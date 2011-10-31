@@ -328,7 +328,7 @@ public class LoadTest extends InstanceTest {
 			// g1 is always without transaction support
 			g1 = createTestGraph();
 			createReadOnlyTransaction(g1);
-			GraphIO.saveGraphToFile(TESTGRAPH_PATH + TESTGRAPH_FILENAME, g1,
+			GraphIO.saveGraphToFile(g1, TESTGRAPH_PATH + TESTGRAPH_FILENAME,
 					null);
 			commit(g1);
 			switch (implementationType) {

@@ -9,7 +9,7 @@ public interface ECARuleManagerInterface {
 
 	/**
 	 * Fire Events from beforeCreateVertexEvents list
-	 * 
+	 *
 	 * @param elementClass
 	 *            the Class of the new Vertex
 	 */
@@ -18,7 +18,7 @@ public interface ECARuleManagerInterface {
 
 	/**
 	 * Fire Events from afterCreateVertexEvents list
-	 * 
+	 *
 	 * @param element
 	 *            the new created Vertex
 	 */
@@ -26,7 +26,7 @@ public interface ECARuleManagerInterface {
 
 	/**
 	 * Fire Events from beforeDeleteVertexEvents list
-	 * 
+	 *
 	 * @param element
 	 *            the Vertex to delete
 	 */
@@ -34,7 +34,7 @@ public interface ECARuleManagerInterface {
 
 	/**
 	 * Fire Events from afterDeleteVertexEvents list
-	 * 
+	 *
 	 * @param elementClass
 	 *            the Class of the deleted Vertex
 	 */
@@ -43,7 +43,7 @@ public interface ECARuleManagerInterface {
 
 	/**
 	 * Fire Events from beforeCreateEdgeEvents list
-	 * 
+	 *
 	 * @param elementClass
 	 *            the Class of the new Edge
 	 */
@@ -52,7 +52,7 @@ public interface ECARuleManagerInterface {
 
 	/**
 	 * Fire Events from afterCreateEdgeEvents list
-	 * 
+	 *
 	 * @param element
 	 *            the new created Edge
 	 */
@@ -60,7 +60,7 @@ public interface ECARuleManagerInterface {
 
 	/**
 	 * Fire Events from beforeDeleteEdgeEvents list
-	 * 
+	 *
 	 * @param element
 	 *            the Edge to delete
 	 */
@@ -68,7 +68,7 @@ public interface ECARuleManagerInterface {
 
 	/**
 	 * Fire Events from afterDeleteEdgeEvents list
-	 * 
+	 *
 	 * @param elementClass
 	 *            the Class of the deleted Edge
 	 */
@@ -77,7 +77,7 @@ public interface ECARuleManagerInterface {
 
 	/**
 	 * Fire Events from beforeChangeAlphaOfEdgeEvents list
-	 * 
+	 *
 	 * @param element
 	 *            the Edge that will change
 	 */
@@ -86,7 +86,7 @@ public interface ECARuleManagerInterface {
 
 	/**
 	 * Fire Events from afterChangeAlphaOfEdgeEvents list
-	 * 
+	 *
 	 * @param element
 	 *            the Edge that changed
 	 */
@@ -95,7 +95,7 @@ public interface ECARuleManagerInterface {
 
 	/**
 	 * Fire Events from beforeChangeOmegaOfEdgeEvents list
-	 * 
+	 *
 	 * @param element
 	 *            the Edge that will change
 	 */
@@ -104,7 +104,7 @@ public interface ECARuleManagerInterface {
 
 	/**
 	 * Fire Events from afterChangeOmegaOfEdgeEvents list
-	 * 
+	 *
 	 * @param element
 	 *            the Edge that changed
 	 */
@@ -113,7 +113,7 @@ public interface ECARuleManagerInterface {
 
 	/**
 	 * Fire Events from beforeChangeAttributeEvents list
-	 * 
+	 *
 	 * @param element
 	 *            the element of which the Attribute will change
 	 * @param attributeName
@@ -125,7 +125,7 @@ public interface ECARuleManagerInterface {
 
 	/**
 	 * Fire Events from afterChangeAttributeEvents list
-	 * 
+	 *
 	 * @param element
 	 *            the element of which the Attribute changed
 	 * @param attributeName
@@ -145,5 +145,8 @@ public interface ECARuleManagerInterface {
 	public abstract void setMaxNestedTriggerCalls(int maxNestedTriggerCalls);
 
 	public abstract int getNestedTriggerCalls();
+
+	// TODO: This cannot be declared here, else we get a cyclic dependency in the build process
+	//public abstract GreqlEvaluator getGreqlEvaluator();
 
 }

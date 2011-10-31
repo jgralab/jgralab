@@ -3,14 +3,13 @@ package de.uni_koblenz.jgralabtest.greql2;
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
+import org.pcollections.PCollection;
 
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.GraphIOException;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueList;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValuePath;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValuePathSystem;
+import de.uni_koblenz.jgralab.greql2.types.Path;
+import de.uni_koblenz.jgralab.greql2.types.PathSystem;
 
 public class GreqlConstructions extends GenericTest {
 
@@ -25,25 +24,26 @@ public class GreqlConstructions extends GenericTest {
 				+ "with c.name = 'Rheinland-Pfalz' "
 				+ "report pathSystem(c, -->{localities.ContainsLocality} -->{connections.AirRoute}) "
 				+ "end";
-		JValue result = evalTestQuery("PathSystemConstruction", queryString,
+		Object result = evalTestQuery("PathSystemConstruction", queryString,
 				TestVersion.ROUTE_MAP_GRAPH);
-		JValueList list = result.toCollection().toJValueList();
+		@SuppressWarnings("unchecked")
+		PCollection<PathSystem> list = ((PCollection<PathSystem>) result);
 		assertEquals(1, list.size());
-		for (JValue v : list) {
-			JValuePathSystem sys = v.toPathSystem();
-			assertEquals(2, sys.depth());
-			assertEquals(3, sys.weight());
+		for (PathSystem v : list) {
+			PathSystem sys = v;
+			assertEquals(2, sys.getDepth());
+			assertEquals(3, sys.getWeight());
 		}
 	}
 
 	@Test
 	public void testPathSystemOnGreqlGraph() throws Exception {
 		String queryString = "extractPath(pathSystem(getVertex(1), (<>--|(<-- <->))*), getVertex(34))";
-		JValue result = evalTestQuery("PathSystemOnGreqlGraph", queryString,
+		Object result = evalTestQuery("PathSystemOnGreqlGraph", queryString,
 				loadTestGraph());
 		// TODO test seriously
 		@SuppressWarnings("unused")
-		JValuePath path = result.toPath();
+		Path path = (Path) result;
 		// System.out.println("Path has length " + path.toPath().pathLength());
 		// System.out.println(path);
 	}
@@ -53,7 +53,7 @@ public class GreqlConstructions extends GenericTest {
 		String queryString = "extractPath(pathSystem(getVertex(1), (<>--|(<-- <->))*))";
 		// TODO test seriously
 		@SuppressWarnings("unused")
-		JValue result = evalTestQuery("PathSystemOnGreqlGraph", queryString,
+		Object result = evalTestQuery("PathSystemOnGreqlGraph", queryString,
 				loadTestGraph());
 		// for (JValue e : result.toJValueSet()) {
 		// JValuePath path = e.toPath();

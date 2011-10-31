@@ -918,9 +918,10 @@ public class SchemaImpl implements Schema {
 
 	@Override
 	public boolean equals(Object other) {
-		return (this == other)
-				|| ((other instanceof Schema) && this.qualifiedName
-						.equals(((Schema) other).getQualifiedName()));
+		if (other == null || !(other instanceof Schema)) {
+			return false;
+		}
+		return qualifiedName.equals(((Schema) other).getQualifiedName());
 	}
 
 	@Override
@@ -1327,10 +1328,10 @@ public class SchemaImpl implements Schema {
 	public String toTGString() {
 		String schemaDefinition = null;
 		ByteArrayOutputStream byteOut = new ByteArrayOutputStream();
-		DataOutputStream dout = new DataOutputStream(byteOut);
+		DataOutputStream out = new DataOutputStream(byteOut);
 		try {
-			GraphIO.saveSchemaToStream(dout, this);
-			dout.close();
+			GraphIO.saveSchemaToStream(this, out);
+			out.close();
 			byteOut.close();
 			schemaDefinition = new String(byteOut.toByteArray());
 		} catch (GraphIOException e) {

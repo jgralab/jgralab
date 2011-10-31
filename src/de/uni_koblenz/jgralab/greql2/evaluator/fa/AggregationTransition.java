@@ -40,15 +40,10 @@ import java.util.Set;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.graphmarker.GraphMarker;
-import de.uni_koblenz.jgralab.graphmarker.SubGraphMarker;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.ThisEdgeEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VertexEvaluator;
-import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
-import de.uni_koblenz.jgralab.greql2.exception.JValueInvalidTypeException;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueImpl;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueTypeCollection;
 import de.uni_koblenz.jgralab.greql2.schema.ThisEdge;
+import de.uni_koblenz.jgralab.greql2.types.TypeCollection;
 import de.uni_koblenz.jgralab.schema.AggregationKind;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
@@ -68,7 +63,7 @@ public class AggregationTransition extends Transition {
 	/**
 	 * The collection of types that are accepted by this transition
 	 */
-	protected JValueTypeCollection typeCollection;
+	protected TypeCollection typeCollection;
 
 	/**
 	 * an edge may have valid roles. This set holds the valid roles for this
@@ -159,7 +154,7 @@ public class AggregationTransition extends Transition {
 	protected AggregationTransition(AggregationTransition t, boolean addToStates) {
 		super(t, addToStates);
 		aggregateFrom = t.aggregateFrom;
-		typeCollection = new JValueTypeCollection(t.typeCollection);
+		typeCollection = new TypeCollection(t.typeCollection);
 		validToEdgeRoles = t.validToEdgeRoles;
 		predicateEvaluator = t.predicateEvaluator;
 		thisEdgeEvaluator = t.thisEdgeEvaluator;
@@ -197,7 +192,7 @@ public class AggregationTransition extends Transition {
 	 *            accepted
 	 */
 	public AggregationTransition(State start, State end, boolean aggregateFrom,
-			JValueTypeCollection typeCollection, Set<String> roles,
+			TypeCollection typeCollection, Set<String> roles,
 			VertexEvaluator predicateEvaluator,
 			GraphMarker<VertexEvaluator> graphMarker) {
 		super(start, end);
@@ -239,31 +234,22 @@ public class AggregationTransition extends Transition {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see greql2.evaluator.fa.Transition#accepts(jgralab.Vertex, jgralab.Edge,
-	 * greql2.evaluator.SubgraphTempAttribute)
+	 * @see greql2.evaluator.fa.Transition#accepts(jgralab.Vertex, jgralab.Edge)
 	 */
 	@Override
-	public boolean accepts(Vertex v, Edge e, SubGraphMarker subgraph)
-			throws EvaluateException {
+	public boolean accepts(Vertex v, Edge e) {
 		if (e == null) {
 			return false;
 		}
 
 		if (aggregateFrom) {
-			if (e.getThatAggregationKind() == AggregationKind.NONE) {
+			if (e.getThatSemantics() == AggregationKind.NONE) {
 				return false;
 			}
 		} else {
-			if (e.getThisAggregationKind() == AggregationKind.NONE) {
+			if (e.getThisSemantics() == AggregationKind.NONE) {
 				return false;
 			}
-		}
-
-		// checks if the subgraphattribute is set and if the edge belongs to
-		// this subgraph (if the edge belongs to it, also the endvertex must
-		// belong to it)
-		if ((subgraph != null) && !subgraph.isMarked(e)) {
-			return false;
 		}
 
 		Set<String> validEdgeRoles = validToEdgeRoles;
@@ -310,20 +296,15 @@ public class AggregationTransition extends Transition {
 
 		// checks if a boolean expression exists and if it evaluates to true
 		if (predicateEvaluator != null) {
-			thisEdgeEvaluator.setValue(new JValueImpl(e));
-			JValue res = predicateEvaluator.getResult(subgraph);
-			if (res.isBoolean()) {
-				try {
-					if (res.toBoolean().equals(Boolean.TRUE)) {
-						return true;
-					}
-				} catch (JValueInvalidTypeException ex) {
-					ex.printStackTrace();
+			thisEdgeEvaluator.setValue(e);
+			Object res = predicateEvaluator.getResult();
+			if (res instanceof Boolean) {
+				if (((Boolean) res).equals(Boolean.TRUE)) {
+					return true;
 				}
 			}
 			return false;
 		}
-
 		return true;
 	}
 

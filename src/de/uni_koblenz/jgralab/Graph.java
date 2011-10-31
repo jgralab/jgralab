@@ -35,6 +35,7 @@
 
 package de.uni_koblenz.jgralab;
 
+import java.io.DataOutputStream;
 import java.util.Comparator;
 import java.util.List;
 
@@ -300,8 +301,8 @@ public interface Graph extends AttributedElement {
 	 *         from <code>startVertex</code> using the given
 	 *         <code>pathDescription</code>
 	 */
-	public <T extends Vertex> List<T> reachableVertices(Vertex startVertex,
-			String pathDescription, Class<T> vertexType);
+	public <T extends Vertex> POrderedSet<T> reachableVertices(
+			Vertex startVertex, String pathDescription, Class<T> vertexType);
 
 	/**
 	 * Returns an Iterable which iterates over all vertices of this Graph in the
@@ -464,4 +465,14 @@ public interface Graph extends AttributedElement {
 	public TraversalContext setTraversalContext(TraversalContext tc);
 
 	public TraversalContext getTraversalContext();
+
+	public void save(String filename) throws GraphIOException;
+
+	public void save(String filename, ProgressFunction pf)
+			throws GraphIOException;
+
+	public void save(DataOutputStream out) throws GraphIOException;
+
+	public void save(DataOutputStream out, ProgressFunction pf)
+			throws GraphIOException;
 }

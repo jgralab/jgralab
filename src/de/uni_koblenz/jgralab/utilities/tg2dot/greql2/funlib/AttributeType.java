@@ -34,73 +34,25 @@
  */
 package de.uni_koblenz.jgralab.utilities.tg2dot.greql2.funlib;
 
-import java.util.ArrayList;
-
 import de.uni_koblenz.jgralab.AttributedElement;
-import de.uni_koblenz.jgralab.Graph;
-import de.uni_koblenz.jgralab.graphmarker.SubGraphMarker;
-import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
-import de.uni_koblenz.jgralab.greql2.funlib.Greql2Function;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueImpl;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
+import de.uni_koblenz.jgralab.greql2.funlib.Function;
 import de.uni_koblenz.jgralab.schema.Attribute;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 
-public class AttributeType extends Greql2Function {
+public class AttributeType extends Function {
 
-	{
-		JValueType[][] x = {
-				{ JValueType.ATTRELEM, JValueType.STRING, JValueType.STRING },
-				{ JValueType.ATTRELEMCLASS, JValueType.STRING,
-						JValueType.STRING } };
-		signatures = x;
-
-		description = "Returns the domain type of a given attribute as string.";
-
-		Category[] c = { Category.SCHEMA_ACCESS };
-		categories = c;
+	public AttributeType() {
+		super("Returns the domain type name of a given attribute as String.",
+				Category.SCHEMA_ACCESS);
 	}
 
-	@Override
-	public JValue evaluate(Graph graph, SubGraphMarker subgraph,
-			JValue[] arguments) throws EvaluateException {
-
-		String attributeName;
-		AttributedElementClass clazz = null;
-		switch (checkArguments(arguments)) {
-		case 0:
-
-			AttributedElement element = arguments[0].toAttributedElement();
-			clazz = element.getAttributedElementClass();
-		case 1:
-			if (clazz == null) {
-				arguments[0].toAttributedElementClass();
-			}
-			attributeName = arguments[1].toString();
-
-			Attribute attribute = clazz.getAttribute(attributeName);
-			String domainName = attribute.getDomain().getQualifiedName();
-
-			return new JValueImpl(domainName);
-		default:
-			throw new RuntimeException();
-		}
+	public String evaluate(AttributedElement el, String name) {
+		return evaluate(el.getAttributedElementClass(), name);
 	}
 
-	@Override
-	public long getEstimatedCardinality(int inElements) {
-		return 1;
+	public String evaluate(AttributedElementClass aec, String name) {
+		Attribute attribute = aec.getAttribute(name);
+		return attribute != null ? attribute.getDomain().getQualifiedName()
+				: null;
 	}
-
-	@Override
-	public long getEstimatedCosts(ArrayList<Long> inElements) {
-		return 1;
-	}
-
-	@Override
-	public double getSelectivity() {
-		return 1;
-	}
-
 }

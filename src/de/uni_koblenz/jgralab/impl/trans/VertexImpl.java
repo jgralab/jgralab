@@ -522,10 +522,4 @@ public abstract class VertexImpl extends
 	public void internalSetDefaultValue(Attribute attr) throws GraphIOException {
 		attr.setDefaultTransactionValue(this);
 	}
-
-	// @Override
-	// public String toString() {
-	// return "v " + getId() + ": "
-	// + getAttributedElementClass().getQualifiedName();
-	// }
 }

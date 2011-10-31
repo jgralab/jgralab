@@ -34,11 +34,10 @@
  */
 package de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout.reader;
 
+import java.util.Collection;
+
 import de.uni_koblenz.jgralab.AttributedElement;
-import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
-import de.uni_koblenz.jgralab.greql2.exception.JValueInvalidTypeException;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueSet;
+import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout.GraphLayout;
 import de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout.definition.Definition;
 import de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout.definition.ElementDefinition;
@@ -51,8 +50,7 @@ import de.uni_koblenz.jgralab.utilities.tg2dot.greql2.GreqlEvaluatorFacade;
  * 
  * @author ist@uni-koblenz.de
  */
-public abstract class AbstractGraphLayoutReader implements
-		GraphLayoutReader {
+public abstract class AbstractGraphLayoutReader implements GraphLayoutReader {
 
 	protected GraphLayout graphLayout;
 	protected Definition currentDefinition;
@@ -100,17 +98,7 @@ public abstract class AbstractGraphLayoutReader implements
 	 *         or a collection of {@link AttributedElement}s as result.
 	 */
 	private boolean isElementDefinition(String text) {
-		boolean isElementDefinition = false;
-		try {
-			JValue result = evaluator.evaluate(text);
-			isElementDefinition = containsAttributedElements(result);
-		} catch (EvaluateException ex) {
-			// TODO appropriate error message
-		} catch (JValueInvalidTypeException ex) {
-			// TODO description
-			throw new RuntimeException("");
-		}
-		return isElementDefinition;
+		return containsGraphElements(evaluator.evaluate(text));
 	}
 
 	/**
@@ -122,17 +110,18 @@ public abstract class AbstractGraphLayoutReader implements
 	 * @return True iff JValue is a {@link AttributedElement}s or a collection
 	 *         of {@link AttributedElement}s.
 	 */
-	private boolean containsAttributedElements(JValue result) {
-
-		boolean isValid = result.isVertex() || result.isEdge();
-		if (result.isCollection()) {
-			JValueSet set = result.toJValueSet();
-			for (JValue element : set) {
-				isValid = element.isVertex() || element.isEdge();
-				break;
+	private boolean containsGraphElements(Object result) {
+		if (result instanceof GraphElement) {
+			return true;
+		}
+		if (result instanceof Collection) {
+			for (Object o : (Collection<?>) result) {
+				if (o instanceof GraphElement) {
+					return true;
+				}
 			}
 		}
-		return isValid;
+		return false;
 	}
 
 	/**

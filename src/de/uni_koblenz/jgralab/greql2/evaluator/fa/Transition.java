@@ -37,8 +37,6 @@ package de.uni_koblenz.jgralab.greql2.evaluator.fa;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.graphmarker.SubGraphMarker;
-import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 
 /**
  * Is baseclass of all transitions. Has one start and one endstate.
@@ -174,10 +172,9 @@ public abstract class Transition {
 
 	/**
 	 * returns true if this transition accepts the given combination of Vertex
-	 * and Edge and if both are part of the given subgraph
+	 * and Edge
 	 */
-	public abstract boolean accepts(Vertex v, Edge e, SubGraphMarker subgraph)
-			throws EvaluateException;
+	public abstract boolean accepts(Vertex v, Edge e);
 
 	/**
 	 * returns the vertex of the datagraph which can be visited after this

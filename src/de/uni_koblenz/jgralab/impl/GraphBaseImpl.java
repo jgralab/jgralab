@@ -35,10 +35,12 @@
 
 package de.uni_koblenz.jgralab.impl;
 
+import java.io.DataOutputStream;
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -49,9 +51,11 @@ import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphException;
 import de.uni_koblenz.jgralab.GraphFactory;
+import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.GraphStructureChangedListener;
 import de.uni_koblenz.jgralab.GraphStructureChangedListenerWithAutoRemove;
+import de.uni_koblenz.jgralab.ProgressFunction;
 import de.uni_koblenz.jgralab.RandomIdGenerator;
 import de.uni_koblenz.jgralab.TraversalContext;
 import de.uni_koblenz.jgralab.Vertex;
@@ -2024,5 +2028,27 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 
 	protected boolean canAddGraphElement(int graphElementId) {
 		return graphElementId == 0;
+	}
+
+	@Override
+	public void save(String filename) throws GraphIOException {
+		save(filename, null);
+	}
+
+	@Override
+	public void save(String filename, ProgressFunction pf)
+			throws GraphIOException {
+		GraphIO.saveGraphToFile(this, filename, pf);
+	}
+
+	@Override
+	public void save(DataOutputStream out) throws GraphIOException {
+		save(out, null);
+	}
+
+	@Override
+	public void save(DataOutputStream out, ProgressFunction pf)
+			throws GraphIOException {
+		GraphIO.saveGraphToStream(this, out, pf);
 	}
 }

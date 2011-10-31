@@ -45,6 +45,6 @@ public class CreateAGraph {
 	public static void main(String[] args) throws GraphIOException {
 		MinimalSchema schema = MinimalSchema.instance();
 		MinimalGraph graph = schema.createMinimalGraph();
-		GraphIO.saveGraphToStream(new DataOutputStream(System.out), graph, null);
+		GraphIO.saveGraphToStream(graph, new DataOutputStream(System.out), null);
 	}
 }

@@ -42,12 +42,14 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphIO;
@@ -55,12 +57,10 @@ import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.codegenerator.CodeGeneratorConfiguration;
 import de.uni_koblenz.jgralab.graphmarker.BooleanGraphMarker;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueCollection;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueMap;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValuePath;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValuePathSystem;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueSlice;
+import de.uni_koblenz.jgralab.greql2.types.Path;
+import de.uni_koblenz.jgralab.greql2.types.PathSystem;
+import de.uni_koblenz.jgralab.greql2.types.Slice;
+import de.uni_koblenz.jgralab.greql2.types.Types;
 import de.uni_koblenz.jgralab.impl.ConsoleProgressFunction;
 import de.uni_koblenz.jgralab.utilities.tg2dot.Tg2Dot;
 
@@ -159,7 +159,7 @@ public class GreqlServer extends Thread {
 		}
 	}
 
-	private void saveAsDot(JValue val, String dotFileName) throws IOException {
+	private void saveAsDot(Object val, String dotFileName) throws IOException {
 		Graph g = eval.getDatagraph();
 		BooleanGraphMarker marker = new BooleanGraphMarker(g);
 		markResultElements(val, marker);
@@ -171,43 +171,44 @@ public class GreqlServer extends Thread {
 		Tg2Dot.convertGraph(marker, dotFileName);
 	}
 
-	private void markResultElements(JValue val, BooleanGraphMarker marker) {
-		if (val.isCollection()) {
-			JValueCollection coll = val.toCollection();
-			for (JValue v : coll) {
+	private void markResultElements(Object val, BooleanGraphMarker marker) {
+		if (val instanceof Collection) {
+			Collection<?> coll = (Collection<?>) val;
+			for (Object v : coll) {
 				markResultElements(v, marker);
 			}
-		} else if (val.isMap()) {
-			for (Entry<JValue, JValue> e : val.toJValueMap().entrySet()) {
+		} else if (val instanceof Map) {
+			for (Entry<? extends Object, ? extends Object> e : ((Map<?, ?>) val)
+					.entrySet()) {
 				markResultElements(e.getKey(), marker);
 				markResultElements(e.getValue(), marker);
 			}
-		} else if (val.isSlice()) {
-			JValueSlice slice = val.toSlice();
-			for (JValue v : slice.nodes()) {
-				marker.mark(v.toVertex());
-			}
-			for (JValue e : slice.edges()) {
-				marker.mark(e.toEdge());
-			}
-		} else if (val.isPathSystem()) {
-			JValuePathSystem pathSystem = val.toPathSystem();
-			for (JValue v : pathSystem.nodes()) {
-				marker.mark(v.toVertex());
-			}
-			for (JValue e : pathSystem.edges()) {
-				marker.mark(e.toEdge());
-			}
-		} else if (val.isPath()) {
-			JValuePath path = val.toPath();
-			for (Vertex v : path.nodeTrace()) {
+		} else if (val instanceof Slice) {
+			Slice slice = (Slice) val;
+			for (Vertex v : slice.getVertices()) {
 				marker.mark(v);
 			}
-			for (Edge e : path.edgeTrace()) {
+			for (Edge e : slice.getEdges()) {
 				marker.mark(e);
 			}
-		} else if (val.isAttributedElement()) {
-			marker.mark(val.toAttributedElement());
+		} else if (val instanceof PathSystem) {
+			PathSystem pathSystem = (PathSystem) val;
+			for (Vertex v : pathSystem.getVertices()) {
+				marker.mark(v);
+			}
+			for (Edge e : pathSystem.getEdges()) {
+				marker.mark(e);
+			}
+		} else if (val instanceof Path) {
+			Path path = (Path) val;
+			for (Vertex v : path.getVertexTrace()) {
+				marker.mark(v);
+			}
+			for (Edge e : path.getEdgeTrace()) {
+				marker.mark(e);
+			}
+		} else if (val instanceof AttributedElement) {
+			marker.mark((AttributedElement) val);
 		} else {
 			println("'" + val + "' is no AttributedElement, "
 					+ "so it won't be considered for DOT output.",
@@ -215,14 +216,14 @@ public class GreqlServer extends Thread {
 		}
 	}
 
-	private JValue evalQuery(String queryFile) throws IOException {
+	private Object evalQuery(String queryFile) throws IOException {
 		println("Evaling query file " + queryFile + ".", PrintTarget.BOTH, true);
 		eval.setQueryFile(new File(queryFile));
-		JValue result = null;
+		Object result = null;
 		try {
 			long startTime = System.currentTimeMillis();
 			eval.startEvaluation();
-			result = eval.getEvaluationResult();
+			result = eval.getResult();
 			long evalTime = System.currentTimeMillis() - startTime;
 			println("<result not printed>", PrintTarget.SERVER, false);
 			out.println();
@@ -230,25 +231,27 @@ public class GreqlServer extends Thread {
 			out.println();
 			out.println("Evaluation Result:");
 			out.println("==================");
-			if (result.isCollection()) {
-				JValueCollection coll = result.toCollection();
+			if (result instanceof Collection) {
+				Collection<?> coll = (Collection<?>) result;
 				println("Result collection (" + coll.getClass().getSimpleName()
 						+ ") contains " + coll.size() + " elements.\n",
 						PrintTarget.CLIENT, true);
-				for (JValue jv : coll) {
+				for (Object jv : coll) {
 					println(jv.toString(), PrintTarget.CLIENT, false);
 				}
-			} else if (result.isMap()) {
-				JValueMap map = result.toJValueMap();
+			} else if (result instanceof Map) {
+				Map<?, ?> map = (Map<?, ?>) result;
 				println("Result map contains " + map.size() + " map entries.\n",
 						PrintTarget.CLIENT, true);
-				for (Entry<JValue, JValue> e : map.entrySet()) {
+				for (Entry<? extends Object, ? extends Object> e : map
+						.entrySet()) {
 					println(e.getKey() + " --> " + e.getValue(),
 							PrintTarget.CLIENT, false);
 				}
 			} else {
 				println("Result is a single element of type "
-						+ result.getType() + ".\n", PrintTarget.CLIENT, true);
+						+ Types.getGreqlTypeName(result) + ".\n",
+						PrintTarget.CLIENT, true);
 				println(result.toString(), PrintTarget.CLIENT, false);
 			}
 			out.flush();

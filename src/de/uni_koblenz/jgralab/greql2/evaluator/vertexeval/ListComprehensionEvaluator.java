@@ -38,16 +38,17 @@ package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.pcollections.PCollection;
+import org.pcollections.PVector;
+
 import de.uni_koblenz.jgralab.EdgeDirection;
+import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueCollection;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueList;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueTable;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueTuple;
-import de.uni_koblenz.jgralab.greql2.schema.ListComprehension;
 import de.uni_koblenz.jgralab.greql2.schema.IsTableHeaderOf;
+import de.uni_koblenz.jgralab.greql2.schema.ListComprehension;
+import de.uni_koblenz.jgralab.greql2.types.Table;
 
 /**
  * Evaluates a ListComprehensionvertex in the GReQL-2 Syntaxgraph
@@ -89,7 +90,7 @@ public class ListComprehensionEvaluator extends ComprehensionEvaluator {
 	private List<VertexEvaluator> headerEvaluators = null;
 
 	@Override
-	protected JValueCollection getResultDatastructure() {
+	protected PCollection<Object> getResultDatastructure() {
 		if (createHeader == null) {
 			if (vertex.getFirstIsTableHeaderOfIncidence(EdgeDirection.IN) != null) {
 				headerEvaluators = new ArrayList<VertexEvaluator>();
@@ -105,13 +106,15 @@ public class ListComprehensionEvaluator extends ComprehensionEvaluator {
 			}
 		}
 		if (createHeader) {
-			JValueTuple headerTuple = new JValueTuple();
+			PVector<String> headerTuple = JGraLab.vector();
 			for (VertexEvaluator headerEvaluator : headerEvaluators) {
-				headerTuple.add(headerEvaluator.getResult(subgraph));
+				headerTuple = headerTuple.plus((String) headerEvaluator
+						.getResult());
 			}
-			return new JValueTable(headerTuple, false);
+			Table<Object> table = Table.empty();
+			return table.withTitles(headerTuple);
 		}
-		return new JValueList();
+		return JGraLab.vector();
 	}
 
 	@Override

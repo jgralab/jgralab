@@ -41,9 +41,7 @@ import org.junit.Test;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.exception.OptimizerException;
-import de.uni_koblenz.jgralab.greql2.funlib.Greql2FunctionLibrary;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueCollection;
+import de.uni_koblenz.jgralab.greql2.funlib.FunLib;
 import de.uni_koblenz.jgralab.greql2.optimizer.CommonSubgraphOptimizer;
 import de.uni_koblenz.jgralab.greql2.optimizer.ConditionalExpressionOptimizer;
 import de.uni_koblenz.jgralab.greql2.optimizer.DefaultOptimizer;
@@ -62,8 +60,7 @@ import de.uni_koblenz.jgralabtest.greql2.testfunctions.IsPrime;
 public class OptimizerTest extends GenericTest {
 
 	static {
-		Greql2FunctionLibrary.instance().registerUserDefinedFunction(
-				IsPrime.class);
+		FunLib.register(IsPrime.class);
 	}
 
 	private Optimizer cso = new CommonSubgraphOptimizer();
@@ -120,9 +117,9 @@ public class OptimizerTest extends GenericTest {
 	private void execTimedTest(String query, String name, Graph datagraph)
 			throws Exception {
 		long start = System.currentTimeMillis();
-		JValue v1 = evalTestQuery(name, query, datagraph);
+		Object v1 = evalTestQuery(name, query, datagraph);
 		long mid = System.currentTimeMillis();
-		JValue v2 = evalTestQuery(name + " (" + defo.getClass().getSimpleName()
+		Object v2 = evalTestQuery(name + " (" + defo.getClass().getSimpleName()
 				+ ")", query, defo, datagraph);
 		long end = System.currentTimeMillis();
 		assertEquals(v1, v2);
@@ -140,22 +137,18 @@ public class OptimizerTest extends GenericTest {
 	private void execTimedTest(String query, String name, Optimizer o,
 			Graph datagraph) throws Exception {
 		long start = System.currentTimeMillis();
-		JValue v1 = evalTestQuery(name, query, datagraph);
+		Object v1 = evalTestQuery(name, query, datagraph);
 		long mid1 = System.currentTimeMillis();
-		JValue v2 = evalTestQuery(name + " (" + o.getClass().getSimpleName()
+		Object v2 = evalTestQuery(name + " (" + o.getClass().getSimpleName()
 				+ ")", query, o, datagraph);
 		long mid2 = System.currentTimeMillis();
-		JValue v3 = evalTestQuery(name + " (" + defo.getClass().getSimpleName()
+		Object v3 = evalTestQuery(name + " (" + defo.getClass().getSimpleName()
 				+ ")", query, defo, datagraph);
 		long end = System.currentTimeMillis();
 
-		if (v1 instanceof JValueCollection) {
-			assertEquals(v1.toJValueSet(), v2.toJValueSet());
-			assertEquals(v1.toJValueSet(), v3.toJValueSet());
-		} else {
-			assertEquals(v1, v2);
-			assertEquals(v1, v3);
-		}
+		assertEquals(v1, v2);
+		assertEquals(v1, v3);
+
 		// TODO test seriously
 		@SuppressWarnings("unused")
 		double noOptTime = (mid1 - start) / 1000d;

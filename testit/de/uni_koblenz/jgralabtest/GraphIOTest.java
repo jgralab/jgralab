@@ -81,17 +81,19 @@ public class GraphIOTest {
 	public static void main(String[] args) throws GraphIOException {
 		Schema ioTest = GraphIO.loadSchemaFromFile("GraphIOTestInput.tg");
 
-		GraphIO.saveSchemaToFile("GraphIOTestOutput.tg", ioTest);
+		GraphIO.saveSchemaToFile(ioTest, "GraphIOTestOutput.tg");
 		System.out.println("Fini.");
 	}
-	
+
 	@Test
 	public void testLoadCityMap() {
 		try {
 			File dir = new File(".");
 			dir.getAbsolutePath();
 			System.out.println(dir.getAbsolutePath());
-			GraphIO.loadSchemaAndGraphFromFile(dir.getAbsolutePath() + "/testit/testgraphs/citymapgraph.tg", CodeGeneratorConfiguration.MINIMAL, null);
+			GraphIO.loadSchemaAndGraphFromFile(dir.getAbsolutePath()
+					+ "/testit/testgraphs/citymapgraph.tg",
+					CodeGeneratorConfiguration.MINIMAL, null);
 		} catch (GraphIOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

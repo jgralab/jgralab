@@ -1,29 +1,29 @@
 /*
  * JGraLab - The Java Graph Laboratory
- * 
+ *
  * Copyright (C) 2006-2011 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
- * 
+ *
  * For bug reports, documentation and further information, visit
- * 
+ *
  *                         http://jgralab.uni-koblenz.de
- * 
+ *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
  * Free Software Foundation; either version 3 of the License, or (at your
  * option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, see <http://www.gnu.org/licenses>.
- * 
+ *
  * Additional permission under GNU GPL version 3 section 7
- * 
+ *
  * If you modify this Program, or any covered work, by linking or combining
  * it with Eclipse (or a modified version of that program or an Eclipse
  * plugin), containing parts covered by the terms of the Eclipse Public
@@ -43,9 +43,7 @@ import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
-import de.uni_koblenz.jgralab.greql2.funlib.Greql2FunctionLibrary;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueImpl;
+import de.uni_koblenz.jgralab.greql2.funlib.FunLib;
 import de.uni_koblenz.jgralab.schema.AggregationKind;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
@@ -103,27 +101,16 @@ public class GreqlEvaluatorFacade {
 	 * Registers all known GReQL functions and disables the JGraLab log.
 	 */
 	static {
-		Greql2FunctionLibrary.instance().registerUserDefinedFunction(
-				ToDotString.class);
-		Greql2FunctionLibrary.instance()
-				.registerUserDefinedFunction(Join.class);
-		Greql2FunctionLibrary.instance().registerUserDefinedFunction(
-				AlphaRolename.class);
-		Greql2FunctionLibrary.instance().registerUserDefinedFunction(
-				AlphaIncidenceNumber.class);
-		Greql2FunctionLibrary.instance().registerUserDefinedFunction(
-				OmegaRolename.class);
-		Greql2FunctionLibrary.instance().registerUserDefinedFunction(
-				OmegaIncidenceNumber.class);
-		Greql2FunctionLibrary.instance().registerUserDefinedFunction(
-				FormatString.class);
-
-		Greql2FunctionLibrary.instance().registerUserDefinedFunction(
-				AbbreviateString.class);
-		Greql2FunctionLibrary.instance().registerUserDefinedFunction(
-				AttributeType.class);
-		Greql2FunctionLibrary.instance().registerUserDefinedFunction(
-				ShortenString.class);
+		FunLib.register(ToDotString.class);
+		FunLib.register(ShortenString.class);
+		FunLib.register(AlphaRolename.class);
+		FunLib.register(AlphaIncidenceNumber.class);
+		FunLib.register(OmegaRolename.class);
+		FunLib.register(OmegaIncidenceNumber.class);
+		FunLib.register(AbbreviateString.class);
+		FunLib.register(Join.class);
+		FunLib.register(FormatString.class);
+		FunLib.register(AttributeType.class);
 	}
 
 	/**
@@ -152,7 +139,7 @@ public class GreqlEvaluatorFacade {
 	public GreqlEvaluatorFacade(Graph graph) {
 		evaluator = new GreqlEvaluator((String) null, graph, null);
 		knownVariableHashCode = 0;
-		evaluator.setVariables(new HashMap<String, JValue>());
+		evaluator.setVariables(new HashMap<String, Object>());
 	}
 
 	/**
@@ -316,22 +303,18 @@ public class GreqlEvaluatorFacade {
 	 *            A GReQL-query as String.
 	 * @return A JValue.
 	 */
-	public JValue evaluate(String query) {
+	public Object evaluate(String query) {
 		query = getUsingString() + query;
 		evaluator.setQuery(query);
-
 		try {
 			evaluator.startEvaluation();
 		} catch (RuntimeException parse) {
 			parse.printStackTrace();
 			throw parse;
 		}
-
-		JValue result = evaluator.getEvaluationResult();
-
+		Object result = evaluator.getResult();
 		GreqlEvaluator.DEBUG_DECLARATION_ITERATIONS = false;
 		GreqlEvaluator.DEBUG_OPTIMIZATION = false;
-
 		return result;
 	}
 
@@ -340,24 +323,10 @@ public class GreqlEvaluatorFacade {
 	 * 
 	 * @param query
 	 *            A GReQL-query as String.
-	 * @return The String from a JValue.
+	 * @return The String from a query result.
 	 */
 	public String evaluateToString(String query) {
 		return evaluate(query).toString();
-	}
-
-	/**
-	 * Sets the given value as variable of the {@link #evaluator}. <br>
-	 * <b>Note:</b> It will use the {@link JValueImpl#fromObject(Object)}.
-	 * 
-	 * @param name
-	 *            Name of the variable.
-	 * @param value
-	 *            A Generic as value.
-	 */
-	public <T> void setVariable(String name, T value) {
-		setVariable(name, JValueImpl.fromObject(value));
-
 	}
 
 	/**
@@ -366,9 +335,9 @@ public class GreqlEvaluatorFacade {
 	 * @param name
 	 *            Name of the variable.
 	 * @param value
-	 *            {@link JValue} as value.
+	 *            Object as value.
 	 */
-	private void setVariable(String name, JValue value) {
+	public void setVariable(String name, Object value) {
 		evaluator.setVariable(name, value);
 	}
 
@@ -381,7 +350,7 @@ public class GreqlEvaluatorFacade {
 	public void setVariablesWithGreqlValues(Map<String, String> variables) {
 
 		for (Entry<String, String> variableEntry : variables.entrySet()) {
-			JValue result = evaluate(variableEntry.getValue());
+			Object result = evaluate(variableEntry.getValue());
 			evaluator.setVariable(variableEntry.getKey(), result);
 		}
 	}

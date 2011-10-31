@@ -24,7 +24,6 @@ import javax.xml.stream.events.XMLEvent;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.OptionGroup;
-import org.pcollections.ArrayPVector;
 import org.pcollections.PVector;
 
 import de.uni_koblenz.ist.utilities.option_handler.OptionHandler;
@@ -224,9 +223,9 @@ public class GXL2Tg {
 
 		// write tg
 		if (graph != null) {
-			GraphIO.saveGraphToFile(graphOutputName, graph, null);
+			GraphIO.saveGraphToFile(graph, graphOutputName, null);
 		} else {
-			GraphIO.saveSchemaToFile(graphOutputName, schema);
+			GraphIO.saveSchemaToFile(schema, graphOutputName);
 		}
 	}
 
@@ -697,7 +696,7 @@ public class GXL2Tg {
 		}
 		PVector<String> constants = enumDomain.get_enumConstants();
 		if (constants == null) {
-			constants = ArrayPVector.empty();
+			constants = JGraLab.vector();
 			enumDomain.set_enumConstants(constants);
 		}
 		constants = constants.plus(enumConstant);

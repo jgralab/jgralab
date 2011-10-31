@@ -1,6 +1,7 @@
 package de.uni_koblenz.jgralab.gretl;
 
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueMap;
+import org.pcollections.PMap;
+
 import de.uni_koblenz.jgralab.schema.Attribute;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.Domain;
@@ -9,7 +10,7 @@ public class CreateAttribute extends Transformation<Attribute> {
 
 	private AttributeSpec attrSpec;
 	private String semanticExpression;
-	private JValueMap archetypes;
+	private PMap<Object, Object> archetypes2values;
 
 	protected CreateAttribute(final Context c, final AttributeSpec attrSpec) {
 		super(c);
@@ -17,9 +18,9 @@ public class CreateAttribute extends Transformation<Attribute> {
 	}
 
 	public CreateAttribute(final Context c, final AttributeSpec attrSpec,
-			final JValueMap archetypes) {
+			final PMap<Object, Object> archetypes2values) {
 		this(c, attrSpec);
-		this.archetypes = archetypes;
+		this.archetypes2values = archetypes2values;
 	}
 
 	public CreateAttribute(final Context c, final AttributeSpec attrSpec,
@@ -46,8 +47,9 @@ public class CreateAttribute extends Transformation<Attribute> {
 			return attr;
 		case GRAPH:
 			Attribute attribute = attrSpec.aec.getAttribute(attrSpec.name);
-			if (archetypes != null) {
-				new SetAttributes(context, attribute, archetypes).execute();
+			if (archetypes2values != null) {
+				new SetAttributes(context, attribute, archetypes2values)
+						.execute();
 			} else {
 				new SetAttributes(context, attribute, semanticExpression)
 						.execute();

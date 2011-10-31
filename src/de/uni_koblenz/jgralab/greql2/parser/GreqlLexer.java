@@ -53,7 +53,7 @@ public class GreqlLexer {
 					put(TokenTypes.AND, "and");
 					put(TokenTypes.FALSE, "false");
 					put(TokenTypes.NOT, "not");
-					put(TokenTypes.NULL_VALUE, "null");
+					put(TokenTypes.UNDEFINED, "undefined");
 					put(TokenTypes.OR, "or");
 					put(TokenTypes.TRUE, "true");
 					put(TokenTypes.XOR, "xor");
@@ -128,7 +128,7 @@ public class GreqlLexer {
 					put(TokenTypes.IMPORT, "import");
 					put(TokenTypes.POS_INFINITY, "POSITIVE_INFINITY");
 					put(TokenTypes.NEG_INFINITY, "NEGATIVE_INFINITY");
-					put(TokenTypes.NaN, "NaN");
+					put(TokenTypes.NOT_A_NUMBER, "NaN");
 				}
 			});
 
@@ -232,9 +232,13 @@ public class GreqlLexer {
 				} else if (tokenText.equals("thisEdge")) {
 					recognizedToken = new ComplexToken(TokenTypes.THISEDGE,
 							start, position - start, tokenText);
-				} else if (tokenText.equals(fixedTokens.get(TokenTypes.POS_INFINITY)) || tokenText.equals(fixedTokens.get(TokenTypes.NEG_INFINITY))  || tokenText.equals(fixedTokens.get(TokenTypes.NaN)) ) {
-					recognizedToken = matchDoubleConstantToken(start,
-							position - start, tokenText);
+				} else if (tokenText.equals(fixedTokens
+						.get(TokenTypes.POS_INFINITY))
+						|| tokenText.equals(fixedTokens
+								.get(TokenTypes.NEG_INFINITY))
+						|| tokenText.equals(fixedTokens.get(TokenTypes.NOT_A_NUMBER))) {
+					recognizedToken = matchDoubleConstantToken(start, position
+							- start, tokenText);
 				} else if (startsWithNumber(tokenText)) {
 					recognizedToken = matchNumericToken(start,
 							position - start, tokenText);
@@ -257,9 +261,11 @@ public class GreqlLexer {
 		return recognizedToken;
 	}
 
-	private final Token matchDoubleConstantToken(int start, int i, String tokenText) {
+	private final Token matchDoubleConstantToken(int start, int i,
+			String tokenText) {
 		Double value = Double.parseDouble(tokenText);
-		return new DoubleToken(TokenTypes.DOUBLELITERAL, start, i, tokenText, value);
+		return new DoubleToken(TokenTypes.DOUBLELITERAL, start, i, tokenText,
+				value);
 	}
 
 	private final boolean startsWithNumber(String text) {

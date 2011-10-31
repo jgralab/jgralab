@@ -1,29 +1,29 @@
 package de.uni_koblenz.jgralab.gretl;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
+
+import org.pcollections.Empty;
+import org.pcollections.PMap;
+import org.pcollections.PSet;
 
 import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueImpl;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueMap;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueSet;
 import de.uni_koblenz.jgralab.gretl.Context.TransformationPhase;
 import de.uni_koblenz.jgralab.gretl.parser.TokenTypes;
 import de.uni_koblenz.jgralab.gretl.template.CreateEdge;
 import de.uni_koblenz.jgralab.gretl.template.CreateVertex;
 import de.uni_koblenz.jgralab.gretl.template.TemplateGraph;
 import de.uni_koblenz.jgralab.gretl.templategraphparser.TemplateGraphParser;
-import de.uni_koblenz.jgralab.impl.InternalEdge;
 import de.uni_koblenz.jgralab.schema.Attribute;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
@@ -36,7 +36,7 @@ public class MatchReplace extends InPlaceTransformation {
 
 	private TemplateGraph replaceGraph;
 	private String semanticExpression;
-	private JValueSet matches;
+	private PSet<Object> matches;
 	private Map<CreateVertex, Vertex> createVertices2Vertices = new HashMap<CreateVertex, Vertex>();
 	private LinkedHashSet<Vertex> matchedVertices = new LinkedHashSet<Vertex>();
 	private LinkedHashSet<Edge> matchedEdges = new LinkedHashSet<Edge>();
@@ -97,7 +97,7 @@ public class MatchReplace extends InPlaceTransformation {
 	}
 
 	public MatchReplace(Context context, TemplateGraph replaceGraph,
-			JValueSet matches) {
+			PSet<Object> matches) {
 		super(context);
 		this.replaceGraph = replaceGraph;
 		this.matches = matches;
@@ -118,13 +118,12 @@ public class MatchReplace extends InPlaceTransformation {
 		}
 
 		if (matches == null) {
-			matches = context.evaluateGReQLQuery(semanticExpression)
-					.toJValueSet();
+			matches = context.evaluateGReQLQuery(semanticExpression);
 		}
 		allModifiedElements.clear();
 
 		int applicationCount = 0;
-		for (JValue match : matches) {
+		for (Object match : matches) {
 			context.setGReQLVariable("$", match);
 
 			matchedVertices.clear();
@@ -152,23 +151,23 @@ public class MatchReplace extends InPlaceTransformation {
 		deleteNonPreservables();
 	}
 
-	private void calculateMatchedElements(JValue jv) {
-		if (jv.isAttributedElement()) {
-			AttributedElement ae = jv.toAttributedElement();
-			if (ae instanceof Vertex) {
-				matchedVertices.add((Vertex) ae);
-			} else if (ae instanceof Edge) {
-				matchedEdges.add(((Edge) ae).getNormalEdge());
-			}
-		} else if (jv.isCollection()) {
-			for (JValue j : jv.toCollection()) {
+	@SuppressWarnings("unchecked")
+	private void calculateMatchedElements(Object matchedElem) {
+		if (matchedElem instanceof Vertex) {
+			matchedVertices.add((Vertex) matchedElem);
+		} else if (matchedElem instanceof Edge) {
+			matchedEdges.add(((Edge) matchedElem).getNormalEdge());
+
+		} else if (matchedElem instanceof Collection) {
+			for (Object j : (Collection<Object>) matchedElem) {
 				calculateMatchedElements(j);
 			}
-		} else if (jv.isMap()) {
-			JValueMap m = jv.toJValueMap();
+		} else if (matchedElem instanceof Map) {
+			Map<Object, Object> m = (Map<Object, Object>) matchedElem;
 			calculateMatchedElements(m.keySet());
 			calculateMatchedElements(m.values());
 		}
+		// Anything else can be ignored.
 	}
 
 	private void deleteNonPreservables() {
@@ -209,36 +208,36 @@ public class MatchReplace extends InPlaceTransformation {
 		for (CreateEdge ce : replaceGraph.getCreateEdgeEdges()) {
 			Vertex startVertex = createVertices2Vertices.get(ce.getAlpha());
 			Vertex endVertex = createVertices2Vertices.get(ce.getOmega());
-			JValue arch = null;
+			Object arch = null;
 			if (ce.get_archetype() != null) {
 				arch = context.evaluateGReQLQuery(ce.get_archetype());
 			}
-			if ((ce.get_typeName() == null) && (arch != null) && arch.isEdge()) {
+			if ((ce.get_typeName() == null) && (arch != null)
+					&& (arch instanceof Edge)) {
 				// Existing, preserved edge. However, maybe we might need to
 				// update alpha and/or omega.
-				InternalEdge e = (InternalEdge) arch.toEdge().getNormalEdge();
+				Edge e = ((Edge) arch).getNormalEdge();
 				preservables.add(e);
 				allModifiedElements.add(e);
 				// setAlpha/Omega are no-ops, if nothing is to be set. So that's
-				// acually cheaper than checking first.
+				// actually cheaper than checking first.
 				e.setAlpha(startVertex);
 				e.setOmega(endVertex);
 
-				setAttributeValues(e, arch, ce.get_attributes(), ce
-						.is_copyAttributeValues());
+				setAttributeValues(e, arch, ce.get_attributes(),
+						ce.is_copyAttributeValues());
 			} else {
 				Edge newEdge = createEdge(ce, startVertex, endVertex);
 				if (addGlobalMappings && (arch != null)) {
-					JValueMap m = new JValueMap(1);
-					m.put(arch, new JValueImpl(newEdge));
+					PMap<Object, AttributedElement> m = Empty.orderedMap();
+					m = m.plus(arch, newEdge);
 					new AddMappings(context, m).execute();
-					if (arch.isEdge()) {
-						Edge replacedEdge = arch.toEdge();
-						allModifiedElements.add(replacedEdge);
+					if (arch instanceof Edge) {
+						allModifiedElements.add((Edge) arch);
 					}
 				}
-				setAttributeValues(newEdge, arch, ce.get_attributes(), ce
-						.is_copyAttributeValues());
+				setAttributeValues(newEdge, arch, ce.get_attributes(),
+						ce.is_copyAttributeValues());
 			}
 		}
 
@@ -246,37 +245,37 @@ public class MatchReplace extends InPlaceTransformation {
 
 	private void createAndUpdateVertices() {
 		for (CreateVertex cv : replaceGraph.getCreateVertexVertices()) {
-			JValue arch = null;
+			Object arch = null;
 			if (cv.get_archetype() != null) {
 				arch = context.evaluateGReQLQuery(cv.get_archetype());
 			}
 			if ((cv.get_typeName() == null) && (arch != null)
-					&& arch.isVertex()) {
+					&& (arch instanceof Vertex)) {
 				// Existing, preserved vertex
-				Vertex v = arch.toVertex();
+				Vertex v = (Vertex) arch;
 				createVertices2Vertices.put(cv, v);
 				preservables.add(v);
 				allModifiedElements.add(v);
-				setAttributeValues(v, arch, cv.get_attributes(), cv
-						.is_copyAttributeValues());
+				setAttributeValues(v, arch, cv.get_attributes(),
+						cv.is_copyAttributeValues());
 			} else {
 				// A new Vertex has to be created
 				Vertex newVertex = createVertex(cv);
 				createVertices2Vertices.put(cv, newVertex);
 				if (arch != null) {
 					if (addGlobalMappings) {
-						JValueMap m = new JValueMap(1);
-						m.put(arch, new JValueImpl(newVertex));
+						PMap<Object, AttributedElement> m = Empty.orderedMap();
+						m = m.plus(arch, newVertex);
 						new AddMappings(context, m).execute();
 					}
-					if (arch.isVertex()) {
-						Vertex replacedVertex = arch.toVertex();
+					if (arch instanceof Vertex) {
+						Vertex replacedVertex = (Vertex) arch;
 						allModifiedElements.add(replacedVertex);
 						relinkIncidences(replacedVertex, newVertex);
 					}
 				}
-				setAttributeValues(newVertex, arch, cv.get_attributes(), cv
-						.is_copyAttributeValues());
+				setAttributeValues(newVertex, arch, cv.get_attributes(),
+						cv.is_copyAttributeValues());
 			}
 		}
 	}
@@ -298,9 +297,9 @@ public class MatchReplace extends InPlaceTransformation {
 				ec = ec(e.get_typeName());
 			}
 		} else {
-			ec = getSingleEdgeClassBetween((VertexClass) startVertex
-					.getAttributedElementClass(), (VertexClass) endVertex
-					.getAttributedElementClass());
+			ec = getSingleEdgeClassBetween(
+					(VertexClass) startVertex.getAttributedElementClass(),
+					(VertexClass) endVertex.getAttributedElementClass());
 		}
 		return context.getTargetGraph().createEdge(ec.getM1Class(),
 				startVertex, endVertex);
@@ -330,19 +329,19 @@ public class MatchReplace extends InPlaceTransformation {
 		return possibles.get(0);
 	}
 
-	private void setAttributeValues(GraphElement ge, JValue arch,
+	private void setAttributeValues(GraphElement ge, Object arch,
 			Map<String, String> attrMap, boolean copy) {
 		if (attrMap == null) {
 			return;
 		}
-		if (copy && ((arch == null) || !arch.isAttributedElement())) {
+		if (copy && ((arch == null) || !(arch instanceof AttributedElement))) {
 			throw new GReTLException(context,
 					"Should copy attribute values, but the archetype '" + arch
 							+ "' is no AttributedElement.");
 		}
 		// Maybe copy matching attributes over
 		if (copy) {
-			AttributedElement ae = arch.toAttributedElement();
+			AttributedElement ae = (AttributedElement) arch;
 			AttributedElementClass aeClass = ae.getAttributedElementClass();
 			AttributedElementClass geClass = ge.getAttributedElementClass();
 			for (Attribute attr : geClass.getAttributeList()) {
@@ -358,8 +357,8 @@ public class MatchReplace extends InPlaceTransformation {
 			}
 		}
 		for (Entry<String, String> e : attrMap.entrySet()) {
-			ge.setAttribute(e.getKey(), context
-					.evaluateGReQLQuery(e.getValue()).toObject());
+			ge.setAttribute(e.getKey(),
+					context.evaluateGReQLQuery(e.getValue()));
 		}
 	}
 

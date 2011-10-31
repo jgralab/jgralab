@@ -37,11 +37,13 @@ package de.uni_koblenz.jgralab;
 
 import java.util.Comparator;
 import java.util.List;
-import java.util.Set;
+
+import org.pcollections.POrderedSet;
 
 import de.uni_koblenz.jgralab.schema.AggregationKind;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.VertexClass;
+import de.uni_koblenz.jgralab.schema.impl.DirectedM1EdgeClass;
 
 /**
  * represents a vertex, m1 classes inherit from this class
@@ -50,6 +52,18 @@ import de.uni_koblenz.jgralab.schema.VertexClass;
  * 
  */
 public interface Vertex extends GraphElement {
+
+	/**
+	 * Checks if the list of incident edges has changed with respect to the
+	 * given <code>incidenceListVersion</code>.
+	 */
+	public boolean isIncidenceListModified(long incidenceListVersion);
+
+	/**
+	 * @return the internal vertex structure version
+	 * @see #isIncidenceListModified(long)
+	 */
+	public long getIncidenceListVersion();
 
 	/**
 	 * @return the number of connected incidences to the vertex
@@ -233,10 +247,6 @@ public interface Vertex extends GraphElement {
 	 */
 	public void putAfter(Vertex v);
 
-	/**
-	 * removes this vertex from vSeq and erases its attributes
-	 */
-	public void delete();
 
 	/**
 	 * Using this method, one can simply iterate over all incident edges of this
@@ -259,8 +269,8 @@ public interface Vertex extends GraphElement {
 	 *            as implicit GoalRestriction)
 	 * @return a List of the reachable vertices
 	 */
-	public <T extends Vertex> List<T> reachableVertices(String pathDescription,
-			Class<T> vertexType);
+	public <T extends Vertex> POrderedSet<T> reachableVertices(
+			String pathDescription, Class<T> vertexType);
 
 	/**
 	 * @param <T>
@@ -272,8 +282,8 @@ public interface Vertex extends GraphElement {
 	 * @return a Set of vertices reachable by traversing the path given by
 	 *         pathElements
 	 */
-	public <T extends Vertex> Set<T> reachableVertices(Class<T> returnType,
-			PathElement... pathElements);
+	public <T extends Vertex> POrderedSet<T> reachableVertices(
+			Class<T> returnType, PathElement... pathElements);
 
 	/**
 	 * Using this method, one can simply iterate over all incident edges of this
@@ -339,6 +349,20 @@ public interface Vertex extends GraphElement {
 	public Iterable<Edge> incidences(Class<? extends Edge> eclass);
 
 	/**
+	 * tests if the Edge <code>edge</code> may start at this vertex
+	 * 
+	 * @return <code>true</code> iff <code>edge</code> may start at this vertex
+	 */
+	public boolean isValidAlpha(Edge edge);
+
+	/**
+	 * tests if the Edge <code>edge</code> may end at this vertex
+	 * 
+	 * @return <code>true</code> iff <code>edge</code> may end at this vertex
+	 */
+	public boolean isValidOmega(Edge edge);
+
+	/**
 	 * Sorts the incidence sequence according to the given comparator in
 	 * ascending order.
 	 * 
@@ -346,6 +370,8 @@ public interface Vertex extends GraphElement {
 	 *            the comparator that defines the desired incidence order.
 	 */
 	public void sortIncidences(Comparator<Edge> comp);
+
+	public DirectedM1EdgeClass getEdgeForRolename(String rolename);
 
 	public List<? extends Vertex> adjacences(String role);
 

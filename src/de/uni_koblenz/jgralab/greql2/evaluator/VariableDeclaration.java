@@ -37,16 +37,16 @@ package de.uni_koblenz.jgralab.greql2.evaluator;
 
 import java.util.Iterator;
 
-import de.uni_koblenz.jgralab.graphmarker.SubGraphMarker;
+import org.pcollections.PSet;
+import org.pcollections.PVector;
+
+import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VariableEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VertexEvaluator;
-import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
-import de.uni_koblenz.jgralab.greql2.exception.JValueInvalidTypeException;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueCollection;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueSet;
+import de.uni_koblenz.jgralab.greql2.exception.GreqlException;
 import de.uni_koblenz.jgralab.greql2.schema.SimpleDeclaration;
 import de.uni_koblenz.jgralab.greql2.schema.Variable;
+import de.uni_koblenz.jgralab.greql2.types.Undefined;
 
 /**
  * This class models the declaration of one variable. It allowes the iteration
@@ -61,9 +61,7 @@ public class VariableDeclaration {
 	/**
 	 * Holds the set of possible values the variable may have
 	 */
-	private JValueCollection definitionSet;
-
-	private SubGraphMarker subgraph;
+	private PSet<Object> definitionSet;
 
 	/**
 	 * Holds the variable-vertex of this declaration.
@@ -82,7 +80,7 @@ public class VariableDeclaration {
 	/**
 	 * Used for simple Iteration over the possible values
 	 */
-	private Iterator<JValue> iter = null;
+	private Iterator<Object> iter = null;
 
 	/**
 	 * Creates a new VariableDeclaration for the given Variable and the given
@@ -100,12 +98,12 @@ public class VariableDeclaration {
 	 *            the GreqlEvaluator which is used to evaluate the query
 	 */
 	public VariableDeclaration(Variable var,
-			VertexEvaluator definitionSetEvaluator, SubGraphMarker subgraph2,
-			SimpleDeclaration decl, GreqlEvaluator eval) {
+			VertexEvaluator definitionSetEvaluator, SimpleDeclaration decl,
+			GreqlEvaluator eval) {
 		variableEval = (VariableEvaluator) definitionSetEvaluator
 				.getVertexEvalMarker().getMark(var);
+		definitionSet = JGraLab.set();
 		this.definitionSetEvaluator = definitionSetEvaluator;
-		this.subgraph = subgraph2;
 	}
 
 	/**
@@ -147,7 +145,7 @@ public class VariableDeclaration {
 	 * returns the current value of the represented variable. used only for
 	 * debugging
 	 */
-	public JValue getVariableValue() {
+	public Object getVariableValue() {
 		return variableEval.getValue();
 	}
 
@@ -156,24 +154,22 @@ public class VariableDeclaration {
 	 */
 	protected void reset() {
 		iterationNumber = 0;
-		variableEval.setValue(null);
-		JValue tempAttribute = definitionSetEvaluator.getResult(subgraph);
-		if (tempAttribute.isCollection()) {
-			try {
-				JValueCollection col = tempAttribute.toCollection();
-				definitionSet = col.toJValueSet();
-				if (col.size() > definitionSet.size()) {
-					throw new EvaluateException(
-							"A collection that doesn't fulfill the set property is used as variable range definition");
-				}
-			} catch (JValueInvalidTypeException exception) {
-				throw new EvaluateException(
-						"Error evaluating a SimpleDeclaration : "
-								+ exception.toString());
+		variableEval.setValue(Undefined.UNDEFINED);
+		Object tempAttribute = definitionSetEvaluator.getResult();
+		if (tempAttribute instanceof PVector) {
+			PVector<?> col = (PVector<?>) tempAttribute;
+			definitionSet = JGraLab.set().plusAll(col);
+			if (col.size() > definitionSet.size()) {
+				throw new GreqlException(
+						"A collection that doesn't fulfill the set property is used as variable range definition");
 			}
+
+		} else if (tempAttribute instanceof PSet) {
+			@SuppressWarnings("unchecked")
+			PSet<Object> s = (PSet<Object>) tempAttribute;
+			definitionSet = s;
 		} else {
-			definitionSet = new JValueSet();
-			definitionSet.add(tempAttribute);
+			definitionSet = JGraLab.set().plus(tempAttribute);
 		}
 		iter = definitionSet.iterator();
 	}

@@ -202,7 +202,7 @@ public class BenchmarkTests {
 		if (transactionSupport) {
 			motorwayMap.newReadOnlyTransaction();
 		}
-		GraphIO.saveGraphToFile(FILENAME, motorwayMap,
+		GraphIO.saveGraphToFile(motorwayMap, FILENAME,
 				new ConsoleProgressFunction());
 	}
 

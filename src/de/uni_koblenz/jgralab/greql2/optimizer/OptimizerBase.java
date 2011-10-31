@@ -1,29 +1,29 @@
 /*
  * JGraLab - The Java Graph Laboratory
- * 
+ *
  * Copyright (C) 2006-2011 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
- * 
+ *
  * For bug reports, documentation and further information, visit
- * 
+ *
  *                         http://jgralab.uni-koblenz.de
- * 
+ *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
  * Free Software Foundation; either version 3 of the License, or (at your
  * option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, see <http://www.gnu.org/licenses>.
- * 
+ *
  * Additional permission under GNU GPL version 3 section 7
- * 
+ *
  * If you modify this Program, or any covered work, by linking or combining
  * it with Eclipse (or a modified version of that program or an Eclipse
  * plugin), containing parts covered by the terms of the Eclipse Public
@@ -44,7 +44,6 @@ import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
-import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.exception.OptimizerException;
 import de.uni_koblenz.jgralab.greql2.schema.Declaration;
 import de.uni_koblenz.jgralab.greql2.schema.Expression;
@@ -55,14 +54,13 @@ import de.uni_koblenz.jgralab.greql2.schema.IsDeclaredVarOf;
 import de.uni_koblenz.jgralab.greql2.schema.IsSimpleDeclOf;
 import de.uni_koblenz.jgralab.greql2.schema.SimpleDeclaration;
 import de.uni_koblenz.jgralab.greql2.schema.Variable;
-import de.uni_koblenz.jgralab.impl.InternalEdge;
 
 /**
  * Base class for all {@link Optimizer}s which defines some useful methods that
  * are needed in derived Classes.
- * 
+ *
  * @author ist@uni-koblenz.de
- * 
+ *
  */
 public abstract class OptimizerBase implements Optimizer {
 
@@ -71,13 +69,7 @@ public abstract class OptimizerBase implements Optimizer {
 	}
 
 	protected void recreateVertexEvaluators(GreqlEvaluator eval) {
-		try {
-			eval.createVertexEvaluators();
-		} catch (EvaluateException e) {
-			e.printStackTrace();
-			throw new OptimizerException(
-					"Exception while re-creating VertexEvaluators.", e);
-		}
+		eval.createVertexEvaluators();
 	}
 
 	/**
@@ -85,7 +77,7 @@ public abstract class OptimizerBase implements Optimizer {
 	 * vertex <code>to</code>. If there's already an edge of exactly that type
 	 * between <code>from</code>'s that-vertex and <code>to</code>, then don't
 	 * create a duplicate edge, unless <code>allowDuplicateEdges</code> is true.
-	 * 
+	 *
 	 * @param from
 	 *            the old vertex
 	 * @param to
@@ -100,15 +92,15 @@ public abstract class OptimizerBase implements Optimizer {
 		assert from.isValid() && to.isValid() : "Relinking invalid vertices!";
 
 		// System.out.println("    relink: " + from + " --> " + to);
-		InternalEdge e = (InternalEdge) from.getFirstIncidence(EdgeDirection.IN);
+		Edge e = from.getFirstIncidence(EdgeDirection.IN);
 		while (e != null) {
-			InternalEdge newE = (InternalEdge) e.getNextIncidence(EdgeDirection.IN);
+			Edge newE = e.getNextIncidence(EdgeDirection.IN);
 			e.setOmega(to);
 			e = newE;
 		}
-		e = (InternalEdge) from.getFirstIncidence(EdgeDirection.OUT);
+		e = from.getFirstIncidence(EdgeDirection.OUT);
 		while (e != null) {
-			InternalEdge newE = (InternalEdge) e.getNextIncidence(EdgeDirection.OUT);
+			Edge newE = e.getNextIncidence(EdgeDirection.OUT);
 			e.setAlpha(to);
 			e = newE;
 		}
@@ -123,9 +115,9 @@ public abstract class OptimizerBase implements Optimizer {
 	 * declared in the same {@link SimpleDeclaration} but is connected to that
 	 * earlier (meaning its {@link IsDeclaredVarOf} edge comes before the
 	 * other's).
-	 * 
+	 *
 	 * Note that a {@link Variable} is never declared before itself.
-	 * 
+	 *
 	 * @param var1
 	 *            a {@link Variable}
 	 * @param var2
@@ -184,7 +176,7 @@ public abstract class OptimizerBase implements Optimizer {
 					if (inc.getAlpha() == var2) {
 						return false;
 					}
-					inc = inc.getNextIsDeclaredVarOf(EdgeDirection.IN);
+					inc = inc.getNextIsDeclaredVarOfIncidence(EdgeDirection.IN);
 				}
 			} else {
 				// var1 and var2 are declared in the same Declaration but
@@ -199,7 +191,7 @@ public abstract class OptimizerBase implements Optimizer {
 					if (inc.getAlpha() == sd2) {
 						return false;
 					}
-					inc = inc.getNextIsSimpleDeclOf(EdgeDirection.IN);
+					inc = inc.getNextIsSimpleDeclOfIncidence(EdgeDirection.IN);
 				}
 			}
 		} else {
@@ -222,7 +214,7 @@ public abstract class OptimizerBase implements Optimizer {
 
 	/**
 	 * Find the nearest {@link Declaration} above <code>vertex</code>.
-	 * 
+	 *
 	 * @param vertex
 	 *            a {@link Vertex}
 	 * @return nearest {@link Declaration} above <code>vertex</code>
@@ -247,7 +239,7 @@ public abstract class OptimizerBase implements Optimizer {
 	 * Split the given {@link SimpleDeclaration} so that there's one
 	 * {@link SimpleDeclaration} that declares the {@link Variable}s in
 	 * <code>varsToBeSplit</code> and one for the rest.
-	 * 
+	 *
 	 * @param sd
 	 *            the {@link SimpleDeclaration} to be split
 	 * @param varsToBeSplit
@@ -287,10 +279,10 @@ public abstract class OptimizerBase implements Optimizer {
 					// the edge.
 					relinkIncs.add(inc);
 				}
-				inc = inc.getNextIsDeclaredVarOf(EdgeDirection.IN);
+				inc = inc.getNextIsDeclaredVarOfIncidence(EdgeDirection.IN);
 			}
 			for (IsDeclaredVarOf relinkEdge : relinkIncs) {
-				((InternalEdge) relinkEdge).setOmega(newSD);
+				relinkEdge.setOmega(newSD);
 			}
 		}
 		return newSD;

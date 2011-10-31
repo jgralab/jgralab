@@ -39,18 +39,16 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
+import org.pcollections.PCollection;
+import org.pcollections.PVector;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueCollection;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueImpl;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueList;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueTable;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueTuple;
 import de.uni_koblenz.jgralab.greql2.parser.GreqlParser;
+import de.uni_koblenz.jgralab.greql2.types.Table;
+import de.uni_koblenz.jgralab.greql2.types.Tuple;
 import de.uni_koblenz.jgralabtest.schemas.greqltestschema.connections.Way;
 
 public class SystemTest extends GenericTest {
@@ -75,35 +73,35 @@ public class SystemTest extends GenericTest {
 	@Test
 	public void testFunctionArgumentsEvaluation() throws Exception {
 		String queryString = "from x:V{FunctionApplication}, y:V{Expression} with x <--{IsArgumentOf} y report tup( tup(\"Function: \", x ), tup(\"Argument: \", y )) end";
-		JValue result = evalTestQuery("FunctionArgumentsEvaluation",
+		Object result = evalTestQuery("FunctionArgumentsEvaluation",
 				queryString);
-		assertEquals(11, result.toCollection().size());
+		assertEquals(11, ((PCollection<?>) result).size());
 	}
 
 	@Test
 	public void testFunctionAsFunctionArgumentEvaluation() throws Exception {
 		String queryString = "from x:V{FunctionApplication}, y:V{FunctionApplication} with x <--{IsArgumentOf} y report tup( tup(\"Function: \", x ), tup(\"Argument: \", y )) end";
-		JValue result = evalTestQuery("FunctionAsFunctionArgumentEvaluation",
+		Object result = evalTestQuery("FunctionAsFunctionArgumentEvaluation",
 				queryString);
-		assertEquals(5, result.toCollection().size());
+		assertEquals(5, ((PCollection<?>) result).size());
 	}
 
 	@Test
 	public void testFunctionAsFunctionArgumentAsFuntionArgumentEvaluation()
 			throws Exception {
 		String queryString = "from x:V{FunctionApplication}, y:V{FunctionApplication} with x <--{IsArgumentOf} <--{IsArgumentOf} y report tup( tup(\"Function: \", x ), tup(\"Argument: \", y )) end";
-		JValue result = evalTestQuery(
+		Object result = evalTestQuery(
 				"FunctionAsFunctionAsFunctionArgumentEvaluation", queryString);
-		assertEquals(4, result.toCollection().size());
+		assertEquals(4, ((PCollection<?>) result).size());
 	}
 
 	@Test
 	public void testFunctionAsArgumentInListComprehensionEvaluation()
 			throws Exception {
 		String queryString = "from x:V{FunctionApplication}, y:V{ListComprehension} with x -->{IsArgumentOf}+ -->{IsCompResultDefOf} y report tup(tup(\"Function: \", x ), tup(\"ListComprehension: \", y )) end";
-		JValue result = evalTestQuery("FunctionAsArgumentInListComprehension",
+		Object result = evalTestQuery("FunctionAsArgumentInListComprehension",
 				queryString);
-		assertEquals(5, result.toCollection().size());
+		assertEquals(5, ((PCollection<?>) result).size());
 	}
 
 	@Test
@@ -114,17 +112,17 @@ public class SystemTest extends GenericTest {
 		String queryString = "from x:V{junctions.Crossroad}, y:V{junctions.Crossroad} "
 				+ "with x -->{connections.Street} <--{connections.Footpath} y report id(x) as '"
 				+ X1 + "', id(y) as '" + X2 + "' end";
-		JValueTable result = evalTestQuery(queryString).toJValueTable();
+		Table<?> result = ((Table<?>) evalTestQuery(queryString));
 		checkHeader(result, X1, X2);
 
 		assertEquals(12, result.size());
 	}
 
-	private void checkHeader(JValueTable table, String... headerStrings) {
-		JValueList header = table.getHeader().toJValueList();
+	private void checkHeader(Table<?> table, String... headerStrings) {
+		PVector<?> header = table.getTitles();
 		assertTrue(header.size() == headerStrings.length);
 		for (String headerString : headerStrings) {
-			assertTrue(header.contains(new JValueImpl(headerString)));
+			assertTrue(header.contains(headerString));
 		}
 	}
 
@@ -139,17 +137,17 @@ public class SystemTest extends GenericTest {
 				+ VERTEX + "', id(c) as '" + IDENTIFIER + "', "
 				+ "outDegree{connections.Way}(c) as '" + USAGE_COUNT + "', "
 				+ "edgesFrom(c) as '" + USAGES + "' end";
-		JValueTable result = evalTestQuery(queryString).toJValueTable();
-		JValueList data = result.getData().toJValueList();
+		Table<?> result = (Table<?>) evalTestQuery(queryString);
+		@SuppressWarnings("unchecked")
+		PVector<Tuple> data = (PVector<Tuple>) result.toPVector();
 
 		checkHeader(result, VERTEX, IDENTIFIER, USAGE_COUNT, USAGES);
 
-		for (JValue value : data) {
-			JValueTuple tuple = value.toJValueTuple();
-			Vertex vertex = tuple.get(0).toVertex();
-			int identifier = tuple.get(1).toInteger().intValue();
-			int usage_count = tuple.get(2).toInteger().intValue();
-			JValueCollection usages = tuple.get(3).toCollection();
+		for (Tuple tuple : data) {
+			Vertex vertex = (Vertex) tuple.get(0);
+			int identifier = ((Integer) tuple.get(1)).intValue();
+			int usage_count = ((Integer) tuple.get(2)).intValue();
+			PCollection<?> usages = (PCollection<?>) tuple.get(3);
 
 			assertEquals(vertex.getId(), identifier);
 			assertEquals(vertex.getDegree(Way.class, EdgeDirection.OUT),
@@ -158,7 +156,7 @@ public class SystemTest extends GenericTest {
 			int n = 0;
 			for (Edge edge : vertex.incidences(Way.class, EdgeDirection.OUT)) {
 				++n;
-				assertTrue(usages.contains(new JValueImpl(edge)));
+				assertTrue(usages.contains(edge));
 			}
 			assertEquals(n, usages.size());
 		}
