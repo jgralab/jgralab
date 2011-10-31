@@ -40,12 +40,12 @@ import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.GraphException;
 import de.uni_koblenz.jgralab.TraversalContext;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.impl.InternalEdge;
 import de.uni_koblenz.jgralab.impl.FreeIndexList;
 import de.uni_koblenz.jgralab.impl.GraphBaseImpl;
 import de.uni_koblenz.jgralab.impl.IncidenceImpl;
-import de.uni_koblenz.jgralab.impl.ReversedEdgeBaseImpl;
+import de.uni_koblenz.jgralab.impl.InternalEdge;
 import de.uni_koblenz.jgralab.impl.InternalVertex;
+import de.uni_koblenz.jgralab.impl.ReversedEdgeBaseImpl;
 import de.uni_koblenz.jgralab.schema.GraphClass;
 import de.uni_koblenz.jgralab.trans.CommitFailedException;
 import de.uni_koblenz.jgralab.trans.InvalidSavepointException;
@@ -287,8 +287,8 @@ public abstract class GraphImpl extends GraphBaseImpl implements
 				&& edge.getGraph() == this;
 	}
 
-	private void testEdgeSuitingVertices(InternalEdge edge, InternalVertex alpha,
-			InternalVertex omega) {
+	private void testEdgeSuitingVertices(InternalEdge edge,
+			InternalVertex alpha, InternalVertex omega) {
 		if (!alpha.isValidAlpha(edge)) {
 			throw new GraphException("Edges of class "
 					+ edge.getAttributedElementClass().getQualifiedName()
@@ -352,9 +352,7 @@ public abstract class GraphImpl extends GraphBaseImpl implements
 			VertexImpl omega) {
 		alpha.appendIncidenceToISeq(edge);
 		alpha.incidenceListModifiedAtClient();
-		omega
-				.appendIncidenceToISeq((IncidenceImpl) edge
-						.getReversedEdge());
+		omega.appendIncidenceToISeq((IncidenceImpl) edge.getReversedEdge());
 		omega.incidenceListModifiedAtClient();
 	}
 
@@ -749,7 +747,8 @@ public abstract class GraphImpl extends GraphBaseImpl implements
 	}
 
 	@Override
-	public void putVertexAfter(InternalVertex targetVertex, InternalVertex movedVertex) {
+	public void putVertexAfter(InternalVertex targetVertex,
+			InternalVertex movedVertex) {
 		DatabasePersistableVertex targetVertexImpl = (DatabasePersistableVertex) targetVertex;
 		DatabasePersistableVertex movedVertexImpl = (DatabasePersistableVertex) movedVertex;
 		vSeq.putAfter(targetVertexImpl, movedVertexImpl);
@@ -757,7 +756,8 @@ public abstract class GraphImpl extends GraphBaseImpl implements
 	}
 
 	@Override
-	public void putEdgeAfterInGraph(InternalEdge targetEdge, InternalEdge movedEdge) {
+	public void putEdgeAfterInGraph(InternalEdge targetEdge,
+			InternalEdge movedEdge) {
 		assertEdges(movedEdge, targetEdge);
 		DatabasePersistableEdge dbTargetEdge = (DatabasePersistableEdge) targetEdge;
 		DatabasePersistableEdge dbMovedEdge = (DatabasePersistableEdge) movedEdge;
@@ -773,14 +773,16 @@ public abstract class GraphImpl extends GraphBaseImpl implements
 	}
 
 	@Override
-	public void putVertexBefore(InternalVertex targetVertex, InternalVertex movedVertex) {
+	public void putVertexBefore(InternalVertex targetVertex,
+			InternalVertex movedVertex) {
 		DatabasePersistableVertex targetVertexImpl = (DatabasePersistableVertex) targetVertex;
 		DatabasePersistableVertex movedVertexImpl = (DatabasePersistableVertex) movedVertex;
 		vSeq.putBefore(targetVertexImpl, movedVertexImpl);
 	}
 
 	@Override
-	public void putEdgeBeforeInGraph(InternalEdge targetEdge, InternalEdge movedEdge) {
+	public void putEdgeBeforeInGraph(InternalEdge targetEdge,
+			InternalEdge movedEdge) {
 		assertEdges(movedEdge, targetEdge);
 		DatabasePersistableEdge dbTargetEdge = (DatabasePersistableEdge) targetEdge;
 		DatabasePersistableEdge dbMovedEdge = (DatabasePersistableEdge) movedEdge;
@@ -1383,7 +1385,7 @@ public abstract class GraphImpl extends GraphBaseImpl implements
 
 	@Override
 	public TraversalContext setTraversalContext(TraversalContext tc) {
-		TraversalContext oldTc = tc;
+		TraversalContext oldTc = this.tc;
 		this.tc = tc;
 		return oldTc;
 	}
