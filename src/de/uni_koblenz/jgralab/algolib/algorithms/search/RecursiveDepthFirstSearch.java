@@ -36,7 +36,6 @@ package de.uni_koblenz.jgralab.algolib.algorithms.search;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
-import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.algolib.algorithms.AlgorithmTerminatedException;
 import de.uni_koblenz.jgralab.algolib.functions.BooleanFunction;
@@ -53,20 +52,18 @@ import de.uni_koblenz.jgralab.algolib.functions.BooleanFunction;
 public class RecursiveDepthFirstSearch extends DepthFirstSearch {
 
 	public RecursiveDepthFirstSearch(Graph graph,
-			BooleanFunction<GraphElement> subgraph,
 			BooleanFunction<Edge> navigable) {
-		super(graph, subgraph, navigable);
+		super(graph, navigable);
 	}
 
 	public RecursiveDepthFirstSearch(Graph graph) {
-		this(graph, null, null);
+		this(graph, null);
 	}
 
 	@Override
 	public RecursiveDepthFirstSearch execute(Vertex root)
 			throws AlgorithmTerminatedException {
-		if (subgraph != null && !subgraph.get(root)
-				|| visitedVertices.get(root)) {
+		if (visitedVertices.get(root)) {
 			return this;
 		}
 		startRunning();
@@ -94,15 +91,13 @@ public class RecursiveDepthFirstSearch extends DepthFirstSearch {
 		num++;
 
 		for (Edge currentEdge : currentVertex.incidences(traversalDirection)) {
-			if (visitedEdges.get(currentEdge) || subgraph != null
-					&& !subgraph.get(currentEdge) || navigable != null
+			if (visitedEdges.get(currentEdge) || navigable != null
 					&& !navigable.get(currentEdge)) {
 				continue;
 			}
 			Vertex nextVertex = currentEdge.getThat();
-			assert (subgraph == null || subgraph.get(nextVertex));
 			edgeOrder[eNum] = currentEdge;
-			if(enumber != null){
+			if (enumber != null) {
 				enumber.set(currentEdge, eNum);
 			}
 			visitors.visitEdge(currentEdge);

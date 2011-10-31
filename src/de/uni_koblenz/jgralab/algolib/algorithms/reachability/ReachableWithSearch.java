@@ -36,11 +36,10 @@ package de.uni_koblenz.jgralab.algolib.algorithms.reachability;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
-import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.algolib.algorithms.StructureOrientedAlgorithm;
 import de.uni_koblenz.jgralab.algolib.algorithms.AlgorithmStates;
 import de.uni_koblenz.jgralab.algolib.algorithms.AlgorithmTerminatedException;
+import de.uni_koblenz.jgralab.algolib.algorithms.StructureOrientedAlgorithm;
 import de.uni_koblenz.jgralab.algolib.algorithms.search.SearchAlgorithm;
 import de.uni_koblenz.jgralab.algolib.algorithms.search.visitors.SearchVisitor;
 import de.uni_koblenz.jgralab.algolib.algorithms.search.visitors.SearchVisitorAdapter;
@@ -56,15 +55,14 @@ public class ReachableWithSearch extends StructureOrientedAlgorithm implements
 	private boolean reachable;
 	private Vertex target;
 
-	public ReachableWithSearch(Graph graph,
-			BooleanFunction<GraphElement> subgraph, SearchAlgorithm search,
+	public ReachableWithSearch(Graph graph, SearchAlgorithm search,
 			BooleanFunction<Edge> navigable) {
-		super(graph, subgraph, navigable);
+		super(graph, navigable);
 		this.search = search;
 	}
 
 	public ReachableWithSearch(Graph graph, SearchAlgorithm search) {
-		this(graph, null, search, null);
+		this(graph, search, null);
 	}
 
 	@Override
@@ -146,7 +144,6 @@ public class ReachableWithSearch extends StructureOrientedAlgorithm implements
 			throws AlgorithmTerminatedException {
 		search.reset();
 		search.setGraph(graph);
-		search.setSubgraph(subgraph);
 		search.setNavigable(navigable);
 		search.setTraversalDirection(traversalDirection);
 		search.addVisitor(reachableVisitor);

@@ -3,7 +3,6 @@ package de.uni_koblenz.jgralab.algolib.algorithms.weak_components;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Graph;
-import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.algolib.algorithms.AlgorithmStates;
 import de.uni_koblenz.jgralab.algolib.algorithms.AlgorithmTerminatedException;
 import de.uni_koblenz.jgralab.algolib.algorithms.StructureOrientedAlgorithm;
@@ -20,13 +19,12 @@ public class IsTree extends StructureOrientedAlgorithm implements IsTreeSolver {
 	private SearchVisitor isTreeVisitor;
 	private boolean isTree;
 
-	public IsTree(Graph graph, BooleanFunction<GraphElement> subgraph,
-			BooleanFunction<Edge> navigable) {
-		super(graph, subgraph, navigable);
+	public IsTree(Graph graph, BooleanFunction<Edge> navigable) {
+		super(graph, navigable);
 	}
 
 	public IsTree(Graph graph) {
-		this(graph, null, null);
+		this(graph, null);
 	}
 
 	@Override
@@ -78,7 +76,6 @@ public class IsTree extends StructureOrientedAlgorithm implements IsTreeSolver {
 	public IsTreeSolver execute() throws AlgorithmTerminatedException {
 		wcbfs.reset();
 		wcbfs.setGraph(graph);
-		wcbfs.setSubgraph(subgraph);
 		wcbfs.setNavigable(navigable);
 		wcbfs.addVisitor(isTreeVisitor);
 		try {

@@ -36,11 +36,10 @@ package de.uni_koblenz.jgralab.algolib.algorithms.shortest_paths;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
-import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.algolib.algorithms.StructureOrientedAlgorithm;
 import de.uni_koblenz.jgralab.algolib.algorithms.AlgorithmStates;
 import de.uni_koblenz.jgralab.algolib.algorithms.AlgorithmTerminatedException;
+import de.uni_koblenz.jgralab.algolib.algorithms.StructureOrientedAlgorithm;
 import de.uni_koblenz.jgralab.algolib.algorithms.search.visitors.SearchVisitorAdapter;
 import de.uni_koblenz.jgralab.algolib.algorithms.search.visitors.SearchVisitorList;
 import de.uni_koblenz.jgralab.algolib.functions.BinaryDoubleFunction;
@@ -48,8 +47,8 @@ import de.uni_koblenz.jgralab.algolib.functions.BooleanFunction;
 import de.uni_koblenz.jgralab.algolib.functions.DoubleFunction;
 import de.uni_koblenz.jgralab.algolib.functions.Function;
 import de.uni_koblenz.jgralab.algolib.problems.DistanceFromVertexToVertexSolver;
-import de.uni_koblenz.jgralab.algolib.problems.WeightedProblemSolver;
 import de.uni_koblenz.jgralab.algolib.problems.ShortestPathFromVertexToVertexSolver;
+import de.uni_koblenz.jgralab.algolib.problems.WeightedProblemSolver;
 import de.uni_koblenz.jgralab.algolib.util.PriorityQueue;
 import de.uni_koblenz.jgralab.algolib.visitors.GraphVisitorAdapter;
 import de.uni_koblenz.jgralab.algolib.visitors.GraphVisitorList;
@@ -59,8 +58,8 @@ import de.uni_koblenz.jgralab.graphmarker.BitSetVertexMarker;
 import de.uni_koblenz.jgralab.graphmarker.DoubleVertexMarker;
 
 public class AStarSearch extends StructureOrientedAlgorithm implements
-		DistanceFromVertexToVertexSolver,
-		ShortestPathFromVertexToVertexSolver, WeightedProblemSolver {
+		DistanceFromVertexToVertexSolver, ShortestPathFromVertexToVertexSolver,
+		WeightedProblemSolver {
 
 	protected DoubleFunction<Vertex> weightedDistance;
 	protected BooleanFunction<Vertex> visitedVertices;
@@ -74,16 +73,16 @@ public class AStarSearch extends StructureOrientedAlgorithm implements
 	protected PriorityQueue<Vertex> vertexQueue;
 	protected GraphVisitorList visitors;
 
-	public AStarSearch(Graph graph, BooleanFunction<GraphElement> subgraph,
-			BooleanFunction<Edge> navigable, DoubleFunction<Edge> edgeWeight,
+	public AStarSearch(Graph graph, BooleanFunction<Edge> navigable,
+			DoubleFunction<Edge> edgeWeight,
 			BinaryDoubleFunction<Vertex, Vertex> heuristic) {
-		super(graph, subgraph, navigable);
+		super(graph, navigable);
 		this.edgeWeight = edgeWeight;
 		this.heuristic = heuristic;
 	}
 
 	public AStarSearch(Graph graph) {
-		this(graph, null, null, null, null);
+		this(graph, null, null, null);
 	}
 
 	@Override
@@ -147,7 +146,8 @@ public class AStarSearch extends StructureOrientedAlgorithm implements
 		targetVertexReachedVisitor = new SearchVisitorAdapter() {
 
 			@Override
-			public void visitVertex(Vertex v) throws AlgorithmTerminatedException {
+			public void visitVertex(Vertex v)
+					throws AlgorithmTerminatedException {
 				if (target == v) {
 					terminate();
 				}
@@ -168,10 +168,9 @@ public class AStarSearch extends StructureOrientedAlgorithm implements
 	}
 
 	@Override
-	public AStarSearch execute(Vertex start, Vertex target) throws AlgorithmTerminatedException {
-		if (subgraph != null && !subgraph.get(target)) {
-			throw new IllegalArgumentException("Target vertex not in subgraph!");
-		}
+	public AStarSearch execute(Vertex start, Vertex target)
+			throws AlgorithmTerminatedException {
+		// TODO check if target vertex is in TC
 		this.target = target;
 		visitors.addVisitor(targetVertexReachedVisitor);
 
@@ -181,10 +180,9 @@ public class AStarSearch extends StructureOrientedAlgorithm implements
 		return this;
 	}
 
-	protected void internalExecute(Vertex start, Vertex target) throws AlgorithmTerminatedException {
-		if (subgraph != null && !subgraph.get(start)) {
-			throw new IllegalArgumentException("Start vertex not in subgraph!");
-		}
+	protected void internalExecute(Vertex start, Vertex target)
+			throws AlgorithmTerminatedException {
+		// TODO check if start vertex is in TC
 		startRunning();
 		weightedDistance.set(start, 0);
 		vertexQueue.put(start, 0);
@@ -200,12 +198,10 @@ public class AStarSearch extends StructureOrientedAlgorithm implements
 				for (Edge currentEdge : currentVertex
 						.incidences(traversalDirection)) {
 					cancelIfInterrupted();
-					if (subgraph != null && !subgraph.get(currentEdge)
-							|| navigable != null && !navigable.get(currentEdge)) {
+					if (navigable != null && !navigable.get(currentEdge)) {
 						continue;
 					}
 					Vertex nextVertex = currentEdge.getThat();
-					assert (subgraph == null || subgraph.get(nextVertex));
 					double newDistance = weightedDistance.get(currentVertex)
 							+ (edgeWeight == null ? 1.0 : edgeWeight
 									.get(currentEdge));

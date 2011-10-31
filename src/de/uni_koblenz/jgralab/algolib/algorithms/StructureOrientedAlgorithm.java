@@ -37,7 +37,6 @@ package de.uni_koblenz.jgralab.algolib.algorithms;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Graph;
-import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.algolib.functions.BooleanFunction;
 import de.uni_koblenz.jgralab.algolib.problems.TraversalSolver;
 
@@ -60,13 +59,12 @@ public abstract class StructureOrientedAlgorithm extends GraphAlgorithm
 	protected EdgeDirection traversalDirection;
 
 	public StructureOrientedAlgorithm(Graph graph) {
-		this(graph, null, null);
+		this(graph, null);
 	}
 
 	public StructureOrientedAlgorithm(Graph graph,
-			BooleanFunction<GraphElement> subgraph,
 			BooleanFunction<Edge> navigable) {
-		super(graph, subgraph);
+		super(graph);
 		this.navigable = navigable;
 	}
 

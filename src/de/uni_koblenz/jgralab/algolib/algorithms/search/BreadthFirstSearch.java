@@ -36,7 +36,6 @@ package de.uni_koblenz.jgralab.algolib.algorithms.search;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
-import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.algolib.algorithms.AlgorithmTerminatedException;
 import de.uni_koblenz.jgralab.algolib.algorithms.search.visitors.SearchVisitorList;
@@ -57,14 +56,12 @@ public class BreadthFirstSearch extends SearchAlgorithm implements
 	private SearchVisitorList visitors;
 	private int firstV;
 
-	public BreadthFirstSearch(Graph graph,
-			BooleanFunction<GraphElement> subgraph,
-			BooleanFunction<Edge> navigable) {
-		super(graph, subgraph, navigable);
+	public BreadthFirstSearch(Graph graph, BooleanFunction<Edge> navigable) {
+		super(graph, navigable);
 	}
 
 	public BreadthFirstSearch(Graph graph) {
-		super(graph);
+		this(graph, null);
 	}
 
 	@Override
@@ -78,9 +75,9 @@ public class BreadthFirstSearch extends SearchAlgorithm implements
 		super.withNumber();
 		return this;
 	}
-	
+
 	@Override
-	public BreadthFirstSearch withENumber(){
+	public BreadthFirstSearch withENumber() {
 		super.withENumber();
 		return this;
 	}
@@ -102,7 +99,7 @@ public class BreadthFirstSearch extends SearchAlgorithm implements
 		super.withoutNumber();
 		return this;
 	}
-	
+
 	@Override
 	public BreadthFirstSearch withoutENumber() {
 		super.withoutENumber();
@@ -166,8 +163,7 @@ public class BreadthFirstSearch extends SearchAlgorithm implements
 	@Override
 	public BreadthFirstSearch execute(Vertex root)
 			throws AlgorithmTerminatedException {
-		if (subgraph != null && !subgraph.get(root)
-				|| visitedVertices.get(root)) {
+		if (visitedVertices.get(root)) {
 			return this;
 		}
 		startRunning();
@@ -191,16 +187,14 @@ public class BreadthFirstSearch extends SearchAlgorithm implements
 			for (Edge currentEdge : currentVertex
 					.incidences(traversalDirection)) {
 				cancelIfInterrupted();
-				if (visitedEdges.get(currentEdge) || subgraph != null
-						&& !subgraph.get(currentEdge) || navigable != null
+				if (visitedEdges.get(currentEdge) || navigable != null
 						&& !navigable.get(currentEdge)) {
 					continue;
 				}
 				Vertex nextVertex = currentEdge.getThat();
-				assert (subgraph == null || subgraph.get(nextVertex));
 
 				edgeOrder[eNum] = currentEdge;
-				if(enumber != null){
+				if (enumber != null) {
 					enumber.set(currentEdge, eNum);
 				}
 				visitors.visitEdge(currentEdge);

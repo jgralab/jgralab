@@ -36,13 +36,12 @@ package de.uni_koblenz.jgralab.algolib.algorithms.search;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
-import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.algolib.algorithms.search.visitors.DFSVisitorList;
 import de.uni_koblenz.jgralab.algolib.functions.ArrayPermutation;
 import de.uni_koblenz.jgralab.algolib.functions.BooleanFunction;
-import de.uni_koblenz.jgralab.algolib.functions.Permutation;
 import de.uni_koblenz.jgralab.algolib.functions.IntFunction;
+import de.uni_koblenz.jgralab.algolib.functions.Permutation;
 import de.uni_koblenz.jgralab.algolib.visitors.Visitor;
 import de.uni_koblenz.jgralab.graphmarker.IntegerVertexMarker;
 
@@ -80,14 +79,12 @@ public abstract class DepthFirstSearch extends SearchAlgorithm {
 	 */
 	protected Vertex[] rorder;
 
-	public DepthFirstSearch(Graph graph,
-			BooleanFunction<GraphElement> subgraph,
-			BooleanFunction<Edge> navigable) {
-		super(graph, subgraph, navigable);
+	public DepthFirstSearch(Graph graph, BooleanFunction<Edge> navigable) {
+		super(graph, navigable);
 	}
 
 	public DepthFirstSearch(Graph graph) {
-		this(graph, null, null);
+		this(graph, null);
 	}
 
 	@Override
@@ -95,7 +92,7 @@ public abstract class DepthFirstSearch extends SearchAlgorithm {
 		super.reset();
 		visitors.reset();
 		rNum = 1;
-		rorder = rorder == null ? null : new Vertex[getVertexCount() + 1];
+		rorder = rorder == null ? null : new Vertex[graph.getVCount() + 1];
 		rnumber = new IntegerVertexMarker(graph);
 		number = new IntegerVertexMarker(graph);
 	}
@@ -135,7 +132,7 @@ public abstract class DepthFirstSearch extends SearchAlgorithm {
 	 */
 	public DepthFirstSearch withRorder() {
 		checkStateForSettingParameters();
-		rorder = new Vertex[getVertexCount() + 1];
+		rorder = new Vertex[graph.getVCount() + 1];
 		return this;
 	}
 
@@ -151,7 +148,8 @@ public abstract class DepthFirstSearch extends SearchAlgorithm {
 		throw new UnsupportedOperationException(
 				"The result \"number\" is mandatory for DFS and cannot be deactivated.");
 	}
-	
+
+	@Override
 	public DepthFirstSearch withoutENumber() {
 		checkStateForSettingParameters();
 		super.withoutENumber();

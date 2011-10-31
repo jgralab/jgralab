@@ -36,11 +36,10 @@ package de.uni_koblenz.jgralab.algolib.algorithms.shortest_paths;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
-import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.algolib.algorithms.StructureOrientedAlgorithm;
 import de.uni_koblenz.jgralab.algolib.algorithms.AlgorithmStates;
 import de.uni_koblenz.jgralab.algolib.algorithms.AlgorithmTerminatedException;
+import de.uni_koblenz.jgralab.algolib.algorithms.StructureOrientedAlgorithm;
 import de.uni_koblenz.jgralab.algolib.algorithms.search.BreadthFirstSearch;
 import de.uni_koblenz.jgralab.algolib.functions.BooleanFunction;
 import de.uni_koblenz.jgralab.algolib.functions.DoubleFunction;
@@ -57,13 +56,12 @@ public class ShortestPathsWithBFS extends StructureOrientedAlgorithm implements
 	private BreadthFirstSearch bfs;
 
 	public ShortestPathsWithBFS(Graph graph, BreadthFirstSearch bfs) {
-		this(graph, null, bfs, null);
+		this(graph, bfs, null);
 	}
 
-	public ShortestPathsWithBFS(Graph graph,
-			BooleanFunction<GraphElement> subgraph, BreadthFirstSearch bfs,
+	public ShortestPathsWithBFS(Graph graph, BreadthFirstSearch bfs,
 			BooleanFunction<Edge> navigable) {
-		super(graph, subgraph, navigable);
+		super(graph, navigable);
 		this.bfs = bfs;
 	}
 
@@ -112,7 +110,6 @@ public class ShortestPathsWithBFS extends StructureOrientedAlgorithm implements
 			throws AlgorithmTerminatedException {
 		bfs.reset();
 		bfs.setGraph(graph);
-		bfs.setSubgraph(subgraph);
 		bfs.setNavigable(navigable);
 		bfs.setTraversalDirection(traversalDirection);
 		startRunning();

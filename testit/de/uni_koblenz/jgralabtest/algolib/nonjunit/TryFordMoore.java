@@ -87,8 +87,7 @@ public class TryFordMoore {
 		if (floyd.hasNegativeCycles()) {
 			System.out.println("negative cycle detected");
 		} else {
-			printResult(graph, floyd.getDistances(), floyd
-					.getSuccessor());
+			printResult(graph, floyd.getDistances(), floyd.getSuccessor());
 		}
 
 		System.out.println();
@@ -96,7 +95,7 @@ public class TryFordMoore {
 
 		Location start = v[0];
 		Location target = v[1];
-		FordMooreAlgorithm fm = new FordMooreAlgorithm(graph, null, null,
+		FordMooreAlgorithm fm = new FordMooreAlgorithm(graph, null,
 				weightFunction);
 		try {
 			fm.execute(start);

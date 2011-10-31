@@ -36,7 +36,6 @@ package de.uni_koblenz.jgralab.algolib.algorithms.search;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
-import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.algolib.algorithms.AlgorithmStates;
 import de.uni_koblenz.jgralab.algolib.algorithms.AlgorithmTerminatedException;
@@ -127,9 +126,8 @@ public abstract class SearchAlgorithm extends StructureOrientedAlgorithm
 	 * @param navigable
 	 *            the navigable function for this search algorithm.
 	 */
-	public SearchAlgorithm(Graph graph, BooleanFunction<GraphElement> subgraph,
-			BooleanFunction<Edge> navigable) {
-		super(graph, subgraph, navigable);
+	public SearchAlgorithm(Graph graph, BooleanFunction<Edge> navigable) {
+		super(graph, navigable);
 	}
 
 	/**
@@ -139,7 +137,7 @@ public abstract class SearchAlgorithm extends StructureOrientedAlgorithm
 	 *            the graph this search algorithm works on.
 	 */
 	public SearchAlgorithm(Graph graph) {
-		this(graph, null, null);
+		this(graph, null);
 	}
 
 	/**
@@ -259,8 +257,8 @@ public abstract class SearchAlgorithm extends StructureOrientedAlgorithm
 	@Override
 	public void reset() {
 		super.reset();
-		vertexOrder = new Vertex[getVertexCount() + 1];
-		edgeOrder = new Edge[getEdgeCount() + 1];
+		vertexOrder = new Vertex[graph.getVCount() + 1];
+		edgeOrder = new Edge[graph.getECount() + 1];
 		visitedVertices = new BitSetVertexMarker(graph);
 		visitedEdges = new BitSetEdgeMarker(graph);
 		level = level == null ? null : new IntegerVertexMarker(graph);
@@ -371,7 +369,7 @@ public abstract class SearchAlgorithm extends StructureOrientedAlgorithm
 	@Override
 	protected void done() {
 		if (state != AlgorithmStates.CANCELED) {
-			state = num < getVertexCount() + 1 ? AlgorithmStates.STOPPED
+			state = num < graph.getVCount() + 1 ? AlgorithmStates.STOPPED
 					: AlgorithmStates.FINISHED;
 		}
 	}

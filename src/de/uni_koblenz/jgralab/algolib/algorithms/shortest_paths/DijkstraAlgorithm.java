@@ -36,7 +36,6 @@ package de.uni_koblenz.jgralab.algolib.algorithms.shortest_paths;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
-import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.algolib.algorithms.AlgorithmTerminatedException;
 import de.uni_koblenz.jgralab.algolib.functions.BooleanFunction;
@@ -47,14 +46,13 @@ import de.uni_koblenz.jgralab.algolib.problems.ShortestPathsFromVertexSolver;
 public class DijkstraAlgorithm extends AStarSearch implements
 		DistancesFromVertexSolver, ShortestPathsFromVertexSolver {
 
-	public DijkstraAlgorithm(Graph graph,
-			BooleanFunction<GraphElement> subgraph,
-			BooleanFunction<Edge> navigable, DoubleFunction<Edge> edgeWeight) {
-		super(graph, subgraph, navigable, edgeWeight, null);
+	public DijkstraAlgorithm(Graph graph, BooleanFunction<Edge> navigable,
+			DoubleFunction<Edge> edgeWeight) {
+		super(graph, navigable, edgeWeight, null);
 	}
 
 	public DijkstraAlgorithm(Graph graph) {
-		this(graph, null, null, null);
+		this(graph, null, null);
 	}
 
 	@Override

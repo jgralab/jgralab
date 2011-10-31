@@ -37,7 +37,6 @@ package de.uni_koblenz.jgralab.algolib.algorithms.topological_order;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Graph;
-import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.algolib.algorithms.AlgorithmTerminatedException;
 import de.uni_koblenz.jgralab.algolib.algorithms.StructureOrientedAlgorithm;
@@ -59,15 +58,14 @@ public class TopologicalOrderWithDFS extends StructureOrientedAlgorithm
 	private boolean acyclic;
 	private TopologicalOrderVisitorList visitors;
 
-	public TopologicalOrderWithDFS(Graph graph,
-			BooleanFunction<GraphElement> subgraph, DepthFirstSearch dfs,
+	public TopologicalOrderWithDFS(Graph graph, DepthFirstSearch dfs,
 			BooleanFunction<Edge> navigable) {
-		super(graph, subgraph, navigable);
+		super(graph, navigable);
 		this.dfs = dfs;
 	}
 
 	public TopologicalOrderWithDFS(Graph graph, DepthFirstSearch dfs) {
-		this(graph, null, dfs, null);
+		this(graph, dfs, null);
 	}
 
 	@Override
@@ -145,7 +143,6 @@ public class TopologicalOrderWithDFS extends StructureOrientedAlgorithm
 			throws AlgorithmTerminatedException {
 		dfs.reset();
 		dfs.setGraph(graph);
-		dfs.setSubgraph(subgraph);
 		dfs.setNavigable(navigable);
 		if (traversalDirection == EdgeDirection.OUT) { // normal
 			dfs.reversed();

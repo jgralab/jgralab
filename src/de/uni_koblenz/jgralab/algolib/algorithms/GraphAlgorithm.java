@@ -34,11 +34,7 @@
  */
 package de.uni_koblenz.jgralab.algolib.algorithms;
 
-import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
-import de.uni_koblenz.jgralab.GraphElement;
-import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.algolib.functions.BooleanFunction;
 import de.uni_koblenz.jgralab.algolib.problems.ProblemSolver;
 import de.uni_koblenz.jgralab.algolib.visitors.Visitor;
 
@@ -48,15 +44,6 @@ public abstract class GraphAlgorithm implements ProblemSolver {
 	 * The graph this graph algorithm works on.
 	 */
 	protected Graph graph;
-
-	private int vertexCount;
-
-	private int edgeCount;
-
-	/**
-	 * The subgraph this graph algorithm works on.
-	 */
-	protected BooleanFunction<GraphElement> subgraph;
 
 	/**
 	 * The state of this graph algorithm.
@@ -78,25 +65,6 @@ public abstract class GraphAlgorithm implements ProblemSolver {
 		reset();
 	}
 
-	/**
-	 * Creates a new <code>GraphAlgorithm</code> for the given
-	 * <code>graph</code> and sets the algorithm parameter <code>subgraph</code>
-	 * to the given value of <code>subgraph</code>.
-	 * 
-	 * @param graph
-	 *            the graph this algorithm works on.
-	 * @param subgraph
-	 *            the subgraph this algorithm works on.
-	 */
-	public GraphAlgorithm(Graph graph, BooleanFunction<GraphElement> subgraph) {
-		super();
-		this.graph = graph;
-		state = AlgorithmStates.INITIALIZED;
-		resetParameters();
-		this.subgraph = subgraph;
-		reset();
-	}
-
 	public synchronized AlgorithmStates getState() {
 		return state;
 	}
@@ -108,51 +76,8 @@ public abstract class GraphAlgorithm implements ProblemSolver {
 		reset();
 	}
 
-	@Override
-	public void setSubgraph(BooleanFunction<GraphElement> subgraph) {
-		checkStateForSettingParameters();
-		this.subgraph = subgraph;
-		reset();
-	}
-
 	public Graph getGraph() {
 		return graph;
-	}
-
-	public BooleanFunction<GraphElement> getSubgraph() {
-		return subgraph;
-	}
-
-	public int getVertexCount() {
-		if (vertexCount < 0) {
-			if (subgraph == null) {
-				vertexCount = graph.getVCount();
-			} else {
-				vertexCount = 0;
-				for (Vertex currentVertex : graph.vertices()) {
-					if (subgraph.get(currentVertex)) {
-						vertexCount++;
-					}
-				}
-			}
-		}
-		return vertexCount;
-	}
-
-	public int getEdgeCount() {
-		if (edgeCount < 0) {
-			if (subgraph == null) {
-				edgeCount = graph.getECount();
-			} else {
-				edgeCount = 0;
-				for (Edge currentEdge : graph.edges()) {
-					if (subgraph.get(currentEdge)) {
-						edgeCount++;
-					}
-				}
-			}
-		}
-		return edgeCount;
 	}
 
 	/**
@@ -165,8 +90,6 @@ public abstract class GraphAlgorithm implements ProblemSolver {
 	public void reset() {
 		if (getState() != AlgorithmStates.RUNNING) {
 			state = AlgorithmStates.INITIALIZED;
-			vertexCount = -1;
-			edgeCount = -1;
 		} else {
 			throw new IllegalStateException(
 					"The algorithm may not be reseted while it is running.");
@@ -181,7 +104,6 @@ public abstract class GraphAlgorithm implements ProblemSolver {
 	 */
 	public void resetParameters() {
 		checkStateForSettingParameters();
-		subgraph = null;
 		disableOptionalResults();
 	}
 
