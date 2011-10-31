@@ -655,10 +655,8 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 		}
 
 		int count = 0;
-		Edge e = getFirstEdge();
-		while (e != null) {
+		for (Edge e = getFirstEdge(); e != null; e = e.getNextEdge()) {
 			count++;
-			e = e.getNextEdge();
 		}
 		return count;
 	}
@@ -881,10 +879,8 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 		}
 
 		int count = 0;
-		Vertex v = getFirstVertex();
-		while (v != null) {
+		for (Vertex v = getFirstVertex(); v != null; v = v.getNextVertex()) {
 			count++;
-			v = v.getNextVertex();
 		}
 		return count;
 	}
@@ -1884,21 +1880,18 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 	@Override
 	public int getGraphStructureChangedListenerCount() {
 		return graphStructureChangedListenersWithAutoRemoval == null ? graphStructureChangedListeners
-				.size()
-				: graphStructureChangedListenersWithAutoRemoval.size()
-						+ graphStructureChangedListeners.size();
+				.size() : graphStructureChangedListenersWithAutoRemoval.size()
+				+ graphStructureChangedListeners.size();
 	}
 
 	private Iterator<WeakReference<GraphStructureChangedListener>> getListenerListIteratorForAutoRemove() {
 		return graphStructureChangedListenersWithAutoRemoval != null ? graphStructureChangedListenersWithAutoRemoval
-				.iterator()
-				: null;
+				.iterator() : null;
 	}
 
 	private Iterator<GraphStructureChangedListener> getListenerListIterator() {
 		return graphStructureChangedListeners != null ? graphStructureChangedListeners
-				.iterator()
-				: null;
+				.iterator() : null;
 	}
 
 	public void notifyVertexDeleted(Vertex v) {

@@ -243,6 +243,9 @@ public class TraversalContextTest extends InstanceTest {
 
 		// with subgraph where the first vertex is missing, the second vertex is
 		// the first one in TC
+		graph.setTraversalContext(subgraph1);
+		assertEquals(v[1], graph.getFirstVertex());
+
 		graph.setTraversalContext(subgraph2);
 		assertEquals(v[2], graph.getFirstVertex());
 	}
@@ -263,6 +266,9 @@ public class TraversalContextTest extends InstanceTest {
 		// vertex is determined by the TC
 		graph.setTraversalContext(subgraph1);
 		assertEquals(v[5], graph.getLastVertex());
+
+		graph.setTraversalContext(subgraph2);
+		assertEquals(v[9], graph.getLastVertex());
 	}
 
 	@Test
@@ -277,13 +283,13 @@ public class TraversalContextTest extends InstanceTest {
 		graph.setTraversalContext(alwaysFalse);
 		assertEquals(0, graph.getVCount());
 
-		// with one vertex missing, the vertex count is 8
-		graph.setTraversalContext(subgraph2);
-		assertEquals(7, graph.getVCount());
-
 		// with 4 vertices missing, the vertex count is 5
 		graph.setTraversalContext(subgraph1);
 		assertEquals(5, graph.getVCount());
+
+		// with one vertex missing, the vertex count is 8
+		graph.setTraversalContext(subgraph2);
+		assertEquals(7, graph.getVCount());
 	}
 
 	@Test
@@ -452,6 +458,9 @@ public class TraversalContextTest extends InstanceTest {
 
 		// with TC where the first few edges are missing, the first edge
 		// is determined by the TC
+		graph.setTraversalContext(subgraph1);
+		assertEquals(e[1], graph.getFirstEdge());
+
 		graph.setTraversalContext(subgraph2);
 		assertEquals(e[4], graph.getFirstEdge());
 	}
@@ -472,6 +481,9 @@ public class TraversalContextTest extends InstanceTest {
 		// determined by the TC
 		graph.setTraversalContext(subgraph1);
 		assertEquals(e[8], graph.getLastEdge());
+
+		graph.setTraversalContext(subgraph2);
+		assertEquals(e[20], graph.getLastEdge());
 	}
 
 	@Test
@@ -486,12 +498,12 @@ public class TraversalContextTest extends InstanceTest {
 		graph.setTraversalContext(alwaysFalse);
 		assertEquals(0, graph.getECount());
 
-		// subgraph2
-		graph.setTraversalContext(subgraph2);
-		assertEquals(8, graph.getECount());
-
 		// subgraph1
 		graph.setTraversalContext(subgraph1);
+		assertEquals(8, graph.getECount());
+
+		// subgraph2
+		graph.setTraversalContext(subgraph2);
 		assertEquals(8, graph.getECount());
 	}
 

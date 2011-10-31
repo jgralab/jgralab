@@ -559,10 +559,9 @@ public abstract class VertexBaseImpl extends GraphElementImpl implements
 		assert ec != null;
 		assert isValid();
 		int degree = 0;
-		Edge e = getFirstIncidence(ec, orientation);
-		while (e != null) {
+		for (Edge e = getFirstIncidence(ec, orientation); e != null; e = e
+				.getNextIncidence(ec, orientation)) {
 			++degree;
-			e = e.getNextIncidence(ec, orientation);
 		}
 		return degree;
 	}
