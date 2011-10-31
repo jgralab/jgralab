@@ -43,12 +43,14 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
+import java.util.logging.Logger;
 
 import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.GraphException;
 import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.GraphStructureChangedListener;
+import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.impl.FreeIndexList;
 import de.uni_koblenz.jgralab.impl.IncidenceImpl;
@@ -72,6 +74,9 @@ import de.uni_koblenz.jgralab.trans.VersionedDataObject;
  */
 public abstract class GraphImpl extends
 		de.uni_koblenz.jgralab.impl.GraphBaseImpl {
+	private static Logger logger = JGraLab
+			.getLogger("de.uni_koblenz.jgralab.impl.trans");
+
 	// the transactions of this instance are managed by a transaction manager
 	private TransactionManager transactionManager;
 
@@ -506,11 +511,17 @@ public abstract class GraphImpl extends
 
 	@Override
 	public Transaction newReadOnlyTransaction() {
+		if (logger != null) {
+			logger.fine("");
+		}
 		return transactionManager.createReadOnlyTransaction();
 	}
 
 	@Override
 	public Transaction newTransaction() {
+		if (logger != null) {
+			logger.fine("");
+		}
 		return transactionManager.createTransaction();
 	}
 
@@ -542,6 +553,9 @@ public abstract class GraphImpl extends
 
 	@Override
 	public void setCurrentTransaction(Transaction transaction) {
+		if (logger != null) {
+			logger.fine("tx id=" + transaction.getID());
+		}
 		transactionManager.setTransactionForThread(transaction,
 				Thread.currentThread());
 	}
@@ -563,6 +577,9 @@ public abstract class GraphImpl extends
 	 */
 	protected void attributeChanged(VersionedDataObject<?> versionedAttribute) {
 		if (!isLoading()) {
+			if (logger != null) {
+				logger.finest(versionedAttribute.toString());
+			}
 			TransactionImpl transaction = (TransactionImpl) getCurrentTransaction();
 			assert ((transaction != null)
 					&& (transaction.getState() != TransactionState.NOTRUNNING)
