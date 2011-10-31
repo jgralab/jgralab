@@ -47,6 +47,7 @@ import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphException;
 import de.uni_koblenz.jgralab.JGraLab;
+import de.uni_koblenz.jgralab.TraversalContext;
 import de.uni_koblenz.jgralab.impl.IncidenceImpl;
 import de.uni_koblenz.jgralab.trans.CommitFailedException;
 import de.uni_koblenz.jgralab.trans.InvalidSavepointException;
@@ -104,6 +105,7 @@ public class TransactionImpl implements Transaction {
 	// needed to undo creation of new persistent versions if during writing
 	// phase something goes wrong unexpectedly.
 	protected Set<VersionedDataObjectImpl<?>> changedDuringCommit;
+	private TraversalContext tc;
 
 	/**
 	 * A map which assigns a single temporary value to a versioned data object
@@ -748,5 +750,17 @@ public class TransactionImpl implements Transaction {
 			}
 		}
 		return versionedDataObjects;
+	}
+
+	@Override
+	public TraversalContext getTraversalContext() {
+		return tc;
+	}
+
+	@Override
+	public TraversalContext setTraversalContext(TraversalContext tc) {
+		TraversalContext oldTC = this.tc;
+		this.tc = tc;
+		return oldTC;
 	}
 }

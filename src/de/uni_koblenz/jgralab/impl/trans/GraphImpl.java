@@ -115,8 +115,6 @@ public abstract class GraphImpl extends
 	protected List<Integer> edgeIndexesToBeFreed;
 	protected List<Integer> vertexIndexesToBeFreed;
 
-	private Map<Transaction, TraversalContext> tc;
-
 	/**
 	 * 
 	 * @return increases value of persistentVersionCounter (graphVersion) if
@@ -555,8 +553,8 @@ public abstract class GraphImpl extends
 		if (logger != null) {
 			logger.fine("tx id=" + transaction.getID());
 		}
-		transactionManager.setTransactionForThread(transaction,
-				Thread.currentThread());
+		transactionManager.setTransactionForThread(transaction, Thread
+				.currentThread());
 	}
 
 	@Override
@@ -1577,20 +1575,12 @@ public abstract class GraphImpl extends
 	}
 
 	@Override
-	public synchronized TraversalContext getTraversalContext() {
-		if (tc == null) {
-			return null;
-		}
-		return tc.get(getCurrentTransaction());
+	public TraversalContext getTraversalContext() {
+		return getCurrentTransaction().getTraversalContext();
 	}
 
 	@Override
 	public synchronized TraversalContext setTraversalContext(TraversalContext tc) {
-		TraversalContext oldTc = getTraversalContext();
-		if (this.tc == null) {
-			this.tc = new HashMap<Transaction, TraversalContext>();
-		}
-		this.tc.put(getCurrentTransaction(), tc);
-		return oldTc;
+		return getCurrentTransaction().setTraversalContext(tc);
 	}
 }
