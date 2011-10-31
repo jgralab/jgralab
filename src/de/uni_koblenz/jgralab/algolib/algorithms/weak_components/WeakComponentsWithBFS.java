@@ -37,7 +37,6 @@ package de.uni_koblenz.jgralab.algolib.algorithms.weak_components;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Graph;
-import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.algolib.algorithms.AlgorithmStates;
 import de.uni_koblenz.jgralab.algolib.algorithms.AlgorithmTerminatedException;
@@ -61,13 +60,12 @@ public class WeakComponentsWithBFS extends StructureOrientedAlgorithm implements
 	private int kappa;
 
 	public WeakComponentsWithBFS(Graph graph, BreadthFirstSearch bfs) {
-		this(graph, null, bfs, null);
+		this(graph, bfs, null);
 	}
 
-	public WeakComponentsWithBFS(Graph graph,
-			BooleanFunction<GraphElement> subgraph, BreadthFirstSearch bfs,
+	public WeakComponentsWithBFS(Graph graph, BreadthFirstSearch bfs,
 			BooleanFunction<Edge> navigable) {
-		super(graph, subgraph, navigable);
+		super(graph, navigable);
 		this.bfs = bfs;
 	}
 
@@ -145,7 +143,6 @@ public class WeakComponentsWithBFS extends StructureOrientedAlgorithm implements
 	public WeakComponentsWithBFS execute() throws AlgorithmTerminatedException {
 		bfs.reset();
 		bfs.setGraph(graph);
-		bfs.setSubgraph(subgraph);
 		bfs.setNavigable(navigable);
 		bfs.undirected();
 		bfs.addVisitor(weakComponentsVisitor);

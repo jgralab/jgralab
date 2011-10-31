@@ -40,21 +40,20 @@ import java.util.Queue;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Graph;
-import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.algolib.algorithms.StructureOrientedAlgorithm;
 import de.uni_koblenz.jgralab.algolib.algorithms.AlgorithmStates;
 import de.uni_koblenz.jgralab.algolib.algorithms.AlgorithmTerminatedException;
+import de.uni_koblenz.jgralab.algolib.algorithms.StructureOrientedAlgorithm;
 import de.uni_koblenz.jgralab.algolib.functions.BooleanFunction;
 import de.uni_koblenz.jgralab.algolib.functions.DoubleFunction;
 import de.uni_koblenz.jgralab.algolib.functions.Function;
 import de.uni_koblenz.jgralab.algolib.functions.IntFunction;
+import de.uni_koblenz.jgralab.algolib.problems.DistanceFromVertexToVertexSolver;
 import de.uni_koblenz.jgralab.algolib.problems.DistancesFromVertexSolver;
+import de.uni_koblenz.jgralab.algolib.problems.ShortestPathFromVertexToVertexSolver;
 import de.uni_koblenz.jgralab.algolib.problems.ShortestPathsFromVertexSolver;
 import de.uni_koblenz.jgralab.algolib.problems.TraversalSolver;
-import de.uni_koblenz.jgralab.algolib.problems.DistanceFromVertexToVertexSolver;
 import de.uni_koblenz.jgralab.algolib.problems.WeightedProblemSolver;
-import de.uni_koblenz.jgralab.algolib.problems.ShortestPathFromVertexToVertexSolver;
 import de.uni_koblenz.jgralab.algolib.visitors.Visitor;
 import de.uni_koblenz.jgralab.graphmarker.ArrayVertexMarker;
 import de.uni_koblenz.jgralab.graphmarker.DoubleVertexMarker;
@@ -62,8 +61,7 @@ import de.uni_koblenz.jgralab.graphmarker.IntegerVertexMarker;
 
 public class FordMooreAlgorithm extends StructureOrientedAlgorithm implements
 		WeightedProblemSolver, TraversalSolver, DistancesFromVertexSolver,
-		ShortestPathsFromVertexSolver,
-		DistanceFromVertexToVertexSolver,
+		ShortestPathsFromVertexSolver, DistanceFromVertexToVertexSolver,
 		ShortestPathFromVertexToVertexSolver {
 
 	private DoubleFunction<Edge> edgeWeight;
@@ -77,15 +75,14 @@ public class FordMooreAlgorithm extends StructureOrientedAlgorithm implements
 	private int maxPushCount;
 	private boolean negativeCycleDetected;
 
-	public FordMooreAlgorithm(Graph graph,
-			BooleanFunction<GraphElement> subgraph,
-			BooleanFunction<Edge> navigable, DoubleFunction<Edge> weight) {
-		super(graph, subgraph, navigable);
-		this.edgeWeight = weight;
+	public FordMooreAlgorithm(Graph graph, BooleanFunction<Edge> navigable,
+			DoubleFunction<Edge> weight) {
+		super(graph, navigable);
+		edgeWeight = weight;
 	}
 
 	public FordMooreAlgorithm(Graph graph) {
-		this(graph, null, null, null);
+		this(graph, null, null);
 	}
 
 	@Override
@@ -152,7 +149,7 @@ public class FordMooreAlgorithm extends StructureOrientedAlgorithm implements
 				: vertexQueue;
 		vertexQueue.clear();
 		pushCount = new IntegerVertexMarker(graph);
-		maxPushCount = getVertexCount() - 1;
+		maxPushCount = graph.getVCount() - 1;
 		negativeCycleDetected = false;
 	}
 
@@ -166,14 +163,9 @@ public class FordMooreAlgorithm extends StructureOrientedAlgorithm implements
 	@Override
 	public FordMooreAlgorithm execute(Vertex start)
 			throws AlgorithmTerminatedException {
-		if (subgraph != null && !subgraph.get(start)) {
-			throw new IllegalArgumentException("Start vertex not in subgraph!");
-		}
 		startRunning();
 		for (Vertex currentVertex : graph.vertices()) {
-			if (subgraph == null || subgraph.get(currentVertex)) {
-				pushCount.set(currentVertex, 0);
-			}
+			pushCount.set(currentVertex, 0);
 		}
 		distance.set(start, 0.0);
 		vertexQueue.add(start);
@@ -185,12 +177,10 @@ public class FordMooreAlgorithm extends StructureOrientedAlgorithm implements
 			for (Edge currentEdge : currentVertex
 					.incidences(traversalDirection)) {
 				cancelIfInterrupted();
-				if (subgraph != null && !subgraph.get(currentEdge)
-						|| navigable != null && !navigable.get(currentEdge)) {
+				if (navigable != null && !navigable.get(currentEdge)) {
 					continue;
 				}
 				Vertex nextVertex = currentEdge.getThat();
-				assert (subgraph.get(nextVertex));
 				double newDistance = distance.get(currentVertex)
 						+ (edgeWeight == null ? 1.0 : edgeWeight
 								.get(currentEdge));
@@ -214,9 +204,6 @@ public class FordMooreAlgorithm extends StructureOrientedAlgorithm implements
 	@Override
 	public FordMooreAlgorithm execute(Vertex start, Vertex target)
 			throws AlgorithmTerminatedException {
-		if (subgraph != null && !subgraph.get(target)) {
-			throw new IllegalArgumentException("Target vertex not in subgraph!");
-		}
 		this.target = target;
 		return execute(start);
 	}

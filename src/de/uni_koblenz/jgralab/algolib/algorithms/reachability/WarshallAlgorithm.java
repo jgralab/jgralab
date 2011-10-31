@@ -37,11 +37,10 @@ package de.uni_koblenz.jgralab.algolib.algorithms.reachability;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Graph;
-import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.algolib.algorithms.StructureOrientedAlgorithm;
 import de.uni_koblenz.jgralab.algolib.algorithms.AlgorithmStates;
 import de.uni_koblenz.jgralab.algolib.algorithms.AlgorithmTerminatedException;
+import de.uni_koblenz.jgralab.algolib.algorithms.StructureOrientedAlgorithm;
 import de.uni_koblenz.jgralab.algolib.algorithms.search.BreadthFirstSearch;
 import de.uni_koblenz.jgralab.algolib.algorithms.search.SearchAlgorithm;
 import de.uni_koblenz.jgralab.algolib.functions.ArrayBinaryFunction;
@@ -65,13 +64,11 @@ public class WarshallAlgorithm extends StructureOrientedAlgorithm implements
 	private Edge[][] successor;
 
 	public WarshallAlgorithm(Graph graph) {
-		this(graph, null, null);
+		this(graph, null);
 	}
 
-	public WarshallAlgorithm(Graph graph,
-			BooleanFunction<GraphElement> subgraph,
-			BooleanFunction<Edge> navigable) {
-		super(graph, subgraph, navigable);
+	public WarshallAlgorithm(Graph graph, BooleanFunction<Edge> navigable) {
+		super(graph, navigable);
 	}
 
 	@Override
@@ -123,7 +120,7 @@ public class WarshallAlgorithm extends StructureOrientedAlgorithm implements
 	@Override
 	public void reset() {
 		super.reset();
-		SearchAlgorithm search = new BreadthFirstSearch(graph, subgraph, null)
+		SearchAlgorithm search = new BreadthFirstSearch(graph, null)
 				.withNumber();
 		search.setTraversalDirection(traversalDirection);
 		try {
@@ -133,7 +130,7 @@ public class WarshallAlgorithm extends StructureOrientedAlgorithm implements
 		assert search.getState() == AlgorithmStates.FINISHED;
 		indexMapping = search.getNumber();
 		vertexOrder = search.getVertexOrder();
-		vertexCount = getVertexCount();
+		vertexCount = graph.getVCount();
 		reachable = reachable == null ? new boolean[vertexCount + 1][vertexCount + 1]
 				: reachable;
 		successor = successor == null ? new Edge[vertexCount + 1][vertexCount + 1]
@@ -160,8 +157,7 @@ public class WarshallAlgorithm extends StructureOrientedAlgorithm implements
 			reachable[vId][vId] = true;
 		}
 		for (Edge e : graph.edges()) {
-			if (subgraph != null && !subgraph.get(e) || navigable != null
-					&& !navigable.get(e)) {
+			if (navigable != null && !navigable.get(e)) {
 				continue;
 			}
 			int vId = indexMapping.get(e.getAlpha());

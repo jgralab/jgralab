@@ -37,11 +37,10 @@ package de.uni_koblenz.jgralab.algolib.algorithms.topological_order;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Graph;
-import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.algolib.algorithms.StructureOrientedAlgorithm;
 import de.uni_koblenz.jgralab.algolib.algorithms.AlgorithmStates;
 import de.uni_koblenz.jgralab.algolib.algorithms.AlgorithmTerminatedException;
+import de.uni_koblenz.jgralab.algolib.algorithms.StructureOrientedAlgorithm;
 import de.uni_koblenz.jgralab.algolib.algorithms.topological_order.visitors.TopologicalOrderVisitorList;
 import de.uni_koblenz.jgralab.algolib.functions.ArrayPermutation;
 import de.uni_koblenz.jgralab.algolib.functions.BooleanFunction;
@@ -64,14 +63,12 @@ public class KahnKnuthAlgorithm extends StructureOrientedAlgorithm implements
 	private boolean acyclic;
 	private EdgeDirection degreeDirection;
 
-	public KahnKnuthAlgorithm(Graph graph,
-			BooleanFunction<GraphElement> subgraph,
-			BooleanFunction<Edge> navigable) {
-		super(graph, subgraph, navigable);
+	public KahnKnuthAlgorithm(Graph graph, BooleanFunction<Edge> navigable) {
+		super(graph, navigable);
 	}
 
 	public KahnKnuthAlgorithm(Graph graph) {
-		this(graph, null, null);
+		this(graph, null);
 	}
 
 	public KahnKnuthAlgorithm withTNumber() {
@@ -130,7 +127,7 @@ public class KahnKnuthAlgorithm extends StructureOrientedAlgorithm implements
 		super.reset();
 		tnum = 1;
 		firstV = 1;
-		torder = new Vertex[getVertexCount() + 1];
+		torder = new Vertex[graph.getVCount() + 1];
 		inDegree = new IntegerVertexMarker(graph);
 		acyclic = true;
 		visitors.reset();
@@ -205,22 +202,7 @@ public class KahnKnuthAlgorithm extends StructureOrientedAlgorithm implements
 
 		// store actual in degree for all vertices
 		for (Vertex currentVertex : graph.vertices()) {
-			if (subgraph != null && !subgraph.get(currentVertex)) {
-				continue;
-			}
-			int degree = 0;
-			if (subgraph == null && navigable == null) {
-				degree = currentVertex.getDegree(degreeDirection);
-			} else {
-				for (Edge currentIncidence : currentVertex
-						.incidences(degreeDirection)) {
-					if ((navigable == null || navigable.get(currentIncidence))
-							&& (subgraph == null || subgraph
-									.get(currentIncidence))) {
-						degree++;
-					}
-				}
-			}
+			int degree = currentVertex.getDegree(degreeDirection);
 			inDegree.set(currentVertex, degree);
 			if (degree == 0) {
 				torder[tnum] = currentVertex;
@@ -237,8 +219,7 @@ public class KahnKnuthAlgorithm extends StructureOrientedAlgorithm implements
 			for (Edge currentEdge : currentVertex
 					.incidences(traversalDirection)) {
 				cancelIfInterrupted();
-				if (navigable != null && !navigable.get(currentEdge)
-						|| subgraph != null && !subgraph.get(currentEdge)) {
+				if (navigable != null && !navigable.get(currentEdge)) {
 					continue;
 				}
 				Vertex nextVertex = currentEdge.getThat();
@@ -252,7 +233,7 @@ public class KahnKnuthAlgorithm extends StructureOrientedAlgorithm implements
 				}
 			}
 		}
-		if (tnum < getVertexCount()) {
+		if (tnum < graph.getVCount()) {
 			acyclic = false;
 		}
 		done();

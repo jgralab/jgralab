@@ -109,8 +109,8 @@ public class TryAStar {
 				Location v1 = (Location) parameter1;
 				Location v2 = (Location) parameter2;
 
-				return RandomGraphForAStar.euclideanDistance(v1.get_x(),
-						v1.get_y(), v2.get_x(), v2.get_y());
+				return RandomGraphForAStar.euclideanDistance(v1.get_x(), v1
+						.get_y(), v2.get_x(), v2.get_y());
 			}
 
 			@Override
@@ -125,7 +125,7 @@ public class TryAStar {
 
 		System.out.println("AStar");
 		for (int i = 0; i < 10; i++) {
-			AStarSearch astar = new AStarSearch(graph, null, null, edgeWeight,
+			AStarSearch astar = new AStarSearch(graph, null, edgeWeight,
 					heuristic);
 			astar.undirected();
 			sw.reset();
@@ -145,7 +145,7 @@ public class TryAStar {
 		for (int i = 0; i < 10; i++) {
 			System.out.println("Dijkstra");
 			DijkstraAlgorithm dijkstra = new DijkstraAlgorithm(graph, null,
-					null, edgeWeight);
+					edgeWeight);
 			dijkstra.undirected();
 			sw.reset();
 			sw.start();
@@ -163,8 +163,7 @@ public class TryAStar {
 
 		System.out.println();
 		System.out.println("Ford-Moore");
-		FordMooreAlgorithm fm = new FordMooreAlgorithm(graph, null, null,
-				edgeWeight);
+		FordMooreAlgorithm fm = new FordMooreAlgorithm(graph, null, edgeWeight);
 		fm.undirected();
 		sw.reset();
 		sw.start();

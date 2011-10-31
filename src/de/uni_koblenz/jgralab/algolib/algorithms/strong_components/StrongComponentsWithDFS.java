@@ -40,11 +40,10 @@ import java.util.Stack;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
-import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.algolib.algorithms.StructureOrientedAlgorithm;
 import de.uni_koblenz.jgralab.algolib.algorithms.AlgorithmTerminatedException;
 import de.uni_koblenz.jgralab.algolib.algorithms.GraphAlgorithm;
+import de.uni_koblenz.jgralab.algolib.algorithms.StructureOrientedAlgorithm;
 import de.uni_koblenz.jgralab.algolib.algorithms.search.DepthFirstSearch;
 import de.uni_koblenz.jgralab.algolib.algorithms.search.visitors.DFSVisitor;
 import de.uni_koblenz.jgralab.algolib.algorithms.search.visitors.DFSVisitorAdapter;
@@ -58,8 +57,8 @@ import de.uni_koblenz.jgralab.algolib.visitors.Visitor;
 import de.uni_koblenz.jgralab.graphmarker.ArrayVertexMarker;
 import de.uni_koblenz.jgralab.graphmarker.IntegerVertexMarker;
 
-public class StrongComponentsWithDFS extends StructureOrientedAlgorithm implements
-		StrongComponentsSolver {
+public class StrongComponentsWithDFS extends StructureOrientedAlgorithm
+		implements StrongComponentsSolver {
 
 	private DepthFirstSearch dfs;
 	private Stack<Vertex> vertexStack;
@@ -69,13 +68,12 @@ public class StrongComponentsWithDFS extends StructureOrientedAlgorithm implemen
 	private ReducedGraphVisitorList visitors;
 
 	public StrongComponentsWithDFS(Graph graph, DepthFirstSearch dfs) {
-		this(graph, null, dfs, null);
+		this(graph, dfs, null);
 	}
 
-	public StrongComponentsWithDFS(Graph graph,
-			BooleanFunction<GraphElement> subgraph, DepthFirstSearch dfs,
+	public StrongComponentsWithDFS(Graph graph, DepthFirstSearch dfs,
 			BooleanFunction<Edge> navigable) {
-		super(graph, subgraph, navigable);
+		super(graph, navigable);
 		this.dfs = dfs;
 	}
 
@@ -226,7 +224,6 @@ public class StrongComponentsWithDFS extends StructureOrientedAlgorithm implemen
 	public StrongComponentsSolver execute() throws AlgorithmTerminatedException {
 		dfs.reset();
 		dfs.setGraph(graph);
-		dfs.setSubgraph(subgraph);
 		dfs.setNavigable(navigable);
 		dfs.setTraversalDirection(traversalDirection);
 		dfs.addVisitor(lowlinkVisitor);

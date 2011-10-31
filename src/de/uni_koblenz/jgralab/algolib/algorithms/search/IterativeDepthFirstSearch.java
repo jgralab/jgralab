@@ -39,7 +39,6 @@ import java.util.Stack;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
-import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.algolib.algorithms.AlgorithmTerminatedException;
 import de.uni_koblenz.jgralab.algolib.functions.BooleanFunction;
@@ -64,13 +63,12 @@ public class IterativeDepthFirstSearch extends DepthFirstSearch {
 	private Stack<Vertex> incompleteVertices;
 
 	public IterativeDepthFirstSearch(Graph graph,
-			BooleanFunction<GraphElement> subgraph, boolean directed,
 			BooleanFunction<Edge> navigable) {
-		super(graph, subgraph, navigable);
+		super(graph, navigable);
 	}
 
 	public IterativeDepthFirstSearch(Graph graph) {
-		this(graph, null, true, null);
+		this(graph, null);
 	}
 
 	@Override
@@ -105,8 +103,7 @@ public class IterativeDepthFirstSearch extends DepthFirstSearch {
 	@Override
 	public IterativeDepthFirstSearch execute(Vertex root)
 			throws AlgorithmTerminatedException {
-		if (subgraph != null && !subgraph.get(root)
-				|| visitedVertices.get(root)) {
+		if (visitedVertices.get(root)) {
 			return this;
 		}
 		startRunning();
@@ -142,14 +139,12 @@ public class IterativeDepthFirstSearch extends DepthFirstSearch {
 			if (currentIncidences.hasNext()) {
 				cancelIfInterrupted();
 				Edge currentEdge = currentIncidences.next();
-				if (visitedEdges.get(currentEdge) || subgraph != null
-						&& !subgraph.get(currentEdge) || navigable != null
+				if (visitedEdges.get(currentEdge) || navigable != null
 						&& !navigable.get(currentEdge)) {
 					// incompleteVertices.push(currentVertex);
 					continue;
 				}
 				Vertex nextVertex = currentEdge.getThat();
-				assert (subgraph == null || subgraph.get(nextVertex));
 				// visit current edge
 				edgeOrder[eNum] = currentEdge;
 				if (enumber != null) {

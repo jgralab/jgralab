@@ -37,11 +37,10 @@ package de.uni_koblenz.jgralab.algolib.algorithms.shortest_paths;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Graph;
-import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.algolib.algorithms.StructureOrientedAlgorithm;
 import de.uni_koblenz.jgralab.algolib.algorithms.AlgorithmStates;
 import de.uni_koblenz.jgralab.algolib.algorithms.AlgorithmTerminatedException;
+import de.uni_koblenz.jgralab.algolib.algorithms.StructureOrientedAlgorithm;
 import de.uni_koblenz.jgralab.algolib.algorithms.search.BreadthFirstSearch;
 import de.uni_koblenz.jgralab.algolib.algorithms.search.SearchAlgorithm;
 import de.uni_koblenz.jgralab.algolib.functions.ArrayBinaryDoubleFunction;
@@ -52,10 +51,10 @@ import de.uni_koblenz.jgralab.algolib.functions.BooleanFunction;
 import de.uni_koblenz.jgralab.algolib.functions.DoubleFunction;
 import de.uni_koblenz.jgralab.algolib.functions.IntFunction;
 import de.uni_koblenz.jgralab.algolib.functions.Permutation;
-import de.uni_koblenz.jgralab.algolib.problems.NegativeCyclesSolver;
 import de.uni_koblenz.jgralab.algolib.problems.DistancesSolver;
-import de.uni_koblenz.jgralab.algolib.problems.WeightedProblemSolver;
+import de.uni_koblenz.jgralab.algolib.problems.NegativeCyclesSolver;
 import de.uni_koblenz.jgralab.algolib.problems.ShortestPathsSolver;
+import de.uni_koblenz.jgralab.algolib.problems.WeightedProblemSolver;
 import de.uni_koblenz.jgralab.algolib.visitors.Visitor;
 
 public class FloydAlgorithm extends StructureOrientedAlgorithm implements
@@ -71,12 +70,12 @@ public class FloydAlgorithm extends StructureOrientedAlgorithm implements
 	private boolean negativeCycles;
 
 	public FloydAlgorithm(Graph graph) {
-		this(graph, null, null, null);
+		this(graph, null, null);
 	}
 
-	public FloydAlgorithm(Graph graph, BooleanFunction<GraphElement> subgraph,
-			BooleanFunction<Edge> navigable, DoubleFunction<Edge> edgeWeight) {
-		super(graph, subgraph, navigable);
+	public FloydAlgorithm(Graph graph, BooleanFunction<Edge> navigable,
+			DoubleFunction<Edge> edgeWeight) {
+		super(graph, navigable);
 		this.edgeWeight = edgeWeight;
 	}
 
@@ -148,7 +147,7 @@ public class FloydAlgorithm extends StructureOrientedAlgorithm implements
 		assert search.getState() == AlgorithmStates.FINISHED;
 		indexMapping = search.getNumber();
 		vertexOrder = search.getVertexOrder();
-		vertexCount = getVertexCount();
+		vertexCount = graph.getVCount();
 		weightedDistance = weightedDistance == null ? new double[vertexCount + 1][vertexCount + 1]
 				: weightedDistance;
 		successor = successor == null ? new Edge[vertexCount + 1][vertexCount + 1]
@@ -175,8 +174,7 @@ public class FloydAlgorithm extends StructureOrientedAlgorithm implements
 			weightedDistance[vId][vId] = 0;
 		}
 		for (Edge e : graph.edges()) {
-			if (subgraph != null && !subgraph.get(e) || navigable != null
-					&& !navigable.get(e)) {
+			if (navigable != null && !navigable.get(e)) {
 				continue;
 			}
 			int vId = indexMapping.get(e.getAlpha());

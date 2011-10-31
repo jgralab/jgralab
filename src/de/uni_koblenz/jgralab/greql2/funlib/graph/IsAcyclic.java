@@ -1,6 +1,7 @@
 package de.uni_koblenz.jgralab.greql2.funlib.graph;
 
 import de.uni_koblenz.jgralab.Graph;
+import de.uni_koblenz.jgralab.TraversalContext;
 import de.uni_koblenz.jgralab.algolib.algorithms.AlgorithmTerminatedException;
 import de.uni_koblenz.jgralab.algolib.algorithms.search.DepthFirstSearch;
 import de.uni_koblenz.jgralab.algolib.algorithms.search.IterativeDepthFirstSearch;
@@ -27,16 +28,13 @@ public class IsAcyclic extends Function {
 		return a.isAcyclic();
 	}
 
-	// TODO [subgraph] delete this method as soon as traversal contexts work
+	// TODO [subgraph] delete this method as soon as traversal context works
 	public Boolean evaluate(Graph g, SubGraphMarker sub) {
-		DepthFirstSearch dfs = new IterativeDepthFirstSearch(g, sub, true, null);
-		TopologicalOrderWithDFS a = new TopologicalOrderWithDFS(g, sub, dfs,
-				null);
+		TraversalContext oldTC = g.setTraversalContext(sub);
 		try {
-			a.execute();
-		} catch (AlgorithmTerminatedException e) {
-			throw new RuntimeException(e.getMessage(), e.getCause());
+			return evaluate(g);
+		} finally {
+			g.setTraversalContext(oldTC);
 		}
-		return a.isAcyclic();
 	}
 }
