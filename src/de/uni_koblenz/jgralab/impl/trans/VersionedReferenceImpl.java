@@ -61,15 +61,6 @@ public class VersionedReferenceImpl<E> extends VersionedDataObjectImpl<E> {
 		super(attributedElement, initialPersistentValue, name);
 	}
 
-	public VersionedReferenceImpl(AttributedElement attributedElement,
-			E initialPersistentValue) {
-		super(attributedElement, initialPersistentValue);
-	}
-
-	public VersionedReferenceImpl(AttributedElement attributedElement) {
-		super(attributedElement);
-	}
-
 	@Override
 	public E copyOf(E dataObject) {
 		return dataObject;

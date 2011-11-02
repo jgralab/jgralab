@@ -12,7 +12,7 @@ public class Mean extends Function {
 				Category.STATISTICS);
 	}
 
-	public Number evaluate(Collection<Number> l) {
+	public Double evaluate(Collection<Number> l) {
 		if (l.isEmpty()) {
 			return null;
 		} else {

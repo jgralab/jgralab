@@ -371,7 +371,7 @@ public abstract class GraphImpl extends
 	@Override
 	public void setECount(int count) {
 		if ((eCount == null) || isLoading()) {
-			eCount = new VersionedReferenceImpl<Integer>(this, count);
+			eCount = new VersionedReferenceImpl<Integer>(this, count, "$eCount");
 		} else {
 			eCount.setValidValue(count, getCurrentTransaction());
 		}
@@ -391,7 +391,7 @@ public abstract class GraphImpl extends
 	public void setFirstEdgeInGraph(InternalEdge firstEdge) {
 		if ((this.firstEdge == null) || isLoading()) {
 			this.firstEdge = new VersionedReferenceImpl<EdgeImpl>(this,
-					(EdgeImpl) firstEdge);
+					(EdgeImpl) firstEdge, "$firstEdge");
 		} else {
 			this.firstEdge.setValidValue((EdgeImpl) firstEdge,
 					getCurrentTransaction());
@@ -402,7 +402,7 @@ public abstract class GraphImpl extends
 	public void setFirstVertex(InternalVertex firstVertex) {
 		if ((this.firstVertex == null) || isLoading()) {
 			this.firstVertex = new VersionedReferenceImpl<VertexImpl>(this,
-					(VertexImpl) firstVertex);
+					(VertexImpl) firstVertex, "$firstVertex");
 		} else {
 			this.firstVertex.setValidValue((VertexImpl) firstVertex,
 					getCurrentTransaction());
@@ -413,7 +413,7 @@ public abstract class GraphImpl extends
 	public void setLastEdgeInGraph(InternalEdge lastEdge) {
 		if ((this.lastEdge == null) || isLoading()) {
 			this.lastEdge = new VersionedReferenceImpl<EdgeImpl>(this,
-					(EdgeImpl) lastEdge);
+					(EdgeImpl) lastEdge, "$lastEdge");
 		} else {
 			this.lastEdge.setValidValue((EdgeImpl) lastEdge,
 					getCurrentTransaction());
@@ -424,7 +424,7 @@ public abstract class GraphImpl extends
 	public void setLastVertex(InternalVertex lastVertex) {
 		if ((this.lastVertex == null) || isLoading()) {
 			this.lastVertex = new VersionedReferenceImpl<VertexImpl>(this,
-					(VertexImpl) lastVertex);
+					(VertexImpl) lastVertex, "$lastVertex");
 		} else {
 			this.lastVertex.setValidValue((VertexImpl) lastVertex,
 					getCurrentTransaction());
@@ -445,7 +445,7 @@ public abstract class GraphImpl extends
 	@Override
 	public void setVCount(int count) {
 		if ((vCount == null) || isLoading()) {
-			vCount = new VersionedReferenceImpl<Integer>(this, count);
+			vCount = new VersionedReferenceImpl<Integer>(this, count, "$vCount");
 		} else {
 			vCount.setValidValue(count, getCurrentTransaction());
 		}
@@ -466,7 +466,7 @@ public abstract class GraphImpl extends
 	public void setVertexListVersion(long vertexListVersion) {
 		if (this.vertexListVersion == null) {
 			this.vertexListVersion = new VersionedReferenceImpl<Long>(this,
-					vertexListVersion);
+					vertexListVersion, "$vertexListVersion");
 		}
 		this.vertexListVersion.setValidValue(vertexListVersion,
 				getCurrentTransaction());
@@ -476,7 +476,7 @@ public abstract class GraphImpl extends
 	public void setEdgeListVersion(long edgeListVersion) {
 		if (this.edgeListVersion == null) {
 			this.edgeListVersion = new VersionedReferenceImpl<Long>(this,
-					edgeListVersion);
+					edgeListVersion, "$edgeListVersion");
 		}
 		this.edgeListVersion.setValidValue(edgeListVersion,
 				getCurrentTransaction());
@@ -802,7 +802,7 @@ public abstract class GraphImpl extends
 				// of graph...
 				if (vertex == null) {
 					vertex = new VersionedArrayImpl<VertexImpl[]>(this,
-							new VertexImpl[newSize + 1]);
+							new VertexImpl[newSize + 1], "$vertex[]");
 				} else {
 					synchronized (vertex) {
 						// expand all vertex-values for all active
@@ -845,10 +845,10 @@ public abstract class GraphImpl extends
 				// initialization edge and revEdge
 				if (edge == null) {
 					edge = new VersionedArrayImpl<EdgeImpl[]>(this,
-							new EdgeImpl[newSize + 1]);
+							new EdgeImpl[newSize + 1], "$edge[]");
 					assert (revEdge == null);
 					revEdge = new VersionedArrayImpl<ReversedEdgeImpl[]>(this,
-							new ReversedEdgeImpl[newSize + 1]);
+							new ReversedEdgeImpl[newSize + 1], "$revEdge[]");
 				} else {
 					// lock Array edge
 					synchronized (edge) {

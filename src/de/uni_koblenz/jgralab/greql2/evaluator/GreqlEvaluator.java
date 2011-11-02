@@ -812,11 +812,14 @@ public class GreqlEvaluator {
 			minimalSchema.compile(CodeGeneratorConfiguration.MINIMAL);
 			Method graphCreateMethod = minimalSchema
 					.getGraphCreateMethod(ImplementationType.STANDARD);
-
 			try {
 				minimalGraph = (Graph) graphCreateMethod.invoke(null,
 						new Object[] { "test", 1, 1 });
-			} catch (Exception e) {
+			} catch (IllegalArgumentException e) {
+				e.printStackTrace();
+			} catch (IllegalAccessException e) {
+				e.printStackTrace();
+			} catch (InvocationTargetException e) {
 				e.printStackTrace();
 			}
 		}

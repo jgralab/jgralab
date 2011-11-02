@@ -175,12 +175,12 @@ public abstract class VertexImpl extends
 		// graph loading -> new initialization...
 		if (graph.isLoading()) {
 			this.firstIncidence = new VersionedReferenceImpl<IncidenceImpl>(
-					this, (IncidenceImpl) firstIncidence);
+					this, (IncidenceImpl) firstIncidence, "$firstIncidence");
 		} else {
 			// initialize here
 			if (this.firstIncidence == null) {
 				this.firstIncidence = new VersionedReferenceImpl<IncidenceImpl>(
-						this);
+						this, null, "$firstIncidence");
 			}
 			this.firstIncidence.setValidValue((IncidenceImpl) firstIncidence,
 					graph.getCurrentTransaction());
@@ -192,12 +192,12 @@ public abstract class VertexImpl extends
 		// graph loading -> new initialization...
 		if (graph.isLoading()) {
 			this.lastIncidence = new VersionedReferenceImpl<IncidenceImpl>(
-					this, (IncidenceImpl) lastIncidence);
+					this, (IncidenceImpl) lastIncidence, "$lastIncidence");
 		} else {
 			// initialize here
 			if (this.lastIncidence == null) {
 				this.lastIncidence = new VersionedReferenceImpl<IncidenceImpl>(
-						this);
+						this, null, "$lastIncidence");
 			}
 			this.lastIncidence.setValidValue((IncidenceImpl) lastIncidence,
 					graph.getCurrentTransaction());
@@ -209,7 +209,7 @@ public abstract class VertexImpl extends
 		// graph loading -> new initialization...
 		if (graph.isLoading()) {
 			this.nextVertex = new VersionedReferenceImpl<VertexImpl>(this,
-					(VertexImpl) nextVertex);
+					(VertexImpl) nextVertex, "$nextVertex");
 		} else {
 			TransactionImpl transaction = (TransactionImpl) graph
 					.getCurrentTransaction();
@@ -228,7 +228,8 @@ public abstract class VertexImpl extends
 				}
 			}
 			if (this.nextVertex == null) {
-				this.nextVertex = new VersionedReferenceImpl<VertexImpl>(this);
+				this.nextVertex = new VersionedReferenceImpl<VertexImpl>(this,
+						null, "$nextVertex");
 			}
 			this.nextVertex.setValidValue((VertexImpl) nextVertex, transaction,
 					explicitChange);
@@ -240,7 +241,7 @@ public abstract class VertexImpl extends
 		// graph loading -> new initialization...
 		if (graph.isLoading()) {
 			this.prevVertex = new VersionedReferenceImpl<VertexImpl>(this,
-					(VertexImpl) prevVertex);
+					(VertexImpl) prevVertex, "$prevVertex");
 		} else {
 			TransactionImpl transaction = (TransactionImpl) graph
 					.getCurrentTransaction();
@@ -259,7 +260,8 @@ public abstract class VertexImpl extends
 				}
 			}
 			if (this.prevVertex == null) {
-				this.prevVertex = new VersionedReferenceImpl<VertexImpl>(this);
+				this.prevVertex = new VersionedReferenceImpl<VertexImpl>(this,
+						null, "$prevVertex");
 			}
 			this.prevVertex.setValidValue((VertexImpl) prevVertex, transaction,
 					explicitChange);
@@ -270,7 +272,8 @@ public abstract class VertexImpl extends
 	public void setIncidenceListVersion(long incidenceListVersion) {
 		// initialize here
 		if (this.incidenceListVersion == null) {
-			this.incidenceListVersion = new VersionedReferenceImpl<Long>(this);
+			this.incidenceListVersion = new VersionedReferenceImpl<Long>(this,
+					null, "$incidenceListVersion");
 		}
 		this.incidenceListVersion.setValidValue(incidenceListVersion, graph
 				.getCurrentTransaction());

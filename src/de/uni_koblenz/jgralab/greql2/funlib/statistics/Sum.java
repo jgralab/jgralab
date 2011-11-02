@@ -12,9 +12,9 @@ public class Sum extends Function {
 				Category.STATISTICS);
 	}
 
-	public Number evaluate(Collection<Number> l) {
+	public Double evaluate(Collection<Number> l) {
 		if (l.isEmpty()) {
-			return null;
+			return 0.0;
 		} else {
 			double sum = 0.0;
 			for (Number n : l) {
