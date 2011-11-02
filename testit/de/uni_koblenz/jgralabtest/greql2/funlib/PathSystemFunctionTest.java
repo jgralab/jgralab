@@ -217,7 +217,7 @@ public class PathSystemFunctionTest extends GenericTest {
 		assertQueryIsFalse("using testPathForContainsElement1: contains(testPathForContainsElement1,getVertex(30))");
 
 		// is null contained?
-		assertQueryIsNull("using nll,testPathForContainsElement1: contains(testPathForContainsElement1,nll)");
+		assertQueryIsUndefined("using nll,testPathForContainsElement1: contains(testPathForContainsElement1,nll)");
 
 	}
 
@@ -260,16 +260,16 @@ public class PathSystemFunctionTest extends GenericTest {
 
 	@Test
 	public void testPathSystemContainsNull() throws Exception {
-		assertQueryIsNull("using emptyPathSystem,nll : contains(emptyPathSystem,nll)");
-		assertQueryIsNull("using d1p1PathSystem,nll : contains(d1p1PathSystem,nll)");
-		assertQueryIsNull("using d1p2PathSystem,nll : contains(d1p2PathSystem,nll)");
-		assertQueryIsNull("using d1pmPathSystem,nll : contains(d1pmPathSystem,nll)");
-		assertQueryIsNull("using d2p1PathSystem,nll : contains(d2p1PathSystem,nll)");
-		assertQueryIsNull("using d2p2PathSystem,nll : contains(d2p2PathSystem,nll)");
-		assertQueryIsNull("using d2pmPathSystem,nll : contains(d2pmPathSystem,nll)");
-		assertQueryIsNull("using dmp1PathSystem,nll : contains(dmp1PathSystem,nll)");
-		assertQueryIsNull("using dmp2PathSystem,nll : contains(dmp2PathSystem,nll)");
-		assertQueryIsNull("using dmpmPathSystem,nll : contains(dmpmPathSystem,nll)");
+		assertQueryIsUndefined("using emptyPathSystem,nll : contains(emptyPathSystem,nll)");
+		assertQueryIsUndefined("using d1p1PathSystem,nll : contains(d1p1PathSystem,nll)");
+		assertQueryIsUndefined("using d1p2PathSystem,nll : contains(d1p2PathSystem,nll)");
+		assertQueryIsUndefined("using d1pmPathSystem,nll : contains(d1pmPathSystem,nll)");
+		assertQueryIsUndefined("using d2p1PathSystem,nll : contains(d2p1PathSystem,nll)");
+		assertQueryIsUndefined("using d2p2PathSystem,nll : contains(d2p2PathSystem,nll)");
+		assertQueryIsUndefined("using d2pmPathSystem,nll : contains(d2pmPathSystem,nll)");
+		assertQueryIsUndefined("using dmp1PathSystem,nll : contains(dmp1PathSystem,nll)");
+		assertQueryIsUndefined("using dmp2PathSystem,nll : contains(dmp2PathSystem,nll)");
+		assertQueryIsUndefined("using dmpmPathSystem,nll : contains(dmpmPathSystem,nll)");
 	}
 
 	// TODO markers cannot be bound to variables
@@ -302,7 +302,7 @@ public class PathSystemFunctionTest extends GenericTest {
 
 	@Test
 	public void testDepthNull() throws Exception {
-		assertQueryIsNull("using nll: depth(nll)");
+		assertQueryIsUndefined("using nll: depth(nll)");
 	}
 
 	@Test
@@ -329,9 +329,9 @@ public class PathSystemFunctionTest extends GenericTest {
 
 	@Test
 	public void testDistanceNull() throws Exception {
-		assertQueryIsNull("using dmpmPathSystem,nll: distance(dmpmPathSystem,nll)");
-		assertQueryIsNull("using nll: distance(nll,firstVertex())");
-		assertQueryIsNull("using nll: distance(nll, nll)");
+		assertQueryIsUndefined("using dmpmPathSystem,nll: distance(dmpmPathSystem,nll)");
+		assertQueryIsUndefined("using nll: distance(nll,firstVertex())");
+		assertQueryIsUndefined("using nll: distance(nll, nll)");
 	}
 
 	@Test
@@ -586,15 +586,15 @@ public class PathSystemFunctionTest extends GenericTest {
 		// assertTrue(result.isEmpty());
 
 		// test with vertex "null"
-		assertQueryIsNull("using nll: edgesConnected{connections.Street}(nll)");
+		assertQueryIsUndefined("using nll: edgesConnected{connections.Street}(nll)");
 
 	}
 
 	@Test
 	public void testEdgesConnectedNull() throws Exception {
-		assertQueryIsNull("using nll: edgesConnected(nll, nll)");
-		assertQueryIsNull("using nll: edgesConnected(firstVertex(), nll)");
-		assertQueryIsNull("using dmpmPathSystem,nll: edgesConnected(nll, dmpmPathSystem)");
+		assertQueryIsUndefined("using nll: edgesConnected(nll, nll)");
+		assertQueryIsUndefined("using nll: edgesConnected(firstVertex(), nll)");
+		assertQueryIsUndefined("using dmpmPathSystem,nll: edgesConnected(nll, dmpmPathSystem)");
 	}
 
 	@Test
@@ -863,14 +863,14 @@ public class PathSystemFunctionTest extends GenericTest {
 		// assertTrue(result.isEmpty());
 
 		// test with vertex "null"
-		assertQueryIsNull("using nll: edgesFrom{connections.Street}(nll)");
+		assertQueryIsUndefined("using nll: edgesFrom{connections.Street}(nll)");
 	}
 
 	@Test
 	public void testEdgesFromNull() throws Exception {
-		assertQueryIsNull("using nll: edgesFrom(nll, nll)");
-		assertQueryIsNull("using nll: edgesFrom(firstVertex(), nll)");
-		assertQueryIsNull("using dmpmPathSystem,nll: edgesFrom(nll, dmpmPathSystem)");
+		assertQueryIsUndefined("using nll: edgesFrom(nll, nll)");
+		assertQueryIsUndefined("using nll: edgesFrom(firstVertex(), nll)");
+		assertQueryIsUndefined("using dmpmPathSystem,nll: edgesFrom(nll, dmpmPathSystem)");
 	}
 
 	@Test
@@ -1128,15 +1128,15 @@ public class PathSystemFunctionTest extends GenericTest {
 		// assertTrue(result.isEmpty());
 
 		// test with vertex "null"
-		assertQueryIsNull("using nll: edgesTo{connections.Street}(nll)");
+		assertQueryIsUndefined("using nll: edgesTo{connections.Street}(nll)");
 	}
 
 	@Test
 	public void testEdgesToNull() throws Exception {
 		// TODO A meaningful Pathsystem is missing
-		assertQueryIsNull("using nll: edgesTo(nll, nll)");
-		assertQueryIsNull("using nll: edgesTo(firstVertex(), nll)");
-		assertQueryIsNull("using dmpmPathSystem,nll: edgesTo(nll, dmpmPathSystem)");
+		assertQueryIsUndefined("using nll: edgesTo(nll, nll)");
+		assertQueryIsUndefined("using nll: edgesTo(firstVertex(), nll)");
+		assertQueryIsUndefined("using dmpmPathSystem,nll: edgesTo(nll, dmpmPathSystem)");
 	}
 
 	@Test
@@ -1152,7 +1152,7 @@ public class PathSystemFunctionTest extends GenericTest {
 
 	@Test
 	public void testEdgesTraceNull() throws Exception {
-		assertQueryIsNull("using nll: edgeTrace(nll)");
+		assertQueryIsUndefined("using nll: edgeTrace(nll)");
 	}
 
 	public void testEdgeTrace(JValuePath usedPath)
@@ -1302,7 +1302,7 @@ public class PathSystemFunctionTest extends GenericTest {
 
 	@Test
 	public void testElementsNull() throws Exception {
-		assertQueryIsNull("using nll: elements(nll)");
+		assertQueryIsUndefined("using nll: elements(nll)");
 	}
 
 	@Test
@@ -1360,11 +1360,11 @@ public class PathSystemFunctionTest extends GenericTest {
 	@Test
 	public void testExtractPathNull() throws Exception {
 		// TODO
-		assertQueryIsNull("using nll: extractPath(nll)");
-		assertQueryIsNull("using nll: extractPath(nll, nll)");
+		assertQueryIsUndefined("using nll: extractPath(nll)");
+		assertQueryIsUndefined("using nll: extractPath(nll, nll)");
 		// assertQueryEqualsNull("using nll: extractPath(?, nll)");
-		assertQueryIsNull("using nll: extractPath(nll, 1)");
-		assertQueryIsNull("using nll: extractPath(nll, firstVertex())");
+		assertQueryIsUndefined("using nll: extractPath(nll, 1)");
+		assertQueryIsUndefined("using nll: extractPath(nll, firstVertex())");
 	}
 
 	@Test
@@ -1391,7 +1391,7 @@ public class PathSystemFunctionTest extends GenericTest {
 
 	@Test
 	public void testInnerNodesNull() throws Exception {
-		assertQueryIsNull("using nll: innerNodes(nll)");
+		assertQueryIsUndefined("using nll: innerNodes(nll)");
 	}
 
 	@Test
@@ -1413,7 +1413,7 @@ public class PathSystemFunctionTest extends GenericTest {
 
 	@Test
 	public void testIsCyclicNull() throws Exception {
-		assertQueryIsNull("using nll: isCycle(nll)");
+		assertQueryIsUndefined("using nll: isCycle(nll)");
 	}
 
 	@Test
@@ -1432,10 +1432,10 @@ public class PathSystemFunctionTest extends GenericTest {
 	@Test
 	public void testIsReachableNull() throws Exception {
 		// TODO A meaningful Pathsystem is missing
-		assertQueryIsNull("using nll: isReachable(nll, nll, nll)");
-		assertQueryIsNull("using nll: isReachable(firstVertex(), nll, nll)");
-		assertQueryIsNull("using nll: isReachable(nll, lastVertex(), nll)");
-		assertQueryIsNull("using nll: isReachable(firstVertex(), lastVertex(), nll)");
+		assertQueryIsUndefined("using nll: isReachable(nll, nll, nll)");
+		assertQueryIsUndefined("using nll: isReachable(firstVertex(), nll, nll)");
+		assertQueryIsUndefined("using nll: isReachable(nll, lastVertex(), nll)");
+		assertQueryIsUndefined("using nll: isReachable(firstVertex(), lastVertex(), nll)");
 
 		// assertQueryEqualsNull("using nll: isReachable(nll, nll, ?)");
 		// assertQueryEqualsNull("using nll: isReachable(firstVertex(), nll, ?)");
@@ -1467,7 +1467,7 @@ public class PathSystemFunctionTest extends GenericTest {
 	public void testIsSubPathOfNull() throws Exception {
 		// TODO A meaningful Pathsystem is missing
 
-		assertQueryIsNull("using nll: isSubPathOf(nll, nll)");
+		assertQueryIsUndefined("using nll: isSubPathOf(nll, nll)");
 		// assertQueryEqualsNull("using nll: isSubPathOf(?, nll)");
 		// assertQueryEqualsNull("using nll: isSubPathOf(nll, ?)");
 		fail();
@@ -1496,7 +1496,7 @@ public class PathSystemFunctionTest extends GenericTest {
 
 	@Test
 	public void testLeavesNull() throws Exception {
-		assertQueryIsNull("using nll: leaves(nll)");
+		assertQueryIsUndefined("using nll: leaves(nll)");
 	}
 
 	@Test
@@ -1508,7 +1508,7 @@ public class PathSystemFunctionTest extends GenericTest {
 	@Test
 	public void testMatchesNull() throws Exception {
 		// TODO A meaningful Automaton is missing
-		assertQueryIsNull("using nll: matches(nll, nll)");
+		assertQueryIsUndefined("using nll: matches(nll, nll)");
 		// assertQueryEqualsNull("using nll: matches(nll, ?)");
 		// assertQueryEqualsNull("using nll: matches(?, nll)");
 		fail();
@@ -1530,7 +1530,7 @@ public class PathSystemFunctionTest extends GenericTest {
 
 	@Test
 	public void testMaxPathLengthNull() throws Exception {
-		assertQueryIsNull("using nll: maxPathLength(nll)");
+		assertQueryIsUndefined("using nll: maxPathLength(nll)");
 	}
 
 	@Test
@@ -1550,7 +1550,7 @@ public class PathSystemFunctionTest extends GenericTest {
 
 	@Test
 	public void testMinPathLengthNull() throws Exception {
-		assertQueryIsNull("using nll: minPathLength(nll)");
+		assertQueryIsUndefined("using nll: minPathLength(nll)");
 	}
 
 	@Test
@@ -1569,7 +1569,7 @@ public class PathSystemFunctionTest extends GenericTest {
 
 	@Test
 	public void testNodesNull() throws Exception {
-		assertQueryIsNull("using nll: nodes(nll)");
+		assertQueryIsUndefined("using nll: nodes(nll)");
 	}
 
 	@Test
@@ -1619,7 +1619,7 @@ public class PathSystemFunctionTest extends GenericTest {
 
 	@Test
 	public void testNodeTraceNull() throws Exception {
-		assertQueryIsNull("using nll: nodeTrace(nll)");
+		assertQueryIsUndefined("using nll: nodeTrace(nll)");
 	}
 
 	@Test
@@ -1644,7 +1644,7 @@ public class PathSystemFunctionTest extends GenericTest {
 	@Test
 	public void testParentNull() throws Exception {
 		// TODO A meaningful Pathsystem is missing
-		assertQueryIsNull("using nll: parent(nll, nll)");
+		assertQueryIsUndefined("using nll: parent(nll, nll)");
 		// assertQueryEqualsNull("using nll: parent(?, nll)");
 		// assertQueryEqualsNull("using nll: parent(nll, ?)");
 		fail();
@@ -1660,7 +1660,7 @@ public class PathSystemFunctionTest extends GenericTest {
 	@Test
 	public void testPathConcatNull() throws Exception {
 		// TODO A meaningful Paths are missing
-		assertQueryIsNull("using nll: pathConcat(nll, nll)");
+		assertQueryIsUndefined("using nll: pathConcat(nll, nll)");
 		// assertQueryEqualsNull("using nll: pathConcat(?, nll)");
 		// assertQueryEqualsNull("using nll: pathConcat(nll, ?)");
 		fail();
@@ -1674,7 +1674,7 @@ public class PathSystemFunctionTest extends GenericTest {
 
 	@Test
 	public void testPathExprNull() throws Exception {
-		assertQueryIsNull("using nll: pathExpr(nll)");
+		assertQueryIsUndefined("using nll: pathExpr(nll)");
 	}
 
 	@Test
@@ -1695,7 +1695,7 @@ public class PathSystemFunctionTest extends GenericTest {
 
 	@Test
 	public void testPathLengthNull() throws Exception {
-		assertQueryIsNull("using nll: pathLength(nll)");
+		assertQueryIsUndefined("using nll: pathLength(nll)");
 	}
 
 	@Test
@@ -1722,13 +1722,13 @@ public class PathSystemFunctionTest extends GenericTest {
 	@Test
 	public void testReachableVertexNull() throws Exception {
 		// TODO A meaningful Pathsystem is missing
-		assertQueryIsNull("using nll: reachableVertices(nll, nll)");
+		assertQueryIsUndefined("using nll: reachableVertices(nll, nll)");
 		// assertQueryEqualsNull("using nll: reachableVertices(nll, ?)");
-		assertQueryIsNull("using nll: reachableVertices(firstVertex(), nll)");
+		assertQueryIsUndefined("using nll: reachableVertices(firstVertex(), nll)");
 
-		assertQueryIsNull("using nll: reachableVertices(nll, nll, nll)");
+		assertQueryIsUndefined("using nll: reachableVertices(nll, nll, nll)");
 		// assertQueryEqualsNull("using nll: reachableVertices(nll, ?, nll)");
-		assertQueryIsNull("using nll: reachableVertices(firstVertex(), nll, nll)");
+		assertQueryIsUndefined("using nll: reachableVertices(firstVertex(), nll, nll)");
 		// assertQueryEqualsNull("using nll: reachableVertices(firstVertex(), ?, nll)");
 
 		// assertQueryEqualsNull("using nll: reachableVertices(nll, nll, ?)");
@@ -1778,9 +1778,9 @@ public class PathSystemFunctionTest extends GenericTest {
 	@Test
 	public void testSiblingsNull() throws Exception {
 		// TODO A meaningful Pathsystem is missing
-		assertQueryIsNull("using nll: siblings(nll, nll)");
+		assertQueryIsUndefined("using nll: siblings(nll, nll)");
 		// assertQueryEqualsNull("using nll: siblings(nll, ?)");
-		assertQueryIsNull("using nll: siblings(firstVertex(), nll)");
+		assertQueryIsUndefined("using nll: siblings(firstVertex(), nll)");
 		fail();
 	}
 
@@ -1848,7 +1848,7 @@ public class PathSystemFunctionTest extends GenericTest {
 
 	@Test
 	public void testWeightNull() throws Exception {
-		assertQueryIsNull("using nll: weight(nll)");
+		assertQueryIsUndefined("using nll: weight(nll)");
 	}
 
 	/*

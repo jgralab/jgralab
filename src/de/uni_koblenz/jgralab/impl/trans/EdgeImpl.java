@@ -195,7 +195,7 @@ public abstract class EdgeImpl extends de.uni_koblenz.jgralab.impl.EdgeBaseImpl
 		// graph loading -> new initialization...
 		if (graph.isLoading()) {
 			this.nextEdge = new VersionedReferenceImpl<EdgeImpl>(this,
-					(EdgeImpl) nextEdge);
+					(EdgeImpl) nextEdge, "$nextEdge");
 		} else {
 			TransactionImpl transaction = (TransactionImpl) graph
 					.getCurrentTransaction();
@@ -215,7 +215,8 @@ public abstract class EdgeImpl extends de.uni_koblenz.jgralab.impl.EdgeBaseImpl
 			}
 			// initialization here
 			if (this.nextEdge == null) {
-				this.nextEdge = new VersionedReferenceImpl<EdgeImpl>(this);
+				this.nextEdge = new VersionedReferenceImpl<EdgeImpl>(this,
+						null, "$nextEdge");
 			}
 			this.nextEdge.setValidValue((EdgeImpl) nextEdge, transaction,
 					explicitChange);
@@ -227,7 +228,7 @@ public abstract class EdgeImpl extends de.uni_koblenz.jgralab.impl.EdgeBaseImpl
 		// graph loading -> new initialization...
 		if (graph.isLoading()) {
 			this.prevEdge = new VersionedReferenceImpl<EdgeImpl>(this,
-					(EdgeImpl) prevEdge);
+					(EdgeImpl) prevEdge, "$prevEdge");
 		} else {
 			TransactionImpl transaction = (TransactionImpl) graph
 					.getCurrentTransaction();
@@ -247,7 +248,8 @@ public abstract class EdgeImpl extends de.uni_koblenz.jgralab.impl.EdgeBaseImpl
 			}
 			// initialization here
 			if (this.prevEdge == null) {
-				this.prevEdge = new VersionedReferenceImpl<EdgeImpl>(this);
+				this.prevEdge = new VersionedReferenceImpl<EdgeImpl>(this,
+						null, "$prevEdge");
 			}
 			this.prevEdge.setValidValue((EdgeImpl) prevEdge, transaction,
 					explicitChange);
@@ -258,12 +260,13 @@ public abstract class EdgeImpl extends de.uni_koblenz.jgralab.impl.EdgeBaseImpl
 	protected void setIncidentVertex(VertexBaseImpl v) {
 		// graph loading -> new initialization...
 		if (graph.isLoading()) {
-			incidentVertex = new VersionedReferenceImpl<VertexBaseImpl>(this, v);
+			incidentVertex = new VersionedReferenceImpl<VertexBaseImpl>(this,
+					v, "$incidentVertex");
 		} else {
 			// initialization here
 			if (incidentVertex == null) {
 				incidentVertex = new VersionedReferenceImpl<VertexBaseImpl>(
-						this);
+						this, null, "$incidentVertex");
 			}
 			incidentVertex.setValidValue(v, graph.getCurrentTransaction());
 		}
@@ -274,7 +277,7 @@ public abstract class EdgeImpl extends de.uni_koblenz.jgralab.impl.EdgeBaseImpl
 		// graph loading -> new initialization...
 		if (graph.isLoading()) {
 			this.nextIncidence = new VersionedReferenceImpl<IncidenceImpl>(
-					this, nextIncidence);
+					this, nextIncidence, "$nextIncidence");
 		} else {
 			TransactionImpl transaction = (TransactionImpl) graph
 					.getCurrentTransaction();
@@ -300,7 +303,7 @@ public abstract class EdgeImpl extends de.uni_koblenz.jgralab.impl.EdgeBaseImpl
 			// initialization here
 			if (this.nextIncidence == null) {
 				this.nextIncidence = new VersionedReferenceImpl<IncidenceImpl>(
-						this);
+						this, null, "$nextIncidence");
 			}
 			this.nextIncidence.setValidValue(nextIncidence, transaction,
 					explicitChange);
@@ -312,7 +315,7 @@ public abstract class EdgeImpl extends de.uni_koblenz.jgralab.impl.EdgeBaseImpl
 		// graph loading -> new initialization...
 		if (graph.isLoading()) {
 			this.prevIncidence = new VersionedReferenceImpl<IncidenceImpl>(
-					this, prevIncidence);
+					this, prevIncidence, "$prevIncidence");
 		} else {
 			TransactionImpl transaction = (TransactionImpl) graph
 					.getCurrentTransaction();
@@ -338,7 +341,7 @@ public abstract class EdgeImpl extends de.uni_koblenz.jgralab.impl.EdgeBaseImpl
 			// initialization here
 			if (this.prevIncidence == null) {
 				this.prevIncidence = new VersionedReferenceImpl<IncidenceImpl>(
-						this);
+						this, null, "$prevIncidence");
 			}
 			this.prevIncidence.setValidValue(prevIncidence, transaction,
 					explicitChange);

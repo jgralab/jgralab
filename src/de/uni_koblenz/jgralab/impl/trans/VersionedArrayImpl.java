@@ -65,35 +65,6 @@ public class VersionedArrayImpl<E> extends VersionedDataObjectImpl<E> {
 		super(attributedElement, initialPersistentValue, name);
 	}
 
-	/**
-	 * 
-	 * @param graph
-	 * @param initialPersistentValue
-	 */
-	protected VersionedArrayImpl(AttributedElement attributedElement,
-			E initialPersistentValue) {
-		super(attributedElement, initialPersistentValue);
-	}
-
-	/**
-	 * 
-	 * @param graph
-	 * @param name
-	 */
-	protected VersionedArrayImpl(AttributedElement attributedElement,
-			String name) {
-		super(attributedElement, name);
-	}
-
-	/**
-	 * 
-	 * @param graph
-	 * @param name
-	 */
-	protected VersionedArrayImpl(AttributedElement attributedElement) {
-		super(attributedElement);
-	}
-
 	@SuppressWarnings("unchecked")
 	@Override
 	public E copyOf(E dataObject) {

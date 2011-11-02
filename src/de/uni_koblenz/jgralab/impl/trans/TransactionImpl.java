@@ -402,12 +402,11 @@ public class TransactionImpl implements Transaction {
 	private void removeAllTemporaryValues() {
 		if (logger != null) {
 			logger.finest("tx id=" + id);
-		} // remove all temporary values created...
+		}
+		// remove all temporary values created...
 		if (temporaryValueMap != null) {
-			// synchronized (temporaryValueMap) {
 			temporaryValueMap.clear();
 			temporaryValueMap = null;
-			// }
 		}
 		if (temporaryVersionMap != null) {
 			temporaryVersionMap.clear();
@@ -432,7 +431,6 @@ public class TransactionImpl implements Transaction {
 		if (savepointList == null) {
 			savepointList = new ArrayList<Savepoint>(1);
 		}
-		// synchronized (savepointList) {
 		SavepointImpl savepoint = new SavepointImpl(this, ++savepointIdCounter);
 		latestDefinedSavepoint = savepoint;
 		savepointList.add(savepoint);
@@ -453,7 +451,6 @@ public class TransactionImpl implements Transaction {
 			logger.fine("--> created sp id=" + savepoint.getID());
 		}
 		return savepoint;
-		// }
 	}
 
 	@Override

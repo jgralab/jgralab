@@ -13,8 +13,8 @@ public class AdditionalTest extends GenericTest {
 		assertQueryEquals("using x: x.menue5", "spiessbraten");
 		assertQueryEquals("using x: x.menue3", "steak");
 
-		assertQueryIsNull("using x: x.menue0");
-		assertQueryIsNull("using x: x.menue6");
+		assertQueryIsUndefined("using x: x.menue0");
+		assertQueryIsUndefined("using x: x.menue6");
 	}
 	
 

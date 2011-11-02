@@ -91,8 +91,6 @@ public class ECARuleManager implements ECARuleManagerInterface {
 		this.graph = graph;
 
 		rules = new ArrayList<ECARule>();
-
-		greqlEvaluator = new GreqlEvaluator("", this.graph, null);
 	}
 
 	private void createBeforeCreateVertexEventsLazily() {
@@ -554,6 +552,9 @@ public class ECARuleManager implements ECARuleManagerInterface {
 	}
 
 	public GreqlEvaluator getGreqlEvaluator() {
+		if (greqlEvaluator == null) {
+			greqlEvaluator = new GreqlEvaluator("", graph, null);
+		}
 		return greqlEvaluator;
 	}
 
