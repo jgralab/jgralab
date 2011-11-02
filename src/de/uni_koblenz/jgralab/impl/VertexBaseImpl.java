@@ -133,8 +133,9 @@ public abstract class VertexBaseImpl extends GraphElementImpl implements
 	 */
 	@Override
 	public Vertex getNextVertex() {
-		InternalVertex nextVertex = getNextVertexInVSeq();
 		TraversalContext tc = graph.getTraversalContext();
+		assert tc == null || tc.containsVertex(this);
+		InternalVertex nextVertex = getNextVertexInVSeq();
 		if (!(tc == null || nextVertex == null || tc.containsVertex(nextVertex))) {
 			while (!(nextVertex == null || tc.containsVertex(nextVertex))) {
 				nextVertex = nextVertex.getNextVertexInVSeq();
@@ -254,8 +255,9 @@ public abstract class VertexBaseImpl extends GraphElementImpl implements
 
 	@Override
 	public Edge getFirstIncidence() {
-		Edge firstIncidence = getFirstIncidenceInISeq();
 		TraversalContext tc = graph.getTraversalContext();
+		assert tc == null || tc.containsVertex(this);
+		Edge firstIncidence = getFirstIncidenceInISeq();
 		if (!(tc == null || firstIncidence == null || tc
 				.containsEdge(firstIncidence))) {
 			firstIncidence = firstIncidence.getNextIncidence();
@@ -265,8 +267,9 @@ public abstract class VertexBaseImpl extends GraphElementImpl implements
 
 	@Override
 	public Edge getLastIncidence() {
-		Edge lastIncidence = getLastIncidenceInISeq();
 		TraversalContext tc = graph.getTraversalContext();
+		assert tc == null || tc.containsVertex(this);
+		Edge lastIncidence = getLastIncidenceInISeq();
 		if (!(tc == null || lastIncidence == null || tc
 				.containsEdge(lastIncidence))) {
 			lastIncidence = lastIncidence.getPrevIncidence();
@@ -673,8 +676,9 @@ public abstract class VertexBaseImpl extends GraphElementImpl implements
 
 	@Override
 	public Vertex getPrevVertex() {
-		InternalVertex prevVertex = getPrevVertexInVSeq();
 		TraversalContext tc = graph.getTraversalContext();
+		assert tc == null || tc.containsVertex(this);
+		InternalVertex prevVertex = getPrevVertexInVSeq();
 		if (!(tc == null || prevVertex == null || tc.containsVertex(prevVertex))) {
 			while (!(prevVertex == null || tc.containsVertex(prevVertex))) {
 				prevVertex = prevVertex.getPrevVertexInVSeq();

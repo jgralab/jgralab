@@ -56,8 +56,9 @@ public abstract class IncidenceImpl extends GraphElementImpl implements Edge,
 
 	@Override
 	public InternalEdge getNextIncidence() {
-		InternalEdge nextIncidence = getNextIncidenceInISeq();
 		TraversalContext tc = graph.getTraversalContext();
+		assert tc == null || tc.containsEdge(this);
+		InternalEdge nextIncidence = getNextIncidenceInISeq();
 		if (!(tc == null || nextIncidence == null || tc
 				.containsEdge(nextIncidence))) {
 			while (!(nextIncidence == null || tc.containsEdge(nextIncidence))) {
@@ -69,8 +70,9 @@ public abstract class IncidenceImpl extends GraphElementImpl implements Edge,
 
 	@Override
 	public InternalEdge getPrevIncidence() {
-		InternalEdge prevIncidence = getPrevIncidenceInISeq();
 		TraversalContext tc = graph.getTraversalContext();
+		assert tc == null || tc.containsEdge(this);
+		InternalEdge prevIncidence = getPrevIncidenceInISeq();
 		if (!(tc == null || prevIncidence == null || tc
 				.containsEdge(prevIncidence))) {
 			while (!(prevIncidence == null || tc.containsEdge(prevIncidence))) {

@@ -109,8 +109,9 @@ public abstract class EdgeBaseImpl extends IncidenceImpl implements Edge,
 
 	@Override
 	public Edge getNextEdge() {
-		InternalEdge nextEdge = getNextEdgeInESeq();
 		TraversalContext tc = graph.getTraversalContext();
+		assert tc == null || tc.containsEdge(this);
+		InternalEdge nextEdge = getNextEdgeInESeq();
 		if (!(tc == null || nextEdge == null || tc.containsEdge(nextEdge))) {
 			while (!(nextEdge == null || tc.containsEdge(nextEdge))) {
 				nextEdge = nextEdge.getNextEdgeInESeq();
@@ -121,8 +122,9 @@ public abstract class EdgeBaseImpl extends IncidenceImpl implements Edge,
 
 	@Override
 	public Edge getPrevEdge() {
-		InternalEdge prevEdge = getPrevEdgeInESeq();
 		TraversalContext tc = graph.getTraversalContext();
+		assert tc == null || tc.containsEdge(this);
+		InternalEdge prevEdge = getPrevEdgeInESeq();
 		if (!(tc == null || prevEdge == null || tc.containsEdge(prevEdge))) {
 			while (!(prevEdge == null || tc.containsEdge(prevEdge))) {
 				prevEdge = prevEdge.getPrevEdgeInESeq();
