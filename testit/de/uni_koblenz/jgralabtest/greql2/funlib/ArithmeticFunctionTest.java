@@ -117,17 +117,17 @@ public class ArithmeticFunctionTest extends GenericTest {
 	@Test
 	public void testAddNull() throws Exception {
 
-		assertQueryIsNull("using nll: add(nll, nll)");
-		assertQueryIsNull("using nll: add(nll, 100)");
-		assertQueryIsNull("using nll: add(100, nll)");
+		assertQueryIsUndefined("using nll: add(nll, nll)");
+		assertQueryIsUndefined("using nll: add(nll, 100)");
+		assertQueryIsUndefined("using nll: add(100, nll)");
 	}
 
 	@Test
 	public void testAddInfixNull() throws Exception {
 
-		assertQueryIsNull("using nll: nll + nll");
-		assertQueryIsNull("using nll: nll + 100");
-		assertQueryIsNull("using nll: 100 + nll");
+		assertQueryIsUndefined("using nll: nll + nll");
+		assertQueryIsUndefined("using nll: nll + 100");
+		assertQueryIsUndefined("using nll: 100 + nll");
 	}
 
 	@Test
@@ -183,17 +183,17 @@ public class ArithmeticFunctionTest extends GenericTest {
 	@Test
 	public void testDivNull() throws Exception {
 
-		assertQueryIsNull("using nll: div(nll, nll)");
-		assertQueryIsNull("using nll: div(nll, 100)");
-		assertQueryIsNull("using nll: div(100, nll)");
+		assertQueryIsUndefined("using nll: div(nll, nll)");
+		assertQueryIsUndefined("using nll: div(nll, 100)");
+		assertQueryIsUndefined("using nll: div(100, nll)");
 	}
 
 	@Test
 	public void testDivInfixNull() throws Exception {
 
-		assertQueryIsNull("using nll: nll / nll");
-		assertQueryIsNull("using nll: nll / 100");
-		assertQueryIsNull("using nll: 100 / nll");
+		assertQueryIsUndefined("using nll: nll / nll");
+		assertQueryIsUndefined("using nll: nll / 100");
+		assertQueryIsUndefined("using nll: 100 / nll");
 	}
 
 	@Test
@@ -255,17 +255,17 @@ public class ArithmeticFunctionTest extends GenericTest {
 	@Test
 	public void testModNull() throws Exception {
 
-		assertQueryIsNull("using nll: mod(nll, nll)");
-		assertQueryIsNull("using nll: mod(nll, 100)");
-		assertQueryIsNull("using nll: mod(100, nll)");
+		assertQueryIsUndefined("using nll: mod(nll, nll)");
+		assertQueryIsUndefined("using nll: mod(nll, 100)");
+		assertQueryIsUndefined("using nll: mod(100, nll)");
 	}
 
 	@Test
 	public void testModInfixNull() throws Exception {
 
-		assertQueryIsNull("using nll: nll % nll");
-		assertQueryIsNull("using nll: nll % 100");
-		assertQueryIsNull("using nll: 100 % nll");
+		assertQueryIsUndefined("using nll: nll % nll");
+		assertQueryIsUndefined("using nll: nll % 100");
+		assertQueryIsUndefined("using nll: 100 % nll");
 	}
 
 	@Test
@@ -333,17 +333,17 @@ public class ArithmeticFunctionTest extends GenericTest {
 	@Test
 	public void testMulNull() throws Exception {
 
-		assertQueryIsNull("using nll: mul(nll, nll)");
-		assertQueryIsNull("using nll: mul(nll, 100)");
-		assertQueryIsNull("using nll: mul(100, nll)");
+		assertQueryIsUndefined("using nll: mul(nll, nll)");
+		assertQueryIsUndefined("using nll: mul(nll, 100)");
+		assertQueryIsUndefined("using nll: mul(100, nll)");
 	}
 
 	@Test
 	public void testMulInfixNull() throws Exception {
 
-		assertQueryIsNull("using nll: nll * nll");
-		assertQueryIsNull("using nll: nll * 100");
-		assertQueryIsNull("using nll: 100 * nll");
+		assertQueryIsUndefined("using nll: nll * nll");
+		assertQueryIsUndefined("using nll: nll * 100");
+		assertQueryIsUndefined("using nll: 100 * nll");
 	}
 
 	@Test
@@ -387,16 +387,16 @@ public class ArithmeticFunctionTest extends GenericTest {
 
 	@Test
 	public void testNegNull() throws Exception {
-		assertQueryIsNull("using nll: neg(nll)");
+		assertQueryIsUndefined("using nll: neg(nll)");
 
 	}
 
 	@Test
 	public void testNegInfixNull() throws Exception {
 
-		assertQueryIsNull("using nll: nll - nll");
-		assertQueryIsNull("using nll: nll - 100");
-		assertQueryIsNull("using nll: 100 - nll");
+		assertQueryIsUndefined("using nll: nll - nll");
+		assertQueryIsUndefined("using nll: nll - 100");
+		assertQueryIsUndefined("using nll: 100 - nll");
 	}
 
 	@Test
@@ -419,7 +419,7 @@ public class ArithmeticFunctionTest extends GenericTest {
 
 	@Test
 	public void testSqrtNull() throws Exception {
-		assertQueryIsNull("using nll: sqrt(nll)");
+		assertQueryIsUndefined("using nll: sqrt(nll)");
 
 	}
 
@@ -483,15 +483,15 @@ public class ArithmeticFunctionTest extends GenericTest {
 
 	@Test
 	public void testSubNull() throws Exception {
-		assertQueryIsNull("using nll: sub(nll, nll)");
-		assertQueryIsNull("using nll: sub(nll, 100)");
-		assertQueryIsNull("using nll: sub(100, nll)");
+		assertQueryIsUndefined("using nll: sub(nll, nll)");
+		assertQueryIsUndefined("using nll: sub(nll, 100)");
+		assertQueryIsUndefined("using nll: sub(100, nll)");
 	}
 
 	@Test
 	public void testSubInfixNull() throws Exception {
-		assertQueryIsNull("using nll: nll - nll");
-		assertQueryIsNull("using nll: nll - 100");
-		assertQueryIsNull("using nll: 100 - nll");
+		assertQueryIsUndefined("using nll: nll - nll");
+		assertQueryIsUndefined("using nll: nll - 100");
+		assertQueryIsUndefined("using nll: 100 - nll");
 	}
 }

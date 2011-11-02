@@ -14,7 +14,7 @@ public class Sdev extends Function {
 				Category.STATISTICS);
 	}
 
-	public Number evaluate(Collection<Number> l) {
+	public Double evaluate(Collection<Number> l) {
 		if (l.size() < 1) {
 			return null;
 		} else {

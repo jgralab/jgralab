@@ -36,7 +36,6 @@
 package de.uni_koblenz.jgralabtest.greql2;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.fail;
 
 import java.io.File;
@@ -59,6 +58,7 @@ import de.uni_koblenz.jgralab.greql2.optimizer.DefaultOptimizer;
 import de.uni_koblenz.jgralab.greql2.optimizer.Optimizer;
 import de.uni_koblenz.jgralab.greql2.parser.GreqlParser;
 import de.uni_koblenz.jgralab.greql2.serialising.GreqlSerializer;
+import de.uni_koblenz.jgralab.greql2.types.Undefined;
 import de.uni_koblenz.jgralab.utilities.tg2dot.Tg2Dot;
 import de.uni_koblenz.jgralabtest.schemas.minimal.MinimalGraph;
 import de.uni_koblenz.jgralabtest.schemas.minimal.MinimalSchema;
@@ -89,7 +89,6 @@ public class GenericTest {
 		plazaCount = test.queryInteger("count(V{junctions.Plaza})");
 		localityCount = test.queryInteger("count(V{localities.Locality})");
 		queryUncontainedCrossroadCount(test);
-		eval.setVariable("nll", null);
 		JGraLab.setLogLevel(Level.OFF);
 	}
 
@@ -106,9 +105,9 @@ public class GenericTest {
 				- ((Double) result).intValue();
 	}
 
-	protected void assertQueryIsNull(String query) throws Exception {
+	protected void assertQueryIsUndefined(String query) throws Exception {
 		Object result = evalTestQuery(query);
-		assertNull(result);
+		assertEquals(Undefined.UNDEFINED, result);
 	}
 
 	protected void assertQueryEquals(String query, boolean expectedValue)
