@@ -686,8 +686,8 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 	 */
 	@Override
 	public Edge getFirstEdge() {
-		Edge firstEdge = getFirstEdgeInESeq();
 		TraversalContext tc = getTraversalContext();
+		Edge firstEdge = getFirstEdgeInESeq();
 		if (!(tc == null || firstEdge == null || tc.containsEdge(firstEdge))) {
 			firstEdge = firstEdge.getNextEdge();
 		}
@@ -701,8 +701,8 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 	 */
 	@Override
 	public Edge getLastEdge() {
-		Edge lastEdge = getLastEdgeInESeq();
 		TraversalContext tc = getTraversalContext();
+		Edge lastEdge = getLastEdgeInESeq();
 		if (!(tc == null || lastEdge == null || tc.containsEdge(lastEdge))) {
 			lastEdge = lastEdge.getPrevEdge();
 		}
@@ -748,8 +748,8 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 	 */
 	@Override
 	public Vertex getFirstVertex() {
-		Vertex firstVertex = getFirstVertexInVSeq();
 		TraversalContext tc = getTraversalContext();
+		Vertex firstVertex = getFirstVertexInVSeq();
 		if (!(tc == null || firstVertex == null || tc
 				.containsVertex(firstVertex))) {
 			firstVertex = firstVertex.getNextVertex();
@@ -764,8 +764,8 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 	 */
 	@Override
 	public Vertex getLastVertex() {
-		Vertex lastVertex = getLastVertexInVSeq();
 		TraversalContext tc = getTraversalContext();
+		Vertex lastVertex = getLastVertexInVSeq();
 		if (!(tc == null || lastVertex == null || tc.containsVertex(lastVertex))) {
 			lastVertex = lastVertex.getPrevVertex();
 		}
@@ -1883,18 +1883,21 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 	@Override
 	public int getGraphStructureChangedListenerCount() {
 		return graphStructureChangedListenersWithAutoRemoval == null ? graphStructureChangedListeners
-				.size() : graphStructureChangedListenersWithAutoRemoval.size()
-				+ graphStructureChangedListeners.size();
+				.size()
+				: graphStructureChangedListenersWithAutoRemoval.size()
+						+ graphStructureChangedListeners.size();
 	}
 
 	private Iterator<WeakReference<GraphStructureChangedListener>> getListenerListIteratorForAutoRemove() {
 		return graphStructureChangedListenersWithAutoRemoval != null ? graphStructureChangedListenersWithAutoRemoval
-				.iterator() : null;
+				.iterator()
+				: null;
 	}
 
 	private Iterator<GraphStructureChangedListener> getListenerListIterator() {
 		return graphStructureChangedListeners != null ? graphStructureChangedListeners
-				.iterator() : null;
+				.iterator()
+				: null;
 	}
 
 	public void notifyVertexDeleted(Vertex v) {

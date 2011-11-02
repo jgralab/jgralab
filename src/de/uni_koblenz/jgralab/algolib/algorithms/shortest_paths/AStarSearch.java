@@ -36,6 +36,7 @@ package de.uni_koblenz.jgralab.algolib.algorithms.shortest_paths;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
+import de.uni_koblenz.jgralab.TraversalContext;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.algolib.algorithms.AlgorithmStates;
 import de.uni_koblenz.jgralab.algolib.algorithms.AlgorithmTerminatedException;
@@ -170,7 +171,10 @@ public class AStarSearch extends StructureOrientedAlgorithm implements
 	@Override
 	public AStarSearch execute(Vertex start, Vertex target)
 			throws AlgorithmTerminatedException {
-		// TODO check if target vertex is in TC
+		TraversalContext subgraph = graph.getTraversalContext();
+		if (subgraph != null && !subgraph.containsVertex(target)) {
+			throw new IllegalArgumentException("Target vertex not in subgraph!");
+		}
 		this.target = target;
 		visitors.addVisitor(targetVertexReachedVisitor);
 
@@ -182,7 +186,10 @@ public class AStarSearch extends StructureOrientedAlgorithm implements
 
 	protected void internalExecute(Vertex start, Vertex target)
 			throws AlgorithmTerminatedException {
-		// TODO check if start vertex is in TC
+		TraversalContext subgraph = graph.getTraversalContext();
+		if (subgraph != null && !subgraph.containsVertex(start)) {
+			throw new IllegalArgumentException("Start vertex not in subgraph!");
+		}
 		startRunning();
 		weightedDistance.set(start, 0);
 		vertexQueue.put(start, 0);

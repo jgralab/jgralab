@@ -39,6 +39,7 @@ import java.util.Stack;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
+import de.uni_koblenz.jgralab.TraversalContext;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.algolib.algorithms.AlgorithmTerminatedException;
 import de.uni_koblenz.jgralab.algolib.functions.BooleanFunction;
@@ -103,7 +104,9 @@ public class IterativeDepthFirstSearch extends DepthFirstSearch {
 	@Override
 	public IterativeDepthFirstSearch execute(Vertex root)
 			throws AlgorithmTerminatedException {
-		if (visitedVertices.get(root)) {
+		TraversalContext subgraph = graph.getTraversalContext();
+		if (subgraph != null && !subgraph.containsVertex(root)
+				|| visitedVertices.get(root)) {
 			return this;
 		}
 		startRunning();
