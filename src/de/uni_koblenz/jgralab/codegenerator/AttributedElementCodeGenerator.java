@@ -427,16 +427,16 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 
 			code.setVariable("initLoading",
 					"new #vclass#(this, _#name#, \"#name#\");");
-			code.setVariable("init", "new #vclass#(this);");
+			code.setVariable("init", "new #vclass#(this, null, \"#name#\");");
 
 			code.add("public void set_#name#(#type# _#name#) {");
 			addCheckValidityCode(code);
 			code.add(
-					"\tif(#theGraph#.isLoading())",
+					"\tif (#theGraph#.isLoading()) {",
 					"\t\tthis._#name# = #initLoading#",
-					"\tif(this._#name# == null) {",
+					"\t}",
+					"\tif (this._#name# == null) {",
 					"\t\tthis._#name# = #init#",
-					"\t\tthis._#name#.setName(\"#name#\");",
 					"\t}",
 					"\tthis._#name#.setValidValue((#ttype#) _#name#, #theGraph#.getCurrentTransaction());",
 					"\tattributeChanged(this._#name#);", "\tgraphModified();",

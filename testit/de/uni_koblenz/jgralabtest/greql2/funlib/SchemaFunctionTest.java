@@ -94,7 +94,7 @@ public class SchemaFunctionTest extends GenericTest {
 
 	@Test
 	public void testAttributeNamesNull() throws Exception {
-		assertQueryIsNull("using nll: attributeNames(nll)");
+		assertQueryIsUndefined("using nll: attributeNames(nll)");
 	}
 
 	@Test
@@ -130,7 +130,7 @@ public class SchemaFunctionTest extends GenericTest {
 
 	@Test
 	public void testAttributesNull() throws Exception {
-		assertQueryIsNull("using nll: attributes(nll)");
+		assertQueryIsUndefined("using nll: attributes(nll)");
 	}
 
 	@Test
@@ -149,9 +149,9 @@ public class SchemaFunctionTest extends GenericTest {
 
 	@Test
 	public void testEnumConstantNull() throws Exception {
-		assertQueryIsNull("using nll: enumConstant(nll, '?')");
-		assertQueryIsNull("using nll: enumConstant('?', nll)");
-		assertQueryIsNull("using nll: enumConstant(nll, nll)");
+		assertQueryIsUndefined("using nll: enumConstant(nll, '?')");
+		assertQueryIsUndefined("using nll: enumConstant('?', nll)");
+		assertQueryIsUndefined("using nll: enumConstant(nll, nll)");
 	}
 
 	@Test
@@ -191,8 +191,8 @@ public class SchemaFunctionTest extends GenericTest {
 		assertQueryEquals("using nll: hasAttribute(firstVertex(), nll)", false);
 		assertQueryEquals("using nll: hasAttribute(type(firstVertex()), nll)",
 				false);
-		assertQueryIsNull("using nll: hasAttribute(nll, '?')");
-		assertQueryIsNull("using nll: hasAttribute(nll, nll)");
+		assertQueryIsUndefined("using nll: hasAttribute(nll, '?')");
+		assertQueryIsUndefined("using nll: hasAttribute(nll, nll)");
 	}
 
 	@Test
@@ -266,10 +266,10 @@ public class SchemaFunctionTest extends GenericTest {
 	@Test
 	public void testHasTypeNull() throws Exception {
 		assertQueryEquals("using nll: hasType(firstVertex(), nll)", false);
-		assertQueryIsNull("using nll: hasType(nll, '?')");
-		assertQueryIsNull("using nll: hasType(nll, type(firstVertex()))");
-		assertQueryIsNull("using nll: hasType{Vertex}(nll)");
-		assertQueryIsNull("using nll: hasType(nll, nll)");
+		assertQueryIsUndefined("using nll: hasType(nll, '?')");
+		assertQueryIsUndefined("using nll: hasType(nll, type(firstVertex()))");
+		assertQueryIsUndefined("using nll: hasType{Vertex}(nll)");
+		assertQueryIsUndefined("using nll: hasType(nll, nll)");
 	}
 
 	@Test
@@ -327,11 +327,11 @@ public class SchemaFunctionTest extends GenericTest {
 
 	@Test
 	public void testIsANull() throws Exception {
-		assertQueryIsNull("using nll: isA('?', nll)");
-		assertQueryIsNull("using nll: isA(firstVertex(), nll)");
-		assertQueryIsNull("using nll: isA(nll, '?')");
-		assertQueryIsNull("using nll: isA(nll, firstVertex())");
-		assertQueryIsNull("using nll: isA(nll, nll)");
+		assertQueryIsUndefined("using nll: isA('?', nll)");
+		assertQueryIsUndefined("using nll: isA(firstVertex(), nll)");
+		assertQueryIsUndefined("using nll: isA(nll, '?')");
+		assertQueryIsUndefined("using nll: isA(nll, firstVertex())");
+		assertQueryIsUndefined("using nll: isA(nll, nll)");
 	}
 
 	@Test
@@ -362,7 +362,7 @@ public class SchemaFunctionTest extends GenericTest {
 
 	@Test
 	public void testSubTypesNull() throws Exception {
-		assertQueryIsNull("using nll: subtypes(nll)");
+		assertQueryIsUndefined("using nll: subtypes(nll)");
 	}
 
 	@Test
@@ -397,7 +397,7 @@ public class SchemaFunctionTest extends GenericTest {
 
 	@Test
 	public void testSuperTypesNull() throws Exception {
-		assertQueryIsNull("using nll: supertypes(nll)");
+		assertQueryIsUndefined("using nll: supertypes(nll)");
 	}
 
 	@Test
@@ -447,7 +447,7 @@ public class SchemaFunctionTest extends GenericTest {
 
 	@Test
 	public void testTypeNull() throws Exception {
-		assertQueryIsNull("using nll: type(nll)");
+		assertQueryIsUndefined("using nll: type(nll)");
 	}
 
 	@Test
@@ -476,7 +476,7 @@ public class SchemaFunctionTest extends GenericTest {
 
 	@Test
 	public void testTypeNameNull() throws Exception {
-		assertQueryIsNull("using nll: typeName(nll)");
+		assertQueryIsUndefined("using nll: typeName(nll)");
 	}
 
 	@Test
@@ -575,7 +575,7 @@ public class SchemaFunctionTest extends GenericTest {
 
 	@Test
 	public void testTypesNull() throws Exception {
-		assertQueryIsNull("using nll: types(nll)");
+		assertQueryIsUndefined("using nll: types(nll)");
 	}
 
 	@Test
@@ -604,6 +604,6 @@ public class SchemaFunctionTest extends GenericTest {
 
 	@Test
 	public void testUniqueTypeNameNull() throws Exception {
-		assertQueryIsNull("using nll: uniqueTypeName(nll)");
+		assertQueryIsUndefined("using nll: uniqueTypeName(nll)");
 	}
 }

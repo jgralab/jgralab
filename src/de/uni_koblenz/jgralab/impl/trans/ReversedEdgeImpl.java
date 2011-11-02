@@ -113,12 +113,12 @@ public abstract class ReversedEdgeImpl extends
 	public void setIncidentVertex(Vertex v) {
 		if (graph.isLoading()) {
 			incidentVertex = new VersionedReferenceImpl<VertexBaseImpl>(
-					normalEdge, (VertexBaseImpl) v);
+					normalEdge, (VertexBaseImpl) v, "$normalEdge");
 		} else {
 			// initialize here
 			if (incidentVertex == null) {
 				incidentVertex = new VersionedReferenceImpl<VertexBaseImpl>(
-						normalEdge);
+						normalEdge, null, "$revIncidentVertex");
 			}
 			incidentVertex.setValidValue((VertexBaseImpl) v, graph
 					.getCurrentTransaction());
@@ -129,7 +129,7 @@ public abstract class ReversedEdgeImpl extends
 	public void setNextIncidenceInternal(InternalEdge nextIncidence) {
 		if (graph.isLoading()) {
 			this.nextIncidence = new VersionedReferenceImpl<IncidenceImpl>(
-					normalEdge, (IncidenceImpl) nextIncidence);
+					normalEdge, (IncidenceImpl) nextIncidence, "$revNextIncidence");
 		} else {
 			TransactionImpl transaction = (TransactionImpl) graph
 					.getCurrentTransaction();
@@ -156,7 +156,7 @@ public abstract class ReversedEdgeImpl extends
 			// initialize here
 			if (this.nextIncidence == null) {
 				this.nextIncidence = new VersionedReferenceImpl<IncidenceImpl>(
-						normalEdge);
+						normalEdge, null, "$revNextIncidence");
 			}
 			this.nextIncidence.setValidValue((IncidenceImpl) nextIncidence,
 					transaction, explicitChange);
@@ -167,7 +167,7 @@ public abstract class ReversedEdgeImpl extends
 	public void setPrevIncidenceInternal(InternalEdge prevIncidence) {
 		if (graph.isLoading()) {
 			this.prevIncidence = new VersionedReferenceImpl<IncidenceImpl>(
-					normalEdge, (IncidenceImpl) prevIncidence);
+					normalEdge, (IncidenceImpl) prevIncidence, "$revPrevIncidence");
 		} else {
 			TransactionImpl transaction = (TransactionImpl) graph
 					.getCurrentTransaction();
@@ -194,7 +194,7 @@ public abstract class ReversedEdgeImpl extends
 			// initialize here
 			if (this.prevIncidence == null) {
 				this.prevIncidence = new VersionedReferenceImpl<IncidenceImpl>(
-						normalEdge);
+						normalEdge, null, "$revPrevIncidence");
 			}
 			this.prevIncidence.setValidValue((IncidenceImpl) prevIncidence,
 					transaction, explicitChange);

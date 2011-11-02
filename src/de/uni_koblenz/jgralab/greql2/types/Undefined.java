@@ -8,7 +8,7 @@ public final class Undefined {
 
 	@Override
 	public boolean equals(Object arg0) {
-		return false;
+		return arg0 == UNDEFINED;
 	}
 
 	@Override
