@@ -48,9 +48,9 @@ import de.uni_koblenz.jgralab.impl.RecordImpl;
 
 /**
  * Evaluates a record construction, this is for instance rec( name:"element")
- *
+ * 
  * @author ist@uni-koblenz.de
- *
+ * 
  */
 public class RecordConstructionEvaluator extends VertexEvaluator {
 
@@ -66,7 +66,7 @@ public class RecordConstructionEvaluator extends VertexEvaluator {
 
 	/**
 	 * Creates a new RecordConstructionEvaluator for the given vertex
-	 *
+	 * 
 	 * @param eval
 	 *            the GreqlEvaluator instance this VertexEvaluator belong to
 	 * @param vertex
@@ -84,7 +84,7 @@ public class RecordConstructionEvaluator extends VertexEvaluator {
 		IsRecordElementOf inc = vertex
 				.getFirstIsRecordElementOfIncidence(EdgeDirection.IN);
 		while (inc != null) {
-			RecordElement currentElement = (RecordElement) inc.getAlpha();
+			RecordElement currentElement = inc.getAlpha();
 			RecordElementEvaluator vertexEval = (RecordElementEvaluator) vertexEvalMarker
 					.getMark(currentElement);
 			resultRecord = resultRecord.plus(vertexEval.getId(),
@@ -96,8 +96,8 @@ public class RecordConstructionEvaluator extends VertexEvaluator {
 
 	@Override
 	public VertexCosts calculateSubtreeEvaluationCosts(GraphSize graphSize) {
-		return this.greqlEvaluator.getCostModel()
-				.calculateCostsRecordConstruction(this, graphSize);
+		return greqlEvaluator.getCostModel().calculateCostsRecordConstruction(
+				this, graphSize);
 	}
 
 	@Override
