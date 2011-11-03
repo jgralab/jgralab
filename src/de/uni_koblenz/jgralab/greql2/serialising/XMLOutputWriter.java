@@ -17,10 +17,10 @@ import org.pcollections.PVector;
 import de.uni_koblenz.ist.utilities.xml.IndentingXMLStreamWriter;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
+import de.uni_koblenz.jgralab.Record;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql2.exception.SerialisingException;
 import de.uni_koblenz.jgralab.greql2.types.Path;
-import de.uni_koblenz.jgralab.greql2.types.Record;
 import de.uni_koblenz.jgralab.greql2.types.Table;
 import de.uni_koblenz.jgralab.greql2.types.Tuple;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
@@ -40,7 +40,7 @@ public class XMLOutputWriter extends DefaultWriter implements XMLConstants {
 			super.write(o);
 		} catch (XMLStreamException e) {
 			throw e;
-		}catch (SerialisingException e){
+		} catch (SerialisingException e) {
 			throw e;
 		} catch (Exception e) {
 			throw new RuntimeException("Unexpected Exception", e);
@@ -252,7 +252,7 @@ public class XMLOutputWriter extends DefaultWriter implements XMLConstants {
 		for (String component : r.getComponentNames()) {
 			writer.writeStartElement(RECORD_COMPONENT);
 			writer.writeAttribute(ATTR_NAME, component);
-			this.write(r.getComponent(component));
+			write(r.getComponent(component));
 			writer.writeEndElement();
 		}
 
@@ -342,8 +342,8 @@ public class XMLOutputWriter extends DefaultWriter implements XMLConstants {
 	@Override
 	public void writePath(Path p) throws XMLStreamException {
 		writer.writeStartElement(PATH);
-		this.write(p.getVertexTrace());
-		this.write(p.getEdgeTrace());
+		write(p.getVertexTrace());
+		write(p.getEdgeTrace());
 		writer.writeEndElement();
 	}
 

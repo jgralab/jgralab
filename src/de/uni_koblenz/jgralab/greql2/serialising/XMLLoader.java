@@ -17,10 +17,10 @@ import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql2.exception.SerialisingException;
-import de.uni_koblenz.jgralab.greql2.types.Record;
 import de.uni_koblenz.jgralab.greql2.types.Table;
 import de.uni_koblenz.jgralab.greql2.types.Tuple;
 import de.uni_koblenz.jgralab.greql2.types.Undefined;
+import de.uni_koblenz.jgralab.impl.RecordImpl;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.Schema;
 
@@ -124,8 +124,8 @@ public class XMLLoader extends XmlProcessor implements XMLConstants {
 		} else if (parentElement instanceof PCollection) {
 			// ok, parent is a collection, so we can simply add with the
 			// exception of records and tables
-			if (parentElement instanceof Record) {
-				Record rec = (Record) parentElement;
+			if (parentElement instanceof RecordImpl) {
+				RecordImpl rec = (RecordImpl) parentElement;
 				RecordComponent comp = (RecordComponent) endedElement;
 				parentElement = rec.plus(comp.componentName, comp.value);
 			} else if (parentElement instanceof Table) {
@@ -244,7 +244,7 @@ public class XMLLoader extends XmlProcessor implements XMLConstants {
 			val = new MapEntry();
 			// ---------------------------------------------------------------
 		} else if (elem.equals(RECORD)) {
-			val = Record.empty();
+			val = RecordImpl.empty();
 			// ---------------------------------------------------------------
 		} else if (elem.equals(RECORD_COMPONENT)) {
 			val = new RecordComponent(getAttribute(ATTR_NAME));

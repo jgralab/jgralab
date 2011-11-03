@@ -1,4 +1,4 @@
-package de.uni_koblenz.jgralab.greql2.types;
+package de.uni_koblenz.jgralab.impl;
 
 import java.io.IOException;
 import java.util.Iterator;
@@ -12,25 +12,25 @@ import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.NoSuchAttributeException;
 
-public class Record implements de.uni_koblenz.jgralab.Record {
+public class RecordImpl implements de.uni_koblenz.jgralab.Record {
 	private PMap<String, Object> entries;
 
-	private Record() {
+	private RecordImpl() {
 		entries = JGraLab.map();
 	}
 
-	private Record(PMap<String, Object> m) {
+	private RecordImpl(PMap<String, Object> m) {
 		entries = m;
 	}
 
-	private static Record empty = new Record();
+	private static RecordImpl empty = new RecordImpl();
 
-	public static Record empty() {
+	public static RecordImpl empty() {
 		return empty;
 	}
 
-	public Record plus(String name, Object value) {
-		return new Record(entries.plus(name, value));
+	public RecordImpl plus(String name, Object value) {
+		return new RecordImpl(entries.plus(name, value));
 	}
 
 	@Override
@@ -77,8 +77,8 @@ public class Record implements de.uni_koblenz.jgralab.Record {
 		if (obj == null) {
 			return false;
 		}
-		if (obj instanceof Record) {
-			return entries.equals(((Record) obj).entries);
+		if (obj instanceof RecordImpl) {
+			return entries.equals(((RecordImpl) obj).entries);
 		}
 		if (obj instanceof de.uni_koblenz.jgralab.Record) {
 			de.uni_koblenz.jgralab.Record r = (de.uni_koblenz.jgralab.Record) obj;
