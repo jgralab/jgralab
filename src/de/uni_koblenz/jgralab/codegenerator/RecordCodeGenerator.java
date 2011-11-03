@@ -207,24 +207,40 @@ public class RecordCodeGenerator extends CodeGenerator {
 		CodeList code = new CodeList();
 		code.addNoIndent(new CodeSnippet(true, "@Override",
 				"public boolean equals(Object o) {"));
-		code.add(new CodeSnippet(
-				"if (o == null || !(o instanceof #simpleClassName#)) {",
-				"\treturn false;", "}",
-				"#simpleClassName# record = (#simpleClassName#) o;"));
+		code.add(new CodeSnippet("if (o == null) {", "\treturn false;", "}"));
 
+		code.add(new CodeSnippet("if (o instanceof #simpleClassName#) {",
+				"\t#simpleClassName# rec = (#simpleClassName#) o;"));
 		for (RecordComponent rc : recordDomain.getComponents()) {
-			CodeSnippet codeSnippet = new CodeSnippet(true);
+			CodeSnippet codeSnippet = new CodeSnippet();
 			codeSnippet.setVariable("name", rc.getName());
 			if (rc.getDomain().isPrimitive()) {
-				codeSnippet.add("\tif(_#name# != record._#name#) {");
+				codeSnippet.add("\tif (_#name# != rec._#name#) {");
 				codeSnippet.add("\t\treturn false;", "\t}");
 			} else {
-				codeSnippet.add("\tif(!(_#name#.equals(record._#name#))) {");
-				codeSnippet.add("\t\treturn false;", "\t}");
+				codeSnippet.add("\tif (!(_#name#.equals(rec._#name#))) {");
+				codeSnippet.add("\t\treturn false;", "\t\t}");
 			}
-			code.addNoIndent(codeSnippet);
+			code.add(codeSnippet);
 		}
-		code.addNoIndent(new CodeSnippet("\treturn true;", "}"));
+		code.add(new CodeSnippet("\treturn true;", "}"));
+
+		code.add(new CodeSnippet("if (o instanceof #jgPackage#.Record) {",
+				"\t#jgPackage#.Record rec = (#jgPackage#.Record) o;",
+				"\tif (rec.size() != " + recordDomain.getComponents().size()
+						+ ") {", "\t\treturn false;", "\t}", "\ttry {"));
+
+		for (RecordComponent rc : recordDomain.getComponents()) {
+			CodeSnippet codeSnippet = new CodeSnippet(
+					"\t\tif (!rec.getComponent(\"#name#\").equals(_#name#)) {",
+					"\t\t\treturn false;", "\t\t}");
+			codeSnippet.setVariable("name", rc.getName());
+			code.add(codeSnippet);
+		}
+		code.add(new CodeSnippet("\t\treturn true;",
+				"\t} catch (NoSuchAttributeException e) {",
+				"\t\treturn false;", "\t}", "}", "return false;"));
+		code.addNoIndent(new CodeSnippet("}"));
 		return code;
 	}
 
@@ -246,8 +262,15 @@ public class RecordCodeGenerator extends CodeGenerator {
 		}
 		code.add(
 				"\t\tcomponentNames = Collections.unmodifiableList(componentNames);",
-				"\t}", "", "\tpublic List<String> getComponentNames() {",
+				"\t}");
+		code.add("", "\t@Override",
+				"\tpublic List<String> getComponentNames() {",
 				"\t\treturn componentNames;", "\t}");
+		code.add("", "\t@Override",
+				"\tpublic boolean hasComponent(String name) {",
+				"\t\treturn componentNames.contains(name);", "\t}");
+		code.add("", "\t@Override", "public int size() {", "\treturn "
+				+ recordDomain.getComponents().size() + ";", "}");
 		return code;
 	}
 

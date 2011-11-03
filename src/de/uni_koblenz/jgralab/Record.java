@@ -41,7 +41,11 @@ import org.pcollections.PMap;
 
 public interface Record {
 
+	public boolean hasComponent(String name);
+
 	public Object getComponent(String name);
+
+	public int size();
 
 	public List<String> getComponentNames();
 
