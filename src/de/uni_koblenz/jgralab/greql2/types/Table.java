@@ -155,4 +155,9 @@ public class Table<T> implements PCollection<T> {
 	public int hashCode() {
 		return entries.hashCode() + titles.hashCode();
 	}
+
+	@Override
+	public String toString() {
+		return titles.toString() + " " + entries.toString();
+	}
 }
