@@ -9,6 +9,7 @@ import org.pcollections.PVector;
 
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.greql2.funlib.Function;
+import de.uni_koblenz.jgralab.greql2.types.Table;
 import de.uni_koblenz.jgralab.greql2.types.Tuple;
 
 public class SortByColumn extends Function {
@@ -16,6 +17,12 @@ public class SortByColumn extends Function {
 	public SortByColumn() {
 		super("Sorts a collection of tuples $l$ by column $col$.",
 				Category.COLLECTIONS_AND_MAPS);
+	}
+
+	public Table<Tuple> evaluate(Integer col, Table<Tuple> t) {
+		Table<Tuple> result = Table.empty();
+		return result.withTitles(t.getTitles()).plusAll(
+				evaluate(col, t.toPVector()));
 	}
 
 	public PVector<Tuple> evaluate(Integer col, PCollection<Tuple> l) {

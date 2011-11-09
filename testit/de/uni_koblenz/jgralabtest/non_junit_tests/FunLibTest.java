@@ -7,6 +7,7 @@ import org.pcollections.PVector;
 
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.greql2.funlib.FunLib;
+import de.uni_koblenz.jgralab.greql2.types.Table;
 import de.uni_koblenz.jgralab.greql2.types.Tuple;
 
 public class FunLibTest {
@@ -129,5 +130,12 @@ public class FunLibTest {
 				.plus(Tuple.empty().plus("b").plus(2));
 		FunLib.apply(os, "sortByColumn", 0, v);
 		FunLib.apply(os, "sortByColumn", 1, v);
+
+		Table<Tuple> t = Table.empty();
+		PVector<String> titles = JGraLab.vector();
+		t = t.withTitles(titles.plus("C0").plus("C1")).plusAll(v);
+		FunLib.apply(os, "sortByColumn", 0, t);
+		FunLib.apply(os, "sortByColumn", 1, t);
+
 	}
 }
