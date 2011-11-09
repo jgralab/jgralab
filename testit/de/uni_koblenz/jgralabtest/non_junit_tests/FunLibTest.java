@@ -7,6 +7,7 @@ import org.pcollections.PVector;
 
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.greql2.funlib.FunLib;
+import de.uni_koblenz.jgralab.greql2.types.Tuple;
 
 public class FunLibTest {
 	enum Color {
@@ -120,5 +121,13 @@ public class FunLibTest {
 		//
 		// FunLib.apply(os, "isDefined", FunLib.apply("get", attrs, 0));
 		// FunLib.apply(os, "isDefined", FunLib.apply("get", attrs, 2));
+
+		PVector<Tuple> v = JGraLab.vector();
+		v = v.plus(Tuple.empty().plus("c").plus(1))
+				.plus(Tuple.empty().plus("a").plus(3))
+				.plus(Tuple.empty().plus("d").plus(0))
+				.plus(Tuple.empty().plus("b").plus(2));
+		FunLib.apply(os, "sortByColumn", 0, v);
+		FunLib.apply(os, "sortByColumn", 1, v);
 	}
 }
