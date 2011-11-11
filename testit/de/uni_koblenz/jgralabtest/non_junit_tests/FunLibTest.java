@@ -127,6 +127,7 @@ public class FunLibTest {
 		v = v.plus(Tuple.empty().plus("c").plus(1))
 				.plus(Tuple.empty().plus("a").plus(3))
 				.plus(Tuple.empty().plus("d").plus(0))
+				.plus(Tuple.empty().plus("a").plus(1))
 				.plus(Tuple.empty().plus("b").plus(2));
 		FunLib.apply(os, "sortByColumn", 0, v);
 		FunLib.apply(os, "sortByColumn", 1, v);
@@ -136,6 +137,14 @@ public class FunLibTest {
 		t = t.withTitles(titles.plus("C0").plus("C1")).plusAll(v);
 		FunLib.apply(os, "sortByColumn", 0, t);
 		FunLib.apply(os, "sortByColumn", 1, t);
+
+		PVector<Integer> cols = JGraLab.vector();
+		cols = cols.plus(0).plus(1);
+		FunLib.apply(os, "sortByColumn", cols, t);
+
+		cols = JGraLab.vector();
+		cols = cols.plus(1).plus(0);
+		FunLib.apply(os, "sortByColumn", cols, t);
 
 	}
 }
