@@ -28,6 +28,31 @@ import de.uni_koblenz.jgralab.greql2.types.Undefined;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 
 public abstract class DefaultWriter {
+	/**
+	 * The graph all elements in the value to visit belong to
+	 */
+	private Graph graph;
+
+	protected Object rootValue;
+
+	public DefaultWriter(Graph g) {
+		graph = g;
+	}
+
+	protected void writeValue(Object value) throws Exception {
+		rootValue = value;
+		head();
+		write(value);
+		foot();
+	}
+
+	public Graph getGraph() {
+		return graph;
+	}
+
+	public void setGraph(Graph graph) {
+		this.graph = graph;
+	}
 
 	/**
 	 * Writes a PSet by writing all its elements
@@ -35,7 +60,7 @@ public abstract class DefaultWriter {
 	 * @param s
 	 *            the PSet to write
 	 */
-	public void writePSet(PSet<?> s) throws Exception {
+	protected void writePSet(PSet<?> s) throws Exception {
 		Iterator<?> iter = s.iterator();
 		boolean first = true;
 		pre();
@@ -45,7 +70,7 @@ public abstract class DefaultWriter {
 			} else {
 				inter();
 			}
-			this.write(iter.next());
+			write(iter.next());
 		}
 		post();
 	}
@@ -56,7 +81,7 @@ public abstract class DefaultWriter {
 	 * @param b
 	 *            the PVector to write
 	 */
-	public void writePVector(PVector<?> b) throws Exception {
+	protected void writePVector(PVector<?> b) throws Exception {
 		Iterator<?> iter = b.iterator();
 		boolean first = true;
 		pre();
@@ -66,7 +91,7 @@ public abstract class DefaultWriter {
 			} else {
 				inter();
 			}
-			this.write(iter.next());
+			write(iter.next());
 		}
 		post();
 	}
@@ -77,7 +102,7 @@ public abstract class DefaultWriter {
 	 * @param b
 	 *            the PMap to write
 	 */
-	public void writePMap(PMap<?, ?> b) throws Exception {
+	protected void writePMap(PMap<?, ?> b) throws Exception {
 		boolean first = true;
 		pre();
 		for (Entry<?, ?> e : b.entrySet()) {
@@ -89,7 +114,7 @@ public abstract class DefaultWriter {
 			Tuple t = Tuple.empty();
 			t = t.plus(e.getKey());
 			t = t.plus(e.getValue());
-			this.writeTuple(t);
+			writeTuple(t);
 		}
 		post();
 	}
@@ -100,9 +125,9 @@ public abstract class DefaultWriter {
 	 * @param t
 	 *            the Table to write
 	 */
-	public void writeTable(Table<?> t) throws Exception {
-		this.writePVector(t.getTitles());
-		this.writePVector(t.toPVector());
+	protected void writeTable(Table<?> t) throws Exception {
+		writePVector(t.getTitles());
+		writePVector(t.toPVector());
 	}
 
 	/**
@@ -111,7 +136,7 @@ public abstract class DefaultWriter {
 	 * @param t
 	 *            the Tuple to write
 	 */
-	public void writeTuple(Tuple t) throws Exception {
+	protected void writeTuple(Tuple t) throws Exception {
 		Iterator<?> iter = t.iterator();
 		boolean first = true;
 		pre();
@@ -121,7 +146,7 @@ public abstract class DefaultWriter {
 			} else {
 				inter();
 			}
-			this.write(iter.next());
+			write(iter.next());
 		}
 		post();
 	}
@@ -133,7 +158,7 @@ public abstract class DefaultWriter {
 	 * @param r
 	 *            the Record to write
 	 */
-	public void writeRecord(Record r) throws Exception {
+	protected void writeRecord(Record r) throws Exception {
 		boolean first = true;
 		pre();
 		for (String compName : r.getComponentNames()) {
@@ -142,8 +167,8 @@ public abstract class DefaultWriter {
 			} else {
 				inter();
 			}
-			this.write(compName);
-			this.write(r.getComponent(compName));
+			write(compName);
+			write(r.getComponent(compName));
 		}
 		post();
 	}
@@ -154,7 +179,7 @@ public abstract class DefaultWriter {
 	 * @param p
 	 *            the Path to write
 	 */
-	public void writePath(Path p) throws Exception {
+	protected void writePath(Path p) throws Exception {
 		cantWrite(p);
 	}
 
@@ -164,7 +189,7 @@ public abstract class DefaultWriter {
 	 * @param p
 	 *            the PathSystem to write
 	 */
-	public void writePathSystem(PathSystem p) throws Exception {
+	protected void writePathSystem(PathSystem p) throws Exception {
 		cantWrite(p);
 	}
 
@@ -174,7 +199,7 @@ public abstract class DefaultWriter {
 	 * @param s
 	 *            the Slice to write
 	 */
-	public void writeSlice(Slice s) throws Exception {
+	protected void writeSlice(Slice s) throws Exception {
 		cantWrite(s);
 	}
 
@@ -184,14 +209,14 @@ public abstract class DefaultWriter {
 	 * @param v
 	 *            the Vertex to write
 	 */
-	public void writeVertex(Vertex v) throws Exception {
+	protected void writeVertex(Vertex v) throws Exception {
 		cantWrite(v);
 	}
 
 	/**
 	 * DefaultWriter has no support for writing an undefined value
 	 */
-	public void writeUndefined() throws Exception {
+	protected void writeUndefined() throws Exception {
 		cantWrite(Undefined.UNDEFINED);
 	}
 
@@ -201,7 +226,7 @@ public abstract class DefaultWriter {
 	 * @param e
 	 *            the Edge to write
 	 */
-	public void writeEdge(Edge e) throws Exception {
+	protected void writeEdge(Edge e) throws Exception {
 		cantWrite(e);
 	}
 
@@ -211,7 +236,7 @@ public abstract class DefaultWriter {
 	 * @param n
 	 *            the Integer to write
 	 */
-	public void writeInteger(Integer n) throws Exception {
+	protected void writeInteger(Integer n) throws Exception {
 		cantWrite(n);
 	}
 
@@ -221,7 +246,7 @@ public abstract class DefaultWriter {
 	 * @param n
 	 *            the Long to write
 	 */
-	public void writeLong(Long n) throws Exception {
+	protected void writeLong(Long n) throws Exception {
 		cantWrite(n);
 	}
 
@@ -231,7 +256,7 @@ public abstract class DefaultWriter {
 	 * @param n
 	 *            the Double to write
 	 */
-	public void writeDouble(Double n) throws Exception {
+	protected void writeDouble(Double n) throws Exception {
 		cantWrite(n);
 	}
 
@@ -241,7 +266,7 @@ public abstract class DefaultWriter {
 	 * @param s
 	 *            the String to write
 	 */
-	public void writeString(String s) throws Exception {
+	protected void writeString(String s) throws Exception {
 		cantWrite(s);
 	}
 
@@ -251,7 +276,7 @@ public abstract class DefaultWriter {
 	 * @param e
 	 *            the Enum to write
 	 */
-	public void writeEnum(Enum<?> e) throws Exception {
+	protected void writeEnum(Enum<?> e) throws Exception {
 		cantWrite(e);
 	}
 
@@ -261,7 +286,7 @@ public abstract class DefaultWriter {
 	 * @param g
 	 *            the Graph to write
 	 */
-	public void writeGraph(Graph g) throws Exception {
+	protected void writeGraph(Graph g) throws Exception {
 		cantWrite(g);
 	}
 
@@ -271,7 +296,7 @@ public abstract class DefaultWriter {
 	 * @param s
 	 *            the SubGraphMarker to write
 	 */
-	public void writeSubGraphMarker(SubGraphMarker s) throws Exception {
+	protected void writeSubGraphMarker(SubGraphMarker s) throws Exception {
 		cantWrite(s);
 	}
 
@@ -281,7 +306,7 @@ public abstract class DefaultWriter {
 	 * @param d
 	 *            the DFA to write
 	 */
-	public void writeDFA(DFA d) throws Exception {
+	protected void writeDFA(DFA d) throws Exception {
 		cantWrite(d);
 	}
 
@@ -291,7 +316,7 @@ public abstract class DefaultWriter {
 	 * @param n
 	 *            the NFA to write
 	 */
-	public void writeNFA(NFA n) throws Exception {
+	protected void writeNFA(NFA n) throws Exception {
 		cantWrite(n);
 	}
 
@@ -301,7 +326,7 @@ public abstract class DefaultWriter {
 	 * @param b
 	 *            the Boolean to write
 	 */
-	public void writeBoolean(Boolean b) throws Exception {
+	protected void writeBoolean(Boolean b) throws Exception {
 		cantWrite(b);
 	}
 
@@ -311,7 +336,7 @@ public abstract class DefaultWriter {
 	 * @param a
 	 *            the AttributedElementClass to write
 	 */
-	public void writeAttributedElementClass(AttributedElementClass a)
+	protected void writeAttributedElementClass(AttributedElementClass a)
 			throws Exception {
 		cantWrite(a);
 	}
@@ -322,7 +347,7 @@ public abstract class DefaultWriter {
 	 * @param a
 	 *            the TypeCollection to write
 	 */
-	public void writeTypeCollection(TypeCollection a) throws Exception {
+	protected void writeTypeCollection(TypeCollection a) throws Exception {
 		cantWrite(a);
 	}
 
@@ -332,7 +357,7 @@ public abstract class DefaultWriter {
 	 * @param s
 	 *            the State to write
 	 */
-	public void writeState(State s) throws Exception {
+	protected void writeState(State s) throws Exception {
 		cantWrite(s);
 	}
 
@@ -342,7 +367,7 @@ public abstract class DefaultWriter {
 	 * @param t
 	 *            the Transition to write
 	 */
-	public void writeTransition(Transition t) throws Exception {
+	protected void writeTransition(Transition t) throws Exception {
 		cantWrite(t);
 	}
 
@@ -352,7 +377,7 @@ public abstract class DefaultWriter {
 	 * @param d
 	 *            the Declaration to write
 	 */
-	public void writeDeclaration(Declaration d) throws Exception {
+	protected void writeDeclaration(Declaration d) throws Exception {
 		cantWrite(d);
 	}
 
@@ -362,7 +387,7 @@ public abstract class DefaultWriter {
 	 * @param o
 	 *            the Object to write
 	 */
-	public void writeDefaultObject(Object o) throws Exception {
+	protected void writeDefaultObject(Object o) throws Exception {
 		cantWrite(o);
 	}
 
@@ -373,83 +398,82 @@ public abstract class DefaultWriter {
 	 * @param o
 	 *            the Object to write
 	 */
-	public void write(Object o) throws Exception {
+	protected void write(Object o) throws Exception {
 		if (o instanceof PSet) {
-			this.writePSet((PSet<?>) o);
+			writePSet((PSet<?>) o);
 		} else if (o instanceof Table) {
-			this.writeTable((Table<?>) o);
+			writeTable((Table<?>) o);
 		} else if (o instanceof PVector) {
-			this.writePVector((PVector<?>) o);
+			writePVector((PVector<?>) o);
 		} else if (o instanceof PMap) {
-			this.writePMap((PMap<?, ?>) o);
+			writePMap((PMap<?, ?>) o);
 		} else if (o instanceof Tuple) {
-			this.writeTuple((Tuple) o);
+			writeTuple((Tuple) o);
 		} else if (o instanceof Record) {
-			this.writeRecord((Record) o);
+			writeRecord((Record) o);
 		} else if (o instanceof Path) {
-			this.writePath((Path) o);
+			writePath((Path) o);
 		} else if (o instanceof PathSystem) {
-			this.writePathSystem((PathSystem) o);
+			writePathSystem((PathSystem) o);
 		} else if (o instanceof Slice) {
-			this.writeSlice((Slice) o);
+			writeSlice((Slice) o);
 		} else if (o instanceof Vertex) {
-			this.writeVertex((Vertex) o);
+			writeVertex((Vertex) o);
 		} else if (o instanceof Edge) {
-			this.writeEdge((Edge) o);
+			writeEdge((Edge) o);
 		} else if (o instanceof Integer) {
-			this.writeInteger((Integer) o);
+			writeInteger((Integer) o);
 		} else if (o instanceof Long) {
-			this.writeLong((Long) o);
+			writeLong((Long) o);
 		} else if (o instanceof Double) {
-			this.writeDouble((Double) o);
+			writeDouble((Double) o);
 		} else if (o instanceof String) {
-			this.writeString((String) o);
+			writeString((String) o);
 		} else if (o instanceof Enum) {
-			this.writeEnum((Enum<?>) o);
+			writeEnum((Enum<?>) o);
 		} else if (o instanceof Graph) {
-			this.writeGraph((Graph) o);
+			writeGraph((Graph) o);
 		} else if (o instanceof SubGraphMarker) {
-			this.writeSubGraphMarker((SubGraphMarker) o);
+			writeSubGraphMarker((SubGraphMarker) o);
 		} else if (o instanceof DFA) {
-			this.writeDFA((DFA) o);
+			writeDFA((DFA) o);
 		} else if (o instanceof NFA) {
-			this.writeNFA((NFA) o);
+			writeNFA((NFA) o);
 		} else if (o instanceof TypeCollection) {
-			this.writeTypeCollection((TypeCollection) o);
+			writeTypeCollection((TypeCollection) o);
 		} else if (o instanceof Boolean) {
-			this.writeBoolean((Boolean) o);
+			writeBoolean((Boolean) o);
 		} else if (o instanceof AttributedElementClass) {
-			this.writeAttributedElementClass((AttributedElementClass) o);
+			writeAttributedElementClass((AttributedElementClass) o);
 		} else if (o instanceof Transition) {
-			this.writeTransition((Transition) o);
+			writeTransition((Transition) o);
 		} else if (o instanceof Declaration) {
-			this.writeDeclaration((Declaration) o);
-		} else if (o instanceof State){
-			this.writeState((State)o);
-		}
-		else if (o instanceof Undefined) {
-			this.writeUndefined();
+			writeDeclaration((Declaration) o);
+		} else if (o instanceof State) {
+			writeState((State) o);
+		} else if (o instanceof Undefined) {
+			writeUndefined();
 		} else {
-			this.writeDefaultObject(o);
+			writeDefaultObject(o);
 		}
 	}
 
-	public void post() throws Exception {
+	protected void post() throws Exception {
 	}
 
-	public void pre() throws Exception {
+	protected void pre() throws Exception {
 	}
 
-	public void inter() throws Exception {
+	protected void inter() throws Exception {
 	}
 
-	public void head() throws Exception {
+	protected void head() throws Exception {
 	}
 
-	public void foot() throws Exception {
+	protected void foot() throws Exception {
 	}
 
-	public void cantWrite(Object v) {
+	protected void cantWrite(Object v) {
 		throw new SerialisingException(getClass().getSimpleName()
 				+ " can not handle " + v.getClass(), v);
 

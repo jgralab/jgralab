@@ -287,31 +287,20 @@ public class GreqlGui extends JFrame {
 								// File resultFile = File.createTempFile(
 								// "greqlQueryResult", ".html");
 								// resultFile.deleteOnExit();
-								try {
-									new HTMLOutputWriter(result, resultFile,
-											graph);
-									Document doc = resultPane.getDocument();
-									doc.putProperty(
-											Document.StreamDescriptionProperty,
-											null);
-									resultPane.setPage(new URL("file",
-											"localhost", resultFile
-													.getCanonicalPath()));
-								} catch (SerialisingException e) {
-									JOptionPane.showMessageDialog(
-											GreqlGui.this,
-											"Exception during HTML output of result: "
-													+ e.toString());
-								}
+								HTMLOutputWriter w = new HTMLOutputWriter(graph);
+								w.setUseCss(false);
+								w.writeValue(result, resultFile);
 								Document doc = resultPane.getDocument();
 								doc.putProperty(
 										Document.StreamDescriptionProperty,
 										null);
 								resultPane.setPage(new URL("file", "localhost",
 										resultFile.getCanonicalPath()));
-								System.out.println(resultFile
-										.getCanonicalPath());
 								tabPane.setSelectedComponent(resultScrollPane);
+							} catch (SerialisingException e) {
+								JOptionPane.showMessageDialog(GreqlGui.this,
+										"Exception during HTML output of result: "
+												+ e.toString());
 							} catch (IOException e) {
 								JOptionPane.showMessageDialog(GreqlGui.this,
 										"Exception during HTML output of result: "
@@ -479,8 +468,8 @@ public class GreqlGui extends JFrame {
 		getContentPane().add(statusPanel, BorderLayout.SOUTH);
 
 		// Don't allow shrinking so that buttons get invisible
-		this.setMinimumSize(new Dimension(
-				buttonPanel.getPreferredSize().width + 10, 450));
+		setMinimumSize(new Dimension(buttonPanel.getPreferredSize().width + 10,
+				450));
 		pack();
 		setVisible(true);
 	}

@@ -21,5 +21,5 @@ public class SerialisingException extends RuntimeException {
 	public String getMessage() {
 		return super.getMessage() + " (value was: " + value + ")";
 	}
-	
+
 }
