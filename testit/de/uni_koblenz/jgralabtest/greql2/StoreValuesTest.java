@@ -73,7 +73,7 @@ public class StoreValuesTest {
 		Long l = 42l;
 		generateHTMLandXMLoutput(l, "outputLong");
 	}
-	
+
 	/**
 	 * Double
 	 */
@@ -82,7 +82,7 @@ public class StoreValuesTest {
 		Double d = 42.0;
 		generateHTMLandXMLoutput(d, "outputDouble");
 	}
-	
+
 	/**
 	 * String
 	 */
@@ -91,7 +91,7 @@ public class StoreValuesTest {
 		String s = "Hallo World!";
 		generateHTMLandXMLoutput(s, "outputString");
 	}
-	
+
 	/**
 	 * Boolean
 	 */
@@ -100,59 +100,59 @@ public class StoreValuesTest {
 		Boolean b = true;
 		generateHTMLandXMLoutput(b, "outputBoolean");
 	}
-	
+
 	/**
 	 * Record
 	 */
 	@Test
-	public void testOutputOfRecord(){
+	public void testOutputOfRecord() {
 		String qu = "rec(a:5,b:\"Yes\")";
 		evaluateQueryAndSaveResult(qu, "outputRecord");
 	}
-	
+
 	/**
 	 * Undefined
 	 */
 	@Test
-	public void testOutputUndefined(){
+	public void testOutputUndefined() {
 		Undefined n = Undefined.UNDEFINED;
 		generateHTMLandXMLoutput(n, "outputUndefined");
 	}
-	
+
 	/**
 	 * Graph
 	 */
 	@Test
-	public void testOutputOfGraph(){
-		generateHTMLandXMLoutput(graph, "outputGraph");	
+	public void testOutputOfGraph() {
+		generateHTMLandXMLoutput(graph, "outputGraph");
 	}
-	
+
 	/**
 	 * Vertex
 	 */
 	@Test
-	public void testOutputOfVertex(){
+	public void testOutputOfVertex() {
 		String qu = "from v : V with id(v)  = 1 report v end";
 		evaluateQueryAndSaveResult(qu, "outputVertex");
 	}
-	
+
 	/**
 	 * Edge
 	 */
 	@Test
-	public void testOutputOfEdge(){
+	public void testOutputOfEdge() {
 		String qu = "from e : E with id(e)  = 1 report e end";
 		evaluateQueryAndSaveResult(qu, "outputEdge");
 	}
-	
+
 	/**
 	 * Enum
 	 */
 	@Test
-	public void testOutputOfEnum(){
+	public void testOutputOfEnum() {
 		generateHTMLandXMLoutput(CountyTags.AREA, "outputEnum");
 	}
-	
+
 	/**
 	 * PVector of Vertices
 	 */
@@ -174,7 +174,7 @@ public class StoreValuesTest {
 				+ "reportSet x end";
 		evaluateQueryAndSaveResult(qu, "outputPSetOfVertices");
 	}
-	
+
 	/**
 	 * PVector of Tuples of Vertices
 	 */
@@ -197,154 +197,159 @@ public class StoreValuesTest {
 	 * Table
 	 */
 	@Test
-	public void testTableOfIntegers(){
+	public void testTableOfIntegers() {
 		String queryString = "from i : list (1..10), j : list (1..5) reportTable i-1, j, i*j end";
 		evaluateQueryAndSaveResult(queryString, "outputTableOfIntegers");
 	}
-	
+
 	/**
 	 * Tuple of Vertices
 	 */
 	@Test
 	public void testOutputOfTupleOfVertices() {
 		String qu = "from a,b:V with connected report a,b end where connected := a-->b";
-		
+
 		eval.setQuery(qu);
 		eval.startEvaluation();
 
 		PVector<Vertex> result = eval.getResultList(Vertex.class);
 
-		generateHTMLandXMLoutput(result.get(0), "outputTupleOfVertices", graph, true);	
+		generateHTMLandXMLoutput(result.get(0), "outputTupleOfVertices", graph,
+				true);
 	}
-	
+
 	/**
 	 * Path
 	 */
 	@Test
-	public void testOutputOfPath(){
+	public void testOutputOfPath() {
 		Path p = Path.start(graph.getVertex(1));
 		p = p.append(graph.getEdge(135));
 		p = p.append(graph.getEdge(136));
 		generateHTMLandXMLoutput(p, "outputPath");
 	}
-	
+
 	/**
 	 * Slice
 	 */
 	@Test
-	public void testOutputOfSlice(){
+	public void testOutputOfSlice() {
 		String qu = "from w: V{localities.Town} report slice(w, <--) end";
 		eval.setQuery(qu);
 		eval.startEvaluation();
 		Object result = eval.getResult();
 
 		try {
-			@SuppressWarnings("unused")
-			HTMLOutputWriter htmlout = new HTMLOutputWriter(result, new File(
-					testdir + "outputSlice" + ".html"), graph, true);
+			HTMLOutputWriter writer = new HTMLOutputWriter(graph);
+			writer.setCreateElementLinks(true);
+			writer.writeValue(result, new File(testdir + "outputSlice"
+					+ ".html"));
 		} catch (IOException e) {
 			e.printStackTrace();
 			assert false;
 		}
 	}
-	
+
 	/**
 	 * Slice
 	 */
 
 	@Test(expected = SerialisingException.class)
-	public void testOutputOfSliceException(){
+	public void testOutputOfSliceException() {
 		String qu = "from w: V{localities.Town} report slice(w, <--) end";
 		eval.setQuery(qu);
 		eval.startEvaluation();
 		Object result = eval.getResult();
 
 		try {
-			@SuppressWarnings("unused")
-			XMLOutputWriter htmlout = new XMLOutputWriter(result, new File(
-					testdir + "outputSlice" + ".xml"), graph);
+			XMLOutputWriter writer = new XMLOutputWriter(graph);
+			writer.writeValue(result,
+					new File(testdir + "outputSlice" + ".xml"));
 		} catch (XMLStreamException e) {
 			e.printStackTrace();
 		}
-	
+
 	}
-	
+
 	/**
 	 * AttributedElementClass
 	 */
 	@Test
-	public void testOutputOfAttributedElementClas(){
-		generateHTMLandXMLoutput(graph.getFirstVertex().getAttributedElementClass(), "outputAttributedElementClass");
+	public void testOutputOfAttributedElementClas() {
+		generateHTMLandXMLoutput(graph.getFirstVertex()
+				.getAttributedElementClass(), "outputAttributedElementClass");
 	}
-	
+
 	/**
 	 * PMap from String to Integers
 	 */
 	@Test
-	public void testOutputOfMapFromStringToInteger(){
+	public void testOutputOfMapFromStringToInteger() {
 		String qu = "from v : V{localities.Locality} with v.inhabitants > 100 reportMap v.name -> v.inhabitants end";
 		evaluateQueryAndSaveResult(qu, "outputMapFromStringToInteger");
 	}
-	
+
 	/**
 	 * PMap from Vertex to PVector of Vertices
 	 */
-	@Test 
-	public void testOutputOfMapFromVertexToListOfVertices(){
+	@Test
+	public void testOutputOfMapFromVertexToListOfVertices() {
 		String qu = "from j : V{junctions.Junction}  reportMap j -> (j <--{connections.Connection}) end";
 		evaluateQueryAndSaveResult(qu, "outputMapFromVertexToListOfVertices");
 	}
-	
+
 	/**
 	 * PVector of PSet of Vertices
 	 */
 	@Test
-	public void testOutputOfListOfSetsOfVertices(){
-		String qu ="from v : V{junctions.Junction} with count(v-->{connections.AirRoute}) > 0 reportList v-->{connections.AirRoute} end";
+	public void testOutputOfListOfSetsOfVertices() {
+		String qu = "from v : V{junctions.Junction} with count(v-->{connections.AirRoute}) > 0 reportList v-->{connections.AirRoute} end";
 		evaluateQueryAndSaveResult(qu, "outputListOfSetsOfVertices");
 	}
-	
+
 	/**
 	 * PMap from Vertex to (PMap from Enumeration to Double)
 	 */
 	@Test
-	public void testOutputOfMapFromVertexToMapFromEnumToDouble(){
+	public void testOutputOfMapFromVertexToMapFromEnumToDouble() {
 		String qu = "from v : V{localities.County} reportMap v -> v.tags end";
-		evaluateQueryAndSaveResult(qu, "outputMapFromVertexToMapFromEnumToDouble");
+		evaluateQueryAndSaveResult(qu,
+				"outputMapFromVertexToMapFromEnumToDouble");
 	}
-	
+
 	/**
 	 * State
 	 */
 	@Test(expected = SerialisingException.class)
-	public void testOutputOfState(){
+	public void testOutputOfState() {
 		State state = new State();
 		try {
-			@SuppressWarnings("unused")
-			HTMLOutputWriter htmlout = new HTMLOutputWriter(state, new File(
-					testdir + "outputException" + ".html"), graph, true);
+			HTMLOutputWriter writer = new HTMLOutputWriter(graph);
+			writer.setCreateElementLinks(true);
+			writer.writeValue(state, new File(testdir + "outputException"
+					+ ".html"));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
-	
+
 	/**
 	 * State
 	 */
 	@Test(expected = SerialisingException.class)
-	public void testOutputOfState2(){
+	public void testOutputOfState2() {
 		State state = new State();
 		try {
-			@SuppressWarnings("unused")
-			XMLOutputWriter htmlout = new XMLOutputWriter(state, new File(
-					testdir + "outputException" + ".html"), graph);
+			XMLOutputWriter writer = new XMLOutputWriter(graph);
+			writer.writeValue(state, new File(testdir + "outputException"
+					+ ".xml"));
 		} catch (XMLStreamException e) {
 			e.printStackTrace();
 		}
 	}
-	//----------------------------------------------------------------------
-	
-	
+
+	// ----------------------------------------------------------------------
+
 	public void evaluateQueryAndSaveResult(String query, String filename) {
 
 		eval.setQuery(query);
@@ -354,24 +359,21 @@ public class StoreValuesTest {
 
 		generateHTMLandXMLoutput(result, filename, graph, true);
 	}
-	
-	
-	
-	public void generateHTMLandXMLoutput(Object result, String filename){
+
+	public void generateHTMLandXMLoutput(Object result, String filename) {
 		generateHTMLandXMLoutput(result, filename, null, false);
 	}
-	
-	public void generateHTMLandXMLoutput(Object result, String filename, Graph graph, boolean elemlinks){
+
+	public void generateHTMLandXMLoutput(Object result, String filename,
+			Graph graph, boolean elemlinks) {
 		try {
+			HTMLOutputWriter htmlWriter = new HTMLOutputWriter(graph);
+			htmlWriter.setCreateElementLinks(elemlinks);
+			htmlWriter.writeValue(result,
+					new File(testdir + filename + ".html"));
 
-			@SuppressWarnings("unused")
-			HTMLOutputWriter htmlout = new HTMLOutputWriter(result, new File(
-					testdir + filename + ".html"), graph, elemlinks);
-
-			@SuppressWarnings("unused")
-			XMLOutputWriter xmlout = new XMLOutputWriter(result, new File(
-					testdir + filename + ".xml"), graph);
-
+			XMLOutputWriter xmlWriter = new XMLOutputWriter(graph);
+			xmlWriter.writeValue(result, new File(testdir + filename + ".xml"));
 		} catch (XMLStreamException e) {
 			e.printStackTrace();
 			assert false;

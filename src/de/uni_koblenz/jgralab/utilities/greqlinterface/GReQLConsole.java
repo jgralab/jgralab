@@ -182,7 +182,8 @@ public class GReQLConsole {
 	 */
 	private void resultToHTML(Object result, String outputFile)
 			throws IOException {
-		new HTMLOutputWriter(result, new File(outputFile), graph);
+		HTMLOutputWriter w = new HTMLOutputWriter(graph);
+		w.writeValue(result, new File(outputFile));
 	}
 
 	/**

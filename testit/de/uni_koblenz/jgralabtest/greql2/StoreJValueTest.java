@@ -53,10 +53,10 @@ public class StoreJValueTest extends GenericTest {
 		fail(); // JValueVisitorException
 		String queryString = "list(tup(\"Nodes:\", count(from v:V{} report v end)), tup(\"Edges:\", count(from e:E{} report e end)))";
 		Object result = evalTestQuery("StoreJValue1", queryString);
-		XMLOutputWriter outputVisitor = new XMLOutputWriter(result, new File(
-				"testit/testdata/storejvaluetest1.xml"),
+		XMLOutputWriter writer = new XMLOutputWriter(
 				getTestGraph(TestVersion.GREQL_GRAPH));
-		outputVisitor.toString();
+		writer.writeValue(result, new File(
+				"testit/testdata/storejvaluetest1.xml"));
 		XMLLoader loader = new XMLLoader(getTestGraph(TestVersion.GREQL_GRAPH));
 		Object loadedValue = loader
 				.load("testit/testdata/storejvaluetest1.xml");
@@ -69,9 +69,10 @@ public class StoreJValueTest extends GenericTest {
 		fail(); // JValueVisitorException
 		String queryString = "V{}";
 		Object result = evalTestQuery("StoreJValue2a", queryString);
-		new XMLOutputWriter(result, new File(
-				"testit/testdata/storejvaluetest2a.xml"),
+		XMLOutputWriter writer = new XMLOutputWriter(
 				getTestGraph(TestVersion.GREQL_GRAPH));
+		writer.writeValue(result, new File(
+				"testit/testdata/storejvaluetest2a.xml"));
 		XMLLoader loader = new XMLLoader(getTestGraph(TestVersion.GREQL_GRAPH));
 		Object loadedValue = loader
 				.load("testit/testdata/storejvaluetest2a.xml");
@@ -84,9 +85,10 @@ public class StoreJValueTest extends GenericTest {
 		fail(); // JValueVisitorException
 		String queryString = "from v:V{} report v as \"Nodes\" end";
 		Object result = evalTestQuery("StoreJValue2", queryString);
-		new XMLOutputWriter(result, new File(
-				"testit/testdata/storejvaluetest2.xml"),
+		XMLOutputWriter writer = new XMLOutputWriter(
 				getTestGraph(TestVersion.GREQL_GRAPH));
+		writer.writeValue(result, new File(
+				"testit/testdata/storejvaluetest2.xml"));
 		XMLLoader loader = new XMLLoader(getTestGraph(TestVersion.GREQL_GRAPH));
 		Object loadedValue = loader
 				.load("testit/testdata/storejvaluetest2.xml");
@@ -99,9 +101,10 @@ public class StoreJValueTest extends GenericTest {
 		fail(); // JValueVisitorException
 		String queryString = "from x,y:list(1..100) reportTable x, y, x*y end";
 		Object result = evalTestQuery("StoreJValue3", queryString);
-		new XMLOutputWriter(result, new File(
-				"testit/testdata/storejvaluetest3.xml"),
+		XMLOutputWriter writer = new XMLOutputWriter(
 				getTestGraph(TestVersion.GREQL_GRAPH));
+		writer.writeValue(result, new File(
+				"testit/testdata/storejvaluetest3.xml"));
 		XMLLoader loader = new XMLLoader(getTestGraph(TestVersion.GREQL_GRAPH));
 		Object loadedValue = loader
 				.load("testit/testdata/storejvaluetest3.xml");
