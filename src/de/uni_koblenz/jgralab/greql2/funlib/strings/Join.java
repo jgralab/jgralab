@@ -8,7 +8,7 @@ public class Join extends Function {
 	public Join() {
 		super(
 				"Joins the given strings in $l$ by interleaving with $delimiter$.",
-				10, 3, 0.1, Category.STRINGS);
+				10, 1, 0.1, Category.STRINGS);
 	}
 
 	public String evaluate(List<String> l, String delimiter) {
