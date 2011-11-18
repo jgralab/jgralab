@@ -58,9 +58,9 @@ public class Context {
 	 * This lets you set the directory where to commit the target schema code
 	 * to. Normally, the code isn't committed at all but compiled in memory, but
 	 * you can use this for debugging purposes.
-	 * 
+	 *
 	 * The value <code>null</code> (default) means don't commit.
-	 * 
+	 *
 	 * @param targetSchemaCodeDirectory
 	 *            the targetSchemaCodeDirectory to set
 	 */
@@ -155,7 +155,7 @@ public class Context {
 
 	/**
 	 * Creates a new Context object
-	 * 
+	 *
 	 * @param targetSchemaName
 	 *            The name of the target schema
 	 * @param targetGraphClassName
@@ -240,7 +240,7 @@ public class Context {
 	/**
 	 * Ensures that theres a function for this attributed element class, even
 	 * though this function may be empty.
-	 * 
+	 *
 	 * @param aec
 	 *            the AttributedElementClass for which to ensure the
 	 *            archMap/imgMap mappings
@@ -442,7 +442,7 @@ public class Context {
 	 * Swap this context object. E.g. make the current target graph the default
 	 * source graph and reinitialize all member vars such as archMap/imgMap.
 	 * This is mainly useful for chaining multiple transformations.
-	 * 
+	 *
 	 * @return this context object itself
 	 */
 	public final Context swap() {
@@ -481,7 +481,7 @@ public class Context {
 	 * Reset this context, so that the same context can be passed to another
 	 * transformation. This means, everything except the source graph is
 	 * cleared.
-	 * 
+	 *
 	 * @return the context
 	 */
 	public final Context reset(boolean forgetTargetSchema) {
@@ -513,7 +513,7 @@ public class Context {
 
 	/**
 	 * Sets the (default) source graph for the transformation
-	 * 
+	 *
 	 * @param sourceGraph
 	 *            the source graph
 	 */
@@ -523,7 +523,7 @@ public class Context {
 
 	/**
 	 * adds a source graph for the transformation
-	 * 
+	 *
 	 * @param alias
 	 *            the alias to access this source graph (used as prefix #name#
 	 *            in semantic expressions)
@@ -578,7 +578,7 @@ public class Context {
 	/**
 	 * returns the target graph of the transformation if no target graph exists,
 	 * it will be created
-	 * 
+	 *
 	 * @return the target graph
 	 */
 	public final Graph getTargetGraph() {
@@ -731,7 +731,7 @@ public class Context {
 			}
 		}
 
-		return evalGReQLQuery(greqlExpression, sourceGraphs.get(name));
+		return this.<T>evalGReQLQuery(greqlExpression, sourceGraphs.get(name));
 	}
 
 	@SuppressWarnings("unchecked")
