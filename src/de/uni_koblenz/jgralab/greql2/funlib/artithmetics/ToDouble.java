@@ -4,7 +4,7 @@ import de.uni_koblenz.jgralab.greql2.funlib.Function;
 
 public class ToDouble extends Function {
 	public ToDouble() {
-		super("Converts a Number $a$ to type Double.", 1, 1, 1.0,
+		super("Converts the Number $a$ into type Double.", 1, 1, 1.0,
 				Category.ARITHMETICS);
 	}
 

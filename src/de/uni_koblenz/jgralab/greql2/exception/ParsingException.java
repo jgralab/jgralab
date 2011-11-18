@@ -48,15 +48,15 @@ public class ParsingException extends GreqlException {
 
 	public ParsingException(String msg, String token, int offset, int length,
 			String query) {
-		super("Parsing error: " + msg + " at token '" + token
-				+ "' at position (" + offset + "," + length + "): '"
-				+ surrounding(query, offset, length) + "'");
+		super("Parsing error: " + msg + " '" + token + "' at position ("
+				+ offset + "," + length + ")");
 		errorMessage = msg;
-		this.tokenString = token;
+		tokenString = token;
 		this.offset = offset;
 		this.length = length;
 	}
 
+	@SuppressWarnings("unused")
 	private static String surrounding(String query, int off, int len) {
 		if ((len < 0) || (off < 0)) {
 			return "";

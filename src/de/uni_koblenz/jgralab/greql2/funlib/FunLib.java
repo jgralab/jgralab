@@ -85,7 +85,7 @@ public class FunLib {
 					.isAnnotationPresent(AcceptsUndefinedArguments.class);
 			registerSignatures(functionSignatures, cls);
 			signatures = new Signature[functionSignatures.size()];
-			functionSignatures.toArray(this.signatures);
+			functionSignatures.toArray(signatures);
 		}
 
 		void registerSignatures(ArrayList<Signature> signatures,
@@ -196,8 +196,8 @@ public class FunLib {
 		}
 		StringBuilder sb = new StringBuilder();
 		sb.append("Function '").append(fi.name)
-				.append("' not defined for argument types");
-		String delim = " (";
+				.append("' not defined for argument types (");
+		String delim = "";
 		for (Object arg : args) {
 			sb.append(delim).append(Types.getGreqlTypeName(arg));
 			delim = ", ";

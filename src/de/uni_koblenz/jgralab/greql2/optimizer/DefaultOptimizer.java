@@ -88,6 +88,10 @@ public class DefaultOptimizer extends OptimizerBase {
 	 */
 	public boolean optimize(GreqlEvaluator eval, Greql2 syntaxgraph)
 			throws OptimizerException {
+		if (syntaxgraph.getVCount() <= 1) {
+			return false;
+		}
+
 		logger.fine(optimizerHeaderString()
 				+ "Starting optimization.  Fasten your seatbelts!");
 
@@ -154,15 +158,13 @@ public class DefaultOptimizer extends OptimizerBase {
 			noOfRuns++;
 
 			if (noOfRuns > 10) {
-				logger
-						.warning("Optimizer didn't finish after 10 runs. Stopping here.");
+				logger.warning("Optimizer didn't finish after 10 runs. Stopping here.");
 				break;
 			}
 
 			logger.fine(optimizerHeaderString() + "starts a new iteration ("
 					+ noOfRuns + ")...");
 		}
-		;
 
 		// Tg2Dot.printGraphAsDot(syntaxgraph, true,
 		// "/home/horn/after-optimization.tg");
@@ -194,8 +196,7 @@ public class DefaultOptimizer extends OptimizerBase {
 		rootEval.calculateEstimatedSelectivity(graphSize);
 
 		Greql2Vertex vertex = syntaxgraph.getFirstGreql2Vertex();
-		logger
-				.fine("=========================================================");
+		logger.fine("=========================================================");
 		while (vertex != null) {
 			logger.fine("Current Node: " + vertex);
 			veval = marker.getMark(vertex);
@@ -213,8 +214,7 @@ public class DefaultOptimizer extends OptimizerBase {
 						+ "Defined Vars: " + definedVars + "\n"
 						+ "Variable Combinations: " + varCombs);
 			}
-			logger
-					.fine("=========================================================");
+			logger.fine("=========================================================");
 			vertex = vertex.getNextGreql2Vertex();
 		}
 		VertexEvaluator greql2ExpEval = marker.getMark(syntaxgraph
