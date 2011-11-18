@@ -72,7 +72,6 @@ import de.uni_koblenz.jgralab.ProgressFunction;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.codegenerator.CodeGeneratorConfiguration;
 import de.uni_koblenz.jgralab.graphmarker.GraphMarker;
-import de.uni_koblenz.jgralab.graphmarker.SubGraphMarker;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.CostModel;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.DefaultCostModel;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize;
@@ -92,6 +91,7 @@ import de.uni_koblenz.jgralab.greql2.schema.IsBoundVarOf;
 import de.uni_koblenz.jgralab.greql2.schema.IsFunctionIdOf;
 import de.uni_koblenz.jgralab.greql2.schema.Variable;
 import de.uni_koblenz.jgralab.greql2.serialising.GreqlSerializer;
+import de.uni_koblenz.jgralab.greql2.types.Undefined;
 import de.uni_koblenz.jgralab.impl.ConsoleProgressFunction;
 import de.uni_koblenz.jgralab.schema.AggregationKind;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
@@ -218,29 +218,6 @@ public class GreqlEvaluator {
 	 * The GraphMarker that stores all vertex evaluators
 	 */
 	protected GraphMarker<VertexEvaluator> vertexEvalGraphMarker;
-
-	protected SubGraphMarker subgraphMarker;
-
-	/**
-	 * @return the subgraphMarker
-	 */
-	public SubGraphMarker getSubgraphMarker() {
-		return subgraphMarker;
-	}
-
-	/**
-	 * Sets the marker for evaluating only on marked elements. Also sets the
-	 * datagraph to the given marker's graph.
-	 * 
-	 * @param subgraphMarker
-	 *            the subgraphMarker to set
-	 */
-	public void setSubgraphMarker(SubGraphMarker subgraphMarker) {
-		this.subgraphMarker = subgraphMarker;
-		if (subgraphMarker != null) {
-			datagraph = subgraphMarker.getGraph();
-		}
-	}
 
 	/**
 	 * The map of SimpleName to Type of types that is known in the evaluator by
@@ -1148,7 +1125,7 @@ public class GreqlEvaluator {
 
 		if (queryGraph.getVCount() <= 1) {
 			// Graph contains only root vertex
-			result = null;
+			result = Undefined.UNDEFINED;
 			return true;
 		}
 

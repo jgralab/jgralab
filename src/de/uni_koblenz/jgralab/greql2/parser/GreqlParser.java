@@ -323,8 +323,8 @@ public class GreqlParser extends ParserHelper {
 		} else {
 			tokenText = lookAhead(0).name();
 		}
-		ParsingException ex = new ParsingException(msg + "!! " + lookAhead(0)
-				+ " !!", tokenText, offset, length, query);
+		ParsingException ex = new ParsingException(msg + " " + lookAhead(0),
+				tokenText, offset, length, query);
 		predicateFulfilled = false;
 		if (getCurrentOffset() > farestOffset) {
 			farestException = ex;
@@ -1123,7 +1123,7 @@ public class GreqlParser extends ParserHelper {
 		if (lookAhead(0) == TokenTypes.FROM) {
 			return parseFWRExpression();
 		}
-		fail("Unrecognized token ");
+		fail("Unrecognized token");
 		return null;
 	}
 

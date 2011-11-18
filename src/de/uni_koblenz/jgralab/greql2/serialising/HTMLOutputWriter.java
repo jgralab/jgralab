@@ -9,10 +9,9 @@ import java.io.PrintWriter;
 import java.util.Map.Entry;
 
 import org.pcollections.ArrayPMap;
-import org.pcollections.ArrayPSet;
-import org.pcollections.OrderedPSet;
 import org.pcollections.PCollection;
 import org.pcollections.PMap;
+import org.pcollections.POrderedSet;
 import org.pcollections.PSet;
 import org.pcollections.PVector;
 
@@ -342,10 +341,8 @@ public class HTMLOutputWriter extends DefaultWriter {
 	@Override
 	protected void writePSet(PSet<?> s) throws Exception {
 		if (s.size() > 0) {
-			if ((s instanceof OrderedPSet)
-					&& (((OrderedPSet<?>) s).get(0) instanceof Tuple)
-					|| (s instanceof ArrayPSet)
-					&& (((ArrayPSet<?>) s).get(0) instanceof Tuple)) {
+			if ((s instanceof POrderedSet)
+					&& (((POrderedSet<?>) s).get(0) instanceof Tuple)) {
 				writeTableOfTuples(s);
 				return;
 			}

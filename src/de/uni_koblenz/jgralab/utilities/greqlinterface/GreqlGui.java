@@ -36,7 +36,9 @@ package de.uni_koblenz.jgralab.utilities.greqlinterface;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
@@ -44,6 +46,7 @@ import java.io.PrintStream;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.util.HashMap;
+import java.util.List;
 import java.util.prefs.Preferences;
 
 import javax.swing.AbstractAction;
@@ -62,10 +65,16 @@ import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
+import javax.swing.KeyStroke;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
+import javax.swing.event.UndoableEditEvent;
+import javax.swing.event.UndoableEditListener;
 import javax.swing.text.Document;
+import javax.swing.undo.CannotRedoException;
+import javax.swing.undo.CannotUndoException;
+import javax.swing.undo.UndoManager;
 
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphIO;
@@ -74,7 +83,10 @@ import de.uni_koblenz.jgralab.ProgressFunction;
 import de.uni_koblenz.jgralab.WorkInProgress;
 import de.uni_koblenz.jgralab.codegenerator.CodeGeneratorConfiguration;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
+import de.uni_koblenz.jgralab.greql2.exception.ParsingException;
+import de.uni_koblenz.jgralab.greql2.exception.QuerySourceException;
 import de.uni_koblenz.jgralab.greql2.exception.SerialisingException;
+import de.uni_koblenz.jgralab.greql2.schema.SourcePosition;
 import de.uni_koblenz.jgralab.greql2.serialising.HTMLOutputWriter;
 
 @WorkInProgress(description = "insufficcient result presentation, simplistic hacked GUI, no load/save functionality, ...", responsibleDevelopers = "horn")
@@ -267,9 +279,34 @@ public class GreqlGui extends JFrame {
 								}
 							}
 							ex.printStackTrace();
-							JOptionPane.showMessageDialog(GreqlGui.this, msg,
-									ex.getClass().getSimpleName(),
-									JOptionPane.ERROR_MESSAGE);
+							if (ex instanceof QuerySourceException) {
+								QuerySourceException qs = (QuerySourceException) ex;
+								List<SourcePosition> spl = qs
+										.getSourcePositions();
+								if (spl.size() > 0) {
+									SourcePosition sp = spl.get(0);
+									if (sp.get_offset() >= 0
+											&& sp.get_length() >= 0) {
+										queryArea.setSelectionStart(sp
+												.get_offset());
+										queryArea.setSelectionEnd(sp
+												.get_offset() + sp.get_length());
+									}
+								}
+							} else if (ex instanceof ParsingException) {
+								ParsingException pe = (ParsingException) ex;
+								if (pe.getOffset() >= 0 && pe.getLength() >= 0) {
+									queryArea.setSelectionStart(pe.getOffset());
+									queryArea.setSelectionEnd(pe.getOffset()
+											+ pe.getLength());
+								}
+							}
+							resultPane.setText(ex.getClass().getSimpleName()
+									+ ": " + msg);
+							// JOptionPane.showMessageDialog(GreqlGui.this, msg,
+							// ex.getClass().getSimpleName(),
+							// JOptionPane.ERROR_MESSAGE);
+							queryArea.requestFocus();
 						} else {
 							statusLabel
 									.setText("Evaluation finished, loading HTML result - this may take a while...");
@@ -336,6 +373,59 @@ public class GreqlGui extends JFrame {
 
 		queryArea = new JTextArea(15, 50);
 		queryArea.setEditable(true);
+		queryArea.setFont(new java.awt.Font("Monaco", java.awt.Font.PLAIN, 13));
+
+		// Start code for undo/redo ---------------
+		final UndoManager undo = new UndoManager();
+		undo.setLimit(10000);
+		Document doc = queryArea.getDocument();
+
+		// Listen for undo and redo events
+		doc.addUndoableEditListener(new UndoableEditListener() {
+			public void undoableEditHappened(UndoableEditEvent evt) {
+				undo.addEdit(evt.getEdit());
+			}
+		});
+
+		// Create an undo action and add it to the text component
+		queryArea.getActionMap().put("Undo", new AbstractAction("Undo") {
+			private static final long serialVersionUID = 4332032556222818139L;
+
+			public void actionPerformed(ActionEvent evt) {
+				try {
+					if (undo.canUndo()) {
+						undo.undo();
+					}
+				} catch (CannotUndoException e) {
+				}
+			}
+		});
+
+		// Bind the undo action to ctl-Z
+		queryArea.getInputMap().put(
+				KeyStroke.getKeyStroke(KeyEvent.VK_Z, Toolkit
+						.getDefaultToolkit().getMenuShortcutKeyMask()), "Undo");
+
+		// Create a redo action and add it to the text component
+		queryArea.getActionMap().put("Redo", new AbstractAction("Redo") {
+			private static final long serialVersionUID = 4136682827172717790L;
+
+			public void actionPerformed(ActionEvent evt) {
+				try {
+					if (undo.canRedo()) {
+						undo.redo();
+					}
+				} catch (CannotRedoException e) {
+				}
+			}
+		});
+
+		// Bind the redo action to ctl-Y
+		queryArea.getInputMap().put(
+				KeyStroke.getKeyStroke(KeyEvent.VK_Y, Toolkit
+						.getDefaultToolkit().getMenuShortcutKeyMask()), "Redo");
+		// End code for undo/redo ---------------------------------------
+
 		queryArea.setText("// Please enter your query here!\n\n");
 		JScrollPane queryScrollPane = new JScrollPane(queryArea);
 
@@ -358,7 +448,6 @@ public class GreqlGui extends JFrame {
 		progressBar.setModel(brm);
 
 		consoleOutputArea = new JTextArea();
-		consoleOutputArea.setEditable(false);
 		JScrollPane consoleScrollPane = new JScrollPane(consoleOutputArea);
 		consoleScrollPane.setPreferredSize(new Dimension(200, 200));
 
@@ -395,7 +484,7 @@ public class GreqlGui extends JFrame {
 				if (returnVal == JFileChooser.APPROVE_OPTION) {
 					fileSelectionButton.setEnabled(false);
 					evalQueryButton.setEnabled(false);
-					statusLabel.setText("Compling schema...");
+					statusLabel.setText("Compiling schema...");
 					new GraphLoader(brm, fileChooser.getSelectedFile()).start();
 					try {
 						prefs.put("LAST_DIRECTORY", fileChooser
