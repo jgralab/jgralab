@@ -66,7 +66,6 @@ import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.GraphIO.TGFilenameFilter;
 import de.uni_koblenz.jgralab.GraphIOException;
-import de.uni_koblenz.jgralab.ImplementationType;
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.ProgressFunction;
 import de.uni_koblenz.jgralab.Vertex;
@@ -93,12 +92,7 @@ import de.uni_koblenz.jgralab.greql2.schema.Variable;
 import de.uni_koblenz.jgralab.greql2.serialising.GreqlSerializer;
 import de.uni_koblenz.jgralab.greql2.types.Undefined;
 import de.uni_koblenz.jgralab.impl.ConsoleProgressFunction;
-import de.uni_koblenz.jgralab.schema.AggregationKind;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
-import de.uni_koblenz.jgralab.schema.GraphClass;
-import de.uni_koblenz.jgralab.schema.Schema;
-import de.uni_koblenz.jgralab.schema.VertexClass;
-import de.uni_koblenz.jgralab.schema.impl.SchemaImpl;
 import de.uni_koblenz.jgralab.utilities.tgmerge.TGMerge;
 
 /**
@@ -753,11 +747,7 @@ public class GreqlEvaluator {
 
 	private GreqlEvaluator(Graph datagraph, Map<String, Object> variables,
 			ProgressFunction progressFunction) {
-		if (datagraph == null) {
-			this.datagraph = createMinimalGraph();
-		} else {
-			this.datagraph = datagraph;
-		}
+		this.datagraph = datagraph;
 		knownTypes = new HashMap<String, AttributedElementClass>();
 		variableMap = variables;
 		subQueryMap = new LinkedHashMap<String, Greql2>();
@@ -770,37 +760,6 @@ public class GreqlEvaluator {
 
 	public AttributedElementClass getKnownType(String typeSimpleName) {
 		return knownTypes.get(typeSimpleName);
-	}
-
-	private Graph minimalGraph = null;
-
-	/**
-	 * @return a minimal graph (no vertices and no edges) of a minimal schema.
-	 */
-	private Graph createMinimalGraph() {
-		if (minimalGraph == null) {
-			Schema minimalSchema = new SchemaImpl("MinimalSchema",
-					"de.uni_koblenz.jgralab.greqlminschema");
-			GraphClass gc = minimalSchema.createGraphClass("MinimalGraph");
-			VertexClass n = gc.createVertexClass("Node");
-			gc.createEdgeClass("Link", n, 0, Integer.MAX_VALUE, "",
-					AggregationKind.NONE, n, 0, Integer.MAX_VALUE, "",
-					AggregationKind.NONE);
-			minimalSchema.compile(CodeGeneratorConfiguration.MINIMAL);
-			Method graphCreateMethod = minimalSchema
-					.getGraphCreateMethod(ImplementationType.STANDARD);
-			try {
-				minimalGraph = (Graph) graphCreateMethod.invoke(null,
-						new Object[] { "test", 1, 1 });
-			} catch (IllegalArgumentException e) {
-				e.printStackTrace();
-			} catch (IllegalAccessException e) {
-				e.printStackTrace();
-			} catch (InvocationTargetException e) {
-				e.printStackTrace();
-			}
-		}
-		return minimalGraph;
 	}
 
 	/**
@@ -1079,10 +1038,6 @@ public class GreqlEvaluator {
 		overallEvaluationTime = 0;
 
 		long startTime = System.currentTimeMillis();
-
-		if (datagraph == null) {
-			datagraph = createMinimalGraph();
-		}
 
 		// Initialize the CostModel if there's none
 		if (costModel == null) {

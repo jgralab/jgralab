@@ -509,7 +509,7 @@ public class GreqlGui extends JFrame {
 			}
 
 		});
-		evalQueryButton.setEnabled(false);
+		// evalQueryButton.setEnabled(false);
 
 		optimizeCheckBox = new JCheckBox("Enable optimizer");
 		optimizeCheckBox.setSelected(true);

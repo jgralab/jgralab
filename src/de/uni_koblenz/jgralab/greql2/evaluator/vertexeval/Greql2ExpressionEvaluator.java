@@ -62,9 +62,9 @@ import de.uni_koblenz.jgralab.schema.VertexClass;
  * GReQL2-Expression is the rootvertex of the GReQL-2Syntaxgraph. It contains
  * the bound/free variables, that are defined via "using" and binds them to the
  * values in the variableMap of the Greql2Evaluator.
- *
+ * 
  * @author ist@uni-koblenz.de
- *
+ * 
  */
 public class Greql2ExpressionEvaluator extends VertexEvaluator {
 
@@ -98,7 +98,7 @@ public class Greql2ExpressionEvaluator extends VertexEvaluator {
 		IsBoundVarOf inc = vertex
 				.getFirstIsBoundVarOfIncidence(EdgeDirection.IN);
 		while (inc != null) {
-			Variable currentBoundVariable = (Variable) inc.getAlpha();
+			Variable currentBoundVariable = inc.getAlpha();
 			Object variableValue = boundVariables.get(currentBoundVariable
 					.get_name());
 			if (variableValue == null) {
@@ -136,7 +136,7 @@ public class Greql2ExpressionEvaluator extends VertexEvaluator {
 			boundVariablesChanged = false;
 		}
 
-		if (vertex.get_importedTypes() != null) {
+		if (vertex.get_importedTypes() != null && graph != null) {
 			Schema graphSchema = graph.getSchema();
 			for (String importedType : vertex.get_importedTypes()) {
 				if (importedType.endsWith(".*")) {
@@ -168,8 +168,8 @@ public class Greql2ExpressionEvaluator extends VertexEvaluator {
 			}
 		}
 
-		Expression boundExpression = (Expression) vertex
-				.getFirstIsQueryExprOfIncidence(EdgeDirection.IN).getAlpha();
+		Expression boundExpression = vertex.getFirstIsQueryExprOfIncidence(
+				EdgeDirection.IN).getAlpha();
 		VertexEvaluator eval = vertexEvalMarker.getMark(boundExpression);
 		Object result = eval.getResult();
 		// if the query contains a "store as " - clause, there is a
@@ -186,8 +186,8 @@ public class Greql2ExpressionEvaluator extends VertexEvaluator {
 
 	@Override
 	public VertexCosts calculateSubtreeEvaluationCosts(GraphSize graphSize) {
-		return this.greqlEvaluator.getCostModel()
-				.calculateCostsGreql2Expression(this, graphSize);
+		return greqlEvaluator.getCostModel().calculateCostsGreql2Expression(
+				this, graphSize);
 	}
 
 }
