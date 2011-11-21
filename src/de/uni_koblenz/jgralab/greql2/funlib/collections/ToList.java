@@ -33,8 +33,7 @@ public class ToList extends Function {
 		if (l instanceof Table) {
 			return ((Table<T>) l).toPVector();
 		}
-		PVector<T> result = JGraLab.vector();
-		return result.plusAll(l);
+		return JGraLab.<T> vector().plusAll(l);
 	}
 
 	@Override

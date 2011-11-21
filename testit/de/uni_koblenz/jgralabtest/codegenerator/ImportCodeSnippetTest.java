@@ -35,6 +35,7 @@
 package de.uni_koblenz.jgralabtest.codegenerator;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -161,8 +162,8 @@ public class ImportCodeSnippetTest extends CodeSnippetTest {
 		ics.add(".", "Halbblutprinz.", ".", "Heiligtuemer.des.Todes", ".", ".");
 		assertEquals(
 				"\n\t\t\timport .;\n\t\t\t\n\t\t\timport Halbblutprinz.;\n\t\t\t"
-						+ "\n\t\t\timport Heiligtuemer.des.Todes;\n", ics
-						.getCode(3));
+						+ "\n\t\t\timport Heiligtuemer.des.Todes;\n",
+				ics.getCode(3));
 		ics.clear();
 		ics.add("Heiligtuemer.Harrys", "Heiligtuemer.des.Todes");
 		assertEquals("\n\t\t\timport Heiligtuemer.Harrys;\n\t\t\timport "
@@ -191,8 +192,8 @@ public class ImportCodeSnippetTest extends CodeSnippetTest {
 		// normal cases
 		ImportCodeSnippet ics = new ImportCodeSnippet();
 		ics.add("rho.", "ny.", "iota.");
-		assertEquals("\nimport iota.;\n\nimport ny.;\n\nimport rho.;\n", ics
-				.getCode());
+		assertEquals("\nimport iota.;\n\nimport ny.;\n\nimport rho.;\n",
+				ics.getCode());
 		ics.clear();
 		ics.add("sigma.tau", "tau.ypsilon", "sigma.ypsilon");
 		assertEquals("\nimport sigma.tau;\nimport sigma.ypsilon;\n\nimport "
@@ -329,12 +330,12 @@ public class ImportCodeSnippetTest extends CodeSnippetTest {
 		testMap.clear();
 		testMap.put(null, null);
 		ics.addVariables(testMap);
-		assertEquals(null, ics.getVariable(null));
+		assertNull(ics.getVariable(null));
 
 		testMap.clear();
 		testMap.put("7", null);
 		ics.addVariables(testMap);
-		assertEquals(null, ics.getVariable("7"));
+		assertNull(ics.getVariable("7"));
 
 		testMap.clear();
 		testMap.put(null, "k");
@@ -365,13 +366,13 @@ public class ImportCodeSnippetTest extends CodeSnippetTest {
 		// border cases
 		ImportCodeSnippet ics = new ImportCodeSnippet();
 		ics.setVariable(null, null);
-		assertEquals(null, ics.getVariable(null));
+		assertNull(ics.getVariable(null));
 		ics.setVariable(null, "sylvester");
 		assertEquals("sylvester", ics.getVariable(null));
 		ics.setVariable("3", null);
-		assertEquals(null, ics.getVariable("3"));
+		assertNull(ics.getVariable("3"));
 		ics.setVariable("", null);
-		assertEquals(null, ics.getVariable(""));
+		assertNull(ics.getVariable(""));
 		ics.setVariable("", "");
 		assertEquals("", ics.getVariable(""));
 		ics.setVariable("5", "");
@@ -400,7 +401,7 @@ public class ImportCodeSnippetTest extends CodeSnippetTest {
 	@Test
 	public void testGetParent() {
 		ImportCodeSnippet ics = new ImportCodeSnippet();
-		assertEquals(null, ics.getParent());
+		assertNull(ics.getParent());
 
 		CodeList cl1 = new CodeList();
 		cl1.setVariable("parent1", "0");
@@ -429,7 +430,7 @@ public class ImportCodeSnippetTest extends CodeSnippetTest {
 		assertEquals(cl2, ics.getParent().getParent());
 		assertEquals("*UNDEFINED:parent4*", ics.getParent().getParent()
 				.getParent().getVariable("parent4"));
-		assertEquals("0", ics.getParent().getParent().getParent().getVariable(
-				"parent1"));
+		assertEquals("0",
+				ics.getParent().getParent().getParent().getVariable("parent1"));
 	}
 }

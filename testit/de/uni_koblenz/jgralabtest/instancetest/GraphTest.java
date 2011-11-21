@@ -343,8 +343,8 @@ public class GraphTest extends InstanceTest {
 		createReadOnlyTransaction(g2);
 		long gVersion1 = g1.getGraphVersion();
 		long gVersion2 = g2.getGraphVersion();
-		assertEquals(false, g1.isGraphModified(gVersion1));
-		assertEquals(false, g2.isGraphModified(gVersion2));
+		assertFalse(g1.isGraphModified(gVersion1));
+		assertFalse(g2.isGraphModified(gVersion2));
 		commit(g1);
 		commit(g2);
 
@@ -357,8 +357,8 @@ public class GraphTest extends InstanceTest {
 
 		createReadOnlyTransaction(g1);
 		createReadOnlyTransaction(g2);
-		assertEquals(true, g1.isGraphModified(gVersion1));
-		assertEquals(true, g2.isGraphModified(gVersion2));
+		assertTrue(g1.isGraphModified(gVersion1));
+		assertTrue(g2.isGraphModified(gVersion2));
 		gVersion1 = g1.getGraphVersion();
 		gVersion2 = g2.getGraphVersion();
 		commit(g1);
@@ -373,8 +373,8 @@ public class GraphTest extends InstanceTest {
 
 		createReadOnlyTransaction(g1);
 		createReadOnlyTransaction(g2);
-		assertEquals(true, g1.isGraphModified(gVersion1));
-		assertEquals(true, g2.isGraphModified(gVersion2));
+		assertTrue(g1.isGraphModified(gVersion1));
+		assertTrue(g2.isGraphModified(gVersion2));
 		gVersion1 = g1.getGraphVersion();
 		gVersion2 = g2.getGraphVersion();
 		commit(g1);
@@ -389,8 +389,8 @@ public class GraphTest extends InstanceTest {
 
 		createReadOnlyTransaction(g1);
 		createReadOnlyTransaction(g2);
-		assertEquals(true, g1.isGraphModified(gVersion1));
-		assertEquals(true, g2.isGraphModified(gVersion2));
+		assertTrue(g1.isGraphModified(gVersion1));
+		assertTrue(g2.isGraphModified(gVersion2));
 		gVersion1 = g1.getGraphVersion();
 		gVersion2 = g2.getGraphVersion();
 		commit(g1);
@@ -402,8 +402,8 @@ public class GraphTest extends InstanceTest {
 
 		createReadOnlyTransaction(g1);
 		createReadOnlyTransaction(g2);
-		assertEquals(true, g1.isGraphModified(gVersion1));
-		assertEquals(false, g2.isGraphModified(gVersion2));
+		assertTrue(g1.isGraphModified(gVersion1));
+		assertFalse(g2.isGraphModified(gVersion2));
 		gVersion1 = g1.getGraphVersion();
 		commit(g1);
 		commit(g2);
@@ -414,8 +414,8 @@ public class GraphTest extends InstanceTest {
 
 		createReadOnlyTransaction(g1);
 		createReadOnlyTransaction(g2);
-		assertEquals(true, g1.isGraphModified(gVersion1));
-		assertEquals(false, g2.isGraphModified(gVersion2));
+		assertTrue(g1.isGraphModified(gVersion1));
+		assertFalse(g2.isGraphModified(gVersion2));
 		gVersion1 = g1.getGraphVersion();
 		commit(g1);
 		commit(g2);
@@ -426,8 +426,8 @@ public class GraphTest extends InstanceTest {
 
 		createReadOnlyTransaction(g1);
 		createReadOnlyTransaction(g2);
-		assertEquals(true, g1.isGraphModified(gVersion1));
-		assertEquals(false, g2.isGraphModified(gVersion2));
+		assertTrue(g1.isGraphModified(gVersion1));
+		assertFalse(g2.isGraphModified(gVersion2));
 		gVersion1 = g1.getGraphVersion();
 		commit(g1);
 		commit(g2);
@@ -443,8 +443,8 @@ public class GraphTest extends InstanceTest {
 
 		createReadOnlyTransaction(g1);
 		createReadOnlyTransaction(g2);
-		assertEquals(true, g1.isGraphModified(gVersion1));
-		assertEquals(false, g2.isGraphModified(gVersion2));
+		assertTrue(g1.isGraphModified(gVersion1));
+		assertFalse(g2.isGraphModified(gVersion2));
 		gVersion1 = g1.getGraphVersion();
 		commit(g1);
 		commit(g2);
@@ -456,8 +456,8 @@ public class GraphTest extends InstanceTest {
 
 		createReadOnlyTransaction(g1);
 		createReadOnlyTransaction(g2);
-		assertEquals(true, g1.isGraphModified(gVersion1));
-		assertEquals(false, g2.isGraphModified(gVersion2));
+		assertTrue(g1.isGraphModified(gVersion1));
+		assertFalse(g2.isGraphModified(gVersion2));
 		commit(g1);
 		commit(g2);
 	}
@@ -1284,7 +1284,7 @@ public class GraphTest extends InstanceTest {
 		createReadOnlyTransaction(g1);
 		assertFalse(e12.isValid());
 		assertFalse(g1.containsEdge(e12));
-		assertEquals(null, g1.getEdge(id));
+		assertNull(g1.getEdge(id));
 		commit(g1);
 
 		createReadOnlyTransaction(g1);
@@ -1298,7 +1298,7 @@ public class GraphTest extends InstanceTest {
 		createReadOnlyTransaction(g1);
 		assertFalse(e1.isValid());
 		assertFalse(g1.containsEdge(e1));
-		assertEquals(null, g1.getEdge(id));
+		assertNull(g1.getEdge(id));
 		commit(g1);
 
 		createReadOnlyTransaction(g1);
@@ -1312,7 +1312,7 @@ public class GraphTest extends InstanceTest {
 		createReadOnlyTransaction(g1);
 		assertFalse(e2.isValid());
 		assertFalse(g1.containsEdge(e2));
-		assertEquals(null, g1.getEdge(id));
+		assertNull(g1.getEdge(id));
 		commit(g1);
 
 		createReadOnlyTransaction(g1);
@@ -1326,7 +1326,7 @@ public class GraphTest extends InstanceTest {
 		createReadOnlyTransaction(g1);
 		assertFalse(e7.isValid());
 		assertFalse(g1.containsEdge(e7));
-		assertEquals(null, g1.getEdge(id));
+		assertNull(g1.getEdge(id));
 		commit(g1);
 
 		createReadOnlyTransaction(g1);
@@ -1340,7 +1340,7 @@ public class GraphTest extends InstanceTest {
 		createReadOnlyTransaction(g1);
 		assertFalse(e3.isValid());
 		assertFalse(g1.containsEdge(e3));
-		assertEquals(null, g1.getEdge(id));
+		assertNull(g1.getEdge(id));
 		commit(g1);
 
 		createReadOnlyTransaction(g1);
@@ -1354,7 +1354,7 @@ public class GraphTest extends InstanceTest {
 		createReadOnlyTransaction(g1);
 		assertFalse(e9.isValid());
 		assertFalse(g1.containsEdge(e9));
-		assertEquals(null, g1.getEdge(id));
+		assertNull(g1.getEdge(id));
 		commit(g1);
 
 		createReadOnlyTransaction(g1);
@@ -1368,7 +1368,7 @@ public class GraphTest extends InstanceTest {
 		createReadOnlyTransaction(g1);
 		assertFalse(e4.isValid());
 		assertFalse(g1.containsEdge(e4));
-		assertEquals(null, g1.getEdge(id));
+		assertNull(g1.getEdge(id));
 		commit(g1);
 
 		createReadOnlyTransaction(g1);
@@ -1382,7 +1382,7 @@ public class GraphTest extends InstanceTest {
 		createReadOnlyTransaction(g1);
 		assertFalse(e10.isValid());
 		assertFalse(g1.containsEdge(e10));
-		assertEquals(null, g1.getEdge(id));
+		assertNull(g1.getEdge(id));
 		commit(g1);
 
 		createReadOnlyTransaction(g1);
@@ -1396,7 +1396,7 @@ public class GraphTest extends InstanceTest {
 		createReadOnlyTransaction(g1);
 		assertFalse(e5.isValid());
 		assertFalse(g1.containsEdge(e5));
-		assertEquals(null, g1.getEdge(id));
+		assertNull(g1.getEdge(id));
 		commit(g1);
 
 		createReadOnlyTransaction(g1);
@@ -1410,7 +1410,7 @@ public class GraphTest extends InstanceTest {
 		createReadOnlyTransaction(g1);
 		assertFalse(e8.isValid());
 		assertFalse(g1.containsEdge(e8));
-		assertEquals(null, g1.getEdge(id));
+		assertNull(g1.getEdge(id));
 		commit(g1);
 
 		createReadOnlyTransaction(g1);
@@ -1424,7 +1424,7 @@ public class GraphTest extends InstanceTest {
 		createReadOnlyTransaction(g1);
 		assertFalse(e11.isValid());
 		assertFalse(g1.containsEdge(e11));
-		assertEquals(null, g1.getEdge(id));
+		assertNull(g1.getEdge(id));
 		commit(g1);
 
 		createReadOnlyTransaction(g1);
@@ -1438,7 +1438,7 @@ public class GraphTest extends InstanceTest {
 		createReadOnlyTransaction(g1);
 		assertFalse(e6.isValid());
 		assertFalse(g1.containsEdge(e6));
-		assertEquals(null, g1.getEdge(id));
+		assertNull(g1.getEdge(id));
 		commit(g1);
 		// border cases
 
@@ -1523,7 +1523,7 @@ public class GraphTest extends InstanceTest {
 		createReadOnlyTransaction(g1);
 		createReadOnlyTransaction(g2);
 		assertEquals(v1, g1.getFirstVertex());
-		assertEquals(null, g2.getFirstVertex());
+		assertNull(g2.getFirstVertex());
 		commit(g2);
 		commit(g1);
 
@@ -1564,7 +1564,7 @@ public class GraphTest extends InstanceTest {
 		commit(g1);
 
 		createReadOnlyTransaction(g2);
-		assertEquals(null, g2.getLastVertex());
+		assertNull(g2.getLastVertex());
 		commit(g2);
 
 		createTransaction(g1);
@@ -1670,9 +1670,9 @@ public class GraphTest extends InstanceTest {
 	public void testGetFirstVertexOfClass() throws CommitFailedException {
 
 		createReadOnlyTransaction(g2);
-		assertEquals(null, g2.getFirstVertex(SubNode.class));
-		assertEquals(null, g2.getFirstVertex(SuperNode.class));
-		assertEquals(null, g2.getFirstVertex(DoubleSubNode.class));
+		assertNull(g2.getFirstVertex(SubNode.class));
+		assertNull(g2.getFirstVertex(SuperNode.class));
+		assertNull(g2.getFirstVertex(DoubleSubNode.class));
 		commit(g2);
 
 		createTransaction(g2);
@@ -1681,8 +1681,8 @@ public class GraphTest extends InstanceTest {
 
 		createReadOnlyTransaction(g2);
 		assertEquals(v13, g2.getFirstVertex(SubNode.class));
-		assertEquals(null, g2.getFirstVertex(SuperNode.class));
-		assertEquals(null, g2.getFirstVertex(DoubleSubNode.class));
+		assertNull(g2.getFirstVertex(SuperNode.class));
+		assertNull(g2.getFirstVertex(DoubleSubNode.class));
 		commit(g2);
 
 		createTransaction(g2);
@@ -1692,7 +1692,7 @@ public class GraphTest extends InstanceTest {
 		createReadOnlyTransaction(g2);
 		assertEquals(v13, g2.getFirstVertex(SubNode.class));
 		assertEquals(v14, g2.getFirstVertex(SuperNode.class));
-		assertEquals(null, g2.getFirstVertex(DoubleSubNode.class));
+		assertNull(g2.getFirstVertex(DoubleSubNode.class));
 		commit(g2);
 
 		createTransaction(g2);
@@ -1702,7 +1702,7 @@ public class GraphTest extends InstanceTest {
 		createReadOnlyTransaction(g2);
 		assertEquals(v13, g2.getFirstVertex(SubNode.class));
 		assertEquals(v14, g2.getFirstVertex(SuperNode.class));
-		assertEquals(null, g2.getFirstVertex(DoubleSubNode.class));
+		assertNull(g2.getFirstVertex(DoubleSubNode.class));
 		commit(g2);
 
 		createTransaction(g2);
@@ -1712,7 +1712,7 @@ public class GraphTest extends InstanceTest {
 		createReadOnlyTransaction(g2);
 		assertEquals(v13, g2.getFirstVertex(SubNode.class));
 		assertEquals(v14, g2.getFirstVertex(SuperNode.class));
-		assertEquals(null, g2.getFirstVertex(DoubleSubNode.class));
+		assertNull(g2.getFirstVertex(DoubleSubNode.class));
 		commit(g2);
 
 		createTransaction(g2);
@@ -1865,9 +1865,9 @@ public class GraphTest extends InstanceTest {
 		commit(g1);
 
 		createReadOnlyTransaction(g2);
-		assertEquals(null, g2.getFirstVertex(subN));
-		assertEquals(null, g2.getFirstVertex(superN));
-		assertEquals(null, g2.getFirstVertex(doubleSubN));
+		assertNull(g2.getFirstVertex(subN));
+		assertNull(g2.getFirstVertex(superN));
+		assertNull(g2.getFirstVertex(doubleSubN));
 		commit(g2);
 
 		createTransaction(g2);
@@ -1875,16 +1875,16 @@ public class GraphTest extends InstanceTest {
 		commit(g2);
 
 		createReadOnlyTransaction(g2);
-		assertEquals(null, g2.getFirstVertex(subN));
+		assertNull(g2.getFirstVertex(subN));
 		assertEquals(v13, g2.getFirstVertex(superN));
-		assertEquals(null, g2.getFirstVertex(doubleSubN));
+		assertNull(g2.getFirstVertex(doubleSubN));
 		commit(g2);
 
 		createTransaction(g2);
 		SubNode v14 = g2.createSubNode();
 		assertEquals(v14, g2.getFirstVertex(subN));
 		assertEquals(v13, g2.getFirstVertex(superN));
-		assertEquals(null, g2.getFirstVertex(doubleSubN));
+		assertNull(g2.getFirstVertex(doubleSubN));
 		commit(g2);
 
 		createTransaction(g2);
@@ -1894,7 +1894,7 @@ public class GraphTest extends InstanceTest {
 		createReadOnlyTransaction(g2);
 		assertEquals(v14, g2.getFirstVertex(subN));
 		assertEquals(v13, g2.getFirstVertex(superN));
-		assertEquals(null, g2.getFirstVertex(doubleSubN));
+		assertNull(g2.getFirstVertex(doubleSubN));
 		commit(g2);
 
 		createTransaction(g2);
@@ -1964,7 +1964,7 @@ public class GraphTest extends InstanceTest {
 		createReadOnlyTransaction(g2);
 		assertEquals(v18, g2.getFirstVertex(subN));
 		assertEquals(v15, g2.getFirstVertex(superN));
-		assertEquals(null, g2.getFirstVertex(doubleSubN));
+		assertNull(g2.getFirstVertex(doubleSubN));
 		commit(g2);
 
 		createTransaction(g2);
@@ -2014,7 +2014,7 @@ public class GraphTest extends InstanceTest {
 		createReadOnlyTransaction(g2);
 		assertEquals(v20, g2.getFirstVertex(subN));
 		assertEquals(v15, g2.getFirstVertex(superN));
-		assertEquals(null, g2.getFirstVertex(doubleSubN));
+		assertNull(g2.getFirstVertex(doubleSubN));
 		commit(g2);
 
 		createTransaction(g2);
@@ -2022,9 +2022,9 @@ public class GraphTest extends InstanceTest {
 		commit(g2);
 
 		createReadOnlyTransaction(g2);
-		assertEquals(null, g2.getFirstVertex(subN));
+		assertNull(g2.getFirstVertex(subN));
 		assertEquals(v15, g2.getFirstVertex(superN));
-		assertEquals(null, g2.getFirstVertex(doubleSubN));
+		assertNull(g2.getFirstVertex(doubleSubN));
 		commit(g2);
 
 		createTransaction(g2);
@@ -2034,7 +2034,7 @@ public class GraphTest extends InstanceTest {
 		createReadOnlyTransaction(g2);
 		assertEquals(v22, g2.getFirstVertex(subN));
 		assertEquals(v15, g2.getFirstVertex(superN));
-		assertEquals(null, g2.getFirstVertex(doubleSubN));
+		assertNull(g2.getFirstVertex(doubleSubN));
 		commit(g2);
 
 		createTransaction(g2);
@@ -2044,7 +2044,7 @@ public class GraphTest extends InstanceTest {
 		createReadOnlyTransaction(g2);
 		assertEquals(v22, g2.getFirstVertex(subN));
 		assertEquals(v21, g2.getFirstVertex(superN));
-		assertEquals(null, g2.getFirstVertex(doubleSubN));
+		assertNull(g2.getFirstVertex(doubleSubN));
 		commit(g2);
 
 	}
@@ -2056,7 +2056,7 @@ public class GraphTest extends InstanceTest {
 		commit(g1);
 
 		createReadOnlyTransaction(g1);
-		assertEquals(null, g1.getFirstEdge());
+		assertNull(g1.getFirstEdge());
 		commit(g1);
 
 		createTransaction(g1);
@@ -2184,7 +2184,7 @@ public class GraphTest extends InstanceTest {
 		commit(g1);
 
 		createReadOnlyTransaction(g1);
-		assertEquals(null, g1.getFirstEdge());
+		assertNull(g1.getFirstEdge());
 		commit(g1);
 
 	}
@@ -2196,7 +2196,7 @@ public class GraphTest extends InstanceTest {
 		commit(g1);
 
 		createReadOnlyTransaction(g1);
-		assertEquals(null, g1.getLastEdge());
+		assertNull(g1.getLastEdge());
 		commit(g1);
 
 		createTransaction(g1);
@@ -2340,7 +2340,7 @@ public class GraphTest extends InstanceTest {
 		commit(g1);
 
 		createReadOnlyTransaction(g1);
-		assertEquals(null, g1.getLastEdge());
+		assertNull(g1.getLastEdge());
 		commit(g1);
 
 	}
@@ -2352,9 +2352,9 @@ public class GraphTest extends InstanceTest {
 		commit(g1);
 
 		createReadOnlyTransaction(g1);
-		assertEquals(null, g1.getFirstEdge(Link.class));
-		assertEquals(null, g1.getFirstEdge(SubLink.class));
-		assertEquals(null, g1.getFirstEdge(LinkBack.class));
+		assertNull(g1.getFirstEdge(Link.class));
+		assertNull(g1.getFirstEdge(SubLink.class));
+		assertNull(g1.getFirstEdge(LinkBack.class));
 		commit(g1);
 
 		createTransaction(g1);
@@ -2363,8 +2363,8 @@ public class GraphTest extends InstanceTest {
 
 		createReadOnlyTransaction(g1);
 		assertEquals(e1, g1.getFirstEdge(Link.class));
-		assertEquals(null, g1.getFirstEdge(SubLink.class));
-		assertEquals(null, g1.getFirstEdge(LinkBack.class));
+		assertNull(g1.getFirstEdge(SubLink.class));
+		assertNull(g1.getFirstEdge(LinkBack.class));
 		commit(g1);
 
 		createTransaction(g1);
@@ -2373,8 +2373,8 @@ public class GraphTest extends InstanceTest {
 
 		createReadOnlyTransaction(g1);
 		assertEquals(e1, g1.getFirstEdge(Link.class));
-		assertEquals(null, g1.getFirstEdge(SubLink.class));
-		assertEquals(null, g1.getFirstEdge(LinkBack.class));
+		assertNull(g1.getFirstEdge(SubLink.class));
+		assertNull(g1.getFirstEdge(LinkBack.class));
 		commit(g1);
 
 		createTransaction(g1);
@@ -2383,7 +2383,7 @@ public class GraphTest extends InstanceTest {
 
 		createReadOnlyTransaction(g1);
 		assertEquals(e1, g1.getFirstEdge(Link.class));
-		assertEquals(null, g1.getFirstEdge(SubLink.class));
+		assertNull(g1.getFirstEdge(SubLink.class));
 		assertEquals(e3, g1.getFirstEdge(LinkBack.class));
 		commit(g1);
 
@@ -2393,7 +2393,7 @@ public class GraphTest extends InstanceTest {
 
 		createReadOnlyTransaction(g1);
 		assertEquals(e2, g1.getFirstEdge(Link.class));
-		assertEquals(null, g1.getFirstEdge(SubLink.class));
+		assertNull(g1.getFirstEdge(SubLink.class));
 		assertEquals(e3, g1.getFirstEdge(LinkBack.class));
 		commit(g1);
 
@@ -2533,7 +2533,7 @@ public class GraphTest extends InstanceTest {
 
 		createReadOnlyTransaction(g1);
 		assertEquals(e10, g1.getFirstEdge(Link.class));
-		assertEquals(null, g1.getFirstEdge(SubLink.class));
+		assertNull(g1.getFirstEdge(SubLink.class));
 		assertEquals(e9, g1.getFirstEdge(LinkBack.class));
 		commit(g1);
 
@@ -2542,8 +2542,8 @@ public class GraphTest extends InstanceTest {
 		commit(g1);
 
 		createReadOnlyTransaction(g1);
-		assertEquals(null, g1.getFirstEdge(Link.class));
-		assertEquals(null, g1.getFirstEdge(SubLink.class));
+		assertNull(g1.getFirstEdge(Link.class));
+		assertNull(g1.getFirstEdge(SubLink.class));
 		assertEquals(e9, g1.getFirstEdge(LinkBack.class));
 		commit(g1);
 
@@ -2552,9 +2552,9 @@ public class GraphTest extends InstanceTest {
 		commit(g1);
 
 		createReadOnlyTransaction(g1);
-		assertEquals(null, g1.getFirstEdge(Link.class));
-		assertEquals(null, g1.getFirstEdge(SubLink.class));
-		assertEquals(null, g1.getFirstEdge(LinkBack.class));
+		assertNull(g1.getFirstEdge(Link.class));
+		assertNull(g1.getFirstEdge(SubLink.class));
+		assertNull(g1.getFirstEdge(LinkBack.class));
 		commit(g1);
 
 	}
@@ -2572,9 +2572,9 @@ public class GraphTest extends InstanceTest {
 
 		// start tests
 		createReadOnlyTransaction(g1);
-		assertEquals(null, g1.getFirstEdge(link));
-		assertEquals(null, g1.getFirstEdge(subL));
-		assertEquals(null, g1.getFirstEdge(lBack));
+		assertNull(g1.getFirstEdge(link));
+		assertNull(g1.getFirstEdge(subL));
+		assertNull(g1.getFirstEdge(lBack));
 		commit(g1);
 
 		createTransaction(g1);
@@ -2584,7 +2584,7 @@ public class GraphTest extends InstanceTest {
 		createReadOnlyTransaction(g1);
 		assertEquals(e1, g1.getFirstEdge(link));
 		assertEquals(e1, g1.getFirstEdge(subL));
-		assertEquals(null, g1.getFirstEdge(lBack));
+		assertNull(g1.getFirstEdge(lBack));
 		commit(g1);
 
 		createTransaction(g1);
@@ -2594,7 +2594,7 @@ public class GraphTest extends InstanceTest {
 		createReadOnlyTransaction(g1);
 		assertEquals(e1, g1.getFirstEdge(link));
 		assertEquals(e1, g1.getFirstEdge(subL));
-		assertEquals(null, g1.getFirstEdge(lBack));
+		assertNull(g1.getFirstEdge(lBack));
 		commit(g1);
 
 		createTransaction(g1);
@@ -2613,7 +2613,7 @@ public class GraphTest extends InstanceTest {
 
 		createReadOnlyTransaction(g1);
 		assertEquals(e2, g1.getFirstEdge(link));
-		assertEquals(null, g1.getFirstEdge(subL));
+		assertNull(g1.getFirstEdge(subL));
 		assertEquals(e3, g1.getFirstEdge(lBack));
 		commit(g1);
 
@@ -2634,7 +2634,7 @@ public class GraphTest extends InstanceTest {
 		createReadOnlyTransaction(g1);
 		assertEquals(e2, g1.getFirstEdge(link));
 		assertEquals(e4, g1.getFirstEdge(subL));
-		assertEquals(null, g1.getFirstEdge(lBack));
+		assertNull(g1.getFirstEdge(lBack));
 		commit(g1);
 
 		createTransaction(g1);
@@ -2682,8 +2682,8 @@ public class GraphTest extends InstanceTest {
 		commit(g1);
 
 		createReadOnlyTransaction(g1);
-		assertEquals(null, g1.getFirstEdge(link));
-		assertEquals(null, g1.getFirstEdge(subL));
+		assertNull(g1.getFirstEdge(link));
+		assertNull(g1.getFirstEdge(subL));
 		assertEquals(e5, g1.getFirstEdge(lBack));
 		commit(g1);
 
@@ -2714,7 +2714,7 @@ public class GraphTest extends InstanceTest {
 		createReadOnlyTransaction(g1);
 		assertEquals(e7, g1.getFirstEdge(link));
 		assertEquals(e7, g1.getFirstEdge(subL));
-		assertEquals(null, g1.getFirstEdge(lBack));
+		assertNull(g1.getFirstEdge(lBack));
 		commit(g1);
 
 		createTransaction(g1);
@@ -2754,7 +2754,7 @@ public class GraphTest extends InstanceTest {
 		createReadOnlyTransaction(g1);
 		assertEquals(e8, g1.getFirstEdge(link));
 		assertEquals(e8, g1.getFirstEdge(subL));
-		assertEquals(null, g1.getFirstEdge(lBack));
+		assertNull(g1.getFirstEdge(lBack));
 		commit(g1);
 
 		createTransaction(g1);
@@ -2763,8 +2763,8 @@ public class GraphTest extends InstanceTest {
 
 		createReadOnlyTransaction(g1);
 		assertEquals(e10, g1.getFirstEdge(link));
-		assertEquals(null, g1.getFirstEdge(subL));
-		assertEquals(null, g1.getFirstEdge(lBack));
+		assertNull(g1.getFirstEdge(subL));
+		assertNull(g1.getFirstEdge(lBack));
 		commit(g1);
 
 		createTransaction(g1);
@@ -2772,9 +2772,9 @@ public class GraphTest extends InstanceTest {
 		commit(g1);
 
 		createReadOnlyTransaction(g1);
-		assertEquals(null, g1.getFirstEdge(link));
-		assertEquals(null, g1.getFirstEdge(subL));
-		assertEquals(null, g1.getFirstEdge(lBack));
+		assertNull(g1.getFirstEdge(link));
+		assertNull(g1.getFirstEdge(subL));
+		assertNull(g1.getFirstEdge(lBack));
 		commit(g1);
 
 	}
@@ -2799,11 +2799,11 @@ public class GraphTest extends InstanceTest {
 		createReadOnlyTransaction(g2);
 		assertEquals(v1, g1.getVertex(1));
 		assertEquals(v16, g2.getVertex(1));
-		assertEquals(null, g1.getVertex(42));
-		assertEquals(null, g1.getVertex(33));
-		assertEquals(null, g2.getVertex(4));
+		assertNull(g1.getVertex(42));
+		assertNull(g1.getVertex(33));
+		assertNull(g2.getVertex(4));
 		// 1000 is the highest possible value
-		assertEquals(null, g1.getVertex(1000));
+		assertNull(g1.getVertex(1000));
 
 		// normal cases
 		assertEquals(v2, g1.getVertex(2));
@@ -2844,11 +2844,11 @@ public class GraphTest extends InstanceTest {
 
 		// border cases
 		createReadOnlyTransaction(g1);
-		assertEquals(null, g1.getEdge(42));
-		assertEquals(null, g1.getEdge(-42));
+		assertNull(g1.getEdge(42));
+		assertNull(g1.getEdge(-42));
 		assertEquals(e1, g1.getEdge(1));
-		assertEquals(null, g1.getEdge(1000));
-		assertEquals(null, g1.getEdge(-1000));
+		assertNull(g1.getEdge(1000));
+		assertNull(g1.getEdge(-1000));
 		commit(g1);
 
 		// normal cases
@@ -3253,7 +3253,7 @@ public class GraphTest extends InstanceTest {
 	@Test
 	public void testEdges() throws CommitFailedException {
 		createReadOnlyTransaction(g1);
-		assertEquals(false, g1.edges().iterator().hasNext());
+		assertFalse(g1.edges().iterator().hasNext());
 		commit(g1);
 
 		createTransaction(g1);
@@ -3325,9 +3325,9 @@ public class GraphTest extends InstanceTest {
 		commit(g1);
 
 		createReadOnlyTransaction(g1);
-		assertEquals(false, g1.edges(link).iterator().hasNext());
-		assertEquals(false, g1.edges(subL).iterator().hasNext());
-		assertEquals(false, g1.edges(lBack).iterator().hasNext());
+		assertFalse(g1.edges(link).iterator().hasNext());
+		assertFalse(g1.edges(subL).iterator().hasNext());
+		assertFalse(g1.edges(lBack).iterator().hasNext());
 		commit(g1);
 
 		createTransaction(g1);
@@ -3474,9 +3474,9 @@ public class GraphTest extends InstanceTest {
 	public void testVertices() throws CommitFailedException {
 		createReadOnlyTransaction(g1);
 		createReadOnlyTransaction(g2);
-		assertEquals(false, g2.vertices().iterator().hasNext());
+		assertFalse(g2.vertices().iterator().hasNext());
 		commit(g2);
-		assertEquals(true, g1.vertices().iterator().hasNext());
+		assertTrue(g1.vertices().iterator().hasNext());
 
 		Vertex[] graphVertices = { v1, v2, v3, v4, v5, v6, v7, v8, v9, v10,
 				v11, v12 };
@@ -3535,12 +3535,12 @@ public class GraphTest extends InstanceTest {
 		createReadOnlyTransaction(g2);
 		getVertexClassesOfG1();
 
-		assertEquals(false, g2.vertices(subN).iterator().hasNext());
-		assertEquals(false, g2.vertices(superN).iterator().hasNext());
-		assertEquals(false, g2.vertices(doubleSubN).iterator().hasNext());
-		assertEquals(true, g1.vertices(subN).iterator().hasNext());
-		assertEquals(true, g1.vertices(superN).iterator().hasNext());
-		assertEquals(true, g1.vertices(doubleSubN).iterator().hasNext());
+		assertFalse(g2.vertices(subN).iterator().hasNext());
+		assertFalse(g2.vertices(superN).iterator().hasNext());
+		assertFalse(g2.vertices(doubleSubN).iterator().hasNext());
+		assertTrue(g1.vertices(subN).iterator().hasNext());
+		assertTrue(g1.vertices(superN).iterator().hasNext());
+		assertTrue(g1.vertices(doubleSubN).iterator().hasNext());
 		commit(g2);
 
 		Vertex[] graphSubN = { v1, v2, v3, v4, v9, v10, v11, v12 };
@@ -3606,16 +3606,16 @@ public class GraphTest extends InstanceTest {
 	@Test
 	public void testVertices3() throws CommitFailedException {
 		createReadOnlyTransaction(g2);
-		assertEquals(false, g2.vertices(SubNode.class).iterator().hasNext());
-		assertEquals(false, g2.vertices(SuperNode.class).iterator().hasNext());
-		assertEquals(false, g2.vertices(DoubleSubNode.class).iterator()
+		assertFalse(g2.vertices(SubNode.class).iterator().hasNext());
+		assertFalse(g2.vertices(SuperNode.class).iterator().hasNext());
+		assertFalse(g2.vertices(DoubleSubNode.class).iterator()
 				.hasNext());
 		commit(g2);
 
 		createReadOnlyTransaction(g1);
-		assertEquals(true, g1.vertices(SubNode.class).iterator().hasNext());
-		assertEquals(true, g1.vertices(SuperNode.class).iterator().hasNext());
-		assertEquals(true, g1.vertices(DoubleSubNode.class).iterator()
+		assertTrue(g1.vertices(SubNode.class).iterator().hasNext());
+		assertTrue(g1.vertices(SuperNode.class).iterator().hasNext());
+		assertTrue(g1.vertices(DoubleSubNode.class).iterator()
 				.hasNext());
 		commit(g1);
 

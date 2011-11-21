@@ -78,9 +78,9 @@ import de.uni_koblenz.jgralab.schema.Attribute;
 /**
  * This {@link Optimizer} implements the transformation "Selection as early as
  * possible".
- *
+ * 
  * @author ist@uni-koblenz.de
- *
+ * 
  */
 public class EarlySelectionOptimizer extends OptimizerBase {
 
@@ -91,7 +91,7 @@ public class EarlySelectionOptimizer extends OptimizerBase {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see
 	 * de.uni_koblenz.jgralab.greql2.optimizer.Optimizer#isEquivalent(de.uni_koblenz
 	 * .jgralab.greql2.optimizer.Optimizer)
@@ -106,7 +106,7 @@ public class EarlySelectionOptimizer extends OptimizerBase {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see
 	 * de.uni_koblenz.jgralab.greql2.optimizer.Optimizer#optimize(de.uni_koblenz
 	 * .jgralab.greql2.evaluator.GreqlEvaluator,
@@ -144,7 +144,7 @@ public class EarlySelectionOptimizer extends OptimizerBase {
 
 	/**
 	 * Do an optimization run.
-	 *
+	 * 
 	 * @throws OptimizerException
 	 */
 	private boolean runOptimization() throws OptimizerException {
@@ -155,7 +155,7 @@ public class EarlySelectionOptimizer extends OptimizerBase {
 			IsConstraintOf isConst = decl
 					.getFirstIsConstraintOfIncidence(EdgeDirection.IN);
 			while (isConst != null) {
-				Expression exp = (Expression) isConst.getAlpha();
+				Expression exp = isConst.getAlpha();
 				for (Entry<SimpleDeclaration, Set<Expression>> e : collectMovableExpressions(
 						exp).entrySet()) {
 					if (movableExpressions.containsKey(e.getKey())) {
@@ -164,7 +164,8 @@ public class EarlySelectionOptimizer extends OptimizerBase {
 						movableExpressions.put(e.getKey(), e.getValue());
 					}
 				}
-				isConst = isConst.getNextIsConstraintOfIncidence(EdgeDirection.IN);
+				isConst = isConst
+						.getNextIsConstraintOfIncidence(EdgeDirection.IN);
 			}
 		}
 
@@ -186,9 +187,9 @@ public class EarlySelectionOptimizer extends OptimizerBase {
 					@Override
 					public int compare(SimpleDeclaration sd1,
 							SimpleDeclaration sd2) {
-						Declaration decl1 = (Declaration) sd1
+						Declaration decl1 = sd1
 								.getFirstIsSimpleDeclOfIncidence().getOmega();
-						Declaration decl2 = (Declaration) sd2
+						Declaration decl2 = sd2
 								.getFirstIsSimpleDeclOfIncidence().getOmega();
 						if (OptimizerUtility.isAbove(decl1, decl2)) {
 							return 1;
@@ -201,7 +202,7 @@ public class EarlySelectionOptimizer extends OptimizerBase {
 				});
 
 		for (SimpleDeclaration sd : simpleDeclsWithMovableExpressions) {
-			Declaration parentDecl = (Declaration) sd.getFirstIsSimpleDeclOfIncidence()
+			Declaration parentDecl = sd.getFirstIsSimpleDeclOfIncidence()
 					.getOmega();
 			Set<Variable> varsDeclaredBySd = OptimizerUtility
 					.collectVariablesDeclaredBy(sd);
@@ -279,7 +280,7 @@ public class EarlySelectionOptimizer extends OptimizerBase {
 		}
 		logger.finer(sb.toString() + " with predicates " + predicates + ".");
 
-		Declaration parentDeclOfOrigSD = (Declaration) origSD
+		Declaration parentDeclOfOrigSD = origSD
 				.getFirstIsSimpleDeclOfIncidence(EdgeDirection.OUT).getOmega();
 		assert parentDeclOfOrigSD.getDegree(EdgeDirection.OUT) == 1;
 
@@ -326,7 +327,8 @@ public class EarlySelectionOptimizer extends OptimizerBase {
 		Declaration newInnerDecl = syntaxgraph.createDeclaration();
 		syntaxgraph.createIsCompDeclOf(newInnerDecl, newInnerCompr);
 		syntaxgraph.createIsCompResultDefOf(newOuterRecord, newInnerCompr);
-		origSD.getFirstIsSimpleDeclOfIncidence(EdgeDirection.OUT).setOmega(newInnerDecl);
+		origSD.getFirstIsSimpleDeclOfIncidence(EdgeDirection.OUT).setOmega(
+				newInnerDecl);
 
 		Expression newCombinedConstraint = createConjunction(
 				new ArrayList<Expression>(predicates), new HashSet<Variable>());
@@ -388,7 +390,8 @@ public class EarlySelectionOptimizer extends OptimizerBase {
 		Variable newInnerVar = undeclaredVars.iterator().next();
 
 		// Connect the edges
-		origSD.getFirstIsTypeExprOfIncidence(EdgeDirection.IN).setOmega(newInnerSD);
+		origSD.getFirstIsTypeExprOfIncidence(EdgeDirection.IN).setOmega(
+				newInnerSD);
 		syntaxgraph.createIsTypeExprOfDeclaration(newSetComp, origSD);
 		syntaxgraph.createIsCompDeclOf(newDecl, newSetComp);
 		syntaxgraph.createIsSimpleDeclOf(newInnerSD, newDecl);
@@ -397,7 +400,7 @@ public class EarlySelectionOptimizer extends OptimizerBase {
 		syntaxgraph.createIsCompResultDefOf(newInnerVar, newSetComp);
 
 		for (Expression exp : predicates) {
-			removeExpressionFromOriginalConstraint(exp, (Declaration) origSD
+			removeExpressionFromOriginalConstraint(exp, origSD
 					.getFirstIsSimpleDeclOfIncidence().getOmega());
 		}
 	}
@@ -441,7 +444,7 @@ public class EarlySelectionOptimizer extends OptimizerBase {
 			for (IsArgumentOf inc : funApp
 					.getIsArgumentOfIncidences(EdgeDirection.IN)) {
 				if (inc.getNormalEdge() != upEdge.getNormalEdge()) {
-					otherArg = (Expression) inc.getAlpha();
+					otherArg = inc.getAlpha();
 				}
 			}
 			ArrayList<Edge> funAppEdges = new ArrayList<Edge>();
@@ -460,7 +463,7 @@ public class EarlySelectionOptimizer extends OptimizerBase {
 	 * Collects all edges running out of the given Variable, which represent
 	 * accesses. Basically, those are all outgoing edges except IsDeclaredVarOf,
 	 * IsBoundVarOf and IsVarOf edges.
-	 *
+	 * 
 	 * @param var
 	 *            a Variable
 	 * @return all edges running out of the given Variable representing variable
@@ -491,10 +494,12 @@ public class EarlySelectionOptimizer extends OptimizerBase {
 		FunctionId funId = OptimizerUtility.findOrCreateFunctionId("and",
 				syntaxgraph);
 		syntaxgraph.createIsFunctionIdOf(funId, funApp);
-		syntaxgraph.createIsArgumentOf((Expression) copySubgraph(predicates
-				.get(0), syntaxgraph, varsToBeCopied, copiedVars), funApp);
-		syntaxgraph.createIsArgumentOf(createConjunction(predicates.subList(1,
-				predicates.size()), varsToBeCopied, copiedVars), funApp);
+		syntaxgraph.createIsArgumentOf(
+				(Expression) copySubgraph(predicates.get(0), syntaxgraph,
+						varsToBeCopied, copiedVars), funApp);
+		syntaxgraph.createIsArgumentOf(
+				createConjunction(predicates.subList(1, predicates.size()),
+						varsToBeCopied, copiedVars), funApp);
 		return funApp;
 	}
 
@@ -505,7 +510,7 @@ public class EarlySelectionOptimizer extends OptimizerBase {
 	 * with exceptions for {@link FunctionId}s (never copied) and
 	 * {@link Variable}s (only those in <code>varsToBeCopied</code> will be
 	 * copied ONCE).
-	 *
+	 * 
 	 * @param predicates
 	 *            a {@link List} of {@link Expression}s
 	 * @param varsToBeCopied
@@ -526,12 +531,12 @@ public class EarlySelectionOptimizer extends OptimizerBase {
 	/**
 	 * Find all {@link Expression}s below <code>exp</code> that can be moved and
 	 * return them.
-	 *
+	 * 
 	 * An {@link Expression} is considered movable if it needs only
 	 * {@link Variable}s that are locally declared in one
 	 * {@link SimpleDeclaration} and this {@link SimpleDeclaration} is not the
 	 * only one in the parent {@link Declaration}.
-	 *
+	 * 
 	 * @param exp
 	 *            the {@link Expression} below which to look for movable
 	 *            {@link Expression}s
@@ -544,10 +549,11 @@ public class EarlySelectionOptimizer extends OptimizerBase {
 				&& OptimizerUtility.isAnd((FunctionApplication) exp)) {
 			// For AND expressions we dive deeper into the arguments.
 			FunctionApplication funApp = (FunctionApplication) exp;
-			IsArgumentOf isArg = funApp.getFirstIsArgumentOfIncidence(EdgeDirection.IN);
+			IsArgumentOf isArg = funApp
+					.getFirstIsArgumentOfIncidence(EdgeDirection.IN);
 			while (isArg != null) {
 				for (Entry<SimpleDeclaration, Set<Expression>> entry : collectMovableExpressions(
-						(Expression) isArg.getAlpha()).entrySet()) {
+						isArg.getAlpha()).entrySet()) {
 					if (movableExpressions.containsKey(entry.getKey())) {
 						movableExpressions.get(entry.getKey()).addAll(
 								entry.getValue());
@@ -566,7 +572,7 @@ public class EarlySelectionOptimizer extends OptimizerBase {
 			// Only collect those SimpleDeclarations whose parent Declaration
 			// has more than one SimpleDeclaration or which declare more than
 			// one variable.
-			Declaration parent = (Declaration) sd.getFirstIsSimpleDeclOfIncidence(
+			Declaration parent = sd.getFirstIsSimpleDeclOfIncidence(
 					EdgeDirection.OUT).getOmega();
 			if ((collectSimpleDeclarationsOf(parent).size() > 1)
 					|| (OptimizerUtility.collectVariablesDeclaredBy(sd).size() > 1)) {
@@ -587,7 +593,7 @@ public class EarlySelectionOptimizer extends OptimizerBase {
 	 * {@link Variable}s the {@link Expression} <code>exp</code> needs. If
 	 * <code>exp</code> doesn't need any variables or such an
 	 * {@link SimpleDeclaration} doesn't exist, return <code>null</code>.
-	 *
+	 * 
 	 * @param exp
 	 *            an {@link Expression}
 	 * @return the {@link SimpleDeclaration} that declares all local
@@ -601,7 +607,7 @@ public class EarlySelectionOptimizer extends OptimizerBase {
 
 		SimpleDeclaration sd = null, oldSd = null;
 		for (Variable var : neededVars) {
-			sd = (SimpleDeclaration) var.getFirstIsDeclaredVarOfIncidence().getOmega();
+			sd = var.getFirstIsDeclaredVarOfIncidence().getOmega();
 			if ((oldSd != null) && (sd != oldSd)) {
 				// the last variable was declared in another
 				// SimpleDeclaration
@@ -634,7 +640,7 @@ public class EarlySelectionOptimizer extends OptimizerBase {
 					if (inc.getAlpha() == var) {
 						neededLocalVars.add(var);
 					}
-					inc = inc.getNextIsDeclaredVarOf();
+					inc = inc.getNextIsDeclaredVarOfIncidence();
 				}
 			}
 		}
@@ -675,7 +681,7 @@ public class EarlySelectionOptimizer extends OptimizerBase {
 	/**
 	 * Collect all {@link SimpleDeclaration}s of <code>decl</code> in a
 	 * {@link List}.
-	 *
+	 * 
 	 * @param decl
 	 *            a {@link Declaration}
 	 * @return a {@link List} of all {@link SimpleDeclaration}s that are part of
@@ -685,7 +691,7 @@ public class EarlySelectionOptimizer extends OptimizerBase {
 		ArrayList<SimpleDeclaration> sds = new ArrayList<SimpleDeclaration>();
 		for (IsSimpleDeclOf inc : decl
 				.getIsSimpleDeclOfIncidences(EdgeDirection.IN)) {
-			sds.add((SimpleDeclaration) inc.getAlpha());
+			sds.add(inc.getAlpha());
 		}
 		return sds;
 	}
@@ -693,7 +699,7 @@ public class EarlySelectionOptimizer extends OptimizerBase {
 	/**
 	 * Collect the {@link Variable}s that have no outgoing
 	 * {@link IsDeclaredVarOf} edges and are located below <code>v</code>.
-	 *
+	 * 
 	 * @param vertex
 	 *            the root {@link Vertex} below which to look for undeclared
 	 *            {@link Variable}s
@@ -722,7 +728,7 @@ public class EarlySelectionOptimizer extends OptimizerBase {
 	 * ONCE. After that the one and only copy is used instead of creating a new
 	 * copy. That's what <code>copiedVarMap</code> is for. So normally you'd
 	 * provide an empty {@link HashMap}.
-	 *
+	 * 
 	 * @param origVertex
 	 *            the root {@link Vertex} of the subgraph to be copied
 	 * @param graph
@@ -782,7 +788,7 @@ public class EarlySelectionOptimizer extends OptimizerBase {
 	/**
 	 * Copy the attribute values of <code>from</code> to <code>to</code>. The
 	 * types of the given {@link AttributedElement}s have to be equal.
-	 *
+	 * 
 	 * @param from
 	 *            an {@link AttributedElement}
 	 * @param to

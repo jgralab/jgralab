@@ -35,6 +35,7 @@
 package de.uni_koblenz.jgralabtest.codegenerator;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -116,10 +117,10 @@ public class CodeSnippetTest {
 		cl.clear();
 		cs1 = new CodeSnippet(cl, "Mandarine", "Orange", "Grapefruit",
 				"Pampelmuse");
-		assertEquals("Mandarine\nOrange\nGrapefruit\nPampelmuse\n", cs1
-				.getCode());
-		assertEquals("\tMandarine\n\tOrange\n\tGrapefruit\n\tPampelmuse\n", cl
-				.getCode());
+		assertEquals("Mandarine\nOrange\nGrapefruit\nPampelmuse\n",
+				cs1.getCode());
+		assertEquals("\tMandarine\n\tOrange\n\tGrapefruit\n\tPampelmuse\n",
+				cl.getCode());
 		cs2.add("Drachenfrucht", "Affenbrot", "Guave");
 		cl.add(cs2, 1);
 		cs1 = new CodeSnippet(cl, "Feige", "Granatapfel");
@@ -173,8 +174,8 @@ public class CodeSnippetTest {
 		assertEquals("Kresse\nBohnenkraut\nKnöterich\n", cs2.getCode());
 		assertEquals(
 				"\t\t\t\tBärlauch\n\t\t\t\tDill\n\t\t\t\tEstragon\n\t\t\t\t"
-						+ "Lorbeer\n\tKresse\n\tBohnenkraut\n\tKnöterich\n", cl
-						.getCode());
+						+ "Lorbeer\n\tKresse\n\tBohnenkraut\n\tKnöterich\n",
+				cl.getCode());
 
 		// border cases
 		cs2 = new CodeSnippet(cl, true, "Kapuzinerkresse", "", "Löwenzahn", "");
@@ -212,16 +213,16 @@ public class CodeSnippetTest {
 		assertEquals("\nAhornsirup\nErdbeermarmelade\nHonig\n", cs.getCode());
 		cs.clear();
 		cs.add("Nougatcreme", "Erdnussbutter", "Blaubeermarmelade");
-		assertEquals("\nNougatcreme\nErdnussbutter\nBlaubeermarmelade\n", cs
-				.getCode());
+		assertEquals("\nNougatcreme\nErdnussbutter\nBlaubeermarmelade\n",
+				cs.getCode());
 
 		cs.clear();
 		cs.setNewLine(false);
 		cs.add("Blaubeermarmelade", "Johannisbeergelee");
 		assertEquals("Blaubeermarmelade\nJohannisbeergelee\n", cs.getCode());
 		cs.add("Apfelmus");
-		assertEquals("Blaubeermarmelade\nJohannisbeergelee\nApfelmus\n", cs
-				.getCode());
+		assertEquals("Blaubeermarmelade\nJohannisbeergelee\nApfelmus\n",
+				cs.getCode());
 		cs.add("Kirschgelee", "Pflaumenmus", "Himbeermarmelade");
 		assertEquals(
 				"Blaubeermarmelade\nJohannisbeergelee\nApfelmus\nKirschgelee"
@@ -245,8 +246,8 @@ public class CodeSnippetTest {
 		cs.add("", "Lakritz", "", "Karamell", "");
 		assertEquals("\nLakritz\n\nKaramell\n\n", cs.getCode());
 		cs.add("Schokofrosch", "", "");
-		assertEquals("\nLakritz\n\nKaramell\n\nSchokofrosch\n\n\n", cs
-				.getCode());
+		assertEquals("\nLakritz\n\nKaramell\n\nSchokofrosch\n\n\n",
+				cs.getCode());
 
 		// border cases
 		CodeSnippet cs2 = new CodeSnippet("");
@@ -266,13 +267,13 @@ public class CodeSnippetTest {
 		// same
 		// number of tabulators in between the Strings
 		CodeSnippet cs = new CodeSnippet("gelb", "orange", "rot");
-		assertEquals("\t\t\t\t\tgelb\n\t\t\t\t\torange\n\t\t\t\t\trot\n", cs
-				.getCode(5));
-		assertEquals("\t\t\t\tgelb\n\t\t\t\torange\n\t\t\t\trot\n", cs
-				.getCode(4));
+		assertEquals("\t\t\t\t\tgelb\n\t\t\t\t\torange\n\t\t\t\t\trot\n",
+				cs.getCode(5));
+		assertEquals("\t\t\t\tgelb\n\t\t\t\torange\n\t\t\t\trot\n",
+				cs.getCode(4));
 		cs.add("grün", "blau");
-		assertEquals("\t\tgelb\n\t\torange\n\t\trot\n\t\tgrün\n\t\tblau\n", cs
-				.getCode(2));
+		assertEquals("\t\tgelb\n\t\torange\n\t\trot\n\t\tgrün\n\t\tblau\n",
+				cs.getCode(2));
 		cs.add("Tulpe", "", "Buschwindroeschen");
 		assertEquals(
 				"\t\t\t\t\t\t\tgelb\n\t\t\t\t\t\t\torange\n\t\t\t\t\t\t\trot\n"
@@ -393,7 +394,7 @@ public class CodeSnippetTest {
 
 		testMap.put(null, null);
 		cs.addVariables(testMap);
-		assertEquals(null, cs.getVariable(null));
+		assertNull(cs.getVariable(null));
 
 		testMap.put(null, "");
 		cs.addVariables(testMap);
@@ -405,7 +406,7 @@ public class CodeSnippetTest {
 
 		testMap.put("", null);
 		cs.addVariables(testMap);
-		assertEquals(null, cs.getVariable(""));
+		assertNull(cs.getVariable(""));
 
 		testMap.put("", "");
 		cs.addVariables(testMap);
@@ -417,7 +418,7 @@ public class CodeSnippetTest {
 
 		testMap.put("schwarz", null);
 		cs.addVariables(testMap);
-		assertEquals(null, cs.getVariable("schwarz"));
+		assertNull(cs.getVariable("schwarz"));
 
 		testMap.put("weiß", "");
 		cs.addVariables(testMap);
@@ -459,7 +460,7 @@ public class CodeSnippetTest {
 		// border cases
 		CodeSnippet cs = new CodeSnippet();
 		cs.setVariable(null, null);
-		assertEquals(null, cs.getVariable(null));
+		assertNull(cs.getVariable(null));
 
 		cs.setVariable(null, "");
 		assertEquals("", cs.getVariable(null));
@@ -468,7 +469,7 @@ public class CodeSnippetTest {
 		assertEquals("weiß", cs.getVariable(null));
 
 		cs.setVariable("", null);
-		assertEquals(null, cs.getVariable(""));
+		assertNull(cs.getVariable(""));
 
 		cs.setVariable("", "");
 		assertEquals("", cs.getVariable(""));
@@ -477,7 +478,7 @@ public class CodeSnippetTest {
 		assertEquals("schwarz", cs.getVariable(""));
 
 		cs.setVariable("schneeweiß", null);
-		assertEquals(null, cs.getVariable("schneeweiß"));
+		assertNull(cs.getVariable("schneeweiß"));
 
 		cs.setVariable("nachtschwarz", "");
 		assertEquals("", cs.getVariable("nachtschwarz"));
@@ -507,7 +508,7 @@ public class CodeSnippetTest {
 	@Test
 	public void testGetParent() {
 		CodeSnippet cs = new CodeSnippet();
-		assertEquals(null, cs.getParent());
+		assertNull(cs.getParent());
 
 		CodeList cl1 = new CodeList();
 		cl1.setVariable("parent1", "0");
@@ -517,18 +518,18 @@ public class CodeSnippetTest {
 		cl3.setVariable("parent3", "2");
 		cs = new CodeSnippet(cl1);
 		assertEquals(cl1, cs.getParent());
-		assertEquals(null, cs.getParent().getParent());
+		assertNull(cs.getParent().getParent());
 
 		cs = new CodeSnippet(cl2);
 		assertEquals(cl2, cs.getParent());
 		assertEquals(cl1, cs.getParent().getParent());
-		assertEquals(null, cs.getParent().getParent().getParent());
+		assertNull(cs.getParent().getParent().getParent());
 
 		cs = new CodeSnippet(cl3);
 		assertEquals(cl3, cs.getParent());
 		assertEquals(cl2, cs.getParent().getParent());
 		assertEquals(cl1, cs.getParent().getParent().getParent());
-		assertEquals(null, cs.getParent().getParent().getParent().getParent());
+		assertNull(cs.getParent().getParent().getParent().getParent());
 
 		// tests dealings with circles
 		cl1 = new CodeList(cl2);
@@ -538,10 +539,10 @@ public class CodeSnippetTest {
 		assertEquals(cl2, cs.getParent().getParent());
 		assertEquals("2", cs.getParent().getVariable("parent4"));
 		assertEquals("0", cs.getParent().getVariable("parent1"));
-		assertEquals("0", cs.getParent().getParent().getParent().getVariable(
-				"parent1"));
+		assertEquals("0",
+				cs.getParent().getParent().getParent().getVariable("parent1"));
 		assertEquals("*UNDEFINED:parent4*", cs.getParent().getParent()
 				.getParent().getVariable("parent4"));
-		assertEquals(null, cs.getParent().getParent().getParent().getParent());
+		assertNull(cs.getParent().getParent().getParent().getParent());
 	}
 }

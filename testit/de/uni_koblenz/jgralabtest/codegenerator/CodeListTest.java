@@ -35,6 +35,7 @@
 package de.uni_koblenz.jgralabtest.codegenerator;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -116,16 +117,16 @@ public class CodeListTest {
 				"\tSchweden\n\tNorwegen\n\tFinnland\n\tGroßbritannien\n\t\n"
 						+ "\tWales\n\tEngland\n\tSchottland\n\tNordirland\n",
 				cl.getCode());
-		assertEquals(null, cs2.getParent());
+		assertNull(cs2.getParent());
 
 		cl.remove(cs3);
 		assertEquals("\tSchweden\n\tNorwegen\n\tFinnland\n", cl.getCode());
-		assertEquals(null, cs3.getParent());
+		assertNull(cs3.getParent());
 
 		cl.add(cs2);
 		cl.remove(cs1);
 		assertEquals("\tDänemark\n\tIsland\n", cl.getCode());
-		assertEquals(null, cs1.getParent());
+		assertNull(cs1.getParent());
 
 		cl.remove(cs2);
 		assertEquals("", cl.getCode());
@@ -141,8 +142,8 @@ public class CodeListTest {
 		cl.add(ics2);
 		cl.remove(ics1);
 		assertEquals("\n\timport Mitteleuropa.Schweiz;\n\timport Mitteleuropa."
-				+ "Österreich;\n\t\n\timport Südeuropa.Italien;\n", cl
-				.getCode());
+				+ "Österreich;\n\t\n\timport Südeuropa.Italien;\n",
+				cl.getCode());
 		cl.remove(ics2);
 		assertEquals("", cl.getCode());
 
@@ -154,8 +155,8 @@ public class CodeListTest {
 		cl3.add(cl);
 		cl3.add(cl2);
 		cl3.remove(cl);
-		assertEquals("\t\tSchweden\n\t\tNorwegen\n\t\tFinnland\n", cl3
-				.getCode());
+		assertEquals("\t\tSchweden\n\t\tNorwegen\n\t\tFinnland\n",
+				cl3.getCode());
 		cl3.remove(cl2);
 		assertEquals("", cl3.getCode());
 
@@ -181,7 +182,7 @@ public class CodeListTest {
 		cl.add(cs2);
 		cl.remove(cs1);
 		assertEquals("\tDänemark\n\tIsland\n", cl.getCode());
-		assertEquals(null, cs1.getParent());
+		assertNull(cs1.getParent());
 
 		cl2.clear();
 		cl.add(ics1);
@@ -196,7 +197,7 @@ public class CodeListTest {
 
 		cl.remove(cs2);
 		assertEquals("", cl.getCode());
-		assertEquals(null, cs1.getParent());
+		assertNull(cs1.getParent());
 
 		cs1 = new CodeSnippet();
 		cs2 = new CodeSnippet("");
@@ -205,20 +206,20 @@ public class CodeListTest {
 		cl.add(cs3);
 		cl.remove(cs1);
 		assertEquals("", cl.getCode());
-		assertEquals(null, cs1.getParent());
+		assertNull(cs1.getParent());
 
 		cl.add(cs2);
 		cl.remove(cs2);
 		cl.remove(cs3);
 		assertEquals("", cl.getCode());
-		assertEquals(null, cs2.getParent());
-		assertEquals(null, cs3.getParent());
+		assertNull(cs2.getParent());
+		assertNull(cs3.getParent());
 
 		cs3 = new CodeSnippet("Irland");
 		cl.add(cs3);
 		cl.remove(cs3);
 		assertEquals(0, cl.size());
-		assertEquals(null, cs3.getParent());
+		assertNull(cs3.getParent());
 
 		cl.remove(cl);
 		assertEquals(0, cl.size());
@@ -275,8 +276,8 @@ public class CodeListTest {
 		cl1.add(cs);
 		assertEquals(6, cl1.size());
 		assertEquals("\tImpressionismus\n\tExpressionismus\n\tJugendstil\n"
-				+ "\tKlassizismus\n\tRenaissance\n\tPointillismus\n", cl1
-				.getCode());
+				+ "\tKlassizismus\n\tRenaissance\n\tPointillismus\n",
+				cl1.getCode());
 		cs.add("", "Romantik", "Rokoko", "");
 		assertEquals(cl1, cs.getParent());
 		cl1.add(cs);
@@ -314,8 +315,8 @@ public class CodeListTest {
 		ics1.add("Epochen.Kunst");
 		cl2.clear();
 		cl2.add(ics1);
-		assertEquals("\n\timport Epochen.Kunst;\n\t\n\timport Klassik.;\n", cl2
-				.getCode());
+		assertEquals("\n\timport Epochen.Kunst;\n\t\n\timport Klassik.;\n",
+				cl2.getCode());
 	}
 
 	@Test
@@ -511,8 +512,8 @@ public class CodeListTest {
 		cs.add("Griechenland", "Moldawien");
 		cl1.clear();
 		cl1.add(cs);
-		assertEquals("\t\t\t\t\t\tGriechenland\n\t\t\t\t\t\tMoldawien\n", cl1
-				.getCode(5));
+		assertEquals("\t\t\t\t\t\tGriechenland\n\t\t\t\t\t\tMoldawien\n",
+				cl1.getCode(5));
 		CodeList cl2 = new CodeList();
 		cl2.add(cl1);
 		assertEquals(
@@ -645,7 +646,7 @@ public class CodeListTest {
 		Map<String, String> testMap = new HashMap<String, String>();
 		testMap.put(null, null);
 		cl.addVariables(testMap);
-		assertEquals(null, cl.getVariable(null));
+		assertNull(cl.getVariable(null));
 		testMap.put("", "");
 		cl.addVariables(testMap);
 		assertEquals("", cl.getVariable(""));
@@ -654,13 +655,13 @@ public class CodeListTest {
 		assertEquals("", cl.getVariable(null));
 		testMap.put("", null);
 		cl.addVariables(testMap);
-		assertEquals(null, cl.getVariable(""));
+		assertNull(cl.getVariable(""));
 		testMap.put(null, "b");
 		cl.addVariables(testMap);
 		assertEquals("b", cl.getVariable(null));
 		testMap.put("b", null);
 		cl.addVariables(testMap);
-		assertEquals(null, cl.getVariable("b"));
+		assertNull(cl.getVariable("b"));
 		testMap.put("", "b");
 		cl.addVariables(testMap);
 		assertEquals("b", cl.getVariable(""));
@@ -676,7 +677,7 @@ public class CodeListTest {
 		assertEquals("Albanien", cl.getVariable("a"));
 		testMap.put(null, null);
 		cl.addVariables(testMap);
-		assertEquals(null, cl.getVariable(null));
+		assertNull(cl.getVariable(null));
 
 		// tests some undefined keys
 		assertEquals("*UNDEFINED:c*", cl.getVariable("c"));
@@ -703,17 +704,17 @@ public class CodeListTest {
 		// border cases
 		CodeList cl = new CodeList();
 		cl.setVariable(null, null);
-		assertEquals(null, cl.getVariable(null));
+		assertNull(cl.getVariable(null));
 		cl.setVariable(null, "");
 		assertEquals("", cl.getVariable(null));
 		cl.setVariable("", null);
-		assertEquals(null, cl.getVariable(""));
+		assertNull(cl.getVariable(""));
 		cl.setVariable("", "");
 		assertEquals("", cl.getVariable(""));
 		cl.setVariable("y", "");
 		assertEquals("", cl.getVariable("y"));
 		cl.setVariable("x", null);
-		assertEquals(null, cl.getVariable("x"));
+		assertNull(cl.getVariable("x"));
 		cl.setVariable(null, "w");
 		assertEquals("w", cl.getVariable(null));
 		cl.setVariable("", "q");
@@ -735,7 +736,7 @@ public class CodeListTest {
 	@Test
 	public void testGetParent() {
 		CodeList cl1 = new CodeList();
-		assertEquals(null, cl1.getParent());
+		assertNull(cl1.getParent());
 
 		CodeList cl2 = new CodeList(cl1);
 		assertEquals(cl1, cl2.getParent());
@@ -743,7 +744,7 @@ public class CodeListTest {
 		CodeList cl3 = new CodeList(cl2);
 		assertEquals(cl2, cl3.getParent());
 		assertEquals(cl1, cl3.getParent().getParent());
-		assertEquals(null, cl3.getParent().getParent().getParent());
+		assertNull(cl3.getParent().getParent().getParent());
 
 		cl1.setVariable("1", "cl1");
 		cl2.setVariable("2", "cl2");
@@ -754,10 +755,10 @@ public class CodeListTest {
 		// tests things that are happening when a circle is created
 		assertEquals("cl1", cl2.getParent().getParent().getVariable("1"));
 		assertEquals("cl2", cl2.getParent().getParent().getVariable("2"));
-		assertEquals("*UNDEFINED:3*", cl2.getParent().getParent().getVariable(
-				"3"));
-		assertEquals("*UNDEFINED:4*", cl2.getParent().getParent().getVariable(
-				"4"));
+		assertEquals("*UNDEFINED:3*",
+				cl2.getParent().getParent().getVariable("3"));
+		assertEquals("*UNDEFINED:4*",
+				cl2.getParent().getParent().getVariable("4"));
 
 	}
 }

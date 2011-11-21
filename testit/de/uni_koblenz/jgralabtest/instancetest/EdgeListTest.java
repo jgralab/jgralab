@@ -36,6 +36,7 @@ package de.uni_koblenz.jgralabtest.instancetest;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
+import static junit.framework.Assert.assertNull;
 import static junit.framework.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -98,8 +99,8 @@ public class EdgeListTest extends InstanceTest {
 			g.createNode();
 		}
 		for (int i = 0; i < N; ++i) {
-			g.createLink((Node) g.getVertex(i + 1), (Node) g.getVertex((i + 1)
-					% N + 1));
+			g.createLink((Node) g.getVertex(i + 1),
+					(Node) g.getVertex((i + 1) % N + 1));
 		}
 		commit(g);
 	}
@@ -244,7 +245,7 @@ public class EdgeListTest extends InstanceTest {
 
 		createReadOnlyTransaction(g);
 		assertFalse(e.isValid());
-		assertEquals(null, g.getEdge(5));
+		assertNull(g.getEdge(5));
 		assertEquals(9, g.getECount());
 		assertEquals(1, g.getVertex(5).getDegree());
 		assertEquals(1, g.getVertex(5).getDegree(EdgeDirection.IN));
@@ -265,7 +266,7 @@ public class EdgeListTest extends InstanceTest {
 
 		createReadOnlyTransaction(g);
 		assertFalse(e.isValid());
-		assertEquals(null, g.getEdge(1));
+		assertNull(g.getEdge(1));
 		assertEquals(8, g.getECount());
 		assertEquals("e2 e3 e4 e6 e7 e8 e9 e10", getESeq());
 		commit(g);
@@ -280,7 +281,7 @@ public class EdgeListTest extends InstanceTest {
 
 		createReadOnlyTransaction(g);
 		assertFalse(e.isValid());
-		assertEquals(null, g.getEdge(1));
+		assertNull(g.getEdge(1));
 		assertEquals(7, g.getECount());
 		assertEquals("e2 e3 e4 e6 e7 e8 e9", getESeq());
 		commit(g);

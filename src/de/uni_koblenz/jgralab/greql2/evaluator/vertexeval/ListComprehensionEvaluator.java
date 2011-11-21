@@ -106,7 +106,7 @@ public class ListComprehensionEvaluator extends ComprehensionEvaluator {
 			}
 		}
 		if (createHeader) {
-			PVector<String> headerTuple = JGraLab.vector();
+			PVector<String> headerTuple = JGraLab.<String> vector();
 			for (VertexEvaluator headerEvaluator : headerEvaluators) {
 				headerTuple = headerTuple.plus((String) headerEvaluator
 						.getResult());
@@ -119,8 +119,8 @@ public class ListComprehensionEvaluator extends ComprehensionEvaluator {
 
 	@Override
 	public VertexCosts calculateSubtreeEvaluationCosts(GraphSize graphSize) {
-		return this.greqlEvaluator.getCostModel()
-				.calculateCostsListComprehension(this, graphSize);
+		return greqlEvaluator.getCostModel().calculateCostsListComprehension(
+				this, graphSize);
 	}
 
 	@Override

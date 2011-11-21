@@ -105,8 +105,7 @@ public class Slice extends Function {
 	}
 
 	public de.uni_koblenz.jgralab.greql2.types.Slice evaluate(Vertex v, DFA dfa) {
-		PSet<Vertex> roots = JGraLab.set();
-		return evaluate(roots.plus(v), dfa);
+		return evaluate(JGraLab.<Vertex> set().plus(v), dfa);
 	}
 
 	public de.uni_koblenz.jgralab.greql2.types.Slice evaluate(

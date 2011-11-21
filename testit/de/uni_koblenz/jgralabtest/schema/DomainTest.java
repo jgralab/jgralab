@@ -147,10 +147,10 @@ public abstract class DomainTest {
 
 		// test against other types of objects, if equals is implemented
 		// properly (must return false in all cases)
-		assertEquals(false, domain1.equals(new Object()));
-		assertEquals(false, domain2.equals(new Object()));
-		assertEquals(false, domain1.equals("AString"));
-		assertEquals(false, domain2.equals("AString"));
+		assertFalse(domain1.equals(new Object()));
+		assertFalse(domain2.equals(new Object()));
+		assertFalse(domain1.equals("AString"));
+		assertFalse(domain2.equals("AString"));
 	}
 
 	@Test
