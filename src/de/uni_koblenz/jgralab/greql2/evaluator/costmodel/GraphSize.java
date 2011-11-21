@@ -65,6 +65,9 @@ public class GraphSize {
 	 *            the datagaph which is base of this GraphSize object
 	 */
 	public GraphSize(Graph dataGraph) {
+		if (dataGraph == null) {
+			return;
+		}
 		vertexCount = dataGraph.getVCount();
 		edgeCount = dataGraph.getECount();
 		GraphClass graphClass = (GraphClass) dataGraph
@@ -119,8 +122,8 @@ public class GraphSize {
 	public GraphSize(GraphClass graphClass, int vCount, int eCount) {
 		vertexCount = vCount;
 		edgeCount = eCount;
-		this.knownEdgeTypes = graphClass.getEdgeClassCount();
-		this.knownVertexTypes = graphClass.getVertexClassCount();
+		knownEdgeTypes = graphClass.getEdgeClassCount();
+		knownVertexTypes = graphClass.getVertexClassCount();
 	}
 
 	/**
