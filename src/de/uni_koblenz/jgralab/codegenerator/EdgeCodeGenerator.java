@@ -212,11 +212,11 @@ public class EdgeCodeGenerator extends AttributedElementCodeGenerator {
 			code.add("/**",
 					" * @return the next #ecQualifiedName# edge in the global edge sequence");
 			code.add(" */",
-					"public #ecQualifiedName# getNext#ecCamelName#(#formalParams#);");
+					"public #ecQualifiedName# getNext#ecCamelName#InGraph(#formalParams#);");
 		}
 		if (currentCycle.isStdOrDbImplOrTransImpl()) {
 			code.add(
-					"public #ecQualifiedName# getNext#ecCamelName#(#formalParams#) {",
+					"public #ecQualifiedName# getNext#ecCamelName#InGraph(#formalParams#) {",
 					"\treturn (#ecQualifiedName#)getNextEdge(#ecQualifiedName#.class#actualParams#);",
 					"}");
 		}

@@ -297,7 +297,7 @@ public class DefaultValueTest extends InstanceTest {
 			PSet<PSet<Boolean>> complexSet, PMap<Integer, Boolean> simpleMap,
 			PMap<PVector<Boolean>, PSet<Boolean>> complexMap,
 			TestRecordDomain record) {
-		assertEquals(true, booleanValue);
+		assertTrue(booleanValue);
 		assertEquals(1, intValue);
 		assertEquals(1, longValue);
 		assertEquals(1.1, doubleValue, 0);
@@ -305,21 +305,21 @@ public class DefaultValueTest extends InstanceTest {
 		assertEquals(TestEnumDomain.FIRST, enumValue);
 
 		assertEquals(3, simpleList.size());
-		assertEquals(true, simpleList.get(0));
-		assertEquals(false, simpleList.get(1));
-		assertEquals(true, simpleList.get(2));
+		assertTrue(simpleList.get(0));
+		assertFalse(simpleList.get(1));
+		assertTrue(simpleList.get(2));
 
 		if (complexList != null) {
 			assertEquals(3, complexList.size());
 			List<Boolean> contentOfComplexList = complexList.get(0);
 			assertEquals(1, contentOfComplexList.size());
-			assertEquals(true, contentOfComplexList.get(0));
+			assertTrue(contentOfComplexList.get(0));
 			contentOfComplexList = complexList.get(1);
 			assertEquals(1, contentOfComplexList.size());
-			assertEquals(false, contentOfComplexList.get(0));
+			assertFalse(contentOfComplexList.get(0));
 			contentOfComplexList = complexList.get(2);
 			assertEquals(1, contentOfComplexList.size());
-			assertEquals(true, contentOfComplexList.get(0));
+			assertTrue(contentOfComplexList.get(0));
 		}
 
 		assertEquals(2, simpleSet.size());

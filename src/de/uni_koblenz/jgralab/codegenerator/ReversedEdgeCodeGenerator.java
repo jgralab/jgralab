@@ -196,8 +196,8 @@ public class ReversedEdgeCodeGenerator extends AttributedElementCodeGenerator {
 	private CodeBlock createNextEdgeMethod(EdgeClass ec) {
 		CodeSnippet code = new CodeSnippet(
 				true,
-				"public #ecName# getNext#ecCamelName#(#formalParams#) {",
-				"\treturn ((#ecName#)normalEdge).getNext#ecCamelName#(#actualParams#);",
+				"public #ecName# getNext#ecCamelName#InGraph(#formalParams#) {",
+				"\treturn ((#ecName#)normalEdge).getNext#ecCamelName#InGraph(#actualParams#);",
 				"}");
 
 		code.setVariable("ecName",

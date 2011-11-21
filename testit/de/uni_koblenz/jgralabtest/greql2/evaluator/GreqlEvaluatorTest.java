@@ -214,7 +214,7 @@ public class GreqlEvaluatorTest extends GenericTest {
 		String queryString = "forall e: E{IsDefinitionOf}"
 				+ "  @ startVertex(e) -->{IsDefinitionOf} endVertex(e)";
 		JValue result = evalTestQuery("Reachability", queryString);
-		assertEquals(true, result.toBoolean());
+		assertTrue(result.toBoolean());
 		JValue resultWO = evalTestQuery("BackwardVertexSet1 (wo)", queryString,
 				new DefaultOptimizer());
 		assertEquals(result, resultWO);

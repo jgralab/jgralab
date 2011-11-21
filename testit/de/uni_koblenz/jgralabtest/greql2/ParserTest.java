@@ -617,7 +617,7 @@ public class ParserTest {
 		TypeId typeId = typeRestrEdge.getAlpha();
 		assertEquals("Definition", typeId.get_name());
 		/* testing second simple declaration def:V{WhereExpression} */
-		simpleDeclEdge = simpleDeclEdge.getNextIsSimpleDeclOf();
+		simpleDeclEdge = simpleDeclEdge.getNextIsSimpleDeclOfIncidence();
 		assertNotNull(simpleDeclEdge);
 		simpleDecl = simpleDeclEdge.getAlpha();
 		var = simpleDecl.getFirstIsDeclaredVarOfIncidence().getAlpha();
@@ -651,7 +651,7 @@ public class ParserTest {
 		TypeId typeId = typeRestrEdge.getAlpha();
 		assertEquals("Definition", typeId.get_name());
 		/* testing second simple declaration def:V{WhereExpression} */
-		simpleDeclEdge = simpleDeclEdge.getNextIsSimpleDeclOf();
+		simpleDeclEdge = simpleDeclEdge.getNextIsSimpleDeclOfIncidence();
 		assertNotNull(simpleDeclEdge);
 		simpleDecl = simpleDeclEdge.getAlpha();
 		var = simpleDecl.getFirstIsDeclaredVarOfIncidence().getAlpha();
@@ -686,7 +686,7 @@ public class ParserTest {
 				.getAlpha();
 		typeId = edgeRestr.getFirstIsTypeIdOfIncidence().getAlpha();
 		assertEquals("IsDefinitionOf", typeId.get_name());
-		altEdge = altEdge.getNextIsAlternativePathOf();
+		altEdge = altEdge.getNextIsAlternativePathOfIncidence();
 		assertNotNull(altEdge);
 		simplePath = (SimplePathDescription) altEdge.getAlpha();
 		edgeRestr = simplePath.getFirstIsEdgeRestrOfIncidence().getAlpha();
@@ -823,7 +823,7 @@ public class ParserTest {
 		IntLiteral arg1 = (IntLiteral) condition
 				.getFirstIsArgumentOfIncidence().getAlpha();
 		IntLiteral arg2 = (IntLiteral) condition
-				.getFirstIsArgumentOfIncidence().getNextIsArgumentOf()
+				.getFirstIsArgumentOfIncidence().getNextIsArgumentOfIncidence()
 				.getAlpha();
 		assertEquals(1, arg1.get_intValue());
 		assertEquals(2, arg2.get_intValue());
@@ -858,7 +858,7 @@ public class ParserTest {
 		IntLiteral arg1 = (IntLiteral) condition
 				.getFirstIsArgumentOfIncidence().getAlpha();
 		IntLiteral arg2 = (IntLiteral) condition
-				.getFirstIsArgumentOfIncidence().getNextIsArgumentOf()
+				.getFirstIsArgumentOfIncidence().getNextIsArgumentOfIncidence()
 				.getAlpha();
 		assertEquals(1, arg1.get_intValue());
 		assertEquals(1, arg2.get_intValue());
@@ -879,15 +879,15 @@ public class ParserTest {
 		IsTypeRestrOf typeEdge = vset.getFirstIsTypeRestrOfIncidence();
 		TypeId typeId = typeEdge.getAlpha();
 		assertEquals("FirstType", typeId.get_name());
-		assertEquals(false, typeId.is_excluded());
-		typeEdge = typeEdge.getNextIsTypeRestrOf();
+		assertFalse(typeId.is_excluded());
+		typeEdge = typeEdge.getNextIsTypeRestrOfIncidence();
 		typeId = typeEdge.getAlpha();
 		assertEquals("SecondType", typeId.get_name());
-		assertEquals(false, typeId.is_excluded());
-		typeEdge = typeEdge.getNextIsTypeRestrOf();
+		assertFalse(typeId.is_excluded());
+		typeEdge = typeEdge.getNextIsTypeRestrOfIncidence();
 		typeId = typeEdge.getAlpha();
 		assertEquals("ThirdType", typeId.get_name());
-		assertEquals(true, typeId.is_excluded());
+		assertTrue(typeId.is_excluded());
 	}
 
 	@Test
@@ -899,15 +899,15 @@ public class ParserTest {
 		IsTypeRestrOf typeEdge = vset.getFirstIsTypeRestrOfIncidence();
 		TypeId typeId = typeEdge.getAlpha();
 		assertEquals("FirstType", typeId.get_name());
-		assertEquals(true, typeId.is_excluded());
-		typeEdge = typeEdge.getNextIsTypeRestrOf();
+		assertTrue(typeId.is_excluded());
+		typeEdge = typeEdge.getNextIsTypeRestrOfIncidence();
 		typeId = typeEdge.getAlpha();
 		assertEquals("SecondType", typeId.get_name());
-		assertEquals(true, typeId.is_excluded());
-		typeEdge = typeEdge.getNextIsTypeRestrOf();
+		assertTrue(typeId.is_excluded());
+		typeEdge = typeEdge.getNextIsTypeRestrOfIncidence();
 		typeId = typeEdge.getAlpha();
 		assertEquals("ThirdType", typeId.get_name());
-		assertEquals(false, typeId.is_excluded());
+		assertFalse(typeId.is_excluded());
 	}
 
 	@Test
@@ -919,15 +919,15 @@ public class ParserTest {
 		IsTypeRestrOf typeEdge = vset.getFirstIsTypeRestrOfIncidence();
 		TypeId typeId = typeEdge.getAlpha();
 		assertEquals("FirstType", typeId.get_name());
-		assertEquals(true, typeId.is_excluded());
-		typeEdge = typeEdge.getNextIsTypeRestrOf();
+		assertTrue(typeId.is_excluded());
+		typeEdge = typeEdge.getNextIsTypeRestrOfIncidence();
 		typeId = typeEdge.getAlpha();
 		assertEquals("SecondType", typeId.get_name());
-		assertEquals(true, typeId.is_excluded());
-		typeEdge = typeEdge.getNextIsTypeRestrOf();
+		assertTrue(typeId.is_excluded());
+		typeEdge = typeEdge.getNextIsTypeRestrOfIncidence();
 		typeId = typeEdge.getAlpha();
 		assertEquals("ThirdType", typeId.get_name());
-		assertEquals(false, typeId.is_excluded());
+		assertFalse(typeId.is_excluded());
 	}
 
 	@Test
@@ -940,15 +940,15 @@ public class ParserTest {
 		IsTypeRestrOf typeEdge = vset.getFirstIsTypeRestrOfIncidence();
 		TypeId typeId = typeEdge.getAlpha();
 		assertEquals("FirstType", typeId.get_name());
-		assertEquals(true, typeId.is_excluded());
-		typeEdge = typeEdge.getNextIsTypeRestrOf();
+		assertTrue(typeId.is_excluded());
+		typeEdge = typeEdge.getNextIsTypeRestrOfIncidence();
 		typeId = typeEdge.getAlpha();
 		assertEquals("SecondType", typeId.get_name());
-		assertEquals(true, typeId.is_excluded());
-		typeEdge = typeEdge.getNextIsTypeRestrOf();
+		assertTrue(typeId.is_excluded());
+		typeEdge = typeEdge.getNextIsTypeRestrOfIncidence();
 		typeId = typeEdge.getAlpha();
 		assertEquals("ThirdType", typeId.get_name());
-		assertEquals(false, typeId.is_excluded());
+		assertFalse(typeId.is_excluded());
 	}
 
 	@Test
@@ -994,7 +994,7 @@ public class ParserTest {
 		assertFalse(type.is_type());
 		assertFalse(type.is_excluded());
 
-		edge = edge.getNextIsAlternativePathOf();
+		edge = edge.getNextIsAlternativePathOfIncidence();
 		assertNotNull(edge);
 		spd = (SimplePathDescription) edge.getAlpha();
 		restrEdge = spd.getFirstIsEdgeRestrOfIncidence();
@@ -1018,7 +1018,7 @@ public class ParserTest {
 				.getFirstIsAlternativePathOfIncidence(EdgeDirection.IN);
 		assertNotNull(edge);
 		assertTrue(edge.getAlpha() instanceof SimplePathDescription);
-		edge = edge.getNextIsAlternativePathOf();
+		edge = edge.getNextIsAlternativePathOfIncidence();
 		assertNotNull(edge);
 		edge.getAlpha();
 		assertTrue(edge.getAlpha() instanceof SimplePathDescription);
@@ -1062,7 +1062,7 @@ public class ParserTest {
 				.getFirstIsAlternativePathOfIncidence(EdgeDirection.IN);
 		assertNotNull(edge);
 		assertTrue(edge.getAlpha() instanceof SimplePathDescription);
-		edge = edge.getNextIsAlternativePathOf();
+		edge = edge.getNextIsAlternativePathOfIncidence();
 		assertNotNull(edge);
 		assertTrue(edge.getAlpha() instanceof SimplePathDescription);
 	}
@@ -1079,7 +1079,7 @@ public class ParserTest {
 		IsSubPathOf edge = ipd.getFirstIsSubPathOfIncidence(EdgeDirection.IN);
 		assertNotNull(edge);
 		assertTrue(edge.getAlpha() instanceof SimplePathDescription);
-		edge = edge.getNextIsSubPathOf();
+		edge = edge.getNextIsSubPathOfIncidence();
 		assertNotNull(edge);
 		assertTrue(edge.getAlpha() instanceof SimplePathDescription);
 		IsIntermediateVertexOf intEdge = ipd
@@ -1101,7 +1101,7 @@ public class ParserTest {
 				.getFirstIsSequenceElementOfIncidence(EdgeDirection.IN);
 		assertNotNull(edge);
 		assertTrue(edge.getAlpha() instanceof SimplePathDescription);
-		edge = edge.getNextIsSequenceElementOf();
+		edge = edge.getNextIsSequenceElementOfIncidence();
 		assertNotNull(edge);
 		assertTrue(edge.getAlpha() instanceof SimplePathDescription);
 	}

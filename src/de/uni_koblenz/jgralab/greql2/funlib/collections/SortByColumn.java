@@ -20,8 +20,7 @@ public class SortByColumn extends Function {
 	}
 
 	public Table<Tuple> evaluate(Integer column, Table<Tuple> t) {
-		PVector<Integer> columns = JGraLab.vector();
-		return evaluate(columns.plus(column), t);
+		return evaluate(JGraLab.<Integer> vector().plus(column), t);
 	}
 
 	public Table<Tuple> evaluate(PVector<Integer> columns, Table<Tuple> t) {
@@ -31,8 +30,7 @@ public class SortByColumn extends Function {
 	}
 
 	public PVector<Tuple> evaluate(Integer column, PCollection<Tuple> l) {
-		PVector<Integer> columns = JGraLab.vector();
-		return evaluate(columns.plus(column), l);
+		return evaluate(JGraLab.<Integer> vector().plus(column), l);
 	}
 
 	public PVector<Tuple> evaluate(PVector<Integer> columns,

@@ -25,8 +25,7 @@ public class ToSet extends Function {
 		if (l instanceof ArrayPSet) {
 			return (PSet<T>) l;
 		}
-		PSet<T> result = JGraLab.set();
-		return result.plusAll(l);
+		return JGraLab.<T> set().plusAll(l);
 	}
 
 	@Override

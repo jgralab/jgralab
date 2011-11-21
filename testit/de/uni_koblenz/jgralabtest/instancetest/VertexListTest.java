@@ -36,6 +36,7 @@ package de.uni_koblenz.jgralabtest.instancetest;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
+import static junit.framework.Assert.assertNull;
 import static junit.framework.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -231,7 +232,7 @@ public class VertexListTest extends InstanceTest {
 
 		createReadOnlyTransaction(g);
 		assertFalse(v.isValid());
-		assertEquals(null, g.getVertex(5));
+		assertNull(g.getVertex(5));
 		assertEquals(9, g.getVCount());
 		assertEquals("v1 v2 v3 v4 v6 v7 v8 v9 v10", getVSeq());
 		commit(g);
@@ -243,7 +244,7 @@ public class VertexListTest extends InstanceTest {
 
 		createReadOnlyTransaction(g);
 		assertFalse(v.isValid());
-		assertEquals(null, g.getVertex(1));
+		assertNull(g.getVertex(1));
 		assertEquals(8, g.getVCount());
 		assertEquals("v2 v3 v4 v6 v7 v8 v9 v10", getVSeq());
 		commit(g);
@@ -255,7 +256,7 @@ public class VertexListTest extends InstanceTest {
 
 		createReadOnlyTransaction(g);
 		assertFalse(v.isValid());
-		assertEquals(null, g.getVertex(1));
+		assertNull(g.getVertex(1));
 		assertEquals(7, g.getVCount());
 		assertEquals("v2 v3 v4 v6 v7 v8 v9", getVSeq());
 		commit(g);

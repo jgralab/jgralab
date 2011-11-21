@@ -37,7 +37,6 @@ package de.uni_koblenz.jgralabtest.greql2;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
-import de.uni_koblenz.jgralabtest.greql2.evaluator.GreqlEvaluatorTest;
 import de.uni_koblenz.jgralabtest.greql2.exception.ExceptionTest;
 import de.uni_koblenz.jgralabtest.greql2.optimizer.OptimizerTest;
 
@@ -46,10 +45,13 @@ import de.uni_koblenz.jgralabtest.greql2.optimizer.OptimizerTest;
  * 
  */
 @RunWith(Suite.class)
-@Suite.SuiteClasses({ ExceptionTest.class, FunctionTest.class,
-		GreqlEvaluatorTest.class, OptimizerTest.class, ParserTest.class,
-		ProgressTest.class, SpeedTest.class, StoreJValueTest.class,
-		SystemTest.class, ThisLiteralTest.class, SubQueryTest.class })
+@Suite.SuiteClasses({
+		ExceptionTest.class,
+		// FunctionTest.class,
+		// GreqlEvaluatorTest.class,
+		OptimizerTest.class, ParserTest.class, ProgressTest.class,
+		SpeedTest.class, StoreJValueTest.class, SystemTest.class,
+		ThisLiteralTest.class, SubQueryTest.class })
 public class RunGreql2Tests {
 
 }

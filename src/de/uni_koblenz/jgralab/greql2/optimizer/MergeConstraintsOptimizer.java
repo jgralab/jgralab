@@ -102,7 +102,7 @@ public class MergeConstraintsOptimizer extends OptimizerBase {
 			for (IsConstraintOf constraint : decl
 					.getIsConstraintOfIncidences(EdgeDirection.IN)) {
 				constraintEdges.add(constraint);
-				constraint = constraint.getNextIsConstraintOf();
+				constraint = constraint.getNextIsConstraintOfIncidence();
 			}
 			if (constraintEdges.size() > 1) {
 				constraintsGotMerged = true;
@@ -137,16 +137,18 @@ public class MergeConstraintsOptimizer extends OptimizerBase {
 	public Expression createConjunction(List<IsConstraintOf> constraintEdges,
 			Greql2 syntaxgraph) {
 		if (constraintEdges.size() == 1) {
-			return (Expression) constraintEdges.get(0).getAlpha();
+			return constraintEdges.get(0).getAlpha();
 		}
 		FunctionApplication funApp = syntaxgraph.createFunctionApplication();
 		FunctionId funId = OptimizerUtility.findOrCreateFunctionId("and",
 				syntaxgraph);
 		syntaxgraph.createIsFunctionIdOf(funId, funApp);
-		syntaxgraph.createIsArgumentOf((Expression) constraintEdges.get(0)
-				.getAlpha(), funApp);
-		syntaxgraph.createIsArgumentOf(createConjunction(constraintEdges
-				.subList(1, constraintEdges.size()), syntaxgraph), funApp);
+		syntaxgraph.createIsArgumentOf(constraintEdges.get(0).getAlpha(),
+				funApp);
+		syntaxgraph.createIsArgumentOf(
+				createConjunction(
+						constraintEdges.subList(1, constraintEdges.size()),
+						syntaxgraph), funApp);
 		return funApp;
 	}
 }

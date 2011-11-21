@@ -120,8 +120,7 @@ public class MergeSimpleDeclarationsOptimizer extends OptimizerBase {
 			IsSimpleDeclOf isSimpleDeclOf = decl
 					.getFirstIsSimpleDeclOfIncidence(EdgeDirection.IN);
 			while (isSimpleDeclOf != null) {
-				SimpleDeclaration sDecl = (SimpleDeclaration) isSimpleDeclOf
-						.getAlpha();
+				SimpleDeclaration sDecl = isSimpleDeclOf.getAlpha();
 				String key = decl.getId()
 						+ "-"
 						+ sDecl.getFirstIsTypeExprOfIncidence(EdgeDirection.IN)
@@ -137,7 +136,8 @@ public class MergeSimpleDeclarationsOptimizer extends OptimizerBase {
 					simpleDecls.add(sDecl);
 					mergableSDMap.put(key, simpleDecls);
 				}
-				isSimpleDeclOf = isSimpleDeclOf.getNextIsSimpleDeclOf();
+				isSimpleDeclOf = isSimpleDeclOf
+						.getNextIsSimpleDeclOfIncidence();
 			}
 			decl = decl.getNextDeclaration();
 		}
@@ -156,8 +156,8 @@ public class MergeSimpleDeclarationsOptimizer extends OptimizerBase {
 		for (Entry<String, ArrayList<SimpleDeclaration>> e : mergableSDMap
 				.entrySet()) {
 			SimpleDeclaration survivor = e.getValue().get(0);
-			Declaration decl = (Declaration) survivor
-					.getFirstIsSimpleDeclOfIncidence().getOmega();
+			Declaration decl = survivor.getFirstIsSimpleDeclOfIncidence()
+					.getOmega();
 			IsSimpleDeclOf isSDOfSurvivor = survivor
 					.getFirstIsSimpleDeclOfIncidence(EdgeDirection.OUT);
 			IsTypeExprOfDeclaration isTEODSurvivor = survivor
@@ -212,10 +212,10 @@ public class MergeSimpleDeclarationsOptimizer extends OptimizerBase {
 		IsSimpleDeclOf edge = decl.getFirstIsSimpleDeclOfIncidence();
 		while (edge != null) {
 			if (edge.getNormalEdge() != isSDOfSurvivor) {
-				edge = edge.getNextIsSimpleDeclOf();
+				edge = edge.getNextIsSimpleDeclOfIncidence();
 				continue;
 			}
-			IsSimpleDeclOf nextEdge = edge.getNextIsSimpleDeclOf();
+			IsSimpleDeclOf nextEdge = edge.getNextIsSimpleDeclOfIncidence();
 			if ((nextEdge != null) && (nextEdge.getNormalEdge() == isSDOfS)) {
 				return true;
 			} else {

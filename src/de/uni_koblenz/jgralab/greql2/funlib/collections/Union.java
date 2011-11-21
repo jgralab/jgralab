@@ -30,8 +30,7 @@ public class Union extends Function {
 			if (a instanceof ArrayPSet) {
 				return ((ArrayPSet<T>) a).plusAll(b);
 			} else {
-				PSet<T> result = JGraLab.set();
-				return result.plusAll(a).plusAll(b);
+				return JGraLab.<T> set().plusAll(a).plusAll(b);
 			}
 		}
 	}
@@ -47,8 +46,7 @@ public class Union extends Function {
 			if (a instanceof ArrayPMap) {
 				return ((ArrayPMap<K, V>) a).plusAll(b);
 			} else {
-				PMap<K, V> result = JGraLab.map();
-				return result.plusAll(a).plusAll(b);
+				return JGraLab.<K, V> map().plusAll(a).plusAll(b);
 			}
 
 		}

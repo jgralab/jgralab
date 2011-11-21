@@ -1383,8 +1383,8 @@ public class GraphBaseTest extends InstanceTest {
 		// TODO how do I get isLoading to return true
 		createReadOnlyTransaction(g1);
 		createReadOnlyTransaction(g2);
-		assertEquals(false, g1.isLoading());
-		assertEquals(false, g2.isLoading());
+		assertFalse(g1.isLoading());
+		assertFalse(g2.isLoading());
 		commit(g1);
 		commit(g2);
 		/*

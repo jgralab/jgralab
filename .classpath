@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src"/>
-	<classpathentry excluding="testdata/|testgraphs/|testschemas/" kind="src" path="testit"/>
+	<classpathentry excluding="testdata/|testgraphs/|testschemas/|de/uni_koblenz/jgralabtest/greql2/funlib/GraphFunctionTest.java|de/uni_koblenz/jgralabtest/greql2/funlib/SliceFunctionTest.java|de/uni_koblenz/jgralabtest/greql2/funlib/PathSystemFunctionTest.java|de/uni_koblenz/jgralabtest/greql2/funlib/SchemaFunctionTest.java|de/uni_koblenz/jgralabtest/greql2/FunctionTest.java|de/uni_koblenz/jgralabtest/greql2/evaluator/GreqlEvaluatorTest.java" kind="src" path="testit"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry kind="lib" path="/common/lib/apache/commons/cli/commons-cli-1.2.jar"/>
@@ -13,6 +13,5 @@
 	<classpathentry kind="lib" path="lib/json/jackson-core-lgpl-1.0.1.jar"/>
 	<classpathentry kind="lib" path="lib/plist/org.riediger.plist.jar"/>
 	<classpathentry kind="lib" path="lib/jdbc/derbyclient.jar"/>
-	<classpathentry kind="lib" path="lib/pcollections/pcollections-SNAPSHOT.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

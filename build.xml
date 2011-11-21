@@ -103,6 +103,8 @@
 	<property name="core.src" value="${src.dir}/de/uni_koblenz/jgralab" />
 	<property name="core.includes" value="*.java graphmarker/** schema/** codegenerator/** impl/** jniserver/** trans/** algolib/functions/** eca/ECARuleManagerInterface.java" />
 
+	<property name="pcollections.src" value="${src.dir}/org/pcollections" />
+
 	<property name="tgtools.src" value="${src.dir}/de/uni_koblenz/jgralab/utilities" />
 	<property name="tgtools.includes" value="tgschema2java/** ant/TgSchema2JavaTask.java ant/DeleteGeneratedSchemaTask.java tg2whatever/** tgmerge/**" />
 
@@ -148,10 +150,16 @@
 	</target>
 
 	<!-- compile -->
-	<target name="compile" depends="core,tgtools,greql2,algolib,graphvalidator,rsa,utilities,gretl_and_eca,generatetestschemas">
+	<target name="compile" depends="pcollections,core,tgtools,greql2,algolib,graphvalidator,rsa,utilities,gretl_and_eca,generatetestschemas">
 		<mkdir dir="testit/testdata" />
 	</target>
 
+	<target name="pcollections" depends="createClassesDir">
+		<javac fork="true" srcdir="${pcollections.src}" destdir="${classes.dir}" memoryinitialsize="${minmemsize}" memorymaximumsize="${maxmemsize}" classpathref="classpath" debug="${debug}" source="${javac.targetVM}" target="${javac.targetVM}" includeantruntime="false">
+			<compilerarg line="-Xlint:unchecked" />
+		</javac>
+	</target>
+	
 	<!-- jgralab -->
 	<!-- compiles jgralab basic sources -->
 	<target name="core" depends="createClassesDir">
@@ -263,7 +271,6 @@
 	<target name="unjar" depends="common.unjar">
 		<unjar dest="${tmp.dir}">
 			<fileset dir="${comlib.dir}/apache/commons/cli/" includes="**/*.jar" />
-			<fileset dir="${lib.dir}/pcollections" includes="*.jar" />
 		</unjar>
 	</target>
 

@@ -1311,7 +1311,7 @@ public class Rsa2Tg extends XmlProcessor {
 					(IncidenceClass) subClass.getFirstGoesToIncidence()
 							.getThat(), (IncidenceClass) superClass
 							.getFirstGoesToIncidence().getThat());
-			spec = spec.getNextSpecializesEdgeClass();
+			spec = spec.getNextSpecializesEdgeClassInGraph();
 		}
 
 		// Generalisation hierarchy is complete, now process redefinitions.
@@ -3349,7 +3349,7 @@ public class Rsa2Tg extends XmlProcessor {
 	}
 
 	public void setKeepEmptyPackages(boolean removeEmptyPackages) {
-		this.keepEmptyPackages = removeEmptyPackages;
+		keepEmptyPackages = removeEmptyPackages;
 	}
 
 }

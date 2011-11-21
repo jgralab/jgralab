@@ -22,15 +22,13 @@ public class Difference extends Function {
 			if (a instanceof ArrayPSet) {
 				return a;
 			} else {
-				PSet<T> result = JGraLab.set();
-				return result.plusAll(a);
+				return JGraLab.<T> set().plusAll(a);
 			}
 		} else {
 			if (a instanceof ArrayPSet) {
 				return a.minusAll(b);
 			} else {
-				PSet<T> result = JGraLab.set();
-				return result.plusAll(a).minusAll(b);
+				return JGraLab.<T> set().plusAll(a).minusAll(b);
 			}
 		}
 	}
