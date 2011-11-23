@@ -12,8 +12,9 @@ import de.uni_koblenz.jgralab.greql2.types.TypeCollection;
 public class EdgesTo extends Function {
 
 	public EdgesTo() {
-		super("Returns the list of incoming edges of vertex $v$", 2, 5, 1.0,
-				Category.GRAPH);
+		super(
+				"Returns the list of incoming edges of the given vertex, optionally restricted by a type collection.",
+				2, 5, 1.0, Category.GRAPH);
 	}
 
 	public PVector<Edge> evaluate(Vertex v) {
@@ -23,7 +24,7 @@ public class EdgesTo extends Function {
 	public PVector<Edge> evaluate(Vertex v, TypeCollection tc) {
 		PVector<Edge> result = JGraLab.vector();
 		for (Edge e : v.incidences(EdgeDirection.IN)) {
-			if (tc == null || tc.acceptsType(e.getAttributedElementClass())) {
+			if ((tc == null) || tc.acceptsType(e.getAttributedElementClass())) {
 				result = result.plus(e);
 			}
 		}

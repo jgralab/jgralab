@@ -13,7 +13,7 @@ import de.uni_koblenz.jgralab.greql2.funlib.Function;
 public class EntrySet extends Function {
 
 	public EntrySet() {
-		super("Returns the set of entries of the $map$.",
+		super("Returns the set of entries of the given map.",
 				Category.COLLECTIONS_AND_MAPS);
 	}
 

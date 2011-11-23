@@ -12,7 +12,7 @@ public class AttributeNames extends Function {
 
 	public AttributeNames() {
 		super(
-				"Determines the set of attribute names of the specified element or schema class.",
+				"Returns the set of attribute names of the specified element or schema class.",
 				5, 5, 1.0, Category.SCHEMA_ACCESS);
 	}
 

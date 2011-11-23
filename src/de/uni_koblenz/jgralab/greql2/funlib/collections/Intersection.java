@@ -10,7 +10,7 @@ import de.uni_koblenz.jgralab.greql2.funlib.Function;
 public class Intersection extends Function {
 
 	public Intersection() {
-		super("Computes the intersection of two sets $a$ and $b$.",
+		super("Returns the intersection of the given two sets.",
 				Category.COLLECTIONS_AND_MAPS);
 	}
 

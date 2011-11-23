@@ -10,8 +10,8 @@ import de.uni_koblenz.jgralab.greql2.types.Slice;
 public class Vertices extends Function {
 
 	public Vertices() {
-		super("Returns the set of vertices in pathsystem $p$/slice $s$.",
-				Category.GRAPH);
+		super("Returns the set of vertices in the given path system or slice.",
+				Category.PATHS_AND_PATHSYSTEMS_AND_SLICES);
 	}
 
 	public PSet<Vertex> evaluate(PathSystem p) {

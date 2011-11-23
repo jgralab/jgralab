@@ -10,7 +10,8 @@ import de.uni_koblenz.jgralab.greql2.types.Slice;
 public class Leaves extends Function {
 
 	public Leaves() {
-		super("Returns the set of leaf vertices in pathsystem $p$/slice $s$.",
+		super(
+				"Returns the set of leaf vertices in the given path system or slice.",
 				Category.GRAPH);
 	}
 

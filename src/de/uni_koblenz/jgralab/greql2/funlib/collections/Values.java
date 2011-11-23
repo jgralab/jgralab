@@ -8,7 +8,7 @@ import de.uni_koblenz.jgralab.greql2.funlib.Function;
 public class Values extends Function {
 
 	public Values() {
-		super("Returns the list of values of the $map$.",
+		super("Returns the collection of values of the given map.",
 				Category.COLLECTIONS_AND_MAPS);
 	}
 

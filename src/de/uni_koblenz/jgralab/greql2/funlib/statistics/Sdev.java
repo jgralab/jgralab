@@ -9,8 +9,8 @@ public class Sdev extends Function {
 
 	public Sdev() {
 		super(
-				"Computes the standard deviation of a collection of numbers.\n"
-						+ "If the size of the collection is less than 2, the standard deviation is undefined.",
+				"Returns the standard deviation of a collection of numbers.\n"
+						+ "If the collection's size is less than 2, the standard deviation is undefined.",
 				Category.STATISTICS);
 	}
 

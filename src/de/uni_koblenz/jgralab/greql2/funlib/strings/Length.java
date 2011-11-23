@@ -4,7 +4,7 @@ import de.uni_koblenz.jgralab.greql2.funlib.Function;
 
 public class Length extends Function {
 	public Length() {
-		super("Returns the length of the String s.", Category.STRINGS);
+		super("Returns the length of the given String.", Category.STRINGS);
 	}
 
 	public Integer evaluate(String s) {

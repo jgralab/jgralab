@@ -1,29 +1,29 @@
 /*
  * JGraLab - The Java Graph Laboratory
- * 
+ *
  * Copyright (C) 2006-2011 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
- * 
+ *
  * For bug reports, documentation and further information, visit
- * 
+ *
  *                         http://jgralab.uni-koblenz.de
- * 
+ *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
  * Free Software Foundation; either version 3 of the License, or (at your
  * option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, see <http://www.gnu.org/licenses>.
- * 
+ *
  * Additional permission under GNU GPL version 3 section 7
- * 
+ *
  * If you modify this Program, or any covered work, by linking or combining
  * it with Eclipse (or a modified version of that program or an Eclipse
  * plugin), containing parts covered by the terms of the Eclipse Public
@@ -59,41 +59,11 @@ import de.uni_koblenz.jgralab.greql2.funlib.Function;
 import de.uni_koblenz.jgralab.greql2.types.pathsearch.PathSystemMarkerEntry;
 import de.uni_koblenz.jgralab.greql2.types.pathsearch.PathSystemQueueEntry;
 
-/**
- * Returns a slice, based on the current graph and the given dfa, whose root is
- * the given vertex.
- * 
- * <dl>
- * <dt><b>GReQL-signature</b></dt>
- * <dd><code>SLICE slice(v:SET&lt;VERTEX&gt;, dfa:AUTOMATON)</code></dd>
- * <dd>&nbsp;</dd>
- * <dd>This function can be used with the (<code>:-)</code>)-Operator:
- * <code>v :-) rpe</code></dd>
- * <dd><code>rpe</code> is a regular path expression.</dd>
- * <dd>&nbsp;</dd>
- * </dl>
- * <dl>
- * <dt></dt>
- * <dd>
- * <dl>
- * <dt><b>Parameters:</b></dt>
- * <dd><code>v</code> - root of the returned pathsystem</dd>
- * <dd><code>dfa</code> - a dfa that accepts regular path expressions</dd>
- * <dt><b>Returns:</b></dt>
- * <dd>a pathsystem, based on the current graph and the given dfa, whose root is
- * the given vertex</dd>
- * <dd><code>Null</code> if one of the given parameters is <code>Null</code></dd>
- * </dl>
- * </dd>
- * </dl>
- * 
- * @author ist@uni-koblenz.de
- * 
- */
 public class Slice extends Function {
 	public Slice() {
 		super(
-				"Returns a slice, starting at root(s) and structured according to path description.",
+				"Returns a slice, starting at the given root vertex or vertices and "
+						+ " being structured according to the given path description.",
 				1000, 1, 1.0, Category.GRAPH,
 				Category.PATHS_AND_PATHSYSTEMS_AND_SLICES);
 	}
@@ -145,7 +115,7 @@ public class Slice extends Function {
 
 	/**
 	 * marks the given vertex with the given SliceMarker
-	 * 
+	 *
 	 * @return true if the vertex was marked successful, false if it is already
 	 *         marked with this parentEdge
 	 */
@@ -173,7 +143,7 @@ public class Slice extends Function {
 
 	/**
 	 * Checks if the given vertex is marked with the given state and parent edge
-	 * 
+	 *
 	 * @return true if the vertex is marked, false otherwise
 	 */
 	protected boolean isMarked(Vertex v, State s, Edge parentEdge) {
@@ -190,7 +160,7 @@ public class Slice extends Function {
 
 	/**
 	 * Checks if the given vertex is marked with the given state
-	 * 
+	 *
 	 * @return true if the vertex is marked, false otherwise
 	 */
 	protected boolean isMarked(Vertex v, State s) {
@@ -205,7 +175,7 @@ public class Slice extends Function {
 	 * Marks all vertices that are part of the slice described by the given
 	 * rootVertex and the regular path expression which is acceptes by the given
 	 * dfa
-	 * 
+	 *
 	 * @param sliCritVertices
 	 *            the start vertices of the slice
 	 * @param dfa
@@ -274,7 +244,7 @@ public class Slice extends Function {
 	/**
 	 * Creates a JValueSlice-object which contains all path which start at the
 	 * given start vertices and end with the given leaves
-	 * 
+	 *
 	 * @param leaves
 	 * @return
 	 */
@@ -341,7 +311,7 @@ public class Slice extends Function {
 										marker.parentVertex, parentStateNumber,
 										marker.state.isFinal);
 								parentVertex = marker.parentVertex;
-								if (parentVertex != null
+								if ((parentVertex != null)
 										&& !isVertexMarkedWithState(
 												parentVertex, parentState)) {
 									// if (parentVertex, parentState) has not
@@ -368,7 +338,7 @@ public class Slice extends Function {
 	/**
 	 * Adds the given state to the set of states maintained for the given
 	 * vertex.
-	 * 
+	 *
 	 * @param v
 	 *            the vertex to be marked
 	 * @param s
@@ -383,7 +353,7 @@ public class Slice extends Function {
 
 	/**
 	 * Checks if the given vertex' state set contains the given state.
-	 * 
+	 *
 	 * @param v
 	 *            the vertex to be checked
 	 * @param s
@@ -399,7 +369,7 @@ public class Slice extends Function {
 
 	/**
 	 * Returns the {@code PathSystemMarkerEntry} for a given vertex and state.
-	 * 
+	 *
 	 * @param v
 	 *            the vertex for which to return the
 	 *            {@code PathSystemMarkerEntry}

@@ -8,7 +8,10 @@ import de.uni_koblenz.jgralab.greql2.funlib.Function;
 public class TheElement extends Function {
 
 	public TheElement() {
-		super("Returns the only value in collection $c$.",
+		super(
+				"Returns the only element in the given collection. "
+						+ "If the collection is empty or contains more than one element, "
+						+ "an exception is thrown.",
 				Category.COLLECTIONS_AND_MAPS);
 	}
 

@@ -8,7 +8,8 @@ import de.uni_koblenz.jgralab.greql2.types.Undefined;
 public class IsDefined extends Function {
 
 	public IsDefined() {
-		super("Returns true if $val$ is defined.", Category.DEBUGGING);
+		super("Returns true, iff the given object is defined.",
+				Category.DEBUGGING);
 	}
 
 	public Boolean evaluate(Object val) {

@@ -8,8 +8,8 @@ import de.uni_koblenz.jgralab.greql2.funlib.Function;
 public class ReMatch extends Function {
 	public ReMatch() {
 		super(
-				"Returns true iff the given string matches the given regular expression. \n"
-						+ "Alternative usage: myString =\\textasciitilde{} myRegexp.",
+				"Returns true, iff the given string matches the given regular expression. \n"
+						+ "Can be used as infix operator: myString =\\textasciitilde{} myRegexp.",
 				50, 1, 0.1, Category.STRINGS);
 	}
 
