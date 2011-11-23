@@ -65,6 +65,16 @@ public class Types {
 		return false;
 	}
 
+	public static String[] getGreqlTypeNames() {
+		String[] names = new String[typeNames.size()];
+		int i = 0;
+		for (String n : typeNames.values()) {
+			names[i] = n;
+			i++;
+		}
+		return names;
+	}
+
 	public static final String getGreqlTypeName(Object value) {
 		if (value == null) {
 			value = Undefined.UNDEFINED;
@@ -74,7 +84,15 @@ public class Types {
 				return typeNames.get(cls);
 			}
 		}
-		return value.getClass().getSimpleName() + "[unknown to GReQL]";
+		return value.getClass().getSimpleName() + " [unknown to GReQL]";
+	}
+
+	public static final String getGreqlTypeName(Class<?> cls) {
+		String tn = typeNames.get(cls);
+		if (tn != null) {
+			return tn;
+		}
+		return cls.getSimpleName();
 	}
 
 	public static final PVector<?> toPVector(Object o) {

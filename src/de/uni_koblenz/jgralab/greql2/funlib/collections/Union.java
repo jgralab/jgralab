@@ -14,7 +14,7 @@ public class Union extends Function {
 
 	public Union() {
 		super(
-				"Computes the union of two sets (or maps) $a$ and $b.\n"
+				"Computes the union of two sets (or maps) $a$ and $b$.\n"
 						+ "In case of common keys in maps, $b$'s entries will overwrite $a$'s entries.",
 				Category.COLLECTIONS_AND_MAPS);
 	}
