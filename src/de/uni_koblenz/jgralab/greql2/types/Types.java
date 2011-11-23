@@ -6,6 +6,7 @@ import java.util.HashSet;
 
 import org.pcollections.ArrayPSet;
 import org.pcollections.ArrayPVector;
+import org.pcollections.PCollection;
 import org.pcollections.PMap;
 import org.pcollections.POrderedSet;
 import org.pcollections.PSet;
@@ -29,8 +30,8 @@ public class Types {
 			GraphElement.class, Path.class, PathSystem.class, Slice.class,
 			TypeCollection.class, Enum.class, Record.class, Table.class,
 			Tuple.class, PVector.class, PSet.class, POrderedSet.class,
-			PMap.class, AttributedElementClass.class, FiniteAutomaton.class,
-			Undefined.class };
+			PCollection.class, PMap.class, AttributedElementClass.class,
+			FiniteAutomaton.class, Undefined.class };
 
 	private static final HashMap<Class<?>, String> typeNames;
 	private static final HashSet<Class<?>> types;
@@ -46,6 +47,7 @@ public class Types {
 		typeNames.put(PSet.class, "Set");
 		typeNames.put(POrderedSet.class, "Set");
 		typeNames.put(PMap.class, "Map");
+		typeNames.put(PCollection.class, "Collection");
 		typeNames.put(FiniteAutomaton.class, "PathDescription");
 	}
 
