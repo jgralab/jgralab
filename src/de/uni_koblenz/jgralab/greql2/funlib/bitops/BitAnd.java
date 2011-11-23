@@ -4,7 +4,7 @@ import de.uni_koblenz.jgralab.greql2.funlib.Function;
 
 public class BitAnd extends Function {
 	public BitAnd() {
-		super("Calculates the bitwise and $a \\vedge b$.", 4, 1, 1.0,
+		super("Calculates the bitwise and $a \\wedge b$.", 4, 1, 1.0,
 				Category.ARITHMETICS);
 	}
 

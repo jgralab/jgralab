@@ -5,7 +5,7 @@ import de.uni_koblenz.jgralab.greql2.funlib.Function;
 public class LeThan extends Function {
 
 	public LeThan() {
-		super("Determines if $a < $b$. Alternative: a < b", 2, 1, 0.5,
+		super("Determines if $a < b$. Alternative: a < b", 2, 1, 0.5,
 				Category.RELATIONS);
 	}
 
