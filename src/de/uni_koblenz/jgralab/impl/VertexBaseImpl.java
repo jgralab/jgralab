@@ -134,7 +134,7 @@ public abstract class VertexBaseImpl extends GraphElementImpl implements
 	@Override
 	public Vertex getNextVertex() {
 		TraversalContext tc = graph.getTraversalContext();
-		assert tc == null || tc.containsVertex(this);
+		assert tc == null || tc.containsVertex(this); // TODO, fails if first vertex is not in TC
 		InternalVertex nextVertex = getNextVertexInVSeq();
 		if (!(tc == null || nextVertex == null || tc.containsVertex(nextVertex))) {
 			while (!(nextVertex == null || tc.containsVertex(nextVertex))) {
