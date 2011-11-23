@@ -9,8 +9,7 @@ import de.uni_koblenz.jgralab.greql2.funlib.NeedsGraphArgument;
 public class GetEdge extends Function {
 
 	public GetEdge() {
-		super("Returns the $graph$'s edge with the specified $id$.",
-				Category.GRAPH);
+		super("Returns the edge with the given id.", Category.GRAPH);
 	}
 
 	public Edge evaluate(Graph graph, Integer id) {

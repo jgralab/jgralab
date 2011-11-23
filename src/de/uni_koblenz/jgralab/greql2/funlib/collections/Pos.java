@@ -11,7 +11,8 @@ public class Pos extends Function {
 
 	public Pos() {
 		super(
-				"Determines the position of the first occurence of $x$ in a collection $l$. Returns -1 if $x$ was not found.",
+				"Returns the position of the first occurence of the given element in the given collection, "
+						+ "or -1, if the element is not contained in the collection.",
 				Category.COLLECTIONS_AND_MAPS);
 	}
 

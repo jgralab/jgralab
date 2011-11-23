@@ -9,7 +9,8 @@ import de.uni_koblenz.jgralab.greql2.funlib.Function;
 public class IsSubSet extends Function {
 
 	public IsSubSet() {
-		super("Returns true iff the set $a$ is subset of $b$.",
+		super(
+				"Returns true, iff the set given as first parameter is subset of the set given as second parameter.",
 				Category.COLLECTIONS_AND_MAPS);
 	}
 

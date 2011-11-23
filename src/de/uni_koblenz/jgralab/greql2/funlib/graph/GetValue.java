@@ -8,7 +8,8 @@ public class GetValue extends Function {
 
 	public GetValue() {
 		super(
-				"Returns the value of the attribute/component $name$ of element $el$/record $rec$.",
+				"Returns the value of the given element's attribute or record component specified by its name. "
+						+ "Can be used using the dot-operator: myElement.attrName.",
 				2, 1, 1.0, Category.GRAPH);
 	}
 

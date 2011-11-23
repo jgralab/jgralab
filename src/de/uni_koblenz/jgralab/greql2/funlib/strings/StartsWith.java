@@ -5,7 +5,7 @@ import de.uni_koblenz.jgralab.greql2.funlib.Function;
 public class StartsWith extends Function {
 	public StartsWith() {
 		super(
-				"Returns true iff the $s$ starts with $prefix$ (beginning search at $toffset$).",
+				"Returns true, iff the given string starts with the given prefix, optionally beginning search at the given offset.",
 				3, 1, 0.05, Category.STRINGS);
 	}
 
@@ -13,7 +13,7 @@ public class StartsWith extends Function {
 		return s.startsWith(prefix);
 	}
 
-	public Boolean evaluate(String prefix, String s, int toffset) {
-		return s.startsWith(prefix, toffset);
+	public Boolean evaluate(String prefix, String s, int offset) {
+		return s.startsWith(prefix, offset);
 	}
 }

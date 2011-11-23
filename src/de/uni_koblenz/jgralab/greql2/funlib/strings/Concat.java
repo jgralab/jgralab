@@ -10,8 +10,9 @@ import de.uni_koblenz.jgralab.greql2.funlib.Function;
 public class Concat extends Function {
 
 	public Concat() {
-		super("Concatenates Strings and Lists. Alternative use: a ++ b", 3, 1,
-				1.0, Category.COLLECTIONS_AND_MAPS, Category.STRINGS);
+		super(
+				"Concatenates strings and collections. Can be used as infix operator: a ++ b.",
+				3, 1, 1.0, Category.COLLECTIONS_AND_MAPS, Category.STRINGS);
 	}
 
 	public String evaluate(String a, Object b) {

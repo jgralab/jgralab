@@ -10,14 +10,14 @@ public class Min extends Function {
 
 	public Min() {
 		super(
-				"Computes the minimum of a collection of values, or of two numbers $a$ and $b$.",
+				"Returns the minimum of a collection of comparable things or the minimum of the given two numbers.",
 				Category.STATISTICS);
 	}
 
 	public Number evaluate(Number a, Number b) {
-		if (a instanceof Double || b instanceof Double) {
+		if ((a instanceof Double) || (b instanceof Double)) {
 			return Math.min(a.doubleValue(), b.doubleValue());
-		} else if (a instanceof Long || b instanceof Long) {
+		} else if ((a instanceof Long) || (b instanceof Long)) {
 			return Math.min(a.longValue(), b.longValue());
 		} else {
 			return Math.min(a.intValue(), b.intValue());

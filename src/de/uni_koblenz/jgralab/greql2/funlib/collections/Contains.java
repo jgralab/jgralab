@@ -11,8 +11,9 @@ public class Contains extends Function {
 
 	public Contains() {
 		super(
-				"Returns true iff the collection or path contains the element $el$.",
-				2, 1, 0.2, Category.COLLECTIONS_AND_MAPS);
+				"Returns true, iff the given collection, path, or path system contains the element given as second parameter.",
+				2, 1, 0.2, Category.COLLECTIONS_AND_MAPS,
+				Category.PATHS_AND_PATHSYSTEMS_AND_SLICES);
 	}
 
 	public <T> Boolean evaluate(PCollection<T> s, T el) {

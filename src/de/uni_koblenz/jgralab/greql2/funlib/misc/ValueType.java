@@ -11,7 +11,7 @@ public class ValueType extends Function {
 
 	public ValueType() {
 		super(
-				"Returns a String denoting the value type of $val$. Possible value types are: "
+				"Returns a String denoting the value type of the given object. Possible value types are: "
 						+ Arrays.toString(Types.getGreqlTypeNames()),
 				Category.REFLECTION);
 	}

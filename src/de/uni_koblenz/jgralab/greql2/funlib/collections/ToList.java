@@ -15,7 +15,7 @@ import de.uni_koblenz.jgralab.greql2.types.Tuple;
 public class ToList extends Function {
 
 	public ToList() {
-		super("Converts a collection into a List.",
+		super("Converts a collection into a list.",
 				Category.COLLECTIONS_AND_MAPS);
 	}
 

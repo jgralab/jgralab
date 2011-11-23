@@ -13,7 +13,7 @@ import de.uni_koblenz.jgralab.greql2.types.Tuple;
 public class ToSet extends Function {
 
 	public ToSet() {
-		super("Converts a collection into a Set (removes duplicates).",
+		super("Converts a collection into a set (removes duplicates).",
 				Category.COLLECTIONS_AND_MAPS);
 	}
 

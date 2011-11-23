@@ -13,7 +13,8 @@ public class Attributes extends Function {
 
 	public Attributes() {
 		super(
-				"Determines the attribute names and domains of the specified element or schema class.",
+				"Returns the attribute names and domains of the specified element or schema class "
+						+ "in terms of a vector containing one map per attribute with the keys name and domain.",
 				2, 1, 1.0, Category.SCHEMA_ACCESS);
 	}
 

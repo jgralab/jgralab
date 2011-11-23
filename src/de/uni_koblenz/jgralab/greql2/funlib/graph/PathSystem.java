@@ -1,28 +1,28 @@
 /* JGraLab - The Java Graph Laboratory
- * 
+ *
  * Copyright (C) 2006-2011 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
- * 
+ *
  * For bug reports, documentation and further information, visit
- * 
+ *
  *                         http://jgralab.uni-koblenz.de
- * 
+ *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
  * Free Software Foundation; either version 3 of the License, or (at your
  * option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, see <http://www.gnu.org/licenses>.
- * 
+ *
  * Additional permission under GNU GPL version 3 section 7
- * 
+ *
  * If you modify this Program, or any covered work, by linking or combining
  * it with Eclipse (or a modified version of that program or an Eclipse
  * plugin), containing parts covered by the terms of the Eclipse Public
@@ -54,7 +54,7 @@ public class PathSystem extends Function {
 
 	public PathSystem() {
 		super(
-				"Returns a pathsystem with root vertex, which is structured according to path description.",
+				"Returns a path system with the given root vertex, which is structured according to the given path description.",
 				1000, 1, 1.0, Category.PATHS_AND_PATHSYSTEMS_AND_SLICES);
 	}
 
@@ -82,7 +82,7 @@ public class PathSystem extends Function {
 
 	/**
 	 * marks the given vertex with the given PathSystemMarker
-	 * 
+	 *
 	 * @return the marker created
 	 */
 	protected PathSystemMarkerEntry markVertex(
@@ -99,7 +99,7 @@ public class PathSystem extends Function {
 
 	/**
 	 * Checks if the given vertex is marked with the given state
-	 * 
+	 *
 	 * @return true if the vertex is marked, false otherwise
 	 */
 	protected boolean isMarked(GraphMarker<PathSystemMarkerEntry>[] marker,
@@ -112,7 +112,7 @@ public class PathSystem extends Function {
 	 * Marks all vertices that are part of the PathSystem described by the given
 	 * rootVertex and the regular path expression which is acceptes by the given
 	 * dfa
-	 * 
+	 *
 	 * @param startVertex
 	 *            the rootVertex of the PathSystem
 	 * @param dfa
@@ -176,7 +176,7 @@ public class PathSystem extends Function {
 	/**
 	 * Creates a JValuePathSystem-object which contains all paths which start at
 	 * the given root vertex and end with one of the given leaves
-	 * 
+	 *
 	 * @param leaves
 	 * @return
 	 */
@@ -214,7 +214,7 @@ public class PathSystem extends Function {
 
 	/**
 	 * Returns the {@code PathSystemMarkerEntry} for a given vertex and state.
-	 * 
+	 *
 	 * @param v
 	 *            the vertex for which to return the
 	 *            {@code PathSystemMarkerEntry}

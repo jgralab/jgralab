@@ -10,7 +10,7 @@ import de.uni_koblenz.jgralab.greql2.types.Slice;
 public class Edges extends Function {
 
 	public Edges() {
-		super("Returns the set of edges in pathsystem $p$/slice $s$.",
+		super("Returns the set of edges in the given path system or slice.",
 				Category.GRAPH);
 	}
 

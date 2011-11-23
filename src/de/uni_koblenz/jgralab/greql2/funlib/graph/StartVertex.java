@@ -8,9 +8,8 @@ import de.uni_koblenz.jgralab.greql2.types.Path;
 public class StartVertex extends Function {
 
 	public StartVertex() {
-		super(
-				"Returns $\\alpha(e)$ for edges, or the start vertex a Path $p$.",
-				Category.GRAPH);
+		super("Returns the start vertex of the given edge or path.",
+				Category.GRAPH, Category.PATHS_AND_PATHSYSTEMS_AND_SLICES);
 	}
 
 	public Vertex evaluate(Edge e) {

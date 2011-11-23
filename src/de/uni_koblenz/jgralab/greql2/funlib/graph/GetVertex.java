@@ -9,8 +9,7 @@ import de.uni_koblenz.jgralab.greql2.funlib.NeedsGraphArgument;
 public class GetVertex extends Function {
 
 	public GetVertex() {
-		super("Returns the $graph$'s vertex with the specified $id$.",
-				Category.GRAPH);
+		super("Returns the vertex with the given id.", Category.GRAPH);
 	}
 
 	public Vertex evaluate(Graph graph, Integer id) {

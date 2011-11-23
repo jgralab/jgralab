@@ -15,7 +15,7 @@ import de.uni_koblenz.jgralab.greql2.types.Tuple;
 public class SortByColumn extends Function {
 
 	public SortByColumn() {
-		super("Sorts a collection of tuples $l$ by columns.",
+		super("Sorts a collection of tuples by one or many columns.",
 				Category.COLLECTIONS_AND_MAPS);
 	}
 
@@ -66,7 +66,7 @@ public class SortByColumn extends Function {
 		public int compare(Tuple t0, Tuple t1) {
 			int l = cols.size();
 			int result = 0;
-			for (int i = 0; i < l && result == 0; ++i) {
+			for (int i = 0; (i < l) && (result == 0); ++i) {
 				int c = cols.get(i);
 				@SuppressWarnings("rawtypes")
 				Comparable c0 = (Comparable) t0.get(c);
