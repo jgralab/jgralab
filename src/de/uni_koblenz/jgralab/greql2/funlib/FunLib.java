@@ -1,48 +1,147 @@
 package de.uni_koblenz.jgralab.greql2.funlib;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.io.PrintStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.net.URL;
-import java.net.URLDecoder;
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Map.Entry;
-import java.util.SortedMap;
-import java.util.TreeMap;
-import java.util.jar.JarEntry;
-import java.util.jar.JarFile;
 import java.util.logging.Logger;
 
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.greql2.exception.GreqlException;
-import de.uni_koblenz.jgralab.greql2.funlib.Function.Category;
 import de.uni_koblenz.jgralab.greql2.types.Types;
 import de.uni_koblenz.jgralab.greql2.types.Undefined;
 
 public class FunLib {
-	private static final String packageDirectory = FunLib.class.getPackage()
-			.getName().replace(".", "/");
+	private static final Map<String, FunctionInfo> functions;
+	private static final Logger logger;
 
 	static {
-		functions = new HashMap<String, FunctionInfo>();
 		logger = JGraLab.getLogger(FunLib.class.getPackage().getName());
-		registerAllFunctions();
+		functions = new HashMap<String, FunctionInfo>();
+		// register builtin functions
+		if (logger != null) {
+			logger.fine("Registering builtin functions");
+		}
+		register(de.uni_koblenz.jgralab.greql2.funlib.artithmetics.Abs.class);
+		register(de.uni_koblenz.jgralab.greql2.funlib.artithmetics.Add.class);
+		register(de.uni_koblenz.jgralab.greql2.funlib.artithmetics.Ceil.class);
+		register(de.uni_koblenz.jgralab.greql2.funlib.artithmetics.Cos.class);
+		register(de.uni_koblenz.jgralab.greql2.funlib.artithmetics.Div.class);
+		register(de.uni_koblenz.jgralab.greql2.funlib.artithmetics.Exp.class);
+		register(de.uni_koblenz.jgralab.greql2.funlib.artithmetics.Floor.class);
+		register(de.uni_koblenz.jgralab.greql2.funlib.artithmetics.Ln.class);
+		register(de.uni_koblenz.jgralab.greql2.funlib.artithmetics.Mod.class);
+		register(de.uni_koblenz.jgralab.greql2.funlib.artithmetics.Mul.class);
+		register(de.uni_koblenz.jgralab.greql2.funlib.artithmetics.Neg.class);
+		register(de.uni_koblenz.jgralab.greql2.funlib.artithmetics.Round.class);
+		register(de.uni_koblenz.jgralab.greql2.funlib.artithmetics.Sin.class);
+		register(de.uni_koblenz.jgralab.greql2.funlib.artithmetics.Sqrt.class);
+		register(de.uni_koblenz.jgralab.greql2.funlib.artithmetics.Sub.class);
+		register(de.uni_koblenz.jgralab.greql2.funlib.artithmetics.Tan.class);
+		register(de.uni_koblenz.jgralab.greql2.funlib.artithmetics.ToDouble.class);
+		register(de.uni_koblenz.jgralab.greql2.funlib.artithmetics.ToInteger.class);
+		register(de.uni_koblenz.jgralab.greql2.funlib.artithmetics.ToLong.class);
+		register(de.uni_koblenz.jgralab.greql2.funlib.bitops.BitAnd.class);
+		register(de.uni_koblenz.jgralab.greql2.funlib.bitops.BitNot.class);
+		register(de.uni_koblenz.jgralab.greql2.funlib.bitops.BitOr.class);
+		register(de.uni_koblenz.jgralab.greql2.funlib.bitops.BitShl.class);
+		register(de.uni_koblenz.jgralab.greql2.funlib.bitops.BitShr.class);
+		register(de.uni_koblenz.jgralab.greql2.funlib.bitops.BitUnsignedShr.class);
+		register(de.uni_koblenz.jgralab.greql2.funlib.bitops.BitXor.class);
+		register(de.uni_koblenz.jgralab.greql2.funlib.collections.Contains.class);
+		register(de.uni_koblenz.jgralab.greql2.funlib.collections.ContainsKey.class);
+		register(de.uni_koblenz.jgralab.greql2.funlib.collections.ContainsValue.class);
+		register(de.uni_koblenz.jgralab.greql2.funlib.collections.Difference.class);
+		register(de.uni_koblenz.jgralab.greql2.funlib.collections.EntrySet.class);
+		register(de.uni_koblenz.jgralab.greql2.funlib.collections.Get.class);
+		register(de.uni_koblenz.jgralab.greql2.funlib.collections.Intersection.class);
+		register(de.uni_koblenz.jgralab.greql2.funlib.collections.IsEmpty.class);
+		register(de.uni_koblenz.jgralab.greql2.funlib.collections.IsSubSet.class);
+		register(de.uni_koblenz.jgralab.greql2.funlib.collections.KeySet.class);
+		register(de.uni_koblenz.jgralab.greql2.funlib.collections.Pos.class);
+		register(de.uni_koblenz.jgralab.greql2.funlib.collections.Sort.class);
+		register(de.uni_koblenz.jgralab.greql2.funlib.collections.SortByColumn.class);
+		register(de.uni_koblenz.jgralab.greql2.funlib.collections.SubCollection.class);
+		register(de.uni_koblenz.jgralab.greql2.funlib.collections.TheElement.class);
+		register(de.uni_koblenz.jgralab.greql2.funlib.collections.ToList.class);
+		register(de.uni_koblenz.jgralab.greql2.funlib.collections.ToSet.class);
+		register(de.uni_koblenz.jgralab.greql2.funlib.collections.Union.class);
+		register(de.uni_koblenz.jgralab.greql2.funlib.collections.Values.class);
+		register(de.uni_koblenz.jgralab.greql2.funlib.graph.Degree.class);
+		register(de.uni_koblenz.jgralab.greql2.funlib.graph.DegreeFunction.class);
+		register(de.uni_koblenz.jgralab.greql2.funlib.graph.Depth.class);
+		register(de.uni_koblenz.jgralab.greql2.funlib.graph.Describe.class);
+		register(de.uni_koblenz.jgralab.greql2.funlib.graph.Distance.class);
+		register(de.uni_koblenz.jgralab.greql2.funlib.graph.Edges.class);
+		register(de.uni_koblenz.jgralab.greql2.funlib.graph.EdgesConnected.class);
+		register(de.uni_koblenz.jgralab.greql2.funlib.graph.EdgesFrom.class);
+		register(de.uni_koblenz.jgralab.greql2.funlib.graph.EdgesTo.class);
+		register(de.uni_koblenz.jgralab.greql2.funlib.graph.EdgeTrace.class);
+		register(de.uni_koblenz.jgralab.greql2.funlib.graph.EndVertex.class);
+		register(de.uni_koblenz.jgralab.greql2.funlib.graph.GetEdge.class);
+		register(de.uni_koblenz.jgralab.greql2.funlib.graph.GetValue.class);
+		register(de.uni_koblenz.jgralab.greql2.funlib.graph.GetVertex.class);
+		register(de.uni_koblenz.jgralab.greql2.funlib.graph.Id.class);
+		register(de.uni_koblenz.jgralab.greql2.funlib.graph.InDegree.class);
+		register(de.uni_koblenz.jgralab.greql2.funlib.graph.IsAcyclic.class);
+		register(de.uni_koblenz.jgralab.greql2.funlib.graph.IsIsolated.class);
+		register(de.uni_koblenz.jgralab.greql2.funlib.graph.IsLoop.class);
+		register(de.uni_koblenz.jgralab.greql2.funlib.graph.IsReachable.class);
+		register(de.uni_koblenz.jgralab.greql2.funlib.graph.Leaves.class);
+		register(de.uni_koblenz.jgralab.greql2.funlib.graph.OutDegree.class);
+		register(de.uni_koblenz.jgralab.greql2.funlib.graph.PathLength.class);
+		register(de.uni_koblenz.jgralab.greql2.funlib.graph.PathSystem.class);
+		register(de.uni_koblenz.jgralab.greql2.funlib.graph.ReachableVertices.class);
+		register(de.uni_koblenz.jgralab.greql2.funlib.graph.Slice.class);
+		register(de.uni_koblenz.jgralab.greql2.funlib.graph.StartVertex.class);
+		register(de.uni_koblenz.jgralab.greql2.funlib.graph.TopologicalSort.class);
+		register(de.uni_koblenz.jgralab.greql2.funlib.graph.VertexTrace.class);
+		register(de.uni_koblenz.jgralab.greql2.funlib.graph.Vertices.class);
+		register(de.uni_koblenz.jgralab.greql2.funlib.logics.And.class);
+		register(de.uni_koblenz.jgralab.greql2.funlib.logics.Not.class);
+		register(de.uni_koblenz.jgralab.greql2.funlib.logics.Or.class);
+		register(de.uni_koblenz.jgralab.greql2.funlib.logics.Xor.class);
+		register(de.uni_koblenz.jgralab.greql2.funlib.misc.IsDefined.class);
+		register(de.uni_koblenz.jgralab.greql2.funlib.misc.IsUndefined.class);
+		register(de.uni_koblenz.jgralab.greql2.funlib.misc.Log.class);
+		register(de.uni_koblenz.jgralab.greql2.funlib.misc.ValueType.class);
+		register(de.uni_koblenz.jgralab.greql2.funlib.relations.Equals.class);
+		register(de.uni_koblenz.jgralab.greql2.funlib.relations.GrEqual.class);
+		register(de.uni_koblenz.jgralab.greql2.funlib.relations.GrThan.class);
+		register(de.uni_koblenz.jgralab.greql2.funlib.relations.LeEqual.class);
+		register(de.uni_koblenz.jgralab.greql2.funlib.relations.LeThan.class);
+		register(de.uni_koblenz.jgralab.greql2.funlib.relations.Nequals.class);
+		register(de.uni_koblenz.jgralab.greql2.funlib.schema.AttributeNames.class);
+		register(de.uni_koblenz.jgralab.greql2.funlib.schema.Attributes.class);
+		register(de.uni_koblenz.jgralab.greql2.funlib.schema.HasAttribute.class);
+		register(de.uni_koblenz.jgralab.greql2.funlib.schema.HasComponent.class);
+		register(de.uni_koblenz.jgralab.greql2.funlib.schema.HasType.class);
+		register(de.uni_koblenz.jgralab.greql2.funlib.schema.Type.class);
+		register(de.uni_koblenz.jgralab.greql2.funlib.schema.TypeName.class);
+		register(de.uni_koblenz.jgralab.greql2.funlib.statistics.Count.class);
+		register(de.uni_koblenz.jgralab.greql2.funlib.statistics.Max.class);
+		register(de.uni_koblenz.jgralab.greql2.funlib.statistics.Mean.class);
+		register(de.uni_koblenz.jgralab.greql2.funlib.statistics.Min.class);
+		register(de.uni_koblenz.jgralab.greql2.funlib.statistics.Sdev.class);
+		register(de.uni_koblenz.jgralab.greql2.funlib.statistics.Sum.class);
+		register(de.uni_koblenz.jgralab.greql2.funlib.statistics.Variance.class);
+		register(de.uni_koblenz.jgralab.greql2.funlib.strings.CapitalizeFirst.class);
+		register(de.uni_koblenz.jgralab.greql2.funlib.strings.Concat.class);
+		register(de.uni_koblenz.jgralab.greql2.funlib.strings.EndsWith.class);
+		register(de.uni_koblenz.jgralab.greql2.funlib.strings.Join.class);
+		register(de.uni_koblenz.jgralab.greql2.funlib.strings.Length.class);
+		register(de.uni_koblenz.jgralab.greql2.funlib.strings.ReMatch.class);
+		register(de.uni_koblenz.jgralab.greql2.funlib.strings.Split.class);
+		register(de.uni_koblenz.jgralab.greql2.funlib.strings.StartsWith.class);
+		register(de.uni_koblenz.jgralab.greql2.funlib.strings.ToString.class);
 	}
 
 	private FunLib() {
 	}
-
-	private static Map<String, FunctionInfo> functions;
-	private static Logger logger;
 
 	private static class Signature {
 		Class<?>[] parameterTypes;
@@ -154,7 +253,7 @@ public class FunLib {
 
 	public static final Object apply(PrintStream os, String name,
 			Object... args) {
-		assert (name != null) && (name.length() >= 1);
+		assert name != null && name.length() >= 1;
 		assert args != null;
 		assert validArgumentTypes(args);
 		StringBuilder sb = new StringBuilder();
@@ -179,7 +278,7 @@ public class FunLib {
 		assert fi != null;
 		if (!fi.acceptsUndefinedValues) {
 			for (Object arg : args) {
-				if ((arg == null) || (arg == Undefined.UNDEFINED)) {
+				if (arg == null || arg == Undefined.UNDEFINED) {
 					return Undefined.UNDEFINED;
 				}
 			}
@@ -213,7 +312,7 @@ public class FunLib {
 	}
 
 	public static final Object apply(String name, Object... args) {
-		assert (name != null) && (name.length() >= 1);
+		assert name != null && name.length() >= 1;
 		assert args != null;
 		assert validArgumentTypes(args);
 		FunctionInfo fi = getFunctionInfo(name);
@@ -231,58 +330,6 @@ public class FunLib {
 			}
 		}
 		return true;
-	}
-
-	private static void registerAllFunctions() {
-		try {
-			Enumeration<URL> resources = FunLib.class.getClassLoader()
-					.getResources(packageDirectory);
-			while (resources.hasMoreElements()) {
-				URL res = resources.nextElement();
-				// unescape URL
-				String fileName = URLDecoder.decode(res.getFile(), "UTF-8");
-				if (fileName.contains(".jar!/")) {
-					String jarName = fileName
-							.substring(fileName.indexOf(':') + 1);
-					if (logger != null) {
-						logger.fine("registerFunctionsInJar(\"" + jarName
-								+ "\")");
-					}
-					registerFunctionsInJar(jarName);
-				} else if (res.getProtocol().equals("bundleresource")) {
-					if (logger != null) {
-						logger.fine("registerFunctionsInResourceBundle(...)");
-					}
-					registerFunctionsInResourceBundle(res);
-				} else {
-					if (logger != null) {
-						logger.fine("registerFunctionsInDirectory(\""
-								+ fileName + "\")");
-					}
-					registerFunctionsInDirectory(FunLib.class.getPackage()
-							.getName(), fileName);
-				}
-			}
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-
-	private static void register(String className)
-			throws ClassNotFoundException {
-		if (logger != null) {
-			logger.finest("Loading class " + className);
-		}
-		Class<?> cls = Class.forName(className);
-		if (Function.class.isAssignableFrom(cls)) {
-			@SuppressWarnings("unchecked")
-			Class<? extends Function> fun = (Class<? extends Function>) cls;
-			register(fun);
-		}
 	}
 
 	public static final void register(Class<? extends Function> cls) {
@@ -306,179 +353,11 @@ public class FunLib {
 		functions.put(name, new FunctionInfo(name, cls));
 	}
 
-	private static void registerFunctionsInJar(String packagePath)
-			throws IOException, ClassNotFoundException {
-		if (packagePath.lastIndexOf(".jar!/") > 0) {
-			packagePath = packagePath
-					.substring(0, packagePath.lastIndexOf("!"));
-			JarFile jar = new JarFile(packagePath);
-			for (Enumeration<JarEntry> e = jar.entries(); e.hasMoreElements();) {
-				JarEntry je = e.nextElement();
-				String entryName = je.getName();
-				if (entryName.startsWith(packageDirectory)
-						&& entryName.endsWith(".class")) {
-					String className = entryName.substring(0,
-							entryName.length() - 6).replace("/", ".");
-					register(className);
-				}
-			}
-		}
-	}
-
-	private static void registerFunctionsInDirectory(String packageName,
-			String directoryName) throws ClassNotFoundException {
-		File dir = new File(directoryName);
-		File[] files = dir.listFiles();
-		for (File file : files) {
-			if (file.isDirectory()) {
-				registerFunctionsInDirectory(
-						packageName + "." + file.getName(),
-						file.getAbsolutePath());
-			}
-			if (!file.getName().endsWith(".class")) {
-				continue;
-			}
-			register(packageName + "."
-					+ file.getName().substring(0, file.getName().length() - 6));
-		}
-	}
-
-	private static void registerFunctionsInResourceBundle(URL res) {
-		throw new UnsupportedOperationException("Not yet implemented.");
-	}
-
 	public static final FunctionInfo getFunctionInfo(String functionName) {
 		return functions.get(functionName);
 	}
 
 	public static final Logger getLogger() {
 		return logger;
-	}
-
-	public static void generateLaTeXFunctionDocs(String fileName)
-			throws IOException {
-		LaTeXFunctionDocsGenerator docGen = new LaTeXFunctionDocsGenerator(
-				fileName, functions);
-		docGen.generate();
-	}
-
-	private static class LaTeXFunctionDocsGenerator {
-		private BufferedWriter bw;
-		private final Map<Category, SortedMap<String, FunctionInfo>> cat2funs = new HashMap<Function.Category, SortedMap<String, FunctionInfo>>();
-
-		LaTeXFunctionDocsGenerator(String fileName,
-				final Map<String, FunctionInfo> funs) throws IOException {
-			bw = new BufferedWriter(new FileWriter(fileName));
-			fillCat2Funs(funs);
-		}
-
-		private void fillCat2Funs(final Map<String, FunctionInfo> funs) {
-			for (Entry<String, FunctionInfo> e : funs.entrySet()) {
-				for (Category cat : e.getValue().getFunction().getCategories()) {
-					SortedMap<String, FunctionInfo> m = cat2funs.get(cat);
-					if (m == null) {
-						m = new TreeMap<String, FunctionInfo>();
-						cat2funs.put(cat, m);
-					}
-					m.put(e.getKey(), e.getValue());
-				}
-			}
-		}
-
-		/**
-		 * Set to true to generate a complete latex doc that can be compiled
-		 * standalone. Useful when changing this generator...
-		 */
-		private boolean STANDALONE = false;
-
-		void generate() throws IOException {
-			try {
-				if (STANDALONE) {
-					write("\\documentclass{article}");
-					newLine();
-					write("\\begin{document}");
-					newLine();
-				}
-				for (Category cat : Category.values()) {
-					if (cat2funs.get(cat) != null) {
-						generateCategoryDocs(cat);
-					}
-				}
-				if (STANDALONE) {
-					write("\\end{document}");
-					newLine();
-				}
-			} finally {
-				bw.close();
-			}
-		}
-
-		private void write(String... strings) throws IOException {
-			for (String s : strings) {
-				bw.write(s);
-			}
-		}
-
-		private void newLine() throws IOException {
-			bw.newLine();
-		}
-
-		private void generateCategoryDocs(Category cat) throws IOException {
-			String heading = cat.toString().toLowerCase().replace('_', ' ');
-			heading = heading.substring(0, 1).toUpperCase()
-					.concat(heading.substring(1));
-			newLine();
-			write("\\subsection{" + heading + "}");
-			newLine();
-
-			SortedMap<String, FunctionInfo> funs = cat2funs.get(cat);
-			for (Entry<String, FunctionInfo> e : funs.entrySet()) {
-				generateFunctionDocs(e.getKey(), e.getValue());
-			}
-		}
-
-		private void generateFunctionDocs(String name, FunctionInfo info)
-				throws IOException {
-			newLine();
-			write("\\paragraph*{" + name + ".}");
-			newLine();
-			write(info.function.getDescription());
-			newLine();
-
-			generateSignatures(name, info.signatures);
-
-			newLine();
-		}
-
-		private void generateSignatures(String name, Signature[] signatures)
-				throws IOException {
-			write("\\begin{itemize}");
-
-			for (Signature sig : signatures) {
-				write("\\item $" + name + ": ");
-				for (int i = 0; i < sig.parameterTypes.length; i++) {
-					if (i != 0) {
-						write(" \\times ");
-					}
-					write(Types.getGreqlTypeName(sig.parameterTypes[i]));
-				}
-				write(" \\longrightarrow ");
-				write(Types
-						.getGreqlTypeName(sig.evaluateMethod.getReturnType()));
-				write("$");
-			}
-
-			write("\\end{itemize}");
-		}
-	}
-
-	public static void main(String[] args) throws IOException {
-		if (args.length != 1) {
-			System.out
-					.println("Generate a LaTeX documentation for all known GReQL functions.");
-			System.out.println("Usage: java FunLib /path/to/fundocs.tex");
-		} else {
-			generateLaTeXFunctionDocs(args[0]);
-		}
 	}
 }
