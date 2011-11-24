@@ -5,11 +5,11 @@ import java.util.ArrayList;
 public abstract class Function {
 
 	public enum Category {
-		ARITHMETICS, COLLECTIONS_AND_MAPS, DEBUGGING, GRAPH, LOGICS,
+		ARITHMETICS, COLLECTIONS_AND_MAPS, GRAPH, LOGICS,
 
 		PATHS_AND_PATHSYSTEMS_AND_SLICES, REFLECTION, RELATIONS,
 
-		SCHEMA_ACCESS, STATISTICS, STRINGS, UNDEFINED
+		SCHEMA_ACCESS, STATISTICS, STRINGS, MISCELLANEOUS, UNDEFINED
 	}
 
 	private String description;
@@ -40,7 +40,7 @@ public abstract class Function {
 
 	/**
 	 * Calculates the estimated cost for the evaluation of this greql function
-	 *
+	 * 
 	 * @param inElements
 	 *            the number of input elements
 	 * @return The estimated costs in the abstract measure-unit "interpretation
@@ -53,7 +53,7 @@ public abstract class Function {
 	/**
 	 * Calculates the estimated selectivity of this boolean function. If this
 	 * function does not return a boolean value, this method should return 1
-	 *
+	 * 
 	 * @return the selectivity of this function, 0 < selectivity <= 1
 	 */
 	public double getSelectivity() {
@@ -63,7 +63,7 @@ public abstract class Function {
 	/**
 	 * Calculates the estimated result size for the given number of input
 	 * elements
-	 *
+	 * 
 	 * @param inElements
 	 *            the number of input elements to calculate the result size for
 	 * @return the estimated number of elements in the result
