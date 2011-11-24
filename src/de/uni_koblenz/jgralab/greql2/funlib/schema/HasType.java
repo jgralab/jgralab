@@ -3,6 +3,7 @@ package de.uni_koblenz.jgralab.greql2.funlib.schema;
 import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.greql2.exception.GreqlException;
 import de.uni_koblenz.jgralab.greql2.funlib.Function;
+import de.uni_koblenz.jgralab.greql2.types.TypeCollection;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 
 public class HasType extends Function {
@@ -25,4 +26,10 @@ public class HasType extends Function {
 		AttributedElementClass c = el.getAttributedElementClass();
 		return c.equals(aec) || c.isSubClassOf(aec);
 	}
+
+	public Boolean evaluate(AttributedElement el, TypeCollection tc) {
+		AttributedElementClass c = el.getAttributedElementClass();
+		return tc.acceptsType(c);
+	}
+
 }
