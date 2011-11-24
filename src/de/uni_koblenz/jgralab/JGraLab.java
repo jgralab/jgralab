@@ -66,7 +66,7 @@ public class JGraLab {
 	 * Used by the jgralab4eclipse plugin to manage class loading (GReQL
 	 * functions and compiled schema classes) inside eclipse.
 	 */
-	public static EclipseAdapter eclipseAdapter;
+	private static EclipseAdapter eclipseAdapter;
 
 	private static String revision = "unknown";
 	private static String version = revision;
@@ -273,5 +273,13 @@ public class JGraLab {
 
 	public static final <K, V> PMap<K, V> map() {
 		return ArrayPMap.empty();
+	}
+
+	public static void setEclipseAdapter(EclipseAdapter eclipseAdapter) {
+		JGraLab.eclipseAdapter = eclipseAdapter;
+	}
+
+	public static EclipseAdapter getEclipseAdapter() {
+		return eclipseAdapter;
 	}
 }

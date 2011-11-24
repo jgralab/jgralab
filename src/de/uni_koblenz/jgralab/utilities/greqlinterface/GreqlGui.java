@@ -75,6 +75,7 @@ import javax.swing.text.Document;
 import javax.swing.undo.CannotRedoException;
 import javax.swing.undo.CannotUndoException;
 import javax.swing.undo.UndoManager;
+import javax.xml.stream.XMLStreamException;
 
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphIO;
@@ -88,6 +89,7 @@ import de.uni_koblenz.jgralab.greql2.exception.QuerySourceException;
 import de.uni_koblenz.jgralab.greql2.exception.SerialisingException;
 import de.uni_koblenz.jgralab.greql2.schema.SourcePosition;
 import de.uni_koblenz.jgralab.greql2.serialising.HTMLOutputWriter;
+import de.uni_koblenz.jgralab.greql2.serialising.XMLOutputWriter;
 
 @WorkInProgress(description = "insufficcient result presentation, simplistic hacked GUI, no load/save functionality, ...", responsibleDevelopers = "horn")
 public class GreqlGui extends JFrame {
@@ -319,6 +321,10 @@ public class GreqlGui extends JFrame {
 						public void run() {
 							Object result = eval.getResult();
 							try {
+								File xmlResultFile = new File(
+										"greqlQueryResult.xml");
+								XMLOutputWriter xw = new XMLOutputWriter(graph);
+								xw.writeValue(result, xmlResultFile);
 								File resultFile = new File(
 										"greqlQueryResult.html");
 								// File resultFile = File.createTempFile(
@@ -342,6 +348,9 @@ public class GreqlGui extends JFrame {
 								JOptionPane.showMessageDialog(GreqlGui.this,
 										"Exception during HTML output of result: "
 												+ e.toString());
+							} catch (XMLStreamException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
 							}
 						}
 					});
