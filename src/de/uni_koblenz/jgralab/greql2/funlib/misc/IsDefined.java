@@ -9,7 +9,7 @@ public class IsDefined extends Function {
 
 	public IsDefined() {
 		super("Returns true, iff the given object is defined.",
-				Category.DEBUGGING);
+				Category.MISCELLANEOUS);
 	}
 
 	public Boolean evaluate(Object val) {

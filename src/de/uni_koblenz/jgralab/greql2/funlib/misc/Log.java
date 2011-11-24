@@ -9,7 +9,7 @@ public class Log extends Function {
 	public Log() {
 		super(
 				"Logs a line of the form  $s$ ++ toString($o$) to sysout and returns $o$.",
-				Category.DEBUGGING);
+				Category.MISCELLANEOUS);
 	}
 
 	public Object evaluate(String s, Object o) {

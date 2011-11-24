@@ -9,7 +9,7 @@ public class IsUndefined extends Function {
 
 	public IsUndefined() {
 		super("Returns true, iff the given object is undefined.",
-				Category.DEBUGGING);
+				Category.MISCELLANEOUS);
 	}
 
 	public Boolean evaluate(Object val) {
