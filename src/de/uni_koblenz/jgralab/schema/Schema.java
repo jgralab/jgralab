@@ -154,16 +154,6 @@ public interface Schema extends Comparable<Schema> {
 			CodeGeneratorConfiguration config);
 
 	/**
-	 * After creating the schema, this command serves to generate and compile
-	 * code for the m1 classes. The class files are not written to disk, but
-	 * only held in memory.
-	 * 
-	 * @param jgralabClassPath
-	 *            the classpath to JGraLab
-	 */
-	public void compile(String jgralabClassPath);
-
-	/**
 	 * Generates Java classes in a temp directory, compiles them, and packs them
 	 * in a JAR file.
 	 * 

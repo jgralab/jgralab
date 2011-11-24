@@ -62,11 +62,13 @@ import javax.tools.JavaFileObject.Kind;
 import javax.tools.StandardJavaFileManager;
 import javax.tools.ToolProvider;
 
+import de.uni_koblenz.jgralab.EclipseAdapter;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphFactory;
 import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.ImplementationType;
+import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.M1ClassManager;
 import de.uni_koblenz.jgralab.ProgressFunction;
 import de.uni_koblenz.jgralab.codegenerator.ClassFileAbstraction;
@@ -253,11 +255,11 @@ public class SchemaImpl implements Schema {
 	public SchemaImpl(String name, String packagePrefix) {
 
 		if (!SCHEMA_NAME_PATTERN.matcher(name).matches()) {
-			this.throwInvalidSchemaNameException();
+			throwInvalidSchemaNameException();
 		}
 
 		if (!PACKAGE_PREFIX_PATTERN.matcher(packagePrefix).matches()) {
-			this.throwInvalidPackagePrefixNameException();
+			throwInvalidPackagePrefixNameException();
 		}
 
 		this.name = name;
@@ -638,17 +640,13 @@ public class SchemaImpl implements Schema {
 
 	@Override
 	public int compareTo(Schema other) {
-		return this.qualifiedName.compareTo(other.getQualifiedName());
+		return qualifiedName.compareTo(other.getQualifiedName());
 	}
 
 	@Override
 	public void compile(CodeGeneratorConfiguration config) {
-		compile(null, config);
-	}
-
-	@Override
-	public void compile(String jgralabClassPath) {
-		compile(jgralabClassPath, new CodeGeneratorConfiguration());
+		EclipseAdapter ea = JGraLab.getEclipseAdapter();
+		compile(ea != null ? ea.getJGraLabJarPath() : null, config);
 	}
 
 	@Override
