@@ -401,6 +401,9 @@ public class Slice {
 	 */
 	public void printEntryMap() {
 		clearPathSystem();
+		if (FunLib.getLogger() == null) {
+			return;
+		}
 		FunLib.getLogger().info("<Key, Entry> set of slice is:");
 		for (Map.Entry<PathSystemKey, List<PathSystemEntry>> mapEntry : keyToEntryMap
 				.entrySet()) {
@@ -417,6 +420,9 @@ public class Slice {
 	 */
 	public void printKeyMap() {
 		clearPathSystem();
+		if (FunLib.getLogger() == null) {
+			return;
+		}
 		Iterator<Map.Entry<Vertex, PathSystemKey>> iter = vertexToFirstKeyMap
 				.entrySet().iterator();
 		FunLib.getLogger().info("<Vertex, FirstKey> set of slice is:");
