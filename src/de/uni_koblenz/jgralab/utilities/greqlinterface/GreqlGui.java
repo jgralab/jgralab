@@ -567,8 +567,8 @@ public class GreqlGui extends JFrame {
 								s = s.substring(0, p);
 							}
 						}
-						s = s.replace("\\t", "\t");
 						s = s.replace("\\\"", "\"");
+						s = s.replace("\\\\", "\\");
 						sb.append(s).append("\n");
 					}
 				}
@@ -588,17 +588,20 @@ public class GreqlGui extends JFrame {
 				boolean firstLine = true;
 				boolean spaceRequired = false;
 				for (String line : lines) {
-					line = line.replace("\t", "\\t");
+					line = line.replace("\t", " ");
+					line = line.replace("\\", "\\\\");
 					line = line.replace("\"", "\\\"");
 					if (firstLine) {
 						sb.append("\"").append(line).append("\"");
 						firstLine = false;
 					} else {
-						sb.append(" +\n\"").append(spaceRequired ? " " : "")
-								.append(line).append("\"");
+						boolean startsWithWs = line.length() > 0
+								&& Character.isWhitespace(line.charAt(0));
+						sb.append(" +\n\"")
+								.append(spaceRequired && !startsWithWs ? " "
+										: "").append(line).append("\"");
 					}
 					spaceRequired = line.length() > 0
-							&& !Character.isWhitespace(line.charAt(0))
 							&& !Character.isWhitespace(line.charAt(line
 									.length() - 1));
 				}
