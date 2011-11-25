@@ -38,6 +38,7 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -105,6 +106,8 @@ public class GreqlGui extends JFrame {
 	final private JButton fileSelectionButton;
 	final private JButton evalQueryButton;
 	final private JButton stopButton;
+	final private JButton fromJavaButton;
+	final private JButton toJavaButton;
 	final private JProgressBar progressBar;
 	final private BoundedRangeModel brm;
 	final private JLabel statusLabel;
@@ -544,12 +547,79 @@ public class GreqlGui extends JFrame {
 		});
 		stopButton.setEnabled(false);
 
+		fromJavaButton = new JButton("Remove Java Quotes");
+		fromJavaButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				String text = queryArea.getText();
+				String[] lines = text.split("\n");
+				StringBuilder sb = new StringBuilder();
+				for (String line : lines) {
+					String[] strings = line.split("\" \\+");
+					for (String s : strings) {
+						int p = s.indexOf('\"');
+						if (p >= 0) {
+							s = s.substring(p + 1);
+						}
+						System.out.println(!(strings.length > 1 && strings[1]
+								.length() > 0) + " '" + s + "'");
+						if (!(strings.length > 1 && strings[1].length() > 0)) {
+							p = s.lastIndexOf('\"');
+							if (p >= 0) {
+								s = s.substring(0, p);
+							}
+						}
+						s = s.replace("\\t", "\t");
+						s = s.replace("\\\"", "\"");
+						sb.append(s).append("\n");
+					}
+				}
+				text = sb.toString();
+				queryArea.setText(text);
+				queryArea.requestFocus();
+			}
+		});
+
+		toJavaButton = new JButton("Insert Java Quotes");
+		toJavaButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				String text = queryArea.getText();
+				String[] lines = text.split("\n");
+				StringBuilder sb = new StringBuilder();
+				boolean firstLine = true;
+				boolean spaceRequired = false;
+				for (String line : lines) {
+					line = line.replace("\t", "\\t");
+					line = line.replace("\"", "\\\"");
+					if (firstLine) {
+						sb.append("\"").append(line).append("\"");
+						firstLine = false;
+					} else {
+						sb.append(" +\n\"").append(spaceRequired ? " " : "")
+								.append(line).append("\"");
+					}
+					spaceRequired = line.length() > 0
+							&& !Character.isWhitespace(line.charAt(0))
+							&& !Character.isWhitespace(line.charAt(line
+									.length() - 1));
+				}
+				text = sb.toString();
+				queryArea.setText(text);
+				queryArea.select(0, text.length());
+				queryArea.copy();
+				queryArea.requestFocus();
+			}
+		});
+
 		JPanel buttonPanel = new JPanel();
 		buttonPanel.add(fileSelectionButton);
 		buttonPanel.add(evalQueryButton);
 		buttonPanel.add(optimizeCheckBox);
 		buttonPanel.add(debugOptimizationCheckBox);
 		buttonPanel.add(stopButton);
+		buttonPanel.add(fromJavaButton);
+		buttonPanel.add(toJavaButton);
 		queryPanel.add(buttonPanel, BorderLayout.SOUTH);
 
 		statusLabel = new JLabel("Welcome", SwingConstants.LEFT);
