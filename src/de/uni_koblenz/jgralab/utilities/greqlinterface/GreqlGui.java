@@ -561,8 +561,6 @@ public class GreqlGui extends JFrame {
 						if (p >= 0) {
 							s = s.substring(p + 1);
 						}
-						System.out.println(!(strings.length > 1 && strings[1]
-								.length() > 0) + " '" + s + "'");
 						if (!(strings.length > 1 && strings[1].length() > 0)) {
 							p = s.lastIndexOf('\"');
 							if (p >= 0) {
