@@ -8,8 +8,8 @@ import de.uni_koblenz.jgralab.greql2.types.Path;
 public class EndVertex extends Function {
 
 	public EndVertex() {
-		super("Returns the end vertex of the given edge or path.",
-				Category.GRAPH, Category.PATHS_AND_PATHSYSTEMS_AND_SLICES);
+		super("Returns the end vertex of an edge or a path.", Category.GRAPH,
+				Category.PATHS_AND_PATHSYSTEMS_AND_SLICES);
 	}
 
 	public Vertex evaluate(Edge e) {

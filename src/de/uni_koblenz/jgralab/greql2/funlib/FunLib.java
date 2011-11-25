@@ -71,6 +71,7 @@ public class FunLib {
 		register(de.uni_koblenz.jgralab.greql2.funlib.collections.ToSet.class);
 		register(de.uni_koblenz.jgralab.greql2.funlib.collections.Union.class);
 		register(de.uni_koblenz.jgralab.greql2.funlib.collections.Values.class);
+		register(de.uni_koblenz.jgralab.greql2.funlib.graph.Alpha.class);
 		register(de.uni_koblenz.jgralab.greql2.funlib.graph.Degree.class);
 		register(de.uni_koblenz.jgralab.greql2.funlib.graph.DegreeFunction.class);
 		register(de.uni_koblenz.jgralab.greql2.funlib.graph.Depth.class);
@@ -92,12 +93,16 @@ public class FunLib {
 		register(de.uni_koblenz.jgralab.greql2.funlib.graph.IsLoop.class);
 		register(de.uni_koblenz.jgralab.greql2.funlib.graph.IsReachable.class);
 		register(de.uni_koblenz.jgralab.greql2.funlib.graph.Leaves.class);
+		register(de.uni_koblenz.jgralab.greql2.funlib.graph.Next.class);
+		register(de.uni_koblenz.jgralab.greql2.funlib.graph.Omega.class);
 		register(de.uni_koblenz.jgralab.greql2.funlib.graph.OutDegree.class);
 		register(de.uni_koblenz.jgralab.greql2.funlib.graph.PathLength.class);
 		register(de.uni_koblenz.jgralab.greql2.funlib.graph.PathSystem.class);
 		register(de.uni_koblenz.jgralab.greql2.funlib.graph.ReachableVertices.class);
 		register(de.uni_koblenz.jgralab.greql2.funlib.graph.Slice.class);
 		register(de.uni_koblenz.jgralab.greql2.funlib.graph.StartVertex.class);
+		register(de.uni_koblenz.jgralab.greql2.funlib.graph.This.class);
+		register(de.uni_koblenz.jgralab.greql2.funlib.graph.That.class);
 		register(de.uni_koblenz.jgralab.greql2.funlib.graph.TopologicalSort.class);
 		register(de.uni_koblenz.jgralab.greql2.funlib.graph.VertexTrace.class);
 		register(de.uni_koblenz.jgralab.greql2.funlib.graph.Vertices.class);
