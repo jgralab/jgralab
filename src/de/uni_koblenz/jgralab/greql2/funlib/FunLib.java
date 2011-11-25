@@ -365,4 +365,134 @@ public class FunLib {
 	public static final Logger getLogger() {
 		return logger;
 	}
+
+	public static void generateLaTeXFunctionDocs(String fileName)
+			throws IOException {
+		LaTeXFunctionDocsGenerator docGen = new LaTeXFunctionDocsGenerator(
+				fileName, functions);
+		docGen.generate();
+	}
+
+	private static class LaTeXFunctionDocsGenerator {
+		private BufferedWriter bw;
+		private final Map<Category, SortedMap<String, FunctionInfo>> cat2funs = new HashMap<Function.Category, SortedMap<String, FunctionInfo>>();
+
+		LaTeXFunctionDocsGenerator(String fileName,
+				final Map<String, FunctionInfo> funs) throws IOException {
+			bw = new BufferedWriter(new FileWriter(fileName));
+			fillCat2Funs(funs);
+		}
+
+		private void fillCat2Funs(final Map<String, FunctionInfo> funs) {
+			for (Entry<String, FunctionInfo> e : funs.entrySet()) {
+				for (Category cat : e.getValue().getFunction().getCategories()) {
+					SortedMap<String, FunctionInfo> m = cat2funs.get(cat);
+					if (m == null) {
+						m = new TreeMap<String, FunctionInfo>();
+						cat2funs.put(cat, m);
+					}
+					m.put(e.getKey(), e.getValue());
+				}
+			}
+		}
+
+		/**
+		 * Set to true to generate a complete latex doc that can be compiled
+		 * standalone. Useful when changing this generator...
+		 */
+		private boolean STANDALONE = false;
+
+		void generate() throws IOException {
+			try {
+				if (STANDALONE) {
+					write("\\documentclass{article}");
+					newLine();
+					write("\\begin{document}");
+					newLine();
+				}
+				write("\\twocolumn");
+				newLine();
+				newLine();
+				for (Category cat : Category.values()) {
+					if (cat2funs.get(cat) != null) {
+						generateCategoryDocs(cat);
+					}
+				}
+				if (STANDALONE) {
+					write("\\end{document}");
+					newLine();
+				}
+			} finally {
+				bw.close();
+			}
+		}
+
+		private void write(String... strings) throws IOException {
+			for (String s : strings) {
+				bw.write(s);
+			}
+		}
+
+		private void newLine() throws IOException {
+			bw.newLine();
+		}
+
+		private void generateCategoryDocs(Category cat) throws IOException {
+			String heading = cat.toString().toLowerCase().replace('_', ' ');
+			heading = heading.substring(0, 1).toUpperCase()
+					.concat(heading.substring(1));
+			newLine();
+			write("\\subsection{" + heading + "}");
+			newLine();
+
+			SortedMap<String, FunctionInfo> funs = cat2funs.get(cat);
+			for (Entry<String, FunctionInfo> e : funs.entrySet()) {
+				generateFunctionDocs(e.getKey(), e.getValue());
+			}
+		}
+
+		private void generateFunctionDocs(String name, FunctionInfo info)
+				throws IOException {
+			newLine();
+			write("\\paragraph*{" + name + ".}");
+			newLine();
+			write(info.function.getDescription());
+			newLine();
+
+			generateSignatures(name, info.signatures);
+
+			newLine();
+		}
+
+		private void generateSignatures(String name, Signature[] signatures)
+				throws IOException {
+			write("\\begin{itemize}");
+
+			for (Signature sig : signatures) {
+				write("\\item $" + name + ": ");
+				for (int i = 0; i < sig.parameterTypes.length; i++) {
+					if (i != 0) {
+						write(" \\times ");
+					}
+					write(Types.getGreqlTypeName(sig.parameterTypes[i]));
+				}
+				write(" \\longrightarrow ");
+				write(Types
+						.getGreqlTypeName(sig.evaluateMethod.getReturnType()));
+				write("$");
+			}
+
+			write("\\end{itemize}");
+		}
+	}
+
+	public static void main(String[] args) throws IOException {
+		if (args.length != 1) {
+			System.out
+					.println("Generate a LaTeX documentation for all known GReQL functions.");
+			System.out.println("Usage: java FunLib /path/to/fundocs.tex");
+		} else {
+			generateLaTeXFunctionDocs(args[0]);
+		}
+	}
 }
