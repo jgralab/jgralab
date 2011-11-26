@@ -53,12 +53,9 @@ import java.util.TreeMap;
 import java.util.Vector;
 import java.util.regex.Pattern;
 
-import javax.tools.FileObject;
-import javax.tools.ForwardingJavaFileManager;
 import javax.tools.JavaCompiler;
 import javax.tools.JavaFileManager;
 import javax.tools.JavaFileObject;
-import javax.tools.JavaFileObject.Kind;
 import javax.tools.StandardJavaFileManager;
 import javax.tools.ToolProvider;
 
@@ -69,16 +66,13 @@ import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.ImplementationType;
 import de.uni_koblenz.jgralab.JGraLab;
-import de.uni_koblenz.jgralab.M1ClassManager;
 import de.uni_koblenz.jgralab.ProgressFunction;
-import de.uni_koblenz.jgralab.codegenerator.ClassFileAbstraction;
 import de.uni_koblenz.jgralab.codegenerator.CodeGenerator;
 import de.uni_koblenz.jgralab.codegenerator.CodeGeneratorConfiguration;
 import de.uni_koblenz.jgralab.codegenerator.EdgeCodeGenerator;
 import de.uni_koblenz.jgralab.codegenerator.EnumCodeGenerator;
 import de.uni_koblenz.jgralab.codegenerator.GraphCodeGenerator;
 import de.uni_koblenz.jgralab.codegenerator.GraphFactoryGenerator;
-import de.uni_koblenz.jgralab.codegenerator.JavaSourceFromString;
 import de.uni_koblenz.jgralab.codegenerator.RecordCodeGenerator;
 import de.uni_koblenz.jgralab.codegenerator.ReversedEdgeCodeGenerator;
 import de.uni_koblenz.jgralab.codegenerator.SchemaCodeGenerator;
@@ -108,32 +102,14 @@ import de.uni_koblenz.jgralab.schema.VertexClass;
 import de.uni_koblenz.jgralab.schema.exception.InvalidNameException;
 import de.uni_koblenz.jgralab.schema.exception.M1ClassAccessException;
 import de.uni_koblenz.jgralab.schema.exception.SchemaException;
+import de.uni_koblenz.jgralab.schema.impl.compilation.ClassFileManager;
+import de.uni_koblenz.jgralab.schema.impl.compilation.JavaSourceFromString;
+import de.uni_koblenz.jgralab.schema.impl.compilation.M1ClassManager;
 
 /**
  * @author ist@uni-koblenz.de
  */
 public class SchemaImpl implements Schema {
-	/**
-	 * File Manager class overwriting the method {@code getJavaFileForOutput} so
-	 * that bytecode is written to a {@code ClassFileAbstraction}.
-	 * 
-	 */
-	private class ClassFileManager extends
-			ForwardingJavaFileManager<JavaFileManager> {
-
-		public ClassFileManager(JavaFileManager fm) {
-			super(fm);
-		}
-
-		@Override
-		public JavaFileObject getJavaFileForOutput(Location location,
-				String className, Kind kind, FileObject sibling) {
-			ClassFileAbstraction cfa = new ClassFileAbstraction(className);
-			M1ClassManager.instance(qualifiedName).putM1Class(className, cfa);
-			return cfa;
-		}
-	}
-
 	// we need a hard reference here, cause the M1ClassManager uses only weak
 	// references. This way, when the schema gets collected, the class manager
 	// is free for collection, too.
@@ -668,7 +644,7 @@ public class SchemaImpl implements Schema {
 			throw new SchemaException(e);
 		}
 
-		ClassFileManager manager = new ClassFileManager(jfm);
+		ClassFileManager manager = new ClassFileManager(this, jfm);
 
 		Vector<String> options = new Vector<String>();
 
@@ -676,6 +652,7 @@ public class SchemaImpl implements Schema {
 		// explicitly, there is the possibility that some other custom
 		// classloader is running the compiler. In that case, we have to set the
 		// -cp arg to the JAR.
+
 		URL url = SchemaImpl.class.getResource(SchemaImpl.class.getSimpleName()
 				+ ".class");
 		if ((url != null) && url.getProtocol().equals("jar")
@@ -686,7 +663,7 @@ public class SchemaImpl implements Schema {
 		}
 		if (jgralabClassPath != null) {
 			options.add("-cp");
-			options.add(jgralabClassPath);
+			options.add("\"" + jgralabClassPath + "\"");
 		}
 
 		compiler.getTask(null, manager, null, options, null, javaSources)
@@ -1359,4 +1336,36 @@ public class SchemaImpl implements Schema {
 		this.config = config;
 	}
 
+	@Override
+	public Graph createGraph(ImplementationType implementationType) {
+		try {
+			getGraphClass().getM1Class();
+		} catch (M1ClassAccessException e) {
+			switch (implementationType) {
+			case STANDARD:
+				compile(CodeGeneratorConfiguration.MINIMAL);
+				break;
+			case DATABASE:
+				compile(CodeGeneratorConfiguration.WITH_DATABASE_SUPPORT);
+				break;
+			case TRANSACTION:
+				compile(CodeGeneratorConfiguration.WITH_TRANSACTION_SUPPORT);
+				break;
+			default:
+				throw new RuntimeException(
+						"FIXME: Unexpected implementation type "
+								+ implementationType);
+			}
+
+		}
+
+		Method graphCreateMethod = getGraphCreateMethod(ImplementationType.STANDARD);
+
+		try {
+			return (Graph) graphCreateMethod.invoke(null, null, 100, 100);
+		} catch (Exception e) {
+			throw new SchemaException(
+					"Something failed when creating the  graph!", e);
+		}
+	}
 }

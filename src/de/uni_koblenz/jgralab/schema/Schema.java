@@ -45,13 +45,14 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.Vector;
 
+import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphFactory;
 import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.ImplementationType;
 import de.uni_koblenz.jgralab.ProgressFunction;
 import de.uni_koblenz.jgralab.codegenerator.CodeGeneratorConfiguration;
-import de.uni_koblenz.jgralab.codegenerator.JavaSourceFromString;
 import de.uni_koblenz.jgralab.schema.RecordDomain.RecordComponent;
+import de.uni_koblenz.jgralab.schema.impl.compilation.JavaSourceFromString;
 
 /**
  * The class Schema represents a grUML Schema (M2).
@@ -485,4 +486,6 @@ public interface Schema extends Comparable<Schema> {
 	 * @return the TG String of this schema
 	 */
 	public String toTGString();
+
+	public Graph createGraph(ImplementationType implementationType);
 }

@@ -1,13 +1,9 @@
 /*
  * JGraLab - The Java Graph Laboratory
  * 
- * Copyright (C) 2006-2011 Institute for Software Technology
+ * Copyright (C) 2006-2010 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
- * 
- * For bug reports, documentation and further information, visit
- * 
- *                         http://jgralab.uni-koblenz.de
  * 
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -33,51 +29,47 @@
  * the parts of JGraLab used as well as that of the covered work.
  */
 
-package de.uni_koblenz.jgralab.codegenerator;
+package de.uni_koblenz.jgralab.plugin;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
 import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
 
-import javax.tools.SimpleJavaFileObject;
+import org.eclipse.core.runtime.FileLocator;
+
+import de.uni_koblenz.jgralab.EclipseAdapter;
 
 /**
- * A ClassFileAbstraction holds Java bytecode for M1 classes compiled in-memory.
- * 
- * @author ist@uni-koblenz.de
+ * @author Tassilo Horn &lt;horn@uni-koblenz.de&gt;
  * 
  */
-public class ClassFileAbstraction extends SimpleJavaFileObject {
-	private byte[] bytecode;
-
-	/**
-	 * Creates a new {@code ClassFileAbstraction} for the class given by {@code
-	 * name}.
-	 * 
-	 * @param name
-	 *            the name of the class
-	 */
-	public ClassFileAbstraction(String name) {
-		super(URI.create("string:///" + name.replace('.', '/')
-				+ Kind.CLASS.extension), Kind.CLASS);
-	}
-
-	public byte[] getBytecode() {
-		return bytecode;
-	}
+public class EclipseAdapterImpl implements EclipseAdapter {
+	private static final String RESOURCE_TO_LOCATE = "de/uni_koblenz/jgralab/JGraLab.class";
 
 	@Override
-	public ByteArrayOutputStream openOutputStream() {
-		return new ByteArrayOutputStream() {
-			@Override
-			public void close() {
-				bytecode = this.toByteArray();
+	public String getJGraLabJarPath() {
+		URL jgURL = Activator.getContext().getBundle()
+				.getResource(RESOURCE_TO_LOCATE);
+		if (jgURL != null) {
+			try {
+				URL fileURL = FileLocator.toFileURL(jgURL);
+				URI uri = new URI(fileURL.toString().replace(" ", "%20"));
+				File jgJar = new File(uri);
+				String p = jgJar.getCanonicalPath();
+				if (p.endsWith(RESOURCE_TO_LOCATE)) {
+					p = p.substring(0, p.length() - RESOURCE_TO_LOCATE.length());
+				}
+				System.err.println("getJGraLabJarPath: " + p);
+				return p;
+			} catch (IOException e) {
+				e.printStackTrace();
+			} catch (URISyntaxException e) {
+				e.printStackTrace();
 			}
-		};
-	}
-
-	@Override
-	public ByteArrayInputStream openInputStream() {
-		return new ByteArrayInputStream(bytecode);
+		}
+		throw new RuntimeException(
+				"Couldn't figure out the path to jgralab.jar.");
 	}
 }

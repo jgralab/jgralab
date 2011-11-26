@@ -1,13 +1,9 @@
 /*
  * JGraLab - The Java Graph Laboratory
  * 
- * Copyright (C) 2006-2011 Institute for Software Technology
+ * Copyright (C) 2006-2010 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
- * 
- * For bug reports, documentation and further information, visit
- * 
- *                         http://jgralab.uni-koblenz.de
  * 
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -33,41 +29,46 @@
  * the parts of JGraLab used as well as that of the covered work.
  */
 
-package de.uni_koblenz.jgralab.codegenerator;
+package de.uni_koblenz.jgralab.plugin;
 
-import java.net.URI;
+import org.osgi.framework.BundleActivator;
+import org.osgi.framework.BundleContext;
 
-import javax.tools.SimpleJavaFileObject;
+import de.uni_koblenz.jgralab.JGraLab;
 
-/**
- * An object of this class holds the generated Java code (used for M1 classes).
- * 
- * @author ist@uni-koblenz.de
- */
-public class JavaSourceFromString extends SimpleJavaFileObject {
-	/**
-	 * The source code of this "file".
-	 */
-	final private String code;
+public class Activator implements BundleActivator {
 
-	/**
-	 * Constructs a new JavaSourceFromString.
+	private static BundleContext context;
+
+	static BundleContext getContext() {
+		return context;
+	}
+
+	public Activator() {
+	}
+
+	/*
+	 * (non-Javadoc)
 	 * 
-	 * @param name
-	 *            the name of the compilation unit represented by this file
-	 *            object
-	 * @param code
-	 *            the source code for the compilation unit represented by this
-	 *            file object
+	 * @see
+	 * org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext
+	 * )
 	 */
-	JavaSourceFromString(String name, String code) {
-		super(URI.create("string:///" + name.replace('.', '/')
-				+ Kind.SOURCE.extension), Kind.SOURCE);
-		this.code = code;
+	public void start(BundleContext bundleContext) throws Exception {
+		Activator.context = bundleContext;
+		System.err.println(bundleContext.toString());
+		JGraLab.setEclipseAdapter(new EclipseAdapterImpl());
 	}
 
-	@Override
-	public CharSequence getCharContent(boolean ignoreEncodingErrors) {
-		return code;
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
+	 */
+	public void stop(BundleContext bundleContext) throws Exception {
+		Activator.context = null;
+		JGraLab.setEclipseAdapter(null);
 	}
+
 }
