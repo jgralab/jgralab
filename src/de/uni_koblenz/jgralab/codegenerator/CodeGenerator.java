@@ -46,6 +46,7 @@ import java.util.logging.Logger;
 import java.util.regex.Matcher;
 
 import de.uni_koblenz.jgralab.GraphIOException;
+import de.uni_koblenz.jgralab.schema.impl.compilation.JavaSourceFromString;
 
 /**
  * TODO add comment

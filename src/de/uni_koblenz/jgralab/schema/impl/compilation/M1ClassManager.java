@@ -33,7 +33,7 @@
  * the parts of JGraLab used as well as that of the covered work.
  */
 
-package de.uni_koblenz.jgralab;
+package de.uni_koblenz.jgralab.schema.impl.compilation;
 
 import java.lang.ref.WeakReference;
 import java.security.AccessController;
@@ -41,7 +41,6 @@ import java.security.PrivilegedAction;
 import java.util.HashMap;
 import java.util.Map;
 
-import de.uni_koblenz.jgralab.codegenerator.ClassFileAbstraction;
 import de.uni_koblenz.jgralab.schema.Schema;
 
 /**

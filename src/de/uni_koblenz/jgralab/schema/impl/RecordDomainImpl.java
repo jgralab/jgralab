@@ -41,7 +41,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
-import de.uni_koblenz.jgralab.M1ClassManager;
 import de.uni_koblenz.jgralab.codegenerator.CodeBlock;
 import de.uni_koblenz.jgralab.codegenerator.CodeGenerator;
 import de.uni_koblenz.jgralab.codegenerator.CodeSnippet;
@@ -55,6 +54,7 @@ import de.uni_koblenz.jgralab.schema.exception.M1ClassAccessException;
 import de.uni_koblenz.jgralab.schema.exception.NoSuchRecordComponentException;
 import de.uni_koblenz.jgralab.schema.exception.RecordCycleException;
 import de.uni_koblenz.jgralab.schema.exception.WrongSchemaException;
+import de.uni_koblenz.jgralab.schema.impl.compilation.M1ClassManager;
 
 public final class RecordDomainImpl extends CompositeDomainImpl implements
 		RecordDomain {
