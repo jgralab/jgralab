@@ -216,8 +216,8 @@ public class EdgeClassImpl extends GraphElementClassImpl implements EdgeClass {
 
 	@Override
 	@SuppressWarnings("unchecked")
-	public Class<? extends Edge> getM1Class() {
-		return (Class<? extends Edge>) super.getM1Class();
+	public Class<? extends Edge> getSchemaClass() {
+		return (Class<? extends Edge>) super.getSchemaClass();
 	}
 
 }

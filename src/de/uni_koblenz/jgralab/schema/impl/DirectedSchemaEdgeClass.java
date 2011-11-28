@@ -32,30 +32,28 @@
  * non-source form of such a combination shall include the source code for
  * the parts of JGraLab used as well as that of the covered work.
  */
-package de.uni_koblenz.jgralab.schema.exception;
+package de.uni_koblenz.jgralab.schema.impl;
 
-import de.uni_koblenz.jgralab.schema.AttributedElementClass;
+import de.uni_koblenz.jgralab.Edge;
+import de.uni_koblenz.jgralab.EdgeDirection;
 
-/**
- * Thrown when accessing the M1 interface or implementation class of an
- * {@link AttributedElementClass} failed.
- * 
- * @author ist@uni-koblenz.de
- * 
- */
-public class M1ClassAccessException extends SchemaException {
+public class DirectedSchemaEdgeClass {
 
-	private static final long serialVersionUID = -1792799570737202237L;
+	Class<? extends Edge> edgeClass;
 
-	public M1ClassAccessException(String message, Exception cause) {
-		super(message, cause);
+	EdgeDirection dir;
+
+	public DirectedSchemaEdgeClass(Class<? extends Edge> ec, EdgeDirection dir) {
+		edgeClass = ec;
+		this.dir = dir;
 	}
 
-	public M1ClassAccessException(String message) {
-		super(message);
+	public Class<? extends Edge> getSchemaClass() {
+		return edgeClass;
 	}
 
-	public M1ClassAccessException(Exception cause) {
-		super(cause);
+	public EdgeDirection getDirection() {
+		return dir;
 	}
+
 }

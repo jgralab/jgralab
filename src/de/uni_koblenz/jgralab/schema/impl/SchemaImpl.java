@@ -96,23 +96,24 @@ import de.uni_koblenz.jgralab.schema.SetDomain;
 import de.uni_koblenz.jgralab.schema.StringDomain;
 import de.uni_koblenz.jgralab.schema.VertexClass;
 import de.uni_koblenz.jgralab.schema.exception.InvalidNameException;
-import de.uni_koblenz.jgralab.schema.exception.M1ClassAccessException;
+import de.uni_koblenz.jgralab.schema.exception.SchemaClassAccessException;
 import de.uni_koblenz.jgralab.schema.exception.SchemaException;
 import de.uni_koblenz.jgralab.schema.impl.compilation.ClassFileManager;
 import de.uni_koblenz.jgralab.schema.impl.compilation.JavaSourceFromString;
-import de.uni_koblenz.jgralab.schema.impl.compilation.M1ClassManager;
+import de.uni_koblenz.jgralab.schema.impl.compilation.SchemaClassManager;
 
 /**
  * @author ist@uni-koblenz.de
  */
 public class SchemaImpl implements Schema {
-	// we need a hard reference here, cause the M1ClassManager uses only weak
+	// we need a hard reference here, cause the SchemaClassManager uses only
+	// weak
 	// references. This way, when the schema gets collected, the class manager
 	// is free for collection, too.
-	private M1ClassManager m1ClassManager = null;
+	private SchemaClassManager schemaClassManager = null;
 
-	public M1ClassManager getM1ClassManager() {
-		return m1ClassManager;
+	public SchemaClassManager getSchemaClassManager() {
+		return schemaClassManager;
 	}
 
 	static final Class<?>[] GRAPHCLASS_CREATE_SIGNATURE = { String.class,
@@ -237,7 +238,7 @@ public class SchemaImpl implements Schema {
 		this.name = name;
 		this.packagePrefix = packagePrefix;
 		qualifiedName = packagePrefix + "." + name;
-		m1ClassManager = M1ClassManager.instance(qualifiedName);
+		schemaClassManager = SchemaClassManager.instance(qualifiedName);
 
 		// Needs to be created before any NamedElement can be created
 		defaultPackage = PackageImpl.createDefaultPackage(this);
@@ -910,34 +911,34 @@ public class SchemaImpl implements Schema {
 
 	private Method getCreateMethod(String className, String graphClassName,
 			Class<?>[] signature, ImplementationType implementationType) {
-		Class<? extends Graph> m1Class = null;
+		Class<? extends Graph> schemaClass = null;
 		AttributedElementClass aec = null;
 		try {
-			m1Class = getGraphClassImpl(implementationType);
+			schemaClass = getGraphClassImpl(implementationType);
 			if (className.equals(graphClassName)) {
-				return m1Class.getMethod("create", signature);
+				return schemaClass.getMethod("create", signature);
 			} else {
 				aec = graphClass.getVertexClass(className);
 				if (aec == null) {
 					aec = graphClass.getEdgeClass(className);
 					if (aec == null) {
-						throw new M1ClassAccessException("class " + className
-								+ " does not exist in schema");
+						throw new SchemaClassAccessException("class "
+								+ className + " does not exist in schema");
 					}
 				}
-				return m1Class
+				return schemaClass
 						.getMethod(
 								"create"
 										+ CodeGenerator.camelCase(aec
 												.getUniqueName()), signature);
 			}
 		} catch (SecurityException e) {
-			throw new M1ClassAccessException(
-					"can't find create method in '" + m1Class.getName()
+			throw new SchemaClassAccessException(
+					"can't find create method in '" + schemaClass.getName()
 							+ "' for '" + aec.getUniqueName() + "'", e);
 		} catch (NoSuchMethodException e) {
-			throw new M1ClassAccessException(
-					"can't find create method in '" + m1Class.getName()
+			throw new SchemaClassAccessException(
+					"can't find create method in '" + schemaClass.getName()
 							+ "' for '" + aec.getUniqueName() + "'", e);
 		}
 	}
@@ -1014,15 +1015,15 @@ public class SchemaImpl implements Schema {
 		EdgeClass ec = (EdgeClass) aec;
 		String methodName = "create"
 				+ CodeGenerator.camelCase(ec.getUniqueName());
-		Class<?> m1Class = getGraphClassImpl(implementationType);
-		for (Method m : m1Class.getMethods()) {
+		Class<?> schemaClass = getGraphClassImpl(implementationType);
+		for (Method m : schemaClass.getMethods()) {
 			if (m.getName().equals(methodName)
 					&& (m.getParameterTypes().length == 3)) {
 				return m;
 			}
 		}
-		throw new M1ClassAccessException("can't find create method '"
-				+ methodName + "' in '" + m1Class.getName() + "' for '"
+		throw new SchemaClassAccessException("can't find create method '"
+				+ methodName + "' in '" + schemaClass.getName() + "' for '"
 				+ ec.getUniqueName() + "'");
 	}
 
@@ -1095,16 +1096,16 @@ public class SchemaImpl implements Schema {
 		implClassName = implClassName + "." + graphClass.getSimpleName()
 				+ "Impl";
 
-		Class<? extends Graph> m1Class;
+		Class<? extends Graph> schemaClass;
 		try {
-			m1Class = (Class<? extends Graph>) Class.forName(implClassName,
-					true, M1ClassManager.instance(qualifiedName));
+			schemaClass = (Class<? extends Graph>) Class.forName(implClassName,
+					true, SchemaClassManager.instance(qualifiedName));
 		} catch (ClassNotFoundException e) {
-			throw new M1ClassAccessException(
+			throw new SchemaClassAccessException(
 					"can't load implementation class '" + implClassName + "'",
 					e);
 		}
-		return m1Class;
+		return schemaClass;
 	}
 
 	@Override
@@ -1306,8 +1307,8 @@ public class SchemaImpl implements Schema {
 	public Graph createGraph(ImplementationType implementationType, int vCount,
 			int eCount) {
 		try {
-			getGraphClass().getM1Class();
-		} catch (M1ClassAccessException e) {
+			getGraphClass().getSchemaClass();
+		} catch (SchemaClassAccessException e) {
 			switch (implementationType) {
 			case STANDARD:
 				compile(CodeGeneratorConfiguration.MINIMAL);

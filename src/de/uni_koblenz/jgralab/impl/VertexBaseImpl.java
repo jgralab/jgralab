@@ -56,7 +56,7 @@ import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.schema.AggregationKind;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.VertexClass;
-import de.uni_koblenz.jgralab.schema.impl.DirectedM1EdgeClass;
+import de.uni_koblenz.jgralab.schema.impl.DirectedSchemaEdgeClass;
 
 /**
  * TODO add comment
@@ -134,7 +134,8 @@ public abstract class VertexBaseImpl extends GraphElementImpl implements
 	@Override
 	public Vertex getNextVertex() {
 		TraversalContext tc = graph.getTraversalContext();
-		assert tc == null || tc.containsVertex(this); // TODO, fails if first vertex is not in TC
+		assert tc == null || tc.containsVertex(this); // TODO, fails if first
+														// vertex is not in TC
 		InternalVertex nextVertex = getNextVertexInVSeq();
 		if (!(tc == null || nextVertex == null || tc.containsVertex(nextVertex))) {
 			while (!(nextVertex == null || tc.containsVertex(nextVertex))) {
@@ -174,7 +175,7 @@ public abstract class VertexBaseImpl extends GraphElementImpl implements
 	public Vertex getNextVertex(VertexClass vertexClass) {
 		assert vertexClass != null;
 		assert isValid();
-		return getNextVertex(vertexClass.getM1Class());
+		return getNextVertex(vertexClass.getSchemaClass());
 	}
 
 	/*
@@ -336,7 +337,8 @@ public abstract class VertexBaseImpl extends GraphElementImpl implements
 	public Edge getFirstIncidence(EdgeClass anEdgeClass) {
 		assert anEdgeClass != null;
 		assert isValid();
-		return getFirstIncidence(anEdgeClass.getM1Class(), EdgeDirection.INOUT);
+		return getFirstIncidence(anEdgeClass.getSchemaClass(),
+				EdgeDirection.INOUT);
 	}
 
 	/*
@@ -363,7 +365,7 @@ public abstract class VertexBaseImpl extends GraphElementImpl implements
 			EdgeDirection orientation) {
 		assert anEdgeClass != null;
 		assert isValid();
-		return getFirstIncidence(anEdgeClass.getM1Class(), orientation);
+		return getFirstIncidence(anEdgeClass.getSchemaClass(), orientation);
 	}
 
 	/*
@@ -527,7 +529,7 @@ public abstract class VertexBaseImpl extends GraphElementImpl implements
 	public int getDegree(EdgeClass ec) {
 		assert ec != null;
 		assert isValid();
-		return getDegree(ec.getM1Class(), EdgeDirection.INOUT);
+		return getDegree(ec.getSchemaClass(), EdgeDirection.INOUT);
 	}
 
 	/*
@@ -551,7 +553,7 @@ public abstract class VertexBaseImpl extends GraphElementImpl implements
 	public int getDegree(EdgeClass ec, EdgeDirection orientation) {
 		assert ec != null;
 		assert isValid();
-		return getDegree(ec.getM1Class(), orientation);
+		return getDegree(ec.getSchemaClass(), orientation);
 	}
 
 	/*
@@ -631,7 +633,7 @@ public abstract class VertexBaseImpl extends GraphElementImpl implements
 	public Iterable<Edge> incidences(EdgeClass eclass, EdgeDirection dir) {
 		assert eclass != null;
 		assert isValid();
-		return new IncidenceIterable<Edge>(this, eclass.getM1Class(), dir);
+		return new IncidenceIterable<Edge>(this, eclass.getSchemaClass(), dir);
 	}
 
 	/*
@@ -659,7 +661,7 @@ public abstract class VertexBaseImpl extends GraphElementImpl implements
 	public Iterable<Edge> incidences(EdgeClass eclass) {
 		assert eclass != null;
 		assert isValid();
-		return new IncidenceIterable<Edge>(this, eclass.getM1Class());
+		return new IncidenceIterable<Edge>(this, eclass.getSchemaClass());
 	}
 
 	/*
@@ -873,9 +875,9 @@ public abstract class VertexBaseImpl extends GraphElementImpl implements
 	public List<? extends Vertex> adjacences(String role) {
 		assert (role != null) && (role.length() > 0);
 		assert isValid();
-		DirectedM1EdgeClass entry = getEdgeForRolename(role);
+		DirectedSchemaEdgeClass entry = getEdgeForRolename(role);
 		List<Vertex> adjacences = new ArrayList<Vertex>();
-		Class<? extends Edge> ec = entry.getM1Class();
+		Class<? extends Edge> ec = entry.getSchemaClass();
 		EdgeDirection dir = entry.getDirection();
 		for (Edge e : incidences(ec, dir)) {
 			adjacences.add(e.getThat());
@@ -889,8 +891,8 @@ public abstract class VertexBaseImpl extends GraphElementImpl implements
 		assert other.isValid();
 		assert getGraph() == other.getGraph();
 
-		DirectedM1EdgeClass entry = getEdgeForRolename(role);
-		Class<? extends Edge> ec = entry.getM1Class();
+		DirectedSchemaEdgeClass entry = getEdgeForRolename(role);
+		Class<? extends Edge> ec = entry.getSchemaClass();
 		EdgeDirection dir = entry.getDirection();
 		Vertex from = null;
 		Vertex to = null;
@@ -910,8 +912,8 @@ public abstract class VertexBaseImpl extends GraphElementImpl implements
 		assert isValid();
 		TraversalContext oldTC = getGraph().setTraversalContext(null);
 		try {
-			DirectedM1EdgeClass entry = getEdgeForRolename(role);
-			Class<? extends Edge> ec = entry.getM1Class();
+			DirectedSchemaEdgeClass entry = getEdgeForRolename(role);
+			Class<? extends Edge> ec = entry.getSchemaClass();
 			List<Vertex> adjacences = new ArrayList<Vertex>();
 			List<Edge> deleteList = new ArrayList<Edge>();
 			EdgeDirection dir = entry.getDirection();
@@ -935,8 +937,8 @@ public abstract class VertexBaseImpl extends GraphElementImpl implements
 		assert getGraph() == other.getGraph();
 		TraversalContext oldTC = getGraph().setTraversalContext(null);
 		try {
-			DirectedM1EdgeClass entry = getEdgeForRolename(role);
-			Class<? extends Edge> ec = entry.getM1Class();
+			DirectedSchemaEdgeClass entry = getEdgeForRolename(role);
+			Class<? extends Edge> ec = entry.getSchemaClass();
 			List<Edge> deleteList = new ArrayList<Edge>();
 			EdgeDirection dir = entry.getDirection();
 			for (Edge e : incidences(ec, dir)) {
@@ -979,7 +981,8 @@ public abstract class VertexBaseImpl extends GraphElementImpl implements
 			while (vx != null) {
 				for (Edge e : vx.incidences(t.edgeClass, t.edgeDirection)) {
 					if (!t.strictType
-							|| (t.strictType && (t.edgeClass == e.getM1Class()))) {
+							|| (t.strictType && (t.edgeClass == e
+									.getSchemaClass()))) {
 						if (i == pathElements.length - 1) {
 							Vertex r = e.getThat();
 							if (returnType.isInstance(r)) {

@@ -34,7 +34,7 @@
  */
 
 /**
- * This package contains JGraLab Graph (M1) implementation classes.
+ * This package contains JGraLab Graph implementation classes.
  * @author ist@uni-koblenz.de
  */
 

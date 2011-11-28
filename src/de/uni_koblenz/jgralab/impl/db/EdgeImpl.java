@@ -37,9 +37,9 @@ package de.uni_koblenz.jgralab.impl.db;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.impl.InternalEdge;
 import de.uni_koblenz.jgralab.impl.EdgeBaseImpl;
 import de.uni_koblenz.jgralab.impl.IncidenceImpl;
+import de.uni_koblenz.jgralab.impl.InternalEdge;
 import de.uni_koblenz.jgralab.impl.InternalVertex;
 import de.uni_koblenz.jgralab.impl.VertexBaseImpl;
 
@@ -420,7 +420,7 @@ public abstract class EdgeImpl extends EdgeBaseImpl implements
 
 	/**
 	 * Notifies edge that one of his attributes has changed. Called from
-	 * generated M1 edge classes when an attribute is changed.
+	 * generated edge implementation classes when an attribute is changed.
 	 * 
 	 * @param attributeName
 	 *            Name of attribute that has been changed.

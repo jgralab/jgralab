@@ -2720,7 +2720,7 @@ public class VertexTest extends InstanceTest {
 	}
 
 	// tests of the method getNextVertex(Class<? extends Vertex>
-	// aM1VertexClass);
+	// aSchemaVertexClass);
 
 	/**
 	 * Tests if there is only one vertex in the graph.
@@ -6607,21 +6607,21 @@ public class VertexTest extends InstanceTest {
 	// tests of the method AttributedElementClass getAttributedElementClass();
 
 	/**
-	 * Some test cases for getM1Class
+	 * Some test cases for getSchemaClass
 	 * 
 	 * @throws CommitFailedException
 	 */
 	@Test
-	public void getM1ClassTest() throws CommitFailedException {
+	public void getSchemaClassTest() throws CommitFailedException {
 		createTransaction(g);
 		Vertex v0 = g.createDoubleSubNode();
 		Vertex v1 = g.createSubNode();
 		Vertex v2 = g.createSuperNode();
 		commit(g);
 		createReadOnlyTransaction(g);
-		assertEquals(DoubleSubNode.class, v0.getM1Class());
-		assertEquals(SubNode.class, v1.getM1Class());
-		assertEquals(SuperNode.class, v2.getM1Class());
+		assertEquals(DoubleSubNode.class, v0.getSchemaClass());
+		assertEquals(SubNode.class, v1.getSchemaClass());
+		assertEquals(SuperNode.class, v2.getSchemaClass());
 		commit(g);
 	}
 

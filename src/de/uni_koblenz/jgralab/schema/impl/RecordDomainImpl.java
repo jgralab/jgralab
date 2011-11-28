@@ -50,11 +50,11 @@ import de.uni_koblenz.jgralab.schema.Package;
 import de.uni_koblenz.jgralab.schema.RecordDomain;
 import de.uni_koblenz.jgralab.schema.exception.DuplicateRecordComponentException;
 import de.uni_koblenz.jgralab.schema.exception.InvalidNameException;
-import de.uni_koblenz.jgralab.schema.exception.M1ClassAccessException;
 import de.uni_koblenz.jgralab.schema.exception.NoSuchRecordComponentException;
 import de.uni_koblenz.jgralab.schema.exception.RecordCycleException;
+import de.uni_koblenz.jgralab.schema.exception.SchemaClassAccessException;
 import de.uni_koblenz.jgralab.schema.exception.WrongSchemaException;
-import de.uni_koblenz.jgralab.schema.impl.compilation.M1ClassManager;
+import de.uni_koblenz.jgralab.schema.impl.compilation.SchemaClassManager;
 
 public final class RecordDomainImpl extends CompositeDomainImpl implements
 		RecordDomain {
@@ -63,7 +63,7 @@ public final class RecordDomainImpl extends CompositeDomainImpl implements
 	 * The class object representing the generated interface for this
 	 * AttributedElementClass
 	 */
-	private Class<? extends Object> m1Class;
+	private Class<? extends Object> schemaClass;
 
 	/**
 	 * holds a list of the components of the record
@@ -144,21 +144,21 @@ public final class RecordDomainImpl extends CompositeDomainImpl implements
 		// return getJavaAttributeTypeName(schemaRootPackagePrefix);
 	}
 
-	public Class<? extends Object> getM1Class() {
-		if (m1Class == null) {
-			String m1ClassName = getSchema().getPackagePrefix() + "."
+	public Class<? extends Object> getSchemaClass() {
+		if (schemaClass == null) {
+			String schemaClassName = getSchema().getPackagePrefix() + "."
 					+ getQualifiedName();
 			try {
-				m1Class = Class
-						.forName(m1ClassName, true, M1ClassManager
-								.instance(getSchema().getQualifiedName()));
+				schemaClass = Class.forName(schemaClassName, true,
+						SchemaClassManager.instance(getSchema()
+								.getQualifiedName()));
 			} catch (ClassNotFoundException e) {
-				throw new M1ClassAccessException(
-						"Can't load M1 class for AttributedElementClass '"
+				throw new SchemaClassAccessException(
+						"Can't load (generated) schema class for AttributedElementClass '"
 								+ getQualifiedName() + "'", e);
 			}
 		}
-		return m1Class;
+		return schemaClass;
 	}
 
 	@Override

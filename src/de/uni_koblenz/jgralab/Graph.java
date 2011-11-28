@@ -167,7 +167,7 @@ public interface Graph extends AttributedElement {
 	 * (including subclasses) in the vertex sequence of this Graph.
 	 * 
 	 * @param vertexClass
-	 *            a VertexClass (i.e. an M1 interface extending Vertex)
+	 *            a VertexClass (i.e. an schema interface extending Vertex)
 	 * 
 	 * @return the first Vertex, or null if this graph contains no vertices of
 	 *         the specified <code>vertexClass</code>.
@@ -205,7 +205,7 @@ public interface Graph extends AttributedElement {
 	 * subclasses) in the edge sequence of this Graph.
 	 * 
 	 * @param edgeClass
-	 *            an EdgeClass (i.e. an M1 interface extending Edge)
+	 *            an EdgeClass (i.e. an schema interface extending Edge)
 	 * 
 	 * @return the first Edge, or null if this graph contains no edges of the
 	 *         specified <code>edgeClass</code>.
@@ -282,7 +282,7 @@ public interface Graph extends AttributedElement {
 	 * order determined by the edge sequence.
 	 * 
 	 * @param edgeClass
-	 *            an EdgeClass (i.e. an M1 interface extending Edge)
+	 *            an EdgeClass (i.e. an schema interface extending Edge)
 	 * 
 	 * @return an Iterable for all edges of the specified <code>edgeClass</code>
 	 */
@@ -332,7 +332,7 @@ public interface Graph extends AttributedElement {
 	 * the order determined by the vertex sequence.
 	 * 
 	 * @param vertexClass
-	 *            a VertexClass (i.e. an M1 interface extending Vertex)
+	 *            a VertexClass (i.e. a schema interface extending Vertex)
 	 * 
 	 * @return a iterable for all vertices of the specified
 	 *         <code>vertexClass</code>

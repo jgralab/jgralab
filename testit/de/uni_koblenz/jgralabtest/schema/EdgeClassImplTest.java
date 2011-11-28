@@ -198,9 +198,9 @@ public class EdgeClassImplTest extends GraphElementClassImplTest {
 				.createVertexClass("EdgeClassFromVertexClass");
 		VertexClass edgeClassToVertexClass2 = graphClass2
 				.createVertexClass("EdgeClassToVertexClass");
-		EdgeClass other = createEdgeClass(graphClass2, edgeClass
-				.getQualifiedName(), edgeClass, edgeClassFromVertexClass2,
-				edgeClassToVertexClass2);
+		EdgeClass other = createEdgeClass(graphClass2,
+				edgeClass.getQualifiedName(), edgeClass,
+				edgeClassFromVertexClass2, edgeClassToVertexClass2);
 
 		testCompareTo3(other);
 	}
@@ -759,7 +759,7 @@ public class EdgeClassImplTest extends GraphElementClassImplTest {
 
 	@Override
 	@Test
-	public void testGetM1Class() {
+	public void testGetSchemaClass() {
 		// TODO Auto-generated method stub
 	}
 

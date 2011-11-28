@@ -4454,15 +4454,15 @@ public class EdgeTest extends InstanceTest {
 		commit(g);
 	}
 
-	// tests of the method Class<? extends AttributedElement> getM1Class();
+	// tests of the method Class<? extends AttributedElement> getSchemaClass();
 
 	/**
-	 * Some test cases for getM1Class
+	 * Some test cases for getSchemaClass
 	 * 
 	 * @throws CommitFailedException
 	 */
 	@Test
-	public void getM1ClassTest() throws CommitFailedException {
+	public void getSchemaClassTest() throws CommitFailedException {
 		Edge e1;
 		Edge e2;
 		Edge e3;
@@ -4476,9 +4476,9 @@ public class EdgeTest extends InstanceTest {
 		commit(g);
 
 		createReadOnlyTransaction(g);
-		assertEquals(Link.class, e1.getM1Class());
-		assertEquals(SubLink.class, e2.getM1Class());
-		assertEquals(LinkBack.class, e3.getM1Class());
+		assertEquals(Link.class, e1.getSchemaClass());
+		assertEquals(SubLink.class, e2.getSchemaClass());
+		assertEquals(LinkBack.class, e3.getSchemaClass());
 		commit(g);
 	}
 
@@ -5011,7 +5011,7 @@ public class EdgeTest extends InstanceTest {
 	 * @throws CommitFailedException
 	 */
 	@Test
-	public void compareToTestM1() throws CommitFailedException {
+	public void compareToTest() throws CommitFailedException {
 		Edge e1;
 		createTransaction(g);
 		DoubleSubNode v1 = g.createDoubleSubNode();
@@ -5213,7 +5213,7 @@ public class EdgeTest extends InstanceTest {
 				((Link) e3.getReversedEdge())
 						.getNextLinkIncidence(EdgeDirection.INOUT));
 		assertNull(((Link) e3.getReversedEdge())
-						.getNextLinkIncidence(EdgeDirection.IN));
+				.getNextLinkIncidence(EdgeDirection.IN));
 		assertEquals(e5,
 				((Link) e3.getReversedEdge())
 						.getNextLinkIncidence(EdgeDirection.OUT));
@@ -5261,11 +5261,11 @@ public class EdgeTest extends InstanceTest {
 				e5.getNextSubLinkIncidence(EdgeDirection.IN));
 		assertNull(e5.getNextSubLinkIncidence(EdgeDirection.OUT));
 		assertNull(((SubLink) e6.getReversedEdge())
-						.getNextSubLinkIncidence(EdgeDirection.INOUT));
+				.getNextSubLinkIncidence(EdgeDirection.INOUT));
 		assertNull(((SubLink) e6.getReversedEdge())
-						.getNextSubLinkIncidence(EdgeDirection.IN));
+				.getNextSubLinkIncidence(EdgeDirection.IN));
 		assertNull(((SubLink) e6.getReversedEdge())
-						.getNextSubLinkIncidence(EdgeDirection.OUT));
+				.getNextSubLinkIncidence(EdgeDirection.OUT));
 		commit(g);
 	}
 }

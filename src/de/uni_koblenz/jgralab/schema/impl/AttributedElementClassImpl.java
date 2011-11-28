@@ -51,16 +51,15 @@ import de.uni_koblenz.jgralab.schema.Package;
 import de.uni_koblenz.jgralab.schema.Schema;
 import de.uni_koblenz.jgralab.schema.exception.DuplicateAttributeException;
 import de.uni_koblenz.jgralab.schema.exception.InheritanceException;
-import de.uni_koblenz.jgralab.schema.exception.M1ClassAccessException;
-import de.uni_koblenz.jgralab.schema.impl.compilation.M1ClassManager;
+import de.uni_koblenz.jgralab.schema.exception.SchemaClassAccessException;
+import de.uni_koblenz.jgralab.schema.impl.compilation.SchemaClassManager;
 
 public abstract class AttributedElementClassImpl extends NamedElementImpl
 		implements AttributedElementClass {
 
 	/**
-	 * a list of attributes which belongs to the m2 element
-	 * (edgeclass/vertexclass/graphclass). Only the own attributes of this class
-	 * are stored here, no inherited attributes
+	 * the list of attributes. Only the own attributes of this class are stored
+	 * here, no inherited attributes
 	 */
 	private final TreeSet<Attribute> attributeList = new TreeSet<Attribute>();
 
@@ -80,8 +79,7 @@ public abstract class AttributedElementClassImpl extends NamedElementImpl
 	protected HashSet<AttributedElementClass> directSuperClasses = new HashSet<AttributedElementClass>();
 
 	/**
-	 * defines the m2 element as abstract, i.e. that it may not have any
-	 * instances
+	 * true if element class is abstract
 	 */
 	private boolean isAbstract = false;
 
@@ -89,14 +87,14 @@ public abstract class AttributedElementClassImpl extends NamedElementImpl
 	 * The class object representing the generated interface for this
 	 * AttributedElementClass
 	 */
-	private Class<? extends AttributedElement> m1Class;
+	private Class<? extends AttributedElement> schemaClass;
 
 	/**
 	 * The class object representing the implementation class for this
 	 * AttributedElementClass. This may be either the generated class or a
 	 * subclass of this
 	 */
-	private Class<? extends AttributedElement> m1ImplementationClass;
+	private Class<? extends AttributedElement> schemaImplementationClass;
 
 	/**
 	 * builds a new attributed element class
@@ -278,47 +276,47 @@ public abstract class AttributedElementClassImpl extends NamedElementImpl
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public Class<? extends AttributedElement> getM1Class() {
-		if (m1Class == null) {
-			String m1ClassName = getSchema().getPackagePrefix() + "."
+	public Class<? extends AttributedElement> getSchemaClass() {
+		if (schemaClass == null) {
+			String schemaClassName = getSchema().getPackagePrefix() + "."
 					+ getQualifiedName();
 			try {
-				m1Class = (Class<? extends AttributedElement>) Class
-						.forName(m1ClassName, true, M1ClassManager
+				schemaClass = (Class<? extends AttributedElement>) Class
+						.forName(schemaClassName, true, SchemaClassManager
 								.instance(getSchema().getQualifiedName()));
 			} catch (ClassNotFoundException e) {
-				throw new M1ClassAccessException(
-						"Can't load M1 class for AttributedElementClass '"
+				throw new SchemaClassAccessException(
+						"Can't load (generated) schema class for AttributedElementClass '"
 								+ getQualifiedName() + "'", e);
 			}
 		}
-		return m1Class;
+		return schemaClass;
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public Class<? extends AttributedElement> getM1ImplementationClass() {
+	public Class<? extends AttributedElement> getSchemaImplementationClass() {
 		if (isAbstract()) {
-			throw new M1ClassAccessException(
-					"Can't get M1 implementation class. AttributedElementClass '"
+			throw new SchemaClassAccessException(
+					"Can't get (generated) schema implementation class. AttributedElementClass '"
 							+ getQualifiedName() + "' is abstract!");
 		}
-		if (m1ImplementationClass == null) {
+		if (schemaImplementationClass == null) {
 			try {
-				Field f = getM1Class().getField("IMPLEMENTATION_CLASS");
-				m1ImplementationClass = (Class<? extends AttributedElement>) f
-						.get(m1Class);
+				Field f = getSchemaClass().getField("IMPLEMENTATION_CLASS");
+				schemaImplementationClass = (Class<? extends AttributedElement>) f
+						.get(schemaClass);
 			} catch (SecurityException e) {
-				throw new M1ClassAccessException(e);
+				throw new SchemaClassAccessException(e);
 			} catch (NoSuchFieldException e) {
-				throw new M1ClassAccessException(e);
+				throw new SchemaClassAccessException(e);
 			} catch (IllegalArgumentException e) {
-				throw new M1ClassAccessException(e);
+				throw new SchemaClassAccessException(e);
 			} catch (IllegalAccessException e) {
-				throw new M1ClassAccessException(e);
+				throw new SchemaClassAccessException(e);
 			}
 		}
-		return m1ImplementationClass;
+		return schemaImplementationClass;
 	}
 
 	@Override

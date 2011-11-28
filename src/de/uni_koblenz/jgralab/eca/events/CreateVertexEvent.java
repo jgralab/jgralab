@@ -23,8 +23,8 @@ public class CreateVertexEvent extends Event {
 	 *            the created Vertex or null if the EventTime is before
 	 */
 	public CreateVertexEvent(int nestedCalls, Graph graph, Vertex element) {
-		super(nestedCalls, EventTime.AFTER, graph, element.getM1Class());
-		this.vertex = element;
+		super(nestedCalls, EventTime.AFTER, graph, element.getSchemaClass());
+		vertex = element;
 	}
 
 	/**
@@ -40,7 +40,7 @@ public class CreateVertexEvent extends Event {
 	public CreateVertexEvent(int nestedCalls, Graph graph,
 			Class<? extends AttributedElement> type) {
 		super(nestedCalls, EventTime.BEFORE, graph, type);
-		this.vertex = null;
+		vertex = null;
 	}
 
 	/**
@@ -56,7 +56,7 @@ public class CreateVertexEvent extends Event {
 	 */
 	@Override
 	public AttributedElement getElement() {
-		return this.vertex;
+		return vertex;
 	}
 
 }

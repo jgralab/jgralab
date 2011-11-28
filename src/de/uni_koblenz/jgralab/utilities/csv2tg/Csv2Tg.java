@@ -67,7 +67,7 @@ import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.codegenerator.CodeGeneratorConfiguration;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.Schema;
-import de.uni_koblenz.jgralab.schema.impl.compilation.M1ClassManager;
+import de.uni_koblenz.jgralab.schema.impl.compilation.SchemaClassManager;
 
 public class Csv2Tg implements FilenameFilter {
 
@@ -135,7 +135,7 @@ public class Csv2Tg implements FilenameFilter {
 	private boolean isCompiled(Schema schema) {
 		try {
 			Class.forName(schema.getQualifiedName(), true,
-					M1ClassManager.instance(schema.getQualifiedName()));
+					SchemaClassManager.instance(schema.getQualifiedName()));
 		} catch (ClassNotFoundException ex) {
 			return false;
 		}
@@ -300,7 +300,7 @@ public class Csv2Tg implements FilenameFilter {
 		AttributedElementClass clazz = schema
 				.getAttributedElementClass(attributeClassName);
 
-		Class<? extends AttributedElement> vertexClass = clazz.getM1Class();
+		Class<? extends AttributedElement> vertexClass = clazz.getSchemaClass();
 		boolean isVertexClass = clazz.isSubClassOf(schema
 				.getDefaultVertexClass());
 

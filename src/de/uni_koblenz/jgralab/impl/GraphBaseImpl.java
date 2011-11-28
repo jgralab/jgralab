@@ -574,7 +574,7 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 	 */
 	@Override
 	public Iterable<Edge> edges(EdgeClass edgeClass) {
-		return new EdgeIterable<Edge>(this, edgeClass.getM1Class());
+		return new EdgeIterable<Edge>(this, edgeClass.getSchemaClass());
 	}
 
 	/**
@@ -738,7 +738,7 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 	@Override
 	public Edge getFirstEdge(EdgeClass edgeClass) {
 		assert edgeClass != null;
-		return getFirstEdge(edgeClass.getM1Class());
+		return getFirstEdge(edgeClass.getSchemaClass());
 	}
 
 	/*
@@ -800,7 +800,7 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 	@Override
 	public Vertex getFirstVertex(VertexClass vertexClass) {
 		assert vertexClass != null;
-		return getFirstVertex(vertexClass.getM1Class());
+		return getFirstVertex(vertexClass.getSchemaClass());
 	}
 
 	/*
@@ -972,8 +972,8 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 		edgeListModified();
 
 		if (getECARuleManagerIfThere() != null) {
-			getECARuleManagerIfThere()
-					.fireAfterDeleteEdgeEvents(e.getM1Class());
+			getECARuleManagerIfThere().fireAfterDeleteEdgeEvents(
+					e.getSchemaClass());
 		}
 		edgeAfterDeleted(e, alpha, omega);
 	}
@@ -1018,7 +1018,7 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 
 			if (getECARuleManagerIfThere() != null) {
 				getECARuleManagerIfThere().fireAfterDeleteVertexEvents(
-						v.getM1Class());
+						v.getSchemaClass());
 			}
 			vertexAfterDeleted(v);
 		}
@@ -1416,7 +1416,7 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 	 */
 	@Override
 	public Iterable<Vertex> vertices(VertexClass vertexClass) {
-		return new VertexIterable<Vertex>(this, vertexClass.getM1Class());
+		return new VertexIterable<Vertex>(this, vertexClass.getSchemaClass());
 	}
 
 	/*
@@ -1883,21 +1883,18 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 	@Override
 	public int getGraphStructureChangedListenerCount() {
 		return graphStructureChangedListenersWithAutoRemoval == null ? graphStructureChangedListeners
-				.size()
-				: graphStructureChangedListenersWithAutoRemoval.size()
-						+ graphStructureChangedListeners.size();
+				.size() : graphStructureChangedListenersWithAutoRemoval.size()
+				+ graphStructureChangedListeners.size();
 	}
 
 	private Iterator<WeakReference<GraphStructureChangedListener>> getListenerListIteratorForAutoRemove() {
 		return graphStructureChangedListenersWithAutoRemoval != null ? graphStructureChangedListenersWithAutoRemoval
-				.iterator()
-				: null;
+				.iterator() : null;
 	}
 
 	private Iterator<GraphStructureChangedListener> getListenerListIterator() {
 		return graphStructureChangedListeners != null ? graphStructureChangedListeners
-				.iterator()
-				: null;
+				.iterator() : null;
 	}
 
 	public void notifyVertexDeleted(Vertex v) {
