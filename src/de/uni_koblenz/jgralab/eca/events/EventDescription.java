@@ -60,9 +60,9 @@ public abstract class EventDescription {
 	public EventDescription(EventTime time,
 			Class<? extends AttributedElement> type) {
 		this.time = time;
-		this.activeRules = new ArrayList<ECARule>();
+		activeRules = new ArrayList<ECARule>();
 		this.type = type;
-		this.context = Context.TYPE;
+		context = Context.TYPE;
 	}
 
 	/**
@@ -75,9 +75,9 @@ public abstract class EventDescription {
 	 */
 	public EventDescription(EventTime time, String contExpr) {
 		this.time = time;
-		this.activeRules = new ArrayList<ECARule>();
-		this.contextExpression = contExpr;
-		this.context = Context.EXPRESSION;
+		activeRules = new ArrayList<ECARule>();
+		contextExpression = contExpr;
+		context = Context.EXPRESSION;
 	}
 
 	// +++++ Methods ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -92,7 +92,7 @@ public abstract class EventDescription {
 	 */
 	protected boolean checkContext(
 			Class<? extends AttributedElement> elementClass) {
-		if (this.getType().equals(elementClass)) {
+		if (getType().equals(elementClass)) {
 			return true;
 		} else {
 			return false;
@@ -108,16 +108,16 @@ public abstract class EventDescription {
 	 * @return whether the Event matches this EventDescription
 	 */
 	protected boolean checkContext(AttributedElement element) {
-		if (this.context.equals(Context.TYPE)) {
-			if (element.getM1Class().equals(this.type)) {
+		if (context.equals(Context.TYPE)) {
+			if (element.getSchemaClass().equals(type)) {
 				return true;
 			} else {
 				return false;
 			}
 		} else {
-			GreqlEvaluator eval = this.activeRules.get(0).getECARuleManager()
+			GreqlEvaluator eval = activeRules.get(0).getECARuleManager()
 					.getGreqlEvaluator();
-			eval.setQuery(this.contextExpression);
+			eval.setQuery(contextExpression);
 			eval.startEvaluation();
 			Object resultingContext = eval.getResult();
 			if (resultingContext instanceof PCollection) {
@@ -145,7 +145,7 @@ public abstract class EventDescription {
 	 * @return list with all currently active ECARules of this Event
 	 */
 	public List<ECARule> getActiveECARules() {
-		return this.activeRules;
+		return activeRules;
 	}
 
 	/**

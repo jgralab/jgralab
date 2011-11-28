@@ -55,7 +55,7 @@ import de.uni_koblenz.jgralab.schema.RecordDomain.RecordComponent;
 import de.uni_koblenz.jgralab.schema.impl.compilation.JavaSourceFromString;
 
 /**
- * The class Schema represents a grUML Schema (M2).
+ * The class Schema represents a grUML Schema.
  * 
  * @author ist@uni-koblenz.de
  * 
@@ -88,7 +88,7 @@ public interface Schema extends Comparable<Schema> {
 
 	/**
 	 * After creating the schema, this command serves to generate code for the
-	 * m1 classes, contained in {@code JavaSourceFromString} objects.
+	 * schema classes, contained in {@code JavaSourceFromString} objects.
 	 * 
 	 * @param config
 	 *            a {@link CodeGeneratorConfiguration} specifying the requested
@@ -97,11 +97,12 @@ public interface Schema extends Comparable<Schema> {
 	public Vector<JavaSourceFromString> commit(CodeGeneratorConfiguration config);
 
 	/**
-	 * after creating the schema, this command serves to make it permanent, m2
-	 * classes are generated to represent the object oriented access layer
+	 * after creating the schema, this command serves to make it permanent,
+	 * schema classes are generated to represent the object oriented access
+	 * layer
 	 * 
 	 * @param path
-	 *            the path to the m1 classes which are to be generated
+	 *            the path to the schema classes which are to be generated
 	 * @param config
 	 *            a {@link CodeGeneratorConfiguration} specifying the requested
 	 *            implementation variant
@@ -113,11 +114,12 @@ public interface Schema extends Comparable<Schema> {
 			throws GraphIOException;
 
 	/**
-	 * after creating the schema, this command serves to make it permanent, m2
-	 * classes are generated to represent the object oriented access layer
+	 * after creating the schema, this command serves to make it permanent,
+	 * schema classes are generated to represent the object oriented access
+	 * layer
 	 * 
 	 * @param path
-	 *            the path to the m1 classes which are to be generated
+	 *            the path to the schema classes which are to be generated
 	 * @param config
 	 *            a {@link CodeGeneratorConfiguration} specifying the requested
 	 *            implementation variant
@@ -131,7 +133,7 @@ public interface Schema extends Comparable<Schema> {
 
 	/**
 	 * After creating the schema, this command serves to generate and compile
-	 * code for the m1 classes. The class files are not written to disk, but
+	 * code for the schema classes. The class files are not written to disk, but
 	 * only held in memory.
 	 * 
 	 * @param config

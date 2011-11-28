@@ -353,7 +353,7 @@ public class SchemaVisualizer {
 							"Aggregation") != cls
 							&& state.getGraph().getSchema()
 									.getAttributedElementClass("Composition") != cls) {
-						aeclass.getM1Class();
+						aeclass.getSchemaClass();
 						// copy aeEntry.getKey() and all subclasses to new
 						// position
 						cloneType(code, aeclass, i, supCls);

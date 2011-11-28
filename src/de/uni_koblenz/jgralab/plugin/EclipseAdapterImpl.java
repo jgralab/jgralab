@@ -49,10 +49,21 @@ import de.uni_koblenz.jgralab.EclipseAdapter;
 import de.uni_koblenz.jgralab.schema.impl.compilation.ClassFileObject;
 
 /**
- * @author Tassilo Horn &lt;horn@uni-koblenz.de&gt;
+ * EclipseAdapter enables in-memory compilation of schema classes. The method
+ * {@link #listJavaFileObjects(String, boolean)} looks for JGraLab class files
+ * in the plugin bundle. Those files are required by the Java compiler, but can
+ * not be found elsewhere.
  * 
+ * @author ist@uni-koblenz.de
  */
 public class EclipseAdapterImpl implements EclipseAdapter {
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.uni_koblenz.jgralab.EclipseAdapter#listJavaFileObjects(java.lang.String
+	 * , boolean)
+	 */
 	@Override
 	public Iterable<JavaFileObject> listJavaFileObjects(String packageName,
 			boolean recurse) {

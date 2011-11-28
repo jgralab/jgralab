@@ -59,9 +59,9 @@ import de.uni_koblenz.jgralab.greql2.schema.IsConstraintOf;
 
 /**
  * TODO: (heimdall) Comment class!
- *
+ * 
  * @author ist@uni-koblenz.de
- *
+ * 
  */
 public class ConditionalExpressionOptimizer extends OptimizerBase {
 
@@ -81,7 +81,7 @@ public class ConditionalExpressionOptimizer extends OptimizerBase {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see
 	 * de.uni_koblenz.jgralab.greql2.optimizer.Optimizer#isEquivalent(de.uni_koblenz
 	 * .jgralab.greql2.optimizer.Optimizer)
@@ -96,7 +96,7 @@ public class ConditionalExpressionOptimizer extends OptimizerBase {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see
 	 * de.uni_koblenz.jgralab.greql2.optimizer.Optimizer#optimize(de.uni_koblenz
 	 * .jgralab.greql2.evaluator.GreqlEvaluator,
@@ -164,7 +164,7 @@ public class ConditionalExpressionOptimizer extends OptimizerBase {
 		assert top.isValid();
 		for (Edge e : top.incidences(EdgeDirection.OUT)) {
 			list.add(new VertexEdgeClassTuple((Greql2Vertex) e.getOmega(),
-					(Class<? extends Edge>) e.getM1Class()));
+					(Class<? extends Edge>) e.getSchemaClass()));
 		}
 		return list;
 	}

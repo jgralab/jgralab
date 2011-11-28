@@ -40,7 +40,8 @@ import java.net.URI;
 import javax.tools.SimpleJavaFileObject;
 
 /**
- * An object of this class holds the generated Java code (used for M1 classes).
+ * An object of this class holds the Java source code (used for in-memory
+ * compilaton of generated schema classes).
  * 
  * @author ist@uni-koblenz.de
  */

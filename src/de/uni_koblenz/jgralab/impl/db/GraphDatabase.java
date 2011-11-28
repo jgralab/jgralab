@@ -1077,7 +1077,7 @@ public abstract class GraphDatabase {
 		Schema schema = graph.getSchema();
 		AttributedElementClass aec = schema
 				.getAttributedElementClass(qualifiedTypeName);
-		return (Class<? extends Vertex>) aec.getM1Class();
+		return (Class<? extends Vertex>) aec.getSchemaClass();
 	}
 
 	private ResultSet getVertexAndIncidenceData(int gId, int vId)
@@ -1215,7 +1215,7 @@ public abstract class GraphDatabase {
 		Schema schema = graph.getSchema();
 		AttributedElementClass aec = schema
 				.getAttributedElementClass(qualifiedTypeName);
-		return (Class<? extends Edge>) aec.getM1Class();
+		return (Class<? extends Edge>) aec.getSchemaClass();
 	}
 
 	private void setAttributesOf(DatabasePersistableEdge edge)
@@ -1464,10 +1464,10 @@ public abstract class GraphDatabase {
 		GraphClass graphClass = schema.getGraphClass();
 		try {
 			return (GraphImpl) graphFactory.createGraphWithDatabaseSupport(
-					(Class<? extends Graph>) graphClass.getM1Class(), this, id);
+					(Class<? extends Graph>) graphClass.getSchemaClass(), this, id);
 		} catch (Exception e) {
 			throw new GraphIOException("Could not create an instance of "
-					+ graphClass.getM1Class().getName());
+					+ graphClass.getSchemaClass().getName());
 		}
 	}
 

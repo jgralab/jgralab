@@ -36,57 +36,60 @@
 package de.uni_koblenz.jgralab.schema.impl.compilation;
 
 import java.lang.ref.WeakReference;
-import java.security.AccessController;
-import java.security.PrivilegedAction;
 import java.util.HashMap;
 import java.util.Map;
 
 import de.uni_koblenz.jgralab.schema.Schema;
 
 /**
- * A {@code M1ClassManager} holds the bytecode of the M1 classes of one
- * {@link Schema} in a {@code Map}. As a specialization of {@code ClassLoader},
- * it overwrites the method {@code findClass} so that the {@code Map} is first
- * searched for classes' bytecode before invoking {@code findClass} of the
- * superclass {@code ClassLoader}.
+ * A {@code SchemaClassManager} holds the bytecode of the generated schema
+ * classes of one {@link Schema} in a Map {@link #schemaClassFiles}.
+ * 
+ * As a specialization of {@link ClassLoader}, it overwrites the
+ * {@link #findClass(String)} method such that {@link #schemaClassFiles} is
+ * first searched for classes' bytecode before invoking {@code findClass} of the
+ * original {@code ClassLoader}.
+ * 
+ * Once the class is loaded, the byte code is discarded.
  * 
  * @author ist@uni-koblenz.de
  */
-public class M1ClassManager extends ClassLoader {
-	private static HashMap<String, WeakReference<M1ClassManager>> instances = new HashMap<String, WeakReference<M1ClassManager>>();
+public class SchemaClassManager extends ClassLoader {
+	private static HashMap<String, WeakReference<SchemaClassManager>> instances = new HashMap<String, WeakReference<SchemaClassManager>>();
 
-	private Map<String, InMemoryClassFile> m1Classes;
+	private Map<String, InMemoryClassFile> schemaClassFiles;
 	private String schemaQName = null;
 
-	public static M1ClassManager instance(final String qualifiedName) {
-		WeakReference<M1ClassManager> ref = instances.get(qualifiedName);
-		if ((ref != null) && (ref.get() != null)) {
-			return ref.get();
+	public static SchemaClassManager instance(String qualifiedName) {
+		// Singleton implementation using weak references
+		WeakReference<SchemaClassManager> ref = instances.get(qualifiedName);
+		SchemaClassManager result = null;
+		if (ref != null) {
+			result = ref.get();
 		}
-		synchronized (M1ClassManager.class) {
-			ref = instances.get(qualifiedName);
-			if ((ref != null) && (ref.get() != null)) {
-				return ref.get();
+		if (result == null) {
+			synchronized (SchemaClassManager.class) {
+				ref = instances.get(qualifiedName);
+				if (ref != null) {
+					result = ref.get();
+				}
+				if (result == null) {
+					result = new SchemaClassManager(qualifiedName);
+					instances.put(qualifiedName,
+							new WeakReference<SchemaClassManager>(result));
+				}
 			}
-			ref = AccessController
-					.doPrivileged(new PrivilegedAction<WeakReference<M1ClassManager>>() {
-						public WeakReference<M1ClassManager> run() {
-							return new WeakReference<M1ClassManager>(
-									new M1ClassManager(qualifiedName));
-						}
-					});
-			instances.put(qualifiedName, ref);
 		}
-		return ref.get();
+		return result;
 	}
 
-	private M1ClassManager(String schemaQName) {
+	private SchemaClassManager(String schemaQName) {
 		this.schemaQName = schemaQName;
-		m1Classes = new HashMap<String, InMemoryClassFile>();
+		schemaClassFiles = new HashMap<String, InMemoryClassFile>();
 	}
 
-	public void putM1Class(String className, InMemoryClassFile cfa) {
-		m1Classes.put(className, cfa);
+	public void putSchemaClass(String className, InMemoryClassFile cfa) {
+		schemaClassFiles.put(className, cfa);
 	}
 
 	/**
@@ -97,12 +100,12 @@ public class M1ClassManager extends ClassLoader {
 	 */
 	@Override
 	protected Class<?> findClass(String name) throws ClassNotFoundException {
-		InMemoryClassFile cfa = m1Classes.get(name);
-		if (cfa != null) {
-			byte[] bytes = cfa.getBytecode();
+		InMemoryClassFile inMemClassFile = schemaClassFiles.get(name);
+		if (inMemClassFile != null) {
+			byte[] bytes = inMemClassFile.getBytecode();
 			Class<?> clazz = defineClass(name, bytes, 0, bytes.length);
-			// once the class is defined, we can forget it!
-			m1Classes.remove(name);
+			// once the class is defined, we can forget its bytecode!
+			schemaClassFiles.remove(name);
 			return clazz;
 		}
 		return Class.forName(name);
@@ -110,6 +113,6 @@ public class M1ClassManager extends ClassLoader {
 
 	@Override
 	public String toString() {
-		return "M1ClassManager for schema '" + schemaQName + "'";
+		return "SchemaClassManager for schema '" + schemaQName + "'";
 	}
 }

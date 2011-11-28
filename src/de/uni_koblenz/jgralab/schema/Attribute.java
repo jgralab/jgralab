@@ -40,7 +40,7 @@ import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.schema.exception.SchemaException;
 
 /**
- * represents an attribute in the m2 layer, consists of a name and a domain
+ * represents an attribute in schema layer, consists of a name and a domain
  * 
  * @author ist@uni-koblenz.de
  * 

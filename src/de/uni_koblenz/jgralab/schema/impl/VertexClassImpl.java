@@ -274,8 +274,8 @@ public final class VertexClassImpl extends GraphElementClassImpl implements
 
 	@Override
 	@SuppressWarnings("unchecked")
-	public Class<? extends Vertex> getM1Class() {
-		return (Class<? extends Vertex>) super.getM1Class();
+	public Class<? extends Vertex> getSchemaClass() {
+		return (Class<? extends Vertex>) super.getSchemaClass();
 	}
 
 	public Set<IncidenceClass> getOwnInIncidenceClasses() {

@@ -344,7 +344,7 @@ public class VertexCodeGenerator extends AttributedElementCodeGenerator {
 		s.add(" */");
 		s.add("@Override");
 		s.add("public boolean isValidAlpha(Edge edge) {");
-		s.add("\treturn validFromEdges.contains(edge.getM1Class());");
+		s.add("\treturn validFromEdges.contains(edge.getSchemaClass());");
 		s.add("}");
 		s.add("");
 		s.add("{");
@@ -367,7 +367,7 @@ public class VertexCodeGenerator extends AttributedElementCodeGenerator {
 		s.add(" */");
 		s.add("@Override");
 		s.add("public boolean isValidOmega(Edge edge) {");
-		s.add("\treturn validToEdges.contains(edge.getM1Class());");
+		s.add("\treturn validToEdges.contains(edge.getSchemaClass());");
 		s.add("}");
 		s.add("");
 		s.add("{");
@@ -388,13 +388,13 @@ public class VertexCodeGenerator extends AttributedElementCodeGenerator {
 	// TODO Check duplicate rolenames at vertex class.
 	private CodeBlock createGetEdgeForRolenameMethod() {
 		CodeList list = new CodeList();
-		addImports("de.uni_koblenz.jgralab.schema.impl.DirectedM1EdgeClass");
+		addImports("de.uni_koblenz.jgralab.schema.impl.DirectedSchemaEdgeClass");
 		CodeSnippet code = new CodeSnippet(true);
-		code.add("private static java.util.Map<String, DirectedM1EdgeClass> roleMap;");
+		code.add("private static java.util.Map<String, DirectedSchemaEdgeClass> roleMap;");
 		list.addNoIndent(code);
 		code = new CodeSnippet(true);
 		code.add("static {");
-		code.add("roleMap = new java.util.HashMap<String, DirectedM1EdgeClass>();");
+		code.add("roleMap = new java.util.HashMap<String, DirectedSchemaEdgeClass>();");
 		list.addNoIndent(code);
 		// addImports("de.uni_koblenz.jgralab.EdgeDirection");
 		VertexClass vc = (VertexClass) aec;
@@ -406,7 +406,7 @@ public class VertexCodeGenerator extends AttributedElementCodeGenerator {
 						schemaRootPackageName + "." + ec.getQualifiedName());
 				code.setVariable("dir",
 						"de.uni_koblenz.jgralab.EdgeDirection.OUT");
-				code.add("roleMap.put(\"#rolename#\", new DirectedM1EdgeClass(#edgeclass#.class, #dir#));");
+				code.add("roleMap.put(\"#rolename#\", new DirectedSchemaEdgeClass(#edgeclass#.class, #dir#));");
 				list.addNoIndent(code);
 			}
 		}
@@ -418,7 +418,7 @@ public class VertexCodeGenerator extends AttributedElementCodeGenerator {
 						schemaRootPackageName + "." + ec.getQualifiedName());
 				code.setVariable("dir",
 						"de.uni_koblenz.jgralab.EdgeDirection.IN");
-				code.add("roleMap.put(\"#rolename#\", new DirectedM1EdgeClass(#edgeclass#.class, #dir#));");
+				code.add("roleMap.put(\"#rolename#\", new DirectedSchemaEdgeClass(#edgeclass#.class, #dir#));");
 				list.addNoIndent(code);
 			}
 		}
@@ -427,7 +427,7 @@ public class VertexCodeGenerator extends AttributedElementCodeGenerator {
 		list.addNoIndent(code);
 		code = new CodeSnippet(true);
 		code.add(
-				"public DirectedM1EdgeClass getEdgeForRolename(String rolename) {",
+				"public DirectedSchemaEdgeClass getEdgeForRolename(String rolename) {",
 				"\treturn roleMap.get(rolename);", "}");
 		list.addNoIndent(code);
 		return list;

@@ -43,21 +43,21 @@ import de.uni_koblenz.jgralab.schema.Schema;
 
 /**
  * aggregates graphs, edges and vertices
- *
+ * 
  * @author ist@uni-koblenz.de
- *
+ * 
  */
 public interface AttributedElement extends Comparable<AttributedElement> {
 	/**
-	 * @return the corresponding m2-element to this m1-element
+	 * @return the {@link AttributedElementClass} of this
+	 *         {@link AttributedElement}
 	 */
 	public AttributedElementClass getAttributedElementClass();
 
 	/**
-	 *
-	 * @return the m1-class of this attributedelement
+	 * @return the schema class of this attributedelement
 	 */
-	public Class<? extends AttributedElement> getM1Class();
+	public Class<? extends AttributedElement> getSchemaClass();
 
 	public GraphClass getGraphClass();
 

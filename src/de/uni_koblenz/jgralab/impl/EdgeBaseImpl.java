@@ -164,7 +164,7 @@ public abstract class EdgeBaseImpl extends IncidenceImpl implements Edge,
 	public Edge getNextEdge(EdgeClass anEdgeClass) {
 		assert anEdgeClass != null;
 		assert isValid();
-		return getNextEdge(anEdgeClass.getM1Class());
+		return getNextEdge(anEdgeClass.getSchemaClass());
 	}
 
 	/*
