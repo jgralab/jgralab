@@ -45,14 +45,15 @@ import javax.tools.SimpleJavaFileObject;
  * 
  * @author ist@uni-koblenz.de
  */
-public class JavaSourceFromString extends SimpleJavaFileObject {
+public class InMemoryJavaSourceFile extends SimpleJavaFileObject {
 	/**
 	 * The source code of this "file".
 	 */
 	final private String code;
 
 	/**
-	 * Constructs a new JavaSourceFromString.
+	 * Creates an {@link InMemoryJavaSourceFile} with name <code>name</code> and
+	 * source <code>code</code>.
 	 * 
 	 * @param name
 	 *            the name of the compilation unit represented by this file
@@ -61,7 +62,7 @@ public class JavaSourceFromString extends SimpleJavaFileObject {
 	 *            the source code for the compilation unit represented by this
 	 *            file object
 	 */
-	public JavaSourceFromString(String name, String code) {
+	public InMemoryJavaSourceFile(String name, String code) {
 		super(URI.create("string:///" + name.replace('.', '/')
 				+ Kind.SOURCE.extension), Kind.SOURCE);
 		this.code = code;

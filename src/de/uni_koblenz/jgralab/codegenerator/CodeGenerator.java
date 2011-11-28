@@ -46,7 +46,7 @@ import java.util.logging.Logger;
 import java.util.regex.Matcher;
 
 import de.uni_koblenz.jgralab.GraphIOException;
-import de.uni_koblenz.jgralab.schema.impl.compilation.JavaSourceFromString;
+import de.uni_koblenz.jgralab.schema.impl.compilation.InMemoryJavaSourceFile;
 
 /**
  * TODO add comment
@@ -403,20 +403,20 @@ public abstract class CodeGenerator {
 	 * 
 	 * @return a Vector of {@code JavaSourceFromString}s from the generated code
 	 */
-	public Vector<JavaSourceFromString> createJavaSources() {
+	public Vector<InMemoryJavaSourceFile> createJavaSources() {
 		String className = rootBlock.getVariable("simpleClassName");
 		String implClassName = rootBlock.getVariable("simpleImplClassName");
-		Vector<JavaSourceFromString> javaSources = new Vector<JavaSourceFromString>(
+		Vector<InMemoryJavaSourceFile> javaSources = new Vector<InMemoryJavaSourceFile>(
 				2);
 
 		currentCycle = getNextCycle();
 		while (currentCycle != null) {
 			createCode();
 			if (currentCycle.isStdOrDbImplOrTransImpl()) {
-				javaSources.add(new JavaSourceFromString(implClassName,
+				javaSources.add(new InMemoryJavaSourceFile(implClassName,
 						rootBlock.getCode()));
 			} else {
-				javaSources.add(new JavaSourceFromString(className, rootBlock
+				javaSources.add(new InMemoryJavaSourceFile(className, rootBlock
 						.getCode()));
 			}
 			currentCycle = getNextCycle();

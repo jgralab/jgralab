@@ -52,7 +52,7 @@ import de.uni_koblenz.jgralab.ImplementationType;
 import de.uni_koblenz.jgralab.ProgressFunction;
 import de.uni_koblenz.jgralab.codegenerator.CodeGeneratorConfiguration;
 import de.uni_koblenz.jgralab.schema.RecordDomain.RecordComponent;
-import de.uni_koblenz.jgralab.schema.impl.compilation.JavaSourceFromString;
+import de.uni_koblenz.jgralab.schema.impl.compilation.InMemoryJavaSourceFile;
 
 /**
  * The class Schema represents a grUML Schema.
@@ -94,7 +94,7 @@ public interface Schema extends Comparable<Schema> {
 	 *            a {@link CodeGeneratorConfiguration} specifying the requested
 	 *            implementation variant
 	 */
-	public Vector<JavaSourceFromString> commit(CodeGeneratorConfiguration config);
+	public Vector<InMemoryJavaSourceFile> commit(CodeGeneratorConfiguration config);
 
 	/**
 	 * after creating the schema, this command serves to make it permanent,
