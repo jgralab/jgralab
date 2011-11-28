@@ -55,10 +55,12 @@ public class ClassFileManager extends
 		if (logger != null && location.getName().equals("CLASS_PATH")) {
 			logger.fine("(" + location + ", " + file + ")");
 		}
+		// handle ClassFileObjects specially
 		if (location.getName().equals("CLASS_PATH")
 				&& file instanceof ClassFileObject) {
 			return ((ClassFileObject) file).getBinaryName();
 		}
+		// handle all other objects by delegation
 		return super.inferBinaryName(location, file);
 	}
 
@@ -69,6 +71,7 @@ public class ClassFileManager extends
 			logger.fine("(" + location + ", " + className + ", " + kind + ", "
 					+ sibling + ")");
 		}
+		// redirect compiler output to InMemoryClassFiles
 		InMemoryClassFile cfa = new InMemoryClassFile(className);
 		SchemaClassManager.instance(schemaImpl.getQualifiedName())
 				.putSchemaClass(className, cfa);
@@ -87,8 +90,13 @@ public class ClassFileManager extends
 		if (ea == null
 				|| !((location.getName().equals("CLASS_PATH") && kinds
 						.contains(Kind.CLASS)))) {
+			// not in a plugin, or not looking for class files -> delegate to
+			// the standard implementation
 			return super.list(location, packageName, kinds, recurse);
 		}
+
+		// if run as Eclipse plugin, delegate to the JGraLab EclipseAdapter and
+		// list class files inside the plugin bundle
 		return ea.listJavaFileObjects(packageName, recurse);
 	}
 }

@@ -99,7 +99,7 @@ import de.uni_koblenz.jgralab.schema.exception.InvalidNameException;
 import de.uni_koblenz.jgralab.schema.exception.SchemaClassAccessException;
 import de.uni_koblenz.jgralab.schema.exception.SchemaException;
 import de.uni_koblenz.jgralab.schema.impl.compilation.ClassFileManager;
-import de.uni_koblenz.jgralab.schema.impl.compilation.JavaSourceFromString;
+import de.uni_koblenz.jgralab.schema.impl.compilation.InMemoryJavaSourceFile;
 import de.uni_koblenz.jgralab.schema.impl.compilation.SchemaClassManager;
 
 /**
@@ -352,9 +352,9 @@ public class SchemaImpl implements Schema {
 		return allowLowercaseEnumConstants;
 	}
 
-	private Vector<JavaSourceFromString> createClasses(
+	private Vector<InMemoryJavaSourceFile> createClasses(
 			CodeGeneratorConfiguration config) {
-		Vector<JavaSourceFromString> javaSources = new Vector<JavaSourceFromString>();
+		Vector<InMemoryJavaSourceFile> javaSources = new Vector<InMemoryJavaSourceFile>();
 
 		/* create code for graph */
 		GraphCodeGenerator graphCodeGenerator = new GraphCodeGenerator(
@@ -462,8 +462,8 @@ public class SchemaImpl implements Schema {
 	}
 
 	@Override
-	public Vector<JavaSourceFromString> commit(CodeGeneratorConfiguration config) {
-		Vector<JavaSourceFromString> javaSources = new Vector<JavaSourceFromString>();
+	public Vector<InMemoryJavaSourceFile> commit(CodeGeneratorConfiguration config) {
+		Vector<InMemoryJavaSourceFile> javaSources = new Vector<InMemoryJavaSourceFile>();
 
 		// generate schema class
 		CodeGenerator schemaCodeGenerator = new SchemaCodeGenerator(this,
@@ -628,7 +628,7 @@ public class SchemaImpl implements Schema {
 		StandardJavaFileManager jfm = compiler.getStandardFileManager(null,
 				null, null);
 		ClassFileManager manager = new ClassFileManager(this, jfm);
-		Vector<JavaSourceFromString> javaSources = commit(config);
+		Vector<InMemoryJavaSourceFile> javaSources = commit(config);
 		compiler.getTask(null, manager, null, null, null, javaSources).call();
 	}
 

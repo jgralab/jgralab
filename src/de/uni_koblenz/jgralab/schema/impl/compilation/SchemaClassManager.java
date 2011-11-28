@@ -92,22 +92,19 @@ public class SchemaClassManager extends ClassLoader {
 		schemaClassFiles.put(className, cfa);
 	}
 
-	/**
-	 * Tries to find a class in the internal {@code Map}
-	 * 
-	 * @param name
-	 *            the name of the class to be found
-	 */
 	@Override
 	protected Class<?> findClass(String name) throws ClassNotFoundException {
+		// first, look if the class byte code is in the internal map
 		InMemoryClassFile inMemClassFile = schemaClassFiles.get(name);
 		if (inMemClassFile != null) {
+			// if found, load the byte code
 			byte[] bytes = inMemClassFile.getBytecode();
 			Class<?> clazz = defineClass(name, bytes, 0, bytes.length);
 			// once the class is defined, we can forget its bytecode!
 			schemaClassFiles.remove(name);
 			return clazz;
 		}
+		// if not defined internally, use the standard class loader mechanisms
 		return Class.forName(name);
 	}
 
