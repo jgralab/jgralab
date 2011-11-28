@@ -53,46 +53,13 @@ import de.uni_koblenz.jgralab.schema.impl.compilation.ClassFileObject;
  * 
  */
 public class EclipseAdapterImpl implements EclipseAdapter {
-	private static final String RESOURCE_TO_LOCATE = "de/uni_koblenz/jgralab";
-
-	@Override
-	public String getJGraLabJarPath() {
-		return "";
-		// URL jgURL = Activator.getContext().getBundle()
-		// .getResource(RESOURCE_TO_LOCATE);
-		// if (jgURL != null) {
-		// try {
-		// URL fileURL = FileLocator.toFileURL(jgURL);
-		// URI uri = new URI(fileURL.toString().replace(" ", "%20"));
-		// File jgJar = new File(uri);
-		// String p = jgJar.getCanonicalPath();
-		// if (p.endsWith(RESOURCE_TO_LOCATE)) {
-		// p = p.substring(0, p.length() - RESOURCE_TO_LOCATE.length());
-		// }
-		// System.err.println(">>> URI: " + uri);
-		// System.err.println(">>> getJGraLabJarPath: " + p);
-		// if (jgJar.isDirectory()) {
-		// String[] entries = jgJar.list();
-		// for (String s : entries) {
-		// System.err.println("\t" + s);
-		// }
-		// }
-		// return p;
-		// } catch (IOException e) {
-		// e.printStackTrace();
-		// } catch (URISyntaxException e) {
-		// e.printStackTrace();
-		// }
-		// }
-		// throw new RuntimeException(
-		// "Couldn't figure out the path to jgralab.jar.");
-	}
-
 	@Override
 	public Iterable<JavaFileObject> listJavaFileObjects(String packageName,
 			boolean recurse) {
 		if (recurse) {
-			throw new UnsupportedOperationException("Can not recurse :-(");
+			throw new UnsupportedOperationException("Tried to list package "
+					+ packageName
+					+ " recursively. Recursive listing not yet implemented :-(");
 		}
 		String directoryName = packageName.replace('.', '/');
 		URL url = Activator.getContext().getBundle().getResource(directoryName);
@@ -107,18 +74,17 @@ public class EclipseAdapterImpl implements EclipseAdapter {
 			for (File f : dir.listFiles()) {
 				if (f.isFile() && f.getName().endsWith(".class")) {
 					URI u = new URI(directoryName + "/" + f.getName());
-					JavaFileObject jfo = new BundleJavaFileObject(f, u,
-							Kind.CLASS) {
-					};
-					list.add(jfo);
+					list.add(new BundleJavaFileObject(f, u, Kind.CLASS));
 				}
 			}
 			return list;
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
+			// Just complain, on System.err. Do not re-throw, since list() is
+			// obligued to give a result even in case of exceptions
 			e.printStackTrace();
 		} catch (URISyntaxException e) {
-			// TODO Auto-generated catch block
+			// Just complain, on System.err. Do not re-throw, since list() is
+			// obligued to give a result even in case of exceptions
 			e.printStackTrace();
 		}
 		return list;
