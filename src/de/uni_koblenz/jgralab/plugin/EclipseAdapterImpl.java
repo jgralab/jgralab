@@ -57,13 +57,6 @@ import de.uni_koblenz.jgralab.schema.impl.compilation.ClassFileObject;
  * @author ist@uni-koblenz.de
  */
 public class EclipseAdapterImpl implements EclipseAdapter {
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * de.uni_koblenz.jgralab.EclipseAdapter#listJavaFileObjects(java.lang.String
-	 * , boolean)
-	 */
 	@Override
 	public Iterable<JavaFileObject> listJavaFileObjects(String packageName,
 			boolean recurse) {
@@ -110,5 +103,19 @@ public class EclipseAdapterImpl implements EclipseAdapter {
 		public InputStream openInputStream() throws IOException {
 			return new FileInputStream(file);
 		}
+	}
+
+	@Override
+	public String getJGraLabVersion() {
+		String s = Activator.getContext().getBundle().getVersion()
+				.getQualifier();
+		return s.substring(0, s.indexOf('_'));
+	}
+
+	@Override
+	public String getJGraLabRevision() {
+		String s = Activator.getContext().getBundle().getVersion()
+				.getQualifier();
+		return s.substring(s.indexOf('_') + 1).replace('_', ':');
 	}
 }

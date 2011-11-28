@@ -39,4 +39,8 @@ import javax.tools.JavaFileObject;
 public interface EclipseAdapter {
 	public Iterable<JavaFileObject> listJavaFileObjects(String packageName,
 			boolean recurse);
+
+	public String getJGraLabVersion();
+
+	public String getJGraLabRevision();
 }
