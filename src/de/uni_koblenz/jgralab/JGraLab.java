@@ -68,36 +68,55 @@ public class JGraLab {
 	 */
 	private static EclipseAdapter eclipseAdapter;
 
-	private static String revision = "unknown";
-	private static String version = revision;
+	private static String version;
+	private static String revision;
 
 	// read revision and version from the manifest
-	static {
-		try {
-			Enumeration<URL> resources = JGraLab.class.getClassLoader()
-					.getResources("META-INF/MANIFEST.MF");
-			while (resources.hasMoreElements()) {
+	private static void readVersionFromManifest() {
+		version = revision = "unknown";
+		if (eclipseAdapter != null) {
+			version = eclipseAdapter.getJGraLabVersion();
+			revision = eclipseAdapter.getJGraLabRevision();
+		} else {
+			// read info from jar manifest
+			try {
+				Enumeration<URL> resources = JGraLab.class.getClassLoader()
+						.getResources("META-INF/MANIFEST.MF");
+				while (resources.hasMoreElements()) {
 
-				Manifest manifest = new Manifest(resources.nextElement()
-						.openStream());
-				Map<String, Attributes> entries = manifest.getEntries();
-				Attributes info = entries.get("de/uni_koblenz/jgralab");
-				if (info == null) {
-					continue;
-				}
-				String implTitle = info.getValue("Implementation-Title");
-				if (implTitle.equals("JGraLab")) {
-					String[] versionString = info.getValue(
-							"Implementation-Version").split("@");
-					version = versionString[0];
-					revision = versionString[1];
-				}
+					Manifest manifest = new Manifest(resources.nextElement()
+							.openStream());
+					Map<String, Attributes> entries = manifest.getEntries();
+					Attributes info = entries.get("de/uni_koblenz/jgralab");
+					if (info == null) {
+						continue;
+					}
+					String implTitle = info.getValue("Implementation-Title");
+					if (implTitle.equals("JGraLab")) {
+						String[] versionString = info.getValue(
+								"Implementation-Version").split("@");
+						version = versionString[0];
+						revision = versionString[1];
+					}
 
+				}
+			} catch (IOException e) {
 			}
-		} catch (IOException e) {
-			e.printStackTrace();
 		}
+	}
 
+	private static String getVersion() {
+		if (version == null) {
+			readVersionFromManifest();
+		}
+		return version;
+	}
+
+	private static String getRevision() {
+		if (revision == null) {
+			readVersionFromManifest();
+		}
+		return revision;
 	}
 
 	private static final String[] versionInfo = {
@@ -229,13 +248,8 @@ public class JGraLab {
 	}
 
 	private static String addInfo(String inputLine) {
-		String outputLine = inputLine;
-		String revString = revision.replace("$R", "R").replace(" $", "");
-
-		outputLine = outputLine.replace("$ver", version);
-		outputLine = outputLine.replace("$rev", revString);
-
-		return outputLine;
+		return inputLine.replace("$ver", getVersion()).replace("$rev",
+				getRevision());
 	}
 
 	public static String getVersionInfo(boolean asTGComment) {
