@@ -138,8 +138,10 @@ public class JGraLab {
 	 * @param level
 	 *            new log level
 	 */
-	public static void setLogLevel(Level level) {
+	public static Level setLogLevel(Level level) {
+		Level old = getRootLogger().getLevel();
 		getRootLogger().setLevel(level);
+		return old;
 	}
 
 	public static Logger getRootLogger() {

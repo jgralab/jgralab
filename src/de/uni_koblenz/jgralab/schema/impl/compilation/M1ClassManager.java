@@ -55,7 +55,7 @@ import de.uni_koblenz.jgralab.schema.Schema;
 public class M1ClassManager extends ClassLoader {
 	private static HashMap<String, WeakReference<M1ClassManager>> instances = new HashMap<String, WeakReference<M1ClassManager>>();
 
-	private Map<String, ClassFileAbstraction> m1Classes;
+	private Map<String, InMemoryClassFile> m1Classes;
 	private String schemaQName = null;
 
 	public static M1ClassManager instance(final String qualifiedName) {
@@ -82,10 +82,10 @@ public class M1ClassManager extends ClassLoader {
 
 	private M1ClassManager(String schemaQName) {
 		this.schemaQName = schemaQName;
-		m1Classes = new HashMap<String, ClassFileAbstraction>();
+		m1Classes = new HashMap<String, InMemoryClassFile>();
 	}
 
-	public void putM1Class(String className, ClassFileAbstraction cfa) {
+	public void putM1Class(String className, InMemoryClassFile cfa) {
 		m1Classes.put(className, cfa);
 	}
 
@@ -97,7 +97,7 @@ public class M1ClassManager extends ClassLoader {
 	 */
 	@Override
 	protected Class<?> findClass(String name) throws ClassNotFoundException {
-		ClassFileAbstraction cfa = m1Classes.get(name);
+		InMemoryClassFile cfa = m1Classes.get(name);
 		if (cfa != null) {
 			byte[] bytes = cfa.getBytecode();
 			Class<?> clazz = defineClass(name, bytes, 0, bytes.length);

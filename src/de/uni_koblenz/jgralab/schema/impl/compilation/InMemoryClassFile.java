@@ -47,7 +47,7 @@ import javax.tools.SimpleJavaFileObject;
  * @author ist@uni-koblenz.de
  * 
  */
-public class ClassFileAbstraction extends SimpleJavaFileObject {
+public class InMemoryClassFile extends SimpleJavaFileObject {
 	private byte[] bytecode;
 
 	/**
@@ -57,7 +57,7 @@ public class ClassFileAbstraction extends SimpleJavaFileObject {
 	 * @param name
 	 *            the name of the class
 	 */
-	public ClassFileAbstraction(String name) {
+	public InMemoryClassFile(String name) {
 		super(URI.create("string:///" + name.replace('.', '/')
 				+ Kind.CLASS.extension), Kind.CLASS);
 	}

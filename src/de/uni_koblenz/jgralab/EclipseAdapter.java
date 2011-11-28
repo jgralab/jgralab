@@ -34,16 +34,9 @@
  */
 package de.uni_koblenz.jgralab;
 
+import javax.tools.JavaFileObject;
 
-/**
- * Simple interface for loading GReQL functions from Eclipse resource bundles.
- * There's a class in the jgralab4eclipse project that implements that
- * interface. The field eclipseFunctionLoader is then set to an instance of
- * that.
- */
 public interface EclipseAdapter {
-	/**
-	 * @return the path to jgralab.jar in the eclipse metadata workspace dir.
-	 */
-	public String getJGraLabJarPath();
+	public Iterable<JavaFileObject> listJavaFileObjects(String packageName,
+			boolean recurse);
 }

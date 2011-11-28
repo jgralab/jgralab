@@ -40,7 +40,6 @@ import java.io.DataOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Method;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -54,18 +53,15 @@ import java.util.Vector;
 import java.util.regex.Pattern;
 
 import javax.tools.JavaCompiler;
-import javax.tools.JavaFileManager;
 import javax.tools.JavaFileObject;
 import javax.tools.StandardJavaFileManager;
 import javax.tools.ToolProvider;
 
-import de.uni_koblenz.jgralab.EclipseAdapter;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphFactory;
 import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.ImplementationType;
-import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.ProgressFunction;
 import de.uni_koblenz.jgralab.codegenerator.CodeGenerator;
 import de.uni_koblenz.jgralab.codegenerator.CodeGeneratorConfiguration;
@@ -621,53 +617,18 @@ public class SchemaImpl implements Schema {
 
 	@Override
 	public void compile(CodeGeneratorConfiguration config) {
-		EclipseAdapter ea = JGraLab.getEclipseAdapter();
-		compile(ea != null ? ea.getJGraLabJarPath() : null, config);
-	}
-
-	@Override
-	public void compile(String jgralabClassPath,
-			CodeGeneratorConfiguration config) {
 		JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
-		JavaFileManager jfm = null;
-
-		// commit
-		Vector<JavaSourceFromString> javaSources = commit(config);
-		// compile
-		try {
-			jfm = compiler.getStandardFileManager(null, null, null);
-		} catch (NullPointerException e) {
-			System.err.println("Cannot compile schema " + qualifiedName + ".");
-			System.err.println("Most probably you use a JRE instead of a JDK. "
+		if (compiler == null) {
+			throw new SchemaException("Cannot compile schema " + qualifiedName
+					+ ". Most probably you use a JRE instead of a JDK. "
 					+ "The JRE does not provide a compiler.");
-			e.printStackTrace();
-			throw new SchemaException(e);
-		}
 
+		}
+		StandardJavaFileManager jfm = compiler.getStandardFileManager(null,
+				null, null);
 		ClassFileManager manager = new ClassFileManager(this, jfm);
-
-		Vector<String> options = new Vector<String>();
-
-		// If jgralab is run from a JAR and jgralabClassPath is not set
-		// explicitly, there is the possibility that some other custom
-		// classloader is running the compiler. In that case, we have to set the
-		// -cp arg to the JAR.
-
-		URL url = SchemaImpl.class.getResource(SchemaImpl.class.getSimpleName()
-				+ ".class");
-		if ((url != null) && url.getProtocol().equals("jar")
-				&& (jgralabClassPath == null)) {
-			String urlStr = url.toString();
-			int firstExcMark = urlStr.indexOf('!');
-			jgralabClassPath = url.toString().substring(9, firstExcMark);
-		}
-		if (jgralabClassPath != null) {
-			options.add("-cp");
-			options.add("\"" + jgralabClassPath + "\"");
-		}
-
-		compiler.getTask(null, manager, null, options, null, javaSources)
-				.call();
+		Vector<JavaSourceFromString> javaSources = commit(config);
+		compiler.getTask(null, manager, null, null, null, javaSources).call();
 	}
 
 	@Override
@@ -1338,6 +1299,12 @@ public class SchemaImpl implements Schema {
 
 	@Override
 	public Graph createGraph(ImplementationType implementationType) {
+		return createGraph(implementationType, 100, 100);
+	}
+
+	@Override
+	public Graph createGraph(ImplementationType implementationType, int vCount,
+			int eCount) {
 		try {
 			getGraphClass().getM1Class();
 		} catch (M1ClassAccessException e) {
@@ -1362,7 +1329,7 @@ public class SchemaImpl implements Schema {
 		Method graphCreateMethod = getGraphCreateMethod(ImplementationType.STANDARD);
 
 		try {
-			return (Graph) graphCreateMethod.invoke(null, null, 100, 100);
+			return (Graph) graphCreateMethod.invoke(null, null, vCount, eCount);
 		} catch (Exception e) {
 			throw new SchemaException(
 					"Something failed when creating the  graph!", e);
