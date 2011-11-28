@@ -32,44 +32,106 @@
 package de.uni_koblenz.jgralab.plugin;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.ArrayList;
+
+import javax.tools.JavaFileObject;
+import javax.tools.JavaFileObject.Kind;
 
 import org.eclipse.core.runtime.FileLocator;
 
 import de.uni_koblenz.jgralab.EclipseAdapter;
+import de.uni_koblenz.jgralab.schema.impl.compilation.ClassFileObject;
 
 /**
  * @author Tassilo Horn &lt;horn@uni-koblenz.de&gt;
  * 
  */
 public class EclipseAdapterImpl implements EclipseAdapter {
-	private static final String RESOURCE_TO_LOCATE = "de/uni_koblenz/jgralab/JGraLab.class";
+	private static final String RESOURCE_TO_LOCATE = "de/uni_koblenz/jgralab";
 
 	@Override
 	public String getJGraLabJarPath() {
-		URL jgURL = Activator.getContext().getBundle()
-				.getResource(RESOURCE_TO_LOCATE);
-		if (jgURL != null) {
-			try {
-				URL fileURL = FileLocator.toFileURL(jgURL);
-				URI uri = new URI(fileURL.toString().replace(" ", "%20"));
-				File jgJar = new File(uri);
-				String p = jgJar.getCanonicalPath();
-				if (p.endsWith(RESOURCE_TO_LOCATE)) {
-					p = p.substring(0, p.length() - RESOURCE_TO_LOCATE.length());
-				}
-				System.err.println("getJGraLabJarPath: " + p);
-				return p;
-			} catch (IOException e) {
-				e.printStackTrace();
-			} catch (URISyntaxException e) {
-				e.printStackTrace();
-			}
+		return "";
+		// URL jgURL = Activator.getContext().getBundle()
+		// .getResource(RESOURCE_TO_LOCATE);
+		// if (jgURL != null) {
+		// try {
+		// URL fileURL = FileLocator.toFileURL(jgURL);
+		// URI uri = new URI(fileURL.toString().replace(" ", "%20"));
+		// File jgJar = new File(uri);
+		// String p = jgJar.getCanonicalPath();
+		// if (p.endsWith(RESOURCE_TO_LOCATE)) {
+		// p = p.substring(0, p.length() - RESOURCE_TO_LOCATE.length());
+		// }
+		// System.err.println(">>> URI: " + uri);
+		// System.err.println(">>> getJGraLabJarPath: " + p);
+		// if (jgJar.isDirectory()) {
+		// String[] entries = jgJar.list();
+		// for (String s : entries) {
+		// System.err.println("\t" + s);
+		// }
+		// }
+		// return p;
+		// } catch (IOException e) {
+		// e.printStackTrace();
+		// } catch (URISyntaxException e) {
+		// e.printStackTrace();
+		// }
+		// }
+		// throw new RuntimeException(
+		// "Couldn't figure out the path to jgralab.jar.");
+	}
+
+	@Override
+	public Iterable<JavaFileObject> listJavaFileObjects(String packageName,
+			boolean recurse) {
+		if (recurse) {
+			throw new UnsupportedOperationException("Can not recurse :-(");
 		}
-		throw new RuntimeException(
-				"Couldn't figure out the path to jgralab.jar.");
+		String directoryName = packageName.replace('.', '/');
+		URL url = Activator.getContext().getBundle().getResource(directoryName);
+		ArrayList<JavaFileObject> list = new ArrayList<JavaFileObject>();
+		if (url == null) {
+			return list;
+		}
+		try {
+			URL fileURL = FileLocator.toFileURL(url);
+			URI fileURI = new URI(fileURL.toString().replace(" ", "%20"));
+			File dir = new File(fileURI);
+			for (File f : dir.listFiles()) {
+				if (f.isFile() && f.getName().endsWith(".class")) {
+					URI u = new URI(directoryName + "/" + f.getName());
+					JavaFileObject jfo = new BundleJavaFileObject(f, u,
+							Kind.CLASS) {
+					};
+					list.add(jfo);
+				}
+			}
+			return list;
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (URISyntaxException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return list;
+	}
+
+	private static class BundleJavaFileObject extends ClassFileObject {
+		public BundleJavaFileObject(File f, URI uri, Kind kind) {
+			super(f, uri, kind);
+		}
+
+		@Override
+		public InputStream openInputStream() throws IOException {
+			return new FileInputStream(file);
+		}
 	}
 }

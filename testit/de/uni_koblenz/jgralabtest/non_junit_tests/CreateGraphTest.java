@@ -1,8 +1,11 @@
 package de.uni_koblenz.jgralabtest.non_junit_tests;
 
+import java.util.logging.Level;
+
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.ImplementationType;
+import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.codegenerator.CodeGeneratorConfiguration;
 import de.uni_koblenz.jgralab.schema.GraphClass;
 import de.uni_koblenz.jgralab.schema.Schema;
@@ -18,16 +21,17 @@ public class CreateGraphTest {
 		GraphClass gc = schema.createGraphClass("SimpleGraph");
 		VertexClass node = gc.createVertexClass("Node");
 
+		Level l = JGraLab.setLogLevel(Level.FINE);
 		System.out.println("Compile schema classes in memory...");
 		System.out.flush();
 		schema.compile(CodeGeneratorConfiguration.MINIMAL);
 
 		System.err.flush();
 		System.out.println("Create " + gc.getQualifiedName());
-		Graph g = schema.createGraph(ImplementationType.STANDARD);
+		Graph g = schema.createGraph(ImplementationType.STANDARD, 10, 10);
 		g.createVertex(node.getM1Class());
 		g.createVertex(node.getM1Class());
-
+		JGraLab.setLogLevel(l);
 		try {
 			System.out.println("Save graph...");
 			g.save("testit/testdata/graph.tg");
