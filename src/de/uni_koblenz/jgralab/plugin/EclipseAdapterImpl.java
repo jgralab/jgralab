@@ -110,28 +110,16 @@ public class EclipseAdapterImpl implements EclipseAdapter {
 	public String getJGraLabVersion() {
 		Version v = Activator.getContext().getBundle().getVersion();
 		String s = v.getQualifier();
-		int p = s.indexOf('_');
-		if (p >= 0) {
-			// we assume that the Qualifier has format
-			// VERSION_REVISON_CHANGESET
-			// e.g. Efraasia_4145_ebffbcd5de3a
-			// (REVISION and CHANGESET are from Mercurial)
-			return s.substring(0, s.indexOf('_'));
+		if (s != null && s.length() > 0) {
+			return v.getMajor() + "." + v.getMinor() + " (" + s + ")";
 		} else {
-			// otherwise: fallback to numeric Bundle version
-			return v.getMajor() + "." + v.getMinor() + "." + v.getMicro();
+			return v.getMajor() + "." + v.getMinor();
 		}
 	}
 
 	@Override
 	public String getJGraLabRevision() {
-		String s = Activator.getContext().getBundle().getVersion()
-				.getQualifier();
-		int p = s.indexOf('_');
-		if (p > 0) {
-			return s.substring(p + 1).replace('_', ':');
-		} else {
-			return getJGraLabVersion();
-		}
+		return Integer.toString(Activator.getContext().getBundle().getVersion()
+				.getMicro());
 	}
 }
