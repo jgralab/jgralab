@@ -40,7 +40,6 @@ package de.uni_koblenz.jgralab.greql2.serialising;
 import java.util.Iterator;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
-import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql2.exception.GreqlException;
 import de.uni_koblenz.jgralab.greql2.schema.AggregationPathDescription;
 import de.uni_koblenz.jgralab.greql2.schema.AlternativePathDescription;
@@ -99,7 +98,6 @@ import de.uni_koblenz.jgralab.greql2.schema.SimpleDeclaration;
 import de.uni_koblenz.jgralab.greql2.schema.SimplePathDescription;
 import de.uni_koblenz.jgralab.greql2.schema.StringLiteral;
 import de.uni_koblenz.jgralab.greql2.schema.SubgraphDefinition;
-import de.uni_koblenz.jgralab.greql2.schema.SubgraphExpression;
 import de.uni_koblenz.jgralab.greql2.schema.SubgraphRestrictedExpression;
 import de.uni_koblenz.jgralab.greql2.schema.TableComprehension;
 import de.uni_koblenz.jgralab.greql2.schema.ThisEdge;
@@ -246,7 +244,6 @@ public class GreqlSerializer {
 			}
 			serializeSimpleDeclaration(sd);
 		}
-
 
 		first = true;
 		for (Expression constraint : v.get_constraint()) {
@@ -418,20 +415,25 @@ public class GreqlSerializer {
 		sb.append(")");
 	}
 
-	private void serializeSubgraphRestrictedExpression(SubgraphRestrictedExpression exp) {
+	private void serializeSubgraphRestrictedExpression(
+			SubgraphRestrictedExpression exp) {
 		sb.append("on");
-		//serialize left
-		IsSubgraphDefinitionOf isSubgraphDefOf = exp.getFirstIsSubgraphDefinitionOfIncidence(EdgeDirection.IN);
-		serializeSubgraphDefinition((SubgraphDefinition) isSubgraphDefOf.getThat());
+		// serialize left
+		IsSubgraphDefinitionOf isSubgraphDefOf = exp
+				.getFirstIsSubgraphDefinitionOfIncidence(EdgeDirection.IN);
+		serializeSubgraphDefinition((SubgraphDefinition) isSubgraphDefOf
+				.getThat());
 		sb.append(":");
-		//serialize right
-		IsExpressionOnSubgraph isExprOnSubgraph = exp.getFirstIsExpressionOnSubgraphIncidence(EdgeDirection.IN);
+		// serialize right
+		IsExpressionOnSubgraph isExprOnSubgraph = exp
+				.getFirstIsExpressionOnSubgraphIncidence(EdgeDirection.IN);
 		serializeExpression((Expression) isExprOnSubgraph.getThat(), true);
 	}
-	
+
 	private void serializeSubgraphDefinition(SubgraphDefinition def) {
-		
-		if ((def instanceof EdgeTypeSubgraph) || (def instanceof VertexTypeSubgraph)) {
+
+		if ((def instanceof EdgeTypeSubgraph)
+				|| (def instanceof VertexTypeSubgraph)) {
 			if (def instanceof EdgeTypeSubgraph) {
 				sb.append("e");
 			} else {
@@ -447,15 +449,14 @@ public class GreqlSerializer {
 				}
 				serializeIdentifier(t);
 			}
-			sb.append('}');			
+			sb.append('}');
 		} else {
-			//subgraph expression defined by arbitrary expression
-			IsSubgraphDefiningExpression isDefExpr = ((ExpressionDefinedSubgraph) def).getFirstIsSubgraphDefiningExpressionIncidence(EdgeDirection.IN);
+			// subgraph expression defined by arbitrary expression
+			IsSubgraphDefiningExpression isDefExpr = ((ExpressionDefinedSubgraph) def)
+					.getFirstIsSubgraphDefiningExpressionIncidence(EdgeDirection.IN);
 			serializeExpression(isDefExpr.getAlpha(), true);
-		}	
-	}	
-		
-
+		}
+	}
 
 	private void serializePathExpression(PathExpression exp) {
 		if (exp instanceof BackwardVertexSet) {
