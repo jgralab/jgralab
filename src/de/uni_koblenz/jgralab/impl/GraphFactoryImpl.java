@@ -44,7 +44,7 @@ import de.uni_koblenz.jgralab.GraphException;
 import de.uni_koblenz.jgralab.GraphFactory;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.impl.db.GraphDatabase;
-import de.uni_koblenz.jgralab.schema.exception.M1ClassAccessException;
+import de.uni_koblenz.jgralab.schema.exception.SchemaClassAccessException;
 
 /**
  * Default implementation for GraphFactory. Per default every create-method
@@ -118,7 +118,7 @@ public abstract class GraphFactoryImpl implements GraphFactory {
 				throw new GraphException(ex.getCause().getLocalizedMessage(),
 						ex);
 			}
-			throw new M1ClassAccessException("Cannot create edge of class "
+			throw new SchemaClassAccessException("Cannot create edge of class "
 					+ edgeClass.getCanonicalName(), ex);
 		}
 	}
@@ -130,7 +130,7 @@ public abstract class GraphFactoryImpl implements GraphFactory {
 			Graph g = graphMap.get(graphClass).newInstance(id, vMax, eMax);
 			return g;
 		} catch (Exception ex) {
-			throw new M1ClassAccessException("Cannot create graph of class "
+			throw new SchemaClassAccessException("Cannot create graph of class "
 					+ graphClass.getCanonicalName(), ex);
 		}
 	}
@@ -141,7 +141,7 @@ public abstract class GraphFactoryImpl implements GraphFactory {
 			Graph g = graphMap.get(graphClass).newInstance(id, 1000, 1000);
 			return g;
 		} catch (Exception ex) {
-			throw new M1ClassAccessException("Cannot create graph of class "
+			throw new SchemaClassAccessException("Cannot create graph of class "
 					+ graphClass.getCanonicalName(), ex);
 		}
 	}
@@ -160,7 +160,7 @@ public abstract class GraphFactoryImpl implements GraphFactory {
 				throw new GraphException(ex.getCause().getLocalizedMessage(),
 						ex);
 			}
-			throw new M1ClassAccessException("Cannot create vertex of class "
+			throw new SchemaClassAccessException("Cannot create vertex of class "
 					+ vertexClass.getCanonicalName(), ex);
 		}
 	}
@@ -175,7 +175,7 @@ public abstract class GraphFactoryImpl implements GraphFactory {
 				graphMap.put(originalClass, implementationClass
 						.getConstructor(params));
 			} catch (NoSuchMethodException ex) {
-				throw new M1ClassAccessException(
+				throw new SchemaClassAccessException(
 						"Unable to locate default constructor for graphclass "
 								+ implementationClass.getName(), ex);
 			}
@@ -192,7 +192,7 @@ public abstract class GraphFactoryImpl implements GraphFactory {
 				vertexMap.put(originalClass, implementationClass
 						.getConstructor(params));
 			} catch (NoSuchMethodException ex) {
-				throw new M1ClassAccessException(
+				throw new SchemaClassAccessException(
 						"Unable to locate default constructor for vertexclass"
 								+ implementationClass, ex);
 			}
@@ -209,7 +209,7 @@ public abstract class GraphFactoryImpl implements GraphFactory {
 				edgeMap.put(originalClass, implementationClass
 						.getConstructor(params));
 			} catch (NoSuchMethodException ex) {
-				throw new M1ClassAccessException(
+				throw new SchemaClassAccessException(
 						"Unable to locate default constructor for edgeclass"
 								+ implementationClass, ex);
 			}
@@ -228,7 +228,7 @@ public abstract class GraphFactoryImpl implements GraphFactory {
 			return graphDatabaseMap.get(graphClass).newInstance(id, 1000, 1000,
 					graphDatabase);
 		} catch (Exception exception) {
-			throw new M1ClassAccessException("Cannot create graph of class "
+			throw new SchemaClassAccessException("Cannot create graph of class "
 					+ graphClass.getCanonicalName(), exception);
 		}
 	}
@@ -241,7 +241,7 @@ public abstract class GraphFactoryImpl implements GraphFactory {
 			return graphDatabaseMap.get(graphClass).newInstance(id, vMax, eMax,
 					graphDatabase);
 		} catch (Exception exception) {
-			throw new M1ClassAccessException("Cannot create graph of class "
+			throw new SchemaClassAccessException("Cannot create graph of class "
 					+ graphClass.getCanonicalName(), exception);
 		}
 	}
@@ -257,7 +257,7 @@ public abstract class GraphFactoryImpl implements GraphFactory {
 				throw new GraphException(exception.getCause()
 						.getLocalizedMessage());
 			} else {
-				throw new M1ClassAccessException("Cannot create edge of class "
+				throw new SchemaClassAccessException("Cannot create edge of class "
 						+ edgeClass.getCanonicalName(), exception);
 			}
 		}
@@ -275,7 +275,7 @@ public abstract class GraphFactoryImpl implements GraphFactory {
 				throw new GraphException(exception.getCause()
 						.getLocalizedMessage());
 			} else {
-				throw new M1ClassAccessException(
+				throw new SchemaClassAccessException(
 						"Cannot create vertex of class "
 								+ vertexClass.getCanonicalName(), exception);
 			}
@@ -293,7 +293,7 @@ public abstract class GraphFactoryImpl implements GraphFactory {
 				graphDatabaseMap.put(originalClass, implementationClass
 						.getConstructor(params));
 			} catch (NoSuchMethodException exception) {
-				throw new M1ClassAccessException(
+				throw new SchemaClassAccessException(
 						"Unable to locate default constructor for graphclass "
 								+ implementationClass.getName(), exception);
 			}
@@ -310,7 +310,7 @@ public abstract class GraphFactoryImpl implements GraphFactory {
 				vertexDatabaseMap.put(originalClass, implementationClass
 						.getConstructor(params));
 			} catch (NoSuchMethodException exception) {
-				throw new M1ClassAccessException(
+				throw new SchemaClassAccessException(
 						"Unable to locate default constructor for vertex class"
 								+ implementationClass, exception);
 			}
@@ -328,7 +328,7 @@ public abstract class GraphFactoryImpl implements GraphFactory {
 				edgeDatabaseMap.put(originalClass, implementationClass
 						.getConstructor(params));
 			} catch (NoSuchMethodException exception) {
-				throw new M1ClassAccessException(
+				throw new SchemaClassAccessException(
 						"Unable to locate default constructor for edge class"
 								+ implementationClass, exception);
 			}
@@ -352,7 +352,7 @@ public abstract class GraphFactoryImpl implements GraphFactory {
 				throw new GraphException(ex.getCause().getLocalizedMessage(),
 						ex);
 			}
-			throw new M1ClassAccessException("Cannot create edge of class "
+			throw new SchemaClassAccessException("Cannot create edge of class "
 					+ edgeClass.getCanonicalName(), ex);
 		}
 	}
@@ -369,7 +369,7 @@ public abstract class GraphFactoryImpl implements GraphFactory {
 				throw new GraphException(ex.getCause().getLocalizedMessage(),
 						ex);
 			}
-			throw new M1ClassAccessException("Cannot create graph of class "
+			throw new SchemaClassAccessException("Cannot create graph of class "
 					+ graphClass.getCanonicalName(), ex);
 		}
 	}
@@ -386,7 +386,7 @@ public abstract class GraphFactoryImpl implements GraphFactory {
 				throw new GraphException(ex.getCause().getLocalizedMessage(),
 						ex);
 			}
-			throw new M1ClassAccessException("Cannot create graph of class "
+			throw new SchemaClassAccessException("Cannot create graph of class "
 					+ graphClass.getCanonicalName(), ex);
 		}
 	}
@@ -402,7 +402,7 @@ public abstract class GraphFactoryImpl implements GraphFactory {
 				throw new GraphException(ex.getCause().getLocalizedMessage(),
 						ex);
 			}
-			throw new M1ClassAccessException("Cannot create vertex of class "
+			throw new SchemaClassAccessException("Cannot create vertex of class "
 					+ vertexClass.getCanonicalName(), ex);
 		}
 	}
@@ -416,7 +416,7 @@ public abstract class GraphFactoryImpl implements GraphFactory {
 				graphTransactionMap.put(originalClass, implementationClass
 						.getConstructor(params));
 			} catch (NoSuchMethodException ex) {
-				throw new M1ClassAccessException(
+				throw new SchemaClassAccessException(
 						"Unable to locate transaction constructor for graphclass "
 								+ implementationClass.getName(), ex);
 			}
@@ -433,7 +433,7 @@ public abstract class GraphFactoryImpl implements GraphFactory {
 				vertexTransactionMap.put(originalClass, implementationClass
 						.getConstructor(params));
 			} catch (NoSuchMethodException ex) {
-				throw new M1ClassAccessException(
+				throw new SchemaClassAccessException(
 						"Unable to locate transaction constructor for vertexclass"
 								+ implementationClass, ex);
 			}
@@ -451,7 +451,7 @@ public abstract class GraphFactoryImpl implements GraphFactory {
 				edgeTransactionMap.put(originalClass, implementationClass
 						.getConstructor(params));
 			} catch (NoSuchMethodException ex) {
-				throw new M1ClassAccessException(
+				throw new SchemaClassAccessException(
 						"Unable to locate transaction constructor for edgeclass"
 								+ implementationClass, ex);
 			}

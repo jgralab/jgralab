@@ -32,42 +32,28 @@
  * non-source form of such a combination shall include the source code for
  * the parts of JGraLab used as well as that of the covered work.
  */
+package de.uni_koblenz.jgralab.schema.impl;
 
-package de.uni_koblenz.jgralab.codegenerator;
+import de.uni_koblenz.jgralab.Edge;
+import de.uni_koblenz.jgralab.EdgeDirection;
 
-import java.net.URI;
+public class DirectedSchemaEdgeClass {
 
-import javax.tools.SimpleJavaFileObject;
+	Class<? extends Edge> edgeClass;
 
-/**
- * An object of this class holds the generated Java code (used for M1 classes).
- * 
- * @author ist@uni-koblenz.de
- */
-public class JavaSourceFromString extends SimpleJavaFileObject {
-	/**
-	 * The source code of this "file".
-	 */
-	final private String code;
+	EdgeDirection dir;
 
-	/**
-	 * Constructs a new JavaSourceFromString.
-	 * 
-	 * @param name
-	 *            the name of the compilation unit represented by this file
-	 *            object
-	 * @param code
-	 *            the source code for the compilation unit represented by this
-	 *            file object
-	 */
-	JavaSourceFromString(String name, String code) {
-		super(URI.create("string:///" + name.replace('.', '/')
-				+ Kind.SOURCE.extension), Kind.SOURCE);
-		this.code = code;
+	public DirectedSchemaEdgeClass(Class<? extends Edge> ec, EdgeDirection dir) {
+		edgeClass = ec;
+		this.dir = dir;
 	}
 
-	@Override
-	public CharSequence getCharContent(boolean ignoreEncodingErrors) {
-		return code;
+	public Class<? extends Edge> getSchemaClass() {
+		return edgeClass;
 	}
+
+	public EdgeDirection getDirection() {
+		return dir;
+	}
+
 }

@@ -88,7 +88,7 @@ public class SetAttributes extends
 		if (dom instanceof RecordDomain) {
 			Record greqlRec = (Record) val;
 			RecordDomain rd = (RecordDomain) dom;
-			Class<?> rClass = rd.getM1Class();
+			Class<?> rClass = rd.getSchemaClass();
 			try {
 				Constructor<?> recConstr = rClass.getConstructor(Map.class);
 				result = recConstr.newInstance(greqlRec.toPMap());

@@ -43,10 +43,10 @@ import org.pcollections.POrderedSet;
 import de.uni_koblenz.jgralab.schema.AggregationKind;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.VertexClass;
-import de.uni_koblenz.jgralab.schema.impl.DirectedM1EdgeClass;
+import de.uni_koblenz.jgralab.schema.impl.DirectedSchemaEdgeClass;
 
 /**
- * represents a vertex, m1 classes inherit from this class
+ * represents a vertex, schema classes inherit from this class
  * 
  * @author ist@uni-koblenz.de
  * 
@@ -247,7 +247,6 @@ public interface Vertex extends GraphElement {
 	 */
 	public void putAfter(Vertex v);
 
-
 	/**
 	 * Using this method, one can simply iterate over all incident edges of this
 	 * vertex using the advanced for-loop
@@ -316,7 +315,7 @@ public interface Vertex extends GraphElement {
 	 * vertex using the advanced for-loop
 	 * 
 	 * @param eclass
-	 *            the M1-Class of the edges which should be iterated
+	 *            the schema class of the edges which should be iterated
 	 * @param dir
 	 *            the direction of the edges which should be iterated, either
 	 *            EdgeDirection.IN or EdgeDirection.OUT
@@ -342,7 +341,7 @@ public interface Vertex extends GraphElement {
 	 * vertex using the advanced for-loop
 	 * 
 	 * @param eclass
-	 *            the M1-Class of the edges which should be iterated
+	 *            the schema class of the edges which should be iterated
 	 * @return a iterable object which can be iterated through using the
 	 *         advanced for-loop
 	 */
@@ -371,7 +370,7 @@ public interface Vertex extends GraphElement {
 	 */
 	public void sortIncidences(Comparator<Edge> comp);
 
-	public DirectedM1EdgeClass getEdgeForRolename(String rolename);
+	public DirectedSchemaEdgeClass getEdgeForRolename(String rolename);
 
 	public List<? extends Vertex> adjacences(String role);
 

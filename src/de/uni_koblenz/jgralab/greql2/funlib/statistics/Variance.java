@@ -9,7 +9,7 @@ public class Variance extends Function {
 
 	public Variance() {
 		super(
-				"Computes the variance of a collection of numbers.\n"
+				"Returns the variance of the given collection of numbers.\n"
 						+ "If the size of the collection is less than 2, the variance is undefined.",
 				Category.STATISTICS);
 	}

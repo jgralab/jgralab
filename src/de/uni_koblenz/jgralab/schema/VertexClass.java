@@ -77,7 +77,7 @@ public interface VertexClass extends GraphElementClass {
 	public void addOutIncidenceClass(IncidenceClass ic);
 
 	@Override
-	public Class<? extends Vertex> getM1Class();
+	public Class<? extends Vertex> getSchemaClass();
 
 	public Set<EdgeClass> getValidToEdgeClasses();
 

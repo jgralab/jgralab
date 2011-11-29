@@ -6,9 +6,8 @@ import de.uni_koblenz.jgralab.greql2.funlib.Function;
 public abstract class IsIsolated extends Function {
 
 	public IsIsolated() {
-		super(
-				"Returns true iff the vertex $v$ has no incidences (possibly restricted to subgraph).",
-				10, 1, 1, Category.GRAPH);
+		super("Returns true, iff the given vertex has no incidences.", 10, 1,
+				1, Category.GRAPH);
 	}
 
 	public Boolean evaluate(Vertex v) {

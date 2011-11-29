@@ -8,7 +8,7 @@ import de.uni_koblenz.jgralab.greql2.funlib.Function;
 public class Sum extends Function {
 
 	public Sum() {
-		super("Computes the sum of a collection of numbers.",
+		super("Returns the sum of the given collection of numbers.",
 				Category.STATISTICS);
 	}
 

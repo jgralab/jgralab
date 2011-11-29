@@ -13,7 +13,7 @@ import de.uni_koblenz.jgralab.greql2.funlib.Function;
 public class Difference extends Function {
 
 	public Difference() {
-		super("Computes the difference of two sets (or maps) $a$ and $b$.",
+		super("Returns the set-difference of the given two sets or maps.",
 				Category.COLLECTIONS_AND_MAPS);
 	}
 

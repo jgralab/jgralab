@@ -76,15 +76,16 @@ public interface GraphFactory {
 			Vertex alpha, Vertex omega);
 
 	public void setGraphImplementationClass(
-			Class<? extends Graph> graphM1Class,
-			Class<? extends Graph> implementationClass);
+			Class<? extends Graph> graphSchemaClass,
+			Class<? extends Graph> graphImplementationClass);
 
 	public void setVertexImplementationClass(
-			Class<? extends Vertex> vertexM1Class,
-			Class<? extends Vertex> implementationClass);
+			Class<? extends Vertex> vertexSchemaClass,
+			Class<? extends Vertex> vertexImplementationClass);
 
-	public void setEdgeImplementationClass(Class<? extends Edge> edgeM1Class,
-			Class<? extends Edge> implementationClass);
+	public void setEdgeImplementationClass(
+			Class<? extends Edge> edgeSchemaClass,
+			Class<? extends Edge> edgeImplementationClass);
 
 	/**
 	 * Creates a graph with database support.
@@ -155,34 +156,34 @@ public interface GraphFactory {
 	 * Assigns an implementation class with database support for a
 	 * <code>Graph</code>.
 	 * 
-	 * @param graphM1Class
-	 * @param implementationClass
+	 * @param graphSchemaClass
+	 * @param graphImplementationClass
 	 */
 	public void setGraphDatabaseImplementationClass(
-			Class<? extends Graph> graphM1Class,
-			Class<? extends Graph> implementationClass);
+			Class<? extends Graph> graphSchemaClass,
+			Class<? extends Graph> graphImplementationClass);
 
 	/**
 	 * Assigns an implementation class with database support for a
 	 * <code>Vertex</code>.
 	 * 
-	 * @param vertexM1Class
-	 * @param implementationClass
+	 * @param vertexSchemaClass
+	 * @param vertexImplementationClass
 	 */
 	public void setVertexDatabaseImplementationClass(
-			Class<? extends Vertex> vertexM1Class,
-			Class<? extends Vertex> implementationClass);
+			Class<? extends Vertex> vertexSchemaClass,
+			Class<? extends Vertex> vertexImplementationClass);
 
 	/**
 	 * Assigns an implementation class with database support for an
 	 * <code>Edge</code>.
 	 * 
-	 * @param edgeM1Class
-	 * @param implementationClass
+	 * @param edgeSchemaClass
+	 * @param edgeImplementationClass
 	 */
 	public void setEdgeDatabaseImplementationClass(
-			Class<? extends Edge> edgeM1Class,
-			Class<? extends Edge> implementationClass);
+			Class<? extends Edge> edgeSchemaClass,
+			Class<? extends Edge> edgeImplementationClass);
 
 	// --- Methods for option TRANSIMPL
 	// ------------------------------------------------
@@ -224,33 +225,33 @@ public interface GraphFactory {
 	 * Assigns an implementation class with transaction support for a
 	 * <code>Graph</code>.
 	 * 
-	 * @param graphM1Class
-	 * @param implementationClass
+	 * @param graphSchemaClass
+	 * @param grapgImplementationClass
 	 */
 	public void setGraphTransactionImplementationClass(
-			Class<? extends Graph> graphM1Class,
-			Class<? extends Graph> implementationClass);
+			Class<? extends Graph> graphSchemaClass,
+			Class<? extends Graph> grapgImplementationClass);
 
 	/**
 	 * Assigns an implementation class with transaction support for a
 	 * <code>Vertex</code>.
 	 * 
-	 * @param vertexM1Class
-	 * @param implementationClass
+	 * @param vertexSchemaClass
+	 * @param vertexImplementationClass
 	 */
 	public void setVertexTransactionImplementationClass(
-			Class<? extends Vertex> vertexM1Class,
-			Class<? extends Vertex> implementationClass);
+			Class<? extends Vertex> vertexSchemaClass,
+			Class<? extends Vertex> vertexImplementationClass);
 
 	/**
 	 * Assigns an implementation class with transaction support for an
 	 * <code>Edge</code>.
 	 * 
-	 * @param edgeM1Class
-	 * @param implementationClass
+	 * @param edgeSchemaClass
+	 * @param edgeImplementationClass
 	 */
 	public void setEdgeTransactionImplementationClass(
-			Class<? extends Edge> edgeM1Class,
-			Class<? extends Edge> implementationClass);
+			Class<? extends Edge> edgeSchemaClass,
+			Class<? extends Edge> edgeImplementationClass);
 
 }

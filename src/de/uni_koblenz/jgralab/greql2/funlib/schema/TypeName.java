@@ -6,7 +6,7 @@ import de.uni_koblenz.jgralab.greql2.funlib.Function;
 public class TypeName extends Function {
 
 	public TypeName() {
-		super("Returns the qualified name of the type of the element $el$.",
+		super("Returns the qualified name of the given element's type.",
 				Category.SCHEMA_ACCESS);
 	}
 

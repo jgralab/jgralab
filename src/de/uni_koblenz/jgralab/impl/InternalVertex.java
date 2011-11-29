@@ -2,7 +2,7 @@ package de.uni_koblenz.jgralab.impl;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.schema.impl.DirectedM1EdgeClass;
+import de.uni_koblenz.jgralab.schema.impl.DirectedSchemaEdgeClass;
 
 public interface InternalVertex extends Vertex, InternalGraphElement {
 
@@ -38,7 +38,7 @@ public interface InternalVertex extends Vertex, InternalGraphElement {
 	 */
 	public boolean isValidOmega(Edge edge);
 
-	public DirectedM1EdgeClass getEdgeForRolename(String rolename);
+	public DirectedSchemaEdgeClass getEdgeForRolename(String rolename);
 
 	/**
 	 * @return the next vertex in vSeq

@@ -14,25 +14,26 @@ public class Get extends Function {
 
 	public Get() {
 		super(
-				"Returns the value associated with KEY in MAP, or the element of INDEX in COLLECTION.\n"
+				"Returns the value associated with the given kep in the given map, "
+						+ "or the element at the given index in the given collection.\n"
 						+ "Shorthand notation: myMap[KEY] or myCollection[INDEX]",
 				2, 1, 1.0, Category.COLLECTIONS_AND_MAPS);
 	}
 
 	public <T> T evaluate(PVector<T> l, Integer i) {
-		return i < 0 || i >= l.size() ? null : l.get(i);
+		return (i < 0) || (i >= l.size()) ? null : l.get(i);
 	}
 
 	public <T> T evaluate(POrderedSet<T> l, Integer i) {
-		return i < 0 || i >= l.size() ? null : l.get(i);
+		return (i < 0) || (i >= l.size()) ? null : l.get(i);
 	}
 
 	public <T> T evaluate(Table<T> l, Integer i) {
-		return i < 0 || i >= l.size() ? null : l.get(i);
+		return (i < 0) || (i >= l.size()) ? null : l.get(i);
 	}
 
 	public Object evaluate(Tuple t, Integer i) {
-		return i < 0 || i >= t.size() ? null : t.get(i);
+		return (i < 0) || (i >= t.size()) ? null : t.get(i);
 	}
 
 	public <K, V> V evaluate(PMap<K, V> m, K key) {

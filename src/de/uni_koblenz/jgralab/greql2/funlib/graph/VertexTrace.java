@@ -9,7 +9,8 @@ import de.uni_koblenz.jgralab.greql2.types.Path;
 public class VertexTrace extends Function {
 
 	public VertexTrace() {
-		super("Returns the vertex trace of a Path $p$.", Category.GRAPH);
+		super("Returns the vertex trace of the given path.",
+				Category.PATHS_AND_PATHSYSTEMS_AND_SLICES);
 	}
 
 	public PVector<Vertex> evaluate(Path p) {

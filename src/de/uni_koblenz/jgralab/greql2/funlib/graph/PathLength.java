@@ -6,7 +6,7 @@ import de.uni_koblenz.jgralab.greql2.types.Path;
 public class PathLength extends Function {
 
 	public PathLength() {
-		super("Returns the length of the Path $p$.", Category.GRAPH);
+		super("Returns the length of the given Path.", Category.GRAPH);
 	}
 
 	public Integer evaluate(Path p) {

@@ -199,7 +199,7 @@ public abstract class VertexImpl extends VertexBaseImpl implements
 
 	/**
 	 * Notifies vertex that one of his attributes has changed. Called from
-	 * generated M1 vertex classes when an attribute is changed.
+	 * generated vertex implementation classes when an attribute is changed.
 	 * 
 	 * @param attributeName
 	 *            Name of attribute that has been changed.

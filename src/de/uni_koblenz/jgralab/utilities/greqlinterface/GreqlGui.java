@@ -38,6 +38,7 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -75,6 +76,7 @@ import javax.swing.text.Document;
 import javax.swing.undo.CannotRedoException;
 import javax.swing.undo.CannotUndoException;
 import javax.swing.undo.UndoManager;
+import javax.xml.stream.XMLStreamException;
 
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphIO;
@@ -88,6 +90,7 @@ import de.uni_koblenz.jgralab.greql2.exception.QuerySourceException;
 import de.uni_koblenz.jgralab.greql2.exception.SerialisingException;
 import de.uni_koblenz.jgralab.greql2.schema.SourcePosition;
 import de.uni_koblenz.jgralab.greql2.serialising.HTMLOutputWriter;
+import de.uni_koblenz.jgralab.greql2.serialising.XMLOutputWriter;
 
 @WorkInProgress(description = "insufficcient result presentation, simplistic hacked GUI, no load/save functionality, ...", responsibleDevelopers = "horn")
 public class GreqlGui extends JFrame {
@@ -103,6 +106,8 @@ public class GreqlGui extends JFrame {
 	final private JButton fileSelectionButton;
 	final private JButton evalQueryButton;
 	final private JButton stopButton;
+	final private JButton fromJavaButton;
+	final private JButton toJavaButton;
 	final private JProgressBar progressBar;
 	final private BoundedRangeModel brm;
 	final private JLabel statusLabel;
@@ -319,6 +324,10 @@ public class GreqlGui extends JFrame {
 						public void run() {
 							Object result = eval.getResult();
 							try {
+								File xmlResultFile = new File(
+										"greqlQueryResult.xml");
+								XMLOutputWriter xw = new XMLOutputWriter(graph);
+								xw.writeValue(result, xmlResultFile);
 								File resultFile = new File(
 										"greqlQueryResult.html");
 								// File resultFile = File.createTempFile(
@@ -342,6 +351,9 @@ public class GreqlGui extends JFrame {
 								JOptionPane.showMessageDialog(GreqlGui.this,
 										"Exception during HTML output of result: "
 												+ e.toString());
+							} catch (XMLStreamException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
 							}
 						}
 					});
@@ -535,12 +547,80 @@ public class GreqlGui extends JFrame {
 		});
 		stopButton.setEnabled(false);
 
+		fromJavaButton = new JButton("Remove Java Quotes");
+		fromJavaButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				String text = queryArea.getText();
+				String[] lines = text.split("\n");
+				StringBuilder sb = new StringBuilder();
+				for (String line : lines) {
+					String[] strings = line.split("\" \\+");
+					for (String s : strings) {
+						int p = s.indexOf('\"');
+						if (p >= 0) {
+							s = s.substring(p + 1);
+						}
+						if (!(strings.length > 1 && strings[1].length() > 0)) {
+							p = s.lastIndexOf('\"');
+							if (p >= 0) {
+								s = s.substring(0, p);
+							}
+						}
+						s = s.replace("\\\"", "\"");
+						s = s.replace("\\\\", "\\");
+						sb.append(s).append("\n");
+					}
+				}
+				text = sb.toString();
+				queryArea.setText(text);
+				queryArea.requestFocus();
+			}
+		});
+
+		toJavaButton = new JButton("Insert Java Quotes");
+		toJavaButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				String text = queryArea.getText();
+				String[] lines = text.split("\n");
+				StringBuilder sb = new StringBuilder();
+				boolean firstLine = true;
+				boolean spaceRequired = false;
+				for (String line : lines) {
+					line = line.replace("\t", " ");
+					line = line.replace("\\", "\\\\");
+					line = line.replace("\"", "\\\"");
+					if (firstLine) {
+						sb.append("\"").append(line).append("\"");
+						firstLine = false;
+					} else {
+						boolean startsWithWs = line.length() > 0
+								&& Character.isWhitespace(line.charAt(0));
+						sb.append(" +\n\"")
+								.append(spaceRequired && !startsWithWs ? " "
+										: "").append(line).append("\"");
+					}
+					spaceRequired = line.length() > 0
+							&& !Character.isWhitespace(line.charAt(line
+									.length() - 1));
+				}
+				text = sb.toString();
+				queryArea.setText(text);
+				queryArea.select(0, text.length());
+				queryArea.copy();
+				queryArea.requestFocus();
+			}
+		});
+
 		JPanel buttonPanel = new JPanel();
 		buttonPanel.add(fileSelectionButton);
 		buttonPanel.add(evalQueryButton);
 		buttonPanel.add(optimizeCheckBox);
 		buttonPanel.add(debugOptimizationCheckBox);
 		buttonPanel.add(stopButton);
+		buttonPanel.add(fromJavaButton);
+		buttonPanel.add(toJavaButton);
 		queryPanel.add(buttonPanel, BorderLayout.SOUTH);
 
 		statusLabel = new JLabel("Welcome", SwingConstants.LEFT);

@@ -144,10 +144,7 @@ public class Tg2GXL extends Tg2Whatever {
 	}
 
 	/**
-	 * starts the graph. The M1 graph refers to its corresponding M2-graph
-	 * graphclass object. The M2 graph refers to the GXL-Metaschema. The name of
-	 * the M2-graph id does not matter anything, the name schemaName+"Graph" was
-	 * chosen for comprehensibility only.
+	 * starts the graph.
 	 * 
 	 * @param out
 	 *            the output stream
@@ -177,15 +174,7 @@ public class Tg2GXL extends Tg2Whatever {
 	}
 
 	/**
-	 * prints a vertex. All M1 vertices are identified by there Id and refer to
-	 * the <code>AttributedElementClassM2</code> object, identified by its
-	 * (unique) name. That is why M2 vertices are divided in two groups: 1.
-	 * <code>v instanceof AttributedElementClassM2</code> 2.
-	 * <code>!(v instanceof AttributedElementClassM2)</code> For 1. the vertex
-	 * name identifies id and for 2. the vertex Id identifies it. Anyway, the
-	 * <code>SchemaM2</code> vertex is ignored, as it has no correspondence in
-	 * the GXL-Metaschema.
-	 * 
+	 * prints a vertex.
 	 * 
 	 * @param out
 	 *            the output stream
@@ -240,10 +229,7 @@ public class Tg2GXL extends Tg2Whatever {
 	}
 
 	/**
-	 * prints an edge object. For the M1 graph, the incidence numbers of the
-	 * edge get printed, too. For the M2 graph, the (in GXL) undefined edges
-	 * <code>ContainsGraphClassM2</code> and
-	 * <code>HasRecordDomainComponentM2</code> are ignored anyway.
+	 * prints an edge object.
 	 * 
 	 * @param out
 	 *            the output stream
@@ -462,10 +448,7 @@ public class Tg2GXL extends Tg2Whatever {
 	}
 
 	/**
-	 * overrides the <code>printGraph()</code> method in Tg2Whatever. The
-	 * <code>boolean printSchema</code> variable is used in every method,
-	 * invoked by <code>super.printGraph()</code> to decide, if either the M1 or
-	 * the M2 graph is printed.
+	 * overrides the <code>printGraph()</code> method in Tg2Whatever.
 	 */
 	@Override
 	public void convert() throws IOException {

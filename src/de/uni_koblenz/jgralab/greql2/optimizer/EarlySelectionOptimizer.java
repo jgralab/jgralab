@@ -369,8 +369,8 @@ public class EarlySelectionOptimizer extends OptimizerBase {
 		Variable var = varsDeclaredByOrigSD.iterator().next();
 
 		logger.finer(optimizerHeaderString()
-				+ "(M1) Performing early selection transformation for "
-				+ origSD + " declaring variable " + var + " (" + var.get_name()
+				+ "Performing early selection transformation for " + origSD
+				+ " declaring variable " + var + " (" + var.get_name()
 				+ ") with predicates " + predicates);
 
 		// Create the new vertices
@@ -665,8 +665,8 @@ public class EarlySelectionOptimizer extends OptimizerBase {
 			return true;
 		}
 
-		if (omega.getAttributedElementClass().getM1Class() == target
-				.getAttributedElementClass().getM1Class()) {
+		if (omega.getAttributedElementClass().getSchemaClass() == target
+				.getAttributedElementClass().getSchemaClass()) {
 			return false;
 		}
 
@@ -760,7 +760,7 @@ public class EarlySelectionOptimizer extends OptimizerBase {
 		}
 
 		Class<? extends Vertex> vertexClass = (Class<? extends Vertex>) origVertex
-				.getAttributedElementClass().getM1Class();
+				.getAttributedElementClass().getSchemaClass();
 		Vertex topVertex = graph.createVertex(vertexClass);
 		copyAttributes(origVertex, topVertex);
 
@@ -777,7 +777,7 @@ public class EarlySelectionOptimizer extends OptimizerBase {
 			subVertex = copySubgraph(origEdge.getAlpha(), graph,
 					variablesToBeCopied, copiedVarMap);
 			Class<? extends Edge> edgeClass = (Class<? extends Edge>) origEdge
-					.getAttributedElementClass().getM1Class();
+					.getAttributedElementClass().getSchemaClass();
 			graph.createEdge(edgeClass, subVertex, topVertex);
 			origEdge = origEdge.getNextIncidence(EdgeDirection.IN);
 		}

@@ -5,7 +5,7 @@ import de.uni_koblenz.jgralab.greql2.funlib.Function;
 public class GrEqual extends Function {
 
 	public GrEqual() {
-		super("Determines if $a \\geq $b$. Alternative: a >= b", 2, 1, 0.05,
+		super("Determines if $a \\geq b$. Alternative: a >= b", 2, 1, 0.05,
 				Category.RELATIONS);
 	}
 

@@ -720,21 +720,21 @@ public class GXL2Tg {
 		assert (f != null) || (t != null);
 		// create missing class
 		if (f == null) {
-			if (t.getM1Class() == VertexClass.class) {
+			if (t.getSchemaClass() == VertexClass.class) {
 				f = createVertexClass();
 			} else {
 				f = createEdgeClass();
 			}
 			id2Class.put(from, f);
 		} else if (t == null) {
-			if (f.getM1Class() == VertexClass.class) {
+			if (f.getSchemaClass() == VertexClass.class) {
 				t = createVertexClass();
 			} else {
 				t = createEdgeClass();
 			}
 			id2Class.put(to, t);
 		}
-		if (f.getM1Class() == VertexClass.class) {
+		if (f.getSchemaClass() == VertexClass.class) {
 			schemaGraph.createSpecializesVertexClass((VertexClass) f,
 					(VertexClass) t);
 		} else {

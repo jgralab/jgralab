@@ -852,6 +852,9 @@ public class PathSystem {
 	 */
 	public void printAscii() {
 		assertFinished();
+		if (FunLib.getLogger() == null) {
+			return;
+		}
 		PSet<Path> pathSet = extractPaths();
 		for (Path path : pathSet) {
 			FunLib.getLogger().info(path.toString());
@@ -877,6 +880,9 @@ public class PathSystem {
 	 */
 	public void printEntryMap() {
 		assertFinished();
+		if (FunLib.getLogger() == null) {
+			return;
+		}
 		FunLib.getLogger().info("<Key, Entry> Set of PathSystem is:");
 		for (Map.Entry<PathSystemKey, PathSystemEntry> entry : keyToEntryMap
 				.entrySet()) {
@@ -892,7 +898,9 @@ public class PathSystem {
 	 */
 	public void printKeyMap() {
 		assertFinished();
-
+		if (FunLib.getLogger() == null) {
+			return;
+		}
 		FunLib.getLogger().info("<Vertex, FirstKey> Set of PathSystem is:");
 		for (Map.Entry<Vertex, PathSystemKey> entry : vertexToFirstKeyMap
 				.entrySet()) {

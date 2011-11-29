@@ -46,7 +46,6 @@ import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.exception.OptimizerException;
 import de.uni_koblenz.jgralab.greql2.schema.Declaration;
-import de.uni_koblenz.jgralab.greql2.schema.Expression;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Expression;
 import de.uni_koblenz.jgralab.greql2.schema.IsBoundVarOf;
@@ -58,9 +57,9 @@ import de.uni_koblenz.jgralab.greql2.schema.Variable;
 /**
  * Base class for all {@link Optimizer}s which defines some useful methods that
  * are needed in derived Classes.
- *
+ * 
  * @author ist@uni-koblenz.de
- *
+ * 
  */
 public abstract class OptimizerBase implements Optimizer {
 
@@ -77,7 +76,7 @@ public abstract class OptimizerBase implements Optimizer {
 	 * vertex <code>to</code>. If there's already an edge of exactly that type
 	 * between <code>from</code>'s that-vertex and <code>to</code>, then don't
 	 * create a duplicate edge, unless <code>allowDuplicateEdges</code> is true.
-	 *
+	 * 
 	 * @param from
 	 *            the old vertex
 	 * @param to
@@ -87,7 +86,7 @@ public abstract class OptimizerBase implements Optimizer {
 	protected void relink(Vertex from, Vertex to) {
 		assert (from != null) && (to != null) : "Relinking null!";
 		assert from != to : "Relinking from itself!";
-		assert from.getM1Class() == to.getM1Class() : "Relinking different classes! from is "
+		assert from.getSchemaClass() == to.getSchemaClass() : "Relinking different classes! from is "
 				+ from + ", to is " + to;
 		assert from.isValid() && to.isValid() : "Relinking invalid vertices!";
 
@@ -115,9 +114,9 @@ public abstract class OptimizerBase implements Optimizer {
 	 * declared in the same {@link SimpleDeclaration} but is connected to that
 	 * earlier (meaning its {@link IsDeclaredVarOf} edge comes before the
 	 * other's).
-	 *
+	 * 
 	 * Note that a {@link Variable} is never declared before itself.
-	 *
+	 * 
 	 * @param var1
 	 *            a {@link Variable}
 	 * @param var2
@@ -139,7 +138,7 @@ public abstract class OptimizerBase implements Optimizer {
 				// Externally bound vars are always before locally declared vars
 				return true;
 			}
-			Greql2Expression root = (Greql2Expression) ibvo1.getOmega();
+			Greql2Expression root = ibvo1.getOmega();
 			for (IsBoundVarOf ibvo : root.getIsBoundVarOfIncidences()) {
 				ibvo = (IsBoundVarOf) ibvo.getNormalEdge();
 				if (ibvo == ibvo1) {
@@ -154,13 +153,13 @@ public abstract class OptimizerBase implements Optimizer {
 			return false;
 		}
 
-		SimpleDeclaration sd1 = (SimpleDeclaration) var1
-				.getFirstIsDeclaredVarOfIncidence(EdgeDirection.OUT).getOmega();
-		Declaration decl1 = (Declaration) sd1.getFirstIsSimpleDeclOfIncidence(
+		SimpleDeclaration sd1 = var1.getFirstIsDeclaredVarOfIncidence(
 				EdgeDirection.OUT).getOmega();
-		SimpleDeclaration sd2 = (SimpleDeclaration) var2
-				.getFirstIsDeclaredVarOfIncidence(EdgeDirection.OUT).getOmega();
-		Declaration decl2 = (Declaration) sd2.getFirstIsSimpleDeclOfIncidence(
+		Declaration decl1 = sd1.getFirstIsSimpleDeclOfIncidence(
+				EdgeDirection.OUT).getOmega();
+		SimpleDeclaration sd2 = var2.getFirstIsDeclaredVarOfIncidence(
+				EdgeDirection.OUT).getOmega();
+		Declaration decl2 = sd2.getFirstIsSimpleDeclOfIncidence(
 				EdgeDirection.OUT).getOmega();
 
 		if (decl1 == decl2) {
@@ -214,7 +213,7 @@ public abstract class OptimizerBase implements Optimizer {
 
 	/**
 	 * Find the nearest {@link Declaration} above <code>vertex</code>.
-	 *
+	 * 
 	 * @param vertex
 	 *            a {@link Vertex}
 	 * @return nearest {@link Declaration} above <code>vertex</code>
@@ -239,7 +238,7 @@ public abstract class OptimizerBase implements Optimizer {
 	 * Split the given {@link SimpleDeclaration} so that there's one
 	 * {@link SimpleDeclaration} that declares the {@link Variable}s in
 	 * <code>varsToBeSplit</code> and one for the rest.
-	 *
+	 * 
 	 * @param sd
 	 *            the {@link SimpleDeclaration} to be split
 	 * @param varsToBeSplit
@@ -258,13 +257,13 @@ public abstract class OptimizerBase implements Optimizer {
 			// there's nothing to split out anymore
 			return sd;
 		}
-		Declaration parentDecl = (Declaration) sd
-				.getFirstIsSimpleDeclOfIncidence(EdgeDirection.OUT).getOmega();
+		Declaration parentDecl = sd.getFirstIsSimpleDeclOfIncidence(
+				EdgeDirection.OUT).getOmega();
 		IsSimpleDeclOf oldEdge = sd.getFirstIsSimpleDeclOfIncidence();
 		SimpleDeclaration newSD = syntaxgraph.createSimpleDeclaration();
 		IsSimpleDeclOf newEdge = syntaxgraph.createIsSimpleDeclOf(newSD,
 				parentDecl);
-		syntaxgraph.createIsTypeExprOfDeclaration((Expression) sd
+		syntaxgraph.createIsTypeExprOfDeclaration(sd
 				.getFirstIsTypeExprOfDeclarationIncidence(EdgeDirection.IN)
 				.getAlpha(), newSD);
 		newEdge.getReversedEdge().putIncidenceAfter(oldEdge.getReversedEdge());

@@ -447,7 +447,7 @@ public class Xml2tg {
 		// create edge
 		try {
 			Edge currentEdge = graph.createEdge(((EdgeClass) current
-					.getAttributedElementClass()).getM1Class(), fromVertex,
+					.getAttributedElementClass()).getSchemaClass(), fromVertex,
 					toVertex);
 			// mark new edge with incidence position information
 			IncidencePositionMark incidences = new IncidencePositionMark();
@@ -480,7 +480,7 @@ public class Xml2tg {
 		// System.out.println("Creating vertex of type " + current.getqName());
 		Map<String, String> attributes = current.getAttributes();
 		Vertex currentVertex = graph.createVertex(((VertexClass) current
-				.getAttributedElementClass()).getM1Class());
+				.getAttributedElementClass()).getSchemaClass());
 		String currentId = attributes.get(GRUML_ATTRIBUTE_ID);
 
 		// add currentVertex to Map

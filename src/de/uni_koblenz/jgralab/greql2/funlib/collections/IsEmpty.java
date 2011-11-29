@@ -9,7 +9,7 @@ import de.uni_koblenz.jgralab.greql2.funlib.Function;
 public class IsEmpty extends Function {
 
 	public IsEmpty() {
-		super("Returns true iff the collection $c$ is empty.", 2, 1, 0.01,
+		super("Returns true, iff the given collection is empty.", 2, 1, 0.01,
 				Category.STATISTICS);
 	}
 

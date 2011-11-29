@@ -47,11 +47,11 @@ public class ChangeEdgeEvent extends Event {
 	public ChangeEdgeEvent(int nestedCalls, EventDescription.EventTime time,
 			Graph graph, Edge edge, Vertex oldVertex, Vertex newVertex,
 			EdgeEnd end) {
-		super(nestedCalls, time, graph, edge.getM1Class());
+		super(nestedCalls, time, graph, edge.getSchemaClass());
 		this.edge = edge;
 		this.oldVertex = oldVertex;
 		this.newVertex = newVertex;
-		this.edgeEnd = end;
+		edgeEnd = end;
 	}
 
 	// ------------------------------------------------------------------------
@@ -82,7 +82,7 @@ public class ChangeEdgeEvent extends Event {
 	 */
 	@Override
 	public AttributedElement getElement() {
-		return this.edge;
+		return edge;
 	}
 
 	/**

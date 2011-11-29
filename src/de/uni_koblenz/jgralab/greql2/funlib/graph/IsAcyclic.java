@@ -13,7 +13,7 @@ import de.uni_koblenz.jgralab.greql2.funlib.NeedsGraphArgument;
 @NeedsGraphArgument
 public class IsAcyclic extends Function {
 	public IsAcyclic() {
-		super("Returns true iff the graph $g$ is acyclic.", 100, 1, 0.1,
+		super("Returns true, iff the graph is acyclic.", 100, 1, 0.1,
 				Category.GRAPH);
 	}
 

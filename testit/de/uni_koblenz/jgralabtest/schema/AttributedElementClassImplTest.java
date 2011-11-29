@@ -89,15 +89,15 @@ public abstract class AttributedElementClassImplTest {
 	 */
 	@Test
 	public final void testAddAttribute() {
-		Attribute attribute = new AttributeImpl("testAttribute", schema
-				.getBooleanDomain(), attributedElement, "null");
+		Attribute attribute = new AttributeImpl("testAttribute",
+				schema.getBooleanDomain(), attributedElement, "null");
 
 		int attributeCountBefore = attributedElement.getAttributeCount();
 
 		attributedElement.addAttribute(attribute);
 
-		Assert.assertEquals(attributeCountBefore + 1, attributedElement
-				.getAttributeCount());
+		Assert.assertEquals(attributeCountBefore + 1,
+				attributedElement.getAttributeCount());
 		Assert.assertTrue(attributedElement.containsAttribute(attribute
 				.getName()));
 	}
@@ -111,18 +111,18 @@ public abstract class AttributedElementClassImplTest {
 	 */
 	@Test
 	public final void testAddAttribute2() {
-		Attribute attribute = new AttributeImpl("testAttribute", schema
-				.getBooleanDomain(), attributedElement, "null");
-		Attribute attribute2 = new AttributeImpl("testAttribute2", schema
-				.getBooleanDomain(), attributedElement, "null");
+		Attribute attribute = new AttributeImpl("testAttribute",
+				schema.getBooleanDomain(), attributedElement, "null");
+		Attribute attribute2 = new AttributeImpl("testAttribute2",
+				schema.getBooleanDomain(), attributedElement, "null");
 
 		int attributeCountBefore = attributedElement.getAttributeCount();
 
 		attributedElement.addAttribute(attribute);
 		attributedElement.addAttribute(attribute2);
 
-		Assert.assertEquals(attributeCountBefore + 2, attributedElement
-				.getAttributeCount());
+		Assert.assertEquals(attributeCountBefore + 2,
+				attributedElement.getAttributeCount());
 		Assert.assertTrue(attributedElement.containsAttribute(attribute
 				.getName()));
 		Assert.assertTrue(attributedElement.containsAttribute(attribute2
@@ -137,8 +137,8 @@ public abstract class AttributedElementClassImplTest {
 	 */
 	@Test
 	public final void testAddAttribute3() {
-		Attribute attribute = new AttributeImpl("testAttribute", schema
-				.getBooleanDomain(), attributedElement, "null");
+		Attribute attribute = new AttributeImpl("testAttribute",
+				schema.getBooleanDomain(), attributedElement, "null");
 		int attributeCountBefore;
 
 		attributedElement.addAttribute(attribute);
@@ -151,8 +151,8 @@ public abstract class AttributedElementClassImplTest {
 		}
 
 		// The number of attributes does not change
-		Assert.assertEquals(attributeCountBefore, attributedElement
-				.getAttributeCount());
+		Assert.assertEquals(attributeCountBefore,
+				attributedElement.getAttributeCount());
 	}
 
 	/**
@@ -164,8 +164,8 @@ public abstract class AttributedElementClassImplTest {
 	 * NOTE: This method is called upon in all of this classes´ subclasses.
 	 */
 	public final void testAddAttribute4(AttributedElementClass superclass) {
-		Attribute attribute = new AttributeImpl("testAttribute", schema
-				.getBooleanDomain(), attributedElement, "null");
+		Attribute attribute = new AttributeImpl("testAttribute",
+				schema.getBooleanDomain(), attributedElement, "null");
 
 		int attributeCountBefore;
 
@@ -180,8 +180,8 @@ public abstract class AttributedElementClassImplTest {
 		}
 
 		// The number of attributes does not change
-		Assert.assertEquals(attributeCountBefore, attributedElement
-				.getAttributeCount());
+		Assert.assertEquals(attributeCountBefore,
+				attributedElement.getAttributeCount());
 	}
 
 	/**
@@ -193,8 +193,8 @@ public abstract class AttributedElementClassImplTest {
 	 * NOTE: This method is called upon in all of this classes´ subclasses.
 	 */
 	public final void testAddAttribute5(AttributedElementClass subclass) {
-		Attribute attribute = new AttributeImpl("testAttribute", schema
-				.getBooleanDomain(), attributedElement, "null");
+		Attribute attribute = new AttributeImpl("testAttribute",
+				schema.getBooleanDomain(), attributedElement, "null");
 
 		int attributeCountBefore;
 
@@ -209,8 +209,8 @@ public abstract class AttributedElementClassImplTest {
 		}
 
 		// The number of attributes does not change
-		Assert.assertEquals(attributeCountBefore, attributedElement
-				.getAttributeCount());
+		Assert.assertEquals(attributeCountBefore,
+				attributedElement.getAttributeCount());
 	}
 
 	/**
@@ -224,15 +224,15 @@ public abstract class AttributedElementClassImplTest {
 		int attributeCountBefore = attributedElement.getAttributeCount();
 
 		try {
-			attributedElement.addAttribute(invalidAttributeName, schema
-					.getBooleanDomain(), "null");
+			attributedElement.addAttribute(invalidAttributeName,
+					schema.getBooleanDomain(), "null");
 			Assert.fail("ReservedWordException expected!");
 		} catch (ReservedWordException e) {
 		}
 
 		// The number of attributes does not change
-		Assert.assertEquals(attributeCountBefore, attributedElement
-				.getAttributeCount());
+		Assert.assertEquals(attributeCountBefore,
+				attributedElement.getAttributeCount());
 		Assert.assertFalse(attributedElement
 				.containsAttribute(invalidAttributeName));
 	}
@@ -414,8 +414,8 @@ public abstract class AttributedElementClassImplTest {
 	 */
 	@Test
 	public final void testContainsAttribute2() {
-		Attribute attribute = new AttributeImpl("testAttribute", schema
-				.getBooleanDomain(), attributedElement, "null");
+		Attribute attribute = new AttributeImpl("testAttribute",
+				schema.getBooleanDomain(), attributedElement, "null");
 
 		attributedElement.addAttribute(attribute);
 
@@ -432,8 +432,8 @@ public abstract class AttributedElementClassImplTest {
 	 * NOTE: This method is called upon in all of this classes´ subclasses.
 	 */
 	public final void testContainsAttribute3(AttributedElementClass superClass) {
-		Attribute attribute = new AttributeImpl("testAttribute", schema
-				.getBooleanDomain(), attributedElement, "null");
+		Attribute attribute = new AttributeImpl("testAttribute",
+				schema.getBooleanDomain(), attributedElement, "null");
 
 		superClass.addAttribute(attribute);
 
@@ -537,8 +537,8 @@ public abstract class AttributedElementClassImplTest {
 	 */
 	@Test
 	public final void testGetAttribute() {
-		Attribute attribute = new AttributeImpl("testAttribute", schema
-				.getBooleanDomain(), attributedElement, "null");
+		Attribute attribute = new AttributeImpl("testAttribute",
+				schema.getBooleanDomain(), attributedElement, "null");
 
 		attributedElement.addAttribute(attribute);
 
@@ -555,8 +555,8 @@ public abstract class AttributedElementClassImplTest {
 	 * NOTE: This method is called upon in all of this classes´ subclasses.
 	 */
 	public final void testGetAttribute2(AttributedElementClass superClass) {
-		Attribute attribute = new AttributeImpl("testAttribute", schema
-				.getBooleanDomain(), attributedElement, "null");
+		Attribute attribute = new AttributeImpl("testAttribute",
+				schema.getBooleanDomain(), attributedElement, "null");
 
 		// Adding the attribute to the superclass
 		superClass.addAttribute(attribute);
@@ -596,8 +596,8 @@ public abstract class AttributedElementClassImplTest {
 	 * NOTE: This method is called upon in all of this classes´ subclasses.
 	 */
 	public final void testGetAttribute5(AttributedElementClass subClass) {
-		Attribute attribute = new AttributeImpl("testAttribute", schema
-				.getBooleanDomain(), attributedElement, "null");
+		Attribute attribute = new AttributeImpl("testAttribute",
+				schema.getBooleanDomain(), attributedElement, "null");
 
 		subClass.addAttribute(attribute);
 
@@ -691,8 +691,8 @@ public abstract class AttributedElementClassImplTest {
 	 */
 	@Test
 	public final void testGetAttributeList() {
-		Attribute attribute = new AttributeImpl("testAttribute", schema
-				.getBooleanDomain(), attributedElement, "null");
+		Attribute attribute = new AttributeImpl("testAttribute",
+				schema.getBooleanDomain(), attributedElement, "null");
 
 		attributedElement.addAttribute(attribute);
 
@@ -712,8 +712,8 @@ public abstract class AttributedElementClassImplTest {
 	 * NOTE: This method is called upon in all of this classes´ subclasses.
 	 */
 	public final void testGetAttributeList2(AttributedElementClass superClass) {
-		Attribute attribute = new AttributeImpl("testAttribute", schema
-				.getBooleanDomain(), attributedElement, "null");
+		Attribute attribute = new AttributeImpl("testAttribute",
+				schema.getBooleanDomain(), attributedElement, "null");
 
 		superClass.addAttribute(attribute);
 
@@ -733,10 +733,10 @@ public abstract class AttributedElementClassImplTest {
 	 * NOTE: This method is called upon in all of this classes´ subclasses.
 	 */
 	public final void testGetAttributeList3(AttributedElementClass superClass) {
-		Attribute attribute = new AttributeImpl("testAttribute", schema
-				.getBooleanDomain(), attributedElement, "null");
-		Attribute attribute2 = new AttributeImpl("testAttribute2", schema
-				.getBooleanDomain(), attributedElement, "null");
+		Attribute attribute = new AttributeImpl("testAttribute",
+				schema.getBooleanDomain(), attributedElement, "null");
+		Attribute attribute2 = new AttributeImpl("testAttribute2",
+				schema.getBooleanDomain(), attributedElement, "null");
 
 		attributedElement.addAttribute(attribute);
 		superClass.addAttribute(attribute2);
@@ -931,12 +931,12 @@ public abstract class AttributedElementClassImplTest {
 	}
 
 	@Test
-	public void testGetM1Class() {
+	public void testGetSchemaClass() {
 		// TODO Auto-generated method stub
 	}
 
 	@Test
-	public void testGetM1ImplementationClass() {
+	public void testGetSchemaImplementationClass() {
 		// TODO Auto-generated method stub
 	}
 
@@ -956,8 +956,8 @@ public abstract class AttributedElementClassImplTest {
 	 */
 	@Test
 	public final void testGetOwnAttribute() {
-		Attribute attribute = new AttributeImpl("testAttribute", schema
-				.getBooleanDomain(), attributedElement, "null");
+		Attribute attribute = new AttributeImpl("testAttribute",
+				schema.getBooleanDomain(), attributedElement, "null");
 
 		attributedElement.addAttribute(attribute);
 
@@ -999,13 +999,12 @@ public abstract class AttributedElementClassImplTest {
 	 * NOTE: This method is called upon in all of this classes´ subclasses.
 	 */
 	public final void testGetOwnAttribute4(AttributedElementClass otherClass) {
-		Attribute attribute = new AttributeImpl("testAttribute", schema
-				.getBooleanDomain(), attributedElement, "null");
+		Attribute attribute = new AttributeImpl("testAttribute",
+				schema.getBooleanDomain(), attributedElement, "null");
 
 		otherClass.addAttribute(attribute);
 
-		Assert.assertNull(attributedElement
-				.getOwnAttribute(attribute.getName()));
+		Assert.assertNull(attributedElement.getOwnAttribute(attribute.getName()));
 	}
 
 	/*
@@ -1019,8 +1018,8 @@ public abstract class AttributedElementClassImplTest {
 	 */
 	@Test
 	public final void testGetOwnAttributeCount() {
-		Attribute attribute = new AttributeImpl("testAttribute", schema
-				.getBooleanDomain(), attributedElement, "null");
+		Attribute attribute = new AttributeImpl("testAttribute",
+				schema.getBooleanDomain(), attributedElement, "null");
 
 		attributedElement.addAttribute(attribute);
 
@@ -1035,10 +1034,10 @@ public abstract class AttributedElementClassImplTest {
 	 */
 	@Test
 	public final void testGetOwnAttributeCount2() {
-		Attribute attribute = new AttributeImpl("testAttribute", schema
-				.getBooleanDomain(), attributedElement, "null");
-		Attribute attribute2 = new AttributeImpl("testAttribute2", schema
-				.getBooleanDomain(), attributedElement, "null");
+		Attribute attribute = new AttributeImpl("testAttribute",
+				schema.getBooleanDomain(), attributedElement, "null");
+		Attribute attribute2 = new AttributeImpl("testAttribute2",
+				schema.getBooleanDomain(), attributedElement, "null");
 
 		attributedElement.addAttribute(attribute);
 		attributedElement.addAttribute(attribute2);
@@ -1067,8 +1066,8 @@ public abstract class AttributedElementClassImplTest {
 	 */
 	public final void testGetOwnAttributeCount4(
 			AttributedElementClass superClass) {
-		Attribute attribute = new AttributeImpl("testAttribute", schema
-				.getBooleanDomain(), attributedElement, "null");
+		Attribute attribute = new AttributeImpl("testAttribute",
+				schema.getBooleanDomain(), attributedElement, "null");
 		superClass.addAttribute(attribute);
 
 		Assert.assertEquals(0, attributedElement.getOwnAttributeCount());
@@ -1085,8 +1084,8 @@ public abstract class AttributedElementClassImplTest {
 	 */
 	@Test
 	public final void testGetOwnAttributeList() {
-		Attribute attribute = new AttributeImpl("testAttribute", schema
-				.getBooleanDomain(), attributedElement, "null");
+		Attribute attribute = new AttributeImpl("testAttribute",
+				schema.getBooleanDomain(), attributedElement, "null");
 
 		attributedElement.addAttribute(attribute);
 
@@ -1105,10 +1104,10 @@ public abstract class AttributedElementClassImplTest {
 	 */
 	@Test
 	public final void testGetOwnAttributeList2() {
-		Attribute attribute = new AttributeImpl("testAttribute", schema
-				.getBooleanDomain(), attributedElement, "null");
-		Attribute attribute2 = new AttributeImpl("testAttribute2", schema
-				.getBooleanDomain(), attributedElement, "null");
+		Attribute attribute = new AttributeImpl("testAttribute",
+				schema.getBooleanDomain(), attributedElement, "null");
+		Attribute attribute2 = new AttributeImpl("testAttribute2",
+				schema.getBooleanDomain(), attributedElement, "null");
 
 		attributedElement.addAttribute(attribute);
 		attributedElement.addAttribute(attribute2);
@@ -1141,8 +1140,8 @@ public abstract class AttributedElementClassImplTest {
 	 * NOTE: This method is called upon in all of this classes´ subclasses.
 	 */
 	public final void testGetOwnAttributeList4(AttributedElementClass superClass) {
-		Attribute attribute = new AttributeImpl("testAttribute", schema
-				.getBooleanDomain(), attributedElement, "null");
+		Attribute attribute = new AttributeImpl("testAttribute",
+				schema.getBooleanDomain(), attributedElement, "null");
 		superClass.addAttribute(attribute);
 
 		Assert.assertTrue(attributedElement.getOwnAttributeList().isEmpty());
@@ -1193,8 +1192,8 @@ public abstract class AttributedElementClassImplTest {
 	 */
 	@Test
 	public final void testHasAttributes() {
-		Attribute attribute = new AttributeImpl("testAttribute", schema
-				.getBooleanDomain(), attributedElement, "null");
+		Attribute attribute = new AttributeImpl("testAttribute",
+				schema.getBooleanDomain(), attributedElement, "null");
 		attributedElement.addAttribute(attribute);
 
 		Assert.assertTrue(attributedElement.hasAttributes());
@@ -1207,10 +1206,10 @@ public abstract class AttributedElementClassImplTest {
 	 */
 	@Test
 	public final void testHasAttributes2() {
-		Attribute attribute = new AttributeImpl("testAttribute", schema
-				.getBooleanDomain(), attributedElement, "null");
-		Attribute attribute2 = new AttributeImpl("testAttribute2", schema
-				.getBooleanDomain(), attributedElement, "null");
+		Attribute attribute = new AttributeImpl("testAttribute",
+				schema.getBooleanDomain(), attributedElement, "null");
+		Attribute attribute2 = new AttributeImpl("testAttribute2",
+				schema.getBooleanDomain(), attributedElement, "null");
 		attributedElement.addAttribute(attribute);
 		attributedElement.addAttribute(attribute2);
 
@@ -1225,8 +1224,8 @@ public abstract class AttributedElementClassImplTest {
 	 * NOTE: This method is called upon in all of this classes´ subclasses.
 	 */
 	public final void testHasAttributes3(AttributedElementClass superClass) {
-		Attribute attribute = new AttributeImpl("testAttribute", schema
-				.getBooleanDomain(), attributedElement, "null");
+		Attribute attribute = new AttributeImpl("testAttribute",
+				schema.getBooleanDomain(), attributedElement, "null");
 		superClass.addAttribute(attribute);
 
 		Assert.assertTrue(attributedElement.hasAttributes());
@@ -1240,10 +1239,10 @@ public abstract class AttributedElementClassImplTest {
 	 * NOTE: This method is called upon in all of this classes´ subclasses.
 	 */
 	public final void testHasAttributes4(AttributedElementClass superClass) {
-		Attribute attribute = new AttributeImpl("testAttribute", schema
-				.getBooleanDomain(), attributedElement, "null");
-		Attribute attribute2 = new AttributeImpl("testAttribute2", schema
-				.getBooleanDomain(), attributedElement, "null");
+		Attribute attribute = new AttributeImpl("testAttribute",
+				schema.getBooleanDomain(), attributedElement, "null");
+		Attribute attribute2 = new AttributeImpl("testAttribute2",
+				schema.getBooleanDomain(), attributedElement, "null");
 		superClass.addAttribute(attribute);
 		superClass.addAttribute(attribute2);
 
@@ -1258,14 +1257,14 @@ public abstract class AttributedElementClassImplTest {
 	 * NOTE: This method is called upon in all of this classes´ subclasses.
 	 */
 	public final void testHasAttributes5(AttributedElementClass superClass) {
-		Attribute attribute = new AttributeImpl("testAttribute", schema
-				.getBooleanDomain(), attributedElement, "null");
-		Attribute attribute2 = new AttributeImpl("testAttribute2", schema
-				.getBooleanDomain(), attributedElement, "null");
-		Attribute attribute3 = new AttributeImpl("testAttribute3", schema
-				.getBooleanDomain(), attributedElement, "null");
-		Attribute attribute4 = new AttributeImpl("testAttribute4", schema
-				.getBooleanDomain(), attributedElement, "null");
+		Attribute attribute = new AttributeImpl("testAttribute",
+				schema.getBooleanDomain(), attributedElement, "null");
+		Attribute attribute2 = new AttributeImpl("testAttribute2",
+				schema.getBooleanDomain(), attributedElement, "null");
+		Attribute attribute3 = new AttributeImpl("testAttribute3",
+				schema.getBooleanDomain(), attributedElement, "null");
+		Attribute attribute4 = new AttributeImpl("testAttribute4",
+				schema.getBooleanDomain(), attributedElement, "null");
 		attributedElement.addAttribute(attribute);
 		attributedElement.addAttribute(attribute2);
 		superClass.addAttribute(attribute3);
@@ -1294,8 +1293,8 @@ public abstract class AttributedElementClassImplTest {
 	 */
 	@Test
 	public final void testHasOwnAttributes() {
-		Attribute attribute = new AttributeImpl("testAttribute", schema
-				.getBooleanDomain(), attributedElement, "null");
+		Attribute attribute = new AttributeImpl("testAttribute",
+				schema.getBooleanDomain(), attributedElement, "null");
 		attributedElement.addAttribute(attribute);
 
 		Assert.assertTrue(attributedElement.hasOwnAttributes());
@@ -1308,10 +1307,10 @@ public abstract class AttributedElementClassImplTest {
 	 */
 	@Test
 	public final void testHasOwnAttributes2() {
-		Attribute attribute = new AttributeImpl("testAttribute", schema
-				.getBooleanDomain(), attributedElement, "null");
-		Attribute attribute2 = new AttributeImpl("testAttribute2", schema
-				.getBooleanDomain(), attributedElement, "null");
+		Attribute attribute = new AttributeImpl("testAttribute",
+				schema.getBooleanDomain(), attributedElement, "null");
+		Attribute attribute2 = new AttributeImpl("testAttribute2",
+				schema.getBooleanDomain(), attributedElement, "null");
 		attributedElement.addAttribute(attribute);
 		attributedElement.addAttribute(attribute2);
 
@@ -1336,10 +1335,10 @@ public abstract class AttributedElementClassImplTest {
 	 * NOTE: This method is called upon in all of this classes´ subclasses.
 	 */
 	public final void testHasOwnAttributes4(AttributedElementClass superClass) {
-		Attribute attribute = new AttributeImpl("testAttribute", schema
-				.getBooleanDomain(), attributedElement, "null");
-		Attribute attribute2 = new AttributeImpl("testAttribute2", schema
-				.getBooleanDomain(), attributedElement, "null");
+		Attribute attribute = new AttributeImpl("testAttribute",
+				schema.getBooleanDomain(), attributedElement, "null");
+		Attribute attribute2 = new AttributeImpl("testAttribute2",
+				schema.getBooleanDomain(), attributedElement, "null");
 		attributedElement.addAttribute(attribute);
 		superClass.addAttribute(attribute2);
 
@@ -1354,10 +1353,10 @@ public abstract class AttributedElementClassImplTest {
 	 * NOTE: This method is called upon in all of this classes´ subclasses.
 	 */
 	public final void testHasOwnAttributes5(AttributedElementClass superClass) {
-		Attribute attribute = new AttributeImpl("testAttribute", schema
-				.getBooleanDomain(), attributedElement, "null");
-		Attribute attribute2 = new AttributeImpl("testAttribute2", schema
-				.getBooleanDomain(), attributedElement, "null");
+		Attribute attribute = new AttributeImpl("testAttribute",
+				schema.getBooleanDomain(), attributedElement, "null");
+		Attribute attribute2 = new AttributeImpl("testAttribute2",
+				schema.getBooleanDomain(), attributedElement, "null");
 		superClass.addAttribute(attribute);
 		superClass.addAttribute(attribute2);
 

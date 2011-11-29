@@ -676,7 +676,7 @@ public final class VertexClassImplTest extends GraphElementClassImplTest {
 
 	@Override
 	@Test
-	public void testGetM1Class() {
+	public void testGetSchemaClass() {
 		// TODO Auto-generated method stub
 	}
 

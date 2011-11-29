@@ -285,10 +285,11 @@ public class ECAIO {
 	 * @throws ECAIOException
 	 */
 	private void saveConditionToStream(Condition cond) throws ECAIOException {
-		if(cond instanceof GreqlCondition){
-			writeToStream(" with \"" + ((GreqlCondition)cond).getConditionExpression() + "\" ");
-		}else {
-			writeToStream(" with class "+cond.getClass().getName()+" ");
+		if (cond instanceof GreqlCondition) {
+			writeToStream(" with \""
+					+ ((GreqlCondition) cond).getConditionExpression() + "\" ");
+		} else {
+			writeToStream(" with class " + cond.getClass().getName() + " ");
 		}
 	}
 
@@ -429,8 +430,8 @@ public class ECAIO {
 			}
 			// -- ChangeEdgeDescription
 			else if (eventdestype.equals("updatedStartOrEndVertex")) {
-				return finishChangeEdgeEventDescription(context, et,
-						type, EdgeEnd.ANY);
+				return finishChangeEdgeEventDescription(context, et, type,
+						EdgeEnd.ANY);
 			}
 			// -- DeleteVertexEventDescription
 			else if (eventdestype.equals("deletedVertex")) {
@@ -666,7 +667,7 @@ public class ECAIO {
 	private Class<? extends AttributedElement> getAttributedElement(String name) {
 		Class<? extends AttributedElement> aecl;
 		AttributedElementClass aeclo = schema.getAttributedElementClass(name);
-		aecl = aeclo.getM1Class();
+		aecl = aeclo.getSchemaClass();
 		return aecl;
 	}
 
@@ -684,26 +685,28 @@ public class ECAIO {
 			return null;
 		} else if (isMatching(currentToken, "with")) {
 			String condexpr = nextToken();
-			if(condexpr.equals("class")){
+			if (condexpr.equals("class")) {
 				condexpr = nextToken();
 				Condition cond;
 				try {
-					System.out.println("classname: "+condexpr);
+					System.out.println("classname: " + condexpr);
 					Class<?> conditionclass = Class.forName(condexpr);
-					cond =  (Condition) conditionclass.newInstance();
+					cond = (Condition) conditionclass.newInstance();
 				} catch (ClassNotFoundException e) {
-					throw new ECAIOException("Specified Condition " + currentToken
-							+ " not found.");
+					throw new ECAIOException("Specified Condition "
+							+ currentToken + " not found.");
 				} catch (InstantiationException e) {
-					throw new ECAIOException("Error while instanciating Condition "
-							+ currentToken);
+					throw new ECAIOException(
+							"Error while instanciating Condition "
+									+ currentToken);
 				} catch (IllegalAccessException e) {
-					throw new ECAIOException("Error while instanciating Condition "
-							+ currentToken);
+					throw new ECAIOException(
+							"Error while instanciating Condition "
+									+ currentToken);
 				}
 				match("do");
 				return cond;
-			}else{
+			} else {
 				match("do");
 				return new GreqlCondition(condexpr);
 			}

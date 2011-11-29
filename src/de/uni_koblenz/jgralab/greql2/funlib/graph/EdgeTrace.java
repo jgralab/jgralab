@@ -9,7 +9,8 @@ import de.uni_koblenz.jgralab.greql2.types.Path;
 public class EdgeTrace extends Function {
 
 	public EdgeTrace() {
-		super("Returns the edge trace of a Path $p$.", Category.GRAPH);
+		super("Returns the edge trace of a Path $p$.",
+				Category.PATHS_AND_PATHSYSTEMS_AND_SLICES);
 	}
 
 	public PVector<Edge> evaluate(Path p) {

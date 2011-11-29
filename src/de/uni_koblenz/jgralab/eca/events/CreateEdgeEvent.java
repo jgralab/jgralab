@@ -23,7 +23,7 @@ public class CreateEdgeEvent extends Event {
 	 *            the created Edge or null if the EventTime is before
 	 */
 	public CreateEdgeEvent(int nestedCalls, Graph graph, Edge edge) {
-		super(nestedCalls, EventTime.AFTER, graph, edge.getM1Class());
+		super(nestedCalls, EventTime.AFTER, graph, edge.getSchemaClass());
 		this.edge = edge;
 	}
 
@@ -40,7 +40,7 @@ public class CreateEdgeEvent extends Event {
 	public CreateEdgeEvent(int nestedCalls, Graph graph,
 			Class<? extends AttributedElement> type) {
 		super(nestedCalls, EventTime.BEFORE, graph, type);
-		this.edge = null;
+		edge = null;
 	}
 
 	/**
@@ -56,7 +56,7 @@ public class CreateEdgeEvent extends Event {
 	 */
 	@Override
 	public AttributedElement getElement() {
-		return this.edge;
+		return edge;
 	}
 
 }
