@@ -113,6 +113,7 @@ public class FunLib {
 		register(de.uni_koblenz.jgralab.greql2.funlib.graph.TopologicalSort.class);
 		register(de.uni_koblenz.jgralab.greql2.funlib.graph.VertexTrace.class);
 		register(de.uni_koblenz.jgralab.greql2.funlib.graph.Vertices.class);
+		register(de.uni_koblenz.jgralab.greql2.funlib.graph.VertexTypeSubgraph.class);
 		register(de.uni_koblenz.jgralab.greql2.funlib.logics.And.class);
 		register(de.uni_koblenz.jgralab.greql2.funlib.logics.Not.class);
 		register(de.uni_koblenz.jgralab.greql2.funlib.logics.Or.class);
