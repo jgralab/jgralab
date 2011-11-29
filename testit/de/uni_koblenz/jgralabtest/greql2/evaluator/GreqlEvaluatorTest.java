@@ -77,12 +77,7 @@ public class GreqlEvaluatorTest extends GenericTest {
 			"Flugplatz Koblenz-Winningen", "Winningen", "Lautzenhausen",
 			"Montabaur", "Flughafen Frankfurt-Hahn" };
 
-	private PVector<String> createListWithMeat() {
-		PVector<String> list = JGraLab.vector();
-		return list.plus("Currywurst").plus("Bratwurst").plus("Käsewurst")
-				.plus("Steak").plus("Pommes").plus("Mayo").plus("Ketchup")
-				.plus("Zwiebeln");
-	}
+	
 
 	@Test
 	public void testCombinations() {
