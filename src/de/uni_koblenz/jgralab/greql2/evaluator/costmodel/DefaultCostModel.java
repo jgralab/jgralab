@@ -106,7 +106,7 @@ import de.uni_koblenz.jgralab.greql2.schema.IsSequenceElementOf;
 import de.uni_koblenz.jgralab.greql2.schema.IsSimpleDeclOf;
 import de.uni_koblenz.jgralab.greql2.schema.IsSubPathOf;
 import de.uni_koblenz.jgralab.greql2.schema.IsTrueExprOf;
-import de.uni_koblenz.jgralab.greql2.schema.IsTypeRestrOf;
+import de.uni_koblenz.jgralab.greql2.schema.IsTypeRestrOfExpression;
 import de.uni_koblenz.jgralab.greql2.schema.IsValueExprOfConstruction;
 import de.uni_koblenz.jgralab.greql2.schema.IteratedPathDescription;
 import de.uni_koblenz.jgralab.greql2.schema.ListComprehension;
@@ -213,7 +213,7 @@ public class DefaultCostModel extends CostModelBase implements CostModel {
 	public long calculateCardinalityEdgeSetExpression(
 			EdgeSetExpressionEvaluator e, GraphSize graphSize) {
 		EdgeSetExpression exp = (EdgeSetExpression) e.getVertex();
-		IsTypeRestrOf inc = exp.getFirstIsTypeRestrOfIncidence();
+		IsTypeRestrOfExpression inc = exp.getFirstIsTypeRestrOfExpressionIncidence();
 		double selectivity = 1.0;
 		if (inc != null) {
 			TypeIdEvaluator typeIdEval = (TypeIdEvaluator) e
@@ -375,7 +375,7 @@ public class DefaultCostModel extends CostModelBase implements CostModel {
 	public long calculateCardinalityVertexSetExpression(
 			VertexSetExpressionEvaluator e, GraphSize graphSize) {
 		VertexSetExpression exp = (VertexSetExpression) e.getVertex();
-		IsTypeRestrOf inc = exp.getFirstIsTypeRestrOfIncidence();
+		IsTypeRestrOfExpression inc = exp.getFirstIsTypeRestrOfExpressionIncidence();
 		double selectivity = 1.0;
 		if (inc != null) {
 			TypeIdEvaluator typeIdEval = (TypeIdEvaluator) e
@@ -592,13 +592,13 @@ public class DefaultCostModel extends CostModelBase implements CostModel {
 		EdgeSetExpression ese = (EdgeSetExpression) e.getVertex();
 
 		long typeRestrCosts = 0;
-		IsTypeRestrOf inc = ese.getFirstIsTypeRestrOfIncidence();
+		IsTypeRestrOfExpression inc = ese.getFirstIsTypeRestrOfExpressionIncidence();
 		while (inc != null) {
 			TypeIdEvaluator tideval = (TypeIdEvaluator) e.getVertexEvalMarker()
 					.getMark(inc.getAlpha());
 			typeRestrCosts += tideval
 					.getCurrentSubtreeEvaluationCosts(graphSize);
-			inc = inc.getNextIsTypeRestrOfIncidence();
+			inc = inc.getNextIsTypeRestrOfExpressionIncidence();
 		}
 
 		long ownCosts = graphSize.getEdgeCount() * edgeSetExpressionCostsFactor;
@@ -1209,13 +1209,13 @@ public class DefaultCostModel extends CostModelBase implements CostModel {
 		VertexSetExpression vse = (VertexSetExpression) e.getVertex();
 
 		long typeRestrCosts = 0;
-		IsTypeRestrOf inc = vse.getFirstIsTypeRestrOfIncidence();
+		IsTypeRestrOfExpression inc = vse.getFirstIsTypeRestrOfExpressionIncidence();
 		while (inc != null) {
 			TypeIdEvaluator tideval = (TypeIdEvaluator) e.getVertexEvalMarker()
 					.getMark(inc.getAlpha());
 			typeRestrCosts += tideval
 					.getCurrentSubtreeEvaluationCosts(graphSize);
-			inc = inc.getNextIsTypeRestrOfIncidence();
+			inc = inc.getNextIsTypeRestrOfExpressionIncidence();
 		}
 
 		long ownCosts = graphSize.getVertexCount()
