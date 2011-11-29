@@ -82,7 +82,6 @@ import de.uni_koblenz.jgralab.greql2.schema.IsQueryExprOf;
 import de.uni_koblenz.jgralab.greql2.schema.IsRowHeaderExprOf;
 import de.uni_koblenz.jgralab.greql2.schema.IsSimpleDeclOf;
 import de.uni_koblenz.jgralab.greql2.schema.IsStartRestrOf;
-import de.uni_koblenz.jgralab.greql2.schema.IsSubgraphOf;
 import de.uni_koblenz.jgralab.greql2.schema.IsTableHeaderOf;
 import de.uni_koblenz.jgralab.greql2.schema.IsValueExprOfComprehension;
 import de.uni_koblenz.jgralab.greql2.schema.IsVarOf;
@@ -410,11 +409,6 @@ public abstract class ParserHelper {
 			mergeVariables(expr, true);
 		}
 
-		IsSubgraphOf isSubgraphOf = v
-				.getFirstIsSubgraphOfIncidence(EdgeDirection.IN);
-		if (isSubgraphOf != null) {
-			mergeVariables(isSubgraphOf.getAlpha(), true);
-		}
 		for (IsConstraintOf isConstraintOf : v
 				.getIsConstraintOfIncidences(EdgeDirection.IN)) {
 			mergeVariables(isConstraintOf.getAlpha(), true);

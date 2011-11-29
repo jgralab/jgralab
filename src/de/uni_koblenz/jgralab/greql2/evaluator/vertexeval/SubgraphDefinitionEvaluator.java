@@ -37,19 +37,17 @@ package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
-import de.uni_koblenz.jgralab.greql2.schema.SubgraphExpression;
+import de.uni_koblenz.jgralab.greql2.schema.SubgraphDefinition;
 
 /**
- * This is the baseclass for VertexSubgraphExpressionEvaluator and
- * EdgeSubgraphExpressionEvaluator
- * 
- * @author ist@uni-koblenz.de Summer 2006, Diploma Thesis
- * 
+ * Base class for all subgraph definition evaluators
+ * @author ist@uni-koblenz.de
+ *
  */
-public abstract class SubgraphExpressionEvaluator extends
+public abstract class SubgraphDefinitionEvaluator extends
 		AbstractGraphElementCollectionEvaluator {
 
-	protected SubgraphExpression vertex;
+	protected SubgraphDefinition vertex;
 
 	/**
 	 * returns the vertex this VertexEvaluator evaluates
@@ -59,7 +57,7 @@ public abstract class SubgraphExpressionEvaluator extends
 		return vertex;
 	}
 
-	public SubgraphExpressionEvaluator(SubgraphExpression vertex,
+	public SubgraphDefinitionEvaluator(SubgraphDefinition vertex,
 			GreqlEvaluator eval) {
 		super(eval);
 		this.vertex = vertex;

@@ -48,7 +48,7 @@ import de.uni_koblenz.jgralab.greql2.types.TypeCollection;
  * the base for Forward- or BackwardVertexSetEvaluator, because these are
  * PathSearchEvaluators.
  *
- * @author ist@uni-koblenz.de Summer 2006, Diploma Thesis
+ * @author ist@uni-koblenz.de  
  *
  */
 public abstract class AbstractGraphElementCollectionEvaluator extends

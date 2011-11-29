@@ -44,7 +44,6 @@ import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.DeclarationEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.EdgePathDescriptionEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.EdgeRestrictionEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.EdgeSetExpressionEvaluator;
-import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.EdgeSubgraphExpressionEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.ExponentiatedPathDescriptionEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.ForwardVertexSetEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.FunctionApplicationEvaluator;
@@ -71,7 +70,6 @@ import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.TupleConstructionEvalu
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.TypeIdEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VariableEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VertexSetExpressionEvaluator;
-import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VertexSubgraphExpressionEvaluator;
 
 /**
  * This interface is implemented by all costmodels.
@@ -123,9 +121,6 @@ public interface CostModel {
 
 	public VertexCosts calculateCostsEdgeSetExpression(
 			EdgeSetExpressionEvaluator e, GraphSize graphSize);
-
-	public VertexCosts calculateCostsEdgeSubgraphExpression(
-			EdgeSubgraphExpressionEvaluator e, GraphSize graphSize);
 
 	public VertexCosts calculateCostsExponentiatedPathDescription(
 			ExponentiatedPathDescriptionEvaluator e, GraphSize graphSize);
@@ -210,9 +205,6 @@ public interface CostModel {
 	public VertexCosts calculateCostsVertexSetExpression(
 			VertexSetExpressionEvaluator e, GraphSize graphSize);
 
-	public VertexCosts calculateCostsVertexSubgraphExpression(
-			VertexSubgraphExpressionEvaluator e, GraphSize graphSize);
-
 	/*
 	 * The methods to calculate the cardinality
 	 */
@@ -232,8 +224,6 @@ public interface CostModel {
 	public long calculateCardinalityEdgeSetExpression(
 			EdgeSetExpressionEvaluator e, GraphSize graphSize);
 
-	public long calculateCardinalityEdgeSubgraphExpression(
-			EdgeSubgraphExpressionEvaluator e, GraphSize graphSize);
 
 	public long calculateCardinalityForwardVertexSet(
 			ForwardVertexSetEvaluator e, GraphSize graphSize);
@@ -268,8 +258,6 @@ public interface CostModel {
 	public long calculateCardinalityVertexSetExpression(
 			VertexSetExpressionEvaluator e, GraphSize graphSize);
 
-	public long calculateCardinalityVertexSubgraphExpression(
-			VertexSubgraphExpressionEvaluator e, GraphSize graphSize);
 
 	/*
 	 * The methods to calculate the selectivity
@@ -288,11 +276,6 @@ public interface CostModel {
 	 * The methods to calculate the size of the expected subgraph
 	 */
 
-	public GraphSize calculateVertexSubgraphSize(
-			VertexSubgraphExpressionEvaluator e, GraphSize graphSize);
-
-	public GraphSize calculateEdgeSubgraphSize(
-			EdgeSubgraphExpressionEvaluator e, GraphSize graphSize);
 
 	public long calculateVariableAssignments(VariableEvaluator e,
 			GraphSize graphSize);
