@@ -272,9 +272,6 @@ public interface CostModel {
 	public double calculateSelectivityTypeId(TypeIdEvaluator e,
 			GraphSize graphSize);
 
-	/*
-	 * The methods to calculate the size of the expected subgraph
-	 */
 
 
 	public long calculateVariableAssignments(VariableEvaluator e,

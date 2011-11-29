@@ -590,39 +590,13 @@ public class GreqlParser extends ParserHelper {
 	
 	private final SubgraphDefinition parseSubgraphDefinition() {
 		SubgraphDefinition definition = null;
-		boolean types = false;
-		switch (lookAhead(0)) {
-		case VSUBGRAPH:
-			match();
-			types = true;
-			if (!inPredicateMode()) {
-				definition = graph.createVertexTypeSubgraph();
-			}
-			break;
-		case ESUBGRAPH:
-			match();
-			types = true;
-			if (!inPredicateMode()) {
-				definition = graph.createEdgeTypeSubgraph();
-			}
-			break;	
-		default:
-			int exprOffset = getCurrentOffset();
-			Expression traversalContextExpr = parseExpression();
-			if (!inPredicateMode()) {
-				int exprLength = getLength(exprOffset);
-				definition = graph.createExpressionDefinedSubgraph();
-				IsSubgraphDefiningExpression isSubgraphDefExpr = graph.createIsSubgraphDefiningExpression(traversalContextExpr, (ExpressionDefinedSubgraph) definition);
-				isSubgraphDefExpr.set_sourcePositions(createSourcePositionList(exprLength, exprOffset));
-			}
-		}
-		if (types) {
-			match(TokenTypes.LCURLY);
-			List<VertexPosition<TypeId>> typeIds = parseTypeExpressionList();
-			match(TokenTypes.RCURLY);
-			if (!inPredicateMode()) {
-				createMultipleEdgesToParent(typeIds, definition, IsTypeRestrOfSubgraph.class,0);
-			}
+		int exprOffset = getCurrentOffset();
+		Expression traversalContextExpr = parseExpression();
+		if (!inPredicateMode()) {
+			int exprLength = getLength(exprOffset);
+			definition = graph.createExpressionDefinedSubgraph();
+			IsSubgraphDefiningExpression isSubgraphDefExpr = graph.createIsSubgraphDefiningExpression(traversalContextExpr, (ExpressionDefinedSubgraph) definition);
+			isSubgraphDefExpr.set_sourcePositions(createSourcePositionList(exprLength, exprOffset));
 		}
 		return definition;
 	}

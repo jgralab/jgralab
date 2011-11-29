@@ -60,7 +60,6 @@ public class GreqlLexer {
 					put(TokenTypes.AS, "as");
 					put(TokenTypes.MAP, "map");
 					put(TokenTypes.E, "E");
-					put(TokenTypes.ESUBGRAPH, "eSubgraph");
 					put(TokenTypes.EXISTS_ONE, "exists!");
 					put(TokenTypes.EXISTS, "exists");
 					put(TokenTypes.END, "end");
@@ -81,7 +80,6 @@ public class GreqlLexer {
 					put(TokenTypes.TUP, "tup");
 					put(TokenTypes.USING, "using");
 					put(TokenTypes.V, "V");
-					put(TokenTypes.VSUBGRAPH, "vSubgraph");
 					put(TokenTypes.WHERE, "where");
 					put(TokenTypes.WITH, "with");
 					put(TokenTypes.QUESTION, "?");
