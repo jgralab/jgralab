@@ -54,7 +54,6 @@ import de.uni_koblenz.jgralab.utilities.tg2dot.greql2.funlib.AlphaIncidenceNumbe
 import de.uni_koblenz.jgralab.utilities.tg2dot.greql2.funlib.AlphaRolename;
 import de.uni_koblenz.jgralab.utilities.tg2dot.greql2.funlib.AttributeType;
 import de.uni_koblenz.jgralab.utilities.tg2dot.greql2.funlib.FormatString;
-import de.uni_koblenz.jgralab.utilities.tg2dot.greql2.funlib.Join;
 import de.uni_koblenz.jgralab.utilities.tg2dot.greql2.funlib.OmegaIncidenceNumber;
 import de.uni_koblenz.jgralab.utilities.tg2dot.greql2.funlib.OmegaRolename;
 import de.uni_koblenz.jgralab.utilities.tg2dot.greql2.funlib.ShortenString;
@@ -108,7 +107,6 @@ public class GreqlEvaluatorFacade {
 		FunLib.register(OmegaRolename.class);
 		FunLib.register(OmegaIncidenceNumber.class);
 		FunLib.register(AbbreviateString.class);
-		FunLib.register(Join.class);
 		FunLib.register(FormatString.class);
 		FunLib.register(AttributeType.class);
 	}
