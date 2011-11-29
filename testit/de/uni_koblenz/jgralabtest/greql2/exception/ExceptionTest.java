@@ -45,7 +45,7 @@ public class ExceptionTest extends GenericTest {
 
 	@Test(expected = QuerySourceException.class)
 	public void testFunctionException() throws Exception {
-		String queryString = "let x:=list(\"a\",4 ,5) in avg(x)";
+		String queryString = "let x:=list(\"a\",4 ,5) in mean(x)";
 		evalTestQuery("FunctionException", queryString);
 	}
 

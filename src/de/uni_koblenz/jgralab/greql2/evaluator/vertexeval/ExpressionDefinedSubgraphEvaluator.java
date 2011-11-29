@@ -12,15 +12,18 @@ import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
 import de.uni_koblenz.jgralab.greql2.schema.Expression;
 import de.uni_koblenz.jgralab.greql2.schema.ExpressionDefinedSubgraph;
+import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
 import de.uni_koblenz.jgralab.greql2.schema.IsSubgraphDefiningExpression;
 
-public class ExpressionDefinedSubgraphEvaluator extends
-		SubgraphDefinitionEvaluator {
+public class ExpressionDefinedSubgraphEvaluator extends VertexEvaluator {
 
 	VertexEvaluator subgraphDefExprEvaluator = null;
 	
+	ExpressionDefinedSubgraph vertex;
+	
 	public ExpressionDefinedSubgraphEvaluator(ExpressionDefinedSubgraph vertex, GreqlEvaluator eval) {
-		super(vertex, eval);
+		super(eval);
+		this.vertex = vertex;
 	}
 	
 
@@ -60,6 +63,12 @@ public class ExpressionDefinedSubgraphEvaluator extends
 		Expression subgraphDefExpr = (Expression) isSubgraphDefiningExpression.getThat();
 		subgraphDefExprEvaluator = vertexEvalMarker.getMark(subgraphDefExpr);
 		return subgraphDefExprEvaluator.calculateSubtreeEvaluationCosts(graphSize);
+	}
+
+
+	@Override
+	public Greql2Vertex getVertex() {
+		return vertex;
 	}
 
 }
