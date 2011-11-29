@@ -38,9 +38,9 @@ import org.pcollections.PCollection;
 
 import de.uni_koblenz.jgralab.greql2.funlib.Function;
 
-public class Join extends Function {
+public class JoinWithCollection extends Function {
 
-	public Join() {
+	public JoinWithCollection() {
 		super(
 				"Returns a string of joined element of a given delimiter and a collection.",
 				2, 1, 1.0, Category.STRINGS);
