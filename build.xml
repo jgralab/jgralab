@@ -35,7 +35,7 @@
 <project name="jgralab" basedir="." default="build">
 
 	<!-- Change version for new release, it will automatically be added to the manifest -->
-	<property name="jgralab_version" value="Efraasia" />
+	<property name="jgralab_version" value="5.0 (Efraasia)" />
 
 	<!-- override default properties -->
 	<property name="projectname" value="jgralab" />
