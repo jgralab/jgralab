@@ -438,7 +438,7 @@ public class GreqlGui extends JFrame {
 						.getDefaultToolkit().getMenuShortcutKeyMask()), "Redo");
 		// End code for undo/redo ---------------------------------------
 
-		queryArea.setText("// Please enter your query here!\n\n");
+		queryArea.setText("// Please enter your query here!");
 		JScrollPane queryScrollPane = new JScrollPane(queryArea);
 
 		queryPanel = new JPanel();
@@ -639,7 +639,11 @@ public class GreqlGui extends JFrame {
 		// Don't allow shrinking so that buttons get invisible
 		setMinimumSize(new Dimension(buttonPanel.getPreferredSize().width + 10,
 				450));
+
 		pack();
+		queryArea.setSelectionStart(0);
+		queryArea.setSelectionEnd(queryArea.getText().length());
+		queryArea.requestFocus();
 		setVisible(true);
 	}
 
