@@ -35,25 +35,7 @@ public class ExpressionDefinedSubgraphEvaluator extends VertexEvaluator {
 			Expression subgraphDefExpr = (Expression) isSubgraphDefiningExpression.getThat();
 			subgraphDefExprEvaluator = vertexEvalMarker.getMark(subgraphDefExpr);
 		}	
-		Object subgraph = subgraphDefExprEvaluator.getResult();
-		if (subgraph instanceof TraversalContext) {
-			result = subgraph;
-		} else {
-			//create new traversal context based on element set
-			@SuppressWarnings("unchecked")
-			final PSet<GraphElement> elemSet = (PSet<GraphElement>) subgraph;
-			result = new TraversalContext() {
-				@Override
-				public boolean containsVertex(Vertex v) {
-					return elemSet.contains(v);
-				}
-				@Override
-				public boolean containsEdge(Edge e) {
-					return elemSet.contains(e);
-				}
-			};
-		}
-		return result;
+		return subgraphDefExprEvaluator.getResult();
 	}
 
 	@Override
