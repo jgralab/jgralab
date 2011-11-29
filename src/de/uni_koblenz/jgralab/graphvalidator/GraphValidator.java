@@ -269,7 +269,7 @@ public class GraphValidator {
 
 			bw.append("<title>");
 			bw.append("Validation Report for the "
-					+ graph.getM1Class().getSimpleName() + " with id "
+					+ graph.getSchemaClass().getSimpleName() + " with id "
 					+ graph.getId() + ".");
 			bw.append("</title>");
 			bw.append("</head>");
@@ -280,7 +280,7 @@ public class GraphValidator {
 			if (brokenConstraints.size() == 0) {
 				bw.append("<p><b>The graph is valid!</b></p>");
 			} else {
-				bw.append("<p><b>The " + graph.getM1Class().getSimpleName()
+				bw.append("<p><b>The " + graph.getSchemaClass().getSimpleName()
 						+ " violates " + brokenConstraints.size()
 						+ " constraints.</b></p>");
 				// Here goes the table

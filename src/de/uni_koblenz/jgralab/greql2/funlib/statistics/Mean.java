@@ -8,7 +8,7 @@ import de.uni_koblenz.jgralab.greql2.funlib.Function;
 public class Mean extends Function {
 
 	public Mean() {
-		super("Computes the mean value of a collection of numbers.",
+		super("Returns the mean value of a collection of numbers.",
 				Category.STATISTICS);
 	}
 

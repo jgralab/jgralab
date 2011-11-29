@@ -7,7 +7,7 @@ import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 public class Type extends Function {
 
 	public Type() {
-		super("Returns the AttributedElementClass of the element $el$.",
+		super("Returns the AttributedElementClass of the given element.",
 				Category.SCHEMA_ACCESS);
 	}
 

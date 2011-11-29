@@ -34,7 +34,7 @@
  */
 
 /**
- * This package contains JGraLab/grUML Schema (M2) interfaces.
+ * This package contains JGraLab/grUML Schema interfaces.
  * 
  * @author ist@uni-koblenz.de
  */

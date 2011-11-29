@@ -177,7 +177,7 @@ public abstract class IncidenceImpl extends GraphElementImpl implements Edge,
 		Edge currentEdge = getNextIncidence(orientation);
 		while (currentEdge != null) {
 			if (noSubclasses) {
-				if (anEdgeClass == currentEdge.getM1Class()) {
+				if (anEdgeClass == currentEdge.getSchemaClass()) {
 					return currentEdge;
 				}
 			} else {
@@ -201,8 +201,8 @@ public abstract class IncidenceImpl extends GraphElementImpl implements Edge,
 	public Edge getNextIncidence(EdgeClass anEdgeClass) {
 		assert anEdgeClass != null;
 		assert isValid();
-		return getNextIncidence(anEdgeClass.getM1Class(), EdgeDirection.INOUT,
-				false);
+		return getNextIncidence(anEdgeClass.getSchemaClass(),
+				EdgeDirection.INOUT, false);
 	}
 
 	/*
@@ -216,8 +216,8 @@ public abstract class IncidenceImpl extends GraphElementImpl implements Edge,
 	public Edge getNextIncidence(EdgeClass anEdgeClass, boolean noSubclasses) {
 		assert anEdgeClass != null;
 		assert isValid();
-		return getNextIncidence(anEdgeClass.getM1Class(), EdgeDirection.INOUT,
-				noSubclasses);
+		return getNextIncidence(anEdgeClass.getSchemaClass(),
+				EdgeDirection.INOUT, noSubclasses);
 	}
 
 	/*
@@ -232,7 +232,8 @@ public abstract class IncidenceImpl extends GraphElementImpl implements Edge,
 			EdgeDirection orientation) {
 		assert anEdgeClass != null;
 		assert isValid();
-		return getNextIncidence(anEdgeClass.getM1Class(), orientation, false);
+		return getNextIncidence(anEdgeClass.getSchemaClass(), orientation,
+				false);
 	}
 
 	/*
@@ -247,7 +248,7 @@ public abstract class IncidenceImpl extends GraphElementImpl implements Edge,
 			EdgeDirection orientation, boolean noSubclasses) {
 		assert anEdgeClass != null;
 		assert isValid();
-		return getNextIncidence(anEdgeClass.getM1Class(), orientation,
+		return getNextIncidence(anEdgeClass.getSchemaClass(), orientation,
 				noSubclasses);
 	}
 

@@ -8,7 +8,8 @@ import de.uni_koblenz.jgralab.greql2.types.Undefined;
 public class IsUndefined extends Function {
 
 	public IsUndefined() {
-		super("Returns true if $val$ is undefined.", Category.DEBUGGING);
+		super("Returns true, iff the given object is undefined.",
+				Category.MISCELLANEOUS);
 	}
 
 	public Boolean evaluate(Object val) {

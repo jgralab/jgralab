@@ -5,7 +5,7 @@ import de.uni_koblenz.jgralab.greql2.funlib.Function;
 public class Nequals extends Function {
 
 	public Nequals() {
-		super("Determines if $a$ and $b$ are equal. Alternative: a <> b", 1, 1,
+		super("Determines if $a$ and $b$ are different. Alternative: a <> b", 1, 1,
 				0.95, Category.RELATIONS);
 	}
 
@@ -18,9 +18,9 @@ public class Nequals extends Function {
 	}
 
 	public Boolean evaluate(Number a, Number b) {
-		if (a instanceof Double || b instanceof Double) {
+		if ((a instanceof Double) || (b instanceof Double)) {
 			return a.doubleValue() != b.doubleValue();
-		} else if (a instanceof Long || b instanceof Long) {
+		} else if ((a instanceof Long) || (b instanceof Long)) {
 			return a.longValue() != b.longValue();
 		} else {
 			return a.intValue() != b.intValue();

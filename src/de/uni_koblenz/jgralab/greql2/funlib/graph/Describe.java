@@ -15,8 +15,8 @@ import de.uni_koblenz.jgralab.schema.Attribute;
 public class Describe extends Function {
 
 	public Describe() {
-		super("Returns a description of the $element$.", 10, 3, 1.0,
-				Category.GRAPH);
+		super("Returns a human-readable description of the given element.", 10,
+				3, 1.0, Category.GRAPH);
 	}
 
 	public PMap<String, Object> evaluate(AttributedElement el) {

@@ -19,7 +19,7 @@ import de.uni_koblenz.jgralab.greql2.funlib.NeedsGraphArgument;
 public class TopologicalSort extends Function {
 	public TopologicalSort() {
 		super(
-				"Returns a list of vertices in topological order if the graph $g$is acyclic."
+				"Returns a list of vertices in topological order, iff the graph $g$ is acyclic."
 						+ " Otherwise, the result is undefined.", 100, 1, 0.1,
 				Category.GRAPH);
 	}

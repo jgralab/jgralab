@@ -326,7 +326,7 @@ public class TGMerge {
 		Vertex start = old2NewVertices.get(e.getAlpha());
 		Vertex end = old2NewVertices.get(e.getOmega());
 		Edge newEdge = targetGraph.createEdge(
-				(Class<? extends Edge>) e.getM1Class(), start, end);
+				(Class<? extends Edge>) e.getSchemaClass(), start, end);
 
 		copyAttributes(e, newEdge);
 
@@ -337,7 +337,7 @@ public class TGMerge {
 	@SuppressWarnings("unchecked")
 	private void copyVertex(Vertex v) {
 		Vertex newVertex = targetGraph.createVertex((Class<? extends Vertex>) v
-				.getM1Class());
+				.getSchemaClass());
 
 		copyAttributes(v, newVertex);
 

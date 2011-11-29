@@ -47,7 +47,7 @@ public class CreateVertices extends Transformation<PSet<? extends Vertex>> {
 		PSet<Vertex> result = Empty.set();
 		for (Object arch : archetypes) {
 			Vertex img = context.targetGraph.createVertex(vertexClass
-					.getM1Class());
+					.getSchemaClass());
 			result = result.plus(img);
 			// System.out.println(newVertex);
 			context.addMapping(vertexClass, arch, img);

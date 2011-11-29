@@ -33,51 +33,43 @@
  * the parts of JGraLab used as well as that of the covered work.
  */
 
-package de.uni_koblenz.jgralab.codegenerator;
+package de.uni_koblenz.jgralab.schema.impl.compilation;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.net.URI;
 
 import javax.tools.SimpleJavaFileObject;
 
 /**
- * A ClassFileAbstraction holds Java bytecode for M1 classes compiled in-memory.
+ * An object of this class holds the Java source code (used for in-memory
+ * compilaton of generated schema classes).
  * 
  * @author ist@uni-koblenz.de
- * 
  */
-public class ClassFileAbstraction extends SimpleJavaFileObject {
-	private byte[] bytecode;
+public class InMemoryJavaSourceFile extends SimpleJavaFileObject {
+	/**
+	 * The source code of this "file".
+	 */
+	final private String code;
 
 	/**
-	 * Creates a new {@code ClassFileAbstraction} for the class given by {@code
-	 * name}.
+	 * Creates an {@link InMemoryJavaSourceFile} with name <code>name</code> and
+	 * source <code>code</code>.
 	 * 
 	 * @param name
-	 *            the name of the class
+	 *            the name of the compilation unit represented by this file
+	 *            object
+	 * @param code
+	 *            the source code for the compilation unit represented by this
+	 *            file object
 	 */
-	public ClassFileAbstraction(String name) {
+	public InMemoryJavaSourceFile(String name, String code) {
 		super(URI.create("string:///" + name.replace('.', '/')
-				+ Kind.CLASS.extension), Kind.CLASS);
-	}
-
-	public byte[] getBytecode() {
-		return bytecode;
+				+ Kind.SOURCE.extension), Kind.SOURCE);
+		this.code = code;
 	}
 
 	@Override
-	public ByteArrayOutputStream openOutputStream() {
-		return new ByteArrayOutputStream() {
-			@Override
-			public void close() {
-				bytecode = this.toByteArray();
-			}
-		};
-	}
-
-	@Override
-	public ByteArrayInputStream openInputStream() {
-		return new ByteArrayInputStream(bytecode);
+	public CharSequence getCharContent(boolean ignoreEncodingErrors) {
+		return code;
 	}
 }

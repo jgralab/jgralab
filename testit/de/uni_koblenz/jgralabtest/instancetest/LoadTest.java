@@ -59,8 +59,8 @@ import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql2.parser.GreqlParser;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Schema;
 import de.uni_koblenz.jgralab.impl.FreeIndexList;
-import de.uni_koblenz.jgralab.impl.InternalGraph;
 import de.uni_koblenz.jgralab.impl.GraphBaseImpl;
+import de.uni_koblenz.jgralab.impl.InternalGraph;
 import de.uni_koblenz.jgralab.impl.InternalVertex;
 import de.uni_koblenz.jgralab.schema.GraphClass;
 import de.uni_koblenz.jgralab.schema.VertexClass;
@@ -458,13 +458,13 @@ public class LoadTest extends InstanceTest {
 			if (vertexClass.isInternal() || vertexClass.isAbstract()) {
 				continue;
 			}
-			Class<? extends Vertex> vc = vertexClass.getM1Class();
+			Class<? extends Vertex> vc = vertexClass.getSchemaClass();
 			g1.createVertex(vc);
 			// VertexClass vertexClass2 = gc.getVertexClasses().get(i %
 			// gc.getVertexClasses().size());
 			// if (vertexClass.isInternal())
 			// continue;
-			// Class<? extends Vertex> vc2 = vertexClass2.getM1Class();
+			// Class<? extends Vertex> vc2 = vertexClass2.getSchemaClass();
 			g2.createVertex(vc);
 		}
 	}

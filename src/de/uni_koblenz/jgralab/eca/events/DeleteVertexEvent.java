@@ -23,7 +23,7 @@ public class DeleteVertexEvent extends Event {
 	 *            the to be deleted Vertex or null if the EventTime is after
 	 */
 	public DeleteVertexEvent(int nestedCalls, Graph graph, Vertex vertex) {
-		super(nestedCalls, EventTime.BEFORE, graph, vertex.getM1Class());
+		super(nestedCalls, EventTime.BEFORE, graph, vertex.getSchemaClass());
 		this.vertex = vertex;
 	}
 
@@ -40,7 +40,7 @@ public class DeleteVertexEvent extends Event {
 	public DeleteVertexEvent(int nestedCalls, Graph graph,
 			Class<? extends AttributedElement> type) {
 		super(nestedCalls, EventTime.AFTER, graph, type);
-		this.vertex = null;
+		vertex = null;
 	}
 
 	/**
@@ -56,7 +56,7 @@ public class DeleteVertexEvent extends Event {
 	 */
 	@Override
 	public AttributedElement getElement() {
-		return this.vertex;
+		return vertex;
 	}
 
 }

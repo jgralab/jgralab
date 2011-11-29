@@ -32,30 +32,53 @@
  * non-source form of such a combination shall include the source code for
  * the parts of JGraLab used as well as that of the covered work.
  */
-package de.uni_koblenz.jgralab.schema.exception;
 
-import de.uni_koblenz.jgralab.schema.AttributedElementClass;
+package de.uni_koblenz.jgralab.schema.impl.compilation;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.net.URI;
+
+import javax.tools.SimpleJavaFileObject;
 
 /**
- * Thrown when accessing the M1 interface or implementation class of an
- * {@link AttributedElementClass} failed.
+ * A ClassFileAbstraction holds Java bytecode for generated schema classes
+ * compiled in-memory.
  * 
  * @author ist@uni-koblenz.de
  * 
  */
-public class M1ClassAccessException extends SchemaException {
+public class InMemoryClassFile extends SimpleJavaFileObject {
+	private byte[] bytecode;
 
-	private static final long serialVersionUID = -1792799570737202237L;
-
-	public M1ClassAccessException(String message, Exception cause) {
-		super(message, cause);
+	/**
+	 * Creates a new {@code ClassFileAbstraction} for the class given by
+	 * {@code name}.
+	 * 
+	 * @param name
+	 *            the name of the class
+	 */
+	public InMemoryClassFile(String name) {
+		super(URI.create("string:///" + name.replace('.', '/')
+				+ Kind.CLASS.extension), Kind.CLASS);
 	}
 
-	public M1ClassAccessException(String message) {
-		super(message);
+	public byte[] getBytecode() {
+		return bytecode;
 	}
 
-	public M1ClassAccessException(Exception cause) {
-		super(cause);
+	@Override
+	public ByteArrayOutputStream openOutputStream() {
+		return new ByteArrayOutputStream() {
+			@Override
+			public void close() {
+				bytecode = toByteArray();
+			}
+		};
+	}
+
+	@Override
+	public ByteArrayInputStream openInputStream() {
+		return new ByteArrayInputStream(bytecode);
 	}
 }

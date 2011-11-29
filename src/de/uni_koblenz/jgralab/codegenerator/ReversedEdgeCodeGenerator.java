@@ -256,7 +256,7 @@ public class ReversedEdgeCodeGenerator extends AttributedElementCodeGenerator {
 	}
 
 	@Override
-	protected CodeBlock createGetM1ClassMethod() {
+	protected CodeBlock createGetSchemaClassMethod() {
 		return null;
 	}
 

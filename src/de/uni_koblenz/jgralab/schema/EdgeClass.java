@@ -39,7 +39,7 @@ import de.uni_koblenz.jgralab.Edge;
 
 /**
  * Interface for Edge/Aggregation/Composition classes, instances of this class
- * represent an M2 element.
+ * represent an schema element.
  * 
  * @author ist@uni-koblenz.de
  */
@@ -65,8 +65,9 @@ public interface EdgeClass extends GraphElementClass {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uni_koblenz.jgralab.schema.AttributedElementClass#getM1Class()
+	 * @see
+	 * de.uni_koblenz.jgralab.schema.AttributedElementClass#getSchemaClass()
 	 */
-	public Class<? extends Edge> getM1Class();
+	public Class<? extends Edge> getSchemaClass();
 
 }

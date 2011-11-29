@@ -402,7 +402,7 @@ public abstract class GraphImpl extends GraphBaseImpl implements
 
 	/**
 	 * Notifies graph that one of his attributes has changed. Called from
-	 * generated M1 graph classes when an attribute is changed.
+	 * generated classes implementation when an attribute is changed.
 	 * 
 	 * @param attributeName
 	 *            Name of attribute that has been changed.

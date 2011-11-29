@@ -10,14 +10,14 @@ public class Max extends Function {
 
 	public Max() {
 		super(
-				"Computes the maximum of a collection of values, or of two numbers $a$ and $b$.",
+				"Returns the maximum of a collection of comparable things or of the given two numbers.",
 				Category.STATISTICS);
 	}
 
 	public Number evaluate(Number a, Number b) {
-		if (a instanceof Double || b instanceof Double) {
+		if ((a instanceof Double) || (b instanceof Double)) {
 			return Math.max(a.doubleValue(), b.doubleValue());
-		} else if (a instanceof Long || b instanceof Long) {
+		} else if ((a instanceof Long) || (b instanceof Long)) {
 			return Math.max(a.longValue(), b.longValue());
 		} else {
 			return Math.max(a.intValue(), b.intValue());

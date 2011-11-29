@@ -14,7 +14,8 @@ import de.uni_koblenz.jgralab.greql2.types.Tuple;
 public class Sort extends Function {
 
 	public Sort() {
-		super("Sorts a collection of values.", Category.COLLECTIONS_AND_MAPS);
+		super("Sorts the given collection according to natural ordering.",
+				Category.COLLECTIONS_AND_MAPS);
 	}
 
 	public PVector<?> evaluate(Tuple t) {

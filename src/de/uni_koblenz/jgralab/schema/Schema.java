@@ -45,16 +45,17 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.Vector;
 
+import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphFactory;
 import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.ImplementationType;
 import de.uni_koblenz.jgralab.ProgressFunction;
 import de.uni_koblenz.jgralab.codegenerator.CodeGeneratorConfiguration;
-import de.uni_koblenz.jgralab.codegenerator.JavaSourceFromString;
 import de.uni_koblenz.jgralab.schema.RecordDomain.RecordComponent;
+import de.uni_koblenz.jgralab.schema.impl.compilation.InMemoryJavaSourceFile;
 
 /**
- * The class Schema represents a grUML Schema (M2).
+ * The class Schema represents a grUML Schema.
  * 
  * @author ist@uni-koblenz.de
  * 
@@ -87,20 +88,21 @@ public interface Schema extends Comparable<Schema> {
 
 	/**
 	 * After creating the schema, this command serves to generate code for the
-	 * m1 classes, contained in {@code JavaSourceFromString} objects.
+	 * schema classes, contained in {@code JavaSourceFromString} objects.
 	 * 
 	 * @param config
 	 *            a {@link CodeGeneratorConfiguration} specifying the requested
 	 *            implementation variant
 	 */
-	public Vector<JavaSourceFromString> commit(CodeGeneratorConfiguration config);
+	public Vector<InMemoryJavaSourceFile> commit(CodeGeneratorConfiguration config);
 
 	/**
-	 * after creating the schema, this command serves to make it permanent, m2
-	 * classes are generated to represent the object oriented access layer
+	 * after creating the schema, this command serves to make it permanent,
+	 * schema classes are generated to represent the object oriented access
+	 * layer
 	 * 
 	 * @param path
-	 *            the path to the m1 classes which are to be generated
+	 *            the path to the schema classes which are to be generated
 	 * @param config
 	 *            a {@link CodeGeneratorConfiguration} specifying the requested
 	 *            implementation variant
@@ -112,11 +114,12 @@ public interface Schema extends Comparable<Schema> {
 			throws GraphIOException;
 
 	/**
-	 * after creating the schema, this command serves to make it permanent, m2
-	 * classes are generated to represent the object oriented access layer
+	 * after creating the schema, this command serves to make it permanent,
+	 * schema classes are generated to represent the object oriented access
+	 * layer
 	 * 
 	 * @param path
-	 *            the path to the m1 classes which are to be generated
+	 *            the path to the schema classes which are to be generated
 	 * @param config
 	 *            a {@link CodeGeneratorConfiguration} specifying the requested
 	 *            implementation variant
@@ -130,7 +133,7 @@ public interface Schema extends Comparable<Schema> {
 
 	/**
 	 * After creating the schema, this command serves to generate and compile
-	 * code for the m1 classes. The class files are not written to disk, but
+	 * code for the schema classes. The class files are not written to disk, but
 	 * only held in memory.
 	 * 
 	 * @param config
@@ -138,30 +141,6 @@ public interface Schema extends Comparable<Schema> {
 	 *            be created
 	 */
 	public void compile(CodeGeneratorConfiguration config);
-
-	/**
-	 * After creating the schema, this command serves to generate and compile
-	 * code for the m1 classes. The class files are not written to disk, but
-	 * only held in memory.
-	 * 
-	 * @param jgralabClassPath
-	 *            the classpath to JGraLab
-	 * @param config
-	 *            configures the CodeGenerator and which classes and methods to
-	 *            be created
-	 */
-	public void compile(String jgralabClassPath,
-			CodeGeneratorConfiguration config);
-
-	/**
-	 * After creating the schema, this command serves to generate and compile
-	 * code for the m1 classes. The class files are not written to disk, but
-	 * only held in memory.
-	 * 
-	 * @param jgralabClassPath
-	 *            the classpath to JGraLab
-	 */
-	public void compile(String jgralabClassPath);
 
 	/**
 	 * Generates Java classes in a temp directory, compiles them, and packs them
@@ -495,4 +474,9 @@ public interface Schema extends Comparable<Schema> {
 	 * @return the TG String of this schema
 	 */
 	public String toTGString();
+
+	public Graph createGraph(ImplementationType implementationType);
+
+	public Graph createGraph(ImplementationType implementationType, int vCount,
+			int eCount);
 }

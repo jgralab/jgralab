@@ -233,8 +233,8 @@ public interface InternalGraph extends Graph {
 	/**
 	 * Adds a vertex to this graph. If the vertex' id is 0, a valid id is set,
 	 * otherwise the vertex' current id is used if possible. Should only be used
-	 * by m1-Graphs derived from Graph. To create a new Vertex as user, use the
-	 * appropriate methods from the derived Graphs like
+	 * by implementation classes derived from Graph. To create a new Vertex as
+	 * user, use the appropriate methods from the derived Graphs like
 	 * <code>createStreet(...)</code>
 	 * 
 	 * @param newVertex
@@ -248,8 +248,8 @@ public interface InternalGraph extends Graph {
 	/**
 	 * Adds an edge to this graph. If the edges id is 0, a valid id is set,
 	 * otherwise the edges current id is used if possible. Should only be used
-	 * by m1-Graphs derived from Graph. To create a new Edge as user, use the
-	 * appropriate methods from the derived Graphs like
+	 * by implementation classes derived from Graph. To create a new Edge as
+	 * user, use the appropriate methods from the derived Graphs like
 	 * <code>createStreet(...)</code>
 	 * 
 	 * @param newEdge

@@ -8,7 +8,7 @@ import de.uni_koblenz.jgralab.greql2.funlib.Function;
 public class KeySet extends Function {
 
 	public KeySet() {
-		super("Returns the set of keys of the $map$.",
+		super("Returns the set of keys of the given map.",
 				Category.COLLECTIONS_AND_MAPS);
 	}
 

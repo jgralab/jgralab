@@ -62,11 +62,6 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 	 */
 	protected AttributedElementClass aec;
 
-	/**
-	 * specifies if the generated code is a special JGraLab class of layer M2
-	 * this effects the way the constructor and some methods are built valid
-	 * values: "Graph", "Vertex", "Edge", "Incidence"
-	 */
 	protected AttributedElementCodeGenerator(
 			AttributedElementClass attributedElementClass,
 			String schemaRootPackageName, CodeGeneratorConfiguration config) {
@@ -118,7 +113,7 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 			code.add(createFields(aec.getAttributeList()));
 			code.add(createConstructor());
 			code.add(createGetAttributedElementClassMethod());
-			code.add(createGetM1ClassMethod());
+			code.add(createGetSchemaClassMethod());
 			code.add(createGenericGetter(aec.getAttributeList()));
 			code.add(createGenericSetter(aec.getAttributeList()));
 			code.add(createGettersAndSetters(aec.getAttributeList()));
@@ -225,10 +220,10 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 				"}");
 	}
 
-	protected CodeBlock createGetM1ClassMethod() {
+	protected CodeBlock createGetSchemaClassMethod() {
 		return new CodeSnippet(
 				true,
-				"public final java.lang.Class<? extends #jgPackage#.AttributedElement> getM1Class() {",
+				"public final java.lang.Class<? extends #jgPackage#.AttributedElement> getSchemaClass() {",
 				"\treturn #javaClassName#.class;", "}");
 	}
 

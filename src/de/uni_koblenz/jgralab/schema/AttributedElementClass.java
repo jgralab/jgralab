@@ -40,7 +40,7 @@ import java.util.SortedSet;
 
 import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.schema.exception.DuplicateAttributeException;
-import de.uni_koblenz.jgralab.schema.exception.M1ClassAccessException;
+import de.uni_koblenz.jgralab.schema.exception.SchemaClassAccessException;
 
 /**
  * This is the base class of any <code>GraphClass</code>/
@@ -466,10 +466,10 @@ public interface AttributedElementClass extends NamedElement {
 	public Set<AttributedElementClass> getDirectSuperClasses();
 
 	/**
-	 * Returns the M1 interface class for this attributed element.
+	 * Returns the schema interface for this attributed element.
 	 * 
 	 * <p>
-	 * <b>Pattern:</b> <code>m1Class = attrElement.getM1Class();</code>
+	 * <b>Pattern:</b> <code>schemaClass = attrElement.getSchemaClass();</code>
 	 * </p>
 	 * 
 	 * <p>
@@ -480,18 +480,19 @@ public interface AttributedElementClass extends NamedElement {
 	 * <b>Postconditions:</b> not yet defined
 	 * </p>
 	 * 
-	 * @return the M1 interface class for this element
+	 * @return the schema interface class for this element
 	 * 
-	 * @throws M1ClassAccessException
+	 * @throws SchemaClassAccessException
 	 *             if reflection exceptions occur.
 	 */
-	public Class<? extends AttributedElement> getM1Class();
+	public Class<? extends AttributedElement> getSchemaClass();
 
 	/**
-	 * Returns the M1 implementation class for this attributed element.
+	 * Returns the schema implementation class for this attributed element.
 	 * 
 	 * <p>
-	 * <b>Pattern:</b> <code>m1ImplClass = attrElement.getM1Class();</code>
+	 * <b>Pattern:</b>
+	 * <code>schemaImplClass = attrElement.getSchemaImplementationClass();</code>
 	 * </p>
 	 * 
 	 * <p>
@@ -502,16 +503,16 @@ public interface AttributedElementClass extends NamedElement {
 	 * <b>Postconditions:</b> not yet defined
 	 * </p>
 	 * 
-	 * @return the M1 implementation class for this element
+	 * @return the schema implementation class for this element
 	 * 
-	 * @throws M1ClassAccessException
+	 * @throws SchemaClassAccessException
 	 *             if:
 	 *             <ul>
 	 *             <li>this element is abstract</li>
 	 *             <li>there are reflection exceptions</li>
 	 *             </ul>
 	 */
-	public Class<? extends AttributedElement> getM1ImplementationClass();
+	public Class<? extends AttributedElement> getSchemaImplementationClass();
 
 	/**
 	 * Fetches the attribute with the specified <code>name</code> from this

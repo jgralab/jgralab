@@ -35,6 +35,7 @@
 package de.uni_koblenz.jgralab.algolib.problems;
 
 import de.uni_koblenz.jgralab.Graph;
+import de.uni_koblenz.jgralab.algolib.visitors.Visitor;
 
 /**
  * This is the super interface for all problem solvers. The common parameter for
@@ -56,5 +57,7 @@ public interface ProblemSolver {
 	 *            the graph this <code>ProblemSolver</code> works with.
 	 */
 	public void setGraph(Graph graph);
+
+	public void addVisitor(Visitor v);
 
 }

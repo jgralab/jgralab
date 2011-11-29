@@ -8,7 +8,7 @@ public class HasAttribute extends Function {
 
 	public HasAttribute() {
 		super(
-				"Determines whether the attribute $name$ is defined for an element $el$ or class $aec$.",
+				"Returns true, iff the attribute given by its name is defined for the given attributed element or attributed element class.",
 				Category.SCHEMA_ACCESS);
 	}
 

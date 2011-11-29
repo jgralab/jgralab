@@ -21,17 +21,17 @@ import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.ImplementationType;
 import de.uni_koblenz.jgralab.JGraLab;
-import de.uni_koblenz.jgralab.M1ClassManager;
 import de.uni_koblenz.jgralab.codegenerator.CodeGeneratorConfiguration;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.EnumDomain;
 import de.uni_koblenz.jgralab.schema.GraphClass;
 import de.uni_koblenz.jgralab.schema.Schema;
-import de.uni_koblenz.jgralab.schema.exception.M1ClassAccessException;
+import de.uni_koblenz.jgralab.schema.exception.SchemaClassAccessException;
 import de.uni_koblenz.jgralab.schema.exception.SchemaException;
 import de.uni_koblenz.jgralab.schema.impl.NamedElementImpl;
 import de.uni_koblenz.jgralab.schema.impl.SchemaImpl;
+import de.uni_koblenz.jgralab.schema.impl.compilation.SchemaClassManager;
 
 /**
  * @author Tassilo Horn &lt;horn@uni-koblenz.de&gt;
@@ -168,7 +168,7 @@ public class Context {
 		// Check if the target schema is already present and we can thus skip
 		// the SCHEMA phase.
 		try {
-			Class<?> schemaClass = M1ClassManager.instance(targetSchemaName)
+			Class<?> schemaClass = SchemaClassManager.instance(targetSchemaName)
 					.loadClass(targetSchemaName);
 			Method schemaInstanceMethod = schemaClass.getMethod("instance");
 			targetSchema = (Schema) schemaInstanceMethod.invoke(null);
@@ -610,8 +610,8 @@ public class Context {
 	final void createTargetGraph() {
 		boolean targetSchemaIsCompiled = true;
 		try {
-			targetSchema.getGraphClass().getM1Class();
-		} catch (M1ClassAccessException e) {
+			targetSchema.getGraphClass().getSchemaClass();
+		} catch (SchemaClassAccessException e) {
 			targetSchemaIsCompiled = false;
 		}
 

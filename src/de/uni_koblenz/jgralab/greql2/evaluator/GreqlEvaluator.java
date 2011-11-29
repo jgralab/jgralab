@@ -893,7 +893,7 @@ public class GreqlEvaluator {
 
 			Edge e = bv.getFirstIncidence();
 			while (e != null) {
-				if (e.getM1Class() == IsBoundVarOf.class) {
+				if (e.getSchemaClass() == IsBoundVarOf.class) {
 					e = e.getNextIncidence();
 					continue;
 				}
@@ -904,7 +904,7 @@ public class GreqlEvaluator {
 
 		Edge e = fa.getFirstIncidence(EdgeDirection.OUT);
 		while (e != null) {
-			if (e.getM1Class() == IsFunctionIdOf.class) {
+			if (e.getSchemaClass() == IsFunctionIdOf.class) {
 				e = e.getNextIncidence(EdgeDirection.OUT);
 				continue;
 			}

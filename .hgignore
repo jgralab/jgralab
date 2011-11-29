@@ -23,3 +23,9 @@ syntax: regexp
 ^jgralabtest$
 syntax: regexp
 ^greqlQueryResult\.html$
+syntax: regexp
+^greqlQueryResult\.xml$
+syntax: regexp
+^eclipse/src$
+syntax: regexp
+^eclipse/src$
