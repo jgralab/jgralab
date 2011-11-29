@@ -149,7 +149,7 @@ public class GraphLayoutFactory {
 				+ PRINT_ELEMENT_SEQUENCE_INDICES + " ? ' (' ++ "
 				+ ELEMENT_SEQUENCE_INDEX
 				+ " ++ ')'  : '') ++ ' | ' ++ typeName(" + ELEMENT
-				+ ") ++ '}|' ++ " + "join(\"\\l\", from attr:attributeNames("
+				+ ") ++ '}|' ++ " + "joinWithCollection(\"\\l\", from attr:attributeNames("
 				+ ELEMENT + ") " + "reportSet (attr ++ ' = ' ++ ("
 				+ SHORTEN_STRINGS + " ? shortenString(toDotString(attrVal), 17) : toDotString(attrVal) ++ (" + PRINT_DOMAIN_NAMES
 				+ " ? ': ' ++ attributeType(" + ELEMENT
@@ -171,7 +171,7 @@ public class GraphLayoutFactory {
 				+ ") ++ ' : ' ++ typeName(" + ELEMENT + ") ++ ("
 				+ PRINT_ELEMENT_SEQUENCE_INDICES + " ? ' (' ++ "
 				+ ELEMENT_SEQUENCE_INDEX + " ++ ')'  : '') ++ ("
-				+ PRINT_EDGE_ATTRIBUTES + " ? '\\n' ++ " + "join('\\l', from "
+				+ PRINT_EDGE_ATTRIBUTES + " ? '\\n' ++ " + "joinWithCollection('\\l', from "
 				+ "attr:attributeNames(" + ELEMENT + ") " + "reportSet (("
 				+ ABBREVIATE_EDGE_ATTRIBUTE_NAMES
 				+ " ? abbreviateString(attr) : attr) " + "++ ' = ' ++ ("
