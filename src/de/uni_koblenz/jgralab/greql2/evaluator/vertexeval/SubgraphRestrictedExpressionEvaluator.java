@@ -21,8 +21,9 @@ public class SubgraphRestrictedExpressionEvaluator extends VertexEvaluator {
 	
 	VertexEvaluator exprEval;
 	
-	protected SubgraphRestrictedExpressionEvaluator(SubgraphRestrictedExpression vertex, GreqlEvaluator eval) {
+	public SubgraphRestrictedExpressionEvaluator(SubgraphRestrictedExpression vertex, GreqlEvaluator eval) {
 		super(eval);
+		this.vertex = vertex;
 	}
 
 	@Override

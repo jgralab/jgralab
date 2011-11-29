@@ -1982,7 +1982,7 @@ public class GreqlParser extends ParserHelper {
 				match(TokenTypes.RCURLY);
 				if (!inPredicateMode()) {
 					createMultipleEdgesToParent(typeIds, expr,
-							IsTypeRestrOf.class, 0);
+							IsTypeRestrOfExpression.class, 0);
 				}
 			}
 		}

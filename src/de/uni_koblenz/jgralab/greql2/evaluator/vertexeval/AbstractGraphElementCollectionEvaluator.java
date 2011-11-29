@@ -38,7 +38,7 @@ package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.schema.Expression;
-import de.uni_koblenz.jgralab.greql2.schema.IsTypeRestrOf;
+import de.uni_koblenz.jgralab.greql2.schema.IsTypeRestrOfExpression;
 import de.uni_koblenz.jgralab.greql2.schema.TypeId;
 import de.uni_koblenz.jgralab.greql2.types.TypeCollection;
 
@@ -63,8 +63,8 @@ public abstract class AbstractGraphElementCollectionEvaluator extends
 	protected TypeCollection getTypeCollection() {
 		if (typeCollection == null) {
 			typeCollection = new TypeCollection();
-			IsTypeRestrOf inc = ((Expression) getVertex())
-					.getFirstIsTypeRestrOfIncidence(EdgeDirection.IN);
+			IsTypeRestrOfExpression inc = ((Expression) getVertex())
+					.getFirstIsTypeRestrOfExpressionIncidence(EdgeDirection.IN);
 			while (inc != null) {
 				if (inc.getAlpha() instanceof TypeId) {
 					TypeIdEvaluator typeEval = (TypeIdEvaluator) vertexEvalMarker
@@ -72,7 +72,7 @@ public abstract class AbstractGraphElementCollectionEvaluator extends
 					typeCollection.addTypes((TypeCollection) typeEval
 							.getResult());
 				}
-				inc = inc.getNextIsTypeRestrOfIncidence(EdgeDirection.IN);
+				inc = inc.getNextIsTypeRestrOfExpressionIncidence(EdgeDirection.IN);
 			}
 		}
 		return typeCollection;

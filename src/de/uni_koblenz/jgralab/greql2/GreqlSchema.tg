@@ -177,7 +177,7 @@ EdgeClass IsTrueExprOf: Greql2Aggregation from Expression (1,1) role trueExpr ag
 EdgeClass IsTypeExprOfDeclaration: IsTypeExprOf from Expression (0,1) role typeExpr aggregation shared to SimpleDeclaration (0,*);
 EdgeClass IsTypeExprOfFunction: IsTypeExprOf from Expression (0,1) role typeExpr aggregation shared to FunctionApplication (0,*);
 EdgeClass IsTypeIdOf: Greql2Aggregation from TypeId (0,*) role typeId aggregation shared to EdgeRestriction (0,*);
-EdgeClass IsTypeRestrOf: Greql2Aggregation from TypeId (0,*) role typeRestr aggregation shared to Expression (0,*);
+EdgeClass IsTypeRestrOfExpression: Greql2Aggregation from TypeId (0,*) role typeRestr aggregation shared to Expression (0,*);
 EdgeClass IsTypeRestrOfSubgraph: Greql2Aggregation from TypeId (0,*) role typeRestr aggregation shared to SubgraphDefinition (0,*);
 EdgeClass IsVarOf: Greql2Aggregation from Variable (1,1) role var aggregation shared to Definition (0,1);
 abstract EdgeClass Greql2Aggregation from Greql2Vertex (0,*) aggregation shared to Greql2Vertex (0,*) { sourcePositions: List<SourcePosition> } ;
