@@ -581,9 +581,80 @@ public class GreqlParser extends ParserHelper {
 		if (skipRule(pos)) {
 			return null;
 		}
-		Expression expr = parseQuantifiedExpression();
+		Expression expr = parseSubgraphRestrictedExpression();
 		ruleSucceeds(RuleEnum.EXPRESSION, pos);
 		return expr;
+	}
+	
+	
+	
+	private final SubgraphDefinition parseSubgraphDefinition() {
+		SubgraphDefinition definition = null;
+		boolean types = false;
+		switch (lookAhead(0)) {
+		case VSUBGRAPH:
+			match();
+			types = true;
+			if (!inPredicateMode()) {
+				definition = graph.createVertexTypeSubgraph();
+			}
+			break;
+		case ESUBGRAPH:
+			match();
+			types = true;
+			if (!inPredicateMode()) {
+				definition = graph.createEdgeTypeSubgraph();
+			}
+			break;	
+		default:
+			int exprOffset = getCurrentOffset();
+			Expression traversalContextExpr = parseExpression();
+			if (!inPredicateMode()) {
+				int exprLength = getLength(exprOffset);
+				definition = graph.createExpressionDefinedSubgraph();
+				IsSubgraphDefiningExpression isSubgraphDefExpr = graph.createIsSubgraphDefiningExpression(traversalContextExpr, (ExpressionDefinedSubgraph) definition);
+				isSubgraphDefExpr.set_sourcePositions(createSourcePositionList(exprLength, exprOffset));
+			}
+		}
+		if (types) {
+			match(TokenTypes.LCURLY);
+			List<VertexPosition<TypeId>> typeIds = parseTypeExpressionList();
+			match(TokenTypes.RCURLY);
+			if (!inPredicateMode()) {
+				createMultipleEdgesToParent(typeIds, definition, IsTypeRestrOfSubgraph.class,0);
+			}
+		}
+		return definition;
+	}
+	
+	private final Expression parseSubgraphRestrictedExpression() {
+		int pos = alreadySucceeded(RuleEnum.SUBGRAPHRESTRICTEDEXPRESSION);
+		if (skipRule(pos)) {
+			return null;
+		}
+		Expression result = null;
+		if (lookAhead(0) == TokenTypes.ON) {
+			match();
+			int offsetDef = getCurrentOffset();
+			SubgraphDefinition subgraphDef = parseSubgraphDefinition();
+			match(TokenTypes.COLON);
+			int lengthDef = getLength(offsetDef);
+			int offsetRestrExpr = getCurrentOffset();
+			Expression restrictedExpr = parseWhereExpression();
+			if (!inPredicateMode()) {
+				int lengthRestrExpr = getLength(offsetRestrExpr);
+				SubgraphRestrictedExpression subgraphRestrExpr = graph.createSubgraphRestrictedExpression();
+				IsSubgraphDefinitionOf subgraphDefOf = graph.createIsSubgraphDefinitionOf(subgraphDef, subgraphRestrExpr);
+				subgraphDefOf.set_sourcePositions(createSourcePositionList(lengthDef, offsetDef));
+				IsExpressionOnSubgraph exprOnSubgraph = graph.createIsExpressionOnSubgraph(restrictedExpr, subgraphRestrExpr);
+				exprOnSubgraph.set_sourcePositions(createSourcePositionList(lengthRestrExpr, offsetRestrExpr));
+				result = subgraphRestrExpr;
+			}
+		} else {
+			result = parseLetExpression();
+		}
+		ruleSucceeds(RuleEnum.SUBGRAPHRESTRICTEDEXPRESSION, pos);
+		return result;
 	}
 
 	private final boolean tryMatch(TokenTypes type) {
@@ -639,7 +710,7 @@ public class GreqlParser extends ParserHelper {
 			lengthQuantifiedDecl = getLength(offsetQuantifiedDecl);
 			match(TokenTypes.AT);
 			offsetQuantifiedExpr = getCurrentOffset();
-			Expression boundExpr = parseQuantifiedExpression();
+			Expression boundExpr = parseSubgraphRestrictedExpression();
 			lengthQuantifiedExpr = getLength(offsetQuantifiedExpr);
 			QuantifiedExpression quantifiedExpr = null;
 			if (!inPredicateMode()) {
@@ -663,7 +734,7 @@ public class GreqlParser extends ParserHelper {
 			duringParsingvariableSymbolTable.blockEnd();
 			return quantifiedExpr;
 		} else {
-			return parseLetExpression();
+			return parseConditionalExpression();
 		}
 	}
 
@@ -699,7 +770,7 @@ public class GreqlParser extends ParserHelper {
 
 	private final Expression parseWhereExpression() {
 		int offset = getCurrentOffset();
-		Expression expr = parseConditionalExpression();
+		Expression expr = parseQuantifiedExpression();
 		if (tryMatch(TokenTypes.WHERE)) {
 			int length = getLength(offset);
 			List<VertexPosition<Definition>> defList = parseDefinitionList();
@@ -1103,14 +1174,6 @@ public class GreqlParser extends ParserHelper {
 		if (predicateEnd()) {
 			// System.out.println("LA2: " + lookAhead.getValue());
 			return parseVariable(false);
-		}
-		predicateStart();
-		try {
-			parseGraphRangeExpression();
-		} catch (ParsingException ex) {
-		}
-		if (predicateEnd()) {
-			return parseGraphRangeExpression();
 		}
 		predicateStart();
 		try {
@@ -1841,17 +1904,6 @@ public class GreqlParser extends ParserHelper {
 				}
 			}
 		}
-		if (tryMatch(TokenTypes.IN)) {
-			int offsetSubgraph = getCurrentOffset();
-			Expression subgraphExpr = parseExpression();
-			int lengthSubgraph = getLength(offsetSubgraph);
-			if (!inPredicateMode()) {
-				IsSubgraphOf subgraphOf = graph.createIsSubgraphOf(
-						subgraphExpr, declaration);
-				subgraphOf.set_sourcePositions(createSourcePositionList(
-						lengthSubgraph, offsetSubgraph));
-			}
-		}
 		return declaration;
 	}
 
@@ -1930,35 +1982,14 @@ public class GreqlParser extends ParserHelper {
 				match(TokenTypes.RCURLY);
 				if (!inPredicateMode()) {
 					createMultipleEdgesToParent(typeIds, expr,
-							IsTypeRestrOf.class, 0);
+							IsTypeRestrOfExpression.class, 0);
 				}
 			}
 		}
 		return expr;
 	}
 
-	private final Expression parseGraphRangeExpression() {
-		Expression expr = null;
-		if (tryMatch(TokenTypes.VSUBGRAPH)) {
-			if (!inPredicateMode()) {
-				expr = graph.createVertexSubgraphExpression();
-			}
-		} else {
-			match(TokenTypes.ESUBGRAPH);
-			if (!inPredicateMode()) {
-				expr = graph.createEdgeSubgraphExpression();
-			}
-		}
-		if (tryMatch(TokenTypes.LCURLY)) {
-			List<VertexPosition<TypeId>> typeIds = parseTypeExpressionList();
-			match(TokenTypes.RCURLY);
-			if (!inPredicateMode()) {
-				createMultipleEdgesToParent(typeIds, expr, IsTypeRestrOf.class,
-						0);
-			}
-		}
-		return expr;
-	}
+
 
 	private final List<VertexPosition<TypeId>> parseTypeExpressionList() {
 		List<VertexPosition<TypeId>> list = new ArrayList<VertexPosition<TypeId>>();
@@ -2249,18 +2280,6 @@ public class GreqlParser extends ParserHelper {
 			declaration = graph.createDeclaration();
 			createMultipleEdgesToParent(declarations, declaration,
 					IsSimpleDeclOf.class, false);
-		}
-		if (tryMatch(TokenTypes.IN)) {
-			int offsetSubgraph = getCurrentOffset();
-			Expression subgraphExpr = parseExpression();
-			int lengthSubgraph = getLength(offsetSubgraph);
-			lengthDecl += lengthSubgraph;
-			if (!inPredicateMode()) {
-				IsSubgraphOf subgraphOf = graph.createIsSubgraphOf(
-						subgraphExpr, declaration);
-				subgraphOf.set_sourcePositions(createSourcePositionList(
-						lengthSubgraph, offsetSubgraph));
-			}
 		}
 		if (tryMatch(TokenTypes.WITH)) {
 			int offsetConstraint = getCurrentOffset();

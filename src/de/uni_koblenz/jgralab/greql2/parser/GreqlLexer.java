@@ -67,6 +67,7 @@ public class GreqlLexer {
 					put(TokenTypes.FORALL, "forall");
 					put(TokenTypes.FROM, "from");
 					put(TokenTypes.IN, "in");
+					put(TokenTypes.ON, "on");
 					put(TokenTypes.LET, "let");
 					put(TokenTypes.LIST, "list");
 					put(TokenTypes.REC, "rec");

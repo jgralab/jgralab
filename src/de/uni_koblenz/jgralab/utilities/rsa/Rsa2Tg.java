@@ -2291,7 +2291,7 @@ public class Rsa2Tg extends XmlProcessor {
 	private boolean edgeClassHierarchyIsAcyclic() {
 		if (edgeClassAcyclicEvaluator == null) {
 			edgeClassAcyclicEvaluator = new GreqlEvaluator(
-					"isAcyclic(vSubgraph{structure.EdgeClass})", sg, null);
+					"on vSubgraph{structure.EdgeClass} : isAcyclic()", sg, null);
 		}
 		edgeClassAcyclicEvaluator.startEvaluation();
 		return (Boolean) edgeClassAcyclicEvaluator.getResult();
@@ -2305,7 +2305,7 @@ public class Rsa2Tg extends XmlProcessor {
 	private boolean vertexClassHierarchyIsAcyclic() {
 		if (vertexClassAcyclicEvaluator == null) {
 			vertexClassAcyclicEvaluator = new GreqlEvaluator(
-					"isAcyclic(vSubgraph{structure.VertexClass})", sg, null);
+					"on vSubgraph{structure.VertexClass} : isAcyclic()", sg, null);
 		}
 		vertexClassAcyclicEvaluator.startEvaluation();
 		return (Boolean) vertexClassAcyclicEvaluator.getResult();

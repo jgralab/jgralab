@@ -64,7 +64,7 @@ import de.uni_koblenz.jgralab.greql2.schema.DoubleLiteral;
 import de.uni_koblenz.jgralab.greql2.schema.EdgePathDescription;
 import de.uni_koblenz.jgralab.greql2.schema.EdgeRestriction;
 import de.uni_koblenz.jgralab.greql2.schema.EdgeSetExpression;
-import de.uni_koblenz.jgralab.greql2.schema.EdgeSubgraphExpression;
+import de.uni_koblenz.jgralab.greql2.schema.EdgeTypeSubgraph;
 import de.uni_koblenz.jgralab.greql2.schema.ForwardVertexSet;
 import de.uni_koblenz.jgralab.greql2.schema.FunctionApplication;
 import de.uni_koblenz.jgralab.greql2.schema.FunctionId;
@@ -96,7 +96,8 @@ import de.uni_koblenz.jgralab.greql2.schema.IsStartRestrOf;
 import de.uni_koblenz.jgralab.greql2.schema.IsSubPathOf;
 import de.uni_koblenz.jgralab.greql2.schema.IsTargetExprOf;
 import de.uni_koblenz.jgralab.greql2.schema.IsTypeIdOf;
-import de.uni_koblenz.jgralab.greql2.schema.IsTypeRestrOf;
+import de.uni_koblenz.jgralab.greql2.schema.IsTypeRestrOfExpression;
+import de.uni_koblenz.jgralab.greql2.schema.IsTypeRestrOfSubgraph;
 import de.uni_koblenz.jgralab.greql2.schema.IteratedPathDescription;
 import de.uni_koblenz.jgralab.greql2.schema.ListComprehension;
 import de.uni_koblenz.jgralab.greql2.schema.ListConstruction;
@@ -118,7 +119,7 @@ import de.uni_koblenz.jgralab.greql2.schema.ThisVertex;
 import de.uni_koblenz.jgralab.greql2.schema.TypeId;
 import de.uni_koblenz.jgralab.greql2.schema.Variable;
 import de.uni_koblenz.jgralab.greql2.schema.VertexSetExpression;
-import de.uni_koblenz.jgralab.greql2.schema.VertexSubgraphExpression;
+import de.uni_koblenz.jgralab.greql2.schema.VertexTypeSubgraph;
 import de.uni_koblenz.jgralab.schema.GraphClass;
 import de.uni_koblenz.jgralab.schema.Schema;
 import de.uni_koblenz.jgralab.schema.impl.SchemaImpl;
@@ -612,7 +613,7 @@ public class ParserTest {
 		assertEquals("var", var.get_name());
 		VertexSetExpression vset = (VertexSetExpression) simpleDecl
 				.getFirstIsTypeExprOfIncidence().getAlpha();
-		IsTypeRestrOf typeRestrEdge = vset.getFirstIsTypeRestrOfIncidence();
+		IsTypeRestrOfExpression typeRestrEdge = vset.getFirstIsTypeRestrOfExpressionIncidence();
 		assertNotNull(typeRestrEdge);
 		TypeId typeId = typeRestrEdge.getAlpha();
 		assertEquals("Definition", typeId.get_name());
@@ -624,7 +625,7 @@ public class ParserTest {
 		assertEquals("def", var.get_name());
 		vset = (VertexSetExpression) simpleDecl.getFirstIsTypeExprOfIncidence()
 				.getAlpha();
-		typeRestrEdge = vset.getFirstIsTypeRestrOfIncidence();
+		typeRestrEdge = vset.getFirstIsTypeRestrOfExpressionIncidence();
 		assertNotNull(typeRestrEdge);
 		typeId = typeRestrEdge.getAlpha();
 		assertEquals("WhereExpression", typeId.get_name());
@@ -646,7 +647,7 @@ public class ParserTest {
 		assertEquals("var", var.get_name());
 		VertexSetExpression vset = (VertexSetExpression) simpleDecl
 				.getFirstIsTypeExprOfIncidence().getAlpha();
-		IsTypeRestrOf typeRestrEdge = vset.getFirstIsTypeRestrOfIncidence();
+		IsTypeRestrOfExpression typeRestrEdge = vset.getFirstIsTypeRestrOfExpressionIncidence();
 		assertNotNull(typeRestrEdge);
 		TypeId typeId = typeRestrEdge.getAlpha();
 		assertEquals("Definition", typeId.get_name());
@@ -658,7 +659,7 @@ public class ParserTest {
 		assertEquals("def", var.get_name());
 		vset = (VertexSetExpression) simpleDecl.getFirstIsTypeExprOfIncidence()
 				.getAlpha();
-		typeRestrEdge = vset.getFirstIsTypeRestrOfIncidence();
+		typeRestrEdge = vset.getFirstIsTypeRestrOfExpressionIncidence();
 		assertNotNull(typeRestrEdge);
 		typeId = typeRestrEdge.getAlpha();
 		assertEquals("WhereExpression", typeId.get_name());
@@ -875,16 +876,16 @@ public class ParserTest {
 		Greql2 graph = parseQuery("V{FirstType, SecondType, ^ThirdType}");
 		VertexSetExpression vset = graph.getFirstVertexSetExpression();
 		assertNotNull(vset);
-		assertEquals(3, vset.getDegree(IsTypeRestrOf.class));
-		IsTypeRestrOf typeEdge = vset.getFirstIsTypeRestrOfIncidence();
+		assertEquals(3, vset.getDegree(IsTypeRestrOfExpression.class));
+		IsTypeRestrOfExpression typeEdge = vset.getFirstIsTypeRestrOfExpressionIncidence();
 		TypeId typeId = typeEdge.getAlpha();
 		assertEquals("FirstType", typeId.get_name());
 		assertFalse(typeId.is_excluded());
-		typeEdge = typeEdge.getNextIsTypeRestrOfIncidence();
+		typeEdge = typeEdge.getNextIsTypeRestrOfExpressionIncidence();
 		typeId = typeEdge.getAlpha();
 		assertEquals("SecondType", typeId.get_name());
 		assertFalse(typeId.is_excluded());
-		typeEdge = typeEdge.getNextIsTypeRestrOfIncidence();
+		typeEdge = typeEdge.getNextIsTypeRestrOfExpressionIncidence();
 		typeId = typeEdge.getAlpha();
 		assertEquals("ThirdType", typeId.get_name());
 		assertTrue(typeId.is_excluded());
@@ -895,16 +896,16 @@ public class ParserTest {
 		Greql2 graph = parseQuery("E{^FirstType, ^SecondType, ThirdType}");
 		EdgeSetExpression vset = graph.getFirstEdgeSetExpression();
 		assertNotNull(vset);
-		assertEquals(3, vset.getDegree(IsTypeRestrOf.class));
-		IsTypeRestrOf typeEdge = vset.getFirstIsTypeRestrOfIncidence();
+		assertEquals(3, vset.getDegree(IsTypeRestrOfExpression.class));
+		IsTypeRestrOfExpression typeEdge = vset.getFirstIsTypeRestrOfExpressionIncidence();
 		TypeId typeId = typeEdge.getAlpha();
 		assertEquals("FirstType", typeId.get_name());
 		assertTrue(typeId.is_excluded());
-		typeEdge = typeEdge.getNextIsTypeRestrOfIncidence();
+		typeEdge = typeEdge.getNextIsTypeRestrOfExpressionIncidence();
 		typeId = typeEdge.getAlpha();
 		assertEquals("SecondType", typeId.get_name());
 		assertTrue(typeId.is_excluded());
-		typeEdge = typeEdge.getNextIsTypeRestrOfIncidence();
+		typeEdge = typeEdge.getNextIsTypeRestrOfExpressionIncidence();
 		typeId = typeEdge.getAlpha();
 		assertEquals("ThirdType", typeId.get_name());
 		assertFalse(typeId.is_excluded());
@@ -912,19 +913,19 @@ public class ParserTest {
 
 	@Test
 	public void testEdgeSubgraphExpression() throws Exception {
-		Greql2 graph = parseQuery("eSubgraph{^FirstType, ^SecondType, ThirdType}");
-		EdgeSubgraphExpression vset = graph.getFirstEdgeSubgraphExpression();
-		assertNotNull(vset);
-		assertEquals(3, vset.getDegree(IsTypeRestrOf.class));
-		IsTypeRestrOf typeEdge = vset.getFirstIsTypeRestrOfIncidence();
+		Greql2 graph = parseQuery("on eSubgraph{^FirstType, ^SecondType, ThirdType} : true");
+		EdgeTypeSubgraph edgeTypeSubgraph = graph.getFirstEdgeTypeSubgraph();
+		assertNotNull(edgeTypeSubgraph);
+		assertEquals(3, edgeTypeSubgraph.getDegree(IsTypeRestrOfSubgraph.class));
+		IsTypeRestrOfSubgraph typeEdge = edgeTypeSubgraph.getFirstIsTypeRestrOfSubgraphIncidence();
 		TypeId typeId = typeEdge.getAlpha();
 		assertEquals("FirstType", typeId.get_name());
 		assertTrue(typeId.is_excluded());
-		typeEdge = typeEdge.getNextIsTypeRestrOfIncidence();
+		typeEdge = typeEdge.getNextIsTypeRestrOfSubgraphIncidence();
 		typeId = typeEdge.getAlpha();
 		assertEquals("SecondType", typeId.get_name());
 		assertTrue(typeId.is_excluded());
-		typeEdge = typeEdge.getNextIsTypeRestrOfIncidence();
+		typeEdge = typeEdge.getNextIsTypeRestrOfSubgraphIncidence();
 		typeId = typeEdge.getAlpha();
 		assertEquals("ThirdType", typeId.get_name());
 		assertFalse(typeId.is_excluded());
@@ -932,20 +933,20 @@ public class ParserTest {
 
 	@Test
 	public void testVertexSubgraphExpression() throws Exception {
-		Greql2 graph = parseQuery("vSubgraph{^FirstType, ^SecondType, ThirdType}");
-		VertexSubgraphExpression vset = graph
-				.getFirstVertexSubgraphExpression();
-		assertNotNull(vset);
-		assertEquals(3, vset.getDegree(IsTypeRestrOf.class));
-		IsTypeRestrOf typeEdge = vset.getFirstIsTypeRestrOfIncidence();
+		Greql2 graph = parseQuery("on vSubgraph{^FirstType, ^SecondType, ThirdType} : true");
+		VertexTypeSubgraph vertexTypesubgraph = graph
+				.getFirstVertexTypeSubgraph();
+		assertNotNull(vertexTypesubgraph);
+		assertEquals(3, vertexTypesubgraph.getDegree(IsTypeRestrOfSubgraph.class));
+		IsTypeRestrOfSubgraph typeEdge = vertexTypesubgraph.getFirstIsTypeRestrOfSubgraphIncidence();
 		TypeId typeId = typeEdge.getAlpha();
 		assertEquals("FirstType", typeId.get_name());
 		assertTrue(typeId.is_excluded());
-		typeEdge = typeEdge.getNextIsTypeRestrOfIncidence();
+		typeEdge = typeEdge.getNextIsTypeRestrOfSubgraphIncidence();
 		typeId = typeEdge.getAlpha();
 		assertEquals("SecondType", typeId.get_name());
 		assertTrue(typeId.is_excluded());
-		typeEdge = typeEdge.getNextIsTypeRestrOfIncidence();
+		typeEdge = typeEdge.getNextIsTypeRestrOfSubgraphIncidence();
 		typeId = typeEdge.getAlpha();
 		assertEquals("ThirdType", typeId.get_name());
 		assertFalse(typeId.is_excluded());

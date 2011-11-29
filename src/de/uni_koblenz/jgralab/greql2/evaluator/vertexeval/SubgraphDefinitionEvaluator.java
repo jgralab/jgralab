@@ -35,34 +35,52 @@
 
 package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 
+import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
-import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
-import de.uni_koblenz.jgralab.greql2.schema.SubgraphExpression;
+import de.uni_koblenz.jgralab.greql2.schema.IsTypeRestrOfSubgraph;
+import de.uni_koblenz.jgralab.greql2.schema.SubgraphDefinition;
+import de.uni_koblenz.jgralab.greql2.types.TypeCollection;
 
 /**
- * This is the baseclass for VertexSubgraphExpressionEvaluator and
- * EdgeSubgraphExpressionEvaluator
- * 
- * @author ist@uni-koblenz.de Summer 2006, Diploma Thesis
- * 
+ * Base class for all subgraph definition evaluators
+ * @author ist@uni-koblenz.de
+ *
  */
-public abstract class SubgraphExpressionEvaluator extends
-		AbstractGraphElementCollectionEvaluator {
+public abstract class SubgraphDefinitionEvaluator extends
+		VertexEvaluator {
 
-	protected SubgraphExpression vertex;
+	protected SubgraphDefinition vertex;
+	
+	private TypeCollection typeCollection = null;
 
 	/**
 	 * returns the vertex this VertexEvaluator evaluates
 	 */
 	@Override
-	public Greql2Vertex getVertex() {
+	public SubgraphDefinition getVertex() {
 		return vertex;
 	}
 
-	public SubgraphExpressionEvaluator(SubgraphExpression vertex,
+	public SubgraphDefinitionEvaluator(SubgraphDefinition vertex,
 			GreqlEvaluator eval) {
 		super(eval);
 		this.vertex = vertex;
+	}
+	
+
+	protected TypeCollection getTypeCollection() {
+		if (typeCollection == null) {
+			typeCollection = new TypeCollection();
+			IsTypeRestrOfSubgraph inc =  vertex.getFirstIsTypeRestrOfSubgraphIncidence(EdgeDirection.IN);
+			while (inc != null) {
+				TypeIdEvaluator typeEval = (TypeIdEvaluator) vertexEvalMarker
+						.getMark(inc.getThat());
+					typeCollection.addTypes((TypeCollection) typeEval
+							.getResult());
+				inc = inc.getNextIsTypeRestrOfSubgraphIncidence(EdgeDirection.IN);
+			}
+		}
+		return typeCollection;
 	}
 
 }
