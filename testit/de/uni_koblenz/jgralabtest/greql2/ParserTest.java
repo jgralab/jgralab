@@ -933,7 +933,7 @@ public class ParserTest {
 
 	@Test
 	public void testVertexSubgraphExpression() throws Exception {
-		Greql2 graph = parseQuery("vSubgraph{^FirstType, ^SecondType, ThirdType}");
+		Greql2 graph = parseQuery("on vSubgraph{^FirstType, ^SecondType, ThirdType} : true");
 		VertexTypeSubgraph vertexTypesubgraph = graph
 				.getFirstVertexTypeSubgraph();
 		assertNotNull(vertexTypesubgraph);

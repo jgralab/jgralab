@@ -647,6 +647,7 @@ public class GreqlParser extends ParserHelper {
 				IsSubgraphDefinitionOf subgraphDefOf = graph.createIsSubgraphDefinitionOf(subgraphDef, subgraphRestrExpr);
 				subgraphDefOf.set_sourcePositions(createSourcePositionList(lengthDef, offsetDef));
 				IsExpressionOnSubgraph exprOnSubgraph = graph.createIsExpressionOnSubgraph(restrictedExpr, subgraphRestrExpr);
+				exprOnSubgraph.set_sourcePositions(createSourcePositionList(lengthRestrExpr, offsetRestrExpr));
 				result = subgraphRestrExpr;
 			}
 		} else {

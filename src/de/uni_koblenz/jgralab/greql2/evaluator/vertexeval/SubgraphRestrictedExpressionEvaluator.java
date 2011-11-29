@@ -13,7 +13,7 @@ import de.uni_koblenz.jgralab.greql2.schema.SubgraphDefinition;
 import de.uni_koblenz.jgralab.greql2.schema.SubgraphRestrictedExpression;
 
 
-public class SubgraphRestricedExpressionEvaluator extends VertexEvaluator {
+public class SubgraphRestrictedExpressionEvaluator extends VertexEvaluator {
 
 	SubgraphRestrictedExpression vertex;
 	
@@ -21,7 +21,7 @@ public class SubgraphRestricedExpressionEvaluator extends VertexEvaluator {
 	
 	VertexEvaluator exprEval;
 	
-	protected SubgraphRestricedExpressionEvaluator(SubgraphRestrictedExpression vertex, GreqlEvaluator eval) {
+	protected SubgraphRestrictedExpressionEvaluator(SubgraphRestrictedExpression vertex, GreqlEvaluator eval) {
 		super(eval);
 	}
 
