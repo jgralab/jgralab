@@ -50,10 +50,10 @@ import de.uni_koblenz.jgralab.greql2.types.TypeCollection;
  * belong to the generated subgraph are marked with a temporary attribut
  * <code>SubgraphTempAttribute</code>
  */
-public class VertexSubgraphExpressionEvaluator extends
+public class VertexTypeSubgraphEvaluator extends
 		SubgraphDefinitionEvaluator {
 
-	public VertexSubgraphExpressionEvaluator(VertexTypeSubgraph vertex,
+	public VertexTypeSubgraphEvaluator(VertexTypeSubgraph vertex,
 			GreqlEvaluator eval) {
 		super(vertex, eval);
 	}
