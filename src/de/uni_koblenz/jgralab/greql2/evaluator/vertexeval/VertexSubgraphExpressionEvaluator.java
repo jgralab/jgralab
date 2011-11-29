@@ -42,7 +42,7 @@ import de.uni_koblenz.jgralab.graphmarker.SubGraphMarker;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
-import de.uni_koblenz.jgralab.greql2.schema.VertexSubgraphExpression;
+import de.uni_koblenz.jgralab.greql2.schema.VertexTypeSubgraph;
 import de.uni_koblenz.jgralab.greql2.types.TypeCollection;
 
 /**
@@ -51,9 +51,9 @@ import de.uni_koblenz.jgralab.greql2.types.TypeCollection;
  * <code>SubgraphTempAttribute</code>
  */
 public class VertexSubgraphExpressionEvaluator extends
-		SubgraphExpressionEvaluator {
+		SubgraphDefinitionEvaluator {
 
-	public VertexSubgraphExpressionEvaluator(VertexSubgraphExpression vertex,
+	public VertexSubgraphExpressionEvaluator(VertexTypeSubgraph vertex,
 			GreqlEvaluator eval) {
 		super(vertex, eval);
 	}
@@ -85,13 +85,11 @@ public class VertexSubgraphExpressionEvaluator extends
 
 	@Override
 	public VertexCosts calculateSubtreeEvaluationCosts(GraphSize graphSize) {
-		return this.greqlEvaluator.getCostModel()
-				.calculateCostsVertexSubgraphExpression(this, graphSize);
+		return new VertexCosts(5,5,5);
 	}
 
 	public GraphSize calculateSubgraphSize(GraphSize graphSize) {
-		return this.greqlEvaluator.getCostModel().calculateVertexSubgraphSize(
-				this, graphSize);
+		return graphSize;
 	}
 
 }
