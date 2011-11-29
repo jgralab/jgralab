@@ -41,7 +41,7 @@ import de.uni_koblenz.jgralab.graphmarker.SubGraphMarker;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
-import de.uni_koblenz.jgralab.greql2.schema.EdgeSubgraphExpression;
+import de.uni_koblenz.jgralab.greql2.schema.EdgeTypeSubgraph;
 import de.uni_koblenz.jgralab.greql2.types.TypeCollection;
 
 /**
@@ -49,10 +49,10 @@ import de.uni_koblenz.jgralab.greql2.types.TypeCollection;
  * belong to the generated subgraph are marked with a temporary attribut
  * <code>SubgraphTempAttribute</code>
  */
-public class EdgeSubgraphExpressionEvaluator extends
-		SubgraphExpressionEvaluator {
+public class EdgeTypeSubgraphEvaluator extends
+		SubgraphDefinitionEvaluator {
 
-	public EdgeSubgraphExpressionEvaluator(EdgeSubgraphExpression vertex,
+	public EdgeTypeSubgraphEvaluator(EdgeTypeSubgraph vertex,
 			GreqlEvaluator eval) {
 		super(vertex, eval);
 	}
@@ -75,13 +75,11 @@ public class EdgeSubgraphExpressionEvaluator extends
 
 	@Override
 	public VertexCosts calculateSubtreeEvaluationCosts(GraphSize graphSize) {
-		return this.greqlEvaluator.getCostModel()
-				.calculateCostsEdgeSubgraphExpression(this, graphSize);
+		return new VertexCosts(5,5,5);
 	}
 
 	public GraphSize calculateSubgraphSize(GraphSize graphSize) {
-		return this.greqlEvaluator.getCostModel().calculateEdgeSubgraphSize(
-				this, graphSize);
+		return graphSize;
 	}
 
 }

@@ -92,7 +92,7 @@ public class SimpleDeclarationEvaluator extends VertexEvaluator {
 				.getFirstIsTypeExprOfIncidence(EdgeDirection.IN);
 		Expression typeExpression = (Expression) inc.getAlpha();
 		VertexEvaluator exprEval = vertexEvalMarker.getMark(typeExpression);
-		if (exprEval instanceof VertexSubgraphExpressionEvaluator) {
+		if (exprEval instanceof VertexTypeSubgraphEvaluator) {
 			inc = inc.getNextIsTypeExprOfIncidence(EdgeDirection.IN);
 			typeExpression = (Expression) inc.getAlpha();
 			exprEval = vertexEvalMarker.getMark(typeExpression);
