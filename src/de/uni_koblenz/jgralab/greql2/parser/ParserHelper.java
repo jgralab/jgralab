@@ -150,7 +150,7 @@ public abstract class ParserHelper {
 
 	/**
 	 * Returns the abstract syntax graph for the input
-	 *
+	 * 
 	 * @return the abstract syntax graph representing a GReQL 2 query
 	 */
 	public Greql2 getGraph() {
@@ -210,7 +210,7 @@ public abstract class ParserHelper {
 			List<Definition> defList = new ArrayList<Definition>();
 			for (IsDefinitionOf isDefOf : exp
 					.getIsDefinitionOfIncidences(EdgeDirection.IN)) {
-				Definition definition = (Definition) isDefOf.getAlpha();
+				Definition definition = isDefOf.getAlpha();
 				defList.add(definition);
 			}
 			/*
@@ -227,8 +227,8 @@ public abstract class ParserHelper {
 						.getFirstIsExprOfIncidence(EdgeDirection.IN);
 				IsVarOf isVarOf = definition
 						.getFirstIsVarOfIncidence(EdgeDirection.IN);
-				Expression expr = (Expression) isExprOf.getAlpha();
-				Variable variable = (Variable) isVarOf.getAlpha();
+				Expression expr = isExprOf.getAlpha();
+				Variable variable = isVarOf.getAlpha();
 				isVarOf.delete();
 				isExprOf.delete();
 				Edge e = variable.getFirstIncidence(EdgeDirection.OUT);
@@ -238,9 +238,8 @@ public abstract class ParserHelper {
 				}
 				variable.delete();
 			}
-			Expression boundExpr = (Expression) exp
-					.getFirstIsBoundExprOfIncidence(EdgeDirection.IN)
-					.getAlpha();
+			Expression boundExpr = exp.getFirstIsBoundExprOfIncidence(
+					EdgeDirection.IN).getAlpha();
 			Edge e = exp.getFirstIncidence(EdgeDirection.OUT);
 			while (e != null) {
 				e.setAlpha(boundExpr);
@@ -265,7 +264,7 @@ public abstract class ParserHelper {
 	/**
 	 * merges variable-vertices in the subgraph with the root-vertex
 	 * <code>v</code>
-	 *
+	 * 
 	 * @param v
 	 *            root of the subgraph
 	 * @param separateScope
@@ -321,7 +320,7 @@ public abstract class ParserHelper {
 	 * Inserts variable-vertices that are declared in the <code>using</code>
 	 * -clause into the variables symbol table and merges variables within the
 	 * query-expression.
-	 *
+	 * 
 	 * @param root
 	 *            root of the graph, represents a <code>Greql2Expression</code>
 	 */
@@ -331,7 +330,7 @@ public abstract class ParserHelper {
 		for (IsBoundVarOf isBoundVarOf : root
 				.getIsBoundVarOfIncidences(EdgeDirection.IN)) {
 			afterParsingvariableSymbolTable.insert(
-					((Variable) isBoundVarOf.getAlpha()).get_name(),
+					(isBoundVarOf.getAlpha()).get_name(),
 					isBoundVarOf.getAlpha());
 		}
 		IsQueryExprOf isQueryExprOf = root
@@ -344,7 +343,7 @@ public abstract class ParserHelper {
 	 * Inserts variables that are defined in the definitions of let- or
 	 * where-expressions and merges variables used in these definitions and in
 	 * the bound expression
-	 *
+	 * 
 	 * @param v
 	 *            contains a let- or where-expression.
 	 */
@@ -356,8 +355,8 @@ public abstract class ParserHelper {
 		}
 		for (IsDefinitionOf currentEdge : v
 				.getIsDefinitionOfIncidences(EdgeDirection.IN)) {
-			Definition definition = (Definition) currentEdge.getAlpha();
-			Variable variable = (Variable) definition.getFirstIsVarOfIncidence(
+			Definition definition = currentEdge.getAlpha();
+			Variable variable = definition.getFirstIsVarOfIncidence(
 					EdgeDirection.IN).getAlpha();
 			afterParsingvariableSymbolTable.insert(variable.get_name(),
 					variable);
@@ -367,9 +366,9 @@ public abstract class ParserHelper {
 		mergeVariables(isBoundExprOf.getAlpha(), false);
 		for (IsDefinitionOf currentEdge : v
 				.getIsDefinitionOfIncidences(EdgeDirection.IN)) {
-			Definition definition = (Definition) currentEdge.getAlpha();
-			Expression expr = (Expression) definition
-					.getFirstIsExprOfIncidence(EdgeDirection.IN).getAlpha();
+			Definition definition = currentEdge.getAlpha();
+			Expression expr = definition.getFirstIsExprOfIncidence(
+					EdgeDirection.IN).getAlpha();
 			mergeVariables(expr, true);
 		}
 		if (separateScope) {
@@ -382,7 +381,7 @@ public abstract class ParserHelper {
 	 * a quantified expression into the symbol-table and merges variables that
 	 * are used in these declaration (in typeexpressions, constraints, or
 	 * subgraphs)
-	 *
+	 * 
 	 * @param v
 	 *            contains a declaration
 	 */
@@ -390,11 +389,10 @@ public abstract class ParserHelper {
 			throws DuplicateVariableException, UndefinedVariableException {
 		for (IsSimpleDeclOf currentEdge : v
 				.getIsSimpleDeclOfIncidences(EdgeDirection.IN)) {
-			SimpleDeclaration simpleDecl = (SimpleDeclaration) currentEdge
-					.getAlpha();
+			SimpleDeclaration simpleDecl = currentEdge.getAlpha();
 			for (IsDeclaredVarOf isDeclaredVarOf : simpleDecl
 					.getIsDeclaredVarOfIncidences(EdgeDirection.IN)) {
-				Variable variable = (Variable) isDeclaredVarOf.getAlpha();
+				Variable variable = isDeclaredVarOf.getAlpha();
 				afterParsingvariableSymbolTable.insert(variable.get_name(),
 						variable);
 			}
@@ -402,10 +400,9 @@ public abstract class ParserHelper {
 
 		for (IsSimpleDeclOf currentEdge : v
 				.getIsSimpleDeclOfIncidences(EdgeDirection.IN)) {
-			SimpleDeclaration simpleDecl = (SimpleDeclaration) currentEdge
-					.getAlpha();
-			Expression expr = (Expression) simpleDecl
-					.getFirstIsTypeExprOfIncidence(EdgeDirection.IN).getAlpha();
+			SimpleDeclaration simpleDecl = currentEdge.getAlpha();
+			Expression expr = simpleDecl.getFirstIsTypeExprOfIncidence(
+					EdgeDirection.IN).getAlpha();
 			mergeVariables(expr, true);
 		}
 
@@ -419,7 +416,7 @@ public abstract class ParserHelper {
 	 * Inserts variable-vertices that are declared in the quantified expression
 	 * represented by <code>v</code> into the variables symbol table and merges
 	 * variables within the bound expression.
-	 *
+	 * 
 	 * @param v
 	 *            contains a quantified expression
 	 */
@@ -431,7 +428,7 @@ public abstract class ParserHelper {
 		}
 		IsQuantifiedDeclOf isQuantifiedDeclOf = v
 				.getFirstIsQuantifiedDeclOfIncidence(EdgeDirection.IN);
-		mergeVariablesInDeclaration((Declaration) isQuantifiedDeclOf.getAlpha());
+		mergeVariablesInDeclaration(isQuantifiedDeclOf.getAlpha());
 		IsBoundExprOfQuantifier isBoundExprOfQuantifier = v
 				.getFirstIsBoundExprOfQuantifierIncidence(EdgeDirection.IN);
 		mergeVariables(isBoundExprOfQuantifier.getAlpha(), true);
@@ -443,7 +440,7 @@ public abstract class ParserHelper {
 	/**
 	 * Inserts declared variable-vertices into the variables symbol table and
 	 * merges variables within the comprehension result and tableheaders
-	 *
+	 * 
 	 * @param v
 	 *            contains a set- or a list-comprehension
 	 */
@@ -540,7 +537,7 @@ public abstract class ParserHelper {
 		public void postOp(String op) {
 			lengthOperator = getLength(offsetOperator);
 			offsetArg2 = getCurrentOffset();
-			this.operatorName = op;
+			operatorName = op;
 		}
 
 		public FunctionApplication postArg2(Expression arg2) {
@@ -615,7 +612,7 @@ public abstract class ParserHelper {
 					for (Edge edge : currentVertex
 							.incidences(EdgeDirection.OUT)) {
 						if (allowedEdgesForThisVertex.contains(edge
-								.getM1Class())) {
+								.getSchemaClass())) {
 							continue;
 						}
 						Greql2Vertex omega = (Greql2Vertex) edge.getOmega();
@@ -644,7 +641,8 @@ public abstract class ParserHelper {
 					Greql2Vertex currentVertex = queue.poll();
 					for (Edge edge : currentVertex
 							.incidences(EdgeDirection.OUT)) {
-						if (allowedEdgesForThisEdge.contains(edge.getM1Class())) {
+						if (allowedEdgesForThisEdge.contains(edge
+								.getSchemaClass())) {
 							continue;
 						}
 						Greql2Vertex omega = (Greql2Vertex) edge.getOmega();

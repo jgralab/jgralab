@@ -837,7 +837,7 @@ public class Rsa2Tg extends XmlProcessor {
 				System.out.println("Warning: Unexpected default value type '"
 						+ xmiType + "' for attribute '"
 						+ currentAttribute.get_name() + "' of "
-						+ currentClass.getM1Class().getSimpleName() + " '"
+						+ currentClass.getSchemaClass().getSimpleName() + " '"
 						+ currentClass.get_qualifiedName() + "' in file '"
 						+ getFileName() + "' at line "
 						+ getParser().getLocation().getLineNumber());
@@ -845,7 +845,7 @@ public class Rsa2Tg extends XmlProcessor {
 				// "Unexpected default value type " + xmiType
 				// + " for attribute '"
 				// + currentAttribute.get_name() + "' of "
-				// + currentClass.getM1Class().getSimpleName()
+				// + currentClass.getSchemaClass().getSimpleName()
 				// + " '" + currentClass.get_qualifiedName() + "'");
 			}
 			inDefaultValue = true;
@@ -895,9 +895,9 @@ public class Rsa2Tg extends XmlProcessor {
 			System.out
 					.println("Warning: Undefined default value for attribute '"
 							+ currentAttribute.get_name() + "' of "
-							+ currentClass.getM1Class().getSimpleName() + " '"
-							+ currentClass.get_qualifiedName() + "' in file '"
-							+ getFileName() + "' at line "
+							+ currentClass.getSchemaClass().getSimpleName()
+							+ " '" + currentClass.get_qualifiedName()
+							+ "' in file '" + getFileName() + "' at line "
 							+ getParser().getLocation().getLineNumber());
 			return;
 		}
@@ -909,7 +909,7 @@ public class Rsa2Tg extends XmlProcessor {
 			System.out.println("Warning: Undefined default value type '"
 					+ xmiType + "' for attribute '"
 					+ currentAttribute.get_name() + "' of "
-					+ currentClass.getM1Class().getSimpleName() + " '"
+					+ currentClass.getSchemaClass().getSimpleName() + " '"
 					+ currentClass.get_qualifiedName() + "' in file '"
 					+ getFileName() + "' at line "
 					+ getParser().getLocation().getLineNumber());
@@ -2140,7 +2140,7 @@ public class Rsa2Tg extends XmlProcessor {
 						+ att.get_name()
 						+ "' of "
 						+ att.getFirstHasAttributeIncidence().getThat()
-								.getM1Class().getSimpleName()
+								.getSchemaClass().getSimpleName()
 						+ " '"
 						+ ((AttributedElementClass) att
 								.getFirstHasAttributeIncidence().getThat())
@@ -2238,10 +2238,10 @@ public class Rsa2Tg extends XmlProcessor {
 					if (!(sub instanceof VertexClass)) {
 						throw new ProcessingException(getFileName(),
 								"Different types in generalization: "
-										+ sub.getM1Class().getSimpleName()
+										+ sub.getSchemaClass().getSimpleName()
 										+ " '" + sub.get_qualifiedName()
 										+ "' can not be subclass of "
-										+ sub.getM1Class().getSimpleName()
+										+ sub.getSchemaClass().getSimpleName()
 										+ " '" + sup.get_qualifiedName() + "'");
 					}
 
@@ -2258,10 +2258,10 @@ public class Rsa2Tg extends XmlProcessor {
 					if (!(sub instanceof EdgeClass)) {
 						throw new ProcessingException(getFileName(),
 								"Different types in generalization: "
-										+ sub.getM1Class().getSimpleName()
+										+ sub.getSchemaClass().getSimpleName()
 										+ " '" + sub.get_qualifiedName()
 										+ "' can not be subclass of "
-										+ sub.getM1Class().getSimpleName()
+										+ sub.getSchemaClass().getSimpleName()
 										+ " '" + sup.get_qualifiedName() + "'");
 					}
 
