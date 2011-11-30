@@ -34,9 +34,6 @@
 
 <project name="jgralab" basedir="." default="build">
 
-	<!-- Change version for new release, it will automatically be added to the manifest -->
-	<property name="jgralab_version" value="5.0 (Efraasia)" />
-
 	<!-- override default properties -->
 	<property name="projectname" value="jgralab" />
 	<property name="main" value="JGraLab" />
@@ -169,6 +166,14 @@
 		</javac>
 	</target>
 
+	<!-- ant tasks for versioning -->
+	<target name="versiontasks">
+		<javac fork="true" srcdir="${tgtools.src}" includes="ant/RetrieveVersion.java ant/BumpMicroVersion.java ant/BumpMinorVersion.java" destdir="${classes.dir}" memoryinitialsize="${minmemsize}" memorymaximumsize="${maxmemsize}" classpathref="classpath" debug="${debug}" source="${javac.targetVM}" target="${javac.targetVM}" includeantruntime="false"/>
+		<taskdef name="bump_micro" classname="de.uni_koblenz.jgralab.utilities.ant.BumpMicroVersion" classpath="${classes.dir}"/>
+		<taskdef name="bump_minor" classname="de.uni_koblenz.jgralab.utilities.ant.BumpMinorVersion" classpath="${classes.dir}" />
+		<taskdef name="retrieve_version" classname="de.uni_koblenz.jgralab.utilities.ant.RetrieveVersion" classpath="${classes.dir}" />
+	</target>
+	
 	<!-- tgtools (utils which are needed for schema creation (TgSchema2Java)
 	         and that don't depend on schemas themselves) -->
 	<target name="tgtools" depends="core">
@@ -275,13 +280,14 @@
 		</unjar>
 	</target>
 
-	<target name="create_manifest" depends="common.create_manifest,revisionAntTasks">
+	<target name="create_manifest" depends="versiontasks,common.create_manifest">
 		<!-- sets the attribute "revision" -->
-		<get_revision />
+		<retrieve_version />
 		<manifest file="${manifest.file}" mode="update">
+			<attribute name="Bundle-Version" value="${version}.${version.codename}"/>
 			<section name="de/uni_koblenz/jgralab">
 				<attribute name="Implementation-Title" value="JGraLab" />
-				<attribute name="Implementation-Version" value="${jgralab_version}@${revision}" />
+				<attribute name="Implementation-Version" value="${version}@${version.codename}" />
 				<attribute name="Implementation-Vendor" value="University of Koblenz, Institute for Software Technology" />
 			</section>
 		</manifest>
@@ -289,7 +295,15 @@
 
 	<!-- release -->
 	<!-- calls targets modify, clean, jar, test and document -->
-	<target name="release" depends="cleanall,build,sourcejar,document" />
+	<target name="release" depends="bumpmicro,cleanall,build,sourcejar,document" />
+
+	<target name="bumpmicro" depends="versiontasks">
+		<bump_micro />
+	</target>
+	
+	<target name="bumpminor" depends="versiontasks">
+		<bump_minor />
+	</target>
 
 	<target name="testcompile" depends="generatetestschemas,common.testcompile" />
 
