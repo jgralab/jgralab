@@ -29,3 +29,11 @@ syntax: regexp
 ^eclipse/src$
 syntax: regexp
 ^eclipse/src$
+syntax: regexp
+^src/de/uni_koblenz/jgralab/QueryUsageExamples\.java$
+syntax: regexp
+^src/de/uni_koblenz/jgralab/QueryInterface\.java$
+syntax: regexp
+^testit/de/uni_koblenz/jgralabtest/dhht$
+syntax: regexp
+^testit/testschemas/dhhttestschema\.tg$
