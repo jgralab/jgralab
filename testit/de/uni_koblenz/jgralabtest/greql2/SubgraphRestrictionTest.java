@@ -18,7 +18,7 @@ public class SubgraphRestrictionTest extends GenericTest {
 
 	@Test
 	public void testVertexTypeRestrictedSubgraph() throws Exception {
-		String queryString = "on vertexTypeSubgraph{junctions.Crossroad}() : from v:V report v end";
+		String queryString = "on vertexTypeSubgraph{junctions.Crossroad}() : from v:V{} report v end";
 		PVector result = (PVector) evalTestQuery(queryString);
 		int crossroads = (Integer) evalTestQuery("count(V{junctions.Crossroad})");
 		int num = 0;
@@ -33,7 +33,7 @@ public class SubgraphRestrictionTest extends GenericTest {
 	
 	@Test
 	public void testEdgeTypeRestrictedSubgraph() throws Exception {
-		String queryString = "on edgeTypeSubgraph{localities.HasCapital}() : from e:E report e end";
+		String queryString = "on edgeTypeSubgraph{localities.HasCapital}() : from e:E{} report e end";
 		PVector result = (PVector) evalTestQuery(queryString);
 		int hasCapitals = (Integer) evalTestQuery("count(E{localities.HasCapital})");
 		int num = 0;
@@ -44,7 +44,7 @@ public class SubgraphRestrictionTest extends GenericTest {
 			num++;
 		}
 		assertEquals(hasCapitals, num);
-		queryString = "on edgeTypeSubgraph{localities.HasCapital}() : from v:V report v end";
+		queryString = "on edgeTypeSubgraph{localities.HasCapital}() : from v:V{} report v end";
 		result = (PVector) evalTestQuery(queryString);
 		int countiesOrCapitals = (Integer) evalTestQuery("count(from v:V{localities.County, localities.City} with degree{localities.HasCapital}(v)>0 report v end)");
 		num = 0;
@@ -76,8 +76,8 @@ public class SubgraphRestrictionTest extends GenericTest {
 	}
 	
 	@Test
-	public void testSetCreatedSubgraph() throws Exception {
-		String queryString = "on elementSetSubgraph(vSet,eSet) : from v:V report v end where vSet := from v:V{junction.Crossroads} report v end, eSet := from e:E{connections.Highway} report e end";
+	public void testElementSetCreatedSubgraph() throws Exception {
+		String queryString = "(on elementSetSubgraph(vSet,eSet) : from v:V report v end) where vSet := from v:V{junctions.Crossroad} report v end, eSet := from e:E{connections.Highway} report e end";
 		PVector result = (PVector) evalTestQuery(queryString);
 		int crossroads = (Integer) evalTestQuery("count(V{junctions.Crossroad})");
 		int num = 0;
