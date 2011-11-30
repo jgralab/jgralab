@@ -1,6 +1,6 @@
 package de.uni_koblenz.jgralab.greql2.funlib.graph;
 
-import org.pcollections.PSet;
+import org.pcollections.PCollection;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
@@ -9,7 +9,6 @@ import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.graphmarker.SubGraphMarker;
 import de.uni_koblenz.jgralab.greql2.funlib.Function;
 import de.uni_koblenz.jgralab.greql2.funlib.NeedsGraphArgument;
-import de.uni_koblenz.jgralab.greql2.types.TypeCollection;
 
 @NeedsGraphArgument
 public class VertexSetSubgraph extends Function {
@@ -20,7 +19,7 @@ public class VertexSetSubgraph extends Function {
 				7, 1, 1.0, Category.GRAPH);
 	}
 
-	public SubGraphMarker evaluate(Graph graph, PSet<Vertex> vertexSet) {
+	public SubGraphMarker evaluate(Graph graph, PCollection<Vertex> vertexSet) {
 		SubGraphMarker subgraphMarker = new SubGraphMarker(graph);
 		for (Vertex currentVertex : vertexSet) {
 			subgraphMarker.mark(currentVertex);

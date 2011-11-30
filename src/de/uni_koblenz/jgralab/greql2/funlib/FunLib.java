@@ -89,6 +89,9 @@ public class FunLib {
 		register(de.uni_koblenz.jgralab.greql2.funlib.graph.EdgesFrom.class);
 		register(de.uni_koblenz.jgralab.greql2.funlib.graph.EdgesTo.class);
 		register(de.uni_koblenz.jgralab.greql2.funlib.graph.EdgeTrace.class);
+		register(de.uni_koblenz.jgralab.greql2.funlib.graph.EdgeTypeSubgraph.class);
+		register(de.uni_koblenz.jgralab.greql2.funlib.graph.EdgeSetSubgraph.class);
+		register(de.uni_koblenz.jgralab.greql2.funlib.graph.ElementSetSubgraph.class);
 		register(de.uni_koblenz.jgralab.greql2.funlib.graph.EndVertex.class);
 		register(de.uni_koblenz.jgralab.greql2.funlib.graph.GetEdge.class);
 		register(de.uni_koblenz.jgralab.greql2.funlib.graph.GetValue.class);
@@ -114,6 +117,7 @@ public class FunLib {
 		register(de.uni_koblenz.jgralab.greql2.funlib.graph.VertexTrace.class);
 		register(de.uni_koblenz.jgralab.greql2.funlib.graph.Vertices.class);
 		register(de.uni_koblenz.jgralab.greql2.funlib.graph.VertexTypeSubgraph.class);
+		register(de.uni_koblenz.jgralab.greql2.funlib.graph.VertexSetSubgraph.class);
 		register(de.uni_koblenz.jgralab.greql2.funlib.logics.And.class);
 		register(de.uni_koblenz.jgralab.greql2.funlib.logics.Not.class);
 		register(de.uni_koblenz.jgralab.greql2.funlib.logics.Or.class);
