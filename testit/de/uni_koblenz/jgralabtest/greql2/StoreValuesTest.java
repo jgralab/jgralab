@@ -212,7 +212,7 @@ public class StoreValuesTest {
 		eval.setQuery(qu);
 		eval.startEvaluation();
 
-		PVector<Vertex> result = eval.getResultList(Vertex.class);
+		PVector<Vertex> result = eval.getResultList();
 
 		generateHTMLandXMLoutput(result.get(0), "outputTupleOfVertices", graph,
 				true);
