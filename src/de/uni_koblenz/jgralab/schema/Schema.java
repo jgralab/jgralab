@@ -51,6 +51,7 @@ import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.ImplementationType;
 import de.uni_koblenz.jgralab.ProgressFunction;
 import de.uni_koblenz.jgralab.codegenerator.CodeGeneratorConfiguration;
+import de.uni_koblenz.jgralab.impl.generic.GenericGraphImpl;
 import de.uni_koblenz.jgralab.schema.RecordDomain.RecordComponent;
 import de.uni_koblenz.jgralab.schema.impl.compilation.InMemoryJavaSourceFile;
 
@@ -479,4 +480,5 @@ public interface Schema extends Comparable<Schema> {
 
 	public Graph createGraph(ImplementationType implementationType, int vCount,
 			int eCount);
+	public GenericGraphImpl createGenericGraph();
 }
