@@ -40,14 +40,15 @@ import de.uni_koblenz.jgralab.greql2.funlib.Function;
 
 public class OmegaIncidenceNumber extends Function {
 	public OmegaIncidenceNumber() {
-		super("Returns the omega incidence number of the given edge starting with 1.", 2, 1,
-				1.0, Category.GRAPH);
+		super(
+				"Returns the omega incidence number of the given edge starting with 1.",
+				2, 1, 1.0, Category.GRAPH);
 	}
 
 	public Integer evaluate(Edge edge) {
 		int num = 1;
 		for (Edge incidence : edge.getOmega().incidences()) {
-			if (incidence == edge) {
+			if (incidence.getNormalEdge() == edge) {
 				return num;
 			}
 			num++;
