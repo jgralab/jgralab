@@ -48,7 +48,7 @@ public class OmegaIncidenceNumber extends Function {
 	public Integer evaluate(Edge edge) {
 		int num = 1;
 		for (Edge incidence : edge.getOmega().incidences()) {
-			if (incidence.getNormalEdge() == edge) {
+			if (incidence.getReversedEdge() == edge) {
 				return num;
 			}
 			num++;
