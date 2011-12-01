@@ -69,14 +69,14 @@ public class JGraLab {
 	private static EclipseAdapter eclipseAdapter;
 
 	private static String version;
-	private static String revision;
+	private static String codename;
 
 	// read revision and version from the manifest
 	private static void readVersionFromManifest() {
-		version = revision = "unknown";
+		version = codename = "unknown";
 		if (eclipseAdapter != null) {
 			version = eclipseAdapter.getJGraLabVersion();
-			revision = eclipseAdapter.getJGraLabRevision();
+			codename = eclipseAdapter.getJGraLabCodename();
 		} else {
 			// read info from jar manifest
 			try {
@@ -96,7 +96,7 @@ public class JGraLab {
 						String[] versionString = info.getValue(
 								"Implementation-Version").split("@");
 						version = versionString[0];
-						revision = versionString[1];
+						codename = versionString[1];
 					}
 
 				}
@@ -112,19 +112,19 @@ public class JGraLab {
 		return version;
 	}
 
-	private static String getRevision() {
-		if (revision == null) {
+	private static String getCodename() {
+		if (codename == null) {
 			readVersionFromManifest();
 		}
-		return revision;
+		return codename;
 	}
 
 	private static final String[] versionInfo = {
 			"JGraLab - The Java graph laboratory", "  Version : $ver",
-			"  Revision: $rev" };
+			"  Codename: $codename" };
 
 	private static final String[] copyrightInfo = {
-			"(c) 2006-2010 Institute for Software Technology",
+			"(c) 2006-2011 Institute for Software Technology",
 			"              University of Koblenz-Landau, Germany",
 			"",
 			"              ist@uni-koblenz.de",
@@ -248,8 +248,8 @@ public class JGraLab {
 	}
 
 	private static String addInfo(String inputLine) {
-		return inputLine.replace("$ver", getVersion()).replace("$rev",
-				getRevision());
+		return inputLine.replace("$ver", getVersion()).replace("$codename",
+				getCodename());
 	}
 
 	public static String getVersionInfo(boolean asTGComment) {

@@ -41,8 +41,6 @@
 	<property name="unjarexcludes" value="clover/**" />
 	<property name="test.suite" value="de.uni_koblenz.jgralabtest.RunTests" />
 	<!-- <property name="test.suite" value="de.uni_koblenz.jgralabtest.instancetest.GraphTest" /> -->
-	<property name="manifest.dir" value="../jgralab/bin/META-INF/" />
-	<property name="keep_manifest" value="true" />
 
 	<!-- import the common build file -->
 	<import file="../common/common.xml" />
@@ -131,7 +129,7 @@
 	<property name="utilities.includes" value="ant/** common/** converter/** csv2tg/** greqlinterface/** jgralab2owl/** schemacompare/** tg2gdl/** tg2gxl/** tg2sidiff/** tgraphbrowser/** tgtree/** xmi2tgschema/** xml/**" />
 
 	<!-- The targets -->
-	<target name="build" depends="ist_utilities,clean,compile,jar" />
+	<target name="build" depends="ist_utilities,clean,compile,modify_manifest,jar" />
 
 	<target name="clean">
 		<delete dir="${classes.dir}" />
@@ -280,11 +278,12 @@
 		</unjar>
 	</target>
 
-	<target name="create_manifest" depends="versiontasks,common.create_manifest">
+	<target name="modify_manifest" depends="versiontasks">
 		<!-- sets the attribute "revision" -->
 		<retrieve_version />
 		<manifest file="${manifest.file}" mode="update">
 			<attribute name="Bundle-Version" value="${version}.${version.codename}"/>
+			<attribute name="Main-Class" value="${main.fq}" />
 			<section name="de/uni_koblenz/jgralab">
 				<attribute name="Implementation-Title" value="JGraLab" />
 				<attribute name="Implementation-Version" value="${version}@${version.codename}" />
@@ -295,7 +294,7 @@
 
 	<!-- release -->
 	<!-- calls targets modify, clean, jar, test and document -->
-	<target name="release" depends="bumpmicro,cleanall,build,sourcejar,document" />
+	<target name="release" depends="cleanall,bumpmicro,build,sourcejar,document" />
 
 	<target name="bumpmicro" depends="versiontasks">
 		<bump_micro />
