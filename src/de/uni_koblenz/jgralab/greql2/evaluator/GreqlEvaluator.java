@@ -670,22 +670,22 @@ public class GreqlEvaluator {
 	}
 
 	@SuppressWarnings("unchecked")
-	public <T> T getSingleResult(Class<T> cls) {
+	public <T> T getSingleResult() {
 		return (T) result;
 	}
 
 	@SuppressWarnings("unchecked")
-	public <T> PVector<T> getResultList(Class<T> cls) {
+	public <T> PVector<T> getResultList() {
 		return (PVector<T>) result;
 	}
 
 	@SuppressWarnings("unchecked")
-	public <K, V> PMap<K, V> getResultMap(Class<K> kcls, Class<V> vcls) {
+	public <K, V> PMap<K, V> getResultMap() {
 		return (PMap<K, V>) result;
 	}
 
 	@SuppressWarnings("unchecked")
-	public <T> POrderedSet<T> getResultSet(Class<T> cls) {
+	public <T> POrderedSet<T> getResultSet() {
 		return (POrderedSet<T>) result;
 	}
 
