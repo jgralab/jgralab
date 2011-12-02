@@ -165,7 +165,7 @@
 	</target>
 
 	<!-- ant tasks for versioning -->
-	<target name="versiontasks">
+	<target name="versiontasks" depends="ist_utilities,createClassesDir">
 		<javac fork="true" srcdir="${tgtools.src}" includes="ant/RetrieveVersion.java ant/BumpMicroVersion.java ant/BumpMinorVersion.java" destdir="${classes.dir}" memoryinitialsize="${minmemsize}" memorymaximumsize="${maxmemsize}" classpathref="classpath" debug="${debug}" source="${javac.targetVM}" target="${javac.targetVM}" includeantruntime="false"/>
 		<taskdef name="bump_micro" classname="de.uni_koblenz.jgralab.utilities.ant.BumpMicroVersion" classpath="${classes.dir}"/>
 		<taskdef name="bump_minor" classname="de.uni_koblenz.jgralab.utilities.ant.BumpMinorVersion" classpath="${classes.dir}" />
