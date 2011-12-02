@@ -82,7 +82,7 @@ public class PathSystem extends Function {
 
 	/**
 	 * marks the given vertex with the given PathSystemMarker
-	 *
+	 * 
 	 * @return the marker created
 	 */
 	protected PathSystemMarkerEntry markVertex(
@@ -99,7 +99,7 @@ public class PathSystem extends Function {
 
 	/**
 	 * Checks if the given vertex is marked with the given state
-	 *
+	 * 
 	 * @return true if the vertex is marked, false otherwise
 	 */
 	protected boolean isMarked(GraphMarker<PathSystemMarkerEntry>[] marker,
@@ -112,14 +112,12 @@ public class PathSystem extends Function {
 	 * Marks all vertices that are part of the PathSystem described by the given
 	 * rootVertex and the regular path expression which is acceptes by the given
 	 * dfa
-	 *
+	 * 
 	 * @param startVertex
 	 *            the rootVertex of the PathSystem
 	 * @param dfa
 	 *            the DFA which accepts the regular path expression that
 	 *            describes the pathsystem
-	 * @param subgraph
-	 *            the subgraph all parts of the pathsystem belong to
 	 * @return the set of leaves in the pathsystem, that is the set of states
 	 *         which are marked with a final state of the dfa
 	 * @throws EvaluateException
@@ -176,7 +174,7 @@ public class PathSystem extends Function {
 	/**
 	 * Creates a JValuePathSystem-object which contains all paths which start at
 	 * the given root vertex and end with one of the given leaves
-	 *
+	 * 
 	 * @param leaves
 	 * @return
 	 */
@@ -214,7 +212,7 @@ public class PathSystem extends Function {
 
 	/**
 	 * Returns the {@code PathSystemMarkerEntry} for a given vertex and state.
-	 *
+	 * 
 	 * @param v
 	 *            the vertex for which to return the
 	 *            {@code PathSystemMarkerEntry}

@@ -115,7 +115,7 @@ public class Slice extends Function {
 
 	/**
 	 * marks the given vertex with the given SliceMarker
-	 *
+	 * 
 	 * @return true if the vertex was marked successful, false if it is already
 	 *         marked with this parentEdge
 	 */
@@ -143,7 +143,7 @@ public class Slice extends Function {
 
 	/**
 	 * Checks if the given vertex is marked with the given state and parent edge
-	 *
+	 * 
 	 * @return true if the vertex is marked, false otherwise
 	 */
 	protected boolean isMarked(Vertex v, State s, Edge parentEdge) {
@@ -160,7 +160,7 @@ public class Slice extends Function {
 
 	/**
 	 * Checks if the given vertex is marked with the given state
-	 *
+	 * 
 	 * @return true if the vertex is marked, false otherwise
 	 */
 	protected boolean isMarked(Vertex v, State s) {
@@ -175,14 +175,12 @@ public class Slice extends Function {
 	 * Marks all vertices that are part of the slice described by the given
 	 * rootVertex and the regular path expression which is acceptes by the given
 	 * dfa
-	 *
+	 * 
 	 * @param sliCritVertices
 	 *            the start vertices of the slice
 	 * @param dfa
 	 *            the DFA which accepts the regular path expression that
 	 *            describes the slice
-	 * @param subgraph
-	 *            the subgraph all parts of the slice belong to
 	 * @return the list of leaves in the slice, that is the set of states which
 	 *         are marked with a final state of the dfa
 	 * @throws EvaluateException
@@ -244,7 +242,7 @@ public class Slice extends Function {
 	/**
 	 * Creates a JValueSlice-object which contains all path which start at the
 	 * given start vertices and end with the given leaves
-	 *
+	 * 
 	 * @param leaves
 	 * @return
 	 */
@@ -338,7 +336,7 @@ public class Slice extends Function {
 	/**
 	 * Adds the given state to the set of states maintained for the given
 	 * vertex.
-	 *
+	 * 
 	 * @param v
 	 *            the vertex to be marked
 	 * @param s
@@ -353,7 +351,7 @@ public class Slice extends Function {
 
 	/**
 	 * Checks if the given vertex' state set contains the given state.
-	 *
+	 * 
 	 * @param v
 	 *            the vertex to be checked
 	 * @param s
@@ -369,7 +367,7 @@ public class Slice extends Function {
 
 	/**
 	 * Returns the {@code PathSystemMarkerEntry} for a given vertex and state.
-	 *
+	 * 
 	 * @param v
 	 *            the vertex for which to return the
 	 *            {@code PathSystemMarkerEntry}

@@ -1,5 +1,4 @@
 /*
- * JGraLab - The Java Graph Laboratory
  * 
  * Copyright (C) 2006-2011 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
