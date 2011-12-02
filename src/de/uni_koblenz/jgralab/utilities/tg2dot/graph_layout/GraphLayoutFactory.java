@@ -145,16 +145,30 @@ public class GraphLayoutFactory {
 	private void setDefaultVertexLayout() {
 		TypeDefinition definition = currentGraphLayout
 				.getTypeDefinition("Vertex");
-		definition.setAttribute("label", "'{{v' ++ id(" + ELEMENT + ") ++ ("
-				+ PRINT_ELEMENT_SEQUENCE_INDICES + " ? ' (' ++ "
-				+ ELEMENT_SEQUENCE_INDEX
-				+ " ++ ')'  : '') ++ ' | ' ++ typeName(" + ELEMENT
-				+ ") ++ '}|' ++ " + "joinWithCollection(\"\\l\", from attr:attributeNames("
-				+ ELEMENT + ") " + "reportSet (attr ++ ' = ' ++ ("
-				+ SHORTEN_STRINGS + " ? shortenString(toDotString(attrVal), 17) : toDotString(attrVal) ++ (" + PRINT_DOMAIN_NAMES
-				+ " ? ': ' ++ attributeType(" + ELEMENT
-				+ ", attr) : ''))) end where attrVal := isDefined(getValue("
-				+ ELEMENT + ", attr)) ? getValue(" + ELEMENT + ", attr) : 'null') ++ '}'");
+		definition
+				.setAttribute(
+						"label",
+						"'{{v' ++ id("
+								+ ELEMENT
+								+ ") ++ ("
+								+ PRINT_ELEMENT_SEQUENCE_INDICES
+								+ " ? ' (' ++ "
+								+ ELEMENT_SEQUENCE_INDEX
+								+ " ++ ')'  : '') ++ ' | ' ++ typeName("
+								+ ELEMENT
+								+ ") ++ '}|' ++ "
+								+ "joinWithCollection(\"\\l\", from attr:attributeNames("
+								+ ELEMENT
+								+ ") "
+								+ "reportSet (attr ++ ' = ' ++ ("
+								+ SHORTEN_STRINGS
+								+ " ? shortenString(toDotString(attrVal), 17) : toDotString(attrVal) ++ ("
+								+ PRINT_DOMAIN_NAMES
+								+ " ? ': ' ++ attributeType("
+								+ ELEMENT
+								+ ", attr) : ''))) end where attrVal := isDefined(getValue("
+								+ ELEMENT + ", attr)) ? getValue(" + ELEMENT
+								+ ", attr) : 'null') ++ '}'");
 		definition.setAttribute("shape", "'record'");
 		definition.setAttribute("color", "'#999999'");
 		definition.setAttribute("fontsize", "14");
@@ -167,18 +181,36 @@ public class GraphLayoutFactory {
 		TypeDefinition definition = currentGraphLayout
 				.getTypeDefinition("Edge");
 		definition.setAttribute("color", "'gray'");
-		definition.setAttribute("label", "'e' ++ id(" + ELEMENT
-				+ ") ++ ' : ' ++ typeName(" + ELEMENT + ") ++ ("
-				+ PRINT_ELEMENT_SEQUENCE_INDICES + " ? ' (' ++ "
-				+ ELEMENT_SEQUENCE_INDEX + " ++ ')'  : '') ++ ("
-				+ PRINT_EDGE_ATTRIBUTES + " ? '\\n' ++ " + "joinWithCollection('\\l', from "
-				+ "attr:attributeNames(" + ELEMENT + ") " + "reportSet (("
-				+ ABBREVIATE_EDGE_ATTRIBUTE_NAMES
-				+ " ? abbreviateString(attr) : attr) " + "++ ' = ' ++ ("
-				+ SHORTEN_STRINGS + " ? shortenString(toDotString(attrVal), 17) : toDotString(attrVal) ++ (" + PRINT_DOMAIN_NAMES
-				+ " ? ': ' ++ attributeType(" + ELEMENT
-				+ ", attr) : ''))) end where attrVal := isDefined(getValue("
-				+ ELEMENT + ", attr)) ? getValue("+ ELEMENT + ", attr) : 'null') : '')");
+		definition
+				.setAttribute(
+						"label",
+						"'e' ++ id("
+								+ ELEMENT
+								+ ") ++ ' : ' ++ typeName("
+								+ ELEMENT
+								+ ") ++ ("
+								+ PRINT_ELEMENT_SEQUENCE_INDICES
+								+ " ? ' (' ++ "
+								+ ELEMENT_SEQUENCE_INDEX
+								+ " ++ ')'  : '') ++ ("
+								+ PRINT_EDGE_ATTRIBUTES
+								+ " ? '\\n' ++ "
+								+ "joinWithCollection('\\l', from "
+								+ "attr:attributeNames("
+								+ ELEMENT
+								+ ") "
+								+ "reportSet (("
+								+ ABBREVIATE_EDGE_ATTRIBUTE_NAMES
+								+ " ? abbreviateString(attr) : attr) "
+								+ "++ ' = ' ++ ("
+								+ SHORTEN_STRINGS
+								+ " ? shortenString(toDotString(attrVal), 17) : toDotString(attrVal) ++ ("
+								+ PRINT_DOMAIN_NAMES
+								+ " ? ': ' ++ attributeType("
+								+ ELEMENT
+								+ ", attr) : ''))) end where attrVal := isDefined(getValue("
+								+ ELEMENT + ", attr)) ? getValue(" + ELEMENT
+								+ ", attr) : 'null') : '')");
 		definition.setAttribute("arrowhead", "((" + SHARED_THIS
 				+ ")? 'odiamond' :" + "(" + COMPOSITE_THIS
 				+ ")? 'diamond': '') ++ 'normal'");
@@ -200,6 +232,8 @@ public class GraphLayoutFactory {
 		definition.setAttribute("dir", "'both'");
 		definition.setAttribute("fontsize", "14");
 		definition.setAttribute("fontname", "'Helvetica'");
+		definition.setAttribute("labelfontsize", "10");
+		definition.setAttribute("labelfontname", "'Helvetica'");
 	}
 
 	private void applyHierarchieToTypeDefinitions() {
