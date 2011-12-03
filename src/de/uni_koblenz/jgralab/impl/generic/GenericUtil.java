@@ -70,7 +70,7 @@ public class GenericUtil {
 
 	@SuppressWarnings("unchecked")
 	public static void serializeGenericAttribute(GraphIO io, Domain domain, Object data) throws IOException {
-		// TODO Distinction of the cases should be more elegant!
+		// TODO Handle distinction of the cases more elegantly - somehow?
 		if(domain instanceof BooleanDomain) {
 			io.writeBoolean((Boolean) data);
 		}
@@ -143,7 +143,13 @@ public class GenericUtil {
 		}
 		else if(domain instanceof RecordDomain) {
 			if(data != null) {
-				// TODO Record writeComponentValues?
+				io.writeSpace();
+				io.write("(");
+				io.noSpace();
+				for(RecordComponent c : ((RecordDomain) domain).getComponents()) {
+					serializeGenericAttribute(io, c.getDomain(), ((Record) data).getComponent(c.getName()));
+				}
+				io.write(")");
 			}
 			else {
 				io.writeIdentifier(GraphIO.NULL_LITERAL);
