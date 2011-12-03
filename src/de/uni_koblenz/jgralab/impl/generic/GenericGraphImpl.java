@@ -73,28 +73,28 @@ public class GenericGraphImpl extends GraphImpl {
 	@Override
 	public void readAttributeValueFromString(String attributeName, String value)
 			throws GraphIOException, NoSuchAttributeException {
-		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
 	public String writeAttributeValueToString(String attributeName)
 			throws IOException, GraphIOException, NoSuchAttributeException {
-		// TODO Auto-generated method stub
-		return null;
+		GraphIO io = GraphIO.createStringWriter(getSchema());
+		GenericUtil.serializeGenericAttribute(io, type.getAttribute(attributeName).getDomain(), getAttribute(attributeName));
+		return io.getStringWriterResult();
 	}
 
 	@Override
 	public void writeAttributeValues(GraphIO io) throws IOException,
 			GraphIOException {
-		// TODO Auto-generated method stub
-		
+		for(Attribute a : type.getAttributeList()) {
+			GenericUtil.serializeGenericAttribute(io, a.getDomain(), attributes.get(a.getName()));
+		}
 	}
 
 	@Override
 	public void readAttributeValues(GraphIO io) throws GraphIOException {
-		// TODO Auto-generated method stub
-		
+		// TODO Auto-generated method stub		
 	}
 
 	@SuppressWarnings("unchecked")

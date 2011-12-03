@@ -64,10 +64,16 @@ import de.uni_koblenz.jgralab.trans.Transaction;
 public interface Graph extends AttributedElement {
 
 	/**
-	 * Creates a vertex the specified class <code>cls</code> and adds the new
+	 * Creates a vertex of the specified class <code>cls</code> and adds the new
 	 * vertex to this Graph.
 	 */
 	public <T extends Vertex> T createVertex(Class<T> cls);
+	
+	/**
+	 * Creates a vertex of the specified {@link VertexClass} and adds the new vertex
+	 * to the Graph. 
+	 */
+	public <T extends Vertex> T createVertex(VertexClass vc);
 
 	/**
 	 * Creates an edge of the specified class <code>cls</code> that connects
@@ -75,6 +81,14 @@ public interface Graph extends AttributedElement {
 	 * to this Graph.
 	 */
 	public <T extends Edge> T createEdge(Class<T> cls, Vertex alpha,
+			Vertex omega);
+	
+	/**
+	 * Creates an edge of the specified {@link EdgeClass} <code>ec</code> that connects
+	 * <code>alpha</code> and </code>omega</code> vertices and adds the new edge to this
+	 * Graph.
+	 */
+	public <T extends Edge> T createEdge(EdgeClass ec, Vertex alpha,
 			Vertex omega);
 
 	/**
