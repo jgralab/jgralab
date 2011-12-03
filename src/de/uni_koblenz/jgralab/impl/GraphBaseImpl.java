@@ -551,6 +551,15 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 			}
 		}
 	}
+	
+	
+	/**
+	 * Creates an edge of the given {@link EdgeClass} and adds it to the graph.
+	 */
+	@SuppressWarnings("unchecked")
+	public <T extends Edge> T createEdge(EdgeClass ec, Vertex alpha, Vertex omega) {
+		return (T) createEdge(ec.getSchemaClass(), alpha, omega);
+	}
 
 	@Override
 	public Edge internalCreateEdge(Class<? extends Edge> cls, Vertex alpha,
@@ -574,6 +583,15 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 			throw new GraphException("Error creating vertex of class "
 					+ cls.getName(), ex);
 		}
+	}
+	
+	/**
+	 * Creates a vertex of the given {@link VertexClass} and adds it to the graph.
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public <T extends Vertex> T createVertex(VertexClass vc) {
+		return (T) createVertex(vc.getSchemaClass());
 	}
 
 	@Override
