@@ -14,7 +14,7 @@ public class GenericEdgeImpl extends EdgeImpl {
 	private EdgeClass type;
 	private Map<String, Object> attributes;
 
-	protected GenericEdgeImpl(EdgeClass type, int anId, GenericGraphImpl graph, GenericVertexImpl alpha, GenericVertexImpl omega) {
+	protected GenericEdgeImpl(EdgeClass type, int anId, Graph graph, Vertex alpha, Vertex omega) {
 		super(anId, graph, alpha, omega);
 		this.type = type;
 		attributes = new HashMap<String, Object>();
