@@ -7,6 +7,7 @@ import java.util.Map;
 import org.pcollections.POrderedSet;
 
 import de.uni_koblenz.jgralab.AttributedElement;
+import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.NoSuchAttributeException;
@@ -36,26 +37,24 @@ public class GenericGraphImpl extends GraphImpl {
 	
 	
 	/**
-	 * Creates a new GenericVertexImpl in the graph that conforms to a given VertexClass
-	 * from the Schema.  
-	 * @param vc
-	 * @return
+	 * Creates a new {@link GenericVertexImpl} in the graph that conforms to a given {@Link VertexClass}
+	 * from the Schema.
 	 */
-	public GenericVertexImpl createVertex(VertexClass vc) { 
-		return new GenericVertexImpl(vc, 0, this);
+	@SuppressWarnings("unchecked")
+	@Override
+	public <T extends Vertex> T createVertex(VertexClass vc) {
+		return (T) new GenericVertexImpl(vc, 0, this);
 	}
 
 	
 	/**
-	 * Creates a new GenericEdgeImpl in the Graph that conforms to a given EdgeClass
+	 * Creates a new {@Link GenericEdgeImpl} in the Graph that conforms to a given {@link EdgeClass}
 	 * from the Schema.
-	 * @param ec
-	 * @param alpha
-	 * @param omega
-	 * @return
 	 */
-	public GenericEdgeImpl createEdge(EdgeClass ec, GenericVertexImpl alpha, GenericVertexImpl omega) {
-		return new GenericEdgeImpl(ec, 0, this, alpha, omega);
+	@SuppressWarnings("unchecked")
+	@Override
+	public <T extends Edge> T createEdge(EdgeClass ec, Vertex alpha, Vertex omega) {
+		return (T) new GenericEdgeImpl(ec, 0, this, alpha, omega);
 	}
 
 	@Override
