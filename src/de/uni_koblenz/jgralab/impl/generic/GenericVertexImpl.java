@@ -23,11 +23,13 @@ public class GenericVertexImpl extends VertexImpl {
 	protected GenericVertexImpl(VertexClass type, int id, Graph graph) {
 		super(id, graph);
 		this.type = type;
-		attributes = new HashMap<String, Object>();
-		for(Attribute a : type.getAttributeList()) {
-			attributes.put(a.getName(), null);
+		if(type.getAttributeList().size() > 0) {
+			attributes = new HashMap<String, Object>();
+			for(Attribute a : type.getAttributeList()) {
+				attributes.put(a.getName(), null);
+			}
+			initializeAttributesWithDefaultValues();
 		}
-		initializeAttributesWithDefaultValues();
 	}
 
 	@Override
@@ -70,8 +72,9 @@ public class GenericVertexImpl extends VertexImpl {
 
 	@Override
 	public void readAttributeValues(GraphIO io) throws GraphIOException {
-		// TODO Auto-generated method stub
-		
+		for(Attribute a : type.getAttributeList()) {
+			attributes.put(a.getName(), GenericUtil.parseGenericAttribute(a.getDomain(), io));
+		}
 	}
 
 	@Override

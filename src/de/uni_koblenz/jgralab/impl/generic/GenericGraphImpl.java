@@ -8,6 +8,8 @@ import org.pcollections.POrderedSet;
 
 import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Edge;
+import de.uni_koblenz.jgralab.Graph;
+import de.uni_koblenz.jgralab.GraphException;
 import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.NoSuchAttributeException;
@@ -26,13 +28,25 @@ public class GenericGraphImpl extends GraphImpl {
 	private Map<String, Object> attributes;
 
 	protected GenericGraphImpl(String id, GraphClass type) {
-		super(id, type);
+		super(id, type, 100, 100);
+	}
+	
+	protected GenericGraphImpl(GraphClass type, String id, int vmax, int emax) {
+		super(id, type, vmax, emax);
 		this.type = type;
 		attributes = new HashMap<String, Object>();
 		for(Attribute a : type.getAttributeList()) {
 			attributes.put(a.getName(), null);
 		}
 		initializeAttributesWithDefaultValues();
+	}
+	
+	/**
+	 * Creates a new instance if a generic Graph. This method isn't supposed to be called manually.
+	 * Use <code>Schema.createGraph(ImplementationType.Generic)</code> instead!
+	 */
+	public static Graph create(GraphClass type, int vmax, int emax) {
+		return new GenericGraphImpl(type, null, vmax, emax);
 	}
 	
 	
@@ -43,7 +57,17 @@ public class GenericGraphImpl extends GraphImpl {
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T extends Vertex> T createVertex(VertexClass vc) {
-		return (T) new GenericVertexImpl(vc, 0, this);
+		try {
+			return (T) new GenericVertexImpl(vc, 0, this);
+		}
+		catch(Exception e) {
+			if(e instanceof GraphException) {
+				throw (GraphException) e;
+			}
+			else {
+				throw new GraphException("Error creating vertex of VertexClass " + vc);
+			}
+		}
 	}
 
 	
@@ -54,7 +78,17 @@ public class GenericGraphImpl extends GraphImpl {
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T extends Edge> T createEdge(EdgeClass ec, Vertex alpha, Vertex omega) {
-		return (T) new GenericEdgeImpl(ec, 0, this, alpha, omega);
+		try {
+			return (T) new GenericEdgeImpl(ec, 0, this, alpha, omega);
+		}
+		catch(Exception e) {
+			if(e instanceof GraphException) {
+				throw (GraphException) e;
+			}
+			else {
+				throw new GraphException("Error creating edge of EdgeClass " + ec);
+			}
+		}
 	}
 
 	@Override

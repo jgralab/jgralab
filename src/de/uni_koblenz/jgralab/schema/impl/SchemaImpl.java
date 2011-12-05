@@ -916,7 +916,7 @@ public class SchemaImpl implements Schema {
 		AttributedElementClass aec = null;
 		try {
 			schemaClass = getGraphClassImpl(implementationType);
-			if (className.equals(graphClassName)) {
+			if (className.equals(graphClassName) || (implementationType == ImplementationType.GENERIC && graphClassName.equals("GenericGraphImpl"))) {
 				return schemaClass.getMethod("create", signature);
 			} else {
 				aec = graphClass.getVertexClass(className);
@@ -1090,30 +1090,53 @@ public class SchemaImpl implements Schema {
 			break;
 		case DATABASE:
 			implClassName += IMPLDATABASEPACKAGENAME;
+		case GENERIC:
+			implClassName = "de.uni_koblenz.jgralab.impl.generic";
+			break;
 		default:
 			throw new SchemaException("Implementation type "
 					+ implementationType + " not supported yet.");
 		}
-		implClassName = implClassName + "." + graphClass.getSimpleName()
-				+ "Impl";
-
+		
 		Class<? extends Graph> schemaClass;
-		try {
-			schemaClass = (Class<? extends Graph>) Class.forName(implClassName,
-					true, SchemaClassManager.instance(qualifiedName));
-		} catch (ClassNotFoundException e) {
-			throw new SchemaClassAccessException(
-					"can't load implementation class '" + implClassName + "'",
-					e);
+		if(implementationType != ImplementationType.GENERIC) {
+			implClassName = implClassName + "." + graphClass.getSimpleName()
+					+ "Impl";
+
+			try {
+				schemaClass = (Class<? extends Graph>) Class.forName(implClassName,
+						true, SchemaClassManager.instance(qualifiedName));
+			} catch (ClassNotFoundException e) {
+				throw new SchemaClassAccessException(
+						"can't load implementation class '" + implClassName + "'",
+						e);
+			}
+			return schemaClass;
 		}
-		return schemaClass;
+		else {
+			implClassName += "." + "GenericGraphImpl";
+			try {
+				return (Class<? extends Graph>) Class.forName(implClassName);
+			} catch (ClassNotFoundException e) {
+				throw new SchemaClassAccessException(
+						"can't load implementation class '" + implClassName + "'",
+						e);
+			}
+		}
 	}
 
 	@Override
 	public Method getGraphCreateMethod(ImplementationType implementationType) {
-		return getCreateMethod(graphClass.getSimpleName(),
-				graphClass.getSimpleName(), GRAPHCLASS_CREATE_SIGNATURE,
-				implementationType);
+		if(implementationType != ImplementationType.GENERIC) {
+			return getCreateMethod(graphClass.getSimpleName(),
+					graphClass.getSimpleName(), GRAPHCLASS_CREATE_SIGNATURE,
+					implementationType);
+		}
+		else {
+			return getCreateMethod(graphClass.getSimpleName(),
+					graphClass.getSimpleName(), new Class[]{ GraphClass.class, int.class, int.class },
+					implementationType);
+		}
 	}
 
 	@Override
@@ -1313,31 +1336,38 @@ public class SchemaImpl implements Schema {
 	@Override
 	public Graph createGraph(ImplementationType implementationType, int vCount,
 			int eCount) {
-		try {
-			getGraphClass().getSchemaClass();
-		} catch (SchemaClassAccessException e) {
-			switch (implementationType) {
-			case STANDARD:
-				compile(CodeGeneratorConfiguration.MINIMAL);
-				break;
-			case DATABASE:
-				compile(CodeGeneratorConfiguration.WITH_DATABASE_SUPPORT);
-				break;
-			case TRANSACTION:
-				compile(CodeGeneratorConfiguration.WITH_TRANSACTION_SUPPORT);
-				break;
-			default:
-				throw new RuntimeException(
-						"FIXME: Unexpected implementation type "
-								+ implementationType);
-			}
+		if(implementationType != ImplementationType.GENERIC) {
+			try {
+				getGraphClass().getSchemaClass();
+			} catch (SchemaClassAccessException e) {
+				switch (implementationType) {
+				case STANDARD:
+					compile(CodeGeneratorConfiguration.MINIMAL);
+					break;
+				case DATABASE:
+					compile(CodeGeneratorConfiguration.WITH_DATABASE_SUPPORT);
+					break;
+				case TRANSACTION:
+					compile(CodeGeneratorConfiguration.WITH_TRANSACTION_SUPPORT);
+					break;
+				default:
+					throw new RuntimeException(
+							"FIXME: Unexpected implementation type "
+									+ implementationType);
+				}
 
+			}
 		}
 
-		Method graphCreateMethod = getGraphCreateMethod(ImplementationType.STANDARD);
+		Method graphCreateMethod = implementationType != ImplementationType.GENERIC ? getGraphCreateMethod(ImplementationType.STANDARD) : getGraphCreateMethod(ImplementationType.GENERIC);
 
 		try {
-			return (Graph) graphCreateMethod.invoke(null, null, vCount, eCount);
+			if(implementationType != ImplementationType.GENERIC) {
+				return (Graph) graphCreateMethod.invoke(null, null, vCount, eCount);
+			}
+			else {
+				return (Graph) graphCreateMethod.invoke(null, getGraphClass(), vCount, eCount);
+			}
 		} catch (Exception e) {
 			throw new SchemaException(
 					"Something failed when creating the  graph!", e);
