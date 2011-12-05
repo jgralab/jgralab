@@ -1,10 +1,14 @@
 package de.uni_koblenz.jgralab.impl.generic;
 
 import java.io.IOException;
+import java.util.Iterator;
 
 import org.pcollections.*;
 
+import de.uni_koblenz.jgralab.GraphException;
 import de.uni_koblenz.jgralab.GraphIO;
+import de.uni_koblenz.jgralab.GraphIOException;
+import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.Record;
 import de.uni_koblenz.jgralab.schema.*;
 import de.uni_koblenz.jgralab.schema.RecordDomain.RecordComponent;
@@ -154,6 +158,147 @@ public class GenericUtil {
 			else {
 				io.writeIdentifier(GraphIO.NULL_LITERAL);
 			}
+		}
+		else {
+			throw new GraphException("Unknown domain " + domain.getQualifiedName());
+		}
+	}
+	
+	/**
+	 * Parses a String representing an attribute value and returns an Object representing the attribute
+	 * value. The created object's type is determined by the attribute's domain and the generic TGraph
+	 * implementation's mapping of types to the domains.
+	 * <br /><br />
+	 * The type mapping is as follows:
+	 * <table>
+	 * 	<tr><td><b>Domain</b></td><td><b>Java-type</b></td></tr>
+	 *  <tr><td>BooleanDomain</td><td>Boolean</td></tr>
+	 *  <tr><td>IntegerDomain</td><td>Integer</td></tr>
+	 *  <tr><td>LongDomain</td><td>Long</td></tr>
+	 *  <tr><td>DoubleDomain</td><td>Double</td></tr>
+	 *  <tr><td>StringDomain</td><td>String</td></tr>
+	 *  <tr><td>EnumDomain</td><td>String (possible values are determined be the EnumDomain)</td></tr>
+	 *  <tr><td>SetDomain</td><td>PSet</td></tr>
+	 *  <tr><td>ListDomain</td><td>PVector</td></tr>
+	 *  <tr><td>MapDomain</td><td>PMap</td></tr>
+	 *  <tr><td>RecordDomain</td><td>Record</td></tr>
+	 * </table>
+	 * 
+	 * @param domain The Expected domain of the attribute's value.
+	 * @param io The GraphIO object serving as parser for the attribute's value.
+	 * @return An Object representing the attribute value.
+	 * @throws GraphIOException 
+	 */
+	public Object parseGenericAttribute(Domain domain, GraphIO io) throws GraphIOException {
+		if(domain instanceof BooleanDomain) {
+			Boolean result = io.matchBoolean();
+			return result;
+		}
+		else if(domain instanceof IntegerDomain) {
+			Integer result = io.matchInteger();
+			return result;
+		}
+		else if(domain instanceof LongDomain) {
+			Long result = io.matchLong();
+			return result;
+		}
+		else if(domain instanceof DoubleDomain) {
+			Double result = io.matchDouble();
+			return result;
+		}
+		else if(domain instanceof StringDomain) {
+			String result = io.matchUtfString();
+			return result;
+		}
+		else if(domain instanceof EnumDomain) {
+			String result = io.matchEnumConstant();
+			return result;
+			
+		}
+		else if(domain instanceof SetDomain) {
+			if(io.isNextToken("{")) {
+				PSet<Object> result = JGraLab.set();
+				io.match("{");
+				while (!io.isNextToken("}")) {
+					Object setElement = null;
+					setElement = parseGenericAttribute(((SetDomain) domain).getBaseDomain(), io);
+					result = result.plus(setElement);
+				}
+				io.match("}");
+				return result;
+			}
+			else if (io.isNextToken(GraphIO.NULL_LITERAL)) {
+				io.match();
+				return null;
+			}
+			else {
+				return null;
+			}
+		}
+		else if(domain instanceof ListDomain) {
+			if (io.isNextToken("[")) {
+				PVector<Object> result = JGraLab.vector();
+				io.match("[");
+				while (!io.isNextToken("]")) {
+					Object listElement = null;
+					listElement = parseGenericAttribute(((ListDomain) domain).getBaseDomain(), io);
+					result = result.plus(listElement);
+				}
+				io.match("]");
+				return result;
+			}
+			else if(io.isNextToken(GraphIO.NULL_LITERAL)) {
+				io.match(); 
+				return null;
+			} else {
+				return null;
+			}
+		}
+		else if(domain instanceof MapDomain) {
+			if (io.isNextToken("{")) {
+				PMap<Object, Object> result = JGraLab.map();
+				io.match("{");
+				while (!io.isNextToken("}")) {
+					Object mapKey = null;
+					Object mapValue = null;
+					mapKey = parseGenericAttribute(((MapDomain) domain).getKeyDomain(), io);
+					io.match("-");
+					mapValue = parseGenericAttribute(((MapDomain) domain).getValueDomain(), io);
+					result = result.plus(mapKey, mapValue);
+				}
+				io.match("}");
+				return result;
+			}
+			else if (io.isNextToken(GraphIO.NULL_LITERAL)) {
+				io.match();
+				return null;
+			} else {
+				return null;
+			}
+		}
+		else if(domain instanceof RecordDomain) {
+			if(io.isNextToken("(")) {
+				de.uni_koblenz.jgralab.impl.RecordImpl result = de.uni_koblenz.jgralab.impl.RecordImpl.empty();
+				Iterator<RecordComponent> components = ((RecordDomain) domain).getComponents().iterator();
+				while(!io.isNextToken(")")) {
+					RecordComponent component = components.next();
+					Object componentValue = null;
+					componentValue = parseGenericAttribute(component.getDomain(), io);
+					result = result.plus(component.getName(), componentValue);
+				}
+				io.match(")");
+				return result;
+			}
+			else if(io.isNextToken(GraphIO.NULL_LITERAL)){
+				io.match();
+				return null;
+			}
+			else {
+				throw new GraphIOException("This is no record!");
+			}
+		}
+		else {
+			throw new GraphException("Unknown domain " + domain.getQualifiedName());
 		}
 	}
 }
