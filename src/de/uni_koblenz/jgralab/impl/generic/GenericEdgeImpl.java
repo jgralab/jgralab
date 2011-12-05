@@ -37,8 +37,20 @@ public class GenericEdgeImpl extends EdgeImpl {
 	@Override
 	public void readAttributeValueFromString(String attributeName, String value)
 			throws GraphIOException, NoSuchAttributeException {
-		// TODO Auto-generated method stub
+		if(attributes.containsKey(attributeName)) {
+			attributes.put(attributeName, GenericUtil.parseGenericAttribute(type.getAttribute(attributeName).getDomain(), GraphIO.createStringReader(value, getSchema())));
+		}
+		else {
+			throw new NoSuchAttributeException("DefaultValueTestGraph doesn't contain an attribute " + attributeName);
+		}
 		
+	}
+
+	@Override
+	public void readAttributeValues(GraphIO io) throws GraphIOException {
+		for(Attribute a : type.getAttributeList()) {
+			attributes.put(a.getName(), GenericUtil.parseGenericAttribute(a.getDomain(), io));
+		}
 	}
 
 	@Override
@@ -55,12 +67,6 @@ public class GenericEdgeImpl extends EdgeImpl {
 		for(Attribute a : type.getAttributeList()) {
 			GenericUtil.serializeGenericAttribute(io, a.getDomain(), attributes.get(a.getName()));
 		}
-		
-	}
-
-	@Override
-	public void readAttributeValues(GraphIO io) throws GraphIOException {
-		// TODO Auto-generated method stub
 		
 	}
 

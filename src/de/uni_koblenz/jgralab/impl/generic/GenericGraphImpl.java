@@ -72,7 +72,19 @@ public class GenericGraphImpl extends GraphImpl {
 	@Override
 	public void readAttributeValueFromString(String attributeName, String value)
 			throws GraphIOException, NoSuchAttributeException {
-		
+		if(attributes.containsKey(attributeName)) {
+			attributes.put(attributeName, GenericUtil.parseGenericAttribute(type.getAttribute(attributeName).getDomain(), GraphIO.createStringReader(value, getSchema())));
+		}
+		else {
+			throw new NoSuchAttributeException("DefaultValueTestGraph doesn't contain an attribute " + attributeName);
+		}
+	}
+
+	@Override
+	public void readAttributeValues(GraphIO io) throws GraphIOException {
+		for(Attribute a : type.getAttributeList()) {
+			attributes.put(a.getName(), GenericUtil.parseGenericAttribute(a.getDomain(), io));
+		}
 	}
 
 	@Override
@@ -89,11 +101,6 @@ public class GenericGraphImpl extends GraphImpl {
 		for(Attribute a : type.getAttributeList()) {
 			GenericUtil.serializeGenericAttribute(io, a.getDomain(), attributes.get(a.getName()));
 		}
-	}
-
-	@Override
-	public void readAttributeValues(GraphIO io) throws GraphIOException {
-		// TODO Auto-generated method stub		
 	}
 
 	@SuppressWarnings("unchecked")

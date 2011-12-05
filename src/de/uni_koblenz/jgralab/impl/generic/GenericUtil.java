@@ -189,7 +189,7 @@ public class GenericUtil {
 	 * @return An Object representing the attribute value.
 	 * @throws GraphIOException 
 	 */
-	public Object parseGenericAttribute(Domain domain, GraphIO io) throws GraphIOException {
+	public static Object parseGenericAttribute(Domain domain, GraphIO io) throws GraphIOException {
 		if(domain instanceof BooleanDomain) {
 			Boolean result = io.matchBoolean();
 			return result;

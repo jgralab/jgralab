@@ -60,8 +60,12 @@ public class GenericVertexImpl extends VertexImpl {
 	@Override
 	public void readAttributeValueFromString(String attributeName, String value)
 			throws GraphIOException, NoSuchAttributeException {
-		// TODO Auto-generated method stub
-		
+		if(attributes.containsKey(attributeName)) {
+			attributes.put(attributeName, GenericUtil.parseGenericAttribute(type.getAttribute(attributeName).getDomain(), GraphIO.createStringReader(value, getSchema())));
+		}
+		else {
+			throw new NoSuchAttributeException("DefaultValueTestGraph doesn't contain an attribute " + attributeName);
+		}
 	}
 
 	@Override
