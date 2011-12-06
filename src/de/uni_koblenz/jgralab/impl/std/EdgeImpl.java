@@ -109,15 +109,13 @@ public abstract class EdgeImpl extends de.uni_koblenz.jgralab.impl.EdgeBaseImpl 
 	public void setPrevIncidenceInternal(InternalEdge prevIncidence) {
 		this.prevIncidence = prevIncidence;
 	}
-
-	/**
-	 * 
-	 * @param anId
-	 * @param graph
-	 * @throws Exception
-	 */
+	
 	protected EdgeImpl(int anId, Graph graph, Vertex alpha, Vertex omega) {
 		super(anId, graph);
+		addToGraph(graph, alpha, omega);
+	}
+	
+	protected void addToGraph(Graph graph, Vertex alpha, Vertex omega) {
 		((GraphImpl) graph).addEdge(this, alpha, omega);
 	}
 
