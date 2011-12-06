@@ -3,6 +3,7 @@ package de.uni_koblenz.jgralab.impl.generic;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import org.pcollections.POrderedSet;
 
@@ -24,8 +25,13 @@ import de.uni_koblenz.jgralab.schema.*;
  */
 public class GenericGraphImpl extends GraphImpl {
 	
+	// TODO The legal incidenceClasses of vertices must be cached
+	// and available before an edge is created! 
+	
 	private GraphClass type;
 	private Map<String, Object> attributes;
+	private Map<VertexClass, Set<IncidenceClass>> vcInIcCache;
+	private Map<VertexClass, Set<IncidenceClass>> vcOutIcCache;
 
 	protected GenericGraphImpl(String id, GraphClass type) {
 		super(id, type, 100, 100);
@@ -34,11 +40,15 @@ public class GenericGraphImpl extends GraphImpl {
 	protected GenericGraphImpl(GraphClass type, String id, int vmax, int emax) {
 		super(id, type, vmax, emax);
 		this.type = type;
-		attributes = new HashMap<String, Object>();
-		for(Attribute a : type.getAttributeList()) {
-			attributes.put(a.getName(), null);
+		if(type.getAttributeCount() > 0) {
+			attributes = new HashMap<String, Object>();
+			for(Attribute a : type.getAttributeList()) {
+				attributes.put(a.getName(), null);
+			}
+			initializeAttributesWithDefaultValues();
 		}
-		initializeAttributesWithDefaultValues();
+		vcOutIcCache = new HashMap<VertexClass, Set<IncidenceClass>>();
+		vcInIcCache = new HashMap<VertexClass, Set<IncidenceClass>>();
 	}
 	
 	/**
@@ -106,7 +116,7 @@ public class GenericGraphImpl extends GraphImpl {
 	@Override
 	public void readAttributeValueFromString(String attributeName, String value)
 			throws GraphIOException, NoSuchAttributeException {
-		if(attributes.containsKey(attributeName)) {
+		if(attributes != null && attributes.containsKey(attributeName)) {
 			attributes.put(attributeName, GenericUtil.parseGenericAttribute(type.getAttribute(attributeName).getDomain(), GraphIO.createStringReader(value, getSchema())));
 		}
 		else {
@@ -140,7 +150,7 @@ public class GenericGraphImpl extends GraphImpl {
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T> T getAttribute(String name) throws NoSuchAttributeException {
-		if(!attributes.containsKey(name)) {
+		if(attributes == null || !attributes.containsKey(name)) {
 			throw new NoSuchAttributeException(type.getSimpleName() + " doesn't contain an attribute " + name);
 		}
 		else {
@@ -151,7 +161,7 @@ public class GenericGraphImpl extends GraphImpl {
 	@Override
 	public <T> void setAttribute(String name, T data)
 			throws NoSuchAttributeException {
-		if(!attributes.containsKey(name)) {
+		if(attributes == null || !attributes.containsKey(name)) {
 			throw new NoSuchAttributeException(type.getSimpleName() + " doesn't contain an attribute " + name);
 		} else {
 			try {
@@ -174,5 +184,30 @@ public class GenericGraphImpl extends GraphImpl {
 	public Class<? extends AttributedElement> getSchemaClass() {
 		throw new UnsupportedOperationException("getSchemaClass is not supported by the generic implementation");
 	}
+	
+
+	/**
+	 * Returns the cache containing the allowed outgoing {@link IncidenceClass}es
+	 * of the {@link VertexClass}es in this Graph's Schema.
+	 */
+	public boolean cachedIsValidAlpha(VertexClass vc, EdgeClass ec) {
+		if(!vcOutIcCache.containsKey(vc)) {
+			vcOutIcCache.put(vc, vc.getAllOutIncidenceClasses());
+		}
+		return vcOutIcCache.get(vc).contains(ec.getFrom());
+	}
+	
+	/**
+	 * Returns the cache containing the allowed incoming {@link IncidenceClass}es
+	 * of the {@link VertexClass}es in this Graph's Schema.
+	 */
+	public boolean cachedIsValidOmega(VertexClass vc, EdgeClass ec) {
+		if(!vcInIcCache.containsKey(vc)) {
+			vcInIcCache.put(vc, vc.getAllInIncidenceClasses());
+		}
+		return vcInIcCache.get(vc).contains(ec.getTo());
+	}
+	
+	// TODO Methoden zur Traversierung!
 
 }
