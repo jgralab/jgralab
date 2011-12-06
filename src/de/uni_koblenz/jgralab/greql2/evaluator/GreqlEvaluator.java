@@ -619,6 +619,10 @@ public class GreqlEvaluator {
 			throw new GreqlException("Invalid subquery name '" + name
 					+ "'. Only word chars are allowed.");
 		}
+		if (FunLib.contains(name)) {
+			throw new GreqlException("The subquery '" + name
+					+ "' would shadow a GReQL function!");
+		}
 
 		Set<String> definedSubQueries = subQueryMap.keySet();
 		HashSet<String> subQueryNames = new HashSet<String>(
@@ -639,10 +643,6 @@ public class GreqlEvaluator {
 			createOptimizedSyntaxGraph();
 			queryGraph = oldQueryGraph;
 			queryString = oldQueryString;
-		}
-		if (FunLib.contains(name)) {
-			throw new GreqlException("The subquery '" + name
-					+ "' would shadow a GReQL function!");
 		}
 		for (FunctionApplication fa : subQueryGraph
 				.getFunctionApplicationVertices()) {
