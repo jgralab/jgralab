@@ -23,35 +23,29 @@ public class GenericVertexImpl extends VertexImpl {
 	protected GenericVertexImpl(VertexClass type, int id, Graph graph) {
 		super(id, graph);
 		this.type = type;
-		if(type.getAttributeList().size() > 0) {
-			attributes = new HashMap<String, Object>();
-			for(Attribute a : type.getAttributeList()) {
-				attributes.put(a.getName(), null);
+		if(type.getAttributeCount() > 0) {
+			if(type.getAttributeList().size() > 0) {
+				attributes = new HashMap<String, Object>();
+				for(Attribute a : type.getAttributeList()) {
+					attributes.put(a.getName(), null);
+				}
+				initializeAttributesWithDefaultValues();
 			}
-			initializeAttributesWithDefaultValues();
 		}
 	}
 
 	@Override
 	public boolean isValidAlpha(Edge edge) {
-		// TODO optimieren!
-		if(type.getAllOutIncidenceClasses().contains(((EdgeClass) edge.getAttributedElementClass()).getFrom())) {
-			return true;
-		}
-		else {
-			return false;
-		}
+		boolean t1 = ((GenericGraphImpl) getGraph()).cachedIsValidAlpha(type, ((EdgeClass) edge.getAttributedElementClass()));
+		System.out.println(t1);
+		return t1;
 	}
 
 	@Override
 	public boolean isValidOmega(Edge edge) {
-		// TODO optimieren!
-		if(type.getAllInIncidenceClasses().contains(((EdgeClass) edge.getAttributedElementClass()).getTo())) {
-			return true;
-		}
-		else {
-			return false;
-		}
+		boolean t1 = ((GenericGraphImpl) getGraph()).cachedIsValidOmega(type, ((EdgeClass) edge.getAttributedElementClass()));
+		System.out.println(t1);
+		return t1;
 	}
 
 	@Override
@@ -62,7 +56,7 @@ public class GenericVertexImpl extends VertexImpl {
 	@Override
 	public void readAttributeValueFromString(String attributeName, String value)
 			throws GraphIOException, NoSuchAttributeException {
-		if(attributes.containsKey(attributeName)) {
+		if(attributes != null && attributes.containsKey(attributeName)) {
 			attributes.put(attributeName, GenericUtil.parseGenericAttribute(type.getAttribute(attributeName).getDomain(), GraphIO.createStringReader(value, getSchema())));
 		}
 		else {
@@ -97,7 +91,7 @@ public class GenericVertexImpl extends VertexImpl {
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T> T getAttribute(String name) throws NoSuchAttributeException {
-		if(!attributes.containsKey(name)) {
+		if(attributes == null || !attributes.containsKey(name)) {
 			throw new NoSuchAttributeException(type.getSimpleName() + " doesn't contain an attribute " + name);
 		}
 		else {
@@ -108,7 +102,7 @@ public class GenericVertexImpl extends VertexImpl {
 	@Override
 	public <T> void setAttribute(String name, T data)
 			throws NoSuchAttributeException {
-		if(!attributes.containsKey(name)) {
+		if(attributes == null || !attributes.containsKey(name)) {
 			throw new NoSuchAttributeException(type.getSimpleName() + " doesn't contain an attribute " + name);
 		} else {
 			try {
@@ -136,5 +130,7 @@ public class GenericVertexImpl extends VertexImpl {
 	public Class<? extends AttributedElement> getSchemaClass() {
 		throw new UnsupportedOperationException("getSchemaClass is not supported by the generic implementation");
 	}
+	
+	// TODO Methoden zur Traversierung!
 
 }

@@ -7,6 +7,7 @@ import java.util.Map;
 import de.uni_koblenz.jgralab.*;
 import de.uni_koblenz.jgralab.impl.ReversedEdgeBaseImpl;
 import de.uni_koblenz.jgralab.impl.std.EdgeImpl;
+import de.uni_koblenz.jgralab.impl.std.GraphImpl;
 import de.uni_koblenz.jgralab.schema.*;
 
 public class GenericEdgeImpl extends EdgeImpl {
@@ -14,14 +15,22 @@ public class GenericEdgeImpl extends EdgeImpl {
 	private EdgeClass type;
 	private Map<String, Object> attributes;
 
-	protected GenericEdgeImpl(EdgeClass type, int anId, Graph graph, Vertex alpha, Vertex omega) {
+	public GenericEdgeImpl(EdgeClass type, int anId, Graph graph, Vertex alpha, Vertex omega) {
 		super(anId, graph, alpha, omega);
 		this.type = type;
-		attributes = new HashMap<String, Object>();
-		for(Attribute a : type.getAttributeList()) {
-			attributes.put(a.getName(), null);
+		((GraphImpl) graph).addEdge(this, alpha, omega);
+		if(type.getAttributeCount() > 0) {
+			attributes = new HashMap<String, Object>();
+			for(Attribute a : type.getAttributeList()) {
+				attributes.put(a.getName(), null);
+			}
+			initializeAttributesWithDefaultValues();
 		}
-		initializeAttributesWithDefaultValues();
+	}
+	
+	@Override
+	protected void addToGraph(Graph graph, Vertex alpha, Vertex omega) {
+		// Do nothing. Edge will be added to the graph later.
 	}
 
 	@Override
@@ -37,7 +46,7 @@ public class GenericEdgeImpl extends EdgeImpl {
 	@Override
 	public void readAttributeValueFromString(String attributeName, String value)
 			throws GraphIOException, NoSuchAttributeException {
-		if(attributes.containsKey(attributeName)) {
+		if(attributes != null && attributes.containsKey(attributeName)) {
 			attributes.put(attributeName, GenericUtil.parseGenericAttribute(type.getAttribute(attributeName).getDomain(), GraphIO.createStringReader(value, getSchema())));
 		}
 		else {
@@ -91,7 +100,7 @@ public class GenericEdgeImpl extends EdgeImpl {
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T> T getAttribute(String name) throws NoSuchAttributeException {
-		if(!attributes.containsKey(name)) {
+		if(attributes == null || !attributes.containsKey(name)) {
 			throw new NoSuchAttributeException(type.getSimpleName() + " doesn't contain an attribute " + name);
 		}
 		else {
@@ -102,7 +111,7 @@ public class GenericEdgeImpl extends EdgeImpl {
 	@Override
 	public <T> void setAttribute(String name, T data)
 			throws NoSuchAttributeException {
-		if(!attributes.containsKey(name)) {
+		if(attributes == null || !attributes.containsKey(name)) {
 			throw new NoSuchAttributeException(type.getSimpleName() + " doesn't contain an attribute " + name);
 		} else {
 			try {
@@ -123,5 +132,7 @@ public class GenericEdgeImpl extends EdgeImpl {
 	public Class<? extends AttributedElement> getSchemaClass() {
 		throw new UnsupportedOperationException("getSchemaClass is not supported by the generic implementation");
 	}
+	
+	// TODO Methoden zur Traversierung!
 
 }
