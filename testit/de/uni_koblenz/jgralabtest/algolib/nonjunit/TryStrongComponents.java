@@ -67,7 +67,8 @@ public class TryStrongComponents {
 
 		DepthFirstSearch dfs = new IterativeDepthFirstSearch(graph);
 		dfs.addVisitor(new DebugSearchVisitor());
-		StrongComponentsWithDFS solver = new StrongComponentsWithDFS(graph, dfs);
+		StrongComponentsWithDFS solver = new StrongComponentsWithDFS(graph, dfs)
+				.withInverseResult();
 		solver.addVisitor(new ReducedGraphVisitorAdapter() {
 
 			@Override
@@ -84,5 +85,6 @@ public class TryStrongComponents {
 		solver.execute();
 		System.out.println(solver.getLowlink());
 		System.out.println(solver.getStrongComponents());
+		System.out.println(solver.getInverseResult());
 	}
 }
