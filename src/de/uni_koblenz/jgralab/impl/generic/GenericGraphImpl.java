@@ -55,8 +55,8 @@ public class GenericGraphImpl extends GraphImpl {
 	 * Creates a new instance if a generic Graph. This method isn't supposed to be called manually.
 	 * Use <code>Schema.createGraph(ImplementationType.Generic)</code> instead!
 	 */
-	public static Graph create(GraphClass type, int vmax, int emax) {
-		return new GenericGraphImpl(type, null, vmax, emax);
+	public static Graph create(GraphClass type, String id, int vmax, int emax) {
+		return new GenericGraphImpl(type, id, vmax, emax);
 	}
 	
 	
@@ -64,11 +64,15 @@ public class GenericGraphImpl extends GraphImpl {
 	 * Creates a new {@link GenericVertexImpl} in the graph that conforms to a given {@Link VertexClass}
 	 * from the Schema.
 	 */
-	@SuppressWarnings("unchecked")
 	@Override
 	public <T extends Vertex> T createVertex(VertexClass vc) {
+		return createVertex(vc, 0);
+	}
+	
+	@SuppressWarnings("unchecked")
+	public <T extends Vertex> T createVertex(VertexClass vc, int id) {
 		try {
-			return (T) new GenericVertexImpl(vc, 0, this);
+			return (T) new GenericVertexImpl(vc, id, this);
 		}
 		catch(Exception e) {
 			if(e instanceof GraphException) {
@@ -85,11 +89,15 @@ public class GenericGraphImpl extends GraphImpl {
 	 * Creates a new {@Link GenericEdgeImpl} in the Graph that conforms to a given {@link EdgeClass}
 	 * from the Schema.
 	 */
-	@SuppressWarnings("unchecked")
 	@Override
 	public <T extends Edge> T createEdge(EdgeClass ec, Vertex alpha, Vertex omega) {
+		return createEdge(ec, 0, alpha, omega);
+	}
+	
+	@SuppressWarnings("unchecked")
+	public <T extends Edge> T createEdge(EdgeClass ec, int id, Vertex alpha, Vertex omega) {
 		try {
-			return (T) new GenericEdgeImpl(ec, 0, this, alpha, omega);
+			return (T) new GenericEdgeImpl(ec, id, this, alpha, omega);
 		}
 		catch(Exception e) {
 			if(e instanceof GraphException) {
