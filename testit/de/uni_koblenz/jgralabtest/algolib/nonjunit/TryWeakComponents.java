@@ -43,14 +43,13 @@ import de.uni_koblenz.jgralab.algolib.algorithms.search.BreadthFirstSearch;
 import de.uni_koblenz.jgralab.algolib.algorithms.weak_components.WeakComponentsWithBFS;
 import de.uni_koblenz.jgralab.algolib.algorithms.weak_components.visitors.VertexPartitionVisitorAdapter;
 import de.uni_koblenz.jgralab.algolib.functions.Function;
-import de.uni_koblenz.jgralab.algolib.problems.WeakComponentsSolver;
 import de.uni_koblenz.jgralabtest.schemas.algolib.simple.SimpleGraph;
 
 public class TryWeakComponents {
 
-	private static final int KAPPA = 15;
-	private static final int VERTICES_PER_COMPONENT = 1000;
-	private static final int ADDITIONAL_EDGES_PER_COMPONENT = 500;
+	private static final int KAPPA = 5;
+	private static final int VERTICES_PER_COMPONENT = 5;
+	private static final int ADDITIONAL_EDGES_PER_COMPONENT = 5;
 
 	public static void main(String[] args) {
 		SimpleGraph graph = RandomGraph.createEmptyGraph();
@@ -62,7 +61,8 @@ public class TryWeakComponents {
 		BreadthFirstSearch bfs = new BreadthFirstSearch(graph);
 		final Set<Vertex> representatives = new HashSet<Vertex>();
 
-		WeakComponentsSolver solver = new WeakComponentsWithBFS(graph, bfs);
+		WeakComponentsWithBFS solver = new WeakComponentsWithBFS(graph, bfs)
+				.withInverseResult();
 		solver.addVisitor(new VertexPartitionVisitorAdapter() {
 			@Override
 			public void visitRepresentativeVertex(Vertex v) {
@@ -88,6 +88,8 @@ public class TryWeakComponents {
 				System.err.println("Wrong representative: " + currentRep);
 			}
 		}
+
+		System.out.println(solver.getInverseResult());
 
 		System.out.println("Fini.");
 

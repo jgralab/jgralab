@@ -94,6 +94,8 @@ public class StrongComponentsWithDFS extends StructureOrientedAlgorithm
 
 	@Override
 	public void disableOptionalResults() {
+		checkStateForSettingParameters();
+		inverseResult = null;
 	}
 
 	@Override
