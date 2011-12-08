@@ -44,6 +44,8 @@ import de.uni_koblenz.jgralab.algolib.algorithms.StructureOrientedAlgorithm;
 import de.uni_koblenz.jgralab.algolib.algorithms.search.BreadthFirstSearch;
 import de.uni_koblenz.jgralab.algolib.algorithms.search.visitors.SearchVisitor;
 import de.uni_koblenz.jgralab.algolib.algorithms.search.visitors.SearchVisitorAdapter;
+import de.uni_koblenz.jgralab.algolib.algorithms.weak_components.visitors.VertexPartitionVisitor;
+import de.uni_koblenz.jgralab.algolib.algorithms.weak_components.visitors.VertexPartitionVisitorList;
 import de.uni_koblenz.jgralab.algolib.functions.BooleanFunction;
 import de.uni_koblenz.jgralab.algolib.functions.Function;
 import de.uni_koblenz.jgralab.algolib.problems.WeakComponentsSolver;
@@ -55,6 +57,7 @@ public class WeakComponentsWithBFS extends StructureOrientedAlgorithm implements
 
 	private BreadthFirstSearch bfs;
 	private SearchVisitor weakComponentsVisitor;
+	private VertexPartitionVisitorList visitors;
 
 	private Function<Vertex, Vertex> weakComponents;
 	private int kappa;
@@ -72,14 +75,23 @@ public class WeakComponentsWithBFS extends StructureOrientedAlgorithm implements
 	@Override
 	public void addVisitor(Visitor visitor) {
 		checkStateForSettingVisitors();
-		// the algorithm is set implicitly to the bfs
-		bfs.addVisitor(visitor);
+		if (visitor instanceof VertexPartitionVisitor) {
+			visitor.setAlgorithm(this);
+			visitors.addVisitor(visitor);
+		} else {
+			// the algorithm is set implicitly to the bfs
+			bfs.addVisitor(visitor);
+		}
 	}
 
 	@Override
 	public void removeVisitor(Visitor visitor) {
 		checkStateForSettingVisitors();
-		bfs.removeVisitor(visitor);
+		if (visitor instanceof VertexPartitionVisitor) {
+			visitors.removeVisitor(visitor);
+		} else {
+			bfs.removeVisitor(visitor);
+		}
 	}
 
 	@Override
@@ -115,6 +127,7 @@ public class WeakComponentsWithBFS extends StructureOrientedAlgorithm implements
 	@Override
 	public void resetParameters() {
 		super.resetParameters();
+		visitors = new VertexPartitionVisitorList();
 		traversalDirection = EdgeDirection.INOUT;
 		weakComponentsVisitor = new SearchVisitorAdapter() {
 
@@ -124,6 +137,7 @@ public class WeakComponentsWithBFS extends StructureOrientedAlgorithm implements
 			public void visitRoot(Vertex v) throws AlgorithmTerminatedException {
 				kappa++;
 				currentRepresentativeVertex = v;
+				visitors.visitRepresentativeVertex(v);
 			}
 
 			@Override

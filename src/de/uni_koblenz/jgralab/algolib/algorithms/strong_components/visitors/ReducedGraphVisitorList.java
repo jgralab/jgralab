@@ -38,16 +38,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.uni_koblenz.jgralab.Edge;
-import de.uni_koblenz.jgralab.Vertex;
+import de.uni_koblenz.jgralab.algolib.algorithms.weak_components.visitors.VertexPartitionVisitorList;
 import de.uni_koblenz.jgralab.algolib.visitors.Visitor;
-import de.uni_koblenz.jgralab.algolib.visitors.VisitorList;
 
-public class ReducedGraphVisitorList extends VisitorList
+public class ReducedGraphVisitorList extends VertexPartitionVisitorList
 		implements ReducedGraphVisitor {
 
 	private List<ReducedGraphVisitor> visitors;
 
-	public ReducedGraphVisitorList(){
+	public ReducedGraphVisitorList() {
 		visitors = new ArrayList<ReducedGraphVisitor>();
 	}
 
@@ -82,14 +81,6 @@ public class ReducedGraphVisitorList extends VisitorList
 		int n = visitors.size();
 		for (int i = 0; i < n; i++) {
 			visitors.get(i).visitReducedEdge(e);
-		}
-	}
-
-	@Override
-	public void visitRepresentativeVertex(Vertex v) {
-		int n = visitors.size();
-		for (int i = 0; i < n; i++) {
-			visitors.get(i).visitRepresentativeVertex(v);
 		}
 	}
 }
