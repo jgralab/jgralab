@@ -40,8 +40,6 @@ import de.uni_koblenz.jgralab.algolib.algorithms.GraphAlgorithm;
 
 public class ReducedGraphVisitorAdapter implements ReducedGraphVisitor {
 
-	// protected StrongComponentsWithDFS algorithm;
-
 	@Override
 	public void reset() {
 
@@ -49,16 +47,7 @@ public class ReducedGraphVisitorAdapter implements ReducedGraphVisitor {
 
 	@Override
 	public void setAlgorithm(GraphAlgorithm alg) {
-		// if (alg instanceof StrongComponentsWithDFS) {
-		// this.algorithm = (StrongComponentsWithDFS) alg;
-		// reset();
-		// } else {
-		// throw new IllegalArgumentException(
-		// "This visitor is not compatible with "
-		// + alg.getClass().getSimpleName()
-		// + " It only works with instances of "
-		// + StrongComponentsSolver.class.getSimpleName());
-		// }
+
 	}
 
 	@Override

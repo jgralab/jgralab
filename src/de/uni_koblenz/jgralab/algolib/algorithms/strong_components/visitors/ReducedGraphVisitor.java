@@ -35,8 +35,7 @@
 package de.uni_koblenz.jgralab.algolib.algorithms.strong_components.visitors;
 
 import de.uni_koblenz.jgralab.Edge;
-import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.algolib.visitors.Visitor;
+import de.uni_koblenz.jgralab.algolib.algorithms.weak_components.visitors.VertexPartitionVisitor;
 
 /**
  * This visitor visits all graph elements of a graph that are relevant for
@@ -48,15 +47,7 @@ import de.uni_koblenz.jgralab.algolib.visitors.Visitor;
  * @author strauss@uni-koblenz.de
  * 
  */
-public interface ReducedGraphVisitor extends Visitor {
-
-	/**
-	 * Visits the representative vertex of a strong component.
-	 * 
-	 * @param v
-	 *            the representative vertex to visit
-	 */
-	public void visitRepresentativeVertex(Vertex v);
+public interface ReducedGraphVisitor extends VertexPartitionVisitor {
 
 	/**
 	 * Visits a reduced edge.
@@ -65,4 +56,5 @@ public interface ReducedGraphVisitor extends Visitor {
 	 *            the reduced edge to visit
 	 */
 	public void visitReducedEdge(Edge e);
+
 }
