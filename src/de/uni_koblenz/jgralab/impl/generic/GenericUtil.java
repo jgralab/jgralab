@@ -1,7 +1,9 @@
 package de.uni_koblenz.jgralab.impl.generic;
 
 import java.io.IOException;
+import java.util.Collection;
 import java.util.Iterator;
+import java.util.TreeMap;
 
 import org.pcollections.*;
 
@@ -28,6 +30,9 @@ public class GenericUtil {
 		}
 		else {
 			boolean result = true;
+			if(value == null) {
+				return result;
+			}
 			if(domain instanceof EnumDomain) {
 				result &= value instanceof PSet && ((EnumDomain) domain).getConsts().contains(value);
 			}
@@ -41,7 +46,7 @@ public class GenericUtil {
 				}
 			}
 			else if(domain instanceof ListDomain) {
-				result &= value instanceof PVector;
+				result &= (value instanceof PVector);
 				if(!result) {
 					return false;
 				}
@@ -150,8 +155,17 @@ public class GenericUtil {
 				io.writeSpace();
 				io.write("(");
 				io.noSpace();
-				for(RecordComponent c : ((RecordDomain) domain).getComponents()) {
-					serializeGenericAttribute(io, c.getDomain(), ((Record) data).getComponent(c.getName()));
+				
+				// TODO Ugly! Is the sorting necessary?
+				// Sort components by lexicographic order, first!
+				Collection<RecordDomain.RecordComponent> components = ((RecordDomain) domain).getComponents();
+				TreeMap<String, Domain> sortedComponents = new TreeMap<String, Domain>();
+				for(RecordDomain.RecordComponent c : components) {
+					sortedComponents.put(c.getName(), c.getDomain());
+				}
+				
+				for(String componentName : sortedComponents.navigableKeySet()) {
+					serializeGenericAttribute(io, sortedComponents.get(componentName), ((Record) data).getComponent(componentName));
 				}
 				io.write(")");
 			}
@@ -279,12 +293,23 @@ public class GenericUtil {
 		else if(domain instanceof RecordDomain) {
 			if(io.isNextToken("(")) {
 				de.uni_koblenz.jgralab.impl.RecordImpl result = de.uni_koblenz.jgralab.impl.RecordImpl.empty();
-				Iterator<RecordComponent> components = ((RecordDomain) domain).getComponents().iterator();
+				io.match("(");
+
+				// TODO This is ugly. Is it necessary?
+				// Component values are expected in lexicographic order -> sort them first!
+				Collection<RecordDomain.RecordComponent> components = ((RecordDomain) domain).getComponents();
+				TreeMap<String, Domain> sortedComponents = new TreeMap<String, Domain>();
+				for(RecordDomain.RecordComponent c : components) {
+					sortedComponents.put(c.getName(), c.getDomain());
+				}
+				Iterator<String> componentIterator = sortedComponents.navigableKeySet().iterator();
+				String componentName = componentIterator.next();
 				while(!io.isNextToken(")")) {
-					RecordComponent component = components.next();
+					Domain componentDomain = sortedComponents.get(componentName);
 					Object componentValue = null;
-					componentValue = parseGenericAttribute(component.getDomain(), io);
-					result = result.plus(component.getName(), componentValue);
+					componentValue = parseGenericAttribute(componentDomain, io);
+					result = result.plus(componentName, componentValue);
+					componentName = componentIterator.hasNext() ? componentIterator.next() : null;
 				}
 				io.match(")");
 				return result;
