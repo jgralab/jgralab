@@ -87,7 +87,7 @@ public class JGraLab {
 					Manifest manifest = new Manifest(resources.nextElement()
 							.openStream());
 					Map<String, Attributes> entries = manifest.getEntries();
-					Attributes info = entries.get("de/uni_koblenz/jgralab");
+					Attributes info = entries.get("de/uni_koblenz/jgralab/");
 					if (info == null) {
 						continue;
 					}
