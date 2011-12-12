@@ -81,20 +81,19 @@ public class GenericEdgeImpl extends EdgeImpl {
 
 	@Override
 	public AggregationKind getAggregationKind() {
-		// TODO Auto-generated method stub
-		return null;
+		AggregationKind fromAK = ((EdgeClass) getAttributedElementClass()).getFrom().getAggregationKind();
+		AggregationKind toAK = ((EdgeClass) getAttributedElementClass()).getTo().getAggregationKind();
+		return fromAK != AggregationKind.NONE ? fromAK : (toAK != AggregationKind.NONE ? toAK : AggregationKind.NONE);
 	}
 
 	@Override
 	public AggregationKind getAlphaAggregationKind() {
-		// TODO Auto-generated method stub
-		return null;
+		return ((EdgeClass) getAttributedElementClass()).getFrom().getAggregationKind();
 	}
 
 	@Override
 	public AggregationKind getOmegaAggregationKind() {
-		// TODO Auto-generated method stub
-		return null;
+		return ((EdgeClass) getAttributedElementClass()).getTo().getAggregationKind();
 	}
 
 	@SuppressWarnings("unchecked")
@@ -127,12 +126,29 @@ public class GenericEdgeImpl extends EdgeImpl {
 			}
 		}
 	}
-
+	
 	@Override
-	public Class<? extends AttributedElement> getSchemaClass() {
-		throw new UnsupportedOperationException("getSchemaClass is not supported by the generic implementation");
+	public Edge getNextEdge(EdgeClass anEdgeClass) {
+		Edge currentEdge = getNextEdge();
+		while(currentEdge != null) {
+			if(currentEdge.getAttributedElementClass().equals(anEdgeClass)) {
+				return currentEdge;
+			}
+			currentEdge = currentEdge.getNextEdge();
+		}
+		return currentEdge;
 	}
 	
-	// TODO Methoden zur Traversierung!
+
+	//************** unsupported methods ***************/
+	@Override
+	public Class<? extends AttributedElement> getSchemaClass() {
+		throw new UnsupportedOperationException("This method is not supported by the generic implementation");
+	}
+	
+	@Override
+	public Edge getNextEdge(Class<? extends Edge> anEdgeClass) {
+		throw new UnsupportedOperationException("This method is not supported by the generic implementation");
+	}
 
 }

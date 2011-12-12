@@ -244,31 +244,30 @@ public class GenericGraphImpl extends GraphImpl {
 		return new GenericEdgeIterable<Edge>(this, ec);
 	}
 	
-	// TODO Methoden zur typspezifischen Traversierung!
 	
 	//************** unsupported methods ***************/
 	@Override
 	public Class<? extends AttributedElement> getSchemaClass() {
-		throw new UnsupportedOperationException("getSchemaClass is not supported by the generic implementation");
+		throw new UnsupportedOperationException("This method is not supported by the generic implementation");
 	}
 	
 	@Override
 	public Vertex getFirstVertex(Class<? extends Vertex> vertexClass) {
-		throw new UnsupportedOperationException("getSchemaClass is not supported by the generic implementation");
+		throw new UnsupportedOperationException("This method is not supported by the generic implementation");
 	}
 	
 	@Override
 	public Iterable<Vertex> vertices(Class<? extends Vertex> vertexClass) {
-		throw new UnsupportedOperationException("getSchemaClass is not supported by the generic implementation");
+		throw new UnsupportedOperationException("This method is not supported by the generic implementation");
 	}
 	
 	@Override
 	public Edge getFirstEdge(Class<? extends Edge> edgeClass) {
-		throw new UnsupportedOperationException("getSchemaClass is not supported by the generic implementation");
+		throw new UnsupportedOperationException("This method is not supported by the generic implementation");
 	}
 	
 	@Override
 	public Iterable<Edge> edges(Class<? extends Edge> edgeClass) {
-		throw new UnsupportedOperationException("getSchemaClass is not supported by the generic implementation");
+		throw new UnsupportedOperationException("This method is not supported by the generic implementation");
 	}
 }
