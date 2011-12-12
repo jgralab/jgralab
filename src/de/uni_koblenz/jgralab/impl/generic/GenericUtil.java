@@ -180,7 +180,7 @@ public class GenericUtil {
 	
 	/**
 	 * Parses a String representing an attribute value and returns an Object representing the attribute
-	 * value. The created object's type is determined by the attribute's domain and the generic TGraph
+	 * value. The created Object's type is determined by the attribute's Domain and the generic TGraph
 	 * implementation's mapping of types to the domains.
 	 * <br /><br />
 	 * The type mapping is as follows:
@@ -199,7 +199,7 @@ public class GenericUtil {
 	 * </table>
 	 * 
 	 * @param domain The Expected domain of the attribute's value.
-	 * @param io The GraphIO object serving as parser for the attribute's value.
+	 * @param io The {@link GraphIO} object serving as parser for the attribute's value.
 	 * @return An Object representing the attribute value.
 	 * @throws GraphIOException 
 	 */

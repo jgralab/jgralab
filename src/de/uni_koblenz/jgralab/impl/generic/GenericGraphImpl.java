@@ -186,12 +186,6 @@ public class GenericGraphImpl extends GraphImpl {
 		}
 		
 	}
-
-
-	@Override
-	public Class<? extends AttributedElement> getSchemaClass() {
-		throw new UnsupportedOperationException("getSchemaClass is not supported by the generic implementation");
-	}
 	
 
 	/**
@@ -216,6 +210,65 @@ public class GenericGraphImpl extends GraphImpl {
 		return vcInIcCache.get(vc).contains(ec.getTo());
 	}
 	
-	// TODO Methoden zur Traversierung!
-
+	@Override
+	public Vertex getFirstVertex(VertexClass vertexClass) {
+		Vertex v = getFirstVertex();
+		if(v == null) {
+			return null;
+		}
+		if(v.getAttributedElementClass().equals(vertexClass)) {
+			return v;
+		}
+		return v.getNextVertex(vertexClass);
+	}
+	
+	@Override
+	public Edge getFirstEdge(EdgeClass edgeClass) {
+		Edge e = getFirstEdge();
+		if(e == null) {
+			return null;
+		}
+		if(e.getAttributedElementClass().equals(edgeClass)) {
+			return e;
+		}
+		return e.getNextEdge(edgeClass);
+	}
+	
+	@Override
+	public Iterable<Vertex> vertices(VertexClass vc) {
+		return new GenericVertexIterable<Vertex>(this, vc);
+	}
+	
+	@Override
+	public Iterable<Edge> edges(EdgeClass ec) {
+		return new GenericEdgeIterable<Edge>(this, ec);
+	}
+	
+	// TODO Methoden zur typspezifischen Traversierung!
+	
+	//************** unsupported methods ***************/
+	@Override
+	public Class<? extends AttributedElement> getSchemaClass() {
+		throw new UnsupportedOperationException("getSchemaClass is not supported by the generic implementation");
+	}
+	
+	@Override
+	public Vertex getFirstVertex(Class<? extends Vertex> vertexClass) {
+		throw new UnsupportedOperationException("getSchemaClass is not supported by the generic implementation");
+	}
+	
+	@Override
+	public Iterable<Vertex> vertices(Class<? extends Vertex> vertexClass) {
+		throw new UnsupportedOperationException("getSchemaClass is not supported by the generic implementation");
+	}
+	
+	@Override
+	public Edge getFirstEdge(Class<? extends Edge> edgeClass) {
+		throw new UnsupportedOperationException("getSchemaClass is not supported by the generic implementation");
+	}
+	
+	@Override
+	public Iterable<Edge> edges(Class<? extends Edge> edgeClass) {
+		throw new UnsupportedOperationException("getSchemaClass is not supported by the generic implementation");
+	}
 }
