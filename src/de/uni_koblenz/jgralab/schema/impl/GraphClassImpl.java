@@ -60,6 +60,9 @@ public final class GraphClassImpl extends AttributedElementClassImpl implements
 
 	private Map<String, VertexClass> vertexClasses = new HashMap<String, VertexClass>();
 
+	private DirectedAcyclicGraph<EdgeClass> edgeCsDag = new DirectedAcyclicGraph<EdgeClass>();
+	private DirectedAcyclicGraph<VertexClass> vertexCsDag = new DirectedAcyclicGraph<VertexClass>();
+		
 	static GraphClass createDefaultGraphClass(SchemaImpl schema) {
 		assert schema.getDefaultPackage() != null : "DefaultPackage has not yet been created!";
 		assert schema.getDefaultGraphClass() == null : "DefaultGraphClass already created!";
@@ -109,6 +112,7 @@ public final class GraphClassImpl extends AttributedElementClassImpl implements
 		}
 		graphElementClasses.put(ec.getQualifiedName(), ec);
 		edgeClasses.put(ec.getQualifiedName(), ec);
+		edgeCsDag.createNode(ec);
 	}
 
 	void addVertexClass(VertexClass vc) {
@@ -124,6 +128,7 @@ public final class GraphClassImpl extends AttributedElementClassImpl implements
 
 		graphElementClasses.put(vc.getQualifiedName(), vc);
 		vertexClasses.put(vc.getQualifiedName(), vc);
+		vertexCsDag.createNode(vc);
 	}
 
 	public void addSuperClass(GraphClass superClass) {
@@ -322,5 +327,14 @@ public final class GraphClassImpl extends AttributedElementClassImpl implements
 	public int getVertexClassCount() {
 		return vertexClasses.size();
 	}
+
+	protected DirectedAcyclicGraph<EdgeClass> getEdgeCsDag() {
+		return edgeCsDag;
+	}
+
+	protected DirectedAcyclicGraph<VertexClass> getVertexCsDag() {
+		return vertexCsDag;
+	}
+
 
 }
