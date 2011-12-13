@@ -139,6 +139,35 @@ public class GenericEdgeImpl extends EdgeImpl {
 		return currentEdge;
 	}
 	
+	@Override
+	public Edge getNextIncidence(EdgeClass anEdgeClass) {
+		return getNextIncidence(anEdgeClass, EdgeDirection.INOUT, false);
+	}
+	
+	@Override
+	public Edge getNextIncidence(EdgeClass anEdgeClass, EdgeDirection orientation) {
+		return getNextIncidence(anEdgeClass, orientation, false);
+	}
+	
+	@Override
+	public Edge getNextIncidence(EdgeClass anEdgeClass, EdgeDirection orientation, boolean noSubclasses) {
+		Edge currentEdge = getNextIncidence(orientation);
+		while(currentEdge != null) {
+			if(noSubclasses) {
+				if(currentEdge.getAttributedElementClass().equals(anEdgeClass)) {
+					return currentEdge;
+				}
+			}
+			else {
+				if(anEdgeClass.equals(currentEdge.getAttributedElementClass()) || anEdgeClass.getAllSubClasses().contains(currentEdge.getAttributedElementClass())) {
+					return currentEdge;
+				}
+			}
+			currentEdge = currentEdge.getNextIncidence(orientation);
+		}
+		return currentEdge;
+	}
+	
 
 	//************** unsupported methods ***************/
 	@Override
@@ -148,6 +177,26 @@ public class GenericEdgeImpl extends EdgeImpl {
 	
 	@Override
 	public Edge getNextEdge(Class<? extends Edge> anEdgeClass) {
+		throw new UnsupportedOperationException("This method is not supported by the generic implementation");
+	}
+	
+	@Override
+	public Edge getNextIncidence(Class<? extends Edge> anEdgeClass) {
+		throw new UnsupportedOperationException("This method is not supported by the generic implementation");
+	}
+	
+	@Override
+	public Edge getNextIncidence(Class<? extends Edge> anEdgeClass, boolean noSubclasses) {
+		throw new UnsupportedOperationException("This method is not supported by the generic implementation");
+	}
+	
+	@Override
+	public Edge getNextIncidence(Class<? extends Edge> anEdgeClass, EdgeDirection orientation) {
+		throw new UnsupportedOperationException("This method is not supported by the generic implementation");
+	}
+	
+	@Override
+	public Edge getNextIncidence(Class<? extends Edge> anEdgeClass, EdgeDirection orientation, boolean noSubclasses) {
 		throw new UnsupportedOperationException("This method is not supported by the generic implementation");
 	}
 
