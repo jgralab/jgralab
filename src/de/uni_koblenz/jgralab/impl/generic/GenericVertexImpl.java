@@ -46,9 +46,6 @@ public class GenericVertexImpl extends VertexImpl {
 				newEdgeClass = ec;
 			}
 		}
-		if(newEdgeClass == null) {
-			return null; // TODO how to handle this? GraphException?
-		}
 		if(newEdgeClass.getFrom().getRolename().equals(role)) {
 			return getGraph().createEdge(newEdgeClass, this, other);
 		}
