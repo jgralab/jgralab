@@ -87,6 +87,8 @@ public final class MapDomainImpl extends CompositeDomainImpl implements
 		}
 		keyDomain = aKeyDomain;
 		valueDomain = aValueDomain;
+		((SchemaImpl)schema).getDomainsDag().createEdge(this, keyDomain);
+		((SchemaImpl)schema).getDomainsDag().createEdge(this, valueDomain);
 	}
 
 	@Override

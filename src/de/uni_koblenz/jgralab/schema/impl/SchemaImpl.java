@@ -157,6 +157,8 @@ public class SchemaImpl implements Schema {
 	 */
 	private Map<String, Domain> domains = new HashMap<String, Domain>();
 
+	private DirectedAcyclicGraph<Domain> domainsDag = new DirectedAcyclicGraph<Domain>();
+	
 	/**
 	 * Holds a reference to the {@link GraphClass} of this schema (not the
 	 * default graph class {@link GraphClass})
@@ -649,7 +651,8 @@ public class SchemaImpl implements Schema {
 		String[] components = splitQualifiedName(qualifiedName);
 		PackageImpl parent = (PackageImpl) createPackageWithParents(components[0]);
 		String simpleName = components[1];
-		return new EnumDomainImpl(simpleName, parent, enumComponents);
+		EnumDomain ed = new EnumDomainImpl(simpleName, parent, enumComponents);
+		return ed;
 	}
 
 	@Override
@@ -841,7 +844,8 @@ public class SchemaImpl implements Schema {
 		String[] components = splitQualifiedName(qualifiedName);
 		PackageImpl parent = (PackageImpl) createPackageWithParents(components[0]);
 		String simpleName = components[1];
-		return new RecordDomainImpl(simpleName, parent, recordComponents);
+		RecordDomain rd = new RecordDomainImpl(simpleName, parent, recordComponents);
+		return rd;
 	}
 
 	@Override
@@ -973,6 +977,10 @@ public class SchemaImpl implements Schema {
 		return domains;
 	}
 
+	protected DirectedAcyclicGraph<Domain> getDomainsDag(){
+		return domainsDag;
+	}
+	
 	@Override
 	public List<EdgeClass> getEdgeClassesInTopologicalOrder() {
 		ArrayList<EdgeClass> topologicalOrderList = new ArrayList<EdgeClass>();
