@@ -174,6 +174,7 @@ public final class VertexClassImpl extends GraphElementClassImpl implements
 	public void addSuperClass(VertexClass superClass) {
 		checkDuplicateRolenames(superClass);
 		super.addSuperClass(superClass);
+		((GraphClassImpl)this.graphClass).getVertexCsDag().createEdge(superClass, this);
 	}
 
 	private void checkDuplicateRolenames(VertexClass superClass) {
