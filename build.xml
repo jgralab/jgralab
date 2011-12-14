@@ -156,7 +156,7 @@
 			<compilerarg line="-Xlint:unchecked" />
 		</javac>
 	</target>
-	
+
 	<!-- jgralab -->
 	<!-- compiles jgralab basic sources -->
 	<target name="core" depends="createClassesDir">
@@ -167,12 +167,12 @@
 
 	<!-- ant tasks for versioning -->
 	<target name="versiontasks" depends="ist_utilities,createClassesDir">
-		<javac fork="true" srcdir="${tgtools.src}" includes="ant/RetrieveVersion.java ant/BumpMicroVersion.java ant/BumpMinorVersion.java" destdir="${classes.dir}" memoryinitialsize="${minmemsize}" memorymaximumsize="${maxmemsize}" classpathref="classpath" debug="${debug}" source="${javac.targetVM}" target="${javac.targetVM}" includeantruntime="false"/>
-		<taskdef name="bump_micro" classname="de.uni_koblenz.jgralab.utilities.ant.BumpMicroVersion" classpath="${classes.dir}"/>
+		<javac fork="true" srcdir="${tgtools.src}" includes="ant/RetrieveVersion.java ant/BumpMicroVersion.java ant/BumpMinorVersion.java" destdir="${classes.dir}" memoryinitialsize="${minmemsize}" memorymaximumsize="${maxmemsize}" classpathref="classpath" debug="${debug}" source="${javac.targetVM}" target="${javac.targetVM}" includeantruntime="false" />
+		<taskdef name="bump_micro" classname="de.uni_koblenz.jgralab.utilities.ant.BumpMicroVersion" classpath="${classes.dir}" />
 		<taskdef name="bump_minor" classname="de.uni_koblenz.jgralab.utilities.ant.BumpMinorVersion" classpath="${classes.dir}" />
 		<taskdef name="retrieve_version" classname="de.uni_koblenz.jgralab.utilities.ant.RetrieveVersion" classpath="${classes.dir}" />
 	</target>
-	
+
 	<!-- tgtools (utils which are needed for schema creation (TgSchema2Java)
 	         and that don't depend on schemas themselves) -->
 	<target name="tgtools" depends="core">
@@ -260,15 +260,11 @@
 	</target>
 
 	<!-- GReTL and ECA -->
-	<target name="gretl_and_eca" depends="greql2" >
-	  <tgschema2java schemaFile="${gretl.templategraphschemafile}" sourcePath="${src.dir}" implementationMode="standard" />
-	  <javac fork="true" srcdir="${gretl_eca.src}" includes="${gretl_eca.includes}" destdir="${classes.dir}"
-		 memoryinitialsize="${minmemsize}" memorymaximumsize="${maxmemsize}"
-		 classpathref="classpath" debug="${debug}"
-		 source="${javac.targetVM}" target="${javac.targetVM}"
-		 includeantruntime="false">
-	    <compilerarg line="-Xlint:unchecked" />
-	  </javac>
+	<target name="gretl_and_eca" depends="greql2">
+		<tgschema2java schemaFile="${gretl.templategraphschemafile}" sourcePath="${src.dir}" implementationMode="standard" />
+		<javac fork="true" srcdir="${gretl_eca.src}" includes="${gretl_eca.includes}" destdir="${classes.dir}" memoryinitialsize="${minmemsize}" memorymaximumsize="${maxmemsize}" classpathref="classpath" debug="${debug}" source="${javac.targetVM}" target="${javac.targetVM}" includeantruntime="false">
+			<compilerarg line="-Xlint:unchecked" />
+		</javac>
 	</target>
 
 	<!-- unjar -->
@@ -276,17 +272,21 @@
 	<target name="unjar" depends="common.unjar">
 		<unjar dest="${tmp.dir}">
 			<fileset dir="${comlib.dir}/apache/commons/cli/" includes="**/*.jar" />
+			<patternset>
+				<exclude name="META-INF/**" />
+			</patternset>
 		</unjar>
-		<delete dir="${tmp.dir}/META-INF" />
-		<mkdir dir="${tmp.dir}/META-INF" />
-		<copy todir="${tmp.dir}/META-INF" file="${project.dir}/license/LICENSE.txt"/>
+		<preserve-meta metaDir="${tmp.dir}/META-INF/">
+			<fileset dir="${comlib.dir}/apache/commons/cli/" includes="**/*.jar" />
+		</preserve-meta>
+		<copy todir="${tmp.dir}/META-INF" file="${project.dir}/license/LICENSE.txt" />
 	</target>
 
 	<target name="modify_manifest" depends="versiontasks">
 		<!-- sets the attribute "revision" -->
 		<retrieve_version />
 		<manifest file="${manifest.file}" mode="update">
-			<attribute name="Bundle-Version" value="${version}.${version.codename}"/>
+			<attribute name="Bundle-Version" value="${version}.${version.codename}" />
 			<attribute name="Main-Class" value="${main.fq}" />
 			<section name="de/uni_koblenz/jgralab/">
 				<attribute name="Implementation-Title" value="JGraLab" />
@@ -303,7 +303,7 @@
 	<target name="bumpmicro" depends="versiontasks">
 		<bump_micro />
 	</target>
-	
+
 	<target name="bumpminor" depends="versiontasks">
 		<bump_minor />
 	</target>
@@ -346,11 +346,11 @@
 
 	<!-- Push a new jgralab jar to clojars.org -->
 	<target name="clojars-push">
-	  <exec executable="scp">
-	    <arg value="pom.xml" />
-	    <arg value="build/jar/jgralab.jar" />
-	    <arg value="clojars@clojars.org:" />
-	  </exec>
+		<exec executable="scp">
+			<arg value="pom.xml" />
+			<arg value="build/jar/jgralab.jar" />
+			<arg value="clojars@clojars.org:" />
+		</exec>
 	</target>
 
 </project>
