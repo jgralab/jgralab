@@ -72,6 +72,16 @@ public final class VertexClassImpl extends GraphElementClassImpl implements
 	 */
 	private Set<IncidenceClass> allOutIncidenceClasses;
 	
+	/**
+	 * the valid from far IncidenceClasses - only set if schema is finished
+	 */
+	private Set<IncidenceClass> validFromFarIncidenceClasses;
+	
+	/**
+	 * the valid to far IncidenceClasses - only set if schema is finished
+	 */
+	private Set<IncidenceClass> validToFarIncidenceClasses;
+	
 	static VertexClass createDefaultVertexClass(Schema schema) {
 		assert schema.getDefaultGraphClass() != null : "DefaultGraphClass has not yet been created!";
 		assert schema.getDefaultVertexClass() == null : "DefaultVertexClass already created!";
@@ -104,9 +114,7 @@ public final class VertexClassImpl extends GraphElementClassImpl implements
 		return "vc_" + getQualifiedName().replace('.', '_');
 	}
 
-	//TODO ask for the reason that methods are public and not protected - they are called only from the EdgeClassImpl Constructor
-	@Override
-	public void addInIncidenceClass(IncidenceClass incClass) {
+	void addInIncidenceClass(IncidenceClass incClass) {
 		if (incClass.getVertexClass() != this) {
 			throwSchemaException();
 		}
@@ -114,8 +122,7 @@ public final class VertexClassImpl extends GraphElementClassImpl implements
 		inIncidenceClasses.add(incClass);
 	}
 
-	@Override
-	public void addOutIncidenceClass(IncidenceClass incClass) {
+	void addOutIncidenceClass(IncidenceClass incClass) {
 		if (incClass.getVertexClass() != this) {
 			throwSchemaException();
 		}
@@ -197,7 +204,6 @@ public final class VertexClassImpl extends GraphElementClassImpl implements
 		}
 		checkDuplicateRolenames(superClass);
 		super.addSuperClass(superClass);
-		((GraphClassImpl)this.graphClass).getVertexCsDag().createEdge(superClass, this);
 	}
 
 	private void checkDuplicateRolenames(VertexClass superClass) {
@@ -211,7 +217,7 @@ public final class VertexClassImpl extends GraphElementClassImpl implements
 				.getAllOutIncidenceClasses());
 	}
 
-	public void checkDuplicatedRolenamesAgainstAllIncidences(
+	private void checkDuplicatedRolenamesAgainstAllIncidences(
 			Set<IncidenceClass> incidences) {
 		for (IncidenceClass incidence : incidences) {
 			checkDuplicateRolenames(incidence);
@@ -226,6 +232,10 @@ public final class VertexClassImpl extends GraphElementClassImpl implements
 	 */
 
 	public Set<IncidenceClass> getValidFromFarIncidenceClasses() {
+		if(isFinished()){
+			return this.validFromFarIncidenceClasses;
+		}
+		
 		Set<IncidenceClass> validFromInc = new HashSet<IncidenceClass>();
 		for (IncidenceClass ic : getAllOutIncidenceClasses()) {
 			IncidenceClass farInc = ic.getEdgeClass().getTo();
@@ -250,6 +260,9 @@ public final class VertexClassImpl extends GraphElementClassImpl implements
 	}
 
 	public Set<IncidenceClass> getValidToFarIncidenceClasses() {
+		if(isFinished()){
+			return this.validToFarIncidenceClasses;
+		}
 		Set<IncidenceClass> validToInc = new HashSet<IncidenceClass>();
 		for (IncidenceClass ic : getAllInIncidenceClasses()) {
 			IncidenceClass farInc = ic.getEdgeClass().getFrom();
@@ -396,12 +409,33 @@ public final class VertexClassImpl extends GraphElementClassImpl implements
 		
 		this.allInIncidenceClasses = Collections.unmodifiableSet(this.allInIncidenceClasses);
 		this.allOutIncidenceClasses = Collections.unmodifiableSet(this.allOutIncidenceClasses);
+
+		this.validFromFarIncidenceClasses = Collections.unmodifiableSet(this.getValidFromFarIncidenceClasses());
+		this.validToFarIncidenceClasses = Collections.unmodifiableSet(this.getValidToFarIncidenceClasses());
+		
+		for(IncidenceClass ic : this.inIncidenceClasses){
+			((IncidenceClassImpl)ic).finish();
+		}
+		for(IncidenceClass ic : this.outIncidenceClasses){
+			((IncidenceClassImpl)ic).finish();
+		}
+		
 		super.finish();
 	}
 	
 	protected void reopen(){
 		this.allInIncidenceClasses = null;
 		this.allOutIncidenceClasses = null;
+		this.validFromFarIncidenceClasses = null;
+		this.validToFarIncidenceClasses = null;
+		
+		for(IncidenceClass ic : this.inIncidenceClasses){
+			((IncidenceClassImpl)ic).reopen();
+		}
+		for(IncidenceClass ic : this.outIncidenceClasses){
+			((IncidenceClassImpl)ic).reopen();
+		}
+		
 		super.reopen();
 	}
 	

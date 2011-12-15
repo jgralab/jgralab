@@ -34,6 +34,7 @@
  */
 package de.uni_koblenz.jgralab.schema.impl;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -80,8 +81,12 @@ public class IncidenceClassImpl implements IncidenceClass {
 
 	private Set<IncidenceClass> redefinedIncidenceClasses;
 
+	private Set<IncidenceClass> allRedefinedIncidenceClasses;
+	
 	private Set<IncidenceClass> subsettedIncidenceClasses;
 
+	private Set<IncidenceClass> allSubsettedIncidenceClasses;
+	
 	@Override
 	public AggregationKind getAggregationKind() {
 		return aggregationKind;
@@ -157,6 +162,9 @@ public class IncidenceClassImpl implements IncidenceClass {
 
 	@Override
 	public Set<IncidenceClass> getSubsettedIncidenceClasses() {
+		if(((VertexClassImpl)vertexClass).isFinished()){
+			return this.allSubsettedIncidenceClasses;
+		}
 		Set<IncidenceClass> result = new HashSet<IncidenceClass>();
 		result.addAll(subsettedIncidenceClasses);
 		for (IncidenceClass ic : subsettedIncidenceClasses) {
@@ -262,4 +270,33 @@ public class IncidenceClassImpl implements IncidenceClass {
 	// return roles;
 	// }
 
+	
+	void finish(){
+		this.allSubsettedIncidenceClasses = new HashSet<IncidenceClass>();
+		this.allSubsettedIncidenceClasses.addAll(subsettedIncidenceClasses);
+		for (IncidenceClass ic : subsettedIncidenceClasses) {
+			this.allSubsettedIncidenceClasses.addAll(
+					ic.getSubsettedIncidenceClasses());
+		}
+		
+		this.allRedefinedIncidenceClasses = new HashSet<IncidenceClass>();
+		this.allRedefinedIncidenceClasses.addAll(redefinedIncidenceClasses);
+		for (IncidenceClass ic : subsettedIncidenceClasses) {
+			this.allRedefinedIncidenceClasses.addAll(
+					ic.getRedefinedIncidenceClasses());
+		}
+		for (IncidenceClass ic : redefinedIncidenceClasses) {
+			this.allRedefinedIncidenceClasses.addAll(
+					ic.getRedefinedIncidenceClasses());
+		}	
+		
+		this.allSubsettedIncidenceClasses = Collections.unmodifiableSet(this.allSubsettedIncidenceClasses);
+		this.allRedefinedIncidenceClasses = Collections.unmodifiableSet(this.allRedefinedIncidenceClasses);
+	}
+	
+	void reopen(){
+		this.allSubsettedIncidenceClasses = null;
+		this.allRedefinedIncidenceClasses = null;
+	}
+	
 }

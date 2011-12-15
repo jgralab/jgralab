@@ -107,8 +107,8 @@ public class EdgeClassImpl extends GraphElementClassImpl implements EdgeClass {
 				toMin, toMax, IncidenceDirection.IN, aggrTo);
 		this.from = fromInc;
 		this.to = toInc;
-		from.addOutIncidenceClass(fromInc);
-		to.addInIncidenceClass(toInc);
+		((VertexClassImpl)from).addOutIncidenceClass(fromInc);
+		((VertexClassImpl)to).addInIncidenceClass(toInc);
 		register();
 	}
 
@@ -132,7 +132,6 @@ public class EdgeClassImpl extends GraphElementClassImpl implements EdgeClass {
 		checkIncidenceClassSpecialization(getFrom(), superClass.getFrom());
 		checkIncidenceClassSpecialization(getTo(), superClass.getTo());
 		super.addSuperClass(superClass);
-		((GraphClassImpl)this.graphClass).getEdgeCsDag().createEdge(superClass, this);
 		((IncidenceClassImpl) getFrom()).addSubsettedIncidenceClass(superClass
 				.getFrom());
 		((IncidenceClassImpl) getTo()).addSubsettedIncidenceClass(superClass

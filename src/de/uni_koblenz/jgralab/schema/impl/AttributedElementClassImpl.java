@@ -48,8 +48,10 @@ import de.uni_koblenz.jgralab.schema.Attribute;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.Constraint;
 import de.uni_koblenz.jgralab.schema.Domain;
+import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.Package;
 import de.uni_koblenz.jgralab.schema.Schema;
+import de.uni_koblenz.jgralab.schema.VertexClass;
 import de.uni_koblenz.jgralab.schema.exception.DuplicateAttributeException;
 import de.uni_koblenz.jgralab.schema.exception.InheritanceException;
 import de.uni_koblenz.jgralab.schema.exception.SchemaClassAccessException;
@@ -201,11 +203,6 @@ public abstract class AttributedElementClassImpl extends NamedElementImpl
 			}
 		}
 		if (superClass.isSubClassOf(this)) {
-			// for (AttributedElementClass attr :
-			// superClass.getAllSuperClasses()) {
-			// System.out.println(attr.getQualifiedName());
-			// }
-			// System.out.println();
 			throw new InheritanceException(
 					"Cycle in class hierarchie for classes: "
 							+ getQualifiedName() + " and "
@@ -213,6 +210,19 @@ public abstract class AttributedElementClassImpl extends NamedElementImpl
 		}
 		directSuperClasses.add(superClass);
 		((AttributedElementClassImpl) superClass).directSubClasses.add(this);
+		
+		//TODO find a better way to do that
+		if(superClass instanceof VertexClass){
+			if(!superClass.equals(getSchema().getDefaultVertexClass())){
+				((GraphClassImpl) getSchema().getGraphClass()).getVertexCsDag()
+					.createEdge((VertexClass)superClass, (VertexClass)this);
+			}
+		}else if(superClass instanceof EdgeClass){
+			if(!superClass.equals(getSchema().getDefaultEdgeClass())){
+				((GraphClassImpl)getSchema().getGraphClass()).getEdgeCsDag()
+					.createEdge((EdgeClass)superClass, ((EdgeClass)this));
+			}
+		}
 	}
 
 	/**
