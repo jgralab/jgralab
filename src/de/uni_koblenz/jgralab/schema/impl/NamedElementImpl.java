@@ -225,7 +225,6 @@ public abstract class NamedElementImpl implements NamedElement {
 	 *             if:
 	 *             <ul>
 	 *             <li>no schema was specified</li>
-	 *             <li>the schema is finished</li>
 	 *             <li>the package is
 	 *             <code>null</null> for any other element then the <code>DefaultPackage</code>
 	 *             </li>
@@ -249,10 +248,6 @@ public abstract class NamedElementImpl implements NamedElement {
 			throw new SchemaException("Cannot create the element '"
 					+ simpleName
 					+ "' because no containing schema was specified.");
-		}
-		
-		if(((SchemaImpl)getSchema()).isFinish()){
-			throw new SchemaException("No changes to finished schema!");
 		}
 
 		/*

@@ -650,6 +650,9 @@ public class SchemaImpl implements Schema {
 	@Override
 	public EnumDomain createEnumDomain(String qualifiedName,
 			List<String> enumComponents) {
+		if(finish){
+			throw new SchemaException("No changes to finished schema!");
+		}
 		String[] components = splitQualifiedName(qualifiedName);
 		PackageImpl parent = (PackageImpl) createPackageWithParents(components[0]);
 		String simpleName = components[1];
@@ -732,6 +735,9 @@ public class SchemaImpl implements Schema {
 
 	@Override
 	public ListDomain createListDomain(Domain baseDomain) {
+		if(finish){
+			throw new SchemaException("No changes to finished schema!");
+		}
 		String qn = "List<" + baseDomain.getQualifiedName() + ">";
 		if (domains.containsKey(qn)) {
 			return (ListDomain) domains.get(qn);
@@ -741,6 +747,9 @@ public class SchemaImpl implements Schema {
 
 	@Override
 	public MapDomain createMapDomain(Domain keyDomain, Domain valueDomain) {
+		if(finish){
+			throw new SchemaException("No changes to finished schema!");
+		}
 		String qn = "Map<" + keyDomain.getQualifiedName() + ", "
 				+ valueDomain.getQualifiedName() + ">";
 		if (domains.containsKey(qn)) {
@@ -843,6 +852,9 @@ public class SchemaImpl implements Schema {
 	@Override
 	public RecordDomain createRecordDomain(String qualifiedName,
 			Collection<RecordComponent> recordComponents) {
+		if(finish){
+			throw new SchemaException("No changes to finished schema!");
+		}
 		String[] components = splitQualifiedName(qualifiedName);
 		PackageImpl parent = (PackageImpl) createPackageWithParents(components[0]);
 		String simpleName = components[1];
@@ -852,6 +864,9 @@ public class SchemaImpl implements Schema {
 
 	@Override
 	public SetDomain createSetDomain(Domain baseDomain) {
+		if(finish){
+			throw new SchemaException("No changes to finished schema!");
+		}
 		String qn = "Set<" + baseDomain.getQualifiedName() + ">";
 		if (domains.containsKey(qn)) {
 			return (SetDomain) domains.get(qn);
