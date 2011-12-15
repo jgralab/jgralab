@@ -160,6 +160,11 @@ public final class GraphClassImpl extends AttributedElementClassImpl implements
 			int fromMin, int fromMax, String fromRoleName,
 			AggregationKind aggrFrom, VertexClass to, int toMin, int toMax,
 			String toRoleName, AggregationKind aggrTo) {
+		
+		if(isFinished()){
+			throw new SchemaException("No changes to finished schema!");
+		}
+		
 		if (!(aggrFrom == AggregationKind.NONE)
 				&& !(aggrTo == AggregationKind.NONE)) {
 			throw new SchemaException(
@@ -181,6 +186,10 @@ public final class GraphClassImpl extends AttributedElementClassImpl implements
 
 	@Override
 	public VertexClass createVertexClass(String qualifiedName) {
+		if(isFinished()){
+			throw new SchemaException("No changes to finished schema!");
+		}
+	
 		String[] qn = SchemaImpl.splitQualifiedName(qualifiedName);
 		Package parent = ((SchemaImpl) getSchema())
 				.createPackageWithParents(qn[0]);
@@ -280,12 +289,12 @@ public final class GraphClassImpl extends AttributedElementClassImpl implements
 
 	@Override
 	public List<EdgeClass> getEdgeClasses() {
-		return new ArrayList<EdgeClass>(edgeClasses.values());
+		return this.edgeCsDag.getNodesInTopologicalOrder();
 	}
 
 	@Override
 	public List<VertexClass> getVertexClasses() {
-		return new ArrayList<VertexClass>(vertexClasses.values());
+		return this.vertexCsDag.getNodesInTopologicalOrder();
 	}
 
 	@Override
@@ -336,5 +345,25 @@ public final class GraphClassImpl extends AttributedElementClassImpl implements
 		return vertexCsDag;
 	}
 
-
+	@Override
+	protected void finish(){
+		for(VertexClass vc : this.vertexCsDag.getNodesInTopologicalOrder()){
+			((VertexClassImpl)vc).finish();
+		}
+		for(EdgeClass ec : this.edgeCsDag.getNodesInTopologicalOrder()){
+			((EdgeClassImpl)ec).finish();
+		}
+		super.finish();
+	}
+	
+	@Override 
+	protected void reopen(){
+		for(VertexClass vc : this.vertexCsDag.getNodesInTopologicalOrder()){
+			((VertexClassImpl)vc).reopen();
+		}
+		for(EdgeClass ec : this.edgeCsDag.getNodesInTopologicalOrder()){
+			((EdgeClassImpl)ec).reopen();
+		}
+		super.reopen();
+	}
 }

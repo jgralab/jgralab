@@ -125,6 +125,10 @@ public class EdgeClassImpl extends GraphElementClassImpl implements EdgeClass {
 
 	@Override
 	public void addSuperClass(EdgeClass superClass) {
+		//checked in super 
+		//if(isFinished()){
+			//throw new SchemaException("No changes to finished schema!");
+		//}
 		checkIncidenceClassSpecialization(getFrom(), superClass.getFrom());
 		checkIncidenceClassSpecialization(getTo(), superClass.getTo());
 		super.addSuperClass(superClass);
