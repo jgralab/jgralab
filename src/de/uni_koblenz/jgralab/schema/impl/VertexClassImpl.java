@@ -35,6 +35,7 @@
 
 package de.uni_koblenz.jgralab.schema.impl;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -51,10 +52,26 @@ import de.uni_koblenz.jgralab.schema.exception.SchemaException;
 public final class VertexClassImpl extends GraphElementClassImpl implements
 		VertexClass {
 
+	/**
+	 * the own in IncidenceClasses
+	 */
 	private Set<IncidenceClass> inIncidenceClasses = new HashSet<IncidenceClass>();
 
+	/**
+	 * the in IncidenceClasses - only set if schema is finish
+	 */
+	private Set<IncidenceClass> allInIncidenceClasses;
+	
+	/**
+	 * the own out IncidenceClasses
+	 */
 	private Set<IncidenceClass> outIncidenceClasses = new HashSet<IncidenceClass>();
 
+	/**
+	 * the out IncidenceClasses - only set if schema is finish
+	 */
+	private Set<IncidenceClass> allOutIncidenceClasses;
+	
 	static VertexClass createDefaultVertexClass(Schema schema) {
 		assert schema.getDefaultGraphClass() != null : "DefaultGraphClass has not yet been created!";
 		assert schema.getDefaultVertexClass() == null : "DefaultVertexClass already created!";
@@ -87,6 +104,8 @@ public final class VertexClassImpl extends GraphElementClassImpl implements
 		return "vc_" + getQualifiedName().replace('.', '_');
 	}
 
+	//TODO ask for the reason that methods are public and not protected - they are called only from the EdgeClassImpl Constructor
+	@Override
 	public void addInIncidenceClass(IncidenceClass incClass) {
 		if (incClass.getVertexClass() != this) {
 			throwSchemaException();
@@ -95,6 +114,7 @@ public final class VertexClassImpl extends GraphElementClassImpl implements
 		inIncidenceClasses.add(incClass);
 	}
 
+	@Override
 	public void addOutIncidenceClass(IncidenceClass incClass) {
 		if (incClass.getVertexClass() != this) {
 			throwSchemaException();
@@ -172,6 +192,9 @@ public final class VertexClassImpl extends GraphElementClassImpl implements
 
 	@Override
 	public void addSuperClass(VertexClass superClass) {
+		if(isFinished()){
+			throw new SchemaException("No changes to finished schema!");
+		}
 		checkDuplicateRolenames(superClass);
 		super.addSuperClass(superClass);
 		((GraphClassImpl)this.graphClass).getVertexCsDag().createEdge(superClass, this);
@@ -289,6 +312,9 @@ public final class VertexClassImpl extends GraphElementClassImpl implements
 
 	@Override
 	public Set<IncidenceClass> getAllInIncidenceClasses() {
+		if(isFinished()) {
+			return this.allInIncidenceClasses;
+		}
 		Set<IncidenceClass> incidenceClasses = new HashSet<IncidenceClass>();
 		incidenceClasses.addAll(inIncidenceClasses);
 		for (AttributedElementClass vc : getDirectSuperClasses()) {
@@ -300,6 +326,9 @@ public final class VertexClassImpl extends GraphElementClassImpl implements
 
 	@Override
 	public Set<IncidenceClass> getAllOutIncidenceClasses() {
+		if(isFinished()){
+			return this.allOutIncidenceClasses;
+		}
 		Set<IncidenceClass> incidenceClasses = new HashSet<IncidenceClass>();
 		incidenceClasses.addAll(outIncidenceClasses);
 		for (AttributedElementClass vc : getDirectSuperClasses()) {
@@ -350,4 +379,30 @@ public final class VertexClassImpl extends GraphElementClassImpl implements
 		return result;
 	}
 
+	@Override
+	protected void finish(){
+		this.allInIncidenceClasses = new HashSet<IncidenceClass>();
+		this.allInIncidenceClasses.addAll(inIncidenceClasses);
+		
+		this.allOutIncidenceClasses = new HashSet<IncidenceClass>();
+		this.allOutIncidenceClasses.addAll(outIncidenceClasses);
+		
+		for (AttributedElementClass vc : getDirectSuperClasses()) {
+			this.allInIncidenceClasses.addAll(((VertexClass) vc)
+					.getAllInIncidenceClasses());
+			this.allOutIncidenceClasses.addAll(((VertexClass)vc)
+					.getAllOutIncidenceClasses());
+		}
+		
+		this.allInIncidenceClasses = Collections.unmodifiableSet(this.allInIncidenceClasses);
+		this.allOutIncidenceClasses = Collections.unmodifiableSet(this.allOutIncidenceClasses);
+		super.finish();
+	}
+	
+	protected void reopen(){
+		this.allInIncidenceClasses = null;
+		this.allOutIncidenceClasses = null;
+		super.reopen();
+	}
+	
 }

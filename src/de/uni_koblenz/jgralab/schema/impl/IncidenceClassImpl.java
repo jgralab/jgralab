@@ -171,6 +171,10 @@ public class IncidenceClassImpl implements IncidenceClass {
 	}
 
 	public void addRedefinedRole(String rolename) {
+		if(((VertexClassImpl)vertexClass).isFinished()){
+			throw new SchemaException("No changes to finished schema!");
+		}
+		
 		boolean foundRole = false;
 
 		for (IncidenceClass ic : getSubsettedIncidenceClasses()) {
@@ -224,6 +228,9 @@ public class IncidenceClassImpl implements IncidenceClass {
 	}
 
 	public void addSubsettedIncidenceClass(IncidenceClass other) {
+		if(((VertexClassImpl)vertexClass).isFinished()){
+			throw new SchemaException("No changes to finished schema!");
+		}
 		EdgeClassImpl.checkIncidenceClassSpecialization(this, other);
 		if (other.getSubsettedIncidenceClasses().contains(this)) {
 			throw new SchemaException(

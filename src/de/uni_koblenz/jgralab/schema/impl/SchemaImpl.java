@@ -159,6 +159,8 @@ public class SchemaImpl implements Schema {
 
 	private DirectedAcyclicGraph<Domain> domainsDag = new DirectedAcyclicGraph<Domain>();
 	
+	private boolean finish = false;
+	
 	/**
 	 * Holds a reference to the {@link GraphClass} of this schema (not the
 	 * default graph class {@link GraphClass})
@@ -983,27 +985,7 @@ public class SchemaImpl implements Schema {
 	
 	@Override
 	public List<EdgeClass> getEdgeClassesInTopologicalOrder() {
-		ArrayList<EdgeClass> topologicalOrderList = new ArrayList<EdgeClass>();
-		HashSet<EdgeClass> edgeClassSet = new HashSet<EdgeClass>();
-
-		// store edge classes in edgeClassSet
-		edgeClassSet.addAll(graphClass.getEdgeClasses());
-
-		topologicalOrderList.add(defaultEdgeClass);
-		// iteratively add classes from edgeClassSet,
-		// whose superclasses already are in topologicalOrderList,
-		// to topologicalOrderList
-		// the added classes are removed from edgeClassSet
-		while (!edgeClassSet.isEmpty()) {
-			for (EdgeClass ec : edgeClassSet) {
-				if (topologicalOrderList.containsAll(ec.getAllSuperClasses())) {
-					topologicalOrderList.add(ec);
-				}
-			}
-			edgeClassSet.removeAll(topologicalOrderList);
-		}
-
-		return topologicalOrderList;
+		return graphClass.getEdgeClasses();
 	}
 
 	@Override
@@ -1177,27 +1159,7 @@ public class SchemaImpl implements Schema {
 
 	@Override
 	public List<VertexClass> getVertexClassesInTopologicalOrder() {
-		ArrayList<VertexClass> topologicalOrderList = new ArrayList<VertexClass>();
-		HashSet<VertexClass> vertexClassSet = new HashSet<VertexClass>();
-
-		// store vertex classes in vertexClassSet
-		vertexClassSet.addAll(graphClass.getVertexClasses());
-		// first only the default vertex class is in the topo list
-		topologicalOrderList.add(defaultVertexClass);
-
-		// iteratively add classes from vertexClassSet,
-		// whose superclasses already are in topologicalOrderList,
-		// to topologicalOrderList
-		// the added classes are removed from vertexClassSet
-		while (!vertexClassSet.isEmpty()) {
-			for (VertexClass vc : vertexClassSet) {
-				if (topologicalOrderList.containsAll(vc.getAllSuperClasses())) {
-					topologicalOrderList.add(vc);
-				}
-			}
-			vertexClassSet.removeAll(topologicalOrderList);
-		}
-		return topologicalOrderList;
+		return graphClass.getVertexClasses();
 	}
 
 	@Override
@@ -1343,5 +1305,22 @@ public class SchemaImpl implements Schema {
 			throw new SchemaException(
 					"Something failed when creating the  graph!", e);
 		}
+	}
+
+	public boolean isFinish() {
+		return finish;
+	}
+
+	public void finish() {
+		if(this.finish) return;
+		((GraphClassImpl)this.graphClass).finish();
+		this.finish = true;
+		
+	}
+	
+	public void reopen(){
+		if(!this.finish) return;
+		((GraphClassImpl)this.graphClass).finish();
+		this.finish = false;
 	}
 }
