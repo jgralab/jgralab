@@ -85,9 +85,11 @@ import de.uni_koblenz.jgralab.ProgressFunction;
 import de.uni_koblenz.jgralab.WorkInProgress;
 import de.uni_koblenz.jgralab.codegenerator.CodeGeneratorConfiguration;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
+import de.uni_koblenz.jgralab.greql2.evaluator.Query;
 import de.uni_koblenz.jgralab.greql2.exception.ParsingException;
 import de.uni_koblenz.jgralab.greql2.exception.QuerySourceException;
 import de.uni_koblenz.jgralab.greql2.exception.SerialisingException;
+import de.uni_koblenz.jgralab.greql2.optimizer.DefaultOptimizer;
 import de.uni_koblenz.jgralab.greql2.schema.SourcePosition;
 import de.uni_koblenz.jgralab.greql2.serialising.HTMLOutputWriter;
 import de.uni_koblenz.jgralab.greql2.serialising.XMLOutputWriter;
@@ -246,20 +248,21 @@ public class GreqlGui extends JFrame {
 	}
 
 	class Evaluator extends Worker {
-		private String query;
+		private String queryText;
 
-		Evaluator(BoundedRangeModel brm, String query) {
+		Evaluator(BoundedRangeModel brm, String queryText) {
 			super(brm);
-			this.query = query;
+			this.queryText = queryText;
 		}
 
 		@Override
 		public void run() {
+			DefaultOptimizer.setDebugOptimization(debugOptimizationCheckBox
+					.isSelected());
+			Query query = new Query(queryText, optimizeCheckBox.isSelected());
+
 			final GreqlEvaluator eval = new GreqlEvaluator(query, graph,
 					new HashMap<String, Object>(), this);
-			eval.setOptimize(optimizeCheckBox.isSelected());
-			GreqlEvaluator.DEBUG_OPTIMIZATION = debugOptimizationCheckBox
-					.isSelected();
 			try {
 				eval.startEvaluation();
 			} catch (Exception e1) {

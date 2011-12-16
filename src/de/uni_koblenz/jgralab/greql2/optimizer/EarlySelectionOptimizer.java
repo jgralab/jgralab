@@ -53,7 +53,7 @@ import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
+import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.CostModel;
 import de.uni_koblenz.jgralab.greql2.exception.OptimizerException;
 import de.uni_koblenz.jgralab.greql2.schema.Declaration;
 import de.uni_koblenz.jgralab.greql2.schema.Expression;
@@ -82,39 +82,23 @@ import de.uni_koblenz.jgralab.schema.Attribute;
  * @author ist@uni-koblenz.de
  * 
  */
-public class EarlySelectionOptimizer extends OptimizerBase {
+public class EarlySelectionOptimizer extends Optimizer {
 
 	private static Logger logger = JGraLab
 			.getLogger(EarlySelectionOptimizer.class.getPackage().getName());
 
 	private Greql2Graph syntaxgraph;
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * de.uni_koblenz.jgralab.greql2.optimizer.Optimizer#isEquivalent(de.uni_koblenz
-	 * .jgralab.greql2.optimizer.Optimizer)
-	 */
 	@Override
-	public boolean isEquivalent(Optimizer optimizer) {
+	protected boolean isEquivalent(Optimizer optimizer) {
 		if (optimizer instanceof EarlySelectionOptimizer) {
 			return true;
 		}
 		return false;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * de.uni_koblenz.jgralab.greql2.optimizer.Optimizer#optimize(de.uni_koblenz
-	 * .jgralab.greql2.evaluator.GreqlEvaluator,
-	 * de.uni_koblenz.jgralab.greql2.schema.Greql2)
-	 */
 	@Override
-	public boolean optimize(GreqlEvaluator eval, Greql2Graph syntaxgraph)
-			throws OptimizerException {
+	protected boolean optimize(Greql2Graph syntaxgraph, CostModel costModel) {
 		this.syntaxgraph = syntaxgraph;
 
 		int noOfRuns = 1;
@@ -134,8 +118,6 @@ public class EarlySelectionOptimizer extends OptimizerBase {
 		}
 
 		OptimizerUtility.createMissingSourcePositions(syntaxgraph);
-
-		recreateVertexEvaluators(eval);
 
 		// If there was more than one optimization run, a transformation was
 		// done.

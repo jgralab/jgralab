@@ -37,7 +37,6 @@
  */
 package de.uni_koblenz.jgralab.greql2.optimizer.condexp;
 
-import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.optimizer.OptimizerUtility;
 import de.uni_koblenz.jgralab.greql2.schema.Expression;
 import de.uni_koblenz.jgralab.greql2.schema.FunctionApplication;
@@ -52,8 +51,8 @@ import de.uni_koblenz.jgralab.greql2.schema.Greql2Graph;
  */
 public class And extends BinaryOperator {
 
-	public And(GreqlEvaluator eval, Formula lhs, Formula rhs) {
-		super(eval, lhs, rhs);
+	public And(Formula lhs, Formula rhs) {
+		super(lhs, rhs);
 	}
 
 	@Override
@@ -114,7 +113,7 @@ public class And extends BinaryOperator {
 			return lhs;
 		}
 
-		return new And(greqlEvaluator, lhs, rhs);
+		return new And(lhs, rhs);
 	}
 
 	@Override

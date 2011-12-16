@@ -43,8 +43,7 @@ import java.util.logging.Logger;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.JGraLab;
-import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
-import de.uni_koblenz.jgralab.greql2.exception.OptimizerException;
+import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.CostModel;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Aggregation;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Graph;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
@@ -81,7 +80,7 @@ import de.uni_koblenz.jgralab.schema.Attribute;
  * @author ist@uni-koblenz.de
  * 
  */
-public class CommonSubgraphOptimizer extends OptimizerBase {
+public class CommonSubgraphOptimizer extends Optimizer {
 
 	private static Logger logger = JGraLab
 			.getLogger(CommonSubgraphOptimizer.class.getPackage().getName());
@@ -105,13 +104,6 @@ public class CommonSubgraphOptimizer extends OptimizerBase {
 		reverseSubgraphMap = new HashMap<Greql2Vertex, String>();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * de.uni_koblenz.jgralab.greql2.optimizer.Optimizer#isEquivalent(de.uni_koblenz
-	 * .jgralab.greql2.optimizer.Optimizer)
-	 */
 	@Override
 	public boolean isEquivalent(Optimizer optimizer) {
 		if (optimizer instanceof CommonSubgraphOptimizer) {
@@ -121,22 +113,10 @@ public class CommonSubgraphOptimizer extends OptimizerBase {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * de.uni_koblenz.jgralab.greql2.optimizer.Optimizer#optimize(de.uni_koblenz
-	 * .jgralab.greql2.evaluator.GreqlEvaluator,
-	 * de.uni_koblenz.jgralab.greql2.schema.Greql2)
-	 */
 	@Override
-	public boolean optimize(GreqlEvaluator eval, Greql2Graph syntaxgraph)
-			throws OptimizerException {
+	protected boolean optimize(Greql2Graph syntaxgraph, CostModel costModel) {
 		anOptimizationWasDone = false;
-
 		computeHashAndProcess(syntaxgraph.getFirstGreql2Expression());
-
-		recreateVertexEvaluators(eval);
 		return anOptimizationWasDone;
 	}
 

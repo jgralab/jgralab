@@ -43,8 +43,7 @@ import java.util.logging.Logger;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.JGraLab;
-import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
-import de.uni_koblenz.jgralab.greql2.exception.OptimizerException;
+import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.CostModel;
 import de.uni_koblenz.jgralab.greql2.schema.Declaration;
 import de.uni_koblenz.jgralab.greql2.schema.Expression;
 import de.uni_koblenz.jgralab.greql2.schema.FunctionApplication;
@@ -60,37 +59,21 @@ import de.uni_koblenz.jgralab.greql2.schema.IsConstraintOf;
  * @author ist@uni-koblenz.de
  * 
  */
-public class MergeConstraintsOptimizer extends OptimizerBase {
+public class MergeConstraintsOptimizer extends Optimizer {
 
 	private static Logger logger = JGraLab
 			.getLogger(MergeConstraintsOptimizer.class.getPackage().getName());
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * de.uni_koblenz.jgralab.greql2.optimizer.Optimizer#isEquivalent(de.uni_koblenz
-	 * .jgralab.greql2.optimizer.Optimizer)
-	 */
 	@Override
-	public boolean isEquivalent(Optimizer optimizer) {
+	protected boolean isEquivalent(Optimizer optimizer) {
 		if (optimizer instanceof MergeConstraintsOptimizer) {
 			return true;
 		}
 		return false;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * de.uni_koblenz.jgralab.greql2.optimizer.Optimizer#optimize(de.uni_koblenz
-	 * .jgralab.greql2.evaluator.GreqlEvaluator,
-	 * de.uni_koblenz.jgralab.greql2.schema.Greql2)
-	 */
 	@Override
-	public boolean optimize(GreqlEvaluator eval, Greql2Graph syntaxgraph)
-			throws OptimizerException {
+	protected boolean optimize(Greql2Graph syntaxgraph, CostModel costModel) {
 		ArrayList<Declaration> declarations = new ArrayList<Declaration>();
 		for (Declaration decl : syntaxgraph.getDeclarationVertices()) {
 			declarations.add(decl);
@@ -119,7 +102,6 @@ public class MergeConstraintsOptimizer extends OptimizerBase {
 				syntaxgraph.createIsConstraintOf(singleConstraint, decl);
 			}
 		}
-		recreateVertexEvaluators(eval);
 		return constraintsGotMerged;
 	}
 
