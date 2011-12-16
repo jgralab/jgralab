@@ -53,7 +53,7 @@ import de.uni_koblenz.jgralab.greql2.schema.Expression;
 import de.uni_koblenz.jgralab.greql2.schema.ForwardVertexSet;
 import de.uni_koblenz.jgralab.greql2.schema.FunctionApplication;
 import de.uni_koblenz.jgralab.greql2.schema.FunctionId;
-import de.uni_koblenz.jgralab.greql2.schema.Greql2;
+import de.uni_koblenz.jgralab.greql2.schema.Greql2Graph;
 import de.uni_koblenz.jgralab.greql2.schema.PathExistence;
 import de.uni_koblenz.jgralab.greql2.schema.PathExpression;
 import de.uni_koblenz.jgralab.greql2.schema.Variable;
@@ -71,7 +71,7 @@ public class PathExistenceOptimizer extends OptimizerBase {
 	private static Logger logger = JGraLab
 			.getLogger(PathExistenceOptimizer.class.getPackage().getName());
 
-	private Greql2 syntaxgraph;
+	private Greql2Graph syntaxgraph;
 
 	private boolean anOptimizationWasDone = false;
 
@@ -99,7 +99,7 @@ public class PathExistenceOptimizer extends OptimizerBase {
 	 * de.uni_koblenz.jgralab.greql2.schema.Greql2)
 	 */
 	@Override
-	public boolean optimize(GreqlEvaluator eval, Greql2 syntaxgraph)
+	public boolean optimize(GreqlEvaluator eval, Greql2Graph syntaxgraph)
 			throws OptimizerException {
 		if (syntaxgraph.getFirstVertex(PathExistence.class) == null) {
 			return false;
@@ -158,9 +158,9 @@ public class PathExistenceOptimizer extends OptimizerBase {
 	 *            a {@link PathExistence} vertex
 	 */
 	private void maybeTransformPathExistence(PathExistence pe) {
-		Expression startExp = (Expression) pe.getFirstIsStartExprOfIncidence(
+		Expression startExp = pe.getFirstIsStartExprOfIncidence(
 				EdgeDirection.IN).getAlpha();
-		Expression targetExp = (Expression) pe.getFirstIsTargetExprOfIncidence(
+		Expression targetExp = pe.getFirstIsTargetExprOfIncidence(
 				EdgeDirection.IN).getAlpha();
 
 		if ((startExp instanceof Variable) && (targetExp instanceof Variable)) {
@@ -262,8 +262,8 @@ public class PathExistenceOptimizer extends OptimizerBase {
 			syntaxgraph.createIsTargetExprOf(startOrTargetExp, vertexSet);
 		}
 		syntaxgraph.createIsPathOf(
-				(Expression) pe.getFirstIsPathOfIncidence(EdgeDirection.IN)
-						.getAlpha(), vertexSet);
+				pe.getFirstIsPathOfIncidence(EdgeDirection.IN).getAlpha(),
+				vertexSet);
 
 		syntaxgraph.createIsArgumentOf(vertexSet, contains);
 		syntaxgraph.createIsArgumentOf(otherExp, contains);

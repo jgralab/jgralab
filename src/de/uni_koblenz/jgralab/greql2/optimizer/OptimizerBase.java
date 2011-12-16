@@ -46,8 +46,8 @@ import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.exception.OptimizerException;
 import de.uni_koblenz.jgralab.greql2.schema.Declaration;
-import de.uni_koblenz.jgralab.greql2.schema.Greql2;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Expression;
+import de.uni_koblenz.jgralab.greql2.schema.Greql2Graph;
 import de.uni_koblenz.jgralab.greql2.schema.IsBoundVarOf;
 import de.uni_koblenz.jgralab.greql2.schema.IsDeclaredVarOf;
 import de.uni_koblenz.jgralab.greql2.schema.IsSimpleDeclOf;
@@ -249,7 +249,7 @@ public abstract class OptimizerBase implements Optimizer {
 	 */
 	protected SimpleDeclaration splitSimpleDeclaration(SimpleDeclaration sd,
 			Set<Variable> varsToBeSplit) {
-		Greql2 syntaxgraph = (Greql2) sd.getGraph();
+		Greql2Graph syntaxgraph = (Greql2Graph) sd.getGraph();
 		Set<Variable> varsDeclaredBySD = OptimizerUtility
 				.collectVariablesDeclaredBy(sd);
 

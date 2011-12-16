@@ -44,8 +44,8 @@ import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VertexEvaluator;
 import de.uni_koblenz.jgralab.greql2.exception.OptimizerException;
-import de.uni_koblenz.jgralab.greql2.schema.Greql2;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Expression;
+import de.uni_koblenz.jgralab.greql2.schema.Greql2Graph;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
 import de.uni_koblenz.jgralab.greql2.schema.Variable;
 
@@ -86,7 +86,7 @@ public class DefaultOptimizer extends OptimizerBase {
 	 * .jgralab.greql2.evaluator.GreqlEvaluator,
 	 * de.uni_koblenz.jgralab.greql2.schema.Greql2)
 	 */
-	public boolean optimize(GreqlEvaluator eval, Greql2 syntaxgraph)
+	public boolean optimize(GreqlEvaluator eval, Greql2Graph syntaxgraph)
 			throws OptimizerException {
 		if (syntaxgraph.getVCount() <= 1) {
 			return false;
@@ -178,7 +178,7 @@ public class DefaultOptimizer extends OptimizerBase {
 	}
 
 	@SuppressWarnings("unused")
-	private void printCosts(GreqlEvaluator eval, Greql2 syntaxgraph) {
+	private void printCosts(GreqlEvaluator eval, Greql2Graph syntaxgraph) {
 		logger.fine("Optimizer: Optimizing " + syntaxgraph.getId() + ".\n"
 				+ "This syntaxgraph has " + syntaxgraph.getECount()
 				+ " edges and " + syntaxgraph.getVCount() + " vertexes.");

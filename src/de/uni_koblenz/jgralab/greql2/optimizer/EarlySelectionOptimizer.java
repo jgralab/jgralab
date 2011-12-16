@@ -59,7 +59,7 @@ import de.uni_koblenz.jgralab.greql2.schema.Declaration;
 import de.uni_koblenz.jgralab.greql2.schema.Expression;
 import de.uni_koblenz.jgralab.greql2.schema.FunctionApplication;
 import de.uni_koblenz.jgralab.greql2.schema.FunctionId;
-import de.uni_koblenz.jgralab.greql2.schema.Greql2;
+import de.uni_koblenz.jgralab.greql2.schema.Greql2Graph;
 import de.uni_koblenz.jgralab.greql2.schema.Identifier;
 import de.uni_koblenz.jgralab.greql2.schema.IsArgumentOf;
 import de.uni_koblenz.jgralab.greql2.schema.IsBoundVarOf;
@@ -87,7 +87,7 @@ public class EarlySelectionOptimizer extends OptimizerBase {
 	private static Logger logger = JGraLab
 			.getLogger(EarlySelectionOptimizer.class.getPackage().getName());
 
-	private Greql2 syntaxgraph;
+	private Greql2Graph syntaxgraph;
 
 	/*
 	 * (non-Javadoc)
@@ -113,7 +113,7 @@ public class EarlySelectionOptimizer extends OptimizerBase {
 	 * de.uni_koblenz.jgralab.greql2.schema.Greql2)
 	 */
 	@Override
-	public boolean optimize(GreqlEvaluator eval, Greql2 syntaxgraph)
+	public boolean optimize(GreqlEvaluator eval, Greql2Graph syntaxgraph)
 			throws OptimizerException {
 		this.syntaxgraph = syntaxgraph;
 
@@ -741,7 +741,7 @@ public class EarlySelectionOptimizer extends OptimizerBase {
 	 * @return the root {@link Vertex} of the copy
 	 */
 	@SuppressWarnings("unchecked")
-	private Vertex copySubgraph(Vertex origVertex, Greql2 graph,
+	private Vertex copySubgraph(Vertex origVertex, Greql2Graph graph,
 			Set<Variable> variablesToBeCopied,
 			HashMap<Variable, Variable> copiedVarMap) {
 		// GreqlEvaluator.println("copySubgraph(" + origVertex + ", graph, "

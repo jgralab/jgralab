@@ -50,9 +50,9 @@ import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize;
 import de.uni_koblenz.jgralab.greql2.schema.FunctionApplication;
 import de.uni_koblenz.jgralab.greql2.schema.FunctionId;
-import de.uni_koblenz.jgralab.greql2.schema.Greql2;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Aggregation;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Expression;
+import de.uni_koblenz.jgralab.greql2.schema.Greql2Graph;
 import de.uni_koblenz.jgralab.greql2.schema.IsDeclaredVarOf;
 import de.uni_koblenz.jgralab.greql2.schema.SimpleDeclaration;
 import de.uni_koblenz.jgralab.greql2.schema.SourcePosition;
@@ -104,8 +104,8 @@ public class OptimizerUtility {
 	 *         {@link FunctionApplication} of {@link And}.
 	 */
 	public static boolean isAnd(FunctionApplication funApp) {
-		return ((FunctionId) funApp.getFirstIsFunctionIdOfIncidence()
-				.getAlpha()).get_name().equals("and");
+		return (funApp.getFirstIsFunctionIdOfIncidence().getAlpha()).get_name()
+				.equals("and");
 	}
 
 	/**
@@ -117,8 +117,8 @@ public class OptimizerUtility {
 	 *         {@link FunctionApplication} of {@link And}.
 	 */
 	public static boolean isOr(FunctionApplication funApp) {
-		return ((FunctionId) funApp.getFirstIsFunctionIdOfIncidence()
-				.getAlpha()).get_name().equals("or");
+		return (funApp.getFirstIsFunctionIdOfIncidence().getAlpha()).get_name()
+				.equals("or");
 	}
 
 	/**
@@ -130,8 +130,8 @@ public class OptimizerUtility {
 	 *         {@link FunctionApplication} of {@link And}.
 	 */
 	public static boolean isXor(FunctionApplication funApp) {
-		return ((FunctionId) funApp.getFirstIsFunctionIdOfIncidence()
-				.getAlpha()).get_name().equals("xor");
+		return (funApp.getFirstIsFunctionIdOfIncidence().getAlpha()).get_name()
+				.equals("xor");
 	}
 
 	/**
@@ -143,8 +143,8 @@ public class OptimizerUtility {
 	 *         {@link FunctionApplication} of {@link And}.
 	 */
 	public static boolean isNot(FunctionApplication funApp) {
-		return ((FunctionId) funApp.getFirstIsFunctionIdOfIncidence()
-				.getAlpha()).get_name().equals("not");
+		return (funApp.getFirstIsFunctionIdOfIncidence().getAlpha()).get_name()
+				.equals("not");
 	}
 
 	/**
@@ -187,7 +187,8 @@ public class OptimizerUtility {
 	 *         <code>name</code> as its name attribute. If no such
 	 *         {@link FunctionId} exists it will be created.
 	 */
-	public static FunctionId findOrCreateFunctionId(String name, Greql2 graph) {
+	public static FunctionId findOrCreateFunctionId(String name,
+			Greql2Graph graph) {
 		for (FunctionId fid : graph.getFunctionIdVertices()) {
 			if (fid.get_name().equals(name)) {
 				return fid;
@@ -206,7 +207,7 @@ public class OptimizerUtility {
 	 * @param graph
 	 *            the {@link Greql2} syntaxgraph
 	 */
-	public static void createMissingSourcePositions(Greql2 graph) {
+	public static void createMissingSourcePositions(Greql2Graph graph) {
 		for (Greql2Aggregation aggr : graph.getGreql2AggregationEdges()) {
 			if (aggr.get_sourcePositions() == null) {
 				PVector<SourcePosition> l = JGraLab.vector();
@@ -225,7 +226,7 @@ public class OptimizerUtility {
 		HashSet<Variable> vars = new HashSet<Variable>();
 		for (IsDeclaredVarOf inc : sd
 				.getIsDeclaredVarOfIncidences(EdgeDirection.IN)) {
-			vars.add((Variable) inc.getAlpha());
+			vars.add(inc.getAlpha());
 		}
 		return vars;
 	}

@@ -53,7 +53,7 @@ import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.SimpleDeclarationEvalu
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VertexEvaluator;
 import de.uni_koblenz.jgralab.greql2.exception.OptimizerException;
 import de.uni_koblenz.jgralab.greql2.schema.Declaration;
-import de.uni_koblenz.jgralab.greql2.schema.Greql2;
+import de.uni_koblenz.jgralab.greql2.schema.Greql2Graph;
 import de.uni_koblenz.jgralab.greql2.schema.IsDeclaredVarOf;
 import de.uni_koblenz.jgralab.greql2.schema.IsSimpleDeclOf;
 import de.uni_koblenz.jgralab.greql2.schema.SimpleDeclaration;
@@ -107,7 +107,7 @@ public class VariableDeclarationOrderOptimizer extends OptimizerBase {
 	 * de.uni_koblenz.jgralab.greql2.schema.Greql2)
 	 */
 	@Override
-	public boolean optimize(GreqlEvaluator eval, Greql2 syntaxgraph)
+	public boolean optimize(GreqlEvaluator eval, Greql2Graph syntaxgraph)
 			throws OptimizerException {
 		GraphSize graphSize;
 		if (eval.getDatagraph() != null) {
@@ -168,10 +168,10 @@ public class VariableDeclarationOrderOptimizer extends OptimizerBase {
 					SimpleDeclaration newSD = syntaxgraph
 							.createSimpleDeclaration();
 					syntaxgraph.createIsDeclaredVarOf(var, newSD);
-					syntaxgraph.createIsTypeExprOfDeclaration(unit
-							.getTypeExpressionOfVariable(), newSD);
-					syntaxgraph.createIsSimpleDeclOf(newSD, unit
-							.getDeclaringDeclaration());
+					syntaxgraph.createIsTypeExprOfDeclaration(
+							unit.getTypeExpressionOfVariable(), newSD);
+					syntaxgraph.createIsSimpleDeclOf(newSD,
+							unit.getDeclaringDeclaration());
 					marker.mark(newSD, new SimpleDeclarationEvaluator(newSD,
 							eval));
 				}
@@ -196,9 +196,9 @@ public class VariableDeclarationOrderOptimizer extends OptimizerBase {
 	private List<Variable> collectVariablesInDeclarationOrder(Declaration decl) {
 		ArrayList<Variable> varList = new ArrayList<Variable>();
 		for (IsSimpleDeclOf isSD : decl.getIsSimpleDeclOfIncidences()) {
-			for (IsDeclaredVarOf isVar : ((SimpleDeclaration) isSD.getAlpha())
+			for (IsDeclaredVarOf isVar : (isSD.getAlpha())
 					.getIsDeclaredVarOfIncidences()) {
-				varList.add((Variable) isVar.getAlpha());
+				varList.add(isVar.getAlpha());
 			}
 		}
 		return varList;
@@ -226,9 +226,8 @@ public class VariableDeclarationOrderOptimizer extends OptimizerBase {
 		HashSet<Variable> vars = new HashSet<Variable>();
 		for (IsSimpleDeclOf inc : decl
 				.getIsSimpleDeclOfIncidences(EdgeDirection.IN)) {
-			vars.addAll(OptimizerUtility
-					.collectVariablesDeclaredBy((SimpleDeclaration) inc
-							.getAlpha()));
+			vars.addAll(OptimizerUtility.collectVariablesDeclaredBy(inc
+					.getAlpha()));
 		}
 		return vars;
 	}

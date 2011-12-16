@@ -45,12 +45,9 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -60,8 +57,6 @@ import org.pcollections.POrderedSet;
 import org.pcollections.PSet;
 import org.pcollections.PVector;
 
-import de.uni_koblenz.jgralab.Edge;
-import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.GraphIO.TGFilenameFilter;
@@ -77,23 +72,14 @@ import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VertexEvaluator;
 import de.uni_koblenz.jgralab.greql2.exception.GreqlException;
 import de.uni_koblenz.jgralab.greql2.exception.OptimizerException;
-import de.uni_koblenz.jgralab.greql2.funlib.FunLib;
 import de.uni_koblenz.jgralab.greql2.optimizer.DefaultOptimizer;
 import de.uni_koblenz.jgralab.greql2.optimizer.Optimizer;
 import de.uni_koblenz.jgralab.greql2.parser.GreqlParser;
-import de.uni_koblenz.jgralab.greql2.schema.Expression;
-import de.uni_koblenz.jgralab.greql2.schema.FunctionApplication;
-import de.uni_koblenz.jgralab.greql2.schema.FunctionId;
-import de.uni_koblenz.jgralab.greql2.schema.Greql2;
-import de.uni_koblenz.jgralab.greql2.schema.Greql2Expression;
-import de.uni_koblenz.jgralab.greql2.schema.IsBoundVarOf;
-import de.uni_koblenz.jgralab.greql2.schema.IsFunctionIdOf;
-import de.uni_koblenz.jgralab.greql2.schema.Variable;
+import de.uni_koblenz.jgralab.greql2.schema.Greql2Graph;
 import de.uni_koblenz.jgralab.greql2.serialising.GreqlSerializer;
 import de.uni_koblenz.jgralab.greql2.types.Undefined;
 import de.uni_koblenz.jgralab.impl.ConsoleProgressFunction;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
-import de.uni_koblenz.jgralab.utilities.tgmerge.TGMerge;
 
 /**
  * This is the core class of the GReQL-2 Evaluator. It takes a GReQL-2 Query as
@@ -466,7 +452,7 @@ public class GreqlEvaluator {
 	/**
 	 * This attribute holds the query-graph
 	 */
-	protected Greql2 queryGraph = null;
+	protected Greql2Graph queryGraph = null;
 
 	/**
 	 * This attribute holds the entry of the optimizedSyntaxGraph map that is
@@ -559,11 +545,6 @@ public class GreqlEvaluator {
 	protected Map<String, Object> variableMap = null;
 
 	/**
-	 * Holds the greql subqueries that can be called like other greql functions.
-	 */
-	protected LinkedHashMap<String, Greql2> subQueryMap = null;
-
-	/**
 	 * Holds the estimated needed for evaluation time in abstract units
 	 */
 	protected long estimatedInterpretationSteps = 0;
@@ -609,57 +590,6 @@ public class GreqlEvaluator {
 			variableMap = new HashMap<String, Object>();
 		}
 		variableMap.put(varName, value);
-	}
-
-	public void setSubQuery(String name, String greqlQuery) {
-		if (name == null) {
-			throw new GreqlException("The name of a subquery must not be null!");
-		}
-		if (!name.matches("^\\w+$")) {
-			throw new GreqlException("Invalid subquery name '" + name
-					+ "'. Only word chars are allowed.");
-		}
-		if (FunLib.contains(name)) {
-			throw new GreqlException("The subquery '" + name
-					+ "' would shadow a GReQL function!");
-		}
-
-		Set<String> definedSubQueries = subQueryMap.keySet();
-		HashSet<String> subQueryNames = new HashSet<String>(
-				definedSubQueries.size() + 1);
-		subQueryNames.addAll(definedSubQueries);
-		subQueryNames.add(name);
-		GreqlParser parser = new GreqlParser(greqlQuery, subQueryNames);
-
-		parser.parse();
-
-		Greql2 subQueryGraph = parser.getGraph();
-		subQueryGraph.getFirstGreql2Expression().set_queryText(name);
-		if (isOptimize()) {
-			Greql2 oldQueryGraph = queryGraph;
-			String oldQueryString = queryString;
-			queryGraph = subQueryGraph;
-			queryString = greqlQuery;
-			createOptimizedSyntaxGraph();
-			queryGraph = oldQueryGraph;
-			queryString = oldQueryString;
-		}
-		for (FunctionApplication fa : subQueryGraph
-				.getFunctionApplicationVertices()) {
-			if (name.equals(fa.get_functionId().get_name())) {
-				throw new GreqlException("The subquery '" + name
-						+ "' is recursive.  That's not allowed!");
-			}
-		}
-		subQueryMap.put(name, subQueryGraph);
-		// System.out.println("\nGiven subquery:");
-		// System.out.println(greqlQuery);
-		// System.out.println("\nOptimized subquery:");
-		// System.out.println(Greql2Serializer.serialize(subQueryGraph));
-	}
-
-	public Greql2 getSubQuery(String name) {
-		return subQueryMap.get(name);
 	}
 
 	/**
@@ -722,7 +652,7 @@ public class GreqlEvaluator {
 	/**
 	 * returns the query syntaxgraph
 	 */
-	public Greql2 getSyntaxGraph() {
+	public Greql2Graph getSyntaxGraph() {
 		return queryGraph;
 	}
 
@@ -750,7 +680,6 @@ public class GreqlEvaluator {
 		this.datagraph = datagraph;
 		knownTypes = new HashMap<String, AttributedElementClass>();
 		variableMap = variables;
-		subQueryMap = new LinkedHashMap<String, Greql2>();
 		this.progressFunction = progressFunction;
 	}
 
@@ -828,98 +757,9 @@ public class GreqlEvaluator {
 	 */
 	protected boolean parseQuery(String query) {
 		long parseStartTime = System.currentTimeMillis();
-		GreqlParser parser = new GreqlParser(query, subQueryMap.keySet());
-		parser.parse();
-		queryGraph = parser.getGraph();
-		weaveInSubQueries();
+		queryGraph = GreqlParser.parse(query);
 		parseTime = System.currentTimeMillis() - parseStartTime;
 		return true;
-	}
-
-	private void weaveInSubQueries() {
-		FunctionApplication subqueryCall = findSubQueryCall();
-		while (subqueryCall != null) {
-			TGMerge tgm = new TGMerge(queryGraph, subQueryMap.get(subqueryCall
-					.get_functionId().get_name()));
-			tgm.merge();
-			weaveInSubquery(subqueryCall);
-			subqueryCall = findSubQueryCall();
-		}
-	}
-
-	private FunctionApplication findSubQueryCall() {
-		for (FunctionApplication fa : queryGraph
-				.getFunctionApplicationVertices()) {
-			if (subQueryMap.containsKey(fa.get_functionId().get_name())) {
-				return fa;
-			}
-		}
-		return null;
-	}
-
-	private void weaveInSubquery(FunctionApplication fa) {
-		FunctionId fid = fa.get_functionId();
-		String name = fid.get_name();
-		// System.out.println("Weaving in subquery " + name);
-		Greql2Expression g2exp = null;
-		for (Greql2Expression e : queryGraph.getGreql2ExpressionVertices()) {
-			if ((e.get_queryText() != null) && e.get_queryText().equals(name)) {
-				g2exp = e;
-				break;
-			}
-		}
-		Expression exp = g2exp.get_queryExpr();
-
-		ArrayList<Variable> boundVars = new ArrayList<Variable>();
-		for (Variable bv : g2exp.get_boundVar()) {
-			boundVars.add(bv);
-		}
-
-		ArrayList<Expression> args = new ArrayList<Expression>();
-		for (Expression arg : fa.get_argument()) {
-			args.add(arg);
-		}
-
-		if (args.size() != boundVars.size()) {
-			throw new GreqlException("Subquery call to '" + name + "' has "
-					+ args.size()
-					+ " arguments, but the subquery definition has "
-					+ boundVars.size() + " formal parameters!");
-		}
-
-		for (int i = 0; i < boundVars.size(); i++) {
-			Expression arg = args.get(i);
-			Variable bv = boundVars.get(i);
-
-			Edge e = bv.getFirstIncidence();
-			while (e != null) {
-				if (e.getSchemaClass() == IsBoundVarOf.class) {
-					e = e.getNextIncidence();
-					continue;
-				}
-				e.setThis(arg);
-				e = bv.getFirstIncidence();
-			}
-		}
-
-		Edge e = fa.getFirstIncidence(EdgeDirection.OUT);
-		while (e != null) {
-			if (e.getSchemaClass() == IsFunctionIdOf.class) {
-				e = e.getNextIncidence(EdgeDirection.OUT);
-				continue;
-			}
-			e.setThis(exp);
-			e = fa.getFirstIncidence(EdgeDirection.OUT);
-		}
-
-		fa.delete();
-		if (fid.getDegree() == 0) {
-			fid.delete();
-		}
-		g2exp.delete();
-		for (Variable bv : boundVars) {
-			bv.delete();
-		}
 	}
 
 	/**
