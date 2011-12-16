@@ -35,32 +35,107 @@
 
 package de.uni_koblenz.jgralab.greql2.optimizer;
 
+import java.lang.reflect.Method;
 import java.util.Set;
 import java.util.logging.Logger;
 
+import de.uni_koblenz.jgralab.Graph;
+import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.graphmarker.GraphMarker;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
+import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.CostModel;
+import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.DefaultCostModel;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VertexEvaluator;
 import de.uni_koblenz.jgralab.greql2.exception.OptimizerException;
-import de.uni_koblenz.jgralab.greql2.schema.Greql2;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Expression;
+import de.uni_koblenz.jgralab.greql2.schema.Greql2Graph;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
 import de.uni_koblenz.jgralab.greql2.schema.Variable;
+import de.uni_koblenz.jgralab.greql2.serialising.GreqlSerializer;
+import de.uni_koblenz.jgralab.impl.ConsoleProgressFunction;
 
 /**
  * @author ist@uni-koblenz.de
  * 
  */
-public class DefaultOptimizer extends OptimizerBase {
+public class DefaultOptimizer extends Optimizer {
 
 	private static Logger logger = JGraLab.getLogger(DefaultOptimizer.class
 			.getPackage().getName());
 
+	/**
+	 * Print the text representation of the optimized query after optimization.
+	 */
+	private static boolean debugOptimization = Boolean.parseBoolean(System
+			.getProperty("greqlDebugOptimization", "false"));
+
+	private static final CostModel costModel = new DefaultCostModel();
+	private static final DefaultOptimizer instance = new DefaultOptimizer();
+
+	public static void optimizeQuery(Greql2Graph g) {
+		if (debugOptimization) {
+			System.out
+					.println("#########################################################");
+			System.out
+					.println("################## Unoptimized Query ####################");
+			System.out
+					.println("#########################################################");
+			String name = "__greql-query";
+			try {
+				g.save(name + ".tg", new ConsoleProgressFunction(
+						"Saving broken GReQL graph:"));
+				printGraphAsDot(g, true, name + ".dot");
+			} catch (GraphIOException e) {
+				e.printStackTrace();
+			}
+			System.out.println("Saved query graph to " + name + "tg/dot.");
+			System.out
+					.println("#########################################################");
+		}
+		instance.optimize(g, costModel);
+		if (debugOptimization) {
+			System.out
+					.println("#########################################################");
+			System.out
+					.println("################### Optimized Query #####################");
+			System.out
+					.println("#########################################################");
+			System.out.println(GreqlSerializer.serializeGraph(g));
+			String name = "__optimized-greql-query.";
+			try {
+				g.save(name + "tg", new ConsoleProgressFunction("Saving"));
+				printGraphAsDot(g, true, name + "dot");
+			} catch (GraphIOException e) {
+				e.printStackTrace();
+			}
+			System.out.println("Saved optimized query graph to " + name
+					+ "tg/dot.");
+			System.out
+					.println("#########################################################");
+		}
+
+	}
+
 	@Override
 	protected String optimizerHeaderString() {
 		return "### " + this.getClass().getSimpleName() + ": ";
+	}
+
+	private static void printGraphAsDot(Graph graph, boolean reversedEdges,
+			String outputFilename) {
+
+		try {
+			Class<?> tg2DotClass = Class
+					.forName("de.uni_koblenz.jgralab.utilities.tg2dot.Tg2Dot");
+			Method printMethod = tg2DotClass.getMethod("convertGraph",
+					Graph.class, String.class, boolean.class);
+			printMethod.invoke(tg2DotClass, new Object[] { graph,
+					outputFilename, reversedEdges });
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	/*
@@ -70,7 +145,8 @@ public class DefaultOptimizer extends OptimizerBase {
 	 * de.uni_koblenz.jgralab.greql2.optimizer.Optimizer#isEquivalent(de.uni_koblenz
 	 * .jgralab.greql2.optimizer.Optimizer)
 	 */
-	public boolean isEquivalent(Optimizer optimizer) {
+	@Override
+	protected boolean isEquivalent(Optimizer optimizer) {
 		if (optimizer instanceof DefaultOptimizer) {
 			return true;
 		} else {
@@ -86,8 +162,8 @@ public class DefaultOptimizer extends OptimizerBase {
 	 * .jgralab.greql2.evaluator.GreqlEvaluator,
 	 * de.uni_koblenz.jgralab.greql2.schema.Greql2)
 	 */
-	public boolean optimize(GreqlEvaluator eval, Greql2 syntaxgraph)
-			throws OptimizerException {
+	@Override
+	public boolean optimize(Greql2Graph syntaxgraph) throws OptimizerException {
 		if (syntaxgraph.getVCount() <= 1) {
 			return false;
 		}
@@ -115,45 +191,45 @@ public class DefaultOptimizer extends OptimizerBase {
 		// do the optimization
 		while (
 		// First merge common subgraphs
-		cso.optimize(eval, syntaxgraph)
+		cso.optimize(syntaxgraph)
 		// then transform all Xors to (x & ~y) | (~x & y).
-				| txfao.optimize(eval, syntaxgraph)
+				| txfao.optimize(syntaxgraph)
 				// Again, merge common subgraphs that may be the result of the
 				// previous step.
-				| cso.optimize(eval, syntaxgraph)
+				| cso.optimize(syntaxgraph)
 				// For each declaration merge its constraints into a single
 				// conjunction.
-				| mco.optimize(eval, syntaxgraph)
+				| mco.optimize(syntaxgraph)
 				// Then try to pull up path existences as forward/backward
 				// vertex sets into the type expressions of the start or target
 				// expression variabse.
-				| pe2dpeo.optimize(eval, syntaxgraph)
+				| pe2dpeo.optimize(syntaxgraph)
 				// Now move predicates that are part of a conjunction and thus
 				// movable into the type expression of the simple declaration
 				// that declares all needed local variables of it.
-				| eso.optimize(eval, syntaxgraph)
+				| eso.optimize(syntaxgraph)
 				// Merge common subgraphs again.
-				| cso.optimize(eval, syntaxgraph)
+				| cso.optimize(syntaxgraph)
 				// Reorder the variable declarations in all declaration vertices
 				// so that these assertions hold: 1. Variables which cause high
 				// recalculation costs on value changes are declared first. 2.
 				// If two variables cause the same recalculation costs the
 				// variable with lower cardinality is declared before the other
 				// one.
-				| vdoo.optimize(eval, syntaxgraph)
+				| vdoo.optimize(syntaxgraph)
 				// Now merge the common subgraphs again.
-				| cso.optimize(eval, syntaxgraph)
+				| cso.optimize(syntaxgraph)
 				// Transform path existence predicates to function applications
 				// of the "contains" function.
-				| peo.optimize(eval, syntaxgraph)
+				| peo.optimize(syntaxgraph)
 				// Transform complex constraint expressions to conditional
 				// expressions to simulate short circuit evaluation.
-				| ceo.optimize(eval, syntaxgraph)
+				| ceo.optimize(syntaxgraph)
 				// At last, merge common subgraphs and
-				| cso.optimize(eval, syntaxgraph)
+				| cso.optimize(syntaxgraph)
 				// merge simple declarations which have the same type
 				// expression.
-				| msdo.optimize(eval, syntaxgraph)) {
+				| msdo.optimize(syntaxgraph)) {
 			aTransformationWasDone = true;
 			noOfRuns++;
 
@@ -178,7 +254,7 @@ public class DefaultOptimizer extends OptimizerBase {
 	}
 
 	@SuppressWarnings("unused")
-	private void printCosts(GreqlEvaluator eval, Greql2 syntaxgraph) {
+	private void printCosts(GreqlEvaluator eval, Greql2Graph syntaxgraph) {
 		logger.fine("Optimizer: Optimizing " + syntaxgraph.getId() + ".\n"
 				+ "This syntaxgraph has " + syntaxgraph.getECount()
 				+ " edges and " + syntaxgraph.getVCount() + " vertexes.");
@@ -224,5 +300,9 @@ public class DefaultOptimizer extends OptimizerBase {
 				.getCurrentSubtreeEvaluationCosts(graphSize);
 		logger.fine("Costs for the whole query: "
 				+ estimatedInterpretationSteps);
+	}
+
+	public static void setDebugOptimization(boolean debug) {
+		debugOptimization = debug;
 	}
 }

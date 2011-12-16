@@ -52,6 +52,7 @@ import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
+import de.uni_koblenz.jgralab.greql2.evaluator.Query;
 import de.uni_koblenz.jgralab.greql2.exception.GreqlException;
 import de.uni_koblenz.jgralab.impl.ConsoleProgressFunction;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
@@ -68,7 +69,6 @@ import de.uni_koblenz.jgralab.schema.Schema;
 public class GraphValidator {
 
 	private Graph graph;
-	private GreqlEvaluator eval;
 
 	/**
 	 * @param graph
@@ -76,7 +76,6 @@ public class GraphValidator {
 	 */
 	public GraphValidator(Graph graph) {
 		this.graph = graph;
-		eval = new GreqlEvaluator((String) null, graph, null);
 	}
 
 	// TODO: Add proper apache common CLI handling!
@@ -189,16 +188,19 @@ public class GraphValidator {
 		SortedSet<ConstraintViolation> brokenConstraints = new TreeSet<ConstraintViolation>();
 		for (Constraint constraint : aec.getConstraints()) {
 			String query = constraint.getPredicate();
-			eval.setQuery(query);
+			GreqlEvaluator eval = new GreqlEvaluator(new Query(query), graph,
+					null, null);
 			try {
 				eval.startEvaluation();
 				if (!(Boolean) eval.getResult()) {
 					if (constraint.getOffendingElementsQuery() != null) {
-						query = constraint.getOffendingElementsQuery();
-						eval.setQuery(query);
-						eval.startEvaluation();
+						String oeq = constraint.getOffendingElementsQuery();
+						GreqlEvaluator eval1 = new GreqlEvaluator(
+								new Query(oeq), graph, null, null);
+
+						eval1.startEvaluation();
 						@SuppressWarnings("unchecked")
-						Set<AttributedElement> resultSet = (Set<AttributedElement>) eval
+						Set<AttributedElement> resultSet = (Set<AttributedElement>) eval1
 								.getResult();
 						brokenConstraints.add(new GReQLConstraintViolation(aec,
 								constraint, resultSet));

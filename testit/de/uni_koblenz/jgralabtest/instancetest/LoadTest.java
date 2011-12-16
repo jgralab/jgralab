@@ -121,7 +121,7 @@ public class LoadTest extends InstanceTest {
 	private Graph createTestGraph() throws Exception {
 		if (implementationType == ImplementationType.STANDARD) {
 			String query = "from i:c report i end where d:=\"drölfundfünfzig\", c:=b, b:=a, a:=\"Mensaessen\"";
-			return GreqlParser.parse(query, null);
+			return GreqlParser.parse(query);
 		}
 		int vertexClasses = 6;
 		int edgeClasses = 7;
@@ -333,7 +333,7 @@ public class LoadTest extends InstanceTest {
 			commit(g1);
 			switch (implementationType) {
 			case STANDARD:
-				g2 = Greql2Schema.instance().loadGreql2(
+				g2 = Greql2Schema.instance().loadGreql2Graph(
 						TESTGRAPH_PATH + TESTGRAPH_FILENAME);
 				break;
 			case TRANSACTION:

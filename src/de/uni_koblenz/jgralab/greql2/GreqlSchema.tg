@@ -33,7 +33,7 @@
 
 TGraph 2;
 Schema de.uni_koblenz.jgralab.greql2.schema.Greql2Schema;
-GraphClass Greql2;
+GraphClass Greql2Graph;
 
 EnumDomain IterationType (STAR, PLUS);
 EnumDomain QuantificationType (FORALL, EXISTS, EXISTSONE);

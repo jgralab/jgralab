@@ -48,12 +48,12 @@ import de.uni_koblenz.jgralab.greql2.optimizer.DefaultOptimizer;
 import de.uni_koblenz.jgralab.greql2.optimizer.EarlySelectionOptimizer;
 import de.uni_koblenz.jgralab.greql2.optimizer.MergeSimpleDeclarationsOptimizer;
 import de.uni_koblenz.jgralab.greql2.optimizer.Optimizer;
-import de.uni_koblenz.jgralab.greql2.optimizer.OptimizerBase;
+import de.uni_koblenz.jgralab.greql2.optimizer.Optimizer;
 import de.uni_koblenz.jgralab.greql2.optimizer.PathExistenceOptimizer;
 import de.uni_koblenz.jgralab.greql2.optimizer.PathExistenceToDirectedPathExpressionOptimizer;
 import de.uni_koblenz.jgralab.greql2.optimizer.VariableDeclarationOrderOptimizer;
 import de.uni_koblenz.jgralab.greql2.parser.GreqlParser;
-import de.uni_koblenz.jgralab.greql2.schema.Greql2;
+import de.uni_koblenz.jgralab.greql2.schema.Greql2Graph;
 import de.uni_koblenz.jgralabtest.greql2.GenericTest;
 import de.uni_koblenz.jgralabtest.greql2.testfunctions.IsPrime;
 
@@ -72,7 +72,7 @@ public class OptimizerTest extends GenericTest {
 	private Optimizer csoAndMsdo = new CommonSubgraphAndMergeSDOptimizer();
 	private Optimizer ceoAndCso = new CommonSubgraphAndConditionalExpressionOptimizer();
 
-	private class CommonSubgraphAndMergeSDOptimizer extends OptimizerBase {
+	private class CommonSubgraphAndMergeSDOptimizer extends Optimizer {
 		private Optimizer msdo = new MergeSimpleDeclarationsOptimizer();
 
 		@Override
@@ -81,7 +81,7 @@ public class OptimizerTest extends GenericTest {
 		}
 
 		@Override
-		public boolean optimize(GreqlEvaluator eval, Greql2 syntaxgraph)
+		public boolean optimize(GreqlEvaluator eval, Greql2Graph syntaxgraph)
 				throws OptimizerException {
 			boolean csoOptimized = cso.optimize(eval, syntaxgraph);
 			return csoOptimized | msdo.optimize(eval, syntaxgraph);
@@ -89,7 +89,7 @@ public class OptimizerTest extends GenericTest {
 	};
 
 	private class CommonSubgraphAndConditionalExpressionOptimizer extends
-			OptimizerBase {
+			Optimizer {
 		private Optimizer ceo = new ConditionalExpressionOptimizer();
 
 		@Override
@@ -98,7 +98,7 @@ public class OptimizerTest extends GenericTest {
 		}
 
 		@Override
-		public boolean optimize(GreqlEvaluator eval, Greql2 syntaxgraph)
+		public boolean optimize(GreqlEvaluator eval, Greql2Graph syntaxgraph)
 				throws OptimizerException {
 			boolean csoOptimized = ceo.optimize(eval, syntaxgraph);
 			return csoOptimized | cso.optimize(eval, syntaxgraph);

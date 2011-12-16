@@ -43,54 +43,37 @@ import java.util.logging.Logger;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.JGraLab;
-import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
-import de.uni_koblenz.jgralab.greql2.exception.OptimizerException;
+import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.CostModel;
 import de.uni_koblenz.jgralab.greql2.schema.Expression;
 import de.uni_koblenz.jgralab.greql2.schema.FunctionApplication;
 import de.uni_koblenz.jgralab.greql2.schema.FunctionId;
-import de.uni_koblenz.jgralab.greql2.schema.Greql2;
+import de.uni_koblenz.jgralab.greql2.schema.Greql2Graph;
 import de.uni_koblenz.jgralab.greql2.schema.IsArgumentOf;
 
 /**
  * Replaces all {@link Xor} {@link FunctionApplication}s in the {@link Greql2}
  * graph according the rule
  * <code>a xor b = (a and not b) or (not a and b)</code>.
- *
+ * 
  * @author ist@uni-koblenz.de
- *
+ * 
  */
-public class TransformXorFunctionApplicationOptimizer extends OptimizerBase {
+public class TransformXorFunctionApplicationOptimizer extends Optimizer {
 
 	private static Logger logger = JGraLab
 			.getLogger(TransformXorFunctionApplicationOptimizer.class
 					.getPackage().getName());
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * de.uni_koblenz.jgralab.greql2.optimizer.Optimizer#isEquivalent(de.uni_koblenz
-	 * .jgralab.greql2.optimizer.Optimizer)
-	 */
 	@Override
-	public boolean isEquivalent(Optimizer optimizer) {
+	protected boolean isEquivalent(Optimizer optimizer) {
 		if (optimizer instanceof TransformXorFunctionApplicationOptimizer) {
 			return true;
 		}
 		return false;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * de.uni_koblenz.jgralab.greql2.optimizer.Optimizer#optimize(de.uni_koblenz
-	 * .jgralab.greql2.evaluator.GreqlEvaluator,
-	 * de.uni_koblenz.jgralab.greql2.schema.Greql2)
-	 */
 	@Override
-	public boolean optimize(GreqlEvaluator eval, Greql2 syntaxgraph)
-			throws OptimizerException {
+	protected boolean optimize(Greql2Graph syntaxgraph, CostModel costModel) {
 		ArrayList<FunctionApplication> xors = new ArrayList<FunctionApplication>();
 		for (FunctionApplication funApp : syntaxgraph
 				.getFunctionApplicationVertices()) {
@@ -104,9 +87,9 @@ public class TransformXorFunctionApplicationOptimizer extends OptimizerBase {
 			// Figure out the two arguments of the Xor
 			IsArgumentOf isArgOf = xor
 					.getFirstIsArgumentOfIncidence(EdgeDirection.IN);
-			Expression arg1 = (Expression) isArgOf.getAlpha();
+			Expression arg1 = isArgOf.getAlpha();
 			isArgOf = isArgOf.getNextIsArgumentOfIncidence(EdgeDirection.IN);
-			Expression arg2 = (Expression) isArgOf.getAlpha();
+			Expression arg2 = isArgOf.getAlpha();
 
 			// The rule is: a xor b = a and ~b or ~a and b
 
@@ -166,8 +149,6 @@ public class TransformXorFunctionApplicationOptimizer extends OptimizerBase {
 			// delete the Xor
 			xor.delete();
 		}
-
-		recreateVertexEvaluators(eval);
 		return somethingWasTransformed;
 	}
 

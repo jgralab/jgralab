@@ -2289,13 +2289,15 @@ public class Rsa2Tg extends XmlProcessor {
 	 * @return true iff the edge class generalization hierarchy is acyclic.
 	 */
 	private boolean edgeClassHierarchyIsAcyclic() {
-		if (edgeClassAcyclicEvaluator == null) {
-			edgeClassAcyclicEvaluator = new GreqlEvaluator(
-					"on edgeTypeSubgraph{structure.SpecializesEdgeClass}(): isAcyclic()",
-					sg, null);
-		}
-		edgeClassAcyclicEvaluator.startEvaluation();
-		return (Boolean) edgeClassAcyclicEvaluator.getResult();
+		// TODO [greqlevaluator]
+		// if (edgeClassAcyclicEvaluator == null) {
+		// edgeClassAcyclicEvaluator = new GreqlEvaluator(
+		// "on edgeTypeSubgraph{structure.SpecializesEdgeClass}(): isAcyclic()",
+		// sg, null);
+		// }
+		// edgeClassAcyclicEvaluator.startEvaluation();
+		// return (Boolean) edgeClassAcyclicEvaluator.getResult();
+		return true;
 	}
 
 	/**
@@ -2304,13 +2306,15 @@ public class Rsa2Tg extends XmlProcessor {
 	 * @return true iff the vertex class generalization hierarchy is acyclic.
 	 */
 	private boolean vertexClassHierarchyIsAcyclic() {
-		if (vertexClassAcyclicEvaluator == null) {
-			vertexClassAcyclicEvaluator = new GreqlEvaluator(
-					"on edgeTypeSubgraph{structure.SpecializesVertexClass}(): isAcyclic()",
-					sg, null);
-		}
-		vertexClassAcyclicEvaluator.startEvaluation();
-		return (Boolean) vertexClassAcyclicEvaluator.getResult();
+		// TODO [greqlevaluator]
+		// if (vertexClassAcyclicEvaluator == null) {
+		// vertexClassAcyclicEvaluator = new GreqlEvaluator(
+		// "on edgeTypeSubgraph{structure.SpecializesVertexClass}(): isAcyclic()",
+		// sg, null);
+		// }
+		// vertexClassAcyclicEvaluator.startEvaluation();
+		// return (Boolean) vertexClassAcyclicEvaluator.getResult();
+		return true;
 	}
 
 	/**

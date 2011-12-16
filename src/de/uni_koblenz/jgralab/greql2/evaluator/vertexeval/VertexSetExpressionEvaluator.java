@@ -93,7 +93,7 @@ public class VertexSetExpressionEvaluator extends ElementSetExpressionEvaluator 
 			}
 			if (GreqlEvaluator.VERTEX_INDEXING) {
 				if ((System.currentTimeMillis() - startTime) > greqlEvaluator
-						.getIndexTimeBarrier()) {
+						.getIndexTimeLimit()) {
 					GreqlEvaluator.addVertexIndex(datagraph, indexKey,
 							resultSet);
 				}
