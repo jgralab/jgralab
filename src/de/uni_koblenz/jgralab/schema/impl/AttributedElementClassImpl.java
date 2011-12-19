@@ -211,7 +211,6 @@ public abstract class AttributedElementClassImpl extends NamedElementImpl
 		directSuperClasses.add(superClass);
 		((AttributedElementClassImpl) superClass).directSubClasses.add(this);
 		
-		//TODO find a better way to do that
 		if(superClass instanceof VertexClass){
 			if(!superClass.equals(getSchema().getDefaultVertexClass())){
 				((GraphClassImpl) getSchema().getGraphClass()).getVertexCsDag()

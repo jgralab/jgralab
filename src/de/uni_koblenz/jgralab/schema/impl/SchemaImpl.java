@@ -1322,10 +1322,17 @@ public class SchemaImpl implements Schema {
 		}
 	}
 
+	/**
+	 * @return whether the schema is finished
+	 */
 	public boolean isFinish() {
 		return finish;
 	}
 
+	/**
+	 * Signals that the schema is finished. No more changes are allowed. 
+	 * To open the change mode call reopen
+	 */
 	public void finish() {
 		if(this.finish) return;
 		((GraphClassImpl)this.graphClass).finish();
@@ -1333,6 +1340,9 @@ public class SchemaImpl implements Schema {
 		
 	}
 	
+	/**
+	 * Reopens the schema to allow changes. To finish the schema again, call finish
+	 */
 	public void reopen(){
 		if(!this.finish) return;
 		((GraphClassImpl)this.graphClass).finish();
