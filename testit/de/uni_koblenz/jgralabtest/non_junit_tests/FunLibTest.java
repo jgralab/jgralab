@@ -93,6 +93,7 @@ public class FunLibTest {
 		v4 = v4.plus(2).plus(10).plus(2).plus(5).plus(-1);
 		FunLib.apply(os, "count", v4);
 		FunLib.apply(os, "sort", v4);
+		FunLib.apply(os, "sum", v4);
 
 		FunLib.apply(os, "round", Math.E);
 		FunLib.apply(os, "floor", Math.E);

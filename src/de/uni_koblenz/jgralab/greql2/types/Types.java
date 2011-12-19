@@ -26,8 +26,8 @@ import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 
 public class Types {
 	private static final Class<?>[] GREQL_TYPES = { Integer.class, Long.class,
-			Boolean.class, Double.class, String.class, Vertex.class,
-			Edge.class, Graph.class, AttributedElement.class,
+			Boolean.class, Double.class, Number.class, String.class,
+			Vertex.class, Edge.class, Graph.class, AttributedElement.class,
 			GraphElement.class, Path.class, PathSystem.class, Slice.class,
 			TypeCollection.class, Enum.class, Record.class, Table.class,
 			Tuple.class, PVector.class, PSet.class, POrderedSet.class,
