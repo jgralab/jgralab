@@ -24,9 +24,14 @@ public class GenericUtil {
 	 * @return
 	 * @throws ClassNotFoundException
 	 */
-	public static boolean testDomainConformity(Object value, Domain domain) throws ClassNotFoundException {
+	public static boolean conformsToDomain(Object value, Domain domain) throws ClassNotFoundException {
 		if(domain instanceof BasicDomain) {
-			return Class.forName(domain.getJavaClassName(null)).isInstance(value);
+			if(!(domain instanceof StringDomain)) {
+				return Class.forName(domain.getJavaClassName(null)).isInstance(value);
+			}
+			else {
+				return value == null || Class.forName(domain.getJavaClassName(null)).isInstance(value);
+			}
 		}
 		else {
 			boolean result = true;
@@ -34,7 +39,7 @@ public class GenericUtil {
 				return result;
 			}
 			if(domain instanceof EnumDomain) {
-				result &= value instanceof PSet && ((EnumDomain) domain).getConsts().contains(value);
+				result &= value instanceof String && ((EnumDomain) domain).getConsts().contains(value);
 			}
 			else if(domain instanceof SetDomain) {
 				result &= value instanceof PSet;
@@ -42,7 +47,7 @@ public class GenericUtil {
 					return false;
 				}
 				for(Object o : ((PSet<?>) value)) {
-					result &= testDomainConformity(o, ((SetDomain) domain).getBaseDomain());
+					result &= conformsToDomain(o, ((SetDomain) domain).getBaseDomain());
 				}
 			}
 			else if(domain instanceof ListDomain) {
@@ -51,7 +56,7 @@ public class GenericUtil {
 					return false;
 				}
 				for(Object o : ((PVector<?>) value)) {
-					result &= testDomainConformity(o, ((ListDomain) domain).getBaseDomain());
+					result &= conformsToDomain(o, ((ListDomain) domain).getBaseDomain());
 				}
 			}
 			else if(domain instanceof MapDomain) {
@@ -60,7 +65,7 @@ public class GenericUtil {
 					return false;
 				}
 				for(Object k : ((PMap<?,?>) value).keySet()) {
-					result &= testDomainConformity(k, ((MapDomain) domain).getKeyDomain()) && testDomainConformity(((PMap<?, ?>) value).get(k), ((MapDomain) domain).getValueDomain());
+					result &= conformsToDomain(k, ((MapDomain) domain).getKeyDomain()) && conformsToDomain(((PMap<?, ?>) value).get(k), ((MapDomain) domain).getValueDomain());
 				}
 			}
 			else if (domain instanceof RecordDomain) {
@@ -69,7 +74,7 @@ public class GenericUtil {
 					return false;
 				}
 				for(RecordComponent c : ((RecordDomain) domain).getComponents()) {
-					result &= testDomainConformity(((Record) value).getComponent(c.getName()), c.getDomain());
+					result &= conformsToDomain(((Record) value).getComponent(c.getName()), c.getDomain());
 				}
 			}
 			return result;
