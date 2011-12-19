@@ -479,4 +479,23 @@ public interface Schema extends Comparable<Schema> {
 
 	public Graph createGraph(ImplementationType implementationType, int vCount,
 			int eCount);
+
+	/**
+	 * @return whether the schema is finished
+	 */
+	public boolean isFinish();
+	
+	/**
+	 * Signals that the schema is finished. No more changes are allowed. 
+	 * To open the change mode call reopen.
+	 * The schema has to be finished before commit or compile.
+	 */
+	public void finish();
+	
+	/**
+	 * Reopens the schema to allow changes. To finish the schema again, call finish
+	 */
+	public void reopen();
+
+
 }

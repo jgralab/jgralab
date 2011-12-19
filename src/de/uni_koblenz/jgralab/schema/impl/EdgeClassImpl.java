@@ -158,7 +158,7 @@ public class EdgeClassImpl extends GraphElementClassImpl implements EdgeClass {
 	 * @throws SchemaException
 	 *             upon illegal combinations
 	 */
-	public static void checkIncidenceClassSpecialization(
+	static void checkIncidenceClassSpecialization(
 			IncidenceClass special, IncidenceClass general) {
 		// Vertex same
 		if ((!general.getVertexClass().isSuperClassOfOrEquals(
