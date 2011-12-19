@@ -199,9 +199,10 @@ public final class VertexClassImpl extends GraphElementClassImpl implements
 
 	@Override
 	public void addSuperClass(VertexClass superClass) {
-		if(isFinished()){
-			throw new SchemaException("No changes to finished schema!");
-		}
+		// Checked in super class
+//		if(isFinished()){
+//			throw new SchemaException("No changes to finished schema!");
+//		}
 		checkDuplicateRolenames(superClass);
 		super.addSuperClass(superClass);
 	}
@@ -351,6 +352,7 @@ public final class VertexClassImpl extends GraphElementClassImpl implements
 		return incidenceClasses;
 	}
 
+	@Override
 	public Set<IncidenceClass> getOwnAndInheritedFarIncidenceClasses() {
 		Set<IncidenceClass> result = new HashSet<IncidenceClass>();
 		for (IncidenceClass ic : getAllInIncidenceClasses()) {
