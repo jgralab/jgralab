@@ -331,4 +331,33 @@ public class GenericUtil {
 			throw new GraphException("Unknown domain " + domain.getQualifiedName());
 		}
 	}
+	
+	/**
+	 * Returns the default value for attributes in the generic implementation,
+	 * according to the attribute's domain, if is no explicitly defined default value.
+	 * @param domain The attribute's domain.
+	 * @return The default value for attributes of the domain.
+	 */
+	public static Object genericAttributeDefaultValue(Domain domain) {
+		if(domain instanceof BasicDomain) {
+			if(domain instanceof BooleanDomain) {
+				return new Boolean(false);
+			}
+			else if(domain instanceof IntegerDomain) {
+				return new Integer(0);
+			}
+			else if(domain instanceof LongDomain) {
+				return new Long(0);
+			}
+			else if(domain instanceof DoubleDomain) {
+				return new Double(0.0);
+			}
+			else {	// StringDomain
+				return null;
+			}
+		}
+		else {
+			return null;
+		}
+	}
 }

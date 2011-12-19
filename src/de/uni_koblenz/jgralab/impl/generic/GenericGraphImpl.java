@@ -25,9 +25,6 @@ import de.uni_koblenz.jgralab.schema.*;
  */
 public class GenericGraphImpl extends GraphImpl {
 	
-	// TODO The legal incidenceClasses of vertices must be cached
-	// and available before an edge is created! 
-	
 	private GraphClass type;
 	private Map<String, Object> attributes;
 	private Map<VertexClass, Set<IncidenceClass>> vcInIcCache;
@@ -108,11 +105,20 @@ public class GenericGraphImpl extends GraphImpl {
 			}
 		}
 	}
+	
+//	protected GreqlEvaluator greqlEvaluator;
 
 	@Override
 	public <T extends Vertex> POrderedSet<T> reachableVertices(Vertex startVertex,
 			String pathDescription, Class<T> vertexType) {
-		// TODO Auto-generated method stub
+		// TODO Copied from generated code... DOes this work with the generic implementation?
+//		if (greqlEvaluator == null) {
+//			greqlEvaluator = new GreqlEvaluator((String) null, this, null);
+//		}
+//		greqlEvaluator.setVariable("v", startVertex);
+//		greqlEvaluator.setQuery("using v: v " + pathDescription);
+//		greqlEvaluator.startEvaluation();
+//		return greqlEvaluator.getResultSet(vertexType);
 		return null;
 	}
 
@@ -173,7 +179,7 @@ public class GenericGraphImpl extends GraphImpl {
 			throw new NoSuchAttributeException(type.getSimpleName() + " doesn't contain an attribute " + name);
 		} else {
 			try {
-				if(!GenericUtil.testDomainConformity(data, type.getAttribute(name).getDomain())) {
+				if(!GenericUtil.conformsToDomain(data, type.getAttribute(name).getDomain())) {
 					throw new ClassCastException();
 				}
 				else {
@@ -242,6 +248,23 @@ public class GenericGraphImpl extends GraphImpl {
 	@Override
 	public Iterable<Edge> edges(EdgeClass ec) {
 		return new GenericEdgeIterable<Edge>(this, ec);
+	}
+
+	@Override
+	public void initializeAttributesWithDefaultValues() {
+		for (Attribute attr : getAttributedElementClass().getAttributeList()) {
+			if ((attr.getDefaultValueAsString() != null)
+					&& !attr.getDefaultValueAsString().isEmpty()) {
+				try {
+					internalSetDefaultValue(attr);
+				} catch (GraphIOException e) {
+					e.printStackTrace();
+				}
+			}
+			else {
+				setAttribute(attr.getName(), GenericUtil.genericAttributeDefaultValue(attr.getDomain()));
+			}
+		}
 	}
 	
 	

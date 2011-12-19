@@ -123,7 +123,7 @@ public class GenericVertexImpl extends VertexImpl {
 			throw new NoSuchAttributeException(type.getSimpleName() + " doesn't contain an attribute " + name);
 		} else {
 			try {
-				if(!GenericUtil.testDomainConformity(data, type.getAttribute(name).getDomain())) {
+				if(!GenericUtil.conformsToDomain(data, type.getAttribute(name).getDomain())) {
 					throw new ClassCastException();
 				}
 				else {
@@ -191,6 +191,22 @@ public class GenericVertexImpl extends VertexImpl {
 			++degree;
 		}
 		return degree;
+	}
+
+	@Override
+	public void initializeAttributesWithDefaultValues() {
+		for (Attribute attr : getAttributedElementClass().getAttributeList()) {
+			if (attr.getDefaultValueAsString() != null) {
+				try {
+					internalSetDefaultValue(attr);
+				} catch (GraphIOException e) {
+					e.printStackTrace();
+				}
+			}
+			else {
+				setAttribute(attr.getName(), GenericUtil.genericAttributeDefaultValue(attr.getDomain()));
+			}
+		}
 	}
 	
 	//************** unsupported methods ***************/
