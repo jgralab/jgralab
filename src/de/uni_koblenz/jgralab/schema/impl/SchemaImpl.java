@@ -467,6 +467,11 @@ public class SchemaImpl implements Schema {
 
 	@Override
 	public Vector<InMemoryJavaSourceFile> commit(CodeGeneratorConfiguration config) {
+		if(!finish){
+			throw new SchemaException("Schema must be finish before committing is allowed. "
+					+"Call finish() to finish the schema.");
+		}
+		
 		Vector<InMemoryJavaSourceFile> javaSources = new Vector<InMemoryJavaSourceFile>();
 
 		// generate schema class
@@ -573,6 +578,10 @@ public class SchemaImpl implements Schema {
 	@Override
 	public void commit(String pathPrefix, CodeGeneratorConfiguration config,
 			ProgressFunction progressFunction) throws GraphIOException {
+		if(!finish){
+			throw new SchemaException("Schema must be finish before committing is allowed. "
+					+"Call finish() to finish the schema.");
+		}
 		// progress bar for schema generation
 		// ProgressFunctionImpl pf;
 		long schemaElements = 0, currentCount = 0, interval = 1;
@@ -1325,6 +1334,7 @@ public class SchemaImpl implements Schema {
 	/**
 	 * @return whether the schema is finished
 	 */
+	@Override
 	public boolean isFinish() {
 		return finish;
 	}
@@ -1333,6 +1343,7 @@ public class SchemaImpl implements Schema {
 	 * Signals that the schema is finished. No more changes are allowed. 
 	 * To open the change mode call reopen
 	 */
+	@Override
 	public void finish() {
 		if(this.finish) return;
 		((GraphClassImpl)this.graphClass).finish();
@@ -1343,6 +1354,7 @@ public class SchemaImpl implements Schema {
 	/**
 	 * Reopens the schema to allow changes. To finish the schema again, call finish
 	 */
+	@Override
 	public void reopen(){
 		if(!this.finish) return;
 		((GraphClassImpl)this.graphClass).finish();

@@ -47,7 +47,7 @@ import de.uni_koblenz.jgralab.schema.exception.SchemaException;
 
 public class IncidenceClassImpl implements IncidenceClass {
 
-	public IncidenceClassImpl(EdgeClass edgeClass, VertexClass vertexClass,
+	protected IncidenceClassImpl(EdgeClass edgeClass, VertexClass vertexClass,
 			String rolename, int minEdgesAtVertex, int maxEdgesAtVertex,
 			IncidenceDirection direction, AggregationKind aggregationKind) {
 		super();

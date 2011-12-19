@@ -993,6 +993,7 @@ public class GraphIO {
 			GraphIO io = new GraphIO();
 			io.TGIn = in;
 			io.tgfile();
+			io.schema.finish();
 			return io.schema;
 		} catch (Exception e) {
 			throw new GraphIOException("Exception while loading schema", e);

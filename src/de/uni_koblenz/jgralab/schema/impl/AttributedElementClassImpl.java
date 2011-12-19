@@ -81,7 +81,7 @@ public abstract class AttributedElementClassImpl extends NamedElementImpl
 	/**
 	 * the immediate sub classes of this class
 	 */
-	protected HashSet<AttributedElementClass> directSubClasses = new HashSet<AttributedElementClass>();
+	protected Set<AttributedElementClass> directSubClasses = new HashSet<AttributedElementClass>();
 
 	/**
 	 * the sub classes of this class - only set if the schema is finish
@@ -91,7 +91,7 @@ public abstract class AttributedElementClassImpl extends NamedElementImpl
 	/**
 	 * the immediate super classes of this class
 	 */
-	protected HashSet<AttributedElementClass> directSuperClasses = new HashSet<AttributedElementClass>();
+	protected Set<AttributedElementClass> directSuperClasses = new HashSet<AttributedElementClass>();
 
 	/**
 	 * the super classes of this class - only set if the schema is finish
@@ -212,6 +212,7 @@ public abstract class AttributedElementClassImpl extends NamedElementImpl
 		((AttributedElementClassImpl) superClass).directSubClasses.add(this);
 		
 		if(superClass instanceof VertexClass){
+			// DefaultVertexClass has a the DefaultGraphClass as graphClass, so it is not in the DAG
 			if(!superClass.equals(getSchema().getDefaultVertexClass())){
 				((GraphClassImpl) getSchema().getGraphClass()).getVertexCsDag()
 					.createEdge((VertexClass)superClass, (VertexClass)this);
@@ -339,10 +340,10 @@ public abstract class AttributedElementClassImpl extends NamedElementImpl
 	public Set<AttributedElementClass> getDirectSubClasses() {
 		return directSubClasses;
 	}
-//TODO ask whether the above or below is not the way they want it
+
 	@Override
 	public Set<AttributedElementClass> getDirectSuperClasses() {
-		return new HashSet<AttributedElementClass>(directSuperClasses);
+		return this.directSuperClasses;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -504,6 +505,8 @@ public abstract class AttributedElementClassImpl extends NamedElementImpl
 			this.allAttributeList.addAll(superClass.getAttributeList());
 		}
 		
+		this.directSubClasses = Collections.unmodifiableSet(this.directSubClasses);
+		this.directSuperClasses = Collections.unmodifiableSet(this.directSuperClasses);
 		this.allSuperClasses = Collections.unmodifiableSet(this.allSuperClasses);
 		this.allSubClasses = Collections.unmodifiableSet(this.allSubClasses);
 		this.allAttributeList = Collections.unmodifiableSortedSet(this.allAttributeList);
@@ -515,6 +518,8 @@ public abstract class AttributedElementClassImpl extends NamedElementImpl
 	 * Called if the schema is reopen
 	 */
 	protected void reopen(){
+		this.directSubClasses = new HashSet<AttributedElementClass>(this.directSubClasses);
+		this.directSuperClasses = new HashSet<AttributedElementClass>(this.directSuperClasses);
 		this.allSuperClasses = null;
 		this.allSubClasses = null;
 		this.allAttributeList = null;
