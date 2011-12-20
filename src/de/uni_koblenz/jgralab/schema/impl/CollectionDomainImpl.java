@@ -59,7 +59,7 @@ public abstract class CollectionDomainImpl extends CompositeDomainImpl
 		}
 
 		this.baseDomain = baseDomain;
-		((SchemaImpl)pkg.getSchema()).getDomainsDag().createEdge(this, baseDomain);
+		((SchemaImpl)pkg.getSchema()).getDomainsDag().createEdge(baseDomain,this);
 	}
 
 	@Override

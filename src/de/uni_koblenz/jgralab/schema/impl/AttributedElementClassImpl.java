@@ -343,7 +343,7 @@ public abstract class AttributedElementClassImpl extends NamedElementImpl
 
 	@Override
 	public Set<AttributedElementClass> getDirectSuperClasses() {
-		return this.directSuperClasses;
+		return directSuperClasses;
 	}
 
 	@SuppressWarnings("unchecked")

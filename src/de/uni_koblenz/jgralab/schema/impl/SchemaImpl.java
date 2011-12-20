@@ -43,8 +43,6 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -910,33 +908,40 @@ public class SchemaImpl implements Schema {
 	@Override
 	public List<CompositeDomain> getCompositeDomainsInTopologicalOrder() {
 		ArrayList<CompositeDomain> topologicalOrderList = new ArrayList<CompositeDomain>();
-		CompositeDomain cd;
-		HashSet<CompositeDomain> compositeDomainSet = new HashSet<CompositeDomain>();
+		//CompositeDomain cd;
+		//HashSet<CompositeDomain> compositeDomainSet = new HashSet<CompositeDomain>();
 
-		// store composite domains in compositeDomainSet
-		for (Domain dl : domains.values()) {
-			if (dl instanceof CompositeDomain) {
-				compositeDomainSet.add((CompositeDomain) dl);
+		for(Domain dom :  domainsDag.getNodesInTopologicalOrder()){
+			if(dom instanceof CompositeDomain){
+				topologicalOrderList.add((CompositeDomain)dom);
 			}
 		}
-
-		// iteratively add domains from compositeDomainSet,
-		// whose component domains already are in topologicalOrderList,
-		// to topologicalOrderList
-		// the added domains are removed from compositeDomainSet
-		while (!compositeDomainSet.isEmpty()) {
-			for (Iterator<CompositeDomain> cdit = compositeDomainSet.iterator(); cdit
-					.hasNext();) {
-				cd = cdit.next();
-				if (topologicalOrderList.containsAll(cd
-						.getAllComponentCompositeDomains())) {
-					topologicalOrderList.add(cd);
-					cdit.remove();
-				}
-			}
-		}
-
 		return topologicalOrderList;
+		
+//		// store composite domains in compositeDomainSet
+//		for (Domain dl : domains.values()) {
+//			if (dl instanceof CompositeDomain) {
+//				compositeDomainSet.add((CompositeDomain) dl);
+//			}
+//		}
+//
+//		// iteratively add domains from compositeDomainSet,
+//		// whose component domains already are in topologicalOrderList,
+//		// to topologicalOrderList
+//		// the added domains are removed from compositeDomainSet
+//		while (!compositeDomainSet.isEmpty()) {
+//			for (Iterator<CompositeDomain> cdit = compositeDomainSet.iterator(); cdit
+//					.hasNext();) {
+//				cd = cdit.next();
+//				if (topologicalOrderList.containsAll(cd
+//						.getAllComponentCompositeDomains())) {
+//					topologicalOrderList.add(cd);
+//					cdit.remove();
+//				}
+//			}
+//		}
+//
+//		return topologicalOrderList;
 	}
 
 	private Method getCreateMethod(String className, String graphClassName,
