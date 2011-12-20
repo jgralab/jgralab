@@ -11,6 +11,8 @@ import java.util.Set;
 import org.pcollections.PSet;
 
 import de.uni_koblenz.jgralab.JGraLab;
+import de.uni_koblenz.jgralab.graphmarker.GraphMarker;
+import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VertexEvaluator;
 import de.uni_koblenz.jgralab.greql2.optimizer.DefaultOptimizer;
 import de.uni_koblenz.jgralab.greql2.parser.GreqlParser;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Expression;
@@ -28,26 +30,42 @@ public class Query {
 	private long parseTime = -1;
 	private Greql2Expression rootExpression;
 
-	private static class QueryGraphCache {
-		HashMap<String, SoftReference<Greql2Graph>> cache = new HashMap<String, SoftReference<Greql2Graph>>();
+	/**
+	 * The GraphMarker that stores all vertex evaluators
+	 */
+	private GraphMarker<VertexEvaluator<?>> vertexEvaluators;
 
-		public Greql2Graph get(String queryText, boolean optimize) {
+	private static class QueryGraphCacheEntry {
+		Greql2Graph graph;
+		GraphMarker<VertexEvaluator<?>> eval;
+
+		QueryGraphCacheEntry(Greql2Graph g, GraphMarker<VertexEvaluator<?>> e) {
+			graph = g;
+			eval = e;
+		}
+	}
+
+	private static class QueryGraphCache {
+		HashMap<String, SoftReference<QueryGraphCacheEntry>> cache = new HashMap<String, SoftReference<QueryGraphCacheEntry>>();
+
+		QueryGraphCacheEntry get(String queryText, boolean optimize) {
 			String key = optimize + "#" + queryText;
-			SoftReference<Greql2Graph> ref = cache.get(key);
+			SoftReference<QueryGraphCacheEntry> ref = cache.get(key);
 			if (ref != null) {
-				Greql2Graph g = ref.get();
-				if (g == null) {
+				QueryGraphCacheEntry e = ref.get();
+				if (e == null) {
 					cache.remove(key);
 				}
-				return g;
+				return e;
 			}
 			return null;
 		}
 
-		public void put(String queryText, boolean optimize,
-				Greql2Graph queryGraph) {
+		void put(String queryText, boolean optimize, Greql2Graph queryGraph,
+				GraphMarker<VertexEvaluator<?>> evaluators) {
 			String key = optimize + "#" + queryText;
-			cache.put(key, new SoftReference<Greql2Graph>(queryGraph));
+			cache.put(key, new SoftReference<QueryGraphCacheEntry>(
+					new QueryGraphCacheEntry(queryGraph, evaluators)));
 		}
 	}
 
@@ -90,7 +108,11 @@ public class Query {
 
 	public Greql2Graph getQueryGraph() {
 		if (queryGraph == null) {
-			queryGraph = queryGraphCache.get(queryText, optimize);
+			QueryGraphCacheEntry e = queryGraphCache.get(queryText, optimize);
+			if (e != null) {
+				queryGraph = e.graph;
+				vertexEvaluators = e.eval;
+			}
 		}
 		if (queryGraph == null) {
 			long t0 = System.currentTimeMillis();
@@ -102,7 +124,10 @@ public class Query {
 				optimizationTime = System.currentTimeMillis() - t1;
 			}
 			rootExpression = queryGraph.getFirstGreql2Expression();
-			queryGraphCache.put(queryText, optimize, queryGraph);
+			vertexEvaluators = new GraphMarker<VertexEvaluator<?>>(
+					queryGraph);
+			queryGraphCache.put(queryText, optimize, queryGraph,
+					vertexEvaluators);
 		}
 		return queryGraph;
 	}
@@ -157,4 +182,5 @@ public class Query {
 	public long getParseTime() {
 		return parseTime;
 	}
+
 }

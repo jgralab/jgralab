@@ -47,7 +47,6 @@ import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.graphmarker.GraphMarker;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
@@ -64,7 +63,8 @@ import de.uni_koblenz.jgralab.greql2.schema.Variable;
  * @author ist@uni-koblenz.de
  * 
  */
-public abstract class VertexEvaluator {
+public abstract class VertexEvaluator<V extends Vertex> {
+
 	/**
 	 * This classes get not evaluated
 	 */
@@ -83,10 +83,7 @@ public abstract class VertexEvaluator {
 		unevaluatedVertices.add("Direction");
 	}
 
-	/**
-	 * The GreqlEvaluator this VertexEvaluator belongs to
-	 */
-	protected GreqlEvaluator greqlEvaluator = null;
+	protected V vertex;
 
 	/**
 	 * The costs for the current evaluation of the whole subtree in the abstract
@@ -137,23 +134,12 @@ public abstract class VertexEvaluator {
 	 */
 	protected Set<Variable> definedVariables = null;
 
-	protected GraphMarker<VertexEvaluator> vertexEvalMarker = null;
-
 	/**
 	 * @param eval
 	 *            the GreqlEvaluator this VertexEvaluator belongs to
 	 */
-	protected VertexEvaluator(GreqlEvaluator eval) {
-		greqlEvaluator = eval;
-		vertexEvalMarker = eval.getVertexEvaluatorGraphMarker();
-	}
-
-	protected void setVertexEvalMarker(GraphMarker<VertexEvaluator> marker) {
-		vertexEvalMarker = marker;
-	}
-
-	public GraphMarker<VertexEvaluator> getVertexEvalMarker() {
-		return vertexEvalMarker;
+	protected VertexEvaluator(V vertex) {
+		this.vertex = vertex;
 	}
 
 	/**
@@ -195,7 +181,7 @@ public abstract class VertexEvaluator {
 		// System.out.println("Evaluating : " + this + " finished");
 		// System.out.println("Result is: " + result);
 
-		greqlEvaluator.progress(ownEvaluationCosts);
+		// greqlEvaluator.progress(ownEvaluationCosts);
 
 		return result;
 	}
@@ -360,59 +346,62 @@ public abstract class VertexEvaluator {
 		return definedVariables;
 	}
 
-	/**
-	 * Returns the number of combinations of the variables this vertex depends
-	 * on
-	 */
-	public long getVariableCombinations() {
-		int combinations = 1;
-		Iterator<Variable> iter = getNeededVariables().iterator();
-		while (iter.hasNext()) {
-			VariableEvaluator veval = (VariableEvaluator) vertexEvalMarker
-					.getMark(iter.next());
-			// combinations *= veval.getEstimatedCardinality();
-			combinations *= veval.getVariableCombinations();
-		}
-		return combinations;
-	}
-
-	/**
-	 * returns the estimated size of the result.
-	 */
-	public long getEstimatedCardinality() {
-		if (estimatedCardinality == Long.MIN_VALUE) {
-			estimatedCardinality = calculateEstimatedCardinality();
-		}
-		return estimatedCardinality;
-	}
-
-	/**
-	 * calculates the estimated cardinality of the evaluationeresult this
-	 * vertexevaluator creates. By default, this size is 1, if a VertexEvaluator
-	 * has bigger resultsizes, it should override this method
-	 */
-	public long calculateEstimatedCardinality() {
-		return 1;
-	}
-
-	/**
-	 * returns the estimated selectivity of the vertex evaluation.
-	 */
-	public double getEstimatedSelectivity() {
-		if (Double.isNaN(estimatedSelectivity)) {
-			estimatedSelectivity = calculateEstimatedSelectivity();
-		}
-		return estimatedSelectivity;
-	}
-
-	/**
-	 * calculates the estimated selectivity for this vertex.By default, this is
-	 * 1, if a VertexEvaluator has an other selectivity, it should override this
-	 * method
-	 */
-	public double calculateEstimatedSelectivity() {
-		return 1;
-	}
+	// /**
+	// * Returns the number of combinations of the variables this vertex depends
+	// * on
+	// */
+	// public long getVariableCombinations() {
+	// int combinations = 1;
+	// Iterator<Variable> iter = getNeededVariables().iterator();
+	// while (iter.hasNext()) {
+	// VariableEvaluator veval = (VariableEvaluator) vertexEvalMarker
+	// .getMark(iter.next());
+	// // combinations *= veval.getEstimatedCardinality();
+	// combinations *= veval.getVariableCombinations();
+	// }
+	// return combinations;
+	// }
+	//
+	// /**
+	// * returns the estimated size of the result.
+	// */
+	// public long getEstimatedCardinality() {
+	// if (estimatedCardinality == Long.MIN_VALUE) {
+	// estimatedCardinality = calculateEstimatedCardinality();
+	// }
+	// return estimatedCardinality;
+	// }
+	//
+	// /**
+	// * calculates the estimated cardinality of the evaluationeresult this
+	// * vertexevaluator creates. By default, this size is 1, if a
+	// VertexEvaluator
+	// * has bigger resultsizes, it should override this method
+	// */
+	// public long calculateEstimatedCardinality() {
+	// return 1;
+	// }
+	//
+	// /**
+	// * returns the estimated selectivity of the vertex evaluation.
+	// */
+	// public double getEstimatedSelectivity() {
+	// if (Double.isNaN(estimatedSelectivity)) {
+	// estimatedSelectivity = calculateEstimatedSelectivity();
+	// }
+	// return estimatedSelectivity;
+	// }
+	//
+	// /**
+	// * calculates the estimated selectivity for this vertex.By default, this
+	// is
+	// * 1, if a VertexEvaluator has an other selectivity, it should override
+	// this
+	// * method
+	// */
+	// public double calculateEstimatedSelectivity() {
+	// return 1;
+	// }
 
 	/**
 	 * creates a list of possible source positions for the current vertex
@@ -486,8 +475,8 @@ public abstract class VertexEvaluator {
 	/**
 	 * creates a vertex evaluator for the given vertex
 	 */
-	public static VertexEvaluator createVertexEvaluator(Vertex vertex,
-			GreqlEvaluator eval) {
+	public static <V extends Vertex> VertexEvaluator<V> createVertexEvaluator(
+			V vertex, GreqlEvaluator eval) {
 		Class<?> vertexClass = vertex.getClass();
 		String fullClassName = vertexClass.getName();
 		// remove the "Impl" ...
@@ -509,7 +498,8 @@ public abstract class VertexEvaluator {
 					GreqlEvaluator.class };
 			Class<?> evalClass = Class.forName(evalName);
 			Constructor<?> constructor = evalClass.getConstructor(argsClass);
-			VertexEvaluator vertexEval = (VertexEvaluator) constructor
+			@SuppressWarnings("unchecked")
+			VertexEvaluator<V> vertexEval = (VertexEvaluator<V>) constructor
 					.newInstance(vertex, eval);
 			return vertexEval;
 		} catch (ClassNotFoundException ex) {

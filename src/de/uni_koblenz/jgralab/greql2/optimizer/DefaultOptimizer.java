@@ -267,9 +267,9 @@ public class DefaultOptimizer extends Optimizer {
 		// the vertices below are properly initialized.
 		Greql2Expression rootVertex = syntaxgraph.getFirstGreql2Expression();
 		VertexEvaluator rootEval = marker.getMark(rootVertex);
-		rootEval.getInitialSubtreeEvaluationCosts(graphSize);
-		rootEval.getEstimatedCardinality(graphSize);
-		rootEval.calculateEstimatedSelectivity(graphSize);
+		rootEval.getInitialSubtreeEvaluationCosts();
+		rootEval.getEstimatedCardinality();
+		rootEval.calculateEstimatedSelectivity();
 
 		Greql2Vertex vertex = syntaxgraph.getFirstGreql2Vertex();
 		logger.fine("=========================================================");
@@ -277,12 +277,12 @@ public class DefaultOptimizer extends Optimizer {
 			logger.fine("Current Node: " + vertex);
 			veval = marker.getMark(vertex);
 			if (veval != null) {
-				long costs = veval.getInitialSubtreeEvaluationCosts(graphSize);
-				long card = veval.getEstimatedCardinality(graphSize);
+				long costs = veval.getInitialSubtreeEvaluationCosts();
+				long card = veval.getEstimatedCardinality();
 				Set<Variable> neededVars = veval.getNeededVariables();
 				Set<Variable> definedVars = veval.getDefinedVariables();
-				long varCombs = veval.getVariableCombinations(graphSize);
-				double sel = veval.getEstimatedSelectivity(graphSize);
+				long varCombs = veval.getVariableCombinations();
+				double sel = veval.getEstimatedSelectivity();
 				logger.fine("Costs for subtree evaluation: " + costs + "\n"
 						+ "Estimated cardinality: " + card + "\n"
 						+ "Estimated selectivity: " + sel + "\n"
@@ -297,7 +297,7 @@ public class DefaultOptimizer extends Optimizer {
 				.getFirstGreql2Expression());
 		greql2ExpEval.resetSubtreeToInitialState();
 		long estimatedInterpretationSteps = greql2ExpEval
-				.getCurrentSubtreeEvaluationCosts(graphSize);
+				.getCurrentSubtreeEvaluationCosts();
 		logger.fine("Costs for the whole query: "
 				+ estimatedInterpretationSteps);
 	}

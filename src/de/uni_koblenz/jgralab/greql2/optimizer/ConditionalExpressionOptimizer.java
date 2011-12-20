@@ -96,7 +96,7 @@ public class ConditionalExpressionOptimizer extends Optimizer {
 				.getFirstGreql2Expression());
 		while (top != null) {
 			LinkedList<VertexEdgeClassTuple> relinkables = rememberConnections(top);
-			Formula formula = Formula.createFormulaFromExpression(top, eval);
+			Formula formula = Formula.createFormulaFromExpression(top);
 			// System.out.println("Formula = " + formula);
 			Formula optimizedFormula = formula.simplify().optimize();
 			if (!formula.equals(optimizedFormula)) {

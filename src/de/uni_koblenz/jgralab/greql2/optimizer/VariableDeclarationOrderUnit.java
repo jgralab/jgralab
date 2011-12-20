@@ -87,13 +87,13 @@ public class VariableDeclarationOrderUnit implements
 	 */
 	VariableDeclarationOrderUnit(Variable var, Declaration declaringDecl,
 			GraphMarker<VertexEvaluator> marker, GraphSize graphSize) {
-		this.variable = var;
-		this.declaringDeclaration = declaringDecl;
-		this.vertexEvalMarker = marker;
+		variable = var;
+		declaringDeclaration = declaringDecl;
+		vertexEvalMarker = marker;
 		this.graphSize = graphSize;
-		this.simpleDeclarationOfVariable = (SimpleDeclaration) this.variable
+		simpleDeclarationOfVariable = variable
 				.getFirstIsDeclaredVarOfIncidence(EdgeDirection.OUT).getOmega();
-		this.typeExpressionOfVariable = (Expression) this.simpleDeclarationOfVariable
+		typeExpressionOfVariable = simpleDeclarationOfVariable
 				.getFirstIsTypeExprOfIncidence(EdgeDirection.IN).getAlpha();
 
 		// Collect all vertices that depend on the variable and thus need to be
@@ -186,7 +186,7 @@ public class VariableDeclarationOrderUnit implements
 		for (Vertex vertex : dependentVertices) {
 			VertexEvaluator eval = vertexEvalMarker.getMark(vertex);
 			assert eval != null;
-			costs += eval.getOwnEvaluationCosts(graphSize);
+			costs += eval.getOwnEvaluationCosts();
 		}
 		return costs;
 	}
@@ -289,7 +289,7 @@ public class VariableDeclarationOrderUnit implements
 	private long calculateTypeExpressionCardinality() {
 		VertexEvaluator veval = vertexEvalMarker
 				.getMark(typeExpressionOfVariable);
-		return veval.getEstimatedCardinality(graphSize);
+		return veval.getEstimatedCardinality();
 	}
 
 	/**
