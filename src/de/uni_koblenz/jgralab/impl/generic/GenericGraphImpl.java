@@ -27,8 +27,8 @@ public class GenericGraphImpl extends GraphImpl {
 	
 	private GraphClass type;
 	private Map<String, Object> attributes;
-	private Map<VertexClass, Set<IncidenceClass>> vcInIcCache;
-	private Map<VertexClass, Set<IncidenceClass>> vcOutIcCache;
+	private Map<VertexClass, Set<EdgeClass>> vcInEdgeCache;
+	private Map<VertexClass, Set<EdgeClass>> vcOutEdgeCache;
 
 	protected GenericGraphImpl(String id, GraphClass type) {
 		super(id, type, 100, 100);
@@ -44,8 +44,8 @@ public class GenericGraphImpl extends GraphImpl {
 			}
 			initializeAttributesWithDefaultValues();
 		}
-		vcOutIcCache = new HashMap<VertexClass, Set<IncidenceClass>>();
-		vcInIcCache = new HashMap<VertexClass, Set<IncidenceClass>>();
+		vcOutEdgeCache = new HashMap<VertexClass, Set<EdgeClass>>();
+		vcInEdgeCache = new HashMap<VertexClass, Set<EdgeClass>>();
 	}
 	
 	/**
@@ -195,25 +195,29 @@ public class GenericGraphImpl extends GraphImpl {
 	
 
 	/**
-	 * Returns the cache containing the allowed outgoing {@link IncidenceClass}es
-	 * of the {@link VertexClass}es in this Graph's Schema.
+	 * Checks the allowed outgoing {@link EdgeClass}es of a
+	 * {@link VertexClass}. If this method is called for a <code>VertexClass</code>
+	 * for the first time, the allowed outgoing <code>EdgeClass</code>es will be
+	 * cached. 
 	 */
 	public boolean cachedIsValidAlpha(VertexClass vc, EdgeClass ec) {
-		if(!vcOutIcCache.containsKey(vc)) {
-			vcOutIcCache.put(vc, vc.getAllOutIncidenceClasses());
+		if(!vcOutEdgeCache.containsKey(vc)) {
+			vcOutEdgeCache.put(vc, vc.getValidFromEdgeClasses());
 		}
-		return vcOutIcCache.get(vc).contains(ec.getFrom());
+		return vcOutEdgeCache.get(vc).contains(ec);
 	}
 	
 	/**
-	 * Returns the cache containing the allowed incoming {@link IncidenceClass}es
-	 * of the {@link VertexClass}es in this Graph's Schema.
+	 * Checks the allowed incoming {@link EdgeClass}es of a
+	 * {@link VertexClass}. If this method is called for a <code>VertexClass</code>
+	 * for the first time, the allowed incoming <code>EdgeClass</code>es will be
+	 * cached. 
 	 */
 	public boolean cachedIsValidOmega(VertexClass vc, EdgeClass ec) {
-		if(!vcInIcCache.containsKey(vc)) {
-			vcInIcCache.put(vc, vc.getAllInIncidenceClasses());
+		if(!vcInEdgeCache.containsKey(vc)) {
+			vcInEdgeCache.put(vc, vc.getValidToEdgeClasses());
 		}
-		return vcInIcCache.get(vc).contains(ec.getTo());
+		return vcInEdgeCache.get(vc).contains(ec);
 	}
 	
 	@Override
