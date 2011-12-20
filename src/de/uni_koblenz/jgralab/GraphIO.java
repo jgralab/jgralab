@@ -2564,9 +2564,16 @@ public class GraphIO {
 		}
 		GraphBaseImpl graph = null;
 		try {
-			graph = (GraphBaseImpl) schema.getGraphCreateMethod(
-					implementationType).invoke(null,
-					new Object[] { graphId, maxV, maxE });
+			if(implementationType != ImplementationType.GENERIC) {
+				graph = (GraphBaseImpl) schema.getGraphCreateMethod(
+						implementationType).invoke(null,
+						new Object[] { graphId, maxV, maxE });
+			}
+			else {
+				graph = (GraphBaseImpl) schema.getGraphCreateMethod(
+						implementationType).invoke(null,
+						new Object[] { schema.getGraphClass(), graphId, maxV, maxE });
+			}
 		} catch (Exception e) {
 			throw new GraphIOException("can't create graph for class '"
 					+ gcName + "'", e);
@@ -2646,7 +2653,12 @@ public class GraphIO {
 				createMethods.put(vcName, createMethod);
 			}
 			vertexDescTempObject[0] = vId;
-			vertex = (Vertex) createMethod.invoke(graph, vertexDescTempObject);
+			if(implementationType != ImplementationType.GENERIC) {
+				vertex = (Vertex) createMethod.invoke(graph, vertexDescTempObject);
+			}
+			else {
+				vertex = (Vertex) createMethod.invoke(graph, new Object[] {schema.getGraphClass().getVertexClass(vcName), vId});
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new GraphIOException("can't create vertex " + vId, e);
@@ -2672,7 +2684,12 @@ public class GraphIO {
 			edgeDescTempObject[0] = eId;
 			edgeDescTempObject[1] = edgeOut[eId];
 			edgeDescTempObject[2] = edgeIn[eId];
-			edge = (Edge) createMethod.invoke(graph, edgeDescTempObject);
+			if(implementationType != ImplementationType.GENERIC) {
+				edge = (Edge) createMethod.invoke(graph, edgeDescTempObject);
+			}
+			else {
+				edge = (Edge) createMethod.invoke(graph, new Object[] {schema.getGraphClass().getEdgeClass(ecName), eId, edgeOut[eId], edgeIn[eId]});
+			}
 		} catch (Exception e) {
 			throw new GraphIOException("can't create edge " + eId + " from "
 					+ edgeOut[eId] + " to " + edgeIn[eId], e);
