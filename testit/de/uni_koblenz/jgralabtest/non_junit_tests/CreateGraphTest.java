@@ -24,6 +24,7 @@ public class CreateGraphTest {
 		Level l = JGraLab.setLogLevel(Level.FINE);
 		System.out.println("Compile schema classes in memory...");
 		System.out.flush();
+		schema.finish();
 		schema.compile(CodeGeneratorConfiguration.MINIMAL);
 
 		System.err.flush();

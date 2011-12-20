@@ -113,7 +113,7 @@ public final class RecordDomainImpl extends CompositeDomainImpl implements
 		}
 		RecordComponent c = new RecordComponent(name, domain);
 		components.put(name, c);
-		((SchemaImpl)parentPackage.getSchema()).getDomainsDag().createEdge(this, domain);
+		((SchemaImpl)parentPackage.getSchema()).getDomainsDag().createEdge(domain,this);
 	}
 
 	@Override

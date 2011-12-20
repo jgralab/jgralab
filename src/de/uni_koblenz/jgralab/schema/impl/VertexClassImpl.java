@@ -415,6 +415,9 @@ public final class VertexClassImpl extends GraphElementClassImpl implements
 		this.validFromFarIncidenceClasses = Collections.unmodifiableSet(this.getValidFromFarIncidenceClasses());
 		this.validToFarIncidenceClasses = Collections.unmodifiableSet(this.getValidToFarIncidenceClasses());
 		
+		this.inIncidenceClasses = Collections.unmodifiableSet(this.inIncidenceClasses);
+		this.outIncidenceClasses = Collections.unmodifiableSet(this.outIncidenceClasses);
+		
 		for(IncidenceClass ic : this.inIncidenceClasses){
 			((IncidenceClassImpl)ic).finish();
 		}
@@ -430,6 +433,8 @@ public final class VertexClassImpl extends GraphElementClassImpl implements
 		this.allOutIncidenceClasses = null;
 		this.validFromFarIncidenceClasses = null;
 		this.validToFarIncidenceClasses = null;
+		this.inIncidenceClasses = new HashSet<IncidenceClass>(this.inIncidenceClasses);
+		this.outIncidenceClasses = new HashSet<IncidenceClass>(this.outIncidenceClasses);
 		
 		for(IncidenceClass ic : this.inIncidenceClasses){
 			((IncidenceClassImpl)ic).reopen();
