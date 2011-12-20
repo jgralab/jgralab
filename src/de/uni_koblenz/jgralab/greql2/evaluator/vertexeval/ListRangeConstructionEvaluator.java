@@ -38,9 +38,9 @@ package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 import org.pcollections.PVector;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
+import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
-import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
 import de.uni_koblenz.jgralab.greql2.schema.Expression;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
@@ -85,9 +85,9 @@ public class ListRangeConstructionEvaluator extends VertexEvaluator {
 	private VertexEvaluator lastElementEvaluator = null;
 
 	private void getEvals() {
-		Expression firstElementExpression = (Expression) vertex
+		Expression firstElementExpression = vertex
 				.getFirstIsFirstValueOfIncidence(EdgeDirection.IN).getAlpha();
-		Expression lastElementExpression = (Expression) vertex
+		Expression lastElementExpression = vertex
 				.getFirstIsLastValueOfIncidence(EdgeDirection.IN).getAlpha();
 		firstElementEvaluator = vertexEvalMarker
 				.getMark(firstElementExpression);
@@ -95,13 +95,13 @@ public class ListRangeConstructionEvaluator extends VertexEvaluator {
 	}
 
 	@Override
-	public PVector<Integer> evaluate() {
+	public PVector<Integer> evaluate(Graph graph) {
 		PVector<Integer> resultList = JGraLab.vector();
 		if (firstElementEvaluator == null) {
 			getEvals();
 		}
-		Object firstElement = firstElementEvaluator.getResult();
-		Object lastElement = lastElementEvaluator.getResult();
+		Object firstElement = firstElementEvaluator.getResult(graph);
+		Object lastElement = lastElementEvaluator.getResult(graph);
 		if (firstElement instanceof Integer && lastElement instanceof Integer) {
 			if ((Integer) firstElement < (Integer) lastElement) {
 				for (int i = (Integer) firstElement; i < (Integer) lastElement + 1; i++) {
@@ -120,15 +120,15 @@ public class ListRangeConstructionEvaluator extends VertexEvaluator {
 	}
 
 	@Override
-	public VertexCosts calculateSubtreeEvaluationCosts(GraphSize graphSize) {
-		return this.greqlEvaluator.getCostModel()
-				.calculateCostsListRangeConstruction(this, graphSize);
+	public VertexCosts calculateSubtreeEvaluationCosts() {
+		return greqlEvaluator.getCostModel()
+				.calculateCostsListRangeConstruction(this);
 	}
 
 	@Override
-	public long calculateEstimatedCardinality(GraphSize graphSize) {
+	public long calculateEstimatedCardinality() {
 		return greqlEvaluator.getCostModel()
-				.calculateCardinalityListRangeConstruction(this, graphSize);
+				.calculateCardinalityListRangeConstruction(this);
 	}
 
 }

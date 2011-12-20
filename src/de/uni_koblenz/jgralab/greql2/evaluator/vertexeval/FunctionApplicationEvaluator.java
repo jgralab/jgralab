@@ -38,8 +38,8 @@ package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 import java.util.ArrayList;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
+import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
-import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
 import de.uni_koblenz.jgralab.greql2.exception.GreqlException;
 import de.uni_koblenz.jgralab.greql2.funlib.FunLib;
@@ -56,9 +56,9 @@ import de.uni_koblenz.jgralab.greql2.types.TypeCollection;
 
 /**
  * Evaluates a FunctionApplication vertex in the GReQL-2 Syntaxgraph
- *
+ * 
  * @author ist@uni-koblenz.de
- *
+ * 
  */
 public class FunctionApplicationEvaluator extends VertexEvaluator {
 
@@ -94,9 +94,8 @@ public class FunctionApplicationEvaluator extends VertexEvaluator {
 	 */
 	public String getFunctionName() {
 		if (functionName == null) {
-			FunctionId id = (FunctionId) vertex
-					.getFirstIsFunctionIdOfIncidence(EdgeDirection.IN)
-					.getAlpha();
+			FunctionId id = vertex.getFirstIsFunctionIdOfIncidence(
+					EdgeDirection.IN).getAlpha();
 			functionName = id.get_name();
 		}
 		return functionName;
@@ -119,7 +118,7 @@ public class FunctionApplicationEvaluator extends VertexEvaluator {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @seede.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VertexEvaluator#
 	 * getLoggingName()
 	 */
@@ -149,7 +148,7 @@ public class FunctionApplicationEvaluator extends VertexEvaluator {
 		IsArgumentOf inc = vertex
 				.getFirstIsArgumentOfIncidence(EdgeDirection.IN);
 		while (inc != null) {
-			Expression currentParameterExpr = (Expression) inc.getAlpha();
+			Expression currentParameterExpr = inc.getAlpha();
 			// maybe the vertex has no evaluator
 			VertexEvaluator paramEval = vertexEvalMarker
 					.getMark(currentParameterExpr);
@@ -173,8 +172,10 @@ public class FunctionApplicationEvaluator extends VertexEvaluator {
 				typeId = (TypeId) typeEdge.getAlpha();
 				TypeIdEvaluator typeEval = (TypeIdEvaluator) vertexEvalMarker
 						.getMark(typeId);
-				typeCollection.addTypes((TypeCollection) typeEval.getResult());
-				typeEdge = typeEdge.getNextIsTypeExprOfIncidence(EdgeDirection.IN);
+				typeCollection.addTypes((TypeCollection) typeEval
+						.getResult(graph));
+				typeEdge = typeEdge
+						.getNextIsTypeExprOfIncidence(EdgeDirection.IN);
 			}
 		}
 		return typeCollection;
@@ -184,7 +185,7 @@ public class FunctionApplicationEvaluator extends VertexEvaluator {
 	 * evaluates the function, calls the right function of the function libary
 	 */
 	@Override
-	public Object evaluate() {
+	public Object evaluate(Graph graph) {
 		FunctionInfo fi = getFunctionInfo();
 		if (!listCreated) {
 			typeArgument = createTypeArgument();
@@ -208,7 +209,7 @@ public class FunctionApplicationEvaluator extends VertexEvaluator {
 		}
 
 		for (int i = 0; i < paramEvalCount; i++) {
-			parameters[p++] = parameterEvaluators.get(i).getResult();
+			parameters[p++] = parameterEvaluators.get(i).getResult(graph);
 		}
 
 		if (typeArgument != null) {
@@ -219,21 +220,21 @@ public class FunctionApplicationEvaluator extends VertexEvaluator {
 	}
 
 	@Override
-	public VertexCosts calculateSubtreeEvaluationCosts(GraphSize graphSize) {
-		return this.greqlEvaluator.getCostModel()
-				.calculateCostsFunctionApplication(this, graphSize);
+	public VertexCosts calculateSubtreeEvaluationCosts() {
+		return greqlEvaluator.getCostModel().calculateCostsFunctionApplication(
+				this);
 	}
 
 	@Override
-	public double calculateEstimatedSelectivity(GraphSize graphSize) {
-		return this.greqlEvaluator.getCostModel()
-				.calculateSelectivityFunctionApplication(this, graphSize);
-	}
-
-	@Override
-	public long calculateEstimatedCardinality(GraphSize graphSize) {
+	public double calculateEstimatedSelectivity() {
 		return greqlEvaluator.getCostModel()
-				.calculateCardinalityFunctionApplication(this, graphSize);
+				.calculateSelectivityFunctionApplication(this);
+	}
+
+	@Override
+	public long calculateEstimatedCardinality() {
+		return greqlEvaluator.getCostModel()
+				.calculateCardinalityFunctionApplication(this);
 	}
 
 }

@@ -195,7 +195,7 @@ public class SimpleTransition extends Transition {
 	public SimpleTransition(State start, State end, AllowedEdgeDirection dir) {
 		super(start, end);
 		validDirection = dir;
-		this.typeCollection = new TypeCollection();
+		typeCollection = new TypeCollection();
 	}
 
 	/**
@@ -328,7 +328,7 @@ public class SimpleTransition extends Transition {
 			if (thisEdgeEvaluator != null) {
 				thisEdgeEvaluator.setValue(e);
 			}
-			Object res = predicateEvaluator.getResult();
+			Object res = predicateEvaluator.getResult(v.getGraph());
 			if (res instanceof Boolean) {
 				return (Boolean) res;
 			}

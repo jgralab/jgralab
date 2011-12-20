@@ -42,9 +42,9 @@ import org.pcollections.PCollection;
 import org.pcollections.PVector;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
+import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
-import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
 import de.uni_koblenz.jgralab.greql2.schema.IsTableHeaderOf;
 import de.uni_koblenz.jgralab.greql2.schema.ListComprehension;
@@ -90,7 +90,7 @@ public class ListComprehensionEvaluator extends ComprehensionEvaluator {
 	private List<VertexEvaluator> headerEvaluators = null;
 
 	@Override
-	protected PCollection<Object> getResultDatastructure() {
+	protected PCollection<Object> getResultDatastructure(Graph graph) {
 		if (createHeader == null) {
 			if (vertex.getFirstIsTableHeaderOfIncidence(EdgeDirection.IN) != null) {
 				headerEvaluators = new ArrayList<VertexEvaluator>();
@@ -109,7 +109,7 @@ public class ListComprehensionEvaluator extends ComprehensionEvaluator {
 			PVector<String> headerTuple = JGraLab.<String> vector();
 			for (VertexEvaluator headerEvaluator : headerEvaluators) {
 				headerTuple = headerTuple.plus((String) headerEvaluator
-						.getResult());
+						.getResult(graph));
 			}
 			Table<Object> table = Table.empty();
 			return table.withTitles(headerTuple);
@@ -118,15 +118,15 @@ public class ListComprehensionEvaluator extends ComprehensionEvaluator {
 	}
 
 	@Override
-	public VertexCosts calculateSubtreeEvaluationCosts(GraphSize graphSize) {
+	public VertexCosts calculateSubtreeEvaluationCosts() {
 		return greqlEvaluator.getCostModel().calculateCostsListComprehension(
-				this, graphSize);
+				this);
 	}
 
 	@Override
-	public long calculateEstimatedCardinality(GraphSize graphSize) {
+	public long calculateEstimatedCardinality() {
 		return greqlEvaluator.getCostModel()
-				.calculateCardinalityListComprehension(this, graphSize);
+				.calculateCardinalityListComprehension(this);
 	}
 
 }

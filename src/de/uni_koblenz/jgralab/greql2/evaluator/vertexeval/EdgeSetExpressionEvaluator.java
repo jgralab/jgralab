@@ -41,7 +41,6 @@ import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
-import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
 import de.uni_koblenz.jgralab.greql2.schema.EdgeSetExpression;
 import de.uni_koblenz.jgralab.greql2.types.TypeCollection;
@@ -69,12 +68,11 @@ public class EdgeSetExpressionEvaluator extends ElementSetExpressionEvaluator {
 	}
 
 	@Override
-	public PSet<Edge> evaluate() {
-		Graph datagraph = greqlEvaluator.getDatagraph();
+	public PSet<Edge> evaluate(Graph graph) {
 		// create the resulting set
 		PSet<Edge> resultSet = JGraLab.set();
-		Edge currentEdge = datagraph.getFirstEdge();
-		TypeCollection typeCollection = getTypeCollection();
+		Edge currentEdge = graph.getFirstEdge();
+		TypeCollection typeCollection = getTypeCollection(graph);
 		while (currentEdge != null) {
 			AttributedElementClass edgeClass = currentEdge
 					.getAttributedElementClass();
@@ -87,15 +85,15 @@ public class EdgeSetExpressionEvaluator extends ElementSetExpressionEvaluator {
 	}
 
 	@Override
-	public VertexCosts calculateSubtreeEvaluationCosts(GraphSize graphSize) {
-		return this.greqlEvaluator.getCostModel()
-				.calculateCostsEdgeSetExpression(this, graphSize);
+	public VertexCosts calculateSubtreeEvaluationCosts() {
+		return greqlEvaluator.getCostModel().calculateCostsEdgeSetExpression(
+				this);
 	}
 
 	@Override
-	public long calculateEstimatedCardinality(GraphSize graphSize) {
+	public long calculateEstimatedCardinality() {
 		return greqlEvaluator.getCostModel()
-				.calculateCardinalityEdgeSetExpression(this, graphSize);
+				.calculateCardinalityEdgeSetExpression(this);
 	}
 
 }

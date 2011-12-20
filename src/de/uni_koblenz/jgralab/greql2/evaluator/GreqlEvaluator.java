@@ -37,7 +37,6 @@ package de.uni_koblenz.jgralab.greql2.evaluator;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.lang.ref.SoftReference;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -47,7 +46,6 @@ import java.util.logging.Logger;
 import org.pcollections.PCollection;
 import org.pcollections.PMap;
 import org.pcollections.POrderedSet;
-import org.pcollections.PSet;
 import org.pcollections.PVector;
 
 import de.uni_koblenz.jgralab.Graph;
@@ -59,7 +57,6 @@ import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.codegenerator.CodeGeneratorConfiguration;
 import de.uni_koblenz.jgralab.graphmarker.GraphMarker;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.CostModel;
-import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VertexEvaluator;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Graph;
 import de.uni_koblenz.jgralab.greql2.types.Undefined;
@@ -115,22 +112,10 @@ public class GreqlEvaluator {
 	}
 
 	/**
-	 * toggles which expressions are added to the index. Only vertex- and
-	 * edgeset expressions that need more than <code>indextimeBarrier</code> ms
-	 * to calculate are added
-	 */
-	private static final long INDEX_TIME_LIMIT = 10;
-
-	/**
 	 * Print the current value of each variable in a declaration layer during
 	 * evaluation.
 	 */
 	public static boolean DEBUG_DECLARATION_ITERATIONS = false;
-
-	/**
-	 * toggles wether to use indexing for vertex sets or not
-	 */
-	public static final boolean VERTEX_INDEXING = true;
 
 	/**
 	 * toggles the maximal size of the vertex index for each graph with respect
@@ -140,19 +125,6 @@ public class GreqlEvaluator {
 	 * the memory.
 	 */
 	public static final int VERTEX_INDEX_SIZE = 50;
-
-	/**
-	 * stores the graph indizes (maps graphId values to GraphIndizes)
-	 */
-	protected static Map<String, SoftReference<GraphIndex>> graphIndizes;
-
-	public static synchronized void resetGraphIndizes() {
-		if (graphIndizes == null) {
-			graphIndizes = new HashMap<String, SoftReference<GraphIndex>>();
-		} else {
-			graphIndizes.clear();
-		}
-	}
 
 	/**
 	 * The GraphMarker that stores all vertex evaluators
@@ -172,76 +144,8 @@ public class GreqlEvaluator {
 		return vertexEvalGraphMarker;
 	}
 
-	/**
-	 * Creates the map of optimized syntaxgraphs as soon as the GreqlEvaluator
-	 * gets loaded
-	 */
-	static {
-		resetGraphIndizes();
-	}
-
 	private static Logger logger = Logger.getLogger(GreqlEvaluator.class
 			.getName());
-
-	/**
-	 * Gets a vertex index for a part of a query
-	 * 
-	 * @param graph
-	 *            the graph to get an index for
-	 * @param queryPart
-	 *            the query part to search for in the index structure
-	 * @return a JValueSet with the result of that queryPart or null if the
-	 *         query part is not yet indexed
-	 */
-	public static synchronized PSet<Vertex> getVertexIndex(Graph graph,
-			String queryPart) {
-		SoftReference<GraphIndex> ref = graphIndizes.get(graph.getId());
-		if (ref == null) {
-			return null;
-		}
-		GraphIndex index = ref.get();
-		if (index == null) {
-			graphIndizes.remove(ref);
-			return null;
-		}
-
-		if (index.isValid(graph)) {
-			return index.getVertexSet(queryPart);
-		}
-		return null;
-	}
-
-	/**
-	 * Adds the given vertex set as the result of the given queryPart to the
-	 * index of the given graph
-	 */
-	public static synchronized void addVertexIndex(Graph graph,
-			String queryPart, PSet<Vertex> vertexSet) {
-		SoftReference<GraphIndex> ref = graphIndizes.get(graph.getId());
-		GraphIndex index = null;
-
-		if (ref != null) {
-			index = ref.get();
-			if (index == null) {
-				// remove the old reference
-				graphIndizes.remove(ref);
-			}
-		}
-
-		if (index == null) {
-			index = new GraphIndex(graph);
-			graphIndizes.put(graph.getId(),
-					new SoftReference<GraphIndex>(index));
-		}
-		index.addVertexSet(queryPart, vertexSet);
-	}
-
-	/**
-	 * @return th time barrier after which unused indices were removed
-	 */
-	public long getIndexTimeLimit() {
-		return INDEX_TIME_LIMIT;
-	}
 
 	/**
 	 * This attribute holds the datagraph
@@ -261,7 +165,7 @@ public class GreqlEvaluator {
 	/**
 	 * The progress function this evaluator uses, may be null
 	 */
-	private ProgressFunction progressFunction = null;
+	// private ProgressFunction progressFunction = null;
 
 	/**
 	 * holds the number of interpretetation steps that have been passed since
@@ -297,16 +201,16 @@ public class GreqlEvaluator {
 	 * given value should be the ownEvaluationCosts of that VertexEvaluator.
 	 * Calls the progress()-Method of the progress function this evaluator uses
 	 */
-	public final void progress(long value) {
-		progressStepsPassed += value;
-		if (progressFunction != null) {
-			while (progressStepsPassed > progressFunction.getUpdateInterval()) {
-				progressFunction.progress(1);
-				progressStepsPassed -= progressFunction.getUpdateInterval();
-			}
-		}
-		passedInterpretationSteps += value;
-	}
+	// public final void progress(long value) {
+	// progressStepsPassed += value;
+	// if (progressFunction != null) {
+	// while (progressStepsPassed > progressFunction.getUpdateInterval()) {
+	// progressFunction.progress(1);
+	// progressStepsPassed -= progressFunction.getUpdateInterval();
+	// }
+	// }
+	// passedInterpretationSteps += value;
+	// }
 
 	/**
 	 * returns the changes variableMap
@@ -373,7 +277,7 @@ public class GreqlEvaluator {
 		this.datagraph = datagraph;
 		knownTypes = new HashMap<String, AttributedElementClass>();
 		variableMap = variables;
-		this.progressFunction = progressFunction;
+		// this.progressFunction = progressFunction;
 	}
 
 	// public void addKnownType(AttributedElementClass knownType) {
@@ -437,20 +341,20 @@ public class GreqlEvaluator {
 		VertexEvaluator greql2ExpEval = vertexEvalGraphMarker.getMark(query
 				.getRootExpression());
 
-		if (progressFunction != null) {
-			estimatedInterpretationSteps = greql2ExpEval
-					.getInitialSubtreeEvaluationCosts(new GraphSize(datagraph));
+		// if (progressFunction != null) {
+		// estimatedInterpretationSteps = greql2ExpEval
+		// .getInitialSubtreeEvaluationCosts(new GraphSize(datagraph));
+		//
+		// progressFunction.init(estimatedInterpretationSteps);
+		// }
 
-			progressFunction.init(estimatedInterpretationSteps);
-		}
-
-		result = greql2ExpEval.getResult();
+		result = greql2ExpEval.getResult(datagraph);
 
 		// last, remove all added tempAttributes, currently, this are only
 		// subgraphAttributes
-		if (progressFunction != null) {
-			progressFunction.finished();
-		}
+		// if (progressFunction != null) {
+		// progressFunction.finished();
+		// }
 
 		evaluationTime = System.currentTimeMillis() - startTime;
 		return result;
@@ -464,10 +368,9 @@ public class GreqlEvaluator {
 	}
 
 	public void printEvaluationTimes() {
-		logger.info("Evaluation took "
-				+ evaluationTime
-				+ "ms."
-				+ (progressFunction != null ? " Estimated evaluation costs: "
-						+ estimatedInterpretationSteps : ""));
+		logger.info("Evaluation took " + evaluationTime + "ms."
+		// + (progressFunction != null ? " Estimated evaluation costs: "
+		// + estimatedInterpretationSteps : ""));
+		);
 	}
 }

@@ -39,8 +39,8 @@ import java.util.ArrayList;
 import java.util.Map;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
+import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
-import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
 import de.uni_koblenz.jgralab.greql2.exception.UndefinedVariableException;
 import de.uni_koblenz.jgralab.greql2.exception.UnknownTypeException;
@@ -130,7 +130,7 @@ public class Greql2ExpressionEvaluator extends VertexEvaluator {
 	 * sets the values of all bound variables and evaluates the queryexpression
 	 */
 	@Override
-	public Object evaluate() {
+	public Object evaluate(Graph graph) {
 		if (boundVariablesChanged) {
 			initializeBoundVariables();
 			boundVariablesChanged = false;
@@ -171,23 +171,23 @@ public class Greql2ExpressionEvaluator extends VertexEvaluator {
 		Expression boundExpression = vertex.getFirstIsQueryExprOfIncidence(
 				EdgeDirection.IN).getAlpha();
 		VertexEvaluator eval = vertexEvalMarker.getMark(boundExpression);
-		Object result = eval.getResult();
+		Object result = eval.getResult(graph);
 		// if the query contains a "store as " - clause, there is a
 		// "isIdOfInc"-Incidence connected with the Greql2Expression
 		IsIdOf storeInc = vertex.getFirstIsIdOfIncidence(EdgeDirection.IN);
 		if (storeInc != null) {
 			VertexEvaluator storeEval = vertexEvalMarker.getMark(storeInc
 					.getAlpha());
-			String varName = storeEval.getResult().toString();
+			String varName = storeEval.getResult(graph).toString();
 			boundVariables.put(varName, result);
 		}
 		return result;
 	}
 
 	@Override
-	public VertexCosts calculateSubtreeEvaluationCosts(GraphSize graphSize) {
+	public VertexCosts calculateSubtreeEvaluationCosts() {
 		return greqlEvaluator.getCostModel().calculateCostsGreql2Expression(
-				this, graphSize);
+				this);
 	}
 
 }

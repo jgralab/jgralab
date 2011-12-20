@@ -84,22 +84,14 @@ public class GraphCodeGenerator extends AttributedElementCodeGenerator {
 
 			rootBlock.setVariable("baseClassName", "GraphImpl");
 
-			// for Vertex.reachableVertices()
-			addImports("org.pcollections.POrderedSet");
-			addImports("de.uni_koblenz.jgralab.Vertex");
-			addImports("de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator");
-
 			code.add(new CodeSnippet(
-					"\n\tprotected GreqlEvaluator greqlEvaluator;\n",
 					"@Override",
-					"public synchronized <T extends Vertex> POrderedSet<T> reachableVertices(Vertex startVertex, String pathDescription, Class<T> vertexType) {",
-					"\tif (greqlEvaluator == null) {",
-					"\t\tgreqlEvaluator = new GreqlEvaluator((String) null, this, null);",
-					"\t}",
-					"\tgreqlEvaluator.setVariable(\"v\", startVertex);",
-					"\tgreqlEvaluator.setQuery(\"using v: v \" + pathDescription);",
-					"\tgreqlEvaluator.startEvaluation();",
-					"\treturn greqlEvaluator.getResultSet();", "}"));
+					"public synchronized <T extends de.uni_koblenz.jgralab.Vertex> org.pcollections.POrderedSet<T> reachableVertices(de.uni_koblenz.jgralab.Vertex startVertex, String pathDescription, Class<T> vertexType) {",
+					"\tde.uni_koblenz.jgralab.greql2.evaluator.Query q = new de.uni_koblenz.jgralab.greql2.evaluator.Query(\"using v: v \" + pathDescription);",
+					"\tjava.util.HashMap<String, Object> variables = new java.util.HashMap<String, Object>();",
+					"\tvariables.put(\"v\", startVertex);",
+					"\tde.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator eval = new de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator(q, this, variables, null);",
+					"\treturn eval.getResultSet();", "}"));
 		}
 		code.add(createGraphElementClassMethods());
 		code.add(createEdgeIteratorMethods());

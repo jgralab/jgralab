@@ -46,9 +46,9 @@ import java.util.TreeSet;
 import org.pcollections.PVector;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
+import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.VariableDeclarationLayer;
-import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
 import de.uni_koblenz.jgralab.greql2.schema.Declaration;
 import de.uni_koblenz.jgralab.greql2.schema.Expression;
@@ -83,24 +83,21 @@ public class TableComprehensionEvaluator extends VertexEvaluator {
 
 	private boolean initialized = false;
 
-	private void initialize() {
-		Declaration d = (Declaration) vertex.getFirstIsCompDeclOfIncidence(
-				EdgeDirection.IN).getAlpha();
+	private void initialize(Graph graph) {
+		Declaration d = vertex.getFirstIsCompDeclOfIncidence(EdgeDirection.IN)
+				.getAlpha();
 		DeclarationEvaluator declEval = (DeclarationEvaluator) vertexEvalMarker
 				.getMark(d);
-		declarationLayer = (VariableDeclarationLayer) declEval.getResult();
+		declarationLayer = (VariableDeclarationLayer) declEval.getResult(graph);
 
-		Expression columnHeader = (Expression) vertex
-				.getFirstIsColumnHeaderExprOfIncidence(EdgeDirection.IN)
-				.getAlpha();
+		Expression columnHeader = vertex.getFirstIsColumnHeaderExprOfIncidence(
+				EdgeDirection.IN).getAlpha();
 		columnHeaderEval = vertexEvalMarker.getMark(columnHeader);
-		Expression rowHeader = (Expression) vertex
-				.getFirstIsRowHeaderExprOfIncidence(EdgeDirection.IN)
-				.getAlpha();
+		Expression rowHeader = vertex.getFirstIsRowHeaderExprOfIncidence(
+				EdgeDirection.IN).getAlpha();
 		rowHeaderEval = vertexEvalMarker.getMark(rowHeader);
-		Expression resultDef = (Expression) vertex
-				.getFirstIsCompResultDefOfIncidence(EdgeDirection.IN)
-				.getAlpha();
+		Expression resultDef = vertex.getFirstIsCompResultDefOfIncidence(
+				EdgeDirection.IN).getAlpha();
 		resultDefEval = vertexEvalMarker.getMark(resultDef);
 		initialized = true;
 	}
@@ -128,9 +125,9 @@ public class TableComprehensionEvaluator extends VertexEvaluator {
 	}
 
 	@Override
-	public Object evaluate() {
+	public Object evaluate(Graph graph) {
 		if (!initialized) {
-			initialize();
+			initialize(graph);
 		}
 		TreeMap<Object, HashMap<Object, Object>> tableMap = new TreeMap<Object, HashMap<Object, Object>>();
 		Set<Object> completeColumnHeaderTuple = new HashSet<Object>();
@@ -138,10 +135,10 @@ public class TableComprehensionEvaluator extends VertexEvaluator {
 
 		declarationLayer.reset();
 		while (declarationLayer.iterate()) {
-			Object columnHeaderEntry = columnHeaderEval.getResult();
+			Object columnHeaderEntry = columnHeaderEval.getResult(graph);
 			completeColumnHeaderTuple.add(columnHeaderEntry);
-			Object rowHeaderEntry = rowHeaderEval.getResult();
-			Object localResult = resultDefEval.getResult();
+			Object rowHeaderEntry = rowHeaderEval.getResult(graph);
+			Object localResult = resultDefEval.getResult(graph);
 			HashMap<Object, Object> row = tableMap.get(rowHeaderEntry);
 			if (row == null) {
 				row = new HashMap<Object, Object>();
@@ -164,14 +161,14 @@ public class TableComprehensionEvaluator extends VertexEvaluator {
 		if (tHeader != null) {
 			VertexEvaluator theval = vertexEvalMarker.getMark(tHeader
 					.getAlpha());
-			headerTuple = headerTuple.plus((String) theval.getResult());
+			headerTuple = headerTuple.plus((String) theval.getResult(graph));
 		} else {
 			headerTuple.plus(""); // dummy entry in the upper
 			// left
 			// corner
 		}
-		while (colIter.hasNext()) {	
-			headerTuple = headerTuple.plus( colIter.next().toString());
+		while (colIter.hasNext()) {
+			headerTuple = headerTuple.plus(colIter.next().toString());
 		}
 		resultTable = resultTable.withTitles(headerTuple);
 		Iterator<Entry<Object, HashMap<Object, Object>>> rowIter = tableMap
@@ -194,15 +191,15 @@ public class TableComprehensionEvaluator extends VertexEvaluator {
 	}
 
 	@Override
-	public VertexCosts calculateSubtreeEvaluationCosts(GraphSize graphSize) {
-		return this.greqlEvaluator.getCostModel()
-				.calculateCostsTableComprehension(this, graphSize);
+	public VertexCosts calculateSubtreeEvaluationCosts() {
+		return greqlEvaluator.getCostModel().calculateCostsTableComprehension(
+				this);
 	}
 
 	@Override
-	public long calculateEstimatedCardinality(GraphSize graphSize) {
+	public long calculateEstimatedCardinality() {
 		return greqlEvaluator.getCostModel()
-				.calculateCardinalityTableComprehension(this, graphSize);
+				.calculateCardinalityTableComprehension(this);
 	}
 
 }

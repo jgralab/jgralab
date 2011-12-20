@@ -36,9 +36,9 @@
 package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
+import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
-import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
 import de.uni_koblenz.jgralab.greql2.evaluator.fa.DFA;
 import de.uni_koblenz.jgralab.greql2.funlib.graph.ReachableVertices;
@@ -81,8 +81,8 @@ public class ForwardVertexSetEvaluator extends PathSearchEvaluator {
 		PathDescriptionEvaluator pathDescEval = (PathDescriptionEvaluator) vertexEvalMarker
 				.getMark(p);
 
-		Expression startExpression = (Expression) vertex
-				.getFirstIsStartExprOfIncidence(EdgeDirection.IN).getAlpha();
+		Expression startExpression = vertex.getFirstIsStartExprOfIncidence(
+				EdgeDirection.IN).getAlpha();
 		startEval = vertexEvalMarker.getMark(startExpression);
 		searchAutomaton = new DFA(pathDescEval.getNFA());
 
@@ -90,25 +90,25 @@ public class ForwardVertexSetEvaluator extends PathSearchEvaluator {
 	}
 
 	@Override
-	public Object evaluate() {
+	public Object evaluate(Graph graph) {
 		if (!initialized) {
 			initialize();
 		}
 		Vertex startVertex = null;
-		startVertex = (Vertex) startEval.getResult();
+		startVertex = (Vertex) startEval.getResult(graph);
 		return ReachableVertices.search(startVertex, searchAutomaton);
 	}
 
 	@Override
-	public VertexCosts calculateSubtreeEvaluationCosts(GraphSize graphSize) {
-		return this.greqlEvaluator.getCostModel()
-				.calculateCostsForwardVertexSet(this, graphSize);
+	public VertexCosts calculateSubtreeEvaluationCosts() {
+		return greqlEvaluator.getCostModel().calculateCostsForwardVertexSet(
+				this);
 	}
 
 	@Override
-	public long calculateEstimatedCardinality(GraphSize graphSize) {
+	public long calculateEstimatedCardinality() {
 		return greqlEvaluator.getCostModel()
-				.calculateCardinalityForwardVertexSet(this, graphSize);
+				.calculateCardinalityForwardVertexSet(this);
 	}
 
 }

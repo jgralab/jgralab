@@ -36,6 +36,7 @@
 package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
+import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.fa.NFA;
 import de.uni_koblenz.jgralab.greql2.schema.IsGoalRestrOf;
@@ -50,9 +51,9 @@ import de.uni_koblenz.jgralab.greql2.types.TypeCollection;
  * because the method PathDescriptionEvaluator.getResult(...) automaticly adds
  * start- and goalrestrictions to the pathdescription, if a start or
  * goalrestriction exists.
- *
+ * 
  * @author ist@uni-koblenz.de
- *
+ * 
  */
 public abstract class PathDescriptionEvaluator extends VertexEvaluator {
 
@@ -63,7 +64,7 @@ public abstract class PathDescriptionEvaluator extends VertexEvaluator {
 
 	/**
 	 * Creates a new PathDescriptionEvaluator
-	 *
+	 * 
 	 * @param eval
 	 */
 	public PathDescriptionEvaluator(GreqlEvaluator eval) {
@@ -73,9 +74,9 @@ public abstract class PathDescriptionEvaluator extends VertexEvaluator {
 	/**
 	 * returns the nfa
 	 */
-	public NFA getNFA() {
+	public NFA getNFA(Graph graph) {
 		if (createdNFA == null) {
-			getResult();
+			getResult(graph);
 		}
 		return createdNFA;
 	}
@@ -84,16 +85,16 @@ public abstract class PathDescriptionEvaluator extends VertexEvaluator {
 	 * Returns the created NFA, encapsulated in a JValue The NFA for the path
 	 * description doesn't depend on the subgraph, so the getResult-Methode is
 	 * overwritten
-	 *
+	 * 
 	 * @return the result as jvalue
 	 */
 	@Override
-	public Object getResult() {
+	public Object getResult(Graph graph) {
 		if (createdNFA == null) {
-			result = evaluate();
+			result = evaluate(graph);
 			createdNFA = (NFA) result;
-			addGoalRestrictions();
-			addStartRestrictions();
+			addGoalRestrictions(graph);
+			addStartRestrictions(graph);
 		}
 		return result;
 	}
@@ -103,7 +104,7 @@ public abstract class PathDescriptionEvaluator extends VertexEvaluator {
 	 * belong to this path descritpion and adds the transitions that accepts
 	 * them to the nfa
 	 */
-	protected void addGoalRestrictions() {
+	protected void addGoalRestrictions(Graph graph) {
 		PathDescription pathDesc = (PathDescription) getVertex();
 		VertexEvaluator goalRestEval = null;
 		IsGoalRestrOf inc = pathDesc
@@ -117,15 +118,16 @@ public abstract class PathDescriptionEvaluator extends VertexEvaluator {
 					.getAlpha());
 			if (vertexEval instanceof TypeIdEvaluator) {
 				TypeIdEvaluator typeEval = (TypeIdEvaluator) vertexEval;
-				typeCollection.addTypes((TypeCollection) typeEval.getResult());
+				typeCollection.addTypes((TypeCollection) typeEval
+						.getResult(graph));
 			} else {
 				goalRestEval = vertexEval;
 			}
 			inc = inc.getNextIsGoalRestrOfIncidence(EdgeDirection.IN);
 		}
-		NFA.addGoalTypeRestriction(getNFA(), typeCollection);
+		NFA.addGoalTypeRestriction(getNFA(graph), typeCollection);
 		if (goalRestEval != null) {
-			NFA.addGoalBooleanRestriction(getNFA(), goalRestEval,
+			NFA.addGoalBooleanRestriction(getNFA(graph), goalRestEval,
 					vertexEvalMarker);
 		}
 	}
@@ -133,10 +135,10 @@ public abstract class PathDescriptionEvaluator extends VertexEvaluator {
 	/**
 	 * creates the lists of start and goal type restrictions from all
 	 * TypeId-Vertices that belong to this path descritpion
-	 *
+	 * 
 	 * @return the generated list of types
 	 */
-	protected void addStartRestrictions() {
+	protected void addStartRestrictions(Graph graph) {
 		PathDescription pathDesc = (PathDescription) getVertex();
 		VertexEvaluator startRestEval = null;
 		IsStartRestrOf inc = pathDesc
@@ -150,15 +152,16 @@ public abstract class PathDescriptionEvaluator extends VertexEvaluator {
 					.getAlpha());
 			if (vertexEval instanceof TypeIdEvaluator) {
 				TypeIdEvaluator typeEval = (TypeIdEvaluator) vertexEval;
-				typeCollection.addTypes((TypeCollection) typeEval.getResult());
+				typeCollection.addTypes((TypeCollection) typeEval
+						.getResult(graph));
 			} else {
 				startRestEval = vertexEval;
 			}
 			inc = inc.getNextIsStartRestrOfIncidence(EdgeDirection.IN);
 		}
-		NFA.addStartTypeRestriction(getNFA(), typeCollection);
+		NFA.addStartTypeRestriction(getNFA(graph), typeCollection);
 		if (startRestEval != null) {
-			NFA.addStartBooleanRestriction(getNFA(), startRestEval,
+			NFA.addStartBooleanRestriction(getNFA(graph), startRestEval,
 					vertexEvalMarker);
 		}
 	}

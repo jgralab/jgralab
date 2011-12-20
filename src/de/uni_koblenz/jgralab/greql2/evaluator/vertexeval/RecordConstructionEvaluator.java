@@ -36,9 +36,9 @@
 package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
+import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.Record;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
-import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
 import de.uni_koblenz.jgralab.greql2.schema.IsRecordElementOf;
@@ -79,7 +79,7 @@ public class RecordConstructionEvaluator extends VertexEvaluator {
 	}
 
 	@Override
-	public Record evaluate() {
+	public Record evaluate(Graph graph) {
 		RecordImpl resultRecord = RecordImpl.empty();
 		IsRecordElementOf inc = vertex
 				.getFirstIsRecordElementOfIncidence(EdgeDirection.IN);
@@ -88,22 +88,22 @@ public class RecordConstructionEvaluator extends VertexEvaluator {
 			RecordElementEvaluator vertexEval = (RecordElementEvaluator) vertexEvalMarker
 					.getMark(currentElement);
 			resultRecord = resultRecord.plus(vertexEval.getId(),
-					vertexEval.getResult());
+					vertexEval.getResult(graph));
 			inc = inc.getNextIsRecordElementOfIncidence(EdgeDirection.IN);
 		}
 		return resultRecord;
 	}
 
 	@Override
-	public VertexCosts calculateSubtreeEvaluationCosts(GraphSize graphSize) {
+	public VertexCosts calculateSubtreeEvaluationCosts() {
 		return greqlEvaluator.getCostModel().calculateCostsRecordConstruction(
-				this, graphSize);
+				this);
 	}
 
 	@Override
-	public long calculateEstimatedCardinality(GraphSize graphSize) {
+	public long calculateEstimatedCardinality() {
 		return greqlEvaluator.getCostModel()
-				.calculateCardinalityRecordConstruction(this, graphSize);
+				.calculateCardinalityRecordConstruction(this);
 	}
 
 }

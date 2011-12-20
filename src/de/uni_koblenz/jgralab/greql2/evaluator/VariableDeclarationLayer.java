@@ -37,6 +37,7 @@ package de.uni_koblenz.jgralab.greql2.evaluator;
 
 import java.util.List;
 
+import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VertexEvaluator;
 import de.uni_koblenz.jgralab.greql2.exception.WrongResultTypeException;
 import de.uni_koblenz.jgralab.greql2.schema.Declaration;
@@ -87,7 +88,7 @@ public class VariableDeclarationLayer {
 	public VariableDeclarationLayer(Declaration vertex,
 			List<VariableDeclaration> varDecls,
 			List<VertexEvaluator> constraintList) {
-		this.declaration = vertex;
+		declaration = vertex;
 		variableDeclarations = varDecls;
 		this.constraintList = constraintList;
 	}
@@ -99,7 +100,7 @@ public class VariableDeclarationLayer {
 	 * 
 	 * @return true if another possible combination was found, false otherwise
 	 */
-	public boolean iterate() {
+	public boolean iterate(Graph graph) {
 		StringBuilder sb = null;
 		if (GreqlEvaluator.DEBUG_DECLARATION_ITERATIONS) {
 			sb = new StringBuilder();
@@ -109,7 +110,7 @@ public class VariableDeclarationLayer {
 		}
 		boolean constraintsFullfilled = false;
 		if (firstIteration) {
-			if (!getFirstCombination()) {
+			if (!getFirstCombination(graph)) {
 				if (GreqlEvaluator.DEBUG_DECLARATION_ITERATIONS) {
 					sb.append("## 1st. iteration: returning false (");
 					sb.append(declaration);
@@ -118,11 +119,11 @@ public class VariableDeclarationLayer {
 				}
 				return false; // no more combinations exists
 			}
-			constraintsFullfilled = fullfillsConstraints();
+			constraintsFullfilled = fullfillsConstraints(graph);
 			firstIteration = false;
 		}
 		while (!constraintsFullfilled) {
-			if (!getNextCombination(false)) {
+			if (!getNextCombination(false, graph)) {
 				if (GreqlEvaluator.DEBUG_DECLARATION_ITERATIONS) {
 					sb.append("## nth iteration: returning false (");
 					sb.append(declaration);
@@ -131,7 +132,7 @@ public class VariableDeclarationLayer {
 				}
 				return false; // no more combinations exists
 			}
-			constraintsFullfilled = fullfillsConstraints();
+			constraintsFullfilled = fullfillsConstraints(graph);
 		}
 
 		if (GreqlEvaluator.DEBUG_DECLARATION_ITERATIONS) {
@@ -158,9 +159,9 @@ public class VariableDeclarationLayer {
 	 * 
 	 * @return true if a first combination exists, false otherwise
 	 */
-	private boolean getFirstCombination() {
-		variableDeclarations.get(0).reset();
-		return getNextCombination(true);
+	private boolean getFirstCombination(Graph graph) {
+		variableDeclarations.get(0).reset(graph);
+		return getNextCombination(true, graph);
 	}
 
 	/**
@@ -169,7 +170,7 @@ public class VariableDeclarationLayer {
 	 * @return true if a next combination exists, false otherwise
 	 */
 
-	private boolean getNextCombination(boolean firstCombination) {
+	private boolean getNextCombination(boolean firstCombination, Graph graph) {
 
 		int pointer = firstCombination ? 0 : variableDeclarations.size() - 1;
 
@@ -187,7 +188,7 @@ public class VariableDeclarationLayer {
 			int size = variableDeclarations.size();
 			while (pointer < size) {
 				currDecl = variableDeclarations.get(pointer++);
-				currDecl.reset();
+				currDecl.reset(graph);
 				if (!currDecl.iterate()) {
 					pointer -= 2;
 					iterate = true;
@@ -203,13 +204,13 @@ public class VariableDeclarationLayer {
 	 * 
 	 * @return true if the combination fulfills the constraint, false otherwise
 	 */
-	private boolean fullfillsConstraints() {
+	private boolean fullfillsConstraints(Graph graph) {
 		if ((constraintList == null) || (constraintList.isEmpty())) {
 			return true;
 		}
 		for (int i = 0; i < constraintList.size(); i++) {
 			VertexEvaluator currentEval = constraintList.get(i);
-			Object tempResult = currentEval.getResult();
+			Object tempResult = currentEval.getResult(graph);
 
 			if (tempResult instanceof Boolean) {
 				if ((Boolean) tempResult != Boolean.TRUE) {

@@ -40,6 +40,7 @@ import java.util.ArrayList;
 import org.pcollections.PCollection;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
+import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.schema.Expression;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
@@ -48,9 +49,9 @@ import de.uni_koblenz.jgralab.greql2.schema.ValueConstruction;
 
 /**
  * This is the abstract base class for all ValueConstructions
- *
+ * 
  * @author ist@uni-koblenz.de
- *
+ * 
  */
 abstract public class ValueConstructionEvaluator extends VertexEvaluator {
 
@@ -72,7 +73,8 @@ abstract public class ValueConstructionEvaluator extends VertexEvaluator {
 		this.vertex = vertex;
 	}
 
-	public final PCollection<Object> createValue(PCollection<Object> collection) {
+	public final PCollection<Object> createValue(
+			PCollection<Object> collection, Graph graph) {
 		if (partEvaluators == null) {
 			int partCount = 0;
 			IsPartOf inc = vertex.getFirstIsPartOfIncidence(EdgeDirection.IN);
@@ -83,7 +85,7 @@ abstract public class ValueConstructionEvaluator extends VertexEvaluator {
 			inc = vertex.getFirstIsPartOfIncidence(EdgeDirection.IN);
 			partEvaluators = new ArrayList<VertexEvaluator>(partCount);
 			while (inc != null) {
-				Expression currentExpression = (Expression) inc.getAlpha();
+				Expression currentExpression = inc.getAlpha();
 				VertexEvaluator vertexEval = vertexEvalMarker
 						.getMark(currentExpression);
 				partEvaluators.add(vertexEval);
@@ -91,7 +93,8 @@ abstract public class ValueConstructionEvaluator extends VertexEvaluator {
 			}
 		}
 		for (int i = 0; i < partEvaluators.size(); i++) {
-			collection = collection.plus(partEvaluators.get(i).getResult());
+			collection = collection
+					.plus(partEvaluators.get(i).getResult(graph));
 		}
 		return collection;
 	}

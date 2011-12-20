@@ -36,8 +36,8 @@
 package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
+import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
-import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
 import de.uni_koblenz.jgralab.greql2.schema.Expression;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
@@ -69,8 +69,8 @@ public class RecordElementEvaluator extends VertexEvaluator {
 
 	public String getId() {
 		if (id == null) {
-			RecordId idVertex = (RecordId) vertex
-					.getFirstIsRecordIdOfIncidence(EdgeDirection.IN).getAlpha();
+			RecordId idVertex = vertex.getFirstIsRecordIdOfIncidence(
+					EdgeDirection.IN).getAlpha();
 			id = idVertex.get_name();
 		}
 		return id;
@@ -90,20 +90,19 @@ public class RecordElementEvaluator extends VertexEvaluator {
 	}
 
 	@Override
-	public Object evaluate() {
+	public Object evaluate(Graph graph) {
 		if (expEval == null) {
-			Expression recordElementExp = (Expression) vertex
+			Expression recordElementExp = vertex
 					.getFirstIsRecordExprOfIncidence(EdgeDirection.IN)
 					.getAlpha();
 			expEval = vertexEvalMarker.getMark(recordElementExp);
 		}
-		return expEval.getResult();
+		return expEval.getResult(graph);
 	}
 
 	@Override
-	public VertexCosts calculateSubtreeEvaluationCosts(GraphSize graphSize) {
-		return this.greqlEvaluator.getCostModel().calculateCostsRecordElement(
-				this, graphSize);
+	public VertexCosts calculateSubtreeEvaluationCosts() {
+		return greqlEvaluator.getCostModel().calculateCostsRecordElement(this);
 	}
 
 }

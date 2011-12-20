@@ -191,17 +191,14 @@ public class GraphValidator {
 			GreqlEvaluator eval = new GreqlEvaluator(new Query(query), graph,
 					null, null);
 			try {
-				eval.startEvaluation();
-				if (!(Boolean) eval.getResult()) {
+
+				if (!eval.<Boolean> getSingleResult()) {
 					if (constraint.getOffendingElementsQuery() != null) {
 						String oeq = constraint.getOffendingElementsQuery();
 						GreqlEvaluator eval1 = new GreqlEvaluator(
 								new Query(oeq), graph, null, null);
-
-						eval1.startEvaluation();
-						@SuppressWarnings("unchecked")
-						Set<AttributedElement> resultSet = (Set<AttributedElement>) eval1
-								.getResult();
+						Set<AttributedElement> resultSet = eval1
+								.<AttributedElement> getResultSet();
 						brokenConstraints.add(new GReQLConstraintViolation(aec,
 								constraint, resultSet));
 					} else {

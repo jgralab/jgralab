@@ -197,8 +197,8 @@ public class EdgeTransition extends SimpleTransition {
 		// checks if only one edge is allowed an if e is this allowed edge
 		if (allowedEdgeEvaluator != null) {
 
-			Edge allowedEdge = ((Edge) allowedEdgeEvaluator.getResult())
-					.getNormalEdge();
+			Edge allowedEdge = ((Edge) allowedEdgeEvaluator.getResult(v
+					.getGraph())).getNormalEdge();
 			if (e.getNormalEdge() != allowedEdge) {
 				return false;
 			}

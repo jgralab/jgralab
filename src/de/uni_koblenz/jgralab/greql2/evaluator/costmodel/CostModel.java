@@ -11,7 +11,7 @@
  * 
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
- * Free Software Foundation; either version 3 of the License, or (at your
+ * Free Software Foundation; either version 3 of the License or (at your
  * option) any later version.
  * 
  * This program is distributed in the hope that it will be useful, but
@@ -99,94 +99,87 @@ public interface CostModel {
 	public boolean isEquivalent(CostModel costModel);
 
 	public VertexCosts calculateCostsAlternativePathDescription(
-			AlternativePathDescriptionEvaluator e, GraphSize graphSize);
+			AlternativePathDescriptionEvaluator e);
 
 	public VertexCosts calculateCostsBackwardVertexSet(
-			BackwardVertexSetEvaluator e, GraphSize graphSize);
+			BackwardVertexSetEvaluator e);
 
-	public VertexCosts calculateCostsListComprehension(ComprehensionEvaluator e,
-			GraphSize graphSize);
+	public VertexCosts calculateCostsListComprehension(ComprehensionEvaluator e);
 
 	public VertexCosts calculateCostsConditionalExpression(
-			ConditionalExpressionEvaluator e, GraphSize graphSize);
+			ConditionalExpressionEvaluator e);
 
-	public VertexCosts calculateCostsDeclaration(DeclarationEvaluator e,
-			GraphSize graphSize);
+	public VertexCosts calculateCostsDeclaration(DeclarationEvaluator e);
 
 	public VertexCosts calculateCostsEdgePathDescription(
-			EdgePathDescriptionEvaluator e, GraphSize graphSize);
+			EdgePathDescriptionEvaluator e);
 
-	public VertexCosts calculateCostsEdgeRestriction(
-			EdgeRestrictionEvaluator e, GraphSize graphSize);
+	public VertexCosts calculateCostsEdgeRestriction(EdgeRestrictionEvaluator e);
 
 	public VertexCosts calculateCostsEdgeSetExpression(
-			EdgeSetExpressionEvaluator e, GraphSize graphSize);
+			EdgeSetExpressionEvaluator e);
 
 	public VertexCosts calculateCostsExponentiatedPathDescription(
-			ExponentiatedPathDescriptionEvaluator e, GraphSize graphSize);
+			ExponentiatedPathDescriptionEvaluator e);
 
 	public VertexCosts calculateCostsForwardVertexSet(
-			ForwardVertexSetEvaluator e, GraphSize graphSize);
+			ForwardVertexSetEvaluator e);
 
 	public VertexCosts calculateCostsFunctionApplication(
-			FunctionApplicationEvaluator e, GraphSize graphSize);
+			FunctionApplicationEvaluator e);
 
 	public VertexCosts calculateCostsGreql2Expression(
-			Greql2ExpressionEvaluator e, GraphSize graphSize);
+			Greql2ExpressionEvaluator e);
 
 	public VertexCosts calculateCostsIntermediateVertexPathDescription(
-			IntermediateVertexPathDescriptionEvaluator e, GraphSize graphSize);
+			IntermediateVertexPathDescriptionEvaluator e);
 
 	public VertexCosts calculateCostsIteratedPathDescription(
-			IteratedPathDescriptionEvaluator e, GraphSize graphSize);
+			IteratedPathDescriptionEvaluator e);
 
 	public VertexCosts calculateCostsListConstruction(
-			ListConstructionEvaluator e, GraphSize graphSize);
+			ListConstructionEvaluator e);
 
 	public VertexCosts calculateCostsListRangeConstruction(
-			ListRangeConstructionEvaluator e, GraphSize graphSize);
+			ListRangeConstructionEvaluator e);
 
 	public VertexCosts calculateCostsOptionalPathDescription(
-			OptionalPathDescriptionEvaluator e, GraphSize graphSize);
+			OptionalPathDescriptionEvaluator e);
 
-	public VertexCosts calculateCostsPathExistence(PathExistenceEvaluator e,
-			GraphSize graphSize);
+	public VertexCosts calculateCostsPathExistence(PathExistenceEvaluator e);
 
 	public VertexCosts calculateCostsQuantifiedExpression(
-			QuantifiedExpressionEvaluator e, GraphSize graphSize);
+			QuantifiedExpressionEvaluator e);
 
 	public VertexCosts calculateCostsRecordConstruction(
-			RecordConstructionEvaluator e, GraphSize graphSize);
+			RecordConstructionEvaluator e);
 
-	public VertexCosts calculateCostsRecordElement(RecordElementEvaluator e,
-			GraphSize graphSize);
+	public VertexCosts calculateCostsRecordElement(RecordElementEvaluator e);
 
 	public VertexCosts calculateCostsSequentialPathDescription(
-			SequentialPathDescriptionEvaluator e, GraphSize graphSize);
+			SequentialPathDescriptionEvaluator e);
 
 	public VertexCosts calculateCostsSetComprehension(
-			SetComprehensionEvaluator e, GraphSize graphSize);
+			SetComprehensionEvaluator e);
 
-	public VertexCosts calculateCostsSetConstruction(
-			SetConstructionEvaluator e, GraphSize graphSize);
+	public VertexCosts calculateCostsSetConstruction(SetConstructionEvaluator e);
 
 	public VertexCosts calculateCostsSimpleDeclaration(
-			SimpleDeclarationEvaluator e, GraphSize graphSize);
+			SimpleDeclarationEvaluator e);
 
 	public VertexCosts calculateCostsSimplePathDescription(
-			SimplePathDescriptionEvaluator e, GraphSize graphSize);
+			SimplePathDescriptionEvaluator e);
 
 	public VertexCosts calculateCostsAggregationPathDescription(
-			AggregationPathDescriptionEvaluator e, GraphSize graphSize);
+			AggregationPathDescriptionEvaluator e);
 
 	public VertexCosts calculateCostsTableComprehension(
-			TableComprehensionEvaluator e, GraphSize graphSize);
+			TableComprehensionEvaluator e);
 
 	public VertexCosts calculateCostsTupleConstruction(
-			TupleConstructionEvaluator e, GraphSize graphSize);
+			TupleConstructionEvaluator e);
 
-	public VertexCosts calculateCostsTypeId(TypeIdEvaluator e,
-			GraphSize graphSize);
+	public VertexCosts calculateCostsTypeId(TypeIdEvaluator e);
 
 	/**
 	 * Calculates the evaluation costs of a TransposedPathDescription.
@@ -197,100 +190,82 @@ public interface CostModel {
 	 *         costs of the given evaluator
 	 */
 	public VertexCosts calculateCostsTransposedPathDescription(
-			TransposedPathDescriptionEvaluator e, GraphSize graphSize);
+			TransposedPathDescriptionEvaluator e);
 
-	public VertexCosts calculateCostsVariable(VariableEvaluator e,
-			GraphSize graphSize);
+	public VertexCosts calculateCostsVariable(VariableEvaluator e);
 
 	public VertexCosts calculateCostsVertexSetExpression(
-			VertexSetExpressionEvaluator e, GraphSize graphSize);
+			VertexSetExpressionEvaluator e);
 
 	/*
 	 * The methods to calculate the cardinality
 	 */
 
 	public long calculateCardinalityBackwardVertexSet(
-			BackwardVertexSetEvaluator e, GraphSize graphSize);
+			BackwardVertexSetEvaluator e);
 
-	public long calculateCardinalityListComprehension(ComprehensionEvaluator e,
-			GraphSize graphSize);
+	public long calculateCardinalityListComprehension(ComprehensionEvaluator e);
 
 	public long calculateCardinalityConditionalExpression(
-			ConditionalExpressionEvaluator e, GraphSize graphSize);
+			ConditionalExpressionEvaluator e);
 
-	public long calculateCardinalityDeclaration(DeclarationEvaluator e,
-			GraphSize graphSize);
+	public long calculateCardinalityDeclaration(DeclarationEvaluator e);
 
 	public long calculateCardinalityEdgeSetExpression(
-			EdgeSetExpressionEvaluator e, GraphSize graphSize);
+			EdgeSetExpressionEvaluator e);
 
-
-	public long calculateCardinalityForwardVertexSet(
-			ForwardVertexSetEvaluator e, GraphSize graphSize);
+	public long calculateCardinalityForwardVertexSet(ForwardVertexSetEvaluator e);
 
 	public long calculateCardinalityFunctionApplication(
-			FunctionApplicationEvaluator e, GraphSize graphSize);
+			FunctionApplicationEvaluator e);
 
-	public long calculateCardinalityListConstruction(
-			ListConstructionEvaluator e, GraphSize graphSize);
+	public long calculateCardinalityListConstruction(ListConstructionEvaluator e);
 
 	public long calculateCardinalityListRangeConstruction(
-			ListRangeConstructionEvaluator e, GraphSize graphSize);
+			ListRangeConstructionEvaluator e);
 
 	public long calculateCardinalityRecordConstruction(
-			RecordConstructionEvaluator e, GraphSize graphSize);
+			RecordConstructionEvaluator e);
 
-	public long calculateCardinalitySetComprehension(
-			SetComprehensionEvaluator e, GraphSize graphSize);
+	public long calculateCardinalitySetComprehension(SetComprehensionEvaluator e);
 
-	public long calculateCardinalitySetConstruction(SetConstructionEvaluator e,
-			GraphSize graphSize);
+	public long calculateCardinalitySetConstruction(SetConstructionEvaluator e);
 
 	public long calculateCardinalitySimpleDeclaration(
-			SimpleDeclarationEvaluator e, GraphSize graphSize);
+			SimpleDeclarationEvaluator e);
 
 	public long calculateCardinalityTableComprehension(
-			TableComprehensionEvaluator e, GraphSize graphSize);
+			TableComprehensionEvaluator e);
 
 	public long calculateCardinalityTupleConstruction(
-			TupleConstructionEvaluator e, GraphSize graphSize);
+			TupleConstructionEvaluator e);
 
 	public long calculateCardinalityVertexSetExpression(
-			VertexSetExpressionEvaluator e, GraphSize graphSize);
-
+			VertexSetExpressionEvaluator e);
 
 	/*
 	 * The methods to calculate the selectivity
 	 */
 
 	public double calculateSelectivityFunctionApplication(
-			FunctionApplicationEvaluator e, GraphSize graphSize);
+			FunctionApplicationEvaluator e);
 
-	public double calculateSelectivityPathExistence(PathExistenceEvaluator e,
-			GraphSize graphSize);
+	public double calculateSelectivityPathExistence(PathExistenceEvaluator e);
 
-	public double calculateSelectivityTypeId(TypeIdEvaluator e,
-			GraphSize graphSize);
+	public double calculateSelectivityTypeId(TypeIdEvaluator e);
 
-
-
-	public long calculateVariableAssignments(VariableEvaluator e,
-			GraphSize graphSize);
+	public long calculateVariableAssignments(VariableEvaluator e);
 
 	public VertexCosts calculateCostsMapConstruction(
-			MapConstructionEvaluator mapConstructionEvaluator,
-			GraphSize graphSize);
+			MapConstructionEvaluator mapConstructionEvaluator);
 
 	public long calculateCardinalityMapConstruction(
-			MapConstructionEvaluator mapConstructionEvaluator,
-			GraphSize graphSize);
+			MapConstructionEvaluator mapConstructionEvaluator);
 
 	public VertexCosts calculateCostsMapComprehension(
-			MapComprehensionEvaluator mapComprehensionEvaluator,
-			GraphSize graphSize);
+			MapComprehensionEvaluator mapComprehensionEvaluator);
 
 	public long calculateCardinalityMapComprehension(
-			MapComprehensionEvaluator mapComprehensionEvaluator,
-			GraphSize graphSize);
+			MapComprehensionEvaluator mapComprehensionEvaluator);
 
 }

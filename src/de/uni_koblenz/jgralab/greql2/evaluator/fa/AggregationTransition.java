@@ -197,8 +197,8 @@ public class AggregationTransition extends Transition {
 			GraphMarker<VertexEvaluator> graphMarker) {
 		super(start, end);
 		this.aggregateFrom = aggregateFrom;
-		this.validToEdgeRoles = roles;
-		this.validFromEdgeRoles = null;
+		validToEdgeRoles = roles;
+		validFromEdgeRoles = null;
 		this.typeCollection = typeCollection;
 		this.predicateEvaluator = predicateEvaluator;
 		Vertex v = graphMarker.getGraph().getFirstVertex(ThisEdge.class);
@@ -297,7 +297,7 @@ public class AggregationTransition extends Transition {
 		// checks if a boolean expression exists and if it evaluates to true
 		if (predicateEvaluator != null) {
 			thisEdgeEvaluator.setValue(e);
-			Object res = predicateEvaluator.getResult();
+			Object res = predicateEvaluator.getResult(v.getGraph());
 			if (res instanceof Boolean) {
 				if (((Boolean) res).equals(Boolean.TRUE)) {
 					return true;

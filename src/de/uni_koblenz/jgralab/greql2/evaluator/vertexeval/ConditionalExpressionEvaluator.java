@@ -36,8 +36,8 @@
 package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
+import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
-import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
 import de.uni_koblenz.jgralab.greql2.schema.ConditionalExpression;
 import de.uni_koblenz.jgralab.greql2.schema.Expression;
@@ -82,28 +82,27 @@ public class ConditionalExpressionEvaluator extends VertexEvaluator {
 	 * evaluates the conditional expression
 	 */
 	@Override
-	public Object evaluate() {
-		Expression condition = (Expression) vertex
-				.getFirstIsConditionOfIncidence(EdgeDirection.IN).getAlpha();
+	public Object evaluate(Graph graph) {
+		Expression condition = vertex.getFirstIsConditionOfIncidence(
+				EdgeDirection.IN).getAlpha();
 		VertexEvaluator conditionEvaluator = vertexEvalMarker
 				.getMark(condition);
-		Object conditionResult = conditionEvaluator.getResult();
+		Object conditionResult = conditionEvaluator.getResult(graph);
 		Expression expressionToEvaluate = null;
 
 		Boolean value = (Boolean) conditionResult;
 		if (value.booleanValue()) {
-			expressionToEvaluate = (Expression) vertex
-					.getFirstIsTrueExprOfIncidence(EdgeDirection.IN).getAlpha();
+			expressionToEvaluate = vertex.getFirstIsTrueExprOfIncidence(
+					EdgeDirection.IN).getAlpha();
 		} else {
-			expressionToEvaluate = (Expression) vertex
-					.getFirstIsFalseExprOfIncidence(EdgeDirection.IN)
-					.getAlpha();
+			expressionToEvaluate = vertex.getFirstIsFalseExprOfIncidence(
+					EdgeDirection.IN).getAlpha();
 		}
 
 		if (expressionToEvaluate != null) {
 			VertexEvaluator exprEvaluator = vertexEvalMarker
 					.getMark(expressionToEvaluate);
-			result = exprEvaluator.getResult();
+			result = exprEvaluator.getResult(graph);
 		} else {
 			result = null;
 		}
@@ -111,9 +110,9 @@ public class ConditionalExpressionEvaluator extends VertexEvaluator {
 	}
 
 	@Override
-	public VertexCosts calculateSubtreeEvaluationCosts(GraphSize graphSize) {
+	public VertexCosts calculateSubtreeEvaluationCosts() {
 		return greqlEvaluator.getCostModel()
-				.calculateCostsConditionalExpression(this, graphSize);
+				.calculateCostsConditionalExpression(this);
 	}
 
 }

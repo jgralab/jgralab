@@ -36,9 +36,9 @@
 package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
+import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
-import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
 import de.uni_koblenz.jgralab.greql2.funlib.FunLib;
 import de.uni_koblenz.jgralab.greql2.funlib.FunLib.FunctionInfo;
@@ -77,15 +77,15 @@ public class PathExistenceEvaluator extends PathSearchEvaluator {
 	}
 
 	@Override
-	public Object evaluate() {
+	public Object evaluate(Graph graph) {
 		PathDescription p = (PathDescription) vertex.getFirstIsPathOfIncidence(
 				EdgeDirection.IN).getAlpha();
 		PathDescriptionEvaluator pathDescEval = (PathDescriptionEvaluator) vertexEvalMarker
 				.getMark(p);
-		Expression startExpression = (Expression) vertex
-				.getFirstIsStartExprOfIncidence(EdgeDirection.IN).getAlpha();
+		Expression startExpression = vertex.getFirstIsStartExprOfIncidence(
+				EdgeDirection.IN).getAlpha();
 		VertexEvaluator startEval = vertexEvalMarker.getMark(startExpression);
-		Object res = startEval.getResult();
+		Object res = startEval.getResult(graph);
 		/**
 		 * check if the result is invalid, this may occur because the
 		 * restrictedExpression may return a null-value
@@ -95,18 +95,18 @@ public class PathExistenceEvaluator extends PathSearchEvaluator {
 		}
 		Vertex startVertex = (Vertex) res;
 
-		Expression targetExpression = (Expression) vertex
-				.getFirstIsTargetExprOfIncidence(EdgeDirection.IN).getAlpha();
+		Expression targetExpression = vertex.getFirstIsTargetExprOfIncidence(
+				EdgeDirection.IN).getAlpha();
 		VertexEvaluator targetEval = vertexEvalMarker.getMark(targetExpression);
 		Vertex targetVertex = null;
-		res = targetEval.getResult();
+		res = targetEval.getResult(graph);
 		if (res == null) {
 			return null;
 		}
 		targetVertex = (Vertex) res;
 
 		if (searchAutomaton == null) {
-			searchAutomaton = pathDescEval.getNFA().getDFA();
+			searchAutomaton = pathDescEval.getNFA(graph).getDFA();
 			// searchAutomaton.printAscii();
 		}
 		Object[] arguments = new Object[3];
@@ -120,15 +120,14 @@ public class PathExistenceEvaluator extends PathSearchEvaluator {
 	}
 
 	@Override
-	public VertexCosts calculateSubtreeEvaluationCosts(GraphSize graphSize) {
-		return this.greqlEvaluator.getCostModel().calculateCostsPathExistence(
-				this, graphSize);
+	public VertexCosts calculateSubtreeEvaluationCosts() {
+		return greqlEvaluator.getCostModel().calculateCostsPathExistence(this);
 	}
 
 	@Override
-	public double calculateEstimatedSelectivity(GraphSize graphSize) {
+	public double calculateEstimatedSelectivity() {
 		return greqlEvaluator.getCostModel().calculateSelectivityPathExistence(
-				this, graphSize);
+				this);
 	}
 
 }

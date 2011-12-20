@@ -38,8 +38,8 @@ package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 import java.util.ArrayList;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
+import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
-import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
 import de.uni_koblenz.jgralab.greql2.evaluator.fa.NFA;
 import de.uni_koblenz.jgralab.greql2.schema.AlternativePathDescription;
@@ -49,9 +49,9 @@ import de.uni_koblenz.jgralab.greql2.schema.IsAlternativePathOf;
 /**
  * Evaluates an alternative path description. Creates a NFA that accepts the
  * alternative path description.
- *
+ * 
  * @author ist@uni-koblenz.de
- *
+ * 
  */
 public class AlternativePathDescriptionEvaluator extends
 		PathDescriptionEvaluator {
@@ -71,7 +71,7 @@ public class AlternativePathDescriptionEvaluator extends
 
 	/**
 	 * Creates a new IteratedPathDescriptionEvaluator for the given vertex
-	 *
+	 * 
 	 * @param eval
 	 *            the GreqlEvaluator instance this VertexEvaluator belong to
 	 * @param vertex
@@ -90,7 +90,7 @@ public class AlternativePathDescriptionEvaluator extends
 	 */
 
 	@Override
-	public NFA evaluate() {
+	public NFA evaluate(Graph graph) {
 		IsAlternativePathOf inc = vertex
 				.getFirstIsAlternativePathOfIncidence(EdgeDirection.IN);
 		ArrayList<NFA> nfaList = new ArrayList<NFA>();
@@ -104,9 +104,9 @@ public class AlternativePathDescriptionEvaluator extends
 	}
 
 	@Override
-	public VertexCosts calculateSubtreeEvaluationCosts(GraphSize graphSize) {
-		return this.greqlEvaluator.getCostModel()
-				.calculateCostsAlternativePathDescription(this, graphSize);
+	public VertexCosts calculateSubtreeEvaluationCosts() {
+		return greqlEvaluator.getCostModel()
+				.calculateCostsAlternativePathDescription(this);
 	}
 
 }
