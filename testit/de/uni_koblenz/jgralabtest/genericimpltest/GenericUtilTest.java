@@ -139,7 +139,7 @@ public class GenericUtilTest {
 			.plus("MapComponent", JGraLab.map().plus(42, 1016l).plus(1, 39215l).plus(7, 1234567890l))
 			.plus("SetComponent", JGraLab.set().plus(true).plus(false))
 			.plus("StringComponent", "somestring");
-//	private static Object mapDomainValue3 = JGraLab.map().plus("key one", recordDomainValue1).plus("key two", nullValue);	// TODO  "Can't add null to an ArrayPVector" Intended behavior?
+	private static Object mapDomainValue3 = JGraLab.map().plus("key one", recordDomainValue1).plus("key two", nullValue);	// TODO  "Can't add null to an ArrayPVector" Intended behavior?
 	private static Object recordDomainValue2 = de.uni_koblenz.jgralab.impl.RecordImpl.empty()
 			.plus("ListComponent", JGraLab.vector()
 					.plus(JGraLab.map())

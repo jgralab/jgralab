@@ -5,6 +5,7 @@ import static org.junit.Assert.*;
 import java.io.File;
 import java.lang.reflect.Field;
 import java.util.Map;
+import java.util.Set;
 
 import org.junit.Test;
 
@@ -41,28 +42,39 @@ public class GenericGraphImplTest {
 			}
 		} catch (NoSuchFieldException e) {
 			e.printStackTrace();
+			fail();
 		} catch (SecurityException e) {
 			e.printStackTrace();
+			fail();
 		} catch (IllegalArgumentException e) {
 			e.printStackTrace();
+			fail();
 		} catch (IllegalAccessException e) {
 			e.printStackTrace();
+			fail();
 		}
 	}
 	
 	/**
 	 * Tests, if the value of an attribute in the generic TGraph implementation has the
-	 * default value corresponding to its definition in the schema.
+	 * default value defined in its definition in the schema. If no explicit default value
+	 * was defined, it tests, if the attribute's value corresponds to the general default
+	 * value of its Domain.  
 	 * @param value
 	 * @param attribute
 	 */
 	private void testDefaultValue(Object value, Attribute attribute) {
 		try {
-			Object expected = GenericUtil.parseGenericAttribute(attribute.getDomain(), GraphIO.createStringReader(attribute.getDefaultValueAsString(), attribute.getAttributedElementClass().getSchema()));
-			assertEquals(expected, value);
+			if(attribute.getDefaultValueAsString() != null) {
+				Object expected = GenericUtil.parseGenericAttribute(attribute.getDomain(), GraphIO.createStringReader(attribute.getDefaultValueAsString(), attribute.getAttributedElementClass().getSchema()));
+				assertEquals(expected, value);
+			}
+			else {
+				assertEquals(GenericUtil.genericAttributeDefaultValue(attribute.getDomain()), value);
+			}
 		} catch (GraphIOException e) {
-			fail();
 			e.printStackTrace();
+			fail();
 		}
 	}
 
@@ -154,70 +166,154 @@ public class GenericGraphImplTest {
 	// Create generic vertices with attributes (inherited ones and own ones) (DefaultValueTestSchema.tg)
 	@Test
 	public void testCreateVertex2() {
-		// TODO
-	}
-	
-	// Create generic edges (1 attribute) (MinialSchema.tg)
-	@Test
-	public void testCreateEdge1() {
 		try {
-			Schema schema;
-			schema = GraphIO.loadSchemaFromFile(SCHEMAFOLDER + "MinimalSchema.tg");
+			Schema schema = GraphIO.loadSchemaFromFile(SCHEMAFOLDER + "DefaultValueTestSchema.tg");
 			Graph g = schema.createGraph(ImplementationType.GENERIC, 100, 100);
-		
-			Vertex v1 = g.createVertex(schema.getGraphClass().getVertexClass("Node"));
-			Vertex v2 = g.createVertex(schema.getGraphClass().getVertexClass("Node"));
+			Vertex v1 = g.createVertex(schema.getGraphClass().getVertexClass("TestVertex"));
+			Vertex v2 = g.createVertex(schema.getGraphClass().getVertexClass("TestSubVertex"));	// Vertex with inherited attributes
 			
-			Edge e1 = g.createEdge(schema.getGraphClass().getEdgeClass("Link"), v1, v2);
-			Edge e2 = g.createEdge(schema.getGraphClass().getEdgeClass("Link"), v2, v1);
-			assertEquals(g.getSchema().getGraphClass().getEdgeClass("Link"), e1.getAttributedElementClass());
-			assertEquals(g.getSchema().getGraphClass().getEdgeClass("Link"), e2.getAttributedElementClass());
-			testElementAttributes(e1, schema.getGraphClass().getEdgeClass("Link"));
-			testElementAttributes(e2, schema.getGraphClass().getEdgeClass("Link"));
-			assertTrue(g.containsEdge(e1));
-			assertTrue(g.containsEdge(e2));
-			
-			assertEquals(e1, v1.getFirstIncidence());
-			assertEquals(e2, e1.getNextEdge());
-			assertEquals(e2.getReversedEdge(), e1.getNextIncidence());
-			assertEquals(e1.getReversedEdge(), v2.getFirstIncidence());
-			
-			v1.setAttribute("nodeMap", JGraLab.map().plus(20, "twenty"));
-			g.save(DATAFOLDER + "Test.tg");
+			assertEquals(schema.getGraphClass().getVertexClass("TestVertex"), v1.getAttributedElementClass());
+			assertEquals(schema.getGraphClass().getVertexClass("TestSubVertex"), v2.getAttributedElementClass());
+			testElementAttributes(v1, v1.getAttributedElementClass());
+			testElementAttributes(v2, v2.getAttributedElementClass());
+			for(Attribute a : schema.getGraphClass().getVertexClass("TestVertex").getAttributeList()) {
+				testDefaultValue(v1.getAttribute(a.getName()), a);
+			}
+			for(Attribute a : schema.getGraphClass().getVertexClass("TestSubVertex").getAttributeList()) {
+				testDefaultValue(v2.getAttribute(a.getName()), a);
+			}
 		} catch (GraphIOException e) {
 			e.printStackTrace();
 			fail();
 		}
 	}
 	
-	// Create generic edges with inherited attributes
+	// Create generic edges (1 attribute) (MinialSchema.tg)
+	@Test
+	public void testCreateEdge1() {
+		try {
+			Schema schema = GraphIO.loadSchemaFromFile(SCHEMAFOLDER + "MinimalSchema.tg");
+			Graph g = schema.createGraph(ImplementationType.GENERIC, 100, 100);		
+			Vertex v1 = g.createVertex(schema.getGraphClass().getVertexClass("Node"));
+			Vertex v2 = g.createVertex(schema.getGraphClass().getVertexClass("Node"));
+			Edge e1 = g.createEdge(schema.getGraphClass().getEdgeClass("Link"), v1, v2);
+			Edge e2 = g.createEdge(schema.getGraphClass().getEdgeClass("Link"), v2, v1);
+			
+			assertEquals(g.getSchema().getGraphClass().getEdgeClass("Link"), e1.getAttributedElementClass());
+			assertEquals(g.getSchema().getGraphClass().getEdgeClass("Link"), e2.getAttributedElementClass());
+			assertTrue(g.containsEdge(e1));
+			assertTrue(g.containsEdge(e2));
+			testElementAttributes(e1, schema.getGraphClass().getEdgeClass("Link"));
+			testElementAttributes(e2, schema.getGraphClass().getEdgeClass("Link"));
+			for(Attribute a : e1.getAttributedElementClass().getAttributeList()) {
+				testDefaultValue(e1.getAttribute(a.getName()), a);
+			}
+			for(Attribute a : e2.getAttributedElementClass().getAttributeList()) {
+				testDefaultValue(e1.getAttribute(a.getName()), a);
+			}
+			
+			assertEquals(e1, v1.getFirstIncidence());
+			assertEquals(e2, e1.getNextEdge());
+			assertEquals(e2.getReversedEdge(), e1.getNextIncidence());
+			assertEquals(e1.getReversedEdge(), v2.getFirstIncidence());
+		} catch (GraphIOException e) {
+			e.printStackTrace();
+			fail();
+		}
+	}
+	
+	// Create generic edges with inherited attributes (VertexTestSchema.tg)
 	@Test
 	public void testCreateEdge2() {
-		// TODO
+		try {
+			Schema schema = GraphIO.loadSchemaFromFile(SCHEMAFOLDER + "VertexTestSchema.tg");
+			Graph g = schema.createGraph(ImplementationType.GENERIC, 100, 100);			
+			Vertex v1 = g.createVertex(schema.getGraphClass().getVertexClass("SubNode"));
+			Vertex v2 = g.createVertex(schema.getGraphClass().getVertexClass("SuperNode"));
+			Vertex v3 = g.createVertex(schema.getGraphClass().getVertexClass("DoubleSubNode"));
+			
+			Edge e1 = g.createEdge(schema.getGraphClass().getEdgeClass("Link"), v1, v2);
+			assertEquals(schema.getGraphClass().getEdgeClass("Link"), e1.getAttributedElementClass());
+			testElementAttributes(e1, e1.getAttributedElementClass());
+			testDefaultValue(e1.getAttribute("aString"), e1.getAttributedElementClass().getAttribute("aString"));
+			
+			// Edge with inherited attributes
+			Edge e2 = g.createEdge(schema.getGraphClass().getEdgeClass("SubLink"), v3, v2);
+			assertEquals(schema.getGraphClass().getEdgeClass("SubLink"), e2.getAttributedElementClass());
+			testElementAttributes(e2, e2.getAttributedElementClass());
+			testDefaultValue(e2.getAttribute("anInt"), e2.getAttributedElementClass().getAttribute("anInt"));
+		} catch (GraphIOException e) {
+			e.printStackTrace();
+			fail();
+		}
 	}
 	
 	// EdgeClass is from a different schema 
-	@Test
+	@Test(expected=GraphException.class)
 	public void testCreateEdgeFailure1() {
-		// TODO
+		try {
+			// both schemas contain an EdgeClass named "Link"
+			Schema schema1 = GraphIO.loadSchemaFromFile(SCHEMAFOLDER + "MinimalSchema.tg");
+			Schema schema2 = GraphIO.loadSchemaFromFile(SCHEMAFOLDER + "jnitestschema.tg");
+			
+			Graph g1 = schema1.createGraph(ImplementationType.GENERIC, 100, 100);
+			Vertex v1 = g1.createVertex(schema1.getGraphClass().getVertexClass("Node"));
+			Vertex v2 = g1.createVertex(schema1.getGraphClass().getVertexClass("Node"));
+			// Error: EdgeClass is from schema2
+			g1.createEdge(schema2.getGraphClass().getEdgeClass("Link"), v1, v2);
+		} catch (GraphIOException e) {
+			e.printStackTrace();
+			fail();
+		}
 	}
 	
-	// EdgeClass is not defined as connecting the VertexClasses
-	@Test
+	// EdgeClass is not defined between the connected nodes' VertexClasses
+	@Test(expected=GraphException.class)
 	public void testCreateEdgeFailure2() {
-		// TODO
+		try {
+			Schema schema = GraphIO.loadSchemaFromFile(SCHEMAFOLDER + "greqltestschema.tg");
+			Graph g = schema.createGraph(ImplementationType.GENERIC, 100, 100);
+			Vertex v1 = g.createVertex(schema.getGraphClass().getVertexClass("localities.Village"));
+			Vertex v2 = g.createVertex(schema.getGraphClass().getVertexClass("localities.Village"));
+			
+			g.createEdge(schema.getGraphClass().getEdgeClass("connections.Street"), v1, v2);
+		} catch (GraphIOException e) {
+			e.printStackTrace();
+			fail();
+		}
 	}
 	
-	// The IncidenceClass is redefined and therefore not allowed
-	@Test
+	// The IncidenceClass is redefined and therefore not allowed (VertexTestSChema.tg)
+	@Test(expected=GraphException.class)
 	public void testCreateEdgeFailure3() {
-		// TODO
+		try {
+			Schema schema = GraphIO.loadSchemaFromFile(SCHEMAFOLDER + "VertexTestSchema.tg");
+			Graph g = schema.createGraph(ImplementationType.GENERIC, 100, 100);
+			Vertex v1 = g.createVertex(schema.getGraphClass().getVertexClass("C2"));
+			Vertex v2 = g.createVertex(schema.getGraphClass().getVertexClass("D2"));
+			
+			// this Edge should not be allowed => GraphException
+			g.createEdge(schema.getGraphClass().getEdgeClass("E"), v1, v2);			
+		} catch (GraphIOException e) {
+			e.printStackTrace();
+			fail();
+		}
 	}
 	
 	// VertexClass is from a different Schema
-	@Test
+	@Test(expected=GraphException.class)
 	public void testCreateVertexFailure1() {
-		// TODO
+		try {
+			Schema citimapschema = GraphIO.loadSchemaFromFile(SCHEMAFOLDER + "citymapschema.tg");
+			Schema greqltestschema = GraphIO.loadSchemaFromFile(SCHEMAFOLDER + "greqltestschema.tg");
+			
+			Graph g1 = citimapschema.createGraph(ImplementationType.GENERIC, 100, 100);
+			
+			g1.createVertex(greqltestschema.getGraphClass().getVertexClass("Street"));
+		} catch (GraphIOException e) {
+			e.printStackTrace();
+			fail();
+		}
 	}
 
 	// Test setting and accessing a graph's attributes
@@ -226,16 +322,26 @@ public class GenericGraphImplTest {
 		Schema schema = GraphIO.loadSchemaFromFile(SCHEMAFOLDER + "DefaultValueTestSchema.tg");
 		Graph g = schema.createGraph(ImplementationType.GENERIC, 100, 100);
 		
+		testDefaultValue(g.getAttribute("boolGraph"), g.getGraphClass().getAttribute("boolGraph"));
 		g.setAttribute("boolGraph", false);
 		assertEquals(false, g.getAttribute("boolGraph"));
 		
+		testDefaultValue(g.getAttribute("listGraph"), g.getGraphClass().getAttribute("listGraph"));
 		g.setAttribute("listGraph", JGraLab.vector().plus(true).plus(true).plus(false));
 		assertEquals(JGraLab.vector().plus(true).plus(true).plus(false), g.getAttribute("listGraph"));
 		
 		g.setAttribute("listGraph", null);
 		assertEquals(null, g.getAttribute("listGraph"));
 		
-		// TODO
+		g.setAttribute("complexListGraph", JGraLab.vector()
+				.plus(JGraLab.vector().plus(true))
+				.plus(JGraLab.vector().plus(false))
+				.plus(JGraLab.vector().plus(false)));
+		assertEquals(JGraLab.vector()
+				.plus(JGraLab.vector().plus(true))
+				.plus(JGraLab.vector().plus(false))
+				.plus(JGraLab.vector().plus(false)),
+				g.getAttribute("complexGraph"));
 	}
 	
 	// Test setting attributes that don't exist. NoSuchAttributeException is expected. 
