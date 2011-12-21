@@ -920,14 +920,14 @@ public class StateRepository {
 			tv.calculateVertexListAndEdgeList(state);
 			tv.visualizeElements(code, state, 20, false, "v"
 					+ (firstVertex != null ? firstVertex.getId() : ""), false,
-					state.currentExplicitlyDefinedSet == null);
+					state.currentExplicitlyDefinedSet == null);// TODO
 			code.append("changeBackgroundColor(\"v")
 					.append(firstVertex != null ? firstVertex.getId() : "")
 					.append("\");\n");
 			tv.visualizeElements(code, state, 20, false, "e"
 					+ (state.getGraph().getFirstEdge() != null ? state
 							.getGraph().getFirstEdge().getId() : ""), false,
-					state.currentExplicitlyDefinedSet == null);
+					state.currentExplicitlyDefinedSet == null);// TODO
 			code.append("timestamp = ").append(state.lastAccess).append(";\n");
 			code.append("resize();\n");
 			code.append("resize();\n");// fixes the correct size in FF
@@ -1271,6 +1271,7 @@ public class StateRepository {
 						code.append(
 								"document.getElementById(\"loadError\").innerHTML += \"ERROR:<br />")
 								.append(e.toString()).append("\";\n");
+						e.printStackTrace();
 					} else if (currentGraphWrapper.graph == null) {
 						code.append("document.getElementById(\"loadError\").innerHTML += \"ERROR:<br />The graph couldn't be loaded!<br />Probably an OutOfMemoryError occured.\";\n");
 					} else {
@@ -1299,6 +1300,7 @@ public class StateRepository {
 				code.append(
 						"document.getElementById(\"loadError\").innerHTML += \"ERROR:<br />")
 						.append(e.toString()).append("\";\n");
+				e.printStackTrace();
 			}
 		}
 		return code.append("}");
