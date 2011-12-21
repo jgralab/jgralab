@@ -41,6 +41,7 @@ import java.util.NoSuchElementException;
 
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.Vertex;
+import de.uni_koblenz.jgralab.schema.VertexClass;
 
 /**
  * This class provides an Iterable to iterate over vertices in a graph. One may
@@ -79,6 +80,8 @@ public class VertexIterable<V extends Vertex> implements Iterable<V> {
 		protected InternalGraph graph = null;
 
 		protected Class<? extends Vertex> vc;
+		
+		protected VertexClass schemaVc;
 
 		/**
 		 * the version of the vertex list of the graph at the beginning of the
@@ -102,6 +105,22 @@ public class VertexIterable<V extends Vertex> implements Iterable<V> {
 			current = (V) (vc == null ? graph.getFirstVertex() : graph
 					.getFirstVertex(vc));
 		}
+		
+		/**
+		 * Creates a new Vertex iterator for the given <code>Graph</code>, that iterates over
+		 * vertices of a given <code>VertexClass</code>
+		 * @param g The <code>Graph</code>.
+		 * @param vc They <code>VertexClass</code> determining which type of vertex should be
+		 * iterated over.
+		 */
+		@SuppressWarnings("unchecked")
+		VertexIterator(InternalGraph g, VertexClass vc) {
+			graph = g;
+			schemaVc = vc;
+			vertexListVersion = g.getVertexListVersion();
+			current = (V) (vc == null ? graph.getFirstVertex() : graph
+					.getFirstVertex(vc));
+		}
 
 		/**
 		 * @return the next vertex in the graph which mathes the conditions of
@@ -117,8 +136,8 @@ public class VertexIterable<V extends Vertex> implements Iterable<V> {
 				throw new NoSuchElementException();
 			}
 			V result = current;
-			current = (V) (vc == null ? current.getNextVertex() : current
-					.getNextVertex(vc));
+			current = (V) (vc == null && schemaVc == null ? current.getNextVertex() : schemaVc == null ? current
+					.getNextVertex(vc) : current.getNextVertex(schemaVc));
 			return result;
 		}
 
@@ -145,10 +164,15 @@ public class VertexIterable<V extends Vertex> implements Iterable<V> {
 	private VertexIterator iter;
 
 	public VertexIterable(Graph g) {
-		this(g, null);
+		this(g, (Class<? extends Vertex>) null);
 	}
 
 	public VertexIterable(Graph g, Class<? extends Vertex> vc) {
+		assert g != null;
+		iter = new VertexIterator((InternalGraph) g, vc);
+	}
+
+	public VertexIterable(Graph g, VertexClass vc) {
 		assert g != null;
 		iter = new VertexIterator((InternalGraph) g, vc);
 	}
