@@ -41,6 +41,7 @@ import java.util.NoSuchElementException;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
+import de.uni_koblenz.jgralab.schema.EdgeClass;
 
 /**
  * This class provides an Iterable to iterate over edges in a graph. One may use
@@ -65,6 +66,8 @@ public class EdgeIterable<E extends Edge> implements Iterable<E> {
 		protected InternalGraph graph = null;
 
 		protected Class<? extends Edge> ec;
+		
+		protected EdgeClass schemaEc;
 
 		/**
 		 * the version of the edge list of the graph at the beginning of the
@@ -84,6 +87,15 @@ public class EdgeIterable<E extends Edge> implements Iterable<E> {
 		}
 
 		@SuppressWarnings("unchecked")
+		EdgeIterator(InternalGraph g, EdgeClass ec) {
+			graph = g;
+			schemaEc = ec;
+			edgeListVersion = g.getEdgeListVersion();
+			current = (E) (ec == null ? graph.getFirstEdge() : graph
+					.getFirstEdge(ec));
+		}
+
+		@SuppressWarnings("unchecked")
 		public E next() {
 			if (graph.isEdgeListModified(edgeListVersion)) {
 				throw new ConcurrentModificationException(
@@ -93,8 +105,8 @@ public class EdgeIterable<E extends Edge> implements Iterable<E> {
 				throw new NoSuchElementException();
 			}
 			E result = current;
-			current = (E) (ec == null ? current.getNextEdge() : current
-					.getNextEdge(ec));
+			current = (E) (ec == null && schemaEc == null ? current.getNextEdge() : schemaEc == null? current
+					.getNextEdge(ec) : current.getNextEdge(schemaEc));
 			return result;
 		}
 
@@ -112,10 +124,15 @@ public class EdgeIterable<E extends Edge> implements Iterable<E> {
 	private EdgeIterator iter;
 
 	public EdgeIterable(Graph g) {
-		this(g, null);
+		this(g, (Class<? extends Edge>) null);
 	}
 
 	public EdgeIterable(Graph g, Class<? extends Edge> ec) {
+		assert g != null;
+		iter = new EdgeIterator((InternalGraph) g, ec);
+	}
+
+	public EdgeIterable(Graph g, EdgeClass ec) {
 		assert g != null;
 		iter = new EdgeIterator((InternalGraph) g, ec);
 	}
