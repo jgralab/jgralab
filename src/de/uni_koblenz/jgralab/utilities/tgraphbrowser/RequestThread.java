@@ -139,6 +139,7 @@ public class RequestThread extends Thread {
 				sendError(out, 500, "Invalid Method.");
 				return;
 			}
+			System.out.println(request);// TODO
 			if (request.startsWith("POST ")) {
 				// POST-Request
 				handlePostRequest(in, out, request);
