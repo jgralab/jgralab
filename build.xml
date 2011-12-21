@@ -270,15 +270,15 @@
 	<!-- unjar -->
 	<!-- prepares additional common libraries to be added to the jar file -->
 	<target name="unjar" depends="common.unjar">
-		<unjar dest="${tmp.dir}">
+		<!--unjar dest="${tmp.dir}">
 			<fileset dir="${comlib.dir}/apache/commons/cli/" includes="**/*.jar" />
 			<patternset>
 				<exclude name="META-INF/**" />
 			</patternset>
-		</unjar>
-		<preserve-meta metaDir="${tmp.dir}/META-INF/">
+		</unjar-->
+		<unjar_mp dest="${tmp.dir}">
 			<fileset dir="${comlib.dir}/apache/commons/cli/" includes="**/*.jar" />
-		</preserve-meta>
+		</unjar_mp>
 		<copy todir="${tmp.dir}/META-INF" file="${project.dir}/license/LICENSE.txt" />
 	</target>
 
