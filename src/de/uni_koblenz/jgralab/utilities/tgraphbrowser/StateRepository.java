@@ -920,14 +920,14 @@ public class StateRepository {
 			tv.calculateVertexListAndEdgeList(state);
 			tv.visualizeElements(code, state, 20, false, "v"
 					+ (firstVertex != null ? firstVertex.getId() : ""), false,
-					state.currentExplicitlyDefinedSet == null);// TODO
+					state.currentExplicitlyDefinedSet == null);
 			code.append("changeBackgroundColor(\"v")
 					.append(firstVertex != null ? firstVertex.getId() : "")
 					.append("\");\n");
 			tv.visualizeElements(code, state, 20, false, "e"
 					+ (state.getGraph().getFirstEdge() != null ? state
 							.getGraph().getFirstEdge().getId() : ""), false,
-					state.currentExplicitlyDefinedSet == null);// TODO
+					state.currentExplicitlyDefinedSet == null);
 			code.append("timestamp = ").append(state.lastAccess).append(";\n");
 			code.append("resize();\n");
 			code.append("resize();\n");// fixes the correct size in FF
@@ -1329,7 +1329,6 @@ public class StateRepository {
 							.append(getEncodedFileName(f, false))
 							.append("\";\n");
 				} catch (UnsupportedEncodingException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 				code.append("childOpt.setAttributeNode(optValue);\n");
@@ -2002,7 +2001,6 @@ public class StateRepository {
 					currentGraph.excOfWorkingCallable = e;
 					e.printStackTrace();
 				}
-				System.out.println("finished loading");// TODO
 			}
 
 			@Override
