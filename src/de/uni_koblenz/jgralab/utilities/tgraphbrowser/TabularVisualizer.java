@@ -525,7 +525,7 @@ public class TabularVisualizer {
 					// NUMBER_OF_INCIDENCES_PER_PAGE incident edges
 					code.append("var text = document.createElement(\"b\");\n");
 					code.append("text.appendChild(document.createTextNode(")
-							.append(e.getAlpha() == currentVertex ? "String.fromCharCode(8594)"
+							.append(isOutgoingEdge(currentVertex, e) ? "String.fromCharCode(8594)"
 									: "String.fromCharCode(8592)")
 							.append("));\n");
 					code.append("text.style.fontSize = \"large\";\n");
@@ -573,6 +573,15 @@ public class TabularVisualizer {
 			createNavigationThroughPages(code, "v" + currentVertex.getId(),
 					numberOfPages, displayedPage, false);
 		}
+	}
+
+	/**
+	 * @param currentVertex
+	 * @param e
+	 * @return
+	 */
+	private boolean isOutgoingEdge(Vertex currentVertex, Edge e) {
+		return e.isNormal() && e.getAlpha() == currentVertex;
 	}
 
 	/**
