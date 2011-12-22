@@ -68,7 +68,7 @@ public class SchemaVisualizer {
 	public void createSchemaRepresentation(StringBuilder code, State state) {
 		createAttributedElementClassRepresentation(code, state, true);
 		createAttributedElementClassRepresentation(code, state, false);
-		// createPackageRepresentation(code, state);// TODO
+		createPackageRepresentation(code, state);
 	}
 
 	/**
@@ -116,7 +116,8 @@ public class SchemaVisualizer {
 		String simpleName = isDefaultPackage ? "defaultPackage"
 				: currentPackage.getSimpleName();
 		String uniqueName = isDefaultPackage ? "defaultPackage"
-				: replaceDollar(currentPackage.getUniqueName());
+				: replaceDollar(currentPackage.getUniqueName().replaceAll(
+						Pattern.quote("."), "__"));
 		String qualifiedName = isDefaultPackage ? "defaultPackage"
 				: currentPackage.getQualifiedName();
 
@@ -144,17 +145,16 @@ public class SchemaVisualizer {
 			}
 			String uniqueNameOfVc = replaceDollar(vc.getUniqueName());
 			String codeSnippet = "";
-			// // invert the checked value of the representation of this
-			// // VertexClass
-			// codeSnippet += "var checkbox" + uniqueNameOfVc
-			// + " = document.getElementById(\"input" + uniqueNameOfVc
-			// + "\");\n";
-			// codeSnippet += "checkbox" + uniqueNameOfVc +
-			// ".checked = !checkbox"
-			// + uniqueNameOfVc + ".checked;\n";
-			// // deSelect current vertexClass
-			// codeSnippet += "deSelect(\"" + uniqueNameOfVc + "\",\"input"
-			// + uniqueName + "\");\n";
+			// invert the checked value of the representation of this
+			// VertexClass
+			codeSnippet += "var checkbox" + uniqueNameOfVc
+					+ " = document.getElementById(\"input" + uniqueNameOfVc
+					+ "\");\n";
+			codeSnippet += "checkbox" + uniqueNameOfVc + ".checked = !checkbox"
+					+ uniqueNameOfVc + ".checked;\n";
+			// deSelect current vertexClass
+			codeSnippet += "deSelect(\"" + uniqueNameOfVc + "\",\"input"
+					+ uniqueName + "\");\n";
 			if (vc.getPackage() == currentPackage) {
 				// this VertexClass is in a subpackage of the current package
 				elsePartOfAdditionalCode += codeSnippet;
@@ -185,17 +185,16 @@ public class SchemaVisualizer {
 			}
 			String uniqueNameOfE = replaceDollar(e.getUniqueName());
 			String codeSnippet = "";
-			// // invert the checked value of the representation of this
-			// // VertexClass
-			// codeSnippet += "var checkbox" + uniqueNameOfE
-			// + " = document.getElementById(\"input" + uniqueNameOfE
-			// + "\");\n";
-			// codeSnippet += "checkbox" + uniqueNameOfE +
-			// ".checked = !checkbox"
-			// + uniqueNameOfE + ".checked;\n";
-			// // deSelect current vertexClass
-			// codeSnippet += "deSelect(\"" + uniqueNameOfE + "\",\"input"
-			// + uniqueName + "\");\n";
+			// invert the checked value of the representation of this
+			// VertexClass
+			codeSnippet += "var checkbox" + uniqueNameOfE
+					+ " = document.getElementById(\"input" + uniqueNameOfE
+					+ "\");\n";
+			codeSnippet += "checkbox" + uniqueNameOfE + ".checked = !checkbox"
+					+ uniqueNameOfE + ".checked;\n";
+			// deSelect current vertexClass
+			codeSnippet += "deSelect(\"" + uniqueNameOfE + "\",\"input"
+					+ uniqueName + "\");\n";
 			if (e.getPackage() == currentPackage) {
 				// this VertexClass is in a subpackage of the current package
 				elsePartOfAdditionalCode += codeSnippet;
@@ -203,7 +202,8 @@ public class SchemaVisualizer {
 			thenPartOfAdditionalCode += codeSnippet;
 		}
 		// deSelect the VertexClasses and EdgeClasses which are in this package
-		String additionalCode = "if(document.getElementById(\"checkSelectAll\").checked){\n";
+		String additionalCode = // "";
+		"if(document.getElementById(\"checkSelectAll\").checked){\n";
 		additionalCode += thenPartOfAdditionalCode;
 		additionalCode += "}else{\n";
 		additionalCode += elsePartOfAdditionalCode;
@@ -230,7 +230,7 @@ public class SchemaVisualizer {
 					}
 				}
 				createEntriesForPackage(code, "ul" + uniqueName, p, false,
-						verticesOfThisPackage, edgesOfThisPackage);// TODO
+						verticesOfThisPackage, edgesOfThisPackage);
 			}
 		}
 	}
