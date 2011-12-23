@@ -36,6 +36,8 @@ package de.uni_koblenz.jgralab.algolib.algorithms.strong_components;
 
 import static java.lang.Math.min;
 
+import java.util.HashSet;
+import java.util.Set;
 import java.util.Stack;
 
 import de.uni_koblenz.jgralab.Edge;
@@ -65,6 +67,7 @@ public class StrongComponentsWithDFS extends StructureOrientedAlgorithm
 	private DFSVisitor lowlinkVisitor;
 	private IntFunction<Vertex> lowlink;
 	private Function<Vertex, Vertex> strongComponents;
+	private Function<Vertex, Set<Vertex>> inverseResult;
 	private ReducedGraphVisitorList visitors;
 
 	public StrongComponentsWithDFS(Graph graph, DepthFirstSearch dfs) {
@@ -91,6 +94,8 @@ public class StrongComponentsWithDFS extends StructureOrientedAlgorithm
 
 	@Override
 	public void disableOptionalResults() {
+		checkStateForSettingParameters();
+		inverseResult = null;
 	}
 
 	@Override
@@ -120,6 +125,18 @@ public class StrongComponentsWithDFS extends StructureOrientedAlgorithm
 		return false;
 	}
 
+	public StrongComponentsWithDFS withInverseResult() {
+		checkStateForSettingParameters();
+		inverseResult = new ArrayVertexMarker<Set<Vertex>>(graph);
+		return this;
+	}
+
+	public StrongComponentsWithDFS withoutInverseResult() {
+		checkStateForSettingParameters();
+		inverseResult = null;
+		return this;
+	}
+
 	@Override
 	public void removeVisitor(Visitor visitor) {
 		checkStateForSettingVisitors();
@@ -136,6 +153,11 @@ public class StrongComponentsWithDFS extends StructureOrientedAlgorithm
 		return strongComponents;
 	}
 
+	public Function<Vertex, Set<Vertex>> getInverseResult() {
+		checkStateForResult();
+		return inverseResult;
+	}
+
 	public IntFunction<Vertex> getLowlink() {
 		checkStateForResult();
 		return lowlink;
@@ -145,9 +167,8 @@ public class StrongComponentsWithDFS extends StructureOrientedAlgorithm
 	public void resetParameters() {
 		super.resetParameters();
 		vertexStack = new Stack<Vertex>();
-		lowlink = new IntegerVertexMarker(graph);
-		strongComponents = new ArrayVertexMarker<Vertex>(graph);
 		visitors = new ReducedGraphVisitorList();
+		inverseResult = null;
 		lowlinkVisitor = new DFSVisitorAdapter() {
 
 			private IntFunction<Vertex> number;
@@ -203,10 +224,20 @@ public class StrongComponentsWithDFS extends StructureOrientedAlgorithm
 			@Override
 			public void leaveVertex(Vertex v) {
 				if (lowlink.get(v) == number.get(v)) {
+					Set<Vertex> currentSubSet = null;
+					if (inverseResult != null) {
+						assert inverseResult.get(v) == null;
+						currentSubSet = new HashSet<Vertex>();
+						inverseResult.set(v, currentSubSet);
+					}
 					Vertex x;
+
 					do {
 						x = vertexStack.pop();
 						strongComponents.set(x, v);
+						if (currentSubSet != null) {
+							currentSubSet.add(x);
+						}
 					} while (x != v);
 					visitors.visitRepresentativeVertex(v);
 				}
@@ -217,6 +248,10 @@ public class StrongComponentsWithDFS extends StructureOrientedAlgorithm
 	@Override
 	public void reset() {
 		super.reset();
+		lowlink = new IntegerVertexMarker(graph);
+		strongComponents = new ArrayVertexMarker<Vertex>(graph);
+		inverseResult = inverseResult == null ? null
+				: new ArrayVertexMarker<Set<Vertex>>(graph);
 		vertexStack.clear();
 	}
 
@@ -243,6 +278,10 @@ public class StrongComponentsWithDFS extends StructureOrientedAlgorithm
 
 	public Function<Vertex, Vertex> getInternalStrongComponents() {
 		return strongComponents;
+	}
+
+	public Function<Vertex, Set<Vertex>> getInternalInverseResult() {
+		return inverseResult;
 	}
 
 	public Stack<Vertex> getVertexStack() {

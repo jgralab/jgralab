@@ -4,14 +4,12 @@ import org.pcollections.PVector;
 
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.JGraLab;
-import de.uni_koblenz.jgralab.TraversalContext;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.algolib.algorithms.AlgorithmTerminatedException;
 import de.uni_koblenz.jgralab.algolib.algorithms.search.DepthFirstSearch;
 import de.uni_koblenz.jgralab.algolib.algorithms.search.IterativeDepthFirstSearch;
 import de.uni_koblenz.jgralab.algolib.algorithms.topological_order.TopologicalOrderWithDFS;
 import de.uni_koblenz.jgralab.algolib.functions.Permutation;
-import de.uni_koblenz.jgralab.graphmarker.SubGraphMarker;
 import de.uni_koblenz.jgralab.greql2.funlib.Function;
 import de.uni_koblenz.jgralab.greql2.funlib.NeedsGraphArgument;
 
@@ -41,16 +39,6 @@ public class TopologicalSort extends Function {
 			result = result.plus(v);
 		}
 		return result;
-	}
-
-	// TODO [subgraph] delete this method as soon as traversal context works
-	public PVector<? extends Vertex> evaluate(Graph g, SubGraphMarker sub) {
-		TraversalContext oldTC = g.setTraversalContext(sub);
-		try {
-			return evaluate(g);
-		} finally {
-			g.setTraversalContext(oldTC);
-		}
 	}
 
 	@Override

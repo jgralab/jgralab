@@ -42,5 +42,5 @@ public interface EclipseAdapter {
 
 	public String getJGraLabVersion();
 
-	public String getJGraLabRevision();
+	public String getJGraLabCodename();
 }

@@ -81,8 +81,7 @@ public class SchemaVisualizer {
 	private void createPackageRepresentation(StringBuilder code, State state) {
 		Package defaultPackage = state.getGraph().getSchema()
 				.getDefaultPackage();
-		code
-				.append("var divPackage = document.getElementById(\"divPackage\");\n");
+		code.append("var divPackage = document.getElementById(\"divPackage\");\n");
 		code.append("var ulRootPackage = document.createElement(\"ul\");\n");
 		code.append("ulRootPackage.id = \"ulRootPackage\";\n");
 		code.append("divPackage.appendChild(ulRootPackage);\n");
@@ -117,7 +116,8 @@ public class SchemaVisualizer {
 		String simpleName = isDefaultPackage ? "defaultPackage"
 				: currentPackage.getSimpleName();
 		String uniqueName = isDefaultPackage ? "defaultPackage"
-				: replaceDollar(currentPackage.getUniqueName());
+				: replaceDollar(currentPackage.getUniqueName().replaceAll(
+						Pattern.quote("."), "__"));
 		String qualifiedName = isDefaultPackage ? "defaultPackage"
 				: currentPackage.getQualifiedName();
 
@@ -202,7 +202,8 @@ public class SchemaVisualizer {
 			thenPartOfAdditionalCode += codeSnippet;
 		}
 		// deSelect the VertexClasses and EdgeClasses which are in this package
-		String additionalCode = "if(document.getElementById(\"checkSelectAll\").checked){\n";
+		String additionalCode = // "";
+		"if(document.getElementById(\"checkSelectAll\").checked){\n";
 		additionalCode += thenPartOfAdditionalCode;
 		additionalCode += "}else{\n";
 		additionalCode += elsePartOfAdditionalCode;
@@ -242,8 +243,8 @@ public class SchemaVisualizer {
 	 * @return
 	 */
 	private String replaceDollar(String uniqueName) {
-		return Pattern.compile(Matcher.quoteReplacement("$")).matcher(
-				uniqueName).replaceAll(Matcher.quoteReplacement(""));
+		return Pattern.compile(Matcher.quoteReplacement("$"))
+				.matcher(uniqueName).replaceAll(Matcher.quoteReplacement(""));
 	}
 
 	/**
@@ -321,17 +322,18 @@ public class SchemaVisualizer {
 				}
 			}
 			createLi(code, "ul" + ulName,
-					replaceDollar(aeclass.getUniqueName()), aeclass
-							.getSimpleName());
+					replaceDollar(aeclass.getUniqueName()),
+					aeclass.getSimpleName());
 			createCheckBox(code, replaceDollar(aeclass.getUniqueName()),
 					aeclass.getQualifiedName(), "");
-			createP(code, aeclass.getSimpleName(), replaceDollar(aeclass
-					.getUniqueName()), aeclass.getQualifiedName(), aeclass
-					.isAbstract(), aeclass.getAttributeList());
+			createP(code, aeclass.getSimpleName(),
+					replaceDollar(aeclass.getUniqueName()),
+					aeclass.getQualifiedName(), aeclass.isAbstract(),
+					aeclass.getAttributeList());
 			// if the class has subclasses create a link and a sub-ul
 			if (aeclass.getDirectSubClasses().size() > 0) {
-				convertToTypeWithSubtypes(code, replaceDollar(aeclass
-						.getUniqueName()));
+				convertToTypeWithSubtypes(code,
+						replaceDollar(aeclass.getUniqueName()));
 			}
 		}
 		/*
@@ -349,8 +351,8 @@ public class SchemaVisualizer {
 					AttributedElementClass cls = unsetSuperClasses.get(z)
 							.next();
 					String supCls = replaceDollar(cls.getUniqueName());
-					if (state.getGraph().getSchema().getAttributedElementClass(
-							"Aggregation") != cls
+					if (state.getGraph().getSchema()
+							.getAttributedElementClass("Aggregation") != cls
 							&& state.getGraph().getSchema()
 									.getAttributedElementClass("Composition") != cls) {
 						aeclass.getSchemaClass();
@@ -387,14 +389,15 @@ public class SchemaVisualizer {
 	private void cloneType(StringBuilder code, AttributedElementClass aeclass,
 			int i, String supCls) {
 		String uniqueName = replaceDollar(aeclass.getUniqueName());
-		code.append("var li").append(uniqueName).append("_").append(i).append(
-				" = li").append(uniqueName).append(".cloneNode(true);\n");
+		code.append("var li").append(uniqueName).append("_").append(i)
+				.append(" = li").append(uniqueName)
+				.append(".cloneNode(true);\n");
 		code.append("insertSorted(li").append(uniqueName).append("_").append(i)
 				.append(", '").append(aeclass.getSimpleName()).append("', ul")
-				.append(supCls).append(", 0, (ul").append(supCls).append(
-						".childNodes && ul").append(supCls).append(
-						".childNodes.length>0)?ul").append(supCls).append(
-						".childNodes.length-1:0);\n");
+				.append(supCls).append(", 0, (ul").append(supCls)
+				.append(".childNodes && ul").append(supCls)
+				.append(".childNodes.length>0)?ul").append(supCls)
+				.append(".childNodes.length-1:0);\n");
 	}
 
 	/**
@@ -422,82 +425,82 @@ public class SchemaVisualizer {
 		code.append("return sufcnt;\n");
 		code.append("}\n;");
 		// add _i to the root li-id
-		code.append("var baseName = li").append(uniqueName).append("_").append(
-				i).append(".id.substr(2);\n");
-		code.append("li").append(uniqueName).append("_").append(i).append(
-				".id = \"li\"+baseName+\":\"").append(
-				" + findFreeNumber(\"li\"+baseName);\n");
+		code.append("var baseName = li").append(uniqueName).append("_")
+				.append(i).append(".id.substr(2);\n");
+		code.append("li").append(uniqueName).append("_").append(i)
+				.append(".id = \"li\"+baseName+\":\"")
+				.append(" + findFreeNumber(\"li\"+baseName);\n");
 		// add to all child ul-ids "_i"
-		code.append("var li").append(uniqueName).append("_").append(i).append(
-				"ulChildren = li").append(uniqueName).append("_").append(i)
-				.append(".getElementsByTagName(\"ul\");\n");
+		code.append("var li").append(uniqueName).append("_").append(i)
+				.append("ulChildren = li").append(uniqueName).append("_")
+				.append(i).append(".getElementsByTagName(\"ul\");\n");
 		code.append("for (var i=0; i<li").append(uniqueName).append("_")
 				.append(i).append("ulChildren.length;i++){\n");
-		code.append("var baseName = li").append(uniqueName).append("_").append(
-				i).append(
-				"ulChildren[i].parentNode.childNodes[1].name.substr(5);\n");
-		code.append("li").append(uniqueName).append("_").append(i).append(
-				"ulChildren[i].id = \"ul\"+baseName+\":\"").append(
-				" + findFreeNumber(\"ul\"+baseName);\n");
+		code.append("var baseName = li")
+				.append(uniqueName)
+				.append("_")
+				.append(i)
+				.append("ulChildren[i].parentNode.childNodes[1].name.substr(5);\n");
+		code.append("li").append(uniqueName).append("_").append(i)
+				.append("ulChildren[i].id = \"ul\"+baseName+\":\"")
+				.append(" + findFreeNumber(\"ul\"+baseName);\n");
 		code.append("}\n");
 		// add to all child li-ids "_i"
-		code.append("var li").append(uniqueName).append("_").append(i).append(
-				"liChildren = li").append(uniqueName).append("_").append(i)
-				.append(".getElementsByTagName(\"li\");\n");
+		code.append("var li").append(uniqueName).append("_").append(i)
+				.append("liChildren = li").append(uniqueName).append("_")
+				.append(i).append(".getElementsByTagName(\"li\");\n");
 		code.append("for (var i=0; i<li").append(uniqueName).append("_")
 				.append(i).append("liChildren.length;i++){\n");
-		code.append("var baseName = li").append(uniqueName).append("_").append(
-				i).append("liChildren[i].childNodes[1].name.substr(5);\n");
-		code.append("li").append(uniqueName).append("_").append(i).append(
-				"liChildren[i].id = \"li\"+baseName+\":\" ").append(
-				"+ findFreeNumber(\"li\"+baseName);\n");
+		code.append("var baseName = li").append(uniqueName).append("_")
+				.append(i)
+				.append("liChildren[i].childNodes[1].name.substr(5);\n");
+		code.append("li").append(uniqueName).append("_").append(i)
+				.append("liChildren[i].id = \"li\"+baseName+\":\" ")
+				.append("+ findFreeNumber(\"li\"+baseName);\n");
 		code.append("}\n");
 		// add to all child a-ids and -hrefs "_i"
-		code.append("var li").append(uniqueName).append("_").append(i).append(
-				"aChildren = li").append(uniqueName).append("_").append(i)
-				.append(".getElementsByTagName(\"a\");\n");
+		code.append("var li").append(uniqueName).append("_").append(i)
+				.append("aChildren = li").append(uniqueName).append("_")
+				.append(i).append(".getElementsByTagName(\"a\");\n");
 		code.append("for (var i=0; i<li").append(uniqueName).append("_")
 				.append(i).append("aChildren.length;i++){\n");
-		code.append("var baseName = li").append(uniqueName).append("_").append(
-				i).append(
-				"aChildren[i].parentNode.childNodes[1].name.substr(5);\n");
-		code
-				.append("var baseName = baseName+\":\"+findFreeNumber(\"a\"+baseName);\n");
-		code.append("li").append(uniqueName).append("_").append(i).append(
-				"aChildren[i].id = \"a\"+baseName;\n");
-		code
-				.append("li")
+		code.append("var baseName = li")
+				.append(uniqueName)
+				.append("_")
+				.append(i)
+				.append("aChildren[i].parentNode.childNodes[1].name.substr(5);\n");
+		code.append("var baseName = baseName+\":\"+findFreeNumber(\"a\"+baseName);\n");
+		code.append("li").append(uniqueName).append("_").append(i)
+				.append("aChildren[i].id = \"a\"+baseName;\n");
+		code.append("li")
 				.append(uniqueName)
 				.append("_")
 				.append(i)
 				.append("aChildren[i].href =")
-				.append(
-						" \"javascript:expand('ul\"+baseName+\"','a\"+baseName+\"');\";\n");
+				.append(" \"javascript:expand('ul\"+baseName+\"','a\"+baseName+\"');\";\n");
 		code.append("}\n");
 		// add to all child input-ids "_i"
 		// and set all input-onclick
-		code.append("var li").append(uniqueName).append("_").append(i).append(
-				"inputChildren = li").append(uniqueName).append("_").append(i)
-				.append(".getElementsByTagName(\"input\");\n");
+		code.append("var li").append(uniqueName).append("_").append(i)
+				.append("inputChildren = li").append(uniqueName).append("_")
+				.append(i).append(".getElementsByTagName(\"input\");\n");
 		code.append("for (var i=0; i<li").append(uniqueName).append("_")
 				.append(i).append("inputChildren.length;i++){\n");
-		code.append("var baseName = li").append(uniqueName).append("_").append(
-				i).append("inputChildren[i].name.substr(5);\n");
-		code.append("li").append(uniqueName).append("_").append(i).append(
-				"inputChildren[i].id = \"input\"+baseName+\":\"").append(
-				" + findFreeNumber(\"input\"+baseName);\n");
-		code
-				.append("li")
+		code.append("var baseName = li").append(uniqueName).append("_")
+				.append(i).append("inputChildren[i].name.substr(5);\n");
+		code.append("li").append(uniqueName).append("_").append(i)
+				.append("inputChildren[i].id = \"input\"+baseName+\":\"")
+				.append(" + findFreeNumber(\"input\"+baseName);\n");
+		code.append("li")
 				.append(uniqueName)
 				.append("_")
 				.append(i)
 				.append("inputChildren[i].onclick = function(){")
-				.append(
-						"deSelect(this.value.substr(this.value.lastIndexOf('.')+1),this.id);\n")
+				.append("deSelect(this.value.substr(this.value.lastIndexOf('.')+1),this.id);\n")
 				.append("submitDeselectedTypes();\n" + "};\n");
 		// IE doesn't clone the checked-value
-		code.append("li").append(uniqueName).append("_").append(i).append(
-				"inputChildren[i].checked = true;\n");
+		code.append("li").append(uniqueName).append("_").append(i)
+				.append("inputChildren[i].checked = true;\n");
 		code.append("}\n");
 	}
 
@@ -516,11 +519,11 @@ public class SchemaVisualizer {
 	 *            VertexClasses. It equals "Edge" otherwise.
 	 */
 	private void createRootUl(StringBuilder code, String var) {
-		code.append("var div").append(var).append(
-				"Class = document.getElementById(\"div").append(var).append(
-				"Class\");\n");
-		code.append("var ulRoot").append(var).append(
-				" = document.createElement(\"ul\");\n");
+		code.append("var div").append(var)
+				.append("Class = document.getElementById(\"div").append(var)
+				.append("Class\");\n");
+		code.append("var ulRoot").append(var)
+				.append(" = document.createElement(\"ul\");\n");
 		code.append("ulRoot").append(var).append(".id = \"ulRoot").append(var)
 				.append("\";\n");
 		code.append("div").append(var).append("Class.appendChild(ulRoot")
@@ -546,30 +549,31 @@ public class SchemaVisualizer {
 	 */
 	private void convertToTypeWithSubtypes(StringBuilder code, String uniqueName) {
 		// create a
-		code.append("var a").append(uniqueName).append(
-				" = document.createElement(\"a\");\n");
-		code.append("a").append(uniqueName).append(".id = \"a").append(
-				uniqueName).append("\";\n");
-		code.append("a").append(uniqueName).append(
-				".href = \"javascript:expand('ul").append(uniqueName).append(
-				"','a").append(uniqueName).append("');\";\n");
+		code.append("var a").append(uniqueName)
+				.append(" = document.createElement(\"a\");\n");
+		code.append("a").append(uniqueName).append(".id = \"a")
+				.append(uniqueName).append("\";\n");
+		code.append("a").append(uniqueName)
+				.append(".href = \"javascript:expand('ul").append(uniqueName)
+				.append("','a").append(uniqueName).append("');\";\n");
 		// create plus image
-		code.append("var img").append(uniqueName).append(
-				" = document.createElement(\"img\");\n");
+		code.append("var img").append(uniqueName)
+				.append(" = document.createElement(\"img\");\n");
 		code.append("img").append(uniqueName).append(".src = \"plus.png\";\n");
 		code.append("img").append(uniqueName).append(".alt = \"+\";\n");
-		code.append("a").append(uniqueName).append(".appendChild(img").append(
-				uniqueName).append(");\n");
+		code.append("a").append(uniqueName).append(".appendChild(img")
+				.append(uniqueName).append(");\n");
 		// create ul
-		code.append("var ul").append(uniqueName).append(
-				" = document.createElement(\"ul\");\n");
-		code.append("ul").append(uniqueName).append(".id = \"ul").append(
-				uniqueName).append("\";\n");
-		code.append("li").append(uniqueName).append(".appendChild(ul").append(
-				uniqueName).append(");\n");
+		code.append("var ul").append(uniqueName)
+				.append(" = document.createElement(\"ul\");\n");
+		code.append("ul").append(uniqueName).append(".id = \"ul")
+				.append(uniqueName).append("\";\n");
+		code.append("li").append(uniqueName).append(".appendChild(ul")
+				.append(uniqueName).append(");\n");
 		// put a at the right place and deletewhitespaces
-		code.append("li").append(uniqueName).append(".replaceChild(a").append(
-				uniqueName).append(",ws").append(uniqueName).append(");\n");
+		code.append("li").append(uniqueName).append(".replaceChild(a")
+				.append(uniqueName).append(",ws").append(uniqueName)
+				.append(");\n");
 	}
 
 	/**
@@ -604,15 +608,15 @@ public class SchemaVisualizer {
 						.append(" ").append(attr.getName()).append(";");
 			}
 		}
-		code.append("var p").append(uniqueName).append(
-				" = document.createElement(\"p\");\n");
+		code.append("var p").append(uniqueName)
+				.append(" = document.createElement(\"p\");\n");
 		code.append("p").append(uniqueName).append(".title = \"").append(title)
 				.append("\";\n");
-		code.append("p").append(uniqueName).append(".innerHTML = \"").append(
-				isAbstract ? "<i>" : "").append(simpleName).append(
-				isAbstract ? "</i>" : "").append("\";\n");
-		code.append("li").append(uniqueName).append(".appendChild(p").append(
-				uniqueName).append(");\n");
+		code.append("p").append(uniqueName).append(".innerHTML = \"")
+				.append(isAbstract ? "<i>" : "").append(simpleName)
+				.append(isAbstract ? "</i>" : "").append("\";\n");
+		code.append("li").append(uniqueName).append(".appendChild(p")
+				.append(uniqueName).append(");\n");
 	}
 
 	/**
@@ -634,34 +638,32 @@ public class SchemaVisualizer {
 	private void createCheckBox(StringBuilder code, String uniqueName,
 			String qualifiedName, String additionalCode) {
 		code.append("var input").append(uniqueName).append(";\n");
-		code
-				.append("if(navigator.appName == \"Microsoft Internet Explorer\"){\n");
+		code.append("if(navigator.appName == \"Microsoft Internet Explorer\"){\n");
 		// IE7 does not set the checkboxes to checked. This is the workaround.
-		code
-				.append("input")
+		code.append("input")
 				.append(uniqueName)
-				.append(
-						" = document.createElement('<input checked=\"checked\" />');\n");
+				.append(" = document.createElement('<input checked=\"checked\" />');\n");
 		code.append("} else {\n");
-		code.append("input").append(uniqueName).append(
-				" = document.createElement(\"input\");\n");
+		code.append("input").append(uniqueName)
+				.append(" = document.createElement(\"input\");\n");
 		code.append("}\n");
 		code.append("input").append(uniqueName).append(".checked = true;\n");
-		code.append("input").append(uniqueName).append(".id = \"input").append(
-				uniqueName).append("\";\n");
-		code.append("input").append(uniqueName).append(
-				".type = \"checkbox\";\n");
+		code.append("input").append(uniqueName).append(".id = \"input")
+				.append(uniqueName).append("\";\n");
+		code.append("input").append(uniqueName)
+				.append(".type = \"checkbox\";\n");
 		code.append("input").append(uniqueName).append(".name = \"input")
 				.append(uniqueName).append("\";\n");
-		code.append("input").append(uniqueName).append(".value = \"").append(
-				qualifiedName).append("\";\n");
+		code.append("input").append(uniqueName).append(".value = \"")
+				.append(qualifiedName).append("\";\n");
 		code.append("li").append(uniqueName).append(".appendChild(input")
 				.append(uniqueName).append(");\n");
 		// create onclick-event for checkbox
-		code.append("input").append(uniqueName).append(
-				".onclick = function(){\n").append(additionalCode).append(
-				"deSelect('").append(uniqueName).append("',this.id);\n")
-				.append("submitDeselectedTypes();\n").append("};\n");
+		code.append("input").append(uniqueName)
+				.append(".onclick = function(){\n").append(additionalCode)
+				.append("deSelect('").append(uniqueName)
+				.append("',this.id);\n").append("submitDeselectedTypes();\n")
+				.append("};\n");
 	}
 
 	/**
@@ -681,28 +683,28 @@ public class SchemaVisualizer {
 	 */
 	private void createLi(StringBuilder code, String parentUl,
 			String uniqueName, String simpleName) {
-		code.append("var li").append(uniqueName).append(
-				" = document.createElement(\"li\");\n");
-		code.append("li").append(uniqueName).append(".id = \"li").append(
-				uniqueName).append("\";\n");
-		code.append("insertSorted(li").append(uniqueName).append(", '").append(
-				simpleName).append("', ").append(parentUl).append(", 0, (")
-				.append(parentUl).append(".childNodes && ").append(parentUl)
-				.append(".childNodes.length>0)?").append(parentUl).append(
-						".childNodes.length-1:0);\n");
+		code.append("var li").append(uniqueName)
+				.append(" = document.createElement(\"li\");\n");
+		code.append("li").append(uniqueName).append(".id = \"li")
+				.append(uniqueName).append("\";\n");
+		code.append("insertSorted(li").append(uniqueName).append(", '")
+				.append(simpleName).append("', ").append(parentUl)
+				.append(", 0, (").append(parentUl).append(".childNodes && ")
+				.append(parentUl).append(".childNodes.length>0)?")
+				.append(parentUl).append(".childNodes.length-1:0);\n");
 		// create whitespace image
-		code.append("var ws").append(uniqueName).append(
-				" = document.createElement(\"span\");\n");
-		code.append("ws").append(uniqueName).append(
-				".style.border = \"none\";\n");
-		code.append("ws").append(uniqueName).append(
-				".style.paddingRight = \"1em\";\n");
-		code.append("ws").append(uniqueName).append(
-				".style.marginRight = \"0.2em\";\n");
-		code.append("ws").append(uniqueName).append(
-				".style.visibility = \"hidden\";\n");
-		code.append("li").append(uniqueName).append(".appendChild(ws").append(
-				uniqueName).append(");\n");
+		code.append("var ws").append(uniqueName)
+				.append(" = document.createElement(\"span\");\n");
+		code.append("ws").append(uniqueName)
+				.append(".style.border = \"none\";\n");
+		code.append("ws").append(uniqueName)
+				.append(".style.paddingRight = \"1em\";\n");
+		code.append("ws").append(uniqueName)
+				.append(".style.marginRight = \"0.2em\";\n");
+		code.append("ws").append(uniqueName)
+				.append(".style.visibility = \"hidden\";\n");
+		code.append("li").append(uniqueName).append(".appendChild(ws")
+				.append(uniqueName).append(");\n");
 	}
 
 }

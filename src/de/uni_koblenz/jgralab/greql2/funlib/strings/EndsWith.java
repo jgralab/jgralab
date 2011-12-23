@@ -8,7 +8,7 @@ public class EndsWith extends Function {
 				3, 1, 0.05, Category.STRINGS);
 	}
 
-	public Boolean evaluate(String s, String suffix) {
+	public Boolean evaluate(String suffix, String s) {
 		return s.endsWith(suffix);
 	}
 }

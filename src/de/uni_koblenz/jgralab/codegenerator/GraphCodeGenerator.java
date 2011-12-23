@@ -99,7 +99,7 @@ public class GraphCodeGenerator extends AttributedElementCodeGenerator {
 					"\tgreqlEvaluator.setVariable(\"v\", startVertex);",
 					"\tgreqlEvaluator.setQuery(\"using v: v \" + pathDescription);",
 					"\tgreqlEvaluator.startEvaluation();",
-					"\treturn greqlEvaluator.getResultSet(vertexType);", "}"));
+					"\treturn greqlEvaluator.getResultSet();", "}"));
 		}
 		code.add(createGraphElementClassMethods());
 		code.add(createEdgeIteratorMethods());

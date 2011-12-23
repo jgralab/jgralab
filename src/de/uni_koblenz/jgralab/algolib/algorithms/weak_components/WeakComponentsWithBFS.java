@@ -34,6 +34,9 @@
  */
 package de.uni_koblenz.jgralab.algolib.algorithms.weak_components;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Graph;
@@ -44,6 +47,8 @@ import de.uni_koblenz.jgralab.algolib.algorithms.StructureOrientedAlgorithm;
 import de.uni_koblenz.jgralab.algolib.algorithms.search.BreadthFirstSearch;
 import de.uni_koblenz.jgralab.algolib.algorithms.search.visitors.SearchVisitor;
 import de.uni_koblenz.jgralab.algolib.algorithms.search.visitors.SearchVisitorAdapter;
+import de.uni_koblenz.jgralab.algolib.algorithms.weak_components.visitors.VertexPartitionVisitor;
+import de.uni_koblenz.jgralab.algolib.algorithms.weak_components.visitors.VertexPartitionVisitorList;
 import de.uni_koblenz.jgralab.algolib.functions.BooleanFunction;
 import de.uni_koblenz.jgralab.algolib.functions.Function;
 import de.uni_koblenz.jgralab.algolib.problems.WeakComponentsSolver;
@@ -55,8 +60,10 @@ public class WeakComponentsWithBFS extends StructureOrientedAlgorithm implements
 
 	private BreadthFirstSearch bfs;
 	private SearchVisitor weakComponentsVisitor;
+	private VertexPartitionVisitorList visitors;
 
 	private Function<Vertex, Vertex> weakComponents;
+	private Function<Vertex, Set<Vertex>> inverseResult;
 	private int kappa;
 
 	public WeakComponentsWithBFS(Graph graph, BreadthFirstSearch bfs) {
@@ -72,14 +79,23 @@ public class WeakComponentsWithBFS extends StructureOrientedAlgorithm implements
 	@Override
 	public void addVisitor(Visitor visitor) {
 		checkStateForSettingVisitors();
-		// the algorithm is set implicitly to the bfs
-		bfs.addVisitor(visitor);
+		if (visitor instanceof VertexPartitionVisitor) {
+			visitor.setAlgorithm(this);
+			visitors.addVisitor(visitor);
+		} else {
+			// the algorithm is set implicitly to the bfs
+			bfs.addVisitor(visitor);
+		}
 	}
 
 	@Override
 	public void removeVisitor(Visitor visitor) {
 		checkStateForSettingVisitors();
-		bfs.removeVisitor(visitor);
+		if (visitor instanceof VertexPartitionVisitor) {
+			visitors.removeVisitor(visitor);
+		} else {
+			bfs.removeVisitor(visitor);
+		}
 	}
 
 	@Override
@@ -105,16 +121,31 @@ public class WeakComponentsWithBFS extends StructureOrientedAlgorithm implements
 		return false;
 	}
 
+	public WeakComponentsWithBFS withInverseResult() {
+		checkStateForSettingParameters();
+		inverseResult = new ArrayVertexMarker<Set<Vertex>>(graph);
+		return this;
+	}
+
+	public WeakComponentsWithBFS withoutInverseResult() {
+		checkStateForSettingParameters();
+		inverseResult = null;
+		return this;
+	}
+
 	@Override
 	public void reset() {
 		super.reset();
 		weakComponents = new ArrayVertexMarker<Vertex>(graph);
+		inverseResult = inverseResult == null ? null
+				: new ArrayVertexMarker<Set<Vertex>>(graph);
 		kappa = 0;
 	}
 
 	@Override
 	public void resetParameters() {
 		super.resetParameters();
+		visitors = new VertexPartitionVisitorList();
 		traversalDirection = EdgeDirection.INOUT;
 		weakComponentsVisitor = new SearchVisitorAdapter() {
 
@@ -124,12 +155,23 @@ public class WeakComponentsWithBFS extends StructureOrientedAlgorithm implements
 			public void visitRoot(Vertex v) throws AlgorithmTerminatedException {
 				kappa++;
 				currentRepresentativeVertex = v;
+				if (inverseResult != null) {
+					assert inverseResult.get(v) == null;
+					inverseResult.set(v, new HashSet<Vertex>());
+				}
+				visitors.visitRepresentativeVertex(v);
 			}
 
 			@Override
 			public void visitVertex(Vertex v)
 					throws AlgorithmTerminatedException {
 				weakComponents.set(v, currentRepresentativeVertex);
+				if (inverseResult != null) {
+					Set<Vertex> currentSubSet = inverseResult
+							.get(currentRepresentativeVertex);
+					assert currentSubSet != null;
+					currentSubSet.add(v);
+				}
 			}
 
 		};
@@ -137,6 +179,8 @@ public class WeakComponentsWithBFS extends StructureOrientedAlgorithm implements
 
 	@Override
 	public void disableOptionalResults() {
+		checkStateForSettingParameters();
+		inverseResult = null;
 	}
 
 	@Override
@@ -169,6 +213,11 @@ public class WeakComponentsWithBFS extends StructureOrientedAlgorithm implements
 		return weakComponents;
 	}
 
+	public Function<Vertex, Set<Vertex>> getInverseResult() {
+		checkStateForResult();
+		return inverseResult;
+	}
+
 	@Override
 	public int getKappa() {
 		checkStateForResult();
@@ -177,6 +226,10 @@ public class WeakComponentsWithBFS extends StructureOrientedAlgorithm implements
 
 	public Function<Vertex, Vertex> getInternalWeakComponents() {
 		return weakComponents;
+	}
+
+	public Function<Vertex, Set<Vertex>> getInternalInverseResult() {
+		return inverseResult;
 	}
 
 	public int getInternalKappa() {
