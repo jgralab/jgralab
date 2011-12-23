@@ -32,32 +32,56 @@
  * non-source form of such a combination shall include the source code for
  * the parts of JGraLab used as well as that of the covered work.
  */
-package de.uni_koblenz.jgralab.algolib.algorithms.strong_components.visitors;
+package de.uni_koblenz.jgralab.algolib.algorithms.weak_components.visitors;
 
-import de.uni_koblenz.jgralab.Edge;
+import java.util.ArrayList;
+import java.util.List;
+
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.algolib.algorithms.GraphAlgorithm;
+import de.uni_koblenz.jgralab.algolib.visitors.Visitor;
+import de.uni_koblenz.jgralab.algolib.visitors.VisitorList;
 
-public class ReducedGraphVisitorAdapter implements ReducedGraphVisitor {
+public class VertexPartitionVisitorList extends VisitorList implements
+		VertexPartitionVisitor {
 
-	@Override
-	public void reset() {
+	private List<VertexPartitionVisitor> visitors;
 
+	public VertexPartitionVisitorList() {
+		visitors = new ArrayList<VertexPartitionVisitor>();
 	}
 
 	@Override
-	public void setAlgorithm(GraphAlgorithm alg) {
-
+	public void addVisitor(Visitor visitor) {
+		if (visitor instanceof VertexPartitionVisitor) {
+			super.addVisitor(visitor);
+			visitors.add((VertexPartitionVisitor) visitor);
+		} else {
+			throw new IllegalArgumentException(
+					"This visitor composition is only compatible with implementations of "
+							+ VertexPartitionVisitor.class.getSimpleName()
+							+ ".");
+		}
 	}
 
 	@Override
-	public void visitReducedEdge(Edge e) {
+	public void removeVisitor(Visitor visitor) {
+		super.removeVisitor(visitor);
+		if (visitor instanceof VertexPartitionVisitor) {
+			visitors.remove(visitor);
+		}
+	}
 
+	@Override
+	public void clearVisitors() {
+		super.clearVisitors();
+		visitors.clear();
 	}
 
 	@Override
 	public void visitRepresentativeVertex(Vertex v) {
-
+		int n = visitors.size();
+		for (int i = 0; i < n; i++) {
+			visitors.get(i).visitRepresentativeVertex(v);
+		}
 	}
-
 }

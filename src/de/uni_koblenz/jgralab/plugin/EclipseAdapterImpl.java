@@ -109,17 +109,12 @@ public class EclipseAdapterImpl implements EclipseAdapter {
 	@Override
 	public String getJGraLabVersion() {
 		Version v = Activator.getContext().getBundle().getVersion();
-		String s = v.getQualifier();
-		if (s != null && s.length() > 0) {
-			return v.getMajor() + "." + v.getMinor() + " (" + s + ")";
-		} else {
-			return v.getMajor() + "." + v.getMinor();
-		}
+		return v.getMajor() + "." + v.getMinor() + "." + v.getMicro();
 	}
 
 	@Override
-	public String getJGraLabRevision() {
-		return Integer.toString(Activator.getContext().getBundle().getVersion()
-				.getMicro());
+	public String getJGraLabCodename() {
+		return Activator.getContext().getBundle().getVersion().getQualifier();
 	}
+
 }

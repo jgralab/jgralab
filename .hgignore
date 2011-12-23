@@ -37,3 +37,7 @@ syntax: regexp
 ^testit/de/uni_koblenz/jgralabtest/dhht$
 syntax: regexp
 ^testit/testschemas/dhhttestschema\.tg$
+syntax: regexp
+^eclipse/META-INF$
+syntax: regexp
+^eclipse/META-INF/MANIFEST\.MF$

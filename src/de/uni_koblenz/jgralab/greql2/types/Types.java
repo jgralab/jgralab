@@ -18,6 +18,7 @@ import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.Record;
+import de.uni_koblenz.jgralab.TraversalContext;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql2.evaluator.fa.FiniteAutomaton;
 import de.uni_koblenz.jgralab.greql2.exception.GreqlException;
@@ -25,13 +26,13 @@ import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 
 public class Types {
 	private static final Class<?>[] GREQL_TYPES = { Integer.class, Long.class,
-			Boolean.class, Double.class, String.class, Vertex.class,
-			Edge.class, Graph.class, AttributedElement.class,
+			Boolean.class, Double.class, Number.class, String.class,
+			Vertex.class, Edge.class, Graph.class, AttributedElement.class,
 			GraphElement.class, Path.class, PathSystem.class, Slice.class,
 			TypeCollection.class, Enum.class, Record.class, Table.class,
 			Tuple.class, PVector.class, PSet.class, POrderedSet.class,
 			PCollection.class, PMap.class, AttributedElementClass.class,
-			FiniteAutomaton.class, Undefined.class };
+			FiniteAutomaton.class, TraversalContext.class, Undefined.class };
 
 	private static final HashMap<Class<?>, String> typeNames;
 	private static final HashSet<Class<?>> types;
