@@ -35,11 +35,12 @@
 package de.uni_koblenz.jgralab.greql2.parser;
 
 import java.util.ArrayList;
+import java.util.BitSet;
 import java.util.Collections;
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import de.uni_koblenz.jgralab.greql2.exception.ParsingException;
 
@@ -47,7 +48,7 @@ public class GreqlLexer {
 
 	@SuppressWarnings("serial")
 	protected static final Map<TokenTypes, String> fixedTokens = Collections
-			.unmodifiableMap(new HashMap<TokenTypes, String>() {
+			.unmodifiableMap(new EnumMap<TokenTypes, String>(TokenTypes.class) {
 				{
 					put(TokenTypes.T, "T");
 					put(TokenTypes.AND, "and");
@@ -131,6 +132,26 @@ public class GreqlLexer {
 				}
 			});
 
+	protected static Map<String, TokenTypes> stringToTokenMap = new HashMap<String, TokenTypes>();
+
+	
+	{
+		for (Map.Entry<TokenTypes, String> entry : fixedTokens.entrySet()) {
+			stringToTokenMap.put(entry.getValue(), entry.getKey());
+		}
+	}
+	
+	
+	protected static BitSet separators = new BitSet();
+	
+	{
+		Character[] sepArray = {';', '<', '>','(',')','{','}',':','[',']',',',' ', '\n', '\t','.','-','+','*','/','%','=','?','^','|','!','@'};
+		for (Character sep : sepArray) {
+			separators.set(sep);
+		}
+	}
+	
+	
 	protected String query = null;
 
 	protected int position = 0;
@@ -148,13 +169,7 @@ public class GreqlLexer {
 	}
 
 	private final static boolean isSeparator(int c) {
-		return (c == ';') || (c == '<') || (c == '>') || (c == '(')
-				|| (c == ')') || (c == '{') || (c == '}') || (c == ':')
-				|| (c == '[') || (c == ']') || (c == ',') || (c == ' ')
-				|| (c == '\n') || (c == '\t') || (c == '.') || (c == '-')
-				|| (c == '+') || (c == '*') || (c == '/') || (c == '%')
-				|| (c == '=') || (c == '?') || (c == '^') || (c == '|')
-				|| (c == '!') || (c == '@');
+		return separators.get(c);
 	}
 
 	public Token getNextToken() {
@@ -162,22 +177,44 @@ public class GreqlLexer {
 		Token recognizedToken = null;
 		int bml = 0; // best match length
 		skipWs();
-		// recognize fixed tokens
-		for (Entry<TokenTypes, String> currentEntry : fixedTokens.entrySet()) {
-			String currentString = currentEntry.getValue();
-			int currLen = currentString.length();
-			if (bml > currLen) {
-				continue;
+		String currentTokenString;
+
+		int currLength = 1;
+		for (int i=0; i<4; i++) {
+			while ((position + currLength) < query.length()-1 && !isSeparator(query.charAt(position + currLength))  && !isSeparator(query.charAt(position + currLength-1)) ) {
+				currLength++;
 			}
-			if (query.regionMatches(position, currentString, 0, currLen)) {
-				if (((position + currLen) == query.length())
-						|| isSeparator(query.charAt(position + currLen - 1))
-						|| isSeparator(query.charAt(position + currLen))) {
-					bml = currLen;
-					recognizedTokenType = currentEntry.getKey();
-				}
+		
+			if (position+currLength < query.length()) {
+				currentTokenString = query.substring(position, position+currLength);
 			}
+			else
+				currentTokenString = query.substring(position);
+			TokenTypes possibleToken = stringToTokenMap.get(currentTokenString);
+			if (possibleToken != null) {
+				recognizedTokenType = possibleToken;
+				bml = currentTokenString.length();
+			} 
+			currLength+=1;
 		}
+
+		
+//		// recognize fixed tokens
+//		for (Entry<TokenTypes, String> currentEntry : fixedTokens.entrySet()) {
+//			String currentString = currentEntry.getValue();
+//			int currLen = currentString.length();
+//			if (bml > currLen) {
+//				continue;
+//			}
+//			if (query.regionMatches(position, currentString, 0, currLen)) {
+//				if (((position + currLen) == query.length())
+//						|| isSeparator(query.charAt(position + currLen - 1))
+//						|| isSeparator(query.charAt(position + currLen))) {
+//					bml = currLen;
+//					recognizedTokenType = currentEntry.getKey();
+//				}
+//			}
+//		}
 		// recognize strings and identifiers
 		if (recognizedTokenType == null) {
 			char separator = query.charAt(position);
@@ -248,6 +285,7 @@ public class GreqlLexer {
 
 			}
 		} else {
+			System.out.println("Returning simple token of type " + recognizedTokenType.toString() + " with length " + bml + ":" + query.substring(position, position+bml));
 			recognizedToken = new SimpleToken(recognizedTokenType, position,
 					bml);
 			position += bml;

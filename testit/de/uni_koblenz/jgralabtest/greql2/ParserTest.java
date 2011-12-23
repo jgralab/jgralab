@@ -1240,6 +1240,13 @@ public class ParserTest {
 		assertNotNull(lit);
 		assertEquals("my simple \"string", lit.get_stringValue());
 	}
+	
+	@Test
+	public void testLexer() {
+		String queryString = "let a:= 7 in a";
+		Greql2 graph = parseQuery(queryString);
+		assertNotNull(graph);
+	}
 
 	@Test
 	public void testStringWithEscape2() {
