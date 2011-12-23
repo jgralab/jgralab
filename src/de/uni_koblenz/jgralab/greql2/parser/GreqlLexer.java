@@ -285,7 +285,6 @@ public class GreqlLexer {
 
 			}
 		} else {
-			System.out.println("Returning simple token of type " + recognizedTokenType.toString() + " with length " + bml + ":" + query.substring(position, position+bml));
 			recognizedToken = new SimpleToken(recognizedTokenType, position,
 					bml);
 			position += bml;
