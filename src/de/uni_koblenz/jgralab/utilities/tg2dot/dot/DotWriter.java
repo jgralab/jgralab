@@ -1,29 +1,29 @@
 /*
  * JGraLab - The Java Graph Laboratory
- * 
+ *
  * Copyright (C) 2006-2011 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
- * 
+ *
  * For bug reports, documentation and further information, visit
- * 
+ *
  *                         http://jgralab.uni-koblenz.de
- * 
+ *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
  * Free Software Foundation; either version 3 of the License, or (at your
  * option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, see <http://www.gnu.org/licenses>.
- * 
+ *
  * Additional permission under GNU GPL version 3 section 7
- * 
+ *
  * If you modify this Program, or any covered work, by linking or combining
  * it with Eclipse (or a modified version of that program or an Eclipse
  * plugin), containing parts covered by the terms of the Eclipse Public
@@ -50,7 +50,7 @@ import java.util.Set;
  * DotWriter creates and writes DOT-files. It includes several methods to create
  * a graph, groups, general attribute lists, subgraphs, clusters, nodes and
  * edges.
- * 
+ *
  * @author ist@uni-koblenz.des
  */
 public class DotWriter {
@@ -83,7 +83,7 @@ public class DotWriter {
 	/**
 	 * Creates a DotWriter from the given file name and creates / overwrites
 	 * this file at the destination.
-	 * 
+	 *
 	 * @param filename
 	 *            Destination file name of the output.
 	 * @throws FileNotFoundException
@@ -95,7 +95,7 @@ public class DotWriter {
 	/**
 	 * Creates a DotWriter from the given File and creates / overwrites this
 	 * file at the destination
-	 * 
+	 *
 	 * @param file
 	 *            Destination File of the output.
 	 * @throws FileNotFoundException
@@ -107,7 +107,7 @@ public class DotWriter {
 
 	/**
 	 * Creates a DotWriter from the given stream.
-	 * 
+	 *
 	 * @param out
 	 *            Provided stream.
 	 */
@@ -118,7 +118,7 @@ public class DotWriter {
 	/**
 	 * Starts a named DOT-graph of the specified GraphType. The nested depth is
 	 * increased by one.
-	 * 
+	 *
 	 * @param type
 	 *            Indicates which type of Dot-graph should be written.
 	 * @param name
@@ -173,7 +173,7 @@ public class DotWriter {
 	 * general type name is written in front of the attribute list. Values are
 	 * automatically quoted, except values starting and ending with arrow
 	 * brackets.
-	 * 
+	 *
 	 * @param type
 	 *            The general attribute list type.
 	 * @param attributeList
@@ -192,7 +192,7 @@ public class DotWriter {
 	/**
 	 * Writes a provided attribute list. Values are automatically quoted, except
 	 * values starting and ending with arrow brackets.
-	 * 
+	 *
 	 * @param attributeList
 	 *            A Map of String pairs. A key has to correspond to a
 	 *            DOT-attribute, whereas a value has to be of the corresponding
@@ -226,7 +226,7 @@ public class DotWriter {
 	 * Writes a given Attribute for a given name and value. Values are
 	 * automatically quoted, except values starting and ending with arrow
 	 * brackets.
-	 * 
+	 *
 	 * @param name
 	 *            Name of the DOT-attribute.
 	 * @param value
@@ -271,7 +271,7 @@ public class DotWriter {
 
 	/**
 	 * Writes an edge with a given start and end node.
-	 * 
+	 *
 	 * @param startNode
 	 *            Name of the start node.
 	 * @param endNode
@@ -283,7 +283,7 @@ public class DotWriter {
 
 	/**
 	 * Writes an edge with a given start, end node and attribute list.
-	 * 
+	 *
 	 * @param startNode
 	 *            Name of the start node.
 	 * @param endNode
@@ -300,7 +300,7 @@ public class DotWriter {
 
 	/**
 	 * Writes an edge with a given start node and an array of end nodes.
-	 * 
+	 *
 	 * @param startNode
 	 *            Name of the start node.
 	 * @param endNodes
@@ -313,7 +313,7 @@ public class DotWriter {
 	/**
 	 * Writes an edge with a given start node, an array of end nodes and an
 	 * attribute list.
-	 * 
+	 *
 	 * @param startNode
 	 *            Name of the start node.
 	 * @param endNodes
@@ -335,7 +335,7 @@ public class DotWriter {
 
 	/**
 	 * Writes a node with the given name.
-	 * 
+	 *
 	 * @param name
 	 *            Name of the node.
 	 */
@@ -345,7 +345,7 @@ public class DotWriter {
 
 	/**
 	 * Writes a node with the given name and attribute list.
-	 * 
+	 *
 	 * @param name
 	 *            Name of the node. A name in
 	 * @param attributeList
@@ -366,7 +366,7 @@ public class DotWriter {
 	/**
 	 * Encapsulates the name in braces, in case an existing blank in the given
 	 * name.
-	 * 
+	 *
 	 * @param name
 	 *            Provided name.
 	 * @return Correct encapsulated name.
@@ -380,7 +380,7 @@ public class DotWriter {
 
 	/**
 	 * Writes a list of node names separated by a comma.
-	 * 
+	 *
 	 * @param nodeNames
 	 *            Node names provided as String array.
 	 */
@@ -404,7 +404,7 @@ public class DotWriter {
 
 	/**
 	 * Starts a named cluster.
-	 * 
+	 *
 	 * @param name
 	 *            Name of the cluster.
 	 */
