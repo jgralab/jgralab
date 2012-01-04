@@ -1001,100 +1001,121 @@ public class StateRepository {
 	 * @param element
 	 *            the JValue which has to be added. If it is null the element at
 	 *            State.insertPosition is shown.
-	 * @param isNewElement
+	 * @param wasElementOfBredcrumbBarSelected
 	 *            It is false, if you want to show an element of the breadcrumb
 	 *            bar.
 	 * @return the JavaScript commands to create the current breadcrumb bar
 	 */
 	private StringBuilder addToBreadcrumbBar(StringBuilder code, State state,
-			Object element, Boolean isNewElement) {
-		int currentPage = 0;
-		code.append("var divBreadcrumbBar = document.getElementById(\"divBreadcrumbBar\");\n");
-		code.append("divBreadcrumbBar.innerHTML = \"\";\n");
-		// create p
-		code.append("var breadcrumbBar = document.createElement(\"p\");\n");
-		code.append("breadcrumbBar.id = \"pBreadcrumbContent0\";\n");
-		code.append("breadcrumbBar.style.display = \"none\";\n");
-		code.append("divBreadcrumbBar.appendChild(breadcrumbBar);\n");
-		code.append("var newEntry;\n");
-		if (element != null) {
-			// add element to the navigationHistory
-			state.navigationHistory.add(state.insertPosition++, element);
-			if ((state.insertPosition < state.navigationHistory.size())
-					&& isNewElement) {
-				// the element was added in the middle of the navigationHistory
-				// delete the following
-				for (int i = state.navigationHistory.size() - 1; i >= state.insertPosition; i--) {
-					state.navigationHistory.remove(i);
+			Object element, Boolean wasElementOfBredcrumbBarSelected) {
+		if (isNewElement(state, element)) {
+			int currentPage = 0;
+			code.append("var divBreadcrumbBar = document.getElementById(\"divBreadcrumbBar\");\n");
+			code.append("divBreadcrumbBar.innerHTML = \"\";\n");
+			// create p
+			code.append("var breadcrumbBar = document.createElement(\"p\");\n");
+			code.append("breadcrumbBar.id = \"pBreadcrumbContent0\";\n");
+			code.append("breadcrumbBar.style.display = \"none\";\n");
+			code.append("divBreadcrumbBar.appendChild(breadcrumbBar);\n");
+			code.append("var newEntry;\n");
+			if (element != null) {
+				// add element to the navigationHistory
+				state.navigationHistory.add(state.insertPosition++, element);
+				if ((state.insertPosition < state.navigationHistory.size())
+						&& wasElementOfBredcrumbBarSelected) {
+					// the element was added in the middle of the
+					// navigationHistory
+					// delete the following
+					for (int i = state.navigationHistory.size() - 1; i >= state.insertPosition; i--) {
+						state.navigationHistory.remove(i);
+					}
 				}
 			}
-		}
-		if (state.navigationHistory.size() <= NUMBER_OF_ELEMENTS_IN_BREADCRUMBBAR) {
-			for (int i = 0; i < state.navigationHistory.size(); i++) {
-				if (i > 0) {
-					// this is not the first element
-					code.append("var raquo = document.createTextNode(String.fromCharCode(187));\n");
-					code.append("breadcrumbBar.appendChild(raquo);\n");
+			if (state.navigationHistory.size() <= NUMBER_OF_ELEMENTS_IN_BREADCRUMBBAR) {
+				for (int i = 0; i < state.navigationHistory.size(); i++) {
+					if (i > 0) {
+						// this is not the first element
+						code.append("var raquo = document.createTextNode(String.fromCharCode(187));\n");
+						code.append("breadcrumbBar.appendChild(raquo);\n");
+					}
+					createBreadcrumbEntry(code, state, i,
+							i < state.insertPosition ? "white" : "gray");
 				}
-				createBreadcrumbEntry(code, state, i,
-						i < state.insertPosition ? "white" : "gray");
-			}
-		} else {
-			// there are more than NUMBER_OF_ELEMENTS_IN_BREADCRUMBBAR elements
-			int modul = state.navigationHistory.size()
-					% NUMBER_OF_ELEMENTS_IN_BREADCRUMBBAR;
-			int pNumber = 0;
-			for (int i = 0; i < state.navigationHistory.size(); i++) {
-				if ((i != 0)
-						&& ((i % NUMBER_OF_ELEMENTS_IN_BREADCRUMBBAR) == modul)) {
-					// start element of a new breadcrumb bar page but not the
-					// first one
-					// create next p
-					code.append("breadcrumbBar = document.createElement(\"p\");\n");
-					code.append("breadcrumbBar.id = \"pBreadcrumbContent")
-							.append(++pNumber).append("\";\n");
-					code.append("divBreadcrumbBar.appendChild(breadcrumbBar);\n");
-					code.append("breadcrumbBar.style.display = \"none\";\n");
-					// create ... >>
-					code.append("var aBack = document.createElement(\"a\");\n");
-					code.append("aBack.innerHTML = \"...\";\n");
-					code.append(
-							"aBack.href = \"javascript:switchBreadcrumbPage('pBreadcrumbContent")
-							.append(pNumber).append("','pBreadcrumbContent")
-							.append(pNumber - 1).append("');\";\n");
-					code.append("breadcrumbBar.appendChild(aBack);\n");
-					code.append("var raquo = document.createTextNode(String.fromCharCode(187));\n");
-					code.append("breadcrumbBar.appendChild(raquo);\n");
-				}
-				if (i == (state.insertPosition - 1)) {
-					currentPage = pNumber;
-				}
-				createBreadcrumbEntry(code, state, i,
-						i < state.insertPosition ? "white" : "gray");
-				if (i != (state.navigationHistory.size() - 1)) {
-					// create >>
-					code.append("var raquo = document.createTextNode(String.fromCharCode(187));\n");
-					code.append("breadcrumbBar.appendChild(raquo);\n");
-					if ((i % NUMBER_OF_ELEMENTS_IN_BREADCRUMBBAR) == (((modul - 1) + NUMBER_OF_ELEMENTS_IN_BREADCRUMBBAR) % NUMBER_OF_ELEMENTS_IN_BREADCRUMBBAR)) {
-						// last element of a new breadcrumb bar page but not the
-						// last element in the navigationHistory
-						// create ...
+			} else {
+				// there are more than NUMBER_OF_ELEMENTS_IN_BREADCRUMBBAR
+				// elements
+				int modul = state.navigationHistory.size()
+						% NUMBER_OF_ELEMENTS_IN_BREADCRUMBBAR;
+				int pNumber = 0;
+				for (int i = 0; i < state.navigationHistory.size(); i++) {
+					if ((i != 0)
+							&& ((i % NUMBER_OF_ELEMENTS_IN_BREADCRUMBBAR) == modul)) {
+						// start element of a new breadcrumb bar page but not
+						// the
+						// first one
+						// create next p
+						code.append("breadcrumbBar = document.createElement(\"p\");\n");
+						code.append("breadcrumbBar.id = \"pBreadcrumbContent")
+								.append(++pNumber).append("\";\n");
+						code.append("divBreadcrumbBar.appendChild(breadcrumbBar);\n");
+						code.append("breadcrumbBar.style.display = \"none\";\n");
+						// create ... >>
 						code.append("var aBack = document.createElement(\"a\");\n");
 						code.append("aBack.innerHTML = \"...\";\n");
 						code.append(
 								"aBack.href = \"javascript:switchBreadcrumbPage('pBreadcrumbContent")
 								.append(pNumber)
 								.append("','pBreadcrumbContent")
-								.append(pNumber + 1).append("');\";\n");
+								.append(pNumber - 1).append("');\";\n");
 						code.append("breadcrumbBar.appendChild(aBack);\n");
+						code.append("var raquo = document.createTextNode(String.fromCharCode(187));\n");
+						code.append("breadcrumbBar.appendChild(raquo);\n");
+					}
+					if (i == (state.insertPosition - 1)) {
+						currentPage = pNumber;
+					}
+					createBreadcrumbEntry(code, state, i,
+							i < state.insertPosition ? "white" : "gray");
+					if (i != (state.navigationHistory.size() - 1)) {
+						// create >>
+						code.append("var raquo = document.createTextNode(String.fromCharCode(187));\n");
+						code.append("breadcrumbBar.appendChild(raquo);\n");
+						if ((i % NUMBER_OF_ELEMENTS_IN_BREADCRUMBBAR) == (((modul - 1) + NUMBER_OF_ELEMENTS_IN_BREADCRUMBBAR) % NUMBER_OF_ELEMENTS_IN_BREADCRUMBBAR)) {
+							// last element of a new breadcrumb bar page but not
+							// the
+							// last element in the navigationHistory
+							// create ...
+							code.append("var aBack = document.createElement(\"a\");\n");
+							code.append("aBack.innerHTML = \"...\";\n");
+							code.append(
+									"aBack.href = \"javascript:switchBreadcrumbPage('pBreadcrumbContent")
+									.append(pNumber)
+									.append("','pBreadcrumbContent")
+									.append(pNumber + 1).append("');\";\n");
+							code.append("breadcrumbBar.appendChild(aBack);\n");
+						}
 					}
 				}
 			}
+			code.append("document.getElementById(\"pBreadcrumbContent")
+					.append(currentPage)
+					.append("\").style.display = \"inline\";\n");
 		}
-		code.append("document.getElementById(\"pBreadcrumbContent")
-				.append(currentPage)
-				.append("\").style.display = \"inline\";\n");
 		return code;
+	}
+
+	/**
+	 * If <code>element</code> is not equal to the last element in the
+	 * breadcrumb bar, <code>true</code> is returned.
+	 * 
+	 * @param state
+	 * @param element
+	 * @return
+	 */
+	private boolean isNewElement(State state, Object element) {
+		// TODO Auto-generated method stub
+		return state.navigationHistory.isEmpty()
+				|| state.navigationHistory.get(state.insertPosition - 1) != element;
 	}
 
 	/**
