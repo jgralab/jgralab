@@ -1190,9 +1190,14 @@ public class StateRepository {
 		code.append("var optValue;\n");
 		code.append("var optText;\n");
 		createOptionForGraphs(code, workspace);
-		code.append("findPositionOf(\"")
-				.append(state.getGraphWrapper().graphPath.replace("\\", "/"))
-				.append("\");\n");
+		try {
+			code.append("findPositionOf(\"")
+					.append(getEncodedFileName(new File(
+							state.getGraphWrapper().graphPath), false))
+					.append("\");\n");
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
 		// set the shown one as selected
 		code.append("document.getElementById(\"selectGraph\").selectedIndex = selectedGraphIndex;\n");
 		// hide rest of title
