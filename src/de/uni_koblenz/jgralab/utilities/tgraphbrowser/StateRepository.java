@@ -1113,7 +1113,6 @@ public class StateRepository {
 	 * @return
 	 */
 	private boolean isNewElement(State state, Object element) {
-		// TODO Auto-generated method stub
 		return state.navigationHistory.isEmpty()
 				|| state.navigationHistory.get(state.insertPosition - 1) != element;
 	}
