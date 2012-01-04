@@ -1291,6 +1291,18 @@ div#div2DGraph{
 			}
 		}
 	}
+	
+	function areVerticesShown(){
+		var divTextVertex = document.getElementById("divTextVertex");
+		var aShowVertices = document.getElementById("aShowVertices");
+		if(divTextVertex.hasAttribute){
+			// code for Firefox, Safari   
+			return aShowVertices.getAttribute("class")=="geklickt";
+		}else{
+			// code for Internet Explorer 7
+			return aShowVertices.getAttribute("className")=="geklickt";
+		}
+	}
 
 	/*
 	 * Informs the server of the closed session.

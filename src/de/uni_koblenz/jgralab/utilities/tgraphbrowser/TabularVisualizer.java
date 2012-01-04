@@ -169,10 +169,8 @@ public class TabularVisualizer {
 		}
 		// print number of elements
 		code.append("document.getElementById(\"h3HowManyElements\").style.display = \"none\";\n");
-		if (isVertex) {
-			code.append("document.getElementById(\"h3HowManyVertices\").style.display = \"block\";\n");
-			code.append("document.getElementById(\"h3HowManyEdges\").style.display = \"none\";\n");
-		}
+		code.append("document.getElementById(\"h3HowManyVertices\").style.display = areVerticesShown() ? \"block\" : \"none\";\n");
+		code.append("document.getElementById(\"h3HowManyEdges\").style.display = areVerticesShown() ? \"none\" : \"block\";\n");
 		code.append("document.getElementById(\"h3")
 				.append(isVertex ? "HowManyVertices" : "HowManyEdges")
 				.append("\").innerHTML = \"")
