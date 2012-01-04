@@ -1343,15 +1343,13 @@ public class StateRepository {
 							".gz"))) {
 				// f is a graph file
 				code.append("childOpt = document.createElement(\"option\");\n");
-				code.append("optValue = document.createAttribute(\"value\");\n");
+				code.append("childOpt.setAttribute(\"value\",\"");
 				try {
-					code.append("optValue.nodeValue = \"")
-							.append(getEncodedFileName(f, false))
-							.append("\";\n");
+					code.append(getEncodedFileName(f, false));
 				} catch (UnsupportedEncodingException e) {
 					e.printStackTrace();
 				}
-				code.append("childOpt.setAttributeNode(optValue);\n");
+				code.append("\");\n");
 				code.append("optText = document.createTextNode(\"")
 						.append(f.toString().replace(workspace.toString(), "")
 								.replace("\\", "/").substring(1))
