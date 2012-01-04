@@ -71,6 +71,7 @@ import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.exception.GreqlException;
 import de.uni_koblenz.jgralab.greql2.types.Types;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
+import de.uni_koblenz.jgralab.schema.GraphElementClass;
 import de.uni_koblenz.jgralab.schema.VertexClass;
 
 public class StateRepository {
@@ -1867,6 +1868,28 @@ public class StateRepository {
 		 */
 		private void setGraphIdentifier(String graphFile, long lastModified) {
 			graphIdentifier = graphFile + "_" + lastModified;
+		}
+
+		public synchronized StringBuilder getVertexTypeSet() {
+			return convertToSet(selectedVertexClasses);
+		}
+
+		public synchronized StringBuilder getEdgeTypeSet() {
+			return convertToSet(selectedEdgeClasses);
+		}
+
+		private synchronized StringBuilder convertToSet(
+				HashMap<? extends GraphElementClass, Boolean> selectedGEClasses) {
+			StringBuilder result = new StringBuilder("{");
+			String delim = "";
+			for (GraphElementClass type : selectedGEClasses.keySet()) {
+				result.append(delim)
+						.append(selectedGEClasses.get(type) ? "" : "^")
+						.append(type.getQualifiedName()).append("!");
+				delim = ", ";
+			}
+			result.append("}");
+			return result;
 		}
 
 		/**
