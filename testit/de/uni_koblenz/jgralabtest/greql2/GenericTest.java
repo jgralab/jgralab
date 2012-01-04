@@ -231,7 +231,7 @@ public class GenericTest {
 	 * Print the query syntax graphs (unoptimized, optimized with one specific
 	 * optimizer, and optimized by the default optimizer) to user.home.
 	 */
-	public static boolean DEBUG_SYNTAXGRAPHS = false;
+	public static boolean DEBUG_SYNTAXGRAPHS = true;
 
 	private Graph cyclicGraph = null;
 	private Graph tree = null;
