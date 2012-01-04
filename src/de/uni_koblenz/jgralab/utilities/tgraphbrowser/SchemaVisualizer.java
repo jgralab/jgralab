@@ -638,7 +638,8 @@ public class SchemaVisualizer {
 	private void createCheckBox(StringBuilder code, String uniqueName,
 			String qualifiedName, String additionalCode) {
 		code.append("var input").append(uniqueName).append(";\n");
-		code.append("if(navigator.appName == \"Microsoft Internet Explorer\"){\n");
+		code.append("if(navigator.appName == \"Microsoft Internet Explorer\" && "
+				+ "navigator.appVersion.indexOf(\"MSIE 7.\")!=-1){\n");
 		// IE7 does not set the checkboxes to checked. This is the workaround.
 		code.append("input")
 				.append(uniqueName)
