@@ -101,15 +101,7 @@ public class TabularVisualizer {
 	public void calculateVertexListAndEdgeList(State state) {
 		StringBuilder query = new StringBuilder();
 		// calculate the list of vertices
-		query.append("V{");
-		boolean first = true;
-		for (VertexClass type : state.selectedVertexClasses.keySet()) {
-			query.append(!first ? ", " : "")
-					.append(state.selectedVertexClasses.get(type) ? "" : "^")
-					.append(type.getQualifiedName()).append("!");
-			first = false;
-		}
-		query.append("} ");
+		query.append("V").append(state.getVertexTypeSet());
 		@SuppressWarnings("unchecked")
 		PSet<Vertex> vertices = (PSet<Vertex>) StateRepository.evaluateGReQL(
 				query.toString(), state.getGraph(), null);
@@ -119,15 +111,8 @@ public class TabularVisualizer {
 			state.verticesOfTableView[i++] = v;
 		}
 		// calculate the list of edges
-		query = new StringBuilder("E{");
-		first = true;
-		for (EdgeClass type : state.selectedEdgeClasses.keySet()) {
-			query.append(!first ? ", " : "")
-					.append(state.selectedEdgeClasses.get(type) ? "" : "^")
-					.append(type.getQualifiedName()).append("!");
-			first = false;
-		}
-		query.append("}");
+		query = new StringBuilder("E");
+		query.append(state.getEdgeTypeSet());
 		@SuppressWarnings("unchecked")
 		PSet<Edge> edges = (PSet<Edge>) StateRepository.evaluateGReQL(
 				query.toString(), state.getGraph(), null);
