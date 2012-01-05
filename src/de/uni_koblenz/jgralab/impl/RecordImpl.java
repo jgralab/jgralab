@@ -30,13 +30,13 @@ public class RecordImpl implements de.uni_koblenz.jgralab.Record {
 	}
 
 	public RecordImpl plus(String name, Object value) {
-		return new RecordImpl(entries.plus(name, value));
+		return new RecordImpl(entries.plus(name, value != null ? value : de.uni_koblenz.jgralab.greql2.types.Undefined.UNDEFINED));
 	}
 
 	@Override
 	public Object getComponent(String name) {
 		if (entries.containsKey(name)) {
-			return entries.get(name);
+			return entries.get(name).equals(de.uni_koblenz.jgralab.greql2.types.Undefined.UNDEFINED)? null : entries.get(name);
 		}
 		throw new NoSuchAttributeException(
 				"Record doesn't contain a component '" + name + "'");
