@@ -64,7 +64,6 @@ import de.uni_koblenz.jgralab.greql2.schema.DoubleLiteral;
 import de.uni_koblenz.jgralab.greql2.schema.EdgePathDescription;
 import de.uni_koblenz.jgralab.greql2.schema.EdgeRestriction;
 import de.uni_koblenz.jgralab.greql2.schema.EdgeSetExpression;
-import de.uni_koblenz.jgralab.greql2.schema.EdgeTypeSubgraph;
 import de.uni_koblenz.jgralab.greql2.schema.ForwardVertexSet;
 import de.uni_koblenz.jgralab.greql2.schema.FunctionApplication;
 import de.uni_koblenz.jgralab.greql2.schema.FunctionId;
@@ -97,7 +96,6 @@ import de.uni_koblenz.jgralab.greql2.schema.IsSubPathOf;
 import de.uni_koblenz.jgralab.greql2.schema.IsTargetExprOf;
 import de.uni_koblenz.jgralab.greql2.schema.IsTypeIdOf;
 import de.uni_koblenz.jgralab.greql2.schema.IsTypeRestrOfExpression;
-import de.uni_koblenz.jgralab.greql2.schema.IsTypeRestrOfSubgraph;
 import de.uni_koblenz.jgralab.greql2.schema.IteratedPathDescription;
 import de.uni_koblenz.jgralab.greql2.schema.ListComprehension;
 import de.uni_koblenz.jgralab.greql2.schema.ListConstruction;
@@ -119,7 +117,6 @@ import de.uni_koblenz.jgralab.greql2.schema.ThisVertex;
 import de.uni_koblenz.jgralab.greql2.schema.TypeId;
 import de.uni_koblenz.jgralab.greql2.schema.Variable;
 import de.uni_koblenz.jgralab.greql2.schema.VertexSetExpression;
-import de.uni_koblenz.jgralab.greql2.schema.VertexTypeSubgraph;
 import de.uni_koblenz.jgralab.schema.GraphClass;
 import de.uni_koblenz.jgralab.schema.Schema;
 import de.uni_koblenz.jgralab.schema.impl.SchemaImpl;
@@ -135,7 +132,7 @@ import de.uni_koblenz.jgralabtest.greql2.testfunctions.IsPrime;
  *
  *
  *
- *
+ * 
  *
  */
 
@@ -613,7 +610,8 @@ public class ParserTest {
 		assertEquals("var", var.get_name());
 		VertexSetExpression vset = (VertexSetExpression) simpleDecl
 				.getFirstIsTypeExprOfIncidence().getAlpha();
-		IsTypeRestrOfExpression typeRestrEdge = vset.getFirstIsTypeRestrOfExpressionIncidence();
+		IsTypeRestrOfExpression typeRestrEdge = vset
+				.getFirstIsTypeRestrOfExpressionIncidence();
 		assertNotNull(typeRestrEdge);
 		TypeId typeId = typeRestrEdge.getAlpha();
 		assertEquals("Definition", typeId.get_name());
@@ -647,7 +645,8 @@ public class ParserTest {
 		assertEquals("var", var.get_name());
 		VertexSetExpression vset = (VertexSetExpression) simpleDecl
 				.getFirstIsTypeExprOfIncidence().getAlpha();
-		IsTypeRestrOfExpression typeRestrEdge = vset.getFirstIsTypeRestrOfExpressionIncidence();
+		IsTypeRestrOfExpression typeRestrEdge = vset
+				.getFirstIsTypeRestrOfExpressionIncidence();
 		assertNotNull(typeRestrEdge);
 		TypeId typeId = typeRestrEdge.getAlpha();
 		assertEquals("Definition", typeId.get_name());
@@ -756,23 +755,18 @@ public class ParserTest {
 
 	@Test
 	public void testDoubleIdentifiers() throws Exception {
-		String queryString = "let COL := list(1..10) in " +
-							 "( " + 
-							 " from i:COL report 'a' end " +
-							 " ++" + 
-							 " from i:COL report 'b' end " +
-							 ")";
-		parseQuery(queryString);
-	}
-	
-	@Test
-	public void testDoubleIdentifiers2() throws Exception {
-		String queryString = "from i:list(1..10) report 'a' end " +
-							 "++" + 
-							 "from i:list(1..10) report 'b' end";
+		String queryString = "let COL := list(1..10) in " + "( "
+				+ " from i:COL report 'a' end " + " ++"
+				+ " from i:COL report 'b' end " + ")";
 		parseQuery(queryString);
 	}
 
+	@Test
+	public void testDoubleIdentifiers2() throws Exception {
+		String queryString = "from i:list(1..10) report 'a' end " + "++"
+				+ "from i:list(1..10) report 'b' end";
+		parseQuery(queryString);
+	}
 
 	@Test
 	public void testLetExpression2() throws Exception {
@@ -803,8 +797,6 @@ public class ParserTest {
 		FunctionId funId = funAp.getFirstIsFunctionIdOfIncidence().getAlpha();
 		assertEquals("degree", funId.get_name());
 	}
-
-
 
 	@Test
 	public void testConditionalExpression() throws Exception {
@@ -874,7 +866,8 @@ public class ParserTest {
 		VertexSetExpression vset = graph.getFirstVertexSetExpression();
 		assertNotNull(vset);
 		assertEquals(3, vset.getDegree(IsTypeRestrOfExpression.class));
-		IsTypeRestrOfExpression typeEdge = vset.getFirstIsTypeRestrOfExpressionIncidence();
+		IsTypeRestrOfExpression typeEdge = vset
+				.getFirstIsTypeRestrOfExpressionIncidence();
 		TypeId typeId = typeEdge.getAlpha();
 		assertEquals("FirstType", typeId.get_name());
 		assertFalse(typeId.is_excluded());
@@ -894,7 +887,8 @@ public class ParserTest {
 		EdgeSetExpression vset = graph.getFirstEdgeSetExpression();
 		assertNotNull(vset);
 		assertEquals(3, vset.getDegree(IsTypeRestrOfExpression.class));
-		IsTypeRestrOfExpression typeEdge = vset.getFirstIsTypeRestrOfExpressionIncidence();
+		IsTypeRestrOfExpression typeEdge = vset
+				.getFirstIsTypeRestrOfExpressionIncidence();
 		TypeId typeId = typeEdge.getAlpha();
 		assertEquals("FirstType", typeId.get_name());
 		assertTrue(typeId.is_excluded());
@@ -907,8 +901,6 @@ public class ParserTest {
 		assertEquals("ThirdType", typeId.get_name());
 		assertFalse(typeId.is_excluded());
 	}
-
-	
 
 	@Test
 	public void testReportAsQuery() throws Exception {
@@ -1198,7 +1190,7 @@ public class ParserTest {
 		assertNotNull(lit);
 		assertEquals("my simple \"string", lit.get_stringValue());
 	}
-	
+
 	@Test
 	public void testLexer() {
 		String queryString = "let a:= 7 in a";
