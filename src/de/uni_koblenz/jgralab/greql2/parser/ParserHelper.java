@@ -198,7 +198,7 @@ public abstract class ParserHelper {
 		}
 	}
 
-	private void replaceDefinitionExpressions()
+	protected void replaceDefinitionExpressions()
 			throws DuplicateVariableException, UndefinedVariableException {
 		List<DefinitionExpression> list = new ArrayList<DefinitionExpression>();
 		for (DefinitionExpression exp : graph.getDefinitionExpressionVertices()) {
@@ -311,7 +311,8 @@ public abstract class ParserHelper {
 				incidenceList.add(inc);
 			}
 			for (Edge e : incidenceList) {
-				mergeVariables(e.getAlpha(), separateScope);
+		//		System.out.println("Merging variables of " + e.getAlpha().getSchemaClass().getName());
+				mergeVariables(e.getAlpha(), true);
 			}
 		}
 	}
@@ -371,6 +372,7 @@ public abstract class ParserHelper {
 					EdgeDirection.IN).getAlpha();
 			mergeVariables(expr, true);
 		}
+
 		if (separateScope) {
 			afterParsingvariableSymbolTable.blockEnd();
 		}
