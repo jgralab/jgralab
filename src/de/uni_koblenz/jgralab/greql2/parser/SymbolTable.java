@@ -35,6 +35,8 @@
 
 package de.uni_koblenz.jgralab.greql2.parser;
 
+import java.util.List;
+
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql2.exception.DuplicateVariableException;
@@ -50,7 +52,6 @@ public class SymbolTable extends SimpleSymbolTable {
 	@Override
 	public void insert(String ident, Vertex v)
 			throws DuplicateVariableException {
-
 		if (!list.getFirst().containsKey(ident)) {
 			list.getFirst().put(ident, v);
 		} else {
@@ -68,13 +69,14 @@ public class SymbolTable extends SimpleSymbolTable {
 				offset = ((IsVarOf) var.getFirstIncidence(EdgeDirection.OUT))
 						.get_sourcePositions().get(0).get_offset();
 			}
+			List<SourcePosition> sourcePositions = null;
+			if (v.getFirstIncidence(EdgeDirection.IN) != null) {
+				sourcePositions = ((Greql2Aggregation) v.getFirstIncidence(EdgeDirection.IN))
+						.get_sourcePositions();
+			}
+			
 			throw new DuplicateVariableException((Variable) var,
-					((Greql2Aggregation) v.getFirstIncidence(EdgeDirection.IN))
-					// .get_sourcePositions(), new SourcePosition(offset,
-					// ident.length()));
-					// .get_sourcePositions(), new SourcePositionImpl(v
-					// .getGraph(), offset, ident.length()));
-							.get_sourcePositions(), new SourcePosition(offset,
+					sourcePositions, new SourcePosition(offset,
 							ident.length()));
 		}
 	}

@@ -34,3 +34,7 @@ public class HasType extends Function {
 	}
 
 }
+
+/*
+
+*/
