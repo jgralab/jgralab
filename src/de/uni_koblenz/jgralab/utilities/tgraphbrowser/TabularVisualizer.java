@@ -101,15 +101,7 @@ public class TabularVisualizer {
 	public void calculateVertexListAndEdgeList(State state) {
 		StringBuilder query = new StringBuilder();
 		// calculate the list of vertices
-		query.append("V{");
-		boolean first = true;
-		for (VertexClass type : state.selectedVertexClasses.keySet()) {
-			query.append(!first ? ", " : "")
-					.append(state.selectedVertexClasses.get(type) ? "" : "^")
-					.append(type.getQualifiedName()).append("!");
-			first = false;
-		}
-		query.append("} ");
+		query.append("V").append(state.getVertexTypeSet());
 		@SuppressWarnings("unchecked")
 		PSet<Vertex> vertices = (PSet<Vertex>) StateRepository.evaluateGReQL(
 				query.toString(), state.getGraph(), null);
@@ -119,15 +111,8 @@ public class TabularVisualizer {
 			state.verticesOfTableView[i++] = v;
 		}
 		// calculate the list of edges
-		query = new StringBuilder("E{");
-		first = true;
-		for (EdgeClass type : state.selectedEdgeClasses.keySet()) {
-			query.append(!first ? ", " : "")
-					.append(state.selectedEdgeClasses.get(type) ? "" : "^")
-					.append(type.getQualifiedName()).append("!");
-			first = false;
-		}
-		query.append("}");
+		query = new StringBuilder("E");
+		query.append(state.getEdgeTypeSet());
 		@SuppressWarnings("unchecked")
 		PSet<Edge> edges = (PSet<Edge>) StateRepository.evaluateGReQL(
 				query.toString(), state.getGraph(), null);
@@ -184,10 +169,8 @@ public class TabularVisualizer {
 		}
 		// print number of elements
 		code.append("document.getElementById(\"h3HowManyElements\").style.display = \"none\";\n");
-		if (isVertex) {
-			code.append("document.getElementById(\"h3HowManyVertices\").style.display = \"block\";\n");
-			code.append("document.getElementById(\"h3HowManyEdges\").style.display = \"none\";\n");
-		}
+		code.append("document.getElementById(\"h3HowManyVertices\").style.display = areVerticesShown() ? \"block\" : \"none\";\n");
+		code.append("document.getElementById(\"h3HowManyEdges\").style.display = areVerticesShown() ? \"none\" : \"block\";\n");
 		code.append("document.getElementById(\"h3")
 				.append(isVertex ? "HowManyVertices" : "HowManyEdges")
 				.append("\").innerHTML = \"")
@@ -525,7 +508,7 @@ public class TabularVisualizer {
 					// NUMBER_OF_INCIDENCES_PER_PAGE incident edges
 					code.append("var text = document.createElement(\"b\");\n");
 					code.append("text.appendChild(document.createTextNode(")
-							.append(e.getAlpha() == currentVertex ? "String.fromCharCode(8594)"
+							.append(isOutgoingEdge(currentVertex, e) ? "String.fromCharCode(8594)"
 									: "String.fromCharCode(8592)")
 							.append("));\n");
 					code.append("text.style.fontSize = \"large\";\n");
@@ -573,6 +556,15 @@ public class TabularVisualizer {
 			createNavigationThroughPages(code, "v" + currentVertex.getId(),
 					numberOfPages, displayedPage, false);
 		}
+	}
+
+	/**
+	 * @param currentVertex
+	 * @param e
+	 * @return
+	 */
+	private boolean isOutgoingEdge(Vertex currentVertex, Edge e) {
+		return e.isNormal() && e.getAlpha() == currentVertex;
 	}
 
 	/**

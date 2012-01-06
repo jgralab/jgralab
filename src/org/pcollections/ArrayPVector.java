@@ -482,7 +482,7 @@ public final class ArrayPVector<E> implements PVector<E>, Serializable {
 			if (cursor == count) {
 				throw new NoSuchElementException();
 			}
-			return value[cursor++];
+			return value[offset + cursor++];
 		}
 
 		@Override
@@ -513,7 +513,7 @@ public final class ArrayPVector<E> implements PVector<E>, Serializable {
 			if (cursor == 0) {
 				throw new NoSuchElementException();
 			}
-			return value[--cursor];
+			return value[--cursor + offset];
 		}
 
 		@Override

@@ -1,29 +1,29 @@
 /*
  * JGraLab - The Java Graph Laboratory
- * 
+ *
  * Copyright (C) 2006-2011 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
- * 
+ *
  * For bug reports, documentation and further information, visit
- * 
+ *
  *                         http://jgralab.uni-koblenz.de
- * 
+ *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
  * Free Software Foundation; either version 3 of the License, or (at your
  * option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, see <http://www.gnu.org/licenses>.
- * 
+ *
  * Additional permission under GNU GPL version 3 section 7
- * 
+ *
  * If you modify this Program, or any covered work, by linking or combining
  * it with Eclipse (or a modified version of that program or an Eclipse
  * plugin), containing parts covered by the terms of the Eclipse Public
@@ -61,7 +61,7 @@ import de.uni_koblenz.jgralab.greql2.funlib.Function;
  * </dl>
  * </dd>
  * </dl>
- * 
+ *
  * @author ist@uni-koblenz.de
  */
 public class IsPrime extends Function {
@@ -97,13 +97,13 @@ public class IsPrime extends Function {
 			return 0;
 		}
 
-		y = x * x % n;
-		if ((y == 1) && (x != 1) && (x != n - 1)) {
+		y = (x * x) % n;
+		if ((y == 1) && (x != 1) && (x != (n - 1))) {
 			return 0;
 		}
 
-		if (i % 2 != 0) {
-			y = a * y % n;
+		if ((i % 2) != 0) {
+			y = (a * y) % n;
 		}
 		return y;
 	}
@@ -116,7 +116,7 @@ public class IsPrime extends Function {
 	 * @return a random number between <code>x</code> and <code>y</code>
 	 */
 	private static long random(long x, long y) {
-		return Math.round(Math.random() * (y - x) + x);
+		return Math.round((Math.random() * (y - x)) + x);
 	}
 
 	/**
@@ -148,6 +148,10 @@ public class IsPrime extends Function {
 		return isPrime(number, 10);
 	}
 
+	public Boolean evaluate(Integer number) {
+		return evaluate(Long.valueOf(number));
+	}
+
 	public Boolean evaluate(Long number, Integer noOfTestRuns) {
 		if (noOfTestRuns <= 0) {
 			throw new IllegalArgumentException(
@@ -157,5 +161,9 @@ public class IsPrime extends Function {
 			return false;
 		}
 		return isPrime(number, noOfTestRuns);
+	}
+
+	public Boolean evaluate(Integer number, Integer noOfTestRuns) {
+		return evaluate(Long.valueOf(number), noOfTestRuns);
 	}
 }

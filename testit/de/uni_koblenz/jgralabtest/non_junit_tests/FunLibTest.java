@@ -15,6 +15,7 @@ public class FunLibTest {
 		RED, GREEN, BLUE
 	};
 
+	@SuppressWarnings("unchecked")
 	public static void main(String[] args) {
 		// MinimalGraph g = MinimalSchema.instance().createMinimalGraph();
 		// Node n1 = g.createNode();
@@ -147,5 +148,12 @@ public class FunLibTest {
 		cols = cols.plus(1).plus(0);
 		FunLib.apply(os, "sortByColumn", cols, t);
 
+		PSet<Integer> l = JGraLab.set();
+		for (int i = 0; i < 10; ++i) {
+			l = l.plus(100 + i);
+
+		}
+		l = (PSet<Integer>) FunLib.apply(os, "subCollection", l, 5);
+		l = (PSet<Integer>) FunLib.apply(os, "subCollection", l, 2, 4);
 	}
 }

@@ -1,29 +1,29 @@
 /*
  * JGraLab - The Java Graph Laboratory
- * 
+ *
  * Copyright (C) 2006-2011 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
- * 
+ *
  * For bug reports, documentation and further information, visit
- * 
+ *
  *                         http://jgralab.uni-koblenz.de
- * 
+ *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
  * Free Software Foundation; either version 3 of the License, or (at your
  * option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, see <http://www.gnu.org/licenses>.
- * 
+ *
  * Additional permission under GNU GPL version 3 section 7
- * 
+ *
  * If you modify this Program, or any covered work, by linking or combining
  * it with Eclipse (or a modified version of that program or an Eclipse
  * plugin), containing parts covered by the terms of the Eclipse Public
@@ -38,12 +38,13 @@ package de.uni_koblenz.jgralab.codegenerator;
 import de.uni_koblenz.jgralab.schema.Domain;
 import de.uni_koblenz.jgralab.schema.RecordDomain;
 import de.uni_koblenz.jgralab.schema.RecordDomain.RecordComponent;
+import de.uni_koblenz.jgralab.schema.StringDomain;
 
 /**
  * TODO add comment
- * 
+ *
  * @author ist@uni-koblenz.de
- * 
+ *
  */
 public class RecordCodeGenerator extends CodeGenerator {
 
@@ -151,7 +152,7 @@ public class RecordCodeGenerator extends CodeGenerator {
 		code.add(new CodeSnippet("assert componentValues.size() == "
 				+ recordDomain.getComponents().size() + ";"));
 		for (RecordComponent rc : recordDomain.getComponents()) {
-			if (rc.getDomain().isComposite() && suppressUnchecked.size() <= 1) {
+			if (rc.getDomain().isComposite() && (suppressUnchecked.size() <= 1)) {
 				suppressUnchecked.add("@SuppressWarnings(\"unchecked\")");
 			}
 			CodeBlock assign = new CodeSnippet(
@@ -276,7 +277,7 @@ public class RecordCodeGenerator extends CodeGenerator {
 
 	/**
 	 * Getter-methods for fields needed for transaction support.
-	 * 
+	 *
 	 * @return
 	 */
 	protected CodeBlock createGetterMethods() {
@@ -375,12 +376,22 @@ public class RecordCodeGenerator extends CodeGenerator {
 				"\tStringBuilder sb = new StringBuilder();"));
 		String delim = "[";
 		for (RecordComponent rc : recordDomain.getComponents()) {
-			CodeSnippet s = new CodeSnippet(
-					"sb.append(\"#delim#\").append(\"#key#\").append(\"=\").append(_#key##toString#);");
+			CodeSnippet s = new CodeSnippet("String #key#String;");
+			if (rc.getDomain().isComposite()
+					|| (rc.getDomain() instanceof StringDomain)) {
+				s.add("if (_#key# == null) #key#String = \"null\";",
+						"else #key#String = #toString#;");
+			} else {
+				s.add("#key#String = #toString#;");
+			}
+			s.add("sb.append(\"#delim#\").append(\"#key#\").append(\"=\").append(#key#String);");
 			s.setVariable("delim", delim);
 			s.setVariable("key", rc.getName());
-			s.setVariable("toString",
-					rc.getDomain().isComposite() ? ".toString()" : "");
+			if (rc.getDomain().isComposite()) {
+				s.setVariable("toString", "_" + rc.getName() + ".toString()");
+			} else {
+				s.setVariable("toString", "String.valueOf(_#key#);");
+			}
 			code.add(s);
 			delim = ", ";
 		}
