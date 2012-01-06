@@ -136,12 +136,6 @@ public class GenericVertexImpl extends VertexImpl {
 		}
 		
 	}
-
-	@Override
-	public DirectedSchemaEdgeClass getEdgeForRolename(String rolename) {
-		// TODO DirectedSchemaEdgeClass is specific for generated Code. Unsupported operation?
-		return null;
-	}
 	
 	@Override
 	public Vertex getNextVertex(VertexClass vertexClass) {
@@ -237,6 +231,11 @@ public class GenericVertexImpl extends VertexImpl {
 	
 	@Override
 	public int getDegree(Class<? extends Edge> ec, EdgeDirection direction) {
+		throw new UnsupportedOperationException("This method is not supported by the generic implementation");
+	}
+
+	@Override
+	public DirectedSchemaEdgeClass getEdgeForRolename(String rolename) {
 		throw new UnsupportedOperationException("This method is not supported by the generic implementation");
 	}
 }
