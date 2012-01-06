@@ -101,17 +101,17 @@ public class TwoDVisualizer {
 		PSet<GraphElement> elementsToDisplay = JGraLab.set();
 		if (currentElement instanceof Vertex) {
 			Slice slice = computeElements((Vertex) currentElement, pathLength,
-					state.getGraph());
+					state.getGraph(), state);
 			elementsToDisplay = calculateElementsInSet(code, state,
 					elementsToDisplay, slice);
 		} else if (currentElement instanceof Edge) {
 			Edge current = (Edge) currentElement;
 			Slice slice = computeElements(current.getAlpha(), pathLength,
-					state.getGraph());
+					state.getGraph(), state);
 			elementsToDisplay = calculateElementsInSet(code, state,
 					elementsToDisplay, slice);
 			slice = computeElements(current.getOmega(), pathLength,
-					state.getGraph());
+					state.getGraph(), state);
 			elementsToDisplay = calculateElementsInSet(code, state,
 					elementsToDisplay, slice);
 		} else {
@@ -318,13 +318,13 @@ public class TwoDVisualizer {
 	 * @return
 	 */
 	private Slice computeElements(Vertex currentElement, Integer pathLength,
-			Graph graph) {
+			Graph graph, State state) {
 		HashMap<String, Object> boundVars = new HashMap<String, Object>();
 		boundVars.put("current", currentElement);
 		StringBuilder query = new StringBuilder("using current: ");
-		query.append("slice(current,<->^1");
+		query.append("slice(current,<->" + state.getEdgeTypeSet() + "^1");
 		for (int i = 2; i <= pathLength; i++) {
-			query.append("|<->^" + i);
+			query.append("|<->" + state.getVertexTypeSet() + "^" + i);
 		}
 		query.append(")");
 		return (Slice) StateRepository.evaluateGReQL(query.toString(), graph,

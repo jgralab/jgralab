@@ -267,6 +267,11 @@ public class RequestThread extends Thread {
 		File svg = new File(fileName);
 		long sleepTime = System.currentTimeMillis() + 10000;
 		while (!svg.exists() && System.currentTimeMillis() <= sleepTime) {
+			try {
+				sleep(100);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
 		}
 
 		// send svgFile
@@ -737,6 +742,7 @@ public class RequestThread extends Thread {
 	 */
 	private void sendSVG(BufferedOutputStream out, String fileName)
 			throws IOException {
+		sendHeader(out, 200, "image/svg+xml", -1, System.currentTimeMillis());
 		if (_socket.isConnected()) {
 			StringBuffer contentOfCreatedSVG = getContentOfCreatedSVG(fileName);
 
