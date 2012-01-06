@@ -324,6 +324,7 @@ public class GenericGraphImplTest {
 	// EdgeClass is from a different schema
 	@Test(expected = GraphException.class)
 	public void testCreateEdgeFailure1() {
+		Graph g1 = null;
 		try {
 			// both schemas contain an EdgeClass named "Link"
 			Schema schema1 = GraphIO.loadSchemaFromFile(SCHEMAFOLDER
@@ -331,7 +332,7 @@ public class GenericGraphImplTest {
 			Schema schema2 = GraphIO.loadSchemaFromFile(SCHEMAFOLDER
 					+ "jnitestschema.tg");
 
-			Graph g1 = schema1
+			g1 = schema1
 					.createGraph(ImplementationType.GENERIC, 100, 100);
 			Vertex v1 = g1.createVertex(schema1.getGraphClass().getVertexClass(
 					"Node"));
@@ -342,6 +343,11 @@ public class GenericGraphImplTest {
 		} catch (GraphIOException e) {
 			e.printStackTrace();
 			fail();
+		} catch (GraphException e) {
+			// Test if there has no edge been added to the graph
+			if(0 == g1.getECount()) {
+				throw e;
+			}
 		}
 	}
 
@@ -390,21 +396,31 @@ public class GenericGraphImplTest {
 	// VertexClass is from a different Schema
 	@Test(expected = GraphException.class)
 	public void testCreateVertexFailure1() {
+		Graph g1 = null;
 		try {
 			Schema citimapschema = GraphIO.loadSchemaFromFile(SCHEMAFOLDER
 					+ "citymapschema.tg");
 			Schema greqltestschema = GraphIO.loadSchemaFromFile(SCHEMAFOLDER
 					+ "greqltestschema.tg");
 
-			Graph g1 = citimapschema.createGraph(ImplementationType.GENERIC,
+			g1 = citimapschema.createGraph(ImplementationType.GENERIC,
 					100, 100);
 
 			g1.createVertex(greqltestschema.getGraphClass().getVertexClass(
-					"Street"));
+					"junctions.Crossroad"));
 		} catch (GraphIOException e) {
 			e.printStackTrace();
 			fail();
+		} catch (GraphException e) {
+			if(0 == g1.getVCount()) {
+				throw e;
+			}
 		}
+	}
+	
+	// Test
+	public void testSetTraversalContext() {
+		// TODO! ?
 	}
 
 	// Test setting and accessing a graph's attributes
