@@ -417,7 +417,7 @@ public class GenericGraphImplTest {
 		}
 	}
 
-	// Test
+	// Test setting a TraversalContext
 	public void testSetTraversalContext() {
 		// TODO! ?
 	}
@@ -500,6 +500,9 @@ public class GenericGraphImplTest {
 	}
 
 	// Test type-specific iteration over vertices (VertexTestSchema.tg)
+	// This test requires the type-specific getNextVertex()/getNextEdge()
+	// methods of the GenericVertexImpl/EdgeImpl classes, as the iterators
+	// use them.
 	@Test
 	public void testVertexIteration() {
 		try {
@@ -533,10 +536,10 @@ public class GenericGraphImplTest {
 			Vertex v11 = g.createVertex(s.getGraphClass().getVertexClass("D2"));
 			Vertex v12 = g.createVertex(s.getGraphClass().getVertexClass("D2"));
 
-			Vertex[] aTest = new Vertex[] { v1, v2 };
-			Vertex[] bTest = new Vertex[] { v3, v4 };
-			Vertex[] cTest = new Vertex[] { v5, v6 };
-			Vertex[] dTest = new Vertex[] { v7, v8 };
+			Vertex[] aTest = new Vertex[] { v1, v2, v5, v6, v9, v10 };
+			Vertex[] bTest = new Vertex[] { v3, v4, v7, v8, v11, v12 };
+			Vertex[] cTest = new Vertex[] { v5, v6, v9, v10 };
+			Vertex[] dTest = new Vertex[] { v7, v8, v11, v12 };
 			Vertex[] c2Test = new Vertex[] { v9, v10 };
 			Vertex[] d2Test = new Vertex[] { v11, v12 };
 
@@ -614,7 +617,7 @@ public class GenericGraphImplTest {
 			Edge e7 = g.createEdge(s.getGraphClass().getEdgeClass("H"), v1, v7);
 			Edge e8 = g.createEdge(s.getGraphClass().getEdgeClass("H"), v2, v8);
 
-			Edge[] eTest = new Edge[] { e1, e2 };
+			Edge[] eTest = new Edge[] { e1, e2, e3, e4, e5, e6, e7, e8 };
 			Edge[] fTest = new Edge[] { e3, e4 };
 			Edge[] gTest = new Edge[] { e5, e6 };
 			Edge[] hTest = new Edge[] { e7, e8 };
