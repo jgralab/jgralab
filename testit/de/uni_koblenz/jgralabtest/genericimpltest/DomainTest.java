@@ -10,11 +10,10 @@ import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.NoSuchAttributeException;
-import de.uni_koblenz.jgralab.impl.generic.GenericUtil;
 import de.uni_koblenz.jgralab.schema.*;
 import de.uni_koblenz.jgralab.schema.impl.SchemaImpl;
 
-public class GenericUtilTest {
+public class DomainTest {
 	
 	// Create a schema and various domains for testing purposes
 	private static Schema schema = new SchemaImpl("TempAttributeTest", "testprefix");
@@ -164,128 +163,128 @@ public class GenericUtilTest {
 	public void testSerializeAttribute() {
 		try {
 			GraphIO io = GraphIO.createStringWriter(schema);
-			GenericUtil.serializeGenericAttribute(io, schema.getBooleanDomain(), boolDomainValue1);
+			schema.getBooleanDomain().serializeGenericAttribute(io, boolDomainValue1);
 			assertEquals(serializedBoolDomainValue1, io.getStringWriterResult());
 			io = GraphIO.createStringWriter(schema);
-			GenericUtil.serializeGenericAttribute(io, schema.getBooleanDomain(), boolDomainValue2);
+			schema.getBooleanDomain().serializeGenericAttribute(io, boolDomainValue2);
 			assertEquals(serializedBoolDomainValue2, io.getStringWriterResult());
 			io = GraphIO.createStringWriter(schema);
-			GenericUtil.serializeGenericAttribute(io, schema.getIntegerDomain(), intDomainMaxValue);
+			schema.getIntegerDomain().serializeGenericAttribute(io, intDomainMaxValue);
 			assertEquals(serializedIntDomainMaxValue, io.getStringWriterResult());
 			io = GraphIO.createStringWriter(schema);
-			GenericUtil.serializeGenericAttribute(io, schema.getIntegerDomain(), intDomainMinValue);
+			schema.getIntegerDomain().serializeGenericAttribute(io, intDomainMinValue);
 			assertEquals(serializedIntDomainMinValue, io.getStringWriterResult());
 			io = GraphIO.createStringWriter(schema);
-			GenericUtil.serializeGenericAttribute(io, schema.getIntegerDomain(), intDomainValue);
+			schema.getIntegerDomain().serializeGenericAttribute(io, intDomainValue);
 			assertEquals(serializedIntDomainValue, io.getStringWriterResult());
 			io = GraphIO.createStringWriter(schema);
-			GenericUtil.serializeGenericAttribute(io, schema.getLongDomain(), longDomainMaxValue);
+			schema.getLongDomain().serializeGenericAttribute(io, longDomainMaxValue);
 			assertEquals(serializedLongDomainMaxValue, io.getStringWriterResult());
 			io = GraphIO.createStringWriter(schema);
-			GenericUtil.serializeGenericAttribute(io, schema.getLongDomain(), longDomainMinValue);
+			schema.getLongDomain().serializeGenericAttribute(io, longDomainMinValue);
 			assertEquals(serializedLongDomainMinValue, io.getStringWriterResult());
 			io = GraphIO.createStringWriter(schema);
-			GenericUtil.serializeGenericAttribute(io, schema.getLongDomain(), longDomainValue);
+			schema.getLongDomain().serializeGenericAttribute(io, longDomainValue);
 			assertEquals(serializedLongDomainValue, io.getStringWriterResult());
 			io = GraphIO.createStringWriter(schema);
-			GenericUtil.serializeGenericAttribute(io, schema.getDoubleDomain(), doubleDomainValue1);
+			schema.getDoubleDomain().serializeGenericAttribute(io, doubleDomainValue1);
 			assertEquals(serializedDoubleDomainValue1, io.getStringWriterResult());
 			io = GraphIO.createStringWriter(schema);
-			GenericUtil.serializeGenericAttribute(io, schema.getDoubleDomain(), doubleDomainValue2);
+			schema.getDoubleDomain().serializeGenericAttribute(io, doubleDomainValue2);
 			assertEquals(serializedDoubleDomainValue2, io.getStringWriterResult());
 			io = GraphIO.createStringWriter(schema);
-			GenericUtil.serializeGenericAttribute(io, schema.getDoubleDomain(), doubleDomainValue3);
+			schema.getDoubleDomain().serializeGenericAttribute(io, doubleDomainValue3);
 			assertEquals(serializedDoubleDomainValue3, io.getStringWriterResult());
 			io = GraphIO.createStringWriter(schema);
-			GenericUtil.serializeGenericAttribute(io, schema.getStringDomain(), stringDomainValue1);
+			schema.getStringDomain().serializeGenericAttribute(io, stringDomainValue1);
 			assertEquals(serializedStringDomainValue1, io.getStringWriterResult());
 			io = GraphIO.createStringWriter(schema);
-			GenericUtil.serializeGenericAttribute(io, schema.getStringDomain(), stringDomainEmptyValue);
+			schema.getStringDomain().serializeGenericAttribute(io, stringDomainEmptyValue);
 			assertEquals(serializedStringDomainEmptyValue, io.getStringWriterResult());
 			io = GraphIO.createStringWriter(schema);
-			GenericUtil.serializeGenericAttribute(io, enumDomain, enumDomainValue1);
+			enumDomain.serializeGenericAttribute(io, enumDomainValue1);
 			assertEquals(serializedEnumDomainValue1, io.getStringWriterResult());
 			io = GraphIO.createStringWriter(schema);
-			GenericUtil.serializeGenericAttribute(io, enumDomain, enumDomainValue2);
+			enumDomain.serializeGenericAttribute(io, enumDomainValue2);
 			assertEquals(serializedEnumDomainValue2, io.getStringWriterResult());
 			io = GraphIO.createStringWriter(schema);
-			GenericUtil.serializeGenericAttribute(io, simpleSetDomain, setDomainValue1);
+			simpleSetDomain.serializeGenericAttribute(io, setDomainValue1);
 			assertEquals(serializedSetDomainValue1, io.getStringWriterResult());
 			io = GraphIO.createStringWriter(schema);
-			GenericUtil.serializeGenericAttribute(io, complexSetDomain, setDomainValue2);
+			complexSetDomain.serializeGenericAttribute(io, setDomainValue2);
 			assertEquals(serializedSetDomainValue2, io.getStringWriterResult());
 			io = GraphIO.createStringWriter(schema);
-			GenericUtil.serializeGenericAttribute(io, simpleSetDomain, setDomainEmptyValue);
+			simpleSetDomain.serializeGenericAttribute(io, setDomainEmptyValue);
 			assertEquals(serializedSetDomainEmptyValue, io.getStringWriterResult());
 			io = GraphIO.createStringWriter(schema);
-			GenericUtil.serializeGenericAttribute(io, complexSetDomain, setDomainEmptyValue);
+			complexSetDomain.serializeGenericAttribute(io, setDomainEmptyValue);
 			assertEquals(serializedSetDomainEmptyValue, io.getStringWriterResult());
 			io = GraphIO.createStringWriter(schema);
-			GenericUtil.serializeGenericAttribute(io, simpleListDomain, listDomainValue1);
+			simpleListDomain.serializeGenericAttribute(io, listDomainValue1);
 			assertEquals(serializedListDomainValue1, io.getStringWriterResult());
 			io = GraphIO.createStringWriter(schema);
-			GenericUtil.serializeGenericAttribute(io, complexListDomain, listDomainValue2);
+			complexListDomain.serializeGenericAttribute(io, listDomainValue2);
 			assertEquals(serializedListDomainValue2, io.getStringWriterResult());
 			io = GraphIO.createStringWriter(schema);
-			GenericUtil.serializeGenericAttribute(io, simpleListDomain, listDomainEmptyValue);
+			simpleListDomain.serializeGenericAttribute(io, listDomainEmptyValue);
 			assertEquals(serializedListDomainEmptyValue, io.getStringWriterResult());
 			io = GraphIO.createStringWriter(schema);
-			GenericUtil.serializeGenericAttribute(io, complexListDomain, listDomainEmptyValue);
+			complexListDomain.serializeGenericAttribute(io, listDomainEmptyValue);
 			assertEquals(serializedListDomainEmptyValue, io.getStringWriterResult());
 			io = GraphIO.createStringWriter(schema);
-			GenericUtil.serializeGenericAttribute(io, simpleMapDomain, mapDomainValue1);
+			simpleMapDomain.serializeGenericAttribute(io, mapDomainValue1);
 			assertEquals(serializedMapDomainValue1, io.getStringWriterResult());
 			io = GraphIO.createStringWriter(schema);
-			GenericUtil.serializeGenericAttribute(io, complexMapDomain, mapDomainValue2);
+			complexMapDomain.serializeGenericAttribute(io, mapDomainValue2);
 			assertEquals(serializedMapDomainValue2, io.getStringWriterResult());
 //			io = GraphIO.createStringWriter(schema);
 //			GenericUtil.serializeGenericAttribute(io, complexMapDomain2, mapDomainValue3);		// TODO see above
 //			assertEquals(serializedMapDomainValue3, io.getStringWriterResult());
 			io = GraphIO.createStringWriter(schema);
-			GenericUtil.serializeGenericAttribute(io, simpleMapDomain, mapDomainEmptyValue);
+			simpleMapDomain.serializeGenericAttribute(io, mapDomainEmptyValue);
 			assertEquals(serializedMapDomainEmptyValue, io.getStringWriterResult());
 			io = GraphIO.createStringWriter(schema);
-			GenericUtil.serializeGenericAttribute(io, complexMapDomain, mapDomainEmptyValue);
+			complexMapDomain.serializeGenericAttribute(io, mapDomainEmptyValue);
 			assertEquals(serializedMapDomainEmptyValue, io.getStringWriterResult());
 			io = GraphIO.createStringWriter(schema);
-			GenericUtil.serializeGenericAttribute(io, complexMapDomain2, mapDomainEmptyValue);
+			complexMapDomain2.serializeGenericAttribute(io, mapDomainEmptyValue);
 			assertEquals(serializedMapDomainEmptyValue, io.getStringWriterResult());
 			io = GraphIO.createStringWriter(schema);
-			GenericUtil.serializeGenericAttribute(io, simpleRecordDomain, recordDomainValue1);
+			simpleRecordDomain.serializeGenericAttribute(io, recordDomainValue1);
 			assertEquals(serializedRecordDomainValue1, io.getStringWriterResult());
 			io = GraphIO.createStringWriter(schema);
-			GenericUtil.serializeGenericAttribute(io, complexRecordDomain, recordDomainValue2);
+			complexRecordDomain.serializeGenericAttribute(io, recordDomainValue2);
 			assertEquals(serializedRecordDomainValue2, io.getStringWriterResult());
 			
 			io = GraphIO.createStringWriter(schema);
-			GenericUtil.serializeGenericAttribute(io, enumDomain, nullValue);
+			enumDomain.serializeGenericAttribute(io, nullValue);
 			assertEquals(serializedNullValue, io.getStringWriterResult());
 			io = GraphIO.createStringWriter(schema);
-			GenericUtil.serializeGenericAttribute(io, simpleSetDomain, nullValue);
+			simpleSetDomain.serializeGenericAttribute(io, nullValue);
 			assertEquals(serializedNullValue, io.getStringWriterResult());
 			io = GraphIO.createStringWriter(schema);
-			GenericUtil.serializeGenericAttribute(io, complexSetDomain, nullValue);
+			complexSetDomain.serializeGenericAttribute(io, nullValue);
 			assertEquals(serializedNullValue, io.getStringWriterResult());
 			io = GraphIO.createStringWriter(schema);
-			GenericUtil.serializeGenericAttribute(io, simpleListDomain, nullValue);
+			simpleListDomain.serializeGenericAttribute(io, nullValue);
 			assertEquals(serializedNullValue, io.getStringWriterResult());
 			io = GraphIO.createStringWriter(schema);
-			GenericUtil.serializeGenericAttribute(io, complexListDomain, nullValue);
+			complexListDomain.serializeGenericAttribute(io, nullValue);
 			assertEquals(serializedNullValue, io.getStringWriterResult());
 			io = GraphIO.createStringWriter(schema);
-			GenericUtil.serializeGenericAttribute(io, simpleMapDomain, nullValue);
+			simpleMapDomain.serializeGenericAttribute(io, nullValue);
 			assertEquals(serializedNullValue, io.getStringWriterResult());
 			io = GraphIO.createStringWriter(schema);
-			GenericUtil.serializeGenericAttribute(io, complexMapDomain, nullValue);
+			complexMapDomain.serializeGenericAttribute(io, nullValue);
 			assertEquals(serializedNullValue, io.getStringWriterResult());
 			io = GraphIO.createStringWriter(schema);
-			GenericUtil.serializeGenericAttribute(io, complexMapDomain2, nullValue);
+			complexMapDomain2.serializeGenericAttribute(io, nullValue);
 			assertEquals(serializedNullValue, io.getStringWriterResult());
 			io = GraphIO.createStringWriter(schema);
-			GenericUtil.serializeGenericAttribute(io, simpleRecordDomain, nullValue);
+			simpleRecordDomain.serializeGenericAttribute(io, nullValue);
 			assertEquals(serializedNullValue, io.getStringWriterResult());
 			io = GraphIO.createStringWriter(schema);
-			GenericUtil.serializeGenericAttribute(io, complexRecordDomain, nullValue);
+			complexRecordDomain.serializeGenericAttribute(io, nullValue);
 			assertEquals(serializedNullValue, io.getStringWriterResult());
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -299,84 +298,84 @@ public class GenericUtilTest {
 	@Test
 	public void testParseAttribute() {
 		try {
-			Object result = GenericUtil.parseGenericAttribute(schema.getBooleanDomain(), GraphIO.createStringReader(serializedBoolDomainValue1, schema));
+			Object result = schema.getBooleanDomain().parseGenericAttribute(GraphIO.createStringReader(serializedBoolDomainValue1, schema));
 			assertEquals(boolDomainValue1, result);
-			result = GenericUtil.parseGenericAttribute(schema.getBooleanDomain(), GraphIO.createStringReader(serializedBoolDomainValue2, schema));
+			result = schema.getBooleanDomain().parseGenericAttribute(GraphIO.createStringReader(serializedBoolDomainValue2, schema));
 			assertEquals(boolDomainValue2, result);
-			result = GenericUtil.parseGenericAttribute(schema.getIntegerDomain(), GraphIO.createStringReader(serializedIntDomainMinValue, schema));
+			result = schema.getIntegerDomain().parseGenericAttribute(GraphIO.createStringReader(serializedIntDomainMinValue, schema));
 			assertEquals(intDomainMinValue, result);
-			result = GenericUtil.parseGenericAttribute(schema.getIntegerDomain(), GraphIO.createStringReader(serializedIntDomainMaxValue, schema));
+			result = schema.getIntegerDomain().parseGenericAttribute(GraphIO.createStringReader(serializedIntDomainMaxValue, schema));
 			assertEquals(intDomainMaxValue, result);
-			result = GenericUtil.parseGenericAttribute(schema.getIntegerDomain(), GraphIO.createStringReader(serializedIntDomainValue, schema));
+			result = schema.getIntegerDomain().parseGenericAttribute(GraphIO.createStringReader(serializedIntDomainValue, schema));
 			assertEquals(intDomainValue, result);
-			result = GenericUtil.parseGenericAttribute(schema.getLongDomain(), GraphIO.createStringReader(serializedLongDomainMaxValue, schema));
+			result = schema.getLongDomain().parseGenericAttribute(GraphIO.createStringReader(serializedLongDomainMaxValue, schema));
 			assertEquals(longDomainMaxValue, result);
-			result = GenericUtil.parseGenericAttribute(schema.getLongDomain(), GraphIO.createStringReader(serializedLongDomainMinValue, schema));
+			result = schema.getLongDomain().parseGenericAttribute(GraphIO.createStringReader(serializedLongDomainMinValue, schema));
 			assertEquals(longDomainMinValue, result);
-			result = GenericUtil.parseGenericAttribute(schema.getLongDomain(), GraphIO.createStringReader(serializedLongDomainValue, schema));
+			result = schema.getLongDomain().parseGenericAttribute(GraphIO.createStringReader(serializedLongDomainValue, schema));
 			assertEquals(longDomainValue, result);
-			result = GenericUtil.parseGenericAttribute(schema.getDoubleDomain(), GraphIO.createStringReader(serializedDoubleDomainValue1, schema));
+			result = schema.getDoubleDomain().parseGenericAttribute(GraphIO.createStringReader(serializedDoubleDomainValue1, schema));
 			assertEquals(doubleDomainValue1, result);
-			result = GenericUtil.parseGenericAttribute(schema.getDoubleDomain(), GraphIO.createStringReader(serializedDoubleDomainValue2, schema));
+			result = schema.getDoubleDomain().parseGenericAttribute(GraphIO.createStringReader(serializedDoubleDomainValue2, schema));
 			assertEquals(doubleDomainValue2, result);
-			result = GenericUtil.parseGenericAttribute(schema.getDoubleDomain(), GraphIO.createStringReader(serializedDoubleDomainValue3, schema));
+			result = schema.getDoubleDomain().parseGenericAttribute(GraphIO.createStringReader(serializedDoubleDomainValue3, schema));
 			assertEquals(doubleDomainValue3, result);
-			result = GenericUtil.parseGenericAttribute(schema.getStringDomain(), GraphIO.createStringReader(serializedStringDomainValue1, schema));
+			result = schema.getStringDomain().parseGenericAttribute(GraphIO.createStringReader(serializedStringDomainValue1, schema));
 			assertEquals(stringDomainValue1, result);
-			result = GenericUtil.parseGenericAttribute(schema.getStringDomain(), GraphIO.createStringReader(serializedStringDomainEmptyValue, schema));
+			result = schema.getStringDomain().parseGenericAttribute(GraphIO.createStringReader(serializedStringDomainEmptyValue, schema));
 			assertEquals(stringDomainEmptyValue, result);
-			result = GenericUtil.parseGenericAttribute(enumDomain, GraphIO.createStringReader(serializedEnumDomainValue1, schema));
+			result = enumDomain.parseGenericAttribute(GraphIO.createStringReader(serializedEnumDomainValue1, schema));
 			assertEquals(enumDomainValue1, result);
-			result = GenericUtil.parseGenericAttribute(enumDomain, GraphIO.createStringReader(serializedEnumDomainValue2, schema));
+			result = enumDomain.parseGenericAttribute(GraphIO.createStringReader(serializedEnumDomainValue2, schema));
 			assertEquals(enumDomainValue2, result);
-			result = GenericUtil.parseGenericAttribute(simpleSetDomain, GraphIO.createStringReader(serializedSetDomainValue1, schema));
+			result = simpleSetDomain.parseGenericAttribute(GraphIO.createStringReader(serializedSetDomainValue1, schema));
 			assertEquals(setDomainValue1, result);
-			result = GenericUtil.parseGenericAttribute(complexSetDomain, GraphIO.createStringReader(serializedSetDomainValue2, schema));
+			result = complexSetDomain.parseGenericAttribute(GraphIO.createStringReader(serializedSetDomainValue2, schema));
 			assertEquals(setDomainValue2, result);
-			result = GenericUtil.parseGenericAttribute(simpleSetDomain, GraphIO.createStringReader(serializedSetDomainEmptyValue, schema));
+			result = simpleSetDomain.parseGenericAttribute(GraphIO.createStringReader(serializedSetDomainEmptyValue, schema));
 			assertEquals(setDomainEmptyValue, result);
-			result = GenericUtil.parseGenericAttribute(complexSetDomain, GraphIO.createStringReader(serializedSetDomainEmptyValue, schema));
+			result = complexSetDomain.parseGenericAttribute(GraphIO.createStringReader(serializedSetDomainEmptyValue, schema));
 			assertEquals(setDomainEmptyValue, result);
-			result = GenericUtil.parseGenericAttribute(simpleListDomain, GraphIO.createStringReader(serializedListDomainValue1, schema));
+			result = simpleListDomain.parseGenericAttribute(GraphIO.createStringReader(serializedListDomainValue1, schema));
 			assertEquals(listDomainValue1, result);
-			result = GenericUtil.parseGenericAttribute(complexListDomain, GraphIO.createStringReader(serializedListDomainValue2, schema));
+			result = complexListDomain.parseGenericAttribute(GraphIO.createStringReader(serializedListDomainValue2, schema));
 			assertEquals(listDomainValue2, result);
-			result = GenericUtil.parseGenericAttribute(simpleListDomain, GraphIO.createStringReader(serializedListDomainEmptyValue, schema));
+			result = simpleListDomain.parseGenericAttribute(GraphIO.createStringReader(serializedListDomainEmptyValue, schema));
 			assertEquals(listDomainEmptyValue, result);
-			result = GenericUtil.parseGenericAttribute(complexListDomain, GraphIO.createStringReader(serializedListDomainEmptyValue, schema));
+			result = complexListDomain.parseGenericAttribute(GraphIO.createStringReader(serializedListDomainEmptyValue, schema));
 			assertEquals(listDomainEmptyValue, result);
-			result = GenericUtil.parseGenericAttribute(simpleMapDomain, GraphIO.createStringReader(serializedMapDomainValue1, schema));
+			result = simpleMapDomain.parseGenericAttribute(GraphIO.createStringReader(serializedMapDomainValue1, schema));
 			assertEquals(mapDomainValue1, result);
-			result = GenericUtil.parseGenericAttribute(complexMapDomain, GraphIO.createStringReader(serializedMapDomainValue2, schema));
+			result = complexMapDomain.parseGenericAttribute(GraphIO.createStringReader(serializedMapDomainValue2, schema));
 			assertEquals(mapDomainValue2, result);
-//			result = GenericUtil.parseGenericAttribute(complexMapDomain2, GraphIO.createStringReader(serializedMapDomainValue3, schema));	// TODO see above
+//			result = GenericUtil.complexMapDomain2(GraphIO.createStringReader(serializedMapDomainValue3, schema));	// TODO see above
 //			assertEquals(mapDomainValue3, result);
-			result = GenericUtil.parseGenericAttribute(simpleMapDomain, GraphIO.createStringReader(serializedMapDomainEmptyValue, schema));
+			result = simpleMapDomain.parseGenericAttribute(GraphIO.createStringReader(serializedMapDomainEmptyValue, schema));
 			assertEquals(mapDomainEmptyValue, result);
-			result = GenericUtil.parseGenericAttribute(complexMapDomain, GraphIO.createStringReader(serializedMapDomainEmptyValue, schema));
+			result = complexMapDomain.parseGenericAttribute(GraphIO.createStringReader(serializedMapDomainEmptyValue, schema));
 			assertEquals(mapDomainEmptyValue, result);
-			result = GenericUtil.parseGenericAttribute(simpleRecordDomain, GraphIO.createStringReader(serializedRecordDomainValue1, schema));
+			result = simpleRecordDomain.parseGenericAttribute(GraphIO.createStringReader(serializedRecordDomainValue1, schema));
 			assertEquals(recordDomainValue1, result);
-			result = GenericUtil.parseGenericAttribute(complexRecordDomain, GraphIO.createStringReader(serializedRecordDomainValue2, schema));
+			result = complexRecordDomain.parseGenericAttribute(GraphIO.createStringReader(serializedRecordDomainValue2, schema));
 			assertEquals(recordDomainValue2, result);
 			
-			result = GenericUtil.parseGenericAttribute(simpleSetDomain, GraphIO.createStringReader(serializedNullValue, schema));
+			result = simpleSetDomain.parseGenericAttribute(GraphIO.createStringReader(serializedNullValue, schema));
 			assertEquals(nullValue, result);
-			result = GenericUtil.parseGenericAttribute(complexSetDomain, GraphIO.createStringReader(serializedNullValue, schema));
+			result = complexSetDomain.parseGenericAttribute(GraphIO.createStringReader(serializedNullValue, schema));
 			assertEquals(nullValue, result);
-			result = GenericUtil.parseGenericAttribute(simpleListDomain, GraphIO.createStringReader(serializedNullValue, schema));
+			result = simpleListDomain.parseGenericAttribute(GraphIO.createStringReader(serializedNullValue, schema));
 			assertEquals(nullValue, result);
-			result = GenericUtil.parseGenericAttribute(complexListDomain, GraphIO.createStringReader(serializedNullValue, schema));
+			result = complexListDomain.parseGenericAttribute(GraphIO.createStringReader(serializedNullValue, schema));
 			assertEquals(nullValue, result);
-			result = GenericUtil.parseGenericAttribute(simpleMapDomain, GraphIO.createStringReader(serializedNullValue, schema));
+			result = simpleMapDomain.parseGenericAttribute(GraphIO.createStringReader(serializedNullValue, schema));
 			assertEquals(nullValue, result);
-			result = GenericUtil.parseGenericAttribute(complexMapDomain, GraphIO.createStringReader(serializedNullValue, schema));
+			result = complexMapDomain.parseGenericAttribute(GraphIO.createStringReader(serializedNullValue, schema));
 			assertEquals(nullValue, result);
-			result = GenericUtil.parseGenericAttribute(complexMapDomain2, GraphIO.createStringReader(serializedNullValue, schema));
+			result = complexMapDomain2.parseGenericAttribute(GraphIO.createStringReader(serializedNullValue, schema));
 			assertEquals(nullValue, result);
-			result = GenericUtil.parseGenericAttribute(simpleRecordDomain, GraphIO.createStringReader(serializedNullValue, schema));
+			result = simpleRecordDomain.parseGenericAttribute(GraphIO.createStringReader(serializedNullValue, schema));
 			assertEquals(nullValue, result);
-			result = GenericUtil.parseGenericAttribute(complexRecordDomain, GraphIO.createStringReader(serializedNullValue, schema));
+			result = complexRecordDomain.parseGenericAttribute(GraphIO.createStringReader(serializedNullValue, schema));
 			assertEquals(nullValue, result);
 		} catch (GraphIOException e) {
 			e.printStackTrace();
@@ -385,7 +384,7 @@ public class GenericUtilTest {
 	}
 	
 	@Test
-	public void testConformsToDomain() {
+	public void testgenericIsConform() {
 		Domain[] testDomains = new Domain[] {
 			schema.getBooleanDomain(),
 			schema.getIntegerDomain(),
@@ -404,164 +403,159 @@ public class GenericUtilTest {
 			complexRecordDomain
 		};
 
-		try {
-			for(int i = 0; i < testDomains.length; i++) {
-				if(i == 0) {
-					assertTrue(GenericUtil.conformsToDomain(boolDomainValue1, testDomains[i]));
-					assertTrue(GenericUtil.conformsToDomain(boolDomainValue2, testDomains[i]));
-				}
-				else {
-					assertFalse(GenericUtil.conformsToDomain(boolDomainValue1, testDomains[i]));
-					assertFalse(GenericUtil.conformsToDomain(boolDomainValue2, testDomains[i]));
-				}
+		for(int i = 0; i < testDomains.length; i++) {
+			if(i == 0) {
+				assertTrue(testDomains[i].genericIsConform(boolDomainValue1));
+				assertTrue(testDomains[i].genericIsConform(boolDomainValue2));
 			}
-			for(int i = 0; i < testDomains.length; i++) {
-				if(i == 1) {
-					assertTrue(GenericUtil.conformsToDomain(intDomainMaxValue, testDomains[i]));
-					assertTrue(GenericUtil.conformsToDomain(intDomainMinValue, testDomains[i]));
-					assertTrue(GenericUtil.conformsToDomain(intDomainValue, testDomains[i]));
-				}
-				else {
-					assertFalse(GenericUtil.conformsToDomain(intDomainMaxValue, testDomains[i]));
-					assertFalse(GenericUtil.conformsToDomain(intDomainMinValue, testDomains[i]));
-					assertFalse(GenericUtil.conformsToDomain(intDomainValue, testDomains[i]));
-				}
+			else {
+				assertFalse(testDomains[i].genericIsConform(boolDomainValue1));
+				assertFalse(testDomains[i].genericIsConform(boolDomainValue2));
 			}
-			for(int i = 0; i < testDomains.length; i++) {
-				if(i == 2) {
-					assertTrue(GenericUtil.conformsToDomain(longDomainMaxValue, testDomains[i]));
-					assertTrue(GenericUtil.conformsToDomain(longDomainMinValue, testDomains[i]));
-					assertTrue(GenericUtil.conformsToDomain(longDomainValue, testDomains[i]));
-				}
-				else {
-					assertFalse(GenericUtil.conformsToDomain(longDomainMaxValue, testDomains[i]));
-					assertFalse(GenericUtil.conformsToDomain(longDomainMinValue, testDomains[i]));
-					assertFalse(GenericUtil.conformsToDomain(longDomainValue, testDomains[i]));
-				}
+		}
+		for(int i = 0; i < testDomains.length; i++) {
+			if(i == 1) {
+				assertTrue(testDomains[i].genericIsConform(intDomainMaxValue));
+				assertTrue(testDomains[i].genericIsConform(intDomainMinValue));
+				assertTrue(testDomains[i].genericIsConform(intDomainValue));
 			}
-			for(int i = 0; i < testDomains.length; i++) {
-				if(i == 3) {
-					assertTrue(GenericUtil.conformsToDomain(doubleDomainValue1, testDomains[i]));
-					assertTrue(GenericUtil.conformsToDomain(doubleDomainValue2, testDomains[i]));
-					assertTrue(GenericUtil.conformsToDomain(doubleDomainValue3, testDomains[i]));
-				}
-				else {
-					assertFalse(GenericUtil.conformsToDomain(doubleDomainValue1, testDomains[i]));
-					assertFalse(GenericUtil.conformsToDomain(doubleDomainValue2, testDomains[i]));
-					assertFalse(GenericUtil.conformsToDomain(doubleDomainValue3, testDomains[i]));
-				}
+			else {
+				assertFalse(testDomains[i].genericIsConform(intDomainMaxValue));
+				assertFalse(testDomains[i].genericIsConform(intDomainMinValue));
+				assertFalse(testDomains[i].genericIsConform(intDomainValue));
 			}
-			for(int i = 0; i < testDomains.length; i++) {
-				if(i == 4) {
-					assertTrue(GenericUtil.conformsToDomain(stringDomainValue1, testDomains[i]));
-					assertTrue(GenericUtil.conformsToDomain(stringDomainEmptyValue, testDomains[i]));
-				}
-				else {
-					assertFalse(GenericUtil.conformsToDomain(stringDomainValue1, testDomains[i]));
-					assertFalse(GenericUtil.conformsToDomain(stringDomainEmptyValue, testDomains[i]));
-				}
+		}
+		for(int i = 0; i < testDomains.length; i++) {
+			if(i == 2) {
+				assertTrue(testDomains[i].genericIsConform(longDomainMaxValue));
+				assertTrue(testDomains[i].genericIsConform(longDomainMinValue));
+				assertTrue(testDomains[i].genericIsConform(longDomainValue));
 			}
-			for(int i = 0; i < testDomains.length; i++) {
-				if(i == 4 || i == 5) {	// Enum-values are represented by Strings in the generic implementation
-					assertTrue(GenericUtil.conformsToDomain(enumDomainValue1, testDomains[i]));
-					assertTrue(GenericUtil.conformsToDomain(enumDomainValue2, testDomains[i]));
-					assertTrue(GenericUtil.conformsToDomain(nullValue, testDomains[i]));
-				}
-				else {
-					assertFalse(GenericUtil.conformsToDomain(enumDomainValue1, testDomains[i]));
-					assertFalse(GenericUtil.conformsToDomain(enumDomainValue2, testDomains[i]));
-				}
+			else {
+				assertFalse(testDomains[i].genericIsConform(longDomainMaxValue));
+				assertFalse(testDomains[i].genericIsConform(longDomainMinValue));
+				assertFalse(testDomains[i].genericIsConform(longDomainValue));
 			}
-			for(int i = 0; i < testDomains.length; i++) {
-				if(i == 6) {
-					assertTrue(GenericUtil.conformsToDomain(setDomainValue1, testDomains[i]));
-					assertTrue(GenericUtil.conformsToDomain(nullValue, testDomains[i]));
-				}
-				else {
-					assertFalse(GenericUtil.conformsToDomain(setDomainValue1, testDomains[i]));
-				}
+		}
+		for(int i = 0; i < testDomains.length; i++) {
+			if(i == 3) {
+				assertTrue(testDomains[i].genericIsConform(doubleDomainValue1));
+				assertTrue(testDomains[i].genericIsConform(doubleDomainValue2));
+				assertTrue(testDomains[i].genericIsConform(doubleDomainValue3));
 			}
-			for(int i = 0; i < testDomains.length; i++) {
-				if(i == 7) {
-					assertTrue(GenericUtil.conformsToDomain(setDomainValue2, testDomains[i]));
-					assertTrue(GenericUtil.conformsToDomain(nullValue, testDomains[i]));
-				}
-				else {
-					assertFalse(GenericUtil.conformsToDomain(setDomainValue2, testDomains[i]));
-				}
+			else {
+				assertFalse(testDomains[i].genericIsConform(doubleDomainValue1));
+				assertFalse(testDomains[i].genericIsConform(doubleDomainValue2));
+				assertFalse(testDomains[i].genericIsConform(doubleDomainValue3));
 			}
-			for(int i = 0; i < testDomains.length; i++) {
-				if(i == 8) {
-					assertTrue(GenericUtil.conformsToDomain(listDomainValue1, testDomains[i]));
-					assertTrue(GenericUtil.conformsToDomain(nullValue, testDomains[i]));
-				}
-				else {
-					assertFalse(GenericUtil.conformsToDomain(listDomainValue1, testDomains[i]));
-				}
+		}
+		for(int i = 0; i < testDomains.length; i++) {
+			if(i == 4) {
+				assertTrue(testDomains[i].genericIsConform(stringDomainValue1));
+				assertTrue(testDomains[i].genericIsConform(stringDomainEmptyValue));
 			}
-			for(int i = 0; i < testDomains.length; i++) {
-				if(i == 9) {
-					assertTrue(GenericUtil.conformsToDomain(listDomainValue2, testDomains[i]));
-					assertTrue(GenericUtil.conformsToDomain(nullValue, testDomains[i]));
-				}
-				else {
-					assertFalse(GenericUtil.conformsToDomain(listDomainValue2, testDomains[i]));
-				}
+			else {
+				assertFalse(testDomains[i].genericIsConform(stringDomainValue1));
+				assertFalse(testDomains[i].genericIsConform(stringDomainEmptyValue));
 			}
-			for(int i = 0; i < testDomains.length; i++) {
-				if(i == 10) {
-					assertTrue(GenericUtil.conformsToDomain(mapDomainValue1, testDomains[i]));
-					assertTrue(GenericUtil.conformsToDomain(nullValue, testDomains[i]));
-				}
-				else {
-					assertFalse(GenericUtil.conformsToDomain(mapDomainValue1, testDomains[i]));
-				}
+		}
+		for(int i = 0; i < testDomains.length; i++) {
+			if(i == 4 || i == 5) {	// Enum-values are represented by Strings in the generic implementation
+				assertTrue(testDomains[i].genericIsConform(enumDomainValue1));
+				assertTrue(testDomains[i].genericIsConform(enumDomainValue2));
+				assertTrue(testDomains[i].genericIsConform(nullValue));
 			}
-			for(int i = 0; i < testDomains.length; i++) {
-				if(i == 11) {
-					assertTrue(GenericUtil.conformsToDomain(mapDomainValue2, testDomains[i]));
-					assertTrue(GenericUtil.conformsToDomain(nullValue, testDomains[i]));
-				}
-				else {
-					assertFalse(GenericUtil.conformsToDomain(mapDomainValue2, testDomains[i]));
-				}
+			else {
+				assertFalse(testDomains[i].genericIsConform(enumDomainValue1));
+				assertFalse(testDomains[i].genericIsConform(enumDomainValue2));
 			}
+		}
+		for(int i = 0; i < testDomains.length; i++) {
+			if(i == 6) {
+				assertTrue(testDomains[i].genericIsConform(setDomainValue1));
+				assertTrue(testDomains[i].genericIsConform(nullValue));
+			}
+			else {
+				assertFalse(testDomains[i].genericIsConform(setDomainValue1));
+			}
+		}
+		for(int i = 0; i < testDomains.length; i++) {
+			if(i == 7) {
+				assertTrue(testDomains[i].genericIsConform(setDomainValue2));
+				assertTrue(testDomains[i].genericIsConform(nullValue));
+			}
+			else {
+				assertFalse(testDomains[i].genericIsConform(setDomainValue2));
+			}
+		}
+		for(int i = 0; i < testDomains.length; i++) {
+			if(i == 8) {
+				assertTrue(testDomains[i].genericIsConform(listDomainValue1));
+				assertTrue(testDomains[i].genericIsConform(nullValue));
+			}
+			else {
+				assertFalse(testDomains[i].genericIsConform(listDomainValue1));
+			}
+		}
+		for(int i = 0; i < testDomains.length; i++) {
+			if(i == 9) {
+				assertTrue(testDomains[i].genericIsConform(listDomainValue2));
+				assertTrue(testDomains[i].genericIsConform(nullValue));
+			}
+			else {
+				assertFalse(testDomains[i].genericIsConform(listDomainValue2));
+			}
+		}
+		for(int i = 0; i < testDomains.length; i++) {
+			if(i == 10) {
+				assertTrue(testDomains[i].genericIsConform(mapDomainValue1));
+				assertTrue(testDomains[i].genericIsConform(nullValue));
+			}
+			else {
+				assertFalse(testDomains[i].genericIsConform(mapDomainValue1));
+			}
+		}
+		for(int i = 0; i < testDomains.length; i++) {
+			if(i == 11) {
+				assertTrue(testDomains[i].genericIsConform(mapDomainValue2));
+				assertTrue(testDomains[i].genericIsConform(nullValue));
+			}
+			else {
+				assertFalse(testDomains[i].genericIsConform(mapDomainValue2));
+			}
+		}
 //			for(int i = 0; i < testDomains.length; i++) {	// TODO see above
 //				if(i == 12) {
-//					assertTrue(GenericUtil.conformsToDomain(mapDomainValue3, testDomains[i]));
-//					assertTrue(GenericUtil.conformsToDomain(nullValue, testDomains[i]));
+//					assertTrue(GenericUtil.genericIsConform(mapDomainValue3, testDomains[i]));
+//					assertTrue(GenericUtil.genericIsConform(nullValue, testDomains[i]));
 //				}
 //				else {
-//					assertFalse(GenericUtil.conformsToDomain(setDomainValue3, testDomains[i]));
+//					assertFalse(GenericUtil.genericIsConform(setDomainValue3, testDomains[i]));
 //				}
 //			}
-			for(int i = 0; i < testDomains.length; i++) {
-				if(i == 13) {
-					assertTrue(GenericUtil.conformsToDomain(recordDomainValue1, testDomains[i]));
-					assertTrue(GenericUtil.conformsToDomain(nullValue, testDomains[i]));
-				}
-				else {
-					try {
-						assertFalse(GenericUtil.conformsToDomain(recordDomainValue1, testDomains[i]));
-					}
-					catch(NoSuchAttributeException e) {} // Desired behavior, if a record has components it shouldn't have.
-				}
+		for(int i = 0; i < testDomains.length; i++) {
+			if(i == 13) {
+				assertTrue(testDomains[i].genericIsConform(recordDomainValue1));
+				assertTrue(testDomains[i].genericIsConform(nullValue));
 			}
-			for(int i = 0; i < testDomains.length; i++) {
-				if(i == 14) {
-					assertTrue(GenericUtil.conformsToDomain(recordDomainValue2, testDomains[i]));
-					assertTrue(GenericUtil.conformsToDomain(nullValue, testDomains[i]));
+			else {
+				try {
+					assertFalse(testDomains[i].genericIsConform(recordDomainValue1));
 				}
-				else {
-					try {
-						assertFalse(GenericUtil.conformsToDomain(recordDomainValue2, testDomains[i]));
-					}
-					catch(NoSuchAttributeException e) {} // Desired behavior, if a record has components it shouldn't have.
-				}
+				catch(NoSuchAttributeException e) {} // Desired behavior, if a record has components it shouldn't have.
 			}
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-			fail();
+		}
+		for(int i = 0; i < testDomains.length; i++) {
+			if(i == 14) {
+				assertTrue(testDomains[i].genericIsConform(recordDomainValue2));
+				assertTrue(testDomains[i].genericIsConform(nullValue));
+			}
+			else {
+				try {
+					assertFalse(testDomains[i].genericIsConform(recordDomainValue2));
+				}
+				catch(NoSuchAttributeException e) {} // Desired behavior, if a record has components it shouldn't have.
+			}
 		}
 	}
 }
