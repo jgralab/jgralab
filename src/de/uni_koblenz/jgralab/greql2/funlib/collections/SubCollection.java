@@ -17,6 +17,9 @@ public class SubCollection extends Function {
 
 	public <T> PVector<T> evaluate(PVector<T> coll, Integer startIndex,
 			Integer endIndex) {
+		if (startIndex < 0 || endIndex > coll.size() || startIndex > endIndex) {
+			return null;
+		}
 		return coll.subList(startIndex, endIndex);
 	}
 
@@ -26,7 +29,7 @@ public class SubCollection extends Function {
 
 	public <T> PSet<T> evaluate(PSet<T> coll, Integer startIndex,
 			Integer endIndex) {
-		if (startIndex > endIndex) {
+		if (startIndex < 0 || endIndex > coll.size() || startIndex > endIndex) {
 			return null;
 		}
 		PSet<T> result = JGraLab.set();

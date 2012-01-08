@@ -37,19 +37,19 @@ package de.uni_koblenz.jgralabtest.greql2.exception;
 
 import org.junit.Test;
 
-import de.uni_koblenz.jgralab.greql2.exception.QuerySourceException;
-import de.uni_koblenz.jgralab.greql2.exception.UnknownTypeException;
+import de.uni_koblenz.jgralab.greql2.exception.GreqlException;
+import de.uni_koblenz.jgralab.greql2.exception.ParsingException;
 import de.uni_koblenz.jgralabtest.greql2.GenericTest;
 
 public class ExceptionTest extends GenericTest {
 
-	@Test(expected = QuerySourceException.class)
+	@Test(expected = GreqlException.class)
 	public void testFunctionException() throws Exception {
 		String queryString = "let x:=list(\"a\",4 ,5) in mean(x)";
 		evalTestQuery("FunctionException", queryString);
 	}
 
-	@Test(expected = UnknownTypeException.class)
+	@Test(expected =ParsingException.class)
 	public void testUnknownTypeException() throws Exception {
 		String queryString = "from e:E{isEdgeOf} report e end";
 		evalTestQuery("UnknownTypeException", queryString);
