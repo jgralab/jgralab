@@ -75,13 +75,13 @@ public class GenericGraphImplTest {
 	private void testDefaultValue(Object value, Attribute attribute) {
 		try {
 			if (attribute.getDefaultValueAsString() != null) {
-				Object expected = GenericUtil.parseGenericAttribute(attribute
-						.getDomain(), GraphIO.createStringReader(attribute
-						.getDefaultValueAsString(), attribute
-						.getAttributedElementClass().getSchema()));
+				Object expected = attribute.getDomain().parseGenericAttribute(
+						GraphIO.createStringReader(attribute
+								.getDefaultValueAsString(), attribute
+								.getAttributedElementClass().getSchema()));
 				assertEquals(expected, value);
 			} else {
-				assertEquals(GenericUtil.genericAttributeDefaultValue(attribute
+				assertEquals(GenericGraphImpl.genericAttributeDefaultValue(attribute
 						.getDomain()), value);
 			}
 		} catch (GraphIOException e) {
@@ -332,8 +332,7 @@ public class GenericGraphImplTest {
 			Schema schema2 = GraphIO.loadSchemaFromFile(SCHEMAFOLDER
 					+ "jnitestschema.tg");
 
-			g1 = schema1
-					.createGraph(ImplementationType.GENERIC, 100, 100);
+			g1 = schema1.createGraph(ImplementationType.GENERIC, 100, 100);
 			Vertex v1 = g1.createVertex(schema1.getGraphClass().getVertexClass(
 					"Node"));
 			Vertex v2 = g1.createVertex(schema1.getGraphClass().getVertexClass(
@@ -345,7 +344,7 @@ public class GenericGraphImplTest {
 			fail();
 		} catch (GraphException e) {
 			// Test if there has no edge been added to the graph
-			if(0 == g1.getECount()) {
+			if (0 == g1.getECount()) {
 				throw e;
 			}
 		}
@@ -403,8 +402,8 @@ public class GenericGraphImplTest {
 			Schema greqltestschema = GraphIO.loadSchemaFromFile(SCHEMAFOLDER
 					+ "greqltestschema.tg");
 
-			g1 = citimapschema.createGraph(ImplementationType.GENERIC,
-					100, 100);
+			g1 = citimapschema
+					.createGraph(ImplementationType.GENERIC, 100, 100);
 
 			g1.createVertex(greqltestschema.getGraphClass().getVertexClass(
 					"junctions.Crossroad"));
@@ -412,12 +411,12 @@ public class GenericGraphImplTest {
 			e.printStackTrace();
 			fail();
 		} catch (GraphException e) {
-			if(0 == g1.getVCount()) {
+			if (0 == g1.getVCount()) {
 				throw e;
 			}
 		}
 	}
-	
+
 	// Test
 	public void testSetTraversalContext() {
 		// TODO! ?
