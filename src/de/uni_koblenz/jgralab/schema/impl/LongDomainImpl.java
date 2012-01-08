@@ -35,6 +35,10 @@
 
 package de.uni_koblenz.jgralab.schema.impl;
 
+import java.io.IOException;
+
+import de.uni_koblenz.jgralab.GraphIO;
+import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.codegenerator.CodeBlock;
 import de.uni_koblenz.jgralab.codegenerator.CodeGenerator;
 import de.uni_koblenz.jgralab.codegenerator.CodeSnippet;
@@ -120,5 +124,28 @@ public final class LongDomainImpl extends BasicDomainImpl implements LongDomain 
 	@Override
 	public boolean isPrimitive() {
 		return true;
+	}
+
+	@Override
+	public Object parseGenericAttribute(GraphIO io) throws GraphIOException {
+		Long result = io.matchLong();
+		return result;
+	}
+
+	@Override
+	public void serializeGenericAttribute(GraphIO io, Object data)
+			throws IOException {
+		io.writeLong((Long) data);
+		
+	}
+
+	@Override
+	public boolean genericIsConform(Object value) {
+		try {
+			return Class.forName(getJavaClassName(null)).isInstance(
+					value);
+		} catch (ClassNotFoundException e) {
+			return false;
+		}
 	}
 }

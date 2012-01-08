@@ -35,6 +35,10 @@
 
 package de.uni_koblenz.jgralab.schema.impl;
 
+import java.io.IOException;
+
+import de.uni_koblenz.jgralab.GraphIO;
+import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.codegenerator.CodeBlock;
 import de.uni_koblenz.jgralab.codegenerator.CodeGenerator;
 import de.uni_koblenz.jgralab.codegenerator.CodeSnippet;
@@ -122,5 +126,27 @@ public final class StringDomainImpl extends BasicDomainImpl implements
 	@Override
 	public boolean isPrimitive() {
 		return false;
+	}
+
+	@Override
+	public Object parseGenericAttribute(GraphIO io) throws GraphIOException {
+		String result = io.matchUtfString();
+		return result;
+	}
+
+	@Override
+	public void serializeGenericAttribute(GraphIO io, Object data)
+			throws IOException {
+		io.writeUtfString((String) data);
+	}
+
+	@Override
+	public boolean genericIsConform(Object value) {
+		try {
+			return value == null
+					|| Class.forName(getJavaClassName(null)).isInstance(value);
+		} catch (ClassNotFoundException e) {
+			return false;
+		}
 	}
 }

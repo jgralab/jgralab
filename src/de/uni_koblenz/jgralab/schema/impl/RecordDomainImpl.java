@@ -35,12 +35,17 @@
 
 package de.uni_koblenz.jgralab.schema.impl;
 
+import java.io.IOException;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
+import de.uni_koblenz.jgralab.GraphIO;
+import de.uni_koblenz.jgralab.GraphIOException;
+import de.uni_koblenz.jgralab.Record;
 import de.uni_koblenz.jgralab.codegenerator.CodeBlock;
 import de.uni_koblenz.jgralab.codegenerator.CodeGenerator;
 import de.uni_koblenz.jgralab.codegenerator.CodeSnippet;
@@ -304,5 +309,84 @@ public final class RecordDomainImpl extends CompositeDomainImpl implements
 	@Override
 	public Boolean hasComponent(String name) {
 		return components.containsKey(name);
+	}
+
+	@Override
+	public Object parseGenericAttribute(GraphIO io) throws GraphIOException {
+		if (io.isNextToken("(")) {
+			de.uni_koblenz.jgralab.impl.RecordImpl result = de.uni_koblenz.jgralab.impl.RecordImpl
+					.empty();
+			io.match("(");
+
+			// Component values are expected in lexicographic order ->
+			// RecordDomainImpl uses a TreeMap for Components and provides
+			// the collection provided by getComponents() is backed by it.
+			// Iteration will be done in the order of Map's keys
+			// (Component-names)
+			Iterator<RecordDomain.RecordComponent> componentIterator = getComponents()
+					.iterator();
+			RecordComponent component = componentIterator.next();
+			while (!io.isNextToken(")")) {
+				Object componentValue = null;
+				componentValue = component.getDomain()
+						.parseGenericAttribute(io);
+				result = result.plus(component.getName(), componentValue);
+				component = componentIterator.hasNext() ? componentIterator
+						.next() : null;
+			}
+			assert (!componentIterator.hasNext());
+			io.match(")");
+			return result;
+		} else if (io.isNextToken(GraphIO.NULL_LITERAL)) {
+			io.match();
+			return null;
+		} else {
+			throw new GraphIOException("This is no record!");
+		}
+	}
+
+	@Override
+	public void serializeGenericAttribute(GraphIO io, Object data)
+			throws IOException {
+		if (data != null) {
+			io.writeSpace();
+			io.write("(");
+			io.noSpace();
+
+			// RecordDomainImpl uses a TreeMap to store its components =>
+			// Collection of components is backed by the TreeMap and
+			// components are
+			// iterated in the order of their keys
+			for (RecordComponent rc : getComponents()) {
+				rc.getDomain().serializeGenericAttribute(io,
+						((Record) data).getComponent(rc.getName()));
+			}
+			io.write(")");
+		} else {
+			io.writeIdentifier(GraphIO.NULL_LITERAL);
+		}
+	}
+
+	@Override
+	public boolean genericIsConform(Object value) {
+		boolean result = true;
+		if (value == null) {
+			return result;
+		}
+		result &= value instanceof Record;
+		if (!result) {
+			return false;
+		}
+		// RecordDomainImpl uses a TreeMap for storing the components.
+		// The iterator is backed by the TreeMap and iterates over its
+		// elements in the order of the TreeMap's keys.
+		Iterator<RecordComponent> iterator = getComponents().iterator();
+		while (iterator.hasNext() && result) {
+			RecordComponent component = iterator.next();
+			result &= component.getDomain().genericIsConform(
+					((Record) value).getComponent(component.getName()));
+		}
+		assert (!iterator.hasNext());
+		return result;
 	}
 }
