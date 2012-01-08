@@ -428,7 +428,7 @@ public class EdgeTest extends InstanceTest {
 	private EdgeClass[] getEdgeClasses() throws CommitFailedException {
 		EdgeClass[] ecs = new EdgeClass[3];
 		createReadOnlyTransaction(g);
-		List<EdgeClass> a = g.getSchema().getEdgeClassesInTopologicalOrder();
+		List<EdgeClass> a = g.getGraphClass().getEdgeClasses();
 		commit(g);
 		// TODO WTF?
 		for (EdgeClass ec : a) {

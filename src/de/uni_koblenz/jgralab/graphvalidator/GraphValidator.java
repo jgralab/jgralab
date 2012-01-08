@@ -154,23 +154,16 @@ public class GraphValidator {
 		SortedSet<ConstraintViolation> brokenConstraints = new TreeSet<ConstraintViolation>();
 
 		// Check if all multiplicities are correct
-		for (EdgeClass ec : graph.getSchema()
-				.getEdgeClassesInTopologicalOrder()) {
-			if (ec.isInternal()) {
-				continue;
-			}
+		for (EdgeClass ec : graph.getGraphClass().getEdgeClasses()) {
 			brokenConstraints.addAll(validateMultiplicities(ec));
 		}
 
 		// check if all greql constraints are met
 		List<AttributedElementClass> aecs = new ArrayList<AttributedElementClass>();
 		aecs.add(graph.getSchema().getGraphClass());
-		aecs.addAll(graph.getSchema().getVertexClassesInTopologicalOrder());
-		aecs.addAll(graph.getSchema().getEdgeClassesInTopologicalOrder());
+		aecs.addAll(graph.getSchema().getGraphClass().getVertexClasses());
+		aecs.addAll(graph.getSchema().getGraphClass().getEdgeClasses());
 		for (AttributedElementClass aec : aecs) {
-			if (aec.isInternal()) {
-				continue;
-			}
 			brokenConstraints.addAll(validateConstraints(aec));
 		}
 		return brokenConstraints;

@@ -436,25 +436,21 @@ public class SchemaCodeGenerator extends CodeGenerator {
 		code.addNoIndent(new CodeSnippet("public final GraphClass "
 				+ schema.getGraphClass().getVariableName() + ";"));
 
-		for (VertexClass vc : schema.getVertexClassesInTopologicalOrder()) {
-			if (!vc.isInternal()) {
+		for (VertexClass vc : schema.getGraphClass().getVertexClasses()) {
 				code.addNoIndent(new CodeSnippet("public final VertexClass "
 						+ vc.getVariableName() + ";"));
-			}
 		}
-		for (EdgeClass ec : schema.getEdgeClassesInTopologicalOrder()) {
-			if (!ec.isInternal()) {
+		for (EdgeClass ec : schema.getGraphClass().getEdgeClasses()) {
 				code.addNoIndent(new CodeSnippet("public final EdgeClass "
 						+ ec.getVariableName() + ";"));
-			}
 		}
 		return code;
 	}
 
 	private CodeBlock createEdgeClasses(GraphClass gc) {
 		CodeList code = new CodeList();
-		for (EdgeClass ec : schema.getEdgeClassesInTopologicalOrder()) {
-			if (!ec.isInternal() && (ec.getGraphClass() == gc)) {
+		for (EdgeClass ec : schema.getGraphClass().getEdgeClasses()) {
+			if ((ec.getGraphClass() == gc)) {
 				code.addNoIndent(createEdgeClass(ec));
 			}
 		}

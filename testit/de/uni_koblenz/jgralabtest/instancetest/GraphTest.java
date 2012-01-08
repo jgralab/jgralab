@@ -168,8 +168,7 @@ public class GraphTest extends InstanceTest {
 	private void getVertexClassesOfG1() {
 		// get vertex- and edge-classes
 		// VertexClass abstractSuperN;
-		List<VertexClass> vclasses = g1.getSchema()
-				.getVertexClassesInTopologicalOrder();
+		List<VertexClass> vclasses = g1.getGraphClass().getVertexClasses();
 		for (VertexClass vc : vclasses) {
 			// if (vc.getSimpleName().equals("AbstractSuperNode")) {
 			// abstractSuperN = vc;
@@ -186,8 +185,7 @@ public class GraphTest extends InstanceTest {
 
 	private void getEdgeClassesOfG1() {
 		// preparations...
-		List<EdgeClass> eclasses = g1.getSchema()
-				.getEdgeClassesInTopologicalOrder();
+		List<EdgeClass> eclasses = g1.getGraphClass().getEdgeClasses();
 		for (EdgeClass ec : eclasses) {
 			if (ec.getSimpleName().equals("Link")) {
 				link = ec;
