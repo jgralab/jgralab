@@ -1014,7 +1014,12 @@ public class SchemaImpl implements Schema {
 	
 	@Override
 	public List<EdgeClass> getEdgeClassesInTopologicalOrder() {
-		return graphClass.getEdgeClasses();
+		List<EdgeClass> ec_top = new ArrayList<EdgeClass>();
+		ec_top.add(defaultEdgeClass);
+		for(EdgeClass ec : graphClass.getEdgeClasses()){
+			ec_top.add(ec);
+		}
+		return ec_top;
 	}
 
 	@Override
@@ -1188,7 +1193,12 @@ public class SchemaImpl implements Schema {
 
 	@Override
 	public List<VertexClass> getVertexClassesInTopologicalOrder() {
-		return graphClass.getVertexClasses();
+		List<VertexClass> vc_top = new ArrayList<VertexClass>();
+		vc_top.add(defaultVertexClass);
+		for(VertexClass vc : graphClass.getVertexClasses()){
+			vc_top.add(vc);
+		}
+		return vc_top;
 	}
 
 	@Override
