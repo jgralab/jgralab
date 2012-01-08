@@ -116,9 +116,13 @@ public class GenericGraphImpl extends GraphImpl {
 	public void readAttributeValueFromString(String attributeName, String value)
 			throws GraphIOException, NoSuchAttributeException {
 		if (attributes != null && attributes.containsKey(attributeName)) {
-			attributes.put(attributeName, GenericUtil.parseGenericAttribute(
-					type.getAttribute(attributeName).getDomain(),
-					GraphIO.createStringReader(value, getSchema())));
+			attributes.put(
+					attributeName,
+					type.getAttribute(attributeName)
+							.getDomain()
+							.parseGenericAttribute(
+									GraphIO.createStringReader(value,
+											getSchema())));
 		} else {
 			throw new NoSuchAttributeException(
 					"DefaultValueTestGraph doesn't contain an attribute "
@@ -129,8 +133,8 @@ public class GenericGraphImpl extends GraphImpl {
 	@Override
 	public void readAttributeValues(GraphIO io) throws GraphIOException {
 		for (Attribute a : type.getAttributeList()) {
-			attributes.put(a.getName(),
-					GenericUtil.parseGenericAttribute(a.getDomain(), io));
+			attributes
+					.put(a.getName(), a.getDomain().parseGenericAttribute(io));
 		}
 	}
 
@@ -138,9 +142,8 @@ public class GenericGraphImpl extends GraphImpl {
 	public String writeAttributeValueToString(String attributeName)
 			throws IOException, GraphIOException, NoSuchAttributeException {
 		GraphIO io = GraphIO.createStringWriter(getSchema());
-		GenericUtil.serializeGenericAttribute(io,
-				type.getAttribute(attributeName).getDomain(),
-				getAttribute(attributeName));
+		type.getAttribute(attributeName).getDomain()
+				.serializeGenericAttribute(io, getAttribute(attributeName));
 		return io.getStringWriterResult();
 	}
 
@@ -148,7 +151,7 @@ public class GenericGraphImpl extends GraphImpl {
 	public void writeAttributeValues(GraphIO io) throws IOException,
 			GraphIOException {
 		for (Attribute a : type.getAttributeList()) {
-			GenericUtil.serializeGenericAttribute(io, a.getDomain(),
+			a.getDomain().serializeGenericAttribute(io,
 					attributes.get(a.getName()));
 		}
 	}
@@ -171,18 +174,10 @@ public class GenericGraphImpl extends GraphImpl {
 			throw new NoSuchAttributeException(type.getSimpleName()
 					+ " doesn't contain an attribute " + name);
 		} else {
-			try {
-				if (!GenericUtil.conformsToDomain(data, type.getAttribute(name)
-						.getDomain())) {
-					throw new ClassCastException();
-				} else {
-					attributes.put(name, data);
-				}
-			} catch (ClassNotFoundException e) {
-				System.err
-						.println(type.getAttribute(name).getDomain()
-								+ ".getJavaClassName(String schemaRootPackagePrefix) returned an unknown class name.");
-				e.printStackTrace();
+			if (!type.getAttribute(name).getDomain().genericIsConform(data)) {
+				throw new ClassCastException();
+			} else {
+				attributes.put(name, data);
 			}
 		}
 
@@ -258,9 +253,35 @@ public class GenericGraphImpl extends GraphImpl {
 				}
 			} else {
 				setAttribute(attr.getName(),
-						GenericUtil.genericAttributeDefaultValue(attr
-								.getDomain()));
+						genericAttributeDefaultValue(attr.getDomain()));
 			}
+		}
+	}
+
+	/**
+	 * Returns the default value for attributes in the generic implementation if
+	 * there is no explicitly defined default value, according to the
+	 * attribute's domain.
+	 * 
+	 * @param domain
+	 *            The attribute's domain.
+	 * @return The default value for attributes of the domain.
+	 */
+	public static Object genericAttributeDefaultValue(Domain domain) {
+		if (domain instanceof BasicDomain) {
+			if (domain instanceof BooleanDomain) {
+				return new Boolean(false);
+			} else if (domain instanceof IntegerDomain) {
+				return new Integer(0);
+			} else if (domain instanceof LongDomain) {
+				return new Long(0);
+			} else if (domain instanceof DoubleDomain) {
+				return new Double(0.0);
+			} else { // StringDomain
+				return null;
+			}
+		} else {
+			return null;
 		}
 	}
 
