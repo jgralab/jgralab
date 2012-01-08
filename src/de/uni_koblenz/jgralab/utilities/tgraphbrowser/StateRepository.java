@@ -71,6 +71,7 @@ import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.exception.GreqlException;
 import de.uni_koblenz.jgralab.greql2.types.Types;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
+import de.uni_koblenz.jgralab.schema.GraphElementClass;
 import de.uni_koblenz.jgralab.schema.VertexClass;
 
 public class StateRepository {
@@ -205,7 +206,7 @@ public class StateRepository {
 
 	/**
 	 * Evaluates GReQL-queries and returns the result.
-	 *
+	 * 
 	 * @param query
 	 *            the GReQL-query
 	 * @param graph
@@ -340,7 +341,7 @@ public class StateRepository {
 
 	/**
 	 * Shows or hides the attributes in the 2D visualization.
-	 *
+	 * 
 	 * @param sessionId
 	 * @param pathLength
 	 * @param showAttributes
@@ -368,7 +369,7 @@ public class StateRepository {
 	/**
 	 * Displays the chosen element in the 2DView. And shows it in the breadcrumb
 	 * bar. This method is called, if the link of an element is clicked.
-	 *
+	 * 
 	 * @param sessionId
 	 *            the id of this session
 	 * @param pathLength
@@ -406,7 +407,7 @@ public class StateRepository {
 	 * The currently selected element of the breadcrumbbar is shown. If the
 	 * tableView is shown the hidden table shows the latest element in the
 	 * navigationHistory
-	 *
+	 * 
 	 * @param sessionId
 	 * @param isTableViewShown
 	 * @param showAttributes
@@ -548,7 +549,7 @@ public class StateRepository {
 	/**
 	 * Sets all <code>deselectedTypes</code> to <code>false</code> and all
 	 * selected to <code>true</code>. The adjusted view is sent back.
-	 *
+	 * 
 	 * @param id
 	 *            the id of this session
 	 * @param isTableViewShown
@@ -626,7 +627,7 @@ public class StateRepository {
 
 	/**
 	 * Shows an element of the navigation history.
-	 *
+	 * 
 	 * @param id
 	 *            the sessionId
 	 * @param indexOfNavigationHistory
@@ -725,7 +726,7 @@ public class StateRepository {
 
 	/**
 	 * This method displays another page of the incidence list.
-	 *
+	 * 
 	 * @param id
 	 *            the sessionId
 	 * @param displayedPage
@@ -753,7 +754,7 @@ public class StateRepository {
 	/**
 	 * Displays the chosen page in the tableView. This method is called, if you
 	 * click on the &lt;&lt;, &lt;, &gt; or &gt;&gt; buttons.
-	 *
+	 * 
 	 * @param id
 	 *            the id of this session
 	 * @param numberPerPage
@@ -790,7 +791,7 @@ public class StateRepository {
 	 * Displays the chosen element in the tableView. And shows it in the
 	 * breadcrumb bar. This method is called, if the link of an element is
 	 * clicked.
-	 *
+	 * 
 	 * @param id
 	 *            the id of this session
 	 * @param numberPerPage
@@ -854,7 +855,7 @@ public class StateRepository {
 	/**
 	 * This method is called, if the number of elements per page is changed, or
 	 * if the attributes should be shown or hidden.
-	 *
+	 * 
 	 * @param id
 	 *            the id of this session
 	 * @param numberPerPage
@@ -939,7 +940,7 @@ public class StateRepository {
 	 * Adds the element with <code>elementId</code> to the breadcrumb bar. If it
 	 * is already in the breadcrumb bar every element behind it gets the color
 	 * gray.
-	 *
+	 * 
 	 * @param id
 	 * @param elementId
 	 *            normally it is the elementId. But if you go back to an earlier
@@ -993,114 +994,133 @@ public class StateRepository {
 	 * navigationHistory of the state. The last
 	 * <code>NUMBER_OF_ELEMENTS_IN_BREADCRUMBBAR</code> of the navigationHistory
 	 * are shown.
-	 *
+	 * 
 	 * @param code
-	 *
+	 * 
 	 * @param state
 	 *            the current state
 	 * @param element
 	 *            the JValue which has to be added. If it is null the element at
 	 *            State.insertPosition is shown.
-	 * @param isNewElement
+	 * @param wasElementOfBredcrumbBarSelected
 	 *            It is false, if you want to show an element of the breadcrumb
 	 *            bar.
 	 * @return the JavaScript commands to create the current breadcrumb bar
 	 */
 	private StringBuilder addToBreadcrumbBar(StringBuilder code, State state,
-			Object element, Boolean isNewElement) {
-		int currentPage = 0;
-		code.append("var divBreadcrumbBar = document.getElementById(\"divBreadcrumbBar\");\n");
-		code.append("divBreadcrumbBar.innerHTML = \"\";\n");
-		// create p
-		code.append("var breadcrumbBar = document.createElement(\"p\");\n");
-		code.append("breadcrumbBar.id = \"pBreadcrumbContent0\";\n");
-		code.append("breadcrumbBar.style.display = \"none\";\n");
-		code.append("divBreadcrumbBar.appendChild(breadcrumbBar);\n");
-		code.append("var newEntry;\n");
-		if (element != null) {
-			// add element to the navigationHistory
-			state.navigationHistory.add(state.insertPosition++, element);
-			if ((state.insertPosition < state.navigationHistory.size())
-					&& isNewElement) {
-				// the element was added in the middle of the navigationHistory
-				// delete the following
-				for (int i = state.navigationHistory.size() - 1; i >= state.insertPosition; i--) {
-					state.navigationHistory.remove(i);
+			Object element, Boolean wasElementOfBredcrumbBarSelected) {
+		if (isNewElement(state, element)) {
+			int currentPage = 0;
+			code.append("var divBreadcrumbBar = document.getElementById(\"divBreadcrumbBar\");\n");
+			code.append("divBreadcrumbBar.innerHTML = \"\";\n");
+			// create p
+			code.append("var breadcrumbBar = document.createElement(\"p\");\n");
+			code.append("breadcrumbBar.id = \"pBreadcrumbContent0\";\n");
+			code.append("breadcrumbBar.style.display = \"none\";\n");
+			code.append("divBreadcrumbBar.appendChild(breadcrumbBar);\n");
+			code.append("var newEntry;\n");
+			if (element != null) {
+				// add element to the navigationHistory
+				state.navigationHistory.add(state.insertPosition++, element);
+				if ((state.insertPosition < state.navigationHistory.size())
+						&& wasElementOfBredcrumbBarSelected) {
+					// the element was added in the middle of the
+					// navigationHistory
+					// delete the following
+					for (int i = state.navigationHistory.size() - 1; i >= state.insertPosition; i--) {
+						state.navigationHistory.remove(i);
+					}
 				}
 			}
-		}
-		if (state.navigationHistory.size() <= NUMBER_OF_ELEMENTS_IN_BREADCRUMBBAR) {
-			for (int i = 0; i < state.navigationHistory.size(); i++) {
-				if (i > 0) {
-					// this is not the first element
-					code.append("var raquo = document.createTextNode(String.fromCharCode(187));\n");
-					code.append("breadcrumbBar.appendChild(raquo);\n");
+			if (state.navigationHistory.size() <= NUMBER_OF_ELEMENTS_IN_BREADCRUMBBAR) {
+				for (int i = 0; i < state.navigationHistory.size(); i++) {
+					if (i > 0) {
+						// this is not the first element
+						code.append("var raquo = document.createTextNode(String.fromCharCode(187));\n");
+						code.append("breadcrumbBar.appendChild(raquo);\n");
+					}
+					createBreadcrumbEntry(code, state, i,
+							i < state.insertPosition ? "white" : "gray");
 				}
-				createBreadcrumbEntry(code, state, i,
-						i < state.insertPosition ? "white" : "gray");
-			}
-		} else {
-			// there are more than NUMBER_OF_ELEMENTS_IN_BREADCRUMBBAR elements
-			int modul = state.navigationHistory.size()
-					% NUMBER_OF_ELEMENTS_IN_BREADCRUMBBAR;
-			int pNumber = 0;
-			for (int i = 0; i < state.navigationHistory.size(); i++) {
-				if ((i != 0)
-						&& ((i % NUMBER_OF_ELEMENTS_IN_BREADCRUMBBAR) == modul)) {
-					// start element of a new breadcrumb bar page but not the
-					// first one
-					// create next p
-					code.append("breadcrumbBar = document.createElement(\"p\");\n");
-					code.append("breadcrumbBar.id = \"pBreadcrumbContent")
-							.append(++pNumber).append("\";\n");
-					code.append("divBreadcrumbBar.appendChild(breadcrumbBar);\n");
-					code.append("breadcrumbBar.style.display = \"none\";\n");
-					// create ... >>
-					code.append("var aBack = document.createElement(\"a\");\n");
-					code.append("aBack.innerHTML = \"...\";\n");
-					code.append(
-							"aBack.href = \"javascript:switchBreadcrumbPage('pBreadcrumbContent")
-							.append(pNumber).append("','pBreadcrumbContent")
-							.append(pNumber - 1).append("');\";\n");
-					code.append("breadcrumbBar.appendChild(aBack);\n");
-					code.append("var raquo = document.createTextNode(String.fromCharCode(187));\n");
-					code.append("breadcrumbBar.appendChild(raquo);\n");
-				}
-				if (i == (state.insertPosition - 1)) {
-					currentPage = pNumber;
-				}
-				createBreadcrumbEntry(code, state, i,
-						i < state.insertPosition ? "white" : "gray");
-				if (i != (state.navigationHistory.size() - 1)) {
-					// create >>
-					code.append("var raquo = document.createTextNode(String.fromCharCode(187));\n");
-					code.append("breadcrumbBar.appendChild(raquo);\n");
-					if ((i % NUMBER_OF_ELEMENTS_IN_BREADCRUMBBAR) == (((modul - 1) + NUMBER_OF_ELEMENTS_IN_BREADCRUMBBAR)
-							% NUMBER_OF_ELEMENTS_IN_BREADCRUMBBAR)) {
-						// last element of a new breadcrumb bar page but not the
-						// last element in the navigationHistory
-						// create ...
+			} else {
+				// there are more than NUMBER_OF_ELEMENTS_IN_BREADCRUMBBAR
+				// elements
+				int modul = state.navigationHistory.size()
+						% NUMBER_OF_ELEMENTS_IN_BREADCRUMBBAR;
+				int pNumber = 0;
+				for (int i = 0; i < state.navigationHistory.size(); i++) {
+					if ((i != 0)
+							&& ((i % NUMBER_OF_ELEMENTS_IN_BREADCRUMBBAR) == modul)) {
+						// start element of a new breadcrumb bar page but not
+						// the
+						// first one
+						// create next p
+						code.append("breadcrumbBar = document.createElement(\"p\");\n");
+						code.append("breadcrumbBar.id = \"pBreadcrumbContent")
+								.append(++pNumber).append("\";\n");
+						code.append("divBreadcrumbBar.appendChild(breadcrumbBar);\n");
+						code.append("breadcrumbBar.style.display = \"none\";\n");
+						// create ... >>
 						code.append("var aBack = document.createElement(\"a\");\n");
 						code.append("aBack.innerHTML = \"...\";\n");
 						code.append(
 								"aBack.href = \"javascript:switchBreadcrumbPage('pBreadcrumbContent")
 								.append(pNumber)
 								.append("','pBreadcrumbContent")
-								.append(pNumber + 1).append("');\";\n");
+								.append(pNumber - 1).append("');\";\n");
 						code.append("breadcrumbBar.appendChild(aBack);\n");
+						code.append("var raquo = document.createTextNode(String.fromCharCode(187));\n");
+						code.append("breadcrumbBar.appendChild(raquo);\n");
+					}
+					if (i == (state.insertPosition - 1)) {
+						currentPage = pNumber;
+					}
+					createBreadcrumbEntry(code, state, i,
+							i < state.insertPosition ? "white" : "gray");
+					if (i != (state.navigationHistory.size() - 1)) {
+						// create >>
+						code.append("var raquo = document.createTextNode(String.fromCharCode(187));\n");
+						code.append("breadcrumbBar.appendChild(raquo);\n");
+						if ((i % NUMBER_OF_ELEMENTS_IN_BREADCRUMBBAR) == (((modul - 1) + NUMBER_OF_ELEMENTS_IN_BREADCRUMBBAR) % NUMBER_OF_ELEMENTS_IN_BREADCRUMBBAR)) {
+							// last element of a new breadcrumb bar page but not
+							// the
+							// last element in the navigationHistory
+							// create ...
+							code.append("var aBack = document.createElement(\"a\");\n");
+							code.append("aBack.innerHTML = \"...\";\n");
+							code.append(
+									"aBack.href = \"javascript:switchBreadcrumbPage('pBreadcrumbContent")
+									.append(pNumber)
+									.append("','pBreadcrumbContent")
+									.append(pNumber + 1).append("');\";\n");
+							code.append("breadcrumbBar.appendChild(aBack);\n");
+						}
 					}
 				}
 			}
+			code.append("document.getElementById(\"pBreadcrumbContent")
+					.append(currentPage)
+					.append("\").style.display = \"inline\";\n");
 		}
-		code.append("document.getElementById(\"pBreadcrumbContent")
-				.append(currentPage)
-				.append("\").style.display = \"inline\";\n");
 		return code;
 	}
 
 	/**
+	 * If <code>element</code> is not equal to the last element in the
+	 * breadcrumb bar, <code>true</code> is returned.
+	 * 
+	 * @param state
+	 * @param element
+	 * @return
+	 */
+	private boolean isNewElement(State state, Object element) {
+		return state.navigationHistory.isEmpty()
+				|| state.navigationHistory.get(state.insertPosition - 1) != element;
+	}
+
+	/**
 	 * Creates a new entry at the end of the breadcrumb bar.
-	 *
+	 * 
 	 * @param code
 	 *            the JavaScript code
 	 * @param state
@@ -1171,9 +1191,14 @@ public class StateRepository {
 		code.append("var optValue;\n");
 		code.append("var optText;\n");
 		createOptionForGraphs(code, workspace);
-		code.append("findPositionOf(\"")
-				.append(state.getGraphWrapper().graphPath.replace("\\", "/"))
-				.append("\");\n");
+		try {
+			code.append("findPositionOf(\"")
+					.append(getEncodedFileName(new File(
+							state.getGraphWrapper().graphPath), false))
+					.append("\");\n");
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
 		// set the shown one as selected
 		code.append("document.getElementById(\"selectGraph\").selectedIndex = selectedGraphIndex;\n");
 		// hide rest of title
@@ -1272,6 +1297,7 @@ public class StateRepository {
 						code.append(
 								"document.getElementById(\"loadError\").innerHTML += \"ERROR:<br />")
 								.append(e.toString()).append("\";\n");
+						e.printStackTrace();
 					} else if (currentGraphWrapper.graph == null) {
 						code.append("document.getElementById(\"loadError\").innerHTML += \"ERROR:<br />The graph couldn't be loaded!<br />Probably an OutOfMemoryError occured.\";\n");
 					} else {
@@ -1300,6 +1326,7 @@ public class StateRepository {
 				code.append(
 						"document.getElementById(\"loadError\").innerHTML += \"ERROR:<br />")
 						.append(e.toString()).append("\";\n");
+				e.printStackTrace();
 			}
 		}
 		return code.append("}");
@@ -1308,9 +1335,9 @@ public class StateRepository {
 	/**
 	 * Creates the options for all the graphs on the server. The selected graph
 	 * is the first.
-	 *
+	 * 
 	 * @param code
-	 *
+	 * 
 	 * @param directory
 	 *            the directory to look for graphs
 	 */
@@ -1322,11 +1349,13 @@ public class StateRepository {
 							".gz"))) {
 				// f is a graph file
 				code.append("childOpt = document.createElement(\"option\");\n");
-				code.append("optValue = document.createAttribute(\"value\");\n");
-				code.append("optValue.nodeValue = \"")
-						.append(f.toString().replace("\\", "/"))
-						.append("\";\n");
-				code.append("childOpt.setAttributeNode(optValue);\n");
+				code.append("childOpt.setAttribute(\"value\",\"");
+				try {
+					code.append(getEncodedFileName(f, false));
+				} catch (UnsupportedEncodingException e) {
+					e.printStackTrace();
+				}
+				code.append("\");\n");
 				code.append("optText = document.createTextNode(\"")
 						.append(f.toString().replace(workspace.toString(), "")
 								.replace("\\", "/").substring(1))
@@ -1355,7 +1384,7 @@ public class StateRepository {
 	/**
 	 * Deletes the graph <code>path</code>, from the server. The graph must be
 	 * in the workspace and end with .tg or .gz.
-	 *
+	 * 
 	 * @param path
 	 *            the path to the graph
 	 * @return an error message for the browser, if delete fails. Otherwise the
@@ -1421,7 +1450,7 @@ public class StateRepository {
 
 	/**
 	 * Loads the graph <code>graph</code>, from the server.
-	 *
+	 * 
 	 * @param path
 	 *            the path to the graph
 	 * @return a StringBuilder with a new session number
@@ -1433,7 +1462,7 @@ public class StateRepository {
 	/**
 	 * Loads the graph from <code>uri</code>. Returns the id of the session or
 	 * -1 if the tg.-file is too big.
-	 *
+	 * 
 	 * @param uri
 	 * @return a StringBuilder with a new session number
 	 */
@@ -1508,7 +1537,7 @@ public class StateRepository {
 
 	/**
 	 * Creates an error message.
-	 *
+	 * 
 	 * @param message
 	 *            the message of the error.
 	 */
@@ -1526,7 +1555,7 @@ public class StateRepository {
 	 * Creates an html-List of links of all graphs found in
 	 * <code>directory</code> and its subdirectories. If a graph is in a
 	 * subdirectory the directory is put in front of the graphname.
-	 *
+	 * 
 	 * @param code
 	 *            the list of links of all graphs
 	 * @param directory
@@ -1556,8 +1585,7 @@ public class StateRepository {
 					try {
 						code.append(
 								"a.href = \"javascript:document.location = 'loadGraphFromServer?path='+'")
-								.append(URLEncoder.encode(URLEncoder.encode(
-										f.toString(), "UTF-8"), "UTF-8"))
+								.append(getEncodedFileName(f, true))
 								.append("';\";\n");
 					} catch (UnsupportedEncodingException e) {
 						e.printStackTrace();
@@ -1583,8 +1611,23 @@ public class StateRepository {
 	}
 
 	/**
+	 * @param f
+	 * @return
+	 * @throws UnsupportedEncodingException
+	 */
+	private String getEncodedFileName(File f, boolean doubleEncoding)
+			throws UnsupportedEncodingException {
+		String onceEncoded = URLEncoder.encode(f.toString(), "UTF-8");
+		if (doubleEncoding) {
+			return URLEncoder.encode(onceEncoded, "UTF-8");
+		} else {
+			return onceEncoded;
+		}
+	}
+
+	/**
 	 * Reloads the current graph of this session.
-	 *
+	 * 
 	 * @param sessionId
 	 * @return the code to reinitialize the browser
 	 */
@@ -1602,7 +1645,7 @@ public class StateRepository {
 	 * if the tg file has changed. Further more the browser is told to send the
 	 * request, which lead to the question if the newer version should be
 	 * loaded, again.
-	 *
+	 * 
 	 * @param sessionId
 	 * @param oldMethodCall
 	 */
@@ -1617,7 +1660,7 @@ public class StateRepository {
 	/**
 	 * Creates and returns a the id of the new State. It gets the first unused
 	 * sessionId.
-	 *
+	 * 
 	 * @param graph
 	 *            the graph
 	 * @return the id of the new State
@@ -1638,7 +1681,7 @@ public class StateRepository {
 
 	/**
 	 * Deletes all sessions where the timeout is reached.
-	 *
+	 * 
 	 * @param timeoutMilSec
 	 *            the timeout in milliseconds
 	 */
@@ -1659,7 +1702,7 @@ public class StateRepository {
 	/**
 	 * Returns the state of the session with <code>sessionId</code>. The
 	 * lastAccess-time is updated.
-	 *
+	 * 
 	 * @param sessionId
 	 *            the id of the session
 	 * @return the state of the session with <code>sessionId</code>
@@ -1679,7 +1722,7 @@ public class StateRepository {
 	 * file of the used graph was not modified since the last call of this
 	 * method. Otherwise null is returned and the JavaScript code which asks, if
 	 * the modified graph should be loaded, is appended to <code>code</code>.
-	 *
+	 * 
 	 * @param sessionId
 	 * @param code
 	 * @param calledMethod
@@ -1761,7 +1804,7 @@ public class StateRepository {
 		/**
 		 * Creates a new State instance. All AttributedElementClasses are set to
 		 * selected. The current system time is set to lastAccess.
-		 *
+		 * 
 		 * @param graphFile
 		 *            the graph
 		 */
@@ -1771,7 +1814,7 @@ public class StateRepository {
 
 		/**
 		 * Sets the attributes of this state to the default values.
-		 *
+		 * 
 		 * @param graphFile
 		 */
 		public void initializeState(String graphFile) {
@@ -1802,7 +1845,7 @@ public class StateRepository {
 		 * If the current graph not already exists it is loaded. Otherwise the
 		 * already existing graph is used and its
 		 * {@link GraphWrapper#numberOfUsers} is incremented.
-		 *
+		 * 
 		 * @param {@link String} the path of the graph of this session
 		 * @param long the time the tg-file of the current graph was modified
 		 */
@@ -1819,12 +1862,34 @@ public class StateRepository {
 		/**
 		 * Sets {@link State#graphIdentifier} to
 		 * <code>graphFile_lastModified</code>.
-		 *
+		 * 
 		 * @param graphFile
 		 * @param lastModified
 		 */
 		private void setGraphIdentifier(String graphFile, long lastModified) {
 			graphIdentifier = graphFile + "_" + lastModified;
+		}
+
+		public synchronized StringBuilder getVertexTypeSet() {
+			return convertToSet(selectedVertexClasses);
+		}
+
+		public synchronized StringBuilder getEdgeTypeSet() {
+			return convertToSet(selectedEdgeClasses);
+		}
+
+		private synchronized StringBuilder convertToSet(
+				HashMap<? extends GraphElementClass, Boolean> selectedGEClasses) {
+			StringBuilder result = new StringBuilder("{");
+			String delim = "";
+			for (GraphElementClass type : selectedGEClasses.keySet()) {
+				result.append(delim)
+						.append(selectedGEClasses.get(type) ? "" : "^")
+						.append(type.getQualifiedName()).append("!");
+				delim = ", ";
+			}
+			result.append("}");
+			return result;
 		}
 
 		/**
@@ -1931,7 +1996,7 @@ public class StateRepository {
 
 		/**
 		 * Creates a new Collable which loads the graph.
-		 *
+		 * 
 		 * @param graphWrapper
 		 *            the wrapper for the .tg-file of the graph
 		 */
