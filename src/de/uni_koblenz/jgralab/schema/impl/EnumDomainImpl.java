@@ -35,10 +35,13 @@
 
 package de.uni_koblenz.jgralab.schema.impl;
 
+import java.io.IOException;
 import java.util.List;
 
 import org.pcollections.PVector;
 
+import de.uni_koblenz.jgralab.GraphIO;
+import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.codegenerator.CodeBlock;
 import de.uni_koblenz.jgralab.codegenerator.CodeGenerator;
@@ -215,5 +218,31 @@ public final class EnumDomainImpl extends DomainImpl implements EnumDomain {
 			}
 		}
 		return schemaClass;
+	}
+
+	@Override
+	public Object parseGenericAttribute(GraphIO io) throws GraphIOException {
+		String result = io.matchEnumConstant();
+		return result;
+	}
+
+	@Override
+	public void serializeGenericAttribute(GraphIO io, Object data)
+			throws IOException {
+		if (data != null) {
+			io.writeIdentifier((String) data);
+		} else {
+			io.writeIdentifier(GraphIO.NULL_LITERAL);
+		}
+	}
+
+	@Override
+	public boolean genericIsConform(Object value) {
+		boolean result = true;
+		if (value == null) {
+			return result;
+		}
+		return result &= value instanceof String
+				&& this.getConsts().contains(value);
 	}
 }
