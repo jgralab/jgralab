@@ -142,7 +142,9 @@ public class GenericEdgeImpl extends EdgeImpl {
 	public Edge getNextEdge(EdgeClass anEdgeClass) {
 		Edge currentEdge = getNextEdge();
 		while (currentEdge != null) {
-			if (currentEdge.getAttributedElementClass().equals(anEdgeClass)) {
+			if (currentEdge.getAttributedElementClass().equals(anEdgeClass)
+					|| currentEdge.getAttributedElementClass()
+							.getAllSuperClasses().contains(anEdgeClass)) {
 				return currentEdge;
 			}
 			currentEdge = currentEdge.getNextEdge();

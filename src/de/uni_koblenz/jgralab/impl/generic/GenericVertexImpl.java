@@ -147,7 +147,9 @@ public class GenericVertexImpl extends VertexImpl {
 	public Vertex getNextVertex(VertexClass vertexClass) {
 		InternalVertex currentVertex = (InternalVertex) getNextVertex();
 		while (currentVertex != null) {
-			if (currentVertex.getAttributedElementClass().equals(vertexClass)) {
+			if (currentVertex.getAttributedElementClass().equals(vertexClass)
+					|| currentVertex.getAttributedElementClass()
+							.getAllSuperClasses().contains(vertexClass)) {
 				return currentVertex;
 			}
 			currentVertex = (InternalVertex) currentVertex.getNextVertex();

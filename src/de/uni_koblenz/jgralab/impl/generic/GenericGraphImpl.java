@@ -213,7 +213,9 @@ public class GenericGraphImpl extends GraphImpl {
 		if (v == null) {
 			return null;
 		}
-		if (v.getAttributedElementClass().equals(vertexClass)) {
+		if (v.getAttributedElementClass().equals(vertexClass)
+				|| v.getAttributedElementClass().getAllSuperClasses()
+						.contains(vertexClass)) {
 			return v;
 		}
 		return v.getNextVertex(vertexClass);
@@ -225,7 +227,9 @@ public class GenericGraphImpl extends GraphImpl {
 		if (e == null) {
 			return null;
 		}
-		if (e.getAttributedElementClass().equals(edgeClass)) {
+		if (e.getAttributedElementClass().equals(edgeClass)
+				|| e.getAttributedElementClass().getAllSuperClasses()
+						.contains(edgeClass)) {
 			return e;
 		}
 		return e.getNextEdge(edgeClass);
