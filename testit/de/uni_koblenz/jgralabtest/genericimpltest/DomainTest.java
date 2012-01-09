@@ -90,7 +90,7 @@ public class DomainTest {
 			serializedRecordDomainValue1 + " " +		// RecordComponent: *SimpleRecordDomain*
 			"{{123 - 4561 321 - 6541} {243 - 4151 312 - 6451}}" +	// SetComponent: Set<Map<Integer, Long>>
 			")";
-//	private static String serializedRecordDomainValue3 = "(" + GraphIO.NULL_LITERAL + " " + GraphIO.NULL_LITERAL + " " + GraphIO.NULL_LITERAL + " " + GraphIO.NULL_LITERAL + ")";	// complexRecordDomain - all components are null
+	private static String serializedRecordDomainValue4 = "(" + GraphIO.NULL_LITERAL + " " + GraphIO.NULL_LITERAL + " " + GraphIO.NULL_LITERAL + " " + GraphIO.NULL_LITERAL + ")";	// complexRecordDomain - all components are null
 	private static String serializedNullValue = GraphIO.NULL_LITERAL;
 	
 	// Values of various domains to test serializing and parsing
@@ -163,7 +163,7 @@ public class DomainTest {
 			.plus("SetComponent", JGraLab.set().plus(true).plus(false))
 			.plus("StringComponent", "secondString");
     private static Object mapDomainValue3 = JGraLab.map().plus("key one", recordDomainValue1).plus("key two", recordDomainValue3);
-	public static Object recordDomainValue4 = de.uni_koblenz.jgralab.impl.RecordImpl.empty()
+	private static Object recordDomainValue4 = de.uni_koblenz.jgralab.impl.RecordImpl.empty()
 			.plus("ListComponent", null)
 			.plus("MapComponent", null)
 			.plus("RecordComponent", null)
@@ -266,6 +266,9 @@ public class DomainTest {
 			io = GraphIO.createStringWriter(schema);
 			complexRecordDomain.serializeGenericAttribute(io, recordDomainValue2);
 			assertEquals(serializedRecordDomainValue2, io.getStringWriterResult());
+			io = GraphIO.createStringWriter(schema);
+			complexRecordDomain.serializeGenericAttribute(io, recordDomainValue4);
+			assertEquals(serializedRecordDomainValue4, io.getStringWriterResult());
 			
 			io = GraphIO.createStringWriter(schema);
 			enumDomain.serializeGenericAttribute(io, nullValue);
@@ -369,6 +372,8 @@ public class DomainTest {
 			assertEquals(recordDomainValue1, result);
 			result = complexRecordDomain.parseGenericAttribute(GraphIO.createStringReader(serializedRecordDomainValue2, schema));
 			assertEquals(recordDomainValue2, result);
+			result = complexRecordDomain.parseGenericAttribute(GraphIO.createStringReader(serializedRecordDomainValue4, schema));
+			assertEquals(recordDomainValue4, result);
 			
 			result = simpleSetDomain.parseGenericAttribute(GraphIO.createStringReader(serializedNullValue, schema));
 			assertEquals(nullValue, result);
