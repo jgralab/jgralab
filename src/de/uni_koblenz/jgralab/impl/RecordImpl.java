@@ -14,8 +14,8 @@ import de.uni_koblenz.jgralab.NoSuchAttributeException;
 
 public class RecordImpl implements de.uni_koblenz.jgralab.Record {
 	
-	// place holder for null-valued components
-	static enum NullValue {
+	// placeholder for null-valued components
+	private static enum NullValue {
 		NULL;
 	}
 	
