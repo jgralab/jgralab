@@ -82,7 +82,8 @@ public class DomainTest {
 	private static String serializedMapDomainValue2 = "{[\"a\" \"b\" \"c\"] - {1 - 123456 42 - 435782} [\"d\" \"e\" \"f\"] - {} [] - {} [\"abc\"] - {73 - 192837 84 - 46565}}";	// complexMapDomain:   Map<List<String>, Map<Integer, Long>>
 	private static String serializedMapDomainEmptyValue = "{}";
 	private static String serializedRecordDomainValue1 = "(t 3.1 SECOND 42 [\"some string\" \"another one\"] 1016 {42 - 1016 1 - 39215 7 - 1234567890} {t f} \"somestring\")";	// simpleRecordDomain
-//	private static String serializedMapDomainValue3 = "{\"key one\" - " + serializedRecordDomainValue1 + " \"key two\" - " + GraphIO.NULL_LITERAL + "}";	// complexMapDomain2: Map<String, SimpleRecordDomain>
+	private static String serializedRecordDomainValue3 = "(f 1.3 FIRST 24 [\"some other string\" \"yet another one\"] 123456789 {1 - 987654321 2 - 39215 3 - 1234567890} {t f} \"secondString\")";
+	private static String serializedMapDomainValue3 = "{\"key one\" - " + serializedRecordDomainValue1 + " \"key two\" - " + serializedRecordDomainValue3 + "}";	// complexMapDomain2: Map<String, SimpleRecordDomain>
 	private static String serializedRecordDomainValue2 = "(" +				// complexRecordDomain
 			"[{} {123 - 4561 321 - 6541} {243 - 4151 312 - 6451}] " +		//ListComponent: List<Map<Integer, Long>>
 			"{[\"a\" \"b\" \"c\"] - {1 - 123456 42 - 435782 7 - 832 8 - 112345} [\"d\" \"e\" \"f\"] - {} [] - {73 - 192837 84 - 46565}} " +	// MapComponent: Map<List<String>, Map<Integer, Long>>
@@ -138,7 +139,6 @@ public class DomainTest {
 			.plus("MapComponent", JGraLab.map().plus(42, 1016l).plus(1, 39215l).plus(7, 1234567890l))
 			.plus("SetComponent", JGraLab.set().plus(true).plus(false))
 			.plus("StringComponent", "somestring");
-//	private static Object mapDomainValue3 = JGraLab.map().plus("key one", recordDomainValue1).plus("key two", nullValue);	// TODO  "Can't add null to an ArrayPVector" Intended behavior?
 	private static Object recordDomainValue2 = de.uni_koblenz.jgralab.impl.RecordImpl.empty()
 			.plus("ListComponent", JGraLab.vector()
 					.plus(JGraLab.map())
@@ -152,11 +152,22 @@ public class DomainTest {
 			.plus("SetComponent", JGraLab.set()
 					.plus(JGraLab.map().plus(123, 4561l).plus(321, 6541l))
 					.plus(JGraLab.map().plus(243, 4151l).plus(312, 6451l)));
-//	public static Object recordDomainValue3 = de.uni_koblenz.jgralab.impl.RecordImpl.empty()	// TODO Can't components in records be null? ArrayPVector prevents it!
-//			.plus("ListComponent", null)
-//			.plus("MapComponent", null)
-//			.plus("RecordComponent", null)
-//			.plus("SetComponent", null);
+	private static Object recordDomainValue3 = de.uni_koblenz.jgralab.impl.RecordImpl.empty()
+			.plus("BoolComponent", false)
+			.plus("DoubleComponent", 1.3)
+			.plus("EnumComponent", "FIRST")
+			.plus("IntComponent", 24)
+			.plus("ListComponent", JGraLab.vector().plus("some other string").plus("yet another one"))
+			.plus("LongComponent", 123456789l)
+			.plus("MapComponent", JGraLab.map().plus(1, 987654321l).plus(2, 39215l).plus(3, 1234567890l))
+			.plus("SetComponent", JGraLab.set().plus(true).plus(false))
+			.plus("StringComponent", "secondString");
+    private static Object mapDomainValue3 = JGraLab.map().plus("key one", recordDomainValue1).plus("key two", recordDomainValue3);
+	public static Object recordDomainValue4 = de.uni_koblenz.jgralab.impl.RecordImpl.empty()
+			.plus("ListComponent", null)
+			.plus("MapComponent", null)
+			.plus("RecordComponent", null)
+			.plus("SetComponent", null);
 	
 	
 	@Test
@@ -237,9 +248,9 @@ public class DomainTest {
 			io = GraphIO.createStringWriter(schema);
 			complexMapDomain.serializeGenericAttribute(io, mapDomainValue2);
 			assertEquals(serializedMapDomainValue2, io.getStringWriterResult());
-//			io = GraphIO.createStringWriter(schema);
-//			GenericUtil.serializeGenericAttribute(io, complexMapDomain2, mapDomainValue3);		// TODO see above
-//			assertEquals(serializedMapDomainValue3, io.getStringWriterResult());
+			io = GraphIO.createStringWriter(schema);
+			complexMapDomain2.serializeGenericAttribute(io, mapDomainValue3);
+			assertEquals(serializedMapDomainValue3, io.getStringWriterResult());
 			io = GraphIO.createStringWriter(schema);
 			simpleMapDomain.serializeGenericAttribute(io, mapDomainEmptyValue);
 			assertEquals(serializedMapDomainEmptyValue, io.getStringWriterResult());
@@ -348,8 +359,8 @@ public class DomainTest {
 			assertEquals(mapDomainValue1, result);
 			result = complexMapDomain.parseGenericAttribute(GraphIO.createStringReader(serializedMapDomainValue2, schema));
 			assertEquals(mapDomainValue2, result);
-//			result = GenericUtil.complexMapDomain2(GraphIO.createStringReader(serializedMapDomainValue3, schema));	// TODO see above
-//			assertEquals(mapDomainValue3, result);
+			result = complexMapDomain2.parseGenericAttribute(GraphIO.createStringReader(serializedMapDomainValue3, schema));
+			assertEquals(mapDomainValue3, result);
 			result = simpleMapDomain.parseGenericAttribute(GraphIO.createStringReader(serializedMapDomainEmptyValue, schema));
 			assertEquals(mapDomainEmptyValue, result);
 			result = complexMapDomain.parseGenericAttribute(GraphIO.createStringReader(serializedMapDomainEmptyValue, schema));
@@ -524,15 +535,15 @@ public class DomainTest {
 				assertFalse(testDomains[i].genericIsConform(mapDomainValue2));
 			}
 		}
-//			for(int i = 0; i < testDomains.length; i++) {	// TODO see above
-//				if(i == 12) {
-//					assertTrue(GenericUtil.genericIsConform(mapDomainValue3, testDomains[i]));
-//					assertTrue(GenericUtil.genericIsConform(nullValue, testDomains[i]));
-//				}
-//				else {
-//					assertFalse(GenericUtil.genericIsConform(setDomainValue3, testDomains[i]));
-//				}
-//			}
+		for(int i = 0; i < testDomains.length; i++) {
+			if(i == 12) {
+				assertTrue(testDomains[i].genericIsConform(mapDomainValue3));
+				assertTrue(testDomains[i].genericIsConform(nullValue));
+			}
+			else {
+				assertFalse(testDomains[i].genericIsConform(mapDomainValue3));
+			}
+		}
 		for(int i = 0; i < testDomains.length; i++) {
 			if(i == 13) {
 				assertTrue(testDomains[i].genericIsConform(recordDomainValue1));
