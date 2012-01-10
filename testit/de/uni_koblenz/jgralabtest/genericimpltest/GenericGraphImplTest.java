@@ -454,6 +454,8 @@ public class GenericGraphImplTest {
 						.plus(JGraLab.vector().plus(false))
 						.plus(JGraLab.vector().plus(false)),
 				g.getAttribute("complexListGraph"));
+		
+		// TODO test record with null-valued components!
 	}
 
 	// Test setting attributes that don't exist. NoSuchAttributeException is
