@@ -24,10 +24,6 @@ public class MetaDataPreservingUnjar extends Task {
 		// unjar = new Expand();
 	}
 
-	public void setMetaDir(String metaDir) {
-		this.metaDir = metaDir;
-	}
-
 	public void setDest(File dest) {
 		this.dest = dest;
 	}
