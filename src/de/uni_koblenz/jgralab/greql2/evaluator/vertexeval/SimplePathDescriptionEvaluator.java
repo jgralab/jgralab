@@ -36,8 +36,8 @@
 package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
+import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
-import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
 import de.uni_koblenz.jgralab.greql2.evaluator.fa.NFA;
 import de.uni_koblenz.jgralab.greql2.schema.IsEdgeRestrOf;
@@ -60,7 +60,7 @@ public class SimplePathDescriptionEvaluator extends
 	}
 
 	@Override
-	public NFA evaluate() {
+	public NFA evaluate(Graph graph) {
 		TypeCollection typeCollection = new TypeCollection();
 		EdgeRestrictionEvaluator edgeRestEval = null;
 		VertexEvaluator predicateEvaluator = null;
@@ -68,7 +68,7 @@ public class SimplePathDescriptionEvaluator extends
 				.getIsEdgeRestrOfIncidences(EdgeDirection.IN)) {
 			edgeRestEval = (EdgeRestrictionEvaluator) vertexEvalMarker
 					.getMark(inc.getAlpha());
-			typeCollection.addTypes(edgeRestEval.getTypeCollection());
+			typeCollection.addTypes(edgeRestEval.getTypeCollection(graph));
 			predicateEvaluator = edgeRestEval.getPredicateEvaluator();
 		}
 		createdNFA = NFA.createSimplePathDescriptionNFA(
@@ -79,9 +79,9 @@ public class SimplePathDescriptionEvaluator extends
 	}
 
 	@Override
-	public VertexCosts calculateSubtreeEvaluationCosts(GraphSize graphSize) {
-		return this.greqlEvaluator.getCostModel()
-				.calculateCostsSimplePathDescription(this, graphSize);
+	public VertexCosts calculateSubtreeEvaluationCosts() {
+		return greqlEvaluator.getCostModel()
+				.calculateCostsSimplePathDescription(this);
 	}
 
 }

@@ -43,9 +43,9 @@ import java.util.Queue;
 import java.util.Set;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
+import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
-import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
 import de.uni_koblenz.jgralab.greql2.schema.Declaration;
 import de.uni_koblenz.jgralab.greql2.schema.Definition;
@@ -59,9 +59,9 @@ import de.uni_koblenz.jgralab.greql2.schema.Variable;
  * the variable value using the method getResult(..), because it should make no
  * difference for other VertexEvaluators, if a vertex is root of a complex
  * subgraph or a variable. Also provides a method to set the variable value.
- *
+ * 
  * @author ist@uni-koblenz.de
- *
+ * 
  */
 public class VariableEvaluator extends VertexEvaluator {
 
@@ -92,8 +92,8 @@ public class VariableEvaluator extends VertexEvaluator {
 
 	/**
 	 * Sets the given value as "result" of this variable, so it can be uses via
-	 * the getResult() method
-	 *
+	 * the getResult(graph) method
+	 * 
 	 * @param variableValue2
 	 */
 	public void setValue(Object variableValue2) {
@@ -127,19 +127,18 @@ public class VariableEvaluator extends VertexEvaluator {
 	}
 
 	@Override
-	public Object evaluate() {
+	public Object evaluate(Graph graph) {
 		return variableValue;
 	}
 
 	@Override
-	public Object getResult() {
+	public Object getResult(Graph graph) {
 		return variableValue;
 	}
 
 	@Override
-	public VertexCosts calculateSubtreeEvaluationCosts(GraphSize graphSize) {
-		return this.greqlEvaluator.getCostModel().calculateCostsVariable(this,
-				graphSize);
+	public VertexCosts calculateSubtreeEvaluationCosts() {
+		return greqlEvaluator.getCostModel().calculateCostsVariable(this);
 	}
 
 	@Override
@@ -233,9 +232,9 @@ public class VariableEvaluator extends VertexEvaluator {
 	 *         may get during evaluation
 	 */
 	@Override
-	public long getVariableCombinations(GraphSize graphSize) {
+	public long getVariableCombinations() {
 		if (estimatedAssignments == Long.MIN_VALUE) {
-			estimatedAssignments = calculateEstimatedAssignments(graphSize);
+			estimatedAssignments = calculateEstimatedAssignments();
 		}
 		return estimatedAssignments;
 	}
@@ -244,9 +243,8 @@ public class VariableEvaluator extends VertexEvaluator {
 	 * calculated the estimated number of possible different values this
 	 * variable may get during evaluation
 	 */
-	public long calculateEstimatedAssignments(GraphSize graphSize) {
-		return this.greqlEvaluator.getCostModel().calculateVariableAssignments(
-				this, graphSize);
+	public long calculateEstimatedAssignments() {
+		return greqlEvaluator.getCostModel().calculateVariableAssignments(this);
 	}
 
 }

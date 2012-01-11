@@ -23,6 +23,7 @@ import de.uni_koblenz.jgralab.ImplementationType;
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.codegenerator.CodeGeneratorConfiguration;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
+import de.uni_koblenz.jgralab.greql2.evaluator.Query;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.EnumDomain;
 import de.uni_koblenz.jgralab.schema.GraphClass;
@@ -48,7 +49,6 @@ public class Context {
 
 	private final Map<String, Graph> sourceGraphs = new HashMap<String, Graph>(
 			1);
-	private GreqlEvaluator eval = null;
 
 	Schema targetSchema = null;
 
@@ -58,9 +58,9 @@ public class Context {
 	 * This lets you set the directory where to commit the target schema code
 	 * to. Normally, the code isn't committed at all but compiled in memory, but
 	 * you can use this for debugging purposes.
-	 *
+	 * 
 	 * The value <code>null</code> (default) means don't commit.
-	 *
+	 * 
 	 * @param targetSchemaCodeDirectory
 	 *            the targetSchemaCodeDirectory to set
 	 */
@@ -121,11 +121,6 @@ public class Context {
 		greqlExtraVars.put(name, evaluateGReQLQuery(greqlExpression));
 	}
 
-	final void setGReQLHelper(String name, String greqlExpression) {
-		ensureGreqlEvaluator();
-		eval.setSubQuery(name, greqlExpression);
-	}
-
 	final void addGReQLImport(String qualifiedName) {
 		greqlImports.add(qualifiedName);
 	}
@@ -155,7 +150,7 @@ public class Context {
 
 	/**
 	 * Creates a new Context object
-	 *
+	 * 
 	 * @param targetSchemaName
 	 *            The name of the target schema
 	 * @param targetGraphClassName
@@ -168,16 +163,13 @@ public class Context {
 		// Check if the target schema is already present and we can thus skip
 		// the SCHEMA phase.
 		try {
-			Class<?> schemaClass = SchemaClassManager.instance(targetSchemaName)
-					.loadClass(targetSchemaName);
+			Class<?> schemaClass = SchemaClassManager
+					.instance(targetSchemaName).loadClass(targetSchemaName);
 			Method schemaInstanceMethod = schemaClass.getMethod("instance");
 			targetSchema = (Schema) schemaInstanceMethod.invoke(null);
 		} catch (Exception e) {
 			// Failing is ok here.
 		}
-		// Do it here, cause that takes some time. We don't want to have that
-		// counted to the transformation time...
-		ensureGreqlEvaluator();
 	}
 
 	/**
@@ -185,10 +177,7 @@ public class Context {
 	 */
 	public Context(Schema targetSchema) {
 		this.targetSchema = targetSchema;
-		this.targetSchemaName = targetSchema.getQualifiedName();
-		// Do it here, cause that takes some time. We don't want to have that
-		// counted to the transformation time...
-		ensureGreqlEvaluator();
+		targetSchemaName = targetSchema.getQualifiedName();
 
 	}
 
@@ -199,9 +188,6 @@ public class Context {
 	public Context(Graph g) {
 		setTargetGraph(g);
 		setSourceGraph(g);
-		// Do it here, cause that takes some time. We don't want to have that
-		// counted to the transformation time...
-		ensureGreqlEvaluator();
 	}
 
 	/**
@@ -240,7 +226,7 @@ public class Context {
 	/**
 	 * Ensures that theres a function for this attributed element class, even
 	 * though this function may be empty.
-	 *
+	 * 
 	 * @param aec
 	 *            the AttributedElementClass for which to ensure the
 	 *            archMap/imgMap mappings
@@ -442,7 +428,7 @@ public class Context {
 	 * Swap this context object. E.g. make the current target graph the default
 	 * source graph and reinitialize all member vars such as archMap/imgMap.
 	 * This is mainly useful for chaining multiple transformations.
-	 *
+	 * 
 	 * @return this context object itself
 	 */
 	public final Context swap() {
@@ -481,7 +467,7 @@ public class Context {
 	 * Reset this context, so that the same context can be passed to another
 	 * transformation. This means, everything except the source graph is
 	 * cleared.
-	 *
+	 * 
 	 * @return the context
 	 */
 	public final Context reset(boolean forgetTargetSchema) {
@@ -502,7 +488,6 @@ public class Context {
 		// reset the GreqlEvaluator index cache, they prevent garbage
 		// collection!
 		GreqlEvaluator.resetGraphIndizes();
-		GreqlEvaluator.resetOptimizedSyntaxGraphs();
 
 		// clear imports/extra vars
 		greqlExtraVars.clear();
@@ -513,7 +498,7 @@ public class Context {
 
 	/**
 	 * Sets the (default) source graph for the transformation
-	 *
+	 * 
 	 * @param sourceGraph
 	 *            the source graph
 	 */
@@ -523,7 +508,7 @@ public class Context {
 
 	/**
 	 * adds a source graph for the transformation
-	 *
+	 * 
 	 * @param alias
 	 *            the alias to access this source graph (used as prefix #name#
 	 *            in semantic expressions)
@@ -578,7 +563,7 @@ public class Context {
 	/**
 	 * returns the target graph of the transformation if no target graph exists,
 	 * it will be created
-	 *
+	 * 
 	 * @return the target graph
 	 */
 	public final Graph getTargetGraph() {
@@ -731,7 +716,7 @@ public class Context {
 			}
 		}
 
-		return this.<T>evalGReQLQuery(greqlExpression, sourceGraphs.get(name));
+		return this.<T> evalGReQLQuery(greqlExpression, sourceGraphs.get(name));
 	}
 
 	@SuppressWarnings("unchecked")
@@ -757,26 +742,10 @@ public class Context {
 		String query = sb.toString();
 		logger.finest("GReQL: " + semanticExpression);
 
-		ensureGreqlEvaluator();
-		eval.setDatagraph(graph);
-		eval.setQuery(query);
-		eval.setVariables(greqlMapping);
-
-		// eval.setOptimize(false);
-
+		GreqlEvaluator eval = new GreqlEvaluator(new Query(query), graph,
+				greqlMapping, null);
 		eval.startEvaluation();
-
-		// log.fine("GReQL result: " + result);
 		return (T) eval.getResult();
-	}
-
-	/**
-	 * Ensure that the {@link GreqlEvaluator} <code>eval</code> exists.
-	 */
-	private void ensureGreqlEvaluator() {
-		if (eval == null) {
-			eval = new GreqlEvaluator((String) null, null, null);
-		}
 	}
 
 	private final PMap<String, Object> getGreqlVariablesNeededByQuery(

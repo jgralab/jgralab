@@ -41,7 +41,6 @@ import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
-import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
 import de.uni_koblenz.jgralab.greql2.schema.VertexSetExpression;
 import de.uni_koblenz.jgralab.greql2.types.TypeCollection;
@@ -51,15 +50,15 @@ import de.uni_koblenz.jgralab.greql2.types.TypeCollection;
  * V:{Department} will be evaluated by this evaluator, it will construct the set
  * of vertices in the datagraph that have the type Department or a type that is
  * derived from Department
- *
+ * 
  * @author ist@uni-koblenz.de
- *
+ * 
  */
 public class VertexSetExpressionEvaluator extends ElementSetExpressionEvaluator {
 
 	/**
 	 * Creates a new ElementSetExpressionEvaluator for the given vertex
-	 *
+	 * 
 	 * @param eval
 	 *            the GreqlEvaluator instance this VertexEvaluator belong to
 	 * @param vertex
@@ -71,19 +70,12 @@ public class VertexSetExpressionEvaluator extends ElementSetExpressionEvaluator 
 	}
 
 	@Override
-	public Object evaluate() {
-		Graph datagraph = greqlEvaluator.getDatagraph();
-		TypeCollection typeCollection = getTypeCollection();
+	public Object evaluate(Graph graph) {
+		TypeCollection typeCollection = getTypeCollection(graph);
 		PSet<Vertex> resultSet = null;
-		String indexKey = null;
-		if (GreqlEvaluator.VERTEX_INDEXING) {
-			indexKey = typeCollection.toString();
-			resultSet = GreqlEvaluator.getVertexIndex(datagraph, indexKey);
-		}
 		if (resultSet == null) {
-			long startTime = System.currentTimeMillis();
 			resultSet = JGraLab.set();
-			Vertex currentVertex = datagraph.getFirstVertex();
+			Vertex currentVertex = graph.getFirstVertex();
 			while (currentVertex != null) {
 				if (typeCollection.acceptsType(currentVertex
 						.getAttributedElementClass())) {
@@ -91,27 +83,20 @@ public class VertexSetExpressionEvaluator extends ElementSetExpressionEvaluator 
 				}
 				currentVertex = currentVertex.getNextVertex();
 			}
-			if (GreqlEvaluator.VERTEX_INDEXING) {
-				if ((System.currentTimeMillis() - startTime) > greqlEvaluator
-						.getIndexTimeBarrier()) {
-					GreqlEvaluator.addVertexIndex(datagraph, indexKey,
-							resultSet);
-				}
-			}
 		}
 		return resultSet;
 	}
 
 	@Override
-	public VertexCosts calculateSubtreeEvaluationCosts(GraphSize graphSize) {
-		return this.greqlEvaluator.getCostModel()
-				.calculateCostsVertexSetExpression(this, graphSize);
+	public VertexCosts calculateSubtreeEvaluationCosts() {
+		return greqlEvaluator.getCostModel().calculateCostsVertexSetExpression(
+				this);
 	}
 
 	@Override
-	public long calculateEstimatedCardinality(GraphSize graphSize) {
+	public long calculateEstimatedCardinality() {
 		return greqlEvaluator.getCostModel()
-				.calculateCardinalityVertexSetExpression(this, graphSize);
+				.calculateCardinalityVertexSetExpression(this);
 	}
 
 }

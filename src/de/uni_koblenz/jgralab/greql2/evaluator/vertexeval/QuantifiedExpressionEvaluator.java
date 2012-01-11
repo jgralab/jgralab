@@ -36,9 +36,9 @@
 package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
+import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.VariableDeclarationLayer;
-import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
 import de.uni_koblenz.jgralab.greql2.schema.Declaration;
 import de.uni_koblenz.jgralab.greql2.schema.Expression;
@@ -86,18 +86,17 @@ public class QuantifiedExpressionEvaluator extends VertexEvaluator {
 		this.vertex = vertex;
 	}
 
-	private void initialize() {
-		Declaration d = (Declaration) vertex
-				.getFirstIsQuantifiedDeclOfIncidence(EdgeDirection.IN)
-				.getAlpha();
+	private void initialize(Graph graph) {
+		Declaration d = vertex.getFirstIsQuantifiedDeclOfIncidence(
+				EdgeDirection.IN).getAlpha();
 		DeclarationEvaluator declEval = (DeclarationEvaluator) vertexEvalMarker
 				.getMark(d);
-		declarationLayer = (VariableDeclarationLayer) declEval.getResult();
-		Quantifier quantifier = (Quantifier) vertex
-				.getFirstIsQuantifierOfIncidence(EdgeDirection.IN).getAlpha();
-		quantificationType = quantifier.get_type();
-		Expression b = (Expression) vertex.getFirstIsBoundExprOfIncidence(
+		declarationLayer = (VariableDeclarationLayer) declEval.getResult(graph);
+		Quantifier quantifier = vertex.getFirstIsQuantifierOfIncidence(
 				EdgeDirection.IN).getAlpha();
+		quantificationType = quantifier.get_type();
+		Expression b = vertex.getFirstIsBoundExprOfIncidence(EdgeDirection.IN)
+				.getAlpha();
 		predicateEvaluator = vertexEvalMarker.getMark(b);
 		initialized = true;
 	}
@@ -106,9 +105,9 @@ public class QuantifiedExpressionEvaluator extends VertexEvaluator {
 	 * evaluates the QuantifiedEx
 	 */
 	@Override
-	public Boolean evaluate() {
+	public Boolean evaluate(Graph graph) {
 		if (!initialized) {
-			initialize();
+			initialize(graph);
 		}
 
 		boolean foundTrue = false;
@@ -116,7 +115,7 @@ public class QuantifiedExpressionEvaluator extends VertexEvaluator {
 		switch (quantificationType) {
 		case EXISTS:
 			while (declarationLayer.iterate()) {
-				Object tempResult = predicateEvaluator.getResult();
+				Object tempResult = predicateEvaluator.getResult(graph);
 				if (tempResult instanceof Boolean) {
 					if ((Boolean) tempResult) {
 						return Boolean.TRUE;
@@ -126,7 +125,7 @@ public class QuantifiedExpressionEvaluator extends VertexEvaluator {
 			return Boolean.FALSE;
 		case EXISTSONE:
 			while (declarationLayer.iterate()) {
-				Object tempResult = predicateEvaluator.getResult();
+				Object tempResult = predicateEvaluator.getResult(graph);
 				if (tempResult instanceof Boolean) {
 					if ((Boolean) tempResult) {
 						if (foundTrue == true) {
@@ -143,7 +142,7 @@ public class QuantifiedExpressionEvaluator extends VertexEvaluator {
 			return Boolean.FALSE;
 		case FORALL:
 			while (declarationLayer.iterate()) {
-				Object tempResult = predicateEvaluator.getResult();
+				Object tempResult = predicateEvaluator.getResult(graph);
 				if (tempResult instanceof Boolean) {
 					if (!(Boolean) tempResult) {
 						return Boolean.FALSE;
@@ -158,9 +157,9 @@ public class QuantifiedExpressionEvaluator extends VertexEvaluator {
 	}
 
 	@Override
-	public VertexCosts calculateSubtreeEvaluationCosts(GraphSize graphSize) {
+	public VertexCosts calculateSubtreeEvaluationCosts() {
 		return greqlEvaluator.getCostModel()
-				.calculateCostsQuantifiedExpression(this, graphSize);
+				.calculateCostsQuantifiedExpression(this);
 	}
 
 }

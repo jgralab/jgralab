@@ -56,41 +56,26 @@ import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.JGraLab;
-import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
-import de.uni_koblenz.jgralab.grumlschema.SchemaGraph;
-import de.uni_koblenz.jgralab.grumlschema.domains.BooleanDomain;
-import de.uni_koblenz.jgralab.grumlschema.domains.CollectionDomain;
-import de.uni_koblenz.jgralab.grumlschema.domains.Domain;
-import de.uni_koblenz.jgralab.grumlschema.domains.DoubleDomain;
-import de.uni_koblenz.jgralab.grumlschema.domains.EnumDomain;
-import de.uni_koblenz.jgralab.grumlschema.domains.HasRecordDomainComponent;
-import de.uni_koblenz.jgralab.grumlschema.domains.IntegerDomain;
-import de.uni_koblenz.jgralab.grumlschema.domains.LongDomain;
-import de.uni_koblenz.jgralab.grumlschema.domains.MapDomain;
-import de.uni_koblenz.jgralab.grumlschema.domains.RecordDomain;
-import de.uni_koblenz.jgralab.grumlschema.domains.StringDomain;
-import de.uni_koblenz.jgralab.grumlschema.structure.AggregationKind;
-import de.uni_koblenz.jgralab.grumlschema.structure.Annotates;
-import de.uni_koblenz.jgralab.grumlschema.structure.Attribute;
-import de.uni_koblenz.jgralab.grumlschema.structure.AttributedElementClass;
-import de.uni_koblenz.jgralab.grumlschema.structure.Comment;
-import de.uni_koblenz.jgralab.grumlschema.structure.Constraint;
-import de.uni_koblenz.jgralab.grumlschema.structure.ContainsDomain;
-import de.uni_koblenz.jgralab.grumlschema.structure.ContainsGraphElementClass;
-import de.uni_koblenz.jgralab.grumlschema.structure.ContainsSubPackage;
-import de.uni_koblenz.jgralab.grumlschema.structure.EdgeClass;
-import de.uni_koblenz.jgralab.grumlschema.structure.EndsAt;
-import de.uni_koblenz.jgralab.grumlschema.structure.GraphClass;
-import de.uni_koblenz.jgralab.grumlschema.structure.GraphElementClass;
-import de.uni_koblenz.jgralab.grumlschema.structure.HasAttribute;
-import de.uni_koblenz.jgralab.grumlschema.structure.HasConstraint;
-import de.uni_koblenz.jgralab.grumlschema.structure.IncidenceClass;
-import de.uni_koblenz.jgralab.grumlschema.structure.NamedElement;
-import de.uni_koblenz.jgralab.grumlschema.structure.Package;
-import de.uni_koblenz.jgralab.grumlschema.structure.Redefines;
-import de.uni_koblenz.jgralab.grumlschema.structure.SpecializesEdgeClass;
-import de.uni_koblenz.jgralab.grumlschema.structure.SpecializesVertexClass;
-import de.uni_koblenz.jgralab.grumlschema.structure.VertexClass;
+import de.uni_koblenz.jgralab.greql2.funlib.schema.HasAttribute;
+import de.uni_koblenz.jgralab.schema.AggregationKind;
+import de.uni_koblenz.jgralab.schema.AttributedElementClass;
+import de.uni_koblenz.jgralab.schema.BooleanDomain;
+import de.uni_koblenz.jgralab.schema.CollectionDomain;
+import de.uni_koblenz.jgralab.schema.Constraint;
+import de.uni_koblenz.jgralab.schema.Domain;
+import de.uni_koblenz.jgralab.schema.DoubleDomain;
+import de.uni_koblenz.jgralab.schema.EdgeClass;
+import de.uni_koblenz.jgralab.schema.EnumDomain;
+import de.uni_koblenz.jgralab.schema.GraphClass;
+import de.uni_koblenz.jgralab.schema.GraphElementClass;
+import de.uni_koblenz.jgralab.schema.IncidenceClass;
+import de.uni_koblenz.jgralab.schema.IntegerDomain;
+import de.uni_koblenz.jgralab.schema.LongDomain;
+import de.uni_koblenz.jgralab.schema.MapDomain;
+import de.uni_koblenz.jgralab.schema.NamedElement;
+import de.uni_koblenz.jgralab.schema.RecordDomain;
+import de.uni_koblenz.jgralab.schema.StringDomain;
+import de.uni_koblenz.jgralab.schema.VertexClass;
 import de.uni_koblenz.jgralab.utilities.tg2schemagraph.Schema2SchemaGraph;
 
 /**
@@ -1123,17 +1108,19 @@ public class SchemaGraph2XMI {
 		HashMap<String, Object> boundVars = new HashMap<String, Object>();
 		boundVars.put("start", connectedVertexClass);
 		int counter = 0;
-		Object result;
-		do {
-			counter++;
-			GreqlEvaluator eval = new GreqlEvaluator(
-					"using start:"
-							+ "exists ic:start<->{structure.SpecializesVertexClass}*<->{structure.EndsAt}<->{structure.ComesFrom,structure.GoesTo}^2@ic.roleName=\""
-							+ baseRolename + (counter == 1 ? "" : counter)
-							+ "\"", schemaGraph, boundVars);
-			eval.startEvaluation();
-			result = eval.getResult();
-		} while (result instanceof Boolean ? (Boolean) result : false);
+		// TODO [greqlevaluator]
+		// Object result;
+		// do {
+		// counter++;
+		// GreqlEvaluator eval = new GreqlEvaluator(
+		// "using start:"
+		// +
+		// "exists ic:start<->{structure.SpecializesVertexClass}*<->{structure.EndsAt}<->{structure.ComesFrom,structure.GoesTo}^2@ic.roleName=\""
+		// + baseRolename + (counter == 1 ? "" : counter)
+		// + "\"", schemaGraph, boundVars);
+		// eval.startEvaluation();
+		// result = eval.getResult();
+		// } while (result instanceof Boolean ? (Boolean) result : false);
 
 		return baseRolename + (counter == 1 ? "" : counter);
 	}
@@ -1154,7 +1141,7 @@ public class SchemaGraph2XMI {
 	private boolean isRoleNameNecessary(EdgeClass edgeClass,
 			String qualifiedName) {
 		if (isBidirectional) {
-			// the association is bidirectional navigable
+			// the association is bidirectionally navigable
 			return true;
 		} else if (((VertexClass) ((IncidenceClass) edgeClass
 				.getFirstGoesToIncidence().getThat()).getFirstEndsAtIncidence()

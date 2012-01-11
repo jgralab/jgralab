@@ -35,9 +35,9 @@
 
 package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 
+import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
-import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
 import de.uni_koblenz.jgralab.greql2.schema.SetConstruction;
 
@@ -54,20 +54,20 @@ public class SetConstructionEvaluator extends ValueConstructionEvaluator {
 	}
 
 	@Override
-	public Object evaluate() {
+	public Object evaluate(Graph graph) {
 		return createValue(JGraLab.set());
 	}
 
 	@Override
-	public VertexCosts calculateSubtreeEvaluationCosts(GraphSize graphSize) {
-		return this.greqlEvaluator.getCostModel()
-				.calculateCostsSetConstruction(this, graphSize);
+	public VertexCosts calculateSubtreeEvaluationCosts() {
+		return greqlEvaluator.getCostModel()
+				.calculateCostsSetConstruction(this);
 	}
 
 	@Override
-	public long calculateEstimatedCardinality(GraphSize graphSize) {
+	public long calculateEstimatedCardinality() {
 		return greqlEvaluator.getCostModel()
-				.calculateCardinalitySetConstruction(this, graphSize);
+				.calculateCardinalitySetConstruction(this);
 	}
 
 }

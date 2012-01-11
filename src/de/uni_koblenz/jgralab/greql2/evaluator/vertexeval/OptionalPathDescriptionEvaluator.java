@@ -36,8 +36,8 @@
 package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
+import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
-import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
 import de.uni_koblenz.jgralab.greql2.evaluator.fa.NFA;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
@@ -81,18 +81,18 @@ public class OptionalPathDescriptionEvaluator extends PathDescriptionEvaluator {
 	}
 
 	@Override
-	public NFA evaluate() {
-		PathDescription p = (PathDescription) vertex
-				.getFirstIsOptionalPathOfIncidence(EdgeDirection.IN).getAlpha();
+	public NFA evaluate(Graph graph) {
+		PathDescription p = vertex.getFirstIsOptionalPathOfIncidence(
+				EdgeDirection.IN).getAlpha();
 		PathDescriptionEvaluator pathEval = (PathDescriptionEvaluator) vertexEvalMarker
 				.getMark(p);
 		return NFA.createOptionalPathDescriptionNFA(pathEval.getNFA());
 	}
 
 	@Override
-	public VertexCosts calculateSubtreeEvaluationCosts(GraphSize graphSize) {
-		return this.greqlEvaluator.getCostModel()
-				.calculateCostsOptionalPathDescription(this, graphSize);
+	public VertexCosts calculateSubtreeEvaluationCosts() {
+		return greqlEvaluator.getCostModel()
+				.calculateCostsOptionalPathDescription(this);
 	}
 
 }

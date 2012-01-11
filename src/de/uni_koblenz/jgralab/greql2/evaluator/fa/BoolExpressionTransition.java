@@ -78,7 +78,7 @@ public class BoolExpressionTransition extends Transition {
 			return false;
 		}
 		BoolExpressionTransition bt = (BoolExpressionTransition) t;
-		if (bt.boolExpressionEvaluator == this.boolExpressionEvaluator) {
+		if (bt.boolExpressionEvaluator == boolExpressionEvaluator) {
 			return true;
 		}
 		return false;
@@ -135,7 +135,7 @@ public class BoolExpressionTransition extends Transition {
 		if (thisVertexEvaluator != null) {
 			thisVertexEvaluator.setValue(v);
 		}
-		Object res = boolExpressionEvaluator.getResult();
+		Object res = boolExpressionEvaluator.getResult(v.getGraph());
 		if (res instanceof Boolean && ((Boolean) res).equals(Boolean.TRUE)) {
 			return true;
 		}

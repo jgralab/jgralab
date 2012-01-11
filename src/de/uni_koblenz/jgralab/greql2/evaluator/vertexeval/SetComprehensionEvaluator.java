@@ -84,15 +84,15 @@ public class SetComprehensionEvaluator extends ComprehensionEvaluator {
 	}
 
 	@Override
-	public VertexCosts calculateSubtreeEvaluationCosts(GraphSize graphSize) {
+	public VertexCosts calculateSubtreeEvaluationCosts() {
 		return this.greqlEvaluator.getCostModel()
-				.calculateCostsSetComprehension(this, graphSize);
+				.calculateCostsSetComprehension(this);
 	}
 
 	@Override
-	public long calculateEstimatedCardinality(GraphSize graphSize) {
+	public long calculateEstimatedCardinality() {
 		return greqlEvaluator.getCostModel()
-				.calculateCardinalitySetComprehension(this, graphSize);
+				.calculateCardinalitySetComprehension(this);
 	}
 
 }

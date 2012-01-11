@@ -47,13 +47,12 @@ import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
-import de.uni_koblenz.jgralab.greql2.exception.OptimizerException;
+import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.CostModel;
 import de.uni_koblenz.jgralab.greql2.optimizer.condexp.Formula;
 import de.uni_koblenz.jgralab.greql2.schema.BoolLiteral;
 import de.uni_koblenz.jgralab.greql2.schema.FunctionApplication;
-import de.uni_koblenz.jgralab.greql2.schema.Greql2;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Expression;
+import de.uni_koblenz.jgralab.greql2.schema.Greql2Graph;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
 import de.uni_koblenz.jgralab.greql2.schema.IsConstraintOf;
 
@@ -63,7 +62,7 @@ import de.uni_koblenz.jgralab.greql2.schema.IsConstraintOf;
  * @author ist@uni-koblenz.de
  * 
  */
-public class ConditionalExpressionOptimizer extends OptimizerBase {
+public class ConditionalExpressionOptimizer extends Optimizer {
 
 	private static Logger logger = JGraLab
 			.getLogger(ConditionalExpressionOptimizer.class.getPackage()
@@ -79,32 +78,16 @@ public class ConditionalExpressionOptimizer extends OptimizerBase {
 		Class<? extends Edge> ec;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * de.uni_koblenz.jgralab.greql2.optimizer.Optimizer#isEquivalent(de.uni_koblenz
-	 * .jgralab.greql2.optimizer.Optimizer)
-	 */
 	@Override
-	public boolean isEquivalent(Optimizer optimizer) {
+	protected boolean isEquivalent(Optimizer optimizer) {
 		if (optimizer instanceof ConditionalExpressionOptimizer) {
 			return true;
 		}
 		return false;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * de.uni_koblenz.jgralab.greql2.optimizer.Optimizer#optimize(de.uni_koblenz
-	 * .jgralab.greql2.evaluator.GreqlEvaluator,
-	 * de.uni_koblenz.jgralab.greql2.schema.Greql2)
-	 */
 	@Override
-	public boolean optimize(GreqlEvaluator eval, Greql2 syntaxgraph)
-			throws OptimizerException {
+	protected boolean optimize(Greql2Graph syntaxgraph, CostModel costModel) {
 		boolean simplifiedOrOptimized = false;
 		// System.out.println("Before CEO: "
 		// + GreqlSerializer.serializeGraph(syntaxgraph));
@@ -113,7 +96,7 @@ public class ConditionalExpressionOptimizer extends OptimizerBase {
 				.getFirstGreql2Expression());
 		while (top != null) {
 			LinkedList<VertexEdgeClassTuple> relinkables = rememberConnections(top);
-			Formula formula = Formula.createFormulaFromExpression(top, eval);
+			Formula formula = Formula.createFormulaFromExpression(top);
 			// System.out.println("Formula = " + formula);
 			Formula optimizedFormula = formula.simplify().optimize();
 			if (!formula.equals(optimizedFormula)) {
@@ -147,7 +130,6 @@ public class ConditionalExpressionOptimizer extends OptimizerBase {
 			bl.delete();
 		}
 
-		recreateVertexEvaluators(eval);
 		OptimizerUtility.createMissingSourcePositions(syntaxgraph);
 
 		// System.out.println("After CEO: "

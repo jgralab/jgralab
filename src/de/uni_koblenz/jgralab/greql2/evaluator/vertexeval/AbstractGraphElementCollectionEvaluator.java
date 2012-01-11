@@ -36,6 +36,7 @@
 package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
+import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.schema.Expression;
 import de.uni_koblenz.jgralab.greql2.schema.IsTypeRestrOfExpression;
@@ -47,9 +48,9 @@ import de.uni_koblenz.jgralab.greql2.types.TypeCollection;
  * element collection, for instance EdgeSetExpressionEvaluator. But it is not
  * the base for Forward- or BackwardVertexSetEvaluator, because these are
  * PathSearchEvaluators.
- *
- * @author ist@uni-koblenz.de  
- *
+ * 
+ * @author ist@uni-koblenz.de
+ * 
  */
 public abstract class AbstractGraphElementCollectionEvaluator extends
 		VertexEvaluator {
@@ -60,7 +61,7 @@ public abstract class AbstractGraphElementCollectionEvaluator extends
 
 	private TypeCollection typeCollection = null;
 
-	protected TypeCollection getTypeCollection() {
+	protected TypeCollection getTypeCollection(Graph graph) {
 		if (typeCollection == null) {
 			typeCollection = new TypeCollection();
 			IsTypeRestrOfExpression inc = ((Expression) getVertex())
@@ -70,9 +71,10 @@ public abstract class AbstractGraphElementCollectionEvaluator extends
 					TypeIdEvaluator typeEval = (TypeIdEvaluator) vertexEvalMarker
 							.getMark(inc.getAlpha());
 					typeCollection.addTypes((TypeCollection) typeEval
-							.getResult());
+							.getResult(graph));
 				}
-				inc = inc.getNextIsTypeRestrOfExpressionIncidence(EdgeDirection.IN);
+				inc = inc
+						.getNextIsTypeRestrOfExpressionIncidence(EdgeDirection.IN);
 			}
 		}
 		return typeCollection;

@@ -41,11 +41,11 @@ import org.pcollections.PCollection;
 import org.pcollections.PMap;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
+import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.VariableDeclarationLayer;
-import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
 import de.uni_koblenz.jgralab.greql2.schema.Comprehension;
 import de.uni_koblenz.jgralab.greql2.schema.MapComprehension;
@@ -71,9 +71,9 @@ public class MapComprehensionEvaluator extends ComprehensionEvaluator {
 	 * (de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize)
 	 */
 	@Override
-	protected VertexCosts calculateSubtreeEvaluationCosts(GraphSize graphSize) {
-		return this.greqlEvaluator.getCostModel()
-				.calculateCostsMapComprehension(this, graphSize);
+	protected VertexCosts calculateSubtreeEvaluationCosts() {
+		return greqlEvaluator.getCostModel().calculateCostsMapComprehension(
+				this);
 	}
 
 	/*
@@ -84,8 +84,8 @@ public class MapComprehensionEvaluator extends ComprehensionEvaluator {
 	 * ()
 	 */
 	@Override
-	public Object evaluate() {
-		VariableDeclarationLayer declLayer = getVariableDeclationLayer();
+	public Object evaluate(Graph graph) {
+		VariableDeclarationLayer declLayer = getVariableDeclationLayer(graph);
 
 		PMap<Object, Object> resultMap = JGraLab.map();
 
@@ -97,8 +97,8 @@ public class MapComprehensionEvaluator extends ComprehensionEvaluator {
 		VertexEvaluator valEval = vertexEvalMarker.getMark(val);
 		declLayer.reset();
 		while (declLayer.iterate()) {
-			Object jkey = keyEval.getResult();
-			Object jval = valEval.getResult();
+			Object jkey = keyEval.getResult(graph);
+			Object jval = valEval.getResult(graph);
 			resultMap = resultMap.plus(jkey, jval);
 		}
 		return resultMap;
@@ -117,9 +117,9 @@ public class MapComprehensionEvaluator extends ComprehensionEvaluator {
 	}
 
 	@Override
-	public long calculateEstimatedCardinality(GraphSize graphSize) {
+	public long calculateEstimatedCardinality() {
 		return greqlEvaluator.getCostModel()
-				.calculateCardinalityMapComprehension(this, graphSize);
+				.calculateCardinalityMapComprehension(this);
 	}
 
 	@Override

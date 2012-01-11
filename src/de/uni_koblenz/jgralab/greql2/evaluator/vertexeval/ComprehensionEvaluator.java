@@ -37,6 +37,7 @@ package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 import org.pcollections.PCollection;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
+import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.VariableDeclarationLayer;
 import de.uni_koblenz.jgralab.greql2.schema.Comprehension;
@@ -59,7 +60,7 @@ public abstract class ComprehensionEvaluator extends VertexEvaluator {
 
 	protected final VertexEvaluator getResultDefinitionEvaluator() {
 		if (resultDefinitionEvaluator == null) {
-			Expression resultDefinition = (Expression) getVertex()
+			Expression resultDefinition = getVertex()
 					.getFirstIsCompResultDefOfIncidence(EdgeDirection.IN)
 					.getAlpha();
 			resultDefinitionEvaluator = vertexEvalMarker
@@ -68,25 +69,26 @@ public abstract class ComprehensionEvaluator extends VertexEvaluator {
 		return resultDefinitionEvaluator;
 	}
 
-	protected final VariableDeclarationLayer getVariableDeclationLayer() {
+	protected final VariableDeclarationLayer getVariableDeclationLayer(
+			Graph graph) {
 		if (varDeclLayer == null) {
-			Declaration d = (Declaration) getVertex()
-					.getFirstIsCompDeclOfIncidence(EdgeDirection.IN).getAlpha();
+			Declaration d = getVertex().getFirstIsCompDeclOfIncidence(
+					EdgeDirection.IN).getAlpha();
 			DeclarationEvaluator declEval = (DeclarationEvaluator) vertexEvalMarker
 					.getMark(d);
-			varDeclLayer = (VariableDeclarationLayer) declEval.getResult();
+			varDeclLayer = (VariableDeclarationLayer) declEval.getResult(graph);
 		}
 		return varDeclLayer;
 	}
 
 	@Override
-	public Object evaluate() {
+	public Object evaluate(Graph graph) {
 		VariableDeclarationLayer declLayer = getVariableDeclationLayer();
 		VertexEvaluator resultDefEval = getResultDefinitionEvaluator();
 		PCollection<Object> resultCollection = getResultDatastructure();
 		declLayer.reset();
 		while (declLayer.iterate()) {
-			Object localResult = resultDefEval.getResult();
+			Object localResult = resultDefEval.getResult(graph);
 			resultCollection = resultCollection.plus(localResult);
 		}
 		return resultCollection;

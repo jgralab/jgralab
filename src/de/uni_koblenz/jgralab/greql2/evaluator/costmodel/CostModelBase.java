@@ -145,9 +145,6 @@ public abstract class CostModelBase {
 
 	protected static final int definitionExpressionCostsFactor = 2;
 
-	/**
-	 * Stores a reference to the {@link GreqlEvaluator} that will evaluate the
-	 * query
-	 */
-//	protected GreqlEvaluator greqlEvaluator;
+	protected GraphSize graphSize;
+
 }

@@ -79,7 +79,7 @@ public class IntermediateVertexTransition extends Transition {
 	public IntermediateVertexTransition(State start, State end,
 			VertexEvaluator intermediateVertices) {
 		super(start, end);
-		this.intermediateVertexEvaluator = intermediateVertices;
+		intermediateVertexEvaluator = intermediateVertices;
 	}
 
 	/**
@@ -129,7 +129,8 @@ public class IntermediateVertexTransition extends Transition {
 		// of e is part of the result of this expression
 
 		if (intermediateVertexEvaluator != null) {
-			Object tempRes = intermediateVertexEvaluator.getResult();
+			Object tempRes = intermediateVertexEvaluator
+					.getResult(v.getGraph());
 			if (tempRes instanceof PCollection) {
 				@SuppressWarnings("unchecked")
 				PCollection<Vertex> intermediateVertices = (PCollection<Vertex>) tempRes;

@@ -38,8 +38,8 @@ package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
-import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
 import de.uni_koblenz.jgralab.greql2.exception.UnknownTypeException;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
@@ -100,22 +100,20 @@ public class TypeIdEvaluator extends VertexEvaluator {
 	}
 
 	@Override
-	public Object evaluate() {
-		List<AttributedElementClass> typeList = createTypeList(greqlEvaluator
-				.getDatagraph().getSchema());
+	public Object evaluate(Graph graph) {
+		List<AttributedElementClass> typeList = createTypeList(graph
+				.getSchema());
 		return new TypeCollection(typeList, vertex.is_excluded());
 	}
 
 	@Override
-	public VertexCosts calculateSubtreeEvaluationCosts(GraphSize graphSize) {
-		return this.greqlEvaluator.getCostModel().calculateCostsTypeId(this,
-				graphSize);
+	public VertexCosts calculateSubtreeEvaluationCosts() {
+		return greqlEvaluator.getCostModel().calculateCostsTypeId(this);
 	}
 
 	@Override
-	public double calculateEstimatedSelectivity(GraphSize graphSize) {
-		return greqlEvaluator.getCostModel().calculateSelectivityTypeId(this,
-				graphSize);
+	public double calculateEstimatedSelectivity() {
+		return greqlEvaluator.getCostModel().calculateSelectivityTypeId(this);
 	}
 
 	/*

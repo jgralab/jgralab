@@ -40,7 +40,6 @@ package de.uni_koblenz.jgralab.greql2.optimizer.condexp;
 import java.util.ArrayList;
 
 import de.uni_koblenz.jgralab.graphmarker.GraphMarker;
-import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VertexEvaluator;
 import de.uni_koblenz.jgralab.greql2.optimizer.OptimizerUtility;
@@ -56,8 +55,7 @@ public class NonConstantTerm extends Formula {
 
 	protected Expression expression;
 
-	public NonConstantTerm(GreqlEvaluator eval, Expression exp) {
-		super(eval);
+	public NonConstantTerm(Expression exp) {
 		expression = exp;
 	}
 

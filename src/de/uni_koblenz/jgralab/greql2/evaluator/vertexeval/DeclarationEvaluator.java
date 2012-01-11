@@ -42,10 +42,10 @@ import java.util.List;
 import org.pcollections.PVector;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
+import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.VariableDeclaration;
 import de.uni_koblenz.jgralab.greql2.evaluator.VariableDeclarationLayer;
-import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
 import de.uni_koblenz.jgralab.greql2.schema.Declaration;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
@@ -87,7 +87,7 @@ public class DeclarationEvaluator extends VertexEvaluator {
 	}
 
 	@Override
-	public VariableDeclarationLayer evaluate() {
+	public VariableDeclarationLayer evaluate(Graph graph) {
 		ArrayList<VertexEvaluator> constraintList = new ArrayList<VertexEvaluator>();
 		for (IsConstraintOf consInc : vertex
 				.getIsConstraintOfIncidences(EdgeDirection.IN)) {
@@ -101,12 +101,12 @@ public class DeclarationEvaluator extends VertexEvaluator {
 		List<VariableDeclaration> varDeclList = new ArrayList<VariableDeclaration>();
 		for (IsSimpleDeclOf inc : vertex
 				.getIsSimpleDeclOfIncidences(EdgeDirection.IN)) {
-			SimpleDeclaration simpleDecl = (SimpleDeclaration) inc.getAlpha();
+			SimpleDeclaration simpleDecl = inc.getAlpha();
 			SimpleDeclarationEvaluator simpleDeclEval = (SimpleDeclarationEvaluator) vertexEvalMarker
 					.getMark(simpleDecl);
 			@SuppressWarnings("unchecked")
 			PVector<VariableDeclaration> resultCollection = (PVector<VariableDeclaration>) simpleDeclEval
-					.getResult();
+					.getResult(graph);
 			for (VariableDeclaration v : resultCollection) {
 				varDeclList.add(v);
 			}
@@ -117,29 +117,28 @@ public class DeclarationEvaluator extends VertexEvaluator {
 	}
 
 	@Override
-	public VertexCosts calculateSubtreeEvaluationCosts(GraphSize graphSize) {
-		return this.greqlEvaluator.getCostModel().calculateCostsDeclaration(
-				this, graphSize);
+	public VertexCosts calculateSubtreeEvaluationCosts() {
+		return greqlEvaluator.getCostModel().calculateCostsDeclaration(this);
 	}
 
 	/**
 	 * Returns the number of combinations of the variables this vertex defines
 	 */
-	public long getDefinedVariableCombinations(GraphSize graphSize) {
+	public long getDefinedVariableCombinations() {
 		long combinations = 1;
 		Iterator<Variable> iter = getDefinedVariables().iterator();
 		while (iter.hasNext()) {
 			VariableEvaluator veval = (VariableEvaluator) vertexEvalMarker
 					.getMark(iter.next());
-			combinations *= veval.getVariableCombinations(graphSize);
+			combinations *= veval.getVariableCombinations();
 		}
 		return combinations;
 	}
 
 	@Override
-	public long calculateEstimatedCardinality(GraphSize graphSize) {
+	public long calculateEstimatedCardinality() {
 		return greqlEvaluator.getCostModel().calculateCardinalityDeclaration(
-				this, graphSize);
+				this);
 	}
 
 }

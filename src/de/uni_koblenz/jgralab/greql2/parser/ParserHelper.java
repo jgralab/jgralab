@@ -60,9 +60,9 @@ import de.uni_koblenz.jgralab.greql2.schema.DefinitionExpression;
 import de.uni_koblenz.jgralab.greql2.schema.Expression;
 import de.uni_koblenz.jgralab.greql2.schema.FunctionApplication;
 import de.uni_koblenz.jgralab.greql2.schema.FunctionId;
-import de.uni_koblenz.jgralab.greql2.schema.Greql2;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Aggregation;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Expression;
+import de.uni_koblenz.jgralab.greql2.schema.Greql2Graph;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Schema;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
 import de.uni_koblenz.jgralab.greql2.schema.IsArgumentOf;
@@ -102,7 +102,7 @@ public abstract class ParserHelper {
 
 	protected String query = null;
 
-	protected Greql2 graph;
+	protected Greql2Graph graph;
 
 	protected Greql2Schema schema = null;
 
@@ -153,7 +153,7 @@ public abstract class ParserHelper {
 	 * 
 	 * @return the abstract syntax graph representing a GReQL 2 query
 	 */
-	public Greql2 getGraph() {
+	public Greql2Graph getGraph() {
 		if (graph == null) {
 			return null;
 		}

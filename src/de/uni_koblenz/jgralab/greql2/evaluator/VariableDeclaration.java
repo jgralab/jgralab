@@ -40,6 +40,7 @@ import java.util.Iterator;
 import org.pcollections.PSet;
 import org.pcollections.PVector;
 
+import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VariableEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VertexEvaluator;
@@ -152,10 +153,10 @@ public class VariableDeclaration {
 	/**
 	 * Resets the iterator to the first element
 	 */
-	protected void reset() {
+	protected void reset(Graph graph) {
 		iterationNumber = 0;
 		variableEval.setValue(Undefined.UNDEFINED);
-		Object tempAttribute = definitionSetEvaluator.getResult();
+		Object tempAttribute = definitionSetEvaluator.getResult(graph);
 		if (tempAttribute instanceof PVector) {
 			PVector<?> col = (PVector<?>) tempAttribute;
 			definitionSet = JGraLab.set().plusAll(col);

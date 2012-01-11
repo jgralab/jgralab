@@ -70,7 +70,6 @@ public class GreqlParser extends ParserHelper {
 	private boolean predicateFulfilled = true;
 
 	private Greql2Schema schema = null;
-	private Set<String> subQueryNames = null;
 
 	/**
 	 * @return the set of variables which are valid at the current position in
@@ -144,15 +143,11 @@ public class GreqlParser extends ParserHelper {
 	}
 
 	public GreqlParser(String source) {
-		this(source, null);
-	}
-
-	public GreqlParser(String source, Set<String> subQueryNames) {
 		query = source;
 		parsingStack = new Stack<Integer>();
 		predicateStack = new Stack<Boolean>();
 		schema = Greql2Schema.instance();
-		graph = schema.createGreql2();
+		graph = schema.createGreql2Graph();
 		tokens = GreqlLexer.scan(source);
 		afterParsingvariableSymbolTable = new SymbolTable();
 		duringParsingvariableSymbolTable = new SimpleSymbolTable();
@@ -160,12 +155,6 @@ public class GreqlParser extends ParserHelper {
 		functionSymbolTable = new HashMap<String, FunctionId>();
 		graphCleaned = false;
 		lookAhead = tokens.get(0);
-		this.subQueryNames = subQueryNames;
-	}
-
-	protected final boolean isFunctionName(String ident) {
-		return ((subQueryNames != null) && subQueryNames.contains(ident))
-				|| FunLib.contains(ident);
 	}
 
 	public void parse() {
@@ -203,12 +192,8 @@ public class GreqlParser extends ParserHelper {
 				startOffset));
 	}
 
-	public static Greql2 parse(String query) {
-		return parse(query, null);
-	}
-
-	public static Greql2 parse(String query, Set<String> subQueryNames) {
-		GreqlParser parser = new GreqlParser(query, subQueryNames);
+	public static Greql2Graph parse(String query) {
+		GreqlParser parser = new GreqlParser(query);
 		parser.parse();
 		return parser.getGraph();
 	}
@@ -585,9 +570,7 @@ public class GreqlParser extends ParserHelper {
 		ruleSucceeds(RuleEnum.EXPRESSION, pos);
 		return expr;
 	}
-	
-	
-	
+
 	private final SubgraphDefinition parseSubgraphDefinition() {
 		SubgraphDefinition definition = null;
 		int exprOffset = getCurrentOffset();
@@ -595,12 +578,15 @@ public class GreqlParser extends ParserHelper {
 		if (!inPredicateMode()) {
 			int exprLength = getLength(exprOffset);
 			definition = graph.createExpressionDefinedSubgraph();
-			IsSubgraphDefiningExpression isSubgraphDefExpr = graph.createIsSubgraphDefiningExpression(traversalContextExpr, (ExpressionDefinedSubgraph) definition);
-			isSubgraphDefExpr.set_sourcePositions(createSourcePositionList(exprLength, exprOffset));
+			IsSubgraphDefiningExpression isSubgraphDefExpr = graph
+					.createIsSubgraphDefiningExpression(traversalContextExpr,
+							(ExpressionDefinedSubgraph) definition);
+			isSubgraphDefExpr.set_sourcePositions(createSourcePositionList(
+					exprLength, exprOffset));
 		}
 		return definition;
 	}
-	
+
 	private final Expression parseSubgraphRestrictedExpression() {
 		int pos = alreadySucceeded(RuleEnum.SUBGRAPHRESTRICTEDEXPRESSION);
 		if (skipRule(pos)) {
@@ -617,11 +603,18 @@ public class GreqlParser extends ParserHelper {
 			Expression restrictedExpr = parseWhereExpression();
 			if (!inPredicateMode()) {
 				int lengthRestrExpr = getLength(offsetRestrExpr);
-				SubgraphRestrictedExpression subgraphRestrExpr = graph.createSubgraphRestrictedExpression();
-				IsSubgraphDefinitionOf subgraphDefOf = graph.createIsSubgraphDefinitionOf(subgraphDef, subgraphRestrExpr);
-				subgraphDefOf.set_sourcePositions(createSourcePositionList(lengthDef, offsetDef));
-				IsExpressionOnSubgraph exprOnSubgraph = graph.createIsExpressionOnSubgraph(restrictedExpr, subgraphRestrExpr);
-				exprOnSubgraph.set_sourcePositions(createSourcePositionList(lengthRestrExpr, offsetRestrExpr));
+				SubgraphRestrictedExpression subgraphRestrExpr = graph
+						.createSubgraphRestrictedExpression();
+				IsSubgraphDefinitionOf subgraphDefOf = graph
+						.createIsSubgraphDefinitionOf(subgraphDef,
+								subgraphRestrExpr);
+				subgraphDefOf.set_sourcePositions(createSourcePositionList(
+						lengthDef, offsetDef));
+				IsExpressionOnSubgraph exprOnSubgraph = graph
+						.createIsExpressionOnSubgraph(restrictedExpr,
+								subgraphRestrExpr);
+				exprOnSubgraph.set_sourcePositions(createSourcePositionList(
+						lengthRestrExpr, offsetRestrExpr));
 				result = subgraphRestrExpr;
 			}
 		} else {
@@ -1605,7 +1598,7 @@ public class GreqlParser extends ParserHelper {
 				|| (lookAhead(0) == TokenTypes.AND)
 				|| (lookAhead(0) == TokenTypes.NOT)
 				|| (lookAhead(0) == TokenTypes.XOR) || (lookAhead(0) == TokenTypes.OR))
-				&& isFunctionName(lookAhead.getValue())
+				&& FunLib.contains(lookAhead.getValue())
 				&& ((lookAhead(1) == TokenTypes.LCURLY) || (lookAhead(1) == TokenTypes.LPAREN))) {
 			int offset = getCurrentOffset();
 			String name = lookAhead.getValue();
@@ -1962,8 +1955,6 @@ public class GreqlParser extends ParserHelper {
 		}
 		return expr;
 	}
-
-
 
 	private final List<VertexPosition<TypeId>> parseTypeExpressionList() {
 		List<VertexPosition<TypeId>> list = new ArrayList<VertexPosition<TypeId>>();

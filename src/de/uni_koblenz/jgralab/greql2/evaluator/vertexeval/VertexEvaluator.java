@@ -47,7 +47,6 @@ import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.graphmarker.GraphMarker;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
@@ -60,11 +59,12 @@ import de.uni_koblenz.jgralab.greql2.schema.Variable;
 /**
  * This is the base class for all VertexEvaluators which evaluate the vertices
  * in the GReQL Syntaxgraph
- *
+ * 
  * @author ist@uni-koblenz.de
- *
+ * 
  */
-public abstract class VertexEvaluator {
+public abstract class VertexEvaluator<V extends Vertex> {
+
 	/**
 	 * This classes get not evaluated
 	 */
@@ -83,15 +83,7 @@ public abstract class VertexEvaluator {
 		unevaluatedVertices.add("Direction");
 	}
 
-	/**
-	 * A reference to the datagraph
-	 */
-	protected Graph graph = null;
-
-	/**
-	 * The GreqlEvaluator this VertexEvaluator belongs to
-	 */
-	protected GreqlEvaluator greqlEvaluator = null;
+	protected V vertex;
 
 	/**
 	 * The costs for the current evaluation of the whole subtree in the abstract
@@ -127,12 +119,6 @@ public abstract class VertexEvaluator {
 	protected double estimatedSelectivity = Double.NaN;
 
 	/**
-	 * The GraphSize-Object for which the costs have been evaluated the last
-	 * time
-	 */
-	protected GraphSize costsGraphSize = null;
-
-	/**
 	 * The evaluation result
 	 */
 	protected Object result = null;
@@ -148,24 +134,12 @@ public abstract class VertexEvaluator {
 	 */
 	protected Set<Variable> definedVariables = null;
 
-	protected GraphMarker<VertexEvaluator> vertexEvalMarker = null;
-
 	/**
 	 * @param eval
 	 *            the GreqlEvaluator this VertexEvaluator belongs to
 	 */
-	protected VertexEvaluator(GreqlEvaluator eval) {
-		greqlEvaluator = eval;
-		graph = eval.getDatagraph();
-		vertexEvalMarker = eval.getVertexEvaluatorGraphMarker();
-	}
-
-	protected void setVertexEvalMarker(GraphMarker<VertexEvaluator> marker) {
-		vertexEvalMarker = marker;
-	}
-
-	public GraphMarker<VertexEvaluator> getVertexEvalMarker() {
-		return vertexEvalMarker;
+	protected VertexEvaluator(V vertex) {
+		this.vertex = vertex;
 	}
 
 	/**
@@ -181,23 +155,23 @@ public abstract class VertexEvaluator {
 	 *         the function name of the corresponding function for logging.
 	 */
 	public String getLoggingName() {
-		return this.getVertex().getAttributedElementClass().getSimpleName();
+		return getVertex().getAttributedElementClass().getSimpleName();
 	}
 
 	/**
 	 * Gets the result of the evaluation of this vertex on the given subgraph
-	 *
+	 * 
 	 * @return the evaluation result
 	 */
-	public Object getResult() {
+	public Object getResult(Graph graph) {
 		if (result != null) {
 			return result;
 		}
 
 		// System.out.println("Evaluating : " + this);
 		try {
-			result = evaluate();
-			// System.out.println("VertexEvaluator.getResult() " + result
+			result = evaluate(graph);
+			// System.out.println("VertexEvaluator.getResult(graph) " + result
 			// + " of vertex " + getVertex());
 		} catch (QuerySourceException ex) {
 			removeInvalidSourcePosition(ex);
@@ -207,7 +181,7 @@ public abstract class VertexEvaluator {
 		// System.out.println("Evaluating : " + this + " finished");
 		// System.out.println("Result is: " + result);
 
-		greqlEvaluator.progress(ownEvaluationCosts);
+		// greqlEvaluator.progress(ownEvaluationCosts);
 
 		return result;
 	}
@@ -224,7 +198,7 @@ public abstract class VertexEvaluator {
 	 * this method does the evaluation. It must be implemented by concrete
 	 * evaluators
 	 */
-	public abstract Object evaluate();
+	public abstract Object evaluate(Graph graph);
 
 	/**
 	 * clears the evaluation result
@@ -247,7 +221,6 @@ public abstract class VertexEvaluator {
 		iteratedEvaluationCosts = Long.MIN_VALUE;
 		estimatedCardinality = Long.MIN_VALUE;
 		estimatedSelectivity = Double.NaN;
-		costsGraphSize = null;
 	}
 
 	public void resetSubtreeToInitialState() {
@@ -264,25 +237,24 @@ public abstract class VertexEvaluator {
 	/**
 	 * This method must be overwritten by every subclass. It should call the
 	 * right method of the GreqlEvaluators costmodel.
-	 *
+	 * 
 	 * @return a 3-Tupel (ownCosts, iteratedCosts, subtreeCosts) of costs the
 	 *         evaluation of the subtree with this vertex as root causes
 	 */
-	protected abstract VertexCosts calculateSubtreeEvaluationCosts(
-			GraphSize graphSize);
+	protected abstract VertexCosts calculateSubtreeEvaluationCosts();
 
 	/**
 	 * Calculates the costs the current evaluation of the subtree causes. These
 	 * cost differ from the initialEvaluationCosts, because only for the first
 	 * evaluation, the result really gets evaluated, for all other evaluations,
 	 * the evaluated result only gets copied, these costs are 1
-	 *
+	 * 
 	 * @return the costs of this evaluation of the subtree the vertex this
 	 *         evaluator evaluates is root of
 	 */
-	public long getCurrentSubtreeEvaluationCosts(GraphSize graphSize) {
+	public long getCurrentSubtreeEvaluationCosts() {
 		if (currentSubtreeEvaluationCosts == Long.MIN_VALUE) {
-			return getInitialSubtreeEvaluationCosts(graphSize);
+			return getInitialSubtreeEvaluationCosts();
 		} else {
 			return 1;
 		}
@@ -292,39 +264,37 @@ public abstract class VertexEvaluator {
 	 * Calculates the costs the first evaluation of the subtree causes. These
 	 * cost differ from the second "evaluation", because for the second one, the
 	 * already evaluated result only gets copied, these costs are 1
-	 *
+	 * 
 	 * @return the costs of the first evaluation of the subgraph the vertex this
 	 *         evaluator evaluates is root of
 	 */
-	public long getInitialSubtreeEvaluationCosts(GraphSize graphSize) {
-		if ((costsGraphSize == graphSize)
-				&& (initialSubtreeEvaluationCosts > 0)) {
+	public long getInitialSubtreeEvaluationCosts() {
+		if (initialSubtreeEvaluationCosts > 0) {
 			return initialSubtreeEvaluationCosts;
 		} else {
-			costsGraphSize = graphSize;
-			VertexCosts costs = calculateSubtreeEvaluationCosts(graphSize);
-			this.ownEvaluationCosts = costs.ownEvaluationCosts;
-			this.iteratedEvaluationCosts = costs.iteratedEvaluationCosts;
-			this.currentSubtreeEvaluationCosts = costs.subtreeEvaluationCosts;
-			this.initialSubtreeEvaluationCosts = costs.subtreeEvaluationCosts;
-			return this.initialSubtreeEvaluationCosts;
+			VertexCosts costs = calculateSubtreeEvaluationCosts();
+			ownEvaluationCosts = costs.ownEvaluationCosts;
+			iteratedEvaluationCosts = costs.iteratedEvaluationCosts;
+			currentSubtreeEvaluationCosts = costs.subtreeEvaluationCosts;
+			initialSubtreeEvaluationCosts = costs.subtreeEvaluationCosts;
+			return initialSubtreeEvaluationCosts;
 		}
 	}
 
 	/**
 	 * Get the costs for evaluating the associated vertex one time. No subtree
 	 * or iteration costs are taken into account.
-	 *
+	 * 
 	 * @param graphSize
 	 *            a {@link GraphSize} object indicating the size of the data-
 	 *            {@link Graph}
 	 * @return the costs for evaluating the associated vertex one time excluding
 	 *         subtree and iteration costs
 	 */
-	public long getOwnEvaluationCosts(GraphSize graphSize) {
+	public long getOwnEvaluationCosts() {
 		if (ownEvaluationCosts == Long.MIN_VALUE) {
 			// call for side-effects
-			getInitialSubtreeEvaluationCosts(graphSize);
+			getInitialSubtreeEvaluationCosts();
 		}
 		return ownEvaluationCosts;
 	}
@@ -352,7 +322,7 @@ public abstract class VertexEvaluator {
 
 	/**
 	 * Calculates the set of variables this vertex depends on
-	 *
+	 * 
 	 * @return the set of variables this vertex depends on
 	 */
 	public Set<Variable> getNeededVariables() {
@@ -366,7 +336,7 @@ public abstract class VertexEvaluator {
 	 * Calculates the set of variables this vertex (or even a vertex in a
 	 * subgraph) defines and that is valid in the whole subtree with this vertex
 	 * as head.
-	 *
+	 * 
 	 * @return the set of variables this vertex defines and that are valid
 	 */
 	public Set<Variable> getDefinedVariables() {
@@ -376,59 +346,62 @@ public abstract class VertexEvaluator {
 		return definedVariables;
 	}
 
-	/**
-	 * Returns the number of combinations of the variables this vertex depends
-	 * on
-	 */
-	public long getVariableCombinations(GraphSize graphSize) {
-		int combinations = 1;
-		Iterator<Variable> iter = getNeededVariables().iterator();
-		while (iter.hasNext()) {
-			VariableEvaluator veval = (VariableEvaluator) vertexEvalMarker
-					.getMark(iter.next());
-			// combinations *= veval.getEstimatedCardinality(graphSize);
-			combinations *= veval.getVariableCombinations(graphSize);
-		}
-		return combinations;
-	}
-
-	/**
-	 * returns the estimated size of the result.
-	 */
-	public long getEstimatedCardinality(GraphSize graphSize) {
-		if (estimatedCardinality == Long.MIN_VALUE) {
-			estimatedCardinality = calculateEstimatedCardinality(graphSize);
-		}
-		return estimatedCardinality;
-	}
-
-	/**
-	 * calculates the estimated cardinality of the evaluationeresult this
-	 * vertexevaluator creates. By default, this size is 1, if a VertexEvaluator
-	 * has bigger resultsizes, it should override this method
-	 */
-	public long calculateEstimatedCardinality(GraphSize graphSize) {
-		return 1;
-	}
-
-	/**
-	 * returns the estimated selectivity of the vertex evaluation.
-	 */
-	public double getEstimatedSelectivity(GraphSize graphSize) {
-		if (Double.isNaN(estimatedSelectivity)) {
-			estimatedSelectivity = calculateEstimatedSelectivity(graphSize);
-		}
-		return estimatedSelectivity;
-	}
-
-	/**
-	 * calculates the estimated selectivity for this vertex.By default, this is
-	 * 1, if a VertexEvaluator has an other selectivity, it should override this
-	 * method
-	 */
-	public double calculateEstimatedSelectivity(GraphSize graphSize) {
-		return 1;
-	}
+	// /**
+	// * Returns the number of combinations of the variables this vertex depends
+	// * on
+	// */
+	// public long getVariableCombinations() {
+	// int combinations = 1;
+	// Iterator<Variable> iter = getNeededVariables().iterator();
+	// while (iter.hasNext()) {
+	// VariableEvaluator veval = (VariableEvaluator) vertexEvalMarker
+	// .getMark(iter.next());
+	// // combinations *= veval.getEstimatedCardinality();
+	// combinations *= veval.getVariableCombinations();
+	// }
+	// return combinations;
+	// }
+	//
+	// /**
+	// * returns the estimated size of the result.
+	// */
+	// public long getEstimatedCardinality() {
+	// if (estimatedCardinality == Long.MIN_VALUE) {
+	// estimatedCardinality = calculateEstimatedCardinality();
+	// }
+	// return estimatedCardinality;
+	// }
+	//
+	// /**
+	// * calculates the estimated cardinality of the evaluationeresult this
+	// * vertexevaluator creates. By default, this size is 1, if a
+	// VertexEvaluator
+	// * has bigger resultsizes, it should override this method
+	// */
+	// public long calculateEstimatedCardinality() {
+	// return 1;
+	// }
+	//
+	// /**
+	// * returns the estimated selectivity of the vertex evaluation.
+	// */
+	// public double getEstimatedSelectivity() {
+	// if (Double.isNaN(estimatedSelectivity)) {
+	// estimatedSelectivity = calculateEstimatedSelectivity();
+	// }
+	// return estimatedSelectivity;
+	// }
+	//
+	// /**
+	// * calculates the estimated selectivity for this vertex.By default, this
+	// is
+	// * 1, if a VertexEvaluator has an other selectivity, it should override
+	// this
+	// * method
+	// */
+	// public double calculateEstimatedSelectivity() {
+	// return 1;
+	// }
 
 	/**
 	 * creates a list of possible source positions for the current vertex
@@ -482,9 +455,9 @@ public abstract class VertexEvaluator {
 				SourcePosition availablePosition = availableIter.next();
 				if ((availablePosition.get_offset() <= currentPosition
 						.get_offset())
-						&& ((availablePosition.get_offset()
-								+ availablePosition.get_length()) >= (currentPosition
-								.get_offset() + currentPosition.get_length()))) {
+						&& ((availablePosition.get_offset() + availablePosition
+								.get_length()) >= (currentPosition.get_offset() + currentPosition
+								.get_length()))) {
 					accepted = true;
 					break;
 				}
@@ -502,8 +475,8 @@ public abstract class VertexEvaluator {
 	/**
 	 * creates a vertex evaluator for the given vertex
 	 */
-	public static VertexEvaluator createVertexEvaluator(Vertex vertex,
-			GreqlEvaluator eval) {
+	public static <V extends Vertex> VertexEvaluator<V> createVertexEvaluator(
+			V vertex, GreqlEvaluator eval) {
 		Class<?> vertexClass = vertex.getClass();
 		String fullClassName = vertexClass.getName();
 		// remove the "Impl" ...
@@ -525,7 +498,8 @@ public abstract class VertexEvaluator {
 					GreqlEvaluator.class };
 			Class<?> evalClass = Class.forName(evalName);
 			Constructor<?> constructor = evalClass.getConstructor(argsClass);
-			VertexEvaluator vertexEval = (VertexEvaluator) constructor
+			@SuppressWarnings("unchecked")
+			VertexEvaluator<V> vertexEval = (VertexEvaluator<V>) constructor
 					.newInstance(vertex, eval);
 			return vertexEval;
 		} catch (ClassNotFoundException ex) {

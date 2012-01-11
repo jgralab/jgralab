@@ -38,10 +38,10 @@ import org.pcollections.PMap;
 import org.pcollections.PVector;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
+import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
-import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
 import de.uni_koblenz.jgralab.greql2.exception.GreqlException;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
@@ -58,20 +58,20 @@ public class MapConstructionEvaluator extends VertexEvaluator {
 	}
 
 	@Override
-	protected VertexCosts calculateSubtreeEvaluationCosts(GraphSize graphSize) {
-		return this.greqlEvaluator.getCostModel()
-				.calculateCostsMapConstruction(this, graphSize);
+	protected VertexCosts calculateSubtreeEvaluationCosts() {
+		return greqlEvaluator.getCostModel()
+				.calculateCostsMapConstruction(this);
 	}
 
 	@Override
-	public Object evaluate() {
+	public Object evaluate(Graph graph) {
 		PMap<Object, Object> map = JGraLab.map();
 		PVector<Object> keys = JGraLab.vector();
 		for (IsKeyExprOfConstruction e : mapConstruction
 				.getIsKeyExprOfConstructionIncidences(EdgeDirection.IN)) {
 			Vertex exp = e.getAlpha();
 			VertexEvaluator expEval = vertexEvalMarker.getMark(exp);
-			keys = keys.plus(expEval.getResult());
+			keys = keys.plus(expEval.getResult(graph));
 		}
 
 		PVector<Object> values = JGraLab.vector();
@@ -79,7 +79,7 @@ public class MapConstructionEvaluator extends VertexEvaluator {
 				.getIsValueExprOfConstructionIncidences(EdgeDirection.IN)) {
 			Vertex exp = e.getAlpha();
 			VertexEvaluator expEval = vertexEvalMarker.getMark(exp);
-			values = values.plus(expEval.getResult());
+			values = values.plus(expEval.getResult(graph));
 		}
 
 		if (keys.size() != values.size()) {
@@ -95,9 +95,9 @@ public class MapConstructionEvaluator extends VertexEvaluator {
 	}
 
 	@Override
-	public long calculateEstimatedCardinality(GraphSize graphSize) {
+	public long calculateEstimatedCardinality() {
 		return greqlEvaluator.getCostModel()
-				.calculateCardinalityMapConstruction(this, graphSize);
+				.calculateCardinalityMapConstruction(this);
 	}
 
 	@Override

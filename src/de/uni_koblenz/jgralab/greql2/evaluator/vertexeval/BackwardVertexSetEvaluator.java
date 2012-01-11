@@ -38,9 +38,9 @@ package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 import org.pcollections.PSet;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
+import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
-import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
 import de.uni_koblenz.jgralab.greql2.evaluator.fa.DFA;
 import de.uni_koblenz.jgralab.greql2.evaluator.fa.NFA;
@@ -84,8 +84,8 @@ public class BackwardVertexSetEvaluator extends PathSearchEvaluator {
 		PathDescriptionEvaluator pathDescEval = (PathDescriptionEvaluator) vertexEvalMarker
 				.getMark(p);
 
-		Expression targetExpression = (Expression) vertex
-				.getFirstIsTargetExprOfIncidence(EdgeDirection.IN).getAlpha();
+		Expression targetExpression = vertex.getFirstIsTargetExprOfIncidence(
+				EdgeDirection.IN).getAlpha();
 		targetEval = vertexEvalMarker.getMark(targetExpression);
 		NFA revertedNFA = NFA.revertNFA(pathDescEval.getNFA());
 		searchAutomaton = new DFA(revertedNFA);
@@ -94,26 +94,26 @@ public class BackwardVertexSetEvaluator extends PathSearchEvaluator {
 	}
 
 	@Override
-	public PSet<Vertex> evaluate() {
+	public PSet<Vertex> evaluate(Graph graph) {
 		if (!initialized) {
 			initialize();
 		}
 		Vertex targetVertex = null;
-		targetVertex = (Vertex) targetEval.getResult();
+		targetVertex = (Vertex) targetEval.getResult(graph);
 
 		return ReachableVertices.search(targetVertex, searchAutomaton);
 	}
 
 	@Override
-	public VertexCosts calculateSubtreeEvaluationCosts(GraphSize graphSize) {
+	public VertexCosts calculateSubtreeEvaluationCosts() {
 		return greqlEvaluator.getCostModel().calculateCostsBackwardVertexSet(
-				this, graphSize);
+				this);
 	}
 
 	@Override
-	public long calculateEstimatedCardinality(GraphSize graphSize) {
+	public long calculateEstimatedCardinality() {
 		return greqlEvaluator.getCostModel()
-				.calculateCardinalityBackwardVertexSet(this, graphSize);
+				.calculateCardinalityBackwardVertexSet(this);
 	}
 
 }
