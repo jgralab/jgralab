@@ -917,7 +917,7 @@ public class SchemaImpl implements Schema {
 		AttributedElementClass aec = null;
 		try {
 			schemaClass = getGraphClassImpl(implementationType);
-			if (className.equals(graphClassName) || (implementationType == ImplementationType.GENERIC && graphClassName.equals("GenericGraphImpl"))) {
+			if (className.equals(graphClassName)) {
 				return schemaClass.getMethod("create", signature);
 			} else {
 				aec = graphClass.getVertexClass(className);
