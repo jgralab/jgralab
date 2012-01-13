@@ -477,6 +477,9 @@ public interface Schema extends Comparable<Schema> {
 
 	public Graph createGraph(ImplementationType implementationType);
 
+	public Graph createGraph(ImplementationType implementationType, String id, int vCount,
+			int eCount);
+	
 	public Graph createGraph(ImplementationType implementationType, int vCount,
 			int eCount);
 

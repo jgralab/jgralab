@@ -2175,4 +2175,12 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 			throws GraphIOException {
 		GraphIO.saveGraphToStream(this, out, pf);
 	}
+
+	public GraphFactory getGraphFactory() {
+		return graphFactory;
+	}
+
+	public void setGraphFactory(GraphFactory graphFactory) {
+		this.graphFactory = graphFactory;
+	}
 }

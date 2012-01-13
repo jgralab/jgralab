@@ -54,24 +54,34 @@ public class GraphFactoryGenerator extends CodeGenerator {
 			CodeGeneratorConfiguration config) {
 		super(schemaPackageName, "", config);
 		this.schema = schema;
-		rootBlock.setVariable("className", schema.getName() + "Factory");
-		rootBlock.setVariable("simpleClassName", schema.getName() + "Factory");
-		rootBlock.setVariable("isClassOnly", "true");
+		rootBlock.setVariable("className", schema.getGraphClass().getSimpleName() + "Factory");
+		rootBlock.setVariable("simpleClassName", schema.getGraphClass().getSimpleName() + "Factory");
+		rootBlock.setVariable("simpleImplClassName", schema.getGraphClass().getSimpleName()+"FactoryImpl");
+		rootBlock.setVariable("schemaRootPackage", schemaPackageName);
+		rootBlock.setVariable("isClassOnly", "false");
 	}
 
 	@Override
 	protected CodeBlock createHeader() {
-		addImports("#jgImplPackage#.GraphFactoryImpl");
 		CodeSnippet code = new CodeSnippet(true);
-		code.setVariable("className", schema.getName() + "Factory");
-		code.add("public class #className# extends GraphFactoryImpl {");
+		code.setVariable("className", schema.getGraphClass().getSimpleName()+ "Factory");
+		code.setVariable("classImplName", schema.getGraphClass().getSimpleName()+"FactoryImpl");
+		if(currentCycle.isAbstract()){
+			addImports("#jgPackage#.GraphFactory");
+			code.add("public interface #className# extends GraphFactory {");
+		}else{
+			addImports("#schemaRootPackage#.#className#");
+			addImports("#jgImplPackage#.GraphFactoryImpl");
+			addImports("#jgPackage#.ImplementationType");
+			code.add("public class #classImplName# extends GraphFactoryImpl implements #className# {");
+		}
 		return code;
 	}
 
 	@Override
 	protected CodeBlock createBody() {
 		CodeList code = new CodeList();
-		if (currentCycle.isClassOnly()) {
+		if (currentCycle.isStdOrDbImplOrTransImpl()) {
 			code.add(createConstructor());
 			code.add(createFillTableMethod());
 		}
@@ -80,15 +90,22 @@ public class GraphFactoryGenerator extends CodeGenerator {
 
 	protected CodeBlock createConstructor() {
 		CodeSnippet code = new CodeSnippet(true);
-		code.setVariable("className", schema.getName() + "Factory");
-		code.add("public #className#() {");
-		code.add("\tsuper();");
+		code.setVariable("classImplName", schema.getGraphClass().getSimpleName()+ "FactoryImpl");
+		String implTypeInfix = "";
+		if(currentCycle.isStdImpl()) implTypeInfix = "STANDARD";
+		if(currentCycle.isTransImpl()) implTypeInfix="TRANSACTION";
+		if(currentCycle.isDbImpl()) implTypeInfix = "DATABASE";
+		code.add("public #classImplName#() {");
+		code.add("\tsuper(ImplementationType."+implTypeInfix+");");
 		code.add("\tfillTable();");
 		code.add("}");
 		return code;
 	}
 
 	protected CodeBlock createFillTableMethod() {
+		if(currentCycle.isAbstract()){
+			return null;
+		}
 		CodeList code = new CodeList();
 		CodeSnippet s = new CodeSnippet(true);
 		s.add("protected void fillTable() { ");
@@ -126,14 +143,15 @@ public class GraphFactoryGenerator extends CodeGenerator {
 
 		if (!graphClass.isAbstract()) {
 			code.add("/* code for graph #graphName# */");
-			if (config.hasStandardSupport()) {
+			
+			if (currentCycle.isStdImpl() && config.hasStandardSupport()) {
 				code.add("setGraphImplementationClass(#graphName#.class, #graphImplName#Impl.class);");
 			}
-			if (config.hasTransactionSupport()) {
-				code.add("setGraphTransactionImplementationClass(#graphName#.class, #graphTransactionImplName#Impl.class);");
+			if (currentCycle.isTransImpl()&& config.hasTransactionSupport()) {
+				code.add("setGraphImplementationClass(#graphName#.class, #graphTransactionImplName#Impl.class);");
 			}
-			if (config.hasDatabaseSupport()) {
-				code.add("setGraphDatabaseImplementationClass(#graphName#.class, #graphDatabaseImplName#Impl.class);");
+			if (currentCycle.isDbImpl()&&config.hasDatabaseSupport()) {
+				code.add("setGraphImplementationClass(#graphName#.class, #graphDatabaseImplName#Impl.class);");
 			}
 		}
 		return code;
@@ -155,14 +173,14 @@ public class GraphFactoryGenerator extends CodeGenerator {
 				+ ".impl.db." + vertexClass.getQualifiedName());
 
 		if (!vertexClass.isAbstract()) {
-			if (config.hasStandardSupport()) {
+			if (currentCycle.isStdImpl() && config.hasStandardSupport()) {
 				code.add("setVertexImplementationClass(#vertexName#.class, #vertexImplName#Impl.class);");
 			}
-			if (config.hasTransactionSupport()) {
-				code.add("setVertexTransactionImplementationClass(#vertexName#.class, #vertexTransactionImplName#Impl.class);");
+			if (currentCycle.isTransImpl() && config.hasTransactionSupport()) {
+				code.add("setVertexImplementationClass(#vertexName#.class, #vertexTransactionImplName#Impl.class);");
 			}
-			if (config.hasDatabaseSupport()) {
-				code.add("setVertexDatabaseImplementationClass(#vertexName#.class, #vertexDatabaseImplName#Impl.class);");
+			if (currentCycle.isDbImpl() && config.hasDatabaseSupport()) {
+				code.add("setVertexImplementationClass(#vertexName#.class, #vertexDatabaseImplName#Impl.class);");
 			}
 		}
 		return code;
@@ -180,14 +198,14 @@ public class GraphFactoryGenerator extends CodeGenerator {
 				+ ".impl.db." + edgeClass.getQualifiedName());
 
 		if (!edgeClass.isAbstract()) {
-			if (config.hasStandardSupport()) {
+			if (currentCycle.isStdImpl() && config.hasStandardSupport()) {
 				code.add("setEdgeImplementationClass(#edgeName#.class, #edgeImplName#Impl.class);");
 			}
-			if (config.hasTransactionSupport()) {
-				code.add("setEdgeTransactionImplementationClass(#edgeName#.class, #edgeTransactionImplName#Impl.class);");
+			if (currentCycle.isTransImpl() && config.hasTransactionSupport()) {
+				code.add("setEdgeImplementationClass(#edgeName#.class, #edgeTransactionImplName#Impl.class);");
 			}
-			if (config.hasDatabaseSupport()) {
-				code.add("setEdgeDatabaseImplementationClass(#edgeName#.class, #edgeDatabaseImplName#Impl.class);");
+			if (currentCycle.isDbImpl() && config.hasDatabaseSupport()) {
+				code.add("setEdgeImplementationClass(#edgeName#.class, #edgeDatabaseImplName#Impl.class);");
 			}
 		}
 		return code;
