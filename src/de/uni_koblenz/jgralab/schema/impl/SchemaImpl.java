@@ -75,7 +75,6 @@ import de.uni_koblenz.jgralab.codegenerator.ReversedEdgeCodeGenerator;
 import de.uni_koblenz.jgralab.codegenerator.SchemaCodeGenerator;
 import de.uni_koblenz.jgralab.codegenerator.VertexCodeGenerator;
 import de.uni_koblenz.jgralab.impl.ConsoleProgressFunction;
-import de.uni_koblenz.jgralab.impl.generic.GenericGraphImpl;
 import de.uni_koblenz.jgralab.schema.Attribute;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.BooleanDomain;
@@ -1348,12 +1347,6 @@ public class SchemaImpl implements Schema {
 	 */
 	public void setConfiguration(CodeGeneratorConfiguration config) {
 		this.config = config;
-	}
-	
-	
-	@Override
-	public GenericGraphImpl createGenericGraph() {
-		return null;
 	}
 
 	@Override
