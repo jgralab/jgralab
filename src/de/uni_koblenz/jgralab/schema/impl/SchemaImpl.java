@@ -1315,6 +1315,12 @@ public class SchemaImpl implements Schema {
 	@Override
 	public Graph createGraph(ImplementationType implementationType, int vCount,
 			int eCount) {
+		return createGraph(implementationType,null,vCount,eCount);
+	}
+	
+	@Override
+	public Graph createGraph(ImplementationType implementationType, String id, int vCount,
+			int eCount) {
 		try {
 			getGraphClass().getSchemaClass();
 		} catch (SchemaClassAccessException e) {
@@ -1339,7 +1345,7 @@ public class SchemaImpl implements Schema {
 		Method graphCreateMethod = getGraphCreateMethod(ImplementationType.STANDARD);
 
 		try {
-			return (Graph) graphCreateMethod.invoke(null, null, vCount, eCount);
+			return (Graph) graphCreateMethod.invoke(null, id, vCount, eCount);
 		} catch (Exception e) {
 			throw new SchemaException(
 					"Something failed when creating the  graph!", e);

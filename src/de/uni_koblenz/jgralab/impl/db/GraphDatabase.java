@@ -1040,9 +1040,9 @@ public abstract class GraphDatabase {
 		ResultSet vertexData = getVertexAndIncidenceData(graph.getGId(), vId);
 		Class<? extends Vertex> vertexClass = getVertexClassFrom(graph,
 				vertexData);
-		GraphFactory graphFactory = graph.getSchema().getGraphFactory();
+		GraphFactory graphFactory = graph.getGraphFactory();
 		DatabasePersistableVertex vertex = (DatabasePersistableVertex) graphFactory
-				.createVertexWithDatabaseSupport(vertexClass, vId, graph);
+				.createVertex(vertexClass, vId, graph);
 		long incidenceListVersion = vertexData.getLong(2);
 		vertex.setIncidenceListVersion(incidenceListVersion);
 		long sequenceNumber = vertexData.getLong(3);
@@ -1192,9 +1192,9 @@ public abstract class GraphDatabase {
 				omegaSeqNumber = edgeData.getLong(5);
 			}
 		} while (edgeData.next());
-		GraphFactory graphFactory = graph.getSchema().getGraphFactory();
+		GraphFactory graphFactory = graph.getGraphFactory();
 		DatabasePersistableEdge edge = (DatabasePersistableEdge) graphFactory
-				.createEdgeWithDatabaseSupport(edgeClass, eId, graph, alpha,
+				.createEdge(edgeClass, eId, graph, alpha,
 						omega);
 		edge.setSequenceNumberInESeq(sequenceNumberInESeq);
 		((DatabasePersistableEdge) edge.getNormalEdge())

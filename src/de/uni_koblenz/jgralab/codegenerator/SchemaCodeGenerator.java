@@ -88,6 +88,7 @@ public class SchemaCodeGenerator extends CodeGenerator {
 		rootBlock.setVariable("isAbstractClass", "false");
 		rootBlock.setVariable("isClassOnly", "true");
 		rootBlock.setVariable("isImplementationClassOnly", "false");
+		rootBlock.setVariable("schemaRootPackage", schemaPackageName);
 	}
 
 	@Override
@@ -134,7 +135,10 @@ public class SchemaCodeGenerator extends CodeGenerator {
 				"#jgPackage#.GraphIO",
 				"#jgImplDbPackage#.GraphDatabaseException",
 				"#jgImplDbPackage#.GraphDatabase",
-				"#jgPackage#.GraphIOException");
+				"#jgPackage#.GraphIOException",
+				"#jgPackage#.ImplementationType",
+				"#jgPackage#.GraphFactory",
+				"#jgImplPackage#.GraphFactoryImpl");
 		if (config.hasDatabaseSupport()) {
 			addImports("#jgPackage#.GraphException");
 		}
@@ -146,9 +150,23 @@ public class SchemaCodeGenerator extends CodeGenerator {
 				" * @param vMax initial vertex count",
 				" * @param eMax initial edge count",
 				"*/",
-				"public #gcName# create#gcCamelName#(int vMax, int eMax) {",
-				((config.hasStandardSupport()) ? "\treturn (#gcCamelName#) graphFactory.createGraph(#gcCamelName#.class, null, vMax, eMax);"
-						: "\tthrow new UnsupportedOperationException(\"No Standard support compiled.\");"),
+				"public #gcName# create#gcCamelName#(ImplementationType implType, String id, int vMax, int eMax) {",
+				"\tswitch(implType){",
+				((config.hasStandardSupport()) ?
+						"\tcase STANDARD: \n"+
+						"\t\t\tGraphFactory stdFactory = new #schemaRootPackage#.impl.std.#gcCamelName#FactoryImpl(); \n"+
+						"\t\t\t#gcCamelName# stdGraph = (#gcCamelName#) stdFactory.createGraph(id, vMax, eMax); \n"+
+						"\t\t\tstdGraph.setGraphFactory(stdFactory);\n"+
+						"\t\t\treturn stdGraph;\n"
+						: ""),
+				((config.hasTransactionSupport())? "\tcase TRANSACTION: \n"+
+						"\t\t\tGraphFactory transFactory = new #schemaRootPackage#.impl.trans.#gcCamelName#FactoryImpl(); \n"+
+						"\t\t\t#gcCamelName# transGraph = (#gcCamelName#) transFactory.createGraph(id, vMax, eMax); \n"+
+						"\t\t\ttransGraph.setGraphFactory(transFactory);\n"+
+						"\t\t\treturn transGraph;\n"
+						: ""),		
+				"\t}",
+				"\tthrow new UnsupportedOperationException(\"No \"+implType+\" support compiled.\");",
 				"}",
 				"",
 				"/**",
@@ -158,17 +176,15 @@ public class SchemaCodeGenerator extends CodeGenerator {
 				" * @param vMax initial vertex count",
 				" * @param eMax initial edge count",
 				" */",
-				"public #gcName# create#gcCamelName#(String id, int vMax, int eMax) {",
-				((config.hasStandardSupport()) ? "\treturn (#gcCamelName#) graphFactory.createGraph(#gcCamelName#.class, id, vMax, eMax);"
-						: "\tthrow new UnsupportedOperationException(\"No Standard support compiled.\");"),
+				"public #gcName# create#gcCamelName#(ImplementationType implType, int vMax, int eMax) {",
+				"\treturn create#gcCamelName#(implType,null,vMax,eMax);",
 				"}",
 				"",
 				"/**",
 				" * Creates a new #gcName# graph.",
 				"*/",
-				"public #gcName# create#gcCamelName#() {",
-				((config.hasStandardSupport()) ? "\treturn (#gcCamelName#) graphFactory.createGraph(#gcCamelName#.class, null);"
-						: "\tthrow new UnsupportedOperationException(\"No Standard support compiled.\");"),
+				"public #gcName# create#gcCamelName#(ImplementationType implType) {",
+				"\treturn create#gcCamelName#(implType,null,1000,1000);",
 				"}",
 				"",
 				"/**",
@@ -176,9 +192,8 @@ public class SchemaCodeGenerator extends CodeGenerator {
 				" *",
 				" * @param id the id name of the new graph",
 				" */",
-				"public #gcName# create#gcCamelName#(String id) {",
-				((config.hasStandardSupport()) ? "\treturn (#gcCamelName#) graphFactory.createGraph(#gcCamelName#.class, id);"
-						: "\tthrow new UnsupportedOperationException(\"No Standard support compiled.\");"),
+				"public #gcName# create#gcCamelName#(ImplementationType implType, String id) {",
+				"\treturn create#gcCamelName#(implType,id,1000,1000);",
 				"}",
 				"",
 				// ---- database support -------
@@ -188,8 +203,12 @@ public class SchemaCodeGenerator extends CodeGenerator {
 				" * @param id Identifier of new graph",
 				" * @param graphDatabase Database which should contain graph",
 				" */",
-				"public #gcName# create#gcCamelName#WithDatabaseSupport(String id, GraphDatabase graphDatabase) throws GraphDatabaseException{",
-				((config.hasDatabaseSupport()) ? "\tGraph graph = graphFactory.createGraphWithDatabaseSupport(#gcCamelName#.class, graphDatabase, id );\n\t\tif(!graphDatabase.containsGraph(id)){\n\t\t\tgraphDatabase.insert((#jgImplDbPackage#.GraphImpl)graph);\n\t\t\treturn (#gcCamelName#)graph;\n\t\t}\n\t\telse\n\t\t\tthrow new GraphException(\"Graph with identifier \" + id + \" already exists in database.\");"
+				"public #gcName# create#gcCamelName#(String id, GraphDatabase graphDatabase) throws GraphDatabaseException{",
+				((config.hasDatabaseSupport()) ? 
+						"\tGraphFactoryImpl graphFactory = new #schemaRootPackage#.impl.db.#gcCamelName#FactoryImpl();\n"+
+						"\t\tgraphFactory.setGraphDatabase(graphDatabase);\n\t"+
+						"\tGraph graph = graphFactory.createGraph" +
+						"(id );\n\t\tif(!graphDatabase.containsGraph(id)){\n\t\t\tgraphDatabase.insert((#jgImplDbPackage#.GraphImpl)graph);\n\t\t\treturn (#gcCamelName#)graph;\n\t\t}\n\t\telse\n\t\t\tthrow new GraphException(\"Graph with identifier \" + id + \" already exists in database.\");"
 						: "\tthrow new UnsupportedOperationException(\"No database support compiled.\");"),
 				"}",
 				"/**",
@@ -200,50 +219,12 @@ public class SchemaCodeGenerator extends CodeGenerator {
 				" * @param eMax Maximum initial count of edges that can be held in graph.",
 				" * @param graphDatabase Database which should contain graph",
 				" */",
-				"public #gcName# create#gcCamelName#WithDatabaseSupport(String id, int vMax, int eMax, GraphDatabase graphDatabase) throws GraphDatabaseException{",
-				((config.hasDatabaseSupport()) ? "\tGraph graph = graphFactory.createGraphWithDatabaseSupport(#gcCamelName#.class, graphDatabase, id, vMax, eMax );\n\t\tif(!graphDatabase.containsGraph(id)){\n\t\t\tgraphDatabase.insert((#jgImplDbPackage#.GraphImpl)graph);\n\t\t\treturn (#gcCamelName#)graph;\n\t\t}\n\t\telse\n\t\t\tthrow new GraphException(\"Graph with identifier \" + id + \" already exists in database.\");"
+				"public #gcName# create#gcCamelName#(String id, int vMax, int eMax, GraphDatabase graphDatabase) throws GraphDatabaseException{",
+				((config.hasDatabaseSupport()) ? 
+						"\tGraphFactoryImpl graphFactory = new #schemaRootPackage#.impl.db.#gcCamelName#FactoryImpl();\n"+
+						"\t\tgraphFactory.setGraphDatabase(graphDatabase);\n\t"+
+						"\tGraph graph = graphFactory.createGraph(id, vMax, eMax );\n\t\tif(!graphDatabase.containsGraph(id)){\n\t\t\tgraphDatabase.insert((#jgImplDbPackage#.GraphImpl)graph);\n\t\t\treturn (#gcCamelName#)graph;\n\t\t}\n\t\telse\n\t\t\tthrow new GraphException(\"Graph with identifier \" + id + \" already exists in database.\");"
 						: "\tthrow new UnsupportedOperationException(\"No database support compiled.\");"),
-				"}",
-				// ---- transaction support ----
-				"/**",
-				" * Creates a new #gcName# graph with transaction support with initial vertex and edge counts <code>vMax</code>, <code>eMax</code>.",
-				" *",
-				" * @param vMax initial vertex count",
-				" * @param eMax initial edge count",
-				"*/",
-				"public #gcName# create#gcCamelName#WithTransactionSupport(int vMax, int eMax) {",
-				((config.hasTransactionSupport()) ? "\treturn (#gcCamelName#) graphFactory.createGraphWithTransactionSupport(#gcCamelName#.class, null, vMax, eMax);"
-						: "\tthrow new UnsupportedOperationException(\"No Transaction support compiled.\");"),
-				"}",
-				"",
-				"/**",
-				" * Creates a new #gcName# graph with transaction support with the ID <code>id</code> initial vertex and edge counts <code>vMax</code>, <code>eMax</code>.",
-				" *",
-				" * @param id the id name of the new graph",
-				" * @param vMax initial vertex count",
-				" * @param eMax initial edge count",
-				" */",
-				"public #gcName# create#gcCamelName#WithTransactionSupport(String id, int vMax, int eMax) {",
-				((config.hasTransactionSupport()) ? "\treturn (#gcCamelName#) graphFactory.createGraphWithTransactionSupport(#gcCamelName#.class, id, vMax, eMax);"
-						: "\tthrow new UnsupportedOperationException(\"No Transaction support compiled.\");"),
-				"}",
-				"",
-				"/**",
-				" * Creates a new #gcName# graph.",
-				"*/",
-				"public #gcName# create#gcCamelName#WithTransactionSupport() {",
-				((config.hasTransactionSupport()) ? "\treturn (#gcCamelName#) graphFactory.createGraphWithTransactionSupport(#gcCamelName#.class, null);"
-						: "\tthrow new UnsupportedOperationException(\"No Transaction support compiled.\");"),
-				"}",
-				"",
-				"/**",
-				" * Creates a new #gcName# graph with the ID <code>id</code>.",
-				" *",
-				" * @param id the id name of the new graph",
-				" */",
-				"public #gcName# create#gcCamelName#WithTransactionSupport(String id) {",
-				((config.hasTransactionSupport()) ? "\treturn (#gcCamelName#) graphFactory.createGraphWithTransactionSupport(#gcCamelName#.class, id);"
-						: "\tthrow new UnsupportedOperationException(\"No Transaction support compiled.\");"),
 				"}",
 				"",
 				// ---- file handling methods ----
@@ -254,9 +235,8 @@ public class SchemaCodeGenerator extends CodeGenerator {
 				" * @return the loaded #gcName#",
 				" * @throws GraphIOException if the graph cannot be loaded",
 				" */",
-				"public #gcName# load#gcCamelName#(String filename) throws GraphIOException {",
-				((config.hasStandardSupport()) ? "\treturn load#gcCamelName#(filename, null);"
-						: "\tthrow new UnsupportedOperationException(\"No Standard support compiled.\");"),
+				"public #gcName# load#gcCamelName#(ImplementationType implType, String filename) throws GraphIOException {",
+				 "\treturn load#gcCamelName#(implType, filename, null);",
 				"}",
 				"",
 				"/**",
@@ -267,42 +247,29 @@ public class SchemaCodeGenerator extends CodeGenerator {
 				" * @return the loaded #gcName#",
 				" * @throws GraphIOException if the graph cannot be loaded",
 				" */",
-				"public #gcName# load#gcCamelName#(String filename, ProgressFunction pf) throws GraphIOException {",
-				((config.hasStandardSupport()) ? "\tGraph graph = GraphIO.loadGraphFromFileWithStandardSupport(filename, this, pf);\n"
-						+ "\tif (!(graph instanceof #gcName#)) {\n"
-						+ "\t\tthrow new GraphIOException(\"Graph in file '\" + filename + \"' is not an instance of GraphClass #gcName#\");\n"
-						+ "\t}" + "\treturn (#gcName#) graph;\n"
-						: "\tthrow new UnsupportedOperationException(\"No Standard support compiled.\");"),
-				"}",
-				"",
-				// ---- file handling methods with transaction support ----
-				"/**",
-				" * Loads a #gcName# graph with transaction support from the file <code>filename</code>.",
-				" *",
-				" * @param filename the name of the file",
-				" * @return the loaded #gcName#",
-				" * @throws GraphIOException if the graph cannot be loaded",
-				" */",
-				"public #gcName# load#gcCamelName#WithTransactionSupport(String filename) throws GraphIOException {",
-				((config.hasTransactionSupport()) ? "\treturn load#gcCamelName#WithTransactionSupport(filename, null);"
-						: "\tthrow new UnsupportedOperationException(\"No Transaction support compiled.\");"),
-				"}",
-				"",
-				"/**",
-				" * Loads a #gcName# graph with transaction support from the file <code>filename</code>.",
-				" *",
-				" * @param filename the name of the file",
-				" * @param pf a progress function to monitor graph loading",
-				" * @return the loaded #gcName#",
-				" * @throws GraphIOException if the graph cannot be loaded",
-				" */",
-				"public #gcName# load#gcCamelName#WithTransactionSupport(String filename, ProgressFunction pf) throws GraphIOException {",
-				((config.hasTransactionSupport()) ? "\tGraph graph = GraphIO.loadGraphFromFileWithTransactionSupport(filename, pf);\n"
-						+ "\tif (!(graph instanceof #gcName#)) {\n"
-						+ "\t\tthrow new GraphIOException(\"Graph in file '\" + filename + \"' is not an instance of GraphClass #gcName#\");\n"
-						+ "\t}" + "\treturn (#gcName#) graph;"
-						: "\tthrow new UnsupportedOperationException(\"No Transaction support compiled.\");"),
-				"}");
+				"public #gcName# load#gcCamelName#(ImplementationType implType, String filename, ProgressFunction pf) throws GraphIOException {",
+				"\tswitch(implType){",
+				((config.hasStandardSupport()) ? 
+						"\tcase STANDARD:\n\t"+
+						"\t\tGraph stdGraph = GraphIO.loadGraphFromFileWithStandardSupport(filename, this, pf);\n\t"
+						+ "\t\tif (!(stdGraph instanceof #gcName#)) {\n\t"
+						+ "\t\t\tthrow new GraphIOException(\"Graph in file '\" + filename + \"' is not an instance of GraphClass #gcName#\");\n\t"
+						+ "\t\t}\n\t" 
+						+ "\t\treturn (#gcName#) stdGraph;\n"
+						: ""), 
+				((config.hasTransactionSupport()) ? 
+						"\tcase TRANSACTION:\n\t"+
+						"\t\tGraph transGraph = GraphIO.loadGraphFromFileWithTransactionSupport(filename, pf);\n\t"
+						+ "\t\tif (!(transGraph instanceof #gcName#)) {\n\t"
+						+ "\t\t\tthrow new GraphIOException(\"Graph in file '\" + filename + \"' is not an instance of GraphClass #gcName#\");\n\t"
+						+ "\t\t}\n\t" 
+						+ "\t\treturn (#gcName#) transGraph;\n"
+						: ""),
+				"\t}",
+				"\tthrow new UnsupportedOperationException(\"No \"+implType+\" support compiled.\");",
+				"}"
+				);
+		
 		code.setVariable("gcName", schema.getGraphClass().getQualifiedName());
 		code.setVariable("gcCamelName", camelCase(schema.getGraphClass()
 				.getQualifiedName()));
@@ -350,9 +317,7 @@ public class SchemaCodeGenerator extends CodeGenerator {
 		code.add(createCompositeDomains());
 		code.add(createGraphClass());
 		code.add(createPackageComments());
-		addImports("#schemaPackage#.#simpleClassName#Factory");
-		code.add(new CodeSnippet(true,
-				"graphFactory = new #simpleClassName#Factory();"));
+		addImports("#schemaPackage#."+schema.getGraphClass().getSimpleName()+"Factory");
 		code.addNoIndent(new CodeSnippet(true, "}"));
 		return code;
 	}
