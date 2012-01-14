@@ -239,7 +239,7 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 		}
 
 		schema = cls.getSchema();
-		graphFactory = schema.getGraphFactory();
+		//graphFactory = schema.getGraphFactory();
 		setId(id == null ? RandomIdGenerator.generateId() : id);
 		// needed for initialization of graphVersion with transactions
 		graphVersion = -1;

@@ -137,10 +137,12 @@ public class SchemaCodeGenerator extends CodeGenerator {
 				"#jgImplDbPackage#.GraphDatabase",
 				"#jgPackage#.GraphIOException",
 				"#jgPackage#.ImplementationType",
-				"#jgPackage#.GraphFactory",
-				"#jgImplPackage#.GraphFactoryImpl");
+				"#jgPackage#.GraphFactory"
+				);
 		if (config.hasDatabaseSupport()) {
-			addImports("#jgPackage#.GraphException");
+			addImports("#jgPackage#.GraphException",
+					"#jgImplPackage#.GraphFactoryImpl"
+					);
 		}
 		CodeSnippet code = new CodeSnippet(
 				true,
@@ -156,13 +158,11 @@ public class SchemaCodeGenerator extends CodeGenerator {
 						"\tcase STANDARD: \n"+
 						"\t\t\tGraphFactory stdFactory = new #schemaRootPackage#.impl.std.#gcCamelName#FactoryImpl(); \n"+
 						"\t\t\t#gcCamelName# stdGraph = (#gcCamelName#) stdFactory.createGraph(id, vMax, eMax); \n"+
-						"\t\t\tstdGraph.setGraphFactory(stdFactory);\n"+
 						"\t\t\treturn stdGraph;\n"
 						: ""),
 				((config.hasTransactionSupport())? "\tcase TRANSACTION: \n"+
 						"\t\t\tGraphFactory transFactory = new #schemaRootPackage#.impl.trans.#gcCamelName#FactoryImpl(); \n"+
 						"\t\t\t#gcCamelName# transGraph = (#gcCamelName#) transFactory.createGraph(id, vMax, eMax); \n"+
-						"\t\t\ttransGraph.setGraphFactory(transFactory);\n"+
 						"\t\t\treturn transGraph;\n"
 						: ""),		
 				"\t}",
@@ -317,7 +317,7 @@ public class SchemaCodeGenerator extends CodeGenerator {
 		code.add(createCompositeDomains());
 		code.add(createGraphClass());
 		code.add(createPackageComments());
-		addImports("#schemaPackage#."+schema.getGraphClass().getSimpleName()+"Factory");
+		//addImports("#schemaPackage#."+schema.getGraphClass().getSimpleName()+"Factory");
 		code.addNoIndent(new CodeSnippet(true, "}"));
 		return code;
 	}

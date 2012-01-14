@@ -36,7 +36,6 @@
 package de.uni_koblenz.jgralab.impl;
 
 import java.lang.reflect.Constructor;
-import java.util.ArrayList;
 import java.util.HashMap;
 
 import de.uni_koblenz.jgralab.Edge;
@@ -112,10 +111,16 @@ public abstract class GraphFactoryImpl implements GraphFactory {
 	public Graph createGraph(String id,
 			int vMax, int eMax) {
 		try {
-			if(implType.equals(ImplementationType.DATABASE))
-				return graphConstructor.newInstance(id, vMax, eMax, graphDatabase);
-			else
-				return graphConstructor.newInstance(id, vMax, eMax);
+			if(implType.equals(ImplementationType.DATABASE)){
+				Graph dbGraph =  graphConstructor.newInstance(id, vMax, eMax, graphDatabase);
+				dbGraph.setGraphFactory(this);
+				return dbGraph;
+			}
+			else{
+				Graph graph =  graphConstructor.newInstance(id, vMax, eMax);
+				graph.setGraphFactory(this);
+				return graph;
+			}
 		} catch (Exception ex) {
 			throw new SchemaClassAccessException("Cannot create graph of class "
 					+ graphConstructor.getDeclaringClass().getCanonicalName(), ex);

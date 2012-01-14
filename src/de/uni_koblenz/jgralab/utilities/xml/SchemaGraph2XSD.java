@@ -112,6 +112,7 @@ import de.uni_koblenz.ist.utilities.option_handler.OptionHandler;
 import de.uni_koblenz.ist.utilities.xml.IndentingXMLStreamWriter;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.GraphIOException;
+import de.uni_koblenz.jgralab.ImplementationType;
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.graphmarker.BooleanGraphMarker;
 import de.uni_koblenz.jgralab.grumlschema.GrumlSchema;
@@ -325,7 +326,7 @@ public class SchemaGraph2XSD {
 		// tg-file.
 		System.out.println("Loading Schema from file '" + inputFile + "'.");
 		SchemaGraph sg = comLine.hasOption('g') ? GrumlSchema.instance()
-				.loadSchemaGraph(inputFile, new ConsoleProgressFunction())
+				.loadSchemaGraph(ImplementationType.STANDARD, inputFile, new ConsoleProgressFunction())
 				: new Tg2SchemaGraph().process(inputFile);
 
 		// SchemaGraph2XSD is instantiated for conversion.

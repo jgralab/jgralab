@@ -46,7 +46,6 @@ import java.util.TreeSet;
 import java.util.Vector;
 
 import de.uni_koblenz.jgralab.Graph;
-import de.uni_koblenz.jgralab.GraphFactory;
 import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.ImplementationType;
 import de.uni_koblenz.jgralab.ProgressFunction;
@@ -361,11 +360,6 @@ public interface Schema extends Comparable<Schema> {
 	 */
 	public Method getGraphCreateMethod(ImplementationType implementationType);
 
-	/**
-	 * @return the factory that is used to create graphs, vertices and edges
-	 */
-	public GraphFactory getGraphFactory();
-
 	public IntegerDomain getIntegerDomain();
 
 	public String getName();
@@ -461,11 +455,6 @@ public interface Schema extends Comparable<Schema> {
 	 */
 	public void setAllowLowercaseEnumConstants(
 			boolean allowLowercaseEnumConstants);
-
-	/**
-	 * sets the factory that is used to create graphs, vertices and edges
-	 */
-	public void setGraphFactory(GraphFactory factory);
 
 	/**
 	 * Creates a string representation of this schema in the TG language. Do not

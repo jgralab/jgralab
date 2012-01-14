@@ -35,7 +35,6 @@
 
 package de.uni_koblenz.jgralab;
 
-import de.uni_koblenz.jgralab.impl.db.GraphDatabase;
 
 /**
  * Creates instances of graphs, edges and vertices. By changing factory it is
@@ -44,9 +43,6 @@ import de.uni_koblenz.jgralab.impl.db.GraphDatabase;
  * @author ist@uni-koblenz.de
  */
 public interface GraphFactory {
-
-	// --- Methods for option STDIMPL
-	// ---------------------------------------------------
 
 	/**
 	 * creates a Graph-object for the specified class. The returned object may

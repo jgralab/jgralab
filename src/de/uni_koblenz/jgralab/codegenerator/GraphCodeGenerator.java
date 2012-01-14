@@ -69,12 +69,13 @@ public class GraphCodeGenerator extends AttributedElementCodeGenerator {
 	protected CodeBlock createBody() {
 		CodeList code = (CodeList) super.createBody();
 		if (currentCycle.isStdOrDbImplOrTransImpl()) {
-			addImports("#jgPackage#.ImplementationType");
 			if (currentCycle.isStdImpl()) {
 				addImports("#jgImplStdPackage#.#baseClassName#");
+				addImports("#jgPackage#.ImplementationType");
 			}
 			if (currentCycle.isTransImpl()) {
 				addImports("#jgImplTransPackage#.#baseClassName#");
+				addImports("#jgPackage#.ImplementationType");
 			}
 			if (currentCycle.isDbImpl()) {
 				addImports("de.uni_koblenz.jgralab.GraphException",
@@ -133,6 +134,7 @@ public class GraphCodeGenerator extends AttributedElementCodeGenerator {
 					"public #simpleClassName#Impl(java.lang.String id, int vMax, int eMax) {",
 					"\tsuper(id, #schemaName#.instance().#schemaVariableName#, vMax, eMax);",
 					"\tinitializeAttributesWithDefaultValues();",
+					"\tgraphFactory = new #simpleClassName#FactoryImpl();",
 					"}",
 					"",
 					"public static #javaClassName# create(int vMax, int eMax) {",
@@ -177,11 +179,13 @@ public class GraphCodeGenerator extends AttributedElementCodeGenerator {
 					"public #simpleClassName#Impl(java.lang.String id, GraphDatabase graphDatabase) {",
 					"\tsuper(id, #schemaName#.instance().#schemaVariableName#, graphDatabase);",
 					"\tinitializeAttributesWithDefaultValues();",
+					"\tgraphFactory = new #simpleClassName#FactoryImpl();",
 					"}",
 					"",
 					"public #simpleClassName#Impl(java.lang.String id, int vMax, int eMax, GraphDatabase graphDatabase) {",
 					"\tsuper(id, vMax, eMax, #schemaName#.instance().#schemaVariableName#, graphDatabase);",
 					"\tinitializeAttributesWithDefaultValues();",
+					"\tgraphFactory = new #simpleClassName#FactoryImpl();",
 					"}",
 					"",
 
