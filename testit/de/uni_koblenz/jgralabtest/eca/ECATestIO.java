@@ -10,6 +10,7 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import de.uni_koblenz.jgralab.ImplementationType;
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.eca.Action;
 import de.uni_koblenz.jgralab.eca.Condition;
@@ -308,7 +309,7 @@ public class ECATestIO {
 	 */
 	public static void initGraph() {
 		SimpleLibraryGraph graph = SimpleLibrarySchema.instance()
-				.createSimpleLibraryGraph();
+				.createSimpleLibraryGraph(ImplementationType.STANDARD);
 		graph.set_version("v1.0");
 
 		// Library

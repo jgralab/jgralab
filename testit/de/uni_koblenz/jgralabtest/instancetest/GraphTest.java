@@ -125,11 +125,11 @@ public class GraphTest extends InstanceTest {
 		VertexTestGraph out = null;
 		switch (implementationType) {
 		case STANDARD:
-			out = VertexTestSchema.instance().createVertexTestGraph();
+			out = VertexTestSchema.instance().createVertexTestGraph(ImplementationType.STANDARD);
 			break;
 		case TRANSACTION:
 			out = VertexTestSchema.instance()
-					.createVertexTestGraphWithTransactionSupport();
+					.createVertexTestGraph(ImplementationType.TRANSACTION);
 			break;
 		case DATABASE:
 			out = createVertexTestGraphWithDatabaseSupport();
@@ -2876,11 +2876,11 @@ public class GraphTest extends InstanceTest {
 		MinimalGraph g3 = null;
 		switch (implementationType) {
 		case STANDARD:
-			g3 = MinimalSchema.instance().createMinimalGraph();
+			g3 = MinimalSchema.instance().createMinimalGraph(ImplementationType.STANDARD);
 			break;
 		case TRANSACTION:
 			g3 = MinimalSchema.instance()
-					.createMinimalGraphWithTransactionSupport();
+					.createMinimalGraph(ImplementationType.TRANSACTION);
 			break;
 		case DATABASE:
 			dbHandler.loadMinimalSchemaIntoGraphDatabase();

@@ -45,6 +45,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import de.uni_koblenz.jgralab.GraphException;
+import de.uni_koblenz.jgralab.ImplementationType;
 import de.uni_koblenz.jgralab.trans.CommitFailedException;
 import de.uni_koblenz.jgralab.trans.InvalidSavepointException;
 import de.uni_koblenz.jgralab.trans.Savepoint;
@@ -74,7 +75,7 @@ public class SavepointImplTest {
 	@Before
 	public void setUp() {
 		MotorwayMapSchema schema = MotorwayMapSchema.instance();
-		motorwayMap = schema.createMotorwayMapWithTransactionSupport(V, E);
+		motorwayMap = schema.createMotorwayMap(ImplementationType.TRANSACTION,V, E);
 		readWriteTransaction1 = motorwayMap.newTransaction();
 		readWriteTransaction2 = motorwayMap.newTransaction();
 		readOnlyTransaction = motorwayMap.newReadOnlyTransaction();

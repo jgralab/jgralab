@@ -79,11 +79,11 @@ public class VertexListTest extends InstanceTest {
 	public void setup() throws CommitFailedException {
 		switch (implementationType) {
 		case STANDARD:
-			g = MinimalSchema.instance().createMinimalGraph(V, E);
+			g = MinimalSchema.instance().createMinimalGraph(ImplementationType.STANDARD,V, E);
 			break;
 		case TRANSACTION:
 			g = MinimalSchema.instance()
-					.createMinimalGraphWithTransactionSupport(V, E);
+					.createMinimalGraph(ImplementationType.TRANSACTION,V, E);
 			break;
 		case DATABASE:
 			g = createMinimalGraphInDatabase();
@@ -306,11 +306,11 @@ public class VertexListTest extends InstanceTest {
 		MinimalGraph g = null;
 		switch (implementationType) {
 		case STANDARD:
-			g = MinimalSchema.instance().createMinimalGraph(V, E);
+			g = MinimalSchema.instance().createMinimalGraph(ImplementationType.STANDARD,V, E);
 			break;
 		case TRANSACTION:
 			g = MinimalSchema.instance()
-					.createMinimalGraphWithTransactionSupport(V, E);
+					.createMinimalGraph(ImplementationType.TRANSACTION,V, E);
 			break;
 		case DATABASE:
 			return; // because vertex list sorting is not implemented for db

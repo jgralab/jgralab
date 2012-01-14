@@ -106,11 +106,11 @@ public class EdgeTest extends InstanceTest {
 	public void setUp() {
 		switch (implementationType) {
 		case STANDARD:
-			g = VertexTestSchema.instance().createVertexTestGraph();
+			g = VertexTestSchema.instance().createVertexTestGraph(ImplementationType.STANDARD);
 			break;
 		case TRANSACTION:
 			g = VertexTestSchema.instance()
-					.createVertexTestGraphWithTransactionSupport();
+					.createVertexTestGraph(ImplementationType.TRANSACTION);
 			break;
 		case DATABASE:
 			g = createVertexTestGraphWithDatabaseSupport();
@@ -314,11 +314,11 @@ public class EdgeTest extends InstanceTest {
 		for (int i = 0; i < RANDOM_GRAPH_COUNT; i++) {
 			switch (implementationType) {
 			case STANDARD:
-				g = VertexTestSchema.instance().createVertexTestGraph();
+				g = VertexTestSchema.instance().createVertexTestGraph(ImplementationType.STANDARD);
 				break;
 			case TRANSACTION:
 				g = VertexTestSchema.instance()
-						.createVertexTestGraphWithTransactionSupport();
+						.createVertexTestGraph(ImplementationType.TRANSACTION);
 				break;
 			case DATABASE:
 				g = dbHandler.createVertexTestGraphWithDatabaseSupport(ID + i);
@@ -524,11 +524,11 @@ public class EdgeTest extends InstanceTest {
 		for (int i = 0; i < RANDOM_GRAPH_COUNT; i++) {
 			switch (implementationType) {
 			case STANDARD:
-				g = VertexTestSchema.instance().createVertexTestGraph();
+				g = VertexTestSchema.instance().createVertexTestGraph(ImplementationType.STANDARD);
 				break;
 			case TRANSACTION:
 				g = VertexTestSchema.instance()
-						.createVertexTestGraphWithTransactionSupport();
+						.createVertexTestGraph(ImplementationType.TRANSACTION);
 				break;
 			case DATABASE:
 				g = dbHandler.createVertexTestGraphWithDatabaseSupport(ID + i);
@@ -677,11 +677,11 @@ public class EdgeTest extends InstanceTest {
 		for (int i = 0; i < RANDOM_GRAPH_COUNT; i++) {
 			switch (implementationType) {
 			case STANDARD:
-				g = VertexTestSchema.instance().createVertexTestGraph();
+				g = VertexTestSchema.instance().createVertexTestGraph(ImplementationType.STANDARD);
 				break;
 			case TRANSACTION:
 				g = VertexTestSchema.instance()
-						.createVertexTestGraphWithTransactionSupport();
+						.createVertexTestGraph(ImplementationType.TRANSACTION);
 				break;
 			case DATABASE:
 				g = dbHandler.createVertexTestGraphWithDatabaseSupport(ID + i);
@@ -917,11 +917,11 @@ public class EdgeTest extends InstanceTest {
 		for (int i = 0; i < RANDOM_GRAPH_COUNT; i++) {
 			switch (implementationType) {
 			case STANDARD:
-				g = VertexTestSchema.instance().createVertexTestGraph();
+				g = VertexTestSchema.instance().createVertexTestGraph(ImplementationType.STANDARD);
 				break;
 			case TRANSACTION:
 				g = VertexTestSchema.instance()
-						.createVertexTestGraphWithTransactionSupport();
+						.createVertexTestGraph(ImplementationType.TRANSACTION);
 				break;
 			case DATABASE:
 				g = dbHandler.createVertexTestGraphWithDatabaseSupport(ID + i);
@@ -1258,11 +1258,11 @@ public class EdgeTest extends InstanceTest {
 		for (int i = 0; i < RANDOM_GRAPH_COUNT; i++) {
 			switch (implementationType) {
 			case STANDARD:
-				g = VertexTestSchema.instance().createVertexTestGraph();
+				g = VertexTestSchema.instance().createVertexTestGraph(ImplementationType.STANDARD);
 				break;
 			case TRANSACTION:
 				g = VertexTestSchema.instance()
-						.createVertexTestGraphWithTransactionSupport();
+						.createVertexTestGraph(ImplementationType.TRANSACTION);
 				break;
 			case DATABASE:
 				g = dbHandler.createVertexTestGraphWithDatabaseSupport(ID + i);
@@ -1523,11 +1523,11 @@ public class EdgeTest extends InstanceTest {
 		for (int i = 0; i < RANDOM_GRAPH_COUNT; i++) {
 			switch (implementationType) {
 			case STANDARD:
-				g = VertexTestSchema.instance().createVertexTestGraph();
+				g = VertexTestSchema.instance().createVertexTestGraph(ImplementationType.STANDARD);
 				break;
 			case TRANSACTION:
 				g = VertexTestSchema.instance()
-						.createVertexTestGraphWithTransactionSupport();
+						.createVertexTestGraph(ImplementationType.TRANSACTION);
 				break;
 			case DATABASE:
 				g = dbHandler.createVertexTestGraphWithDatabaseSupport(ID + i);
@@ -1706,11 +1706,11 @@ public class EdgeTest extends InstanceTest {
 		for (int i = 0; i < RANDOM_GRAPH_COUNT; i++) {
 			switch (implementationType) {
 			case STANDARD:
-				g = VertexTestSchema.instance().createVertexTestGraph();
+				g = VertexTestSchema.instance().createVertexTestGraph(ImplementationType.STANDARD);
 				break;
 			case TRANSACTION:
 				g = VertexTestSchema.instance()
-						.createVertexTestGraphWithTransactionSupport();
+						.createVertexTestGraph(ImplementationType.TRANSACTION);
 				break;
 			case DATABASE:
 				g = dbHandler.createVertexTestGraphWithDatabaseSupport(ID + i);
@@ -1975,11 +1975,11 @@ public class EdgeTest extends InstanceTest {
 		for (int i = 0; i < RANDOM_GRAPH_COUNT; i++) {
 			switch (implementationType) {
 			case STANDARD:
-				g = VertexTestSchema.instance().createVertexTestGraph();
+				g = VertexTestSchema.instance().createVertexTestGraph(ImplementationType.STANDARD);
 				break;
 			case TRANSACTION:
 				g = VertexTestSchema.instance()
-						.createVertexTestGraphWithTransactionSupport();
+						.createVertexTestGraph(ImplementationType.TRANSACTION);
 				break;
 			case DATABASE:
 				g = dbHandler.createVertexTestGraphWithDatabaseSupport(ID + i);
@@ -2349,11 +2349,11 @@ public class EdgeTest extends InstanceTest {
 		for (int i = 0; i < RANDOM_GRAPH_COUNT; i++) {
 			switch (implementationType) {
 			case STANDARD:
-				g = VertexTestSchema.instance().createVertexTestGraph();
+				g = VertexTestSchema.instance().createVertexTestGraph(ImplementationType.STANDARD);
 				break;
 			case TRANSACTION:
 				g = VertexTestSchema.instance()
-						.createVertexTestGraphWithTransactionSupport();
+						.createVertexTestGraph(ImplementationType.TRANSACTION);
 				break;
 			case DATABASE:
 				g = dbHandler.createVertexTestGraphWithDatabaseSupport(ID + i);
@@ -4326,11 +4326,11 @@ public class EdgeTest extends InstanceTest {
 		VertexTestGraph anotherGraph = null;
 		switch (implementationType) {
 		case STANDARD:
-			anotherGraph = VertexTestSchema.instance().createVertexTestGraph();
+			anotherGraph = VertexTestSchema.instance().createVertexTestGraph(ImplementationType.STANDARD);
 			break;
 		case TRANSACTION:
 			anotherGraph = VertexTestSchema.instance()
-					.createVertexTestGraphWithTransactionSupport();
+					.createVertexTestGraph(ImplementationType.TRANSACTION);
 			break;
 		case DATABASE:
 			anotherGraph = dbHandler
