@@ -1367,6 +1367,10 @@ public class GraphIO {
 		sortVertexClasses();
 		sortEdgeClasses();
 
+		if(!schemaClass.equals(SchemaImpl.class)){
+			addHierarchyInformation();
+		}
+		
 		domDef(); // create Domains
 		completeGraphClass(); // create GraphClasses with contained elements
 		buildHierarchy(); // build inheritance relationships
@@ -1375,7 +1379,27 @@ public class GraphIO {
 	
 	public static Class<? extends Schema> schemaClass = SchemaImpl.class;
 	
+	private void addHierarchyInformation(){
+		for (Entry<String, List<GraphElementClassData>> gcElements : edgeClassBuffer
+				.entrySet()) {
+			for (GraphElementClassData eData : gcElements.getValue()) {
+				for(String supClassName : eData.directSuperClasses){
+					GraphElementClassData superClass = this.getEdgeClassDataByName(supClassName);
+					superClass.hasSubClasses = true;
+				}
+			}
+		}
+	}
 
+	private GraphElementClassData getEdgeClassDataByName(String qualname){
+		for (Entry<String, List<GraphElementClassData>> gcElements : edgeClassBuffer
+				.entrySet()) {
+			for (GraphElementClassData eData : gcElements.getValue()) {
+				if(eData.getQualifiedName().equals(qualname)) return eData;
+			}
+		}
+		return null;
+	}
 	
 	private Schema createSchema(String name, String prefix){
 		System.out.println("create schema instance");
@@ -1939,7 +1963,47 @@ public class GraphIO {
 
 	private EdgeClass createEdgeClass(GraphElementClassData ecd, GraphClass gc)
 			throws GraphIOException, SchemaException {
-		EdgeClass ec = gc.createEdgeClass(ecd.getQualifiedName(), gc
+		
+		EdgeClass ec = null;
+		if((!schemaClass.equals(SchemaImpl.class)) &&
+			(ecd.attributes == null || ecd.attributes.isEmpty())&&
+				(!ecd.hasSubClasses)&&
+					(ecd.directSuperClasses == null || ecd.directSuperClasses.isEmpty())){
+						
+					Method m;
+					try {
+						m = gc.getClass().getMethod("createReferenceClass", String.class, 
+								VertexClass.class, int.class, int.class, String.class, AggregationKind.class,
+								VertexClass.class, int.class, int.class, String.class, AggregationKind.class);
+					
+						ec = (EdgeClass) m.invoke(gc,
+								ecd.getQualifiedName(), gc
+								.getVertexClass(ecd.fromVertexClassName),
+								ecd.fromMultiplicity[0], ecd.fromMultiplicity[1],
+								ecd.fromRoleName, ecd.fromAggregation, gc
+										.getVertexClass(ecd.toVertexClassName),
+								ecd.toMultiplicity[0], ecd.toMultiplicity[1], ecd.toRoleName,
+								ecd.toAggregation);
+					} catch (SecurityException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (NoSuchMethodException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (IllegalArgumentException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (IllegalAccessException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (InvocationTargetException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+			
+		}
+		else{
+			ec = gc.createEdgeClass(ecd.getQualifiedName(), gc
 				.getVertexClass(ecd.fromVertexClassName),
 				ecd.fromMultiplicity[0], ecd.fromMultiplicity[1],
 				ecd.fromRoleName, ecd.fromAggregation, gc
@@ -1947,8 +2011,8 @@ public class GraphIO {
 				ecd.toMultiplicity[0], ecd.toMultiplicity[1], ecd.toRoleName,
 				ecd.toAggregation);
 
-		addAttributes(ecd.attributes, ec);
-
+			addAttributes(ecd.attributes, ec);
+		}
 		for (Constraint constraint : ecd.constraints) {
 			ec.addConstraint(constraint);
 		}
@@ -3139,6 +3203,8 @@ public class GraphIO {
 
 		boolean isAbstract = false;
 
+		boolean hasSubClasses = false;
+		
 		List<String> directSuperClasses = new LinkedList<String>();
 
 		String fromVertexClassName;
