@@ -757,7 +757,7 @@ public class SchemaImpl implements Schema {
 	 * @return a new {@link Package} with the given qualified name, or an
 	 *         existing package with this qualified name.
 	 */
-	Package createPackageWithParents(String qn) {
+	protected Package createPackageWithParents(String qn) {
 		if (packages.containsKey(qn)) {
 			return packages.get(qn);
 		}

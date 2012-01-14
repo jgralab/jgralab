@@ -47,6 +47,8 @@ import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.nio.CharBuffer;
 import java.nio.charset.Charset;
@@ -252,7 +254,7 @@ public class GraphIO {
 	// multiple identical strings are used as attribute values
 	private final HashMap<String, String> stringPool;
 
-	private GraphIO() {
+	protected GraphIO() {
 		domains = new TreeMap<String, Domain>();
 		GECsearch = new HashMap<GraphElementClass, GraphClass>();
 		createMethods = new HashMap<String, Method>();
@@ -266,6 +268,7 @@ public class GraphIO {
 		commentData = new HashMap<String, List<String>>();
 		stringPool = new HashMap<String, String>();
 		putBackChar = -1;
+		
 	}
 
 	/**
@@ -1343,7 +1346,7 @@ public class GraphIO {
 			}
 		}
 
-		schema = new SchemaImpl(qn[1], qn[0]);
+		schema = createSchema(qn[1],qn[0]);
 
 		// read Domains and GraphClasses with contained GraphElementClasses
 		parseSchema();
@@ -1368,6 +1371,38 @@ public class GraphIO {
 		completeGraphClass(); // create GraphClasses with contained elements
 		buildHierarchy(); // build inheritance relationships
 		processComments();
+	}
+	
+	public static Class<? extends Schema> schemaClass = SchemaImpl.class;
+	
+
+	
+	private Schema createSchema(String name, String prefix){
+		System.out.println("create schema instance");
+		try {
+			Constructor <? extends Schema > cons = schemaClass.getConstructor(String.class,String.class);
+			Schema schema = cons.newInstance(name,prefix);
+			return schema;
+		} catch (SecurityException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (NoSuchMethodException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalArgumentException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InstantiationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InvocationTargetException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return new SchemaImpl(name,prefix);
 	}
 
 	/**
