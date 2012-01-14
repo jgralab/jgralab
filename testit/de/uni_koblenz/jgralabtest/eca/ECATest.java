@@ -8,6 +8,7 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import de.uni_koblenz.jgralab.ImplementationType;
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.eca.Action;
 import de.uni_koblenz.jgralab.eca.Condition;
@@ -262,7 +263,7 @@ public class ECATest {
 		System.out
 				.println("Test if an Exception occurs when an Event is assigned to two Graphs");
 		SimpleLibraryGraph newGraph = SimpleLibrarySchema.instance()
-				.createSimpleLibraryGraph();
+				.createSimpleLibraryGraph(ImplementationType.STANDARD);
 
 		EventDescription aft_ev = new CreateVertexEventDescription(
 				EventDescription.EventTime.AFTER, Library.class);
@@ -289,7 +290,7 @@ public class ECATest {
 		System.out
 				.println("Test if an Exception occurs when a Rule is assigned to two Graphs");
 		SimpleLibraryGraph newGraph = SimpleLibrarySchema.instance()
-				.createSimpleLibraryGraph();
+				.createSimpleLibraryGraph(ImplementationType.STANDARD);
 
 		EventDescription aft_ev = new CreateVertexEventDescription(
 				EventDescription.EventTime.AFTER, Library.class);
@@ -473,7 +474,7 @@ public class ECATest {
 	
 	static void initGraph() {
 		SimpleLibraryGraph graph = SimpleLibrarySchema.instance()
-				.createSimpleLibraryGraph();
+				.createSimpleLibraryGraph(ImplementationType.STANDARD);
 		graph.set_version("v1.0");
 
 		// Library

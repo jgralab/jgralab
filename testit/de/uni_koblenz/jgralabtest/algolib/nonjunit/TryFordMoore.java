@@ -37,6 +37,7 @@ package de.uni_koblenz.jgralabtest.algolib.nonjunit;
 import java.util.Stack;
 
 import de.uni_koblenz.jgralab.Edge;
+import de.uni_koblenz.jgralab.ImplementationType;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.algolib.algorithms.AlgorithmTerminatedException;
 import de.uni_koblenz.jgralab.algolib.algorithms.shortest_paths.FloydAlgorithm;
@@ -67,7 +68,7 @@ public class TryFordMoore {
 	}
 
 	public static void main(String[] args) {
-		graph = WeightedSchema.instance().createWeightedGraph(20, 20);
+		graph = WeightedSchema.instance().createWeightedGraph(ImplementationType.STANDARD,20, 20);
 		// heuristic = new DoubleVertexMarker(graph);
 		weightFunction = new DoubleEdgeMarker(graph);
 		names = new ArrayVertexMarker<String>(graph);

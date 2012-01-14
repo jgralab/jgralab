@@ -10,6 +10,7 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import de.uni_koblenz.jgralab.ImplementationType;
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.eca.Action;
 import de.uni_koblenz.jgralab.eca.ECAIO;
@@ -38,7 +39,7 @@ public class ECATestGretlAction {
 
 	private static void initGraph() {
 		AddressBookGraph g = AddressBookSchema.instance()
-				.createAddressBookGraph();
+				.createAddressBookGraph(ImplementationType.STANDARD);
 		AddressBook ab1 = g.createAddressBook();
 		ab1.set_name("Democrats");
 		Contact c1 = g.createContact();

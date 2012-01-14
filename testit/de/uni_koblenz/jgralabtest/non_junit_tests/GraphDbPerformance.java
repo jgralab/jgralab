@@ -232,7 +232,7 @@ public class GraphDbPerformance {
 
 	private static WeightedGraph createTheGraph() throws GraphDatabaseException {
 		WeightedGraph graph = WeightedSchema.instance()
-				.createWeightedGraphWithDatabaseSupport(GRAPH_ID, gdb);
+				.createWeightedGraph(GRAPH_ID, gdb);
 		// graphGenerator.createPlanarRandomGraph(graph, VERTICES_PER_DIMENSION,
 		// INCIDENCES_PER_VERTEX, new Random(SEED), false);
 		createGraphWithRandomEdgeWeight(graph, VERTICES_PER_DIMENSION, SEED);

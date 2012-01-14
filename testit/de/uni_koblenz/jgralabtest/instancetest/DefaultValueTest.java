@@ -119,7 +119,7 @@ public class DefaultValueTest extends InstanceTest {
 			String id) {
 		try {
 			return DefaultValueTestSchema.instance()
-					.createDefaultValueTestGraphWithDatabaseSupport(id,
+					.createDefaultValueTestGraph(id,
 							dbHandler.getGraphDatabase());
 		} catch (Exception exception) {
 			fail("Could not create test graph");
@@ -132,11 +132,11 @@ public class DefaultValueTest extends InstanceTest {
 		switch (implementationType) {
 		case STANDARD:
 			graph = DefaultValueTestSchema.instance()
-					.createDefaultValueTestGraph();
+					.createDefaultValueTestGraph(ImplementationType.STANDARD);
 			break;
 		case TRANSACTION:
 			graph = DefaultValueTestSchema.instance()
-					.createDefaultValueTestGraphWithTransactionSupport();
+					.createDefaultValueTestGraph(ImplementationType.TRANSACTION);
 			break;
 		case DATABASE:
 			graph = createDefaultValueTestGraphWithDatabaseSupport();
@@ -257,7 +257,7 @@ public class DefaultValueTest extends InstanceTest {
 		switch (implementationType) {
 		case TRANSACTION:
 			secondGraph = DefaultValueTestSchema.instance()
-					.createDefaultValueTestGraphWithTransactionSupport();
+					.createDefaultValueTestGraph(ImplementationType.TRANSACTION);
 			break;
 		case STANDARD:
 		case DATABASE:
