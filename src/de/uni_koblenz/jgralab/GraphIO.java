@@ -47,8 +47,6 @@ import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.nio.CharBuffer;
 import java.nio.charset.Charset;
@@ -71,8 +69,8 @@ import java.util.zip.GZIPOutputStream;
 
 import de.uni_koblenz.jgralab.codegenerator.CodeGeneratorConfiguration;
 import de.uni_koblenz.jgralab.graphmarker.BooleanGraphMarker;
-import de.uni_koblenz.jgralab.impl.InternalGraph;
 import de.uni_koblenz.jgralab.impl.GraphBaseImpl;
+import de.uni_koblenz.jgralab.impl.InternalGraph;
 import de.uni_koblenz.jgralab.impl.db.GraphDatabase;
 import de.uni_koblenz.jgralab.impl.db.GraphDatabaseException;
 import de.uni_koblenz.jgralab.schema.AggregationKind;
@@ -162,15 +160,15 @@ public class GraphIO {
 		}
 	}
 
-	private static final int BUFFER_SIZE = 65536;
+	protected static final int BUFFER_SIZE = 65536;
 
 	private static Logger logger = Logger.getLogger(GraphIO.class.getName());
 
-	private InputStream TGIn;
+	protected InputStream TGIn;
 
 	private DataOutputStream TGOut;
 
-	private Schema schema;
+	protected Schema schema;
 
 	/**
 	 * Maps domain names to the respective Domains.
@@ -180,7 +178,7 @@ public class GraphIO {
 	/**
 	 * Maps GraphElementClasses to their containing GraphClasses
 	 */
-	private final Map<GraphElementClass, GraphClass> GECsearch;
+	protected final Map<GraphElementClass, GraphClass> GECsearch;
 
 	private final Map<String, Method> createMethods;
 
@@ -237,7 +235,7 @@ public class GraphIO {
 	 * Buffers the parsed data of edge classes prior to their creation in
 	 * JGraLab.
 	 */
-	private final Map<String, List<GraphElementClassData>> edgeClassBuffer;
+	protected final Map<String, List<GraphElementClassData>> edgeClassBuffer;
 
 	private final Map<String, List<String>> commentData;
 
@@ -1207,7 +1205,7 @@ public class GraphIO {
 		}
 	}
 
-	private static void close(Closeable stream) throws GraphIOException {
+	protected static void close(Closeable stream) throws GraphIOException {
 		try {
 			if (stream != null) {
 				stream.close();
@@ -1272,7 +1270,7 @@ public class GraphIO {
 		}
 	}
 
-	private void tgfile() throws GraphIOException, SchemaException, IOException {
+	protected void tgfile() throws GraphIOException, SchemaException, IOException {
 		line = 1;
 		la = read();
 		match();
@@ -1309,7 +1307,7 @@ public class GraphIO {
 	 * 
 	 * @throws GraphIOException
 	 */
-	private void schema() throws GraphIOException, SchemaException {
+	protected void schema() throws GraphIOException, SchemaException {
 		currentPackageName = "";
 		match("Schema");
 		String[] qn = matchQualifiedName(true);
@@ -1366,10 +1364,6 @@ public class GraphIO {
 		sortRecordDomains();
 		sortVertexClasses();
 		sortEdgeClasses();
-
-		if(!schemaClass.equals(SchemaImpl.class)){
-			addHierarchyInformation();
-		}
 		
 		domDef(); // create Domains
 		completeGraphClass(); // create GraphClasses with contained elements
@@ -1377,55 +1371,10 @@ public class GraphIO {
 		processComments();
 	}
 	
-	public static Class<? extends Schema> schemaClass = SchemaImpl.class;
 	
-	private void addHierarchyInformation(){
-		for (Entry<String, List<GraphElementClassData>> gcElements : edgeClassBuffer
-				.entrySet()) {
-			for (GraphElementClassData eData : gcElements.getValue()) {
-				for(String supClassName : eData.directSuperClasses){
-					GraphElementClassData superClass = this.getEdgeClassDataByName(supClassName);
-					superClass.hasSubClasses = true;
-				}
-			}
-		}
-	}
 
-	private GraphElementClassData getEdgeClassDataByName(String qualname){
-		for (Entry<String, List<GraphElementClassData>> gcElements : edgeClassBuffer
-				.entrySet()) {
-			for (GraphElementClassData eData : gcElements.getValue()) {
-				if(eData.getQualifiedName().equals(qualname)) return eData;
-			}
-		}
-		return null;
-	}
 	
-	private Schema createSchema(String name, String prefix){
-		System.out.println("create schema instance");
-		try {
-			Constructor <? extends Schema > cons = schemaClass.getConstructor(String.class,String.class);
-			Schema schema = cons.newInstance(name,prefix);
-			return schema;
-		} catch (SecurityException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (NoSuchMethodException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IllegalArgumentException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (InstantiationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (InvocationTargetException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+	protected Schema createSchema(String name, String prefix){
 		return new SchemaImpl(name,prefix);
 	}
 
@@ -1732,7 +1681,7 @@ public class GraphIO {
 		return attributesData;
 	}
 
-	private void addAttributes(List<AttributeData> attributesData,
+	protected void addAttributes(List<AttributeData> attributesData,
 			AttributedElementClass aec) throws GraphIOException {
 		for (AttributeData ad : attributesData) {
 			aec.addAttribute(ad.name, attrDomain(ad.domainDescription),
@@ -1961,58 +1910,19 @@ public class GraphIO {
 		return vc;
 	}
 
-	private EdgeClass createEdgeClass(GraphElementClassData ecd, GraphClass gc)
+	protected EdgeClass createEdgeClass(GraphElementClassData ecd, GraphClass gc)
 			throws GraphIOException, SchemaException {
 		
-		EdgeClass ec = null;
-		if((!schemaClass.equals(SchemaImpl.class)) &&
-			(ecd.attributes == null || ecd.attributes.isEmpty())&&
-				(!ecd.hasSubClasses)&&
-					(ecd.directSuperClasses == null || ecd.directSuperClasses.isEmpty())){
-						
-					Method m;
-					try {
-						m = gc.getClass().getMethod("createReferenceClass", String.class, 
-								VertexClass.class, int.class, int.class, String.class, AggregationKind.class,
-								VertexClass.class, int.class, int.class, String.class, AggregationKind.class);
-					
-						ec = (EdgeClass) m.invoke(gc,
-								ecd.getQualifiedName(), gc
-								.getVertexClass(ecd.fromVertexClassName),
-								ecd.fromMultiplicity[0], ecd.fromMultiplicity[1],
-								ecd.fromRoleName, ecd.fromAggregation, gc
-										.getVertexClass(ecd.toVertexClassName),
-								ecd.toMultiplicity[0], ecd.toMultiplicity[1], ecd.toRoleName,
-								ecd.toAggregation);
-					} catch (SecurityException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					} catch (NoSuchMethodException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					} catch (IllegalArgumentException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					} catch (IllegalAccessException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					} catch (InvocationTargetException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-			
-		}
-		else{
-			ec = gc.createEdgeClass(ecd.getQualifiedName(), gc
-				.getVertexClass(ecd.fromVertexClassName),
-				ecd.fromMultiplicity[0], ecd.fromMultiplicity[1],
-				ecd.fromRoleName, ecd.fromAggregation, gc
-						.getVertexClass(ecd.toVertexClassName),
-				ecd.toMultiplicity[0], ecd.toMultiplicity[1], ecd.toRoleName,
-				ecd.toAggregation);
+		EdgeClass ec = gc.createEdgeClass(ecd.getQualifiedName(), gc
+			.getVertexClass(ecd.fromVertexClassName),
+			ecd.fromMultiplicity[0], ecd.fromMultiplicity[1],
+			ecd.fromRoleName, ecd.fromAggregation, gc
+					.getVertexClass(ecd.toVertexClassName),
+			ecd.toMultiplicity[0], ecd.toMultiplicity[1], ecd.toRoleName,
+			ecd.toAggregation);
 
-			addAttributes(ecd.attributes, ec);
-		}
+		addAttributes(ecd.attributes, ec);
+		
 		for (Constraint constraint : ecd.constraints) {
 			ec.addConstraint(constraint);
 		}
@@ -3193,43 +3103,41 @@ public class GraphIO {
 	 * GraphElementClassData contains the parsed data of a GraphElementClass.
 	 * This data is used to create a GraphElementClass.
 	 */
-	private class GraphElementClassData {
-		String simpleName;
-		String packageName;
+	protected class GraphElementClassData {
+		protected String simpleName;
+		protected String packageName;
 
-		String getQualifiedName() {
+		public String getQualifiedName() {
 			return toQNameString(packageName, simpleName);
 		}
 
-		boolean isAbstract = false;
-
-		boolean hasSubClasses = false;
+		public boolean isAbstract = false;
 		
-		List<String> directSuperClasses = new LinkedList<String>();
+		public List<String> directSuperClasses = new LinkedList<String>();
 
-		String fromVertexClassName;
+		public String fromVertexClassName;
 
-		int[] fromMultiplicity = { 1, Integer.MAX_VALUE };
+		public int[] fromMultiplicity = { 1, Integer.MAX_VALUE };
 
-		String fromRoleName = "";
+		public String fromRoleName = "";
 
-		Set<String> redefinedFromRoles = null;
+		protected Set<String> redefinedFromRoles = null;
 
-		AggregationKind fromAggregation;
+		public AggregationKind fromAggregation;
 
-		String toVertexClassName;
+		public String toVertexClassName;
 
-		int[] toMultiplicity = { 1, Integer.MAX_VALUE };
+		public int[] toMultiplicity = { 1, Integer.MAX_VALUE };
 
-		String toRoleName = "";
+		public String toRoleName = "";
 
-		Set<String> redefinedToRoles = null;
+		protected Set<String> redefinedToRoles = null;
 
-		AggregationKind toAggregation;
+		public AggregationKind toAggregation;
 
-		List<AttributeData> attributes = new ArrayList<AttributeData>();
+		public List<AttributeData> attributes = new ArrayList<AttributeData>();
 
-		Set<Constraint> constraints = new HashSet<Constraint>(1);
+		public Set<Constraint> constraints = new HashSet<Constraint>(1);
 	}
 
 	public static Graph loadGraphFromDatabase(String id,
