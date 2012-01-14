@@ -56,7 +56,6 @@ import javax.tools.StandardJavaFileManager;
 import javax.tools.ToolProvider;
 
 import de.uni_koblenz.jgralab.Graph;
-import de.uni_koblenz.jgralab.GraphFactory;
 import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.ImplementationType;
@@ -164,12 +163,6 @@ public class SchemaImpl implements Schema {
 	 * default graph class {@link GraphClass})
 	 */
 	private GraphClass graphClass;
-
-	/**
-	 * The {@link GraphFactory} for this schemas {@link GraphClass}, see {
-	 * {@link #graphClass}.
-	 */
-	protected GraphFactory graphFactory;
 
 	/**
 	 * The name of this schema without the package prefix.
@@ -1139,11 +1132,7 @@ public class SchemaImpl implements Schema {
 				implementationType);
 	}
 
-	@Override
-	public GraphFactory getGraphFactory() {
-		return graphFactory;
-	}
-
+	
 	@Override
 	public String getName() {
 		return name;
@@ -1240,11 +1229,6 @@ public class SchemaImpl implements Schema {
 	public void setAllowLowercaseEnumConstants(
 			boolean allowLowercaseEnumConstants) {
 		this.allowLowercaseEnumConstants = allowLowercaseEnumConstants;
-	}
-
-	@Override
-	public void setGraphFactory(GraphFactory factory) {
-		graphFactory = factory;
 	}
 
 	void setGraphClass(GraphClass gc) {

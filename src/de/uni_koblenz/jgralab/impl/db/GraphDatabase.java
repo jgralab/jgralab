@@ -34,6 +34,7 @@
  */
 package de.uni_koblenz.jgralab.impl.db;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.sql.CallableStatement;
 import java.sql.Connection;
@@ -56,6 +57,7 @@ import de.uni_koblenz.jgralab.GraphException;
 import de.uni_koblenz.jgralab.GraphFactory;
 import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.Vertex;
+import de.uni_koblenz.jgralab.impl.GraphFactoryImpl;
 import de.uni_koblenz.jgralab.schema.Attribute;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
@@ -1460,11 +1462,15 @@ public abstract class GraphDatabase {
 	private GraphImpl getEmptyGraphInstance(String id) throws SQLException,
 			GraphIOException {
 		Schema schema = getSchemaForGraph(id);
-		GraphFactory graphFactory = schema.getGraphFactory();
+		//GraphFactory graphFactory = schema.getGraphFactory();
 		GraphClass graphClass = schema.getGraphClass();
 		try {
-			return (GraphImpl) graphFactory.createGraphWithDatabaseSupport(
-					(Class<? extends Graph>) graphClass.getSchemaClass(), this, id);
+			Class<? extends GraphFactory> c = (Class<? extends GraphFactory>) Class.forName(
+					schema.getPackagePrefix()+".impl.db."+graphClass.getSimpleName()+"FactoryImpl");
+			Constructor <? extends GraphFactory> cons = c.getConstructor();
+			GraphFactory graphFactory = cons.newInstance();
+			((GraphFactoryImpl)graphFactory).setGraphDatabase(this);
+			return (GraphImpl) graphFactory.createGraph(id);
 		} catch (Exception e) {
 			throw new GraphIOException("Could not create an instance of "
 					+ graphClass.getSchemaClass().getName());
