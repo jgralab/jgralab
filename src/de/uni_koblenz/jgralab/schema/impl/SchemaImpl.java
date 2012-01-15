@@ -744,7 +744,7 @@ public class SchemaImpl implements Schema {
 		return new MapDomainImpl(this, keyDomain, valueDomain);
 	}
 
-	Package createPackage(String sn, Package parentPkg) {
+	protected Package createPackage(String sn, Package parentPkg) {
 		return new PackageImpl(sn, parentPkg, this);
 	}
 

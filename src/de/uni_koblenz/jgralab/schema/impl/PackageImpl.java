@@ -46,7 +46,7 @@ import de.uni_koblenz.jgralab.schema.Schema;
 import de.uni_koblenz.jgralab.schema.VertexClass;
 import de.uni_koblenz.jgralab.schema.exception.SchemaException;
 
-public final class PackageImpl extends NamedElementImpl implements Package {
+public class PackageImpl extends NamedElementImpl implements Package {
 
 	private final Map<String, Domain> domains = new TreeMap<String, Domain>();
 
@@ -99,7 +99,7 @@ public final class PackageImpl extends NamedElementImpl implements Package {
 		this(Package.DEFAULTPACKAGE_NAME, null, schema);
 	}
 
-	PackageImpl(String simpleName, Package parentPackage, Schema schema) {
+	protected PackageImpl(String simpleName, Package parentPackage, Schema schema) {
 		super(simpleName, parentPackage, schema);
 		this.schema = schema;
 		register();

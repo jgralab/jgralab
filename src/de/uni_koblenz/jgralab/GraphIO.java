@@ -1684,8 +1684,9 @@ public class GraphIO {
 	protected void addAttributes(List<AttributeData> attributesData,
 			AttributedElementClass aec) throws GraphIOException {
 		for (AttributeData ad : attributesData) {
-			aec.addAttribute(ad.name, attrDomain(ad.domainDescription),
-					ad.defaultValue);
+			aec.addAttribute(schema.createAttribute(ad.name, attrDomain(ad.domainDescription), aec, ad.defaultValue));
+			//aec.addAttribute(ad.name, attrDomain(ad.domainDescription),
+				//	ad.defaultValue);
 		}
 	}
 
