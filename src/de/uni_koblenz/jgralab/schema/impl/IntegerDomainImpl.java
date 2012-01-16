@@ -42,10 +42,10 @@ import de.uni_koblenz.jgralab.schema.IntegerDomain;
 import de.uni_koblenz.jgralab.schema.Package;
 import de.uni_koblenz.jgralab.schema.Schema;
 
-public final class IntegerDomainImpl extends BasicDomainImpl implements
-		IntegerDomain {
+public class IntegerDomainImpl extends BasicDomainImpl implements
+IntegerDomain {
 
-	IntegerDomainImpl(Schema schema) {
+	protected IntegerDomainImpl(Schema schema) {
 		super(INTDOMAIN_NAME, schema.getDefaultPackage());
 	}
 
@@ -83,15 +83,15 @@ public final class IntegerDomainImpl extends BasicDomainImpl implements
 	public CodeBlock getTransactionReadMethod(String schemaPrefix,
 			String variableName, String graphIoVariableName) {
 		return new CodeSnippet(
-				getJavaAttributeImplementationTypeName(schemaPrefix) + " "
-						+ variableName + " = " + graphIoVariableName
-						+ ".matchInteger();");
+				this.getJavaAttributeImplementationTypeName(schemaPrefix) + " "
+				+ variableName + " = " + graphIoVariableName
+				+ ".matchInteger();");
 	}
 
 	@Override
 	public CodeBlock getTransactionWriteMethod(String schemaRootPackagePrefix,
 			String variableName, String graphIoVariableName) {
-		return getWriteMethod(schemaRootPackagePrefix,
+		return this.getWriteMethod(schemaRootPackagePrefix,
 				"get" + CodeGenerator.camelCase(variableName) + "()",
 				graphIoVariableName);
 	}
@@ -104,13 +104,13 @@ public final class IntegerDomainImpl extends BasicDomainImpl implements
 
 	@Override
 	public String getTransactionJavaClassName(String schemaRootPackagePrefix) {
-		return getJavaClassName(schemaRootPackagePrefix);
+		return this.getJavaClassName(schemaRootPackagePrefix);
 	}
 
 	@Override
 	public String getVersionedClass(String schemaRootPackagePrefix) {
 		return "de.uni_koblenz.jgralab.impl.trans.VersionedReferenceImpl<"
-				+ getTransactionJavaClassName(schemaRootPackagePrefix) + ">";
+		+ this.getTransactionJavaClassName(schemaRootPackagePrefix) + ">";
 	}
 
 	@Override

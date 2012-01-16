@@ -42,9 +42,9 @@ import de.uni_koblenz.jgralab.schema.LongDomain;
 import de.uni_koblenz.jgralab.schema.Package;
 import de.uni_koblenz.jgralab.schema.Schema;
 
-public final class LongDomainImpl extends BasicDomainImpl implements LongDomain {
+public class LongDomainImpl extends BasicDomainImpl implements LongDomain {
 
-	LongDomainImpl(Schema schema) {
+	protected LongDomainImpl(Schema schema) {
 		super(LONGDOMAIN_NAME, schema.getDefaultPackage());
 	}
 
@@ -82,15 +82,15 @@ public final class LongDomainImpl extends BasicDomainImpl implements LongDomain 
 	public CodeBlock getTransactionReadMethod(String schemaPrefix,
 			String variableName, String graphIoVariableName) {
 		return new CodeSnippet(
-				getJavaAttributeImplementationTypeName(schemaPrefix) + " "
-						+ variableName + " = " + graphIoVariableName
-						+ ".matchLong();");
+				this.getJavaAttributeImplementationTypeName(schemaPrefix) + " "
+				+ variableName + " = " + graphIoVariableName
+				+ ".matchLong();");
 	}
 
 	@Override
 	public CodeBlock getTransactionWriteMethod(String schemaRootPackagePrefix,
 			String variableName, String graphIoVariableName) {
-		return getWriteMethod(schemaRootPackagePrefix,
+		return this.getWriteMethod(schemaRootPackagePrefix,
 				"get" + CodeGenerator.camelCase(variableName) + "()",
 				graphIoVariableName);
 	}
@@ -103,13 +103,13 @@ public final class LongDomainImpl extends BasicDomainImpl implements LongDomain 
 
 	@Override
 	public String getTransactionJavaClassName(String schemaRootPackagePrefix) {
-		return getJavaClassName(schemaRootPackagePrefix);
+		return this.getJavaClassName(schemaRootPackagePrefix);
 	}
 
 	@Override
 	public String getVersionedClass(String schemaRootPackagePrefix) {
 		return "de.uni_koblenz.jgralab.impl.trans.VersionedReferenceImpl<"
-				+ getTransactionJavaClassName(schemaRootPackagePrefix) + ">";
+		+ this.getTransactionJavaClassName(schemaRootPackagePrefix) + ">";
 	}
 
 	@Override

@@ -42,10 +42,10 @@ import de.uni_koblenz.jgralab.schema.DoubleDomain;
 import de.uni_koblenz.jgralab.schema.Package;
 import de.uni_koblenz.jgralab.schema.Schema;
 
-public final class DoubleDomainImpl extends BasicDomainImpl implements
-		DoubleDomain {
+public class DoubleDomainImpl extends BasicDomainImpl implements
+DoubleDomain {
 
-	DoubleDomainImpl(Schema schema) {
+	protected DoubleDomainImpl(Schema schema) {
 		super(DOUBLEDOMAIN_NAME, schema.getDefaultPackage());
 	}
 
@@ -83,15 +83,15 @@ public final class DoubleDomainImpl extends BasicDomainImpl implements
 	public CodeBlock getTransactionReadMethod(String schemaPrefix,
 			String variableName, String graphIoVariableName) {
 		return new CodeSnippet(
-				getJavaAttributeImplementationTypeName(schemaPrefix) + " "
-						+ variableName + " = " + graphIoVariableName
-						+ ".matchDouble();");
+				this.getJavaAttributeImplementationTypeName(schemaPrefix) + " "
+				+ variableName + " = " + graphIoVariableName
+				+ ".matchDouble();");
 	}
 
 	@Override
 	public CodeBlock getTransactionWriteMethod(String schemaRootPackagePrefix,
 			String variableName, String graphIoVariableName) {
-		return getWriteMethod(schemaRootPackagePrefix,
+		return this.getWriteMethod(schemaRootPackagePrefix,
 				"get" + CodeGenerator.camelCase(variableName) + "()",
 				graphIoVariableName);
 	}
@@ -104,13 +104,13 @@ public final class DoubleDomainImpl extends BasicDomainImpl implements
 
 	@Override
 	public String getTransactionJavaClassName(String schemaRootPackagePrefix) {
-		return getJavaClassName(schemaRootPackagePrefix);
+		return this.getJavaClassName(schemaRootPackagePrefix);
 	}
 
 	@Override
 	public String getVersionedClass(String schemaRootPackagePrefix) {
 		return "de.uni_koblenz.jgralab.impl.trans.VersionedReferenceImpl<"
-				+ getTransactionJavaClassName(schemaRootPackagePrefix) + ">";
+		+ this.getTransactionJavaClassName(schemaRootPackagePrefix) + ">";
 	}
 
 	@Override

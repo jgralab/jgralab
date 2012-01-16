@@ -42,10 +42,10 @@ import de.uni_koblenz.jgralab.schema.Package;
 import de.uni_koblenz.jgralab.schema.Schema;
 import de.uni_koblenz.jgralab.schema.StringDomain;
 
-public final class StringDomainImpl extends BasicDomainImpl implements
-		StringDomain {
+public class StringDomainImpl extends BasicDomainImpl implements
+StringDomain {
 
-	StringDomainImpl(Schema schema) {
+	protected StringDomainImpl(Schema schema) {
 		super(STRINGDOMAIN_NAME, schema.getDefaultPackage());
 	}
 
@@ -57,7 +57,7 @@ public final class StringDomainImpl extends BasicDomainImpl implements
 
 	@Override
 	public String getJavaClassName(String schemaRootPackagePrefix) {
-		return getJavaAttributeImplementationTypeName(schemaRootPackagePrefix);
+		return this.getJavaAttributeImplementationTypeName(schemaRootPackagePrefix);
 	}
 
 	@Override
@@ -83,9 +83,9 @@ public final class StringDomainImpl extends BasicDomainImpl implements
 	public CodeBlock getTransactionReadMethod(String schemaPrefix,
 			String variableName, String graphIoVariableName) {
 		return new CodeSnippet(
-				getJavaAttributeImplementationTypeName(schemaPrefix) + " "
-						+ variableName + " = " + graphIoVariableName
-						+ ".matchUtfString();");
+				this.getJavaAttributeImplementationTypeName(schemaPrefix) + " "
+				+ variableName + " = " + graphIoVariableName
+				+ ".matchUtfString();");
 	}
 
 	@Override
@@ -99,7 +99,7 @@ public final class StringDomainImpl extends BasicDomainImpl implements
 	@Override
 	public String getTransactionJavaAttributeImplementationTypeName(
 			String schemaRootPackagePrefix) {
-		return getJavaAttributeImplementationTypeName(schemaRootPackagePrefix);
+		return this.getJavaAttributeImplementationTypeName(schemaRootPackagePrefix);
 	}
 
 	@Override
@@ -110,8 +110,8 @@ public final class StringDomainImpl extends BasicDomainImpl implements
 	@Override
 	public String getVersionedClass(String schemaRootPackagePrefix) {
 		return "de.uni_koblenz.jgralab.impl.trans.VersionedReferenceImpl<"
-				+ getTransactionJavaAttributeImplementationTypeName(schemaRootPackagePrefix)
-				+ ">";
+		+ this.getTransactionJavaAttributeImplementationTypeName(schemaRootPackagePrefix)
+		+ ">";
 	}
 
 	@Override
