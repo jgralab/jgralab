@@ -51,7 +51,7 @@ public class GenericGraphImpl extends GraphImpl {
 	}
 
 	/**
-	 * Creates a new instance if a generic Graph. This method isn't supposed to
+	 * Creates a new instance of a generic Graph. This method isn't supposed to
 	 * be called manually. Use
 	 * <code>Schema.createGraph(ImplementationType.Generic)</code> instead!
 	 */
@@ -70,6 +70,9 @@ public class GenericGraphImpl extends GraphImpl {
 
 	@SuppressWarnings("unchecked")
 	public <T extends Vertex> T createVertex(VertexClass vc, int id) {
+		if(type.getVertexClass(vc.getQualifiedName()) == null) {
+			throw new GraphException("Error creating vertex of VertexClass " + vc);
+		}
 		try {
 			return (T) new GenericVertexImpl(vc, id, this);
 		} catch (Exception e) {
