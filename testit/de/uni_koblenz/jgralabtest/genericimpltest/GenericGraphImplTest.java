@@ -4,11 +4,14 @@ import static org.junit.Assert.*;
 
 import java.io.File;
 import java.lang.reflect.Field;
+import java.util.Iterator;
 import java.util.Map;
 
+import org.junit.AfterClass;
 import org.junit.Test;
 
 import de.uni_koblenz.jgralab.*;
+import de.uni_koblenz.jgralab.impl.RecordImpl;
 import de.uni_koblenz.jgralab.impl.generic.*;
 import de.uni_koblenz.jgralab.schema.*;
 
@@ -81,8 +84,9 @@ public class GenericGraphImplTest {
 								.getAttributedElementClass().getSchema()));
 				assertEquals(expected, value);
 			} else {
-				assertEquals(GenericGraphImpl.genericAttributeDefaultValue(attribute
-						.getDomain()), value);
+				assertEquals(
+						GenericGraphImpl.genericAttributeDefaultValue(attribute
+								.getDomain()), value);
 			}
 		} catch (GraphIOException e) {
 			e.printStackTrace();
@@ -417,9 +421,60 @@ public class GenericGraphImplTest {
 		}
 	}
 
-	// Test setting a TraversalContext
+	// Test setting a TraversalContext (greqltestgraph.tg)
 	public void testSetTraversalContext() {
-		// TODO! ?
+		try {
+			final Graph g = GraphIO.loadGraphFromFile(GRAPHFOLDER
+					+ "greqltestgraph.tg", null, null,
+					ImplementationType.GENERIC);
+			g.setTraversalContext(new TraversalContext() {
+
+				@Override
+				public boolean containsVertex(Vertex v) {
+					return v.getAttributedElementClass().equals(
+							g.getGraphClass().getVertexClass("Crossroad"));
+				}
+
+				@Override
+				public boolean containsEdge(Edge e) {
+					return e.getAttributedElementClass().equals(
+							g.getGraphClass().getEdgeClass("Street"));
+				}
+
+			});
+			for (Vertex v : g.vertices()) {
+				assertEquals(g.getGraphClass().getVertexClass("Crossroad"),
+						v.getAttributedElementClass());
+			}
+			for (Edge e : g.edges()) {
+				assertEquals(g.getGraphClass().getEdgeClass("Street"),
+						e.getAttributedElementClass());
+			}
+
+			g.setTraversalContext(new TraversalContext() {
+
+				@Override
+				public boolean containsVertex(Vertex v) {
+					return g.getGraphClass().getVertexClass("Plaza")
+							.equals(v.getAttributedElementClass());
+				}
+
+				@Override
+				public boolean containsEdge(Edge e) {
+					return false;
+				}
+			});
+
+			for (Vertex v : g.vertices()) {
+				assertEquals(g.getGraphClass().getVertexClass("Plaza"),
+						v.getAttributedElementClass());
+			}
+
+			assertNull(g.getFirstEdge());
+		} catch (GraphIOException e) {
+			e.printStackTrace();
+			fail();
+		}
 	}
 
 	// Test setting and accessing a graph's attributes
@@ -454,8 +509,17 @@ public class GenericGraphImplTest {
 						.plus(JGraLab.vector().plus(false))
 						.plus(JGraLab.vector().plus(false)),
 				g.getAttribute("complexListGraph"));
-		
-		// TODO test record with null-valued components!
+
+		RecordImpl r = g.getAttribute("recordGraph");
+		r = r.plus("stringRecord", null);
+		r = r.plus("listRecord", null);
+		r = r.plus("setRecord", null);
+		r = r.plus("mapRecord", null);
+		g.setAttribute("recordGraph", r);
+		assertNull(r.getComponent("stringRecord"));
+		assertNull(r.getComponent("listRecord"));
+		assertNull(r.getComponent("setRecord"));
+		assertNull(r.getComponent("mapRecord"));
 	}
 
 	// Test setting attributes that don't exist. NoSuchAttributeException is
@@ -651,8 +715,7 @@ public class GenericGraphImplTest {
 	}
 
 	@Test
-	public void testSave1() {
-
+	public void testSave() {
 		try {
 			Schema schema;
 			schema = GraphIO.loadSchemaFromFile(SCHEMAFOLDER
@@ -665,9 +728,32 @@ public class GenericGraphImplTest {
 
 			g.createEdge(schema.getGraphClass().getEdgeClass("Link"), v1, v2);
 			g.createEdge(schema.getGraphClass().getEdgeClass("Link"), v2, v1);
-			g.save("testit" + File.separator + "testdata" + File.separator
-					+ "GenericTestGraph1.tg");
-			// TODO How to test saved file?
+			g.save(DATAFOLDER + "GenericTestGraph1.tg");
+
+			Graph g2 = GraphIO.loadGraphFromFile(DATAFOLDER
+					+ "GenericTestGraph1.tg", schema, null,
+					ImplementationType.GENERIC);
+			Iterator<Vertex> vertexIterator1 = g.vertices().iterator();
+			Iterator<Vertex> vertexIterator2 = g2.vertices().iterator();
+			Iterator<Edge> edgeIterator1 = g.edges().iterator();
+			Iterator<Edge> edgeIterator2 = g2.edges().iterator();
+
+			while (vertexIterator1.hasNext()) {
+				Vertex vg1 = (Vertex) vertexIterator1.next();
+				Vertex vg2 = (Vertex) vertexIterator2.next();
+				assertEquals(vg1.getId(), vg2.getId());
+				assertEquals(vg1.getAttributedElementClass(),
+						vg2.getAttributedElementClass());
+			}
+			assertFalse(vertexIterator2.hasNext());
+			while (edgeIterator1.hasNext()) {
+				Edge eg1 = (Edge) edgeIterator1.next();
+				Edge eg2 = (Edge) edgeIterator2.next();
+				assertEquals(eg1.getId(), eg2.getId());
+				assertEquals(eg2.getAttributedElementClass(),
+						eg2.getAttributedElementClass());
+			}
+			assertFalse(edgeIterator2.hasNext());
 		} catch (GraphIOException e) {
 			e.printStackTrace();
 			fail();
@@ -802,22 +888,38 @@ public class GenericGraphImplTest {
 	@Test
 	public void testLoadGraph2() {
 		try {
-			Graph g = GraphIO.loadGraphFromFile(GRAPHFOLDER
+			Graph g1 = GraphIO.loadGraphFromFile(GRAPHFOLDER
 					+ "greqltestgraph.tg", null, null,
 					ImplementationType.GENERIC);
-			Schema s = g.getSchema();
-			assertEquals(s.getGraphClass(), g.getAttributedElementClass());
-			// TODO
+			Schema s = g1.getSchema();
+			assertEquals(s.getGraphClass(), g1.getAttributedElementClass());
+			assertEquals(157, g1.getVCount());
+			assertEquals(357, g1.getECount());
+
+			// compare against the same Graph loaded with the standard
+			// implementation
+			Graph g2 = GraphIO
+					.loadGraphFromFile(GRAPHFOLDER + "greqltestgraph.tg", s,
+							null, ImplementationType.STANDARD);
+			for (Vertex v : g2.vertices()) {
+				assertEquals(v.getAttributedElementClass(),
+						g1.getVertex(v.getId()).getAttributedElementClass());
+			}
+			for (Edge e : g2.edges()) {
+				assertEquals(e.getAttributedElementClass(),
+						g1.getEdge(e.getId()).getAttributedElementClass());
+			}
+
 		} catch (GraphIOException e) {
 			e.printStackTrace();
 			fail();
 		}
 	}
 
-	// Test creating, saving and loading a random graph
-	@Test
-	public void testSaveLoadRandomGraph() {
-		// TODO
+	@AfterClass
+	public static void cleanup() {
+		File f = new File(DATAFOLDER + "GenericTestGraph1.tg");
+		f.delete();
 	}
 
 }
