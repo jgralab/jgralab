@@ -40,6 +40,8 @@ import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
@@ -452,6 +454,16 @@ public class GreqlGui extends JFrame {
 						+ "Simply select a graph, type a query and press the evaluation button."
 						+ "</html>");
 		resultPane.setEditable(false);
+
+		// install property change listener to update status label
+		resultPane.addPropertyChangeListener("page",
+				new PropertyChangeListener() {
+					@Override
+					public void propertyChange(PropertyChangeEvent pce) {
+						statusLabel.setText("Result complete.");
+					}
+				});
+
 		resultScrollPane = new JScrollPane(resultPane);
 		resultScrollPane.setPreferredSize(new Dimension(200, 200));
 
@@ -666,6 +678,12 @@ public class GreqlGui extends JFrame {
 	}
 
 	public static void main(String[] args) {
-		new GreqlGui();
+		SwingUtilities.invokeLater(new Runnable() {
+
+			@Override
+			public void run() {
+				new GreqlGui();
+			}
+		});
 	}
 }
