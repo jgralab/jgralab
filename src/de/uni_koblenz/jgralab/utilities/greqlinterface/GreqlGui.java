@@ -35,11 +35,10 @@
 package de.uni_koblenz.jgralab.utilities.greqlinterface;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.ByteArrayOutputStream;
@@ -50,6 +49,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.List;
+import java.util.ResourceBundle;
 import java.util.prefs.Preferences;
 
 import javax.swing.AbstractAction;
@@ -61,25 +61,21 @@ import javax.swing.JCheckBox;
 import javax.swing.JEditorPane;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
-import javax.swing.KeyStroke;
-import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
-import javax.swing.border.EmptyBorder;
 import javax.swing.event.UndoableEditEvent;
 import javax.swing.event.UndoableEditListener;
 import javax.swing.text.Document;
-import javax.swing.undo.CannotRedoException;
-import javax.swing.undo.CannotUndoException;
 import javax.swing.undo.UndoManager;
 import javax.xml.stream.XMLStreamException;
 
+import de.uni_koblenz.ist.utilities.gui.SwingApplication;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.GraphIO.TGFilenameFilter;
@@ -94,29 +90,37 @@ import de.uni_koblenz.jgralab.greql2.schema.SourcePosition;
 import de.uni_koblenz.jgralab.greql2.serialising.HTMLOutputWriter;
 import de.uni_koblenz.jgralab.greql2.serialising.XMLOutputWriter;
 
+@SuppressWarnings("serial")
 @WorkInProgress(description = "insufficcient result presentation, simplistic hacked GUI, no load/save functionality, ...", responsibleDevelopers = "horn")
-public class GreqlGui extends JFrame {
-	private static final long serialVersionUID = 1L;
+public class GreqlGui extends SwingApplication {
+
+	private static final String VERSION = "0.0"; //$NON-NLS-1$
+
+	private static final String BUNDLE_NAME = GreqlGui.class.getPackage()
+			.getName() + ".resources.messages"; //$NON-NLS-1$
+
+	private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle
+			.getBundle(BUNDLE_NAME);
 
 	private Graph graph;
-	final private JFileChooser fileChooser;
-	final private JPanel queryPanel;
-	final private JTextArea queryArea;
-	final private JEditorPane resultPane;
-	final private JTabbedPane tabPane;
-	final private JTextArea consoleOutputArea;
-	final private JButton fileSelectionButton;
-	final private JButton evalQueryButton;
-	final private JButton stopButton;
-	final private JButton fromJavaButton;
-	final private JButton toJavaButton;
-	final private JProgressBar progressBar;
-	final private BoundedRangeModel brm;
-	final private JLabel statusLabel;
+	private JFileChooser fileChooser;
+	private JPanel queryPanel;
+	private JTextArea queryArea;
+	private JEditorPane resultPane;
+	private JTabbedPane tabPane;
+	private JTextArea consoleOutputArea;
+	private JButton fileSelectionButton;
+	private JButton evalQueryButton;
+	private JButton stopButton;
+	private JButton fromJavaButton;
+	private JButton toJavaButton;
+	private JProgressBar progressBar;
+	private BoundedRangeModel brm;
 	private Evaluator evaluator;
-	final private JCheckBox optimizeCheckBox;
-	final private JCheckBox debugOptimizationCheckBox;
-	final private JScrollPane resultScrollPane;
+	private JCheckBox optimizeCheckBox;
+	private JCheckBox debugOptimizationCheckBox;
+	private JScrollPane resultScrollPane;
+	private UndoManager undoManager;
 
 	class Worker extends Thread implements ProgressFunction {
 		BoundedRangeModel brm;
@@ -217,10 +221,10 @@ public class GreqlGui extends JFrame {
 							JOptionPane.showMessageDialog(GreqlGui.this, msg,
 									ex.getClass().getSimpleName(),
 									JOptionPane.ERROR_MESSAGE);
-							statusLabel.setText("Couldn't load graph :-(");
+							getStatusBar().setText("Couldn't load graph :-(");
 						} else {
-							statusLabel.setText("Graph '" + graph.getId()
-									+ "' loaded.");
+							getStatusBar().setText(
+									"Graph '" + graph.getId() + "' loaded.");
 						}
 						fileSelectionButton.setEnabled(true);
 						evalQueryButton.setEnabled(graph != null);
@@ -238,7 +242,7 @@ public class GreqlGui extends JFrame {
 				SwingUtilities.invokeAndWait(new Runnable() {
 					@Override
 					public void run() {
-						statusLabel.setText("Loading graph...");
+						getStatusBar().setText("Loading graph...");
 					}
 				});
 			} catch (InterruptedException e) {
@@ -276,7 +280,8 @@ public class GreqlGui extends JFrame {
 						fileSelectionButton.setEnabled(true);
 						if (ex != null) {
 							brm.setValue(brm.getMinimum());
-							statusLabel.setText("Couldn't evaluate query :-(");
+							getStatusBar().setText(
+									"Couldn't evaluate query :-(");
 							String msg = ex.getMessage();
 							if (msg == null) {
 								if (ex.getCause() != null) {
@@ -315,8 +320,9 @@ public class GreqlGui extends JFrame {
 							// JOptionPane.ERROR_MESSAGE);
 							queryArea.requestFocus();
 						} else {
-							statusLabel
-									.setText("Evaluation finished, loading HTML result - this may take a while...");
+							getStatusBar()
+									.setText(
+											"Evaluation finished, loading HTML result - this may take a while...");
 						}
 					}
 				});
@@ -372,7 +378,7 @@ public class GreqlGui extends JFrame {
 				SwingUtilities.invokeAndWait(new Runnable() {
 					@Override
 					public void run() {
-						statusLabel.setText("Evaluating query...");
+						getStatusBar().setText("Evaluating query...");
 					}
 				});
 			} catch (InterruptedException e) {
@@ -382,63 +388,92 @@ public class GreqlGui extends JFrame {
 	}
 
 	public GreqlGui() {
-		super("GReQL GUI");
+		super(RESOURCE_BUNDLE);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		initializeApplication();
+	}
 
+	private class ConsoleOutputStream extends PrintStream {
+		public ConsoleOutputStream() {
+			super(new ByteArrayOutputStream());
+		}
+
+		@Override
+		public void write(byte[] buf, int off, int len) {
+			final String aString = new String(buf, off, len);
+			try {
+				SwingUtilities.invokeAndWait(new Runnable() {
+					@Override
+					public void run() {
+						consoleOutputArea.append(aString);
+					}
+				});
+			} catch (InterruptedException e) {
+			} catch (InvocationTargetException e) {
+			}
+		}
+	}
+
+	@Override
+	protected void editUndo() {
+		undoManager.undo();
+		updateActions();
+	}
+
+	@Override
+	protected void editRedo() {
+		undoManager.redo();
+		updateActions();
+	}
+
+	@Override
+	protected void editCut() {
+		queryArea.cut();
+		updateActions();
+	}
+
+	@Override
+	protected void editCopy() {
+		queryArea.copy();
+		updateActions();
+	}
+
+	@Override
+	protected void editPaste() {
+		queryArea.paste();
+		updateActions();
+	}
+
+	@Override
+	protected boolean confirmClose() {
+		return true;
+	}
+
+	@Override
+	protected void updateActions() {
+		editUndoAction.setEnabled(undoManager.canUndo());
+		editRedoAction.setEnabled(undoManager.canRedo());
+	}
+
+	@Override
+	protected Component createContent() {
 		queryArea = new JTextArea(15, 50);
 		queryArea.setEditable(true);
 		queryArea.setFont(new java.awt.Font("Monaco", java.awt.Font.PLAIN, 13));
 
 		// Start code for undo/redo ---------------
-		final UndoManager undo = new UndoManager();
-		undo.setLimit(10000);
+		undoManager = new UndoManager();
+		undoManager.setLimit(10000);
 		Document doc = queryArea.getDocument();
 
 		// Listen for undo and redo events
 		doc.addUndoableEditListener(new UndoableEditListener() {
 			public void undoableEditHappened(UndoableEditEvent evt) {
-				undo.addEdit(evt.getEdit());
+				undoManager.addEdit(evt.getEdit());
+				updateActions();
+				setModified(true);
 			}
 		});
-
-		// Create an undo action and add it to the text component
-		queryArea.getActionMap().put("Undo", new AbstractAction("Undo") {
-			private static final long serialVersionUID = 4332032556222818139L;
-
-			public void actionPerformed(ActionEvent evt) {
-				try {
-					if (undo.canUndo()) {
-						undo.undo();
-					}
-				} catch (CannotUndoException e) {
-				}
-			}
-		});
-
-		// Bind the undo action to ctl-Z
-		queryArea.getInputMap().put(
-				KeyStroke.getKeyStroke(KeyEvent.VK_Z, Toolkit
-						.getDefaultToolkit().getMenuShortcutKeyMask()), "Undo");
-
-		// Create a redo action and add it to the text component
-		queryArea.getActionMap().put("Redo", new AbstractAction("Redo") {
-			private static final long serialVersionUID = 4136682827172717790L;
-
-			public void actionPerformed(ActionEvent evt) {
-				try {
-					if (undo.canRedo()) {
-						undo.redo();
-					}
-				} catch (CannotRedoException e) {
-				}
-			}
-		});
-
-		// Bind the redo action to ctl-Y
-		queryArea.getInputMap().put(
-				KeyStroke.getKeyStroke(KeyEvent.VK_Y, Toolkit
-						.getDefaultToolkit().getMenuShortcutKeyMask()), "Redo");
-		// End code for undo/redo ---------------------------------------
 
 		queryArea.setText("// Please enter your query here!");
 		JScrollPane queryScrollPane = new JScrollPane(queryArea);
@@ -460,7 +495,7 @@ public class GreqlGui extends JFrame {
 				new PropertyChangeListener() {
 					@Override
 					public void propertyChange(PropertyChangeEvent pce) {
-						statusLabel.setText("Result complete.");
+						getStatusBar().setText("Result complete.");
 					}
 				});
 
@@ -508,7 +543,7 @@ public class GreqlGui extends JFrame {
 				if (returnVal == JFileChooser.APPROVE_OPTION) {
 					fileSelectionButton.setEnabled(false);
 					evalQueryButton.setEnabled(false);
-					statusLabel.setText("Compiling schema...");
+					getStatusBar().setText("Compiling schema...");
 					new GraphLoader(brm, fileChooser.getSelectedFile()).start();
 					try {
 						prefs.put("LAST_DIRECTORY", fileChooser
@@ -553,7 +588,7 @@ public class GreqlGui extends JFrame {
 				evalQueryButton.setEnabled(true);
 				evaluator = null;
 				brm.setValue(brm.getMinimum());
-				statusLabel.setText("Query aborted.");
+				getStatusBar().setText("Query aborted.");
 			}
 
 		});
@@ -635,46 +670,24 @@ public class GreqlGui extends JFrame {
 		buttonPanel.add(toJavaButton);
 		queryPanel.add(buttonPanel, BorderLayout.SOUTH);
 
-		statusLabel = new JLabel("Welcome", SwingConstants.LEFT);
-		statusLabel.setBorder(new EmptyBorder(0, 4, 4, 4));
-
-		JPanel statusPanel = new JPanel();
-		statusPanel.setLayout(new BorderLayout());
-		statusPanel.add(progressBar, BorderLayout.NORTH);
-		statusPanel.add(statusLabel, BorderLayout.SOUTH);
-
-		getContentPane().setLayout(new BorderLayout());
-		getContentPane().add(queryPanel, BorderLayout.NORTH);
-		getContentPane().add(tabPane, BorderLayout.CENTER);
-		getContentPane().add(statusPanel, BorderLayout.SOUTH);
+		JSplitPane spl = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
+		spl.add(queryPanel, JSplitPane.TOP);
+		spl.add(tabPane, JSplitPane.BOTTOM);
 
 		// Don't allow shrinking so that buttons get invisible
-		setMinimumSize(new Dimension(buttonPanel.getPreferredSize().width + 10,
-				450));
+		spl.setMinimumSize(new Dimension(
+				buttonPanel.getPreferredSize().width + 10, 450));
 
-		pack();
 		queryArea.setSelectionStart(0);
 		queryArea.setSelectionEnd(queryArea.getText().length());
 		queryArea.requestFocus();
-		setVisible(true);
+		setModified(false);
+		return spl;
 	}
 
-	private class ConsoleOutputStream extends PrintStream {
-		public ConsoleOutputStream() {
-			super(new ByteArrayOutputStream());
-		}
-
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see java.io.PrintStream#write(byte[], int, int)
-		 */
-		@Override
-		public void write(byte[] buf, int off, int len) {
-			String aString = new String(buf, off, len);
-			consoleOutputArea.append(aString);
-		}
-
+	@Override
+	public String getVersion() {
+		return VERSION;
 	}
 
 	public static void main(String[] args) {
@@ -682,7 +695,7 @@ public class GreqlGui extends JFrame {
 
 			@Override
 			public void run() {
-				new GreqlGui();
+				new GreqlGui().setVisible(true);
 			}
 		});
 	}
