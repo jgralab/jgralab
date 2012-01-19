@@ -4,7 +4,7 @@ import static org.junit.Assert.*;
 
 import org.junit.Test;
 
-import de.uni_koblenz.jgralab.Edge;
+import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphException;
 import de.uni_koblenz.jgralab.GraphIO;
@@ -13,6 +13,7 @@ import de.uni_koblenz.jgralab.ImplementationType;
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.impl.RecordImpl;
+import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.Schema;
 
 public class GenericVertexImplTest {
@@ -213,21 +214,107 @@ public class GenericVertexImplTest {
 		}
 	}
 
+	// Test type specific getDegree Methods (VertexTestSchema.tg)
 	@Test
 	public void testGetDegree() {
 		try {
 			Schema s = GraphIO
 					.loadSchemaFromFile(GenericGraphImplTest.SCHEMAFOLDER
 							+ "VertexTestSchema.tg");
-			Graph g = s.createGraph(ImplementationType.GENERIC);
-			Vertex a = g.createVertex(g.getGraphClass().getVertexClass("A"));
-			Vertex b = g.createVertex(g.getGraphClass().getVertexClass("B"));
-			Vertex c = g.createVertex(g.getGraphClass().getVertexClass("C"));
-			Vertex d = g.createVertex(g.getGraphClass().getVertexClass("D"));
-			Vertex c2 = g.createVertex(g.getGraphClass().getVertexClass("C2"));
-			Vertex d2 = g.createVertex(g.getGraphClass().getVertexClass("D2"));
+			Graph g = s.createGraph(ImplementationType.GENERIC);		
 			
-			Edge e = g.createEdge(g.getGraphClass().getEdgeClass("E"), a, b);
+			Vertex[] vertices = new Vertex[6];
+			vertices[0] = g.createVertex(g.getGraphClass().getVertexClass("A"));
+			vertices[1] = g.createVertex(g.getGraphClass().getVertexClass("B"));
+			vertices[2] = g.createVertex(g.getGraphClass().getVertexClass("C"));
+			vertices[3] = g.createVertex(g.getGraphClass().getVertexClass("D"));
+			vertices[4] = g.createVertex(g.getGraphClass().getVertexClass("C2"));
+			vertices[5] = g.createVertex(g.getGraphClass().getVertexClass("D2"));
+
+			EdgeClass[] edgeClasses = new EdgeClass[7];
+			edgeClasses[0] = g.getGraphClass().getEdgeClass("E");
+			edgeClasses[1] = g.getGraphClass().getEdgeClass("F");
+			edgeClasses[2] = g.getGraphClass().getEdgeClass("G");
+			edgeClasses[3] = g.getGraphClass().getEdgeClass("H");
+			edgeClasses[4] = g.getGraphClass().getEdgeClass("I");
+			edgeClasses[5] = g.getGraphClass().getEdgeClass("J");
+			edgeClasses[6] = g.getGraphClass().getEdgeClass("K");
+			
+			assertEquals(0, vertices[0].getDegree(edgeClasses[0]));
+			assertEquals(0, vertices[0].getDegree(edgeClasses[0], EdgeDirection.OUT));
+			assertEquals(0, vertices[1].getDegree(edgeClasses[0]));
+			assertEquals(0, vertices[1].getDegree(edgeClasses[0], EdgeDirection.IN));
+			
+			assertEquals(0, vertices[2].getDegree(edgeClasses[1]));
+			assertEquals(0, vertices[2].getDegree(edgeClasses[1], EdgeDirection.OUT));
+			assertEquals(0, vertices[3].getDegree(edgeClasses[1]));
+			assertEquals(0, vertices[3].getDegree(edgeClasses[1], EdgeDirection.IN));
+			
+			assertEquals(0, vertices[2].getDegree(edgeClasses[2]));
+			assertEquals(0, vertices[2].getDegree(edgeClasses[2], EdgeDirection.OUT));
+			assertEquals(0, vertices[3].getDegree(edgeClasses[2]));
+			assertEquals(0, vertices[3].getDegree(edgeClasses[2], EdgeDirection.IN));
+			
+			assertEquals(0, vertices[0].getDegree(edgeClasses[3]));
+			assertEquals(0, vertices[0].getDegree(edgeClasses[3], EdgeDirection.OUT));
+			assertEquals(0, vertices[1].getDegree(edgeClasses[3]));
+			assertEquals(0, vertices[1].getDegree(edgeClasses[3], EdgeDirection.IN));
+			
+			assertEquals(0, vertices[0].getDegree(edgeClasses[4]));
+			assertEquals(0, vertices[0].getDegree(edgeClasses[4], EdgeDirection.OUT));
+			assertEquals(0, vertices[0].getDegree(edgeClasses[4], EdgeDirection.IN));
+			
+			assertEquals(0, vertices[4].getDegree(edgeClasses[5]));
+			assertEquals(0, vertices[4].getDegree(edgeClasses[5], EdgeDirection.OUT));
+			assertEquals(0, vertices[5].getDegree(edgeClasses[5]));
+			assertEquals(0, vertices[5].getDegree(edgeClasses[5], EdgeDirection.IN));
+			
+			assertEquals(0, vertices[0].getDegree(edgeClasses[6]));
+			assertEquals(0, vertices[0].getDegree(edgeClasses[6], EdgeDirection.OUT));
+			assertEquals(0, vertices[1].getDegree(edgeClasses[6]));
+			assertEquals(0, vertices[1].getDegree(edgeClasses[6], EdgeDirection.IN));
+			
+			g.createEdge(edgeClasses[0], vertices[0], vertices[1]);
+			g.createEdge(edgeClasses[1], vertices[2], vertices[3]);
+			g.createEdge(edgeClasses[2], vertices[2], vertices[3]);
+			g.createEdge(edgeClasses[3], vertices[0], vertices[1]);
+			g.createEdge(edgeClasses[4], vertices[0], vertices[0]);
+			g.createEdge(edgeClasses[5], vertices[4], vertices[5]);
+			g.createEdge(edgeClasses[6], vertices[0], vertices[1]);
+			
+			assertEquals(3, vertices[0].getDegree(edgeClasses[0]));
+			assertEquals(3, vertices[0].getDegree(edgeClasses[0], EdgeDirection.OUT));
+			assertEquals(3, vertices[1].getDegree(edgeClasses[0]));
+			assertEquals(3, vertices[1].getDegree(edgeClasses[0], EdgeDirection.IN));
+			
+			assertEquals(1, vertices[2].getDegree(edgeClasses[1]));
+			assertEquals(1, vertices[2].getDegree(edgeClasses[1], EdgeDirection.OUT));
+			assertEquals(1, vertices[3].getDegree(edgeClasses[1]));
+			assertEquals(1, vertices[3].getDegree(edgeClasses[1], EdgeDirection.IN));
+			
+			assertEquals(1, vertices[2].getDegree(edgeClasses[2]));
+			assertEquals(1, vertices[2].getDegree(edgeClasses[2], EdgeDirection.OUT));
+			assertEquals(1, vertices[3].getDegree(edgeClasses[2]));
+			assertEquals(1, vertices[3].getDegree(edgeClasses[2], EdgeDirection.IN));
+			
+			assertEquals(2, vertices[0].getDegree(edgeClasses[3]));
+			assertEquals(2, vertices[0].getDegree(edgeClasses[3], EdgeDirection.OUT));
+			assertEquals(2, vertices[1].getDegree(edgeClasses[3]));
+			assertEquals(2, vertices[1].getDegree(edgeClasses[3], EdgeDirection.IN));
+			
+			assertEquals(2, vertices[0].getDegree(edgeClasses[4]));
+			assertEquals(1, vertices[0].getDegree(edgeClasses[4], EdgeDirection.OUT));
+			assertEquals(1, vertices[0].getDegree(edgeClasses[4], EdgeDirection.IN));
+			
+			assertEquals(1, vertices[4].getDegree(edgeClasses[5]));
+			assertEquals(1, vertices[4].getDegree(edgeClasses[5], EdgeDirection.OUT));
+			assertEquals(1, vertices[5].getDegree(edgeClasses[5]));
+			assertEquals(1, vertices[5].getDegree(edgeClasses[5], EdgeDirection.IN));
+			
+			assertEquals(1, vertices[0].getDegree(edgeClasses[6]));
+			assertEquals(1, vertices[0].getDegree(edgeClasses[6], EdgeDirection.OUT));
+			assertEquals(1, vertices[1].getDegree(edgeClasses[6]));
+			assertEquals(1, vertices[1].getDegree(edgeClasses[6], EdgeDirection.IN));
 		} catch (GraphIOException e) {
 			e.printStackTrace();
 			fail();
