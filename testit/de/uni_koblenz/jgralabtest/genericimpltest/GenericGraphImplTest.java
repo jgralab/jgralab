@@ -17,11 +17,11 @@ import de.uni_koblenz.jgralab.schema.*;
 
 public class GenericGraphImplTest {
 
-	private static final String SCHEMAFOLDER = "testit" + File.separator
+	public static final String SCHEMAFOLDER = "testit" + File.separator
 			+ "testschemas" + File.separator;
-	private static final String GRAPHFOLDER = "testit" + File.separator
+	public static final String GRAPHFOLDER = "testit" + File.separator
 			+ "testgraphs" + File.separator;
-	private static final String DATAFOLDER = "testit" + File.separator
+	public static final String DATAFOLDER = "testit" + File.separator
 			+ "testdata" + File.separator;
 
 	/**
