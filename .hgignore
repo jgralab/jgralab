@@ -43,3 +43,5 @@ syntax: regexp
 ^eclipse/META-INF/MANIFEST\.MF$
 syntax: regexp
 ^testit/de/uni_koblenz/jgralabtest/genericimpltest/TempTest\.java$
+syntax: regexp
+^testit/de/uni_koblenz/jgralabtest/genericimpltest/PerformanceTest\.java$
