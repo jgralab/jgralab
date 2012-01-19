@@ -133,16 +133,12 @@ public class GreqlGui extends SwingApplication {
 
 		@Override
 		public void finished() {
-			try {
-				SwingUtilities.invokeAndWait(new Runnable() {
-					@Override
-					public void run() {
-						brm.setValue(brm.getMaximum());
-					}
-				});
-			} catch (InterruptedException e) {
-			} catch (InvocationTargetException e) {
-			}
+			invokeAndWait(new Runnable() {
+				@Override
+				public void run() {
+					brm.setValue(brm.getMaximum());
+				}
+			});
 		}
 
 		@Override
@@ -154,32 +150,22 @@ public class GreqlGui extends SwingApplication {
 		@Override
 		public void init(long totalElements) {
 			this.totalElements = totalElements;
-			try {
-				SwingUtilities.invokeAndWait(new Runnable() {
-					@Override
-					public void run() {
-						brm.setValue(brm.getMinimum());
-					}
-				});
-			} catch (InterruptedException e) {
-			} catch (InvocationTargetException e) {
-			}
+			invokeAndWait(new Runnable() {
+				@Override
+				public void run() {
+					brm.setValue(brm.getMinimum());
+				}
+			});
 		}
 
 		@Override
 		public void progress(long processedElements) {
-			try {
-				SwingUtilities.invokeAndWait(new Runnable() {
-					@Override
-					public void run() {
-						if (brm.getValue() < brm.getMaximum()) {
-							brm.setValue(brm.getValue() + 1);
-						}
-					}
-				});
-			} catch (InterruptedException e) {
-			} catch (InvocationTargetException e) {
-			}
+			invokeAndWait(new Runnable() {
+				@Override
+				public void run() {
+					brm.setValue(brm.getValue() + 1);
+				}
+			});
 		}
 	}
 
@@ -201,53 +187,46 @@ public class GreqlGui extends SwingApplication {
 				graph = null;
 				ex = e1;
 			}
-			try {
-				SwingUtilities.invokeAndWait(new Runnable() {
-					@Override
-					public void run() {
-						if (graph == null) {
+			invokeAndWait(new Runnable() {
+				@Override
+				public void run() {
+					if (graph == null) {
 
-							String msg = "Can't load ";
-							try {
-								msg += file.getCanonicalPath() + "\n"
-										+ ex.getMessage();
-							} catch (IOException e) {
-								msg += "graph\n";
-							}
-							Throwable cause = ex.getCause();
-							if (cause != null) {
-								msg += "\ncaused by " + cause;
-							}
-							JOptionPane.showMessageDialog(GreqlGui.this, msg,
-									ex.getClass().getSimpleName(),
-									JOptionPane.ERROR_MESSAGE);
-							getStatusBar().setText("Couldn't load graph :-(");
-						} else {
-							getStatusBar().setText(
-									"Graph '" + graph.getId() + "' loaded.");
+						String msg = "Can't load ";
+						try {
+							msg += file.getCanonicalPath() + "\n"
+									+ ex.getMessage();
+						} catch (IOException e) {
+							msg += "graph\n";
 						}
-						fileSelectionButton.setEnabled(true);
-						evalQueryButton.setEnabled(graph != null);
+						Throwable cause = ex.getCause();
+						if (cause != null) {
+							msg += "\ncaused by " + cause;
+						}
+						JOptionPane.showMessageDialog(GreqlGui.this, msg, ex
+								.getClass().getSimpleName(),
+								JOptionPane.ERROR_MESSAGE);
+						getStatusBar().setText("Couldn't load graph :-(");
+					} else {
+						getStatusBar().setText(
+								"Graph '" + graph.getId() + "' loaded.");
 					}
-				});
-			} catch (InterruptedException e) {
-			} catch (InvocationTargetException e) {
-			}
+					fileSelectionButton.setEnabled(true);
+					evalQueryButton.setEnabled(graph != null);
+				}
+			});
 		}
 
 		@Override
 		public void init(long totalElements) {
 			super.init(totalElements);
-			try {
-				SwingUtilities.invokeAndWait(new Runnable() {
-					@Override
-					public void run() {
-						getStatusBar().setText("Loading graph...");
-					}
-				});
-			} catch (InterruptedException e) {
-			} catch (InvocationTargetException e) {
-			}
+			invokeAndWait(new Runnable() {
+				@Override
+				public void run() {
+					getStatusBar().setText("Loading graph...");
+				}
+			});
+
 		}
 	}
 
@@ -271,119 +250,107 @@ public class GreqlGui extends SwingApplication {
 			} catch (Exception e1) {
 				ex = e1;
 			}
-			try {
-				SwingUtilities.invokeAndWait(new Runnable() {
+			invokeAndWait(new Runnable() {
+				@Override
+				public void run() {
+					stopButton.setEnabled(false);
+					evalQueryButton.setEnabled(true);
+					fileSelectionButton.setEnabled(true);
+					if (ex != null) {
+						brm.setValue(brm.getMinimum());
+						getStatusBar().setText("Couldn't evaluate query :-(");
+						String msg = ex.getMessage();
+						if (msg == null) {
+							if (ex.getCause() != null) {
+								msg = ex.getCause().toString();
+							} else {
+								msg = ex.toString();
+							}
+						}
+						ex.printStackTrace();
+						if (ex instanceof QuerySourceException) {
+							QuerySourceException qs = (QuerySourceException) ex;
+							List<SourcePosition> spl = qs.getSourcePositions();
+							if (spl.size() > 0) {
+								SourcePosition sp = spl.get(0);
+								if (sp.get_offset() >= 0
+										&& sp.get_length() >= 0) {
+									queryArea
+											.setSelectionStart(sp.get_offset());
+									queryArea.setSelectionEnd(sp.get_offset()
+											+ sp.get_length());
+								}
+							}
+						} else if (ex instanceof ParsingException) {
+							ParsingException pe = (ParsingException) ex;
+							if (pe.getOffset() >= 0 && pe.getLength() >= 0) {
+								queryArea.setSelectionStart(pe.getOffset());
+								queryArea.setSelectionEnd(pe.getOffset()
+										+ pe.getLength());
+							}
+						}
+						resultPane.setText(ex.getClass().getSimpleName() + ": "
+								+ msg);
+						// JOptionPane.showMessageDialog(GreqlGui.this, msg,
+						// ex.getClass().getSimpleName(),
+						// JOptionPane.ERROR_MESSAGE);
+						queryArea.requestFocus();
+					} else {
+						getStatusBar()
+								.setText(
+										"Evaluation finished, loading HTML result - this may take a while...");
+					}
+				}
+			});
+			if (ex == null) {
+				invokeLater(new Runnable() {
 					@Override
 					public void run() {
-						stopButton.setEnabled(false);
-						evalQueryButton.setEnabled(true);
-						fileSelectionButton.setEnabled(true);
-						if (ex != null) {
-							brm.setValue(brm.getMinimum());
-							getStatusBar().setText(
-									"Couldn't evaluate query :-(");
-							String msg = ex.getMessage();
-							if (msg == null) {
-								if (ex.getCause() != null) {
-									msg = ex.getCause().toString();
-								} else {
-									msg = ex.toString();
-								}
-							}
-							ex.printStackTrace();
-							if (ex instanceof QuerySourceException) {
-								QuerySourceException qs = (QuerySourceException) ex;
-								List<SourcePosition> spl = qs
-										.getSourcePositions();
-								if (spl.size() > 0) {
-									SourcePosition sp = spl.get(0);
-									if (sp.get_offset() >= 0
-											&& sp.get_length() >= 0) {
-										queryArea.setSelectionStart(sp
-												.get_offset());
-										queryArea.setSelectionEnd(sp
-												.get_offset() + sp.get_length());
-									}
-								}
-							} else if (ex instanceof ParsingException) {
-								ParsingException pe = (ParsingException) ex;
-								if (pe.getOffset() >= 0 && pe.getLength() >= 0) {
-									queryArea.setSelectionStart(pe.getOffset());
-									queryArea.setSelectionEnd(pe.getOffset()
-											+ pe.getLength());
-								}
-							}
-							resultPane.setText(ex.getClass().getSimpleName()
-									+ ": " + msg);
-							// JOptionPane.showMessageDialog(GreqlGui.this, msg,
-							// ex.getClass().getSimpleName(),
-							// JOptionPane.ERROR_MESSAGE);
-							queryArea.requestFocus();
-						} else {
-							getStatusBar()
-									.setText(
-											"Evaluation finished, loading HTML result - this may take a while...");
+						Object result = eval.getResult();
+						try {
+							File xmlResultFile = new File(
+									"greqlQueryResult.xml");
+							XMLOutputWriter xw = new XMLOutputWriter(graph);
+							xw.writeValue(result, xmlResultFile);
+							File resultFile = new File("greqlQueryResult.html");
+							// File resultFile = File.createTempFile(
+							// "greqlQueryResult", ".html");
+							// resultFile.deleteOnExit();
+							HTMLOutputWriter w = new HTMLOutputWriter(graph);
+							w.setUseCss(false);
+							w.writeValue(result, resultFile);
+							Document doc = resultPane.getDocument();
+							doc.putProperty(Document.StreamDescriptionProperty,
+									null);
+							resultPane.setPage(new URL("file", "localhost",
+									resultFile.getCanonicalPath()));
+							tabPane.setSelectedComponent(resultScrollPane);
+						} catch (SerialisingException e) {
+							JOptionPane.showMessageDialog(GreqlGui.this,
+									"Exception during HTML output of result: "
+											+ e.toString());
+						} catch (IOException e) {
+							JOptionPane.showMessageDialog(GreqlGui.this,
+									"Exception during HTML output of result: "
+											+ e.toString());
+						} catch (XMLStreamException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
 						}
 					}
 				});
-				if (ex == null) {
-					SwingUtilities.invokeLater(new Runnable() {
-						@Override
-						public void run() {
-							Object result = eval.getResult();
-							try {
-								File xmlResultFile = new File(
-										"greqlQueryResult.xml");
-								XMLOutputWriter xw = new XMLOutputWriter(graph);
-								xw.writeValue(result, xmlResultFile);
-								File resultFile = new File(
-										"greqlQueryResult.html");
-								// File resultFile = File.createTempFile(
-								// "greqlQueryResult", ".html");
-								// resultFile.deleteOnExit();
-								HTMLOutputWriter w = new HTMLOutputWriter(graph);
-								w.setUseCss(false);
-								w.writeValue(result, resultFile);
-								Document doc = resultPane.getDocument();
-								doc.putProperty(
-										Document.StreamDescriptionProperty,
-										null);
-								resultPane.setPage(new URL("file", "localhost",
-										resultFile.getCanonicalPath()));
-								tabPane.setSelectedComponent(resultScrollPane);
-							} catch (SerialisingException e) {
-								JOptionPane.showMessageDialog(GreqlGui.this,
-										"Exception during HTML output of result: "
-												+ e.toString());
-							} catch (IOException e) {
-								JOptionPane.showMessageDialog(GreqlGui.this,
-										"Exception during HTML output of result: "
-												+ e.toString());
-							} catch (XMLStreamException e) {
-								// TODO Auto-generated catch block
-								e.printStackTrace();
-							}
-						}
-					});
-				}
-			} catch (InterruptedException e) {
-			} catch (InvocationTargetException e) {
 			}
 		}
 
 		@Override
 		public void init(long totalElements) {
 			super.init(totalElements);
-			try {
-				SwingUtilities.invokeAndWait(new Runnable() {
-					@Override
-					public void run() {
-						getStatusBar().setText("Evaluating query...");
-					}
-				});
-			} catch (InterruptedException e) {
-			} catch (InvocationTargetException e) {
-			}
+			invokeAndWait(new Runnable() {
+				@Override
+				public void run() {
+					getStatusBar().setText("Evaluating query...");
+				}
+			});
 		}
 	}
 
@@ -691,8 +658,7 @@ public class GreqlGui extends SwingApplication {
 	}
 
 	public static void main(String[] args) {
-		SwingUtilities.invokeLater(new Runnable() {
-
+		SwingApplication.invokeLater(new Runnable() {
 			@Override
 			public void run() {
 				new GreqlGui().setVisible(true);
