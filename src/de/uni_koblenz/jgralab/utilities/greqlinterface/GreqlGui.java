@@ -37,30 +37,34 @@ package de.uni_koblenz.jgralab.utilities.greqlinterface;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
-import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
+import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.ResourceBundle;
+import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 
 import javax.swing.AbstractAction;
+import javax.swing.Action;
 import javax.swing.BorderFactory;
 import javax.swing.BoundedRangeModel;
 import javax.swing.DefaultBoundedRangeModel;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
-import javax.swing.JEditorPane;
-import javax.swing.JFileChooser;
 import javax.swing.JFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
@@ -68,17 +72,18 @@ import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
-import javax.swing.SwingUtilities;
-import javax.swing.event.UndoableEditEvent;
-import javax.swing.event.UndoableEditListener;
+import javax.swing.JTextPane;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.text.Document;
-import javax.swing.undo.UndoManager;
+import javax.swing.text.MutableAttributeSet;
+import javax.swing.text.StyleConstants;
+import javax.swing.text.StyledDocument;
 import javax.xml.stream.XMLStreamException;
 
 import de.uni_koblenz.ist.utilities.gui.SwingApplication;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphIO;
-import de.uni_koblenz.jgralab.GraphIO.TGFilenameFilter;
 import de.uni_koblenz.jgralab.ProgressFunction;
 import de.uni_koblenz.jgralab.WorkInProgress;
 import de.uni_koblenz.jgralab.codegenerator.CodeGeneratorConfiguration;
@@ -102,25 +107,46 @@ public class GreqlGui extends SwingApplication {
 	private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle
 			.getBundle(BUNDLE_NAME);
 
+	private static final String DOCUMENT_NAME = "GReQL query";
+
+	private static final String DOCUMENT_EXTENSION = ".greql";
+
+	private static final String GRAPH_NAME = "Graph";
+
+	private static final String GRAPH_EXTENSION = ".tg";
+
 	private Graph graph;
-	private JFileChooser fileChooser;
-	private JPanel queryPanel;
-	private JTextArea queryArea;
-	private JEditorPane resultPane;
-	private JTabbedPane tabPane;
-	private JTextArea consoleOutputArea;
-	private JButton fileSelectionButton;
-	private JButton evalQueryButton;
-	private JButton stopButton;
-	private JButton fromJavaButton;
-	private JButton toJavaButton;
-	private JProgressBar progressBar;
-	private BoundedRangeModel brm;
-	private Evaluator evaluator;
+	private JTabbedPane editorPane;
+	private List<QueryEditorPanel> queries;
+
 	private JCheckBox optimizeCheckBox;
 	private JCheckBox debugOptimizationCheckBox;
+
+	private JTextPane resultPane;
+	private JTabbedPane outputPane;
 	private JScrollPane resultScrollPane;
-	private UndoManager undoManager;
+	private JTextArea consoleOutputArea;
+
+	private JProgressBar progressBar;
+	private BoundedRangeModel brm;
+
+	private Evaluator evaluator;
+
+	private FileDialog fd;
+
+	private Action insertJavaQuotesAction;
+	private Action removeJavaQuotesAction;
+
+	private Action loadGraphAction;
+	private Action unloadGraphAction;
+	private Action evaluateQueryAction;
+	private Action stopEvaluationAction;
+
+	private boolean graphLoading;
+
+	private boolean evaluating;
+
+	private boolean fontSet;
 
 	class Worker extends Thread implements ProgressFunction {
 		BoundedRangeModel brm;
@@ -185,7 +211,10 @@ public class GreqlGui extends SwingApplication {
 						CodeGeneratorConfiguration.MINIMAL, this);
 			} catch (Exception e1) {
 				graph = null;
+				e1.printStackTrace();
 				ex = e1;
+			} finally {
+				graphLoading = false;
 			}
 			invokeAndWait(new Runnable() {
 				@Override
@@ -211,8 +240,6 @@ public class GreqlGui extends SwingApplication {
 						getStatusBar().setText(
 								"Graph '" + graph.getId() + "' loaded.");
 					}
-					fileSelectionButton.setEnabled(true);
-					evalQueryButton.setEnabled(graph != null);
 				}
 			});
 		}
@@ -253,10 +280,8 @@ public class GreqlGui extends SwingApplication {
 			invokeAndWait(new Runnable() {
 				@Override
 				public void run() {
-					stopButton.setEnabled(false);
-					evalQueryButton.setEnabled(true);
-					fileSelectionButton.setEnabled(true);
 					if (ex != null) {
+						evaluating = false;
 						brm.setValue(brm.getMinimum());
 						getStatusBar().setText("Couldn't evaluate query :-(");
 						String msg = ex.getMessage();
@@ -273,28 +298,21 @@ public class GreqlGui extends SwingApplication {
 							List<SourcePosition> spl = qs.getSourcePositions();
 							if (spl.size() > 0) {
 								SourcePosition sp = spl.get(0);
-								if (sp.get_offset() >= 0
-										&& sp.get_length() >= 0) {
-									queryArea
-											.setSelectionStart(sp.get_offset());
-									queryArea.setSelectionEnd(sp.get_offset()
-											+ sp.get_length());
-								}
+								getCurrentQuery().setSelection(sp.get_offset(),
+										sp.get_length());
 							}
 						} else if (ex instanceof ParsingException) {
 							ParsingException pe = (ParsingException) ex;
-							if (pe.getOffset() >= 0 && pe.getLength() >= 0) {
-								queryArea.setSelectionStart(pe.getOffset());
-								queryArea.setSelectionEnd(pe.getOffset()
-										+ pe.getLength());
-							}
+							getCurrentQuery().setSelection(pe.getOffset(),
+									pe.getLength());
 						}
+						fontSet = false;
 						resultPane.setText(ex.getClass().getSimpleName() + ": "
 								+ msg);
+						updateActions();
 						// JOptionPane.showMessageDialog(GreqlGui.this, msg,
 						// ex.getClass().getSimpleName(),
 						// JOptionPane.ERROR_MESSAGE);
-						queryArea.requestFocus();
 					} else {
 						getStatusBar()
 								.setText(
@@ -307,6 +325,8 @@ public class GreqlGui extends SwingApplication {
 					@Override
 					public void run() {
 						Object result = eval.getResult();
+						evaluating = false;
+						updateActions();
 						try {
 							File xmlResultFile = new File(
 									"greqlQueryResult.xml");
@@ -322,9 +342,10 @@ public class GreqlGui extends SwingApplication {
 							Document doc = resultPane.getDocument();
 							doc.putProperty(Document.StreamDescriptionProperty,
 									null);
+							outputPane.setSelectedComponent(resultScrollPane);
+							fontSet = false;
 							resultPane.setPage(new URL("file", "localhost",
 									resultFile.getCanonicalPath()));
-							tabPane.setSelectedComponent(resultScrollPane);
 						} catch (SerialisingException e) {
 							JOptionPane.showMessageDialog(GreqlGui.this,
 									"Exception during HTML output of result: "
@@ -358,6 +379,7 @@ public class GreqlGui extends SwingApplication {
 		super(RESOURCE_BUNDLE);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		initializeApplication();
+		fd = new FileDialog(getApplicationName());
 	}
 
 	private class ConsoleOutputStream extends PrintStream {
@@ -368,93 +390,166 @@ public class GreqlGui extends SwingApplication {
 		@Override
 		public void write(byte[] buf, int off, int len) {
 			final String aString = new String(buf, off, len);
-			try {
-				SwingUtilities.invokeAndWait(new Runnable() {
-					@Override
-					public void run() {
-						consoleOutputArea.append(aString);
-					}
-				});
-			} catch (InterruptedException e) {
-			} catch (InvocationTargetException e) {
-			}
+			invokeAndWait(new Runnable() {
+				@Override
+				public void run() {
+					consoleOutputArea.append(aString);
+				}
+			});
 		}
 	}
 
 	@Override
 	protected void editUndo() {
-		undoManager.undo();
+		getCurrentQuery().undo();
 		updateActions();
 	}
 
 	@Override
 	protected void editRedo() {
-		undoManager.redo();
+		getCurrentQuery().redo();
 		updateActions();
 	}
 
 	@Override
 	protected void editCut() {
-		queryArea.cut();
+		getCurrentQuery().cut();
 		updateActions();
 	}
 
 	@Override
 	protected void editCopy() {
-		queryArea.copy();
+		getCurrentQuery().copy();
 		updateActions();
 	}
 
 	@Override
 	protected void editPaste() {
-		queryArea.paste();
+		getCurrentQuery().paste();
 		updateActions();
 	}
 
 	@Override
-	protected boolean confirmClose() {
-		return true;
+	public void updateActions() {
+		setModified(getCurrentQuery() != null && getCurrentQuery().isModified());
+
+		fileCloseAction.setEnabled(getCurrentQuery() != null);
+		fileSaveAction.setEnabled(getCurrentQuery() != null && isModified());
+		fileSaveAsAction.setEnabled(getCurrentQuery() != null);
+		filePrintAction.setEnabled(false);
+
+		editUndoAction.setEnabled(getCurrentQuery() != null
+				&& getCurrentQuery().canUndo());
+		editRedoAction.setEnabled(getCurrentQuery() != null
+				&& getCurrentQuery().canRedo());
+		editCutAction.setEnabled(getCurrentQuery() != null);
+		editCopyAction.setEnabled(getCurrentQuery() != null);
+		editPasteAction.setEnabled(getCurrentQuery() != null);
+
+		insertJavaQuotesAction.setEnabled(getCurrentQuery() != null);
+		removeJavaQuotesAction.setEnabled(getCurrentQuery() != null);
+
+		loadGraphAction.setEnabled(!evaluating && !graphLoading);
+		unloadGraphAction.setEnabled(!evaluating && !graphLoading
+				&& graph != null);
+		evaluateQueryAction.setEnabled(getCurrentQuery() != null && !evaluating
+				&& !graphLoading);
+		stopEvaluationAction.setEnabled(evaluating);
+
+		setTitle(MessageFormat.format(
+				getMessage("Application.mainwindow.title"),
+				getCurrentQuery() != null ? getCurrentQuery().getFileName()
+						: "(no query opened)"));
+		if (getCurrentQuery() != null) {
+			editorPane.setTitleAt(editorPane.getSelectedIndex(),
+					(getCurrentQuery().isModified() ? "*" : "")
+							+ getCurrentQuery().getFileName());
+		}
+		if (getCurrentQuery() != null) {
+			getCurrentQuery().requestFocus();
+		}
 	}
 
 	@Override
-	protected void updateActions() {
-		editUndoAction.setEnabled(undoManager.canUndo());
-		editRedoAction.setEnabled(undoManager.canRedo());
+	protected void createActions() {
+		// TODO Auto-generated method stub
+		super.createActions();
+		loadGraphAction = new AbstractAction("Load graph ...") {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				loadGraph();
+			}
+		};
+
+		unloadGraphAction = new AbstractAction("Unload graph") {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				unloadGraph();
+			}
+		};
+
+		evaluateQueryAction = new AbstractAction("Evaluate query") {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				evaluateQuery();
+			}
+		};
+
+		stopEvaluationAction = new AbstractAction("Stop evaluation") {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				stopEvaluation();
+			}
+		};
+
+		insertJavaQuotesAction = new AbstractAction("Insert Java quotes") {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				insertJavaQuotes();
+			}
+		};
+
+		removeJavaQuotesAction = new AbstractAction("Remove Java quotes") {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				removeJavaQuotes();
+			}
+		};
+	}
+
+	@Override
+	protected JMenuBar createMenuBar() {
+		// TODO Auto-generated method stub
+		JMenuBar mb = super.createMenuBar();
+		JMenu graphMenu = new JMenu("Graph");
+		graphMenu.add(loadGraphAction);
+		graphMenu.add(unloadGraphAction);
+		mb.add(graphMenu, mb.getComponentIndex(helpMenu));
+		return mb;
+	}
+
+	@Override
+	protected JPanel createToolBar() {
+		JPanel pnl = super.createToolBar();
+		pnl.add(new JButton(loadGraphAction));
+		pnl.add(new JButton(evaluateQueryAction));
+		pnl.add(new JButton(stopEvaluationAction));
+		pnl.add(new JButton(insertJavaQuotesAction));
+		pnl.add(new JButton(removeJavaQuotesAction));
+		return pnl;
 	}
 
 	@Override
 	protected Component createContent() {
-		queryArea = new JTextArea(15, 50);
-		queryArea.setEditable(true);
-		queryArea.setFont(new java.awt.Font("Monaco", java.awt.Font.PLAIN, 13));
-
-		// Start code for undo/redo ---------------
-		undoManager = new UndoManager();
-		undoManager.setLimit(10000);
-		Document doc = queryArea.getDocument();
-
-		// Listen for undo and redo events
-		doc.addUndoableEditListener(new UndoableEditListener() {
-			public void undoableEditHappened(UndoableEditEvent evt) {
-				undoManager.addEdit(evt.getEdit());
+		queries = new ArrayList<QueryEditorPanel>();
+		editorPane = new JTabbedPane();
+		editorPane.addChangeListener(new ChangeListener() {
+			@Override
+			public void stateChanged(ChangeEvent e) {
 				updateActions();
-				setModified(true);
 			}
 		});
-
-		queryArea.setText("// Please enter your query here!");
-		JScrollPane queryScrollPane = new JScrollPane(queryArea);
-
-		queryPanel = new JPanel();
-		queryPanel.setLayout(new BorderLayout(4, 4));
-		queryPanel.setBorder(BorderFactory.createEmptyBorder(4, 4, 4, 4));
-		queryPanel.add(queryScrollPane, BorderLayout.CENTER);
-
-		resultPane = new JEditorPane(
-				"text/html; charset=UTF-8",
-				"<html>Here the <b>query results</b> will be shown. "
-						+ "Simply select a graph, type a query and press the evaluation button."
-						+ "</html>");
+		resultPane = new JTextPane();
 		resultPane.setEditable(false);
 
 		// install property change listener to update status label
@@ -462,7 +557,17 @@ public class GreqlGui extends SwingApplication {
 				new PropertyChangeListener() {
 					@Override
 					public void propertyChange(PropertyChangeEvent pce) {
-						getStatusBar().setText("Result complete.");
+						if (!fontSet) {
+							MutableAttributeSet attrs = resultPane
+									.getInputAttributes();
+							StyleConstants
+									.setFontFamily(attrs, Font.SANS_SERIF);
+							StyledDocument doc = resultPane.getStyledDocument();
+							doc.setCharacterAttributes(0, doc.getLength() + 1,
+									attrs, false);
+							fontSet = true;
+							getStatusBar().setText("Result complete.");
+						}
 					}
 				});
 
@@ -478,64 +583,11 @@ public class GreqlGui extends SwingApplication {
 		consoleScrollPane.setPreferredSize(new Dimension(200, 200));
 
 		System.setOut(new ConsoleOutputStream());
-		System.setErr(new ConsoleOutputStream());
+		// System.setErr(new ConsoleOutputStream());
 
-		tabPane = new JTabbedPane();
-		tabPane.addTab("Console", consoleScrollPane);
-		tabPane.addTab("Result", resultScrollPane);
-
-		fileChooser = new JFileChooser();
-		fileChooser.setAcceptAllFileFilterUsed(true);
-		fileChooser.setFileFilter(TGFilenameFilter.instance());
-
-		fileSelectionButton = new JButton(new AbstractAction("Select Graph") {
-			private static final long serialVersionUID = 1L;
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				Preferences prefs = Preferences
-						.userNodeForPackage(GreqlGui.class);
-				String lastDirectoryName = prefs.get("LAST_DIRECTORY",
-						System.getProperty("user.dir"));
-				File lastDir = new File(lastDirectoryName);
-				if (lastDir.isDirectory() && lastDir.canRead()) {
-					fileChooser.setCurrentDirectory(lastDir);
-				} else {
-					lastDir = new File(System.getProperty("user.dir"));
-					if (lastDir.isDirectory() && lastDir.canRead()) {
-						fileChooser.setCurrentDirectory(lastDir);
-					}
-				}
-				int returnVal = fileChooser.showOpenDialog(fileSelectionButton);
-				if (returnVal == JFileChooser.APPROVE_OPTION) {
-					fileSelectionButton.setEnabled(false);
-					evalQueryButton.setEnabled(false);
-					getStatusBar().setText("Compiling schema...");
-					new GraphLoader(brm, fileChooser.getSelectedFile()).start();
-					try {
-						prefs.put("LAST_DIRECTORY", fileChooser
-								.getCurrentDirectory().getCanonicalPath());
-					} catch (IOException e1) {
-					}
-				}
-			}
-		});
-
-		evalQueryButton = new JButton(new AbstractAction("Evaluate Query") {
-			private static final long serialVersionUID = 1L;
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				fileSelectionButton.setEnabled(false);
-				evalQueryButton.setEnabled(false);
-				brm.setValue(brm.getMinimum());
-				evaluator = new Evaluator(brm, queryArea.getText());
-				evaluator.start();
-				stopButton.setEnabled(true);
-			}
-
-		});
-		// evalQueryButton.setEnabled(false);
+		outputPane = new JTabbedPane();
+		outputPane.addTab("Result", resultScrollPane);
+		outputPane.addTab("Console", consoleScrollPane);
 
 		optimizeCheckBox = new JCheckBox("Enable optimizer");
 		optimizeCheckBox.setSelected(true);
@@ -543,113 +595,43 @@ public class GreqlGui extends SwingApplication {
 		debugOptimizationCheckBox = new JCheckBox("Debug optimization");
 		debugOptimizationCheckBox.setSelected(false);
 
-		stopButton = new JButton(new AbstractAction("Stop evaluation") {
-			private static final long serialVersionUID = 1L;
+		JPanel queryPanel = new JPanel();
+		queryPanel.setLayout(new BorderLayout(4, 4));
+		queryPanel.setBorder(BorderFactory.createEmptyBorder(4, 4, 4, 4));
 
-			@SuppressWarnings("deprecation")
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				evaluator.stop(); // this brutal brake is intended!
-				stopButton.setEnabled(false);
-				fileSelectionButton.setEnabled(true);
-				evalQueryButton.setEnabled(true);
-				evaluator = null;
-				brm.setValue(brm.getMinimum());
-				getStatusBar().setText("Query aborted.");
-			}
-
-		});
-		stopButton.setEnabled(false);
-
-		fromJavaButton = new JButton("Remove Java Quotes");
-		fromJavaButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				String text = queryArea.getText();
-				String[] lines = text.split("\n");
-				StringBuilder sb = new StringBuilder();
-				for (String line : lines) {
-					String[] strings = line.split("\" \\+");
-					for (String s : strings) {
-						int p = s.indexOf('\"');
-						if (p >= 0) {
-							s = s.substring(p + 1);
-						}
-						if (!(strings.length > 1 && strings[1].length() > 0)) {
-							p = s.lastIndexOf('\"');
-							if (p >= 0) {
-								s = s.substring(0, p);
-							}
-						}
-						s = s.replace("\\\"", "\"");
-						s = s.replace("\\\\", "\\");
-						sb.append(s).append("\n");
-					}
-				}
-				text = sb.toString();
-				queryArea.setText(text);
-				queryArea.requestFocus();
-			}
-		});
-
-		toJavaButton = new JButton("Insert Java Quotes");
-		toJavaButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				String text = queryArea.getText();
-				String[] lines = text.split("\n");
-				StringBuilder sb = new StringBuilder();
-				boolean firstLine = true;
-				boolean spaceRequired = false;
-				for (String line : lines) {
-					line = line.replace("\t", " ");
-					line = line.replace("\\", "\\\\");
-					line = line.replace("\"", "\\\"");
-					if (firstLine) {
-						sb.append("\"").append(line).append("\"");
-						firstLine = false;
-					} else {
-						boolean startsWithWs = line.length() > 0
-								&& Character.isWhitespace(line.charAt(0));
-						sb.append(" +\n\"")
-								.append(spaceRequired && !startsWithWs ? " "
-										: "").append(line).append("\"");
-					}
-					spaceRequired = line.length() > 0
-							&& !Character.isWhitespace(line.charAt(line
-									.length() - 1));
-				}
-				text = sb.toString();
-				queryArea.setText(text);
-				queryArea.select(0, text.length());
-				queryArea.copy();
-				queryArea.requestFocus();
-			}
-		});
+		queryPanel.add(editorPane, BorderLayout.CENTER);
 
 		JPanel buttonPanel = new JPanel();
-		buttonPanel.add(fileSelectionButton);
-		buttonPanel.add(evalQueryButton);
 		buttonPanel.add(optimizeCheckBox);
 		buttonPanel.add(debugOptimizationCheckBox);
-		buttonPanel.add(stopButton);
-		buttonPanel.add(fromJavaButton);
-		buttonPanel.add(toJavaButton);
 		queryPanel.add(buttonPanel, BorderLayout.SOUTH);
 
 		JSplitPane spl = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
 		spl.add(queryPanel, JSplitPane.TOP);
-		spl.add(tabPane, JSplitPane.BOTTOM);
+		spl.add(outputPane, JSplitPane.BOTTOM);
 
 		// Don't allow shrinking so that buttons get invisible
 		spl.setMinimumSize(new Dimension(
 				buttonPanel.getPreferredSize().width + 10, 450));
 
-		queryArea.setSelectionStart(0);
-		queryArea.setSelectionEnd(queryArea.getText().length());
-		queryArea.requestFocus();
-		setModified(false);
+		fileNew();
 		return spl;
+	}
+
+	protected String getPrefString(String key, String def) {
+		Preferences prefs = Preferences.userNodeForPackage(GreqlGui.class);
+		return prefs.get(key, def);
+	}
+
+	protected void setPrefString(String key, String val) {
+		Preferences prefs = Preferences.userNodeForPackage(GreqlGui.class);
+		prefs.put(key, val);
+		try {
+			prefs.flush();
+		} catch (BackingStoreException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	@Override
@@ -657,12 +639,236 @@ public class GreqlGui extends SwingApplication {
 		return VERSION;
 	}
 
+	protected void openFile(File f) throws IOException {
+		// look for existing editor
+		for (QueryEditorPanel q : queries) {
+			if (f.equals(q.getQueryFile())) {
+				editorPane.setSelectedComponent(q);
+				return;
+			}
+		}
+		System.out.println("openFile(" + f.getAbsolutePath() + ")");
+		System.out.println("\t" + getCurrentQuery());
+		if (getCurrentQuery() != null
+				&& getCurrentQuery().getQueryFile() == null
+				&& !getCurrentQuery().isModified()) {
+			// re-use fresh editor
+			getCurrentQuery().loadFromFile(f);
+			updateActions();
+		} else {
+			// create new editor
+			QueryEditorPanel newQuery = new QueryEditorPanel(this, f);
+			queries.add(newQuery);
+			editorPane.addTab("", newQuery);
+			editorPane.setSelectedComponent(newQuery);
+		}
+		setPrefString("LAST_QUERY_DIRECTORY", f.getParentFile()
+				.getCanonicalPath());
+	}
+
+	protected void saveFile(File f) throws IOException {
+		getCurrentQuery().saveToFile(f);
+		setPrefString("LAST_QUERY_DIRECTORY", f.getParentFile()
+				.getCanonicalPath());
+		updateActions();
+	}
+
+	@Override
+	protected void fileNew() {
+		QueryEditorPanel newQuery;
+		try {
+			newQuery = new QueryEditorPanel(this);
+			queries.add(newQuery);
+			editorPane.addTab("", newQuery);
+			editorPane.setSelectedComponent(newQuery);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	@Override
+	protected void fileOpen() {
+		String lastQueryDirectory = getPrefString("LAST_QUERY_DIRECTORY",
+				System.getProperty("user.dir"));
+		fd.setDirectory(new File(lastQueryDirectory));
+		File queryFile = fd.showFileOpenDialog(this, "Open " + DOCUMENT_NAME,
+				DOCUMENT_EXTENSION, DOCUMENT_NAME + "s");
+		if (queryFile != null) {
+			try {
+				openFile(queryFile);
+			} catch (IOException e) {
+				// TODO
+				e.printStackTrace();
+			}
+		}
+	}
+
+	@Override
+	protected boolean confirmClose() {
+		if (!isModified()) {
+			return true;
+		}
+		switch (JOptionPane.showConfirmDialog(this,
+				"Unsaved changes, save them?", getMessage("Application.name"),
+				JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE)) {
+		case JOptionPane.YES_OPTION:
+			if (getCurrentQuery().getQueryFile() != null) {
+				try {
+					saveFile(getCurrentQuery().getQueryFile());
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+					return false;
+				}
+				return true;
+			} else {
+				return fileSaveAs();
+			}
+		case JOptionPane.NO_OPTION:
+			return true;
+		default:
+			return false;
+		}
+	}
+
+	@Override
+	protected boolean confirmExit() {
+		for (QueryEditorPanel q : queries) {
+			if (q.isModified()) {
+				editorPane.setSelectedComponent(q);
+				if (!confirmClose()) {
+					return false;
+				}
+			}
+		}
+		return true;
+	}
+
+	@Override
+	protected void fileClose() {
+		if (confirmClose()) {
+			int i = editorPane.getSelectedIndex();
+			editorPane.remove(i);
+			queries.remove(getCurrentQuery());
+		}
+	}
+
+	@Override
+	protected void fileSave() {
+		if (getCurrentQuery().getQueryFile() == null) {
+			fileSaveAs();
+		} else {
+			try {
+				saveFile(getCurrentQuery().getQueryFile());
+				updateActions();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+	}
+
+	@Override
+	protected boolean fileSaveAs() {
+		File f = fd.showFileSaveAsDialog(this, "Save " + DOCUMENT_NAME + " as",
+				DOCUMENT_EXTENSION, getCurrentQuery().getQueryFile());
+		if (f == null) {
+			return false;
+		}
+		System.out.println("SaveFileAs " + f.getAbsolutePath());
+		try {
+			saveFile(f);
+			updateActions();
+			return true;
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return false;
+	}
+
+	@Override
+	protected void editPreferences() {
+		new SettingsDialog(this);
+	}
+
+	public void loadGraph() {
+		String lastDirectoryName = getPrefString("LAST_GRAPH_DIRECTORY",
+				System.getProperty("user.dir"));
+
+		fd.setDirectory(new File(lastDirectoryName));
+		File graphFile = fd.showFileOpenDialog(this, "Open " + GRAPH_NAME,
+				GRAPH_EXTENSION, GRAPH_NAME + "s");
+		if (graphFile != null) {
+			try {
+				setPrefString("LAST_GRAPH_DIRECTORY", graphFile.getParentFile()
+						.getCanonicalPath());
+				graphLoading = true;
+				updateActions();
+				new GraphLoader(brm, graphFile).start();
+			} catch (IOException e) {
+				// TODO
+				e.printStackTrace();
+			}
+		}
+	}
+
+	public void unloadGraph() {
+		graph = null;
+		getStatusBar().setText("Graph unloaded.");
+		updateActions();
+	}
+
+	private void insertJavaQuotes() {
+		getCurrentQuery().insertJavaQuotes();
+		updateActions();
+	}
+
+	private void removeJavaQuotes() {
+		getCurrentQuery().removeJavaQuotes();
+		updateActions();
+	}
+
+	private void evaluateQuery() {
+		evaluating = true;
+		brm.setValue(brm.getMinimum());
+		evaluator = new Evaluator(brm, getCurrentQuery().getText());
+		updateActions();
+		evaluator.start();
+	}
+
+	private void stopEvaluation() {
+		if (evaluating) {
+			evaluator.stop(); // this brutal brake is intended!
+			evaluating = false;
+			fontSet = false;
+			evaluator = null;
+			brm.setValue(brm.getMinimum());
+			resultPane.setText("Query aborted.");
+			getStatusBar().setText("Query aborted.");
+			updateActions();
+		}
+	}
+
 	public static void main(String[] args) {
 		SwingApplication.invokeLater(new Runnable() {
 			@Override
 			public void run() {
-				new GreqlGui().setVisible(true);
+				Locale.setDefault(Locale.ENGLISH);
+				GreqlGui g = new GreqlGui();
+				g.setVisible(true);
+				// FontSelectionDialog.selectFont(g,
+				// g.getMessage("Settings.SelectQueryFont"), null, false);
 			}
 		});
+	}
+
+	private QueryEditorPanel getCurrentQuery() {
+		return (QueryEditorPanel) editorPane.getSelectedComponent();
+	}
+
+	public void saveSettings() {
+		// TODO
 	}
 }
