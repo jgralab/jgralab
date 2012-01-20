@@ -39,6 +39,7 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.ByteArrayOutputStream;
@@ -73,6 +74,7 @@ import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextPane;
+import javax.swing.KeyStroke;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.text.Document;
@@ -81,6 +83,7 @@ import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
 import javax.xml.stream.XMLStreamException;
 
+import de.uni_koblenz.ist.utilities.gui.RecentFilesList;
 import de.uni_koblenz.ist.utilities.gui.SwingApplication;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphIO;
@@ -139,6 +142,7 @@ public class GreqlGui extends SwingApplication {
 
 	private Action loadGraphAction;
 	private Action unloadGraphAction;
+	private Action clearRecentGraphsAction;
 	private Action evaluateQueryAction;
 	private Action stopEvaluationAction;
 
@@ -146,7 +150,13 @@ public class GreqlGui extends SwingApplication {
 
 	private boolean evaluating;
 
-	private boolean fontSet;
+	private boolean resultFontSet;
+
+	private Preferences prefs;
+
+	private RecentFilesList recentQueryList;
+	private RecentFilesList recentGraphList;
+	private JMenu recentGraphsMenu;
 
 	class Worker extends Thread implements ProgressFunction {
 		BoundedRangeModel brm;
@@ -209,6 +219,8 @@ public class GreqlGui extends SwingApplication {
 				graph = GraphIO.loadSchemaAndGraphFromFile(
 						file.getCanonicalPath(),
 						CodeGeneratorConfiguration.MINIMAL, this);
+				recentGraphList.rememberFile(file);
+				graphLoading = false;
 			} catch (Exception e1) {
 				graph = null;
 				e1.printStackTrace();
@@ -220,7 +232,6 @@ public class GreqlGui extends SwingApplication {
 				@Override
 				public void run() {
 					if (graph == null) {
-
 						String msg = "Can't load ";
 						try {
 							msg += file.getCanonicalPath() + "\n"
@@ -240,6 +251,7 @@ public class GreqlGui extends SwingApplication {
 						getStatusBar().setText(
 								"Graph '" + graph.getId() + "' loaded.");
 					}
+					updateActions();
 				}
 			});
 		}
@@ -306,7 +318,7 @@ public class GreqlGui extends SwingApplication {
 							getCurrentQuery().setSelection(pe.getOffset(),
 									pe.getLength());
 						}
-						fontSet = false;
+						resultFontSet = false;
 						resultPane.setText(ex.getClass().getSimpleName() + ": "
 								+ msg);
 						updateActions();
@@ -343,7 +355,7 @@ public class GreqlGui extends SwingApplication {
 							doc.putProperty(Document.StreamDescriptionProperty,
 									null);
 							outputPane.setSelectedComponent(resultScrollPane);
-							fontSet = false;
+							resultFontSet = false;
 							resultPane.setPage(new URL("file", "localhost",
 									resultFile.getCanonicalPath()));
 						} catch (SerialisingException e) {
@@ -378,7 +390,28 @@ public class GreqlGui extends SwingApplication {
 	public GreqlGui() {
 		super(RESOURCE_BUNDLE);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		prefs = Preferences.userNodeForPackage(GreqlGui.class);
 		initializeApplication();
+		recentQueryList = new RecentFilesList(prefs, "RECENT_QUERY", 10,
+				recentFilesMenu) {
+			@Override
+			public void openRecentFile(File file) {
+				try {
+					openFile(file);
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		};
+
+		recentGraphList = new RecentFilesList(prefs, "RECENT_GRAPH", 10,
+				recentGraphsMenu) {
+			@Override
+			public void openRecentFile(File file) {
+				loadGraph(file);
+			}
+		};
 		fd = new FileDialog(getApplicationName());
 	}
 
@@ -438,6 +471,8 @@ public class GreqlGui extends SwingApplication {
 		fileSaveAsAction.setEnabled(getCurrentQuery() != null);
 		filePrintAction.setEnabled(false);
 
+		recentGraphsMenu.setEnabled(!graphLoading);
+
 		editUndoAction.setEnabled(getCurrentQuery() != null
 				&& getCurrentQuery().canUndo());
 		editRedoAction.setEnabled(getCurrentQuery() != null
@@ -475,9 +510,21 @@ public class GreqlGui extends SwingApplication {
 		// TODO Auto-generated method stub
 		super.createActions();
 		loadGraphAction = new AbstractAction("Load graph ...") {
+			{
+				putValue(AbstractAction.ACCELERATOR_KEY,
+						KeyStroke.getKeyStroke(KeyEvent.VK_L, menuEventMask));
+			}
+
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				loadGraph();
+			}
+		};
+
+		clearRecentGraphsAction = new AbstractAction("Clear list") {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				recentGraphList.clear();
 			}
 		};
 
@@ -489,6 +536,11 @@ public class GreqlGui extends SwingApplication {
 		};
 
 		evaluateQueryAction = new AbstractAction("Evaluate query") {
+			{
+				putValue(AbstractAction.ACCELERATOR_KEY,
+						KeyStroke.getKeyStroke(KeyEvent.VK_R, menuEventMask));
+			}
+
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				evaluateQuery();
@@ -523,8 +575,21 @@ public class GreqlGui extends SwingApplication {
 		JMenuBar mb = super.createMenuBar();
 		JMenu graphMenu = new JMenu("Graph");
 		graphMenu.add(loadGraphAction);
+		recentGraphsMenu = new JMenu("Recent graphs");
+		recentGraphsMenu.addSeparator();
+		recentGraphsMenu.add(clearRecentGraphsAction);
+		graphMenu.add(recentGraphsMenu);
+		graphMenu.addSeparator();
 		graphMenu.add(unloadGraphAction);
 		mb.add(graphMenu, mb.getComponentIndex(helpMenu));
+
+		JMenu queryMenu = new JMenu("Query");
+		queryMenu.add(evaluateQueryAction);
+		queryMenu.add(stopEvaluationAction);
+		queryMenu.addSeparator();
+		queryMenu.add(insertJavaQuotesAction);
+		queryMenu.add(removeJavaQuotesAction);
+		mb.add(queryMenu, mb.getComponentIndex(graphMenu));
 		return mb;
 	}
 
@@ -557,7 +622,7 @@ public class GreqlGui extends SwingApplication {
 				new PropertyChangeListener() {
 					@Override
 					public void propertyChange(PropertyChangeEvent pce) {
-						if (!fontSet) {
+						if (!resultFontSet) {
 							MutableAttributeSet attrs = resultPane
 									.getInputAttributes();
 							StyleConstants
@@ -565,7 +630,7 @@ public class GreqlGui extends SwingApplication {
 							StyledDocument doc = resultPane.getStyledDocument();
 							doc.setCharacterAttributes(0, doc.getLength() + 1,
 									attrs, false);
-							fontSet = true;
+							resultFontSet = true;
 							getStatusBar().setText("Result complete.");
 						}
 					}
@@ -662,6 +727,7 @@ public class GreqlGui extends SwingApplication {
 			editorPane.addTab("", newQuery);
 			editorPane.setSelectedComponent(newQuery);
 		}
+		recentQueryList.rememberFile(f);
 		setPrefString("LAST_QUERY_DIRECTORY", f.getParentFile()
 				.getCanonicalPath());
 	}
@@ -748,9 +814,9 @@ public class GreqlGui extends SwingApplication {
 	@Override
 	protected void fileClose() {
 		if (confirmClose()) {
-			int i = editorPane.getSelectedIndex();
-			editorPane.remove(i);
-			queries.remove(getCurrentQuery());
+			QueryEditorPanel curr = getCurrentQuery();
+			editorPane.remove(curr);
+			queries.remove(curr);
 		}
 	}
 
@@ -789,8 +855,26 @@ public class GreqlGui extends SwingApplication {
 	}
 
 	@Override
+	protected void fileClearRecentFiles() {
+		recentQueryList.clear();
+	}
+
+	@Override
 	protected void editPreferences() {
 		new SettingsDialog(this);
+	}
+
+	public void loadGraph(File f) {
+		try {
+			setPrefString("LAST_GRAPH_DIRECTORY", f.getParentFile()
+					.getCanonicalPath());
+			graphLoading = true;
+			updateActions();
+			new GraphLoader(brm, f).start();
+		} catch (IOException e) {
+			// TODO
+			e.printStackTrace();
+		}
 	}
 
 	public void loadGraph() {
@@ -801,16 +885,7 @@ public class GreqlGui extends SwingApplication {
 		File graphFile = fd.showFileOpenDialog(this, "Open " + GRAPH_NAME,
 				GRAPH_EXTENSION, GRAPH_NAME + "s");
 		if (graphFile != null) {
-			try {
-				setPrefString("LAST_GRAPH_DIRECTORY", graphFile.getParentFile()
-						.getCanonicalPath());
-				graphLoading = true;
-				updateActions();
-				new GraphLoader(brm, graphFile).start();
-			} catch (IOException e) {
-				// TODO
-				e.printStackTrace();
-			}
+			loadGraph(graphFile);
 		}
 	}
 
@@ -842,7 +917,7 @@ public class GreqlGui extends SwingApplication {
 		if (evaluating) {
 			evaluator.stop(); // this brutal brake is intended!
 			evaluating = false;
-			fontSet = false;
+			resultFontSet = false;
 			evaluator = null;
 			brm.setValue(brm.getMinimum());
 			resultPane.setText("Query aborted.");
