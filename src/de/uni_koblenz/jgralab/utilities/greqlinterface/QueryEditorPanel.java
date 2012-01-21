@@ -1,12 +1,14 @@
 package de.uni_koblenz.jgralab.utilities.greqlinterface;
 
 import java.awt.BorderLayout;
+import java.awt.Font;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.text.MessageFormat;
 
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -19,7 +21,7 @@ import javax.swing.undo.UndoManager;
 public class QueryEditorPanel extends JPanel {
 	private static final long serialVersionUID = -5113284469152114552L;
 
-	private GreqlGui gui;
+	private GreqlGui app;
 	private JTextArea queryArea;
 	private UndoManager undoManager;
 	private File queryFile;
@@ -29,14 +31,16 @@ public class QueryEditorPanel extends JPanel {
 		this(parent, null);
 	}
 
-	public QueryEditorPanel(GreqlGui parent, File f) throws IOException {
-		gui = parent;
+	public QueryEditorPanel(GreqlGui gui, File f) throws IOException {
+		app = gui;
 		queryFile = null;
 
 		queryArea = new JTextArea(15, 50);
 		queryArea.setEditable(true);
-		queryArea.setFont(new java.awt.Font("Monaco", java.awt.Font.PLAIN, 13));
-
+		queryArea.setFont(gui.getQueryFont());
+		queryArea.setToolTipText(MessageFormat.format(
+				gui.getMessage("GreqlGui.QueryArea.ToolTip"),
+				gui.getEvaluateQueryShortcut()));
 		undoManager = new UndoManager();
 		undoManager.setLimit(10000);
 		Document doc = queryArea.getDocument();
@@ -51,7 +55,7 @@ public class QueryEditorPanel extends JPanel {
 			public void undoableEditHappened(UndoableEditEvent evt) {
 				undoManager.addEdit(evt.getEdit());
 				setModified(true);
-				gui.updateActions();
+				app.updateActions();
 			}
 		});
 
@@ -120,7 +124,13 @@ public class QueryEditorPanel extends JPanel {
 		StringBuilder sb = new StringBuilder();
 		for (String line : lines) {
 			String[] strings = line.split("\" \\+");
+			int i = 0;
 			for (String s : strings) {
+				if (i < strings.length - 1) {
+					s += "\"";
+				}
+				System.out.println(s);
+				++i;
 				int p = s.indexOf('\"');
 				if (p >= 0) {
 					s = s.substring(p + 1);
@@ -214,5 +224,9 @@ public class QueryEditorPanel extends JPanel {
 
 	public String getFileName() {
 		return queryFile == null ? "<new query>" : queryFile.getName();
+	}
+
+	public void setQueryFont(Font queryFont) {
+		queryArea.setFont(queryFont);
 	}
 }

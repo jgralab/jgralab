@@ -62,8 +62,7 @@ import javax.swing.BorderFactory;
 import javax.swing.BoundedRangeModel;
 import javax.swing.DefaultBoundedRangeModel;
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JFrame;
+import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JOptionPane;
@@ -88,7 +87,6 @@ import de.uni_koblenz.ist.utilities.gui.SwingApplication;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.ProgressFunction;
-import de.uni_koblenz.jgralab.WorkInProgress;
 import de.uni_koblenz.jgralab.codegenerator.CodeGeneratorConfiguration;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.exception.ParsingException;
@@ -99,9 +97,7 @@ import de.uni_koblenz.jgralab.greql2.serialising.HTMLOutputWriter;
 import de.uni_koblenz.jgralab.greql2.serialising.XMLOutputWriter;
 
 @SuppressWarnings("serial")
-@WorkInProgress(description = "insufficcient result presentation, simplistic hacked GUI, no load/save functionality, ...", responsibleDevelopers = "horn")
 public class GreqlGui extends SwingApplication {
-
 	private static final String VERSION = "0.0"; //$NON-NLS-1$
 
 	private static final String BUNDLE_NAME = GreqlGui.class.getPackage()
@@ -121,9 +117,6 @@ public class GreqlGui extends SwingApplication {
 	private Graph graph;
 	private JTabbedPane editorPane;
 	private List<QueryEditorPanel> queries;
-
-	private JCheckBox optimizeCheckBox;
-	private JCheckBox debugOptimizationCheckBox;
 
 	private JTextPane resultPane;
 	private JTabbedPane outputPane;
@@ -145,6 +138,11 @@ public class GreqlGui extends SwingApplication {
 	private Action clearRecentGraphsAction;
 	private Action evaluateQueryAction;
 	private Action stopEvaluationAction;
+	private Action enableOptimizerAction;
+	private Action debugOptimizerAction;
+
+	private JCheckBoxMenuItem enableOptimizerCheckBoxItem;
+	private JCheckBoxMenuItem debugOptimizerCheckBoxItem;
 
 	private boolean graphLoading;
 
@@ -157,6 +155,9 @@ public class GreqlGui extends SwingApplication {
 	private RecentFilesList recentQueryList;
 	private RecentFilesList recentGraphList;
 	private JMenu recentGraphsMenu;
+
+	private Font queryFont;
+	private Font resultFont;
 
 	class Worker extends Thread implements ProgressFunction {
 		BoundedRangeModel brm;
@@ -223,7 +224,6 @@ public class GreqlGui extends SwingApplication {
 				graphLoading = false;
 			} catch (Exception e1) {
 				graph = null;
-				e1.printStackTrace();
 				ex = e1;
 			} finally {
 				graphLoading = false;
@@ -281,8 +281,8 @@ public class GreqlGui extends SwingApplication {
 		public void run() {
 			final GreqlEvaluator eval = new GreqlEvaluator(query, graph,
 					new HashMap<String, Object>(), this);
-			eval.setOptimize(optimizeCheckBox.isSelected());
-			GreqlEvaluator.DEBUG_OPTIMIZATION = debugOptimizationCheckBox
+			eval.setOptimize(enableOptimizerCheckBoxItem.isSelected());
+			GreqlEvaluator.DEBUG_OPTIMIZATION = debugOptimizerCheckBoxItem
 					.isSelected();
 			try {
 				eval.startEvaluation();
@@ -321,6 +321,7 @@ public class GreqlGui extends SwingApplication {
 						resultFontSet = false;
 						resultPane.setText(ex.getClass().getSimpleName() + ": "
 								+ msg);
+						setResultFont(resultFont);
 						updateActions();
 						// JOptionPane.showMessageDialog(GreqlGui.this, msg,
 						// ex.getClass().getSimpleName(),
@@ -389,19 +390,19 @@ public class GreqlGui extends SwingApplication {
 
 	public GreqlGui() {
 		super(RESOURCE_BUNDLE);
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		// setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
 		prefs = Preferences.userNodeForPackage(GreqlGui.class);
+
+		loadSettings();
+
 		initializeApplication();
+
 		recentQueryList = new RecentFilesList(prefs, "RECENT_QUERY", 10,
 				recentFilesMenu) {
 			@Override
 			public void openRecentFile(File file) {
-				try {
-					openFile(file);
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+				openFile(file);
 			}
 		};
 
@@ -412,7 +413,22 @@ public class GreqlGui extends SwingApplication {
 				loadGraph(file);
 			}
 		};
+
 		fd = new FileDialog(getApplicationName());
+	}
+
+	private void loadSettings() {
+		String fontName = prefs.get("QUERY_FONT", "Monospaced-plain-14"); //$NON-NLS-1$ //$NON-NLS-2$
+		queryFont = Font.decode(fontName);
+		if (queryFont == null) {
+			queryFont = new Font("Monospaced", Font.PLAIN, 14); //$NON-NLS-1$
+		}
+
+		fontName = prefs.get("RESULT_FONT", "Monospaced-plain-14"); //$NON-NLS-1$ //$NON-NLS-2$
+		resultFont = Font.decode(fontName);
+		if (resultFont == null) {
+			resultFont = new Font("Monospaced", Font.PLAIN, 14); //$NON-NLS-1$
+		}
 	}
 
 	private class ConsoleOutputStream extends PrintStream {
@@ -490,6 +506,8 @@ public class GreqlGui extends SwingApplication {
 		evaluateQueryAction.setEnabled(getCurrentQuery() != null && !evaluating
 				&& !graphLoading);
 		stopEvaluationAction.setEnabled(evaluating);
+		enableOptimizerAction.setEnabled(!evaluating);
+		debugOptimizerAction.setEnabled(!evaluating);
 
 		setTitle(MessageFormat.format(
 				getMessage("Application.mainwindow.title"),
@@ -567,6 +585,18 @@ public class GreqlGui extends SwingApplication {
 				removeJavaQuotes();
 			}
 		};
+
+		enableOptimizerAction = new AbstractAction("Enable optimizer") {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+			}
+		};
+
+		debugOptimizerAction = new AbstractAction("Debug optimizer") {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+			}
+		};
 	}
 
 	@Override
@@ -589,6 +619,16 @@ public class GreqlGui extends SwingApplication {
 		queryMenu.addSeparator();
 		queryMenu.add(insertJavaQuotesAction);
 		queryMenu.add(removeJavaQuotesAction);
+		queryMenu.addSeparator();
+
+		enableOptimizerCheckBoxItem = new JCheckBoxMenuItem(
+				enableOptimizerAction);
+		enableOptimizerCheckBoxItem.setSelected(true);
+		queryMenu.add(enableOptimizerCheckBoxItem);
+
+		debugOptimizerCheckBoxItem = new JCheckBoxMenuItem(debugOptimizerAction);
+		queryMenu.add(debugOptimizerCheckBoxItem);
+
 		mb.add(queryMenu, mb.getComponentIndex(graphMenu));
 		return mb;
 	}
@@ -623,13 +663,7 @@ public class GreqlGui extends SwingApplication {
 					@Override
 					public void propertyChange(PropertyChangeEvent pce) {
 						if (!resultFontSet) {
-							MutableAttributeSet attrs = resultPane
-									.getInputAttributes();
-							StyleConstants
-									.setFontFamily(attrs, Font.SANS_SERIF);
-							StyledDocument doc = resultPane.getStyledDocument();
-							doc.setCharacterAttributes(0, doc.getLength() + 1,
-									attrs, false);
+							setResultFont(resultFont);
 							resultFontSet = true;
 							getStatusBar().setText("Result complete.");
 						}
@@ -642,6 +676,10 @@ public class GreqlGui extends SwingApplication {
 		brm = new DefaultBoundedRangeModel();
 		progressBar = new JProgressBar();
 		progressBar.setModel(brm);
+		progressBar.setBorder(BorderFactory.createEmptyBorder(0, 8, 0, 8));
+		if (RUNS_ON_MAC_OS_X) {
+			progressBar.putClientProperty("JComponent.sizeVariant", "small");
+		}
 
 		consoleOutputArea = new JTextArea();
 		JScrollPane consoleScrollPane = new JScrollPane(consoleOutputArea);
@@ -654,30 +692,15 @@ public class GreqlGui extends SwingApplication {
 		outputPane.addTab("Result", resultScrollPane);
 		outputPane.addTab("Console", consoleScrollPane);
 
-		optimizeCheckBox = new JCheckBox("Enable optimizer");
-		optimizeCheckBox.setSelected(true);
-
-		debugOptimizationCheckBox = new JCheckBox("Debug optimization");
-		debugOptimizationCheckBox.setSelected(false);
-
 		JPanel queryPanel = new JPanel();
-		queryPanel.setLayout(new BorderLayout(4, 4));
-		queryPanel.setBorder(BorderFactory.createEmptyBorder(4, 4, 4, 4));
+		queryPanel.setLayout(new BorderLayout());
 
 		queryPanel.add(editorPane, BorderLayout.CENTER);
-
-		JPanel buttonPanel = new JPanel();
-		buttonPanel.add(optimizeCheckBox);
-		buttonPanel.add(debugOptimizationCheckBox);
-		queryPanel.add(buttonPanel, BorderLayout.SOUTH);
+		queryPanel.add(progressBar, BorderLayout.SOUTH);
 
 		JSplitPane spl = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
 		spl.add(queryPanel, JSplitPane.TOP);
 		spl.add(outputPane, JSplitPane.BOTTOM);
-
-		// Don't allow shrinking so that buttons get invisible
-		spl.setMinimumSize(new Dimension(
-				buttonPanel.getPreferredSize().width + 10, 450));
 
 		fileNew();
 		return spl;
@@ -704,7 +727,7 @@ public class GreqlGui extends SwingApplication {
 		return VERSION;
 	}
 
-	protected void openFile(File f) throws IOException {
+	protected void openFile(File f) {
 		// look for existing editor
 		for (QueryEditorPanel q : queries) {
 			if (f.equals(q.getQueryFile())) {
@@ -712,31 +735,43 @@ public class GreqlGui extends SwingApplication {
 				return;
 			}
 		}
-		System.out.println("openFile(" + f.getAbsolutePath() + ")");
-		System.out.println("\t" + getCurrentQuery());
-		if (getCurrentQuery() != null
-				&& getCurrentQuery().getQueryFile() == null
-				&& !getCurrentQuery().isModified()) {
-			// re-use fresh editor
-			getCurrentQuery().loadFromFile(f);
+		try {
+			if (getCurrentQuery() != null
+					&& getCurrentQuery().getQueryFile() == null
+					&& !getCurrentQuery().isModified()) {
+				// re-use fresh editor
+				getCurrentQuery().loadFromFile(f);
+			} else {
+				// create new editor
+				QueryEditorPanel newQuery = new QueryEditorPanel(this, f);
+				queries.add(newQuery);
+				editorPane.addTab("", newQuery);
+				editorPane.setSelectedComponent(newQuery);
+			}
+			recentQueryList.rememberFile(f);
+			setPrefString("LAST_QUERY_DIRECTORY", f.getParentFile()
+					.getCanonicalPath());
+		} catch (IOException e) {
+			// TODO
+			e.printStackTrace();
+		} finally {
 			updateActions();
-		} else {
-			// create new editor
-			QueryEditorPanel newQuery = new QueryEditorPanel(this, f);
-			queries.add(newQuery);
-			editorPane.addTab("", newQuery);
-			editorPane.setSelectedComponent(newQuery);
 		}
-		recentQueryList.rememberFile(f);
-		setPrefString("LAST_QUERY_DIRECTORY", f.getParentFile()
-				.getCanonicalPath());
 	}
 
-	protected void saveFile(File f) throws IOException {
-		getCurrentQuery().saveToFile(f);
-		setPrefString("LAST_QUERY_DIRECTORY", f.getParentFile()
-				.getCanonicalPath());
-		updateActions();
+	protected boolean saveFile(File f) {
+		try {
+			getCurrentQuery().saveToFile(f);
+			setPrefString("LAST_QUERY_DIRECTORY", f.getParentFile()
+					.getCanonicalPath());
+			return true;
+		} catch (IOException e) {
+			// TODO
+			e.printStackTrace();
+			return false;
+		} finally {
+			updateActions();
+		}
 	}
 
 	@Override
@@ -750,6 +785,8 @@ public class GreqlGui extends SwingApplication {
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		} finally {
+			updateActions();
 		}
 	}
 
@@ -761,12 +798,7 @@ public class GreqlGui extends SwingApplication {
 		File queryFile = fd.showFileOpenDialog(this, "Open " + DOCUMENT_NAME,
 				DOCUMENT_EXTENSION, DOCUMENT_NAME + "s");
 		if (queryFile != null) {
-			try {
-				openFile(queryFile);
-			} catch (IOException e) {
-				// TODO
-				e.printStackTrace();
-			}
+			openFile(queryFile);
 		}
 	}
 
@@ -780,14 +812,7 @@ public class GreqlGui extends SwingApplication {
 				JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE)) {
 		case JOptionPane.YES_OPTION:
 			if (getCurrentQuery().getQueryFile() != null) {
-				try {
-					saveFile(getCurrentQuery().getQueryFile());
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-					return false;
-				}
-				return true;
+				return saveFile(getCurrentQuery().getQueryFile());
 			} else {
 				return fileSaveAs();
 			}
@@ -825,13 +850,7 @@ public class GreqlGui extends SwingApplication {
 		if (getCurrentQuery().getQueryFile() == null) {
 			fileSaveAs();
 		} else {
-			try {
-				saveFile(getCurrentQuery().getQueryFile());
-				updateActions();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			saveFile(getCurrentQuery().getQueryFile());
 		}
 	}
 
@@ -842,16 +861,7 @@ public class GreqlGui extends SwingApplication {
 		if (f == null) {
 			return false;
 		}
-		System.out.println("SaveFileAs " + f.getAbsolutePath());
-		try {
-			saveFile(f);
-			updateActions();
-			return true;
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return false;
+		return saveFile(f);
 	}
 
 	@Override
@@ -868,19 +878,19 @@ public class GreqlGui extends SwingApplication {
 		try {
 			setPrefString("LAST_GRAPH_DIRECTORY", f.getParentFile()
 					.getCanonicalPath());
-			graphLoading = true;
-			updateActions();
-			new GraphLoader(brm, f).start();
 		} catch (IOException e) {
 			// TODO
 			e.printStackTrace();
 		}
+		graphLoading = true;
+		updateActions();
+		new GraphLoader(brm, f).start();
+
 	}
 
 	public void loadGraph() {
 		String lastDirectoryName = getPrefString("LAST_GRAPH_DIRECTORY",
 				System.getProperty("user.dir"));
-
 		fd.setDirectory(new File(lastDirectoryName));
 		File graphFile = fd.showFileOpenDialog(this, "Open " + GRAPH_NAME,
 				GRAPH_EXTENSION, GRAPH_NAME + "s");
@@ -913,6 +923,7 @@ public class GreqlGui extends SwingApplication {
 		evaluator.start();
 	}
 
+	@SuppressWarnings("deprecation")
 	private void stopEvaluation() {
 		if (evaluating) {
 			evaluator.stop(); // this brutal brake is intended!
@@ -921,8 +932,69 @@ public class GreqlGui extends SwingApplication {
 			evaluator = null;
 			brm.setValue(brm.getMinimum());
 			resultPane.setText("Query aborted.");
+			setResultFont(resultFont);
 			getStatusBar().setText("Query aborted.");
 			updateActions();
+		}
+	}
+
+	public String getEvaluateQueryShortcut() {
+		KeyStroke ks = (KeyStroke) evaluateQueryAction
+				.getValue(Action.ACCELERATOR_KEY);
+		return getKeyStrokeAsString(ks);
+	}
+
+	private QueryEditorPanel getCurrentQuery() {
+		return (QueryEditorPanel) editorPane.getSelectedComponent();
+	}
+
+	public String getFontName(Font font) {
+		String style = (font.getStyle() == Font.PLAIN) ? "plain" : font //$NON-NLS-1$
+				.getStyle() == Font.BOLD ? "bold" //$NON-NLS-1$
+				: font.getStyle() == Font.ITALIC ? "italic" : "bolditalic"; //$NON-NLS-1$ //$NON-NLS-2$
+		return font.getFamily() + "-" + style + "-" + font.getSize(); //$NON-NLS-1$ //$NON-NLS-2$
+	}
+
+	public void setQueryFont(Font font) {
+		queryFont = font;
+		for (QueryEditorPanel p : queries) {
+			p.setQueryFont(queryFont);
+		}
+	}
+
+	public void setResultFont(Font font) {
+		resultFont = font;
+		MutableAttributeSet attrs = resultPane.getInputAttributes();
+		StyleConstants.setFontSize(attrs, resultFont.getSize());
+		StyleConstants.setFontFamily(attrs, resultFont.getFamily());
+		StyledDocument doc = resultPane.getStyledDocument();
+		doc.setCharacterAttributes(0, doc.getLength() + 1, attrs, false);
+	}
+
+	public Font getQueryFont() {
+		return queryFont;
+	}
+
+	public Font getResultFont() {
+		return resultFont;
+	}
+
+	public void saveSettings() {
+		if (queryFont == null) {
+			prefs.remove("QUERY_FONT");
+		} else {
+			prefs.put("QUERY_FONT", getFontName(queryFont));
+		}
+		if (resultFont == null) {
+			prefs.remove("RESULT_FONT");
+		} else {
+			prefs.put("RESULT_FONT", getFontName(resultFont));
+		}
+		try {
+			prefs.flush();
+		} catch (BackingStoreException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 
@@ -937,13 +1009,5 @@ public class GreqlGui extends SwingApplication {
 				// g.getMessage("Settings.SelectQueryFont"), null, false);
 			}
 		});
-	}
-
-	private QueryEditorPanel getCurrentQuery() {
-		return (QueryEditorPanel) editorPane.getSelectedComponent();
-	}
-
-	public void saveSettings() {
-		// TODO
 	}
 }
