@@ -119,34 +119,15 @@ public class QueryEditorPanel extends JPanel {
 	}
 
 	public void removeJavaQuotes() {
-		String text = queryArea.getText();
-		String[] lines = text.split("\n");
-		StringBuilder sb = new StringBuilder();
-		for (String line : lines) {
-			String[] strings = line.split("\" \\+");
-			int i = 0;
-			for (String s : strings) {
-				if (i < strings.length - 1) {
-					s += "\"";
-				}
-				System.out.println(s);
-				++i;
-				int p = s.indexOf('\"');
-				if (p >= 0) {
-					s = s.substring(p + 1);
-				}
-				if (!(strings.length > 1 && strings[1].length() > 0)) {
-					p = s.lastIndexOf('\"');
-					if (p >= 0) {
-						s = s.substring(0, p);
-					}
-				}
-				s = s.replace("\\\"", "\"");
-				s = s.replace("\\\\", "\\");
-				sb.append(s).append("\n");
-			}
-		}
-		text = sb.toString();
+		String text = queryArea.getText().trim();
+		text = text.replaceAll("\"\\s*\\+\\s*\"", "");
+		text = text.replace("\\\"", "\uffff");
+		text = text.replace("\"", "");
+		text = text.replace("\\n", "\n");
+		text = text.replace("\\t", "\t");
+		text = text.replace("\\\"", "\"");
+		text = text.replace("\\\\", "\\");
+		text = text.replace("\uffff", "\"");
 		queryArea.setText(text);
 	}
 
@@ -154,24 +135,17 @@ public class QueryEditorPanel extends JPanel {
 		String text = queryArea.getText();
 		String[] lines = text.split("\n");
 		StringBuilder sb = new StringBuilder();
-		boolean firstLine = true;
-		boolean spaceRequired = false;
-		for (String line : lines) {
-			line = line.replace("\t", " ");
+		for (int i = 0; i < lines.length; ++i) {
+			String line = lines[i];
 			line = line.replace("\\", "\\\\");
 			line = line.replace("\"", "\\\"");
-			if (firstLine) {
-				sb.append("\"").append(line).append("\"");
-				firstLine = false;
+			line = line.replace("\t", "\\t");
+			sb.append("\"").append(line);
+			if (i < lines.length - 1) {
+				sb.append("\\n\" +\n");
 			} else {
-				boolean startsWithWs = line.length() > 0
-						&& Character.isWhitespace(line.charAt(0));
-				sb.append(" +\n\"")
-						.append(spaceRequired && !startsWithWs ? " " : "")
-						.append(line).append("\"");
+				sb.append("\"");
 			}
-			spaceRequired = line.length() > 0
-					&& !Character.isWhitespace(line.charAt(line.length() - 1));
 		}
 		text = sb.toString();
 		queryArea.setText(text);
