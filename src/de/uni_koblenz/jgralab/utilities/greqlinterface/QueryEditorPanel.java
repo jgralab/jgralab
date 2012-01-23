@@ -21,7 +21,7 @@ import javax.swing.undo.UndoManager;
 public class QueryEditorPanel extends JPanel {
 	private static final long serialVersionUID = -5113284469152114552L;
 
-	private GreqlGui app;
+	private GreqlGui gui;
 	private JTextArea queryArea;
 	private UndoManager undoManager;
 	private File queryFile;
@@ -31,8 +31,8 @@ public class QueryEditorPanel extends JPanel {
 		this(parent, null);
 	}
 
-	public QueryEditorPanel(GreqlGui gui, File f) throws IOException {
-		app = gui;
+	public QueryEditorPanel(GreqlGui app, File f) throws IOException {
+		gui = app;
 		queryFile = null;
 
 		queryArea = new JTextArea(15, 50);
@@ -55,7 +55,7 @@ public class QueryEditorPanel extends JPanel {
 			public void undoableEditHappened(UndoableEditEvent evt) {
 				undoManager.addEdit(evt.getEdit());
 				setModified(true);
-				app.updateActions();
+				gui.updateActions();
 			}
 		});
 
@@ -120,31 +120,31 @@ public class QueryEditorPanel extends JPanel {
 
 	public void removeJavaQuotes() {
 		String text = queryArea.getText().trim();
-		text = text.replaceAll("\"\\s*\\+\\s*\"", "");
-		text = text.replace("\\\"", "\uffff");
-		text = text.replace("\"", "");
-		text = text.replace("\\n", "\n");
-		text = text.replace("\\t", "\t");
-		text = text.replace("\\\"", "\"");
-		text = text.replace("\\\\", "\\");
-		text = text.replace("\uffff", "\"");
+		text = text.replaceAll("\"\\s*\\+\\s*\"", ""); //$NON-NLS-1$ //$NON-NLS-2$
+		text = text.replace("\\\"", "\uffff"); //$NON-NLS-1$ //$NON-NLS-2$
+		text = text.replace("\"", ""); //$NON-NLS-1$ //$NON-NLS-2$
+		text = text.replace("\\n", "\n"); //$NON-NLS-1$ //$NON-NLS-2$
+		text = text.replace("\\t", "\t"); //$NON-NLS-1$ //$NON-NLS-2$
+		text = text.replace("\\\"", "\""); //$NON-NLS-1$ //$NON-NLS-2$
+		text = text.replace("\\\\", "\\"); //$NON-NLS-1$ //$NON-NLS-2$
+		text = text.replace("\uffff", "\""); //$NON-NLS-1$ //$NON-NLS-2$
 		queryArea.setText(text);
 	}
 
 	public void insertJavaQuotes() {
 		String text = queryArea.getText();
-		String[] lines = text.split("\n");
+		String[] lines = text.split("\n"); //$NON-NLS-1$
 		StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < lines.length; ++i) {
 			String line = lines[i];
-			line = line.replace("\\", "\\\\");
-			line = line.replace("\"", "\\\"");
-			line = line.replace("\t", "\\t");
-			sb.append("\"").append(line);
+			line = line.replace("\\", "\\\\"); //$NON-NLS-1$ //$NON-NLS-2$
+			line = line.replace("\"", "\\\""); //$NON-NLS-1$ //$NON-NLS-2$
+			line = line.replace("\t", "\\t"); //$NON-NLS-1$ //$NON-NLS-2$
+			sb.append("\"").append(line); //$NON-NLS-1$
 			if (i < lines.length - 1) {
-				sb.append("\\n\" +\n");
+				sb.append("\\n\" +\n"); //$NON-NLS-1$ 
 			} else {
-				sb.append("\"");
+				sb.append("\""); //$NON-NLS-1$
 			}
 		}
 		text = sb.toString();
@@ -177,7 +177,7 @@ public class QueryEditorPanel extends JPanel {
 		BufferedReader rdr = new BufferedReader(new FileReader(f));
 		StringBuffer sb = new StringBuffer();
 		for (String line = rdr.readLine(); line != null; line = rdr.readLine()) {
-			sb.append(line).append("\n");
+			sb.append(line).append("\n"); //$NON-NLS-1$
 		}
 		rdr.close();
 		setQuery(f, sb.toString());
@@ -192,12 +192,13 @@ public class QueryEditorPanel extends JPanel {
 	}
 
 	private void newFile() {
-		setQuery(null, "// Please enter your query here!");
+		setQuery(null, gui.getMessage("GreqlGui.NewQuery.Text")); //$NON-NLS-1$
 		setSelection(0, queryArea.getDocument().getLength());
 	}
 
 	public String getFileName() {
-		return queryFile == null ? "<new query>" : queryFile.getName();
+		return queryFile == null ? gui.getMessage("GreqlGui.NewQuery.Title") //$NON-NLS-1$
+				: queryFile.getName();
 	}
 
 	public void setQueryFont(Font queryFont) {

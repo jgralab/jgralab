@@ -98,6 +98,14 @@ import de.uni_koblenz.jgralab.greql2.serialising.XMLOutputWriter;
 
 @SuppressWarnings("serial")
 public class GreqlGui extends SwingApplication {
+	// keys for preferences
+	private static final String PREFS_KEY_LAST_QUERY_DIRECTORY = "LAST_QUERY_DIRECTORY"; //$NON-NLS-1$
+	private static final String PREFS_KEY_LAST_GRAPH_DIRECTORY = "LAST_GRAPH_DIRECTORY"; //$NON-NLS-1$
+	private static final String PREFS_KEY_RECENT_GRAPH = "RECENT_GRAPH"; //$NON-NLS-1$
+	private static final String PREFS_KEY_RECENT_QUERY = "RECENT_QUERY"; //$NON-NLS-1$
+	private static final String PREFS_KEY_RESULT_FONT = "RESULT_FONT"; //$NON-NLS-1$
+	private static final String PREFS_KEY_QUERY_FONT = "QUERY_FONT"; //$NON-NLS-1$
+
 	private static final String VERSION = "0.0"; //$NON-NLS-1$
 
 	private static final String BUNDLE_NAME = GreqlGui.class.getPackage()
@@ -106,12 +114,7 @@ public class GreqlGui extends SwingApplication {
 	private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle
 			.getBundle(BUNDLE_NAME);
 
-	private static final String DOCUMENT_NAME = "GReQL query";
-
 	private static final String DOCUMENT_EXTENSION = ".greql";
-
-	private static final String GRAPH_NAME = "Graph";
-
 	private static final String GRAPH_EXTENSION = ".tg";
 
 	private Graph graph;
@@ -398,16 +401,16 @@ public class GreqlGui extends SwingApplication {
 
 		initializeApplication();
 
-		recentQueryList = new RecentFilesList(prefs, "RECENT_QUERY", 10,
-				recentFilesMenu) {
+		recentQueryList = new RecentFilesList(prefs, PREFS_KEY_RECENT_QUERY,
+				10, recentFilesMenu) {
 			@Override
 			public void openRecentFile(File file) {
 				openFile(file);
 			}
 		};
 
-		recentGraphList = new RecentFilesList(prefs, "RECENT_GRAPH", 10,
-				recentGraphsMenu) {
+		recentGraphList = new RecentFilesList(prefs, PREFS_KEY_RECENT_GRAPH,
+				10, recentGraphsMenu) {
 			@Override
 			public void openRecentFile(File file) {
 				loadGraph(file);
@@ -418,13 +421,14 @@ public class GreqlGui extends SwingApplication {
 	}
 
 	private void loadSettings() {
-		String fontName = prefs.get("QUERY_FONT", "Monospaced-plain-14"); //$NON-NLS-1$ //$NON-NLS-2$
+		String fontName = prefs
+				.get(PREFS_KEY_QUERY_FONT, "Monospaced-plain-14"); //$NON-NLS-1$ //$NON-NLS-2$
 		queryFont = Font.decode(fontName);
 		if (queryFont == null) {
 			queryFont = new Font("Monospaced", Font.PLAIN, 14); //$NON-NLS-1$
 		}
 
-		fontName = prefs.get("RESULT_FONT", "Monospaced-plain-14"); //$NON-NLS-1$ //$NON-NLS-2$
+		fontName = prefs.get(PREFS_KEY_RESULT_FONT, "Monospaced-plain-14"); //$NON-NLS-1$ //$NON-NLS-2$
 		resultFont = Font.decode(fontName);
 		if (resultFont == null) {
 			resultFont = new Font("Monospaced", Font.PLAIN, 14); //$NON-NLS-1$
@@ -510,12 +514,12 @@ public class GreqlGui extends SwingApplication {
 		debugOptimizerAction.setEnabled(!evaluating);
 
 		setTitle(MessageFormat.format(
-				getMessage("Application.mainwindow.title"),
+				getMessage("Application.mainwindow.title"), //$NON-NLS-1$ 
 				getCurrentQuery() != null ? getCurrentQuery().getFileName()
-						: "(no query opened)"));
+						: getMessage("GreqlGui.NoQuery.Title"))); //$NON-NLS-1$
 		if (getCurrentQuery() != null) {
 			editorPane.setTitleAt(editorPane.getSelectedIndex(),
-					(getCurrentQuery().isModified() ? "*" : "")
+					(getCurrentQuery().isModified() ? "*" : "") //$NON-NLS-1$ //$NON-NLS-2$ 
 							+ getCurrentQuery().getFileName());
 		}
 		if (getCurrentQuery() != null) {
@@ -658,7 +662,7 @@ public class GreqlGui extends SwingApplication {
 		resultPane.setEditable(false);
 
 		// install property change listener to update status label
-		resultPane.addPropertyChangeListener("page",
+		resultPane.addPropertyChangeListener("page", //$NON-NLS-1$ 
 				new PropertyChangeListener() {
 					@Override
 					public void propertyChange(PropertyChangeEvent pce) {
@@ -678,7 +682,7 @@ public class GreqlGui extends SwingApplication {
 		progressBar.setModel(brm);
 		progressBar.setBorder(BorderFactory.createEmptyBorder(0, 8, 0, 8));
 		if (RUNS_ON_MAC_OS_X) {
-			progressBar.putClientProperty("JComponent.sizeVariant", "small");
+			progressBar.putClientProperty("JComponent.sizeVariant", "small"); //$NON-NLS-1$ //$NON-NLS-2$ 
 		}
 
 		consoleOutputArea = new JTextArea();
@@ -745,11 +749,11 @@ public class GreqlGui extends SwingApplication {
 				// create new editor
 				QueryEditorPanel newQuery = new QueryEditorPanel(this, f);
 				queries.add(newQuery);
-				editorPane.addTab("", newQuery);
+				editorPane.addTab("", newQuery); //$NON-NLS-1$ 
 				editorPane.setSelectedComponent(newQuery);
 			}
 			recentQueryList.rememberFile(f);
-			setPrefString("LAST_QUERY_DIRECTORY", f.getParentFile()
+			setPrefString(PREFS_KEY_LAST_QUERY_DIRECTORY, f.getParentFile()
 					.getCanonicalPath());
 		} catch (IOException e) {
 			// TODO
@@ -762,7 +766,7 @@ public class GreqlGui extends SwingApplication {
 	protected boolean saveFile(File f) {
 		try {
 			getCurrentQuery().saveToFile(f);
-			setPrefString("LAST_QUERY_DIRECTORY", f.getParentFile()
+			setPrefString(PREFS_KEY_LAST_QUERY_DIRECTORY, f.getParentFile()
 					.getCanonicalPath());
 			return true;
 		} catch (IOException e) {
@@ -792,11 +796,14 @@ public class GreqlGui extends SwingApplication {
 
 	@Override
 	protected void fileOpen() {
-		String lastQueryDirectory = getPrefString("LAST_QUERY_DIRECTORY",
-				System.getProperty("user.dir"));
+		String lastQueryDirectory = getPrefString(
+				PREFS_KEY_LAST_QUERY_DIRECTORY, System.getProperty("user.dir")); //$NON-NLS-1$ 
 		fd.setDirectory(new File(lastQueryDirectory));
-		File queryFile = fd.showFileOpenDialog(this, "Open " + DOCUMENT_NAME,
-				DOCUMENT_EXTENSION, DOCUMENT_NAME + "s");
+		File queryFile = fd.showFileOpenDialog(
+				this,
+				getMessage("GreqlGui.FileOpenDialog.Title"), //$NON-NLS-1$ 
+				DOCUMENT_EXTENSION,
+				getMessage("GreqlGui.FileOpenDialog.FilterName")); //$NON-NLS-1$ 
 		if (queryFile != null) {
 			openFile(queryFile);
 		}
@@ -808,7 +815,8 @@ public class GreqlGui extends SwingApplication {
 			return true;
 		}
 		switch (JOptionPane.showConfirmDialog(this,
-				"Unsaved changes, save them?", getMessage("Application.name"),
+				getMessage("GreqlGui.ConfirmUnsaved"), //$NON-NLS-1$ 
+				getMessage("Application.name"), //$NON-NLS-1$ 
 				JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE)) {
 		case JOptionPane.YES_OPTION:
 			if (getCurrentQuery().getQueryFile() != null) {
@@ -856,7 +864,8 @@ public class GreqlGui extends SwingApplication {
 
 	@Override
 	protected boolean fileSaveAs() {
-		File f = fd.showFileSaveAsDialog(this, "Save " + DOCUMENT_NAME + " as",
+		File f = fd.showFileSaveAsDialog(this,
+				getMessage("GreqlGui.FileSaveAsDialog.Title"), //$NON-NLS-1$ 
 				DOCUMENT_EXTENSION, getCurrentQuery().getQueryFile());
 		if (f == null) {
 			return false;
@@ -876,7 +885,7 @@ public class GreqlGui extends SwingApplication {
 
 	public void loadGraph(File f) {
 		try {
-			setPrefString("LAST_GRAPH_DIRECTORY", f.getParentFile()
+			setPrefString(PREFS_KEY_LAST_GRAPH_DIRECTORY, f.getParentFile()
 					.getCanonicalPath());
 		} catch (IOException e) {
 			// TODO
@@ -889,11 +898,12 @@ public class GreqlGui extends SwingApplication {
 	}
 
 	public void loadGraph() {
-		String lastDirectoryName = getPrefString("LAST_GRAPH_DIRECTORY",
-				System.getProperty("user.dir"));
+		String lastDirectoryName = getPrefString(
+				PREFS_KEY_LAST_GRAPH_DIRECTORY, System.getProperty("user.dir")); //$NON-NLS-1$ 
 		fd.setDirectory(new File(lastDirectoryName));
-		File graphFile = fd.showFileOpenDialog(this, "Open " + GRAPH_NAME,
-				GRAPH_EXTENSION, GRAPH_NAME + "s");
+		File graphFile = fd.showFileOpenDialog(this,
+				getMessage("GreqlGui.GraphOpenDialog.Title"), GRAPH_EXTENSION, //$NON-NLS-1$ 
+				getMessage("GreqlGui.GraphOpenDialog.FilterName")); //$NON-NLS-1$ 
 		if (graphFile != null) {
 			loadGraph(graphFile);
 		}
@@ -981,14 +991,14 @@ public class GreqlGui extends SwingApplication {
 
 	public void saveSettings() {
 		if (queryFont == null) {
-			prefs.remove("QUERY_FONT");
+			prefs.remove(PREFS_KEY_QUERY_FONT);
 		} else {
-			prefs.put("QUERY_FONT", getFontName(queryFont));
+			prefs.put(PREFS_KEY_QUERY_FONT, getFontName(queryFont));
 		}
 		if (resultFont == null) {
-			prefs.remove("RESULT_FONT");
+			prefs.remove(PREFS_KEY_RESULT_FONT);
 		} else {
-			prefs.put("RESULT_FONT", getFontName(resultFont));
+			prefs.put(PREFS_KEY_RESULT_FONT, getFontName(resultFont));
 		}
 		try {
 			prefs.flush();
@@ -1003,10 +1013,7 @@ public class GreqlGui extends SwingApplication {
 			@Override
 			public void run() {
 				Locale.setDefault(Locale.ENGLISH);
-				GreqlGui g = new GreqlGui();
-				g.setVisible(true);
-				// FontSelectionDialog.selectFont(g,
-				// g.getMessage("Settings.SelectQueryFont"), null, false);
+				new GreqlGui().setVisible(true);
 			}
 		});
 	}
