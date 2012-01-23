@@ -532,7 +532,6 @@ public class GreqlGui extends SwingApplication {
 
 	@Override
 	protected void createActions() {
-		// TODO Auto-generated method stub
 		super.createActions();
 		loadGraphAction = new AbstractAction(
 				getMessage("GreqlGui.Action.LoadGraph")) { //$NON-NLS-1$
@@ -617,8 +616,8 @@ public class GreqlGui extends SwingApplication {
 
 	@Override
 	protected JMenuBar createMenuBar() {
-		// TODO Auto-generated method stub
 		JMenuBar mb = super.createMenuBar();
+
 		JMenu graphMenu = new JMenu(getMessage("GreqlGui.Menu.Graph")); //$NON-NLS-1$
 		graphMenu.add(loadGraphAction);
 		recentGraphsMenu = new JMenu(getMessage("GreqlGui.Menu.RecentGraphs")); //$NON-NLS-1$
@@ -704,7 +703,7 @@ public class GreqlGui extends SwingApplication {
 		consoleScrollPane.setPreferredSize(new Dimension(200, 200));
 
 		System.setOut(new ConsoleOutputStream());
-		// System.setErr(new ConsoleOutputStream());
+		System.setErr(new ConsoleOutputStream());
 
 		outputPane = new JTabbedPane();
 		outputPane
