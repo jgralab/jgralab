@@ -23,15 +23,15 @@ public class SettingsDialog extends JDialog implements ActionListener {
 	private JButton cancelButton;
 	private JButton okButton;
 
-	private Font qf;
+	private Font queryFont;
 	private JTextField queryFontLabel;
 	private JButton queryFontButton;
 
-	private Font rf;
+	private Font resultFont;
 	private JTextField resultFontLabel;
 	private JButton resultFontButton;
 
-	public SettingsDialog(GreqlGui app) {
+	public SettingsDialog(GreqlGui app, Font qf, Font rf) {
 		super(app, app.getApplicationName()
 				+ app.getMessage("SettingsDialog.Title"), true); //$NON-NLS-1$
 		gui = app;
@@ -39,8 +39,8 @@ public class SettingsDialog extends JDialog implements ActionListener {
 		pnl.setLayout(new BorderLayout());
 		getContentPane().add(pnl);
 
-		qf = gui.getQueryFont();
-		rf = gui.getResultFont();
+		queryFont = qf;
+		resultFont = rf;
 
 		JPanel settingsPanel = new JPanel();
 		settingsPanel.setLayout(new GridBagLayout());
@@ -56,7 +56,7 @@ public class SettingsDialog extends JDialog implements ActionListener {
 		lbl.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 8));
 		settingsPanel.add(lbl, c);
 		++c.gridx;
-		queryFontLabel = new JTextField(gui.getFontName(qf), 30);
+		queryFontLabel = new JTextField(gui.getFontName(queryFont), 30);
 		queryFontLabel.setEditable(false);
 		settingsPanel.add(queryFontLabel, c);
 		queryFontButton = new JButton(
@@ -72,7 +72,7 @@ public class SettingsDialog extends JDialog implements ActionListener {
 		lbl.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 8));
 		settingsPanel.add(lbl, c);
 		++c.gridx;
-		resultFontLabel = new JTextField(gui.getFontName(rf), 30);
+		resultFontLabel = new JTextField(gui.getFontName(resultFont), 30);
 		resultFontLabel.setEditable(false);
 		settingsPanel.add(resultFontLabel, c);
 		resultFontButton = new JButton(
@@ -105,28 +105,36 @@ public class SettingsDialog extends JDialog implements ActionListener {
 			dispose();
 		}
 		if (e.getSource() == okButton && isOk()) {
-			gui.setQueryFont(qf);
-			gui.setResultFont(rf);
-			gui.saveSettings();
+			gui.saveSettings(this);
 			dispose();
 		}
 		if (e.getSource() == resultFontButton) {
 			Font newFont = FontSelectionDialog.selectFont(gui,
 					gui.getMessage("SettingsDialog.ResultFontTitle"), //$NON-NLS-1$
-					rf, false);
+					resultFont, false);
 			if (newFont != null) {
-				rf = newFont;
-				resultFontLabel.setText(gui.getFontName(rf));
+				resultFont = newFont;
+				resultFontLabel.setText(gui.getFontName(resultFont));
 			}
 		}
 		if (e.getSource() == queryFontButton) {
-			Font newFont = FontSelectionDialog.selectFont(gui,
-					gui.getMessage("SettingsDialog.QueryFontTitle"), qf, false); //$NON-NLS-1$
+			Font newFont = FontSelectionDialog
+					.selectFont(
+							gui,
+							gui.getMessage("SettingsDialog.QueryFontTitle"), queryFont, false); //$NON-NLS-1$
 			if (newFont != null) {
-				qf = newFont;
-				queryFontLabel.setText(gui.getFontName(qf));
+				queryFont = newFont;
+				queryFontLabel.setText(gui.getFontName(queryFont));
 			}
 		}
+	}
+
+	public Font getQueryFont() {
+		return queryFont;
+	}
+
+	public Font getResultFont() {
+		return resultFont;
 	}
 
 	private boolean isOk() {

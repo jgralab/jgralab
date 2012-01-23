@@ -51,7 +51,6 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
@@ -114,8 +113,8 @@ public class GreqlGui extends SwingApplication {
 	private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle
 			.getBundle(BUNDLE_NAME);
 
-	private static final String DOCUMENT_EXTENSION = ".greql";
-	private static final String GRAPH_EXTENSION = ".tg";
+	private static final String DOCUMENT_EXTENSION = ".greql"; //$NON-NLS-1$
+	private static final String GRAPH_EXTENSION = ".tg"; //$NON-NLS-1$
 
 	private Graph graph;
 	private JTabbedPane editorPane;
@@ -235,24 +234,30 @@ public class GreqlGui extends SwingApplication {
 				@Override
 				public void run() {
 					if (graph == null) {
-						String msg = "Can't load ";
+						// TODO externalize string
+						String msg = "Can't load "; //$NON-NLS-1$
 						try {
-							msg += file.getCanonicalPath() + "\n"
+							msg += file.getCanonicalPath() + "\n" //$NON-NLS-1$
 									+ ex.getMessage();
 						} catch (IOException e) {
-							msg += "graph\n";
+							msg += "graph\n"; //$NON-NLS-1$
 						}
 						Throwable cause = ex.getCause();
 						if (cause != null) {
-							msg += "\ncaused by " + cause;
+							msg += "\ncaused by " + cause; //$NON-NLS-1$
 						}
 						JOptionPane.showMessageDialog(GreqlGui.this, msg, ex
 								.getClass().getSimpleName(),
 								JOptionPane.ERROR_MESSAGE);
-						getStatusBar().setText("Couldn't load graph :-(");
+						getStatusBar()
+								.setText(
+										getMessage("GreqlGui.StatusMessage.GraphLoadingFailed")); //$NON-NLS-1$
 					} else {
-						getStatusBar().setText(
-								"Graph '" + graph.getId() + "' loaded.");
+						getStatusBar()
+								.setText(
+										MessageFormat
+												.format(getMessage("GreqlGui.StatusMessage.GraphLoadingFinished"), //$NON-NLS-1$
+												graph.getId()));
 					}
 					updateActions();
 				}
@@ -265,7 +270,8 @@ public class GreqlGui extends SwingApplication {
 			invokeAndWait(new Runnable() {
 				@Override
 				public void run() {
-					getStatusBar().setText("Loading graph...");
+					getStatusBar().setText(
+							getMessage("GreqlGui.StatusMessage.GraphLoading")); //$NON-NLS-1$
 				}
 			});
 
@@ -298,7 +304,9 @@ public class GreqlGui extends SwingApplication {
 					if (ex != null) {
 						evaluating = false;
 						brm.setValue(brm.getMinimum());
-						getStatusBar().setText("Couldn't evaluate query :-(");
+						getStatusBar()
+								.setText(
+										getMessage("GreqlGui.StatusMessage.EvaluationFailed")); //$NON-NLS-1$
 						String msg = ex.getMessage();
 						if (msg == null) {
 							if (ex.getCause() != null) {
@@ -322,17 +330,14 @@ public class GreqlGui extends SwingApplication {
 									pe.getLength());
 						}
 						resultFontSet = false;
-						resultPane.setText(ex.getClass().getSimpleName() + ": "
+						resultPane.setText(ex.getClass().getSimpleName() + ": " //$NON-NLS-1$
 								+ msg);
 						setResultFont(resultFont);
 						updateActions();
-						// JOptionPane.showMessageDialog(GreqlGui.this, msg,
-						// ex.getClass().getSimpleName(),
-						// JOptionPane.ERROR_MESSAGE);
 					} else {
 						getStatusBar()
 								.setText(
-										"Evaluation finished, loading HTML result - this may take a while...");
+										getMessage("GreqlGui.StatusMessage.EvaluationFinished")); //$NON-NLS-1$
 					}
 				}
 			});
@@ -345,10 +350,10 @@ public class GreqlGui extends SwingApplication {
 						updateActions();
 						try {
 							File xmlResultFile = new File(
-									"greqlQueryResult.xml");
+									"greqlQueryResult.xml"); //$NON-NLS-1$
 							XMLOutputWriter xw = new XMLOutputWriter(graph);
 							xw.writeValue(result, xmlResultFile);
-							File resultFile = new File("greqlQueryResult.html");
+							File resultFile = new File("greqlQueryResult.html"); //$NON-NLS-1$
 							// File resultFile = File.createTempFile(
 							// "greqlQueryResult", ".html");
 							// resultFile.deleteOnExit();
@@ -360,15 +365,17 @@ public class GreqlGui extends SwingApplication {
 									null);
 							outputPane.setSelectedComponent(resultScrollPane);
 							resultFontSet = false;
-							resultPane.setPage(new URL("file", "localhost",
+							resultPane.setPage(new URL("file", "localhost", //$NON-NLS-1$ //$NON-NLS-2$
 									resultFile.getCanonicalPath()));
 						} catch (SerialisingException e) {
+							// TODO externalize string
 							JOptionPane.showMessageDialog(GreqlGui.this,
-									"Exception during HTML output of result: "
+									"Exception during HTML output of result: " //$NON-NLS-1$
 											+ e.toString());
 						} catch (IOException e) {
+							// TODO externalize string
 							JOptionPane.showMessageDialog(GreqlGui.this,
-									"Exception during HTML output of result: "
+									"Exception during HTML output of result: " //$NON-NLS-1$
 											+ e.toString());
 						} catch (XMLStreamException e) {
 							// TODO Auto-generated catch block
@@ -385,7 +392,8 @@ public class GreqlGui extends SwingApplication {
 			invokeAndWait(new Runnable() {
 				@Override
 				public void run() {
-					getStatusBar().setText("Evaluating query...");
+					getStatusBar().setText(
+							getMessage("GreqlGui.StatusMessage.Evaluating")); //$NON-NLS-1$
 				}
 			});
 		}
@@ -393,12 +401,8 @@ public class GreqlGui extends SwingApplication {
 
 	public GreqlGui() {
 		super(RESOURCE_BUNDLE);
-		// setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
 		prefs = Preferences.userNodeForPackage(GreqlGui.class);
-
 		loadSettings();
-
 		initializeApplication();
 
 		recentQueryList = new RecentFilesList(prefs, PREFS_KEY_RECENT_QUERY,
@@ -408,7 +412,6 @@ public class GreqlGui extends SwingApplication {
 				openFile(file);
 			}
 		};
-
 		recentGraphList = new RecentFilesList(prefs, PREFS_KEY_RECENT_GRAPH,
 				10, recentGraphsMenu) {
 			@Override
@@ -416,7 +419,6 @@ public class GreqlGui extends SwingApplication {
 				loadGraph(file);
 			}
 		};
-
 		fd = new FileDialog(getApplicationName());
 	}
 
@@ -531,7 +533,8 @@ public class GreqlGui extends SwingApplication {
 	protected void createActions() {
 		// TODO Auto-generated method stub
 		super.createActions();
-		loadGraphAction = new AbstractAction("Load graph ...") {
+		loadGraphAction = new AbstractAction(
+				getMessage("GreqlGui.Action.LoadGraph")) { //$NON-NLS-1$
 			{
 				putValue(AbstractAction.ACCELERATOR_KEY,
 						KeyStroke.getKeyStroke(KeyEvent.VK_L, menuEventMask));
@@ -543,21 +546,24 @@ public class GreqlGui extends SwingApplication {
 			}
 		};
 
-		clearRecentGraphsAction = new AbstractAction("Clear list") {
+		clearRecentGraphsAction = new AbstractAction(
+				getMessage("GreqlGui.Action.ClearRecentGraphList")) { //$NON-NLS-1$
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				recentGraphList.clear();
 			}
 		};
 
-		unloadGraphAction = new AbstractAction("Unload graph") {
+		unloadGraphAction = new AbstractAction(
+				getMessage("GreqlGui.Action.UnloadGraph")) { //$NON-NLS-1$
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				unloadGraph();
 			}
 		};
 
-		evaluateQueryAction = new AbstractAction("Evaluate query") {
+		evaluateQueryAction = new AbstractAction(
+				getMessage("GreqlGui.Action.EvaluateQuery")) { //$NON-NLS-1$
 			{
 				putValue(AbstractAction.ACCELERATOR_KEY,
 						KeyStroke.getKeyStroke(KeyEvent.VK_R, menuEventMask));
@@ -569,34 +575,39 @@ public class GreqlGui extends SwingApplication {
 			}
 		};
 
-		stopEvaluationAction = new AbstractAction("Stop evaluation") {
+		stopEvaluationAction = new AbstractAction(
+				getMessage("GreqlGui.Action.StopEvaluation")) { //$NON-NLS-1$
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				stopEvaluation();
 			}
 		};
 
-		insertJavaQuotesAction = new AbstractAction("Insert Java quotes") {
+		insertJavaQuotesAction = new AbstractAction(
+				getMessage("GreqlGui.Action.InsertJavaQuotes")) { //$NON-NLS-1$
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				insertJavaQuotes();
 			}
 		};
 
-		removeJavaQuotesAction = new AbstractAction("Remove Java quotes") {
+		removeJavaQuotesAction = new AbstractAction(
+				getMessage("GreqlGui.Action.RemoveJavaQuotes")) { //$NON-NLS-1$
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				removeJavaQuotes();
 			}
 		};
 
-		enableOptimizerAction = new AbstractAction("Enable optimizer") {
+		enableOptimizerAction = new AbstractAction(
+				getMessage("GreqlGui.Action.EnableOptimizer")) { //$NON-NLS-1$
 			@Override
 			public void actionPerformed(ActionEvent e) {
 			}
 		};
 
-		debugOptimizerAction = new AbstractAction("Debug optimizer") {
+		debugOptimizerAction = new AbstractAction(
+				getMessage("GreqlGui.Action.DebugOptimizer")) { //$NON-NLS-1$
 			@Override
 			public void actionPerformed(ActionEvent e) {
 			}
@@ -607,9 +618,9 @@ public class GreqlGui extends SwingApplication {
 	protected JMenuBar createMenuBar() {
 		// TODO Auto-generated method stub
 		JMenuBar mb = super.createMenuBar();
-		JMenu graphMenu = new JMenu("Graph");
+		JMenu graphMenu = new JMenu(getMessage("GreqlGui.Menu.Graph")); //$NON-NLS-1$
 		graphMenu.add(loadGraphAction);
-		recentGraphsMenu = new JMenu("Recent graphs");
+		recentGraphsMenu = new JMenu(getMessage("GreqlGui.Menu.RecentGraphs")); //$NON-NLS-1$
 		recentGraphsMenu.addSeparator();
 		recentGraphsMenu.add(clearRecentGraphsAction);
 		graphMenu.add(recentGraphsMenu);
@@ -617,7 +628,7 @@ public class GreqlGui extends SwingApplication {
 		graphMenu.add(unloadGraphAction);
 		mb.add(graphMenu, mb.getComponentIndex(helpMenu));
 
-		JMenu queryMenu = new JMenu("Query");
+		JMenu queryMenu = new JMenu(getMessage("GreqlGui.Menu.Query")); //$NON-NLS-1$
 		queryMenu.add(evaluateQueryAction);
 		queryMenu.add(stopEvaluationAction);
 		queryMenu.addSeparator();
@@ -669,7 +680,9 @@ public class GreqlGui extends SwingApplication {
 						if (!resultFontSet) {
 							setResultFont(resultFont);
 							resultFontSet = true;
-							getStatusBar().setText("Result complete.");
+							getStatusBar()
+									.setText(
+											getMessage("GreqlGui.StatusMessage.ResultComplete")); //$NON-NLS-1$
 						}
 					}
 				});
@@ -693,8 +706,10 @@ public class GreqlGui extends SwingApplication {
 		// System.setErr(new ConsoleOutputStream());
 
 		outputPane = new JTabbedPane();
-		outputPane.addTab("Result", resultScrollPane);
-		outputPane.addTab("Console", consoleScrollPane);
+		outputPane
+				.addTab(getMessage("GreqlGui.Result.Title"), resultScrollPane); //$NON-NLS-1$
+		outputPane.addTab(
+				getMessage("GreqlGui.Console.Title"), consoleScrollPane); //$NON-NLS-1$
 
 		JPanel queryPanel = new JPanel();
 		queryPanel.setLayout(new BorderLayout());
@@ -784,7 +799,7 @@ public class GreqlGui extends SwingApplication {
 		try {
 			newQuery = new QueryEditorPanel(this);
 			queries.add(newQuery);
-			editorPane.addTab("", newQuery);
+			editorPane.addTab("", newQuery); //$NON-NLS-1$
 			editorPane.setSelectedComponent(newQuery);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -880,7 +895,7 @@ public class GreqlGui extends SwingApplication {
 
 	@Override
 	protected void editPreferences() {
-		new SettingsDialog(this);
+		new SettingsDialog(this, queryFont, resultFont);
 	}
 
 	public void loadGraph(File f) {
@@ -911,7 +926,8 @@ public class GreqlGui extends SwingApplication {
 
 	public void unloadGraph() {
 		graph = null;
-		getStatusBar().setText("Graph unloaded.");
+		getStatusBar().setText(
+				getMessage("GreqlGui.StatusMessage.GraphUnloaded")); //$NON-NLS-1$
 		updateActions();
 	}
 
@@ -941,9 +957,11 @@ public class GreqlGui extends SwingApplication {
 			resultFontSet = false;
 			evaluator = null;
 			brm.setValue(brm.getMinimum());
-			resultPane.setText("Query aborted.");
+			resultPane
+					.setText(getMessage("GreqlGui.StatusMessage.QueryAborted")); //$NON-NLS-1$
 			setResultFont(resultFont);
-			getStatusBar().setText("Query aborted.");
+			getStatusBar().setText(
+					getMessage("GreqlGui.StatusMessage.QueryAborted")); //$NON-NLS-1$
 			updateActions();
 		}
 	}
@@ -965,14 +983,18 @@ public class GreqlGui extends SwingApplication {
 		return font.getFamily() + "-" + style + "-" + font.getSize(); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
-	public void setQueryFont(Font font) {
+	private void setQueryFont(Font font) {
 		queryFont = font;
 		for (QueryEditorPanel p : queries) {
 			p.setQueryFont(queryFont);
 		}
 	}
 
-	public void setResultFont(Font font) {
+	public Font getQueryFont() {
+		return queryFont;
+	}
+
+	private void setResultFont(Font font) {
 		resultFont = font;
 		MutableAttributeSet attrs = resultPane.getInputAttributes();
 		StyleConstants.setFontSize(attrs, resultFont.getSize());
@@ -981,20 +1003,14 @@ public class GreqlGui extends SwingApplication {
 		doc.setCharacterAttributes(0, doc.getLength() + 1, attrs, false);
 	}
 
-	public Font getQueryFont() {
-		return queryFont;
-	}
-
-	public Font getResultFont() {
-		return resultFont;
-	}
-
-	public void saveSettings() {
+	public void saveSettings(SettingsDialog d) {
+		setQueryFont(d.getQueryFont());
 		if (queryFont == null) {
 			prefs.remove(PREFS_KEY_QUERY_FONT);
 		} else {
 			prefs.put(PREFS_KEY_QUERY_FONT, getFontName(queryFont));
 		}
+		setResultFont(d.getResultFont());
 		if (resultFont == null) {
 			prefs.remove(PREFS_KEY_RESULT_FONT);
 		} else {
@@ -1012,7 +1028,6 @@ public class GreqlGui extends SwingApplication {
 		SwingApplication.invokeLater(new Runnable() {
 			@Override
 			public void run() {
-				Locale.setDefault(Locale.ENGLISH);
 				new GreqlGui().setVisible(true);
 			}
 		});
