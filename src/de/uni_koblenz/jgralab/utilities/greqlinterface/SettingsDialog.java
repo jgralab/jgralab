@@ -56,7 +56,8 @@ public class SettingsDialog extends JDialog implements ActionListener {
 		lbl.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 8));
 		settingsPanel.add(lbl, c);
 		++c.gridx;
-		queryFontLabel = new JTextField(gui.getFontName(queryFont), 30);
+		queryFontLabel = new JTextField(FontSelectionDialog.getFontName(gui,
+				queryFont), 30);
 		queryFontLabel.setEditable(false);
 		settingsPanel.add(queryFontLabel, c);
 		queryFontButton = new JButton(
@@ -72,7 +73,8 @@ public class SettingsDialog extends JDialog implements ActionListener {
 		lbl.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 8));
 		settingsPanel.add(lbl, c);
 		++c.gridx;
-		resultFontLabel = new JTextField(gui.getFontName(resultFont), 30);
+		resultFontLabel = new JTextField(FontSelectionDialog.getFontName(gui,
+				resultFont), 30);
 		resultFontLabel.setEditable(false);
 		settingsPanel.add(resultFontLabel, c);
 		resultFontButton = new JButton(
@@ -114,7 +116,8 @@ public class SettingsDialog extends JDialog implements ActionListener {
 					resultFont, false);
 			if (newFont != null) {
 				resultFont = newFont;
-				resultFontLabel.setText(gui.getFontName(resultFont));
+				resultFontLabel.setText(FontSelectionDialog.getFontName(gui,
+						resultFont));
 			}
 		}
 		if (e.getSource() == queryFontButton) {
@@ -124,7 +127,8 @@ public class SettingsDialog extends JDialog implements ActionListener {
 							gui.getMessage("SettingsDialog.QueryFontTitle"), queryFont, false); //$NON-NLS-1$
 			if (newFont != null) {
 				queryFont = newFont;
-				queryFontLabel.setText(gui.getFontName(queryFont));
+				queryFontLabel.setText(FontSelectionDialog.getFontName(gui,
+						queryFont));
 			}
 		}
 	}

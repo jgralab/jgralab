@@ -81,6 +81,7 @@ import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
 import javax.xml.stream.XMLStreamException;
 
+import de.uni_koblenz.ist.utilities.gui.FontSelectionDialog;
 import de.uni_koblenz.ist.utilities.gui.RecentFilesList;
 import de.uni_koblenz.ist.utilities.gui.SwingApplication;
 import de.uni_koblenz.jgralab.Graph;
@@ -976,13 +977,6 @@ public class GreqlGui extends SwingApplication {
 		return (QueryEditorPanel) editorPane.getSelectedComponent();
 	}
 
-	public String getFontName(Font font) {
-		String style = (font.getStyle() == Font.PLAIN) ? "plain" : font //$NON-NLS-1$
-				.getStyle() == Font.BOLD ? "bold" //$NON-NLS-1$
-				: font.getStyle() == Font.ITALIC ? "italic" : "bolditalic"; //$NON-NLS-1$ //$NON-NLS-2$
-		return font.getFamily() + "-" + style + "-" + font.getSize(); //$NON-NLS-1$ //$NON-NLS-2$
-	}
-
 	private void setQueryFont(Font font) {
 		queryFont = font;
 		for (QueryEditorPanel p : queries) {
@@ -1008,13 +1002,15 @@ public class GreqlGui extends SwingApplication {
 		if (queryFont == null) {
 			prefs.remove(PREFS_KEY_QUERY_FONT);
 		} else {
-			prefs.put(PREFS_KEY_QUERY_FONT, getFontName(queryFont));
+			prefs.put(PREFS_KEY_QUERY_FONT,
+					FontSelectionDialog.getInternalFontName(queryFont));
 		}
 		setResultFont(d.getResultFont());
 		if (resultFont == null) {
 			prefs.remove(PREFS_KEY_RESULT_FONT);
 		} else {
-			prefs.put(PREFS_KEY_RESULT_FONT, getFontName(resultFont));
+			prefs.put(PREFS_KEY_RESULT_FONT,
+					FontSelectionDialog.getInternalFontName(resultFont));
 		}
 		try {
 			prefs.flush();
