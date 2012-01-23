@@ -4,6 +4,7 @@ import static org.junit.Assert.*;
 
 import org.junit.Test;
 
+import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphException;
@@ -256,7 +257,7 @@ public class GenericVertexImplTest {
 			assertEquals(0, vertices[3].getDegree(edgeClasses[1]));
 			assertEquals(0,
 					vertices[3].getDegree(edgeClasses[1], EdgeDirection.IN));
-			
+
 			g.createEdge(edgeClasses[0], vertices[0], vertices[1]);
 			g.createEdge(edgeClasses[1], vertices[2], vertices[3]);
 			g.createEdge(edgeClasses[2], vertices[2], vertices[3]);
@@ -379,9 +380,66 @@ public class GenericVertexImplTest {
 		}
 	}
 
+	// Test type specific getFirstIncidence Method
 	@Test
 	public void testGetFirstIncidence() {
-		// TODO
+		try {
+			Schema s = GraphIO
+					.loadSchemaFromFile(GenericGraphImplTest.SCHEMAFOLDER
+							+ "VertexTestSchema.tg");
+			Graph g = s.createGraph(ImplementationType.GENERIC);
+	
+			Vertex[] vertices = new Vertex[6];
+			vertices[0] = g.createVertex(g.getGraphClass().getVertexClass("A"));
+			vertices[1] = g.createVertex(g.getGraphClass().getVertexClass("B"));
+			vertices[2] = g.createVertex(g.getGraphClass().getVertexClass("C"));
+			vertices[3] = g.createVertex(g.getGraphClass().getVertexClass("D"));
+			vertices[4] = g
+					.createVertex(g.getGraphClass().getVertexClass("C2"));
+			vertices[5] = g
+					.createVertex(g.getGraphClass().getVertexClass("D2"));
+	
+			EdgeClass[] edgeClasses = new EdgeClass[7];
+			edgeClasses[0] = g.getGraphClass().getEdgeClass("E");
+			edgeClasses[1] = g.getGraphClass().getEdgeClass("F");
+			edgeClasses[2] = g.getGraphClass().getEdgeClass("G");
+			edgeClasses[3] = g.getGraphClass().getEdgeClass("H");
+			edgeClasses[4] = g.getGraphClass().getEdgeClass("I");
+			edgeClasses[5] = g.getGraphClass().getEdgeClass("J");
+			edgeClasses[6] = g.getGraphClass().getEdgeClass("K");
+			
+			for(Vertex v : vertices) {
+				for(EdgeClass ec : edgeClasses) {
+					assertNull(v.getFirstIncidence(ec));
+					assertNull(v.getFirstIncidence(ec, EdgeDirection.IN));
+					assertNull(v.getFirstIncidence(ec, EdgeDirection.OUT));
+				}
+			}
+			
+			Edge[] edges = new Edge[7];
+			edges[0] = g.createEdge(edgeClasses[0], vertices[0], vertices[1]);
+			edges[1] = g.createEdge(edgeClasses[1], vertices[2], vertices[3]);
+			edges[2] = g.createEdge(edgeClasses[2], vertices[2], vertices[3]);
+			edges[3] = g.createEdge(edgeClasses[3], vertices[0], vertices[1]);
+			edges[4] = g.createEdge(edgeClasses[4], vertices[0], vertices[0]);
+			edges[5] = g.createEdge(edgeClasses[5], vertices[4], vertices[5]);
+			edges[6] = g.createEdge(edgeClasses[6], vertices[0], vertices[1]);
+			
+			assertEquals(vertices[0].getFirstIncidence(edgeClasses[0]), edges[0]);
+			assertEquals(vertices[0].getFirstIncidence(edgeClasses[6]), edges[6]);
+			assertEquals(vertices[1].getFirstIncidence(edgeClasses[0]), edges[0].getReversedEdge());
+			assertEquals(vertices[1].getFirstIncidence(edgeClasses[6]), edges[6].getReversedEdge());
+			assertEquals(vertices[2].getFirstIncidence(edgeClasses[1]), edges[1]);
+			assertEquals(vertices[3].getFirstIncidence(edgeClasses[1]), edges[1].getReversedEdge());
+			assertEquals(vertices[4].getFirstIncidence(edgeClasses[5]), edges[5]);
+			assertEquals(vertices[5].getFirstIncidence(edgeClasses[5]), edges[5].getReversedEdge());
+			
+			// TODO Test with IN / OUT parameters
+		}
+		catch(GraphIOException e) {
+			e.printStackTrace();
+			fail();
+		}
 	}
 
 	@Test
