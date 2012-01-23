@@ -3,6 +3,7 @@ package de.uni_koblenz.jgralabtest.genericimpltest;
 import static org.junit.Assert.*;
 
 import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.Iterator;
 import java.util.Map;
@@ -904,10 +905,40 @@ public class GenericGraphImplTest {
 			for (Vertex v : g2.vertices()) {
 				assertEquals(v.getAttributedElementClass(),
 						g1.getVertex(v.getId()).getAttributedElementClass());
+
+				// assert equality of attributes
+				for (Attribute a : v.getAttributedElementClass()
+						.getAttributeList()) {
+					try {
+						assertEquals(
+								v.writeAttributeValueToString(a.getName()),
+								g2.getVertex(v.getId())
+										.writeAttributeValueToString(
+												a.getName()));
+					} catch (IOException e) {
+						e.printStackTrace();
+						fail();
+					}
+				}
 			}
-			for (Edge e : g2.edges()) {
-				assertEquals(e.getAttributedElementClass(),
-						g1.getEdge(e.getId()).getAttributedElementClass());
+			for (Edge edge : g2.edges()) {
+				assertEquals(edge.getAttributedElementClass(),
+						g1.getEdge(edge.getId()).getAttributedElementClass());
+
+				// assert equality of attributes
+				for (Attribute a : edge.getAttributedElementClass()
+						.getAttributeList()) {
+					try {
+						assertEquals(
+								edge.writeAttributeValueToString(a.getName()),
+								g2.getEdge(edge.getId())
+										.writeAttributeValueToString(
+												a.getName()));
+					} catch (IOException e) {
+						e.printStackTrace();
+						fail();
+					}
+				}
 			}
 
 		} catch (GraphIOException e) {
