@@ -39,7 +39,7 @@ public class QueryEditorPanel extends JPanel {
 		queryArea.setEditable(true);
 		queryArea.setFont(gui.getQueryFont());
 		queryArea.setToolTipText(MessageFormat.format(
-				gui.getMessage("GreqlGui.QueryArea.ToolTip"),
+				gui.getMessage("GreqlGui.QueryArea.ToolTip"),//$NON-NLS-1$
 				gui.getEvaluateQueryShortcut()));
 		undoManager = new UndoManager();
 		undoManager.setLimit(10000);
