@@ -73,7 +73,8 @@ import de.uni_koblenz.jgralab.schema.AttributedElementClass;
  * @author ist@uni-koblenz.de
  * 
  */
-public class GreqlEvaluatorImpl {
+public class GreqlEvaluatorImpl implements InternalGreqlEvaluator,
+		GreqlEvaluator {
 
 	public static void main(String[] args) throws FileNotFoundException,
 			IOException, GraphIOException {
