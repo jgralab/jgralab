@@ -45,7 +45,6 @@ import java.util.Set;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluatorImpl;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
 import de.uni_koblenz.jgralab.greql2.schema.Declaration;
 import de.uni_koblenz.jgralab.greql2.schema.Definition;
@@ -63,20 +62,7 @@ import de.uni_koblenz.jgralab.greql2.schema.Variable;
  * @author ist@uni-koblenz.de
  * 
  */
-public class VariableEvaluator extends VertexEvaluator {
-
-	/**
-	 * The variable this VariableEvaluator "evaluates"
-	 */
-	protected Variable vertex;
-
-	/**
-	 * returns the vertex this VertexEvaluator evaluates
-	 */
-	@Override
-	public Greql2Vertex getVertex() {
-		return vertex;
-	}
+public class VariableEvaluator extends VertexEvaluator<Variable> {
 
 	private List<VertexEvaluator> dependingExpressions;
 
@@ -116,14 +102,11 @@ public class VariableEvaluator extends VertexEvaluator {
 	}
 
 	/**
-	 * @param eval
-	 *            the GreqlEvaluator this VertexEvaluator belongs to
 	 * @param vertex
 	 *            the vertex which gets evaluated by this VertexEvaluator
 	 */
-	public VariableEvaluator(Variable vertex, GreqlEvaluatorImpl eval) {
-		super(eval);
-		this.vertex = vertex;
+	public VariableEvaluator(Variable vertex) {
+		super(vertex);
 	}
 
 	@Override

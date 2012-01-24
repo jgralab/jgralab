@@ -45,6 +45,7 @@ import java.util.Set;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
+import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluatorImpl;
 import de.uni_koblenz.jgralab.greql2.evaluator.InternalGreqlEvaluator;
@@ -149,7 +150,9 @@ public abstract class VertexEvaluator<V extends Vertex> {
 	/**
 	 * returns the vertex this VertexEvaluator evaluates
 	 */
-	public abstract Greql2Vertex getVertex();
+	public V getVertex() {
+		return vertex;
+	}
 
 	/**
 	 * @return the name of the associated {@link Greql2Vertex} used for logging.
@@ -163,42 +166,46 @@ public abstract class VertexEvaluator<V extends Vertex> {
 	}
 
 	// TODO [greqlrenovation] handleResult
-	// /**
-	// * Gets the result of the evaluation of this vertex on the given subgraph
-	// *
-	// * @return the evaluation result
-	// */
-	// public Object getResult(Graph graph) {
-	// if (result != null) {
-	// return result;
-	// }
-	//
-	// // System.out.println("Evaluating : " + this);
-	// try {
-	// result = evaluate(graph);
-	// // System.out.println("VertexEvaluator.getResult(graph) " + result
-	// // + " of vertex " + getVertex());
-	// } catch (QuerySourceException ex) {
-	// removeInvalidSourcePosition(ex);
-	// throw ex;
-	// }
-	//
-	// // System.out.println("Evaluating : " + this + " finished");
-	// // System.out.println("Result is: " + result);
-	//
-	// // greqlEvaluator.progress(ownEvaluationCosts);
-	//
-	// return result;
-	// }
+	/**
+	 * Gets the result of the evaluation of this vertex on the given subgraph
+	 * 
+	 * @return the evaluation result
+	 */
+	@Deprecated
+	public Object getResult(Graph graph) {
+		// if (result != null) {
+		// return result;
+		// }
+		//
+		// // System.out.println("Evaluating : " + this);
+		// try {
+		// result = evaluate(graph);
+		// // System.out.println("VertexEvaluator.getResult(graph) " + result
+		// // + " of vertex " + getVertex());
+		// } catch (QuerySourceException ex) {
+		// removeInvalidSourcePosition(ex);
+		// throw ex;
+		// }
+		//
+		// // System.out.println("Evaluating : " + this + " finished");
+		// // System.out.println("Result is: " + result);
+		//
+		// // greqlEvaluator.progress(ownEvaluationCosts);
+		//
+		// return result;
+		return null;
+	}
 
 	// TODO [greqlrenovation] handleResult
-	// /**
-	// * @return true, if this expression has already been evaluated, useful
-	// * mostly for debugging
-	// */
-	// public boolean isEvaluated() {
-	// return (result != null);
-	// }
+	/**
+	 * @return true, if this expression has already been evaluated, useful
+	 *         mostly for debugging
+	 */
+	@Deprecated
+	public boolean isEvaluated() {
+		return false;
+		// return (result != null);
+	}
 
 	/**
 	 * this method does the evaluation. It must be implemented by concrete
@@ -210,38 +217,41 @@ public abstract class VertexEvaluator<V extends Vertex> {
 	// /**
 	// * clears the evaluation result
 	// */
-	// public final void clear() {
-	// result = null;
-	// }
+	@Deprecated
+	public final void clear() {
+		// result = null;
+	}
 
 	// TODO [greqlrenovation] handleResult
-	// /**
-	// * resets the VertexEvaluators internal state (evaluation result, costs,
-	// * etc) to the initial one, that means, sets all variables of this
-	// * vertexevaluator to values, that it is in the same state like it was
-	// * directly after creation
-	// */
-	// public void resetToInitialState() {
-	// result = null;
-	// currentSubtreeEvaluationCosts = Long.MIN_VALUE;
-	// initialSubtreeEvaluationCosts = Long.MIN_VALUE;
-	// ownEvaluationCosts = Long.MIN_VALUE;
-	// iteratedEvaluationCosts = Long.MIN_VALUE;
-	// estimatedCardinality = Long.MIN_VALUE;
-	// estimatedSelectivity = Double.NaN;
-	// }
+	/**
+	 * resets the VertexEvaluators internal state (evaluation result, costs,
+	 * etc) to the initial one, that means, sets all variables of this
+	 * vertexevaluator to values, that it is in the same state like it was
+	 * directly after creation
+	 */
+	@Deprecated
+	public void resetToInitialState() {
+		// result = null;
+		// currentSubtreeEvaluationCosts = Long.MIN_VALUE;
+		// initialSubtreeEvaluationCosts = Long.MIN_VALUE;
+		// ownEvaluationCosts = Long.MIN_VALUE;
+		// iteratedEvaluationCosts = Long.MIN_VALUE;
+		// estimatedCardinality = Long.MIN_VALUE;
+		// estimatedSelectivity = Double.NaN;
+	}
 
 	// TODO [greqlrenovation] handleResult
-	// public void resetSubtreeToInitialState() {
-	// resetToInitialState();
-	// for (Edge e : getVertex().incidences(EdgeDirection.IN)) {
-	// Vertex vertex = e.getThat();
-	// VertexEvaluator eval = vertexEvalMarker.getMark(vertex);
-	// if (eval != null) {
-	// eval.resetSubtreeToInitialState();
-	// }
-	// }
-	// }
+	@Deprecated
+	public void resetSubtreeToInitialState() {
+		// resetToInitialState();
+		// for (Edge e : getVertex().incidences(EdgeDirection.IN)) {
+		// Vertex vertex = e.getThat();
+		// VertexEvaluator eval = vertexEvalMarker.getMark(vertex);
+		// if (eval != null) {
+		// eval.resetSubtreeToInitialState();
+		// }
+		// }
+	}
 
 	/**
 	 * This method must be overwritten by every subclass. It should call the
@@ -491,6 +501,7 @@ public abstract class VertexEvaluator<V extends Vertex> {
 	 */
 	public static <V extends Vertex> VertexEvaluator<V> createVertexEvaluator(
 			V vertex, GreqlEvaluatorImpl eval) {
+		// TODO [greqlrenovation] check the creation of VertexEvaluator
 		Class<?> vertexClass = vertex.getClass();
 		String fullClassName = vertexClass.getName();
 		// remove the "Impl" ...

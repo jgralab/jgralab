@@ -36,23 +36,18 @@
 package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.pcollections.PVector;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
-import de.uni_koblenz.jgralab.Graph;
-import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluatorImpl;
+import de.uni_koblenz.jgralab.greql2.evaluator.InternalGreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.VariableDeclaration;
 import de.uni_koblenz.jgralab.greql2.evaluator.VariableDeclarationLayer;
-import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
 import de.uni_koblenz.jgralab.greql2.schema.Declaration;
-import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
 import de.uni_koblenz.jgralab.greql2.schema.IsConstraintOf;
 import de.uni_koblenz.jgralab.greql2.schema.IsSimpleDeclOf;
 import de.uni_koblenz.jgralab.greql2.schema.SimpleDeclaration;
-import de.uni_koblenz.jgralab.greql2.schema.Variable;
 
 /**
  * Evaluates a Declaration vertex in the GReQL-2 Syntaxgraph
@@ -60,34 +55,18 @@ import de.uni_koblenz.jgralab.greql2.schema.Variable;
  * @author ist@uni-koblenz.de
  * 
  */
-public class DeclarationEvaluator extends VertexEvaluator {
+public class DeclarationEvaluator extends VertexEvaluator<Declaration> {
 
 	/**
-	 * This is the declaration vertex
-	 */
-	private Declaration vertex;
-
-	/**
-	 * returns the vertex this VertexEvaluator evaluates
-	 */
-	@Override
-	public Greql2Vertex getVertex() {
-		return vertex;
-	}
-
-	/**
-	 * @param eval
-	 *            the DeclarationEvaluator this VertexEvaluator belongs to
 	 * @param vertex
 	 *            the vertex which gets evaluated by this VertexEvaluator
 	 */
-	public DeclarationEvaluator(Declaration vertex, GreqlEvaluatorImpl eval) {
-		super(eval);
-		this.vertex = vertex;
+	public DeclarationEvaluator(Declaration vertex) {
+		super(vertex);
 	}
 
 	@Override
-	public VariableDeclarationLayer evaluate(Graph graph) {
+	public VariableDeclarationLayer evaluate(InternalGreqlEvaluator evaluator) {
 		ArrayList<VertexEvaluator> constraintList = new ArrayList<VertexEvaluator>();
 		for (IsConstraintOf consInc : vertex
 				.getIsConstraintOfIncidences(EdgeDirection.IN)) {
@@ -116,29 +95,29 @@ public class DeclarationEvaluator extends VertexEvaluator {
 		return declarationLayer;
 	}
 
-	@Override
-	public VertexCosts calculateSubtreeEvaluationCosts() {
-		return greqlEvaluator.getCostModel().calculateCostsDeclaration(this);
-	}
-
-	/**
-	 * Returns the number of combinations of the variables this vertex defines
-	 */
-	public long getDefinedVariableCombinations() {
-		long combinations = 1;
-		Iterator<Variable> iter = getDefinedVariables().iterator();
-		while (iter.hasNext()) {
-			VariableEvaluator veval = (VariableEvaluator) vertexEvalMarker
-					.getMark(iter.next());
-			combinations *= veval.getVariableCombinations();
-		}
-		return combinations;
-	}
-
-	@Override
-	public long calculateEstimatedCardinality() {
-		return greqlEvaluator.getCostModel().calculateCardinalityDeclaration(
-				this);
-	}
+	// @Override
+	// public VertexCosts calculateSubtreeEvaluationCosts() {
+	// return greqlEvaluator.getCostModel().calculateCostsDeclaration(this);
+	// }
+	//
+	// /**
+	// * Returns the number of combinations of the variables this vertex defines
+	// */
+	// public long getDefinedVariableCombinations() {
+	// long combinations = 1;
+	// Iterator<Variable> iter = getDefinedVariables().iterator();
+	// while (iter.hasNext()) {
+	// VariableEvaluator veval = (VariableEvaluator) vertexEvalMarker
+	// .getMark(iter.next());
+	// combinations *= veval.getVariableCombinations();
+	// }
+	// return combinations;
+	// }
+	//
+	// @Override
+	// public long calculateEstimatedCardinality() {
+	// return greqlEvaluator.getCostModel().calculateCardinalityDeclaration(
+	// this);
+	// }
 
 }

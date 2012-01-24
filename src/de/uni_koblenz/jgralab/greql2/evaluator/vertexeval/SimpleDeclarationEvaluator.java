@@ -35,22 +35,16 @@
 
 package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 
-import java.util.HashSet;
-
 import org.pcollections.PVector;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.JGraLab;
-import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluatorImpl;
 import de.uni_koblenz.jgralab.greql2.evaluator.VariableDeclaration;
-import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
 import de.uni_koblenz.jgralab.greql2.schema.Expression;
-import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
 import de.uni_koblenz.jgralab.greql2.schema.IsDeclaredVarOf;
 import de.uni_koblenz.jgralab.greql2.schema.IsTypeExprOf;
 import de.uni_koblenz.jgralab.greql2.schema.SimpleDeclaration;
-import de.uni_koblenz.jgralab.greql2.schema.Variable;
 
 /**
  * Evaluates a simple declaration. Creates a VariableDeclaration-object, that
@@ -59,28 +53,15 @@ import de.uni_koblenz.jgralab.greql2.schema.Variable;
  * @author ist@uni-koblenz.de
  * 
  */
-public class SimpleDeclarationEvaluator extends VertexEvaluator {
-
-	private SimpleDeclaration vertex;
-
-	/**
-	 * returns the vertex this VertexEvaluator evaluates
-	 */
-	@Override
-	public Greql2Vertex getVertex() {
-		return vertex;
-	}
+public class SimpleDeclarationEvaluator extends
+		VertexEvaluator<SimpleDeclaration> {
 
 	/**
-	 * @param eval
-	 *            the SimpleDeclarationEvaluator this VertexEvaluator belongs to
 	 * @param vertex
 	 *            the vertex which gets evaluated by this VertexEvaluator
 	 */
-	public SimpleDeclarationEvaluator(SimpleDeclaration vertex,
-			GreqlEvaluatorImpl eval) {
-		super(eval);
-		this.vertex = vertex;
+	public SimpleDeclarationEvaluator(SimpleDeclaration vertex) {
+		super(vertex);
 	}
 
 	/**
@@ -104,37 +85,37 @@ public class SimpleDeclarationEvaluator extends VertexEvaluator {
 		return varDeclList;
 	}
 
-	@Override
-	public VertexCosts calculateSubtreeEvaluationCosts() {
-		return greqlEvaluator.getCostModel().calculateCostsSimpleDeclaration(
-				this);
-	}
-
-	@Override
-	public void calculateNeededAndDefinedVariables() {
-		neededVariables = new HashSet<Variable>();
-		definedVariables = new HashSet<Variable>();
-		IsDeclaredVarOf varInc = vertex
-				.getFirstIsDeclaredVarOfIncidence(EdgeDirection.IN);
-		while (varInc != null) {
-			definedVariables.add(varInc.getAlpha());
-			varInc = varInc.getNextIsDeclaredVarOfIncidence(EdgeDirection.IN);
-		}
-		IsTypeExprOf typeInc = vertex
-				.getFirstIsTypeExprOfIncidence(EdgeDirection.IN);
-		if (typeInc != null) {
-			VertexEvaluator veval = vertexEvalMarker
-					.getMark(typeInc.getAlpha());
-			if (veval != null) {
-				neededVariables.addAll(veval.getNeededVariables());
-			}
-		}
-	}
-
-	@Override
-	public long calculateEstimatedCardinality() {
-		return greqlEvaluator.getCostModel()
-				.calculateCardinalitySimpleDeclaration(this);
-	}
+	// @Override
+	// public VertexCosts calculateSubtreeEvaluationCosts() {
+	// return greqlEvaluator.getCostModel().calculateCostsSimpleDeclaration(
+	// this);
+	// }
+	//
+	// @Override
+	// public void calculateNeededAndDefinedVariables() {
+	// neededVariables = new HashSet<Variable>();
+	// definedVariables = new HashSet<Variable>();
+	// IsDeclaredVarOf varInc = vertex
+	// .getFirstIsDeclaredVarOfIncidence(EdgeDirection.IN);
+	// while (varInc != null) {
+	// definedVariables.add(varInc.getAlpha());
+	// varInc = varInc.getNextIsDeclaredVarOfIncidence(EdgeDirection.IN);
+	// }
+	// IsTypeExprOf typeInc = vertex
+	// .getFirstIsTypeExprOfIncidence(EdgeDirection.IN);
+	// if (typeInc != null) {
+	// VertexEvaluator veval = vertexEvalMarker
+	// .getMark(typeInc.getAlpha());
+	// if (veval != null) {
+	// neededVariables.addAll(veval.getNeededVariables());
+	// }
+	// }
+	// }
+	//
+	// @Override
+	// public long calculateEstimatedCardinality() {
+	// return greqlEvaluator.getCostModel()
+	// .calculateCardinalitySimpleDeclaration(this);
+	// }
 
 }
