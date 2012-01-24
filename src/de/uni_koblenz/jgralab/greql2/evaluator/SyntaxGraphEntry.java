@@ -41,7 +41,8 @@ import java.util.logging.Logger;
 import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.CostModel;
-import de.uni_koblenz.jgralab.greql2.optimizer.Optimizer;
+// TODO [greqlevaluator] readd import
+// import de.uni_koblenz.jgralab.greql2.optimizer.Optimizer;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Expression;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Graph;
 
@@ -104,7 +105,8 @@ public class SyntaxGraphEntry {
 	/**
 	 * the optimizer that ist used to optimize this syntaxgraph
 	 */
-	private Optimizer optimizer;
+	// TODO [greqlevaluator] reenable optimizer
+	// private Optimizer optimizer;
 
 	/**
 	 * The GReQL2 query in text form.
@@ -114,9 +116,10 @@ public class SyntaxGraphEntry {
 	/**
 	 * @return the optimzer that is used to optimize this syntaxgraph
 	 */
-	public Optimizer getOptimizer() {
-		return optimizer;
-	}
+	// TODO [greqlevaluator] reenable optimizer
+	// public Optimizer getOptimizer() {
+	// return optimizer;
+	// }
 
 	/**
 	 * Locks the given SyntaxGraphEntry
@@ -167,11 +170,13 @@ public class SyntaxGraphEntry {
 	 * @param locked
 	 *            specifies, wether the graph should be locked or not
 	 */
+	// TODO [greqlevaluator] reenable optimizer
 	public SyntaxGraphEntry(String queryText, Greql2Graph graph,
-			Optimizer optimizer, CostModel costModel, boolean locked) {
+	// Optimizer optimizer,
+			CostModel costModel, boolean locked) {
 		this.queryText = queryText;
 		syntaxGraph = graph;
-		this.optimizer = optimizer;
+		// this.optimizer = optimizer;
 		this.costModel = costModel;
 		this.locked = locked;
 	}
@@ -203,10 +208,11 @@ public class SyntaxGraphEntry {
 		try {
 			queryText = (String) g2e.getAttribute("_queryText");
 			String optimizerClass = (String) g2e.getAttribute("_optimizer");
-			if (!optimizerClass.isEmpty()) {
-				optimizer = (Optimizer) Class.forName(optimizerClass)
-						.newInstance();
-			}
+			// TODO [greqlevaluator] reenable optimizer
+			// if (!optimizerClass.isEmpty()) {
+			// optimizer = (Optimizer) Class.forName(optimizerClass)
+			// .newInstance();
+			// }
 			String costModelClass = (String) g2e.getAttribute("_costModel");
 			if (!costModelClass.isEmpty()) {
 				costModel = (CostModel) Class.forName(costModelClass)
@@ -242,10 +248,11 @@ public class SyntaxGraphEntry {
 		Greql2Expression g2e = syntaxGraph.getFirstGreql2Expression();
 		g2e.set_queryText(queryText);
 
-		if (optimizer != null) {
-			optimizerClass = optimizer.getClass().getName();
-			optimizerClassSimple = optimizer.getClass().getSimpleName();
-		}
+		// TODO [greqlevaluator] reenable optimizer
+		// if (optimizer != null) {
+		// optimizerClass = optimizer.getClass().getName();
+		// optimizerClassSimple = optimizer.getClass().getSimpleName();
+		// }
 		g2e.set_optimizer(optimizerClass);
 
 		if (costModel != null) {
@@ -274,16 +281,21 @@ public class SyntaxGraphEntry {
 		if (o instanceof SyntaxGraphEntry) {
 			SyntaxGraphEntry e = (SyntaxGraphEntry) o;
 			return queryText.equals(e.queryText)
-					&& optimizer.getClass().equals(e.optimizer.getClass())
-					&& costModel.getClass().equals(e.costModel.getClass());
+			// TODO [greqlevaluator] reenable optimizer
+			// && optimizer.getClass().equals(e.optimizer.getClass())
+			// && costModel.getClass().equals(e.costModel.getClass())
+			;
 		}
 		return false;
 	}
 
 	@Override
 	public int hashCode() {
-		return queryText.hashCode() + optimizer.getClass().hashCode()
-				+ costModel.getClass().hashCode();
+		return queryText.hashCode()
+		// TODO [greqlevaluator] reenable optimizer
+		// + optimizer.getClass().hashCode() +
+		// costModel.getClass().hashCode()
+		;
 	}
 
 	public String getQueryText() {
@@ -293,7 +305,9 @@ public class SyntaxGraphEntry {
 	@Override
 	public String toString() {
 		return "{SyntaxGraphEntry@" + syntaxGraph.hashCode() + ":"
-				+ costModel.getClass().getSimpleName() + ":"
-				+ optimizer.getClass().getSimpleName() + "}";
+		// TODO [greqlevaluator] reenable optimizer
+				// + costModel.getClass().getSimpleName() + ":"
+		// + optimizer.getClass().getSimpleName()
+				+ "}";
 	}
 }

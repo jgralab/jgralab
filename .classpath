@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry excluding="de/uni_koblenz/jgralab/plugin/" kind="src" path="src"/>
-	<classpathentry excluding="testdata/|testgraphs/|testschemas/|de/uni_koblenz/jgralabtest/greql2/funlib/GraphFunctionTest.java|de/uni_koblenz/jgralabtest/greql2/funlib/SliceFunctionTest.java|de/uni_koblenz/jgralabtest/greql2/funlib/PathSystemFunctionTest.java|de/uni_koblenz/jgralabtest/greql2/funlib/SchemaFunctionTest.java|de/uni_koblenz/jgralabtest/greql2/FunctionTest.java|de/uni_koblenz/jgralabtest/greql2/evaluator/GreqlEvaluatorTest.java" kind="src" path="testit"/>
+	<classpathentry excluding="de/uni_koblenz/jgralab/plugin/|de/uni_koblenz/jgralab/greql2/optimizer/|de/uni_koblenz/jgralab/greql2/exception/OptimizerException.java" kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry kind="lib" path="/common/lib/apache/commons/cli/commons-cli-1.2.jar"/>

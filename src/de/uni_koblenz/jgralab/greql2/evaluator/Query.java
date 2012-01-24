@@ -13,7 +13,8 @@ import org.pcollections.PSet;
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.graphmarker.GraphMarker;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VertexEvaluator;
-import de.uni_koblenz.jgralab.greql2.optimizer.DefaultOptimizer;
+// TODO [greqlevaluator] readd import
+// import de.uni_koblenz.jgralab.greql2.optimizer.DefaultOptimizer;
 import de.uni_koblenz.jgralab.greql2.parser.GreqlParser;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Expression;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Graph;
@@ -119,13 +120,13 @@ public class Query {
 			queryGraph = GreqlParser.parse(queryText);
 			long t1 = System.currentTimeMillis();
 			parseTime = t1 - t0;
-			if (optimize) {
-				DefaultOptimizer.optimizeQuery(queryGraph);
-				optimizationTime = System.currentTimeMillis() - t1;
-			}
+			// TODO [greqlevaluator] reenable optimize
+			// if (optimize) {
+			// DefaultOptimizer.optimizeQuery(queryGraph);
+			// optimizationTime = System.currentTimeMillis() - t1;
+			// }
 			rootExpression = queryGraph.getFirstGreql2Expression();
-			vertexEvaluators = new GraphMarker<VertexEvaluator<?>>(
-					queryGraph);
+			vertexEvaluators = new GraphMarker<VertexEvaluator<?>>(queryGraph);
 			queryGraphCache.put(queryText, optimize, queryGraph,
 					vertexEvaluators);
 		}
