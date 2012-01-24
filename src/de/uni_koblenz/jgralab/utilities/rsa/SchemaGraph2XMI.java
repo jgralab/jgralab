@@ -56,26 +56,40 @@ import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.JGraLab;
-import de.uni_koblenz.jgralab.greql2.funlib.schema.HasAttribute;
-import de.uni_koblenz.jgralab.schema.AggregationKind;
-import de.uni_koblenz.jgralab.schema.AttributedElementClass;
-import de.uni_koblenz.jgralab.schema.BooleanDomain;
-import de.uni_koblenz.jgralab.schema.CollectionDomain;
-import de.uni_koblenz.jgralab.schema.Constraint;
-import de.uni_koblenz.jgralab.schema.Domain;
-import de.uni_koblenz.jgralab.schema.DoubleDomain;
-import de.uni_koblenz.jgralab.schema.EdgeClass;
-import de.uni_koblenz.jgralab.schema.EnumDomain;
-import de.uni_koblenz.jgralab.schema.GraphClass;
-import de.uni_koblenz.jgralab.schema.GraphElementClass;
-import de.uni_koblenz.jgralab.schema.IncidenceClass;
-import de.uni_koblenz.jgralab.schema.IntegerDomain;
-import de.uni_koblenz.jgralab.schema.LongDomain;
-import de.uni_koblenz.jgralab.schema.MapDomain;
-import de.uni_koblenz.jgralab.schema.NamedElement;
-import de.uni_koblenz.jgralab.schema.RecordDomain;
-import de.uni_koblenz.jgralab.schema.StringDomain;
-import de.uni_koblenz.jgralab.schema.VertexClass;
+import de.uni_koblenz.jgralab.grumlschema.SchemaGraph;
+import de.uni_koblenz.jgralab.grumlschema.domains.BooleanDomain;
+import de.uni_koblenz.jgralab.grumlschema.domains.CollectionDomain;
+import de.uni_koblenz.jgralab.grumlschema.domains.Domain;
+import de.uni_koblenz.jgralab.grumlschema.domains.DoubleDomain;
+import de.uni_koblenz.jgralab.grumlschema.domains.EnumDomain;
+import de.uni_koblenz.jgralab.grumlschema.domains.HasRecordDomainComponent;
+import de.uni_koblenz.jgralab.grumlschema.domains.IntegerDomain;
+import de.uni_koblenz.jgralab.grumlschema.domains.LongDomain;
+import de.uni_koblenz.jgralab.grumlschema.domains.MapDomain;
+import de.uni_koblenz.jgralab.grumlschema.domains.RecordDomain;
+import de.uni_koblenz.jgralab.grumlschema.domains.StringDomain;
+import de.uni_koblenz.jgralab.grumlschema.structure.AggregationKind;
+import de.uni_koblenz.jgralab.grumlschema.structure.Annotates;
+import de.uni_koblenz.jgralab.grumlschema.structure.Attribute;
+import de.uni_koblenz.jgralab.grumlschema.structure.AttributedElementClass;
+import de.uni_koblenz.jgralab.grumlschema.structure.Comment;
+import de.uni_koblenz.jgralab.grumlschema.structure.Constraint;
+import de.uni_koblenz.jgralab.grumlschema.structure.ContainsDomain;
+import de.uni_koblenz.jgralab.grumlschema.structure.ContainsGraphElementClass;
+import de.uni_koblenz.jgralab.grumlschema.structure.ContainsSubPackage;
+import de.uni_koblenz.jgralab.grumlschema.structure.EdgeClass;
+import de.uni_koblenz.jgralab.grumlschema.structure.EndsAt;
+import de.uni_koblenz.jgralab.grumlschema.structure.GraphClass;
+import de.uni_koblenz.jgralab.grumlschema.structure.GraphElementClass;
+import de.uni_koblenz.jgralab.grumlschema.structure.HasAttribute;
+import de.uni_koblenz.jgralab.grumlschema.structure.HasConstraint;
+import de.uni_koblenz.jgralab.grumlschema.structure.IncidenceClass;
+import de.uni_koblenz.jgralab.grumlschema.structure.NamedElement;
+import de.uni_koblenz.jgralab.grumlschema.structure.Package;
+import de.uni_koblenz.jgralab.grumlschema.structure.Redefines;
+import de.uni_koblenz.jgralab.grumlschema.structure.SpecializesEdgeClass;
+import de.uni_koblenz.jgralab.grumlschema.structure.SpecializesVertexClass;
+import de.uni_koblenz.jgralab.grumlschema.structure.VertexClass;
 import de.uni_koblenz.jgralab.utilities.tg2schemagraph.Schema2SchemaGraph;
 
 /**
@@ -103,11 +117,6 @@ public class SchemaGraph2XMI {
 	 * which are bidirectional navigable.
 	 */
 	private boolean isBidirectional = false;
-
-	/**
-	 * Stores the current {@link SchemaGraph} which is converted to a XMI.
-	 */
-	private SchemaGraph schemaGraph;
 
 	/**
 	 * Processes an TG-file as schema or a schema in a grUML graph to a XMI
@@ -240,7 +249,6 @@ public class SchemaGraph2XMI {
 	 */
 	private void createXMI(String xmiName, SchemaGraph schemaGraph)
 			throws XMLStreamException, IOException {
-		this.schemaGraph = schemaGraph;
 		Writer out = null;
 		XMLStreamWriter writer = null;
 		try {
