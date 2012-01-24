@@ -13,8 +13,6 @@ import org.pcollections.PSet;
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.graphmarker.GraphMarker;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VertexEvaluator;
-// TODO [greqlevaluator] readd import
-// import de.uni_koblenz.jgralab.greql2.optimizer.DefaultOptimizer;
 import de.uni_koblenz.jgralab.greql2.parser.GreqlParser;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Expression;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Graph;
@@ -26,8 +24,8 @@ public class Query {
 	private Greql2Graph queryGraph;
 	private PSet<String> usedVariables;
 	private PSet<String> storedVariables;
-	private boolean optimize;
-	private long optimizationTime = -1;
+	private final boolean optimize;
+	private final long optimizationTime = -1;
 	private long parseTime = -1;
 	private Greql2Expression rootExpression;
 
@@ -116,21 +114,24 @@ public class Query {
 			}
 		}
 		if (queryGraph == null) {
-			long t0 = System.currentTimeMillis();
-			queryGraph = GreqlParser.parse(queryText);
-			long t1 = System.currentTimeMillis();
-			parseTime = t1 - t0;
-			// TODO [greqlevaluator] reenable optimize
-			// if (optimize) {
-			// DefaultOptimizer.optimizeQuery(queryGraph);
-			// optimizationTime = System.currentTimeMillis() - t1;
-			// }
-			rootExpression = queryGraph.getFirstGreql2Expression();
-			vertexEvaluators = new GraphMarker<VertexEvaluator<?>>(queryGraph);
-			queryGraphCache.put(queryText, optimize, queryGraph,
-					vertexEvaluators);
+			initalizeQueryGraph();
 		}
 		return queryGraph;
+	}
+
+	private void initalizeQueryGraph() {
+		long t0 = System.currentTimeMillis();
+		queryGraph = GreqlParser.parse(queryText);
+		long t1 = System.currentTimeMillis();
+		parseTime = t1 - t0;
+		// TODO [greqlevaluator] reenable optimize
+		// if (optimize) {
+		// DefaultOptimizer.optimizeQuery(queryGraph);
+		// optimizationTime = System.currentTimeMillis() - t1;
+		// }
+		rootExpression = queryGraph.getFirstGreql2Expression();
+		vertexEvaluators = new GraphMarker<VertexEvaluator<?>>(queryGraph);
+		queryGraphCache.put(queryText, optimize, queryGraph, vertexEvaluators);
 	}
 
 	public Set<String> getUsedVariables() {
