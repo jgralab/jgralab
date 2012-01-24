@@ -341,7 +341,7 @@ public class GreqlParser extends ParserHelper {
 				return name;
 			}
 		}
-		fail("expected identifier");
+		fail("expected identifier, but found");
 		return null;
 	}
 
@@ -353,7 +353,7 @@ public class GreqlParser extends ParserHelper {
 				return name;
 			}
 		}
-		fail("expected simple name");
+		fail("expected simple name, but found");
 		return null;
 	}
 
@@ -361,7 +361,7 @@ public class GreqlParser extends ParserHelper {
 		if (lookAhead(0) == type) {
 			match();
 		} else {
-			fail("Expected " + type);
+			fail("expected " + type + ", but found");
 		}
 	}
 
@@ -410,7 +410,7 @@ public class GreqlParser extends ParserHelper {
 			} while (ph);
 			return name.toString();
 		}
-		fail("Unrecognized package name or TypeName expected");
+		fail("Package or type name expected, but found");
 		return null;
 	}
 
@@ -585,9 +585,7 @@ public class GreqlParser extends ParserHelper {
 		ruleSucceeds(RuleEnum.EXPRESSION, pos);
 		return expr;
 	}
-	
-	
-	
+
 	private final SubgraphDefinition parseSubgraphDefinition() {
 		SubgraphDefinition definition = null;
 		int exprOffset = getCurrentOffset();
@@ -595,12 +593,15 @@ public class GreqlParser extends ParserHelper {
 		if (!inPredicateMode()) {
 			int exprLength = getLength(exprOffset);
 			definition = graph.createExpressionDefinedSubgraph();
-			IsSubgraphDefiningExpression isSubgraphDefExpr = graph.createIsSubgraphDefiningExpression(traversalContextExpr, (ExpressionDefinedSubgraph) definition);
-			isSubgraphDefExpr.set_sourcePositions(createSourcePositionList(exprLength, exprOffset));
+			IsSubgraphDefiningExpression isSubgraphDefExpr = graph
+					.createIsSubgraphDefiningExpression(traversalContextExpr,
+							(ExpressionDefinedSubgraph) definition);
+			isSubgraphDefExpr.set_sourcePositions(createSourcePositionList(
+					exprLength, exprOffset));
 		}
 		return definition;
 	}
-	
+
 	private final Expression parseSubgraphRestrictedExpression() {
 		int pos = alreadySucceeded(RuleEnum.SUBGRAPHRESTRICTEDEXPRESSION);
 		if (skipRule(pos)) {
@@ -617,11 +618,18 @@ public class GreqlParser extends ParserHelper {
 			Expression restrictedExpr = parseWhereExpression();
 			if (!inPredicateMode()) {
 				int lengthRestrExpr = getLength(offsetRestrExpr);
-				SubgraphRestrictedExpression subgraphRestrExpr = graph.createSubgraphRestrictedExpression();
-				IsSubgraphDefinitionOf subgraphDefOf = graph.createIsSubgraphDefinitionOf(subgraphDef, subgraphRestrExpr);
-				subgraphDefOf.set_sourcePositions(createSourcePositionList(lengthDef, offsetDef));
-				IsExpressionOnSubgraph exprOnSubgraph = graph.createIsExpressionOnSubgraph(restrictedExpr, subgraphRestrExpr);
-				exprOnSubgraph.set_sourcePositions(createSourcePositionList(lengthRestrExpr, offsetRestrExpr));
+				SubgraphRestrictedExpression subgraphRestrExpr = graph
+						.createSubgraphRestrictedExpression();
+				IsSubgraphDefinitionOf subgraphDefOf = graph
+						.createIsSubgraphDefinitionOf(subgraphDef,
+								subgraphRestrExpr);
+				subgraphDefOf.set_sourcePositions(createSourcePositionList(
+						lengthDef, offsetDef));
+				IsExpressionOnSubgraph exprOnSubgraph = graph
+						.createIsExpressionOnSubgraph(restrictedExpr,
+								subgraphRestrExpr);
+				exprOnSubgraph.set_sourcePositions(createSourcePositionList(
+						lengthRestrExpr, offsetRestrExpr));
 				result = subgraphRestrExpr;
 			}
 		} else {
@@ -1391,7 +1399,7 @@ public class GreqlParser extends ParserHelper {
 				Expression ie = parseNumericLiteral();
 				if (!inPredicateMode()) {
 					if (!(ie instanceof IntLiteral)) {
-						fail("Expected integer constant as iteration quantifier or T");
+						fail("Expected integer constant as iteration quantifier or T, but found");
 					}
 					int lengthExpr = getLength(offsetExpr);
 					ExponentiatedPathDescription epd = graph
@@ -1692,7 +1700,7 @@ public class GreqlParser extends ParserHelper {
 				}
 			}
 		}
-		fail("Expected value construction");
+		fail("Expected value construction, but found");
 		return null;
 	}
 
@@ -1962,8 +1970,6 @@ public class GreqlParser extends ParserHelper {
 		}
 		return expr;
 	}
-
-
 
 	private final List<VertexPosition<TypeId>> parseTypeExpressionList() {
 		List<VertexPosition<TypeId>> list = new ArrayList<VertexPosition<TypeId>>();

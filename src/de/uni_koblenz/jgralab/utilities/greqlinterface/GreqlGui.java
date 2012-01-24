@@ -150,6 +150,7 @@ public class GreqlGui extends SwingApplication {
 	private boolean graphLoading;
 
 	private boolean evaluating;
+	private double evaluationTime;
 
 	private boolean resultFontSet;
 
@@ -300,6 +301,7 @@ public class GreqlGui extends SwingApplication {
 				ex = e1;
 			}
 			invokeAndWait(new Runnable() {
+
 				@Override
 				public void run() {
 					if (ex != null) {
@@ -336,9 +338,11 @@ public class GreqlGui extends SwingApplication {
 						setResultFont(resultFont);
 						updateActions();
 					} else {
+						evaluationTime = eval.getOverallEvaluationTime() / 1000.0;
 						getStatusBar()
 								.setText(
-										getMessage("GreqlGui.StatusMessage.EvaluationFinished")); //$NON-NLS-1$
+										MessageFormat
+												.format(getMessage("GreqlGui.StatusMessage.EvaluationFinished"), evaluationTime)); //$NON-NLS-1$
 					}
 				}
 			});
@@ -682,7 +686,9 @@ public class GreqlGui extends SwingApplication {
 							resultFontSet = true;
 							getStatusBar()
 									.setText(
-											getMessage("GreqlGui.StatusMessage.ResultComplete")); //$NON-NLS-1$
+											MessageFormat
+													.format(getMessage("GreqlGui.StatusMessage.ResultComplete"), //$NON-NLS-1$
+													evaluationTime));
 						}
 					}
 				});
