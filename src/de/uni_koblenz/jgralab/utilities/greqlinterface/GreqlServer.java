@@ -56,7 +56,7 @@ import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.codegenerator.CodeGeneratorConfiguration;
 import de.uni_koblenz.jgralab.graphmarker.BooleanGraphMarker;
-import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
+import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluatorImpl;
 import de.uni_koblenz.jgralab.greql2.types.Path;
 import de.uni_koblenz.jgralab.greql2.types.PathSystem;
 import de.uni_koblenz.jgralab.greql2.types.Slice;
@@ -72,7 +72,7 @@ public class GreqlServer extends Thread {
 	private final Socket socket;
 	private final BufferedReader in;
 	private final PrintWriter out;
-	private final GreqlEvaluator eval;
+	private final GreqlEvaluatorImpl eval;
 	private String graphFile;
 	private static Map<String, Graph> dataGraphs = Collections
 			.synchronizedMap(new HashMap<String, Graph>());
@@ -85,7 +85,7 @@ public class GreqlServer extends Thread {
 		socket = s;
 		in = new BufferedReader(new InputStreamReader(s.getInputStream()));
 		out = new PrintWriter(new OutputStreamWriter(s.getOutputStream()));
-		eval = new GreqlEvaluator((String) null, (Graph) null, null);
+		eval = new GreqlEvaluatorImpl((String) null, (Graph) null, null);
 		println("Hi! I'm your GreqlServer (" + socket.getInetAddress() + ")",
 				PrintTarget.BOTH, true);
 	}

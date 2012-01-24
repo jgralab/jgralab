@@ -36,7 +36,7 @@
 package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 
 import de.uni_koblenz.jgralab.Graph;
-import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
+import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluatorImpl;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
 import de.uni_koblenz.jgralab.greql2.schema.BoolLiteral;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
@@ -50,12 +50,12 @@ import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
  * @author ist@uni-koblenz.de
  * 
  */
-public class BoolLiteralEvaluator extends VertexEvaluator {
+public class BoolLiteralEvaluator extends VertexEvaluator<BoolLiteral> {
 
 	/**
 	 * The BoolLiteral this evluator provides acces to
 	 */
-	private BoolLiteral vertex;
+	private final BoolLiteral vertex;
 
 	/**
 	 * returns the vertex this VertexEvaluator evaluates
@@ -65,7 +65,7 @@ public class BoolLiteralEvaluator extends VertexEvaluator {
 		return vertex;
 	}
 
-	public BoolLiteralEvaluator(BoolLiteral vertex, GreqlEvaluator eval) {
+	public BoolLiteralEvaluator(BoolLiteral vertex, GreqlEvaluatorImpl eval) {
 		super(eval);
 		this.vertex = vertex;
 	}

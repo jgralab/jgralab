@@ -36,7 +36,7 @@
 package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 
 import de.uni_koblenz.jgralab.Graph;
-import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
+import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluatorImpl;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
 import de.uni_koblenz.jgralab.greql2.schema.StringLiteral;
@@ -62,7 +62,7 @@ public class StringLiteralEvaluator extends VertexEvaluator {
 		return vertex;
 	}
 
-	public StringLiteralEvaluator(StringLiteral vertex, GreqlEvaluator eval) {
+	public StringLiteralEvaluator(StringLiteral vertex, GreqlEvaluatorImpl eval) {
 		super(eval);
 		this.vertex = vertex;
 	}

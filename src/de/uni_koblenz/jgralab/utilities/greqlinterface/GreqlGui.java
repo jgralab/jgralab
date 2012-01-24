@@ -84,7 +84,7 @@ import de.uni_koblenz.jgralab.GraphIO.TGFilenameFilter;
 import de.uni_koblenz.jgralab.ProgressFunction;
 import de.uni_koblenz.jgralab.WorkInProgress;
 import de.uni_koblenz.jgralab.codegenerator.CodeGeneratorConfiguration;
-import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
+import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluatorImpl;
 import de.uni_koblenz.jgralab.greql2.evaluator.Query;
 import de.uni_koblenz.jgralab.greql2.exception.ParsingException;
 import de.uni_koblenz.jgralab.greql2.exception.QuerySourceException;
@@ -261,7 +261,7 @@ public class GreqlGui extends JFrame {
 					.isSelected());
 			Query query = new Query(queryText, optimizeCheckBox.isSelected());
 
-			final GreqlEvaluator eval = new GreqlEvaluator(query, graph,
+			final GreqlEvaluatorImpl eval = new GreqlEvaluatorImpl(query, graph,
 					new HashMap<String, Object>(), this);
 			try {
 				eval.startEvaluation();

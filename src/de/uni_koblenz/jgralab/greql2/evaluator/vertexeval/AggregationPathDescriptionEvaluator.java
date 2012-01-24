@@ -37,7 +37,7 @@ package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Graph;
-import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
+import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluatorImpl;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
 import de.uni_koblenz.jgralab.greql2.evaluator.fa.NFA;
 import de.uni_koblenz.jgralab.greql2.schema.AggregationPathDescription;
@@ -56,7 +56,7 @@ public class AggregationPathDescriptionEvaluator extends
 		PrimaryPathDescriptionEvaluator {
 
 	public AggregationPathDescriptionEvaluator(
-			AggregationPathDescription vertex, GreqlEvaluator eval) {
+			AggregationPathDescription vertex, GreqlEvaluatorImpl eval) {
 		super(vertex, eval);
 	}
 

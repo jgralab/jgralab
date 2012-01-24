@@ -41,7 +41,7 @@ import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
+import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluatorImpl;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
 import de.uni_koblenz.jgralab.greql2.exception.GreqlException;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
@@ -52,7 +52,7 @@ import de.uni_koblenz.jgralab.greql2.schema.MapConstruction;
 public class MapConstructionEvaluator extends VertexEvaluator {
 	private MapConstruction mapConstruction;
 
-	public MapConstructionEvaluator(MapConstruction vertex, GreqlEvaluator eval) {
+	public MapConstructionEvaluator(MapConstruction vertex, GreqlEvaluatorImpl eval) {
 		super(eval);
 		mapConstruction = vertex;
 	}

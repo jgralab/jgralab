@@ -3,7 +3,7 @@ package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.TraversalContext;
-import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
+import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluatorImpl;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
 import de.uni_koblenz.jgralab.greql2.schema.Expression;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
@@ -21,7 +21,7 @@ public class SubgraphRestrictedExpressionEvaluator extends VertexEvaluator {
 	VertexEvaluator exprEval;
 
 	public SubgraphRestrictedExpressionEvaluator(
-			SubgraphRestrictedExpression vertex, GreqlEvaluator eval) {
+			SubgraphRestrictedExpression vertex, GreqlEvaluatorImpl eval) {
 		super(eval);
 		this.vertex = vertex;
 	}

@@ -39,7 +39,7 @@ import org.pcollections.PCollection;
 
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.JGraLab;
-import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
+import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluatorImpl;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
 import de.uni_koblenz.jgralab.greql2.schema.ListConstruction;
 
@@ -52,7 +52,7 @@ import de.uni_koblenz.jgralab.greql2.schema.ListConstruction;
 public class ListConstructionEvaluator extends ValueConstructionEvaluator {
 
 	public ListConstructionEvaluator(ListConstruction vertex,
-			GreqlEvaluator eval) {
+			GreqlEvaluatorImpl eval) {
 		super(vertex, eval);
 	}
 

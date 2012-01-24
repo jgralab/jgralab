@@ -67,12 +67,13 @@ import de.uni_koblenz.jgralab.schema.AttributedElementClass;
  * This is the core class of the GReQL-2 Evaluator. It takes a GReQL-2 Query as
  * String or Graph and a JGraLab-Datagraph and evaluates the Query on this
  * graph. The result is a JValue-object, it can be accessed using the method
- * <code>JValue getEvaluationResult()</code>.
+ * <code>JValue getEvaluationResult()</code>. TODO [greqlevaluator] Make all
+ * occurences of GreqlEvaluatorImpl to use the public Interface.
  * 
  * @author ist@uni-koblenz.de
  * 
  */
-public class GreqlEvaluator {
+public class GreqlEvaluatorImpl {
 
 	public static void main(String[] args) throws FileNotFoundException,
 			IOException, GraphIOException {
@@ -91,8 +92,8 @@ public class GreqlEvaluator {
 					new ConsoleProgressFunction("Loading"));
 		}
 
-		GreqlEvaluator eval = new GreqlEvaluator(new Query(query), datagraph,
-				null, null);
+		GreqlEvaluatorImpl eval = new GreqlEvaluatorImpl(new Query(query),
+				datagraph, null, null);
 		Object result = eval.getResult();
 		System.out.println("Evaluation Result:");
 		System.out.println("==================");
@@ -144,7 +145,7 @@ public class GreqlEvaluator {
 		return vertexEvalGraphMarker;
 	}
 
-	private static Logger logger = Logger.getLogger(GreqlEvaluator.class
+	private static Logger logger = Logger.getLogger(GreqlEvaluatorImpl.class
 			.getName());
 
 	/**
@@ -160,7 +161,7 @@ public class GreqlEvaluator {
 	/**
 	 * This attribute holds the CostModel which estimates the evaluation costs
 	 */
-	private CostModel costModel = null;
+	private final CostModel costModel = null;
 
 	/**
 	 * The progress function this evaluator uses, may be null
@@ -194,7 +195,7 @@ public class GreqlEvaluator {
 	 */
 	private long passedInterpretationSteps;
 
-	private Query query;
+	private final Query query;
 
 	/**
 	 * should be called by every vertex evaluator to indicate a progress. The
@@ -271,7 +272,7 @@ public class GreqlEvaluator {
 	 *            the ProgressFunction which indicates the progress, for
 	 *            instance display a progress bar etc.
 	 */
-	public GreqlEvaluator(Query query, Graph datagraph,
+	public GreqlEvaluatorImpl(Query query, Graph datagraph,
 			Map<String, Object> variables, ProgressFunction progressFunction) {
 		this.query = query;
 		this.datagraph = datagraph;

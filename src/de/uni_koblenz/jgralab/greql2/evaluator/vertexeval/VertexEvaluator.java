@@ -47,7 +47,7 @@ import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
+import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluatorImpl;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
 import de.uni_koblenz.jgralab.greql2.exception.QuerySourceException;
@@ -476,7 +476,7 @@ public abstract class VertexEvaluator<V extends Vertex> {
 	 * creates a vertex evaluator for the given vertex
 	 */
 	public static <V extends Vertex> VertexEvaluator<V> createVertexEvaluator(
-			V vertex, GreqlEvaluator eval) {
+			V vertex, GreqlEvaluatorImpl eval) {
 		Class<?> vertexClass = vertex.getClass();
 		String fullClassName = vertexClass.getName();
 		// remove the "Impl" ...
@@ -495,7 +495,7 @@ public abstract class VertexEvaluator<V extends Vertex> {
 				+ evalName;
 		try {
 			Class<?> argsClass[] = new Class[] { Class.forName(fullClassName),
-					GreqlEvaluator.class };
+					GreqlEvaluatorImpl.class };
 			Class<?> evalClass = Class.forName(evalName);
 			Constructor<?> constructor = evalClass.getConstructor(argsClass);
 			@SuppressWarnings("unchecked")

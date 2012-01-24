@@ -36,7 +36,7 @@
 package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 
 import de.uni_koblenz.jgralab.Graph;
-import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
+import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluatorImpl;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
 import de.uni_koblenz.jgralab.greql2.schema.Identifier;
@@ -60,7 +60,7 @@ public class IdentifierEvaluator extends VertexEvaluator {
 		return vertex;
 	}
 
-	public IdentifierEvaluator(Identifier vertex, GreqlEvaluator eval) {
+	public IdentifierEvaluator(Identifier vertex, GreqlEvaluatorImpl eval) {
 		super(eval);
 		this.vertex = vertex;
 	}

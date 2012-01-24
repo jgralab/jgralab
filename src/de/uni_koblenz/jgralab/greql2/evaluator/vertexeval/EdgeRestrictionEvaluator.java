@@ -40,7 +40,7 @@ import java.util.Set;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Graph;
-import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
+import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluatorImpl;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
 import de.uni_koblenz.jgralab.greql2.schema.EdgeRestriction;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
@@ -110,7 +110,7 @@ public class EdgeRestrictionEvaluator extends VertexEvaluator {
 	 * @param vertex
 	 * @param eval
 	 */
-	public EdgeRestrictionEvaluator(EdgeRestriction vertex, GreqlEvaluator eval) {
+	public EdgeRestrictionEvaluator(EdgeRestriction vertex, GreqlEvaluatorImpl eval) {
 		super(eval);
 		this.vertex = vertex;
 	}

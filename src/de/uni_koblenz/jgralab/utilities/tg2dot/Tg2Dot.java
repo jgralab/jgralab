@@ -71,7 +71,7 @@ import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.graphmarker.BooleanGraphMarker;
-import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
+import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluatorImpl;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.utilities.tg2dot.dot.DotWriter;
@@ -417,10 +417,10 @@ public class Tg2Dot extends Tg2Whatever {
 	protected void graphStart(PrintStream out) {
 		// Disable debugging to prevent recursive execution and restore it in
 		// graphEnd()
-		debugIterations = GreqlEvaluator.DEBUG_DECLARATION_ITERATIONS;
-		debugOptimization = GreqlEvaluator.DEBUG_OPTIMIZATION;
-		GreqlEvaluator.DEBUG_DECLARATION_ITERATIONS = false;
-		GreqlEvaluator.DEBUG_OPTIMIZATION = false;
+		debugIterations = GreqlEvaluatorImpl.DEBUG_DECLARATION_ITERATIONS;
+		debugOptimization = GreqlEvaluatorImpl.DEBUG_OPTIMIZATION;
+		GreqlEvaluatorImpl.DEBUG_DECLARATION_ITERATIONS = false;
+		GreqlEvaluatorImpl.DEBUG_OPTIMIZATION = false;
 		jGraLabLogLevel = JGraLab.getRootLogger().getLevel();
 		JGraLab.setLogLevel(Level.OFF);
 
@@ -460,14 +460,14 @@ public class Tg2Dot extends Tg2Whatever {
 	}
 
 	/**
-	 * Sets all known global variables in the {@link GreqlEvaluator}.
+	 * Sets all known global variables in the {@link GreqlEvaluatorImpl}.
 	 */
 	private void setGlobalVariables() {
 		evaluator.setVariablesWithGreqlValues(layout.getGlobalVariables());
 	}
 
 	/**
-	 * Sets all provided command line switch in the {@link GreqlEvaluator}.
+	 * Sets all provided command line switch in the {@link GreqlEvaluatorImpl}.
 	 */
 	private void setCommandLineVariables() {
 		evaluator.setVariable(PRINT_ROLENAMES, roleNames);
@@ -593,7 +593,7 @@ public class Tg2Dot extends Tg2Whatever {
 	/**
 	 * Creates a evaluated style attribute list of the given {@link Definition}.
 	 * <b>Note:</b><br>
-	 * The current element has been set to the {@link GreqlEvaluator} via the
+	 * The current element has been set to the {@link GreqlEvaluatorImpl} via the
 	 * method
 	 * {@link GreqlEvaluatorFacade#setVariablesOfGreqlEvaluator(AttributedElement, int)}
 	 * .
@@ -719,8 +719,8 @@ public class Tg2Dot extends Tg2Whatever {
 	protected void graphEnd(PrintStream out) {
 		writer.close();
 		writer = null;
-		GreqlEvaluator.DEBUG_DECLARATION_ITERATIONS = debugIterations;
-		GreqlEvaluator.DEBUG_OPTIMIZATION = debugOptimization;
+		GreqlEvaluatorImpl.DEBUG_DECLARATION_ITERATIONS = debugIterations;
+		GreqlEvaluatorImpl.DEBUG_OPTIMIZATION = debugOptimization;
 		JGraLab.setLogLevel(jGraLabLogLevel);
 	}
 

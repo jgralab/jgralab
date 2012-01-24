@@ -7,7 +7,7 @@ import org.pcollections.PCollection;
 
 import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.eca.ECARule;
-import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
+import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluatorImpl;
 
 public abstract class EventDescription {
 
@@ -115,7 +115,7 @@ public abstract class EventDescription {
 				return false;
 			}
 		} else {
-			GreqlEvaluator eval = activeRules.get(0).getECARuleManager()
+			GreqlEvaluatorImpl eval = activeRules.get(0).getECARuleManager()
 					.getGreqlEvaluator();
 			eval.setQuery(contextExpression);
 			eval.startEvaluation();

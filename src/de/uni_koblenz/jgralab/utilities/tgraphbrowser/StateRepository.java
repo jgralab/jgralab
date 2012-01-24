@@ -67,7 +67,7 @@ import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.ProgressFunction;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.codegenerator.CodeGeneratorConfiguration;
-import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
+import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluatorImpl;
 import de.uni_koblenz.jgralab.greql2.exception.GreqlException;
 import de.uni_koblenz.jgralab.greql2.types.Types;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
@@ -215,7 +215,7 @@ public class StateRepository {
 	 */
 	synchronized static Object evaluateGReQL(String query, Graph graph,
 			HashMap<String, Object> boundVars) {
-		GreqlEvaluator eval = new GreqlEvaluator(query, graph, boundVars);
+		GreqlEvaluatorImpl eval = new GreqlEvaluatorImpl(query, graph, boundVars);
 		eval.startEvaluation();
 		return eval.getResult();
 	}

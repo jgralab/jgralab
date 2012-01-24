@@ -42,7 +42,7 @@ import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
+import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluatorImpl;
 import de.uni_koblenz.jgralab.greql2.funlib.FunLib;
 import de.uni_koblenz.jgralab.schema.AggregationKind;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
@@ -62,7 +62,7 @@ import de.uni_koblenz.jgralab.utilities.tg2dot.greql2.funlib.ToDotString;
 
 /**
  * The {@link GreqlEvaluatorFacade} is just a facade for a
- * {@link GreqlEvaluator} and provides automatic generation of an
+ * {@link GreqlEvaluatorImpl} and provides automatic generation of an
  * using-preamble, variable setting and simple GReQL-query evaluation.
  * 
  * @author ist@uni-koblenz.de
@@ -116,7 +116,7 @@ public class GreqlEvaluatorFacade {
 	/**
 	 * The actual GreqlEvaluator used for evaluations.
 	 */
-	private final GreqlEvaluator evaluator;
+	private final GreqlEvaluatorImpl evaluator;
 
 	/**
 	 * Current known variable set used by the
@@ -131,20 +131,20 @@ public class GreqlEvaluatorFacade {
 
 	/**
 	 * Constructs a GreqlEvaluatorFacade for a given {@link Graph} and creates
-	 * its own {@link GreqlEvaluator}.
+	 * its own {@link GreqlEvaluatorImpl}.
 	 * 
 	 * @param graph
 	 *            Graph for which this GreqlEvaluatorFacade is used for.
 	 */
 	public GreqlEvaluatorFacade(Graph graph) {
-		evaluator = new GreqlEvaluator((String) null, graph, null);
+		evaluator = new GreqlEvaluatorImpl((String) null, graph, null);
 		knownVariableHashCode = 0;
 		evaluator.setVariables(new HashMap<String, Object>());
 	}
 
 	/**
 	 * Set for a provided {@link AttributedElementClass} the statically known
-	 * variables in the {@link GreqlEvaluator}.
+	 * variables in the {@link GreqlEvaluatorImpl}.
 	 * 
 	 * @param typeClass
 	 *            A AttributedElementClass.
@@ -165,7 +165,7 @@ public class GreqlEvaluatorFacade {
 
 	/**
 	 * Set for a provided {@link VertexClass} the statically known variables in
-	 * the {@link GreqlEvaluator}.
+	 * the {@link GreqlEvaluatorImpl}.
 	 * 
 	 * @param vertexClass
 	 *            A VertexClass.
@@ -313,8 +313,8 @@ public class GreqlEvaluatorFacade {
 			throw parse;
 		}
 		Object result = evaluator.getResult();
-		GreqlEvaluator.DEBUG_DECLARATION_ITERATIONS = false;
-		GreqlEvaluator.DEBUG_OPTIMIZATION = false;
+		GreqlEvaluatorImpl.DEBUG_DECLARATION_ITERATIONS = false;
+		GreqlEvaluatorImpl.DEBUG_OPTIMIZATION = false;
 		return result;
 	}
 

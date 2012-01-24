@@ -35,7 +35,7 @@
 
 package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 
-import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
+import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluatorImpl;
 import de.uni_koblenz.jgralab.greql2.evaluator.fa.DFA;
 
 /**
@@ -55,7 +55,7 @@ public abstract class PathSearchEvaluator extends VertexEvaluator {
 	/**
 	 * this is the GReQL-Function which evaluates the pathexistence
 	 */
-	public PathSearchEvaluator(GreqlEvaluator eval) {
+	public PathSearchEvaluator(GreqlEvaluatorImpl eval) {
 		super(eval);
 		searchAutomaton = null;
 	}

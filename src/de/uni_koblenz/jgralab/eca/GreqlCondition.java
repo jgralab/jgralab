@@ -2,7 +2,7 @@ package de.uni_koblenz.jgralab.eca;
 
 import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.eca.events.Event;
-import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
+import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluatorImpl;
 
 public class GreqlCondition implements Condition {
 	/**
@@ -34,7 +34,7 @@ public class GreqlCondition implements Condition {
 	@Override
 	public boolean evaluate(Event event) {
 		AttributedElement element = event.getElement();
-		GreqlEvaluator greqlEvaluator = ((ECARuleManager) event.getGraph()
+		GreqlEvaluatorImpl greqlEvaluator = ((ECARuleManager) event.getGraph()
 				.getECARuleManager()).getGreqlEvaluator();
 		if (this.conditionExpression.contains("context")) {
 			greqlEvaluator.setQuery("using context: " + conditionExpression);

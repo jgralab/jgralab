@@ -22,7 +22,7 @@ import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.ImplementationType;
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.codegenerator.CodeGeneratorConfiguration;
-import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
+import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluatorImpl;
 import de.uni_koblenz.jgralab.greql2.evaluator.Query;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.EnumDomain;
@@ -487,7 +487,7 @@ public class Context {
 
 		// reset the GreqlEvaluator index cache, they prevent garbage
 		// collection!
-		GreqlEvaluator.resetGraphIndizes();
+		GreqlEvaluatorImpl.resetGraphIndizes();
 
 		// clear imports/extra vars
 		greqlExtraVars.clear();
@@ -742,7 +742,7 @@ public class Context {
 		String query = sb.toString();
 		logger.finest("GReQL: " + semanticExpression);
 
-		GreqlEvaluator eval = new GreqlEvaluator(new Query(query), graph,
+		GreqlEvaluatorImpl eval = new GreqlEvaluatorImpl(new Query(query), graph,
 				greqlMapping, null);
 		eval.startEvaluation();
 		return (T) eval.getResult();

@@ -38,7 +38,7 @@ import org.pcollections.PCollection;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Graph;
-import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
+import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluatorImpl;
 import de.uni_koblenz.jgralab.greql2.evaluator.VariableDeclarationLayer;
 import de.uni_koblenz.jgralab.greql2.schema.Comprehension;
 import de.uni_koblenz.jgralab.greql2.schema.Declaration;
@@ -52,7 +52,7 @@ public abstract class ComprehensionEvaluator extends VertexEvaluator {
 	@Override
 	public abstract Comprehension getVertex();
 
-	public ComprehensionEvaluator(GreqlEvaluator eval) {
+	public ComprehensionEvaluator(GreqlEvaluatorImpl eval) {
 		super(eval);
 	}
 

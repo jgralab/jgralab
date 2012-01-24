@@ -37,7 +37,7 @@ package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Graph;
-import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
+import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluatorImpl;
 import de.uni_koblenz.jgralab.greql2.evaluator.fa.NFA;
 import de.uni_koblenz.jgralab.greql2.schema.IsGoalRestrOf;
 import de.uni_koblenz.jgralab.greql2.schema.IsStartRestrOf;
@@ -67,7 +67,7 @@ public abstract class PathDescriptionEvaluator extends VertexEvaluator {
 	 * 
 	 * @param eval
 	 */
-	public PathDescriptionEvaluator(GreqlEvaluator eval) {
+	public PathDescriptionEvaluator(GreqlEvaluatorImpl eval) {
 		super(eval);
 	}
 

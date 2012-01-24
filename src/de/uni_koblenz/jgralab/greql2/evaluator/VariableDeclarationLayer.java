@@ -102,7 +102,7 @@ public class VariableDeclarationLayer {
 	 */
 	public boolean iterate(Graph graph) {
 		StringBuilder sb = null;
-		if (GreqlEvaluator.DEBUG_DECLARATION_ITERATIONS) {
+		if (GreqlEvaluatorImpl.DEBUG_DECLARATION_ITERATIONS) {
 			sb = new StringBuilder();
 			sb.append("### New Declaration Layer Iteration (");
 			sb.append(declaration);
@@ -111,7 +111,7 @@ public class VariableDeclarationLayer {
 		boolean constraintsFullfilled = false;
 		if (firstIteration) {
 			if (!getFirstCombination(graph)) {
-				if (GreqlEvaluator.DEBUG_DECLARATION_ITERATIONS) {
+				if (GreqlEvaluatorImpl.DEBUG_DECLARATION_ITERATIONS) {
 					sb.append("## 1st. iteration: returning false (");
 					sb.append(declaration);
 					sb.append(")");
@@ -124,7 +124,7 @@ public class VariableDeclarationLayer {
 		}
 		while (!constraintsFullfilled) {
 			if (!getNextCombination(false, graph)) {
-				if (GreqlEvaluator.DEBUG_DECLARATION_ITERATIONS) {
+				if (GreqlEvaluatorImpl.DEBUG_DECLARATION_ITERATIONS) {
 					sb.append("## nth iteration: returning false (");
 					sb.append(declaration);
 					sb.append(")");
@@ -135,7 +135,7 @@ public class VariableDeclarationLayer {
 			constraintsFullfilled = fullfillsConstraints(graph);
 		}
 
-		if (GreqlEvaluator.DEBUG_DECLARATION_ITERATIONS) {
+		if (GreqlEvaluatorImpl.DEBUG_DECLARATION_ITERATIONS) {
 			boolean first = true;
 			for (VariableDeclaration dec : variableDeclarations) {
 				if (first) {

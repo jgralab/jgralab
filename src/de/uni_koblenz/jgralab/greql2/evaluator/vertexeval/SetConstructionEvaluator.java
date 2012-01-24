@@ -37,7 +37,7 @@ package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.JGraLab;
-import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
+import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluatorImpl;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
 import de.uni_koblenz.jgralab.greql2.schema.SetConstruction;
 
@@ -49,7 +49,7 @@ import de.uni_koblenz.jgralab.greql2.schema.SetConstruction;
  */
 public class SetConstructionEvaluator extends ValueConstructionEvaluator {
 
-	public SetConstructionEvaluator(SetConstruction vertex, GreqlEvaluator eval) {
+	public SetConstructionEvaluator(SetConstruction vertex, GreqlEvaluatorImpl eval) {
 		super(vertex, eval);
 	}
 

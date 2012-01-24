@@ -127,7 +127,7 @@ import de.uni_koblenz.jgralab.graphmarker.BooleanGraphMarker;
 import de.uni_koblenz.jgralab.graphmarker.GraphMarker;
 import de.uni_koblenz.jgralab.graphvalidator.ConstraintViolation;
 import de.uni_koblenz.jgralab.graphvalidator.GraphValidator;
-import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
+import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluatorImpl;
 import de.uni_koblenz.jgralab.grumlschema.GrumlSchema;
 import de.uni_koblenz.jgralab.grumlschema.SchemaGraph;
 import de.uni_koblenz.jgralab.grumlschema.domains.CollectionDomain;
@@ -386,8 +386,8 @@ public class Rsa2Tg extends XmlProcessor {
 
 	private boolean inOwnedAttribute;
 
-	private GreqlEvaluator edgeClassAcyclicEvaluator;
-	private GreqlEvaluator vertexClassAcyclicEvaluator;
+	private GreqlEvaluatorImpl edgeClassAcyclicEvaluator;
+	private GreqlEvaluatorImpl vertexClassAcyclicEvaluator;
 
 	private boolean inDefaultValue;
 

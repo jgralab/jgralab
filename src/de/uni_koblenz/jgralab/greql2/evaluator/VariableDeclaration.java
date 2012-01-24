@@ -100,7 +100,7 @@ public class VariableDeclaration {
 	 */
 	public VariableDeclaration(Variable var,
 			VertexEvaluator definitionSetEvaluator, SimpleDeclaration decl,
-			GreqlEvaluator eval) {
+			GreqlEvaluatorImpl eval) {
 		variableEval = (VariableEvaluator) definitionSetEvaluator
 				.getVertexEvalMarker().getMark(var);
 		definitionSet = JGraLab.set();
