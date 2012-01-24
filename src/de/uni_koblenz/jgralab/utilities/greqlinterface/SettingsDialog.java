@@ -98,6 +98,8 @@ public class SettingsDialog extends JDialog implements ActionListener {
 		pnl.add(buttonPanel, BorderLayout.SOUTH);
 		pack();
 		okButton.requestFocus();
+
+		setLocationRelativeTo(gui);
 		setVisible(true);
 	}
 
@@ -106,7 +108,7 @@ public class SettingsDialog extends JDialog implements ActionListener {
 		if (e.getSource() == cancelButton) {
 			dispose();
 		}
-		if (e.getSource() == okButton && isOk()) {
+		if ((e.getSource() == okButton) && isOk()) {
 			gui.saveSettings(this);
 			dispose();
 		}
