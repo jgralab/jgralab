@@ -1,5 +1,7 @@
 package de.uni_koblenz.jgralab.greql2.evaluator;
 
+import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
+
 public interface InternalGreqlEvaluator {
 	// TODO [greqlevaluator] create internal interface
 
@@ -7,8 +9,10 @@ public interface InternalGreqlEvaluator {
 
 	public Object getGolabalVariableValue(String varName);
 
-	public Object setLocalVariable(String varName, Object value);
+	public Object setLocalVariable(Greql2Vertex vertex, Object value);
 
-	public Object getLocalVariableValue(String varName);
+	public Object getLocalVariableValue(Greql2Vertex vertex);
+
+	public Object remove(Greql2Vertex vertex);
 
 }
