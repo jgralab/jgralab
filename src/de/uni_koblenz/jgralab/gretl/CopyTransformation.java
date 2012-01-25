@@ -298,12 +298,8 @@ public class CopyTransformation extends Transformation<Graph> {
 			}
 			ecsCreated.add(schemaQName);
 
-			for (EdgeClass oldEC : e.getValue().getSchema()
-					.getEdgeClassesInTopologicalOrder()) {
-				if (oldEC.isInternal()) {
-					continue;
-				}
-
+			for (EdgeClass oldEC : e.getValue().getGraphClass()
+					.getEdgeClasses()) {
 				// Skip excluded elements
 				if (isExcluded(oldEC.getQualifiedName())) {
 					log.finer("CopyTransformation: Skipped rule for EdgeClass "
@@ -411,10 +407,7 @@ public class CopyTransformation extends Transformation<Graph> {
 			vcsCreated.add(schemaQName);
 
 			for (VertexClass oldVC : e.getValue().getSchema()
-					.getVertexClassesInTopologicalOrder()) {
-				if (oldVC.isInternal()) {
-					continue;
-				}
+					.getGraphClass().getVertexClasses()) {
 
 				// Skip excluded elements
 				if (isExcluded(oldVC.getQualifiedName())) {

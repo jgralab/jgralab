@@ -37,6 +37,7 @@ package de.uni_koblenz.jgralabtest.algolib.nonjunit;
 import java.util.Arrays;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
+import de.uni_koblenz.jgralab.ImplementationType;
 import de.uni_koblenz.jgralab.algolib.algorithms.AlgorithmTerminatedException;
 import de.uni_koblenz.jgralab.algolib.algorithms.search.BreadthFirstSearch;
 import de.uni_koblenz.jgralab.algolib.algorithms.search.SearchAlgorithm;
@@ -47,7 +48,7 @@ import de.uni_koblenz.jgralabtest.schemas.algolib.simple.SimpleVertex;
 public class TryBFS {
 
 	private static SimpleGraph getSmallGraph() {
-		SimpleGraph graph = SimpleSchema.instance().createSimpleGraph();
+		SimpleGraph graph = SimpleSchema.instance().createSimpleGraph(ImplementationType.STANDARD);
 		SimpleVertex v1 = graph.createSimpleVertex();
 		SimpleVertex v2 = graph.createSimpleVertex();
 		SimpleVertex v3 = graph.createSimpleVertex();

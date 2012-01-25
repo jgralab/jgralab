@@ -44,6 +44,7 @@ import org.junit.Test;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
+import de.uni_koblenz.jgralab.ImplementationType;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.graphmarker.GraphMarker;
 import de.uni_koblenz.jgralabtest.schemas.citymap.CityMap;
@@ -57,7 +58,7 @@ public class TempAttributeTest extends TestCase {
 
 	@Override
 	public void setUp() throws Exception {
-		graph = CityMapSchema.instance().loadCityMap(
+		graph = CityMapSchema.instance().loadCityMap(ImplementationType.STANDARD,
 				"testit/testgraphs/citymapgraph.tg");
 	}
 

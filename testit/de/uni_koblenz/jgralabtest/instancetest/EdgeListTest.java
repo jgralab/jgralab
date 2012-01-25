@@ -81,11 +81,11 @@ public class EdgeListTest extends InstanceTest {
 	public void setup() throws CommitFailedException {
 		switch (implementationType) {
 		case STANDARD:
-			g = MinimalSchema.instance().createMinimalGraph(V, E);
+			g = MinimalSchema.instance().createMinimalGraph(ImplementationType.STANDARD,V, E);
 			break;
 		case TRANSACTION:
 			g = MinimalSchema.instance()
-					.createMinimalGraphWithTransactionSupport(V, E);
+					.createMinimalGraph(ImplementationType.TRANSACTION,V, E);
 			break;
 		case DATABASE:
 			g = createMinimalGraphWithDatabaseSupport();
@@ -335,11 +335,11 @@ public class EdgeListTest extends InstanceTest {
 	public void testSortEdgeList() throws CommitFailedException {
 		switch (implementationType) {
 		case STANDARD:
-			g = MinimalSchema.instance().createMinimalGraph(V, E);
+			g = MinimalSchema.instance().createMinimalGraph(ImplementationType.STANDARD,V, E);
 			break;
 		case TRANSACTION:
 			g = MinimalSchema.instance()
-					.createMinimalGraphWithTransactionSupport(V, E);
+					.createMinimalGraph(ImplementationType.TRANSACTION,V, E);
 			break;
 		case DATABASE:
 			return; // because edge list sorting is not implemented for db

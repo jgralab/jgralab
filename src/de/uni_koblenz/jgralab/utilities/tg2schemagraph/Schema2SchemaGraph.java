@@ -40,6 +40,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import de.uni_koblenz.jgralab.ImplementationType;
 import de.uni_koblenz.jgralab.grumlschema.GrumlSchema;
 import de.uni_koblenz.jgralab.grumlschema.SchemaGraph;
 import de.uni_koblenz.jgralab.grumlschema.domains.CollectionDomain;
@@ -175,7 +176,7 @@ public class Schema2SchemaGraph {
 		edgeClassMap = new HashMap<de.uni_koblenz.jgralab.schema.EdgeClass, EdgeClass>();
 		incidenceClassMap = new HashMap<de.uni_koblenz.jgralab.schema.IncidenceClass, IncidenceClass>();
 
-		schemaGraph = GrumlSchema.instance().createSchemaGraph();
+		schemaGraph = GrumlSchema.instance().createSchemaGraph(ImplementationType.STANDARD);
 	}
 
 	/**

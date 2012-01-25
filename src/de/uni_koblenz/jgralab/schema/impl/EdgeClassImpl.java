@@ -107,8 +107,8 @@ public class EdgeClassImpl extends GraphElementClassImpl implements EdgeClass {
 				toMin, toMax, IncidenceDirection.IN, aggrTo);
 		this.from = fromInc;
 		this.to = toInc;
-		from.addOutIncidenceClass(fromInc);
-		to.addInIncidenceClass(toInc);
+		((VertexClassImpl)from).addOutIncidenceClass(fromInc);
+		((VertexClassImpl)to).addInIncidenceClass(toInc);
 		register();
 	}
 
@@ -125,6 +125,10 @@ public class EdgeClassImpl extends GraphElementClassImpl implements EdgeClass {
 
 	@Override
 	public void addSuperClass(EdgeClass superClass) {
+		//checked in super 
+		//if(isFinished()){
+			//throw new SchemaException("No changes to finished schema!");
+		//}
 		checkIncidenceClassSpecialization(getFrom(), superClass.getFrom());
 		checkIncidenceClassSpecialization(getTo(), superClass.getTo());
 		super.addSuperClass(superClass);
@@ -154,7 +158,7 @@ public class EdgeClassImpl extends GraphElementClassImpl implements EdgeClass {
 	 * @throws SchemaException
 	 *             upon illegal combinations
 	 */
-	public static void checkIncidenceClassSpecialization(
+	static void checkIncidenceClassSpecialization(
 			IncidenceClass special, IncidenceClass general) {
 		// Vertex same
 		if ((!general.getVertexClass().isSuperClassOfOrEquals(

@@ -35,6 +35,7 @@
 package de.uni_koblenz.jgralabtest.algolib.nonjunit;
 
 import de.uni_koblenz.jgralab.Edge;
+import de.uni_koblenz.jgralab.ImplementationType;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.algolib.algorithms.AlgorithmTerminatedException;
 import de.uni_koblenz.jgralab.algolib.algorithms.search.DepthFirstSearch;
@@ -50,7 +51,7 @@ import de.uni_koblenz.jgralabtest.schemas.algolib.simple.SimpleVertex;
 public class TryKahnKnuth {
 
 	public static SimpleGraph danielsGraph() {
-		SimpleGraph graph = SimpleSchema.instance().createSimpleGraph();
+		SimpleGraph graph = SimpleSchema.instance().createSimpleGraph(ImplementationType.STANDARD);
 		int vertexCount = 7;
 		SimpleVertex[] vertices = new SimpleVertex[vertexCount];
 		for (int i = 1; i < vertexCount; i++) {
@@ -66,7 +67,7 @@ public class TryKahnKnuth {
 	}
 
 	public static SimpleGraph myGraph() {
-		SimpleGraph graph = SimpleSchema.instance().createSimpleGraph();
+		SimpleGraph graph = SimpleSchema.instance().createSimpleGraph(ImplementationType.STANDARD);
 		int vertexCount = 10;
 		SimpleVertex[] vertices = new SimpleVertex[vertexCount];
 		for (int i = 1; i < vertexCount; i++) {
@@ -87,7 +88,7 @@ public class TryKahnKnuth {
 	}
 
 	public static SimpleGraph volkersGraph() {
-		SimpleGraph graph = SimpleSchema.instance().createSimpleGraph();
+		SimpleGraph graph = SimpleSchema.instance().createSimpleGraph(ImplementationType.STANDARD);
 		int vertexCount = 5;
 		SimpleVertex[] vertices = new SimpleVertex[vertexCount];
 		for (int i = 1; i < vertexCount; i++) {

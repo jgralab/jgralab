@@ -626,6 +626,7 @@ public class Context {
 			}
 			logger.info("Compiling schema '" + targetSchema.getQualifiedName()
 					+ "'...");
+			targetSchema.finish();
 			targetSchema.compile(CodeGeneratorConfiguration.MINIMAL);
 		} else {
 			logger.info("Schema '" + targetSchema.getQualifiedName()

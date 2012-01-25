@@ -836,10 +836,9 @@ public class Tg2Dot extends Tg2Whatever {
 	private void buildReversedEdgeClassSet(
 			Set<Class<? extends AttributedElement>> reversedEdgeTypes) {
 		reversedEdgeClasses = new HashSet<AttributedElementClass>();
-		for (EdgeClass edgeClass : graph.getSchema()
-				.getEdgeClassesInTopologicalOrder()) {
-			if (!edgeClass.isInternal()
-					&& reversedEdgeTypes.remove(edgeClass.getSchemaClass())) {
+		for (EdgeClass edgeClass : graph.getGraphClass()
+				.getEdgeClasses()) {
+			if (reversedEdgeTypes.remove(edgeClass.getSchemaClass())) {
 				reversedEdgeClasses.add(edgeClass);
 			}
 		}

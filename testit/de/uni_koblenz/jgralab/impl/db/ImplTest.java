@@ -55,7 +55,7 @@ public abstract class ImplTest {
 						"testit/testschemas/VertexTestSchema.tg", database);
 			}
 			return VertexTestSchema.instance()
-					.createVertexTestGraphWithDatabaseSupport(id, vMax, eMax,
+					.createVertexTestGraph(id, vMax, eMax,
 							database);
 		} catch (Exception exception) {
 			exception.printStackTrace();

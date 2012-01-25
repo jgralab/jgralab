@@ -973,13 +973,13 @@ public abstract class GraphImpl extends
 	@Override
 	public Edge internalCreateEdge(Class<? extends Edge> cls, Vertex alpha,
 			Vertex omega) {
-		return graphFactory.createEdgeWithTransactionSupport(cls, 0, this,
+		return graphFactory.createEdge(cls, 0, this,
 				alpha, omega);
 	}
 
 	@Override
 	public Vertex internalCreateVertex(Class<? extends Vertex> cls) {
-		return graphFactory.createVertexWithTransactionSupport(cls, 0, this);
+		return graphFactory.createVertex(cls, 0, this);
 	}
 
 	@Override

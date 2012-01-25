@@ -34,6 +34,7 @@
  */
 package de.uni_koblenz.jgralab.schema.impl;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -46,7 +47,7 @@ import de.uni_koblenz.jgralab.schema.exception.SchemaException;
 
 public class IncidenceClassImpl implements IncidenceClass {
 
-	public IncidenceClassImpl(EdgeClass edgeClass, VertexClass vertexClass,
+	protected IncidenceClassImpl(EdgeClass edgeClass, VertexClass vertexClass,
 			String rolename, int minEdgesAtVertex, int maxEdgesAtVertex,
 			IncidenceDirection direction, AggregationKind aggregationKind) {
 		super();
@@ -80,8 +81,12 @@ public class IncidenceClassImpl implements IncidenceClass {
 
 	private Set<IncidenceClass> redefinedIncidenceClasses;
 
+	private Set<IncidenceClass> allRedefinedIncidenceClasses;
+	
 	private Set<IncidenceClass> subsettedIncidenceClasses;
 
+	private Set<IncidenceClass> allSubsettedIncidenceClasses;
+	
 	@Override
 	public AggregationKind getAggregationKind() {
 		return aggregationKind;
@@ -157,6 +162,9 @@ public class IncidenceClassImpl implements IncidenceClass {
 
 	@Override
 	public Set<IncidenceClass> getSubsettedIncidenceClasses() {
+		if(((VertexClassImpl)vertexClass).isFinished()){
+			return this.allSubsettedIncidenceClasses;
+		}
 		Set<IncidenceClass> result = new HashSet<IncidenceClass>();
 		result.addAll(subsettedIncidenceClasses);
 		for (IncidenceClass ic : subsettedIncidenceClasses) {
@@ -171,6 +179,10 @@ public class IncidenceClassImpl implements IncidenceClass {
 	}
 
 	public void addRedefinedRole(String rolename) {
+		if(((VertexClassImpl)vertexClass).isFinished()){
+			throw new SchemaException("No changes to finished schema!");
+		}
+		
 		boolean foundRole = false;
 
 		for (IncidenceClass ic : getSubsettedIncidenceClasses()) {
@@ -224,6 +236,9 @@ public class IncidenceClassImpl implements IncidenceClass {
 	}
 
 	public void addSubsettedIncidenceClass(IncidenceClass other) {
+		if(((VertexClassImpl)vertexClass).isFinished()){
+			throw new SchemaException("No changes to finished schema!");
+		}
 		EdgeClassImpl.checkIncidenceClassSpecialization(this, other);
 		if (other.getSubsettedIncidenceClasses().contains(this)) {
 			throw new SchemaException(
@@ -255,4 +270,33 @@ public class IncidenceClassImpl implements IncidenceClass {
 	// return roles;
 	// }
 
+	
+	void finish(){
+		this.allSubsettedIncidenceClasses = new HashSet<IncidenceClass>();
+		this.allSubsettedIncidenceClasses.addAll(subsettedIncidenceClasses);
+		for (IncidenceClass ic : subsettedIncidenceClasses) {
+			this.allSubsettedIncidenceClasses.addAll(
+					ic.getSubsettedIncidenceClasses());
+		}
+		
+		this.allRedefinedIncidenceClasses = new HashSet<IncidenceClass>();
+		this.allRedefinedIncidenceClasses.addAll(redefinedIncidenceClasses);
+		for (IncidenceClass ic : subsettedIncidenceClasses) {
+			this.allRedefinedIncidenceClasses.addAll(
+					ic.getRedefinedIncidenceClasses());
+		}
+		for (IncidenceClass ic : redefinedIncidenceClasses) {
+			this.allRedefinedIncidenceClasses.addAll(
+					ic.getRedefinedIncidenceClasses());
+		}	
+		
+		this.allSubsettedIncidenceClasses = Collections.unmodifiableSet(this.allSubsettedIncidenceClasses);
+		this.allRedefinedIncidenceClasses = Collections.unmodifiableSet(this.allRedefinedIncidenceClasses);
+	}
+	
+	void reopen(){
+		this.allSubsettedIncidenceClasses = null;
+		this.allRedefinedIncidenceClasses = null;
+	}
+	
 }

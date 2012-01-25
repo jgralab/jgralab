@@ -37,6 +37,7 @@ package de.uni_koblenz.jgralabtest.impl.trans;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.GraphIOException;
+import de.uni_koblenz.jgralab.ImplementationType;
 import de.uni_koblenz.jgralab.ProgressFunction;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.impl.ConsoleProgressFunction;
@@ -180,19 +181,19 @@ public class BenchmarkTests {
 	private void createGraph(boolean transactionSupport) {
 		if (transactionSupport) {
 			motorwayMap = MotorwayMapSchema.instance()
-					.createMotorwayMapWithTransactionSupport(V, E);
+					.createMotorwayMap(ImplementationType.TRANSACTION,V, E);
 		} else {
-			motorwayMap = MotorwayMapSchema.instance().createMotorwayMap(V, E);
+			motorwayMap = MotorwayMapSchema.instance().createMotorwayMap(ImplementationType.STANDARD,V, E);
 		}
 	}
 
 	private void loadGraph(boolean transactionSupport) throws GraphIOException {
 		if (transactionSupport) {
 			motorwayMap = MotorwayMapSchema.instance()
-					.loadMotorwayMapWithTransactionSupport(FILENAME,
+					.loadMotorwayMap(ImplementationType.TRANSACTION, FILENAME,
 							new ConsoleProgressFunction("Loading"));
 		} else {
-			motorwayMap = MotorwayMapSchema.instance().loadMotorwayMap(
+			motorwayMap = MotorwayMapSchema.instance().loadMotorwayMap(ImplementationType.STANDARD,
 					FILENAME, new ConsoleProgressFunction());
 		}
 		printMemoryUsage("loadGraph");

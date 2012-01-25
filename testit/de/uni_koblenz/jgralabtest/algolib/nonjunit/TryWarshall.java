@@ -36,6 +36,7 @@ package de.uni_koblenz.jgralabtest.algolib.nonjunit;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
+import de.uni_koblenz.jgralab.ImplementationType;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.algolib.algorithms.AlgorithmTerminatedException;
 import de.uni_koblenz.jgralab.algolib.algorithms.reachability.WarshallAlgorithm;
@@ -53,7 +54,7 @@ public class TryWarshall {
 	 * @param args
 	 */
 	public static void main(String[] args) throws AlgorithmTerminatedException {
-		SimpleGraph graph = SimpleSchema.instance().createSimpleGraph(8, 7);
+		SimpleGraph graph = SimpleSchema.instance().createSimpleGraph(ImplementationType.STANDARD,8, 7);
 		SimpleVertex v1 = graph.createSimpleVertex();
 		SimpleVertex v2 = graph.createSimpleVertex();
 		SimpleVertex v3 = graph.createSimpleVertex();

@@ -52,6 +52,7 @@ import org.pcollections.PVector;
 
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphIO;
+import de.uni_koblenz.jgralab.ImplementationType;
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.optimizer.DefaultOptimizer;
@@ -307,7 +308,7 @@ public class GenericTest {
 
 	protected Graph createCyclicTestGraph() {
 		MinimalSchema s = MinimalSchema.instance();
-		MinimalGraph g = s.createMinimalGraph(10, 10);
+		MinimalGraph g = s.createMinimalGraph(ImplementationType.STANDARD,10, 10);
 		Node[] v = new Node[10];
 		for (int i = 0; i < 10; i++) {
 			v[i] = g.createNode();
@@ -321,7 +322,7 @@ public class GenericTest {
 	protected Graph createTestTree() {
 		// create a binary tree where v[0] is the root
 		MinimalSchema s = MinimalSchema.instance();
-		MinimalGraph g = s.createMinimalGraph(10, 10);
+		MinimalGraph g = s.createMinimalGraph(ImplementationType.STANDARD,10, 10);
 		Node[] v = new Node[15];
 		for (int i = 0; i < 15; i++) {
 			v[i] = g.createNode();
