@@ -354,6 +354,7 @@ public class SchemaCodeGenerator extends CodeGenerator {
 		addImports("#jgSchemaPackage#.GraphClass");
 		code.setVariable("gcName", gc.getQualifiedName());
 		code.setVariable("gcVariable", "gc");
+		code.setVariable("aecVariable", "gc");
 		code.setVariable("schemaVariable", gc.getVariableName());
 		code.setVariable("gcAbstract", gc.isAbstract() ? "true" : "false");
 		code.addNoIndent(new CodeSnippet(
