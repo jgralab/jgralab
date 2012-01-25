@@ -42,9 +42,11 @@ import org.pcollections.PVector;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.greql2.evaluator.InternalGreqlEvaluator;
+import de.uni_koblenz.jgralab.greql2.evaluator.Query;
 import de.uni_koblenz.jgralab.greql2.evaluator.VariableDeclaration;
 import de.uni_koblenz.jgralab.greql2.evaluator.VariableDeclarationLayer;
 import de.uni_koblenz.jgralab.greql2.schema.Declaration;
+import de.uni_koblenz.jgralab.greql2.schema.Expression;
 import de.uni_koblenz.jgralab.greql2.schema.IsConstraintOf;
 import de.uni_koblenz.jgralab.greql2.schema.IsSimpleDeclOf;
 import de.uni_koblenz.jgralab.greql2.schema.SimpleDeclaration;
@@ -61,17 +63,17 @@ public class DeclarationEvaluator extends VertexEvaluator<Declaration> {
 	 * @param vertex
 	 *            the vertex which gets evaluated by this VertexEvaluator
 	 */
-	public DeclarationEvaluator(Declaration vertex) {
-		super(vertex);
+	public DeclarationEvaluator(Declaration vertex, Query query) {
+		super(vertex, query);
 	}
 
 	@Override
 	public VariableDeclarationLayer evaluate(InternalGreqlEvaluator evaluator) {
-		ArrayList<VertexEvaluator> constraintList = new ArrayList<VertexEvaluator>();
+		ArrayList<VertexEvaluator<? extends Expression>> constraintList = new ArrayList<VertexEvaluator<? extends Expression>>();
 		for (IsConstraintOf consInc : vertex
 				.getIsConstraintOfIncidences(EdgeDirection.IN)) {
-			VertexEvaluator curEval = vertexEvalMarker.getMark(consInc
-					.getAlpha());
+			VertexEvaluator<? extends Expression> curEval = query
+					.getVertexEvaluator(consInc.getAlpha());
 			if (curEval != null) {
 				constraintList.add(curEval);
 			}
@@ -81,11 +83,11 @@ public class DeclarationEvaluator extends VertexEvaluator<Declaration> {
 		for (IsSimpleDeclOf inc : vertex
 				.getIsSimpleDeclOfIncidences(EdgeDirection.IN)) {
 			SimpleDeclaration simpleDecl = inc.getAlpha();
-			SimpleDeclarationEvaluator simpleDeclEval = (SimpleDeclarationEvaluator) vertexEvalMarker
-					.getMark(simpleDecl);
+			SimpleDeclarationEvaluator simpleDeclEval = (SimpleDeclarationEvaluator) query
+					.getVertexEvaluator(simpleDecl);
 			@SuppressWarnings("unchecked")
 			PVector<VariableDeclaration> resultCollection = (PVector<VariableDeclaration>) simpleDeclEval
-					.getResult(graph);
+					.getResult(evaluator);
 			for (VariableDeclaration v : resultCollection) {
 				varDeclList.add(v);
 			}
