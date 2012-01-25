@@ -134,7 +134,7 @@ public class TableComprehensionEvaluator extends VertexEvaluator {
 		TreeSet<Object> rowHeaderSet = new TreeSet<Object>();
 
 		declarationLayer.reset();
-		while (declarationLayer.iterate()) {
+		while (declarationLayer.iterate(null)) {
 			Object columnHeaderEntry = columnHeaderEval.getResult(graph);
 			completeColumnHeaderTuple.add(columnHeaderEntry);
 			Object rowHeaderEntry = rowHeaderEval.getResult(graph);

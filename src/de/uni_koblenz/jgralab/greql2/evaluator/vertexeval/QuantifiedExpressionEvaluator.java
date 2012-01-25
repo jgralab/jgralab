@@ -114,7 +114,7 @@ public class QuantifiedExpressionEvaluator extends VertexEvaluator {
 		declarationLayer.reset();
 		switch (quantificationType) {
 		case EXISTS:
-			while (declarationLayer.iterate()) {
+			while (declarationLayer.iterate(null)) {
 				Object tempResult = predicateEvaluator.getResult(graph);
 				if (tempResult instanceof Boolean) {
 					if ((Boolean) tempResult) {
@@ -124,7 +124,7 @@ public class QuantifiedExpressionEvaluator extends VertexEvaluator {
 			}
 			return Boolean.FALSE;
 		case EXISTSONE:
-			while (declarationLayer.iterate()) {
+			while (declarationLayer.iterate(null)) {
 				Object tempResult = predicateEvaluator.getResult(graph);
 				if (tempResult instanceof Boolean) {
 					if ((Boolean) tempResult) {
@@ -141,7 +141,7 @@ public class QuantifiedExpressionEvaluator extends VertexEvaluator {
 			}
 			return Boolean.FALSE;
 		case FORALL:
-			while (declarationLayer.iterate()) {
+			while (declarationLayer.iterate(null)) {
 				Object tempResult = predicateEvaluator.getResult(graph);
 				if (tempResult instanceof Boolean) {
 					if (!(Boolean) tempResult) {

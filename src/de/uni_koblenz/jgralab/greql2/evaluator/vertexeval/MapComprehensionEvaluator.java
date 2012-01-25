@@ -96,7 +96,7 @@ public class MapComprehensionEvaluator extends ComprehensionEvaluator {
 				EdgeDirection.IN).getAlpha();
 		VertexEvaluator valEval = vertexEvalMarker.getMark(val);
 		declLayer.reset();
-		while (declLayer.iterate()) {
+		while (declLayer.iterate(null)) {
 			Object jkey = keyEval.getResult(graph);
 			Object jval = valEval.getResult(graph);
 			resultMap = resultMap.plus(jkey, jval);

@@ -16,6 +16,7 @@ import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VertexEvaluator;
 import de.uni_koblenz.jgralab.greql2.parser.GreqlParser;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Expression;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Graph;
+import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
 import de.uni_koblenz.jgralab.greql2.schema.Identifier;
 import de.uni_koblenz.jgralab.greql2.schema.Variable;
 
@@ -32,7 +33,7 @@ public class Query {
 	/**
 	 * The GraphMarker that stores all vertex evaluators
 	 */
-	private GraphMarker<VertexEvaluator<?>> vertexEvaluators;
+	private GraphMarker<VertexEvaluator<? extends Greql2Vertex>> vertexEvaluators;
 
 	private static class QueryGraphCacheEntry {
 		Greql2Graph graph;
@@ -106,6 +107,18 @@ public class Query {
 	}
 
 	public Greql2Graph getQueryGraph() {
+		initalizeQueryGraph();
+		return queryGraph;
+	}
+
+	@SuppressWarnings("unchecked")
+	public <V extends Greql2Vertex> VertexEvaluator<V> getVertexEvaluator(
+			V vertex) {
+		initalizeQueryGraph();
+		return (VertexEvaluator<V>) vertexEvaluators.get(vertex);
+	}
+
+	private void initalizeQueryGraph() {
 		if (queryGraph == null) {
 			QueryGraphCacheEntry e = queryGraphCache.get(queryText, optimize);
 			if (e != null) {
@@ -114,24 +127,20 @@ public class Query {
 			}
 		}
 		if (queryGraph == null) {
-			initalizeQueryGraph();
+			long t0 = System.currentTimeMillis();
+			queryGraph = GreqlParser.parse(queryText);
+			long t1 = System.currentTimeMillis();
+			parseTime = t1 - t0;
+			// TODO [greqlevaluator] reenable optimize
+			// if (optimize) {
+			// DefaultOptimizer.optimizeQuery(queryGraph);
+			// optimizationTime = System.currentTimeMillis() - t1;
+			// }
+			rootExpression = queryGraph.getFirstGreql2Expression();
+			vertexEvaluators = new GraphMarker<VertexEvaluator<?>>(queryGraph);
+			queryGraphCache.put(queryText, optimize, queryGraph,
+					vertexEvaluators);
 		}
-		return queryGraph;
-	}
-
-	private void initalizeQueryGraph() {
-		long t0 = System.currentTimeMillis();
-		queryGraph = GreqlParser.parse(queryText);
-		long t1 = System.currentTimeMillis();
-		parseTime = t1 - t0;
-		// TODO [greqlevaluator] reenable optimize
-		// if (optimize) {
-		// DefaultOptimizer.optimizeQuery(queryGraph);
-		// optimizationTime = System.currentTimeMillis() - t1;
-		// }
-		rootExpression = queryGraph.getFirstGreql2Expression();
-		vertexEvaluators = new GraphMarker<VertexEvaluator<?>>(queryGraph);
-		queryGraphCache.put(queryText, optimize, queryGraph, vertexEvaluators);
 	}
 
 	public Set<String> getUsedVariables() {

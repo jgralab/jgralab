@@ -38,8 +38,9 @@ package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 import org.pcollections.PVector;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
-import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.JGraLab;
+import de.uni_koblenz.jgralab.greql2.evaluator.InternalGreqlEvaluator;
+import de.uni_koblenz.jgralab.greql2.evaluator.Query;
 import de.uni_koblenz.jgralab.greql2.evaluator.VariableDeclaration;
 import de.uni_koblenz.jgralab.greql2.schema.Expression;
 import de.uni_koblenz.jgralab.greql2.schema.IsDeclaredVarOf;
@@ -60,25 +61,29 @@ public class SimpleDeclarationEvaluator extends
 	 * @param vertex
 	 *            the vertex which gets evaluated by this VertexEvaluator
 	 */
-	public SimpleDeclarationEvaluator(SimpleDeclaration vertex) {
-		super(vertex);
+	public SimpleDeclarationEvaluator(SimpleDeclaration vertex, Query query) {
+		super(vertex, query);
 	}
 
 	/**
 	 * returns a JValueList of VariableDeclaration objects
 	 */
 	@Override
-	public PVector<VariableDeclaration> evaluate(Graph graph) {
+	public PVector<VariableDeclaration> evaluate(
+			InternalGreqlEvaluator evaluator) {
 		IsTypeExprOf inc = vertex
 				.getFirstIsTypeExprOfIncidence(EdgeDirection.IN);
 		Expression typeExpression = inc.getAlpha();
-		VertexEvaluator exprEval = vertexEvalMarker.getMark(typeExpression);
+		VertexEvaluator<? extends Expression> exprEval = query
+				.getVertexEvaluator(typeExpression);
 		PVector<VariableDeclaration> varDeclList = JGraLab.vector();
 		IsDeclaredVarOf varInc = vertex
 				.getFirstIsDeclaredVarOfIncidence(EdgeDirection.IN);
 		while (varInc != null) {
 			VariableDeclaration varDecl = new VariableDeclaration(
-					varInc.getAlpha(), exprEval, vertex, greqlEvaluator);
+					varInc.getAlpha(), exprEval,
+					(VariableEvaluator) query.getVertexEvaluator(varInc
+							.getAlpha()));
 			varDeclList = varDeclList.plus(varDecl);
 			varInc = varInc.getNextIsDeclaredVarOfIncidence(EdgeDirection.IN);
 		}
@@ -90,7 +95,7 @@ public class SimpleDeclarationEvaluator extends
 	// return greqlEvaluator.getCostModel().calculateCostsSimpleDeclaration(
 	// this);
 	// }
-	//
+
 	// @Override
 	// public void calculateNeededAndDefinedVariables() {
 	// neededVariables = new HashSet<Variable>();

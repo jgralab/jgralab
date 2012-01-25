@@ -87,7 +87,7 @@ public abstract class ComprehensionEvaluator extends VertexEvaluator {
 		VertexEvaluator resultDefEval = getResultDefinitionEvaluator();
 		PCollection<Object> resultCollection = getResultDatastructure();
 		declLayer.reset();
-		while (declLayer.iterate()) {
+		while (declLayer.iterate(null)) {
 			Object localResult = resultDefEval.getResult(graph);
 			resultCollection = resultCollection.plus(localResult);
 		}

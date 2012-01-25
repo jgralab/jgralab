@@ -40,12 +40,11 @@ import java.util.Iterator;
 import org.pcollections.PSet;
 import org.pcollections.PVector;
 
-import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VariableEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VertexEvaluator;
 import de.uni_koblenz.jgralab.greql2.exception.GreqlException;
-import de.uni_koblenz.jgralab.greql2.schema.SimpleDeclaration;
+import de.uni_koblenz.jgralab.greql2.schema.Expression;
 import de.uni_koblenz.jgralab.greql2.schema.Variable;
 import de.uni_koblenz.jgralab.greql2.types.Undefined;
 
@@ -67,7 +66,7 @@ public class VariableDeclaration {
 	/**
 	 * Holds the variable-vertex of this declaration.
 	 */
-	private VariableEvaluator variableEval;
+	private final VariableEvaluator variableEval;
 
 	/**
 	 * @return the variableEval
@@ -76,7 +75,7 @@ public class VariableDeclaration {
 		return variableEval;
 	}
 
-	private VertexEvaluator definitionSetEvaluator;
+	private final VertexEvaluator<? extends Expression> definitionSetEvaluator;
 
 	/**
 	 * Used for simple Iteration over the possible values
@@ -93,16 +92,14 @@ public class VariableDeclaration {
 	 * @param definitionSetEvaluator
 	 *            the evaluator for the set of possible values this variable may
 	 *            have
-	 * @param decl
-	 *            the SimpleDeclaration which declares the variable
-	 * @param eval
-	 *            the GreqlEvaluator which is used to evaluate the query
+	 * @param variableEvaluator
+	 *            the {@link VariableEvaluator} of the represented Variable
+	 *            vertex
 	 */
 	public VariableDeclaration(Variable var,
-			VertexEvaluator definitionSetEvaluator, SimpleDeclaration decl,
-			GreqlEvaluatorImpl eval) {
-		variableEval = (VariableEvaluator) definitionSetEvaluator
-				.getVertexEvalMarker().getMark(var);
+			VertexEvaluator<? extends Expression> definitionSetEvaluator,
+			VariableEvaluator variableEvaluator) {
+		variableEval = variableEvaluator;
 		definitionSet = JGraLab.set();
 		this.definitionSetEvaluator = definitionSetEvaluator;
 	}
@@ -114,10 +111,16 @@ public class VariableDeclaration {
 
 	@Override
 	public String toString() {
+		System.out
+				.println("Warning: Use the toString(GreqlEvaluatorImpl) method for VariableDeclarations.");
+		return super.toString();
+	}
+
+	public String toString(InternalGreqlEvaluator evaluator) {
 		StringBuilder sb = new StringBuilder();
-		sb.append(((Variable) variableEval.getVertex()).get_name());
+		sb.append(variableEval.getVertex().get_name());
 		sb.append(" = ");
-		sb.append(getVariableValue());
+		sb.append(getVariableValue(evaluator));
 		sb.append(" [");
 		sb.append(iterationNumber);
 		sb.append('/');
@@ -129,12 +132,14 @@ public class VariableDeclaration {
 	/**
 	 * Iterates over all possible values for this variable. Returns true if
 	 * another value was found, false otherwise
+	 * 
+	 * @param evaluator
 	 */
-	public boolean iterate() {
+	public boolean iterate(InternalGreqlEvaluator evaluator) {
 		iterationNumber++;
 		if ((iter != null) && (iter.hasNext())) {
 			// JValue old = getVariableValue();
-			variableEval.setValue(iter.next());
+			variableEval.setValue(iter.next(), evaluator);
 			// assert !getVariableValue().equals(old) :
 			// "Iterating over the same element twice!!!";
 			return true;
@@ -146,17 +151,17 @@ public class VariableDeclaration {
 	 * returns the current value of the represented variable. used only for
 	 * debugging
 	 */
-	public Object getVariableValue() {
-		return variableEval.getValue();
+	public Object getVariableValue(InternalGreqlEvaluator evaluator) {
+		return variableEval.getValue(evaluator);
 	}
 
 	/**
 	 * Resets the iterator to the first element
 	 */
-	protected void reset(Graph graph) {
+	protected void reset(InternalGreqlEvaluator evaluator) {
 		iterationNumber = 0;
-		variableEval.setValue(Undefined.UNDEFINED);
-		Object tempAttribute = definitionSetEvaluator.getResult(graph);
+		variableEval.setValue(Undefined.UNDEFINED, evaluator);
+		Object tempAttribute = definitionSetEvaluator.getResult(evaluator);
 		if (tempAttribute instanceof PVector) {
 			PVector<?> col = (PVector<?>) tempAttribute;
 			definitionSet = JGraLab.set().plusAll(col);

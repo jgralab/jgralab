@@ -7,7 +7,7 @@ public interface InternalGreqlEvaluator {
 
 	public Object setGlobalVariable(String varName, Object value);
 
-	public Object getGolabalVariableValue(String varName);
+	public Object getGlobalVariableValue(String varName);
 
 	public Object setLocalVariable(Greql2Vertex vertex, Object value);
 

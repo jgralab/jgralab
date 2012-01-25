@@ -58,12 +58,12 @@ public class VariableDeclarationLayer {
 	 * Holds a VariableDeclaration for each Variable which is declared in this
 	 * Declaration
 	 */
-	private List<VariableDeclaration> variableDeclarations;
+	private final List<VariableDeclaration> variableDeclarations;
 
 	/**
 	 * this is the list of constraint vertices
 	 */
-	private List<VertexEvaluator> constraintList;
+	private final List<VertexEvaluator> constraintList;
 
 	/**
 	 * true if the next variable iteration is the first one, that means, if
@@ -189,7 +189,7 @@ public class VariableDeclarationLayer {
 			while (pointer < size) {
 				currDecl = variableDeclarations.get(pointer++);
 				currDecl.reset(graph);
-				if (!currDecl.iterate()) {
+				if (!currDecl.iterate(null)) {
 					pointer -= 2;
 					iterate = true;
 					break;
