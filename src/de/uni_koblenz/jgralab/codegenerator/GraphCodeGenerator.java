@@ -71,9 +71,11 @@ public class GraphCodeGenerator extends AttributedElementCodeGenerator {
 		if (currentCycle.isStdOrDbImplOrTransImpl()) {
 			if (currentCycle.isStdImpl()) {
 				addImports("#jgImplStdPackage#.#baseClassName#");
+				addImports("#jgPackage#.ImplementationType");
 			}
 			if (currentCycle.isTransImpl()) {
 				addImports("#jgImplTransPackage#.#baseClassName#");
+				addImports("#jgPackage#.ImplementationType");
 			}
 			if (currentCycle.isDbImpl()) {
 				addImports("de.uni_koblenz.jgralab.GraphException",
@@ -112,52 +114,71 @@ public class GraphCodeGenerator extends AttributedElementCodeGenerator {
 		addImports("#schemaPackageName#.#schemaName#");
 		CodeSnippet code = new CodeSnippet(true);
 		if (currentCycle.isTransImpl()) {
-			code.setVariable("createSuffix", "WithTransactionSupport");
+			code.setVariable("createSuffix", "TRANSACTION");
 		}
 		if (currentCycle.isStdImpl()) {
-			code.setVariable("createSuffix", "");
+			code.setVariable("createSuffix", "STANDARD");
 		}
 		if (currentCycle.isDbImpl()) {
-			code.setVariable("createSuffix", "WithDatabaseSupport");
+			code.setVariable("createSuffix", "DATABASE");
 		}
 		// TODO if(currentCycle.isDbImpl()) only write ctors and create with
 		// GraphDatabase as param.
 		if (!currentCycle.isDbImpl()) {
 			code.add(
 					"/* Constructors and create methods with values for initial vertex and edge count */",
+					"",
+					"/**",
+					" * DON'T USE THE CONSTRUCTOR",
+					" * For instantiating a Graph, use a GraphFactory",
+					"**/",
 					"public #simpleClassName#Impl(int vMax, int eMax) {",
 					"\tthis(null, vMax, eMax);",
 					"}",
 					"",
+					"/**",
+					" * DON'T USE THE CONSTRUCTOR",
+					" * For instantiating a Graph, use a GraphFactory",
+					"**/",
 					"public #simpleClassName#Impl(java.lang.String id, int vMax, int eMax) {",
 					"\tsuper(id, #schemaName#.instance().#schemaVariableName#, vMax, eMax);",
 					"\tinitializeAttributesWithDefaultValues();",
+					//"\tgraphFactory = new #simpleClassName#FactoryImpl();",
 					"}",
 					"",
 					"public static #javaClassName# create(int vMax, int eMax) {",
-					"\treturn (#javaClassName#) #schemaName#.instance().create#uniqueClassName##createSuffix#(null, vMax, eMax);",
+					"\treturn (#javaClassName#) #schemaName#.instance().create#uniqueClassName#(ImplementationType.#createSuffix#, null, vMax, eMax);",
 					"}",
 					"",
 					"public static #javaClassName# create(String id, int vMax, int eMax) {",
-					"\treturn (#javaClassName#) #schemaName#.instance().create#uniqueClassName##createSuffix#(id, vMax, eMax);",
+					"\treturn (#javaClassName#) #schemaName#.instance().create#uniqueClassName#(ImplementationType.#createSuffix#, id, vMax, eMax);",
 					"}",
 					"",
 					"/* Constructors and create methods without values for initial vertex and edge count */",
+					"",
+					"/**",
+					" * DON'T USE THE CONSTRUCTOR",
+					" * For instantiating a Graph, use a GraphFactory",
+					"**/",
 					"public #simpleClassName#Impl() {",
 					"\tthis(null);",
 					"}",
 					"",
+					"/**",
+					" * DON'T USE THE CONSTRUCTOR",
+					" * For instantiating a Graph, use a GraphFactory",
+					"**/",
 					"public #simpleClassName#Impl(java.lang.String id) {",
 					"\tsuper(id, #schemaName#.instance().#schemaVariableName#);",
 					"\tinitializeAttributesWithDefaultValues();",
 					"}",
 					"",
 					"public static #javaClassName# create() {",
-					"\treturn (#javaClassName#) #schemaName#.instance().create#uniqueClassName##createSuffix#(null);",
+					"\treturn (#javaClassName#) #schemaName#.instance().create#uniqueClassName#(ImplementationType.#createSuffix#, null);",
 					"}",
 					"",
 					"public static #javaClassName# create(String id) {",
-					"\treturn (#javaClassName#) #schemaName#.instance().create#uniqueClassName##createSuffix#(id);",
+					"\treturn (#javaClassName#) #schemaName#.instance().create#uniqueClassName#(ImplementationType.#createSuffix#, id);",
 					"}");
 		} else {
 			code.add(
@@ -173,20 +194,30 @@ public class GraphCodeGenerator extends AttributedElementCodeGenerator {
 					 * , // TODO Should not be allowed.
 					 * "\tinitializeAttributesWithDefaultValues();", "}", "",
 					 */
+					"/**",
+					" * DON'T USE THE CONSTRUCTOR",
+					" * For instantiating a Graph, use a GraphFactory",
+					"**/",
 					"public #simpleClassName#Impl(java.lang.String id, GraphDatabase graphDatabase) {",
 					"\tsuper(id, #schemaName#.instance().#schemaVariableName#, graphDatabase);",
 					"\tinitializeAttributesWithDefaultValues();",
+					//"\tgraphFactory = new #simpleClassName#FactoryImpl();",
 					"}",
 					"",
+					"/**",
+					" * DON'T USE THE CONSTRUCTOR",
+					" * For instantiating a Graph, use a GraphFactory",
+					"**/",
 					"public #simpleClassName#Impl(java.lang.String id, int vMax, int eMax, GraphDatabase graphDatabase) {",
 					"\tsuper(id, vMax, eMax, #schemaName#.instance().#schemaVariableName#, graphDatabase);",
 					"\tinitializeAttributesWithDefaultValues();",
+					//"\tgraphFactory = new #simpleClassName#FactoryImpl();",
 					"}",
 					"",
 
 					"public static #javaClassName# create(String id, GraphDatabase graphDatabase) {",
 					"\ttry{",
-					"\t\treturn (#javaClassName#) #schemaName#.instance().create#uniqueClassName##createSuffix#(id, graphDatabase);",
+					"\t\treturn (#javaClassName#) #schemaName#.instance().create#uniqueClassName#(id, graphDatabase);",
 					"\t}",
 					"\tcatch(GraphDatabaseException exception){",
 					"\t\tthrow new GraphException(\"Could not create graph.\", exception);",
@@ -279,14 +310,6 @@ public class GraphCodeGenerator extends AttributedElementCodeGenerator {
 	private CodeBlock createFactoryMethod(GraphElementClass gec, boolean withId) {
 		CodeSnippet code = new CodeSnippet(true);
 
-		if (currentCycle.isStdImpl()) {
-			code.setVariable("cycleSupportSuffix", "");
-		} else if (currentCycle.isTransImpl()) {
-			code.setVariable("cycleSupportSuffix", "WithTransactionSupport");
-		} else if (currentCycle.isDbImpl()) {
-			code.setVariable("cycleSupportSuffix", "WithDatabaseSupport");
-		}
-
 		if (currentCycle.isAbstract()) {
 			code.add(
 					"/**",
@@ -305,7 +328,7 @@ public class GraphCodeGenerator extends AttributedElementCodeGenerator {
 		if (currentCycle.isStdOrDbImplOrTransImpl()) {
 			code.add(
 					"public #ecJavaClassName# create#ecCamelName#(#formalParams#) {",
-					"\t#ecJavaClassName# new#ecType# = (#ecJavaClassName#) graphFactory.create#ecType##cycleSupportSuffix#(#ecJavaClassName#.class, #newActualParams#, this#additionalParams#);",
+					"\t#ecJavaClassName# new#ecType# = (#ecJavaClassName#) graphFactory.create#ecType#(#ecJavaClassName#.class, #newActualParams#, this#additionalParams#);",
 					"\treturn new#ecType#;", "}");
 			code.setVariable("additionalParams", "");
 		}

@@ -125,11 +125,11 @@ public class GraphTest extends InstanceTest {
 		VertexTestGraph out = null;
 		switch (implementationType) {
 		case STANDARD:
-			out = VertexTestSchema.instance().createVertexTestGraph();
+			out = VertexTestSchema.instance().createVertexTestGraph(ImplementationType.STANDARD);
 			break;
 		case TRANSACTION:
 			out = VertexTestSchema.instance()
-					.createVertexTestGraphWithTransactionSupport();
+					.createVertexTestGraph(ImplementationType.TRANSACTION);
 			break;
 		case DATABASE:
 			out = createVertexTestGraphWithDatabaseSupport();
@@ -168,8 +168,7 @@ public class GraphTest extends InstanceTest {
 	private void getVertexClassesOfG1() {
 		// get vertex- and edge-classes
 		// VertexClass abstractSuperN;
-		List<VertexClass> vclasses = g1.getSchema()
-				.getVertexClassesInTopologicalOrder();
+		List<VertexClass> vclasses = g1.getGraphClass().getVertexClasses();
 		for (VertexClass vc : vclasses) {
 			// if (vc.getSimpleName().equals("AbstractSuperNode")) {
 			// abstractSuperN = vc;
@@ -186,8 +185,7 @@ public class GraphTest extends InstanceTest {
 
 	private void getEdgeClassesOfG1() {
 		// preparations...
-		List<EdgeClass> eclasses = g1.getSchema()
-				.getEdgeClassesInTopologicalOrder();
+		List<EdgeClass> eclasses = g1.getGraphClass().getEdgeClasses();
 		for (EdgeClass ec : eclasses) {
 			if (ec.getSimpleName().equals("Link")) {
 				link = ec;
@@ -2878,11 +2876,11 @@ public class GraphTest extends InstanceTest {
 		MinimalGraph g3 = null;
 		switch (implementationType) {
 		case STANDARD:
-			g3 = MinimalSchema.instance().createMinimalGraph();
+			g3 = MinimalSchema.instance().createMinimalGraph(ImplementationType.STANDARD);
 			break;
 		case TRANSACTION:
 			g3 = MinimalSchema.instance()
-					.createMinimalGraphWithTransactionSupport();
+					.createMinimalGraph(ImplementationType.TRANSACTION);
 			break;
 		case DATABASE:
 			dbHandler.loadMinimalSchemaIntoGraphDatabase();

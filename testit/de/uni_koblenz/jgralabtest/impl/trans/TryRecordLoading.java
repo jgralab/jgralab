@@ -38,6 +38,7 @@ import org.pcollections.PMap;
 
 import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.GraphIOException;
+import de.uni_koblenz.jgralab.ImplementationType;
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.impl.ConsoleProgressFunction;
 import de.uni_koblenz.jgralabtest.schemas.record.BooleanType;
@@ -54,7 +55,7 @@ public class TryRecordLoading {
 	public static void main(String[] args) throws GraphIOException {
 		// create graph without transaction support
 		RecordTestGraph graph = RecordTestSchema.instance()
-				.createRecordTestGraph();
+				.createRecordTestGraph(ImplementationType.STANDARD);
 		Node node = graph.createNode();
 		PMap<Integer, String> map = JGraLab.map();
 		node.set_nodeMap(map);
@@ -68,7 +69,7 @@ public class TryRecordLoading {
 
 		// load graph with transaction support
 
-		RecordTestSchema.instance().loadRecordTestGraphWithTransactionSupport(
+		RecordTestSchema.instance().loadRecordTestGraph(ImplementationType.TRANSACTION,
 				filename, new ConsoleProgressFunction());
 
 		System.out.println("Success!");

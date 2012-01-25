@@ -47,6 +47,7 @@ import org.pcollections.PVector;
 
 import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.GraphIOException;
+import de.uni_koblenz.jgralab.ImplementationType;
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.impl.ConsoleProgressFunction;
 import de.uni_koblenz.jgralab.trans.CommitFailedException;
@@ -66,7 +67,7 @@ public class NullValueTest {
 	@Before
 	public void setUp() throws CommitFailedException {
 		graph = RecordTestSchema.instance()
-				.createRecordTestGraphWithTransactionSupport();
+				.createRecordTestGraph(ImplementationType.TRANSACTION);
 		graph.newTransaction();
 		createTestGraph(true);
 		graph.commit();
@@ -151,7 +152,7 @@ public class NullValueTest {
 
 	@Test
 	public void readTest() throws CommitFailedException, GraphIOException {
-		graph = RecordTestSchema.instance().createRecordTestGraph();
+		graph = RecordTestSchema.instance().createRecordTestGraph(ImplementationType.STANDARD);
 		createTestGraph(false);
 		GraphIO.saveGraphToFile(graph, filename, new ConsoleProgressFunction());
 		try {

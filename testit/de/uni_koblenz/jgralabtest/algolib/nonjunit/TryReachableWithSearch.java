@@ -34,6 +34,7 @@
  */
 package de.uni_koblenz.jgralabtest.algolib.nonjunit;
 
+import de.uni_koblenz.jgralab.ImplementationType;
 import de.uni_koblenz.jgralab.algolib.algorithms.AlgorithmTerminatedException;
 import de.uni_koblenz.jgralab.algolib.algorithms.reachability.ReachableWithSearch;
 import de.uni_koblenz.jgralab.algolib.algorithms.search.BreadthFirstSearch;
@@ -48,7 +49,7 @@ public class TryReachableWithSearch {
 	 * @param args
 	 */
 	public static void main(String[] args) throws AlgorithmTerminatedException {
-		SimpleGraph graph = SimpleSchema.instance().createSimpleGraph();
+		SimpleGraph graph = SimpleSchema.instance().createSimpleGraph(ImplementationType.STANDARD);
 		SimpleVertex v1 = graph.createSimpleVertex();
 		SimpleVertex v2 = graph.createSimpleVertex();
 		SimpleVertex v3 = graph.createSimpleVertex();

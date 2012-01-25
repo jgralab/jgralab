@@ -46,6 +46,7 @@ import org.pcollections.PVector;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
+import de.uni_koblenz.jgralab.ImplementationType;
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql2.exception.ParsingException;
@@ -152,7 +153,7 @@ public class GreqlParser extends ParserHelper {
 		parsingStack = new Stack<Integer>();
 		predicateStack = new Stack<Boolean>();
 		schema = Greql2Schema.instance();
-		graph = schema.createGreql2();
+		graph = schema.createGreql2(ImplementationType.STANDARD);
 		tokens = GreqlLexer.scan(source);
 		afterParsingvariableSymbolTable = new SymbolTable();
 		duringParsingvariableSymbolTable = new SimpleSymbolTable();

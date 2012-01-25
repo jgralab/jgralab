@@ -121,6 +121,7 @@ import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.GraphIOException;
+import de.uni_koblenz.jgralab.ImplementationType;
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.graphmarker.BooleanGraphMarker;
@@ -612,7 +613,7 @@ public class Rsa2Tg extends XmlProcessor {
 	@Override
 	public void startDocument() {
 
-		sg = GrumlSchema.instance().createSchemaGraph();
+		sg = GrumlSchema.instance().createSchemaGraph(ImplementationType.STANDARD);
 
 		// Initializing all necessary data structures for processing purposes.
 		xmiIdStack = new Stack<String>();

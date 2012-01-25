@@ -100,11 +100,11 @@ public class RoleNameTest extends InstanceTest {
 	public void setUp() {
 		switch (implementationType) {
 		case STANDARD:
-			graph = VertexTestSchema.instance().createVertexTestGraph(100, 100);
+			graph = VertexTestSchema.instance().createVertexTestGraph(ImplementationType.STANDARD,100, 100);
 			break;
 		case TRANSACTION:
 			graph = VertexTestSchema.instance()
-					.createVertexTestGraphWithTransactionSupport(100, 100);
+					.createVertexTestGraph(ImplementationType.TRANSACTION,100, 100);
 			break;
 		case DATABASE:
 			graph = createVertexTestGraphWithDatabaseSupport();

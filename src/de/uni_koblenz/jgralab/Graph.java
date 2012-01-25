@@ -491,6 +491,11 @@ public interface Graph extends AttributedElement {
 
 	public TraversalContext getTraversalContext();
 
+	public GraphFactory getGraphFactory();
+	
+
+	public void setGraphFactory(GraphFactory graphFactory) ;
+	
 	public void save(String filename) throws GraphIOException;
 
 	public void save(String filename, ProgressFunction pf)
