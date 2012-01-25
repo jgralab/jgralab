@@ -83,12 +83,8 @@ public class SchemaCodeGenerator extends CodeGenerator {
 		this.schema = schema;
 
 		rootBlock.setVariable("simpleClassName", schema.getName());
-		rootBlock.setVariable("simpleImplClassName", schema.getName());
 		rootBlock.setVariable("baseClassName", "SchemaImpl");
-		rootBlock.setVariable("isAbstractClass", "false");
 		rootBlock.setVariable("isClassOnly", "true");
-		rootBlock.setVariable("isImplementationClassOnly", "false");
-		rootBlock.setVariable("schemaRootPackage", schemaPackageName);
 	}
 
 	@Override
@@ -156,12 +152,12 @@ public class SchemaCodeGenerator extends CodeGenerator {
 				"\tswitch(implType){",
 				((config.hasStandardSupport()) ?
 						"\tcase STANDARD: \n"+
-						"\t\t\tGraphFactory stdFactory = new #schemaRootPackage#.impl.std.#gcCamelName#FactoryImpl(); \n"+
+						"\t\t\tGraphFactory stdFactory = new #schemaImplStdPackage#.#gcCamelName#FactoryImpl(); \n"+
 						"\t\t\t#gcCamelName# stdGraph = (#gcCamelName#) stdFactory.createGraph(id, vMax, eMax); \n"+
 						"\t\t\treturn stdGraph;\n"
 						: ""),
 				((config.hasTransactionSupport())? "\tcase TRANSACTION: \n"+
-						"\t\t\tGraphFactory transFactory = new #schemaRootPackage#.impl.trans.#gcCamelName#FactoryImpl(); \n"+
+						"\t\t\tGraphFactory transFactory = new #schemaImplTransPackage#.#gcCamelName#FactoryImpl(); \n"+
 						"\t\t\t#gcCamelName# transGraph = (#gcCamelName#) transFactory.createGraph(id, vMax, eMax); \n"+
 						"\t\t\treturn transGraph;\n"
 						: ""),		
@@ -205,7 +201,7 @@ public class SchemaCodeGenerator extends CodeGenerator {
 				" */",
 				"public #gcName# create#gcCamelName#(String id, GraphDatabase graphDatabase) throws GraphDatabaseException{",
 				((config.hasDatabaseSupport()) ? 
-						"\tGraphFactoryImpl graphFactory = new #schemaRootPackage#.impl.db.#gcCamelName#FactoryImpl();\n"+
+						"\tGraphFactoryImpl graphFactory = new #schemaImplDbPackage#.#gcCamelName#FactoryImpl();\n"+
 						"\t\tgraphFactory.setGraphDatabase(graphDatabase);\n\t"+
 						"\tGraph graph = graphFactory.createGraph" +
 						"(id );\n\t\tif(!graphDatabase.containsGraph(id)){\n\t\t\tgraphDatabase.insert((#jgImplDbPackage#.GraphImpl)graph);\n\t\t\treturn (#gcCamelName#)graph;\n\t\t}\n\t\telse\n\t\t\tthrow new GraphException(\"Graph with identifier \" + id + \" already exists in database.\");"
@@ -221,7 +217,7 @@ public class SchemaCodeGenerator extends CodeGenerator {
 				" */",
 				"public #gcName# create#gcCamelName#(String id, int vMax, int eMax, GraphDatabase graphDatabase) throws GraphDatabaseException{",
 				((config.hasDatabaseSupport()) ? 
-						"\tGraphFactoryImpl graphFactory = new #schemaRootPackage#.impl.db.#gcCamelName#FactoryImpl();\n"+
+						"\tGraphFactoryImpl graphFactory = new #schemaImplDbPackage#.#gcCamelName#FactoryImpl();\n"+
 						"\t\tgraphFactory.setGraphDatabase(graphDatabase);\n\t"+
 						"\tGraph graph = graphFactory.createGraph(id, vMax, eMax );\n\t\tif(!graphDatabase.containsGraph(id)){\n\t\t\tgraphDatabase.insert((#jgImplDbPackage#.GraphImpl)graph);\n\t\t\treturn (#gcCamelName#)graph;\n\t\t}\n\t\telse\n\t\t\tthrow new GraphException(\"Graph with identifier \" + id + \" already exists in database.\");"
 						: "\tthrow new UnsupportedOperationException(\"No database support compiled.\");"),
@@ -317,7 +313,6 @@ public class SchemaCodeGenerator extends CodeGenerator {
 		code.add(createCompositeDomains());
 		code.add(createGraphClass());
 		code.add(createPackageComments());
-		//addImports("#schemaPackage#."+schema.getGraphClass().getSimpleName()+"Factory");
 		code.addNoIndent(new CodeSnippet(true, "}"));
 		return code;
 	}
@@ -359,7 +354,6 @@ public class SchemaCodeGenerator extends CodeGenerator {
 		addImports("#jgSchemaPackage#.GraphClass");
 		code.setVariable("gcName", gc.getQualifiedName());
 		code.setVariable("gcVariable", "gc");
-		code.setVariable("aecVariable", "gc");
 		code.setVariable("schemaVariable", gc.getVariableName());
 		code.setVariable("gcAbstract", gc.isAbstract() ? "true" : "false");
 		code.addNoIndent(new CodeSnippet(
@@ -429,7 +423,6 @@ public class SchemaCodeGenerator extends CodeGenerator {
 
 		code.setVariable("ecName", ec.getQualifiedName());
 		code.setVariable("schemaVariable", ec.getVariableName());
-		code.setVariable("ecVariable", "ec");
 		code.setVariable("aecVariable", "ec");
 		code.setVariable("ecAbstract", ec.isAbstract() ? "true" : "false");
 		code.setVariable("fromClass", ec.getFrom().getVertexClass()
@@ -452,30 +445,30 @@ public class SchemaCodeGenerator extends CodeGenerator {
 		code.addNoIndent(new CodeSnippet(
 				true,
 				"{",
-				"\t#ecType# #ecVariable# = #schemaVariable# = #gcVariable#.create#ecType#(\"#ecName#\",",
+				"\t#ecType# #aecVariable# = #schemaVariable# = #gcVariable#.create#ecType#(\"#ecName#\",",
 				"\t\t#fromPart#,", "\t\t#toPart#);",
-				"\t#ecVariable#.setAbstract(#ecAbstract#);"));
+				"\t#aecVariable#.setAbstract(#ecAbstract#);"));
 
 		for (AttributedElementClass superClass : ec.getDirectSuperClasses()) {
 			if (superClass.isInternal()) {
 				continue;
 			}
 			CodeSnippet s = new CodeSnippet(
-					"#ecVariable#.addSuperClass(#superClassName#);");
+					"#aecVariable#.addSuperClass(#superClassName#);");
 			s.setVariable("superClassName", superClass.getVariableName());
 			code.add(s);
 		}
 
 		for (String redefinedFromRole : ec.getFrom().getRedefinedRoles()) {
 			CodeSnippet s = new CodeSnippet(
-					"#ecVariable#.getFrom().addRedefinedRole(\"#redefinedFromRole#\");");
+					"#aecVariable#.getFrom().addRedefinedRole(\"#redefinedFromRole#\");");
 			s.setVariable("redefinedFromRole", redefinedFromRole);
 			code.add(s);
 		}
 
 		for (String redefinedToRole : ec.getTo().getRedefinedRoles()) {
 			CodeSnippet s = new CodeSnippet(
-					"#ecVariable#.getTo().addRedefinedRole(\"#redefinedToRole#\");");
+					"#aecVariable#.getTo().addRedefinedRole(\"#redefinedToRole#\");");
 			s.setVariable("redefinedToRole", redefinedToRole);
 			code.add(s);
 		}
@@ -506,21 +499,20 @@ public class SchemaCodeGenerator extends CodeGenerator {
 	private CodeBlock createVertexClass(VertexClass vc) {
 		CodeList code = new CodeList();
 		code.setVariable("vcName", vc.getQualifiedName());
-		code.setVariable("vcVariable", "vc");
 		code.setVariable("aecVariable", "vc");
 		code.setVariable("schemaVariable", vc.getVariableName());
 		code.setVariable("vcAbstract", vc.isAbstract() ? "true" : "false");
 		code.addNoIndent(new CodeSnippet(
 				true,
 				"{",
-				"\tVertexClass #vcVariable# = #schemaVariable# = #gcVariable#.createVertexClass(\"#vcName#\");",
-				"\t#vcVariable#.setAbstract(#vcAbstract#);"));
+				"\tVertexClass #aecVariable# = #schemaVariable# = #gcVariable#.createVertexClass(\"#vcName#\");",
+				"\t#aecVariable#.setAbstract(#vcAbstract#);"));
 		for (AttributedElementClass superClass : vc.getDirectSuperClasses()) {
 			if (superClass.isInternal()) {
 				continue;
 			}
 			CodeSnippet s = new CodeSnippet(
-					"#vcVariable#.addSuperClass(#superClassName#);");
+					"#aecVariable#.addSuperClass(#superClassName#);");
 			s.setVariable("superClassName", superClass.getVariableName());
 			code.add(s);
 		}
