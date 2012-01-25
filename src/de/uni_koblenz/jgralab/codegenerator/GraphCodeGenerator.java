@@ -232,35 +232,33 @@ public class GraphCodeGenerator extends AttributedElementCodeGenerator {
 		TreeSet<GraphElementClass> sortedClasses = new TreeSet<GraphElementClass>();
 		sortedClasses.addAll(gc.getGraphElementClasses());
 		for (GraphElementClass gec : sortedClasses) {
-			if (!gec.isInternal()) {
-				CodeList gecCode = new CodeList();
-				code.addNoIndent(gecCode);
+			CodeList gecCode = new CodeList();
+			code.addNoIndent(gecCode);
 
-				gecCode.addNoIndent(new CodeSnippet(
-						true,
-						"// ------------------------ Code for #ecQualifiedName# ------------------------"));
+			gecCode.addNoIndent(new CodeSnippet(
+					true,
+					"// ------------------------ Code for #ecQualifiedName# ------------------------"));
 
-				gecCode.setVariable("ecSimpleName", gec.getSimpleName());
-				gecCode.setVariable("ecUniqueName", gec.getUniqueName());
-				gecCode.setVariable("ecQualifiedName", gec.getQualifiedName());
-				gecCode.setVariable("ecSchemaVariableName",
-						gec.getVariableName());
-				gecCode.setVariable("ecJavaClassName", schemaRootPackageName
-						+ "." + gec.getQualifiedName());
-				gecCode.setVariable("ecType",
-						(gec instanceof VertexClass ? "Vertex" : "Edge"));
-				gecCode.setVariable("ecTypeInComment",
-						(gec instanceof VertexClass ? "vertex" : "edge"));
-				gecCode.setVariable("ecCamelName",
-						camelCase(gec.getUniqueName()));
-				gecCode.setVariable(
-						"ecImplName",
-						(gec.isAbstract() ? "**ERROR**" : camelCase(gec
-								.getQualifiedName()) + "Impl"));
+			gecCode.setVariable("ecSimpleName", gec.getSimpleName());
+			gecCode.setVariable("ecUniqueName", gec.getUniqueName());
+			gecCode.setVariable("ecQualifiedName", gec.getQualifiedName());
+			gecCode.setVariable("ecSchemaVariableName",
+					gec.getVariableName());
+			gecCode.setVariable("ecJavaClassName", schemaRootPackageName
+					+ "." + gec.getQualifiedName());
+			gecCode.setVariable("ecType",
+					(gec instanceof VertexClass ? "Vertex" : "Edge"));
+			gecCode.setVariable("ecTypeInComment",
+					(gec instanceof VertexClass ? "vertex" : "edge"));
+			gecCode.setVariable("ecCamelName",
+					camelCase(gec.getUniqueName()));
+			gecCode.setVariable(
+					"ecImplName",
+					(gec.isAbstract() ? "**ERROR**" : camelCase(gec
+							.getQualifiedName()) + "Impl"));
 
-				gecCode.addNoIndent(createGetFirstMethods(gec));
-				gecCode.addNoIndent(createFactoryMethods(gec));
-			}
+			gecCode.addNoIndent(createGetFirstMethods(gec));
+			gecCode.addNoIndent(createFactoryMethods(gec));
 		}
 
 		return code;
@@ -426,7 +424,6 @@ public class GraphCodeGenerator extends AttributedElementCodeGenerator {
 			s.setVariable("vertexJavaClassName", "#schemaPackage#."
 					+ vertex.getQualifiedName());
 			s.setVariable("vertexCamelName", camelCase(vertex.getUniqueName()));
-			// getFooIncidences()
 			if (currentCycle.isAbstract()) {
 				s.add("/**");
 				s.add(" * @return an Iterable for all vertices of this graph that are of type #vertexQualifiedName# or subtypes.");
