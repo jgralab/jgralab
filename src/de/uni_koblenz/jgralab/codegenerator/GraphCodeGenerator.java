@@ -88,8 +88,8 @@ public class GraphCodeGenerator extends AttributedElementCodeGenerator {
 
 			// for Vertex.reachableVertices()
 			addImports("org.pcollections.POrderedSet");
-			addImports("de.uni_koblenz.jgralab.Vertex");
-			addImports("de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator");
+			addImports("#jgPackage#.Vertex");
+			addImports("#jgPackage#.greql2.evaluator.GreqlEvaluator");
 
 			code.add(new CodeSnippet(
 					"\n\tprotected GreqlEvaluator greqlEvaluator;\n",
@@ -132,7 +132,7 @@ public class GraphCodeGenerator extends AttributedElementCodeGenerator {
 					" * DON'T USE THE CONSTRUCTOR",
 					" * For instantiating a Graph, use a GraphFactory",
 					"**/",
-					"public #simpleClassName#Impl(int vMax, int eMax) {",
+					"public #simpleImplClassName#(int vMax, int eMax) {",
 					"\tthis(null, vMax, eMax);",
 					"}",
 					"",
@@ -140,10 +140,9 @@ public class GraphCodeGenerator extends AttributedElementCodeGenerator {
 					" * DON'T USE THE CONSTRUCTOR",
 					" * For instantiating a Graph, use a GraphFactory",
 					"**/",
-					"public #simpleClassName#Impl(java.lang.String id, int vMax, int eMax) {",
+					"public #simpleImplClassName#(java.lang.String id, int vMax, int eMax) {",
 					"\tsuper(id, #schemaName#.instance().#schemaVariableName#, vMax, eMax);",
 					"\tinitializeAttributesWithDefaultValues();",
-					//"\tgraphFactory = new #simpleClassName#FactoryImpl();",
 					"}",
 					"",
 					"public static #javaClassName# create(int vMax, int eMax) {",
@@ -160,7 +159,7 @@ public class GraphCodeGenerator extends AttributedElementCodeGenerator {
 					" * DON'T USE THE CONSTRUCTOR",
 					" * For instantiating a Graph, use a GraphFactory",
 					"**/",
-					"public #simpleClassName#Impl() {",
+					"public #simpleImplClassName#() {",
 					"\tthis(null);",
 					"}",
 					"",
@@ -168,7 +167,7 @@ public class GraphCodeGenerator extends AttributedElementCodeGenerator {
 					" * DON'T USE THE CONSTRUCTOR",
 					" * For instantiating a Graph, use a GraphFactory",
 					"**/",
-					"public #simpleClassName#Impl(java.lang.String id) {",
+					"public #simpleImplClassName#(java.lang.String id) {",
 					"\tsuper(id, #schemaName#.instance().#schemaVariableName#);",
 					"\tinitializeAttributesWithDefaultValues();",
 					"}",
@@ -198,7 +197,7 @@ public class GraphCodeGenerator extends AttributedElementCodeGenerator {
 					" * DON'T USE THE CONSTRUCTOR",
 					" * For instantiating a Graph, use a GraphFactory",
 					"**/",
-					"public #simpleClassName#Impl(java.lang.String id, GraphDatabase graphDatabase) {",
+					"public #simpleImplClassName#(java.lang.String id, GraphDatabase graphDatabase) {",
 					"\tsuper(id, #schemaName#.instance().#schemaVariableName#, graphDatabase);",
 					"\tinitializeAttributesWithDefaultValues();",
 					//"\tgraphFactory = new #simpleClassName#FactoryImpl();",
@@ -208,7 +207,7 @@ public class GraphCodeGenerator extends AttributedElementCodeGenerator {
 					" * DON'T USE THE CONSTRUCTOR",
 					" * For instantiating a Graph, use a GraphFactory",
 					"**/",
-					"public #simpleClassName#Impl(java.lang.String id, int vMax, int eMax, GraphDatabase graphDatabase) {",
+					"public #simpleImplClassName#(java.lang.String id, int vMax, int eMax, GraphDatabase graphDatabase) {",
 					"\tsuper(id, vMax, eMax, #schemaName#.instance().#schemaVariableName#, graphDatabase);",
 					"\tinitializeAttributesWithDefaultValues();",
 					//"\tgraphFactory = new #simpleClassName#FactoryImpl();",
@@ -338,18 +337,14 @@ public class GraphCodeGenerator extends AttributedElementCodeGenerator {
 			String fromClass = ec.getFrom().getVertexClass().getQualifiedName();
 			String toClass = ec.getTo().getVertexClass().getQualifiedName();
 			if (fromClass.equals("Vertex")) {
-				code.setVariable("fromClass",
-						rootBlock.getVariable("jgPackage") + "." + "Vertex");
+				code.setVariable("fromClass", "#jgPackage#.Vertex");
 			} else {
-				code.setVariable("fromClass", schemaRootPackageName + "."
-						+ fromClass);
+				code.setVariable("fromClass", "#schemaPackage#."+fromClass);
 			}
 			if (toClass.equals("Vertex")) {
-				code.setVariable("toClass", rootBlock.getVariable("jgPackage")
-						+ "." + "Vertex");
+				code.setVariable("toClass", "#jgPackage#.Vertex");
 			} else {
-				code.setVariable("toClass", schemaRootPackageName + "."
-						+ toClass);
+				code.setVariable("toClass",  "#schemaPackage#."+ toClass);
 			}
 			code.setVariable("formalParams", (withId ? "int id, " : "")
 					+ "#fromClass# alpha, #toClass# omega");
@@ -428,7 +423,7 @@ public class GraphCodeGenerator extends AttributedElementCodeGenerator {
 			CodeSnippet s = new CodeSnippet(true);
 			code.addNoIndent(s);
 			s.setVariable("vertexQualifiedName", vertex.getQualifiedName());
-			s.setVariable("vertexJavaClassName", schemaRootPackageName + "."
+			s.setVariable("vertexJavaClassName", "#schemaPackage#."
 					+ vertex.getQualifiedName());
 			s.setVariable("vertexCamelName", camelCase(vertex.getUniqueName()));
 			// getFooIncidences()
