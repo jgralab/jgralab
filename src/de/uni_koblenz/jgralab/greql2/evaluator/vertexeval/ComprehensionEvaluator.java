@@ -37,58 +37,58 @@ package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 import org.pcollections.PCollection;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
-import de.uni_koblenz.jgralab.Graph;
-import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluatorImpl;
+import de.uni_koblenz.jgralab.greql2.evaluator.InternalGreqlEvaluator;
+import de.uni_koblenz.jgralab.greql2.evaluator.Query;
 import de.uni_koblenz.jgralab.greql2.evaluator.VariableDeclarationLayer;
 import de.uni_koblenz.jgralab.greql2.schema.Comprehension;
 import de.uni_koblenz.jgralab.greql2.schema.Declaration;
 import de.uni_koblenz.jgralab.greql2.schema.Expression;
 
-public abstract class ComprehensionEvaluator extends VertexEvaluator {
+public abstract class ComprehensionEvaluator<V extends Comprehension> extends
+		VertexEvaluator<V> {
 
 	private VariableDeclarationLayer varDeclLayer = null;
-	private VertexEvaluator resultDefinitionEvaluator = null;
+	private VertexEvaluator<? extends Expression> resultDefinitionEvaluator = null;
 
-	@Override
-	public abstract Comprehension getVertex();
-
-	public ComprehensionEvaluator(GreqlEvaluatorImpl eval) {
-		super(eval);
+	public ComprehensionEvaluator(V vertex, Query query) {
+		super(vertex, query);
 	}
 
-	protected abstract PCollection<Object> getResultDatastructure();
+	protected abstract PCollection<Object> getResultDatastructure(
+			InternalGreqlEvaluator evaluator);
 
-	protected final VertexEvaluator getResultDefinitionEvaluator() {
+	protected final VertexEvaluator<? extends Expression> getResultDefinitionEvaluator() {
 		if (resultDefinitionEvaluator == null) {
 			Expression resultDefinition = getVertex()
 					.getFirstIsCompResultDefOfIncidence(EdgeDirection.IN)
 					.getAlpha();
-			resultDefinitionEvaluator = vertexEvalMarker
-					.getMark(resultDefinition);
+			resultDefinitionEvaluator = query
+					.getVertexEvaluator(resultDefinition);
 		}
 		return resultDefinitionEvaluator;
 	}
 
 	protected final VariableDeclarationLayer getVariableDeclationLayer(
-			Graph graph) {
+			InternalGreqlEvaluator evaluator) {
 		if (varDeclLayer == null) {
 			Declaration d = getVertex().getFirstIsCompDeclOfIncidence(
 					EdgeDirection.IN).getAlpha();
-			DeclarationEvaluator declEval = (DeclarationEvaluator) vertexEvalMarker
-					.getMark(d);
-			varDeclLayer = (VariableDeclarationLayer) declEval.getResult(graph);
+			DeclarationEvaluator declEval = (DeclarationEvaluator) query
+					.getVertexEvaluator(d);
+			varDeclLayer = (VariableDeclarationLayer) declEval
+					.getResult(evaluator);
 		}
 		return varDeclLayer;
 	}
 
 	@Override
-	public Object evaluate(Graph graph) {
-		VariableDeclarationLayer declLayer = getVariableDeclationLayer();
-		VertexEvaluator resultDefEval = getResultDefinitionEvaluator();
-		PCollection<Object> resultCollection = getResultDatastructure();
+	public Object evaluate(InternalGreqlEvaluator evaluator) {
+		VariableDeclarationLayer declLayer = getVariableDeclationLayer(evaluator);
+		VertexEvaluator<? extends Expression> resultDefEval = getResultDefinitionEvaluator();
+		PCollection<Object> resultCollection = getResultDatastructure(evaluator);
 		declLayer.reset();
 		while (declLayer.iterate(null)) {
-			Object localResult = resultDefEval.getResult(graph);
+			Object localResult = resultDefEval.getResult(evaluator);
 			resultCollection = resultCollection.plus(localResult);
 		}
 		return resultCollection;

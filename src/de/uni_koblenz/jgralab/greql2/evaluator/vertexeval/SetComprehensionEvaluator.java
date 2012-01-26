@@ -38,9 +38,8 @@ package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 import org.pcollections.PCollection;
 
 import de.uni_koblenz.jgralab.JGraLab;
-import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluatorImpl;
-import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize;
-import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
+import de.uni_koblenz.jgralab.greql2.evaluator.InternalGreqlEvaluator;
+import de.uni_koblenz.jgralab.greql2.evaluator.Query;
 import de.uni_koblenz.jgralab.greql2.schema.SetComprehension;
 
 /**
@@ -49,20 +48,8 @@ import de.uni_koblenz.jgralab.greql2.schema.SetComprehension;
  * @author ist@uni-koblenz.de
  * 
  */
-public class SetComprehensionEvaluator extends ComprehensionEvaluator {
-
-	/**
-	 * The SetComprehension-Vertex this evaluator evaluates
-	 */
-	private SetComprehension vertex;
-
-	/**
-	 * returns the vertex this VertexEvaluator evaluates
-	 */
-	@Override
-	public SetComprehension getVertex() {
-		return vertex;
-	}
+public class SetComprehensionEvaluator extends
+		ComprehensionEvaluator<SetComprehension> {
 
 	/**
 	 * Creates a new SetComprehensionEvaluator for the given vertex
@@ -72,27 +59,26 @@ public class SetComprehensionEvaluator extends ComprehensionEvaluator {
 	 * @param vertex
 	 *            the vertex this VertexEvaluator evaluates
 	 */
-	public SetComprehensionEvaluator(SetComprehension vertex,
-			GreqlEvaluatorImpl eval) {
-		super(eval);
-		this.vertex = vertex;
+	public SetComprehensionEvaluator(SetComprehension vertex, Query query) {
+		super(vertex, query);
 	}
 
 	@Override
-	protected PCollection<Object> getResultDatastructure() {
+	protected PCollection<Object> getResultDatastructure(
+			InternalGreqlEvaluator evaluator) {
 		return JGraLab.set();
 	}
 
-	@Override
-	public VertexCosts calculateSubtreeEvaluationCosts() {
-		return this.greqlEvaluator.getCostModel()
-				.calculateCostsSetComprehension(this);
-	}
-
-	@Override
-	public long calculateEstimatedCardinality() {
-		return greqlEvaluator.getCostModel()
-				.calculateCardinalitySetComprehension(this);
-	}
+	// @Override
+	// public VertexCosts calculateSubtreeEvaluationCosts() {
+	// return this.greqlEvaluator.getCostModel()
+	// .calculateCostsSetComprehension(this);
+	// }
+	//
+	// @Override
+	// public long calculateEstimatedCardinality() {
+	// return greqlEvaluator.getCostModel()
+	// .calculateCardinalitySetComprehension(this);
+	// }
 
 }

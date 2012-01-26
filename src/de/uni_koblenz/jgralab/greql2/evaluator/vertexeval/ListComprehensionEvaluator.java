@@ -42,10 +42,10 @@ import org.pcollections.PCollection;
 import org.pcollections.PVector;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
-import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.JGraLab;
-import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluatorImpl;
-import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
+import de.uni_koblenz.jgralab.greql2.evaluator.InternalGreqlEvaluator;
+import de.uni_koblenz.jgralab.greql2.evaluator.Query;
+import de.uni_koblenz.jgralab.greql2.schema.Expression;
 import de.uni_koblenz.jgralab.greql2.schema.IsTableHeaderOf;
 import de.uni_koblenz.jgralab.greql2.schema.ListComprehension;
 import de.uni_koblenz.jgralab.greql2.types.Table;
@@ -56,20 +56,8 @@ import de.uni_koblenz.jgralab.greql2.types.Table;
  * @author ist@uni-koblenz.de
  * 
  */
-public class ListComprehensionEvaluator extends ComprehensionEvaluator {
-
-	/**
-	 * The ListComprehension-Vertex this evaluator evaluates
-	 */
-	private ListComprehension vertex;
-
-	/**
-	 * returns the vertex this VertexEvaluator evaluates
-	 */
-	@Override
-	public ListComprehension getVertex() {
-		return vertex;
-	}
+public class ListComprehensionEvaluator extends
+		ComprehensionEvaluator<ListComprehension> {
 
 	/**
 	 * Creates a new ListComprehensionEvaluator for the given vertex
@@ -79,26 +67,25 @@ public class ListComprehensionEvaluator extends ComprehensionEvaluator {
 	 * @param vertex
 	 *            the vertex this VertexEvaluator evaluates
 	 */
-	public ListComprehensionEvaluator(ListComprehension vertex,
-			GreqlEvaluatorImpl eval) {
-		super(eval);
-		this.vertex = vertex;
+	public ListComprehensionEvaluator(ListComprehension vertex, Query query) {
+		super(vertex, query);
 	}
 
 	private Boolean createHeader = null;
 
-	private List<VertexEvaluator> headerEvaluators = null;
+	private List<VertexEvaluator<? extends Expression>> headerEvaluators = null;
 
 	@Override
-	protected PCollection<Object> getResultDatastructure(Graph graph) {
+	protected PCollection<Object> getResultDatastructure(
+			InternalGreqlEvaluator evaluator) {
 		if (createHeader == null) {
 			if (vertex.getFirstIsTableHeaderOfIncidence(EdgeDirection.IN) != null) {
-				headerEvaluators = new ArrayList<VertexEvaluator>();
+				headerEvaluators = new ArrayList<VertexEvaluator<? extends Expression>>();
 				createHeader = true;
 				for (IsTableHeaderOf tableInc : vertex
 						.getIsTableHeaderOfIncidences(EdgeDirection.IN)) {
-					VertexEvaluator headerEval = vertexEvalMarker
-							.getMark(tableInc.getAlpha());
+					VertexEvaluator<? extends Expression> headerEval = query
+							.getVertexEvaluator(tableInc.getAlpha());
 					headerEvaluators.add(headerEval);
 				}
 			} else {
@@ -107,9 +94,9 @@ public class ListComprehensionEvaluator extends ComprehensionEvaluator {
 		}
 		if (createHeader) {
 			PVector<String> headerTuple = JGraLab.<String> vector();
-			for (VertexEvaluator headerEvaluator : headerEvaluators) {
+			for (VertexEvaluator<? extends Expression> headerEvaluator : headerEvaluators) {
 				headerTuple = headerTuple.plus((String) headerEvaluator
-						.getResult(graph));
+						.getResult(evaluator));
 			}
 			Table<Object> table = Table.empty();
 			return table.withTitles(headerTuple);
@@ -117,16 +104,16 @@ public class ListComprehensionEvaluator extends ComprehensionEvaluator {
 		return JGraLab.vector();
 	}
 
-	@Override
-	public VertexCosts calculateSubtreeEvaluationCosts() {
-		return greqlEvaluator.getCostModel().calculateCostsListComprehension(
-				this);
-	}
-
-	@Override
-	public long calculateEstimatedCardinality() {
-		return greqlEvaluator.getCostModel()
-				.calculateCardinalityListComprehension(this);
-	}
+	// @Override
+	// public VertexCosts calculateSubtreeEvaluationCosts() {
+	// return greqlEvaluator.getCostModel().calculateCostsListComprehension(
+	// this);
+	// }
+	//
+	// @Override
+	// public long calculateEstimatedCardinality() {
+	// return greqlEvaluator.getCostModel()
+	// .calculateCardinalityListComprehension(this);
+	// }
 
 }
