@@ -1456,7 +1456,7 @@ public abstract class AttributedElementClassImplTest {
 	 */
 	@Test
 	public void testIsInternal() {
-		for (VertexClass vc : schema.getVertexClassesInTopologicalOrder()) {
+		for (VertexClass vc : schema.getVertexClasses()) {
 			if (vc == schema.getDefaultVertexClass()) {
 				Assert.assertTrue(vc.isInternal());
 			} else {
@@ -1464,7 +1464,7 @@ public abstract class AttributedElementClassImplTest {
 			}
 		}
 
-		for (EdgeClass ec : schema.getEdgeClassesInTopologicalOrder()) {
+		for (EdgeClass ec : schema.getEdgeClasses()) {
 			if (ec == schema.getDefaultEdgeClass()) {
 				Assert.assertTrue(ec.isInternal());
 			} else {

@@ -483,7 +483,7 @@ public class SchemaCodeGenerator extends CodeGenerator {
 
 	private CodeBlock createVertexClasses(GraphClass gc) {
 		CodeList code = new CodeList();
-		for (VertexClass vc : schema.getVertexClassesInTopologicalOrder()) {
+		for (VertexClass vc : schema.getVertexClasses()) {
 			if (vc.isInternal()) {
 				CodeSnippet s = new CodeSnippet();
 				s.setVariable("schemaVariable", vc.getVariableName());
@@ -593,7 +593,7 @@ public class SchemaCodeGenerator extends CodeGenerator {
 	private CodeBlock createCompositeDomains() {
 		CodeList code = new CodeList();
 		for (CompositeDomain dom : schema
-				.getCompositeDomainsInTopologicalOrder()) {
+				.getCompositeDomains()) {
 			CodeSnippet s = new CodeSnippet(true);
 			s.setVariable("domName", dom.getQualifiedName());
 			code.addNoIndent(s);

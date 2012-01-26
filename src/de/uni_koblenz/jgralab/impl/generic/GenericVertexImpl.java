@@ -43,7 +43,7 @@ public class GenericVertexImpl extends VertexImpl {
 	public Edge addAdjacence(String role, Vertex other) {
 		EdgeClass newEdgeClass = null;
 		// TODO optimize!
-		for (EdgeClass ec : getSchema().getEdgeClassesInTopologicalOrder()) {
+		for (EdgeClass ec : getSchema().getEdgeClasses()) {
 			if (ec.getFrom().getRolename().equals(role)
 					|| ec.getTo().getRolename().equals(role)) {
 				newEdgeClass = ec;

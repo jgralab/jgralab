@@ -87,8 +87,8 @@ public class SchemaVisualizer {
 		code.append("divPackage.appendChild(ulRootPackage);\n");
 		createEntriesForPackage(code, "ulRootPackage", defaultPackage, true,
 				state.getGraph().getSchema()
-						.getVertexClassesInTopologicalOrder(), state.getGraph()
-						.getSchema().getEdgeClassesInTopologicalOrder());
+						.getVertexClasses(), state.getGraph()
+						.getSchema().getEdgeClasses());
 	}
 
 	/**
@@ -264,9 +264,9 @@ public class SchemaVisualizer {
 		assert state.getGraph().getSchema() != null : "schema is null";
 		// list of the AttributedElementClasses in topological order
 		List<? extends GraphElementClass> classes = createForVertex ? state
-				.getGraph().getSchema().getVertexClassesInTopologicalOrder()
+				.getGraph().getSchema().getVertexClasses()
 				: state.getGraph().getSchema()
-						.getEdgeClassesInTopologicalOrder();
+						.getEdgeClasses();
 		String var = createForVertex ? "Vertex" : "Edge";
 		createRootUl(code, var);
 		// unsetAEClasses saves the classes which have more than one superclass

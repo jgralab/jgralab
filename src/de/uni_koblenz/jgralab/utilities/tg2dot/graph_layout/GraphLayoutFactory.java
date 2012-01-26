@@ -244,8 +244,8 @@ public class GraphLayoutFactory {
 	private void applyHierarchie(Map<AttributedElementClass, TypeDefinition> map) {
 
 		List<AttributedElementClass> allSchemaTypes = new ArrayList<AttributedElementClass>();
-		allSchemaTypes.addAll(schema.getVertexClassesInTopologicalOrder());
-		allSchemaTypes.addAll(schema.getEdgeClassesInTopologicalOrder());
+		allSchemaTypes.addAll(schema.getVertexClasses());
+		allSchemaTypes.addAll(schema.getEdgeClasses());
 
 		for (Entry<AttributedElementClass, TypeDefinition> entry : map
 				.entrySet()) {

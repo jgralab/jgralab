@@ -133,11 +133,11 @@ public class GraphLayout {
 	}
 
 	void initiateAllTypeDefinitions() {
-		for (VertexClass type : schema.getVertexClassesInTopologicalOrder()) {
+		for (VertexClass type : schema.getVertexClasses()) {
 			vertexTypeDefinitions.put(type, new TypeDefinition(type));
 		}
 
-		for (EdgeClass type : schema.getEdgeClassesInTopologicalOrder()) {
+		for (EdgeClass type : schema.getEdgeClasses()) {
 			edgeTypeDefinitions.put(type, new TypeDefinition(type));
 		}
 	}
