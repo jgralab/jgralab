@@ -14,7 +14,10 @@ import de.uni_koblenz.jgralab.NoSuchAttributeException;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.impl.InternalVertex;
 import de.uni_koblenz.jgralab.impl.std.VertexImpl;
-import de.uni_koblenz.jgralab.schema.*;
+import de.uni_koblenz.jgralab.schema.Attribute;
+import de.uni_koblenz.jgralab.schema.AttributedElementClass;
+import de.uni_koblenz.jgralab.schema.EdgeClass;
+import de.uni_koblenz.jgralab.schema.VertexClass;
 import de.uni_koblenz.jgralab.schema.impl.DirectedSchemaEdgeClass;
 
 public class GenericVertexImpl extends VertexImpl {
@@ -74,7 +77,7 @@ public class GenericVertexImpl extends VertexImpl {
 	@Override
 	public void readAttributeValueFromString(String attributeName, String value)
 			throws GraphIOException, NoSuchAttributeException {
-		if (attributes != null && attributes.containsKey(attributeName)) {
+		if ((attributes != null) && attributes.containsKey(attributeName)) {
 			attributes.put(
 					attributeName,
 					type.getAttribute(attributeName)
@@ -119,7 +122,7 @@ public class GenericVertexImpl extends VertexImpl {
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T> T getAttribute(String name) throws NoSuchAttributeException {
-		if (attributes == null || !attributes.containsKey(name)) {
+		if ((attributes == null) || !attributes.containsKey(name)) {
 			throw new NoSuchAttributeException(type.getSimpleName()
 					+ " doesn't contain an attribute " + name);
 		} else {
@@ -130,7 +133,7 @@ public class GenericVertexImpl extends VertexImpl {
 	@Override
 	public <T> void setAttribute(String name, T data)
 			throws NoSuchAttributeException {
-		if (attributes == null || !attributes.containsKey(name)) {
+		if ((attributes == null) || !attributes.containsKey(name)) {
 			throw new NoSuchAttributeException(type.getSimpleName()
 					+ " doesn't contain an attribute " + name);
 		} else {
@@ -223,6 +226,7 @@ public class GenericVertexImpl extends VertexImpl {
 				"This method is not supported by the generic implementation");
 	}
 
+	@Override
 	public Vertex getNextVertex(Class<? extends Vertex> vertexClass) {
 		throw new UnsupportedOperationException(
 				"This method is not supported by the generic implementation");
@@ -257,5 +261,12 @@ public class GenericVertexImpl extends VertexImpl {
 	public DirectedSchemaEdgeClass getEdgeForRolename(String rolename) {
 		throw new UnsupportedOperationException(
 				"This method is not supported by the generic implementation");
+	}
+
+	@Override
+	public boolean isInstanceOf(AttributedElementClass cls) {
+		// Needs to be overridden from the base variant, because that relies on
+		// code generation.
+		return type.equals(cls) || type.isSubClassOf(cls);
 	}
 }

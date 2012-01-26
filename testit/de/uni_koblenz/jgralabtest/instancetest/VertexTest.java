@@ -138,7 +138,7 @@ public class VertexTest extends InstanceTest {
 	// tests of the method isIncidenceListModified(long incidenceListVersion);
 	/**
 	 * Tests if the incidenceList wasn't modified.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -161,7 +161,7 @@ public class VertexTest extends InstanceTest {
 	/**
 	 * If you create and delete edges, only the incidenceLists of the involved
 	 * nodes may have been modified.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -237,7 +237,7 @@ public class VertexTest extends InstanceTest {
 	/**
 	 * If you create and delete edges, only the incidenceListVersions of the
 	 * involved nodes may have been increased.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -288,7 +288,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * A vertex with no connected incidences has to have a degree of 0.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -303,7 +303,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Checks the degrees in a manually build graph.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -329,7 +329,7 @@ public class VertexTest extends InstanceTest {
 	/**
 	 * Generates a number of edges and checks the correct degrees of the
 	 * vertices. After that it deletes the edges and checks the degrees again.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -390,7 +390,7 @@ public class VertexTest extends InstanceTest {
 	/**
 	 * A vertex with no connected incidences has to have a degree of 0 for each
 	 * EdgeDirection.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -407,7 +407,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Checks the degrees in a manually build graph.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -442,7 +442,7 @@ public class VertexTest extends InstanceTest {
 	 * Generates a number of different edges and checks the correct degrees of
 	 * the vertices considering the different EdgeDirections. After that it
 	 * deletes the edges and checks the degrees again.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -532,7 +532,7 @@ public class VertexTest extends InstanceTest {
 	/**
 	 * A vertex with no connected incidences has to have a degree of 0 for each
 	 * EdgeClass.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -547,7 +547,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Checks the degrees in a manually build graph.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -575,7 +575,7 @@ public class VertexTest extends InstanceTest {
 	 * Generates a number of different edges and checks the correct degrees of
 	 * the vertices considering the different Edgeclasses. After that it deletes
 	 * the edges and checks the degrees again.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -663,7 +663,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Tests if a Vertex has the expected degree considering the EdgeClass.
-	 * 
+	 *
 	 * @param forNode
 	 *            the Vertex, which degrees should be tested
 	 * @param expectedLink
@@ -683,7 +683,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Creates an array of the EdgeClasses.
-	 * 
+	 *
 	 * @return {Link, SubLink, LinkBack}
 	 */
 	private EdgeClass[] getEdgeClasses() {
@@ -707,7 +707,7 @@ public class VertexTest extends InstanceTest {
 	/**
 	 * A vertex with no connected incidences has to have a degree of 0 for each
 	 * Class extends Edge.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -724,7 +724,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Checks the degrees in a manually build graph.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -760,7 +760,7 @@ public class VertexTest extends InstanceTest {
 	 * Generates a number of different edges and checks the correct degrees of
 	 * the vertices considering the different Classes. After that it deletes the
 	 * edges and checks the degrees again.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -863,7 +863,7 @@ public class VertexTest extends InstanceTest {
 	/**
 	 * A vertex with no connected incidences has to have a degree of 0 for each
 	 * EdgeClass.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -876,7 +876,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Checks the degrees in a manually build graph.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -900,7 +900,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Checks the degrees in a manually build graph, which has only SubLinks.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -919,7 +919,7 @@ public class VertexTest extends InstanceTest {
 	 * Generates a number of different edges and checks the correct degrees of
 	 * the vertices considering the different Edgeclasses and their subclasses.
 	 * After that it deletes the edges and checks the degrees again.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -1008,7 +1008,7 @@ public class VertexTest extends InstanceTest {
 	/**
 	 * Tests if a Vertex has the expected degree considering the EdgeClass and
 	 * SubClasses.
-	 * 
+	 *
 	 * @param forNode
 	 *            the Vertex, which degrees should be tested
 	 * @param expectedLink
@@ -1036,7 +1036,7 @@ public class VertexTest extends InstanceTest {
 	/**
 	 * A vertex with no connected incidences has to have a degree of 0 for each
 	 * Class extends Edge.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -1049,7 +1049,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Checks the degrees in a manually build graph.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -1072,7 +1072,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Checks the degrees in a manually build graph, which has only SubLinks.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -1091,7 +1091,7 @@ public class VertexTest extends InstanceTest {
 	 * Generates a number of different edges and checks the correct degrees of
 	 * the vertices considering the different Classes and Subclasses. After that
 	 * it deletes the edges and checks the degrees again.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -1180,7 +1180,7 @@ public class VertexTest extends InstanceTest {
 	/**
 	 * Tests if a Vertex has the expected degree considering the Classes
 	 * extending Edge and SubClasses.
-	 * 
+	 *
 	 * @param forNode
 	 *            the Vertex, which degrees should be tested
 	 * @param expectedLink
@@ -1207,7 +1207,7 @@ public class VertexTest extends InstanceTest {
 	/**
 	 * A vertex with no connected incidences has to have a degree of 0 for each
 	 * EdgeClass.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -1223,7 +1223,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Checks the degrees in a manually build graph.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -1261,7 +1261,7 @@ public class VertexTest extends InstanceTest {
 	/**
 	 * Checks the degrees in a manually build graph, which has only one
 	 * LinkBack.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -1286,7 +1286,7 @@ public class VertexTest extends InstanceTest {
 	 * the vertices considering the different Edgeclasses and their
 	 * EdgeDirections. After that it deletes the edges and checks the degrees
 	 * again.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -1427,7 +1427,7 @@ public class VertexTest extends InstanceTest {
 	/**
 	 * Tests if a Vertex has the expected degree considering the EdgeClass and
 	 * the EdgeDirection.
-	 * 
+	 *
 	 * @param forNode
 	 *            the Vertex, which degrees should be tested
 	 * @param expectedLink
@@ -1457,7 +1457,7 @@ public class VertexTest extends InstanceTest {
 	/**
 	 * A vertex with no connected incidences has to have a degree of 0 for each
 	 * Class.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -1474,7 +1474,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Checks the degrees in a manually build graph.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -1511,7 +1511,7 @@ public class VertexTest extends InstanceTest {
 	/**
 	 * Checks the degrees in a manually build graph, which has only one
 	 * LinkBack.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -1535,7 +1535,7 @@ public class VertexTest extends InstanceTest {
 	 * Generates a number of different edges and checks the correct degrees of
 	 * the vertices considering the different Classes and their EdgeDirections.
 	 * After that it deletes the edges and checks the degrees again.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -1675,7 +1675,7 @@ public class VertexTest extends InstanceTest {
 	/**
 	 * Tests if a Vertex has the expected degree considering the Class and the
 	 * EdgeDirection.
-	 * 
+	 *
 	 * @param forNode
 	 *            the Vertex, which degrees should be tested
 	 * @param expectedLink
@@ -1703,7 +1703,7 @@ public class VertexTest extends InstanceTest {
 	/**
 	 * A vertex with no connected incidences has to have a degree of 0 for each
 	 * EdgeClass.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -1723,7 +1723,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Checks the degrees in a manually build graph.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -1771,7 +1771,7 @@ public class VertexTest extends InstanceTest {
 	/**
 	 * Checks the degrees in a manually build graph, which has only one
 	 * LinkBack.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -1801,7 +1801,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Checks the degrees in a manually build graph, which has only one Link.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -1833,7 +1833,7 @@ public class VertexTest extends InstanceTest {
 	 * the vertices considering the different Edgeclasses, their EdgeDirections
 	 * and their SubClasses. After that it deletes the edges and checks the
 	 * degrees again.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -1980,7 +1980,7 @@ public class VertexTest extends InstanceTest {
 	/**
 	 * Tests if a Vertex has the expected degree considering the EdgeClass, the
 	 * EdgeDirection and the Subclasses.
-	 * 
+	 *
 	 * @param forNode
 	 *            the Vertex, which degrees should be tested
 	 * @param expectedLink
@@ -2007,7 +2007,7 @@ public class VertexTest extends InstanceTest {
 	/**
 	 * A vertex with no connected incidences has to have a degree of 0 for each
 	 * Class.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -2025,7 +2025,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Checks the degrees in a manually build graph.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -2070,7 +2070,7 @@ public class VertexTest extends InstanceTest {
 	/**
 	 * Checks the degrees in a manually build graph, which has only one
 	 * LinkBack.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -2098,7 +2098,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Checks the degrees in a manually build graph, which has only one Link.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -2129,7 +2129,7 @@ public class VertexTest extends InstanceTest {
 	 * the vertices considering the different Classes, their EdgeDirections and
 	 * their SubClasses. After that it deletes the edges and checks the degrees
 	 * again.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -2270,7 +2270,7 @@ public class VertexTest extends InstanceTest {
 	/**
 	 * Tests if a Vertex has the expected degree considering the Class, the
 	 * EdgeDirection and the Subclasses.
-	 * 
+	 *
 	 * @param forNode
 	 *            the Vertex, which degrees should be tested
 	 * @param expectedLink
@@ -2296,7 +2296,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Tests the method if there is only one Vertex in the graph.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -2311,7 +2311,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Tests the correctness in a manually build graph.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -2334,7 +2334,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Tests the correctness in an random graph.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -2362,11 +2362,12 @@ public class VertexTest extends InstanceTest {
 		VertexTestGraph graph = null;
 		switch (implementationType) {
 		case STANDARD:
-			graph = VertexTestSchema.instance().createVertexTestGraph(ImplementationType.STANDARD,100, 100);
+			graph = VertexTestSchema.instance().createVertexTestGraph(
+					ImplementationType.STANDARD, 100, 100);
 			break;
 		case TRANSACTION:
-			graph = VertexTestSchema.instance()
-					.createVertexTestGraph(ImplementationType.TRANSACTION,100, 100);
+			graph = VertexTestSchema.instance().createVertexTestGraph(
+					ImplementationType.TRANSACTION, 100, 100);
 			break;
 		case DATABASE:
 			graph = createVertexTestGraphWithDatabaseSupport();
@@ -2396,7 +2397,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Tests the method if there is only one Vertex in the graph.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -2411,7 +2412,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Tests the correctness in a manually build graph.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -2434,7 +2435,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Tests the correctness in an random graph.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -2466,7 +2467,7 @@ public class VertexTest extends InstanceTest {
 	 * ret[1]=SubNode<br>
 	 * ret[2]=SuperNode<br>
 	 * ret[3]=DoubleSubNode
-	 * 
+	 *
 	 * @return an array <code>ret</code> of all VertexClasses
 	 */
 	private VertexClass[] getVertexClasses() {
@@ -2488,7 +2489,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Tests if there is only one vertex in the graph.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -2508,7 +2509,7 @@ public class VertexTest extends InstanceTest {
 	/**
 	 * The next vertex is an instance of a class which is a subclass of another
 	 * vertexclass.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -2529,7 +2530,7 @@ public class VertexTest extends InstanceTest {
 	/**
 	 * The next vertex is an instance of a class which is a subclass of tow
 	 * other vertexclasses.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -2550,7 +2551,7 @@ public class VertexTest extends InstanceTest {
 	/**
 	 * Test in a manually build graph: SubNode SuperNode DoubleSubNode SuperNode
 	 * SubNode SuperNode DoubleSubNode
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -2606,7 +2607,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * RandomTests
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -2723,7 +2724,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Tests if there is only one vertex in the graph.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -2742,7 +2743,7 @@ public class VertexTest extends InstanceTest {
 	/**
 	 * The next vertex is an instance of a class which is a subclass of another
 	 * vertexclass.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -2762,7 +2763,7 @@ public class VertexTest extends InstanceTest {
 	/**
 	 * The next vertex is an instance of a class which is a subclass of tow
 	 * other vertexclasses.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -2782,7 +2783,7 @@ public class VertexTest extends InstanceTest {
 	/**
 	 * Test in a manually build graph: SubNode SuperNode DoubleSubNode SuperNode
 	 * SubNode SuperNode DoubleSubNode
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -2837,7 +2838,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * RandomTests
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -2947,7 +2948,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * RandomTests
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -3094,7 +3095,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * RandomTests
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -3245,7 +3246,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Tests if a node has no Edges
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -3262,7 +3263,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Tests if a node has only one Edge
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -3286,7 +3287,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Tests if a node has two Edges with the same direction.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -3311,7 +3312,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Tests if a node has two Edges with different direction.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -3337,7 +3338,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Tests if alpha and omega of an Edge is the same Vertex.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -3356,7 +3357,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Random tests
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -3452,7 +3453,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Tests if a node has no Edges
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -3470,7 +3471,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Tests if a node has only one Edge
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -3493,7 +3494,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Tests if a node has an edge which extends another edge
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -3516,7 +3517,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Tests if a node has two Edges.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -3540,7 +3541,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Tests if alpha and omega of an Edge is the same Vertex.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -3559,7 +3560,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Random tests
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -3647,7 +3648,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Tests if a node has no Edges
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -3664,7 +3665,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Tests if a node has only one Edge
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -3686,7 +3687,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Tests if a node has an edge which extends another edge
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -3708,7 +3709,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Tests if a node has two Edges.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -3731,7 +3732,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Tests if alpha and omega of an Edge is the same Vertex.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -3749,7 +3750,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Random tests
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -3834,7 +3835,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Tests if a node has no Edges
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -3862,7 +3863,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Tests if a node has only one Edge
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -3903,7 +3904,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Tests if a node has an edge which extends another edge
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -3946,7 +3947,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Tests if a node has two Edges.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -3990,7 +3991,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Tests if alpha and omega of an Edge is the same Vertex.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -4020,7 +4021,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Random tests
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -4178,7 +4179,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Tests if a node has no Edges
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -4205,7 +4206,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Tests if a node has only one Edge
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -4245,7 +4246,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Tests if a node has an edge which extends another edge
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -4288,7 +4289,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Tests if a node has two Edges.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -4333,7 +4334,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Tests if alpha and omega of an Edge is the same Vertex.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -4362,7 +4363,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Random tests
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -4517,7 +4518,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * A vertex is not before itself.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -4538,7 +4539,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * A vertex is not after itself.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -4559,7 +4560,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Deleting v3 in v1<>---e1----v2<>-----e2-----v3
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -4592,7 +4593,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Deleting v2 in v1<>---e1----v2<>-----e2-----v3
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -4623,7 +4624,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Deleting v1 in v1<>---e1----v2<>-----e2-----v3
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -4645,7 +4646,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Deleting v1 in v1<>---e1----v2 v1<>-----e2-----v3
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -4667,7 +4668,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Deleting v1 in v1<>---e1----v2 v1<>-----e2-----v2
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -4688,7 +4689,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Deleting v1 in v1<>---e1----v2-----e2-----v3
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -4714,7 +4715,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * An exception should occur if you want to remove an edge via the iterator.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test(expected = UnsupportedOperationException.class)
@@ -4733,7 +4734,7 @@ public class VertexTest extends InstanceTest {
 	/**
 	 * If you call hasNext several time, the current edge of the iterator must
 	 * stay the same.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -4753,7 +4754,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * If there exists no further edges, hasNext must return false.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -4778,7 +4779,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * An exception should occur if the current edge is deleted.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test(expected = ConcurrentModificationException.class)
@@ -4800,7 +4801,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * An exception should occur if the position of the current edge is changed.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test(expected = ConcurrentModificationException.class)
@@ -4822,7 +4823,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * An exception should occur if a previous edge is deleted.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test(expected = ConcurrentModificationException.class)
@@ -4846,7 +4847,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * An exception should occur if a following edge is deleted.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test(expected = ConcurrentModificationException.class)
@@ -4866,7 +4867,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * An exception should occur if an edge is added.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test(expected = ConcurrentModificationException.class)
@@ -4886,7 +4887,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * An exception should occur if an edge gets another alpha vertex.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test(expected = ConcurrentModificationException.class)
@@ -4908,7 +4909,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Checks if the expected incidences equals the returned incidences.
-	 * 
+	 *
 	 * @param v
 	 *            the node of which the incidences should be tested
 	 * @param ec
@@ -4958,7 +4959,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Checks if a vertex has no incidences.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -4978,7 +4979,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Checks if a vertex has only outgoing or ingoing incidences.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -5012,7 +5013,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Checks incidences in a manually build graph.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -5069,7 +5070,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Random test.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -5152,7 +5153,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * If the IN-edges are iterated the OUT-edges could not be deleted.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test(expected = ConcurrentModificationException.class)
@@ -5173,7 +5174,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * If the IN-edges are iterated the OUT-edges could not be changed.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test(expected = ConcurrentModificationException.class)
@@ -5194,7 +5195,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * If the IN-edges are iterated a new OUT-edges could not be created.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test(expected = ConcurrentModificationException.class)
@@ -5215,7 +5216,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * If the OUT-edges are iterated the IN-edges could not be deleted.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test(expected = ConcurrentModificationException.class)
@@ -5236,7 +5237,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * If the OUT-edges are iterated the IN-edges could not be changed.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test(expected = ConcurrentModificationException.class)
@@ -5257,7 +5258,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * If the OUT-edges are iterated a new IN-edges could not be created.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test(expected = ConcurrentModificationException.class)
@@ -5280,7 +5281,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Checks if a vertex has no incidences.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -5298,7 +5299,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Checks if a vertex has only incident edges of type SubLink.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -5333,7 +5334,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Checks incidences in a manually build graph.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -5385,7 +5386,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Random test.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -5459,7 +5460,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Checks if a vertex has no incidences.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -5478,7 +5479,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Checks if a vertex has only incident edges of type SubLink.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -5512,7 +5513,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Checks incidences in a manually build graph.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -5563,7 +5564,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Random test.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -5642,7 +5643,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Checks if a vertex has no incidences.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -5679,7 +5680,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Checks if a vertex has only incident edges of type SubLink.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -5751,7 +5752,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Checks incidences in a manually build graph.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -5862,7 +5863,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Random test.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -6023,7 +6024,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Checks if a vertex has no incidences.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -6059,7 +6060,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Checks if a vertex has only incident edges of type SubLink.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -6140,7 +6141,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Checks incidences in a manually build graph.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -6265,7 +6266,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Random test.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -6424,7 +6425,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Checks some cases for true and false considering heredity.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -6450,7 +6451,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Checks some cases for true and false.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -6479,7 +6480,7 @@ public class VertexTest extends InstanceTest {
 	// tests of the method Graph getGraph();
 	/**
 	 * Checks some cases for true and false.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -6515,7 +6516,7 @@ public class VertexTest extends InstanceTest {
 	// }
 	/**
 	 * Tests if the graphversion is increased by creating a new vertex.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -6537,7 +6538,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Tests if the graphversion is increased by deleting a vertex.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -6559,7 +6560,7 @@ public class VertexTest extends InstanceTest {
 	/**
 	 * Tests if the graphversion is increased by changing the attributes of a
 	 * vertex.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -6585,7 +6586,7 @@ public class VertexTest extends InstanceTest {
 	// tests of the method AttributedElementClass getAttributedElementClass();
 	/**
 	 * Some test cases for getAttributedElementClass
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -6607,7 +6608,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Some test cases for getSchemaClass
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -6628,7 +6629,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Some test cases for getGraphClass
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -6656,7 +6657,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Tests if the value of the correct attribute is returned.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -6678,7 +6679,7 @@ public class VertexTest extends InstanceTest {
 	/**
 	 * Tests if an exception is thrown if you want to get an attribute which
 	 * doesn't exist.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test(expected = NoSuchAttributeException.class)
@@ -6694,7 +6695,7 @@ public class VertexTest extends InstanceTest {
 	/**
 	 * Tests if an exception is thrown if you want to get an attribute with an
 	 * empty name.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test(expected = NoSuchAttributeException.class)
@@ -6712,7 +6713,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Tests if an existing attribute is correct set.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -6733,7 +6734,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Tests if an existing attribute is set to null.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -6752,7 +6753,7 @@ public class VertexTest extends InstanceTest {
 	/**
 	 * Tests if an exception is thrown if you want to get an attribute which
 	 * doesn't exist.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test(expected = NoSuchAttributeException.class)
@@ -6766,7 +6767,7 @@ public class VertexTest extends InstanceTest {
 	/**
 	 * Tests if an exception is thrown if you want to get an attribute with an
 	 * empty name.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test(expected = NoSuchAttributeException.class)
@@ -6781,7 +6782,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Some tests.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -6806,7 +6807,7 @@ public class VertexTest extends InstanceTest {
 	// tests of the method int compareTo(AttributedElement a);
 	/**
 	 * Test if a vertex is equal to itself.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -6821,7 +6822,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Test if a vertex is smaller than another.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -6837,7 +6838,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Test if a vertex is greater than another.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -7037,7 +7038,7 @@ public class VertexTest extends InstanceTest {
 	/**
 	 * Checks if <code>v.incidences()</code> has the same elements in the same
 	 * order like <code>e</code>.
-	 * 
+	 *
 	 * @param v
 	 *            the Vertex which incident edges should be checked
 	 * @param e
@@ -7059,7 +7060,7 @@ public class VertexTest extends InstanceTest {
 	/**
 	 * Checks if <code>graph.edges()</code> has the same elements in the same
 	 * order like <code>e</code>.
-	 * 
+	 *
 	 * @param e
 	 *            the edges to check
 	 */
@@ -7215,7 +7216,7 @@ public class VertexTest extends InstanceTest {
 	// tests of the method remove_sourcec
 	/**
 	 * Removes the sourcec of v0 --&gt v0.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -7232,7 +7233,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Removes the sourcec of v0 --&gt v1.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -7937,7 +7938,7 @@ public class VertexTest extends InstanceTest {
 	/**
 	 * Checks if the edges which are returned by an get#Edge#incidences are the
 	 * expected ones.
-	 * 
+	 *
 	 * @param incidenceName
 	 *            Name of #Edge#
 	 * @param v
@@ -8060,4 +8061,27 @@ public class VertexTest extends InstanceTest {
 		commit(g);
 	}
 
+	@Test
+	public void isInstanceOfTest() throws CommitFailedException {
+		VertexClass a = g.getSchema().getGraphClass().getVertexClass("A");
+		VertexClass asn = g.getSchema().getGraphClass()
+				.getVertexClass("AbstractSuperNode");
+		VertexClass sn = g.getSchema().getGraphClass()
+				.getVertexClass("SuperNode");
+
+		createTransaction(g);
+		for (DoubleSubNode x : g.getDoubleSubNodeVertices()) {
+			assertTrue(x.isInstanceOf(x.getAttributedElementClass()));
+			assertTrue(x.isInstanceOf(asn));
+			assertTrue(x.isInstanceOf(sn));
+			assertFalse(x.isInstanceOf(a));
+		}
+
+		for (AbstractSuperNode x : g.getAbstractSuperNodeVertices()) {
+			assertTrue(x.isInstanceOf(asn));
+			assertFalse(x.isInstanceOf(sn));
+			assertFalse(x.isInstanceOf(a));
+		}
+		commit(g);
+	}
 }
