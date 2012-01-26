@@ -325,6 +325,60 @@ public class GenericGraphImplTest {
 			fail();
 		}
 	}
+	
+	// Test if deletion works with the generic implementation
+	@Test
+	public void testDeleteEdge() {
+		try {
+			Schema schema = GraphIO.loadSchemaFromFile(SCHEMAFOLDER
+					+ "VertexTestSchema.tg");
+			Graph g = schema.createGraph(ImplementationType.GENERIC, 100, 100);
+			Vertex v1 = g.createVertex(schema.getGraphClass().getVertexClass(
+					"DoubleSubNode"));
+			Vertex v2 = g.createVertex(schema.getGraphClass().getVertexClass(
+					"SuperNode"));
+
+			Edge e1 = g.createEdge(schema.getGraphClass().getEdgeClass("SubLink"),
+					v1, v2);
+			Edge e2 = g.createEdge(schema.getGraphClass().getEdgeClass("LinkBack"),
+					v2, v1);
+			
+			g.deleteEdge(e1);
+			assertFalse(g.containsEdge(e1));
+			assertTrue(g.containsVertex(v2));
+			assertTrue(g.containsEdge(e2));
+		} catch (GraphIOException e) {
+			e.printStackTrace();
+			fail();
+		}
+	}
+	
+	// Test if deletion works with the generic implementation
+	@Test
+	public void testDeleteVertex() {
+		try {
+			Schema schema = GraphIO.loadSchemaFromFile(SCHEMAFOLDER
+					+ "VertexTestSchema.tg");
+			Graph g = schema.createGraph(ImplementationType.GENERIC, 100, 100);
+			Vertex v1 = g.createVertex(schema.getGraphClass().getVertexClass(
+					"DoubleSubNode"));
+			Vertex v2 = g.createVertex(schema.getGraphClass().getVertexClass(
+					"SuperNode"));
+
+			Edge e1 = g.createEdge(schema.getGraphClass().getEdgeClass("SubLink"),
+					v1, v2);
+			Edge e2 = g.createEdge(schema.getGraphClass().getEdgeClass("LinkBack"),
+					v2, v1);
+			
+			g.deleteVertex(v1);
+			assertFalse(g.containsEdge(e1));
+			assertFalse(g.containsVertex(v2));
+			assertFalse(g.containsEdge(e2));
+		} catch (GraphIOException e) {
+			e.printStackTrace();
+			fail();
+		}
+	}
 
 	// EdgeClass is from a different schema
 	@Test(expected = GraphException.class)
