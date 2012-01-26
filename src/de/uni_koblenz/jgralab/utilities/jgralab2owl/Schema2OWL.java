@@ -186,7 +186,7 @@ class Schema2OWL {
 		boolean listCreated = false;
 
 		for (CompositeDomain compositeDomain : schema
-				.getCompositeDomainsInTopologicalOrder()) {
+				.getCompositeDomains()) {
 			if (!setCreated
 					&& compositeDomain.getTGTypeName(null).startsWith("Set<")) {
 				convertSetDomain();

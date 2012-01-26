@@ -904,11 +904,8 @@ public class SchemaImpl implements Schema {
 	}
 
 	@Override
-	public List<CompositeDomain> getCompositeDomainsInTopologicalOrder() {
+	public List<CompositeDomain> getCompositeDomains() {
 		ArrayList<CompositeDomain> topologicalOrderList = new ArrayList<CompositeDomain>();
-		// CompositeDomain cd;
-		// HashSet<CompositeDomain> compositeDomainSet = new
-		// HashSet<CompositeDomain>();
 
 		for (Domain dom : domainsDag.getNodesInTopologicalOrder()) {
 			if (dom instanceof CompositeDomain) {
@@ -916,32 +913,6 @@ public class SchemaImpl implements Schema {
 			}
 		}
 		return topologicalOrderList;
-
-		// // store composite domains in compositeDomainSet
-		// for (Domain dl : domains.values()) {
-		// if (dl instanceof CompositeDomain) {
-		// compositeDomainSet.add((CompositeDomain) dl);
-		// }
-		// }
-		//
-		// // iteratively add domains from compositeDomainSet,
-		// // whose component domains already are in topologicalOrderList,
-		// // to topologicalOrderList
-		// // the added domains are removed from compositeDomainSet
-		// while (!compositeDomainSet.isEmpty()) {
-		// for (Iterator<CompositeDomain> cdit = compositeDomainSet.iterator();
-		// cdit
-		// .hasNext();) {
-		// cd = cdit.next();
-		// if (topologicalOrderList.containsAll(cd
-		// .getAllComponentCompositeDomains())) {
-		// topologicalOrderList.add(cd);
-		// cdit.remove();
-		// }
-		// }
-		// }
-		//
-		// return topologicalOrderList;
 	}
 
 	private Method getCreateMethod(String className, String graphClassName,
@@ -1021,7 +992,7 @@ public class SchemaImpl implements Schema {
 	}
 
 	@Override
-	public List<EdgeClass> getEdgeClassesInTopologicalOrder() {
+	public List<EdgeClass> getEdgeClasses() {
 		List<EdgeClass> ec_top = new ArrayList<EdgeClass>();
 		ec_top.add(defaultEdgeClass);
 		for (EdgeClass ec : graphClass.getEdgeClasses()) {
@@ -1230,7 +1201,7 @@ public class SchemaImpl implements Schema {
 	}
 
 	@Override
-	public List<VertexClass> getVertexClassesInTopologicalOrder() {
+	public List<VertexClass> getVertexClasses() {
 		List<VertexClass> vc_top = new ArrayList<VertexClass>();
 		vc_top.add(defaultVertexClass);
 		for (VertexClass vc : graphClass.getVertexClasses()) {

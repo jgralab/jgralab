@@ -1809,9 +1809,9 @@ public abstract class GraphDatabase {
 	private void insertDefinedTypesOf(Schema schema, int schemaId)
 			throws SQLException {
 		insertGraphClass(schema.getGraphClass(), schemaId);
-		insertVertexClasses(schema.getVertexClassesInTopologicalOrder(),
+		insertVertexClasses(schema.getVertexClasses(),
 				schemaId);
-		insertEdgeClasses(schema.getEdgeClassesInTopologicalOrder(), schemaId);
+		insertEdgeClasses(schema.getEdgeClasses(), schemaId);
 		insertAttributes(schemaId);
 	}
 
