@@ -200,7 +200,7 @@ public class Tg2Dot extends Tg2Whatever {
 		if (reversedEdgeTypes != null) {
 			HashSet<AttributedElementClass> revEdgeTypes = new HashSet<AttributedElementClass>();
 			Collections.addAll(revEdgeTypes, reversedEdgeTypes);
-			converter.setReversedEdgeTypes(revEdgeTypes);
+			converter.setReversedEdgeClasses(revEdgeTypes);
 		}
 
 		return converter;
@@ -850,7 +850,7 @@ public class Tg2Dot extends Tg2Whatever {
 	 *            the set of edge types whose instances should be printed
 	 *            reversed
 	 */
-	public void setReversedEdgeTypes(
+	public void setReversedEdgeClasses(
 			Set<AttributedElementClass> reversedEdgeTypes) {
 
 		// Copies the current set in order to manipulate it.
@@ -968,11 +968,6 @@ public class Tg2Dot extends Tg2Whatever {
 
 	public Set<AttributedElementClass> getReversedEdgeClasses() {
 		return reversedEdgeClasses;
-	}
-
-	public void setReversedEdgeClasses(
-			Set<AttributedElementClass> reversedEdgeClasses) {
-		this.reversedEdgeClasses = reversedEdgeClasses;
 	}
 
 	public GraphVizLayouter getGraphVizLayouter() {
