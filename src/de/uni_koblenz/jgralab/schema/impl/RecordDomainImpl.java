@@ -58,6 +58,7 @@ import de.uni_koblenz.jgralab.schema.exception.InvalidNameException;
 import de.uni_koblenz.jgralab.schema.exception.NoSuchRecordComponentException;
 import de.uni_koblenz.jgralab.schema.exception.RecordCycleException;
 import de.uni_koblenz.jgralab.schema.exception.SchemaClassAccessException;
+import de.uni_koblenz.jgralab.schema.exception.SchemaException;
 import de.uni_koblenz.jgralab.schema.exception.WrongSchemaException;
 import de.uni_koblenz.jgralab.schema.impl.compilation.SchemaClassManager;
 
@@ -93,6 +94,10 @@ public final class RecordDomainImpl extends CompositeDomainImpl implements
 
 	@Override
 	public void addComponent(String name, Domain domain) {
+		if(((SchemaImpl)getSchema()).isFinish()){
+			throw new SchemaException("No changes to finished schema!");
+		}
+		
 		if (name.isEmpty()) {
 			throw new InvalidNameException(
 					"Cannot create a record component with an empty name.");
@@ -113,6 +118,7 @@ public final class RecordDomainImpl extends CompositeDomainImpl implements
 		}
 		RecordComponent c = new RecordComponent(name, domain);
 		components.put(name, c);
+		((SchemaImpl)parentPackage.getSchema()).getDomainsDag().createEdge(domain,this);
 	}
 
 	@Override

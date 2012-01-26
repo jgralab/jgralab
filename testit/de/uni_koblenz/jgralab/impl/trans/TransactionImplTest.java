@@ -55,6 +55,7 @@ import org.pcollections.PVector;
 import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.GraphException;
+import de.uni_koblenz.jgralab.ImplementationType;
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.trans.CommitFailedException;
@@ -100,7 +101,7 @@ public class TransactionImplTest {
 	@Before
 	public void setUp() throws InterruptedException {
 		motorwayMap = MotorwayMapSchema.instance()
-				.createMotorwayMapWithTransactionSupport(V, E);
+				.createMotorwayMap(ImplementationType.TRANSACTION,V, E);
 
 		readWriteTransaction1 = (TransactionImpl) motorwayMap.newTransaction();
 		readOnlyTransaction = (TransactionImpl) motorwayMap

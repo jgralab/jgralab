@@ -4,6 +4,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 
+import de.uni_koblenz.jgralab.ImplementationType;
 import de.uni_koblenz.jgralabtest.algolib.nonjunit.kdtree.KDTree;
 import de.uni_koblenz.jgralabtest.algolib.nonjunit.kdtree.Point;
 import de.uni_koblenz.jgralabtest.schemas.algolib.weighted.Location;
@@ -70,7 +71,7 @@ public class RandomGraphForAStar {
 
 	public WeightedGraph createPlanarRandomGraph(int vertexCount,
 			int edgesPerVertex) {
-		WeightedGraph graph = WeightedSchema.instance().createWeightedGraph();
+		WeightedGraph graph = WeightedSchema.instance().createWeightedGraph(ImplementationType.STANDARD);
 		Random rng = new Random();
 		return createPlanarRandomGraph(graph, vertexCount, edgesPerVertex, rng,
 				true);

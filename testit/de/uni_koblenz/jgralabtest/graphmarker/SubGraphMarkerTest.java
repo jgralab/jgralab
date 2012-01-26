@@ -87,11 +87,11 @@ public class SubGraphMarkerTest extends InstanceTest {
 	public void setUp() throws CommitFailedException {
 		switch (implementationType) {
 		case STANDARD:
-			g = MinimalSchema.instance().createMinimalGraph(V, E);
+			g = MinimalSchema.instance().createMinimalGraph(ImplementationType.STANDARD,V, E);
 			break;
 		case TRANSACTION:
 			g = MinimalSchema.instance()
-					.createMinimalGraphWithTransactionSupport(V, E);
+					.createMinimalGraph(ImplementationType.TRANSACTION,V, E);
 			break;
 		case DATABASE:
 			dbHandler.connectToDatabase();

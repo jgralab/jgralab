@@ -239,7 +239,7 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 		}
 
 		schema = cls.getSchema();
-		graphFactory = schema.getGraphFactory();
+		//graphFactory = schema.getGraphFactory();
 		setId(id == null ? RandomIdGenerator.generateId() : id);
 		// needed for initialization of graphVersion with transactions
 		graphVersion = -1;
@@ -2192,5 +2192,13 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 	public void save(DataOutputStream out, ProgressFunction pf)
 			throws GraphIOException {
 		GraphIO.saveGraphToStream(this, out, pf);
+	}
+
+	public GraphFactory getGraphFactory() {
+		return graphFactory;
+	}
+
+	public void setGraphFactory(GraphFactory graphFactory) {
+		this.graphFactory = graphFactory;
 	}
 }

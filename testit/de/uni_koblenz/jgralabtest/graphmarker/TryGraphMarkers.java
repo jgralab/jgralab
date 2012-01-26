@@ -35,6 +35,7 @@
 package de.uni_koblenz.jgralabtest.graphmarker;
 
 import de.uni_koblenz.jgralab.Edge;
+import de.uni_koblenz.jgralab.ImplementationType;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.graphmarker.DoubleEdgeMarker;
 import de.uni_koblenz.jgralab.graphmarker.IntegerVertexMarker;
@@ -49,7 +50,7 @@ public class TryGraphMarkers {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		MinimalGraph graph = MinimalSchema.instance().createMinimalGraph(5, 5);
+		MinimalGraph graph = MinimalSchema.instance().createMinimalGraph(ImplementationType.STANDARD,5, 5);
 		Node v1 = graph.createNode();
 		Node v2 = graph.createNode();
 		Node v3 = graph.createNode();
