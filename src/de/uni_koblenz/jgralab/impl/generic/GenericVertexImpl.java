@@ -162,15 +162,7 @@ public class GenericVertexImpl extends VertexImpl {
 
 	@Override
 	public Edge getFirstIncidence(EdgeClass anEdgeClass) {
-		Edge currentEdge = getFirstIncidence();
-		while (currentEdge != null) {
-			if (currentEdge.getNormalEdge().getAttributedElementClass()
-					.equals(anEdgeClass)) {
-				return currentEdge;
-			}
-			currentEdge = currentEdge.getNextIncidence();
-		}
-		return currentEdge;
+		return getFirstIncidence(anEdgeClass, EdgeDirection.INOUT);
 	}
 
 	@Override
@@ -179,7 +171,9 @@ public class GenericVertexImpl extends VertexImpl {
 		Edge currentEdge = getFirstIncidence(orientation);
 		while (currentEdge != null) {
 			if (currentEdge.getNormalEdge().getAttributedElementClass()
-					.equals(anEdgeClass)) {
+					.equals(anEdgeClass)
+					|| anEdgeClass.getAllSubClasses().contains(
+							currentEdge.getAttributedElementClass())) {
 				break;
 			}
 			currentEdge = currentEdge.getNextIncidence(orientation);
