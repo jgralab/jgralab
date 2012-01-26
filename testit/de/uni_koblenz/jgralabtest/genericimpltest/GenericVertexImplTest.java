@@ -434,7 +434,8 @@ public class GenericVertexImplTest {
 			assertEquals(vertices[4].getFirstIncidence(edgeClasses[5]), edges[5]);
 			assertEquals(vertices[5].getFirstIncidence(edgeClasses[5]), edges[5].getReversedEdge());
 			
-			// TODO Test with IN / OUT parameters
+			assertEquals(vertices[0].getFirstIncidence(edgeClasses[4], EdgeDirection.IN), edges[4].getReversedEdge());
+			assertEquals(vertices[2].getFirstIncidence(edgeClasses[0], EdgeDirection.OUT), edges[1]);
 		}
 		catch(GraphIOException e) {
 			e.printStackTrace();
@@ -449,6 +450,6 @@ public class GenericVertexImplTest {
 
 	@Test
 	public void testIsValidOmega() {
-
+		// TODO
 	}
 }
