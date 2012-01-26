@@ -48,6 +48,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import de.uni_koblenz.jgralab.Edge;
+import de.uni_koblenz.jgralab.ImplementationType;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.algolib.algorithms.AlgorithmTerminatedException;
 import de.uni_koblenz.jgralab.algolib.algorithms.search.BreadthFirstSearch;
@@ -96,7 +97,7 @@ public class BreadthFirstSearchTest extends GraphAlgorithmTest {
 		normalTreeEdges = new LinkedList<SimpleEdge>();
 		normalFronds = new LinkedList<SimpleEdge>();
 
-		g = SimpleSchema.instance().createSimpleGraph();
+		g = SimpleSchema.instance().createSimpleGraph(ImplementationType.STANDARD);
 		v1 = g.createSimpleVertex();
 		v2 = g.createSimpleVertex();
 		v3 = g.createSimpleVertex();

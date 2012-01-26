@@ -374,7 +374,7 @@ public abstract class GraphImpl extends GraphBaseImpl implements
 	@Override
 	public Edge internalCreateEdge(Class<? extends Edge> cls, Vertex alpha,
 			Vertex omega) {
-		Edge edge = graphFactory.createEdgeWithDatabaseSupport(cls, 0, this,
+		Edge edge = graphFactory.createEdge(cls, 0, this,
 				alpha, omega);
 		edge.initializeAttributesWithDefaultValues();
 		graphCache.addEdge((DatabasePersistableEdge) edge);
@@ -383,7 +383,7 @@ public abstract class GraphImpl extends GraphBaseImpl implements
 
 	@Override
 	public Vertex internalCreateVertex(Class<? extends Vertex> cls) {
-		Vertex vertex = graphFactory.createVertexWithDatabaseSupport(cls, 0,
+		Vertex vertex = graphFactory.createVertex(cls, 0,
 				this);
 		vertex.initializeAttributesWithDefaultValues();
 		graphCache.addVertex((DatabasePersistableVertex) vertex);

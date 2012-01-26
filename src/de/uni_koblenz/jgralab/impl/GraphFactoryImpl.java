@@ -42,6 +42,7 @@ import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphException;
 import de.uni_koblenz.jgralab.GraphFactory;
+import de.uni_koblenz.jgralab.ImplementationType;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.impl.db.GraphDatabase;
 import de.uni_koblenz.jgralab.schema.exception.SchemaClassAccessException;
@@ -56,54 +57,81 @@ import de.uni_koblenz.jgralab.schema.exception.SchemaClassAccessException;
  */
 public abstract class GraphFactoryImpl implements GraphFactory {
 
-	// FIXME Remove redundancies! Why is this all in one class anyway? Because
-	// it seems to be a factory pattern!?!
-
 	// Maps for standard support.
-	protected HashMap<Class<? extends Graph>, Constructor<? extends Graph>> graphMap;
+	protected Constructor<? extends Graph> graphConstructor;
 	protected HashMap<Class<? extends Edge>, Constructor<? extends Edge>> edgeMap;
 	protected HashMap<Class<? extends Vertex>, Constructor<? extends Vertex>> vertexMap;
 
-	// Maps for database support.
-	protected HashMap<Class<? extends Graph>, Constructor<? extends Graph>> graphDatabaseMap;
-	protected HashMap<Class<? extends Edge>, Constructor<? extends Edge>> edgeDatabaseMap;
-	protected HashMap<Class<? extends Vertex>, Constructor<? extends Vertex>> vertexDatabaseMap;
-
-	// Maps for transaction support.
-	protected HashMap<Class<? extends Graph>, Constructor<? extends Graph>> graphTransactionMap;
-	protected HashMap<Class<? extends Edge>, Constructor<? extends Edge>> edgeTransactionMap;
-	protected HashMap<Class<? extends Vertex>, Constructor<? extends Vertex>> vertexTransactionMap;
+	protected ImplementationType implType;
+	protected GraphDatabase graphDatabase;
 
 	/**
 	 * Creates and initializes a new <code>GraphFactoryImpl</code>.
 	 */
-	protected GraphFactoryImpl() {
-		createMapsForStandardSupport();
-		createMapsForDatabaseSupport();
-		createMapsForTransactionSupport();
+	protected GraphFactoryImpl(ImplementationType i) {
+		this.implType = i;
+		createMaps();
 	}
 
-	private void createMapsForStandardSupport() {
-		graphMap = new HashMap<Class<? extends Graph>, Constructor<? extends Graph>>();
+	public void setGraphDatabase(GraphDatabase graphDatabase){
+		this.graphDatabase = graphDatabase;
+	}
+	
+	private void createMaps() {
 		edgeMap = new HashMap<Class<? extends Edge>, Constructor<? extends Edge>>();
 		vertexMap = new HashMap<Class<? extends Vertex>, Constructor<? extends Vertex>>();
 	}
 
-	private void createMapsForDatabaseSupport() {
-		graphDatabaseMap = new HashMap<Class<? extends Graph>, Constructor<? extends Graph>>();
-		edgeDatabaseMap = new HashMap<Class<? extends Edge>, Constructor<? extends Edge>>();
-		vertexDatabaseMap = new HashMap<Class<? extends Vertex>, Constructor<? extends Vertex>>();
-	}
 
-	private void createMapsForTransactionSupport() {
-		graphTransactionMap = new HashMap<Class<? extends Graph>, Constructor<? extends Graph>>();
-		edgeTransactionMap = new HashMap<Class<? extends Edge>, Constructor<? extends Edge>>();
-		vertexTransactionMap = new HashMap<Class<? extends Vertex>, Constructor<? extends Vertex>>();
-	}
-
-	// --- Methods for option STDIMPL
 	// ---------------------------------------------------
+	@Override
+	public void setGraphImplementationClass(
+			Class<? extends Graph> originalClass,
+			Class<? extends Graph> implementationClass) {
+		if (isSuperclassOrEqual(originalClass, implementationClass)) {
+			try {
+				if(implType.equals(ImplementationType.DATABASE)){
+					Class<?>[] params  = { String.class, int.class, int.class, GraphDatabase.class};
+					graphConstructor = implementationClass
+							.getConstructor(params);
+				}else{
+					Class<?>[] params  = { String.class, int.class, int.class };
+					graphConstructor = implementationClass
+							.getConstructor(params);
+				}
+			} catch (NoSuchMethodException ex) {
+				throw new SchemaClassAccessException(
+						"Unable to locate default constructor for graphclass "
+								+ implementationClass.getName(), ex);
+			}
+		}
+	}
 
+	@Override
+	public Graph createGraph(String id,
+			int vMax, int eMax) {
+		try {
+			if(implType.equals(ImplementationType.DATABASE)){
+				Graph dbGraph =  graphConstructor.newInstance(id, vMax, eMax, graphDatabase);
+				dbGraph.setGraphFactory(this);
+				return dbGraph;
+			}
+			else{
+				Graph graph =  graphConstructor.newInstance(id, vMax, eMax);
+				graph.setGraphFactory(this);
+				return graph;
+			}
+		} catch (Exception ex) {
+			throw new SchemaClassAccessException("Cannot create graph of class "
+					+ graphConstructor.getDeclaringClass().getCanonicalName(), ex);
+		}
+	}
+
+	@Override
+	public Graph createGraph(String id) {
+		return createGraph(id,1000,1000);
+	}
+	
 	@Override
 	public Edge createEdge(Class<? extends Edge> edgeClass, int id, Graph g,
 			Vertex alpha, Vertex omega) {
@@ -123,28 +151,7 @@ public abstract class GraphFactoryImpl implements GraphFactory {
 		}
 	}
 
-	@Override
-	public Graph createGraph(Class<? extends Graph> graphClass, String id,
-			int vMax, int eMax) {
-		try {
-			Graph g = graphMap.get(graphClass).newInstance(id, vMax, eMax);
-			return g;
-		} catch (Exception ex) {
-			throw new SchemaClassAccessException("Cannot create graph of class "
-					+ graphClass.getCanonicalName(), ex);
-		}
-	}
-
-	@Override
-	public Graph createGraph(Class<? extends Graph> graphClass, String id) {
-		try {
-			Graph g = graphMap.get(graphClass).newInstance(id, 1000, 1000);
-			return g;
-		} catch (Exception ex) {
-			throw new SchemaClassAccessException("Cannot create graph of class "
-					+ graphClass.getCanonicalName(), ex);
-		}
-	}
+	
 
 	@Override
 	public Vertex createVertex(Class<? extends Vertex> vertexClass, int id,
@@ -165,23 +172,7 @@ public abstract class GraphFactoryImpl implements GraphFactory {
 		}
 	}
 
-	@Override
-	public void setGraphImplementationClass(
-			Class<? extends Graph> originalClass,
-			Class<? extends Graph> implementationClass) {
-		if (isSuperclassOrEqual(originalClass, implementationClass)) {
-			try {
-				Class<?>[] params = { String.class, int.class, int.class };
-				graphMap.put(originalClass, implementationClass
-						.getConstructor(params));
-			} catch (NoSuchMethodException ex) {
-				throw new SchemaClassAccessException(
-						"Unable to locate default constructor for graphclass "
-								+ implementationClass.getName(), ex);
-			}
-		}
-	}
-
+	
 	@Override
 	public void setVertexImplementationClass(
 			Class<? extends Vertex> originalClass,
@@ -211,248 +202,6 @@ public abstract class GraphFactoryImpl implements GraphFactory {
 			} catch (NoSuchMethodException ex) {
 				throw new SchemaClassAccessException(
 						"Unable to locate default constructor for edgeclass"
-								+ implementationClass, ex);
-			}
-		}
-	}
-
-	// -------------------------------------------------------------------------
-	// Methods for the TRANSIMPL option.
-	// -------------------------------------------------------------------------
-
-	@Override
-	public Graph createGraphWithDatabaseSupport(
-			Class<? extends Graph> graphClass, GraphDatabase graphDatabase,
-			String id) {
-		try {
-			return graphDatabaseMap.get(graphClass).newInstance(id, 1000, 1000,
-					graphDatabase);
-		} catch (Exception exception) {
-			throw new SchemaClassAccessException("Cannot create graph of class "
-					+ graphClass.getCanonicalName(), exception);
-		}
-	}
-
-	@Override
-	public Graph createGraphWithDatabaseSupport(
-			Class<? extends Graph> graphClass, GraphDatabase graphDatabase,
-			String id, int vMax, int eMax) {
-		try {
-			return graphDatabaseMap.get(graphClass).newInstance(id, vMax, eMax,
-					graphDatabase);
-		} catch (Exception exception) {
-			throw new SchemaClassAccessException("Cannot create graph of class "
-					+ graphClass.getCanonicalName(), exception);
-		}
-	}
-
-	@Override
-	public Edge createEdgeWithDatabaseSupport(Class<? extends Edge> edgeClass,
-			int id, Graph graph, Vertex alpha, Vertex omega) {
-		try {
-			return edgeDatabaseMap.get(edgeClass).newInstance(id, graph, alpha,
-					omega);
-		} catch (Exception exception) {
-			if (exception.getCause() instanceof GraphException) {
-				throw new GraphException(exception.getCause()
-						.getLocalizedMessage());
-			} else {
-				throw new SchemaClassAccessException("Cannot create edge of class "
-						+ edgeClass.getCanonicalName(), exception);
-			}
-		}
-	}
-
-	@Override
-	public Vertex createVertexWithDatabaseSupport(
-			Class<? extends Vertex> vertexClass, int id, Graph graph) {
-		try {
-			Constructor<? extends Vertex> constructor = vertexDatabaseMap
-					.get(vertexClass);
-			return constructor.newInstance(id, graph);
-		} catch (Exception exception) {
-			if (exception.getCause() instanceof GraphException) {
-				throw new GraphException(exception.getCause()
-						.getLocalizedMessage());
-			} else {
-				throw new SchemaClassAccessException(
-						"Cannot create vertex of class "
-								+ vertexClass.getCanonicalName(), exception);
-			}
-		}
-	}
-
-	@Override
-	public void setGraphDatabaseImplementationClass(
-			Class<? extends Graph> originalClass,
-			Class<? extends Graph> implementationClass) {
-		if (isSuperclassOrEqual(originalClass, implementationClass)) {
-			try {
-				Class<?>[] params = { String.class, int.class, int.class,
-						GraphDatabase.class };
-				graphDatabaseMap.put(originalClass, implementationClass
-						.getConstructor(params));
-			} catch (NoSuchMethodException exception) {
-				throw new SchemaClassAccessException(
-						"Unable to locate default constructor for graphclass "
-								+ implementationClass.getName(), exception);
-			}
-		}
-	}
-
-	@Override
-	public void setVertexDatabaseImplementationClass(
-			Class<? extends Vertex> originalClass,
-			Class<? extends Vertex> implementationClass) {
-		if (isSuperclassOrEqual(originalClass, implementationClass)) {
-			try {
-				Class<?>[] params = { int.class, Graph.class };
-				vertexDatabaseMap.put(originalClass, implementationClass
-						.getConstructor(params));
-			} catch (NoSuchMethodException exception) {
-				throw new SchemaClassAccessException(
-						"Unable to locate default constructor for vertex class"
-								+ implementationClass, exception);
-			}
-		}
-	}
-
-	@Override
-	public void setEdgeDatabaseImplementationClass(
-			Class<? extends Edge> originalClass,
-			Class<? extends Edge> implementationClass) {
-		if (isSuperclassOrEqual(originalClass, implementationClass)) {
-			try {
-				Class<?>[] params = { int.class, Graph.class, Vertex.class,
-						Vertex.class };
-				edgeDatabaseMap.put(originalClass, implementationClass
-						.getConstructor(params));
-			} catch (NoSuchMethodException exception) {
-				throw new SchemaClassAccessException(
-						"Unable to locate default constructor for edge class"
-								+ implementationClass, exception);
-			}
-		}
-	}
-
-	// --- Methods for option TRANSIMPL
-	// -------------------------------------------------
-
-	@Override
-	public Edge createEdgeWithTransactionSupport(
-			Class<? extends Edge> edgeClass, int id, Graph g, Vertex alpha,
-			Vertex omega) {
-		try {
-			Edge e = edgeTransactionMap.get(edgeClass).newInstance(id, g,
-					alpha, omega);
-			e.initializeAttributesWithDefaultValues();
-			return e;
-		} catch (Exception ex) {
-			if (ex.getCause() instanceof GraphException) {
-				throw new GraphException(ex.getCause().getLocalizedMessage(),
-						ex);
-			}
-			throw new SchemaClassAccessException("Cannot create edge of class "
-					+ edgeClass.getCanonicalName(), ex);
-		}
-	}
-
-	@Override
-	public Graph createGraphWithTransactionSupport(
-			Class<? extends Graph> graphClass, String id, int vMax, int eMax) {
-		try {
-			Graph g = graphTransactionMap.get(graphClass).newInstance(id, vMax,
-					eMax);
-			return g;
-		} catch (Exception ex) {
-			if (ex.getCause() instanceof GraphException) {
-				throw new GraphException(ex.getCause().getLocalizedMessage(),
-						ex);
-			}
-			throw new SchemaClassAccessException("Cannot create graph of class "
-					+ graphClass.getCanonicalName(), ex);
-		}
-	}
-
-	@Override
-	public Graph createGraphWithTransactionSupport(
-			Class<? extends Graph> graphClass, String id) {
-		try {
-			Graph g = graphTransactionMap.get(graphClass).newInstance(id, 1000,
-					1000);
-			return g;
-		} catch (Exception ex) {
-			if (ex.getCause() instanceof GraphException) {
-				throw new GraphException(ex.getCause().getLocalizedMessage(),
-						ex);
-			}
-			throw new SchemaClassAccessException("Cannot create graph of class "
-					+ graphClass.getCanonicalName(), ex);
-		}
-	}
-
-	@Override
-	public Vertex createVertexWithTransactionSupport(
-			Class<? extends Vertex> vertexClass, int id, Graph g) {
-		try {
-			Vertex v = vertexTransactionMap.get(vertexClass).newInstance(id, g);
-			return v;
-		} catch (Exception ex) {
-			if (ex.getCause() instanceof GraphException) {
-				throw new GraphException(ex.getCause().getLocalizedMessage(),
-						ex);
-			}
-			throw new SchemaClassAccessException("Cannot create vertex of class "
-					+ vertexClass.getCanonicalName(), ex);
-		}
-	}
-
-	public void setGraphTransactionImplementationClass(
-			Class<? extends Graph> originalClass,
-			Class<? extends Graph> implementationClass) {
-		if (isSuperclassOrEqual(originalClass, implementationClass)) {
-			try {
-				Class<?>[] params = { String.class, int.class, int.class };
-				graphTransactionMap.put(originalClass, implementationClass
-						.getConstructor(params));
-			} catch (NoSuchMethodException ex) {
-				throw new SchemaClassAccessException(
-						"Unable to locate transaction constructor for graphclass "
-								+ implementationClass.getName(), ex);
-			}
-		}
-	}
-
-	@Override
-	public void setVertexTransactionImplementationClass(
-			Class<? extends Vertex> originalClass,
-			Class<? extends Vertex> implementationClass) {
-		if (isSuperclassOrEqual(originalClass, implementationClass)) {
-			try {
-				Class<?>[] params = { int.class, Graph.class };
-				vertexTransactionMap.put(originalClass, implementationClass
-						.getConstructor(params));
-			} catch (NoSuchMethodException ex) {
-				throw new SchemaClassAccessException(
-						"Unable to locate transaction constructor for vertexclass"
-								+ implementationClass, ex);
-			}
-		}
-	}
-
-	@Override
-	public void setEdgeTransactionImplementationClass(
-			Class<? extends Edge> originalClass,
-			Class<? extends Edge> implementationClass) {
-		if (isSuperclassOrEqual(originalClass, implementationClass)) {
-			try {
-				Class<?>[] params = { int.class, Graph.class, Vertex.class,
-						Vertex.class };
-				edgeTransactionMap.put(originalClass, implementationClass
-						.getConstructor(params));
-			} catch (NoSuchMethodException ex) {
-				throw new SchemaClassAccessException(
-						"Unable to locate transaction constructor for edgeclass"
 								+ implementationClass, ex);
 			}
 		}

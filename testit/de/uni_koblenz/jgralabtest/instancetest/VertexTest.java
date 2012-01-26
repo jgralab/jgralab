@@ -688,7 +688,7 @@ public class VertexTest extends InstanceTest {
 	 */
 	private EdgeClass[] getEdgeClasses() {
 		EdgeClass[] ecs = new EdgeClass[3];
-		List<EdgeClass> a = g.getSchema().getEdgeClassesInTopologicalOrder();
+		List<EdgeClass> a = g.getGraphClass().getEdgeClasses();
 		for (EdgeClass ec : a) {
 			if (ec.getSimpleName().equals("Link")) {
 				ecs[0] = ec;
@@ -2362,11 +2362,11 @@ public class VertexTest extends InstanceTest {
 		VertexTestGraph graph = null;
 		switch (implementationType) {
 		case STANDARD:
-			graph = VertexTestSchema.instance().createVertexTestGraph(100, 100);
+			graph = VertexTestSchema.instance().createVertexTestGraph(ImplementationType.STANDARD,100, 100);
 			break;
 		case TRANSACTION:
 			graph = VertexTestSchema.instance()
-					.createVertexTestGraphWithTransactionSupport(100, 100);
+					.createVertexTestGraph(ImplementationType.TRANSACTION,100, 100);
 			break;
 		case DATABASE:
 			graph = createVertexTestGraphWithDatabaseSupport();
@@ -2470,8 +2470,7 @@ public class VertexTest extends InstanceTest {
 	 * @return an array <code>ret</code> of all VertexClasses
 	 */
 	private VertexClass[] getVertexClasses() {
-		List<VertexClass> vclasses = g.getSchema()
-				.getVertexClassesInTopologicalOrder();
+		List<VertexClass> vclasses = g.getGraphClass().getVertexClasses();
 		VertexClass[] vcret = new VertexClass[4];
 		for (VertexClass vc : vclasses) {
 			if (vc.getSimpleName().equals("AbstractSuperNode")) {

@@ -243,12 +243,12 @@ public class LoadTest extends InstanceTest {
 		VertexTestGraph graph = null;
 		switch (implementationType) {
 		case STANDARD:
-			graph = VertexTestSchema.instance().createVertexTestGraph(vMax,
+			graph = VertexTestSchema.instance().createVertexTestGraph(ImplementationType.STANDARD,vMax,
 					eMax);
 			break;
 		case TRANSACTION:
 			graph = VertexTestSchema.instance()
-					.createVertexTestGraphWithTransactionSupport(vMax, eMax);
+					.createVertexTestGraph(ImplementationType.TRANSACTION,vMax, eMax);
 			break;
 		case DATABASE:
 			graph = dbHandler.createVertexTestGraphWithDatabaseSupport(
@@ -333,12 +333,12 @@ public class LoadTest extends InstanceTest {
 			commit(g1);
 			switch (implementationType) {
 			case STANDARD:
-				g2 = Greql2Schema.instance().loadGreql2(
+				g2 = Greql2Schema.instance().loadGreql2(ImplementationType.STANDARD,
 						TESTGRAPH_PATH + TESTGRAPH_FILENAME);
 				break;
 			case TRANSACTION:
 				g2 = VertexTestSchema.instance()
-						.loadVertexTestGraphWithTransactionSupport(
+						.loadVertexTestGraph(ImplementationType.TRANSACTION,
 								TESTGRAPH_PATH + TESTGRAPH_FILENAME);
 				break;
 			case DATABASE:

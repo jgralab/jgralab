@@ -54,24 +54,30 @@ public class GraphFactoryGenerator extends CodeGenerator {
 			CodeGeneratorConfiguration config) {
 		super(schemaPackageName, "", config);
 		this.schema = schema;
-		rootBlock.setVariable("className", schema.getName() + "Factory");
-		rootBlock.setVariable("simpleClassName", schema.getName() + "Factory");
-		rootBlock.setVariable("isClassOnly", "true");
+		rootBlock.setVariable("simpleClassName", schema.getGraphClass().getSimpleName() + "Factory");
+		rootBlock.setVariable("simpleImplClassName", schema.getGraphClass().getSimpleName()+"FactoryImpl");
+		rootBlock.setVariable("isClassOnly", "false");
 	}
 
 	@Override
 	protected CodeBlock createHeader() {
-		addImports("#jgImplPackage#.GraphFactoryImpl");
 		CodeSnippet code = new CodeSnippet(true);
-		code.setVariable("className", schema.getName() + "Factory");
-		code.add("public class #className# extends GraphFactoryImpl {");
+		if(currentCycle.isAbstract()){
+			addImports("#jgPackage#.GraphFactory");
+			code.add("public interface #simpleClassName# extends GraphFactory {");
+		}else{
+			addImports("#schemaPackage#.#simpleClassName#");
+			addImports("#jgImplPackage#.GraphFactoryImpl");
+			addImports("#jgPackage#.ImplementationType");
+			code.add("public class #simpleImplClassName# extends GraphFactoryImpl implements #simpleClassName# {");
+		}
 		return code;
 	}
 
 	@Override
 	protected CodeBlock createBody() {
 		CodeList code = new CodeList();
-		if (currentCycle.isClassOnly()) {
+		if (currentCycle.isStdOrDbImplOrTransImpl()) {
 			code.add(createConstructor());
 			code.add(createFillTableMethod());
 		}
@@ -80,15 +86,20 @@ public class GraphFactoryGenerator extends CodeGenerator {
 
 	protected CodeBlock createConstructor() {
 		CodeSnippet code = new CodeSnippet(true);
-		code.setVariable("className", schema.getName() + "Factory");
-		code.add("public #className#() {");
-		code.add("\tsuper();");
+		if(currentCycle.isStdImpl()) code.setVariable("implTypeInfix", "STANDARD"); 
+		if(currentCycle.isTransImpl()) code.setVariable("implTypeInfix", "TRANSACTION");
+		if(currentCycle.isDbImpl()) code.setVariable("implTypeInfix","DATABASE");
+		code.add("public #simpleImplClassName#() {");
+		code.add("\tsuper(ImplementationType.#implTypeInfix#);");
 		code.add("\tfillTable();");
 		code.add("}");
 		return code;
 	}
 
 	protected CodeBlock createFillTableMethod() {
+		if(currentCycle.isAbstract()){
+			return null;
+		}
 		CodeList code = new CodeList();
 		CodeSnippet s = new CodeSnippet(true);
 		s.add("protected void fillTable() { ");
@@ -116,24 +127,25 @@ public class GraphFactoryGenerator extends CodeGenerator {
 
 		CodeSnippet code = new CodeSnippet(true);
 		code.setVariable("graphName",
-				schemaRootPackageName + "." + graphClass.getQualifiedName());
-		code.setVariable("graphImplName", schemaRootPackageName + ".impl.std."
-				+ graphClass.getQualifiedName());
-		code.setVariable("graphTransactionImplName", schemaRootPackageName
-				+ ".impl.trans." + graphClass.getQualifiedName());
-		code.setVariable("graphDatabaseImplName", schemaRootPackageName
-				+ ".impl.db." + graphClass.getQualifiedName());
+				"#schemaPackage#." + graphClass.getQualifiedName());
+		code.setVariable("graphImplName",  "#schemaImplStdPackage#."
+				+ graphClass.getQualifiedName()+"Impl");
+		code.setVariable("graphTransactionImplName", 
+				"#schemaImplTransPackage#." + graphClass.getQualifiedName()+"Impl");
+		code.setVariable("graphDatabaseImplName", 
+				"#schemaImplDbPackage#." + graphClass.getQualifiedName()+"Impl");
 
 		if (!graphClass.isAbstract()) {
 			code.add("/* code for graph #graphName# */");
-			if (config.hasStandardSupport()) {
-				code.add("setGraphImplementationClass(#graphName#.class, #graphImplName#Impl.class);");
+			
+			if (currentCycle.isStdImpl() && config.hasStandardSupport()) {
+				code.add("setGraphImplementationClass(#graphName#.class, #graphImplName#.class);");
 			}
-			if (config.hasTransactionSupport()) {
-				code.add("setGraphTransactionImplementationClass(#graphName#.class, #graphTransactionImplName#Impl.class);");
+			if (currentCycle.isTransImpl()&& config.hasTransactionSupport()) {
+				code.add("setGraphImplementationClass(#graphName#.class, #graphTransactionImplName#.class);");
 			}
-			if (config.hasDatabaseSupport()) {
-				code.add("setGraphDatabaseImplementationClass(#graphName#.class, #graphDatabaseImplName#Impl.class);");
+			if (currentCycle.isDbImpl()&&config.hasDatabaseSupport()) {
+				code.add("setGraphImplementationClass(#graphName#.class, #graphDatabaseImplName#.class);");
 			}
 		}
 		return code;
@@ -145,24 +157,24 @@ public class GraphFactoryGenerator extends CodeGenerator {
 		}
 
 		CodeSnippet code = new CodeSnippet(true);
-		code.setVariable("vertexName", schemaRootPackageName + "."
+		code.setVariable("vertexName",  "#schemaPackage#."
 				+ vertexClass.getQualifiedName());
-		code.setVariable("vertexImplName", schemaRootPackageName + ".impl.std."
-				+ vertexClass.getQualifiedName());
-		code.setVariable("vertexTransactionImplName", schemaRootPackageName
-				+ ".impl.trans." + vertexClass.getQualifiedName());
-		code.setVariable("vertexDatabaseImplName", schemaRootPackageName
-				+ ".impl.db." + vertexClass.getQualifiedName());
+		code.setVariable("vertexImplName", "#schemaImplStdPackage#."
+				+ vertexClass.getQualifiedName()+"Impl");
+		code.setVariable("vertexTransactionImplName", 
+				"#schemaImplTransPackage#." + vertexClass.getQualifiedName()+"Impl");
+		code.setVariable("vertexDatabaseImplName", 
+				"#schemaImplDbPackage#." + vertexClass.getQualifiedName()+"Impl");
 
 		if (!vertexClass.isAbstract()) {
-			if (config.hasStandardSupport()) {
-				code.add("setVertexImplementationClass(#vertexName#.class, #vertexImplName#Impl.class);");
+			if (currentCycle.isStdImpl() && config.hasStandardSupport()) {
+				code.add("setVertexImplementationClass(#vertexName#.class, #vertexImplName#.class);");
 			}
-			if (config.hasTransactionSupport()) {
-				code.add("setVertexTransactionImplementationClass(#vertexName#.class, #vertexTransactionImplName#Impl.class);");
+			if (currentCycle.isTransImpl() && config.hasTransactionSupport()) {
+				code.add("setVertexImplementationClass(#vertexName#.class, #vertexTransactionImplName#.class);");
 			}
-			if (config.hasDatabaseSupport()) {
-				code.add("setVertexDatabaseImplementationClass(#vertexName#.class, #vertexDatabaseImplName#Impl.class);");
+			if (currentCycle.isDbImpl() && config.hasDatabaseSupport()) {
+				code.add("setVertexImplementationClass(#vertexName#.class, #vertexDatabaseImplName#.class);");
 			}
 		}
 		return code;
@@ -171,23 +183,23 @@ public class GraphFactoryGenerator extends CodeGenerator {
 	protected CodeBlock createFillTableForEdge(EdgeClass edgeClass) {
 		CodeSnippet code = new CodeSnippet(true);
 		code.setVariable("edgeName",
-				schemaRootPackageName + "." + edgeClass.getQualifiedName());
-		code.setVariable("edgeImplName", schemaRootPackageName + ".impl.std."
-				+ edgeClass.getQualifiedName());
-		code.setVariable("edgeTransactionImplName", schemaRootPackageName
-				+ ".impl.trans." + edgeClass.getQualifiedName());
-		code.setVariable("edgeDatabaseImplName", schemaRootPackageName
-				+ ".impl.db." + edgeClass.getQualifiedName());
+				 "#schemaPackage#." + edgeClass.getQualifiedName());
+		code.setVariable("edgeImplName",  "#schemaImplStdPackage#."
+				+ edgeClass.getQualifiedName()+"Impl");
+		code.setVariable("edgeTransactionImplName",
+				 "#schemaImplTransPackage#." + edgeClass.getQualifiedName()+"Impl");
+		code.setVariable("edgeDatabaseImplName", 
+				"#schemaImplDbPackage#." + edgeClass.getQualifiedName()+"Impl");
 
 		if (!edgeClass.isAbstract()) {
-			if (config.hasStandardSupport()) {
-				code.add("setEdgeImplementationClass(#edgeName#.class, #edgeImplName#Impl.class);");
+			if (currentCycle.isStdImpl() && config.hasStandardSupport()) {
+				code.add("setEdgeImplementationClass(#edgeName#.class, #edgeImplName#.class);");
 			}
-			if (config.hasTransactionSupport()) {
-				code.add("setEdgeTransactionImplementationClass(#edgeName#.class, #edgeTransactionImplName#Impl.class);");
+			if (currentCycle.isTransImpl() && config.hasTransactionSupport()) {
+				code.add("setEdgeImplementationClass(#edgeName#.class, #edgeTransactionImplName#.class);");
 			}
-			if (config.hasDatabaseSupport()) {
-				code.add("setEdgeDatabaseImplementationClass(#edgeName#.class, #edgeDatabaseImplName#Impl.class);");
+			if (currentCycle.isDbImpl() && config.hasDatabaseSupport()) {
+				code.add("setEdgeImplementationClass(#edgeName#.class, #edgeDatabaseImplName#.class);");
 			}
 		}
 		return code;

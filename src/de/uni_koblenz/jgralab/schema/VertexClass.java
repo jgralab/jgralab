@@ -70,11 +70,11 @@ public interface VertexClass extends GraphElementClass {
 
 	public Set<IncidenceClass> getValidToFarIncidenceClasses();
 
-	// public Set<IncidenceClass> getOwnAndInheritedFarIncidenceClasses();
+	public Set<IncidenceClass> getOwnAndInheritedFarIncidenceClasses();
 
-	public void addInIncidenceClass(IncidenceClass ic);
+	//public void addInIncidenceClass(IncidenceClass ic);
 
-	public void addOutIncidenceClass(IncidenceClass ic);
+	//public void addOutIncidenceClass(IncidenceClass ic);
 
 	@Override
 	public Class<? extends Vertex> getSchemaClass();

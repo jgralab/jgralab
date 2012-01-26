@@ -35,6 +35,7 @@
 
 package de.uni_koblenz.jgralab.schema.impl;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -51,10 +52,36 @@ import de.uni_koblenz.jgralab.schema.exception.SchemaException;
 public final class VertexClassImpl extends GraphElementClassImpl implements
 		VertexClass {
 
+	/**
+	 * the own in IncidenceClasses
+	 */
 	private Set<IncidenceClass> inIncidenceClasses = new HashSet<IncidenceClass>();
 
+	/**
+	 * the in IncidenceClasses - only set if schema is finish
+	 */
+	private Set<IncidenceClass> allInIncidenceClasses;
+	
+	/**
+	 * the own out IncidenceClasses
+	 */
 	private Set<IncidenceClass> outIncidenceClasses = new HashSet<IncidenceClass>();
 
+	/**
+	 * the out IncidenceClasses - only set if schema is finish
+	 */
+	private Set<IncidenceClass> allOutIncidenceClasses;
+	
+	/**
+	 * the valid from far IncidenceClasses - only set if schema is finished
+	 */
+	private Set<IncidenceClass> validFromFarIncidenceClasses;
+	
+	/**
+	 * the valid to far IncidenceClasses - only set if schema is finished
+	 */
+	private Set<IncidenceClass> validToFarIncidenceClasses;
+	
 	static VertexClass createDefaultVertexClass(Schema schema) {
 		assert schema.getDefaultGraphClass() != null : "DefaultGraphClass has not yet been created!";
 		assert schema.getDefaultVertexClass() == null : "DefaultVertexClass already created!";
@@ -87,7 +114,7 @@ public final class VertexClassImpl extends GraphElementClassImpl implements
 		return "vc_" + getQualifiedName().replace('.', '_');
 	}
 
-	public void addInIncidenceClass(IncidenceClass incClass) {
+	void addInIncidenceClass(IncidenceClass incClass) {
 		if (incClass.getVertexClass() != this) {
 			throwSchemaException();
 		}
@@ -95,7 +122,7 @@ public final class VertexClassImpl extends GraphElementClassImpl implements
 		inIncidenceClasses.add(incClass);
 	}
 
-	public void addOutIncidenceClass(IncidenceClass incClass) {
+	void addOutIncidenceClass(IncidenceClass incClass) {
 		if (incClass.getVertexClass() != this) {
 			throwSchemaException();
 		}
@@ -172,6 +199,10 @@ public final class VertexClassImpl extends GraphElementClassImpl implements
 
 	@Override
 	public void addSuperClass(VertexClass superClass) {
+		// Checked in super class
+//		if(isFinished()){
+//			throw new SchemaException("No changes to finished schema!");
+//		}
 		checkDuplicateRolenames(superClass);
 		super.addSuperClass(superClass);
 	}
@@ -187,7 +218,7 @@ public final class VertexClassImpl extends GraphElementClassImpl implements
 				.getAllOutIncidenceClasses());
 	}
 
-	public void checkDuplicatedRolenamesAgainstAllIncidences(
+	private void checkDuplicatedRolenamesAgainstAllIncidences(
 			Set<IncidenceClass> incidences) {
 		for (IncidenceClass incidence : incidences) {
 			checkDuplicateRolenames(incidence);
@@ -202,6 +233,10 @@ public final class VertexClassImpl extends GraphElementClassImpl implements
 	 */
 
 	public Set<IncidenceClass> getValidFromFarIncidenceClasses() {
+		if(isFinished()){
+			return this.validFromFarIncidenceClasses;
+		}
+		
 		Set<IncidenceClass> validFromInc = new HashSet<IncidenceClass>();
 		for (IncidenceClass ic : getAllOutIncidenceClasses()) {
 			IncidenceClass farInc = ic.getEdgeClass().getTo();
@@ -226,6 +261,9 @@ public final class VertexClassImpl extends GraphElementClassImpl implements
 	}
 
 	public Set<IncidenceClass> getValidToFarIncidenceClasses() {
+		if(isFinished()){
+			return this.validToFarIncidenceClasses;
+		}
 		Set<IncidenceClass> validToInc = new HashSet<IncidenceClass>();
 		for (IncidenceClass ic : getAllInIncidenceClasses()) {
 			IncidenceClass farInc = ic.getEdgeClass().getFrom();
@@ -288,6 +326,9 @@ public final class VertexClassImpl extends GraphElementClassImpl implements
 
 	@Override
 	public Set<IncidenceClass> getAllInIncidenceClasses() {
+		if(isFinished()) {
+			return this.allInIncidenceClasses;
+		}
 		Set<IncidenceClass> incidenceClasses = new HashSet<IncidenceClass>();
 		incidenceClasses.addAll(inIncidenceClasses);
 		for (AttributedElementClass vc : getDirectSuperClasses()) {
@@ -299,6 +340,9 @@ public final class VertexClassImpl extends GraphElementClassImpl implements
 
 	@Override
 	public Set<IncidenceClass> getAllOutIncidenceClasses() {
+		if(isFinished()){
+			return this.allOutIncidenceClasses;
+		}
 		Set<IncidenceClass> incidenceClasses = new HashSet<IncidenceClass>();
 		incidenceClasses.addAll(outIncidenceClasses);
 		for (AttributedElementClass vc : getDirectSuperClasses()) {
@@ -308,6 +352,7 @@ public final class VertexClassImpl extends GraphElementClassImpl implements
 		return incidenceClasses;
 	}
 
+	@Override
 	public Set<IncidenceClass> getOwnAndInheritedFarIncidenceClasses() {
 		Set<IncidenceClass> result = new HashSet<IncidenceClass>();
 		for (IncidenceClass ic : getAllInIncidenceClasses()) {
@@ -349,4 +394,56 @@ public final class VertexClassImpl extends GraphElementClassImpl implements
 		return result;
 	}
 
+	@Override
+	protected void finish(){
+		this.allInIncidenceClasses = new HashSet<IncidenceClass>();
+		this.allInIncidenceClasses.addAll(inIncidenceClasses);
+		
+		this.allOutIncidenceClasses = new HashSet<IncidenceClass>();
+		this.allOutIncidenceClasses.addAll(outIncidenceClasses);
+		
+		for (AttributedElementClass vc : getDirectSuperClasses()) {
+			this.allInIncidenceClasses.addAll(((VertexClass) vc)
+					.getAllInIncidenceClasses());
+			this.allOutIncidenceClasses.addAll(((VertexClass)vc)
+					.getAllOutIncidenceClasses());
+		}
+		
+		this.allInIncidenceClasses = Collections.unmodifiableSet(this.allInIncidenceClasses);
+		this.allOutIncidenceClasses = Collections.unmodifiableSet(this.allOutIncidenceClasses);
+
+		this.validFromFarIncidenceClasses = Collections.unmodifiableSet(this.getValidFromFarIncidenceClasses());
+		this.validToFarIncidenceClasses = Collections.unmodifiableSet(this.getValidToFarIncidenceClasses());
+		
+		this.inIncidenceClasses = Collections.unmodifiableSet(this.inIncidenceClasses);
+		this.outIncidenceClasses = Collections.unmodifiableSet(this.outIncidenceClasses);
+		
+		for(IncidenceClass ic : this.inIncidenceClasses){
+			((IncidenceClassImpl)ic).finish();
+		}
+		for(IncidenceClass ic : this.outIncidenceClasses){
+			((IncidenceClassImpl)ic).finish();
+		}
+		
+		super.finish();
+	}
+	
+	protected void reopen(){
+		this.allInIncidenceClasses = null;
+		this.allOutIncidenceClasses = null;
+		this.validFromFarIncidenceClasses = null;
+		this.validToFarIncidenceClasses = null;
+		this.inIncidenceClasses = new HashSet<IncidenceClass>(this.inIncidenceClasses);
+		this.outIncidenceClasses = new HashSet<IncidenceClass>(this.outIncidenceClasses);
+		
+		for(IncidenceClass ic : this.inIncidenceClasses){
+			((IncidenceClassImpl)ic).reopen();
+		}
+		for(IncidenceClass ic : this.outIncidenceClasses){
+			((IncidenceClassImpl)ic).reopen();
+		}
+		
+		super.reopen();
+	}
+	
 }

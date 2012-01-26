@@ -196,7 +196,7 @@ public class GXL2Tg {
 
 		if (existingSchemaFile == null) {
 			// initialize SchemaGraph
-			schemaGraph = GrumlSchema.instance().createSchemaGraph();
+			schemaGraph = GrumlSchema.instance().createSchemaGraph(ImplementationType.STANDARD);
 			convertSchemaGraph();
 			if (storeIds) {
 				extractEdgeid();

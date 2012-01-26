@@ -298,44 +298,40 @@ public class TgSchema2Java {
 					+ gc.getSimpleName() + "Impl.java");
 		}
 
-		for (VertexClass vc : schema.getVertexClassesInTopologicalOrder()) {
-			if (!vc.isInternal()) {
-				requiredFilePaths.add(commitPath + File.separator + schemaPath
-						+ File.separator + vc.getFileName() + ".java");
-				if (!vc.isAbstract()) {
-					pathName = vc.getPathName();
+		for (VertexClass vc : schema.getGraphClass().getVertexClasses()) {
+			requiredFilePaths.add(commitPath + File.separator + schemaPath
+					+ File.separator + vc.getFileName() + ".java");
+			if (!vc.isAbstract()) {
+				pathName = vc.getPathName();
 
-					if (pathName != "") {
-						pathName = pathName.concat(File.separator);
-					}
-					requiredFilePaths.add(commitPath + File.separator
-							+ schemaPath + File.separator + "impl"
-							+ File.separator + pathName + vc.getSimpleName()
-							+ "Impl.java");
+				if (pathName != "") {
+					pathName = pathName.concat(File.separator);
 				}
+				requiredFilePaths.add(commitPath + File.separator
+						+ schemaPath + File.separator + "impl"
+						+ File.separator + pathName + vc.getSimpleName()
+						+ "Impl.java");
 			}
 		}
 
-		for (EdgeClass ec : schema.getEdgeClassesInTopologicalOrder()) {
-			if (!ec.isInternal()) {
-				requiredFilePaths.add(commitPath + File.separator + schemaPath
-						+ File.separator + ec.getFileName() + ".java");
-				if (!ec.isAbstract()) {
-					pathName = ec.getPathName();
+		for (EdgeClass ec : schema.getGraphClass().getEdgeClasses()) {
+			requiredFilePaths.add(commitPath + File.separator + schemaPath
+					+ File.separator + ec.getFileName() + ".java");
+			if (!ec.isAbstract()) {
+				pathName = ec.getPathName();
 
-					if (pathName != "") {
-						pathName = pathName.concat(File.separator);
-					}
-					requiredFilePaths.add(commitPath + File.separator
-							+ schemaPath + File.separator + "impl"
-							+ File.separator + pathName + ec.getSimpleName()
-							+ "Impl.java");
-					requiredFilePaths.add(commitPath + File.separator
-							+ schemaPath + File.separator + "impl"
-							+ File.separator + pathName + "Reversed"
-							+ ec.getSimpleName() + "Impl.java");
+				if (pathName != "") {
+					pathName = pathName.concat(File.separator);
 				}
-			}
+				requiredFilePaths.add(commitPath + File.separator
+						+ schemaPath + File.separator + "impl"
+						+ File.separator + pathName + ec.getSimpleName()
+						+ "Impl.java");
+				requiredFilePaths.add(commitPath + File.separator
+						+ schemaPath + File.separator + "impl"
+						+ File.separator + pathName + "Reversed"
+						+ ec.getSimpleName() + "Impl.java");
+			}		
 		}
 
 		/*
