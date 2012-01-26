@@ -74,6 +74,7 @@ import de.uni_koblenz.jgralab.graphmarker.BooleanGraphMarker;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
+import de.uni_koblenz.jgralab.schema.Schema;
 import de.uni_koblenz.jgralab.utilities.tg2dot.dot.DotWriter;
 import de.uni_koblenz.jgralab.utilities.tg2dot.dot.GraphType;
 import de.uni_koblenz.jgralab.utilities.tg2dot.dot.GraphVizLayouter;
@@ -92,9 +93,9 @@ import de.uni_koblenz.jgralab.utilities.tg2whatever.Tg2Whatever;
 /**
  * Tg2Dot2 takes a graph layout and a JGraLab graph and transforms the graph
  * into a DOT-graph of GraphViz.
- * 
+ *
  * @author ist@uni-koblenz.de
- * 
+ *
  */
 public class Tg2Dot extends Tg2Whatever {
 
@@ -189,8 +190,7 @@ public class Tg2Dot extends Tg2Whatever {
 	}
 
 	public static Tg2Dot createConverterAndSetAttributes(Graph graph,
-			boolean reversedEdges,
-			Class<? extends AttributedElement>... reversedEdgeTypes) {
+			boolean reversedEdges, AttributedElementClass... reversedEdgeTypes) {
 
 		Tg2Dot converter = new Tg2Dot();
 		converter.setGraph(graph);
@@ -198,7 +198,7 @@ public class Tg2Dot extends Tg2Whatever {
 		converter.setPrintEdgeAttributes(true);
 
 		if (reversedEdgeTypes != null) {
-			HashSet<Class<? extends AttributedElement>> revEdgeTypes = new HashSet<Class<? extends AttributedElement>>();
+			HashSet<AttributedElementClass> revEdgeTypes = new HashSet<AttributedElementClass>();
 			Collections.addAll(revEdgeTypes, reversedEdgeTypes);
 			converter.setReversedEdgeTypes(revEdgeTypes);
 		}
@@ -209,57 +209,64 @@ public class Tg2Dot extends Tg2Whatever {
 	public static void convertGraph(Graph graph, String outputFileName)
 			throws IOException {
 		convertGraph(graph, outputFileName, false, GraphVizOutputFormat.XDOT,
-				(Class<? extends AttributedElement>[]) null);
+				(AttributedElementClass[]) null);
 	}
 
 	public static void convertGraph(Graph graph, String outputFileName,
 			boolean reversedEdges) throws IOException {
 		convertGraph(graph, outputFileName, reversedEdges,
-				GraphVizOutputFormat.XDOT,
-				(Class<? extends AttributedElement>[]) null);
+				GraphVizOutputFormat.XDOT, (AttributedElementClass[]) null);
 	}
 
 	public static void convertGraph(Graph graph, String outputFileName,
 			GraphVizOutputFormat format) throws IOException {
 		convertGraph(graph, outputFileName, false, format,
-				(Class<? extends AttributedElement>[]) null);
+				(AttributedElementClass[]) null);
 	}
 
 	public static void convertGraph(Graph graph, String outputFileName,
 			boolean reversedEdges, GraphVizOutputFormat format,
 			Class<? extends AttributedElement>... reversedEdgeTypes)
 			throws IOException {
+		convertGraph(graph, outputFileName, reversedEdges, format,
+				toAttrElemClassArray(graph.getSchema(), reversedEdgeTypes));
+	}
+
+	public static void convertGraph(Graph graph, String outputFileName,
+			boolean reversedEdges, GraphVizOutputFormat format,
+			AttributedElementClass... reversedEdgeTypes) throws IOException {
 
 		Tg2Dot converter = createConverterAndSetAttributes(graph,
-				reversedEdges, (Class<? extends AttributedElement>[]) null);
+				reversedEdges, reversedEdgeTypes);
 		converter.setOutputFile(outputFileName);
 		converter.setGraphVizOutputFormat(format);
-
-		if ((reversedEdgeTypes != null) && (reversedEdgeTypes.length > 0)) {
-			HashSet<Class<? extends AttributedElement>> revEdgeTypes = new HashSet<Class<? extends AttributedElement>>();
-			Collections.addAll(revEdgeTypes, reversedEdgeTypes);
-			converter.setReversedEdgeTypes(revEdgeTypes);
-		}
-
 		converter.convert();
 	}
 
 	public static void convertGraph(BooleanGraphMarker marker,
 			String outputFileName) throws IOException {
 		convertGraph(marker, outputFileName, false,
-				(Class<? extends AttributedElement>[]) null);
+				(AttributedElementClass[]) null);
 	}
 
 	public static void convertGraph(BooleanGraphMarker marker,
 			String outputFileName, boolean reversedEdges,
 			Class<? extends AttributedElement>... reversedEdgeTypes)
 			throws IOException {
+		convertGraph(
+				marker,
+				outputFileName,
+				GraphVizOutputFormat.PDF,
+				reversedEdges,
+				toAttrElemClassArray(marker.getGraph().getSchema(),
+						reversedEdgeTypes));
+	}
 
-		Tg2Dot converter = createConverterAndSetAttributes(marker.getGraph(),
+	public static void convertGraph(BooleanGraphMarker marker,
+			String outputFileName, boolean reversedEdges,
+			AttributedElementClass... reversedEdgeTypes) throws IOException {
+		convertGraph(marker, outputFileName, GraphVizOutputFormat.PDF,
 				reversedEdges, reversedEdgeTypes);
-		converter.setOutputFile(outputFileName);
-		converter.setGraphMarker(marker);
-		converter.convert();
 	}
 
 	public static void convertGraph(BooleanGraphMarker marker,
@@ -267,10 +274,40 @@ public class Tg2Dot extends Tg2Whatever {
 			boolean reversedEdges,
 			Class<? extends AttributedElement>... reversedEdgeTypes)
 			throws IOException {
+		convertGraph(
+				marker,
+				outputFileName,
+				format,
+				reversedEdges,
+				toAttrElemClassArray(marker.getGraph().getSchema(),
+						reversedEdgeTypes));
+	}
+
+	private static AttributedElementClass[] toAttrElemClassArray(Schema s,
+			Class<? extends AttributedElement>... reversedEdgeTypes) {
+		if (reversedEdgeTypes == null) {
+			return null;
+		}
+		AttributedElementClass[] aecs = new AttributedElementClass[reversedEdgeTypes.length];
+		for (int i = 0; i < aecs.length; i++) {
+			Class<? extends AttributedElement> cls = reversedEdgeTypes[i];
+			String qname = cls.getName()
+					.replace(s.getPackagePrefix() + ".", "");
+			aecs[i] = s.getAttributedElementClass(qname);
+			if (aecs[i] == null) {
+				throw new RuntimeException("No such class " + qname);
+			}
+		}
+		return aecs;
+	}
+
+	public static void convertGraph(BooleanGraphMarker marker,
+			String outputFileName, GraphVizOutputFormat format,
+			boolean reversedEdges, AttributedElementClass... reversedEdgeTypes)
+			throws IOException {
 		Tg2Dot converter = createConverterAndSetAttributes(marker.getGraph(),
 				reversedEdges, reversedEdgeTypes);
 		converter.setOutputFile(outputFileName);
-		converter.setGraphVizOutputFormat(format);
 		converter.setGraphMarker(marker);
 		converter.convert();
 	}
@@ -483,7 +520,7 @@ public class Tg2Dot extends Tg2Whatever {
 
 	/**
 	 * Creates a {@link DotWriter}.
-	 * 
+	 *
 	 * @param out
 	 *            Provides stream, the DotWriter will use.
 	 */
@@ -512,7 +549,7 @@ public class Tg2Dot extends Tg2Whatever {
 	/**
 	 * Returns the responsible {@link TypeDefinition} or
 	 * {@link ElementDefinition} for the specified {@link AttributedElement}.
-	 * 
+	 *
 	 * @param attributedElement
 	 *            Given {@link AttributedElement}.
 	 * @return Responsible {@link Definition}.
@@ -531,7 +568,7 @@ public class Tg2Dot extends Tg2Whatever {
 	/**
 	 * Constructs an {@link ElementDefinition} for the given
 	 * {@link AttributedElement}.
-	 * 
+	 *
 	 * @param element
 	 *            Given AttributedElement.
 	 * @return {@link ElementDefinition} for the provided
@@ -558,7 +595,7 @@ public class Tg2Dot extends Tg2Whatever {
 	/**
 	 * Evaluates all attributes of a given {@link Vertex} and prints via the
 	 * {@link DotWriter}.
-	 * 
+	 *
 	 * @param vertex
 	 *            Provides Vertex.
 	 * @param definition
@@ -581,7 +618,7 @@ public class Tg2Dot extends Tg2Whatever {
 	/**
 	 * Returns unified vertex names. A vertex name has the prefix 'v' followed
 	 * by the {@link Vertex} id.
-	 * 
+	 *
 	 * @param vertex
 	 *            Given {@link Vertex}
 	 * @return Unified vertex name.
@@ -597,7 +634,7 @@ public class Tg2Dot extends Tg2Whatever {
 	 * method
 	 * {@link GreqlEvaluatorFacade#setVariablesOfGreqlEvaluator(AttributedElement, int)}
 	 * .
-	 * 
+	 *
 	 * @param spec
 	 *            Given {@link Definition} with the style attributes and their
 	 *            queries.
@@ -628,7 +665,7 @@ public class Tg2Dot extends Tg2Whatever {
 	/**
 	 * Evaluates all attributes of a given {@link Edge} and prints via the
 	 * {@link DotWriter}.
-	 * 
+	 *
 	 * @param edge
 	 *            Provides Edge.
 	 * @param definition
@@ -666,7 +703,7 @@ public class Tg2Dot extends Tg2Whatever {
 	/**
 	 * Checks whether or not the given {@link Edge} belongs to a
 	 * {@link EdgeClass}, which should be reversed.
-	 * 
+	 *
 	 * @param e
 	 *            Given Edge, which should be checked.
 	 * @return Return true, if the given Edge should be reversed.
@@ -680,7 +717,7 @@ public class Tg2Dot extends Tg2Whatever {
 	/**
 	 * Reverses all reversible style attributes in the provided evaluted style
 	 * attribute list.
-	 * 
+	 *
 	 * @param evaluatedList
 	 *            Given evaluated style attribute list as {@link Map}.
 	 */
@@ -694,7 +731,7 @@ public class Tg2Dot extends Tg2Whatever {
 
 	/**
 	 * Swaps two key-value pairs in a map.
-	 * 
+	 *
 	 * @param head
 	 *            Key of the first key-value pair.
 	 * @param tail
@@ -808,20 +845,24 @@ public class Tg2Dot extends Tg2Whatever {
 	 * nodes, like: State <--{ComesFrom} Transition -->{GoesTo}. Here, reversing
 	 * the direction of either ComesFrom or GoesTo results in much nicer
 	 * layouts.
-	 * 
+	 *
 	 * @param reversedEdgeTypes
 	 *            the set of edge types whose instances should be printed
 	 *            reversed
 	 */
 	public void setReversedEdgeTypes(
-			Set<Class<? extends AttributedElement>> reversedEdgeTypes) {
+			Set<AttributedElementClass> reversedEdgeTypes) {
 
 		// Copies the current set in order to manipulate it.
-		reversedEdgeTypes = new HashSet<Class<? extends AttributedElement>>(
+		reversedEdgeTypes = new HashSet<AttributedElementClass>(
 				reversedEdgeTypes);
 
 		buildReversedEdgeClassSet(reversedEdgeTypes);
-		checkForMissedClasses(reversedEdgeTypes);
+		if (!reversedEdgeTypes.isEmpty()) {
+			throw new RuntimeException(
+					"Those edge classes should be reversed but are not contained in the schema! "
+							+ reversedEdgeTypes);
+		}
 		// apply hierarchy
 		addAllSubClassesOfAllReversedEdgeClasses();
 	}
@@ -829,15 +870,14 @@ public class Tg2Dot extends Tg2Whatever {
 	/**
 	 * Converts the existing set of classes into a set of
 	 * {@link AttributedElementClass}es.
-	 * 
+	 *
 	 * @param reversedEdgeTypes
 	 *            Set of classes of Edges, which should be reversed.
 	 */
 	private void buildReversedEdgeClassSet(
-			Set<Class<? extends AttributedElement>> reversedEdgeTypes) {
+			Set<AttributedElementClass> reversedEdgeTypes) {
 		reversedEdgeClasses = new HashSet<AttributedElementClass>();
-		for (EdgeClass edgeClass : graph.getGraphClass()
-				.getEdgeClasses()) {
+		for (EdgeClass edgeClass : graph.getGraphClass().getEdgeClasses()) {
 			if (reversedEdgeTypes.remove(edgeClass.getSchemaClass())) {
 				reversedEdgeClasses.add(edgeClass);
 			}
@@ -845,20 +885,6 @@ public class Tg2Dot extends Tg2Whatever {
 		if (reversedEdgeTypes.remove(Edge.class)) {
 			reversedEdgeClasses.add(graph.getSchema()
 					.getAttributedElementClass("Edge"));
-		}
-	}
-
-	/**
-	 * Checks for missed classes
-	 * 
-	 * @param reversedEdgeTypes
-	 */
-	private void checkForMissedClasses(
-			Set<Class<? extends AttributedElement>> reversedEdgeTypes) {
-		if (!reversedEdgeTypes.isEmpty()) {
-			throw new RuntimeException(
-					"Warning: Several specified class could be associated with an AttributedElementClass.\nList: "
-							+ reversedEdgeTypes);
 		}
 	}
 
@@ -876,7 +902,7 @@ public class Tg2Dot extends Tg2Whatever {
 	/**
 	 * Return a flag indicating that incidence numbers should be included in the
 	 * graph layout process.
-	 * 
+	 *
 	 * @return True, if incidence numbers should be be printed.
 	 */
 	public boolean printsIncidenceNumbers() {
