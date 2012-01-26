@@ -103,4 +103,10 @@ public class GenericReversedEdgeImpl extends ReversedEdgeImpl {
 				"Can not call readAttributeValuesFromString for reversed Edges.");
 	}
 
+	@Override
+	public boolean isInstanceOf(AttributedElementClass cls) {
+		// Needs to be overridden from the base variant, because that relies on
+		// code generation.
+		return getNormalEdge().isInstanceOf(cls);
+	}
 }

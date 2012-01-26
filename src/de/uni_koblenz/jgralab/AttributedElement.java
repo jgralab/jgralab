@@ -43,9 +43,9 @@ import de.uni_koblenz.jgralab.schema.Schema;
 
 /**
  * aggregates graphs, edges and vertices
- * 
+ *
  * @author ist@uni-koblenz.de
- * 
+ *
  */
 public interface AttributedElement extends Comparable<AttributedElement> {
 	/**
@@ -83,4 +83,10 @@ public interface AttributedElement extends Comparable<AttributedElement> {
 	public Schema getSchema();
 
 	void initializeAttributesWithDefaultValues();
+
+	/**
+	 * @param cls
+	 * @return true, iff this attributed element is an instance of cls.
+	 */
+	public boolean isInstanceOf(AttributedElementClass cls);
 }

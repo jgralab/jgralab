@@ -18,12 +18,22 @@ import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.impl.EdgeIterable;
 import de.uni_koblenz.jgralab.impl.VertexIterable;
 import de.uni_koblenz.jgralab.impl.std.GraphImpl;
-import de.uni_koblenz.jgralab.schema.*;
+import de.uni_koblenz.jgralab.schema.Attribute;
+import de.uni_koblenz.jgralab.schema.AttributedElementClass;
+import de.uni_koblenz.jgralab.schema.BasicDomain;
+import de.uni_koblenz.jgralab.schema.BooleanDomain;
+import de.uni_koblenz.jgralab.schema.Domain;
+import de.uni_koblenz.jgralab.schema.DoubleDomain;
+import de.uni_koblenz.jgralab.schema.EdgeClass;
+import de.uni_koblenz.jgralab.schema.GraphClass;
+import de.uni_koblenz.jgralab.schema.IntegerDomain;
+import de.uni_koblenz.jgralab.schema.LongDomain;
+import de.uni_koblenz.jgralab.schema.VertexClass;
 
 /**
- * 
+ *
  * @author Bernhard
- * 
+ *
  */
 public class GenericGraphImpl extends GraphImpl {
 
@@ -70,8 +80,9 @@ public class GenericGraphImpl extends GraphImpl {
 
 	@SuppressWarnings("unchecked")
 	public <T extends Vertex> T createVertex(VertexClass vc, int id) {
-		if(type.getVertexClass(vc.getQualifiedName()) == null) {
-			throw new GraphException("Error creating vertex of VertexClass " + vc);
+		if (type.getVertexClass(vc.getQualifiedName()) == null) {
+			throw new GraphException("Error creating vertex of VertexClass "
+					+ vc);
 		}
 		try {
 			return (T) new GenericVertexImpl(vc, id, this);
@@ -118,7 +129,7 @@ public class GenericGraphImpl extends GraphImpl {
 	@Override
 	public void readAttributeValueFromString(String attributeName, String value)
 			throws GraphIOException, NoSuchAttributeException {
-		if (attributes != null && attributes.containsKey(attributeName)) {
+		if ((attributes != null) && attributes.containsKey(attributeName)) {
 			attributes.put(
 					attributeName,
 					type.getAttribute(attributeName)
@@ -162,7 +173,7 @@ public class GenericGraphImpl extends GraphImpl {
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T> T getAttribute(String name) throws NoSuchAttributeException {
-		if (attributes == null || !attributes.containsKey(name)) {
+		if ((attributes == null) || !attributes.containsKey(name)) {
 			throw new NoSuchAttributeException(type.getSimpleName()
 					+ " doesn't contain an attribute " + name);
 		} else {
@@ -173,7 +184,7 @@ public class GenericGraphImpl extends GraphImpl {
 	@Override
 	public <T> void setAttribute(String name, T data)
 			throws NoSuchAttributeException {
-		if (attributes == null || !attributes.containsKey(name)) {
+		if ((attributes == null) || !attributes.containsKey(name)) {
 			throw new NoSuchAttributeException(type.getSimpleName()
 					+ " doesn't contain an attribute " + name);
 		} else {
@@ -269,7 +280,7 @@ public class GenericGraphImpl extends GraphImpl {
 	 * Returns the default value for attributes in the generic implementation if
 	 * there is no explicitly defined default value, according to the
 	 * attribute's domain.
-	 * 
+	 *
 	 * @param domain
 	 *            The attribute's domain.
 	 * @return The default value for attributes of the domain.
@@ -328,5 +339,12 @@ public class GenericGraphImpl extends GraphImpl {
 			Vertex startVertex, String pathDescription, Class<T> vertexType) {
 		throw new UnsupportedOperationException(
 				"This method is not supported by the generic implementation");
+	}
+
+	@Override
+	public boolean isInstanceOf(AttributedElementClass cls) {
+		// Needs to be overridden from the base variant, because that relies on
+		// code generation.
+		return type.equals(cls) || type.isSubClassOf(cls);
 	}
 }

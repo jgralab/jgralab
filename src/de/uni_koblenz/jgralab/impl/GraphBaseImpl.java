@@ -239,7 +239,7 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 		}
 
 		schema = cls.getSchema();
-		//graphFactory = schema.getGraphFactory();
+		// graphFactory = schema.getGraphFactory();
 		setId(id == null ? RandomIdGenerator.generateId() : id);
 		// needed for initialization of graphVersion with transactions
 		graphVersion = -1;
@@ -551,13 +551,14 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 			}
 		}
 	}
-	
-	
+
 	/**
 	 * Creates an edge of the given {@link EdgeClass} and adds it to the graph.
 	 */
+	@Override
 	@SuppressWarnings("unchecked")
-	public <T extends Edge> T createEdge(EdgeClass ec, Vertex alpha, Vertex omega) {
+	public <T extends Edge> T createEdge(EdgeClass ec, Vertex alpha,
+			Vertex omega) {
 		return (T) createEdge(ec.getSchemaClass(), alpha, omega);
 	}
 
@@ -584,9 +585,10 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 					+ cls.getName(), ex);
 		}
 	}
-	
+
 	/**
-	 * Creates a vertex of the given {@link VertexClass} and adds it to the graph.
+	 * Creates a vertex of the given {@link VertexClass} and adds it to the
+	 * graph.
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
@@ -2194,11 +2196,20 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 		GraphIO.saveGraphToStream(this, out, pf);
 	}
 
+	@Override
 	public GraphFactory getGraphFactory() {
 		return graphFactory;
 	}
 
+	@Override
 	public void setGraphFactory(GraphFactory graphFactory) {
 		this.graphFactory = graphFactory;
+	}
+
+	@Override
+	public boolean isInstanceOf(AttributedElementClass cls) {
+		// This is specific to all impl variants with code generation. Generic
+		// needs to implement this with a schema lookup.
+		return cls.getSchemaClass().isInstance(this);
 	}
 }
