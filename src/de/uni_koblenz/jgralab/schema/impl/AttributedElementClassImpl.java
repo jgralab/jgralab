@@ -1,29 +1,29 @@
 /*
  * JGraLab - The Java Graph Laboratory
- * 
+ *
  * Copyright (C) 2006-2011 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
- * 
+ *
  * For bug reports, documentation and further information, visit
- * 
+ *
  *                         http://jgralab.uni-koblenz.de
- * 
+ *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
  * Free Software Foundation; either version 3 of the License, or (at your
  * option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, see <http://www.gnu.org/licenses>.
- * 
+ *
  * Additional permission under GNU GPL version 3 section 7
- * 
+ *
  * If you modify this Program, or any covered work, by linking or combining
  * it with Eclipse (or a modified version of that program or an Eclipse
  * plugin), containing parts covered by the terms of the Eclipse Public
@@ -68,11 +68,11 @@ public abstract class AttributedElementClassImpl extends NamedElementImpl
 	private final TreeSet<Attribute> attributeList = new TreeSet<Attribute>();
 
 	/**
-	 * the list of all attributes. Own attributes and inherited attributes are 
+	 * the list of all attributes. Own attributes and inherited attributes are
 	 * stored here - but only if the schema is finish
 	 */
 	private SortedSet<Attribute> allAttributeList;
-	
+
 	/**
 	 * A set of {@link Constraint}s which can be used to validate the graph.
 	 */
@@ -87,7 +87,7 @@ public abstract class AttributedElementClassImpl extends NamedElementImpl
 	 * the sub classes of this class - only set if the schema is finish
 	 */
 	protected Set<AttributedElementClass> allSubClasses;
-	
+
 	/**
 	 * the immediate super classes of this class
 	 */
@@ -97,12 +97,12 @@ public abstract class AttributedElementClassImpl extends NamedElementImpl
 	 * the super classes of this class - only set if the schema is finish
 	 */
 	protected Set<AttributedElementClass> allSuperClasses;
-	
+
 	/**
 	 * true if the schema is finish
 	 */
 	private boolean finish = false;
-	
+
 	/**
 	 * true if element class is abstract
 	 */
@@ -123,7 +123,7 @@ public abstract class AttributedElementClassImpl extends NamedElementImpl
 
 	/**
 	 * builds a new attributed element class
-	 * 
+	 *
 	 * @param qn
 	 *            the unique identifier of the element in the schema
 	 */
@@ -134,11 +134,10 @@ public abstract class AttributedElementClassImpl extends NamedElementImpl
 
 	@Override
 	public void addAttribute(Attribute anAttribute) {
-		
 		if(finish){
 			throw new SchemaException("No changes to finished schema!");
 		}
-		
+
 		if (containsAttribute(anAttribute.getName())) {
 			throw new DuplicateAttributeException(anAttribute.getName(),
 					getQualifiedName());
@@ -178,7 +177,7 @@ public abstract class AttributedElementClassImpl extends NamedElementImpl
 
 	/**
 	 * adds a superClass to this class
-	 * 
+	 *
 	 * @param superClass
 	 *            the class to add as superclass
 	 */
@@ -186,7 +185,7 @@ public abstract class AttributedElementClassImpl extends NamedElementImpl
 		if(finish){
 			throw new SchemaException("No changes to finished schema!");
 		}
-		
+
 		if ((superClass == this) || (superClass == null)) {
 			return;
 		}
@@ -210,7 +209,7 @@ public abstract class AttributedElementClassImpl extends NamedElementImpl
 		}
 		directSuperClasses.add(superClass);
 		((AttributedElementClassImpl) superClass).directSubClasses.add(this);
-		
+
 		if(superClass instanceof VertexClass){
 			// DefaultVertexClass has a the DefaultGraphClass as graphClass, so it is not in the DAG
 			if(!superClass.equals(getSchema().getDefaultVertexClass())){
@@ -255,7 +254,7 @@ public abstract class AttributedElementClassImpl extends NamedElementImpl
 		if(finish){
 			return this.allSubClasses;
 		}
-		
+
 		Set<AttributedElementClass> returnSet = new HashSet<AttributedElementClass>();
 		for (AttributedElementClass subclass : directSubClasses) {
 			returnSet.add(subclass);
@@ -269,7 +268,7 @@ public abstract class AttributedElementClassImpl extends NamedElementImpl
 		if(finish) {
 			return this.allSuperClasses;
 		}
-		
+
 		HashSet<AttributedElementClass> allSuperClasses = new HashSet<AttributedElementClass>();
 		allSuperClasses.addAll(directSuperClasses);
 		for (AttributedElementClass superClass : directSuperClasses) {
@@ -291,7 +290,7 @@ public abstract class AttributedElementClassImpl extends NamedElementImpl
 				}
 			}
 		}
-		
+
 		Attribute ownAttr = getOwnAttribute(name);
 		if (ownAttr != null) {
 			return ownAttr;
@@ -322,7 +321,7 @@ public abstract class AttributedElementClassImpl extends NamedElementImpl
 		if(finish){
 			return this.allAttributeList;
 		}
-		
+
 		TreeSet<Attribute> attrList = new TreeSet<Attribute>();
 		attrList.addAll(attributeList);
 		for (AttributedElementClass superClass : directSuperClasses) {
@@ -481,10 +480,10 @@ public abstract class AttributedElementClassImpl extends NamedElementImpl
 		}
 		return false;
 	}
-	
+
 	/**
-	 * Called if the schema is finished, saves complete subclass, superclass 
-	 * and attribute list 
+	 * Called if the schema is finished, saves complete subclass, superclass
+	 * and attribute list
 	 */
 	protected void finish(){
 		this.allSuperClasses = new HashSet<AttributedElementClass>();
@@ -492,28 +491,28 @@ public abstract class AttributedElementClassImpl extends NamedElementImpl
 		for(AttributedElementClass superClass : directSuperClasses){
 			this.allSuperClasses.addAll(superClass.getAllSuperClasses());
 		}
-		
+
 		this.allSubClasses = new HashSet<AttributedElementClass>();
 		this.allSubClasses.addAll(directSubClasses);
 		for(AttributedElementClass subClass : directSubClasses){
 			this.allSubClasses.addAll(subClass.getAllSubClasses());
 		}
-		
+
 		this.allAttributeList = new TreeSet<Attribute>();
 		this.allAttributeList.addAll(attributeList);
 		for (AttributedElementClass superClass : directSuperClasses) {
 			this.allAttributeList.addAll(superClass.getAttributeList());
 		}
-		
+
 		this.directSubClasses = Collections.unmodifiableSet(this.directSubClasses);
 		this.directSuperClasses = Collections.unmodifiableSet(this.directSuperClasses);
 		this.allSuperClasses = Collections.unmodifiableSet(this.allSuperClasses);
 		this.allSubClasses = Collections.unmodifiableSet(this.allSubClasses);
 		this.allAttributeList = Collections.unmodifiableSortedSet(this.allAttributeList);
-		
+
 		this.finish = true;
 	}
-	
+
 	/**
 	 * Called if the schema is reopen
 	 */
@@ -523,10 +522,10 @@ public abstract class AttributedElementClassImpl extends NamedElementImpl
 		this.allSuperClasses = null;
 		this.allSubClasses = null;
 		this.allAttributeList = null;
-		
+
 		this.finish = false;
 	}
-	
+
 	protected boolean isFinished(){
 		return finish;
 	}

@@ -352,7 +352,7 @@ public interface Vertex extends GraphElement {
 	 *
 	 * @return <code>true</code> iff <code>edge</code> may start at this vertex
 	 */
-	@Deprecated
+	// @Deprecated
 	public boolean isValidAlpha(Edge edge);
 
 	/**
@@ -360,7 +360,7 @@ public interface Vertex extends GraphElement {
 	 *
 	 * @return <code>true</code> iff <code>edge</code> may end at this vertex
 	 */
-	@Deprecated
+	// @Deprecated
 	public boolean isValidOmega(Edge edge);
 
 	/**
