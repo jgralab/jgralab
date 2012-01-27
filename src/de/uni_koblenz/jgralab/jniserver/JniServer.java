@@ -507,8 +507,8 @@ public class JniServer {
 	// ----------------------------------------------------------------------------
 	// ----------------------------------------------------------------------------
 
-	private void setEnumAttribute(AttributedElement e, String attributeName,
-			Object value) {
+	private void setEnumAttribute(AttributedElement<?, ?> e,
+			String attributeName, Object value) {
 		try {
 			AttributedElementClass aec = e.getAttributedElementClass();
 			Attribute attr = aec.getAttribute(attributeName);
@@ -545,12 +545,13 @@ public class JniServer {
 		}
 	}
 
-	private void setAttribute(AttributedElement e, String attributeName,
+	private void setAttribute(AttributedElement<?, ?> e, String attributeName,
 			Object value) {
 		e.setAttribute(attributeName, value);
 	}
 
-	private String getEnumAttribute(AttributedElement e, String attributeName) {
+	private String getEnumAttribute(AttributedElement<?, ?> e,
+			String attributeName) {
 		AttributedElementClass aec = e.getAttributedElementClass();
 		Attribute attr = aec.getAttribute(attributeName);
 		if (attr == null) {
@@ -566,7 +567,7 @@ public class JniServer {
 
 	}
 
-	private Object getAttribute(AttributedElement e, String attributeName) {
+	private Object getAttribute(AttributedElement<?, ?> e, String attributeName) {
 		return e.getAttribute(attributeName);
 	}
 

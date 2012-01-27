@@ -7,7 +7,6 @@ import java.util.Set;
 
 import org.pcollections.POrderedSet;
 
-import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphException;
@@ -31,9 +30,9 @@ import de.uni_koblenz.jgralab.schema.LongDomain;
 import de.uni_koblenz.jgralab.schema.VertexClass;
 
 /**
- *
+ * 
  * @author Bernhard
- *
+ * 
  */
 public class GenericGraphImpl extends GraphImpl {
 
@@ -122,7 +121,7 @@ public class GenericGraphImpl extends GraphImpl {
 	}
 
 	@Override
-	public AttributedElementClass getAttributedElementClass() {
+	public GraphClass getAttributedElementClass() {
 		return type;
 	}
 
@@ -280,7 +279,7 @@ public class GenericGraphImpl extends GraphImpl {
 	 * Returns the default value for attributes in the generic implementation if
 	 * there is no explicitly defined default value, according to the
 	 * attribute's domain.
-	 *
+	 * 
 	 * @param domain
 	 *            The attribute's domain.
 	 * @return The default value for attributes of the domain.
@@ -305,7 +304,7 @@ public class GenericGraphImpl extends GraphImpl {
 
 	// ************** unsupported methods ***************/
 	@Override
-	public Class<? extends AttributedElement> getSchemaClass() {
+	public Class<? extends Graph> getSchemaClass() {
 		throw new UnsupportedOperationException(
 				"This method is not supported by the generic implementation");
 	}

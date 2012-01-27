@@ -77,11 +77,12 @@ public class ImplementationModeTest extends InstanceTest {
 	public void setup() throws CommitFailedException, GraphIOException {
 		switch (implementationType) {
 		case STANDARD:
-			g = MinimalSchema.instance().createMinimalGraph(ImplementationType.STANDARD,V, E);
+			g = MinimalSchema.instance().createMinimalGraph(
+					ImplementationType.STANDARD, null, V, E);
 			break;
 		case TRANSACTION:
-			g = MinimalSchema.instance()
-					.createMinimalGraph(ImplementationType.TRANSACTION,V, E);
+			g = MinimalSchema.instance().createMinimalGraph(
+					ImplementationType.TRANSACTION, null, V, E);
 			break;
 		case DATABASE:
 			// load graph from file not (yet) implemented in DATABASE
@@ -114,12 +115,13 @@ public class ImplementationModeTest extends InstanceTest {
 		MinimalGraph g2;
 		switch (implementationType) {
 		case STANDARD:
-			g2 = MinimalSchema.instance().loadMinimalGraph(ImplementationType.STANDARD,filename);
+			g2 = MinimalSchema.instance().loadMinimalGraph(
+					ImplementationType.STANDARD, filename);
 			assertFalse(g2.hasTransactionSupport());
 			break;
 		case TRANSACTION:
-			g2 = MinimalSchema.instance()
-					.loadMinimalGraph(ImplementationType.TRANSACTION,filename);
+			g2 = MinimalSchema.instance().loadMinimalGraph(
+					ImplementationType.TRANSACTION, filename);
 			createReadOnlyTransaction(g2);
 			assertTrue(g2.hasTransactionSupport());
 			commit(g2);

@@ -13,7 +13,7 @@ public class GetValue extends Function {
 				2, 1, 1.0, Category.GRAPH);
 	}
 
-	public Object evaluate(AttributedElement el, String name) {
+	public Object evaluate(AttributedElement<?, ?> el, String name) {
 		return el.getAttribute(name);
 	}
 

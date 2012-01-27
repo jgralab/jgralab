@@ -60,12 +60,12 @@ public class GReQLConstraintViolation extends ConstraintViolation {
 	 * @return the offendingElements
 	 */
 	@Override
-	public Set<AttributedElement> getOffendingElements() {
+	public Set<AttributedElement<?, ?>> getOffendingElements() {
 		return offendingElements;
 	}
 
 	public GReQLConstraintViolation(AttributedElementClass aec,
-			Constraint constraint, Set<AttributedElement> offendingElems) {
+			Constraint constraint, Set<AttributedElement<?, ?>> offendingElems) {
 		super(aec);
 		this.constraint = constraint;
 		offendingElements = offendingElems;
@@ -75,7 +75,7 @@ public class GReQLConstraintViolation extends ConstraintViolation {
 	public boolean equals(Object o) {
 		if (o instanceof GReQLConstraintViolation) {
 			GReQLConstraintViolation other = (GReQLConstraintViolation) o;
-			return this.compareTo(other) == 0;
+			return compareTo(other) == 0;
 		}
 		return false;
 	}
@@ -98,7 +98,7 @@ public class GReQLConstraintViolation extends ConstraintViolation {
 		if (offendingElements != null) {
 			sb.append(" Offending elements: ");
 			boolean first = true;
-			for (AttributedElement ae : offendingElements) {
+			for (AttributedElement<?, ?> ae : offendingElements) {
 				if (first) {
 					first = false;
 				} else {

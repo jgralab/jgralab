@@ -75,7 +75,8 @@ public class SavepointImplTest {
 	@Before
 	public void setUp() {
 		MotorwayMapSchema schema = MotorwayMapSchema.instance();
-		motorwayMap = schema.createMotorwayMap(ImplementationType.TRANSACTION,V, E);
+		motorwayMap = schema.createMotorwayMap(ImplementationType.TRANSACTION,
+				null, V, E);
 		readWriteTransaction1 = motorwayMap.newTransaction();
 		readWriteTransaction2 = motorwayMap.newTransaction();
 		readOnlyTransaction = motorwayMap.newReadOnlyTransaction();
@@ -135,8 +136,8 @@ public class SavepointImplTest {
 			Savepoint sp1 = readWriteTransaction1.defineSavepoint();
 			Savepoint sp2 = readWriteTransaction1.defineSavepoint();
 			Savepoint sp3 = readWriteTransaction1.defineSavepoint();
-			assertEquals(readWriteTransaction1.getSavepoints(), Arrays.asList(
-					sp1, sp2, sp3));
+			assertEquals(readWriteTransaction1.getSavepoints(),
+					Arrays.asList(sp1, sp2, sp3));
 		} catch (Exception e) {
 			e.printStackTrace();
 			fail();

@@ -51,7 +51,7 @@ import de.uni_koblenz.jgralab.schema.impl.DirectedSchemaEdgeClass;
  * @author ist@uni-koblenz.de
  * 
  */
-public interface Vertex extends GraphElement {
+public interface Vertex extends GraphElement<VertexClass, Vertex> {
 
 	/**
 	 * Checks if the list of incident edges has changed with respect to the

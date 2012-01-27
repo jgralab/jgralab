@@ -37,7 +37,7 @@ public class CreateSubgraph extends Transformation<Void> {
 	private TemplateGraph templateGraph = null;
 	private Object match;
 	private String matchText;
-	private Set<GraphElement> createdElements = new HashSet<GraphElement>();
+	private Set<GraphElement<?, ?>> createdElements = new HashSet<GraphElement<?, ?>>();
 
 	public CreateSubgraph(Context c, String subgraphCreationText, Object match) {
 		super(c);
@@ -49,13 +49,13 @@ public class CreateSubgraph extends Transformation<Void> {
 			String greqlText) {
 		super(c);
 		templateGraph = TemplateGraphParser.parse(subgraphCreationText);
-		this.matchText = greqlText;
+		matchText = greqlText;
 	}
 
 	public CreateSubgraph(Context c, TemplateGraph g, String greqlText) {
 		super(c);
-		this.templateGraph = g;
-		this.matchText = greqlText;
+		templateGraph = g;
+		matchText = greqlText;
 	}
 
 	public static CreateSubgraph parseAndCreate(ExecuteTransformation et) {
@@ -216,12 +216,10 @@ public class CreateSubgraph extends Transformation<Void> {
 						.get_archetype()));
 				triple = triple.plus(arch);
 
-				triple = triple.plus(context
-						.evaluateGReQLQuery(((CreateVertex) e.getAlpha())
-								.get_archetype()));
-				triple = triple.plus(context
-						.evaluateGReQLQuery(((CreateVertex) e.getOmega())
-								.get_archetype()));
+				triple = triple.plus(context.evaluateGReQLQuery((e.getAlpha())
+						.get_archetype()));
+				triple = triple.plus(context.evaluateGReQLQuery((e.getOmega())
+						.get_archetype()));
 				archTripleSet = archTripleSet.plus(triple);
 			}
 			log.finer("Instantiating " + archTripleSet.size() + " '"
@@ -239,12 +237,12 @@ public class CreateSubgraph extends Transformation<Void> {
 	}
 
 	private void applyAttributeSetting(PSet<Object> matchCollection) {
-		List<Iterable<? extends GraphElement>> iterables = new LinkedList<Iterable<? extends GraphElement>>();
+		List<Iterable<? extends GraphElement<?, ?>>> iterables = new LinkedList<Iterable<? extends GraphElement<?, ?>>>();
 		iterables.add(templateGraph.getCreateVertexVertices());
 		iterables.add(templateGraph.getCreateEdgeEdges());
 
-		for (Iterable<? extends GraphElement> it : iterables) {
-			for (GraphElement ge : it) {
+		for (Iterable<? extends GraphElement<?, ?>> it : iterables) {
+			for (GraphElement<?, ?> ge : it) {
 				AttributedElementClass aec;
 				Map<String, String> attrs;
 				String qName;

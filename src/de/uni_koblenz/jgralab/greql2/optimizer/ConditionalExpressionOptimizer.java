@@ -157,7 +157,6 @@ public class ConditionalExpressionOptimizer extends OptimizerBase {
 		return simplifiedOrOptimized;
 	}
 
-	@SuppressWarnings("unchecked")
 	private LinkedList<VertexEdgeClassTuple> rememberConnections(
 			FunctionApplication top) {
 		LinkedList<VertexEdgeClassTuple> list = new LinkedList<VertexEdgeClassTuple>();

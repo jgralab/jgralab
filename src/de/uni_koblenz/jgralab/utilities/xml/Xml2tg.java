@@ -492,7 +492,7 @@ public class Xml2tg {
 
 	}
 
-	private void setAttributes(AttributedElement element,
+	private void setAttributes(AttributedElement<?, ?> element,
 			Map<String, String> attributes) {
 
 		for (Entry<String, String> currentEntry : attributes.entrySet()) {

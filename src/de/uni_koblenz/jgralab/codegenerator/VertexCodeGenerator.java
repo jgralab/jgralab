@@ -57,6 +57,7 @@ public class VertexCodeGenerator extends AttributedElementCodeGenerator {
 			String schemaPackageName, CodeGeneratorConfiguration config) {
 		super(vertexClass, schemaPackageName, config);
 		rootBlock.setVariable("graphElementClass", "Vertex");
+		rootBlock.setVariable("schemaElementClass", "VertexClass");
 		rolenameGenerator = new RolenameCodeGenerator((VertexClass) aec);
 	}
 

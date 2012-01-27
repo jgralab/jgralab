@@ -29,7 +29,8 @@ public class GenericEdgeImplTest {
 					"TestVertex"));
 			Vertex v2 = g.createVertex(g.getGraphClass().getVertexClass(
 					"TestVertex"));
-			Edge e1 = g.createEdge(g.getGraphClass().getEdgeClass("TestEdge"), v1, v2);
+			Edge e1 = g.createEdge(g.getGraphClass().getEdgeClass("TestEdge"),
+					v1, v2);
 
 			// accessing default values
 			assertEquals(true, e1.getAttribute("boolEdge"));
@@ -114,8 +115,8 @@ public class GenericEdgeImplTest {
 			assertEquals("SECOND", e1.getAttribute("enumEdge"));
 			e1.setAttribute("intEdge", 42);
 			assertEquals(42, e1.getAttribute("intEdge"));
-			e1.setAttribute("listEdge",
-					JGraLab.vector().plus(false).plus(false).plus(true));
+			e1.setAttribute("listEdge", JGraLab.vector().plus(false)
+					.plus(false).plus(true));
 			assertEquals(JGraLab.vector().plus(false).plus(false).plus(true),
 					e1.getAttribute("listEdge"));
 			e1.setAttribute("longEdge", 987654321l);
@@ -169,7 +170,7 @@ public class GenericEdgeImplTest {
 	}
 
 	// Test setting an attribute that doesn't exist
-	@Test(expected=GraphException.class)
+	@Test(expected = GraphException.class)
 	public void testAccessAttributesFailure1() {
 		try {
 			Schema s = GraphIO
@@ -180,15 +181,16 @@ public class GenericEdgeImplTest {
 					"TestVertex"));
 			Vertex v2 = g.createVertex(g.getGraphClass().getVertexClass(
 					"TestVertex"));
-			Edge e1 = g.createEdge(g.getGraphClass().getEdgeClass("TestEdge"), v1, v2);
+			Edge e1 = g.createEdge(g.getGraphClass().getEdgeClass("TestEdge"),
+					v1, v2);
 			e1.setAttribute("MapEdge", JGraLab.map());
 		} catch (GraphIOException e) {
 			e.printStackTrace();
 			fail();
 		}
 	}
-	
-	@Test(expected=GraphException.class)
+
+	@Test(expected = GraphException.class)
 	public void testAccessAttributesFailure2() {
 		try {
 			Schema s = GraphIO
@@ -199,7 +201,8 @@ public class GenericEdgeImplTest {
 					"TestVertex"));
 			Vertex v2 = g.createVertex(g.getGraphClass().getVertexClass(
 					"TestVertex"));
-			Edge e1 = g.createEdge(g.getGraphClass().getEdgeClass("TestEdge"), v1, v2);
+			Edge e1 = g.createEdge(g.getGraphClass().getEdgeClass("TestEdge"),
+					v1, v2);
 			e1.setAttribute("SapEdge", JGraLab.set().plus(false));
 		} catch (GraphIOException e) {
 			e.printStackTrace();
@@ -208,7 +211,7 @@ public class GenericEdgeImplTest {
 	}
 
 	// Test setting attributes with values that don't conform to their domain
-	@Test(expected=ClassCastException.class)
+	@Test(expected = ClassCastException.class)
 	public void testAccessAttributesFailure3() {
 		try {
 			Schema s = GraphIO
@@ -219,34 +222,35 @@ public class GenericEdgeImplTest {
 					"TestVertex"));
 			Vertex v2 = g.createVertex(g.getGraphClass().getVertexClass(
 					"TestVertex"));
-			Edge e1 = g.createEdge(g.getGraphClass().getEdgeClass("TestEdge"), v1, v2);
+			Edge e1 = g.createEdge(g.getGraphClass().getEdgeClass("TestEdge"),
+					v1, v2);
 			e1.setAttribute("mapEdge", JGraLab.set());
 		} catch (GraphIOException e) {
 			e.printStackTrace();
 			fail();
 		}
 	}
-	
+
 	@Test
 	public void testGetNextEdge() {
 		// TODO
 	}
-	
+
 	@Test
 	public void testGetNextIncidence() {
 		// TODO
 	}
-	
+
 	@Test
 	public void testGetAggregationKind() {
 		// TODO
 	}
-	
+
 	@Test
 	public void testGetAlphaAggregationKind() {
 		// TODO
 	}
-	
+
 	@Test
 	public void testGetOmegaAggregationKind() {
 		// TODO

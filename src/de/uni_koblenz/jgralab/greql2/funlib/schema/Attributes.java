@@ -29,7 +29,7 @@ public class Attributes extends Function {
 		return result;
 	}
 
-	public PVector<PMap<String, String>> evaluate(AttributedElement el) {
+	public PVector<PMap<String, String>> evaluate(AttributedElement<?, ?> el) {
 		return evaluate(el.getAttributedElementClass());
 	}
 }

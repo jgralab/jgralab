@@ -485,7 +485,7 @@ public interface AttributedElementClass extends NamedElement {
 	 * @throws SchemaClassAccessException
 	 *             if reflection exceptions occur.
 	 */
-	public Class<? extends AttributedElement> getSchemaClass();
+	public Class<? extends AttributedElement<?, ?>> getSchemaClass();
 
 	/**
 	 * Returns the schema implementation class for this attributed element.
@@ -512,7 +512,7 @@ public interface AttributedElementClass extends NamedElement {
 	 *             <li>there are reflection exceptions</li>
 	 *             </ul>
 	 */
-	public Class<? extends AttributedElement> getSchemaImplementationClass();
+	public Class<? extends AttributedElement<?, ?>> getSchemaImplementationClass();
 
 	/**
 	 * Fetches the attribute with the specified <code>name</code> from this

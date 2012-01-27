@@ -300,7 +300,8 @@ public class Csv2Tg implements FilenameFilter {
 		AttributedElementClass clazz = schema
 				.getAttributedElementClass(attributeClassName);
 
-		Class<? extends AttributedElement> vertexClass = clazz.getSchemaClass();
+		Class<? extends AttributedElement<?, ?>> vertexClass = clazz
+				.getSchemaClass();
 		boolean isVertexClass = clazz.isSubClassOf(schema
 				.getDefaultVertexClass());
 
@@ -358,9 +359,9 @@ public class Csv2Tg implements FilenameFilter {
 
 	}
 
-	private void insertAttribute(AttributedElement edge, CsvReader reader,
-			int startColumnIndex) throws NoSuchAttributeException,
-			GraphIOException {
+	private void insertAttribute(AttributedElement<?, ?> element,
+			CsvReader reader, int startColumnIndex)
+			throws NoSuchAttributeException, GraphIOException {
 
 		List<String> header = reader.getFieldNames();
 
@@ -375,14 +376,14 @@ public class Csv2Tg implements FilenameFilter {
 			String transformedString = transformCsvStringValue(valueString);
 
 			try {
-				edge.readAttributeValueFromString(attributeName,
+				element.readAttributeValueFromString(attributeName,
 						transformedString);
 			} catch (NoSuchAttributeException ex) {
 				throw new RuntimeException("The attribute \"" + attributeName
 						+ "\" with value \"" + transformedString
 						+ "\" in line " + index
 						+ " is not a valid attribute name for "
-						+ edge.getGraphClass().getQualifiedName(), ex);
+						+ element.getGraphClass().getQualifiedName(), ex);
 			}
 
 		}
@@ -412,7 +413,7 @@ public class Csv2Tg implements FilenameFilter {
 	}
 
 	public void setCsvFiles(String[] vertexFiles) {
-		this.csvFiles = getFilesInFolder(vertexFiles);
+		csvFiles = getFilesInFolder(vertexFiles);
 	}
 
 	private String[] getFilesInFolder(String[] filenames) {

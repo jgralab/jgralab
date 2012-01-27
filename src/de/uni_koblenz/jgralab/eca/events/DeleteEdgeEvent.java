@@ -38,7 +38,7 @@ public class DeleteEdgeEvent extends Event {
 	 *            type of the deleted Edge
 	 */
 	public DeleteEdgeEvent(int nestedCalls, Graph graph,
-			Class<? extends AttributedElement> type) {
+			Class<? extends AttributedElement<?, ?>> type) {
 		super(nestedCalls, EventTime.AFTER, graph, type);
 		edge = null;
 	}
@@ -55,7 +55,7 @@ public class DeleteEdgeEvent extends Event {
 	 *         EventTime is after
 	 */
 	@Override
-	public AttributedElement getElement() {
+	public AttributedElement<?, ?> getElement() {
 		return edge;
 	}
 }

@@ -36,19 +36,22 @@
 package de.uni_koblenz.jgralab.impl;
 
 import de.uni_koblenz.jgralab.Graph;
+import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.schema.Attribute;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.GraphClass;
+import de.uni_koblenz.jgralab.schema.GraphElementClass;
 import de.uni_koblenz.jgralab.schema.Schema;
 
 /**
  * TODO add comment
- *
+ * 
  * @author ist@uni-koblenz.de
- *
+ * 
  */
-public abstract class GraphElementImpl implements InternalGraphElement {
+public abstract class GraphElementImpl<SC extends GraphElementClass, IC extends GraphElement<SC, IC>>
+		implements InternalGraphElement<SC, IC> {
 	protected int id;
 
 	protected GraphElementImpl(Graph graph) {
@@ -65,7 +68,7 @@ public abstract class GraphElementImpl implements InternalGraphElement {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see de.uni_koblenz.jgralab.AttributedElement#getGraphClass()
 	 */
 	@Override
@@ -75,7 +78,7 @@ public abstract class GraphElementImpl implements InternalGraphElement {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see jgralab.AttributedElement#getSchema()
 	 */
 	@Override
@@ -90,7 +93,7 @@ public abstract class GraphElementImpl implements InternalGraphElement {
 
 	/**
 	 * Triggers ECA-rules before an Attribute is changed
-	 *
+	 * 
 	 * @param name
 	 *            of the changing Attribute
 	 */
@@ -104,7 +107,7 @@ public abstract class GraphElementImpl implements InternalGraphElement {
 
 	/**
 	 * Triggers ECA-rule after an Attribute is changed
-	 *
+	 * 
 	 * @param name
 	 *            of the changed Attribute
 	 */
@@ -118,7 +121,7 @@ public abstract class GraphElementImpl implements InternalGraphElement {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see de.uni_koblenz.jgralab.GraphElement#getId()
 	 */
 	@Override

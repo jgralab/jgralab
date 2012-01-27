@@ -40,13 +40,13 @@ public class MatchReplace extends InPlaceTransformation {
 	private Map<CreateVertex, Vertex> createVertices2Vertices = new HashMap<CreateVertex, Vertex>();
 	private LinkedHashSet<Vertex> matchedVertices = new LinkedHashSet<Vertex>();
 	private LinkedHashSet<Edge> matchedEdges = new LinkedHashSet<Edge>();
-	private Set<GraphElement> preservables = new HashSet<GraphElement>();
+	private Set<GraphElement<?, ?>> preservables = new HashSet<GraphElement<?, ?>>();
 	private boolean addGlobalMappings = false;
 
 	/**
 	 * for validating successive matches.
 	 */
-	private HashSet<GraphElement> allModifiedElements = new HashSet<GraphElement>();
+	private HashSet<GraphElement<?, ?>> allModifiedElements = new HashSet<GraphElement<?, ?>>();
 
 	/**
 	 * Creates a new {@link MatchReplace} transformation.
@@ -229,7 +229,8 @@ public class MatchReplace extends InPlaceTransformation {
 			} else {
 				Edge newEdge = createEdge(ce, startVertex, endVertex);
 				if (addGlobalMappings && (arch != null)) {
-					PMap<Object, AttributedElement> m = Empty.orderedMap();
+					PMap<Object, AttributedElement<?, ?>> m = Empty
+							.orderedMap();
 					m = m.plus(arch, newEdge);
 					new AddMappings(context, m).execute();
 					if (arch instanceof Edge) {
@@ -264,7 +265,8 @@ public class MatchReplace extends InPlaceTransformation {
 				createVertices2Vertices.put(cv, newVertex);
 				if (arch != null) {
 					if (addGlobalMappings) {
-						PMap<Object, AttributedElement> m = Empty.orderedMap();
+						PMap<Object, AttributedElement<?, ?>> m = Empty
+								.orderedMap();
 						m = m.plus(arch, newVertex);
 						new AddMappings(context, m).execute();
 					}
@@ -298,8 +300,8 @@ public class MatchReplace extends InPlaceTransformation {
 			}
 		} else {
 			ec = getSingleEdgeClassBetween(
-					(VertexClass) startVertex.getAttributedElementClass(),
-					(VertexClass) endVertex.getAttributedElementClass());
+					startVertex.getAttributedElementClass(),
+					endVertex.getAttributedElementClass());
 		}
 		return context.getTargetGraph().createEdge(ec.getSchemaClass(),
 				startVertex, endVertex);
@@ -329,7 +331,7 @@ public class MatchReplace extends InPlaceTransformation {
 		return possibles.get(0);
 	}
 
-	private void setAttributeValues(GraphElement ge, Object arch,
+	private void setAttributeValues(GraphElement<?, ?> ge, Object arch,
 			Map<String, String> attrMap, boolean copy) {
 		if (attrMap == null) {
 			return;
@@ -341,7 +343,7 @@ public class MatchReplace extends InPlaceTransformation {
 		}
 		// Maybe copy matching attributes over
 		if (copy) {
-			AttributedElement ae = (AttributedElement) arch;
+			AttributedElement<?, ?> ae = (AttributedElement<?, ?>) arch;
 			AttributedElementClass aeClass = ae.getAttributedElementClass();
 			AttributedElementClass geClass = ge.getAttributedElementClass();
 			for (Attribute attr : geClass.getAttributeList()) {

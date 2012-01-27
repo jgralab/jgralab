@@ -63,8 +63,8 @@ import de.uni_koblenz.jgralab.schema.impl.DirectedSchemaEdgeClass;
  * 
  * @author ist@uni-koblenz.de
  */
-public abstract class VertexBaseImpl extends GraphElementImpl implements
-		Vertex, InternalVertex {
+public abstract class VertexBaseImpl extends
+		GraphElementImpl<VertexClass, Vertex> implements Vertex, InternalVertex {
 
 	/**
 	 * @param id
@@ -590,7 +590,7 @@ public abstract class VertexBaseImpl extends GraphElementImpl implements
 	 * @see java.lang.Comparable#compareTo(java.lang.Object)
 	 */
 	@Override
-	public int compareTo(AttributedElement a) {
+	public int compareTo(AttributedElement<VertexClass, Vertex> a) {
 		assert a instanceof Vertex;
 		Vertex v = (Vertex) a;
 		assert isValid() && v.isValid();

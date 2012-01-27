@@ -203,7 +203,7 @@ public class GreqlEvaluatorFacade {
 	 *            AttributedElement.
 	 */
 	protected void setTypeSpecificVariablesOfGreqlEvaluator(
-			AttributedElement attributedElement, int graphSequenceIndex) {
+			AttributedElement<?, ?> attributedElement, int graphSequenceIndex) {
 
 		// Sets the common attributes a variables in the evaluator.
 		setVariablesOfGreqlEvaluator(attributedElement, graphSequenceIndex);
@@ -230,7 +230,7 @@ public class GreqlEvaluatorFacade {
 	 *            AttributedElement.
 	 */
 	public void setVariablesOfGreqlEvaluator(
-			AttributedElement attributedElement, int graphSequenceIndex) {
+			AttributedElement<?, ?> attributedElement, int graphSequenceIndex) {
 
 		setVariable(ELEMENT, attributedElement);
 		setVariable(TYPE, attributedElement.getAttributedElementClass());

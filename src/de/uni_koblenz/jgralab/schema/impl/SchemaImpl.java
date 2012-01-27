@@ -56,6 +56,7 @@ import javax.tools.StandardJavaFileManager;
 import javax.tools.ToolProvider;
 
 import de.uni_koblenz.jgralab.Graph;
+import de.uni_koblenz.jgralab.GraphFactory;
 import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.ImplementationType;
@@ -215,7 +216,7 @@ public class SchemaImpl implements Schema {
 
 	/**
 	 * Creates a new <code>Schema</code>.
-	 *
+	 * 
 	 * @param name
 	 *            Name of schema.
 	 * @param packagePrefix
@@ -769,7 +770,7 @@ public class SchemaImpl implements Schema {
 	/**
 	 * Creates a {@link Package} with given qualified name, or returns an
 	 * existing package with this qualified name.
-	 *
+	 * 
 	 * @param qn
 	 *            the qualified name of the package
 	 * @return a new {@link Package} with the given qualified name, or an
@@ -825,7 +826,7 @@ public class SchemaImpl implements Schema {
 	/**
 	 * Given a qualified name like foo.bar.baz returns a string array with two
 	 * components: the package prefix (foo.bar) and the simple name (baz).
-	 *
+	 * 
 	 * @param qualifiedName
 	 *            a qualified name
 	 * @return a string array with two components: the package prefix and the
@@ -1086,7 +1087,7 @@ public class SchemaImpl implements Schema {
 	}
 
 	/**
-	 *
+	 * 
 	 * @param implementationType
 	 * @return
 	 */
@@ -1160,7 +1161,7 @@ public class SchemaImpl implements Schema {
 
 	/**
 	 * only used internally
-	 *
+	 * 
 	 * @return number of graphelementclasses contained in graphclass
 	 */
 	private int getNumberOfElements() {
@@ -1308,18 +1309,9 @@ public class SchemaImpl implements Schema {
 		return packagePrefix.replace('.', File.separatorChar);
 	}
 
-	/**
-	 * Set flag that transaction support should be used or not.
-	 *
-	 * @param config
-	 */
-	public void setConfiguration(CodeGeneratorConfiguration config) {
-		this.config = config;
-	}
-
 	@Override
 	public Graph createGraph(ImplementationType implementationType) {
-		return createGraph(implementationType, 100, 100);
+		return createGraph(implementationType, null, 100, 100);
 	}
 
 	@Override
@@ -1347,7 +1339,7 @@ public class SchemaImpl implements Schema {
 			}
 		}
 
-		Method graphCreateMethod = implementationType != ImplementationType.GENERIC ? getGraphCreateMethod(ImplementationType.STANDARD)
+		Method graphCreateMethod = implementationType != ImplementationType.GENERIC ? getGraphCreateMethod(implementationType)
 				: getGraphCreateMethod(ImplementationType.GENERIC);
 
 		try {
@@ -1360,14 +1352,20 @@ public class SchemaImpl implements Schema {
 			}
 		} catch (Exception e) {
 			throw new SchemaException(
-					"Something failed when creating the  graph!", e);
+					"Something failed when creating the graph!", e);
 		}
 	}
 
 	@Override
-	public Graph createGraph(ImplementationType implementationType, int vCount,
+	public Graph createGraph(GraphFactory factory) {
+		return createGraph(factory, null, 100, 100);
+	}
+
+	@Override
+	public Graph createGraph(GraphFactory factory, String id, int vCount,
 			int eCount) {
-		return createGraph(implementationType, null, vCount, eCount);
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	/**
@@ -1384,11 +1382,11 @@ public class SchemaImpl implements Schema {
 	 */
 	@Override
 	public void finish() {
-		if (this.finish) {
+		if (finish) {
 			return;
 		}
-		((GraphClassImpl) this.graphClass).finish();
-		this.finish = true;
+		((GraphClassImpl) graphClass).finish();
+		finish = true;
 
 	}
 
@@ -1398,11 +1396,11 @@ public class SchemaImpl implements Schema {
 	 */
 	@Override
 	public void reopen() {
-		if (!this.finish) {
+		if (!finish) {
 			return;
 		}
-		((GraphClassImpl) this.graphClass).finish();
-		this.finish = false;
+		((GraphClassImpl) graphClass).finish();
+		finish = false;
 	}
 
 }

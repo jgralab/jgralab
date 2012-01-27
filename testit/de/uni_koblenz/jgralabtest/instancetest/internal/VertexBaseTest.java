@@ -127,11 +127,12 @@ public class VertexBaseTest extends InstanceTest {
 		VertexTestGraph graph = null;
 		switch (implementationType) {
 		case STANDARD:
-			graph = VertexTestSchema.instance().createVertexTestGraph(ImplementationType.STANDARD,100, 100);
+			graph = VertexTestSchema.instance().createVertexTestGraph(
+					ImplementationType.STANDARD);
 			break;
 		case TRANSACTION:
-			graph = VertexTestSchema.instance()
-					.createVertexTestGraph(ImplementationType.TRANSACTION,100, 100);
+			graph = VertexTestSchema.instance().createVertexTestGraph(
+					ImplementationType.TRANSACTION);
 			break;
 		case DATABASE:
 			graph = createVertexTestGraphWithDatabaseSupport();
@@ -186,12 +187,12 @@ public class VertexBaseTest extends InstanceTest {
 			expectedVersions[end]++;
 			commit(g);
 			createReadOnlyTransaction(g);
-			assertEquals(expectedVersions[0], nodes[0]
-					.getIncidenceListVersion());
-			assertEquals(expectedVersions[1], nodes[1]
-					.getIncidenceListVersion());
-			assertEquals(expectedVersions[2], nodes[2]
-					.getIncidenceListVersion());
+			assertEquals(expectedVersions[0],
+					nodes[0].getIncidenceListVersion());
+			assertEquals(expectedVersions[1],
+					nodes[1].getIncidenceListVersion());
+			assertEquals(expectedVersions[2],
+					nodes[2].getIncidenceListVersion());
 			commit(g);
 			// delete an edge
 			createTransaction(g);
@@ -200,12 +201,12 @@ public class VertexBaseTest extends InstanceTest {
 			expectedVersions[end]++;
 			commit(g);
 			createReadOnlyTransaction(g);
-			assertEquals(expectedVersions[0], nodes[0]
-					.getIncidenceListVersion());
-			assertEquals(expectedVersions[1], nodes[1]
-					.getIncidenceListVersion());
-			assertEquals(expectedVersions[2], nodes[2]
-					.getIncidenceListVersion());
+			assertEquals(expectedVersions[0],
+					nodes[0].getIncidenceListVersion());
+			assertEquals(expectedVersions[1],
+					nodes[1].getIncidenceListVersion());
+			assertEquals(expectedVersions[2],
+					nodes[2].getIncidenceListVersion());
 			commit(g);
 		}
 	}

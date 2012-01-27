@@ -53,9 +53,9 @@ import de.uni_koblenz.jgralab.schema.Domain;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.ListDomain;
 import de.uni_koblenz.jgralab.schema.RecordDomain;
+import de.uni_koblenz.jgralab.schema.RecordDomain.RecordComponent;
 import de.uni_koblenz.jgralab.schema.Schema;
 import de.uni_koblenz.jgralab.schema.SetDomain;
-import de.uni_koblenz.jgralab.schema.RecordDomain.RecordComponent;
 
 class Graph2OWLInstances {
 
@@ -473,9 +473,9 @@ class Graph2OWLInstances {
 	 * representing the edge's {@code AttributedElementClass}. {@code eElemId}
 	 * specifies the individual's id. The individual contains properties
 	 * relating it to its attributes, its containing graph, the role names on
-	 * its "from" and "to" sides and, if {@code e} constitutes an {@code
-	 * Aggregation} or {@code Composition}, to the {@code Vertex} forming the
-	 * aggregate.<br>
+	 * its "from" and "to" sides and, if {@code e} constitutes an
+	 * {@code Aggregation} or {@code Composition}, to the {@code Vertex} forming
+	 * the aggregate.<br>
 	 * <br>
 	 * XML code written if: <br>
 	 * 
@@ -591,7 +591,7 @@ class Graph2OWLInstances {
 	 * @see #writeAttributeIndividualDatatypePropElement(String name, Object
 	 *      value, Domain dom)
 	 */
-	private void convertAttributeValue(AttributedElement ownerAe,
+	private void convertAttributeValue(AttributedElement<?, ?> ownerAe,
 			Attribute attr, String attrName) throws XMLStreamException {
 		String attrPropertyName;
 		Object value = ownerAe.getAttribute(attrName);
@@ -607,7 +607,8 @@ class Graph2OWLInstances {
 		} else {
 			attrPropertyName = HelperMethods.firstToLowerCase(owningAec
 					.getQualifiedName())
-					+ "Has" + HelperMethods.firstToUpperCase(attrName);
+					+ "Has"
+					+ HelperMethods.firstToUpperCase(attrName);
 		}
 
 		Domain dom = attr.getDomain();
@@ -902,11 +903,12 @@ class Graph2OWLInstances {
 				e.printStackTrace();
 			}
 
-			writeAttributeIndividualDatatypePropElement(HelperMethods
-					.firstToLowerCase(dom.getQualifiedName())
-					+ "Has"
-					+ HelperMethods.firstToUpperCase(component.getName()),
-					componentValue, component.getDomain());
+			writeAttributeIndividualDatatypePropElement(
+					HelperMethods.firstToLowerCase(dom.getQualifiedName())
+							+ "Has"
+							+ HelperMethods.firstToUpperCase(component
+									.getName()), componentValue,
+					component.getDomain());
 		}
 
 		writer.writeEndElement();
@@ -933,7 +935,7 @@ class Graph2OWLInstances {
 	 *            be converted.
 	 * @throws XMLStreamException
 	 */
-	@SuppressWarnings( { "rawtypes" })
+	@SuppressWarnings({ "rawtypes" })
 	private void writeAttributeIndividualDatatypePropElement(String propName,
 			Object value, Domain dom) throws XMLStreamException {
 		if (dom.toString().contains("Enum")) {
@@ -948,13 +950,11 @@ class Graph2OWLInstances {
 						JGraLab2OWL.xsdNS + "string");
 				writer.writeCharacters((String) value);
 			} else {
-				writer
-						.writeAttribute(
-								JGraLab2OWL.rdfNS,
-								"datatype",
-								JGraLab2OWL.xsdNS
-										+ dom
-												.getJavaAttributeImplementationTypeName(""));
+				writer.writeAttribute(
+						JGraLab2OWL.rdfNS,
+						"datatype",
+						JGraLab2OWL.xsdNS
+								+ dom.getJavaAttributeImplementationTypeName(""));
 				writer.writeCharacters(value.toString());
 			}
 

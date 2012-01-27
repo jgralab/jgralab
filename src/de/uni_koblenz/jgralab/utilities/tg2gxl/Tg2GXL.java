@@ -304,7 +304,7 @@ public class Tg2GXL extends Tg2Whatever {
 	 *            <code>Attribute</code>
 	 */
 
-	private void printAttributes(PrintStream out, AttributedElement elem) {
+	private void printAttributes(PrintStream out, AttributedElement<?, ?> elem) {
 		for (Attribute attr : elem.getAttributedElementClass()
 				.getAttributeList()) {
 

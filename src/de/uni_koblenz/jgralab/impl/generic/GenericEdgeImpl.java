@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Graph;
@@ -50,7 +49,7 @@ public class GenericEdgeImpl extends EdgeImpl {
 	}
 
 	@Override
-	public AttributedElementClass getAttributedElementClass() {
+	public EdgeClass getAttributedElementClass() {
 		return type;
 	}
 
@@ -102,24 +101,22 @@ public class GenericEdgeImpl extends EdgeImpl {
 
 	@Override
 	public AggregationKind getAggregationKind() {
-		AggregationKind fromAK = ((EdgeClass) getAttributedElementClass())
-				.getFrom().getAggregationKind();
-		AggregationKind toAK = ((EdgeClass) getAttributedElementClass())
-				.getTo().getAggregationKind();
+		AggregationKind fromAK = (getAttributedElementClass()).getFrom()
+				.getAggregationKind();
+		AggregationKind toAK = (getAttributedElementClass()).getTo()
+				.getAggregationKind();
 		return fromAK != AggregationKind.NONE ? fromAK
 				: (toAK != AggregationKind.NONE ? toAK : AggregationKind.NONE);
 	}
 
 	@Override
 	public AggregationKind getAlphaAggregationKind() {
-		return ((EdgeClass) getAttributedElementClass()).getFrom()
-				.getAggregationKind();
+		return (getAttributedElementClass()).getFrom().getAggregationKind();
 	}
 
 	@Override
 	public AggregationKind getOmegaAggregationKind() {
-		return ((EdgeClass) getAttributedElementClass()).getTo()
-				.getAggregationKind();
+		return (getAttributedElementClass()).getTo().getAggregationKind();
 	}
 
 	@SuppressWarnings("unchecked")
@@ -213,7 +210,7 @@ public class GenericEdgeImpl extends EdgeImpl {
 
 	// ************** unsupported methods ***************/
 	@Override
-	public Class<? extends AttributedElement> getSchemaClass() {
+	public Class<? extends Edge> getSchemaClass() {
 		throw new UnsupportedOperationException(
 				"This method is not supported by the generic implementation");
 	}

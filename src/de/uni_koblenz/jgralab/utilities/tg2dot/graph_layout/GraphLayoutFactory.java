@@ -268,24 +268,24 @@ public class GraphLayoutFactory {
 			Object result = evaluator.evaluate(definition.getGreqlString());
 			if (result instanceof PSet) {
 				@SuppressWarnings("unchecked")
-				PSet<GraphElement> set = (PSet<GraphElement>) result;
+				PSet<GraphElement<?, ?>> set = (PSet<GraphElement<?, ?>>) result;
 				evaluateJValueSet(set, definition);
 			} else if (result instanceof GraphElement) {
 				addGraphElementToElementDefinition(definition,
-						(GraphElement) result);
+						(GraphElement<?, ?>) result);
 			}
 		}
 	}
 
-	private void evaluateJValueSet(PSet<GraphElement> result,
+	private void evaluateJValueSet(PSet<GraphElement<?, ?>> result,
 			ElementDefinition definition) {
-		for (GraphElement element : result) {
+		for (GraphElement<?, ?> element : result) {
 			addGraphElementToElementDefinition(definition, element);
 		}
 	}
 
 	private void addGraphElementToElementDefinition(
-			ElementDefinition definition, GraphElement el) {
+			ElementDefinition definition, GraphElement<?, ?> el) {
 		if (el != null) {
 			definition.add(el);
 			currentGraphLayout.attributedElementsDefinedByElementDefinitions

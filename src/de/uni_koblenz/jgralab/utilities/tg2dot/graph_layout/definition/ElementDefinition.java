@@ -56,7 +56,7 @@ public class ElementDefinition extends AbstractDefinition {
 	 * List of all AttributedElements described by the GReQL-query stored in
 	 * {@link ElementDefinition#elementDefinitionQuery}.
 	 */
-	protected List<AttributedElement> containedElements;
+	protected List<AttributedElement<?, ?>> containedElements;
 
 	/**
 	 * 
@@ -95,7 +95,7 @@ public class ElementDefinition extends AbstractDefinition {
 	 *            AttributedElement in question.
 	 * @return True, iff this definition contains the given element.
 	 */
-	public boolean hasElement(AttributedElement element) {
+	public boolean hasElement(AttributedElement<?, ?> element) {
 		return containedElements.contains(element);
 	}
 
@@ -105,7 +105,7 @@ public class ElementDefinition extends AbstractDefinition {
 	 * @param element
 	 *            {@link AttributedElement} to be added.
 	 */
-	public void add(AttributedElement element) {
+	public void add(AttributedElement<?, ?> element) {
 		containedElements.add(element);
 	}
 

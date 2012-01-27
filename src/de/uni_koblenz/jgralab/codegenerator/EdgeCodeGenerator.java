@@ -54,6 +54,7 @@ public class EdgeCodeGenerator extends AttributedElementCodeGenerator {
 			CodeGeneratorConfiguration config) {
 		super(edgeClass, schemaPackageName, config);
 		rootBlock.setVariable("graphElementClass", "Edge");
+		rootBlock.setVariable("schemaElementClass", "EdgeClass");
 	}
 
 	@Override

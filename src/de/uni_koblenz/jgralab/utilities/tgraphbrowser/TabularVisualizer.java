@@ -67,10 +67,10 @@ public class TabularVisualizer {
 	 *            filtered.
 	 */
 	public void calculateVertexListAndEdgeList(State state,
-			PSet<GraphElement> elements) {
+			PSet<GraphElement<?, ?>> elements) {
 		ArrayList<Vertex> vertices = new ArrayList<Vertex>();
 		ArrayList<Edge> edges = new ArrayList<Edge>();
-		for (GraphElement jv : elements) {
+		for (GraphElement<?, ?> jv : elements) {
 			if (jv instanceof Vertex) {
 				Vertex v = (Vertex) jv;
 				if (state.selectedVertexClasses.get(v
@@ -307,7 +307,7 @@ public class TabularVisualizer {
 	private void createTable(StringBuilder code,
 			int numberOfPageWithElementOfId, int numberPerPage,
 			String typeInfix, boolean showAttributes,
-			GraphElement[] graphElements,
+			GraphElement<?, ?>[] graphElements,
 			HashMap<VertexClass, Boolean> selectedVertexClasses,
 			HashMap<EdgeClass, Boolean> selectedEdgeClasses, boolean createLinks) {
 		// create table
@@ -338,7 +338,7 @@ public class TabularVisualizer {
 				* (numberPerPage < 0 ? 0 : numberPerPage); (currentElementIndex < graphElements.length)
 				&& (currentElementIndex < (numberPerPage < 0 ? graphElements.length
 						: numberOfPageWithElementOfId * numberPerPage)); currentElementIndex++) {
-			GraphElement currentElement = graphElements[currentElementIndex];
+			GraphElement<?, ?> currentElement = graphElements[currentElementIndex];
 			code.append("var currentTr = document.createElement(\"tr\");\n");
 			code.append("currentTr.id = \"tr")
 					.append(currentElement instanceof Vertex ? "v" : "e")
@@ -393,7 +393,7 @@ public class TabularVisualizer {
 	 * @param currentElement
 	 * @return
 	 */
-	private String createElement(GraphElement currentElement) {
+	private String createElement(GraphElement<?, ?> currentElement) {
 		return currentElement.getAttributedElementClass().getUniqueName()
 				+ "<sub>" + Math.abs(currentElement.getId()) + "</sub>";
 	}
@@ -409,7 +409,7 @@ public class TabularVisualizer {
 	 *            if true, it is shown in the tooltip
 	 */
 	private void createAttributes(StringBuilder code,
-			AttributedElement currentElement, boolean inToolTip) {
+			AttributedElement<?, ?> currentElement, boolean inToolTip) {
 		createAttributes(code, currentElement, inToolTip, null);
 	}
 
@@ -426,7 +426,8 @@ public class TabularVisualizer {
 	 *            attribute should be set.
 	 */
 	private void createAttributes(StringBuilder code,
-			AttributedElement currentElement, boolean inToolTip, String var) {
+			AttributedElement<?, ?> currentElement, boolean inToolTip,
+			String var) {
 		code.append(inToolTip ? (var == null ? "currentTd" : var)
 				+ ".title = \"" : "");
 		boolean first = true;

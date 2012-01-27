@@ -19,7 +19,7 @@ public class GenericReversedEdgeImpl extends ReversedEdgeImpl {
 	}
 
 	@Override
-	public AttributedElementClass getAttributedElementClass() {
+	public EdgeClass getAttributedElementClass() {
 		return normalEdge.getAttributedElementClass();
 	}
 

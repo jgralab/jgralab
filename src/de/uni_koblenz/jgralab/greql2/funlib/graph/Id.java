@@ -9,7 +9,7 @@ public class Id extends Function {
 		super("Returns the id of the given graph element.", Category.GRAPH);
 	}
 
-	public Integer evaluate(GraphElement el) {
+	public Integer evaluate(GraphElement<?, ?> el) {
 		return el.getId();
 	}
 }
