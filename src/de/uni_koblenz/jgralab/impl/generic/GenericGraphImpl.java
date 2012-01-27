@@ -3,7 +3,6 @@ package de.uni_koblenz.jgralab.impl.generic;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 import org.pcollections.POrderedSet;
 
@@ -54,8 +53,6 @@ public class GenericGraphImpl extends GraphImpl {
 			}
 			initializeAttributesWithDefaultValues();
 		}
-		vcOutEdgeCache = new HashMap<VertexClass, Set<EdgeClass>>();
-		vcInEdgeCache = new HashMap<VertexClass, Set<EdgeClass>>();
 	}
 
 	/**
