@@ -39,7 +39,6 @@ import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.schema.GraphClass;
 import de.uni_koblenz.jgralab.schema.GraphElementClass;
 import de.uni_koblenz.jgralab.schema.Package;
-import de.uni_koblenz.jgralab.schema.VertexClass;
 
 public abstract class GraphElementClassImpl<SC extends GraphElementClass<SC, IC>, IC extends GraphElement<SC, IC>>
 		extends AttributedElementClassImpl<SC, IC> implements
@@ -87,13 +86,6 @@ public abstract class GraphElementClassImpl<SC extends GraphElementClass<SC, IC>
 		}
 
 		output.append(attributesToString());
-
-		if (this instanceof VertexClass) {
-			output.append("outgoing edge classes: ");
-			output.append("\n");
-			output.append("incomming edge classes: ");
-			output.append("\n");
-		}
 		output.append("\n");
 
 		return output.toString();
