@@ -352,7 +352,7 @@ public abstract class EdgeBaseImpl extends IncidenceImpl implements Edge,
 		InternalVertex oldAlpha = getIncidentVertex();
 
 		if (!graph.isLoading() && graph.getECARuleManagerIfThere() != null) {
-			graph.getECARuleManager().fireBeforeChangeAlphaOfEdgeEvents(this,
+			graph.getECARuleManagerIfThere().fireBeforeChangeAlphaOfEdgeEvents(this,
 					oldAlpha, alphaBase);
 		}
 
@@ -396,7 +396,7 @@ public abstract class EdgeBaseImpl extends IncidenceImpl implements Edge,
 		InternalVertex oldOmgea = reversedEdge.getIncidentVertex();
 
 		if (!graph.isLoading() && graph.getECARuleManagerIfThere() != null) {
-			graph.getECARuleManager().fireBeforeChangeOmegaOfEdgeEvents(this,
+			graph.getECARuleManagerIfThere().fireBeforeChangeOmegaOfEdgeEvents(this,
 					oldOmgea, omegaBase);
 		}
 

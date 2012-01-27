@@ -381,7 +381,7 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 	public void internalVertexAdded(InternalVertex v) {
 		notifyVertexAdded(v);
 		if (getECARuleManagerIfThere() != null) {
-			getECARuleManager().fireAfterCreateVertexEvents(v);
+			getECARuleManagerIfThere().fireAfterCreateVertexEvents(v);
 		}
 	}
 
@@ -1046,8 +1046,11 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 	 */
 	private void internalDeleteEdge(Edge edge) {
 		assert (edge != null) && edge.isValid() && eSeqContainsEdge(edge);
-
-		getECARuleManager().fireBeforeDeleteEdgeEvents(edge);
+	
+		if (getECARuleManagerIfThere() != null) {
+			getECARuleManagerIfThere().fireBeforeDeleteEdgeEvents(edge);	
+		}
+		
 
 		InternalEdge e = (InternalEdge) edge.getNormalEdge();
 		if (getECARuleManagerIfThere() != null) {
