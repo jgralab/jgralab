@@ -1008,16 +1008,4 @@ public abstract class VertexBaseImpl extends GraphElementImpl implements
 		}
 		return (POrderedSet<T>) result;
 	}
-
-	@Override
-	public boolean isValidAlpha(Edge edge) {
-		return ((VertexClass) getAttributedElementClass())
-				.isValidFromFor((EdgeClass) edge.getAttributedElementClass());
-	}
-
-	@Override
-	public boolean isValidOmega(Edge edge) {
-		return ((VertexClass) getAttributedElementClass())
-				.isValidToFor((EdgeClass) edge.getAttributedElementClass());
-	}
 }

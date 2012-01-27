@@ -246,7 +246,7 @@ public class SchemaCodeGenerator extends CodeGenerator {
 						+ "\t\t}\n\t" + "\t\treturn (#gcName#) stdGraph;\n"
 						: ""),
 				((config.hasTransactionSupport()) ? "\tcase TRANSACTION:\n\t"
-						+ "\t\tGraph transGraph = GraphIO.loadGraphFromFileWithTransactionSupport(filename, pf);\n\t"
+						+ "\t\tGraph transGraph = GraphIO.loadGraphFromFileWithTransactionSupport(filename, this, pf);\n\t"
 						+ "\t\tif (!(transGraph instanceof #gcName#)) {\n\t"
 						+ "\t\t\tthrow new GraphIOException(\"Graph in file '\" + filename + \"' is not an instance of GraphClass #gcName#\");\n\t"
 						+ "\t\t}\n\t" + "\t\treturn (#gcName#) transGraph;\n"

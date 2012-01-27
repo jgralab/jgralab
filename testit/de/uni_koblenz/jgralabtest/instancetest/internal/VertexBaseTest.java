@@ -1,29 +1,29 @@
 /*
  * JGraLab - The Java Graph Laboratory
- * 
+ *
  * Copyright (C) 2006-2011 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
- * 
+ *
  * For bug reports, documentation and further information, visit
- * 
+ *
  *                         http://jgralab.uni-koblenz.de
- * 
+ *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
  * Free Software Foundation; either version 3 of the License, or (at your
  * option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, see <http://www.gnu.org/licenses>.
- * 
+ *
  * Additional permission under GNU GPL version 3 section 7
- * 
+ *
  * If you modify this Program, or any covered work, by linking or combining
  * it with Eclipse (or a modified version of that program or an Eclipse
  * plugin), containing parts covered by the terms of the Eclipse Public
@@ -51,16 +51,13 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
-import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.ImplementationType;
 import de.uni_koblenz.jgralab.RandomIdGenerator;
-import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.impl.InternalGraph;
 import de.uni_koblenz.jgralab.impl.InternalVertex;
 import de.uni_koblenz.jgralab.trans.CommitFailedException;
 import de.uni_koblenz.jgralabtest.instancetest.InstanceTest;
 import de.uni_koblenz.jgralabtest.schemas.vertextest.AbstractSuperNode;
-import de.uni_koblenz.jgralabtest.schemas.vertextest.DoubleSubNode;
 import de.uni_koblenz.jgralabtest.schemas.vertextest.Link;
 import de.uni_koblenz.jgralabtest.schemas.vertextest.SuperNode;
 import de.uni_koblenz.jgralabtest.schemas.vertextest.VertexTestGraph;
@@ -127,11 +124,12 @@ public class VertexBaseTest extends InstanceTest {
 		VertexTestGraph graph = null;
 		switch (implementationType) {
 		case STANDARD:
-			graph = VertexTestSchema.instance().createVertexTestGraph(ImplementationType.STANDARD,100, 100);
+			graph = VertexTestSchema.instance().createVertexTestGraph(
+					ImplementationType.STANDARD, 100, 100);
 			break;
 		case TRANSACTION:
-			graph = VertexTestSchema.instance()
-					.createVertexTestGraph(ImplementationType.TRANSACTION,100, 100);
+			graph = VertexTestSchema.instance().createVertexTestGraph(
+					ImplementationType.TRANSACTION, 100, 100);
 			break;
 		case DATABASE:
 			graph = createVertexTestGraphWithDatabaseSupport();
@@ -163,7 +161,7 @@ public class VertexBaseTest extends InstanceTest {
 	/**
 	 * If you create and delete edges, only the incidenceListVersions of the
 	 * involved nodes may have been increased.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -186,12 +184,12 @@ public class VertexBaseTest extends InstanceTest {
 			expectedVersions[end]++;
 			commit(g);
 			createReadOnlyTransaction(g);
-			assertEquals(expectedVersions[0], nodes[0]
-					.getIncidenceListVersion());
-			assertEquals(expectedVersions[1], nodes[1]
-					.getIncidenceListVersion());
-			assertEquals(expectedVersions[2], nodes[2]
-					.getIncidenceListVersion());
+			assertEquals(expectedVersions[0],
+					nodes[0].getIncidenceListVersion());
+			assertEquals(expectedVersions[1],
+					nodes[1].getIncidenceListVersion());
+			assertEquals(expectedVersions[2],
+					nodes[2].getIncidenceListVersion());
 			commit(g);
 			// delete an edge
 			createTransaction(g);
@@ -200,12 +198,12 @@ public class VertexBaseTest extends InstanceTest {
 			expectedVersions[end]++;
 			commit(g);
 			createReadOnlyTransaction(g);
-			assertEquals(expectedVersions[0], nodes[0]
-					.getIncidenceListVersion());
-			assertEquals(expectedVersions[1], nodes[1]
-					.getIncidenceListVersion());
-			assertEquals(expectedVersions[2], nodes[2]
-					.getIncidenceListVersion());
+			assertEquals(expectedVersions[0],
+					nodes[0].getIncidenceListVersion());
+			assertEquals(expectedVersions[1],
+					nodes[1].getIncidenceListVersion());
+			assertEquals(expectedVersions[2],
+					nodes[2].getIncidenceListVersion());
 			commit(g);
 		}
 	}
@@ -217,7 +215,7 @@ public class VertexBaseTest extends InstanceTest {
 	// tests of the method isIncidenceListModified(long incidenceListVersion);
 	/**
 	 * Tests if the incidenceList wasn't modified.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -244,7 +242,7 @@ public class VertexBaseTest extends InstanceTest {
 	/**
 	 * If you create and delete edges, only the incidenceLists of the involved
 	 * nodes may have been modified.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -314,59 +312,6 @@ public class VertexBaseTest extends InstanceTest {
 			versions[2] = nodes[2].getIncidenceListVersion();
 			commit(g);
 		}
-	}
-
-	// tests of the method boolean isValidAlpha(Edge edge);
-
-	/**
-	 * Checks some cases for true and false considering heredity.
-	 * 
-	 * @throws CommitFailedException
-	 */
-	@Test
-	public void isValidAlphaTest0() throws CommitFailedException {
-		createTransaction(g);
-		InternalVertex v0 = (InternalVertex) vtg.createSubNode();
-		InternalVertex v1 = (InternalVertex) vtg.createSuperNode();
-		InternalVertex v2 = (InternalVertex) vtg.createDoubleSubNode();
-		Edge e0 = vtg.createLink((AbstractSuperNode) v2, (SuperNode) v2);
-		Edge e1 = vtg.createSubLink((DoubleSubNode) v2, (SuperNode) v2);
-		commit(g);
-		createReadOnlyTransaction(g);
-		assertTrue(v0.isValidAlpha(e0));
-		assertFalse(v1.isValidAlpha(e0));
-		assertTrue(v2.isValidAlpha(e0));
-		assertFalse(v0.isValidAlpha(e1));
-		assertFalse(v1.isValidAlpha(e1));
-		assertTrue(v2.isValidAlpha(e1));
-		commit(g);
-	}
-
-	// tests of the method boolean isValidOmega(Edge edge);
-
-	/**
-	 * Checks some cases for true and false.
-	 * 
-	 * @throws CommitFailedException
-	 */
-	@Test
-	public void isValidOmegaTest0() throws CommitFailedException {
-		// TODO why isn't this method calling validOmega EVER?
-		createTransaction(g);
-		Vertex v0 = vtg.createSubNode();
-		Vertex v1 = vtg.createSuperNode();
-		commit(g);
-		createReadOnlyTransaction(g);
-		assertTrue(v0.isValid());
-		assertTrue(v1.isValid());
-		commit(g);
-		createTransaction(g);
-		v0.delete();
-		commit(g);
-		createReadOnlyTransaction(g);
-		assertFalse(v0.isValid());
-		assertTrue(v1.isValid());
-		commit(g);
 	}
 
 }

@@ -204,19 +204,6 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 		setECount(0);
 	}
 
-	// protected TraversalContext traversalContext;
-
-	// @Override
-	// public TraversalContext setTraversalContext(TraversalContext tc) {
-	// TraversalContext result = traversalContext;
-	// traversalContext = tc;
-	// return result;
-	// }
-	//
-	// public TraversalContext getTraversalContext() {
-	// return traversalContext;
-	// }
-
 	@Override
 	public void addEdge(Edge newEdge, Vertex alpha, Vertex omega) {
 		assert newEdge != null;
@@ -231,20 +218,7 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 
 		EdgeBaseImpl e = (EdgeBaseImpl) newEdge;
 		InternalVertex a = (InternalVertex) alpha;
-		if (!a.isValidAlpha(e)) {
-			throw new GraphException("Edges of class "
-					+ e.getAttributedElementClass().getQualifiedName()
-					+ " may not start at vertices of class "
-					+ a.getAttributedElementClass().getQualifiedName());
-		}
-
 		InternalVertex o = (InternalVertex) omega;
-		if (!o.isValidOmega(e)) {
-			throw new GraphException("Edges of class "
-					+ e.getAttributedElementClass().getQualifiedName()
-					+ " may not end at vertices of class "
-					+ o.getAttributedElementClass().getQualifiedName());
-		}
 
 		int eId = e.getId();
 		if (isLoading()) {

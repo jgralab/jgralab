@@ -40,11 +40,6 @@ public class GenericEdgeImpl extends EdgeImpl {
 	}
 
 	@Override
-	protected void addToGraph(Graph graph, Vertex alpha, Vertex omega) {
-		// Do nothing. Edge will be added to the graph later.
-	}
-
-	@Override
 	protected ReversedEdgeBaseImpl createReversedEdge() {
 		return new GenericReversedEdgeImpl(this, graph);
 	}

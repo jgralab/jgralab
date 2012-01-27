@@ -1,29 +1,29 @@
 /*
  * JGraLab - The Java Graph Laboratory
- * 
+ *
  * Copyright (C) 2006-2011 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
- * 
+ *
  * For bug reports, documentation and further information, visit
- * 
+ *
  *                         http://jgralab.uni-koblenz.de
- * 
+ *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
  * Free Software Foundation; either version 3 of the License, or (at your
  * option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, see <http://www.gnu.org/licenses>.
- * 
+ *
  * Additional permission under GNU GPL version 3 section 7
- * 
+ *
  * If you modify this Program, or any covered work, by linking or combining
  * it with Eclipse (or a modified version of that program or an Eclipse
  * plugin), containing parts covered by the terms of the Eclipse Public
@@ -58,10 +58,10 @@ import de.uni_koblenz.jgralab.trans.VertexPosition;
 
 /**
  * The implementation of an <code>Edge</code> with versioning.
- * 
+ *
  * Next and previous edge in Eseq, the incident vertex and the next and previous
  * incidence in Iseq(incidentVertex) are versioned.
- * 
+ *
  * @author Jose Monte(monte@uni-koblenz.de)
  */
 public abstract class EdgeImpl extends de.uni_koblenz.jgralab.impl.EdgeBaseImpl
@@ -79,7 +79,7 @@ public abstract class EdgeImpl extends de.uni_koblenz.jgralab.impl.EdgeBaseImpl
 	 * Initialization of versioned attributes is avoided here, to not have
 	 * persistent and temporary values for new instances within the transaction
 	 * this instance is created in.
-	 * 
+	 *
 	 * @param anId
 	 *            the id of the <code>Edge</code>
 	 * @param graph
@@ -87,8 +87,7 @@ public abstract class EdgeImpl extends de.uni_koblenz.jgralab.impl.EdgeBaseImpl
 	 * @throws Exception
 	 */
 	protected EdgeImpl(int anId, Graph graph, Vertex alpha, Vertex omega) {
-		super(anId, graph);
-		((GraphImpl) graph).addEdge(this, alpha, omega);
+		super(anId, graph, alpha, omega);
 	}
 
 	// --- getter ---//
@@ -258,8 +257,8 @@ public abstract class EdgeImpl extends de.uni_koblenz.jgralab.impl.EdgeBaseImpl
 				incidentVertex = new VersionedReferenceImpl<VertexImpl>(this,
 						null, "$incidentVertex");
 			}
-			incidentVertex.setValidValue((VertexImpl) v, graph
-					.getCurrentTransaction());
+			incidentVertex.setValidValue((VertexImpl) v,
+					graph.getCurrentTransaction());
 		}
 	}
 
@@ -441,7 +440,7 @@ public abstract class EdgeImpl extends de.uni_koblenz.jgralab.impl.EdgeBaseImpl
 	/**
 	 * Should be called from generated <code>Edge</code> implementation classes
 	 * whenever a versioned attribute is changed.
-	 * 
+	 *
 	 * @param versionedAttribute
 	 *            the changed attribute
 	 */
@@ -483,7 +482,7 @@ public abstract class EdgeImpl extends de.uni_koblenz.jgralab.impl.EdgeBaseImpl
 
 	/**
 	 * Implemented in generated subclasses.
-	 * 
+	 *
 	 * @return references to all versioned attributes of this instance. Needed
 	 *         for validation!!!
 	 */

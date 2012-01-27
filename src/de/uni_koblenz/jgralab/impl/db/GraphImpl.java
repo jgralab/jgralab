@@ -1,29 +1,29 @@
 /*
  * JGraLab - The Java Graph Laboratory
- * 
+ *
  * Copyright (C) 2006-2011 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
- * 
+ *
  * For bug reports, documentation and further information, visit
- * 
+ *
  *                         http://jgralab.uni-koblenz.de
- * 
+ *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
  * Free Software Foundation; either version 3 of the License, or (at your
  * option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, see <http://www.gnu.org/licenses>.
- * 
+ *
  * Additional permission under GNU GPL version 3 section 7
- * 
+ *
  * If you modify this Program, or any covered work, by linking or combining
  * it with Eclipse (or a modified version of that program or an Eclipse
  * plugin), containing parts covered by the terms of the Eclipse Public
@@ -46,7 +46,9 @@ import de.uni_koblenz.jgralab.impl.IncidenceImpl;
 import de.uni_koblenz.jgralab.impl.InternalEdge;
 import de.uni_koblenz.jgralab.impl.InternalVertex;
 import de.uni_koblenz.jgralab.impl.ReversedEdgeBaseImpl;
+import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.GraphClass;
+import de.uni_koblenz.jgralab.schema.VertexClass;
 import de.uni_koblenz.jgralab.trans.CommitFailedException;
 import de.uni_koblenz.jgralab.trans.InvalidSavepointException;
 import de.uni_koblenz.jgralab.trans.Savepoint;
@@ -54,7 +56,7 @@ import de.uni_koblenz.jgralab.trans.Transaction;
 
 /**
  * Graph which can be persisted into a graph database.
- * 
+ *
  * @author ultbreit@uni-koblenz.de
  */
 public abstract class GraphImpl extends GraphBaseImpl implements
@@ -95,7 +97,7 @@ public abstract class GraphImpl extends GraphBaseImpl implements
 
 	/**
 	 * Creates a new <code>GraphImpl</code> persistent in database.
-	 * 
+	 *
 	 * @param id
 	 *            Identifier of graph.
 	 * @param graphClass
@@ -110,7 +112,7 @@ public abstract class GraphImpl extends GraphBaseImpl implements
 
 	/**
 	 * Creates a new <code>GraphImpl</code> persistent in database.
-	 * 
+	 *
 	 * @param id
 	 *            Identifier of graph.
 	 * @param graphClass
@@ -131,7 +133,7 @@ public abstract class GraphImpl extends GraphBaseImpl implements
 
 	/**
 	 * Creates a new <code>GraphImpl</code> not persistent in database.
-	 * 
+	 *
 	 * @param id
 	 *            Identifier of graph.
 	 * @param graphClass
@@ -277,25 +279,27 @@ public abstract class GraphImpl extends GraphBaseImpl implements
 	}
 
 	private boolean isSameSchemaAsGraph(Edge edge, Vertex alpha, Vertex omega) {
-		return alpha.getSchema() == omega.getSchema()
-				&& alpha.getSchema() == getSchema()
-				&& edge.getSchema() == getSchema();
+		return (alpha.getSchema() == omega.getSchema())
+				&& (alpha.getSchema() == getSchema())
+				&& (edge.getSchema() == getSchema());
 	}
 
 	private boolean isGraphMatching(Edge edge, Vertex alpha, Vertex omega) {
-		return alpha.getGraph() == omega.getGraph() && alpha.getGraph() == this
-				&& edge.getGraph() == this;
+		return (alpha.getGraph() == omega.getGraph())
+				&& (alpha.getGraph() == this) && (edge.getGraph() == this);
 	}
 
 	private void testEdgeSuitingVertices(InternalEdge edge,
 			InternalVertex alpha, InternalVertex omega) {
-		if (!alpha.isValidAlpha(edge)) {
+		if (!((VertexClass) alpha.getAttributedElementClass())
+				.isValidFromFor((EdgeClass) edge.getAttributedElementClass())) {
 			throw new GraphException("Edges of class "
 					+ edge.getAttributedElementClass().getQualifiedName()
 					+ " may not start at vertices of class "
 					+ alpha.getAttributedElementClass().getQualifiedName());
 		}
-		if (!omega.isValidOmega(edge)) {
+		if (!((VertexClass) omega.getAttributedElementClass())
+				.isValidToFor((EdgeClass) edge.getAttributedElementClass())) {
 			throw new GraphException("Edges of class "
 					+ edge.getAttributedElementClass().getQualifiedName()
 					+ " may not end at vertices of class "
@@ -374,8 +378,7 @@ public abstract class GraphImpl extends GraphBaseImpl implements
 	@Override
 	public Edge internalCreateEdge(Class<? extends Edge> cls, Vertex alpha,
 			Vertex omega) {
-		Edge edge = graphFactory.createEdge(cls, 0, this,
-				alpha, omega);
+		Edge edge = graphFactory.createEdge(cls, 0, this, alpha, omega);
 		edge.initializeAttributesWithDefaultValues();
 		graphCache.addEdge((DatabasePersistableEdge) edge);
 		return edge;
@@ -383,8 +386,7 @@ public abstract class GraphImpl extends GraphBaseImpl implements
 
 	@Override
 	public Vertex internalCreateVertex(Class<? extends Vertex> cls) {
-		Vertex vertex = graphFactory.createVertex(cls, 0,
-				this);
+		Vertex vertex = graphFactory.createVertex(cls, 0, this);
 		vertex.initializeAttributesWithDefaultValues();
 		graphCache.addVertex((DatabasePersistableVertex) vertex);
 		return vertex;
@@ -403,7 +405,7 @@ public abstract class GraphImpl extends GraphBaseImpl implements
 	/**
 	 * Notifies graph that one of his attributes has changed. Called from
 	 * generated classes implementation when an attribute is changed.
-	 * 
+	 *
 	 * @param attributeName
 	 *            Name of attribute that has been changed.
 	 */
@@ -666,13 +668,13 @@ public abstract class GraphImpl extends GraphBaseImpl implements
 	/**
 	 * Deletes vertex from database, removes it from cache and sets it to
 	 * deleted.
-	 * 
+	 *
 	 * @param vertexToBeDeleted
 	 *            The vertex to delete from database.
-	 * 
+	 *
 	 *            Precondition: Vertex is not part of VSeq and persistent in
 	 *            database.
-	 * 
+	 *
 	 *            Postcondition: Vertex is not in cache, no longer persistent in
 	 *            database and set to deleted.
 	 */
@@ -791,13 +793,13 @@ public abstract class GraphImpl extends GraphBaseImpl implements
 
 	@Override
 	public boolean vSeqContainsVertex(Vertex v) {
-		return v != null && v.getGraph() == this
+		return (v != null) && (v.getGraph() == this)
 				&& vSeq.contains((DatabasePersistableVertex) v);
 	}
 
 	@Override
 	public boolean eSeqContainsEdge(Edge e) {
-		return (e != null) && e.getGraph() == this
+		return (e != null) && (e.getGraph() == this)
 				&& eSeq.contains((DatabasePersistableEdge) e);
 	}
 
@@ -863,7 +865,7 @@ public abstract class GraphImpl extends GraphBaseImpl implements
 
 	/**
 	 * Updates a vertex's attribute value in database.
-	 * 
+	 *
 	 * @param edge
 	 *            Vertex with attribute value to update.
 	 * @param attributeName
@@ -882,7 +884,7 @@ public abstract class GraphImpl extends GraphBaseImpl implements
 
 	/**
 	 * Updates an edge's attribute value in database.
-	 * 
+	 *
 	 * @param edge
 	 *            Edge with attribute value to update.
 	 * @param attributeName
@@ -901,7 +903,7 @@ public abstract class GraphImpl extends GraphBaseImpl implements
 
 	/**
 	 * Updates incidence list of a vertex in database.
-	 * 
+	 *
 	 * @param vertex
 	 *            Vertex with incidence list to update.
 	 */
@@ -918,7 +920,7 @@ public abstract class GraphImpl extends GraphBaseImpl implements
 
 	/**
 	 * Updates sequence number of vertex in database.
-	 * 
+	 *
 	 * @param vertex
 	 *            Vertex with sequence number to update.
 	 */
@@ -934,7 +936,7 @@ public abstract class GraphImpl extends GraphBaseImpl implements
 
 	/**
 	 * Updates id of a vertex in database.
-	 * 
+	 *
 	 * @param oldVId
 	 *            Old id of vertex.
 	 * @param vertex
@@ -953,7 +955,7 @@ public abstract class GraphImpl extends GraphBaseImpl implements
 
 	/**
 	 * Write id of incident vertex back.
-	 * 
+	 *
 	 * @param incidence
 	 *            Incidence to write back id of it's incident vertex.
 	 */
@@ -969,7 +971,7 @@ public abstract class GraphImpl extends GraphBaseImpl implements
 
 	/**
 	 * Write edge number mapping it's sequence in ESeq back.
-	 * 
+	 *
 	 * @param incidence
 	 *            Edge to write back it's number mapping it's sequence in ESeq.
 	 */
@@ -986,7 +988,7 @@ public abstract class GraphImpl extends GraphBaseImpl implements
 
 	/**
 	 * Write incidence's number mapping it's sequence in LambdaSeq back.
-	 * 
+	 *
 	 * @param incidence
 	 *            Incidence to write back it's number mapping it's sequence in
 	 *            LambdaSeq.
@@ -1005,7 +1007,7 @@ public abstract class GraphImpl extends GraphBaseImpl implements
 
 	/**
 	 * Write edge's new id back to database.
-	 * 
+	 *
 	 * @param edge
 	 *            Edge to write back id.
 	 * @param newEId
@@ -1022,7 +1024,7 @@ public abstract class GraphImpl extends GraphBaseImpl implements
 
 	/**
 	 * Gets previous vertex in VSeq before given one.
-	 * 
+	 *
 	 * @param vertex
 	 *            Vertex to get it's predecessor in VSeq.
 	 * @return Predecessor in VSeq of edge or null if given one is first vertex
@@ -1036,7 +1038,7 @@ public abstract class GraphImpl extends GraphBaseImpl implements
 
 	/**
 	 * Gets previous vertex in VSeq before given one.
-	 * 
+	 *
 	 * @param vertex
 	 *            Vertex to get it's successor in VSeq.
 	 * @return Successor in VSeq of edge or null if given one is last vertex in
@@ -1050,7 +1052,7 @@ public abstract class GraphImpl extends GraphBaseImpl implements
 
 	/**
 	 * Gets previous edge in ESeq before given one.
-	 * 
+	 *
 	 * @param edge
 	 *            Edge to get it's predecessor in ESeq.
 	 * @return Predecessor in ESeq of edge or null if given one is first edge in
@@ -1064,7 +1066,7 @@ public abstract class GraphImpl extends GraphBaseImpl implements
 
 	/**
 	 * Gets next edge in ESeq after given one.
-	 * 
+	 *
 	 * @param edge
 	 *            Edge to get it's successor in ESeq.
 	 * @return Successor in ESeq of edge or null if given one is last edge in
@@ -1095,7 +1097,7 @@ public abstract class GraphImpl extends GraphBaseImpl implements
 
 	/**
 	 * Checks by it's id whether a vertex is cached or not.
-	 * 
+	 *
 	 * @param vId
 	 *            Id of vertex.
 	 * @return true if vertex is cached, false otherwise.
@@ -1106,7 +1108,7 @@ public abstract class GraphImpl extends GraphBaseImpl implements
 
 	/**
 	 * Checks by it's id whether an edge is cached or not.
-	 * 
+	 *
 	 * @param eId
 	 *            Id of edge.
 	 * @return true if edge is cached, false otherwise.
@@ -1117,7 +1119,7 @@ public abstract class GraphImpl extends GraphBaseImpl implements
 
 	/**
 	 * Reorganizes sequence numbers in vertex list at database only.
-	 * 
+	 *
 	 * Precondition: Vertex list must have been reorganized in memory just
 	 * before.
 	 */
@@ -1134,7 +1136,7 @@ public abstract class GraphImpl extends GraphBaseImpl implements
 
 	/**
 	 * Reorganizes sequence numbers in edge list at database only.
-	 * 
+	 *
 	 * Precondition: Edge list must have been reorganized in memory just before.
 	 */
 	public void reorganizeEdgeListInGraphDatabase() {
@@ -1151,10 +1153,10 @@ public abstract class GraphImpl extends GraphBaseImpl implements
 	/**
 	 * Reorganizes sequence numbers in incidence list of a vertex at database
 	 * only.
-	 * 
+	 *
 	 * @param vertex
 	 *            Vertex with incidence list to reorganize.
-	 * 
+	 *
 	 *            Precondition: Incidence list must have been reorganized in
 	 *            memory just before.
 	 */

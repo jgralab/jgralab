@@ -852,30 +852,6 @@ public class Tg2Dot extends Tg2Whatever {
 	 */
 	public void setReversedEdgeClasses(
 			Set<AttributedElementClass> reversedEdgeTypes) {
-
-		// Copies the current set in order to manipulate it.
-		reversedEdgeTypes = new HashSet<AttributedElementClass>(
-				reversedEdgeTypes);
-
-		buildReversedEdgeClassSet(reversedEdgeTypes);
-		if (!reversedEdgeTypes.isEmpty()) {
-			throw new RuntimeException(
-					"Those edge classes should be reversed but are not contained in the schema! "
-							+ reversedEdgeTypes);
-		}
-		// apply hierarchy
-		addAllSubClassesOfAllReversedEdgeClasses();
-	}
-
-	/**
-	 * Converts the existing set of classes into a set of
-	 * {@link AttributedElementClass}es.
-	 *
-	 * @param reversedEdgeTypes
-	 *            Set of classes of Edges, which should be reversed.
-	 */
-	private void buildReversedEdgeClassSet(
-			Set<AttributedElementClass> reversedEdgeTypes) {
 		reversedEdgeClasses = new HashSet<AttributedElementClass>();
 		for (EdgeClass edgeClass : graph.getGraphClass().getEdgeClasses()) {
 			if (reversedEdgeTypes.remove(edgeClass.getSchemaClass())) {
@@ -886,6 +862,9 @@ public class Tg2Dot extends Tg2Whatever {
 			reversedEdgeClasses.add(graph.getSchema()
 					.getAttributedElementClass("Edge"));
 		}
+
+		// apply hierarchy
+		addAllSubClassesOfAllReversedEdgeClasses();
 	}
 
 	/**
