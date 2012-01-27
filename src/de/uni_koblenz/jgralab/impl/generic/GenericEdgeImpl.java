@@ -175,6 +175,12 @@ public class GenericEdgeImpl extends EdgeImpl {
 
 	@Override
 	public Edge getNextIncidence(EdgeClass anEdgeClass,
+			boolean noSubClasses) {
+		return getNextIncidence(anEdgeClass, EdgeDirection.INOUT, noSubClasses);
+	}
+
+	@Override
+	public Edge getNextIncidence(EdgeClass anEdgeClass,
 			EdgeDirection orientation, boolean noSubclasses) {
 		Edge currentEdge = getNextIncidence(orientation);
 		while (currentEdge != null) {
