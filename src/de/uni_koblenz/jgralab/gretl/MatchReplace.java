@@ -285,7 +285,7 @@ public class MatchReplace extends InPlaceTransformation {
 
 	private Vertex createVertex(CreateVertex cv) {
 		VertexClass vc = vc(CreateSubgraph.getVertexClassName(cv, context));
-		Vertex nv = context.getTargetGraph().createVertex(vc.getSchemaClass());
+		Vertex nv = context.getTargetGraph().createVertex(vc);
 		return nv;
 	}
 
@@ -304,8 +304,7 @@ public class MatchReplace extends InPlaceTransformation {
 					startVertex.getAttributedElementClass(),
 					endVertex.getAttributedElementClass());
 		}
-		return context.getTargetGraph().createEdge(ec.getSchemaClass(),
-				startVertex, endVertex);
+		return context.getTargetGraph().createEdge(ec, startVertex, endVertex);
 	}
 
 	private EdgeClass getSingleEdgeClassBetween(VertexClass from, VertexClass to) {

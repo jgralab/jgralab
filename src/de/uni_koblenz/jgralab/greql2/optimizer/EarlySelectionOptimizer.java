@@ -758,9 +758,8 @@ public class EarlySelectionOptimizer extends OptimizerBase {
 			}
 		}
 
-		Class<? extends Vertex> vertexClass = origVertex
-				.getAttributedElementClass().getSchemaClass();
-		Vertex topVertex = graph.createVertex(vertexClass);
+		Vertex topVertex = graph.createVertex(origVertex
+				.getAttributedElementClass());
 		copyAttributes(origVertex, topVertex);
 
 		if (topVertex instanceof Variable) {
@@ -775,9 +774,8 @@ public class EarlySelectionOptimizer extends OptimizerBase {
 		while (origEdge != null) {
 			subVertex = copySubgraph(origEdge.getAlpha(), graph,
 					variablesToBeCopied, copiedVarMap);
-			Class<? extends Edge> edgeClass = origEdge
-					.getAttributedElementClass().getSchemaClass();
-			graph.createEdge(edgeClass, subVertex, topVertex);
+			graph.createEdge(origEdge.getAttributedElementClass(), subVertex,
+					topVertex);
 			origEdge = origEdge.getNextIncidence(EdgeDirection.IN);
 		}
 

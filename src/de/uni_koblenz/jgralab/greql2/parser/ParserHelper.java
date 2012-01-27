@@ -97,6 +97,8 @@ import de.uni_koblenz.jgralab.greql2.schema.ThisLiteral;
 import de.uni_koblenz.jgralab.greql2.schema.ThisVertex;
 import de.uni_koblenz.jgralab.greql2.schema.Variable;
 import de.uni_koblenz.jgralab.greql2.schema.WhereExpression;
+import de.uni_koblenz.jgralab.schema.EdgeClass;
+import de.uni_koblenz.jgralab.schema.VertexClass;
 
 public abstract class ParserHelper {
 
@@ -131,10 +133,10 @@ public abstract class ParserHelper {
 		return getCurrentOffset() - offset;
 	}
 
-	public PathDescription addPathElement(Class<? extends PathDescription> vc,
-			Class<? extends Edge> ec, PathDescription pathDescr,
-			PathDescription part1, int offsetPart1, int lengthPart1,
-			PathDescription part2, int offsetPart2, int lengthPart2) {
+	public PathDescription addPathElement(VertexClass vc, EdgeClass ec,
+			PathDescription pathDescr, PathDescription part1, int offsetPart1,
+			int lengthPart1, PathDescription part2, int offsetPart2,
+			int lengthPart2) {
 		Greql2Aggregation edge = null;
 		if (pathDescr == null) {
 			pathDescr = graph.createVertex(vc);
@@ -311,7 +313,8 @@ public abstract class ParserHelper {
 				incidenceList.add(inc);
 			}
 			for (Edge e : incidenceList) {
-		//		System.out.println("Merging variables of " + e.getAlpha().getSchemaClass().getName());
+				// System.out.println("Merging variables of " +
+				// e.getAlpha().getSchemaClass().getName());
 				mergeVariables(e.getAlpha(), true);
 			}
 		}

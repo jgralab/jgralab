@@ -66,7 +66,9 @@ import de.uni_koblenz.jgralab.NoSuchAttributeException;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.codegenerator.CodeGeneratorConfiguration;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
+import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.Schema;
+import de.uni_koblenz.jgralab.schema.VertexClass;
 import de.uni_koblenz.jgralab.schema.impl.compilation.SchemaClassManager;
 
 public class Csv2Tg implements FilenameFilter {
@@ -86,8 +88,8 @@ public class Csv2Tg implements FilenameFilter {
 
 	private Schema schema;
 	private String[] csvFiles;
-	private Map<Class<? extends Vertex>, CsvReader> vertexInstances;
-	private Map<Class<? extends Edge>, CsvReader> edgeInstances;
+	private Map<VertexClass, CsvReader> vertexInstances;
+	private Map<EdgeClass, CsvReader> edgeInstances;
 	private Map<CsvReader, String> reader2FilenameMap;
 	private CsvReader currentReader;
 	private String outputFile;
@@ -218,8 +220,8 @@ public class Csv2Tg implements FilenameFilter {
 
 		Method method = schema
 				.getGraphCreateMethod(ImplementationType.STANDARD);
-		vertexInstances = new HashMap<Class<? extends Vertex>, CsvReader>();
-		edgeInstances = new HashMap<Class<? extends Edge>, CsvReader>();
+		vertexInstances = new HashMap<VertexClass, CsvReader>();
+		edgeInstances = new HashMap<EdgeClass, CsvReader>();
 		reader2FilenameMap = new HashMap<CsvReader, String>();
 		// TODO Graph ID
 		try {
@@ -254,8 +256,7 @@ public class Csv2Tg implements FilenameFilter {
 
 	private void processEdgeFiles() throws NoSuchAttributeException,
 			IOException, GraphIOException {
-		for (Entry<Class<? extends Edge>, CsvReader> entry : edgeInstances
-				.entrySet()) {
+		for (Entry<EdgeClass, CsvReader> entry : edgeInstances.entrySet()) {
 
 			currentReader = entry.getValue();
 
@@ -271,8 +272,7 @@ public class Csv2Tg implements FilenameFilter {
 	private void processVertexFiles() throws NoSuchAttributeException,
 			IOException, GraphIOException {
 
-		for (Entry<Class<? extends Vertex>, CsvReader> entry : vertexInstances
-				.entrySet()) {
+		for (Entry<VertexClass, CsvReader> entry : vertexInstances.entrySet()) {
 
 			currentReader = entry.getValue();
 			while (currentReader.readRecord()) {
@@ -290,22 +290,18 @@ public class Csv2Tg implements FilenameFilter {
 		}
 	}
 
-	@SuppressWarnings("unchecked")
 	private void loadCsvFile(String csvFile) throws NoSuchAttributeException,
 			GraphIOException, IOException {
 		CsvReader reader = openCvsFile(csvFile);
 		reader2FilenameMap.put(reader, csvFile);
 
 		String attributeClassName = reader.getFieldNames().get(0);
-		// TODO [generic]
 		AttributedElementClass<?, ?> aec = schema
 				.getAttributedElementClass(attributeClassName);
-		if (Vertex.class.isInstance(aec.getSchemaClass())) {
-			vertexInstances.put((Class<? extends Vertex>) aec.getSchemaClass(),
-					reader);
+		if (aec instanceof VertexClass) {
+			vertexInstances.put((VertexClass) aec, reader);
 		} else {
-			edgeInstances.put((Class<? extends Edge>) aec.getSchemaClass(),
-					reader);
+			edgeInstances.put((EdgeClass) aec, reader);
 		}
 	}
 
@@ -328,9 +324,9 @@ public class Csv2Tg implements FilenameFilter {
 		}
 	}
 
-	private void createVertex(CsvReader reader, Class<? extends Vertex> clazz)
+	private void createVertex(CsvReader reader, VertexClass vc)
 			throws NoSuchAttributeException, GraphIOException {
-		Vertex vertex = graph.createVertex(clazz);
+		Vertex vertex = graph.createVertex(vc);
 
 		insertAttribute(vertex, reader, 1);
 
@@ -344,13 +340,13 @@ public class Csv2Tg implements FilenameFilter {
 		vertices.put(uniqueName, vertex);
 	}
 
-	private void createEdge(CsvReader reader, Class<? extends Edge> clazz)
+	private void createEdge(CsvReader reader, EdgeClass ec)
 			throws NoSuchAttributeException, GraphIOException {
 
 		Vertex alpha = getVertex(reader, 1);
 		Vertex omega = getVertex(reader, 2);
 
-		Edge edge = graph.createEdge(clazz, alpha, omega);
+		Edge edge = graph.createEdge(ec, alpha, omega);
 
 		insertAttribute(edge, reader, 3);
 

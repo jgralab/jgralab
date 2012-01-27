@@ -532,58 +532,21 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 	}
 
 	/**
-	 * Creates an edge of the given class and adds this edge to the graph.
-	 * <code>cls</code> has to be the "Impl" class.
-	 */
-	@SuppressWarnings("unchecked")
-	@Override
-	public <T extends Edge> T createEdge(Class<T> cls, Vertex alpha,
-			Vertex omega) {
-		try {
-			return (T) internalCreateEdge(cls, alpha, omega);
-		} catch (Exception exception) {
-			if (exception instanceof GraphException) {
-				throw (GraphException) exception;
-			} else {
-				throw new GraphException("Error creating edge of class "
-						+ cls.getName(), exception);
-			}
-		}
-	}
-
-	/**
 	 * Creates an edge of the given {@link EdgeClass} and adds it to the graph.
 	 */
 	@Override
 	@SuppressWarnings("unchecked")
 	public <T extends Edge> T createEdge(EdgeClass ec, Vertex alpha,
 			Vertex omega) {
-		return (T) createEdge(ec.getSchemaClass(), alpha, omega);
-	}
-
-	@Override
-	public Edge internalCreateEdge(Class<? extends Edge> cls, Vertex alpha,
-			Vertex omega) {
-		// TODO factory
-		// return graphFactory.createEdge(cls, 0, this, alpha, omega);
-		return null;
-	}
-
-	/**
-	 * Creates a vertex of the given class and adds this edge to the graph.
-	 * <code>cls</code> has to be the "Impl" class.
-	 */
-	@SuppressWarnings("unchecked")
-	@Override
-	public <T extends Vertex> T createVertex(Class<T> cls) {
 		try {
-			return (T) internalCreateVertex(cls);
-		} catch (Exception ex) {
-			if (ex instanceof GraphException) {
-				throw (GraphException) ex;
+			return (T) graphFactory.createEdge(ec, 0, this, alpha, omega);
+		} catch (Exception exception) {
+			if (exception instanceof GraphException) {
+				throw (GraphException) exception;
+			} else {
+				throw new GraphException("Error creating edge of class "
+						+ ec.getQualifiedName(), exception);
 			}
-			throw new GraphException("Error creating vertex of class "
-					+ cls.getName(), ex);
 		}
 	}
 
@@ -594,14 +557,15 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T extends Vertex> T createVertex(VertexClass vc) {
-		return (T) createVertex(vc.getSchemaClass());
-	}
-
-	@Override
-	public Vertex internalCreateVertex(Class<? extends Vertex> cls) {
-		// TODO factory
-		// return graphFactory.createVertex(cls, 0, this);
-		return null;
+		try {
+			return (T) graphFactory.createVertex(vc, 0, this);
+		} catch (Exception ex) {
+			if (ex instanceof GraphException) {
+				throw (GraphException) ex;
+			}
+			throw new GraphException("Error creating vertex of class "
+					+ vc.getQualifiedName(), ex);
+		}
 	}
 
 	/*

@@ -56,6 +56,7 @@ import de.uni_koblenz.jgralab.greql2.schema.Greql2;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Expression;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
 import de.uni_koblenz.jgralab.greql2.schema.IsConstraintOf;
+import de.uni_koblenz.jgralab.schema.EdgeClass;
 
 /**
  * TODO: (heimdall) Comment class!
@@ -70,13 +71,13 @@ public class ConditionalExpressionOptimizer extends OptimizerBase {
 					.getName());
 
 	private static class VertexEdgeClassTuple {
-		public VertexEdgeClassTuple(Greql2Vertex v, Class<? extends Edge> ec) {
+		public VertexEdgeClassTuple(Greql2Vertex v, EdgeClass ec) {
 			this.v = v;
 			this.ec = ec;
 		}
 
 		Greql2Vertex v;
-		Class<? extends Edge> ec;
+		EdgeClass ec;
 	}
 
 	/*
@@ -162,8 +163,8 @@ public class ConditionalExpressionOptimizer extends OptimizerBase {
 		LinkedList<VertexEdgeClassTuple> list = new LinkedList<VertexEdgeClassTuple>();
 		assert top.isValid();
 		for (Edge e : top.incidences(EdgeDirection.OUT)) {
-			list.add(new VertexEdgeClassTuple((Greql2Vertex) e.getOmega(),
-					(Class<? extends Edge>) e.getSchemaClass()));
+			list.add(new VertexEdgeClassTuple((Greql2Vertex) e.getOmega(), e
+					.getAttributedElementClass()));
 		}
 		return list;
 	}
