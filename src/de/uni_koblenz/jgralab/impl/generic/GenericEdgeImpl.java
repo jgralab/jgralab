@@ -60,11 +60,10 @@ public class GenericEdgeImpl extends EdgeImpl {
 							.parseGenericAttribute(
 									GraphIO.createStringReader(value,
 											getSchema())));
-		} else {
-			throw new NoSuchAttributeException(
-					"DefaultValueTestGraph doesn't contain an attribute "
-							+ attributeName);
+			return;
 		}
+		throw new NoSuchAttributeException(this
+				+ " doesn't have an attribute " + attributeName);
 
 	}
 
@@ -169,8 +168,7 @@ public class GenericEdgeImpl extends EdgeImpl {
 	}
 
 	@Override
-	public Edge getNextIncidence(EdgeClass anEdgeClass,
-			boolean noSubClasses) {
+	public Edge getNextIncidence(EdgeClass anEdgeClass, boolean noSubClasses) {
 		return getNextIncidence(anEdgeClass, EdgeDirection.INOUT, noSubClasses);
 	}
 
