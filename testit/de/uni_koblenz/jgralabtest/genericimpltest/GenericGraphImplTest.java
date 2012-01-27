@@ -325,7 +325,7 @@ public class GenericGraphImplTest {
 			fail();
 		}
 	}
-	
+
 	// Test if deletion works with the generic implementation
 	@Test
 	public void testDeleteEdge() {
@@ -338,11 +338,11 @@ public class GenericGraphImplTest {
 			Vertex v2 = g.createVertex(schema.getGraphClass().getVertexClass(
 					"SuperNode"));
 
-			Edge e1 = g.createEdge(schema.getGraphClass().getEdgeClass("SubLink"),
-					v1, v2);
-			Edge e2 = g.createEdge(schema.getGraphClass().getEdgeClass("LinkBack"),
-					v2, v1);
-			
+			Edge e1 = g.createEdge(
+					schema.getGraphClass().getEdgeClass("SubLink"), v1, v2);
+			Edge e2 = g.createEdge(
+					schema.getGraphClass().getEdgeClass("LinkBack"), v2, v1);
+
 			g.deleteEdge(e1);
 			assertFalse(g.containsEdge(e1));
 			assertTrue(g.containsVertex(v2));
@@ -352,7 +352,7 @@ public class GenericGraphImplTest {
 			fail();
 		}
 	}
-	
+
 	// Test if deletion works with the generic implementation
 	@Test
 	public void testDeleteVertex() {
@@ -365,11 +365,11 @@ public class GenericGraphImplTest {
 			Vertex v2 = g.createVertex(schema.getGraphClass().getVertexClass(
 					"SuperNode"));
 
-			Edge e1 = g.createEdge(schema.getGraphClass().getEdgeClass("SubLink"),
-					v1, v2);
-			Edge e2 = g.createEdge(schema.getGraphClass().getEdgeClass("LinkBack"),
-					v2, v1);
-			
+			Edge e1 = g.createEdge(
+					schema.getGraphClass().getEdgeClass("SubLink"), v1, v2);
+			Edge e2 = g.createEdge(
+					schema.getGraphClass().getEdgeClass("LinkBack"), v2, v1);
+
 			g.deleteVertex(v1);
 			assertFalse(g.containsEdge(e1));
 			assertFalse(g.containsVertex(v2));
@@ -820,8 +820,10 @@ public class GenericGraphImplTest {
 	public void testLoadGraph1() {
 		// Static test relies on an unchanged graph in the file!
 		try {
+			Schema s = GraphIO.loadSchemaFromFile(GRAPHFOLDER
+					+ "citymapgraph.tg");
 			Graph g = GraphIO.loadGraphFromFile(
-					GRAPHFOLDER + "citymapgraph.tg", null, null,
+					GRAPHFOLDER + "citymapgraph.tg", s, null,
 					ImplementationType.GENERIC);
 			assertEquals(8, g.getVCount());
 			assertEquals(11, g.getECount());
@@ -943,10 +945,11 @@ public class GenericGraphImplTest {
 	@Test
 	public void testLoadGraph2() {
 		try {
+			Schema s = GraphIO.loadSchemaFromFile(GRAPHFOLDER
+					+ "greqltestgraph.tg");
 			Graph g1 = GraphIO.loadGraphFromFile(GRAPHFOLDER
-					+ "greqltestgraph.tg", null, null,
-					ImplementationType.GENERIC);
-			Schema s = g1.getSchema();
+					+ "greqltestgraph.tg", s, null, ImplementationType.GENERIC);
+
 			assertEquals(s.getGraphClass(), g1.getAttributedElementClass());
 			assertEquals(157, g1.getVCount());
 			assertEquals(357, g1.getECount());
@@ -983,11 +986,9 @@ public class GenericGraphImplTest {
 				for (Attribute a : edge.getAttributedElementClass()
 						.getAttributeList()) {
 					try {
-						assertEquals(
-								edge.writeAttributeValueToString(a.getName()),
-								g2.getEdge(edge.getId())
-										.writeAttributeValueToString(
-												a.getName()));
+						assertEquals(edge.writeAttributeValueToString(a
+								.getName()), g2.getEdge(edge.getId())
+								.writeAttributeValueToString(a.getName()));
 					} catch (IOException e) {
 						e.printStackTrace();
 						fail();
