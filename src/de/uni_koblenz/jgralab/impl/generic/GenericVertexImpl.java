@@ -58,18 +58,6 @@ public class GenericVertexImpl extends VertexImpl {
 	}
 
 	@Override
-	public boolean isValidAlpha(Edge edge) {
-		return ((GenericGraphImpl) getGraph()).cachedIsValidAlpha(type,
-				((EdgeClass) edge.getAttributedElementClass()));
-	}
-
-	@Override
-	public boolean isValidOmega(Edge edge) {
-		return ((GenericGraphImpl) getGraph()).cachedIsValidOmega(type,
-				((EdgeClass) edge.getAttributedElementClass()));
-	}
-
-	@Override
 	public AttributedElementClass getAttributedElementClass() {
 		return type;
 	}
