@@ -132,11 +132,10 @@ public class GenericGraphImpl extends GraphImpl {
 							.parseGenericAttribute(
 									GraphIO.createStringReader(value,
 											getSchema())));
-		} else {
-			throw new NoSuchAttributeException(
-					"DefaultValueTestGraph doesn't contain an attribute "
-							+ attributeName);
+			return;
 		}
+		throw new NoSuchAttributeException(this + " doesn't have an attribute "
+				+ attributeName);
 	}
 
 	@Override
@@ -259,13 +258,13 @@ public class GenericGraphImpl extends GraphImpl {
 	public static Object genericAttributeDefaultValue(Domain domain) {
 		if (domain instanceof BasicDomain) {
 			if (domain instanceof BooleanDomain) {
-				return new Boolean(false);
+				return Boolean.valueOf(false);
 			} else if (domain instanceof IntegerDomain) {
-				return new Integer(0);
+				return Integer.valueOf(0);
 			} else if (domain instanceof LongDomain) {
-				return new Long(0);
+				return Long.valueOf(0);
 			} else if (domain instanceof DoubleDomain) {
-				return new Double(0.0);
+				return Double.valueOf(0.0);
 			} else { // StringDomain
 				return null;
 			}

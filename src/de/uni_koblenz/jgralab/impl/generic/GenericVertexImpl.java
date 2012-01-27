@@ -73,11 +73,10 @@ public class GenericVertexImpl extends VertexImpl {
 							.parseGenericAttribute(
 									GraphIO.createStringReader(value,
 											getSchema())));
-		} else {
-			throw new NoSuchAttributeException(
-					"DefaultValueTestGraph doesn't contain an attribute "
-							+ attributeName);
+			return;
 		}
+		throw new NoSuchAttributeException(this
+				+ " doesn't have an attribute " + attributeName);
 	}
 
 	@Override
