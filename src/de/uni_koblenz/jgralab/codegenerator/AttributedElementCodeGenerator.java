@@ -46,9 +46,9 @@ import de.uni_koblenz.jgralab.schema.RecordDomain;
 
 /**
  * TODO add comment
- * 
+ *
  * @author ist@uni-koblenz.de
- * 
+ *
  */
 public class AttributedElementCodeGenerator extends CodeGenerator {
 
@@ -98,7 +98,7 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 	 * Returns the absolute name of the given AttributdelementClass. The name is
 	 * composed of the package-prefix of the schema the class belongs to and the
 	 * qualified name of the class
-	 * 
+	 *
 	 * @param aec
 	 * @return
 	 */
@@ -125,9 +125,17 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 			code.add(createGetVersionedAttributesMethod(aec.getAttributeList()));
 		}
 		if (currentCycle.isAbstract()) {
+			code.add(createAttributedElementClassConstant());
 			code.add(createGettersAndSetters(aec.getOwnAttributeList()));
 		}
 		return code;
+	}
+
+	protected CodeBlock createAttributedElementClassConstant() {
+		return new CodeSnippet(
+				true,
+				"static final #jgSchemaPackage#.AttributedElementClass ATTRIBUTED_ELEMENT_CLASS"
+						+ " = #schemaPackageName#.#schemaName#.instance().#schemaVariableName#;");
 	}
 
 	@Override
@@ -216,8 +224,7 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 		return new CodeSnippet(
 				true,
 				"public final #jgSchemaPackage#.AttributedElementClass getAttributedElementClass() {",
-				"\treturn #schemaPackageName#.#schemaName#.instance().#schemaVariableName#;",
-				"}");
+				"\treturn #javaClassName#.ATTRIBUTED_ELEMENT_CLASS;", "}");
 	}
 
 	protected CodeBlock createGetSchemaClassMethod() {
@@ -503,7 +510,7 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param attrSet
 	 * @return
 	 */
@@ -605,7 +612,7 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 	/**
 	 * Generates method attributes() which returns a set of all versioned
 	 * attributes for an <code>AttributedElement</code>.
-	 * 
+	 *
 	 * @param attributeList
 	 * @return
 	 */

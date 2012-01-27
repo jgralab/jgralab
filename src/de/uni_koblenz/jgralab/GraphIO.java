@@ -1241,6 +1241,7 @@ public class GraphIO {
 		try {
 			GraphIO io = new GraphIO();
 			io.schema = schema;
+			io.schema.finish();
 			io.TGIn = in;
 			io.tgfile();
 			if (implementationType == ImplementationType.GENERIC) {
@@ -1252,6 +1253,7 @@ public class GraphIO {
 				Method instanceMethod = schemaClass.getMethod("instance",
 						(Class<?>[]) null);
 				io.schema = (Schema) instanceMethod.invoke(null, new Object[0]);
+				io.schema.finish();
 			}
 			GraphBaseImpl loadedGraph = io.graph(pf, implementationType);
 			loadedGraph.internalLoadingCompleted(io.firstIncidence,

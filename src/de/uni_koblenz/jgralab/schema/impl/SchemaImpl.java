@@ -222,7 +222,6 @@ public class SchemaImpl implements Schema {
 	 *            Package prefix of schema.
 	 */
 	public SchemaImpl(String name, String packagePrefix) {
-
 		if (!SCHEMA_NAME_PATTERN.matcher(name).matches()) {
 			throwInvalidSchemaNameException();
 		}
@@ -626,6 +625,7 @@ public class SchemaImpl implements Schema {
 
 	@Override
 	public void compile(CodeGeneratorConfiguration config) {
+		finish();
 		JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
 		if (compiler == null) {
 			throw new SchemaException("Cannot compile schema " + qualifiedName
@@ -643,6 +643,9 @@ public class SchemaImpl implements Schema {
 	@Override
 	public Attribute createAttribute(String name, Domain dom,
 			AttributedElementClass aec, String defaultValueAsString) {
+		if (finish) {
+			throw new SchemaException("No changes to finished schema!");
+		}
 		return new AttributeImpl(name, dom, aec, defaultValueAsString);
 	}
 
@@ -666,6 +669,9 @@ public class SchemaImpl implements Schema {
 
 	@Override
 	public GraphClass createGraphClass(String simpleName) {
+		if (finish) {
+			throw new SchemaException("No changes to finished schema!");
+		}
 		if (graphClass != null) {
 			throw new SchemaException(
 					"Only one GraphClass (except DefaultGraphClass) is allowed in a Schema! '"
@@ -1325,6 +1331,7 @@ public class SchemaImpl implements Schema {
 	@Override
 	public Graph createGraph(ImplementationType implementationType, String id,
 			int vCount, int eCount) {
+		finish();
 		if (implementationType != ImplementationType.GENERIC) {
 			try {
 				getGraphClass().getSchemaClass();

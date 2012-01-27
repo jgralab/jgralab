@@ -36,7 +36,6 @@
 package de.uni_koblenz.jgralab.impl;
 
 import java.io.DataOutputStream;
-import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
@@ -56,7 +55,6 @@ import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.GraphStructureChangedListener;
 import de.uni_koblenz.jgralab.GraphStructureChangedListenerWithAutoRemove;
-import de.uni_koblenz.jgralab.NoSuchAttributeException;
 import de.uni_koblenz.jgralab.ProgressFunction;
 import de.uni_koblenz.jgralab.RandomIdGenerator;
 import de.uni_koblenz.jgralab.Record;
@@ -85,57 +83,6 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 
 	// ------------- GRAPH VARIABLES -------------
 
-	@Override
-	public AttributedElementClass getAttributedElementClass() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Class<? extends AttributedElement> getSchemaClass() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public void readAttributeValueFromString(String attributeName, String value)
-			throws GraphIOException, NoSuchAttributeException {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public String writeAttributeValueToString(String attributeName)
-			throws IOException, GraphIOException, NoSuchAttributeException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public void writeAttributeValues(GraphIO io) throws IOException,
-			GraphIOException {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void readAttributeValues(GraphIO io) throws GraphIOException {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public <T> T getAttribute(String name) throws NoSuchAttributeException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public <T> void setAttribute(String name, T data)
-			throws NoSuchAttributeException {
-		// TODO Auto-generated method stub
-
-	}
 
 	/**
 	 * the unique id of the graph in the schema
@@ -1046,11 +993,11 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 	 */
 	private void internalDeleteEdge(Edge edge) {
 		assert (edge != null) && edge.isValid() && eSeqContainsEdge(edge);
-	
+
 		if (getECARuleManagerIfThere() != null) {
-			getECARuleManagerIfThere().fireBeforeDeleteEdgeEvents(edge);	
+			getECARuleManagerIfThere().fireBeforeDeleteEdgeEvents(edge);
 		}
-		
+
 
 		InternalEdge e = (InternalEdge) edge.getNormalEdge();
 		if (getECARuleManagerIfThere() != null) {

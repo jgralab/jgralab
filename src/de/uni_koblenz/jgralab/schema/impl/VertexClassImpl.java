@@ -304,13 +304,13 @@ public final class VertexClassImpl extends GraphElementClassImpl implements
 		if (isFinished()) {
 			return this.validFromEdgeClasses;
 		}
+		// System.err.print("+");
 		Set<EdgeClass> validFrom = new HashSet<EdgeClass>();
 		for (IncidenceClass ic : getValidFromFarIncidenceClasses()) {
 			if (!ic.getEdgeClass().isInternal()) {
 				validFrom.add(ic.getEdgeClass());
 			}
 		}
-
 		return validFrom;
 	}
 
@@ -319,6 +319,7 @@ public final class VertexClassImpl extends GraphElementClassImpl implements
 		if (isFinished()) {
 			return this.validToEdgeClasses;
 		}
+		// System.err.print("-");
 		Set<EdgeClass> validTo = new HashSet<EdgeClass>();
 		for (IncidenceClass ic : getValidToFarIncidenceClasses()) {
 			if (!ic.getEdgeClass().isInternal()) {
