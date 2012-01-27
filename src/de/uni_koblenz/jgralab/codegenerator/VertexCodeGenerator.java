@@ -1,29 +1,29 @@
 /*
  * JGraLab - The Java Graph Laboratory
- * 
+ *
  * Copyright (C) 2006-2011 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
- * 
+ *
  * For bug reports, documentation and further information, visit
- * 
+ *
  *                         http://jgralab.uni-koblenz.de
- * 
+ *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
  * Free Software Foundation; either version 3 of the License, or (at your
  * option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, see <http://www.gnu.org/licenses>.
- * 
+ *
  * Additional permission under GNU GPL version 3 section 7
- * 
+ *
  * If you modify this Program, or any covered work, by linking or combining
  * it with Eclipse (or a modified version of that program or an Eclipse
  * plugin), containing parts covered by the terms of the Eclipse Public
@@ -46,7 +46,7 @@ import de.uni_koblenz.jgralab.schema.VertexClass;
 /**
  * This class is used by the method Schema.commit() to generate the Java-classes
  * that implement the VertexClasses of a graph schema.
- * 
+ *
  * @author ist@uni-koblenz.de
  */
 public class VertexCodeGenerator extends AttributedElementCodeGenerator {
@@ -85,7 +85,6 @@ public class VertexCodeGenerator extends AttributedElementCodeGenerator {
 			}
 
 			rootBlock.setVariable("baseClassName", "VertexImpl");
-			code.add(createValidEdgeSets((VertexClass) aec));
 		}
 
 		if (config.hasTypeSpecificMethodsSupport()
@@ -105,7 +104,7 @@ public class VertexCodeGenerator extends AttributedElementCodeGenerator {
 
 	/**
 	 * creates the methods <code>getFirstEdgeName()</code>
-	 * 
+	 *
 	 * @param createClass
 	 *            if set to true, the method bodies will also be created
 	 * @return the CodeBlock that contains the methods
@@ -150,7 +149,7 @@ public class VertexCodeGenerator extends AttributedElementCodeGenerator {
 	/**
 	 * creates the method <code>getFirstEdgeName()</code> for the given
 	 * EdgeClass
-	 * 
+	 *
 	 * @param createClass
 	 *            if set to true, the method bodies will also be created
 	 * @param withOrientation
@@ -187,7 +186,7 @@ public class VertexCodeGenerator extends AttributedElementCodeGenerator {
 
 	/**
 	 * Creates <code>getNextVertexClassName()</code> methods
-	 * 
+	 *
 	 * @param createClass
 	 *            if set to true, also the method bodies will be created
 	 * @return the CodeBlock that contains the methods
@@ -214,7 +213,7 @@ public class VertexCodeGenerator extends AttributedElementCodeGenerator {
 	/**
 	 * Creates <code>getNextVertexClassName()</code> method for given
 	 * VertexClass
-	 * 
+	 *
 	 * @param createClass
 	 *            if set to true, the method bodies will also be created
 	 * @return the CodeBlock that contains the method
@@ -244,7 +243,7 @@ public class VertexCodeGenerator extends AttributedElementCodeGenerator {
 
 	/**
 	 * Creates <code>getEdgeNameIncidences</code> methods.
-	 * 
+	 *
 	 * @param createClass
 	 *            if set to true, also the method bodies will be created
 	 * @return the CodeBlock that contains the code for the
@@ -324,68 +323,6 @@ public class VertexCodeGenerator extends AttributedElementCodeGenerator {
 		return code;
 	}
 
-	/**
-	 * creates the sets of valid in and valid out edges
-	 */
-	private CodeBlock createValidEdgeSets(VertexClass vc) {
-		addImports("java.util.Set");
-		addImports("java.util.HashSet");
-		addImports("#jgPackage#.Edge");
-		CodeList code = new CodeList();
-		code.setVariable("vcQualifiedName", schemaRootPackageName + ".impl."
-				+ vc.getQualifiedName());
-		code.setVariable("vcCamelName", camelCase(vc.getUniqueName()));
-		CodeSnippet s = new CodeSnippet(true);
-		s.add("/* add all valid from edges */");
-		s.add("private static Set<java.lang.Class<? extends Edge>> validFromEdges = new HashSet<java.lang.Class<? extends Edge>>();");
-		s.add("");
-		s.add("/* (non-Javadoc)");
-		s.add(" * @see jgralab.Vertex:isValidAlpha()");
-		s.add(" */");
-		s.add("@Override");
-		s.add("public boolean isValidAlpha(Edge edge) {");
-		s.add("\treturn validFromEdges.contains(edge.getSchemaClass());");
-		s.add("}");
-		s.add("");
-		s.add("{");
-		code.addNoIndent(s);
-		for (EdgeClass ec : vc.getValidFromEdgeClasses()) {
-			CodeSnippet line = new CodeSnippet(true);
-			line.setVariable("edgeClassQualifiedName", schemaRootPackageName
-					+ "." + ec.getQualifiedName());
-			line.add("\tvalidFromEdges.add(#edgeClassQualifiedName#.class);");
-			code.addNoIndent(line);
-		}
-		s = new CodeSnippet(true);
-		s.add("}");
-		s.add("");
-		s.add("/* add all valid to edges */");
-		s.add("private static Set<java.lang.Class<? extends Edge>> validToEdges = new HashSet<java.lang.Class<? extends Edge>>();");
-		s.add("");
-		s.add("/* (non-Javadoc)");
-		s.add(" * @see jgralab.Vertex:isValidOemga()");
-		s.add(" */");
-		s.add("@Override");
-		s.add("public boolean isValidOmega(Edge edge) {");
-		s.add("\treturn validToEdges.contains(edge.getSchemaClass());");
-		s.add("}");
-		s.add("");
-		s.add("{");
-		code.addNoIndent(s);
-		for (EdgeClass ec : vc.getValidToEdgeClasses()) {
-			CodeSnippet line = new CodeSnippet(true);
-			line.setVariable("edgeClassQualifiedName", schemaRootPackageName
-					+ "." + ec.getQualifiedName());
-			line.add("\tvalidToEdges.add(#edgeClassQualifiedName#.class);");
-			code.addNoIndent(line);
-		}
-		s = new CodeSnippet(true);
-		s.add("}");
-		code.addNoIndent(s);
-		return code;
-	}
-
-	// TODO Check duplicate rolenames at vertex class.
 	private CodeBlock createGetEdgeForRolenameMethod() {
 		CodeList list = new CodeList();
 		addImports("de.uni_koblenz.jgralab.schema.impl.DirectedSchemaEdgeClass");

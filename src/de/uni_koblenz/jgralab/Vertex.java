@@ -1,29 +1,29 @@
 /*
  * JGraLab - The Java Graph Laboratory
- * 
+ *
  * Copyright (C) 2006-2011 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
- * 
+ *
  * For bug reports, documentation and further information, visit
- * 
+ *
  *                         http://jgralab.uni-koblenz.de
- * 
+ *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
  * Free Software Foundation; either version 3 of the License, or (at your
  * option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, see <http://www.gnu.org/licenses>.
- * 
+ *
  * Additional permission under GNU GPL version 3 section 7
- * 
+ *
  * If you modify this Program, or any covered work, by linking or combining
  * it with Eclipse (or a modified version of that program or an Eclipse
  * plugin), containing parts covered by the terms of the Eclipse Public
@@ -47,9 +47,9 @@ import de.uni_koblenz.jgralab.schema.impl.DirectedSchemaEdgeClass;
 
 /**
  * represents a vertex, schema classes inherit from this class
- * 
+ *
  * @author ist@uni-koblenz.de
- * 
+ *
  */
 public interface Vertex extends GraphElement {
 
@@ -158,24 +158,24 @@ public interface Vertex extends GraphElement {
 	 * <br/>
 	 * For example, this returns the first edge to a parent vertex in the
 	 * containment hierarchy.
-	 * 
+	 *
 	 * <pre>
 	 * v.getFirstIncidence(true, AggregationKind.SHARED, AggregationKind.COMPOSITE)
 	 * </pre>
-	 * 
+	 *
 	 * And this returns the first edge to a child vertex in the containment
 	 * hierarchy.
-	 * 
+	 *
 	 * <pre>
 	 * v.getFirstIncidence(false, AggregationKind.SHARED, AggregationKind.COMPOSITE)
 	 * </pre>
-	 * 
+	 *
 	 * @see Edge#getNextIncidence(boolean, AggregationKind...)
-	 * 
+	 *
 	 * @param thisIncidence
 	 *            if true, <code>kinds</code> has to match the incidence at this
 	 *            vertex, else it has to match the opposite incidence
-	 * 
+	 *
 	 * @return the first incident edge where the incidence at this vertex
 	 *         (thisIncidence == true) or that vertex (thisIncidence == false)
 	 *         has one of the aggregation semantics given by <code>kind</code>.
@@ -229,7 +229,7 @@ public interface Vertex extends GraphElement {
 
 	/**
 	 * puts this vertex immediately before v in vSeq
-	 * 
+	 *
 	 * @param v
 	 */
 	public void putBefore(Vertex v);
@@ -242,7 +242,7 @@ public interface Vertex extends GraphElement {
 
 	/**
 	 * puts this vertex immediately after v in vSeq
-	 * 
+	 *
 	 * @param v
 	 */
 	public void putAfter(Vertex v);
@@ -250,7 +250,7 @@ public interface Vertex extends GraphElement {
 	/**
 	 * Using this method, one can simply iterate over all incident edges of this
 	 * vertex using the advanced for-loop
-	 * 
+	 *
 	 * @return a iterable object which can be iterated through using the
 	 *         advanced for-loop
 	 */
@@ -259,7 +259,7 @@ public interface Vertex extends GraphElement {
 	/**
 	 * Return an List&lt;vertexType&gt; over all vertices reachable from this
 	 * vertex via the specified <code>pathDescription</code>.
-	 * 
+	 *
 	 * @param pathDescription
 	 *            a GReQL path description like
 	 *            <code>-->{EdgeType1}+ <>--{EdgeType2}</code>
@@ -287,7 +287,7 @@ public interface Vertex extends GraphElement {
 	/**
 	 * Using this method, one can simply iterate over all incident edges of this
 	 * vertex using the advanced for-loop
-	 * 
+	 *
 	 * @param dir
 	 *            the direction of the edges which should be iterated, either
 	 *            EdgeDirection.IN or EdgeDirection.OUT
@@ -299,7 +299,7 @@ public interface Vertex extends GraphElement {
 	/**
 	 * Using this method, one can simply iterate over all incident edges of this
 	 * vertex using the advanced for-loop
-	 * 
+	 *
 	 * @param eclass
 	 *            the EdgeClass of the edges which should be iterated
 	 * @param dir
@@ -313,7 +313,7 @@ public interface Vertex extends GraphElement {
 	/**
 	 * Using this method, one can simply iterate over all incident edges of this
 	 * vertex using the advanced for-loop
-	 * 
+	 *
 	 * @param eclass
 	 *            the schema class of the edges which should be iterated
 	 * @param dir
@@ -328,7 +328,7 @@ public interface Vertex extends GraphElement {
 	/**
 	 * Using this method, one can simply iterate over all incident edges of this
 	 * vertex using the advanced for-loop
-	 * 
+	 *
 	 * @param eclass
 	 *            the EdgeClass of the edges which should be iterated
 	 * @return a iterable object which can be iterated through using the
@@ -339,7 +339,7 @@ public interface Vertex extends GraphElement {
 	/**
 	 * Using this method, one can simply iterate over all incident edges of this
 	 * vertex using the advanced for-loop
-	 * 
+	 *
 	 * @param eclass
 	 *            the schema class of the edges which should be iterated
 	 * @return a iterable object which can be iterated through using the
@@ -349,22 +349,24 @@ public interface Vertex extends GraphElement {
 
 	/**
 	 * tests if the Edge <code>edge</code> may start at this vertex
-	 * 
+	 *
 	 * @return <code>true</code> iff <code>edge</code> may start at this vertex
 	 */
+	@Deprecated
 	public boolean isValidAlpha(Edge edge);
 
 	/**
 	 * tests if the Edge <code>edge</code> may end at this vertex
-	 * 
+	 *
 	 * @return <code>true</code> iff <code>edge</code> may end at this vertex
 	 */
+	@Deprecated
 	public boolean isValidOmega(Edge edge);
 
 	/**
 	 * Sorts the incidence sequence according to the given comparator in
 	 * ascending order.
-	 * 
+	 *
 	 * @param comp
 	 *            the comparator that defines the desired incidence order.
 	 */
