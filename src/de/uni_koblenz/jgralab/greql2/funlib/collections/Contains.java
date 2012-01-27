@@ -20,11 +20,11 @@ public class Contains extends Function {
 		return s.contains(el);
 	}
 
-	public <T> Boolean evaluate(Path p, GraphElement el) {
+	public <T> Boolean evaluate(Path p, GraphElement<?, ?> el) {
 		return p.contains(el);
 	}
 
-	public <T> Boolean evaluate(PathSystem p, GraphElement el) {
+	public <T> Boolean evaluate(PathSystem p, GraphElement<?, ?> el) {
 		return p.contains(el);
 	}
 }

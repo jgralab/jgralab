@@ -164,7 +164,7 @@ public class Tg2SiDiff extends Tg2Whatever {
 	 */
 	@Override
 	protected void printEdge(PrintStream out, Edge e) {
-		EdgeClass cls = (EdgeClass) e.getAttributedElementClass();
+		EdgeClass cls = e.getAttributedElementClass();
 		Vertex alpha = (isReversedEdges() ? e.getOmega() : e.getAlpha());
 		Vertex omega = (isReversedEdges() ? e.getAlpha() : e.getOmega());
 		boolean aggregateTo = (e.getAlphaAggregationKind() != AggregationKind.NONE);
@@ -196,7 +196,7 @@ public class Tg2SiDiff extends Tg2Whatever {
 	 * <Attribute name="isAbstract" value="false"/> <Attribute name="name"
 	 * value="Dimension"/> <Attribute name="visibility" value="public"/>
 	 */
-	private void printAttributes(PrintStream out, AttributedElement elem) {
+	private void printAttributes(PrintStream out, AttributedElement<?, ?> elem) {
 		AttributedElementClass cls = elem.getAttributedElementClass();
 		for (Attribute attr : cls.getAttributeList()) {
 			Object val = elem.getAttribute(attr.getName());

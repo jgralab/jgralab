@@ -14,7 +14,7 @@ public class HasType extends Function {
 				Category.SCHEMA_ACCESS);
 	}
 
-	public Boolean evaluate(AttributedElement el, String qn) {
+	public Boolean evaluate(AttributedElement<?, ?> el, String qn) {
 		AttributedElementClass aec = el.getSchema().getAttributedElementClass(
 				qn);
 		if (aec == null) {
@@ -23,12 +23,13 @@ public class HasType extends Function {
 		return evaluate(el, aec);
 	}
 
-	private Boolean evaluate(AttributedElement el, AttributedElementClass aec) {
+	private Boolean evaluate(AttributedElement<?, ?> el,
+			AttributedElementClass aec) {
 		AttributedElementClass c = el.getAttributedElementClass();
 		return c.equals(aec) || c.isSubClassOf(aec);
 	}
 
-	public Boolean evaluate(AttributedElement el, TypeCollection tc) {
+	public Boolean evaluate(AttributedElement<?, ?> el, TypeCollection tc) {
 		AttributedElementClass c = el.getAttributedElementClass();
 		return tc.acceptsType(c);
 	}

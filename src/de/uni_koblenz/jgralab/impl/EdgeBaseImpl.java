@@ -70,7 +70,7 @@ public abstract class EdgeBaseImpl extends IncidenceImpl implements Edge,
 	 * @see java.lang.Comparable#compareTo(java.lang.Object)
 	 */
 	@Override
-	public int compareTo(AttributedElement a) {
+	public int compareTo(AttributedElement<EdgeClass, Edge> a) {
 		assert a != null;
 		assert a instanceof Edge;
 		Edge e = (Edge) a;
@@ -217,7 +217,7 @@ public abstract class EdgeBaseImpl extends IncidenceImpl implements Edge,
 	@Override
 	public String getThatRole() {
 		assert isValid();
-		return ((EdgeClass) getAttributedElementClass()).getTo().getRolename();
+		return (getAttributedElementClass()).getTo().getRolename();
 	}
 
 	/*
@@ -239,8 +239,7 @@ public abstract class EdgeBaseImpl extends IncidenceImpl implements Edge,
 	@Override
 	public String getThisRole() {
 		assert isValid();
-		return ((EdgeClass) getAttributedElementClass()).getFrom()
-				.getRolename();
+		return (getAttributedElementClass()).getFrom().getRolename();
 	}
 
 	/*

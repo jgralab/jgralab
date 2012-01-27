@@ -108,7 +108,7 @@ public class GraphValidator {
 
 		int toMin = ec.getTo().getMin();
 		int toMax = ec.getTo().getMax();
-		Set<AttributedElement> badOutgoing = new HashSet<AttributedElement>();
+		Set<AttributedElement<?, ?>> badOutgoing = new HashSet<AttributedElement<?, ?>>();
 		for (Vertex v : graph.vertices(ec.getFrom().getVertexClass())) {
 			int degree = v.getDegree(ec, EdgeDirection.OUT);
 			if ((degree < toMin) || (degree > toMax)) {
@@ -124,7 +124,7 @@ public class GraphValidator {
 
 		int fromMin = ec.getFrom().getMin();
 		int fromMax = ec.getFrom().getMax();
-		Set<AttributedElement> badIncoming = new HashSet<AttributedElement>();
+		Set<AttributedElement<?, ?>> badIncoming = new HashSet<AttributedElement<?, ?>>();
 		for (Vertex v : graph.vertices(ec.getTo().getVertexClass())) {
 			int degree = v.getDegree(ec, EdgeDirection.IN);
 			if ((degree < fromMin) || (degree > fromMax)) {
@@ -191,7 +191,7 @@ public class GraphValidator {
 						eval.setQuery(query);
 						eval.startEvaluation();
 						@SuppressWarnings("unchecked")
-						Set<AttributedElement> resultSet = (Set<AttributedElement>) eval
+						Set<AttributedElement<?, ?>> resultSet = (Set<AttributedElement<?, ?>>) eval
 								.getResult();
 						brokenConstraints.add(new GReQLConstraintViolation(aec,
 								constraint, resultSet));
@@ -308,7 +308,8 @@ public class GraphValidator {
 					bw.append("</td>");
 					bw.append("<td class=\"" + cssClass + "\">");
 					if (ci.getOffendingElements() != null) {
-						for (AttributedElement ae : ci.getOffendingElements()) {
+						for (AttributedElement<?, ?> ae : ci
+								.getOffendingElements()) {
 							bw.append(ae.toString());
 							bw.append("<br/>");
 						}

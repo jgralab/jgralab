@@ -16,7 +16,7 @@ public class HasAttribute extends Function {
 		return aec.containsAttribute(name);
 	}
 
-	public Boolean evaluate(AttributedElement el, String name) {
+	public Boolean evaluate(AttributedElement<?, ?> el, String name) {
 		return evaluate(el.getAttributedElementClass(), name);
 	}
 }

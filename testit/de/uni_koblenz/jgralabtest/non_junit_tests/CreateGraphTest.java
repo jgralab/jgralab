@@ -29,7 +29,7 @@ public class CreateGraphTest {
 
 		System.err.flush();
 		System.out.println("Create " + gc.getQualifiedName());
-		Graph g = schema.createGraph(ImplementationType.STANDARD, 10, 10);
+		Graph g = schema.createGraph(ImplementationType.STANDARD);
 		g.createVertex(node.getSchemaClass());
 		g.createVertex(node.getSchemaClass());
 		JGraLab.setLogLevel(l);

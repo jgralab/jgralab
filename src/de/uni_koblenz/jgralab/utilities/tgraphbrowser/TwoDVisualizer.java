@@ -98,7 +98,7 @@ public class TwoDVisualizer {
 					.append(((Edge) currentElement).getId()).append("\";\n");
 		}
 		// calculate environment
-		PSet<GraphElement> elementsToDisplay = JGraLab.set();
+		PSet<GraphElement<?, ?>> elementsToDisplay = JGraLab.set();
 		if (currentElement instanceof Vertex) {
 			Slice slice = computeElements((Vertex) currentElement, pathLength,
 					state.getGraph(), state);
@@ -254,8 +254,9 @@ public class TwoDVisualizer {
 	 * @param elementsToDisplay
 	 * @param elements
 	 */
-	private PSet<GraphElement> calculateElementsInSet(StringBuilder code,
-			State state, PSet<GraphElement> elementsToDisplay, Object elements) {
+	private PSet<GraphElement<?, ?>> calculateElementsInSet(StringBuilder code,
+			State state, PSet<GraphElement<?, ?>> elementsToDisplay,
+			Object elements) {
 		int totalElements = 0;
 		int selectedElements = 0;
 		if (elements instanceof Slice) {
@@ -279,8 +280,8 @@ public class TwoDVisualizer {
 			}
 		} else {
 			@SuppressWarnings("unchecked")
-			PSet<GraphElement> s = (PSet<GraphElement>) elements;
-			for (GraphElement v : s) {
+			PSet<GraphElement<?, ?>> s = (PSet<GraphElement<?, ?>>) elements;
+			for (GraphElement<?, ?> v : s) {
 				totalElements++;
 				if (v instanceof Vertex
 						&& state.selectedVertexClasses.get(v
@@ -389,7 +390,7 @@ public class TwoDVisualizer {
 		/**
 		 * The elements to be displayed.
 		 */
-		private final PSet<GraphElement> elements;
+		private final PSet<GraphElement<?, ?>> elements;
 
 		/**
 		 * The current Element.
@@ -425,8 +426,9 @@ public class TwoDVisualizer {
 		 * @param showAttributes
 		 * @param selectedEdgeClasses2
 		 */
-		public MyTg2Dot(PSet<GraphElement> elements, String outputFileName,
-				Boolean showAttributes, Object currentElement,
+		public MyTg2Dot(PSet<GraphElement<?, ?>> elements,
+				String outputFileName, Boolean showAttributes,
+				Object currentElement,
 				HashMap<EdgeClass, Boolean> selectedEdgeClasses2,
 				HashMap<VertexClass, Boolean> selectedVertexClasses2) {
 			selectedEdgeClasses = selectedEdgeClasses2;
@@ -457,7 +459,7 @@ public class TwoDVisualizer {
 				out = new PrintStream(new BufferedOutputStream(
 						new FileOutputStream(outputName)));
 				graphStart(out);
-				for (GraphElement el : elements) {
+				for (GraphElement<?, ?> el : elements) {
 					if (el instanceof Vertex) {
 						printVertex(out, (Vertex) el);
 					} else {
@@ -518,7 +520,7 @@ public class TwoDVisualizer {
 
 			out.print("v" + alpha.getId() + " -> v" + omega.getId() + " [");
 
-			EdgeClass cls = (EdgeClass) e.getAttributedElementClass();
+			EdgeClass cls = e.getAttributedElementClass();
 
 			out.print("dir=\"both\" ");
 			/*
@@ -571,7 +573,7 @@ public class TwoDVisualizer {
 				String fromRole = null;
 				String toRole = null;
 				if (PRINT_ROLE_NAMES) {
-					EdgeClass ec = (EdgeClass) e.getAttributedElementClass();
+					EdgeClass ec = e.getAttributedElementClass();
 					fromRole = ec.getFrom().getRolename();
 					toRole = ec.getTo().getRolename();
 				}
@@ -606,7 +608,8 @@ public class TwoDVisualizer {
 			return -1;
 		}
 
-		private void printAttributes(PrintStream out, AttributedElement elem) {
+		private void printAttributes(PrintStream out,
+				AttributedElement<?, ?> elem) {
 			AttributedElementClass cls = elem.getAttributedElementClass();
 			StringBuilder value = new StringBuilder();
 			for (Attribute attr : cls.getAttributeList()) {

@@ -146,14 +146,14 @@ public class StateRepository {
 			try {
 				Object result = evaluateGReQL(query, state.getGraph(), null);
 				boolean elementsAreDisplayed = false;
-				PSet<GraphElement> elements = JGraLab.set();
+				PSet<GraphElement<?, ?>> elements = JGraLab.set();
 				if (result instanceof PCollection) {
 					elements = elements
-							.plusAll((Collection<? extends GraphElement>) result);
+							.plusAll((Collection<? extends GraphElement<?, ?>>) result);
 					boolean containsOnlyVerticesOrEdges = true;
 					for (Object v : (PCollection<?>) elements) {
 						if (v instanceof GraphElement) {
-							elements = elements.plus((GraphElement) v);
+							elements = elements.plus((GraphElement<?, ?>) v);
 						} else {
 							containsOnlyVerticesOrEdges = false;
 							break;
@@ -172,7 +172,7 @@ public class StateRepository {
 						code.append("h3error.innerHTML = \"Only VERTEX, EDGE or COLLECTION of vertices or edges is supported.\";\n");
 					}
 				} else if (result instanceof GraphElement) {
-					elements = elements.plus((GraphElement) result);
+					elements = elements.plus((GraphElement<?, ?>) result);
 					displayJValueSet(sessionId, isTableViewShown,
 							showAttributes, numberPerPage, pathLength, state,
 							elements, code);
@@ -233,7 +233,7 @@ public class StateRepository {
 				numberPerPage.toString(), pathLength.toString(), content);
 		if (state != null) {
 			// find all elements
-			PSet<GraphElement> elements = JGraLab.set();
+			PSet<GraphElement<?, ?>> elements = JGraLab.set();
 			StringBuilder notExistingElements = new StringBuilder();
 			for (String s : content.split(",")) {
 				if (s.startsWith("v")) {
@@ -265,7 +265,7 @@ public class StateRepository {
 							elements, code);
 				} else {
 					// there is only one entry to show
-					GraphElement element = elements.iterator().next();
+					GraphElement<?, ?> element = elements.iterator().next();
 					addToBreadcrumbBar(code, state, element, true);
 					if (isTableViewShown) {
 						code.append("if((areVerticesShown()&&")
@@ -304,7 +304,7 @@ public class StateRepository {
 	 */
 	private void displayJValueSet(Integer sessionId, Boolean isTableViewShown,
 			Boolean showAttributes, Integer numberPerPage, Integer pathLength,
-			State state, PSet<GraphElement> elements, StringBuilder code) {
+			State state, PSet<GraphElement<?, ?>> elements, StringBuilder code) {
 		state.currentExplicitlyDefinedSet = elements;
 		addToBreadcrumbBar(code, state, elements, true);
 		if (isTableViewShown) {
@@ -386,7 +386,7 @@ public class StateRepository {
 				pathLength.toString(), showAttributes.toString(), elementId);
 		if (state != null) {
 			int currentElementId = Integer.parseInt(elementId.substring(1));
-			GraphElement currentElement = null;
+			GraphElement<?, ?> currentElement = null;
 			if (elementId.charAt(0) == 'v') {
 				currentElement = state.getGraph().getVertex(currentElementId);
 			} else {
@@ -479,7 +479,7 @@ public class StateRepository {
 					code.append("document.getElementById(\"h3HowManyVertices\").style.display = \"none\";\n");
 				} else {
 					@SuppressWarnings("unchecked")
-					PSet<GraphElement> elements = (PSet<GraphElement>) state.navigationHistory
+					PSet<GraphElement<?, ?>> elements = (PSet<GraphElement<?, ?>>) state.navigationHistory
 							.get(currentIndex);
 					state.currentExplicitlyDefinedSet = elements;
 					tv.calculateVertexListAndEdgeList(state, elements);
@@ -528,7 +528,7 @@ public class StateRepository {
 	 * Switches the table of the browser if it is needed.
 	 */
 	private void showCorrectTable(StringBuilder code,
-			GraphElement currentElement) {
+			GraphElement<?, ?> currentElement) {
 		String infix = "";
 		if (currentElement instanceof Vertex) {
 			infix = "Vertices";
@@ -663,7 +663,7 @@ public class StateRepository {
 				createVerticesAndEdges = true;
 			}
 			if (currentElement instanceof PSet) {
-				state.currentExplicitlyDefinedSet = (PSet<GraphElement>) currentElement;
+				state.currentExplicitlyDefinedSet = (PSet<GraphElement<?, ?>>) currentElement;
 				new TabularVisualizer().calculateVertexListAndEdgeList(state,
 						state.currentExplicitlyDefinedSet);
 				if (isTableShown) {
@@ -1143,8 +1143,8 @@ public class StateRepository {
 			boolean first = true;
 			int counter = 0;
 			@SuppressWarnings("unchecked")
-			PSet<GraphElement> elemSet = (PSet<GraphElement>) elem;
-			for (GraphElement v : elemSet) {
+			PSet<GraphElement<?, ?>> elemSet = (PSet<GraphElement<?, ?>>) elem;
+			for (GraphElement<?, ?> v : elemSet) {
 				if (!first) {
 					elementId.append(", ");
 					if (counter >= NUMBER_OF_ELEMENTS_IN_A_SET_IN_BREADCRUMBBAR) {
@@ -1799,7 +1799,7 @@ public class StateRepository {
 		public Edge[] edgesOfTableView;
 
 		// the set of elements explicitly defined and currently shown
-		public PSet<GraphElement> currentExplicitlyDefinedSet;
+		public PSet<GraphElement<?, ?>> currentExplicitlyDefinedSet;
 
 		/**
 		 * Creates a new State instance. All AttributedElementClasses are set to

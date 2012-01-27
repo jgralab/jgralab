@@ -202,7 +202,7 @@ public abstract class Transformation<T> {
 					Tg2Dot.convertGraph(context.getTargetGraph(), "__debug_"
 							+ (EXECUTION_STEP++) + "_" + name + ".pdf",
 							DEBUG_REVERSE_EDGES, GraphVizOutputFormat.PDF,
-							(Class<? extends AttributedElement>[]) null);
+							(Class<? extends AttributedElement<?, ?>>[]) null);
 				} catch (IOException e) {
 					e.printStackTrace();
 				}

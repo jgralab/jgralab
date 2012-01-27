@@ -93,9 +93,9 @@ import de.uni_koblenz.jgralab.utilities.tg2whatever.Tg2Whatever;
 /**
  * Tg2Dot2 takes a graph layout and a JGraLab graph and transforms the graph
  * into a DOT-graph of GraphViz.
- *
+ * 
  * @author ist@uni-koblenz.de
- *
+ * 
  */
 public class Tg2Dot extends Tg2Whatever {
 
@@ -226,7 +226,7 @@ public class Tg2Dot extends Tg2Whatever {
 
 	public static void convertGraph(Graph graph, String outputFileName,
 			boolean reversedEdges, GraphVizOutputFormat format,
-			Class<? extends AttributedElement>... reversedEdgeTypes)
+			Class<? extends AttributedElement<?, ?>>... reversedEdgeTypes)
 			throws IOException {
 		convertGraph(graph, outputFileName, reversedEdges, format,
 				toAttrElemClassArray(graph.getSchema(), reversedEdgeTypes));
@@ -251,7 +251,7 @@ public class Tg2Dot extends Tg2Whatever {
 
 	public static void convertGraph(BooleanGraphMarker marker,
 			String outputFileName, boolean reversedEdges,
-			Class<? extends AttributedElement>... reversedEdgeTypes)
+			Class<? extends AttributedElement<?, ?>>... reversedEdgeTypes)
 			throws IOException {
 		convertGraph(
 				marker,
@@ -272,7 +272,7 @@ public class Tg2Dot extends Tg2Whatever {
 	public static void convertGraph(BooleanGraphMarker marker,
 			String outputFileName, GraphVizOutputFormat format,
 			boolean reversedEdges,
-			Class<? extends AttributedElement>... reversedEdgeTypes)
+			Class<? extends AttributedElement<?, ?>>... reversedEdgeTypes)
 			throws IOException {
 		convertGraph(
 				marker,
@@ -284,13 +284,13 @@ public class Tg2Dot extends Tg2Whatever {
 	}
 
 	private static AttributedElementClass[] toAttrElemClassArray(Schema s,
-			Class<? extends AttributedElement>... reversedEdgeTypes) {
+			Class<? extends AttributedElement<?, ?>>... reversedEdgeTypes) {
 		if (reversedEdgeTypes == null) {
 			return null;
 		}
 		AttributedElementClass[] aecs = new AttributedElementClass[reversedEdgeTypes.length];
 		for (int i = 0; i < aecs.length; i++) {
-			Class<? extends AttributedElement> cls = reversedEdgeTypes[i];
+			Class<? extends AttributedElement<?, ?>> cls = reversedEdgeTypes[i];
 			String qname = cls.getName()
 					.replace(s.getPackagePrefix() + ".", "");
 			aecs[i] = s.getAttributedElementClass(qname);
@@ -520,7 +520,7 @@ public class Tg2Dot extends Tg2Whatever {
 
 	/**
 	 * Creates a {@link DotWriter}.
-	 *
+	 * 
 	 * @param out
 	 *            Provides stream, the DotWriter will use.
 	 */
@@ -549,13 +549,13 @@ public class Tg2Dot extends Tg2Whatever {
 	/**
 	 * Returns the responsible {@link TypeDefinition} or
 	 * {@link ElementDefinition} for the specified {@link AttributedElement}.
-	 *
+	 * 
 	 * @param attributedElement
 	 *            Given {@link AttributedElement}.
 	 * @return Responsible {@link Definition}.
 	 */
 	private Definition getCorrespondingDefinition(
-			AttributedElement attributedElement) {
+			AttributedElement<?, ?> attributedElement) {
 		if (layout.isDefinedbyElementDefinitions(attributedElement)) {
 			return constructSpecificElementDefinition(attributedElement);
 		} else {
@@ -568,14 +568,14 @@ public class Tg2Dot extends Tg2Whatever {
 	/**
 	 * Constructs an {@link ElementDefinition} for the given
 	 * {@link AttributedElement}.
-	 *
+	 * 
 	 * @param element
 	 *            Given AttributedElement.
 	 * @return {@link ElementDefinition} for the provided
 	 *         {@link AttributedElement}.
 	 */
 	private Definition constructSpecificElementDefinition(
-			AttributedElement element) {
+			AttributedElement<?, ?> element) {
 
 		// Retrieves corresponding underlying TypeDefinition
 		Definition definition = layout.getTypeDefinition(element);
@@ -595,7 +595,7 @@ public class Tg2Dot extends Tg2Whatever {
 	/**
 	 * Evaluates all attributes of a given {@link Vertex} and prints via the
 	 * {@link DotWriter}.
-	 *
+	 * 
 	 * @param vertex
 	 *            Provides Vertex.
 	 * @param definition
@@ -618,7 +618,7 @@ public class Tg2Dot extends Tg2Whatever {
 	/**
 	 * Returns unified vertex names. A vertex name has the prefix 'v' followed
 	 * by the {@link Vertex} id.
-	 *
+	 * 
 	 * @param vertex
 	 *            Given {@link Vertex}
 	 * @return Unified vertex name.
@@ -634,7 +634,7 @@ public class Tg2Dot extends Tg2Whatever {
 	 * method
 	 * {@link GreqlEvaluatorFacade#setVariablesOfGreqlEvaluator(AttributedElement, int)}
 	 * .
-	 *
+	 * 
 	 * @param spec
 	 *            Given {@link Definition} with the style attributes and their
 	 *            queries.
@@ -665,7 +665,7 @@ public class Tg2Dot extends Tg2Whatever {
 	/**
 	 * Evaluates all attributes of a given {@link Edge} and prints via the
 	 * {@link DotWriter}.
-	 *
+	 * 
 	 * @param edge
 	 *            Provides Edge.
 	 * @param definition
@@ -703,7 +703,7 @@ public class Tg2Dot extends Tg2Whatever {
 	/**
 	 * Checks whether or not the given {@link Edge} belongs to a
 	 * {@link EdgeClass}, which should be reversed.
-	 *
+	 * 
 	 * @param e
 	 *            Given Edge, which should be checked.
 	 * @return Return true, if the given Edge should be reversed.
@@ -717,7 +717,7 @@ public class Tg2Dot extends Tg2Whatever {
 	/**
 	 * Reverses all reversible style attributes in the provided evaluted style
 	 * attribute list.
-	 *
+	 * 
 	 * @param evaluatedList
 	 *            Given evaluated style attribute list as {@link Map}.
 	 */
@@ -731,7 +731,7 @@ public class Tg2Dot extends Tg2Whatever {
 
 	/**
 	 * Swaps two key-value pairs in a map.
-	 *
+	 * 
 	 * @param head
 	 *            Key of the first key-value pair.
 	 * @param tail
@@ -845,7 +845,7 @@ public class Tg2Dot extends Tg2Whatever {
 	 * nodes, like: State <--{ComesFrom} Transition -->{GoesTo}. Here, reversing
 	 * the direction of either ComesFrom or GoesTo results in much nicer
 	 * layouts.
-	 *
+	 * 
 	 * @param reversedEdgeTypes
 	 *            the set of edge types whose instances should be printed
 	 *            reversed
@@ -870,7 +870,7 @@ public class Tg2Dot extends Tg2Whatever {
 	/**
 	 * Converts the existing set of classes into a set of
 	 * {@link AttributedElementClass}es.
-	 *
+	 * 
 	 * @param reversedEdgeTypes
 	 *            Set of classes of Edges, which should be reversed.
 	 */
@@ -902,7 +902,7 @@ public class Tg2Dot extends Tg2Whatever {
 	/**
 	 * Return a flag indicating that incidence numbers should be included in the
 	 * graph layout process.
-	 *
+	 * 
 	 * @return True, if incidence numbers should be be printed.
 	 */
 	public boolean printsIncidenceNumbers() {

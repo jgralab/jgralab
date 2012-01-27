@@ -5,8 +5,8 @@ import java.util.Collections;
 import java.util.List;
 
 import de.uni_koblenz.jgralab.AttributedElement;
+import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
-import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.eca.events.ChangeAttributeEventDescription;
 import de.uni_koblenz.jgralab.eca.events.ChangeEdgeEventDescription;
@@ -17,6 +17,8 @@ import de.uni_koblenz.jgralab.eca.events.DeleteEdgeEventDescription;
 import de.uni_koblenz.jgralab.eca.events.DeleteVertexEventDescription;
 import de.uni_koblenz.jgralab.eca.events.EventDescription;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
+import de.uni_koblenz.jgralab.schema.EdgeClass;
+import de.uni_koblenz.jgralab.schema.VertexClass;
 
 public class ECARuleManager implements ECARuleManagerInterface {
 
@@ -186,8 +188,7 @@ public class ECARuleManager implements ECARuleManagerInterface {
 	 * fireBeforeCreateVertexEvents(java.lang.Class)
 	 */
 	@Override
-	public void fireBeforeCreateVertexEvents(
-			Class<? extends AttributedElement> elementClass) {
+	public void fireBeforeCreateVertexEvents(VertexClass vc) {
 		if (beforeCreateVertexEvents == null) {
 			return;
 		}
@@ -196,7 +197,8 @@ public class ECARuleManager implements ECARuleManagerInterface {
 		}
 		int max = beforeCreateVertexEvents.size();
 		for (int i = 0; i < max; i++) {
-			beforeCreateVertexEvents.get(i).fire(elementClass);
+			// TODO [factory]
+			// beforeCreateVertexEvents.get(i).fire(vc);
 		}
 		nestedTriggerCalls--;
 
@@ -209,7 +211,7 @@ public class ECARuleManager implements ECARuleManagerInterface {
 	 * fireAfterCreateVertexEvents(de.uni_koblenz.jgralab.GraphElement)
 	 */
 	@Override
-	public void fireAfterCreateVertexEvents(GraphElement element) {
+	public void fireAfterCreateVertexEvents(Vertex element) {
 		if (afterCreateVertexEvents == null) {
 			return;
 		}
@@ -231,7 +233,7 @@ public class ECARuleManager implements ECARuleManagerInterface {
 	 * fireBeforeDeleteVertexEvents(de.uni_koblenz.jgralab.GraphElement)
 	 */
 	@Override
-	public void fireBeforeDeleteVertexEvents(GraphElement element) {
+	public void fireBeforeDeleteVertexEvents(Vertex element) {
 		if (beforeDeleteVertexEvents == null) {
 			return;
 		}
@@ -253,8 +255,7 @@ public class ECARuleManager implements ECARuleManagerInterface {
 	 * fireAfterDeleteVertexEvents(java.lang.Class)
 	 */
 	@Override
-	public void fireAfterDeleteVertexEvents(
-			Class<? extends AttributedElement> elementClass) {
+	public void fireAfterDeleteVertexEvents(VertexClass elementClass) {
 		if (afterDeleteVertexEvents == null) {
 			return;
 		}
@@ -263,7 +264,8 @@ public class ECARuleManager implements ECARuleManagerInterface {
 		}
 		int max = afterDeleteVertexEvents.size();
 		for (int i = 0; i < max; i++) {
-			afterDeleteVertexEvents.get(i).fire(elementClass);
+			// TODO [factory]
+			// afterDeleteVertexEvents.get(i).fire(elementClass);
 		}
 		nestedTriggerCalls--;
 
@@ -277,8 +279,7 @@ public class ECARuleManager implements ECARuleManagerInterface {
 	 * (java.lang.Class)
 	 */
 	@Override
-	public void fireBeforeCreateEdgeEvents(
-			Class<? extends AttributedElement> elementClass) {
+	public void fireBeforeCreateEdgeEvents(Class<? extends Edge> elementClass) {
 		if (beforeCreateEdgeEvents == null) {
 			return;
 		}
@@ -301,7 +302,7 @@ public class ECARuleManager implements ECARuleManagerInterface {
 	 * (de.uni_koblenz.jgralab.GraphElement)
 	 */
 	@Override
-	public void fireAfterCreateEdgeEvents(GraphElement element) {
+	public void fireAfterCreateEdgeEvents(Edge element) {
 		if (afterCreateEdgeEvents == null) {
 			return;
 		}
@@ -324,7 +325,7 @@ public class ECARuleManager implements ECARuleManagerInterface {
 	 * (de.uni_koblenz.jgralab.GraphElement)
 	 */
 	@Override
-	public void fireBeforeDeleteEdgeEvents(GraphElement element) {
+	public void fireBeforeDeleteEdgeEvents(Edge element) {
 		if (beforeDeleteEdgeEvents == null) {
 			return;
 		}
@@ -347,8 +348,7 @@ public class ECARuleManager implements ECARuleManagerInterface {
 	 * (java.lang.Class)
 	 */
 	@Override
-	public void fireAfterDeleteEdgeEvents(
-			Class<? extends AttributedElement> elementClass) {
+	public void fireAfterDeleteEdgeEvents(EdgeClass elementClass) {
 		if (afterDeleteEdgeEvents == null) {
 			return;
 		}
@@ -357,7 +357,8 @@ public class ECARuleManager implements ECARuleManagerInterface {
 		}
 		int max = afterDeleteEdgeEvents.size();
 		for (int i = 0; i < max; i++) {
-			afterDeleteEdgeEvents.get(i).fire(elementClass);
+			// TODO [factory]
+			// afterDeleteEdgeEvents.get(i).fire(elementClass);
 		}
 		nestedTriggerCalls--;
 
@@ -371,7 +372,7 @@ public class ECARuleManager implements ECARuleManagerInterface {
 	 * de.uni_koblenz.jgralab.Vertex, de.uni_koblenz.jgralab.Vertex)
 	 */
 	@Override
-	public void fireBeforeChangeAlphaOfEdgeEvents(GraphElement element,
+	public void fireBeforeChangeAlphaOfEdgeEvents(Edge element,
 			Vertex oldVertex, Vertex newVertex) {
 		if (beforeChangeAlphaOfEdgeEvents == null) {
 			return;
@@ -396,7 +397,7 @@ public class ECARuleManager implements ECARuleManagerInterface {
 	 * de.uni_koblenz.jgralab.Vertex, de.uni_koblenz.jgralab.Vertex)
 	 */
 	@Override
-	public void fireAfterChangeAlphaOfEdgeEvents(GraphElement element,
+	public void fireAfterChangeAlphaOfEdgeEvents(Edge element,
 			Vertex oldVertex, Vertex newVertex) {
 		if (afterChangeAlphaOfEdgeEvents == null) {
 			return;
@@ -421,7 +422,7 @@ public class ECARuleManager implements ECARuleManagerInterface {
 	 * de.uni_koblenz.jgralab.Vertex, de.uni_koblenz.jgralab.Vertex)
 	 */
 	@Override
-	public void fireBeforeChangeOmegaOfEdgeEvents(GraphElement element,
+	public void fireBeforeChangeOmegaOfEdgeEvents(Edge element,
 			Vertex oldVertex, Vertex newVertex) {
 		if (beforeChangeOmegaOfEdgeEvents == null) {
 			return;
@@ -446,7 +447,7 @@ public class ECARuleManager implements ECARuleManagerInterface {
 	 * de.uni_koblenz.jgralab.Vertex, de.uni_koblenz.jgralab.Vertex)
 	 */
 	@Override
-	public void fireAfterChangeOmegaOfEdgeEvents(GraphElement element,
+	public void fireAfterChangeOmegaOfEdgeEvents(Edge element,
 			Vertex oldVertex, Vertex newVertex) {
 		if (afterChangeOmegaOfEdgeEvents == null) {
 			return;
@@ -471,8 +472,9 @@ public class ECARuleManager implements ECARuleManagerInterface {
 	 * java.lang.String, java.lang.Object, java.lang.Object)
 	 */
 	@Override
-	public void fireBeforeChangeAttributeEvents(AttributedElement element,
-			String attributeName, Object oldValue, Object newValue) {
+	public void fireBeforeChangeAttributeEvents(
+			AttributedElement<?, ?> element, String attributeName,
+			Object oldValue, Object newValue) {
 		if (beforeChangeAttributeEvents == null) {
 			return;
 		}
@@ -496,7 +498,7 @@ public class ECARuleManager implements ECARuleManagerInterface {
 	 * java.lang.String, java.lang.Object, java.lang.Object)
 	 */
 	@Override
-	public void fireAfterChangeAttributeEvents(AttributedElement element,
+	public void fireAfterChangeAttributeEvents(AttributedElement<?, ?> element,
 			String attributeName, Object oldValue, Object newValue) {
 		if (afterChangeAttributeEvents == null) {
 			return;

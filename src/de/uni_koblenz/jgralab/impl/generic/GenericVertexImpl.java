@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Graph;
@@ -60,17 +59,17 @@ public class GenericVertexImpl extends VertexImpl {
 	@Override
 	public boolean isValidAlpha(Edge edge) {
 		return ((GenericGraphImpl) getGraph()).cachedIsValidAlpha(type,
-				((EdgeClass) edge.getAttributedElementClass()));
+				(edge.getAttributedElementClass()));
 	}
 
 	@Override
 	public boolean isValidOmega(Edge edge) {
 		return ((GenericGraphImpl) getGraph()).cachedIsValidOmega(type,
-				((EdgeClass) edge.getAttributedElementClass()));
+				(edge.getAttributedElementClass()));
 	}
 
 	@Override
-	public AttributedElementClass getAttributedElementClass() {
+	public VertexClass getAttributedElementClass() {
 		return type;
 	}
 
@@ -221,7 +220,7 @@ public class GenericVertexImpl extends VertexImpl {
 
 	// ************** unsupported methods ***************/
 	@Override
-	public Class<? extends AttributedElement> getSchemaClass() {
+	public Class<? extends Vertex> getSchemaClass() {
 		throw new UnsupportedOperationException(
 				"This method is not supported by the generic implementation");
 	}

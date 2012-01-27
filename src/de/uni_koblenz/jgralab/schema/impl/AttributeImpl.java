@@ -44,7 +44,7 @@ import de.uni_koblenz.jgralab.schema.exception.SchemaException;
 
 /**
  * TODO add comment
- *
+ * 
  * @author ist@uni-koblenz.de
  */
 public class AttributeImpl implements Attribute, Comparable<Attribute> {
@@ -81,7 +81,7 @@ public class AttributeImpl implements Attribute, Comparable<Attribute> {
 
 	/**
 	 * builds a new attribute
-	 *
+	 * 
 	 * @param name
 	 *            the name of the attribute
 	 * @param domain
@@ -98,13 +98,13 @@ public class AttributeImpl implements Attribute, Comparable<Attribute> {
 		this.name = name;
 		this.domain = domain;
 		this.aec = aec;
-		this.sortKey = name + ":" + domain.getQualifiedName();
+		sortKey = name + ":" + domain.getQualifiedName();
 		setDefaultValueAsString(defaultValue);
 	}
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
@@ -114,7 +114,7 @@ public class AttributeImpl implements Attribute, Comparable<Attribute> {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see jgralab.Attribute#getDomain()
 	 */
 	@Override
@@ -124,7 +124,7 @@ public class AttributeImpl implements Attribute, Comparable<Attribute> {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see jgralab.Attribute#getName()
 	 */
 	@Override
@@ -179,7 +179,7 @@ public class AttributeImpl implements Attribute, Comparable<Attribute> {
 	}
 
 	@Override
-	public void setDefaultTransactionValue(AttributedElement element)
+	public void setDefaultTransactionValue(AttributedElement<?, ?> element)
 			throws GraphIOException {
 		if (defaultValueAsString != null) {
 			if (!defaultTransactionValueComputed) {
@@ -195,7 +195,7 @@ public class AttributeImpl implements Attribute, Comparable<Attribute> {
 	}
 
 	@Override
-	public void setDefaultValue(AttributedElement element)
+	public void setDefaultValue(AttributedElement<?, ?> element)
 			throws GraphIOException {
 		if (!defaultValueComputed) {
 			if (defaultValueAsString != null) {

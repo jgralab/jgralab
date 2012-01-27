@@ -54,7 +54,7 @@ public abstract class ConstraintViolation implements
 		Comparable<ConstraintViolation> {
 
 	protected AttributedElementClass attributedElementClass;
-	protected Set<AttributedElement> offendingElements;
+	protected Set<AttributedElement<?, ?>> offendingElements;
 
 	/**
 	 * @return the {@link AttributedElementClass} the violated constraint is
@@ -74,7 +74,9 @@ public abstract class ConstraintViolation implements
 				&& (ci instanceof MultiplicityConstraintViolation)) {
 			MultiplicityConstraintViolation me = (MultiplicityConstraintViolation) this;
 			MultiplicityConstraintViolation other = (MultiplicityConstraintViolation) ci;
-			int result = me.getAttributedElementClass().getQualifiedName()
+			int result = me
+					.getAttributedElementClass()
+					.getQualifiedName()
 					.compareTo(
 							other.getAttributedElementClass()
 									.getQualifiedName());
@@ -103,7 +105,9 @@ public abstract class ConstraintViolation implements
 				&& (ci instanceof BrokenGReQLConstraintViolation)) {
 			BrokenGReQLConstraintViolation me = (BrokenGReQLConstraintViolation) this;
 			BrokenGReQLConstraintViolation other = (BrokenGReQLConstraintViolation) ci;
-			int result = me.getAttributedElementClass().getQualifiedName()
+			int result = me
+					.getAttributedElementClass()
+					.getQualifiedName()
 					.compareTo(
 							other.getAttributedElementClass()
 									.getQualifiedName());
@@ -121,7 +125,9 @@ public abstract class ConstraintViolation implements
 				&& (ci instanceof GReQLConstraintViolation)) {
 			GReQLConstraintViolation me = (GReQLConstraintViolation) this;
 			GReQLConstraintViolation other = (GReQLConstraintViolation) ci;
-			int result = me.getAttributedElementClass().getQualifiedName()
+			int result = me
+					.getAttributedElementClass()
+					.getQualifiedName()
 					.compareTo(
 							other.getAttributedElementClass()
 									.getQualifiedName());
@@ -169,5 +175,5 @@ public abstract class ConstraintViolation implements
 	/**
 	 * @return a set of {@link AttributedElement}s which violate the constraint
 	 */
-	public abstract Set<AttributedElement> getOffendingElements();
+	public abstract Set<AttributedElement<?, ?>> getOffendingElements();
 }

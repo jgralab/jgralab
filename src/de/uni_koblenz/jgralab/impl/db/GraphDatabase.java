@@ -1043,8 +1043,11 @@ public abstract class GraphDatabase {
 		Class<? extends Vertex> vertexClass = getVertexClassFrom(graph,
 				vertexData);
 		GraphFactory graphFactory = graph.getGraphFactory();
-		DatabasePersistableVertex vertex = (DatabasePersistableVertex) graphFactory
-				.createVertex(vertexClass, vId, graph);
+		// TODO [factory]
+		// DatabasePersistableVertex vertex = (DatabasePersistableVertex)
+		// graphFactory
+		// .createVertex(vertexClass, vId, graph);
+		DatabasePersistableVertex vertex = null;
 		long incidenceListVersion = vertexData.getLong(2);
 		vertex.setIncidenceListVersion(incidenceListVersion);
 		long sequenceNumber = vertexData.getLong(3);
@@ -1195,9 +1198,11 @@ public abstract class GraphDatabase {
 			}
 		} while (edgeData.next());
 		GraphFactory graphFactory = graph.getGraphFactory();
-		DatabasePersistableEdge edge = (DatabasePersistableEdge) graphFactory
-				.createEdge(edgeClass, eId, graph, alpha,
-						omega);
+		// TODO [factory]
+		// DatabasePersistableEdge edge = (DatabasePersistableEdge) graphFactory
+		// .createEdge(edgeClass, eId, graph, alpha,
+		// omega);
+		DatabasePersistableEdge edge = null;
 		edge.setSequenceNumberInESeq(sequenceNumberInESeq);
 		((DatabasePersistableEdge) edge.getNormalEdge())
 				.setSequenceNumberInLambdaSeq(alphaSeqNumber);
@@ -1462,14 +1467,15 @@ public abstract class GraphDatabase {
 	private GraphImpl getEmptyGraphInstance(String id) throws SQLException,
 			GraphIOException {
 		Schema schema = getSchemaForGraph(id);
-		//GraphFactory graphFactory = schema.getGraphFactory();
+		// GraphFactory graphFactory = schema.getGraphFactory();
 		GraphClass graphClass = schema.getGraphClass();
 		try {
-			Class<? extends GraphFactory> c = (Class<? extends GraphFactory>) Class.forName(
-					schema.getPackagePrefix()+".impl.db."+graphClass.getSimpleName()+"FactoryImpl");
-			Constructor <? extends GraphFactory> cons = c.getConstructor();
+			Class<? extends GraphFactory> c = (Class<? extends GraphFactory>) Class
+					.forName(schema.getPackagePrefix() + ".impl.db."
+							+ graphClass.getSimpleName() + "FactoryImpl");
+			Constructor<? extends GraphFactory> cons = c.getConstructor();
 			GraphFactory graphFactory = cons.newInstance();
-			((GraphFactoryImpl)graphFactory).setGraphDatabase(this);
+			((GraphFactoryImpl) graphFactory).setGraphDatabase(this);
 			return (GraphImpl) graphFactory.createGraph(id);
 		} catch (Exception e) {
 			throw new GraphIOException("Could not create an instance of "
@@ -1809,8 +1815,7 @@ public abstract class GraphDatabase {
 	private void insertDefinedTypesOf(Schema schema, int schemaId)
 			throws SQLException {
 		insertGraphClass(schema.getGraphClass(), schemaId);
-		insertVertexClasses(schema.getVertexClasses(),
-				schemaId);
+		insertVertexClasses(schema.getVertexClasses(), schemaId);
 		insertEdgeClasses(schema.getEdgeClasses(), schemaId);
 		insertAttributes(schemaId);
 	}

@@ -59,7 +59,7 @@ public class GraphLayout {
 
 	List<ElementDefinition> elementDefinitions;
 
-	Collection<AttributedElement> attributedElementsDefinedByElementDefinitions;
+	Collection<AttributedElement<?, ?>> attributedElementsDefinedByElementDefinitions;
 
 	Map<String, String> globalVariables;
 
@@ -74,7 +74,7 @@ public class GraphLayout {
 		edgeTypeDefinitions = new HashMap<AttributedElementClass, TypeDefinition>();
 		elementDefinitions = new ArrayList<ElementDefinition>();
 
-		attributedElementsDefinedByElementDefinitions = new HashSet<AttributedElement>();
+		attributedElementsDefinedByElementDefinitions = new HashSet<AttributedElement<?, ?>>();
 
 		globalVariables = new HashMap<String, String>();
 	}
@@ -99,11 +99,11 @@ public class GraphLayout {
 		return elementDefinitions;
 	}
 
-	public Collection<AttributedElement> getAttributedElementsDefinedByElementDefinitions() {
+	public Collection<AttributedElement<?, ?>> getAttributedElementsDefinedByElementDefinitions() {
 		return attributedElementsDefinedByElementDefinitions;
 	}
 
-	public TypeDefinition getTypeDefinition(AttributedElement element) {
+	public TypeDefinition getTypeDefinition(AttributedElement<?, ?> element) {
 		return getTypeDefinition(element.getAttributedElementClass());
 	}
 
@@ -162,7 +162,7 @@ public class GraphLayout {
 		elementDefinitions.add(definition);
 	}
 
-	public boolean isDefinedbyElementDefinitions(AttributedElement v) {
+	public boolean isDefinedbyElementDefinitions(AttributedElement<?, ?> v) {
 		return attributedElementsDefinedByElementDefinitions.contains(v);
 	}
 

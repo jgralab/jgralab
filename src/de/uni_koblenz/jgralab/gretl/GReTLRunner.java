@@ -213,7 +213,7 @@ public class GReTLRunner {
 				String pdf = outFileName.replaceFirst("\\.tg(\\.gz)?$", ".pdf");
 				Tg2Dot.convertGraph(outGraph, pdf, cli.hasOption('r'),
 						GraphVizOutputFormat.PDF,
-						(Class<? extends AttributedElement>[]) null);
+						(Class<? extends AttributedElement<?, ?>>[]) null);
 			}
 		}
 	}

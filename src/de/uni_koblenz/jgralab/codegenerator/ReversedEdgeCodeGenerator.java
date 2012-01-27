@@ -56,6 +56,7 @@ public class ReversedEdgeCodeGenerator extends AttributedElementCodeGenerator {
 			String schemaPackageName, CodeGeneratorConfiguration config) {
 		super(edgeClass, schemaPackageName, config);
 		rootBlock.setVariable("graphElementClass", "ReversedEdge");
+		rootBlock.setVariable("schemaElementClass", "EdgeClass");
 		rootBlock.setVariable("isImplementationClassOnly", "true");
 		rootBlock.setVariable("className",
 				"Reversed" + edgeClass.getSimpleName());

@@ -38,7 +38,7 @@ public class DeleteVertexEvent extends Event {
 	 *            the type of the deleted Vertex
 	 */
 	public DeleteVertexEvent(int nestedCalls, Graph graph,
-			Class<? extends AttributedElement> type) {
+			Class<? extends AttributedElement<?, ?>> type) {
 		super(nestedCalls, EventTime.AFTER, graph, type);
 		vertex = null;
 	}
@@ -55,7 +55,7 @@ public class DeleteVertexEvent extends Event {
 	 *         EventTime is after
 	 */
 	@Override
-	public AttributedElement getElement() {
+	public AttributedElement<?, ?> getElement() {
 		return vertex;
 	}
 

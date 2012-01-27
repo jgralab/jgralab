@@ -35,6 +35,9 @@
 
 package de.uni_koblenz.jgralab;
 
+import de.uni_koblenz.jgralab.schema.EdgeClass;
+import de.uni_koblenz.jgralab.schema.GraphClass;
+import de.uni_koblenz.jgralab.schema.VertexClass;
 
 /**
  * Creates instances of graphs, edges and vertices. By changing factory it is
@@ -43,46 +46,37 @@ package de.uni_koblenz.jgralab;
  * @author ist@uni-koblenz.de
  */
 public interface GraphFactory {
-
 	/**
-	 * creates a Graph-object for the specified class. The returned object may
-	 * be an instance of a subclass of the specified graphClass.
+	 * @return the {@link ImplementationType} of this GraphFactory
 	 */
-	public Graph createGraph(String id,
-			int vMax, int eMax);
+	public ImplementationType getImplementationType();
 
 	/**
-	 * creates a Graph-object for the specified class. The returned object may
-	 * be an instance of a subclass of the specified graphClass.
+	 */
+	public Graph createGraph(String id, int vMax, int eMax);
+
+	/**
 	 */
 	public Graph createGraph(String id);
 
 	/**
-	 * creates a Vertex-object for the specified class. The returned object may
-	 * be an instance of a subclass of the specified vertexClass.
+	 * Creates a Vertex for the specified class.
 	 */
-	public Vertex createVertex(Class<? extends Vertex> vertexClass, int id,
-			Graph g);
+	public <V extends Vertex> V createVertex(VertexClass vc, int id, Graph g);
 
 	/**
-	 * creates a Edge-object for the specified class. The returned object may be
-	 * an instance of a subclass of the specified edgeClass.
+	 * Creates an Edge for the specified class.
 	 */
-	public Edge createEdge(Class<? extends Edge> edgeClass, int id, Graph g,
+	public <E extends Edge> E createEdge(EdgeClass ec, int id, Graph g,
 			Vertex alpha, Vertex omega);
 
-	public void setGraphImplementationClass(
-			Class<? extends Graph> graphSchemaClass,
+	public void setGraphImplementationClass(GraphClass gc,
 			Class<? extends Graph> graphImplementationClass);
 
-	public void setVertexImplementationClass(
-			Class<? extends Vertex> vertexSchemaClass,
+	public void setVertexImplementationClass(VertexClass vc,
 			Class<? extends Vertex> vertexImplementationClass);
 
-	public void setEdgeImplementationClass(
-			Class<? extends Edge> edgeSchemaClass,
+	public void setEdgeImplementationClass(EdgeClass ec,
 			Class<? extends Edge> edgeImplementationClass);
-
-	
 
 }

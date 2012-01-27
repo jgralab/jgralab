@@ -68,7 +68,7 @@ public class BrokenGReQLConstraintViolation extends ConstraintViolation {
 	public boolean equals(Object o) {
 		if (o instanceof BrokenGReQLConstraintViolation) {
 			BrokenGReQLConstraintViolation other = (BrokenGReQLConstraintViolation) o;
-			return this.compareTo(other) == 0;
+			return compareTo(other) == 0;
 		}
 		return false;
 	}
@@ -110,7 +110,7 @@ public class BrokenGReQLConstraintViolation extends ConstraintViolation {
 	}
 
 	@Override
-	public Set<AttributedElement> getOffendingElements() {
+	public Set<AttributedElement<?, ?>> getOffendingElements() {
 		return null;
 	}
 }

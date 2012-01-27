@@ -100,8 +100,8 @@ public class TransactionImplTest {
 
 	@Before
 	public void setUp() throws InterruptedException {
-		motorwayMap = MotorwayMapSchema.instance()
-				.createMotorwayMap(ImplementationType.TRANSACTION,V, E);
+		motorwayMap = MotorwayMapSchema.instance().createMotorwayMap(
+				ImplementationType.TRANSACTION, null, V, E);
 
 		readWriteTransaction1 = (TransactionImpl) motorwayMap.newTransaction();
 		readOnlyTransaction = (TransactionImpl) motorwayMap
