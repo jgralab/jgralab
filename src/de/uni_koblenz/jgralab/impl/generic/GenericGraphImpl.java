@@ -39,8 +39,6 @@ public class GenericGraphImpl extends GraphImpl {
 
 	private GraphClass type;
 	private Map<String, Object> attributes;
-	private Map<VertexClass, Set<EdgeClass>> vcInEdgeCache;
-	private Map<VertexClass, Set<EdgeClass>> vcOutEdgeCache;
 
 	protected GenericGraphImpl(String id, GraphClass type) {
 		super(id, type, 100, 100);
