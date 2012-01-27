@@ -38,9 +38,8 @@ package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 import java.util.ArrayList;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
-import de.uni_koblenz.jgralab.Graph;
-import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluatorImpl;
-import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
+import de.uni_koblenz.jgralab.greql2.evaluator.InternalGreqlEvaluator;
+import de.uni_koblenz.jgralab.greql2.evaluator.Query;
 import de.uni_koblenz.jgralab.greql2.exception.GreqlException;
 import de.uni_koblenz.jgralab.greql2.funlib.FunLib;
 import de.uni_koblenz.jgralab.greql2.funlib.FunLib.FunctionInfo;
@@ -48,7 +47,6 @@ import de.uni_koblenz.jgralab.greql2.funlib.Function;
 import de.uni_koblenz.jgralab.greql2.schema.Expression;
 import de.uni_koblenz.jgralab.greql2.schema.FunctionApplication;
 import de.uni_koblenz.jgralab.greql2.schema.FunctionId;
-import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
 import de.uni_koblenz.jgralab.greql2.schema.IsArgumentOf;
 import de.uni_koblenz.jgralab.greql2.schema.IsTypeExprOf;
 import de.uni_koblenz.jgralab.greql2.schema.TypeId;
@@ -60,17 +58,8 @@ import de.uni_koblenz.jgralab.greql2.types.TypeCollection;
  * @author ist@uni-koblenz.de
  * 
  */
-public class FunctionApplicationEvaluator extends VertexEvaluator {
-
-	protected FunctionApplication vertex;
-
-	/**
-	 * returns the vertex this VertexEvaluator evaluates
-	 */
-	@Override
-	public Greql2Vertex getVertex() {
-		return vertex;
-	}
+public class FunctionApplicationEvaluator extends
+		VertexEvaluator<FunctionApplication> {
 
 	protected ArrayList<VertexEvaluator> parameterEvaluators = null;
 
@@ -116,12 +105,6 @@ public class FunctionApplicationEvaluator extends VertexEvaluator {
 		return getFunctionInfo().getFunction();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @seede.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VertexEvaluator#
-	 * getLoggingName()
-	 */
 	@Override
 	public String getLoggingName() {
 		return getFunctionName();
@@ -133,10 +116,8 @@ public class FunctionApplicationEvaluator extends VertexEvaluator {
 	 * @param vertex
 	 *            the vertex which gets evaluated by this VertexEvaluator
 	 */
-	public FunctionApplicationEvaluator(FunctionApplication vertex,
-			GreqlEvaluatorImpl eval) {
-		super(eval);
-		this.vertex = vertex;
+	public FunctionApplicationEvaluator(FunctionApplication vertex, Query query) {
+		super(vertex, query);
 	}
 
 	/**
@@ -185,7 +166,7 @@ public class FunctionApplicationEvaluator extends VertexEvaluator {
 	 * evaluates the function, calls the right function of the function libary
 	 */
 	@Override
-	public Object evaluate(Graph graph) {
+	public Object evaluate(InternalGreqlEvaluator evaluator) {
 		FunctionInfo fi = getFunctionInfo();
 		if (!listCreated) {
 			typeArgument = createTypeArgument();
@@ -219,22 +200,22 @@ public class FunctionApplicationEvaluator extends VertexEvaluator {
 		return FunLib.apply(fi, parameters);
 	}
 
-	@Override
-	public VertexCosts calculateSubtreeEvaluationCosts() {
-		return greqlEvaluator.getCostModel().calculateCostsFunctionApplication(
-				this);
-	}
-
-	@Override
-	public double calculateEstimatedSelectivity() {
-		return greqlEvaluator.getCostModel()
-				.calculateSelectivityFunctionApplication(this);
-	}
-
-	@Override
-	public long calculateEstimatedCardinality() {
-		return greqlEvaluator.getCostModel()
-				.calculateCardinalityFunctionApplication(this);
-	}
+	// @Override
+	// public VertexCosts calculateSubtreeEvaluationCosts() {
+	// return greqlEvaluator.getCostModel().calculateCostsFunctionApplication(
+	// this);
+	// }
+	//
+	// @Override
+	// public double calculateEstimatedSelectivity() {
+	// return greqlEvaluator.getCostModel()
+	// .calculateSelectivityFunctionApplication(this);
+	// }
+	//
+	// @Override
+	// public long calculateEstimatedCardinality() {
+	// return greqlEvaluator.getCostModel()
+	// .calculateCardinalityFunctionApplication(this);
+	// }
 
 }

@@ -38,10 +38,9 @@ package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 import org.pcollections.PSet;
 
 import de.uni_koblenz.jgralab.Edge;
-import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.JGraLab;
-import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluatorImpl;
-import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
+import de.uni_koblenz.jgralab.greql2.evaluator.InternalGreqlEvaluator;
+import de.uni_koblenz.jgralab.greql2.evaluator.Query;
 import de.uni_koblenz.jgralab.greql2.schema.EdgeSetExpression;
 import de.uni_koblenz.jgralab.greql2.types.TypeCollection;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
@@ -52,7 +51,8 @@ import de.uni_koblenz.jgralab.schema.AttributedElementClass;
  * @author ist@uni-koblenz.de
  * 
  */
-public class EdgeSetExpressionEvaluator extends ElementSetExpressionEvaluator {
+public class EdgeSetExpressionEvaluator extends
+		ElementSetExpressionEvaluator<EdgeSetExpression> {
 
 	/**
 	 * Creates a new ElementSetExpressionEvaluator for the given vertex
@@ -62,17 +62,16 @@ public class EdgeSetExpressionEvaluator extends ElementSetExpressionEvaluator {
 	 * @param vertex
 	 *            the vertex this VertexEvaluator evaluates
 	 */
-	public EdgeSetExpressionEvaluator(EdgeSetExpression vertex,
-			GreqlEvaluatorImpl eval) {
-		super(vertex, eval);
+	public EdgeSetExpressionEvaluator(EdgeSetExpression vertex, Query query) {
+		super(vertex, query);
 	}
 
 	@Override
-	public PSet<Edge> evaluate(Graph graph) {
+	public PSet<Edge> evaluate(InternalGreqlEvaluator evaluator) {
 		// create the resulting set
 		PSet<Edge> resultSet = JGraLab.set();
-		Edge currentEdge = graph.getFirstEdge();
-		TypeCollection typeCollection = getTypeCollection(graph);
+		Edge currentEdge = query.getQueryGraph().getFirstEdge();
+		TypeCollection typeCollection = getTypeCollection(evaluator);
 		while (currentEdge != null) {
 			AttributedElementClass edgeClass = currentEdge
 					.getAttributedElementClass();
@@ -84,16 +83,16 @@ public class EdgeSetExpressionEvaluator extends ElementSetExpressionEvaluator {
 		return resultSet;
 	}
 
-	@Override
-	public VertexCosts calculateSubtreeEvaluationCosts() {
-		return greqlEvaluator.getCostModel().calculateCostsEdgeSetExpression(
-				this);
-	}
-
-	@Override
-	public long calculateEstimatedCardinality() {
-		return greqlEvaluator.getCostModel()
-				.calculateCardinalityEdgeSetExpression(this);
-	}
+	// @Override
+	// public VertexCosts calculateSubtreeEvaluationCosts() {
+	// return greqlEvaluator.getCostModel().calculateCostsEdgeSetExpression(
+	// this);
+	// }
+	//
+	// @Override
+	// public long calculateEstimatedCardinality() {
+	// return greqlEvaluator.getCostModel()
+	// .calculateCardinalityEdgeSetExpression(this);
+	// }
 
 }

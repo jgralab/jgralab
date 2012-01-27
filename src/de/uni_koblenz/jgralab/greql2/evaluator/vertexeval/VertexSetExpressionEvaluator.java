@@ -37,11 +37,10 @@ package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 
 import org.pcollections.PSet;
 
-import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluatorImpl;
-import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
+import de.uni_koblenz.jgralab.greql2.evaluator.InternalGreqlEvaluator;
+import de.uni_koblenz.jgralab.greql2.evaluator.Query;
 import de.uni_koblenz.jgralab.greql2.schema.VertexSetExpression;
 import de.uni_koblenz.jgralab.greql2.types.TypeCollection;
 
@@ -54,7 +53,8 @@ import de.uni_koblenz.jgralab.greql2.types.TypeCollection;
  * @author ist@uni-koblenz.de
  * 
  */
-public class VertexSetExpressionEvaluator extends ElementSetExpressionEvaluator {
+public class VertexSetExpressionEvaluator extends
+		ElementSetExpressionEvaluator<VertexSetExpression> {
 
 	/**
 	 * Creates a new ElementSetExpressionEvaluator for the given vertex
@@ -64,18 +64,17 @@ public class VertexSetExpressionEvaluator extends ElementSetExpressionEvaluator 
 	 * @param vertex
 	 *            the vertex this VertexEvaluator evaluates
 	 */
-	public VertexSetExpressionEvaluator(VertexSetExpression vertex,
-			GreqlEvaluatorImpl eval) {
-		super(vertex, eval);
+	public VertexSetExpressionEvaluator(VertexSetExpression vertex, Query query) {
+		super(vertex, query);
 	}
 
 	@Override
-	public Object evaluate(Graph graph) {
-		TypeCollection typeCollection = getTypeCollection(graph);
+	public Object evaluate(InternalGreqlEvaluator evaluator) {
+		TypeCollection typeCollection = getTypeCollection(evaluator);
 		PSet<Vertex> resultSet = null;
 		if (resultSet == null) {
 			resultSet = JGraLab.set();
-			Vertex currentVertex = graph.getFirstVertex();
+			Vertex currentVertex = query.getQueryGraph().getFirstVertex();
 			while (currentVertex != null) {
 				if (typeCollection.acceptsType(currentVertex
 						.getAttributedElementClass())) {
@@ -87,16 +86,16 @@ public class VertexSetExpressionEvaluator extends ElementSetExpressionEvaluator 
 		return resultSet;
 	}
 
-	@Override
-	public VertexCosts calculateSubtreeEvaluationCosts() {
-		return greqlEvaluator.getCostModel().calculateCostsVertexSetExpression(
-				this);
-	}
-
-	@Override
-	public long calculateEstimatedCardinality() {
-		return greqlEvaluator.getCostModel()
-				.calculateCardinalityVertexSetExpression(this);
-	}
+	// @Override
+	// public VertexCosts calculateSubtreeEvaluationCosts() {
+	// return greqlEvaluator.getCostModel().calculateCostsVertexSetExpression(
+	// this);
+	// }
+	//
+	// @Override
+	// public long calculateEstimatedCardinality() {
+	// return greqlEvaluator.getCostModel()
+	// .calculateCardinalityVertexSetExpression(this);
+	// }
 
 }

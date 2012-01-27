@@ -36,8 +36,8 @@
 package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
-import de.uni_koblenz.jgralab.Graph;
-import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluatorImpl;
+import de.uni_koblenz.jgralab.greql2.evaluator.InternalGreqlEvaluator;
+import de.uni_koblenz.jgralab.greql2.evaluator.Query;
 import de.uni_koblenz.jgralab.greql2.schema.Expression;
 import de.uni_koblenz.jgralab.greql2.schema.IsTypeRestrOfExpression;
 import de.uni_koblenz.jgralab.greql2.schema.TypeId;
@@ -52,26 +52,26 @@ import de.uni_koblenz.jgralab.greql2.types.TypeCollection;
  * @author ist@uni-koblenz.de
  * 
  */
-public abstract class AbstractGraphElementCollectionEvaluator extends
-		VertexEvaluator {
+public abstract class AbstractGraphElementCollectionEvaluator<V extends Expression>
+		extends VertexEvaluator<V> {
 
-	public AbstractGraphElementCollectionEvaluator(GreqlEvaluatorImpl eval) {
-		super(eval);
+	public AbstractGraphElementCollectionEvaluator(V vertex, Query query) {
+		super(vertex, query);
 	}
 
 	private TypeCollection typeCollection = null;
 
-	protected TypeCollection getTypeCollection(Graph graph) {
+	protected TypeCollection getTypeCollection(InternalGreqlEvaluator evaluator) {
 		if (typeCollection == null) {
 			typeCollection = new TypeCollection();
 			IsTypeRestrOfExpression inc = ((Expression) getVertex())
 					.getFirstIsTypeRestrOfExpressionIncidence(EdgeDirection.IN);
 			while (inc != null) {
 				if (inc.getAlpha() instanceof TypeId) {
-					TypeIdEvaluator typeEval = (TypeIdEvaluator) vertexEvalMarker
-							.getMark(inc.getAlpha());
+					TypeIdEvaluator typeEval = (TypeIdEvaluator) query
+							.getVertexEvaluator(inc.getAlpha());
 					typeCollection.addTypes((TypeCollection) typeEval
-							.getResult(graph));
+							.getResult(evaluator));
 				}
 				inc = inc
 						.getNextIsTypeRestrOfExpressionIncidence(EdgeDirection.IN);

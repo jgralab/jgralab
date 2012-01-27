@@ -13,6 +13,6 @@ public interface InternalGreqlEvaluator {
 
 	public Object getLocalVariableValue(Greql2Vertex vertex);
 
-	public Object remove(Greql2Vertex vertex);
+	public Object removeLocalVariable(Greql2Vertex vertex);
 
 }

@@ -36,12 +36,10 @@
 package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
-import de.uni_koblenz.jgralab.Graph;
-import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluatorImpl;
-import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
+import de.uni_koblenz.jgralab.greql2.evaluator.InternalGreqlEvaluator;
+import de.uni_koblenz.jgralab.greql2.evaluator.Query;
 import de.uni_koblenz.jgralab.greql2.schema.ConditionalExpression;
 import de.uni_koblenz.jgralab.greql2.schema.Expression;
-import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
 
 /**
  * Evaluates a ConditionalExpression vertex in the GReQL-2 Syntaxgraph
@@ -49,20 +47,8 @@ import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
  * @author ist@uni-koblenz.de
  * 
  */
-public class ConditionalExpressionEvaluator extends VertexEvaluator {
-
-	/**
-	 * The ConditionalExpression-Vertex this evaluator evaluates
-	 */
-	private ConditionalExpression vertex;
-
-	/**
-	 * returns the vertex this VertexEvaluator evaluates
-	 */
-	@Override
-	public Greql2Vertex getVertex() {
-		return vertex;
-	}
+public class ConditionalExpressionEvaluator extends
+		VertexEvaluator<ConditionalExpression> {
 
 	/**
 	 * Creates a new ConditionExpressionEvaluator for the given vertex
@@ -73,21 +59,20 @@ public class ConditionalExpressionEvaluator extends VertexEvaluator {
 	 *            the vertex this VertexEvaluator evaluates
 	 */
 	public ConditionalExpressionEvaluator(ConditionalExpression vertex,
-			GreqlEvaluatorImpl eval) {
-		super(eval);
-		this.vertex = vertex;
+			Query query) {
+		super(vertex, query);
 	}
 
 	/**
 	 * evaluates the conditional expression
 	 */
 	@Override
-	public Object evaluate(Graph graph) {
+	public Object evaluate(InternalGreqlEvaluator evaluator) {
 		Expression condition = vertex.getFirstIsConditionOfIncidence(
 				EdgeDirection.IN).getAlpha();
-		VertexEvaluator conditionEvaluator = vertexEvalMarker
-				.getMark(condition);
-		Object conditionResult = conditionEvaluator.getResult(graph);
+		VertexEvaluator<? extends Expression> conditionEvaluator = query
+				.getVertexEvaluator(condition);
+		Object conditionResult = conditionEvaluator.getResult(evaluator);
 		Expression expressionToEvaluate = null;
 
 		Boolean value = (Boolean) conditionResult;
@@ -99,20 +84,23 @@ public class ConditionalExpressionEvaluator extends VertexEvaluator {
 					EdgeDirection.IN).getAlpha();
 		}
 
+		Object result = null;
 		if (expressionToEvaluate != null) {
-			VertexEvaluator exprEvaluator = vertexEvalMarker
-					.getMark(expressionToEvaluate);
-			result = exprEvaluator.getResult(graph);
+			VertexEvaluator<? extends Expression> exprEvaluator = query
+					.getVertexEvaluator(expressionToEvaluate);
+			result = exprEvaluator.getResult(evaluator);
+			evaluator.setLocalVariable(vertex, result);
 		} else {
+			evaluator.removeLocalVariable(vertex);
 			result = null;
 		}
 		return result;
 	}
 
-	@Override
-	public VertexCosts calculateSubtreeEvaluationCosts() {
-		return greqlEvaluator.getCostModel()
-				.calculateCostsConditionalExpression(this);
-	}
+	// @Override
+	// public VertexCosts calculateSubtreeEvaluationCosts() {
+	// return greqlEvaluator.getCostModel()
+	// .calculateCostsConditionalExpression(this);
+	// }
 
 }

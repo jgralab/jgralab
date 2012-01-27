@@ -38,11 +38,9 @@ package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.uni_koblenz.jgralab.Graph;
-import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluatorImpl;
-import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
+import de.uni_koblenz.jgralab.greql2.evaluator.InternalGreqlEvaluator;
+import de.uni_koblenz.jgralab.greql2.evaluator.Query;
 import de.uni_koblenz.jgralab.greql2.exception.UnknownTypeException;
-import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
 import de.uni_koblenz.jgralab.greql2.schema.TypeId;
 import de.uni_koblenz.jgralab.greql2.types.TypeCollection;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
@@ -54,21 +52,10 @@ import de.uni_koblenz.jgralab.schema.Schema;
  * @author ist@uni-koblenz.de
  * 
  */
-public class TypeIdEvaluator extends VertexEvaluator {
+public class TypeIdEvaluator extends VertexEvaluator<TypeId> {
 
-	/**
-	 * returns the vertex this VertexEvaluator evaluates
-	 */
-	@Override
-	public Greql2Vertex getVertex() {
-		return vertex;
-	}
-
-	private TypeId vertex;
-
-	public TypeIdEvaluator(TypeId vertex, GreqlEvaluatorImpl eval) {
-		super(eval);
-		this.vertex = vertex;
+	public TypeIdEvaluator(TypeId vertex, Query query) {
+		super(vertex, query);
 	}
 
 	/**
@@ -100,28 +87,22 @@ public class TypeIdEvaluator extends VertexEvaluator {
 	}
 
 	@Override
-	public Object evaluate(Graph graph) {
-		List<AttributedElementClass> typeList = createTypeList(graph
-				.getSchema());
+	public Object evaluate(InternalGreqlEvaluator evaluator) {
+		List<AttributedElementClass> typeList = createTypeList(query
+				.getQueryGraph().getSchema());
 		return new TypeCollection(typeList, vertex.is_excluded());
 	}
 
-	@Override
-	public VertexCosts calculateSubtreeEvaluationCosts() {
-		return greqlEvaluator.getCostModel().calculateCostsTypeId(this);
-	}
+	// @Override
+	// public VertexCosts calculateSubtreeEvaluationCosts() {
+	// return greqlEvaluator.getCostModel().calculateCostsTypeId(this);
+	// }
+	//
+	// @Override
+	// public double calculateEstimatedSelectivity() {
+	// return greqlEvaluator.getCostModel().calculateSelectivityTypeId(this);
+	// }
 
-	@Override
-	public double calculateEstimatedSelectivity() {
-		return greqlEvaluator.getCostModel().calculateSelectivityTypeId(this);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @seede.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VertexEvaluator#
-	 * getLoggingName()
-	 */
 	@Override
 	public String getLoggingName() {
 		StringBuilder name = new StringBuilder();

@@ -60,8 +60,8 @@ import de.uni_koblenz.jgralab.greql2.schema.Variable;
  * This is the base class for all VertexEvaluators which evaluate the vertices
  * in the GReQL Syntaxgraph
  * 
- * @author ist@uni-koblenz.de
- * 
+ * @author ist@uni-koblenz.de TODO [greqlrenovation] Check when GlobalVariable
+ *         must be set in evaluator
  */
 public abstract class VertexEvaluator<V extends Greql2Vertex> {
 
@@ -211,7 +211,7 @@ public abstract class VertexEvaluator<V extends Greql2Vertex> {
 	 * clears the evaluation result
 	 */
 	public final void clear(InternalGreqlEvaluator evaluator) {
-		evaluator.remove(vertex);
+		evaluator.removeLocalVariable(vertex);
 	}
 
 	// TODO [greqlrenovation] handleResult

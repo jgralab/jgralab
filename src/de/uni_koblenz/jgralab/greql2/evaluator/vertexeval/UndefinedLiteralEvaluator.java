@@ -35,10 +35,8 @@
 
 package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 
-import de.uni_koblenz.jgralab.Graph;
-import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluatorImpl;
-import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
-import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
+import de.uni_koblenz.jgralab.greql2.evaluator.InternalGreqlEvaluator;
+import de.uni_koblenz.jgralab.greql2.evaluator.Query;
 import de.uni_koblenz.jgralab.greql2.schema.UndefinedLiteral;
 import de.uni_koblenz.jgralab.greql2.types.Undefined;
 
@@ -51,32 +49,21 @@ import de.uni_koblenz.jgralab.greql2.types.Undefined;
  * @author ist@uni-koblenz.de
  * 
  */
-public class UndefinedLiteralEvaluator extends VertexEvaluator {
+public class UndefinedLiteralEvaluator extends
+		VertexEvaluator<UndefinedLiteral> {
 
-	private UndefinedLiteral vertex;
-
-	/**
-	 * returns the vertex this VertexEvaluator evaluates
-	 */
-	@Override
-	public Greql2Vertex getVertex() {
-		return vertex;
-	}
-
-	public UndefinedLiteralEvaluator(UndefinedLiteral vertex,
-			GreqlEvaluatorImpl eval) {
-		super(eval);
-		this.vertex = vertex;
+	public UndefinedLiteralEvaluator(UndefinedLiteral vertex, Query query) {
+		super(vertex, query);
 	}
 
 	@Override
-	public Undefined evaluate(Graph graph) {
+	public Undefined evaluate(InternalGreqlEvaluator evaluator) {
 		return Undefined.UNDEFINED;
 	}
 
-	@Override
-	public VertexCosts calculateSubtreeEvaluationCosts() {
-		return new VertexCosts(1, 1, 1);
-	}
+	// @Override
+	// public VertexCosts calculateSubtreeEvaluationCosts() {
+	// return new VertexCosts(1, 1, 1);
+	// }
 
 }
