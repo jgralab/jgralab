@@ -496,6 +496,7 @@ public class GenericVertexImplTest {
 			assertTrue(a.isValidAlpha(i));
 			assertTrue(c2.isValidAlpha(j));
 			assertTrue(c2.isValidAlpha(k));
+			assertFalse(a.isValidAlpha(f));
 			assertFalse(c2.isValidAlpha(e));
 			assertFalse(c.isValidAlpha(e));
 		} catch (GraphIOException e) {
@@ -542,6 +543,14 @@ public class GenericVertexImplTest {
 					a, b);
 			
 			assertTrue(a.isValidOmega(i));
+			assertTrue(b.isValidOmega(e));
+			assertTrue(d.isValidOmega(e));
+			assertTrue(d.isValidOmega(f));
+			assertTrue(d.isValidOmega(g));
+			assertTrue(b.isValidOmega(h));
+			assertTrue(d2.isValidOmega(j));
+			assertTrue(b.isValidOmega(k));
+			assertFalse(b.isValidOmega(f));
 		} catch (GraphIOException e) {
 			e.printStackTrace();
 			fail();
