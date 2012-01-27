@@ -58,6 +58,7 @@ import de.uni_koblenz.jgralab.schema.RecordDomain;
 import de.uni_koblenz.jgralab.schema.RecordDomain.RecordComponent;
 import de.uni_koblenz.jgralab.schema.Schema;
 import de.uni_koblenz.jgralab.schema.SetDomain;
+import de.uni_koblenz.jgralab.schema.VertexClass;
 
 class Graph2OWLConcepts {
 
@@ -374,7 +375,7 @@ class Graph2OWLConcepts {
 	 */
 	private void convertVertex(String hashedGId, Vertex v, String vElemId,
 			ProgressFunction pf) throws XMLStreamException {
-		AttributedElementClass vc = v.getAttributedElementClass();
+		VertexClass vc = v.getAttributedElementClass();
 		Vertex incidentVertex;
 		String attrName, eElemId, eSuffixedLowerCaseQName;
 
@@ -493,7 +494,7 @@ class Graph2OWLConcepts {
 	 */
 	private void convertEdge(String hashedGId, Edge e, String eElemId,
 			ProgressFunction pf) throws XMLStreamException {
-		AttributedElementClass ec = e.getAttributedElementClass();
+		EdgeClass ec = e.getAttributedElementClass();
 		Vertex fromVertex = e.getAlpha();
 		Vertex toVertex = e.getOmega();
 		String attrName;
@@ -526,11 +527,9 @@ class Graph2OWLConcepts {
 
 		// create properties for role names
 		writeIndividualDatatypePropElement(edgeRolePropPrefix + "OutRole",
-				JGraLab2OWL.xsdNS + "string", ((EdgeClass) ec).getFrom()
-						.getRolename());
+				JGraLab2OWL.xsdNS + "string", (ec).getFrom().getRolename());
 		writeIndividualDatatypePropElement(edgeRolePropPrefix + "InRole",
-				JGraLab2OWL.xsdNS + "string", ((EdgeClass) ec).getTo()
-						.getRolename());
+				JGraLab2OWL.xsdNS + "string", (ec).getTo().getRolename());
 
 		// create properties for aggregate if e is an Aggregation or Composition
 		if (e.getOmegaAggregationKind() != AggregationKind.NONE) {
@@ -568,7 +567,8 @@ class Graph2OWLConcepts {
 		String attrPropertyName;
 		Object value = ownerAe.getAttribute(attrName);
 
-		AttributedElementClass owningAec = attr.getAttributedElementClass();
+		AttributedElementClass<?, ?> owningAec = attr
+				.getAttributedElementClass();
 
 		// The name of the Property representing the attribute
 		if (owningAec instanceof EdgeClass) {

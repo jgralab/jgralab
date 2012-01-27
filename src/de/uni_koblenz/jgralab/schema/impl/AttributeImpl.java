@@ -62,7 +62,7 @@ public class AttributeImpl implements Attribute, Comparable<Attribute> {
 	/**
 	 * the owning AttributedElementClass of the atribute
 	 */
-	private final AttributedElementClass aec;
+	private final AttributedElementClass<?, ?> aec;
 
 	/**
 	 * defines a total order of all attributes
@@ -94,7 +94,7 @@ public class AttributeImpl implements Attribute, Comparable<Attribute> {
 	 *            Attribute, or null if no default value shall be specified.
 	 */
 	public AttributeImpl(String name, Domain domain,
-			AttributedElementClass aec, String defaultValue) {
+			AttributedElementClass<?, ?> aec, String defaultValue) {
 		this.name = name;
 		this.domain = domain;
 		this.aec = aec;
@@ -133,7 +133,7 @@ public class AttributeImpl implements Attribute, Comparable<Attribute> {
 	}
 
 	@Override
-	public AttributedElementClass getAttributedElementClass() {
+	public AttributedElementClass<?, ?> getAttributedElementClass() {
 		return aec;
 	}
 

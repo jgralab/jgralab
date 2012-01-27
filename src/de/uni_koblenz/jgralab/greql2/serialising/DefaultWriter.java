@@ -336,7 +336,7 @@ public abstract class DefaultWriter {
 	 * @param a
 	 *            the AttributedElementClass to write
 	 */
-	protected void writeAttributedElementClass(AttributedElementClass a)
+	protected void writeAttributedElementClass(AttributedElementClass<?, ?> a)
 			throws Exception {
 		cantWrite(a);
 	}
@@ -444,7 +444,7 @@ public abstract class DefaultWriter {
 		} else if (o instanceof Boolean) {
 			writeBoolean((Boolean) o);
 		} else if (o instanceof AttributedElementClass) {
-			writeAttributedElementClass((AttributedElementClass) o);
+			writeAttributedElementClass((AttributedElementClass<?, ?>) o);
 		} else if (o instanceof Transition) {
 			writeTransition((Transition) o);
 		} else if (o instanceof Declaration) {

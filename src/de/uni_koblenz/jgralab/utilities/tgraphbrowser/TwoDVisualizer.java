@@ -610,7 +610,7 @@ public class TwoDVisualizer {
 
 		private void printAttributes(PrintStream out,
 				AttributedElement<?, ?> elem) {
-			AttributedElementClass cls = elem.getAttributedElementClass();
+			AttributedElementClass<?, ?> cls = elem.getAttributedElementClass();
 			StringBuilder value = new StringBuilder();
 			for (Attribute attr : cls.getAttributeList()) {
 				String current = attr.getName();
@@ -639,7 +639,7 @@ public class TwoDVisualizer {
 		}
 
 		protected void printVertex(PrintStream out, Vertex v) {
-			AttributedElementClass cls = v.getAttributedElementClass();
+			VertexClass cls = v.getAttributedElementClass();
 			out.print("v" + v.getId() + " [label=\"{{v" + v.getId() + "|"
 					+ cls.getUniqueName().replace('$', '.') + "}");
 			if (showAttributes && (cls.getAttributeCount() > 0)) {

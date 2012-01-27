@@ -139,7 +139,7 @@ public class Tg2Dot extends Tg2Whatever {
 	 * reversed dot edges. This will not affect the appearance in dot, but will
 	 * affect the layout process of GraphViz.
 	 */
-	private Set<AttributedElementClass> reversedEdgeClasses;
+	private Set<EdgeClass> reversedEdgeClasses;
 
 	/**
 	 * Specifies the type of file, which will be passed to dot in order to
@@ -190,7 +190,7 @@ public class Tg2Dot extends Tg2Whatever {
 	}
 
 	public static Tg2Dot createConverterAndSetAttributes(Graph graph,
-			boolean reversedEdges, AttributedElementClass... reversedEdgeTypes) {
+			boolean reversedEdges, EdgeClass... reversedEdgeTypes) {
 
 		Tg2Dot converter = new Tg2Dot();
 		converter.setGraph(graph);
@@ -198,7 +198,7 @@ public class Tg2Dot extends Tg2Whatever {
 		converter.setPrintEdgeAttributes(true);
 
 		if (reversedEdgeTypes != null) {
-			HashSet<AttributedElementClass> revEdgeTypes = new HashSet<AttributedElementClass>();
+			HashSet<EdgeClass> revEdgeTypes = new HashSet<EdgeClass>();
 			Collections.addAll(revEdgeTypes, reversedEdgeTypes);
 			converter.setReversedEdgeClasses(revEdgeTypes);
 		}
@@ -209,32 +209,30 @@ public class Tg2Dot extends Tg2Whatever {
 	public static void convertGraph(Graph graph, String outputFileName)
 			throws IOException {
 		convertGraph(graph, outputFileName, false, GraphVizOutputFormat.XDOT,
-				(AttributedElementClass[]) null);
+				(EdgeClass[]) null);
 	}
 
 	public static void convertGraph(Graph graph, String outputFileName,
 			boolean reversedEdges) throws IOException {
 		convertGraph(graph, outputFileName, reversedEdges,
-				GraphVizOutputFormat.XDOT, (AttributedElementClass[]) null);
+				GraphVizOutputFormat.XDOT, (EdgeClass[]) null);
 	}
 
 	public static void convertGraph(Graph graph, String outputFileName,
 			GraphVizOutputFormat format) throws IOException {
-		convertGraph(graph, outputFileName, false, format,
-				(AttributedElementClass[]) null);
+		convertGraph(graph, outputFileName, false, format, (EdgeClass[]) null);
 	}
 
 	public static void convertGraph(Graph graph, String outputFileName,
 			boolean reversedEdges, GraphVizOutputFormat format,
-			Class<? extends AttributedElement<?, ?>>... reversedEdgeTypes)
-			throws IOException {
+			Class<? extends Edge>... reversedEdgeTypes) throws IOException {
 		convertGraph(graph, outputFileName, reversedEdges, format,
 				toAttrElemClassArray(graph.getSchema(), reversedEdgeTypes));
 	}
 
 	public static void convertGraph(Graph graph, String outputFileName,
 			boolean reversedEdges, GraphVizOutputFormat format,
-			AttributedElementClass... reversedEdgeTypes) throws IOException {
+			EdgeClass... reversedEdgeTypes) throws IOException {
 
 		Tg2Dot converter = createConverterAndSetAttributes(graph,
 				reversedEdges, reversedEdgeTypes);
@@ -245,14 +243,12 @@ public class Tg2Dot extends Tg2Whatever {
 
 	public static void convertGraph(BooleanGraphMarker marker,
 			String outputFileName) throws IOException {
-		convertGraph(marker, outputFileName, false,
-				(AttributedElementClass[]) null);
+		convertGraph(marker, outputFileName, false, (EdgeClass[]) null);
 	}
 
 	public static void convertGraph(BooleanGraphMarker marker,
 			String outputFileName, boolean reversedEdges,
-			Class<? extends AttributedElement<?, ?>>... reversedEdgeTypes)
-			throws IOException {
+			Class<? extends Edge>... reversedEdgeTypes) throws IOException {
 		convertGraph(
 				marker,
 				outputFileName,
@@ -264,15 +260,14 @@ public class Tg2Dot extends Tg2Whatever {
 
 	public static void convertGraph(BooleanGraphMarker marker,
 			String outputFileName, boolean reversedEdges,
-			AttributedElementClass... reversedEdgeTypes) throws IOException {
+			EdgeClass... reversedEdgeTypes) throws IOException {
 		convertGraph(marker, outputFileName, GraphVizOutputFormat.PDF,
 				reversedEdges, reversedEdgeTypes);
 	}
 
 	public static void convertGraph(BooleanGraphMarker marker,
 			String outputFileName, GraphVizOutputFormat format,
-			boolean reversedEdges,
-			Class<? extends AttributedElement<?, ?>>... reversedEdgeTypes)
+			boolean reversedEdges, Class<? extends Edge>... reversedEdgeTypes)
 			throws IOException {
 		convertGraph(
 				marker,
@@ -283,12 +278,12 @@ public class Tg2Dot extends Tg2Whatever {
 						reversedEdgeTypes));
 	}
 
-	private static AttributedElementClass[] toAttrElemClassArray(Schema s,
-			Class<? extends AttributedElement<?, ?>>... reversedEdgeTypes) {
+	private static EdgeClass[] toAttrElemClassArray(Schema s,
+			Class<? extends Edge>... reversedEdgeTypes) {
 		if (reversedEdgeTypes == null) {
 			return null;
 		}
-		AttributedElementClass[] aecs = new AttributedElementClass[reversedEdgeTypes.length];
+		EdgeClass[] aecs = new EdgeClass[reversedEdgeTypes.length];
 		for (int i = 0; i < aecs.length; i++) {
 			Class<? extends AttributedElement<?, ?>> cls = reversedEdgeTypes[i];
 			String qname = cls.getName()
@@ -303,7 +298,7 @@ public class Tg2Dot extends Tg2Whatever {
 
 	public static void convertGraph(BooleanGraphMarker marker,
 			String outputFileName, GraphVizOutputFormat format,
-			boolean reversedEdges, AttributedElementClass... reversedEdgeTypes)
+			boolean reversedEdges, EdgeClass... reversedEdgeTypes)
 			throws IOException {
 		Tg2Dot converter = createConverterAndSetAttributes(marker.getGraph(),
 				reversedEdges, reversedEdgeTypes);
@@ -366,7 +361,7 @@ public class Tg2Dot extends Tg2Whatever {
 	 * Initializes all data structures.
 	 */
 	public Tg2Dot() {
-		reversedEdgeClasses = new HashSet<AttributedElementClass>();
+		reversedEdgeClasses = new HashSet<EdgeClass>();
 	}
 
 	@Override
@@ -850,12 +845,10 @@ public class Tg2Dot extends Tg2Whatever {
 	 *            the set of edge types whose instances should be printed
 	 *            reversed
 	 */
-	public void setReversedEdgeClasses(
-			Set<AttributedElementClass> reversedEdgeTypes) {
+	public void setReversedEdgeClasses(Set<EdgeClass> reversedEdgeTypes) {
 
 		// Copies the current set in order to manipulate it.
-		reversedEdgeTypes = new HashSet<AttributedElementClass>(
-				reversedEdgeTypes);
+		reversedEdgeTypes = new HashSet<EdgeClass>(reversedEdgeTypes);
 
 		buildReversedEdgeClassSet(reversedEdgeTypes);
 		if (!reversedEdgeTypes.isEmpty()) {
@@ -874,16 +867,15 @@ public class Tg2Dot extends Tg2Whatever {
 	 * @param reversedEdgeTypes
 	 *            Set of classes of Edges, which should be reversed.
 	 */
-	private void buildReversedEdgeClassSet(
-			Set<AttributedElementClass> reversedEdgeTypes) {
-		reversedEdgeClasses = new HashSet<AttributedElementClass>();
+	private void buildReversedEdgeClassSet(Set<EdgeClass> reversedEdgeTypes) {
+		reversedEdgeClasses = new HashSet<EdgeClass>();
 		for (EdgeClass edgeClass : graph.getGraphClass().getEdgeClasses()) {
 			if (reversedEdgeTypes.remove(edgeClass.getSchemaClass())) {
 				reversedEdgeClasses.add(edgeClass);
 			}
 		}
 		if (reversedEdgeTypes.remove(Edge.class)) {
-			reversedEdgeClasses.add(graph.getSchema()
+			reversedEdgeClasses.add((EdgeClass) graph.getSchema()
 					.getAttributedElementClass("Edge"));
 		}
 	}
@@ -892,9 +884,8 @@ public class Tg2Dot extends Tg2Whatever {
 	 * Adds sub classes of reversed Edges.
 	 */
 	private void addAllSubClassesOfAllReversedEdgeClasses() {
-		Set<AttributedElementClass> classes = new HashSet<AttributedElementClass>(
-				reversedEdgeClasses);
-		for (AttributedElementClass attr : classes) {
+		Set<EdgeClass> classes = new HashSet<EdgeClass>(reversedEdgeClasses);
+		for (EdgeClass attr : classes) {
 			reversedEdgeClasses.addAll(attr.getAllSubClasses());
 		}
 	}
@@ -966,7 +957,7 @@ public class Tg2Dot extends Tg2Whatever {
 		this.graphLayoutFilename = graphLayoutFilename;
 	}
 
-	public Set<AttributedElementClass> getReversedEdgeClasses() {
+	public Set<EdgeClass> getReversedEdgeClasses() {
 		return reversedEdgeClasses;
 	}
 

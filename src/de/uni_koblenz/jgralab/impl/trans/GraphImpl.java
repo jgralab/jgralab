@@ -582,7 +582,7 @@ public abstract class GraphImpl extends
 					&& (transaction.getState() != TransactionState.NOTRUNNING)
 					&& transaction.isValid() && !transaction.isReadOnly());
 			if (transaction.changedAttributes == null) {
-				transaction.changedAttributes = new HashMap<AttributedElement, Set<VersionedDataObject<?>>>(
+				transaction.changedAttributes = new HashMap<AttributedElement<?, ?>, Set<VersionedDataObject<?>>>(
 						1, TransactionManagerImpl.LOAD_FACTOR);
 			}
 			Set<VersionedDataObject<?>> attributes = transaction.changedAttributes

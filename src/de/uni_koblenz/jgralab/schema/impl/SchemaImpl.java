@@ -180,7 +180,7 @@ public class SchemaImpl implements Schema {
 	 * Maps from simple names to a set of {@link NamedElement}s which have this
 	 * simple name. Used for creation of unique names.
 	 */
-	private Map<String, AttributedElementClass> duplicateSimpleNames = new HashMap<String, AttributedElementClass>();
+	private Map<String, AttributedElementClass<?, ?>> duplicateSimpleNames = new HashMap<String, AttributedElementClass<?, ?>>();
 
 	/**
 	 * Maps from qualified name to the {@link Package} with that qualified name.
@@ -324,10 +324,10 @@ public class SchemaImpl implements Schema {
 			return;
 		}
 
-		AttributedElementClass aec = (AttributedElementClass) namedElement;
+		AttributedElementClass<?, ?> aec = (AttributedElementClass<?, ?>) namedElement;
 
 		if (duplicateSimpleNames.containsKey(aec.getSimpleName())) {
-			AttributedElementClass other = duplicateSimpleNames.get(aec
+			AttributedElementClass<?, ?> other = duplicateSimpleNames.get(aec
 					.getSimpleName());
 			if (other != null) {
 				((NamedElementImpl) other).changeUniqueName();
@@ -643,7 +643,7 @@ public class SchemaImpl implements Schema {
 
 	@Override
 	public Attribute createAttribute(String name, Domain dom,
-			AttributedElementClass aec, String defaultValueAsString) {
+			AttributedElementClass<?, ?> aec, String defaultValueAsString) {
 		return new AttributeImpl(name, dom, aec, defaultValueAsString);
 	}
 
@@ -893,14 +893,16 @@ public class SchemaImpl implements Schema {
 		return qualifiedName.hashCode();
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
-	public AttributedElementClass getAttributedElementClass(String qualifiedName) {
+	public <T extends AttributedElementClass<?, ?>> T getAttributedElementClass(
+			String qualifiedName) {
 		if (graphClass == null) {
 			return null;
 		} else if (graphClass.getQualifiedName().equals(qualifiedName)) {
-			return graphClass;
+			return (T) graphClass;
 		} else {
-			return graphClass.getGraphElementClass(qualifiedName);
+			return (T) graphClass.getGraphElementClass(qualifiedName);
 		}
 	}
 
@@ -919,7 +921,7 @@ public class SchemaImpl implements Schema {
 	private Method getCreateMethod(String className, String graphClassName,
 			Class<?>[] signature, ImplementationType implementationType) {
 		Class<? extends Graph> schemaClass = null;
-		AttributedElementClass aec = null;
+		AttributedElementClass<?, ?> aec = null;
 		try {
 			schemaClass = getGraphClassImpl(implementationType);
 			if (className.equals(graphClassName)) {
@@ -1010,7 +1012,7 @@ public class SchemaImpl implements Schema {
 		// from-class. Those subclasses are unknown in this method. Therefore,
 		// we look for a method with correct name and 3 parameters
 		// (int, vertex, Vertex).
-		AttributedElementClass aec = getAttributedElementClass(edgeClassName);
+		AttributedElementClass<?, ?> aec = getAttributedElementClass(edgeClassName);
 		if ((aec == null) || !(aec instanceof EdgeClass)) {
 			throw new SchemaException(
 					"There's no EdgeClass with qualified name " + edgeClassName

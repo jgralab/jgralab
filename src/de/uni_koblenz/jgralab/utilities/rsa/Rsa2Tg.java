@@ -1771,7 +1771,7 @@ public class Rsa2Tg extends XmlProcessor {
 
 		StringBuilder sb = new StringBuilder();
 
-		de.uni_koblenz.jgralab.schema.AttributedElementClass aec = attributedElement
+		de.uni_koblenz.jgralab.schema.AttributedElementClass<?, ?> aec = attributedElement
 				.getAttributedElementClass();
 		sb.append(attributedElement);
 		sb.append(" { ");

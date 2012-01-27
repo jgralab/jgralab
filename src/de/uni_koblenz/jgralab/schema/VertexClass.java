@@ -44,7 +44,7 @@ import de.uni_koblenz.jgralab.Vertex;
  * 
  * @author ist@uni-koblenz.de
  */
-public interface VertexClass extends GraphElementClass {
+public interface VertexClass extends GraphElementClass<VertexClass, Vertex> {
 
 	public final static String DEFAULTVERTEXCLASS_NAME = "Vertex";
 
@@ -58,10 +58,6 @@ public interface VertexClass extends GraphElementClass {
 	 */
 	public void addSuperClass(VertexClass superClass);
 
-	// public Set<IncidenceClass> getOwnInIncidenceClasses();
-
-	// public Set<IncidenceClass> getOwnOutIncidenceClasses();
-
 	public Set<IncidenceClass> getAllInIncidenceClasses();
 
 	public Set<IncidenceClass> getAllOutIncidenceClasses();
@@ -71,13 +67,6 @@ public interface VertexClass extends GraphElementClass {
 	public Set<IncidenceClass> getValidToFarIncidenceClasses();
 
 	public Set<IncidenceClass> getOwnAndInheritedFarIncidenceClasses();
-
-	//public void addInIncidenceClass(IncidenceClass ic);
-
-	//public void addOutIncidenceClass(IncidenceClass ic);
-
-	@Override
-	public Class<? extends Vertex> getSchemaClass();
 
 	public Set<EdgeClass> getValidToEdgeClasses();
 

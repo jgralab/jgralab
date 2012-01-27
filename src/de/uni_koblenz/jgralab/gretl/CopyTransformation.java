@@ -38,6 +38,7 @@ import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.Domain;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.GraphClass;
+import de.uni_koblenz.jgralab.schema.GraphElementClass;
 import de.uni_koblenz.jgralab.schema.IncidenceClass;
 import de.uni_koblenz.jgralab.schema.RecordDomain;
 import de.uni_koblenz.jgralab.schema.RecordDomain.RecordComponent;
@@ -155,7 +156,7 @@ public class CopyTransformation extends Transformation<Graph> {
 			createAttributes(gc, e);
 
 			// then create the attributes of vertex and edge classes
-			for (AttributedElementClass aec : gc.getGraphElementClasses()) {
+			for (GraphElementClass<?, ?> aec : gc.getGraphElementClasses()) {
 				if (isExcluded(aec.getQualifiedName())) {
 					continue;
 				}
@@ -185,7 +186,7 @@ public class CopyTransformation extends Transformation<Graph> {
 				&& !includePattern.matcher(qName).matches();
 	}
 
-	private void createAttributes(AttributedElementClass oldAEC,
+	private void createAttributes(AttributedElementClass<?, ?> oldAEC,
 			Entry<String, Graph> e) {
 		for (Attribute oldAttr : oldAEC.getOwnAttributeList()) {
 			if (isExcluded(oldAEC.getQualifiedName() + "." + oldAttr.getName())) {
@@ -194,7 +195,7 @@ public class CopyTransformation extends Transformation<Graph> {
 				continue;
 			}
 
-			AttributedElementClass newAec = aec(oldAEC.getQualifiedName());
+			AttributedElementClass<?, ?> newAec = aec(oldAEC.getQualifiedName());
 
 			if (newAec == null) {
 				throw new GReTLException(context, "Cannot create attribute '"
@@ -362,13 +363,12 @@ public class CopyTransformation extends Transformation<Graph> {
 						+ newECQName + "' is null!";
 
 				// Add generalizations
-				for (AttributedElementClass superEC : oldEC
-						.getDirectSuperClasses()) {
+				for (EdgeClass superEC : oldEC.getDirectSuperClasses()) {
 					if (superEC.isInternal()
 							|| isExcluded(superEC.getQualifiedName())) {
 						continue;
 					}
-					EdgeClass supEC = (EdgeClass) superEC;
+					EdgeClass supEC = superEC;
 					EdgeClass newSuperEC = ec(supEC.getQualifiedName());
 					new AddSuperClass(context, newEC, newSuperEC).execute();
 				}
@@ -406,8 +406,8 @@ public class CopyTransformation extends Transformation<Graph> {
 			}
 			vcsCreated.add(schemaQName);
 
-			for (VertexClass oldVC : e.getValue().getSchema()
-					.getGraphClass().getVertexClasses()) {
+			for (VertexClass oldVC : e.getValue().getSchema().getGraphClass()
+					.getVertexClasses()) {
 
 				// Skip excluded elements
 				if (isExcluded(oldVC.getQualifiedName())) {
@@ -430,8 +430,7 @@ public class CopyTransformation extends Transformation<Graph> {
 				}
 
 				// Add generalizations
-				for (AttributedElementClass superVC : oldVC
-						.getDirectSuperClasses()) {
+				for (VertexClass superVC : oldVC.getDirectSuperClasses()) {
 					if (superVC.isInternal()
 							|| isExcluded(superVC.getQualifiedName())) {
 						continue;

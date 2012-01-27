@@ -49,6 +49,7 @@ import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.GraphClass;
 import de.uni_koblenz.jgralab.schema.VertexClass;
 import de.uni_koblenz.jgralab.schema.exception.SchemaClassAccessException;
+import de.uni_koblenz.jgralab.schema.exception.SchemaException;
 
 /**
  * Default implementation for GraphFactory. Per default every create-method
@@ -94,22 +95,28 @@ public abstract class GraphFactoryImpl implements GraphFactory {
 	@Override
 	public void setGraphImplementationClass(GraphClass gc,
 			Class<? extends Graph> implementationClass) {
-		// if (isSuperclassOrEqual(originalClass, implementationClass)) {
-		try {
-			if (implementationType.equals(ImplementationType.DATABASE)) {
-				Class<?>[] params = { String.class, int.class, int.class,
-						GraphDatabase.class };
-				graphConstructor = implementationClass.getConstructor(params);
-			} else {
-				Class<?>[] params = { String.class, int.class, int.class };
-				graphConstructor = implementationClass.getConstructor(params);
+		Class<? extends Graph> originalClass = gc.getSchemaClass();
+		if (isSuperclassOrEqual(originalClass, implementationClass)) {
+			try {
+				if (implementationType.equals(ImplementationType.DATABASE)) {
+					Class<?>[] params = { String.class, int.class, int.class,
+							GraphDatabase.class };
+					graphConstructor = implementationClass
+							.getConstructor(params);
+				} else {
+					Class<?>[] params = { String.class, int.class, int.class };
+					graphConstructor = implementationClass
+							.getConstructor(params);
+				}
+			} catch (NoSuchMethodException ex) {
+				throw new SchemaClassAccessException(
+						"Unable to locate default constructor for graphclass "
+								+ implementationClass.getName(), ex);
 			}
-		} catch (NoSuchMethodException ex) {
-			throw new SchemaClassAccessException(
-					"Unable to locate default constructor for graphclass "
-							+ implementationClass.getName(), ex);
+		} else {
+			throw new SchemaException(implementationClass.getCanonicalName()
+					+ " does not implement " + originalClass.getCanonicalName());
 		}
-		// }
 	}
 
 	@Override
@@ -188,32 +195,40 @@ public abstract class GraphFactoryImpl implements GraphFactory {
 	@Override
 	public void setVertexImplementationClass(VertexClass vc,
 			Class<? extends Vertex> implementationClass) {
-		// if (isSuperclassOrEqual(originalClass, implementationClass)) {
-		try {
-			Class<?>[] params = { int.class, Graph.class };
-			vertexMap.put(vc, implementationClass.getConstructor(params));
-		} catch (NoSuchMethodException ex) {
-			throw new SchemaClassAccessException(
-					"Unable to locate default constructor for vertexclass"
-							+ implementationClass, ex);
+		Class<? extends Vertex> originalClass = vc.getSchemaClass();
+		if (isSuperclassOrEqual(originalClass, implementationClass)) {
+			try {
+				Class<?>[] params = { int.class, Graph.class };
+				vertexMap.put(vc, implementationClass.getConstructor(params));
+			} catch (NoSuchMethodException ex) {
+				throw new SchemaClassAccessException(
+						"Unable to locate default constructor for vertexclass"
+								+ implementationClass, ex);
+			}
+		} else {
+			throw new SchemaException(implementationClass.getCanonicalName()
+					+ " does not implement " + originalClass.getCanonicalName());
 		}
-		// }
 	}
 
 	@Override
 	public void setEdgeImplementationClass(EdgeClass ec,
 			Class<? extends Edge> implementationClass) {
-		// if (isSuperclassOrEqual(originalClass, implementationClass)) {
-		try {
-			Class<?>[] params = { int.class, Graph.class, Vertex.class,
-					Vertex.class };
-			edgeMap.put(ec, implementationClass.getConstructor(params));
-		} catch (NoSuchMethodException ex) {
-			throw new SchemaClassAccessException(
-					"Unable to locate default constructor for edgeclass"
-							+ implementationClass, ex);
+		Class<? extends Edge> originalClass = ec.getSchemaClass();
+		if (isSuperclassOrEqual(originalClass, implementationClass)) {
+			try {
+				Class<?>[] params = { int.class, Graph.class, Vertex.class,
+						Vertex.class };
+				edgeMap.put(ec, implementationClass.getConstructor(params));
+			} catch (NoSuchMethodException ex) {
+				throw new SchemaClassAccessException(
+						"Unable to locate default constructor for edgeclass"
+								+ implementationClass, ex);
+			}
+		} else {
+			throw new SchemaException(implementationClass.getCanonicalName()
+					+ " does not implement " + originalClass.getCanonicalName());
 		}
-		// }
 	}
 
 	// -------------------------------------------------------------------------

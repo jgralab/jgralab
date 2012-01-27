@@ -53,18 +53,18 @@ import de.uni_koblenz.jgralab.schema.Constraint;
 public abstract class ConstraintViolation implements
 		Comparable<ConstraintViolation> {
 
-	protected AttributedElementClass attributedElementClass;
+	protected AttributedElementClass<?, ?> attributedElementClass;
 	protected Set<AttributedElement<?, ?>> offendingElements;
 
 	/**
 	 * @return the {@link AttributedElementClass} the violated constraint is
 	 *         attached to
 	 */
-	public AttributedElementClass getAttributedElementClass() {
+	public AttributedElementClass<?, ?> getAttributedElementClass() {
 		return attributedElementClass;
 	}
 
-	public ConstraintViolation(AttributedElementClass aec) {
+	public ConstraintViolation(AttributedElementClass<?, ?> aec) {
 		attributedElementClass = aec;
 	}
 

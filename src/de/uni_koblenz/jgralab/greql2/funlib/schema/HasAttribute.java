@@ -12,7 +12,7 @@ public class HasAttribute extends Function {
 				Category.SCHEMA_ACCESS);
 	}
 
-	public Boolean evaluate(AttributedElementClass aec, String name) {
+	public Boolean evaluate(AttributedElementClass<?, ?> aec, String name) {
 		return aec.containsAttribute(name);
 	}
 

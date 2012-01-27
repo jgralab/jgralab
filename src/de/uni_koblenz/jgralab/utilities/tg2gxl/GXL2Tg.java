@@ -953,8 +953,7 @@ public class GXL2Tg {
 	private void createAttributes(AttributedElement<?, ?> ae, String id)
 			throws XMLStreamException, GraphIOException {
 		if (storeIds) {
-			if (ae.getAttributedElementClass().isSubClassOf(
-					schema.getDefaultVertexClass())
+			if (ae.getAttributedElementClass() instanceof VertexClass
 					|| haveEdgesIds) {
 				ae.setAttribute(ID_ATTRIBUTE_NAME, id);
 			}

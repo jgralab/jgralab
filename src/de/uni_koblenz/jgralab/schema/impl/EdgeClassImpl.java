@@ -46,7 +46,8 @@ import de.uni_koblenz.jgralab.schema.Schema;
 import de.uni_koblenz.jgralab.schema.VertexClass;
 import de.uni_koblenz.jgralab.schema.exception.SchemaException;
 
-public class EdgeClassImpl extends GraphElementClassImpl implements EdgeClass {
+public class EdgeClassImpl extends GraphElementClassImpl<EdgeClass, Edge>
+		implements EdgeClass {
 
 	private IncidenceClass from, to;
 
@@ -107,8 +108,8 @@ public class EdgeClassImpl extends GraphElementClassImpl implements EdgeClass {
 				toMin, toMax, IncidenceDirection.IN, aggrTo);
 		this.from = fromInc;
 		this.to = toInc;
-		((VertexClassImpl)from).addOutIncidenceClass(fromInc);
-		((VertexClassImpl)to).addInIncidenceClass(toInc);
+		((VertexClassImpl) from).addOutIncidenceClass(fromInc);
+		((VertexClassImpl) to).addInIncidenceClass(toInc);
 		register();
 	}
 
@@ -125,10 +126,10 @@ public class EdgeClassImpl extends GraphElementClassImpl implements EdgeClass {
 
 	@Override
 	public void addSuperClass(EdgeClass superClass) {
-		//checked in super 
-		//if(isFinished()){
-			//throw new SchemaException("No changes to finished schema!");
-		//}
+		// checked in super
+		// if(isFinished()){
+		// throw new SchemaException("No changes to finished schema!");
+		// }
 		checkIncidenceClassSpecialization(getFrom(), superClass.getFrom());
 		checkIncidenceClassSpecialization(getTo(), superClass.getTo());
 		super.addSuperClass(superClass);
@@ -158,8 +159,8 @@ public class EdgeClassImpl extends GraphElementClassImpl implements EdgeClass {
 	 * @throws SchemaException
 	 *             upon illegal combinations
 	 */
-	static void checkIncidenceClassSpecialization(
-			IncidenceClass special, IncidenceClass general) {
+	static void checkIncidenceClassSpecialization(IncidenceClass special,
+			IncidenceClass general) {
 		// Vertex same
 		if ((!general.getVertexClass().isSuperClassOfOrEquals(
 				special.getVertexClass()))) {
@@ -217,11 +218,4 @@ public class EdgeClassImpl extends GraphElementClassImpl implements EdgeClass {
 		}
 
 	}
-
-	@Override
-	@SuppressWarnings("unchecked")
-	public Class<? extends Edge> getSchemaClass() {
-		return (Class<? extends Edge>) super.getSchemaClass();
-	}
-
 }

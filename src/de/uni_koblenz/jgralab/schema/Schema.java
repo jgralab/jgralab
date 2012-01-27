@@ -176,7 +176,7 @@ public interface Schema extends Comparable<Schema> {
 	 * @return the new Attribute
 	 */
 	public Attribute createAttribute(String name, Domain dom,
-			AttributedElementClass aec, String defaultValueAsString);
+			AttributedElementClass<?, ?> aec, String defaultValueAsString);
 
 	/**
 	 * Builds a new enumeration domain, multiple domains may exist in a schema.
@@ -267,7 +267,8 @@ public interface Schema extends Comparable<Schema> {
 	 * @param qn
 	 * @return the attributed element class with the specified qualified name
 	 */
-	public AttributedElementClass getAttributedElementClass(String qn);
+	public <T extends AttributedElementClass<?, ?>> T getAttributedElementClass(
+			String qn);
 
 	public BooleanDomain getBooleanDomain();
 

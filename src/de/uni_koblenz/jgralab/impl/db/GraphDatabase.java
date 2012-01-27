@@ -1073,16 +1073,15 @@ public abstract class GraphDatabase {
 		return vertex;
 	}
 
-	@SuppressWarnings("unchecked")
 	private Class<? extends Vertex> getVertexClassFrom(
 			DatabasePersistableGraph graph, ResultSet vertexData)
 			throws SQLException {
 		int typeId = vertexData.getInt(1);
 		String qualifiedTypeName = getTypeName(graph, typeId);
 		Schema schema = graph.getSchema();
-		AttributedElementClass aec = schema
+		VertexClass aec = (VertexClass) schema
 				.getAttributedElementClass(qualifiedTypeName);
-		return (Class<? extends Vertex>) aec.getSchemaClass();
+		return aec.getSchemaClass();
 	}
 
 	private ResultSet getVertexAndIncidenceData(int gId, int vId)
@@ -1215,14 +1214,13 @@ public abstract class GraphDatabase {
 		return edge;
 	}
 
-	@SuppressWarnings("unchecked")
 	private Class<? extends Edge> getEdgeClassFrom(
 			DatabasePersistableGraph graph, int typeId) throws SQLException {
 		String qualifiedTypeName = getTypeName(graph, typeId);
 		Schema schema = graph.getSchema();
-		AttributedElementClass aec = schema
+		EdgeClass aec = (EdgeClass) schema
 				.getAttributedElementClass(qualifiedTypeName);
-		return (Class<? extends Edge>) aec.getSchemaClass();
+		return aec.getSchemaClass();
 	}
 
 	private void setAttributesOf(DatabasePersistableEdge edge)
@@ -1737,7 +1735,7 @@ public abstract class GraphDatabase {
 	 * @throws GraphDatabaseException
 	 *             Conversion not successful.
 	 */
-	protected String convertToString(AttributedElement attributedElement,
+	protected String convertToString(AttributedElement<?, ?> attributedElement,
 			String attributeName) throws GraphDatabaseException {
 		try {
 			return attributedElement.writeAttributeValueToString(attributeName);
@@ -1826,15 +1824,16 @@ public abstract class GraphDatabase {
 		collectAttributeNamesOf(graphClass);
 	}
 
-	private void insertType(AttributedElementClass attributedElementClass,
-			int schemaId) throws SQLException {
+	private void insertType(
+			AttributedElementClass<?, ?> attributedElementClass, int schemaId)
+			throws SQLException {
 		PreparedStatement statement = sqlStatementList.insertType(
 				attributedElementClass.getQualifiedName(), schemaId);
 		statement.executeUpdate();
 	}
 
 	private void collectAttributeNamesOf(
-			AttributedElementClass attributedElementClass) {
+			AttributedElementClass<?, ?> attributedElementClass) {
 		for (Attribute attribute : attributedElementClass.getAttributeList()) {
 			attributeNames.add(attribute.getName());
 		}

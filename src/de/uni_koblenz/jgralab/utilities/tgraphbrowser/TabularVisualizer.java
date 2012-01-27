@@ -48,7 +48,6 @@ import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.schema.Attribute;
-import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.VertexClass;
 import de.uni_koblenz.jgralab.utilities.tgraphbrowser.StateRepository.State;
@@ -524,7 +523,7 @@ public class TabularVisualizer {
 					createAttributes(code, e.getNormalEdge(), true, "aE");
 					code.append("currentTd.appendChild(aE);\n");
 					code.append("currentTd.appendChild(document.createTextNode(\"}\"+String.fromCharCode(160)));\n");
-					AttributedElementClass qualName = e.getThat()
+					VertexClass qualName = e.getThat()
 							.getAttributedElementClass();
 					if (selectedVertexClasses.get(qualName)) {
 						// if the type of that is selected, show it as link
@@ -580,7 +579,7 @@ public class TabularVisualizer {
 	 */
 	private void createIncidentVertices(StringBuilder code, Edge currentEdge,
 			HashMap<VertexClass, Boolean> selectedVertexClasses) {
-		AttributedElementClass qualName = currentEdge.getAlpha()
+		VertexClass qualName = currentEdge.getAlpha()
 				.getAttributedElementClass();
 		// create alpha-vertex
 		if (selectedVertexClasses.get(qualName)) {

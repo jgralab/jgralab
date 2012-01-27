@@ -178,7 +178,7 @@ public class GraphIO {
 	/**
 	 * Maps GraphElementClasses to their containing GraphClasses
 	 */
-	private final Map<GraphElementClass, GraphClass> GECsearch;
+	private final Map<GraphElementClass<?, ?>, GraphClass> GECsearch;
 
 	private final Map<String, Method> createMethods;
 
@@ -254,7 +254,7 @@ public class GraphIO {
 
 	private GraphIO() {
 		domains = new TreeMap<String, Domain>();
-		GECsearch = new HashMap<GraphElementClass, GraphClass>();
+		GECsearch = new HashMap<GraphElementClass<?, ?>, GraphClass>();
 		createMethods = new HashMap<String, Method>();
 		buffer = new byte[BUFFER_SIZE];
 		bufferPos = 0;
@@ -523,7 +523,7 @@ public class GraphIO {
 		}
 	}
 
-	private void writeConstraints(AttributedElementClass aec)
+	private void writeConstraints(AttributedElementClass<?, ?> aec)
 			throws IOException {
 		for (Constraint c : aec.getConstraints()) {
 			writeSpace();
@@ -724,7 +724,8 @@ public class GraphIO {
 					continue;
 				}
 				vId = nextV.getId();
-				AttributedElementClass aec = nextV.getAttributedElementClass();
+				AttributedElementClass<?, ?> aec = nextV
+						.getAttributedElementClass();
 				Package currentPackage = aec.getPackage();
 				if (currentPackage != oldPackage) {
 					write("Package");
@@ -775,7 +776,8 @@ public class GraphIO {
 					continue;
 				}
 				eId = nextE.getId();
-				AttributedElementClass aec = nextE.getAttributedElementClass();
+				AttributedElementClass<?, ?> aec = nextE
+						.getAttributedElementClass();
 				Package currentPackage = aec.getPackage();
 				if (currentPackage != oldPackage) {
 					write("Package");
@@ -818,10 +820,11 @@ public class GraphIO {
 		write("TGraph " + TGFILE_VERSION + ";\n");
 	}
 
-	private void writeHierarchy(Package pkg, AttributedElementClass aec)
+	private void writeHierarchy(Package pkg, AttributedElementClass<?, ?> aec)
 			throws IOException {
 		String delim = ":";
-		for (AttributedElementClass superClass : aec.getDirectSuperClasses()) {
+		for (AttributedElementClass<?, ?> superClass : aec
+				.getDirectSuperClasses()) {
 			if (!superClass.isInternal()) {
 				write(delim);
 				space();
@@ -831,7 +834,7 @@ public class GraphIO {
 		}
 	}
 
-	private void writeAttributes(Package pkg, AttributedElementClass aec)
+	private void writeAttributes(Package pkg, AttributedElementClass<?, ?> aec)
 			throws IOException {
 		if (aec.hasOwnAttributes()) {
 			write(" {");
@@ -1664,7 +1667,7 @@ public class GraphIO {
 	}
 
 	private void addAttributes(List<AttributeData> attributesData,
-			AttributedElementClass aec) throws GraphIOException {
+			AttributedElementClass<?, ?> aec) throws GraphIOException {
 		for (AttributeData ad : attributesData) {
 			aec.addAttribute(ad.name, attrDomain(ad.domainDescription),
 					ad.defaultValue);
@@ -2084,7 +2087,7 @@ public class GraphIO {
 
 	private void buildVertexClassHierarchy() throws GraphIOException,
 			SchemaException {
-		AttributedElementClass aec;
+		AttributedElementClass<?, ?> aec;
 		VertexClass superClass;
 
 		for (Entry<String, List<GraphElementClassData>> gcElements : vertexClassBuffer
@@ -2115,7 +2118,7 @@ public class GraphIO {
 
 	private void buildEdgeClassHierarchy() throws GraphIOException,
 			SchemaException {
-		AttributedElementClass aec;
+		AttributedElementClass<?, ?> aec;
 		EdgeClass superClass;
 
 		for (Entry<String, List<GraphElementClassData>> gcElements : edgeClassBuffer

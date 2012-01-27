@@ -196,12 +196,12 @@ public class VertexCodeGenerator extends AttributedElementCodeGenerator {
 	private CodeBlock createNextVertexMethods() {
 		CodeList code = new CodeList();
 
-		TreeSet<AttributedElementClass> superClasses = new TreeSet<AttributedElementClass>();
+		TreeSet<AttributedElementClass<?, ?>> superClasses = new TreeSet<AttributedElementClass<?, ?>>();
 		superClasses.addAll(aec.getAllSuperClasses());
 		superClasses.add(aec);
 
 		if (config.hasTypeSpecificMethodsSupport()) {
-			for (AttributedElementClass ec : superClasses) {
+			for (AttributedElementClass<?, ?> ec : superClasses) {
 				if (ec.isInternal()) {
 					continue;
 				}

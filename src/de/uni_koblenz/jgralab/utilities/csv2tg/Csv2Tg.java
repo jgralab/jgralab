@@ -297,18 +297,15 @@ public class Csv2Tg implements FilenameFilter {
 		reader2FilenameMap.put(reader, csvFile);
 
 		String attributeClassName = reader.getFieldNames().get(0);
-		AttributedElementClass clazz = schema
+		// TODO [generic]
+		AttributedElementClass<?, ?> aec = schema
 				.getAttributedElementClass(attributeClassName);
-
-		Class<? extends AttributedElement<?, ?>> vertexClass = clazz
-				.getSchemaClass();
-		boolean isVertexClass = clazz.isSubClassOf(schema
-				.getDefaultVertexClass());
-
-		if (isVertexClass) {
-			vertexInstances.put((Class<? extends Vertex>) vertexClass, reader);
+		if (Vertex.class.isInstance(aec.getSchemaClass())) {
+			vertexInstances.put((Class<? extends Vertex>) aec.getSchemaClass(),
+					reader);
 		} else {
-			edgeInstances.put((Class<? extends Edge>) vertexClass, reader);
+			edgeInstances.put((Class<? extends Edge>) aec.getSchemaClass(),
+					reader);
 		}
 	}
 

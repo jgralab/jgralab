@@ -39,6 +39,7 @@ import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql2.types.TypeCollection;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
+import de.uni_koblenz.jgralab.schema.VertexClass;
 
 /**
  * This transition accepts a vertex type restriction. It is used to accept
@@ -136,7 +137,7 @@ public class VertexTypeRestrictionTransition extends Transition {
 	 */
 	@Override
 	public boolean accepts(Vertex v, Edge e) {
-		AttributedElementClass vertexClass = v.getAttributedElementClass();
+		VertexClass vertexClass = v.getAttributedElementClass();
 		if (!typeCollection.acceptsType(vertexClass)) {
 			return false;
 		}
@@ -156,7 +157,7 @@ public class VertexTypeRestrictionTransition extends Transition {
 	public String prettyPrint() {
 		StringBuilder b = new StringBuilder();
 		String delim = "";
-		for (AttributedElementClass c : typeCollection.getAllowedTypes()) {
+		for (AttributedElementClass<?, ?> c : typeCollection.getAllowedTypes()) {
 			b.append(delim);
 			b.append(c.getSimpleName());
 			delim = ",";

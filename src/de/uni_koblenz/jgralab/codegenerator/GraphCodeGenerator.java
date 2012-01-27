@@ -181,9 +181,9 @@ public class GraphCodeGenerator extends AttributedElementCodeGenerator {
 		CodeList code = new CodeList();
 
 		GraphClass gc = (GraphClass) aec;
-		TreeSet<GraphElementClass> sortedClasses = new TreeSet<GraphElementClass>();
+		TreeSet<GraphElementClass<?, ?>> sortedClasses = new TreeSet<GraphElementClass<?, ?>>();
 		sortedClasses.addAll(gc.getGraphElementClasses());
-		for (GraphElementClass gec : sortedClasses) {
+		for (GraphElementClass<?, ?> gec : sortedClasses) {
 			CodeList gecCode = new CodeList();
 			code.addNoIndent(gecCode);
 
@@ -212,7 +212,7 @@ public class GraphCodeGenerator extends AttributedElementCodeGenerator {
 		return code;
 	}
 
-	private CodeBlock createGetFirstMethods(GraphElementClass gec) {
+	private CodeBlock createGetFirstMethods(GraphElementClass<?, ?> gec) {
 		CodeList code = new CodeList();
 		if (config.hasTypeSpecificMethodsSupport()) {
 			code.addNoIndent(createGetFirstMethod(gec));
@@ -220,7 +220,7 @@ public class GraphCodeGenerator extends AttributedElementCodeGenerator {
 		return code;
 	}
 
-	private CodeBlock createGetFirstMethod(GraphElementClass gec) {
+	private CodeBlock createGetFirstMethod(GraphElementClass<?, ?> gec) {
 		CodeSnippet code = new CodeSnippet(true);
 		if (currentCycle.isAbstract()) {
 			code.add("/**",
@@ -240,7 +240,7 @@ public class GraphCodeGenerator extends AttributedElementCodeGenerator {
 		return code;
 	}
 
-	private CodeBlock createFactoryMethods(GraphElementClass gec) {
+	private CodeBlock createFactoryMethods(GraphElementClass<?, ?> gec) {
 		if (gec.isAbstract()) {
 			return null;
 		}
@@ -252,7 +252,8 @@ public class GraphCodeGenerator extends AttributedElementCodeGenerator {
 		return code;
 	}
 
-	private CodeBlock createFactoryMethod(GraphElementClass gec, boolean withId) {
+	private CodeBlock createFactoryMethod(GraphElementClass<?, ?> gec,
+			boolean withId) {
 		CodeSnippet code = new CodeSnippet(true);
 
 		if (currentCycle.isAbstract()) {

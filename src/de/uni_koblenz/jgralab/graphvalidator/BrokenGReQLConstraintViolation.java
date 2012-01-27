@@ -49,7 +49,7 @@ public class BrokenGReQLConstraintViolation extends ConstraintViolation {
 	private Constraint constraint;
 	private String brokenPart;
 
-	public BrokenGReQLConstraintViolation(AttributedElementClass aec,
+	public BrokenGReQLConstraintViolation(AttributedElementClass<?, ?> aec,
 			Constraint constraint, String brokenPart) {
 		super(aec);
 		this.constraint = constraint;

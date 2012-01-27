@@ -258,8 +258,8 @@ public abstract class EdgeImpl extends de.uni_koblenz.jgralab.impl.EdgeBaseImpl
 				incidentVertex = new VersionedReferenceImpl<VertexImpl>(this,
 						null, "$incidentVertex");
 			}
-			incidentVertex.setValidValue((VertexImpl) v, graph
-					.getCurrentTransaction());
+			incidentVertex.setValidValue((VertexImpl) v,
+					graph.getCurrentTransaction());
 		}
 	}
 
@@ -466,7 +466,7 @@ public abstract class EdgeImpl extends de.uni_koblenz.jgralab.impl.EdgeBaseImpl
 				}
 				// get all changed attributes of this instance...
 				if (transaction.changedAttributes == null) {
-					transaction.changedAttributes = new HashMap<AttributedElement, Set<VersionedDataObject<?>>>(
+					transaction.changedAttributes = new HashMap<AttributedElement<?, ?>, Set<VersionedDataObject<?>>>(
 							1, TransactionManagerImpl.LOAD_FACTOR);
 				}
 				Set<VersionedDataObject<?>> attributes = transaction.changedAttributes

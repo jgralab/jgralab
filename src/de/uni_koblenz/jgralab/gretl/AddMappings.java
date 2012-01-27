@@ -61,7 +61,7 @@ public class AddMappings extends Transformation<Void> {
 		}
 
 		for (Entry<Object, AttributedElement<?, ?>> e : archetypes.entrySet()) {
-			AttributedElementClass aec = e.getValue()
+			AttributedElementClass<?, ?> aec = e.getValue()
 					.getAttributedElementClass();
 			context.addMapping(aec, e.getKey(), e.getValue());
 		}
