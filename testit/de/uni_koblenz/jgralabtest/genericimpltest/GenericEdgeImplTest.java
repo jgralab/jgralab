@@ -14,6 +14,7 @@ import de.uni_koblenz.jgralab.ImplementationType;
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.impl.RecordImpl;
+import de.uni_koblenz.jgralab.schema.AggregationKind;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.Schema;
 
@@ -289,16 +290,54 @@ public class GenericEdgeImplTest {
 
 	@Test
 	public void testGetAggregationKind() {
-		// TODO
+		try {
+			Schema s = GraphIO.loadSchemaFromFile(GenericGraphImplTest.SCHEMAFOLDER
+					+ "VertexTestSchema.tg");
+			Graph g = s.createGraph(ImplementationType.GENERIC);
+			
+			Vertex superNode = g.createVertex(g.getGraphClass().getVertexClass("SuperNode"));
+			Vertex subNode = g.createVertex(g.getGraphClass().getVertexClass("SubNode"));
+			Vertex doubleSubNode = g.createVertex(g.getGraphClass().getVertexClass("DoubleSubNode"));
+			
+			Edge link = g.createEdge(g.getGraphClass().getEdgeClass("Link"), subNode, superNode);
+			Edge linkBack = g.createEdge(g.getGraphClass().getEdgeClass("LinkBack"), superNode, subNode);
+			Edge subLink = g.createEdge(g.getGraphClass().getEdgeClass("SubLink"), doubleSubNode, superNode);
+			
+			assertEquals(AggregationKind.COMPOSITE, subLink.getAggregationKind());
+			assertEquals(AggregationKind.NONE, link.getAggregationKind());
+			assertEquals(AggregationKind.SHARED, linkBack.getAggregationKind());
+		}
+		catch (GraphIOException e) {
+			e.printStackTrace();
+			fail();
+		}
 	}
 
 	@Test
-	public void testGetAlphaAggregationKind() {
-		// TODO
-	}
-
-	@Test
-	public void testGetOmegaAggregationKind() {
-		// TODO
+	public void testGetAlphaOmegaAggregationKind() {
+		try {
+			Schema s = GraphIO.loadSchemaFromFile(GenericGraphImplTest.SCHEMAFOLDER
+					+ "VertexTestSchema.tg");
+			Graph g = s.createGraph(ImplementationType.GENERIC);
+			
+			Vertex superNode = g.createVertex(g.getGraphClass().getVertexClass("SuperNode"));
+			Vertex subNode = g.createVertex(g.getGraphClass().getVertexClass("SubNode"));
+			Vertex doubleSubNode = g.createVertex(g.getGraphClass().getVertexClass("DoubleSubNode"));
+			
+			Edge link = g.createEdge(g.getGraphClass().getEdgeClass("Link"), subNode, superNode);
+			Edge linkBack = g.createEdge(g.getGraphClass().getEdgeClass("LinkBack"), superNode, subNode);
+			Edge subLink = g.createEdge(g.getGraphClass().getEdgeClass("SubLink"), doubleSubNode, superNode);
+			
+			assertEquals(AggregationKind.NONE, subLink.getAlphaAggregationKind());
+			assertEquals(AggregationKind.COMPOSITE, subLink.getOmegaAggregationKind());
+			assertEquals(AggregationKind.NONE, link.getAlphaAggregationKind());
+			assertEquals(AggregationKind.NONE, link.getOmegaAggregationKind());
+			assertEquals(AggregationKind.NONE, linkBack.getAlphaAggregationKind());
+			assertEquals(AggregationKind.SHARED, linkBack.getOmegaAggregationKind());
+		}
+		catch (GraphIOException e) {
+			e.printStackTrace();
+			fail();
+		}
 	}
 }
