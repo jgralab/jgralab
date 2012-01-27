@@ -36,14 +36,12 @@
 package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
-import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluatorImpl;
-import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
+import de.uni_koblenz.jgralab.greql2.evaluator.InternalGreqlEvaluator;
+import de.uni_koblenz.jgralab.greql2.evaluator.Query;
 import de.uni_koblenz.jgralab.greql2.funlib.FunLib;
 import de.uni_koblenz.jgralab.greql2.funlib.FunLib.FunctionInfo;
 import de.uni_koblenz.jgralab.greql2.schema.Expression;
-import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
 import de.uni_koblenz.jgralab.greql2.schema.PathDescription;
 import de.uni_koblenz.jgralab.greql2.schema.PathExistence;
 
@@ -54,38 +52,25 @@ import de.uni_koblenz.jgralab.greql2.schema.PathExistence;
  * @author ist@uni-koblenz.de
  * 
  */
-public class PathExistenceEvaluator extends PathSearchEvaluator {
+public class PathExistenceEvaluator extends PathSearchEvaluator<PathExistence> {
 
-	/**
-	 * this is the PathExistence vertex in the GReQL Syntaxgraph this evaluator
-	 * evaluates
-	 */
-	private PathExistence vertex;
 	private FunctionInfo fi;
 
-	/**
-	 * returns the vertex this VertexEvaluator evaluates
-	 */
-	@Override
-	public Greql2Vertex getVertex() {
-		return vertex;
-	}
-
-	public PathExistenceEvaluator(PathExistence vertex, GreqlEvaluatorImpl eval) {
-		super(eval);
-		this.vertex = vertex;
+	public PathExistenceEvaluator(PathExistence vertex, Query query) {
+		super(vertex, query);
 	}
 
 	@Override
-	public Object evaluate(Graph graph) {
+	public Object evaluate(InternalGreqlEvaluator evaluator) {
 		PathDescription p = (PathDescription) vertex.getFirstIsPathOfIncidence(
 				EdgeDirection.IN).getAlpha();
-		PathDescriptionEvaluator pathDescEval = (PathDescriptionEvaluator) vertexEvalMarker
-				.getMark(p);
+		PathDescriptionEvaluator<?> pathDescEval = (PathDescriptionEvaluator<?>) query
+				.getVertexEvaluator(p);
 		Expression startExpression = vertex.getFirstIsStartExprOfIncidence(
 				EdgeDirection.IN).getAlpha();
-		VertexEvaluator startEval = vertexEvalMarker.getMark(startExpression);
-		Object res = startEval.getResult(graph);
+		VertexEvaluator<? extends Expression> startEval = query
+				.getVertexEvaluator(startExpression);
+		Object res = startEval.getResult(evaluator);
 		/**
 		 * check if the result is invalid, this may occur because the
 		 * restrictedExpression may return a null-value
@@ -97,16 +82,17 @@ public class PathExistenceEvaluator extends PathSearchEvaluator {
 
 		Expression targetExpression = vertex.getFirstIsTargetExprOfIncidence(
 				EdgeDirection.IN).getAlpha();
-		VertexEvaluator targetEval = vertexEvalMarker.getMark(targetExpression);
+		VertexEvaluator<? extends Expression> targetEval = query
+				.getVertexEvaluator(targetExpression);
 		Vertex targetVertex = null;
-		res = targetEval.getResult(graph);
+		res = targetEval.getResult(evaluator);
 		if (res == null) {
 			return null;
 		}
 		targetVertex = (Vertex) res;
 
 		if (searchAutomaton == null) {
-			searchAutomaton = pathDescEval.getNFA(graph).getDFA();
+			searchAutomaton = pathDescEval.getNFA(evaluator).getDFA();
 			// searchAutomaton.printAscii();
 		}
 		Object[] arguments = new Object[3];
@@ -119,15 +105,15 @@ public class PathExistenceEvaluator extends PathSearchEvaluator {
 		return FunLib.apply(fi, arguments);
 	}
 
-	@Override
-	public VertexCosts calculateSubtreeEvaluationCosts() {
-		return greqlEvaluator.getCostModel().calculateCostsPathExistence(this);
-	}
-
-	@Override
-	public double calculateEstimatedSelectivity() {
-		return greqlEvaluator.getCostModel().calculateSelectivityPathExistence(
-				this);
-	}
+	// @Override
+	// public VertexCosts calculateSubtreeEvaluationCosts() {
+	// return greqlEvaluator.getCostModel().calculateCostsPathExistence(this);
+	// }
+	//
+	// @Override
+	// public double calculateEstimatedSelectivity() {
+	// return greqlEvaluator.getCostModel().calculateSelectivityPathExistence(
+	// this);
+	// }
 
 }

@@ -39,11 +39,10 @@ import java.util.HashSet;
 import java.util.Set;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
-import de.uni_koblenz.jgralab.Graph;
-import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluatorImpl;
-import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
+import de.uni_koblenz.jgralab.greql2.evaluator.InternalGreqlEvaluator;
+import de.uni_koblenz.jgralab.greql2.evaluator.Query;
 import de.uni_koblenz.jgralab.greql2.schema.EdgeRestriction;
-import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
+import de.uni_koblenz.jgralab.greql2.schema.Expression;
 import de.uni_koblenz.jgralab.greql2.schema.IsBooleanPredicateOfEdgeRestriction;
 import de.uni_koblenz.jgralab.greql2.schema.IsRoleIdOf;
 import de.uni_koblenz.jgralab.greql2.schema.IsTypeIdOf;
@@ -56,24 +55,11 @@ import de.uni_koblenz.jgralab.greql2.types.TypeCollection;
  * @author ist@uni-koblenz.de
  * 
  */
-public class EdgeRestrictionEvaluator extends VertexEvaluator {
+public class EdgeRestrictionEvaluator extends VertexEvaluator<EdgeRestriction> {
 
-	/**
-	 * The EdgeRestriction vertex in the GReQL Syntaxgraph
-	 */
-	private EdgeRestriction vertex;
+	private VertexEvaluator<? extends Expression> predicateEvaluator = null;
 
-	private VertexEvaluator predicateEvaluator = null;
-
-	/**
-	 * returns the vertex this VertexEvaluator evaluates
-	 */
-	@Override
-	public Greql2Vertex getVertex() {
-		return vertex;
-	}
-
-	public VertexEvaluator getPredicateEvaluator() {
+	public VertexEvaluator<? extends Expression> getPredicateEvaluator() {
 		return predicateEvaluator;
 	}
 
@@ -85,9 +71,9 @@ public class EdgeRestrictionEvaluator extends VertexEvaluator {
 	/**
 	 * Returns the typeCollection
 	 */
-	public TypeCollection getTypeCollection(Graph graph) {
+	public TypeCollection getTypeCollection(InternalGreqlEvaluator evaluator) {
 		if (typeCollection == null) {
-			evaluate(graph);
+			evaluate(evaluator);
 		}
 		return typeCollection;
 	}
@@ -110,25 +96,24 @@ public class EdgeRestrictionEvaluator extends VertexEvaluator {
 	 * @param vertex
 	 * @param eval
 	 */
-	public EdgeRestrictionEvaluator(EdgeRestriction vertex, GreqlEvaluatorImpl eval) {
-		super(eval);
-		this.vertex = vertex;
+	public EdgeRestrictionEvaluator(EdgeRestriction vertex, Query query) {
+		super(vertex, query);
 	}
 
 	/**
 	 * evaluates the EdgeRestriction, creates the typeList and the validEdgeRole
 	 */
 	@Override
-	public Object evaluate(Graph graph) {
+	public Object evaluate(InternalGreqlEvaluator evaluator) {
 		if (typeCollection == null) {
 			typeCollection = new TypeCollection();
 			IsTypeIdOf typeInc = vertex
 					.getFirstIsTypeIdOfIncidence(EdgeDirection.IN);
 			while (typeInc != null) {
-				TypeIdEvaluator typeEval = (TypeIdEvaluator) vertexEvalMarker
-						.getMark(typeInc.getAlpha());
+				TypeIdEvaluator typeEval = (TypeIdEvaluator) query
+						.getVertexEvaluator(typeInc.getAlpha());
 				typeCollection.addTypes((TypeCollection) typeEval
-						.getResult(graph));
+						.getResult(evaluator));
 				typeInc = typeInc.getNextIsTypeIdOfIncidence(EdgeDirection.IN);
 			}
 		}
@@ -144,15 +129,15 @@ public class EdgeRestrictionEvaluator extends VertexEvaluator {
 				.getFirstIsBooleanPredicateOfEdgeRestrictionIncidence(EdgeDirection.IN);
 		if (predInc != null) {
 			// System.out.println("Found a BooleanPredicateOfEdge");
-			predicateEvaluator = vertexEvalMarker.getMark(predInc.getAlpha());
+			predicateEvaluator = query.getVertexEvaluator(predInc.getAlpha());
 		}
 		return null;
 	}
 
-	@Override
-	public VertexCosts calculateSubtreeEvaluationCosts() {
-		return greqlEvaluator.getCostModel()
-				.calculateCostsEdgeRestriction(this);
-	}
+	// @Override
+	// public VertexCosts calculateSubtreeEvaluationCosts() {
+	// return greqlEvaluator.getCostModel()
+	// .calculateCostsEdgeRestriction(this);
+	// }
 
 }

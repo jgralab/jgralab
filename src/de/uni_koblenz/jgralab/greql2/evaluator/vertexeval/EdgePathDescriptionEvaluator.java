@@ -37,11 +37,11 @@ package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
-import de.uni_koblenz.jgralab.Graph;
-import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluatorImpl;
-import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
+import de.uni_koblenz.jgralab.greql2.evaluator.InternalGreqlEvaluator;
+import de.uni_koblenz.jgralab.greql2.evaluator.Query;
 import de.uni_koblenz.jgralab.greql2.evaluator.fa.NFA;
 import de.uni_koblenz.jgralab.greql2.schema.EdgePathDescription;
+import de.uni_koblenz.jgralab.greql2.schema.Expression;
 import de.uni_koblenz.jgralab.greql2.schema.IsTypeRestrOfExpression;
 import de.uni_koblenz.jgralab.greql2.types.TypeCollection;
 
@@ -52,29 +52,29 @@ import de.uni_koblenz.jgralab.greql2.types.TypeCollection;
  * 
  */
 public class EdgePathDescriptionEvaluator extends
-		PrimaryPathDescriptionEvaluator {
+		PrimaryPathDescriptionEvaluator<EdgePathDescription> {
 
-	public EdgePathDescriptionEvaluator(EdgePathDescription vertex,
-			GreqlEvaluatorImpl eval) {
-		super(vertex, eval);
+	public EdgePathDescriptionEvaluator(EdgePathDescription vertex, Query query) {
+		super(vertex, query);
 	}
 
 	@Override
-	public NFA evaluate(Graph graph) {
+	public NFA evaluate(InternalGreqlEvaluator evaluator) {
 		Edge evalEdge = vertex.getFirstIsEdgeExprOfIncidence();
-		VertexEvaluator edgeEval = null;
+		VertexEvaluator<? extends Expression> edgeEval = null;
 		if (evalEdge != null) {
-			edgeEval = vertexEvalMarker.getMark(evalEdge.getAlpha());
+			edgeEval = query.getVertexEvaluator((Expression) evalEdge
+					.getAlpha());
 		}
 		TypeCollection typeCollection = new TypeCollection();
 		IsTypeRestrOfExpression inc = vertex
 				.getFirstIsTypeRestrOfExpressionIncidence(EdgeDirection.IN);
 		EdgeRestrictionEvaluator edgeRestEval = null;
-		VertexEvaluator predicateEvaluator = null;
+		VertexEvaluator<? extends Expression> predicateEvaluator = null;
 		if (inc != null) {
-			edgeRestEval = (EdgeRestrictionEvaluator) vertexEvalMarker
-					.getMark(inc.getAlpha());
-			typeCollection.addTypes(edgeRestEval.getTypeCollection());
+			edgeRestEval = (EdgeRestrictionEvaluator) query
+					.getVertexEvaluator(inc.getAlpha());
+			typeCollection.addTypes(edgeRestEval.getTypeCollection(evaluator));
 			predicateEvaluator = edgeRestEval.getPredicateEvaluator();
 		}
 		createdNFA = NFA.createEdgePathDescriptionNFA(getEdgeDirection(vertex),
@@ -83,10 +83,10 @@ public class EdgePathDescriptionEvaluator extends
 		return createdNFA;
 	}
 
-	@Override
-	public VertexCosts calculateSubtreeEvaluationCosts() {
-		return greqlEvaluator.getCostModel().calculateCostsEdgePathDescription(
-				this);
-	}
+	// @Override
+	// public VertexCosts calculateSubtreeEvaluationCosts() {
+	// return greqlEvaluator.getCostModel().calculateCostsEdgePathDescription(
+	// this);
+	// }
 
 }

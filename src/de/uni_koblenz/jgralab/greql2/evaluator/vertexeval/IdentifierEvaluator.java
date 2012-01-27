@@ -35,10 +35,8 @@
 
 package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 
-import de.uni_koblenz.jgralab.Graph;
-import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluatorImpl;
-import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
-import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
+import de.uni_koblenz.jgralab.greql2.evaluator.InternalGreqlEvaluator;
+import de.uni_koblenz.jgralab.greql2.evaluator.Query;
 import de.uni_koblenz.jgralab.greql2.schema.Identifier;
 
 /**
@@ -48,31 +46,20 @@ import de.uni_koblenz.jgralab.greql2.schema.Identifier;
  * @author ist@uni-koblenz.de
  * 
  */
-public class IdentifierEvaluator extends VertexEvaluator {
+public class IdentifierEvaluator extends VertexEvaluator<Identifier> {
 
-	Identifier vertex;
-
-	/**
-	 * returns the vertex this VertexEvaluator evaluates
-	 */
-	@Override
-	public Greql2Vertex getVertex() {
-		return vertex;
-	}
-
-	public IdentifierEvaluator(Identifier vertex, GreqlEvaluatorImpl eval) {
-		super(eval);
-		this.vertex = vertex;
+	public IdentifierEvaluator(Identifier vertex, Query query) {
+		super(vertex, query);
 	}
 
 	@Override
-	public String evaluate(Graph graph) {
+	public String evaluate(InternalGreqlEvaluator evaluator) {
 		return vertex.get_name();
 	}
 
-	@Override
-	public VertexCosts calculateSubtreeEvaluationCosts() {
-		return new VertexCosts(1, 1, 1);
-	}
+	// @Override
+	// public VertexCosts calculateSubtreeEvaluationCosts() {
+	// return new VertexCosts(1, 1, 1);
+	// }
 
 }

@@ -38,12 +38,10 @@ package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 import java.util.ArrayList;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
-import de.uni_koblenz.jgralab.Graph;
-import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluatorImpl;
-import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
+import de.uni_koblenz.jgralab.greql2.evaluator.InternalGreqlEvaluator;
+import de.uni_koblenz.jgralab.greql2.evaluator.Query;
 import de.uni_koblenz.jgralab.greql2.evaluator.fa.NFA;
 import de.uni_koblenz.jgralab.greql2.schema.AlternativePathDescription;
-import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
 import de.uni_koblenz.jgralab.greql2.schema.IsAlternativePathOf;
 
 /**
@@ -54,20 +52,7 @@ import de.uni_koblenz.jgralab.greql2.schema.IsAlternativePathOf;
  * 
  */
 public class AlternativePathDescriptionEvaluator extends
-		PathDescriptionEvaluator {
-
-	/**
-	 * The AlternativePathDescription-Vertex this evaluator evaluates
-	 */
-	private AlternativePathDescription vertex;
-
-	/**
-	 * returns the vertex this VertexEvaluator evaluates
-	 */
-	@Override
-	public Greql2Vertex getVertex() {
-		return vertex;
-	}
+		PathDescriptionEvaluator<AlternativePathDescription> {
 
 	/**
 	 * Creates a new IteratedPathDescriptionEvaluator for the given vertex
@@ -78,9 +63,8 @@ public class AlternativePathDescriptionEvaluator extends
 	 *            the vertex this VertexEvaluator evaluates
 	 */
 	public AlternativePathDescriptionEvaluator(
-			AlternativePathDescription vertex, GreqlEvaluatorImpl eval) {
-		super(eval);
-		this.vertex = vertex;
+			AlternativePathDescription vertex, Query query) {
+		super(vertex, query);
 	}
 
 	/**
@@ -90,23 +74,23 @@ public class AlternativePathDescriptionEvaluator extends
 	 */
 
 	@Override
-	public NFA evaluate(Graph graph) {
+	public NFA evaluate(InternalGreqlEvaluator evaluator) {
 		IsAlternativePathOf inc = vertex
 				.getFirstIsAlternativePathOfIncidence(EdgeDirection.IN);
 		ArrayList<NFA> nfaList = new ArrayList<NFA>();
 		while (inc != null) {
-			PathDescriptionEvaluator pathEval = (PathDescriptionEvaluator) vertexEvalMarker
-					.getMark(inc.getAlpha());
-			nfaList.add(pathEval.getNFA());
+			PathDescriptionEvaluator<?> pathEval = (PathDescriptionEvaluator<?>) query
+					.getVertexEvaluator(inc.getAlpha());
+			nfaList.add(pathEval.getNFA(evaluator));
 			inc = inc.getNextIsAlternativePathOfIncidence(EdgeDirection.IN);
 		}
 		return NFA.createAlternativePathDescriptionNFA(nfaList);
 	}
 
-	@Override
-	public VertexCosts calculateSubtreeEvaluationCosts() {
-		return greqlEvaluator.getCostModel()
-				.calculateCostsAlternativePathDescription(this);
-	}
+	// @Override
+	// public VertexCosts calculateSubtreeEvaluationCosts() {
+	// return greqlEvaluator.getCostModel()
+	// .calculateCostsAlternativePathDescription(this);
+	// }
 
 }

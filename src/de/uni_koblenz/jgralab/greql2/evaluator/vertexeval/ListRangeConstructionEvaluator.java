@@ -38,12 +38,10 @@ package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 import org.pcollections.PVector;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
-import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.JGraLab;
-import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluatorImpl;
-import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
+import de.uni_koblenz.jgralab.greql2.evaluator.InternalGreqlEvaluator;
+import de.uni_koblenz.jgralab.greql2.evaluator.Query;
 import de.uni_koblenz.jgralab.greql2.schema.Expression;
-import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
 import de.uni_koblenz.jgralab.greql2.schema.ListRangeConstruction;
 
 /**
@@ -54,17 +52,8 @@ import de.uni_koblenz.jgralab.greql2.schema.ListRangeConstruction;
  * @author ist@uni-koblenz.de
  * 
  */
-public class ListRangeConstructionEvaluator extends VertexEvaluator {
-
-	private ListRangeConstruction vertex;
-
-	/**
-	 * returns the vertex this VertexEvaluator evaluates
-	 */
-	@Override
-	public Greql2Vertex getVertex() {
-		return vertex;
-	}
+public class ListRangeConstructionEvaluator extends
+		VertexEvaluator<ListRangeConstruction> {
 
 	/**
 	 * Creates a new ListRangeConstructionEvaluator for the given vertex
@@ -75,33 +64,32 @@ public class ListRangeConstructionEvaluator extends VertexEvaluator {
 	 *            the vertex this VertexEvaluator evaluates
 	 */
 	public ListRangeConstructionEvaluator(ListRangeConstruction vertex,
-			GreqlEvaluatorImpl eval) {
-		super(eval);
-		this.vertex = vertex;
+			Query query) {
+		super(vertex, query);
 	}
 
-	private VertexEvaluator firstElementEvaluator = null;
+	private VertexEvaluator<? extends Expression> firstElementEvaluator = null;
 
-	private VertexEvaluator lastElementEvaluator = null;
+	private VertexEvaluator<? extends Expression> lastElementEvaluator = null;
 
 	private void getEvals() {
 		Expression firstElementExpression = vertex
 				.getFirstIsFirstValueOfIncidence(EdgeDirection.IN).getAlpha();
 		Expression lastElementExpression = vertex
 				.getFirstIsLastValueOfIncidence(EdgeDirection.IN).getAlpha();
-		firstElementEvaluator = vertexEvalMarker
-				.getMark(firstElementExpression);
-		lastElementEvaluator = vertexEvalMarker.getMark(lastElementExpression);
+		firstElementEvaluator = query
+				.getVertexEvaluator(firstElementExpression);
+		lastElementEvaluator = query.getVertexEvaluator(lastElementExpression);
 	}
 
 	@Override
-	public PVector<Integer> evaluate(Graph graph) {
+	public PVector<Integer> evaluate(InternalGreqlEvaluator evaluator) {
 		PVector<Integer> resultList = JGraLab.vector();
 		if (firstElementEvaluator == null) {
 			getEvals();
 		}
-		Object firstElement = firstElementEvaluator.getResult(graph);
-		Object lastElement = lastElementEvaluator.getResult(graph);
+		Object firstElement = firstElementEvaluator.getResult(evaluator);
+		Object lastElement = lastElementEvaluator.getResult(evaluator);
 		if (firstElement instanceof Integer && lastElement instanceof Integer) {
 			if ((Integer) firstElement < (Integer) lastElement) {
 				for (int i = (Integer) firstElement; i < (Integer) lastElement + 1; i++) {
@@ -119,16 +107,16 @@ public class ListRangeConstructionEvaluator extends VertexEvaluator {
 		return resultList;
 	}
 
-	@Override
-	public VertexCosts calculateSubtreeEvaluationCosts() {
-		return greqlEvaluator.getCostModel()
-				.calculateCostsListRangeConstruction(this);
-	}
-
-	@Override
-	public long calculateEstimatedCardinality() {
-		return greqlEvaluator.getCostModel()
-				.calculateCardinalityListRangeConstruction(this);
-	}
+	// @Override
+	// public VertexCosts calculateSubtreeEvaluationCosts() {
+	// return greqlEvaluator.getCostModel()
+	// .calculateCostsListRangeConstruction(this);
+	// }
+	//
+	// @Override
+	// public long calculateEstimatedCardinality() {
+	// return greqlEvaluator.getCostModel()
+	// .calculateCardinalityListRangeConstruction(this);
+	// }
 
 }

@@ -36,11 +36,11 @@
 package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
-import de.uni_koblenz.jgralab.Graph;
-import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluatorImpl;
-import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
+import de.uni_koblenz.jgralab.greql2.evaluator.InternalGreqlEvaluator;
+import de.uni_koblenz.jgralab.greql2.evaluator.Query;
 import de.uni_koblenz.jgralab.greql2.evaluator.fa.NFA;
 import de.uni_koblenz.jgralab.greql2.schema.AggregationPathDescription;
+import de.uni_koblenz.jgralab.greql2.schema.Expression;
 import de.uni_koblenz.jgralab.greql2.schema.IsEdgeRestrOf;
 import de.uni_koblenz.jgralab.greql2.types.TypeCollection;
 
@@ -53,38 +53,38 @@ import de.uni_koblenz.jgralab.greql2.types.TypeCollection;
  * 
  */
 public class AggregationPathDescriptionEvaluator extends
-		PrimaryPathDescriptionEvaluator {
+		PrimaryPathDescriptionEvaluator<AggregationPathDescription> {
 
 	public AggregationPathDescriptionEvaluator(
-			AggregationPathDescription vertex, GreqlEvaluatorImpl eval) {
-		super(vertex, eval);
+			AggregationPathDescription vertex, Query query) {
+		super(vertex, query);
 	}
 
 	@Override
-	public NFA evaluate(Graph graph) {
+	public NFA evaluate(InternalGreqlEvaluator evaluator) {
 		TypeCollection typeCollection = new TypeCollection();
 		IsEdgeRestrOf inc = vertex
 				.getFirstIsEdgeRestrOfIncidence(EdgeDirection.IN);
 		EdgeRestrictionEvaluator edgeRestEval = null;
-		VertexEvaluator predicateEvaluator = null;
+		VertexEvaluator<? extends Expression> predicateEvaluator = null;
 		if (inc != null) {
-			edgeRestEval = (EdgeRestrictionEvaluator) vertexEvalMarker
-					.getMark(inc.getAlpha());
-			typeCollection.addTypes(edgeRestEval.getTypeCollection());
+			edgeRestEval = (EdgeRestrictionEvaluator) query
+					.getVertexEvaluator(inc.getAlpha());
+			typeCollection.addTypes(edgeRestEval.getTypeCollection(evaluator));
 			predicateEvaluator = edgeRestEval.getPredicateEvaluator();
 		}
 
 		createdNFA = NFA.createAggregationPathDescriptionNFA(
-				((AggregationPathDescription) vertex).is_outAggregation(),
-				typeCollection, getEdgeRoles(edgeRestEval), predicateEvaluator,
+				vertex.is_outAggregation(), typeCollection,
+				getEdgeRoles(edgeRestEval), predicateEvaluator,
 				vertexEvalMarker);
 		return createdNFA;
 	}
 
-	@Override
-	public VertexCosts calculateSubtreeEvaluationCosts() {
-		return greqlEvaluator.getCostModel()
-				.calculateCostsAggregationPathDescription(this);
-	}
+	// @Override
+	// public VertexCosts calculateSubtreeEvaluationCosts() {
+	// return greqlEvaluator.getCostModel()
+	// .calculateCostsAggregationPathDescription(this);
+	// }
 
 }

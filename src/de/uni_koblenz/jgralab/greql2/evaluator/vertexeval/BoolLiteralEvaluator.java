@@ -35,11 +35,9 @@
 
 package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 
-import de.uni_koblenz.jgralab.Graph;
-import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluatorImpl;
-import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
+import de.uni_koblenz.jgralab.greql2.evaluator.InternalGreqlEvaluator;
+import de.uni_koblenz.jgralab.greql2.evaluator.Query;
 import de.uni_koblenz.jgralab.greql2.schema.BoolLiteral;
-import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
 
 /**
  * Evaluates a boolean literal, that means, provides access to the literal value
@@ -52,41 +50,27 @@ import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
  */
 public class BoolLiteralEvaluator extends VertexEvaluator<BoolLiteral> {
 
-	/**
-	 * The BoolLiteral this evluator provides acces to
-	 */
-	private final BoolLiteral vertex;
-
-	/**
-	 * returns the vertex this VertexEvaluator evaluates
-	 */
-	@Override
-	public Greql2Vertex getVertex() {
-		return vertex;
-	}
-
-	public BoolLiteralEvaluator(BoolLiteral vertex, GreqlEvaluatorImpl eval) {
-		super(eval);
-		this.vertex = vertex;
+	public BoolLiteralEvaluator(BoolLiteral vertex, Query query) {
+		super(vertex, query);
 	}
 
 	@Override
-	public Boolean evaluate(Graph graph) {
+	public Boolean evaluate(InternalGreqlEvaluator evaluator) {
 		return vertex.is_boolValue();
 	}
 
-	@Override
-	public VertexCosts calculateSubtreeEvaluationCosts() {
-		return new VertexCosts(1, 1, 1);
-	}
-
-	@Override
-	public double calculateEstimatedSelectivity() {
-		// true has selectivity 1, but false and null can never be true, so
-		// their selectivity is 0.
-		if (vertex.is_boolValue()) {
-			return 1;
-		}
-		return 0;
-	}
+	// @Override
+	// public VertexCosts calculateSubtreeEvaluationCosts() {
+	// return new VertexCosts(1, 1, 1);
+	// }
+	//
+	// @Override
+	// public double calculateEstimatedSelectivity() {
+	// // true has selectivity 1, but false and null can never be true, so
+	// // their selectivity is 0.
+	// if (vertex.is_boolValue()) {
+	// return 1;
+	// }
+	// return 0;
+	// }
 }

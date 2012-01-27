@@ -36,11 +36,9 @@
 package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
-import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.Record;
-import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluatorImpl;
-import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
-import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
+import de.uni_koblenz.jgralab.greql2.evaluator.InternalGreqlEvaluator;
+import de.uni_koblenz.jgralab.greql2.evaluator.Query;
 import de.uni_koblenz.jgralab.greql2.schema.IsRecordElementOf;
 import de.uni_koblenz.jgralab.greql2.schema.RecordConstruction;
 import de.uni_koblenz.jgralab.greql2.schema.RecordElement;
@@ -52,17 +50,8 @@ import de.uni_koblenz.jgralab.impl.RecordImpl;
  * @author ist@uni-koblenz.de
  * 
  */
-public class RecordConstructionEvaluator extends VertexEvaluator {
-
-	private RecordConstruction vertex;
-
-	/**
-	 * returns the vertex this VertexEvaluator evaluates
-	 */
-	@Override
-	public Greql2Vertex getVertex() {
-		return vertex;
-	}
+public class RecordConstructionEvaluator extends
+		VertexEvaluator<RecordConstruction> {
 
 	/**
 	 * Creates a new RecordConstructionEvaluator for the given vertex
@@ -72,38 +61,36 @@ public class RecordConstructionEvaluator extends VertexEvaluator {
 	 * @param vertex
 	 *            the vertex this VertexEvaluator evaluates
 	 */
-	public RecordConstructionEvaluator(RecordConstruction vertex,
-			GreqlEvaluatorImpl eval) {
-		super(eval);
-		this.vertex = vertex;
+	public RecordConstructionEvaluator(RecordConstruction vertex, Query query) {
+		super(vertex, query);
 	}
 
 	@Override
-	public Record evaluate(Graph graph) {
+	public Record evaluate(InternalGreqlEvaluator evaluator) {
 		RecordImpl resultRecord = RecordImpl.empty();
 		IsRecordElementOf inc = vertex
 				.getFirstIsRecordElementOfIncidence(EdgeDirection.IN);
 		while (inc != null) {
 			RecordElement currentElement = inc.getAlpha();
-			RecordElementEvaluator vertexEval = (RecordElementEvaluator) vertexEvalMarker
-					.getMark(currentElement);
+			RecordElementEvaluator vertexEval = (RecordElementEvaluator) query
+					.getVertexEvaluator(currentElement);
 			resultRecord = resultRecord.plus(vertexEval.getId(),
-					vertexEval.getResult(graph));
+					vertexEval.getResult(evaluator));
 			inc = inc.getNextIsRecordElementOfIncidence(EdgeDirection.IN);
 		}
 		return resultRecord;
 	}
 
-	@Override
-	public VertexCosts calculateSubtreeEvaluationCosts() {
-		return greqlEvaluator.getCostModel().calculateCostsRecordConstruction(
-				this);
-	}
-
-	@Override
-	public long calculateEstimatedCardinality() {
-		return greqlEvaluator.getCostModel()
-				.calculateCardinalityRecordConstruction(this);
-	}
+	// @Override
+	// public VertexCosts calculateSubtreeEvaluationCosts() {
+	// return greqlEvaluator.getCostModel().calculateCostsRecordConstruction(
+	// this);
+	// }
+	//
+	// @Override
+	// public long calculateEstimatedCardinality() {
+	// return greqlEvaluator.getCostModel()
+	// .calculateCardinalityRecordConstruction(this);
+	// }
 
 }

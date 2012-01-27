@@ -36,11 +36,10 @@
 package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
-import de.uni_koblenz.jgralab.Graph;
-import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluatorImpl;
-import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
+import de.uni_koblenz.jgralab.greql2.evaluator.InternalGreqlEvaluator;
+import de.uni_koblenz.jgralab.greql2.evaluator.Query;
 import de.uni_koblenz.jgralab.greql2.evaluator.fa.NFA;
-import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
+import de.uni_koblenz.jgralab.greql2.schema.Expression;
 import de.uni_koblenz.jgralab.greql2.schema.IntermediateVertexPathDescription;
 import de.uni_koblenz.jgralab.greql2.schema.IsSubPathOf;
 
@@ -51,20 +50,7 @@ import de.uni_koblenz.jgralab.greql2.schema.IsSubPathOf;
  * 
  */
 public class IntermediateVertexPathDescriptionEvaluator extends
-		PathDescriptionEvaluator {
-
-	/**
-	 * The IntermediateVertexPathDescription-Vertex this evaluator evaluates
-	 */
-	private IntermediateVertexPathDescription vertex;
-
-	/**
-	 * returns the vertex this VertexEvaluator evaluates
-	 */
-	@Override
-	public Greql2Vertex getVertex() {
-		return vertex;
-	}
+		PathDescriptionEvaluator<IntermediateVertexPathDescription> {
 
 	/**
 	 * Creates a new IntermediateVertexPathDescriptionEvaluator for the given
@@ -76,33 +62,33 @@ public class IntermediateVertexPathDescriptionEvaluator extends
 	 *            the vertex this VertexEvaluator evaluates
 	 */
 	public IntermediateVertexPathDescriptionEvaluator(
-			IntermediateVertexPathDescription vertex, GreqlEvaluatorImpl eval) {
-		super(eval);
-		this.vertex = vertex;
+			IntermediateVertexPathDescription vertex, Query query) {
+		super(vertex, query);
 	}
 
 	@Override
-	public NFA evaluate(Graph graph) {
+	public NFA evaluate(InternalGreqlEvaluator evaluator) {
 		IsSubPathOf inc = vertex.getFirstIsSubPathOfIncidence(EdgeDirection.IN);
-		PathDescriptionEvaluator firstEval = (PathDescriptionEvaluator) vertexEvalMarker
-				.getMark(inc.getAlpha());
-		NFA firstNFA = firstEval.getNFA();
+		PathDescriptionEvaluator<?> firstEval = (PathDescriptionEvaluator<?>) query
+				.getVertexEvaluator(inc.getAlpha());
+		NFA firstNFA = firstEval.getNFA(evaluator);
 		inc = inc.getNextIsSubPathOfIncidence(EdgeDirection.IN);
-		PathDescriptionEvaluator secondEval = (PathDescriptionEvaluator) vertexEvalMarker
-				.getMark(inc.getAlpha());
-		NFA secondNFA = secondEval.getNFA();
-		VertexEvaluator vertexEval = vertexEvalMarker.getMark(vertex
-				.getFirstIsIntermediateVertexOfIncidence(EdgeDirection.IN)
-				.getAlpha());
+		PathDescriptionEvaluator<?> secondEval = (PathDescriptionEvaluator<?>) query
+				.getVertexEvaluator(inc.getAlpha());
+		NFA secondNFA = secondEval.getNFA(evaluator);
+		VertexEvaluator<? extends Expression> vertexEval = query
+				.getVertexEvaluator(vertex
+						.getFirstIsIntermediateVertexOfIncidence(
+								EdgeDirection.IN).getAlpha());
 		return NFA.createIntermediateVertexPathDescriptionNFA(firstNFA,
 				vertexEval, secondNFA);
 	}
 
-	@Override
-	public VertexCosts calculateSubtreeEvaluationCosts() {
-		return greqlEvaluator.getCostModel()
-				.calculateCostsIntermediateVertexPathDescription(this,
-						graphSize);
-	}
+	// @Override
+	// public VertexCosts calculateSubtreeEvaluationCosts() {
+	// return greqlEvaluator.getCostModel()
+	// .calculateCostsIntermediateVertexPathDescription(this,
+	// graphSize);
+	// }
 
 }

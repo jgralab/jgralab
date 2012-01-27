@@ -36,11 +36,9 @@
 package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
-import de.uni_koblenz.jgralab.Graph;
-import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluatorImpl;
-import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
+import de.uni_koblenz.jgralab.greql2.evaluator.InternalGreqlEvaluator;
+import de.uni_koblenz.jgralab.greql2.evaluator.Query;
 import de.uni_koblenz.jgralab.greql2.evaluator.fa.NFA;
-import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
 import de.uni_koblenz.jgralab.greql2.schema.OptionalPathDescription;
 import de.uni_koblenz.jgralab.greql2.schema.PathDescription;
 
@@ -51,20 +49,8 @@ import de.uni_koblenz.jgralab.greql2.schema.PathDescription;
  * @author ist@uni-koblenz.de
  * 
  */
-public class OptionalPathDescriptionEvaluator extends PathDescriptionEvaluator {
-
-	/**
-	 * The IteratedPathDescription-Vertex this evaluator evaluates
-	 */
-	private OptionalPathDescription vertex;
-
-	/**
-	 * returns the vertex this VertexEvaluator evaluates
-	 */
-	@Override
-	public Greql2Vertex getVertex() {
-		return vertex;
-	}
+public class OptionalPathDescriptionEvaluator extends
+		PathDescriptionEvaluator<OptionalPathDescription> {
 
 	/**
 	 * Creates a new OptionalPathDescriptionEvaluator for the given vertex
@@ -75,24 +61,23 @@ public class OptionalPathDescriptionEvaluator extends PathDescriptionEvaluator {
 	 *            the vertex this VertexEvaluator evaluates
 	 */
 	public OptionalPathDescriptionEvaluator(OptionalPathDescription vertex,
-			GreqlEvaluatorImpl eval) {
-		super(eval);
-		this.vertex = vertex;
+			Query query) {
+		super(vertex, query);
 	}
 
 	@Override
-	public NFA evaluate(Graph graph) {
+	public NFA evaluate(InternalGreqlEvaluator evaluator) {
 		PathDescription p = vertex.getFirstIsOptionalPathOfIncidence(
 				EdgeDirection.IN).getAlpha();
-		PathDescriptionEvaluator pathEval = (PathDescriptionEvaluator) vertexEvalMarker
-				.getMark(p);
-		return NFA.createOptionalPathDescriptionNFA(pathEval.getNFA());
+		PathDescriptionEvaluator<?> pathEval = (PathDescriptionEvaluator<?>) query
+				.getVertexEvaluator(p);
+		return NFA.createOptionalPathDescriptionNFA(pathEval.getNFA(evaluator));
 	}
 
-	@Override
-	public VertexCosts calculateSubtreeEvaluationCosts() {
-		return greqlEvaluator.getCostModel()
-				.calculateCostsOptionalPathDescription(this);
-	}
+	// @Override
+	// public VertexCosts calculateSubtreeEvaluationCosts() {
+	// return greqlEvaluator.getCostModel()
+	// .calculateCostsOptionalPathDescription(this);
+	// }
 
 }

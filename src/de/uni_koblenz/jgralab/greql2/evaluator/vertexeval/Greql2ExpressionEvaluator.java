@@ -40,13 +40,11 @@ import java.util.Map;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Graph;
-import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluatorImpl;
-import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
+import de.uni_koblenz.jgralab.greql2.evaluator.Query;
 import de.uni_koblenz.jgralab.greql2.exception.UndefinedVariableException;
 import de.uni_koblenz.jgralab.greql2.exception.UnknownTypeException;
 import de.uni_koblenz.jgralab.greql2.schema.Expression;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Expression;
-import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
 import de.uni_koblenz.jgralab.greql2.schema.IsBoundVarOf;
 import de.uni_koblenz.jgralab.greql2.schema.IsIdOf;
 import de.uni_koblenz.jgralab.greql2.schema.SourcePosition;
@@ -66,20 +64,8 @@ import de.uni_koblenz.jgralab.schema.VertexClass;
  * @author ist@uni-koblenz.de
  * 
  */
-public class Greql2ExpressionEvaluator extends VertexEvaluator {
-
-	/**
-	 * The Greql2Expression-Vertex this evaluator evaluates
-	 */
-	private Greql2Expression vertex;
-
-	/**
-	 * returns the vertex this VertexEvaluator evaluates
-	 */
-	@Override
-	public Greql2Vertex getVertex() {
-		return vertex;
-	}
+public class Greql2ExpressionEvaluator extends
+		VertexEvaluator<Greql2Expression> {
 
 	/**
 	 * The varibles that are defined via the <code>using</code> clause. They are
@@ -118,10 +104,8 @@ public class Greql2ExpressionEvaluator extends VertexEvaluator {
 	 * @param vertex
 	 *            the vertex which gets evaluated by this VertexEvaluator
 	 */
-	public Greql2ExpressionEvaluator(Greql2Expression vertex,
-			GreqlEvaluatorImpl eval) {
-		super(eval);
-		this.vertex = vertex;
+	public Greql2ExpressionEvaluator(Greql2Expression vertex, Query query) {
+		super(vertex, query);
 		boundVariables = eval.getVariables();
 		boundVariablesChanged = true;
 	}
@@ -184,10 +168,10 @@ public class Greql2ExpressionEvaluator extends VertexEvaluator {
 		return result;
 	}
 
-	@Override
-	public VertexCosts calculateSubtreeEvaluationCosts() {
-		return greqlEvaluator.getCostModel().calculateCostsGreql2Expression(
-				this);
-	}
+	// @Override
+	// public VertexCosts calculateSubtreeEvaluationCosts() {
+	// return greqlEvaluator.getCostModel().calculateCostsGreql2Expression(
+	// this);
+	// }
 
 }

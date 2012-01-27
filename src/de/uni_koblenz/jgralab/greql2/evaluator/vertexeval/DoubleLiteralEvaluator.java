@@ -35,11 +35,9 @@
 
 package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 
-import de.uni_koblenz.jgralab.Graph;
-import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluatorImpl;
-import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
+import de.uni_koblenz.jgralab.greql2.evaluator.InternalGreqlEvaluator;
+import de.uni_koblenz.jgralab.greql2.evaluator.Query;
 import de.uni_koblenz.jgralab.greql2.schema.DoubleLiteral;
-import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
 
 /**
  * Evaluates a Double Literal, that means, provides access to the literal value
@@ -50,31 +48,20 @@ import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
  * @author ist@uni-koblenz.de
  * 
  */
-public class DoubleLiteralEvaluator extends VertexEvaluator {
+public class DoubleLiteralEvaluator extends VertexEvaluator<DoubleLiteral> {
 
-	private DoubleLiteral vertex;
-
-	/**
-	 * returns the vertex this VertexEvaluator evaluates
-	 */
-	@Override
-	public Greql2Vertex getVertex() {
-		return vertex;
-	}
-
-	public DoubleLiteralEvaluator(DoubleLiteral vertex, GreqlEvaluatorImpl eval) {
-		super(eval);
-		this.vertex = vertex;
+	public DoubleLiteralEvaluator(DoubleLiteral vertex, Query query) {
+		super(vertex, query);
 	}
 
 	@Override
-	public Double evaluate(Graph graph) {
+	public Double evaluate(InternalGreqlEvaluator evaluator) {
 		return vertex.get_doubleValue();
 	}
 
-	@Override
-	public VertexCosts calculateSubtreeEvaluationCosts() {
-		return new VertexCosts(1, 1, 1);
-	}
+	// @Override
+	// public VertexCosts calculateSubtreeEvaluationCosts() {
+	// return new VertexCosts(1, 1, 1);
+	// }
 
 }

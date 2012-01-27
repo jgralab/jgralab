@@ -36,13 +36,12 @@
 package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
-import de.uni_koblenz.jgralab.Graph;
-import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluatorImpl;
-import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
+import de.uni_koblenz.jgralab.greql2.evaluator.InternalGreqlEvaluator;
+import de.uni_koblenz.jgralab.greql2.evaluator.Query;
 import de.uni_koblenz.jgralab.greql2.evaluator.fa.NFA;
 import de.uni_koblenz.jgralab.greql2.exception.GreqlException;
 import de.uni_koblenz.jgralab.greql2.schema.ExponentiatedPathDescription;
-import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
+import de.uni_koblenz.jgralab.greql2.schema.Expression;
 import de.uni_koblenz.jgralab.greql2.schema.PathDescription;
 
 /**
@@ -53,20 +52,7 @@ import de.uni_koblenz.jgralab.greql2.schema.PathDescription;
  * 
  */
 public class ExponentiatedPathDescriptionEvaluator extends
-		PathDescriptionEvaluator {
-
-	/**
-	 * The ExponentiatedPathDescription-Vertex this evaluator evaluates
-	 */
-	private ExponentiatedPathDescription vertex;
-
-	/**
-	 * returns the vertex this VertexEvaluator evaluates
-	 */
-	@Override
-	public Greql2Vertex getVertex() {
-		return vertex;
-	}
+		PathDescriptionEvaluator<ExponentiatedPathDescription> {
 
 	/**
 	 * Creates a new ExponentiatedPathDescriptionEvaluator for the given vertex
@@ -77,20 +63,20 @@ public class ExponentiatedPathDescriptionEvaluator extends
 	 *            the vertex this VertexEvaluator evaluates
 	 */
 	public ExponentiatedPathDescriptionEvaluator(
-			ExponentiatedPathDescription vertex, GreqlEvaluatorImpl eval) {
-		super(eval);
-		this.vertex = vertex;
+			ExponentiatedPathDescription vertex, Query query) {
+		super(vertex, query);
 	}
 
 	@Override
-	public NFA evaluate(Graph graph) {
+	public NFA evaluate(InternalGreqlEvaluator evaluator) {
 		PathDescription p = vertex.getFirstIsExponentiatedPathOfIncidence()
 				.getAlpha();
-		PathDescriptionEvaluator pathEval = (PathDescriptionEvaluator) vertexEvalMarker
-				.getMark(p);
-		VertexEvaluator exponentEvaluator = vertexEvalMarker.getMark(vertex
-				.getFirstIsExponentOfIncidence(EdgeDirection.IN).getAlpha());
-		Object exponentValue = exponentEvaluator.getResult(graph);
+		PathDescriptionEvaluator<?> pathEval = (PathDescriptionEvaluator<?>) query
+				.getVertexEvaluator(p);
+		VertexEvaluator<? extends Expression> exponentEvaluator = query
+				.getVertexEvaluator(vertex.getFirstIsExponentOfIncidence(
+						EdgeDirection.IN).getAlpha());
+		Object exponentValue = exponentEvaluator.getResult(evaluator);
 		int exponent = 0;
 		if (exponentValue instanceof Integer) {
 			exponent = (Integer) exponentValue;
@@ -98,14 +84,14 @@ public class ExponentiatedPathDescriptionEvaluator extends
 			throw new GreqlException(
 					"Exponent of ExponentiatedPathDescription is not convertable to integer value");
 		}
-		return NFA.createExponentiatedPathDescriptionNFA(pathEval.getNFA(),
-				exponent);
+		return NFA.createExponentiatedPathDescriptionNFA(
+				pathEval.getNFA(evaluator), exponent);
 	}
 
-	@Override
-	public VertexCosts calculateSubtreeEvaluationCosts() {
-		return greqlEvaluator.getCostModel()
-				.calculateCostsExponentiatedPathDescription(this);
-	}
+	// @Override
+	// public VertexCosts calculateSubtreeEvaluationCosts() {
+	// return greqlEvaluator.getCostModel()
+	// .calculateCostsExponentiatedPathDescription(this);
+	// }
 
 }

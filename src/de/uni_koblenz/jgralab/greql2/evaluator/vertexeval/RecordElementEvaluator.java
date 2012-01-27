@@ -36,11 +36,9 @@
 package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
-import de.uni_koblenz.jgralab.Graph;
-import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluatorImpl;
-import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
+import de.uni_koblenz.jgralab.greql2.evaluator.InternalGreqlEvaluator;
+import de.uni_koblenz.jgralab.greql2.evaluator.Query;
 import de.uni_koblenz.jgralab.greql2.schema.Expression;
-import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
 import de.uni_koblenz.jgralab.greql2.schema.RecordElement;
 import de.uni_koblenz.jgralab.greql2.schema.RecordId;
 
@@ -51,21 +49,11 @@ import de.uni_koblenz.jgralab.greql2.schema.RecordId;
  * @author ist@uni-koblenz.de November 2006
  * 
  */
-public class RecordElementEvaluator extends VertexEvaluator {
-
-	private RecordElement vertex;
+public class RecordElementEvaluator extends VertexEvaluator<RecordElement> {
 
 	private String id = null;
 
-	private VertexEvaluator expEval = null;
-
-	/**
-	 * returns the vertex this VertexEvaluator evaluates
-	 */
-	@Override
-	public Greql2Vertex getVertex() {
-		return vertex;
-	}
+	private VertexEvaluator<? extends Expression> expEval = null;
 
 	public String getId() {
 		if (id == null) {
@@ -84,25 +72,24 @@ public class RecordElementEvaluator extends VertexEvaluator {
 	 * @param vertex
 	 *            the vertex this VertexEvaluator evaluates
 	 */
-	public RecordElementEvaluator(RecordElement vertex, GreqlEvaluatorImpl eval) {
-		super(eval);
-		this.vertex = vertex;
+	public RecordElementEvaluator(RecordElement vertex, Query query) {
+		super(vertex, query);
 	}
 
 	@Override
-	public Object evaluate(Graph graph) {
+	public Object evaluate(InternalGreqlEvaluator evaluator) {
 		if (expEval == null) {
 			Expression recordElementExp = vertex
 					.getFirstIsRecordExprOfIncidence(EdgeDirection.IN)
 					.getAlpha();
-			expEval = vertexEvalMarker.getMark(recordElementExp);
+			expEval = query.getVertexEvaluator(recordElementExp);
 		}
-		return expEval.getResult(graph);
+		return expEval.getResult(evaluator);
 	}
 
-	@Override
-	public VertexCosts calculateSubtreeEvaluationCosts() {
-		return greqlEvaluator.getCostModel().calculateCostsRecordElement(this);
-	}
+	// @Override
+	// public VertexCosts calculateSubtreeEvaluationCosts() {
+	// return greqlEvaluator.getCostModel().calculateCostsRecordElement(this);
+	// }
 
 }

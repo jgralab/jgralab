@@ -36,10 +36,10 @@
 package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
-import de.uni_koblenz.jgralab.Graph;
-import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluatorImpl;
-import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
+import de.uni_koblenz.jgralab.greql2.evaluator.InternalGreqlEvaluator;
+import de.uni_koblenz.jgralab.greql2.evaluator.Query;
 import de.uni_koblenz.jgralab.greql2.evaluator.fa.NFA;
+import de.uni_koblenz.jgralab.greql2.schema.Expression;
 import de.uni_koblenz.jgralab.greql2.schema.IsEdgeRestrOf;
 import de.uni_koblenz.jgralab.greql2.schema.SimplePathDescription;
 import de.uni_koblenz.jgralab.greql2.types.TypeCollection;
@@ -52,23 +52,23 @@ import de.uni_koblenz.jgralab.greql2.types.TypeCollection;
  * 
  */
 public class SimplePathDescriptionEvaluator extends
-		PrimaryPathDescriptionEvaluator {
+		PrimaryPathDescriptionEvaluator<SimplePathDescription> {
 
 	public SimplePathDescriptionEvaluator(SimplePathDescription vertex,
-			GreqlEvaluatorImpl eval) {
-		super(vertex, eval);
+			Query query) {
+		super(vertex, query);
 	}
 
 	@Override
-	public NFA evaluate(Graph graph) {
+	public NFA evaluate(InternalGreqlEvaluator evaluator) {
 		TypeCollection typeCollection = new TypeCollection();
 		EdgeRestrictionEvaluator edgeRestEval = null;
-		VertexEvaluator predicateEvaluator = null;
+		VertexEvaluator<? extends Expression> predicateEvaluator = null;
 		for (IsEdgeRestrOf inc : vertex
 				.getIsEdgeRestrOfIncidences(EdgeDirection.IN)) {
-			edgeRestEval = (EdgeRestrictionEvaluator) vertexEvalMarker
-					.getMark(inc.getAlpha());
-			typeCollection.addTypes(edgeRestEval.getTypeCollection(graph));
+			edgeRestEval = (EdgeRestrictionEvaluator) query
+					.getVertexEvaluator(inc.getAlpha());
+			typeCollection.addTypes(edgeRestEval.getTypeCollection(evaluator));
 			predicateEvaluator = edgeRestEval.getPredicateEvaluator();
 		}
 		createdNFA = NFA.createSimplePathDescriptionNFA(
@@ -78,10 +78,10 @@ public class SimplePathDescriptionEvaluator extends
 		return createdNFA;
 	}
 
-	@Override
-	public VertexCosts calculateSubtreeEvaluationCosts() {
-		return greqlEvaluator.getCostModel()
-				.calculateCostsSimplePathDescription(this);
-	}
+	// @Override
+	// public VertexCosts calculateSubtreeEvaluationCosts() {
+	// return greqlEvaluator.getCostModel()
+	// .calculateCostsSimplePathDescription(this);
+	// }
 
 }

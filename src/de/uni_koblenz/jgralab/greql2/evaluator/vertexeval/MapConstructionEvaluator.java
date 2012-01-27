@@ -38,48 +38,46 @@ import org.pcollections.PMap;
 import org.pcollections.PVector;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
-import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.JGraLab;
-import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluatorImpl;
-import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
+import de.uni_koblenz.jgralab.greql2.evaluator.InternalGreqlEvaluator;
+import de.uni_koblenz.jgralab.greql2.evaluator.Query;
 import de.uni_koblenz.jgralab.greql2.exception.GreqlException;
-import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
+import de.uni_koblenz.jgralab.greql2.schema.Expression;
 import de.uni_koblenz.jgralab.greql2.schema.IsKeyExprOfConstruction;
 import de.uni_koblenz.jgralab.greql2.schema.IsValueExprOfConstruction;
 import de.uni_koblenz.jgralab.greql2.schema.MapConstruction;
 
-public class MapConstructionEvaluator extends VertexEvaluator {
-	private MapConstruction mapConstruction;
+public class MapConstructionEvaluator extends VertexEvaluator<MapConstruction> {
 
-	public MapConstructionEvaluator(MapConstruction vertex, GreqlEvaluatorImpl eval) {
-		super(eval);
-		mapConstruction = vertex;
+	public MapConstructionEvaluator(MapConstruction vertex, Query query) {
+		super(vertex, query);
 	}
 
-	@Override
-	protected VertexCosts calculateSubtreeEvaluationCosts() {
-		return greqlEvaluator.getCostModel()
-				.calculateCostsMapConstruction(this);
-	}
+	// @Override
+	// protected VertexCosts calculateSubtreeEvaluationCosts() {
+	// return greqlEvaluator.getCostModel()
+	// .calculateCostsMapConstruction(this);
+	// }
 
 	@Override
-	public Object evaluate(Graph graph) {
+	public Object evaluate(InternalGreqlEvaluator evaluator) {
 		PMap<Object, Object> map = JGraLab.map();
 		PVector<Object> keys = JGraLab.vector();
-		for (IsKeyExprOfConstruction e : mapConstruction
+		for (IsKeyExprOfConstruction e : vertex
 				.getIsKeyExprOfConstructionIncidences(EdgeDirection.IN)) {
-			Vertex exp = e.getAlpha();
-			VertexEvaluator expEval = vertexEvalMarker.getMark(exp);
-			keys = keys.plus(expEval.getResult(graph));
+			Expression exp = e.getAlpha();
+			VertexEvaluator<? extends Expression> expEval = query
+					.getVertexEvaluator(exp);
+			keys = keys.plus(expEval.getResult(evaluator));
 		}
 
 		PVector<Object> values = JGraLab.vector();
-		for (IsValueExprOfConstruction e : mapConstruction
+		for (IsValueExprOfConstruction e : vertex
 				.getIsValueExprOfConstructionIncidences(EdgeDirection.IN)) {
-			Vertex exp = e.getAlpha();
-			VertexEvaluator expEval = vertexEvalMarker.getMark(exp);
-			values = values.plus(expEval.getResult(graph));
+			Expression exp = e.getAlpha();
+			VertexEvaluator<? extends Expression> expEval = query
+					.getVertexEvaluator(exp);
+			values = values.plus(expEval.getResult(evaluator));
 		}
 
 		if (keys.size() != values.size()) {
@@ -94,15 +92,10 @@ public class MapConstructionEvaluator extends VertexEvaluator {
 		return map;
 	}
 
-	@Override
-	public long calculateEstimatedCardinality() {
-		return greqlEvaluator.getCostModel()
-				.calculateCardinalityMapConstruction(this);
-	}
-
-	@Override
-	public Greql2Vertex getVertex() {
-		return mapConstruction;
-	}
+	// @Override
+	// public long calculateEstimatedCardinality() {
+	// return greqlEvaluator.getCostModel()
+	// .calculateCardinalityMapConstruction(this);
+	// }
 
 }

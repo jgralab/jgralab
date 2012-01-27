@@ -37,10 +37,9 @@ package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 
 import org.pcollections.PCollection;
 
-import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.JGraLab;
-import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluatorImpl;
-import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
+import de.uni_koblenz.jgralab.greql2.evaluator.InternalGreqlEvaluator;
+import de.uni_koblenz.jgralab.greql2.evaluator.Query;
 import de.uni_koblenz.jgralab.greql2.schema.ListConstruction;
 
 /**
@@ -49,28 +48,28 @@ import de.uni_koblenz.jgralab.greql2.schema.ListConstruction;
  * @author ist@uni-koblenz.de
  * 
  */
-public class ListConstructionEvaluator extends ValueConstructionEvaluator {
+public class ListConstructionEvaluator extends
+		ValueConstructionEvaluator<ListConstruction> {
 
-	public ListConstructionEvaluator(ListConstruction vertex,
-			GreqlEvaluatorImpl eval) {
-		super(vertex, eval);
+	public ListConstructionEvaluator(ListConstruction vertex, Query query) {
+		super(vertex, query);
 	}
 
 	@Override
-	public PCollection<Object> evaluate(Graph graph) {
-		return createValue(JGraLab.vector());
+	public PCollection<Object> evaluate(InternalGreqlEvaluator evaluator) {
+		return createValue(JGraLab.vector(), evaluator);
 	}
 
-	@Override
-	public VertexCosts calculateSubtreeEvaluationCosts() {
-		return greqlEvaluator.getCostModel().calculateCostsListConstruction(
-				this);
-	}
-
-	@Override
-	public long calculateEstimatedCardinality() {
-		return greqlEvaluator.getCostModel()
-				.calculateCardinalityListConstruction(this);
-	}
+	// @Override
+	// public VertexCosts calculateSubtreeEvaluationCosts() {
+	// return greqlEvaluator.getCostModel().calculateCostsListConstruction(
+	// this);
+	// }
+	//
+	// @Override
+	// public long calculateEstimatedCardinality() {
+	// return greqlEvaluator.getCostModel()
+	// .calculateCardinalityListConstruction(this);
+	// }
 
 }
