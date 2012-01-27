@@ -34,21 +34,21 @@
  */
 package de.uni_koblenz.jgralab.schema.impl;
 
-import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
+import de.uni_koblenz.jgralab.schema.EdgeClass;
 
 public class DirectedSchemaEdgeClass {
 
-	Class<? extends Edge> edgeClass;
+	EdgeClass edgeClass;
 
 	EdgeDirection dir;
 
-	public DirectedSchemaEdgeClass(Class<? extends Edge> ec, EdgeDirection dir) {
+	public DirectedSchemaEdgeClass(EdgeClass ec, EdgeDirection dir) {
 		edgeClass = ec;
 		this.dir = dir;
 	}
 
-	public Class<? extends Edge> getSchemaClass() {
+	public EdgeClass getEdgeClass() {
 		return edgeClass;
 	}
 

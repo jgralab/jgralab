@@ -877,9 +877,8 @@ public abstract class VertexBaseImpl extends
 		assert isValid();
 		DirectedSchemaEdgeClass entry = getEdgeForRolename(role);
 		List<Vertex> adjacences = new ArrayList<Vertex>();
-		Class<? extends Edge> ec = entry.getSchemaClass();
 		EdgeDirection dir = entry.getDirection();
-		for (Edge e : incidences(ec, dir)) {
+		for (Edge e : incidences(entry.getEdgeClass(), dir)) {
 			adjacences.add(e.getThat());
 		}
 		return adjacences;
@@ -892,7 +891,6 @@ public abstract class VertexBaseImpl extends
 		assert getGraph() == other.getGraph();
 
 		DirectedSchemaEdgeClass entry = getEdgeForRolename(role);
-		Class<? extends Edge> ec = entry.getSchemaClass();
 		EdgeDirection dir = entry.getDirection();
 		Vertex from = null;
 		Vertex to = null;
@@ -903,8 +901,7 @@ public abstract class VertexBaseImpl extends
 			to = other;
 			from = this;
 		}
-		Edge e = getGraph().createEdge(ec, from, to);
-		return e;
+		return getGraph().createEdge(entry.getEdgeClass(), from, to);
 	}
 
 	public List<Vertex> removeAdjacences(String role) {
@@ -913,11 +910,10 @@ public abstract class VertexBaseImpl extends
 		TraversalContext oldTC = getGraph().setTraversalContext(null);
 		try {
 			DirectedSchemaEdgeClass entry = getEdgeForRolename(role);
-			Class<? extends Edge> ec = entry.getSchemaClass();
 			List<Vertex> adjacences = new ArrayList<Vertex>();
 			List<Edge> deleteList = new ArrayList<Edge>();
 			EdgeDirection dir = entry.getDirection();
-			for (Edge e : incidences(ec, dir)) {
+			for (Edge e : incidences(entry.getEdgeClass(), dir)) {
 				deleteList.add(e);
 				adjacences.add(e.getThat());
 			}
@@ -938,10 +934,9 @@ public abstract class VertexBaseImpl extends
 		TraversalContext oldTC = getGraph().setTraversalContext(null);
 		try {
 			DirectedSchemaEdgeClass entry = getEdgeForRolename(role);
-			Class<? extends Edge> ec = entry.getSchemaClass();
 			List<Edge> deleteList = new ArrayList<Edge>();
 			EdgeDirection dir = entry.getDirection();
-			for (Edge e : incidences(ec, dir)) {
+			for (Edge e : incidences(entry.getEdgeClass(), dir)) {
 				if (e.getThat() == other) {
 					deleteList.add(e);
 				}

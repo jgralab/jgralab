@@ -46,7 +46,9 @@ import de.uni_koblenz.jgralab.impl.IncidenceImpl;
 import de.uni_koblenz.jgralab.impl.InternalEdge;
 import de.uni_koblenz.jgralab.impl.InternalVertex;
 import de.uni_koblenz.jgralab.impl.ReversedEdgeBaseImpl;
+import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.GraphClass;
+import de.uni_koblenz.jgralab.schema.VertexClass;
 import de.uni_koblenz.jgralab.trans.CommitFailedException;
 import de.uni_koblenz.jgralab.trans.InvalidSavepointException;
 import de.uni_koblenz.jgralab.trans.Savepoint;
@@ -372,25 +374,20 @@ public abstract class GraphImpl extends GraphBaseImpl implements
 	}
 
 	@Override
-	public Edge internalCreateEdge(Class<? extends Edge> cls, Vertex alpha,
+	public <T extends Edge> T createEdge(EdgeClass ec, Vertex alpha,
 			Vertex omega) {
-		// TODO [factory]
-		// Edge edge = graphFactory.createEdge(cls, 0, this,
-		// alpha, omega);
-		Edge edge = null;
-		edge.initializeAttributesWithDefaultValues();
-		graphCache.addEdge((DatabasePersistableEdge) edge);
-		return edge;
+		T e = super.createEdge(ec, alpha, omega);
+		e.initializeAttributesWithDefaultValues();
+		graphCache.addEdge((DatabasePersistableEdge) e);
+		return e;
 	}
 
 	@Override
-	public Vertex internalCreateVertex(Class<? extends Vertex> cls) {
-		// TODO [factory]
-		// Vertex vertex = graphFactory.createVertex(cls, 0, this);
-		Vertex vertex = null;
-		vertex.initializeAttributesWithDefaultValues();
-		graphCache.addVertex((DatabasePersistableVertex) vertex);
-		return vertex;
+	public <T extends Vertex> T createVertex(VertexClass vc) {
+		T v = super.createVertex(vc);
+		v.initializeAttributesWithDefaultValues();
+		graphCache.addVertex((DatabasePersistableVertex) v);
+		return v;
 	}
 
 	private void insertEdgeIntoDatabase(DatabasePersistableEdge edge,

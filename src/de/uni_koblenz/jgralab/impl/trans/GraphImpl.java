@@ -971,22 +971,6 @@ public abstract class GraphImpl extends
 	}
 
 	@Override
-	public Edge internalCreateEdge(Class<? extends Edge> cls, Vertex alpha,
-			Vertex omega) {
-		// TODO [factory]
-		// return graphFactory.createEdge(cls, 0, this,
-		// alpha, omega);
-		return null;
-	}
-
-	@Override
-	public Vertex internalCreateVertex(Class<? extends Vertex> cls) {
-		// TODO [factory]
-		// return graphFactory.createVertex(cls, 0, this);
-		return null;
-	}
-
-	@Override
 	public void deleteEdge(Edge edgeToBeDeleted) {
 		TransactionImpl transaction = (TransactionImpl) getCurrentTransaction();
 		if (transaction == null) {

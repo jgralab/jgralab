@@ -159,8 +159,8 @@ public class JniServer {
 
 	public int createVertex(int graphId, String vertexClassName) {
 		Graph graph = graphs.get(graphId);
-		Class<? extends Vertex> schemaClass = graph.getGraphClass()
-				.getVertexClass(vertexClassName).getSchemaClass();
+		VertexClass schemaClass = graph.getGraphClass().getVertexClass(
+				vertexClassName);
 		return graph.createVertex(schemaClass).getId();
 	}
 
@@ -264,8 +264,8 @@ public class JniServer {
 	public int createEdge(int graphId, String edgeClassName, int alphaId,
 			int omegaId) {
 		Graph graph = graphs.get(graphId);
-		Class<? extends Edge> schemaClass = graph.getGraphClass()
-				.getEdgeClass(edgeClassName).getSchemaClass();
+		EdgeClass schemaClass = graph.getGraphClass().getEdgeClass(
+				edgeClassName);
 		return graph.createEdge(schemaClass, graph.getVertex(alphaId),
 				graph.getVertex(omegaId)).getId();
 	}

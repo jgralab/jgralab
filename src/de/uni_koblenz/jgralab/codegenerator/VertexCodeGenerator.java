@@ -403,11 +403,11 @@ public class VertexCodeGenerator extends AttributedElementCodeGenerator {
 			if (!ec.getTo().getRolename().isEmpty()) {
 				code = new CodeSnippet(true);
 				code.setVariable("rolename", ec.getTo().getRolename());
-				code.setVariable("edgeclass",
-						schemaRootPackageName + "." + ec.getQualifiedName());
+				code.setVariable("edgeclass", ec.getSchema().getQualifiedName()
+						+ ".instance()." + ec.getVariableName());
 				code.setVariable("dir",
 						"de.uni_koblenz.jgralab.EdgeDirection.OUT");
-				code.add("roleMap.put(\"#rolename#\", new DirectedSchemaEdgeClass(#edgeclass#.class, #dir#));");
+				code.add("roleMap.put(\"#rolename#\", new DirectedSchemaEdgeClass(#edgeclass#, #dir#));");
 				list.addNoIndent(code);
 			}
 		}
@@ -415,11 +415,11 @@ public class VertexCodeGenerator extends AttributedElementCodeGenerator {
 			if (!ec.getFrom().getRolename().isEmpty()) {
 				code = new CodeSnippet(true);
 				code.setVariable("rolename", ec.getFrom().getRolename());
-				code.setVariable("edgeclass",
-						schemaRootPackageName + "." + ec.getQualifiedName());
+				code.setVariable("edgeclass", ec.getSchema().getQualifiedName()
+						+ ".instance()." + ec.getVariableName());
 				code.setVariable("dir",
 						"de.uni_koblenz.jgralab.EdgeDirection.IN");
-				code.add("roleMap.put(\"#rolename#\", new DirectedSchemaEdgeClass(#edgeclass#.class, #dir#));");
+				code.add("roleMap.put(\"#rolename#\", new DirectedSchemaEdgeClass(#edgeclass#, #dir#));");
 				list.addNoIndent(code);
 			}
 		}
