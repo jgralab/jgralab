@@ -1,6 +1,8 @@
 package de.uni_koblenz.jgralabtest.genericimpltest;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.fail;
 
 import org.junit.Test;
 
@@ -452,108 +454,4 @@ public class GenericVertexImplTest {
 		}
 	}
 
-	@Test
-	public void testIsValidAlpha() {
-		try {
-			Schema s = GraphIO
-					.loadSchemaFromFile(GenericGraphImplTest.SCHEMAFOLDER
-							+ "VertexTestSchema.tg");
-			Graph graph = s.createGraph(ImplementationType.GENERIC);
-			Vertex a = graph.createVertex(graph.getGraphClass().getVertexClass(
-					"A"));
-			Vertex b = graph.createVertex(graph.getGraphClass().getVertexClass(
-					"B"));
-			Vertex c = graph.createVertex(graph.getGraphClass().getVertexClass(
-					"C"));
-			Vertex d = graph.createVertex(graph.getGraphClass().getVertexClass(
-					"D"));
-			Vertex c2 = graph.createVertex(graph.getGraphClass()
-					.getVertexClass("C2"));
-			Vertex d2 = graph.createVertex(graph.getGraphClass()
-					.getVertexClass("D2"));
-
-			// Issue: createEdge already (indirectly) calls isValidAlpha =>
-			// it already requires the method to work correctly
-			Edge e = graph.createEdge(graph.getGraphClass().getEdgeClass("E"),
-					a, b);
-			Edge f = graph.createEdge(graph.getGraphClass().getEdgeClass("F"),
-					c, d);
-			Edge g = graph.createEdge(graph.getGraphClass().getEdgeClass("G"),
-					c, d);
-			Edge h = graph.createEdge(graph.getGraphClass().getEdgeClass("H"),
-					a, b);
-			Edge i = graph.createEdge(graph.getGraphClass().getEdgeClass("I"),
-					a, a);
-			Edge j = graph.createEdge(graph.getGraphClass().getEdgeClass("J"),
-					c2, d2);
-			Edge k = graph.createEdge(graph.getGraphClass().getEdgeClass("K"),
-					a, b);
-
-			assertTrue(a.isValidAlpha(e));
-			assertTrue(c.isValidAlpha(f));
-			assertTrue(c.isValidAlpha(g));
-			assertTrue(a.isValidAlpha(h));
-			assertTrue(a.isValidAlpha(i));
-			assertTrue(c2.isValidAlpha(j));
-			assertTrue(c2.isValidAlpha(k));
-			assertFalse(a.isValidAlpha(f));
-			assertFalse(c2.isValidAlpha(e));
-			assertFalse(c.isValidAlpha(e));
-		} catch (GraphIOException e) {
-			e.printStackTrace();
-			fail();
-		}
-	}
-
-	@Test
-	public void testIsValidOmega() {
-		try {
-			Schema s = GraphIO
-					.loadSchemaFromFile(GenericGraphImplTest.SCHEMAFOLDER
-							+ "VertexTestSchema.tg");
-			Graph graph = s.createGraph(ImplementationType.GENERIC);
-			Vertex a = graph.createVertex(graph.getGraphClass().getVertexClass(
-					"A"));
-			Vertex b = graph.createVertex(graph.getGraphClass().getVertexClass(
-					"B"));
-			Vertex c = graph.createVertex(graph.getGraphClass().getVertexClass(
-					"C"));
-			Vertex d = graph.createVertex(graph.getGraphClass().getVertexClass(
-					"D"));
-			Vertex c2 = graph.createVertex(graph.getGraphClass()
-					.getVertexClass("C2"));
-			Vertex d2 = graph.createVertex(graph.getGraphClass()
-					.getVertexClass("D2"));
-
-			// Issue: createEdge already (indirectly) calls isValidOmega =>
-			// it already requires the method to work correctly
-			Edge e = graph.createEdge(graph.getGraphClass().getEdgeClass("E"),
-					a, b);
-			Edge f = graph.createEdge(graph.getGraphClass().getEdgeClass("F"),
-					c, d);
-			Edge g = graph.createEdge(graph.getGraphClass().getEdgeClass("G"),
-					c, d);
-			Edge h = graph.createEdge(graph.getGraphClass().getEdgeClass("H"),
-					a, b);
-			Edge i = graph.createEdge(graph.getGraphClass().getEdgeClass("I"),
-					a, a);
-			Edge j = graph.createEdge(graph.getGraphClass().getEdgeClass("J"),
-					c2, d2);
-			Edge k = graph.createEdge(graph.getGraphClass().getEdgeClass("K"),
-					a, b);
-			
-			assertTrue(a.isValidOmega(i));
-			assertTrue(b.isValidOmega(e));
-			assertTrue(d.isValidOmega(e));
-			assertTrue(d.isValidOmega(f));
-			assertTrue(d.isValidOmega(g));
-			assertTrue(b.isValidOmega(h));
-			assertTrue(d2.isValidOmega(j));
-			assertTrue(b.isValidOmega(k));
-			assertFalse(b.isValidOmega(f));
-		} catch (GraphIOException e) {
-			e.printStackTrace();
-			fail();
-		}
-	}
 }

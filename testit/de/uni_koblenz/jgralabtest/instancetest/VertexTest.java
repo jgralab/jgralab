@@ -6421,58 +6421,6 @@ public class VertexTest extends InstanceTest {
 		}
 	}
 
-	// tests of the method boolean isValidAlpha(Edge edge);
-
-	/**
-	 * Checks some cases for true and false considering heredity.
-	 *
-	 * @throws CommitFailedException
-	 */
-	@Test
-	public void isValidAlphaTest0() throws CommitFailedException {
-		createTransaction(g);
-		Vertex v0 = g.createSubNode();
-		Vertex v1 = g.createSuperNode();
-		Vertex v2 = g.createDoubleSubNode();
-		Edge e0 = g.createLink((AbstractSuperNode) v2, (SuperNode) v2);
-		Edge e1 = g.createSubLink((DoubleSubNode) v2, (SuperNode) v2);
-		commit(g);
-		createReadOnlyTransaction(g);
-		assertTrue(v0.isValidAlpha(e0));
-		assertFalse(v1.isValidAlpha(e0));
-		assertTrue(v2.isValidAlpha(e0));
-		assertFalse(v0.isValidAlpha(e1));
-		assertFalse(v1.isValidAlpha(e1));
-		assertTrue(v2.isValidAlpha(e1));
-		commit(g);
-	}
-
-	// tests of the method boolean isValidOmega(Edge edge);
-
-	/**
-	 * Checks some cases for true and false.
-	 *
-	 * @throws CommitFailedException
-	 */
-	@Test
-	public void isValidOmegaTest0() throws CommitFailedException {
-		createTransaction(g);
-		Vertex v0 = g.createSubNode();
-		Vertex v1 = g.createSuperNode();
-		commit(g);
-		createReadOnlyTransaction(g);
-		assertTrue(v0.isValid());
-		assertTrue(v1.isValid());
-		commit(g);
-		createTransaction(g);
-		v0.delete();
-		commit(g);
-		createReadOnlyTransaction(g);
-		assertFalse(v0.isValid());
-		assertTrue(v1.isValid());
-		commit(g);
-	}
-
 	/*
 	 * Test of the Interface GraphElement
 	 */

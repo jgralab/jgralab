@@ -348,22 +348,6 @@ public interface Vertex extends GraphElement {
 	public Iterable<Edge> incidences(Class<? extends Edge> eclass);
 
 	/**
-	 * tests if the Edge <code>edge</code> may start at this vertex
-	 *
-	 * @return <code>true</code> iff <code>edge</code> may start at this vertex
-	 */
-	// @Deprecated
-	public boolean isValidAlpha(Edge edge);
-
-	/**
-	 * tests if the Edge <code>edge</code> may end at this vertex
-	 *
-	 * @return <code>true</code> iff <code>edge</code> may end at this vertex
-	 */
-	// @Deprecated
-	public boolean isValidOmega(Edge edge);
-
-	/**
 	 * Sorts the incidence sequence according to the given comparator in
 	 * ascending order.
 	 *

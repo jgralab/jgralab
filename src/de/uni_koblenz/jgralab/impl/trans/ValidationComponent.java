@@ -1,29 +1,29 @@
 /*
  * JGraLab - The Java Graph Laboratory
- * 
+ *
  * Copyright (C) 2006-2011 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
- * 
+ *
  * For bug reports, documentation and further information, visit
- * 
+ *
  *                         http://jgralab.uni-koblenz.de
- * 
+ *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
  * Free Software Foundation; either version 3 of the License, or (at your
  * option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, see <http://www.gnu.org/licenses>.
- * 
+ *
  * Additional permission under GNU GPL version 3 section 7
- * 
+ *
  * If you modify this Program, or any covered work, by linking or combining
  * it with Eclipse (or a modified version of that program or an Eclipse
  * plugin), containing parts covered by the terms of the Eclipse Public
@@ -52,7 +52,7 @@ import de.uni_koblenz.jgralab.trans.VertexPosition;
 
 /**
  * Executes validation (check for conflicts) for a transaction.
- * 
+ *
  * @author Jose Monte(monte@uni-koblenz.de)
  */
 public class ValidationComponent {
@@ -60,7 +60,7 @@ public class ValidationComponent {
 	private String conflictReason;
 
 	/**
-	 * 
+	 *
 	 * @return if validation fails (a conflict has been detected), the reason
 	 *         for failing is returned
 	 */
@@ -79,7 +79,7 @@ public class ValidationComponent {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return true if a conflict has been detected; false otherwise
 	 */
 	protected boolean isInConflict() {
@@ -99,7 +99,7 @@ public class ValidationComponent {
 
 	/**
 	 * Check whether alpha- and omega-vertices of added edges still exist.
-	 * 
+	 *
 	 * @return if conflict has been detected
 	 */
 	private boolean conflictWithinAddedEdges() {
@@ -110,11 +110,10 @@ public class ValidationComponent {
 				assert (edge.isNormal());
 				InternalVertex alpha = edge.incidentVertex
 						.getTemporaryValue(transaction);
-				assert (alpha.isValidAlpha(edge));
 				// check if alpha-vertex still exists (only relevant if
 				// alpha-vertex hasn't been added within current transaction)
 				if (!alpha.isValid()
-						&& (transaction.addedVertices == null || !transaction.addedVertices
+						&& ((transaction.addedVertices == null) || !transaction.addedVertices
 								.contains(alpha))) {
 					// alpha-vertex is phantom
 					conflictReason = "Cannot add edge " + edge
@@ -122,13 +121,13 @@ public class ValidationComponent {
 							+ edge + " doesn't exist anymore.";
 					return true;
 				}
-				InternalVertex omega = ((ReversedEdgeImpl) edge.getReversedEdge()).incidentVertex
+				InternalVertex omega = ((ReversedEdgeImpl) edge
+						.getReversedEdge()).incidentVertex
 						.getTemporaryValue(transaction);
 				// check if omega-vertex still exists (only relevant if
 				// omega-vertex hasn't been added within current transaction)
-				assert (omega.isValidOmega(edge));
 				if (!omega.isValid()
-						&& (transaction.addedVertices == null || !transaction.addedVertices
+						&& ((transaction.addedVertices == null) || !transaction.addedVertices
 								.contains(omega))) {
 					// omega-vertex is phantom
 					conflictReason = "Cannot add edge " + edge
@@ -143,7 +142,7 @@ public class ValidationComponent {
 
 	/**
 	 * Check whether the deletion of vertices causes lost updates.
-	 * 
+	 *
 	 * @return if conflict has been detected
 	 */
 	private boolean conflictWithinDeletedVertices() {
@@ -151,7 +150,7 @@ public class ValidationComponent {
 		if (transaction.deletedVertices != null) {
 			// for each deleted vertex
 			for (VertexImpl vertex : transaction.deletedVertices) {
-				assert (transaction.addedVertices == null || !transaction.addedVertices
+				assert ((transaction.addedVertices == null) || !transaction.addedVertices
 						.contains(vertex));
 				// vertex only relevant if it still exists
 				if (vertex.isValid()) {
@@ -207,7 +206,7 @@ public class ValidationComponent {
 
 	/**
 	 * Check whether the deletion of edges causes lost updates.
-	 * 
+	 *
 	 * @return if conflict has been detected
 	 */
 	private boolean conflictWithinDeletedEdges() {
@@ -215,7 +214,7 @@ public class ValidationComponent {
 		if (transaction.deletedEdges != null) {
 			// for each deleted edge
 			for (EdgeImpl edge : transaction.deletedEdges) {
-				assert (transaction.addedEdges == null || !transaction.addedEdges
+				assert ((transaction.addedEdges == null) || !transaction.addedEdges
 						.contains(edge));
 				assert (edge.isNormal());
 				// edge only relevant if it still exists
@@ -329,7 +328,7 @@ public class ValidationComponent {
 
 	/**
 	 * Check whether explicit changes to Vseq cause conflicts.
-	 * 
+	 *
 	 * @return if conflict has been detected.
 	 */
 	private boolean conflictWithinVseq() {
@@ -344,12 +343,12 @@ public class ValidationComponent {
 					// explicitly changed...
 					for (VertexImpl vertex : transaction.changedVseqVertices
 							.keySet()) {
-						assert (transaction.deletedVertices == null || !transaction.deletedVertices
+						assert ((transaction.deletedVertices == null) || !transaction.deletedVertices
 								.contains(vertex));
 						// check if vertex still exists (only relevant if vertex
 						// hasn't been added within current transaction)
 						if (!vertex.isValid()
-								&& (transaction.addedVertices == null || !transaction.addedVertices
+								&& ((transaction.addedVertices == null) || !transaction.addedVertices
 										.contains(vertex))) {
 							conflictReason = "Can't commit changes in Vseq for vertex "
 									+ vertex
@@ -370,7 +369,7 @@ public class ValidationComponent {
 								// exists?
 								if (!vertex.prevVertex.getTemporaryValue(
 										transaction).isValid()
-										&& (transaction.addedVertices == null || !transaction.addedVertices
+										&& ((transaction.addedVertices == null) || !transaction.addedVertices
 												.contains(vertex.prevVertex
 														.getTemporaryValue(transaction)))) {
 									conflictReason = "Can't commit changes in Vseq for previous vertex of vertex "
@@ -383,11 +382,11 @@ public class ValidationComponent {
 								}
 								// lost update for the previous vertex of
 								// vertex?
-								if (vertex.prevVertex
-										.getLatestPersistentVersion() > transaction.persistentVersionAtBot
-										&& vertex.prevVertex
+								if ((vertex.prevVertex
+										.getLatestPersistentVersion() > transaction.persistentVersionAtBot)
+										&& (vertex.prevVertex
 												.getTemporaryValue(transaction) != vertex.prevVertex
-												.getLatestPersistentValue()) {
+												.getLatestPersistentValue())) {
 									conflictReason = "Can't commit changes in Vseq for previous vertex of vertex "
 											+ vertex
 											+ ", because a lost update for previous vertex occured.";
@@ -405,21 +404,20 @@ public class ValidationComponent {
 										// vertex of another vertex in Vseq
 										// since
 										// BOT
-										if (vertex.nextVertex
+										if ((vertex.nextVertex
 												.getLatestPersistentValue().prevVertex
-												.getLatestPersistentVersion() > transaction.persistentVersionAtBot
+												.getLatestPersistentVersion() > transaction.persistentVersionAtBot)
 												&& !(transaction.changedVseqVertices
 														.containsKey(vertex.nextVertex
 																.getLatestPersistentValue())
 														&& transaction.changedVseqVertices
-																.get(
-																		vertex.nextVertex
-																				.getLatestPersistentValue())
+																.get(vertex.nextVertex
+																		.getLatestPersistentValue())
 																.keySet()
 																.contains(
-																		ListPosition.PREV) && vertex.nextVertex
+																		ListPosition.PREV) && (vertex.nextVertex
 														.getLatestPersistentValue() == vertex.nextVertex
-														.getTemporaryValue(transaction))) {
+														.getTemporaryValue(transaction)))) {
 											conflictReason = "Can't commit change of position of vertex "
 													+ vertex
 													+ " in Vseq, because "
@@ -438,7 +436,7 @@ public class ValidationComponent {
 								// does the next vertex of vertex still exists?
 								if (!vertex.nextVertex.getTemporaryValue(
 										transaction).isValid()
-										&& (transaction.addedVertices == null || !transaction.addedVertices
+										&& ((transaction.addedVertices == null) || !transaction.addedVertices
 												.contains(vertex.nextVertex
 														.getTemporaryValue(transaction)))) {
 									conflictReason = "Can't commit changes in Vseq for next vertex of vertex "
@@ -450,11 +448,11 @@ public class ValidationComponent {
 									return true;
 								}
 								// lost update for the next vertex of vertex?
-								if (vertex.nextVertex
-										.getLatestPersistentVersion() > transaction.persistentVersionAtBot
-										&& vertex.nextVertex
+								if ((vertex.nextVertex
+										.getLatestPersistentVersion() > transaction.persistentVersionAtBot)
+										&& (vertex.nextVertex
 												.getTemporaryValue(transaction) != vertex.nextVertex
-												.getLatestPersistentValue()) {
+												.getLatestPersistentValue())) {
 									conflictReason = "Can't commit changes in Vseq for next vertex of vertex "
 											+ vertex
 											+ ", because a lost update for next vertex occured.";
@@ -471,21 +469,20 @@ public class ValidationComponent {
 										// vertex of another vertex in Vseq
 										// since
 										// BOT
-										if (vertex.prevVertex
+										if ((vertex.prevVertex
 												.getLatestPersistentValue().nextVertex
-												.getLatestPersistentVersion() > transaction.persistentVersionAtBot
+												.getLatestPersistentVersion() > transaction.persistentVersionAtBot)
 												&& !(transaction.changedVseqVertices
 														.containsKey(vertex.prevVertex
 																.getLatestPersistentValue())
 														&& transaction.changedVseqVertices
-																.get(
-																		vertex.prevVertex
-																				.getLatestPersistentValue())
+																.get(vertex.prevVertex
+																		.getLatestPersistentValue())
 																.keySet()
 																.contains(
-																		ListPosition.NEXT) && vertex.prevVertex
+																		ListPosition.NEXT) && (vertex.prevVertex
 														.getLatestPersistentValue() == vertex.prevVertex
-														.getTemporaryValue(transaction))) {
+														.getTemporaryValue(transaction)))) {
 											conflictReason = "Can't commit change of position of vertex "
 													+ vertex
 													+ " in Vseq, because "
@@ -515,7 +512,7 @@ public class ValidationComponent {
 
 	/**
 	 * Check whether explicit changes to Eseq cause conflicts.
-	 * 
+	 *
 	 * @return if conflict has been detected.
 	 */
 	private boolean conflictWithinEseq() {
@@ -528,13 +525,13 @@ public class ValidationComponent {
 					// for every edge whose previous and/or next vertex has been
 					// explicitly changed...
 					for (EdgeImpl edge : transaction.changedEseqEdges.keySet()) {
-						assert (transaction.deletedEdges == null || !transaction.deletedEdges
+						assert ((transaction.deletedEdges == null) || !transaction.deletedEdges
 								.contains(edge));
 						assert (edge.isNormal());
 						// check if edge still exists (only relevant if edge
 						// hasn't been added within current transaction)
 						if (!edge.isValid()
-								&& (transaction.addedEdges == null || !transaction.addedEdges
+								&& ((transaction.addedEdges == null) || !transaction.addedEdges
 										.contains(edge))) {
 							conflictReason = "Can't commit changes in Eseq for edge "
 									+ edge
@@ -554,7 +551,7 @@ public class ValidationComponent {
 								// does the previous edge of edge still exists?
 								if (!edge.prevEdge.getTemporaryValue(
 										transaction).isValid()
-										&& (transaction.addedEdges == null || !transaction.addedEdges
+										&& ((transaction.addedEdges == null) || !transaction.addedEdges
 												.contains(edge.prevEdge
 														.getTemporaryValue(transaction)))) {
 									conflictReason = "Can't commit changes in Eseq for previous edge of edge "
@@ -566,10 +563,10 @@ public class ValidationComponent {
 									return true;
 								}
 								// lost update for the previous edge of edge?
-								if (edge.prevEdge.getLatestPersistentVersion() > transaction.persistentVersionAtBot
-										&& edge.prevEdge
+								if ((edge.prevEdge.getLatestPersistentVersion() > transaction.persistentVersionAtBot)
+										&& (edge.prevEdge
 												.getTemporaryValue(transaction) != edge.prevEdge
-												.getLatestPersistentValue()) {
+												.getLatestPersistentValue())) {
 									conflictReason = "Can't commit changes in Eseq for previous edge of edge "
 											+ edge
 											+ ", because a lost update for previous edge occured.";
@@ -590,21 +587,19 @@ public class ValidationComponent {
 										// BOT
 										if (edge.nextEdge
 												.getLatestPersistentValue() != null) {
-											if (edge.nextEdge
+											if ((edge.nextEdge
 													.getLatestPersistentValue().prevEdge
-													.getLatestPersistentVersion() > transaction.persistentVersionAtBot
-													&& !(transaction.changedEseqEdges
+													.getLatestPersistentVersion() > transaction.persistentVersionAtBot)
+													&& !((transaction.changedEseqEdges
 															.containsKey(edge.nextEdge
+																	.getLatestPersistentValue()) && transaction.changedEseqEdges
+															.get(edge.nextEdge
 																	.getLatestPersistentValue())
-															&& transaction.changedEseqEdges
-																	.get(
-																			edge.nextEdge
-																					.getLatestPersistentValue())
-																	.keySet()
-																	.contains(
-																			ListPosition.PREV) || edge.nextEdge
+															.keySet()
+															.contains(
+																	ListPosition.PREV)) || (edge.nextEdge
 															.getLatestPersistentValue() == edge.nextEdge
-															.getTemporaryValue(transaction))) {
+															.getTemporaryValue(transaction)))) {
 												conflictReason = "Can't commit change of position of edge "
 														+ edge
 														+ " in Eseq, because "
@@ -624,7 +619,7 @@ public class ValidationComponent {
 								// does the next edge of edge still exists?
 								if (!edge.nextEdge.getTemporaryValue(
 										transaction).isValid()
-										&& (transaction.addedEdges == null || !transaction.addedEdges
+										&& ((transaction.addedEdges == null) || !transaction.addedEdges
 												.contains(edge.nextEdge
 														.getTemporaryValue(transaction)))) {
 									conflictReason = "Can't commit changes in Eseq for next edge of edge "
@@ -636,10 +631,10 @@ public class ValidationComponent {
 									return true;
 								}
 								// lost update for the next edge of edge?
-								if (edge.nextEdge.getLatestPersistentVersion() > transaction.persistentVersionAtBot
-										&& edge.nextEdge
+								if ((edge.nextEdge.getLatestPersistentVersion() > transaction.persistentVersionAtBot)
+										&& (edge.nextEdge
 												.getTemporaryValue(transaction) != edge.nextEdge
-												.getLatestPersistentValue()) {
+												.getLatestPersistentValue())) {
 									conflictReason = "Can't commit changes in Eseq for next edge of edge "
 											+ edge
 											+ ", because a lost update for next edge occured.";
@@ -657,21 +652,20 @@ public class ValidationComponent {
 										// as next
 										// edge of another edge in Eseq since
 										// BOT
-										if (edge.prevEdge
+										if ((edge.prevEdge
 												.getLatestPersistentValue().nextEdge
-												.getLatestPersistentVersion() > transaction.persistentVersionAtBot
+												.getLatestPersistentVersion() > transaction.persistentVersionAtBot)
 												&& !(transaction.changedEseqEdges
 														.containsKey(edge.prevEdge
 																.getLatestPersistentValue())
 														&& transaction.changedEseqEdges
-																.get(
-																		edge.prevEdge
-																				.getLatestPersistentValue())
+																.get(edge.prevEdge
+																		.getLatestPersistentValue())
 																.keySet()
 																.contains(
-																		ListPosition.NEXT) && edge.prevEdge
+																		ListPosition.NEXT) && (edge.prevEdge
 														.getLatestPersistentValue() == edge.prevEdge
-														.getTemporaryValue(transaction))) {
+														.getTemporaryValue(transaction)))) {
 											conflictReason = "Can't commit change of position of edge "
 													+ edge
 													+ " in Eseq, because "
@@ -701,7 +695,7 @@ public class ValidationComponent {
 
 	/**
 	 * Check whether explicit changes to Iseq cause conflicts.
-	 * 
+	 *
 	 * @return if conflict has been detected.
 	 */
 	private boolean conflictWithinChangedIncidences() {
@@ -712,20 +706,20 @@ public class ValidationComponent {
 					.entrySet();
 			for (Entry<VertexImpl, Map<IncidenceImpl, Map<ListPosition, Boolean>>> vertexMap : vertices) {
 				VertexImpl vertex = vertexMap.getKey();
-				assert (transaction.deletedVertices == null || !transaction.deletedVertices
+				assert ((transaction.deletedVertices == null) || !transaction.deletedVertices
 						.contains(vertex));
 				if (!vertex.isValid()
-						&& (transaction.addedVertices == null || !transaction.addedVertices
+						&& ((transaction.addedVertices == null) || !transaction.addedVertices
 								.contains(vertex))) {
 					conflictReason = "Can't commit changes to Iseq(" + vertex
 							+ "), because " + vertex
 							+ " doesn't exist anymore.";
 					return true;
 				}
-				if ((transaction.addedVertices == null || !transaction.addedVertices
+				if (((transaction.addedVertices == null) || !transaction.addedVertices
 						.contains(vertex))
-						&& vertex.incidenceListVersion
-								.getLatestPersistentVersion() <= transaction.persistentVersionAtBot) {
+						&& (vertex.incidenceListVersion
+								.getLatestPersistentVersion() <= transaction.persistentVersionAtBot)) {
 					continue;
 				}
 				Map<IncidenceImpl, Map<ListPosition, Boolean>> incidences = vertexMap
@@ -735,9 +729,9 @@ public class ValidationComponent {
 							.entrySet();
 					for (Entry<IncidenceImpl, Map<ListPosition, Boolean>> incidencesMap : incidencesEntrySet) {
 						IncidenceImpl incidence = incidencesMap.getKey();
-						assert (transaction.deletedEdges == null || !transaction.deletedEdges
+						assert ((transaction.deletedEdges == null) || !transaction.deletedEdges
 								.contains(incidence));
-						if ((transaction.addedEdges == null || !transaction.addedEdges
+						if (((transaction.addedEdges == null) || !transaction.addedEdges
 								.contains(incidence.getNormalEdge()))
 								&& !incidence.getNormalEdge().isValid()) {
 							conflictReason = "Can't commit changes for incidence "
@@ -770,9 +764,10 @@ public class ValidationComponent {
 							boolean movedIncidence = entry.getValue();
 							switch (entry.getKey()) {
 							case PREV: {
-								if (!prevIncidence.getTemporaryValue(
-										transaction).getNormalEdge().isValid()
-										&& (transaction.addedEdges == null || transaction.addedEdges
+								if (!prevIncidence
+										.getTemporaryValue(transaction)
+										.getNormalEdge().isValid()
+										&& ((transaction.addedEdges == null) || transaction.addedEdges
 												.contains(prevIncidence
 														.getTemporaryValue(
 																transaction)
@@ -788,10 +783,10 @@ public class ValidationComponent {
 											+ "), because previous incidence doesn't exist anymore.";
 									return true;
 								}
-								if (prevIncidence.getLatestPersistentVersion() > transaction.persistentVersionAtBot
-										&& prevIncidence
+								if ((prevIncidence.getLatestPersistentVersion() > transaction.persistentVersionAtBot)
+										&& (prevIncidence
 												.getTemporaryValue(transaction) != prevIncidence
-												.getLatestPersistentValue()) {
+												.getLatestPersistentValue())) {
 									conflictReason = "Can't commit previous incidence "
 											+ prevIncidence.getTemporaryValue(
 													transaction)
@@ -836,20 +831,19 @@ public class ValidationComponent {
 										// BOT
 										if (nextIncidence
 												.getLatestPersistentValue() != null) {
-											if (niPrevIncidence
-													.getLatestPersistentVersion() > transaction.persistentVersionAtBot
+											if ((niPrevIncidence
+													.getLatestPersistentVersion() > transaction.persistentVersionAtBot)
 													&& !(transaction.changedIncidences
 															.containsKey(nextIncidence
 																	.getLatestPersistentValue())
 															&& transaction.changedIncidences
-																	.get(
-																			nextIncidence
-																					.getLatestPersistentValue())
+																	.get(nextIncidence
+																			.getLatestPersistentValue())
 																	.keySet()
 																	.contains(
-																			ListPosition.PREV) && nextIncidence
+																			ListPosition.PREV) && (nextIncidence
 															.getLatestPersistentValue() == nextIncidence
-															.getTemporaryValue(transaction))) {
+															.getTemporaryValue(transaction)))) {
 												conflictReason = "Can't commit change of position of incidence "
 														+ incidence
 														+ " in Iseq( "
@@ -868,9 +862,10 @@ public class ValidationComponent {
 								break;
 							}
 							case NEXT: {
-								if (!nextIncidence.getTemporaryValue(
-										transaction).getNormalEdge().isValid()
-										&& (transaction.addedEdges == null || transaction.addedEdges
+								if (!nextIncidence
+										.getTemporaryValue(transaction)
+										.getNormalEdge().isValid()
+										&& ((transaction.addedEdges == null) || transaction.addedEdges
 												.contains(nextIncidence
 														.getTemporaryValue(
 																transaction)
@@ -886,10 +881,10 @@ public class ValidationComponent {
 											+ "), because next incidence doesn't exist anymore.";
 									return true;
 								}
-								if (nextIncidence.getLatestPersistentVersion() > transaction.persistentVersionAtBot
-										&& nextIncidence
+								if ((nextIncidence.getLatestPersistentVersion() > transaction.persistentVersionAtBot)
+										&& (nextIncidence
 												.getTemporaryValue(transaction) != nextIncidence
-												.getLatestPersistentValue()) {
+												.getLatestPersistentValue())) {
 									conflictReason = "Can't commit next incidence "
 											+ nextIncidence.getTemporaryValue(
 													transaction)
@@ -932,20 +927,19 @@ public class ValidationComponent {
 										// set as next
 										// edge of another edge in Eseq since
 										// BOT
-										if (piNextIncidence
-												.getLatestPersistentVersion() > transaction.persistentVersionAtBot
+										if ((piNextIncidence
+												.getLatestPersistentVersion() > transaction.persistentVersionAtBot)
 												&& !(transaction.changedIncidences
 														.containsKey(prevIncidence
 																.getLatestPersistentValue())
 														&& transaction.changedIncidences
-																.get(
-																		prevIncidence
-																				.getLatestPersistentValue())
+																.get(prevIncidence
+																		.getLatestPersistentValue())
 																.keySet()
 																.contains(
-																		ListPosition.NEXT) && prevIncidence
+																		ListPosition.NEXT) && (prevIncidence
 														.getLatestPersistentValue() == prevIncidence
-														.getTemporaryValue(transaction))) {
+														.getTemporaryValue(transaction)))) {
 											conflictReason = "Can't commit change of position of edge "
 													+ incidence
 													+ " in Eseq, because "
@@ -971,7 +965,7 @@ public class ValidationComponent {
 
 	/**
 	 * Check whether explicit changes to edges cause conflicts.
-	 * 
+	 *
 	 * @return if conflict has been detected.
 	 */
 	private boolean conflictWithinChangedEdges() {
@@ -982,13 +976,13 @@ public class ValidationComponent {
 			// for each edge changed...
 			for (Entry<EdgeImpl, VertexPosition> entry : edges) {
 				EdgeImpl edge = entry.getKey();
-				assert (transaction.deletedEdges == null || !transaction.deletedEdges
+				assert ((transaction.deletedEdges == null) || !transaction.deletedEdges
 						.contains(edge));
 				assert (edge.isNormal());
 				// does edge still exists (only relevant if edge hasn't been
 				// added within current transaction)
 				if (!edge.isValid()
-						&& (transaction.addedEdges == null || !transaction.addedEdges
+						&& ((transaction.addedEdges == null) || !transaction.addedEdges
 								.contains(edge))) {
 					conflictReason = "Changes made to edge " + edge
 							+ " can't be committed, because " + edge
@@ -1006,7 +1000,7 @@ public class ValidationComponent {
 					// check if alpha-vertex still exists...
 					if (!edge.incidentVertex.getTemporaryValue(transaction)
 							.isValid()
-							&& (transaction.addedVertices == null || !transaction.addedVertices
+							&& ((transaction.addedVertices == null) || !transaction.addedVertices
 									.contains(edge.incidentVertex
 											.getTemporaryValue(transaction)))) {
 						conflictReason = "Can't commit alpha-vertex "
@@ -1018,10 +1012,10 @@ public class ValidationComponent {
 						return true;
 					}
 					// lost update for alpha-vertex?
-					if (edge.incidentVertex.getLatestPersistentVersion() > transaction.persistentVersionAtBot
-							&& edge.incidentVertex
+					if ((edge.incidentVertex.getLatestPersistentVersion() > transaction.persistentVersionAtBot)
+							&& (edge.incidentVertex
 									.getTemporaryValue(transaction) != edge.incidentVertex
-									.getLatestPersistentValue()) {
+									.getLatestPersistentValue())) {
 						conflictReason = "Can't commit alpha-vertex "
 								+ edge.incidentVertex
 										.getTemporaryValue(transaction)
@@ -1038,7 +1032,7 @@ public class ValidationComponent {
 					// check if omega-vertex still exists...
 					if (!((ReversedEdgeImpl) edge.getReversedEdge()).incidentVertex
 							.getTemporaryValue(transaction).isValid()
-							&& (transaction.addedVertices == null || !transaction.addedVertices
+							&& ((transaction.addedVertices == null) || !transaction.addedVertices
 									.contains(((ReversedEdgeImpl) edge
 											.getReversedEdge()).incidentVertex
 											.getTemporaryValue(transaction)))) {
@@ -1051,12 +1045,12 @@ public class ValidationComponent {
 						return true;
 					}
 					// lost update for omega-vertex?
-					if (((ReversedEdgeImpl) edge.getReversedEdge()).incidentVertex
-							.getLatestPersistentVersion() > transaction.persistentVersionAtBot
-							&& ((ReversedEdgeImpl) edge.getReversedEdge()).incidentVertex
+					if ((((ReversedEdgeImpl) edge.getReversedEdge()).incidentVertex
+							.getLatestPersistentVersion() > transaction.persistentVersionAtBot)
+							&& (((ReversedEdgeImpl) edge.getReversedEdge()).incidentVertex
 									.getTemporaryValue(transaction) != ((ReversedEdgeImpl) edge
 									.getReversedEdge()).incidentVertex
-									.getLatestPersistentValue()) {
+									.getLatestPersistentValue())) {
 						conflictReason = "Can't commit omega-vertex "
 								+ ((ReversedEdgeImpl) edge.getReversedEdge()).incidentVertex
 										.getTemporaryValue(transaction)
@@ -1079,7 +1073,7 @@ public class ValidationComponent {
 
 	/**
 	 * Check whether explicit changes to attributes cause conflicts.
-	 * 
+	 *
 	 * @return if conflict has been detected.
 	 */
 	private boolean conflictWithinChangedAttributes() {
@@ -1095,10 +1089,10 @@ public class ValidationComponent {
 				if (attributedElement instanceof Vertex) {
 					type = "vertex ";
 					VertexImpl vertex = (VertexImpl) attributedElement;
-					assert (transaction.deletedVertices == null || !transaction.deletedVertices
+					assert ((transaction.deletedVertices == null) || !transaction.deletedVertices
 							.contains(attributedElement));
 					// if vertex has been added within current transaction...
-					if (transaction.addedVertices != null
+					if ((transaction.addedVertices != null)
 							&& transaction.addedVertices
 									.contains(attributedElement)) {
 						continue;
@@ -1117,10 +1111,10 @@ public class ValidationComponent {
 				if (attributedElement instanceof Edge) {
 					type = "edge ";
 					Edge edge = (Edge) attributedElement;
-					assert (transaction.deletedEdges == null || !transaction.deletedEdges
+					assert ((transaction.deletedEdges == null) || !transaction.deletedEdges
 							.contains(attributedElement));
 					// if edge has been added within current transaction...
-					if (transaction.addedEdges != null
+					if ((transaction.addedEdges != null)
 							&& transaction.addedEdges
 									.contains(attributedElement)) {
 						continue;
@@ -1171,19 +1165,19 @@ public class ValidationComponent {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param attribute
 	 * @return
 	 */
 	private boolean isAttributeInConflict(VersionedDataObject<?> attribute) {
 		if (attribute.getLatestPersistentVersion() > transaction.persistentVersionAtBot) {
 			Object temporaryValue = attribute.getTemporaryValue(transaction);
-			if (temporaryValue == null
-					&& attribute.getLatestPersistentValue() == null) {
+			if ((temporaryValue == null)
+					&& (attribute.getLatestPersistentValue() == null)) {
 				return false;
 			}
-			if (temporaryValue == null
-					&& attribute.getLatestPersistentValue() != null) {
+			if ((temporaryValue == null)
+					&& (attribute.getLatestPersistentValue() != null)) {
 				return true;
 			}
 			if (!attribute.getTemporaryValue(transaction).equals(

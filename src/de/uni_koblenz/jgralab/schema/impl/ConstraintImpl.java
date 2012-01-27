@@ -1,29 +1,29 @@
 /*
  * JGraLab - The Java Graph Laboratory
- * 
+ *
  * Copyright (C) 2006-2011 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
- * 
+ *
  * For bug reports, documentation and further information, visit
- * 
+ *
  *                         http://jgralab.uni-koblenz.de
- * 
+ *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
  * Free Software Foundation; either version 3 of the License, or (at your
  * option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, see <http://www.gnu.org/licenses>.
- * 
+ *
  * Additional permission under GNU GPL version 3 section 7
- * 
+ *
  * If you modify this Program, or any covered work, by linking or combining
  * it with Eclipse (or a modified version of that program or an Eclipse
  * plugin), containing parts covered by the terms of the Eclipse Public
@@ -39,7 +39,7 @@ import de.uni_koblenz.jgralab.schema.Constraint;
 
 /**
  * @author Tassilo Horn <horn@uni-koblenz.de>
- * 
+ *
  */
 public class ConstraintImpl implements Constraint {
 
@@ -54,8 +54,7 @@ public class ConstraintImpl implements Constraint {
 	}
 
 	public ConstraintImpl(String msg, String pred) {
-		message = msg;
-		predicate = pred;
+		this(msg, pred, null);
 	}
 
 	@Override
@@ -85,10 +84,9 @@ public class ConstraintImpl implements Constraint {
 	@Override
 	public int hashCode() {
 		int hash = 17;
-		hash = 31 * hash + message.hashCode();
-		hash = 31 * hash + predicate.hashCode();
-		hash = 31
-				* hash
+		hash = (31 * hash) + message.hashCode();
+		hash = (31 * hash) + predicate.hashCode();
+		hash = (31 * hash)
 				+ (null == offendingElements ? 0 : offendingElements.hashCode());
 		return hash;
 
@@ -104,7 +102,13 @@ public class ConstraintImpl implements Constraint {
 		if (result != 0) {
 			return result;
 		}
-		return offendingElements.compareTo(o.getOffendingElementsQuery());
+		if (offendingElements != null) {
+			return offendingElements.compareTo(o.getOffendingElementsQuery());
+		}
+		if (o.getOffendingElementsQuery() == null) {
+			return 0;
+		}
+		return -1;
 	}
 
 	@Override
@@ -115,7 +119,8 @@ public class ConstraintImpl implements Constraint {
 		sb.append("\", predicate = \"");
 		sb.append(CodeGenerator.stringQuote(predicate));
 		sb.append("\", offendingElements = ");
-		sb.append(offendingElements);
+		sb.append((offendingElements == null ? "<no offending elems query>"
+				: offendingElements));
 		sb.append("}");
 		return sb.toString();
 	}

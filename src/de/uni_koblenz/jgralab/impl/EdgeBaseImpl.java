@@ -1,29 +1,29 @@
 /*
  * JGraLab - The Java Graph Laboratory
- * 
+ *
  * Copyright (C) 2006-2011 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
- * 
+ *
  * For bug reports, documentation and further information, visit
- * 
+ *
  *                         http://jgralab.uni-koblenz.de
- * 
+ *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
  * Free Software Foundation; either version 3 of the License, or (at your
  * option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, see <http://www.gnu.org/licenses>.
- * 
+ *
  * Additional permission under GNU GPL version 3 section 7
- * 
+ *
  * If you modify this Program, or any covered work, by linking or combining
  * it with Eclipse (or a modified version of that program or an Eclipse
  * plugin), containing parts covered by the terms of the Eclipse Public
@@ -43,10 +43,11 @@ import de.uni_koblenz.jgralab.TraversalContext;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.schema.AggregationKind;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
+import de.uni_koblenz.jgralab.schema.VertexClass;
 
 /**
  * TODO add comment
- * 
+ *
  * @author ist@uni-koblenz.de
  */
 public abstract class EdgeBaseImpl extends IncidenceImpl implements Edge,
@@ -58,15 +59,31 @@ public abstract class EdgeBaseImpl extends IncidenceImpl implements Edge,
 	 * @param anId
 	 * @param graph
 	 */
-	protected EdgeBaseImpl(int anId, Graph graph) {
+	protected EdgeBaseImpl(int anId, Graph graph, Vertex alpha, Vertex omega) {
 		super(graph);
+		EdgeClass myEC = (EdgeClass) getAttributedElementClass();
+		VertexClass aVC = (VertexClass) alpha.getAttributedElementClass();
+		if (!aVC.isValidFromFor(myEC)) {
+			throw new GraphException("Edges of class "
+					+ myEC.getQualifiedName()
+					+ " may not start at vertices of class "
+					+ aVC.getQualifiedName());
+		}
+		VertexClass oVC = (VertexClass) omega.getAttributedElementClass();
+		if (!oVC.isValidToFor(myEC)) {
+			throw new GraphException("Edges of class "
+					+ myEC.getQualifiedName()
+					+ " may not end at vertices of class "
+					+ oVC.getQualifiedName());
+		}
 		setId(anId);
 		reversedEdge = createReversedEdge();
+		((InternalGraph) graph).addEdge(this, alpha, omega);
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see java.lang.Comparable#compareTo(java.lang.Object)
 	 */
 	@Override
@@ -87,7 +104,7 @@ public abstract class EdgeBaseImpl extends IncidenceImpl implements Edge,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.uni_koblenz.jgralab.Edge#delete()
 	 */
 	@Override
@@ -98,7 +115,7 @@ public abstract class EdgeBaseImpl extends IncidenceImpl implements Edge,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.uni_koblenz.jgralab.Edge#getAlpha()
 	 */
 	@Override
@@ -110,10 +127,10 @@ public abstract class EdgeBaseImpl extends IncidenceImpl implements Edge,
 	@Override
 	public Edge getNextEdge() {
 		TraversalContext tc = graph.getTraversalContext();
-		assert tc == null || tc.containsEdge(this);
+		assert (tc == null) || tc.containsEdge(this);
 		InternalEdge nextEdge = getNextEdgeInESeq();
-		if (!(tc == null || nextEdge == null || tc.containsEdge(nextEdge))) {
-			while (!(nextEdge == null || tc.containsEdge(nextEdge))) {
+		if (!((tc == null) || (nextEdge == null) || tc.containsEdge(nextEdge))) {
+			while (!((nextEdge == null) || tc.containsEdge(nextEdge))) {
 				nextEdge = nextEdge.getNextEdgeInESeq();
 			}
 		}
@@ -123,10 +140,10 @@ public abstract class EdgeBaseImpl extends IncidenceImpl implements Edge,
 	@Override
 	public Edge getPrevEdge() {
 		TraversalContext tc = graph.getTraversalContext();
-		assert tc == null || tc.containsEdge(this);
+		assert (tc == null) || tc.containsEdge(this);
 		InternalEdge prevEdge = getPrevEdgeInESeq();
-		if (!(tc == null || prevEdge == null || tc.containsEdge(prevEdge))) {
-			while (!(prevEdge == null || tc.containsEdge(prevEdge))) {
+		if (!((tc == null) || (prevEdge == null) || tc.containsEdge(prevEdge))) {
+			while (!((prevEdge == null) || tc.containsEdge(prevEdge))) {
 				prevEdge = prevEdge.getPrevEdgeInESeq();
 			}
 		}
@@ -135,7 +152,7 @@ public abstract class EdgeBaseImpl extends IncidenceImpl implements Edge,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.uni_koblenz.jgralab.Edge#getNextEdgeOfClassInGraph(java.lang.Class)
 	 */
@@ -155,7 +172,7 @@ public abstract class EdgeBaseImpl extends IncidenceImpl implements Edge,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.uni_koblenz.jgralab.Edge#getNextEdgeOfClassInGraph(de.uni_koblenz.
 	 * jgralab.schema.EdgeClass)
@@ -169,7 +186,7 @@ public abstract class EdgeBaseImpl extends IncidenceImpl implements Edge,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.uni_koblenz.jgralab.Edge#getNormalEdge()
 	 */
 	@Override
@@ -179,7 +196,7 @@ public abstract class EdgeBaseImpl extends IncidenceImpl implements Edge,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.uni_koblenz.jgralab.Edge#getOmega()
 	 */
 	@Override
@@ -190,7 +207,7 @@ public abstract class EdgeBaseImpl extends IncidenceImpl implements Edge,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.uni_koblenz.jgralab.Edge#getReversedEdge()
 	 */
 	@Override
@@ -200,7 +217,7 @@ public abstract class EdgeBaseImpl extends IncidenceImpl implements Edge,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.uni_koblenz.jgralab.Edge#getThat()
 	 */
 	@Override
@@ -211,7 +228,7 @@ public abstract class EdgeBaseImpl extends IncidenceImpl implements Edge,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.uni_koblenz.jgralab.Edge#getThatRole()
 	 */
 	@Override
@@ -222,7 +239,7 @@ public abstract class EdgeBaseImpl extends IncidenceImpl implements Edge,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.uni_koblenz.jgralab.Edge#getThis()
 	 */
 	@Override
@@ -233,7 +250,7 @@ public abstract class EdgeBaseImpl extends IncidenceImpl implements Edge,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.uni_koblenz.jgralab.Edge#getThisRole()
 	 */
 	@Override
@@ -245,7 +262,7 @@ public abstract class EdgeBaseImpl extends IncidenceImpl implements Edge,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.uni_koblenz.jgralab.Edge#isAfterInGraph(de.uni_koblenz.jgralab.Edge)
 	 */
@@ -268,7 +285,7 @@ public abstract class EdgeBaseImpl extends IncidenceImpl implements Edge,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.uni_koblenz.jgralab.Edge#isBeforeInGraph(de.uni_koblenz.jgralab.Edge)
 	 */
@@ -292,7 +309,7 @@ public abstract class EdgeBaseImpl extends IncidenceImpl implements Edge,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.uni_koblenz.jgralab.Edge#isNormal()
 	 */
 	@Override
@@ -302,7 +319,7 @@ public abstract class EdgeBaseImpl extends IncidenceImpl implements Edge,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.uni_koblenz.jgralab.Edge#putAfterInGraph(de.uni_koblenz.jgralab.Edge)
 	 */
@@ -320,7 +337,7 @@ public abstract class EdgeBaseImpl extends IncidenceImpl implements Edge,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.uni_koblenz.jgralab.Edge#putBeforeInGraph(de.uni_koblenz.jgralab.Edge)
 	 */
@@ -338,7 +355,7 @@ public abstract class EdgeBaseImpl extends IncidenceImpl implements Edge,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.uni_koblenz.jgralab.Edge#setAlpha(de.uni_koblenz.jgralab.Vertex)
 	 */
 	@Override
@@ -351,15 +368,16 @@ public abstract class EdgeBaseImpl extends IncidenceImpl implements Edge,
 
 		InternalVertex oldAlpha = getIncidentVertex();
 
-		if (!graph.isLoading() && graph.getECARuleManagerIfThere() != null) {
-			graph.getECARuleManagerIfThere().fireBeforeChangeAlphaOfEdgeEvents(this,
-					oldAlpha, alphaBase);
+		if (!graph.isLoading() && (graph.getECARuleManagerIfThere() != null)) {
+			graph.getECARuleManagerIfThere().fireBeforeChangeAlphaOfEdgeEvents(
+					this, oldAlpha, alphaBase);
 		}
 
 		if (alphaBase == oldAlpha) {
 			return; // nothing to change
 		}
-		if (!alphaBase.isValidAlpha(this)) {
+		if (!((VertexClass) alphaBase.getAttributedElementClass())
+				.isValidFromFor((EdgeClass) getAttributedElementClass())) {
 			throw new GraphException("Edges of class "
 					+ getAttributedElementClass().getUniqueName()
 					+ " may not start at vertices of class "
@@ -382,7 +400,7 @@ public abstract class EdgeBaseImpl extends IncidenceImpl implements Edge,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.uni_koblenz.jgralab.Edge#setOmega(de.uni_koblenz.jgralab.Vertex)
 	 */
 	@Override
@@ -395,16 +413,17 @@ public abstract class EdgeBaseImpl extends IncidenceImpl implements Edge,
 
 		InternalVertex oldOmgea = reversedEdge.getIncidentVertex();
 
-		if (!graph.isLoading() && graph.getECARuleManagerIfThere() != null) {
-			graph.getECARuleManagerIfThere().fireBeforeChangeOmegaOfEdgeEvents(this,
-					oldOmgea, omegaBase);
+		if (!graph.isLoading() && (graph.getECARuleManagerIfThere() != null)) {
+			graph.getECARuleManagerIfThere().fireBeforeChangeOmegaOfEdgeEvents(
+					this, oldOmgea, omegaBase);
 		}
 
 		if (omegaBase == oldOmgea) {
 			return; // nothing to change
 		}
 
-		if (!omegaBase.isValidOmega(this)) {
+		if (!((VertexClass) omegaBase.getAttributedElementClass())
+				.isValidToFor((EdgeClass) getAttributedElementClass())) {
 			throw new GraphException("Edges of class "
 					+ getAttributedElementClass().getUniqueName()
 					+ " may not end at at vertices of class "
@@ -429,7 +448,7 @@ public abstract class EdgeBaseImpl extends IncidenceImpl implements Edge,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.uni_koblenz.jgralab.Edge#setThat(de.uni_koblenz.jgralab.Vertex)
 	 */
 	@Override
@@ -444,7 +463,7 @@ public abstract class EdgeBaseImpl extends IncidenceImpl implements Edge,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.uni_koblenz.jgralab.Edge#setThis(de.uni_koblenz.jgralab.Vertex)
 	 */
 	@Override
@@ -459,7 +478,7 @@ public abstract class EdgeBaseImpl extends IncidenceImpl implements Edge,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
@@ -471,7 +490,7 @@ public abstract class EdgeBaseImpl extends IncidenceImpl implements Edge,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.uni_koblenz.jgralab.Edge#isValid()
 	 */
 	@Override
