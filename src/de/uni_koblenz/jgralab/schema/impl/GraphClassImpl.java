@@ -69,6 +69,7 @@ public final class GraphClassImpl extends
 		assert schema.getDefaultGraphClass() == null : "DefaultGraphClass already created!";
 		GraphClass gc = new GraphClassImpl(schema);
 		gc.setAbstract(true);
+		((GraphClassImpl) gc).setInternal(true);
 		return gc;
 	}
 

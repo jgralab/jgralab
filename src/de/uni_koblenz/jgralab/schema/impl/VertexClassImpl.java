@@ -87,6 +87,7 @@ public final class VertexClassImpl extends
 		VertexClass vc = schema.getDefaultGraphClass().createVertexClass(
 				DEFAULTVERTEXCLASS_NAME);
 		vc.setAbstract(true);
+		((VertexClassImpl) vc).setInternal(true);
 		return vc;
 	}
 
@@ -202,15 +203,18 @@ public final class VertexClassImpl extends
 		// if(isFinished()){
 		// throw new SchemaException("No changes to finished schema!");
 		// }
+		if ((superClass == this) || (superClass == null)) {
+			return;
+		}
 		checkDuplicateRolenames(superClass);
 		super.addSuperClass(superClass);
+		if (!superClass.equals(getSchema().getDefaultVertexClass())) {
+			((GraphClassImpl) getSchema().getGraphClass()).getVertexCsDag()
+					.createEdge(superClass, this);
+		}
 	}
 
 	private void checkDuplicateRolenames(VertexClass superClass) {
-
-		if (superClass == null) {
-			return;
-		}
 		checkDuplicatedRolenamesAgainstAllIncidences(superClass
 				.getAllInIncidenceClasses());
 		checkDuplicatedRolenamesAgainstAllIncidences(superClass

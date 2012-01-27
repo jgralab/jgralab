@@ -61,6 +61,7 @@ public class EdgeClassImpl extends GraphElementClassImpl<EdgeClass, Edge>
 				schema.getDefaultVertexClass(), 0, Integer.MAX_VALUE, "",
 				AggregationKind.NONE);
 		ec.setAbstract(true);
+		((EdgeClassImpl) ec).setInternal(true);
 		return ec;
 	}
 
@@ -130,9 +131,16 @@ public class EdgeClassImpl extends GraphElementClassImpl<EdgeClass, Edge>
 		// if(isFinished()){
 		// throw new SchemaException("No changes to finished schema!");
 		// }
+		if ((superClass == this) || (superClass == null)) {
+			return;
+		}
 		checkIncidenceClassSpecialization(getFrom(), superClass.getFrom());
 		checkIncidenceClassSpecialization(getTo(), superClass.getTo());
 		super.addSuperClass(superClass);
+		if (!superClass.equals(getSchema().getDefaultEdgeClass())) {
+			((GraphClassImpl) getSchema().getGraphClass()).getEdgeCsDag()
+					.createEdge(superClass, (this));
+		}
 		((IncidenceClassImpl) getFrom()).addSubsettedIncidenceClass(superClass
 				.getFrom());
 		((IncidenceClassImpl) getTo()).addSubsettedIncidenceClass(superClass

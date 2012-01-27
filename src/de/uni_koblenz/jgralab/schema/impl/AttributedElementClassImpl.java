@@ -48,10 +48,8 @@ import de.uni_koblenz.jgralab.schema.Attribute;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.Constraint;
 import de.uni_koblenz.jgralab.schema.Domain;
-import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.Package;
 import de.uni_koblenz.jgralab.schema.Schema;
-import de.uni_koblenz.jgralab.schema.VertexClass;
 import de.uni_koblenz.jgralab.schema.exception.DuplicateAttributeException;
 import de.uni_koblenz.jgralab.schema.exception.InheritanceException;
 import de.uni_koblenz.jgralab.schema.exception.SchemaClassAccessException;
@@ -107,6 +105,8 @@ public abstract class AttributedElementClassImpl<SC extends AttributedElementCla
 	 * true if element class is abstract
 	 */
 	private boolean isAbstract = false;
+
+	private boolean internal = false;
 
 	/**
 	 * The class object representing the generated interface for this
@@ -212,21 +212,6 @@ public abstract class AttributedElementClassImpl<SC extends AttributedElementCla
 		directSuperClasses.add(superClass);
 		((AttributedElementClassImpl<SC, IC>) superClass).directSubClasses
 				.add((SC) this);
-
-		if (superClass instanceof VertexClass) {
-			// DefaultVertexClass has a the DefaultGraphClass as graphClass, so
-			// it is not in the DAG
-			if (!superClass.equals(getSchema().getDefaultVertexClass())) {
-				((GraphClassImpl) getSchema().getGraphClass()).getVertexCsDag()
-						.createEdge((VertexClass) superClass,
-								(VertexClass) this);
-			}
-		} else if (superClass instanceof EdgeClass) {
-			if (!superClass.equals(getSchema().getDefaultEdgeClass())) {
-				((GraphClassImpl) getSchema().getGraphClass()).getEdgeCsDag()
-						.createEdge((EdgeClass) superClass, ((EdgeClass) this));
-			}
-		}
 	}
 
 	/**
@@ -445,10 +430,11 @@ public abstract class AttributedElementClassImpl<SC extends AttributedElementCla
 
 	@Override
 	public boolean isInternal() {
-		Schema s = getSchema();
-		return ((this == s.getDefaultEdgeClass())
-				|| (this == s.getDefaultGraphClass()) || (this == s
-				.getDefaultVertexClass()));
+		return internal;
+	}
+
+	void setInternal(Boolean b) {
+		internal = b;
 	}
 
 	@Override
