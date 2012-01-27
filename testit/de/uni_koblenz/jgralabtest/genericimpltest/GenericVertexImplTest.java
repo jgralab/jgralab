@@ -388,7 +388,7 @@ public class GenericVertexImplTest {
 					.loadSchemaFromFile(GenericGraphImplTest.SCHEMAFOLDER
 							+ "VertexTestSchema.tg");
 			Graph g = s.createGraph(ImplementationType.GENERIC);
-	
+
 			Vertex[] vertices = new Vertex[6];
 			vertices[0] = g.createVertex(g.getGraphClass().getVertexClass("A"));
 			vertices[1] = g.createVertex(g.getGraphClass().getVertexClass("B"));
@@ -398,7 +398,7 @@ public class GenericVertexImplTest {
 					.createVertex(g.getGraphClass().getVertexClass("C2"));
 			vertices[5] = g
 					.createVertex(g.getGraphClass().getVertexClass("D2"));
-	
+
 			EdgeClass[] edgeClasses = new EdgeClass[7];
 			edgeClasses[0] = g.getGraphClass().getEdgeClass("E");
 			edgeClasses[1] = g.getGraphClass().getEdgeClass("F");
@@ -407,15 +407,15 @@ public class GenericVertexImplTest {
 			edgeClasses[4] = g.getGraphClass().getEdgeClass("I");
 			edgeClasses[5] = g.getGraphClass().getEdgeClass("J");
 			edgeClasses[6] = g.getGraphClass().getEdgeClass("K");
-			
-			for(Vertex v : vertices) {
-				for(EdgeClass ec : edgeClasses) {
+
+			for (Vertex v : vertices) {
+				for (EdgeClass ec : edgeClasses) {
 					assertNull(v.getFirstIncidence(ec));
 					assertNull(v.getFirstIncidence(ec, EdgeDirection.IN));
 					assertNull(v.getFirstIncidence(ec, EdgeDirection.OUT));
 				}
 			}
-			
+
 			Edge[] edges = new Edge[7];
 			edges[0] = g.createEdge(edgeClasses[0], vertices[0], vertices[1]);
 			edges[1] = g.createEdge(edgeClasses[1], vertices[2], vertices[3]);
@@ -424,20 +424,29 @@ public class GenericVertexImplTest {
 			edges[4] = g.createEdge(edgeClasses[4], vertices[0], vertices[0]);
 			edges[5] = g.createEdge(edgeClasses[5], vertices[4], vertices[5]);
 			edges[6] = g.createEdge(edgeClasses[6], vertices[0], vertices[1]);
-			
-			assertEquals(vertices[0].getFirstIncidence(edgeClasses[0]), edges[0]);
-			assertEquals(vertices[0].getFirstIncidence(edgeClasses[6]), edges[6]);
-			assertEquals(vertices[1].getFirstIncidence(edgeClasses[0]), edges[0].getReversedEdge());
-			assertEquals(vertices[1].getFirstIncidence(edgeClasses[6]), edges[6].getReversedEdge());
-			assertEquals(vertices[2].getFirstIncidence(edgeClasses[1]), edges[1]);
-			assertEquals(vertices[3].getFirstIncidence(edgeClasses[1]), edges[1].getReversedEdge());
-			assertEquals(vertices[4].getFirstIncidence(edgeClasses[5]), edges[5]);
-			assertEquals(vertices[5].getFirstIncidence(edgeClasses[5]), edges[5].getReversedEdge());
-			
-			assertEquals(vertices[0].getFirstIncidence(edgeClasses[4], EdgeDirection.IN), edges[4].getReversedEdge());
-			assertEquals(vertices[2].getFirstIncidence(edgeClasses[0], EdgeDirection.OUT), edges[1]);
-		}
-		catch(GraphIOException e) {
+
+			assertEquals(vertices[0].getFirstIncidence(edgeClasses[0]),
+					edges[0]);
+			assertEquals(vertices[0].getFirstIncidence(edgeClasses[6]),
+					edges[6]);
+			assertEquals(vertices[1].getFirstIncidence(edgeClasses[0]),
+					edges[0].getReversedEdge());
+			assertEquals(vertices[1].getFirstIncidence(edgeClasses[6]),
+					edges[6].getReversedEdge());
+			assertEquals(vertices[2].getFirstIncidence(edgeClasses[1]),
+					edges[1]);
+			assertEquals(vertices[3].getFirstIncidence(edgeClasses[1]),
+					edges[1].getReversedEdge());
+			assertEquals(vertices[4].getFirstIncidence(edgeClasses[5]),
+					edges[5]);
+			assertEquals(vertices[5].getFirstIncidence(edgeClasses[5]),
+					edges[5].getReversedEdge());
+
+			assertEquals(vertices[0].getFirstIncidence(edgeClasses[4],
+					EdgeDirection.IN), edges[4].getReversedEdge());
+			assertEquals(vertices[2].getFirstIncidence(edgeClasses[0],
+					EdgeDirection.OUT), edges[1]);
+		} catch (GraphIOException e) {
 			e.printStackTrace();
 			fail();
 		}
@@ -450,22 +459,36 @@ public class GenericVertexImplTest {
 					.loadSchemaFromFile(GenericGraphImplTest.SCHEMAFOLDER
 							+ "VertexTestSchema.tg");
 			Graph graph = s.createGraph(ImplementationType.GENERIC);
-			Vertex a = graph.createVertex(graph.getGraphClass().getVertexClass("A"));
-			Vertex b = graph.createVertex(graph.getGraphClass().getVertexClass("B"));
-			Vertex c = graph.createVertex(graph.getGraphClass().getVertexClass("C"));
-			Vertex d = graph.createVertex(graph.getGraphClass().getVertexClass("D"));
-			Vertex c2 = graph.createVertex(graph.getGraphClass().getVertexClass("C2"));
-			Vertex d2 = graph.createVertex(graph.getGraphClass().getVertexClass("D2"));
-			
-			// TODO instantiate by means of Reflection!
-			Edge e = graph.createEdge(graph.getGraphClass().getEdgeClass("E"), a, b);
-			Edge f = graph.createEdge(graph.getGraphClass().getEdgeClass("F"), c, d);
-			Edge g = graph.createEdge(graph.getGraphClass().getEdgeClass("G"), c, d);
-			Edge h = graph.createEdge(graph.getGraphClass().getEdgeClass("H"), a, b);
-			Edge i = graph.createEdge(graph.getGraphClass().getEdgeClass("I"), a, a);
-			Edge j = graph.createEdge(graph.getGraphClass().getEdgeClass("J"), c2, d2);
-			Edge k = graph.createEdge(graph.getGraphClass().getEdgeClass("K"), a, b);
-			
+			Vertex a = graph.createVertex(graph.getGraphClass().getVertexClass(
+					"A"));
+			Vertex b = graph.createVertex(graph.getGraphClass().getVertexClass(
+					"B"));
+			Vertex c = graph.createVertex(graph.getGraphClass().getVertexClass(
+					"C"));
+			Vertex d = graph.createVertex(graph.getGraphClass().getVertexClass(
+					"D"));
+			Vertex c2 = graph.createVertex(graph.getGraphClass()
+					.getVertexClass("C2"));
+			Vertex d2 = graph.createVertex(graph.getGraphClass()
+					.getVertexClass("D2"));
+
+			// Issue: createEdge already (indirectly) calls isValidAlpha =>
+			// it already requires the method to work correctly
+			Edge e = graph.createEdge(graph.getGraphClass().getEdgeClass("E"),
+					a, b);
+			Edge f = graph.createEdge(graph.getGraphClass().getEdgeClass("F"),
+					c, d);
+			Edge g = graph.createEdge(graph.getGraphClass().getEdgeClass("G"),
+					c, d);
+			Edge h = graph.createEdge(graph.getGraphClass().getEdgeClass("H"),
+					a, b);
+			Edge i = graph.createEdge(graph.getGraphClass().getEdgeClass("I"),
+					a, a);
+			Edge j = graph.createEdge(graph.getGraphClass().getEdgeClass("J"),
+					c2, d2);
+			Edge k = graph.createEdge(graph.getGraphClass().getEdgeClass("K"),
+					a, b);
+
 			assertTrue(a.isValidAlpha(e));
 			assertTrue(c.isValidAlpha(f));
 			assertTrue(c.isValidAlpha(g));
@@ -473,9 +496,9 @@ public class GenericVertexImplTest {
 			assertTrue(a.isValidAlpha(i));
 			assertTrue(c2.isValidAlpha(j));
 			assertTrue(c2.isValidAlpha(k));
-			assertTrue(c2.isValidAlpha(e));
-		}
-		catch (GraphIOException e) {
+			assertFalse(c2.isValidAlpha(e));
+			assertFalse(c.isValidAlpha(e));
+		} catch (GraphIOException e) {
 			e.printStackTrace();
 			fail();
 		}
@@ -487,10 +510,39 @@ public class GenericVertexImplTest {
 			Schema s = GraphIO
 					.loadSchemaFromFile(GenericGraphImplTest.SCHEMAFOLDER
 							+ "VertexTestSchema.tg");
-			Graph g = s.createGraph(ImplementationType.GENERIC);
-			// TODO
-		}
-		catch (GraphIOException e) {
+			Graph graph = s.createGraph(ImplementationType.GENERIC);
+			Vertex a = graph.createVertex(graph.getGraphClass().getVertexClass(
+					"A"));
+			Vertex b = graph.createVertex(graph.getGraphClass().getVertexClass(
+					"B"));
+			Vertex c = graph.createVertex(graph.getGraphClass().getVertexClass(
+					"C"));
+			Vertex d = graph.createVertex(graph.getGraphClass().getVertexClass(
+					"D"));
+			Vertex c2 = graph.createVertex(graph.getGraphClass()
+					.getVertexClass("C2"));
+			Vertex d2 = graph.createVertex(graph.getGraphClass()
+					.getVertexClass("D2"));
+
+			// Issue: createEdge already (indirectly) calls isValidOmega =>
+			// it already requires the method to work correctly
+			Edge e = graph.createEdge(graph.getGraphClass().getEdgeClass("E"),
+					a, b);
+			Edge f = graph.createEdge(graph.getGraphClass().getEdgeClass("F"),
+					c, d);
+			Edge g = graph.createEdge(graph.getGraphClass().getEdgeClass("G"),
+					c, d);
+			Edge h = graph.createEdge(graph.getGraphClass().getEdgeClass("H"),
+					a, b);
+			Edge i = graph.createEdge(graph.getGraphClass().getEdgeClass("I"),
+					a, a);
+			Edge j = graph.createEdge(graph.getGraphClass().getEdgeClass("J"),
+					c2, d2);
+			Edge k = graph.createEdge(graph.getGraphClass().getEdgeClass("K"),
+					a, b);
+			
+			assertTrue(a.isValidOmega(i));
+		} catch (GraphIOException e) {
 			e.printStackTrace();
 			fail();
 		}
