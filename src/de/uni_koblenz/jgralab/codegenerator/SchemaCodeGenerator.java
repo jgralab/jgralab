@@ -329,7 +329,7 @@ public class SchemaCodeGenerator extends CodeGenerator {
 				"{",
 				"\tGraphClass #gcVariable# = #schemaVariable# = createGraphClass(\"#gcName#\");",
 				"\t#gcVariable#.setAbstract(#gcAbstract#);"));
-		for (AttributedElementClass superClass : gc.getDirectSuperClasses()) {
+		for (GraphClass superClass : gc.getDirectSuperClasses()) {
 			if (superClass.isInternal()) {
 				continue;
 			}
@@ -417,7 +417,7 @@ public class SchemaCodeGenerator extends CodeGenerator {
 				"\t\t#fromPart#,", "\t\t#toPart#);",
 				"\t#aecVariable#.setAbstract(#ecAbstract#);"));
 
-		for (AttributedElementClass superClass : ec.getDirectSuperClasses()) {
+		for (EdgeClass superClass : ec.getDirectSuperClasses()) {
 			if (superClass.isInternal()) {
 				continue;
 			}
@@ -475,7 +475,7 @@ public class SchemaCodeGenerator extends CodeGenerator {
 				"{",
 				"\tVertexClass #aecVariable# = #schemaVariable# = #gcVariable#.createVertexClass(\"#vcName#\");",
 				"\t#aecVariable#.setAbstract(#vcAbstract#);"));
-		for (AttributedElementClass superClass : vc.getDirectSuperClasses()) {
+		for (VertexClass superClass : vc.getDirectSuperClasses()) {
 			if (superClass.isInternal()) {
 				continue;
 			}
@@ -491,7 +491,7 @@ public class SchemaCodeGenerator extends CodeGenerator {
 		return code;
 	}
 
-	private CodeBlock createAttributes(AttributedElementClass aec) {
+	private CodeBlock createAttributes(AttributedElementClass<?, ?> aec) {
 		CodeList code = new CodeList();
 		for (Attribute attr : aec.getOwnAttributeList()) {
 			CodeSnippet s = new CodeSnippet(
@@ -516,7 +516,7 @@ public class SchemaCodeGenerator extends CodeGenerator {
 		return code;
 	}
 
-	private CodeBlock createConstraints(AttributedElementClass aec) {
+	private CodeBlock createConstraints(AttributedElementClass<?, ?> aec) {
 		CodeList code = new CodeList();
 		for (Constraint constraint : aec.getConstraints()) {
 			addImports("#jgSchemaImplPackage#.ConstraintImpl");

@@ -243,7 +243,7 @@ public class CreateSubgraph extends Transformation<Void> {
 
 		for (Iterable<? extends GraphElement<?, ?>> it : iterables) {
 			for (GraphElement<?, ?> ge : it) {
-				AttributedElementClass aec;
+				AttributedElementClass<?, ?> aec;
 				Map<String, String> attrs;
 				String qName;
 				String archetype;

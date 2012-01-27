@@ -50,7 +50,7 @@ public class AttributeType extends Function {
 		return evaluate(el.getAttributedElementClass(), name);
 	}
 
-	public String evaluate(AttributedElementClass aec, String name) {
+	public String evaluate(AttributedElementClass<?, ?> aec, String name) {
 		Attribute attribute = aec.getAttribute(name);
 		return attribute != null ? attribute.getDomain().getQualifiedName()
 				: null;

@@ -510,7 +510,7 @@ public class JniServer {
 	private void setEnumAttribute(AttributedElement<?, ?> e,
 			String attributeName, Object value) {
 		try {
-			AttributedElementClass aec = e.getAttributedElementClass();
+			AttributedElementClass<?, ?> aec = e.getAttributedElementClass();
 			Attribute attr = aec.getAttribute(attributeName);
 			if (attr == null) {
 				throw new GraphException("Attribute " + attributeName
@@ -552,7 +552,7 @@ public class JniServer {
 
 	private String getEnumAttribute(AttributedElement<?, ?> e,
 			String attributeName) {
-		AttributedElementClass aec = e.getAttributedElementClass();
+		AttributedElementClass<?, ?> aec = e.getAttributedElementClass();
 		Attribute attr = aec.getAttribute(attributeName);
 		if (attr == null) {
 			throw new GraphException("Attribute " + attributeName

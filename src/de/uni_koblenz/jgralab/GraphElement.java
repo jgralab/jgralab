@@ -43,7 +43,7 @@ import de.uni_koblenz.jgralab.schema.GraphElementClass;
  * @author ist@uni-koblenz.de
  * 
  */
-public interface GraphElement<SC extends GraphElementClass, IC extends GraphElement<SC, IC>>
+public interface GraphElement<SC extends GraphElementClass<SC, IC>, IC extends GraphElement<SC, IC>>
 		extends AttributedElement<SC, IC> {
 
 	/**

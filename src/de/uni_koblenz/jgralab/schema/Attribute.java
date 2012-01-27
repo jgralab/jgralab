@@ -108,7 +108,7 @@ public interface Attribute {
 	/**
 	 * @return the owning AttributedElementClass
 	 */
-	public AttributedElementClass getAttributedElementClass();
+	public AttributedElementClass<?, ?> getAttributedElementClass();
 
 	/**
 	 * Returns a String suitable to sort Attributes of an AttributedElement.

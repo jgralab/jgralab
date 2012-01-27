@@ -63,11 +63,11 @@ public class CreateAttribute extends Transformation<Attribute> {
 
 	public static final class AttributeSpec {
 		protected String name;
-		protected AttributedElementClass aec;
+		protected AttributedElementClass<?, ?> aec;
 		protected Domain domain;
 		protected String defaultValue;
 
-		public AttributeSpec(final AttributedElementClass attrElemClass,
+		public AttributeSpec(final AttributedElementClass<?, ?> attrElemClass,
 				String attrName, final Domain domain, String defaultValue) {
 			name = attrName;
 			aec = attrElemClass;
@@ -75,7 +75,7 @@ public class CreateAttribute extends Transformation<Attribute> {
 			this.defaultValue = defaultValue;
 		}
 
-		public AttributeSpec(final AttributedElementClass attrElemClass,
+		public AttributeSpec(final AttributedElementClass<?, ?> attrElemClass,
 				String attrName, final Domain domain) {
 			this(attrElemClass, attrName, domain, null);
 		}

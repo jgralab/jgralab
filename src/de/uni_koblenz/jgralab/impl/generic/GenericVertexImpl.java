@@ -14,7 +14,6 @@ import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.impl.InternalVertex;
 import de.uni_koblenz.jgralab.impl.std.VertexImpl;
 import de.uni_koblenz.jgralab.schema.Attribute;
-import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.VertexClass;
 import de.uni_koblenz.jgralab.schema.impl.DirectedSchemaEdgeClass;
@@ -263,7 +262,7 @@ public class GenericVertexImpl extends VertexImpl {
 	}
 
 	@Override
-	public boolean isInstanceOf(AttributedElementClass cls) {
+	public boolean isInstanceOf(VertexClass cls) {
 		// Needs to be overridden from the base variant, because that relies on
 		// code generation.
 		return type.equals(cls) || type.isSubClassOf(cls);

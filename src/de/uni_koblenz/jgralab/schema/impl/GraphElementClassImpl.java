@@ -35,14 +35,15 @@
 
 package de.uni_koblenz.jgralab.schema.impl;
 
-import de.uni_koblenz.jgralab.schema.AttributedElementClass;
+import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.schema.GraphClass;
 import de.uni_koblenz.jgralab.schema.GraphElementClass;
 import de.uni_koblenz.jgralab.schema.Package;
 import de.uni_koblenz.jgralab.schema.VertexClass;
 
-public abstract class GraphElementClassImpl extends AttributedElementClassImpl
-		implements GraphElementClass {
+public abstract class GraphElementClassImpl<SC extends GraphElementClass<SC, IC>, IC extends GraphElement<SC, IC>>
+		extends AttributedElementClassImpl<SC, IC> implements
+		GraphElementClass<SC, IC> {
 
 	protected GraphClass graphClass;
 
@@ -73,15 +74,15 @@ public abstract class GraphElementClassImpl extends AttributedElementClassImpl
 
 		output.append("subClasses of '" + getQualifiedName() + "': ");
 
-		for (AttributedElementClass aec : getAllSubClasses()) {
+		for (SC aec : getAllSubClasses()) {
 			output.append("'" + aec.getQualifiedName() + "' ");
 		}
 		output.append("\nsuperClasses of '" + getQualifiedName() + "': ");
-		for (AttributedElementClass aec : getAllSuperClasses()) {
+		for (SC aec : getAllSuperClasses()) {
 			output.append("'" + aec.getQualifiedName() + "' ");
 		}
 		output.append("\ndirectSuperClasses of '" + getQualifiedName() + "': ");
-		for (AttributedElementClass aec : getDirectSuperClasses()) {
+		for (SC aec : getDirectSuperClasses()) {
 			output.append("'" + aec.getQualifiedName() + "' ");
 		}
 

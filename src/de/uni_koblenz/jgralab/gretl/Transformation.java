@@ -9,7 +9,6 @@ import java.lang.annotation.Target;
 import java.lang.reflect.Method;
 import java.util.logging.Logger;
 
-import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.gretl.Context.TransformationPhase;
@@ -202,7 +201,7 @@ public abstract class Transformation<T> {
 					Tg2Dot.convertGraph(context.getTargetGraph(), "__debug_"
 							+ (EXECUTION_STEP++) + "_" + name + ".pdf",
 							DEBUG_REVERSE_EDGES, GraphVizOutputFormat.PDF,
-							(Class<? extends AttributedElement<?, ?>>[]) null);
+							(EdgeClass[]) null);
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
@@ -321,8 +320,8 @@ public abstract class Transformation<T> {
 	 * @return the target schema {@link AttributedElementClass} with the given
 	 *         qualified name.
 	 */
-	protected final AttributedElementClass aec(String qualifiedName) {
-		AttributedElementClass aec = context.targetSchema
+	protected final AttributedElementClass<?, ?> aec(String qualifiedName) {
+		AttributedElementClass<?, ?> aec = context.targetSchema
 				.getAttributedElementClass(qualifiedName);
 		if (aec == null) {
 			throw new GReTLException(context,
@@ -337,8 +336,8 @@ public abstract class Transformation<T> {
 	 * @return the target schema {@link GraphElementClass} with the given
 	 *         qualified name.
 	 */
-	protected final GraphElementClass gec(String qualifiedName) {
-		GraphElementClass gec = context.targetSchema.getGraphClass()
+	protected final GraphElementClass<?, ?> gec(String qualifiedName) {
+		GraphElementClass<?, ?> gec = context.targetSchema.getGraphClass()
 				.getGraphElementClass(qualifiedName);
 		if (gec == null) {
 			throw new GReTLException(context,
@@ -351,7 +350,7 @@ public abstract class Transformation<T> {
 	protected final Attribute attr(String qualifiedName) {
 		int lastDot = qualifiedName.lastIndexOf('.');
 		String className = qualifiedName.substring(0, lastDot);
-		AttributedElementClass aec = context.getTargetSchema()
+		AttributedElementClass<?, ?> aec = context.getTargetSchema()
 				.getAttributedElementClass(className);
 		if (aec == null) {
 			throw new GReTLException(context,

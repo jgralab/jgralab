@@ -117,10 +117,10 @@ public class Xml2tg {
 	}
 
 	private class AttributedElementInfo {
-		private AttributedElementClass aec;
+		private AttributedElementClass<?, ?> aec;
 		private Map<String, String> attributes;
 
-		public AttributedElementInfo(AttributedElementClass aec) {
+		public AttributedElementInfo(AttributedElementClass<?, ?> aec) {
 			super();
 			this.aec = aec;
 			attributes = new HashMap<String, String>();
@@ -131,7 +131,7 @@ public class Xml2tg {
 			}
 		}
 
-		public AttributedElementClass getAttributedElementClass() {
+		public AttributedElementClass<?, ?> getAttributedElementClass() {
 			return aec;
 		}
 
@@ -299,7 +299,7 @@ public class Xml2tg {
 						String attributedElementClassName = reader.getName()
 								.getLocalPart();
 						// System.out.println(attributedElementClassName);
-						AttributedElementClass aec = schema
+						AttributedElementClass<?, ?> aec = schema
 								.getAttributedElementClass(attributedElementClassName);
 						if (aec == null) {
 							throw new RuntimeException(
@@ -319,7 +319,7 @@ public class Xml2tg {
 													.getQualifiedName()
 											+ " but was " + graphClassName);
 						}
-						AttributedElementClass aec = schema
+						AttributedElementClass<?, ?> aec = schema
 								.getAttributedElementClass(graphClassName);
 						if (aec == null) {
 							throw new RuntimeException("GraphClass '"

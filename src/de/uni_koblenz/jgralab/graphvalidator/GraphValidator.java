@@ -159,11 +159,11 @@ public class GraphValidator {
 		}
 
 		// check if all greql constraints are met
-		List<AttributedElementClass> aecs = new ArrayList<AttributedElementClass>();
+		List<AttributedElementClass<?, ?>> aecs = new ArrayList<AttributedElementClass<?, ?>>();
 		aecs.add(graph.getSchema().getGraphClass());
 		aecs.addAll(graph.getSchema().getGraphClass().getVertexClasses());
 		aecs.addAll(graph.getSchema().getGraphClass().getEdgeClasses());
-		for (AttributedElementClass aec : aecs) {
+		for (AttributedElementClass<?, ?> aec : aecs) {
 			brokenConstraints.addAll(validateConstraints(aec));
 		}
 		return brokenConstraints;
@@ -178,7 +178,7 @@ public class GraphValidator {
 	 * @return a set of {@link ConstraintViolation} objects
 	 */
 	public SortedSet<ConstraintViolation> validateConstraints(
-			AttributedElementClass aec) {
+			AttributedElementClass<?, ?> aec) {
 		SortedSet<ConstraintViolation> brokenConstraints = new TreeSet<ConstraintViolation>();
 		for (Constraint constraint : aec.getConstraints()) {
 			String query = constraint.getPredicate();

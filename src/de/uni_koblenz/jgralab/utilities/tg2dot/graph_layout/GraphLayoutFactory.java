@@ -60,6 +60,7 @@ import org.pcollections.PSet;
 
 import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
+import de.uni_koblenz.jgralab.schema.GraphElementClass;
 import de.uni_koblenz.jgralab.schema.Schema;
 import de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout.definition.Definition;
 import de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout.definition.ElementDefinition;
@@ -237,26 +238,29 @@ public class GraphLayoutFactory {
 	}
 
 	private void applyHierarchieToTypeDefinitions() {
-		applyHierarchie(currentGraphLayout.vertexTypeDefinitions);
-		applyHierarchie(currentGraphLayout.edgeTypeDefinitions);
+		applyHierarchie(currentGraphLayout.vertexTypeDefinitions, true);
+		applyHierarchie(currentGraphLayout.edgeTypeDefinitions, false);
 	}
 
-	private void applyHierarchie(Map<AttributedElementClass, TypeDefinition> map) {
+	@SuppressWarnings("unchecked")
+	private <T extends GraphElementClass<?, ?>> void applyHierarchie(
+			Map<T, TypeDefinition> map, boolean isVertexClasses) {
 
-		List<AttributedElementClass> allSchemaTypes = new ArrayList<AttributedElementClass>();
-		allSchemaTypes.addAll(schema.getVertexClasses());
-		allSchemaTypes.addAll(schema.getEdgeClasses());
+		List<T> allSchemaTypes = new ArrayList<T>();
+		if (isVertexClasses) {
+			allSchemaTypes.addAll((List<T>) schema.getVertexClasses());
+		} else {
+			allSchemaTypes.addAll((List<T>) schema.getEdgeClasses());
+		}
 
-		for (Entry<AttributedElementClass, TypeDefinition> entry : map
-				.entrySet()) {
-			AttributedElementClass type = entry.getKey();
+		for (Entry<T, TypeDefinition> entry : map.entrySet()) {
+			T type = entry.getKey();
 
-			List<AttributedElementClass> allSuperClasses = new ArrayList<AttributedElementClass>(
-					allSchemaTypes);
+			List<T> allSuperClasses = new ArrayList<T>(allSchemaTypes);
 			allSuperClasses.retainAll(type.getAllSuperClasses());
 			Collections.reverse(allSuperClasses);
 
-			for (AttributedElementClass supertype : allSuperClasses) {
+			for (AttributedElementClass<?, ?> supertype : allSuperClasses) {
 				Definition spec = map.get(supertype);
 				entry.getValue().addNonExistingAttributes(spec);
 			}

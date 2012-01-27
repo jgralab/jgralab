@@ -667,7 +667,8 @@ public class ECAIO {
 	private Class<? extends AttributedElement<?, ?>> getAttributedElement(
 			String name) {
 		Class<? extends AttributedElement<?, ?>> aecl;
-		AttributedElementClass aeclo = schema.getAttributedElementClass(name);
+		AttributedElementClass<?, ?> aeclo = schema
+				.getAttributedElementClass(name);
 		aecl = aeclo.getSchemaClass();
 		return aecl;
 	}

@@ -122,7 +122,8 @@ public class ValidationComponent {
 							+ edge + " doesn't exist anymore.";
 					return true;
 				}
-				InternalVertex omega = ((ReversedEdgeImpl) edge.getReversedEdge()).incidentVertex
+				InternalVertex omega = ((ReversedEdgeImpl) edge
+						.getReversedEdge()).incidentVertex
 						.getTemporaryValue(transaction);
 				// check if omega-vertex still exists (only relevant if
 				// omega-vertex hasn't been added within current transaction)
@@ -412,9 +413,8 @@ public class ValidationComponent {
 														.containsKey(vertex.nextVertex
 																.getLatestPersistentValue())
 														&& transaction.changedVseqVertices
-																.get(
-																		vertex.nextVertex
-																				.getLatestPersistentValue())
+																.get(vertex.nextVertex
+																		.getLatestPersistentValue())
 																.keySet()
 																.contains(
 																		ListPosition.PREV) && vertex.nextVertex
@@ -478,9 +478,8 @@ public class ValidationComponent {
 														.containsKey(vertex.prevVertex
 																.getLatestPersistentValue())
 														&& transaction.changedVseqVertices
-																.get(
-																		vertex.prevVertex
-																				.getLatestPersistentValue())
+																.get(vertex.prevVertex
+																		.getLatestPersistentValue())
 																.keySet()
 																.contains(
 																		ListPosition.NEXT) && vertex.prevVertex
@@ -597,9 +596,8 @@ public class ValidationComponent {
 															.containsKey(edge.nextEdge
 																	.getLatestPersistentValue())
 															&& transaction.changedEseqEdges
-																	.get(
-																			edge.nextEdge
-																					.getLatestPersistentValue())
+																	.get(edge.nextEdge
+																			.getLatestPersistentValue())
 																	.keySet()
 																	.contains(
 																			ListPosition.PREV) || edge.nextEdge
@@ -664,9 +662,8 @@ public class ValidationComponent {
 														.containsKey(edge.prevEdge
 																.getLatestPersistentValue())
 														&& transaction.changedEseqEdges
-																.get(
-																		edge.prevEdge
-																				.getLatestPersistentValue())
+																.get(edge.prevEdge
+																		.getLatestPersistentValue())
 																.keySet()
 																.contains(
 																		ListPosition.NEXT) && edge.prevEdge
@@ -770,8 +767,9 @@ public class ValidationComponent {
 							boolean movedIncidence = entry.getValue();
 							switch (entry.getKey()) {
 							case PREV: {
-								if (!prevIncidence.getTemporaryValue(
-										transaction).getNormalEdge().isValid()
+								if (!prevIncidence
+										.getTemporaryValue(transaction)
+										.getNormalEdge().isValid()
 										&& (transaction.addedEdges == null || transaction.addedEdges
 												.contains(prevIncidence
 														.getTemporaryValue(
@@ -842,9 +840,8 @@ public class ValidationComponent {
 															.containsKey(nextIncidence
 																	.getLatestPersistentValue())
 															&& transaction.changedIncidences
-																	.get(
-																			nextIncidence
-																					.getLatestPersistentValue())
+																	.get(nextIncidence
+																			.getLatestPersistentValue())
 																	.keySet()
 																	.contains(
 																			ListPosition.PREV) && nextIncidence
@@ -868,8 +865,9 @@ public class ValidationComponent {
 								break;
 							}
 							case NEXT: {
-								if (!nextIncidence.getTemporaryValue(
-										transaction).getNormalEdge().isValid()
+								if (!nextIncidence
+										.getTemporaryValue(transaction)
+										.getNormalEdge().isValid()
 										&& (transaction.addedEdges == null || transaction.addedEdges
 												.contains(nextIncidence
 														.getTemporaryValue(
@@ -938,9 +936,8 @@ public class ValidationComponent {
 														.containsKey(prevIncidence
 																.getLatestPersistentValue())
 														&& transaction.changedIncidences
-																.get(
-																		prevIncidence
-																				.getLatestPersistentValue())
+																.get(prevIncidence
+																		.getLatestPersistentValue())
 																.keySet()
 																.contains(
 																		ListPosition.NEXT) && prevIncidence
@@ -1084,12 +1081,12 @@ public class ValidationComponent {
 	 */
 	private boolean conflictWithinChangedAttributes() {
 		if (transaction.changedAttributes != null) {
-			Set<Entry<AttributedElement, Set<VersionedDataObject<?>>>> attributedElements = transaction.changedAttributes
+			Set<Entry<AttributedElement<?, ?>, Set<VersionedDataObject<?>>>> attributedElements = transaction.changedAttributes
 					.entrySet();
 			// for every AttributedElement for which at least one attribute has
 			// been changed...
-			for (Entry<AttributedElement, Set<VersionedDataObject<?>>> entry : attributedElements) {
-				AttributedElement attributedElement = entry.getKey();
+			for (Entry<AttributedElement<?, ?>, Set<VersionedDataObject<?>>> entry : attributedElements) {
+				AttributedElement<?, ?> attributedElement = entry.getKey();
 				String type = "";
 				// attributedElement == vertex?
 				if (attributedElement instanceof Vertex) {

@@ -64,7 +64,7 @@ public class GReQLConstraintViolation extends ConstraintViolation {
 		return offendingElements;
 	}
 
-	public GReQLConstraintViolation(AttributedElementClass aec,
+	public GReQLConstraintViolation(AttributedElementClass<?, ?> aec,
 			Constraint constraint, Set<AttributedElement<?, ?>> offendingElems) {
 		super(aec);
 		this.constraint = constraint;

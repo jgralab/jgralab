@@ -53,9 +53,9 @@ import de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout.definition.TypeDefin
 
 public class GraphLayout {
 
-	Map<AttributedElementClass, TypeDefinition> vertexTypeDefinitions;
+	Map<VertexClass, TypeDefinition> vertexTypeDefinitions;
 
-	Map<AttributedElementClass, TypeDefinition> edgeTypeDefinitions;
+	Map<EdgeClass, TypeDefinition> edgeTypeDefinitions;
 
 	List<ElementDefinition> elementDefinitions;
 
@@ -70,8 +70,8 @@ public class GraphLayout {
 	}
 
 	private void initiateDataStructures() {
-		vertexTypeDefinitions = new HashMap<AttributedElementClass, TypeDefinition>();
-		edgeTypeDefinitions = new HashMap<AttributedElementClass, TypeDefinition>();
+		vertexTypeDefinitions = new HashMap<VertexClass, TypeDefinition>();
+		edgeTypeDefinitions = new HashMap<EdgeClass, TypeDefinition>();
 		elementDefinitions = new ArrayList<ElementDefinition>();
 
 		attributedElementsDefinedByElementDefinitions = new HashSet<AttributedElement<?, ?>>();
@@ -87,11 +87,11 @@ public class GraphLayout {
 		return schema;
 	}
 
-	public Map<AttributedElementClass, TypeDefinition> getVertexTypeDefinitions() {
+	public Map<VertexClass, TypeDefinition> getVertexTypeDefinitions() {
 		return vertexTypeDefinitions;
 	}
 
-	public Map<AttributedElementClass, TypeDefinition> getEdgeTypeDefinitions() {
+	public Map<EdgeClass, TypeDefinition> getEdgeTypeDefinitions() {
 		return edgeTypeDefinitions;
 	}
 
@@ -112,7 +112,7 @@ public class GraphLayout {
 				.getAttributedElementClass(attributedElementClassName));
 	}
 
-	public TypeDefinition getTypeDefinition(AttributedElementClass type) {
+	public TypeDefinition getTypeDefinition(AttributedElementClass<?, ?> type) {
 		TypeDefinition definition = vertexTypeDefinitions.get(type);
 		if (definition == null) {
 			definition = edgeTypeDefinitions.get(type);

@@ -47,7 +47,7 @@ import de.uni_koblenz.jgralab.schema.Schema;
  * @author ist@uni-koblenz.de
  * 
  */
-public interface AttributedElement<SC extends AttributedElementClass, IC extends AttributedElement<SC, IC>>
+public interface AttributedElement<SC extends AttributedElementClass<SC, IC>, IC extends AttributedElement<SC, IC>>
 		extends Comparable<AttributedElement<SC, IC>> {
 	/**
 	 * @return the {@link AttributedElementClass} of this
@@ -89,5 +89,5 @@ public interface AttributedElement<SC extends AttributedElementClass, IC extends
 	 * @param cls
 	 * @return true, iff this attributed element is an instance of cls.
 	 */
-	public boolean isInstanceOf(AttributedElementClass cls);
+	public boolean isInstanceOf(SC cls);
 }

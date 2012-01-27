@@ -5,7 +5,7 @@ import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.schema.Attribute;
 import de.uni_koblenz.jgralab.schema.GraphElementClass;
 
-public interface InternalGraphElement<SC extends GraphElementClass, IC extends GraphElement<SC, IC>>
+public interface InternalGraphElement<SC extends GraphElementClass<SC, IC>, IC extends GraphElement<SC, IC>>
 		extends GraphElement<SC, IC> {
 
 	/**

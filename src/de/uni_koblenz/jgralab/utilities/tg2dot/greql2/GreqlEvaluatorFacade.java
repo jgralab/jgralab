@@ -150,7 +150,7 @@ public class GreqlEvaluatorFacade {
 	 *            A AttributedElementClass.
 	 */
 	public void setStaticVariablesOfGreqlEvaluator(
-			AttributedElementClass typeClass) {
+			AttributedElementClass<?, ?> typeClass) {
 
 		if (typeClass instanceof EdgeClass) {
 			setStaticVariablesOfGreqlEvaluator((EdgeClass) typeClass);

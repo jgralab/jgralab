@@ -27,6 +27,7 @@ import de.uni_koblenz.jgralab.gretl.templategraphparser.TemplateGraphParser;
 import de.uni_koblenz.jgralab.schema.Attribute;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
+import de.uni_koblenz.jgralab.schema.GraphElementClass;
 import de.uni_koblenz.jgralab.schema.VertexClass;
 
 /**
@@ -344,8 +345,9 @@ public class MatchReplace extends InPlaceTransformation {
 		// Maybe copy matching attributes over
 		if (copy) {
 			AttributedElement<?, ?> ae = (AttributedElement<?, ?>) arch;
-			AttributedElementClass aeClass = ae.getAttributedElementClass();
-			AttributedElementClass geClass = ge.getAttributedElementClass();
+			AttributedElementClass<?, ?> aeClass = ae
+					.getAttributedElementClass();
+			GraphElementClass<?, ?> geClass = ge.getAttributedElementClass();
 			for (Attribute attr : geClass.getAttributeList()) {
 				String attrName = attr.getName();
 				if (attrMap.containsKey(attrName)) {

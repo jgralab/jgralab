@@ -195,7 +195,7 @@ public class SimpleTransition extends Transition {
 	public SimpleTransition(State start, State end, AllowedEdgeDirection dir) {
 		super(start, end);
 		validDirection = dir;
-		this.typeCollection = new TypeCollection();
+		typeCollection = new TypeCollection();
 	}
 
 	/**
@@ -295,7 +295,7 @@ public class SimpleTransition extends Transition {
 
 		// checks if a role restriction is set and if e has the right role
 		if (validEdgeRoles != null) {
-			EdgeClass ec = (EdgeClass) e.getAttributedElementClass();
+			EdgeClass ec = e.getAttributedElementClass();
 			Set<String> roles = null;
 			if (e.isNormal() == checkToEdgeRoles) {
 				roles = ec.getTo().getAllRoles();
@@ -315,8 +315,7 @@ public class SimpleTransition extends Transition {
 			}
 		} else {
 			if (!acceptedByRole) {
-				AttributedElementClass edgeClass = e
-						.getAttributedElementClass();
+				EdgeClass edgeClass = e.getAttributedElementClass();
 				if (!typeCollection.acceptsType(edgeClass)) {
 					return false;
 				}
@@ -350,7 +349,7 @@ public class SimpleTransition extends Transition {
 	public String prettyPrint() {
 		StringBuilder b = new StringBuilder();
 		String delim = "";
-		for (AttributedElementClass c : typeCollection.getAllowedTypes()) {
+		for (AttributedElementClass<?, ?> c : typeCollection.getAllowedTypes()) {
 			b.append(delim);
 			b.append(c.getSimpleName());
 			delim = ",";

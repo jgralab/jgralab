@@ -1879,10 +1879,10 @@ public class StateRepository {
 		}
 
 		private synchronized StringBuilder convertToSet(
-				HashMap<? extends GraphElementClass, Boolean> selectedGEClasses) {
+				HashMap<? extends GraphElementClass<?, ?>, Boolean> selectedGEClasses) {
 			StringBuilder result = new StringBuilder("{");
 			String delim = "";
-			for (GraphElementClass type : selectedGEClasses.keySet()) {
+			for (GraphElementClass<?, ?> type : selectedGEClasses.keySet()) {
 				result.append(delim)
 						.append(selectedGEClasses.get(type) ? "" : "^")
 						.append(type.getQualifiedName()).append("!");

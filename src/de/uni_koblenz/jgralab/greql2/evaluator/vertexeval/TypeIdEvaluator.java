@@ -78,10 +78,10 @@ public class TypeIdEvaluator extends VertexEvaluator {
 	 *            the schema of the datagraph
 	 * @return the generated list of types
 	 */
-	protected List<AttributedElementClass> createTypeList(Schema schema) {
+	protected List<AttributedElementClass<?, ?>> createTypeList(Schema schema) {
 
-		ArrayList<AttributedElementClass> returnTypes = new ArrayList<AttributedElementClass>();
-		AttributedElementClass elemClass = schema
+		ArrayList<AttributedElementClass<?, ?>> returnTypes = new ArrayList<AttributedElementClass<?, ?>>();
+		AttributedElementClass<?, ?> elemClass = schema
 				.getAttributedElementClass(vertex.get_name());
 		if (elemClass == null) {
 			elemClass = greqlEvaluator.getKnownType(vertex.get_name());
@@ -101,14 +101,14 @@ public class TypeIdEvaluator extends VertexEvaluator {
 
 	@Override
 	public Object evaluate() {
-		List<AttributedElementClass> typeList = createTypeList(greqlEvaluator
+		List<AttributedElementClass<?, ?>> typeList = createTypeList(greqlEvaluator
 				.getDatagraph().getSchema());
 		return new TypeCollection(typeList, vertex.is_excluded());
 	}
 
 	@Override
 	public VertexCosts calculateSubtreeEvaluationCosts(GraphSize graphSize) {
-		return this.greqlEvaluator.getCostModel().calculateCostsTypeId(this,
+		return greqlEvaluator.getCostModel().calculateCostsTypeId(this,
 				graphSize);
 	}
 
