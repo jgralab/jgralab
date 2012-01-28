@@ -36,7 +36,7 @@ import de.uni_koblenz.jgralab.schema.VertexClass;
  */
 public class GenericGraphImpl extends GraphImpl {
 
-	private GraphClass type;
+	private GraphClass aec;
 	private Map<String, Object> attributes;
 
 	protected GenericGraphImpl(String id, GraphClass type) {
@@ -45,14 +45,9 @@ public class GenericGraphImpl extends GraphImpl {
 
 	protected GenericGraphImpl(GraphClass type, String id, int vmax, int emax) {
 		super(id, type, vmax, emax);
-		this.type = type;
-		if (type.getAttributeCount() > 0) {
-			attributes = new HashMap<String, Object>();
-			for (Attribute a : type.getAttributeList()) {
-				attributes.put(a.getName(), null);
-			}
-			initializeAttributesWithDefaultValues();
-		}
+		this.aec = type;
+		attributes = GenericGraphImpl.initializeAttributes(type);
+		GenericGraphImpl.initializeGenericAttributeValues(this);
 	}
 
 	/**
@@ -75,7 +70,7 @@ public class GenericGraphImpl extends GraphImpl {
 
 	@SuppressWarnings("unchecked")
 	public <T extends Vertex> T createVertex(VertexClass vc, int id) {
-		if (type.getVertexClass(vc.getQualifiedName()) == null) {
+		if (aec.getVertexClass(vc.getQualifiedName()) == null) {
 			throw new GraphException("Error creating vertex of VertexClass "
 					+ vc);
 		}
@@ -118,7 +113,7 @@ public class GenericGraphImpl extends GraphImpl {
 
 	@Override
 	public AttributedElementClass getAttributedElementClass() {
-		return type;
+		return aec;
 	}
 
 	@Override
@@ -127,7 +122,7 @@ public class GenericGraphImpl extends GraphImpl {
 		if ((attributes != null) && attributes.containsKey(attributeName)) {
 			attributes.put(
 					attributeName,
-					type.getAttribute(attributeName)
+					aec.getAttribute(attributeName)
 							.getDomain()
 							.parseGenericAttribute(
 									GraphIO.createStringReader(value,
@@ -140,7 +135,7 @@ public class GenericGraphImpl extends GraphImpl {
 
 	@Override
 	public void readAttributeValues(GraphIO io) throws GraphIOException {
-		for (Attribute a : type.getAttributeList()) {
+		for (Attribute a : aec.getAttributeList()) {
 			attributes
 					.put(a.getName(), a.getDomain().parseGenericAttribute(io));
 		}
@@ -150,7 +145,7 @@ public class GenericGraphImpl extends GraphImpl {
 	public String writeAttributeValueToString(String attributeName)
 			throws IOException, GraphIOException, NoSuchAttributeException {
 		GraphIO io = GraphIO.createStringWriter(getSchema());
-		type.getAttribute(attributeName).getDomain()
+		aec.getAttribute(attributeName).getDomain()
 				.serializeGenericAttribute(io, getAttribute(attributeName));
 		return io.getStringWriterResult();
 	}
@@ -158,7 +153,7 @@ public class GenericGraphImpl extends GraphImpl {
 	@Override
 	public void writeAttributeValues(GraphIO io) throws IOException,
 			GraphIOException {
-		for (Attribute a : type.getAttributeList()) {
+		for (Attribute a : aec.getAttributeList()) {
 			a.getDomain().serializeGenericAttribute(io,
 					attributes.get(a.getName()));
 		}
@@ -168,7 +163,7 @@ public class GenericGraphImpl extends GraphImpl {
 	@Override
 	public <T> T getAttribute(String name) throws NoSuchAttributeException {
 		if ((attributes == null) || !attributes.containsKey(name)) {
-			throw new NoSuchAttributeException(type.getSimpleName()
+			throw new NoSuchAttributeException(aec.getSimpleName()
 					+ " doesn't contain an attribute " + name);
 		} else {
 			return (T) attributes.get(name);
@@ -179,10 +174,10 @@ public class GenericGraphImpl extends GraphImpl {
 	public <T> void setAttribute(String name, T data)
 			throws NoSuchAttributeException {
 		if ((attributes == null) || !attributes.containsKey(name)) {
-			throw new NoSuchAttributeException(type.getSimpleName()
+			throw new NoSuchAttributeException(aec.getSimpleName()
 					+ " doesn't contain an attribute " + name);
 		} else {
-			if (!type.getAttribute(name).getDomain().genericIsConform(data)) {
+			if (!aec.getAttribute(name).getDomain().genericIsConform(data)) {
 				throw new ClassCastException();
 			} else {
 				attributes.put(name, data);
@@ -231,19 +226,7 @@ public class GenericGraphImpl extends GraphImpl {
 
 	@Override
 	public void initializeAttributesWithDefaultValues() {
-		for (Attribute attr : getAttributedElementClass().getAttributeList()) {
-			if ((attr.getDefaultValueAsString() != null)
-					&& !attr.getDefaultValueAsString().isEmpty()) {
-				try {
-					internalSetDefaultValue(attr);
-				} catch (GraphIOException e) {
-					e.printStackTrace();
-				}
-			} else {
-				setAttribute(attr.getName(),
-						genericAttributeDefaultValue(attr.getDomain()));
-			}
-		}
+		initializeGenericAttributeValues(this);
 	}
 
 	/**
@@ -270,6 +253,33 @@ public class GenericGraphImpl extends GraphImpl {
 			}
 		} else {
 			return null;
+		}
+	}
+	
+	static Map<String, Object> initializeAttributes(AttributedElementClass aec) {
+		Map<String, Object> attributes = null;
+		if (aec.getAttributeCount() > 0) {
+			attributes = new HashMap<String, Object>();
+			for (Attribute a : aec.getAttributeList()) {
+				attributes.put(a.getName(), null);
+			}
+		}
+		return attributes;
+	}
+	
+	static void initializeGenericAttributeValues(AttributedElement ae) {
+		for (Attribute attr : ae.getAttributedElementClass().getAttributeList()) {
+			if ((attr.getDefaultValueAsString() != null)
+					&& !attr.getDefaultValueAsString().isEmpty()) {
+				try {
+					attr.setDefaultValue(ae);
+				} catch (GraphIOException e) {
+					e.printStackTrace();
+				}
+			} else {
+				ae.setAttribute(attr.getName(),
+						genericAttributeDefaultValue(attr.getDomain()));
+			}
 		}
 	}
 
@@ -315,6 +325,6 @@ public class GenericGraphImpl extends GraphImpl {
 	public boolean isInstanceOf(AttributedElementClass cls) {
 		// Needs to be overridden from the base variant, because that relies on
 		// code generation.
-		return type.equals(cls) || type.isSubClassOf(cls);
+		return aec.equals(cls) || aec.isSubClassOf(cls);
 	}
 }
