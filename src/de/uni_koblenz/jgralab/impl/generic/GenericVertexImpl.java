@@ -1,7 +1,6 @@
 package de.uni_koblenz.jgralab.impl.generic;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Map;
 
 import de.uni_koblenz.jgralab.AttributedElement;
@@ -28,15 +27,8 @@ public class GenericVertexImpl extends VertexImpl {
 	protected GenericVertexImpl(VertexClass type, int id, Graph graph) {
 		super(id, graph);
 		this.type = type;
-		if (type.getAttributeCount() > 0) {
-			if (type.getAttributeList().size() > 0) {
-				attributes = new HashMap<String, Object>();
-				for (Attribute a : type.getAttributeList()) {
-					attributes.put(a.getName(), null);
-				}
-				initializeAttributesWithDefaultValues();
-			}
-		}
+		attributes = GenericGraphImpl.initializeAttributes(type);
+		GenericGraphImpl.initializeGenericAttributeValues(this);
 	}
 
 	@Override
@@ -185,19 +177,7 @@ public class GenericVertexImpl extends VertexImpl {
 
 	@Override
 	public void initializeAttributesWithDefaultValues() {
-		for (Attribute attr : getAttributedElementClass().getAttributeList()) {
-			if (attr.getDefaultValueAsString() != null) {
-				try {
-					internalSetDefaultValue(attr);
-				} catch (GraphIOException e) {
-					e.printStackTrace();
-				}
-			} else {
-				setAttribute(attr.getName(),
-						GenericGraphImpl.genericAttributeDefaultValue(attr
-								.getDomain()));
-			}
-		}
+		GenericGraphImpl.initializeGenericAttributeValues(this);
 	}
 
 	// ************** unsupported methods ***************/

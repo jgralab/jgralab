@@ -1,7 +1,6 @@
 package de.uni_koblenz.jgralab.impl.generic;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Map;
 
 import de.uni_koblenz.jgralab.AttributedElement;
@@ -30,13 +29,8 @@ public class GenericEdgeImpl extends EdgeImpl {
 		super(anId, graph, alpha, omega);
 		this.type = type;
 		((GraphImpl) graph).addEdge(this, alpha, omega);
-		if (type.getAttributeCount() > 0) {
-			attributes = new HashMap<String, Object>();
-			for (Attribute a : type.getAttributeList()) {
-				attributes.put(a.getName(), null);
-			}
-			initializeAttributesWithDefaultValues();
-		}
+		attributes = GenericGraphImpl.initializeAttributes(type);
+		GenericGraphImpl.initializeGenericAttributeValues(this);
 	}
 
 	@Override
@@ -195,19 +189,7 @@ public class GenericEdgeImpl extends EdgeImpl {
 
 	@Override
 	public void initializeAttributesWithDefaultValues() {
-		for (Attribute attr : getAttributedElementClass().getAttributeList()) {
-			if (attr.getDefaultValueAsString() != null) {
-				try {
-					internalSetDefaultValue(attr);
-				} catch (GraphIOException e) {
-					e.printStackTrace();
-				}
-			} else {
-				setAttribute(attr.getName(),
-						GenericGraphImpl.genericAttributeDefaultValue(attr
-								.getDomain()));
-			}
-		}
+		GenericGraphImpl.initializeGenericAttributeValues(this);
 	}
 
 	// ************** unsupported methods ***************/
