@@ -17,7 +17,7 @@ public class CreateVertexEventDescription extends EventDescription {
 	 *            the Class of elements, this Event monitors
 	 */
 	public CreateVertexEventDescription(EventTime time,
-			Class<? extends AttributedElement> type) {
+			Class<? extends AttributedElement<?, ?>> type) {
 		super(time, type);
 	}
 
@@ -46,11 +46,11 @@ public class CreateVertexEventDescription extends EventDescription {
 	 * @param element
 	 *            the created Vertex
 	 */
-	public void fire(AttributedElement element) {
+	public void fire(AttributedElement<?, ?> element) {
 		if (super.checkContext(element)) {
-			int nested = this.getActiveECARules().get(0).getECARuleManager()
+			int nested = getActiveECARules().get(0).getECARuleManager()
 					.getNestedTriggerCalls();
-			Graph graph = this.getActiveECARules().get(0).getECARuleManager()
+			Graph graph = getActiveECARules().get(0).getECARuleManager()
 					.getGraph();
 			for (ECARule rule : activeRules) {
 				rule.trigger(new CreateVertexEvent(nested, graph,
@@ -65,18 +65,16 @@ public class CreateVertexEventDescription extends EventDescription {
 	 * @param type
 	 *            the type of the Vertex that will become created
 	 */
-	public void fire(Class<? extends AttributedElement> type) {
+	public void fire(Class<? extends AttributedElement<?, ?>> type) {
 		if (super.checkContext(type)) {
-			int nested = this.getActiveECARules().get(0).getECARuleManager()
+			int nested = getActiveECARules().get(0).getECARuleManager()
 					.getNestedTriggerCalls();
-			Graph graph = this.getActiveECARules().get(0).getECARuleManager()
+			Graph graph = getActiveECARules().get(0).getECARuleManager()
 					.getGraph();
 			for (ECARule rule : activeRules) {
-				rule.trigger(new CreateVertexEvent(nested, graph, this
-						.getType()));
+				rule.trigger(new CreateVertexEvent(nested, graph, getType()));
 			}
 		}
 	}
-	
-	
+
 }

@@ -83,7 +83,7 @@ public class GXL2Tg {
 
 	private de.uni_koblenz.jgralab.schema.Schema schema = null;
 	private Graph graph;
-	private final HashMap<String, GraphElement> id2GraphElement = new HashMap<String, GraphElement>();
+	private final HashMap<String, GraphElement<?, ?>> id2GraphElement = new HashMap<String, GraphElement<?, ?>>();
 	private final Map<String, Method> createMethods = new HashMap<String, Method>();
 
 	private XMLEventReader inputReader;
@@ -196,7 +196,8 @@ public class GXL2Tg {
 
 		if (existingSchemaFile == null) {
 			// initialize SchemaGraph
-			schemaGraph = GrumlSchema.instance().createSchemaGraph(ImplementationType.STANDARD);
+			schemaGraph = GrumlSchema.instance().createSchemaGraph(
+					ImplementationType.STANDARD);
 			convertSchemaGraph();
 			if (storeIds) {
 				extractEdgeid();
@@ -949,12 +950,10 @@ public class GXL2Tg {
 		createAttributes(vertex, id);
 	}
 
-	private void createAttributes(AttributedElement ae, String id)
+	private void createAttributes(AttributedElement<?, ?> ae, String id)
 			throws XMLStreamException, GraphIOException {
 		if (storeIds) {
-			if (ae.getAttributedElementClass().isSubClassOf(
-					schema.getDefaultVertexClass())
-					|| haveEdgesIds) {
+			if (ae instanceof Vertex || haveEdgesIds) {
 				ae.setAttribute(ID_ATTRIBUTE_NAME, id);
 			}
 		}
@@ -1016,7 +1015,7 @@ public class GXL2Tg {
 		}
 	}
 
-	private void setAttribute(AttributedElement ae, String attributeName,
+	private void setAttribute(AttributedElement<?, ?> ae, String attributeName,
 			String type, String value) throws GraphIOException {
 		if (type.equals("bool")) {
 			ae.setAttribute(attributeName, Boolean.parseBoolean(value));
@@ -1072,6 +1071,7 @@ public class GXL2Tg {
 				.getGraphCreateMethod(ImplementationType.STANDARD).invoke(
 						null,
 						new Object[] {
+								ImplementationType.STANDARD,
 								element.getAttributeByName(new QName("id"))
 										.getValue(), 100, 100 });
 

@@ -26,6 +26,7 @@ import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.EnumDomain;
 import de.uni_koblenz.jgralab.schema.GraphClass;
+import de.uni_koblenz.jgralab.schema.GraphElementClass;
 import de.uni_koblenz.jgralab.schema.Schema;
 import de.uni_koblenz.jgralab.schema.exception.SchemaClassAccessException;
 import de.uni_koblenz.jgralab.schema.exception.SchemaException;
@@ -58,9 +59,9 @@ public class Context {
 	 * This lets you set the directory where to commit the target schema code
 	 * to. Normally, the code isn't committed at all but compiled in memory, but
 	 * you can use this for debugging purposes.
-	 *
+	 * 
 	 * The value <code>null</code> (default) means don't commit.
-	 *
+	 * 
 	 * @param targetSchemaCodeDirectory
 	 *            the targetSchemaCodeDirectory to set
 	 */
@@ -102,13 +103,13 @@ public class Context {
 	 * Maps from {@link AttributedElementClass} to a map, mapping old elements
 	 * to their images. (zeta-reverse)
 	 */
-	private Map<AttributedElementClass, PMap<Object, AttributedElement>> imgMap = new HashMap<AttributedElementClass, PMap<Object, AttributedElement>>();
+	private Map<AttributedElementClass<?, ?>, PMap<Object, AttributedElement<?, ?>>> imgMap = new HashMap<AttributedElementClass<?, ?>, PMap<Object, AttributedElement<?, ?>>>();
 
 	/**
 	 * Maps from {@link AttributedElementClass} to a map, mapping new elements
 	 * to the elements they were created for (their archetypes). (zeta)
 	 */
-	private Map<AttributedElementClass, PMap<AttributedElement, Object>> archMap = new HashMap<AttributedElementClass, PMap<AttributedElement, Object>>();
+	private Map<AttributedElementClass<?, ?>, PMap<AttributedElement<?, ?>, Object>> archMap = new HashMap<AttributedElementClass<?, ?>, PMap<AttributedElement<?, ?>, Object>>();
 
 	private final Map<String, Object> greqlExtraVars = new HashMap<String, Object>();
 	private final Set<String> greqlImports = new HashSet<String>();
@@ -155,7 +156,7 @@ public class Context {
 
 	/**
 	 * Creates a new Context object
-	 *
+	 * 
 	 * @param targetSchemaName
 	 *            The name of the target schema
 	 * @param targetGraphClassName
@@ -168,8 +169,8 @@ public class Context {
 		// Check if the target schema is already present and we can thus skip
 		// the SCHEMA phase.
 		try {
-			Class<?> schemaClass = SchemaClassManager.instance(targetSchemaName)
-					.loadClass(targetSchemaName);
+			Class<?> schemaClass = SchemaClassManager
+					.instance(targetSchemaName).loadClass(targetSchemaName);
 			Method schemaInstanceMethod = schemaClass.getMethod("instance");
 			targetSchema = (Schema) schemaInstanceMethod.invoke(null);
 		} catch (Exception e) {
@@ -185,7 +186,7 @@ public class Context {
 	 */
 	public Context(Schema targetSchema) {
 		this.targetSchema = targetSchema;
-		this.targetSchemaName = targetSchema.getQualifiedName();
+		targetSchemaName = targetSchema.getQualifiedName();
 		// Do it here, cause that takes some time. We don't want to have that
 		// counted to the transformation time...
 		ensureGreqlEvaluator();
@@ -210,9 +211,9 @@ public class Context {
 	 *            mappings
 	 * @return a map from target graph elements (images) to their archetypes
 	 */
-	public final PMap<AttributedElement, Object> getArch(
-			AttributedElementClass aec) {
-		PMap<AttributedElement, Object> result = archMap.get(aec);
+	public final PMap<AttributedElement<?, ?>, Object> getArch(
+			AttributedElementClass<?, ?> aec) {
+		PMap<AttributedElement<?, ?>, Object> result = archMap.get(aec);
 		if (result == null) {
 			result = Empty.orderedMap();
 			archMap.put(aec, result);
@@ -227,9 +228,9 @@ public class Context {
 	 * @return a map from archetypes to target graph elements, which are their
 	 *         images
 	 */
-	public final PMap<Object, AttributedElement> getImg(
-			AttributedElementClass aec) {
-		PMap<Object, AttributedElement> result = imgMap.get(aec);
+	public final PMap<Object, AttributedElement<?, ?>> getImg(
+			AttributedElementClass<?, ?> aec) {
+		PMap<Object, AttributedElement<?, ?>> result = imgMap.get(aec);
 		if (result == null) {
 			result = Empty.orderedMap();
 			imgMap.put(aec, result);
@@ -240,12 +241,12 @@ public class Context {
 	/**
 	 * Ensures that theres a function for this attributed element class, even
 	 * though this function may be empty.
-	 *
+	 * 
 	 * @param aec
 	 *            the AttributedElementClass for which to ensure the
 	 *            archMap/imgMap mappings
 	 */
-	final void ensureMappings(AttributedElementClass aec) {
+	final void ensureMappings(AttributedElementClass<?, ?> aec) {
 		getImg(aec);
 		getArch(aec);
 		// validateMappings();
@@ -257,7 +258,7 @@ public class Context {
 	 */
 	public final void ensureAllMappings() {
 		ensureMappings(targetSchema.getGraphClass());
-		for (AttributedElementClass gec : targetSchema.getGraphClass()
+		for (GraphElementClass<?, ?> gec : targetSchema.getGraphClass()
 				.getGraphElementClasses()) {
 			ensureMappings(gec);
 		}
@@ -265,31 +266,32 @@ public class Context {
 
 	public final void printImgMappings() {
 		System.out.println("Image Mappings:");
-		for (Entry<AttributedElementClass, PMap<Object, AttributedElement>> e : imgMap
+		for (Entry<AttributedElementClass<?, ?>, PMap<Object, AttributedElement<?, ?>>> e : imgMap
 				.entrySet()) {
-			AttributedElementClass aec = e.getKey();
-			PMap<Object, AttributedElement> img = e.getValue();
+			AttributedElementClass<?, ?> aec = e.getKey();
+			PMap<Object, AttributedElement<?, ?>> img = e.getValue();
 			if (aec.isInternal()) {
 				continue;
 			}
 			System.out.println("Mappings for: " + aec.getQualifiedName());
-			for (Entry<Object, AttributedElement> entry : img.entrySet()) {
+			for (Entry<Object, AttributedElement<?, ?>> entry : img.entrySet()) {
 				System.out.println("    " + entry.getKey() + " ==> "
 						+ entry.getValue());
 			}
 		}
 	}
 
-	final void addMapping(AttributedElementClass attrElemClass,
-			Object archetype, AttributedElement image) {
+	final void addMapping(AttributedElementClass<?, ?> attrElemClass,
+			Object archetype, AttributedElement<?, ?> image) {
 		addMappingToClass(attrElemClass, archetype, image);
 		addMappingsToSuperClasses(attrElemClass, archetype, image);
 	}
 
 	private final void addMappingsToSuperClasses(
-			final AttributedElementClass subClass, final Object archetype,
-			final AttributedElement image) {
-		for (AttributedElementClass superClass : subClass.getAllSuperClasses()) {
+			final AttributedElementClass<?, ?> subClass,
+			final Object archetype, final AttributedElement<?, ?> image) {
+		for (AttributedElementClass<?, ?> superClass : subClass
+				.getAllSuperClasses()) {
 			if (superClass.isInternal()) {
 				continue;
 			}
@@ -297,15 +299,16 @@ public class Context {
 		}
 	}
 
-	private final void addMappingToClass(AttributedElementClass attrElemClass,
-			Object archetype, AttributedElement image) {
+	private final void addMappingToClass(
+			AttributedElementClass<?, ?> attrElemClass, Object archetype,
+			AttributedElement<?, ?> image) {
 		addArchMapping(attrElemClass, image, archetype);
 		addImgMapping(attrElemClass, archetype, image);
 	}
 
-	private void addArchMapping(AttributedElementClass attrElemClass,
-			AttributedElement image, Object archetype) {
-		PMap<AttributedElement, Object> map = archMap.get(attrElemClass);
+	private void addArchMapping(AttributedElementClass<?, ?> attrElemClass,
+			AttributedElement<?, ?> image, Object archetype) {
+		PMap<AttributedElement<?, ?>, Object> map = archMap.get(attrElemClass);
 		if (map.containsKey(image)) {
 			throw new GReTLBijectionViolationException(this, "'"
 					+ image
@@ -324,9 +327,9 @@ public class Context {
 		archMap.put(attrElemClass, map);
 	}
 
-	private void addImgMapping(AttributedElementClass attrElemClass,
-			Object archetype, AttributedElement image) {
-		PMap<Object, AttributedElement> map = imgMap.get(attrElemClass);
+	private void addImgMapping(AttributedElementClass<?, ?> attrElemClass,
+			Object archetype, AttributedElement<?, ?> image) {
+		PMap<Object, AttributedElement<?, ?>> map = imgMap.get(attrElemClass);
 		if (map.containsKey(archetype)) {
 			throw new GReTLBijectionViolationException(this, "'"
 					+ archetype
@@ -372,8 +375,8 @@ public class Context {
 				o = imgMap;
 			}
 			@SuppressWarnings("unchecked")
-			Set<AttributedElementClass> keySet = m.keySet();
-			for (AttributedElementClass aec : keySet) {
+			Set<AttributedElementClass<?, ?>> keySet = m.keySet();
+			for (AttributedElementClass<?, ?> aec : keySet) {
 				if (!o.containsKey(aec)) {
 					System.err.println(toGReTLVarNotation(aec
 							.getQualifiedName(),
@@ -388,7 +391,7 @@ public class Context {
 							+ ") and archMap (" + archMap.size()
 							+ ") don't match!");
 		}
-		for (AttributedElementClass aec : archMap.keySet()) {
+		for (AttributedElementClass<?, ?> aec : archMap.keySet()) {
 			if (!imgMap.containsKey(aec)) {
 				throw new GReTLBijectionViolationException(this,
 						"The imgMap and archMap mappings aren't valid! "
@@ -442,7 +445,7 @@ public class Context {
 	 * Swap this context object. E.g. make the current target graph the default
 	 * source graph and reinitialize all member vars such as archMap/imgMap.
 	 * This is mainly useful for chaining multiple transformations.
-	 *
+	 * 
 	 * @return this context object itself
 	 */
 	public final Context swap() {
@@ -481,7 +484,7 @@ public class Context {
 	 * Reset this context, so that the same context can be passed to another
 	 * transformation. This means, everything except the source graph is
 	 * cleared.
-	 *
+	 * 
 	 * @return the context
 	 */
 	public final Context reset(boolean forgetTargetSchema) {
@@ -513,7 +516,7 @@ public class Context {
 
 	/**
 	 * Sets the (default) source graph for the transformation
-	 *
+	 * 
 	 * @param sourceGraph
 	 *            the source graph
 	 */
@@ -523,7 +526,7 @@ public class Context {
 
 	/**
 	 * adds a source graph for the transformation
-	 *
+	 * 
 	 * @param alias
 	 *            the alias to access this source graph (used as prefix #name#
 	 *            in semantic expressions)
@@ -578,7 +581,7 @@ public class Context {
 	/**
 	 * returns the target graph of the transformation if no target graph exists,
 	 * it will be created
-	 *
+	 * 
 	 * @return the target graph
 	 */
 	public final Graph getTargetGraph() {
@@ -637,8 +640,8 @@ public class Context {
 				.getGraphCreateMethod(ImplementationType.STANDARD);
 
 		try {
-			targetGraph = (Graph) graphCreateMethod
-					.invoke(null, null, 500, 500);
+			targetGraph = (Graph) graphCreateMethod.invoke(
+					ImplementationType.STANDARD, null, 500, 500);
 			targetSchema = targetGraph.getSchema();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -732,7 +735,7 @@ public class Context {
 			}
 		}
 
-		return this.<T>evalGReQLQuery(greqlExpression, sourceGraphs.get(name));
+		return this.<T> evalGReQLQuery(greqlExpression, sourceGraphs.get(name));
 	}
 
 	@SuppressWarnings("unchecked")
@@ -790,7 +793,7 @@ public class Context {
 			}
 		}
 
-		for (Entry<AttributedElementClass, PMap<AttributedElement, Object>> e : archMap
+		for (Entry<AttributedElementClass<?, ?>, PMap<AttributedElement<?, ?>, Object>> e : archMap
 				.entrySet()) {
 			String varName = toGReTLVarNotation(e.getKey().getQualifiedName(),
 					GReTLVariableType.ARCH);
@@ -799,7 +802,7 @@ public class Context {
 			}
 		}
 
-		for (Entry<AttributedElementClass, PMap<Object, AttributedElement>> e : imgMap
+		for (Entry<AttributedElementClass<?, ?>, PMap<Object, AttributedElement<?, ?>>> e : imgMap
 				.entrySet()) {
 			String varName = toGReTLVarNotation(e.getKey().getQualifiedName(),
 					GReTLVariableType.IMG);

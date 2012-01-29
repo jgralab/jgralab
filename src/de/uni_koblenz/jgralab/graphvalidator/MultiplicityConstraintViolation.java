@@ -47,7 +47,7 @@ public class MultiplicityConstraintViolation extends ConstraintViolation {
 	private String message;
 
 	public MultiplicityConstraintViolation(EdgeClass ec, String message,
-			Set<AttributedElement> offendingElems) {
+			Set<AttributedElement<?, ?>> offendingElems) {
 		super(ec);
 		this.message = message;
 		offendingElements = offendingElems;
@@ -65,7 +65,7 @@ public class MultiplicityConstraintViolation extends ConstraintViolation {
 	public boolean equals(Object o) {
 		if (o instanceof MultiplicityConstraintViolation) {
 			MultiplicityConstraintViolation other = (MultiplicityConstraintViolation) o;
-			return this.compareTo(other) == 0;
+			return compareTo(other) == 0;
 		}
 		return false;
 	}
@@ -82,7 +82,7 @@ public class MultiplicityConstraintViolation extends ConstraintViolation {
 	 * @return the offendingElements
 	 */
 	@Override
-	public Set<AttributedElement> getOffendingElements() {
+	public Set<AttributedElement<?, ?>> getOffendingElements() {
 		return offendingElements;
 	}
 
@@ -95,7 +95,7 @@ public class MultiplicityConstraintViolation extends ConstraintViolation {
 		sb.append(message);
 		sb.append(" Offending vertices: ");
 		boolean first = true;
-		for (AttributedElement v : offendingElements) {
+		for (AttributedElement<?, ?> v : offendingElements) {
 			if (first) {
 				first = false;
 			} else {

@@ -59,7 +59,7 @@ public abstract class AttributedElementClassImplTest {
 
 	protected Schema schema;
 	protected GraphClass graphClass;
-	protected AttributedElementClass attributedElement;
+	protected AttributedElementClass<?, ?> attributedElement;
 
 	@Before
 	public void setUp() {
@@ -71,7 +71,7 @@ public abstract class AttributedElementClassImplTest {
 	/*
 	 * Tests for the addAttribute(Attribute) and addAttribute(QualifiedName,
 	 * Domain) methods.
-	 *
+	 * 
 	 * NOTE: As addAttribute(QualifiedName, Domain) only creates an attribute
 	 * with the given parameters then calling the addAttribute(Attribute) method
 	 * and in accordance with the specification of addAttribute(QualifiedName,
@@ -83,7 +83,7 @@ public abstract class AttributedElementClassImplTest {
 	 */
 	/**
 	 * addAttribute(Attribute)
-	 *
+	 * 
 	 * TEST CASE: Adding an attribute, which is not yet present in this element,
 	 * nor in this element´s direct and indirect super-/subclasses
 	 */
@@ -104,7 +104,7 @@ public abstract class AttributedElementClassImplTest {
 
 	/**
 	 * addAttribute(Attribute)
-	 *
+	 * 
 	 * TEST CASE: Adding two distinct attributes which are not yet present in
 	 * this element, nor in this element´s direct and indirect superclasses (and
 	 * subclasses)
@@ -131,7 +131,7 @@ public abstract class AttributedElementClassImplTest {
 
 	/**
 	 * addAttribute(Attribute)
-	 *
+	 * 
 	 * TEST CASE: Adding an attribute, already contained directly in this
 	 * element.
 	 */
@@ -157,13 +157,13 @@ public abstract class AttributedElementClassImplTest {
 
 	/**
 	 * addAttribute(Attribute)
-	 *
+	 * 
 	 * TEST CASE: Adding an attribute, already contained in a superclass of this
 	 * element
-	 *
+	 * 
 	 * NOTE: This method is called upon in all of this classes´ subclasses.
 	 */
-	public final void testAddAttribute4(AttributedElementClass superclass) {
+	public final void testAddAttribute4(AttributedElementClass<?, ?> superclass) {
 		Attribute attribute = new AttributeImpl("testAttribute",
 				schema.getBooleanDomain(), attributedElement, "null");
 
@@ -186,13 +186,13 @@ public abstract class AttributedElementClassImplTest {
 
 	/**
 	 * addAttribute(Attribute)
-	 *
+	 * 
 	 * TEST CASE: Adding an attribute, already contained in a subclass of this
 	 * element
-	 *
+	 * 
 	 * NOTE: This method is called upon in all of this classes´ subclasses.
 	 */
-	public final void testAddAttribute5(AttributedElementClass subclass) {
+	public final void testAddAttribute5(AttributedElementClass<?, ?> subclass) {
 		Attribute attribute = new AttributeImpl("testAttribute",
 				schema.getBooleanDomain(), attributedElement, "null");
 
@@ -215,7 +215,7 @@ public abstract class AttributedElementClassImplTest {
 
 	/**
 	 * addAttribute(QualifiedName, Domain)
-	 *
+	 * 
 	 * TEST CASE: Adding an attribute with a name containing a reserved TG word.
 	 */
 	public final void testAddAttribute6() {
@@ -243,7 +243,7 @@ public abstract class AttributedElementClassImplTest {
 
 	/**
 	 * addConstraint(Constraint)
-	 *
+	 * 
 	 * TEST CASE: Adding a constraint, which is not yet present in this element,
 	 * nor in this element´s direct and indirect super-/subclasses
 	 */
@@ -262,7 +262,7 @@ public abstract class AttributedElementClassImplTest {
 
 	/**
 	 * addConstraint(Constraint)
-	 *
+	 * 
 	 * TEST CASE: Adding two distinct constraints which are not yet present in
 	 * this element, nor in this element´s direct and indirect super-/subclasses
 	 */
@@ -284,7 +284,7 @@ public abstract class AttributedElementClassImplTest {
 
 	/**
 	 * addConstraint(Constraint)
-	 *
+	 * 
 	 * TEST CASE: Adding a constraint, already contained directly in this
 	 * element
 	 */
@@ -305,13 +305,13 @@ public abstract class AttributedElementClassImplTest {
 
 	/**
 	 * addConstraint(Constraint)
-	 *
+	 * 
 	 * TEST CASE: Adding a constraint, already contained in a superclass of this
 	 * element
-	 *
+	 * 
 	 * NOTE: This method is called upon in all of this classes´ subclasses.
 	 */
-	public final void testAddConstraint4(AttributedElementClass superClass) {
+	public final void testAddConstraint4(AttributedElementClass<?, ?> superClass) {
 		Constraint constr = new ConstraintImpl("", "SomeConstraint", "");
 
 		int constraintCountBefore = attributedElement.getConstraints().size();
@@ -326,13 +326,13 @@ public abstract class AttributedElementClassImplTest {
 
 	/**
 	 * addConstraint(Constraint)
-	 *
+	 * 
 	 * TEST CASE: Adding a constraint, already contained in a subclass of this
 	 * element
-	 *
+	 * 
 	 * NOTE: This method is called upon in all of this classes´ subclasses.
 	 */
-	public final void testAddConstraint5(AttributedElementClass subClass) {
+	public final void testAddConstraint5(AttributedElementClass<?, ?> subClass) {
 		Constraint constr = new ConstraintImpl("", "SomeConstraint", "");
 
 		int constraintCountBefore = attributedElement.getConstraints().size();
@@ -351,13 +351,13 @@ public abstract class AttributedElementClassImplTest {
 
 	/**
 	 * compareTo(AttributedElementClass)
-	 *
+	 * 
 	 * TEST CASE: Comparing this element to another, where this element´s
 	 * qualified name is lexicographically less than the other´s
-	 *
+	 * 
 	 * Note: This method is called upon in all of this classes´ subclasses.
 	 */
-	public final void testCompareTo(AttributedElementClass other) {
+	public final void testCompareTo(AttributedElementClass<?, ?> other) {
 		int comp = attributedElement.compareTo(other);
 
 		Assert.assertTrue(comp < 0);
@@ -365,13 +365,13 @@ public abstract class AttributedElementClassImplTest {
 
 	/**
 	 * compareTo(AttributedElementClass)
-	 *
+	 * 
 	 * TEST CASE: Comparing this element to another, where this element´s
 	 * qualified name is lexicographically greater than the other´s
-	 *
+	 * 
 	 * Note: This method is called upon in all of this classes´ subclasses.
 	 */
-	public final void testCompareTo2(AttributedElementClass other) {
+	public final void testCompareTo2(AttributedElementClass<?, ?> other) {
 		int comp = attributedElement.compareTo(other);
 
 		Assert.assertTrue(comp > 0);
@@ -379,15 +379,15 @@ public abstract class AttributedElementClassImplTest {
 
 	/**
 	 * compareTo(AttributedElementClass)
-	 *
+	 * 
 	 * TEST CASE: Comparing this element to another, where both element´s
 	 * qualified names are equal
-	 *
+	 * 
 	 * TEST CASE: Comparing an element to itself
-	 *
+	 * 
 	 * Note: This method is called upon in all of this classes´ subclasses.
 	 */
-	public final void testCompareTo3(AttributedElementClass other) {
+	public final void testCompareTo3(AttributedElementClass<?, ?> other) {
 		int comp = attributedElement.compareTo(other);
 
 		Assert.assertTrue(comp == 0);
@@ -398,7 +398,7 @@ public abstract class AttributedElementClassImplTest {
 	 */
 	/**
 	 * containsAttribute(String)
-	 *
+	 * 
 	 * TEST CASE: looking for a non-present attribute
 	 */
 	@Test
@@ -409,7 +409,7 @@ public abstract class AttributedElementClassImplTest {
 
 	/**
 	 * containsAttribute(String)
-	 *
+	 * 
 	 * TEST CASE: looking for an attribute, directly present in this element
 	 */
 	@Test
@@ -425,13 +425,14 @@ public abstract class AttributedElementClassImplTest {
 
 	/**
 	 * containsAttribute(String)
-	 *
+	 * 
 	 * TEST CASE: looking for an attribute, present in a superclass of this
 	 * element
-	 *
+	 * 
 	 * NOTE: This method is called upon in all of this classes´ subclasses.
 	 */
-	public final void testContainsAttribute3(AttributedElementClass superClass) {
+	public final void testContainsAttribute3(
+			AttributedElementClass<?, ?> superClass) {
 		Attribute attribute = new AttributeImpl("testAttribute",
 				schema.getBooleanDomain(), attributedElement, "null");
 
@@ -446,30 +447,30 @@ public abstract class AttributedElementClassImplTest {
 	 */
 	/**
 	 * getAllSubClasses()
-	 *
+	 * 
 	 * TEST CASE: Getting all subclasses of an element with one direct subclass
-	 *
+	 * 
 	 * TEST CASE: Getting all subclasses of an element with multiple direct
 	 * subclasses
-	 *
+	 * 
 	 * TEST CASE: Getting all subclasses of an element with multiple direct and
 	 * indirect subclasses
-	 *
+	 * 
 	 * TEST CASE: Getting all subclasses of an element that has no subclasses
-	 *
+	 * 
 	 * NOTE: This method is called upon in all of this classes´ subclasses.
 	 */
 	public final void testGetAllSubClasses(
-			Vector<AttributedElementClass> expectedSubClasses) {
-		Set<AttributedElementClass> subClasses = attributedElement
+			Vector<AttributedElementClass<?, ?>> expectedSubClasses) {
+		Set<AttributedElementClass<?, ?>> subClasses = attributedElement
 				.getAllSubClasses();
 
 		Assert.assertEquals(expectedSubClasses.size(), subClasses.size());
 
 		// Check if this element contains all expected subclasses
-		for (AttributedElementClass expectedSubClass : expectedSubClasses) {
+		for (AttributedElementClass<?, ?> expectedSubClass : expectedSubClasses) {
 			boolean expectedSubClassFound = false;
-			for (AttributedElementClass subClass : subClasses) {
+			for (AttributedElementClass<?, ?> subClass : subClasses) {
 				if (subClass.getQualifiedName().equals(
 						expectedSubClass.getQualifiedName())) {
 					expectedSubClassFound = true;
@@ -488,32 +489,32 @@ public abstract class AttributedElementClassImplTest {
 	 */
 	/**
 	 * getAllSuperClasses()
-	 *
+	 * 
 	 * TEST CASE: Getting all superclasses of an element with one direct
 	 * superclass
-	 *
+	 * 
 	 * TEST CASE: Getting all superclasses of an element with multiple direct
 	 * superclasses
-	 *
+	 * 
 	 * TEST CASE: Getting all superclasses of an element with multiple direct
 	 * and indirect superclasses
-	 *
+	 * 
 	 * TEST CASE: Getting all superclasses of an element that has no
 	 * superclasses
-	 *
+	 * 
 	 * NOTE: This method is called upon in all of this classes´ subclasses.
 	 */
 	public final void testGetAllSuperClasses(
-			Vector<AttributedElementClass> expectedSuperClasses) {
-		Set<AttributedElementClass> superClasses = attributedElement
+			Vector<AttributedElementClass<?, ?>> expectedSuperClasses) {
+		Set<AttributedElementClass<?, ?>> superClasses = attributedElement
 				.getAllSuperClasses();
 
 		Assert.assertEquals(expectedSuperClasses.size(), superClasses.size());
 
 		// Check if this element contains all expected superclasses
-		for (AttributedElementClass expectedSuperClass : expectedSuperClasses) {
+		for (AttributedElementClass<?, ?> expectedSuperClass : expectedSuperClasses) {
 			boolean expectedSuperClassFound = false;
-			for (AttributedElementClass superClass : superClasses) {
+			for (AttributedElementClass<?, ?> superClass : superClasses) {
 				if (superClass.getQualifiedName().equals(
 						expectedSuperClass.getQualifiedName())) {
 					expectedSuperClassFound = true;
@@ -532,7 +533,7 @@ public abstract class AttributedElementClassImplTest {
 	 */
 	/**
 	 * getAttribute()
-	 *
+	 * 
 	 * TEST CASE: Getting a direct attribute
 	 */
 	@Test
@@ -549,12 +550,12 @@ public abstract class AttributedElementClassImplTest {
 
 	/**
 	 * getAttribute()
-	 *
+	 * 
 	 * TEST CASE: Getting an inherited attribute
-	 *
+	 * 
 	 * NOTE: This method is called upon in all of this classes´ subclasses.
 	 */
-	public final void testGetAttribute2(AttributedElementClass superClass) {
+	public final void testGetAttribute2(AttributedElementClass<?, ?> superClass) {
 		Attribute attribute = new AttributeImpl("testAttribute",
 				schema.getBooleanDomain(), attributedElement, "null");
 
@@ -568,7 +569,7 @@ public abstract class AttributedElementClassImplTest {
 
 	/**
 	 * getAttribute()
-	 *
+	 * 
 	 * TEST CASE: Trying to get a non existent attribute
 	 */
 	@Test
@@ -579,7 +580,7 @@ public abstract class AttributedElementClassImplTest {
 
 	/**
 	 * getAttribute()
-	 *
+	 * 
 	 * TEST CASE: Trying to get an attribute with an empty name
 	 */
 	@Test
@@ -589,13 +590,13 @@ public abstract class AttributedElementClassImplTest {
 
 	/**
 	 * getAttribute()
-	 *
+	 * 
 	 * TEST CASE: Trying to get an attribute present in a subclass of this
 	 * element
-	 *
+	 * 
 	 * NOTE: This method is called upon in all of this classes´ subclasses.
 	 */
-	public final void testGetAttribute5(AttributedElementClass subClass) {
+	public final void testGetAttribute5(AttributedElementClass<?, ?> subClass) {
 		Attribute attribute = new AttributeImpl("testAttribute",
 				schema.getBooleanDomain(), attributedElement, "null");
 
@@ -609,7 +610,7 @@ public abstract class AttributedElementClassImplTest {
 	 */
 	/**
 	 * getAttributeCount()
-	 *
+	 * 
 	 * TEST CASE: Getting the number of attributes of an element which has only
 	 * one direct attribute and no inherited attributes
 	 */
@@ -623,13 +624,14 @@ public abstract class AttributedElementClassImplTest {
 
 	/**
 	 * getAttributeCount()
-	 *
+	 * 
 	 * TEST CASE: Getting the number of attributes of an element which has
 	 * exactly only one inherited attribute and no direct attributes
-	 *
+	 * 
 	 * NOTE: This method is called upon in all of this classes´ subclasses.
 	 */
-	public final void testGetAttributeCount2(AttributedElementClass superClass) {
+	public final void testGetAttributeCount2(
+			AttributedElementClass<?, ?> superClass) {
 		superClass.addAttribute(new AttributeImpl("testAttribute", schema
 				.getBooleanDomain(), attributedElement, "null"));
 
@@ -638,13 +640,14 @@ public abstract class AttributedElementClassImplTest {
 
 	/**
 	 * getAttributeCount()
-	 *
+	 * 
 	 * TEST CASE: Getting the number of attributes of an element which has
 	 * multiple direct and indirect attributes
-	 *
+	 * 
 	 * NOTE: This method is called upon in all of this classes´ subclasses.
 	 */
-	public final void testGetAttributeCount3(AttributedElementClass superClass) {
+	public final void testGetAttributeCount3(
+			AttributedElementClass<?, ?> superClass) {
 		attributedElement.addAttribute(new AttributeImpl("testAttribute",
 				schema.getBooleanDomain(), attributedElement, "null"));
 
@@ -656,7 +659,7 @@ public abstract class AttributedElementClassImplTest {
 
 	/**
 	 * getAttributeCount()
-	 *
+	 * 
 	 * TEST CASE: Getting the number of attributes of an element which has no
 	 * direct nor inherited attributes
 	 */
@@ -667,13 +670,14 @@ public abstract class AttributedElementClassImplTest {
 
 	/**
 	 * getAttributeCount()
-	 *
+	 * 
 	 * TEST CASE: Getting the number of attributes of an element which has no
 	 * direct nor inherited attributes but whose subclass has attributes
-	 *
+	 * 
 	 * NOTE: This method is called upon in all of this classes´ subclasses.
 	 */
-	public final void testGetAttributeCount5(AttributedElementClass subClass) {
+	public final void testGetAttributeCount5(
+			AttributedElementClass<?, ?> subClass) {
 		subClass.addAttribute(new AttributeImpl("testAttribute", schema
 				.getBooleanDomain(), attributedElement, "null"));
 
@@ -685,7 +689,7 @@ public abstract class AttributedElementClassImplTest {
 	 */
 	/**
 	 * getAttributeList()
-	 *
+	 * 
 	 * TEST CASE: Getting an element´s list of attributes, which has only one
 	 * direct attribute and no inherited attributes
 	 */
@@ -705,13 +709,14 @@ public abstract class AttributedElementClassImplTest {
 
 	/**
 	 * getAttributeList()
-	 *
+	 * 
 	 * TEST CASE: Getting an element´s list of attributes, which has exactly one
 	 * inherited attribute and no direct attributes
-	 *
+	 * 
 	 * NOTE: This method is called upon in all of this classes´ subclasses.
 	 */
-	public final void testGetAttributeList2(AttributedElementClass superClass) {
+	public final void testGetAttributeList2(
+			AttributedElementClass<?, ?> superClass) {
 		Attribute attribute = new AttributeImpl("testAttribute",
 				schema.getBooleanDomain(), attributedElement, "null");
 
@@ -726,13 +731,14 @@ public abstract class AttributedElementClassImplTest {
 
 	/**
 	 * getAttributeList()
-	 *
+	 * 
 	 * TEST CASE: Getting an element´s list of attributes, which has mutliple
 	 * direct and inherited attributes
-	 *
+	 * 
 	 * NOTE: This method is called upon in all of this classes´ subclasses.
 	 */
-	public final void testGetAttributeList3(AttributedElementClass superClass) {
+	public final void testGetAttributeList3(
+			AttributedElementClass<?, ?> superClass) {
 		Attribute attribute = new AttributeImpl("testAttribute",
 				schema.getBooleanDomain(), attributedElement, "null");
 		Attribute attribute2 = new AttributeImpl("testAttribute2",
@@ -751,7 +757,7 @@ public abstract class AttributedElementClassImplTest {
 
 	/**
 	 * getAttributeList()
-	 *
+	 * 
 	 * TEST CASE: Getting an element´s list of attributes, which has no direct
 	 * nor inherited attributes
 	 */
@@ -762,13 +768,14 @@ public abstract class AttributedElementClassImplTest {
 
 	/**
 	 * getAttributeList()
-	 *
+	 * 
 	 * TEST CASE: Getting an element´s list of attributes, which has no direct
 	 * nor inherited attributes but whose subclass has attributes
-	 *
+	 * 
 	 * NOTE: This method is called upon in all of this classes´ subclasses.
 	 */
-	public final void testGetAttributeList5(AttributedElementClass subClass) {
+	public final void testGetAttributeList5(
+			AttributedElementClass<?, ?> subClass) {
 		Assert.assertTrue(attributedElement.getAttributeList().isEmpty());
 	}
 
@@ -777,7 +784,7 @@ public abstract class AttributedElementClassImplTest {
 	 */
 	/**
 	 * getConstraints()
-	 *
+	 * 
 	 * TEST CASE: Getting an element´s list of constraints, that has only one
 	 * constraint
 	 */
@@ -793,7 +800,7 @@ public abstract class AttributedElementClassImplTest {
 
 	/**
 	 * getConstraints()
-	 *
+	 * 
 	 * TEST CASE: Getting an element´s list of constraints, that has only one
 	 * constraint
 	 */
@@ -812,7 +819,7 @@ public abstract class AttributedElementClassImplTest {
 
 	/**
 	 * getConstraints()
-	 *
+	 * 
 	 * TEST CASE: Getting an element´s list of constraints, that has no
 	 * constraints at all
 	 */
@@ -823,13 +830,14 @@ public abstract class AttributedElementClassImplTest {
 
 	/**
 	 * getConstraints()
-	 *
+	 * 
 	 * TEST CASE: Getting an element´s list of constraints, that has a
 	 * superclass with constraints
-	 *
+	 * 
 	 * Note: This method is called upon in all of this classes´ subclasses.
 	 */
-	public final void testGetConstraints4(AttributedElementClass superClass) {
+	public final void testGetConstraints4(
+			AttributedElementClass<?, ?> superClass) {
 		Constraint constr = new ConstraintImpl("", "SomeConstraint", "");
 		Constraint constr2 = new ConstraintImpl("", "SomeOtherConstraint", "");
 
@@ -849,33 +857,33 @@ public abstract class AttributedElementClassImplTest {
 	 */
 	/**
 	 * getDirectSubClasses()
-	 *
-	 *
+	 * 
+	 * 
 	 * TEST CASE: Getting all direct subclasses of an element that has one
 	 * direct subclass.
-	 *
+	 * 
 	 * TEST CASE: Getting all direct subclasses of an element that has multiple
 	 * direct subclasses.
-	 *
+	 * 
 	 * TEST CASE: Getting all direct subclasses of an element that has multiple
 	 * direct and indirect subclasses.
-	 *
+	 * 
 	 * TEST CASE: Getting all direct subclasses of an element that has no direct
 	 * subclasses.
-	 *
+	 * 
 	 * NOTE: This method is called upon in all of this classes´ subclasses.
 	 */
 	public final void testGetDirectSubClasses(
-			Vector<AttributedElementClass> expectedSubClasses) {
-		Set<AttributedElementClass> subClasses = attributedElement
+			Vector<AttributedElementClass<?, ?>> expectedSubClasses) {
+		Set<AttributedElementClass<?, ?>> subClasses = attributedElement
 				.getDirectSubClasses();
 
 		Assert.assertEquals(subClasses.size(), expectedSubClasses.size());
 
 		// Check if subClasses contains all expected subclasses, and only these
-		for (AttributedElementClass subClass : subClasses) {
+		for (AttributedElementClass<?, ?> subClass : subClasses) {
 			boolean subClassFound = false;
-			for (AttributedElementClass expectedSubClass : expectedSubClasses) {
+			for (AttributedElementClass<?, ?> expectedSubClass : expectedSubClasses) {
 				if (expectedSubClass.getQualifiedName().equals(
 						subClass.getQualifiedName())) {
 					subClassFound = true;
@@ -892,33 +900,33 @@ public abstract class AttributedElementClassImplTest {
 	 */
 	/**
 	 * getDirectSuperClasses()
-	 *
+	 * 
 	 * TEST CASE: Getting all direct superclasses of an element that has one
 	 * direct superclass.
-	 *
+	 * 
 	 * TEST CASE: Getting all direct superclasses of an element that has
 	 * multiple direct superclasses.
-	 *
+	 * 
 	 * TEST CASE: Getting all direct superclasses of an element that has
 	 * multiple direct and indirect superclasses.
-	 *
+	 * 
 	 * TEST CASE: Getting all direct superclasses of an element that has no
 	 * direct superclasses.
-	 *
+	 * 
 	 * NOTE: This method is called upon in all of this classes´ subclasses.
 	 */
 	public final void testGetDirectSuperClasses(
-			Vector<AttributedElementClass> expectedSuperClasses) {
-		Set<AttributedElementClass> superClasses = attributedElement
+			Vector<AttributedElementClass<?, ?>> expectedSuperClasses) {
+		Set<AttributedElementClass<?, ?>> superClasses = attributedElement
 				.getDirectSuperClasses();
 
 		Assert.assertEquals(expectedSuperClasses.size(), superClasses.size());
 
 		// Check if superClasses contains all expected superclasses, and only
 		// these
-		for (AttributedElementClass superClass : superClasses) {
+		for (AttributedElementClass<?, ?> superClass : superClasses) {
 			boolean superClassFound = false;
-			for (AttributedElementClass expectedSuperClass : expectedSuperClasses) {
+			for (AttributedElementClass<?, ?> expectedSuperClass : expectedSuperClasses) {
 				if (expectedSuperClass.getQualifiedName().equals(
 						superClass.getQualifiedName())) {
 					superClassFound = true;
@@ -951,7 +959,7 @@ public abstract class AttributedElementClassImplTest {
 
 	/**
 	 * getOwnAttribute()
-	 *
+	 * 
 	 * TEST CASE: Getting a direct attribute
 	 */
 	@Test
@@ -968,7 +976,7 @@ public abstract class AttributedElementClassImplTest {
 
 	/**
 	 * getOwnAttribute()
-	 *
+	 * 
 	 * TEST CASE: Trying to get a non existent attribute
 	 */
 	@Test
@@ -979,7 +987,7 @@ public abstract class AttributedElementClassImplTest {
 
 	/**
 	 * getOwnAttribute()
-	 *
+	 * 
 	 * TEST CASE: Trying to get an attribute with an empty name
 	 */
 	@Test
@@ -989,16 +997,17 @@ public abstract class AttributedElementClassImplTest {
 
 	/**
 	 * getOwnAttribute()
-	 *
+	 * 
 	 * TEST CASE: Trying to get an attribute present in a superclass of this
 	 * element
-	 *
+	 * 
 	 * TEST CASE: Trying to get an attribute present in a subclass of this
 	 * element
-	 *
+	 * 
 	 * NOTE: This method is called upon in all of this classes´ subclasses.
 	 */
-	public final void testGetOwnAttribute4(AttributedElementClass otherClass) {
+	public final void testGetOwnAttribute4(
+			AttributedElementClass<?, ?> otherClass) {
 		Attribute attribute = new AttributeImpl("testAttribute",
 				schema.getBooleanDomain(), attributedElement, "null");
 
@@ -1012,7 +1021,7 @@ public abstract class AttributedElementClassImplTest {
 	 */
 	/**
 	 * getOwnAttributeCount()
-	 *
+	 * 
 	 * TEST CASE: Getting the number of attributes of an element that only has
 	 * one direct attribute
 	 */
@@ -1028,7 +1037,7 @@ public abstract class AttributedElementClassImplTest {
 
 	/**
 	 * getOwnAttributeCount()
-	 *
+	 * 
 	 * TEST CASE: Getting the number of attributes of an element that has
 	 * multiple direct attributes
 	 */
@@ -1047,7 +1056,7 @@ public abstract class AttributedElementClassImplTest {
 
 	/**
 	 * getOwnAttributeCount()
-	 *
+	 * 
 	 * TEST CASE: Getting the number of attributes of an element that has no
 	 * direct attributes
 	 */
@@ -1058,14 +1067,14 @@ public abstract class AttributedElementClassImplTest {
 
 	/**
 	 * getOwnAttributeCount()
-	 *
+	 * 
 	 * TEST CASE: Getting the number of attributes of an element that only has
 	 * inherited attributes and no direct attributes
-	 *
+	 * 
 	 * NOTE: This method is called upon in all of this classes´ subclasses.
 	 */
 	public final void testGetOwnAttributeCount4(
-			AttributedElementClass superClass) {
+			AttributedElementClass<?, ?> superClass) {
 		Attribute attribute = new AttributeImpl("testAttribute",
 				schema.getBooleanDomain(), attributedElement, "null");
 		superClass.addAttribute(attribute);
@@ -1078,7 +1087,7 @@ public abstract class AttributedElementClassImplTest {
 	 */
 	/**
 	 * getOwnAttributeList()
-	 *
+	 * 
 	 * TEST CASE: Getting an element´s list of attributes, that has one direct
 	 * attribute
 	 */
@@ -1098,7 +1107,7 @@ public abstract class AttributedElementClassImplTest {
 
 	/**
 	 * getOwnAttributeList()
-	 *
+	 * 
 	 * TEST CASE: Getting an element´s list of attributes, that has mutliple
 	 * direct attributes
 	 */
@@ -1122,7 +1131,7 @@ public abstract class AttributedElementClassImplTest {
 
 	/**
 	 * getOwnAttributeList()
-	 *
+	 * 
 	 * TEST CASE: Getting an element´s list of attributes, that has no direct
 	 * attributes
 	 */
@@ -1133,13 +1142,14 @@ public abstract class AttributedElementClassImplTest {
 
 	/**
 	 * getOwnAttributeList()
-	 *
+	 * 
 	 * TEST CASE: Getting an element´s list of attributes, that only has
 	 * inherited attributes and no direct attributes
-	 *
+	 * 
 	 * NOTE: This method is called upon in all of this classes´ subclasses.
 	 */
-	public final void testGetOwnAttributeList4(AttributedElementClass superClass) {
+	public final void testGetOwnAttributeList4(
+			AttributedElementClass<?, ?> superClass) {
 		Attribute attribute = new AttributeImpl("testAttribute",
 				schema.getBooleanDomain(), attributedElement, "null");
 		superClass.addAttribute(attribute);
@@ -1187,7 +1197,7 @@ public abstract class AttributedElementClassImplTest {
 	 */
 	/**
 	 * hasAttributes()
-	 *
+	 * 
 	 * TEST CASE: The element has one direct attribute
 	 */
 	@Test
@@ -1201,7 +1211,7 @@ public abstract class AttributedElementClassImplTest {
 
 	/**
 	 * hasAttributes()
-	 *
+	 * 
 	 * TEST CASE: The element has multiple direct attributes
 	 */
 	@Test
@@ -1218,12 +1228,12 @@ public abstract class AttributedElementClassImplTest {
 
 	/**
 	 * hasAttributes()
-	 *
+	 * 
 	 * TEST CASE: The element has one inherited attribute
-	 *
+	 * 
 	 * NOTE: This method is called upon in all of this classes´ subclasses.
 	 */
-	public final void testHasAttributes3(AttributedElementClass superClass) {
+	public final void testHasAttributes3(AttributedElementClass<?, ?> superClass) {
 		Attribute attribute = new AttributeImpl("testAttribute",
 				schema.getBooleanDomain(), attributedElement, "null");
 		superClass.addAttribute(attribute);
@@ -1233,12 +1243,12 @@ public abstract class AttributedElementClassImplTest {
 
 	/**
 	 * hasAttributes()
-	 *
+	 * 
 	 * TEST CASE: The element has multiple inherited attributes
-	 *
+	 * 
 	 * NOTE: This method is called upon in all of this classes´ subclasses.
 	 */
-	public final void testHasAttributes4(AttributedElementClass superClass) {
+	public final void testHasAttributes4(AttributedElementClass<?, ?> superClass) {
 		Attribute attribute = new AttributeImpl("testAttribute",
 				schema.getBooleanDomain(), attributedElement, "null");
 		Attribute attribute2 = new AttributeImpl("testAttribute2",
@@ -1251,12 +1261,12 @@ public abstract class AttributedElementClassImplTest {
 
 	/**
 	 * hasAttributes()
-	 *
+	 * 
 	 * TEST CASE: The element has multiple direct and indirect attributes
-	 *
+	 * 
 	 * NOTE: This method is called upon in all of this classes´ subclasses.
 	 */
-	public final void testHasAttributes5(AttributedElementClass superClass) {
+	public final void testHasAttributes5(AttributedElementClass<?, ?> superClass) {
 		Attribute attribute = new AttributeImpl("testAttribute",
 				schema.getBooleanDomain(), attributedElement, "null");
 		Attribute attribute2 = new AttributeImpl("testAttribute2",
@@ -1275,7 +1285,7 @@ public abstract class AttributedElementClassImplTest {
 
 	/**
 	 * hasAttributes()
-	 *
+	 * 
 	 * TEST CASE: The element has no direct and no indirect attributes
 	 */
 	@Test
@@ -1288,7 +1298,7 @@ public abstract class AttributedElementClassImplTest {
 	 */
 	/**
 	 * hasOwnAttributes()
-	 *
+	 * 
 	 * TEST CASE: The element has one direct attribute
 	 */
 	@Test
@@ -1302,7 +1312,7 @@ public abstract class AttributedElementClassImplTest {
 
 	/**
 	 * hasOwnAttributes()
-	 *
+	 * 
 	 * TEST CASE: The element has multiple direct attributes
 	 */
 	@Test
@@ -1319,7 +1329,7 @@ public abstract class AttributedElementClassImplTest {
 
 	/**
 	 * hasOwnAttributes()
-	 *
+	 * 
 	 * TEST CASE: The element has no direct and no indirect attributes
 	 */
 	@Test
@@ -1329,12 +1339,13 @@ public abstract class AttributedElementClassImplTest {
 
 	/**
 	 * hasOwnAttributes()
-	 *
+	 * 
 	 * TEST CASE: The element has direct and inherited attributes
-	 *
+	 * 
 	 * NOTE: This method is called upon in all of this classes´ subclasses.
 	 */
-	public final void testHasOwnAttributes4(AttributedElementClass superClass) {
+	public final void testHasOwnAttributes4(
+			AttributedElementClass<?, ?> superClass) {
 		Attribute attribute = new AttributeImpl("testAttribute",
 				schema.getBooleanDomain(), attributedElement, "null");
 		Attribute attribute2 = new AttributeImpl("testAttribute2",
@@ -1347,12 +1358,13 @@ public abstract class AttributedElementClassImplTest {
 
 	/**
 	 * hasOwnAttributes()
-	 *
+	 * 
 	 * TEST CASE: The element has no direct but indirect attributes
-	 *
+	 * 
 	 * NOTE: This method is called upon in all of this classes´ subclasses.
 	 */
-	public final void testHasOwnAttributes5(AttributedElementClass superClass) {
+	public final void testHasOwnAttributes5(
+			AttributedElementClass<?, ?> superClass) {
 		Attribute attribute = new AttributeImpl("testAttribute",
 				schema.getBooleanDomain(), attributedElement, "null");
 		Attribute attribute2 = new AttributeImpl("testAttribute2",
@@ -1368,7 +1380,7 @@ public abstract class AttributedElementClassImplTest {
 	 */
 	/**
 	 * isAbstract()
-	 *
+	 * 
 	 * TEST CASE: The element is abstract
 	 */
 	@Test
@@ -1381,7 +1393,7 @@ public abstract class AttributedElementClassImplTest {
 
 	/**
 	 * isAbstract()
-	 *
+	 * 
 	 * TEST CASE: The element is not abstract
 	 */
 	@Test
@@ -1396,25 +1408,25 @@ public abstract class AttributedElementClassImplTest {
 	 */
 	/**
 	 * isDirectSubClassOf()
-	 *
+	 * 
 	 * TEST CASE: The other element is a direct superclass of this element
 	 */
-	public final void testIsDirectSubClassOf(AttributedElementClass other) {
+	public final void testIsDirectSubClassOf(AttributedElementClass<?, ?> other) {
 		Assert.assertTrue(attributedElement.isDirectSubClassOf(other));
 	}
 
 	/**
 	 * isDirectSubClassOf()
-	 *
+	 * 
 	 * TEST CASE: The other element is an inherited superclass of this element
-	 *
+	 * 
 	 * TEST CASE: The other element is a subclass of this element
-	 *
+	 * 
 	 * TEST CASE: The other element has no relation with this element
-	 *
+	 * 
 	 * TEST CASE: The other element and this element are the same
 	 */
-	public final void testIsDirectSubClassOf2(AttributedElementClass other) {
+	public final void testIsDirectSubClassOf2(AttributedElementClass<?, ?> other) {
 		Assert.assertFalse(attributedElement.isDirectSubClassOf(other));
 	}
 
@@ -1423,25 +1435,27 @@ public abstract class AttributedElementClassImplTest {
 	 */
 	/**
 	 * isDirectSuperClassOf()
-	 *
+	 * 
 	 * TEST CASE: The other element is a direct subclass of this element
 	 */
-	public final void testIsDirectSuperClassOf(AttributedElementClass other) {
+	public final void testIsDirectSuperClassOf(
+			AttributedElementClass<?, ?> other) {
 		Assert.assertTrue(attributedElement.isDirectSuperClassOf(other));
 	}
 
 	/**
 	 * isDirectSuperClassOf()
-	 *
+	 * 
 	 * TEST CASE: The other element is an inherited subclass of this element
-	 *
+	 * 
 	 * TEST CASE: The other element is a superclass of this element
-	 *
+	 * 
 	 * TEST CASE: The other element has no relation with this element
-	 *
+	 * 
 	 * TEST CASE: The other element and this element are the same
 	 */
-	public final void testIsDirectSuperClassOf2(AttributedElementClass other) {
+	public final void testIsDirectSuperClassOf2(
+			AttributedElementClass<?, ?> other) {
 		Assert.assertFalse(attributedElement.isDirectSuperClassOf(other));
 	}
 
@@ -1451,7 +1465,7 @@ public abstract class AttributedElementClassImplTest {
 
 	/**
 	 * isInternal()
-	 *
+	 * 
 	 * TEST CASE: The element is not for internal use
 	 */
 	@Test
@@ -1481,25 +1495,25 @@ public abstract class AttributedElementClassImplTest {
 	 */
 	/**
 	 * isSubClassOf()
-	 *
+	 * 
 	 * TEST CASE: The other element is a direct superclass of this element
-	 *
+	 * 
 	 * TEST CASE: The other element is an inherited superclass of this element
 	 */
-	public final void testIsSubClassOf(AttributedElementClass other) {
+	public final void testIsSubClassOf(AttributedElementClass<?, ?> other) {
 		Assert.assertTrue(attributedElement.isSubClassOf(other));
 	}
 
 	/**
 	 * isSubClassOf()
-	 *
+	 * 
 	 * TEST CASE: The other element is a subclass of this element
-	 *
+	 * 
 	 * TEST CASE: The other element has no relation with this element
-	 *
+	 * 
 	 * TEST CASE: The other element and this element are the same
 	 */
-	public final void testIsSubClassOf2(AttributedElementClass other) {
+	public final void testIsSubClassOf2(AttributedElementClass<?, ?> other) {
 		Assert.assertFalse(attributedElement.isSubClassOf(other));
 	}
 
@@ -1508,25 +1522,25 @@ public abstract class AttributedElementClassImplTest {
 	 */
 	/**
 	 * isSuperClassOf()
-	 *
+	 * 
 	 * TEST CASE: The other element is a direct subclass of this element
-	 *
+	 * 
 	 * TEST CASE: The other element is an inherited subclass of this element
 	 */
-	public final void testIsSuperClassOf(AttributedElementClass other) {
+	public final void testIsSuperClassOf(AttributedElementClass<?, ?> other) {
 		Assert.assertTrue(attributedElement.isSuperClassOf(other));
 	}
 
 	/**
 	 * isDirectSuperClassOf()
-	 *
+	 * 
 	 * TEST CASE: The other element is a superclass of this element
-	 *
+	 * 
 	 * TEST CASE: The other element has no relation with this element
-	 *
+	 * 
 	 * TEST CASE: The other element and this element are the same
 	 */
-	public final void testIsSuperClassOf2(AttributedElementClass other) {
+	public final void testIsSuperClassOf2(AttributedElementClass<?, ?> other) {
 		Assert.assertFalse(attributedElement.isSuperClassOf(other));
 	}
 
@@ -1535,25 +1549,27 @@ public abstract class AttributedElementClassImplTest {
 	 */
 	/**
 	 * isSuperClassOfOrEquals()
-	 *
+	 * 
 	 * TEST CASE: The other element is a direct subclass of this element
-	 *
+	 * 
 	 * TEST CASE: The other element is an inherited subclass of this element
-	 *
+	 * 
 	 * TEST CASE: The other element is a superclass of this element
 	 */
-	public final void testIsSuperClassOfOrEquals(AttributedElementClass other) {
+	public final void testIsSuperClassOfOrEquals(
+			AttributedElementClass<?, ?> other) {
 		Assert.assertTrue(attributedElement.isSuperClassOfOrEquals(other));
 	}
 
 	/**
 	 * isSuperClassOfOrEquals()
-	 *
+	 * 
 	 * TEST CASE: The other element has no relation with this element
-	 *
+	 * 
 	 * TEST CASE: The other element and this element are the same
 	 */
-	public final void testIsSuperClassOfOrEquals2(AttributedElementClass other) {
+	public final void testIsSuperClassOfOrEquals2(
+			AttributedElementClass<?, ?> other) {
 		Assert.assertFalse(attributedElement.isSuperClassOfOrEquals(other));
 	}
 
@@ -1562,7 +1578,7 @@ public abstract class AttributedElementClassImplTest {
 	 */
 	/**
 	 * setAbstract()
-	 *
+	 * 
 	 * TEST CASE: The element is set to an abstract state
 	 */
 	@Test
@@ -1574,7 +1590,7 @@ public abstract class AttributedElementClassImplTest {
 
 	/**
 	 * setAbstract()
-	 *
+	 * 
 	 * TEST CASE: The element is set to a non-abstract state
 	 */
 	@Test

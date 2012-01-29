@@ -8,23 +8,23 @@ import de.uni_koblenz.jgralab.gretl.Context.TransformationPhase;
 public class Delete extends InPlaceTransformation {
 
 	private String greqlExp;
-	private PSet<GraphElement> elementsToBeDeleted;
+	private PSet<GraphElement<?, ?>> elementsToBeDeleted;
 
 	protected Delete(Context context, String semExp) {
 		super(context);
-		this.greqlExp = semExp;
+		greqlExp = semExp;
 	}
 
-	protected Delete(Context context, PSet<GraphElement> deletableElements) {
+	protected Delete(Context context, PSet<GraphElement<?, ?>> deletableElements) {
 		super(context);
-		this.elementsToBeDeleted = deletableElements;
+		elementsToBeDeleted = deletableElements;
 	}
 
 	@Override
 	protected Integer transform() {
 		if (context.getPhase() == TransformationPhase.SCHEMA) {
 			throw new GReTLException(
-					"Huzza! SCHEMA phase in InPlaceTransformatio?!?");
+					"Huzza! SCHEMA phase in InPlaceTransformation?!?");
 		}
 
 		if (elementsToBeDeleted == null) {
@@ -39,9 +39,9 @@ public class Delete extends InPlaceTransformation {
 		return deleteCount;
 	}
 
-	private int deleteElements(PSet<GraphElement> j) {
+	private int deleteElements(PSet<GraphElement<?, ?>> j) {
 		int count = 0;
-		for (GraphElement ge : j) {
+		for (GraphElement<?, ?> ge : j) {
 			if (ge.isValid()) {
 				ge.delete();
 				count++;

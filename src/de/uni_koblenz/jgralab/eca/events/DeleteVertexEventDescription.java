@@ -17,7 +17,7 @@ public class DeleteVertexEventDescription extends EventDescription {
 	 *            the Class of elements, this EventDescription monitors
 	 */
 	public DeleteVertexEventDescription(EventTime time,
-			Class<? extends AttributedElement> type) {
+			Class<? extends AttributedElement<?, ?>> type) {
 		super(time, type);
 	}
 
@@ -46,11 +46,11 @@ public class DeleteVertexEventDescription extends EventDescription {
 	 * @param element
 	 *            the to be deleted Vertex
 	 */
-	public void fire(AttributedElement element) {
+	public void fire(AttributedElement<?, ?> element) {
 		if (super.checkContext(element)) {
-			int nested = this.getActiveECARules().get(0).getECARuleManager()
+			int nested = getActiveECARules().get(0).getECARuleManager()
 					.getNestedTriggerCalls();
-			Graph graph = this.getActiveECARules().get(0).getECARuleManager()
+			Graph graph = getActiveECARules().get(0).getECARuleManager()
 					.getGraph();
 			for (ECARule rule : activeRules) {
 				rule.trigger(new DeleteVertexEvent(nested, graph,
@@ -58,24 +58,23 @@ public class DeleteVertexEventDescription extends EventDescription {
 			}
 		}
 	}
-	
+
 	/**
 	 * Triggers the rule if this EventDescription matches the Event
 	 * 
 	 * @param type
 	 *            the type of the Vertex that is deleted
 	 */
-	public void fire(Class<? extends AttributedElement> type) {
+	public void fire(Class<? extends AttributedElement<?, ?>> type) {
 		if (super.checkContext(type)) {
-			int nested = this.getActiveECARules().get(0).getECARuleManager()
+			int nested = getActiveECARules().get(0).getECARuleManager()
 					.getNestedTriggerCalls();
-			Graph graph = this.getActiveECARules().get(0).getECARuleManager()
+			Graph graph = getActiveECARules().get(0).getECARuleManager()
 					.getGraph();
 			for (ECARule rule : activeRules) {
-				rule.trigger(new DeleteVertexEvent(nested, graph, this
-						.getType()));
+				rule.trigger(new DeleteVertexEvent(nested, graph, getType()));
 			}
 		}
 	}
-	
+
 }

@@ -208,7 +208,7 @@ public class GreqlServer extends Thread {
 				marker.mark(e);
 			}
 		} else if (val instanceof AttributedElement) {
-			marker.mark((AttributedElement) val);
+			marker.mark((AttributedElement<?, ?>) val);
 		} else {
 			println("'" + val + "' is no AttributedElement, "
 					+ "so it won't be considered for DOT output.",

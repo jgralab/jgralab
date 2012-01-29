@@ -81,7 +81,7 @@ public class ChangeEdgeEvent extends Event {
 	 * @return the AttributedElement that causes this Event
 	 */
 	@Override
-	public AttributedElement getElement() {
+	public AttributedElement<?, ?> getElement() {
 		return edge;
 	}
 

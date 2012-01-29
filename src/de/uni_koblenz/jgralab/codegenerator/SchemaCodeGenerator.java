@@ -140,6 +140,13 @@ public class SchemaCodeGenerator extends CodeGenerator {
 		CodeSnippet code = new CodeSnippet(
 				true,
 				"/**",
+				" * Creates a new #gcName# graph.",
+				"*/",
+				"public #gcName# create#gcCamelName#(ImplementationType implType) {",
+				"\treturn create#gcCamelName#(implType,null,1000,1000);",
+				"}",
+				"",
+				"/**",
 				" * Creates a new #gcName# graph with initial vertex and edge counts <code>vMax</code>, <code>eMax</code>.",
 				" *",
 				" * @param vMax initial vertex count",
@@ -161,33 +168,6 @@ public class SchemaCodeGenerator extends CodeGenerator {
 				"\tthrow new UnsupportedOperationException(\"No \"+implType+\" support compiled.\");",
 				"}",
 				"",
-				"/**",
-				" * Creates a new #gcName# graph with the ID <code>id</code> initial vertex and edge counts <code>vMax</code>, <code>eMax</code>.",
-				" *",
-				" * @param id the id name of the new graph",
-				" * @param vMax initial vertex count",
-				" * @param eMax initial edge count",
-				" */",
-				"public #gcName# create#gcCamelName#(ImplementationType implType, int vMax, int eMax) {",
-				"\treturn create#gcCamelName#(implType,null,vMax,eMax);",
-				"}",
-				"",
-				"/**",
-				" * Creates a new #gcName# graph.",
-				"*/",
-				"public #gcName# create#gcCamelName#(ImplementationType implType) {",
-				"\treturn create#gcCamelName#(implType,null,1000,1000);",
-				"}",
-				"",
-				"/**",
-				" * Creates a new #gcName# graph with the ID <code>id</code>.",
-				" *",
-				" * @param id the id name of the new graph",
-				" */",
-				"public #gcName# create#gcCamelName#(ImplementationType implType, String id) {",
-				"\treturn create#gcCamelName#(implType,id,1000,1000);",
-				"}",
-				"",
 				// ---- database support -------
 				"/**",
 				" * Creates a new #gcName# graph in a database with given <code>id</code>.",
@@ -202,6 +182,7 @@ public class SchemaCodeGenerator extends CodeGenerator {
 						+ "(id );\n\t\tif(!graphDatabase.containsGraph(id)){\n\t\t\tgraphDatabase.insert((#jgImplDbPackage#.GraphImpl)graph);\n\t\t\treturn (#gcCamelName#)graph;\n\t\t}\n\t\telse\n\t\t\tthrow new GraphException(\"Graph with identifier \" + id + \" already exists in database.\");"
 						: "\tthrow new UnsupportedOperationException(\"No database support compiled.\");"),
 				"}",
+				"",
 				"/**",
 				" * Creates a new #gcName# graph in a database with given <code>id</code>.",
 				" *",
@@ -351,7 +332,7 @@ public class SchemaCodeGenerator extends CodeGenerator {
 				"{",
 				"\tGraphClass #gcVariable# = #schemaVariable# = createGraphClass(\"#gcName#\");",
 				"\t#gcVariable#.setAbstract(#gcAbstract#);"));
-		for (AttributedElementClass superClass : gc.getDirectSuperClasses()) {
+		for (GraphClass superClass : gc.getDirectSuperClasses()) {
 			if (superClass.isInternal()) {
 				continue;
 			}
@@ -439,7 +420,7 @@ public class SchemaCodeGenerator extends CodeGenerator {
 				"\t\t#fromPart#,", "\t\t#toPart#);",
 				"\t#aecVariable#.setAbstract(#ecAbstract#);"));
 
-		for (AttributedElementClass superClass : ec.getDirectSuperClasses()) {
+		for (EdgeClass superClass : ec.getDirectSuperClasses()) {
 			if (superClass.isInternal()) {
 				continue;
 			}
@@ -497,7 +478,7 @@ public class SchemaCodeGenerator extends CodeGenerator {
 				"{",
 				"\tVertexClass #aecVariable# = #schemaVariable# = #gcVariable#.createVertexClass(\"#vcName#\");",
 				"\t#aecVariable#.setAbstract(#vcAbstract#);"));
-		for (AttributedElementClass superClass : vc.getDirectSuperClasses()) {
+		for (VertexClass superClass : vc.getDirectSuperClasses()) {
 			if (superClass.isInternal()) {
 				continue;
 			}
@@ -513,7 +494,7 @@ public class SchemaCodeGenerator extends CodeGenerator {
 		return code;
 	}
 
-	private CodeBlock createAttributes(AttributedElementClass aec) {
+	private CodeBlock createAttributes(AttributedElementClass<?, ?> aec) {
 		CodeList code = new CodeList();
 		for (Attribute attr : aec.getOwnAttributeList()) {
 			CodeSnippet s = new CodeSnippet(
@@ -538,7 +519,7 @@ public class SchemaCodeGenerator extends CodeGenerator {
 		return code;
 	}
 
-	private CodeBlock createConstraints(AttributedElementClass aec) {
+	private CodeBlock createConstraints(AttributedElementClass<?, ?> aec) {
 		CodeList code = new CodeList();
 		for (Constraint constraint : aec.getConstraints()) {
 			addImports("#jgSchemaImplPackage#.ConstraintImpl");

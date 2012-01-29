@@ -9,7 +9,6 @@ import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.NoSuchAttributeException;
 import de.uni_koblenz.jgralab.impl.std.ReversedEdgeImpl;
-import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 
 public class GenericReversedEdgeImpl extends ReversedEdgeImpl {
@@ -19,7 +18,7 @@ public class GenericReversedEdgeImpl extends ReversedEdgeImpl {
 	}
 
 	@Override
-	public AttributedElementClass getAttributedElementClass() {
+	public EdgeClass getAttributedElementClass() {
 		return normalEdge.getAttributedElementClass();
 	}
 
@@ -110,7 +109,7 @@ public class GenericReversedEdgeImpl extends ReversedEdgeImpl {
 	}
 
 	@Override
-	public boolean isInstanceOf(AttributedElementClass cls) {
+	public boolean isInstanceOf(EdgeClass cls) {
 		// Needs to be overridden from the base variant, because that relies on
 		// code generation.
 		return getNormalEdge().isInstanceOf(cls);

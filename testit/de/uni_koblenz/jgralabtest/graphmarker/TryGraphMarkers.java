@@ -50,7 +50,8 @@ public class TryGraphMarkers {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		MinimalGraph graph = MinimalSchema.instance().createMinimalGraph(ImplementationType.STANDARD,5, 5);
+		MinimalGraph graph = MinimalSchema.instance().createMinimalGraph(
+				ImplementationType.STANDARD);
 		Node v1 = graph.createNode();
 		Node v2 = graph.createNode();
 		Node v3 = graph.createNode();

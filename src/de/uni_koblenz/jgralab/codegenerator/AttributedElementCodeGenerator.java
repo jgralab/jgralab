@@ -46,9 +46,9 @@ import de.uni_koblenz.jgralab.schema.RecordDomain;
 
 /**
  * TODO add comment
- *
+ * 
  * @author ist@uni-koblenz.de
- *
+ * 
  */
 public class AttributedElementCodeGenerator extends CodeGenerator {
 
@@ -60,10 +60,10 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 	/**
 	 * the AttributedElementClass to generate code for
 	 */
-	protected AttributedElementClass aec;
+	protected AttributedElementClass<?, ?> aec;
 
 	protected AttributedElementCodeGenerator(
-			AttributedElementClass attributedElementClass,
+			AttributedElementClass<?, ?> attributedElementClass,
 			String schemaRootPackageName, CodeGeneratorConfiguration config) {
 		super(schemaRootPackageName, attributedElementClass.getPackageName(),
 				config);
@@ -88,7 +88,7 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 		interfaces.add(aec.getQualifiedName());
 		rootBlock.setVariable("isAbstractClass", aec.isAbstract() ? "true"
 				: "false");
-		for (AttributedElementClass superClass : attributedElementClass
+		for (AttributedElementClass<?, ?> superClass : attributedElementClass
 				.getDirectSuperClasses()) {
 			interfaces.add(superClass.getQualifiedName());
 		}
@@ -98,11 +98,11 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 	 * Returns the absolute name of the given AttributdelementClass. The name is
 	 * composed of the package-prefix of the schema the class belongs to and the
 	 * qualified name of the class
-	 *
+	 * 
 	 * @param aec
 	 * @return
 	 */
-	protected String absoluteName(AttributedElementClass aec) {
+	protected String absoluteName(AttributedElementClass<?, ?> aec) {
 		return schemaRootPackageName + "." + aec.getQualifiedName();
 	}
 
@@ -134,7 +134,7 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 	protected CodeBlock createAttributedElementClassConstant() {
 		return new CodeSnippet(
 				true,
-				"static final #jgSchemaPackage#.AttributedElementClass ATTRIBUTED_ELEMENT_CLASS"
+				"static final #jgSchemaPackage#.#schemaElementClass# ATTRIBUTED_ELEMENT_CLASS"
 						+ " = #schemaPackageName#.#schemaName#.instance().#schemaVariableName#;");
 	}
 
@@ -223,14 +223,14 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 	protected CodeBlock createGetAttributedElementClassMethod() {
 		return new CodeSnippet(
 				true,
-				"public final #jgSchemaPackage#.AttributedElementClass getAttributedElementClass() {",
+				"public final #jgSchemaPackage#.#schemaElementClass# getAttributedElementClass() {",
 				"\treturn #javaClassName#.ATTRIBUTED_ELEMENT_CLASS;", "}");
 	}
 
 	protected CodeBlock createGetSchemaClassMethod() {
 		return new CodeSnippet(
 				true,
-				"public final java.lang.Class<? extends #jgPackage#.AttributedElement> getSchemaClass() {",
+				"public final java.lang.Class<? extends #jgPackage#.#graphElementClass#> getSchemaClass() {",
 				"\treturn #javaClassName#.class;", "}");
 	}
 
@@ -510,7 +510,7 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 	}
 
 	/**
-	 *
+	 * 
 	 * @param attrSet
 	 * @return
 	 */
@@ -612,7 +612,7 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 	/**
 	 * Generates method attributes() which returns a set of all versioned
 	 * attributes for an <code>AttributedElement</code>.
-	 *
+	 * 
 	 * @param attributeList
 	 * @return
 	 */

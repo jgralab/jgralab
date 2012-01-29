@@ -62,7 +62,8 @@ import de.uni_koblenz.jgralab.schema.exception.SchemaClassAccessException;
  * 
  * @author ist@uni-koblenz.de
  */
-public interface AttributedElementClass extends NamedElement {
+public interface AttributedElementClass<SC extends AttributedElementClass<SC, IC>, IC extends AttributedElement<SC, IC>>
+		extends NamedElement {
 
 	/**
 	 * Adds a new attribute <code>anAttribute</code> to this element.
@@ -254,7 +255,7 @@ public interface AttributedElementClass extends NamedElement {
 	 * 
 	 * @return a Set of all direct and indirect subclasses of this element
 	 */
-	public Set<AttributedElementClass> getAllSubClasses();
+	public Set<SC> getAllSubClasses();
 
 	/**
 	 * Lists all direct and indirect superclasses of this element.
@@ -287,7 +288,7 @@ public interface AttributedElementClass extends NamedElement {
 	 * 
 	 * @return a Set of all direct and indirect superclasses of this element
 	 */
-	public Set<AttributedElementClass> getAllSuperClasses();
+	public Set<SC> getAllSuperClasses();
 
 	/**
 	 * Fetches the attribute with the specified <code>name</code> from this
@@ -429,7 +430,7 @@ public interface AttributedElementClass extends NamedElement {
 	 * 
 	 * @return a Set of all direct subclasses of this element
 	 */
-	public Set<AttributedElementClass> getDirectSubClasses();
+	public Set<SC> getDirectSubClasses();
 
 	/**
 	 * Returns all direct superclasses of this element.
@@ -463,7 +464,7 @@ public interface AttributedElementClass extends NamedElement {
 	 * 
 	 * @return a Set of all direct superclasses of this element
 	 */
-	public Set<AttributedElementClass> getDirectSuperClasses();
+	public Set<SC> getDirectSuperClasses();
 
 	/**
 	 * Returns the schema interface for this attributed element.
@@ -485,7 +486,7 @@ public interface AttributedElementClass extends NamedElement {
 	 * @throws SchemaClassAccessException
 	 *             if reflection exceptions occur.
 	 */
-	public Class<? extends AttributedElement> getSchemaClass();
+	public Class<IC> getSchemaClass();
 
 	/**
 	 * Returns the schema implementation class for this attributed element.
@@ -512,7 +513,7 @@ public interface AttributedElementClass extends NamedElement {
 	 *             <li>there are reflection exceptions</li>
 	 *             </ul>
 	 */
-	public Class<? extends AttributedElement> getSchemaImplementationClass();
+	public Class<IC> getSchemaImplementationClass();
 
 	/**
 	 * Fetches the attribute with the specified <code>name</code> from this
@@ -746,8 +747,7 @@ public interface AttributedElementClass extends NamedElement {
 	 * @return <code>true</code> if <code>anAttributedElementClass</code> is a
 	 *         direct subclass of this element, otherwise <code>false</code>
 	 */
-	public boolean isDirectSubClassOf(
-			AttributedElementClass anAttributedElementClass);
+	public boolean isDirectSubClassOf(SC anAttributedElementClass);
 
 	/**
 	 * Checks if the current element is a direct superclass of another
@@ -785,8 +785,7 @@ public interface AttributedElementClass extends NamedElement {
 	 * @return <code>true</code> if <code>anAttributedElementClass</code> is a
 	 *         direct subclass of this element, otherwise <code>false</code>
 	 */
-	public boolean isDirectSuperClassOf(
-			AttributedElementClass anAttributedElementClass);
+	public boolean isDirectSuperClassOf(SC anAttributedElementClass);
 
 	/**
 	 * @return true, if this AttributedElementClass is only for internal use
@@ -830,7 +829,7 @@ public interface AttributedElementClass extends NamedElement {
 	 *         direct or indirect subclass of this element, otherwise
 	 *         <code>false</code>
 	 */
-	public boolean isSubClassOf(AttributedElementClass anAttributedElementClass);
+	public boolean isSubClassOf(SC anAttributedElementClass);
 
 	/**
 	 * Checks if the current element is a direct or inherited superclass of
@@ -869,8 +868,7 @@ public interface AttributedElementClass extends NamedElement {
 	 *         direct or indirect subclass of this element, otherwise
 	 *         <code>false</code>
 	 */
-	public boolean isSuperClassOf(
-			AttributedElementClass anAttributedElementClass);
+	public boolean isSuperClassOf(SC anAttributedElementClass);
 
 	/**
 	 * Tests if the current element equals another attributed element or is
@@ -907,8 +905,7 @@ public interface AttributedElementClass extends NamedElement {
 	 *         direct or indirect subclass of this element or <code>this</code>
 	 *         attributed element itself, otherwise <code>false</code>
 	 */
-	public boolean isSuperClassOfOrEquals(
-			AttributedElementClass anAttributedElementClass);
+	public boolean isSuperClassOfOrEquals(SC anAttributedElementClass);
 
 	/**
 	 * Defines if this attributed element is abstract. Abstract elements can´t

@@ -13,7 +13,7 @@ import de.uni_koblenz.jgralab.schema.EnumDomain;
 import de.uni_koblenz.jgralab.schema.RecordDomain;
 
 public class SetAttributes extends
-		Transformation<PMap<AttributedElement, Object>> {
+		Transformation<PMap<AttributedElement<?, ?>, Object>> {
 
 	private Attribute attribute = null;
 	private PMap<Object, Object> archetype2valueMap = null;
@@ -41,7 +41,7 @@ public class SetAttributes extends
 	}
 
 	@Override
-	protected PMap<AttributedElement, Object> transform() {
+	protected PMap<AttributedElement<?, ?>, Object> transform() {
 		if (context.phase != TransformationPhase.GRAPH) {
 			return null;
 		}
@@ -50,11 +50,11 @@ public class SetAttributes extends
 			archetype2valueMap = context.evaluateGReQLQuery(semanticExpression);
 		}
 
-		PMap<AttributedElement, Object> resultMap = Empty.orderedMap();
+		PMap<AttributedElement<?, ?>, Object> resultMap = Empty.orderedMap();
 		for (Object archetype : archetype2valueMap.keySet()) {
 			// System.out.println("sourceElement = " + sourceElement);
 			// context.printMappings();
-			AttributedElement image = context.getImg(
+			AttributedElement<?, ?> image = context.getImg(
 					attribute.getAttributedElementClass()).get(archetype);
 			if (image == null) {
 				String qname = attribute.getAttributedElementClass()

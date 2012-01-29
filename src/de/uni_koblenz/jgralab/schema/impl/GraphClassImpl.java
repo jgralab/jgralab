@@ -41,6 +41,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.schema.AggregationKind;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
@@ -51,23 +52,24 @@ import de.uni_koblenz.jgralab.schema.VertexClass;
 import de.uni_koblenz.jgralab.schema.exception.InheritanceException;
 import de.uni_koblenz.jgralab.schema.exception.SchemaException;
 
-public final class GraphClassImpl extends AttributedElementClassImpl implements
-		GraphClass {
+public final class GraphClassImpl extends
+		AttributedElementClassImpl<GraphClass, Graph> implements GraphClass {
 
 	private Map<String, EdgeClass> edgeClasses = new HashMap<String, EdgeClass>();
 
-	private Map<String, GraphElementClass> graphElementClasses = new HashMap<String, GraphElementClass>();
+	private Map<String, GraphElementClass<?, ?>> graphElementClasses = new HashMap<String, GraphElementClass<?, ?>>();
 
 	private Map<String, VertexClass> vertexClasses = new HashMap<String, VertexClass>();
 
 	private DirectedAcyclicGraph<EdgeClass> edgeCsDag = new DirectedAcyclicGraph<EdgeClass>();
 	private DirectedAcyclicGraph<VertexClass> vertexCsDag = new DirectedAcyclicGraph<VertexClass>();
-		
+
 	static GraphClass createDefaultGraphClass(SchemaImpl schema) {
 		assert schema.getDefaultPackage() != null : "DefaultPackage has not yet been created!";
 		assert schema.getDefaultGraphClass() == null : "DefaultGraphClass already created!";
 		GraphClass gc = new GraphClassImpl(schema);
 		gc.setAbstract(true);
+		((GraphClassImpl) gc).setInternal(true);
 		return gc;
 	}
 
@@ -131,6 +133,7 @@ public final class GraphClassImpl extends AttributedElementClassImpl implements
 		vertexCsDag.createNode(vc);
 	}
 
+	@Override
 	public void addSuperClass(GraphClass superClass) {
 		// only the internal abstract base class "Graph" can be a superclass
 		if (!superClass.getQualifiedName().equals(
@@ -160,11 +163,11 @@ public final class GraphClassImpl extends AttributedElementClassImpl implements
 			int fromMin, int fromMax, String fromRoleName,
 			AggregationKind aggrFrom, VertexClass to, int toMin, int toMax,
 			String toRoleName, AggregationKind aggrTo) {
-		
-		if(isFinished()){
+
+		if (isFinished()) {
 			throw new SchemaException("No changes to finished schema!");
 		}
-		
+
 		if (!(aggrFrom == AggregationKind.NONE)
 				&& !(aggrTo == AggregationKind.NONE)) {
 			throw new SchemaException(
@@ -186,10 +189,10 @@ public final class GraphClassImpl extends AttributedElementClassImpl implements
 
 	@Override
 	public VertexClass createVertexClass(String qualifiedName) {
-		if(isFinished()){
+		if (isFinished()) {
 			throw new SchemaException("No changes to finished schema!");
 		}
-	
+
 		String[] qn = SchemaImpl.splitQualifiedName(qualifiedName);
 		Package parent = ((SchemaImpl) getSchema())
 				.createPackageWithParents(qn[0]);
@@ -199,7 +202,7 @@ public final class GraphClassImpl extends AttributedElementClassImpl implements
 	}
 
 	@Override
-	public boolean knowsOwn(GraphElementClass aGraphElementClass) {
+	public boolean knowsOwn(GraphElementClass<?, ?> aGraphElementClass) {
 		return (graphElementClasses.containsKey(aGraphElementClass
 				.getQualifiedName()));
 	}
@@ -210,12 +213,12 @@ public final class GraphClassImpl extends AttributedElementClassImpl implements
 	}
 
 	@Override
-	public boolean knows(GraphElementClass aGraphElementClass) {
+	public boolean knows(GraphElementClass<?, ?> aGraphElementClass) {
 		if (graphElementClasses.containsKey(aGraphElementClass
 				.getQualifiedName())) {
 			return true;
 		}
-		for (AttributedElementClass superClass : directSuperClasses) {
+		for (AttributedElementClass<?, ?> superClass : directSuperClasses) {
 			if (((GraphClass) superClass).knows(aGraphElementClass)) {
 				return true;
 			}
@@ -228,7 +231,7 @@ public final class GraphClassImpl extends AttributedElementClassImpl implements
 		if (graphElementClasses.containsKey(qn)) {
 			return true;
 		}
-		for (AttributedElementClass superClass : directSuperClasses) {
+		for (AttributedElementClass<?, ?> superClass : directSuperClasses) {
 			if (((GraphClass) superClass).knows(qn)) {
 				return true;
 			}
@@ -237,11 +240,11 @@ public final class GraphClassImpl extends AttributedElementClassImpl implements
 	}
 
 	@Override
-	public GraphElementClass getGraphElementClass(String qn) {
+	public GraphElementClass<?, ?> getGraphElementClass(String qn) {
 		if (graphElementClasses.containsKey(qn)) {
 			return graphElementClasses.get(qn);
 		}
-		for (AttributedElementClass superClass : directSuperClasses) {
+		for (AttributedElementClass<?, ?> superClass : directSuperClasses) {
 			if (((GraphClass) superClass).knows(qn)) {
 				return ((GraphClass) superClass).getGraphElementClass(qn);
 			}
@@ -258,14 +261,14 @@ public final class GraphClassImpl extends AttributedElementClassImpl implements
 		output.append(": \n");
 
 		output.append("subClasses of '" + getQualifiedName() + "': ");
-		Iterator<AttributedElementClass> it = getAllSubClasses().iterator();
+		Iterator<GraphClass> it = getAllSubClasses().iterator();
 		while (it.hasNext()) {
 			output.append("'" + ((GraphClassImpl) it.next()).getQualifiedName()
 					+ "' ");
 		}
 
 		output.append("\nsuperClasses of '" + getQualifiedName() + "': ");
-		Iterator<AttributedElementClass> it2 = getAllSuperClasses().iterator();
+		Iterator<GraphClass> it2 = getAllSuperClasses().iterator();
 		while (it2.hasNext()) {
 			output.append("'"
 					+ ((GraphClassImpl) it2.next()).getQualifiedName() + "' ");
@@ -274,7 +277,7 @@ public final class GraphClassImpl extends AttributedElementClassImpl implements
 
 		output.append("\n\nGraphElementClasses of '" + getQualifiedName()
 				+ "':\n\n");
-		Iterator<GraphElementClass> it3 = graphElementClasses.values()
+		Iterator<GraphElementClass<?, ?>> it3 = graphElementClasses.values()
 				.iterator();
 		while (it3.hasNext()) {
 			output.append(it3.next().toString() + "\n");
@@ -283,18 +286,19 @@ public final class GraphClassImpl extends AttributedElementClassImpl implements
 	}
 
 	@Override
-	public List<GraphElementClass> getGraphElementClasses() {
-		return new ArrayList<GraphElementClass>(graphElementClasses.values());
+	public List<GraphElementClass<?, ?>> getGraphElementClasses() {
+		return new ArrayList<GraphElementClass<?, ?>>(
+				graphElementClasses.values());
 	}
 
 	@Override
 	public List<EdgeClass> getEdgeClasses() {
-		return this.edgeCsDag.getNodesInTopologicalOrder();
+		return edgeCsDag.getNodesInTopologicalOrder();
 	}
 
 	@Override
 	public List<VertexClass> getVertexClasses() {
-		return this.vertexCsDag.getNodesInTopologicalOrder();
+		return vertexCsDag.getNodesInTopologicalOrder();
 	}
 
 	@Override
@@ -303,8 +307,8 @@ public final class GraphClassImpl extends AttributedElementClassImpl implements
 		if (vc != null) {
 			return vc;
 		}
-		for (AttributedElementClass superclass : directSuperClasses) {
-			vc = ((GraphClass) superclass).getVertexClass(qn);
+		for (GraphClass superclass : directSuperClasses) {
+			vc = superclass.getVertexClass(qn);
 			if (vc != null) {
 				return vc;
 			}
@@ -318,8 +322,8 @@ public final class GraphClassImpl extends AttributedElementClassImpl implements
 		if (ec != null) {
 			return ec;
 		}
-		for (AttributedElementClass superclass : directSuperClasses) {
-			ec = ((GraphClass) superclass).getEdgeClass(qn);
+		for (GraphClass superclass : directSuperClasses) {
+			ec = superclass.getEdgeClass(qn);
 			if (ec != null) {
 				return ec;
 			}
@@ -346,23 +350,23 @@ public final class GraphClassImpl extends AttributedElementClassImpl implements
 	}
 
 	@Override
-	protected void finish(){
-		for(VertexClass vc : this.vertexCsDag.getNodesInTopologicalOrder()){
-			((VertexClassImpl)vc).finish();
+	protected void finish() {
+		for (VertexClass vc : vertexCsDag.getNodesInTopologicalOrder()) {
+			((VertexClassImpl) vc).finish();
 		}
-		for(EdgeClass ec : this.edgeCsDag.getNodesInTopologicalOrder()){
-			((EdgeClassImpl)ec).finish();
+		for (EdgeClass ec : edgeCsDag.getNodesInTopologicalOrder()) {
+			((EdgeClassImpl) ec).finish();
 		}
 		super.finish();
 	}
-	
-	@Override 
-	protected void reopen(){
-		for(VertexClass vc : this.vertexCsDag.getNodesInTopologicalOrder()){
-			((VertexClassImpl)vc).reopen();
+
+	@Override
+	protected void reopen() {
+		for (VertexClass vc : vertexCsDag.getNodesInTopologicalOrder()) {
+			((VertexClassImpl) vc).reopen();
 		}
-		for(EdgeClass ec : this.edgeCsDag.getNodesInTopologicalOrder()){
-			((EdgeClassImpl)ec).reopen();
+		for (EdgeClass ec : edgeCsDag.getNodesInTopologicalOrder()) {
+			((EdgeClassImpl) ec).reopen();
 		}
 		super.reopen();
 	}

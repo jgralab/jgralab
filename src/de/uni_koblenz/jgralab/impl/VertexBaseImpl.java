@@ -63,8 +63,8 @@ import de.uni_koblenz.jgralab.schema.impl.DirectedSchemaEdgeClass;
  *
  * @author ist@uni-koblenz.de
  */
-public abstract class VertexBaseImpl extends GraphElementImpl implements
-		Vertex, InternalVertex {
+public abstract class VertexBaseImpl extends
+		GraphElementImpl<VertexClass, Vertex> implements Vertex, InternalVertex {
 
 	/**
 	 * @param id
@@ -592,7 +592,7 @@ public abstract class VertexBaseImpl extends GraphElementImpl implements
 	 * @see java.lang.Comparable#compareTo(java.lang.Object)
 	 */
 	@Override
-	public int compareTo(AttributedElement a) {
+	public int compareTo(AttributedElement<VertexClass, Vertex> a) {
 		assert a instanceof Vertex;
 		Vertex v = (Vertex) a;
 		assert isValid() && v.isValid();
@@ -883,9 +883,8 @@ public abstract class VertexBaseImpl extends GraphElementImpl implements
 		assert isValid();
 		DirectedSchemaEdgeClass entry = getEdgeForRolename(role);
 		List<Vertex> adjacences = new ArrayList<Vertex>();
-		Class<? extends Edge> ec = entry.getSchemaClass();
 		EdgeDirection dir = entry.getDirection();
-		for (Edge e : incidences(ec, dir)) {
+		for (Edge e : incidences(entry.getEdgeClass(), dir)) {
 			adjacences.add(e.getThat());
 		}
 		return adjacences;
@@ -899,7 +898,6 @@ public abstract class VertexBaseImpl extends GraphElementImpl implements
 		assert getGraph() == other.getGraph();
 
 		DirectedSchemaEdgeClass entry = getEdgeForRolename(role);
-		Class<? extends Edge> ec = entry.getSchemaClass();
 		EdgeDirection dir = entry.getDirection();
 		Vertex from = null;
 		Vertex to = null;
@@ -910,8 +908,7 @@ public abstract class VertexBaseImpl extends GraphElementImpl implements
 			to = other;
 			from = this;
 		}
-		Edge e = getGraph().createEdge(ec, from, to);
-		return e;
+		return getGraph().createEdge(entry.getEdgeClass(), from, to);
 	}
 
 	@Override
@@ -921,11 +918,10 @@ public abstract class VertexBaseImpl extends GraphElementImpl implements
 		TraversalContext oldTC = getGraph().setTraversalContext(null);
 		try {
 			DirectedSchemaEdgeClass entry = getEdgeForRolename(role);
-			Class<? extends Edge> ec = entry.getSchemaClass();
 			List<Vertex> adjacences = new ArrayList<Vertex>();
 			List<Edge> deleteList = new ArrayList<Edge>();
 			EdgeDirection dir = entry.getDirection();
-			for (Edge e : incidences(ec, dir)) {
+			for (Edge e : incidences(entry.getEdgeClass(), dir)) {
 				deleteList.add(e);
 				adjacences.add(e.getThat());
 			}
@@ -947,10 +943,9 @@ public abstract class VertexBaseImpl extends GraphElementImpl implements
 		TraversalContext oldTC = getGraph().setTraversalContext(null);
 		try {
 			DirectedSchemaEdgeClass entry = getEdgeForRolename(role);
-			Class<? extends Edge> ec = entry.getSchemaClass();
 			List<Edge> deleteList = new ArrayList<Edge>();
 			EdgeDirection dir = entry.getDirection();
-			for (Edge e : incidences(ec, dir)) {
+			for (Edge e : incidences(entry.getEdgeClass(), dir)) {
 				if (e.getThat() == other) {
 					deleteList.add(e);
 				}
