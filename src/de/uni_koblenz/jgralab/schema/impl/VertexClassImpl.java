@@ -49,7 +49,7 @@ import de.uni_koblenz.jgralab.schema.Schema;
 import de.uni_koblenz.jgralab.schema.VertexClass;
 import de.uni_koblenz.jgralab.schema.exception.SchemaException;
 
-public final class VertexClassImpl extends GraphElementClassImpl implements
+public class VertexClassImpl extends GraphElementClassImpl implements
 		VertexClass {
 
 	/**
