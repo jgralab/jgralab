@@ -713,14 +713,14 @@ public class CompareSchemaWithSchemaGraph {
 	 *            be compared.
 	 */
 	final private void compareAttributedElementClass(
-			de.uni_koblenz.jgralab.schema.AttributedElementClass element,
+			de.uni_koblenz.jgralab.schema.AttributedElementClass<?, ?> element,
 			AttributedElementClass gElement) {
 
 		compareNamedElement(element, gElement);
 
 		if (element instanceof de.uni_koblenz.jgralab.schema.GraphElementClass) {
 			compareIsAbstract(
-					(de.uni_koblenz.jgralab.schema.GraphElementClass) element,
+					(de.uni_koblenz.jgralab.schema.GraphElementClass<?, ?>) element,
 					(GraphElementClass) gElement);
 		}
 
@@ -731,7 +731,7 @@ public class CompareSchemaWithSchemaGraph {
 	}
 
 	private void compareIsAbstract(
-			de.uni_koblenz.jgralab.schema.GraphElementClass element,
+			de.uni_koblenz.jgralab.schema.GraphElementClass<?, ?> element,
 			GraphElementClass gElement) {
 		// Comparing the attribute \"isAbstract\"
 		assertEquals("Attribute \"isAbstract\" is different.",
@@ -754,10 +754,8 @@ public class CompareSchemaWithSchemaGraph {
 		// AttributeElemenClass method.
 		compareAttributedElementClass(vertexClass, gVertexClass);
 		// Creates a clone Map of AttributedElementClass objects.
-		Map<String, de.uni_koblenz.jgralab.schema.AttributedElementClass> superClasses = getAttributedElementClassMap(vertexClass
+		Map<String, de.uni_koblenz.jgralab.schema.VertexClass> superClasses = getAttributedElementClassMap(vertexClass
 				.getDirectSuperClasses());
-
-		dropInternalClasses(superClasses);
 
 		// Loop over all SpecializesVertexClass edges
 		for (SpecializesVertexClass specializesVertexClass : gVertexClass
@@ -792,11 +790,8 @@ public class CompareSchemaWithSchemaGraph {
 		compareAttributedElementClass(edgeClass, gEdgeClass);
 
 		// Creates a map out of an set of AttributedElementClass objects.
-		Map<String, de.uni_koblenz.jgralab.schema.AttributedElementClass> superClasses = getAttributedElementClassMap(edgeClass
+		Map<String, de.uni_koblenz.jgralab.schema.EdgeClass> superClasses = getAttributedElementClassMap(edgeClass
 				.getDirectSuperClasses());
-
-		// Drops all internally used objects
-		dropInternalClasses(superClasses);
 
 		// Loop over all SpecializesEdgeClass edges
 		for (SpecializesEdgeClass specializesEdgeClass : gEdgeClass
@@ -804,7 +799,7 @@ public class CompareSchemaWithSchemaGraph {
 			AttributedElementClass gElement = specializesEdgeClass.getOmega();
 
 			// Gets, removes and compares the QualifiedNames
-			de.uni_koblenz.jgralab.schema.AttributedElementClass element = superClasses
+			de.uni_koblenz.jgralab.schema.EdgeClass element = superClasses
 					.remove(gElement.get_qualifiedName());
 
 			assertEquals(
@@ -827,16 +822,6 @@ public class CompareSchemaWithSchemaGraph {
 		compareIncidenceClass(edgeClass.getTo(),
 				(IncidenceClass) goesTo.getThat(), IncidenceDirection.IN);
 		// TODO TEST ob es weitere Kanten gibt, die es nicht geben sollte!
-	}
-
-	private void dropInternalClasses(
-			Map<String, de.uni_koblenz.jgralab.schema.AttributedElementClass> superClasses) {
-		for (Iterator<Entry<String, de.uni_koblenz.jgralab.schema.AttributedElementClass>> it = superClasses
-				.entrySet().iterator(); it.hasNext();) {
-			if (it.next().getValue().isInternal()) {
-				it.remove();
-			}
-		}
 	}
 
 	/**
@@ -1049,7 +1034,7 @@ public class CompareSchemaWithSchemaGraph {
 	 *            Attribute objects should be compared.
 	 */
 	final private void compareAttributes(
-			de.uni_koblenz.jgralab.schema.AttributedElementClass element,
+			de.uni_koblenz.jgralab.schema.AttributedElementClass<?, ?> element,
 			AttributedElementClass gElement) {
 
 		// Clone the map of Attribute objects.
@@ -1102,7 +1087,7 @@ public class CompareSchemaWithSchemaGraph {
 	 *            Constraint objects should be compared.
 	 */
 	final private void compareConstraints(
-			de.uni_koblenz.jgralab.schema.AttributedElementClass element,
+			de.uni_koblenz.jgralab.schema.AttributedElementClass<?, ?> element,
 			AttributedElementClass gElement) {
 
 		int gConstraintCount = 0;
@@ -1178,17 +1163,18 @@ public class CompareSchemaWithSchemaGraph {
 	 * @return The new map of AttributedElementClass objects with their
 	 *         QualifiedName as key.
 	 */
-	final private Map<String, de.uni_koblenz.jgralab.schema.AttributedElementClass> getAttributedElementClassMap(
-			Set<de.uni_koblenz.jgralab.schema.AttributedElementClass> elementSet) {
+	final private <T extends de.uni_koblenz.jgralab.schema.GraphElementClass<?, ?>> Map<String, T> getAttributedElementClassMap(
+			Set<T> elementSet) {
 
 		// Creates the AttributedElementClass map.
-		Map<String, de.uni_koblenz.jgralab.schema.AttributedElementClass> map = new HashMap<String, de.uni_koblenz.jgralab.schema.AttributedElementClass>();
+		Map<String, T> map = new HashMap<String, T>();
 
 		// Fills the map
-		for (de.uni_koblenz.jgralab.schema.AttributedElementClass element : elementSet) {
-			map.put(element.getQualifiedName(), element);
+		for (T element : elementSet) {
+			if (!element.isInternal()) {
+				map.put(element.getQualifiedName(), element);
+			}
 		}
-
 		return map;
 	}
 }

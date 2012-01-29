@@ -424,8 +424,8 @@ public abstract class AttributedElementClassImpl<SC extends AttributedElementCla
 
 	@Override
 	public boolean isDirectSuperClassOf(SC anAttributedElementClass) {
-		return (((AttributedElementClassImpl<SC, IC>) anAttributedElementClass).directSuperClasses
-				.contains(this));
+		return ((AttributedElementClassImpl<SC, IC>) anAttributedElementClass).directSuperClasses
+				.contains(this);
 	}
 
 	@Override

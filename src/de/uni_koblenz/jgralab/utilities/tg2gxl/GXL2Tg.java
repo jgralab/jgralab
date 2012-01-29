@@ -1071,6 +1071,7 @@ public class GXL2Tg {
 				.getGraphCreateMethod(ImplementationType.STANDARD).invoke(
 						null,
 						new Object[] {
+								ImplementationType.STANDARD,
 								element.getAttributeByName(new QName("id"))
 										.getValue(), 100, 100 });
 
