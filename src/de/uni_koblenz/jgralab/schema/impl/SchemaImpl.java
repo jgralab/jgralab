@@ -158,7 +158,7 @@ public class SchemaImpl implements Schema {
 
 	private DirectedAcyclicGraph<Domain> domainsDag = new DirectedAcyclicGraph<Domain>();
 
-	private boolean finish = false;
+	private boolean finished = false;
 
 	/**
 	 * Holds a reference to the {@link GraphClass} of this schema (not the
@@ -460,7 +460,7 @@ public class SchemaImpl implements Schema {
 	@Override
 	public Vector<InMemoryJavaSourceFile> commit(
 			CodeGeneratorConfiguration config) {
-		if (!finish) {
+		if (!finished) {
 			throw new SchemaException(
 					"Schema must be finish before committing is allowed. "
 							+ "Call finish() to finish the schema.");
@@ -572,7 +572,7 @@ public class SchemaImpl implements Schema {
 	@Override
 	public void commit(String pathPrefix, CodeGeneratorConfiguration config,
 			ProgressFunction progressFunction) throws GraphIOException {
-		if (!finish) {
+		if (!finished) {
 			throw new SchemaException(
 					"Schema must be finish before committing is allowed. "
 							+ "Call finish() to finish the schema.");
@@ -644,7 +644,7 @@ public class SchemaImpl implements Schema {
 	@Override
 	public Attribute createAttribute(String name, Domain dom,
 			AttributedElementClass<?, ?> aec, String defaultValueAsString) {
-		if (finish) {
+		if (finished) {
 			throw new SchemaException("No changes to finished schema!");
 		}
 		return new AttributeImpl(name, dom, aec, defaultValueAsString);
@@ -658,7 +658,7 @@ public class SchemaImpl implements Schema {
 	@Override
 	public EnumDomain createEnumDomain(String qualifiedName,
 			List<String> enumComponents) {
-		if (finish) {
+		if (finished) {
 			throw new SchemaException("No changes to finished schema!");
 		}
 		String[] components = splitQualifiedName(qualifiedName);
@@ -670,7 +670,7 @@ public class SchemaImpl implements Schema {
 
 	@Override
 	public GraphClass createGraphClass(String simpleName) {
-		if (finish) {
+		if (finished) {
 			throw new SchemaException("No changes to finished schema!");
 		}
 		if (graphClass != null) {
@@ -746,7 +746,7 @@ public class SchemaImpl implements Schema {
 
 	@Override
 	public ListDomain createListDomain(Domain baseDomain) {
-		if (finish) {
+		if (finished) {
 			throw new SchemaException("No changes to finished schema!");
 		}
 		String qn = "List<" + baseDomain.getQualifiedName() + ">";
@@ -758,7 +758,7 @@ public class SchemaImpl implements Schema {
 
 	@Override
 	public MapDomain createMapDomain(Domain keyDomain, Domain valueDomain) {
-		if (finish) {
+		if (finished) {
 			throw new SchemaException("No changes to finished schema!");
 		}
 		String qn = "Map<" + keyDomain.getQualifiedName() + ", "
@@ -863,7 +863,7 @@ public class SchemaImpl implements Schema {
 	@Override
 	public RecordDomain createRecordDomain(String qualifiedName,
 			Collection<RecordComponent> recordComponents) {
-		if (finish) {
+		if (finished) {
 			throw new SchemaException("No changes to finished schema!");
 		}
 		String[] components = splitQualifiedName(qualifiedName);
@@ -876,7 +876,7 @@ public class SchemaImpl implements Schema {
 
 	@Override
 	public SetDomain createSetDomain(Domain baseDomain) {
-		if (finish) {
+		if (finished) {
 			throw new SchemaException("No changes to finished schema!");
 		}
 		String qn = "Set<" + baseDomain.getQualifiedName() + ">";
@@ -1374,6 +1374,13 @@ public class SchemaImpl implements Schema {
 	}
 
 	@Override
+	public GraphFactory createDefaultGraphFactory(
+			ImplementationType implementationType) {
+		throw new UnsupportedOperationException(
+				"Base implementation can't create a GraphFactory.");
+	}
+
+	@Override
 	public Graph createGraph(GraphFactory factory) {
 		return createGraph(factory, null, 100, 100);
 	}
@@ -1389,8 +1396,8 @@ public class SchemaImpl implements Schema {
 	 * @return whether the schema is finished
 	 */
 	@Override
-	public boolean isFinish() {
-		return finish;
+	public boolean isFinished() {
+		return finished;
 	}
 
 	/**
@@ -1399,11 +1406,11 @@ public class SchemaImpl implements Schema {
 	 */
 	@Override
 	public void finish() {
-		if (finish) {
+		if (finished) {
 			return;
 		}
 		((GraphClassImpl) graphClass).finish();
-		finish = true;
+		finished = true;
 
 	}
 
@@ -1413,11 +1420,11 @@ public class SchemaImpl implements Schema {
 	 */
 	@Override
 	public void reopen() {
-		if (!finish) {
+		if (!finished) {
 			return;
 		}
 		((GraphClassImpl) graphClass).finish();
-		finish = false;
+		finished = false;
 	}
 
 }

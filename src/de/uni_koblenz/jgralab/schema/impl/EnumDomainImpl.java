@@ -80,7 +80,7 @@ public final class EnumDomainImpl extends DomainImpl implements EnumDomain {
 
 	@Override
 	public void addConst(String aConst) {
-		if(((SchemaImpl)getSchema()).isFinish()){
+		if(((SchemaImpl)getSchema()).isFinished()){
 			throw new SchemaException("No changes to finished schema!");
 		}
 		if (constants.contains(aConst)) {

@@ -146,8 +146,8 @@ public class JniServer {
 
 	public int loadGraph(String fileName) {
 		try {
-			Graph g = GraphIO.loadGraphFromFileWithStandardSupport(fileName,
-					null);
+			Graph g = GraphIO.loadGraphFromFile(fileName,
+					null, ImplementationType.STANDARD, null);
 			return addGraph(g);
 		} catch (Exception e) {
 			throw new GraphException("Exception while loading graph.", e);

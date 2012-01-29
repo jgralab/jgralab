@@ -37,6 +37,7 @@ package de.uni_koblenz.jgralab;
 
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.GraphClass;
+import de.uni_koblenz.jgralab.schema.Schema;
 import de.uni_koblenz.jgralab.schema.VertexClass;
 
 /**
@@ -51,13 +52,12 @@ public interface GraphFactory {
 	 */
 	public ImplementationType getImplementationType();
 
-	/**
-	 */
-	public Graph createGraph(String id, int vMax, int eMax);
+	public Schema getSchema();
 
 	/**
 	 */
-	public Graph createGraph(String id);
+	public <G extends Graph> G createGraph(GraphClass gc, String id, int vMax,
+			int eMax);
 
 	/**
 	 * Creates a Vertex for the specified class.

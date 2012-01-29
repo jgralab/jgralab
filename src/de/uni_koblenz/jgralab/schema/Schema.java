@@ -481,10 +481,13 @@ public interface Schema extends Comparable<Schema> {
 	public Graph createGraph(GraphFactory factory, String id, int vCount,
 			int eCount);
 
+	public GraphFactory createDefaultGraphFactory(
+			ImplementationType implementationType);
+
 	/**
 	 * @return whether the schema is finished
 	 */
-	public boolean isFinish();
+	public boolean isFinished();
 
 	/**
 	 * Signals that the schema is finished. No more changes are allowed. To open

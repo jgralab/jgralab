@@ -142,7 +142,7 @@ public class TGMerge {
 
 		List<Graph> graphs = new LinkedList<Graph>();
 		for (String g : cmdl.getArgs()) {
-			graphs.add(GraphIO.loadGraphFromFileWithStandardSupport(g,
+			graphs.add(GraphIO.loadGraphFromFile(g,
 					new ConsoleProgressFunction("Loading")));
 		}
 
