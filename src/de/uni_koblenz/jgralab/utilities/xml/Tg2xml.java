@@ -241,8 +241,8 @@ public class Tg2xml extends GraphVisitor {
 		String xsdLocation = comLine.getOptionValue("x").trim();
 		String outputFile = comLine.getOptionValue("o").trim();
 
-		Graph theGraph = GraphIO.loadGraphFromFileWithStandardSupport(
-				graphFile, new ConsoleProgressFunction("Loading"));
+		Graph theGraph = GraphIO.loadGraphFromFile(graphFile,
+				new ConsoleProgressFunction("Loading"));
 
 		Tg2xml converter = new Tg2xml(new BufferedOutputStream(
 				new FileOutputStream(outputFile)), theGraph, namespacePrefix,

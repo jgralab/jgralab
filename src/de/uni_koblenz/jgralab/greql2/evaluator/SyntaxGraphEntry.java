@@ -170,7 +170,7 @@ public class SyntaxGraphEntry {
 	public SyntaxGraphEntry(String queryText, Greql2 graph,
 			Optimizer optimizer, CostModel costModel, boolean locked) {
 		this.queryText = queryText;
-		this.syntaxGraph = graph;
+		syntaxGraph = graph;
 		this.optimizer = optimizer;
 		this.costModel = costModel;
 		this.locked = locked;
@@ -197,22 +197,22 @@ public class SyntaxGraphEntry {
 	 *             contain a constructor with zero parameters.
 	 */
 	public SyntaxGraphEntry(File fileName) throws GraphIOException {
-		this.syntaxGraph = (Greql2) GraphIO
-				.loadGraphFromFileWithStandardSupport(fileName.getPath(), null);
+		syntaxGraph = (Greql2) GraphIO.loadGraphFromFile(fileName.getPath(),
+				null);
 		Greql2Expression g2e = syntaxGraph.getFirstGreql2Expression();
 		try {
-			this.queryText = (String) g2e.getAttribute("_queryText");
+			queryText = (String) g2e.getAttribute("_queryText");
 			String optimizerClass = (String) g2e.getAttribute("_optimizer");
 			if (!optimizerClass.isEmpty()) {
-				this.optimizer = (Optimizer) Class.forName(optimizerClass)
+				optimizer = (Optimizer) Class.forName(optimizerClass)
 						.newInstance();
 			}
 			String costModelClass = (String) g2e.getAttribute("_costModel");
 			if (!costModelClass.isEmpty()) {
-				this.costModel = (CostModel) Class.forName(costModelClass)
+				costModel = (CostModel) Class.forName(costModelClass)
 						.newInstance();
 			}
-			this.locked = false;
+			locked = false;
 			// Now delete the attribute values. They're not needed anymore.
 			g2e.setAttribute("_queryText", null);
 			g2e.setAttribute("_optimizer", null);

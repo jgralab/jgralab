@@ -99,7 +99,7 @@ public abstract class AttributedElementClassImpl<SC extends AttributedElementCla
 	/**
 	 * true if the schema is finish
 	 */
-	private boolean finish = false;
+	private boolean finished = false;
 
 	/**
 	 * true if element class is abstract
@@ -134,7 +134,7 @@ public abstract class AttributedElementClassImpl<SC extends AttributedElementCla
 
 	@Override
 	public void addAttribute(Attribute anAttribute) {
-		if(finish){
+		if(finished){
 			throw new SchemaException("No changes to finished schema!");
 		}
 
@@ -169,7 +169,7 @@ public abstract class AttributedElementClassImpl<SC extends AttributedElementCla
 
 	@Override
 	public void addConstraint(Constraint constraint) {
-		if (finish) {
+		if (finished) {
 			throw new SchemaException("No changes to finished schema!");
 		}
 		constraints.add(constraint);
@@ -183,7 +183,7 @@ public abstract class AttributedElementClassImpl<SC extends AttributedElementCla
 	 */
 	@SuppressWarnings("unchecked")
 	protected void addSuperClass(SC superClass) {
-		if (finish) {
+		if (finished) {
 			throw new SchemaException("No changes to finished schema!");
 		}
 
@@ -240,7 +240,7 @@ public abstract class AttributedElementClassImpl<SC extends AttributedElementCla
 
 	@Override
 	public Set<SC> getAllSubClasses() {
-		if (finish) {
+		if (finished) {
 			return allSubClasses;
 		}
 
@@ -254,7 +254,7 @@ public abstract class AttributedElementClassImpl<SC extends AttributedElementCla
 
 	@Override
 	public Set<SC> getAllSuperClasses() {
-		if (finish) {
+		if (finished) {
 			return allSuperClasses;
 		}
 
@@ -269,7 +269,7 @@ public abstract class AttributedElementClassImpl<SC extends AttributedElementCla
 	@Override
 	public Attribute getAttribute(String name) {
 		// TODO ask if Attributes save as map
-		if (finish) {
+		if (finished) {
 			Iterator<Attribute> it = allAttributeList.iterator();
 			Attribute a;
 			while (it.hasNext()) {
@@ -295,7 +295,7 @@ public abstract class AttributedElementClassImpl<SC extends AttributedElementCla
 
 	@Override
 	public int getAttributeCount() {
-		if (finish) {
+		if (finished) {
 			return allAttributeList.size();
 		}
 		int attrCount = getOwnAttributeCount();
@@ -307,7 +307,7 @@ public abstract class AttributedElementClassImpl<SC extends AttributedElementCla
 
 	@Override
 	public SortedSet<Attribute> getAttributeList() {
-		if (finish) {
+		if (finished) {
 			return allAttributeList;
 		}
 
@@ -495,7 +495,7 @@ public abstract class AttributedElementClassImpl<SC extends AttributedElementCla
 		allSubClasses = Collections.unmodifiableSet(allSubClasses);
 		allAttributeList = Collections.unmodifiableSortedSet(allAttributeList);
 
-		finish = true;
+		finished = true;
 	}
 
 	/**
@@ -508,10 +508,10 @@ public abstract class AttributedElementClassImpl<SC extends AttributedElementCla
 		allSubClasses = null;
 		allAttributeList = null;
 
-		finish = false;
+		finished = false;
 	}
 
 	protected boolean isFinished() {
-		return finish;
+		return finished;
 	}
 }

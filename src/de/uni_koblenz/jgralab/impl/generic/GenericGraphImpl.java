@@ -39,7 +39,7 @@ public class GenericGraphImpl extends GraphImpl {
 	private GraphClass type;
 	private Map<String, Object> attributes;
 
-	protected GenericGraphImpl(String id, GraphClass type) {
+	protected GenericGraphImpl(GraphClass type, String id) {
 		super(id, type, 100, 100);
 	}
 

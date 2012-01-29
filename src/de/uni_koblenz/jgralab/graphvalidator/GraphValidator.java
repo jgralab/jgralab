@@ -85,7 +85,7 @@ public class GraphValidator {
 			System.err.println("Usage: java GraphValidator <graph.tg>");
 			System.exit(1);
 		}
-		Graph g = GraphIO.loadGraphFromFileWithStandardSupport(args[0],
+		Graph g = GraphIO.loadGraphFromFile(args[0],
 				new ConsoleProgressFunction("Loading"));
 		GraphValidator v = new GraphValidator(g);
 		v.createValidationReport("__validation_report.html");

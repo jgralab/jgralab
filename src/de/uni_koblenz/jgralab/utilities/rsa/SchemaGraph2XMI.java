@@ -150,8 +150,8 @@ public class SchemaGraph2XMI {
 		String outputName = cli.getOptionValue("o");
 		try {
 			if (cli.hasOption("ig")) {
-				s.process((SchemaGraph) GraphIO
-						.loadGraphFromFileWithStandardSupport(
+				s.process(
+						GraphIO.<SchemaGraph> loadGraphFromFile(
 								cli.getOptionValue("ig"), null), outputName);
 			} else {
 				s.process(new Schema2SchemaGraph().convert2SchemaGraph(GraphIO

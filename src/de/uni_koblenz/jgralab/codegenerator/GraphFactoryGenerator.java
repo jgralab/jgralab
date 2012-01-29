@@ -99,7 +99,9 @@ public class GraphFactoryGenerator extends CodeGenerator {
 		}
 		CodeSnippet s = new CodeSnippet(true);
 		s.add("public #simpleImplClassName#() {",
-				"\tsuper(ImplementationType.#implTypeInfix#);");
+				"\tsuper(#schemaName#.instance(), ImplementationType.#implTypeInfix#);",
+				"\tcreateMaps();");
+
 		code.addNoIndent(s);
 		code.add(createFillTableMethod());
 		code.addNoIndent(new CodeSnippet("}"));

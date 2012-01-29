@@ -1299,12 +1299,13 @@ public abstract class GraphDatabase {
 	 * @throws GraphDatabaseException
 	 *             Getting graph not successful.
 	 */
-	public DatabasePersistableGraph getGraph(String id)
+	@SuppressWarnings("unchecked")
+	public <G extends Graph> G getGraph(String id)
 			throws GraphDatabaseException {
 		if (loadedGraphs.containsKey(id)) {
-			return loadedGraphs.get(id);
+			return (G) loadedGraphs.get(id);
 		} else {
-			return loadAndCacheGraph(id);
+			return (G) loadAndCacheGraph(id);
 		}
 	}
 
@@ -1461,7 +1462,8 @@ public abstract class GraphDatabase {
 			Constructor<? extends GraphFactory> cons = c.getConstructor();
 			GraphFactory graphFactory = cons.newInstance();
 			((GraphFactoryImpl) graphFactory).setGraphDatabase(this);
-			return (GraphImpl) graphFactory.createGraph(id);
+			return (GraphImpl) graphFactory.createGraph(schema.getGraphClass(),
+					id, 100, 100);
 		} catch (Exception e) {
 			throw new GraphIOException("Could not create an instance of "
 					+ graphClass.getSchemaClass().getName());
