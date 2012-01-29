@@ -157,7 +157,7 @@ public class Greql2ExpressionEvaluator extends VertexEvaluator {
 						greqlEvaluator.addKnownType(elem);
 					}
 				} else {
-					AttributedElementClass elemClass = graphSchema
+					AttributedElementClass<?, ?> elemClass = graphSchema
 							.getAttributedElementClass(importedType);
 					if (elemClass == null) {
 						throw new UnknownTypeException(importedType,

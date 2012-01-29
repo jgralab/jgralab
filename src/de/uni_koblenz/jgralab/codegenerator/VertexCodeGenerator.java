@@ -46,7 +46,7 @@ import de.uni_koblenz.jgralab.schema.VertexClass;
 /**
  * This class is used by the method Schema.commit() to generate the Java-classes
  * that implement the VertexClasses of a graph schema.
- *
+ * 
  * @author ist@uni-koblenz.de
  */
 public class VertexCodeGenerator extends AttributedElementCodeGenerator {
@@ -57,6 +57,7 @@ public class VertexCodeGenerator extends AttributedElementCodeGenerator {
 			String schemaPackageName, CodeGeneratorConfiguration config) {
 		super(vertexClass, schemaPackageName, config);
 		rootBlock.setVariable("graphElementClass", "Vertex");
+		rootBlock.setVariable("schemaElementClass", "VertexClass");
 		rolenameGenerator = new RolenameCodeGenerator((VertexClass) aec);
 	}
 
@@ -104,7 +105,7 @@ public class VertexCodeGenerator extends AttributedElementCodeGenerator {
 
 	/**
 	 * creates the methods <code>getFirstEdgeName()</code>
-	 *
+	 * 
 	 * @param createClass
 	 *            if set to true, the method bodies will also be created
 	 * @return the CodeBlock that contains the methods
@@ -149,7 +150,7 @@ public class VertexCodeGenerator extends AttributedElementCodeGenerator {
 	/**
 	 * creates the method <code>getFirstEdgeName()</code> for the given
 	 * EdgeClass
-	 *
+	 * 
 	 * @param createClass
 	 *            if set to true, the method bodies will also be created
 	 * @param withOrientation
@@ -186,7 +187,7 @@ public class VertexCodeGenerator extends AttributedElementCodeGenerator {
 
 	/**
 	 * Creates <code>getNextVertexClassName()</code> methods
-	 *
+	 * 
 	 * @param createClass
 	 *            if set to true, also the method bodies will be created
 	 * @return the CodeBlock that contains the methods
@@ -194,12 +195,12 @@ public class VertexCodeGenerator extends AttributedElementCodeGenerator {
 	private CodeBlock createNextVertexMethods() {
 		CodeList code = new CodeList();
 
-		TreeSet<AttributedElementClass> superClasses = new TreeSet<AttributedElementClass>();
+		TreeSet<AttributedElementClass<?, ?>> superClasses = new TreeSet<AttributedElementClass<?, ?>>();
 		superClasses.addAll(aec.getAllSuperClasses());
 		superClasses.add(aec);
 
 		if (config.hasTypeSpecificMethodsSupport()) {
-			for (AttributedElementClass ec : superClasses) {
+			for (AttributedElementClass<?, ?> ec : superClasses) {
 				if (ec.isInternal()) {
 					continue;
 				}
@@ -213,7 +214,7 @@ public class VertexCodeGenerator extends AttributedElementCodeGenerator {
 	/**
 	 * Creates <code>getNextVertexClassName()</code> method for given
 	 * VertexClass
-	 *
+	 * 
 	 * @param createClass
 	 *            if set to true, the method bodies will also be created
 	 * @return the CodeBlock that contains the method
@@ -243,7 +244,7 @@ public class VertexCodeGenerator extends AttributedElementCodeGenerator {
 
 	/**
 	 * Creates <code>getEdgeNameIncidences</code> methods.
-	 *
+	 * 
 	 * @param createClass
 	 *            if set to true, also the method bodies will be created
 	 * @return the CodeBlock that contains the code for the
@@ -339,11 +340,11 @@ public class VertexCodeGenerator extends AttributedElementCodeGenerator {
 			if (!ec.getTo().getRolename().isEmpty()) {
 				code = new CodeSnippet(true);
 				code.setVariable("rolename", ec.getTo().getRolename());
-				code.setVariable("edgeclass",
-						schemaRootPackageName + "." + ec.getQualifiedName());
+				code.setVariable("edgeclass", ec.getSchema().getQualifiedName()
+						+ ".instance()." + ec.getVariableName());
 				code.setVariable("dir",
 						"de.uni_koblenz.jgralab.EdgeDirection.OUT");
-				code.add("roleMap.put(\"#rolename#\", new DirectedSchemaEdgeClass(#edgeclass#.class, #dir#));");
+				code.add("roleMap.put(\"#rolename#\", new DirectedSchemaEdgeClass(#edgeclass#, #dir#));");
 				list.addNoIndent(code);
 			}
 		}
@@ -351,11 +352,11 @@ public class VertexCodeGenerator extends AttributedElementCodeGenerator {
 			if (!ec.getFrom().getRolename().isEmpty()) {
 				code = new CodeSnippet(true);
 				code.setVariable("rolename", ec.getFrom().getRolename());
-				code.setVariable("edgeclass",
-						schemaRootPackageName + "." + ec.getQualifiedName());
+				code.setVariable("edgeclass", ec.getSchema().getQualifiedName()
+						+ ".instance()." + ec.getVariableName());
 				code.setVariable("dir",
 						"de.uni_koblenz.jgralab.EdgeDirection.IN");
-				code.add("roleMap.put(\"#rolename#\", new DirectedSchemaEdgeClass(#edgeclass#.class, #dir#));");
+				code.add("roleMap.put(\"#rolename#\", new DirectedSchemaEdgeClass(#edgeclass#, #dir#));");
 				list.addNoIndent(code);
 			}
 		}

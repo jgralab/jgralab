@@ -55,10 +55,11 @@ import de.uni_koblenz.jgralab.impl.ReversedEdgeBaseImpl;
  * 
  * @author ist@uni-koblenz.de
  */
-public class BooleanGraphMarker extends AbstractGraphMarker<AttributedElement>
-		implements BooleanFunction<AttributedElement> {
+public class BooleanGraphMarker extends
+		AbstractGraphMarker<AttributedElement<?, ?>> implements
+		BooleanFunction<AttributedElement<?, ?>> {
 
-	private final HashSet<AttributedElement> markedElements;
+	private final HashSet<AttributedElement<?, ?>> markedElements;
 
 	/**
 	 * creates a new boolean graph marker
@@ -66,7 +67,7 @@ public class BooleanGraphMarker extends AbstractGraphMarker<AttributedElement>
 	 */
 	public BooleanGraphMarker(Graph g) {
 		super(g);
-		markedElements = new HashSet<AttributedElement>();
+		markedElements = new HashSet<AttributedElement<?, ?>>();
 	}
 
 	/**
@@ -78,8 +79,8 @@ public class BooleanGraphMarker extends AbstractGraphMarker<AttributedElement>
 	 * @return true if this GraphMarker marks the given element, false otherwise
 	 */
 	@Override
-	public final boolean isMarked(AttributedElement elem) {
-		assert ((elem instanceof GraphElement && ((GraphElement) elem)
+	public final boolean isMarked(AttributedElement<?, ?> elem) {
+		assert ((elem instanceof GraphElement && ((GraphElement<?, ?>) elem)
 				.getGraph() == graph) || elem == graph);
 		if (elem instanceof ReversedEdgeBaseImpl) {
 			elem = ((ReversedEdgeBaseImpl) elem).getNormalEdge();
@@ -95,8 +96,8 @@ public class BooleanGraphMarker extends AbstractGraphMarker<AttributedElement>
 	 * @return true if the element has been marked successfull, false if this
 	 *         element is already marked by this GraphMarker
 	 */
-	public final boolean mark(AttributedElement elem) {
-		assert ((elem instanceof GraphElement && ((GraphElement) elem)
+	public final boolean mark(AttributedElement<?, ?> elem) {
+		assert ((elem instanceof GraphElement && ((GraphElement<?, ?>) elem)
 				.getGraph() == graph) || elem == graph);
 		if (elem instanceof ReversedEdgeBaseImpl) {
 			elem = ((ReversedEdgeBaseImpl) elem).getNormalEdge();
@@ -115,8 +116,8 @@ public class BooleanGraphMarker extends AbstractGraphMarker<AttributedElement>
 	 *         <code>false</code> otherwise
 	 */
 	@Override
-	public final boolean removeMark(AttributedElement elem) {
-		assert ((elem instanceof GraphElement && ((GraphElement) elem)
+	public final boolean removeMark(AttributedElement<?, ?> elem) {
+		assert ((elem instanceof GraphElement && ((GraphElement<?, ?>) elem)
 				.getGraph() == graph) || elem == graph);
 		if (elem instanceof ReversedEdgeBaseImpl) {
 			elem = ((ReversedEdgeBaseImpl) elem).getNormalEdge();
@@ -130,7 +131,7 @@ public class BooleanGraphMarker extends AbstractGraphMarker<AttributedElement>
 	 * @return the markedElements
 	 */
 	@Override
-	public Iterable<AttributedElement> getMarkedElements() {
+	public Iterable<AttributedElement<?, ?>> getMarkedElements() {
 		return markedElements;
 	}
 
@@ -194,17 +195,17 @@ public class BooleanGraphMarker extends AbstractGraphMarker<AttributedElement>
 	}
 
 	@Override
-	public boolean get(AttributedElement parameter) {
+	public boolean get(AttributedElement<?, ?> parameter) {
 		return isMarked(parameter);
 	}
 
 	@Override
-	public boolean isDefined(AttributedElement parameter) {
+	public boolean isDefined(AttributedElement<?, ?> parameter) {
 		return true;
 	}
 
 	@Override
-	public void set(AttributedElement parameter, boolean value) {
+	public void set(AttributedElement<?, ?> parameter, boolean value) {
 		if (value) {
 			mark(parameter);
 		} else {
@@ -213,10 +214,10 @@ public class BooleanGraphMarker extends AbstractGraphMarker<AttributedElement>
 	}
 
 	@Override
-	public Iterator<BooleanFunctionEntry<AttributedElement>> iterator() {
-		final Iterator<AttributedElement> markedElements = getMarkedElements()
+	public Iterator<BooleanFunctionEntry<AttributedElement<?, ?>>> iterator() {
+		final Iterator<AttributedElement<?, ?>> markedElements = getMarkedElements()
 				.iterator();
-		return new Iterator<BooleanFunctionEntry<AttributedElement>>() {
+		return new Iterator<BooleanFunctionEntry<AttributedElement<?, ?>>>() {
 
 			@Override
 			public boolean hasNext() {
@@ -224,10 +225,10 @@ public class BooleanGraphMarker extends AbstractGraphMarker<AttributedElement>
 			}
 
 			@Override
-			public BooleanFunctionEntry<AttributedElement> next() {
-				AttributedElement currentElement = markedElements.next();
-				return new BooleanFunctionEntry<AttributedElement>(currentElement,
-						get(currentElement));
+			public BooleanFunctionEntry<AttributedElement<?, ?>> next() {
+				AttributedElement<?, ?> currentElement = markedElements.next();
+				return new BooleanFunctionEntry<AttributedElement<?, ?>>(
+						currentElement, get(currentElement));
 			}
 
 			@Override
@@ -239,7 +240,7 @@ public class BooleanGraphMarker extends AbstractGraphMarker<AttributedElement>
 	}
 
 	@Override
-	public Iterable<AttributedElement> getDomainElements() {
+	public Iterable<AttributedElement<?, ?>> getDomainElements() {
 		return getMarkedElements();
 	}
 

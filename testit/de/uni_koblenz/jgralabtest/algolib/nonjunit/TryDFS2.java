@@ -44,7 +44,8 @@ import de.uni_koblenz.jgralabtest.schemas.algolib.simple.SimpleVertex;
 
 public class TryDFS2 {
 	public static void main(String[] args) throws AlgorithmTerminatedException {
-		SimpleGraph graph = SimpleSchema.instance().createSimpleGraph(ImplementationType.STANDARD,4, 6);
+		SimpleGraph graph = SimpleSchema.instance().createSimpleGraph(
+				ImplementationType.STANDARD);
 		SimpleVertex a = graph.createSimpleVertex();
 		SimpleVertex b = graph.createSimpleVertex();
 		SimpleVertex c = graph.createSimpleVertex();

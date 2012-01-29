@@ -47,7 +47,7 @@ public class TypeDefinition extends AbstractDefinition {
 	/**
 	 * The {@link AttributedElementClass} this definition describes.
 	 */
-	private AttributedElementClass typeClass;
+	private AttributedElementClass<?, ?> typeClass;
 
 	/**
 	 * Constructs a TypeDefinition for a {@link AttributedElementClass} and
@@ -56,7 +56,7 @@ public class TypeDefinition extends AbstractDefinition {
 	 * @param type
 	 *            {@link AttributedElementClass} this definition describes.
 	 */
-	public TypeDefinition(AttributedElementClass type) {
+	public TypeDefinition(AttributedElementClass<?, ?> type) {
 		super();
 
 		typeClass = type;
@@ -79,7 +79,7 @@ public class TypeDefinition extends AbstractDefinition {
 	 * 
 	 * @return Associated {@link AttributedElementClass}.
 	 */
-	public AttributedElementClass getTypeClass() {
+	public AttributedElementClass<?, ?> getTypeClass() {
 		return typeClass;
 	}
 

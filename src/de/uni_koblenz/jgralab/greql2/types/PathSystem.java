@@ -354,7 +354,7 @@ public class PathSystem {
 	 * 
 	 * @return true, if the element is part of this system, false otherwise
 	 */
-	public boolean contains(GraphElement elem) {
+	public boolean contains(GraphElement<?, ?> elem) {
 		assertFinished();
 		for (Map.Entry<PathSystemKey, PathSystemEntry> entry : keyToEntryMap
 				.entrySet()) {

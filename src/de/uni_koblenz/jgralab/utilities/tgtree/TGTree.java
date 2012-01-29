@@ -74,7 +74,7 @@ public class TGTree extends JFrame {
 
 	public TGTree(Graph g) {
 		super("TGTree <" + g.getId() + ">");
-		this.graph = g;
+		graph = g;
 
 		JMenuBar menuBar = new JMenuBar();
 		JLabel idLabel = new JLabel("Select by id: ");
@@ -102,16 +102,15 @@ public class TGTree extends JFrame {
 		tree.setCellRenderer(new GraphElementCellRenderer());
 		tree.addMouseListener(new TreeViewMouseAdapter());
 		tree.addKeyListener(new TreeViewKeyAdapter());
-	
+
 		// < Bad Code - only for Demo
 		int j = 1;
-		for(int i = 0; i < tree.getRowCount(); i++){
+		for (int i = 0; i < tree.getRowCount(); i++) {
 			tree.expandRow(j);
-			j = j +2;
+			j = j + 2;
 		}
 		// Bad Code >
 
-		
 		scrollPane = new JScrollPane();
 		scrollPane.getViewport().add(tree);
 		cp.add(scrollPane);
@@ -124,7 +123,7 @@ public class TGTree extends JFrame {
 		pack();
 	}
 
-	public void setTreeViewRoot(GraphElement ge) {
+	public void setTreeViewRoot(GraphElement<?, ?> ge) {
 		GraphElementTreeNode tn = null;
 		if (ge instanceof Edge) {
 			tn = new EdgeTreeNode((Edge) ge, null);
@@ -133,14 +132,14 @@ public class TGTree extends JFrame {
 		} else {
 			throw new RuntimeException(ge + " is neither Vertex nor Edge.");
 		}
-		
+
 		tree.setModel(new TGraphTreeModel(tn));
-		
+
 		// < Bad Code - only for Demo
 		int j = 1;
-		for(int i = 0; i < tree.getRowCount(); i++){
+		for (int i = 0; i < tree.getRowCount(); i++) {
 			tree.expandRow(j);
-			j = j +2;
+			j = j + 2;
 		}
 		// Bad Code >
 	}

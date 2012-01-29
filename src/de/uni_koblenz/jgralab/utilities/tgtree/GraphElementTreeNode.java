@@ -49,7 +49,7 @@ abstract class GraphElementTreeNode implements TreeNode {
 
 	protected abstract void init();
 
-	protected abstract GraphElement get();
+	protected abstract GraphElement<?, ?> get();
 
 	protected GraphElementTreeNode(GraphElementTreeNode parent) {
 		this.parent = parent;

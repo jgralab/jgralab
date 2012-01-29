@@ -49,7 +49,7 @@ public class BrokenGReQLConstraintViolation extends ConstraintViolation {
 	private Constraint constraint;
 	private String brokenPart;
 
-	public BrokenGReQLConstraintViolation(AttributedElementClass aec,
+	public BrokenGReQLConstraintViolation(AttributedElementClass<?, ?> aec,
 			Constraint constraint, String brokenPart) {
 		super(aec);
 		this.constraint = constraint;
@@ -68,7 +68,7 @@ public class BrokenGReQLConstraintViolation extends ConstraintViolation {
 	public boolean equals(Object o) {
 		if (o instanceof BrokenGReQLConstraintViolation) {
 			BrokenGReQLConstraintViolation other = (BrokenGReQLConstraintViolation) o;
-			return this.compareTo(other) == 0;
+			return compareTo(other) == 0;
 		}
 		return false;
 	}
@@ -110,7 +110,7 @@ public class BrokenGReQLConstraintViolation extends ConstraintViolation {
 	}
 
 	@Override
-	public Set<AttributedElement> getOffendingElements() {
+	public Set<AttributedElement<?, ?>> getOffendingElements() {
 		return null;
 	}
 }

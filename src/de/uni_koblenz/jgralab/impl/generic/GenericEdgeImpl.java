@@ -3,7 +3,6 @@ package de.uni_koblenz.jgralab.impl.generic;
 import java.io.IOException;
 import java.util.Map;
 
-import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Graph;
@@ -16,7 +15,6 @@ import de.uni_koblenz.jgralab.impl.std.EdgeImpl;
 import de.uni_koblenz.jgralab.impl.std.GraphImpl;
 import de.uni_koblenz.jgralab.schema.AggregationKind;
 import de.uni_koblenz.jgralab.schema.Attribute;
-import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 
 public class GenericEdgeImpl extends EdgeImpl {
@@ -39,7 +37,7 @@ public class GenericEdgeImpl extends EdgeImpl {
 	}
 
 	@Override
-	public AttributedElementClass getAttributedElementClass() {
+	public EdgeClass getAttributedElementClass() {
 		return type;
 	}
 
@@ -90,24 +88,22 @@ public class GenericEdgeImpl extends EdgeImpl {
 
 	@Override
 	public AggregationKind getAggregationKind() {
-		AggregationKind fromAK = ((EdgeClass) getAttributedElementClass())
-				.getFrom().getAggregationKind();
-		AggregationKind toAK = ((EdgeClass) getAttributedElementClass())
-				.getTo().getAggregationKind();
+		AggregationKind fromAK = (getAttributedElementClass()).getFrom()
+				.getAggregationKind();
+		AggregationKind toAK = (getAttributedElementClass()).getTo()
+				.getAggregationKind();
 		return fromAK != AggregationKind.NONE ? fromAK
 				: (toAK != AggregationKind.NONE ? toAK : AggregationKind.NONE);
 	}
 
 	@Override
 	public AggregationKind getAlphaAggregationKind() {
-		return ((EdgeClass) getAttributedElementClass()).getFrom()
-				.getAggregationKind();
+		return (getAttributedElementClass()).getFrom().getAggregationKind();
 	}
 
 	@Override
 	public AggregationKind getOmegaAggregationKind() {
-		return ((EdgeClass) getAttributedElementClass()).getTo()
-				.getAggregationKind();
+		return (getAttributedElementClass()).getTo().getAggregationKind();
 	}
 
 	@SuppressWarnings("unchecked")
@@ -194,7 +190,7 @@ public class GenericEdgeImpl extends EdgeImpl {
 
 	// ************** unsupported methods ***************/
 	@Override
-	public Class<? extends AttributedElement> getSchemaClass() {
+	public Class<? extends Edge> getSchemaClass() {
 		throw new UnsupportedOperationException(
 				"This method is not supported by the generic implementation");
 	}
@@ -233,7 +229,7 @@ public class GenericEdgeImpl extends EdgeImpl {
 	}
 
 	@Override
-	public boolean isInstanceOf(AttributedElementClass cls) {
+	public boolean isInstanceOf(EdgeClass cls) {
 		// Needs to be overridden from the base variant, because that relies on
 		// code generation.
 		return type.equals(cls) || type.isSubClassOf(cls);

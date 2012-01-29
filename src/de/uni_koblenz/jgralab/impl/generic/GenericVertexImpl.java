@@ -3,7 +3,6 @@ package de.uni_koblenz.jgralab.impl.generic;
 import java.io.IOException;
 import java.util.Map;
 
-import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Graph;
@@ -14,7 +13,6 @@ import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.impl.InternalVertex;
 import de.uni_koblenz.jgralab.impl.std.VertexImpl;
 import de.uni_koblenz.jgralab.schema.Attribute;
-import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.VertexClass;
 import de.uni_koblenz.jgralab.schema.impl.DirectedSchemaEdgeClass;
@@ -50,7 +48,7 @@ public class GenericVertexImpl extends VertexImpl {
 	}
 
 	@Override
-	public AttributedElementClass getAttributedElementClass() {
+	public VertexClass getAttributedElementClass() {
 		return type;
 	}
 
@@ -67,8 +65,8 @@ public class GenericVertexImpl extends VertexImpl {
 											getSchema())));
 			return;
 		}
-		throw new NoSuchAttributeException(this
-				+ " doesn't have an attribute " + attributeName);
+		throw new NoSuchAttributeException(this + " doesn't have an attribute "
+				+ attributeName);
 	}
 
 	@Override
@@ -182,7 +180,7 @@ public class GenericVertexImpl extends VertexImpl {
 
 	// ************** unsupported methods ***************/
 	@Override
-	public Class<? extends AttributedElement> getSchemaClass() {
+	public Class<? extends Vertex> getSchemaClass() {
 		throw new UnsupportedOperationException(
 				"This method is not supported by the generic implementation");
 	}
@@ -225,7 +223,7 @@ public class GenericVertexImpl extends VertexImpl {
 	}
 
 	@Override
-	public boolean isInstanceOf(AttributedElementClass cls) {
+	public boolean isInstanceOf(VertexClass cls) {
 		// Needs to be overridden from the base variant, because that relies on
 		// code generation.
 		return type.equals(cls) || type.isSubClassOf(cls);

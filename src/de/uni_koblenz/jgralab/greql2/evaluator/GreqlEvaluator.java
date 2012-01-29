@@ -217,7 +217,7 @@ public class GreqlEvaluator {
 	 * The map of SimpleName to Type of types that is known in the evaluator by
 	 * import statements in the greql query
 	 */
-	protected Map<String, AttributedElementClass> knownTypes = new HashMap<String, AttributedElementClass>(); // initial
+	protected Map<String, AttributedElementClass<?, ?>> knownTypes = new HashMap<String, AttributedElementClass<?, ?>>();
 
 	/**
 	 * returns the vertexEvalGraph marker that is used
@@ -748,17 +748,17 @@ public class GreqlEvaluator {
 	private GreqlEvaluator(Graph datagraph, Map<String, Object> variables,
 			ProgressFunction progressFunction) {
 		this.datagraph = datagraph;
-		knownTypes = new HashMap<String, AttributedElementClass>();
+		knownTypes = new HashMap<String, AttributedElementClass<?, ?>>();
 		variableMap = variables;
 		subQueryMap = new LinkedHashMap<String, Greql2>();
 		this.progressFunction = progressFunction;
 	}
 
-	public void addKnownType(AttributedElementClass knownType) {
+	public void addKnownType(AttributedElementClass<?, ?> knownType) {
 		knownTypes.put(knownType.getSimpleName(), knownType);
 	}
 
-	public AttributedElementClass getKnownType(String typeSimpleName) {
+	public AttributedElementClass<?, ?> getKnownType(String typeSimpleName) {
 		return knownTypes.get(typeSimpleName);
 	}
 
