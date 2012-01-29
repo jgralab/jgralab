@@ -66,8 +66,9 @@ public class RolenameCodeGenerator {
 			EdgeDirection dir, boolean createClass) {
 		CodeSnippet code = new CodeSnippet();
 		code.setVariable("rolename", rolename);
-		code.setVariable("edgeClass", edgeClass.getSchema().getQualifiedName()
-				+ ".instance()." + edgeClass.getVariableName());
+		code.setVariable("edgeClass",
+				"#schemaPackage#." + edgeClass.getSimpleName()
+						+ ".ATTRIBUTED_ELEMENT_CLASS");
 		code.setVariable("edgeClassName",
 				schemaRootPackageName + edgeClass.getQualifiedName());
 		code.setVariable("dir", "EdgeDirection." + dir.toString());
@@ -187,10 +188,10 @@ public class RolenameCodeGenerator {
 			boolean createClass) {
 		CodeSnippet code = new CodeSnippet();
 		code.setVariable("rolename", rolename);
-		code.setVariable("edgeClass", edgeClass.getSchema().getQualifiedName()
-				+ ".instance()." + edgeClass.getVariableName());
 		code.setVariable("edgeClassName",
 				schemaRootPackageName + edgeClass.getQualifiedName());
+		code.setVariable("edgeClass",
+				"#edgeClassName#.ATTRIBUTED_ELEMENT_CLASS");
 		code.setVariable("graphClassName", schemaRootPackageName
 				+ edgeClass.getGraphClass().getQualifiedName());
 		code.setVariable("definingVertexClassName", schemaRootPackageName

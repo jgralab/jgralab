@@ -108,7 +108,6 @@ public class GraphCodeGenerator extends AttributedElementCodeGenerator {
 
 	@Override
 	protected CodeBlock createConstructor() {
-		addImports("#schemaPackageName#.#schemaName#");
 		CodeSnippet code = new CodeSnippet(true);
 		if (currentCycle.isTransImpl()) {
 			code.setVariable("createSuffix", "TRANSACTION");
@@ -144,7 +143,7 @@ public class GraphCodeGenerator extends AttributedElementCodeGenerator {
 					" * For instantiating a Graph, use the Schema and a GraphFactory",
 					"**/",
 					"public #simpleImplClassName#(java.lang.String id, int vMax, int eMax) {",
-					"\tsuper(id, #schemaName#.instance().#schemaVariableName#, vMax, eMax);",
+					"\tsuper(id, #javaClassName#.ATTRIBUTED_ELEMENT_CLASS, vMax, eMax);",
 					"\tinitializeAttributesWithDefaultValues();",
 					"}",
 					"",
@@ -153,7 +152,7 @@ public class GraphCodeGenerator extends AttributedElementCodeGenerator {
 					" * For instantiating a Graph, use the Schema and a GraphFactory",
 					"**/",
 					"public #simpleImplClassName#(java.lang.String id) {",
-					"\tsuper(id, #schemaName#.instance().#schemaVariableName#);",
+					"\tsuper(id, #javaClassName#.ATTRIBUTED_ELEMENT_CLASS);",
 					"\tinitializeAttributesWithDefaultValues();", "}");
 		} else {
 			code.add(
@@ -162,7 +161,7 @@ public class GraphCodeGenerator extends AttributedElementCodeGenerator {
 					" * For instantiating a Graph, use a GraphFactory",
 					"**/",
 					"public #simpleImplClassName#(java.lang.String id, GraphDatabase graphDatabase) {",
-					"\tsuper(id, #schemaName#.instance().#schemaVariableName#, graphDatabase);",
+					"\tsuper(id, #javaClassName#.ATTRIBUTED_ELEMENT_CLASS, graphDatabase);",
 					"\tinitializeAttributesWithDefaultValues();",
 					"}",
 					"",
@@ -171,7 +170,7 @@ public class GraphCodeGenerator extends AttributedElementCodeGenerator {
 					" * For instantiating a Graph, use a GraphFactory",
 					"**/",
 					"public #simpleImplClassName#(java.lang.String id, int vMax, int eMax, GraphDatabase graphDatabase) {",
-					"\tsuper(id, vMax, eMax, #schemaName#.instance().#schemaVariableName#, graphDatabase);",
+					"\tsuper(id, vMax, eMax, #javaClassName#.ATTRIBUTED_ELEMENT_CLASS, graphDatabase);",
 					"\tinitializeAttributesWithDefaultValues();", "}");
 		}
 		return code;
@@ -231,7 +230,7 @@ public class GraphCodeGenerator extends AttributedElementCodeGenerator {
 		if (currentCycle.isStdOrDbImplOrTransImpl()) {
 			code.add(
 					"public #ecJavaClassName# getFirst#ecCamelName#(#formalParams#) {",
-					"\treturn (#ecJavaClassName#)getFirst#ecType#(#schemaName#.instance().#ecSchemaVariableName##actualParams#);",
+					"\treturn (#ecJavaClassName#)getFirst#ecType#(#ecJavaClassName#.ATTRIBUTED_ELEMENT_CLASS#actualParams#);",
 					"}");
 		}
 		code.setVariable("formalParams", "");
@@ -274,7 +273,7 @@ public class GraphCodeGenerator extends AttributedElementCodeGenerator {
 		if (currentCycle.isStdOrDbImplOrTransImpl()) {
 			code.add(
 					"public #ecJavaClassName# create#ecCamelName#(#formalParams#) {",
-					"\treturn graphFactory.<#ecJavaClassName#> create#ecType#(#schemaName#.instance().#ecSchemaVariableName#, #newActualParams#, this#additionalParams#);",
+					"\treturn graphFactory.<#ecJavaClassName#> create#ecType#(#ecJavaClassName#.ATTRIBUTED_ELEMENT_CLASS, #newActualParams#, this#additionalParams#);",
 					"}");
 			code.setVariable("additionalParams", "");
 		}

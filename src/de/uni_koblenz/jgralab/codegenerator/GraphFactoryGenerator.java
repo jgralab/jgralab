@@ -128,8 +128,8 @@ public class GraphFactoryGenerator extends CodeGenerator {
 		}
 
 		CodeSnippet code = new CodeSnippet(false);
-		code.setVariable("graphName", graphClass.getVariableName());
-		// "#schemaPackage#." + graphClass.getQualifiedName());
+		code.setVariable("graphName", graphClass.getQualifiedName()
+				+ ".ATTRIBUTED_ELEMENT_CLASS");
 		code.setVariable("graphImplName", "#schemaImplStdPackage#."
 				+ graphClass.getQualifiedName() + "Impl");
 		code.setVariable("graphTransactionImplName",
@@ -140,13 +140,13 @@ public class GraphFactoryGenerator extends CodeGenerator {
 
 		if (!graphClass.isAbstract()) {
 			if (currentCycle.isStdImpl() && config.hasStandardSupport()) {
-				code.add("setGraphImplementationClass(#schemaName#.instance().#graphName#, #graphImplName#.class);");
+				code.add("setGraphImplementationClass(#schemaPackage#.#graphName#, #graphImplName#.class);");
 			}
 			if (currentCycle.isTransImpl() && config.hasTransactionSupport()) {
-				code.add("setGraphImplementationClass(#schemaName#.instance().#graphName#, #graphTransactionImplName#.class);");
+				code.add("setGraphImplementationClass(#schemaPackage#.#graphName#, #graphTransactionImplName#.class);");
 			}
 			if (currentCycle.isDbImpl() && config.hasDatabaseSupport()) {
-				code.add("setGraphImplementationClass(#schemaName#.instance().#graphName#, #graphDatabaseImplName#.class);");
+				code.add("setGraphImplementationClass(#schemaPackage#.#graphName#, #graphDatabaseImplName#.class);");
 			}
 		}
 		return code;
@@ -158,9 +158,9 @@ public class GraphFactoryGenerator extends CodeGenerator {
 		}
 
 		CodeSnippet code = new CodeSnippet(false);
-		code.setVariable("vertexName", vertexClass.getVariableName());
-		// "#schemaPackage#."
-		// + vertexClass.getQualifiedName());
+		code.setVariable("vertexName", vertexClass.getQualifiedName()
+				+ ".ATTRIBUTED_ELEMENT_CLASS");
+
 		code.setVariable("vertexImplName", "#schemaImplStdPackage#."
 				+ vertexClass.getQualifiedName() + "Impl");
 		code.setVariable("vertexTransactionImplName",
@@ -171,13 +171,13 @@ public class GraphFactoryGenerator extends CodeGenerator {
 
 		if (!vertexClass.isAbstract()) {
 			if (currentCycle.isStdImpl() && config.hasStandardSupport()) {
-				code.add("setVertexImplementationClass(#schemaName#.instance().#vertexName#, #vertexImplName#.class);");
+				code.add("setVertexImplementationClass(#schemaPackage#.#vertexName#, #vertexImplName#.class);");
 			}
 			if (currentCycle.isTransImpl() && config.hasTransactionSupport()) {
-				code.add("setVertexImplementationClass(#schemaName#.instance().#vertexName#, #vertexTransactionImplName#.class);");
+				code.add("setVertexImplementationClass(#schemaPackage#.#vertexName#, #vertexTransactionImplName#.class);");
 			}
 			if (currentCycle.isDbImpl() && config.hasDatabaseSupport()) {
-				code.add("setVertexImplementationClass(#schemaName#.instance().#vertexName#, #vertexDatabaseImplName#.class);");
+				code.add("setVertexImplementationClass(#schemaPackage#.#vertexName#, #vertexDatabaseImplName#.class);");
 			}
 		}
 		return code;
@@ -185,8 +185,8 @@ public class GraphFactoryGenerator extends CodeGenerator {
 
 	protected CodeBlock createFillTableForEdge(EdgeClass edgeClass) {
 		CodeSnippet code = new CodeSnippet(false);
-		code.setVariable("edgeName", edgeClass.getVariableName());
-		// "#schemaPackage#." + edgeClass.getQualifiedName());
+		code.setVariable("edgeName", edgeClass.getQualifiedName()
+				+ ".ATTRIBUTED_ELEMENT_CLASS");
 		code.setVariable("edgeImplName",
 				"#schemaImplStdPackage#." + edgeClass.getQualifiedName()
 						+ "Impl");
@@ -197,13 +197,13 @@ public class GraphFactoryGenerator extends CodeGenerator {
 
 		if (!edgeClass.isAbstract()) {
 			if (currentCycle.isStdImpl() && config.hasStandardSupport()) {
-				code.add("setEdgeImplementationClass(#schemaName#.instance().#edgeName#, #edgeImplName#.class);");
+				code.add("setEdgeImplementationClass(#schemaPackage#.#edgeName#, #edgeImplName#.class);");
 			}
 			if (currentCycle.isTransImpl() && config.hasTransactionSupport()) {
-				code.add("setEdgeImplementationClass(#schemaName#.instance().#edgeName#, #edgeTransactionImplName#.class);");
+				code.add("setEdgeImplementationClass(#schemaPackage#.#edgeName#, #edgeTransactionImplName#.class);");
 			}
 			if (currentCycle.isDbImpl() && config.hasDatabaseSupport()) {
-				code.add("setEdgeImplementationClass(#schemaName#.instance().#edgeName#, #edgeDatabaseImplName#.class);");
+				code.add("setEdgeImplementationClass(#schemaPackage#.#edgeName#, #edgeDatabaseImplName#.class);");
 			}
 		}
 		return code;

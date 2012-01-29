@@ -223,6 +223,7 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 	protected CodeBlock createGetAttributedElementClassMethod() {
 		return new CodeSnippet(
 				true,
+				"@Override",
 				"public final #jgSchemaPackage#.#schemaElementClass# getAttributedElementClass() {",
 				"\treturn #javaClassName#.ATTRIBUTED_ELEMENT_CLASS;", "}");
 	}
@@ -230,6 +231,7 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 	protected CodeBlock createGetSchemaClassMethod() {
 		return new CodeSnippet(
 				true,
+				"@Override",
 				"public final java.lang.Class<? extends #jgPackage#.#graphElementClass#> getSchemaClass() {",
 				"\treturn #javaClassName#.class;", "}");
 	}
