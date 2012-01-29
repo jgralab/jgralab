@@ -321,7 +321,6 @@ public class GraphIO {
 	}
 
 	private void saveSchema(Schema s) throws IOException {
-		// TODO [rie] decide what to do if default schema is used
 		schema = s;
 		write("Schema");
 		space();
@@ -2559,8 +2558,10 @@ public class GraphIO {
 		try {
 			if (implementationType != ImplementationType.GENERIC) {
 				graph = (GraphBaseImpl) schema.getGraphCreateMethod(
-						implementationType).invoke(null,
-						new Object[] { graphId, maxV, maxE });
+						implementationType)
+						.invoke(null,
+								new Object[] { implementationType, graphId,
+										maxV, maxE });
 			} else {
 				graph = (GraphBaseImpl) schema.getGraphCreateMethod(
 						implementationType).invoke(

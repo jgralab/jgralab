@@ -640,8 +640,8 @@ public class Context {
 				.getGraphCreateMethod(ImplementationType.STANDARD);
 
 		try {
-			targetGraph = (Graph) graphCreateMethod
-					.invoke(null, null, 500, 500);
+			targetGraph = (Graph) graphCreateMethod.invoke(
+					ImplementationType.STANDARD, null, 500, 500);
 			targetSchema = targetGraph.getSchema();
 		} catch (Exception e) {
 			e.printStackTrace();

@@ -115,8 +115,8 @@ public class SchemaImpl implements Schema {
 		return schemaClassManager;
 	}
 
-	static final Class<?>[] GRAPHCLASS_CREATE_SIGNATURE = { String.class,
-			int.class, int.class };
+	static final Class<?>[] GRAPHCLASS_CREATE_SIGNATURE = {
+			ImplementationType.class, String.class, int.class, int.class };
 
 	/**
 	 * This is the name of the package into which the implementation classes for
@@ -925,8 +925,16 @@ public class SchemaImpl implements Schema {
 		try {
 			schemaClass = getGraphClassImpl(implementationType);
 			if (className.equals(graphClassName)) {
-				return schemaClass.getMethod("create", signature);
+				if (implementationType != ImplementationType.GENERIC) {
+					// Graph create method is in the SchemaImpl specialization
+					return getClass().getMethod("create" + graphClassName,
+							signature);
+				} else {
+					// generic case
+					return schemaClass.getMethod("createGraph", signature);
+				}
 			} else {
+				// Element create methods are in the GraphImpl specialization
 				aec = graphClass.getVertexClass(className);
 				if (aec == null) {
 					aec = graphClass.getEdgeClass(className);
@@ -1346,8 +1354,8 @@ public class SchemaImpl implements Schema {
 
 		try {
 			if (implementationType != ImplementationType.GENERIC) {
-				return (Graph) graphCreateMethod.invoke(null, id, vCount,
-						eCount);
+				return (Graph) graphCreateMethod.invoke(implementationType,
+						null, id, vCount, eCount);
 			} else {
 				return (Graph) graphCreateMethod.invoke(null, getGraphClass(),
 						id, vCount, eCount);

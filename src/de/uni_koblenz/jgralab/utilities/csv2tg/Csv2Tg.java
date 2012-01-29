@@ -225,8 +225,8 @@ public class Csv2Tg implements FilenameFilter {
 		reader2FilenameMap = new HashMap<CsvReader, String>();
 		// TODO Graph ID
 		try {
-			graph = (Graph) method
-					.invoke(null, new Object[] { null, 128, 128 });
+			graph = (Graph) method.invoke(null, new Object[] {
+					ImplementationType.STANDARD, null, 128, 128 });
 		} catch (IllegalArgumentException e) {
 			e.printStackTrace();
 		} catch (IllegalAccessException e) {

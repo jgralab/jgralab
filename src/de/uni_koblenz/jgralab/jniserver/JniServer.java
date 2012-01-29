@@ -129,7 +129,7 @@ public class JniServer {
 					.getGraphCreateMethod(ImplementationType.STANDARD);
 
 			Graph g = (Graph) (graphCreateMethod.invoke(null, new Object[] {
-					null, vMax, eMax }));
+					ImplementationType.STANDARD, null, vMax, eMax }));
 			return addGraph(g);
 		} catch (Exception e) {
 			throw new GraphException("Exception while creating graph.", e);

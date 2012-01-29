@@ -337,7 +337,8 @@ public class Xml2tg {
 							graph = (Graph) schema.getGraphCreateMethod(
 									ImplementationType.STANDARD).invoke(
 									null,
-									new Object[] { graphID, MAX_VERTEX_COUNT,
+									new Object[] { ImplementationType.STANDARD,
+											graphID, MAX_VERTEX_COUNT,
 											MAX_EDGE_COUNT });
 							// System.out.println("done.");
 						} catch (Exception e) {

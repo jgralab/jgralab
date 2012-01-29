@@ -63,7 +63,8 @@ public class GenericGraphImpl extends GraphImpl {
 	 * be called manually. Use
 	 * <code>Schema.createGraph(ImplementationType.Generic)</code> instead!
 	 */
-	public static Graph create(GraphClass type, String id, int vmax, int emax) {
+	public static Graph createGraph(GraphClass type, String id, int vmax,
+			int emax) {
 		return new GenericGraphImpl(type, id, vmax, emax);
 	}
 
