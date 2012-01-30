@@ -34,17 +34,17 @@ import de.uni_koblenz.jgralab.utilities.tg2dot.dot.GraphVizOutputFormat;
  * use the {@code create}-Methods defined here, to build up a new {@link Schema}
  * , and provide semantic expressions (GReQL queries on the source graph) to
  * specify the transformation on instance level.
- * 
+ *
  * @author Tassilo Horn &lt;horn@uni-koblenz.de&gt;
- * 
+ *
  */
 public abstract class Transformation<T> {
 	/**
 	 * Use this annotation to annotate transformation methods that should be run
 	 * <b>after</b> the transformation finished.
-	 * 
+	 *
 	 * @author Tassilo Horn &lt;horn@uni-koblenz.de&gt;
-	 * 
+	 *
 	 */
 	@Retention(RetentionPolicy.RUNTIME)
 	@Target(ElementType.METHOD)
@@ -55,9 +55,9 @@ public abstract class Transformation<T> {
 	/**
 	 * Use this annotation to annotate transformation methods that should be run
 	 * <b>before</b> the transformation started.
-	 * 
+	 *
 	 * @author Tassilo Horn &lt;horn@uni-koblenz.de&gt;
-	 * 
+	 *
 	 */
 	@Retention(RetentionPolicy.RUNTIME)
 	@Target(ElementType.METHOD)
@@ -69,7 +69,7 @@ public abstract class Transformation<T> {
 	 * Run all methods annotated with <code>annotationClass</code> of this
 	 * transformation including annotated methods in superclasses up to the base
 	 * class {@link Transformation}.
-	 * 
+	 *
 	 * @param annotationClass
 	 */
 	private final void invokeHooks(Class<? extends Annotation> annotationClass) {
@@ -117,7 +117,7 @@ public abstract class Transformation<T> {
 
 	/**
 	 * Executes this transformation.
-	 * 
+	 *
 	 * When it finishes, the target graph be accessed via the {@link Context}
 	 * object.
 	 */
@@ -167,12 +167,9 @@ public abstract class Transformation<T> {
 								+ "'.");
 			}
 
-			// init the enum_QName maps
-			context.initializeEnumValue2LiteralMaps();
-
 			// Start the GRAPH phase
 			log.info("SCHEMA Phase took "
-					+ (System.currentTimeMillis() - startTime + "ms."));
+					+ ((System.currentTimeMillis() - startTime) + "ms."));
 			startTime = System.currentTimeMillis();
 
 			context.phase = TransformationPhase.GRAPH;
@@ -185,7 +182,7 @@ public abstract class Transformation<T> {
 			}
 
 			log.info("GRAPH Phase took "
-					+ (System.currentTimeMillis() - startTime + "ms."));
+					+ ((System.currentTimeMillis() - startTime) + "ms."));
 		} else {
 			// hey, I'm nested, so run the phase my parent is running.
 			result = transform();
@@ -193,7 +190,7 @@ public abstract class Transformation<T> {
 			// Debugging stuff...
 			Graph tg = context.targetGraph;
 			if (DEBUG_EXECUTION
-					&& (tg.getVCount() + tg.getECount() < GReTLRunner.MAX_VISUALIZATION_SIZE)) {
+					&& ((tg.getVCount() + tg.getECount()) < GReTLRunner.MAX_VISUALIZATION_SIZE)) {
 				try {
 					String name = getClass().getSimpleName();
 					if (name.isEmpty()) {
@@ -218,7 +215,7 @@ public abstract class Transformation<T> {
 	/**
 	 * In this method the individual transformation operation calls are
 	 * specified. Concrete transformations must override this method.
-	 * 
+	 *
 	 * @return
 	 */
 	protected abstract T transform();
