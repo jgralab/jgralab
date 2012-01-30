@@ -98,6 +98,15 @@ public class EdgeCodeGenerator extends AttributedElementCodeGenerator {
 	}
 
 	@Override
+	protected CodeBlock createSpecialConstructorCode() {
+		if (currentCycle.isStdImpl()) {
+			return new CodeSnippet(
+					"((#jgImplPackage#.InternalGraph) graph).addEdge(this, alpha, omega);");
+		}
+		return super.createSpecialConstructorCode();
+	}
+
+	@Override
 	protected CodeBlock createBody() {
 		CodeList code = (CodeList) super.createBody();
 		if (currentCycle.isStdOrDbImplOrTransImpl()) {

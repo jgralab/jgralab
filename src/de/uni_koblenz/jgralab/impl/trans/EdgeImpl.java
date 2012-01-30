@@ -58,10 +58,10 @@ import de.uni_koblenz.jgralab.trans.VertexPosition;
 
 /**
  * The implementation of an <code>Edge</code> with versioning.
- *
+ * 
  * Next and previous edge in Eseq, the incident vertex and the next and previous
  * incidence in Iseq(incidentVertex) are versioned.
- *
+ * 
  * @author Jose Monte(monte@uni-koblenz.de)
  */
 public abstract class EdgeImpl extends de.uni_koblenz.jgralab.impl.EdgeBaseImpl
@@ -79,7 +79,7 @@ public abstract class EdgeImpl extends de.uni_koblenz.jgralab.impl.EdgeBaseImpl
 	 * Initialization of versioned attributes is avoided here, to not have
 	 * persistent and temporary values for new instances within the transaction
 	 * this instance is created in.
-	 *
+	 * 
 	 * @param anId
 	 *            the id of the <code>Edge</code>
 	 * @param graph
@@ -88,6 +88,7 @@ public abstract class EdgeImpl extends de.uni_koblenz.jgralab.impl.EdgeBaseImpl
 	 */
 	protected EdgeImpl(int anId, Graph graph, Vertex alpha, Vertex omega) {
 		super(anId, graph, alpha, omega);
+		((GraphImpl) graph).addEdge(this, alpha, omega);
 	}
 
 	// --- getter ---//
@@ -440,7 +441,7 @@ public abstract class EdgeImpl extends de.uni_koblenz.jgralab.impl.EdgeBaseImpl
 	/**
 	 * Should be called from generated <code>Edge</code> implementation classes
 	 * whenever a versioned attribute is changed.
-	 *
+	 * 
 	 * @param versionedAttribute
 	 *            the changed attribute
 	 */
@@ -482,7 +483,7 @@ public abstract class EdgeImpl extends de.uni_koblenz.jgralab.impl.EdgeBaseImpl
 
 	/**
 	 * Implemented in generated subclasses.
-	 *
+	 * 
 	 * @return references to all versioned attributes of this instance. Needed
 	 *         for validation!!!
 	 */
@@ -492,9 +493,11 @@ public abstract class EdgeImpl extends de.uni_koblenz.jgralab.impl.EdgeBaseImpl
 	public boolean isValid() {
 		// avoid that validity of this instance is checked while edge-Arrays are
 		// expanded
-		((GraphImpl) graph).edgeSync.readLock().lock();
+		((de.uni_koblenz.jgralab.impl.trans.GraphImpl) graph).edgeSync
+				.readLock().lock();
 		boolean result = super.isValid();
-		((GraphImpl) graph).edgeSync.readLock().unlock();
+		((de.uni_koblenz.jgralab.impl.trans.GraphImpl) graph).edgeSync
+				.readLock().unlock();
 		return result;
 	}
 

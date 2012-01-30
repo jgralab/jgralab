@@ -82,7 +82,6 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 
 	// ------------- GRAPH VARIABLES -------------
 
-
 	/**
 	 * the unique id of the graph in the schema
 	 */
@@ -219,6 +218,21 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 		InternalVertex a = (InternalVertex) alpha;
 		InternalVertex o = (InternalVertex) omega;
 
+		EdgeClass myEC = newEdge.getAttributedElementClass();
+		VertexClass aVC = a.getAttributedElementClass();
+		if (!aVC.isValidFromFor(myEC)) {
+			throw new GraphException("Edges of class "
+					+ myEC.getQualifiedName()
+					+ " may not start at vertices of class "
+					+ aVC.getQualifiedName());
+		}
+		VertexClass oVC = o.getAttributedElementClass();
+		if (!oVC.isValidToFor(myEC)) {
+			throw new GraphException("Edges of class "
+					+ myEC.getQualifiedName()
+					+ " may not end at vertices of class "
+					+ oVC.getQualifiedName());
+		}
 		int eId = e.getId();
 		if (isLoading()) {
 			if (eId > 0) {
@@ -938,7 +952,6 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 		if (getECARuleManagerIfThere() != null) {
 			getECARuleManagerIfThere().fireBeforeDeleteEdgeEvents(edge);
 		}
-
 
 		InternalEdge e = (InternalEdge) edge.getNormalEdge();
 		if (getECARuleManagerIfThere() != null) {
