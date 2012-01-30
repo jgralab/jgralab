@@ -84,7 +84,7 @@ public class GraphBaseTest extends InstanceTest {
 
 	private InternalGraph g1;
 	private InternalGraph g2;
-	private Vertex v1, v2, v3, v5, v7, v8, v9, v11;
+	private Vertex v2, v3, v5, v7, v8, v11;
 
 	@Before
 	public void setUp() throws CommitFailedException {
@@ -96,7 +96,7 @@ public class GraphBaseTest extends InstanceTest {
 		g2 = (InternalGraph) createNewGraph();
 		createTransaction(g1);
 		// System.out.println("Graph2 is instance of class " + g2.getClass());
-		v1 = g1.createVertex(SubNode.ATTRIBUTED_ELEMENT_CLASS);
+		g1.createVertex(SubNode.ATTRIBUTED_ELEMENT_CLASS);
 		// System.out.println("V1 is instance of class " + v1.getClass());
 		v2 = g1.createVertex(SubNode.ATTRIBUTED_ELEMENT_CLASS);
 		v3 = g1.createVertex(SubNode.ATTRIBUTED_ELEMENT_CLASS);
@@ -105,7 +105,7 @@ public class GraphBaseTest extends InstanceTest {
 		g1.createVertex(SuperNode.ATTRIBUTED_ELEMENT_CLASS);
 		v7 = g1.createVertex(SuperNode.ATTRIBUTED_ELEMENT_CLASS);
 		v8 = g1.createVertex(SuperNode.ATTRIBUTED_ELEMENT_CLASS);
-		v9 = g1.createVertex(DoubleSubNode.ATTRIBUTED_ELEMENT_CLASS);
+		g1.createVertex(DoubleSubNode.ATTRIBUTED_ELEMENT_CLASS);
 		// System.out.println("v9= " + v9);
 		g1.createVertex(DoubleSubNode.ATTRIBUTED_ELEMENT_CLASS);
 		v11 = g1.createVertex(DoubleSubNode.ATTRIBUTED_ELEMENT_CLASS);
@@ -116,7 +116,7 @@ public class GraphBaseTest extends InstanceTest {
 	private ArrayList<String> graphIdsInUse = new ArrayList<String>();
 
 	/**
-	 * 
+	 *
 	 * @return
 	 */
 	private VertexTestGraph createNewGraph() {
@@ -167,7 +167,7 @@ public class GraphBaseTest extends InstanceTest {
 	/**
 	 * Asserts true if the edgeListVersion has changed. Returns the new
 	 * edgeListVersion.
-	 * 
+	 *
 	 * @param elv1
 	 *            the edgeListVersion before the transaction.
 	 * @return the edgeListVersion after the transaction.
@@ -186,7 +186,7 @@ public class GraphBaseTest extends InstanceTest {
 
 	/**
 	 * Asserts true if the edgeListVersion has not changed.
-	 * 
+	 *
 	 * @param elv1
 	 *            the edgeListVersion before the transaction.
 	 * @throws CommitFailedException
@@ -1279,7 +1279,7 @@ public class GraphBaseTest extends InstanceTest {
 		/*
 		 * try{ // graph =VertexTestSchema.instance().loadVertexTestGraph(
 		 * "de.uni_koblenz.VertexTestSchema.tg");
-		 * 
+		 *
 		 * VertexTestGraph graph3 =
 		 * VertexTestSchema.instance().loadVertexTestGraph
 		 * ("VertexTestSchema.tg"); }catch (GraphIOException e){
