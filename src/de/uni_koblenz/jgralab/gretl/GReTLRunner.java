@@ -13,7 +13,6 @@ import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.JGraLab;
-import de.uni_koblenz.jgralab.codegenerator.CodeGeneratorConfiguration;
 import de.uni_koblenz.jgralab.impl.ConsoleProgressFunction;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.Schema;
@@ -149,8 +148,7 @@ public class GReTLRunner {
 			saveTargetGraph(outGraph, outFileName, cli);
 		} else {
 			for (String in : cli.getArgs()) {
-				Graph inGraph = GraphIO.loadSchemaAndGraphFromFile(in,
-						CodeGeneratorConfiguration.MINIMAL,
+				Graph inGraph = GraphIO.loadGraphFromFile(in,
 						new ConsoleProgressFunction("Loading"));
 				if (cli.hasOption('u')) {
 					c = new Context(inGraph.getSchema());

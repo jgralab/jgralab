@@ -69,7 +69,6 @@ import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.ProgressFunction;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.codegenerator.CodeGeneratorConfiguration;
 import de.uni_koblenz.jgralab.graphmarker.GraphMarker;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.CostModel;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.DefaultCostModel;
@@ -118,8 +117,7 @@ public class GreqlEvaluator {
 		String query = args[0];
 		Graph datagraph = null;
 		if (args.length == 2) {
-			datagraph = GraphIO.loadSchemaAndGraphFromFile(args[1],
-					CodeGeneratorConfiguration.MINIMAL,
+			datagraph = GraphIO.loadGraphFromFile(args[1],
 					new ConsoleProgressFunction("Loading"));
 		}
 

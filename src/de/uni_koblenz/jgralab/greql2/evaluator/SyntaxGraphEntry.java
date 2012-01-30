@@ -38,12 +38,12 @@ package de.uni_koblenz.jgralab.greql2.evaluator;
 import java.io.File;
 import java.util.logging.Logger;
 
-import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.CostModel;
 import de.uni_koblenz.jgralab.greql2.optimizer.Optimizer;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Expression;
+import de.uni_koblenz.jgralab.greql2.schema.Greql2Schema;
 
 /**
  * This class is one entry in the Map from Query+CostModel+Optimizer to
@@ -197,8 +197,7 @@ public class SyntaxGraphEntry {
 	 *             contain a constructor with zero parameters.
 	 */
 	public SyntaxGraphEntry(File fileName) throws GraphIOException {
-		syntaxGraph = (Greql2) GraphIO.loadGraphFromFile(fileName.getPath(),
-				null);
+		syntaxGraph = Greql2Schema.instance().loadGreql2(fileName.getPath());
 		Greql2Expression g2e = syntaxGraph.getFirstGreql2Expression();
 		try {
 			queryText = (String) g2e.getAttribute("_queryText");

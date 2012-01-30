@@ -134,7 +134,7 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 	protected CodeBlock createAttributedElementClassConstant() {
 		return new CodeSnippet(
 				true,
-				"static final #jgSchemaPackage#.#schemaElementClass# ATTRIBUTED_ELEMENT_CLASS"
+				"public static final #jgSchemaPackage#.#schemaElementClass# ATTRIBUTED_ELEMENT_CLASS"
 						+ " = #schemaPackageName#.#schemaName#.instance().#schemaVariableName#;");
 	}
 

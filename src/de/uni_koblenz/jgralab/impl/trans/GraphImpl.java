@@ -1390,18 +1390,6 @@ public abstract class GraphImpl extends
 	}
 
 	@Override
-	public void internalLoadingCompleted(int[] firstIncidence,
-			int[] nextIncidence) {
-		setLoading(true);
-		super.internalLoadingCompleted(firstIncidence, nextIncidence);
-	}
-
-	@Override
-	public void loadingCompleted() {
-		setLoading(false);
-	}
-
-	@Override
 	public Iterable<Vertex> vertices() {
 		return new AttributedElementIterable<Vertex>(super.vertices(), this);
 	}
