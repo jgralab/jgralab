@@ -1,29 +1,29 @@
 /*
  * JGraLab - The Java Graph Laboratory
- * 
+ *
  * Copyright (C) 2006-2011 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
- * 
+ *
  * For bug reports, documentation and further information, visit
- * 
+ *
  *                         http://jgralab.uni-koblenz.de
- * 
+ *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
  * Free Software Foundation; either version 3 of the License, or (at your
  * option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, see <http://www.gnu.org/licenses>.
- * 
+ *
  * Additional permission under GNU GPL version 3 section 7
- * 
+ *
  * If you modify this Program, or any covered work, by linking or combining
  * it with Eclipse (or a modified version of that program or an Eclipse
  * plugin), containing parts covered by the terms of the Eclipse Public
@@ -46,9 +46,9 @@ import de.uni_koblenz.jgralab.schema.VertexClass;
 
 /**
  * TODO add comment
- * 
+ *
  * @author ist@uni-koblenz.de
- * 
+ *
  */
 public class GraphCodeGenerator extends AttributedElementCodeGenerator {
 
@@ -143,7 +143,7 @@ public class GraphCodeGenerator extends AttributedElementCodeGenerator {
 					" * For instantiating a Graph, use the Schema and a GraphFactory",
 					"**/",
 					"public #simpleImplClassName#(java.lang.String id, int vMax, int eMax) {",
-					"\tsuper(id, #javaClassName#.ATTRIBUTED_ELEMENT_CLASS, vMax, eMax);",
+					"\tsuper(id, #javaClassName#.GC, vMax, eMax);",
 					"\tinitializeAttributesWithDefaultValues();",
 					"}",
 					"",
@@ -152,7 +152,7 @@ public class GraphCodeGenerator extends AttributedElementCodeGenerator {
 					" * For instantiating a Graph, use the Schema and a GraphFactory",
 					"**/",
 					"public #simpleImplClassName#(java.lang.String id) {",
-					"\tsuper(id, #javaClassName#.ATTRIBUTED_ELEMENT_CLASS);",
+					"\tsuper(id, #javaClassName#.GC);",
 					"\tinitializeAttributesWithDefaultValues();", "}");
 		} else {
 			code.add(
@@ -161,7 +161,7 @@ public class GraphCodeGenerator extends AttributedElementCodeGenerator {
 					" * For instantiating a Graph, use a GraphFactory",
 					"**/",
 					"public #simpleImplClassName#(java.lang.String id, GraphDatabase graphDatabase) {",
-					"\tsuper(id, #javaClassName#.ATTRIBUTED_ELEMENT_CLASS, graphDatabase);",
+					"\tsuper(id, #javaClassName#.GC, graphDatabase);",
 					"\tinitializeAttributesWithDefaultValues();",
 					"}",
 					"",
@@ -170,7 +170,7 @@ public class GraphCodeGenerator extends AttributedElementCodeGenerator {
 					" * For instantiating a Graph, use a GraphFactory",
 					"**/",
 					"public #simpleImplClassName#(java.lang.String id, int vMax, int eMax, GraphDatabase graphDatabase) {",
-					"\tsuper(id, vMax, eMax, #javaClassName#.ATTRIBUTED_ELEMENT_CLASS, graphDatabase);",
+					"\tsuper(id, vMax, eMax, #javaClassName#.GC, graphDatabase);",
 					"\tinitializeAttributesWithDefaultValues();", "}");
 		}
 		return code;
@@ -200,6 +200,8 @@ public class GraphCodeGenerator extends AttributedElementCodeGenerator {
 					(gec instanceof VertexClass ? "Vertex" : "Edge"));
 			gecCode.setVariable("ecTypeInComment",
 					(gec instanceof VertexClass ? "vertex" : "edge"));
+			gecCode.setVariable("ecTypeAecConstant",
+					(gec instanceof VertexClass ? "VC" : "EC"));
 			gecCode.setVariable("ecCamelName", camelCase(gec.getUniqueName()));
 			gecCode.setVariable("ecImplName", (gec.isAbstract() ? "**ERROR**"
 					: camelCase(gec.getQualifiedName()) + "Impl"));
@@ -225,16 +227,14 @@ public class GraphCodeGenerator extends AttributedElementCodeGenerator {
 			code.add("/**",
 					" * @return the first #ecSimpleName# #ecTypeInComment# in this graph");
 			code.add(" */",
-					"public #ecJavaClassName# getFirst#ecCamelName#(#formalParams#);");
+					"public #ecJavaClassName# getFirst#ecCamelName#();");
 		}
 		if (currentCycle.isStdOrDbImplOrTransImpl()) {
 			code.add(
-					"public #ecJavaClassName# getFirst#ecCamelName#(#formalParams#) {",
-					"\treturn (#ecJavaClassName#)getFirst#ecType#(#ecJavaClassName#.ATTRIBUTED_ELEMENT_CLASS#actualParams#);",
+					"public #ecJavaClassName# getFirst#ecCamelName#() {",
+					"\treturn (#ecJavaClassName#)getFirst#ecType#(#ecJavaClassName#.#ecTypeAecConstant#);",
 					"}");
 		}
-		code.setVariable("formalParams", "");
-		code.setVariable("actualParams", "");
 
 		return code;
 	}
@@ -273,7 +273,7 @@ public class GraphCodeGenerator extends AttributedElementCodeGenerator {
 		if (currentCycle.isStdOrDbImplOrTransImpl()) {
 			code.add(
 					"public #ecJavaClassName# create#ecCamelName#(#formalParams#) {",
-					"\treturn graphFactory.<#ecJavaClassName#> create#ecType#(#ecJavaClassName#.ATTRIBUTED_ELEMENT_CLASS, #newActualParams#, this#additionalParams#);",
+					"\treturn graphFactory.<#ecJavaClassName#> create#ecType#(#ecJavaClassName#.#ecTypeAecConstant#, #newActualParams#, this#additionalParams#);",
 					"}");
 			code.setVariable("additionalParams", "");
 		}
@@ -391,5 +391,22 @@ public class GraphCodeGenerator extends AttributedElementCodeGenerator {
 	@Override
 	protected void addCheckValidityCode(CodeSnippet code) {
 		// just do nothing here
+	}
+
+	@Override
+	protected CodeBlock createAttributedElementClassConstant() {
+		return new CodeSnippet(
+				true,
+				"public static final #jgSchemaPackage#.#schemaElementClass# GC"
+						+ " = #schemaPackageName#.#schemaName#.instance().#schemaVariableName#;");
+	}
+
+	@Override
+	protected CodeBlock createGetAttributedElementClassMethod() {
+		return new CodeSnippet(
+				true,
+				"@Override",
+				"public final #jgSchemaPackage#.#schemaElementClass# getAttributedElementClass() {",
+				"\treturn #javaClassName#.GC;", "}");
 	}
 }
