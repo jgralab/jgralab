@@ -812,7 +812,7 @@ public class TransactionImplTest {
 		c1Impl.set_testRecord(new TestRecord("test", list, set, 2, 2D, 2L,
 				false));
 
-		Map<AttributedElement, Set<VersionedDataObject<?>>> changedAttributesMap = new HashMap<AttributedElement, Set<VersionedDataObject<?>>>();
+		Map<AttributedElement<?, ?>, Set<VersionedDataObject<?>>> changedAttributesMap = new HashMap<AttributedElement<?, ?>, Set<VersionedDataObject<?>>>();
 		changedAttributesMap.put(c1, c1Impl.attributes());
 
 		assertEquals(readWriteTransaction1.changedAttributes,

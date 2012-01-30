@@ -20,6 +20,7 @@ import de.uni_koblenz.jgralab.eca.ECARuleManager;
 import de.uni_koblenz.jgralab.eca.events.DeleteVertexEventDescription;
 import de.uni_koblenz.jgralab.eca.events.EventDescription;
 import de.uni_koblenz.jgralab.gretl.eca.GretlTransformAction;
+import de.uni_koblenz.jgralab.schema.VertexClass;
 import de.uni_koblenz.jgralabtest.gretl.SimpleCopyTransformation;
 import de.uni_koblenz.jgralabtest.schemas.gretl.addressbook.AddressBook;
 import de.uni_koblenz.jgralabtest.schemas.gretl.addressbook.AddressBookGraph;
@@ -77,11 +78,12 @@ public class ECATestGretlAction {
 	public void testDoGretlTransformAsAction() {
 		Contact c5 = testGraph.createContact();
 
-		EventDescription bef_ev = new DeleteVertexEventDescription(
-				EventDescription.EventTime.BEFORE, Contact.class);
-		Action bef_act = new GretlTransformAction(
+		EventDescription<VertexClass> bef_ev = new DeleteVertexEventDescription(
+				EventDescription.EventTime.BEFORE, Contact.VC);
+		Action<VertexClass> bef_act = new GretlTransformAction<VertexClass>(
 				SimpleCopyTransformation.class);
-		ECARule bef_rule = new ECARule(bef_ev, bef_act);
+		ECARule<VertexClass> bef_rule = new ECARule<VertexClass>(bef_ev,
+				bef_act);
 
 		((ECARuleManager) testGraph.getECARuleManager()).addECARule(bef_rule);
 
@@ -100,13 +102,14 @@ public class ECATestGretlAction {
 	@Test
 	public void testSaveGretlTransformAction() {
 		System.out.println("Save rule with GretlTransformAction.");
-		EventDescription bef_ev = new DeleteVertexEventDescription(
-				EventDescription.EventTime.BEFORE, Contact.class);
-		Action bef_act = new GretlTransformAction(
+		EventDescription<VertexClass> bef_ev = new DeleteVertexEventDescription(
+				EventDescription.EventTime.BEFORE, Contact.VC);
+		Action<VertexClass> bef_act = new GretlTransformAction<VertexClass>(
 				SimpleCopyTransformation.class);
-		ECARule bef_rule = new ECARule(bef_ev, bef_act);
+		ECARule<VertexClass> bef_rule = new ECARule<VertexClass>(bef_ev,
+				bef_act);
 
-		ArrayList<ECARule> rules = new ArrayList<ECARule>();
+		ArrayList<ECARule<?>> rules = new ArrayList<ECARule<?>>();
 		rules.add(bef_rule);
 
 		try {
@@ -125,11 +128,11 @@ public class ECATestGretlAction {
 		Contact c5 = testGraph.createContact();
 
 		try {
-			List<ECARule> rules = ECAIO.loadECArules(testGraph.getSchema(),
+			List<ECARule<?>> rules = ECAIO.loadECArules(testGraph.getSchema(),
 					ECATestIO.FOLDER_FOR_RULE_FILES + "testSaveRules2.eca");
 			ECARuleManager ecaRuleManager = (ECARuleManager) testGraph
 					.getECARuleManager();
-			for (ECARule rule : rules) {
+			for (ECARule<?> rule : rules) {
 				ecaRuleManager.addECARule(rule);
 			}
 		} catch (ECAIOException e) {

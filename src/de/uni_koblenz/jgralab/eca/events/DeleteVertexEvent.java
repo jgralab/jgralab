@@ -1,11 +1,11 @@
 package de.uni_koblenz.jgralab.eca.events;
 
-import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.eca.events.EventDescription.EventTime;
+import de.uni_koblenz.jgralab.schema.VertexClass;
 
-public class DeleteVertexEvent extends Event {
+public class DeleteVertexEvent extends Event<VertexClass> {
 
 	/**
 	 * The to be deleted Vertex or null if the EventTime is after
@@ -23,7 +23,8 @@ public class DeleteVertexEvent extends Event {
 	 *            the to be deleted Vertex or null if the EventTime is after
 	 */
 	public DeleteVertexEvent(int nestedCalls, Graph graph, Vertex vertex) {
-		super(nestedCalls, EventTime.BEFORE, graph, vertex.getSchemaClass());
+		super(nestedCalls, EventTime.BEFORE, graph, vertex
+				.getAttributedElementClass());
 		this.vertex = vertex;
 	}
 
@@ -37,17 +38,9 @@ public class DeleteVertexEvent extends Event {
 	 * @param type
 	 *            the type of the deleted Vertex
 	 */
-	public DeleteVertexEvent(int nestedCalls, Graph graph,
-			Class<? extends AttributedElement<?, ?>> type) {
+	public DeleteVertexEvent(int nestedCalls, Graph graph, VertexClass type) {
 		super(nestedCalls, EventTime.AFTER, graph, type);
 		vertex = null;
-	}
-
-	/**
-	 * @return the to be deleted Vertex or null if the EventTime is after
-	 */
-	public Vertex getVertex() {
-		return vertex;
 	}
 
 	/**
@@ -55,7 +48,7 @@ public class DeleteVertexEvent extends Event {
 	 *         EventTime is after
 	 */
 	@Override
-	public AttributedElement<?, ?> getElement() {
+	public Vertex getElement() {
 		return vertex;
 	}
 
