@@ -59,7 +59,6 @@ import org.junit.runners.Parameterized.Parameters;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.GraphException;
-import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.ImplementationType;
 import de.uni_koblenz.jgralab.NoSuchAttributeException;
@@ -4594,12 +4593,10 @@ public class EdgeTest extends InstanceTest {
 		switch (implementationType) {
 		case DATABASE:
 		case STANDARD:
-			loadedgraph = (VertexTestGraph) GraphIO
-					.loadGraphFromFileWithStandardSupport("test.tg", null);
-			break;
 		case TRANSACTION:
-			loadedgraph = (VertexTestGraph) GraphIO
-					.loadGraphFromFileWithTransactionSupport("test.tg", null);
+			loadedgraph = VertexTestSchema.instance().loadVertexTestGraph(
+					"test.tg", implementationType);
+
 			break;
 		default:
 			fail("Implementation " + implementationType

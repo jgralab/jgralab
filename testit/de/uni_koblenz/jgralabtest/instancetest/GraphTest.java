@@ -99,20 +99,20 @@ public class GraphTest extends InstanceTest {
 		g2 = createNewGraph();
 		createTransaction(g1);
 		// System.out.println("Graph2 is instance of class " + g2.getClass());
-		v1 = g1.createVertex(SubNode.class);
+		v1 = g1.createVertex(SubNode.ATTRIBUTED_ELEMENT_CLASS);
 		// System.out.println("V1 is instance of class " + v1.getClass());
-		v2 = g1.createVertex(SubNode.class);
-		v3 = g1.createVertex(SubNode.class);
-		v4 = g1.createVertex(SubNode.class);
-		v5 = g1.createVertex(SuperNode.class);
-		v6 = g1.createVertex(SuperNode.class);
-		v7 = g1.createVertex(SuperNode.class);
-		v8 = g1.createVertex(SuperNode.class);
-		v9 = g1.createVertex(DoubleSubNode.class);
+		v2 = g1.createVertex(SubNode.ATTRIBUTED_ELEMENT_CLASS);
+		v3 = g1.createVertex(SubNode.ATTRIBUTED_ELEMENT_CLASS);
+		v4 = g1.createVertex(SubNode.ATTRIBUTED_ELEMENT_CLASS);
+		v5 = g1.createVertex(SuperNode.ATTRIBUTED_ELEMENT_CLASS);
+		v6 = g1.createVertex(SuperNode.ATTRIBUTED_ELEMENT_CLASS);
+		v7 = g1.createVertex(SuperNode.ATTRIBUTED_ELEMENT_CLASS);
+		v8 = g1.createVertex(SuperNode.ATTRIBUTED_ELEMENT_CLASS);
+		v9 = g1.createVertex(DoubleSubNode.ATTRIBUTED_ELEMENT_CLASS);
 		// System.out.println("v9= " + v9);
-		v10 = g1.createVertex(DoubleSubNode.class);
-		v11 = g1.createVertex(DoubleSubNode.class);
-		v12 = g1.createVertex(DoubleSubNode.class);
+		v10 = g1.createVertex(DoubleSubNode.ATTRIBUTED_ELEMENT_CLASS);
+		v11 = g1.createVertex(DoubleSubNode.ATTRIBUTED_ELEMENT_CLASS);
+		v12 = g1.createVertex(DoubleSubNode.ATTRIBUTED_ELEMENT_CLASS);
 		commit(g1);
 	}
 
@@ -203,12 +203,12 @@ public class GraphTest extends InstanceTest {
 	public void testCreateVertex() throws CommitFailedException {
 		createTransaction(g1);
 		createTransaction(g2);
-		Vertex v13 = g1.createVertex(SubNode.class);
-		Vertex v14 = g2.createVertex(SubNode.class);
-		Vertex v15 = g1.createVertex(SuperNode.class);
-		Vertex v16 = g2.createVertex(SuperNode.class);
-		Vertex v17 = g1.createVertex(DoubleSubNode.class);
-		Vertex v18 = g2.createVertex(DoubleSubNode.class);
+		Vertex v13 = g1.createVertex(SubNode.ATTRIBUTED_ELEMENT_CLASS);
+		Vertex v14 = g2.createVertex(SubNode.ATTRIBUTED_ELEMENT_CLASS);
+		Vertex v15 = g1.createVertex(SuperNode.ATTRIBUTED_ELEMENT_CLASS);
+		Vertex v16 = g2.createVertex(SuperNode.ATTRIBUTED_ELEMENT_CLASS);
+		Vertex v17 = g1.createVertex(DoubleSubNode.ATTRIBUTED_ELEMENT_CLASS);
+		Vertex v18 = g2.createVertex(DoubleSubNode.ATTRIBUTED_ELEMENT_CLASS);
 		commit(g1);
 		commit(g2);
 
@@ -259,20 +259,23 @@ public class GraphTest extends InstanceTest {
 	@Test
 	public void testCreateEdge() throws CommitFailedException {
 		createTransaction(g1);
-		Edge e1 = g1.createEdge(SubLink.class, v9, v5);
-		Edge e2 = g1.createEdge(SubLink.class, v10, v6);
-		Edge e3 = g1.createEdge(SubLink.class, v12, v8);
-		Edge e4 = g1.createEdge(Link.class, v1, v5);
-		Edge e5 = g1.createEdge(Link.class, v2, v6);
-		Edge e6 = g1.createEdge(Link.class, v9, v6);
-		Edge e7 = g1.createEdge(Link.class, v10, v5);
-		Edge e8 = g1.createEdge(Link.class, v11, v6);
-		Edge e9 = g1.createEdge(LinkBack.class, v5, v1);
-		Edge e10 = g1.createEdge(LinkBack.class, v6, v2);
-		Edge e11 = g1.createEdge(LinkBack.class, v5, v9);
-		Edge e12 = g1.createEdge(LinkBack.class, v6, v10);
-		Edge e13 = g1.createEdge(LinkBack.class, v5, v12);
-		Edge e14 = g1.createEdge(LinkBack.class, v6, v10); // the same as e12
+		Edge e1 = g1.createEdge(SubLink.ATTRIBUTED_ELEMENT_CLASS, v9, v5);
+		Edge e2 = g1.createEdge(SubLink.ATTRIBUTED_ELEMENT_CLASS, v10, v6);
+		Edge e3 = g1.createEdge(SubLink.ATTRIBUTED_ELEMENT_CLASS, v12, v8);
+		Edge e4 = g1.createEdge(Link.ATTRIBUTED_ELEMENT_CLASS, v1, v5);
+		Edge e5 = g1.createEdge(Link.ATTRIBUTED_ELEMENT_CLASS, v2, v6);
+		Edge e6 = g1.createEdge(Link.ATTRIBUTED_ELEMENT_CLASS, v9, v6);
+		Edge e7 = g1.createEdge(Link.ATTRIBUTED_ELEMENT_CLASS, v10, v5);
+		Edge e8 = g1.createEdge(Link.ATTRIBUTED_ELEMENT_CLASS, v11, v6);
+		Edge e9 = g1.createEdge(LinkBack.ATTRIBUTED_ELEMENT_CLASS, v5, v1);
+		Edge e10 = g1.createEdge(LinkBack.ATTRIBUTED_ELEMENT_CLASS, v6, v2);
+		Edge e11 = g1.createEdge(LinkBack.ATTRIBUTED_ELEMENT_CLASS, v5, v9);
+		Edge e12 = g1.createEdge(LinkBack.ATTRIBUTED_ELEMENT_CLASS, v6, v10);
+		Edge e13 = g1.createEdge(LinkBack.ATTRIBUTED_ELEMENT_CLASS, v5, v12);
+		Edge e14 = g1.createEdge(LinkBack.ATTRIBUTED_ELEMENT_CLASS, v6, v10); // the
+																				// same
+																				// as
+																				// e12
 		commit(g1);
 
 		// tests whether the edge is an instance of the expected class
@@ -350,7 +353,7 @@ public class GraphTest extends InstanceTest {
 
 		createTransaction(g1);
 		createTransaction(g2);
-		g1.createEdge(SubLink.class, v9, v5);
+		g1.createEdge(SubLink.ATTRIBUTED_ELEMENT_CLASS, v9, v5);
 		g2.createSubNode();
 		commit(g1);
 		commit(g2);
@@ -366,7 +369,7 @@ public class GraphTest extends InstanceTest {
 
 		createTransaction(g1);
 		createTransaction(g2);
-		Edge e1 = g1.createEdge(Link.class, v1, v6);
+		Edge e1 = g1.createEdge(Link.ATTRIBUTED_ELEMENT_CLASS, v1, v6);
 		g2.createSuperNode();
 		commit(g1);
 		commit(g2);
@@ -382,7 +385,7 @@ public class GraphTest extends InstanceTest {
 
 		createTransaction(g1);
 		createTransaction(g2);
-		g1.createEdge(LinkBack.class, v7, v10);
+		g1.createEdge(LinkBack.ATTRIBUTED_ELEMENT_CLASS, v7, v10);
 		g2.createDoubleSubNode();
 		commit(g1);
 		commit(g2);
@@ -397,7 +400,7 @@ public class GraphTest extends InstanceTest {
 		commit(g2);
 
 		createTransaction(g1);
-		Edge e2 = g1.createEdge(SubLink.class, v9, v5);
+		Edge e2 = g1.createEdge(SubLink.ATTRIBUTED_ELEMENT_CLASS, v9, v5);
 		commit(g1);
 
 		createReadOnlyTransaction(g1);
@@ -531,9 +534,9 @@ public class GraphTest extends InstanceTest {
 		SubNode v16 = g2.createSubNode();
 		SuperNode v17 = g1.createSuperNode();
 		SuperNode v18 = g2.createSuperNode();
-		Vertex v19 = g2.createVertex(DoubleSubNode.class);
-		Vertex v20 = g2.createVertex(SubNode.class);
-		Vertex v21 = g2.createVertex(SuperNode.class);
+		Vertex v19 = g2.createVertex(DoubleSubNode.ATTRIBUTED_ELEMENT_CLASS);
+		Vertex v20 = g2.createVertex(SubNode.ATTRIBUTED_ELEMENT_CLASS);
+		Vertex v21 = g2.createVertex(SuperNode.ATTRIBUTED_ELEMENT_CLASS);
 		commit(g1);
 		commit(g2);
 
@@ -626,19 +629,19 @@ public class GraphTest extends InstanceTest {
 		SuperNode v17 = g2.createSuperNode();
 		SuperNode v18 = g2.createSuperNode();
 
-		Edge e1 = g1.createEdge(SubLink.class, v9, v7);
+		Edge e1 = g1.createEdge(SubLink.ATTRIBUTED_ELEMENT_CLASS, v9, v7);
 		SubLink e2 = g2.createSubLink(v13, v17);
-		Edge e3 = g1.createEdge(Link.class, v10, v5);
+		Edge e3 = g1.createEdge(Link.ATTRIBUTED_ELEMENT_CLASS, v10, v5);
 		Link e4 = g2.createLink(v15, v17);
-		Edge e5 = g1.createEdge(LinkBack.class, v7, v1);
+		Edge e5 = g1.createEdge(LinkBack.ATTRIBUTED_ELEMENT_CLASS, v7, v1);
 		LinkBack e6 = g2.createLinkBack(v17, v13);
-		Edge e7 = g1.createEdge(SubLink.class, v10, v5);
-		Edge e8 = g1.createEdge(Link.class, v3, v7);
-		Edge e9 = g1.createEdge(LinkBack.class, v5, v9);
-		Edge e10 = g1.createEdge(SubLink.class, v9, v5);
-		Edge e11 = g2.createEdge(SubLink.class, v14, v17);
-		Edge e12 = g2.createEdge(Link.class, v16, v18);
-		Edge e13 = g2.createEdge(LinkBack.class, v18, v13);
+		Edge e7 = g1.createEdge(SubLink.ATTRIBUTED_ELEMENT_CLASS, v10, v5);
+		Edge e8 = g1.createEdge(Link.ATTRIBUTED_ELEMENT_CLASS, v3, v7);
+		Edge e9 = g1.createEdge(LinkBack.ATTRIBUTED_ELEMENT_CLASS, v5, v9);
+		Edge e10 = g1.createEdge(SubLink.ATTRIBUTED_ELEMENT_CLASS, v9, v5);
+		Edge e11 = g2.createEdge(SubLink.ATTRIBUTED_ELEMENT_CLASS, v14, v17);
+		Edge e12 = g2.createEdge(Link.ATTRIBUTED_ELEMENT_CLASS, v16, v18);
+		Edge e13 = g2.createEdge(LinkBack.ATTRIBUTED_ELEMENT_CLASS, v18, v13);
 		commit(g1);
 		commit(g2);
 
@@ -679,9 +682,9 @@ public class GraphTest extends InstanceTest {
 		// when a vertex is deleted, the edges to which it belonged are deleted
 		// as well
 		createTransaction(g1);
-		e1 = g1.createEdge(SubLink.class, v10, v12);
-		Edge e14 = g1.createEdge(SubLink.class, v9, v6);
-		Edge e17 = g1.createEdge(LinkBack.class, v8, v10);
+		e1 = g1.createEdge(SubLink.ATTRIBUTED_ELEMENT_CLASS, v10, v12);
+		Edge e14 = g1.createEdge(SubLink.ATTRIBUTED_ELEMENT_CLASS, v9, v6);
+		Edge e17 = g1.createEdge(LinkBack.ATTRIBUTED_ELEMENT_CLASS, v8, v10);
 		commit(g1);
 
 		createReadOnlyTransaction(g1);
@@ -692,7 +695,7 @@ public class GraphTest extends InstanceTest {
 		createTransaction(g1);
 		g1.deleteVertex(v10);
 		// create new instances of implicitly deleted vertices
-		v12 = g1.createVertex(DoubleSubNode.class);
+		v12 = g1.createVertex(DoubleSubNode.ATTRIBUTED_ELEMENT_CLASS);
 		commit(g1);
 
 		// all edges from or to v10 do no longer exist
@@ -714,8 +717,8 @@ public class GraphTest extends InstanceTest {
 		commit(g1);
 
 		createTransaction(g1);
-		Edge e15 = g1.createEdge(LinkBack.class, v6, v11);
-		Edge e16 = g1.createEdge(Link.class, v12, v8);
+		Edge e15 = g1.createEdge(LinkBack.ATTRIBUTED_ELEMENT_CLASS, v6, v11);
+		Edge e16 = g1.createEdge(Link.ATTRIBUTED_ELEMENT_CLASS, v12, v8);
 		commit(g1);
 
 		createReadOnlyTransaction(g1);
@@ -1202,24 +1205,24 @@ public class GraphTest extends InstanceTest {
 	// .instance()
 	// .getGraphFactory()
 	// .setGraphImplementationClass(
-	// VertexTestGraph.class,
-	// de.uni_koblenz.jgralabtest.schemas.vertextest.impl.std.VertexTestGraphImpl.class);
+	// VertexTestGraph.ATTRIBUTED_ELEMENT_CLASS,
+	// de.uni_koblenz.jgralabtest.schemas.vertextest.impl.std.VertexTestGraphImpl.ATTRIBUTED_ELEMENT_CLASS);
 	// VertexTestSchema
 	// .instance()
 	// .getGraphFactory()
 	// .setGraphTransactionImplementationClass(
-	// VertexTestGraph.class,
-	// de.uni_koblenz.jgralabtest.schemas.vertextest.impl.trans.VertexTestGraphImpl.class);
+	// VertexTestGraph.ATTRIBUTED_ELEMENT_CLASS,
+	// de.uni_koblenz.jgralabtest.schemas.vertextest.impl.trans.VertexTestGraphImpl.ATTRIBUTED_ELEMENT_CLASS);
 	//
 	// }
 
 	// private void setTestGraphClasses() {
 	// VertexTestSchema.instance().getGraphFactory()
-	// .setGraphImplementationClass(VertexTestGraph.class,
-	// VertexTestGraphImplTest.class);
+	// .setGraphImplementationClass(VertexTestGraph.ATTRIBUTED_ELEMENT_CLASS,
+	// VertexTestGraphImplTest.ATTRIBUTED_ELEMENT_CLASS);
 	// VertexTestSchema.instance().getGraphFactory()
-	// .setGraphTransactionImplementationClass(VertexTestGraph.class,
-	// VertexTestGraphImplTestWithTransactionSupport.class);
+	// .setGraphTransactionImplementationClass(VertexTestGraph.ATTRIBUTED_ELEMENT_CLASS,
+	// VertexTestGraphImplTestWithTransactionSupport.ATTRIBUTED_ELEMENT_CLASS);
 	// }
 
 	// @Test
@@ -1258,21 +1261,22 @@ public class GraphTest extends InstanceTest {
 		 */
 		// TODO faults => assertions
 		createTransaction(g1);
-		Link e1 = g1.createEdge(Link.class, v1, v6);
-		Link e2 = g1.createEdge(Link.class, v11, v5);
-		Link e3 = g1.createEdge(Link.class, v2, v8);
-		SubLink e4 = g1.createEdge(SubLink.class, v11, v6);
-		SubLink e5 = g1.createEdge(SubLink.class, v12, v5);
-		LinkBack e6 = g1.createEdge(LinkBack.class, v6, v11);
-		LinkBack e7 = g1.createEdge(LinkBack.class, v5, v2);
-		LinkBack e8 = g1.createEdge(LinkBack.class, v8, v1);
-		LinkBack e9 = g1.createEdge(LinkBack.class, v5, v10);
-		Link e10 = g1.createEdge(Link.class, v12, v7);
-		SubLink e11 = g1.createEdge(SubLink.class, v10, v6);
-		SubLink e12 = g1.createEdge(SubLink.class, v9, v7);
+		Link e1 = g1.createEdge(Link.ATTRIBUTED_ELEMENT_CLASS, v1, v6);
+		Link e2 = g1.createEdge(Link.ATTRIBUTED_ELEMENT_CLASS, v11, v5);
+		Link e3 = g1.createEdge(Link.ATTRIBUTED_ELEMENT_CLASS, v2, v8);
+		SubLink e4 = g1.createEdge(SubLink.ATTRIBUTED_ELEMENT_CLASS, v11, v6);
+		SubLink e5 = g1.createEdge(SubLink.ATTRIBUTED_ELEMENT_CLASS, v12, v5);
+		LinkBack e6 = g1.createEdge(LinkBack.ATTRIBUTED_ELEMENT_CLASS, v6, v11);
+		LinkBack e7 = g1.createEdge(LinkBack.ATTRIBUTED_ELEMENT_CLASS, v5, v2);
+		LinkBack e8 = g1.createEdge(LinkBack.ATTRIBUTED_ELEMENT_CLASS, v8, v1);
+		LinkBack e9 = g1.createEdge(LinkBack.ATTRIBUTED_ELEMENT_CLASS, v5, v10);
+		Link e10 = g1.createEdge(Link.ATTRIBUTED_ELEMENT_CLASS, v12, v7);
+		SubLink e11 = g1.createEdge(SubLink.ATTRIBUTED_ELEMENT_CLASS, v10, v6);
+		SubLink e12 = g1.createEdge(SubLink.ATTRIBUTED_ELEMENT_CLASS, v9, v7);
 		commit(g1);
 
-		// SubLink e10 = graph2.createEdge(SubLink.class, v9, v6);
+		// SubLink e10 = graph2.createEdge(SubLink.ATTRIBUTED_ELEMENT_CLASS, v9,
+		// v6);
 		createReadOnlyTransaction(g1);
 		int id = e12.getId();
 		commit(g1);
@@ -1568,7 +1572,7 @@ public class GraphTest extends InstanceTest {
 		commit(g2);
 
 		createTransaction(g1);
-		Vertex v13 = g1.createVertex(SubNode.class);
+		Vertex v13 = g1.createVertex(SubNode.ATTRIBUTED_ELEMENT_CLASS);
 		commit(g1);
 
 		createReadOnlyTransaction(g1);
@@ -1577,7 +1581,7 @@ public class GraphTest extends InstanceTest {
 
 		// normal cases
 		createTransaction(g1);
-		Vertex v14 = g1.createVertex(SubNode.class);
+		Vertex v14 = g1.createVertex(SubNode.ATTRIBUTED_ELEMENT_CLASS);
 		commit(g1);
 
 		createReadOnlyTransaction(g1);
@@ -1585,7 +1589,7 @@ public class GraphTest extends InstanceTest {
 		commit(g1);
 
 		createTransaction(g1);
-		Vertex v15 = g1.createVertex(SubNode.class);
+		Vertex v15 = g1.createVertex(SubNode.ATTRIBUTED_ELEMENT_CLASS);
 		commit(g1);
 
 		createReadOnlyTransaction(g1);
@@ -1593,7 +1597,7 @@ public class GraphTest extends InstanceTest {
 		commit(g1);
 
 		createTransaction(g1);
-		Vertex v16 = g1.createVertex(SubNode.class);
+		Vertex v16 = g1.createVertex(SubNode.ATTRIBUTED_ELEMENT_CLASS);
 		commit(g1);
 
 		createReadOnlyTransaction(g1);
@@ -1601,7 +1605,7 @@ public class GraphTest extends InstanceTest {
 		commit(g1);
 
 		createTransaction(g1);
-		Vertex v17 = g1.createVertex(SuperNode.class);
+		Vertex v17 = g1.createVertex(SuperNode.ATTRIBUTED_ELEMENT_CLASS);
 		commit(g1);
 
 		createReadOnlyTransaction(g1);
@@ -1609,7 +1613,7 @@ public class GraphTest extends InstanceTest {
 		commit(g1);
 
 		createTransaction(g1);
-		Vertex v18 = g1.createVertex(SuperNode.class);
+		Vertex v18 = g1.createVertex(SuperNode.ATTRIBUTED_ELEMENT_CLASS);
 		commit(g1);
 
 		createReadOnlyTransaction(g1);
@@ -1617,7 +1621,7 @@ public class GraphTest extends InstanceTest {
 		commit(g1);
 
 		createTransaction(g1);
-		Vertex v19 = g1.createVertex(SuperNode.class);
+		Vertex v19 = g1.createVertex(SuperNode.ATTRIBUTED_ELEMENT_CLASS);
 		commit(g1);
 
 		createReadOnlyTransaction(g1);
@@ -1625,7 +1629,7 @@ public class GraphTest extends InstanceTest {
 		commit(g1);
 
 		createTransaction(g1);
-		Vertex v20 = g1.createVertex(SuperNode.class);
+		Vertex v20 = g1.createVertex(SuperNode.ATTRIBUTED_ELEMENT_CLASS);
 		commit(g1);
 
 		createReadOnlyTransaction(g1);
@@ -1633,7 +1637,7 @@ public class GraphTest extends InstanceTest {
 		commit(g1);
 
 		createTransaction(g1);
-		Vertex v21 = g1.createVertex(DoubleSubNode.class);
+		Vertex v21 = g1.createVertex(DoubleSubNode.ATTRIBUTED_ELEMENT_CLASS);
 		commit(g1);
 
 		createReadOnlyTransaction(g1);
@@ -1641,7 +1645,7 @@ public class GraphTest extends InstanceTest {
 		commit(g1);
 
 		createTransaction(g1);
-		Vertex v22 = g1.createVertex(DoubleSubNode.class);
+		Vertex v22 = g1.createVertex(DoubleSubNode.ATTRIBUTED_ELEMENT_CLASS);
 		commit(g1);
 
 		createReadOnlyTransaction(g1);
@@ -1649,7 +1653,7 @@ public class GraphTest extends InstanceTest {
 		commit(g1);
 
 		createTransaction(g1);
-		Vertex v23 = g1.createVertex(DoubleSubNode.class);
+		Vertex v23 = g1.createVertex(DoubleSubNode.ATTRIBUTED_ELEMENT_CLASS);
 		commit(g1);
 
 		createReadOnlyTransaction(g1);
@@ -1657,7 +1661,7 @@ public class GraphTest extends InstanceTest {
 		commit(g1);
 
 		createTransaction(g1);
-		Vertex v24 = g1.createVertex(DoubleSubNode.class);
+		Vertex v24 = g1.createVertex(DoubleSubNode.ATTRIBUTED_ELEMENT_CLASS);
 		commit(g1);
 
 		createReadOnlyTransaction(g1);
@@ -1670,89 +1674,93 @@ public class GraphTest extends InstanceTest {
 	public void testGetFirstVertexOfClass() throws CommitFailedException {
 
 		createReadOnlyTransaction(g2);
-		assertNull(g2.getFirstVertex(SubNode.class));
-		assertNull(g2.getFirstVertex(SuperNode.class));
-		assertNull(g2.getFirstVertex(DoubleSubNode.class));
+		assertNull(g2.getFirstVertex(SubNode.ATTRIBUTED_ELEMENT_CLASS));
+		assertNull(g2.getFirstVertex(SuperNode.ATTRIBUTED_ELEMENT_CLASS));
+		assertNull(g2.getFirstVertex(DoubleSubNode.ATTRIBUTED_ELEMENT_CLASS));
 		commit(g2);
 
 		createTransaction(g2);
-		Vertex v13 = g2.createVertex(SubNode.class);
+		Vertex v13 = g2.createVertex(SubNode.ATTRIBUTED_ELEMENT_CLASS);
 		commit(g2);
 
 		createReadOnlyTransaction(g2);
-		assertEquals(v13, g2.getFirstVertex(SubNode.class));
-		assertNull(g2.getFirstVertex(SuperNode.class));
-		assertNull(g2.getFirstVertex(DoubleSubNode.class));
+		assertEquals(v13, g2.getFirstVertex(SubNode.ATTRIBUTED_ELEMENT_CLASS));
+		assertNull(g2.getFirstVertex(SuperNode.ATTRIBUTED_ELEMENT_CLASS));
+		assertNull(g2.getFirstVertex(DoubleSubNode.ATTRIBUTED_ELEMENT_CLASS));
 		commit(g2);
 
 		createTransaction(g2);
-		Vertex v14 = g2.createVertex(SuperNode.class);
+		Vertex v14 = g2.createVertex(SuperNode.ATTRIBUTED_ELEMENT_CLASS);
 		commit(g2);
 
 		createReadOnlyTransaction(g2);
-		assertEquals(v13, g2.getFirstVertex(SubNode.class));
-		assertEquals(v14, g2.getFirstVertex(SuperNode.class));
-		assertNull(g2.getFirstVertex(DoubleSubNode.class));
+		assertEquals(v13, g2.getFirstVertex(SubNode.ATTRIBUTED_ELEMENT_CLASS));
+		assertEquals(v14, g2.getFirstVertex(SuperNode.ATTRIBUTED_ELEMENT_CLASS));
+		assertNull(g2.getFirstVertex(DoubleSubNode.ATTRIBUTED_ELEMENT_CLASS));
 		commit(g2);
 
 		createTransaction(g2);
-		Vertex v15 = g2.createVertex(SubNode.class);
+		Vertex v15 = g2.createVertex(SubNode.ATTRIBUTED_ELEMENT_CLASS);
 		commit(g2);
 
 		createReadOnlyTransaction(g2);
-		assertEquals(v13, g2.getFirstVertex(SubNode.class));
-		assertEquals(v14, g2.getFirstVertex(SuperNode.class));
-		assertNull(g2.getFirstVertex(DoubleSubNode.class));
+		assertEquals(v13, g2.getFirstVertex(SubNode.ATTRIBUTED_ELEMENT_CLASS));
+		assertEquals(v14, g2.getFirstVertex(SuperNode.ATTRIBUTED_ELEMENT_CLASS));
+		assertNull(g2.getFirstVertex(DoubleSubNode.ATTRIBUTED_ELEMENT_CLASS));
 		commit(g2);
 
 		createTransaction(g2);
-		Vertex v16 = g2.createVertex(SubNode.class);
+		Vertex v16 = g2.createVertex(SubNode.ATTRIBUTED_ELEMENT_CLASS);
 		commit(g2);
 
 		createReadOnlyTransaction(g2);
-		assertEquals(v13, g2.getFirstVertex(SubNode.class));
-		assertEquals(v14, g2.getFirstVertex(SuperNode.class));
-		assertNull(g2.getFirstVertex(DoubleSubNode.class));
+		assertEquals(v13, g2.getFirstVertex(SubNode.ATTRIBUTED_ELEMENT_CLASS));
+		assertEquals(v14, g2.getFirstVertex(SuperNode.ATTRIBUTED_ELEMENT_CLASS));
+		assertNull(g2.getFirstVertex(DoubleSubNode.ATTRIBUTED_ELEMENT_CLASS));
 		commit(g2);
 
 		createTransaction(g2);
-		Vertex v17 = g2.createVertex(DoubleSubNode.class);
+		Vertex v17 = g2.createVertex(DoubleSubNode.ATTRIBUTED_ELEMENT_CLASS);
 		commit(g2);
 
 		createReadOnlyTransaction(g2);
-		assertEquals(v13, g2.getFirstVertex(SubNode.class));
-		assertEquals(v14, g2.getFirstVertex(SuperNode.class));
-		assertEquals(v17, g2.getFirstVertex(DoubleSubNode.class));
+		assertEquals(v13, g2.getFirstVertex(SubNode.ATTRIBUTED_ELEMENT_CLASS));
+		assertEquals(v14, g2.getFirstVertex(SuperNode.ATTRIBUTED_ELEMENT_CLASS));
+		assertEquals(v17,
+				g2.getFirstVertex(DoubleSubNode.ATTRIBUTED_ELEMENT_CLASS));
 		commit(g2);
 
 		createTransaction(g2);
-		Vertex v18 = g2.createVertex(SuperNode.class);
+		Vertex v18 = g2.createVertex(SuperNode.ATTRIBUTED_ELEMENT_CLASS);
 		commit(g2);
 
 		createReadOnlyTransaction(g2);
-		assertEquals(v13, g2.getFirstVertex(SubNode.class));
-		assertEquals(v14, g2.getFirstVertex(SuperNode.class));
-		assertEquals(v17, g2.getFirstVertex(DoubleSubNode.class));
+		assertEquals(v13, g2.getFirstVertex(SubNode.ATTRIBUTED_ELEMENT_CLASS));
+		assertEquals(v14, g2.getFirstVertex(SuperNode.ATTRIBUTED_ELEMENT_CLASS));
+		assertEquals(v17,
+				g2.getFirstVertex(DoubleSubNode.ATTRIBUTED_ELEMENT_CLASS));
 		commit(g2);
 
 		createTransaction(g2);
-		Vertex v19 = g2.createVertex(SubNode.class);
+		Vertex v19 = g2.createVertex(SubNode.ATTRIBUTED_ELEMENT_CLASS);
 		commit(g2);
 
 		createReadOnlyTransaction(g2);
-		assertEquals(v13, g2.getFirstVertex(SubNode.class));
-		assertEquals(v14, g2.getFirstVertex(SuperNode.class));
-		assertEquals(v17, g2.getFirstVertex(DoubleSubNode.class));
+		assertEquals(v13, g2.getFirstVertex(SubNode.ATTRIBUTED_ELEMENT_CLASS));
+		assertEquals(v14, g2.getFirstVertex(SuperNode.ATTRIBUTED_ELEMENT_CLASS));
+		assertEquals(v17,
+				g2.getFirstVertex(DoubleSubNode.ATTRIBUTED_ELEMENT_CLASS));
 		commit(g2);
 
 		createTransaction(g2);
-		Vertex v20 = g2.createVertex(DoubleSubNode.class);
+		Vertex v20 = g2.createVertex(DoubleSubNode.ATTRIBUTED_ELEMENT_CLASS);
 		commit(g2);
 
 		createReadOnlyTransaction(g2);
-		assertEquals(v13, g2.getFirstVertex(SubNode.class));
-		assertEquals(v14, g2.getFirstVertex(SuperNode.class));
-		assertEquals(v17, g2.getFirstVertex(DoubleSubNode.class));
+		assertEquals(v13, g2.getFirstVertex(SubNode.ATTRIBUTED_ELEMENT_CLASS));
+		assertEquals(v14, g2.getFirstVertex(SuperNode.ATTRIBUTED_ELEMENT_CLASS));
+		assertEquals(v17,
+				g2.getFirstVertex(DoubleSubNode.ATTRIBUTED_ELEMENT_CLASS));
 		commit(g2);
 
 		createTransaction(g2);
@@ -1760,19 +1768,21 @@ public class GraphTest extends InstanceTest {
 		commit(g2);
 
 		createReadOnlyTransaction(g2);
-		assertEquals(v13, g2.getFirstVertex(SubNode.class));
-		assertEquals(v17, g2.getFirstVertex(SuperNode.class));
-		assertEquals(v17, g2.getFirstVertex(DoubleSubNode.class));
+		assertEquals(v13, g2.getFirstVertex(SubNode.ATTRIBUTED_ELEMENT_CLASS));
+		assertEquals(v17, g2.getFirstVertex(SuperNode.ATTRIBUTED_ELEMENT_CLASS));
+		assertEquals(v17,
+				g2.getFirstVertex(DoubleSubNode.ATTRIBUTED_ELEMENT_CLASS));
 		commit(g2);
 
 		createTransaction(g2);
-		Vertex v21 = g2.createVertex(DoubleSubNode.class);
+		Vertex v21 = g2.createVertex(DoubleSubNode.ATTRIBUTED_ELEMENT_CLASS);
 		commit(g2);
 
 		createReadOnlyTransaction(g2);
-		assertEquals(v13, g2.getFirstVertex(SubNode.class));
-		assertEquals(v17, g2.getFirstVertex(SuperNode.class));
-		assertEquals(v17, g2.getFirstVertex(DoubleSubNode.class));
+		assertEquals(v13, g2.getFirstVertex(SubNode.ATTRIBUTED_ELEMENT_CLASS));
+		assertEquals(v17, g2.getFirstVertex(SuperNode.ATTRIBUTED_ELEMENT_CLASS));
+		assertEquals(v17,
+				g2.getFirstVertex(DoubleSubNode.ATTRIBUTED_ELEMENT_CLASS));
 		commit(g2);
 
 		createTransaction(g2);
@@ -1780,29 +1790,32 @@ public class GraphTest extends InstanceTest {
 		commit(g2);
 
 		createReadOnlyTransaction(g2);
-		assertEquals(v13, g2.getFirstVertex(SubNode.class));
-		assertEquals(v17, g2.getFirstVertex(SuperNode.class));
-		assertEquals(v17, g2.getFirstVertex(DoubleSubNode.class));
+		assertEquals(v13, g2.getFirstVertex(SubNode.ATTRIBUTED_ELEMENT_CLASS));
+		assertEquals(v17, g2.getFirstVertex(SuperNode.ATTRIBUTED_ELEMENT_CLASS));
+		assertEquals(v17,
+				g2.getFirstVertex(DoubleSubNode.ATTRIBUTED_ELEMENT_CLASS));
 		commit(g2);
 
 		createTransaction(g2);
-		g2.createVertex(SuperNode.class);
+		g2.createVertex(SuperNode.ATTRIBUTED_ELEMENT_CLASS);
 		commit(g2);
 
 		createReadOnlyTransaction(g2);
-		assertEquals(v13, g2.getFirstVertex(SubNode.class));
-		assertEquals(v17, g2.getFirstVertex(SuperNode.class));
-		assertEquals(v17, g2.getFirstVertex(DoubleSubNode.class));
+		assertEquals(v13, g2.getFirstVertex(SubNode.ATTRIBUTED_ELEMENT_CLASS));
+		assertEquals(v17, g2.getFirstVertex(SuperNode.ATTRIBUTED_ELEMENT_CLASS));
+		assertEquals(v17,
+				g2.getFirstVertex(DoubleSubNode.ATTRIBUTED_ELEMENT_CLASS));
 		commit(g2);
 
 		createTransaction(g2);
-		g2.createVertex(DoubleSubNode.class);
+		g2.createVertex(DoubleSubNode.ATTRIBUTED_ELEMENT_CLASS);
 		commit(g2);
 
 		createReadOnlyTransaction(g2);
-		assertEquals(v13, g2.getFirstVertex(SubNode.class));
-		assertEquals(v17, g2.getFirstVertex(SuperNode.class));
-		assertEquals(v17, g2.getFirstVertex(DoubleSubNode.class));
+		assertEquals(v13, g2.getFirstVertex(SubNode.ATTRIBUTED_ELEMENT_CLASS));
+		assertEquals(v17, g2.getFirstVertex(SuperNode.ATTRIBUTED_ELEMENT_CLASS));
+		assertEquals(v17,
+				g2.getFirstVertex(DoubleSubNode.ATTRIBUTED_ELEMENT_CLASS));
 		commit(g2);
 
 		createTransaction(g2);
@@ -1810,9 +1823,10 @@ public class GraphTest extends InstanceTest {
 		commit(g2);
 
 		createReadOnlyTransaction(g2);
-		assertEquals(v15, g2.getFirstVertex(SubNode.class));
-		assertEquals(v17, g2.getFirstVertex(SuperNode.class));
-		assertEquals(v17, g2.getFirstVertex(DoubleSubNode.class));
+		assertEquals(v15, g2.getFirstVertex(SubNode.ATTRIBUTED_ELEMENT_CLASS));
+		assertEquals(v17, g2.getFirstVertex(SuperNode.ATTRIBUTED_ELEMENT_CLASS));
+		assertEquals(v17,
+				g2.getFirstVertex(DoubleSubNode.ATTRIBUTED_ELEMENT_CLASS));
 		commit(g2);
 
 		createTransaction(g2);
@@ -1820,9 +1834,10 @@ public class GraphTest extends InstanceTest {
 		commit(g2);
 
 		createReadOnlyTransaction(g2);
-		assertEquals(v15, g2.getFirstVertex(SubNode.class));
-		assertEquals(v18, g2.getFirstVertex(SuperNode.class));
-		assertEquals(v20, g2.getFirstVertex(DoubleSubNode.class));
+		assertEquals(v15, g2.getFirstVertex(SubNode.ATTRIBUTED_ELEMENT_CLASS));
+		assertEquals(v18, g2.getFirstVertex(SuperNode.ATTRIBUTED_ELEMENT_CLASS));
+		assertEquals(v20,
+				g2.getFirstVertex(DoubleSubNode.ATTRIBUTED_ELEMENT_CLASS));
 		commit(g2);
 
 		createTransaction(g2);
@@ -1830,19 +1845,21 @@ public class GraphTest extends InstanceTest {
 		commit(g2);
 
 		createReadOnlyTransaction(g2);
-		assertEquals(v15, g2.getFirstVertex(SubNode.class));
-		assertEquals(v18, g2.getFirstVertex(SuperNode.class));
-		assertEquals(v21, g2.getFirstVertex(DoubleSubNode.class));
+		assertEquals(v15, g2.getFirstVertex(SubNode.ATTRIBUTED_ELEMENT_CLASS));
+		assertEquals(v18, g2.getFirstVertex(SuperNode.ATTRIBUTED_ELEMENT_CLASS));
+		assertEquals(v21,
+				g2.getFirstVertex(DoubleSubNode.ATTRIBUTED_ELEMENT_CLASS));
 		commit(g2);
 
 		createTransaction(g2);
-		g2.createVertex(SuperNode.class);
+		g2.createVertex(SuperNode.ATTRIBUTED_ELEMENT_CLASS);
 		commit(g2);
 
 		createReadOnlyTransaction(g2);
-		assertEquals(v15, g2.getFirstVertex(SubNode.class));
-		assertEquals(v18, g2.getFirstVertex(SuperNode.class));
-		assertEquals(v21, g2.getFirstVertex(DoubleSubNode.class));
+		assertEquals(v15, g2.getFirstVertex(SubNode.ATTRIBUTED_ELEMENT_CLASS));
+		assertEquals(v18, g2.getFirstVertex(SuperNode.ATTRIBUTED_ELEMENT_CLASS));
+		assertEquals(v21,
+				g2.getFirstVertex(DoubleSubNode.ATTRIBUTED_ELEMENT_CLASS));
 		commit(g2);
 
 		createTransaction(g2);
@@ -1850,9 +1867,10 @@ public class GraphTest extends InstanceTest {
 		commit(g2);
 
 		createReadOnlyTransaction(g2);
-		assertEquals(v19, g2.getFirstVertex(SubNode.class));
-		assertEquals(v18, g2.getFirstVertex(SuperNode.class));
-		assertEquals(v21, g2.getFirstVertex(DoubleSubNode.class));
+		assertEquals(v19, g2.getFirstVertex(SubNode.ATTRIBUTED_ELEMENT_CLASS));
+		assertEquals(v18, g2.getFirstVertex(SuperNode.ATTRIBUTED_ELEMENT_CLASS));
+		assertEquals(v21,
+				g2.getFirstVertex(DoubleSubNode.ATTRIBUTED_ELEMENT_CLASS));
 		commit(g2);
 
 	}
@@ -2052,7 +2070,7 @@ public class GraphTest extends InstanceTest {
 	@Test
 	public void testGetFirstEdgeInGraph() throws CommitFailedException {
 		createTransaction(g1);
-		Vertex v13 = g1.createVertex(SuperNode.class);
+		Vertex v13 = g1.createVertex(SuperNode.ATTRIBUTED_ELEMENT_CLASS);
 		commit(g1);
 
 		createReadOnlyTransaction(g1);
@@ -2060,7 +2078,7 @@ public class GraphTest extends InstanceTest {
 		commit(g1);
 
 		createTransaction(g1);
-		Edge e1 = g1.createEdge(Link.class, v3, v6);
+		Edge e1 = g1.createEdge(Link.ATTRIBUTED_ELEMENT_CLASS, v3, v6);
 		commit(g1);
 
 		createReadOnlyTransaction(g1);
@@ -2068,7 +2086,7 @@ public class GraphTest extends InstanceTest {
 		commit(g1);
 
 		createTransaction(g1);
-		Edge e2 = g1.createEdge(Link.class, v3, v13);
+		Edge e2 = g1.createEdge(Link.ATTRIBUTED_ELEMENT_CLASS, v3, v13);
 		commit(g1);
 
 		createReadOnlyTransaction(g1);
@@ -2076,7 +2094,7 @@ public class GraphTest extends InstanceTest {
 		commit(g1);
 
 		createTransaction(g1);
-		Edge e3 = g1.createEdge(LinkBack.class, v7, v11);
+		Edge e3 = g1.createEdge(LinkBack.ATTRIBUTED_ELEMENT_CLASS, v7, v11);
 		commit(g1);
 
 		createReadOnlyTransaction(g1);
@@ -2100,7 +2118,7 @@ public class GraphTest extends InstanceTest {
 		commit(g1);
 
 		createTransaction(g1);
-		Edge e4 = g1.createEdge(SubLink.class, v10, v8);
+		Edge e4 = g1.createEdge(SubLink.ATTRIBUTED_ELEMENT_CLASS, v10, v8);
 		commit(g1);
 
 		createReadOnlyTransaction(g1);
@@ -2116,7 +2134,7 @@ public class GraphTest extends InstanceTest {
 		commit(g1);
 
 		createTransaction(g1);
-		Edge e5 = g1.createEdge(LinkBack.class, v8, v3);
+		Edge e5 = g1.createEdge(LinkBack.ATTRIBUTED_ELEMENT_CLASS, v8, v3);
 		commit(g1);
 
 		createReadOnlyTransaction(g1);
@@ -2124,7 +2142,7 @@ public class GraphTest extends InstanceTest {
 		commit(g1);
 
 		createTransaction(g1);
-		Edge e6 = g1.createEdge(Link.class, v2, v5);
+		Edge e6 = g1.createEdge(Link.ATTRIBUTED_ELEMENT_CLASS, v2, v5);
 		commit(g1);
 
 		createReadOnlyTransaction(g1);
@@ -2140,7 +2158,7 @@ public class GraphTest extends InstanceTest {
 		commit(g1);
 
 		createTransaction(g1);
-		Edge e7 = g1.createEdge(LinkBack.class, v13, v1);
+		Edge e7 = g1.createEdge(LinkBack.ATTRIBUTED_ELEMENT_CLASS, v13, v1);
 		commit(g1);
 
 		createReadOnlyTransaction(g1);
@@ -2156,7 +2174,7 @@ public class GraphTest extends InstanceTest {
 		commit(g1);
 
 		createTransaction(g1);
-		Edge e8 = g1.createEdge(SubLink.class, v9, v6);
+		Edge e8 = g1.createEdge(SubLink.ATTRIBUTED_ELEMENT_CLASS, v9, v6);
 		commit(g1);
 
 		createReadOnlyTransaction(g1);
@@ -2192,7 +2210,7 @@ public class GraphTest extends InstanceTest {
 	@Test
 	public void testGetLastEdgeInGraph() throws CommitFailedException {
 		createTransaction(g1);
-		Vertex v13 = g1.createVertex(SuperNode.class);
+		Vertex v13 = g1.createVertex(SuperNode.ATTRIBUTED_ELEMENT_CLASS);
 		commit(g1);
 
 		createReadOnlyTransaction(g1);
@@ -2200,7 +2218,7 @@ public class GraphTest extends InstanceTest {
 		commit(g1);
 
 		createTransaction(g1);
-		Edge e1 = g1.createEdge(Link.class, v3, v6);
+		Edge e1 = g1.createEdge(Link.ATTRIBUTED_ELEMENT_CLASS, v3, v6);
 		commit(g1);
 
 		createReadOnlyTransaction(g1);
@@ -2208,7 +2226,7 @@ public class GraphTest extends InstanceTest {
 		commit(g1);
 
 		createTransaction(g1);
-		Edge e2 = g1.createEdge(Link.class, v3, v13);
+		Edge e2 = g1.createEdge(Link.ATTRIBUTED_ELEMENT_CLASS, v3, v13);
 		commit(g1);
 
 		createReadOnlyTransaction(g1);
@@ -2216,7 +2234,7 @@ public class GraphTest extends InstanceTest {
 		commit(g1);
 
 		createTransaction(g1);
-		Edge e3 = g1.createEdge(LinkBack.class, v7, v11);
+		Edge e3 = g1.createEdge(LinkBack.ATTRIBUTED_ELEMENT_CLASS, v7, v11);
 		commit(g1);
 
 		createReadOnlyTransaction(g1);
@@ -2232,7 +2250,7 @@ public class GraphTest extends InstanceTest {
 		commit(g1);
 
 		createTransaction(g1);
-		Edge e4 = g1.createEdge(SubLink.class, v10, v8);
+		Edge e4 = g1.createEdge(SubLink.ATTRIBUTED_ELEMENT_CLASS, v10, v8);
 		commit(g1);
 
 		createReadOnlyTransaction(g1);
@@ -2240,7 +2258,7 @@ public class GraphTest extends InstanceTest {
 		commit(g1);
 
 		createTransaction(g1);
-		Edge e5 = g1.createEdge(LinkBack.class, v8, v3);
+		Edge e5 = g1.createEdge(LinkBack.ATTRIBUTED_ELEMENT_CLASS, v8, v3);
 		commit(g1);
 
 		createReadOnlyTransaction(g1);
@@ -2248,7 +2266,7 @@ public class GraphTest extends InstanceTest {
 		commit(g1);
 
 		createTransaction(g1);
-		Edge e6 = g1.createEdge(Link.class, v9, v5);
+		Edge e6 = g1.createEdge(Link.ATTRIBUTED_ELEMENT_CLASS, v9, v5);
 		commit(g1);
 
 		createReadOnlyTransaction(g1);
@@ -2256,7 +2274,7 @@ public class GraphTest extends InstanceTest {
 		commit(g1);
 
 		createTransaction(g1);
-		Edge e7 = g1.createEdge(SubLink.class, v11, v7);
+		Edge e7 = g1.createEdge(SubLink.ATTRIBUTED_ELEMENT_CLASS, v11, v7);
 		commit(g1);
 
 		createReadOnlyTransaction(g1);
@@ -2280,7 +2298,7 @@ public class GraphTest extends InstanceTest {
 		commit(g1);
 
 		createTransaction(g1);
-		Edge e8 = g1.createEdge(Link.class, v1, v13);
+		Edge e8 = g1.createEdge(Link.ATTRIBUTED_ELEMENT_CLASS, v1, v13);
 		commit(g1);
 
 		createReadOnlyTransaction(g1);
@@ -2296,7 +2314,7 @@ public class GraphTest extends InstanceTest {
 		commit(g1);
 
 		createTransaction(g1);
-		Edge e9 = g1.createEdge(LinkBack.class, v6, v2);
+		Edge e9 = g1.createEdge(LinkBack.ATTRIBUTED_ELEMENT_CLASS, v6, v2);
 		commit(g1);
 
 		createReadOnlyTransaction(g1);
@@ -2348,43 +2366,43 @@ public class GraphTest extends InstanceTest {
 	@Test
 	public void testGetFirstEdgeOfClassInGraph() throws CommitFailedException {
 		createTransaction(g1);
-		Vertex v13 = g1.createVertex(SuperNode.class);
+		Vertex v13 = g1.createVertex(SuperNode.ATTRIBUTED_ELEMENT_CLASS);
 		commit(g1);
 
 		createReadOnlyTransaction(g1);
-		assertNull(g1.getFirstEdge(Link.class));
-		assertNull(g1.getFirstEdge(SubLink.class));
-		assertNull(g1.getFirstEdge(LinkBack.class));
+		assertNull(g1.getFirstEdge(Link.ATTRIBUTED_ELEMENT_CLASS));
+		assertNull(g1.getFirstEdge(SubLink.ATTRIBUTED_ELEMENT_CLASS));
+		assertNull(g1.getFirstEdge(LinkBack.ATTRIBUTED_ELEMENT_CLASS));
 		commit(g1);
 
 		createTransaction(g1);
-		Edge e1 = g1.createEdge(Link.class, v3, v6);
+		Edge e1 = g1.createEdge(Link.ATTRIBUTED_ELEMENT_CLASS, v3, v6);
 		commit(g1);
 
 		createReadOnlyTransaction(g1);
-		assertEquals(e1, g1.getFirstEdge(Link.class));
-		assertNull(g1.getFirstEdge(SubLink.class));
-		assertNull(g1.getFirstEdge(LinkBack.class));
+		assertEquals(e1, g1.getFirstEdge(Link.ATTRIBUTED_ELEMENT_CLASS));
+		assertNull(g1.getFirstEdge(SubLink.ATTRIBUTED_ELEMENT_CLASS));
+		assertNull(g1.getFirstEdge(LinkBack.ATTRIBUTED_ELEMENT_CLASS));
 		commit(g1);
 
 		createTransaction(g1);
-		Edge e2 = g1.createEdge(Link.class, v3, v13);
+		Edge e2 = g1.createEdge(Link.ATTRIBUTED_ELEMENT_CLASS, v3, v13);
 		commit(g1);
 
 		createReadOnlyTransaction(g1);
-		assertEquals(e1, g1.getFirstEdge(Link.class));
-		assertNull(g1.getFirstEdge(SubLink.class));
-		assertNull(g1.getFirstEdge(LinkBack.class));
+		assertEquals(e1, g1.getFirstEdge(Link.ATTRIBUTED_ELEMENT_CLASS));
+		assertNull(g1.getFirstEdge(SubLink.ATTRIBUTED_ELEMENT_CLASS));
+		assertNull(g1.getFirstEdge(LinkBack.ATTRIBUTED_ELEMENT_CLASS));
 		commit(g1);
 
 		createTransaction(g1);
-		Edge e3 = g1.createEdge(LinkBack.class, v7, v11);
+		Edge e3 = g1.createEdge(LinkBack.ATTRIBUTED_ELEMENT_CLASS, v7, v11);
 		commit(g1);
 
 		createReadOnlyTransaction(g1);
-		assertEquals(e1, g1.getFirstEdge(Link.class));
-		assertNull(g1.getFirstEdge(SubLink.class));
-		assertEquals(e3, g1.getFirstEdge(LinkBack.class));
+		assertEquals(e1, g1.getFirstEdge(Link.ATTRIBUTED_ELEMENT_CLASS));
+		assertNull(g1.getFirstEdge(SubLink.ATTRIBUTED_ELEMENT_CLASS));
+		assertEquals(e3, g1.getFirstEdge(LinkBack.ATTRIBUTED_ELEMENT_CLASS));
 		commit(g1);
 
 		createTransaction(g1);
@@ -2392,29 +2410,29 @@ public class GraphTest extends InstanceTest {
 		commit(g1);
 
 		createReadOnlyTransaction(g1);
-		assertEquals(e2, g1.getFirstEdge(Link.class));
-		assertNull(g1.getFirstEdge(SubLink.class));
-		assertEquals(e3, g1.getFirstEdge(LinkBack.class));
+		assertEquals(e2, g1.getFirstEdge(Link.ATTRIBUTED_ELEMENT_CLASS));
+		assertNull(g1.getFirstEdge(SubLink.ATTRIBUTED_ELEMENT_CLASS));
+		assertEquals(e3, g1.getFirstEdge(LinkBack.ATTRIBUTED_ELEMENT_CLASS));
 		commit(g1);
 
 		createTransaction(g1);
-		Edge e4 = g1.createEdge(SubLink.class, v10, v8);
+		Edge e4 = g1.createEdge(SubLink.ATTRIBUTED_ELEMENT_CLASS, v10, v8);
 		commit(g1);
 
 		createReadOnlyTransaction(g1);
-		assertEquals(e2, g1.getFirstEdge(Link.class));
-		assertEquals(e4, g1.getFirstEdge(SubLink.class));
-		assertEquals(e3, g1.getFirstEdge(LinkBack.class));
+		assertEquals(e2, g1.getFirstEdge(Link.ATTRIBUTED_ELEMENT_CLASS));
+		assertEquals(e4, g1.getFirstEdge(SubLink.ATTRIBUTED_ELEMENT_CLASS));
+		assertEquals(e3, g1.getFirstEdge(LinkBack.ATTRIBUTED_ELEMENT_CLASS));
 		commit(g1);
 
 		createTransaction(g1);
-		Edge e5 = g1.createEdge(LinkBack.class, v8, v3);
+		Edge e5 = g1.createEdge(LinkBack.ATTRIBUTED_ELEMENT_CLASS, v8, v3);
 		commit(g1);
 
 		createReadOnlyTransaction(g1);
-		assertEquals(e2, g1.getFirstEdge(Link.class));
-		assertEquals(e4, g1.getFirstEdge(SubLink.class));
-		assertEquals(e3, g1.getFirstEdge(LinkBack.class));
+		assertEquals(e2, g1.getFirstEdge(Link.ATTRIBUTED_ELEMENT_CLASS));
+		assertEquals(e4, g1.getFirstEdge(SubLink.ATTRIBUTED_ELEMENT_CLASS));
+		assertEquals(e3, g1.getFirstEdge(LinkBack.ATTRIBUTED_ELEMENT_CLASS));
 		commit(g1);
 
 		createTransaction(g1);
@@ -2422,19 +2440,19 @@ public class GraphTest extends InstanceTest {
 		commit(g1);
 
 		createReadOnlyTransaction(g1);
-		assertEquals(e2, g1.getFirstEdge(Link.class));
-		assertEquals(e4, g1.getFirstEdge(SubLink.class));
-		assertEquals(e5, g1.getFirstEdge(LinkBack.class));
+		assertEquals(e2, g1.getFirstEdge(Link.ATTRIBUTED_ELEMENT_CLASS));
+		assertEquals(e4, g1.getFirstEdge(SubLink.ATTRIBUTED_ELEMENT_CLASS));
+		assertEquals(e5, g1.getFirstEdge(LinkBack.ATTRIBUTED_ELEMENT_CLASS));
 		commit(g1);
 
 		createTransaction(g1);
-		Edge e6 = g1.createEdge(Link.class, v9, v5);
+		Edge e6 = g1.createEdge(Link.ATTRIBUTED_ELEMENT_CLASS, v9, v5);
 		commit(g1);
 
 		createReadOnlyTransaction(g1);
-		assertEquals(e2, g1.getFirstEdge(Link.class));
-		assertEquals(e4, g1.getFirstEdge(SubLink.class));
-		assertEquals(e5, g1.getFirstEdge(LinkBack.class));
+		assertEquals(e2, g1.getFirstEdge(Link.ATTRIBUTED_ELEMENT_CLASS));
+		assertEquals(e4, g1.getFirstEdge(SubLink.ATTRIBUTED_ELEMENT_CLASS));
+		assertEquals(e5, g1.getFirstEdge(LinkBack.ATTRIBUTED_ELEMENT_CLASS));
 		commit(g1);
 
 		createTransaction(g1);
@@ -2442,19 +2460,19 @@ public class GraphTest extends InstanceTest {
 		commit(g1);
 
 		createReadOnlyTransaction(g1);
-		assertEquals(e4, g1.getFirstEdge(Link.class));
-		assertEquals(e4, g1.getFirstEdge(SubLink.class));
-		assertEquals(e5, g1.getFirstEdge(LinkBack.class));
+		assertEquals(e4, g1.getFirstEdge(Link.ATTRIBUTED_ELEMENT_CLASS));
+		assertEquals(e4, g1.getFirstEdge(SubLink.ATTRIBUTED_ELEMENT_CLASS));
+		assertEquals(e5, g1.getFirstEdge(LinkBack.ATTRIBUTED_ELEMENT_CLASS));
 		commit(g1);
 
 		createTransaction(g1);
-		Edge e7 = g1.createEdge(SubLink.class, v11, v7);
+		Edge e7 = g1.createEdge(SubLink.ATTRIBUTED_ELEMENT_CLASS, v11, v7);
 		commit(g1);
 
 		createReadOnlyTransaction(g1);
-		assertEquals(e4, g1.getFirstEdge(Link.class));
-		assertEquals(e4, g1.getFirstEdge(SubLink.class));
-		assertEquals(e5, g1.getFirstEdge(LinkBack.class));
+		assertEquals(e4, g1.getFirstEdge(Link.ATTRIBUTED_ELEMENT_CLASS));
+		assertEquals(e4, g1.getFirstEdge(SubLink.ATTRIBUTED_ELEMENT_CLASS));
+		assertEquals(e5, g1.getFirstEdge(LinkBack.ATTRIBUTED_ELEMENT_CLASS));
 		commit(g1);
 
 		createTransaction(g1);
@@ -2462,29 +2480,29 @@ public class GraphTest extends InstanceTest {
 		commit(g1);
 
 		createReadOnlyTransaction(g1);
-		assertEquals(e6, g1.getFirstEdge(Link.class));
-		assertEquals(e7, g1.getFirstEdge(SubLink.class));
-		assertEquals(e5, g1.getFirstEdge(LinkBack.class));
+		assertEquals(e6, g1.getFirstEdge(Link.ATTRIBUTED_ELEMENT_CLASS));
+		assertEquals(e7, g1.getFirstEdge(SubLink.ATTRIBUTED_ELEMENT_CLASS));
+		assertEquals(e5, g1.getFirstEdge(LinkBack.ATTRIBUTED_ELEMENT_CLASS));
 		commit(g1);
 
 		createTransaction(g1);
-		Edge e8 = g1.createEdge(SubLink.class, v10, v13);
+		Edge e8 = g1.createEdge(SubLink.ATTRIBUTED_ELEMENT_CLASS, v10, v13);
 		commit(g1);
 
 		createReadOnlyTransaction(g1);
-		assertEquals(e6, g1.getFirstEdge(Link.class));
-		assertEquals(e7, g1.getFirstEdge(SubLink.class));
-		assertEquals(e5, g1.getFirstEdge(LinkBack.class));
+		assertEquals(e6, g1.getFirstEdge(Link.ATTRIBUTED_ELEMENT_CLASS));
+		assertEquals(e7, g1.getFirstEdge(SubLink.ATTRIBUTED_ELEMENT_CLASS));
+		assertEquals(e5, g1.getFirstEdge(LinkBack.ATTRIBUTED_ELEMENT_CLASS));
 		commit(g1);
 
 		createTransaction(g1);
-		Edge e9 = g1.createEdge(LinkBack.class, v6, v1);
+		Edge e9 = g1.createEdge(LinkBack.ATTRIBUTED_ELEMENT_CLASS, v6, v1);
 		commit(g1);
 
 		createReadOnlyTransaction(g1);
-		assertEquals(e6, g1.getFirstEdge(Link.class));
-		assertEquals(e7, g1.getFirstEdge(SubLink.class));
-		assertEquals(e5, g1.getFirstEdge(LinkBack.class));
+		assertEquals(e6, g1.getFirstEdge(Link.ATTRIBUTED_ELEMENT_CLASS));
+		assertEquals(e7, g1.getFirstEdge(SubLink.ATTRIBUTED_ELEMENT_CLASS));
+		assertEquals(e5, g1.getFirstEdge(LinkBack.ATTRIBUTED_ELEMENT_CLASS));
 		commit(g1);
 
 		createTransaction(g1);
@@ -2492,9 +2510,9 @@ public class GraphTest extends InstanceTest {
 		commit(g1);
 
 		createReadOnlyTransaction(g1);
-		assertEquals(e6, g1.getFirstEdge(Link.class));
-		assertEquals(e7, g1.getFirstEdge(SubLink.class));
-		assertEquals(e9, g1.getFirstEdge(LinkBack.class));
+		assertEquals(e6, g1.getFirstEdge(Link.ATTRIBUTED_ELEMENT_CLASS));
+		assertEquals(e7, g1.getFirstEdge(SubLink.ATTRIBUTED_ELEMENT_CLASS));
+		assertEquals(e9, g1.getFirstEdge(LinkBack.ATTRIBUTED_ELEMENT_CLASS));
 		commit(g1);
 
 		createTransaction(g1);
@@ -2502,9 +2520,9 @@ public class GraphTest extends InstanceTest {
 		commit(g1);
 
 		createReadOnlyTransaction(g1);
-		assertEquals(e6, g1.getFirstEdge(Link.class));
-		assertEquals(e8, g1.getFirstEdge(SubLink.class));
-		assertEquals(e9, g1.getFirstEdge(LinkBack.class));
+		assertEquals(e6, g1.getFirstEdge(Link.ATTRIBUTED_ELEMENT_CLASS));
+		assertEquals(e8, g1.getFirstEdge(SubLink.ATTRIBUTED_ELEMENT_CLASS));
+		assertEquals(e9, g1.getFirstEdge(LinkBack.ATTRIBUTED_ELEMENT_CLASS));
 		commit(g1);
 
 		createTransaction(g1);
@@ -2512,19 +2530,19 @@ public class GraphTest extends InstanceTest {
 		commit(g1);
 
 		createReadOnlyTransaction(g1);
-		assertEquals(e8, g1.getFirstEdge(Link.class));
-		assertEquals(e8, g1.getFirstEdge(SubLink.class));
-		assertEquals(e9, g1.getFirstEdge(LinkBack.class));
+		assertEquals(e8, g1.getFirstEdge(Link.ATTRIBUTED_ELEMENT_CLASS));
+		assertEquals(e8, g1.getFirstEdge(SubLink.ATTRIBUTED_ELEMENT_CLASS));
+		assertEquals(e9, g1.getFirstEdge(LinkBack.ATTRIBUTED_ELEMENT_CLASS));
 		commit(g1);
 
 		createTransaction(g1);
-		Edge e10 = g1.createEdge(Link.class, v2, v7);
+		Edge e10 = g1.createEdge(Link.ATTRIBUTED_ELEMENT_CLASS, v2, v7);
 		commit(g1);
 
 		createReadOnlyTransaction(g1);
-		assertEquals(e8, g1.getFirstEdge(Link.class));
-		assertEquals(e8, g1.getFirstEdge(SubLink.class));
-		assertEquals(e9, g1.getFirstEdge(LinkBack.class));
+		assertEquals(e8, g1.getFirstEdge(Link.ATTRIBUTED_ELEMENT_CLASS));
+		assertEquals(e8, g1.getFirstEdge(SubLink.ATTRIBUTED_ELEMENT_CLASS));
+		assertEquals(e9, g1.getFirstEdge(LinkBack.ATTRIBUTED_ELEMENT_CLASS));
 		commit(g1);
 
 		createTransaction(g1);
@@ -2532,9 +2550,9 @@ public class GraphTest extends InstanceTest {
 		commit(g1);
 
 		createReadOnlyTransaction(g1);
-		assertEquals(e10, g1.getFirstEdge(Link.class));
-		assertNull(g1.getFirstEdge(SubLink.class));
-		assertEquals(e9, g1.getFirstEdge(LinkBack.class));
+		assertEquals(e10, g1.getFirstEdge(Link.ATTRIBUTED_ELEMENT_CLASS));
+		assertNull(g1.getFirstEdge(SubLink.ATTRIBUTED_ELEMENT_CLASS));
+		assertEquals(e9, g1.getFirstEdge(LinkBack.ATTRIBUTED_ELEMENT_CLASS));
 		commit(g1);
 
 		createTransaction(g1);
@@ -2542,9 +2560,9 @@ public class GraphTest extends InstanceTest {
 		commit(g1);
 
 		createReadOnlyTransaction(g1);
-		assertNull(g1.getFirstEdge(Link.class));
-		assertNull(g1.getFirstEdge(SubLink.class));
-		assertEquals(e9, g1.getFirstEdge(LinkBack.class));
+		assertNull(g1.getFirstEdge(Link.ATTRIBUTED_ELEMENT_CLASS));
+		assertNull(g1.getFirstEdge(SubLink.ATTRIBUTED_ELEMENT_CLASS));
+		assertEquals(e9, g1.getFirstEdge(LinkBack.ATTRIBUTED_ELEMENT_CLASS));
 		commit(g1);
 
 		createTransaction(g1);
@@ -2552,9 +2570,9 @@ public class GraphTest extends InstanceTest {
 		commit(g1);
 
 		createReadOnlyTransaction(g1);
-		assertNull(g1.getFirstEdge(Link.class));
-		assertNull(g1.getFirstEdge(SubLink.class));
-		assertNull(g1.getFirstEdge(LinkBack.class));
+		assertNull(g1.getFirstEdge(Link.ATTRIBUTED_ELEMENT_CLASS));
+		assertNull(g1.getFirstEdge(SubLink.ATTRIBUTED_ELEMENT_CLASS));
+		assertNull(g1.getFirstEdge(LinkBack.ATTRIBUTED_ELEMENT_CLASS));
 		commit(g1);
 
 	}
@@ -2567,7 +2585,7 @@ public class GraphTest extends InstanceTest {
 		commit(g1);
 
 		createTransaction(g1);
-		Vertex v13 = g1.createVertex(SuperNode.class);
+		Vertex v13 = g1.createVertex(SuperNode.ATTRIBUTED_ELEMENT_CLASS);
 		commit(g1);
 
 		// start tests
@@ -2578,7 +2596,7 @@ public class GraphTest extends InstanceTest {
 		commit(g1);
 
 		createTransaction(g1);
-		Edge e1 = g1.createEdge(SubLink.class, v9, v6);
+		Edge e1 = g1.createEdge(SubLink.ATTRIBUTED_ELEMENT_CLASS, v9, v6);
 		commit(g1);
 
 		createReadOnlyTransaction(g1);
@@ -2588,7 +2606,7 @@ public class GraphTest extends InstanceTest {
 		commit(g1);
 
 		createTransaction(g1);
-		Edge e2 = g1.createEdge(Link.class, v3, v13);
+		Edge e2 = g1.createEdge(Link.ATTRIBUTED_ELEMENT_CLASS, v3, v13);
 		commit(g1);
 
 		createReadOnlyTransaction(g1);
@@ -2598,7 +2616,7 @@ public class GraphTest extends InstanceTest {
 		commit(g1);
 
 		createTransaction(g1);
-		Edge e3 = g1.createEdge(LinkBack.class, v7, v11);
+		Edge e3 = g1.createEdge(LinkBack.ATTRIBUTED_ELEMENT_CLASS, v7, v11);
 		commit(g1);
 
 		createReadOnlyTransaction(g1);
@@ -2618,7 +2636,7 @@ public class GraphTest extends InstanceTest {
 		commit(g1);
 
 		createTransaction(g1);
-		Edge e4 = g1.createEdge(SubLink.class, v10, v8);
+		Edge e4 = g1.createEdge(SubLink.ATTRIBUTED_ELEMENT_CLASS, v10, v8);
 		commit(g1);
 
 		createReadOnlyTransaction(g1);
@@ -2638,7 +2656,7 @@ public class GraphTest extends InstanceTest {
 		commit(g1);
 
 		createTransaction(g1);
-		Edge e5 = g1.createEdge(LinkBack.class, v8, v3);
+		Edge e5 = g1.createEdge(LinkBack.ATTRIBUTED_ELEMENT_CLASS, v8, v3);
 		commit(g1);
 
 		createReadOnlyTransaction(g1);
@@ -2658,7 +2676,7 @@ public class GraphTest extends InstanceTest {
 		commit(g1);
 
 		createTransaction(g1);
-		Edge e6 = g1.createEdge(Link.class, v9, v5);
+		Edge e6 = g1.createEdge(Link.ATTRIBUTED_ELEMENT_CLASS, v9, v5);
 		commit(g1);
 
 		createReadOnlyTransaction(g1);
@@ -2688,7 +2706,7 @@ public class GraphTest extends InstanceTest {
 		commit(g1);
 
 		createTransaction(g1);
-		Edge e7 = g1.createEdge(SubLink.class, v11, v7);
+		Edge e7 = g1.createEdge(SubLink.ATTRIBUTED_ELEMENT_CLASS, v11, v7);
 		commit(g1);
 
 		createReadOnlyTransaction(g1);
@@ -2698,7 +2716,7 @@ public class GraphTest extends InstanceTest {
 		commit(g1);
 
 		createTransaction(g1);
-		Edge e8 = g1.createEdge(SubLink.class, v10, v13);
+		Edge e8 = g1.createEdge(SubLink.ATTRIBUTED_ELEMENT_CLASS, v10, v13);
 		commit(g1);
 
 		createReadOnlyTransaction(g1);
@@ -2718,7 +2736,7 @@ public class GraphTest extends InstanceTest {
 		commit(g1);
 
 		createTransaction(g1);
-		Edge e9 = g1.createEdge(LinkBack.class, v6, v1);
+		Edge e9 = g1.createEdge(LinkBack.ATTRIBUTED_ELEMENT_CLASS, v6, v1);
 		commit(g1);
 
 		createReadOnlyTransaction(g1);
@@ -2728,7 +2746,7 @@ public class GraphTest extends InstanceTest {
 		commit(g1);
 
 		createTransaction(g1);
-		Edge e10 = g1.createEdge(Link.class, v2, v7);
+		Edge e10 = g1.createEdge(Link.ATTRIBUTED_ELEMENT_CLASS, v2, v7);
 		commit(g1);
 
 		createReadOnlyTransaction(g1);
@@ -2783,15 +2801,15 @@ public class GraphTest extends InstanceTest {
 	public void testGetVertex() throws CommitFailedException {
 
 		createTransaction(g1);
-		Vertex v13 = g1.createVertex(SubNode.class);
-		Vertex v14 = g1.createVertex(DoubleSubNode.class);
-		Vertex v15 = g1.createVertex(SuperNode.class);
+		Vertex v13 = g1.createVertex(SubNode.ATTRIBUTED_ELEMENT_CLASS);
+		Vertex v14 = g1.createVertex(DoubleSubNode.ATTRIBUTED_ELEMENT_CLASS);
+		Vertex v15 = g1.createVertex(SuperNode.ATTRIBUTED_ELEMENT_CLASS);
 		commit(g1);
 
 		createTransaction(g2);
-		Vertex v16 = g2.createVertex(SubNode.class);
-		Vertex v17 = g2.createVertex(SuperNode.class);
-		Vertex v18 = g2.createVertex(DoubleSubNode.class);
+		Vertex v16 = g2.createVertex(SubNode.ATTRIBUTED_ELEMENT_CLASS);
+		Vertex v17 = g2.createVertex(SuperNode.ATTRIBUTED_ELEMENT_CLASS);
+		Vertex v18 = g2.createVertex(DoubleSubNode.ATTRIBUTED_ELEMENT_CLASS);
 		commit(g2);
 
 		// border cases
@@ -2830,16 +2848,16 @@ public class GraphTest extends InstanceTest {
 	@Test
 	public void testGetEdge() throws CommitFailedException {
 		createTransaction(g1);
-		Edge e1 = g1.createEdge(LinkBack.class, v5, v1);
-		Edge e2 = g1.createEdge(Link.class, v2, v7);
-		Edge e3 = g1.createEdge(LinkBack.class, v8, v4);
-		Edge e4 = g1.createEdge(SubLink.class, v11, v6);
-		Edge e5 = g1.createEdge(Link.class, v2, v5);
-		Edge e6 = g1.createEdge(LinkBack.class, v7, v12);
-		Edge e7 = g1.createEdge(SubLink.class, v9, v8);
-		Edge e8 = g1.createEdge(SubLink.class, v10, v6);
-		Edge e9 = g1.createEdge(Link.class, v3, v7);
-		Edge e10 = g1.createEdge(Link.class, v3, v7);
+		Edge e1 = g1.createEdge(LinkBack.ATTRIBUTED_ELEMENT_CLASS, v5, v1);
+		Edge e2 = g1.createEdge(Link.ATTRIBUTED_ELEMENT_CLASS, v2, v7);
+		Edge e3 = g1.createEdge(LinkBack.ATTRIBUTED_ELEMENT_CLASS, v8, v4);
+		Edge e4 = g1.createEdge(SubLink.ATTRIBUTED_ELEMENT_CLASS, v11, v6);
+		Edge e5 = g1.createEdge(Link.ATTRIBUTED_ELEMENT_CLASS, v2, v5);
+		Edge e6 = g1.createEdge(LinkBack.ATTRIBUTED_ELEMENT_CLASS, v7, v12);
+		Edge e7 = g1.createEdge(SubLink.ATTRIBUTED_ELEMENT_CLASS, v9, v8);
+		Edge e8 = g1.createEdge(SubLink.ATTRIBUTED_ELEMENT_CLASS, v10, v6);
+		Edge e9 = g1.createEdge(Link.ATTRIBUTED_ELEMENT_CLASS, v3, v7);
+		Edge e10 = g1.createEdge(Link.ATTRIBUTED_ELEMENT_CLASS, v3, v7);
 		commit(g1);
 
 		// border cases
@@ -2905,7 +2923,7 @@ public class GraphTest extends InstanceTest {
 		commit(g2);
 
 		createTransaction(g2);
-		Vertex v1 = g2.createVertex(SubNode.class);
+		Vertex v1 = g2.createVertex(SubNode.ATTRIBUTED_ELEMENT_CLASS);
 		commit(g2);
 
 		createReadOnlyTransaction(g2);
@@ -2921,7 +2939,7 @@ public class GraphTest extends InstanceTest {
 		commit(g2);
 
 		createTransaction(g2);
-		g2.createVertex(SubNode.class);
+		g2.createVertex(SubNode.ATTRIBUTED_ELEMENT_CLASS);
 		commit(g2);
 
 		createReadOnlyTransaction(g2);
@@ -2934,7 +2952,7 @@ public class GraphTest extends InstanceTest {
 		commit(g1);
 
 		createTransaction(g2);
-		Vertex v2 = g2.createVertex(SubNode.class);
+		Vertex v2 = g2.createVertex(SubNode.ATTRIBUTED_ELEMENT_CLASS);
 		commit(g2);
 
 		createReadOnlyTransaction(g2);
@@ -2942,7 +2960,7 @@ public class GraphTest extends InstanceTest {
 		commit(g2);
 
 		createTransaction(g2);
-		g2.createVertex(SubNode.class);
+		g2.createVertex(SubNode.ATTRIBUTED_ELEMENT_CLASS);
 		commit(g2);
 
 		createReadOnlyTransaction(g2);
@@ -2958,7 +2976,7 @@ public class GraphTest extends InstanceTest {
 		commit(g2);
 
 		createTransaction(g2);
-		g2.createVertex(SuperNode.class);
+		g2.createVertex(SuperNode.ATTRIBUTED_ELEMENT_CLASS);
 		commit(g2);
 
 		createReadOnlyTransaction(g2);
@@ -2966,7 +2984,7 @@ public class GraphTest extends InstanceTest {
 		commit(g2);
 
 		createTransaction(g2);
-		Vertex v3 = g2.createVertex(SuperNode.class);
+		Vertex v3 = g2.createVertex(SuperNode.ATTRIBUTED_ELEMENT_CLASS);
 		commit(g2);
 
 		createReadOnlyTransaction(g2);
@@ -2982,7 +3000,7 @@ public class GraphTest extends InstanceTest {
 		commit(g2);
 
 		createTransaction(g2);
-		Vertex v4 = g2.createVertex(SuperNode.class);
+		Vertex v4 = g2.createVertex(SuperNode.ATTRIBUTED_ELEMENT_CLASS);
 		commit(g2);
 
 		createReadOnlyTransaction(g2);
@@ -2990,7 +3008,7 @@ public class GraphTest extends InstanceTest {
 		commit(g2);
 
 		createTransaction(g2);
-		g2.createVertex(SuperNode.class);
+		g2.createVertex(SuperNode.ATTRIBUTED_ELEMENT_CLASS);
 		commit(g2);
 
 		createReadOnlyTransaction(g2);
@@ -2998,7 +3016,7 @@ public class GraphTest extends InstanceTest {
 		commit(g2);
 
 		createTransaction(g2);
-		g2.createVertex(DoubleSubNode.class);
+		g2.createVertex(DoubleSubNode.ATTRIBUTED_ELEMENT_CLASS);
 		commit(g2);
 
 		createReadOnlyTransaction(g2);
@@ -3006,7 +3024,7 @@ public class GraphTest extends InstanceTest {
 		commit(g2);
 
 		createTransaction(g2);
-		g2.createVertex(DoubleSubNode.class);
+		g2.createVertex(DoubleSubNode.ATTRIBUTED_ELEMENT_CLASS);
 		commit(g2);
 
 		createReadOnlyTransaction(g2);
@@ -3022,7 +3040,7 @@ public class GraphTest extends InstanceTest {
 		commit(g2);
 
 		createTransaction(g2);
-		g2.createVertex(DoubleSubNode.class);
+		g2.createVertex(DoubleSubNode.ATTRIBUTED_ELEMENT_CLASS);
 		commit(g2);
 
 		createReadOnlyTransaction(g2);
@@ -3030,7 +3048,7 @@ public class GraphTest extends InstanceTest {
 		commit(g2);
 
 		createTransaction(g2);
-		g2.createVertex(DoubleSubNode.class);
+		g2.createVertex(DoubleSubNode.ATTRIBUTED_ELEMENT_CLASS);
 		commit(g2);
 
 		createReadOnlyTransaction(g2);
@@ -3039,7 +3057,7 @@ public class GraphTest extends InstanceTest {
 
 		for (int i = 9; i < 20; i++) {
 			createTransaction(g2);
-			g2.createVertex(SuperNode.class);
+			g2.createVertex(SuperNode.ATTRIBUTED_ELEMENT_CLASS);
 			commit(g2);
 
 			createReadOnlyTransaction(g2);
@@ -3049,7 +3067,7 @@ public class GraphTest extends InstanceTest {
 
 		for (int i = 20; i < 32; i++) {
 			createTransaction(g2);
-			g2.createVertex(DoubleSubNode.class);
+			g2.createVertex(DoubleSubNode.ATTRIBUTED_ELEMENT_CLASS);
 			commit(g2);
 
 			createReadOnlyTransaction(g2);
@@ -3059,7 +3077,7 @@ public class GraphTest extends InstanceTest {
 
 		for (int i = 32; i < 42; i++) {
 			createTransaction(g2);
-			g2.createVertex(SubNode.class);
+			g2.createVertex(SubNode.ATTRIBUTED_ELEMENT_CLASS);
 			commit(g2);
 
 			createReadOnlyTransaction(g2);
@@ -3077,7 +3095,7 @@ public class GraphTest extends InstanceTest {
 		commit(g1);
 
 		createTransaction(g1);
-		Edge e1 = g1.createEdge(LinkBack.class, v5, v1);
+		Edge e1 = g1.createEdge(LinkBack.ATTRIBUTED_ELEMENT_CLASS, v5, v1);
 		commit(g1);
 
 		createReadOnlyTransaction(g1);
@@ -3086,7 +3104,7 @@ public class GraphTest extends InstanceTest {
 
 		// creating a vertex does not change the value
 		createTransaction(g1);
-		g1.createVertex(DoubleSubNode.class);
+		g1.createVertex(DoubleSubNode.ATTRIBUTED_ELEMENT_CLASS);
 		commit(g1);
 
 		createReadOnlyTransaction(g1);
@@ -3105,7 +3123,7 @@ public class GraphTest extends InstanceTest {
 		// normal cases
 		// creating an edge increases the value by 1
 		createTransaction(g1);
-		Edge e2 = g1.createEdge(Link.class, v2, v7);
+		Edge e2 = g1.createEdge(Link.ATTRIBUTED_ELEMENT_CLASS, v2, v7);
 		commit(g1);
 
 		createReadOnlyTransaction(g1);
@@ -3113,7 +3131,7 @@ public class GraphTest extends InstanceTest {
 		commit(g1);
 
 		createTransaction(g1);
-		Edge e3 = g1.createEdge(LinkBack.class, v8, v4);
+		Edge e3 = g1.createEdge(LinkBack.ATTRIBUTED_ELEMENT_CLASS, v8, v4);
 		commit(g1);
 
 		createReadOnlyTransaction(g1);
@@ -3121,7 +3139,7 @@ public class GraphTest extends InstanceTest {
 		commit(g1);
 
 		createTransaction(g1);
-		Edge e4 = g1.createEdge(SubLink.class, v11, v6);
+		Edge e4 = g1.createEdge(SubLink.ATTRIBUTED_ELEMENT_CLASS, v11, v6);
 		commit(g1);
 
 		createReadOnlyTransaction(g1);
@@ -3129,7 +3147,7 @@ public class GraphTest extends InstanceTest {
 		commit(g1);
 
 		createTransaction(g1);
-		Edge e5 = g1.createEdge(Link.class, v2, v5);
+		Edge e5 = g1.createEdge(Link.ATTRIBUTED_ELEMENT_CLASS, v2, v5);
 		commit(g1);
 
 		createReadOnlyTransaction(g1);
@@ -3137,7 +3155,7 @@ public class GraphTest extends InstanceTest {
 		commit(g1);
 
 		createTransaction(g1);
-		Edge e6 = g1.createEdge(LinkBack.class, v7, v12);
+		Edge e6 = g1.createEdge(LinkBack.ATTRIBUTED_ELEMENT_CLASS, v7, v12);
 		commit(g1);
 
 		createReadOnlyTransaction(g1);
@@ -3145,7 +3163,7 @@ public class GraphTest extends InstanceTest {
 		commit(g1);
 
 		createTransaction(g1);
-		Edge e7 = g1.createEdge(SubLink.class, v9, v8);
+		Edge e7 = g1.createEdge(SubLink.ATTRIBUTED_ELEMENT_CLASS, v9, v8);
 		commit(g1);
 
 		createReadOnlyTransaction(g1);
@@ -3153,7 +3171,7 @@ public class GraphTest extends InstanceTest {
 		commit(g1);
 
 		createTransaction(g1);
-		Edge e8 = g1.createEdge(SubLink.class, v10, v6);
+		Edge e8 = g1.createEdge(SubLink.ATTRIBUTED_ELEMENT_CLASS, v10, v6);
 		commit(g1);
 
 		createReadOnlyTransaction(g1);
@@ -3161,7 +3179,7 @@ public class GraphTest extends InstanceTest {
 		commit(g1);
 
 		createTransaction(g1);
-		Edge e9 = g1.createEdge(Link.class, v3, v7);
+		Edge e9 = g1.createEdge(Link.ATTRIBUTED_ELEMENT_CLASS, v3, v7);
 		commit(g1);
 
 		createReadOnlyTransaction(g1);
@@ -3169,7 +3187,7 @@ public class GraphTest extends InstanceTest {
 		commit(g1);
 
 		createTransaction(g1);
-		Edge e10 = g1.createEdge(Link.class, v3, v7);
+		Edge e10 = g1.createEdge(Link.ATTRIBUTED_ELEMENT_CLASS, v3, v7);
 		commit(g1);
 
 		createReadOnlyTransaction(g1);
@@ -3258,15 +3276,15 @@ public class GraphTest extends InstanceTest {
 		commit(g1);
 
 		createTransaction(g1);
-		Edge e1 = g1.createEdge(Link.class, v3, v7);
-		Edge e2 = g1.createEdge(Link.class, v4, v8);
-		Edge e3 = g1.createEdge(Link.class, v1, v8);
-		Edge e4 = g1.createEdge(SubLink.class, v12, v5);
-		Edge e5 = g1.createEdge(SubLink.class, v10, v7);
-		Edge e6 = g1.createEdge(SubLink.class, v11, v5);
-		Edge e7 = g1.createEdge(LinkBack.class, v6, v12);
-		Edge e8 = g1.createEdge(LinkBack.class, v6, v3);
-		Edge e9 = g1.createEdge(LinkBack.class, v8, v9);
+		Edge e1 = g1.createEdge(Link.ATTRIBUTED_ELEMENT_CLASS, v3, v7);
+		Edge e2 = g1.createEdge(Link.ATTRIBUTED_ELEMENT_CLASS, v4, v8);
+		Edge e3 = g1.createEdge(Link.ATTRIBUTED_ELEMENT_CLASS, v1, v8);
+		Edge e4 = g1.createEdge(SubLink.ATTRIBUTED_ELEMENT_CLASS, v12, v5);
+		Edge e5 = g1.createEdge(SubLink.ATTRIBUTED_ELEMENT_CLASS, v10, v7);
+		Edge e6 = g1.createEdge(SubLink.ATTRIBUTED_ELEMENT_CLASS, v11, v5);
+		Edge e7 = g1.createEdge(LinkBack.ATTRIBUTED_ELEMENT_CLASS, v6, v12);
+		Edge e8 = g1.createEdge(LinkBack.ATTRIBUTED_ELEMENT_CLASS, v6, v3);
+		Edge e9 = g1.createEdge(LinkBack.ATTRIBUTED_ELEMENT_CLASS, v8, v9);
 		commit(g1);
 
 		createReadOnlyTransaction(g1);
@@ -3279,12 +3297,12 @@ public class GraphTest extends InstanceTest {
 		commit(g1);
 
 		createTransaction(g1);
-		Edge e10 = g1.createEdge(SubLink.class, v11, v6);
-		Edge e11 = g1.createEdge(LinkBack.class, v7, v12);
-		Edge e12 = g1.createEdge(LinkBack.class, v5, v1);
-		Edge e13 = g1.createEdge(Link.class, v12, v5);
-		Edge e14 = g1.createEdge(SubLink.class, v9, v7);
-		Edge e15 = g1.createEdge(SubLink.class, v11, v6);
+		Edge e10 = g1.createEdge(SubLink.ATTRIBUTED_ELEMENT_CLASS, v11, v6);
+		Edge e11 = g1.createEdge(LinkBack.ATTRIBUTED_ELEMENT_CLASS, v7, v12);
+		Edge e12 = g1.createEdge(LinkBack.ATTRIBUTED_ELEMENT_CLASS, v5, v1);
+		Edge e13 = g1.createEdge(Link.ATTRIBUTED_ELEMENT_CLASS, v12, v5);
+		Edge e14 = g1.createEdge(SubLink.ATTRIBUTED_ELEMENT_CLASS, v9, v7);
+		Edge e15 = g1.createEdge(SubLink.ATTRIBUTED_ELEMENT_CLASS, v11, v6);
 		commit(g1);
 
 		createReadOnlyTransaction(g1);
@@ -3298,12 +3316,12 @@ public class GraphTest extends InstanceTest {
 		commit(g1);
 
 		createTransaction(g1);
-		Edge e16 = g1.createEdge(LinkBack.class, v5, v2);
-		Edge e17 = g1.createEdge(SubLink.class, v10, v6);
-		Edge e18 = g1.createEdge(LinkBack.class, v8, v12);
-		Edge e19 = g1.createEdge(Link.class, v1, v7);
-		Edge e20 = g1.createEdge(SubLink.class, v10, v6);
-		Edge e21 = g1.createEdge(Link.class, v3, v6);
+		Edge e16 = g1.createEdge(LinkBack.ATTRIBUTED_ELEMENT_CLASS, v5, v2);
+		Edge e17 = g1.createEdge(SubLink.ATTRIBUTED_ELEMENT_CLASS, v10, v6);
+		Edge e18 = g1.createEdge(LinkBack.ATTRIBUTED_ELEMENT_CLASS, v8, v12);
+		Edge e19 = g1.createEdge(Link.ATTRIBUTED_ELEMENT_CLASS, v1, v7);
+		Edge e20 = g1.createEdge(SubLink.ATTRIBUTED_ELEMENT_CLASS, v10, v6);
+		Edge e21 = g1.createEdge(Link.ATTRIBUTED_ELEMENT_CLASS, v3, v6);
 		commit(g1);
 
 		createReadOnlyTransaction(g1);
@@ -3332,15 +3350,15 @@ public class GraphTest extends InstanceTest {
 		commit(g1);
 
 		createTransaction(g1);
-		Edge e1 = g1.createEdge(Link.class, v3, v7);
-		Edge e2 = g1.createEdge(Link.class, v4, v8);
-		Edge e3 = g1.createEdge(Link.class, v1, v8);
-		Edge e4 = g1.createEdge(SubLink.class, v12, v5);
-		Edge e5 = g1.createEdge(SubLink.class, v10, v7);
-		Edge e6 = g1.createEdge(SubLink.class, v11, v5);
-		Edge e7 = g1.createEdge(LinkBack.class, v6, v12);
-		Edge e8 = g1.createEdge(LinkBack.class, v6, v2);
-		Edge e9 = g1.createEdge(LinkBack.class, v8, v9);
+		Edge e1 = g1.createEdge(Link.ATTRIBUTED_ELEMENT_CLASS, v3, v7);
+		Edge e2 = g1.createEdge(Link.ATTRIBUTED_ELEMENT_CLASS, v4, v8);
+		Edge e3 = g1.createEdge(Link.ATTRIBUTED_ELEMENT_CLASS, v1, v8);
+		Edge e4 = g1.createEdge(SubLink.ATTRIBUTED_ELEMENT_CLASS, v12, v5);
+		Edge e5 = g1.createEdge(SubLink.ATTRIBUTED_ELEMENT_CLASS, v10, v7);
+		Edge e6 = g1.createEdge(SubLink.ATTRIBUTED_ELEMENT_CLASS, v11, v5);
+		Edge e7 = g1.createEdge(LinkBack.ATTRIBUTED_ELEMENT_CLASS, v6, v12);
+		Edge e8 = g1.createEdge(LinkBack.ATTRIBUTED_ELEMENT_CLASS, v6, v2);
+		Edge e9 = g1.createEdge(LinkBack.ATTRIBUTED_ELEMENT_CLASS, v8, v9);
 		commit(g1);
 
 		createReadOnlyTransaction(g1);
@@ -3367,12 +3385,12 @@ public class GraphTest extends InstanceTest {
 		commit(g1);
 
 		createTransaction(g1);
-		Edge e10 = g1.createEdge(SubLink.class, v11, v6);
-		Edge e11 = g1.createEdge(LinkBack.class, v7, v12);
-		Edge e12 = g1.createEdge(LinkBack.class, v5, v1);
-		Edge e13 = g1.createEdge(Link.class, v12, v5);
-		Edge e14 = g1.createEdge(SubLink.class, v9, v7);
-		Edge e15 = g1.createEdge(SubLink.class, v11, v6);
+		Edge e10 = g1.createEdge(SubLink.ATTRIBUTED_ELEMENT_CLASS, v11, v6);
+		Edge e11 = g1.createEdge(LinkBack.ATTRIBUTED_ELEMENT_CLASS, v7, v12);
+		Edge e12 = g1.createEdge(LinkBack.ATTRIBUTED_ELEMENT_CLASS, v5, v1);
+		Edge e13 = g1.createEdge(Link.ATTRIBUTED_ELEMENT_CLASS, v12, v5);
+		Edge e14 = g1.createEdge(SubLink.ATTRIBUTED_ELEMENT_CLASS, v9, v7);
+		Edge e15 = g1.createEdge(SubLink.ATTRIBUTED_ELEMENT_CLASS, v11, v6);
 		commit(g1);
 
 		createReadOnlyTransaction(g1);
@@ -3403,67 +3421,67 @@ public class GraphTest extends InstanceTest {
 	@Test
 	public void testEdges3() throws CommitFailedException {
 		createTransaction(g1);
-		Edge e1 = g1.createEdge(Link.class, v3, v7);
-		Edge e2 = g1.createEdge(Link.class, v4, v8);
-		Edge e3 = g1.createEdge(Link.class, v1, v8);
-		Edge e4 = g1.createEdge(SubLink.class, v12, v5);
-		Edge e5 = g1.createEdge(SubLink.class, v10, v7);
-		Edge e6 = g1.createEdge(SubLink.class, v11, v5);
-		Edge e7 = g1.createEdge(LinkBack.class, v6, v12);
-		Edge e8 = g1.createEdge(LinkBack.class, v6, v3);
-		Edge e9 = g1.createEdge(LinkBack.class, v8, v9);
+		Edge e1 = g1.createEdge(Link.ATTRIBUTED_ELEMENT_CLASS, v3, v7);
+		Edge e2 = g1.createEdge(Link.ATTRIBUTED_ELEMENT_CLASS, v4, v8);
+		Edge e3 = g1.createEdge(Link.ATTRIBUTED_ELEMENT_CLASS, v1, v8);
+		Edge e4 = g1.createEdge(SubLink.ATTRIBUTED_ELEMENT_CLASS, v12, v5);
+		Edge e5 = g1.createEdge(SubLink.ATTRIBUTED_ELEMENT_CLASS, v10, v7);
+		Edge e6 = g1.createEdge(SubLink.ATTRIBUTED_ELEMENT_CLASS, v11, v5);
+		Edge e7 = g1.createEdge(LinkBack.ATTRIBUTED_ELEMENT_CLASS, v6, v12);
+		Edge e8 = g1.createEdge(LinkBack.ATTRIBUTED_ELEMENT_CLASS, v6, v3);
+		Edge e9 = g1.createEdge(LinkBack.ATTRIBUTED_ELEMENT_CLASS, v8, v9);
 		commit(g1);
 
 		createReadOnlyTransaction(g1);
 		Edge[] graphLink = { e1, e2, e3, e4, e5, e6 };
 		int i = 0;
-		for (Edge e : g1.edges(Link.class)) {
+		for (Edge e : g1.edges(Link.ATTRIBUTED_ELEMENT_CLASS)) {
 			assertEquals(graphLink[i], e);
 			i++;
 		}
 
 		Edge[] graphSubLink = { e4, e5, e6 };
 		i = 0;
-		for (Edge e : g1.edges(SubLink.class)) {
+		for (Edge e : g1.edges(SubLink.ATTRIBUTED_ELEMENT_CLASS)) {
 			assertEquals(graphSubLink[i], e);
 			i++;
 		}
 
 		Edge[] graphLinkBack = { e7, e8, e9 };
 		i = 0;
-		for (Edge e : g1.edges(LinkBack.class)) {
+		for (Edge e : g1.edges(LinkBack.ATTRIBUTED_ELEMENT_CLASS)) {
 			assertEquals(graphLinkBack[i], e);
 			i++;
 		}
 		commit(g1);
 
 		createTransaction(g1);
-		Edge e10 = g1.createEdge(LinkBack.class, v5, v2);
-		Edge e11 = g1.createEdge(SubLink.class, v10, v6);
-		Edge e12 = g1.createEdge(LinkBack.class, v8, v12);
-		Edge e13 = g1.createEdge(Link.class, v1, v7);
-		Edge e14 = g1.createEdge(SubLink.class, v10, v6);
-		Edge e15 = g1.createEdge(Link.class, v3, v6);
+		Edge e10 = g1.createEdge(LinkBack.ATTRIBUTED_ELEMENT_CLASS, v5, v2);
+		Edge e11 = g1.createEdge(SubLink.ATTRIBUTED_ELEMENT_CLASS, v10, v6);
+		Edge e12 = g1.createEdge(LinkBack.ATTRIBUTED_ELEMENT_CLASS, v8, v12);
+		Edge e13 = g1.createEdge(Link.ATTRIBUTED_ELEMENT_CLASS, v1, v7);
+		Edge e14 = g1.createEdge(SubLink.ATTRIBUTED_ELEMENT_CLASS, v10, v6);
+		Edge e15 = g1.createEdge(Link.ATTRIBUTED_ELEMENT_CLASS, v3, v6);
 		commit(g1);
 
 		createReadOnlyTransaction(g1);
 		Edge[] graphLink2 = { e1, e2, e3, e4, e5, e6, e11, e13, e14, e15 };
 		i = 0;
-		for (Edge e : g1.edges(Link.class)) {
+		for (Edge e : g1.edges(Link.ATTRIBUTED_ELEMENT_CLASS)) {
 			assertEquals(graphLink2[i], e);
 			i++;
 		}
 
 		Edge[] graphSubLink2 = { e4, e5, e6, e11, e14 };
 		i = 0;
-		for (Edge e : g1.edges(SubLink.class)) {
+		for (Edge e : g1.edges(SubLink.ATTRIBUTED_ELEMENT_CLASS)) {
 			assertEquals(graphSubLink2[i], e);
 			i++;
 		}
 
 		Edge[] graphLinkBack2 = { e7, e8, e9, e10, e12 };
 		i = 0;
-		for (Edge e : g1.edges(LinkBack.class)) {
+		for (Edge e : g1.edges(LinkBack.ATTRIBUTED_ELEMENT_CLASS)) {
 			assertEquals(graphLinkBack2[i], e);
 			i++;
 		}
@@ -3490,10 +3508,10 @@ public class GraphTest extends InstanceTest {
 		commit(g1);
 
 		createTransaction(g1);
-		Vertex v13 = g1.createVertex(DoubleSubNode.class);
-		Vertex v14 = g1.createVertex(SuperNode.class);
-		Vertex v15 = g1.createVertex(SuperNode.class);
-		Vertex v16 = g1.createVertex(DoubleSubNode.class);
+		Vertex v13 = g1.createVertex(DoubleSubNode.ATTRIBUTED_ELEMENT_CLASS);
+		Vertex v14 = g1.createVertex(SuperNode.ATTRIBUTED_ELEMENT_CLASS);
+		Vertex v15 = g1.createVertex(SuperNode.ATTRIBUTED_ELEMENT_CLASS);
+		Vertex v16 = g1.createVertex(DoubleSubNode.ATTRIBUTED_ELEMENT_CLASS);
 		commit(g1);
 
 		createReadOnlyTransaction(g1);
@@ -3508,12 +3526,12 @@ public class GraphTest extends InstanceTest {
 		commit(g1);
 
 		createTransaction(g1);
-		Vertex v17 = g1.createVertex(SubNode.class);
-		Vertex v18 = g1.createVertex(DoubleSubNode.class);
-		Vertex v19 = g1.createVertex(SubNode.class);
-		Vertex v20 = g1.createVertex(SuperNode.class);
-		Vertex v21 = g1.createVertex(DoubleSubNode.class);
-		Vertex v22 = g1.createVertex(SuperNode.class);
+		Vertex v17 = g1.createVertex(SubNode.ATTRIBUTED_ELEMENT_CLASS);
+		Vertex v18 = g1.createVertex(DoubleSubNode.ATTRIBUTED_ELEMENT_CLASS);
+		Vertex v19 = g1.createVertex(SubNode.ATTRIBUTED_ELEMENT_CLASS);
+		Vertex v20 = g1.createVertex(SuperNode.ATTRIBUTED_ELEMENT_CLASS);
+		Vertex v21 = g1.createVertex(DoubleSubNode.ATTRIBUTED_ELEMENT_CLASS);
+		Vertex v22 = g1.createVertex(SuperNode.ATTRIBUTED_ELEMENT_CLASS);
 		commit(g1);
 
 		createReadOnlyTransaction(g1);
@@ -3567,14 +3585,14 @@ public class GraphTest extends InstanceTest {
 		commit(g1);
 
 		createTransaction(g1);
-		Vertex v13 = g1.createVertex(DoubleSubNode.class);
-		Vertex v14 = g1.createVertex(SubNode.class);
-		Vertex v15 = g1.createVertex(DoubleSubNode.class);
-		Vertex v16 = g1.createVertex(SuperNode.class);
-		Vertex v17 = g1.createVertex(SuperNode.class);
-		Vertex v18 = g1.createVertex(SubNode.class);
-		Vertex v19 = g1.createVertex(DoubleSubNode.class);
-		Vertex v20 = g1.createVertex(SuperNode.class);
+		Vertex v13 = g1.createVertex(DoubleSubNode.ATTRIBUTED_ELEMENT_CLASS);
+		Vertex v14 = g1.createVertex(SubNode.ATTRIBUTED_ELEMENT_CLASS);
+		Vertex v15 = g1.createVertex(DoubleSubNode.ATTRIBUTED_ELEMENT_CLASS);
+		Vertex v16 = g1.createVertex(SuperNode.ATTRIBUTED_ELEMENT_CLASS);
+		Vertex v17 = g1.createVertex(SuperNode.ATTRIBUTED_ELEMENT_CLASS);
+		Vertex v18 = g1.createVertex(SubNode.ATTRIBUTED_ELEMENT_CLASS);
+		Vertex v19 = g1.createVertex(DoubleSubNode.ATTRIBUTED_ELEMENT_CLASS);
+		Vertex v20 = g1.createVertex(SuperNode.ATTRIBUTED_ELEMENT_CLASS);
 		commit(g1);
 
 		createReadOnlyTransaction(g1);
@@ -3607,56 +3625,62 @@ public class GraphTest extends InstanceTest {
 	@Test
 	public void testVertices3() throws CommitFailedException {
 		createReadOnlyTransaction(g2);
-		assertFalse(g2.vertices(SubNode.class).iterator().hasNext());
-		assertFalse(g2.vertices(SuperNode.class).iterator().hasNext());
-		assertFalse(g2.vertices(DoubleSubNode.class).iterator().hasNext());
+		assertFalse(g2.vertices(SubNode.ATTRIBUTED_ELEMENT_CLASS).iterator()
+				.hasNext());
+		assertFalse(g2.vertices(SuperNode.ATTRIBUTED_ELEMENT_CLASS).iterator()
+				.hasNext());
+		assertFalse(g2.vertices(DoubleSubNode.ATTRIBUTED_ELEMENT_CLASS)
+				.iterator().hasNext());
 		commit(g2);
 
 		createReadOnlyTransaction(g1);
-		assertTrue(g1.vertices(SubNode.class).iterator().hasNext());
-		assertTrue(g1.vertices(SuperNode.class).iterator().hasNext());
-		assertTrue(g1.vertices(DoubleSubNode.class).iterator().hasNext());
+		assertTrue(g1.vertices(SubNode.ATTRIBUTED_ELEMENT_CLASS).iterator()
+				.hasNext());
+		assertTrue(g1.vertices(SuperNode.ATTRIBUTED_ELEMENT_CLASS).iterator()
+				.hasNext());
+		assertTrue(g1.vertices(DoubleSubNode.ATTRIBUTED_ELEMENT_CLASS)
+				.iterator().hasNext());
 		commit(g1);
 
 		createReadOnlyTransaction(g1);
 		Vertex[] graphSubN = { v1, v2, v3, v4, v9, v10, v11, v12 };
 		int i = 0;
-		for (Vertex v : g1.vertices(SubNode.class)) {
+		for (Vertex v : g1.vertices(SubNode.ATTRIBUTED_ELEMENT_CLASS)) {
 			assertEquals(graphSubN[i], v);
 			i++;
 		}
 
 		Vertex[] graphSuperN = { v5, v6, v7, v8, v9, v10, v11, v12 };
 		i = 0;
-		for (Vertex v : g1.vertices(SuperNode.class)) {
+		for (Vertex v : g1.vertices(SuperNode.ATTRIBUTED_ELEMENT_CLASS)) {
 			assertEquals(graphSuperN[i], v);
 			i++;
 		}
 
 		Vertex[] graphDoubleSubN = { v9, v10, v11, v12 };
 		i = 0;
-		for (Vertex v : g1.vertices(DoubleSubNode.class)) {
+		for (Vertex v : g1.vertices(DoubleSubNode.ATTRIBUTED_ELEMENT_CLASS)) {
 			assertEquals(graphDoubleSubN[i], v);
 			i++;
 		}
 		commit(g1);
 
 		createTransaction(g1);
-		Vertex v13 = g1.createVertex(DoubleSubNode.class);
-		Vertex v14 = g1.createVertex(DoubleSubNode.class);
-		Vertex v15 = g1.createVertex(SuperNode.class);
-		Vertex v16 = g1.createVertex(SubNode.class);
-		Vertex v17 = g1.createVertex(SuperNode.class);
-		Vertex v18 = g1.createVertex(DoubleSubNode.class);
-		Vertex v19 = g1.createVertex(SubNode.class);
-		Vertex v20 = g1.createVertex(SuperNode.class);
+		Vertex v13 = g1.createVertex(DoubleSubNode.ATTRIBUTED_ELEMENT_CLASS);
+		Vertex v14 = g1.createVertex(DoubleSubNode.ATTRIBUTED_ELEMENT_CLASS);
+		Vertex v15 = g1.createVertex(SuperNode.ATTRIBUTED_ELEMENT_CLASS);
+		Vertex v16 = g1.createVertex(SubNode.ATTRIBUTED_ELEMENT_CLASS);
+		Vertex v17 = g1.createVertex(SuperNode.ATTRIBUTED_ELEMENT_CLASS);
+		Vertex v18 = g1.createVertex(DoubleSubNode.ATTRIBUTED_ELEMENT_CLASS);
+		Vertex v19 = g1.createVertex(SubNode.ATTRIBUTED_ELEMENT_CLASS);
+		Vertex v20 = g1.createVertex(SuperNode.ATTRIBUTED_ELEMENT_CLASS);
 		commit(g1);
 
 		createReadOnlyTransaction(g1);
 		Vertex[] graphSubN2 = { v1, v2, v3, v4, v9, v10, v11, v12, v13, v14,
 				v16, v18, v19 };
 		i = 0;
-		for (Vertex v : g1.vertices(SubNode.class)) {
+		for (Vertex v : g1.vertices(SubNode.ATTRIBUTED_ELEMENT_CLASS)) {
 			assertEquals(graphSubN2[i], v);
 			i++;
 		}
@@ -3664,14 +3688,14 @@ public class GraphTest extends InstanceTest {
 		Vertex[] graphSuperN2 = { v5, v6, v7, v8, v9, v10, v11, v12, v13, v14,
 				v15, v17, v18, v20 };
 		i = 0;
-		for (Vertex v : g1.vertices(SuperNode.class)) {
+		for (Vertex v : g1.vertices(SuperNode.ATTRIBUTED_ELEMENT_CLASS)) {
 			assertEquals(graphSuperN2[i], v);
 			i++;
 		}
 
 		Vertex[] graphDoubleSubN2 = { v9, v10, v11, v12, v13, v14, v18 };
 		i = 0;
-		for (Vertex v : g1.vertices(DoubleSubNode.class)) {
+		for (Vertex v : g1.vertices(DoubleSubNode.ATTRIBUTED_ELEMENT_CLASS)) {
 			assertEquals(graphDoubleSubN2[i], v);
 			i++;
 		}
