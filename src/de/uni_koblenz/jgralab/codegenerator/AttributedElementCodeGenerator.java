@@ -41,8 +41,10 @@ import java.util.TreeSet;
 
 import de.uni_koblenz.jgralab.schema.Attribute;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
+import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.EnumDomain;
 import de.uni_koblenz.jgralab.schema.RecordDomain;
+import de.uni_koblenz.jgralab.schema.VertexClass;
 
 /**
  * TODO add comment
@@ -68,7 +70,7 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 		super(schemaRootPackageName, attributedElementClass.getPackageName(),
 				config);
 		aec = attributedElementClass;
-		rootBlock.setVariable("ecName", aec.getSimpleName());
+		rootBlock.setVariable("schemaTypeName", getSchemaTypeName(aec));
 		rootBlock.setVariable("qualifiedClassName", aec.getQualifiedName());
 		rootBlock.setVariable("schemaName", aec.getSchema().getName());
 		rootBlock.setVariable("schemaVariableName", aec.getVariableName());
@@ -91,6 +93,16 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 		for (AttributedElementClass superClass : attributedElementClass
 				.getDirectSuperClasses()) {
 			interfaces.add(superClass.getQualifiedName());
+		}
+	}
+
+	private static String getSchemaTypeName(AttributedElementClass aec) {
+		if (aec instanceof VertexClass) {
+			return "VertexClass";
+		} else if (aec instanceof EdgeClass) {
+			return "EdgeClass";
+		} else {
+			return "GraphClass";
 		}
 	}
 
@@ -134,7 +146,7 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 	protected CodeBlock createAttributedElementClassConstant() {
 		return new CodeSnippet(
 				true,
-				"static final #jgSchemaPackage#.AttributedElementClass ATTRIBUTED_ELEMENT_CLASS"
+				"static final #jgSchemaPackage#.#schemaTypeName# ATTRIBUTED_ELEMENT_CLASS"
 						+ " = #schemaPackageName#.#schemaName#.instance().#schemaVariableName#;");
 	}
 
@@ -223,7 +235,7 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 	protected CodeBlock createGetAttributedElementClassMethod() {
 		return new CodeSnippet(
 				true,
-				"public final #jgSchemaPackage#.AttributedElementClass getAttributedElementClass() {",
+				"public final #jgSchemaPackage#.#schemaTypeName# getAttributedElementClass() {",
 				"\treturn #javaClassName#.ATTRIBUTED_ELEMENT_CLASS;", "}");
 	}
 

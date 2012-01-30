@@ -39,7 +39,7 @@ public class GenericEdgeImpl extends EdgeImpl {
 	}
 
 	@Override
-	public AttributedElementClass getAttributedElementClass() {
+	public EdgeClass getAttributedElementClass() {
 		return type;
 	}
 
@@ -90,9 +90,9 @@ public class GenericEdgeImpl extends EdgeImpl {
 
 	@Override
 	public AggregationKind getAggregationKind() {
-		AggregationKind fromAK = ((EdgeClass) getAttributedElementClass())
+		AggregationKind fromAK = getAttributedElementClass()
 				.getFrom().getAggregationKind();
-		AggregationKind toAK = ((EdgeClass) getAttributedElementClass())
+		AggregationKind toAK = getAttributedElementClass()
 				.getTo().getAggregationKind();
 		return fromAK != AggregationKind.NONE ? fromAK
 				: (toAK != AggregationKind.NONE ? toAK : AggregationKind.NONE);
@@ -100,13 +100,13 @@ public class GenericEdgeImpl extends EdgeImpl {
 
 	@Override
 	public AggregationKind getAlphaAggregationKind() {
-		return ((EdgeClass) getAttributedElementClass()).getFrom()
+		return getAttributedElementClass().getFrom()
 				.getAggregationKind();
 	}
 
 	@Override
 	public AggregationKind getOmegaAggregationKind() {
-		return ((EdgeClass) getAttributedElementClass()).getTo()
+		return getAttributedElementClass().getTo()
 				.getAggregationKind();
 	}
 

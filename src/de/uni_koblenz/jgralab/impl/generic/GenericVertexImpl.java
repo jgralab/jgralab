@@ -50,7 +50,7 @@ public class GenericVertexImpl extends VertexImpl {
 	}
 
 	@Override
-	public AttributedElementClass getAttributedElementClass() {
+	public VertexClass getAttributedElementClass() {
 		return type;
 	}
 
