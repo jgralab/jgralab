@@ -1,29 +1,29 @@
 /*
  * JGraLab - The Java Graph Laboratory
- * 
+ *
  * Copyright (C) 2006-2011 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
- * 
+ *
  * For bug reports, documentation and further information, visit
- * 
+ *
  *                         http://jgralab.uni-koblenz.de
- * 
+ *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
  * Free Software Foundation; either version 3 of the License, or (at your
  * option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, see <http://www.gnu.org/licenses>.
- * 
+ *
  * Additional permission under GNU GPL version 3 section 7
- * 
+ *
  * If you modify this Program, or any covered work, by linking or combining
  * it with Eclipse (or a modified version of that program or an Eclipse
  * plugin), containing parts covered by the terms of the Eclipse Public
@@ -261,65 +261,6 @@ public class LoadTest extends InstanceTest {
 		return graph;
 	}
 
-	// @Test
-	// public void testFreeElementList() throws CommitFailedException {
-	// onlyTestWithoutTransactionSupport();
-	// Greql2 g1 = null;
-	// Greql2 g2 = null;
-	// try {
-	// // g1 is always without transaction support
-	// g1 = createTestGraph();
-	// GraphIO.saveGraphToFile(TESTGRAPH_PATH + TESTGRAPH_FILENAME, g1,
-	// null);
-	// g2 = transactionsEnabled ? Greql2Schema.instance()
-	// .loadGreql2WithTransactionSupport(
-	// TESTGRAPH_PATH + TESTGRAPH_FILENAME) : Greql2Schema
-	// .instance().loadGreql2(TESTGRAPH_PATH + TESTGRAPH_FILENAME);
-	// } catch (Exception ex) {
-	// ex.printStackTrace();
-	// }
-	// createReadOnlyTransaction(g2);
-	// checkEqualVertexList(g1, g2);
-	// checkEqualEdgeList(g1, g2);
-	// commit(g2);
-	//
-	// createTransaction(g2);
-	// fillVertexList(g1, g2);
-	// commit(g2);
-	//
-	// createReadOnlyTransaction(g2);
-	// checkEqualVertexList(g1, g2);
-	// checkEqualEdgeList(g1, g2);
-	// commit(g2);
-	//
-	// createTransaction(g2);
-	// removeVertices(g1, g2);
-	// commit(g2);
-	//
-	// createReadOnlyTransaction(g2);
-	// checkEqualVertexList(g1, g2);
-	// checkEqualEdgeList(g1, g2);
-	// commit(g2);
-	//
-	// createTransaction(g2);
-	// fillVertexList(g1, g2);
-	// commit(g2);
-	//
-	// createReadOnlyTransaction(g2);
-	// checkEqualVertexList(g1, g2);
-	// checkEqualEdgeList(g1, g2);
-	// commit(g2);
-	//
-	// createTransaction(g2);
-	// removeVertices(g1, g2);
-	// commit(g2);
-	//
-	// createReadOnlyTransaction(g2);
-	// checkEqualVertexList(g1, g2);
-	// checkEqualEdgeList(g1, g2);
-	// commit(g2);
-	// }
-	@SuppressWarnings("deprecation")
 	@Test
 	public void testFreeElementList() throws CommitFailedException {
 		Graph g1 = null;
@@ -334,13 +275,13 @@ public class LoadTest extends InstanceTest {
 			switch (implementationType) {
 			case STANDARD:
 				g2 = Greql2Schema.instance().loadGreql2(
-						ImplementationType.STANDARD,
-						TESTGRAPH_PATH + TESTGRAPH_FILENAME);
+						TESTGRAPH_PATH + TESTGRAPH_FILENAME,
+						ImplementationType.STANDARD);
 				break;
 			case TRANSACTION:
 				g2 = VertexTestSchema.instance().loadVertexTestGraph(
-						ImplementationType.TRANSACTION,
-						TESTGRAPH_PATH + TESTGRAPH_FILENAME);
+						TESTGRAPH_PATH + TESTGRAPH_FILENAME,
+						ImplementationType.TRANSACTION);
 				break;
 			case DATABASE:
 				g2 = GraphIO.loadGraphFromFile(TESTGRAPH_PATH
@@ -459,14 +400,9 @@ public class LoadTest extends InstanceTest {
 			if (vertexClass.isInternal() || vertexClass.isAbstract()) {
 				continue;
 			}
-			Class<? extends Vertex> vc = vertexClass.getSchemaClass();
-			g1.createVertex(vc);
-			// VertexClass vertexClass2 = gc.getVertexClasses().get(i %
-			// gc.getVertexClasses().size());
-			// if (vertexClass.isInternal())
-			// continue;
-			// Class<? extends Vertex> vc2 = vertexClass2.getSchemaClass();
-			g2.createVertex(vc);
+			g1.createVertex(vertexClass);
+
+			g2.createVertex(vertexClass);
 		}
 	}
 
@@ -486,7 +422,7 @@ public class LoadTest extends InstanceTest {
 	 * Returns the freeVertexList of <code>graph</code> if
 	 * <code>getVertexList</code> is set to true else the freeEdgeList is
 	 * returned.
-	 * 
+	 *
 	 * @param graph
 	 *            the graph
 	 * @param getVertexList
@@ -514,7 +450,7 @@ public class LoadTest extends InstanceTest {
 
 	/**
 	 * Returns the runs-Array of <code>fil</code>.
-	 * 
+	 *
 	 * @param fil
 	 *            a FreeIndexList
 	 * @return runs
@@ -543,7 +479,7 @@ public class LoadTest extends InstanceTest {
 	 * vList.runs.length==<code>runsLength</code><br>
 	 * vList.runs starts with the elements of <code>runsValues</code>. The other
 	 * elements of runs must be 0.
-	 * 
+	 *
 	 * @param vList
 	 * @param used
 	 * @param free
@@ -573,7 +509,7 @@ public class LoadTest extends InstanceTest {
 
 	/**
 	 * Test if graph has only one vertex.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -597,7 +533,7 @@ public class LoadTest extends InstanceTest {
 	/**
 	 * Test if graph has a limit of one vertex and you want to create another
 	 * one.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -622,7 +558,7 @@ public class LoadTest extends InstanceTest {
 
 	/**
 	 * Test if you fill runs completely by the allocate method.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -665,7 +601,7 @@ public class LoadTest extends InstanceTest {
 	 * Test if you reach an increase of runs by the allocate method.
 	 * runs=[2,-1,1,-1,1,-1,1,-1,1,-1,1,-1,1,-1,1,-1] and then create a new
 	 * vertex.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -707,7 +643,7 @@ public class LoadTest extends InstanceTest {
 	/**
 	 * Test if you create 17 vertices and you delete every second(FreeIndexList
 	 * must be increased).
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -739,7 +675,7 @@ public class LoadTest extends InstanceTest {
 
 	/**
 	 * A graph which has at most 2 vertices. One vertex is created and deleted.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -765,7 +701,7 @@ public class LoadTest extends InstanceTest {
 	/**
 	 * Delete first node at a FreeIndexList.runs= [-2, 1, -1, 1, -1, 1, -1, 1,
 	 * -1, 1, -1, 1, -1, 1, -1, 1]
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -807,7 +743,7 @@ public class LoadTest extends InstanceTest {
 	/**
 	 * FreeIndexList.runs= [1, -1, 1, -1, 1, -1, 1, -1, 1, -1, 1, -1, 1, -3, 0,
 	 * 0] Delete the middle vertex of -3.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -848,7 +784,7 @@ public class LoadTest extends InstanceTest {
 	/**
 	 * FreeIndexList.runs= [1, -1, 1, -3, 1, -1, 1, -1, 1, -1, 1, -1, 1, -1, 0,
 	 * 0] Delete the middle vertex of -3.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -890,7 +826,7 @@ public class LoadTest extends InstanceTest {
 
 	/**
 	 * FreeIndexList.runs= [-1, 1, -2, 0,...] Delete the first vertex of -2.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -927,7 +863,7 @@ public class LoadTest extends InstanceTest {
 
 	/**
 	 * FreeIndexList.runs= [-1, 1, -1, 0,...] Delete the last used index.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -962,7 +898,7 @@ public class LoadTest extends InstanceTest {
 	/**
 	 * FreeIndexList.runs= [1,-1,1,-1,1,-1,1,-1,1,-1,1,-1,1,-1,1,-2] Delete the
 	 * last used index.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
