@@ -46,9 +46,9 @@ import de.uni_koblenz.jgralab.schema.VertexClass;
 
 /**
  * TODO add comment
- * 
+ *
  * @author ist@uni-koblenz.de
- * 
+ *
  */
 public class ReversedEdgeCodeGenerator extends AttributedElementCodeGenerator {
 
@@ -329,4 +329,17 @@ public class ReversedEdgeCodeGenerator extends AttributedElementCodeGenerator {
 		return null;
 	}
 
+	@Override
+	protected CodeBlock createAttributedElementClassConstant() {
+		return null;
+	}
+
+	@Override
+	protected CodeBlock createGetAttributedElementClassMethod() {
+		return new CodeSnippet(
+				true,
+				"@Override",
+				"public final #jgSchemaPackage#.#schemaElementClass# getAttributedElementClass() {",
+				"\treturn getNormalEdge().getAttributedElementClass();", "}");
+	}
 }

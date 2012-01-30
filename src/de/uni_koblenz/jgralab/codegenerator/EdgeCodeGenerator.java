@@ -44,9 +44,9 @@ import de.uni_koblenz.jgralab.schema.VertexClass;
 
 /**
  * TODO add comment
- * 
+ *
  * @author ist@uni-koblenz.de
- * 
+ *
  */
 public class EdgeCodeGenerator extends AttributedElementCodeGenerator {
 
@@ -172,7 +172,7 @@ public class EdgeCodeGenerator extends AttributedElementCodeGenerator {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return
 	 */
 	private CodeBlock createReversedEdgeMethod() {
@@ -329,5 +329,22 @@ public class EdgeCodeGenerator extends AttributedElementCodeGenerator {
 				"\treturn de.uni_koblenz.jgralab.schema.AggregationKind.#semantics#;",
 				"}");
 		return code;
+	}
+
+	@Override
+	protected CodeBlock createAttributedElementClassConstant() {
+		return new CodeSnippet(
+				true,
+				"public static final #jgSchemaPackage#.#schemaElementClass# EC"
+						+ " = #schemaPackageName#.#schemaName#.instance().#schemaVariableName#;");
+	}
+
+	@Override
+	protected CodeBlock createGetAttributedElementClassMethod() {
+		return new CodeSnippet(
+				true,
+				"@Override",
+				"public final #jgSchemaPackage#.#schemaElementClass# getAttributedElementClass() {",
+				"\treturn #javaClassName#.EC;", "}");
 	}
 }

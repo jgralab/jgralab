@@ -77,6 +77,7 @@ public class SimpleCopyTransformation extends Transformation<Graph> {
 								+ "!} reportSet e, startVertex(e), endVertex(e) end")
 						.execute();
 			}
+
 			for (EdgeClass oldSuperEC : oldEC.getDirectSuperClasses()) {
 				if (oldSuperEC.isInternal()) {
 					continue;

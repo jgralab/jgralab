@@ -48,11 +48,11 @@ import de.uni_koblenz.jgralab.schema.VertexClass;
 
 /**
  * TODO add comment
- * 
+ *
  * @author ist@uni-koblenz.de
- * 
+ *
  */
-public class AttributedElementCodeGenerator extends CodeGenerator {
+public abstract class AttributedElementCodeGenerator extends CodeGenerator {
 
 	/**
 	 * all the interfaces of the class which are being implemented
@@ -110,7 +110,7 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 	 * Returns the absolute name of the given AttributdelementClass. The name is
 	 * composed of the package-prefix of the schema the class belongs to and the
 	 * qualified name of the class
-	 * 
+	 *
 	 * @param aec
 	 * @return
 	 */
@@ -143,12 +143,7 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 		return code;
 	}
 
-	protected CodeBlock createAttributedElementClassConstant() {
-		return new CodeSnippet(
-				true,
-				"public static final #jgSchemaPackage#.#schemaElementClass# ATTRIBUTED_ELEMENT_CLASS"
-						+ " = #schemaPackageName#.#schemaName#.instance().#schemaVariableName#;");
-	}
+	protected abstract CodeBlock createAttributedElementClassConstant();
 
 	@Override
 	protected CodeBlock createHeader() {
@@ -232,13 +227,7 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 		return false;
 	}
 
-	protected CodeBlock createGetAttributedElementClassMethod() {
-		return new CodeSnippet(
-				true,
-				"@Override",
-				"public final #jgSchemaPackage#.#schemaElementClass# getAttributedElementClass() {",
-				"\treturn #javaClassName#.ATTRIBUTED_ELEMENT_CLASS;", "}");
-	}
+	protected abstract CodeBlock createGetAttributedElementClassMethod();
 
 	protected CodeBlock createGetSchemaClassMethod() {
 		return new CodeSnippet(
@@ -524,7 +513,7 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param attrSet
 	 * @return
 	 */
@@ -626,7 +615,7 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 	/**
 	 * Generates method attributes() which returns a set of all versioned
 	 * attributes for an <code>AttributedElement</code>.
-	 * 
+	 *
 	 * @param attributeList
 	 * @return
 	 */
