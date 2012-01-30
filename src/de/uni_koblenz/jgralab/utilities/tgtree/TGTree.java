@@ -61,7 +61,6 @@ import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.codegenerator.CodeGeneratorConfiguration;
 import de.uni_koblenz.jgralab.impl.ConsoleProgressFunction;
 
 public class TGTree extends JFrame {
@@ -157,8 +156,7 @@ public class TGTree extends JFrame {
 			System.err.println("Usage: TGTree <graphfile>");
 			System.exit(1);
 		}
-		Graph g = GraphIO.loadSchemaAndGraphFromFile(args[0],
-				CodeGeneratorConfiguration.MINIMAL,
+		Graph g = GraphIO.loadGraphFromFile(args[0],
 				new ConsoleProgressFunction("Loading"));
 		TGTree tgtree = new TGTree(g);
 		tgtree.setDefaultCloseOperation(EXIT_ON_CLOSE);

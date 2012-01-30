@@ -162,7 +162,7 @@ public class SchemaCodeGenerator extends CodeGenerator {
 	}
 
 	private CodeBlock createGraphFactoryMethods() {
-		addImports("#jgPackage#.ProgressFunction", "#jgPackage#.GraphIO",
+		addImports("#jgPackage#.GraphIO",
 				"#jgImplDbPackage#.GraphDatabaseException",
 				"#jgImplDbPackage#.GraphDatabase",
 				"#jgPackage#.GraphIOException");
@@ -190,6 +190,24 @@ public class SchemaCodeGenerator extends CodeGenerator {
 				"*/",
 				"public #gcName# create#gcCamelName#(#jgPackage#.ImplementationType implType, String id, int vMax, int eMax) {",
 				"\t#jgPackage#.GraphFactory factory = createDefaultGraphFactory(implType);",
+				"\treturn factory.createGraph(#gcVariableName#, id, vMax, eMax);",
+				"}"));
+
+		code.addNoIndent(new CodeSnippet(
+				true,
+				"/**",
+				" * Creates a new #gcName# graph.",
+				"*/",
+				"public #gcName# create#gcCamelName#(#jgPackage#.GraphFactory factory) {",
+				"\treturn factory.createGraph(#gcVariableName#, null, 100, 100);",
+				"}"));
+
+		code.addNoIndent(new CodeSnippet(
+				true,
+				"/**",
+				" * Creates a new #gcName# graph.",
+				"*/",
+				"public #gcName# create#gcCamelName#(#jgPackage#.GraphFactory factory, String id, int vMax, int eMax) {",
 				"\treturn factory.createGraph(#gcVariableName#, id, vMax, eMax);",
 				"}"));
 
@@ -236,33 +254,44 @@ public class SchemaCodeGenerator extends CodeGenerator {
 		code.addNoIndent(new CodeSnippet("}"));
 
 		// ---- file handling methods ----
+		if (config.hasStandardSupport()) {
+			code.addNoIndent(new CodeSnippet(
+					true,
+					"public #gcName# load#gcCamelName#(String filename) throws GraphIOException {",
+					"\t#jgPackage#.GraphFactory factory = createDefaultGraphFactory(#jgPackage#.ImplementationType.STANDARD);",
+					"\treturn load#gcCamelName#(filename, factory, null);", "}"));
+
+			code.addNoIndent(new CodeSnippet(
+					true,
+					"public #gcName# load#gcCamelName#(String filename, #jgPackage#.ProgressFunction pf) throws GraphIOException {",
+					"\t#jgPackage#.GraphFactory factory = createDefaultGraphFactory(#jgPackage#.ImplementationType.STANDARD);",
+					"\treturn load#gcCamelName#(filename, factory, pf);", "}"));
+		}
+
 		code.addNoIndent(new CodeSnippet(
 				true,
-				"/**",
-				" * Loads a #gcName# graph from the file <code>filename</code>.",
-				" *",
-				" * @param filename the name of the file",
-				" * @return the loaded #gcName#",
-				" * @throws GraphIOException if the graph cannot be loaded",
-				" */",
-				"public #gcName# load#gcCamelName#(#jgPackage#.ImplementationType implType, String filename) throws GraphIOException {",
-				"\treturn load#gcCamelName#(implType, filename, null);",
-				"}",
-				"",
-				"/**",
-				" * Loads a #gcName# graph from the file <code>filename</code>.",
-				" *",
-				" * @param filename the name of the file",
-				" * @param pf a progress function to monitor graph loading",
-				" * @return the loaded #gcName#",
-				" * @throws GraphIOException if the graph cannot be loaded",
-				" */",
-				"public #gcName# load#gcCamelName#(#jgPackage#.ImplementationType implType, String filename, ProgressFunction pf) throws GraphIOException {",
+				"public #gcName# load#gcCamelName#(String filename, #jgPackage#.ImplementationType implType) throws GraphIOException {",
 				"\t#jgPackage#.GraphFactory factory = createDefaultGraphFactory(implType);",
-				"\t#gcName# graph = GraphIO.loadGraphFromFile(filename, factory, pf);",
-				"\tif (!(graph instanceof #gcName#)) {",
-				"\t\tthrow new GraphIOException(\"Graph in file '\" + filename + \"' is not an instance of GraphClass #gcName#\");",
-				"\t} else {", "\t\t return graph;", "\t}", "}"));
+				"\treturn load#gcCamelName#(filename, factory, null);", "}"));
+
+		code.addNoIndent(new CodeSnippet(
+				true,
+				"",
+				"public #gcName# load#gcCamelName#(String filename, #jgPackage#.ImplementationType implType, #jgPackage#.ProgressFunction pf) throws GraphIOException {",
+				"\t#jgPackage#.GraphFactory factory = createDefaultGraphFactory(implType);",
+				"\treturn load#gcCamelName#(filename, factory, pf);", "}"));
+
+		code.addNoIndent(new CodeSnippet(
+				true,
+				"public #gcName# load#gcCamelName#(String filename, #jgPackage#.GraphFactory factory) throws GraphIOException {",
+				"\treturn GraphIO.loadGraphFromFile(filename, factory, null);",
+				"}"));
+
+		code.addNoIndent(new CodeSnippet(
+				true,
+				"public #gcName# load#gcCamelName#(String filename, #jgPackage#.GraphFactory factory, #jgPackage#.ProgressFunction pf) throws GraphIOException {",
+				"\treturn GraphIO.loadGraphFromFile(filename, factory, pf);",
+				"}"));
 
 		return code;
 	}

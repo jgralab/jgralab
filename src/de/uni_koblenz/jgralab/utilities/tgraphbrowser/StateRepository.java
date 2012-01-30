@@ -66,7 +66,6 @@ import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.ProgressFunction;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.codegenerator.CodeGeneratorConfiguration;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.exception.GreqlException;
 import de.uni_koblenz.jgralab.greql2.types.Types;
@@ -2010,10 +2009,9 @@ public class StateRepository {
 			try {
 				synchronized (GraphIO.class) {
 					currentGraph.progress = 0;
-					currentGraph.graph = GraphIO.loadSchemaAndGraphFromFile(
-							currentGraph.graphPath,
-							CodeGeneratorConfiguration.MINIMAL,
-							new MyProgressFunction(currentGraph));
+					currentGraph.graph = GraphIO.loadGraphFromFile(
+							currentGraph.graphPath, new MyProgressFunction(
+									currentGraph));
 					assert currentGraph.graph != null : "The graph wasn't loaded correctly.";
 					currentGraph = null;
 				}

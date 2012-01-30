@@ -263,6 +263,54 @@ public class GraphIO {
 		putBackChar = -1;
 	}
 
+	public static Schema loadSchemaFromFile(String filename)
+			throws GraphIOException {
+		InputStream in = null;
+		try {
+			if (filename.toLowerCase().endsWith(".gz")) {
+				in = new GZIPInputStream(new FileInputStream(filename),
+						BUFFER_SIZE);
+			} else {
+				in = new BufferedInputStream(new FileInputStream(filename),
+						BUFFER_SIZE);
+			}
+			return loadSchemaFromStream(in);
+		} catch (IOException ex) {
+			throw new GraphIOException("Exception while loading schema from "
+					+ filename, ex);
+		} finally {
+			close(in);
+		}
+	}
+
+	private static Schema loadSchemaFromStream(InputStream in)
+			throws GraphIOException {
+		try {
+			GraphIO io = new GraphIO();
+			io.TGIn = in;
+			io.tgfile();
+			io.schema.finish();
+			return io.schema;
+		} catch (Exception e) {
+			throw new GraphIOException("Exception while loading schema.", e);
+		}
+	}
+
+	public static Schema loadSchemaFromDatabase(GraphDatabase graphDatabase,
+			String packagePrefix, String schemaName) throws GraphIOException {
+		String definition = graphDatabase.getSchemaDefinition(packagePrefix,
+				schemaName);
+		InputStream input = new ByteArrayInputStream(definition.getBytes());
+		return loadSchemaFromStream(input);
+	}
+
+	public static void loadSchemaIntoGraphDatabase(String filePath,
+			GraphDatabase graphDatabase) throws IOException, GraphIOException,
+			SQLException {
+		Schema schema = loadSchemaFromFile(filePath);
+		graphDatabase.insertSchema(schema);
+	}
+
 	/**
 	 * Saves the specified <code>schema</code> to the file named
 	 * <code>filename</code>. When the <code>filename</code> ends with
@@ -941,96 +989,95 @@ public class GraphIO {
 		}
 	}
 
-	public static Schema loadSchemaFromFile(String filename)
+	public static Graph loadGraphFromFile(String filename, ProgressFunction pf)
 			throws GraphIOException {
-		// TODO should throw a file not found exception (or at least a runtime
-		// exception)
-		InputStream in = null;
-		try {
-			if (filename.toLowerCase().endsWith(".gz")) {
-				in = new GZIPInputStream(new FileInputStream(filename),
-						BUFFER_SIZE);
-			} else {
-				in = new BufferedInputStream(new FileInputStream(filename),
-						BUFFER_SIZE);
-			}
-			return loadSchemaFromStream(in);
-		} catch (IOException ex) {
-			throw new GraphIOException("Exception while loading schema from "
-					+ filename, ex);
-		} finally {
-			if (in != null) {
-				close(in);
-			}
+		return loadGraphFromFile(filename, ImplementationType.STANDARD, pf);
+	}
+
+	public static Graph loadGraphFromFile(String filename,
+			ImplementationType implementationType, ProgressFunction pf)
+			throws GraphIOException {
+		if (implementationType == null
+				|| implementationType == ImplementationType.DATABASE) {
+			throw new IllegalArgumentException(
+					"ImplementationType must be != null and != DATABASE");
 		}
-	}
-
-	public static Schema loadSchemaFromDatabase(GraphDatabase graphDatabase,
-			String packagePrefix, String schemaName) throws GraphIOException {
-		String definition = graphDatabase.getSchemaDefinition(packagePrefix,
-				schemaName);
-		InputStream input = new ByteArrayInputStream(definition.getBytes());
-		return loadSchemaFromStream(input);
-	}
-
-	public static Schema loadSchemaFromStream(InputStream in)
-			throws GraphIOException {
-		try {
-			GraphIO io = new GraphIO();
-			io.TGIn = in;
-			io.tgfile();
-			io.schema.finish();
-			return io.schema;
-		} catch (Exception e) {
-			throw new GraphIOException("Exception while loading schema", e);
-		}
-	}
-
-	public static void loadSchemaIntoGraphDatabase(String filePath,
-			GraphDatabase graphDatabase) throws IOException, GraphIOException,
-			SQLException {
-		Schema schema = loadSchemaFromFile(filePath);
-		graphDatabase.insertSchema(schema);
-	}
-
-	/**
-	 * Loads a graph with standard support from the file <code>filename</code>.
-	 * When schema classes can not be found on the class path, the schema is
-	 * first loaded and compiled in memory using the code generator
-	 * configuration <code>config</code>. When the <code>filename</code> ends
-	 * with <code>.gz</code>, it is assumed that the input is GZIP compressed,
-	 * otherwise uncompressed plain text. A {@link ProgressFunction}
-	 * <code>pf</code> can be used to monitor progress.
-	 * 
-	 * @param filename
-	 *            the name of the TG file to be read
-	 * @param config
-	 *            the {@link CodeGeneratorConfiguration} to be used to generate
-	 *            and compile the schema classes
-	 * @param pf
-	 *            a {@link ProgressFunction}, may be <code>null</code>
-	 * @return the loaded graph
-	 * @throws GraphIOException
-	 *             if an IOException occurs or the compiled schema classes can
-	 *             not be loaded
-	 */
-	public static Graph loadSchemaAndGraphFromFile(String filename,
-			CodeGeneratorConfiguration config, ProgressFunction pf)
-			throws GraphIOException {
+		FileInputStream fileStream = null;
 		try {
 			logger.finer("Loading graph " + filename);
-			return loadGraphFromFile(filename, null,
-					ImplementationType.STANDARD, pf);
-		} catch (GraphIOException ex) {
-			if (ex.getCause() instanceof ClassNotFoundException) {
-				logger.fine("Compiled schema classes were not found, so load and compile the schema first.");
-				Schema s = loadSchemaFromFile(filename);
-				s.compile(config);
-				return loadGraphFromFile(filename, s,
-						ImplementationType.STANDARD, pf);
-			} else {
-				throw ex;
+			fileStream = new FileInputStream(filename);
+			InputStream inputStream = null;
+			try {
+				if (filename.toLowerCase().endsWith(".gz")) {
+					inputStream = new GZIPInputStream(fileStream, BUFFER_SIZE);
+				} else {
+					inputStream = new BufferedInputStream(fileStream,
+							BUFFER_SIZE);
+				}
+				return loadGraphFromStream(inputStream, null, null,
+						implementationType, pf);
+			} catch (IOException ex) {
+				throw new GraphIOException(
+						"Exception while loading graph from file " + filename,
+						ex);
+			} finally {
+				close(inputStream);
 			}
+		} catch (IOException ex) {
+			throw new GraphIOException(
+					"Exception while loading graph from file " + filename, ex);
+		} finally {
+			close(fileStream);
+		}
+	}
+
+	public static <G extends Graph> G loadGraphFromFile(String filename,
+			Schema schema, ImplementationType implementationType,
+			ProgressFunction pf) throws GraphIOException {
+		if (schema == null) {
+			throw new IllegalArgumentException("Schema must be != null");
+		}
+		if (implementationType == null
+				|| implementationType == ImplementationType.DATABASE) {
+			throw new IllegalArgumentException(
+					"ImplementationType must be != null and != DATABASE");
+		}
+		GraphFactory factory = schema
+				.createDefaultGraphFactory(implementationType);
+		return loadGraphFromFile(filename, factory, pf);
+	}
+
+	public static <G extends Graph> G loadGraphFromFile(String filename,
+			GraphFactory factory, ProgressFunction pf) throws GraphIOException {
+		if (factory == null) {
+			throw new IllegalArgumentException("GraphFactory must be != null");
+		}
+		FileInputStream fileStream = null;
+		try {
+			logger.finer("Loading graph " + filename);
+			fileStream = new FileInputStream(filename);
+			InputStream inputStream = null;
+			try {
+				if (filename.toLowerCase().endsWith(".gz")) {
+					inputStream = new GZIPInputStream(fileStream, BUFFER_SIZE);
+				} else {
+					inputStream = new BufferedInputStream(fileStream,
+							BUFFER_SIZE);
+				}
+				return loadGraphFromStream(inputStream, factory.getSchema(),
+						factory, factory.getImplementationType(), pf);
+			} catch (IOException ex) {
+				throw new GraphIOException(
+						"Exception while loading graph from file " + filename,
+						ex);
+			} finally {
+				close(inputStream);
+			}
+		} catch (IOException ex) {
+			throw new GraphIOException(
+					"Exception while loading graph from file " + filename, ex);
+		} finally {
+			close(fileStream);
 		}
 	}
 
@@ -1043,153 +1090,74 @@ public class GraphIO {
 		}
 	}
 
-	/**
-	 * Loads a graph from the file <code>filename</code>. When the
-	 * <code>filename</code> ends with <code>.gz</code>, it is assumed that the
-	 * input is GZIP compressed, otherwise uncompressed plain text. A
-	 * {@link ProgressFunction} <code>pf</code> can be used to monitor progress.
-	 * 
-	 * @param filename
-	 *            the name of the TG file to be read
-	 * @param schema
-	 *            the schema (must be the same schema as in the TG file read by
-	 *            the InputStream), may be <code>null</code>
-	 * @param pf
-	 *            a {@link ProgressFunction}, may be <code>null</code>
-	 * @param implementationType
-	 * @return the loaded graph
-	 * @throws GraphIOException
-	 *             if an IOException occurs or the compiled schema classes can
-	 *             not be loaded
-	 */
-	public static <G extends Graph> G loadGraphFromFile(String filename,
-			Schema schema, ImplementationType implementationType,
-			ProgressFunction pf) throws GraphIOException {
-		InputStream inputStream = null;
-		FileInputStream fileStream = null;
-		try {
-			logger.finer("Loading graph " + filename);
-			fileStream = new FileInputStream(filename);
-			if (filename.toLowerCase().endsWith(".gz")) {
-				inputStream = new GZIPInputStream(fileStream, BUFFER_SIZE);
-			} else {
-				inputStream = new BufferedInputStream(fileStream, BUFFER_SIZE);
-			}
-			return loadGraphFromStream(inputStream, schema, null,
-					implementationType, pf);
-		} catch (IOException ex) {
-			throw new GraphIOException(
-					"Exception while loading graph from file " + filename, ex);
-		} finally {
-			if (inputStream != null) {
-				close(inputStream);
-			}
-			if (fileStream != null) {
-				close(fileStream);
-			}
-		}
-	}
-
-	public static <G extends Graph> G loadGraphFromFile(String filename,
-			ProgressFunction pf) throws GraphIOException {
-		return loadGraphFromFile(filename, null, ImplementationType.STANDARD,
-				pf);
-	}
-
-	public static <G extends Graph> G loadGraphFromFile(String filename,
-			GraphFactory factory, ProgressFunction pf) throws GraphIOException {
-		InputStream inputStream = null;
-		FileInputStream fileStream = null;
-		try {
-			logger.finer("Loading graph " + filename);
-			fileStream = new FileInputStream(filename);
-			if (filename.toLowerCase().endsWith(".gz")) {
-				inputStream = new GZIPInputStream(fileStream, BUFFER_SIZE);
-			} else {
-				inputStream = new BufferedInputStream(fileStream, BUFFER_SIZE);
-			}
-			return loadGraphFromStream(inputStream, factory.getSchema(),
-					factory, null, pf);
-		} catch (IOException ex) {
-			throw new GraphIOException(
-					"Exception while loading graph from file " + filename, ex);
-		} finally {
-			if (inputStream != null) {
-				close(inputStream);
-			}
-			if (fileStream != null) {
-				close(fileStream);
-			}
-		}
-	}
-
 	private static void close(Closeable stream) throws GraphIOException {
 		try {
 			if (stream != null) {
 				stream.close();
 			}
 		} catch (IOException ex) {
-			throw new GraphIOException("Exception while closing the stream.",
-					ex);
+			throw new GraphIOException("Exception while closing stream.", ex);
 		}
 	}
 
-	/**
-	 * Loads a graph from the stream <code>in</code>. A {@link ProgressFunction}
-	 * <code>pf</code> can be used to monitor progress. The stream is
-	 * <em>not</em> closed.
-	 * 
-	 * @param in
-	 *            an InputStream
-	 * @param schema
-	 *            the schema (must be the same schema as in the TG file read by
-	 *            the InputStream), may be <code>null</code>
-	 * @param pf
-	 *            a {@link ProgressFunction}, may be <code>null</code>
-	 * @param implementationType
-	 *            when <code>true</code>, a graph instance with transaction
-	 *            support is created
-	 * @return the loaded graph
-	 * @throws GraphIOException
-	 *             if an IOException occurs or the compiled schema classes can
-	 *             not be loaded
-	 */
-	public static <G extends Graph> G loadGraphFromStream(InputStream in,
+	private static <G extends Graph> G loadGraphFromStream(InputStream in,
 			Schema schema, GraphFactory graphFactory,
 			ImplementationType implementationType, ProgressFunction pf)
 			throws GraphIOException {
 		try {
 			GraphIO io = new GraphIO();
-			io.schema = schema;
 			io.TGIn = in;
+			io.schema = schema;
 			io.tgfile();
 			if (implementationType != ImplementationType.GENERIC) {
+				// we have replace the schema by an instance of the compiled
+				// schema, try to load the schema class
 				String schemaQName = io.schema.getQualifiedName();
-				Class<?> schemaClass = Class.forName(schemaQName, true,
-						SchemaClassManager.instance(schemaQName));
+				Class<?> schemaClass = null;
+				try {
+					schemaClass = Class.forName(schemaQName, true,
+							SchemaClassManager.instance(schemaQName));
+				} catch (ClassNotFoundException e) {
+					// schema class not found, try compile schema in-memory
+					io.schema.compile(CodeGeneratorConfiguration.MINIMAL);
+					try {
+						schemaClass = Class.forName(schemaQName, true,
+								SchemaClassManager.instance(schemaQName));
+					} catch (ClassNotFoundException e1) {
+						throw new GraphIOException(
+								"Unable to load a graph which belongs to the schema because the Java-classes for this schema can not be created.",
+								e1);
+					}
+				}
+				// create an instance of the compiled schema class
 				Method instanceMethod = schemaClass.getMethod("instance",
 						(Class<?>[]) null);
 				io.schema = (Schema) instanceMethod.invoke(null, new Object[0]);
 			}
 			io.schema.finish();
 			if (graphFactory == null) {
-				graphFactory = schema
+				graphFactory = io.schema
 						.createDefaultGraphFactory(implementationType);
 			}
+			if (graphFactory.getSchema() != io.schema) {
+				throw new GraphIOException(
+						"Incompatible in graph factory: Expected '"
+								+ io.schema.getQualifiedName() + "', found '"
+								+ graphFactory.getSchema().getQualifiedName()
+								+ "'.");
+			}
+			if (implementationType != null
+					&& graphFactory.getImplementationType() != implementationType) {
+				throw new GraphIOException(
+						"Graph factory has wrong implementation type: Expected '"
+								+ implementationType + "', found '"
+								+ graphFactory.getImplementationType() + "'.");
+			}
 			io.graphFactory = graphFactory;
+
 			@SuppressWarnings("unchecked")
 			G loadedGraph = (G) io.graph(pf);
-			((GraphBaseImpl) loadedGraph).internalLoadingCompleted(
-					io.firstIncidence, io.nextIncidence);
-			io.firstIncidence = null;
-			io.nextIncidence = null;
 			return loadedGraph;
-		} catch (ClassNotFoundException e) {
-			// the schema class was not found, probably schema.commit-method was
-			// not called, or schema package was not included into classpath
-			throw new GraphIOException(
-					"Unable to load a graph which belongs to the schema because the Java-classes for this schema have not yet been created."
-							+ " Use Schema.commit(...) to create them!", e);
 		} catch (GraphIOException e1) {
 			throw e1;
 		} catch (Exception e2) {
@@ -2535,7 +2503,11 @@ public class GraphIO {
 		if (pf != null) {
 			pf.finished();
 		}
+		graph.internalLoadingCompleted(firstIncidence, nextIncidence);
+		firstIncidence = null;
+		nextIncidence = null;
 		graph.setLoading(false);
+		graph.loadingCompleted();
 		return graph;
 	}
 

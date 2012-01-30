@@ -57,6 +57,7 @@ import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
+import de.uni_koblenz.jgralab.grumlschema.GrumlSchema;
 import de.uni_koblenz.jgralab.grumlschema.SchemaGraph;
 import de.uni_koblenz.jgralab.grumlschema.domains.BooleanDomain;
 import de.uni_koblenz.jgralab.grumlschema.domains.CollectionDomain;
@@ -151,8 +152,8 @@ public class SchemaGraph2XMI {
 		try {
 			if (cli.hasOption("ig")) {
 				s.process(
-						GraphIO.<SchemaGraph> loadGraphFromFile(
-								cli.getOptionValue("ig"), null), outputName);
+						GrumlSchema.instance().loadSchemaGraph(
+								cli.getOptionValue("ig")), outputName);
 			} else {
 				s.process(new Schema2SchemaGraph().convert2SchemaGraph(GraphIO
 						.loadSchemaFromFile(cli.getOptionValue("i"))),
