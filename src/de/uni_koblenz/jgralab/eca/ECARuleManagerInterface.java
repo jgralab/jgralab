@@ -1,10 +1,11 @@
 package de.uni_koblenz.jgralab.eca;
 
-import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
+import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
+import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.VertexClass;
 
 public interface ECARuleManagerInterface {
@@ -47,8 +48,7 @@ public interface ECARuleManagerInterface {
 	 * @param elementClass
 	 *            the Class of the new Edge
 	 */
-	public abstract void fireBeforeCreateEdgeEvents(
-			Class<? extends Edge> elementClass);
+	public abstract void fireBeforeCreateEdgeEvents(EdgeClass elementClass);
 
 	/**
 	 * Fire Events from afterCreateEdgeEvents list
@@ -118,8 +118,8 @@ public interface ECARuleManagerInterface {
 	 * @param attributeName
 	 *            the name of the Attribute that will change
 	 */
-	public abstract void fireBeforeChangeAttributeEvents(
-			AttributedElement<?, ?> element, String attributeName,
+	public abstract <AEC extends AttributedElementClass<AEC, ?>> void fireBeforeChangeAttributeEvents(
+			AttributedElement<AEC, ?> element, String attributeName,
 			Object oldValue, Object newValue);
 
 	/**
@@ -130,8 +130,8 @@ public interface ECARuleManagerInterface {
 	 * @param attributeName
 	 *            the name of the changed Attribute
 	 */
-	public abstract void fireAfterChangeAttributeEvents(
-			AttributedElement<?, ?> element, String attributeName,
+	public abstract <AEC extends AttributedElementClass<AEC, ?>> void fireAfterChangeAttributeEvents(
+			AttributedElement<AEC, ?> element, String attributeName,
 			Object oldValue, Object newValue);
 
 	/**

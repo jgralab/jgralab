@@ -3,8 +3,10 @@ package de.uni_koblenz.jgralab.eca;
 import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.eca.events.Event;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
+import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 
-public class GreqlCondition implements Condition {
+public class GreqlCondition<AEC extends AttributedElementClass<AEC, ?>> implements
+		Condition<AEC> {
 	/**
 	 * Condition as GReQuL Query
 	 */
@@ -32,8 +34,8 @@ public class GreqlCondition implements Condition {
 	 * @return if the condition is evaluated to true
 	 */
 	@Override
-	public boolean evaluate(Event event) {
-		AttributedElement<?, ?> element = event.getElement();
+	public boolean evaluate(Event<AEC> event) {
+		AttributedElement<AEC, ?> element = event.getElement();
 		GreqlEvaluator greqlEvaluator = ((ECARuleManager) event.getGraph()
 				.getECARuleManager()).getGreqlEvaluator();
 		if (conditionExpression.contains("context")) {
