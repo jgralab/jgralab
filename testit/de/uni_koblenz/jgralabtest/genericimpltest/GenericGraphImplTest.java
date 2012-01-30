@@ -58,7 +58,7 @@ public class GenericGraphImplTest {
 	 *            tested.
 	 */
 	private void testElementAttributes(Object testObject,
-			AttributedElementClass aec) {
+			AttributedElementClass<?, ?> aec) {
 		try {
 			Field f = testObject.getClass().getDeclaredField("attributes");
 			f.setAccessible(true);
@@ -351,7 +351,7 @@ public class GenericGraphImplTest {
 		try {
 			Schema schema = GraphIO.loadSchemaFromFile(SCHEMAFOLDER
 					+ "VertexTestSchema.tg");
-			Graph g = schema.createGraph(ImplementationType.GENERIC, 100, 100);
+			Graph g = schema.createGraph(ImplementationType.GENERIC);
 			Vertex v1 = g.createVertex(schema.getGraphClass().getVertexClass(
 					"DoubleSubNode"));
 			Vertex v2 = g.createVertex(schema.getGraphClass().getVertexClass(
@@ -378,7 +378,7 @@ public class GenericGraphImplTest {
 		try {
 			Schema schema = GraphIO.loadSchemaFromFile(SCHEMAFOLDER
 					+ "VertexTestSchema.tg");
-			Graph g = schema.createGraph(ImplementationType.GENERIC, 100, 100);
+			Graph g = schema.createGraph(ImplementationType.GENERIC);
 			Vertex v1 = g.createVertex(schema.getGraphClass().getVertexClass(
 					"DoubleSubNode"));
 			Vertex v2 = g.createVertex(schema.getGraphClass().getVertexClass(
@@ -498,8 +498,7 @@ public class GenericGraphImplTest {
 	public void testSetTraversalContext() {
 		try {
 			final Graph g = GraphIO.loadGraphFromFile(GRAPHFOLDER
-					+ "greqltestgraph.tg", null, null,
-					ImplementationType.GENERIC);
+					+ "greqltestgraph.tg", ImplementationType.GENERIC, null);
 			g.setTraversalContext(new TraversalContext() {
 
 				@Override
@@ -804,8 +803,8 @@ public class GenericGraphImplTest {
 			g.save(DATAFOLDER + "GenericTestGraph1.tg");
 
 			Graph g2 = GraphIO.loadGraphFromFile(DATAFOLDER
-					+ "GenericTestGraph1.tg", schema, null,
-					ImplementationType.GENERIC);
+					+ "GenericTestGraph1.tg", schema,
+					ImplementationType.GENERIC, null);
 			Iterator<Vertex> vertexIterator1 = g.vertices().iterator();
 			Iterator<Vertex> vertexIterator2 = g2.vertices().iterator();
 			Iterator<Edge> edgeIterator1 = g.edges().iterator();
@@ -841,8 +840,8 @@ public class GenericGraphImplTest {
 			Schema s = GraphIO.loadSchemaFromFile(GRAPHFOLDER
 					+ "citymapgraph.tg");
 			Graph g = GraphIO.loadGraphFromFile(
-					GRAPHFOLDER + "citymapgraph.tg", s, null,
-					ImplementationType.GENERIC);
+					GRAPHFOLDER + "citymapgraph.tg", s,
+					ImplementationType.GENERIC, null);
 			assertEquals(8, g.getVCount());
 			assertEquals(11, g.getECount());
 
@@ -966,7 +965,7 @@ public class GenericGraphImplTest {
 			Schema s = GraphIO.loadSchemaFromFile(GRAPHFOLDER
 					+ "greqltestgraph.tg");
 			Graph g1 = GraphIO.loadGraphFromFile(GRAPHFOLDER
-					+ "greqltestgraph.tg", s, null, ImplementationType.GENERIC);
+					+ "greqltestgraph.tg", s, ImplementationType.GENERIC, null);
 
 			assertEquals(s.getGraphClass(), g1.getAttributedElementClass());
 			assertEquals(157, g1.getVCount());
@@ -976,7 +975,7 @@ public class GenericGraphImplTest {
 			// implementation
 			Graph g2 = GraphIO
 					.loadGraphFromFile(GRAPHFOLDER + "greqltestgraph.tg", s,
-							null, ImplementationType.STANDARD);
+							ImplementationType.STANDARD, null);
 			for (Vertex v : g2.vertices()) {
 				assertEquals(v.getAttributedElementClass(),
 						g1.getVertex(v.getId()).getAttributedElementClass());

@@ -19,7 +19,7 @@ public class CreateGraphTest {
 		System.out.println("Create schema...");
 		Schema schema = new SchemaImpl("SimpleSchema", "de.uni_koblenz.demo");
 		GraphClass gc = schema.createGraphClass("SimpleGraph");
-		VertexClass node = gc.createVertexClass("Node");
+		VertexClass vc = gc.createVertexClass("Node");
 
 		Level l = JGraLab.setLogLevel(Level.FINE);
 		System.out.println("Compile schema classes in memory...");
@@ -30,8 +30,8 @@ public class CreateGraphTest {
 		System.err.flush();
 		System.out.println("Create " + gc.getQualifiedName());
 		Graph g = schema.createGraph(ImplementationType.STANDARD);
-		g.createVertex(node.getSchemaClass());
-		g.createVertex(node.getSchemaClass());
+		g.createVertex(vc);
+		g.createVertex(vc);
 		JGraLab.setLogLevel(l);
 		try {
 			System.out.println("Save graph...");

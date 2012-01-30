@@ -55,11 +55,11 @@ import de.uni_koblenz.jgralab.schema.impl.AttributeImpl;
 import de.uni_koblenz.jgralab.schema.impl.ConstraintImpl;
 import de.uni_koblenz.jgralab.schema.impl.SchemaImpl;
 
-public abstract class AttributedElementClassImplTest {
+public abstract class AttributedElementClassImplTest<AEC extends AttributedElementClass<?, ?>> {
 
 	protected Schema schema;
 	protected GraphClass graphClass;
-	protected AttributedElementClass<?, ?> attributedElement;
+	protected AEC attributedElement;
 
 	@Before
 	public void setUp() {
@@ -163,7 +163,7 @@ public abstract class AttributedElementClassImplTest {
 	 * 
 	 * NOTE: This method is called upon in all of this classes´ subclasses.
 	 */
-	public final void testAddAttribute4(AttributedElementClass<?, ?> superclass) {
+	public final void testAddAttribute4(AEC superclass) {
 		Attribute attribute = new AttributeImpl("testAttribute",
 				schema.getBooleanDomain(), attributedElement, "null");
 
@@ -192,7 +192,7 @@ public abstract class AttributedElementClassImplTest {
 	 * 
 	 * NOTE: This method is called upon in all of this classes´ subclasses.
 	 */
-	public final void testAddAttribute5(AttributedElementClass<?, ?> subclass) {
+	public final void testAddAttribute5(AEC subclass) {
 		Attribute attribute = new AttributeImpl("testAttribute",
 				schema.getBooleanDomain(), attributedElement, "null");
 
@@ -311,7 +311,7 @@ public abstract class AttributedElementClassImplTest {
 	 * 
 	 * NOTE: This method is called upon in all of this classes´ subclasses.
 	 */
-	public final void testAddConstraint4(AttributedElementClass<?, ?> superClass) {
+	public final void testAddConstraint4(AEC superClass) {
 		Constraint constr = new ConstraintImpl("", "SomeConstraint", "");
 
 		int constraintCountBefore = attributedElement.getConstraints().size();
@@ -332,7 +332,7 @@ public abstract class AttributedElementClassImplTest {
 	 * 
 	 * NOTE: This method is called upon in all of this classes´ subclasses.
 	 */
-	public final void testAddConstraint5(AttributedElementClass<?, ?> subClass) {
+	public final void testAddConstraint5(AEC subClass) {
 		Constraint constr = new ConstraintImpl("", "SomeConstraint", "");
 
 		int constraintCountBefore = attributedElement.getConstraints().size();
@@ -357,7 +357,7 @@ public abstract class AttributedElementClassImplTest {
 	 * 
 	 * Note: This method is called upon in all of this classes´ subclasses.
 	 */
-	public final void testCompareTo(AttributedElementClass<?, ?> other) {
+	public final void testCompareTo(AEC other) {
 		int comp = attributedElement.compareTo(other);
 
 		Assert.assertTrue(comp < 0);
@@ -371,7 +371,7 @@ public abstract class AttributedElementClassImplTest {
 	 * 
 	 * Note: This method is called upon in all of this classes´ subclasses.
 	 */
-	public final void testCompareTo2(AttributedElementClass<?, ?> other) {
+	public final void testCompareTo2(AEC other) {
 		int comp = attributedElement.compareTo(other);
 
 		Assert.assertTrue(comp > 0);
@@ -387,7 +387,7 @@ public abstract class AttributedElementClassImplTest {
 	 * 
 	 * Note: This method is called upon in all of this classes´ subclasses.
 	 */
-	public final void testCompareTo3(AttributedElementClass<?, ?> other) {
+	public final void testCompareTo3(AEC other) {
 		int comp = attributedElement.compareTo(other);
 
 		Assert.assertTrue(comp == 0);
@@ -431,8 +431,7 @@ public abstract class AttributedElementClassImplTest {
 	 * 
 	 * NOTE: This method is called upon in all of this classes´ subclasses.
 	 */
-	public final void testContainsAttribute3(
-			AttributedElementClass<?, ?> superClass) {
+	public final void testContainsAttribute3(AEC superClass) {
 		Attribute attribute = new AttributeImpl("testAttribute",
 				schema.getBooleanDomain(), attributedElement, "null");
 
@@ -460,17 +459,15 @@ public abstract class AttributedElementClassImplTest {
 	 * 
 	 * NOTE: This method is called upon in all of this classes´ subclasses.
 	 */
-	public final void testGetAllSubClasses(
-			Vector<AttributedElementClass<?, ?>> expectedSubClasses) {
-		Set<AttributedElementClass<?, ?>> subClasses = attributedElement
-				.getAllSubClasses();
+	public final void testGetAllSubClasses(Vector<AEC> expectedSubClasses) {
+		Set<AEC> subClasses = attributedElement.getAllSubClasses();
 
 		Assert.assertEquals(expectedSubClasses.size(), subClasses.size());
 
 		// Check if this element contains all expected subclasses
-		for (AttributedElementClass<?, ?> expectedSubClass : expectedSubClasses) {
+		for (AEC expectedSubClass : expectedSubClasses) {
 			boolean expectedSubClassFound = false;
-			for (AttributedElementClass<?, ?> subClass : subClasses) {
+			for (AEC subClass : subClasses) {
 				if (subClass.getQualifiedName().equals(
 						expectedSubClass.getQualifiedName())) {
 					expectedSubClassFound = true;
@@ -504,17 +501,15 @@ public abstract class AttributedElementClassImplTest {
 	 * 
 	 * NOTE: This method is called upon in all of this classes´ subclasses.
 	 */
-	public final void testGetAllSuperClasses(
-			Vector<AttributedElementClass<?, ?>> expectedSuperClasses) {
-		Set<AttributedElementClass<?, ?>> superClasses = attributedElement
-				.getAllSuperClasses();
+	public final void testGetAllSuperClasses(Vector<AEC> expectedSuperClasses) {
+		Set<AEC> superClasses = attributedElement.getAllSuperClasses();
 
 		Assert.assertEquals(expectedSuperClasses.size(), superClasses.size());
 
 		// Check if this element contains all expected superclasses
-		for (AttributedElementClass<?, ?> expectedSuperClass : expectedSuperClasses) {
+		for (AEC expectedSuperClass : expectedSuperClasses) {
 			boolean expectedSuperClassFound = false;
-			for (AttributedElementClass<?, ?> superClass : superClasses) {
+			for (AEC superClass : superClasses) {
 				if (superClass.getQualifiedName().equals(
 						expectedSuperClass.getQualifiedName())) {
 					expectedSuperClassFound = true;
@@ -555,7 +550,7 @@ public abstract class AttributedElementClassImplTest {
 	 * 
 	 * NOTE: This method is called upon in all of this classes´ subclasses.
 	 */
-	public final void testGetAttribute2(AttributedElementClass<?, ?> superClass) {
+	public final void testGetAttribute2(AEC superClass) {
 		Attribute attribute = new AttributeImpl("testAttribute",
 				schema.getBooleanDomain(), attributedElement, "null");
 
@@ -596,7 +591,7 @@ public abstract class AttributedElementClassImplTest {
 	 * 
 	 * NOTE: This method is called upon in all of this classes´ subclasses.
 	 */
-	public final void testGetAttribute5(AttributedElementClass<?, ?> subClass) {
+	public final void testGetAttribute5(AEC subClass) {
 		Attribute attribute = new AttributeImpl("testAttribute",
 				schema.getBooleanDomain(), attributedElement, "null");
 
@@ -630,8 +625,7 @@ public abstract class AttributedElementClassImplTest {
 	 * 
 	 * NOTE: This method is called upon in all of this classes´ subclasses.
 	 */
-	public final void testGetAttributeCount2(
-			AttributedElementClass<?, ?> superClass) {
+	public final void testGetAttributeCount2(AEC superClass) {
 		superClass.addAttribute(new AttributeImpl("testAttribute", schema
 				.getBooleanDomain(), attributedElement, "null"));
 
@@ -646,8 +640,7 @@ public abstract class AttributedElementClassImplTest {
 	 * 
 	 * NOTE: This method is called upon in all of this classes´ subclasses.
 	 */
-	public final void testGetAttributeCount3(
-			AttributedElementClass<?, ?> superClass) {
+	public final void testGetAttributeCount3(AEC superClass) {
 		attributedElement.addAttribute(new AttributeImpl("testAttribute",
 				schema.getBooleanDomain(), attributedElement, "null"));
 
@@ -676,8 +669,7 @@ public abstract class AttributedElementClassImplTest {
 	 * 
 	 * NOTE: This method is called upon in all of this classes´ subclasses.
 	 */
-	public final void testGetAttributeCount5(
-			AttributedElementClass<?, ?> subClass) {
+	public final void testGetAttributeCount5(AEC subClass) {
 		subClass.addAttribute(new AttributeImpl("testAttribute", schema
 				.getBooleanDomain(), attributedElement, "null"));
 
@@ -715,8 +707,7 @@ public abstract class AttributedElementClassImplTest {
 	 * 
 	 * NOTE: This method is called upon in all of this classes´ subclasses.
 	 */
-	public final void testGetAttributeList2(
-			AttributedElementClass<?, ?> superClass) {
+	public final void testGetAttributeList2(AEC superClass) {
 		Attribute attribute = new AttributeImpl("testAttribute",
 				schema.getBooleanDomain(), attributedElement, "null");
 
@@ -737,8 +728,7 @@ public abstract class AttributedElementClassImplTest {
 	 * 
 	 * NOTE: This method is called upon in all of this classes´ subclasses.
 	 */
-	public final void testGetAttributeList3(
-			AttributedElementClass<?, ?> superClass) {
+	public final void testGetAttributeList3(AEC superClass) {
 		Attribute attribute = new AttributeImpl("testAttribute",
 				schema.getBooleanDomain(), attributedElement, "null");
 		Attribute attribute2 = new AttributeImpl("testAttribute2",
@@ -774,8 +764,7 @@ public abstract class AttributedElementClassImplTest {
 	 * 
 	 * NOTE: This method is called upon in all of this classes´ subclasses.
 	 */
-	public final void testGetAttributeList5(
-			AttributedElementClass<?, ?> subClass) {
+	public final void testGetAttributeList5(AEC subClass) {
 		Assert.assertTrue(attributedElement.getAttributeList().isEmpty());
 	}
 
@@ -836,8 +825,7 @@ public abstract class AttributedElementClassImplTest {
 	 * 
 	 * Note: This method is called upon in all of this classes´ subclasses.
 	 */
-	public final void testGetConstraints4(
-			AttributedElementClass<?, ?> superClass) {
+	public final void testGetConstraints4(AEC superClass) {
 		Constraint constr = new ConstraintImpl("", "SomeConstraint", "");
 		Constraint constr2 = new ConstraintImpl("", "SomeOtherConstraint", "");
 
@@ -873,17 +861,15 @@ public abstract class AttributedElementClassImplTest {
 	 * 
 	 * NOTE: This method is called upon in all of this classes´ subclasses.
 	 */
-	public final void testGetDirectSubClasses(
-			Vector<AttributedElementClass<?, ?>> expectedSubClasses) {
-		Set<AttributedElementClass<?, ?>> subClasses = attributedElement
-				.getDirectSubClasses();
+	public final void testGetDirectSubClasses(Vector<AEC> expectedSubClasses) {
+		Set<AEC> subClasses = attributedElement.getDirectSubClasses();
 
 		Assert.assertEquals(subClasses.size(), expectedSubClasses.size());
 
 		// Check if subClasses contains all expected subclasses, and only these
-		for (AttributedElementClass<?, ?> subClass : subClasses) {
+		for (AEC subClass : subClasses) {
 			boolean subClassFound = false;
-			for (AttributedElementClass<?, ?> expectedSubClass : expectedSubClasses) {
+			for (AEC expectedSubClass : expectedSubClasses) {
 				if (expectedSubClass.getQualifiedName().equals(
 						subClass.getQualifiedName())) {
 					subClassFound = true;
@@ -915,18 +901,16 @@ public abstract class AttributedElementClassImplTest {
 	 * 
 	 * NOTE: This method is called upon in all of this classes´ subclasses.
 	 */
-	public final void testGetDirectSuperClasses(
-			Vector<AttributedElementClass<?, ?>> expectedSuperClasses) {
-		Set<AttributedElementClass<?, ?>> superClasses = attributedElement
-				.getDirectSuperClasses();
+	public final void testGetDirectSuperClasses(Vector<AEC> expectedSuperClasses) {
+		Set<AEC> superClasses = attributedElement.getDirectSuperClasses();
 
 		Assert.assertEquals(expectedSuperClasses.size(), superClasses.size());
 
 		// Check if superClasses contains all expected superclasses, and only
 		// these
-		for (AttributedElementClass<?, ?> superClass : superClasses) {
+		for (AEC superClass : superClasses) {
 			boolean superClassFound = false;
-			for (AttributedElementClass<?, ?> expectedSuperClass : expectedSuperClasses) {
+			for (AEC expectedSuperClass : expectedSuperClasses) {
 				if (expectedSuperClass.getQualifiedName().equals(
 						superClass.getQualifiedName())) {
 					superClassFound = true;
@@ -1006,8 +990,7 @@ public abstract class AttributedElementClassImplTest {
 	 * 
 	 * NOTE: This method is called upon in all of this classes´ subclasses.
 	 */
-	public final void testGetOwnAttribute4(
-			AttributedElementClass<?, ?> otherClass) {
+	public final void testGetOwnAttribute4(AEC otherClass) {
 		Attribute attribute = new AttributeImpl("testAttribute",
 				schema.getBooleanDomain(), attributedElement, "null");
 
@@ -1073,8 +1056,7 @@ public abstract class AttributedElementClassImplTest {
 	 * 
 	 * NOTE: This method is called upon in all of this classes´ subclasses.
 	 */
-	public final void testGetOwnAttributeCount4(
-			AttributedElementClass<?, ?> superClass) {
+	public final void testGetOwnAttributeCount4(AEC superClass) {
 		Attribute attribute = new AttributeImpl("testAttribute",
 				schema.getBooleanDomain(), attributedElement, "null");
 		superClass.addAttribute(attribute);
@@ -1148,8 +1130,7 @@ public abstract class AttributedElementClassImplTest {
 	 * 
 	 * NOTE: This method is called upon in all of this classes´ subclasses.
 	 */
-	public final void testGetOwnAttributeList4(
-			AttributedElementClass<?, ?> superClass) {
+	public final void testGetOwnAttributeList4(AEC superClass) {
 		Attribute attribute = new AttributeImpl("testAttribute",
 				schema.getBooleanDomain(), attributedElement, "null");
 		superClass.addAttribute(attribute);
@@ -1233,7 +1214,7 @@ public abstract class AttributedElementClassImplTest {
 	 * 
 	 * NOTE: This method is called upon in all of this classes´ subclasses.
 	 */
-	public final void testHasAttributes3(AttributedElementClass<?, ?> superClass) {
+	public final void testHasAttributes3(AEC superClass) {
 		Attribute attribute = new AttributeImpl("testAttribute",
 				schema.getBooleanDomain(), attributedElement, "null");
 		superClass.addAttribute(attribute);
@@ -1248,7 +1229,7 @@ public abstract class AttributedElementClassImplTest {
 	 * 
 	 * NOTE: This method is called upon in all of this classes´ subclasses.
 	 */
-	public final void testHasAttributes4(AttributedElementClass<?, ?> superClass) {
+	public final void testHasAttributes4(AEC superClass) {
 		Attribute attribute = new AttributeImpl("testAttribute",
 				schema.getBooleanDomain(), attributedElement, "null");
 		Attribute attribute2 = new AttributeImpl("testAttribute2",
@@ -1266,7 +1247,7 @@ public abstract class AttributedElementClassImplTest {
 	 * 
 	 * NOTE: This method is called upon in all of this classes´ subclasses.
 	 */
-	public final void testHasAttributes5(AttributedElementClass<?, ?> superClass) {
+	public final void testHasAttributes5(AEC superClass) {
 		Attribute attribute = new AttributeImpl("testAttribute",
 				schema.getBooleanDomain(), attributedElement, "null");
 		Attribute attribute2 = new AttributeImpl("testAttribute2",
@@ -1344,8 +1325,7 @@ public abstract class AttributedElementClassImplTest {
 	 * 
 	 * NOTE: This method is called upon in all of this classes´ subclasses.
 	 */
-	public final void testHasOwnAttributes4(
-			AttributedElementClass<?, ?> superClass) {
+	public final void testHasOwnAttributes4(AEC superClass) {
 		Attribute attribute = new AttributeImpl("testAttribute",
 				schema.getBooleanDomain(), attributedElement, "null");
 		Attribute attribute2 = new AttributeImpl("testAttribute2",
@@ -1363,8 +1343,7 @@ public abstract class AttributedElementClassImplTest {
 	 * 
 	 * NOTE: This method is called upon in all of this classes´ subclasses.
 	 */
-	public final void testHasOwnAttributes5(
-			AttributedElementClass<?, ?> superClass) {
+	public final void testHasOwnAttributes5(AEC superClass) {
 		Attribute attribute = new AttributeImpl("testAttribute",
 				schema.getBooleanDomain(), attributedElement, "null");
 		Attribute attribute2 = new AttributeImpl("testAttribute2",
@@ -1411,7 +1390,7 @@ public abstract class AttributedElementClassImplTest {
 	 * 
 	 * TEST CASE: The other element is a direct superclass of this element
 	 */
-	public final void testIsDirectSubClassOf(AttributedElementClass<?, ?> other) {
+	public final void testIsDirectSubClassOf(AEC other) {
 		Assert.assertTrue(attributedElement.isDirectSubClassOf(other));
 	}
 
@@ -1426,7 +1405,7 @@ public abstract class AttributedElementClassImplTest {
 	 * 
 	 * TEST CASE: The other element and this element are the same
 	 */
-	public final void testIsDirectSubClassOf2(AttributedElementClass<?, ?> other) {
+	public final void testIsDirectSubClassOf2(AEC other) {
 		Assert.assertFalse(attributedElement.isDirectSubClassOf(other));
 	}
 
@@ -1438,8 +1417,7 @@ public abstract class AttributedElementClassImplTest {
 	 * 
 	 * TEST CASE: The other element is a direct subclass of this element
 	 */
-	public final void testIsDirectSuperClassOf(
-			AttributedElementClass<?, ?> other) {
+	public final void testIsDirectSuperClassOf(AEC other) {
 		Assert.assertTrue(attributedElement.isDirectSuperClassOf(other));
 	}
 
@@ -1454,8 +1432,7 @@ public abstract class AttributedElementClassImplTest {
 	 * 
 	 * TEST CASE: The other element and this element are the same
 	 */
-	public final void testIsDirectSuperClassOf2(
-			AttributedElementClass<?, ?> other) {
+	public final void testIsDirectSuperClassOf2(AEC other) {
 		Assert.assertFalse(attributedElement.isDirectSuperClassOf(other));
 	}
 
@@ -1500,7 +1477,7 @@ public abstract class AttributedElementClassImplTest {
 	 * 
 	 * TEST CASE: The other element is an inherited superclass of this element
 	 */
-	public final void testIsSubClassOf(AttributedElementClass<?, ?> other) {
+	public final void testIsSubClassOf(AEC other) {
 		Assert.assertTrue(attributedElement.isSubClassOf(other));
 	}
 
@@ -1513,7 +1490,7 @@ public abstract class AttributedElementClassImplTest {
 	 * 
 	 * TEST CASE: The other element and this element are the same
 	 */
-	public final void testIsSubClassOf2(AttributedElementClass<?, ?> other) {
+	public final void testIsSubClassOf2(AEC other) {
 		Assert.assertFalse(attributedElement.isSubClassOf(other));
 	}
 
@@ -1527,7 +1504,7 @@ public abstract class AttributedElementClassImplTest {
 	 * 
 	 * TEST CASE: The other element is an inherited subclass of this element
 	 */
-	public final void testIsSuperClassOf(AttributedElementClass<?, ?> other) {
+	public final void testIsSuperClassOf(AEC other) {
 		Assert.assertTrue(attributedElement.isSuperClassOf(other));
 	}
 
@@ -1540,7 +1517,7 @@ public abstract class AttributedElementClassImplTest {
 	 * 
 	 * TEST CASE: The other element and this element are the same
 	 */
-	public final void testIsSuperClassOf2(AttributedElementClass<?, ?> other) {
+	public final void testIsSuperClassOf2(AEC other) {
 		Assert.assertFalse(attributedElement.isSuperClassOf(other));
 	}
 
@@ -1556,8 +1533,7 @@ public abstract class AttributedElementClassImplTest {
 	 * 
 	 * TEST CASE: The other element is a superclass of this element
 	 */
-	public final void testIsSuperClassOfOrEquals(
-			AttributedElementClass<?, ?> other) {
+	public final void testIsSuperClassOfOrEquals(AEC other) {
 		Assert.assertTrue(attributedElement.isSuperClassOfOrEquals(other));
 	}
 
@@ -1568,8 +1544,7 @@ public abstract class AttributedElementClassImplTest {
 	 * 
 	 * TEST CASE: The other element and this element are the same
 	 */
-	public final void testIsSuperClassOfOrEquals2(
-			AttributedElementClass<?, ?> other) {
+	public final void testIsSuperClassOfOrEquals2(AEC other) {
 		Assert.assertFalse(attributedElement.isSuperClassOfOrEquals(other));
 	}
 

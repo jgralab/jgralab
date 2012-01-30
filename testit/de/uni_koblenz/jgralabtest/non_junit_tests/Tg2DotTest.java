@@ -41,7 +41,6 @@ import org.junit.Test;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.GraphIOException;
-import de.uni_koblenz.jgralab.ProgressFunction;
 import de.uni_koblenz.jgralab.WorkInProgress;
 import de.uni_koblenz.jgralab.schema.Schema;
 import de.uni_koblenz.jgralab.utilities.tg2dot.Tg2Dot;
@@ -53,14 +52,14 @@ import de.uni_koblenz.jgralab.utilities.tg2schemagraph.Schema2SchemaGraph;
 public class Tg2DotTest {
 
 	public void convertGraph() throws GraphIOException, IOException {
-		Graph g = GraphIO.loadGraphFromFileWithStandardSupport(
-				"testit/testgraphs/greqltestgraph.tg", (ProgressFunction) null);
+		Graph g = GraphIO.loadGraphFromFile(
+				"testit/testgraphs/greqltestgraph.tg", null);
 		Tg2Dot.convertGraph(g, "testit/testdata/testoutput.dot");
 	}
 
 	public void convertGraph2Svg() throws GraphIOException, IOException {
-		Graph g = GraphIO.loadGraphFromFileWithStandardSupport(
-				"testit/testgraphs/greqltestgraph.tg", (ProgressFunction) null);
+		Graph g = GraphIO.loadGraphFromFile(
+				"testit/testgraphs/greqltestgraph.tg", null);
 		Tg2Dot t2d = new Tg2Dot();
 		t2d.setGraph(g);
 		t2d.setGraphVizOutputFormat(GraphVizOutputFormat.SVG);
@@ -69,8 +68,8 @@ public class Tg2DotTest {
 	}
 
 	public void convertGraph2Png() throws GraphIOException, IOException {
-		Graph g = GraphIO.loadGraphFromFileWithStandardSupport(
-				"testit/testgraphs/greqltestgraph.tg", (ProgressFunction) null);
+		Graph g = GraphIO.loadGraphFromFile(
+				"testit/testgraphs/greqltestgraph.tg", null);
 		Tg2Dot t2d = new Tg2Dot();
 		t2d.setGraph(g);
 		t2d.setGraphVizOutputFormat(GraphVizOutputFormat.PNG);

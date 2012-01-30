@@ -58,8 +58,9 @@ public class TempAttributeTest extends TestCase {
 
 	@Override
 	public void setUp() throws Exception {
-		graph = CityMapSchema.instance().loadCityMap(ImplementationType.STANDARD,
-				"testit/testgraphs/citymapgraph.tg");
+		graph = CityMapSchema.instance().loadCityMap(
+				"testit/testgraphs/citymapgraph.tg",
+				ImplementationType.STANDARD);
 	}
 
 	@Test

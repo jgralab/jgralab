@@ -39,10 +39,10 @@ import java.util.Vector;
 import org.junit.Before;
 import org.junit.Test;
 
-import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.VertexClass;
 
-public final class VertexClassImplTest extends GraphElementClassImplTest {
+public final class VertexClassImplTest extends
+		GraphElementClassImplTest<VertexClass> {
 
 	private VertexClass vertexClass;
 
@@ -138,7 +138,7 @@ public final class VertexClassImplTest extends GraphElementClassImplTest {
 	 */
 	@Test
 	public void testGetAllSubClasses() {
-		Vector<AttributedElementClass> expectedSubClasses = new Vector<AttributedElementClass>();
+		Vector<VertexClass> expectedSubClasses = new Vector<VertexClass>();
 
 		VertexClass subClass = graphClass
 				.createVertexClass("VertexClassSubClass");
@@ -158,7 +158,7 @@ public final class VertexClassImplTest extends GraphElementClassImplTest {
 	 */
 	@Test
 	public void testGetAllSubClasses2() {
-		Vector<AttributedElementClass> expectedSubClasses = new Vector<AttributedElementClass>();
+		Vector<VertexClass> expectedSubClasses = new Vector<VertexClass>();
 
 		VertexClass subClass = graphClass
 				.createVertexClass("VertexClassSubClass");
@@ -182,7 +182,7 @@ public final class VertexClassImplTest extends GraphElementClassImplTest {
 	 */
 	@Test
 	public void testGetAllSubClasses3() {
-		Vector<AttributedElementClass> expectedSubClasses = new Vector<AttributedElementClass>();
+		Vector<VertexClass> expectedSubClasses = new Vector<VertexClass>();
 
 		VertexClass subClass = graphClass
 				.createVertexClass("VertexClassSubClass");
@@ -206,7 +206,7 @@ public final class VertexClassImplTest extends GraphElementClassImplTest {
 	@Test
 	public void testGetAllSubClasses4() {
 		// no subclasses expected
-		testGetAllSubClasses(new Vector<AttributedElementClass>());
+		testGetAllSubClasses(new Vector<VertexClass>());
 	}
 
 	/**
@@ -217,7 +217,7 @@ public final class VertexClassImplTest extends GraphElementClassImplTest {
 	 */
 	@Test
 	public void testGetAllSuperClasses() {
-		Vector<AttributedElementClass> expectedSuperClasses = new Vector<AttributedElementClass>();
+		Vector<VertexClass> expectedSuperClasses = new Vector<VertexClass>();
 
 		VertexClass superClass = graphClass
 				.createVertexClass("VertexClassSuperClass");
@@ -238,7 +238,7 @@ public final class VertexClassImplTest extends GraphElementClassImplTest {
 	 */
 	@Test
 	public void testGetAllSuperClasses2() {
-		Vector<AttributedElementClass> expectedSuperClasses = new Vector<AttributedElementClass>();
+		Vector<VertexClass> expectedSuperClasses = new Vector<VertexClass>();
 
 		VertexClass superClass = graphClass
 				.createVertexClass("VertexClassSuperClass");
@@ -263,7 +263,7 @@ public final class VertexClassImplTest extends GraphElementClassImplTest {
 	 */
 	@Test
 	public void testGetAllSuperClasses3() {
-		Vector<AttributedElementClass> expectedSuperClasses = new Vector<AttributedElementClass>();
+		Vector<VertexClass> expectedSuperClasses = new Vector<VertexClass>();
 
 		VertexClass superClass = graphClass
 				.createVertexClass("VertexClassSuperClass");
@@ -288,7 +288,7 @@ public final class VertexClassImplTest extends GraphElementClassImplTest {
 	 */
 	@Test
 	public void testGetAllSuperClasses4() {
-		Vector<AttributedElementClass> expectedSuperClasses = new Vector<AttributedElementClass>();
+		Vector<VertexClass> expectedSuperClasses = new Vector<VertexClass>();
 
 		expectedSuperClasses.add(schema.getDefaultVertexClass());
 
@@ -446,7 +446,7 @@ public final class VertexClassImplTest extends GraphElementClassImplTest {
 	 */
 	@Test
 	public void testGetDirectSubClasses() {
-		Vector<AttributedElementClass> expectedSubClasses = new Vector<AttributedElementClass>();
+		Vector<VertexClass> expectedSubClasses = new Vector<VertexClass>();
 
 		VertexClass subClass = graphClass
 				.createVertexClass("VertexClassSubClass");
@@ -466,7 +466,7 @@ public final class VertexClassImplTest extends GraphElementClassImplTest {
 	 */
 	@Test
 	public void testGetDirectSubClasses2() {
-		Vector<AttributedElementClass> expectedSubClasses = new Vector<AttributedElementClass>();
+		Vector<VertexClass> expectedSubClasses = new Vector<VertexClass>();
 
 		VertexClass subClass = graphClass
 				.createVertexClass("VertexClassSubClass");
@@ -490,7 +490,7 @@ public final class VertexClassImplTest extends GraphElementClassImplTest {
 	 */
 	@Test
 	public void testGetDirectSubClasses3() {
-		Vector<AttributedElementClass> expectedSubClasses = new Vector<AttributedElementClass>();
+		Vector<VertexClass> expectedSubClasses = new Vector<VertexClass>();
 
 		VertexClass subClass = graphClass
 				.createVertexClass("VertexClassSubClass"); // Direct subclass
@@ -513,7 +513,7 @@ public final class VertexClassImplTest extends GraphElementClassImplTest {
 	 */
 	@Test
 	public void testGetDirectSubClasses4() {
-		testGetDirectSubClasses(new Vector<AttributedElementClass>());
+		testGetDirectSubClasses(new Vector<VertexClass>());
 	}
 
 	/**
@@ -524,7 +524,7 @@ public final class VertexClassImplTest extends GraphElementClassImplTest {
 	 */
 	@Test
 	public void testGetDirectSuperClasses() {
-		Vector<AttributedElementClass> expectedSuperClasses = new Vector<AttributedElementClass>();
+		Vector<VertexClass> expectedSuperClasses = new Vector<VertexClass>();
 
 		VertexClass superClass = graphClass
 				.createVertexClass("VertexClassSuperClass");
@@ -544,7 +544,7 @@ public final class VertexClassImplTest extends GraphElementClassImplTest {
 	 */
 	@Test
 	public void testGetDirectSuperClasses2() {
-		Vector<AttributedElementClass> expectedSuperClasses = new Vector<AttributedElementClass>();
+		Vector<VertexClass> expectedSuperClasses = new Vector<VertexClass>();
 
 		VertexClass superClass = graphClass
 				.createVertexClass("VertexClassSuperClass");
@@ -568,7 +568,7 @@ public final class VertexClassImplTest extends GraphElementClassImplTest {
 	 */
 	@Test
 	public void testGetDirectSuperClasses3() {
-		Vector<AttributedElementClass> expectedSuperClasses = new Vector<AttributedElementClass>();
+		Vector<VertexClass> expectedSuperClasses = new Vector<VertexClass>();
 
 		VertexClass superClass = graphClass // Direct superclass
 				.createVertexClass("VertexClassSuperClass");
@@ -591,7 +591,7 @@ public final class VertexClassImplTest extends GraphElementClassImplTest {
 	 */
 	@Test
 	public void testGetDirectSuperClasses4() {
-		Vector<AttributedElementClass> expectedSuperClasses = new Vector<AttributedElementClass>();
+		Vector<VertexClass> expectedSuperClasses = new Vector<VertexClass>();
 
 		expectedSuperClasses.add(schema.getDefaultVertexClass());
 

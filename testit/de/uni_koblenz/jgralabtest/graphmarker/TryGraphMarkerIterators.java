@@ -70,7 +70,8 @@ public class TryGraphMarkerIterators {
 	private static SubGraphMarker subGraphMarker;
 
 	public static void main(String[] args) {
-		MinimalGraph graph = MinimalSchema.instance().createMinimalGraph(ImplementationType.STANDARD);
+		MinimalGraph graph = MinimalSchema.instance().createMinimalGraph(
+				ImplementationType.STANDARD);
 		Node[] nodes = new Node[10];
 		for (int i = 0; i < nodes.length; i++) {
 			nodes[i] = graph.createNode();
@@ -167,7 +168,7 @@ public class TryGraphMarkerIterators {
 				.iterator();
 		Iterator<Edge> bitSetEdgeIterator = bitSetEdgeMarker
 				.getMarkedElements().iterator();
-		Iterator<GraphElement> subGraphIterator = subGraphMarker
+		Iterator<GraphElement<?, ?>> subGraphIterator = subGraphMarker
 				.getMarkedElements().iterator();
 
 		while (arrayVertexIterator.hasNext() || integerVertexIterator.hasNext()

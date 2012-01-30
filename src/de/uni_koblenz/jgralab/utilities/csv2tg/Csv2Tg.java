@@ -41,8 +41,6 @@ import java.io.FileNotFoundException;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -217,23 +215,10 @@ public class Csv2Tg implements FilenameFilter {
 
 	private void setUp() {
 		vertices = new HashMap<String, Vertex>();
-
-		Method method = schema
-				.getGraphCreateMethod(ImplementationType.STANDARD);
 		vertexInstances = new HashMap<VertexClass, CsvReader>();
 		edgeInstances = new HashMap<EdgeClass, CsvReader>();
 		reader2FilenameMap = new HashMap<CsvReader, String>();
-		// TODO Graph ID
-		try {
-			graph = (Graph) method.invoke(null, new Object[] {
-					ImplementationType.STANDARD, null, 128, 128 });
-		} catch (IllegalArgumentException e) {
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			e.printStackTrace();
-		} catch (InvocationTargetException e) {
-			e.printStackTrace();
-		}
+		graph = schema.createGraph(ImplementationType.GENERIC);
 	}
 
 	private void tearDown() throws IOException {

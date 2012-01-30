@@ -63,8 +63,8 @@ public class GreqlConstructions extends GenericTest {
 	}
 
 	private Graph loadTestGraph() throws GraphIOException {
-		return GraphIO.loadGraphFromFileWithStandardSupport(
-				"testit/testgraphs/greqltestgraph.tg", null);
+		return GraphIO.loadGraphFromFile("testit/testgraphs/greqltestgraph.tg",
+				null);
 
 	}
 }

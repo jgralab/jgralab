@@ -40,14 +40,13 @@ import org.junit.Before;
 import org.junit.Test;
 
 import de.uni_koblenz.jgralab.schema.AggregationKind;
-import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.GraphClass;
 import de.uni_koblenz.jgralab.schema.Schema;
 import de.uni_koblenz.jgralab.schema.VertexClass;
 import de.uni_koblenz.jgralab.schema.impl.SchemaImpl;
 
-public class EdgeClassImplTest extends GraphElementClassImplTest {
+public class EdgeClassImplTest extends GraphElementClassImplTest<EdgeClass> {
 
 	private EdgeClass edgeClass;
 	private VertexClass sourceVertexClass, targetVertexClass;
@@ -243,7 +242,7 @@ public class EdgeClassImplTest extends GraphElementClassImplTest {
 	 */
 	@Test
 	public void testGetAllSubClasses() {
-		Vector<AttributedElementClass> expectedSubClasses = new Vector<AttributedElementClass>();
+		Vector<EdgeClass> expectedSubClasses = new Vector<EdgeClass>();
 		// TODO: This kind of creation of an edge class is not allowed
 		// Beispiel Kante
 		EdgeClass subClass = createEdgeClass("EdgeClassSubClass", edgeClass);
@@ -263,7 +262,7 @@ public class EdgeClassImplTest extends GraphElementClassImplTest {
 	 */
 	@Test
 	public void testGetAllSubClasses2() {
-		Vector<AttributedElementClass> expectedSubClasses = new Vector<AttributedElementClass>();
+		Vector<EdgeClass> expectedSubClasses = new Vector<EdgeClass>();
 
 		// Beispiel kante
 		EdgeClass subClass = createEdgeClass("EdgeClassSubClass", edgeClass);
@@ -288,7 +287,7 @@ public class EdgeClassImplTest extends GraphElementClassImplTest {
 	 */
 	@Test
 	public void testGetAllSubClasses3() {
-		Vector<AttributedElementClass> expectedSubClasses = new Vector<AttributedElementClass>();
+		Vector<EdgeClass> expectedSubClasses = new Vector<EdgeClass>();
 
 		// Beispiel kante
 		EdgeClass subClass = createEdgeClass("EdgeClassSubClass", edgeClass);
@@ -312,7 +311,7 @@ public class EdgeClassImplTest extends GraphElementClassImplTest {
 	@Test
 	public void testGetAllSubClasses4() {
 		// no subclasses expected
-		testGetAllSubClasses(new Vector<AttributedElementClass>());
+		testGetAllSubClasses(new Vector<EdgeClass>());
 	}
 
 	/**
@@ -323,7 +322,7 @@ public class EdgeClassImplTest extends GraphElementClassImplTest {
 	 */
 	@Test
 	public void testGetAllSuperClasses() {
-		Vector<AttributedElementClass> expectedSuperClasses = new Vector<AttributedElementClass>();
+		Vector<EdgeClass> expectedSuperClasses = new Vector<EdgeClass>();
 
 		// Normale Kante
 		EdgeClass superClass = createEdgeClass("EdgeClassSuperClass",
@@ -345,7 +344,7 @@ public class EdgeClassImplTest extends GraphElementClassImplTest {
 	 */
 	@Test
 	public void testGetAllSuperClasses2() {
-		Vector<AttributedElementClass> expectedSuperClasses = new Vector<AttributedElementClass>();
+		Vector<EdgeClass> expectedSuperClasses = new Vector<EdgeClass>();
 
 		// Normale Kanten
 		EdgeClass superClass = createEdgeClass("EdgeClassSuperClass", edgeClass);
@@ -370,7 +369,7 @@ public class EdgeClassImplTest extends GraphElementClassImplTest {
 	 */
 	@Test
 	public void testGetAllSuperClasses3() {
-		Vector<AttributedElementClass> expectedSuperClasses = new Vector<AttributedElementClass>();
+		Vector<EdgeClass> expectedSuperClasses = new Vector<EdgeClass>();
 
 		// Normale Kanten
 		EdgeClass superClass = createEdgeClass("VertexClassSuperClass",
@@ -396,7 +395,7 @@ public class EdgeClassImplTest extends GraphElementClassImplTest {
 	 */
 	@Test
 	public void testGetAllSuperClasses4() {
-		Vector<AttributedElementClass> expectedSuperClasses = new Vector<AttributedElementClass>();
+		Vector<EdgeClass> expectedSuperClasses = new Vector<EdgeClass>();
 
 		expectedSuperClasses.add(schema.getDefaultEdgeClass());
 
@@ -564,7 +563,7 @@ public class EdgeClassImplTest extends GraphElementClassImplTest {
 	public void testGetDirectSubClasses() {
 
 		// Beispiel kante
-		Vector<AttributedElementClass> expectedSubClasses = new Vector<AttributedElementClass>();
+		Vector<EdgeClass> expectedSubClasses = new Vector<EdgeClass>();
 
 		EdgeClass subClass = createEdgeClass("EdgeClassSubClass", edgeClass);
 
@@ -583,7 +582,7 @@ public class EdgeClassImplTest extends GraphElementClassImplTest {
 	 */
 	@Test
 	public void testGetDirectSubClasses2() {
-		Vector<AttributedElementClass> expectedSubClasses = new Vector<AttributedElementClass>();
+		Vector<EdgeClass> expectedSubClasses = new Vector<EdgeClass>();
 
 		// Beispiel kante
 		EdgeClass subClass2 = createEdgeClass("EdgeClassSubClass2", edgeClass);
@@ -608,7 +607,7 @@ public class EdgeClassImplTest extends GraphElementClassImplTest {
 	 */
 	@Test
 	public void testGetDirectSubClasses3() {
-		Vector<AttributedElementClass> expectedSubClasses = new Vector<AttributedElementClass>();
+		Vector<EdgeClass> expectedSubClasses = new Vector<EdgeClass>();
 
 		// Beispiel kante
 		EdgeClass subClass = createEdgeClass("EdgeClassSubClass", edgeClass);
@@ -635,7 +634,7 @@ public class EdgeClassImplTest extends GraphElementClassImplTest {
 	 */
 	@Test
 	public void testGetDirectSubClasses4() {
-		testGetDirectSubClasses(new Vector<AttributedElementClass>());
+		testGetDirectSubClasses(new Vector<EdgeClass>());
 	}
 
 	/**
@@ -646,7 +645,7 @@ public class EdgeClassImplTest extends GraphElementClassImplTest {
 	 */
 	@Test
 	public void testGetDirectSuperClasses() {
-		Vector<AttributedElementClass> expectedSuperClasses = new Vector<AttributedElementClass>();
+		Vector<EdgeClass> expectedSuperClasses = new Vector<EdgeClass>();
 
 		// Normale Kante
 		EdgeClass superClass = createEdgeClass("EdgeClassSuperClass", edgeClass);
@@ -666,7 +665,7 @@ public class EdgeClassImplTest extends GraphElementClassImplTest {
 	 */
 	@Test
 	public void testGetDirectSuperClasses2() {
-		Vector<AttributedElementClass> expectedSuperClasses = new Vector<AttributedElementClass>();
+		Vector<EdgeClass> expectedSuperClasses = new Vector<EdgeClass>();
 
 		// Normale Kanten
 		EdgeClass superClass = createEdgeClass("EdgeClassSuperClass", edgeClass);
@@ -690,7 +689,7 @@ public class EdgeClassImplTest extends GraphElementClassImplTest {
 	 */
 	@Test
 	public void testGetDirectSuperClasses3() {
-		Vector<AttributedElementClass> expectedSuperClasses = new Vector<AttributedElementClass>();
+		Vector<EdgeClass> expectedSuperClasses = new Vector<EdgeClass>();
 
 		// Normale Kanten
 		EdgeClass superClass = createEdgeClass("EdgeClassSuperClass", edgeClass); // Direct
@@ -715,7 +714,7 @@ public class EdgeClassImplTest extends GraphElementClassImplTest {
 	 */
 	@Test
 	public void testGetDirectSuperClasses4() {
-		Vector<AttributedElementClass> expectedSuperClasses = new Vector<AttributedElementClass>();
+		Vector<EdgeClass> expectedSuperClasses = new Vector<EdgeClass>();
 
 		expectedSuperClasses.add(schema.getDefaultEdgeClass());
 

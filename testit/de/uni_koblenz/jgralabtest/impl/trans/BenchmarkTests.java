@@ -191,11 +191,11 @@ public class BenchmarkTests {
 	private void loadGraph(boolean transactionSupport) throws GraphIOException {
 		if (transactionSupport) {
 			motorwayMap = MotorwayMapSchema.instance().loadMotorwayMap(
-					ImplementationType.TRANSACTION, FILENAME,
+					FILENAME, ImplementationType.TRANSACTION,
 					new ConsoleProgressFunction("Loading"));
 		} else {
 			motorwayMap = MotorwayMapSchema.instance().loadMotorwayMap(
-					ImplementationType.STANDARD, FILENAME,
+					FILENAME, ImplementationType.STANDARD,
 					new ConsoleProgressFunction());
 		}
 		printMemoryUsage("loadGraph");

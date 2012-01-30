@@ -51,7 +51,7 @@ public class StoreValuesTest {
 	 * @throws GraphIOException
 	 */
 	public static Graph createTestGraph() throws GraphIOException {
-		Graph testGraph = GraphIO.loadGraphFromFileWithStandardSupport(
+		Graph testGraph = GraphIO.loadGraphFromFile(
 				"testit/testgraphs/greqltestgraph.tg", null);
 		return testGraph;
 	}

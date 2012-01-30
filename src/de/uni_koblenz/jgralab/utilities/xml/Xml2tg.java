@@ -331,25 +331,11 @@ public class Xml2tg {
 						}
 						String graphID = stack.peek().getAttributes()
 								.get(GRUML_ATTRIBUTE_ID);
-						try {
-							// System.out.println("Creating instance of "
-							// + graphClassName);
-							graph = (Graph) schema.getGraphCreateMethod(
-									ImplementationType.STANDARD).invoke(
-									null,
-									new Object[] { ImplementationType.STANDARD,
-											graphID, MAX_VERTEX_COUNT,
-											MAX_EDGE_COUNT });
-							// System.out.println("done.");
-						} catch (Exception e) {
-							throw new GraphIOException(
-									"Unable to create instance of "
-											+ graphClassName, e);
-						}
-						// inicialize markers
+						graph = schema.createGraph(ImplementationType.GENERIC,
+								graphID, MAX_VERTEX_COUNT, MAX_EDGE_COUNT);
+						// initialize markers
 						incidencePositionMarker = new GraphMarker<IncidencePositionMark>(
 								graph);
-
 					}
 					break;
 				case END_ELEMENT:

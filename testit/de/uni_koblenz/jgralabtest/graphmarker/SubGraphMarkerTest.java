@@ -152,12 +152,13 @@ public class SubGraphMarkerTest extends InstanceTest {
 
 	public void assertAllMarkedCorrectly() throws CommitFailedException {
 		createReadOnlyTransaction(g);
-		Set<AttributedElement> oldSet = new HashSet<AttributedElement>();
-		Set<AttributedElement> newSet = new HashSet<AttributedElement>();
-		for (AttributedElement currentElement : oldMarker.getMarkedElements()) {
+		Set<AttributedElement<?, ?>> oldSet = new HashSet<AttributedElement<?, ?>>();
+		Set<AttributedElement<?, ?>> newSet = new HashSet<AttributedElement<?, ?>>();
+		for (AttributedElement<?, ?> currentElement : oldMarker
+				.getMarkedElements()) {
 			oldSet.add(currentElement);
 		}
-		for (GraphElement currentElement : newMarker.getMarkedElements()) {
+		for (GraphElement<?, ?> currentElement : newMarker.getMarkedElements()) {
 			newSet.add(currentElement);
 		}
 		assertEquals(oldSet, newSet);
