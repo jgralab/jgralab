@@ -44,6 +44,7 @@ import org.pcollections.POrderedSet;
 import de.uni_koblenz.jgralab.eca.ECARuleManagerInterface;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.EnumDomain;
+import de.uni_koblenz.jgralab.schema.GraphClass;
 import de.uni_koblenz.jgralab.schema.RecordDomain;
 import de.uni_koblenz.jgralab.schema.VertexClass;
 import de.uni_koblenz.jgralab.trans.CommitFailedException;
@@ -68,10 +69,10 @@ public interface Graph extends AttributedElement {
 	 * vertex to this Graph.
 	 */
 	public <T extends Vertex> T createVertex(Class<T> cls);
-	
+
 	/**
-	 * Creates a vertex of the specified {@link VertexClass} and adds the new vertex
-	 * to the Graph. 
+	 * Creates a vertex of the specified {@link VertexClass} and adds the new
+	 * vertex to the Graph.
 	 */
 	public <T extends Vertex> T createVertex(VertexClass vc);
 
@@ -82,11 +83,11 @@ public interface Graph extends AttributedElement {
 	 */
 	public <T extends Edge> T createEdge(Class<T> cls, Vertex alpha,
 			Vertex omega);
-	
+
 	/**
-	 * Creates an edge of the specified {@link EdgeClass} <code>ec</code> that connects
-	 * <code>alpha</code> and </code>omega</code> vertices and adds the new edge to this
-	 * Graph.
+	 * Creates an edge of the specified {@link EdgeClass} <code>ec</code> that
+	 * connects <code>alpha</code> and </code>omega</code> vertices and adds the
+	 * new edge to this Graph.
 	 */
 	public <T extends Edge> T createEdge(EdgeClass ec, Vertex alpha,
 			Vertex omega);
@@ -506,10 +507,9 @@ public interface Graph extends AttributedElement {
 	public TraversalContext getTraversalContext();
 
 	public GraphFactory getGraphFactory();
-	
 
-	public void setGraphFactory(GraphFactory graphFactory) ;
-	
+	public void setGraphFactory(GraphFactory graphFactory);
+
 	public void save(String filename) throws GraphIOException;
 
 	public void save(String filename, ProgressFunction pf)
@@ -519,4 +519,7 @@ public interface Graph extends AttributedElement {
 
 	public void save(DataOutputStream out, ProgressFunction pf)
 			throws GraphIOException;
+
+	@Override
+	public GraphClass getAttributedElementClass();
 }

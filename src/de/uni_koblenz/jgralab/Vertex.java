@@ -366,4 +366,7 @@ public interface Vertex extends GraphElement {
 
 	public void removeAdjacence(String role, Vertex other);
 
+	@Override
+	public VertexClass getAttributedElementClass();
+
 }

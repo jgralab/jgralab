@@ -112,7 +112,7 @@ public class GenericGraphImpl extends GraphImpl {
 	}
 
 	@Override
-	public AttributedElementClass getAttributedElementClass() {
+	public GraphClass getAttributedElementClass() {
 		return aec;
 	}
 
@@ -255,7 +255,7 @@ public class GenericGraphImpl extends GraphImpl {
 			return null;
 		}
 	}
-	
+
 	static Map<String, Object> initializeAttributes(AttributedElementClass aec) {
 		Map<String, Object> attributes = null;
 		if (aec.getAttributeCount() > 0) {
@@ -266,7 +266,7 @@ public class GenericGraphImpl extends GraphImpl {
 		}
 		return attributes;
 	}
-	
+
 	static void initializeGenericAttributeValues(AttributedElement ae) {
 		for (Attribute attr : ae.getAttributedElementClass().getAttributeList()) {
 			if ((attr.getDefaultValueAsString() != null)
