@@ -9,7 +9,6 @@ import de.uni_koblenz.jgralab.gretl.Context.GReTLVariableType;
 import de.uni_koblenz.jgralab.gretl.Context.TransformationPhase;
 import de.uni_koblenz.jgralab.schema.Attribute;
 import de.uni_koblenz.jgralab.schema.Domain;
-import de.uni_koblenz.jgralab.schema.EnumDomain;
 import de.uni_koblenz.jgralab.schema.RecordDomain;
 
 public class SetAttributes extends
@@ -80,15 +79,12 @@ public class SetAttributes extends
 
 	private Object convertToAttributeValue(Object val) {
 		// TODO: Implement proper conversion from GReQL result to domain
-		// (Collections of records/enums,...)
+		// (Collections of records,...)
 		Object result = val;
 		Domain dom = attribute.getDomain();
 		if (dom instanceof RecordDomain) {
 			return context.getTargetGraph().createRecord((RecordDomain) dom,
 					((Record) val).toPMap());
-		} else if (dom instanceof EnumDomain) {
-			return context.getTargetGraph().getEnumConstant((EnumDomain) dom,
-					(String) val);
 		}
 		return result;
 	}

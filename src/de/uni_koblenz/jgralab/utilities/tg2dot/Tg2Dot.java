@@ -532,8 +532,8 @@ public class Tg2Dot extends Tg2Whatever {
 	 * Starts the Graph in the output file.
 	 */
 	private void startDotGraph() {
-		writer.startGraph(GraphType.DIRECTED, graph.getSchemaClass()
-				.getSimpleName(),
+		writer.startGraph(GraphType.DIRECTED, graph.getAttributedElementClass()
+				.getQualifiedName(),
 				graph.getId() + " / " + graph.getGraphVersion());
 	}
 
@@ -854,11 +854,12 @@ public class Tg2Dot extends Tg2Whatever {
 			Set<AttributedElementClass> reversedEdgeTypes) {
 		reversedEdgeClasses = new HashSet<AttributedElementClass>();
 		for (EdgeClass edgeClass : graph.getGraphClass().getEdgeClasses()) {
-			if (reversedEdgeTypes.remove(edgeClass.getSchemaClass())) {
+			if (reversedEdgeTypes.remove(edgeClass)) {
 				reversedEdgeClasses.add(edgeClass);
 			}
 		}
-		if (reversedEdgeTypes.remove(Edge.class)) {
+		if (reversedEdgeTypes.remove(graph.getSchema()
+				.getAttributedElementClass("Edge"))) {
 			reversedEdgeClasses.add(graph.getSchema()
 					.getAttributedElementClass("Edge"));
 		}

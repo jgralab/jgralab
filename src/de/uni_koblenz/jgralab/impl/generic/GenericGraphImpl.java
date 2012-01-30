@@ -106,7 +106,7 @@ public class GenericGraphImpl extends GraphImpl {
 				throw (GraphException) e;
 			} else {
 				throw new GraphException("Error creating edge of EdgeClass "
-						+ ec);
+						+ ec, e);
 			}
 		}
 	}

@@ -1,6 +1,5 @@
 package de.uni_koblenz.jgralab.gretl;
 
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -18,16 +17,12 @@ import org.pcollections.PMap;
 
 import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Graph;
-import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.ImplementationType;
 import de.uni_koblenz.jgralab.JGraLab;
-import de.uni_koblenz.jgralab.codegenerator.CodeGeneratorConfiguration;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
-import de.uni_koblenz.jgralab.schema.EnumDomain;
 import de.uni_koblenz.jgralab.schema.GraphClass;
 import de.uni_koblenz.jgralab.schema.Schema;
-import de.uni_koblenz.jgralab.schema.exception.SchemaClassAccessException;
 import de.uni_koblenz.jgralab.schema.exception.SchemaException;
 import de.uni_koblenz.jgralab.schema.impl.NamedElementImpl;
 import de.uni_koblenz.jgralab.schema.impl.SchemaImpl;
@@ -51,22 +46,6 @@ public class Context {
 	private GreqlEvaluator eval = null;
 
 	Schema targetSchema = null;
-
-	private String targetSchemaCodeDirectory = null;
-
-	/**
-	 * This lets you set the directory where to commit the target schema code
-	 * to. Normally, the code isn't committed at all but compiled in memory, but
-	 * you can use this for debugging purposes.
-	 *
-	 * The value <code>null</code> (default) means don't commit.
-	 *
-	 * @param targetSchemaCodeDirectory
-	 *            the targetSchemaCodeDirectory to set
-	 */
-	public void setTargetSchemaCodeDirectory(String targetSchemaCodeDirectory) {
-		this.targetSchemaCodeDirectory = targetSchemaCodeDirectory;
-	}
 
 	/**
 	 * @return the targetSchema
@@ -168,8 +147,8 @@ public class Context {
 		// Check if the target schema is already present and we can thus skip
 		// the SCHEMA phase.
 		try {
-			Class<?> schemaClass = SchemaClassManager.instance(targetSchemaName)
-					.loadClass(targetSchemaName);
+			Class<?> schemaClass = SchemaClassManager
+					.instance(targetSchemaName).loadClass(targetSchemaName);
 			Method schemaInstanceMethod = schemaClass.getMethod("instance");
 			targetSchema = (Schema) schemaInstanceMethod.invoke(null);
 		} catch (Exception e) {
@@ -608,42 +587,23 @@ public class Context {
 	 * creates the target graph from the target schema
 	 */
 	final void createTargetGraph() {
-		boolean targetSchemaIsCompiled = true;
+		Method graphCreateMethod;
+		targetSchema.finish();
 		try {
+			// Try to use existing compiled schema
 			targetSchema.getGraphClass().getSchemaClass();
-		} catch (SchemaClassAccessException e) {
-			targetSchemaIsCompiled = false;
-		}
-
-		if (!targetSchemaIsCompiled) {
-			if (targetSchemaCodeDirectory != null) {
-				try {
-					targetSchema.commit(targetSchemaCodeDirectory,
-							CodeGeneratorConfiguration.MINIMAL);
-				} catch (GraphIOException e1) {
-					e1.printStackTrace();
-				}
-			}
-			logger.info("Compiling schema '" + targetSchema.getQualifiedName()
-					+ "'...");
-			targetSchema.finish();
-			targetSchema.compile(CodeGeneratorConfiguration.MINIMAL);
-		} else {
+			graphCreateMethod = targetSchema
+					.getGraphCreateMethod(ImplementationType.STANDARD);
 			logger.info("Schema '" + targetSchema.getQualifiedName()
 					+ "' is already compiled or in the CLASSPATH...");
-		}
-
-		Method graphCreateMethod = targetSchema
-				.getGraphCreateMethod(ImplementationType.STANDARD);
-
-		try {
 			targetGraph = (Graph) graphCreateMethod
 					.invoke(null, null, 500, 500);
 			targetSchema = targetGraph.getSchema();
+			targetSchema.finish();
 		} catch (Exception e) {
-			e.printStackTrace();
-			throw new GReTLException(this,
-					"Something failed when creating the target graph!", e);
+			// fall back to generic graph
+			targetGraph = targetSchema.createGraph(ImplementationType.GENERIC,
+					500, 500);
 		}
 
 		for (Entry<String, Graph> e : sourceGraphs.entrySet()) {
@@ -659,49 +619,8 @@ public class Context {
 		}
 	}
 
-	void initializeEnumValue2LiteralMaps() {
-		// Make enum constants accessible via maps of the form enum_QName:
-		// String -> Object
-		for (EnumDomain d : targetGraph.getSchema().getEnumDomains()) {
-			try {
-				Class<?> myEnum = Class.forName(targetSchema.getPackagePrefix()
-						+ "." + d.getQualifiedName(), false, targetSchema
-						.getClass().getClassLoader());
-
-				Method valueOf = myEnum.getMethod("valueOf",
-						new Class<?>[] { String.class });
-				PMap<String, Object> map = Empty.orderedMap();
-				for (String c : d.getConsts()) {
-					Object constant = valueOf.invoke(null, new Object[] { c });
-					map = map.plus(c, constant);
-				}
-				setGReQLVariable(
-						toGReTLVarNotation(d.getQualifiedName(),
-								GReTLVariableType.ENUM), map);
-			} catch (ClassNotFoundException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			} catch (SecurityException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (NoSuchMethodException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (IllegalArgumentException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (IllegalAccessException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (InvocationTargetException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-	}
-
 	public enum GReTLVariableType {
-		ARCH, IMG, ENUM
+		ARCH, IMG
 	}
 
 	public static String toGReTLVarNotation(String qualifiedName,
@@ -732,7 +651,7 @@ public class Context {
 			}
 		}
 
-		return this.<T>evalGReQLQuery(greqlExpression, sourceGraphs.get(name));
+		return this.<T> evalGReQLQuery(greqlExpression, sourceGraphs.get(name));
 	}
 
 	@SuppressWarnings("unchecked")
