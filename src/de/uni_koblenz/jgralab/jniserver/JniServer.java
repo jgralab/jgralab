@@ -36,7 +36,6 @@
 package de.uni_koblenz.jgralab.jniserver;
 
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
@@ -118,18 +117,14 @@ public class JniServer {
 		return graphs.containsKey(graphId);
 	}
 
-	public int createGraph(String schemaName, int vMax, int eMax) {
+	public int createGraph(String schemaName) {
 		Class<?> schemaClass;
 		try {
 			schemaClass = Class.forName(schemaName);
 			Schema schema = (Schema) (schemaClass.getMethod("instance",
 					(Class[]) null).invoke(null));
 
-			Method graphCreateMethod = schema
-					.getGraphCreateMethod(ImplementationType.STANDARD);
-
-			Graph g = (Graph) (graphCreateMethod.invoke(null, new Object[] {
-					ImplementationType.STANDARD, null, vMax, eMax }));
+			Graph g = schema.createGraph(ImplementationType.STANDARD);
 			return addGraph(g);
 		} catch (Exception e) {
 			throw new GraphException("Exception while creating graph.", e);
@@ -146,8 +141,7 @@ public class JniServer {
 
 	public int loadGraph(String fileName) {
 		try {
-			Graph g = GraphIO.loadGraphFromFile(fileName,
-					null, ImplementationType.STANDARD, null);
+			Graph g = GraphIO.loadGraphFromFile(fileName, null);
 			return addGraph(g);
 		} catch (Exception e) {
 			throw new GraphException("Exception while loading graph.", e);

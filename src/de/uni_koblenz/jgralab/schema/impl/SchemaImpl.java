@@ -1158,20 +1158,6 @@ public class SchemaImpl implements Schema {
 	}
 
 	@Override
-	public Method getGraphCreateMethod(ImplementationType implementationType) {
-		if (implementationType != ImplementationType.GENERIC) {
-			return getCreateMethod(graphClass.getSimpleName(),
-					graphClass.getSimpleName(), GRAPHCLASS_CREATE_SIGNATURE,
-					implementationType);
-		} else {
-			return getCreateMethod(graphClass.getSimpleName(),
-					graphClass.getSimpleName(), new Class[] { GraphClass.class,
-							String.class, int.class, int.class },
-					implementationType);
-		}
-	}
-
-	@Override
 	public String getName() {
 		return name;
 	}
@@ -1327,54 +1313,6 @@ public class SchemaImpl implements Schema {
 	}
 
 	@Override
-	public Graph createGraph(ImplementationType implementationType) {
-		return createGraph(implementationType, null, 100, 100);
-	}
-
-	@Override
-	public Graph createGraph(ImplementationType implementationType, String id,
-			int vCount, int eCount) {
-		finish();
-		if (implementationType != ImplementationType.GENERIC) {
-			try {
-				getGraphClass().getSchemaClass();
-			} catch (SchemaClassAccessException e) {
-				switch (implementationType) {
-				case STANDARD:
-					compile(CodeGeneratorConfiguration.MINIMAL);
-					break;
-				case DATABASE:
-					compile(CodeGeneratorConfiguration.WITH_DATABASE_SUPPORT);
-					break;
-				case TRANSACTION:
-					compile(CodeGeneratorConfiguration.WITH_TRANSACTION_SUPPORT);
-					break;
-				default:
-					throw new RuntimeException(
-							"FIXME: Unexpected implementation type "
-									+ implementationType);
-				}
-			}
-		}
-
-		Method graphCreateMethod = implementationType != ImplementationType.GENERIC ? getGraphCreateMethod(implementationType)
-				: getGraphCreateMethod(ImplementationType.GENERIC);
-
-		try {
-			if (implementationType != ImplementationType.GENERIC) {
-				return (Graph) graphCreateMethod.invoke(implementationType,
-						null, id, vCount, eCount);
-			} else {
-				return (Graph) graphCreateMethod.invoke(null, getGraphClass(),
-						id, vCount, eCount);
-			}
-		} catch (Exception e) {
-			throw new SchemaException(
-					"Something failed when creating the graph!", e);
-		}
-	}
-
-	@Override
 	public GraphFactory createDefaultGraphFactory(
 			ImplementationType implementationType) {
 		if (implementationType != ImplementationType.GENERIC) {
@@ -1387,15 +1325,15 @@ public class SchemaImpl implements Schema {
 	}
 
 	@Override
-	public Graph createGraph(GraphFactory factory) {
-		return createGraph(factory, null, 100, 100);
+	public Graph createGraph(ImplementationType implementationType) {
+		return createGraph(implementationType, null, 100, 100);
 	}
 
 	@Override
-	public Graph createGraph(GraphFactory factory, String id, int vCount,
-			int eCount) {
-		// TODO Auto-generated method stub
-		return null;
+	public Graph createGraph(ImplementationType implementationType, String id,
+			int vMax, int eMax) {
+		GraphFactory factory = createDefaultGraphFactory(implementationType);
+		return factory.createGraph(getGraphClass(), id, vMax, eMax);
 	}
 
 	/**

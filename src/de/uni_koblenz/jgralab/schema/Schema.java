@@ -358,14 +358,6 @@ public interface Schema extends Comparable<Schema> {
 	 */
 	public GraphClass getGraphClass();
 
-	/**
-	 * Gets the method to create a new graph of this schema
-	 * 
-	 * @return the Method-Object that represents the method to create graphs of
-	 *         this schema
-	 */
-	public Method getGraphCreateMethod(ImplementationType implementationType);
-
 	public IntegerDomain getIntegerDomain();
 
 	public String getName();
@@ -471,18 +463,13 @@ public interface Schema extends Comparable<Schema> {
 	 */
 	public String toTGString();
 
+	public GraphFactory createDefaultGraphFactory(
+			ImplementationType implementationType);
+
 	public Graph createGraph(ImplementationType implementationType);
 
 	public Graph createGraph(ImplementationType implementationType, String id,
-			int vCount, int eCount);
-
-	public Graph createGraph(GraphFactory factory);
-
-	public Graph createGraph(GraphFactory factory, String id, int vCount,
-			int eCount);
-
-	public GraphFactory createDefaultGraphFactory(
-			ImplementationType implementationType);
+			int vMax, int eMax);
 
 	/**
 	 * @return whether the schema is finished

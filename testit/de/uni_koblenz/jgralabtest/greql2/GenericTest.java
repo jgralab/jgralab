@@ -299,7 +299,7 @@ public class GenericTest {
 		// this test graph?
 		// This singleton should prevent spending to much time in GraphIO.
 		if (testGraph == null) {
-			testGraph = GraphIO.loadGraphFromFileWithStandardSupport(
+			testGraph = GraphIO.loadGraphFromFile(
 					"testit/testgraphs/greqltestgraph.tg", null);
 		}
 

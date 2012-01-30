@@ -1067,13 +1067,8 @@ public class GXL2Tg {
 					+ "\" is undefined.");
 		}
 
-		graph = (Graph) schema
-				.getGraphCreateMethod(ImplementationType.STANDARD).invoke(
-						null,
-						new Object[] {
-								ImplementationType.STANDARD,
-								element.getAttributeByName(new QName("id"))
-										.getValue(), 100, 100 });
+		graph = schema.createGraph(ImplementationType.GENERIC, element
+				.getAttributeByName(new QName("id")).getValue(), 100, 100);
 
 		Attribute role = element.getAttributeByName(new QName("role"));
 		if (role != null) {
