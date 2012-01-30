@@ -73,6 +73,7 @@ import de.uni_koblenz.jgralab.codegenerator.ReversedEdgeCodeGenerator;
 import de.uni_koblenz.jgralab.codegenerator.SchemaCodeGenerator;
 import de.uni_koblenz.jgralab.codegenerator.VertexCodeGenerator;
 import de.uni_koblenz.jgralab.impl.ConsoleProgressFunction;
+import de.uni_koblenz.jgralab.impl.generic.GenericGraphFactoryImpl;
 import de.uni_koblenz.jgralab.schema.Attribute;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.BooleanDomain;
@@ -1376,8 +1377,13 @@ public class SchemaImpl implements Schema {
 	@Override
 	public GraphFactory createDefaultGraphFactory(
 			ImplementationType implementationType) {
-		throw new UnsupportedOperationException(
-				"Base implementation can't create a GraphFactory.");
+		if (implementationType != ImplementationType.GENERIC) {
+			throw new IllegalArgumentException(
+					"Base implementation can't create a GraphFactory for implementation type "
+							+ implementationType
+							+ ". Only GENERIC is supported.");
+		}
+		return new GenericGraphFactoryImpl(this);
 	}
 
 	@Override
