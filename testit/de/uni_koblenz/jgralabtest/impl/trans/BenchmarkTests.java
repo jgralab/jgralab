@@ -180,21 +180,23 @@ public class BenchmarkTests {
 
 	private void createGraph(boolean transactionSupport) {
 		if (transactionSupport) {
-			motorwayMap = MotorwayMapSchema.instance()
-					.createMotorwayMap(ImplementationType.TRANSACTION,V, E);
+			motorwayMap = MotorwayMapSchema.instance().createMotorwayMap(
+					ImplementationType.TRANSACTION, null, V, E);
 		} else {
-			motorwayMap = MotorwayMapSchema.instance().createMotorwayMap(ImplementationType.STANDARD,V, E);
+			motorwayMap = MotorwayMapSchema.instance().createMotorwayMap(
+					ImplementationType.STANDARD, null, V, E);
 		}
 	}
 
 	private void loadGraph(boolean transactionSupport) throws GraphIOException {
 		if (transactionSupport) {
-			motorwayMap = MotorwayMapSchema.instance()
-					.loadMotorwayMap(ImplementationType.TRANSACTION, FILENAME,
-							new ConsoleProgressFunction("Loading"));
+			motorwayMap = MotorwayMapSchema.instance().loadMotorwayMap(
+					ImplementationType.TRANSACTION, FILENAME,
+					new ConsoleProgressFunction("Loading"));
 		} else {
-			motorwayMap = MotorwayMapSchema.instance().loadMotorwayMap(ImplementationType.STANDARD,
-					FILENAME, new ConsoleProgressFunction());
+			motorwayMap = MotorwayMapSchema.instance().loadMotorwayMap(
+					ImplementationType.STANDARD, FILENAME,
+					new ConsoleProgressFunction());
 		}
 		printMemoryUsage("loadGraph");
 	}

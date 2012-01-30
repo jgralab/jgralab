@@ -48,8 +48,8 @@ import de.uni_koblenz.jgralab.schema.EdgeClass;
  * 
  * @author ist@uni-koblenz.de
  */
-public abstract class IncidenceImpl extends GraphElementImpl implements Edge,
-		InternalEdge {
+public abstract class IncidenceImpl extends GraphElementImpl<EdgeClass, Edge>
+		implements Edge, InternalEdge {
 	protected IncidenceImpl(Graph graph) {
 		super(graph);
 	}

@@ -17,7 +17,7 @@ public class DeleteEdgeEventDescription extends EventDescription {
 	 *            the Class of elements, this Event monitors
 	 */
 	public DeleteEdgeEventDescription(EventTime time,
-			Class<? extends AttributedElement> type) {
+			Class<? extends AttributedElement<?, ?>> type) {
 		super(time, type);
 	}
 
@@ -46,15 +46,14 @@ public class DeleteEdgeEventDescription extends EventDescription {
 	 * @param element
 	 *            the to be deleted Edge
 	 */
-	public void fire(AttributedElement element) {
+	public void fire(AttributedElement<?, ?> element) {
 		if (super.checkContext(element)) {
-			int nested = this.getActiveECARules().get(0).getECARuleManager()
+			int nested = getActiveECARules().get(0).getECARuleManager()
 					.getNestedTriggerCalls();
-			Graph graph = this.getActiveECARules().get(0).getECARuleManager()
+			Graph graph = getActiveECARules().get(0).getECARuleManager()
 					.getGraph();
 			for (ECARule rule : activeRules) {
-				rule.trigger(new DeleteEdgeEvent(nested, graph,
-						(Edge) element));
+				rule.trigger(new DeleteEdgeEvent(nested, graph, (Edge) element));
 			}
 		}
 	}
@@ -65,11 +64,11 @@ public class DeleteEdgeEventDescription extends EventDescription {
 	 * @param type
 	 *            the type of the Edge that is deleted
 	 */
-	public void fire(Class<? extends AttributedElement> type) {
+	public void fire(Class<? extends AttributedElement<?, ?>> type) {
 		if (super.checkContext(type)) {
-			int nested = this.getActiveECARules().get(0).getECARuleManager()
+			int nested = getActiveECARules().get(0).getECARuleManager()
 					.getNestedTriggerCalls();
-			Graph graph = this.getActiveECARules().get(0).getECARuleManager()
+			Graph graph = getActiveECARules().get(0).getECARuleManager()
 					.getGraph();
 			for (ECARule rule : activeRules) {
 				rule.trigger(new DeleteEdgeEvent(nested, graph, type));

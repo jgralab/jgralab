@@ -301,7 +301,7 @@ public class HTMLOutputWriter extends DefaultWriter {
 	}
 
 	@Override
-	protected void writeAttributedElementClass(AttributedElementClass c)
+	protected void writeAttributedElementClass(AttributedElementClass<?, ?> c)
 			throws IOException {
 		out.println(c.getQualifiedName());
 	}

@@ -101,7 +101,7 @@ public class XMLOutputWriter extends DefaultWriter implements XMLConstants {
 	 * visitAttributedElementClass(de.uni_koblenz.jgralab.greql2.jvalue.JValue)
 	 */
 	@Override
-	protected void writeAttributedElementClass(AttributedElementClass aec)
+	protected void writeAttributedElementClass(AttributedElementClass<?, ?> aec)
 			throws XMLStreamException {
 		writer.writeEmptyElement(ATTRIBUTEDELEMENTCLASS);
 		writer.writeAttribute(ATTR_NAME, aec.getQualifiedName());

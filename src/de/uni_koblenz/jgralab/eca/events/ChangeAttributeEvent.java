@@ -8,7 +8,7 @@ public class ChangeAttributeEvent extends Event {
 	/**
 	 * AttributedElement who causes this Event
 	 */
-	private AttributedElement element;
+	private AttributedElement<?, ?> element;
 
 	/**
 	 * Name of the Attribute that changes
@@ -45,8 +45,8 @@ public class ChangeAttributeEvent extends Event {
 	 */
 	public ChangeAttributeEvent(int nestedCalls,
 			EventDescription.EventTime time, Graph graph,
-			AttributedElement element, String attributeName, Object oldValue,
-			Object newValue) {
+			AttributedElement<?, ?> element, String attributeName,
+			Object oldValue, Object newValue) {
 		super(nestedCalls, time, graph, element.getSchemaClass());
 		this.element = element;
 		this.attributeName = attributeName;
@@ -58,7 +58,7 @@ public class ChangeAttributeEvent extends Event {
 	 * @return the AttributedElement that causes this Event
 	 */
 	@Override
-	public AttributedElement getElement() {
+	public AttributedElement<?, ?> getElement() {
 		return element;
 	}
 

@@ -86,8 +86,8 @@ import de.uni_koblenz.ist.utilities.gui.RecentFilesList;
 import de.uni_koblenz.ist.utilities.gui.SwingApplication;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphIO;
+import de.uni_koblenz.jgralab.ImplementationType;
 import de.uni_koblenz.jgralab.ProgressFunction;
-import de.uni_koblenz.jgralab.codegenerator.CodeGeneratorConfiguration;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.exception.ParsingException;
 import de.uni_koblenz.jgralab.greql2.exception.QuerySourceException;
@@ -221,9 +221,9 @@ public class GreqlGui extends SwingApplication {
 		@Override
 		public void run() {
 			try {
-				graph = GraphIO.loadSchemaAndGraphFromFile(
-						file.getCanonicalPath(),
-						CodeGeneratorConfiguration.MINIMAL, this);
+				graph = GraphIO.loadGraphFromFile(file.getCanonicalPath(),
+						ImplementationType.GENERIC, this);
+				System.err.println(graph);
 				recentGraphList.rememberFile(file);
 				graphLoading = false;
 			} catch (Exception e1) {

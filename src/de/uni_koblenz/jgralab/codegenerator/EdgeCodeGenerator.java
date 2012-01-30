@@ -54,6 +54,7 @@ public class EdgeCodeGenerator extends AttributedElementCodeGenerator {
 			CodeGeneratorConfiguration config) {
 		super(edgeClass, schemaPackageName, config);
 		rootBlock.setVariable("graphElementClass", "Edge");
+		rootBlock.setVariable("schemaElementClass", "EdgeClass");
 	}
 
 	@Override
@@ -184,12 +185,12 @@ public class EdgeCodeGenerator extends AttributedElementCodeGenerator {
 
 	private CodeBlock createNextEdgeMethods() {
 		CodeList code = new CodeList();
-		TreeSet<AttributedElementClass> superClasses = new TreeSet<AttributedElementClass>();
+		TreeSet<AttributedElementClass<?, ?>> superClasses = new TreeSet<AttributedElementClass<?, ?>>();
 		superClasses.addAll(aec.getAllSuperClasses());
 		superClasses.add(aec);
 
 		if (config.hasTypeSpecificMethodsSupport()) {
-			for (AttributedElementClass ec : superClasses) {
+			for (AttributedElementClass<?, ?> ec : superClasses) {
 				if (ec.isInternal()) {
 					continue;
 				}
@@ -226,12 +227,12 @@ public class EdgeCodeGenerator extends AttributedElementCodeGenerator {
 	private CodeBlock createNextIncidenceMethods() {
 		CodeList code = new CodeList();
 
-		TreeSet<AttributedElementClass> superClasses = new TreeSet<AttributedElementClass>();
+		TreeSet<AttributedElementClass<?, ?>> superClasses = new TreeSet<AttributedElementClass<?, ?>>();
 		superClasses.addAll(aec.getAllSuperClasses());
 		superClasses.add(aec);
 
 		if (config.hasTypeSpecificMethodsSupport()) {
-			for (AttributedElementClass ec : superClasses) {
+			for (AttributedElementClass<?, ?> ec : superClasses) {
 				if (ec.isInternal()) {
 					continue;
 				}

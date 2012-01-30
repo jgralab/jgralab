@@ -134,7 +134,7 @@ public class Path {
 		}
 	}
 
-	public boolean contains(GraphElement el) {
+	public boolean contains(GraphElement<?, ?> el) {
 		return (el instanceof Vertex) ? containsVertex((Vertex) el)
 				: containsEdge((Edge) el);
 	}

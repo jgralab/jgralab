@@ -1078,12 +1078,12 @@ public class ValidationComponent {
 	 */
 	private boolean conflictWithinChangedAttributes() {
 		if (transaction.changedAttributes != null) {
-			Set<Entry<AttributedElement, Set<VersionedDataObject<?>>>> attributedElements = transaction.changedAttributes
+			Set<Entry<AttributedElement<?, ?>, Set<VersionedDataObject<?>>>> attributedElements = transaction.changedAttributes
 					.entrySet();
 			// for every AttributedElement for which at least one attribute has
 			// been changed...
-			for (Entry<AttributedElement, Set<VersionedDataObject<?>>> entry : attributedElements) {
-				AttributedElement attributedElement = entry.getKey();
+			for (Entry<AttributedElement<?, ?>, Set<VersionedDataObject<?>>> entry : attributedElements) {
+				AttributedElement<?, ?> attributedElement = entry.getKey();
 				String type = "";
 				// attributedElement == vertex?
 				if (attributedElement instanceof Vertex) {

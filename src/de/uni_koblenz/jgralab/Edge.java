@@ -44,7 +44,7 @@ import de.uni_koblenz.jgralab.schema.EdgeClass;
  * @author ist@uni-koblenz.de
  *
  */
-public interface Edge extends GraphElement {
+public interface Edge extends GraphElement<EdgeClass, Edge> {
 
 	/**
 	 * @return the next incidence object in iSeq of current vertex

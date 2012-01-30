@@ -128,7 +128,7 @@ public class Schema2SchemaGraph {
 	 * Map to reference a AttributedElementClass of a Schema to a
 	 * AttributedElementClass of a SchemaGraph.
 	 */
-	private Map<de.uni_koblenz.jgralab.schema.AttributedElementClass, AttributedElementClass> attributedElementClassMap;
+	private Map<de.uni_koblenz.jgralab.schema.AttributedElementClass<?, ?>, AttributedElementClass> attributedElementClassMap;
 
 	/**
 	 * Map to reference a VertexClass of a Schema to a VertexClass of a
@@ -170,13 +170,14 @@ public class Schema2SchemaGraph {
 		workInProgress = true;
 
 		packageMap = new HashMap<de.uni_koblenz.jgralab.schema.Package, Package>();
-		attributedElementClassMap = new HashMap<de.uni_koblenz.jgralab.schema.AttributedElementClass, AttributedElementClass>();
+		attributedElementClassMap = new HashMap<de.uni_koblenz.jgralab.schema.AttributedElementClass<?, ?>, AttributedElementClass>();
 		domainMap = new HashMap<de.uni_koblenz.jgralab.schema.Domain, Domain>();
 		vertexClassMap = new HashMap<de.uni_koblenz.jgralab.schema.VertexClass, VertexClass>();
 		edgeClassMap = new HashMap<de.uni_koblenz.jgralab.schema.EdgeClass, EdgeClass>();
 		incidenceClassMap = new HashMap<de.uni_koblenz.jgralab.schema.IncidenceClass, IncidenceClass>();
 
-		schemaGraph = GrumlSchema.instance().createSchemaGraph(ImplementationType.STANDARD);
+		schemaGraph = GrumlSchema.instance().createSchemaGraph(
+				ImplementationType.STANDARD);
 	}
 
 	/**
@@ -835,7 +836,7 @@ public class Schema2SchemaGraph {
 		for (Entry<de.uni_koblenz.jgralab.schema.VertexClass, VertexClass> entry : vertexClassMap
 				.entrySet()) {
 			// Loop over all superclass's of the current entry
-			for (de.uni_koblenz.jgralab.schema.AttributedElementClass superClass : entry
+			for (de.uni_koblenz.jgralab.schema.AttributedElementClass<?, ?> superClass : entry
 					.getKey().getDirectSuperClasses()) {
 
 				// Skips predefined classes
@@ -855,7 +856,7 @@ public class Schema2SchemaGraph {
 		for (Entry<de.uni_koblenz.jgralab.schema.EdgeClass, EdgeClass> entry : edgeClassMap
 				.entrySet()) {
 			// Loop over all superclass's of the current entry
-			for (de.uni_koblenz.jgralab.schema.AttributedElementClass superClass : entry
+			for (de.uni_koblenz.jgralab.schema.AttributedElementClass<?, ?> superClass : entry
 					.getKey().getDirectSuperClasses()) {
 
 				// Skips predefined classes
@@ -878,7 +879,7 @@ public class Schema2SchemaGraph {
 	 */
 	private void createAttributes() {
 		// Loop over all AttributeElementClass entries.
-		for (Entry<de.uni_koblenz.jgralab.schema.AttributedElementClass, AttributedElementClass> entry : attributedElementClassMap
+		for (Entry<de.uni_koblenz.jgralab.schema.AttributedElementClass<?, ?>, AttributedElementClass> entry : attributedElementClassMap
 				.entrySet()) {
 			// Creates all Attribute objects for this entry
 			createAttributes(entry.getKey(), entry.getValue());
@@ -895,7 +896,7 @@ public class Schema2SchemaGraph {
 	 *            AttributeElementClass, to which all attributes are linked.
 	 */
 	private void createAttributes(
-			de.uni_koblenz.jgralab.schema.AttributedElementClass element,
+			de.uni_koblenz.jgralab.schema.AttributedElementClass<?, ?> element,
 			AttributedElementClass gElement) {
 
 		assert (checkSchemaAndSchemaGraph());
@@ -936,7 +937,7 @@ public class Schema2SchemaGraph {
 	 */
 	private void createConstraints() {
 		// Loop over all AttributeElementClass entries.
-		for (Entry<de.uni_koblenz.jgralab.schema.AttributedElementClass, AttributedElementClass> entry : attributedElementClassMap
+		for (Entry<de.uni_koblenz.jgralab.schema.AttributedElementClass<?, ?>, AttributedElementClass> entry : attributedElementClassMap
 				.entrySet()) {
 			// Creates all Constraint objects for the current
 			// AttributeElementClass entry
@@ -955,7 +956,7 @@ public class Schema2SchemaGraph {
 	 *            AttributedElementClass, to which all Constraints are linked.
 	 */
 	private void createConstraints(
-			de.uni_koblenz.jgralab.schema.AttributedElementClass element,
+			de.uni_koblenz.jgralab.schema.AttributedElementClass<?, ?> element,
 			AttributedElementClass gElement) {
 
 		assert (checkSchemaAndSchemaGraph());

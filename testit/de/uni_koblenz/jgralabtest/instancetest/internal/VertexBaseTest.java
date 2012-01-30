@@ -125,11 +125,11 @@ public class VertexBaseTest extends InstanceTest {
 		switch (implementationType) {
 		case STANDARD:
 			graph = VertexTestSchema.instance().createVertexTestGraph(
-					ImplementationType.STANDARD, 100, 100);
+					ImplementationType.STANDARD);
 			break;
 		case TRANSACTION:
 			graph = VertexTestSchema.instance().createVertexTestGraph(
-					ImplementationType.TRANSACTION, 100, 100);
+					ImplementationType.TRANSACTION);
 			break;
 		case DATABASE:
 			graph = createVertexTestGraphWithDatabaseSupport();
