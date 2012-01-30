@@ -43,7 +43,7 @@ import de.uni_koblenz.jgralab.impl.InternalVertex;
 /**
  * The implementation of an <code>Edge</code> accessing attributes without
  * versioning.
- *
+ * 
  * @author Jose Monte(monte@uni-koblenz.de)
  */
 public abstract class EdgeImpl extends de.uni_koblenz.jgralab.impl.EdgeBaseImpl {

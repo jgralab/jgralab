@@ -116,7 +116,7 @@ public class GraphBaseTest extends InstanceTest {
 	private ArrayList<String> graphIdsInUse = new ArrayList<String>();
 
 	/**
-	 *
+	 * 
 	 * @return
 	 */
 	private VertexTestGraph createNewGraph() {
@@ -167,7 +167,7 @@ public class GraphBaseTest extends InstanceTest {
 	/**
 	 * Asserts true if the edgeListVersion has changed. Returns the new
 	 * edgeListVersion.
-	 *
+	 * 
 	 * @param elv1
 	 *            the edgeListVersion before the transaction.
 	 * @return the edgeListVersion after the transaction.
@@ -186,7 +186,7 @@ public class GraphBaseTest extends InstanceTest {
 
 	/**
 	 * Asserts true if the edgeListVersion has not changed.
-	 *
+	 * 
 	 * @param elv1
 	 *            the edgeListVersion before the transaction.
 	 * @throws CommitFailedException
@@ -687,119 +687,6 @@ public class GraphBaseTest extends InstanceTest {
 
 		// same
 		checkIfEdgeListVersionRemained(elv1);
-
-	}
-
-	@Test
-	public void testGetExpandedEdgeCount() throws CommitFailedException {
-		// border case
-		createReadOnlyTransaction(g1);
-		assertEquals(2000, g1.getExpandedEdgeCount());
-		commit(g1);
-
-		// normal cases
-		createTransaction(g1);
-		for (int i = 0; i < 1000; i++) {
-			g1.createEdge(SubLink.ATTRIBUTED_ELEMENT_CLASS, v9, v5);
-		}
-		commit(g1);
-
-		createReadOnlyTransaction(g1);
-		assertEquals(2000, g1.getExpandedEdgeCount());
-		commit(g1);
-
-		createTransaction(g1);
-		for (int i = 0; i < 1000; i++) {
-			g1.createEdge(Link.ATTRIBUTED_ELEMENT_CLASS, v1, v5);
-		}
-		commit(g1);
-
-		createReadOnlyTransaction(g1);
-		assertEquals(4000, g1.getExpandedEdgeCount());
-		commit(g1);
-
-		createTransaction(g1);
-		for (int i = 0; i < 1000; i++) {
-			g1.createEdge(LinkBack.ATTRIBUTED_ELEMENT_CLASS, v5, v9);
-		}
-		commit(g1);
-
-		createReadOnlyTransaction(g1);
-		assertEquals(8000, g1.getExpandedEdgeCount());
-		commit(g1);
-
-	}
-
-	@Test
-	public void testGetExpandedVertexCount() throws CommitFailedException {
-		// border case
-		createReadOnlyTransaction(g1);
-		assertEquals(2000, g1.getExpandedVertexCount());
-		commit(g1);
-
-		// normal cases
-		createTransaction(g1);
-		for (int i = 12; i < 1000; i++) {
-			g1.createVertex(SubNode.ATTRIBUTED_ELEMENT_CLASS);
-		}
-		commit(g1);
-
-		createReadOnlyTransaction(g1);
-		assertEquals(2000, g1.getExpandedVertexCount());
-		commit(g1);
-
-		createTransaction(g1);
-		for (int i = 0; i < 1000; i++) {
-			g1.createVertex(SuperNode.ATTRIBUTED_ELEMENT_CLASS);
-		}
-		commit(g1);
-
-		createReadOnlyTransaction(g1);
-		assertEquals(4000, g1.getExpandedVertexCount());
-		commit(g1);
-
-		createTransaction(g1);
-		for (int i = 0; i < 1000; i++) {
-			g1.createVertex(DoubleSubNode.ATTRIBUTED_ELEMENT_CLASS);
-		}
-		commit(g1);
-
-		createReadOnlyTransaction(g1);
-		assertEquals(8000, g1.getExpandedVertexCount());
-		commit(g1);
-
-	}
-
-	@Test
-	public void testGetMaxECount() throws CommitFailedException {
-		createReadOnlyTransaction(g1);
-		assertEquals(1000, g1.getMaxECount());
-		commit(g1);
-
-		createReadOnlyTransaction(g2);
-		assertEquals(1000, g2.getMaxECount());
-		commit(g2);
-
-		MinimalGraph g3 = createMinimalGraph();
-
-		createReadOnlyTransaction(g3);
-		assertEquals(1000, ((InternalGraph) g3).getMaxECount());
-		commit(g3);
-
-	}
-
-	@Test
-	public void testGetMaxVCount() throws CommitFailedException {
-		createReadOnlyTransaction(g1);
-		assertEquals(1000, g1.getMaxVCount());
-		assertEquals(1000, g2.getMaxVCount());
-		commit(g1);
-
-		MinimalGraph g3 = createMinimalGraph();
-
-		createReadOnlyTransaction(g3);
-		assertEquals(1000, ((InternalGraph) g3).getMaxVCount());
-		commit(g3);
 
 	}
 
@@ -1392,7 +1279,7 @@ public class GraphBaseTest extends InstanceTest {
 		/*
 		 * try{ // graph =VertexTestSchema.instance().loadVertexTestGraph(
 		 * "de.uni_koblenz.VertexTestSchema.tg");
-		 *
+		 * 
 		 * VertexTestGraph graph3 =
 		 * VertexTestSchema.instance().loadVertexTestGraph
 		 * ("VertexTestSchema.tg"); }catch (GraphIOException e){

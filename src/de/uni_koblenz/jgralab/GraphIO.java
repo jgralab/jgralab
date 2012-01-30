@@ -283,7 +283,7 @@ public class GraphIO {
 		}
 	}
 
-	private static Schema loadSchemaFromStream(InputStream in)
+	public static Schema loadSchemaFromStream(InputStream in)
 			throws GraphIOException {
 		try {
 			GraphIO io = new GraphIO();
@@ -1100,7 +1100,7 @@ public class GraphIO {
 		}
 	}
 
-	private static <G extends Graph> G loadGraphFromStream(InputStream in,
+	public static <G extends Graph> G loadGraphFromStream(InputStream in,
 			Schema schema, GraphFactory graphFactory,
 			ImplementationType implementationType, ProgressFunction pf)
 			throws GraphIOException {

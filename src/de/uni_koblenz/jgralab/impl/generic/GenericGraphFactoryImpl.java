@@ -45,13 +45,17 @@ public class GenericGraphFactoryImpl extends GraphFactoryImpl {
 	@Override
 	public <V extends Vertex> V createVertex(VertexClass vc, int id, Graph g) {
 		assert schema == vc.getSchema();
-		return ((GenericGraphImpl) g).createVertex(vc, id);
+		@SuppressWarnings("unchecked")
+		V vertex = (V) new GenericVertexImpl(vc, id, g);
+		return vertex;
 	}
 
 	@Override
 	public <E extends Edge> E createEdge(EdgeClass ec, int id, Graph g,
 			Vertex alpha, Vertex omega) {
 		assert schema == ec.getSchema();
-		return ((GenericGraphImpl) g).createEdge(ec, id, alpha, omega);
+		@SuppressWarnings("unchecked")
+		E edge = (E) new GenericEdgeImpl(ec, id, g, alpha, omega);
+		return edge;
 	}
 }

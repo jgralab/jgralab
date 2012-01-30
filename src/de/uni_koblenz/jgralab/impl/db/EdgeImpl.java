@@ -45,7 +45,7 @@ import de.uni_koblenz.jgralab.impl.VertexBaseImpl;
 
 /**
  * Implements a database persistable edge.
- *
+ * 
  * @author ultbreit@uni-koblenz.de
  */
 public abstract class EdgeImpl extends EdgeBaseImpl implements
@@ -80,7 +80,7 @@ public abstract class EdgeImpl extends EdgeBaseImpl implements
 
 	/**
 	 * Creates and initializes a new <code>EdgeImpl</code>.
-	 *
+	 * 
 	 * @param anId
 	 *            Id edge will have.
 	 * @param graph
@@ -92,6 +92,7 @@ public abstract class EdgeImpl extends EdgeBaseImpl implements
 	 */
 	protected EdgeImpl(int anId, Graph graph, Vertex alpha, Vertex omega) {
 		super(anId, graph, alpha, omega);
+		((GraphImpl) graph).addEdge(this, alpha, omega);
 	}
 
 	private GraphImpl getGraphImpl() {
@@ -141,7 +142,7 @@ public abstract class EdgeImpl extends EdgeBaseImpl implements
 
 	/**
 	 * Updates id of incident vertex.
-	 *
+	 * 
 	 * @param incidentVId
 	 *            Id of incident vertex.
 	 */
@@ -155,7 +156,7 @@ public abstract class EdgeImpl extends EdgeBaseImpl implements
 
 	/**
 	 * Updates number mapping edge's sequence LambdaSeq of incident vertex.
-	 *
+	 * 
 	 * @param sequenceNumber
 	 *            Number of vertex mapping it's sequence LambdaSeq of incident
 	 *            vertex.
@@ -169,7 +170,7 @@ public abstract class EdgeImpl extends EdgeBaseImpl implements
 
 	/**
 	 * Updates number mapping edge's sequence in VSeq.
-	 *
+	 * 
 	 * @param sequenceNumber
 	 *            Number of vertex mapping it's sequence in VSeq.
 	 */
@@ -331,7 +332,8 @@ public abstract class EdgeImpl extends EdgeBaseImpl implements
 		VertexImpl v = (VertexImpl) getThis();
 		assert v.isValid();
 		// if (this.isNotTheSameEdgeAs(e)){
-		if ((this != e) && (this != ((InternalEdge) e).getNextIncidenceInISeq())) {
+		if ((this != e)
+				&& (this != ((InternalEdge) e).getNextIncidenceInISeq())) {
 			// System.out.println("putEdgeAfter calls v.putIncidenceAfter");
 			v.putIncidenceAfter((IncidenceImpl) e, this);
 			v.incidenceListModified();
@@ -371,7 +373,7 @@ public abstract class EdgeImpl extends EdgeBaseImpl implements
 
 	/**
 	 * Sets id of edge if it is different than previous one.
-	 *
+	 * 
 	 * @param id
 	 *            Id of edge.
 	 */
@@ -385,7 +387,7 @@ public abstract class EdgeImpl extends EdgeBaseImpl implements
 
 	/**
 	 * Updates id of edge.
-	 *
+	 * 
 	 * @param graphId
 	 *            Id of edge.
 	 */
@@ -408,7 +410,7 @@ public abstract class EdgeImpl extends EdgeBaseImpl implements
 	/**
 	 * Notifies edge that one of his attributes has changed. Called from
 	 * generated edge implementation classes when an attribute is changed.
-	 *
+	 * 
 	 * @param attributeName
 	 *            Name of attribute that has been changed.
 	 */

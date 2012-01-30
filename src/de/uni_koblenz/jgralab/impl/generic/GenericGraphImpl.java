@@ -9,7 +9,6 @@ import org.pcollections.POrderedSet;
 import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
-import de.uni_koblenz.jgralab.GraphException;
 import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.NoSuchAttributeException;
@@ -30,9 +29,9 @@ import de.uni_koblenz.jgralab.schema.LongDomain;
 import de.uni_koblenz.jgralab.schema.VertexClass;
 
 /**
- *
+ * 
  * @author Bernhard
- *
+ * 
  */
 public class GenericGraphImpl extends GraphImpl {
 
@@ -66,25 +65,7 @@ public class GenericGraphImpl extends GraphImpl {
 	 */
 	@Override
 	public <T extends Vertex> T createVertex(VertexClass vc) {
-		return createVertex(vc, 0);
-	}
-
-	@SuppressWarnings("unchecked")
-	public <T extends Vertex> T createVertex(VertexClass vc, int id) {
-		if (type.getVertexClass(vc.getQualifiedName()) == null) {
-			throw new GraphException("Error creating vertex of VertexClass "
-					+ vc);
-		}
-		try {
-			return (T) new GenericVertexImpl(vc, id, this);
-		} catch (Exception e) {
-			if (e instanceof GraphException) {
-				throw (GraphException) e;
-			} else {
-				throw new GraphException(
-						"Error creating vertex of VertexClass " + vc);
-			}
-		}
+		return graphFactory.createVertex(vc, 0, this);
 	}
 
 	/**
@@ -94,22 +75,7 @@ public class GenericGraphImpl extends GraphImpl {
 	@Override
 	public <T extends Edge> T createEdge(EdgeClass ec, Vertex alpha,
 			Vertex omega) {
-		return createEdge(ec, 0, alpha, omega);
-	}
-
-	@SuppressWarnings("unchecked")
-	public <T extends Edge> T createEdge(EdgeClass ec, int id, Vertex alpha,
-			Vertex omega) {
-		try {
-			return (T) new GenericEdgeImpl(ec, id, this, alpha, omega);
-		} catch (Exception e) {
-			if (e instanceof GraphException) {
-				throw (GraphException) e;
-			} else {
-				throw new GraphException("Error creating edge of EdgeClass "
-						+ ec, e);
-			}
-		}
+		return graphFactory.createEdge(ec, 0, this, alpha, omega);
 	}
 
 	@Override
@@ -234,7 +200,7 @@ public class GenericGraphImpl extends GraphImpl {
 	 * Returns the default value for attributes in the generic implementation if
 	 * there is no explicitly defined default value, according to the
 	 * attribute's domain.
-	 *
+	 * 
 	 * @param domain
 	 *            The attribute's domain.
 	 * @return The default value for attributes of the domain.

@@ -12,7 +12,6 @@ import de.uni_koblenz.jgralab.NoSuchAttributeException;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.impl.ReversedEdgeBaseImpl;
 import de.uni_koblenz.jgralab.impl.std.EdgeImpl;
-import de.uni_koblenz.jgralab.impl.std.GraphImpl;
 import de.uni_koblenz.jgralab.schema.AggregationKind;
 import de.uni_koblenz.jgralab.schema.Attribute;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
@@ -26,9 +25,9 @@ public class GenericEdgeImpl extends EdgeImpl {
 			Vertex omega) {
 		super(anId, graph, alpha, omega);
 		this.type = type;
-		((GraphImpl) graph).addEdge(this, alpha, omega);
 		attributes = GenericGraphImpl.initializeAttributes(type);
 		GenericGraphImpl.initializeGenericAttributeValues(this);
+		((GenericGraphImpl) graph).addEdge(this, alpha, omega);
 	}
 
 	@Override
