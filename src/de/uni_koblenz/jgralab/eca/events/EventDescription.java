@@ -45,7 +45,7 @@ public abstract class EventDescription {
 	 * Class of the elements, this Event monitors if the {@link context} is set
 	 * to TYPE, null otherwise
 	 */
-	private Class<? extends AttributedElement> type;
+	private Class<? extends AttributedElement<?, ?>> type;
 
 	// +++++++ Constructors ++++++++++++++++++++++++++++++++++++++++++++++++++
 
@@ -58,7 +58,7 @@ public abstract class EventDescription {
 	 *            the Class of elements, this Event monitors
 	 */
 	public EventDescription(EventTime time,
-			Class<? extends AttributedElement> type) {
+			Class<? extends AttributedElement<?, ?>> type) {
 		this.time = time;
 		activeRules = new ArrayList<ECARule>();
 		this.type = type;
@@ -91,7 +91,7 @@ public abstract class EventDescription {
 	 * @return whether the Event matches this EventDescription
 	 */
 	protected boolean checkContext(
-			Class<? extends AttributedElement> elementClass) {
+			Class<? extends AttributedElement<?, ?>> elementClass) {
 		if (getType().equals(elementClass)) {
 			return true;
 		} else {
@@ -107,7 +107,7 @@ public abstract class EventDescription {
 	 *            the element to check
 	 * @return whether the Event matches this EventDescription
 	 */
-	protected boolean checkContext(AttributedElement element) {
+	protected boolean checkContext(AttributedElement<?, ?> element) {
 		if (context.equals(Context.TYPE)) {
 			if (element.getSchemaClass().equals(type)) {
 				return true;
@@ -158,7 +158,7 @@ public abstract class EventDescription {
 	/**
 	 * @return the type of the monitored elements
 	 */
-	public Class<? extends AttributedElement> getType() {
+	public Class<? extends AttributedElement<?, ?>> getType() {
 		return type;
 	}
 

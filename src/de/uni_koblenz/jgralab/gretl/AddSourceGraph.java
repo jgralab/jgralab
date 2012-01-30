@@ -42,7 +42,7 @@ public class AddSourceGraph extends Transformation<Graph> {
 
 		Graph g;
 		try {
-			g = GraphIO.loadGraphFromFileWithStandardSupport(graphFile,
+			g = GraphIO.loadGraphFromFile(graphFile,
 					new ConsoleProgressFunction());
 		} catch (Exception e) {
 			throw new GReTLException(

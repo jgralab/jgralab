@@ -48,18 +48,16 @@ import de.uni_koblenz.jgralab.schema.Attribute;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.Constraint;
 import de.uni_koblenz.jgralab.schema.Domain;
-import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.Package;
 import de.uni_koblenz.jgralab.schema.Schema;
-import de.uni_koblenz.jgralab.schema.VertexClass;
 import de.uni_koblenz.jgralab.schema.exception.DuplicateAttributeException;
 import de.uni_koblenz.jgralab.schema.exception.InheritanceException;
 import de.uni_koblenz.jgralab.schema.exception.SchemaClassAccessException;
 import de.uni_koblenz.jgralab.schema.exception.SchemaException;
 import de.uni_koblenz.jgralab.schema.impl.compilation.SchemaClassManager;
 
-public abstract class AttributedElementClassImpl extends NamedElementImpl
-		implements AttributedElementClass {
+public abstract class AttributedElementClassImpl<SC extends AttributedElementClass<SC, IC>, IC extends AttributedElement<SC, IC>>
+		extends NamedElementImpl implements AttributedElementClass<SC, IC> {
 
 	/**
 	 * the list of attributes. Only the own attributes of this class are stored
@@ -81,45 +79,47 @@ public abstract class AttributedElementClassImpl extends NamedElementImpl
 	/**
 	 * the immediate sub classes of this class
 	 */
-	protected Set<AttributedElementClass> directSubClasses = new HashSet<AttributedElementClass>();
+	protected Set<SC> directSubClasses = new HashSet<SC>();
 
 	/**
 	 * the sub classes of this class - only set if the schema is finish
 	 */
-	protected Set<AttributedElementClass> allSubClasses;
+	protected Set<SC> allSubClasses;
 
 	/**
 	 * the immediate super classes of this class
 	 */
-	protected Set<AttributedElementClass> directSuperClasses = new HashSet<AttributedElementClass>();
+	protected Set<SC> directSuperClasses = new HashSet<SC>();
 
 	/**
 	 * the super classes of this class - only set if the schema is finish
 	 */
-	protected Set<AttributedElementClass> allSuperClasses;
+	protected Set<SC> allSuperClasses;
 
 	/**
 	 * true if the schema is finish
 	 */
-	private boolean finish = false;
+	private boolean finished = false;
 
 	/**
 	 * true if element class is abstract
 	 */
 	private boolean isAbstract = false;
 
+	private boolean internal = false;
+
 	/**
 	 * The class object representing the generated interface for this
 	 * AttributedElementClass
 	 */
-	private Class<? extends AttributedElement> schemaClass;
+	private Class<IC> schemaClass;
 
 	/**
 	 * The class object representing the implementation class for this
 	 * AttributedElementClass. This may be either the generated class or a
 	 * subclass of this
 	 */
-	private Class<? extends AttributedElement> schemaImplementationClass;
+	private Class<IC> schemaImplementationClass;
 
 	/**
 	 * builds a new attributed element class
@@ -134,7 +134,7 @@ public abstract class AttributedElementClassImpl extends NamedElementImpl
 
 	@Override
 	public void addAttribute(Attribute anAttribute) {
-		if(finish){
+		if(finished){
 			throw new SchemaException("No changes to finished schema!");
 		}
 
@@ -169,7 +169,7 @@ public abstract class AttributedElementClassImpl extends NamedElementImpl
 
 	@Override
 	public void addConstraint(Constraint constraint) {
-		if(finish){
+		if (finished) {
 			throw new SchemaException("No changes to finished schema!");
 		}
 		constraints.add(constraint);
@@ -181,8 +181,9 @@ public abstract class AttributedElementClassImpl extends NamedElementImpl
 	 * @param superClass
 	 *            the class to add as superclass
 	 */
-	protected void addSuperClass(AttributedElementClass superClass) {
-		if(finish){
+	@SuppressWarnings("unchecked")
+	protected void addSuperClass(SC superClass) {
+		if (finished) {
 			throw new SchemaException("No changes to finished schema!");
 		}
 
@@ -201,27 +202,15 @@ public abstract class AttributedElementClassImpl extends NamedElementImpl
 						+ a.getName() + " is declared in both classes");
 			}
 		}
-		if (superClass.isSubClassOf(this)) {
+		if (superClass.isSubClassOf((SC) this)) {
 			throw new InheritanceException(
 					"Cycle in class hierarchie for classes: "
 							+ getQualifiedName() + " and "
 							+ superClass.getQualifiedName());
 		}
 		directSuperClasses.add(superClass);
-		((AttributedElementClassImpl) superClass).directSubClasses.add(this);
-
-		if(superClass instanceof VertexClass){
-			// DefaultVertexClass has a the DefaultGraphClass as graphClass, so it is not in the DAG
-			if(!superClass.equals(getSchema().getDefaultVertexClass())){
-				((GraphClassImpl) getSchema().getGraphClass()).getVertexCsDag()
-					.createEdge((VertexClass)superClass, (VertexClass)this);
-			}
-		}else if(superClass instanceof EdgeClass){
-			if(!superClass.equals(getSchema().getDefaultEdgeClass())){
-				((GraphClassImpl)getSchema().getGraphClass()).getEdgeCsDag()
-					.createEdge((EdgeClass)superClass, ((EdgeClass)this));
-			}
-		}
+		((AttributedElementClassImpl<SC, IC>) superClass).directSubClasses
+				.add((SC) this);
 	}
 
 	/**
@@ -250,13 +239,13 @@ public abstract class AttributedElementClassImpl extends NamedElementImpl
 	}
 
 	@Override
-	public Set<AttributedElementClass> getAllSubClasses() {
-		if(finish){
-			return this.allSubClasses;
+	public Set<SC> getAllSubClasses() {
+		if (finished) {
+			return allSubClasses;
 		}
 
-		Set<AttributedElementClass> returnSet = new HashSet<AttributedElementClass>();
-		for (AttributedElementClass subclass : directSubClasses) {
+		Set<SC> returnSet = new HashSet<SC>();
+		for (SC subclass : directSubClasses) {
 			returnSet.add(subclass);
 			returnSet.addAll(subclass.getAllSubClasses());
 		}
@@ -264,14 +253,14 @@ public abstract class AttributedElementClassImpl extends NamedElementImpl
 	}
 
 	@Override
-	public Set<AttributedElementClass> getAllSuperClasses() {
-		if(finish) {
-			return this.allSuperClasses;
+	public Set<SC> getAllSuperClasses() {
+		if (finished) {
+			return allSuperClasses;
 		}
 
-		HashSet<AttributedElementClass> allSuperClasses = new HashSet<AttributedElementClass>();
+		HashSet<SC> allSuperClasses = new HashSet<SC>();
 		allSuperClasses.addAll(directSuperClasses);
-		for (AttributedElementClass superClass : directSuperClasses) {
+		for (SC superClass : directSuperClasses) {
 			allSuperClasses.addAll(superClass.getAllSuperClasses());
 		}
 		return allSuperClasses;
@@ -279,8 +268,8 @@ public abstract class AttributedElementClassImpl extends NamedElementImpl
 
 	@Override
 	public Attribute getAttribute(String name) {
-		//TODO ask if Attributes save as map
-		if(finish){
+		// TODO ask if Attributes save as map
+		if (finished) {
 			Iterator<Attribute> it = allAttributeList.iterator();
 			Attribute a;
 			while (it.hasNext()) {
@@ -295,7 +284,7 @@ public abstract class AttributedElementClassImpl extends NamedElementImpl
 		if (ownAttr != null) {
 			return ownAttr;
 		}
-		for (AttributedElementClass superClass : directSuperClasses) {
+		for (SC superClass : directSuperClasses) {
 			Attribute inheritedAttr = superClass.getAttribute(name);
 			if (inheritedAttr != null) {
 				return inheritedAttr;
@@ -306,11 +295,11 @@ public abstract class AttributedElementClassImpl extends NamedElementImpl
 
 	@Override
 	public int getAttributeCount() {
-		if(finish){
-			return this.allAttributeList.size();
+		if (finished) {
+			return allAttributeList.size();
 		}
 		int attrCount = getOwnAttributeCount();
-		for (AttributedElementClass superClass : directSuperClasses) {
+		for (SC superClass : directSuperClasses) {
 			attrCount += superClass.getAttributeCount();
 		}
 		return attrCount;
@@ -318,13 +307,13 @@ public abstract class AttributedElementClassImpl extends NamedElementImpl
 
 	@Override
 	public SortedSet<Attribute> getAttributeList() {
-		if(finish){
-			return this.allAttributeList;
+		if (finished) {
+			return allAttributeList;
 		}
 
 		TreeSet<Attribute> attrList = new TreeSet<Attribute>();
 		attrList.addAll(attributeList);
-		for (AttributedElementClass superClass : directSuperClasses) {
+		for (SC superClass : directSuperClasses) {
 			attrList.addAll(superClass.getAttributeList());
 		}
 		return attrList;
@@ -336,25 +325,25 @@ public abstract class AttributedElementClassImpl extends NamedElementImpl
 	}
 
 	@Override
-	public Set<AttributedElementClass> getDirectSubClasses() {
+	public Set<SC> getDirectSubClasses() {
 		return directSubClasses;
 	}
 
 	@Override
-	public Set<AttributedElementClass> getDirectSuperClasses() {
+	public Set<SC> getDirectSuperClasses() {
 		return directSuperClasses;
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public Class<? extends AttributedElement> getSchemaClass() {
+	public Class<IC> getSchemaClass() {
 		if (schemaClass == null) {
 			String schemaClassName = getSchema().getPackagePrefix() + "."
 					+ getQualifiedName();
 			try {
-				schemaClass = (Class<? extends AttributedElement>) Class
-						.forName(schemaClassName, true, SchemaClassManager
-								.instance(getSchema().getQualifiedName()));
+				schemaClass = (Class<IC>) Class.forName(schemaClassName, true,
+						SchemaClassManager.instance(getSchema()
+								.getQualifiedName()));
 			} catch (ClassNotFoundException e) {
 				throw new SchemaClassAccessException(
 						"Can't load (generated) schema class for AttributedElementClass '"
@@ -366,7 +355,7 @@ public abstract class AttributedElementClassImpl extends NamedElementImpl
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public Class<? extends AttributedElement> getSchemaImplementationClass() {
+	public Class<IC> getSchemaImplementationClass() {
 		if (isAbstract()) {
 			throw new SchemaClassAccessException(
 					"Can't get (generated) schema implementation class. AttributedElementClass '"
@@ -375,8 +364,7 @@ public abstract class AttributedElementClassImpl extends NamedElementImpl
 		if (schemaImplementationClass == null) {
 			try {
 				Field f = getSchemaClass().getField("IMPLEMENTATION_CLASS");
-				schemaImplementationClass = (Class<? extends AttributedElement>) f
-						.get(schemaClass);
+				schemaImplementationClass = (Class<IC>) f.get(schemaClass);
 			} catch (SecurityException e) {
 				throw new SchemaClassAccessException(e);
 			} catch (NoSuchFieldException e) {
@@ -429,40 +417,37 @@ public abstract class AttributedElementClassImpl extends NamedElementImpl
 	}
 
 	@Override
-	public boolean isDirectSubClassOf(
-			AttributedElementClass anAttributedElementClass) {
+	public boolean isDirectSubClassOf(SC anAttributedElementClass) {
 		return directSuperClasses.contains(anAttributedElementClass);
 	}
 
 	@Override
-	public boolean isDirectSuperClassOf(
-			AttributedElementClass anAttributedElementClass) {
-		return (((AttributedElementClassImpl) anAttributedElementClass).directSuperClasses
-				.contains(this));
+	public boolean isDirectSuperClassOf(SC anAttributedElementClass) {
+		return ((AttributedElementClassImpl<SC, IC>) anAttributedElementClass).directSuperClasses
+				.contains(this);
 	}
 
 	@Override
 	public boolean isInternal() {
-		Schema s = getSchema();
-		return ((this == s.getDefaultEdgeClass())
-				|| (this == s.getDefaultGraphClass()) || (this == s
-				.getDefaultVertexClass()));
+		return internal;
+	}
+
+	void setInternal(Boolean b) {
+		internal = b;
 	}
 
 	@Override
-	public boolean isSubClassOf(AttributedElementClass anAttributedElementClass) {
+	public boolean isSubClassOf(SC anAttributedElementClass) {
 		return getAllSuperClasses().contains(anAttributedElementClass);
 	}
 
 	@Override
-	public boolean isSuperClassOf(
-			AttributedElementClass anAttributedElementClass) {
+	public boolean isSuperClassOf(SC anAttributedElementClass) {
 		return anAttributedElementClass.getAllSuperClasses().contains(this);
 	}
 
 	@Override
-	public boolean isSuperClassOfOrEquals(
-			AttributedElementClass anAttributedElementClass) {
+	public boolean isSuperClassOfOrEquals(SC anAttributedElementClass) {
 		return ((this == anAttributedElementClass) || (isSuperClassOf(anAttributedElementClass)));
 	}
 
@@ -472,7 +457,7 @@ public abstract class AttributedElementClassImpl extends NamedElementImpl
 	}
 
 	protected boolean subclassContainsAttribute(String name) {
-		for (AttributedElementClass subClass : getAllSubClasses()) {
+		for (SC subClass : getAllSubClasses()) {
 			Attribute subclassAttr = subClass.getAttribute(name);
 			if (subclassAttr != null) {
 				return true;
@@ -485,48 +470,48 @@ public abstract class AttributedElementClassImpl extends NamedElementImpl
 	 * Called if the schema is finished, saves complete subclass, superclass
 	 * and attribute list
 	 */
-	protected void finish(){
-		this.allSuperClasses = new HashSet<AttributedElementClass>();
-		this.allSuperClasses.addAll(directSuperClasses);
-		for(AttributedElementClass superClass : directSuperClasses){
-			this.allSuperClasses.addAll(superClass.getAllSuperClasses());
+	protected void finish() {
+		allSuperClasses = new HashSet<SC>();
+		allSuperClasses.addAll(directSuperClasses);
+		for (SC superClass : directSuperClasses) {
+			allSuperClasses.addAll(superClass.getAllSuperClasses());
 		}
 
-		this.allSubClasses = new HashSet<AttributedElementClass>();
-		this.allSubClasses.addAll(directSubClasses);
-		for(AttributedElementClass subClass : directSubClasses){
-			this.allSubClasses.addAll(subClass.getAllSubClasses());
+		allSubClasses = new HashSet<SC>();
+		allSubClasses.addAll(directSubClasses);
+		for (SC subClass : directSubClasses) {
+			allSubClasses.addAll(subClass.getAllSubClasses());
 		}
 
-		this.allAttributeList = new TreeSet<Attribute>();
-		this.allAttributeList.addAll(attributeList);
-		for (AttributedElementClass superClass : directSuperClasses) {
-			this.allAttributeList.addAll(superClass.getAttributeList());
+		allAttributeList = new TreeSet<Attribute>();
+		allAttributeList.addAll(attributeList);
+		for (SC superClass : directSuperClasses) {
+			allAttributeList.addAll(superClass.getAttributeList());
 		}
 
-		this.directSubClasses = Collections.unmodifiableSet(this.directSubClasses);
-		this.directSuperClasses = Collections.unmodifiableSet(this.directSuperClasses);
-		this.allSuperClasses = Collections.unmodifiableSet(this.allSuperClasses);
-		this.allSubClasses = Collections.unmodifiableSet(this.allSubClasses);
-		this.allAttributeList = Collections.unmodifiableSortedSet(this.allAttributeList);
+		directSubClasses = Collections.unmodifiableSet(directSubClasses);
+		directSuperClasses = Collections.unmodifiableSet(directSuperClasses);
+		allSuperClasses = Collections.unmodifiableSet(allSuperClasses);
+		allSubClasses = Collections.unmodifiableSet(allSubClasses);
+		allAttributeList = Collections.unmodifiableSortedSet(allAttributeList);
 
-		this.finish = true;
+		finished = true;
 	}
 
 	/**
 	 * Called if the schema is reopen
 	 */
-	protected void reopen(){
-		this.directSubClasses = new HashSet<AttributedElementClass>(this.directSubClasses);
-		this.directSuperClasses = new HashSet<AttributedElementClass>(this.directSuperClasses);
-		this.allSuperClasses = null;
-		this.allSubClasses = null;
-		this.allAttributeList = null;
+	protected void reopen() {
+		directSubClasses = new HashSet<SC>(directSubClasses);
+		directSuperClasses = new HashSet<SC>(directSuperClasses);
+		allSuperClasses = null;
+		allSubClasses = null;
+		allAttributeList = null;
 
-		this.finish = false;
+		finished = false;
 	}
 
-	protected boolean isFinished(){
-		return finish;
+	protected boolean isFinished() {
+		return finished;
 	}
 }

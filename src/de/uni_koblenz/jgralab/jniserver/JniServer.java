@@ -129,7 +129,7 @@ public class JniServer {
 					.getGraphCreateMethod(ImplementationType.STANDARD);
 
 			Graph g = (Graph) (graphCreateMethod.invoke(null, new Object[] {
-					null, vMax, eMax }));
+					ImplementationType.STANDARD, null, vMax, eMax }));
 			return addGraph(g);
 		} catch (Exception e) {
 			throw new GraphException("Exception while creating graph.", e);
@@ -146,8 +146,8 @@ public class JniServer {
 
 	public int loadGraph(String fileName) {
 		try {
-			Graph g = GraphIO.loadGraphFromFileWithStandardSupport(fileName,
-					null);
+			Graph g = GraphIO.loadGraphFromFile(fileName,
+					null, ImplementationType.STANDARD, null);
 			return addGraph(g);
 		} catch (Exception e) {
 			throw new GraphException("Exception while loading graph.", e);
@@ -159,8 +159,8 @@ public class JniServer {
 
 	public int createVertex(int graphId, String vertexClassName) {
 		Graph graph = graphs.get(graphId);
-		Class<? extends Vertex> schemaClass = graph.getGraphClass()
-				.getVertexClass(vertexClassName).getSchemaClass();
+		VertexClass schemaClass = graph.getGraphClass().getVertexClass(
+				vertexClassName);
 		return graph.createVertex(schemaClass).getId();
 	}
 
@@ -264,8 +264,8 @@ public class JniServer {
 	public int createEdge(int graphId, String edgeClassName, int alphaId,
 			int omegaId) {
 		Graph graph = graphs.get(graphId);
-		Class<? extends Edge> schemaClass = graph.getGraphClass()
-				.getEdgeClass(edgeClassName).getSchemaClass();
+		EdgeClass schemaClass = graph.getGraphClass().getEdgeClass(
+				edgeClassName);
 		return graph.createEdge(schemaClass, graph.getVertex(alphaId),
 				graph.getVertex(omegaId)).getId();
 	}
@@ -507,10 +507,10 @@ public class JniServer {
 	// ----------------------------------------------------------------------------
 	// ----------------------------------------------------------------------------
 
-	private void setEnumAttribute(AttributedElement e, String attributeName,
-			Object value) {
+	private void setEnumAttribute(AttributedElement<?, ?> e,
+			String attributeName, Object value) {
 		try {
-			AttributedElementClass aec = e.getAttributedElementClass();
+			AttributedElementClass<?, ?> aec = e.getAttributedElementClass();
 			Attribute attr = aec.getAttribute(attributeName);
 			if (attr == null) {
 				throw new GraphException("Attribute " + attributeName
@@ -545,13 +545,14 @@ public class JniServer {
 		}
 	}
 
-	private void setAttribute(AttributedElement e, String attributeName,
+	private void setAttribute(AttributedElement<?, ?> e, String attributeName,
 			Object value) {
 		e.setAttribute(attributeName, value);
 	}
 
-	private String getEnumAttribute(AttributedElement e, String attributeName) {
-		AttributedElementClass aec = e.getAttributedElementClass();
+	private String getEnumAttribute(AttributedElement<?, ?> e,
+			String attributeName) {
+		AttributedElementClass<?, ?> aec = e.getAttributedElementClass();
 		Attribute attr = aec.getAttribute(attributeName);
 		if (attr == null) {
 			throw new GraphException("Attribute " + attributeName
@@ -566,7 +567,7 @@ public class JniServer {
 
 	}
 
-	private Object getAttribute(AttributedElement e, String attributeName) {
+	private Object getAttribute(AttributedElement<?, ?> e, String attributeName) {
 		return e.getAttribute(attributeName);
 	}
 

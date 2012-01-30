@@ -1,6 +1,10 @@
 package de.uni_koblenz.jgralabtest.genericimpltest;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.io.File;
 import java.io.IOException;
@@ -11,10 +15,25 @@ import java.util.Map;
 import org.junit.AfterClass;
 import org.junit.Test;
 
-import de.uni_koblenz.jgralab.*;
+import de.uni_koblenz.jgralab.Edge;
+import de.uni_koblenz.jgralab.Graph;
+import de.uni_koblenz.jgralab.GraphException;
+import de.uni_koblenz.jgralab.GraphIO;
+import de.uni_koblenz.jgralab.GraphIOException;
+import de.uni_koblenz.jgralab.ImplementationType;
+import de.uni_koblenz.jgralab.JGraLab;
+import de.uni_koblenz.jgralab.NoSuchAttributeException;
+import de.uni_koblenz.jgralab.TraversalContext;
+import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.impl.RecordImpl;
-import de.uni_koblenz.jgralab.impl.generic.*;
-import de.uni_koblenz.jgralab.schema.*;
+import de.uni_koblenz.jgralab.impl.generic.GenericEdgeImpl;
+import de.uni_koblenz.jgralab.impl.generic.GenericGraphImpl;
+import de.uni_koblenz.jgralab.impl.generic.GenericVertexImpl;
+import de.uni_koblenz.jgralab.schema.Attribute;
+import de.uni_koblenz.jgralab.schema.AttributedElementClass;
+import de.uni_koblenz.jgralab.schema.EdgeClass;
+import de.uni_koblenz.jgralab.schema.Schema;
+import de.uni_koblenz.jgralab.schema.VertexClass;
 
 public class GenericGraphImplTest {
 
@@ -102,7 +121,7 @@ public class GenericGraphImplTest {
 			Schema schema;
 			schema = GraphIO.loadSchemaFromFile(SCHEMAFOLDER
 					+ "MinimalSchema.tg");
-			Graph g = schema.createGraph(ImplementationType.GENERIC, 100, 100);
+			Graph g = schema.createGraph(ImplementationType.GENERIC);
 			assertTrue(g instanceof GenericGraphImpl);
 			assertEquals(schema.getGraphClass(), g.getAttributedElementClass());
 			testElementAttributes(g, schema.getGraphClass());
@@ -119,7 +138,7 @@ public class GenericGraphImplTest {
 		try {
 			Schema schema = GraphIO.loadSchemaFromFile(SCHEMAFOLDER
 					+ "DefaultValueTestSchema.tg");
-			Graph g = schema.createGraph(ImplementationType.GENERIC, 100, 100);
+			Graph g = schema.createGraph(ImplementationType.GENERIC);
 			assertTrue(g instanceof GenericGraphImpl);
 			assertEquals(schema.getGraphClass(), g.getAttributedElementClass());
 			testElementAttributes(g, schema.getGraphClass());
@@ -189,7 +208,7 @@ public class GenericGraphImplTest {
 			Schema schema;
 			schema = GraphIO.loadSchemaFromFile(SCHEMAFOLDER
 					+ "MinimalSchema.tg");
-			Graph g = schema.createGraph(ImplementationType.GENERIC, 100, 100);
+			Graph g = schema.createGraph(ImplementationType.GENERIC);
 
 			Vertex v1 = g.createVertex(schema.getGraphClass().getVertexClass(
 					"Node"));
@@ -218,7 +237,7 @@ public class GenericGraphImplTest {
 		try {
 			Schema schema = GraphIO.loadSchemaFromFile(SCHEMAFOLDER
 					+ "DefaultValueTestSchema.tg");
-			Graph g = schema.createGraph(ImplementationType.GENERIC, 100, 100);
+			Graph g = schema.createGraph(ImplementationType.GENERIC);
 			Vertex v1 = g.createVertex(schema.getGraphClass().getVertexClass(
 					"TestVertex"));
 			Vertex v2 = g.createVertex(schema.getGraphClass().getVertexClass(
@@ -251,7 +270,7 @@ public class GenericGraphImplTest {
 		try {
 			Schema schema = GraphIO.loadSchemaFromFile(SCHEMAFOLDER
 					+ "MinimalSchema.tg");
-			Graph g = schema.createGraph(ImplementationType.GENERIC, 100, 100);
+			Graph g = schema.createGraph(ImplementationType.GENERIC);
 			Vertex v1 = g.createVertex(schema.getGraphClass().getVertexClass(
 					"Node"));
 			Vertex v2 = g.createVertex(schema.getGraphClass().getVertexClass(
@@ -296,7 +315,7 @@ public class GenericGraphImplTest {
 		try {
 			Schema schema = GraphIO.loadSchemaFromFile(SCHEMAFOLDER
 					+ "VertexTestSchema.tg");
-			Graph g = schema.createGraph(ImplementationType.GENERIC, 100, 100);
+			Graph g = schema.createGraph(ImplementationType.GENERIC);
 			Vertex v1 = g.createVertex(schema.getGraphClass().getVertexClass(
 					"SubNode"));
 			Vertex v2 = g.createVertex(schema.getGraphClass().getVertexClass(
@@ -391,7 +410,7 @@ public class GenericGraphImplTest {
 			Schema schema2 = GraphIO.loadSchemaFromFile(SCHEMAFOLDER
 					+ "jnitestschema.tg");
 
-			g1 = schema1.createGraph(ImplementationType.GENERIC, 100, 100);
+			g1 = schema1.createGraph(ImplementationType.GENERIC);
 			Vertex v1 = g1.createVertex(schema1.getGraphClass().getVertexClass(
 					"Node"));
 			Vertex v2 = g1.createVertex(schema1.getGraphClass().getVertexClass(
@@ -415,7 +434,7 @@ public class GenericGraphImplTest {
 		try {
 			Schema schema = GraphIO.loadSchemaFromFile(SCHEMAFOLDER
 					+ "greqltestschema.tg");
-			Graph g = schema.createGraph(ImplementationType.GENERIC, 100, 100);
+			Graph g = schema.createGraph(ImplementationType.GENERIC);
 			Vertex v1 = g.createVertex(schema.getGraphClass().getVertexClass(
 					"localities.Village"));
 			Vertex v2 = g.createVertex(schema.getGraphClass().getVertexClass(
@@ -437,7 +456,7 @@ public class GenericGraphImplTest {
 		try {
 			Schema schema = GraphIO.loadSchemaFromFile(SCHEMAFOLDER
 					+ "VertexTestSchema.tg");
-			Graph g = schema.createGraph(ImplementationType.GENERIC, 100, 100);
+			Graph g = schema.createGraph(ImplementationType.GENERIC);
 			Vertex v1 = g.createVertex(schema.getGraphClass().getVertexClass(
 					"C2"));
 			Vertex v2 = g.createVertex(schema.getGraphClass().getVertexClass(
@@ -461,8 +480,7 @@ public class GenericGraphImplTest {
 			Schema greqltestschema = GraphIO.loadSchemaFromFile(SCHEMAFOLDER
 					+ "greqltestschema.tg");
 
-			g1 = citimapschema
-					.createGraph(ImplementationType.GENERIC, 100, 100);
+			g1 = citimapschema.createGraph(ImplementationType.GENERIC);
 
 			g1.createVertex(greqltestschema.getGraphClass().getVertexClass(
 					"junctions.Crossroad"));
@@ -537,7 +555,7 @@ public class GenericGraphImplTest {
 	public void testAccessAttributes1() throws GraphIOException {
 		Schema schema = GraphIO.loadSchemaFromFile(SCHEMAFOLDER
 				+ "DefaultValueTestSchema.tg");
-		Graph g = schema.createGraph(ImplementationType.GENERIC, 100, 100);
+		Graph g = schema.createGraph(ImplementationType.GENERIC);
 
 		testDefaultValue(g.getAttribute("boolGraph"), g.getGraphClass()
 				.getAttribute("boolGraph"));
@@ -583,7 +601,7 @@ public class GenericGraphImplTest {
 	public void testAccessAttributesFailure1() throws GraphIOException {
 		Schema schema = GraphIO.loadSchemaFromFile(SCHEMAFOLDER
 				+ "DefaultValueTestSchema.tg");
-		Graph g = schema.createGraph(ImplementationType.GENERIC, 100, 100);
+		Graph g = schema.createGraph(ImplementationType.GENERIC);
 
 		g.setAttribute("doesNotExist", true);
 	}
@@ -592,7 +610,7 @@ public class GenericGraphImplTest {
 	public void testAccessAttributesFailure2() throws GraphIOException {
 		Schema schema = GraphIO.loadSchemaFromFile(SCHEMAFOLDER
 				+ "DefaultValueTestSchema.tg");
-		Graph g = schema.createGraph(ImplementationType.GENERIC, 100, 100);
+		Graph g = schema.createGraph(ImplementationType.GENERIC);
 
 		g.setAttribute("boolgraph", true); // the actual attribute's name is
 											// written in CamelCase
@@ -604,7 +622,7 @@ public class GenericGraphImplTest {
 	public void testAccessAttributesFailure3() throws GraphIOException {
 		Schema schema = GraphIO.loadSchemaFromFile(SCHEMAFOLDER
 				+ "DefaultValueTestSchema.tg");
-		Graph g = schema.createGraph(ImplementationType.GENERIC, 100, 100);
+		Graph g = schema.createGraph(ImplementationType.GENERIC);
 
 		g.setAttribute("boolGraph", JGraLab.set().plus(1));
 	}
@@ -615,7 +633,7 @@ public class GenericGraphImplTest {
 	public void testAccessAttributesFailure4() throws GraphIOException {
 		Schema schema = GraphIO.loadSchemaFromFile(SCHEMAFOLDER
 				+ "DefaultValueTestSchema.tg");
-		Graph g = schema.createGraph(ImplementationType.GENERIC, 100, 100);
+		Graph g = schema.createGraph(ImplementationType.GENERIC);
 
 		g.setAttribute("boolGraph", null);
 	}
@@ -629,7 +647,7 @@ public class GenericGraphImplTest {
 		try {
 			Schema s = GraphIO.loadSchemaFromFile(SCHEMAFOLDER
 					+ "VertexTestSchema.tg");
-			Graph g = s.createGraph(ImplementationType.GENERIC, 100, 100);
+			Graph g = s.createGraph(ImplementationType.GENERIC);
 
 			Vertex v1 = g.createVertex(s.getGraphClass().getVertexClass("A"));
 			Vertex v2 = g.createVertex(s.getGraphClass().getVertexClass("A"));
@@ -711,7 +729,7 @@ public class GenericGraphImplTest {
 		try {
 			Schema s = GraphIO.loadSchemaFromFile(SCHEMAFOLDER
 					+ "VertexTestSchema.tg");
-			Graph g = s.createGraph(ImplementationType.GENERIC, 100, 100);
+			Graph g = s.createGraph(ImplementationType.GENERIC);
 
 			Vertex v1 = g.createVertex(s.getGraphClass().getVertexClass("A"));
 			Vertex v2 = g.createVertex(s.getGraphClass().getVertexClass("A"));
@@ -775,7 +793,7 @@ public class GenericGraphImplTest {
 			Schema schema;
 			schema = GraphIO.loadSchemaFromFile(SCHEMAFOLDER
 					+ "MinimalSchema.tg");
-			Graph g = schema.createGraph(ImplementationType.GENERIC, 100, 100);
+			Graph g = schema.createGraph(ImplementationType.GENERIC);
 			Vertex v1 = g.createVertex(schema.getGraphClass().getVertexClass(
 					"Node"));
 			Vertex v2 = g.createVertex(schema.getGraphClass().getVertexClass(
@@ -794,16 +812,16 @@ public class GenericGraphImplTest {
 			Iterator<Edge> edgeIterator2 = g2.edges().iterator();
 
 			while (vertexIterator1.hasNext()) {
-				Vertex vg1 = (Vertex) vertexIterator1.next();
-				Vertex vg2 = (Vertex) vertexIterator2.next();
+				Vertex vg1 = vertexIterator1.next();
+				Vertex vg2 = vertexIterator2.next();
 				assertEquals(vg1.getId(), vg2.getId());
 				assertEquals(vg1.getAttributedElementClass(),
 						vg2.getAttributedElementClass());
 			}
 			assertFalse(vertexIterator2.hasNext());
 			while (edgeIterator1.hasNext()) {
-				Edge eg1 = (Edge) edgeIterator1.next();
-				Edge eg2 = (Edge) edgeIterator2.next();
+				Edge eg1 = edgeIterator1.next();
+				Edge eg2 = edgeIterator2.next();
 				assertEquals(eg1.getId(), eg2.getId());
 				assertEquals(eg2.getAttributedElementClass(),
 						eg2.getAttributedElementClass());

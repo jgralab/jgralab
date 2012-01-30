@@ -87,7 +87,7 @@ public class Tg2Gdl extends Tg2Whatever {
 		out.println();
 	}
 
-	private void printLabel(AttributedElement ae, PrintStream out) {
+	private void printLabel(AttributedElement<?, ?> ae, PrintStream out) {
 		out.print("label: \"");
 		if (ae instanceof Vertex) {
 			out.print("v" + ((Vertex) ae).getId() + " : "

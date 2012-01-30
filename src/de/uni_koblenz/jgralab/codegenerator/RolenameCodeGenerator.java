@@ -66,33 +66,33 @@ public class RolenameCodeGenerator {
 			EdgeDirection dir, boolean createClass) {
 		CodeSnippet code = new CodeSnippet();
 		code.setVariable("rolename", rolename);
-		code.setVariable("edgeClassName", schemaRootPackageName
-				+ edgeClass.getQualifiedName());
+		code.setVariable("edgeClass",
+				"#schemaPackage#." + edgeClass.getSimpleName()
+						+ ".ATTRIBUTED_ELEMENT_CLASS");
+		code.setVariable("edgeClassName",
+				schemaRootPackageName + edgeClass.getQualifiedName());
 		code.setVariable("dir", "EdgeDirection." + dir.toString());
 		code.setVariable("definingVertexClassName", schemaRootPackageName
 				+ definingVertexClass.getQualifiedName());
 		if (!createClass) {
-			code
-					.add(
-							"/**",
-							" * removes the given vertex as <code>#rolename#</code> from this vertex, i.e. ",
-							" * deletes the <code>#edgeClassName#</code> edge connections of this vertex with ",
-							" * the given one.", " */",
-							"public boolean remove_#rolename#(#definingVertexClassName# vertex);");
+			code.add(
+					"/**",
+					" * removes the given vertex as <code>#rolename#</code> from this vertex, i.e. ",
+					" * deletes the <code>#edgeClassName#</code> edge connections of this vertex with ",
+					" * the given one.", " */",
+					"public boolean remove_#rolename#(#definingVertexClassName# vertex);");
 		} else {
-			code
-					.add(
-							"@Override",
-							"public boolean remove_#rolename#(#definingVertexClassName# vertex) {",
-							"\tboolean elementRemoved = false;",
-							"\t#edgeClassName# edge = (#edgeClassName#) getFirstIncidence(#edgeClassName#.class, #dir#);",
-							"\twhile (edge != null) {",
-							"\t\t#edgeClassName# next = (#edgeClassName#) edge.getNextIncidence(#edgeClassName#.class, #dir#);",
-							"\t\tif (edge.getThat().equals(vertex)) {"
-									+ "\t\t\tedge.delete();",
-							"\t\t\telementRemoved = true;", "\t\t}",
-							"\t\tedge = next;", "\t}",
-							"\treturn elementRemoved;", "}");
+			code.add(
+					"@Override",
+					"public boolean remove_#rolename#(#definingVertexClassName# vertex) {",
+					"\tboolean elementRemoved = false;",
+					"\t#edgeClassName# edge = (#edgeClassName#) getFirstIncidence(#edgeClassName#.class, #dir#);",
+					"\twhile (edge != null) {",
+					"\t\t#edgeClassName# next = (#edgeClassName#) edge.getNextIncidence(#edgeClassName#.class, #dir#);",
+					"\t\tif (edge.getThat().equals(vertex)) {"
+							+ "\t\t\tedge.delete();",
+					"\t\t\telementRemoved = true;", "\t\t}",
+					"\t\tedge = next;", "\t}", "\treturn elementRemoved;", "}");
 		}
 		return code;
 	}
@@ -102,34 +102,32 @@ public class RolenameCodeGenerator {
 			EdgeDirection dir, boolean createClass) {
 		CodeSnippet code = new CodeSnippet();
 		code.setVariable("rolename", rolename);
-		code.setVariable("edgeClassName", schemaRootPackageName
-				+ edgeClass.getQualifiedName());
+		code.setVariable("edgeClassName",
+				schemaRootPackageName + edgeClass.getQualifiedName());
 		code.setVariable("dir", "EdgeDirection." + dir.toString());
 		code.setVariable("vertexClassName", schemaRootPackageName
 				+ otherVertexClass.getQualifiedName());
 		if (!createClass) {
-			code
-					.add(
-							"/**",
-							" * removes all #rolename# adjacences to all vertices by ",
-							" * deleting the <code>#edgeClassName#</code> edges of this vertex to ",
-							" * all other ones, but doesn't delete those vertices.",
-							" *",
-							" * @return the adjacent vertices prior to removal of incidences",
-							" */",
-							"public java.util.List<? extends #vertexClassName#> remove_#rolename#();");
+			code.add(
+					"/**",
+					" * removes all #rolename# adjacences to all vertices by ",
+					" * deleting the <code>#edgeClassName#</code> edges of this vertex to ",
+					" * all other ones, but doesn't delete those vertices.",
+					" *",
+					" * @return the adjacent vertices prior to removal of incidences",
+					" */",
+					"public java.util.List<? extends #vertexClassName#> remove_#rolename#();");
 		} else {
-			code
-					.add(
-							"@Override",
-							"public java.util.List<? extends #vertexClassName#> remove_#rolename#() {",
-							"\tjava.util.List<#vertexClassName#> adjacences = new java.util.ArrayList<#vertexClassName#>();",
-							"\t#edgeClassName# edge = (#edgeClassName#) getFirstIncidence(#edgeClassName#.class, #dir#);",
-							"\twhile (edge != null) {",
-							"\t\t#edgeClassName# next = (#edgeClassName#) edge.getNextIncidence(#edgeClassName#.class, #dir#);",
-							"\t\tadjacences.add((#vertexClassName#) edge.getThat());",
-							"\t\tedge.delete();", "\t\tedge = next;", "\t}",
-							"\treturn adjacences;", "}");
+			code.add(
+					"@Override",
+					"public java.util.List<? extends #vertexClassName#> remove_#rolename#() {",
+					"\tjava.util.List<#vertexClassName#> adjacences = new java.util.ArrayList<#vertexClassName#>();",
+					"\t#edgeClassName# edge = (#edgeClassName#) getFirstIncidence(#edgeClassName#.class, #dir#);",
+					"\twhile (edge != null) {",
+					"\t\t#edgeClassName# next = (#edgeClassName#) edge.getNextIncidence(#edgeClassName#.class, #dir#);",
+					"\t\tadjacences.add((#vertexClassName#) edge.getThat());",
+					"\t\tedge.delete();", "\t\tedge = next;", "\t}",
+					"\treturn adjacences;", "}");
 		}
 		return code;
 	}
@@ -149,41 +147,36 @@ public class RolenameCodeGenerator {
 			// if the rolename has an upper multiplicity of 1, create a method
 			// to access just the one element
 			if (!createClass) {
-				code
-						.add(
-								"/**",
-								" * @return the vertex to this one with the rolename '#rolename#' ",
-								" *         (connected with a <code>#edgeClassName#</code> edge), or null if no such vertex exists",
-								" */",
-								"public #vertexClassName# get_#rolename#();");
+				code.add(
+						"/**",
+						" * @return the vertex to this one with the rolename '#rolename#' ",
+						" *         (connected with a <code>#edgeClassName#</code> edge), or null if no such vertex exists",
+						" */", "public #vertexClassName# get_#rolename#();");
 			} else {
-				code
-						.add(
-								"@Override",
-								"public #vertexClassName# get_#rolename#() {",
-								"\t#edgeClassName# edge = (#edgeClassName#) getFirstIncidence(#edgeClassName#.class, #dir#);",
-								"\tif (edge != null) {",
-								"\t\treturn (#vertexClassName#) edge.getThat();",
-								"\t}", "\treturn null;", "}");
+				code.add(
+						"@Override",
+						"public #vertexClassName# get_#rolename#() {",
+						"\t#edgeClassName# edge = (#edgeClassName#) getFirstIncidence(#edgeClassName#.class, #dir#);",
+						"\tif (edge != null) {",
+						"\t\treturn (#vertexClassName#) edge.getThat();",
+						"\t}", "\treturn null;", "}");
 			}
 		} else {
 			// if the rolename has an upper multiplicity greater than 1, create
 			// a method to access the list of elements
 			if (!createClass) {
-				code
-						.add(
-								"/**",
-								" * @return an Iterable of all vertices adjacent to this one with the rolename '#rolename#'",
-								" *         (connected with a <code>#edgeClassName#</code> edge).",
-								" */",
-								"public Iterable<? extends #vertexClassName#> get_#rolename#();");
+				code.add(
+						"/**",
+						" * @return an Iterable of all vertices adjacent to this one with the rolename '#rolename#'",
+						" *         (connected with a <code>#edgeClassName#</code> edge).",
+						" */",
+						"public Iterable<? extends #vertexClassName#> get_#rolename#();");
 			} else {
-				code
-						.add(
-								"@Override",
-								"public Iterable<? extends #vertexClassName#> get_#rolename#() {",
-								"\treturn new de.uni_koblenz.jgralab.impl.NeighbourIterable<#edgeClassName#, #vertexClassName#>(this, #edgeClassName#.class, #dir#);",
-								"}");
+				code.add(
+						"@Override",
+						"public Iterable<? extends #vertexClassName#> get_#rolename#() {",
+						"\treturn new de.uni_koblenz.jgralab.impl.NeighbourIterable<#edgeClassName#, #vertexClassName#>(this, #edgeClassName#.class, #dir#);",
+						"}");
 			}
 		}
 		return code;
@@ -195,8 +188,10 @@ public class RolenameCodeGenerator {
 			boolean createClass) {
 		CodeSnippet code = new CodeSnippet();
 		code.setVariable("rolename", rolename);
-		code.setVariable("edgeClassName", schemaRootPackageName
-				+ edgeClass.getQualifiedName());
+		code.setVariable("edgeClassName",
+				schemaRootPackageName + edgeClass.getQualifiedName());
+		code.setVariable("edgeClass",
+				"#edgeClassName#.ATTRIBUTED_ELEMENT_CLASS");
 		code.setVariable("graphClassName", schemaRootPackageName
 				+ edgeClass.getGraphClass().getQualifiedName());
 		code.setVariable("definingVertexClassName", schemaRootPackageName
@@ -221,31 +216,27 @@ public class RolenameCodeGenerator {
 					+ vertexClass.getQualifiedName());
 		}
 		if (!createClass) {
-			code
-					.add(
-							"/**",
-							" * adds the given vertex as <code>#rolename#</code> to this vertex, i.e. creates an",
-							" * <code>#edgeClassName#</code> edge from this vertex to the given ",
-							" * one and returns the created edge.",
-							" * @return  a newly created edge of type <code>#edgeClassName#</code>",
-							" *          between this vertex and the given one.",
-							" */",
-							"public #edgeClassName# add_#rolename#(#definingVertexClassName# vertex);");
+			code.add(
+					"/**",
+					" * adds the given vertex as <code>#rolename#</code> to this vertex, i.e. creates an",
+					" * <code>#edgeClassName#</code> edge from this vertex to the given ",
+					" * one and returns the created edge.",
+					" * @return  a newly created edge of type <code>#edgeClassName#</code>",
+					" *          between this vertex and the given one.",
+					" */",
+					"public #edgeClassName# add_#rolename#(#definingVertexClassName# vertex);");
 		} else {
-			code
-					.add("@Override",
-							"public #edgeClassName# add_#rolename#(#definingVertexClassName# vertex) {");
+			code.add("@Override",
+					"public #edgeClassName# add_#rolename#(#definingVertexClassName# vertex) {");
 			if (definingVertexClass != allowedVertexClass) {
-				code
-						.add(
-								"\tif (!(vertex instanceof #allowedVertexClassName#)) {",
-								"\t\tthrow new de.uni_koblenz.jgralab.GraphException(\"The rolename #rolename# was redefined at the vertex class #thisVertexClassName#. Only vertices of #allowedVertexClassName# are allowed.\"); ",
-								"\t}");
+				code.add(
+						"\tif (!(vertex instanceof #allowedVertexClassName#)) {",
+						"\t\tthrow new de.uni_koblenz.jgralab.GraphException(\"The rolename #rolename# was redefined at the vertex class #thisVertexClassName#. Only vertices of #allowedVertexClassName# are allowed.\"); ",
+						"\t}");
 			}
-			code
-					.add(
-							"\treturn ((#graphClassName#)getGraph()).createEdge(#edgeClassName#.class, (#alphaVertexClassName#) #alpha#, (#omegaVertexClassName#) #omega#);",
-							"}");
+			code.add(
+					"\treturn ((#graphClassName#)getGraph()).createEdge(#edgeClass#, (#alphaVertexClassName#) #alpha#, (#omegaVertexClassName#) #omega#);",
+					"}");
 		}
 		return code;
 	}

@@ -613,7 +613,8 @@ public class Rsa2Tg extends XmlProcessor {
 	@Override
 	public void startDocument() {
 
-		sg = GrumlSchema.instance().createSchemaGraph(ImplementationType.STANDARD);
+		sg = GrumlSchema.instance().createSchemaGraph(
+				ImplementationType.STANDARD);
 
 		// Initializing all necessary data structures for processing purposes.
 		xmiIdStack = new Stack<String>();
@@ -959,7 +960,7 @@ public class Rsa2Tg extends XmlProcessor {
 				handleDefaultValue(xmiId, content.toString().trim());
 			}
 		}
-		AttributedElement elem = idMap.get(xmiId);
+		AttributedElement<?, ?> elem = idMap.get(xmiId);
 		if (elem != null) {
 			if (elem instanceof Package) {
 
@@ -1322,7 +1323,7 @@ public class Rsa2Tg extends XmlProcessor {
 		// indirect superclass is redefined, this results in a redefines edge to
 		// that incidence class, without replacing a subsets edge.
 
-		for (AttributedElement ae : redefines.getMarkedElements()) {
+		for (AttributedElement<?, ?> ae : redefines.getMarkedElements()) {
 			IncidenceClass inc = (IncidenceClass) ae;
 			Set<String> redefinedRolenames = redefines.getMark(inc);
 			for (String rolename : redefinedRolenames) {
@@ -1546,7 +1547,7 @@ public class Rsa2Tg extends XmlProcessor {
 	 */
 	private Vertex handleClass(String xmiId) throws XMLStreamException {
 
-		AttributedElement ae = idMap.get(xmiId);
+		AttributedElement<?, ?> ae = idMap.get(xmiId);
 		VertexClass vc = null;
 		if (ae != null) {
 
@@ -1588,7 +1589,7 @@ public class Rsa2Tg extends XmlProcessor {
 
 		// create an EdgeClass at first, probably, this has to
 		// become an Aggregation or Composition later...
-		AttributedElement ae = idMap.get(xmiId);
+		AttributedElement<?, ?> ae = idMap.get(xmiId);
 		EdgeClass ec = null;
 		if (ae != null) {
 			if (!(ae instanceof EdgeClass)) {
@@ -1765,11 +1766,12 @@ public class Rsa2Tg extends XmlProcessor {
 	 *            representation should be created.
 	 * @return A String representing the given AttributedElement.
 	 */
-	private String attributedElement2String(AttributedElement attributedElement) {
+	private String attributedElement2String(
+			AttributedElement<?, ?> attributedElement) {
 
 		StringBuilder sb = new StringBuilder();
 
-		de.uni_koblenz.jgralab.schema.AttributedElementClass aec = attributedElement
+		de.uni_koblenz.jgralab.schema.AttributedElementClass<?, ?> aec = attributedElement
 				.getAttributedElementClass();
 		sb.append(attributedElement);
 		sb.append(" { ");
@@ -2220,7 +2222,7 @@ public class Rsa2Tg extends XmlProcessor {
 			}
 		}
 
-		for (AttributedElement ae : generalizations.getMarkedElements()) {
+		for (AttributedElement<?, ?> ae : generalizations.getMarkedElements()) {
 			AttributedElementClass sub = (AttributedElementClass) ae;
 
 			Set<String> superclasses = generalizations.getMark(sub);
@@ -2913,7 +2915,7 @@ public class Rsa2Tg extends XmlProcessor {
 
 			// we have an "ownedEnd", vertex class id is in "type" attribute
 
-			AttributedElement ae = idMap.get(typeId);
+			AttributedElement<?, ?> ae = idMap.get(typeId);
 			if (ae != null) {
 				if (!(ae instanceof VertexClass)) {
 					throw new ProcessingException(getParser(), getFileName(),
@@ -3000,7 +3002,7 @@ public class Rsa2Tg extends XmlProcessor {
 					.getThat();
 			if (preliminaryVertices.contains(vc)) {
 
-				AttributedElement ae = idMap.get(typeId);
+				AttributedElement<?, ?> ae = idMap.get(typeId);
 
 				if ((ae != null) && !vc.equals(ae)) {
 					if (!(ae instanceof VertexClass)) {

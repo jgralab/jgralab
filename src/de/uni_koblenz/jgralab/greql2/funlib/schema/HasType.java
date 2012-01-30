@@ -14,22 +14,24 @@ public class HasType extends Function {
 				Category.SCHEMA_ACCESS);
 	}
 
-	public Boolean evaluate(AttributedElement el, String qn) {
-		AttributedElementClass aec = el.getSchema().getAttributedElementClass(
-				qn);
+	public <SC extends AttributedElementClass<SC, IC>, IC extends AttributedElement<SC, IC>> Boolean evaluate(
+			IC el, String qn) {
+		SC aec = el.getSchema().getAttributedElementClass(qn);
 		if (aec == null) {
 			throw new GreqlException("hasType: Schema doesn't contain a type '");
 		}
 		return evaluate(el, aec);
 	}
 
-	private Boolean evaluate(AttributedElement el, AttributedElementClass aec) {
-		AttributedElementClass c = el.getAttributedElementClass();
+	private <SC extends AttributedElementClass<SC, IC>, IC extends AttributedElement<SC, IC>> Boolean evaluate(
+			IC el, SC aec) {
+		SC c = el.getAttributedElementClass();
 		return c.equals(aec) || c.isSubClassOf(aec);
 	}
 
-	public Boolean evaluate(AttributedElement el, TypeCollection tc) {
-		AttributedElementClass c = el.getAttributedElementClass();
+	public <SC extends AttributedElementClass<SC, IC>, IC extends AttributedElement<SC, IC>> Boolean evaluate(
+			IC el, TypeCollection tc) {
+		SC c = el.getAttributedElementClass();
 		return tc.acceptsType(c);
 	}
 

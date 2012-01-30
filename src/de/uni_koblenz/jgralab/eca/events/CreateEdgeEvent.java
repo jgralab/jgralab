@@ -38,7 +38,7 @@ public class CreateEdgeEvent extends Event {
 	 *            the type
 	 */
 	public CreateEdgeEvent(int nestedCalls, Graph graph,
-			Class<? extends AttributedElement> type) {
+			Class<? extends AttributedElement<?, ?>> type) {
 		super(nestedCalls, EventTime.BEFORE, graph, type);
 		edge = null;
 	}
@@ -55,7 +55,7 @@ public class CreateEdgeEvent extends Event {
 	 *         EventTime is before
 	 */
 	@Override
-	public AttributedElement getElement() {
+	public AttributedElement<?, ?> getElement() {
 		return edge;
 	}
 

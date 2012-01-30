@@ -181,7 +181,7 @@ public class XMLLoader extends XmlProcessor implements XMLConstants {
 				throw new SerialisingException("Couldn't retrieve Schema '"
 						+ schemaName + "'", null);
 			}
-			AttributedElementClass aec = schema
+			AttributedElementClass<?, ?> aec = schema
 					.getAttributedElementClass(qName);
 			if (aec == null) {
 				throw new SerialisingException(

@@ -94,7 +94,7 @@ public final class RecordDomainImpl extends CompositeDomainImpl implements
 
 	@Override
 	public void addComponent(String name, Domain domain) {
-		if(((SchemaImpl)getSchema()).isFinish()){
+		if(((SchemaImpl)getSchema()).isFinished()){
 			throw new SchemaException("No changes to finished schema!");
 		}
 		

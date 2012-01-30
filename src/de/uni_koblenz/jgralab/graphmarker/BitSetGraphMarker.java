@@ -53,7 +53,7 @@ import de.uni_koblenz.jgralab.algolib.functions.entries.BooleanFunctionEntry;
  *            the name of the graph element class used by this
  *            <code>BitSetGraphMarker</code>
  */
-public abstract class BitSetGraphMarker<T extends GraphElement> extends
+public abstract class BitSetGraphMarker<T extends GraphElement<?, ?>> extends
 		AbstractGraphMarker<T> implements BooleanFunction<T> {
 	protected final BitSet marks;
 	protected long version;
@@ -162,7 +162,8 @@ public abstract class BitSetGraphMarker<T extends GraphElement> extends
 			@Override
 			public BooleanFunctionEntry<T> next() {
 				T currentElement = markedElements.next();
-				return new BooleanFunctionEntry<T>(currentElement, get(currentElement));
+				return new BooleanFunctionEntry<T>(currentElement,
+						get(currentElement));
 			}
 
 			@Override

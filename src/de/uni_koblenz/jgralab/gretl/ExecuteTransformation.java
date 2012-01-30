@@ -332,7 +332,7 @@ public class ExecuteTransformation extends Transformation<Graph> {
 		return lst.toArray(new Attribute[lst.size()]);
 	}
 
-	public GraphElementClass matchGraphElementClass() {
+	public GraphElementClass<?, ?> matchGraphElementClass() {
 		return gec(match(TokenTypes.IDENT).value);
 	}
 
@@ -386,7 +386,7 @@ public class ExecuteTransformation extends Transformation<Graph> {
 
 	/**
 	 * concrete syntax for string arrays: (val1, val2, ...)
-	 *
+	 * 
 	 * @return an array of identifiers
 	 */
 	public String[] matchIdentifierArray() {
@@ -481,7 +481,7 @@ public class ExecuteTransformation extends Transformation<Graph> {
 					String.class);
 			int lastDot = qName.lastIndexOf('.');
 			String className = qName.substring(0, lastDot);
-			AttributedElementClass aec = aec(className);
+			AttributedElementClass<?, ?> aec = aec(className);
 			if (aec == null) {
 				throw new GReTLParsingException(context,
 						"There's no AttributedElementClass '" + className
