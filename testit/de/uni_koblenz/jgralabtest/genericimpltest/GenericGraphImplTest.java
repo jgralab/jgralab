@@ -1045,12 +1045,12 @@ public class GenericGraphImplTest {
 			String stringRecord = "some string";
 			values.put("boolRecord", boolRecord);
 			values.put("doubleRecord", doubleRecord);
-			values.put("enumRecordRecord", enumRecord);
-			values.put("intRecordRecord", intRecord);
+			values.put("enumRecord", enumRecord);
+			values.put("intRecord", intRecord);
 			values.put("listRecord", listRecord);
 			values.put("longRecord", longRecord);
-			values.put("mapRecordRecord", mapRecord);
-			values.put("setRecordRecord", setRecord);
+			values.put("mapRecord", mapRecord);
+			values.put("setRecord", setRecord);
 			values.put("stringRecord", stringRecord);
 			Record r = g.createRecord(testRecordDomain, values);
 			for (String componentName : values.keySet()) {
