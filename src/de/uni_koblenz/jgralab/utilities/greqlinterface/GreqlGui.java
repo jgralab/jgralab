@@ -105,6 +105,9 @@ public class GreqlGui extends SwingApplication {
 	private static final String PREFS_KEY_RECENT_QUERY = "RECENT_QUERY"; //$NON-NLS-1$
 	private static final String PREFS_KEY_RESULT_FONT = "RESULT_FONT"; //$NON-NLS-1$
 	private static final String PREFS_KEY_QUERY_FONT = "QUERY_FONT"; //$NON-NLS-1$
+	private static final String PREFS_KEY_GENERIC_IMPL = "GENERIC_IMPL"; //$NON-NLS-1$
+	private static final String PREFS_KEY_ENABLE_OPTIMIZER = "ENABLE_OPTIMIZER"; //$NON-NLS-1$
+	private static final String PREFS_KEY_DEBUG_OPTIMIZER = "DEBUG_OPTIMIZER"; //$NON-NLS-1$
 
 	private static final String VERSION = "0.0"; //$NON-NLS-1$
 
@@ -138,6 +141,7 @@ public class GreqlGui extends SwingApplication {
 
 	private Action loadGraphAction;
 	private Action unloadGraphAction;
+	private Action genericImplementaionAction;
 	private Action clearRecentGraphsAction;
 	private Action evaluateQueryAction;
 	private Action stopEvaluationAction;
@@ -146,6 +150,7 @@ public class GreqlGui extends SwingApplication {
 
 	private JCheckBoxMenuItem enableOptimizerCheckBoxItem;
 	private JCheckBoxMenuItem debugOptimizerCheckBoxItem;
+	private JCheckBoxMenuItem genericImplementationCheckBoxItem;
 
 	private boolean graphLoading;
 
@@ -221,8 +226,11 @@ public class GreqlGui extends SwingApplication {
 		@Override
 		public void run() {
 			try {
-				graph = GraphIO.loadGraphFromFile(file.getCanonicalPath(),
-						ImplementationType.GENERIC, this);
+				graph = GraphIO
+						.loadGraphFromFile(
+								file.getCanonicalPath(),
+								genericImplementationCheckBoxItem.isSelected() ? ImplementationType.GENERIC
+										: ImplementationType.STANDARD, this);
 				System.err.println(graph);
 				recentGraphList.rememberFile(file);
 				graphLoading = false;
@@ -407,8 +415,9 @@ public class GreqlGui extends SwingApplication {
 	public GreqlGui() {
 		super(RESOURCE_BUNDLE);
 		prefs = Preferences.userNodeForPackage(GreqlGui.class);
-		loadSettings();
+		loadFontSettings();
 		initializeApplication();
+		loadCheckBoxSettings();
 
 		recentQueryList = new RecentFilesList(prefs, PREFS_KEY_RECENT_QUERY,
 				10, recentFilesMenu) {
@@ -427,7 +436,7 @@ public class GreqlGui extends SwingApplication {
 		fd = new FileDialog(getApplicationName());
 	}
 
-	private void loadSettings() {
+	private void loadFontSettings() {
 		String fontName = prefs
 				.get(PREFS_KEY_QUERY_FONT, "Monospaced-plain-14"); //$NON-NLS-1$ //$NON-NLS-2$
 		queryFont = Font.decode(fontName);
@@ -440,6 +449,17 @@ public class GreqlGui extends SwingApplication {
 		if (resultFont == null) {
 			resultFont = new Font("Monospaced", Font.PLAIN, 14); //$NON-NLS-1$
 		}
+	}
+
+	private void loadCheckBoxSettings() {
+		enableOptimizerCheckBoxItem.setSelected(prefs.getBoolean(
+				PREFS_KEY_ENABLE_OPTIMIZER, true));
+
+		debugOptimizerCheckBoxItem.setSelected(prefs.getBoolean(
+				PREFS_KEY_DEBUG_OPTIMIZER, false));
+
+		genericImplementationCheckBoxItem.setSelected(prefs.getBoolean(
+				PREFS_KEY_GENERIC_IMPL, false));
 	}
 
 	private class ConsoleOutputStream extends PrintStream {
@@ -566,6 +586,13 @@ public class GreqlGui extends SwingApplication {
 			}
 		};
 
+		genericImplementaionAction = new AbstractAction(
+				getMessage("GreqlGui.Action.GenericImplementation")) {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				saveCheckBoxSettings();
+			}
+		};
 		evaluateQueryAction = new AbstractAction(
 				getMessage("GreqlGui.Action.EvaluateQuery")) { //$NON-NLS-1$
 			{
@@ -607,6 +634,7 @@ public class GreqlGui extends SwingApplication {
 				getMessage("GreqlGui.Action.EnableOptimizer")) { //$NON-NLS-1$
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				saveCheckBoxSettings();
 			}
 		};
 
@@ -614,6 +642,7 @@ public class GreqlGui extends SwingApplication {
 				getMessage("GreqlGui.Action.DebugOptimizer")) { //$NON-NLS-1$
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				saveCheckBoxSettings();
 			}
 		};
 	}
@@ -629,6 +658,9 @@ public class GreqlGui extends SwingApplication {
 		recentGraphsMenu.add(clearRecentGraphsAction);
 		graphMenu.add(recentGraphsMenu);
 		graphMenu.addSeparator();
+		genericImplementationCheckBoxItem = new JCheckBoxMenuItem(
+				genericImplementaionAction);
+		graphMenu.add(genericImplementationCheckBoxItem);
 		graphMenu.add(unloadGraphAction);
 		mb.add(graphMenu, mb.getComponentIndex(helpMenu));
 
@@ -1017,6 +1049,23 @@ public class GreqlGui extends SwingApplication {
 			prefs.put(PREFS_KEY_RESULT_FONT,
 					FontSelectionDialog.getInternalFontName(resultFont));
 		}
+		try {
+			prefs.flush();
+		} catch (BackingStoreException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	private void saveCheckBoxSettings() {
+		prefs.putBoolean(PREFS_KEY_DEBUG_OPTIMIZER,
+				debugOptimizerCheckBoxItem.isSelected());
+
+		prefs.putBoolean(PREFS_KEY_ENABLE_OPTIMIZER,
+				enableOptimizerCheckBoxItem.isSelected());
+
+		prefs.putBoolean(PREFS_KEY_GENERIC_IMPL,
+				genericImplementationCheckBoxItem.isSelected());
 		try {
 			prefs.flush();
 		} catch (BackingStoreException e) {

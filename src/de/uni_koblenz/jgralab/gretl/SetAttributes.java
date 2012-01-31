@@ -5,7 +5,6 @@ import org.pcollections.PMap;
 
 import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Record;
-import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.gretl.Context.GReTLVariableType;
 import de.uni_koblenz.jgralab.gretl.Context.TransformationPhase;
 import de.uni_koblenz.jgralab.schema.Attribute;
