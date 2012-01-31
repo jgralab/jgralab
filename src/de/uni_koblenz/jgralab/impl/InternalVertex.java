@@ -27,7 +27,6 @@ public interface InternalVertex extends Vertex,
 	@Override
 	public boolean isIncidenceListModified(long incidenceListVersion);
 
-	@Override
 	public DirectedSchemaEdgeClass getEdgeForRolename(String rolename);
 
 	/**

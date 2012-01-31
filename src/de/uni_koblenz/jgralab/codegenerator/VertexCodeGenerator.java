@@ -96,9 +96,6 @@ public class VertexCodeGenerator extends AttributedElementCodeGenerator {
 					.isStdOrDbImplOrTransImpl()));
 			code.add(createIncidenceIteratorMethods());
 		}
-		if (currentCycle.isStdOrDbImplOrTransImpl()) {
-			code.add(createGetEdgeForRolenameMethod());
-		}
 
 		return code;
 	}
@@ -322,55 +319,6 @@ public class VertexCodeGenerator extends AttributedElementCodeGenerator {
 			}
 		}
 		return code;
-	}
-
-	private CodeBlock createGetEdgeForRolenameMethod() {
-		CodeList list = new CodeList();
-		addImports("de.uni_koblenz.jgralab.schema.impl.DirectedSchemaEdgeClass");
-		CodeSnippet code = new CodeSnippet(true);
-		code.add("private static java.util.Map<String, DirectedSchemaEdgeClass> roleMap;");
-		list.addNoIndent(code);
-		code = new CodeSnippet(true);
-		code.add("static {");
-		code.add("roleMap = new java.util.HashMap<String, DirectedSchemaEdgeClass>();");
-		list.addNoIndent(code);
-		// addImports("de.uni_koblenz.jgralab.EdgeDirection");
-		VertexClass vc = (VertexClass) aec;
-		for (EdgeClass ec : vc.getValidFromEdgeClasses()) {
-			if (!ec.getTo().getRolename().isEmpty()) {
-				code = new CodeSnippet(true);
-				code.setVariable("rolename", ec.getTo().getRolename());
-				code.setVariable("edgeclass",
-						schemaRootPackageName + "." + ec.getQualifiedName()
-								+ ".EC");
-				code.setVariable("dir",
-						"de.uni_koblenz.jgralab.EdgeDirection.OUT");
-				code.add("roleMap.put(\"#rolename#\", new DirectedSchemaEdgeClass(#edgeclass#, #dir#));");
-				list.addNoIndent(code);
-			}
-		}
-		for (EdgeClass ec : vc.getValidToEdgeClasses()) {
-			if (!ec.getFrom().getRolename().isEmpty()) {
-				code = new CodeSnippet(true);
-				code.setVariable("rolename", ec.getFrom().getRolename());
-				code.setVariable("edgeclass",
-						schemaRootPackageName + "." + ec.getQualifiedName()
-								+ ".EC");
-				code.setVariable("dir",
-						"de.uni_koblenz.jgralab.EdgeDirection.IN");
-				code.add("roleMap.put(\"#rolename#\", new DirectedSchemaEdgeClass(#edgeclass#, #dir#));");
-				list.addNoIndent(code);
-			}
-		}
-		code = new CodeSnippet(true);
-		code.add("}");
-		list.addNoIndent(code);
-		code = new CodeSnippet(true);
-		code.add(
-				"public DirectedSchemaEdgeClass getEdgeForRolename(String rolename) {",
-				"\treturn roleMap.get(rolename);", "}");
-		list.addNoIndent(code);
-		return list;
 	}
 
 	@Override
