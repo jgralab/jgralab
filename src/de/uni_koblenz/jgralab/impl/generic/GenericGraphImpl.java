@@ -9,12 +9,14 @@ import org.pcollections.POrderedSet;
 import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
+import de.uni_koblenz.jgralab.GraphException;
 import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.NoSuchAttributeException;
 import de.uni_koblenz.jgralab.Record;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.impl.EdgeIterable;
+import de.uni_koblenz.jgralab.impl.RecordImpl;
 import de.uni_koblenz.jgralab.impl.VertexIterable;
 import de.uni_koblenz.jgralab.impl.std.GraphImpl;
 import de.uni_koblenz.jgralab.schema.Attribute;
@@ -29,6 +31,7 @@ import de.uni_koblenz.jgralab.schema.GraphClass;
 import de.uni_koblenz.jgralab.schema.IntegerDomain;
 import de.uni_koblenz.jgralab.schema.LongDomain;
 import de.uni_koblenz.jgralab.schema.RecordDomain;
+import de.uni_koblenz.jgralab.schema.RecordDomain.RecordComponent;
 import de.uni_koblenz.jgralab.schema.VertexClass;
 
 /**
@@ -254,6 +257,35 @@ public class GenericGraphImpl extends GraphImpl {
 		}
 	}
 
+	@Override
+	public boolean isInstanceOf(GraphClass cls) {
+		// Needs to be overridden from the base variant, because that relies on
+		// code generation.
+		return type.equals(cls) || type.isSubClassOf(cls);
+	}
+
+	@Override
+	public Object getEnumConstant(EnumDomain enumDomain, String constantName) {
+		for (String cn : enumDomain.getConsts()) {
+			if (cn.equals(constantName)) {
+				return cn;
+			}
+		}
+		throw new GraphException("No such enum constant '" + constantName
+				+ "' in EnumDomain " + enumDomain);
+	}
+
+	@Override
+	public Record createRecord(RecordDomain recordDomain,
+			Map<String, Object> values) {
+		RecordImpl record = RecordImpl.empty();
+		for(RecordComponent c : recordDomain.getComponents()) {
+			assert(values.containsKey(c.getName()));
+			record = record.plus(c.getName(), values.get(c.getName()));
+		}
+		return record;
+	}
+
 	// ************** unsupported methods ***************/
 	@Override
 	public Class<? extends Graph> getSchemaClass() {
@@ -290,27 +322,5 @@ public class GenericGraphImpl extends GraphImpl {
 			Vertex startVertex, String pathDescription, Class<T> vertexType) {
 		throw new UnsupportedOperationException(
 				"This method is not supported by the generic implementation");
-	}
-
-	@Override
-	public boolean isInstanceOf(GraphClass cls) {
-		// Needs to be overridden from the base variant, because that relies on
-		// code generation.
-		return type.equals(cls) || type.isSubClassOf(cls);
-	}
-
-	@Override
-	public Object getEnumConstant(EnumDomain enumDomain, String constantName) {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException(
-				"Not yet implemented!  Bug Bernhard to do it!");
-	}
-
-	@Override
-	public Record createRecord(RecordDomain recordDomain,
-			Map<String, Object> values) {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException(
-				"Not yet implemented!  Bug Bernhard to do it!");
 	}
 }
