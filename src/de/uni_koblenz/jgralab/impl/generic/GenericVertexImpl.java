@@ -16,7 +16,6 @@ import de.uni_koblenz.jgralab.impl.std.VertexImpl;
 import de.uni_koblenz.jgralab.schema.Attribute;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.VertexClass;
-import de.uni_koblenz.jgralab.schema.impl.DirectedSchemaEdgeClass;
 
 public class GenericVertexImpl extends VertexImpl {
 
@@ -159,12 +158,6 @@ public class GenericVertexImpl extends VertexImpl {
 	@Override
 	public void initializeAttributesWithDefaultValues() {
 		GenericGraphImpl.initializeGenericAttributeValues(this);
-	}
-
-	@Override
-	public DirectedSchemaEdgeClass getEdgeForRolename(String rolename) {
-		return getAttributedElementClass().getDirectedEdgeClassForFarEndRole(
-				rolename);
 	}
 
 	@Override

@@ -958,6 +958,12 @@ public abstract class VertexBaseImpl extends
 		}
 	}
 
+	@Override
+	public DirectedSchemaEdgeClass getEdgeForRolename(String rolename) {
+		return getAttributedElementClass().getDirectedEdgeClassForFarEndRole(
+				rolename);
+	}
+
 	/*
 	 * (non-Javadoc)
 	 *

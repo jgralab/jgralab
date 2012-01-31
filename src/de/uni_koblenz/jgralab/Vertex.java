@@ -43,7 +43,6 @@ import org.pcollections.POrderedSet;
 import de.uni_koblenz.jgralab.schema.AggregationKind;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.VertexClass;
-import de.uni_koblenz.jgralab.schema.impl.DirectedSchemaEdgeClass;
 
 /**
  * represents a vertex, schema classes inherit from this class
@@ -355,8 +354,6 @@ public interface Vertex extends GraphElement<VertexClass, Vertex> {
 	 *            the comparator that defines the desired incidence order.
 	 */
 	public void sortIncidences(Comparator<Edge> comp);
-
-	public DirectedSchemaEdgeClass getEdgeForRolename(String rolename);
 
 	public List<? extends Vertex> adjacences(String role);
 
