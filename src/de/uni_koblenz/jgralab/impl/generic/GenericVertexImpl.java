@@ -10,6 +10,7 @@ import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.NoSuchAttributeException;
 import de.uni_koblenz.jgralab.Vertex;
+import de.uni_koblenz.jgralab.impl.IncidenceIterable;
 import de.uni_koblenz.jgralab.impl.InternalVertex;
 import de.uni_koblenz.jgralab.impl.std.VertexImpl;
 import de.uni_koblenz.jgralab.schema.Attribute;
@@ -175,6 +176,16 @@ public class GenericVertexImpl extends VertexImpl {
 			}
 		}
 		return null;
+	}
+
+	@Override
+	public Iterable<Edge> incidences(EdgeClass eClass) {
+		return new IncidenceIterable<Edge>(this, eClass);
+	}
+
+	@Override
+	public Iterable<Edge> incidences(EdgeClass eClass, EdgeDirection dir) {
+		return new IncidenceIterable<Edge>(this, eClass, dir);
 	}
 
 	// ************** unsupported methods ***************/
