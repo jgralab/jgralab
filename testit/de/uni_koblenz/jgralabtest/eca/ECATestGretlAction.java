@@ -12,6 +12,7 @@ import org.junit.Test;
 
 import de.uni_koblenz.jgralab.ImplementationType;
 import de.uni_koblenz.jgralab.JGraLab;
+import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.eca.Action;
 import de.uni_koblenz.jgralab.eca.ECAIO;
 import de.uni_koblenz.jgralab.eca.ECAIOException;
@@ -76,7 +77,7 @@ public class ECATestGretlAction {
 
 	@Test
 	public void testDoGretlTransformAsAction() {
-		Contact c5 = testGraph.createContact();
+		//Contact c5 = testGraph.createContact();
 
 		EventDescription<VertexClass> bef_ev = new DeleteVertexEventDescription(
 				EventDescription.EventTime.BEFORE, Contact.VC);
@@ -89,11 +90,11 @@ public class ECATestGretlAction {
 
 		int oldVCount = testGraph.getVCount();
 
-		testGraph.deleteVertex(c5);
+		testGraph.deleteVertex(testGraph.getVertex(5));
 
 		// Duplicate all Vertices and then take the deleted one away
 		assertEquals(testGraph.getVCount(), oldVCount * 2 - 1);
-
+		
 		((ECARuleManager) testGraph.getECARuleManager())
 				.deleteECARule(bef_rule);
 
@@ -125,7 +126,7 @@ public class ECATestGretlAction {
 	@Test
 	public void testLoadGretlTransformAction() {
 		System.out.println("Load rule with GretlTransformAction.");
-		Contact c5 = testGraph.createContact();
+	//	Contact c5 = testGraph.createContact();
 
 		try {
 			List<ECARule<?>> rules = ECAIO.loadECArules(testGraph.getSchema(),
@@ -142,7 +143,7 @@ public class ECATestGretlAction {
 
 		int oldVCount = testGraph.getVCount();
 
-		testGraph.deleteVertex(c5);
+		testGraph.deleteVertex(testGraph.getVertex(2));
 
 		// Duplicate all Vertices and then take the deleted one away
 		assertEquals(testGraph.getVCount(), oldVCount * 2 - 1);
