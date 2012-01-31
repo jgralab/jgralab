@@ -9,8 +9,11 @@ import static org.junit.Assert.fail;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.junit.AfterClass;
 import org.junit.Test;
@@ -23,6 +26,7 @@ import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.ImplementationType;
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.NoSuchAttributeException;
+import de.uni_koblenz.jgralab.Record;
 import de.uni_koblenz.jgralab.TraversalContext;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.impl.RecordImpl;
@@ -32,6 +36,8 @@ import de.uni_koblenz.jgralab.impl.generic.GenericVertexImpl;
 import de.uni_koblenz.jgralab.schema.Attribute;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
+import de.uni_koblenz.jgralab.schema.EnumDomain;
+import de.uni_koblenz.jgralab.schema.RecordDomain;
 import de.uni_koblenz.jgralab.schema.Schema;
 import de.uni_koblenz.jgralab.schema.VertexClass;
 
@@ -49,7 +55,7 @@ public class GenericGraphImplTest {
 	 * all its attributes, as defined by the corresponding
 	 * {@link AttributedElementClass} in the <code>Graph</code>'s
 	 * <code>Schema</code>.
-	 * 
+	 *
 	 * @param testObject
 	 *            A {@link GenericGraphImpl}, {@link GenericVertexImpl} or
 	 *            {@link GenericEdgeImpl} <code>Object</code>.
@@ -91,7 +97,7 @@ public class GenericGraphImplTest {
 	 * has the default value defined in its definition in the schema. If no
 	 * explicit default value was defined, it tests, if the attribute's value
 	 * corresponds to the general default value of its Domain.
-	 * 
+	 *
 	 * @param value
 	 * @param attribute
 	 */
@@ -582,7 +588,7 @@ public class GenericGraphImplTest {
 						.plus(JGraLab.vector().plus(false)),
 				g.getAttribute("complexListGraph"));
 
-		RecordImpl r = g.getAttribute("recordGraph");
+		RecordImpl r = (RecordImpl) g.getAttribute("recordGraph");
 		r = r.plus("stringRecord", null);
 		r = r.plus("listRecord", null);
 		r = r.plus("setRecord", null);
@@ -1013,6 +1019,76 @@ public class GenericGraphImplTest {
 				}
 			}
 
+		} catch (GraphIOException e) {
+			e.printStackTrace();
+			fail();
+		}
+	}
+
+	@Test
+	public void testCreateRecord() {
+		try {
+			Schema schema = GraphIO.loadSchemaFromFile(SCHEMAFOLDER
+					+ "DefaultValueTestSchema.tg");
+			Graph g = schema.createGraph(ImplementationType.GENERIC);
+			RecordDomain testRecordDomain = (RecordDomain) schema
+					.getDomain("TestRecordDomain");
+			Map<String, Object> values = new HashMap<String, Object>();
+			Boolean boolRecord = Boolean.FALSE;
+			Double doubleRecord = Double.valueOf(0.123d);
+			String enumRecord = "SECOND";
+			Integer intRecord = Integer.valueOf(42);
+			List<?> listRecord = JGraLab.vector().plus(true).plus(false);
+			Long longRecord = Long.valueOf(9876543210l);
+			Map<?, ?> mapRecord = JGraLab.map().plus(1, true).plus(2, false);
+			Set<?> setRecord = JGraLab.set().plus(true).plus(false);
+			String stringRecord = "some string";
+			values.put("boolRecord", boolRecord);
+			values.put("doubleRecord", doubleRecord);
+			values.put("enumRecordRecord", enumRecord);
+			values.put("intRecordRecord", intRecord);
+			values.put("listRecord", listRecord);
+			values.put("longRecord", longRecord);
+			values.put("mapRecordRecord", mapRecord);
+			values.put("setRecordRecord", setRecord);
+			values.put("stringRecord", stringRecord);
+			Record r = g.createRecord(testRecordDomain, values);
+			for (String componentName : values.keySet()) {
+				assertEquals(values.get(componentName),
+						r.getComponent(componentName));
+			}
+		} catch (GraphIOException e) {
+			e.printStackTrace();
+			fail();
+		}
+	}
+
+	@Test
+	public void testGetEnumConstant() {
+		try {
+			Schema schema = GraphIO.loadSchemaFromFile(SCHEMAFOLDER
+					+ "DefaultValueTestSchema.tg");
+			Graph g = schema.createGraph(ImplementationType.GENERIC);
+			EnumDomain testEnumDomain = (EnumDomain) schema
+					.getDomain("TestEnumDomain");
+			for (String c : testEnumDomain.getConsts()) {
+				assertEquals(c, g.getEnumConstant(testEnumDomain, c));
+			}
+		} catch (GraphIOException e) {
+			e.printStackTrace();
+			fail();
+		}
+	}
+
+	@Test(expected = GraphException.class)
+	public void testGetEnumConstantFailure() {
+		try {
+			Schema schema = GraphIO.loadSchemaFromFile(SCHEMAFOLDER
+					+ "DefaultValueTestSchema.tg");
+			Graph g = schema.createGraph(ImplementationType.GENERIC);
+			EnumDomain testEnumDomain = (EnumDomain) schema
+					.getDomain("TestEnumDomain");
+			g.getEnumConstant(testEnumDomain, "FOURTH");
 		} catch (GraphIOException e) {
 			e.printStackTrace();
 			fail();
