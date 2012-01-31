@@ -108,7 +108,7 @@ public abstract class EventDescription<AEC extends AttributedElementClass<AEC, ?
 	 */
 	protected boolean checkContext(AttributedElement<AEC, ?> element) {
 		if (context.equals(Context.TYPE)) {
-			if (element.getSchemaClass().equals(type)) {
+			if (element.getAttributedElementClass().equals(type)) {
 				return true;
 			} else {
 				return false;

@@ -422,6 +422,9 @@ public class ECATest {
 				.getECARuleManager();
 		ecaRuleManager.addECARule(aft_rule);
 
+		System.out.println(loans_u1_b1.getSchemaClass());
+		System.out.println(Loans.EC);
+		
 		loans_u1_b1.setAlpha(user1);
 
 		assertEquals(loans_u1_b1.getAlpha(), user2);
