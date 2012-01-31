@@ -12,6 +12,7 @@ import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.NoSuchAttributeException;
+import de.uni_koblenz.jgralab.Record;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.impl.EdgeIterable;
 import de.uni_koblenz.jgralab.impl.VertexIterable;
@@ -23,15 +24,17 @@ import de.uni_koblenz.jgralab.schema.BooleanDomain;
 import de.uni_koblenz.jgralab.schema.Domain;
 import de.uni_koblenz.jgralab.schema.DoubleDomain;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
+import de.uni_koblenz.jgralab.schema.EnumDomain;
 import de.uni_koblenz.jgralab.schema.GraphClass;
 import de.uni_koblenz.jgralab.schema.IntegerDomain;
 import de.uni_koblenz.jgralab.schema.LongDomain;
+import de.uni_koblenz.jgralab.schema.RecordDomain;
 import de.uni_koblenz.jgralab.schema.VertexClass;
 
 /**
- * 
+ *
  * @author Bernhard
- * 
+ *
  */
 public class GenericGraphImpl extends GraphImpl {
 
@@ -200,7 +203,7 @@ public class GenericGraphImpl extends GraphImpl {
 	 * Returns the default value for attributes in the generic implementation if
 	 * there is no explicitly defined default value, according to the
 	 * attribute's domain.
-	 * 
+	 *
 	 * @param domain
 	 *            The attribute's domain.
 	 * @return The default value for attributes of the domain.
@@ -294,5 +297,20 @@ public class GenericGraphImpl extends GraphImpl {
 		// Needs to be overridden from the base variant, because that relies on
 		// code generation.
 		return type.equals(cls) || type.isSubClassOf(cls);
+	}
+
+	@Override
+	public Object getEnumConstant(EnumDomain enumDomain, String constantName) {
+		// TODO Auto-generated method stub
+		throw new UnsupportedOperationException(
+				"Not yet implemented!  Bug Bernhard to do it!");
+	}
+
+	@Override
+	public Record createRecord(RecordDomain recordDomain,
+			Map<String, Object> values) {
+		// TODO Auto-generated method stub
+		throw new UnsupportedOperationException(
+				"Not yet implemented!  Bug Bernhard to do it!");
 	}
 }

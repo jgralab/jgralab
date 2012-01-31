@@ -39,6 +39,7 @@ public class GenericGraphFactoryImpl extends GraphFactoryImpl {
 		assert schema == gc.getSchema();
 		@SuppressWarnings("unchecked")
 		G graph = (G) new GenericGraphImpl(gc, id, vMax, eMax);
+		graph.setGraphFactory(this);
 		return graph;
 	}
 
