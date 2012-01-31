@@ -45,9 +45,9 @@ import de.uni_koblenz.jgralab.schema.Schema;
 
 /**
  * TODO add comment
- * 
+ *
  * @author ist@uni-koblenz.de
- * 
+ *
  */
 public abstract class GraphElementImpl<SC extends GraphElementClass<SC, IC>, IC extends GraphElement<SC, IC>>
 		implements InternalGraphElement<SC, IC> {
@@ -67,7 +67,7 @@ public abstract class GraphElementImpl<SC extends GraphElementClass<SC, IC>, IC 
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.uni_koblenz.jgralab.AttributedElement#getGraphClass()
 	 */
 	@Override
@@ -77,7 +77,7 @@ public abstract class GraphElementImpl<SC extends GraphElementClass<SC, IC>, IC 
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see jgralab.AttributedElement#getSchema()
 	 */
 	@Override
@@ -92,13 +92,13 @@ public abstract class GraphElementImpl<SC extends GraphElementClass<SC, IC>, IC 
 
 	/**
 	 * Triggers ECA-rules before an Attribute is changed
-	 * 
+	 *
 	 * @param name
 	 *            of the changing Attribute
 	 */
 	public void ecaAttributeChanging(String name, Object oldValue,
 			Object newValue) {
-		if (!graph.isLoading() && (graph.getECARuleManagerIfThere() != null)) {
+		if (!graph.isLoading() && (graph.hasECARuleManager())) {
 			graph.getECARuleManager().fireBeforeChangeAttributeEvents(this,
 					name, oldValue, newValue);
 		}
@@ -106,13 +106,13 @@ public abstract class GraphElementImpl<SC extends GraphElementClass<SC, IC>, IC 
 
 	/**
 	 * Triggers ECA-rule after an Attribute is changed
-	 * 
+	 *
 	 * @param name
 	 *            of the changed Attribute
 	 */
 	public void ecaAttributeChanged(String name, Object oldValue,
 			Object newValue) {
-		if (!graph.isLoading() && (graph.getECARuleManagerIfThere() != null)) {
+		if (!graph.isLoading() && (graph.hasECARuleManager())) {
 			graph.getECARuleManager().fireAfterChangeAttributeEvents(this,
 					name, oldValue, newValue);
 		}
@@ -120,7 +120,7 @@ public abstract class GraphElementImpl<SC extends GraphElementClass<SC, IC>, IC 
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.uni_koblenz.jgralab.GraphElement#getId()
 	 */
 	@Override

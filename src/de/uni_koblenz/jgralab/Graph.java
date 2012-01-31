@@ -486,7 +486,7 @@ public interface Graph extends AttributedElement<GraphClass, Graph> {
 
 	public ECARuleManagerInterface getECARuleManager();
 
-	public ECARuleManagerInterface getECARuleManagerIfThere();
+	public boolean hasECARuleManager();
 
 	public TraversalContext setTraversalContext(TraversalContext tc);
 
