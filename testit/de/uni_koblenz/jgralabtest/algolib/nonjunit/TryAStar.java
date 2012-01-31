@@ -38,7 +38,6 @@ import java.io.File;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.GraphIOException;
-import de.uni_koblenz.jgralab.ImplementationType;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.algolib.algorithms.AlgorithmTerminatedException;
 import de.uni_koblenz.jgralab.algolib.algorithms.shortest_paths.AStarSearch;
@@ -74,7 +73,7 @@ public class TryAStar {
 		Stopwatch sw = new Stopwatch();
 		graphGenerator = new RandomGraphForAStar(MAX, MAX, MAX_DEVIATION);
 		if (new File(filename).exists()) {
-			graph = WeightedSchema.instance().loadWeightedGraph(ImplementationType.STANDARD,filename,
+			graph = WeightedSchema.instance().loadWeightedGraph(filename,
 					new ConsoleProgressFunction());
 			System.out.println("Loaded graph with " + graph.getVCount()
 					+ " vertices and " + graph.getECount() + " edges.");
@@ -110,8 +109,8 @@ public class TryAStar {
 				Location v1 = (Location) parameter1;
 				Location v2 = (Location) parameter2;
 
-				return RandomGraphForAStar.euclideanDistance(v1.get_x(), v1
-						.get_y(), v2.get_x(), v2.get_y());
+				return RandomGraphForAStar.euclideanDistance(v1.get_x(),
+						v1.get_y(), v2.get_x(), v2.get_y());
 			}
 
 			@Override

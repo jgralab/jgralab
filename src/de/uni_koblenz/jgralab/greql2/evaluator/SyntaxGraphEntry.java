@@ -38,12 +38,12 @@ package de.uni_koblenz.jgralab.greql2.evaluator;
 import java.io.File;
 import java.util.logging.Logger;
 
-import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.CostModel;
 import de.uni_koblenz.jgralab.greql2.optimizer.Optimizer;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Expression;
+import de.uni_koblenz.jgralab.greql2.schema.Greql2Schema;
 
 /**
  * This class is one entry in the Map from Query+CostModel+Optimizer to
@@ -170,7 +170,7 @@ public class SyntaxGraphEntry {
 	public SyntaxGraphEntry(String queryText, Greql2 graph,
 			Optimizer optimizer, CostModel costModel, boolean locked) {
 		this.queryText = queryText;
-		this.syntaxGraph = graph;
+		syntaxGraph = graph;
 		this.optimizer = optimizer;
 		this.costModel = costModel;
 		this.locked = locked;
@@ -197,22 +197,21 @@ public class SyntaxGraphEntry {
 	 *             contain a constructor with zero parameters.
 	 */
 	public SyntaxGraphEntry(File fileName) throws GraphIOException {
-		this.syntaxGraph = (Greql2) GraphIO
-				.loadGraphFromFileWithStandardSupport(fileName.getPath(), null);
+		syntaxGraph = Greql2Schema.instance().loadGreql2(fileName.getPath());
 		Greql2Expression g2e = syntaxGraph.getFirstGreql2Expression();
 		try {
-			this.queryText = (String) g2e.getAttribute("_queryText");
+			queryText = (String) g2e.getAttribute("_queryText");
 			String optimizerClass = (String) g2e.getAttribute("_optimizer");
 			if (!optimizerClass.isEmpty()) {
-				this.optimizer = (Optimizer) Class.forName(optimizerClass)
+				optimizer = (Optimizer) Class.forName(optimizerClass)
 						.newInstance();
 			}
 			String costModelClass = (String) g2e.getAttribute("_costModel");
 			if (!costModelClass.isEmpty()) {
-				this.costModel = (CostModel) Class.forName(costModelClass)
+				costModel = (CostModel) Class.forName(costModelClass)
 						.newInstance();
 			}
-			this.locked = false;
+			locked = false;
 			// Now delete the attribute values. They're not needed anymore.
 			g2e.setAttribute("_queryText", null);
 			g2e.setAttribute("_optimizer", null);

@@ -31,16 +31,17 @@ import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 public class AddMappings extends Transformation<Void> {
 
 	private String semanticExpression;
-	private PMap<Object, AttributedElement> archetypes;
+	private PMap<Object, AttributedElement<?, ?>> archetypes;
 
 	public AddMappings(Context c, String semanticExpression) {
 		super(c);
 		this.semanticExpression = semanticExpression;
 	}
 
-	public AddMappings(Context c, PMap<Object, AttributedElement> archetypeMap) {
+	public AddMappings(Context c,
+			PMap<Object, AttributedElement<?, ?>> archetypeMap) {
 		super(c);
-		this.archetypes = archetypeMap;
+		archetypes = archetypeMap;
 	}
 
 	public static AddMappings parseAndCreate(ExecuteTransformation et) {
@@ -59,8 +60,8 @@ public class AddMappings extends Transformation<Void> {
 			archetypes = context.evaluateGReQLQuery(semanticExpression);
 		}
 
-		for (Entry<Object, AttributedElement> e : archetypes.entrySet()) {
-			AttributedElementClass aec = e.getValue()
+		for (Entry<Object, AttributedElement<?, ?>> e : archetypes.entrySet()) {
+			AttributedElementClass<?, ?> aec = e.getValue()
 					.getAttributedElementClass();
 			context.addMapping(aec, e.getKey(), e.getValue());
 		}

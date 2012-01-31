@@ -56,6 +56,7 @@ import javax.tools.StandardJavaFileManager;
 import javax.tools.ToolProvider;
 
 import de.uni_koblenz.jgralab.Graph;
+import de.uni_koblenz.jgralab.GraphFactory;
 import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.ImplementationType;
@@ -72,6 +73,7 @@ import de.uni_koblenz.jgralab.codegenerator.ReversedEdgeCodeGenerator;
 import de.uni_koblenz.jgralab.codegenerator.SchemaCodeGenerator;
 import de.uni_koblenz.jgralab.codegenerator.VertexCodeGenerator;
 import de.uni_koblenz.jgralab.impl.ConsoleProgressFunction;
+import de.uni_koblenz.jgralab.impl.generic.GenericGraphFactoryImpl;
 import de.uni_koblenz.jgralab.schema.Attribute;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.BooleanDomain;
@@ -114,8 +116,8 @@ public class SchemaImpl implements Schema {
 		return schemaClassManager;
 	}
 
-	static final Class<?>[] GRAPHCLASS_CREATE_SIGNATURE = { String.class,
-			int.class, int.class };
+	static final Class<?>[] GRAPHCLASS_CREATE_SIGNATURE = {
+			ImplementationType.class, String.class, int.class, int.class };
 
 	/**
 	 * This is the name of the package into which the implementation classes for
@@ -157,7 +159,7 @@ public class SchemaImpl implements Schema {
 
 	private DirectedAcyclicGraph<Domain> domainsDag = new DirectedAcyclicGraph<Domain>();
 
-	private boolean finish = false;
+	private boolean finished = false;
 
 	/**
 	 * Holds a reference to the {@link GraphClass} of this schema (not the
@@ -179,7 +181,7 @@ public class SchemaImpl implements Schema {
 	 * Maps from simple names to a set of {@link NamedElement}s which have this
 	 * simple name. Used for creation of unique names.
 	 */
-	private Map<String, AttributedElementClass> duplicateSimpleNames = new HashMap<String, AttributedElementClass>();
+	private Map<String, AttributedElementClass<?, ?>> duplicateSimpleNames = new HashMap<String, AttributedElementClass<?, ?>>();
 
 	/**
 	 * Maps from qualified name to the {@link Package} with that qualified name.
@@ -215,7 +217,7 @@ public class SchemaImpl implements Schema {
 
 	/**
 	 * Creates a new <code>Schema</code>.
-	 *
+	 * 
 	 * @param name
 	 *            Name of schema.
 	 * @param packagePrefix
@@ -322,10 +324,10 @@ public class SchemaImpl implements Schema {
 			return;
 		}
 
-		AttributedElementClass aec = (AttributedElementClass) namedElement;
+		AttributedElementClass<?, ?> aec = (AttributedElementClass<?, ?>) namedElement;
 
 		if (duplicateSimpleNames.containsKey(aec.getSimpleName())) {
-			AttributedElementClass other = duplicateSimpleNames.get(aec
+			AttributedElementClass<?, ?> other = duplicateSimpleNames.get(aec
 					.getSimpleName());
 			if (other != null) {
 				((NamedElementImpl) other).changeUniqueName();
@@ -459,7 +461,7 @@ public class SchemaImpl implements Schema {
 	@Override
 	public Vector<InMemoryJavaSourceFile> commit(
 			CodeGeneratorConfiguration config) {
-		if (!finish) {
+		if (!finished) {
 			throw new SchemaException(
 					"Schema must be finish before committing is allowed. "
 							+ "Call finish() to finish the schema.");
@@ -571,7 +573,7 @@ public class SchemaImpl implements Schema {
 	@Override
 	public void commit(String pathPrefix, CodeGeneratorConfiguration config,
 			ProgressFunction progressFunction) throws GraphIOException {
-		if (!finish) {
+		if (!finished) {
 			throw new SchemaException(
 					"Schema must be finish before committing is allowed. "
 							+ "Call finish() to finish the schema.");
@@ -642,8 +644,8 @@ public class SchemaImpl implements Schema {
 
 	@Override
 	public Attribute createAttribute(String name, Domain dom,
-			AttributedElementClass aec, String defaultValueAsString) {
-		if (finish) {
+			AttributedElementClass<?, ?> aec, String defaultValueAsString) {
+		if (finished) {
 			throw new SchemaException("No changes to finished schema!");
 		}
 		return new AttributeImpl(name, dom, aec, defaultValueAsString);
@@ -657,7 +659,7 @@ public class SchemaImpl implements Schema {
 	@Override
 	public EnumDomain createEnumDomain(String qualifiedName,
 			List<String> enumComponents) {
-		if (finish) {
+		if (finished) {
 			throw new SchemaException("No changes to finished schema!");
 		}
 		String[] components = splitQualifiedName(qualifiedName);
@@ -669,7 +671,7 @@ public class SchemaImpl implements Schema {
 
 	@Override
 	public GraphClass createGraphClass(String simpleName) {
-		if (finish) {
+		if (finished) {
 			throw new SchemaException("No changes to finished schema!");
 		}
 		if (graphClass != null) {
@@ -745,7 +747,7 @@ public class SchemaImpl implements Schema {
 
 	@Override
 	public ListDomain createListDomain(Domain baseDomain) {
-		if (finish) {
+		if (finished) {
 			throw new SchemaException("No changes to finished schema!");
 		}
 		String qn = "List<" + baseDomain.getQualifiedName() + ">";
@@ -757,7 +759,7 @@ public class SchemaImpl implements Schema {
 
 	@Override
 	public MapDomain createMapDomain(Domain keyDomain, Domain valueDomain) {
-		if (finish) {
+		if (finished) {
 			throw new SchemaException("No changes to finished schema!");
 		}
 		String qn = "Map<" + keyDomain.getQualifiedName() + ", "
@@ -775,7 +777,7 @@ public class SchemaImpl implements Schema {
 	/**
 	 * Creates a {@link Package} with given qualified name, or returns an
 	 * existing package with this qualified name.
-	 *
+	 * 
 	 * @param qn
 	 *            the qualified name of the package
 	 * @return a new {@link Package} with the given qualified name, or an
@@ -831,7 +833,7 @@ public class SchemaImpl implements Schema {
 	/**
 	 * Given a qualified name like foo.bar.baz returns a string array with two
 	 * components: the package prefix (foo.bar) and the simple name (baz).
-	 *
+	 * 
 	 * @param qualifiedName
 	 *            a qualified name
 	 * @return a string array with two components: the package prefix and the
@@ -862,7 +864,7 @@ public class SchemaImpl implements Schema {
 	@Override
 	public RecordDomain createRecordDomain(String qualifiedName,
 			Collection<RecordComponent> recordComponents) {
-		if (finish) {
+		if (finished) {
 			throw new SchemaException("No changes to finished schema!");
 		}
 		String[] components = splitQualifiedName(qualifiedName);
@@ -875,7 +877,7 @@ public class SchemaImpl implements Schema {
 
 	@Override
 	public SetDomain createSetDomain(Domain baseDomain) {
-		if (finish) {
+		if (finished) {
 			throw new SchemaException("No changes to finished schema!");
 		}
 		String qn = "Set<" + baseDomain.getQualifiedName() + ">";
@@ -898,14 +900,16 @@ public class SchemaImpl implements Schema {
 		return qualifiedName.hashCode();
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
-	public AttributedElementClass getAttributedElementClass(String qualifiedName) {
+	public <T extends AttributedElementClass<?, ?>> T getAttributedElementClass(
+			String qualifiedName) {
 		if (graphClass == null) {
 			return null;
 		} else if (graphClass.getQualifiedName().equals(qualifiedName)) {
-			return graphClass;
+			return (T) graphClass;
 		} else {
-			return graphClass.getGraphElementClass(qualifiedName);
+			return (T) graphClass.getGraphElementClass(qualifiedName);
 		}
 	}
 
@@ -924,12 +928,20 @@ public class SchemaImpl implements Schema {
 	private Method getCreateMethod(String className, String graphClassName,
 			Class<?>[] signature, ImplementationType implementationType) {
 		Class<? extends Graph> schemaClass = null;
-		AttributedElementClass aec = null;
+		AttributedElementClass<?, ?> aec = null;
 		try {
 			schemaClass = getGraphClassImpl(implementationType);
 			if (className.equals(graphClassName)) {
-				return schemaClass.getMethod("create", signature);
+				if (implementationType != ImplementationType.GENERIC) {
+					// Graph create method is in the SchemaImpl specialization
+					return getClass().getMethod("create" + graphClassName,
+							signature);
+				} else {
+					// generic case
+					return schemaClass.getMethod("createGraph", signature);
+				}
 			} else {
+				// Element create methods are in the GraphImpl specialization
 				aec = graphClass.getVertexClass(className);
 				if (aec == null) {
 					aec = graphClass.getEdgeClass(className);
@@ -1015,7 +1027,7 @@ public class SchemaImpl implements Schema {
 		// from-class. Those subclasses are unknown in this method. Therefore,
 		// we look for a method with correct name and 3 parameters
 		// (int, vertex, Vertex).
-		AttributedElementClass aec = getAttributedElementClass(edgeClassName);
+		AttributedElementClass<?, ?> aec = getAttributedElementClass(edgeClassName);
 		if ((aec == null) || !(aec instanceof EdgeClass)) {
 			throw new SchemaException(
 					"There's no EdgeClass with qualified name " + edgeClassName
@@ -1092,7 +1104,7 @@ public class SchemaImpl implements Schema {
 	}
 
 	/**
-	 *
+	 * 
 	 * @param implementationType
 	 * @return
 	 */
@@ -1146,27 +1158,13 @@ public class SchemaImpl implements Schema {
 	}
 
 	@Override
-	public Method getGraphCreateMethod(ImplementationType implementationType) {
-		if (implementationType != ImplementationType.GENERIC) {
-			return getCreateMethod(graphClass.getSimpleName(),
-					graphClass.getSimpleName(), GRAPHCLASS_CREATE_SIGNATURE,
-					implementationType);
-		} else {
-			return getCreateMethod(graphClass.getSimpleName(),
-					graphClass.getSimpleName(), new Class[] { GraphClass.class,
-							String.class, int.class, int.class },
-					implementationType);
-		}
-	}
-
-	@Override
 	public String getName() {
 		return name;
 	}
 
 	/**
 	 * only used internally
-	 *
+	 * 
 	 * @return number of graphelementclasses contained in graphclass
 	 */
 	private int getNumberOfElements() {
@@ -1314,75 +1312,36 @@ public class SchemaImpl implements Schema {
 		return packagePrefix.replace('.', File.separatorChar);
 	}
 
-	/**
-	 * Set flag that transaction support should be used or not.
-	 *
-	 * @param config
-	 */
-	public void setConfiguration(CodeGeneratorConfiguration config) {
-		this.config = config;
+	@Override
+	public GraphFactory createDefaultGraphFactory(
+			ImplementationType implementationType) {
+		if (implementationType != ImplementationType.GENERIC) {
+			throw new IllegalArgumentException(
+					"Base implementation can't create a GraphFactory for implementation type "
+							+ implementationType
+							+ ". Only GENERIC is supported.");
+		}
+		return new GenericGraphFactoryImpl(this);
 	}
 
 	@Override
 	public Graph createGraph(ImplementationType implementationType) {
-		return createGraph(implementationType, 100, 100);
+		return createGraph(implementationType, null, 100, 100);
 	}
 
 	@Override
 	public Graph createGraph(ImplementationType implementationType, String id,
-			int vCount, int eCount) {
-		finish();
-		if (implementationType != ImplementationType.GENERIC) {
-			try {
-				getGraphClass().getSchemaClass();
-			} catch (SchemaClassAccessException e) {
-				switch (implementationType) {
-				case STANDARD:
-					compile(CodeGeneratorConfiguration.MINIMAL);
-					break;
-				case DATABASE:
-					compile(CodeGeneratorConfiguration.WITH_DATABASE_SUPPORT);
-					break;
-				case TRANSACTION:
-					compile(CodeGeneratorConfiguration.WITH_TRANSACTION_SUPPORT);
-					break;
-				default:
-					throw new RuntimeException(
-							"FIXME: Unexpected implementation type "
-									+ implementationType);
-				}
-			}
-		}
-
-		Method graphCreateMethod = implementationType != ImplementationType.GENERIC ? getGraphCreateMethod(ImplementationType.STANDARD)
-				: getGraphCreateMethod(ImplementationType.GENERIC);
-
-		try {
-			if (implementationType != ImplementationType.GENERIC) {
-				return (Graph) graphCreateMethod.invoke(null, id, vCount,
-						eCount);
-			} else {
-				return (Graph) graphCreateMethod.invoke(null, getGraphClass(),
-						id, vCount, eCount);
-			}
-		} catch (Exception e) {
-			throw new SchemaException(
-					"Something failed when creating the  graph!", e);
-		}
-	}
-
-	@Override
-	public Graph createGraph(ImplementationType implementationType, int vCount,
-			int eCount) {
-		return createGraph(implementationType, null, vCount, eCount);
+			int vMax, int eMax) {
+		GraphFactory factory = createDefaultGraphFactory(implementationType);
+		return factory.createGraph(getGraphClass(), id, vMax, eMax);
 	}
 
 	/**
 	 * @return whether the schema is finished
 	 */
 	@Override
-	public boolean isFinish() {
-		return finish;
+	public boolean isFinished() {
+		return finished;
 	}
 
 	/**
@@ -1391,11 +1350,11 @@ public class SchemaImpl implements Schema {
 	 */
 	@Override
 	public void finish() {
-		if (this.finish) {
+		if (finished) {
 			return;
 		}
-		((GraphClassImpl) this.graphClass).finish();
-		this.finish = true;
+		((GraphClassImpl) graphClass).finish();
+		finished = true;
 
 	}
 
@@ -1405,11 +1364,11 @@ public class SchemaImpl implements Schema {
 	 */
 	@Override
 	public void reopen() {
-		if (!this.finish) {
+		if (!finished) {
 			return;
 		}
-		((GraphClassImpl) this.graphClass).finish();
-		this.finish = false;
+		((GraphClassImpl) graphClass).finish();
+		finished = false;
 	}
 
 }

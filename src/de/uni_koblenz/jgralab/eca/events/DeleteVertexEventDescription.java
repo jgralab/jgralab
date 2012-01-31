@@ -1,12 +1,12 @@
 package de.uni_koblenz.jgralab.eca.events;
 
-import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.eca.ECAException;
 import de.uni_koblenz.jgralab.eca.ECARule;
+import de.uni_koblenz.jgralab.schema.VertexClass;
 
-public class DeleteVertexEventDescription extends EventDescription {
+public class DeleteVertexEventDescription extends EventDescription<VertexClass> {
 
 	/**
 	 * Creates an DeleteVertexEventDescription with the given parameters
@@ -16,8 +16,7 @@ public class DeleteVertexEventDescription extends EventDescription {
 	 * @param type
 	 *            the Class of elements, this EventDescription monitors
 	 */
-	public DeleteVertexEventDescription(EventTime time,
-			Class<? extends AttributedElement> type) {
+	public DeleteVertexEventDescription(EventTime time, VertexClass type) {
 		super(time, type);
 	}
 
@@ -46,36 +45,34 @@ public class DeleteVertexEventDescription extends EventDescription {
 	 * @param element
 	 *            the to be deleted Vertex
 	 */
-	public void fire(AttributedElement element) {
+	public void fire(Vertex element) {
 		if (super.checkContext(element)) {
-			int nested = this.getActiveECARules().get(0).getECARuleManager()
+			int nested = getActiveECARules().get(0).getECARuleManager()
 					.getNestedTriggerCalls();
-			Graph graph = this.getActiveECARules().get(0).getECARuleManager()
+			Graph graph = getActiveECARules().get(0).getECARuleManager()
 					.getGraph();
-			for (ECARule rule : activeRules) {
-				rule.trigger(new DeleteVertexEvent(nested, graph,
-						(Vertex) element));
+			for (ECARule<VertexClass> rule : activeRules) {
+				rule.trigger(new DeleteVertexEvent(nested, graph, element));
 			}
 		}
 	}
-	
+
 	/**
 	 * Triggers the rule if this EventDescription matches the Event
 	 * 
 	 * @param type
 	 *            the type of the Vertex that is deleted
 	 */
-	public void fire(Class<? extends AttributedElement> type) {
+	public void fire(VertexClass type) {
 		if (super.checkContext(type)) {
-			int nested = this.getActiveECARules().get(0).getECARuleManager()
+			int nested = getActiveECARules().get(0).getECARuleManager()
 					.getNestedTriggerCalls();
-			Graph graph = this.getActiveECARules().get(0).getECARuleManager()
+			Graph graph = getActiveECARules().get(0).getECARuleManager()
 					.getGraph();
-			for (ECARule rule : activeRules) {
-				rule.trigger(new DeleteVertexEvent(nested, graph, this
-						.getType()));
+			for (ECARule<VertexClass> rule : activeRules) {
+				rule.trigger(new DeleteVertexEvent(nested, graph, getType()));
 			}
 		}
 	}
-	
+
 }

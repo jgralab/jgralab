@@ -137,11 +137,12 @@ public class ArrayGraphmarkerTest extends InstanceTest {
 	public void setup() throws CommitFailedException {
 		switch (implementationType) {
 		case STANDARD:
-			g = MinimalSchema.instance().createMinimalGraph(ImplementationType.STANDARD,V, E);
+			g = MinimalSchema.instance().createMinimalGraph(
+					ImplementationType.STANDARD, null, V, E);
 			break;
 		case TRANSACTION:
-			g = MinimalSchema.instance()
-					.createMinimalGraph(ImplementationType.TRANSACTION,V, E);
+			g = MinimalSchema.instance().createMinimalGraph(
+					ImplementationType.TRANSACTION, null, V, E);
 			break;
 		case DATABASE:
 			dbHandler.connectToDatabase();

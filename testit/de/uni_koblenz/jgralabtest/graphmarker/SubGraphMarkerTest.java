@@ -87,11 +87,12 @@ public class SubGraphMarkerTest extends InstanceTest {
 	public void setUp() throws CommitFailedException {
 		switch (implementationType) {
 		case STANDARD:
-			g = MinimalSchema.instance().createMinimalGraph(ImplementationType.STANDARD,V, E);
+			g = MinimalSchema.instance().createMinimalGraph(
+					ImplementationType.STANDARD, null, V, E);
 			break;
 		case TRANSACTION:
-			g = MinimalSchema.instance()
-					.createMinimalGraph(ImplementationType.TRANSACTION,V, E);
+			g = MinimalSchema.instance().createMinimalGraph(
+					ImplementationType.TRANSACTION, null, V, E);
 			break;
 		case DATABASE:
 			dbHandler.connectToDatabase();
@@ -151,12 +152,13 @@ public class SubGraphMarkerTest extends InstanceTest {
 
 	public void assertAllMarkedCorrectly() throws CommitFailedException {
 		createReadOnlyTransaction(g);
-		Set<AttributedElement> oldSet = new HashSet<AttributedElement>();
-		Set<AttributedElement> newSet = new HashSet<AttributedElement>();
-		for (AttributedElement currentElement : oldMarker.getMarkedElements()) {
+		Set<AttributedElement<?, ?>> oldSet = new HashSet<AttributedElement<?, ?>>();
+		Set<AttributedElement<?, ?>> newSet = new HashSet<AttributedElement<?, ?>>();
+		for (AttributedElement<?, ?> currentElement : oldMarker
+				.getMarkedElements()) {
 			oldSet.add(currentElement);
 		}
-		for (GraphElement currentElement : newMarker.getMarkedElements()) {
+		for (GraphElement<?, ?> currentElement : newMarker.getMarkedElements()) {
 			newSet.add(currentElement);
 		}
 		assertEquals(oldSet, newSet);

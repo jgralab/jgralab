@@ -53,13 +53,13 @@ import de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout.definition.TypeDefin
 
 public class GraphLayout {
 
-	Map<AttributedElementClass, TypeDefinition> vertexTypeDefinitions;
+	Map<VertexClass, TypeDefinition> vertexTypeDefinitions;
 
-	Map<AttributedElementClass, TypeDefinition> edgeTypeDefinitions;
+	Map<EdgeClass, TypeDefinition> edgeTypeDefinitions;
 
 	List<ElementDefinition> elementDefinitions;
 
-	Collection<AttributedElement> attributedElementsDefinedByElementDefinitions;
+	Collection<AttributedElement<?, ?>> attributedElementsDefinedByElementDefinitions;
 
 	Map<String, String> globalVariables;
 
@@ -70,11 +70,11 @@ public class GraphLayout {
 	}
 
 	private void initiateDataStructures() {
-		vertexTypeDefinitions = new HashMap<AttributedElementClass, TypeDefinition>();
-		edgeTypeDefinitions = new HashMap<AttributedElementClass, TypeDefinition>();
+		vertexTypeDefinitions = new HashMap<VertexClass, TypeDefinition>();
+		edgeTypeDefinitions = new HashMap<EdgeClass, TypeDefinition>();
 		elementDefinitions = new ArrayList<ElementDefinition>();
 
-		attributedElementsDefinedByElementDefinitions = new HashSet<AttributedElement>();
+		attributedElementsDefinedByElementDefinitions = new HashSet<AttributedElement<?, ?>>();
 
 		globalVariables = new HashMap<String, String>();
 	}
@@ -87,11 +87,11 @@ public class GraphLayout {
 		return schema;
 	}
 
-	public Map<AttributedElementClass, TypeDefinition> getVertexTypeDefinitions() {
+	public Map<VertexClass, TypeDefinition> getVertexTypeDefinitions() {
 		return vertexTypeDefinitions;
 	}
 
-	public Map<AttributedElementClass, TypeDefinition> getEdgeTypeDefinitions() {
+	public Map<EdgeClass, TypeDefinition> getEdgeTypeDefinitions() {
 		return edgeTypeDefinitions;
 	}
 
@@ -99,11 +99,11 @@ public class GraphLayout {
 		return elementDefinitions;
 	}
 
-	public Collection<AttributedElement> getAttributedElementsDefinedByElementDefinitions() {
+	public Collection<AttributedElement<?, ?>> getAttributedElementsDefinedByElementDefinitions() {
 		return attributedElementsDefinedByElementDefinitions;
 	}
 
-	public TypeDefinition getTypeDefinition(AttributedElement element) {
+	public TypeDefinition getTypeDefinition(AttributedElement<?, ?> element) {
 		return getTypeDefinition(element.getAttributedElementClass());
 	}
 
@@ -112,7 +112,7 @@ public class GraphLayout {
 				.getAttributedElementClass(attributedElementClassName));
 	}
 
-	public TypeDefinition getTypeDefinition(AttributedElementClass type) {
+	public TypeDefinition getTypeDefinition(AttributedElementClass<?, ?> type) {
 		TypeDefinition definition = vertexTypeDefinitions.get(type);
 		if (definition == null) {
 			definition = edgeTypeDefinitions.get(type);
@@ -162,7 +162,7 @@ public class GraphLayout {
 		elementDefinitions.add(definition);
 	}
 
-	public boolean isDefinedbyElementDefinitions(AttributedElement v) {
+	public boolean isDefinedbyElementDefinitions(AttributedElement<?, ?> v) {
 		return attributedElementsDefinedByElementDefinitions.contains(v);
 	}
 

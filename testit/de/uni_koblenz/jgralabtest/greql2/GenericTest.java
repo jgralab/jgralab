@@ -299,7 +299,7 @@ public class GenericTest {
 		// this test graph?
 		// This singleton should prevent spending to much time in GraphIO.
 		if (testGraph == null) {
-			testGraph = GraphIO.loadGraphFromFileWithStandardSupport(
+			testGraph = GraphIO.loadGraphFromFile(
 					"testit/testgraphs/greqltestgraph.tg", null);
 		}
 
@@ -308,7 +308,7 @@ public class GenericTest {
 
 	protected Graph createCyclicTestGraph() {
 		MinimalSchema s = MinimalSchema.instance();
-		MinimalGraph g = s.createMinimalGraph(ImplementationType.STANDARD,10, 10);
+		MinimalGraph g = s.createMinimalGraph(ImplementationType.STANDARD);
 		Node[] v = new Node[10];
 		for (int i = 0; i < 10; i++) {
 			v[i] = g.createNode();
@@ -322,7 +322,7 @@ public class GenericTest {
 	protected Graph createTestTree() {
 		// create a binary tree where v[0] is the root
 		MinimalSchema s = MinimalSchema.instance();
-		MinimalGraph g = s.createMinimalGraph(ImplementationType.STANDARD,10, 10);
+		MinimalGraph g = s.createMinimalGraph(ImplementationType.STANDARD);
 		Node[] v = new Node[15];
 		for (int i = 0; i < 15; i++) {
 			v[i] = g.createNode();

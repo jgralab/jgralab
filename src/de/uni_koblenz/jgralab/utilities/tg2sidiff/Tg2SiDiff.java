@@ -45,6 +45,7 @@ import de.uni_koblenz.jgralab.schema.AggregationKind;
 import de.uni_koblenz.jgralab.schema.Attribute;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
+import de.uni_koblenz.jgralab.schema.VertexClass;
 import de.uni_koblenz.jgralab.utilities.tg2whatever.Tg2Whatever;
 
 public class Tg2SiDiff extends Tg2Whatever {
@@ -95,7 +96,7 @@ public class Tg2SiDiff extends Tg2Whatever {
 	 */
 	@Override
 	protected void printVertex(PrintStream out, Vertex v) {
-		AttributedElementClass cls = v.getAttributedElementClass();
+		VertexClass cls = v.getAttributedElementClass();
 		out.print("<Node type=\"" + cls.getQualifiedName() + "\" id=\"vertex"
 				+ v.getId() + "\">\n");
 		if (cls.getAttributeCount() > 0) {
@@ -164,7 +165,7 @@ public class Tg2SiDiff extends Tg2Whatever {
 	 */
 	@Override
 	protected void printEdge(PrintStream out, Edge e) {
-		EdgeClass cls = (EdgeClass) e.getAttributedElementClass();
+		EdgeClass cls = e.getAttributedElementClass();
 		Vertex alpha = (isReversedEdges() ? e.getOmega() : e.getAlpha());
 		Vertex omega = (isReversedEdges() ? e.getAlpha() : e.getOmega());
 		boolean aggregateTo = (e.getAlphaAggregationKind() != AggregationKind.NONE);
@@ -196,8 +197,8 @@ public class Tg2SiDiff extends Tg2Whatever {
 	 * <Attribute name="isAbstract" value="false"/> <Attribute name="name"
 	 * value="Dimension"/> <Attribute name="visibility" value="public"/>
 	 */
-	private void printAttributes(PrintStream out, AttributedElement elem) {
-		AttributedElementClass cls = elem.getAttributedElementClass();
+	private void printAttributes(PrintStream out, AttributedElement<?, ?> elem) {
+		AttributedElementClass<?, ?> cls = elem.getAttributedElementClass();
 		for (Attribute attr : cls.getAttributeList()) {
 			Object val = elem.getAttribute(attr.getName());
 			String attributeValue = "null";

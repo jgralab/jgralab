@@ -43,7 +43,7 @@ import de.uni_koblenz.jgralab.Edge;
  *
  * @author ist@uni-koblenz.de
  */
-public interface EdgeClass extends GraphElementClass {
+public interface EdgeClass extends GraphElementClass<EdgeClass, Edge> {
 
 	public static final String DEFAULTEDGECLASS_NAME = "Edge";
 
@@ -61,14 +61,5 @@ public interface EdgeClass extends GraphElementClass {
 	public IncidenceClass getFrom();
 
 	public IncidenceClass getTo();
-
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * de.uni_koblenz.jgralab.schema.AttributedElementClass#getSchemaClass()
-	 */
-	@Override
-	public Class<? extends Edge> getSchemaClass();
 
 }

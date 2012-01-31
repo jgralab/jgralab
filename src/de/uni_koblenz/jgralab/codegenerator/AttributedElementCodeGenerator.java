@@ -52,7 +52,7 @@ import de.uni_koblenz.jgralab.schema.VertexClass;
  * @author ist@uni-koblenz.de
  *
  */
-public class AttributedElementCodeGenerator extends CodeGenerator {
+public abstract class AttributedElementCodeGenerator extends CodeGenerator {
 
 	/**
 	 * all the interfaces of the class which are being implemented
@@ -62,10 +62,10 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 	/**
 	 * the AttributedElementClass to generate code for
 	 */
-	protected AttributedElementClass aec;
+	protected AttributedElementClass<?, ?> aec;
 
 	protected AttributedElementCodeGenerator(
-			AttributedElementClass attributedElementClass,
+			AttributedElementClass<?, ?> attributedElementClass,
 			String schemaRootPackageName, CodeGeneratorConfiguration config) {
 		super(schemaRootPackageName, attributedElementClass.getPackageName(),
 				config);
@@ -90,13 +90,13 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 		interfaces.add(aec.getQualifiedName());
 		rootBlock.setVariable("isAbstractClass", aec.isAbstract() ? "true"
 				: "false");
-		for (AttributedElementClass superClass : attributedElementClass
+		for (AttributedElementClass<?, ?> superClass : attributedElementClass
 				.getDirectSuperClasses()) {
 			interfaces.add(superClass.getQualifiedName());
 		}
 	}
 
-	private static String getSchemaTypeName(AttributedElementClass aec) {
+	private static String getSchemaTypeName(AttributedElementClass<?, ?> aec) {
 		if (aec instanceof VertexClass) {
 			return "VertexClass";
 		} else if (aec instanceof EdgeClass) {
@@ -114,7 +114,7 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 	 * @param aec
 	 * @return
 	 */
-	protected String absoluteName(AttributedElementClass aec) {
+	protected String absoluteName(AttributedElementClass<?, ?> aec) {
 		return schemaRootPackageName + "." + aec.getQualifiedName();
 	}
 
@@ -143,12 +143,7 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 		return code;
 	}
 
-	protected CodeBlock createAttributedElementClassConstant() {
-		return new CodeSnippet(
-				true,
-				"static final #jgSchemaPackage#.#schemaTypeName# ATTRIBUTED_ELEMENT_CLASS"
-						+ " = #schemaPackageName#.#schemaName#.instance().#schemaVariableName#;");
-	}
+	protected abstract CodeBlock createAttributedElementClassConstant();
 
 	@Override
 	protected CodeBlock createHeader() {
@@ -232,17 +227,13 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 		return false;
 	}
 
-	protected CodeBlock createGetAttributedElementClassMethod() {
-		return new CodeSnippet(
-				true,
-				"public final #jgSchemaPackage#.#schemaTypeName# getAttributedElementClass() {",
-				"\treturn #javaClassName#.ATTRIBUTED_ELEMENT_CLASS;", "}");
-	}
+	protected abstract CodeBlock createGetAttributedElementClassMethod();
 
 	protected CodeBlock createGetSchemaClassMethod() {
 		return new CodeSnippet(
 				true,
-				"public final java.lang.Class<? extends #jgPackage#.AttributedElement> getSchemaClass() {",
+				"@Override",
+				"public final java.lang.Class<? extends #jgPackage#.#graphElementClass#> getSchemaClass() {",
 				"\treturn #javaClassName#.class;", "}");
 	}
 

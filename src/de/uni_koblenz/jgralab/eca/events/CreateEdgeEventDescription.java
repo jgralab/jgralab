@@ -1,12 +1,12 @@
 package de.uni_koblenz.jgralab.eca.events;
 
-import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.eca.ECAException;
 import de.uni_koblenz.jgralab.eca.ECARule;
+import de.uni_koblenz.jgralab.schema.EdgeClass;
 
-public class CreateEdgeEventDescription extends EventDescription{
+public class CreateEdgeEventDescription extends EventDescription<EdgeClass> {
 
 	/**
 	 * Creates an CreateEdgeEventDescription with the given parameters
@@ -16,8 +16,7 @@ public class CreateEdgeEventDescription extends EventDescription{
 	 * @param type
 	 *            the Class of elements, this EventDescription monitors
 	 */
-	public CreateEdgeEventDescription(EventTime time,
-			Class<? extends AttributedElement> type) {
+	public CreateEdgeEventDescription(EventTime time, EdgeClass type) {
 		super(time, type);
 	}
 
@@ -37,43 +36,41 @@ public class CreateEdgeEventDescription extends EventDescription{
 							+ " because there is no element.");
 		}
 	}
-	
+
 	// --------------------------------------------------------------------
-	
+
 	/**
 	 * Triggers the rules if this EventDescription matches the Event
 	 * 
 	 * @param element
 	 *            the created Edge
 	 */
-	public void fire(AttributedElement element) {
+	public void fire(Edge element) {
 		if (super.checkContext(element)) {
-			int nested = this.getActiveECARules().get(0).getECARuleManager()
+			int nested = getActiveECARules().get(0).getECARuleManager()
 					.getNestedTriggerCalls();
-			Graph graph = this.getActiveECARules().get(0).getECARuleManager()
+			Graph graph = getActiveECARules().get(0).getECARuleManager()
 					.getGraph();
-			for (ECARule rule : activeRules) {
-				rule.trigger(new CreateEdgeEvent(nested, graph,
-						(Edge) element));
+			for (ECARule<EdgeClass> rule : activeRules) {
+				rule.trigger(new CreateEdgeEvent(nested, graph, element));
 			}
 		}
 	}
-	
+
 	/**
 	 * Triggers the rule if this EventDescription matches the Event
 	 * 
 	 * @param type
 	 *            the type of the Edge that will become created
 	 */
-	public void fire(Class<? extends AttributedElement> type) {
+	public void fire(EdgeClass type) {
 		if (super.checkContext(type)) {
-			int nested = this.getActiveECARules().get(0).getECARuleManager()
+			int nested = getActiveECARules().get(0).getECARuleManager()
 					.getNestedTriggerCalls();
-			Graph graph = this.getActiveECARules().get(0).getECARuleManager()
+			Graph graph = getActiveECARules().get(0).getECARuleManager()
 					.getGraph();
-			for (ECARule rule : activeRules) {
-				rule.trigger(new CreateEdgeEvent(nested, graph,
-						this.getType()));
+			for (ECARule<EdgeClass> rule : activeRules) {
+				rule.trigger(new CreateEdgeEvent(nested, graph, getType()));
 			}
 		}
 	}

@@ -44,9 +44,9 @@ import de.uni_koblenz.jgralab.schema.VertexClass;
 
 /**
  * TODO add comment
- * 
+ *
  * @author ist@uni-koblenz.de
- * 
+ *
  */
 public class EdgeCodeGenerator extends AttributedElementCodeGenerator {
 
@@ -54,6 +54,7 @@ public class EdgeCodeGenerator extends AttributedElementCodeGenerator {
 			CodeGeneratorConfiguration config) {
 		super(edgeClass, schemaPackageName, config);
 		rootBlock.setVariable("graphElementClass", "Edge");
+		rootBlock.setVariable("schemaElementClass", "EdgeClass");
 	}
 
 	@Override
@@ -94,6 +95,15 @@ public class EdgeCodeGenerator extends AttributedElementCodeGenerator {
 		code.add(createSpecialConstructorCode());
 		code.addNoIndent(new CodeSnippet("}"));
 		return code;
+	}
+
+	@Override
+	protected CodeBlock createSpecialConstructorCode() {
+		if (currentCycle.isStdImpl()) {
+			return new CodeSnippet(
+					"((#jgImplPackage#.InternalGraph) graph).addEdge(this, alpha, omega);");
+		}
+		return super.createSpecialConstructorCode();
 	}
 
 	@Override
@@ -162,7 +172,7 @@ public class EdgeCodeGenerator extends AttributedElementCodeGenerator {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return
 	 */
 	private CodeBlock createReversedEdgeMethod() {
@@ -184,12 +194,12 @@ public class EdgeCodeGenerator extends AttributedElementCodeGenerator {
 
 	private CodeBlock createNextEdgeMethods() {
 		CodeList code = new CodeList();
-		TreeSet<AttributedElementClass> superClasses = new TreeSet<AttributedElementClass>();
+		TreeSet<AttributedElementClass<?, ?>> superClasses = new TreeSet<AttributedElementClass<?, ?>>();
 		superClasses.addAll(aec.getAllSuperClasses());
 		superClasses.add(aec);
 
 		if (config.hasTypeSpecificMethodsSupport()) {
-			for (AttributedElementClass ec : superClasses) {
+			for (AttributedElementClass<?, ?> ec : superClasses) {
 				if (ec.isInternal()) {
 					continue;
 				}
@@ -226,12 +236,12 @@ public class EdgeCodeGenerator extends AttributedElementCodeGenerator {
 	private CodeBlock createNextIncidenceMethods() {
 		CodeList code = new CodeList();
 
-		TreeSet<AttributedElementClass> superClasses = new TreeSet<AttributedElementClass>();
+		TreeSet<AttributedElementClass<?, ?>> superClasses = new TreeSet<AttributedElementClass<?, ?>>();
 		superClasses.addAll(aec.getAllSuperClasses());
 		superClasses.add(aec);
 
 		if (config.hasTypeSpecificMethodsSupport()) {
-			for (AttributedElementClass ec : superClasses) {
+			for (AttributedElementClass<?, ?> ec : superClasses) {
 				if (ec.isInternal()) {
 					continue;
 				}
@@ -319,5 +329,22 @@ public class EdgeCodeGenerator extends AttributedElementCodeGenerator {
 				"\treturn de.uni_koblenz.jgralab.schema.AggregationKind.#semantics#;",
 				"}");
 		return code;
+	}
+
+	@Override
+	protected CodeBlock createAttributedElementClassConstant() {
+		return new CodeSnippet(
+				true,
+				"public static final #jgSchemaPackage#.#schemaElementClass# EC"
+						+ " = #schemaPackageName#.#schemaName#.instance().#schemaVariableName#;");
+	}
+
+	@Override
+	protected CodeBlock createGetAttributedElementClassMethod() {
+		return new CodeSnippet(
+				true,
+				"@Override",
+				"public final #jgSchemaPackage#.#schemaElementClass# getAttributedElementClass() {",
+				"\treturn #javaClassName#.EC;", "}");
 	}
 }

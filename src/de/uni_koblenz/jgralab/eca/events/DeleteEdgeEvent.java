@@ -1,11 +1,11 @@
 package de.uni_koblenz.jgralab.eca.events;
 
-import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.eca.events.EventDescription.EventTime;
+import de.uni_koblenz.jgralab.schema.EdgeClass;
 
-public class DeleteEdgeEvent extends Event {
+public class DeleteEdgeEvent extends Event<EdgeClass> {
 
 	/**
 	 * The to be deleted Edge or null if the EventTime is after
@@ -23,7 +23,8 @@ public class DeleteEdgeEvent extends Event {
 	 *            the to be deleted Edge or null if the EventTime is after
 	 */
 	public DeleteEdgeEvent(int nestedCalls, Graph graph, Edge edge) {
-		super(nestedCalls, EventTime.BEFORE, graph, edge.getSchemaClass());
+		super(nestedCalls, EventTime.BEFORE, graph, edge
+				.getAttributedElementClass());
 		this.edge = edge;
 	}
 
@@ -37,17 +38,9 @@ public class DeleteEdgeEvent extends Event {
 	 * @param type
 	 *            type of the deleted Edge
 	 */
-	public DeleteEdgeEvent(int nestedCalls, Graph graph,
-			Class<? extends AttributedElement> type) {
+	public DeleteEdgeEvent(int nestedCalls, Graph graph, EdgeClass type) {
 		super(nestedCalls, EventTime.AFTER, graph, type);
 		edge = null;
-	}
-
-	/**
-	 * @return the to be deleted Edge or null if the EventTime is after
-	 */
-	public Edge getEdge() {
-		return edge;
 	}
 
 	/**
@@ -55,7 +48,7 @@ public class DeleteEdgeEvent extends Event {
 	 *         EventTime is after
 	 */
 	@Override
-	public AttributedElement getElement() {
+	public Edge getElement() {
 		return edge;
 	}
 }

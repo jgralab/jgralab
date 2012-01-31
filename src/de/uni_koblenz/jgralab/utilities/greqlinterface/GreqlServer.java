@@ -54,7 +54,6 @@ import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.codegenerator.CodeGeneratorConfiguration;
 import de.uni_koblenz.jgralab.graphmarker.BooleanGraphMarker;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.types.Path;
@@ -125,8 +124,7 @@ public class GreqlServer extends Thread {
 					if (g == null) {
 						println("Loading " + graphFile + ".", PrintTarget.BOTH,
 								true);
-						g = GraphIO.loadSchemaAndGraphFromFile(graphFile,
-								CodeGeneratorConfiguration.MINIMAL,
+						g = GraphIO.loadGraphFromFile(graphFile,
 								new ConsoleProgressFunction("Loading"));
 						dataGraphs.put(graphFile, g);
 					}
@@ -208,7 +206,7 @@ public class GreqlServer extends Thread {
 				marker.mark(e);
 			}
 		} else if (val instanceof AttributedElement) {
-			marker.mark((AttributedElement) val);
+			marker.mark((AttributedElement<?, ?>) val);
 		} else {
 			println("'" + val + "' is no AttributedElement, "
 					+ "so it won't be considered for DOT output.",

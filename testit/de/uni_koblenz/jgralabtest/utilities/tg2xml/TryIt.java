@@ -73,7 +73,7 @@ public class TryIt {
 			System.out.println("Compiling schema");
 			schema.compile(CodeGeneratorConfiguration.FULL);
 			System.out.println("done");
-			Graph graph = GraphIO.loadGraphFromFileWithStandardSupport(file,
+			Graph graph = GraphIO.loadGraphFromFile(file,
 					new ConsoleProgressFunction());
 			Tg2xml converter = new Tg2xml(new BufferedOutputStream(
 					new FileOutputStream(outName)), graph, "gruml", "gruml.xsd");

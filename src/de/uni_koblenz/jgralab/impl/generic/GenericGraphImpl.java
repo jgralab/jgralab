@@ -9,10 +9,10 @@ import org.pcollections.POrderedSet;
 import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
-import de.uni_koblenz.jgralab.GraphException;
 import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.NoSuchAttributeException;
+import de.uni_koblenz.jgralab.Record;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.impl.EdgeIterable;
 import de.uni_koblenz.jgralab.impl.VertexIterable;
@@ -24,9 +24,11 @@ import de.uni_koblenz.jgralab.schema.BooleanDomain;
 import de.uni_koblenz.jgralab.schema.Domain;
 import de.uni_koblenz.jgralab.schema.DoubleDomain;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
+import de.uni_koblenz.jgralab.schema.EnumDomain;
 import de.uni_koblenz.jgralab.schema.GraphClass;
 import de.uni_koblenz.jgralab.schema.IntegerDomain;
 import de.uni_koblenz.jgralab.schema.LongDomain;
+import de.uni_koblenz.jgralab.schema.RecordDomain;
 import de.uni_koblenz.jgralab.schema.VertexClass;
 
 /**
@@ -36,16 +38,16 @@ import de.uni_koblenz.jgralab.schema.VertexClass;
  */
 public class GenericGraphImpl extends GraphImpl {
 
-	private GraphClass aec;
+	private GraphClass type;
 	private Map<String, Object> attributes;
 
-	protected GenericGraphImpl(String id, GraphClass type) {
+	protected GenericGraphImpl(GraphClass type, String id) {
 		super(id, type, 100, 100);
 	}
 
 	protected GenericGraphImpl(GraphClass type, String id, int vmax, int emax) {
 		super(id, type, vmax, emax);
-		this.aec = type;
+		this.type = type;
 		attributes = GenericGraphImpl.initializeAttributes(type);
 		GenericGraphImpl.initializeGenericAttributeValues(this);
 	}
@@ -55,7 +57,8 @@ public class GenericGraphImpl extends GraphImpl {
 	 * be called manually. Use
 	 * <code>Schema.createGraph(ImplementationType.Generic)</code> instead!
 	 */
-	public static Graph create(GraphClass type, String id, int vmax, int emax) {
+	public static Graph createGraph(GraphClass type, String id, int vmax,
+			int emax) {
 		return new GenericGraphImpl(type, id, vmax, emax);
 	}
 
@@ -65,25 +68,7 @@ public class GenericGraphImpl extends GraphImpl {
 	 */
 	@Override
 	public <T extends Vertex> T createVertex(VertexClass vc) {
-		return createVertex(vc, 0);
-	}
-
-	@SuppressWarnings("unchecked")
-	public <T extends Vertex> T createVertex(VertexClass vc, int id) {
-		if (aec.getVertexClass(vc.getQualifiedName()) == null) {
-			throw new GraphException("Error creating vertex of VertexClass "
-					+ vc);
-		}
-		try {
-			return (T) new GenericVertexImpl(vc, id, this);
-		} catch (Exception e) {
-			if (e instanceof GraphException) {
-				throw (GraphException) e;
-			} else {
-				throw new GraphException(
-						"Error creating vertex of VertexClass " + vc);
-			}
-		}
+		return graphFactory.createVertex(vc, 0, this);
 	}
 
 	/**
@@ -93,27 +78,12 @@ public class GenericGraphImpl extends GraphImpl {
 	@Override
 	public <T extends Edge> T createEdge(EdgeClass ec, Vertex alpha,
 			Vertex omega) {
-		return createEdge(ec, 0, alpha, omega);
-	}
-
-	@SuppressWarnings("unchecked")
-	public <T extends Edge> T createEdge(EdgeClass ec, int id, Vertex alpha,
-			Vertex omega) {
-		try {
-			return (T) new GenericEdgeImpl(ec, id, this, alpha, omega);
-		} catch (Exception e) {
-			if (e instanceof GraphException) {
-				throw (GraphException) e;
-			} else {
-				throw new GraphException("Error creating edge of EdgeClass "
-						+ ec, e);
-			}
-		}
+		return graphFactory.createEdge(ec, 0, this, alpha, omega);
 	}
 
 	@Override
 	public GraphClass getAttributedElementClass() {
-		return aec;
+		return type;
 	}
 
 	@Override
@@ -122,7 +92,7 @@ public class GenericGraphImpl extends GraphImpl {
 		if ((attributes != null) && attributes.containsKey(attributeName)) {
 			attributes.put(
 					attributeName,
-					aec.getAttribute(attributeName)
+					type.getAttribute(attributeName)
 							.getDomain()
 							.parseGenericAttribute(
 									GraphIO.createStringReader(value,
@@ -135,7 +105,7 @@ public class GenericGraphImpl extends GraphImpl {
 
 	@Override
 	public void readAttributeValues(GraphIO io) throws GraphIOException {
-		for (Attribute a : aec.getAttributeList()) {
+		for (Attribute a : type.getAttributeList()) {
 			attributes
 					.put(a.getName(), a.getDomain().parseGenericAttribute(io));
 		}
@@ -145,7 +115,7 @@ public class GenericGraphImpl extends GraphImpl {
 	public String writeAttributeValueToString(String attributeName)
 			throws IOException, GraphIOException, NoSuchAttributeException {
 		GraphIO io = GraphIO.createStringWriter(getSchema());
-		aec.getAttribute(attributeName).getDomain()
+		type.getAttribute(attributeName).getDomain()
 				.serializeGenericAttribute(io, getAttribute(attributeName));
 		return io.getStringWriterResult();
 	}
@@ -153,7 +123,7 @@ public class GenericGraphImpl extends GraphImpl {
 	@Override
 	public void writeAttributeValues(GraphIO io) throws IOException,
 			GraphIOException {
-		for (Attribute a : aec.getAttributeList()) {
+		for (Attribute a : type.getAttributeList()) {
 			a.getDomain().serializeGenericAttribute(io,
 					attributes.get(a.getName()));
 		}
@@ -163,7 +133,7 @@ public class GenericGraphImpl extends GraphImpl {
 	@Override
 	public <T> T getAttribute(String name) throws NoSuchAttributeException {
 		if ((attributes == null) || !attributes.containsKey(name)) {
-			throw new NoSuchAttributeException(aec.getSimpleName()
+			throw new NoSuchAttributeException(type.getSimpleName()
 					+ " doesn't contain an attribute " + name);
 		} else {
 			return (T) attributes.get(name);
@@ -174,10 +144,10 @@ public class GenericGraphImpl extends GraphImpl {
 	public <T> void setAttribute(String name, T data)
 			throws NoSuchAttributeException {
 		if ((attributes == null) || !attributes.containsKey(name)) {
-			throw new NoSuchAttributeException(aec.getSimpleName()
+			throw new NoSuchAttributeException(type.getSimpleName()
 					+ " doesn't contain an attribute " + name);
 		} else {
-			if (!aec.getAttribute(name).getDomain().genericIsConform(data)) {
+			if (!type.getAttribute(name).getDomain().genericIsConform(data)) {
 				throw new ClassCastException();
 			} else {
 				attributes.put(name, data);
@@ -256,7 +226,8 @@ public class GenericGraphImpl extends GraphImpl {
 		}
 	}
 
-	static Map<String, Object> initializeAttributes(AttributedElementClass aec) {
+	static Map<String, Object> initializeAttributes(
+			AttributedElementClass<?, ?> aec) {
 		Map<String, Object> attributes = null;
 		if (aec.getAttributeCount() > 0) {
 			attributes = new HashMap<String, Object>();
@@ -267,7 +238,7 @@ public class GenericGraphImpl extends GraphImpl {
 		return attributes;
 	}
 
-	static void initializeGenericAttributeValues(AttributedElement ae) {
+	static void initializeGenericAttributeValues(AttributedElement<?, ?> ae) {
 		for (Attribute attr : ae.getAttributedElementClass().getAttributeList()) {
 			if ((attr.getDefaultValueAsString() != null)
 					&& !attr.getDefaultValueAsString().isEmpty()) {
@@ -285,7 +256,7 @@ public class GenericGraphImpl extends GraphImpl {
 
 	// ************** unsupported methods ***************/
 	@Override
-	public Class<? extends AttributedElement> getSchemaClass() {
+	public Class<? extends Graph> getSchemaClass() {
 		throw new UnsupportedOperationException(
 				"This method is not supported by the generic implementation");
 	}
@@ -322,9 +293,24 @@ public class GenericGraphImpl extends GraphImpl {
 	}
 
 	@Override
-	public boolean isInstanceOf(AttributedElementClass cls) {
+	public boolean isInstanceOf(GraphClass cls) {
 		// Needs to be overridden from the base variant, because that relies on
 		// code generation.
-		return aec.equals(cls) || aec.isSubClassOf(cls);
+		return type.equals(cls) || type.isSubClassOf(cls);
+	}
+
+	@Override
+	public Object getEnumConstant(EnumDomain enumDomain, String constantName) {
+		// TODO Auto-generated method stub
+		throw new UnsupportedOperationException(
+				"Not yet implemented!  Bug Bernhard to do it!");
+	}
+
+	@Override
+	public Record createRecord(RecordDomain recordDomain,
+			Map<String, Object> values) {
+		// TODO Auto-generated method stub
+		throw new UnsupportedOperationException(
+				"Not yet implemented!  Bug Bernhard to do it!");
 	}
 }

@@ -5,9 +5,9 @@ import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.GraphElementClass;
 import de.uni_koblenz.jgralab.schema.VertexClass;
 
-public class AddSuperClass extends Transformation<GraphElementClass> {
-	private GraphElementClass subClass;
-	private GraphElementClass superClass;
+public class AddSuperClass extends Transformation<GraphElementClass<?, ?>> {
+	private GraphElementClass<?, ?> subClass;
+	private GraphElementClass<?, ?> superClass;
 
 	public AddSuperClass(final Context c, final VertexClass subClass,
 			final VertexClass superClass) {
@@ -24,7 +24,7 @@ public class AddSuperClass extends Transformation<GraphElementClass> {
 	}
 
 	public static AddSuperClass parseAndCreate(ExecuteTransformation et) {
-		GraphElementClass subGec = et.matchGraphElementClass();
+		GraphElementClass<?, ?> subGec = et.matchGraphElementClass();
 		if (subGec instanceof VertexClass) {
 			VertexClass superVC = et.matchVertexClass();
 			return new AddSuperClass(et.context, (VertexClass) subGec, superVC);
@@ -35,7 +35,7 @@ public class AddSuperClass extends Transformation<GraphElementClass> {
 	}
 
 	@Override
-	protected GraphElementClass transform() {
+	protected GraphElementClass<?, ?> transform() {
 		if (context.phase != TransformationPhase.SCHEMA) {
 			return subClass;
 		}
