@@ -10,10 +10,12 @@ import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.NoSuchAttributeException;
 import de.uni_koblenz.jgralab.Vertex;
+import de.uni_koblenz.jgralab.impl.IncidenceIterable;
 import de.uni_koblenz.jgralab.impl.InternalVertex;
 import de.uni_koblenz.jgralab.impl.std.VertexImpl;
 import de.uni_koblenz.jgralab.schema.Attribute;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
+import de.uni_koblenz.jgralab.schema.IncidenceClass;
 import de.uni_koblenz.jgralab.schema.VertexClass;
 import de.uni_koblenz.jgralab.schema.impl.DirectedSchemaEdgeClass;
 
@@ -27,24 +29,6 @@ public class GenericVertexImpl extends VertexImpl {
 		this.type = type;
 		attributes = GenericGraphImpl.initializeAttributes(type);
 		GenericGraphImpl.initializeGenericAttributeValues(this);
-	}
-
-	@Override
-	public Edge addAdjacence(String role, Vertex other) {
-		EdgeClass newEdgeClass = null;
-		// TODO optimize!
-		for (EdgeClass ec : getSchema().getEdgeClasses()) {
-			if (ec.getFrom().getRolename().equals(role)
-					|| ec.getTo().getRolename().equals(role)) {
-				newEdgeClass = ec;
-			}
-		}
-		if (newEdgeClass.getFrom().getRolename().equals(role)) {
-			return getGraph().createEdge(newEdgeClass, this, other);
-		} else {
-			return getGraph().createEdge(newEdgeClass, other, this);
-		}
-
 	}
 
 	@Override
@@ -178,6 +162,32 @@ public class GenericVertexImpl extends VertexImpl {
 		GenericGraphImpl.initializeGenericAttributeValues(this);
 	}
 
+	@Override
+	public DirectedSchemaEdgeClass getEdgeForRolename(String rolename) {
+		// TODO Optimize!
+		for(IncidenceClass ic : getAttributedElementClass().getAllInIncidenceClasses()) {
+			if(ic.getRolename().equals(rolename)) {
+				return new DirectedSchemaEdgeClass(ic.getEdgeClass(), EdgeDirection.IN);
+			}
+		}
+		for(IncidenceClass ic : getAttributedElementClass().getAllOutIncidenceClasses()) {
+			if(ic.getRolename().equals(rolename)) {
+				return new DirectedSchemaEdgeClass(ic.getEdgeClass(), EdgeDirection.OUT);
+			}
+		}
+		return null;
+	}
+
+	@Override
+	public Iterable<Edge> incidences(EdgeClass eClass) {
+		return new IncidenceIterable<Edge>(this, eClass);
+	}
+
+	@Override
+	public Iterable<Edge> incidences(EdgeClass eClass, EdgeDirection dir) {
+		return new IncidenceIterable<Edge>(this, eClass, dir);
+	}
+
 	// ************** unsupported methods ***************/
 	@Override
 	public Class<? extends Vertex> getSchemaClass() {
@@ -212,12 +222,6 @@ public class GenericVertexImpl extends VertexImpl {
 
 	@Override
 	public int getDegree(Class<? extends Edge> ec, EdgeDirection direction) {
-		throw new UnsupportedOperationException(
-				"This method is not supported by the generic implementation");
-	}
-
-	@Override
-	public DirectedSchemaEdgeClass getEdgeForRolename(String rolename) {
 		throw new UnsupportedOperationException(
 				"This method is not supported by the generic implementation");
 	}

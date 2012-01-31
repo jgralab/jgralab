@@ -1,8 +1,12 @@
 package de.uni_koblenz.jgralabtest.genericimpltest;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.fail;
+
+import java.util.HashMap;
+import java.util.Iterator;
 
 import org.junit.Test;
 
@@ -19,6 +23,7 @@ import de.uni_koblenz.jgralab.impl.RecordImpl;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.Schema;
 import de.uni_koblenz.jgralab.schema.VertexClass;
+import de.uni_koblenz.jgralab.schema.impl.DirectedSchemaEdgeClass;
 
 public class GenericVertexImplTest {
 	@Test
@@ -454,4 +459,193 @@ public class GenericVertexImplTest {
 		}
 	}
 
+	@Test
+	public void testGetEdgeForRoleName() {
+		try {
+			Schema schema;
+			schema = GraphIO
+					.loadSchemaFromFile(GenericGraphImplTest.SCHEMAFOLDER
+							+ "VertexTestSchema.tg");
+			Graph g = schema.createGraph(ImplementationType.GENERIC);
+
+			HashMap<String, EdgeClass> ecs = new HashMap<String, EdgeClass>();
+			ecs.put("E", g.getGraphClass().getEdgeClass("E"));
+			ecs.put("F", g.getGraphClass().getEdgeClass("F"));
+			ecs.put("G", g.getGraphClass().getEdgeClass("G"));
+			ecs.put("H", g.getGraphClass().getEdgeClass("H"));
+			ecs.put("I", g.getGraphClass().getEdgeClass("I"));
+			ecs.put("J", g.getGraphClass().getEdgeClass("J"));
+			ecs.put("K", g.getGraphClass().getEdgeClass("K"));
+
+			Vertex a = g.createVertex(g.getGraphClass().getVertexClass("A"));
+			Vertex b = g.createVertex(g.getGraphClass().getVertexClass("B"));
+			Vertex c = g.createVertex(g.getGraphClass().getVertexClass("C"));
+			Vertex d = g.createVertex(g.getGraphClass().getVertexClass("D"));
+			Vertex c2 = g.createVertex(g.getGraphClass().getVertexClass("C2"));
+			Vertex d2 = g.createVertex(g.getGraphClass().getVertexClass("D2"));
+
+			assertEquals(new DirectedSchemaEdgeClass(ecs.get("E"),
+					EdgeDirection.OUT), a.getEdgeForRolename("sourceE"));
+			assertEquals(new DirectedSchemaEdgeClass(ecs.get("H"),
+					EdgeDirection.OUT), a.getEdgeForRolename("sourceH"));
+			assertEquals(new DirectedSchemaEdgeClass(ecs.get("I"),
+					EdgeDirection.OUT), a.getEdgeForRolename("sourceI"));
+			assertEquals(new DirectedSchemaEdgeClass(ecs.get("K"),
+					EdgeDirection.OUT), a.getEdgeForRolename("sourceK"));
+			assertEquals(new DirectedSchemaEdgeClass(ecs.get("F"),
+					EdgeDirection.OUT), c.getEdgeForRolename("sourceF"));
+			assertEquals(new DirectedSchemaEdgeClass(ecs.get("G"),
+					EdgeDirection.OUT), c.getEdgeForRolename("sourceG"));
+			assertEquals(new DirectedSchemaEdgeClass(ecs.get("J"),
+					EdgeDirection.OUT), c2.getEdgeForRolename("sourceJ"));
+			assertEquals(new DirectedSchemaEdgeClass(ecs.get("E"),
+					EdgeDirection.IN), b.getEdgeForRolename("x"));
+			assertEquals(new DirectedSchemaEdgeClass(ecs.get("F"),
+					EdgeDirection.IN), d.getEdgeForRolename("y"));
+			assertEquals(new DirectedSchemaEdgeClass(ecs.get("G"),
+					EdgeDirection.IN), d.getEdgeForRolename("z"));
+			assertEquals(new DirectedSchemaEdgeClass(ecs.get("H"),
+					EdgeDirection.IN), b.getEdgeForRolename("w"));
+			assertEquals(new DirectedSchemaEdgeClass(ecs.get("I"),
+					EdgeDirection.IN), a.getEdgeForRolename("v"));
+			assertEquals(new DirectedSchemaEdgeClass(ecs.get("J"),
+					EdgeDirection.IN), d2.getEdgeForRolename("u"));
+			assertEquals(new DirectedSchemaEdgeClass(ecs.get("K"),
+					EdgeDirection.IN), b.getEdgeForRolename("targetK"));
+			assertNull(a.getEdgeForRolename("sourceF"));
+			assertNull(b.getEdgeForRolename("sourceE"));
+			assertNull(c.getEdgeForRolename("x"));
+		} catch (GraphIOException e) {
+			e.printStackTrace();
+			fail();
+		}
+	}
+
+	// Test type specific incidences() method
+	@Test
+	public void testIncidences() {
+		try {
+			Schema s = GraphIO
+					.loadSchemaFromFile(GenericGraphImplTest.SCHEMAFOLDER
+							+ "VertexTestSchema.tg");
+			Graph g = s.createGraph(ImplementationType.GENERIC);
+
+			Vertex a = g.createVertex(g.getGraphClass().getVertexClass("A"));
+			Vertex b = g.createVertex(g.getGraphClass().getVertexClass("B"));
+			Vertex c = g.createVertex(g.getGraphClass().getVertexClass("C"));
+			Vertex d = g.createVertex(g.getGraphClass().getVertexClass("D"));
+			Vertex c2 = g.createVertex(g.getGraphClass().getVertexClass("C2"));
+			Vertex d2 = g.createVertex(g.getGraphClass().getVertexClass("D2"));
+
+			HashMap<String, EdgeClass> ecs = new HashMap<String, EdgeClass>();
+			ecs.put("E", g.getGraphClass().getEdgeClass("E"));
+			ecs.put("F", g.getGraphClass().getEdgeClass("F"));
+			ecs.put("G", g.getGraphClass().getEdgeClass("G"));
+			ecs.put("H", g.getGraphClass().getEdgeClass("H"));
+			ecs.put("I", g.getGraphClass().getEdgeClass("I"));
+			ecs.put("J", g.getGraphClass().getEdgeClass("J"));
+			ecs.put("K", g.getGraphClass().getEdgeClass("K"));
+			Iterator<Edge> iterator = a.incidences(ecs.get("E")).iterator();
+			assertFalse(iterator.hasNext());
+			iterator = a.incidences(ecs.get("E"), EdgeDirection.OUT).iterator();
+			assertFalse(iterator.hasNext());
+			iterator = c.incidences(ecs.get("F"), EdgeDirection.OUT).iterator();
+			assertFalse(iterator.hasNext());
+
+			Edge[] edges = new Edge[7];
+			edges[0] = g.createEdge(ecs.get("E"), a, b);
+			edges[1] = g.createEdge(ecs.get("F"), c, d);
+			edges[2] = g.createEdge(ecs.get("G"), c, d);
+			edges[3] = g.createEdge(ecs.get("H"), a, b);
+			edges[4] = g.createEdge(ecs.get("I"), a, a);
+			edges[5] = g.createEdge(ecs.get("J"), c2, d2);
+			edges[6] = g.createEdge(ecs.get("K"), a, b);
+
+			Edge[] incidentEdges = new Edge[] { edges[0], edges[3], edges[6] };
+			Iterator<Edge> ii1 = a.incidences(ecs.get("E")).iterator();
+			Iterator<Edge> ii2 = a.incidences(ecs.get("E"), EdgeDirection.OUT)
+					.iterator();
+			for (int i = 0; i < incidentEdges.length; i++) {
+				Edge e1 = ii1.next();
+				Edge e2 = ii2.next();
+				assertEquals(incidentEdges[i], e1);
+				assertEquals(incidentEdges[i], e2);
+			}
+			assertFalse(ii1.hasNext());
+			assertFalse(ii2.hasNext());
+
+			incidentEdges = new Edge[] { edges[3], edges[6]};
+			ii1 = a.incidences(ecs.get("H")).iterator();
+			ii2 = a.incidences(ecs.get("H"), EdgeDirection.OUT)
+					.iterator();
+			for (int i = 0; i < incidentEdges.length; i++) {
+				Edge e1 = ii1.next();
+				Edge e2 = ii2.next();
+				assertEquals(incidentEdges[i], e1);
+				assertEquals(incidentEdges[i], e2);
+			}
+			assertFalse(ii1.hasNext());
+			assertFalse(ii2.hasNext());
+
+			incidentEdges = new Edge[] { edges[0].getReversedEdge(),
+					edges[3].getReversedEdge(), edges[6].getReversedEdge() };
+			ii1 = b.incidences(ecs.get("E")).iterator();
+			ii2 = b.incidences(ecs.get("E"), EdgeDirection.IN).iterator();
+			for (int i = 0; i < incidentEdges.length; i++) {
+				Edge e1 = ii1.next();
+				Edge e2 = ii2.next();
+				assertEquals(incidentEdges[i], e1);
+				assertEquals(incidentEdges[i], e2);
+			}
+			assertFalse(ii1.hasNext());
+			assertFalse(ii2.hasNext());
+
+			incidentEdges = new Edge[] { edges[1]};
+			ii1 = c.incidences(ecs.get("F")).iterator();
+			ii2 = c.incidences(ecs.get("F"), EdgeDirection.OUT).iterator();
+			for (int i = 0; i < incidentEdges.length; i++) {
+				Edge e1 = ii1.next();
+				Edge e2 = ii2.next();
+				assertEquals(incidentEdges[i], e1);
+				assertEquals(incidentEdges[i], e2);
+			}
+			assertFalse(ii1.hasNext());
+			assertFalse(ii2.hasNext());
+
+			incidentEdges = new Edge[] { edges[2]};
+			ii1 = c.incidences(ecs.get("G")).iterator();
+			ii2 = c.incidences(ecs.get("G"), EdgeDirection.OUT).iterator();
+			for (int i = 0; i < incidentEdges.length; i++) {
+				Edge e1 = ii1.next();
+				Edge e2 = ii2.next();
+				assertEquals(incidentEdges[i], e1);
+				assertEquals(incidentEdges[i], e2);
+			}
+			assertFalse(ii1.hasNext());
+			assertFalse(ii2.hasNext());
+
+			incidentEdges = new Edge[] { edges[4], edges[4].getReversedEdge()};
+			ii1 = a.incidences(ecs.get("I")).iterator();
+			for (int i = 0; i < incidentEdges.length; i++) {
+				Edge e1 = ii1.next();
+				assertEquals(incidentEdges[i], e1);
+			}
+			assertFalse(ii1.hasNext());
+
+			incidentEdges = new Edge[] { edges[5]};
+			ii1 = c2.incidences(ecs.get("J")).iterator();
+			ii2 = c2.incidences(ecs.get("J"), EdgeDirection.OUT).iterator();
+			for (int i = 0; i < incidentEdges.length; i++) {
+				Edge e1 = ii1.next();
+				Edge e2 = ii2.next();
+				assertEquals(incidentEdges[i], e1);
+				assertEquals(incidentEdges[i], e2);
+			}
+			assertFalse(ii1.hasNext());
+			assertFalse(ii2.hasNext());
+		} catch (GraphIOException e) {
+			e.printStackTrace();
+			fail();
+		}
+	}
 }
