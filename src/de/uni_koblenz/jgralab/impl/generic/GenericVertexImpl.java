@@ -15,7 +15,6 @@ import de.uni_koblenz.jgralab.impl.InternalVertex;
 import de.uni_koblenz.jgralab.impl.std.VertexImpl;
 import de.uni_koblenz.jgralab.schema.Attribute;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
-import de.uni_koblenz.jgralab.schema.IncidenceClass;
 import de.uni_koblenz.jgralab.schema.VertexClass;
 import de.uni_koblenz.jgralab.schema.impl.DirectedSchemaEdgeClass;
 
@@ -164,18 +163,8 @@ public class GenericVertexImpl extends VertexImpl {
 
 	@Override
 	public DirectedSchemaEdgeClass getEdgeForRolename(String rolename) {
-		// TODO Optimize!
-		for(IncidenceClass ic : getAttributedElementClass().getAllInIncidenceClasses()) {
-			if(ic.getRolename().equals(rolename)) {
-				return new DirectedSchemaEdgeClass(ic.getEdgeClass(), EdgeDirection.IN);
-			}
-		}
-		for(IncidenceClass ic : getAttributedElementClass().getAllOutIncidenceClasses()) {
-			if(ic.getRolename().equals(rolename)) {
-				return new DirectedSchemaEdgeClass(ic.getEdgeClass(), EdgeDirection.OUT);
-			}
-		}
-		return null;
+		return getAttributedElementClass().getDirectedEdgeClassForFarEndRole(
+				rolename);
 	}
 
 	@Override

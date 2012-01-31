@@ -62,4 +62,13 @@ public class DirectedSchemaEdgeClass {
 				&& ((DirectedSchemaEdgeClass) o).getDirection().equals(dir);
 	}
 
+	@Override
+	public int hashCode() {
+		return edgeClass.hashCode() + dir.hashCode();
+	}
+
+	@Override
+	public String toString() {
+		return "{" + edgeClass + ", " + dir + "}";
+	}
 }

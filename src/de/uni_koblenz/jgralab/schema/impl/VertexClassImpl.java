@@ -36,9 +36,12 @@
 package de.uni_koblenz.jgralab.schema.impl;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
+import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.GraphClass;
@@ -91,6 +94,8 @@ public final class VertexClassImpl extends
 	 */
 	private Set<IncidenceClass> validToFarIncidenceClasses;
 
+	private Map<String, DirectedSchemaEdgeClass> farRoleNameToEdgeClass;
+
 	static VertexClass createDefaultVertexClass(Schema schema) {
 		assert schema.getDefaultGraphClass() != null : "DefaultGraphClass has not yet been created!";
 		assert schema.getDefaultVertexClass() == null : "DefaultVertexClass already created!";
@@ -103,7 +108,7 @@ public final class VertexClassImpl extends
 
 	/**
 	 * builds a new vertex class object
-	 * 
+	 *
 	 * @param qn
 	 *            the unique identifier of the vertex class in the schema
 	 */
@@ -242,7 +247,7 @@ public final class VertexClassImpl extends
 	 * For a vertexclass A are all edgeclasses valid froms, which (1) run from A
 	 * to a B or (2) run from a superclass of A to a B and whose end b at B is
 	 * not redefined by A or a superclass of A
-	 * 
+	 *
 	 */
 
 	@Override
@@ -436,6 +441,14 @@ public final class VertexClassImpl extends
 		validToEdgeClasses = Collections
 				.unmodifiableSet(getValidToEdgeClasses());
 
+		farRoleNameToEdgeClass = new HashMap<String, DirectedSchemaEdgeClass>();
+		for (IncidenceClass ic : getOwnAndInheritedFarIncidenceClasses()) {
+			farRoleNameToEdgeClass.put(ic.getRolename(),
+					getDirectedEdgeClassForFarEndRole(ic.getRolename()));
+		}
+		farRoleNameToEdgeClass = Collections
+				.unmodifiableMap(farRoleNameToEdgeClass);
+
 		inIncidenceClasses = Collections.unmodifiableSet(inIncidenceClasses);
 		outIncidenceClasses = Collections.unmodifiableSet(outIncidenceClasses);
 
@@ -469,6 +482,7 @@ public final class VertexClassImpl extends
 		validToEdgeClasses = null;
 		inIncidenceClasses = new HashSet<IncidenceClass>(inIncidenceClasses);
 		outIncidenceClasses = new HashSet<IncidenceClass>(outIncidenceClasses);
+		farRoleNameToEdgeClass = null;
 
 		for (IncidenceClass ic : inIncidenceClasses) {
 			((IncidenceClassImpl) ic).reopen();
@@ -480,4 +494,21 @@ public final class VertexClassImpl extends
 		super.reopen();
 	}
 
+	@Override
+	public DirectedSchemaEdgeClass getDirectedEdgeClassForFarEndRole(
+			String roleName) {
+		if (isFinished()) {
+			return farRoleNameToEdgeClass.get(roleName);
+		}
+		for (IncidenceClass ic : getOwnAndInheritedFarIncidenceClasses()) {
+			if (roleName.equals(ic.getRolename())) {
+				EdgeClass ec = ic.getEdgeClass();
+				return new DirectedSchemaEdgeClass(
+						ec,
+						(getValidFromEdgeClasses().contains(ec) ? EdgeDirection.OUT
+								: EdgeDirection.IN));
+			}
+		}
+		return null;
+	}
 }
