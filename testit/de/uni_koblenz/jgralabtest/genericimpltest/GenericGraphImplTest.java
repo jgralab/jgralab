@@ -40,6 +40,7 @@ import de.uni_koblenz.jgralab.schema.EnumDomain;
 import de.uni_koblenz.jgralab.schema.RecordDomain;
 import de.uni_koblenz.jgralab.schema.Schema;
 import de.uni_koblenz.jgralab.schema.VertexClass;
+import de.uni_koblenz.jgralabtest.schemas.greqltestschema.impl.std.RouteMapFactoryImpl;
 
 public class GenericGraphImplTest {
 
@@ -473,30 +474,6 @@ public class GenericGraphImplTest {
 		} catch (GraphIOException e) {
 			e.printStackTrace();
 			fail();
-		}
-	}
-
-	// VertexClass is from a different Schema
-	@Test(expected = GraphException.class)
-	public void testCreateVertexFailure1() {
-		Graph g1 = null;
-		try {
-			Schema citimapschema = GraphIO.loadSchemaFromFile(SCHEMAFOLDER
-					+ "citymapschema.tg");
-			Schema greqltestschema = GraphIO.loadSchemaFromFile(SCHEMAFOLDER
-					+ "greqltestschema.tg");
-
-			g1 = citimapschema.createGraph(ImplementationType.GENERIC);
-
-			g1.createVertex(greqltestschema.getGraphClass().getVertexClass(
-					"junctions.Crossroad"));
-		} catch (GraphIOException e) {
-			e.printStackTrace();
-			fail();
-		} catch (GraphException e) {
-			if (0 == g1.getVCount()) {
-				throw e;
-			}
 		}
 	}
 
@@ -979,9 +956,7 @@ public class GenericGraphImplTest {
 
 			// compare against the same Graph loaded with the standard
 			// implementation
-			Graph g2 = GraphIO
-					.loadGraphFromFile(GRAPHFOLDER + "greqltestgraph.tg", s,
-							ImplementationType.STANDARD, null);
+			Graph g2 = GraphIO.loadGraphFromFile(GRAPHFOLDER + "greqltestgraph.tg", new RouteMapFactoryImpl(), null);
 			for (Vertex v : g2.vertices()) {
 				assertEquals(v.getAttributedElementClass(),
 						g1.getVertex(v.getId()).getAttributedElementClass());
