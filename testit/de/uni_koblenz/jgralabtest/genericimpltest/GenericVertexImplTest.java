@@ -4,6 +4,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.fail;
 
+import java.util.HashMap;
+
 import org.junit.Test;
 
 import de.uni_koblenz.jgralab.Edge;
@@ -19,6 +21,7 @@ import de.uni_koblenz.jgralab.impl.RecordImpl;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.Schema;
 import de.uni_koblenz.jgralab.schema.VertexClass;
+import de.uni_koblenz.jgralab.schema.impl.DirectedSchemaEdgeClass;
 
 public class GenericVertexImplTest {
 	@Test
@@ -448,6 +451,53 @@ public class GenericVertexImplTest {
 					EdgeDirection.IN), edges[4].getReversedEdge());
 			assertEquals(vertices[2].getFirstIncidence(edgeClasses[0],
 					EdgeDirection.OUT), edges[1]);
+		} catch (GraphIOException e) {
+			e.printStackTrace();
+			fail();
+		}
+	}
+
+	@Test
+	public void testGetEdgeForRoleName() {
+		try {
+			Schema schema;
+			schema = GraphIO.loadSchemaFromFile(GenericGraphImplTest.SCHEMAFOLDER
+					+ "VertexTestSchema.tg");
+			Graph g = schema.createGraph(ImplementationType.GENERIC);
+
+			HashMap<String, EdgeClass> ecs = new HashMap<String, EdgeClass>();
+			ecs.put("E", g.getGraphClass().getEdgeClass("E"));
+			ecs.put("F", g.getGraphClass().getEdgeClass("F"));
+			ecs.put("G", g.getGraphClass().getEdgeClass("G"));
+			ecs.put("H", g.getGraphClass().getEdgeClass("H"));
+			ecs.put("I", g.getGraphClass().getEdgeClass("I"));
+			ecs.put("J", g.getGraphClass().getEdgeClass("J"));
+			ecs.put("K", g.getGraphClass().getEdgeClass("K"));
+
+			Vertex a = g.createVertex(g.getGraphClass().getVertexClass("A"));
+			Vertex b = g.createVertex(g.getGraphClass().getVertexClass("B"));
+			Vertex c = g.createVertex(g.getGraphClass().getVertexClass("C"));
+			Vertex d = g.createVertex(g.getGraphClass().getVertexClass("D"));
+			Vertex c2 = g.createVertex(g.getGraphClass().getVertexClass("C2"));
+			Vertex d2 = g.createVertex(g.getGraphClass().getVertexClass("D2"));
+
+			assertEquals(new DirectedSchemaEdgeClass(ecs.get("E"), EdgeDirection.OUT), a.getEdgeForRolename("sourceE"));
+			assertEquals(new DirectedSchemaEdgeClass(ecs.get("H"), EdgeDirection.OUT), a.getEdgeForRolename("sourceH"));
+			assertEquals(new DirectedSchemaEdgeClass(ecs.get("I"), EdgeDirection.OUT), a.getEdgeForRolename("sourceI"));
+			assertEquals(new DirectedSchemaEdgeClass(ecs.get("K"), EdgeDirection.OUT), a.getEdgeForRolename("sourceK"));
+			assertEquals(new DirectedSchemaEdgeClass(ecs.get("F"), EdgeDirection.OUT), c.getEdgeForRolename("sourceF"));
+			assertEquals(new DirectedSchemaEdgeClass(ecs.get("G"), EdgeDirection.OUT), c.getEdgeForRolename("sourceG"));
+			assertEquals(new DirectedSchemaEdgeClass(ecs.get("J"), EdgeDirection.OUT), c2.getEdgeForRolename("sourceJ"));
+			assertEquals(new DirectedSchemaEdgeClass(ecs.get("E"), EdgeDirection.IN), b.getEdgeForRolename("x"));
+			assertEquals(new DirectedSchemaEdgeClass(ecs.get("F"), EdgeDirection.IN), d.getEdgeForRolename("y"));
+			assertEquals(new DirectedSchemaEdgeClass(ecs.get("G"), EdgeDirection.IN), d.getEdgeForRolename("z"));
+			assertEquals(new DirectedSchemaEdgeClass(ecs.get("H"), EdgeDirection.IN), b.getEdgeForRolename("w"));
+			assertEquals(new DirectedSchemaEdgeClass(ecs.get("I"), EdgeDirection.IN), a.getEdgeForRolename("v"));
+			assertEquals(new DirectedSchemaEdgeClass(ecs.get("J"), EdgeDirection.IN), d2.getEdgeForRolename("u"));
+			assertEquals(new DirectedSchemaEdgeClass(ecs.get("K"), EdgeDirection.IN), b.getEdgeForRolename("targetK"));
+			assertNull(a.getEdgeForRolename("sourceF"));
+			assertNull(b.getEdgeForRolename("sourceE"));
+			assertNull(c.getEdgeForRolename("x"));
 		} catch (GraphIOException e) {
 			e.printStackTrace();
 			fail();
