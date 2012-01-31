@@ -24,7 +24,7 @@ public class CreateVertices extends Transformation<PSet<? extends Vertex>> {
 			final String semExp) {
 		super(c);
 		this.vertexClass = vertexClass;
-		this.semanticExpression = semExp;
+		semanticExpression = semExp;
 	}
 
 	public static CreateVertices parseAndCreate(final ExecuteTransformation et) {

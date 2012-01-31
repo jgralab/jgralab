@@ -8,7 +8,6 @@ import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.codegenerator.CodeGeneratorConfiguration;
 import de.uni_koblenz.jgralab.impl.ConsoleProgressFunction;
 import de.uni_koblenz.jgralab.schema.NamedElement;
 
@@ -17,8 +16,7 @@ public class GraphStatistics {
 
 	public static void main(String[] args) {
 		try {
-			Graph g = GraphIO.loadSchemaAndGraphFromFile(args[0],
-					CodeGeneratorConfiguration.MINIMAL,
+			Graph g = GraphIO.loadGraphFromFile(args[0],
 					new ConsoleProgressFunction());
 
 			for (Vertex v : g.vertices()) {

@@ -63,12 +63,12 @@ public abstract class ReversedEdgeBaseImpl extends IncidenceImpl implements
 	}
 
 	@Override
-	public Class<? extends AttributedElement> getSchemaClass() {
+	public Class<? extends Edge> getSchemaClass() {
 		return normalEdge.getSchemaClass();
 	}
 
 	@Override
-	public int compareTo(AttributedElement a) {
+	public int compareTo(AttributedElement<EdgeClass, Edge> a) {
 		assert isValid();
 		assert (a instanceof Edge);
 		Edge e = (Edge) a;

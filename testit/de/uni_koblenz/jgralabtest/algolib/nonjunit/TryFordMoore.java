@@ -68,7 +68,8 @@ public class TryFordMoore {
 	}
 
 	public static void main(String[] args) {
-		graph = WeightedSchema.instance().createWeightedGraph(ImplementationType.STANDARD,20, 20);
+		graph = WeightedSchema.instance().createWeightedGraph(
+				ImplementationType.STANDARD);
 		// heuristic = new DoubleVertexMarker(graph);
 		weightFunction = new DoubleEdgeMarker(graph);
 		names = new ArrayVertexMarker<String>(graph);

@@ -22,6 +22,7 @@ import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.GraphClass;
+import de.uni_koblenz.jgralab.schema.GraphElementClass;
 import de.uni_koblenz.jgralab.schema.Schema;
 import de.uni_koblenz.jgralab.schema.exception.SchemaException;
 import de.uni_koblenz.jgralab.schema.impl.NamedElementImpl;
@@ -81,13 +82,13 @@ public class Context {
 	 * Maps from {@link AttributedElementClass} to a map, mapping old elements
 	 * to their images. (zeta-reverse)
 	 */
-	private Map<AttributedElementClass, PMap<Object, AttributedElement>> imgMap = new HashMap<AttributedElementClass, PMap<Object, AttributedElement>>();
+	private Map<AttributedElementClass<?, ?>, PMap<Object, AttributedElement<?, ?>>> imgMap = new HashMap<AttributedElementClass<?, ?>, PMap<Object, AttributedElement<?, ?>>>();
 
 	/**
 	 * Maps from {@link AttributedElementClass} to a map, mapping new elements
 	 * to the elements they were created for (their archetypes). (zeta)
 	 */
-	private Map<AttributedElementClass, PMap<AttributedElement, Object>> archMap = new HashMap<AttributedElementClass, PMap<AttributedElement, Object>>();
+	private Map<AttributedElementClass<?, ?>, PMap<AttributedElement<?, ?>, Object>> archMap = new HashMap<AttributedElementClass<?, ?>, PMap<AttributedElement<?, ?>, Object>>();
 
 	private final Map<String, Object> greqlExtraVars = new HashMap<String, Object>();
 	private final Set<String> greqlImports = new HashSet<String>();
@@ -164,7 +165,7 @@ public class Context {
 	 */
 	public Context(Schema targetSchema) {
 		this.targetSchema = targetSchema;
-		this.targetSchemaName = targetSchema.getQualifiedName();
+		targetSchemaName = targetSchema.getQualifiedName();
 		// Do it here, cause that takes some time. We don't want to have that
 		// counted to the transformation time...
 		ensureGreqlEvaluator();
@@ -189,9 +190,9 @@ public class Context {
 	 *            mappings
 	 * @return a map from target graph elements (images) to their archetypes
 	 */
-	public final PMap<AttributedElement, Object> getArch(
-			AttributedElementClass aec) {
-		PMap<AttributedElement, Object> result = archMap.get(aec);
+	public final PMap<AttributedElement<?, ?>, Object> getArch(
+			AttributedElementClass<?, ?> aec) {
+		PMap<AttributedElement<?, ?>, Object> result = archMap.get(aec);
 		if (result == null) {
 			result = Empty.orderedMap();
 			archMap.put(aec, result);
@@ -206,9 +207,9 @@ public class Context {
 	 * @return a map from archetypes to target graph elements, which are their
 	 *         images
 	 */
-	public final PMap<Object, AttributedElement> getImg(
-			AttributedElementClass aec) {
-		PMap<Object, AttributedElement> result = imgMap.get(aec);
+	public final PMap<Object, AttributedElement<?, ?>> getImg(
+			AttributedElementClass<?, ?> aec) {
+		PMap<Object, AttributedElement<?, ?>> result = imgMap.get(aec);
 		if (result == null) {
 			result = Empty.orderedMap();
 			imgMap.put(aec, result);
@@ -224,7 +225,7 @@ public class Context {
 	 *            the AttributedElementClass for which to ensure the
 	 *            archMap/imgMap mappings
 	 */
-	final void ensureMappings(AttributedElementClass aec) {
+	final void ensureMappings(AttributedElementClass<?, ?> aec) {
 		getImg(aec);
 		getArch(aec);
 		// validateMappings();
@@ -236,7 +237,7 @@ public class Context {
 	 */
 	public final void ensureAllMappings() {
 		ensureMappings(targetSchema.getGraphClass());
-		for (AttributedElementClass gec : targetSchema.getGraphClass()
+		for (GraphElementClass<?, ?> gec : targetSchema.getGraphClass()
 				.getGraphElementClasses()) {
 			ensureMappings(gec);
 		}
@@ -244,31 +245,32 @@ public class Context {
 
 	public final void printImgMappings() {
 		System.out.println("Image Mappings:");
-		for (Entry<AttributedElementClass, PMap<Object, AttributedElement>> e : imgMap
+		for (Entry<AttributedElementClass<?, ?>, PMap<Object, AttributedElement<?, ?>>> e : imgMap
 				.entrySet()) {
-			AttributedElementClass aec = e.getKey();
-			PMap<Object, AttributedElement> img = e.getValue();
+			AttributedElementClass<?, ?> aec = e.getKey();
+			PMap<Object, AttributedElement<?, ?>> img = e.getValue();
 			if (aec.isInternal()) {
 				continue;
 			}
 			System.out.println("Mappings for: " + aec.getQualifiedName());
-			for (Entry<Object, AttributedElement> entry : img.entrySet()) {
+			for (Entry<Object, AttributedElement<?, ?>> entry : img.entrySet()) {
 				System.out.println("    " + entry.getKey() + " ==> "
 						+ entry.getValue());
 			}
 		}
 	}
 
-	final void addMapping(AttributedElementClass attrElemClass,
-			Object archetype, AttributedElement image) {
+	final void addMapping(AttributedElementClass<?, ?> attrElemClass,
+			Object archetype, AttributedElement<?, ?> image) {
 		addMappingToClass(attrElemClass, archetype, image);
 		addMappingsToSuperClasses(attrElemClass, archetype, image);
 	}
 
 	private final void addMappingsToSuperClasses(
-			final AttributedElementClass subClass, final Object archetype,
-			final AttributedElement image) {
-		for (AttributedElementClass superClass : subClass.getAllSuperClasses()) {
+			final AttributedElementClass<?, ?> subClass,
+			final Object archetype, final AttributedElement<?, ?> image) {
+		for (AttributedElementClass<?, ?> superClass : subClass
+				.getAllSuperClasses()) {
 			if (superClass.isInternal()) {
 				continue;
 			}
@@ -276,15 +278,16 @@ public class Context {
 		}
 	}
 
-	private final void addMappingToClass(AttributedElementClass attrElemClass,
-			Object archetype, AttributedElement image) {
+	private final void addMappingToClass(
+			AttributedElementClass<?, ?> attrElemClass, Object archetype,
+			AttributedElement<?, ?> image) {
 		addArchMapping(attrElemClass, image, archetype);
 		addImgMapping(attrElemClass, archetype, image);
 	}
 
-	private void addArchMapping(AttributedElementClass attrElemClass,
-			AttributedElement image, Object archetype) {
-		PMap<AttributedElement, Object> map = archMap.get(attrElemClass);
+	private void addArchMapping(AttributedElementClass<?, ?> attrElemClass,
+			AttributedElement<?, ?> image, Object archetype) {
+		PMap<AttributedElement<?, ?>, Object> map = archMap.get(attrElemClass);
 		if (map.containsKey(image)) {
 			throw new GReTLBijectionViolationException(this, "'"
 					+ image
@@ -303,9 +306,9 @@ public class Context {
 		archMap.put(attrElemClass, map);
 	}
 
-	private void addImgMapping(AttributedElementClass attrElemClass,
-			Object archetype, AttributedElement image) {
-		PMap<Object, AttributedElement> map = imgMap.get(attrElemClass);
+	private void addImgMapping(AttributedElementClass<?, ?> attrElemClass,
+			Object archetype, AttributedElement<?, ?> image) {
+		PMap<Object, AttributedElement<?, ?>> map = imgMap.get(attrElemClass);
 		if (map.containsKey(archetype)) {
 			throw new GReTLBijectionViolationException(this, "'"
 					+ archetype
@@ -351,8 +354,8 @@ public class Context {
 				o = imgMap;
 			}
 			@SuppressWarnings("unchecked")
-			Set<AttributedElementClass> keySet = m.keySet();
-			for (AttributedElementClass aec : keySet) {
+			Set<AttributedElementClass<?, ?>> keySet = m.keySet();
+			for (AttributedElementClass<?, ?> aec : keySet) {
 				if (!o.containsKey(aec)) {
 					System.err.println(toGReTLVarNotation(aec
 							.getQualifiedName(),
@@ -367,7 +370,7 @@ public class Context {
 							+ ") and archMap (" + archMap.size()
 							+ ") don't match!");
 		}
-		for (AttributedElementClass aec : archMap.keySet()) {
+		for (AttributedElementClass<?, ?> aec : archMap.keySet()) {
 			if (!imgMap.containsKey(aec)) {
 				throw new GReTLBijectionViolationException(this,
 						"The imgMap and archMap mappings aren't valid! "
@@ -587,23 +590,20 @@ public class Context {
 	 * creates the target graph from the target schema
 	 */
 	final void createTargetGraph() {
-		Method graphCreateMethod;
 		targetSchema.finish();
 		try {
 			// Try to use existing compiled schema
 			targetSchema.getGraphClass().getSchemaClass();
-			graphCreateMethod = targetSchema
-					.getGraphCreateMethod(ImplementationType.STANDARD);
 			logger.info("Schema '" + targetSchema.getQualifiedName()
 					+ "' is already compiled or in the CLASSPATH...");
-			targetGraph = (Graph) graphCreateMethod
-					.invoke(null, null, 500, 500);
 			targetSchema = targetGraph.getSchema();
 			targetSchema.finish();
+			targetGraph = targetSchema.createGraph(ImplementationType.STANDARD);
 		} catch (Exception e) {
 			// fall back to generic graph
-			targetGraph = targetSchema.createGraph(ImplementationType.GENERIC,
-					500, 500);
+			logger.info("Schema '" + targetSchema.getQualifiedName()
+					+ "' is new, so instantiating a generic target graph...");
+			targetGraph = targetSchema.createGraph(ImplementationType.GENERIC);
 		}
 
 		for (Entry<String, Graph> e : sourceGraphs.entrySet()) {
@@ -709,7 +709,7 @@ public class Context {
 			}
 		}
 
-		for (Entry<AttributedElementClass, PMap<AttributedElement, Object>> e : archMap
+		for (Entry<AttributedElementClass<?, ?>, PMap<AttributedElement<?, ?>, Object>> e : archMap
 				.entrySet()) {
 			String varName = toGReTLVarNotation(e.getKey().getQualifiedName(),
 					GReTLVariableType.ARCH);
@@ -718,7 +718,7 @@ public class Context {
 			}
 		}
 
-		for (Entry<AttributedElementClass, PMap<Object, AttributedElement>> e : imgMap
+		for (Entry<AttributedElementClass<?, ?>, PMap<Object, AttributedElement<?, ?>>> e : imgMap
 				.entrySet()) {
 			String varName = toGReTLVarNotation(e.getKey().getQualifiedName(),
 					GReTLVariableType.IMG);

@@ -43,7 +43,6 @@ import de.uni_koblenz.jgralab.TraversalContext;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.schema.AggregationKind;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
-import de.uni_koblenz.jgralab.schema.VertexClass;
 
 /**
  * TODO add comment
@@ -61,24 +60,8 @@ public abstract class EdgeBaseImpl extends IncidenceImpl implements Edge,
 	 */
 	protected EdgeBaseImpl(int anId, Graph graph, Vertex alpha, Vertex omega) {
 		super(graph);
-		EdgeClass myEC = (EdgeClass) getAttributedElementClass();
-		VertexClass aVC = (VertexClass) alpha.getAttributedElementClass();
-		if (!aVC.isValidFromFor(myEC)) {
-			throw new GraphException("Edges of class "
-					+ myEC.getQualifiedName()
-					+ " may not start at vertices of class "
-					+ aVC.getQualifiedName());
-		}
-		VertexClass oVC = (VertexClass) omega.getAttributedElementClass();
-		if (!oVC.isValidToFor(myEC)) {
-			throw new GraphException("Edges of class "
-					+ myEC.getQualifiedName()
-					+ " may not end at vertices of class "
-					+ oVC.getQualifiedName());
-		}
 		setId(anId);
 		reversedEdge = createReversedEdge();
-		((InternalGraph) graph).addEdge(this, alpha, omega);
 	}
 
 	/*
@@ -87,7 +70,7 @@ public abstract class EdgeBaseImpl extends IncidenceImpl implements Edge,
 	 * @see java.lang.Comparable#compareTo(java.lang.Object)
 	 */
 	@Override
-	public int compareTo(AttributedElement a) {
+	public int compareTo(AttributedElement<EdgeClass, Edge> a) {
 		assert a != null;
 		assert a instanceof Edge;
 		Edge e = (Edge) a;
@@ -234,7 +217,7 @@ public abstract class EdgeBaseImpl extends IncidenceImpl implements Edge,
 	@Override
 	public String getThatRole() {
 		assert isValid();
-		return ((EdgeClass) getAttributedElementClass()).getTo().getRolename();
+		return (getAttributedElementClass()).getTo().getRolename();
 	}
 
 	/*
@@ -256,8 +239,7 @@ public abstract class EdgeBaseImpl extends IncidenceImpl implements Edge,
 	@Override
 	public String getThisRole() {
 		assert isValid();
-		return ((EdgeClass) getAttributedElementClass()).getFrom()
-				.getRolename();
+		return (getAttributedElementClass()).getFrom().getRolename();
 	}
 
 	/*
@@ -368,16 +350,16 @@ public abstract class EdgeBaseImpl extends IncidenceImpl implements Edge,
 
 		InternalVertex oldAlpha = getIncidentVertex();
 
-		if (!graph.isLoading() && (graph.getECARuleManagerIfThere() != null)) {
-			graph.getECARuleManagerIfThere().fireBeforeChangeAlphaOfEdgeEvents(
-					this, oldAlpha, alphaBase);
+		if (!graph.isLoading() && graph.hasECARuleManager()) {
+			graph.getECARuleManager().fireBeforeChangeAlphaOfEdgeEvents(this,
+					oldAlpha, alphaBase);
 		}
 
 		if (alphaBase == oldAlpha) {
 			return; // nothing to change
 		}
-		if (!((VertexClass) alphaBase.getAttributedElementClass())
-				.isValidFromFor((EdgeClass) getAttributedElementClass())) {
+		if (!(alphaBase.getAttributedElementClass())
+				.isValidFromFor(getAttributedElementClass())) {
 			throw new GraphException("Edges of class "
 					+ getAttributedElementClass().getUniqueName()
 					+ " may not start at vertices of class "
@@ -392,7 +374,7 @@ public abstract class EdgeBaseImpl extends IncidenceImpl implements Edge,
 		newAlpha.incidenceListModified();
 		setIncidentVertex(newAlpha);
 
-		if (!graph.isLoading()) {
+		if (!graph.isLoading() && graph.hasECARuleManager()) {
 			graph.getECARuleManager().fireAfterChangeAlphaOfEdgeEvents(this,
 					oldAlpha, alphaBase);
 		}
@@ -413,17 +395,17 @@ public abstract class EdgeBaseImpl extends IncidenceImpl implements Edge,
 
 		InternalVertex oldOmgea = reversedEdge.getIncidentVertex();
 
-		if (!graph.isLoading() && (graph.getECARuleManagerIfThere() != null)) {
-			graph.getECARuleManagerIfThere().fireBeforeChangeOmegaOfEdgeEvents(
-					this, oldOmgea, omegaBase);
+		if (!graph.isLoading() && graph.hasECARuleManager()) {
+			graph.getECARuleManager().fireBeforeChangeOmegaOfEdgeEvents(this,
+					oldOmgea, omegaBase);
 		}
 
 		if (omegaBase == oldOmgea) {
 			return; // nothing to change
 		}
 
-		if (!((VertexClass) omegaBase.getAttributedElementClass())
-				.isValidToFor((EdgeClass) getAttributedElementClass())) {
+		if (!(omegaBase.getAttributedElementClass())
+				.isValidToFor(getAttributedElementClass())) {
 			throw new GraphException("Edges of class "
 					+ getAttributedElementClass().getUniqueName()
 					+ " may not end at at vertices of class "

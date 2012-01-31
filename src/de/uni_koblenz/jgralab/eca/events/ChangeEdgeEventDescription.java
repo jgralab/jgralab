@@ -1,12 +1,12 @@
 package de.uni_koblenz.jgralab.eca.events;
 
-import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.eca.ECARule;
+import de.uni_koblenz.jgralab.schema.EdgeClass;
 
-public class ChangeEdgeEventDescription extends EventDescription {
+public class ChangeEdgeEventDescription extends EventDescription<EdgeClass> {
 
 	public enum EdgeEnd {
 		ALPHA, OMEGA, ANY
@@ -25,10 +25,10 @@ public class ChangeEdgeEventDescription extends EventDescription {
 	 * @param type
 	 *            the Class of elements, this EventDescription monitors
 	 */
-	public ChangeEdgeEventDescription(EventTime time,
-			Class<? extends AttributedElement> type, EdgeEnd end) {
+	public ChangeEdgeEventDescription(EventTime time, EdgeClass type,
+			EdgeEnd end) {
 		super(time, type);
-		this.edgeEnd = end;
+		edgeEnd = end;
 	}
 
 	/**
@@ -54,16 +54,16 @@ public class ChangeEdgeEventDescription extends EventDescription {
 	 * @param newVertex
 	 *            the new Vertex of the Edge
 	 */
-	public void fire(AttributedElement element, Vertex oldVertex,
-			Vertex newVertex, EdgeEnd endOfEdge) {
+	public void fire(Edge element, Vertex oldVertex, Vertex newVertex,
+			EdgeEnd endOfEdge) {
 		if (super.checkContext(element)) {
-			int nested = this.getActiveECARules().get(0).getECARuleManager()
+			int nested = getActiveECARules().get(0).getECARuleManager()
 					.getNestedTriggerCalls();
-			Graph graph = this.getActiveECARules().get(0).getECARuleManager()
+			Graph graph = getActiveECARules().get(0).getECARuleManager()
 					.getGraph();
-			for (ECARule rule : activeRules) {
-				rule.trigger(new ChangeEdgeEvent(nested, this.getTime(), graph,
-						(Edge) element, oldVertex, newVertex, endOfEdge));
+			for (ECARule<EdgeClass> rule : activeRules) {
+				rule.trigger(new ChangeEdgeEvent(nested, getTime(), graph,
+						element, oldVertex, newVertex, endOfEdge));
 
 			}
 		}

@@ -2,8 +2,10 @@ package de.uni_koblenz.jgralab.impl;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Vertex;
+import de.uni_koblenz.jgralab.schema.EdgeClass;
 
-public interface InternalEdge extends Edge, InternalGraphElement {
+public interface InternalEdge extends Edge,
+		InternalGraphElement<EdgeClass, Edge> {
 
 	/**
 	 * @return next edge in eSeq

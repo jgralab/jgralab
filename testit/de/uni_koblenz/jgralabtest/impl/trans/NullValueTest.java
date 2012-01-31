@@ -157,10 +157,9 @@ public class NullValueTest {
 		createTestGraph(false);
 		GraphIO.saveGraphToFile(graph, filename, new ConsoleProgressFunction());
 		try {
-			graph = (RecordTestGraph) GraphIO
-					.loadGraphFromFileWithTransactionSupport(filename,
-							RecordTestSchema.instance(),
-							new ConsoleProgressFunction());
+			graph = RecordTestSchema.instance().loadRecordTestGraph(filename,
+					ImplementationType.TRANSACTION,
+					new ConsoleProgressFunction());
 		} catch (Exception e) {
 			e.printStackTrace();
 			fail(e.getMessage());

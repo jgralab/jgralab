@@ -1,14 +1,16 @@
 package de.uni_koblenz.jgralab.eca.events;
 
-import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Graph;
+import de.uni_koblenz.jgralab.AttributedElement;
+import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 
-public class ChangeAttributeEvent extends Event {
+public class ChangeAttributeEvent<AEC extends AttributedElementClass<AEC, ?>>
+		extends Event<AEC> {
 
 	/**
 	 * AttributedElement who causes this Event
 	 */
-	private AttributedElement element;
+	private AttributedElement<AEC, ?> element;
 
 	/**
 	 * Name of the Attribute that changes
@@ -45,9 +47,9 @@ public class ChangeAttributeEvent extends Event {
 	 */
 	public ChangeAttributeEvent(int nestedCalls,
 			EventDescription.EventTime time, Graph graph,
-			AttributedElement element, String attributeName, Object oldValue,
-			Object newValue) {
-		super(nestedCalls, time, graph, element.getSchemaClass());
+			AttributedElement<AEC, ?> element, String attributeName,
+			Object oldValue, Object newValue) {
+		super(nestedCalls, time, graph, element.getAttributedElementClass());
 		this.element = element;
 		this.attributeName = attributeName;
 		this.oldValue = oldValue;
@@ -58,7 +60,7 @@ public class ChangeAttributeEvent extends Event {
 	 * @return the AttributedElement that causes this Event
 	 */
 	@Override
-	public AttributedElement getElement() {
+	public AttributedElement<AEC, ?> getElement() {
 		return element;
 	}
 

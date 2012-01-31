@@ -553,8 +553,8 @@ public abstract class GraphImpl extends
 		if (logger != null) {
 			logger.fine("tx id=" + transaction.getID());
 		}
-		transactionManager.setTransactionForThread(transaction, Thread
-				.currentThread());
+		transactionManager.setTransactionForThread(transaction,
+				Thread.currentThread());
 	}
 
 	@Override
@@ -582,7 +582,7 @@ public abstract class GraphImpl extends
 					&& (transaction.getState() != TransactionState.NOTRUNNING)
 					&& transaction.isValid() && !transaction.isReadOnly());
 			if (transaction.changedAttributes == null) {
-				transaction.changedAttributes = new HashMap<AttributedElement, Set<VersionedDataObject<?>>>(
+				transaction.changedAttributes = new HashMap<AttributedElement<?, ?>, Set<VersionedDataObject<?>>>(
 						1, TransactionManagerImpl.LOAD_FACTOR);
 			}
 			Set<VersionedDataObject<?>> attributes = transaction.changedAttributes
@@ -971,18 +971,6 @@ public abstract class GraphImpl extends
 	}
 
 	@Override
-	public Edge internalCreateEdge(Class<? extends Edge> cls, Vertex alpha,
-			Vertex omega) {
-		return graphFactory.createEdge(cls, 0, this,
-				alpha, omega);
-	}
-
-	@Override
-	public Vertex internalCreateVertex(Class<? extends Vertex> cls) {
-		return graphFactory.createVertex(cls, 0, this);
-	}
-
-	@Override
 	public void deleteEdge(Edge edgeToBeDeleted) {
 		TransactionImpl transaction = (TransactionImpl) getCurrentTransaction();
 		if (transaction == null) {
@@ -1204,8 +1192,7 @@ public abstract class GraphImpl extends
 				positionsMap.put(ListPosition.NEXT, true);
 				if (transaction.changedEseqEdges.get(movedEdge) == null) {
 					transaction.changedEseqEdges
-							.put(
-									(de.uni_koblenz.jgralab.impl.trans.EdgeImpl) movedEdge,
+							.put((de.uni_koblenz.jgralab.impl.trans.EdgeImpl) movedEdge,
 									positionsMap);
 				}
 				positionsMap = transaction.changedEseqEdges.get(targetEdge);
@@ -1216,8 +1203,7 @@ public abstract class GraphImpl extends
 				positionsMap.put(ListPosition.PREV, false);
 				if (transaction.changedEseqEdges.get(targetEdge) == null) {
 					transaction.changedEseqEdges
-							.put(
-									(de.uni_koblenz.jgralab.impl.trans.EdgeImpl) targetEdge,
+							.put((de.uni_koblenz.jgralab.impl.trans.EdgeImpl) targetEdge,
 									positionsMap);
 				}
 			}
@@ -1265,8 +1251,7 @@ public abstract class GraphImpl extends
 				positionsMap.put(ListPosition.PREV, true);
 				if (transaction.changedEseqEdges.get(movedEdge) == null) {
 					transaction.changedEseqEdges
-							.put(
-									(de.uni_koblenz.jgralab.impl.trans.EdgeImpl) movedEdge,
+							.put((de.uni_koblenz.jgralab.impl.trans.EdgeImpl) movedEdge,
 									positionsMap);
 				}
 				positionsMap = transaction.changedEseqEdges.get(targetEdge);
@@ -1277,8 +1262,7 @@ public abstract class GraphImpl extends
 				positionsMap.put(ListPosition.NEXT, false);
 				if (transaction.changedEseqEdges.get(targetEdge) == null) {
 					transaction.changedEseqEdges
-							.put(
-									(de.uni_koblenz.jgralab.impl.trans.EdgeImpl) targetEdge,
+							.put((de.uni_koblenz.jgralab.impl.trans.EdgeImpl) targetEdge,
 									positionsMap);
 				}
 			}
@@ -1326,8 +1310,7 @@ public abstract class GraphImpl extends
 				positionsMap.put(ListPosition.PREV, true);
 				if (transaction.changedVseqVertices.get(movedVertex) == null) {
 					transaction.changedVseqVertices
-							.put(
-									(de.uni_koblenz.jgralab.impl.trans.VertexImpl) movedVertex,
+							.put((de.uni_koblenz.jgralab.impl.trans.VertexImpl) movedVertex,
 									positionsMap);
 				}
 				positionsMap = transaction.changedVseqVertices
@@ -1339,8 +1322,7 @@ public abstract class GraphImpl extends
 				positionsMap.put(ListPosition.NEXT, false);
 				if (transaction.changedVseqVertices.get(targetVertex) == null) {
 					transaction.changedVseqVertices
-							.put(
-									(de.uni_koblenz.jgralab.impl.trans.VertexImpl) targetVertex,
+							.put((de.uni_koblenz.jgralab.impl.trans.VertexImpl) targetVertex,
 									positionsMap);
 				}
 			}
@@ -1388,8 +1370,7 @@ public abstract class GraphImpl extends
 				positionsMap.put(ListPosition.NEXT, true);
 				if (transaction.changedVseqVertices.get(movedVertex) == null) {
 					transaction.changedVseqVertices
-							.put(
-									(de.uni_koblenz.jgralab.impl.trans.VertexImpl) movedVertex,
+							.put((de.uni_koblenz.jgralab.impl.trans.VertexImpl) movedVertex,
 									positionsMap);
 				}
 				positionsMap = transaction.changedVseqVertices
@@ -1401,24 +1382,11 @@ public abstract class GraphImpl extends
 				positionsMap.put(ListPosition.PREV, false);
 				if (transaction.changedVseqVertices.get(targetVertex) == null) {
 					transaction.changedVseqVertices
-							.put(
-									(de.uni_koblenz.jgralab.impl.trans.VertexImpl) targetVertex,
+							.put((de.uni_koblenz.jgralab.impl.trans.VertexImpl) targetVertex,
 									positionsMap);
 				}
 			}
 		}
-	}
-
-	@Override
-	public void internalLoadingCompleted(int[] firstIncidence,
-			int[] nextIncidence) {
-		setLoading(true);
-		super.internalLoadingCompleted(firstIncidence, nextIncidence);
-	}
-
-	@Override
-	public void loadingCompleted() {
-		setLoading(false);
 	}
 
 	@Override
@@ -1428,14 +1396,14 @@ public abstract class GraphImpl extends
 
 	@Override
 	public Iterable<Vertex> vertices(Class<? extends Vertex> vertexClass) {
-		return new AttributedElementIterable<Vertex>(super
-				.vertices(vertexClass), this);
+		return new AttributedElementIterable<Vertex>(
+				super.vertices(vertexClass), this);
 	}
 
 	@Override
 	public Iterable<Vertex> vertices(VertexClass vertexClass) {
-		return new AttributedElementIterable<Vertex>(super
-				.vertices(vertexClass), this);
+		return new AttributedElementIterable<Vertex>(
+				super.vertices(vertexClass), this);
 	}
 
 	@Override

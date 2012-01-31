@@ -1,9 +1,11 @@
 package de.uni_koblenz.jgralab.impl;
 
 import de.uni_koblenz.jgralab.Vertex;
+import de.uni_koblenz.jgralab.schema.VertexClass;
 import de.uni_koblenz.jgralab.schema.impl.DirectedSchemaEdgeClass;
 
-public interface InternalVertex extends Vertex, InternalGraphElement {
+public interface InternalVertex extends Vertex,
+		InternalGraphElement<VertexClass, Vertex> {
 
 	/**
 	 * @return the internal vertex structure version

@@ -36,10 +36,11 @@
 package de.uni_koblenz.jgralab.impl;
 
 import de.uni_koblenz.jgralab.Graph;
+import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.schema.Attribute;
-import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.GraphClass;
+import de.uni_koblenz.jgralab.schema.GraphElementClass;
 import de.uni_koblenz.jgralab.schema.Schema;
 
 /**
@@ -48,7 +49,8 @@ import de.uni_koblenz.jgralab.schema.Schema;
  * @author ist@uni-koblenz.de
  *
  */
-public abstract class GraphElementImpl implements InternalGraphElement {
+public abstract class GraphElementImpl<SC extends GraphElementClass<SC, IC>, IC extends GraphElement<SC, IC>>
+		implements InternalGraphElement<SC, IC> {
 	protected int id;
 
 	protected GraphElementImpl(Graph graph) {
@@ -70,7 +72,7 @@ public abstract class GraphElementImpl implements InternalGraphElement {
 	 */
 	@Override
 	public GraphClass getGraphClass() {
-		return (GraphClass) graph.getAttributedElementClass();
+		return graph.getAttributedElementClass();
 	}
 
 	/*
@@ -96,7 +98,7 @@ public abstract class GraphElementImpl implements InternalGraphElement {
 	 */
 	public void ecaAttributeChanging(String name, Object oldValue,
 			Object newValue) {
-		if (!graph.isLoading() && (graph.getECARuleManagerIfThere() != null)) {
+		if (!graph.isLoading() && (graph.hasECARuleManager())) {
 			graph.getECARuleManager().fireBeforeChangeAttributeEvents(this,
 					name, oldValue, newValue);
 		}
@@ -110,7 +112,7 @@ public abstract class GraphElementImpl implements InternalGraphElement {
 	 */
 	public void ecaAttributeChanged(String name, Object oldValue,
 			Object newValue) {
-		if (!graph.isLoading() && (graph.getECARuleManagerIfThere() != null)) {
+		if (!graph.isLoading() && (graph.hasECARuleManager())) {
 			graph.getECARuleManager().fireAfterChangeAttributeEvents(this,
 					name, oldValue, newValue);
 		}
@@ -147,7 +149,7 @@ public abstract class GraphElementImpl implements InternalGraphElement {
 	}
 
 	@Override
-	public boolean isInstanceOf(AttributedElementClass cls) {
+	public boolean isInstanceOf(SC cls) {
 		// This is specific to all impl variants with code generation. Generic
 		// needs to implement this with a schema lookup.
 		return cls.getSchemaClass().isInstance(this);

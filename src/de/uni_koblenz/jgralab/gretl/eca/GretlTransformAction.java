@@ -1,6 +1,5 @@
 package de.uni_koblenz.jgralab.gretl.eca;
 
-
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
@@ -9,14 +8,16 @@ import de.uni_koblenz.jgralab.eca.Action;
 import de.uni_koblenz.jgralab.eca.events.Event;
 import de.uni_koblenz.jgralab.gretl.Context;
 import de.uni_koblenz.jgralab.gretl.Transformation;
+import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 
-public class GretlTransformAction implements Action {
+public class GretlTransformAction<AEC extends AttributedElementClass<AEC, ?>>
+		implements Action<AEC> {
 
 	/**
 	 * Class of Transformation
 	 */
 	Class<? extends Transformation<Graph>> transformationClass;
-	
+
 	// +++++++++++++++++++++++++++++++++++++++++++++++++
 
 	/**
@@ -36,7 +37,7 @@ public class GretlTransformAction implements Action {
 	 * Executes the action
 	 */
 	@Override
-	public void doAction(Event event) {
+	public void doAction(Event<AEC> event) {
 
 		try {
 			Graph graph = event.getGraph();

@@ -11,7 +11,7 @@ public class Type extends Function {
 				Category.SCHEMA_ACCESS);
 	}
 
-	public AttributedElementClass evaluate(AttributedElement el) {
+	public AttributedElementClass<?, ?> evaluate(AttributedElement<?, ?> el) {
 		return el.getAttributedElementClass();
 	}
 }

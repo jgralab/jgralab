@@ -49,15 +49,15 @@ import de.uni_koblenz.jgralab.schema.EnumDomain;
 import de.uni_koblenz.jgralab.schema.GraphClass;
 import de.uni_koblenz.jgralab.schema.GraphElementClass;
 import de.uni_koblenz.jgralab.schema.RecordDomain;
+import de.uni_koblenz.jgralab.schema.RecordDomain.RecordComponent;
 import de.uni_koblenz.jgralab.schema.Schema;
 import de.uni_koblenz.jgralab.schema.VertexClass;
-import de.uni_koblenz.jgralab.schema.RecordDomain.RecordComponent;
 
 class Schema2OWL {
 
 	/**
-	 * The names of the default {@code GraphElementClass}es except {@code
-	 * Aggregation} and {@code Composition}.
+	 * The names of the default {@code GraphElementClass}es except
+	 * {@code Aggregation} and {@code Composition}.
 	 */
 	private final String[] defaultGECs = { "Vertex", "Edge" };
 
@@ -169,8 +169,8 @@ class Schema2OWL {
 	 * Converts all {@code CompositeDomain}s in a schema to constructs of the
 	 * corresponding ontology.<br>
 	 * <br>
-	 * The written XML representation depends on the type of the {@code
-	 * CompositeDomain}.
+	 * The written XML representation depends on the type of the
+	 * {@code CompositeDomain}.
 	 * 
 	 * @param schema
 	 *            The schema whose {@code CompositeDomain}s shall be converted.
@@ -185,8 +185,7 @@ class Schema2OWL {
 		boolean setCreated = false;
 		boolean listCreated = false;
 
-		for (CompositeDomain compositeDomain : schema
-				.getCompositeDomains()) {
+		for (CompositeDomain compositeDomain : schema.getCompositeDomains()) {
 			if (!setCreated
 					&& compositeDomain.getTGTypeName(null).startsWith("Set<")) {
 				convertSetDomain();
@@ -346,8 +345,8 @@ class Schema2OWL {
 	 * </pre>
 	 * 
 	 * For each {@code component}, i.e. a {@code (Name, Domain)} pair, either an
-	 * ObjectProperty or a DatatypeProperty is created, depending on the {@code
-	 * component}s domain:<br>
+	 * ObjectProperty or a DatatypeProperty is created, depending on the
+	 * {@code component}s domain:<br>
 	 * 
 	 * <pre>
 	 *     &lt;owl:DatatypeProperty rdf:ID=&quot;&lt;i&gt;rd.getName()&lt;/i&gt; + Has + &lt;i&gt;Name&lt;/i&gt;&quot;&gt;
@@ -380,15 +379,13 @@ class Schema2OWL {
 				writeRdfsDomainEmptyElement("#" + rd.getQualifiedName());
 
 				writeRdfsRangeEmptyElement();
-				if (component.getDomain().getTGTypeName(null).startsWith(
-						"List<")) {
+				if (component.getDomain().getTGTypeName(null)
+						.startsWith("List<")) {
 					writer.writeAttribute(JGraLab2OWL.rdfNS, "resource",
 							"#ListElement");
 				} else if (component.getDomain().getTGTypeName(null)
 						.startsWith("Set<")) {
-					writer
-							.writeAttribute(JGraLab2OWL.rdfNS, "resource",
-									"#Set");
+					writer.writeAttribute(JGraLab2OWL.rdfNS, "resource", "#Set");
 				} else {
 					writer.writeAttribute(JGraLab2OWL.rdfNS, "resource", "#"
 							+ component.getDomain().getQualifiedName());
@@ -409,15 +406,14 @@ class Schema2OWL {
 					writer.writeAttribute(JGraLab2OWL.rdfNS, "resource",
 							JGraLab2OWL.xsdNS + "string");
 				} else {
-					writer
-							.writeAttribute(
-									JGraLab2OWL.rdfNS,
-									"resource",
-									JGraLab2OWL.xsdNS
-											+ component
-													.getDomain()
-													.getJavaAttributeImplementationTypeName(
-															""));
+					writer.writeAttribute(
+							JGraLab2OWL.rdfNS,
+							"resource",
+							JGraLab2OWL.xsdNS
+									+ component
+											.getDomain()
+											.getJavaAttributeImplementationTypeName(
+													""));
 				}
 			}
 
@@ -428,18 +424,18 @@ class Schema2OWL {
 
 	/**
 	 * Converts all {@code GraphClass}es of the given {@code Schema schema}
-	 * together with their attributes, {@code VertexClass}es, and {@code
-	 * EdgeClass}es to corresponding OWL constructs. Each {@code GraphClass}
-	 * itself with references to its superclasses is transformed to an OWL
-	 * Class. Abstract {@code GraphClass}es are represented as unions of their
-	 * subclasses.<br>
+	 * together with their attributes, {@code VertexClass}es, and
+	 * {@code EdgeClass}es to corresponding OWL constructs. Each
+	 * {@code GraphClass} itself with references to its superclasses is
+	 * transformed to an OWL Class. Abstract {@code GraphClass}es are
+	 * represented as unions of their subclasses.<br>
 	 * <br>
 	 * See the description of
 	 * {@link #convertAttributes(AttributedElementClass aec)} for the
 	 * representation of attributes and
 	 * {@link #convertVertexClasses(GraphClass gc)} and
-	 * {@link #convertEdgeClasses(GraphClass gc)} for the conversion of {@code
-	 * VertexClasses} and {@code EdgeClasses}.<br>
+	 * {@link #convertEdgeClasses(GraphClass gc)} for the conversion of
+	 * {@code VertexClasses} and {@code EdgeClasses}.<br>
 	 * <br>
 	 * in addition, four Properties are created which relate a {@code Graph} to
 	 * its contained {@code Vertices} or {@code Edge}s (or their subclasses) and
@@ -545,7 +541,7 @@ class Schema2OWL {
 		writeOwlClassStartElement(gc.getQualifiedName());
 
 		// create references to superclasses
-		for (AttributedElementClass superGC : gc.getDirectSuperClasses()) {
+		for (GraphClass superGC : gc.getDirectSuperClasses()) {
 			writeRdfsSubClassOfEmptyElement("#" + superGC.getQualifiedName());
 		}
 
@@ -570,10 +566,10 @@ class Schema2OWL {
 
 	/**
 	 * Converts all {@code VertexClass}es of the given {@code GraphClass gc}
-	 * together with their attributes to corresponding OWL constructs. A {@code
-	 * VertexClass} itself with references to its superclasses is transformed to
-	 * an OWL Class. Abstract {@code VertexClass}es are represented as unions of
-	 * their subclasses.<br>
+	 * together with their attributes to corresponding OWL constructs. A
+	 * {@code VertexClass} itself with references to its superclasses is
+	 * transformed to an OWL Class. Abstract {@code VertexClass}es are
+	 * represented as unions of their subclasses.<br>
 	 * <br>
 	 * See the description of
 	 * {@link #convertAttributes(AttributedElementClass aec)} for the
@@ -608,8 +604,8 @@ class Schema2OWL {
 	 * </pre>
 	 * 
 	 * The Class for the default {@code VertexClass Vertex} also has an
-	 * anonymous superclass restricting the cardinality of the Property {@code
-	 * vertexClassIsInGraph} to 1. This means that every {@code Vertex}
+	 * anonymous superclass restricting the cardinality of the Property
+	 * {@code vertexClassIsInGraph} to 1. This means that every {@code Vertex}
 	 * individual and individuals of its subclasses only belong to one graph.<br>
 	 * <br>
 	 * XML-code written for the default {@code VertexClass Vertex}:<br>
@@ -638,7 +634,7 @@ class Schema2OWL {
 			writeOwlClassStartElement(vc.getQualifiedName());
 
 			// create references to superclasses
-			for (AttributedElementClass superVC : vc.getDirectSuperClasses()) {
+			for (VertexClass superVC : vc.getDirectSuperClasses()) {
 				writeRdfsSubClassOfEmptyElement("#"
 						+ superVC.getQualifiedName());
 			}
@@ -683,7 +679,7 @@ class Schema2OWL {
 	 */
 	private void convertEdgeClasses(GraphClass gc) throws XMLStreamException {
 		// for each GraphElementClass gec contained in GraphClass "gc"
-		for (GraphElementClass gec : gc.getGraphElementClasses()) {
+		for (GraphElementClass<?, ?> gec : gc.getGraphElementClasses()) {
 			// if gec is of type EdgeClass
 			if (gec instanceof EdgeClass) {
 				if (edgeClasses2Properties) {
@@ -698,12 +694,13 @@ class Schema2OWL {
 	/**
 	 * Converts the given {@code EdgeClass ec} together with its attributes to
 	 * two corresponding OWL Properties. One of these two Properties bears the
-	 * name of {@code ec}, with the OWL Class representing the {@code
-	 * VertexClass} on the "from" side as domain and the {@code VertexClass} on
-	 * the "to" side as range. The other Property has the name of {@code ec}
-	 * with an additional "-of" as suffix. Its domain and range are reversed.
-	 * The multiplicities are mapped to subclass restrictions of the OWL Classes
-	 * representing the incident {@code VertexClass}es. <br>
+	 * name of {@code ec}, with the OWL Class representing the
+	 * {@code VertexClass} on the "from" side as domain and the
+	 * {@code VertexClass} on the "to" side as range. The other Property has the
+	 * name of {@code ec} with an additional "-of" as suffix. Its domain and
+	 * range are reversed. The multiplicities are mapped to subclass
+	 * restrictions of the OWL Classes representing the incident
+	 * {@code VertexClass}es. <br>
 	 * <b>The attributes and rolenames of {@code ec} are not converted.</b><br>
 	 * <br>
 	 * XML-code written for {@code ec}:<br>
@@ -763,10 +760,9 @@ class Schema2OWL {
 			throws XMLStreamException {
 		// write normal property
 		writeOwlObjectPropertyStartElement(HelperMethods.firstToLowerCase(ec
-				.getQualifiedName())
-				+ edgeClassNameSuffix);
+				.getQualifiedName()) + edgeClassNameSuffix);
 
-		for (AttributedElementClass superEC : ec.getDirectSuperClasses()) {
+		for (EdgeClass superEC : ec.getDirectSuperClasses()) {
 			writeRdfsSubPropertyOfEmptyElement("#"
 					+ HelperMethods
 							.firstToLowerCase(superEC.getQualifiedName())
@@ -781,10 +777,9 @@ class Schema2OWL {
 
 		// write "-of" property
 		writeOwlObjectPropertyStartElement(HelperMethods.firstToLowerCase(ec
-				.getQualifiedName())
-				+ edgeClassNameSuffix + "-of");
+				.getQualifiedName()) + edgeClassNameSuffix + "-of");
 
-		for (AttributedElementClass superEC : ec.getDirectSuperClasses()) {
+		for (EdgeClass superEC : ec.getDirectSuperClasses()) {
 			writeRdfsSubPropertyOfEmptyElement("#"
 					+ HelperMethods
 							.firstToLowerCase(superEC.getQualifiedName())
@@ -808,10 +803,10 @@ class Schema2OWL {
 	 * corresponding OWL constructs. {@code ec} itself with references to its
 	 * superclasses is transformed to an OWL Class and two Properties relating
 	 * the OWL Classes representing the two incident {@code VertexClass}es on
-	 * the "from" and "to" sides to the OWL Class representing the {@code
-	 * EdgeClass}. The multiplicities are mapped to subclass restrictions of the
-	 * OWL Classes representing the incident {@code VertexClass}es. If {@code
-	 * ec} is abstract, it is represented as union of its subclasses.<br>
+	 * the "from" and "to" sides to the OWL Class representing the
+	 * {@code EdgeClass}. The multiplicities are mapped to subclass restrictions
+	 * of the OWL Classes representing the incident {@code VertexClass}es. If
+	 * {@code ec} is abstract, it is represented as union of its subclasses.<br>
 	 * <br>
 	 * See the description of
 	 * {@link #convertAttributes(AttributedElementClass aec)} for the
@@ -884,12 +879,12 @@ class Schema2OWL {
 	 * </pre>
 	 * 
 	 * The OWL Class for the default {@code EdgeClass Edge} also has an
-	 * anonymous superclass restricting the cardinality of the Property {@code
-	 * edgeClassIsInGraph} to 1. This means that every {@code Edge} individual
-	 * and individuals of its subclasses only belong to one graph.<br>
+	 * anonymous superclass restricting the cardinality of the Property
+	 * {@code edgeClassIsInGraph} to 1. This means that every {@code Edge}
+	 * individual and individuals of its subclasses only belong to one graph.<br>
 	 * <br>
-	 * XML-code written for the default {@code EdgeClass Edge} (only {@code
-	 * <owl:Class rdf:ID="Edge">} element):<br>
+	 * XML-code written for the default {@code EdgeClass Edge} (only
+	 * {@code <owl:Class rdf:ID="Edge">} element):<br>
 	 * 
 	 * <pre>
 	 *     &lt;owl:Class rdf:ID=&quot;Edge&lt;i&gt; + edgeClassNameSuffix&lt;/i&gt;&quot;&gt;
@@ -943,7 +938,7 @@ class Schema2OWL {
 		writeOwlClassStartElement(ec.getQualifiedName() + edgeClassNameSuffix);
 
 		// create superclass references
-		for (AttributedElementClass superEC : ec.getDirectSuperClasses()) {
+		for (AttributedElementClass<?, ?> superEC : ec.getDirectSuperClasses()) {
 			writeRdfsSubClassOfEmptyElement("#" + superEC.getQualifiedName()
 					+ edgeClassNameSuffix);
 		}
@@ -981,10 +976,10 @@ class Schema2OWL {
 	}
 
 	/**
-	 * Writes an {@code ObjectProperty} representing the relation from a {@code
-	 * VertexClass} to the incident {@code EdgeClass ec} (if {@code
-	 * edgeClasses2Properties = false}). Whether the "from" or "to" relation is
-	 * created depends on the value of the {@code from} parameter.<br>
+	 * Writes an {@code ObjectProperty} representing the relation from a
+	 * {@code VertexClass} to the incident {@code EdgeClass ec} (if
+	 * {@code edgeClasses2Properties = false}). Whether the "from" or "to"
+	 * relation is created depends on the value of the {@code from} parameter.<br>
 	 * <br>
 	 * XML code written if {@code from = true}:<br>
 	 * 
@@ -1020,8 +1015,7 @@ class Schema2OWL {
 
 		// create ObjectProperty for incident EdgeClass
 		writeOwlObjectPropertyStartElement(HelperMethods.firstToLowerCase(ec
-				.getQualifiedName())
-				+ edgeClassNameSuffix + direction);
+				.getQualifiedName()) + edgeClassNameSuffix + direction);
 
 		writeRdfTypeEmptyElement(JGraLab2OWL.owlNS + "SymmetricProperty");
 		writeRdfsDomainEmptyElement("#" + vcName);
@@ -1032,10 +1026,10 @@ class Schema2OWL {
 	}
 
 	/**
-	 * Writes a subclass restriction representing the multiplicity of a {@code
-	 * VertexClass} incident to the {@code EdgeClass ec}. Whether a restriction
-	 * for the "from" or "to" multiplicity is created depends on the value of
-	 * the {@code from} parameter.<br>
+	 * Writes a subclass restriction representing the multiplicity of a
+	 * {@code VertexClass} incident to the {@code EdgeClass ec}. Whether a
+	 * restriction for the "from" or "to" multiplicity is created depends on the
+	 * value of the {@code from} parameter.<br>
 	 * <br>
 	 * XML code written if {@code from = true}:<br>
 	 * 
@@ -1050,9 +1044,10 @@ class Schema2OWL {
 	 * </pre>
 	 * 
 	 * @param from
-	 *            Indicates whether a subclass restriction for the {@code
-	 *            VertexClass} on the "from" side or for the {@code VertexClass}
-	 *            on the "to" side of the {@code EdgeClass ec} shall be created.
+	 *            Indicates whether a subclass restriction for the
+	 *            {@code VertexClass} on the "from" side or for the
+	 *            {@code VertexClass} on the "to" side of the
+	 *            {@code EdgeClass ec} shall be created.
 	 * @param ec
 	 *            The {@code EdgeClass} for which the subclass restriction shall
 	 *            be created.
@@ -1135,9 +1130,9 @@ class Schema2OWL {
 
 	/**
 	 * Writes a subclass restriction representing the cardinality "1" of an OWL
-	 * Class representing a {@code Vertex} related to the OWL Class {@code
-	 * Aggregation} or {@code AggregationEdgeClass}, respectively. via {@code
-	 * aggregate} Property.<br>
+	 * Class representing a {@code Vertex} related to the OWL Class
+	 * {@code Aggregation} or {@code AggregationEdgeClass}, respectively. via
+	 * {@code aggregate} Property.<br>
 	 * 
 	 * <pre>
 	 *         &lt;rdfs:subClassOf&gt;
@@ -1195,7 +1190,7 @@ class Schema2OWL {
 	 *            converted.
 	 * @throws XMLStreamException
 	 */
-	private void convertAttributes(AttributedElementClass aec)
+	private void convertAttributes(AttributedElementClass<?, ?> aec)
 			throws XMLStreamException {
 		String aecElemName;
 
@@ -1225,9 +1220,7 @@ class Schema2OWL {
 							"#ListElement");
 				} else if (attr.getDomain().getTGTypeName(null)
 						.contains("Set<")) {
-					writer
-							.writeAttribute(JGraLab2OWL.rdfNS, "resource",
-									"#Set");
+					writer.writeAttribute(JGraLab2OWL.rdfNS, "resource", "#Set");
 				} else {
 					writer.writeAttribute(JGraLab2OWL.rdfNS, "resource", "#"
 							+ attr.getDomain().getQualifiedName());
@@ -1248,15 +1241,13 @@ class Schema2OWL {
 					writer.writeAttribute(JGraLab2OWL.rdfNS, "resource",
 							JGraLab2OWL.xsdNS + "string");
 				} else {
-					writer
-							.writeAttribute(
-									JGraLab2OWL.rdfNS,
-									"resource",
-									JGraLab2OWL.xsdNS
-											+ attr
-													.getDomain()
-													.getJavaAttributeImplementationTypeName(
-															""));
+					writer.writeAttribute(
+							JGraLab2OWL.rdfNS,
+							"resource",
+							JGraLab2OWL.xsdNS
+									+ attr.getDomain()
+											.getJavaAttributeImplementationTypeName(
+													""));
 				}
 			}
 
@@ -1296,7 +1287,8 @@ class Schema2OWL {
 		// create DatatypeProperty
 		writeOwlDatatypePropertyStartElement(HelperMethods
 				.firstToLowerCase("Edge" + edgeClassNameSuffix)
-				+ direction + "Role");
+				+ direction
+				+ "Role");
 
 		writeRdfTypeEmptyElement(JGraLab2OWL.owlNS + "FunctionalProperty");
 		writeRdfsDomainEmptyElement("#Edge" + edgeClassNameSuffix);
@@ -1349,15 +1341,15 @@ class Schema2OWL {
 				if (gecName.equals("Edge")) {
 					writeOwlObjectPropertyStartElement(HelperMethods
 							.firstToLowerCase(gecName)
-							+ edgeClassNameSuffix + "IsInGraph");
+							+ edgeClassNameSuffix
+							+ "IsInGraph");
 					writeRdfTypeEmptyElement(JGraLab2OWL.owlNS
 							+ "FunctionalProperty");
 					writeRdfsDomainEmptyElement("#" + gecName
 							+ edgeClassNameSuffix);
 				} else {
 					writeOwlObjectPropertyStartElement(HelperMethods
-							.firstToLowerCase(gecName)
-							+ "IsInGraph");
+							.firstToLowerCase(gecName) + "IsInGraph");
 					writeRdfTypeEmptyElement(JGraLab2OWL.owlNS
 							+ "FunctionalProperty");
 					writeRdfsDomainEmptyElement("#" + gecName);
@@ -1447,7 +1439,7 @@ class Schema2OWL {
 	 *            element shall be created.
 	 * @throws XMLStreamException
 	 */
-	private void writeUnionOfSubclasses(AttributedElementClass aec)
+	private void writeUnionOfSubclasses(AttributedElementClass<?, ?> aec)
 			throws XMLStreamException {
 		// create unionOf element
 		writer.writeStartElement(JGraLab2OWL.owlNS, "unionOf");
@@ -1455,16 +1447,15 @@ class Schema2OWL {
 
 		// create owl:Class element for every direct subclass of aec and build
 		// the subtree
-		for (AttributedElementClass subclass : aec.getDirectSubClasses()) {
+		for (AttributedElementClass<?, ?> subclass : aec.getDirectSubClasses()) {
 			writeOwlClassEmptyElement();
 
 			if (subclass instanceof EdgeClass) {
-				writer.writeAttribute(JGraLab2OWL.rdfNS, "about", subclass
-						.getQualifiedName()
-						+ edgeClassNameSuffix);
+				writer.writeAttribute(JGraLab2OWL.rdfNS, "about",
+						subclass.getQualifiedName() + edgeClassNameSuffix);
 			} else {
-				writer.writeAttribute(JGraLab2OWL.rdfNS, "about", subclass
-						.getQualifiedName());
+				writer.writeAttribute(JGraLab2OWL.rdfNS, "about",
+						subclass.getQualifiedName());
 			}
 		}
 
@@ -1514,8 +1505,7 @@ class Schema2OWL {
 	}
 
 	/**
-	 * Writes an element {@code <owl:ObjectProperty rdf:ID = } <i>id</i>{@code
-	 * >}
+	 * Writes an element {@code <owl:ObjectProperty rdf:ID = } <i>id</i>{@code >}
 	 * 
 	 * @param id
 	 *            The value for the {@code rdf:ID} attribute.

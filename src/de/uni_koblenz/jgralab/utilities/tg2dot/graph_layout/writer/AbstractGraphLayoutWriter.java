@@ -40,6 +40,7 @@ import java.util.Map;
 import org.codehaus.jackson.JsonGenerationException;
 
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
+import de.uni_koblenz.jgralab.schema.GraphElementClass;
 import de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout.GraphLayout;
 import de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout.definition.Definition;
 import de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout.definition.ElementDefinition;
@@ -106,9 +107,9 @@ public abstract class AbstractGraphLayoutWriter {
 	 * @throws JsonGenerationException
 	 * @throws IOException
 	 */
-	protected abstract void writeTypeDefinitions(
-			Map<AttributedElementClass, TypeDefinition> definitions)
-			throws JsonGenerationException, IOException;
+	protected abstract <T extends GraphElementClass<?, ?>> void writeTypeDefinitions(
+			Map<T, TypeDefinition> definitions) throws JsonGenerationException,
+			IOException;
 
 	/**
 	 * Writes all TypeDefinitions to the file.
