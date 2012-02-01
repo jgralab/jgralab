@@ -79,7 +79,7 @@ public class EdgePathDescriptionEvaluator extends
 		}
 		createdNFA = NFA.createEdgePathDescriptionNFA(getEdgeDirection(vertex),
 				typeCollection, getEdgeRoles(edgeRestEval), edgeEval,
-				predicateEvaluator, vertexEvalMarker);
+				predicateEvaluator, query);
 		return createdNFA;
 	}
 

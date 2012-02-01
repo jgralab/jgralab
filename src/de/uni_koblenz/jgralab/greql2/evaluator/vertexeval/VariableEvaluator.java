@@ -63,7 +63,7 @@ import de.uni_koblenz.jgralab.greql2.schema.Variable;
  * @author ist@uni-koblenz.de
  * 
  */
-public class VariableEvaluator extends VertexEvaluator<Variable> {
+public class VariableEvaluator<V extends Variable> extends VertexEvaluator<V> {
 
 	private List<VertexEvaluator<? extends Expression>> dependingExpressions;
 
@@ -102,7 +102,7 @@ public class VariableEvaluator extends VertexEvaluator<Variable> {
 	 * @param vertex
 	 *            the vertex which gets evaluated by this VertexEvaluator
 	 */
-	public VariableEvaluator(Variable vertex, Query query) {
+	public VariableEvaluator(V vertex, Query query) {
 		super(vertex, query);
 	}
 

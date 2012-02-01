@@ -54,7 +54,7 @@ import de.uni_koblenz.jgralab.greql2.schema.ThisEdge;
  * @author ist@uni-koblenz.de
  * 
  */
-public class ThisEdgeEvaluator extends VariableEvaluator {
+public class ThisEdgeEvaluator extends VariableEvaluator<ThisEdge> {
 
 	/**
 	 * @param eval

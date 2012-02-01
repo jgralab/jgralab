@@ -57,7 +57,7 @@ import de.uni_koblenz.jgralab.greql2.schema.ThisVertex;
  * @author ist@uni-koblenz.de
  * 
  */
-public class ThisVertexEvaluator extends VariableEvaluator {
+public class ThisVertexEvaluator extends VariableEvaluator<ThisVertex> {
 
 	/**
 	 * @param eval

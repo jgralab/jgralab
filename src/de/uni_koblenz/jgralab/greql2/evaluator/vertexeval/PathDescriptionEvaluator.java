@@ -131,7 +131,7 @@ public abstract class PathDescriptionEvaluator<V extends PathDescription>
 		NFA.addGoalTypeRestriction(getNFA(evaluator), typeCollection);
 		if (goalRestEval != null) {
 			NFA.addGoalBooleanRestriction(getNFA(evaluator), goalRestEval,
-					vertexEvalMarker);
+					query);
 		}
 	}
 
@@ -165,7 +165,7 @@ public abstract class PathDescriptionEvaluator<V extends PathDescription>
 		NFA.addStartTypeRestriction(getNFA(evaluator), typeCollection);
 		if (startRestEval != null) {
 			NFA.addStartBooleanRestriction(getNFA(evaluator), startRestEval,
-					vertexEvalMarker);
+					query);
 		}
 	}
 

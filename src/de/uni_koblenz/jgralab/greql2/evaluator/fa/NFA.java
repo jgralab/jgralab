@@ -42,8 +42,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import de.uni_koblenz.jgralab.graphmarker.GraphMarker;
+import de.uni_koblenz.jgralab.greql2.evaluator.Query;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VertexEvaluator;
+import de.uni_koblenz.jgralab.greql2.schema.Expression;
 import de.uni_koblenz.jgralab.greql2.types.TypeCollection;
 
 /**
@@ -279,7 +280,7 @@ public class NFA extends FiniteAutomaton {
 	 * IntermediateVertexPathDescription
 	 */
 	public static NFA createIntermediateVertexPathDescriptionNFA(NFA firstNFA,
-			VertexEvaluator intermediateVertices, NFA secondNFA) {
+			VertexEvaluator<?> intermediateVertices, NFA secondNFA) {
 
 		State newFinalState = new State();
 		firstNFA.stateList.add(newFinalState);
@@ -301,16 +302,16 @@ public class NFA extends FiniteAutomaton {
 	 */
 	public static NFA createEdgePathDescriptionNFA(
 			Transition.AllowedEdgeDirection dir, TypeCollection typeCollection,
-			Set<String> roles, VertexEvaluator edgeEval,
-			VertexEvaluator predicateEvaluator,
-			GraphMarker<VertexEvaluator> marker) {
+			Set<String> roles, VertexEvaluator<?> edgeEval,
+			VertexEvaluator<? extends Expression> predicateEvaluator,
+			Query query) {
 		NFA nfa = new NFA();
 		nfa.transitionList.clear();
 		nfa.initialState.outTransitions.clear();
 		nfa.finalStates.get(0).inTransitions.clear();
 		SimpleTransition t = new EdgeTransition(nfa.initialState,
 				nfa.finalStates.get(0), dir, typeCollection, roles, edgeEval,
-				predicateEvaluator, marker);
+				predicateEvaluator, query);
 		nfa.transitionList.add(t);
 		nfa.updateStateAttributes();
 		return nfa;
@@ -322,15 +323,16 @@ public class NFA extends FiniteAutomaton {
 	 */
 	public static NFA createSimplePathDescriptionNFA(
 			Transition.AllowedEdgeDirection dir, TypeCollection typeCollection,
-			Set<String> roles, VertexEvaluator predicateEvaluator,
-			GraphMarker<VertexEvaluator> marker) {
+			Set<String> roles,
+			VertexEvaluator<? extends Expression> predicateEvaluator,
+			Query query) {
 		NFA nfa = new NFA();
 		nfa.transitionList.clear();
 		nfa.initialState.outTransitions.clear();
 		nfa.finalStates.get(0).inTransitions.clear();
 		SimpleTransition t = new SimpleTransition(nfa.initialState,
 				nfa.finalStates.get(0), dir, typeCollection, roles,
-				predicateEvaluator, marker);
+				predicateEvaluator, query);
 		nfa.transitionList.add(t);
 		nfa.updateStateAttributes();
 		return nfa;
@@ -342,15 +344,16 @@ public class NFA extends FiniteAutomaton {
 	 */
 	public static NFA createAggregationPathDescriptionNFA(
 			boolean aggregateFrom, TypeCollection typeCollection,
-			Set<String> roles, VertexEvaluator predicateEvaluator,
-			GraphMarker<VertexEvaluator> marker) {
+			Set<String> roles,
+			VertexEvaluator<? extends Expression> predicateEvaluator,
+			Query query) {
 		NFA nfa = new NFA();
 		nfa.transitionList.clear();
 		nfa.initialState.outTransitions.clear();
 		nfa.finalStates.get(0).inTransitions.clear();
 		AggregationTransition t = new AggregationTransition(nfa.initialState,
 				nfa.finalStates.get(0), aggregateFrom, typeCollection, roles,
-				predicateEvaluator, marker);
+				predicateEvaluator, query);
 		nfa.transitionList.add(t);
 		nfa.updateStateAttributes();
 		return nfa;
@@ -415,7 +418,7 @@ public class NFA extends FiniteAutomaton {
 	 *            the VertexEvaluator, which restricts this nfa
 	 */
 	public static void addGoalBooleanRestriction(NFA nfa,
-			VertexEvaluator boolEval, GraphMarker<VertexEvaluator> marker) {
+			VertexEvaluator<? extends Expression> boolEval, Query query) {
 		State newEndState;
 		if (nfa.finalStates.size() == 1) {
 			newEndState = nfa.finalStates.get(0);
@@ -434,7 +437,7 @@ public class NFA extends FiniteAutomaton {
 		nfa.stateList.add(restrictedFinalState);
 		nfa.finalStates.add(restrictedFinalState);
 		BoolExpressionTransition trans = new BoolExpressionTransition(
-				newEndState, restrictedFinalState, boolEval, marker);
+				newEndState, restrictedFinalState, boolEval, query);
 		nfa.transitionList.add(trans);
 	}
 
@@ -447,11 +450,11 @@ public class NFA extends FiniteAutomaton {
 	 *            the VertexEvaluator, which restricts this nfa
 	 */
 	public static void addStartBooleanRestriction(NFA nfa,
-			VertexEvaluator boolEval, GraphMarker<VertexEvaluator> marker) {
+			VertexEvaluator<? extends Expression> boolEval, Query query) {
 		State newInitialState = new State();
 		nfa.stateList.add(newInitialState);
 		BoolExpressionTransition trans = new BoolExpressionTransition(
-				newInitialState, nfa.initialState, boolEval, marker);
+				newInitialState, nfa.initialState, boolEval, query);
 		nfa.transitionList.add(trans);
 		nfa.initialState = newInitialState;
 	}

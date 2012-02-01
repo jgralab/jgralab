@@ -46,6 +46,7 @@ import de.uni_koblenz.jgralab.greql2.schema.Expression;
 import de.uni_koblenz.jgralab.greql2.schema.IsDeclaredVarOf;
 import de.uni_koblenz.jgralab.greql2.schema.IsTypeExprOf;
 import de.uni_koblenz.jgralab.greql2.schema.SimpleDeclaration;
+import de.uni_koblenz.jgralab.greql2.schema.Variable;
 
 /**
  * Evaluates a simple declaration. Creates a VariableDeclaration-object, that
@@ -82,8 +83,8 @@ public class SimpleDeclarationEvaluator extends
 		while (varInc != null) {
 			VariableDeclaration varDecl = new VariableDeclaration(
 					varInc.getAlpha(), exprEval,
-					(VariableEvaluator) query.getVertexEvaluator(varInc
-							.getAlpha()));
+					(VariableEvaluator<Variable>) query
+							.getVertexEvaluator(varInc.getAlpha()));
 			varDeclList = varDeclList.plus(varDecl);
 			varInc = varInc.getNextIsDeclaredVarOfIncidence(EdgeDirection.IN);
 		}

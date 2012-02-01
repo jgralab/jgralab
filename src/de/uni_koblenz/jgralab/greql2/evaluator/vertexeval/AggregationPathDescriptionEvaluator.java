@@ -76,8 +76,7 @@ public class AggregationPathDescriptionEvaluator extends
 
 		createdNFA = NFA.createAggregationPathDescriptionNFA(
 				vertex.is_outAggregation(), typeCollection,
-				getEdgeRoles(edgeRestEval), predicateEvaluator,
-				vertexEvalMarker);
+				getEdgeRoles(edgeRestEval), predicateEvaluator, query);
 		return createdNFA;
 	}
 
