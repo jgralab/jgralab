@@ -66,12 +66,12 @@ public class VariableDeclaration {
 	/**
 	 * Holds the variable-vertex of this declaration.
 	 */
-	private final VariableEvaluator variableEval;
+	private final VariableEvaluator<Variable> variableEval;
 
 	/**
 	 * @return the variableEval
 	 */
-	VariableEvaluator getVariableEval() {
+	VariableEvaluator<Variable> getVariableEval() {
 		return variableEval;
 	}
 
@@ -98,7 +98,7 @@ public class VariableDeclaration {
 	 */
 	public VariableDeclaration(Variable var,
 			VertexEvaluator<? extends Expression> definitionSetEvaluator,
-			VariableEvaluator variableEvaluator) {
+			VariableEvaluator<Variable> variableEvaluator) {
 		variableEval = variableEvaluator;
 		definitionSet = JGraLab.set();
 		this.definitionSetEvaluator = definitionSetEvaluator;
