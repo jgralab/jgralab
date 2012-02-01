@@ -102,16 +102,22 @@ public class EdgeClassImpl extends GraphElementClassImpl<EdgeClass, Edge>
 			String fromRoleName, AggregationKind aggrFrom, VertexClass to,
 			int toMin, int toMax, String toRoleName, AggregationKind aggrTo) {
 		super(simpleName, pkg, aGraphClass);
-		IncidenceClass fromInc = new IncidenceClassImpl(this, from,
-				fromRoleName, fromMin, fromMax, IncidenceDirection.OUT,
-				aggrFrom);
-		IncidenceClass toInc = new IncidenceClassImpl(this, to, toRoleName,
-				toMin, toMax, IncidenceDirection.IN, aggrTo);
+		IncidenceClass fromInc = createIncidenceClass(from, fromRoleName,
+				fromMin, fromMax, IncidenceDirection.OUT, aggrFrom);
+		IncidenceClass toInc = createIncidenceClass(to, toRoleName, toMin,
+				toMax, IncidenceDirection.IN, aggrTo);
 		this.from = fromInc;
 		this.to = toInc;
 		((VertexClassImpl) from).addOutIncidenceClass(fromInc);
 		((VertexClassImpl) to).addInIncidenceClass(toInc);
 		register();
+	}
+
+	protected IncidenceClass createIncidenceClass(VertexClass vrtxCls,
+			String rolename, int min, int max, IncidenceDirection dir,
+			AggregationKind aggr) {
+		return new IncidenceClassImpl(this, vrtxCls, rolename, min, max, dir,
+				aggr);
 	}
 
 	@Override

@@ -52,7 +52,8 @@ import de.uni_koblenz.jgralab.schema.VertexClass;
 import de.uni_koblenz.jgralab.schema.exception.InheritanceException;
 import de.uni_koblenz.jgralab.schema.exception.SchemaException;
 
-public final class GraphClassImpl extends
+
+public class GraphClassImpl extends
 		AttributedElementClassImpl<GraphClass, Graph> implements GraphClass {
 
 	private Map<String, EdgeClass> edgeClasses = new HashMap<String, EdgeClass>();
@@ -97,7 +98,7 @@ public final class GraphClassImpl extends
 	 *            the <code>Schema</code> containing this
 	 *            <code>GraphClass</code>
 	 */
-	GraphClassImpl(String gcName, SchemaImpl schema) {
+	protected GraphClassImpl(String gcName, SchemaImpl schema) {
 		super(gcName, schema.getDefaultPackage(), schema);
 		register();
 	}

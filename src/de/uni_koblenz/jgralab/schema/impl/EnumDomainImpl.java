@@ -53,7 +53,7 @@ import de.uni_koblenz.jgralab.schema.exception.SchemaClassAccessException;
 import de.uni_koblenz.jgralab.schema.exception.SchemaException;
 import de.uni_koblenz.jgralab.schema.impl.compilation.SchemaClassManager;
 
-public final class EnumDomainImpl extends DomainImpl implements EnumDomain {
+public class EnumDomainImpl extends DomainImpl implements EnumDomain {
 
 	/**
 	 * holds a list of the components of the enumeration
@@ -71,7 +71,7 @@ public final class EnumDomainImpl extends DomainImpl implements EnumDomain {
 	 * @param constants
 	 *            holds a list of the components of the enumeration
 	 */
-	EnumDomainImpl(String sn, Package pkg, List<String> constants) {
+	protected EnumDomainImpl(String sn, Package pkg, List<String> constants) {
 		super(sn, pkg);
 		for (String c : constants) {
 			addConst(c);

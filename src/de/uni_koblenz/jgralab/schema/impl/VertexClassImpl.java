@@ -51,8 +51,8 @@ import de.uni_koblenz.jgralab.schema.Schema;
 import de.uni_koblenz.jgralab.schema.VertexClass;
 import de.uni_koblenz.jgralab.schema.exception.SchemaException;
 
-public final class VertexClassImpl extends
-		GraphElementClassImpl<VertexClass, Vertex> implements VertexClass {
+public class VertexClassImpl extends
+GraphElementClassImpl<VertexClass, Vertex> implements VertexClass {
 
 	/**
 	 * the own in IncidenceClasses
@@ -115,34 +115,34 @@ public final class VertexClassImpl extends
 	protected VertexClassImpl(String simpleName, Package pkg,
 			GraphClass aGraphClass) {
 		super(simpleName, pkg, aGraphClass);
-		register();
+		this.register();
 	}
 
 	@Override
 	protected void register() {
-		((PackageImpl) parentPackage).addVertexClass(this);
-		((GraphClassImpl) graphClass).addVertexClass(this);
+		((PackageImpl) this.parentPackage).addVertexClass(this);
+		((GraphClassImpl) this.graphClass).addVertexClass(this);
 	}
 
 	@Override
 	public String getVariableName() {
-		return "vc_" + getQualifiedName().replace('.', '_');
+		return "vc_" + this.getQualifiedName().replace('.', '_');
 	}
 
 	void addInIncidenceClass(IncidenceClass incClass) {
 		if (incClass.getVertexClass() != this) {
-			throwSchemaException();
+			this.throwSchemaException();
 		}
-		checkDuplicateRolenames(incClass);
-		inIncidenceClasses.add(incClass);
+		this.checkDuplicateRolenames(incClass);
+		this.inIncidenceClasses.add(incClass);
 	}
 
 	void addOutIncidenceClass(IncidenceClass incClass) {
 		if (incClass.getVertexClass() != this) {
-			throwSchemaException();
+			this.throwSchemaException();
 		}
-		checkDuplicateRolenames(incClass);
-		outIncidenceClasses.add(incClass);
+		this.checkDuplicateRolenames(incClass);
+		this.outIncidenceClasses.add(incClass);
 	}
 
 	private void checkDuplicateRolenames(IncidenceClass incClass) {
@@ -153,12 +153,12 @@ public final class VertexClassImpl extends
 			return;
 		}
 
-		checkDuplicatedRolenameForACyclicIncidence(incClass);
+		this.checkDuplicatedRolenameForACyclicIncidence(incClass);
 
-		checkDuplicatedRolenameForAllIncidences(incClass,
-				getAllInIncidenceClasses());
-		checkDuplicatedRolenameForAllIncidences(incClass,
-				getAllOutIncidenceClasses());
+		this.checkDuplicatedRolenameForAllIncidences(incClass,
+				this.getAllInIncidenceClasses());
+		this.checkDuplicatedRolenameForAllIncidences(incClass,
+				this.getAllOutIncidenceClasses());
 	}
 
 	private void checkDuplicatedRolenameForACyclicIncidence(
@@ -172,7 +172,7 @@ public final class VertexClassImpl extends
 		boolean identicalClasses = this == oppositeVertexClass;
 
 		if (equalRolenames && identicalClasses) {
-			throwSchemaException(incClass);
+			this.throwSchemaException(incClass);
 		}
 	}
 
@@ -190,7 +190,7 @@ public final class VertexClassImpl extends
 				continue;
 			}
 			if (incidence.getOpposite().getRolename().equals(rolename)) {
-				throwSchemaExceptionRolenameUsedTwice(incidence);
+				this.throwSchemaExceptionRolenameUsedTwice(incidence);
 			}
 		}
 	}
@@ -198,7 +198,7 @@ public final class VertexClassImpl extends
 	private void throwSchemaExceptionRolenameUsedTwice(IncidenceClass incidence) {
 		throw new SchemaException("The rolename "
 				+ incidence.getOpposite().getRolename()
-				+ " is used twice at class " + getQualifiedName());
+				+ " is used twice at class " + this.getQualifiedName());
 	}
 
 	private void throwSchemaException(IncidenceClass incClass) {
@@ -218,28 +218,30 @@ public final class VertexClassImpl extends
 		// if(isFinished()){
 		// throw new SchemaException("No changes to finished schema!");
 		// }
+
 		if ((superClass == this) || (superClass == null)) {
 			return;
 		}
-		checkDuplicateRolenames(superClass);
+		this.checkDuplicateRolenames(superClass);
 		super.addSuperClass(superClass);
-		if (!superClass.equals(getSchema().getDefaultVertexClass())) {
-			((GraphClassImpl) getSchema().getGraphClass()).getVertexCsDag()
-					.createEdge(superClass, this);
+		if (!superClass.equals(this.getSchema().getDefaultVertexClass())) {
+			((GraphClassImpl) this.getSchema().getGraphClass()).getVertexCsDag()
+			.createEdge(superClass, this);
 		}
 	}
 
 	private void checkDuplicateRolenames(VertexClass superClass) {
-		checkDuplicatedRolenamesAgainstAllIncidences(superClass
+
+		this.checkDuplicatedRolenamesAgainstAllIncidences(superClass
 				.getAllInIncidenceClasses());
-		checkDuplicatedRolenamesAgainstAllIncidences(superClass
+		this.checkDuplicatedRolenamesAgainstAllIncidences(superClass
 				.getAllOutIncidenceClasses());
 	}
 
 	private void checkDuplicatedRolenamesAgainstAllIncidences(
 			Set<IncidenceClass> incidences) {
 		for (IncidenceClass incidence : incidences) {
-			checkDuplicateRolenames(incidence);
+			this.checkDuplicateRolenames(incidence);
 		}
 	}
 
@@ -252,16 +254,17 @@ public final class VertexClassImpl extends
 
 	@Override
 	public Set<IncidenceClass> getValidFromFarIncidenceClasses() {
-		if (isFinished()) {
-			return validFromFarIncidenceClasses;
+
+		if (this.isFinished()) {
+			return this.validFromFarIncidenceClasses;
 		}
 
 		Set<IncidenceClass> validFromInc = new HashSet<IncidenceClass>();
-		for (IncidenceClass ic : getAllOutIncidenceClasses()) {
+		for (IncidenceClass ic : this.getAllOutIncidenceClasses()) {
 			IncidenceClass farInc = ic.getEdgeClass().getTo();
 			validFromInc.add(farInc);
 		}
-		for (VertexClass aec : getAllSuperClasses()) {
+		for (VertexClass aec : this.getAllSuperClasses()) {
 			VertexClass vc = aec;
 			if (vc.isInternal()) {
 				continue;
@@ -281,15 +284,17 @@ public final class VertexClassImpl extends
 
 	@Override
 	public Set<IncidenceClass> getValidToFarIncidenceClasses() {
-		if (isFinished()) {
-			return validToFarIncidenceClasses;
+
+		if (this.isFinished()) {
+			return this.validToFarIncidenceClasses;
 		}
 		Set<IncidenceClass> validToInc = new HashSet<IncidenceClass>();
-		for (IncidenceClass ic : getAllInIncidenceClasses()) {
+		for (IncidenceClass ic : this.getAllInIncidenceClasses()) {
 			IncidenceClass farInc = ic.getEdgeClass().getFrom();
 			validToInc.add(farInc);
 		}
-		for (VertexClass aec : getAllSuperClasses()) {
+
+		for (VertexClass aec : this.getAllSuperClasses()) {
 			VertexClass vc = aec;
 			if (vc.isInternal()) {
 				continue;
@@ -309,12 +314,13 @@ public final class VertexClassImpl extends
 
 	@Override
 	public Set<EdgeClass> getValidFromEdgeClasses() {
-		if (isFinished()) {
-			return validFromEdgeClasses;
+
+		if (this.isFinished()) {
+			return this.validFromEdgeClasses;
 		}
 		// System.err.print("+");
 		Set<EdgeClass> validFrom = new HashSet<EdgeClass>();
-		for (IncidenceClass ic : getValidFromFarIncidenceClasses()) {
+		for (IncidenceClass ic : this.getValidFromFarIncidenceClasses()) {
 			if (!ic.getEdgeClass().isInternal()) {
 				validFrom.add(ic.getEdgeClass());
 			}
@@ -324,12 +330,13 @@ public final class VertexClassImpl extends
 
 	@Override
 	public Set<EdgeClass> getValidToEdgeClasses() {
-		if (isFinished()) {
-			return validToEdgeClasses;
+
+		if (this.isFinished()) {
+			return this.validToEdgeClasses;
 		}
 		// System.err.print("-");
 		Set<EdgeClass> validTo = new HashSet<EdgeClass>();
-		for (IncidenceClass ic : getValidToFarIncidenceClasses()) {
+		for (IncidenceClass ic : this.getValidToFarIncidenceClasses()) {
 			if (!ic.getEdgeClass().isInternal()) {
 				validTo.add(ic.getEdgeClass());
 			}
@@ -338,21 +345,21 @@ public final class VertexClassImpl extends
 	}
 
 	public Set<IncidenceClass> getOwnInIncidenceClasses() {
-		return inIncidenceClasses;
+		return this.inIncidenceClasses;
 	}
 
 	public Set<IncidenceClass> getOwnOutIncidenceClasses() {
-		return outIncidenceClasses;
+		return this.outIncidenceClasses;
 	}
 
 	@Override
 	public Set<IncidenceClass> getAllInIncidenceClasses() {
-		if (isFinished()) {
-			return allInIncidenceClasses;
+		if (this.isFinished()) {
+			return this.allInIncidenceClasses;
 		}
 		Set<IncidenceClass> incidenceClasses = new HashSet<IncidenceClass>();
-		incidenceClasses.addAll(inIncidenceClasses);
-		for (VertexClass vc : getDirectSuperClasses()) {
+		incidenceClasses.addAll(this.inIncidenceClasses);
+		for (VertexClass vc : this.getDirectSuperClasses()) {
 			incidenceClasses.addAll(vc.getAllInIncidenceClasses());
 		}
 		return incidenceClasses;
@@ -360,12 +367,13 @@ public final class VertexClassImpl extends
 
 	@Override
 	public Set<IncidenceClass> getAllOutIncidenceClasses() {
-		if (isFinished()) {
-			return allOutIncidenceClasses;
+
+		if (this.isFinished()) {
+			return this.allOutIncidenceClasses;
 		}
 		Set<IncidenceClass> incidenceClasses = new HashSet<IncidenceClass>();
-		incidenceClasses.addAll(outIncidenceClasses);
-		for (VertexClass vc : getDirectSuperClasses()) {
+		incidenceClasses.addAll(this.outIncidenceClasses);
+		for (VertexClass vc : this.getDirectSuperClasses()) {
 			incidenceClasses.addAll(vc.getAllOutIncidenceClasses());
 		}
 		return incidenceClasses;
@@ -374,13 +382,13 @@ public final class VertexClassImpl extends
 	@Override
 	public Set<IncidenceClass> getOwnAndInheritedFarIncidenceClasses() {
 		Set<IncidenceClass> result = new HashSet<IncidenceClass>();
-		for (IncidenceClass ic : getAllInIncidenceClasses()) {
+		for (IncidenceClass ic : this.getAllInIncidenceClasses()) {
 			result.add(ic.getEdgeClass().getFrom());
 			for (IncidenceClass sup : ic.getSubsettedIncidenceClasses()) {
 				result.add(sup.getEdgeClass().getFrom());
 			}
 		}
-		for (IncidenceClass ic : getAllOutIncidenceClasses()) {
+		for (IncidenceClass ic : this.getAllOutIncidenceClasses()) {
 			result.add(ic.getEdgeClass().getTo());
 			for (IncidenceClass sup : ic.getSubsettedIncidenceClasses()) {
 				result.add(sup.getEdgeClass().getTo());
@@ -392,10 +400,10 @@ public final class VertexClassImpl extends
 	@Override
 	public Set<EdgeClass> getConnectedEdgeClasses() {
 		Set<EdgeClass> result = new HashSet<EdgeClass>();
-		for (IncidenceClass ic : getAllInIncidenceClasses()) {
+		for (IncidenceClass ic : this.getAllInIncidenceClasses()) {
 			result.add(ic.getEdgeClass());
 		}
-		for (IncidenceClass ic : getAllOutIncidenceClasses()) {
+		for (IncidenceClass ic : this.getAllOutIncidenceClasses()) {
 			result.add(ic.getEdgeClass());
 		}
 		return result;
@@ -404,10 +412,10 @@ public final class VertexClassImpl extends
 	@Override
 	public Set<EdgeClass> getOwnConnectedEdgeClasses() {
 		Set<EdgeClass> result = new HashSet<EdgeClass>();
-		for (IncidenceClass ic : getOwnInIncidenceClasses()) {
+		for (IncidenceClass ic : this.getOwnInIncidenceClasses()) {
 			result.add(ic.getEdgeClass());
 		}
-		for (IncidenceClass ic : getOwnOutIncidenceClasses()) {
+		for (IncidenceClass ic : this.getOwnOutIncidenceClasses()) {
 			result.add(ic.getEdgeClass());
 		}
 		return result;
@@ -415,47 +423,49 @@ public final class VertexClassImpl extends
 
 	@Override
 	protected void finish() {
-		allInIncidenceClasses = new HashSet<IncidenceClass>();
-		allInIncidenceClasses.addAll(inIncidenceClasses);
 
-		allOutIncidenceClasses = new HashSet<IncidenceClass>();
-		allOutIncidenceClasses.addAll(outIncidenceClasses);
+		this.allInIncidenceClasses = new HashSet<IncidenceClass>();
+		this.allInIncidenceClasses.addAll(this.inIncidenceClasses);
 
-		for (VertexClass vc : getDirectSuperClasses()) {
-			allInIncidenceClasses.addAll(vc.getAllInIncidenceClasses());
-			allOutIncidenceClasses.addAll(vc.getAllOutIncidenceClasses());
+		this.allOutIncidenceClasses = new HashSet<IncidenceClass>();
+		this.allOutIncidenceClasses.addAll(this.outIncidenceClasses);
+
+
+		for (VertexClass vc : this.getDirectSuperClasses()) {
+			this.allInIncidenceClasses.addAll(vc.getAllInIncidenceClasses());
+			this.allOutIncidenceClasses.addAll(vc.getAllOutIncidenceClasses());
 		}
 
-		allInIncidenceClasses = Collections
-				.unmodifiableSet(allInIncidenceClasses);
-		allOutIncidenceClasses = Collections
-				.unmodifiableSet(allOutIncidenceClasses);
+		this.allInIncidenceClasses = Collections
+				.unmodifiableSet(this.allInIncidenceClasses);
+		this.allOutIncidenceClasses = Collections
+				.unmodifiableSet(this.allOutIncidenceClasses);
 
-		validFromFarIncidenceClasses = Collections
-				.unmodifiableSet(getValidFromFarIncidenceClasses());
-		validToFarIncidenceClasses = Collections
-				.unmodifiableSet(getValidToFarIncidenceClasses());
+		this.validFromFarIncidenceClasses = Collections
+				.unmodifiableSet(this.getValidFromFarIncidenceClasses());
+		this.validToFarIncidenceClasses = Collections
+				.unmodifiableSet(this.getValidToFarIncidenceClasses());
 
-		validFromEdgeClasses = Collections
-				.unmodifiableSet(getValidFromEdgeClasses());
-		validToEdgeClasses = Collections
-				.unmodifiableSet(getValidToEdgeClasses());
+		this.validFromEdgeClasses = Collections
+				.unmodifiableSet(this.getValidFromEdgeClasses());
+		this.validToEdgeClasses = Collections
+				.unmodifiableSet(this.getValidToEdgeClasses());
 
-		farRoleNameToEdgeClass = new HashMap<String, DirectedSchemaEdgeClass>();
-		for (IncidenceClass ic : getOwnAndInheritedFarIncidenceClasses()) {
-			farRoleNameToEdgeClass.put(ic.getRolename(),
-					getDirectedEdgeClassForFarEndRole(ic.getRolename()));
+		this.farRoleNameToEdgeClass = new HashMap<String, DirectedSchemaEdgeClass>();
+		for (IncidenceClass ic : this.getOwnAndInheritedFarIncidenceClasses()) {
+			this.farRoleNameToEdgeClass.put(ic.getRolename(),
+					this.getDirectedEdgeClassForFarEndRole(ic.getRolename()));
 		}
-		farRoleNameToEdgeClass = Collections
-				.unmodifiableMap(farRoleNameToEdgeClass);
+		this.farRoleNameToEdgeClass = Collections
+				.unmodifiableMap(this.farRoleNameToEdgeClass);
 
-		inIncidenceClasses = Collections.unmodifiableSet(inIncidenceClasses);
-		outIncidenceClasses = Collections.unmodifiableSet(outIncidenceClasses);
+		this.inIncidenceClasses = Collections.unmodifiableSet(this.inIncidenceClasses);
+		this.outIncidenceClasses = Collections.unmodifiableSet(this.outIncidenceClasses);
 
-		for (IncidenceClass ic : inIncidenceClasses) {
+		for (IncidenceClass ic : this.inIncidenceClasses) {
 			((IncidenceClassImpl) ic).finish();
 		}
-		for (IncidenceClass ic : outIncidenceClasses) {
+		for (IncidenceClass ic : this.outIncidenceClasses) {
 			((IncidenceClassImpl) ic).finish();
 		}
 
@@ -464,30 +474,30 @@ public final class VertexClassImpl extends
 
 	@Override
 	public boolean isValidFromFor(EdgeClass ec) {
-		return getValidFromEdgeClasses().contains(ec);
+		return this.getValidFromEdgeClasses().contains(ec);
 	}
 
 	@Override
 	public boolean isValidToFor(EdgeClass ec) {
-		return getValidToEdgeClasses().contains(ec);
+		return this.getValidToEdgeClasses().contains(ec);
 	}
 
 	@Override
 	protected void reopen() {
-		allInIncidenceClasses = null;
-		allOutIncidenceClasses = null;
-		validFromFarIncidenceClasses = null;
-		validToFarIncidenceClasses = null;
-		validFromEdgeClasses = null;
-		validToEdgeClasses = null;
-		inIncidenceClasses = new HashSet<IncidenceClass>(inIncidenceClasses);
-		outIncidenceClasses = new HashSet<IncidenceClass>(outIncidenceClasses);
-		farRoleNameToEdgeClass = null;
+		this.allInIncidenceClasses = null;
+		this.allOutIncidenceClasses = null;
+		this.validFromFarIncidenceClasses = null;
+		this.validToFarIncidenceClasses = null;
+		this.validFromEdgeClasses = null;
+		this.validToEdgeClasses = null;
+		this.inIncidenceClasses = new HashSet<IncidenceClass>(this.inIncidenceClasses);
+		this.outIncidenceClasses = new HashSet<IncidenceClass>(this.outIncidenceClasses);
+		this.farRoleNameToEdgeClass = null;
 
-		for (IncidenceClass ic : inIncidenceClasses) {
+		for (IncidenceClass ic : this.inIncidenceClasses) {
 			((IncidenceClassImpl) ic).reopen();
 		}
-		for (IncidenceClass ic : outIncidenceClasses) {
+		for (IncidenceClass ic : this.outIncidenceClasses) {
 			((IncidenceClassImpl) ic).reopen();
 		}
 
@@ -497,15 +507,15 @@ public final class VertexClassImpl extends
 	@Override
 	public DirectedSchemaEdgeClass getDirectedEdgeClassForFarEndRole(
 			String roleName) {
-		if (isFinished()) {
-			return farRoleNameToEdgeClass.get(roleName);
+		if (this.isFinished()) {
+			return this.farRoleNameToEdgeClass.get(roleName);
 		}
-		for (IncidenceClass ic : getOwnAndInheritedFarIncidenceClasses()) {
+		for (IncidenceClass ic : this.getOwnAndInheritedFarIncidenceClasses()) {
 			if (roleName.equals(ic.getRolename())) {
 				EdgeClass ec = ic.getEdgeClass();
 				return new DirectedSchemaEdgeClass(
 						ec,
-						(getValidFromEdgeClasses().contains(ec) ? EdgeDirection.OUT
+						(this.getValidFromEdgeClasses().contains(ec) ? EdgeDirection.OUT
 								: EdgeDirection.IN));
 			}
 		}
