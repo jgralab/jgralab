@@ -421,154 +421,154 @@ public class DomainTest {
 
 		for(int i = 0; i < testDomains.length; i++) {
 			if(i == 0) {
-				assertTrue(testDomains[i].genericIsConform(boolDomainValue1));
-				assertTrue(testDomains[i].genericIsConform(boolDomainValue2));
+				assertTrue(testDomains[i].isConformGenericValue(boolDomainValue1));
+				assertTrue(testDomains[i].isConformGenericValue(boolDomainValue2));
 			}
 			else {
-				assertFalse(testDomains[i].genericIsConform(boolDomainValue1));
-				assertFalse(testDomains[i].genericIsConform(boolDomainValue2));
+				assertFalse(testDomains[i].isConformGenericValue(boolDomainValue1));
+				assertFalse(testDomains[i].isConformGenericValue(boolDomainValue2));
 			}
 		}
 		for(int i = 0; i < testDomains.length; i++) {
 			if(i == 1) {
-				assertTrue(testDomains[i].genericIsConform(intDomainMaxValue));
-				assertTrue(testDomains[i].genericIsConform(intDomainMinValue));
-				assertTrue(testDomains[i].genericIsConform(intDomainValue));
+				assertTrue(testDomains[i].isConformGenericValue(intDomainMaxValue));
+				assertTrue(testDomains[i].isConformGenericValue(intDomainMinValue));
+				assertTrue(testDomains[i].isConformGenericValue(intDomainValue));
 			}
 			else {
-				assertFalse(testDomains[i].genericIsConform(intDomainMaxValue));
-				assertFalse(testDomains[i].genericIsConform(intDomainMinValue));
-				assertFalse(testDomains[i].genericIsConform(intDomainValue));
+				assertFalse(testDomains[i].isConformGenericValue(intDomainMaxValue));
+				assertFalse(testDomains[i].isConformGenericValue(intDomainMinValue));
+				assertFalse(testDomains[i].isConformGenericValue(intDomainValue));
 			}
 		}
 		for(int i = 0; i < testDomains.length; i++) {
 			if(i == 2) {
-				assertTrue(testDomains[i].genericIsConform(longDomainMaxValue));
-				assertTrue(testDomains[i].genericIsConform(longDomainMinValue));
-				assertTrue(testDomains[i].genericIsConform(longDomainValue));
+				assertTrue(testDomains[i].isConformGenericValue(longDomainMaxValue));
+				assertTrue(testDomains[i].isConformGenericValue(longDomainMinValue));
+				assertTrue(testDomains[i].isConformGenericValue(longDomainValue));
 			}
 			else {
-				assertFalse(testDomains[i].genericIsConform(longDomainMaxValue));
-				assertFalse(testDomains[i].genericIsConform(longDomainMinValue));
-				assertFalse(testDomains[i].genericIsConform(longDomainValue));
+				assertFalse(testDomains[i].isConformGenericValue(longDomainMaxValue));
+				assertFalse(testDomains[i].isConformGenericValue(longDomainMinValue));
+				assertFalse(testDomains[i].isConformGenericValue(longDomainValue));
 			}
 		}
 		for(int i = 0; i < testDomains.length; i++) {
 			if(i == 3) {
-				assertTrue(testDomains[i].genericIsConform(doubleDomainValue1));
-				assertTrue(testDomains[i].genericIsConform(doubleDomainValue2));
-				assertTrue(testDomains[i].genericIsConform(doubleDomainValue3));
+				assertTrue(testDomains[i].isConformGenericValue(doubleDomainValue1));
+				assertTrue(testDomains[i].isConformGenericValue(doubleDomainValue2));
+				assertTrue(testDomains[i].isConformGenericValue(doubleDomainValue3));
 			}
 			else {
-				assertFalse(testDomains[i].genericIsConform(doubleDomainValue1));
-				assertFalse(testDomains[i].genericIsConform(doubleDomainValue2));
-				assertFalse(testDomains[i].genericIsConform(doubleDomainValue3));
+				assertFalse(testDomains[i].isConformGenericValue(doubleDomainValue1));
+				assertFalse(testDomains[i].isConformGenericValue(doubleDomainValue2));
+				assertFalse(testDomains[i].isConformGenericValue(doubleDomainValue3));
 			}
 		}
 		for(int i = 0; i < testDomains.length; i++) {
 			if(i == 4) {
-				assertTrue(testDomains[i].genericIsConform(stringDomainValue1));
-				assertTrue(testDomains[i].genericIsConform(stringDomainEmptyValue));
+				assertTrue(testDomains[i].isConformGenericValue(stringDomainValue1));
+				assertTrue(testDomains[i].isConformGenericValue(stringDomainEmptyValue));
 			}
 			else {
-				assertFalse(testDomains[i].genericIsConform(stringDomainValue1));
-				assertFalse(testDomains[i].genericIsConform(stringDomainEmptyValue));
+				assertFalse(testDomains[i].isConformGenericValue(stringDomainValue1));
+				assertFalse(testDomains[i].isConformGenericValue(stringDomainEmptyValue));
 			}
 		}
 		for(int i = 0; i < testDomains.length; i++) {
 			if(i == 4 || i == 5) {	// Enum-values are represented by Strings in the generic implementation
-				assertTrue(testDomains[i].genericIsConform(enumDomainValue1));
-				assertTrue(testDomains[i].genericIsConform(enumDomainValue2));
-				assertTrue(testDomains[i].genericIsConform(nullValue));
+				assertTrue(testDomains[i].isConformGenericValue(enumDomainValue1));
+				assertTrue(testDomains[i].isConformGenericValue(enumDomainValue2));
+				assertTrue(testDomains[i].isConformGenericValue(nullValue));
 			}
 			else {
-				assertFalse(testDomains[i].genericIsConform(enumDomainValue1));
-				assertFalse(testDomains[i].genericIsConform(enumDomainValue2));
+				assertFalse(testDomains[i].isConformGenericValue(enumDomainValue1));
+				assertFalse(testDomains[i].isConformGenericValue(enumDomainValue2));
 			}
 		}
 		for(int i = 0; i < testDomains.length; i++) {
 			if(i == 6) {
-				assertTrue(testDomains[i].genericIsConform(setDomainValue1));
-				assertTrue(testDomains[i].genericIsConform(nullValue));
+				assertTrue(testDomains[i].isConformGenericValue(setDomainValue1));
+				assertTrue(testDomains[i].isConformGenericValue(nullValue));
 			}
 			else {
-				assertFalse(testDomains[i].genericIsConform(setDomainValue1));
+				assertFalse(testDomains[i].isConformGenericValue(setDomainValue1));
 			}
 		}
 		for(int i = 0; i < testDomains.length; i++) {
 			if(i == 7) {
-				assertTrue(testDomains[i].genericIsConform(setDomainValue2));
-				assertTrue(testDomains[i].genericIsConform(nullValue));
+				assertTrue(testDomains[i].isConformGenericValue(setDomainValue2));
+				assertTrue(testDomains[i].isConformGenericValue(nullValue));
 			}
 			else {
-				assertFalse(testDomains[i].genericIsConform(setDomainValue2));
+				assertFalse(testDomains[i].isConformGenericValue(setDomainValue2));
 			}
 		}
 		for(int i = 0; i < testDomains.length; i++) {
 			if(i == 8) {
-				assertTrue(testDomains[i].genericIsConform(listDomainValue1));
-				assertTrue(testDomains[i].genericIsConform(nullValue));
+				assertTrue(testDomains[i].isConformGenericValue(listDomainValue1));
+				assertTrue(testDomains[i].isConformGenericValue(nullValue));
 			}
 			else {
-				assertFalse(testDomains[i].genericIsConform(listDomainValue1));
+				assertFalse(testDomains[i].isConformGenericValue(listDomainValue1));
 			}
 		}
 		for(int i = 0; i < testDomains.length; i++) {
 			if(i == 9) {
-				assertTrue(testDomains[i].genericIsConform(listDomainValue2));
-				assertTrue(testDomains[i].genericIsConform(nullValue));
+				assertTrue(testDomains[i].isConformGenericValue(listDomainValue2));
+				assertTrue(testDomains[i].isConformGenericValue(nullValue));
 			}
 			else {
-				assertFalse(testDomains[i].genericIsConform(listDomainValue2));
+				assertFalse(testDomains[i].isConformGenericValue(listDomainValue2));
 			}
 		}
 		for(int i = 0; i < testDomains.length; i++) {
 			if(i == 10) {
-				assertTrue(testDomains[i].genericIsConform(mapDomainValue1));
-				assertTrue(testDomains[i].genericIsConform(nullValue));
+				assertTrue(testDomains[i].isConformGenericValue(mapDomainValue1));
+				assertTrue(testDomains[i].isConformGenericValue(nullValue));
 			}
 			else {
-				assertFalse(testDomains[i].genericIsConform(mapDomainValue1));
+				assertFalse(testDomains[i].isConformGenericValue(mapDomainValue1));
 			}
 		}
 		for(int i = 0; i < testDomains.length; i++) {
 			if(i == 11) {
-				assertTrue(testDomains[i].genericIsConform(mapDomainValue2));
-				assertTrue(testDomains[i].genericIsConform(nullValue));
+				assertTrue(testDomains[i].isConformGenericValue(mapDomainValue2));
+				assertTrue(testDomains[i].isConformGenericValue(nullValue));
 			}
 			else {
-				assertFalse(testDomains[i].genericIsConform(mapDomainValue2));
+				assertFalse(testDomains[i].isConformGenericValue(mapDomainValue2));
 			}
 		}
 		for(int i = 0; i < testDomains.length; i++) {
 			if(i == 12) {
-				assertTrue(testDomains[i].genericIsConform(mapDomainValue3));
-				assertTrue(testDomains[i].genericIsConform(nullValue));
+				assertTrue(testDomains[i].isConformGenericValue(mapDomainValue3));
+				assertTrue(testDomains[i].isConformGenericValue(nullValue));
 			}
 			else {
-				assertFalse(testDomains[i].genericIsConform(mapDomainValue3));
+				assertFalse(testDomains[i].isConformGenericValue(mapDomainValue3));
 			}
 		}
 		for(int i = 0; i < testDomains.length; i++) {
 			if(i == 13) {
-				assertTrue(testDomains[i].genericIsConform(recordDomainValue1));
-				assertTrue(testDomains[i].genericIsConform(nullValue));
+				assertTrue(testDomains[i].isConformGenericValue(recordDomainValue1));
+				assertTrue(testDomains[i].isConformGenericValue(nullValue));
 			}
 			else {
 				try {
-					assertFalse(testDomains[i].genericIsConform(recordDomainValue1));
+					assertFalse(testDomains[i].isConformGenericValue(recordDomainValue1));
 				}
 				catch(NoSuchAttributeException e) {} // Desired behavior, if a record has components it shouldn't have.
 			}
 		}
 		for(int i = 0; i < testDomains.length; i++) {
 			if(i == 14) {
-				assertTrue(testDomains[i].genericIsConform(recordDomainValue2));
-				assertTrue(testDomains[i].genericIsConform(nullValue));
+				assertTrue(testDomains[i].isConformGenericValue(recordDomainValue2));
+				assertTrue(testDomains[i].isConformGenericValue(nullValue));
 			}
 			else {
 				try {
-					assertFalse(testDomains[i].genericIsConform(recordDomainValue2));
+					assertFalse(testDomains[i].isConformGenericValue(recordDomainValue2));
 				}
 				catch(NoSuchAttributeException e) {} // Desired behavior, if a record has components it shouldn't have.
 			}
