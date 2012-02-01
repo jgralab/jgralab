@@ -39,12 +39,13 @@ import java.util.ArrayList;
 import java.util.Map;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
-import de.uni_koblenz.jgralab.Graph;
+import de.uni_koblenz.jgralab.greql2.evaluator.InternalGreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.Query;
 import de.uni_koblenz.jgralab.greql2.exception.UndefinedVariableException;
 import de.uni_koblenz.jgralab.greql2.exception.UnknownTypeException;
 import de.uni_koblenz.jgralab.greql2.schema.Expression;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Expression;
+import de.uni_koblenz.jgralab.greql2.schema.Identifier;
 import de.uni_koblenz.jgralab.greql2.schema.IsBoundVarOf;
 import de.uni_koblenz.jgralab.greql2.schema.IsIdOf;
 import de.uni_koblenz.jgralab.greql2.schema.SourcePosition;
@@ -74,26 +75,26 @@ public class Greql2ExpressionEvaluator extends
 	private Map<String, Object> boundVariables;
 	boolean boundVariablesChanged = true;
 
-	protected void setBoundVariables(Map<String, Object> boundVariables) {
-		this.boundVariables = boundVariables;
-		result = null;
-		boundVariablesChanged = true;
-	}
+	// protected void setBoundVariables(Map<String, Object> boundVariables) {
+	// this.boundVariables = boundVariables;
+	// result = null;
+	// boundVariablesChanged = true;
+	// }
 
-	private void initializeBoundVariables() {
+	private void initializeBoundVariables(InternalGreqlEvaluator evaluator) {
 		IsBoundVarOf inc = vertex
 				.getFirstIsBoundVarOfIncidence(EdgeDirection.IN);
 		while (inc != null) {
 			Variable currentBoundVariable = inc.getAlpha();
-			Object variableValue = boundVariables.get(currentBoundVariable
-					.get_name());
+			Object variableValue = evaluator
+					.getBoundVariableValue(currentBoundVariable.get_name());
 			if (variableValue == null) {
 				throw new UndefinedVariableException(currentBoundVariable,
 						createSourcePositions(inc));
 			}
-			VariableEvaluator variableEval = (VariableEvaluator) vertexEvalMarker
-					.getMark(currentBoundVariable);
-			variableEval.setValue(variableValue);
+			VariableEvaluator<Variable> variableEval = (VariableEvaluator<Variable>) query
+					.getVertexEvaluator(currentBoundVariable);
+			variableEval.setValue(variableValue, evaluator);
 			inc = inc.getNextIsBoundVarOfIncidence(EdgeDirection.IN);
 		}
 	}
@@ -106,18 +107,18 @@ public class Greql2ExpressionEvaluator extends
 	 */
 	public Greql2ExpressionEvaluator(Greql2Expression vertex, Query query) {
 		super(vertex, query);
-		boundVariables = eval.getVariables();
-		boundVariablesChanged = true;
+		// boundVariables = eval.getVariables();
+		// boundVariablesChanged = true;
 	}
 
 	/**
 	 * sets the values of all bound variables and evaluates the queryexpression
 	 */
 	@Override
-	public Object evaluate(Graph graph) {
+	public Object evaluate(InternalGreqlEvaluator evaluator) {
 		if (boundVariablesChanged) {
-			initializeBoundVariables();
-			boundVariablesChanged = false;
+			initializeBoundVariables(evaluator);
+			// boundVariablesChanged = false;
 		}
 
 		if (vertex.get_importedTypes() != null && graph != null) {
@@ -154,20 +155,22 @@ public class Greql2ExpressionEvaluator extends
 
 		Expression boundExpression = vertex.getFirstIsQueryExprOfIncidence(
 				EdgeDirection.IN).getAlpha();
-		VertexEvaluator eval = vertexEvalMarker.getMark(boundExpression);
-		Object result = eval.getResult(graph);
+		VertexEvaluator<? extends Expression> eval = query
+				.getVertexEvaluator(boundExpression);
+		Object result = eval.getResult(evaluator);
 		// if the query contains a "store as " - clause, there is a
 		// "isIdOfInc"-Incidence connected with the Greql2Expression
 		IsIdOf storeInc = vertex.getFirstIsIdOfIncidence(EdgeDirection.IN);
 		if (storeInc != null) {
-			VertexEvaluator storeEval = vertexEvalMarker.getMark(storeInc
-					.getAlpha());
-			String varName = storeEval.getResult(graph).toString();
-			boundVariables.put(varName, result);
+			VertexEvaluator<Identifier> storeEval = query
+					.getVertexEvaluator(storeInc.getAlpha());
+			String varName = storeEval.getResult(evaluator).toString();
+			// TODO [greqlrenovation] VariableDeclaration has an own
+			// toString(InternalGreqlEvaluator)-method
+			evaluator.setBoundVariable(varName, result);
 		}
 		return result;
 	}
-
 	// @Override
 	// public VertexCosts calculateSubtreeEvaluationCosts() {
 	// return greqlEvaluator.getCostModel().calculateCostsGreql2Expression(

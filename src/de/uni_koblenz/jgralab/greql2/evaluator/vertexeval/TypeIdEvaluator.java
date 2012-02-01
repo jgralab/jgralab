@@ -44,7 +44,6 @@ import de.uni_koblenz.jgralab.greql2.exception.UnknownTypeException;
 import de.uni_koblenz.jgralab.greql2.schema.TypeId;
 import de.uni_koblenz.jgralab.greql2.types.TypeCollection;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
-import de.uni_koblenz.jgralab.schema.Schema;
 
 /**
  * Creates a List of types out of the TypeId-Vertex.
@@ -65,13 +64,14 @@ public class TypeIdEvaluator extends VertexEvaluator<TypeId> {
 	 *            the schema of the datagraph
 	 * @return the generated list of types
 	 */
-	protected List<AttributedElementClass> createTypeList(Schema schema) {
+	protected List<AttributedElementClass> createTypeList(
+			InternalGreqlEvaluator evaluator) {
 
 		ArrayList<AttributedElementClass> returnTypes = new ArrayList<AttributedElementClass>();
-		AttributedElementClass elemClass = schema
+		AttributedElementClass elemClass = evaluator
 				.getAttributedElementClass(vertex.get_name());
 		if (elemClass == null) {
-			elemClass = greqlEvaluator.getKnownType(vertex.get_name());
+			elemClass = evaluator.getKnownType(vertex.get_name());
 			if (elemClass == null) {
 				throw new UnknownTypeException(vertex.get_name(),
 						createPossibleSourcePositions());
@@ -88,8 +88,7 @@ public class TypeIdEvaluator extends VertexEvaluator<TypeId> {
 
 	@Override
 	public TypeCollection evaluate(InternalGreqlEvaluator evaluator) {
-		List<AttributedElementClass> typeList = createTypeList(query
-				.getQueryGraph().getSchema());
+		List<AttributedElementClass> typeList = createTypeList(evaluator);
 		return new TypeCollection(typeList, vertex.is_excluded());
 	}
 
