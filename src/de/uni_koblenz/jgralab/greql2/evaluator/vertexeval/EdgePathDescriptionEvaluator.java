@@ -42,7 +42,7 @@ import de.uni_koblenz.jgralab.greql2.evaluator.Query;
 import de.uni_koblenz.jgralab.greql2.evaluator.fa.NFA;
 import de.uni_koblenz.jgralab.greql2.schema.EdgePathDescription;
 import de.uni_koblenz.jgralab.greql2.schema.Expression;
-import de.uni_koblenz.jgralab.greql2.schema.IsTypeRestrOfExpression;
+import de.uni_koblenz.jgralab.greql2.schema.IsEdgeRestrOf;
 import de.uni_koblenz.jgralab.greql2.types.TypeCollection;
 
 /**
@@ -67,8 +67,10 @@ public class EdgePathDescriptionEvaluator extends
 					.getAlpha());
 		}
 		TypeCollection typeCollection = new TypeCollection();
-		IsTypeRestrOfExpression inc = vertex
-				.getFirstIsTypeRestrOfExpressionIncidence(EdgeDirection.IN);
+		// IsTypeRestrOfExpression inc = vertex
+		// .getFirstIsTypeRestrOfExpressionIncidence(EdgeDirection.IN);
+		IsEdgeRestrOf inc = vertex
+				.getFirstIsEdgeRestrOfIncidence(EdgeDirection.IN);
 		EdgeRestrictionEvaluator edgeRestEval = null;
 		VertexEvaluator<? extends Expression> predicateEvaluator = null;
 		if (inc != null) {

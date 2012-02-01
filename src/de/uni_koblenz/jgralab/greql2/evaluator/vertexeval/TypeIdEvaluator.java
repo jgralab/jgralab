@@ -87,7 +87,7 @@ public class TypeIdEvaluator extends VertexEvaluator<TypeId> {
 	}
 
 	@Override
-	public Object evaluate(InternalGreqlEvaluator evaluator) {
+	public TypeCollection evaluate(InternalGreqlEvaluator evaluator) {
 		List<AttributedElementClass> typeList = createTypeList(query
 				.getQueryGraph().getSchema());
 		return new TypeCollection(typeList, vertex.is_excluded());
