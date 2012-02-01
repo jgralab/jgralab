@@ -5,6 +5,7 @@ import org.pcollections.PMap;
 
 import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Record;
+import de.uni_koblenz.jgralab.greql2.types.Undefined;
 import de.uni_koblenz.jgralab.gretl.Context.GReTLVariableType;
 import de.uni_koblenz.jgralab.gretl.Context.TransformationPhase;
 import de.uni_koblenz.jgralab.schema.Attribute;
@@ -68,7 +69,7 @@ public class SetAttributes extends
 			}
 			Object val = archetype2valueMap.get(archetype);
 			resultMap = resultMap.plus(image, val);
-			if (val != null) {
+			if (val != Undefined.UNDEFINED) {
 				Object o = convertToAttributeValue(val);
 				image.setAttribute(attribute.getName(), o);
 			}
