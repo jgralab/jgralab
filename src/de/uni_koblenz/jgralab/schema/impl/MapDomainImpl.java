@@ -353,7 +353,7 @@ public final class MapDomainImpl extends CompositeDomainImpl implements
 	}
 
 	@Override
-	public boolean genericIsConform(Object value) {
+	public boolean isConformGenericValue(Object value) {
 		boolean result = true;
 		if (value == null) {
 			return result;
@@ -365,9 +365,9 @@ public final class MapDomainImpl extends CompositeDomainImpl implements
 		Iterator<?> iterator = ((PMap<?, ?>) value).keySet().iterator();
 		while (iterator.hasNext() && result) {
 			Object key = iterator.next();
-			result &= getKeyDomain().genericIsConform(key)
+			result &= getKeyDomain().isConformGenericValue(key)
 					&& getValueDomain()
-							.genericIsConform(((PMap<?, ?>) value).get(key));
+							.isConformGenericValue(((PMap<?, ?>) value).get(key));
 		}
 		return result;
 	}

@@ -141,7 +141,7 @@ public final class StringDomainImpl extends BasicDomainImpl implements
 	}
 
 	@Override
-	public boolean genericIsConform(Object value) {
+	public boolean isConformGenericValue(Object value) {
 		try {
 			return value == null
 					|| Class.forName(getJavaClassName(null)).isInstance(value);

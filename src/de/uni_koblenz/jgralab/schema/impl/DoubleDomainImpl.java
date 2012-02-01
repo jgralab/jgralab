@@ -140,7 +140,7 @@ public final class DoubleDomainImpl extends BasicDomainImpl implements
 	}
 
 	@Override
-	public boolean genericIsConform(Object value) {
+	public boolean isConformGenericValue(Object value) {
 		try {
 			return Class.forName(getJavaClassName(null)).isInstance(value);
 		} catch (ClassNotFoundException e) {

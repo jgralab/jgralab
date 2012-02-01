@@ -241,7 +241,7 @@ public final class EnumDomainImpl extends DomainImpl implements EnumDomain {
 	}
 
 	@Override
-	public boolean genericIsConform(Object value) {
+	public boolean isConformGenericValue(Object value) {
 		boolean result = true;
 		if (value == null) {
 			return result;

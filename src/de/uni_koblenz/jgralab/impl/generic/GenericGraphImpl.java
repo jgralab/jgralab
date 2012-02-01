@@ -150,7 +150,7 @@ public class GenericGraphImpl extends GraphImpl {
 			throw new NoSuchAttributeException(type.getSimpleName()
 					+ " doesn't contain an attribute " + name);
 		} else {
-			if (!type.getAttribute(name).getDomain().genericIsConform(data)) {
+			if (!type.getAttribute(name).getDomain().isConformGenericValue(data)) {
 				throw new ClassCastException();
 			} else {
 				attributes.put(name, data);

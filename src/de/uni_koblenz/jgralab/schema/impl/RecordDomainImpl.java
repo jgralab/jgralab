@@ -374,7 +374,7 @@ public final class RecordDomainImpl extends CompositeDomainImpl implements
 	}
 
 	@Override
-	public boolean genericIsConform(Object value) {
+	public boolean isConformGenericValue(Object value) {
 		boolean result = true;
 		if (value == null) {
 			return result;
@@ -389,7 +389,7 @@ public final class RecordDomainImpl extends CompositeDomainImpl implements
 		Iterator<RecordComponent> iterator = getComponents().iterator();
 		while (iterator.hasNext() && result) {
 			RecordComponent component = iterator.next();
-			result &= component.getDomain().genericIsConform(
+			result &= component.getDomain().isConformGenericValue(
 					((Record) value).getComponent(component.getName()));
 		}
 		assert (!iterator.hasNext());
