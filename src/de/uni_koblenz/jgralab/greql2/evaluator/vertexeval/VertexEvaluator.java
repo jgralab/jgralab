@@ -169,7 +169,7 @@ public abstract class VertexEvaluator<V extends Greql2Vertex> {
 	 * @return the evaluation result
 	 */
 	public Object getResult(InternalGreqlEvaluator evaluator) {
-		Object result = evaluator.getLocalVariableValue(vertex);
+		Object result = evaluator.getLocalEvaluationResult(vertex);
 		if (result != null) {
 			return result;
 		}
@@ -177,7 +177,7 @@ public abstract class VertexEvaluator<V extends Greql2Vertex> {
 		// System.out.println("Evaluating : " + this);
 		try {
 			result = evaluate(evaluator);
-			evaluator.setLocalVariable(vertex, result);
+			evaluator.setLocalEvaluationResult(vertex, result);
 			// System.out.println("VertexEvaluator.getResult(graph) " + result
 			// + " of vertex " + getVertex());
 		} catch (QuerySourceException ex) {
@@ -198,7 +198,7 @@ public abstract class VertexEvaluator<V extends Greql2Vertex> {
 	 *         mostly for debugging
 	 */
 	public boolean isEvaluated(InternalGreqlEvaluator evaluator) {
-		return (evaluator.getLocalVariableValue(vertex) != null);
+		return (evaluator.getLocalEvaluationResult(vertex) != null);
 	}
 
 	/**
@@ -211,7 +211,7 @@ public abstract class VertexEvaluator<V extends Greql2Vertex> {
 	 * clears the evaluation result
 	 */
 	public final void clear(InternalGreqlEvaluator evaluator) {
-		evaluator.removeLocalVariable(vertex);
+		evaluator.removeLocalEvaluationResult(vertex);
 	}
 
 	// TODO [greqlrenovation] handleResult

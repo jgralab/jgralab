@@ -9,10 +9,10 @@ public interface InternalGreqlEvaluator {
 
 	public Object getGlobalVariableValue(String varName);
 
-	public Object setLocalVariable(Greql2Vertex vertex, Object value);
+	public Object setLocalEvaluationResult(Greql2Vertex vertex, Object value);
 
-	public Object getLocalVariableValue(Greql2Vertex vertex);
+	public Object getLocalEvaluationResult(Greql2Vertex vertex);
 
-	public Object removeLocalVariable(Greql2Vertex vertex);
+	public Object removeLocalEvaluationResult(Greql2Vertex vertex);
 
 }

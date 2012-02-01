@@ -53,7 +53,7 @@ public class SubgraphRestrictedExpressionEvaluator extends
 
 		// evaluate restricted expression with traversal context
 		Object result = exprEval.getResult(evaluator);
-		evaluator.setLocalVariable(vertex, result);
+		evaluator.setLocalEvaluationResult(vertex, result);
 
 		// release traversal context
 		graph.setTraversalContext(oldTraversalContext);

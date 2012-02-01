@@ -89,9 +89,9 @@ public class ConditionalExpressionEvaluator extends
 			VertexEvaluator<? extends Expression> exprEvaluator = query
 					.getVertexEvaluator(expressionToEvaluate);
 			result = exprEvaluator.getResult(evaluator);
-			evaluator.setLocalVariable(vertex, result);
+			evaluator.setLocalEvaluationResult(vertex, result);
 		} else {
-			evaluator.removeLocalVariable(vertex);
+			evaluator.removeLocalEvaluationResult(vertex);
 			result = null;
 		}
 		return result;

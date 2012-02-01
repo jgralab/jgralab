@@ -95,11 +95,11 @@ public abstract class PathDescriptionEvaluator<V extends PathDescription>
 		if (createdNFA == null) {
 			Object result = evaluate(evaluator);
 			createdNFA = (NFA) result;
-			evaluator.setLocalVariable(vertex, result);
+			evaluator.setLocalEvaluationResult(vertex, result);
 			addGoalRestrictions(evaluator);
 			addStartRestrictions(evaluator);
 		}
-		return evaluator.getLocalVariableValue(vertex);
+		return evaluator.getLocalEvaluationResult(vertex);
 	}
 
 	/**

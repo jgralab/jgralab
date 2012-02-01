@@ -88,14 +88,14 @@ public class VariableEvaluator extends VertexEvaluator<Variable> {
 		for (int i = 0; i < size; i++) {
 			dependingExpressions.get(i).clear(evaluator);
 		}
-		evaluator.setLocalVariable(vertex, variableValue);
+		evaluator.setLocalEvaluationResult(vertex, variableValue);
 	}
 
 	/**
 	 * returns the variableValue
 	 */
 	public Object getValue(InternalGreqlEvaluator evaluator) {
-		return evaluator.getLocalVariableValue(vertex);
+		return evaluator.getLocalEvaluationResult(vertex);
 	}
 
 	/**
