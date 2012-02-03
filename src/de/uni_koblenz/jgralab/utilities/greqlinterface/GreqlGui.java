@@ -83,15 +83,18 @@ import javax.xml.stream.XMLStreamException;
 
 import de.uni_koblenz.ist.utilities.gui.FontSelectionDialog;
 import de.uni_koblenz.ist.utilities.gui.RecentFilesList;
+import de.uni_koblenz.ist.utilities.gui.StringListPreferences;
 import de.uni_koblenz.ist.utilities.gui.SwingApplication;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.ImplementationType;
 import de.uni_koblenz.jgralab.ProgressFunction;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
+import de.uni_koblenz.jgralab.greql2.exception.GreqlException;
 import de.uni_koblenz.jgralab.greql2.exception.ParsingException;
 import de.uni_koblenz.jgralab.greql2.exception.QuerySourceException;
 import de.uni_koblenz.jgralab.greql2.exception.SerialisingException;
+import de.uni_koblenz.jgralab.greql2.funlib.FunLib;
 import de.uni_koblenz.jgralab.greql2.schema.SourcePosition;
 import de.uni_koblenz.jgralab.greql2.serialising.HTMLOutputWriter;
 import de.uni_koblenz.jgralab.greql2.serialising.XMLOutputWriter;
@@ -108,6 +111,7 @@ public class GreqlGui extends SwingApplication {
 	private static final String PREFS_KEY_GENERIC_IMPL = "GENERIC_IMPL"; //$NON-NLS-1$
 	private static final String PREFS_KEY_ENABLE_OPTIMIZER = "ENABLE_OPTIMIZER"; //$NON-NLS-1$
 	private static final String PREFS_KEY_DEBUG_OPTIMIZER = "DEBUG_OPTIMIZER"; //$NON-NLS-1$
+	private static final String PREFS_KEY_GREQL_FUNCTIONS = "GREQL_FUNCTION"; //$NON-NLS-1$
 
 	private static final String VERSION = "0.0"; //$NON-NLS-1$
 
@@ -163,6 +167,7 @@ public class GreqlGui extends SwingApplication {
 
 	private RecentFilesList recentQueryList;
 	private RecentFilesList recentGraphList;
+	private StringListPreferences greqlFunctionList;
 	private JMenu recentGraphsMenu;
 
 	private Font queryFont;
@@ -210,6 +215,78 @@ public class GreqlGui extends SwingApplication {
 				@Override
 				public void run() {
 					brm.setValue(brm.getValue() + 1);
+				}
+			});
+		}
+	}
+
+	class GreqlFunctionLoader extends Worker {
+		boolean errors;
+
+		GreqlFunctionLoader(BoundedRangeModel brm) {
+			super(brm);
+		}
+
+		@Override
+		public void run() {
+			init(greqlFunctionList.size());
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+			}
+			try {
+				errors = false;
+				for (String className : greqlFunctionList.getEntries()) {
+					try {
+						FunLib.register(className);
+					} catch (GreqlException e) {
+						System.err
+								.println(MessageFormat
+										.format(getMessage("GreqlGui.StatusMessage.FunctionGreqlException"),
+												className, e.getMessage()));
+					} catch (ClassNotFoundException e1) {
+						errors = true;
+						System.err
+								.println(MessageFormat
+										.format(getMessage("GreqlGui.StatusMessage.FunctionNotFound"),
+												className));
+					} catch (ClassCastException e2) {
+						errors = true;
+						System.err
+								.println(MessageFormat
+										.format(getMessage("GreqlGui.StatusMessage.FunctionWrongType"),
+												className));
+					}
+					progress(1);
+				}
+			} finally {
+				finished();
+			}
+		}
+
+		@Override
+		public void init(long totalElements) {
+			super.init(totalElements);
+			invokeAndWait(new Runnable() {
+				@Override
+				public void run() {
+					getStatusBar()
+							.setText(
+									getMessage("GreqlGui.StatusMessage.FunctionsLoading")); //$NON-NLS-1$
+				}
+			});
+		}
+
+		@Override
+		public void finished() {
+			super.finished();
+			invokeAndWait(new Runnable() {
+				@Override
+				public void run() {
+					getStatusBar()
+							.setText(
+									getMessage(errors ? "GreqlGui.StatusMessage.FunctionsLoadedWithErrors" //$NON-NLS-1$ 
+											: "GreqlGui.StatusMessage.FunctionsLoaded")); //$NON-NLS-1$
 				}
 			});
 		}
@@ -433,7 +510,13 @@ public class GreqlGui extends SwingApplication {
 				loadGraph(file);
 			}
 		};
+
 		fd = new FileDialog(getApplicationName());
+
+		greqlFunctionList = new StringListPreferences(prefs,
+				PREFS_KEY_GREQL_FUNCTIONS);
+		greqlFunctionList.load();
+		loadGreqlFunctions();
 	}
 
 	private void loadFontSettings() {
@@ -510,7 +593,7 @@ public class GreqlGui extends SwingApplication {
 	}
 
 	@Override
-	public void updateActions() {
+	protected void updateActions() {
 		setModified(getCurrentQuery() != null && getCurrentQuery().isModified());
 
 		fileCloseAction.setEnabled(getCurrentQuery() != null);
@@ -933,10 +1016,11 @@ public class GreqlGui extends SwingApplication {
 
 	@Override
 	protected void editPreferences() {
-		new SettingsDialog(this, queryFont, resultFont);
+		new SettingsDialog(this, queryFont, resultFont,
+				greqlFunctionList.getEntries());
 	}
 
-	public void loadGraph(File f) {
+	private void loadGraph(File f) {
 		try {
 			setPrefString(PREFS_KEY_LAST_GRAPH_DIRECTORY, f.getParentFile()
 					.getCanonicalPath());
@@ -950,7 +1034,14 @@ public class GreqlGui extends SwingApplication {
 
 	}
 
-	public void loadGraph() {
+	private void loadGreqlFunctions() {
+		if (greqlFunctionList.size() == 0) {
+			return;
+		}
+		new GreqlFunctionLoader(brm).start();
+	}
+
+	private void loadGraph() {
 		String lastDirectoryName = getPrefString(
 				PREFS_KEY_LAST_GRAPH_DIRECTORY, System.getProperty("user.dir")); //$NON-NLS-1$ 
 		fd.setDirectory(new File(lastDirectoryName));
@@ -962,7 +1053,7 @@ public class GreqlGui extends SwingApplication {
 		}
 	}
 
-	public void unloadGraph() {
+	private void unloadGraph() {
 		graph = null;
 		getStatusBar().setText(
 				getMessage("GreqlGui.StatusMessage.GraphUnloaded")); //$NON-NLS-1$
@@ -1049,6 +1140,7 @@ public class GreqlGui extends SwingApplication {
 			prefs.put(PREFS_KEY_RESULT_FONT,
 					FontSelectionDialog.getInternalFontName(resultFont));
 		}
+		greqlFunctionList.setEntries(d.getGreqlFunctionList());
 		try {
 			prefs.flush();
 		} catch (BackingStoreException e) {
