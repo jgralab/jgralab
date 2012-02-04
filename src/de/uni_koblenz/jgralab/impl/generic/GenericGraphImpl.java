@@ -52,7 +52,9 @@ public class GenericGraphImpl extends GraphImpl {
 		super(id, type, vmax, emax);
 		this.type = type;
 		attributes = GenericGraphImpl.initializeAttributes(type);
-		GenericGraphImpl.initializeGenericAttributeValues(this);
+		if(!isLoading()) {
+			GenericGraphImpl.initializeGenericAttributeValues(this);
+		}
 	}
 
 	/**
