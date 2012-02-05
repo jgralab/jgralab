@@ -235,7 +235,7 @@ public class GenericGraphImpl extends GraphImpl {
 			AttributedElementClass<?, ?> aec) {
 		Map<String, Object> attributes = null;
 		if (aec.getAttributeCount() > 0) {
-			attributes = new HashMap<String, Object>();
+			attributes = new HashMap<String, Object>(aec.getAttributeCount());
 			for (Attribute a : aec.getAttributeList()) {
 				attributes.put(a.getName(), null);
 			}
