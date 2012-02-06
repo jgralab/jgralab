@@ -187,7 +187,9 @@ public class GreqlGui extends SwingApplication {
 			invokeAndWait(new Runnable() {
 				@Override
 				public void run() {
-					brm.setValue(brm.getMaximum());
+					progressBar.setIndeterminate(false);
+					progressBar.setStringPainted(false);
+					brm.setValue(brm.getMinimum());
 				}
 			});
 		}
@@ -214,6 +216,8 @@ public class GreqlGui extends SwingApplication {
 			invokeAndWait(new Runnable() {
 				@Override
 				public void run() {
+					progressBar.setIndeterminate(false);
+					progressBar.setStringPainted(true);
 					brm.setValue(brm.getValue() + 1);
 				}
 			});
@@ -303,6 +307,7 @@ public class GreqlGui extends SwingApplication {
 		@Override
 		public void run() {
 			try {
+				progressBar.setIndeterminate(true);
 				graph = GraphIO
 						.loadGraphFromFile(
 								file.getCanonicalPath(),
@@ -375,104 +380,114 @@ public class GreqlGui extends SwingApplication {
 
 		@Override
 		public void run() {
-			final GreqlEvaluator eval = new GreqlEvaluator(query, graph,
-					new HashMap<String, Object>(), this);
-			eval.setOptimize(enableOptimizerCheckBoxItem.isSelected());
-			GreqlEvaluator.DEBUG_OPTIMIZATION = debugOptimizerCheckBoxItem
-					.isSelected();
+			progressBar.setIndeterminate(true);
 			try {
-				eval.startEvaluation();
-			} catch (Exception e1) {
-				ex = e1;
-			}
-			invokeAndWait(new Runnable() {
-
-				@Override
-				public void run() {
-					if (ex != null) {
-						evaluating = false;
-						brm.setValue(brm.getMinimum());
-						getStatusBar()
-								.setText(
-										getMessage("GreqlGui.StatusMessage.EvaluationFailed")); //$NON-NLS-1$
-						String msg = ex.getMessage();
-						if (msg == null) {
-							if (ex.getCause() != null) {
-								msg = ex.getCause().toString();
-							} else {
-								msg = ex.toString();
-							}
-						}
-						ex.printStackTrace();
-						if (ex instanceof QuerySourceException) {
-							QuerySourceException qs = (QuerySourceException) ex;
-							List<SourcePosition> spl = qs.getSourcePositions();
-							if (spl.size() > 0) {
-								SourcePosition sp = spl.get(0);
-								getCurrentQuery().setSelection(sp.get_offset(),
-										sp.get_length());
-							}
-						} else if (ex instanceof ParsingException) {
-							ParsingException pe = (ParsingException) ex;
-							getCurrentQuery().setSelection(pe.getOffset(),
-									pe.getLength());
-						}
-						resultFontSet = false;
-						resultPane.setText(ex.getClass().getSimpleName() + ": " //$NON-NLS-1$
-								+ msg);
-						setResultFont(resultFont);
-						updateActions();
-					} else {
-						evaluationTime = eval.getOverallEvaluationTime() / 1000.0;
-						getStatusBar()
-								.setText(
-										MessageFormat
-												.format(getMessage("GreqlGui.StatusMessage.EvaluationFinished"), evaluationTime)); //$NON-NLS-1$
-					}
+				final GreqlEvaluator eval = new GreqlEvaluator(query, graph,
+						new HashMap<String, Object>(), this);
+				eval.setOptimize(enableOptimizerCheckBoxItem.isSelected());
+				GreqlEvaluator.DEBUG_OPTIMIZATION = debugOptimizerCheckBoxItem
+						.isSelected();
+				try {
+					eval.startEvaluation();
+				} catch (Exception e1) {
+					ex = e1;
 				}
-			});
-			if (ex == null) {
-				invokeLater(new Runnable() {
+				invokeAndWait(new Runnable() {
+
 					@Override
 					public void run() {
-						Object result = eval.getResult();
-						evaluating = false;
-						updateActions();
-						try {
-							File xmlResultFile = new File(
-									"greqlQueryResult.xml"); //$NON-NLS-1$
-							XMLOutputWriter xw = new XMLOutputWriter(graph);
-							xw.writeValue(result, xmlResultFile);
-							File resultFile = new File("greqlQueryResult.html"); //$NON-NLS-1$
-							// File resultFile = File.createTempFile(
-							// "greqlQueryResult", ".html");
-							// resultFile.deleteOnExit();
-							HTMLOutputWriter w = new HTMLOutputWriter(graph);
-							w.setUseCss(false);
-							w.writeValue(result, resultFile);
-							Document doc = resultPane.getDocument();
-							doc.putProperty(Document.StreamDescriptionProperty,
-									null);
-							outputPane.setSelectedComponent(resultScrollPane);
+						if (ex != null) {
+							evaluating = false;
+							brm.setValue(brm.getMinimum());
+							getStatusBar()
+									.setText(
+											getMessage("GreqlGui.StatusMessage.EvaluationFailed")); //$NON-NLS-1$
+							String msg = ex.getMessage();
+							if (msg == null) {
+								if (ex.getCause() != null) {
+									msg = ex.getCause().toString();
+								} else {
+									msg = ex.toString();
+								}
+							}
+							ex.printStackTrace();
+							if (ex instanceof QuerySourceException) {
+								QuerySourceException qs = (QuerySourceException) ex;
+								List<SourcePosition> spl = qs
+										.getSourcePositions();
+								if (spl.size() > 0) {
+									SourcePosition sp = spl.get(0);
+									getCurrentQuery().setSelection(
+											sp.get_offset(), sp.get_length());
+								}
+							} else if (ex instanceof ParsingException) {
+								ParsingException pe = (ParsingException) ex;
+								getCurrentQuery().setSelection(pe.getOffset(),
+										pe.getLength());
+							}
 							resultFontSet = false;
-							resultPane.setPage(new URL("file", "localhost", //$NON-NLS-1$ //$NON-NLS-2$
-									resultFile.getCanonicalPath()));
-						} catch (SerialisingException e) {
-							// TODO externalize string
-							JOptionPane.showMessageDialog(GreqlGui.this,
-									"Exception during HTML output of result: " //$NON-NLS-1$
-											+ e.toString());
-						} catch (IOException e) {
-							// TODO externalize string
-							JOptionPane.showMessageDialog(GreqlGui.this,
-									"Exception during HTML output of result: " //$NON-NLS-1$
-											+ e.toString());
-						} catch (XMLStreamException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
+							resultPane.setText(ex.getClass().getSimpleName()
+									+ ": " //$NON-NLS-1$
+									+ msg);
+							setResultFont(resultFont);
+							updateActions();
+						} else {
+							evaluationTime = eval.getOverallEvaluationTime() / 1000.0;
+							getStatusBar()
+									.setText(
+											MessageFormat
+													.format(getMessage("GreqlGui.StatusMessage.EvaluationFinished"), evaluationTime)); //$NON-NLS-1$
 						}
 					}
 				});
+				if (ex == null) {
+					invokeLater(new Runnable() {
+						@Override
+						public void run() {
+							Object result = eval.getResult();
+							evaluating = false;
+							updateActions();
+							try {
+								File xmlResultFile = new File(
+										"greqlQueryResult.xml"); //$NON-NLS-1$
+								XMLOutputWriter xw = new XMLOutputWriter(graph);
+								xw.writeValue(result, xmlResultFile);
+								File resultFile = new File(
+										"greqlQueryResult.html"); //$NON-NLS-1$
+								// File resultFile = File.createTempFile(
+								// "greqlQueryResult", ".html");
+								// resultFile.deleteOnExit();
+								HTMLOutputWriter w = new HTMLOutputWriter(graph);
+								w.setUseCss(false);
+								w.writeValue(result, resultFile);
+								Document doc = resultPane.getDocument();
+								doc.putProperty(
+										Document.StreamDescriptionProperty,
+										null);
+								outputPane
+										.setSelectedComponent(resultScrollPane);
+								resultFontSet = false;
+								resultPane.setPage(new URL("file", "localhost", //$NON-NLS-1$ //$NON-NLS-2$
+										resultFile.getCanonicalPath()));
+							} catch (SerialisingException e) {
+								// TODO externalize string
+								JOptionPane.showMessageDialog(GreqlGui.this,
+										"Exception during HTML output of result: " //$NON-NLS-1$
+												+ e.toString());
+							} catch (IOException e) {
+								// TODO externalize string
+								JOptionPane.showMessageDialog(GreqlGui.this,
+										"Exception during HTML output of result: " //$NON-NLS-1$
+												+ e.toString());
+							} catch (XMLStreamException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
+						}
+					});
+				}
+			} finally {
+				finished();
 			}
 		}
 
@@ -814,6 +829,7 @@ public class GreqlGui extends SwingApplication {
 		brm = new DefaultBoundedRangeModel();
 		progressBar = new JProgressBar();
 		progressBar.setModel(brm);
+		progressBar.setStringPainted(true);
 		progressBar.setBorder(BorderFactory.createEmptyBorder(0, 8, 0, 8));
 		if (RUNS_ON_MAC_OS_X) {
 			progressBar.putClientProperty("JComponent.sizeVariant", "small"); //$NON-NLS-1$ //$NON-NLS-2$ 
