@@ -81,7 +81,7 @@ public class GraphIndex {
 	/**
 	 * The id of the graph this index belongs to
 	 */
-	private String graphId;
+	private Graph graph;
 
 	/**
 	 * The original size of that graph
@@ -105,7 +105,7 @@ public class GraphIndex {
 	 *            the graph to create the Index for
 	 */
 	public GraphIndex(Graph graph) {
-		graphId = graph.getId();
+		this.graph = graph;
 		graphVersion = graph.getGraphVersion();
 		graphSize = graph.getECount() + graph.getVCount();
 		vertexIndex = new HashMap<String, VertexIndexEntry>();
@@ -115,15 +115,15 @@ public class GraphIndex {
 	 * @return true iff this index is still valid for the given graph
 	 */
 	public boolean isValid(Graph g) {
-		return ((g.getId().equals(graphId)) && (!g
+		return ((g == graph) && (!g
 				.isGraphModified(graphVersion)));
 	}
 
 	/**
 	 * @return the ID of the graph this index belongs to
 	 */
-	public String getGraphId() {
-		return graphId;
+	public Graph getGraph() {
+		return graph;
 	}
 
 	/**
