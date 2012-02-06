@@ -196,11 +196,11 @@ public class GreqlEvaluator {
 	/**
 	 * stores the graph indizes (maps graphId values to GraphIndizes)
 	 */
-	protected static Map<String, SoftReference<GraphIndex>> graphIndizes;
+	protected static Map<Graph, SoftReference<GraphIndex>> graphIndizes;
 
 	public static synchronized void resetGraphIndizes() {
 		if (graphIndizes == null) {
-			graphIndizes = new HashMap<String, SoftReference<GraphIndex>>();
+			graphIndizes = new HashMap<Graph, SoftReference<GraphIndex>>();
 		} else {
 			graphIndizes.clear();
 		}
@@ -248,7 +248,7 @@ public class GreqlEvaluator {
 	 */
 	public static synchronized PSet<Vertex> getVertexIndex(Graph graph,
 			String queryPart) {
-		SoftReference<GraphIndex> ref = graphIndizes.get(graph.getId());
+		SoftReference<GraphIndex> ref = graphIndizes.get(graph);
 		if (ref == null) {
 			return null;
 		}
@@ -270,7 +270,7 @@ public class GreqlEvaluator {
 	 */
 	public static synchronized void addVertexIndex(Graph graph,
 			String queryPart, PSet<Vertex> vertexSet) {
-		SoftReference<GraphIndex> ref = graphIndizes.get(graph.getId());
+		SoftReference<GraphIndex> ref = graphIndizes.get(graph);
 		GraphIndex index = null;
 
 		if (ref != null) {
@@ -283,7 +283,7 @@ public class GreqlEvaluator {
 
 		if (index == null) {
 			index = new GraphIndex(graph);
-			graphIndizes.put(graph.getId(),
+			graphIndizes.put(graph,
 					new SoftReference<GraphIndex>(index));
 		}
 		index.addVertexSet(queryPart, vertexSet);
