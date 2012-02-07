@@ -166,7 +166,7 @@ public class Greql2ExpressionEvaluator extends
 					.getVertexEvaluator(storeInc.getAlpha());
 			String varName = storeEval.getResult(evaluator).toString();
 			// TODO [greqlrenovation] VariableDeclaration has an own
-			// toString(InternalGreqlEvaluator)-method
+			// toString(InternalGreqlEvaluator)-method. check the use
 			evaluator.setBoundVariable(varName, result);
 		}
 		return result;
