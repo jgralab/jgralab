@@ -278,7 +278,7 @@ public class OptimizerTest extends GenericTest {
 		String query = "from a, b : list(1..10),               "
 				+ "          c, d : list(11..20)"
 				+ "     with isPrime(a) and isPrime(b) and a < b and c < d"
-				+ "     report a, b, c, d end";
+				+ "     reportSet a, b, c, d end";
 		execTimedTest(query, "EarlySelectionOptimizer7()", eso);
 	}
 
