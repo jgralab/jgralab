@@ -349,6 +349,12 @@ public class FunLib {
 		return true;
 	}
 
+	public static final void register(String className)
+			throws ClassNotFoundException {
+		Class<?> cls = Class.forName(className);
+		register(cls.asSubclass(Function.class));
+	}
+
 	public static final void register(Class<? extends Function> cls) {
 		int mods = cls.getModifiers();
 		if (Modifier.isAbstract(mods) || Modifier.isInterface(mods)

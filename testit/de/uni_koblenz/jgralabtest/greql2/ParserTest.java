@@ -1248,6 +1248,7 @@ public class ParserTest {
 				"de.uni_koblenz.jgralab.sampleschema");
 		GraphClass gc = s.createGraphClass("SampleGraph");
 		gc.createVertexClass("map.SampleVertex");
+		s.finish();
 		s.commit(CodeGeneratorConfiguration.MINIMAL);
 		String query = "import map.SampleVertex;  true ";
 		parseQuery(query);

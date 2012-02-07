@@ -52,7 +52,9 @@ public class GenericGraphImpl extends GraphImpl {
 		super(id, type, vmax, emax);
 		this.type = type;
 		attributes = GenericGraphImpl.initializeAttributes(type);
-		GenericGraphImpl.initializeGenericAttributeValues(this);
+		if(!isLoading()) {
+			GenericGraphImpl.initializeGenericAttributeValues(this);
+		}
 	}
 
 	/**
@@ -150,7 +152,7 @@ public class GenericGraphImpl extends GraphImpl {
 			throw new NoSuchAttributeException(type.getSimpleName()
 					+ " doesn't contain an attribute " + name);
 		} else {
-			if (!type.getAttribute(name).getDomain().genericIsConform(data)) {
+			if (!type.getAttribute(name).getDomain().isConformGenericValue(data)) {
 				throw new ClassCastException();
 			} else {
 				attributes.put(name, data);
@@ -233,7 +235,7 @@ public class GenericGraphImpl extends GraphImpl {
 			AttributedElementClass<?, ?> aec) {
 		Map<String, Object> attributes = null;
 		if (aec.getAttributeCount() > 0) {
-			attributes = new HashMap<String, Object>();
+			attributes = new HashMap<String, Object>(aec.getAttributeCount());
 			for (Attribute a : aec.getAttributeList()) {
 				attributes.put(a.getName(), null);
 			}

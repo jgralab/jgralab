@@ -185,5 +185,5 @@ public interface Domain extends NamedElement {
 	 * Checks, if an attribute value in the generic implementation conforms
 	 * to this domain.
 	 */
-	public boolean genericIsConform(Object value);
+	public boolean isConformGenericValue(Object value);
 }

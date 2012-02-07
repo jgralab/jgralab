@@ -10,6 +10,7 @@ import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.NoSuchAttributeException;
 import de.uni_koblenz.jgralab.Vertex;
+import de.uni_koblenz.jgralab.impl.InternalGraph;
 import de.uni_koblenz.jgralab.impl.ReversedEdgeBaseImpl;
 import de.uni_koblenz.jgralab.impl.std.EdgeImpl;
 import de.uni_koblenz.jgralab.schema.AggregationKind;
@@ -26,7 +27,9 @@ public class GenericEdgeImpl extends EdgeImpl {
 		super(anId, graph, alpha, omega);
 		this.type = type;
 		attributes = GenericGraphImpl.initializeAttributes(type);
-		GenericGraphImpl.initializeGenericAttributeValues(this);
+		if(!((InternalGraph) graph).isLoading()) {
+			GenericGraphImpl.initializeGenericAttributeValues(this);
+		}
 		((GenericGraphImpl) graph).addEdge(this, alpha, omega);
 	}
 
@@ -123,7 +126,7 @@ public class GenericEdgeImpl extends EdgeImpl {
 			throw new NoSuchAttributeException(type.getSimpleName()
 					+ " doesn't contain an attribute " + name);
 		} else {
-			if (!type.getAttribute(name).getDomain().genericIsConform(data)) {
+			if (!type.getAttribute(name).getDomain().isConformGenericValue(data)) {
 				throw new ClassCastException();
 			} else {
 				attributes.put(name, data);

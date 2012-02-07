@@ -268,7 +268,7 @@ public final class ListDomainImpl extends CollectionDomainImpl implements
 	}
 
 	@Override
-	public boolean genericIsConform(Object value) {
+	public boolean isConformGenericValue(Object value) {
 		boolean result = true;
 		if (value == null) {
 			return result;
@@ -279,7 +279,7 @@ public final class ListDomainImpl extends CollectionDomainImpl implements
 		}
 		Iterator<?> iterator = ((PVector<?>) value).iterator();
 		while (iterator.hasNext() && result) {
-			result &= getBaseDomain().genericIsConform(iterator.next());
+			result &= getBaseDomain().isConformGenericValue(iterator.next());
 		}
 		assert (!iterator.hasNext());
 		return result;

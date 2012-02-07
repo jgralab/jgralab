@@ -11,6 +11,7 @@ import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.NoSuchAttributeException;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.impl.IncidenceIterable;
+import de.uni_koblenz.jgralab.impl.InternalGraph;
 import de.uni_koblenz.jgralab.impl.InternalVertex;
 import de.uni_koblenz.jgralab.impl.std.VertexImpl;
 import de.uni_koblenz.jgralab.schema.Attribute;
@@ -26,7 +27,9 @@ public class GenericVertexImpl extends VertexImpl {
 		super(id, graph);
 		this.type = type;
 		attributes = GenericGraphImpl.initializeAttributes(type);
-		GenericGraphImpl.initializeGenericAttributeValues(this);
+		if(!((InternalGraph) graph).isLoading()) {
+			GenericGraphImpl.initializeGenericAttributeValues(this);
+		}
 	}
 
 	@Override
@@ -96,7 +99,7 @@ public class GenericVertexImpl extends VertexImpl {
 			throw new NoSuchAttributeException(type.getSimpleName()
 					+ " doesn't contain an attribute " + name);
 		} else {
-			if (!type.getAttribute(name).getDomain().genericIsConform(data)) {
+			if (!type.getAttribute(name).getDomain().isConformGenericValue(data)) {
 				throw new ClassCastException();
 			} else {
 				attributes.put(name, data);
