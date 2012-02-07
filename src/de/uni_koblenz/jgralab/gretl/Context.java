@@ -596,7 +596,6 @@ public class Context {
 			targetSchema.getGraphClass().getSchemaClass();
 			logger.info("Schema '" + targetSchema.getQualifiedName()
 					+ "' is already compiled or in the CLASSPATH...");
-			targetSchema = targetGraph.getSchema();
 			targetSchema.finish();
 			targetGraph = targetSchema.createGraph(ImplementationType.STANDARD);
 		} catch (Exception e) {
