@@ -9,12 +9,12 @@ import de.uni_koblenz.jgralab.schema.VertexClass;
 
 public class CreateVertices extends Transformation<PSet<? extends Vertex>> {
 
-	private PSet<Object> archetypes = null;
+	private PSet<? extends Object> archetypes = null;
 	private String semanticExpression = null;
 	private VertexClass vertexClass = null;
 
 	public CreateVertices(final Context c, final VertexClass vertexClass,
-			final PSet<Object> archetypes) {
+			final PSet<? extends Object> archetypes) {
 		super(c);
 		this.vertexClass = vertexClass;
 		this.archetypes = archetypes;

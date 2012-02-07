@@ -16,11 +16,11 @@ public class SetAttributes extends
 		Transformation<PMap<AttributedElement<?, ?>, Object>> {
 
 	private Attribute attribute = null;
-	private PMap<Object, Object> archetype2valueMap = null;
+	private PMap<? extends Object, ? extends Object> archetype2valueMap = null;
 	private String semanticExpression = null;
 
 	public SetAttributes(final Context c, final Attribute attr,
-			final PMap<Object, Object> archetypeValueMap) {
+			final PMap<? extends Object, ? extends Object> archetypeValueMap) {
 		super(c);
 		attribute = attr;
 		archetype2valueMap = archetypeValueMap;
