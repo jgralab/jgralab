@@ -10,7 +10,7 @@ public class CreateAttribute extends Transformation<Attribute> {
 
 	private AttributeSpec attrSpec;
 	private String semanticExpression;
-	private PMap<Object, Object> archetypes2values;
+	private PMap<? extends Object, ? extends Object> archetypes2values;
 
 	protected CreateAttribute(final Context c, final AttributeSpec attrSpec) {
 		super(c);
@@ -18,7 +18,7 @@ public class CreateAttribute extends Transformation<Attribute> {
 	}
 
 	public CreateAttribute(final Context c, final AttributeSpec attrSpec,
-			final PMap<Object, Object> archetypes2values) {
+			final PMap<? extends Object, ? extends Object> archetypes2values) {
 		this(c, attrSpec);
 		this.archetypes2values = archetypes2values;
 	}
