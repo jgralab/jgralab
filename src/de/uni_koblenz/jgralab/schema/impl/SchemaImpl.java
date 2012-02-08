@@ -217,7 +217,7 @@ public class SchemaImpl implements Schema {
 
 	/**
 	 * Creates a new <code>Schema</code>.
-	 * 
+	 *
 	 * @param name
 	 *            Name of schema.
 	 * @param packagePrefix
@@ -777,7 +777,7 @@ public class SchemaImpl implements Schema {
 	/**
 	 * Creates a {@link Package} with given qualified name, or returns an
 	 * existing package with this qualified name.
-	 * 
+	 *
 	 * @param qn
 	 *            the qualified name of the package
 	 * @return a new {@link Package} with the given qualified name, or an
@@ -833,7 +833,7 @@ public class SchemaImpl implements Schema {
 	/**
 	 * Given a qualified name like foo.bar.baz returns a string array with two
 	 * components: the package prefix (foo.bar) and the simple name (baz).
-	 * 
+	 *
 	 * @param qualifiedName
 	 *            a qualified name
 	 * @return a string array with two components: the package prefix and the
@@ -1104,7 +1104,7 @@ public class SchemaImpl implements Schema {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param implementationType
 	 * @return
 	 */
@@ -1164,7 +1164,7 @@ public class SchemaImpl implements Schema {
 
 	/**
 	 * only used internally
-	 * 
+	 *
 	 * @return number of graphelementclasses contained in graphclass
 	 */
 	private int getNumberOfElements() {
@@ -1369,6 +1369,16 @@ public class SchemaImpl implements Schema {
 		}
 		((GraphClassImpl) graphClass).finish();
 		finished = false;
+	}
+
+	@Override
+	public void save(String filename) throws GraphIOException {
+		GraphIO.saveSchemaToFile(this, filename);
+	}
+
+	@Override
+	public void save(DataOutputStream out) throws GraphIOException {
+		GraphIO.saveSchemaToStream(this, out);
 	}
 
 }
