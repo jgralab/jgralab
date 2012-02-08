@@ -231,6 +231,10 @@ public class GenericGraphImpl extends GraphImpl {
 		}
 	}
 
+	/*
+	 * Creates a Map with an entry for each attribute of a given
+	 * AttributedElementClass
+	 */
 	static Map<String, Object> initializeAttributes(
 			AttributedElementClass<?, ?> aec) {
 		Map<String, Object> attributes = null;
@@ -243,6 +247,10 @@ public class GenericGraphImpl extends GraphImpl {
 		return attributes;
 	}
 
+	/*
+	 * Initializes attributes of an (generic) AttributedElement with their
+	 * default values
+	 */
 	static void initializeGenericAttributeValues(AttributedElement<?, ?> ae) {
 		for (Attribute attr : ae.getAttributedElementClass().getAttributeList()) {
 			if ((attr.getDefaultValueAsString() != null)
