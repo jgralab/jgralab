@@ -8,7 +8,6 @@ import static org.junit.Assert.fail;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -18,6 +17,7 @@ import java.util.Set;
 import org.junit.AfterClass;
 import org.junit.Test;
 
+import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphException;
@@ -40,7 +40,6 @@ import de.uni_koblenz.jgralab.schema.EnumDomain;
 import de.uni_koblenz.jgralab.schema.RecordDomain;
 import de.uni_koblenz.jgralab.schema.Schema;
 import de.uni_koblenz.jgralab.schema.VertexClass;
-import de.uni_koblenz.jgralabtest.schemas.greqltestschema.impl.std.RouteMapFactoryImpl;
 
 public class GenericGraphImplTest {
 
@@ -55,7 +54,8 @@ public class GenericGraphImplTest {
 	 * Tests, if an graph/vertex/edge of a generic <code>Graph</code> contains
 	 * all its attributes, as defined by the corresponding
 	 * {@link AttributedElementClass} in the <code>Graph</code>'s
-	 * <code>Schema</code>.
+	 * <code>Schema</code>. However, this does not guarantee that there are no
+	 * other, additional attributes.
 	 *
 	 * @param testObject
 	 *            A {@link GenericGraphImpl}, {@link GenericVertexImpl} or
@@ -64,40 +64,19 @@ public class GenericGraphImplTest {
 	 *            The element of the <code>Schema</code>, representing the
 	 *            tested.
 	 */
-	private void testElementAttributes(Object testObject,
+	private void testElementAttributes(AttributedElement<?, ?> ae,
 			AttributedElementClass<?, ?> aec) {
-		try {
-			Field f = testObject.getClass().getDeclaredField("attributes");
-			f.setAccessible(true);
-			Map<?, ?> attributes = (Map<?, ?>) f.get(testObject);
-			if (attributes != null) {
-				assertEquals(aec.getAttributeCount(), attributes.size());
-				for (Attribute a : aec.getAttributeList()) {
-					assertTrue(attributes.containsKey(a.getName()));
-				}
-			} else {
-				assertEquals(0, aec.getAttributeCount());
-			}
-		} catch (NoSuchFieldException e) {
-			e.printStackTrace();
-			fail();
-		} catch (SecurityException e) {
-			e.printStackTrace();
-			fail();
-		} catch (IllegalArgumentException e) {
-			e.printStackTrace();
-			fail();
-		} catch (IllegalAccessException e) {
-			e.printStackTrace();
-			fail();
+		for (Attribute a : aec.getAttributeList()) {
+			Object value = ae.getAttribute(a.getName());
+			assertTrue(a.getDomain().isConformGenericValue(value));
 		}
 	}
 
 	/**
 	 * Tests, if the value of an attribute in the generic TGraph implementation
-	 * has the default value defined in its definition in the schema. If no
-	 * explicit default value was defined, it tests, if the attribute's value
-	 * corresponds to the general default value of its Domain.
+	 * has the default value as defined in the schema. If no explicit default
+	 * value was defined, it tests, if the attribute's value corresponds to the
+	 * general default value of its Domain.
 	 *
 	 * @param value
 	 * @param attribute
@@ -956,7 +935,8 @@ public class GenericGraphImplTest {
 
 			// compare against the same Graph loaded with the standard
 			// implementation
-			Graph g2 = GraphIO.loadGraphFromFile(GRAPHFOLDER + "greqltestgraph.tg", new RouteMapFactoryImpl(), null);
+			Graph g2 = GraphIO.loadGraphFromFile(GRAPHFOLDER
+					+ "greqltestgraph.tg", ImplementationType.STANDARD, null);
 			for (Vertex v : g2.vertices()) {
 				assertEquals(v.getAttributedElementClass(),
 						g1.getVertex(v.getId()).getAttributedElementClass());
