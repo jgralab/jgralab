@@ -1,7 +1,6 @@
 package de.uni_koblenz.jgralab.impl.generic;
 
 import java.io.IOException;
-import java.util.Map;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
@@ -18,16 +17,22 @@ import de.uni_koblenz.jgralab.schema.Attribute;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.VertexClass;
 
+/**
+ * A generic {@link Vertex}-Implementation that can represent vertices of
+ * arbitrary {@link Schema}s.
+ */
 public class GenericVertexImpl extends VertexImpl {
 
 	private final VertexClass type;
-	private Map<String, Object> attributes;
+	private Object[] attributes2;
 
 	protected GenericVertexImpl(VertexClass type, int id, Graph graph) {
 		super(id, graph);
 		this.type = type;
-		attributes = GenericGraphImpl.initializeAttributes(type);
-		if(!((InternalGraph) graph).isLoading()) {
+		if (type.getAttributeCount() > 0) {
+			attributes2 = new Object[type.getAttributeCount()];
+		}
+		if (!((InternalGraph) graph).isLoading()) {
 			GenericGraphImpl.initializeGenericAttributeValues(this);
 		}
 	}
@@ -40,25 +45,25 @@ public class GenericVertexImpl extends VertexImpl {
 	@Override
 	public void readAttributeValueFromString(String attributeName, String value)
 			throws GraphIOException, NoSuchAttributeException {
-		if ((attributes != null) && attributes.containsKey(attributeName)) {
-			attributes.put(
-					attributeName,
-					type.getAttribute(attributeName)
-							.getDomain()
-							.parseGenericAttribute(
-									GraphIO.createStringReader(value,
-											getSchema())));
-			return;
+		int i = ((GenericGraphImpl) graph).getAttributeIndex(type,
+				attributeName);
+		if (attributes2 != null && i < type.getAttributeCount()) {
+			attributes2[i] = type
+					.getAttribute(attributeName)
+					.getDomain()
+					.parseGenericAttribute(
+							GraphIO.createStringReader(value, getSchema()));
+		} else {
+			throw new NoSuchAttributeException(this
+					+ " doesn't have an attribute " + attributeName);
 		}
-		throw new NoSuchAttributeException(this + " doesn't have an attribute "
-				+ attributeName);
 	}
 
 	@Override
 	public void readAttributeValues(GraphIO io) throws GraphIOException {
 		for (Attribute a : type.getAttributeList()) {
-			attributes
-					.put(a.getName(), a.getDomain().parseGenericAttribute(io));
+			attributes2[((GenericGraphImpl) graph).getAttributeIndex(type,
+					a.getName())] = a.getDomain().parseGenericAttribute(io);
 		}
 	}
 
@@ -76,36 +81,35 @@ public class GenericVertexImpl extends VertexImpl {
 			GraphIOException {
 		for (Attribute a : type.getAttributeList()) {
 			a.getDomain().serializeGenericAttribute(io,
-					attributes.get(a.getName()));
+					getAttribute(a.getName()));
 		}
-
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T> T getAttribute(String name) throws NoSuchAttributeException {
-		if ((attributes == null) || !attributes.containsKey(name)) {
-			throw new NoSuchAttributeException(type.getSimpleName()
-					+ " doesn't contain an attribute " + name);
-		} else {
-			return (T) attributes.get(name);
+		int i = ((GenericGraphImpl) getGraph()).getAttributeIndex(type, name);
+		if (attributes2 != null && i < attributes2.length) {
+			return (T) attributes2[i];
 		}
+		throw new NoSuchAttributeException(type.getSimpleName()
+				+ " doesn't contain an attribute " + name);
 	}
 
 	@Override
 	public <T> void setAttribute(String name, T data)
 			throws NoSuchAttributeException {
-		if ((attributes == null) || !attributes.containsKey(name)) {
+		int i = ((GenericGraphImpl) graph).getAttributeIndex(type, name);
+		if (attributes2 == null || i >= attributes2.length) {
 			throw new NoSuchAttributeException(type.getSimpleName()
 					+ " doesn't contain an attribute " + name);
-		} else {
-			if (!type.getAttribute(name).getDomain().isConformGenericValue(data)) {
-				throw new ClassCastException();
-			} else {
-				attributes.put(name, data);
-			}
 		}
-
+		if (getAttributedElementClass().getAttribute(name).getDomain()
+				.isConformGenericValue(data)) {
+			attributes2[i] = data;
+		} else {
+			throw new ClassCastException();
+		}
 	}
 
 	@Override

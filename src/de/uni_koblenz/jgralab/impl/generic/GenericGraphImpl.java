@@ -35,14 +35,15 @@ import de.uni_koblenz.jgralab.schema.RecordDomain.RecordComponent;
 import de.uni_koblenz.jgralab.schema.VertexClass;
 
 /**
- *
- * @author Bernhard
- *
+ * A generic {@link Graph}-Implementation that can represent TGraphs of
+ * arbitrary {@link Schema}s.
  */
 public class GenericGraphImpl extends GraphImpl {
 
 	private GraphClass type;
-	private Map<String, Object> attributes;
+	private Object[] attributes2;
+
+	private HashMap<AttributedElementClass<?, ?>, HashMap<String, Integer>> attributeIndexMaps;
 
 	protected GenericGraphImpl(GraphClass type, String id) {
 		super(id, type, 100, 100);
@@ -51,8 +52,9 @@ public class GenericGraphImpl extends GraphImpl {
 	protected GenericGraphImpl(GraphClass type, String id, int vmax, int emax) {
 		super(id, type, vmax, emax);
 		this.type = type;
-		attributes = GenericGraphImpl.initializeAttributes(type);
-		if(!isLoading()) {
+		attributeIndexMaps = new HashMap<AttributedElementClass<?, ?>, HashMap<String, Integer>>();
+		attributes2 = new Object[type.getAttributeCount()];
+		if (!isLoading()) {
 			GenericGraphImpl.initializeGenericAttributeValues(this);
 		}
 	}
@@ -94,25 +96,24 @@ public class GenericGraphImpl extends GraphImpl {
 	@Override
 	public void readAttributeValueFromString(String attributeName, String value)
 			throws GraphIOException, NoSuchAttributeException {
-		if ((attributes != null) && attributes.containsKey(attributeName)) {
-			attributes.put(
-					attributeName,
-					type.getAttribute(attributeName)
-							.getDomain()
-							.parseGenericAttribute(
-									GraphIO.createStringReader(value,
-											getSchema())));
-			return;
+		int i = getAttributeIndex(type, attributeName);
+		if (attributes2 != null && i < type.getAttributeCount()) {
+			attributes2[i] = type
+					.getAttribute(attributeName)
+					.getDomain()
+					.parseGenericAttribute(
+							GraphIO.createStringReader(value, getSchema()));
+		} else {
+			throw new NoSuchAttributeException(this
+					+ " doesn't have an attribute " + attributeName);
 		}
-		throw new NoSuchAttributeException(this + " doesn't have an attribute "
-				+ attributeName);
 	}
 
 	@Override
 	public void readAttributeValues(GraphIO io) throws GraphIOException {
 		for (Attribute a : type.getAttributeList()) {
-			attributes
-					.put(a.getName(), a.getDomain().parseGenericAttribute(io));
+			attributes2[getAttributeIndex(type, a.getName())] = a.getDomain()
+					.parseGenericAttribute(io);
 		}
 	}
 
@@ -130,35 +131,35 @@ public class GenericGraphImpl extends GraphImpl {
 			GraphIOException {
 		for (Attribute a : type.getAttributeList()) {
 			a.getDomain().serializeGenericAttribute(io,
-					attributes.get(a.getName()));
+					getAttribute(a.getName()));
 		}
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T> T getAttribute(String name) throws NoSuchAttributeException {
-		if ((attributes == null) || !attributes.containsKey(name)) {
-			throw new NoSuchAttributeException(type.getSimpleName()
-					+ " doesn't contain an attribute " + name);
-		} else {
-			return (T) attributes.get(name);
+		int i = getAttributeIndex(getAttributedElementClass(), name);
+		if (attributes2 != null || i < attributes2.length) {
+			return (T) attributes2[i];
 		}
+		throw new NoSuchAttributeException(type.getSimpleName()
+				+ " doesn't contain an attribute " + name);
 	}
 
 	@Override
 	public <T> void setAttribute(String name, T data)
 			throws NoSuchAttributeException {
-		if ((attributes == null) || !attributes.containsKey(name)) {
+		int i = getAttributeIndex(getAttributedElementClass(), name);
+		if (attributes2 == null
+				|| i >= getAttributedElementClass().getAttributeCount()) {
 			throw new NoSuchAttributeException(type.getSimpleName()
 					+ " doesn't contain an attribute " + name);
-		} else {
-			if (!type.getAttribute(name).getDomain().isConformGenericValue(data)) {
-				throw new ClassCastException();
-			} else {
-				attributes.put(name, data);
-			}
 		}
-
+		if (type.getAttribute(name).getDomain().isConformGenericValue(data)) {
+			attributes2[i] = data;
+		} else {
+			throw new ClassCastException();
+		}
 	}
 
 	@Override
@@ -231,25 +232,32 @@ public class GenericGraphImpl extends GraphImpl {
 		}
 	}
 
-	/*
-	 * Creates a Map with an entry for each attribute of a given
-	 * AttributedElementClass
-	 */
-	static Map<String, Object> initializeAttributes(
-			AttributedElementClass<?, ?> aec) {
-		Map<String, Object> attributes = null;
-		if (aec.getAttributeCount() > 0) {
-			attributes = new HashMap<String, Object>(aec.getAttributeCount());
-			for (Attribute a : aec.getAttributeList()) {
-				attributes.put(a.getName(), null);
-			}
-		}
-		return attributes;
+	protected int getAttributeIndex(AttributedElementClass<?, ?> aec,
+			String name) {
+		assert (aec.getAttributeCount() > 0);
+		Map<String, Integer> indexMap = getIndexMap(aec);
+		Integer i = indexMap.get(name);
+		return i == null ? Integer.MAX_VALUE : i.intValue();
 	}
 
-	/*
+	protected Map<String, Integer> getIndexMap(AttributedElementClass<?, ?> aec) {
+		if (attributeIndexMaps.containsKey(aec)) {
+			return attributeIndexMaps.get(aec);
+		} else {
+			HashMap<String, Integer> valueIndex = new HashMap<String, Integer>();
+			int i = 0;
+			for (Attribute a : aec.getAttributeList()) {
+				valueIndex.put(a.getName(), i);
+				++i;
+			}
+			attributeIndexMaps.put(aec, valueIndex);
+			return valueIndex;
+		}
+	}
+
+	/**
 	 * Initializes attributes of an (generic) AttributedElement with their
-	 * default values
+	 * default values.
 	 */
 	static void initializeGenericAttributeValues(AttributedElement<?, ?> ae) {
 		for (Attribute attr : ae.getAttributedElementClass().getAttributeList()) {
@@ -289,8 +297,8 @@ public class GenericGraphImpl extends GraphImpl {
 	public Record createRecord(RecordDomain recordDomain,
 			Map<String, Object> values) {
 		RecordImpl record = RecordImpl.empty();
-		for(RecordComponent c : recordDomain.getComponents()) {
-			assert(values.containsKey(c.getName()));
+		for (RecordComponent c : recordDomain.getComponents()) {
+			assert (values.containsKey(c.getName()));
 			record = record.plus(c.getName(), values.get(c.getName()));
 		}
 		return record;
