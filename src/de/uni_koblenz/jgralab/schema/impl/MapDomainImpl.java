@@ -61,8 +61,8 @@ import de.uni_koblenz.jgralab.schema.exception.SchemaException;
  * @author Tassilo Horn <horn@uni-koblenz.de>
  * 
  */
-public final class MapDomainImpl extends CompositeDomainImpl implements
-		MapDomain {
+public class MapDomainImpl extends CompositeDomainImpl implements
+MapDomain {
 	/**
 	 * The domain of this MapDomain's keys.
 	 */
@@ -73,36 +73,37 @@ public final class MapDomainImpl extends CompositeDomainImpl implements
 	 */
 	private final Domain valueDomain;
 
-	MapDomainImpl(Schema schema, Domain aKeyDomain, Domain aValueDomain) {
+	protected MapDomainImpl(Schema schema, Domain aKeyDomain,
+			Domain aValueDomain) {
 		super(MAPDOMAIN_NAME + "<"
 				+ aKeyDomain.getTGTypeName(schema.getDefaultPackage()) + ", "
 				+ aValueDomain.getTGTypeName(schema.getDefaultPackage()) + ">",
 				schema.getDefaultPackage());
 
-		if (parentPackage.getSchema().getDomain(aKeyDomain.getQualifiedName()) == null) {
+		if (this.parentPackage.getSchema().getDomain(aKeyDomain.getQualifiedName()) == null) {
 			throw new SchemaException("Key domain '"
 					+ aKeyDomain.getQualifiedName()
 					+ "' not existent in schema "
-					+ parentPackage.getSchema().getQualifiedName());
+					+ this.parentPackage.getSchema().getQualifiedName());
 		}
-		if (parentPackage.getSchema()
+		if (this.parentPackage.getSchema()
 				.getDomain(aValueDomain.getQualifiedName()) == null) {
 			throw new SchemaException("Value domain '"
 					+ aValueDomain.getQualifiedName()
 					+ "' not existent in schema "
-					+ parentPackage.getSchema().getQualifiedName());
+					+ this.parentPackage.getSchema().getQualifiedName());
 		}
-		keyDomain = aKeyDomain;
-		valueDomain = aValueDomain;
-		((SchemaImpl)schema).getDomainsDag().createEdge(keyDomain,this);
-		((SchemaImpl)schema).getDomainsDag().createEdge(valueDomain,this);
+		this.keyDomain = aKeyDomain;
+		this.valueDomain = aValueDomain;
+		((SchemaImpl)schema).getDomainsDag().createEdge(this.keyDomain,this);
+		((SchemaImpl)schema).getDomainsDag().createEdge(this.valueDomain,this);
 	}
 
 	@Override
 	public Set<Domain> getAllComponentDomains() {
 		HashSet<Domain> allComponentDomains = new HashSet<Domain>(2);
-		allComponentDomains.add(keyDomain);
-		allComponentDomains.add(valueDomain);
+		allComponentDomains.add(this.keyDomain);
+		allComponentDomains.add(this.valueDomain);
 		return allComponentDomains;
 	}
 
@@ -110,18 +111,18 @@ public final class MapDomainImpl extends CompositeDomainImpl implements
 	public String getJavaAttributeImplementationTypeName(
 			String schemaRootPackagePrefix) {
 		return MAPDOMAIN_TYPE + "<"
-				+ keyDomain.getJavaClassName(schemaRootPackagePrefix) + ", "
-				+ valueDomain.getJavaClassName(schemaRootPackagePrefix) + ">";
+				+ this.keyDomain.getJavaClassName(schemaRootPackagePrefix) + ", "
+				+ this.valueDomain.getJavaClassName(schemaRootPackagePrefix) + ">";
 	}
 
 	@Override
 	public String getJavaClassName(String schemaRootPackagePrefix) {
-		return getJavaAttributeImplementationTypeName(schemaRootPackagePrefix);
+		return this.getJavaAttributeImplementationTypeName(schemaRootPackagePrefix);
 	}
 
 	@Override
 	public Domain getKeyDomain() {
-		return keyDomain;
+		return this.keyDomain;
 	}
 
 	@Override
@@ -129,7 +130,7 @@ public final class MapDomainImpl extends CompositeDomainImpl implements
 			String variableName, String graphIoVariableName) {
 		CodeList code = new CodeList();
 		code.setVariable("init", "");
-		internalGetReadMethod(code, schemaRootPackagePrefix, variableName,
+		this.internalGetReadMethod(code, schemaRootPackagePrefix, variableName,
 				graphIoVariableName);
 
 		return code;
@@ -137,13 +138,13 @@ public final class MapDomainImpl extends CompositeDomainImpl implements
 
 	@Override
 	public String getTGTypeName(Package pkg) {
-		return MAPDOMAIN_NAME + "<" + keyDomain.getTGTypeName(pkg) + ", "
-				+ valueDomain.getTGTypeName(pkg) + ">";
+		return MAPDOMAIN_NAME + "<" + this.keyDomain.getTGTypeName(pkg) + ", "
+				+ this.valueDomain.getTGTypeName(pkg) + ">";
 	}
 
 	@Override
 	public Domain getValueDomain() {
-		return valueDomain;
+		return this.valueDomain;
 	}
 
 	@Override
@@ -151,7 +152,7 @@ public final class MapDomainImpl extends CompositeDomainImpl implements
 			String variableName, String graphIoVariableName) {
 		CodeList code = new CodeList();
 		code.setVariable("name", variableName);
-		internalGetWriteMethod(code, schemaRootPackagePrefix, variableName,
+		this.internalGetWriteMethod(code, schemaRootPackagePrefix, variableName,
 				graphIoVariableName);
 
 		return code;
@@ -160,8 +161,8 @@ public final class MapDomainImpl extends CompositeDomainImpl implements
 
 	@Override
 	public String toString() {
-		return "domain " + MAPDOMAIN_NAME + "<" + keyDomain.toString() + ", "
-				+ valueDomain.toString() + ">";
+		return "domain " + MAPDOMAIN_NAME + "<" + this.keyDomain.toString() + ", "
+				+ this.valueDomain.toString() + ">";
 	}
 
 	private void internalGetReadMethod(CodeList code,
@@ -170,17 +171,17 @@ public final class MapDomainImpl extends CompositeDomainImpl implements
 		code.setVariable("name", variableName);
 		code.setVariable("empty", MapDomain.EMPTY_MAP);
 		code.setVariable("keydom",
-				getKeyDomain().getJavaClassName(schemaRootPackagePrefix));
+				this.getKeyDomain().getJavaClassName(schemaRootPackagePrefix));
 		code.setVariable(
 				"keytype",
-				getKeyDomain().getJavaAttributeImplementationTypeName(
+				this.getKeyDomain().getJavaAttributeImplementationTypeName(
 						schemaRootPackagePrefix));
 
 		code.setVariable("valuedom",
-				getValueDomain().getJavaClassName(schemaRootPackagePrefix));
+				this.getValueDomain().getJavaClassName(schemaRootPackagePrefix));
 		code.setVariable(
 				"valuetype",
-				getValueDomain().getJavaAttributeImplementationTypeName(
+				this.getValueDomain().getJavaAttributeImplementationTypeName(
 						schemaRootPackagePrefix));
 
 		code.setVariable("io", graphIoVariableName);
@@ -192,23 +193,23 @@ public final class MapDomainImpl extends CompositeDomainImpl implements
 		code.add(new CodeSnippet("#io#.match(\"{\");",
 				"while (!#io#.isNextToken(\"}\")) {"));
 
-		if (getKeyDomain().isComposite()) {
+		if (this.getKeyDomain().isComposite()) {
 			code.add(new CodeSnippet("\t#keytype# #name#Key = null;"));
 		} else {
 			code.add(new CodeSnippet("\t#keytype# #name#Key;"));
 		}
-		if (getValueDomain().isComposite()) {
+		if (this.getValueDomain().isComposite()) {
 			code.add(new CodeSnippet("\t\t#valuetype# #name#Value = null;"));
 		} else {
 			code.add(new CodeSnippet("\t\t#valuetype# #name#Value;"));
 		}
 
 		code.add(
-				getKeyDomain().getReadMethod(schemaRootPackagePrefix,
+				this.getKeyDomain().getReadMethod(schemaRootPackagePrefix,
 						variableName + "Key", graphIoVariableName), 1);
 		code.add(new CodeSnippet("\t#io#.match(\"-\");"));
 		code.add(
-				getValueDomain().getReadMethod(schemaRootPackagePrefix,
+				this.getValueDomain().getReadMethod(schemaRootPackagePrefix,
 						variableName + "Value", graphIoVariableName), 1);
 		code.add(new CodeSnippet(
 				"\t$#name# = $#name#.plus(#name#Key, #name#Value);", "}",
@@ -227,12 +228,12 @@ public final class MapDomainImpl extends CompositeDomainImpl implements
 
 		code.setVariable(
 				"keytype",
-				getKeyDomain().getJavaAttributeImplementationTypeName(
+				this.getKeyDomain().getJavaAttributeImplementationTypeName(
 						schemaRootPackagePrefix));
 
 		code.setVariable(
 				"valuetype",
-				getValueDomain().getJavaAttributeImplementationTypeName(
+				this.getValueDomain().getJavaAttributeImplementationTypeName(
 						schemaRootPackagePrefix));
 
 		code.setVariable("io", graphIoVariableName);
@@ -245,13 +246,13 @@ public final class MapDomainImpl extends CompositeDomainImpl implements
 		code.add(new CodeSnippet(
 				"#valuetype# #nameValue# = #name#.get(#nameKey#);"), 1);
 		code.add(
-				getKeyDomain().getWriteMethod(schemaRootPackagePrefix,
+				this.getKeyDomain().getWriteMethod(schemaRootPackagePrefix,
 						code.getVariable("nameKey"), graphIoVariableName), 1);
 
 		code.add(new CodeSnippet("\t#io#.write(\" -\");"));
 
 		code.add(
-				getValueDomain().getWriteMethod(schemaRootPackagePrefix,
+				this.getValueDomain().getWriteMethod(schemaRootPackagePrefix,
 						code.getVariable("nameValue"), graphIoVariableName), 1);
 
 		code.add(new CodeSnippet("}", "#io#.write(\"}\");", "#io#.space();"));
@@ -269,7 +270,7 @@ public final class MapDomainImpl extends CompositeDomainImpl implements
 				+ "()");
 		code.setVariable("init", MAPDOMAIN_TYPE
 				+ "<#keydom#, #valuedom#> #name# = null;");
-		internalGetReadMethod(code, schemaPrefix, variableName,
+		this.internalGetReadMethod(code, schemaPrefix, variableName,
 				graphIoVariableName);
 		return code;
 	}
@@ -280,7 +281,7 @@ public final class MapDomainImpl extends CompositeDomainImpl implements
 		CodeList code = new CodeList();
 		code.setVariable("name", "get" + CodeGenerator.camelCase(variableName)
 				+ "()");
-		internalGetWriteMethod(code, schemaRootPackagePrefix, variableName,
+		this.internalGetWriteMethod(code, schemaRootPackagePrefix, variableName,
 				graphIoVariableName);
 		return code;
 	}
@@ -288,18 +289,18 @@ public final class MapDomainImpl extends CompositeDomainImpl implements
 	@Override
 	public String getTransactionJavaAttributeImplementationTypeName(
 			String schemaRootPackagePrefix) {
-		return getJavaAttributeImplementationTypeName(schemaRootPackagePrefix);
+		return this.getJavaAttributeImplementationTypeName(schemaRootPackagePrefix);
 	}
 
 	@Override
 	public String getTransactionJavaClassName(String schemaRootPackagePrefix) {
-		return getJavaAttributeImplementationTypeName(schemaRootPackagePrefix);
+		return this.getJavaAttributeImplementationTypeName(schemaRootPackagePrefix);
 	}
 
 	@Override
 	public String getVersionedClass(String schemaRootPackagePrefix) {
 		return "de.uni_koblenz.jgralab.impl.trans.VersionedReferenceImpl<"
-				+ getTransactionJavaAttributeImplementationTypeName(schemaRootPackagePrefix)
+				+ this.getTransactionJavaAttributeImplementationTypeName(schemaRootPackagePrefix)
 				+ ">";
 	}
 
@@ -316,9 +317,9 @@ public final class MapDomainImpl extends CompositeDomainImpl implements
 			while (!io.isNextToken("}")) {
 				Object mapKey = null;
 				Object mapValue = null;
-				mapKey = getKeyDomain().parseGenericAttribute(io);
+				mapKey = this.getKeyDomain().parseGenericAttribute(io);
 				io.match("-");
-				mapValue = getValueDomain().parseGenericAttribute(io);
+				mapValue = this.getValueDomain().parseGenericAttribute(io);
 				result = result.plus(mapKey, mapValue);
 			}
 			io.match("}");
@@ -340,9 +341,9 @@ public final class MapDomainImpl extends CompositeDomainImpl implements
 			io.write("{");
 			io.noSpace();
 			for (Object key : ((PMap<Object, Object>) data).keySet()) {
-				getKeyDomain().serializeGenericAttribute(io, key);
+				this.getKeyDomain().serializeGenericAttribute(io, key);
 				io.write(" -");
-				getValueDomain().serializeGenericAttribute(io,
+				this.getValueDomain().serializeGenericAttribute(io,
 						((PMap<Object, Object>) data).get(key));
 			}
 			io.write("}");
@@ -365,9 +366,9 @@ public final class MapDomainImpl extends CompositeDomainImpl implements
 		Iterator<?> iterator = ((PMap<?, ?>) value).keySet().iterator();
 		while (iterator.hasNext() && result) {
 			Object key = iterator.next();
-			result &= getKeyDomain().isConformGenericValue(key)
-					&& getValueDomain()
-							.isConformGenericValue(((PMap<?, ?>) value).get(key));
+			result &= this.getKeyDomain().isConformGenericValue(key)
+					&& this.getValueDomain()
+					.isConformGenericValue(((PMap<?, ?>) value).get(key));
 		}
 		return result;
 	}

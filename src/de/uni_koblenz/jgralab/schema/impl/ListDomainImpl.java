@@ -55,8 +55,8 @@ import de.uni_koblenz.jgralab.schema.ListDomain;
 import de.uni_koblenz.jgralab.schema.Package;
 import de.uni_koblenz.jgralab.schema.Schema;
 
-public final class ListDomainImpl extends CollectionDomainImpl implements
-		ListDomain {
+public class ListDomainImpl extends CollectionDomainImpl implements
+ListDomain {
 
 	/**
 	 * @param aList
@@ -67,7 +67,7 @@ public final class ListDomainImpl extends CollectionDomainImpl implements
 		return new HashSet<Object>(aList);
 	}
 
-	ListDomainImpl(Schema schema, Domain aBaseDomain) {
+	protected ListDomainImpl(Schema schema, Domain aBaseDomain) {
 		super(LISTDOMAIN_NAME + "<"
 				+ aBaseDomain.getTGTypeName(schema.getDefaultPackage()) + ">",
 				schema.getDefaultPackage(), aBaseDomain);
@@ -76,7 +76,7 @@ public final class ListDomainImpl extends CollectionDomainImpl implements
 	@Override
 	public Set<Domain> getAllComponentDomains() {
 		HashSet<Domain> componentDomainSet = new HashSet<Domain>(1);
-		componentDomainSet.add(baseDomain);
+		componentDomainSet.add(this.baseDomain);
 		return componentDomainSet;
 	}
 
@@ -84,29 +84,29 @@ public final class ListDomainImpl extends CollectionDomainImpl implements
 	public String getJavaAttributeImplementationTypeName(
 			String schemaRootPackagePrefix) {
 		return LISTDOMAIN_TYPE + "<"
-				+ baseDomain.getJavaClassName(schemaRootPackagePrefix) + ">";
+				+ this.baseDomain.getJavaClassName(schemaRootPackagePrefix) + ">";
 	}
 
 	@Override
 	public String getTransactionJavaAttributeImplementationTypeName(
 			String schemaRootPackagePrefix) {
-		return getJavaAttributeImplementationTypeName(schemaRootPackagePrefix);
+		return this.getJavaAttributeImplementationTypeName(schemaRootPackagePrefix);
 	}
 
 	@Override
 	public String getJavaClassName(String schemaRootPackagePrefix) {
-		return getJavaAttributeImplementationTypeName(schemaRootPackagePrefix);
+		return this.getJavaAttributeImplementationTypeName(schemaRootPackagePrefix);
 	}
 
 	@Override
 	public String getTransactionJavaClassName(String schemaRootPackagePrefix) {
-		return getJavaAttributeImplementationTypeName(schemaRootPackagePrefix);
+		return this.getJavaAttributeImplementationTypeName(schemaRootPackagePrefix);
 	}
 
 	@Override
 	public String getVersionedClass(String schemaRootPackagePrefix) {
 		return "de.uni_koblenz.jgralab.impl.trans.VersionedReferenceImpl<"
-				+ getTransactionJavaAttributeImplementationTypeName(schemaRootPackagePrefix)
+				+ this.getTransactionJavaAttributeImplementationTypeName(schemaRootPackagePrefix)
 				+ ">";
 	}
 
@@ -115,7 +115,7 @@ public final class ListDomainImpl extends CollectionDomainImpl implements
 			String graphIoVariableName) {
 		CodeList code = new CodeList();
 		code.setVariable("init", "");
-		internalGetReadMethod(code, schemaPrefix, variableName,
+		this.internalGetReadMethod(code, schemaPrefix, variableName,
 				graphIoVariableName);
 
 		return code;
@@ -123,7 +123,7 @@ public final class ListDomainImpl extends CollectionDomainImpl implements
 
 	@Override
 	public String getTGTypeName(Package pkg) {
-		return LISTDOMAIN_NAME + "<" + baseDomain.getTGTypeName(pkg) + ">";
+		return LISTDOMAIN_NAME + "<" + this.baseDomain.getTGTypeName(pkg) + ">";
 	}
 
 	@Override
@@ -131,7 +131,7 @@ public final class ListDomainImpl extends CollectionDomainImpl implements
 			String variableName, String graphIoVariableName) {
 		CodeList code = new CodeList();
 		code.setVariable("name", variableName);
-		internalGetWriteMethod(code, schemaRootPackagePrefix, variableName,
+		this.internalGetWriteMethod(code, schemaRootPackagePrefix, variableName,
 				graphIoVariableName);
 
 		return code;
@@ -139,7 +139,7 @@ public final class ListDomainImpl extends CollectionDomainImpl implements
 
 	@Override
 	public String toString() {
-		return "domain " + LISTDOMAIN_NAME + "<" + baseDomain.toString() + ">";
+		return "domain " + LISTDOMAIN_NAME + "<" + this.baseDomain.toString() + ">";
 	}
 
 	private void internalGetReadMethod(CodeList code, String schemaPrefix,
@@ -147,8 +147,8 @@ public final class ListDomainImpl extends CollectionDomainImpl implements
 		code.setVariable("name", variableName);
 		code.setVariable("empty", ListDomain.EMPTY_LIST);
 		code.setVariable("basedom",
-				getBaseDomain().getJavaClassName(schemaPrefix));
-		code.setVariable("basetype", getBaseDomain()
+				this.getBaseDomain().getJavaClassName(schemaPrefix));
+		code.setVariable("basetype", this.getBaseDomain()
 				.getJavaAttributeImplementationTypeName(schemaPrefix));
 		code.setVariable("io", graphIoVariableName);
 
@@ -157,13 +157,13 @@ public final class ListDomainImpl extends CollectionDomainImpl implements
 		code.add(new CodeSnippet(LISTDOMAIN_TYPE
 				+ "<#basedom#> $#name# = #empty#;", "#io#.match(\"[\");",
 				"while (!#io#.isNextToken(\"]\")) {"));
-		if (getBaseDomain().isComposite()) {
+		if (this.getBaseDomain().isComposite()) {
 			code.add(new CodeSnippet("\t#basetype# $#name#Element = null;"));
 		} else {
 			code.add(new CodeSnippet("\t#basetype# $#name#Element;"));
 		}
 		code.add(
-				getBaseDomain().getReadMethod(schemaPrefix,
+				this.getBaseDomain().getReadMethod(schemaPrefix,
 						"$" + variableName + "Element", graphIoVariableName), 1);
 		code.add(new CodeSnippet("\t$#name# = $#name#.plus($#name#Element);",
 				"}", "#io#.match(\"]\");", "#name# = $#name#;"));
@@ -178,10 +178,10 @@ public final class ListDomainImpl extends CollectionDomainImpl implements
 			String schemaRootPackagePrefix, String variableName,
 			String graphIoVariableName) {
 		code.setVariable("basedom",
-				getBaseDomain().getJavaClassName(schemaRootPackagePrefix));
+				this.getBaseDomain().getJavaClassName(schemaRootPackagePrefix));
 		code.setVariable(
 				"basetype",
-				getBaseDomain().getJavaAttributeImplementationTypeName(
+				this.getBaseDomain().getJavaAttributeImplementationTypeName(
 						schemaRootPackagePrefix));
 		code.setVariable("io", graphIoVariableName);
 
@@ -194,7 +194,7 @@ public final class ListDomainImpl extends CollectionDomainImpl implements
 		code.add(new CodeSnippet("#io#.writeSpace();", "#io#.write(\"[\");",
 				"#io#.noSpace();", "for (#basetype# #element# : #name#) {"));
 		code.add(
-				getBaseDomain().getWriteMethod(schemaRootPackagePrefix,
+				this.getBaseDomain().getWriteMethod(schemaRootPackagePrefix,
 						code.getVariable("element"), graphIoVariableName), 1);
 		code.add(new CodeSnippet("}", "#io#.write(\"]\");", "#io#.space();"));
 		code.addNoIndent(new CodeSnippet("} else {"));
@@ -208,7 +208,7 @@ public final class ListDomainImpl extends CollectionDomainImpl implements
 			String variableName, String graphIoVariableName) {
 		CodeList code = new CodeList();
 		code.setVariable("init", LISTDOMAIN_TYPE + "<#basedom#> #name# = null;");
-		internalGetReadMethod(code, schemaPrefix, variableName,
+		this.internalGetReadMethod(code, schemaPrefix, variableName,
 				graphIoVariableName);
 		return code;
 	}
@@ -219,7 +219,7 @@ public final class ListDomainImpl extends CollectionDomainImpl implements
 		CodeList code = new CodeList();
 		code.setVariable("name", "get" + CodeGenerator.camelCase(variableName)
 				+ "()");
-		internalGetWriteMethod(code, schemaRootPackagePrefix, variableName,
+		this.internalGetWriteMethod(code, schemaRootPackagePrefix, variableName,
 				graphIoVariableName);
 		return code;
 	}
@@ -236,7 +236,7 @@ public final class ListDomainImpl extends CollectionDomainImpl implements
 			io.match("[");
 			while (!io.isNextToken("]")) {
 				Object listElement = null;
-				listElement = getBaseDomain().parseGenericAttribute(io);
+				listElement = this.getBaseDomain().parseGenericAttribute(io);
 				result = result.plus(listElement);
 			}
 			io.match("]");
@@ -258,7 +258,7 @@ public final class ListDomainImpl extends CollectionDomainImpl implements
 			io.write("[");
 			io.noSpace();
 			for (Object value : (PVector<Object>) data) {
-				getBaseDomain().serializeGenericAttribute(io, value);
+				this.getBaseDomain().serializeGenericAttribute(io, value);
 			}
 			io.write("]");
 			io.space();
@@ -279,7 +279,7 @@ public final class ListDomainImpl extends CollectionDomainImpl implements
 		}
 		Iterator<?> iterator = ((PVector<?>) value).iterator();
 		while (iterator.hasNext() && result) {
-			result &= getBaseDomain().isConformGenericValue(iterator.next());
+			result &= this.getBaseDomain().isConformGenericValue(iterator.next());
 		}
 		assert (!iterator.hasNext());
 		return result;
