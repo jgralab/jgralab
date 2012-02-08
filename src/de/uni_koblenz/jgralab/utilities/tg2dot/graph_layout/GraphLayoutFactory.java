@@ -173,7 +173,7 @@ public class GraphLayoutFactory {
 		definition.setAttribute("shape", "'record'");
 		definition.setAttribute("color", "'#999999'");
 		definition.setAttribute("fontsize", "14");
-		definition.setAttribute("fontname", "'Helvetica'");
+		definition.setAttribute("fontname", "'Sans Serif'");
 		definition.setAttribute("margin", "'0.02,0.005'");
 	}
 
@@ -232,9 +232,9 @@ public class GraphLayoutFactory {
 				+ ") ? omegaRolename(" + ELEMENT + ") : '')");
 		definition.setAttribute("dir", "'both'");
 		definition.setAttribute("fontsize", "14");
-		definition.setAttribute("fontname", "'Helvetica'");
+		definition.setAttribute("fontname", "'Sans Serif'");
 		definition.setAttribute("labelfontsize", "10");
-		definition.setAttribute("labelfontname", "'Helvetica'");
+		definition.setAttribute("labelfontname", "'Sans Serif'");
 	}
 
 	private void applyHierarchieToTypeDefinitions() {
