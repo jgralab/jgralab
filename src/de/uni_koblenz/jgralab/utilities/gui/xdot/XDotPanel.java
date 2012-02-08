@@ -39,10 +39,7 @@ public class XDotPanel extends DrawingPanel {
 	public XDotPanel(Graph g, InputStream xdotInputStream) throws IOException {
 		super(true, false);
 		setBackground(Color.WHITE);
-		graph = g;
-		elementShapes = new GraphMarker<List<XDotShape>>(g);
-		XDotParser p = new XDotParser(graph, elementShapes);
-		shapes = p.parseXDotFile(new BufferedInputStream(xdotInputStream));
+		setGraph(g, xdotInputStream);
 		standardStroke = new BasicStroke(1.0f, BasicStroke.CAP_ROUND,
 				BasicStroke.JOIN_ROUND);
 		thickStroke = new BasicStroke(2.5f, BasicStroke.CAP_ROUND,
@@ -52,10 +49,6 @@ public class XDotPanel extends DrawingPanel {
 				BasicStroke.JOIN_ROUND, 1.0f, dash, 0);
 		thickDashedStroke = new BasicStroke(2.5f, BasicStroke.CAP_ROUND,
 				BasicStroke.JOIN_ROUND, 1.0f, dash, 0);
-		Rectangle2D bounds = p.getBounds();
-		if (bounds != null) {
-			setBoundingBox(bounds);
-		}
 
 		addMouseMotionListener(new MouseMotionAdapter() {
 			@Override
@@ -100,6 +93,19 @@ public class XDotPanel extends DrawingPanel {
 		});
 
 		listenerList = new ArrayList<ElementSelectionListener>();
+	}
+
+	public void setGraph(Graph g, InputStream xdotInputStream)
+			throws IOException {
+		graph = g;
+		elementShapes = new GraphMarker<List<XDotShape>>(g);
+		XDotParser p = new XDotParser(graph, elementShapes);
+		shapes = p.parseXDotFile(new BufferedInputStream(xdotInputStream));
+		Rectangle2D bounds = p.getBounds();
+		if (bounds != null) {
+			setBoundingBox(bounds);
+		}
+		elementBoxes = null;
 	}
 
 	private List<ElementSelectionListener> listenerList;
