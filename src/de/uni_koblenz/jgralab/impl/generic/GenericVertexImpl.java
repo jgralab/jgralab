@@ -24,16 +24,16 @@ import de.uni_koblenz.jgralab.schema.VertexClass;
 public class GenericVertexImpl extends VertexImpl {
 
 	private final VertexClass type;
-	private Object[] attributes2;
+	private Object[] attributes;
 
 	protected GenericVertexImpl(VertexClass type, int id, Graph graph) {
 		super(id, graph);
 		this.type = type;
 		if (type.getAttributeCount() > 0) {
-			attributes2 = new Object[type.getAttributeCount()];
-		}
-		if (!((InternalGraph) graph).isLoading()) {
-			GenericGraphImpl.initializeGenericAttributeValues(this);
+			attributes = new Object[type.getAttributeCount()];
+			if (!((InternalGraph) graph).isLoading()) {
+				GenericGraphImpl.initializeGenericAttributeValues(this);
+			}
 		}
 	}
 
@@ -46,7 +46,7 @@ public class GenericVertexImpl extends VertexImpl {
 	public void readAttributeValueFromString(String attributeName, String value)
 			throws GraphIOException, NoSuchAttributeException {
 		int i = type.getAttributeIndex(attributeName);
-		attributes2[i] = type
+		attributes[i] = type
 				.getAttribute(attributeName)
 				.getDomain()
 				.parseGenericAttribute(
@@ -56,7 +56,7 @@ public class GenericVertexImpl extends VertexImpl {
 	@Override
 	public void readAttributeValues(GraphIO io) throws GraphIOException {
 		for (Attribute a : type.getAttributeList()) {
-			attributes2[type.getAttributeIndex(a.getName())] = a.getDomain()
+			attributes[type.getAttributeIndex(a.getName())] = a.getDomain()
 					.parseGenericAttribute(io);
 		}
 	}
@@ -83,7 +83,7 @@ public class GenericVertexImpl extends VertexImpl {
 	@Override
 	public <T> T getAttribute(String name) throws NoSuchAttributeException {
 		int i = type.getAttributeIndex(name);
-		return (T) attributes2[i];
+		return (T) attributes[i];
 	}
 
 	@Override
@@ -92,7 +92,7 @@ public class GenericVertexImpl extends VertexImpl {
 		int i = type.getAttributeIndex(name);
 		if (getAttributedElementClass().getAttribute(name).getDomain()
 				.isConformGenericValue(data)) {
-			attributes2[i] = data;
+			attributes[i] = data;
 		} else {
 			throw new ClassCastException();
 		}
