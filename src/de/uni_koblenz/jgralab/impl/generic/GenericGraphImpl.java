@@ -1,7 +1,6 @@
 package de.uni_koblenz.jgralab.impl.generic;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Map;
 
 import org.pcollections.POrderedSet;
@@ -20,7 +19,6 @@ import de.uni_koblenz.jgralab.impl.RecordImpl;
 import de.uni_koblenz.jgralab.impl.VertexIterable;
 import de.uni_koblenz.jgralab.impl.std.GraphImpl;
 import de.uni_koblenz.jgralab.schema.Attribute;
-import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.BasicDomain;
 import de.uni_koblenz.jgralab.schema.BooleanDomain;
 import de.uni_koblenz.jgralab.schema.Domain;
@@ -41,9 +39,7 @@ import de.uni_koblenz.jgralab.schema.VertexClass;
 public class GenericGraphImpl extends GraphImpl {
 
 	private GraphClass type;
-	private Object[] attributes2;
-
-	private HashMap<AttributedElementClass<?, ?>, HashMap<String, Integer>> attributeIndexMaps;
+	private Object[] attributes;
 
 	protected GenericGraphImpl(GraphClass type, String id) {
 		super(id, type, 100, 100);
@@ -52,8 +48,7 @@ public class GenericGraphImpl extends GraphImpl {
 	protected GenericGraphImpl(GraphClass type, String id, int vmax, int emax) {
 		super(id, type, vmax, emax);
 		this.type = type;
-		attributeIndexMaps = new HashMap<AttributedElementClass<?, ?>, HashMap<String, Integer>>();
-		attributes2 = new Object[type.getAttributeCount()];
+		attributes = new Object[type.getAttributeCount()];
 		if (!isLoading()) {
 			GenericGraphImpl.initializeGenericAttributeValues(this);
 		}
@@ -96,23 +91,18 @@ public class GenericGraphImpl extends GraphImpl {
 	@Override
 	public void readAttributeValueFromString(String attributeName, String value)
 			throws GraphIOException, NoSuchAttributeException {
-		int i = getAttributeIndex(type, attributeName);
-		if (attributes2 != null && i < type.getAttributeCount()) {
-			attributes2[i] = type
-					.getAttribute(attributeName)
-					.getDomain()
-					.parseGenericAttribute(
-							GraphIO.createStringReader(value, getSchema()));
-		} else {
-			throw new NoSuchAttributeException(this
-					+ " doesn't have an attribute " + attributeName);
-		}
+		int i = type.getAttributeIndex(attributeName);
+		attributes[i] = type
+				.getAttribute(attributeName)
+				.getDomain()
+				.parseGenericAttribute(
+						GraphIO.createStringReader(value, getSchema()));
 	}
 
 	@Override
 	public void readAttributeValues(GraphIO io) throws GraphIOException {
 		for (Attribute a : type.getAttributeList()) {
-			attributes2[getAttributeIndex(type, a.getName())] = a.getDomain()
+			attributes[type.getAttributeIndex(a.getName())] = a.getDomain()
 					.parseGenericAttribute(io);
 		}
 	}
@@ -138,25 +128,16 @@ public class GenericGraphImpl extends GraphImpl {
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T> T getAttribute(String name) throws NoSuchAttributeException {
-		int i = getAttributeIndex(getAttributedElementClass(), name);
-		if (attributes2 != null || i < attributes2.length) {
-			return (T) attributes2[i];
-		}
-		throw new NoSuchAttributeException(type.getSimpleName()
-				+ " doesn't contain an attribute " + name);
+		int i = getAttributedElementClass().getAttributeIndex(name);
+		return (T) attributes[i];
 	}
 
 	@Override
 	public <T> void setAttribute(String name, T data)
 			throws NoSuchAttributeException {
-		int i = getAttributeIndex(getAttributedElementClass(), name);
-		if (attributes2 == null
-				|| i >= getAttributedElementClass().getAttributeCount()) {
-			throw new NoSuchAttributeException(type.getSimpleName()
-					+ " doesn't contain an attribute " + name);
-		}
+		int i = getAttributedElementClass().getAttributeIndex(name);
 		if (type.getAttribute(name).getDomain().isConformGenericValue(data)) {
-			attributes2[i] = data;
+			attributes[i] = data;
 		} else {
 			throw new ClassCastException();
 		}
@@ -232,28 +213,29 @@ public class GenericGraphImpl extends GraphImpl {
 		}
 	}
 
-	protected int getAttributeIndex(AttributedElementClass<?, ?> aec,
-			String name) {
-		assert (aec.getAttributeCount() > 0);
-		Map<String, Integer> indexMap = getIndexMap(aec);
-		Integer i = indexMap.get(name);
-		return i == null ? Integer.MAX_VALUE : i.intValue();
-	}
+	// protected int getAttributeIndex(AttributedElementClass<?, ?> aec,
+	// String name) {
+	// assert (aec.getAttributeCount() > 0);
+	// Map<String, Integer> indexMap = getIndexMap(aec);
+	// Integer i = indexMap.get(name);
+	// return i == null ? Integer.MAX_VALUE : i.intValue();
+	// }
 
-	protected Map<String, Integer> getIndexMap(AttributedElementClass<?, ?> aec) {
-		if (attributeIndexMaps.containsKey(aec)) {
-			return attributeIndexMaps.get(aec);
-		} else {
-			HashMap<String, Integer> valueIndex = new HashMap<String, Integer>();
-			int i = 0;
-			for (Attribute a : aec.getAttributeList()) {
-				valueIndex.put(a.getName(), i);
-				++i;
-			}
-			attributeIndexMaps.put(aec, valueIndex);
-			return valueIndex;
-		}
-	}
+	// protected Map<String, Integer> getIndexMap(AttributedElementClass<?, ?>
+	// aec) {
+	// if (attributeIndexMaps.containsKey(aec)) {
+	// return attributeIndexMaps.get(aec);
+	// } else {
+	// HashMap<String, Integer> valueIndex = new HashMap<String, Integer>();
+	// int i = 0;
+	// for (Attribute a : aec.getAttributeList()) {
+	// valueIndex.put(a.getName(), i);
+	// ++i;
+	// }
+	// attributeIndexMaps.put(aec, valueIndex);
+	// return valueIndex;
+	// }
+	// }
 
 	/**
 	 * Initializes attributes of an (generic) AttributedElement with their

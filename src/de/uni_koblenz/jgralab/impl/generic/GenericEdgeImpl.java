@@ -17,8 +17,8 @@ import de.uni_koblenz.jgralab.schema.Attribute;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 
 /**
- * A generic {@link Edge}-Implementation that can represent edges of
- * arbitrary {@link Schema}s.
+ * A generic {@link Edge}-Implementation that can represent edges of arbitrary
+ * {@link Schema}s.
  */
 public class GenericEdgeImpl extends EdgeImpl {
 
@@ -29,10 +29,10 @@ public class GenericEdgeImpl extends EdgeImpl {
 			Vertex omega) {
 		super(anId, graph, alpha, omega);
 		this.type = type;
-		if(type.getAttributeCount() > 0) {
+		if (type.getAttributeCount() > 0) {
 			attributes2 = new Object[type.getAttributeCount()];
 		}
-		if(!((InternalGraph) graph).isLoading()) {
+		if (!((InternalGraph) graph).isLoading()) {
 			GenericGraphImpl.initializeGenericAttributeValues(this);
 		}
 		((GenericGraphImpl) graph).addEdge(this, alpha, omega);
@@ -51,25 +51,19 @@ public class GenericEdgeImpl extends EdgeImpl {
 	@Override
 	public void readAttributeValueFromString(String attributeName, String value)
 			throws GraphIOException, NoSuchAttributeException {
-		int i = ((GenericGraphImpl) graph).getAttributeIndex(type,
-				attributeName);
-		if (attributes2 != null && i < type.getAttributeCount()) {
-			attributes2[i] = type
-					.getAttribute(attributeName)
-					.getDomain()
-					.parseGenericAttribute(
-							GraphIO.createStringReader(value, getSchema()));
-		} else {
-			throw new NoSuchAttributeException(this
-					+ " doesn't have an attribute " + attributeName);
-		}
+		int i = type.getAttributeIndex(attributeName);
+		attributes2[i] = type
+				.getAttribute(attributeName)
+				.getDomain()
+				.parseGenericAttribute(
+						GraphIO.createStringReader(value, getSchema()));
 	}
 
 	@Override
 	public void readAttributeValues(GraphIO io) throws GraphIOException {
 		for (Attribute a : type.getAttributeList()) {
-			attributes2[((GenericGraphImpl) graph).getAttributeIndex(type,
-					a.getName())] = a.getDomain().parseGenericAttribute(io);
+			attributes2[type.getAttributeIndex(a.getName())] = a.getDomain()
+					.parseGenericAttribute(io);
 		}
 	}
 
@@ -114,23 +108,16 @@ public class GenericEdgeImpl extends EdgeImpl {
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T> T getAttribute(String name) throws NoSuchAttributeException {
-		int i = ((GenericGraphImpl) getGraph()).getAttributeIndex(type, name);
-		if(attributes2 != null && i < attributes2.length) {
-			return (T) attributes2[i];
-		}
-		throw new NoSuchAttributeException(type.getSimpleName()
-				+ " doesn't contain an attribute " + name);
+		int i = type.getAttributeIndex(name);
+		return (T) attributes2[i];
 	}
 
 	@Override
 	public <T> void setAttribute(String name, T data)
 			throws NoSuchAttributeException {
-		int i = ((GenericGraphImpl) graph).getAttributeIndex(type, name);
-		if(attributes2 == null || i >= attributes2.length) {
-			throw new NoSuchAttributeException(type.getSimpleName()
-					+ " doesn't contain an attribute " + name);
-		}
-		if(getAttributedElementClass().getAttribute(name).getDomain().isConformGenericValue(data)) {
+		int i = type.getAttributeIndex(name);
+		if (getAttributedElementClass().getAttribute(name).getDomain()
+				.isConformGenericValue(data)) {
 			attributes2[i] = data;
 		} else {
 			throw new ClassCastException();
