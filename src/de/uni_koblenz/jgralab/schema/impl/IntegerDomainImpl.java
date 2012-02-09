@@ -129,8 +129,7 @@ IntegerDomain {
 
 	@Override
 	public Object parseGenericAttribute(GraphIO io) throws GraphIOException {
-		Integer result = io.matchInteger();
-		return result;
+		return io.matchInteger();
 	}
 
 	@Override

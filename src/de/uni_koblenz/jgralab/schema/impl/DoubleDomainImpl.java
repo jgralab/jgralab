@@ -129,8 +129,7 @@ DoubleDomain {
 
 	@Override
 	public Object parseGenericAttribute(GraphIO io) throws GraphIOException {
-		Double result = io.matchDouble();
-		return result;
+		return io.matchDouble();
 	}
 
 	@Override

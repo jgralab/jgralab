@@ -37,6 +37,7 @@ package de.uni_koblenz.jgralab.schema.impl;
 
 import java.lang.reflect.Field;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
@@ -44,6 +45,7 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 
 import de.uni_koblenz.jgralab.AttributedElement;
+import de.uni_koblenz.jgralab.NoSuchAttributeException;
 import de.uni_koblenz.jgralab.schema.Attribute;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.Constraint;
@@ -92,6 +94,11 @@ public abstract class AttributedElementClassImpl<SC extends AttributedElementCla
 	protected Set<SC> directSuperClasses = new HashSet<SC>();
 
 	/**
+	 * maps each attribute to an index
+	 */
+	protected HashMap<String, Integer> attributeIndex;
+
+	/**
 	 * the super classes of this class - only set if the schema is finish
 	 */
 	protected Set<SC> allSuperClasses;
@@ -134,7 +141,7 @@ public abstract class AttributedElementClassImpl<SC extends AttributedElementCla
 
 	@Override
 	public void addAttribute(Attribute anAttribute) {
-		if(finished){
+		if (finished) {
 			throw new SchemaException("No changes to finished schema!");
 		}
 
@@ -467,8 +474,8 @@ public abstract class AttributedElementClassImpl<SC extends AttributedElementCla
 	}
 
 	/**
-	 * Called if the schema is finished, saves complete subclass, superclass
-	 * and attribute list
+	 * Called if the schema is finished, saves complete subclass, superclass and
+	 * attribute list
 	 */
 	protected void finish() {
 		allSuperClasses = new HashSet<SC>();
@@ -495,6 +502,13 @@ public abstract class AttributedElementClassImpl<SC extends AttributedElementCla
 		allSubClasses = Collections.unmodifiableSet(allSubClasses);
 		allAttributeList = Collections.unmodifiableSortedSet(allAttributeList);
 
+		attributeIndex = new HashMap<String, Integer>();
+		int i = 0;
+		for (Attribute a : allAttributeList) {
+			attributeIndex.put(a.getName(), i);
+			++i;
+		}
+
 		finished = true;
 	}
 
@@ -513,5 +527,31 @@ public abstract class AttributedElementClassImpl<SC extends AttributedElementCla
 
 	protected boolean isFinished() {
 		return finished;
+	}
+
+	@Override
+	public int getAttributeIndex(String name) {
+		Integer i;
+		if(isFinished()) {
+			i = attributeIndex.get(name);
+		}
+		else {
+			int j = 0;
+			for (Attribute a : getAttributeList()) {
+				if(a.getName().equals(name)) {
+					break;
+				}
+				++j;
+			}
+			i = Integer.valueOf(j);
+		}
+
+		if (i != null && i < allAttributeList.size()) {
+			return i.intValue();
+		} else {
+			throw new NoSuchAttributeException(this.getSimpleName()
+					+ " doesn't contain an attribute " + name);
+		}
+
 	}
 }

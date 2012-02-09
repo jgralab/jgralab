@@ -1,7 +1,6 @@
 package de.uni_koblenz.jgralab.impl.generic;
 
 import java.io.IOException;
-import java.util.Map;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
@@ -18,17 +17,23 @@ import de.uni_koblenz.jgralab.schema.Attribute;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.VertexClass;
 
+/**
+ * A generic {@link Vertex}-Implementation that can represent vertices of
+ * arbitrary {@link Schema}s.
+ */
 public class GenericVertexImpl extends VertexImpl {
 
 	private final VertexClass type;
-	private Map<String, Object> attributes;
+	private Object[] attributes;
 
 	protected GenericVertexImpl(VertexClass type, int id, Graph graph) {
 		super(id, graph);
 		this.type = type;
-		attributes = GenericGraphImpl.initializeAttributes(type);
-		if(!((InternalGraph) graph).isLoading()) {
-			GenericGraphImpl.initializeGenericAttributeValues(this);
+		if (type.getAttributeCount() > 0) {
+			attributes = new Object[type.getAttributeCount()];
+			if (!((InternalGraph) graph).isLoading()) {
+				GenericGraphImpl.initializeGenericAttributeValues(this);
+			}
 		}
 	}
 
@@ -40,25 +45,19 @@ public class GenericVertexImpl extends VertexImpl {
 	@Override
 	public void readAttributeValueFromString(String attributeName, String value)
 			throws GraphIOException, NoSuchAttributeException {
-		if ((attributes != null) && attributes.containsKey(attributeName)) {
-			attributes.put(
-					attributeName,
-					type.getAttribute(attributeName)
-							.getDomain()
-							.parseGenericAttribute(
-									GraphIO.createStringReader(value,
-											getSchema())));
-			return;
-		}
-		throw new NoSuchAttributeException(this + " doesn't have an attribute "
-				+ attributeName);
+		int i = type.getAttributeIndex(attributeName);
+		attributes[i] = type
+				.getAttribute(attributeName)
+				.getDomain()
+				.parseGenericAttribute(
+						GraphIO.createStringReader(value, getSchema()));
 	}
 
 	@Override
 	public void readAttributeValues(GraphIO io) throws GraphIOException {
 		for (Attribute a : type.getAttributeList()) {
-			attributes
-					.put(a.getName(), a.getDomain().parseGenericAttribute(io));
+			attributes[type.getAttributeIndex(a.getName())] = a.getDomain()
+					.parseGenericAttribute(io);
 		}
 	}
 
@@ -76,36 +75,27 @@ public class GenericVertexImpl extends VertexImpl {
 			GraphIOException {
 		for (Attribute a : type.getAttributeList()) {
 			a.getDomain().serializeGenericAttribute(io,
-					attributes.get(a.getName()));
+					getAttribute(a.getName()));
 		}
-
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T> T getAttribute(String name) throws NoSuchAttributeException {
-		if ((attributes == null) || !attributes.containsKey(name)) {
-			throw new NoSuchAttributeException(type.getSimpleName()
-					+ " doesn't contain an attribute " + name);
-		} else {
-			return (T) attributes.get(name);
-		}
+		int i = type.getAttributeIndex(name);
+		return (T) attributes[i];
 	}
 
 	@Override
 	public <T> void setAttribute(String name, T data)
 			throws NoSuchAttributeException {
-		if ((attributes == null) || !attributes.containsKey(name)) {
-			throw new NoSuchAttributeException(type.getSimpleName()
-					+ " doesn't contain an attribute " + name);
+		int i = type.getAttributeIndex(name);
+		if (getAttributedElementClass().getAttribute(name).getDomain()
+				.isConformGenericValue(data)) {
+			attributes[i] = data;
 		} else {
-			if (!type.getAttribute(name).getDomain().isConformGenericValue(data)) {
-				throw new ClassCastException();
-			} else {
-				attributes.put(name, data);
-			}
+			throw new ClassCastException();
 		}
-
 	}
 
 	@Override

@@ -133,8 +133,7 @@ public class BooleanDomainImpl extends BasicDomainImpl implements BooleanDomain 
 
 	@Override
 	public Object parseGenericAttribute(GraphIO io) throws GraphIOException {
-		Boolean result = io.matchBoolean();
-		return result;
+		return io.matchBoolean();
 	}
 
 	@Override

@@ -128,8 +128,7 @@ public class LongDomainImpl extends BasicDomainImpl implements LongDomain {
 
 	@Override
 	public Object parseGenericAttribute(GraphIO io) throws GraphIOException {
-		Long result = io.matchLong();
-		return result;
+		return io.matchLong();
 	}
 
 	@Override
