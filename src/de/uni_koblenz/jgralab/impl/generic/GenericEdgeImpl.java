@@ -23,17 +23,17 @@ import de.uni_koblenz.jgralab.schema.EdgeClass;
 public class GenericEdgeImpl extends EdgeImpl {
 
 	private EdgeClass type;
-	private Object[] attributes2;
+	private Object[] attributes;
 
 	public GenericEdgeImpl(EdgeClass type, int anId, Graph graph, Vertex alpha,
 			Vertex omega) {
 		super(anId, graph, alpha, omega);
 		this.type = type;
 		if (type.getAttributeCount() > 0) {
-			attributes2 = new Object[type.getAttributeCount()];
-		}
-		if (!((InternalGraph) graph).isLoading()) {
-			GenericGraphImpl.initializeGenericAttributeValues(this);
+			attributes = new Object[type.getAttributeCount()];
+			if (!((InternalGraph) graph).isLoading()) {
+				GenericGraphImpl.initializeGenericAttributeValues(this);
+			}
 		}
 		((GenericGraphImpl) graph).addEdge(this, alpha, omega);
 	}
@@ -52,7 +52,7 @@ public class GenericEdgeImpl extends EdgeImpl {
 	public void readAttributeValueFromString(String attributeName, String value)
 			throws GraphIOException, NoSuchAttributeException {
 		int i = type.getAttributeIndex(attributeName);
-		attributes2[i] = type
+		attributes[i] = type
 				.getAttribute(attributeName)
 				.getDomain()
 				.parseGenericAttribute(
@@ -62,7 +62,7 @@ public class GenericEdgeImpl extends EdgeImpl {
 	@Override
 	public void readAttributeValues(GraphIO io) throws GraphIOException {
 		for (Attribute a : type.getAttributeList()) {
-			attributes2[type.getAttributeIndex(a.getName())] = a.getDomain()
+			attributes[type.getAttributeIndex(a.getName())] = a.getDomain()
 					.parseGenericAttribute(io);
 		}
 	}
@@ -109,7 +109,7 @@ public class GenericEdgeImpl extends EdgeImpl {
 	@Override
 	public <T> T getAttribute(String name) throws NoSuchAttributeException {
 		int i = type.getAttributeIndex(name);
-		return (T) attributes2[i];
+		return (T) attributes[i];
 	}
 
 	@Override
@@ -118,7 +118,7 @@ public class GenericEdgeImpl extends EdgeImpl {
 		int i = type.getAttributeIndex(name);
 		if (getAttributedElementClass().getAttribute(name).getDomain()
 				.isConformGenericValue(data)) {
-			attributes2[i] = data;
+			attributes[i] = data;
 		} else {
 			throw new ClassCastException();
 		}
