@@ -66,7 +66,6 @@ import de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout.definition.Definitio
 import de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout.definition.ElementDefinition;
 import de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout.definition.TypeDefinition;
 import de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout.reader.GraphLayoutReader;
-import de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout.reader.json.JsonGraphLayoutReader;
 import de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout.reader.plist.PListGraphLayoutReader;
 import de.uni_koblenz.jgralab.utilities.tg2dot.greql2.GreqlEvaluatorFacade;
 
@@ -85,11 +84,6 @@ public class GraphLayoutFactory {
 	public GraphLayoutFactory(GreqlEvaluatorFacade evaluator) {
 		this.evaluator = evaluator;
 		schema = evaluator.getSchema();
-	}
-
-	public void setJsonGraphLayoutFilename(File graphLayoutFile) {
-		this.graphLayoutFile = graphLayoutFile;
-		reader = new JsonGraphLayoutReader(evaluator);
 	}
 
 	public void setPListGraphLayoutFilename(File graphLayoutFile) {
