@@ -279,7 +279,7 @@
 		<unjar_mp dest="${tmp.dir}">
 			<fileset dir="${comlib.dir}/apache/commons/cli/" includes="**/*.jar" />
 		</unjar_mp>
-		<copy todir="${tmp.dir}/META-INF" file="${project.dir}/license/LICENSE.txt" />
+		<copy todir="${tmp.dir}/META-INF" file="${project.dir}/LICENSE" />
 	</target>
 
 	<target name="modify_manifest" depends="versiontasks">
