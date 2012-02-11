@@ -239,7 +239,7 @@ public class SchemaImpl implements Schema {
 		this.schemaClassManager = SchemaClassManager.instance(this.qualifiedName);
 
 		// Needs to be created before any NamedElement can be created
-		this.defaultPackage = PackageImpl.createDefaultPackage(this);
+		this.defaultPackage = this.createDefaultPackage();
 
 		// Creation of the BasicDomains
 		this.booleanDomain = this.createBooleanDomain();
@@ -258,6 +258,10 @@ public class SchemaImpl implements Schema {
 		this.defaultVertexClass = VertexClassImpl.createDefaultVertexClass(this);
 		this.defaultEdgeClass = EdgeClassImpl.createDefaultEdgeClass(this);
 		this.config = this.createDefaultConfig();
+	}
+
+	protected Package createDefaultPackage() {
+		return PackageImpl.createDefaultPackage(this);
 	}
 
 	private void throwInvalidSchemaNameException() {
