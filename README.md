@@ -13,8 +13,8 @@ projects into some base folder `jgsrc` so that the filesystem structure is like
 so.
 
     jgsrc/               # your jgralab workspace
-    +-> common/          # this project
-    +-> jgralab/         # jgralab itself
+    +-> common/          # the common project
+    +-> jgralab/         # this project, i.e., jgralab itself
 
 To build `jgralab` you need to have [Apache Ant](http://ant.apache.org/).
 Build `common` first and then `jgralab`.
