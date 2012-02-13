@@ -217,7 +217,7 @@ public class SchemaImpl implements Schema {
 
 	/**
 	 * Creates a new <code>Schema</code>.
-	 *
+	 * 
 	 * @param name
 	 *            Name of schema.
 	 * @param packagePrefix
@@ -302,22 +302,27 @@ public class SchemaImpl implements Schema {
 	}
 
 	void addDomain(Domain dom) {
-		assert !domains.containsKey(dom.getQualifiedName()) : "There already is a Domain with the qualified name: "
-				+ dom.getQualifiedName() + " in the Schema!";
+		if (domains.containsKey(dom.getQualifiedName())) {
+			throw new SchemaException("Duplicate Domain '"
+					+ dom.getQualifiedName());
+		}
 		domains.put(dom.getQualifiedName(), dom);
+		domainsDag.createNode(dom);
 	}
 
 	void addPackage(PackageImpl pkg) {
-		assert !packages.containsKey(pkg.getQualifiedName()) : "There already is a Package with the qualified name '"
-				+ pkg.getQualifiedName() + "' in the Schema!";
+		if (packages.containsKey(pkg.getQualifiedName())) {
+			throw new SchemaException("Duplicate Package "
+					+ pkg.getQualifiedName());
+		}
 		packages.put(pkg.getQualifiedName(), pkg);
 	}
 
 	void addNamedElement(NamedElement namedElement) {
-		assert !namedElements.containsKey(namedElement.getQualifiedName()) : "You are trying to add the NamedElement '"
-				+ namedElement.getQualifiedName()
-				+ "' to this Schema, but that does already exist!";
-
+		if (namedElements.containsKey(namedElement.getQualifiedName())) {
+			throw new SchemaException("Duplicate NamedElement "
+					+ namedElement.getQualifiedName());
+		}
 		namedElements.put(namedElement.getQualifiedName(), namedElement);
 
 		if (!(namedElement instanceof AttributedElementClass)) {
@@ -777,7 +782,7 @@ public class SchemaImpl implements Schema {
 	/**
 	 * Creates a {@link Package} with given qualified name, or returns an
 	 * existing package with this qualified name.
-	 *
+	 * 
 	 * @param qn
 	 *            the qualified name of the package
 	 * @return a new {@link Package} with the given qualified name, or an
@@ -833,7 +838,7 @@ public class SchemaImpl implements Schema {
 	/**
 	 * Given a qualified name like foo.bar.baz returns a string array with two
 	 * components: the package prefix (foo.bar) and the simple name (baz).
-	 *
+	 * 
 	 * @param qualifiedName
 	 *            a qualified name
 	 * @return a string array with two components: the package prefix and the
@@ -1005,8 +1010,8 @@ public class SchemaImpl implements Schema {
 		return domains;
 	}
 
-	protected DirectedAcyclicGraph<Domain> getDomainsDag() {
-		return domainsDag;
+	void addDomainDependency(Domain composite, Domain base) {
+		domainsDag.createEdge(base, composite);
 	}
 
 	@Override
@@ -1104,7 +1109,7 @@ public class SchemaImpl implements Schema {
 	}
 
 	/**
-	 *
+	 * 
 	 * @param implementationType
 	 * @return
 	 */
@@ -1164,7 +1169,7 @@ public class SchemaImpl implements Schema {
 
 	/**
 	 * only used internally
-	 *
+	 * 
 	 * @return number of graphelementclasses contained in graphclass
 	 */
 	private int getNumberOfElements() {

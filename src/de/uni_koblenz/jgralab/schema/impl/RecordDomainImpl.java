@@ -94,10 +94,10 @@ public final class RecordDomainImpl extends CompositeDomainImpl implements
 
 	@Override
 	public void addComponent(String name, Domain domain) {
-		if(((SchemaImpl)getSchema()).isFinished()){
+		if (((SchemaImpl) getSchema()).isFinished()) {
 			throw new SchemaException("No changes to finished schema!");
 		}
-		
+
 		if (name.isEmpty()) {
 			throw new InvalidNameException(
 					"Cannot create a record component with an empty name.");
@@ -118,7 +118,8 @@ public final class RecordDomainImpl extends CompositeDomainImpl implements
 		}
 		RecordComponent c = new RecordComponent(name, domain);
 		components.put(name, c);
-		((SchemaImpl)parentPackage.getSchema()).getDomainsDag().createEdge(domain,this);
+		((SchemaImpl) parentPackage.getSchema()).addDomainDependency(this,
+				domain);
 	}
 
 	@Override

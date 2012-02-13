@@ -94,8 +94,8 @@ public final class MapDomainImpl extends CompositeDomainImpl implements
 		}
 		keyDomain = aKeyDomain;
 		valueDomain = aValueDomain;
-		((SchemaImpl)schema).getDomainsDag().createEdge(keyDomain,this);
-		((SchemaImpl)schema).getDomainsDag().createEdge(valueDomain,this);
+		((SchemaImpl) schema).addDomainDependency(this, keyDomain);
+		((SchemaImpl) schema).addDomainDependency(this, valueDomain);
 	}
 
 	@Override
@@ -366,8 +366,8 @@ public final class MapDomainImpl extends CompositeDomainImpl implements
 		while (iterator.hasNext() && result) {
 			Object key = iterator.next();
 			result &= getKeyDomain().isConformGenericValue(key)
-					&& getValueDomain()
-							.isConformGenericValue(((PMap<?, ?>) value).get(key));
+					&& getValueDomain().isConformGenericValue(
+							((PMap<?, ?>) value).get(key));
 		}
 		return result;
 	}
