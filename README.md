@@ -34,7 +34,7 @@ can import them in Eclipse as existing projects.
 You can download nightly builds from our
 [snapshots page](http://userpages.uni-koblenz.de/~ist/jgralab/snapshots/).  The
 source jars contain the compiled class files and the source files.  As such,
-they are preferrable to the binary-only bulds when you intend to develop
+they are preferrable to the binary-only builds when you intend to develop
 applications using JGraLab, because then you get nicer code completion, e.g.,
 the real names of method parameters instead of just `arg0`.
 
