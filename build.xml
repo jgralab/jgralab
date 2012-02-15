@@ -46,7 +46,7 @@
 	<!-- import the common build file -->
 	<import file="../common/common.xml" />
 
-	<property name="license.file" value="../jgralab/license/header/gpl-3.0-header.txt" />
+	<property name="license.file" value="../jgralab/license-header/gpl-3.0-header.txt" />
 
 	<property file="${testcases.dir}/jgralabtest.properties" />
 
