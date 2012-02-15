@@ -5,6 +5,7 @@ import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.ImplementationType;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.impl.GraphFactoryImpl;
+import de.uni_koblenz.jgralab.impl.InternalGraph;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.GraphClass;
 import de.uni_koblenz.jgralab.schema.Schema;
@@ -46,8 +47,14 @@ public class GenericGraphFactoryImpl extends GraphFactoryImpl {
 	@Override
 	public <V extends Vertex> V createVertex(VertexClass vc, int id, Graph g) {
 		assert schema == vc.getSchema();
+		if (!((InternalGraph) g).isLoading() && (g.hasECARuleManager())) {
+			g.getECARuleManager().fireBeforeCreateVertexEvents(vc);
+		}
 		@SuppressWarnings("unchecked")
 		V vertex = (V) new GenericVertexImpl(vc, id, g);
+		if (!((InternalGraph) g).isLoading() && g.hasECARuleManager()) {
+			g.getECARuleManager().fireAfterCreateVertexEvents(vertex);
+		}
 		return vertex;
 	}
 
@@ -55,8 +62,14 @@ public class GenericGraphFactoryImpl extends GraphFactoryImpl {
 	public <E extends Edge> E createEdge(EdgeClass ec, int id, Graph g,
 			Vertex alpha, Vertex omega) {
 		assert schema == ec.getSchema();
+		if (!((InternalGraph) g).isLoading() && (g.hasECARuleManager())) {
+			g.getECARuleManager().fireBeforeCreateEdgeEvents(ec);
+		}
 		@SuppressWarnings("unchecked")
 		E edge = (E) new GenericEdgeImpl(ec, id, g, alpha, omega);
+		if (!((InternalGraph) g).isLoading() && g.hasECARuleManager()) {
+			g.getECARuleManager().fireAfterCreateEdgeEvents(edge);
+		}	
 		return edge;
 	}
 }

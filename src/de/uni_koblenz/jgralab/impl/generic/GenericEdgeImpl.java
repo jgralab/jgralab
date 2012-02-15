@@ -118,7 +118,10 @@ public class GenericEdgeImpl extends EdgeImpl {
 		int i = type.getAttributeIndex(name);
 		if (getAttributedElementClass().getAttribute(name).getDomain()
 				.isConformGenericValue(data)) {
+			this.ecaAttributeChanging(name, this.attributes[i], data);
+			Object old_value = this.attributes[i];
 			attributes[i] = data;
+			this.ecaAttributeChanged(name, old_value, data);
 		} else {
 			throw new ClassCastException();
 		}

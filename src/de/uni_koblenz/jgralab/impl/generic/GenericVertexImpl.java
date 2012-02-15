@@ -92,7 +92,10 @@ public class GenericVertexImpl extends VertexImpl {
 		int i = type.getAttributeIndex(name);
 		if (getAttributedElementClass().getAttribute(name).getDomain()
 				.isConformGenericValue(data)) {
+			ecaAttributeChanging(name, attributes[i], data);
+			Object old_value = attributes[i];
 			attributes[i] = data;
+			ecaAttributeChanged(name, old_value, data);
 		} else {
 			throw new ClassCastException();
 		}

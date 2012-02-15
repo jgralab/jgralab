@@ -46,7 +46,7 @@ public class DeleteEdgeEventDescription extends EventDescription<EdgeClass> {
 	 *            the to be deleted Edge
 	 */
 	public void fire(Edge element) {
-		if (super.checkContext(element)) {
+		if (this.checkContext(element)) {
 			int nested = getActiveECARules().get(0).getECARuleManager()
 					.getNestedTriggerCalls();
 			Graph graph = getActiveECARules().get(0).getECARuleManager()
@@ -64,7 +64,7 @@ public class DeleteEdgeEventDescription extends EventDescription<EdgeClass> {
 	 *            the type of the Edge that is deleted
 	 */
 	public void fire(EdgeClass type) {
-		if (super.checkContext(type)) {
+		if (this.checkContext(type)) {
 			int nested = getActiveECARules().get(0).getECARuleManager()
 					.getNestedTriggerCalls();
 			Graph graph = getActiveECARules().get(0).getECARuleManager()

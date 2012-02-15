@@ -270,9 +270,9 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 	@Override
 	public void internalEdgeAdded(InternalEdge e) {
 		notifyEdgeAdded(e);
-		if (hasECARuleManager()) {
-			getECARuleManager().fireAfterCreateEdgeEvents(e);
-		}
+//		if (hasECARuleManager()) {
+//			getECARuleManager().fireAfterCreateEdgeEvents(e);
+//		}
 	}
 
 	@Override
@@ -314,9 +314,9 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 	@Override
 	public void internalVertexAdded(InternalVertex v) {
 		notifyVertexAdded(v);
-		if (hasECARuleManager()) {
-			getECARuleManager().fireAfterCreateVertexEvents(v);
-		}
+//		if (hasECARuleManager()) {
+//			getECARuleManager().fireAfterCreateVertexEvents(v);
+//		}
 	}
 
 	@Override
@@ -949,14 +949,12 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 	private void internalDeleteEdge(Edge edge) {
 		assert (edge != null) && edge.isValid() && eSeqContainsEdge(edge);
 
-		if (hasECARuleManager()) {
-			getECARuleManager().fireBeforeDeleteEdgeEvents(edge);
-		}
-
 		InternalEdge e = (InternalEdge) edge.getNormalEdge();
 		if (hasECARuleManager()) {
 			getECARuleManager().fireBeforeDeleteEdgeEvents(edge);
 		}
+		
+		EdgeClass ec = e.getAttributedElementClass();
 
 		e = (InternalEdge) edge.getNormalEdge();
 		internalEdgeDeleted(e);
@@ -975,7 +973,7 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 
 		if (hasECARuleManager()) {
 			getECARuleManager().fireAfterDeleteEdgeEvents(
-					e.getAttributedElementClass());
+					ec);
 		}
 		edgeAfterDeleted(e, alpha, omega);
 	}
@@ -999,6 +997,8 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 			if (hasECARuleManager()) {
 				getECARuleManager().fireBeforeDeleteVertexEvents(v);
 			}
+			VertexClass vc = v.getAttributedElementClass();
+			
 			internalVertexDeleted(v);
 			// delete all incident edges including incidence objects
 			Edge e = v.getFirstIncidence();
@@ -1021,7 +1021,7 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 
 			if (hasECARuleManager()) {
 				getECARuleManager().fireAfterDeleteVertexEvents(
-						v.getAttributedElementClass());
+						vc);
 			}
 			vertexAfterDeleted(v);
 		}

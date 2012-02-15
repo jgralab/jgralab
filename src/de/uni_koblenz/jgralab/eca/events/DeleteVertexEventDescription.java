@@ -70,7 +70,7 @@ public class DeleteVertexEventDescription extends EventDescription<VertexClass> 
 			Graph graph = getActiveECARules().get(0).getECARuleManager()
 					.getGraph();
 			for (ECARule<VertexClass> rule : activeRules) {
-				rule.trigger(new DeleteVertexEvent(nested, graph, getType()));
+				rule.trigger(new DeleteVertexEvent(nested, graph, type));
 			}
 		}
 	}

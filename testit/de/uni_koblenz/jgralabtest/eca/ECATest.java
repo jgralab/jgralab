@@ -502,6 +502,7 @@ public class ECATest {
 	static void initGraph() {
 		SimpleLibraryGraph graph = SimpleLibrarySchema.instance()
 				.createSimpleLibraryGraph(ImplementationType.STANDARD);
+				
 		graph.set_version("v1.0");
 
 		// Library
