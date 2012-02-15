@@ -41,7 +41,9 @@
 	<property name="unjarexcludes" value="clover/**" />
 	<property name="test.suite" value="de.uni_koblenz.jgralabtest.RunTests" />
 	<property name="manifest.static" value="true" />
-	<!-- <property name="test.suite" value="de.uni_koblenz.jgralabtest.instancetest.GraphTest" /> -->
+
+	<!-- TODO: Currently the greqltest won't compile -->
+	<property name="testcompileexcludes" value="de/uni_koblenz/jgralabtest/greql2/**" />
 
 	<!-- import the common build file -->
 	<import file="../common/common.xml" />
