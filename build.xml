@@ -52,7 +52,7 @@
 
 	<!-- enable clover for the testcases:
 	     run with "$ ant with.clover build test clover.html" -->
-	<property name="clover.jar" value="${lib.dir}/clover/clover-3.1.0.jar" />
+	<property name="clover.jar" value="${lib.dir}/clover/clover-3.1.3.jar" />
 	<taskdef resource="cloverlib.xml" classpath="${clover.jar}" />
 
 	<target name="with.clover">
