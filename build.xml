@@ -41,7 +41,9 @@
 	<property name="unjarexcludes" value="clover/**" />
 	<property name="test.suite" value="de.uni_koblenz.jgralabtest.RunTests" />
 	<property name="manifest.static" value="true" />
-	<!-- <property name="test.suite" value="de.uni_koblenz.jgralabtest.instancetest.GraphTest" /> -->
+
+	<!-- TODO: Currently the greqltest won't compile -->
+	<property name="testcompileexcludes" value="de/uni_koblenz/jgralabtest/greql2/**" />
 
 	<!-- import the common build file -->
 	<import file="../common/common.xml" />
@@ -52,7 +54,7 @@
 
 	<!-- enable clover for the testcases:
 	     run with "$ ant with.clover build test clover.html" -->
-	<property name="clover.jar" value="${lib.dir}/clover/clover-3.1.0.jar" />
+	<property name="clover.jar" value="${lib.dir}/clover/clover-3.1.3.jar" />
 	<taskdef resource="cloverlib.xml" classpath="${clover.jar}" />
 
 	<target name="with.clover">
