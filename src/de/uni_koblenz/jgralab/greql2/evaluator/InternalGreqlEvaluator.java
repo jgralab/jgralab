@@ -34,7 +34,10 @@
  */
 package de.uni_koblenz.jgralab.greql2.evaluator;
 
+import de.uni_koblenz.jgralab.Graph;
+import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.FunctionApplicationEvaluator;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
+import de.uni_koblenz.jgralab.greql2.types.TypeCollection;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.Schema;
 
@@ -58,4 +61,18 @@ public interface InternalGreqlEvaluator {
 	public boolean haveBoundVariablesChanged();
 
 	public void setBoundVariablesHaveChanged(boolean boundVariablesHaveChanged);
+
+	public Graph getDataGraph();
+
+	/**
+	 * @param eval
+	 *            {@link FunctionApplicationEvaluator}
+	 * @return {@link TypeCollection} which is associated with <code>eval</code>
+	 *         . If none is stored, <code>null</code> is returned.
+	 */
+	public TypeCollection getTypeCollectionForFunctionApplicationEvaluator(
+			FunctionApplicationEvaluator eval);
+
+	public TypeCollection setTypeCollectionForFunctionApplicationEvaluator(
+			FunctionApplicationEvaluator faeval, TypeCollection typeArgument);
 }

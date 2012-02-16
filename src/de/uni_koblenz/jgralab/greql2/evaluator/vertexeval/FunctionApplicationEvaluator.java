@@ -61,11 +61,7 @@ import de.uni_koblenz.jgralab.greql2.types.TypeCollection;
 public class FunctionApplicationEvaluator extends
 		VertexEvaluator<FunctionApplication> {
 
-	protected ArrayList<VertexEvaluator> parameterEvaluators = null;
-
-	protected TypeCollection typeArgument = null;
-
-	protected Object[] parameters = null;
+	protected ArrayList<VertexEvaluator<? extends Expression>> parameterEvaluators = null;
 
 	protected int paramEvalCount = 0;
 
@@ -124,15 +120,15 @@ public class FunctionApplicationEvaluator extends
 	 * creates the list of parameter evaluators so that it would not be
 	 * necessary to build it up each time the function gets evaluated
 	 */
-	protected ArrayList<VertexEvaluator> createVertexEvaluatorList() {
-		ArrayList<VertexEvaluator> vertexEvalList = new ArrayList<VertexEvaluator>();
+	protected ArrayList<VertexEvaluator<? extends Expression>> createVertexEvaluatorList() {
+		ArrayList<VertexEvaluator<? extends Expression>> vertexEvalList = new ArrayList<VertexEvaluator<? extends Expression>>();
 		IsArgumentOf inc = vertex
 				.getFirstIsArgumentOfIncidence(EdgeDirection.IN);
 		while (inc != null) {
 			Expression currentParameterExpr = inc.getAlpha();
 			// maybe the vertex has no evaluator
-			VertexEvaluator paramEval = vertexEvalMarker
-					.getMark(currentParameterExpr);
+			VertexEvaluator<? extends Expression> paramEval = query
+					.getVertexEvaluator(currentParameterExpr);
 			vertexEvalList.add(paramEval);
 			inc = inc.getNextIsArgumentOfIncidence(EdgeDirection.IN);
 		}
@@ -142,7 +138,7 @@ public class FunctionApplicationEvaluator extends
 	/**
 	 * creates the type-argument
 	 */
-	private TypeCollection createTypeArgument() {
+	private TypeCollection createTypeArgument(InternalGreqlEvaluator evaluator) {
 		TypeId typeId;
 		IsTypeExprOf typeEdge = vertex
 				.getFirstIsTypeExprOfIncidence(EdgeDirection.IN);
@@ -151,10 +147,10 @@ public class FunctionApplicationEvaluator extends
 			typeCollection = new TypeCollection();
 			while (typeEdge != null) {
 				typeId = (TypeId) typeEdge.getAlpha();
-				TypeIdEvaluator typeEval = (TypeIdEvaluator) vertexEvalMarker
-						.getMark(typeId);
+				TypeIdEvaluator typeEval = (TypeIdEvaluator) query
+						.getVertexEvaluator(typeId);
 				typeCollection.addTypes((TypeCollection) typeEval
-						.getResult(graph));
+						.getResult(evaluator));
 				typeEdge = typeEdge
 						.getNextIsTypeExprOfIncidence(EdgeDirection.IN);
 			}
@@ -168,29 +164,38 @@ public class FunctionApplicationEvaluator extends
 	@Override
 	public Object evaluate(InternalGreqlEvaluator evaluator) {
 		FunctionInfo fi = getFunctionInfo();
+
+		TypeCollection typeArgument = evaluator
+				.getTypeCollectionForFunctionApplicationEvaluator(this);
+		if (typeArgument == null) {
+			typeArgument = createTypeArgument(evaluator);
+			evaluator.setTypeCollectionForFunctionApplicationEvaluator(this,
+					typeArgument);
+		}
+
 		if (!listCreated) {
-			typeArgument = createTypeArgument();
 			parameterEvaluators = createVertexEvaluatorList();
-			int parameterCount = parameterEvaluators.size();
-			if (fi.needsGraphArgument()) {
-				parameterCount++;
-			}
-			if (typeArgument != null) {
-				parameterCount++;
-			}
-			parameters = new Object[parameterCount];
 			paramEvalCount = parameterEvaluators.size();
 			listCreated = true;
 		}
 
+		int parameterCount = parameterEvaluators.size();
+		if (fi.needsGraphArgument()) {
+			parameterCount++;
+		}
+		if (typeArgument != null) {
+			parameterCount++;
+		}
+		Object[] parameters = new Object[parameterCount];
+
 		int p = 0;
 
 		if (fi.needsGraphArgument()) {
-			parameters[p++] = graph;
+			parameters[p++] = evaluator.getDataGraph();
 		}
 
 		for (int i = 0; i < paramEvalCount; i++) {
-			parameters[p++] = parameterEvaluators.get(i).getResult(graph);
+			parameters[p++] = parameterEvaluators.get(i).getResult(evaluator);
 		}
 
 		if (typeArgument != null) {
