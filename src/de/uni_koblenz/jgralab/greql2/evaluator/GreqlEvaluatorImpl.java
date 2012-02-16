@@ -1,29 +1,29 @@
 /*
  * JGraLab - The Java Graph Laboratory
- * 
+ *
  * Copyright (C) 2006-2012 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
- * 
+ *
  * For bug reports, documentation and further information, visit
- * 
+ *
  *                         https://github.com/jgralab/jgralab
- * 
+ *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
  * Free Software Foundation; either version 3 of the License, or (at your
  * option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, see <http://www.gnu.org/licenses>.
- * 
+ *
  * Additional permission under GNU GPL version 3 section 7
- * 
+ *
  * If you modify this Program, or any covered work, by linking or combining
  * it with Eclipse (or a modified version of that program or an Eclipse
  * plugin), containing parts covered by the terms of the Eclipse Public
@@ -51,14 +51,15 @@ import org.pcollections.PVector;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.GraphIOException;
+import de.uni_koblenz.jgralab.ImplementationType;
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.ProgressFunction;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.codegenerator.CodeGeneratorConfiguration;
 import de.uni_koblenz.jgralab.graphmarker.GraphMarker;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.CostModel;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VertexEvaluator;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Graph;
+import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
 import de.uni_koblenz.jgralab.greql2.types.Undefined;
 import de.uni_koblenz.jgralab.impl.ConsoleProgressFunction;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
@@ -69,9 +70,9 @@ import de.uni_koblenz.jgralab.schema.AttributedElementClass;
  * graph. The result is a JValue-object, it can be accessed using the method
  * <code>JValue getEvaluationResult()</code>. TODO [greqlevaluator] Make all
  * occurences of GreqlEvaluatorImpl to use the public Interface.
- * 
+ *
  * @author ist@uni-koblenz.de
- * 
+ *
  */
 public class GreqlEvaluatorImpl implements InternalGreqlEvaluator,
 		GreqlEvaluator {
@@ -88,9 +89,9 @@ public class GreqlEvaluatorImpl implements InternalGreqlEvaluator,
 		String query = args[0];
 		Graph datagraph = null;
 		if (args.length == 2) {
-			datagraph = GraphIO.loadSchemaAndGraphFromFile(args[1],
-					CodeGeneratorConfiguration.MINIMAL,
-					new ConsoleProgressFunction("Loading"));
+			datagraph = GraphIO.loadGraphFromFile(args[1],
+					ImplementationType.GENERIC, new ConsoleProgressFunction(
+							"Loading"));
 		}
 
 		GreqlEvaluatorImpl eval = new GreqlEvaluatorImpl(new Query(query),
@@ -262,7 +263,7 @@ public class GreqlEvaluatorImpl implements InternalGreqlEvaluator,
 
 	/**
 	 * Creates a new GreqlEvaluator for the given Query and Datagraph
-	 * 
+	 *
 	 * @param query
 	 *            the string-representation of the query to evaluate
 	 * @param datagraph
@@ -296,21 +297,21 @@ public class GreqlEvaluatorImpl implements InternalGreqlEvaluator,
 	private void createVertexEvaluators() {
 		Greql2Graph queryGraph = query.getQueryGraph();
 		vertexEvalGraphMarker = new GraphMarker<VertexEvaluator>(queryGraph);
-		Vertex currentVertex = queryGraph.getFirstVertex();
+		Greql2Vertex currentVertex = queryGraph.getFirstGreql2Vertex();
 		while (currentVertex != null) {
 			VertexEvaluator vertexEval = VertexEvaluator.createVertexEvaluator(
 					currentVertex, this);
 			if (vertexEval != null) {
 				vertexEvalGraphMarker.mark(currentVertex, vertexEval);
 			}
-			currentVertex = currentVertex.getNextVertex();
+			currentVertex = currentVertex.getNextGreql2Vertex();
 		}
 	}
 
 	/**
 	 * clears the tempresults that are stored in the VertexEvaluators-Objects at
 	 * the syntaxgraph nodes
-	 * 
+	 *
 	 * @param optimizer
 	 */
 	private void resetVertexEvaluators() {
