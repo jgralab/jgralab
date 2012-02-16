@@ -47,7 +47,7 @@ public abstract class Function {
 	}
 
 	private String description;
-	private Category[] categories;;
+	private Category[] categories;
 	private long costs;
 	private long cardinality;
 	private double selectivity;

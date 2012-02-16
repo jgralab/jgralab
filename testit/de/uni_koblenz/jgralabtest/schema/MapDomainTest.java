@@ -51,7 +51,7 @@ import de.uni_koblenz.jgralab.schema.Domain;
 import de.uni_koblenz.jgralab.schema.MapDomain;
 import de.uni_koblenz.jgralab.schema.RecordDomain;
 import de.uni_koblenz.jgralab.schema.RecordDomain.RecordComponent;
-import de.uni_koblenz.jgralab.schema.exception.RecordCycleException;
+import de.uni_koblenz.jgralab.schema.exception.SchemaException;
 
 /**
  * TODO: More testing!
@@ -120,7 +120,7 @@ public class MapDomainTest extends CompositeDomainTest {
 		expectedDomains4.add(domain3);
 	}
 
-	@Test(expected = RecordCycleException.class)
+	@Test(expected = SchemaException.class)
 	public void testRejectionOfCyclicInclusion() {
 		/*
 		 * Tests the rejection of the following case: A MapDomain M contains a

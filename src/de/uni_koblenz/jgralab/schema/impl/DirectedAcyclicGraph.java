@@ -63,7 +63,7 @@ public class DirectedAcyclicGraph<T> extends DirectedGraph<T> {
 		}
 		// Take a node from q as long as q is not empty
 		// Add it to the topolocicalOrder list
-		// Add all of his successors to q for which it is true, 
+		// Add all of his successors to q for which it is true,
 		// that all predecessors are already in the list
 		while (!q.isEmpty()) {
 			Node<T> n = q.poll();
@@ -139,8 +139,7 @@ public class DirectedAcyclicGraph<T> extends DirectedGraph<T> {
 			fromNode.successors.remove(toNode);
 			toNode.predecessors.remove(fromNode);
 			computeTopologicalOrder();
-			throw new IllegalArgumentException("Can't add edge from " + alpha
-					+ " to " + omega + " since this would create a cycle.");
+			throw new CycleException(alpha, omega);
 		}
 	}
 

@@ -50,7 +50,6 @@ import de.uni_koblenz.jgralab.schema.EnumDomain;
 import de.uni_koblenz.jgralab.schema.Package;
 import de.uni_koblenz.jgralab.schema.exception.InvalidNameException;
 import de.uni_koblenz.jgralab.schema.exception.SchemaClassAccessException;
-import de.uni_koblenz.jgralab.schema.exception.SchemaException;
 import de.uni_koblenz.jgralab.schema.impl.compilation.SchemaClassManager;
 
 public final class EnumDomainImpl extends DomainImpl implements EnumDomain {
@@ -80,14 +79,13 @@ public final class EnumDomainImpl extends DomainImpl implements EnumDomain {
 
 	@Override
 	public void addConst(String aConst) {
-		if(((SchemaImpl)getSchema()).isFinished()){
-			throw new SchemaException("No changes to finished schema!");
-		}
+		SchemaImpl s = (SchemaImpl) getSchema();
+		s.assertNotFinished();
 		if (constants.contains(aConst)) {
 			throw new InvalidNameException("Try to add duplicate constant '"
 					+ aConst + "' to EnumDomain" + getQualifiedName());
 		}
-		if (!getSchema().isValidEnumConstant(aConst)) {
+		if (!s.isValidEnumConstant(aConst)) {
 			throw new InvalidNameException(aConst
 					+ " is not a valid enumeration constant.");
 		}

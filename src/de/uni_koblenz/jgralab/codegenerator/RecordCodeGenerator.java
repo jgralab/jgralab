@@ -42,9 +42,9 @@ import de.uni_koblenz.jgralab.schema.StringDomain;
 
 /**
  * TODO add comment
- *
+ * 
  * @author ist@uni-koblenz.de
- *
+ * 
  */
 public class RecordCodeGenerator extends CodeGenerator {
 
@@ -277,7 +277,7 @@ public class RecordCodeGenerator extends CodeGenerator {
 
 	/**
 	 * Getter-methods for fields needed for transaction support.
-	 *
+	 * 
 	 * @return
 	 */
 	protected CodeBlock createGetterMethods() {
@@ -390,7 +390,7 @@ public class RecordCodeGenerator extends CodeGenerator {
 			if (rc.getDomain().isComposite()) {
 				s.setVariable("toString", "_" + rc.getName() + ".toString()");
 			} else {
-				s.setVariable("toString", "String.valueOf(_#key#);");
+				s.setVariable("toString", "String.valueOf(_#key#)");
 			}
 			code.add(s);
 			delim = ", ";

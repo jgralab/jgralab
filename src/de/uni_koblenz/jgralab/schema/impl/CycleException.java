@@ -32,18 +32,25 @@
  * non-source form of such a combination shall include the source code for
  * the parts of JGraLab used as well as that of the covered work.
  */
-package de.uni_koblenz.jgralab.schema.exception;
+package de.uni_koblenz.jgralab.schema.impl;
 
-/**
- * @author ist@uni-koblenz.de
- * 
- */
-public class RecordCycleException extends SchemaException {
+public class CycleException extends RuntimeException {
+	private static final long serialVersionUID = 6062437865949937921L;
+	private Object alpha;
+	private Object omega;
 
-	private static final long serialVersionUID = -5774810231680098254L;
-
-	public RecordCycleException(String message) {
-		super(message);
+	public CycleException(Object alpha, Object omega) {
+		super("Can't add edge from " + alpha + " to " + omega
+				+ " since this would create a cycle.");
+		this.alpha = alpha;
+		this.omega = omega;
 	}
 
+	public Object getAlpha() {
+		return alpha;
+	}
+
+	public Object getOmega() {
+		return omega;
+	}
 }

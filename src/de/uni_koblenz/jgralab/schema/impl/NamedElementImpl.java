@@ -518,9 +518,7 @@ public abstract class NamedElementImpl implements NamedElement {
 
 	@Override
 	public void addComment(String comment) {
-		if(((SchemaImpl)getSchema()).isFinished()){
-			throw new SchemaException("No changes to finished schema!");
-		}
+		((SchemaImpl) getSchema()).assertNotFinished();
 		if (comment == null) {
 			return;
 		}

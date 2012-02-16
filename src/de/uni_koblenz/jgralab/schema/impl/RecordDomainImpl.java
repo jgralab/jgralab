@@ -49,14 +49,11 @@ import de.uni_koblenz.jgralab.Record;
 import de.uni_koblenz.jgralab.codegenerator.CodeBlock;
 import de.uni_koblenz.jgralab.codegenerator.CodeGenerator;
 import de.uni_koblenz.jgralab.codegenerator.CodeSnippet;
-import de.uni_koblenz.jgralab.schema.CompositeDomain;
 import de.uni_koblenz.jgralab.schema.Domain;
 import de.uni_koblenz.jgralab.schema.Package;
 import de.uni_koblenz.jgralab.schema.RecordDomain;
-import de.uni_koblenz.jgralab.schema.exception.DuplicateRecordComponentException;
 import de.uni_koblenz.jgralab.schema.exception.InvalidNameException;
 import de.uni_koblenz.jgralab.schema.exception.NoSuchRecordComponentException;
-import de.uni_koblenz.jgralab.schema.exception.RecordCycleException;
 import de.uni_koblenz.jgralab.schema.exception.SchemaClassAccessException;
 import de.uni_koblenz.jgralab.schema.exception.SchemaException;
 import de.uni_koblenz.jgralab.schema.exception.WrongSchemaException;
@@ -94,32 +91,31 @@ public final class RecordDomainImpl extends CompositeDomainImpl implements
 
 	@Override
 	public void addComponent(String name, Domain domain) {
-		if (((SchemaImpl) getSchema()).isFinished()) {
-			throw new SchemaException("No changes to finished schema!");
-		}
+		SchemaImpl s = (SchemaImpl) getSchema();
+		s.assertNotFinished();
 
 		if (name.isEmpty()) {
 			throw new InvalidNameException(
 					"Cannot create a record component with an empty name.");
 		}
 		if (components.containsKey(name)) {
-			throw new DuplicateRecordComponentException(name,
-					getQualifiedName());
+			throw new SchemaException("Duplicate component '" + name + "' in "
+					+ this);
 		}
 		if (parentPackage.getSchema().getDomain(domain.getQualifiedName()) != domain) {
 			throw new WrongSchemaException(domain.getQualifiedName()
 					+ " must be a domain of the schema "
 					+ parentPackage.getSchema().getQualifiedName());
 		}
-		if (!staysAcyclicAfterAdding(domain)) {
-			throw new RecordCycleException(
-					"The creation of a component, which has the type " + domain
-							+ ", would create a cycle of RecordDomains.");
+		try {
+			s.addDomainDependency(this, domain);
+		} catch (CycleException e) {
+			throw new SchemaException("Adding the component '" + name
+					+ "' of type '" + domain + "' to '" + this
+					+ "' would create a cycle of RecordDomains.");
 		}
 		RecordComponent c = new RecordComponent(name, domain);
 		components.put(name, c);
-		((SchemaImpl) parentPackage.getSchema()).addDomainDependency(this,
-				domain);
 	}
 
 	@Override
@@ -200,28 +196,6 @@ public final class RecordDomainImpl extends CompositeDomainImpl implements
 				graphIoVariableName);
 
 		return code;
-	}
-
-	/**
-	 * @param d
-	 *            the component domain which should be checked
-	 * @return <code>true</code> if the addition of <code>d</code> wouldn't
-	 *         create an inclusion cycle, <code>false</code> otherwise
-	 */
-	private boolean staysAcyclicAfterAdding(Domain d) {
-		if (d == this) {
-			return false;
-		}
-		if (!(d instanceof CompositeDomain)) {
-			return true;
-		}
-		CompositeDomain c = (CompositeDomain) d;
-		for (CompositeDomain comp : c.getAllComponentCompositeDomains()) {
-			if (!staysAcyclicAfterAdding(comp)) {
-				return false;
-			}
-		}
-		return true;
 	}
 
 	@Override

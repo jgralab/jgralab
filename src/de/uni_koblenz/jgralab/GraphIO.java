@@ -63,7 +63,6 @@ import java.util.Queue;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
-import java.util.logging.Logger;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
@@ -161,8 +160,6 @@ public class GraphIO {
 	}
 
 	private static final int BUFFER_SIZE = 65536;
-
-	private static Logger logger = Logger.getLogger(GraphIO.class.getName());
 
 	private InputStream TGIn;
 
@@ -1004,7 +1001,6 @@ public class GraphIO {
 		}
 		FileInputStream fileStream = null;
 		try {
-			logger.finer("Loading graph " + filename);
 			fileStream = new FileInputStream(filename);
 			InputStream inputStream = null;
 			try {
@@ -1054,7 +1050,6 @@ public class GraphIO {
 		}
 		FileInputStream fileStream = null;
 		try {
-			logger.finer("Loading graph " + filename);
 			fileStream = new FileInputStream(filename);
 			InputStream inputStream = null;
 			try {

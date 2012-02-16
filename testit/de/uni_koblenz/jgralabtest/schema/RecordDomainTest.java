@@ -53,7 +53,7 @@ import de.uni_koblenz.jgralab.schema.RecordDomain.RecordComponent;
 import de.uni_koblenz.jgralab.schema.Schema;
 import de.uni_koblenz.jgralab.schema.exception.InvalidNameException;
 import de.uni_koblenz.jgralab.schema.exception.NoSuchRecordComponentException;
-import de.uni_koblenz.jgralab.schema.exception.RecordCycleException;
+import de.uni_koblenz.jgralab.schema.exception.SchemaException;
 import de.uni_koblenz.jgralab.schema.exception.WrongSchemaException;
 import de.uni_koblenz.jgralab.schema.impl.SchemaImpl;
 
@@ -174,7 +174,7 @@ public class RecordDomainTest extends CompositeDomainTest {
 		record1.addComponent("", schema1.getDomain("Boolean"));
 	}
 
-	@Test(expected = RecordCycleException.class)
+	@Test(expected = SchemaException.class)
 	public void testOfSelfInclusion() {
 		// tests if an exception occurs during creating a RecordDomain which
 		// includes itself
@@ -185,7 +185,7 @@ public class RecordDomainTest extends CompositeDomainTest {
 		record1.addComponent("this", record1);
 	}
 
-	@Test(expected = RecordCycleException.class)
+	@Test(expected = SchemaException.class)
 	public void testOfCyclicInclusion() {
 		// tests if an exception occurs during creating two RecordDomains which
 		// include each other
@@ -196,7 +196,7 @@ public class RecordDomainTest extends CompositeDomainTest {
 		record3.addComponent("theOther", record2);
 	}
 
-	@Test(expected = RecordCycleException.class)
+	@Test(expected = SchemaException.class)
 	public void testOfCyclicInclusion2() {
 		// tests if an exception occurs during creating two RecordDomains which
 		// include each other
@@ -209,7 +209,7 @@ public class RecordDomainTest extends CompositeDomainTest {
 		record4.addComponent("theOther", record2);
 	}
 
-	@Test(expected = RecordCycleException.class)
+	@Test(expected = SchemaException.class)
 	public void testOfCyclicInclusion3() {
 		Schema s = new SchemaImpl("MySchema", "pkgPrefix1");
 		RecordDomain r1 = s.createRecordDomain("test.R1");

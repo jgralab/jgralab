@@ -120,19 +120,6 @@ public class SchemaCodeGenerator extends CodeGenerator {
 		return code;
 	}
 
-	@Override
-	protected CodeBlock createFooter() {
-		CodeList footer = new CodeList();
-		// override equals and hashCode methods
-		footer.add(new CodeSnippet("", "@Override",
-				"public boolean equals(Object o) {",
-				"\treturn super.equals(o);", "}"));
-		footer.add(new CodeSnippet("", "@Override", "public int hashCode() {",
-				"\treturn super.hashCode();", "}"));
-		footer.addNoIndent(super.createFooter());
-		return footer;
-	}
-
 	private CodeBlock createGetDefaultGraphFactoryMethod() {
 		CodeList code = new CodeList();
 		code.addNoIndent(new CodeSnippet(
@@ -308,19 +295,13 @@ public class SchemaCodeGenerator extends CodeGenerator {
 				"/**",
 				" * @return the singleton instance of #simpleClassName#",
 				" */",
-				"public static #simpleClassName# instance() {",
+				"public static synchronized #simpleClassName# instance() {",
 				"\t#simpleClassName# s = theInstance.get();",
 				"\tif (s != null) {",
 				"\t\treturn s;",
 				"\t}",
-				"\tsynchronized (#simpleClassName#.class) {",
-				"\t\ts = theInstance.get();",
-				"\t\tif (s != null) {",
-				"\t\t\treturn s;",
-				"\t\t}",
-				"\t\ts = new #simpleClassName#();",
-				"\t\ttheInstance = new WeakReference<#simpleClassName#>(s);",
-				"\t}",
+				"\ts = new #simpleClassName#();",
+				"\ttheInstance = new WeakReference<#simpleClassName#>(s);",
 				"\treturn s;",
 				"}",
 				"",

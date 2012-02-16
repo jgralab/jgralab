@@ -93,13 +93,13 @@ public class DirectedGraph<T> {
 	}
 
 	@SuppressWarnings("unchecked")
-	public Set<T> getDirectPredecessorsInTopologicalOrder(T data) {
+	public Set<T> getDirectPredecessors(T data) {
 		return (Set<T>) Collections
 				.unmodifiableSet(entries.get(data).predecessors);
 	}
 
 	@SuppressWarnings("unchecked")
-	public Set<T> getDirectSucccessorsInTopologicalOrder(T data) {
+	public Set<T> getDirectSucccessors(T data) {
 		return (Set<T>) Collections
 				.unmodifiableSet(entries.get(data).successors);
 	}
