@@ -36,7 +36,6 @@
 package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 
 import java.util.ArrayList;
-import java.util.Map;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.greql2.evaluator.InternalGreqlEvaluator;
@@ -68,19 +67,6 @@ import de.uni_koblenz.jgralab.schema.VertexClass;
 public class Greql2ExpressionEvaluator extends
 		VertexEvaluator<Greql2Expression> {
 
-	/**
-	 * The varibles that are defined via the <code>using</code> clause. They are
-	 * called bound or also free variables
-	 */
-	private Map<String, Object> boundVariables;
-	boolean boundVariablesChanged = true;
-
-	protected void setBoundVariables(Map<String, Object> boundVariables) {
-		this.boundVariables = boundVariables;
-		result = null;
-		boundVariablesChanged = true;
-	}
-
 	private void initializeBoundVariables(InternalGreqlEvaluator evaluator) {
 		IsBoundVarOf inc = vertex
 				.getFirstIsBoundVarOfIncidence(EdgeDirection.IN);
@@ -107,8 +93,6 @@ public class Greql2ExpressionEvaluator extends
 	 */
 	public Greql2ExpressionEvaluator(Greql2Expression vertex, Query query) {
 		super(vertex, query);
-		boundVariables = eval.getVariables();
-		boundVariablesChanged = true;
 	}
 
 	/**
@@ -116,9 +100,9 @@ public class Greql2ExpressionEvaluator extends
 	 */
 	@Override
 	public Object evaluate(InternalGreqlEvaluator evaluator) {
-		if (boundVariablesChanged) {
+		if (evaluator.haveBoundVariablesChanged()) {
 			initializeBoundVariables(evaluator);
-			boundVariablesChanged = false;
+			evaluator.setBoundVariablesHaveChanged(false);
 		}
 
 		Schema graphSchema = evaluator.getSchemaOfDataGraph();

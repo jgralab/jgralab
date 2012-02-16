@@ -54,4 +54,8 @@ public interface InternalGreqlEvaluator {
 	public Schema getSchemaOfDataGraph();
 
 	public AttributedElementClass<?, ?> getAttributedElementClass(String name);
+
+	public boolean haveBoundVariablesChanged();
+
+	public void setBoundVariablesHaveChanged(boolean boundVariablesHaveChanged);
 }

@@ -179,6 +179,7 @@ public class GreqlEvaluatorImpl implements InternalGreqlEvaluator,
 	 * free variables
 	 */
 	private Map<String, Object> variableMap;
+	boolean variablesChanged = true;
 
 	/**
 	 * Holds the estimated needed for evaluation time in abstract units
@@ -221,6 +222,7 @@ public class GreqlEvaluatorImpl implements InternalGreqlEvaluator,
 
 	public void setVariables(Map<String, Object> varMap) {
 		variableMap = varMap;
+		setBoundVariablesHaveChanged(true);
 	}
 
 	public void setVariable(String varName, Object value) {
@@ -228,6 +230,15 @@ public class GreqlEvaluatorImpl implements InternalGreqlEvaluator,
 			variableMap = new HashMap<String, Object>();
 		}
 		variableMap.put(varName, value);
+		setBoundVariablesHaveChanged(true);
+	}
+
+	public boolean haveBoundVariablesChanged() {
+		return variablesChanged;
+	}
+
+	public void setBoundVariablesHaveChanged(boolean boundVariablesHaveChanged) {
+		variablesChanged = boundVariablesHaveChanged;
 	}
 
 	public Object getResult() {
@@ -272,6 +283,7 @@ public class GreqlEvaluatorImpl implements InternalGreqlEvaluator,
 		this.query = query;
 		this.datagraph = datagraph;
 		variableMap = variables;
+		setBoundVariablesHaveChanged(true);
 		// this.progressFunction = progressFunction;
 	}
 
