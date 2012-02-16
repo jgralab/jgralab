@@ -53,6 +53,7 @@ import de.uni_koblenz.jgralab.greql2.schema.Greql2Graph;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
 import de.uni_koblenz.jgralab.greql2.schema.Identifier;
 import de.uni_koblenz.jgralab.greql2.schema.Variable;
+import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 
 public class Query {
 	private final String queryText;
@@ -226,6 +227,21 @@ public class Query {
 	 */
 	public long getParseTime() {
 		return parseTime;
+	}
+
+	/**
+	 * @param name
+	 * @return {@link AttributedElementClass} of the datagraph with the name
+	 *         <code>name</code>
+	 */
+	public AttributedElementClass<?, ?> getKnownType(String name) {
+		// TODO [greqlrenovation]
+		return null;
+	}
+
+	public AttributedElementClass<?, ?> getAttributedElementClass(String name) {
+		// TODO [greqlrenovation]
+		return null;
 	}
 
 }
