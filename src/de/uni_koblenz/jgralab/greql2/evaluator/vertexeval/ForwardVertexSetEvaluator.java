@@ -83,7 +83,8 @@ public class ForwardVertexSetEvaluator extends
 		}
 		Vertex startVertex = null;
 		startVertex = (Vertex) startEval.getResult(evaluator);
-		return ReachableVertices.search(startVertex, searchAutomaton);
+		return ReachableVertices
+				.search(evaluator, startVertex, searchAutomaton);
 	}
 
 	// @Override

@@ -88,7 +88,8 @@ public class BackwardVertexSetEvaluator extends
 		Vertex targetVertex = null;
 		targetVertex = (Vertex) targetEval.getResult(evaluator);
 
-		return ReachableVertices.search(targetVertex, searchAutomaton);
+		return ReachableVertices.search(evaluator, targetVertex,
+				searchAutomaton);
 	}
 
 	// @Override
