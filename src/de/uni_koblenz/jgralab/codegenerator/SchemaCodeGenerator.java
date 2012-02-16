@@ -83,11 +83,14 @@ public class SchemaCodeGenerator extends CodeGenerator {
 		this.schema = schema;
 
 		rootBlock.setVariable("simpleClassName", schema.getName());
-		rootBlock.setVariable("simpleImplClassName", schema.getName());
 		rootBlock.setVariable("baseClassName", "SchemaImpl");
-		rootBlock.setVariable("isAbstractClass", "false");
 		rootBlock.setVariable("isClassOnly", "true");
-		rootBlock.setVariable("isImplementationClassOnly", "false");
+		rootBlock.setVariable("gcName", schema.getGraphClass()
+				.getQualifiedName());
+		rootBlock.setVariable("gcCamelName", camelCase(schema.getGraphClass()
+				.getQualifiedName()));
+		rootBlock.setVariable("gcImplName", schema.getGraphClass()
+				.getQualifiedName() + "Impl");
 	}
 
 	@Override
@@ -111,7 +114,8 @@ public class SchemaCodeGenerator extends CodeGenerator {
 		if (currentCycle.isClassOnly()) {
 			code.add(createVariables());
 			code.add(createConstructor());
-			code.add(createGraphFactoryMethod());
+			code.add(createGetDefaultGraphFactoryMethod());
+			code.add(createGraphFactoryMethods());
 		}
 		return code;
 	}
@@ -129,16 +133,54 @@ public class SchemaCodeGenerator extends CodeGenerator {
 		return footer;
 	}
 
-	private CodeBlock createGraphFactoryMethod() {
-		addImports("#jgPackage#.Graph", "#jgPackage#.ProgressFunction",
-				"#jgPackage#.GraphIO",
+	private CodeBlock createGetDefaultGraphFactoryMethod() {
+		CodeList code = new CodeList();
+		code.addNoIndent(new CodeSnippet(
+				true,
+				"@Override",
+				"public #jgPackage#.GraphFactory createDefaultGraphFactory(#jgPackage#.ImplementationType implementationType) {"));
+		code.add(new CodeSnippet("switch(implementationType) {"));
+		code.add(new CodeSnippet("\tcase GENERIC:",
+				"\t\treturn new #jgImplPackage#.generic.GenericGraphFactoryImpl(this);"));
+		if (config.hasStandardSupport()) {
+			code.add(new CodeSnippet("\tcase STANDARD:",
+					"\t\treturn new #schemaImplStdPackage#.#gcCamelName#FactoryImpl();"));
+		}
+		if (config.hasTransactionSupport()) {
+			code.add(new CodeSnippet("\tcase TRANSACTION:",
+					"\t\treturn new #schemaImplTransPackage#.#gcCamelName#FactoryImpl();"));
+		}
+		if (config.hasDatabaseSupport()) {
+			code.add(new CodeSnippet("\tcase DATABASE:",
+					"\t\treturn new #schemaImplDbPackage#.#gcCamelName#FactoryImpl();"));
+		}
+		code.add(new CodeSnippet(
+				"}",
+				"throw new UnsupportedOperationException(\"No \" + implementationType + \" support compiled.\");"));
+		code.addNoIndent(new CodeSnippet("}"));
+		return code;
+	}
+
+	private CodeBlock createGraphFactoryMethods() {
+		addImports("#jgPackage#.GraphIO",
 				"#jgImplDbPackage#.GraphDatabaseException",
 				"#jgImplDbPackage#.GraphDatabase",
 				"#jgPackage#.GraphIOException");
 		if (config.hasDatabaseSupport()) {
 			addImports("#jgPackage#.GraphException");
 		}
-		CodeSnippet code = new CodeSnippet(
+		CodeList code = new CodeList();
+		code.setVariable("gcVariableName", schema.getGraphClass()
+				.getVariableName());
+		code.addNoIndent(new CodeSnippet(
+				true,
+				"/**",
+				" * Creates a new #gcName# graph.",
+				"*/",
+				"public #gcName# create#gcCamelName#(#jgPackage#.ImplementationType implType) {",
+				"\treturn create#gcCamelName#(implType, null, 100, 100);", "}"));
+
+		code.addNoIndent(new CodeSnippet(
 				true,
 				"/**",
 				" * Creates a new #gcName# graph with initial vertex and edge counts <code>vMax</code>, <code>eMax</code>.",
@@ -146,52 +188,44 @@ public class SchemaCodeGenerator extends CodeGenerator {
 				" * @param vMax initial vertex count",
 				" * @param eMax initial edge count",
 				"*/",
-				"public #gcName# create#gcCamelName#(int vMax, int eMax) {",
-				((config.hasStandardSupport()) ? "\treturn (#gcCamelName#) graphFactory.createGraph(#gcCamelName#.class, null, vMax, eMax);"
-						: "\tthrow new UnsupportedOperationException(\"No Standard support compiled.\");"),
-				"}",
-				"",
-				"/**",
-				" * Creates a new #gcName# graph with the ID <code>id</code> initial vertex and edge counts <code>vMax</code>, <code>eMax</code>.",
-				" *",
-				" * @param id the id name of the new graph",
-				" * @param vMax initial vertex count",
-				" * @param eMax initial edge count",
-				" */",
-				"public #gcName# create#gcCamelName#(String id, int vMax, int eMax) {",
-				((config.hasStandardSupport()) ? "\treturn (#gcCamelName#) graphFactory.createGraph(#gcCamelName#.class, id, vMax, eMax);"
-						: "\tthrow new UnsupportedOperationException(\"No Standard support compiled.\");"),
-				"}",
-				"",
+				"public #gcName# create#gcCamelName#(#jgPackage#.ImplementationType implType, String id, int vMax, int eMax) {",
+				"\t#jgPackage#.GraphFactory factory = createDefaultGraphFactory(implType);",
+				"\treturn factory.createGraph(#gcVariableName#, id, vMax, eMax);",
+				"}"));
+
+		code.addNoIndent(new CodeSnippet(
+				true,
 				"/**",
 				" * Creates a new #gcName# graph.",
 				"*/",
-				"public #gcName# create#gcCamelName#() {",
-				((config.hasStandardSupport()) ? "\treturn (#gcCamelName#) graphFactory.createGraph(#gcCamelName#.class, null);"
-						: "\tthrow new UnsupportedOperationException(\"No Standard support compiled.\");"),
-				"}",
-				"",
+				"public #gcName# create#gcCamelName#(#jgPackage#.GraphFactory factory) {",
+				"\treturn factory.createGraph(#gcVariableName#, null, 100, 100);",
+				"}"));
+
+		code.addNoIndent(new CodeSnippet(
+				true,
 				"/**",
-				" * Creates a new #gcName# graph with the ID <code>id</code>.",
-				" *",
-				" * @param id the id name of the new graph",
-				" */",
-				"public #gcName# create#gcCamelName#(String id) {",
-				((config.hasStandardSupport()) ? "\treturn (#gcCamelName#) graphFactory.createGraph(#gcCamelName#.class, id);"
-						: "\tthrow new UnsupportedOperationException(\"No Standard support compiled.\");"),
-				"}",
-				"",
-				// ---- database support -------
+				" * Creates a new #gcName# graph.",
+				"*/",
+				"public #gcName# create#gcCamelName#(#jgPackage#.GraphFactory factory, String id, int vMax, int eMax) {",
+				"\treturn factory.createGraph(#gcVariableName#, id, vMax, eMax);",
+				"}"));
+
+		// ---- database support ----
+		code.addNoIndent(new CodeSnippet(
+				true,
 				"/**",
 				" * Creates a new #gcName# graph in a database with given <code>id</code>.",
 				" *",
 				" * @param id Identifier of new graph",
 				" * @param graphDatabase Database which should contain graph",
 				" */",
-				"public #gcName# create#gcCamelName#WithDatabaseSupport(String id, GraphDatabase graphDatabase) throws GraphDatabaseException{",
-				((config.hasDatabaseSupport()) ? "\tGraph graph = graphFactory.createGraphWithDatabaseSupport(#gcCamelName#.class, graphDatabase, id );\n\t\tif(!graphDatabase.containsGraph(id)){\n\t\t\tgraphDatabase.insert((#jgImplDbPackage#.GraphImpl)graph);\n\t\t\treturn (#gcCamelName#)graph;\n\t\t}\n\t\telse\n\t\t\tthrow new GraphException(\"Graph with identifier \" + id + \" already exists in database.\");"
-						: "\tthrow new UnsupportedOperationException(\"No database support compiled.\");"),
-				"}",
+				"public #gcName# create#gcCamelName#(String id, GraphDatabase graphDatabase) throws GraphDatabaseException{",
+				"\treturn create#gcCamelName#(id, 100, 100, graphDatabase);",
+				"}"));
+
+		code.addNoIndent(new CodeSnippet(
+				true,
 				"/**",
 				" * Creates a new #gcName# graph in a database with given <code>id</code>.",
 				" *",
@@ -200,114 +234,65 @@ public class SchemaCodeGenerator extends CodeGenerator {
 				" * @param eMax Maximum initial count of edges that can be held in graph.",
 				" * @param graphDatabase Database which should contain graph",
 				" */",
-				"public #gcName# create#gcCamelName#WithDatabaseSupport(String id, int vMax, int eMax, GraphDatabase graphDatabase) throws GraphDatabaseException{",
-				((config.hasDatabaseSupport()) ? "\tGraph graph = graphFactory.createGraphWithDatabaseSupport(#gcCamelName#.class, graphDatabase, id, vMax, eMax );\n\t\tif(!graphDatabase.containsGraph(id)){\n\t\t\tgraphDatabase.insert((#jgImplDbPackage#.GraphImpl)graph);\n\t\t\treturn (#gcCamelName#)graph;\n\t\t}\n\t\telse\n\t\t\tthrow new GraphException(\"Graph with identifier \" + id + \" already exists in database.\");"
-						: "\tthrow new UnsupportedOperationException(\"No database support compiled.\");"),
-				"}",
-				// ---- transaction support ----
-				"/**",
-				" * Creates a new #gcName# graph with transaction support with initial vertex and edge counts <code>vMax</code>, <code>eMax</code>.",
-				" *",
-				" * @param vMax initial vertex count",
-				" * @param eMax initial edge count",
-				"*/",
-				"public #gcName# create#gcCamelName#WithTransactionSupport(int vMax, int eMax) {",
-				((config.hasTransactionSupport()) ? "\treturn (#gcCamelName#) graphFactory.createGraphWithTransactionSupport(#gcCamelName#.class, null, vMax, eMax);"
-						: "\tthrow new UnsupportedOperationException(\"No Transaction support compiled.\");"),
-				"}",
+				"public #gcName# create#gcCamelName#(String id, int vMax, int eMax, GraphDatabase graphDatabase) throws GraphDatabaseException{"));
+
+		if (config.hasDatabaseSupport()) {
+			code.add(new CodeSnippet(
+					"#jgImplPackage#.GraphFactoryImpl graphFactory = (#jgImplPackage#.GraphFactoryImpl) createDefaultGraphFactory(#jgPackage#.ImplementationType.DATABASE);",
+					"graphFactory.setGraphDatabase(graphDatabase);",
+					"#gcCamelName# graph = graphFactory.createGraph(#gcVariableName#, id, vMax, eMax);",
+					"if (!graphDatabase.containsGraph(id)) {",
+					"\tgraphDatabase.insert((#jgImplDbPackage#.GraphImpl)graph);",
+					"\treturn graph;",
+					"} else {",
+					"\tthrow new GraphException(\"Graph with identifier \" + id + \" already exists in database.\");",
+					"}"));
+		} else {
+			code.add(new CodeSnippet(
+					"throw new UnsupportedOperationException(\"No DATABASE support compiled.\");"));
+		}
+		code.addNoIndent(new CodeSnippet("}"));
+
+		// ---- file handling methods ----
+		if (config.hasStandardSupport()) {
+			code.addNoIndent(new CodeSnippet(
+					true,
+					"public #gcName# load#gcCamelName#(String filename) throws GraphIOException {",
+					"\t#jgPackage#.GraphFactory factory = createDefaultGraphFactory(#jgPackage#.ImplementationType.STANDARD);",
+					"\treturn load#gcCamelName#(filename, factory, null);", "}"));
+
+			code.addNoIndent(new CodeSnippet(
+					true,
+					"public #gcName# load#gcCamelName#(String filename, #jgPackage#.ProgressFunction pf) throws GraphIOException {",
+					"\t#jgPackage#.GraphFactory factory = createDefaultGraphFactory(#jgPackage#.ImplementationType.STANDARD);",
+					"\treturn load#gcCamelName#(filename, factory, pf);", "}"));
+		}
+
+		code.addNoIndent(new CodeSnippet(
+				true,
+				"public #gcName# load#gcCamelName#(String filename, #jgPackage#.ImplementationType implType) throws GraphIOException {",
+				"\t#jgPackage#.GraphFactory factory = createDefaultGraphFactory(implType);",
+				"\treturn load#gcCamelName#(filename, factory, null);", "}"));
+
+		code.addNoIndent(new CodeSnippet(
+				true,
 				"",
-				"/**",
-				" * Creates a new #gcName# graph with transaction support with the ID <code>id</code> initial vertex and edge counts <code>vMax</code>, <code>eMax</code>.",
-				" *",
-				" * @param id the id name of the new graph",
-				" * @param vMax initial vertex count",
-				" * @param eMax initial edge count",
-				" */",
-				"public #gcName# create#gcCamelName#WithTransactionSupport(String id, int vMax, int eMax) {",
-				((config.hasTransactionSupport()) ? "\treturn (#gcCamelName#) graphFactory.createGraphWithTransactionSupport(#gcCamelName#.class, id, vMax, eMax);"
-						: "\tthrow new UnsupportedOperationException(\"No Transaction support compiled.\");"),
-				"}",
-				"",
-				"/**",
-				" * Creates a new #gcName# graph.",
-				"*/",
-				"public #gcName# create#gcCamelName#WithTransactionSupport() {",
-				((config.hasTransactionSupport()) ? "\treturn (#gcCamelName#) graphFactory.createGraphWithTransactionSupport(#gcCamelName#.class, null);"
-						: "\tthrow new UnsupportedOperationException(\"No Transaction support compiled.\");"),
-				"}",
-				"",
-				"/**",
-				" * Creates a new #gcName# graph with the ID <code>id</code>.",
-				" *",
-				" * @param id the id name of the new graph",
-				" */",
-				"public #gcName# create#gcCamelName#WithTransactionSupport(String id) {",
-				((config.hasTransactionSupport()) ? "\treturn (#gcCamelName#) graphFactory.createGraphWithTransactionSupport(#gcCamelName#.class, id);"
-						: "\tthrow new UnsupportedOperationException(\"No Transaction support compiled.\");"),
-				"}",
-				"",
-				// ---- file handling methods ----
-				"/**",
-				" * Loads a #gcName# graph from the file <code>filename</code>.",
-				" *",
-				" * @param filename the name of the file",
-				" * @return the loaded #gcName#",
-				" * @throws GraphIOException if the graph cannot be loaded",
-				" */",
-				"public #gcName# load#gcCamelName#(String filename) throws GraphIOException {",
-				((config.hasStandardSupport()) ? "\treturn load#gcCamelName#(filename, null);"
-						: "\tthrow new UnsupportedOperationException(\"No Standard support compiled.\");"),
-				"}",
-				"",
-				"/**",
-				" * Loads a #gcName# graph from the file <code>filename</code>.",
-				" *",
-				" * @param filename the name of the file",
-				" * @param pf a progress function to monitor graph loading",
-				" * @return the loaded #gcName#",
-				" * @throws GraphIOException if the graph cannot be loaded",
-				" */",
-				"public #gcName# load#gcCamelName#(String filename, ProgressFunction pf) throws GraphIOException {",
-				((config.hasStandardSupport()) ? "\tGraph graph = GraphIO.loadGraphFromFileWithStandardSupport(filename, this, pf);\n"
-						+ "\tif (!(graph instanceof #gcName#)) {\n"
-						+ "\t\tthrow new GraphIOException(\"Graph in file '\" + filename + \"' is not an instance of GraphClass #gcName#\");\n"
-						+ "\t}" + "\treturn (#gcName#) graph;\n"
-						: "\tthrow new UnsupportedOperationException(\"No Standard support compiled.\");"),
-				"}",
-				"",
-				// ---- file handling methods with transaction support ----
-				"/**",
-				" * Loads a #gcName# graph with transaction support from the file <code>filename</code>.",
-				" *",
-				" * @param filename the name of the file",
-				" * @return the loaded #gcName#",
-				" * @throws GraphIOException if the graph cannot be loaded",
-				" */",
-				"public #gcName# load#gcCamelName#WithTransactionSupport(String filename) throws GraphIOException {",
-				((config.hasTransactionSupport()) ? "\treturn load#gcCamelName#WithTransactionSupport(filename, null);"
-						: "\tthrow new UnsupportedOperationException(\"No Transaction support compiled.\");"),
-				"}",
-				"",
-				"/**",
-				" * Loads a #gcName# graph with transaction support from the file <code>filename</code>.",
-				" *",
-				" * @param filename the name of the file",
-				" * @param pf a progress function to monitor graph loading",
-				" * @return the loaded #gcName#",
-				" * @throws GraphIOException if the graph cannot be loaded",
-				" */",
-				"public #gcName# load#gcCamelName#WithTransactionSupport(String filename, ProgressFunction pf) throws GraphIOException {",
-				((config.hasTransactionSupport()) ? "\tGraph graph = GraphIO.loadGraphFromFileWithTransactionSupport(filename, pf);\n"
-						+ "\tif (!(graph instanceof #gcName#)) {\n"
-						+ "\t\tthrow new GraphIOException(\"Graph in file '\" + filename + \"' is not an instance of GraphClass #gcName#\");\n"
-						+ "\t}" + "\treturn (#gcName#) graph;"
-						: "\tthrow new UnsupportedOperationException(\"No Transaction support compiled.\");"),
-				"}");
-		code.setVariable("gcName", schema.getGraphClass().getQualifiedName());
-		code.setVariable("gcCamelName", camelCase(schema.getGraphClass()
-				.getQualifiedName()));
-		code.setVariable("gcImplName", schema.getGraphClass()
-				.getQualifiedName() + "Impl");
+				"public #gcName# load#gcCamelName#(String filename, #jgPackage#.ImplementationType implType, #jgPackage#.ProgressFunction pf) throws GraphIOException {",
+				"\t#jgPackage#.GraphFactory factory = createDefaultGraphFactory(implType);",
+				"\treturn load#gcCamelName#(filename, factory, pf);", "}"));
+
+		code.addNoIndent(new CodeSnippet(
+				true,
+				"public #gcName# load#gcCamelName#(String filename, #jgPackage#.GraphFactory factory) throws GraphIOException {",
+				"\treturn GraphIO.loadGraphFromFile(filename, factory, null);",
+				"}"));
+
+		code.addNoIndent(new CodeSnippet(
+				true,
+				"public #gcName# load#gcCamelName#(String filename, #jgPackage#.GraphFactory factory, #jgPackage#.ProgressFunction pf) throws GraphIOException {",
+				"\treturn GraphIO.loadGraphFromFile(filename, factory, pf);",
+				"}"));
+
 		return code;
 	}
 
@@ -350,10 +335,7 @@ public class SchemaCodeGenerator extends CodeGenerator {
 		code.add(createCompositeDomains());
 		code.add(createGraphClass());
 		code.add(createPackageComments());
-		addImports("#schemaPackage#.#simpleClassName#Factory");
-		code.add(new CodeSnippet(true,
-				"graphFactory = new #simpleClassName#Factory();"));
-		code.addNoIndent(new CodeSnippet(true, "}"));
+		code.addNoIndent(new CodeSnippet(true, "\tfinish();", "}"));
 		return code;
 	}
 
@@ -392,7 +374,6 @@ public class SchemaCodeGenerator extends CodeGenerator {
 		GraphClass gc = schema.getGraphClass();
 		CodeList code = new CodeList();
 		addImports("#jgSchemaPackage#.GraphClass");
-		code.setVariable("gcName", gc.getQualifiedName());
 		code.setVariable("gcVariable", "gc");
 		code.setVariable("aecVariable", "gc");
 		code.setVariable("schemaVariable", gc.getVariableName());
@@ -402,7 +383,7 @@ public class SchemaCodeGenerator extends CodeGenerator {
 				"{",
 				"\tGraphClass #gcVariable# = #schemaVariable# = createGraphClass(\"#gcName#\");",
 				"\t#gcVariable#.setAbstract(#gcAbstract#);"));
-		for (AttributedElementClass superClass : gc.getDirectSuperClasses()) {
+		for (GraphClass superClass : gc.getDirectSuperClasses()) {
 			if (superClass.isInternal()) {
 				continue;
 			}
@@ -436,25 +417,21 @@ public class SchemaCodeGenerator extends CodeGenerator {
 		code.addNoIndent(new CodeSnippet("public final GraphClass "
 				+ schema.getGraphClass().getVariableName() + ";"));
 
-		for (VertexClass vc : schema.getVertexClassesInTopologicalOrder()) {
-			if (!vc.isInternal()) {
-				code.addNoIndent(new CodeSnippet("public final VertexClass "
-						+ vc.getVariableName() + ";"));
-			}
+		for (VertexClass vc : schema.getGraphClass().getVertexClasses()) {
+			code.addNoIndent(new CodeSnippet("public final VertexClass "
+					+ vc.getVariableName() + ";"));
 		}
-		for (EdgeClass ec : schema.getEdgeClassesInTopologicalOrder()) {
-			if (!ec.isInternal()) {
-				code.addNoIndent(new CodeSnippet("public final EdgeClass "
-						+ ec.getVariableName() + ";"));
-			}
+		for (EdgeClass ec : schema.getGraphClass().getEdgeClasses()) {
+			code.addNoIndent(new CodeSnippet("public final EdgeClass "
+					+ ec.getVariableName() + ";"));
 		}
 		return code;
 	}
 
 	private CodeBlock createEdgeClasses(GraphClass gc) {
 		CodeList code = new CodeList();
-		for (EdgeClass ec : schema.getEdgeClassesInTopologicalOrder()) {
-			if (!ec.isInternal() && (ec.getGraphClass() == gc)) {
+		for (EdgeClass ec : schema.getGraphClass().getEdgeClasses()) {
+			if ((ec.getGraphClass() == gc)) {
 				code.addNoIndent(createEdgeClass(ec));
 			}
 		}
@@ -468,7 +445,6 @@ public class SchemaCodeGenerator extends CodeGenerator {
 
 		code.setVariable("ecName", ec.getQualifiedName());
 		code.setVariable("schemaVariable", ec.getVariableName());
-		code.setVariable("ecVariable", "ec");
 		code.setVariable("aecVariable", "ec");
 		code.setVariable("ecAbstract", ec.isAbstract() ? "true" : "false");
 		code.setVariable("fromClass", ec.getFrom().getVertexClass()
@@ -491,30 +467,30 @@ public class SchemaCodeGenerator extends CodeGenerator {
 		code.addNoIndent(new CodeSnippet(
 				true,
 				"{",
-				"\t#ecType# #ecVariable# = #schemaVariable# = #gcVariable#.create#ecType#(\"#ecName#\",",
+				"\t#ecType# #aecVariable# = #schemaVariable# = #gcVariable#.create#ecType#(\"#ecName#\",",
 				"\t\t#fromPart#,", "\t\t#toPart#);",
-				"\t#ecVariable#.setAbstract(#ecAbstract#);"));
+				"\t#aecVariable#.setAbstract(#ecAbstract#);"));
 
-		for (AttributedElementClass superClass : ec.getDirectSuperClasses()) {
+		for (EdgeClass superClass : ec.getDirectSuperClasses()) {
 			if (superClass.isInternal()) {
 				continue;
 			}
 			CodeSnippet s = new CodeSnippet(
-					"#ecVariable#.addSuperClass(#superClassName#);");
+					"#aecVariable#.addSuperClass(#superClassName#);");
 			s.setVariable("superClassName", superClass.getVariableName());
 			code.add(s);
 		}
 
 		for (String redefinedFromRole : ec.getFrom().getRedefinedRoles()) {
 			CodeSnippet s = new CodeSnippet(
-					"#ecVariable#.getFrom().addRedefinedRole(\"#redefinedFromRole#\");");
+					"#aecVariable#.getFrom().addRedefinedRole(\"#redefinedFromRole#\");");
 			s.setVariable("redefinedFromRole", redefinedFromRole);
 			code.add(s);
 		}
 
 		for (String redefinedToRole : ec.getTo().getRedefinedRoles()) {
 			CodeSnippet s = new CodeSnippet(
-					"#ecVariable#.getTo().addRedefinedRole(\"#redefinedToRole#\");");
+					"#aecVariable#.getTo().addRedefinedRole(\"#redefinedToRole#\");");
 			s.setVariable("redefinedToRole", redefinedToRole);
 			code.add(s);
 		}
@@ -528,7 +504,7 @@ public class SchemaCodeGenerator extends CodeGenerator {
 
 	private CodeBlock createVertexClasses(GraphClass gc) {
 		CodeList code = new CodeList();
-		for (VertexClass vc : schema.getVertexClassesInTopologicalOrder()) {
+		for (VertexClass vc : schema.getVertexClasses()) {
 			if (vc.isInternal()) {
 				CodeSnippet s = new CodeSnippet();
 				s.setVariable("schemaVariable", vc.getVariableName());
@@ -545,21 +521,20 @@ public class SchemaCodeGenerator extends CodeGenerator {
 	private CodeBlock createVertexClass(VertexClass vc) {
 		CodeList code = new CodeList();
 		code.setVariable("vcName", vc.getQualifiedName());
-		code.setVariable("vcVariable", "vc");
 		code.setVariable("aecVariable", "vc");
 		code.setVariable("schemaVariable", vc.getVariableName());
 		code.setVariable("vcAbstract", vc.isAbstract() ? "true" : "false");
 		code.addNoIndent(new CodeSnippet(
 				true,
 				"{",
-				"\tVertexClass #vcVariable# = #schemaVariable# = #gcVariable#.createVertexClass(\"#vcName#\");",
-				"\t#vcVariable#.setAbstract(#vcAbstract#);"));
-		for (AttributedElementClass superClass : vc.getDirectSuperClasses()) {
+				"\tVertexClass #aecVariable# = #schemaVariable# = #gcVariable#.createVertexClass(\"#vcName#\");",
+				"\t#aecVariable#.setAbstract(#vcAbstract#);"));
+		for (VertexClass superClass : vc.getDirectSuperClasses()) {
 			if (superClass.isInternal()) {
 				continue;
 			}
 			CodeSnippet s = new CodeSnippet(
-					"#vcVariable#.addSuperClass(#superClassName#);");
+					"#aecVariable#.addSuperClass(#superClassName#);");
 			s.setVariable("superClassName", superClass.getVariableName());
 			code.add(s);
 		}
@@ -570,7 +545,7 @@ public class SchemaCodeGenerator extends CodeGenerator {
 		return code;
 	}
 
-	private CodeBlock createAttributes(AttributedElementClass aec) {
+	private CodeBlock createAttributes(AttributedElementClass<?, ?> aec) {
 		CodeList code = new CodeList();
 		for (Attribute attr : aec.getOwnAttributeList()) {
 			CodeSnippet s = new CodeSnippet(
@@ -595,7 +570,7 @@ public class SchemaCodeGenerator extends CodeGenerator {
 		return code;
 	}
 
-	private CodeBlock createConstraints(AttributedElementClass aec) {
+	private CodeBlock createConstraints(AttributedElementClass<?, ?> aec) {
 		CodeList code = new CodeList();
 		for (Constraint constraint : aec.getConstraints()) {
 			addImports("#jgSchemaImplPackage#.ConstraintImpl");
@@ -638,8 +613,7 @@ public class SchemaCodeGenerator extends CodeGenerator {
 
 	private CodeBlock createCompositeDomains() {
 		CodeList code = new CodeList();
-		for (CompositeDomain dom : schema
-				.getCompositeDomainsInTopologicalOrder()) {
+		for (CompositeDomain dom : schema.getCompositeDomains()) {
 			CodeSnippet s = new CodeSnippet(true);
 			s.setVariable("domName", dom.getQualifiedName());
 			code.addNoIndent(s);

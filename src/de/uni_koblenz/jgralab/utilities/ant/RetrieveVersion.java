@@ -118,7 +118,7 @@ public class RetrieveVersion extends Task {
 			w.println("\t<name>JGraLab</name>");
 			w.println("\t<description>");
 			w.println("\t\tA high-performance TGraph library.");
-			w.println("\t\tSee http://jgralab.uni-koblenz.de");
+			w.println("\t\tSee https://github.com/jgralab/jgralab");
 			w.println("\t</description>");
 			w.println("\t<repositories>");
 			w.println("\t\t<repository>");

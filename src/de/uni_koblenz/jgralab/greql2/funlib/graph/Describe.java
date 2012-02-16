@@ -53,14 +53,14 @@ public class Describe extends Function {
 				3, 1.0, Category.GRAPH);
 	}
 
-	public PMap<String, Object> evaluate(AttributedElement el) {
+	public PMap<String, Object> evaluate(AttributedElement<?, ?> el) {
 		PMap<String, Object> result = JGraLab.map();
 		result = result.plus("type", el.getAttributedElementClass()
 				.getQualifiedName());
 		if (el instanceof Graph) {
 			result = result.plus("id", ((Graph) el).getId());
 		} else {
-			result = result.plus("id", ((GraphElement) el).getId());
+			result = result.plus("id", ((GraphElement<?, ?>) el).getId());
 		}
 		Set<Attribute> al = el.getAttributedElementClass().getAttributeList();
 		if (al.size() > 0) {

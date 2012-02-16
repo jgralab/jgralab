@@ -47,7 +47,6 @@ import de.uni_koblenz.jgralab.gretl.CreateEdgeClass.IncidenceClassSpec;
 import de.uni_koblenz.jgralab.gretl.CreateVertexClass;
 import de.uni_koblenz.jgralab.gretl.Transformation;
 import de.uni_koblenz.jgralab.schema.Attribute;
-import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.Domain;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.GraphElementClass;
@@ -72,27 +71,25 @@ public class SimpleCopyTransformation extends Transformation<Graph> {
 	}
 
 	private void copyAttributes() {
-		for (GraphElementClass oldGEC : sourceSchema.getGraphClass()
+		for (GraphElementClass<?, ?> oldGEC : sourceSchema.getGraphClass()
 				.getGraphElementClasses()) {
 			for (Attribute oldAttr : oldGEC.getOwnAttributeList()) {
 				String qName = oldGEC.getQualifiedName();
-				GraphElementClass newGEC = gec(qName);
+				GraphElementClass<?, ?> newGEC = gec(qName);
 				Domain domain = new CopyDomain(context, oldAttr.getDomain())
 						.execute();
 				new CreateAttribute(context, new AttributeSpec(newGEC,
 						oldAttr.getName(), domain,
 						oldAttr.getDefaultValueAsString()),
-						"from ge: keySet(img_" + qName + ") reportMap ge -> ge."
-								+ oldAttr.getName() + " end").execute();
+						"from ge: keySet(img_" + qName
+								+ ") reportMap ge -> ge." + oldAttr.getName()
+								+ " end").execute();
 			}
 		}
 	}
 
 	private void copyEdgeClasses() {
-		for (EdgeClass oldEC : sourceSchema.getEdgeClassesInTopologicalOrder()) {
-			if (oldEC.isInternal()) {
-				continue;
-			}
+		for (EdgeClass oldEC : sourceSchema.getGraphClass().getEdgeClasses()) {
 			EdgeClass newEC = null;
 			String qName = oldEC.getQualifiedName();
 			VertexClass newFrom = vc(oldEC.getFrom().getVertexClass()
@@ -114,8 +111,8 @@ public class SimpleCopyTransformation extends Transformation<Graph> {
 								+ "!} reportSet e, startVertex(e), endVertex(e) end")
 						.execute();
 			}
-			for (AttributedElementClass oldSuperEC : oldEC
-					.getDirectSuperClasses()) {
+
+			for (EdgeClass oldSuperEC : oldEC.getDirectSuperClasses()) {
 				if (oldSuperEC.isInternal()) {
 					continue;
 				}
@@ -126,11 +123,8 @@ public class SimpleCopyTransformation extends Transformation<Graph> {
 	}
 
 	private void copyVertexClasses() {
-		for (VertexClass oldVC : sourceSchema
-				.getVertexClassesInTopologicalOrder()) {
-			if (oldVC.isInternal()) {
-				continue;
-			}
+		for (VertexClass oldVC : sourceSchema.getGraphClass()
+				.getVertexClasses()) {
 			VertexClass newVC = null;
 			String qName = oldVC.getQualifiedName();
 			if (oldVC.isAbstract()) {
@@ -139,8 +133,7 @@ public class SimpleCopyTransformation extends Transformation<Graph> {
 				newVC = new CreateVertexClass(context, qName, "V{" + qName
 						+ "!}").execute();
 			}
-			for (AttributedElementClass oldSuperVC : oldVC
-					.getDirectSuperClasses()) {
+			for (VertexClass oldSuperVC : oldVC.getDirectSuperClasses()) {
 				if (oldSuperVC.isInternal()) {
 					continue;
 				}

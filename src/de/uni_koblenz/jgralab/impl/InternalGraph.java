@@ -246,11 +246,6 @@ public interface InternalGraph extends Graph {
 	 */
 	public InternalEdge getLastEdgeInESeq();
 
-	public Edge internalCreateEdge(Class<? extends Edge> cls, Vertex alpha,
-			Vertex omega);
-
-	public Vertex internalCreateVertex(Class<? extends Vertex> cls);
-
 	public void internalEdgeAdded(InternalEdge e);
 
 	public void internalVertexAdded(InternalVertex v);

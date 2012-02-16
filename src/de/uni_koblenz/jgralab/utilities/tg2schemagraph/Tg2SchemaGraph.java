@@ -34,8 +34,6 @@
  */
 package de.uni_koblenz.jgralab.utilities.tg2schemagraph;
 
-import java.io.InputStream;
-
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
 
@@ -54,12 +52,6 @@ public class Tg2SchemaGraph {
 	public SchemaGraph process(String filename) throws GraphIOException {
 		Schema2SchemaGraph s2sg = new Schema2SchemaGraph();
 		Schema schema = GraphIO.loadSchemaFromFile(filename);
-		return s2sg.convert2SchemaGraph(schema);
-	}
-
-	public SchemaGraph process(InputStream in) throws GraphIOException {
-		Schema2SchemaGraph s2sg = new Schema2SchemaGraph();
-		Schema schema = GraphIO.loadSchemaFromStream(in);
 		return s2sg.convert2SchemaGraph(schema);
 	}
 

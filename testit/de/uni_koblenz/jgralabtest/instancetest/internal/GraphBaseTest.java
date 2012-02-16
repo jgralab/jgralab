@@ -84,7 +84,7 @@ public class GraphBaseTest extends InstanceTest {
 
 	private InternalGraph g1;
 	private InternalGraph g2;
-	private Vertex v1, v2, v3, v5, v7, v8, v9, v11;
+	private Vertex v2, v3, v5, v7, v8, v11;
 
 	@Before
 	public void setUp() throws CommitFailedException {
@@ -96,38 +96,39 @@ public class GraphBaseTest extends InstanceTest {
 		g2 = (InternalGraph) createNewGraph();
 		createTransaction(g1);
 		// System.out.println("Graph2 is instance of class " + g2.getClass());
-		v1 = g1.createVertex(SubNode.class);
+		g1.createVertex(SubNode.VC);
 		// System.out.println("V1 is instance of class " + v1.getClass());
-		v2 = g1.createVertex(SubNode.class);
-		v3 = g1.createVertex(SubNode.class);
-		g1.createVertex(SubNode.class);
-		v5 = g1.createVertex(SuperNode.class);
-		g1.createVertex(SuperNode.class);
-		v7 = g1.createVertex(SuperNode.class);
-		v8 = g1.createVertex(SuperNode.class);
-		v9 = g1.createVertex(DoubleSubNode.class);
+		v2 = g1.createVertex(SubNode.VC);
+		v3 = g1.createVertex(SubNode.VC);
+		g1.createVertex(SubNode.VC);
+		v5 = g1.createVertex(SuperNode.VC);
+		g1.createVertex(SuperNode.VC);
+		v7 = g1.createVertex(SuperNode.VC);
+		v8 = g1.createVertex(SuperNode.VC);
+		g1.createVertex(DoubleSubNode.VC);
 		// System.out.println("v9= " + v9);
-		g1.createVertex(DoubleSubNode.class);
-		v11 = g1.createVertex(DoubleSubNode.class);
-		g1.createVertex(DoubleSubNode.class);
+		g1.createVertex(DoubleSubNode.VC);
+		v11 = g1.createVertex(DoubleSubNode.VC);
+		g1.createVertex(DoubleSubNode.VC);
 		commit(g1);
 	}
 
 	private ArrayList<String> graphIdsInUse = new ArrayList<String>();
 
 	/**
-	 * 
+	 *
 	 * @return
 	 */
 	private VertexTestGraph createNewGraph() {
 		VertexTestGraph out = null;
 		switch (implementationType) {
 		case STANDARD:
-			out = VertexTestSchema.instance().createVertexTestGraph();
+			out = VertexTestSchema.instance().createVertexTestGraph(
+					ImplementationType.STANDARD);
 			break;
 		case TRANSACTION:
-			out = VertexTestSchema.instance()
-					.createVertexTestGraphWithTransactionSupport();
+			out = VertexTestSchema.instance().createVertexTestGraph(
+					ImplementationType.TRANSACTION);
 			break;
 		case DATABASE:
 			out = createVertexTestGraphWithDatabaseSupport();
@@ -166,7 +167,7 @@ public class GraphBaseTest extends InstanceTest {
 	/**
 	 * Asserts true if the edgeListVersion has changed. Returns the new
 	 * edgeListVersion.
-	 * 
+	 *
 	 * @param elv1
 	 *            the edgeListVersion before the transaction.
 	 * @return the edgeListVersion after the transaction.
@@ -185,7 +186,7 @@ public class GraphBaseTest extends InstanceTest {
 
 	/**
 	 * Asserts true if the edgeListVersion has not changed.
-	 * 
+	 *
 	 * @param elv1
 	 *            the edgeListVersion before the transaction.
 	 * @throws CommitFailedException
@@ -202,11 +203,12 @@ public class GraphBaseTest extends InstanceTest {
 		MinimalGraph g3 = null;
 		switch (implementationType) {
 		case STANDARD:
-			g3 = MinimalSchema.instance().createMinimalGraph();
+			g3 = MinimalSchema.instance().createMinimalGraph(
+					ImplementationType.STANDARD);
 			break;
 		case TRANSACTION:
-			g3 = MinimalSchema.instance()
-					.createMinimalGraphWithTransactionSupport();
+			g3 = MinimalSchema.instance().createMinimalGraph(
+					ImplementationType.TRANSACTION);
 			break;
 		case DATABASE:
 			dbHandler.loadMinimalSchemaIntoGraphDatabase();
@@ -285,8 +287,8 @@ public class GraphBaseTest extends InstanceTest {
 
 			// create links (resulting graph is a ring)
 			for (int i = 0; i < 20; i++) {
-				links[i] = g.createLink((Node) g.getVertex(i + 1), (Node) g
-						.getVertex(i % 20 + 1));
+				links[i] = g.createLink((Node) g.getVertex(i + 1),
+						(Node) g.getVertex((i % 20) + 1));
 			}
 			// test if all ids from 1 to 20 have been assigned in correct order
 			for (int i = 0; i < 20; i++) {
@@ -318,18 +320,18 @@ public class GraphBaseTest extends InstanceTest {
 	public void testGetEdgeListVersion() throws Exception {
 		createTransaction(g1);
 		// preparations...
-		Vertex v1 = g1.createVertex(SubNode.class);
-		Vertex v2 = g1.createVertex(SubNode.class);
-		Vertex v3 = g1.createVertex(SubNode.class);
-		Vertex v4 = g1.createVertex(SubNode.class);
-		Vertex v5 = g1.createVertex(SuperNode.class);
-		Vertex v6 = g1.createVertex(SuperNode.class);
-		Vertex v7 = g1.createVertex(SuperNode.class);
-		Vertex v8 = g1.createVertex(SuperNode.class);
-		Vertex v9 = g1.createVertex(DoubleSubNode.class);
-		Vertex v10 = g1.createVertex(DoubleSubNode.class);
-		Vertex v11 = g1.createVertex(DoubleSubNode.class);
-		Vertex v12 = g1.createVertex(DoubleSubNode.class);
+		Vertex v1 = g1.createVertex(SubNode.VC);
+		Vertex v2 = g1.createVertex(SubNode.VC);
+		Vertex v3 = g1.createVertex(SubNode.VC);
+		Vertex v4 = g1.createVertex(SubNode.VC);
+		Vertex v5 = g1.createVertex(SuperNode.VC);
+		Vertex v6 = g1.createVertex(SuperNode.VC);
+		Vertex v7 = g1.createVertex(SuperNode.VC);
+		Vertex v8 = g1.createVertex(SuperNode.VC);
+		Vertex v9 = g1.createVertex(DoubleSubNode.VC);
+		Vertex v10 = g1.createVertex(DoubleSubNode.VC);
+		Vertex v11 = g1.createVertex(DoubleSubNode.VC);
+		Vertex v12 = g1.createVertex(DoubleSubNode.VC);
 		commit(g1);
 
 		long elv1;
@@ -341,7 +343,7 @@ public class GraphBaseTest extends InstanceTest {
 		commit(g1);
 
 		createTransaction(g1);
-		Edge e1 = g1.createEdge(SubLink.class, v9, v7);
+		Edge e1 = g1.createEdge(SubLink.EC, v9, v7);
 		commit(g1);
 
 		elv1 = checkIfEdgeListVersionChanged(elv1);
@@ -354,91 +356,91 @@ public class GraphBaseTest extends InstanceTest {
 
 		// normal cases
 		createTransaction(g1);
-		g1.createEdge(SubLink.class, v10, v5);
+		g1.createEdge(SubLink.EC, v10, v5);
 		commit(g1);
 
 		elv1 = checkIfEdgeListVersionChanged(elv1);
 
 		createTransaction(g1);
-		g1.createEdge(SubLink.class, v10, v6);
+		g1.createEdge(SubLink.EC, v10, v6);
 		commit(g1);
 
 		elv1 = checkIfEdgeListVersionChanged(elv1);
 
 		createTransaction(g1);
-		g1.createEdge(SubLink.class, v10, v7);
+		g1.createEdge(SubLink.EC, v10, v7);
 		commit(g1);
 
 		elv1 = checkIfEdgeListVersionChanged(elv1);
 
 		createTransaction(g1);
-		g1.createEdge(SubLink.class, v10, v8);
+		g1.createEdge(SubLink.EC, v10, v8);
 		commit(g1);
 
 		elv1 = checkIfEdgeListVersionChanged(elv1);
 
 		createTransaction(g1);
-		g1.createEdge(SubLink.class, v11, v5);
+		g1.createEdge(SubLink.EC, v11, v5);
 		commit(g1);
 
 		elv1 = checkIfEdgeListVersionChanged(elv1);
 
 		createTransaction(g1);
-		g1.createEdge(SubLink.class, v11, v6);
+		g1.createEdge(SubLink.EC, v11, v6);
 		commit(g1);
 
 		elv1 = checkIfEdgeListVersionChanged(elv1);
 
 		createTransaction(g1);
-		g1.createEdge(SubLink.class, v11, v7);
+		g1.createEdge(SubLink.EC, v11, v7);
 		commit(g1);
 
 		elv1 = checkIfEdgeListVersionChanged(elv1);
 
 		createTransaction(g1);
-		g1.createEdge(SubLink.class, v11, v8);
+		g1.createEdge(SubLink.EC, v11, v8);
 		commit(g1);
 
 		elv1 = checkIfEdgeListVersionChanged(elv1);
 
 		createTransaction(g1);
-		g1.createEdge(SubLink.class, v12, v5);
+		g1.createEdge(SubLink.EC, v12, v5);
 		commit(g1);
 
 		elv1 = checkIfEdgeListVersionChanged(elv1);
 
 		createTransaction(g1);
-		g1.createEdge(SubLink.class, v12, v6);
+		g1.createEdge(SubLink.EC, v12, v6);
 		commit(g1);
 
 		elv1 = checkIfEdgeListVersionChanged(elv1);
 
 		createTransaction(g1);
-		g1.createEdge(SubLink.class, v12, v7);
+		g1.createEdge(SubLink.EC, v12, v7);
 		commit(g1);
 
 		elv1 = checkIfEdgeListVersionChanged(elv1);
 
 		createTransaction(g1);
-		Edge e3 = g1.createEdge(SubLink.class, v12, v8);
+		Edge e3 = g1.createEdge(SubLink.EC, v12, v8);
 		commit(g1);
 
 		elv1 = checkIfEdgeListVersionChanged(elv1);
 
 		createTransaction(g1);
-		g1.createEdge(SubLink.class, v9, v6);
+		g1.createEdge(SubLink.EC, v9, v6);
 		commit(g1);
 
 		elv1 = checkIfEdgeListVersionChanged(elv1);
 
 		createTransaction(g1);
-		g1.createEdge(SubLink.class, v9, v7);
+		g1.createEdge(SubLink.EC, v9, v7);
 		commit(g1);
 
 		elv1 = checkIfEdgeListVersionChanged(elv1);
 
 		createTransaction(g1);
-		g1.createEdge(SubLink.class, v9, v8);
+		g1.createEdge(SubLink.EC, v9, v8);
 		commit(g1);
 
 		elv1 = checkIfEdgeListVersionChanged(elv1);
@@ -452,9 +454,9 @@ public class GraphBaseTest extends InstanceTest {
 		// when deleting a vertex, incident edges are also deleted and the
 		// edgeListVersion changes.
 		createTransaction(g1);
-		Vertex v13 = g1.createVertex(DoubleSubNode.class);
-		Vertex v14 = g1.createVertex(DoubleSubNode.class);
-		g1.createEdge(Link.class, v13, v14);
+		Vertex v13 = g1.createVertex(DoubleSubNode.VC);
+		Vertex v14 = g1.createVertex(DoubleSubNode.VC);
+		g1.createEdge(Link.EC, v13, v14);
 		commit(g1);
 
 		elv1 = checkIfEdgeListVersionChanged(elv1);
@@ -475,122 +477,122 @@ public class GraphBaseTest extends InstanceTest {
 		checkIfEdgeListVersionRemained(elv1);
 
 		createTransaction(g1);
-		g1.createEdge(Link.class, v1, v5);
+		g1.createEdge(Link.EC, v1, v5);
 		commit(g1);
 
 		elv1 = checkIfEdgeListVersionChanged(elv1);
 
 		createTransaction(g1);
-		g1.createEdge(Link.class, v2, v5);
+		g1.createEdge(Link.EC, v2, v5);
 		commit(g1);
 
 		elv1 = checkIfEdgeListVersionChanged(elv1);
 
 		createTransaction(g1);
-		g1.createEdge(Link.class, v3, v5);
+		g1.createEdge(Link.EC, v3, v5);
 		commit(g1);
 
 		elv1 = checkIfEdgeListVersionChanged(elv1);
 
 		createTransaction(g1);
-		g1.createEdge(Link.class, v4, v5);
+		g1.createEdge(Link.EC, v4, v5);
 		commit(g1);
 
 		elv1 = checkIfEdgeListVersionChanged(elv1);
 
 		createTransaction(g1);
-		g1.createEdge(Link.class, v10, v5);
+		g1.createEdge(Link.EC, v10, v5);
 		commit(g1);
 
 		elv1 = checkIfEdgeListVersionChanged(elv1);
 
 		createTransaction(g1);
-		g1.createEdge(Link.class, v11, v5);
+		g1.createEdge(Link.EC, v11, v5);
 		commit(g1);
 
 		elv1 = checkIfEdgeListVersionChanged(elv1);
 
 		createTransaction(g1);
-		g1.createEdge(Link.class, v12, v5);
+		g1.createEdge(Link.EC, v12, v5);
 		commit(g1);
 
 		elv1 = checkIfEdgeListVersionChanged(elv1);
 
 		// v6 does not exist anymore
 		createTransaction(g1);
-		g1.createEdge(Link.class, v1, v6);
+		g1.createEdge(Link.EC, v1, v6);
 		commit(g1);
 
 		elv1 = checkIfEdgeListVersionChanged(elv1);
 
 		createTransaction(g1);
-		g1.createEdge(Link.class, v1, v7);
+		g1.createEdge(Link.EC, v1, v7);
 		commit(g1);
 
 		elv1 = checkIfEdgeListVersionChanged(elv1);
 
 		createTransaction(g1);
-		g1.createEdge(Link.class, v1, v8);
+		g1.createEdge(Link.EC, v1, v8);
 		commit(g1);
 
 		elv1 = checkIfEdgeListVersionChanged(elv1);
 
 		createTransaction(g1);
-		Edge e4 = g1.createEdge(Link.class, v3, v7);
+		Edge e4 = g1.createEdge(Link.EC, v3, v7);
 		commit(g1);
 
 		elv1 = checkIfEdgeListVersionChanged(elv1);
 
 		createTransaction(g1);
-		g1.createEdge(Link.class, v11, v8);
+		g1.createEdge(Link.EC, v11, v8);
 		commit(g1);
 
 		elv1 = checkIfEdgeListVersionChanged(elv1);
 
 		createTransaction(g1);
-		g1.createEdge(LinkBack.class, v5, v1);
+		g1.createEdge(LinkBack.EC, v5, v1);
 		commit(g1);
 
 		elv1 = checkIfEdgeListVersionChanged(elv1);
 
 		createTransaction(g1);
-		g1.createEdge(LinkBack.class, v6, v2);
+		g1.createEdge(LinkBack.EC, v6, v2);
 		commit(g1);
 
 		elv1 = checkIfEdgeListVersionChanged(elv1);
 
 		createTransaction(g1);
-		Edge e5 = g1.createEdge(LinkBack.class, v7, v3);
+		Edge e5 = g1.createEdge(LinkBack.EC, v7, v3);
 		commit(g1);
 
 		elv1 = checkIfEdgeListVersionChanged(elv1);
 
 		createTransaction(g1);
-		g1.createEdge(LinkBack.class, v8, v4);
+		g1.createEdge(LinkBack.EC, v8, v4);
 		commit(g1);
 
 		elv1 = checkIfEdgeListVersionChanged(elv1);
 
 		createTransaction(g1);
-		g1.createEdge(LinkBack.class, v8, v9);
+		g1.createEdge(LinkBack.EC, v8, v9);
 		commit(g1);
 
 		elv1 = checkIfEdgeListVersionChanged(elv1);
 
 		createTransaction(g1);
-		g1.createEdge(LinkBack.class, v7, v10);
+		g1.createEdge(LinkBack.EC, v7, v10);
 		commit(g1);
 
 		elv1 = checkIfEdgeListVersionChanged(elv1);
 
 		createTransaction(g1);
-		g1.createEdge(LinkBack.class, v6, v11);
+		g1.createEdge(LinkBack.EC, v6, v11);
 		commit(g1);
 
 		elv1 = checkIfEdgeListVersionChanged(elv1);
 
 		createTransaction(g1);
-		Edge e6 = g1.createEdge(LinkBack.class, v5, v12);
+		Edge e6 = g1.createEdge(LinkBack.EC, v5, v12);
 		commit(g1);
 
 		elv1 = checkIfEdgeListVersionChanged(elv1);
@@ -615,19 +617,19 @@ public class GraphBaseTest extends InstanceTest {
 
 		// reordering edges does change the edgeListVersion
 		createTransaction(g1);
-		Edge e7 = g1.createEdge(SubLink.class, v9, v5);
+		Edge e7 = g1.createEdge(SubLink.EC, v9, v5);
 		commit(g1);
 
 		elv1 = checkIfEdgeListVersionChanged(elv1);
 
 		createTransaction(g1);
-		Edge e8 = g1.createEdge(SubLink.class, v12, v7);
+		Edge e8 = g1.createEdge(SubLink.EC, v12, v7);
 		commit(g1);
 
 		elv1 = checkIfEdgeListVersionChanged(elv1);
 
 		createTransaction(g1);
-		Edge e9 = g1.createEdge(SubLink.class, v11, v6);
+		Edge e9 = g1.createEdge(SubLink.EC, v11, v6);
 		commit(g1);
 
 		elv1 = checkIfEdgeListVersionChanged(elv1);
@@ -689,119 +691,6 @@ public class GraphBaseTest extends InstanceTest {
 	}
 
 	@Test
-	public void testGetExpandedEdgeCount() throws CommitFailedException {
-		// border case
-		createReadOnlyTransaction(g1);
-		assertEquals(2000, g1.getExpandedEdgeCount());
-		commit(g1);
-
-		// normal cases
-		createTransaction(g1);
-		for (int i = 0; i < 1000; i++) {
-			g1.createEdge(SubLink.class, v9, v5);
-		}
-		commit(g1);
-
-		createReadOnlyTransaction(g1);
-		assertEquals(2000, g1.getExpandedEdgeCount());
-		commit(g1);
-
-		createTransaction(g1);
-		for (int i = 0; i < 1000; i++) {
-			g1.createEdge(Link.class, v1, v5);
-		}
-		commit(g1);
-
-		createReadOnlyTransaction(g1);
-		assertEquals(4000, g1.getExpandedEdgeCount());
-		commit(g1);
-
-		createTransaction(g1);
-		for (int i = 0; i < 1000; i++) {
-			g1.createEdge(LinkBack.class, v5, v9);
-		}
-		commit(g1);
-
-		createReadOnlyTransaction(g1);
-		assertEquals(8000, g1.getExpandedEdgeCount());
-		commit(g1);
-
-	}
-
-	@Test
-	public void testGetExpandedVertexCount() throws CommitFailedException {
-		// border case
-		createReadOnlyTransaction(g1);
-		assertEquals(2000, g1.getExpandedVertexCount());
-		commit(g1);
-
-		// normal cases
-		createTransaction(g1);
-		for (int i = 12; i < 1000; i++) {
-			g1.createVertex(SubNode.class);
-		}
-		commit(g1);
-
-		createReadOnlyTransaction(g1);
-		assertEquals(2000, g1.getExpandedVertexCount());
-		commit(g1);
-
-		createTransaction(g1);
-		for (int i = 0; i < 1000; i++) {
-			g1.createVertex(SuperNode.class);
-		}
-		commit(g1);
-
-		createReadOnlyTransaction(g1);
-		assertEquals(4000, g1.getExpandedVertexCount());
-		commit(g1);
-
-		createTransaction(g1);
-		for (int i = 0; i < 1000; i++) {
-			g1.createVertex(DoubleSubNode.class);
-		}
-		commit(g1);
-
-		createReadOnlyTransaction(g1);
-		assertEquals(8000, g1.getExpandedVertexCount());
-		commit(g1);
-
-	}
-
-	@Test
-	public void testGetMaxECount() throws CommitFailedException {
-		createReadOnlyTransaction(g1);
-		assertEquals(1000, g1.getMaxECount());
-		commit(g1);
-
-		createReadOnlyTransaction(g2);
-		assertEquals(1000, g2.getMaxECount());
-		commit(g2);
-
-		MinimalGraph g3 = createMinimalGraph();
-
-		createReadOnlyTransaction(g3);
-		assertEquals(1000, ((InternalGraph) g3).getMaxECount());
-		commit(g3);
-
-	}
-
-	@Test
-	public void testGetMaxVCount() throws CommitFailedException {
-		createReadOnlyTransaction(g1);
-		assertEquals(1000, g1.getMaxVCount());
-		assertEquals(1000, g2.getMaxVCount());
-		commit(g1);
-
-		MinimalGraph g3 = createMinimalGraph();
-
-		createReadOnlyTransaction(g3);
-		assertEquals(1000, ((InternalGraph) g3).getMaxVCount());
-		commit(g3);
-
-	}
-
-	@Test
 	public void testGetVertexListVersion() throws CommitFailedException {
 
 		// border cases
@@ -811,7 +700,7 @@ public class GraphBaseTest extends InstanceTest {
 		commit(g2);
 
 		createTransaction(g2);
-		Vertex v13 = g2.createVertex(SuperNode.class);
+		Vertex v13 = g2.createVertex(SuperNode.VC);
 		commit(g2);
 
 		createReadOnlyTransaction(g2);
@@ -827,7 +716,7 @@ public class GraphBaseTest extends InstanceTest {
 		commit(g1);
 
 		createTransaction(g1);
-		g1.createVertex(SubNode.class);
+		g1.createVertex(SubNode.VC);
 		commit(g1);
 
 		createReadOnlyTransaction(g1);
@@ -836,7 +725,7 @@ public class GraphBaseTest extends InstanceTest {
 		commit(g1);
 
 		createTransaction(g2);
-		g2.createVertex(SuperNode.class);
+		g2.createVertex(SuperNode.VC);
 		commit(g2);
 
 		createReadOnlyTransaction(g2);
@@ -845,7 +734,7 @@ public class GraphBaseTest extends InstanceTest {
 		commit(g2);
 
 		createTransaction(g2);
-		g2.createVertex(DoubleSubNode.class);
+		g2.createVertex(DoubleSubNode.VC);
 		commit(g2);
 
 		createReadOnlyTransaction(g2);
@@ -855,7 +744,7 @@ public class GraphBaseTest extends InstanceTest {
 
 		for (int i = 4; i < 100; i++) {
 			createTransaction(g2);
-			g2.createVertex(SuperNode.class);
+			g2.createVertex(SuperNode.VC);
 			commit(g2);
 
 			createReadOnlyTransaction(g2);
@@ -865,7 +754,7 @@ public class GraphBaseTest extends InstanceTest {
 		}
 
 		createTransaction(g2);
-		g2.createVertex(DoubleSubNode.class);
+		g2.createVertex(DoubleSubNode.VC);
 		commit(g2);
 
 		createReadOnlyTransaction(g2);
@@ -885,7 +774,7 @@ public class GraphBaseTest extends InstanceTest {
 
 		for (int i = 14; i < 31; i += 3) {
 			createTransaction(g1);
-			g1.createVertex(DoubleSubNode.class);
+			g1.createVertex(DoubleSubNode.VC);
 			commit(g1);
 
 			createReadOnlyTransaction(g1);
@@ -894,7 +783,7 @@ public class GraphBaseTest extends InstanceTest {
 			commit(g1);
 
 			createTransaction(g1);
-			g1.createVertex(SubNode.class);
+			g1.createVertex(SubNode.VC);
 			commit(g1);
 
 			createReadOnlyTransaction(g1);
@@ -903,7 +792,7 @@ public class GraphBaseTest extends InstanceTest {
 			commit(g1);
 
 			createTransaction(g1);
-			g1.createVertex(SuperNode.class);
+			g1.createVertex(SuperNode.VC);
 			commit(g1);
 
 			createReadOnlyTransaction(g1);
@@ -913,7 +802,7 @@ public class GraphBaseTest extends InstanceTest {
 		}
 
 		createTransaction(g1);
-		Vertex v14 = g1.createVertex(SuperNode.class);
+		Vertex v14 = g1.createVertex(SuperNode.VC);
 		commit(g1);
 
 		createReadOnlyTransaction(g1);
@@ -922,7 +811,7 @@ public class GraphBaseTest extends InstanceTest {
 		commit(g1);
 
 		createTransaction(g1);
-		Vertex v15 = g1.createVertex(DoubleSubNode.class);
+		Vertex v15 = g1.createVertex(DoubleSubNode.VC);
 		commit(g1);
 
 		createReadOnlyTransaction(g1);
@@ -951,7 +840,7 @@ public class GraphBaseTest extends InstanceTest {
 
 		// makes sure that editing edges does not change the vertexList
 		createTransaction(g1);
-		g1.createEdge(SubLink.class, v15, v14);
+		g1.createEdge(SubLink.EC, v15, v14);
 		commit(g1);
 
 		createReadOnlyTransaction(g1);
@@ -959,7 +848,7 @@ public class GraphBaseTest extends InstanceTest {
 		commit(g1);
 
 		createTransaction(g1);
-		g1.createEdge(LinkBack.class, v14, v15);
+		g1.createEdge(LinkBack.EC, v14, v15);
 		commit(g1);
 
 		createReadOnlyTransaction(g1);
@@ -1050,18 +939,18 @@ public class GraphBaseTest extends InstanceTest {
 	public void testIsEdgeListModified() throws CommitFailedException {
 		// preparations...
 		createTransaction(g2);
-		Vertex v13 = g2.createVertex(SubNode.class);
-		Vertex v14 = g2.createVertex(SubNode.class);
-		Vertex v15 = g2.createVertex(SubNode.class);
-		Vertex v16 = g2.createVertex(SubNode.class);
-		Vertex v17 = g2.createVertex(SuperNode.class);
-		Vertex v18 = g2.createVertex(SuperNode.class);
-		Vertex v19 = g2.createVertex(SuperNode.class);
-		Vertex v20 = g2.createVertex(SuperNode.class);
-		Vertex v21 = g2.createVertex(DoubleSubNode.class);
-		Vertex v22 = g2.createVertex(DoubleSubNode.class);
-		Vertex v23 = g2.createVertex(DoubleSubNode.class);
-		Vertex v24 = g2.createVertex(DoubleSubNode.class);
+		Vertex v13 = g2.createVertex(SubNode.VC);
+		Vertex v14 = g2.createVertex(SubNode.VC);
+		Vertex v15 = g2.createVertex(SubNode.VC);
+		Vertex v16 = g2.createVertex(SubNode.VC);
+		Vertex v17 = g2.createVertex(SuperNode.VC);
+		Vertex v18 = g2.createVertex(SuperNode.VC);
+		Vertex v19 = g2.createVertex(SuperNode.VC);
+		Vertex v20 = g2.createVertex(SuperNode.VC);
+		Vertex v21 = g2.createVertex(DoubleSubNode.VC);
+		Vertex v22 = g2.createVertex(DoubleSubNode.VC);
+		Vertex v23 = g2.createVertex(DoubleSubNode.VC);
+		Vertex v24 = g2.createVertex(DoubleSubNode.VC);
 		commit(g2);
 
 		// border cases
@@ -1075,11 +964,11 @@ public class GraphBaseTest extends InstanceTest {
 		commit(g2);
 
 		createTransaction(g1);
-		g1.createEdge(SubLink.class, v11, v7);
+		g1.createEdge(SubLink.EC, v11, v7);
 		commit(g1);
 
 		createTransaction(g2);
-		Edge e1 = g2.createEdge(Link.class, v15, v19);
+		Edge e1 = g2.createEdge(Link.EC, v15, v19);
 		commit(g2);
 
 		createReadOnlyTransaction(g1);
@@ -1109,7 +998,7 @@ public class GraphBaseTest extends InstanceTest {
 		commit(g2);
 
 		createTransaction(g2);
-		g2.createEdge(LinkBack.class, v19, v15);
+		g2.createEdge(LinkBack.EC, v19, v15);
 		commit(g2);
 
 		createReadOnlyTransaction(g2);
@@ -1120,7 +1009,7 @@ public class GraphBaseTest extends InstanceTest {
 		commit(g2);
 
 		createTransaction(g2);
-		g2.createEdge(Link.class, v15, v19);
+		g2.createEdge(Link.EC, v15, v19);
 		commit(g2);
 
 		createReadOnlyTransaction(g2);
@@ -1130,7 +1019,7 @@ public class GraphBaseTest extends InstanceTest {
 		commit(g2);
 
 		createTransaction(g2);
-		Edge e2 = g2.createEdge(SubLink.class, v23, v19);
+		Edge e2 = g2.createEdge(SubLink.EC, v23, v19);
 		commit(g2);
 
 		createReadOnlyTransaction(g2);
@@ -1140,7 +1029,7 @@ public class GraphBaseTest extends InstanceTest {
 		commit(g2);
 
 		createTransaction(g2);
-		g2.createEdge(Link.class, v16, v20);
+		g2.createEdge(Link.EC, v16, v20);
 		commit(g2);
 
 		createReadOnlyTransaction(g2);
@@ -1150,7 +1039,7 @@ public class GraphBaseTest extends InstanceTest {
 		commit(g2);
 
 		createTransaction(g2);
-		Edge e3 = g2.createEdge(Link.class, v23, v20);
+		Edge e3 = g2.createEdge(Link.EC, v23, v20);
 		commit(g2);
 
 		createReadOnlyTransaction(g2);
@@ -1160,7 +1049,7 @@ public class GraphBaseTest extends InstanceTest {
 		commit(g2);
 
 		createTransaction(g2);
-		g2.createEdge(Link.class, v24, v19);
+		g2.createEdge(Link.EC, v24, v19);
 		commit(g2);
 
 		createReadOnlyTransaction(g2);
@@ -1170,7 +1059,7 @@ public class GraphBaseTest extends InstanceTest {
 		commit(g2);
 
 		createTransaction(g2);
-		g2.createEdge(LinkBack.class, v20, v16);
+		g2.createEdge(LinkBack.EC, v20, v16);
 		commit(g2);
 
 		createReadOnlyTransaction(g2);
@@ -1180,7 +1069,7 @@ public class GraphBaseTest extends InstanceTest {
 		commit(g2);
 
 		createTransaction(g2);
-		Edge e4 = g2.createEdge(SubLink.class, v24, v20);
+		Edge e4 = g2.createEdge(SubLink.EC, v24, v20);
 		commit(g2);
 
 		createReadOnlyTransaction(g2);
@@ -1200,7 +1089,7 @@ public class GraphBaseTest extends InstanceTest {
 		commit(g2);
 
 		createTransaction(g2);
-		g2.createEdge(LinkBack.class, v19, v23);
+		g2.createEdge(LinkBack.EC, v19, v23);
 		commit(g2);
 
 		createReadOnlyTransaction(g2);
@@ -1210,7 +1099,7 @@ public class GraphBaseTest extends InstanceTest {
 		commit(g2);
 
 		createTransaction(g2);
-		g2.createEdge(LinkBack.class, v20, v24);
+		g2.createEdge(LinkBack.EC, v20, v24);
 		commit(g2);
 
 		createReadOnlyTransaction(g2);
@@ -1240,7 +1129,7 @@ public class GraphBaseTest extends InstanceTest {
 		commit(g2);
 
 		createTransaction(g2);
-		Edge e5 = g2.createEdge(SubLink.class, v21, v17);
+		Edge e5 = g2.createEdge(SubLink.EC, v21, v17);
 		commit(g2);
 
 		createTransaction(g2);
@@ -1250,7 +1139,7 @@ public class GraphBaseTest extends InstanceTest {
 		commit(g2);
 
 		createTransaction(g2);
-		Edge e6 = g2.createEdge(Link.class, v13, v18);
+		Edge e6 = g2.createEdge(Link.EC, v13, v18);
 		commit(g2);
 
 		createReadOnlyTransaction(g2);
@@ -1260,7 +1149,7 @@ public class GraphBaseTest extends InstanceTest {
 		commit(g2);
 
 		createTransaction(g2);
-		Edge e7 = g2.createEdge(LinkBack.class, v17, v14);
+		Edge e7 = g2.createEdge(LinkBack.EC, v17, v14);
 		commit(g2);
 
 		createReadOnlyTransaction(g2);
@@ -1270,7 +1159,7 @@ public class GraphBaseTest extends InstanceTest {
 		commit(g2);
 
 		createTransaction(g2);
-		g2.createEdge(Link.class, v22, v18);
+		g2.createEdge(Link.EC, v22, v18);
 		commit(g2);
 
 		createReadOnlyTransaction(g2);
@@ -1281,7 +1170,7 @@ public class GraphBaseTest extends InstanceTest {
 
 		// adding vertices does not affect the edgeList
 		createTransaction(g2);
-		Vertex v25 = g2.createVertex(DoubleSubNode.class);
+		Vertex v25 = g2.createVertex(DoubleSubNode.VC);
 		commit(g2);
 
 		createReadOnlyTransaction(g2);
@@ -1289,7 +1178,7 @@ public class GraphBaseTest extends InstanceTest {
 		commit(g2);
 
 		createTransaction(g2);
-		Vertex v26 = g2.createVertex(SuperNode.class);
+		Vertex v26 = g2.createVertex(SuperNode.VC);
 		commit(g2);
 
 		createReadOnlyTransaction(g2);
@@ -1335,7 +1224,7 @@ public class GraphBaseTest extends InstanceTest {
 
 		// changing the attributes of an edge does not change the edgeList
 		createTransaction(g2);
-		Edge e8 = g2.createEdge(SubLink.class, v25, v26);
+		Edge e8 = g2.createEdge(SubLink.EC, v25, v26);
 		commit(g2);
 
 		createReadOnlyTransaction(g2);
@@ -1390,7 +1279,7 @@ public class GraphBaseTest extends InstanceTest {
 		/*
 		 * try{ // graph =VertexTestSchema.instance().loadVertexTestGraph(
 		 * "de.uni_koblenz.VertexTestSchema.tg");
-		 * 
+		 *
 		 * VertexTestGraph graph3 =
 		 * VertexTestSchema.instance().loadVertexTestGraph
 		 * ("VertexTestSchema.tg"); }catch (GraphIOException e){
@@ -1416,7 +1305,7 @@ public class GraphBaseTest extends InstanceTest {
 		commit(g2);
 
 		createTransaction(g1);
-		Vertex v1 = g1.createVertex(DoubleSubNode.class);
+		Vertex v1 = g1.createVertex(DoubleSubNode.VC);
 		commit(g1);
 
 		createReadOnlyTransaction(g1);
@@ -1426,7 +1315,7 @@ public class GraphBaseTest extends InstanceTest {
 		commit(g1);
 
 		createTransaction(g1);
-		Vertex v2 = g1.createVertex(SuperNode.class);
+		Vertex v2 = g1.createVertex(SuperNode.VC);
 		commit(g1);
 
 		createReadOnlyTransaction(g1);
@@ -1437,7 +1326,7 @@ public class GraphBaseTest extends InstanceTest {
 
 		// makes sure that changing edges does not affect the vertexList
 		createTransaction(g1);
-		g1.createEdge(SubLink.class, v1, v2);
+		g1.createEdge(SubLink.EC, v1, v2);
 		commit(g1);
 
 		createReadOnlyTransaction(g1);
@@ -1445,7 +1334,7 @@ public class GraphBaseTest extends InstanceTest {
 		commit(g1);
 
 		createTransaction(g1);
-		g1.createEdge(Link.class, v1, v2);
+		g1.createEdge(Link.EC, v1, v2);
 		commit(g1);
 
 		createReadOnlyTransaction(g1);
@@ -1467,7 +1356,7 @@ public class GraphBaseTest extends InstanceTest {
 		// normal cases
 		for (int i = 0; i < 21; i++) {
 			createTransaction(g1);
-			g1.createVertex(SubNode.class);
+			g1.createVertex(SubNode.VC);
 			commit(g1);
 
 			createReadOnlyTransaction(g1);
@@ -1489,7 +1378,7 @@ public class GraphBaseTest extends InstanceTest {
 
 		for (int i = 0; i < 12; i++) {
 			createTransaction(g1);
-			g1.createVertex(SuperNode.class);
+			g1.createVertex(SuperNode.VC);
 			commit(g1);
 
 			createReadOnlyTransaction(g1);
@@ -1503,7 +1392,7 @@ public class GraphBaseTest extends InstanceTest {
 		commit(g1);
 
 		createTransaction(g1);
-		Vertex v3 = g1.createVertex(SubNode.class);
+		Vertex v3 = g1.createVertex(SubNode.VC);
 		commit(g1);
 
 		createReadOnlyTransaction(g1);
@@ -1513,7 +1402,7 @@ public class GraphBaseTest extends InstanceTest {
 		commit(g1);
 
 		createTransaction(g1);
-		Vertex v4 = g1.createVertex(SuperNode.class);
+		Vertex v4 = g1.createVertex(SuperNode.VC);
 		commit(g1);
 
 		createReadOnlyTransaction(g1);
@@ -1551,7 +1440,7 @@ public class GraphBaseTest extends InstanceTest {
 		commit(g1);
 
 		createTransaction(g1);
-		Vertex v5 = g1.createVertex(DoubleSubNode.class);
+		Vertex v5 = g1.createVertex(DoubleSubNode.VC);
 		commit(g1);
 
 		createReadOnlyTransaction(g1);

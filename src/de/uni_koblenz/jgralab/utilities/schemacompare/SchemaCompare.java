@@ -202,7 +202,7 @@ public class SchemaCompare {
 			return;
 		}
 
-		for (GraphElementClass gec : g.getGraphElementClasses()) {
+		for (GraphElementClass<?, ?> gec : g.getGraphElementClasses()) {
 			if (gec.isInternal()) {
 				continue;
 			}
@@ -214,8 +214,8 @@ public class SchemaCompare {
 		marked.add(h);
 	}
 
-	private void compareGraphElementClass(GraphElementClass g,
-			GraphElementClass h) {
+	private void compareGraphElementClass(GraphElementClass<?, ?> g,
+			GraphElementClass<?, ?> h) {
 		if (h == null) {
 			reportDiff("GraphElementClass: " + g.getQualifiedName(), "null");
 			return;
@@ -237,7 +237,8 @@ public class SchemaCompare {
 		marked.add(h);
 	}
 
-	private void compareAbstractness(GraphElementClass g, GraphElementClass h) {
+	private void compareAbstractness(GraphElementClass<?, ?> g,
+			GraphElementClass<?, ?> h) {
 		if (g.isAbstract() ^ h.isAbstract()) {
 			reportDiff(g.getQualifiedName()
 					+ (g.isAbstract() ? " is" : " is not") + " abstract",
@@ -246,8 +247,8 @@ public class SchemaCompare {
 		}
 	}
 
-	private void compareAttribute(GraphElementClass g, Attribute a,
-			GraphElementClass h, Attribute b) {
+	private void compareAttribute(GraphElementClass<?, ?> g, Attribute a,
+			GraphElementClass<?, ?> h, Attribute b) {
 		if (b == null) {
 			reportDiff(g.getQualifiedName() + "." + a.getName(),
 					h.getQualifiedName() + " doesn't have such an Atrribute");
@@ -270,7 +271,8 @@ public class SchemaCompare {
 		marked.add(h);
 	}
 
-	private void compareHierarchy(GraphElementClass g, GraphElementClass h) {
+	private void compareHierarchy(GraphElementClass<?, ?> g,
+			GraphElementClass<?, ?> h) {
 		// superclasses
 		Set<String> gsup = getQNameSet(g.getDirectSuperClasses());
 		Set<String> hsup = getQNameSet(h.getDirectSuperClasses());

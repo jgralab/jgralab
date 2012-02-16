@@ -42,7 +42,7 @@ import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.algolib.functions.IntFunction;
 import de.uni_koblenz.jgralab.algolib.functions.entries.IntFunctionEntry;
 
-public abstract class IntegerGraphMarker<T extends GraphElement> extends
+public abstract class IntegerGraphMarker<T extends GraphElement<?, ?>> extends
 		AbstractGraphMarker<T> implements IntFunction<T> {
 
 	private static final int DEFAULT_UNMARKED_VALUE = Integer.MIN_VALUE;

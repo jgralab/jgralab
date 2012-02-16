@@ -35,8 +35,8 @@
 package de.uni_koblenz.jgralab.impl.trans;
 
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.GraphException;
@@ -94,8 +94,8 @@ public class WritingComponent {
 		// if at least one edge is to be added or deleted...
 		if (((transaction.addedEdges != null && transaction.addedEdges.size() > 0) || (transaction.deletedEdges != null && transaction.deletedEdges
 				.size() > 0))
-				// looking for graph.edge is sufficient, because edge and
-				// revEdge are one unit..
+		// looking for graph.edge is sufficient, because edge and
+		// revEdge are one unit..
 				&& graph.edge.isLatestPersistentValueReferenced()) {
 			// important to synchronize here!!!
 			graph.edgeSync.readLock().lock();
@@ -456,12 +456,12 @@ public class WritingComponent {
 	 * 
 	 * @throws Exception
 	 */
-	@SuppressWarnings( { "unchecked" })
+	@SuppressWarnings({ "unchecked" })
 	private void changeAttributes() throws Exception {
 		if (transaction.changedAttributes != null) {
-			Set<Entry<AttributedElement, Set<VersionedDataObject<?>>>> elements = transaction.changedAttributes
+			Set<Entry<AttributedElement<?, ?>, Set<VersionedDataObject<?>>>> elements = transaction.changedAttributes
 					.entrySet();
-			for (Entry<AttributedElement, Set<VersionedDataObject<?>>> entry : elements) {
+			for (Entry<AttributedElement<?, ?>, Set<VersionedDataObject<?>>> entry : elements) {
 				// TODO how can the unchecked usage of VersionedDataObject can
 				// be avoided (using <?> doesn't work)
 				Set<VersionedDataObject<?>> attributes = entry.getValue();
@@ -469,8 +469,8 @@ public class WritingComponent {
 					// the temporary value of attribute for current transaction
 					Object tempValue = attribute.getTemporaryValue(transaction);
 					((VersionedDataObjectImpl<Object>) attribute)
-							.setValidValue(tempValue, graph
-									.getCurrentTransaction(), true);
+							.setValidValue(tempValue,
+									graph.getCurrentTransaction(), true);
 					graph.setGraphVersion(graph.getGraphVersion() + 1);
 				}
 			}

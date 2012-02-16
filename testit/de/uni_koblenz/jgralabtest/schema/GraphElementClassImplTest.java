@@ -38,8 +38,10 @@ import java.util.Random;
 
 import org.junit.Test;
 
-public abstract class GraphElementClassImplTest extends
-		AttributedElementClassImplTest {
+import de.uni_koblenz.jgralab.schema.GraphElementClass;
+
+public abstract class GraphElementClassImplTest<GEC extends GraphElementClass<?, ?>>
+		extends AttributedElementClassImplTest<GEC> {
 
 	protected static Random random = new Random();
 

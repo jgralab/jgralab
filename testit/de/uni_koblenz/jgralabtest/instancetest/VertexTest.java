@@ -688,7 +688,7 @@ public class VertexTest extends InstanceTest {
 	 */
 	private EdgeClass[] getEdgeClasses() {
 		EdgeClass[] ecs = new EdgeClass[3];
-		List<EdgeClass> a = g.getSchema().getEdgeClassesInTopologicalOrder();
+		List<EdgeClass> a = g.getGraphClass().getEdgeClasses();
 		for (EdgeClass ec : a) {
 			if (ec.getSimpleName().equals("Link")) {
 				ecs[0] = ec;
@@ -2362,11 +2362,12 @@ public class VertexTest extends InstanceTest {
 		VertexTestGraph graph = null;
 		switch (implementationType) {
 		case STANDARD:
-			graph = VertexTestSchema.instance().createVertexTestGraph(100, 100);
+			graph = VertexTestSchema.instance().createVertexTestGraph(
+					ImplementationType.STANDARD);
 			break;
 		case TRANSACTION:
-			graph = VertexTestSchema.instance()
-					.createVertexTestGraphWithTransactionSupport(100, 100);
+			graph = VertexTestSchema.instance().createVertexTestGraph(
+					ImplementationType.TRANSACTION);
 			break;
 		case DATABASE:
 			graph = createVertexTestGraphWithDatabaseSupport();
@@ -2470,8 +2471,7 @@ public class VertexTest extends InstanceTest {
 	 * @return an array <code>ret</code> of all VertexClasses
 	 */
 	private VertexClass[] getVertexClasses() {
-		List<VertexClass> vclasses = g.getSchema()
-				.getVertexClassesInTopologicalOrder();
+		List<VertexClass> vclasses = g.getGraphClass().getVertexClasses();
 		VertexClass[] vcret = new VertexClass[4];
 		for (VertexClass vc : vclasses) {
 			if (vc.getSimpleName().equals("AbstractSuperNode")) {
@@ -6421,58 +6421,6 @@ public class VertexTest extends InstanceTest {
 		}
 	}
 
-	// tests of the method boolean isValidAlpha(Edge edge);
-
-	/**
-	 * Checks some cases for true and false considering heredity.
-	 * 
-	 * @throws CommitFailedException
-	 */
-	@Test
-	public void isValidAlphaTest0() throws CommitFailedException {
-		createTransaction(g);
-		Vertex v0 = g.createSubNode();
-		Vertex v1 = g.createSuperNode();
-		Vertex v2 = g.createDoubleSubNode();
-		Edge e0 = g.createLink((AbstractSuperNode) v2, (SuperNode) v2);
-		Edge e1 = g.createSubLink((DoubleSubNode) v2, (SuperNode) v2);
-		commit(g);
-		createReadOnlyTransaction(g);
-		assertTrue(v0.isValidAlpha(e0));
-		assertFalse(v1.isValidAlpha(e0));
-		assertTrue(v2.isValidAlpha(e0));
-		assertFalse(v0.isValidAlpha(e1));
-		assertFalse(v1.isValidAlpha(e1));
-		assertTrue(v2.isValidAlpha(e1));
-		commit(g);
-	}
-
-	// tests of the method boolean isValidOmega(Edge edge);
-
-	/**
-	 * Checks some cases for true and false.
-	 * 
-	 * @throws CommitFailedException
-	 */
-	@Test
-	public void isValidOmegaTest0() throws CommitFailedException {
-		createTransaction(g);
-		Vertex v0 = g.createSubNode();
-		Vertex v1 = g.createSuperNode();
-		commit(g);
-		createReadOnlyTransaction(g);
-		assertTrue(v0.isValid());
-		assertTrue(v1.isValid());
-		commit(g);
-		createTransaction(g);
-		v0.delete();
-		commit(g);
-		createReadOnlyTransaction(g);
-		assertFalse(v0.isValid());
-		assertTrue(v1.isValid());
-		commit(g);
-	}
-
 	/*
 	 * Test of the Interface GraphElement
 	 */
@@ -8061,4 +8009,27 @@ public class VertexTest extends InstanceTest {
 		commit(g);
 	}
 
+	@Test
+	public void isInstanceOfTest() throws CommitFailedException {
+		VertexClass a = g.getSchema().getGraphClass().getVertexClass("A");
+		VertexClass asn = g.getSchema().getGraphClass()
+				.getVertexClass("AbstractSuperNode");
+		VertexClass sn = g.getSchema().getGraphClass()
+				.getVertexClass("SuperNode");
+
+		createTransaction(g);
+		for (DoubleSubNode x : g.getDoubleSubNodeVertices()) {
+			assertTrue(x.isInstanceOf(x.getAttributedElementClass()));
+			assertTrue(x.isInstanceOf(asn));
+			assertTrue(x.isInstanceOf(sn));
+			assertFalse(x.isInstanceOf(a));
+		}
+
+		for (AbstractSuperNode x : g.getAbstractSuperNodeVertices()) {
+			assertTrue(x.isInstanceOf(asn));
+			assertFalse(x.isInstanceOf(sn));
+			assertFalse(x.isInstanceOf(a));
+		}
+		commit(g);
+	}
 }

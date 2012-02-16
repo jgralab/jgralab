@@ -86,7 +86,7 @@ public class GraphDbTest {
 
 		System.out.println("Creating graph...");
 		JniTestGraph g = JniTestSchema.instance()
-				.createJniTestGraphWithDatabaseSupport("gdbtest", gdb);
+				.createJniTestGraph("gdbtest", gdb);
 
 		final int NV = 1000;
 		final int NE = 1000;

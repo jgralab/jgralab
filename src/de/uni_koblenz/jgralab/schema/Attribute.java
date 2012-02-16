@@ -93,7 +93,7 @@ public interface Attribute {
 	 * @param element
 	 * @throws GraphIOException
 	 */
-	public void setDefaultTransactionValue(AttributedElement element)
+	public void setDefaultTransactionValue(AttributedElement<?, ?> element)
 			throws GraphIOException;
 
 	/**
@@ -102,12 +102,13 @@ public interface Attribute {
 	 * @param el
 	 * @throws GraphIOException
 	 */
-	public void setDefaultValue(AttributedElement el) throws GraphIOException;
+	public void setDefaultValue(AttributedElement<?, ?> el)
+			throws GraphIOException;
 
 	/**
 	 * @return the owning AttributedElementClass
 	 */
-	public AttributedElementClass getAttributedElementClass();
+	public AttributedElementClass<?, ?> getAttributedElementClass();
 
 	/**
 	 * Returns a String suitable to sort Attributes of an AttributedElement.

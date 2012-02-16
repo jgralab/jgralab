@@ -56,8 +56,8 @@ import de.uni_koblenz.jgralab.algolib.functions.entries.BooleanFunctionEntry;
  * @author ist@uni-koblenz.de
  * 
  */
-public class SubGraphMarker extends AbstractGraphMarker<GraphElement> implements
-		BooleanFunction<GraphElement>, TraversalContext {
+public class SubGraphMarker extends AbstractGraphMarker<GraphElement<?, ?>>
+		implements BooleanFunction<GraphElement<?, ?>>, TraversalContext {
 
 	private final BitSetEdgeMarker edgeGraphMarker;
 	private final BitSetVertexMarker vertexGraphMarker;
@@ -93,7 +93,7 @@ public class SubGraphMarker extends AbstractGraphMarker<GraphElement> implements
 	}
 
 	@Override
-	public boolean isMarked(GraphElement graphElement) {
+	public boolean isMarked(GraphElement<?, ?> graphElement) {
 		return graphElement instanceof Edge ? edgeGraphMarker
 				.isMarked((Edge) graphElement) : vertexGraphMarker
 				.isMarked((Vertex) graphElement);
@@ -113,7 +113,7 @@ public class SubGraphMarker extends AbstractGraphMarker<GraphElement> implements
 	}
 
 	@Override
-	public boolean removeMark(GraphElement graphElement) {
+	public boolean removeMark(GraphElement<?, ?> graphElement) {
 		return graphElement instanceof Edge ? removeMark((Edge) graphElement)
 				: removeMark((Vertex) graphElement);
 	}
@@ -163,7 +163,7 @@ public class SubGraphMarker extends AbstractGraphMarker<GraphElement> implements
 	 * @return false if the given <code>graphElement</code> has already been
 	 *         marked.
 	 */
-	public boolean mark(GraphElement graphElement) {
+	public boolean mark(GraphElement<?, ?> graphElement) {
 		return graphElement instanceof Edge ? mark((Edge) graphElement)
 				: mark((Vertex) graphElement);
 	}
@@ -226,12 +226,12 @@ public class SubGraphMarker extends AbstractGraphMarker<GraphElement> implements
 	}
 
 	@Override
-	public Iterable<GraphElement> getMarkedElements() {
-		return new Iterable<GraphElement>() {
+	public Iterable<GraphElement<?, ?>> getMarkedElements() {
+		return new Iterable<GraphElement<?, ?>>() {
 
 			@Override
-			public Iterator<GraphElement> iterator() {
-				return new ArrayGraphMarkerIterator<GraphElement>(version) {
+			public Iterator<GraphElement<?, ?>> iterator() {
+				return new ArrayGraphMarkerIterator<GraphElement<?, ?>>(version) {
 
 					Iterator<Vertex> vertexIterator;
 					Iterator<Edge> edgeIterator;
@@ -255,7 +255,7 @@ public class SubGraphMarker extends AbstractGraphMarker<GraphElement> implements
 					}
 
 					@Override
-					public GraphElement next() {
+					public GraphElement<?, ?> next() {
 						if (version != SubGraphMarker.this.version) {
 							throw new ConcurrentModificationException(
 									MODIFIED_ERROR_MESSAGE);
@@ -277,17 +277,17 @@ public class SubGraphMarker extends AbstractGraphMarker<GraphElement> implements
 	}
 
 	@Override
-	public boolean get(GraphElement parameter) {
+	public boolean get(GraphElement<?, ?> parameter) {
 		return isMarked(parameter);
 	}
 
 	@Override
-	public boolean isDefined(GraphElement parameter) {
+	public boolean isDefined(GraphElement<?, ?> parameter) {
 		return true;
 	}
 
 	@Override
-	public void set(GraphElement parameter, boolean value) {
+	public void set(GraphElement<?, ?> parameter, boolean value) {
 		if (value) {
 			mark(parameter);
 		} else {
@@ -296,10 +296,10 @@ public class SubGraphMarker extends AbstractGraphMarker<GraphElement> implements
 	}
 
 	@Override
-	public Iterator<BooleanFunctionEntry<GraphElement>> iterator() {
-		final Iterator<GraphElement> markedElements = getMarkedElements()
+	public Iterator<BooleanFunctionEntry<GraphElement<?, ?>>> iterator() {
+		final Iterator<GraphElement<?, ?>> markedElements = getMarkedElements()
 				.iterator();
-		return new Iterator<BooleanFunctionEntry<GraphElement>>() {
+		return new Iterator<BooleanFunctionEntry<GraphElement<?, ?>>>() {
 
 			@Override
 			public boolean hasNext() {
@@ -307,10 +307,10 @@ public class SubGraphMarker extends AbstractGraphMarker<GraphElement> implements
 			}
 
 			@Override
-			public BooleanFunctionEntry<GraphElement> next() {
-				GraphElement currentElement = markedElements.next();
-				return new BooleanFunctionEntry<GraphElement>(currentElement,
-						get(currentElement));
+			public BooleanFunctionEntry<GraphElement<?, ?>> next() {
+				GraphElement<?, ?> currentElement = markedElements.next();
+				return new BooleanFunctionEntry<GraphElement<?, ?>>(
+						currentElement, get(currentElement));
 			}
 
 			@Override
@@ -322,7 +322,7 @@ public class SubGraphMarker extends AbstractGraphMarker<GraphElement> implements
 	}
 
 	@Override
-	public Iterable<GraphElement> getDomainElements() {
+	public Iterable<GraphElement<?, ?>> getDomainElements() {
 		return getMarkedElements();
 	}
 

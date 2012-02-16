@@ -65,8 +65,8 @@ import de.uni_koblenz.jgralab.impl.ReversedEdgeBaseImpl;
  * @author ist@uni-koblenz.de
  * 
  */
-public abstract class MapGraphMarker<T extends AttributedElement, O> extends
-		AbstractGraphMarker<T> implements Function<T, O> {
+public abstract class MapGraphMarker<T extends AttributedElement<?, ?>, O>
+		extends AbstractGraphMarker<T> implements Function<T, O> {
 
 	/**
 	 * Stores the mapping between Graph, Edge or Vertex and the attribute
@@ -94,7 +94,7 @@ public abstract class MapGraphMarker<T extends AttributedElement, O> extends
 		if (elem == null) {
 			return null;
 		}
-		assert ((elem instanceof GraphElement && ((GraphElement) elem)
+		assert ((elem instanceof GraphElement && ((GraphElement<?, ?>) elem)
 				.getGraph() == graph) || elem == graph);
 		if (elem instanceof ReversedEdgeBaseImpl) {
 			elem = getNormalEdge(elem);
@@ -113,7 +113,7 @@ public abstract class MapGraphMarker<T extends AttributedElement, O> extends
 	 *         with, <code>null</code> if the given element has not been marked.
 	 */
 	public O mark(T elem, O value) {
-		assert ((elem instanceof GraphElement && ((GraphElement) elem)
+		assert ((elem instanceof GraphElement && ((GraphElement<?, ?>) elem)
 				.getGraph() == graph) || elem == graph);
 
 		if (elem instanceof ReversedEdgeBaseImpl) {
@@ -170,7 +170,7 @@ public abstract class MapGraphMarker<T extends AttributedElement, O> extends
 
 	@Override
 	public boolean isMarked(T elem) {
-		assert ((elem instanceof GraphElement && ((GraphElement) elem)
+		assert ((elem instanceof GraphElement && ((GraphElement<?, ?>) elem)
 				.getGraph() == graph) || elem == graph);
 		if (elem instanceof ReversedEdgeBaseImpl) {
 			elem = getNormalEdge(elem);
@@ -180,7 +180,7 @@ public abstract class MapGraphMarker<T extends AttributedElement, O> extends
 
 	@Override
 	public boolean removeMark(T elem) {
-		assert ((elem instanceof GraphElement && ((GraphElement) elem)
+		assert ((elem instanceof GraphElement && ((GraphElement<?, ?>) elem)
 				.getGraph() == graph) || elem == graph);
 		if (elem instanceof ReversedEdgeBaseImpl) {
 			elem = getNormalEdge(elem);

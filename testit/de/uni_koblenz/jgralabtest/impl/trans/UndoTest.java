@@ -45,6 +45,7 @@ import org.pcollections.PMap;
 import org.pcollections.PSet;
 import org.pcollections.PVector;
 
+import de.uni_koblenz.jgralab.ImplementationType;
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.trans.CommitFailedException;
 import de.uni_koblenz.jgralab.trans.InvalidSavepointException;
@@ -67,7 +68,7 @@ public class UndoTest {
 	@Before
 	public void setUp() throws CommitFailedException {
 		graph = RecordTestSchema.instance()
-				.createRecordTestGraphWithTransactionSupport();
+				.createRecordTestGraph(ImplementationType.TRANSACTION);
 		graph.newTransaction();
 		graph.commit();
 

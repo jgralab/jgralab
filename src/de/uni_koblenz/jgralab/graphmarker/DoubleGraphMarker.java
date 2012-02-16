@@ -42,7 +42,7 @@ import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.algolib.functions.DoubleFunction;
 import de.uni_koblenz.jgralab.algolib.functions.entries.DoubleFunctionEntry;
 
-public abstract class DoubleGraphMarker<T extends GraphElement> extends
+public abstract class DoubleGraphMarker<T extends GraphElement<?, ?>> extends
 		AbstractGraphMarker<T> implements DoubleFunction<T> {
 
 	protected double[] temporaryAttributes;

@@ -34,13 +34,13 @@
  */
 package de.uni_koblenz.jgralab.eca.events;
 
-import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.eca.events.ChangeEdgeEventDescription.EdgeEnd;
+import de.uni_koblenz.jgralab.schema.EdgeClass;
 
-public class ChangeEdgeEvent extends Event {
+public class ChangeEdgeEvent extends Event<EdgeClass> {
 
 	/**
 	 * Edge that causes the Event
@@ -81,7 +81,7 @@ public class ChangeEdgeEvent extends Event {
 	public ChangeEdgeEvent(int nestedCalls, EventDescription.EventTime time,
 			Graph graph, Edge edge, Vertex oldVertex, Vertex newVertex,
 			EdgeEnd end) {
-		super(nestedCalls, time, graph, edge.getSchemaClass());
+		super(nestedCalls, time, graph, edge.getAttributedElementClass());
 		this.edge = edge;
 		this.oldVertex = oldVertex;
 		this.newVertex = newVertex;
@@ -89,13 +89,6 @@ public class ChangeEdgeEvent extends Event {
 	}
 
 	// ------------------------------------------------------------------------
-
-	/**
-	 * @return the Edge that causes this Event
-	 */
-	public Edge getEdge() {
-		return edge;
-	}
 
 	/**
 	 * @return the old Vertex of this Edge
@@ -115,7 +108,7 @@ public class ChangeEdgeEvent extends Event {
 	 * @return the AttributedElement that causes this Event
 	 */
 	@Override
-	public AttributedElement getElement() {
+	public Edge getElement() {
 		return edge;
 	}
 

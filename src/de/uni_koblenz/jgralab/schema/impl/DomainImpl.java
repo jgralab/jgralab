@@ -49,6 +49,7 @@ public abstract class DomainImpl extends NamedElementImpl implements Domain {
 	protected final void register() {
 		((SchemaImpl) getSchema()).addDomain(this);
 		((PackageImpl) parentPackage).addDomain(this);
+		((SchemaImpl)getSchema()).getDomainsDag().createNode(this);
 	}
 
 	@Override

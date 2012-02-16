@@ -79,7 +79,7 @@ class VertexTreeNode extends GraphElementTreeNode {
 	}
 
 	@Override
-	protected GraphElement get() {
+	protected GraphElement<?, ?> get() {
 		return v;
 	}
 }

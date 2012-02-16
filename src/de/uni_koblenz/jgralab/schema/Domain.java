@@ -35,6 +35,10 @@
 
 package de.uni_koblenz.jgralab.schema;
 
+import java.io.IOException;
+
+import de.uni_koblenz.jgralab.GraphIO;
+import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.codegenerator.CodeBlock;
 
 /**
@@ -140,4 +144,46 @@ public interface Domain extends NamedElement {
 	 * @return the initial value for this Domain
 	 */
 	public String getInitialValue();
+
+	/**
+	 * Parses a String representing an attribute value and returns an Object
+	 * representing the attribute value. The created Object's type is determined
+	 * by the attribute's Domain and the generic TGraph implementation's mapping
+	 * of types to the domains. <br />
+	 * <br />
+	 * The type mapping is as follows:
+	 * <table><tr><td><b>Domain</b></td><td><b>Java-type</b></td></tr>
+	 * <tr><td>BooleanDomain</td><td>Boolean</td></tr>
+	 * <tr><td>IntegerDomain</td><td>Integer</td></tr>
+	 * <tr><td>LongDomain</td><td>Long</td></tr>
+	 * <tr><td>DoubleDomain</td><td>Double</td></tr>
+	 * <tr><td>StringDomain</td><td>String</td></tr>
+	 * <tr><td>EnumDomain</td><td>String (possible values are determined by the EnumDomain)</td></tr>
+	 * <tr><td>SetDomain</td><td>PSet</td></tr>
+	 * <tr><td>ListDomain</td><td>PVector</td></tr>
+	 * <tr><td>MapDomain</td><td>PMap</td></tr>
+	 * <tr><td>RecordDomain</td><td>de.uni_koblenz.jgralab.impl.RecordImpl</td></tr></table>
+	 * @param io
+	 *            The {@link GraphIO} object serving as parser for the
+	 *            attribute's value.
+	 */
+	public Object parseGenericAttribute(GraphIO io)
+			throws GraphIOException;
+
+	/**
+	 * Serializes an attribute value in the generic implementation of this
+	 * domain.
+	 * 
+	 * @param io
+	 * @param data
+	 * @throws IOException
+	 */
+	public void serializeGenericAttribute(GraphIO io, Object data)
+			throws IOException;
+
+	/**
+	 * Checks, if an attribute value in the generic implementation conforms
+	 * to this domain.
+	 */
+	public boolean isConformGenericValue(Object value);
 }

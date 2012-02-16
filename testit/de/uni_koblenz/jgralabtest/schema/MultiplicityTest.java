@@ -48,6 +48,7 @@ import org.junit.Test;
 import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.GraphIOException;
+import de.uni_koblenz.jgralab.ImplementationType;
 import de.uni_koblenz.jgralab.codegenerator.CodeGeneratorConfiguration;
 import de.uni_koblenz.jgralab.graphvalidator.GraphValidator;
 import de.uni_koblenz.jgralab.graphvalidator.MultiplicityConstraintViolation;
@@ -67,7 +68,8 @@ public class MultiplicityTest {
 	 */
 	@Before
 	public void setUp() {
-		graph = VertexTestSchema.instance().createVertexTestGraph();
+		graph = VertexTestSchema.instance().createVertexTestGraph(
+				ImplementationType.STANDARD);
 		validator = new GraphValidator(graph);
 	}
 
@@ -255,7 +257,7 @@ public class MultiplicityTest {
 				.validateMultiplicities((EdgeClass) graph.getSchema()
 						.getAttributedElementClass("H"));
 		assertFalse(violations.isEmpty());
-		Set<AttributedElement> offendingElements = violations.first()
+		Set<AttributedElement<?, ?>> offendingElements = violations.first()
 				.getOffendingElements();
 		assertEquals(1, offendingElements.size());
 		assertTrue(offendingElements.contains(v1));
@@ -279,7 +281,7 @@ public class MultiplicityTest {
 				.validateMultiplicities((EdgeClass) graph.getSchema()
 						.getAttributedElementClass("H"));
 		assertFalse(violations.isEmpty());
-		Set<AttributedElement> offendingElements = violations.first()
+		Set<AttributedElement<?, ?>> offendingElements = violations.first()
 				.getOffendingElements();
 		assertEquals(1, offendingElements.size());
 		assertTrue(offendingElements.contains(v1));
@@ -298,7 +300,7 @@ public class MultiplicityTest {
 				.validateMultiplicities((EdgeClass) graph.getSchema()
 						.getAttributedElementClass("K"));
 		assertFalse(violations.isEmpty());
-		Set<AttributedElement> offendingElements = violations.first()
+		Set<AttributedElement<?, ?>> offendingElements = violations.first()
 				.getOffendingElements();
 		assertEquals(1, offendingElements.size());
 		assertTrue(offendingElements.contains(v1));
@@ -318,7 +320,7 @@ public class MultiplicityTest {
 				.validateMultiplicities((EdgeClass) graph.getSchema()
 						.getAttributedElementClass("K"));
 		assertFalse(violations.isEmpty());
-		Set<AttributedElement> offendingElements = violations.first()
+		Set<AttributedElement<?, ?>> offendingElements = violations.first()
 				.getOffendingElements();
 		assertEquals(1, offendingElements.size());
 		assertTrue(offendingElements.contains(v1));
@@ -341,7 +343,7 @@ public class MultiplicityTest {
 				.validateMultiplicities((EdgeClass) graph.getSchema()
 						.getAttributedElementClass("K"));
 		assertFalse(violations.isEmpty());
-		Set<AttributedElement> offendingElements = violations.first()
+		Set<AttributedElement<?, ?>> offendingElements = violations.first()
 				.getOffendingElements();
 		assertEquals(1, offendingElements.size());
 		assertTrue(offendingElements.contains(v1));
@@ -375,7 +377,7 @@ public class MultiplicityTest {
 		violations = validator.validateMultiplicities((EdgeClass) graph
 				.getSchema().getAttributedElementClass("H"));
 		assertFalse(violations.isEmpty());
-		Set<AttributedElement> offendingElements = violations.first()
+		Set<AttributedElement<?, ?>> offendingElements = violations.first()
 				.getOffendingElements();
 		assertEquals(1, offendingElements.size());
 		assertTrue(offendingElements.contains(v1));

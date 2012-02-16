@@ -46,11 +46,13 @@ import org.pcollections.PVector;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
+import de.uni_koblenz.jgralab.ImplementationType;
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql2.exception.ParsingException;
 import de.uni_koblenz.jgralab.greql2.funlib.FunLib;
 import de.uni_koblenz.jgralab.greql2.schema.*;
+import de.uni_koblenz.jgralab.schema.EdgeClass;
 
 public class GreqlParser extends ParserHelper {
 	private Map<RuleEnum, int[]> testedRules = new HashMap<RuleEnum, int[]>();
@@ -70,6 +72,7 @@ public class GreqlParser extends ParserHelper {
 	private boolean predicateFulfilled = true;
 
 	private Greql2Schema schema = null;
+	private Set<String> subQueryNames = null;
 
 	/**
 	 * @return the set of variables which are valid at the current position in
@@ -143,11 +146,15 @@ public class GreqlParser extends ParserHelper {
 	}
 
 	public GreqlParser(String source) {
+		this(source, null);
+	}
+
+	public GreqlParser(String source, Set<String> subQueryNames) {
 		query = source;
 		parsingStack = new Stack<Integer>();
 		predicateStack = new Stack<Boolean>();
 		schema = Greql2Schema.instance();
-		graph = schema.createGreql2Graph();
+		graph = schema.createGreql2(ImplementationType.STANDARD);
 		tokens = GreqlLexer.scan(source);
 		afterParsingvariableSymbolTable = new SymbolTable();
 		duringParsingvariableSymbolTable = new SimpleSymbolTable();
@@ -155,6 +162,12 @@ public class GreqlParser extends ParserHelper {
 		functionSymbolTable = new HashMap<String, FunctionId>();
 		graphCleaned = false;
 		lookAhead = tokens.get(0);
+		this.subQueryNames = subQueryNames;
+	}
+
+	protected final boolean isFunctionName(String ident) {
+		return ((subQueryNames != null) && subQueryNames.contains(ident))
+				|| FunLib.contains(ident);
 	}
 
 	public void parse() {
@@ -192,8 +205,12 @@ public class GreqlParser extends ParserHelper {
 				startOffset));
 	}
 
-	public static Greql2Graph parse(String query) {
-		GreqlParser parser = new GreqlParser(query);
+	public static Greql2 parse(String query) {
+		return parse(query, null);
+	}
+
+	public static Greql2 parse(String query, Set<String> subQueryNames) {
+		GreqlParser parser = new GreqlParser(query, subQueryNames);
 		parser.parse();
 		return parser.getGraph();
 	}
@@ -202,12 +219,12 @@ public class GreqlParser extends ParserHelper {
 			List<VertexPosition<Expression>> expressions,
 			ValueConstruction parent) {
 		return (ValueConstruction) createMultipleEdgesToParent(expressions,
-				parent, IsPartOf.class);
+				parent, Greql2Schema.instance().ec_IsPartOf);
 	}
 
 	private final Vertex createMultipleEdgesToParent(
 			List<VertexPosition<Expression>> expressions, Vertex parent,
-			Class<? extends Edge> edgeClass) {
+			EdgeClass edgeClass) {
 		if (expressions != null) {
 			for (VertexPosition<? extends Vertex> expr : expressions) {
 				Greql2Aggregation edge = (Greql2Aggregation) graph.createEdge(
@@ -221,7 +238,7 @@ public class GreqlParser extends ParserHelper {
 
 	private final Vertex createMultipleEdgesToParent(
 			List<VertexPosition<TypeId>> expressions, Vertex parent,
-			Class<? extends Edge> edgeClass, int i) {
+			EdgeClass edgeClass, int i) {
 		if (expressions != null) {
 			for (VertexPosition<? extends Vertex> expr : expressions) {
 				Greql2Aggregation edge = (Greql2Aggregation) graph.createEdge(
@@ -235,7 +252,7 @@ public class GreqlParser extends ParserHelper {
 
 	private final Vertex createMultipleEdgesToParent(
 			List<VertexPosition<SimpleDeclaration>> expressions, Vertex parent,
-			Class<? extends Edge> edgeClass, boolean b) {
+			EdgeClass edgeClass, boolean b) {
 		if (expressions != null) {
 			for (VertexPosition<? extends Vertex> expr : expressions) {
 				Greql2Aggregation edge = (Greql2Aggregation) graph.createEdge(
@@ -249,7 +266,7 @@ public class GreqlParser extends ParserHelper {
 
 	private final Vertex createMultipleEdgesToParent(
 			List<VertexPosition<Variable>> expressions, Vertex parent,
-			Class<? extends Edge> edgeClass, String s) {
+			EdgeClass edgeClass, String s) {
 		if (expressions != null) {
 			for (VertexPosition<? extends Vertex> expr : expressions) {
 				Greql2Aggregation edge = (Greql2Aggregation) graph.createEdge(
@@ -326,7 +343,7 @@ public class GreqlParser extends ParserHelper {
 				return name;
 			}
 		}
-		fail("expected identifier");
+		fail("expected identifier, but found");
 		return null;
 	}
 
@@ -338,7 +355,7 @@ public class GreqlParser extends ParserHelper {
 				return name;
 			}
 		}
-		fail("expected simple name");
+		fail("expected simple name, but found");
 		return null;
 	}
 
@@ -346,7 +363,7 @@ public class GreqlParser extends ParserHelper {
 		if (lookAhead(0) == type) {
 			match();
 		} else {
-			fail("Expected " + type);
+			fail("expected " + type + ", but found");
 		}
 	}
 
@@ -395,7 +412,7 @@ public class GreqlParser extends ParserHelper {
 			} while (ph);
 			return name.toString();
 		}
-		fail("Unrecognized package name or TypeName expected");
+		fail("Package or type name expected, but found");
 		return null;
 	}
 
@@ -1186,9 +1203,11 @@ public class GreqlParser extends ParserHelper {
 			PathDescription part2 = parseAltPathDescription();
 			int lengthPart2 = getLength(offsetPart2);
 			if (!inPredicateMode()) {
-				part1 = addPathElement(AlternativePathDescription.class,
-						IsAlternativePathOf.class, null, part1, offsetPart1,
-						lengthPart1, part2, offsetPart2, lengthPart2);
+				part1 = addPathElement(
+						Greql2Schema.instance().vc_AlternativePathDescription,
+						Greql2Schema.instance().ec_IsAlternativePathOf, null,
+						part1, offsetPart1, lengthPart1, part2, offsetPart2,
+						lengthPart2);
 			}
 		}
 		ruleSucceeds(RuleEnum.ALTERNATIVE_PATH_DESCRIPTION, pos);
@@ -1217,9 +1236,10 @@ public class GreqlParser extends ParserHelper {
 			IntermediateVertexPathDescription result = null;
 			if (!inPredicateMode()) {
 				result = (IntermediateVertexPathDescription) addPathElement(
-						IntermediateVertexPathDescription.class,
-						IsSubPathOf.class, null, part1, offsetPart1,
-						lengthPart1, part2, offsetPart2, lengthPart2);
+						Greql2Schema.instance().vc_IntermediateVertexPathDescription,
+						Greql2Schema.instance().ec_IsSubPathOf, null, part1,
+						offsetPart1, lengthPart1, part2, offsetPart2,
+						lengthPart2);
 				IsIntermediateVertexOf intermediateVertexOf = graph
 						.createIsIntermediateVertexOf(restrExpr, result);
 				intermediateVertexOf
@@ -1245,9 +1265,11 @@ public class GreqlParser extends ParserHelper {
 			PathDescription part2 = parseSequentialPathDescription();
 			int lengthPart2 = getLength(offsetPart2);
 			if (!inPredicateMode()) {
-				return addPathElement(SequentialPathDescription.class,
-						IsSequenceElementOf.class, null, part1, offsetPart1,
-						lengthPart1, part2, offsetPart2, lengthPart2);
+				return addPathElement(
+						Greql2Schema.instance().vc_SequentialPathDescription,
+						Greql2Schema.instance().ec_IsSequenceElementOf, null,
+						part1, offsetPart1, lengthPart1, part2, offsetPart2,
+						lengthPart2);
 			} else {
 				return null;
 			}
@@ -1384,7 +1406,7 @@ public class GreqlParser extends ParserHelper {
 				Expression ie = parseNumericLiteral();
 				if (!inPredicateMode()) {
 					if (!(ie instanceof IntLiteral)) {
-						fail("Expected integer constant as iteration quantifier or T");
+						fail("Expected integer constant as iteration quantifier or T, but found");
 					}
 					int lengthExpr = getLength(offsetExpr);
 					ExponentiatedPathDescription epd = graph
@@ -1598,7 +1620,7 @@ public class GreqlParser extends ParserHelper {
 				|| (lookAhead(0) == TokenTypes.AND)
 				|| (lookAhead(0) == TokenTypes.NOT)
 				|| (lookAhead(0) == TokenTypes.XOR) || (lookAhead(0) == TokenTypes.OR))
-				&& FunLib.contains(lookAhead.getValue())
+				&& isFunctionName(lookAhead.getValue())
 				&& ((lookAhead(1) == TokenTypes.LCURLY) || (lookAhead(1) == TokenTypes.LPAREN))) {
 			int offset = getCurrentOffset();
 			String name = lookAhead.getValue();
@@ -1685,7 +1707,7 @@ public class GreqlParser extends ParserHelper {
 				}
 			}
 		}
-		fail("Expected value construction");
+		fail("Expected value construction, but found");
 		return null;
 	}
 
@@ -1844,7 +1866,7 @@ public class GreqlParser extends ParserHelper {
 		if (!inPredicateMode()) {
 			declaration = (Declaration) createMultipleEdgesToParent(
 					declarations, graph.createDeclaration(),
-					IsSimpleDeclOf.class, false);
+					Greql2Schema.instance().ec_IsSimpleDeclOf, false);
 		}
 		while (tryMatch(TokenTypes.COMMA)) {
 			int offsetConstraint = getCurrentOffset();
@@ -1867,7 +1889,7 @@ public class GreqlParser extends ParserHelper {
 				declarations = parseDeclarationList();
 				if (!inPredicateMode()) {
 					createMultipleEdgesToParent(declarations, declaration,
-							IsSimpleDeclOf.class, false);
+							Greql2Schema.instance().ec_IsSimpleDeclOf, false);
 				}
 			}
 		}
@@ -1904,7 +1926,7 @@ public class GreqlParser extends ParserHelper {
 		if (!inPredicateMode()) {
 			SimpleDeclaration simpleDecl = (SimpleDeclaration) createMultipleEdgesToParent(
 					variables, graph.createSimpleDeclaration(),
-					IsDeclaredVarOf.class, "");
+					Greql2Schema.instance().ec_IsDeclaredVarOf, "");
 			IsTypeExprOf typeExprOf = graph.createIsTypeExprOfDeclaration(expr,
 					simpleDecl);
 			typeExprOf.set_sourcePositions(createSourcePositionList(length,
@@ -1949,7 +1971,8 @@ public class GreqlParser extends ParserHelper {
 				match(TokenTypes.RCURLY);
 				if (!inPredicateMode()) {
 					createMultipleEdgesToParent(typeIds, expr,
-							IsTypeRestrOfExpression.class, 0);
+							Greql2Schema.instance().ec_IsTypeRestrOfExpression,
+							0);
 				}
 			}
 		}
@@ -2222,7 +2245,7 @@ public class GreqlParser extends ParserHelper {
 				if (reportList.size() > 1) {
 					TupleConstruction tupConstr = (TupleConstruction) createMultipleEdgesToParent(
 							reportList, graph.createTupleConstruction(),
-							IsPartOf.class);
+							Greql2Schema.instance().ec_IsPartOf);
 					e = graph.createIsCompResultDefOf(tupConstr, comprehension);
 				} else {
 					e = graph.createIsCompResultDefOf(reportList.get(0).node,
@@ -2244,7 +2267,7 @@ public class GreqlParser extends ParserHelper {
 		if (!inPredicateMode()) {
 			declaration = graph.createDeclaration();
 			createMultipleEdgesToParent(declarations, declaration,
-					IsSimpleDeclOf.class, false);
+					Greql2Schema.instance().ec_IsSimpleDeclOf, false);
 		}
 		if (tryMatch(TokenTypes.WITH)) {
 			int offsetConstraint = getCurrentOffset();

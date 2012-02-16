@@ -44,6 +44,7 @@ import org.junit.Test;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
+import de.uni_koblenz.jgralab.ImplementationType;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.graphmarker.GraphMarker;
 import de.uni_koblenz.jgralabtest.schemas.citymap.CityMap;
@@ -58,7 +59,8 @@ public class TempAttributeTest extends TestCase {
 	@Override
 	public void setUp() throws Exception {
 		graph = CityMapSchema.instance().loadCityMap(
-				"testit/testgraphs/citymapgraph.tg");
+				"testit/testgraphs/citymapgraph.tg",
+				ImplementationType.STANDARD);
 	}
 
 	@Test
@@ -80,6 +82,7 @@ public class TempAttributeTest extends TestCase {
 		assertEquals("successful", marker.getMark(graph.getFirstEdge()));
 	}
 
+	@Test
 	public void testGenericForEachIncidence() {
 		Vertex v = graph.getFirstVertex();
 		List<Edge> edgeList = new ArrayList<Edge>();
@@ -93,6 +96,7 @@ public class TempAttributeTest extends TestCase {
 		assertEquals("e3", s.get_name());
 	}
 
+	@Test
 	public void testForEachStreet() {
 		Intersection v = (Intersection) graph.getFirstVertex();
 		List<Edge> edgeList = new ArrayList<Edge>();
@@ -107,6 +111,7 @@ public class TempAttributeTest extends TestCase {
 		assertEquals("e3", s.get_name());
 	}
 
+	@Test
 	public void testForEachBridge() {
 		Intersection v = (Intersection) graph.getFirstVertex();
 		List<Edge> edgeList = new ArrayList<Edge>();
@@ -117,6 +122,7 @@ public class TempAttributeTest extends TestCase {
 		assertEquals(0, edgeList.size());
 	}
 
+	@Test
 	public void testForEachStreetDirection() {
 		Intersection v = (Intersection) graph.getFirstVertex();
 		List<Edge> edgeList = new ArrayList<Edge>();
@@ -127,6 +133,7 @@ public class TempAttributeTest extends TestCase {
 		assertEquals(0, edgeList.size());
 	}
 
+	@Test
 	public void testForEachStreetDirection2() {
 		Intersection v = (Intersection) graph.getFirstVertex();
 		List<Edge> edgeList = new ArrayList<Edge>();

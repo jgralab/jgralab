@@ -47,6 +47,12 @@ import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.NoSuchAttributeException;
 
 public class RecordImpl implements de.uni_koblenz.jgralab.Record {
+	
+	// placeholder for null-valued components
+	private static enum NullValue {
+		NULL;
+	}
+	
 	private PMap<String, Object> entries;
 
 	private RecordImpl() {
@@ -64,13 +70,13 @@ public class RecordImpl implements de.uni_koblenz.jgralab.Record {
 	}
 
 	public RecordImpl plus(String name, Object value) {
-		return new RecordImpl(entries.plus(name, value));
+		return new RecordImpl(entries.plus(name, value != null ? value : NullValue.NULL));
 	}
 
 	@Override
 	public Object getComponent(String name) {
 		if (entries.containsKey(name)) {
-			return entries.get(name);
+			return entries.get(name).equals(NullValue.NULL)? null : entries.get(name);
 		}
 		throw new NoSuchAttributeException(
 				"Record doesn't contain a component '" + name + "'");

@@ -36,11 +36,11 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>de.uni-koblenz.ist</groupId>
 	<artifactId>jgralab</artifactId>
-	<version>5.2.6</version>
+	<version>6.0.5</version>
 	<name>JGraLab</name>
 	<description>
 		A high-performance TGraph library.
-		See http://jgralab.uni-koblenz.de
+		See https://github.com/jgralab/jgralab
 	</description>
 	<repositories>
 		<repository>

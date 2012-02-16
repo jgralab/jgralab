@@ -36,6 +36,7 @@ package de.uni_koblenz.jgralabtest.non_junit_tests;
 
 import java.util.Arrays;
 
+import de.uni_koblenz.jgralab.ImplementationType;
 import de.uni_koblenz.jgralab.impl.InternalGraph;
 import de.uni_koblenz.jgralabtest.schemas.vertextest.DoubleSubNode;
 import de.uni_koblenz.jgralabtest.schemas.vertextest.SubLink;
@@ -49,7 +50,7 @@ public class DebugTrans {
 	 */
 	public static void main(String[] args) throws Exception {
 		VertexTestGraph vtg = VertexTestSchema.instance()
-				.createVertexTestGraphWithTransactionSupport();
+				.createVertexTestGraph(ImplementationType.TRANSACTION);
 		InternalGraph g = (InternalGraph) vtg;
 		g.newTransaction();
 		DoubleSubNode v1 = vtg.createDoubleSubNode();

@@ -114,8 +114,8 @@ public class CreateEdges extends Transformation<PSet<? extends Edge>> {
 								Context.GReTLVariableType.IMG) + ".");
 			}
 
-			Edge img = context.targetGraph.createEdge(edgeClass.getSchemaClass(),
-					startVertex, endVertex);
+			Edge img = context.targetGraph.createEdge(edgeClass, startVertex,
+					endVertex);
 			result = result.plus(img);
 			context.addMapping(edgeClass, arch, img);
 		}

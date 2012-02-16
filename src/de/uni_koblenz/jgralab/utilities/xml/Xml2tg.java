@@ -117,10 +117,10 @@ public class Xml2tg {
 	}
 
 	private class AttributedElementInfo {
-		private AttributedElementClass aec;
+		private AttributedElementClass<?, ?> aec;
 		private Map<String, String> attributes;
 
-		public AttributedElementInfo(AttributedElementClass aec) {
+		public AttributedElementInfo(AttributedElementClass<?, ?> aec) {
 			super();
 			this.aec = aec;
 			attributes = new HashMap<String, String>();
@@ -131,7 +131,7 @@ public class Xml2tg {
 			}
 		}
 
-		public AttributedElementClass getAttributedElementClass() {
+		public AttributedElementClass<?, ?> getAttributedElementClass() {
 			return aec;
 		}
 
@@ -299,7 +299,7 @@ public class Xml2tg {
 						String attributedElementClassName = reader.getName()
 								.getLocalPart();
 						// System.out.println(attributedElementClassName);
-						AttributedElementClass aec = schema
+						AttributedElementClass<?, ?> aec = schema
 								.getAttributedElementClass(attributedElementClassName);
 						if (aec == null) {
 							throw new RuntimeException(
@@ -319,7 +319,7 @@ public class Xml2tg {
 													.getQualifiedName()
 											+ " but was " + graphClassName);
 						}
-						AttributedElementClass aec = schema
+						AttributedElementClass<?, ?> aec = schema
 								.getAttributedElementClass(graphClassName);
 						if (aec == null) {
 							throw new RuntimeException("GraphClass '"
@@ -331,24 +331,11 @@ public class Xml2tg {
 						}
 						String graphID = stack.peek().getAttributes()
 								.get(GRUML_ATTRIBUTE_ID);
-						try {
-							// System.out.println("Creating instance of "
-							// + graphClassName);
-							graph = (Graph) schema.getGraphCreateMethod(
-									ImplementationType.STANDARD).invoke(
-									null,
-									new Object[] { graphID, MAX_VERTEX_COUNT,
-											MAX_EDGE_COUNT });
-							// System.out.println("done.");
-						} catch (Exception e) {
-							throw new GraphIOException(
-									"Unable to create instance of "
-											+ graphClassName, e);
-						}
-						// inicialize markers
+						graph = schema.createGraph(ImplementationType.GENERIC,
+								graphID, MAX_VERTEX_COUNT, MAX_EDGE_COUNT);
+						// initialize markers
 						incidencePositionMarker = new GraphMarker<IncidencePositionMark>(
 								graph);
-
 					}
 					break;
 				case END_ELEMENT:
@@ -446,9 +433,9 @@ public class Xml2tg {
 
 		// create edge
 		try {
-			Edge currentEdge = graph.createEdge(((EdgeClass) current
-					.getAttributedElementClass()).getSchemaClass(), fromVertex,
-					toVertex);
+			Edge currentEdge = graph.createEdge(
+					(EdgeClass) current.getAttributedElementClass(),
+					fromVertex, toVertex);
 			// mark new edge with incidence position information
 			IncidencePositionMark incidences = new IncidencePositionMark();
 			String fseq = attributes.get(GRUML_ATTRIBUTE_FSEQ);
@@ -479,8 +466,8 @@ public class Xml2tg {
 	private void createVertex(AttributedElementInfo current) {
 		// System.out.println("Creating vertex of type " + current.getqName());
 		Map<String, String> attributes = current.getAttributes();
-		Vertex currentVertex = graph.createVertex(((VertexClass) current
-				.getAttributedElementClass()).getSchemaClass());
+		Vertex currentVertex = graph.createVertex((VertexClass) current
+				.getAttributedElementClass());
 		String currentId = attributes.get(GRUML_ATTRIBUTE_ID);
 
 		// add currentVertex to Map
@@ -492,7 +479,7 @@ public class Xml2tg {
 
 	}
 
-	private void setAttributes(AttributedElement element,
+	private void setAttributes(AttributedElement<?, ?> element,
 			Map<String, String> attributes) {
 
 		for (Entry<String, String> currentEntry : attributes.entrySet()) {

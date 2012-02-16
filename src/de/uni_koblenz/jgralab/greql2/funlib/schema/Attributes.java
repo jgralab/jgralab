@@ -52,7 +52,8 @@ public class Attributes extends Function {
 				2, 1, 1.0, Category.SCHEMA_ACCESS);
 	}
 
-	public PVector<PMap<String, String>> evaluate(AttributedElementClass cls) {
+	public PVector<PMap<String, String>> evaluate(
+			AttributedElementClass<?, ?> cls) {
 		PVector<PMap<String, String>> result = JGraLab.vector();
 		for (Attribute a : cls.getAttributeList()) {
 			PMap<String, String> entry = JGraLab.map();
@@ -63,7 +64,7 @@ public class Attributes extends Function {
 		return result;
 	}
 
-	public PVector<PMap<String, String>> evaluate(AttributedElement el) {
+	public PVector<PMap<String, String>> evaluate(AttributedElement<?, ?> el) {
 		return evaluate(el.getAttributedElementClass());
 	}
 }

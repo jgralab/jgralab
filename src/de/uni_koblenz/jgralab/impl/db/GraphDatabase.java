@@ -34,6 +34,7 @@
  */
 package de.uni_koblenz.jgralab.impl.db;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.sql.CallableStatement;
 import java.sql.Connection;
@@ -49,13 +50,13 @@ import java.util.List;
 import java.util.SortedSet;
 
 import de.uni_koblenz.jgralab.AttributedElement;
-import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphException;
 import de.uni_koblenz.jgralab.GraphFactory;
 import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.Vertex;
+import de.uni_koblenz.jgralab.impl.GraphFactoryImpl;
 import de.uni_koblenz.jgralab.schema.Attribute;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
@@ -1038,11 +1039,10 @@ public abstract class GraphDatabase {
 	private DatabasePersistableVertex getVertexWithLessRoundTrips(
 			DatabasePersistableGraph graph, int vId) throws Exception {
 		ResultSet vertexData = getVertexAndIncidenceData(graph.getGId(), vId);
-		Class<? extends Vertex> vertexClass = getVertexClassFrom(graph,
-				vertexData);
-		GraphFactory graphFactory = graph.getSchema().getGraphFactory();
+		VertexClass vertexClass = getVertexClassFrom(graph, vertexData);
+		GraphFactory graphFactory = graph.getGraphFactory();
 		DatabasePersistableVertex vertex = (DatabasePersistableVertex) graphFactory
-				.createVertexWithDatabaseSupport(vertexClass, vId, graph);
+				.createVertex(vertexClass, vId, graph);
 		long incidenceListVersion = vertexData.getLong(2);
 		vertex.setIncidenceListVersion(incidenceListVersion);
 		long sequenceNumber = vertexData.getLong(3);
@@ -1068,16 +1068,13 @@ public abstract class GraphDatabase {
 		return vertex;
 	}
 
-	@SuppressWarnings("unchecked")
-	private Class<? extends Vertex> getVertexClassFrom(
-			DatabasePersistableGraph graph, ResultSet vertexData)
-			throws SQLException {
+	private VertexClass getVertexClassFrom(DatabasePersistableGraph graph,
+			ResultSet vertexData) throws SQLException {
 		int typeId = vertexData.getInt(1);
 		String qualifiedTypeName = getTypeName(graph, typeId);
 		Schema schema = graph.getSchema();
-		AttributedElementClass aec = schema
+		return (VertexClass) schema
 				.getAttributedElementClass(qualifiedTypeName);
-		return (Class<? extends Vertex>) aec.getSchemaClass();
 	}
 
 	private ResultSet getVertexAndIncidenceData(int gId, int vId)
@@ -1173,8 +1170,7 @@ public abstract class GraphDatabase {
 	private DatabasePersistableEdge instanceEdgeFrom(
 			DatabasePersistableGraph graph, ResultSet edgeData, int eId)
 			throws Exception {
-		Class<? extends Edge> edgeClass = getEdgeClassFrom(graph,
-				edgeData.getInt(1));
+		EdgeClass edgeClass = getEdgeClassFrom(graph, edgeData.getInt(1));
 
 		long sequenceNumberInESeq = edgeData.getLong(2);
 		Vertex alpha = null;
@@ -1192,10 +1188,9 @@ public abstract class GraphDatabase {
 				omegaSeqNumber = edgeData.getLong(5);
 			}
 		} while (edgeData.next());
-		GraphFactory graphFactory = graph.getSchema().getGraphFactory();
+		GraphFactory graphFactory = graph.getGraphFactory();
 		DatabasePersistableEdge edge = (DatabasePersistableEdge) graphFactory
-				.createEdgeWithDatabaseSupport(edgeClass, eId, graph, alpha,
-						omega);
+				.createEdge(edgeClass, eId, graph, alpha, omega);
 		edge.setSequenceNumberInESeq(sequenceNumberInESeq);
 		((DatabasePersistableEdge) edge.getNormalEdge())
 				.setSequenceNumberInLambdaSeq(alphaSeqNumber);
@@ -1208,14 +1203,11 @@ public abstract class GraphDatabase {
 		return edge;
 	}
 
-	@SuppressWarnings("unchecked")
-	private Class<? extends Edge> getEdgeClassFrom(
-			DatabasePersistableGraph graph, int typeId) throws SQLException {
+	private EdgeClass getEdgeClassFrom(DatabasePersistableGraph graph,
+			int typeId) throws SQLException {
 		String qualifiedTypeName = getTypeName(graph, typeId);
 		Schema schema = graph.getSchema();
-		AttributedElementClass aec = schema
-				.getAttributedElementClass(qualifiedTypeName);
-		return (Class<? extends Edge>) aec.getSchemaClass();
+		return (EdgeClass) schema.getAttributedElementClass(qualifiedTypeName);
 	}
 
 	private void setAttributesOf(DatabasePersistableEdge edge)
@@ -1307,12 +1299,13 @@ public abstract class GraphDatabase {
 	 * @throws GraphDatabaseException
 	 *             Getting graph not successful.
 	 */
-	public DatabasePersistableGraph getGraph(String id)
+	@SuppressWarnings("unchecked")
+	public <G extends Graph> G getGraph(String id)
 			throws GraphDatabaseException {
 		if (loadedGraphs.containsKey(id)) {
-			return loadedGraphs.get(id);
+			return (G) loadedGraphs.get(id);
 		} else {
-			return loadAndCacheGraph(id);
+			return (G) loadAndCacheGraph(id);
 		}
 	}
 
@@ -1460,11 +1453,17 @@ public abstract class GraphDatabase {
 	private GraphImpl getEmptyGraphInstance(String id) throws SQLException,
 			GraphIOException {
 		Schema schema = getSchemaForGraph(id);
-		GraphFactory graphFactory = schema.getGraphFactory();
+		// GraphFactory graphFactory = schema.getGraphFactory();
 		GraphClass graphClass = schema.getGraphClass();
 		try {
-			return (GraphImpl) graphFactory.createGraphWithDatabaseSupport(
-					(Class<? extends Graph>) graphClass.getSchemaClass(), this, id);
+			Class<? extends GraphFactory> c = (Class<? extends GraphFactory>) Class
+					.forName(schema.getPackagePrefix() + ".impl.db."
+							+ graphClass.getSimpleName() + "FactoryImpl");
+			Constructor<? extends GraphFactory> cons = c.getConstructor();
+			GraphFactory graphFactory = cons.newInstance();
+			((GraphFactoryImpl) graphFactory).setGraphDatabase(this);
+			return (GraphImpl) graphFactory.createGraph(schema.getGraphClass(),
+					id, 100, 100);
 		} catch (Exception e) {
 			throw new GraphIOException("Could not create an instance of "
 					+ graphClass.getSchemaClass().getName());
@@ -1725,7 +1724,7 @@ public abstract class GraphDatabase {
 	 * @throws GraphDatabaseException
 	 *             Conversion not successful.
 	 */
-	protected String convertToString(AttributedElement attributedElement,
+	protected String convertToString(AttributedElement<?, ?> attributedElement,
 			String attributeName) throws GraphDatabaseException {
 		try {
 			return attributedElement.writeAttributeValueToString(attributeName);
@@ -1803,9 +1802,8 @@ public abstract class GraphDatabase {
 	private void insertDefinedTypesOf(Schema schema, int schemaId)
 			throws SQLException {
 		insertGraphClass(schema.getGraphClass(), schemaId);
-		insertVertexClasses(schema.getVertexClassesInTopologicalOrder(),
-				schemaId);
-		insertEdgeClasses(schema.getEdgeClassesInTopologicalOrder(), schemaId);
+		insertVertexClasses(schema.getVertexClasses(), schemaId);
+		insertEdgeClasses(schema.getEdgeClasses(), schemaId);
 		insertAttributes(schemaId);
 	}
 
@@ -1815,15 +1813,16 @@ public abstract class GraphDatabase {
 		collectAttributeNamesOf(graphClass);
 	}
 
-	private void insertType(AttributedElementClass attributedElementClass,
-			int schemaId) throws SQLException {
+	private void insertType(
+			AttributedElementClass<?, ?> attributedElementClass, int schemaId)
+			throws SQLException {
 		PreparedStatement statement = sqlStatementList.insertType(
 				attributedElementClass.getQualifiedName(), schemaId);
 		statement.executeUpdate();
 	}
 
 	private void collectAttributeNamesOf(
-			AttributedElementClass attributedElementClass) {
+			AttributedElementClass<?, ?> attributedElementClass) {
 		for (Attribute attribute : attributedElementClass.getAttributeList()) {
 			attributeNames.add(attribute.getName());
 		}

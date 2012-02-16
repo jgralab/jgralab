@@ -34,12 +34,12 @@
  */
 package de.uni_koblenz.jgralab.eca.events;
 
-import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.eca.events.EventDescription.EventTime;
+import de.uni_koblenz.jgralab.schema.VertexClass;
 
-public class CreateVertexEvent extends Event {
+public class CreateVertexEvent extends Event<VertexClass> {
 
 	/**
 	 * The created Vertex or null if the EventTime is before
@@ -57,7 +57,8 @@ public class CreateVertexEvent extends Event {
 	 *            the created Vertex or null if the EventTime is before
 	 */
 	public CreateVertexEvent(int nestedCalls, Graph graph, Vertex element) {
-		super(nestedCalls, EventTime.AFTER, graph, element.getSchemaClass());
+		super(nestedCalls, EventTime.AFTER, graph, element
+				.getAttributedElementClass());
 		vertex = element;
 	}
 
@@ -71,17 +72,9 @@ public class CreateVertexEvent extends Event {
 	 * @param type
 	 *            the type of the to be created Vertex
 	 */
-	public CreateVertexEvent(int nestedCalls, Graph graph,
-			Class<? extends AttributedElement> type) {
+	public CreateVertexEvent(int nestedCalls, Graph graph, VertexClass type) {
 		super(nestedCalls, EventTime.BEFORE, graph, type);
 		vertex = null;
-	}
-
-	/**
-	 * @return the created Vertex or null if the EventTime is before
-	 */
-	public Vertex getVertex() {
-		return vertex;
 	}
 
 	/**
@@ -89,7 +82,7 @@ public class CreateVertexEvent extends Event {
 	 *         EventTime is before
 	 */
 	@Override
-	public AttributedElement getElement() {
+	public Vertex getElement() {
 		return vertex;
 	}
 

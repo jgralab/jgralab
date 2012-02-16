@@ -205,4 +205,21 @@ public class OrderedPSet<E> implements POrderedSet<E> {
 	public void clear() {
 		throw new UnsupportedOperationException();
 	}
+
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("{");
+		boolean first = true;
+		for (E item : order) {
+			if (first) {
+				first = false;
+			} else {
+				sb.append(", ");
+			}
+			sb.append(item);
+		}
+		sb.append("}");
+		return sb.toString();
+	}
 }

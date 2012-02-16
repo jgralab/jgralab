@@ -43,7 +43,6 @@ import java.lang.annotation.Target;
 import java.lang.reflect.Method;
 import java.util.logging.Logger;
 
-import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.gretl.Context.TransformationPhase;
@@ -68,17 +67,17 @@ import de.uni_koblenz.jgralab.utilities.tg2dot.dot.GraphVizOutputFormat;
  * use the {@code create}-Methods defined here, to build up a new {@link Schema}
  * , and provide semantic expressions (GReQL queries on the source graph) to
  * specify the transformation on instance level.
- * 
+ *
  * @author Tassilo Horn &lt;horn@uni-koblenz.de&gt;
- * 
+ *
  */
 public abstract class Transformation<T> {
 	/**
 	 * Use this annotation to annotate transformation methods that should be run
 	 * <b>after</b> the transformation finished.
-	 * 
+	 *
 	 * @author Tassilo Horn &lt;horn@uni-koblenz.de&gt;
-	 * 
+	 *
 	 */
 	@Retention(RetentionPolicy.RUNTIME)
 	@Target(ElementType.METHOD)
@@ -89,9 +88,9 @@ public abstract class Transformation<T> {
 	/**
 	 * Use this annotation to annotate transformation methods that should be run
 	 * <b>before</b> the transformation started.
-	 * 
+	 *
 	 * @author Tassilo Horn &lt;horn@uni-koblenz.de&gt;
-	 * 
+	 *
 	 */
 	@Retention(RetentionPolicy.RUNTIME)
 	@Target(ElementType.METHOD)
@@ -103,7 +102,7 @@ public abstract class Transformation<T> {
 	 * Run all methods annotated with <code>annotationClass</code> of this
 	 * transformation including annotated methods in superclasses up to the base
 	 * class {@link Transformation}.
-	 * 
+	 *
 	 * @param annotationClass
 	 */
 	private final void invokeHooks(Class<? extends Annotation> annotationClass) {
@@ -151,7 +150,7 @@ public abstract class Transformation<T> {
 
 	/**
 	 * Executes this transformation.
-	 * 
+	 *
 	 * When it finishes, the target graph be accessed via the {@link Context}
 	 * object.
 	 */
@@ -201,12 +200,9 @@ public abstract class Transformation<T> {
 								+ "'.");
 			}
 
-			// init the enum_QName maps
-			context.initializeEnumValue2LiteralMaps();
-
 			// Start the GRAPH phase
 			log.info("SCHEMA Phase took "
-					+ (System.currentTimeMillis() - startTime + "ms."));
+					+ ((System.currentTimeMillis() - startTime) + "ms."));
 			startTime = System.currentTimeMillis();
 
 			context.phase = TransformationPhase.GRAPH;
@@ -219,7 +215,7 @@ public abstract class Transformation<T> {
 			}
 
 			log.info("GRAPH Phase took "
-					+ (System.currentTimeMillis() - startTime + "ms."));
+					+ ((System.currentTimeMillis() - startTime) + "ms."));
 		} else {
 			// hey, I'm nested, so run the phase my parent is running.
 			result = transform();
@@ -227,7 +223,7 @@ public abstract class Transformation<T> {
 			// Debugging stuff...
 			Graph tg = context.targetGraph;
 			if (DEBUG_EXECUTION
-					&& (tg.getVCount() + tg.getECount() < GReTLRunner.MAX_VISUALIZATION_SIZE)) {
+					&& ((tg.getVCount() + tg.getECount()) < GReTLRunner.MAX_VISUALIZATION_SIZE)) {
 				try {
 					String name = getClass().getSimpleName();
 					if (name.isEmpty()) {
@@ -236,7 +232,7 @@ public abstract class Transformation<T> {
 					Tg2Dot.convertGraph(context.getTargetGraph(), "__debug_"
 							+ (EXECUTION_STEP++) + "_" + name + ".pdf",
 							DEBUG_REVERSE_EDGES, GraphVizOutputFormat.PDF,
-							(Class<? extends AttributedElement>[]) null);
+							(EdgeClass[]) null);
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
@@ -252,7 +248,7 @@ public abstract class Transformation<T> {
 	/**
 	 * In this method the individual transformation operation calls are
 	 * specified. Concrete transformations must override this method.
-	 * 
+	 *
 	 * @return
 	 */
 	protected abstract T transform();
@@ -355,8 +351,8 @@ public abstract class Transformation<T> {
 	 * @return the target schema {@link AttributedElementClass} with the given
 	 *         qualified name.
 	 */
-	protected final AttributedElementClass aec(String qualifiedName) {
-		AttributedElementClass aec = context.targetSchema
+	protected final AttributedElementClass<?, ?> aec(String qualifiedName) {
+		AttributedElementClass<?, ?> aec = context.targetSchema
 				.getAttributedElementClass(qualifiedName);
 		if (aec == null) {
 			throw new GReTLException(context,
@@ -371,8 +367,8 @@ public abstract class Transformation<T> {
 	 * @return the target schema {@link GraphElementClass} with the given
 	 *         qualified name.
 	 */
-	protected final GraphElementClass gec(String qualifiedName) {
-		GraphElementClass gec = context.targetSchema.getGraphClass()
+	protected final GraphElementClass<?, ?> gec(String qualifiedName) {
+		GraphElementClass<?, ?> gec = context.targetSchema.getGraphClass()
 				.getGraphElementClass(qualifiedName);
 		if (gec == null) {
 			throw new GReTLException(context,
@@ -385,7 +381,7 @@ public abstract class Transformation<T> {
 	protected final Attribute attr(String qualifiedName) {
 		int lastDot = qualifiedName.lastIndexOf('.');
 		String className = qualifiedName.substring(0, lastDot);
-		AttributedElementClass aec = context.getTargetSchema()
+		AttributedElementClass<?, ?> aec = context.getTargetSchema()
 				.getAttributedElementClass(className);
 		if (aec == null) {
 			throw new GReTLException(context,

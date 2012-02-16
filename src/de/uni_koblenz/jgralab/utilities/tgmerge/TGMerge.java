@@ -75,14 +75,14 @@ public class TGMerge {
 	 * Remembers the positions of all copied graph elements in their original
 	 * graph to speed up sorting of vertices and edges.
 	 */
-	private Map<GraphElement, Integer> copiedGraphPositions = new HashMap<GraphElement, Integer>();
+	private Map<GraphElement<?, ?>, Integer> copiedGraphPositions = new HashMap<GraphElement<?, ?>, Integer>();
 
 	/**
 	 * Remembers the positions of all target graph elements before the elements
 	 * of another graph are merged into to speed up sorting of vertices and
 	 * edges.
 	 */
-	private Map<GraphElement, Integer> targetGraphPositions = new HashMap<GraphElement, Integer>();
+	private Map<GraphElement<?, ?>, Integer> targetGraphPositions = new HashMap<GraphElement<?, ?>, Integer>();
 
 	private static Logger log = JGraLab.getLogger(TGMerge.class.getPackage()
 			.getName());
@@ -142,7 +142,7 @@ public class TGMerge {
 
 		List<Graph> graphs = new LinkedList<Graph>();
 		for (String g : cmdl.getArgs()) {
-			graphs.add(GraphIO.loadGraphFromFileWithStandardSupport(g,
+			graphs.add(GraphIO.loadGraphFromFile(g,
 					new ConsoleProgressFunction("Loading")));
 		}
 
@@ -174,12 +174,12 @@ public class TGMerge {
 			log.fine("Merging GraphMarker '" + marker + "'...");
 			rememberTargetGraphPositions();
 			rememberCopiedGraphPositions(marker.getGraph());
-			for (AttributedElement ae : marker.getMarkedElements()) {
+			for (AttributedElement<?, ?> ae : marker.getMarkedElements()) {
 				if (ae instanceof Vertex) {
 					copyVertex((Vertex) ae);
 				}
 			}
-			for (AttributedElement ae : marker.getMarkedElements()) {
+			for (AttributedElement<?, ?> ae : marker.getMarkedElements()) {
 				if (ae instanceof Edge) {
 					copyEdge((Edge) ae);
 				}
@@ -321,12 +321,11 @@ public class TGMerge {
 		}
 	}
 
-	@SuppressWarnings("unchecked")
 	private void copyEdge(Edge e) {
 		Vertex start = old2NewVertices.get(e.getAlpha());
 		Vertex end = old2NewVertices.get(e.getOmega());
-		Edge newEdge = targetGraph.createEdge(
-				(Class<? extends Edge>) e.getSchemaClass(), start, end);
+		Edge newEdge = targetGraph.createEdge(e.getAttributedElementClass(),
+				start, end);
 
 		copyAttributes(e, newEdge);
 
@@ -334,10 +333,9 @@ public class TGMerge {
 		new2OldEdges.put(newEdge.getReversedEdge(), e.getReversedEdge());
 	}
 
-	@SuppressWarnings("unchecked")
 	private void copyVertex(Vertex v) {
-		Vertex newVertex = targetGraph.createVertex((Class<? extends Vertex>) v
-				.getSchemaClass());
+		Vertex newVertex = targetGraph.createVertex(v
+				.getAttributedElementClass());
 
 		copyAttributes(v, newVertex);
 
@@ -345,8 +343,8 @@ public class TGMerge {
 		new2OldVertices.put(newVertex, v);
 	}
 
-	private void copyAttributes(AttributedElement oldAttrElem,
-			AttributedElement newAttrElem) {
+	private void copyAttributes(AttributedElement<?, ?> oldAttrElem,
+			AttributedElement<?, ?> newAttrElem) {
 		for (Attribute attr : oldAttrElem.getAttributedElementClass()
 				.getAttributeList()) {
 			newAttrElem.setAttribute(attr.getName(),

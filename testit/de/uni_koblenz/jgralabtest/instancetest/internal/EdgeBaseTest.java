@@ -93,11 +93,11 @@ public class EdgeBaseTest extends InstanceTest {
 	public void setUp() {
 		switch (implementationType) {
 		case STANDARD:
-			g = VertexTestSchema.instance().createVertexTestGraph();
+			g = VertexTestSchema.instance().createVertexTestGraph(ImplementationType.STANDARD);
 			break;
 		case TRANSACTION:
 			g = VertexTestSchema.instance()
-					.createVertexTestGraphWithTransactionSupport();
+					.createVertexTestGraph(ImplementationType.TRANSACTION);
 			break;
 		case DATABASE:
 			g = createVertexTestGraphWithDatabaseSupport();

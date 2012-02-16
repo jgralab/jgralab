@@ -94,11 +94,11 @@ public class TraversalContextTest extends InstanceTest {
 
 		switch (implementationType) {
 		case STANDARD:
-			graph = MinimalSchema.instance().createMinimalGraph();
+			graph = MinimalSchema.instance().createMinimalGraph(ImplementationType.STANDARD);
 			break;
 		case TRANSACTION:
 			graph = MinimalSchema.instance()
-					.createMinimalGraphWithTransactionSupport();
+					.createMinimalGraph(ImplementationType.TRANSACTION);
 			break;
 		case DATABASE:
 			graph = createMinimalGraphWithDatabaseSupport();

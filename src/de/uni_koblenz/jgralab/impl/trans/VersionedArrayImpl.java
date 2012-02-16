@@ -60,7 +60,7 @@ public class VersionedArrayImpl<E> extends VersionedDataObjectImpl<E> {
 	 * @param name
 	 *            the name of the attribute
 	 */
-	protected VersionedArrayImpl(AttributedElement attributedElement,
+	protected VersionedArrayImpl(AttributedElement<?, ?> attributedElement,
 			E initialPersistentValue, String name) {
 		super(attributedElement, initialPersistentValue, name);
 	}

@@ -44,8 +44,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.uni_koblenz.jgralab.AttributedElement;
-import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.eca.events.ChangeAttributeEventDescription;
 import de.uni_koblenz.jgralab.eca.events.ChangeEdgeEventDescription;
 import de.uni_koblenz.jgralab.eca.events.ChangeEdgeEventDescription.EdgeEnd;
@@ -58,7 +56,9 @@ import de.uni_koblenz.jgralab.eca.events.EventDescription.EventTime;
 import de.uni_koblenz.jgralab.gretl.Transformation;
 import de.uni_koblenz.jgralab.gretl.eca.GretlTransformAction;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
+import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.Schema;
+import de.uni_koblenz.jgralab.schema.VertexClass;
 
 public class ECAIO {
 
@@ -101,7 +101,7 @@ public class ECAIO {
 	 * @return list of loaded ECA rules
 	 * @throws ECAIOException
 	 */
-	public static List<ECARule> loadECArules(Schema schema, String filename)
+	public static List<ECARule<?>> loadECArules(Schema schema, String filename)
 			throws ECAIOException {
 
 		BufferedInputStream inputStream = null;
@@ -135,7 +135,7 @@ public class ECAIO {
 	 * @throws ECAIOException
 	 */
 	public static void saveECArules(Schema schema, String filename,
-			List<ECARule> rules) throws ECAIOException {
+			List<ECARule<?>> rules) throws ECAIOException {
 		DataOutputStream out = null;
 		try {
 			out = new DataOutputStream(new BufferedOutputStream(
@@ -169,7 +169,7 @@ public class ECAIO {
 	/**
 	 * List with loaded rules or to be saved rules
 	 */
-	private List<ECARule> rules;
+	private List<ECARule<?>> rules;
 
 	/**
 	 * InputStream to read
@@ -193,7 +193,7 @@ public class ECAIO {
 	 * 
 	 */
 	private ECAIO() {
-		rules = new ArrayList<ECARule>();
+		rules = new ArrayList<ECARule<?>>();
 	}
 
 	// #########################################################################
@@ -204,7 +204,7 @@ public class ECAIO {
 	 * Save all given ECARules
 	 */
 	private void save() throws ECAIOException {
-		for (ECARule rule : rules) {
+		for (ECARule<?> rule : rules) {
 			saveRule(rule);
 		}
 	}
@@ -215,7 +215,7 @@ public class ECAIO {
 	 * @param rule
 	 * @throws ECAIOException
 	 */
-	private void saveRule(ECARule rule) throws ECAIOException {
+	private void saveRule(ECARule<?> rule) throws ECAIOException {
 		// Save EventDescription
 		saveEventDescriptionToStream(rule.getEventDescription());
 		// Save Condition if there is one
@@ -232,7 +232,7 @@ public class ECAIO {
 	 * @param ev
 	 * @throws ECAIOException
 	 */
-	private void saveEventDescriptionToStream(EventDescription ev)
+	private void saveEventDescriptionToStream(EventDescription<?> ev)
 			throws ECAIOException {
 		String eventDescriptionString = "";
 		// context?
@@ -262,7 +262,7 @@ public class ECAIO {
 	 * @return the type of an EventDescription as String, e.g.
 	 *         createdVertex(VertexClass1)
 	 */
-	private String getEventDescriptionType(EventDescription ev) {
+	private String getEventDescriptionType(EventDescription<?> ev) {
 		if (ev instanceof CreateVertexEventDescription) {
 			return "createdVertex(" + getEventElementTypeString(ev) + ") ";
 		} else if (ev instanceof DeleteVertexEventDescription) {
@@ -271,7 +271,7 @@ public class ECAIO {
 			return "updatedAttributeValue("
 					+ getEventElementTypeString(ev)
 					+ ", "
-					+ ((ChangeAttributeEventDescription) ev)
+					+ ((ChangeAttributeEventDescription<?>) ev)
 							.getConcernedAttribute() + ")";
 		} else if (ev instanceof ChangeEdgeEventDescription) {
 			if (((ChangeEdgeEventDescription) ev).getEdgeEnd().equals(
@@ -303,10 +303,10 @@ public class ECAIO {
 	 * @return the type of the monitored Edge or Vertex as string or "" if the
 	 *         elements are filtered by context
 	 */
-	private String getEventElementTypeString(EventDescription ev) {
+	private String getEventElementTypeString(EventDescription<?> ev) {
 		String nameOfGraphElementClass = "";
 		if (ev.getContext().equals(EventDescription.Context.TYPE)) {
-			nameOfGraphElementClass += ev.getType().getName()
+			nameOfGraphElementClass += ev.getType().getQualifiedName()
 					.replace(schema.getPackagePrefix() + ".", "");
 		}
 		return nameOfGraphElementClass;
@@ -318,10 +318,11 @@ public class ECAIO {
 	 * @param cond
 	 * @throws ECAIOException
 	 */
-	private void saveConditionToStream(Condition cond) throws ECAIOException {
+	private void saveConditionToStream(Condition<?> cond) throws ECAIOException {
 		if (cond instanceof GreqlCondition) {
 			writeToStream(" with \""
-					+ ((GreqlCondition) cond).getConditionExpression() + "\" ");
+					+ ((GreqlCondition<?>) cond).getConditionExpression()
+					+ "\" ");
 		} else {
 			writeToStream(" with class " + cond.getClass().getName() + " ");
 		}
@@ -333,14 +334,15 @@ public class ECAIO {
 	 * @param act
 	 * @throws ECAIOException
 	 */
-	private void saveActionToStream(Action act) throws ECAIOException {
+	private void saveActionToStream(Action<?> act) throws ECAIOException {
 		String actionstring = "do ";
 		if (act instanceof PrintAction) {
 			actionstring += "print \"";
-			actionstring += ((PrintAction) act).getMessage();
+			actionstring += ((PrintAction<?>) act).getMessage();
 			actionstring += "\"";
 			actionstring += "\n";
 		} else if (act instanceof GretlTransformAction) {
+			@SuppressWarnings("rawtypes")
 			GretlTransformAction gta = ((GretlTransformAction) act);
 			actionstring += gta.getTransformationClass().getName();
 		} else {
@@ -390,10 +392,11 @@ public class ECAIO {
 	 * 
 	 * @throws ECAIOException
 	 */
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private void parseRule() throws ECAIOException {
-		EventDescription ed = parseEventDescription();
-		Condition cond = parseCondition();
-		Action action = parseAction();
+		EventDescription<?> ed = parseEventDescription();
+		Condition<?> cond = parseCondition();
+		Action<?> action = parseAction();
 
 		if (cond == null) {
 			rules.add(new ECARule(ed, action));
@@ -410,8 +413,7 @@ public class ECAIO {
 	 * @return the parsed EventDescription
 	 * @throws ECAIOException
 	 */
-	private EventDescription parseEventDescription() throws ECAIOException {
-
+	private EventDescription<?> parseEventDescription() throws ECAIOException {
 		// Check whether a context is given
 		String context = null;
 		String currentToken = nextToken();
@@ -525,14 +527,15 @@ public class ECAIO {
 	 * @return the created EventDescription
 	 * @throws ECAIOException
 	 */
-	private EventDescription finishDeleteEdgeEventDescription(String context,
-			EventTime eventTime, String qualNameOfGraphElementToMonitor)
-			throws ECAIOException {
+	private EventDescription<EdgeClass> finishDeleteEdgeEventDescription(
+			String context, EventTime eventTime,
+			String qualNameOfGraphElementToMonitor) throws ECAIOException {
 		if (context != null && qualNameOfGraphElementToMonitor == null) {
 			return new DeleteEdgeEventDescription(eventTime, context);
 		} else if (context == null && qualNameOfGraphElementToMonitor != null) {
-			return new DeleteEdgeEventDescription(eventTime,
-					getAttributedElement(qualNameOfGraphElementToMonitor));
+			return new DeleteEdgeEventDescription(
+					eventTime,
+					(EdgeClass) getAttributedElementClass(qualNameOfGraphElementToMonitor));
 		} else {
 			throw new ECAIOException(
 					"It's necessary to give a context OR a type. Its an XOR. Found: context: \""
@@ -554,14 +557,15 @@ public class ECAIO {
 	 * @return the created EventDescription
 	 * @throws ECAIOException
 	 */
-	private EventDescription finishDeleteVertexEventDescription(String context,
-			EventTime eventTime, String qualNameOfGraphElementToMonitor)
-			throws ECAIOException {
+	private EventDescription<VertexClass> finishDeleteVertexEventDescription(
+			String context, EventTime eventTime,
+			String qualNameOfGraphElementToMonitor) throws ECAIOException {
 		if (context != null && qualNameOfGraphElementToMonitor == null) {
 			return new DeleteVertexEventDescription(eventTime, context);
 		} else if (context == null && qualNameOfGraphElementToMonitor != null) {
-			return new DeleteVertexEventDescription(eventTime,
-					getAttributedElement(qualNameOfGraphElementToMonitor));
+			return new DeleteVertexEventDescription(
+					eventTime,
+					(VertexClass) getAttributedElementClass(qualNameOfGraphElementToMonitor));
 		} else {
 			throw new ECAIOException(
 					"It's necessary to give a context OR a type. Its an XOR. Found: context: \""
@@ -585,14 +589,16 @@ public class ECAIO {
 	 * @return the created EventDescription
 	 * @throws ECAIOException
 	 */
-	private EventDescription finishChangeEdgeEventDescription(String context,
-			EventTime eventTime, String qualNameOfGraphElementToMonitor,
-			EdgeEnd edgeEnd) throws ECAIOException {
+	private EventDescription<EdgeClass> finishChangeEdgeEventDescription(
+			String context, EventTime eventTime,
+			String qualNameOfGraphElementToMonitor, EdgeEnd edgeEnd)
+			throws ECAIOException {
 		if (context != null && qualNameOfGraphElementToMonitor == null) {
 			return new ChangeEdgeEventDescription(eventTime, context);
 		} else if (context == null && qualNameOfGraphElementToMonitor != null) {
-			return new ChangeEdgeEventDescription(eventTime,
-					getAttributedElement(qualNameOfGraphElementToMonitor),
+			return new ChangeEdgeEventDescription(
+					eventTime,
+					(EdgeClass) getAttributedElementClass(qualNameOfGraphElementToMonitor),
 					edgeEnd);
 		} else {
 			throw new ECAIOException(
@@ -615,7 +621,8 @@ public class ECAIO {
 	 * @return the created EventDescription
 	 * @throws ECAIOException
 	 */
-	private EventDescription finishChangeAttributeEventDescription(
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	private EventDescription<?> finishChangeAttributeEventDescription(
 			String context, EventTime eventTime,
 			String qualNameOfGraphElementToMonitor) throws ECAIOException {
 		String name = nextToken();
@@ -625,7 +632,8 @@ public class ECAIO {
 			return new ChangeAttributeEventDescription(eventTime, context, name);
 		} else if (context == null && qualNameOfGraphElementToMonitor != null) {
 			return new ChangeAttributeEventDescription(eventTime,
-					getAttributedElement(qualNameOfGraphElementToMonitor), name);
+					getAttributedElementClass(qualNameOfGraphElementToMonitor),
+					name);
 		} else {
 			throw new ECAIOException(
 					"It's necessary to give a context OR a type. Its an XOR. Found: context: \""
@@ -647,14 +655,15 @@ public class ECAIO {
 	 * @return the created EventDescription
 	 * @throws ECAIOException
 	 */
-	private EventDescription finishCreateEdgeEventDescription(String context,
-			EventTime eventTime, String qualNameOfGraphElementToMonitor)
-			throws ECAIOException {
+	private EventDescription<EdgeClass> finishCreateEdgeEventDescription(
+			String context, EventTime eventTime,
+			String qualNameOfGraphElementToMonitor) throws ECAIOException {
 		if (context != null && qualNameOfGraphElementToMonitor == null) {
 			return new CreateEdgeEventDescription(eventTime, context);
 		} else if (context == null && qualNameOfGraphElementToMonitor != null) {
-			return new CreateEdgeEventDescription(eventTime,
-					getAttributedElement(qualNameOfGraphElementToMonitor));
+			return new CreateEdgeEventDescription(
+					eventTime,
+					(EdgeClass) getAttributedElementClass(qualNameOfGraphElementToMonitor));
 		} else {
 			throw new ECAIOException(
 					"It's necessary to give a context OR a type. Its an XOR. Found: context: \""
@@ -676,14 +685,15 @@ public class ECAIO {
 	 * @return the created EventDescription
 	 * @throws ECAIOException
 	 */
-	private EventDescription finishCreateVertexEvent(String context,
-			EventTime eventTime, String qualNameOfGraphElementToMonitor)
-			throws ECAIOException {
+	private EventDescription<VertexClass> finishCreateVertexEvent(
+			String context, EventTime eventTime,
+			String qualNameOfGraphElementToMonitor) throws ECAIOException {
 		if (context != null && qualNameOfGraphElementToMonitor == null) {
 			return new CreateVertexEventDescription(eventTime, context);
 		} else if (context == null && qualNameOfGraphElementToMonitor != null) {
-			return new CreateVertexEventDescription(eventTime,
-					getAttributedElement(qualNameOfGraphElementToMonitor));
+			return new CreateVertexEventDescription(
+					eventTime,
+					(VertexClass) getAttributedElementClass(qualNameOfGraphElementToMonitor));
 		} else {
 			throw new ECAIOException(
 					"It's necessary to give a context OR a type. Its an XOR. Found: context: \""
@@ -698,11 +708,8 @@ public class ECAIO {
 	 * @param name
 	 * @return
 	 */
-	private Class<? extends AttributedElement> getAttributedElement(String name) {
-		Class<? extends AttributedElement> aecl;
-		AttributedElementClass aeclo = schema.getAttributedElementClass(name);
-		aecl = aeclo.getSchemaClass();
-		return aecl;
+	private AttributedElementClass<?, ?> getAttributedElementClass(String name) {
+		return schema.getAttributedElementClass(name);
 	}
 
 	// ######################################################################
@@ -713,7 +720,8 @@ public class ECAIO {
 	 * @return the condition or null if there is no
 	 * @throws ECAIOException
 	 */
-	private Condition parseCondition() throws ECAIOException {
+	@SuppressWarnings("rawtypes")
+	private Condition<?> parseCondition() throws ECAIOException {
 		String currentToken = nextToken();
 		if (isMatching(currentToken, "do")) {
 			return null;
@@ -721,11 +729,14 @@ public class ECAIO {
 			String condexpr = nextToken();
 			if (condexpr.equals("class")) {
 				condexpr = nextToken();
-				Condition cond;
+				Condition<?> cond;
 				try {
 					System.out.println("classname: " + condexpr);
-					Class<?> conditionclass = Class.forName(condexpr);
-					cond = (Condition) conditionclass.newInstance();
+					@SuppressWarnings("unchecked")
+					Class<? extends Condition<?>> conditionclass = (Class<? extends Condition<?>>) Class
+							.forName(condexpr);
+					Condition<?> c = conditionclass.newInstance();
+					cond = c;
 				} catch (ClassNotFoundException e) {
 					throw new ECAIOException("Specified Condition "
 							+ currentToken + " not found.");
@@ -759,20 +770,20 @@ public class ECAIO {
 	 * @return the resulting Action
 	 * @throws ECAIOException
 	 */
-	@SuppressWarnings("unchecked")
-	private Action parseAction() throws ECAIOException {
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	private Action<?> parseAction() throws ECAIOException {
 		String currentToken = nextToken();
 		if (isMatching("print", currentToken)) {
 			String message = nextToken();
 			return new PrintAction(message);
 		} else {
 			try {
-				Class<?> actionclass = Class.forName(currentToken);
+				Class<? extends Action<?>> actionclass = (Class<? extends Action<?>>) Class
+						.forName(currentToken);
 				if (actionclass.getSuperclass().equals(Transformation.class)) {
-					return new GretlTransformAction(
-							(Class<? extends Transformation<Graph>>) actionclass);
+					return new GretlTransformAction(actionclass);
 				} else {
-					return (Action) actionclass.newInstance();
+					return actionclass.newInstance();
 				}
 
 			} catch (ClassNotFoundException e) {

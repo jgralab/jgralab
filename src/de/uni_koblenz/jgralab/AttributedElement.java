@@ -42,22 +42,23 @@ import de.uni_koblenz.jgralab.schema.GraphClass;
 import de.uni_koblenz.jgralab.schema.Schema;
 
 /**
- * aggregates graphs, edges and vertices
+ * superclass of graphs, edges and vertices
  * 
  * @author ist@uni-koblenz.de
  * 
  */
-public interface AttributedElement extends Comparable<AttributedElement> {
+public interface AttributedElement<SC extends AttributedElementClass<SC, IC>, IC extends AttributedElement<SC, IC>>
+		extends Comparable<AttributedElement<SC, IC>> {
 	/**
 	 * @return the {@link AttributedElementClass} of this
 	 *         {@link AttributedElement}
 	 */
-	public AttributedElementClass getAttributedElementClass();
+	public SC getAttributedElementClass();
 
 	/**
 	 * @return the schema class of this attributedelement
 	 */
-	public Class<? extends AttributedElement> getSchemaClass();
+	public Class<? extends IC> getSchemaClass();
 
 	public GraphClass getGraphClass();
 
@@ -83,4 +84,10 @@ public interface AttributedElement extends Comparable<AttributedElement> {
 	public Schema getSchema();
 
 	void initializeAttributesWithDefaultValues();
+
+	/**
+	 * @param cls
+	 * @return true, iff this attributed element is an instance of cls.
+	 */
+	public boolean isInstanceOf(SC cls);
 }

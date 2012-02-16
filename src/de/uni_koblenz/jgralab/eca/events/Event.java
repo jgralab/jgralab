@@ -34,10 +34,11 @@
  */
 package de.uni_koblenz.jgralab.eca.events;
 
-import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Graph;
+import de.uni_koblenz.jgralab.AttributedElement;
+import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 
-public abstract class Event {
+public abstract class Event<AEC extends AttributedElementClass<AEC, ?>> {
 
 	/**
 	 * The nested call depth, the Event happened
@@ -57,7 +58,7 @@ public abstract class Event {
 	/**
 	 * Type of element, VertexClass, EdgeClass or GraphClass
 	 */
-	private Class<? extends AttributedElement> type;
+	private AEC type;
 
 	/**
 	 * Create an Event with the given parameters
@@ -71,9 +72,8 @@ public abstract class Event {
 	 * @param type
 	 *            type of element
 	 */
-	public Event(int nC, EventDescription.EventTime time, Graph graph,
-			Class<? extends AttributedElement> type) {
-		this.nestedCalls = nC;
+	public Event(int nC, EventDescription.EventTime time, Graph graph, AEC type) {
+		nestedCalls = nC;
 		this.time = time;
 		this.graph = graph;
 		this.type = type;
@@ -89,7 +89,7 @@ public abstract class Event {
 	/**
 	 * @return the element who causes the Event, can be Vertex, Edge or Graph
 	 */
-	public abstract AttributedElement getElement();
+	public abstract AttributedElement<AEC, ?> getElement();
 
 	/**
 	 * @return if the Event happened before or after
@@ -108,7 +108,7 @@ public abstract class Event {
 	/**
 	 * @return the class of the Event
 	 */
-	public Class<? extends AttributedElement> getType() {
+	public AEC getType() {
 		return type;
 	}
 

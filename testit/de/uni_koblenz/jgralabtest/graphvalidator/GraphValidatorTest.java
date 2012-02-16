@@ -43,6 +43,7 @@ import java.util.logging.Level;
 import org.junit.Before;
 import org.junit.Test;
 
+import de.uni_koblenz.jgralab.ImplementationType;
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.graphvalidator.BrokenGReQLConstraintViolation;
 import de.uni_koblenz.jgralab.graphvalidator.ConstraintViolation;
@@ -69,7 +70,7 @@ public class GraphValidatorTest {
 
 	@Before
 	public void setup() {
-		g = ConstrainedSchema.instance().createConstrainedGraph();
+		g = ConstrainedSchema.instance().createConstrainedGraph(ImplementationType.STANDARD);
 		validator = new GraphValidator(g);
 	}
 

@@ -37,8 +37,10 @@ package de.uni_koblenz.jgralab.eca.events;
 import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.eca.ECARule;
+import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 
-public class ChangeAttributeEventDescription extends EventDescription {
+public class ChangeAttributeEventDescription<AEC extends AttributedElementClass<AEC, ?>>
+		extends EventDescription<AEC> {
 
 	/**
 	 * Name of the Attribute, this EventDescription monitors changes
@@ -58,10 +60,10 @@ public class ChangeAttributeEventDescription extends EventDescription {
 	 * @param attributeName
 	 *            the name of the observed Attribute
 	 */
-	public ChangeAttributeEventDescription(EventTime time,
-			Class<? extends AttributedElement> type, String attributeName) {
+	public ChangeAttributeEventDescription(EventTime time, AEC type,
+			String attributeName) {
 		super(time, type);
-		this.concernedAttribute = attributeName;
+		concernedAttribute = attributeName;
 	}
 
 	/**
@@ -78,7 +80,7 @@ public class ChangeAttributeEventDescription extends EventDescription {
 	public ChangeAttributeEventDescription(EventTime time, String contextExpr,
 			String attributeName) {
 		super(time, contextExpr);
-		this.concernedAttribute = attributeName;
+		concernedAttribute = attributeName;
 	}
 
 	// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -92,18 +94,18 @@ public class ChangeAttributeEventDescription extends EventDescription {
 	 * @param attributeName
 	 *            the name of the changing or changed Attribute
 	 */
-	public void fire(AttributedElement element, String attributeName,
+	public void fire(AttributedElement<AEC, ?> element, String attributeName,
 			Object oldValue, Object newValue) {
 		if (concernedAttribute.equals(attributeName)) {
 			if (super.checkContext(element)) {
-				int nested = this.getActiveECARules().get(0)
-						.getECARuleManager().getNestedTriggerCalls();
-				Graph graph = this.getActiveECARules().get(0)
-						.getECARuleManager().getGraph();
-				for (ECARule rule : activeRules) {
-					rule.trigger(new ChangeAttributeEvent(nested, this
-							.getTime(), graph, element, attributeName,
-							oldValue, newValue));
+				int nested = getActiveECARules().get(0).getECARuleManager()
+						.getNestedTriggerCalls();
+				Graph graph = getActiveECARules().get(0).getECARuleManager()
+						.getGraph();
+				for (ECARule<AEC> rule : activeRules) {
+					rule.trigger(new ChangeAttributeEvent<AEC>(nested,
+							getTime(), graph, element, attributeName, oldValue,
+							newValue));
 				}
 			}
 		}

@@ -61,7 +61,6 @@ import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.codegenerator.CodeGeneratorConfiguration;
 import de.uni_koblenz.jgralab.impl.ConsoleProgressFunction;
 
 public class TGTree extends JFrame {
@@ -74,7 +73,7 @@ public class TGTree extends JFrame {
 
 	public TGTree(Graph g) {
 		super("TGTree <" + g.getId() + ">");
-		this.graph = g;
+		graph = g;
 
 		JMenuBar menuBar = new JMenuBar();
 		JLabel idLabel = new JLabel("Select by id: ");
@@ -102,16 +101,15 @@ public class TGTree extends JFrame {
 		tree.setCellRenderer(new GraphElementCellRenderer());
 		tree.addMouseListener(new TreeViewMouseAdapter());
 		tree.addKeyListener(new TreeViewKeyAdapter());
-	
+
 		// < Bad Code - only for Demo
 		int j = 1;
-		for(int i = 0; i < tree.getRowCount(); i++){
+		for (int i = 0; i < tree.getRowCount(); i++) {
 			tree.expandRow(j);
-			j = j +2;
+			j = j + 2;
 		}
 		// Bad Code >
 
-		
 		scrollPane = new JScrollPane();
 		scrollPane.getViewport().add(tree);
 		cp.add(scrollPane);
@@ -124,7 +122,7 @@ public class TGTree extends JFrame {
 		pack();
 	}
 
-	public void setTreeViewRoot(GraphElement ge) {
+	public void setTreeViewRoot(GraphElement<?, ?> ge) {
 		GraphElementTreeNode tn = null;
 		if (ge instanceof Edge) {
 			tn = new EdgeTreeNode((Edge) ge, null);
@@ -133,14 +131,14 @@ public class TGTree extends JFrame {
 		} else {
 			throw new RuntimeException(ge + " is neither Vertex nor Edge.");
 		}
-		
+
 		tree.setModel(new TGraphTreeModel(tn));
-		
+
 		// < Bad Code - only for Demo
 		int j = 1;
-		for(int i = 0; i < tree.getRowCount(); i++){
+		for (int i = 0; i < tree.getRowCount(); i++) {
 			tree.expandRow(j);
-			j = j +2;
+			j = j + 2;
 		}
 		// Bad Code >
 	}
@@ -158,8 +156,7 @@ public class TGTree extends JFrame {
 			System.err.println("Usage: TGTree <graphfile>");
 			System.exit(1);
 		}
-		Graph g = GraphIO.loadSchemaAndGraphFromFile(args[0],
-				CodeGeneratorConfiguration.MINIMAL,
+		Graph g = GraphIO.loadGraphFromFile(args[0],
 				new ConsoleProgressFunction("Loading"));
 		TGTree tgtree = new TGTree(g);
 		tgtree.setDefaultCloseOperation(EXIT_ON_CLOSE);

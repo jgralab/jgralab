@@ -53,8 +53,8 @@ import de.uni_koblenz.jgralab.trans.Transaction;
  * @param <A>
  *            <code>Vertex</code> or <code>Edge</code>
  */
-public class AttributedElementIterable<A extends AttributedElement> implements
-		Iterable<A> {
+public class AttributedElementIterable<A extends AttributedElement<?, ?>>
+		implements Iterable<A> {
 	/**
 	 * The <code>Iterable</code>-instance to which the method-calls are
 	 * delegated to.

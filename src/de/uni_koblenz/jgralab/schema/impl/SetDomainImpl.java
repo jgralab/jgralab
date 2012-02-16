@@ -35,9 +35,16 @@
 
 package de.uni_koblenz.jgralab.schema.impl;
 
+import java.io.IOException;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 
+import org.pcollections.PSet;
+
+import de.uni_koblenz.jgralab.GraphIO;
+import de.uni_koblenz.jgralab.GraphIOException;
+import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.codegenerator.CodeBlock;
 import de.uni_koblenz.jgralab.codegenerator.CodeGenerator;
 import de.uni_koblenz.jgralab.codegenerator.CodeList;
@@ -221,5 +228,61 @@ public final class SetDomainImpl extends CollectionDomainImpl implements
 	@Override
 	public String getInitialValue() {
 		return "null";
+	}
+
+	@Override
+	public Object parseGenericAttribute(GraphIO io) throws GraphIOException {
+		if (io.isNextToken("{")) {
+			PSet<Object> result = JGraLab.set();
+			io.match("{");
+			while (!io.isNextToken("}")) {
+				Object setElement = null;
+				setElement = getBaseDomain().parseGenericAttribute(io);
+				result = result.plus(setElement);
+			}
+			io.match("}");
+			return result;
+		} else if (io.isNextToken(GraphIO.NULL_LITERAL)) {
+			io.match();
+			return null;
+		} else {
+			return null;
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public void serializeGenericAttribute(GraphIO io, Object data)
+			throws IOException {
+		if (data != null) {
+			io.writeSpace();
+			io.write("{");
+			io.noSpace();
+			for (Object value : (PSet<Object>) data) {
+				getBaseDomain().serializeGenericAttribute(io, value);
+			}
+			io.write("}");
+			io.space();
+		} else {
+			io.writeIdentifier(GraphIO.NULL_LITERAL);
+		}
+	}
+
+	@Override
+	public boolean isConformGenericValue(Object value) {
+		boolean result = true;
+		if (value == null) {
+			return result;
+		}
+		result &= value instanceof PSet;
+		if (!result) {
+			return false;
+		}
+		Iterator<?> iterator = ((PSet<?>) value).iterator();
+		while (iterator.hasNext() && result) {
+			result &= getBaseDomain().isConformGenericValue(iterator.next());
+		}
+		assert (!iterator.hasNext());
+		return result;
 	}
 }

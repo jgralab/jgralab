@@ -41,7 +41,9 @@
 	<property name="unjarexcludes" value="clover/**" />
 	<property name="test.suite" value="de.uni_koblenz.jgralabtest.RunTests" />
 	<property name="manifest.static" value="true" />
-	<!-- <property name="test.suite" value="de.uni_koblenz.jgralabtest.instancetest.GraphTest" /> -->
+
+	<!-- TODO: Currently the greqltest won't compile -->
+	<property name="testcompileexcludes" value="de/uni_koblenz/jgralabtest/greql2/**" />
 
 	<!-- import the common build file -->
 	<import file="../common/common.xml" />
@@ -52,7 +54,7 @@
 
 	<!-- enable clover for the testcases:
 	     run with "$ ant with.clover build test clover.html" -->
-	<property name="clover.jar" value="${lib.dir}/clover/clover-3.1.0.jar" />
+	<property name="clover.jar" value="${lib.dir}/clover/clover-3.1.3.jar" />
 	<taskdef resource="cloverlib.xml" classpath="${clover.jar}" />
 
 	<target name="with.clover">
@@ -127,7 +129,7 @@
 	<property name="common-tools.includes" value="common/**" />
 
 	<property name="utilities.src" value="${src.dir}/de/uni_koblenz/jgralab/utilities" />
-	<property name="utilities.includes" value="ant/** common/** converter/** csv2tg/** greqlinterface/** jgralab2owl/** schemacompare/** tg2gdl/** tg2gxl/** tg2sidiff/** tgraphbrowser/** tgtree/** xmi2tgschema/** xml/**" />
+	<property name="utilities.includes" value="ant/** common/** converter/** csv2tg/** greqlinterface/** jgralab2owl/** schemacompare/** tg2gdl/** tg2gxl/** tg2sidiff/** tgraphbrowser/** tgtree/** xmi2tgschema/** xml/** gui/**" />
 
 	<!-- The targets -->
 	<target name="build" depends="ist_utilities,clean,compile,modify_manifest,jar" />
@@ -279,7 +281,7 @@
 		<unjar_mp dest="${tmp.dir}">
 			<fileset dir="${comlib.dir}/apache/commons/cli/" includes="**/*.jar" />
 		</unjar_mp>
-		<copy todir="${tmp.dir}/META-INF" file="${project.dir}/license/LICENSE.txt" />
+		<copy todir="${tmp.dir}/META-INF" file="${project.dir}/LICENSE" />
 	</target>
 
 	<target name="modify_manifest" depends="versiontasks">

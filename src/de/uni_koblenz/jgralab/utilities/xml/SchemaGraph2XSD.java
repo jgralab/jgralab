@@ -93,10 +93,10 @@ import java.io.PrintStream;
 import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
-import java.util.Map.Entry;
 
 import javax.xml.XMLConstants;
 import javax.xml.stream.FactoryConfigurationError;
@@ -507,8 +507,8 @@ public class SchemaGraph2XSD {
 		// Removes the illegal character ":" from the end of the namespacePrefix
 		// String.
 		if (namespacePrefix.endsWith(":")) {
-			namespacePrefix = namespacePrefix.substring(0, namespacePrefix
-					.length() - 1);
+			namespacePrefix = namespacePrefix.substring(0,
+					namespacePrefix.length() - 1);
 		}
 		this.namespacePrefix = namespacePrefix;
 
@@ -721,13 +721,13 @@ public class SchemaGraph2XSD {
 		GraphClass gc = schemaGraph.getFirstGraphClass();
 
 		// Writes an element for the GraphClass
-		writeXSDElement(gc.get_qualifiedName(), GRUML_PREFIX_GRAPHTYPE
-				+ gc.get_qualifiedName());
+		writeXSDElement(gc.get_qualifiedName(),
+				GRUML_PREFIX_GRAPHTYPE + gc.get_qualifiedName());
 
 		// Writes a complexType for the GraphClass and extending from the
 		// predefined GraphClass type.
-		writeStartXSDComplexType(GRUML_PREFIX_GRAPHTYPE
-				+ gc.get_qualifiedName(), false, true);
+		writeStartXSDComplexType(
+				GRUML_PREFIX_GRAPHTYPE + gc.get_qualifiedName(), false, true);
 		writeStartXSDExtension(GRUML_GRAPHTYPE, true);
 
 		// Writes all attributes.
@@ -1162,7 +1162,7 @@ public class SchemaGraph2XSD {
 	 */
 	private void writeAttribute(Attribute attribute) throws XMLStreamException {
 		String name = attribute.get_name();
-		Domain type = (Domain) attribute.getFirstHasDomainIncidence(EdgeDirection.OUT)
+		Domain type = attribute.getFirstHasDomainIncidence(EdgeDirection.OUT)
 				.getOmega();
 		writeXSDAttribute(name, getXSDType(type), XSD_REQUIRED);
 	}
@@ -1201,7 +1201,7 @@ public class SchemaGraph2XSD {
 				.getHasAttributeIncidences(EdgeDirection.OUT)) {
 			// Adds the Attribute with its corresponding AttributedElementClass,
 			// in which it's defined.
-			attributes.put((Attribute) ha.getOmega(), attrElemClass);
+			attributes.put(ha.getOmega(), attrElemClass);
 		}
 
 		// Loop over all AttributedElementClasses, which are extended by the
@@ -1211,15 +1211,13 @@ public class SchemaGraph2XSD {
 			for (SpecializesVertexClass s : ((VertexClass) attrElemClass)
 					.getSpecializesVertexClassIncidences(EdgeDirection.OUT)) {
 				// Recursive call of this method with a specialized VertexClass.
-				collectAttributes((AttributedElementClass) s.getOmega(),
-						attributes);
+				collectAttributes(s.getOmega(), attributes);
 			}
 		} else if (attrElemClass instanceof EdgeClass) {
 			for (SpecializesEdgeClass s : ((EdgeClass) attrElemClass)
 					.getSpecializesEdgeClassIncidences(EdgeDirection.OUT)) {
 				// Recursive call of this method with a specialized EdgeClass.
-				collectAttributes((AttributedElementClass) s.getOmega(),
-						attributes);
+				collectAttributes(s.getOmega(), attributes);
 			}
 		} else if (attrElemClass instanceof GraphClass) {
 			// nothing to do here
@@ -1301,7 +1299,7 @@ public class SchemaGraph2XSD {
 				 */
 				stringWriter.append(a.get_name());
 				stringWriter.append(" : ");
-				stringWriter.append(((Domain) a.getFirstHasDomainIncidence().getOmega())
+				stringWriter.append((a.getFirstHasDomainIncidence().getOmega())
 						.get_qualifiedName());
 				stringWriter.append(" (from ");
 				stringWriter.append(e.getValue().get_qualifiedName());
@@ -1335,7 +1333,7 @@ public class SchemaGraph2XSD {
 			// Puts the current Attribute as String with it's corresponding
 			// Domain as String in the SortedMap.
 			map.put(component.get_name(),
-					getXSDTypeWithoutPrefix((Domain) component.getOmega()));
+					getXSDTypeWithoutPrefix(component.getOmega()));
 		}
 
 		// Loop over all entries in alphabetically order (key).

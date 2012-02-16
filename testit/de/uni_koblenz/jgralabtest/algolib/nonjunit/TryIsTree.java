@@ -34,6 +34,7 @@
  */
 package de.uni_koblenz.jgralabtest.algolib.nonjunit;
 
+import de.uni_koblenz.jgralab.ImplementationType;
 import de.uni_koblenz.jgralab.algolib.algorithms.weak_components.IsTree;
 import de.uni_koblenz.jgralab.algolib.problems.IsTreeSolver;
 import de.uni_koblenz.jgralabtest.schemas.algolib.simple.SimpleGraph;
@@ -42,7 +43,7 @@ import de.uni_koblenz.jgralabtest.schemas.algolib.simple.SimpleVertex;
 
 public class TryIsTree {
 	private static SimpleGraph getSmallGraph() {
-		SimpleGraph graph = SimpleSchema.instance().createSimpleGraph();
+		SimpleGraph graph = SimpleSchema.instance().createSimpleGraph(ImplementationType.STANDARD);
 		SimpleVertex v1 = graph.createSimpleVertex();
 		SimpleVertex v2 = graph.createSimpleVertex();
 		SimpleVertex v3 = graph.createSimpleVertex();

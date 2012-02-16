@@ -34,16 +34,18 @@
  */
 package de.uni_koblenz.jgralab.impl;
 
-import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Vertex;
+import de.uni_koblenz.jgralab.schema.VertexClass;
 import de.uni_koblenz.jgralab.schema.impl.DirectedSchemaEdgeClass;
 
-public interface InternalVertex extends Vertex, InternalGraphElement {
+public interface InternalVertex extends Vertex,
+		InternalGraphElement<VertexClass, Vertex> {
 
 	/**
 	 * @return the internal vertex structure version
 	 * @see #isIncidenceListModified(long)
 	 */
+	@Override
 	public long getIncidenceListVersion();
 
 	/**
@@ -56,21 +58,8 @@ public interface InternalVertex extends Vertex, InternalGraphElement {
 	 * Checks if the list of incident edges has changed with respect to the
 	 * given <code>incidenceListVersion</code>.
 	 */
+	@Override
 	public boolean isIncidenceListModified(long incidenceListVersion);
-
-	/**
-	 * tests if the Edge <code>edge</code> may start at this vertex
-	 * 
-	 * @return <code>true</code> iff <code>edge</code> may start at this vertex
-	 */
-	public boolean isValidAlpha(Edge edge);
-
-	/**
-	 * tests if the Edge <code>edge</code> may end at this vertex
-	 * 
-	 * @return <code>true</code> iff <code>edge</code> may end at this vertex
-	 */
-	public boolean isValidOmega(Edge edge);
 
 	public DirectedSchemaEdgeClass getEdgeForRolename(String rolename);
 

@@ -59,7 +59,6 @@ import org.junit.runners.Parameterized.Parameters;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.GraphException;
-import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.ImplementationType;
 import de.uni_koblenz.jgralab.NoSuchAttributeException;
@@ -70,6 +69,8 @@ import de.uni_koblenz.jgralab.schema.Schema;
 import de.uni_koblenz.jgralab.trans.CommitFailedException;
 import de.uni_koblenz.jgralabtest.schemas.vertextest.AbstractSuperNode;
 import de.uni_koblenz.jgralabtest.schemas.vertextest.DoubleSubNode;
+import de.uni_koblenz.jgralabtest.schemas.vertextest.E;
+import de.uni_koblenz.jgralabtest.schemas.vertextest.K;
 import de.uni_koblenz.jgralabtest.schemas.vertextest.Link;
 import de.uni_koblenz.jgralabtest.schemas.vertextest.LinkBack;
 import de.uni_koblenz.jgralabtest.schemas.vertextest.SubLink;
@@ -106,11 +107,12 @@ public class EdgeTest extends InstanceTest {
 	public void setUp() {
 		switch (implementationType) {
 		case STANDARD:
-			g = VertexTestSchema.instance().createVertexTestGraph();
+			g = VertexTestSchema.instance().createVertexTestGraph(
+					ImplementationType.STANDARD);
 			break;
 		case TRANSACTION:
-			g = VertexTestSchema.instance()
-					.createVertexTestGraphWithTransactionSupport();
+			g = VertexTestSchema.instance().createVertexTestGraph(
+					ImplementationType.TRANSACTION);
 			break;
 		case DATABASE:
 			g = createVertexTestGraphWithDatabaseSupport();
@@ -157,7 +159,7 @@ public class EdgeTest extends InstanceTest {
 	 * If you create several edges and you delete one, the next edge should get
 	 * the id of the deleted edge. If you create a further edge it should get
 	 * the next free id.
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	@Test
@@ -210,7 +212,7 @@ public class EdgeTest extends InstanceTest {
 	// tests of the method Edge getNextEdge(EdgeDirection orientation);
 	/**
 	 * There exists only one edge in the graph
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -235,7 +237,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Test in a manually built graph.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -306,7 +308,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Test in a randomly built graph
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	@Test
@@ -314,11 +316,12 @@ public class EdgeTest extends InstanceTest {
 		for (int i = 0; i < RANDOM_GRAPH_COUNT; i++) {
 			switch (implementationType) {
 			case STANDARD:
-				g = VertexTestSchema.instance().createVertexTestGraph();
+				g = VertexTestSchema.instance().createVertexTestGraph(
+						ImplementationType.STANDARD);
 				break;
 			case TRANSACTION:
-				g = VertexTestSchema.instance()
-						.createVertexTestGraphWithTransactionSupport();
+				g = VertexTestSchema.instance().createVertexTestGraph(
+						ImplementationType.TRANSACTION);
 				break;
 			case DATABASE:
 				g = dbHandler.createVertexTestGraphWithDatabaseSupport(ID + i);
@@ -421,14 +424,14 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Creates an array of the EdgeClasses.
-	 * 
+	 *
 	 * @return {Link, SubLink, LinkBack}
 	 * @throws CommitFailedException
 	 */
 	private EdgeClass[] getEdgeClasses() throws CommitFailedException {
 		EdgeClass[] ecs = new EdgeClass[3];
 		createReadOnlyTransaction(g);
-		List<EdgeClass> a = g.getSchema().getEdgeClassesInTopologicalOrder();
+		List<EdgeClass> a = g.getGraphClass().getEdgeClasses();
 		commit(g);
 		// TODO WTF?
 		for (EdgeClass ec : a) {
@@ -446,7 +449,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * An edge which has no following edges.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -468,7 +471,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Test in a manually built graph.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -515,7 +518,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Test in a randomly built graph
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -524,11 +527,12 @@ public class EdgeTest extends InstanceTest {
 		for (int i = 0; i < RANDOM_GRAPH_COUNT; i++) {
 			switch (implementationType) {
 			case STANDARD:
-				g = VertexTestSchema.instance().createVertexTestGraph();
+				g = VertexTestSchema.instance().createVertexTestGraph(
+						ImplementationType.STANDARD);
 				break;
 			case TRANSACTION:
-				g = VertexTestSchema.instance()
-						.createVertexTestGraphWithTransactionSupport();
+				g = VertexTestSchema.instance().createVertexTestGraph(
+						ImplementationType.TRANSACTION);
 				break;
 			case DATABASE:
 				g = dbHandler.createVertexTestGraphWithDatabaseSupport(ID + i);
@@ -604,7 +608,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * An edge which has no following edges.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -624,7 +628,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Test in a manually built graph.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -669,7 +673,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Test in a randomly built graph
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -677,11 +681,12 @@ public class EdgeTest extends InstanceTest {
 		for (int i = 0; i < RANDOM_GRAPH_COUNT; i++) {
 			switch (implementationType) {
 			case STANDARD:
-				g = VertexTestSchema.instance().createVertexTestGraph();
+				g = VertexTestSchema.instance().createVertexTestGraph(
+						ImplementationType.STANDARD);
 				break;
 			case TRANSACTION:
-				g = VertexTestSchema.instance()
-						.createVertexTestGraphWithTransactionSupport();
+				g = VertexTestSchema.instance().createVertexTestGraph(
+						ImplementationType.TRANSACTION);
 				break;
 			case DATABASE:
 				g = dbHandler.createVertexTestGraphWithDatabaseSupport(ID + i);
@@ -757,7 +762,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * An edge which has no following edges.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -786,7 +791,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Test in a manually built graph.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -907,7 +912,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Test in a randomly built graph
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -917,11 +922,12 @@ public class EdgeTest extends InstanceTest {
 		for (int i = 0; i < RANDOM_GRAPH_COUNT; i++) {
 			switch (implementationType) {
 			case STANDARD:
-				g = VertexTestSchema.instance().createVertexTestGraph();
+				g = VertexTestSchema.instance().createVertexTestGraph(
+						ImplementationType.STANDARD);
 				break;
 			case TRANSACTION:
-				g = VertexTestSchema.instance()
-						.createVertexTestGraphWithTransactionSupport();
+				g = VertexTestSchema.instance().createVertexTestGraph(
+						ImplementationType.TRANSACTION);
 				break;
 			case DATABASE:
 				g = dbHandler.createVertexTestGraphWithDatabaseSupport(ID + i);
@@ -1097,7 +1103,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * An edge which has no following edges.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -1124,7 +1130,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Test in a manually built graph.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -1249,7 +1255,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Test in a randomly built graph
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -1258,11 +1264,12 @@ public class EdgeTest extends InstanceTest {
 		for (int i = 0; i < RANDOM_GRAPH_COUNT; i++) {
 			switch (implementationType) {
 			case STANDARD:
-				g = VertexTestSchema.instance().createVertexTestGraph();
+				g = VertexTestSchema.instance().createVertexTestGraph(
+						ImplementationType.STANDARD);
 				break;
 			case TRANSACTION:
-				g = VertexTestSchema.instance()
-						.createVertexTestGraphWithTransactionSupport();
+				g = VertexTestSchema.instance().createVertexTestGraph(
+						ImplementationType.TRANSACTION);
 				break;
 			case DATABASE:
 				g = dbHandler.createVertexTestGraphWithDatabaseSupport(ID + i);
@@ -1439,7 +1446,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * An edge which has no following edges.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -1462,7 +1469,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Test in a manually built graph.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -1513,7 +1520,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Test in a randomly built graph
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -1523,11 +1530,12 @@ public class EdgeTest extends InstanceTest {
 		for (int i = 0; i < RANDOM_GRAPH_COUNT; i++) {
 			switch (implementationType) {
 			case STANDARD:
-				g = VertexTestSchema.instance().createVertexTestGraph();
+				g = VertexTestSchema.instance().createVertexTestGraph(
+						ImplementationType.STANDARD);
 				break;
 			case TRANSACTION:
-				g = VertexTestSchema.instance()
-						.createVertexTestGraphWithTransactionSupport();
+				g = VertexTestSchema.instance().createVertexTestGraph(
+						ImplementationType.TRANSACTION);
 				break;
 			case DATABASE:
 				g = dbHandler.createVertexTestGraphWithDatabaseSupport(ID + i);
@@ -1626,7 +1634,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * An edge which has no following edges.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -1647,7 +1655,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Test in a manually built graph.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -1697,7 +1705,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Test in a randomly built graph
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -1706,11 +1714,12 @@ public class EdgeTest extends InstanceTest {
 		for (int i = 0; i < RANDOM_GRAPH_COUNT; i++) {
 			switch (implementationType) {
 			case STANDARD:
-				g = VertexTestSchema.instance().createVertexTestGraph();
+				g = VertexTestSchema.instance().createVertexTestGraph(
+						ImplementationType.STANDARD);
 				break;
 			case TRANSACTION:
-				g = VertexTestSchema.instance()
-						.createVertexTestGraphWithTransactionSupport();
+				g = VertexTestSchema.instance().createVertexTestGraph(
+						ImplementationType.TRANSACTION);
 				break;
 			case DATABASE:
 				g = dbHandler.createVertexTestGraphWithDatabaseSupport(ID + i);
@@ -1809,7 +1818,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * An edge which has no following edges.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -1838,7 +1847,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Test in a manually built graph.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -1965,7 +1974,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Test in a randomly built graph
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -1975,11 +1984,12 @@ public class EdgeTest extends InstanceTest {
 		for (int i = 0; i < RANDOM_GRAPH_COUNT; i++) {
 			switch (implementationType) {
 			case STANDARD:
-				g = VertexTestSchema.instance().createVertexTestGraph();
+				g = VertexTestSchema.instance().createVertexTestGraph(
+						ImplementationType.STANDARD);
 				break;
 			case TRANSACTION:
-				g = VertexTestSchema.instance()
-						.createVertexTestGraphWithTransactionSupport();
+				g = VertexTestSchema.instance().createVertexTestGraph(
+						ImplementationType.TRANSACTION);
 				break;
 			case DATABASE:
 				g = dbHandler.createVertexTestGraphWithDatabaseSupport(ID + i);
@@ -2183,7 +2193,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * An edge which has no following edges.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -2210,7 +2220,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Test in a manually built graph.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -2340,7 +2350,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Test in a randomly built graph
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -2349,11 +2359,12 @@ public class EdgeTest extends InstanceTest {
 		for (int i = 0; i < RANDOM_GRAPH_COUNT; i++) {
 			switch (implementationType) {
 			case STANDARD:
-				g = VertexTestSchema.instance().createVertexTestGraph();
+				g = VertexTestSchema.instance().createVertexTestGraph(
+						ImplementationType.STANDARD);
 				break;
 			case TRANSACTION:
-				g = VertexTestSchema.instance()
-						.createVertexTestGraphWithTransactionSupport();
+				g = VertexTestSchema.instance().createVertexTestGraph(
+						ImplementationType.TRANSACTION);
 				break;
 			case DATABASE:
 				g = dbHandler.createVertexTestGraphWithDatabaseSupport(ID + i);
@@ -2591,7 +2602,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Test in a manually built graph.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -2617,7 +2628,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Test in a randomly built graph.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -2635,7 +2646,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Test in a manually built graph.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -2661,7 +2672,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Test in a randomly built graph.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -2679,7 +2690,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Test in a manually built graph.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -2706,7 +2717,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Test in a manually built graph.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -2734,7 +2745,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Test for reversedEdge.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -2762,7 +2773,7 @@ public class EdgeTest extends InstanceTest {
 	 * Creates an randomly build graph an returns an 2-dim ArrayList of Edges,
 	 * which are needed to check the equality in respect to the parameters of
 	 * the methods.
-	 * 
+	 *
 	 * @param classedge
 	 * @param nosubclasses
 	 * @return
@@ -2855,7 +2866,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Test for reversedEdge.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -2880,7 +2891,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Tests if an edge has no previous edge in graph.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -2897,7 +2908,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Test in a manually built graph.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -2919,7 +2930,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Test in a randomly built graph.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -2940,7 +2951,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * An edge which has no following edges.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -2963,7 +2974,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Test in a manually built graph.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -3033,7 +3044,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Test in a randomly built graph.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -3066,7 +3077,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * An edge which has no following edges.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -3087,7 +3098,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Test in a manually built graph.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -3155,7 +3166,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Test in a randomly built graph.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -3184,7 +3195,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * An edge which has no following edges.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -3213,7 +3224,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Tests if an edge is before itself.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -3230,7 +3241,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Tests if an edge is direct before another.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -3249,7 +3260,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Tests if an edge is before another.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -3272,7 +3283,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Tests if an edge is after itself.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -3289,7 +3300,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Tests if an edge is direct after another.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -3308,7 +3319,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Tests if an edge is after another.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -3335,7 +3346,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Tests if an edge is before itself.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -3356,7 +3367,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Tests if an edge is before itself.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -3386,7 +3397,7 @@ public class EdgeTest extends InstanceTest {
 	/**
 	 * Tests if the incident edges of <code>c</code> equals the edges of
 	 * <code>incidentEdges</code>.
-	 * 
+	 *
 	 * @param v
 	 * @param incidentEdges
 	 * @throws CommitFailedException
@@ -3408,7 +3419,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Alpha of an edge is changed to another vertex.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -3447,7 +3458,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Alpha of an reversedEdge is changed to another vertex.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -3486,7 +3497,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Alpha of an edge is set to the previous alpha vertex.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -3519,7 +3530,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Alpha of an edge is changed to the omega vertex.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -3559,7 +3570,7 @@ public class EdgeTest extends InstanceTest {
 	/**
 	 * Alpha of an edge is changed to another vertex. And there exists further
 	 * edges.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -3612,7 +3623,7 @@ public class EdgeTest extends InstanceTest {
 	/**
 	 * An exception should occur if you try to set alpha to a vertex which type
 	 * isn't allowed as an alpha vertex for that edge.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test(expected = GraphException.class)
@@ -3629,7 +3640,7 @@ public class EdgeTest extends InstanceTest {
 	 * Creates a random graph and returns an 2-dim ArrayList ret.get(0) =
 	 * incident edges of v1 ret.get(1) = incident edges of v2 ret.get(2) =
 	 * incident edges of v3
-	 * 
+	 *
 	 * @return ret
 	 * @throws CommitFailedException
 	 */
@@ -3678,7 +3689,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Random Test
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -3739,7 +3750,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Omega of an edge is changed to another vertex.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -3778,7 +3789,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Omega of an reversedEdge is changed to another vertex.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -3817,7 +3828,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Omega of an edge is set to the previous omega vertex.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -3850,7 +3861,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Omega of an edge is changed to the alpha vertex.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -3884,7 +3895,7 @@ public class EdgeTest extends InstanceTest {
 	/**
 	 * Omega of an edge is changed to another vertex. And there exists further
 	 * edges.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -3936,7 +3947,7 @@ public class EdgeTest extends InstanceTest {
 	/**
 	 * An exception should occur if you try to set omega to a vertex which type
 	 * isn't allowed as an omega vertex for that edge.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test(expected = GraphException.class)
@@ -3951,7 +3962,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Random Test
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -4011,7 +4022,7 @@ public class EdgeTest extends InstanceTest {
 	/**
 	 * This of an edge is changed to another vertex. And there exists further
 	 * edges.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -4087,7 +4098,7 @@ public class EdgeTest extends InstanceTest {
 	/**
 	 * That of an edge is changed to another vertex. And there exists further
 	 * edges.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -4168,7 +4179,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Tests on edges and reversedEdges.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -4199,7 +4210,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Tests on edges and reversedEdges.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -4230,7 +4241,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Tests on edges and reversedEdges.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -4261,7 +4272,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Tests on edges and reversedEdges.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -4294,7 +4305,7 @@ public class EdgeTest extends InstanceTest {
 	// tests of the method Graph getGraph();
 	/**
 	 * Test with edges of two graphs.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -4326,11 +4337,12 @@ public class EdgeTest extends InstanceTest {
 		VertexTestGraph anotherGraph = null;
 		switch (implementationType) {
 		case STANDARD:
-			anotherGraph = VertexTestSchema.instance().createVertexTestGraph();
+			anotherGraph = VertexTestSchema.instance().createVertexTestGraph(
+					ImplementationType.STANDARD);
 			break;
 		case TRANSACTION:
-			anotherGraph = VertexTestSchema.instance()
-					.createVertexTestGraphWithTransactionSupport();
+			anotherGraph = VertexTestSchema.instance().createVertexTestGraph(
+					ImplementationType.TRANSACTION);
 			break;
 		case DATABASE:
 			anotherGraph = dbHandler
@@ -4346,7 +4358,7 @@ public class EdgeTest extends InstanceTest {
 	// TODO maybe move the following two to graphTest
 	/**
 	 * Tests if the graphversion is increased by creating a new edge.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -4371,7 +4383,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Tests if the graphversion is increased by deleting an edge.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -4398,7 +4410,7 @@ public class EdgeTest extends InstanceTest {
 	/**
 	 * Tests if the graphversion is increased by changing the attributes of an
 	 * edge.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -4428,7 +4440,7 @@ public class EdgeTest extends InstanceTest {
 	// tests of the method AttributedElementClass getAttributedElementClass();
 	/**
 	 * Some test cases for getAttributedElementClass
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -4458,7 +4470,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Some test cases for getSchemaClass
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -4486,7 +4498,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Some test cases for getGraphClass
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -4521,7 +4533,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Test with null values.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -4581,12 +4593,10 @@ public class EdgeTest extends InstanceTest {
 		switch (implementationType) {
 		case DATABASE:
 		case STANDARD:
-			loadedgraph = (VertexTestGraph) GraphIO
-					.loadGraphFromFileWithStandardSupport("test.tg", null);
-			break;
 		case TRANSACTION:
-			loadedgraph = (VertexTestGraph) GraphIO
-					.loadGraphFromFileWithTransactionSupport("test.tg", null);
+			loadedgraph = VertexTestSchema.instance().loadVertexTestGraph(
+					"test.tg", implementationType);
+
 			break;
 		default:
 			fail("Implementation " + implementationType
@@ -4597,7 +4607,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Test with values.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -4658,7 +4668,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Tests if the value of the correct attribute is returned.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -4678,7 +4688,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Tests if the value of the correct attribute is returned. reversedEdge
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -4700,7 +4710,7 @@ public class EdgeTest extends InstanceTest {
 	/**
 	 * Tests if an exception is thrown if you want to get an attribute which
 	 * doesn't exist.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test(expected = NoSuchAttributeException.class)
@@ -4719,7 +4729,7 @@ public class EdgeTest extends InstanceTest {
 	/**
 	 * Tests if an exception is thrown if you want to get an attribute with an
 	 * empty name.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test(expected = NoSuchAttributeException.class)
@@ -4740,7 +4750,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Tests if an existing attribute is correct set.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -4761,7 +4771,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Tests if an existing attribute is correct set. reversedEdge
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -4782,7 +4792,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Tests if an existing attribute is set to null.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -4802,7 +4812,7 @@ public class EdgeTest extends InstanceTest {
 	/**
 	 * Tests if an exception is thrown if you want to get an attribute which
 	 * doesn't exist.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test(expected = NoSuchAttributeException.class)
@@ -4817,7 +4827,7 @@ public class EdgeTest extends InstanceTest {
 	/**
 	 * Tests if an exception is thrown if you want to get an attribute with an
 	 * empty name.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test(expected = NoSuchAttributeException.class)
@@ -4833,7 +4843,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Some tests.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -4869,7 +4879,7 @@ public class EdgeTest extends InstanceTest {
 	// tests of the method int compareTo(AttributedElement a);
 	/**
 	 * Test if a vertex is equal to itself.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -4887,7 +4897,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Test if a vertex is smaller than another.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -4907,7 +4917,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Test if a vertex is greater than another.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -4929,7 +4939,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Test if a vertex is equal to itself.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -4947,7 +4957,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Test if a vertex is smaller than another.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -4967,7 +4977,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Test if a vertex is greater than another.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -4989,7 +4999,7 @@ public class EdgeTest extends InstanceTest {
 	// normalEdge
 	/**
 	 * Test if a vertex is equal to itself.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -5007,7 +5017,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Test if a vertex is equal to itself.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -5266,6 +5276,30 @@ public class EdgeTest extends InstanceTest {
 				.getNextSubLinkIncidence(EdgeDirection.IN));
 		assertNull(((SubLink) e6.getReversedEdge())
 				.getNextSubLinkIncidence(EdgeDirection.OUT));
+		commit(g);
+	}
+
+	@Test
+	public void isInstanceOfTest() throws CommitFailedException {
+		EdgeClass e = g.getSchema().getGraphClass().getEdgeClass("E");
+		EdgeClass h = g.getSchema().getGraphClass().getEdgeClass("H");
+		EdgeClass k = g.getSchema().getGraphClass().getEdgeClass("K");
+		EdgeClass i = g.getSchema().getGraphClass().getEdgeClass("I");
+
+		createTransaction(g);
+		for (K x : g.getKEdges()) {
+			assertTrue(x.isInstanceOf(k));
+			assertTrue(x.isInstanceOf(h));
+			assertTrue(x.isInstanceOf(e));
+			assertFalse(x.isInstanceOf(i));
+		}
+
+		for (E x : g.getEEdges()) {
+			assertTrue(x.isInstanceOf(e));
+			assertFalse(x.isInstanceOf(k));
+			assertFalse(x.isInstanceOf(h));
+			assertFalse(x.isInstanceOf(i));
+		}
 		commit(g);
 	}
 }

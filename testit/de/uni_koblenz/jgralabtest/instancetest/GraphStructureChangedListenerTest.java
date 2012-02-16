@@ -89,33 +89,29 @@ public class GraphStructureChangedListenerTest extends InstanceTest {
 		@Override
 		public void vertexAdded(Vertex v) {
 			trigger();
-			assertTrue("The given vertex has not been added to the graph.", v
-					.isValid()
-					&& (v.getGraph() == g));
+			assertTrue("The given vertex has not been added to the graph.",
+					v.isValid() && (v.getGraph() == g));
 		}
 
 		@Override
 		public void vertexDeleted(Vertex v) {
 			trigger();
-			assertTrue("The given vertex is not valid, but it should be.", v
-					.isValid()
-					&& (v.getGraph() == g));
+			assertTrue("The given vertex is not valid, but it should be.",
+					v.isValid() && (v.getGraph() == g));
 		}
 
 		@Override
 		public void edgeAdded(Edge e) {
 			trigger();
-			assertTrue("The given edge has not been added to the graph", e
-					.isValid()
-					&& (e.getGraph() == g));
+			assertTrue("The given edge has not been added to the graph",
+					e.isValid() && (e.getGraph() == g));
 		}
 
 		@Override
 		public void edgeDeleted(Edge e) {
 			trigger();
-			assertTrue("The given edge is not valid, but it should be.", e
-					.isValid()
-					&& (e.getGraph() == g));
+			assertTrue("The given edge is not valid, but it should be.",
+					e.isValid() && (e.getGraph() == g));
 		}
 
 		@Override
@@ -150,11 +146,12 @@ public class GraphStructureChangedListenerTest extends InstanceTest {
 	public void setup() throws CommitFailedException {
 		switch (implementationType) {
 		case STANDARD:
-			g = MinimalSchema.instance().createMinimalGraph(V, E);
+			g = MinimalSchema.instance().createMinimalGraph(
+					ImplementationType.STANDARD, null, V, E);
 			break;
 		case TRANSACTION:
-			g = MinimalSchema.instance()
-					.createMinimalGraphWithTransactionSupport(V, E);
+			g = MinimalSchema.instance().createMinimalGraph(
+					ImplementationType.TRANSACTION, null, V, E);
 			break;
 		case DATABASE:
 			dbHandler.connectToDatabase();
@@ -342,16 +339,16 @@ public class GraphStructureChangedListenerTest extends InstanceTest {
 
 		// test explicit unregister
 		createReadOnlyTransaction(g);
-		assertTrue("The wrong amount of listeners was created.", g
-				.getGraphStructureChangedListenerCount() == LISTENERS * 2);
+		assertTrue("The wrong amount of listeners was created.",
+				g.getGraphStructureChangedListenerCount() == LISTENERS * 2);
 		commit(g);
 
 		g.removeGraphStructureChangedListener(listenersWithAutoRemove[1]);
 		g.removeGraphStructureChangedListener(normalListeners[1]);
 
 		createReadOnlyTransaction(g);
-		assertEquals(LISTENERS * 2 - 2, g
-				.getGraphStructureChangedListenerCount());
+		assertEquals(LISTENERS * 2 - 2,
+				g.getGraphStructureChangedListenerCount());
 		commit(g);
 
 		// test implicit unregister
@@ -372,8 +369,8 @@ public class GraphStructureChangedListenerTest extends InstanceTest {
 
 		createReadOnlyTransaction(g);
 		// only the auto removal one is expected to be deleted
-		assertEquals(LISTENERS * 2 - 3, g
-				.getGraphStructureChangedListenerCount());
+		assertEquals(LISTENERS * 2 - 3,
+				g.getGraphStructureChangedListenerCount());
 		commit(g);
 
 		for (int i = 0; i < LISTENERS; i++) {

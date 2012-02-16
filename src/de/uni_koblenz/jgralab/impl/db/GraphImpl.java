@@ -46,7 +46,9 @@ import de.uni_koblenz.jgralab.impl.IncidenceImpl;
 import de.uni_koblenz.jgralab.impl.InternalEdge;
 import de.uni_koblenz.jgralab.impl.InternalVertex;
 import de.uni_koblenz.jgralab.impl.ReversedEdgeBaseImpl;
+import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.GraphClass;
+import de.uni_koblenz.jgralab.schema.VertexClass;
 import de.uni_koblenz.jgralab.trans.CommitFailedException;
 import de.uni_koblenz.jgralab.trans.InvalidSavepointException;
 import de.uni_koblenz.jgralab.trans.Savepoint;
@@ -277,25 +279,27 @@ public abstract class GraphImpl extends GraphBaseImpl implements
 	}
 
 	private boolean isSameSchemaAsGraph(Edge edge, Vertex alpha, Vertex omega) {
-		return alpha.getSchema() == omega.getSchema()
-				&& alpha.getSchema() == getSchema()
-				&& edge.getSchema() == getSchema();
+		return (alpha.getSchema() == omega.getSchema())
+				&& (alpha.getSchema() == getSchema())
+				&& (edge.getSchema() == getSchema());
 	}
 
 	private boolean isGraphMatching(Edge edge, Vertex alpha, Vertex omega) {
-		return alpha.getGraph() == omega.getGraph() && alpha.getGraph() == this
-				&& edge.getGraph() == this;
+		return (alpha.getGraph() == omega.getGraph())
+				&& (alpha.getGraph() == this) && (edge.getGraph() == this);
 	}
 
 	private void testEdgeSuitingVertices(InternalEdge edge,
 			InternalVertex alpha, InternalVertex omega) {
-		if (!alpha.isValidAlpha(edge)) {
+		if (!(alpha.getAttributedElementClass()).isValidFromFor(edge
+				.getAttributedElementClass())) {
 			throw new GraphException("Edges of class "
 					+ edge.getAttributedElementClass().getQualifiedName()
 					+ " may not start at vertices of class "
 					+ alpha.getAttributedElementClass().getQualifiedName());
 		}
-		if (!omega.isValidOmega(edge)) {
+		if (!(omega.getAttributedElementClass()).isValidToFor(edge
+				.getAttributedElementClass())) {
 			throw new GraphException("Edges of class "
 					+ edge.getAttributedElementClass().getQualifiedName()
 					+ " may not end at vertices of class "
@@ -372,19 +376,17 @@ public abstract class GraphImpl extends GraphBaseImpl implements
 	}
 
 	@Override
-	public Edge internalCreateEdge(Class<? extends Edge> cls, Vertex alpha,
+	public <T extends Edge> T createEdge(EdgeClass ec, Vertex alpha,
 			Vertex omega) {
-		Edge edge = graphFactory.createEdgeWithDatabaseSupport(cls, 0, this,
-				alpha, omega);
+		T edge = graphFactory.createEdge(ec, 0, this, alpha, omega);
 		edge.initializeAttributesWithDefaultValues();
 		graphCache.addEdge((DatabasePersistableEdge) edge);
 		return edge;
 	}
 
 	@Override
-	public Vertex internalCreateVertex(Class<? extends Vertex> cls) {
-		Vertex vertex = graphFactory.createVertexWithDatabaseSupport(cls, 0,
-				this);
+	public <T extends Vertex> T createVertex(VertexClass vc) {
+		T vertex = graphFactory.createVertex(vc, 0, this);
 		vertex.initializeAttributesWithDefaultValues();
 		graphCache.addVertex((DatabasePersistableVertex) vertex);
 		return vertex;
@@ -791,13 +793,13 @@ public abstract class GraphImpl extends GraphBaseImpl implements
 
 	@Override
 	public boolean vSeqContainsVertex(Vertex v) {
-		return v != null && v.getGraph() == this
+		return (v != null) && (v.getGraph() == this)
 				&& vSeq.contains((DatabasePersistableVertex) v);
 	}
 
 	@Override
 	public boolean eSeqContainsEdge(Edge e) {
-		return (e != null) && e.getGraph() == this
+		return (e != null) && (e.getGraph() == this)
 				&& eSeq.contains((DatabasePersistableEdge) e);
 	}
 

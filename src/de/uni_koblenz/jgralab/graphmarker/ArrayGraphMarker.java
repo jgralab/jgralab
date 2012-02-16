@@ -49,7 +49,7 @@ import de.uni_koblenz.jgralab.algolib.functions.entries.FunctionEntry;
  * 
  * @param <T>
  */
-public abstract class ArrayGraphMarker<T extends GraphElement, O> extends
+public abstract class ArrayGraphMarker<T extends GraphElement<?, ?>, O> extends
 		AbstractGraphMarker<T> implements Function<T, O> {
 
 	/**

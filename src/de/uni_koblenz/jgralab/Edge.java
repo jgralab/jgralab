@@ -40,11 +40,11 @@ import de.uni_koblenz.jgralab.schema.EdgeClass;
 
 /**
  * represents a signed edge, has an orientation
- * 
+ *
  * @author ist@uni-koblenz.de
- * 
+ *
  */
-public interface Edge extends GraphElement {
+public interface Edge extends GraphElement<EdgeClass, Edge> {
 
 	/**
 	 * @return the next incidence object in iSeq of current vertex
@@ -68,12 +68,12 @@ public interface Edge extends GraphElement {
 	 * <code>kinds</code> aggregation semantics at this (
 	 * <code>thisIncidence == true</code>) or that (
 	 * <code>thisIncidence == false</code>) side.
-	 * 
+	 *
 	 * If no <code>kind</code> is given, it simply returns the first incident
 	 * edge.
-	 * 
+	 *
 	 * @see Vertex#getFirstIncidence(boolean, AggregationKind...)
-	 * 
+	 *
 	 * @param thisIncidence
 	 *            if true, <code>kinds</code> has to match the incidence at the
 	 *            current vertex, else it has to matche the incedence at the
@@ -187,7 +187,7 @@ public interface Edge extends GraphElement {
 
 	/**
 	 * sets the alpha vertex to v
-	 * 
+	 *
 	 * @param v
 	 *            a vertex
 	 */
@@ -195,7 +195,7 @@ public interface Edge extends GraphElement {
 
 	/**
 	 * sets the omega vertex to v
-	 * 
+	 *
 	 * @param v
 	 *            a vertex
 	 */
@@ -203,7 +203,7 @@ public interface Edge extends GraphElement {
 
 	/**
 	 * sets the this vertex to v
-	 * 
+	 *
 	 * @param v
 	 *            a vertex
 	 */
@@ -211,7 +211,7 @@ public interface Edge extends GraphElement {
 
 	/**
 	 * sets the that vertex to v
-	 * 
+	 *
 	 * @param v
 	 *            a vertex
 	 */
@@ -281,7 +281,7 @@ public interface Edge extends GraphElement {
 
 	/**
 	 * puts this edge immediately before e in eSeq
-	 * 
+	 *
 	 * @param e
 	 */
 	public void putBeforeEdge(Edge e);
@@ -294,7 +294,7 @@ public interface Edge extends GraphElement {
 
 	/**
 	 * puts this edge immediately after anEdge in eSeq
-	 * 
+	 *
 	 * @param e
 	 */
 	public void putAfterEdge(Edge e);
@@ -303,6 +303,7 @@ public interface Edge extends GraphElement {
 	 * removes this edge from eSeq and erases its attributes @ if used on an
 	 * incidence
 	 */
+	@Override
 	public void delete();
 
 	/**
@@ -369,4 +370,6 @@ public interface Edge extends GraphElement {
 	 */
 	public AggregationKind getThatAggregationKind();
 
+	@Override
+	public EdgeClass getAttributedElementClass();
 }

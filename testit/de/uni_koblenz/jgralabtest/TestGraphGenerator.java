@@ -36,6 +36,7 @@
 package de.uni_koblenz.jgralabtest;
 
 import de.uni_koblenz.jgralab.GraphIOException;
+import de.uni_koblenz.jgralab.ImplementationType;
 import de.uni_koblenz.jgralabtest.schemas.citymap.Bridge;
 import de.uni_koblenz.jgralabtest.schemas.citymap.CarPark;
 import de.uni_koblenz.jgralabtest.schemas.citymap.CityMap;
@@ -62,7 +63,7 @@ public class TestGraphGenerator {
 		CityMapSchema schema = CityMapSchema.instance();
 
 		// generate graph g1
-		CityMap g1 = schema.createCityMap("CityMapSample", 1000, 1000);
+		CityMap g1 = schema.createCityMap(ImplementationType.STANDARD,"CityMapSample", 1000, 1000);
 
 		Intersection v1 = g1.createIntersection();
 		Intersection v2 = g1.createIntersection();

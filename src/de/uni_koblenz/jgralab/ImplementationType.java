@@ -35,5 +35,5 @@
 package de.uni_koblenz.jgralab;
 
 public enum ImplementationType {
-	STANDARD, TRANSACTION, DATABASE;
+	STANDARD, TRANSACTION, DATABASE, GENERIC;
 }

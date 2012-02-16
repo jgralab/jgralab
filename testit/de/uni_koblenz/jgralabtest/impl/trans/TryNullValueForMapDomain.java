@@ -37,6 +37,7 @@ package de.uni_koblenz.jgralabtest.impl.trans;
 import java.util.Map;
 
 import de.uni_koblenz.jgralab.GraphIOException;
+import de.uni_koblenz.jgralab.ImplementationType;
 import de.uni_koblenz.jgralab.trans.CommitFailedException;
 import de.uni_koblenz.jgralabtest.schemas.record.Node;
 import de.uni_koblenz.jgralabtest.schemas.record.RecordTestGraph;
@@ -53,7 +54,7 @@ public class TryNullValueForMapDomain {
 			CommitFailedException {
 		// create graph without transaction support
 		RecordTestGraph graph = RecordTestSchema.instance()
-				.createRecordTestGraphWithTransactionSupport();
+				.createRecordTestGraph(ImplementationType.TRANSACTION);
 		graph.newTransaction();
 		Node node = graph.createNode();
 		node.set_nodeMap(null);

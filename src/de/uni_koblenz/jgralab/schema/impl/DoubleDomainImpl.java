@@ -35,6 +35,10 @@
 
 package de.uni_koblenz.jgralab.schema.impl;
 
+import java.io.IOException;
+
+import de.uni_koblenz.jgralab.GraphIO;
+import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.codegenerator.CodeBlock;
 import de.uni_koblenz.jgralab.codegenerator.CodeGenerator;
 import de.uni_koblenz.jgralab.codegenerator.CodeSnippet;
@@ -121,5 +125,21 @@ public final class DoubleDomainImpl extends BasicDomainImpl implements
 	@Override
 	public boolean isPrimitive() {
 		return true;
+	}
+
+	@Override
+	public Object parseGenericAttribute(GraphIO io) throws GraphIOException {
+		return io.matchDouble();
+	}
+
+	@Override
+	public void serializeGenericAttribute(GraphIO io, Object data)
+			throws IOException {
+		io.writeDouble((Double) data);
+	}
+
+	@Override
+	public boolean isConformGenericValue(Object value) {
+		return Double.class.isInstance(value);
 	}
 }

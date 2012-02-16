@@ -48,7 +48,7 @@ import de.uni_koblenz.jgralab.gretl.Context.TransformationPhase;
 import de.uni_koblenz.jgralab.schema.Attribute;
 
 public class SetMultipleAttributes extends
-		Transformation<PVector<PMap<AttributedElement, Object>>> {
+		Transformation<PVector<PMap<AttributedElement<?, ?>, Object>>> {
 
 	private Attribute[] attributes = null;
 	private PMap<Object, PSequence<Object>> archetype2valuesMap = null;
@@ -76,7 +76,7 @@ public class SetMultipleAttributes extends
 	}
 
 	@Override
-	protected PVector<PMap<AttributedElement, Object>> transform() {
+	protected PVector<PMap<AttributedElement<?, ?>, Object>> transform() {
 		if (context.phase != TransformationPhase.GRAPH) {
 			return null;
 		}
@@ -85,7 +85,7 @@ public class SetMultipleAttributes extends
 			archetype2valuesMap = context
 					.evaluateGReQLQuery(semanticExpression);
 		}
-		PVector<PMap<AttributedElement, Object>> retLst = Empty.vector();
+		PVector<PMap<AttributedElement<?, ?>, Object>> retLst = Empty.vector();
 		List<PMap<Object, Object>> lst = splice(archetype2valuesMap);
 		for (int i = 0; i < attributes.length; i++) {
 			retLst = retLst.plus(new SetAttributes(context, attributes[i], lst

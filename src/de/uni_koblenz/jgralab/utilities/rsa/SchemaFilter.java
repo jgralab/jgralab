@@ -180,7 +180,7 @@ public class SchemaFilter {
 	 * @param ae
 	 *            the element to decide whether to write "IN: " or "OUT: "
 	 */
-	private void writeIncludeOrExcludeInformation(AttributedElement ae) {
+	private void writeIncludeOrExcludeInformation(AttributedElement<?, ?> ae) {
 		if (includes.isMarked(ae)) {
 			debugOutputStream.print("IN: ");
 		} else {
@@ -337,14 +337,13 @@ public class SchemaFilter {
 		for (EdgeClass currentEdgeClass : schemaGraph.getEdgeClassVertices()) {
 			if (includes.isMarked(currentEdgeClass)) {
 				// only look at included EdgeClasses
-				IncidenceClass fromIC = (IncidenceClass) currentEdgeClass
+				IncidenceClass fromIC = currentEdgeClass
 						.getFirstComesFromIncidence().getOmega();
-				VertexClass fromVC = (VertexClass) fromIC.getFirstEndsAtIncidence()
+				VertexClass fromVC = fromIC.getFirstEndsAtIncidence()
 						.getOmega();
-				IncidenceClass toIC = (IncidenceClass) currentEdgeClass
+				IncidenceClass toIC = currentEdgeClass
 						.getFirstGoesToIncidence().getOmega();
-				VertexClass toVC = (VertexClass) toIC.getFirstEndsAtIncidence()
-						.getOmega();
+				VertexClass toVC = toIC.getFirstEndsAtIncidence().getOmega();
 				if (!includes.isMarked(fromVC) || !includes.isMarked(toVC)) {
 					// exclude all EdgeClasses whose to or from VertexClasses
 					// are already excluded
@@ -392,8 +391,8 @@ public class SchemaFilter {
 		}
 		for (SpecializesVertexClass current : currentVertexClass
 				.getSpecializesVertexClassIncidences(EdgeDirection.IN)) {
-			if (!isVertexClassExcluded(processed, (VertexClass) current
-					.getThat())) {
+			if (!isVertexClassExcluded(processed,
+					(VertexClass) current.getThat())) {
 				// at least one subclass is not excluded
 				return false;
 			}

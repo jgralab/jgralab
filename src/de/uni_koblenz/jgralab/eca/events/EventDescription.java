@@ -42,13 +42,14 @@ import org.pcollections.PCollection;
 import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.eca.ECARule;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluatorImpl;
+import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 
-public abstract class EventDescription {
+public abstract class EventDescription<AEC extends AttributedElementClass<AEC, ?>> {
 
 	/**
 	 * Rules that can possibly become triggered by this EventDescription
 	 */
-	protected List<ECARule> activeRules;
+	protected List<ECARule<AEC>> activeRules;
 
 	/**
 	 * EventTime: BEFORE or AFTER
@@ -79,7 +80,7 @@ public abstract class EventDescription {
 	 * Class of the elements, this Event monitors if the {@link context} is set
 	 * to TYPE, null otherwise
 	 */
-	private Class<? extends AttributedElement> type;
+	private AEC type;
 
 	// +++++++ Constructors ++++++++++++++++++++++++++++++++++++++++++++++++++
 
@@ -91,10 +92,9 @@ public abstract class EventDescription {
 	 * @param type
 	 *            the Class of elements, this Event monitors
 	 */
-	public EventDescription(EventTime time,
-			Class<? extends AttributedElement> type) {
+	public EventDescription(EventTime time, AEC type) {
 		this.time = time;
-		activeRules = new ArrayList<ECARule>();
+		activeRules = new ArrayList<ECARule<AEC>>();
 		this.type = type;
 		context = Context.TYPE;
 	}
@@ -109,7 +109,7 @@ public abstract class EventDescription {
 	 */
 	public EventDescription(EventTime time, String contExpr) {
 		this.time = time;
-		activeRules = new ArrayList<ECARule>();
+		activeRules = new ArrayList<ECARule<AEC>>();
 		contextExpression = contExpr;
 		context = Context.EXPRESSION;
 	}
@@ -124,8 +124,7 @@ public abstract class EventDescription {
 	 *            Type of the element that will become created or was deleted
 	 * @return whether the Event matches this EventDescription
 	 */
-	protected boolean checkContext(
-			Class<? extends AttributedElement> elementClass) {
+	protected boolean checkContext(AEC elementClass) {
 		if (getType().equals(elementClass)) {
 			return true;
 		} else {
@@ -141,9 +140,9 @@ public abstract class EventDescription {
 	 *            the element to check
 	 * @return whether the Event matches this EventDescription
 	 */
-	protected boolean checkContext(AttributedElement element) {
+	protected boolean checkContext(AttributedElement<AEC, ?> element) {
 		if (context.equals(Context.TYPE)) {
-			if (element.getSchemaClass().equals(type)) {
+			if (element.getAttributedElementClass().equals(type)) {
 				return true;
 			} else {
 				return false;
@@ -178,7 +177,7 @@ public abstract class EventDescription {
 	/**
 	 * @return list with all currently active ECARules of this Event
 	 */
-	public List<ECARule> getActiveECARules() {
+	public List<ECARule<AEC>> getActiveECARules() {
 		return activeRules;
 	}
 
@@ -192,7 +191,7 @@ public abstract class EventDescription {
 	/**
 	 * @return the type of the monitored elements
 	 */
-	public Class<? extends AttributedElement> getType() {
+	public AEC getType() {
 		return type;
 	}
 
@@ -201,6 +200,11 @@ public abstract class EventDescription {
 	 */
 	public Context getContext() {
 		return context;
+	}
+
+	@SuppressWarnings("unchecked")
+	public void addActiveRule(ECARule<?> rule) {
+		activeRules.add((ECARule<AEC>) rule);
 	}
 
 }

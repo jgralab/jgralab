@@ -56,7 +56,7 @@ public class VersionedReferenceImpl<E> extends VersionedDataObjectImpl<E> {
 	 * @param name
 	 *            the name of the attribute
 	 */
-	public VersionedReferenceImpl(AttributedElement attributedElement,
+	public VersionedReferenceImpl(AttributedElement<?, ?> attributedElement,
 			E initialPersistentValue, String name) {
 		super(attributedElement, initialPersistentValue, name);
 	}

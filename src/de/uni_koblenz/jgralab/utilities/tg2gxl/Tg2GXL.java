@@ -58,10 +58,10 @@ import de.uni_koblenz.jgralab.WorkInProgress;
 import de.uni_koblenz.jgralab.grumlschema.domains.HasRecordDomainComponent;
 import de.uni_koblenz.jgralab.grumlschema.structure.Schema;
 import de.uni_koblenz.jgralab.schema.Attribute;
-import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.BooleanDomain;
 import de.uni_koblenz.jgralab.schema.Domain;
 import de.uni_koblenz.jgralab.schema.DoubleDomain;
+import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.EnumDomain;
 import de.uni_koblenz.jgralab.schema.IntegerDomain;
 import de.uni_koblenz.jgralab.schema.ListDomain;
@@ -70,6 +70,7 @@ import de.uni_koblenz.jgralab.schema.RecordDomain;
 import de.uni_koblenz.jgralab.schema.RecordDomain.RecordComponent;
 import de.uni_koblenz.jgralab.schema.SetDomain;
 import de.uni_koblenz.jgralab.schema.StringDomain;
+import de.uni_koblenz.jgralab.schema.VertexClass;
 import de.uni_koblenz.jgralab.utilities.tg2schemagraph.Schema2SchemaGraph;
 import de.uni_koblenz.jgralab.utilities.tg2whatever.Tg2Whatever;
 
@@ -183,7 +184,7 @@ public class Tg2GXL extends Tg2Whatever {
 	 */
 	@Override
 	protected void printVertex(PrintStream out, Vertex v) {
-		AttributedElementClass elemClass = v.getAttributedElementClass();
+		VertexClass elemClass = v.getAttributedElementClass();
 		if (printSchema && !(v instanceof Schema)) {
 
 			if (v instanceof de.uni_koblenz.jgralab.grumlschema.structure.AttributedElementClass) {
@@ -238,7 +239,7 @@ public class Tg2GXL extends Tg2Whatever {
 	 */
 	@Override
 	protected void printEdge(PrintStream out, Edge e) {
-		AttributedElementClass elemClass = e.getAttributedElementClass();
+		EdgeClass elemClass = e.getAttributedElementClass();
 
 		if (printSchema
 				&& !(e instanceof de.uni_koblenz.jgralab.grumlschema.structure.DefinesGraphClass)
@@ -304,7 +305,7 @@ public class Tg2GXL extends Tg2Whatever {
 	 *            <code>Attribute</code>
 	 */
 
-	private void printAttributes(PrintStream out, AttributedElement elem) {
+	private void printAttributes(PrintStream out, AttributedElement<?, ?> elem) {
 		for (Attribute attr : elem.getAttributedElementClass()
 				.getAttributeList()) {
 

@@ -39,7 +39,7 @@ import de.uni_koblenz.jgralab.schema.Constraint;
 
 /**
  * @author Tassilo Horn <horn@uni-koblenz.de>
- * 
+ *
  */
 public class ConstraintImpl implements Constraint {
 
@@ -54,8 +54,7 @@ public class ConstraintImpl implements Constraint {
 	}
 
 	public ConstraintImpl(String msg, String pred) {
-		message = msg;
-		predicate = pred;
+		this(msg, pred, null);
 	}
 
 	@Override
@@ -85,10 +84,9 @@ public class ConstraintImpl implements Constraint {
 	@Override
 	public int hashCode() {
 		int hash = 17;
-		hash = 31 * hash + message.hashCode();
-		hash = 31 * hash + predicate.hashCode();
-		hash = 31
-				* hash
+		hash = (31 * hash) + message.hashCode();
+		hash = (31 * hash) + predicate.hashCode();
+		hash = (31 * hash)
 				+ (null == offendingElements ? 0 : offendingElements.hashCode());
 		return hash;
 
@@ -104,7 +102,13 @@ public class ConstraintImpl implements Constraint {
 		if (result != 0) {
 			return result;
 		}
-		return offendingElements.compareTo(o.getOffendingElementsQuery());
+		if (offendingElements != null) {
+			return offendingElements.compareTo(o.getOffendingElementsQuery());
+		}
+		if (o.getOffendingElementsQuery() == null) {
+			return 0;
+		}
+		return -1;
 	}
 
 	@Override
@@ -115,7 +119,8 @@ public class ConstraintImpl implements Constraint {
 		sb.append("\", predicate = \"");
 		sb.append(CodeGenerator.stringQuote(predicate));
 		sb.append("\", offendingElements = ");
-		sb.append(offendingElements);
+		sb.append((offendingElements == null ? "<no offending elems query>"
+				: offendingElements));
 		sb.append("}");
 		return sb.toString();
 	}

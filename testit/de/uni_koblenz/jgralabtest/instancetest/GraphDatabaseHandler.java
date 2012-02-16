@@ -126,7 +126,7 @@ public class GraphDatabaseHandler {
 			int vMax, int eMax) {
 		try {
 			return MinimalSchema.instance()
-					.createMinimalGraphWithDatabaseSupport(id, vMax, eMax,
+					.createMinimalGraph(id, vMax, eMax,
 							graphDatabase);
 		} catch (Exception exception) {
 			exception.printStackTrace();
@@ -143,7 +143,7 @@ public class GraphDatabaseHandler {
 			int vMax, int eMax) {
 		try {
 			return VertexTestSchema.instance()
-					.createVertexTestGraphWithDatabaseSupport(id, vMax, eMax,
+					.createVertexTestGraph(id, vMax, eMax,
 							graphDatabase);
 		} catch (Exception exception) {
 			exception.printStackTrace();

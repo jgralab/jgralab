@@ -84,7 +84,7 @@ public class GraphValidator {
 			System.err.println("Usage: java GraphValidator <graph.tg>");
 			System.exit(1);
 		}
-		Graph g = GraphIO.loadGraphFromFileWithStandardSupport(args[0],
+		Graph g = GraphIO.loadGraphFromFile(args[0],
 				new ConsoleProgressFunction("Loading"));
 		GraphValidator v = new GraphValidator(g);
 		v.createValidationReport("__validation_report.html");
@@ -107,7 +107,7 @@ public class GraphValidator {
 
 		int toMin = ec.getTo().getMin();
 		int toMax = ec.getTo().getMax();
-		Set<AttributedElement> badOutgoing = new HashSet<AttributedElement>();
+		Set<AttributedElement<?, ?>> badOutgoing = new HashSet<AttributedElement<?, ?>>();
 		for (Vertex v : graph.vertices(ec.getFrom().getVertexClass())) {
 			int degree = v.getDegree(ec, EdgeDirection.OUT);
 			if ((degree < toMin) || (degree > toMax)) {
@@ -123,7 +123,7 @@ public class GraphValidator {
 
 		int fromMin = ec.getFrom().getMin();
 		int fromMax = ec.getFrom().getMax();
-		Set<AttributedElement> badIncoming = new HashSet<AttributedElement>();
+		Set<AttributedElement<?, ?>> badIncoming = new HashSet<AttributedElement<?, ?>>();
 		for (Vertex v : graph.vertices(ec.getTo().getVertexClass())) {
 			int degree = v.getDegree(ec, EdgeDirection.IN);
 			if ((degree < fromMin) || (degree > fromMax)) {
@@ -153,23 +153,16 @@ public class GraphValidator {
 		SortedSet<ConstraintViolation> brokenConstraints = new TreeSet<ConstraintViolation>();
 
 		// Check if all multiplicities are correct
-		for (EdgeClass ec : graph.getSchema()
-				.getEdgeClassesInTopologicalOrder()) {
-			if (ec.isInternal()) {
-				continue;
-			}
+		for (EdgeClass ec : graph.getGraphClass().getEdgeClasses()) {
 			brokenConstraints.addAll(validateMultiplicities(ec));
 		}
 
 		// check if all greql constraints are met
-		List<AttributedElementClass> aecs = new ArrayList<AttributedElementClass>();
+		List<AttributedElementClass<?, ?>> aecs = new ArrayList<AttributedElementClass<?, ?>>();
 		aecs.add(graph.getSchema().getGraphClass());
-		aecs.addAll(graph.getSchema().getVertexClassesInTopologicalOrder());
-		aecs.addAll(graph.getSchema().getEdgeClassesInTopologicalOrder());
-		for (AttributedElementClass aec : aecs) {
-			if (aec.isInternal()) {
-				continue;
-			}
+		aecs.addAll(graph.getSchema().getGraphClass().getVertexClasses());
+		aecs.addAll(graph.getSchema().getGraphClass().getEdgeClasses());
+		for (AttributedElementClass<?, ?> aec : aecs) {
 			brokenConstraints.addAll(validateConstraints(aec));
 		}
 		return brokenConstraints;
@@ -184,7 +177,7 @@ public class GraphValidator {
 	 * @return a set of {@link ConstraintViolation} objects
 	 */
 	public SortedSet<ConstraintViolation> validateConstraints(
-			AttributedElementClass aec) {
+			AttributedElementClass<?, ?> aec) {
 		SortedSet<ConstraintViolation> brokenConstraints = new TreeSet<ConstraintViolation>();
 		for (Constraint constraint : aec.getConstraints()) {
 			String query = constraint.getPredicate();
@@ -314,7 +307,8 @@ public class GraphValidator {
 					bw.append("</td>");
 					bw.append("<td class=\"" + cssClass + "\">");
 					if (ci.getOffendingElements() != null) {
-						for (AttributedElement ae : ci.getOffendingElements()) {
+						for (AttributedElement<?, ?> ae : ci
+								.getOffendingElements()) {
 							bw.append(ae.toString());
 							bw.append("<br/>");
 						}

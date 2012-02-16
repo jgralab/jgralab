@@ -34,12 +34,12 @@
  */
 package de.uni_koblenz.jgralab.eca.events;
 
-import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.eca.events.EventDescription.EventTime;
+import de.uni_koblenz.jgralab.schema.EdgeClass;
 
-public class CreateEdgeEvent extends Event {
+public class CreateEdgeEvent extends Event<EdgeClass> {
 
 	/**
 	 * The created Edge or null if the EventTime is before
@@ -57,7 +57,8 @@ public class CreateEdgeEvent extends Event {
 	 *            the created Edge or null if the EventTime is before
 	 */
 	public CreateEdgeEvent(int nestedCalls, Graph graph, Edge edge) {
-		super(nestedCalls, EventTime.AFTER, graph, edge.getSchemaClass());
+		super(nestedCalls, EventTime.AFTER, graph, edge
+				.getAttributedElementClass());
 		this.edge = edge;
 	}
 
@@ -71,17 +72,9 @@ public class CreateEdgeEvent extends Event {
 	 * @param type
 	 *            the type
 	 */
-	public CreateEdgeEvent(int nestedCalls, Graph graph,
-			Class<? extends AttributedElement> type) {
+	public CreateEdgeEvent(int nestedCalls, Graph graph, EdgeClass type) {
 		super(nestedCalls, EventTime.BEFORE, graph, type);
 		edge = null;
-	}
-
-	/**
-	 * @return the created Edge or null if the EventTime is before
-	 */
-	public Edge getEdge() {
-		return edge;
 	}
 
 	/**
@@ -89,7 +82,7 @@ public class CreateEdgeEvent extends Event {
 	 *         EventTime is before
 	 */
 	@Override
-	public AttributedElement getElement() {
+	public Edge getElement() {
 		return edge;
 	}
 

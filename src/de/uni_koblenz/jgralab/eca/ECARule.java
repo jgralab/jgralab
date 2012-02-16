@@ -36,8 +36,9 @@ package de.uni_koblenz.jgralab.eca;
 
 import de.uni_koblenz.jgralab.eca.events.Event;
 import de.uni_koblenz.jgralab.eca.events.EventDescription;
+import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 
-public class ECARule {
+public class ECARule<AEC extends AttributedElementClass<AEC, ?>> {
 
 	/**
 	 * ECARuleManager of this ECARule
@@ -47,17 +48,17 @@ public class ECARule {
 	/**
 	 * Event part of ECARule
 	 */
-	private EventDescription eventDescription;
+	private EventDescription<AEC> eventDescription;
 
 	/**
 	 * Condition part of ECARule, optional
 	 */
-	private Condition condition;
+	private Condition<AEC> condition;
 
 	/**
 	 * Action part of ECARule
 	 */
-	private Action action;
+	private Action<AEC> action;
 
 	// +++++ Constructor Summary +++++++++++++++++++++++++++
 
@@ -69,7 +70,7 @@ public class ECARule {
 	 * @param action
 	 *            Action
 	 */
-	public ECARule(EventDescription event, Action action) {
+	public ECARule(EventDescription<AEC> event, Action<AEC> action) {
 		this.setEventDescription(event);
 		this.setAction(action);
 	}
@@ -84,7 +85,8 @@ public class ECARule {
 	 * @param action
 	 *            Action
 	 */
-	public ECARule(EventDescription event, Condition condition, Action action) {
+	public ECARule(EventDescription<AEC> event, Condition<AEC> condition,
+			Action<AEC> action) {
 		this.setEventDescription(event);
 		this.setCondition(condition);
 		this.setAction(action);
@@ -100,7 +102,7 @@ public class ECARule {
 	 * @param event
 	 *            an Event containing the concerned element
 	 */
-	public void trigger(Event event) {
+	public void trigger(Event<AEC> event) {
 		if (this.condition == null || this.condition.evaluate(event)) {
 			this.action.doAction(event);
 		}
@@ -111,7 +113,7 @@ public class ECARule {
 	/**
 	 * @return the Event
 	 */
-	public EventDescription getEventDescription() {
+	public EventDescription<AEC> getEventDescription() {
 		return eventDescription;
 	}
 
@@ -121,14 +123,14 @@ public class ECARule {
 	 * @param event
 	 *            the Event
 	 */
-	private void setEventDescription(EventDescription event) {
+	private void setEventDescription(EventDescription<AEC> event) {
 		this.eventDescription = event;
 	}
 
 	/**
 	 * @return the Condition
 	 */
-	public Condition getCondition() {
+	public Condition<AEC> getCondition() {
 		return condition;
 	}
 
@@ -138,14 +140,14 @@ public class ECARule {
 	 * @param condition
 	 *            the Condition
 	 */
-	private void setCondition(Condition condition) {
+	private void setCondition(Condition<AEC> condition) {
 		this.condition = condition;
 	}
 
 	/**
 	 * @return the Action
 	 */
-	public Action getAction() {
+	public Action<AEC> getAction() {
 		return action;
 	}
 
@@ -155,7 +157,7 @@ public class ECARule {
 	 * @param action
 	 *            the Action
 	 */
-	private void setAction(Action action) {
+	private void setAction(Action<AEC> action) {
 		this.action = action;
 	}
 

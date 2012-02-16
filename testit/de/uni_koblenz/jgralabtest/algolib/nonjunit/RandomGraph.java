@@ -36,6 +36,7 @@ package de.uni_koblenz.jgralabtest.algolib.nonjunit;
 
 import java.util.Random;
 
+import de.uni_koblenz.jgralab.ImplementationType;
 import de.uni_koblenz.jgralabtest.schemas.algolib.simple.SimpleGraph;
 import de.uni_koblenz.jgralabtest.schemas.algolib.simple.SimpleSchema;
 import de.uni_koblenz.jgralabtest.schemas.algolib.simple.SimpleVertex;
@@ -62,7 +63,7 @@ public class RandomGraph {
 
 	public static SimpleGraph createEmptyGraph() {
 		System.out.println("Creating empty graph.");
-		SimpleGraph out = SimpleSchema.instance().createSimpleGraph();
+		SimpleGraph out = SimpleSchema.instance().createSimpleGraph(ImplementationType.STANDARD);
 		return out;
 	}
 

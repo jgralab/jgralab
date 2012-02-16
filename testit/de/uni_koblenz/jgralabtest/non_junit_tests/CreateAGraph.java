@@ -38,13 +38,14 @@ import java.io.DataOutputStream;
 
 import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.GraphIOException;
+import de.uni_koblenz.jgralab.ImplementationType;
 import de.uni_koblenz.jgralabtest.schemas.minimal.MinimalGraph;
 import de.uni_koblenz.jgralabtest.schemas.minimal.MinimalSchema;
 
 public class CreateAGraph {
 	public static void main(String[] args) throws GraphIOException {
 		MinimalSchema schema = MinimalSchema.instance();
-		MinimalGraph graph = schema.createMinimalGraph();
+		MinimalGraph graph = schema.createMinimalGraph(ImplementationType.STANDARD);
 		GraphIO.saveGraphToStream(graph, new DataOutputStream(System.out), null);
 	}
 }

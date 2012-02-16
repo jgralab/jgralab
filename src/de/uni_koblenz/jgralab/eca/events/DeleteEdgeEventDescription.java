@@ -34,13 +34,13 @@
  */
 package de.uni_koblenz.jgralab.eca.events;
 
-import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.eca.ECAException;
 import de.uni_koblenz.jgralab.eca.ECARule;
+import de.uni_koblenz.jgralab.schema.EdgeClass;
 
-public class DeleteEdgeEventDescription extends EventDescription {
+public class DeleteEdgeEventDescription extends EventDescription<EdgeClass> {
 
 	/**
 	 * Creates an DeleteEdgeEventDescription with the given parameters
@@ -50,8 +50,7 @@ public class DeleteEdgeEventDescription extends EventDescription {
 	 * @param type
 	 *            the Class of elements, this Event monitors
 	 */
-	public DeleteEdgeEventDescription(EventTime time,
-			Class<? extends AttributedElement> type) {
+	public DeleteEdgeEventDescription(EventTime time, EdgeClass type) {
 		super(time, type);
 	}
 
@@ -80,15 +79,14 @@ public class DeleteEdgeEventDescription extends EventDescription {
 	 * @param element
 	 *            the to be deleted Edge
 	 */
-	public void fire(AttributedElement element) {
+	public void fire(Edge element) {
 		if (super.checkContext(element)) {
-			int nested = this.getActiveECARules().get(0).getECARuleManager()
+			int nested = getActiveECARules().get(0).getECARuleManager()
 					.getNestedTriggerCalls();
-			Graph graph = this.getActiveECARules().get(0).getECARuleManager()
+			Graph graph = getActiveECARules().get(0).getECARuleManager()
 					.getGraph();
-			for (ECARule rule : activeRules) {
-				rule.trigger(new DeleteEdgeEvent(nested, graph,
-						(Edge) element));
+			for (ECARule<EdgeClass> rule : activeRules) {
+				rule.trigger(new DeleteEdgeEvent(nested, graph, element));
 			}
 		}
 	}
@@ -99,13 +97,13 @@ public class DeleteEdgeEventDescription extends EventDescription {
 	 * @param type
 	 *            the type of the Edge that is deleted
 	 */
-	public void fire(Class<? extends AttributedElement> type) {
+	public void fire(EdgeClass type) {
 		if (super.checkContext(type)) {
-			int nested = this.getActiveECARules().get(0).getECARuleManager()
+			int nested = getActiveECARules().get(0).getECARuleManager()
 					.getNestedTriggerCalls();
-			Graph graph = this.getActiveECARules().get(0).getECARuleManager()
+			Graph graph = getActiveECARules().get(0).getECARuleManager()
 					.getGraph();
-			for (ECARule rule : activeRules) {
+			for (ECARule<EdgeClass> rule : activeRules) {
 				rule.trigger(new DeleteEdgeEvent(nested, graph, type));
 			}
 		}

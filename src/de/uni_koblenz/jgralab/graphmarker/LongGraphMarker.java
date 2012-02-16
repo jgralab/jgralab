@@ -42,7 +42,7 @@ import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.algolib.functions.LongFunction;
 import de.uni_koblenz.jgralab.algolib.functions.entries.LongFunctionEntry;
 
-public abstract class LongGraphMarker<T extends GraphElement> extends
+public abstract class LongGraphMarker<T extends GraphElement<?, ?>> extends
 		AbstractGraphMarker<T> implements LongFunction<T> {
 
 	private static final long DEFAULT_UNMARKED_VALUE = Long.MIN_VALUE;

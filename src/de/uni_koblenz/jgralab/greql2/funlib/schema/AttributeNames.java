@@ -50,7 +50,7 @@ public class AttributeNames extends Function {
 				5, 5, 1.0, Category.SCHEMA_ACCESS);
 	}
 
-	public PSet<String> evaluate(AttributedElementClass cls) {
+	public PSet<String> evaluate(AttributedElementClass<?, ?> cls) {
 		PSet<String> result = JGraLab.set();
 		for (Attribute a : cls.getAttributeList()) {
 			result = result.plus(a.getName());
@@ -58,7 +58,7 @@ public class AttributeNames extends Function {
 		return result;
 	}
 
-	public PSet<String> evaluate(AttributedElement el) {
+	public PSet<String> evaluate(AttributedElement<?, ?> el) {
 		return evaluate(el.getAttributedElementClass());
 	}
 }

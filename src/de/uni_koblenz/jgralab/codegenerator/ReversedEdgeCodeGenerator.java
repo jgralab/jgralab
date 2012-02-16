@@ -46,9 +46,9 @@ import de.uni_koblenz.jgralab.schema.VertexClass;
 
 /**
  * TODO add comment
- * 
+ *
  * @author ist@uni-koblenz.de
- * 
+ *
  */
 public class ReversedEdgeCodeGenerator extends AttributedElementCodeGenerator {
 
@@ -56,6 +56,7 @@ public class ReversedEdgeCodeGenerator extends AttributedElementCodeGenerator {
 			String schemaPackageName, CodeGeneratorConfiguration config) {
 		super(edgeClass, schemaPackageName, config);
 		rootBlock.setVariable("graphElementClass", "ReversedEdge");
+		rootBlock.setVariable("schemaElementClass", "EdgeClass");
 		rootBlock.setVariable("isImplementationClassOnly", "true");
 		rootBlock.setVariable("className",
 				"Reversed" + edgeClass.getSimpleName());
@@ -179,11 +180,11 @@ public class ReversedEdgeCodeGenerator extends AttributedElementCodeGenerator {
 	private CodeBlock createNextEdgeMethods() {
 		CodeList code = new CodeList();
 
-		TreeSet<AttributedElementClass> superClasses = new TreeSet<AttributedElementClass>();
+		TreeSet<AttributedElementClass<?, ?>> superClasses = new TreeSet<AttributedElementClass<?, ?>>();
 		superClasses.addAll(aec.getAllSuperClasses());
 		superClasses.add(aec);
 
-		for (AttributedElementClass ec : superClasses) {
+		for (AttributedElementClass<?, ?> ec : superClasses) {
 			if (ec.isInternal()) {
 				continue;
 			}
@@ -211,11 +212,11 @@ public class ReversedEdgeCodeGenerator extends AttributedElementCodeGenerator {
 	private CodeBlock createNextIncidenceMethods() {
 		CodeList code = new CodeList();
 
-		TreeSet<AttributedElementClass> superClasses = new TreeSet<AttributedElementClass>();
+		TreeSet<AttributedElementClass<?, ?>> superClasses = new TreeSet<AttributedElementClass<?, ?>>();
 		superClasses.addAll(aec.getAllSuperClasses());
 		superClasses.add(aec);
 
-		for (AttributedElementClass ec : superClasses) {
+		for (AttributedElementClass<?, ?> ec : superClasses) {
 			if (ec.isInternal()) {
 				continue;
 			}
@@ -328,4 +329,17 @@ public class ReversedEdgeCodeGenerator extends AttributedElementCodeGenerator {
 		return null;
 	}
 
+	@Override
+	protected CodeBlock createAttributedElementClassConstant() {
+		return null;
+	}
+
+	@Override
+	protected CodeBlock createGetAttributedElementClassMethod() {
+		return new CodeSnippet(
+				true,
+				"@Override",
+				"public final #jgSchemaPackage#.#schemaElementClass# getAttributedElementClass() {",
+				"\treturn getNormalEdge().getAttributedElementClass();", "}");
+	}
 }

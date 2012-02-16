@@ -67,7 +67,7 @@ public class SavepointImpl implements Savepoint {
 	protected Map<EdgeImpl, Map<ListPosition, Boolean>> changedEseqEdges;
 	protected Map<VertexImpl, Map<IncidenceImpl, Map<ListPosition, Boolean>>> changedIncidences;
 	protected Map<EdgeImpl, VertexPosition> changedEdges;
-	protected Map<AttributedElement, Set<VersionedDataObject<?>>> changedAttributes;
+	protected Map<AttributedElement<?, ?>, Set<VersionedDataObject<?>>> changedAttributes;
 
 	/**
 	 * 
@@ -119,7 +119,7 @@ public class SavepointImpl implements Savepoint {
 			changedEdges.putAll(transaction.changedEdges);
 		}
 		if (transaction.changedAttributes != null) {
-			changedAttributes = new HashMap<AttributedElement, Set<VersionedDataObject<?>>>(
+			changedAttributes = new HashMap<AttributedElement<?, ?>, Set<VersionedDataObject<?>>>(
 					1, TransactionManagerImpl.LOAD_FACTOR);
 			changedAttributes.putAll(transaction.changedAttributes);
 		}

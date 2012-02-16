@@ -47,8 +47,8 @@ import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphException;
 import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.impl.InternalEdge;
 import de.uni_koblenz.jgralab.impl.IncidenceImpl;
+import de.uni_koblenz.jgralab.impl.InternalEdge;
 import de.uni_koblenz.jgralab.impl.InternalVertex;
 import de.uni_koblenz.jgralab.schema.Attribute;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
@@ -275,8 +275,8 @@ public abstract class VertexImpl extends
 			this.incidenceListVersion = new VersionedReferenceImpl<Long>(this,
 					null, "$incidenceListVersion");
 		}
-		this.incidenceListVersion.setValidValue(incidenceListVersion, graph
-				.getCurrentTransaction());
+		this.incidenceListVersion.setValidValue(incidenceListVersion,
+				graph.getCurrentTransaction());
 	}
 
 	@Override
@@ -450,7 +450,7 @@ public abstract class VertexImpl extends
 				}
 				// get all changed attributes of this instance...
 				if (transaction.changedAttributes == null) {
-					transaction.changedAttributes = new HashMap<AttributedElement, Set<VersionedDataObject<?>>>(
+					transaction.changedAttributes = new HashMap<AttributedElement<?, ?>, Set<VersionedDataObject<?>>>(
 							1, TransactionManagerImpl.LOAD_FACTOR);
 				}
 				Set<VersionedDataObject<?>> attributes = transaction.changedAttributes
@@ -485,15 +485,15 @@ public abstract class VertexImpl extends
 
 	@Override
 	public Iterable<Edge> incidences(EdgeClass eclass, EdgeDirection dir) {
-		return new AttributedElementIterable<Edge>(super
-				.incidences(eclass, dir), graph);
+		return new AttributedElementIterable<Edge>(
+				super.incidences(eclass, dir), graph);
 	}
 
 	@Override
 	public Iterable<Edge> incidences(Class<? extends Edge> eclass,
 			EdgeDirection dir) {
-		return new AttributedElementIterable<Edge>(super
-				.incidences(eclass, dir), graph);
+		return new AttributedElementIterable<Edge>(
+				super.incidences(eclass, dir), graph);
 	}
 
 	@Override

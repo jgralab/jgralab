@@ -56,6 +56,7 @@ import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.JGraLab;
+import de.uni_koblenz.jgralab.grumlschema.GrumlSchema;
 import de.uni_koblenz.jgralab.grumlschema.SchemaGraph;
 import de.uni_koblenz.jgralab.grumlschema.domains.BooleanDomain;
 import de.uni_koblenz.jgralab.grumlschema.domains.CollectionDomain;
@@ -144,9 +145,9 @@ public class SchemaGraph2XMI {
 		String outputName = cli.getOptionValue("o");
 		try {
 			if (cli.hasOption("ig")) {
-				s.process((SchemaGraph) GraphIO
-						.loadGraphFromFileWithStandardSupport(
-								cli.getOptionValue("ig"), null), outputName);
+				s.process(
+						GrumlSchema.instance().loadSchemaGraph(
+								cli.getOptionValue("ig")), outputName);
 			} else {
 				s.process(new Schema2SchemaGraph().convert2SchemaGraph(GraphIO
 						.loadSchemaFromFile(cli.getOptionValue("i"))),

@@ -41,7 +41,7 @@ import de.uni_koblenz.jgralab.schema.VertexClass;
 public class CreateVertexClass extends Transformation<VertexClass> {
 
 	protected String qualifiedName = null;
-	private PSet<Object> archetypes = null;
+	private PSet<? extends Object> archetypes = null;
 	private String semanticExpression = null;
 
 	protected CreateVertexClass(final Context c, final String qualifiedName) {
@@ -50,7 +50,7 @@ public class CreateVertexClass extends Transformation<VertexClass> {
 	}
 
 	public CreateVertexClass(final Context c, final String qualifiedName,
-			final PSet<Object> archetypes) {
+			final PSet<? extends Object> archetypes) {
 		this(c, qualifiedName);
 		this.archetypes = archetypes;
 	}

@@ -36,7 +36,6 @@
 package de.uni_koblenz.jgralab.impl;
 
 import java.io.DataOutputStream;
-import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
@@ -56,7 +55,6 @@ import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.GraphStructureChangedListener;
 import de.uni_koblenz.jgralab.GraphStructureChangedListenerWithAutoRemove;
-import de.uni_koblenz.jgralab.NoSuchAttributeException;
 import de.uni_koblenz.jgralab.ProgressFunction;
 import de.uni_koblenz.jgralab.RandomIdGenerator;
 import de.uni_koblenz.jgralab.Record;
@@ -66,7 +64,6 @@ import de.uni_koblenz.jgralab.eca.ECARuleManagerInterface;
 import de.uni_koblenz.jgralab.graphmarker.SubGraphMarker;
 import de.uni_koblenz.jgralab.schema.AggregationKind;
 import de.uni_koblenz.jgralab.schema.Attribute;
-import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.EnumDomain;
 import de.uni_koblenz.jgralab.schema.GraphClass;
@@ -84,58 +81,6 @@ import de.uni_koblenz.jgralab.schema.VertexClass;
 public abstract class GraphBaseImpl implements Graph, InternalGraph {
 
 	// ------------- GRAPH VARIABLES -------------
-
-	@Override
-	public AttributedElementClass getAttributedElementClass() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Class<? extends AttributedElement> getSchemaClass() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public void readAttributeValueFromString(String attributeName, String value)
-			throws GraphIOException, NoSuchAttributeException {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public String writeAttributeValueToString(String attributeName)
-			throws IOException, GraphIOException, NoSuchAttributeException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public void writeAttributeValues(GraphIO io) throws IOException,
-			GraphIOException {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void readAttributeValues(GraphIO io) throws GraphIOException {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public <T> T getAttribute(String name) throws NoSuchAttributeException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public <T> void setAttribute(String name, T data)
-			throws NoSuchAttributeException {
-		// TODO Auto-generated method stub
-
-	}
 
 	/**
 	 * the unique id of the graph in the schema
@@ -239,7 +184,7 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 		}
 
 		schema = cls.getSchema();
-		graphFactory = schema.getGraphFactory();
+		// graphFactory = schema.getGraphFactory();
 		setId(id == null ? RandomIdGenerator.generateId() : id);
 		// needed for initialization of graphVersion with transactions
 		graphVersion = -1;
@@ -257,19 +202,6 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 		setECount(0);
 	}
 
-	// protected TraversalContext traversalContext;
-
-	// @Override
-	// public TraversalContext setTraversalContext(TraversalContext tc) {
-	// TraversalContext result = traversalContext;
-	// traversalContext = tc;
-	// return result;
-	// }
-	//
-	// public TraversalContext getTraversalContext() {
-	// return traversalContext;
-	// }
-
 	@Override
 	public void addEdge(Edge newEdge, Vertex alpha, Vertex omega) {
 		assert newEdge != null;
@@ -284,21 +216,23 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 
 		EdgeBaseImpl e = (EdgeBaseImpl) newEdge;
 		InternalVertex a = (InternalVertex) alpha;
-		if (!a.isValidAlpha(e)) {
-			throw new GraphException("Edges of class "
-					+ e.getAttributedElementClass().getQualifiedName()
-					+ " may not start at vertices of class "
-					+ a.getAttributedElementClass().getQualifiedName());
-		}
-
 		InternalVertex o = (InternalVertex) omega;
-		if (!o.isValidOmega(e)) {
-			throw new GraphException("Edges of class "
-					+ e.getAttributedElementClass().getQualifiedName()
-					+ " may not end at vertices of class "
-					+ o.getAttributedElementClass().getQualifiedName());
-		}
 
+		EdgeClass myEC = newEdge.getAttributedElementClass();
+		VertexClass aVC = a.getAttributedElementClass();
+		if (!aVC.isValidFromFor(myEC)) {
+			throw new GraphException("Edges of class "
+					+ myEC.getQualifiedName()
+					+ " may not start at vertices of class "
+					+ aVC.getQualifiedName());
+		}
+		VertexClass oVC = o.getAttributedElementClass();
+		if (!oVC.isValidToFor(myEC)) {
+			throw new GraphException("Edges of class "
+					+ myEC.getQualifiedName()
+					+ " may not end at vertices of class "
+					+ oVC.getQualifiedName());
+		}
 		int eId = e.getId();
 		if (isLoading()) {
 			if (eId > 0) {
@@ -336,8 +270,8 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 	@Override
 	public void internalEdgeAdded(InternalEdge e) {
 		notifyEdgeAdded(e);
-		if (getECARuleManagerIfThere() != null) {
-			getECARuleManagerIfThere().fireAfterCreateEdgeEvents(e);
+		if (hasECARuleManager()) {
+			getECARuleManager().fireAfterCreateEdgeEvents(e);
 		}
 	}
 
@@ -380,7 +314,7 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 	@Override
 	public void internalVertexAdded(InternalVertex v) {
 		notifyVertexAdded(v);
-		if (getECARuleManagerIfThere() != null) {
+		if (hasECARuleManager()) {
 			getECARuleManager().fireAfterCreateVertexEvents(v);
 		}
 	}
@@ -455,7 +389,7 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 	 * @see java.lang.Comparable#compareTo(java.lang.Object)
 	 */
 	@Override
-	public int compareTo(AttributedElement a) {
+	public int compareTo(AttributedElement<GraphClass, Graph> a) {
 		if (a instanceof Graph) {
 			Graph g = (Graph) a;
 			return hashCode() - g.hashCode();
@@ -533,52 +467,40 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 	}
 
 	/**
-	 * Creates an edge of the given class and adds this edge to the graph.
-	 * <code>cls</code> has to be the "Impl" class.
+	 * Creates an edge of the given {@link EdgeClass} and adds it to the graph.
 	 */
-	@SuppressWarnings("unchecked")
 	@Override
-	public <T extends Edge> T createEdge(Class<T> cls, Vertex alpha,
+	@SuppressWarnings("unchecked")
+	public <T extends Edge> T createEdge(EdgeClass ec, Vertex alpha,
 			Vertex omega) {
 		try {
-			return (T) internalCreateEdge(cls, alpha, omega);
+			return (T) graphFactory.createEdge(ec, 0, this, alpha, omega);
 		} catch (Exception exception) {
 			if (exception instanceof GraphException) {
 				throw (GraphException) exception;
 			} else {
 				throw new GraphException("Error creating edge of class "
-						+ cls.getName(), exception);
+						+ ec.getQualifiedName(), exception);
 			}
 		}
 	}
 
-	@Override
-	public Edge internalCreateEdge(Class<? extends Edge> cls, Vertex alpha,
-			Vertex omega) {
-		return graphFactory.createEdge(cls, 0, this, alpha, omega);
-	}
-
 	/**
-	 * Creates a vertex of the given class and adds this edge to the graph.
-	 * <code>cls</code> has to be the "Impl" class.
+	 * Creates a vertex of the given {@link VertexClass} and adds it to the
+	 * graph.
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public <T extends Vertex> T createVertex(Class<T> cls) {
+	public <T extends Vertex> T createVertex(VertexClass vc) {
 		try {
-			return (T) internalCreateVertex(cls);
+			return (T) graphFactory.createVertex(vc, 0, this);
 		} catch (Exception ex) {
 			if (ex instanceof GraphException) {
 				throw (GraphException) ex;
 			}
 			throw new GraphException("Error creating vertex of class "
-					+ cls.getName(), ex);
+					+ vc.getQualifiedName(), ex);
 		}
-	}
-
-	@Override
-	public Vertex internalCreateVertex(Class<? extends Vertex> cls) {
-		return graphFactory.createVertex(cls, 0, this);
 	}
 
 	/*
@@ -885,7 +807,7 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 	 */
 	@Override
 	public GraphClass getGraphClass() {
-		return (GraphClass) getAttributedElementClass();
+		return getAttributedElementClass();
 	}
 
 	/*
@@ -1027,11 +949,13 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 	private void internalDeleteEdge(Edge edge) {
 		assert (edge != null) && edge.isValid() && eSeqContainsEdge(edge);
 
-		getECARuleManager().fireBeforeDeleteEdgeEvents(edge);
+		if (hasECARuleManager()) {
+			getECARuleManager().fireBeforeDeleteEdgeEvents(edge);
+		}
 
 		InternalEdge e = (InternalEdge) edge.getNormalEdge();
-		if (getECARuleManagerIfThere() != null) {
-			getECARuleManagerIfThere().fireBeforeDeleteEdgeEvents(edge);
+		if (hasECARuleManager()) {
+			getECARuleManager().fireBeforeDeleteEdgeEvents(edge);
 		}
 
 		e = (InternalEdge) edge.getNormalEdge();
@@ -1049,9 +973,9 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 		removeEdgeFromESeq(e);
 		edgeListModified();
 
-		if (getECARuleManagerIfThere() != null) {
-			getECARuleManagerIfThere().fireAfterDeleteEdgeEvents(
-					e.getSchemaClass());
+		if (hasECARuleManager()) {
+			getECARuleManager().fireAfterDeleteEdgeEvents(
+					e.getAttributedElementClass());
 		}
 		edgeAfterDeleted(e, alpha, omega);
 	}
@@ -1072,8 +996,8 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 			InternalVertex v = getDeleteVertexList().remove(0);
 			assert (v != null) && v.isValid() && vSeqContainsVertex(v);
 
-			if (getECARuleManagerIfThere() != null) {
-				getECARuleManagerIfThere().fireBeforeDeleteVertexEvents(v);
+			if (hasECARuleManager()) {
+				getECARuleManager().fireBeforeDeleteVertexEvents(v);
 			}
 			internalVertexDeleted(v);
 			// delete all incident edges including incidence objects
@@ -1095,9 +1019,9 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 			removeVertexFromVSeq(v);
 			vertexListModified();
 
-			if (getECARuleManagerIfThere() != null) {
-				getECARuleManagerIfThere().fireAfterDeleteVertexEvents(
-						v.getSchemaClass());
+			if (hasECARuleManager()) {
+				getECARuleManager().fireAfterDeleteVertexEvents(
+						v.getAttributedElementClass());
 			}
 			vertexAfterDeleted(v);
 		}
@@ -1908,7 +1832,7 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 	private ECARuleManagerInterface ecaRuleManager;
 
 	@Override
-	public ECARuleManagerInterface getECARuleManager() {
+	public final ECARuleManagerInterface getECARuleManager() {
 		if (ecaRuleManager == null) {
 			Constructor<?> ruleManagerConstructor;
 			try {
@@ -1926,8 +1850,8 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 	}
 
 	@Override
-	public ECARuleManagerInterface getECARuleManagerIfThere() {
-		return ecaRuleManager;
+	public final boolean hasECARuleManager() {
+		return ecaRuleManager != null;
 	}
 
 	// handle GraphStructureChangedListener
@@ -2174,5 +2098,22 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 	public void save(DataOutputStream out, ProgressFunction pf)
 			throws GraphIOException {
 		GraphIO.saveGraphToStream(this, out, pf);
+	}
+
+	@Override
+	public GraphFactory getGraphFactory() {
+		return graphFactory;
+	}
+
+	@Override
+	public void setGraphFactory(GraphFactory graphFactory) {
+		this.graphFactory = graphFactory;
+	}
+
+	@Override
+	public boolean isInstanceOf(GraphClass cls) {
+		// This is specific to all impl variants with code generation. Generic
+		// needs to implement this with a schema lookup.
+		return cls.getSchemaClass().isInstance(this);
 	}
 }

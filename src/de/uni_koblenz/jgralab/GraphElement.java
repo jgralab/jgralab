@@ -35,13 +35,16 @@
 
 package de.uni_koblenz.jgralab;
 
+import de.uni_koblenz.jgralab.schema.GraphElementClass;
+
 /**
  * aggregates vertices and edges
  * 
  * @author ist@uni-koblenz.de
  * 
  */
-public interface GraphElement extends AttributedElement {
+public interface GraphElement<SC extends GraphElementClass<SC, IC>, IC extends GraphElement<SC, IC>>
+		extends AttributedElement<SC, IC> {
 
 	/**
 	 * returns the id of this graph element

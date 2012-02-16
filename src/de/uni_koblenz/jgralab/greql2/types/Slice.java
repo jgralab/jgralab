@@ -269,7 +269,7 @@ public class Slice {
 		return resultSet;
 	}
 
-	public boolean contains(GraphElement elem) {
+	public boolean contains(GraphElement<?, ?> elem) {
 		for (Entry<PathSystemKey, List<PathSystemEntry>> e : keyToEntryMap
 				.entrySet()) {
 

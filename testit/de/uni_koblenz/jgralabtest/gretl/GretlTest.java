@@ -57,6 +57,7 @@ import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.GraphIOException;
+import de.uni_koblenz.jgralab.ImplementationType;
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.gretl.AddSuperClass;
@@ -182,7 +183,8 @@ public class GretlTest {
 	}
 
 	private static void initVarroUMLGraph() {
-		UMLGraph g = UMLSchema.instance().createUMLGraph();
+		UMLGraph g = UMLSchema.instance().createUMLGraph(
+				ImplementationType.STANDARD);
 
 		de.uni_koblenz.jgralabtest.schemas.gretl.varro.uml.Package p = g
 				.createPackage();
@@ -242,7 +244,8 @@ public class GretlTest {
 	}
 
 	private static void initCopyGraph() {
-		CopyGraph g = CopySchema.instance().createCopyGraph();
+		CopyGraph g = CopySchema.instance().createCopyGraph(
+				ImplementationType.STANDARD);
 
 		Whole w1 = g.createWholeOne();
 		Whole w2 = g.createWholeOne();
@@ -313,7 +316,8 @@ public class GretlTest {
 	}
 
 	private static void initFamilyGraph() {
-		FamilyGraph g = FamilySchema.instance().createFamilyGraph();
+		FamilyGraph g = FamilySchema.instance().createFamilyGraph(
+				ImplementationType.STANDARD);
 
 		// Family Smith (2 sons, 1 daughter)
 		Family smith = g.createFamily();
@@ -407,7 +411,8 @@ public class GretlTest {
 
 	private static void initBedslAndPddslGraphs() {
 		// The BEDSL Graph
-		BedslGraph g = BedslSchema.instance().createBedslGraph();
+		BedslGraph g = BedslSchema.instance().createBedslGraph(
+				ImplementationType.STANDARD);
 		Entity bCisco = g.createEntity();
 		bCisco.set_name("Cisco");
 		Entity bCisco7603 = g.createEntity();
@@ -453,7 +458,8 @@ public class GretlTest {
 		sourceBEDSLGraph = g;
 
 		// The PDDSL Graph
-		PddslGraph h = PddslSchema.instance().createPddslGraph();
+		PddslGraph h = PddslSchema.instance().createPddslGraph(
+				ImplementationType.STANDARD);
 		Chassis pCisco = h.createChassis();
 		pCisco.set_name("Cisco");
 
@@ -482,7 +488,7 @@ public class GretlTest {
 
 	private static void initAddressBookGraph() {
 		AddressBookGraph g = AddressBookSchema.instance()
-				.createAddressBookGraph();
+				.createAddressBookGraph(ImplementationType.STANDARD);
 		AddressBook ab1 = g.createAddressBook();
 		ab1.set_name("Democrats");
 		Contact c1 = g.createContact();
@@ -511,7 +517,8 @@ public class GretlTest {
 	private static void initServiceGraph() {
 		String myShopOwner = "MyShop Inc.";
 
-		ServiceGraph g = ServiceSchema.instance().createServiceGraph();
+		ServiceGraph g = ServiceSchema.instance().createServiceGraph(
+				ImplementationType.STANDARD);
 		BasicService customerDataService = g.createBasicService();
 		customerDataService.set_name("CustomerDataService");
 		customerDataService.set_owner("CustomerPool Inc.");
@@ -587,9 +594,9 @@ public class GretlTest {
 		arch.setAccessible(true);
 		img.setAccessible(true);
 
-		Map<AttributedElementClass, Map<AttributedElement, Object>> oldArch = (Map<AttributedElementClass, Map<AttributedElement, Object>>) arch
+		Map<AttributedElementClass<?, ?>, Map<AttributedElement<?, ?>, Object>> oldArch = (Map<AttributedElementClass<?, ?>, Map<AttributedElement<?, ?>, Object>>) arch
 				.get(context);
-		Map<AttributedElementClass, Map<Object, AttributedElement>> oldImg = (Map<AttributedElementClass, Map<Object, AttributedElement>>) img
+		Map<AttributedElementClass<?, ?>, Map<Object, AttributedElement<?, ?>>> oldImg = (Map<AttributedElementClass<?, ?>, Map<Object, AttributedElement<?, ?>>>) img
 				.get(context);
 
 		context.restoreTrace(traceFile);
@@ -623,7 +630,8 @@ public class GretlTest {
 	public void createSubgraph1() {
 		targetFileName = "createSubgraph1";
 		System.out.println(">>> " + targetFileName);
-		context = new Context(FamilySchema.instance().createFamilyGraph());
+		context = new Context(FamilySchema.instance().createFamilyGraph(
+				ImplementationType.STANDARD));
 		new CreateSubgraph(
 				context,
 				"f(Family '$[0]' | lastName = 'toString($[0])'), "

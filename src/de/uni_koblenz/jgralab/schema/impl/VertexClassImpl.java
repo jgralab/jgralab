@@ -35,11 +35,14 @@
 
 package de.uni_koblenz.jgralab.schema.impl;
 
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
+import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.GraphClass;
 import de.uni_koblenz.jgralab.schema.IncidenceClass;
@@ -48,12 +51,50 @@ import de.uni_koblenz.jgralab.schema.Schema;
 import de.uni_koblenz.jgralab.schema.VertexClass;
 import de.uni_koblenz.jgralab.schema.exception.SchemaException;
 
-public final class VertexClassImpl extends GraphElementClassImpl implements
-		VertexClass {
+public final class VertexClassImpl extends
+		GraphElementClassImpl<VertexClass, Vertex> implements VertexClass {
 
+	/**
+	 * the own in IncidenceClasses
+	 */
 	private Set<IncidenceClass> inIncidenceClasses = new HashSet<IncidenceClass>();
 
+	/**
+	 * the in IncidenceClasses - only set if schema is finish
+	 */
+	private Set<IncidenceClass> allInIncidenceClasses;
+
+	/**
+	 * the own out IncidenceClasses
+	 */
 	private Set<IncidenceClass> outIncidenceClasses = new HashSet<IncidenceClass>();
+
+	/**
+	 * the out IncidenceClasses - only set if schema is finish
+	 */
+	private Set<IncidenceClass> allOutIncidenceClasses;
+
+	/**
+	 * the valid from far IncidenceClasses - only set if schema is finished
+	 */
+	private Set<IncidenceClass> validFromFarIncidenceClasses;
+
+	/**
+	 * the valid from EdgeClasses - only set if schema is finished
+	 */
+	private Set<EdgeClass> validFromEdgeClasses;
+
+	/**
+	 * the valid to EdgeClasses - only set if schema is finished
+	 */
+	private Set<EdgeClass> validToEdgeClasses;
+
+	/**
+	 * the valid to far IncidenceClasses - only set if schema is finished
+	 */
+	private Set<IncidenceClass> validToFarIncidenceClasses;
+
+	private Map<String, DirectedSchemaEdgeClass> farRoleNameToEdgeClass;
 
 	static VertexClass createDefaultVertexClass(Schema schema) {
 		assert schema.getDefaultGraphClass() != null : "DefaultGraphClass has not yet been created!";
@@ -61,12 +102,13 @@ public final class VertexClassImpl extends GraphElementClassImpl implements
 		VertexClass vc = schema.getDefaultGraphClass().createVertexClass(
 				DEFAULTVERTEXCLASS_NAME);
 		vc.setAbstract(true);
+		((VertexClassImpl) vc).setInternal(true);
 		return vc;
 	}
 
 	/**
 	 * builds a new vertex class object
-	 * 
+	 *
 	 * @param qn
 	 *            the unique identifier of the vertex class in the schema
 	 */
@@ -87,7 +129,7 @@ public final class VertexClassImpl extends GraphElementClassImpl implements
 		return "vc_" + getQualifiedName().replace('.', '_');
 	}
 
-	public void addInIncidenceClass(IncidenceClass incClass) {
+	void addInIncidenceClass(IncidenceClass incClass) {
 		if (incClass.getVertexClass() != this) {
 			throwSchemaException();
 		}
@@ -95,7 +137,7 @@ public final class VertexClassImpl extends GraphElementClassImpl implements
 		inIncidenceClasses.add(incClass);
 	}
 
-	public void addOutIncidenceClass(IncidenceClass incClass) {
+	void addOutIncidenceClass(IncidenceClass incClass) {
 		if (incClass.getVertexClass() != this) {
 			throwSchemaException();
 		}
@@ -172,22 +214,29 @@ public final class VertexClassImpl extends GraphElementClassImpl implements
 
 	@Override
 	public void addSuperClass(VertexClass superClass) {
+		// Checked in super class
+		// if(isFinished()){
+		// throw new SchemaException("No changes to finished schema!");
+		// }
+		if ((superClass == this) || (superClass == null)) {
+			return;
+		}
 		checkDuplicateRolenames(superClass);
 		super.addSuperClass(superClass);
+		if (!superClass.equals(getSchema().getDefaultVertexClass())) {
+			((GraphClassImpl) getSchema().getGraphClass()).getVertexCsDag()
+					.createEdge(superClass, this);
+		}
 	}
 
 	private void checkDuplicateRolenames(VertexClass superClass) {
-
-		if (superClass == null) {
-			return;
-		}
 		checkDuplicatedRolenamesAgainstAllIncidences(superClass
 				.getAllInIncidenceClasses());
 		checkDuplicatedRolenamesAgainstAllIncidences(superClass
 				.getAllOutIncidenceClasses());
 	}
 
-	public void checkDuplicatedRolenamesAgainstAllIncidences(
+	private void checkDuplicatedRolenamesAgainstAllIncidences(
 			Set<IncidenceClass> incidences) {
 		for (IncidenceClass incidence : incidences) {
 			checkDuplicateRolenames(incidence);
@@ -198,17 +247,22 @@ public final class VertexClassImpl extends GraphElementClassImpl implements
 	 * For a vertexclass A are all edgeclasses valid froms, which (1) run from A
 	 * to a B or (2) run from a superclass of A to a B and whose end b at B is
 	 * not redefined by A or a superclass of A
-	 * 
+	 *
 	 */
 
+	@Override
 	public Set<IncidenceClass> getValidFromFarIncidenceClasses() {
+		if (isFinished()) {
+			return validFromFarIncidenceClasses;
+		}
+
 		Set<IncidenceClass> validFromInc = new HashSet<IncidenceClass>();
 		for (IncidenceClass ic : getAllOutIncidenceClasses()) {
 			IncidenceClass farInc = ic.getEdgeClass().getTo();
 			validFromInc.add(farInc);
 		}
-		for (AttributedElementClass aec : getAllSuperClasses()) {
-			VertexClass vc = (VertexClass) aec;
+		for (VertexClass aec : getAllSuperClasses()) {
+			VertexClass vc = aec;
 			if (vc.isInternal()) {
 				continue;
 			}
@@ -225,14 +279,18 @@ public final class VertexClassImpl extends GraphElementClassImpl implements
 		return validFromInc;
 	}
 
+	@Override
 	public Set<IncidenceClass> getValidToFarIncidenceClasses() {
+		if (isFinished()) {
+			return validToFarIncidenceClasses;
+		}
 		Set<IncidenceClass> validToInc = new HashSet<IncidenceClass>();
 		for (IncidenceClass ic : getAllInIncidenceClasses()) {
 			IncidenceClass farInc = ic.getEdgeClass().getFrom();
 			validToInc.add(farInc);
 		}
-		for (AttributedElementClass aec : getAllSuperClasses()) {
-			VertexClass vc = (VertexClass) aec;
+		for (VertexClass aec : getAllSuperClasses()) {
+			VertexClass vc = aec;
 			if (vc.isInternal()) {
 				continue;
 			}
@@ -251,18 +309,25 @@ public final class VertexClassImpl extends GraphElementClassImpl implements
 
 	@Override
 	public Set<EdgeClass> getValidFromEdgeClasses() {
+		if (isFinished()) {
+			return validFromEdgeClasses;
+		}
+		// System.err.print("+");
 		Set<EdgeClass> validFrom = new HashSet<EdgeClass>();
 		for (IncidenceClass ic : getValidFromFarIncidenceClasses()) {
 			if (!ic.getEdgeClass().isInternal()) {
 				validFrom.add(ic.getEdgeClass());
 			}
 		}
-
 		return validFrom;
 	}
 
 	@Override
 	public Set<EdgeClass> getValidToEdgeClasses() {
+		if (isFinished()) {
+			return validToEdgeClasses;
+		}
+		// System.err.print("-");
 		Set<EdgeClass> validTo = new HashSet<EdgeClass>();
 		for (IncidenceClass ic : getValidToFarIncidenceClasses()) {
 			if (!ic.getEdgeClass().isInternal()) {
@@ -270,12 +335,6 @@ public final class VertexClassImpl extends GraphElementClassImpl implements
 			}
 		}
 		return validTo;
-	}
-
-	@Override
-	@SuppressWarnings("unchecked")
-	public Class<? extends Vertex> getSchemaClass() {
-		return (Class<? extends Vertex>) super.getSchemaClass();
 	}
 
 	public Set<IncidenceClass> getOwnInIncidenceClasses() {
@@ -288,26 +347,31 @@ public final class VertexClassImpl extends GraphElementClassImpl implements
 
 	@Override
 	public Set<IncidenceClass> getAllInIncidenceClasses() {
+		if (isFinished()) {
+			return allInIncidenceClasses;
+		}
 		Set<IncidenceClass> incidenceClasses = new HashSet<IncidenceClass>();
 		incidenceClasses.addAll(inIncidenceClasses);
-		for (AttributedElementClass vc : getDirectSuperClasses()) {
-			incidenceClasses.addAll(((VertexClass) vc)
-					.getAllInIncidenceClasses());
+		for (VertexClass vc : getDirectSuperClasses()) {
+			incidenceClasses.addAll(vc.getAllInIncidenceClasses());
 		}
 		return incidenceClasses;
 	}
 
 	@Override
 	public Set<IncidenceClass> getAllOutIncidenceClasses() {
+		if (isFinished()) {
+			return allOutIncidenceClasses;
+		}
 		Set<IncidenceClass> incidenceClasses = new HashSet<IncidenceClass>();
 		incidenceClasses.addAll(outIncidenceClasses);
-		for (AttributedElementClass vc : getDirectSuperClasses()) {
-			incidenceClasses.addAll(((VertexClass) vc)
-					.getAllOutIncidenceClasses());
+		for (VertexClass vc : getDirectSuperClasses()) {
+			incidenceClasses.addAll(vc.getAllOutIncidenceClasses());
 		}
 		return incidenceClasses;
 	}
 
+	@Override
 	public Set<IncidenceClass> getOwnAndInheritedFarIncidenceClasses() {
 		Set<IncidenceClass> result = new HashSet<IncidenceClass>();
 		for (IncidenceClass ic : getAllInIncidenceClasses()) {
@@ -349,4 +413,102 @@ public final class VertexClassImpl extends GraphElementClassImpl implements
 		return result;
 	}
 
+	@Override
+	protected void finish() {
+		allInIncidenceClasses = new HashSet<IncidenceClass>();
+		allInIncidenceClasses.addAll(inIncidenceClasses);
+
+		allOutIncidenceClasses = new HashSet<IncidenceClass>();
+		allOutIncidenceClasses.addAll(outIncidenceClasses);
+
+		for (VertexClass vc : getDirectSuperClasses()) {
+			allInIncidenceClasses.addAll(vc.getAllInIncidenceClasses());
+			allOutIncidenceClasses.addAll(vc.getAllOutIncidenceClasses());
+		}
+
+		allInIncidenceClasses = Collections
+				.unmodifiableSet(allInIncidenceClasses);
+		allOutIncidenceClasses = Collections
+				.unmodifiableSet(allOutIncidenceClasses);
+
+		validFromFarIncidenceClasses = Collections
+				.unmodifiableSet(getValidFromFarIncidenceClasses());
+		validToFarIncidenceClasses = Collections
+				.unmodifiableSet(getValidToFarIncidenceClasses());
+
+		validFromEdgeClasses = Collections
+				.unmodifiableSet(getValidFromEdgeClasses());
+		validToEdgeClasses = Collections
+				.unmodifiableSet(getValidToEdgeClasses());
+
+		farRoleNameToEdgeClass = new HashMap<String, DirectedSchemaEdgeClass>();
+		for (IncidenceClass ic : getOwnAndInheritedFarIncidenceClasses()) {
+			farRoleNameToEdgeClass.put(ic.getRolename(),
+					getDirectedEdgeClassForFarEndRole(ic.getRolename()));
+		}
+		farRoleNameToEdgeClass = Collections
+				.unmodifiableMap(farRoleNameToEdgeClass);
+
+		inIncidenceClasses = Collections.unmodifiableSet(inIncidenceClasses);
+		outIncidenceClasses = Collections.unmodifiableSet(outIncidenceClasses);
+
+		for (IncidenceClass ic : inIncidenceClasses) {
+			((IncidenceClassImpl) ic).finish();
+		}
+		for (IncidenceClass ic : outIncidenceClasses) {
+			((IncidenceClassImpl) ic).finish();
+		}
+
+		super.finish();
+	}
+
+	@Override
+	public boolean isValidFromFor(EdgeClass ec) {
+		return getValidFromEdgeClasses().contains(ec);
+	}
+
+	@Override
+	public boolean isValidToFor(EdgeClass ec) {
+		return getValidToEdgeClasses().contains(ec);
+	}
+
+	@Override
+	protected void reopen() {
+		allInIncidenceClasses = null;
+		allOutIncidenceClasses = null;
+		validFromFarIncidenceClasses = null;
+		validToFarIncidenceClasses = null;
+		validFromEdgeClasses = null;
+		validToEdgeClasses = null;
+		inIncidenceClasses = new HashSet<IncidenceClass>(inIncidenceClasses);
+		outIncidenceClasses = new HashSet<IncidenceClass>(outIncidenceClasses);
+		farRoleNameToEdgeClass = null;
+
+		for (IncidenceClass ic : inIncidenceClasses) {
+			((IncidenceClassImpl) ic).reopen();
+		}
+		for (IncidenceClass ic : outIncidenceClasses) {
+			((IncidenceClassImpl) ic).reopen();
+		}
+
+		super.reopen();
+	}
+
+	@Override
+	public DirectedSchemaEdgeClass getDirectedEdgeClassForFarEndRole(
+			String roleName) {
+		if (isFinished()) {
+			return farRoleNameToEdgeClass.get(roleName);
+		}
+		for (IncidenceClass ic : getOwnAndInheritedFarIncidenceClasses()) {
+			if (roleName.equals(ic.getRolename())) {
+				EdgeClass ec = ic.getEdgeClass();
+				return new DirectedSchemaEdgeClass(
+						ec,
+						(getValidFromEdgeClasses().contains(ec) ? EdgeDirection.OUT
+								: EdgeDirection.IN));
+			}
+		}
+		return null;
+	}
 }

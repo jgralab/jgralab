@@ -43,6 +43,7 @@ import org.pcollections.PMap;
 
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphIOException;
+import de.uni_koblenz.jgralab.ImplementationType;
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.gretl.template.CreateEdge;
 import de.uni_koblenz.jgralab.gretl.template.CreateVertex;
@@ -61,7 +62,7 @@ public class TemplateGraphParser {
 	}
 
 	private TemplateGraph parse() {
-		graph = TemplateSchema.instance().createTemplateGraph();
+		graph = TemplateSchema.instance().createTemplateGraph(ImplementationType.STANDARD);
 
 		while (!tokens.isEmpty()) {
 			matchVertexOrSubgraph();

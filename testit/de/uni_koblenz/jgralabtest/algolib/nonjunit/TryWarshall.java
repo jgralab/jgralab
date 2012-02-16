@@ -36,24 +36,24 @@ package de.uni_koblenz.jgralabtest.algolib.nonjunit;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
+import de.uni_koblenz.jgralab.ImplementationType;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.algolib.algorithms.AlgorithmTerminatedException;
 import de.uni_koblenz.jgralab.algolib.algorithms.reachability.WarshallAlgorithm;
 import de.uni_koblenz.jgralab.algolib.functions.BinaryFunction;
-import de.uni_koblenz.jgralab.algolib.functions.IntFunction;
 import de.uni_koblenz.jgralab.algolib.functions.Relation;
 import de.uni_koblenz.jgralabtest.schemas.algolib.simple.SimpleGraph;
 import de.uni_koblenz.jgralabtest.schemas.algolib.simple.SimpleSchema;
 import de.uni_koblenz.jgralabtest.schemas.algolib.simple.SimpleVertex;
 
-@SuppressWarnings("unused")
 public class TryWarshall {
 
 	/**
 	 * @param args
 	 */
 	public static void main(String[] args) throws AlgorithmTerminatedException {
-		SimpleGraph graph = SimpleSchema.instance().createSimpleGraph(8, 7);
+		SimpleGraph graph = SimpleSchema.instance().createSimpleGraph(
+				ImplementationType.STANDARD);
 		SimpleVertex v1 = graph.createSimpleVertex();
 		SimpleVertex v2 = graph.createSimpleVertex();
 		SimpleVertex v3 = graph.createSimpleVertex();
@@ -72,7 +72,7 @@ public class TryWarshall {
 		graph.createSimpleEdge(v8, v7);
 
 		final WarshallAlgorithm w = new WarshallAlgorithm(graph);
-		
+
 		// TransitiveVisitorAdapter visitor = new TransitiveVisitorAdapter() {
 		//
 		// private Edge[][] successor = w.getInternalSuccessor();
@@ -86,7 +86,7 @@ public class TryWarshall {
 		// }
 		//
 		// };
-		
+
 		// w.addVisitor(visitor);
 		w.setTraversalDirection(EdgeDirection.INOUT);
 		w.execute();

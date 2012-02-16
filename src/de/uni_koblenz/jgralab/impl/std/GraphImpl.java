@@ -39,8 +39,8 @@ import java.util.List;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.TraversalContext;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.impl.InternalEdge;
 import de.uni_koblenz.jgralab.impl.FreeIndexList;
+import de.uni_koblenz.jgralab.impl.InternalEdge;
 import de.uni_koblenz.jgralab.impl.InternalVertex;
 import de.uni_koblenz.jgralab.schema.GraphClass;
 import de.uni_koblenz.jgralab.trans.Savepoint;
@@ -333,16 +333,6 @@ public abstract class GraphImpl extends
 	@Override
 	public final boolean hasTransactionSupport() {
 		return false;
-	}
-
-	@Override
-	public void addVertex(Vertex newVertex) {
-		super.addVertex(newVertex);
-	}
-
-	@Override
-	public void addEdge(Edge newEdge, Vertex alpha, Vertex omega) {
-		super.addEdge(newEdge, alpha, omega);
 	}
 
 	@Override

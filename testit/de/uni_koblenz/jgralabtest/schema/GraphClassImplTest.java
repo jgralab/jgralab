@@ -39,13 +39,13 @@ import java.util.Vector;
 import org.junit.Before;
 import org.junit.Test;
 
-import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.GraphClass;
 import de.uni_koblenz.jgralab.schema.Schema;
 import de.uni_koblenz.jgralab.schema.exception.SchemaException;
 import de.uni_koblenz.jgralab.schema.impl.SchemaImpl;
 
-public final class GraphClassImplTest extends AttributedElementClassImplTest {
+public final class GraphClassImplTest extends
+		AttributedElementClassImplTest<GraphClass> {
 
 	@Before
 	@Override
@@ -98,7 +98,7 @@ public final class GraphClassImplTest extends AttributedElementClassImplTest {
 	@Test
 	public void testGetAllSubClasses4() {
 		// A (virgin) GraphClass has no subclasses.
-		testGetAllSubClasses(new Vector<AttributedElementClass>());
+		testGetAllSubClasses(new Vector<GraphClass>());
 	}
 
 	/**
@@ -109,7 +109,7 @@ public final class GraphClassImplTest extends AttributedElementClassImplTest {
 	 */
 	@Test
 	public void testGetAllSuperClasses4() {
-		Vector<AttributedElementClass> expectedSuperClasses = new Vector<AttributedElementClass>();
+		Vector<GraphClass> expectedSuperClasses = new Vector<GraphClass>();
 
 		// Each element has a Default-Class as superclass upon creation.
 		// GraphClass does not allow other superclasses.
@@ -127,7 +127,7 @@ public final class GraphClassImplTest extends AttributedElementClassImplTest {
 	@Test
 	public void testGetDirectSubClasses4() {
 		// A (virgin) GraphClass has no subclasses.
-		testGetDirectSubClasses(new Vector<AttributedElementClass>());
+		testGetDirectSubClasses(new Vector<GraphClass>());
 	}
 
 	/**
@@ -138,7 +138,7 @@ public final class GraphClassImplTest extends AttributedElementClassImplTest {
 	 */
 	@Test
 	public void testGetDirectSuperClasses4() {
-		Vector<AttributedElementClass> expectedSuperClasses = new Vector<AttributedElementClass>();
+		Vector<GraphClass> expectedSuperClasses = new Vector<GraphClass>();
 
 		// Each element has a Default-Class as superclass upon creation.
 		// GraphClass does not allow other superclasses.

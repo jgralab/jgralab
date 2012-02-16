@@ -109,8 +109,8 @@ public class TryAStar {
 				Location v1 = (Location) parameter1;
 				Location v2 = (Location) parameter2;
 
-				return RandomGraphForAStar.euclideanDistance(v1.get_x(), v1
-						.get_y(), v2.get_x(), v2.get_y());
+				return RandomGraphForAStar.euclideanDistance(v1.get_x(),
+						v1.get_y(), v2.get_x(), v2.get_y());
 			}
 
 			@Override

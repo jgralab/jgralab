@@ -71,7 +71,7 @@ public abstract class VersionedDataObjectImpl<E> implements
 	private static Logger logger = JGraLab
 			.getLogger("de.uni_koblenz.jgralab.impl.trans");
 
-	protected AttributedElement attributedElement;
+	protected AttributedElement<?, ?> attributedElement;
 
 	/**
 	 * Needed for attributes and validation.
@@ -107,7 +107,8 @@ public abstract class VersionedDataObjectImpl<E> implements
 		if (attributedElement instanceof Graph) {
 			return (InternalGraph) attributedElement;
 		}
-		return (InternalGraph) ((GraphElement) attributedElement).getGraph();
+		return (InternalGraph) ((GraphElement<?, ?>) attributedElement)
+				.getGraph();
 	}
 
 	/**
@@ -142,7 +143,8 @@ public abstract class VersionedDataObjectImpl<E> implements
 	 * @param name
 	 *            the name of the attribute
 	 */
-	protected VersionedDataObjectImpl(AttributedElement attributedElement,
+	protected VersionedDataObjectImpl(
+			AttributedElement<?, ?> attributedElement,
 			E initialPersistentValue, String name) {
 		this.attributedElement = attributedElement;
 		this.persistentValue = initialPersistentValue;
@@ -1012,7 +1014,8 @@ public abstract class VersionedDataObjectImpl<E> implements
 	 *            be extended
 	 */
 	@SuppressWarnings("unchecked")
-	private void expandArray(int newSize, AttributedElement[] initExpandedArray) {
+	private void expandArray(int newSize,
+			AttributedElement<?, ?>[] initExpandedArray) {
 		List<Transaction> transactionList = TransactionManagerImpl.getInstance(
 				(GraphImpl) getGraph()).getTransactions();
 		synchronized (transactionList) {
@@ -1028,9 +1031,9 @@ public abstract class VersionedDataObjectImpl<E> implements
 						if (trans.isValid() && copyTemporaryValues != null) {
 							for (Entry<Long, Object> e : copyTemporaryValues
 									.entrySet()) {
-								AttributedElement[] expandedArray = null;
+								AttributedElement<?, ?>[] expandedArray = null;
 								expandedArray = initExpandedArray.clone();
-								AttributedElement[] oldVertex = (AttributedElement[]) e
+								AttributedElement<?, ?>[] oldVertex = (AttributedElement[]) e
 										.getValue();
 								System.arraycopy(oldVertex, 0, expandedArray,
 										0, oldVertex.length);
@@ -1048,9 +1051,9 @@ public abstract class VersionedDataObjectImpl<E> implements
 								trans.temporaryValueMap);
 						if (trans.isValid()
 								&& copyTemporaryValueMap.containsKey(this)) {
-							AttributedElement[] oldVertex = (AttributedElement[]) copyTemporaryValueMap
+							AttributedElement<?, ?>[] oldVertex = (AttributedElement[]) copyTemporaryValueMap
 									.get(this);
-							AttributedElement[] expandedArray = null;
+							AttributedElement<?, ?>[] expandedArray = null;
 							expandedArray = initExpandedArray.clone();
 							System.arraycopy(oldVertex, 0, expandedArray, 0,
 									oldVertex.length);
@@ -1064,9 +1067,9 @@ public abstract class VersionedDataObjectImpl<E> implements
 			Set<Long> persistentVersions = persistentVersionMap.keySet();
 			if (persistentVersions != null) {
 				for (Long version : persistentVersions) {
-					AttributedElement[] oldVertex = (AttributedElement[]) persistentVersionMap
+					AttributedElement<?, ?>[] oldVertex = (AttributedElement[]) persistentVersionMap
 							.get(version);
-					AttributedElement[] expandedArray = null;
+					AttributedElement<?, ?>[] expandedArray = null;
 					expandedArray = initExpandedArray.clone();
 					System.arraycopy(oldVertex, 0, expandedArray, 0,
 							oldVertex.length);
@@ -1075,9 +1078,9 @@ public abstract class VersionedDataObjectImpl<E> implements
 			}
 		}
 		if (persistentValue != null) {
-			AttributedElement[] oldVertex = (AttributedElement[]) persistentValue;
+			AttributedElement<?, ?>[] oldVertex = (AttributedElement[]) persistentValue;
 
-			AttributedElement[] expandedArray = null;
+			AttributedElement<?, ?>[] expandedArray = null;
 			expandedArray = initExpandedArray.clone();
 			System.arraycopy(oldVertex, 0, expandedArray, 0, oldVertex.length);
 

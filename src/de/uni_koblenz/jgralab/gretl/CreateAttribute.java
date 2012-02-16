@@ -44,7 +44,7 @@ public class CreateAttribute extends Transformation<Attribute> {
 
 	private AttributeSpec attrSpec;
 	private String semanticExpression;
-	private PMap<Object, Object> archetypes2values;
+	private PMap<? extends Object, ? extends Object> archetypes2values;
 
 	protected CreateAttribute(final Context c, final AttributeSpec attrSpec) {
 		super(c);
@@ -52,7 +52,7 @@ public class CreateAttribute extends Transformation<Attribute> {
 	}
 
 	public CreateAttribute(final Context c, final AttributeSpec attrSpec,
-			final PMap<Object, Object> archetypes2values) {
+			final PMap<? extends Object, ? extends Object> archetypes2values) {
 		this(c, attrSpec);
 		this.archetypes2values = archetypes2values;
 	}
@@ -97,11 +97,11 @@ public class CreateAttribute extends Transformation<Attribute> {
 
 	public static final class AttributeSpec {
 		protected String name;
-		protected AttributedElementClass aec;
+		protected AttributedElementClass<?, ?> aec;
 		protected Domain domain;
 		protected String defaultValue;
 
-		public AttributeSpec(final AttributedElementClass attrElemClass,
+		public AttributeSpec(final AttributedElementClass<?, ?> attrElemClass,
 				String attrName, final Domain domain, String defaultValue) {
 			name = attrName;
 			aec = attrElemClass;
@@ -109,7 +109,7 @@ public class CreateAttribute extends Transformation<Attribute> {
 			this.defaultValue = defaultValue;
 		}
 
-		public AttributeSpec(final AttributedElementClass attrElemClass,
+		public AttributeSpec(final AttributedElementClass<?, ?> attrElemClass,
 				String attrName, final Domain domain) {
 			this(attrElemClass, attrName, domain, null);
 		}

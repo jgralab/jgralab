@@ -41,8 +41,8 @@ import de.uni_koblenz.jgralab.GraphStructureChangedAdapterWithAutoRemove;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.impl.InternalGraph;
 
-public abstract class AbstractGraphMarker<T extends AttributedElement> extends
-		GraphStructureChangedAdapterWithAutoRemove {
+public abstract class AbstractGraphMarker<T extends AttributedElement<?, ?>>
+		extends GraphStructureChangedAdapterWithAutoRemove {
 	protected final InternalGraph graph;
 
 	protected AbstractGraphMarker(Graph graph) {

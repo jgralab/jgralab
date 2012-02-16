@@ -39,8 +39,8 @@ import java.util.Collections;
 import java.util.List;
 
 import de.uni_koblenz.jgralab.AttributedElement;
+import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
-import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.eca.events.ChangeAttributeEventDescription;
 import de.uni_koblenz.jgralab.eca.events.ChangeEdgeEventDescription;
@@ -50,6 +50,9 @@ import de.uni_koblenz.jgralab.eca.events.CreateVertexEventDescription;
 import de.uni_koblenz.jgralab.eca.events.DeleteEdgeEventDescription;
 import de.uni_koblenz.jgralab.eca.events.DeleteVertexEventDescription;
 import de.uni_koblenz.jgralab.eca.events.EventDescription;
+import de.uni_koblenz.jgralab.schema.AttributedElementClass;
+import de.uni_koblenz.jgralab.schema.EdgeClass;
+import de.uni_koblenz.jgralab.schema.VertexClass;
 
 public class ECARuleManager implements ECARuleManagerInterface {
 
@@ -65,7 +68,7 @@ public class ECARuleManager implements ECARuleManagerInterface {
 	/**
 	 * List with all ECARules managed by this ECARuleManager
 	 */
-	private List<ECARule> rules;
+	private List<ECARule<?>> rules;
 
 	private int nestedTriggerCalls = 0;
 	private int maxNestedTriggerCalls = 30;
@@ -106,8 +109,8 @@ public class ECARuleManager implements ECARuleManagerInterface {
 	/*
 	 * ChangeAttributeEvents
 	 */
-	private List<ChangeAttributeEventDescription> beforeChangeAttributeEvents;
-	private List<ChangeAttributeEventDescription> afterChangeAttributeEvents;
+	private List<ChangeAttributeEventDescription<?>> beforeChangeAttributeEvents;
+	private List<ChangeAttributeEventDescription<?>> afterChangeAttributeEvents;
 
 	// +++++ Constructor ++++++++++++++++++++++++++++++++++++++++++++++
 
@@ -121,7 +124,7 @@ public class ECARuleManager implements ECARuleManagerInterface {
 
 		this.graph = graph;
 
-		rules = new ArrayList<ECARule>();
+		rules = new ArrayList<ECARule<?>>();
 	}
 
 	private void createBeforeCreateVertexEventsLazily() {
@@ -198,13 +201,13 @@ public class ECARuleManager implements ECARuleManagerInterface {
 
 	private void createBeforeChangeAttributeEventsLazily() {
 		if (beforeChangeAttributeEvents == null) {
-			beforeChangeAttributeEvents = new ArrayList<ChangeAttributeEventDescription>();
+			beforeChangeAttributeEvents = new ArrayList<ChangeAttributeEventDescription<?>>();
 		}
 	}
 
 	private void createAfterChangeAttributeEventsLazily() {
 		if (afterChangeAttributeEvents == null) {
-			afterChangeAttributeEvents = new ArrayList<ChangeAttributeEventDescription>();
+			afterChangeAttributeEvents = new ArrayList<ChangeAttributeEventDescription<?>>();
 		}
 	}
 
@@ -217,8 +220,7 @@ public class ECARuleManager implements ECARuleManagerInterface {
 	 * fireBeforeCreateVertexEvents(java.lang.Class)
 	 */
 	@Override
-	public void fireBeforeCreateVertexEvents(
-			Class<? extends AttributedElement> elementClass) {
+	public void fireBeforeCreateVertexEvents(VertexClass vc) {
 		if (beforeCreateVertexEvents == null) {
 			return;
 		}
@@ -227,7 +229,7 @@ public class ECARuleManager implements ECARuleManagerInterface {
 		}
 		int max = beforeCreateVertexEvents.size();
 		for (int i = 0; i < max; i++) {
-			beforeCreateVertexEvents.get(i).fire(elementClass);
+			beforeCreateVertexEvents.get(i).fire(vc);
 		}
 		nestedTriggerCalls--;
 
@@ -240,7 +242,7 @@ public class ECARuleManager implements ECARuleManagerInterface {
 	 * fireAfterCreateVertexEvents(de.uni_koblenz.jgralab.GraphElement)
 	 */
 	@Override
-	public void fireAfterCreateVertexEvents(GraphElement element) {
+	public void fireAfterCreateVertexEvents(Vertex element) {
 		if (afterCreateVertexEvents == null) {
 			return;
 		}
@@ -262,7 +264,7 @@ public class ECARuleManager implements ECARuleManagerInterface {
 	 * fireBeforeDeleteVertexEvents(de.uni_koblenz.jgralab.GraphElement)
 	 */
 	@Override
-	public void fireBeforeDeleteVertexEvents(GraphElement element) {
+	public void fireBeforeDeleteVertexEvents(Vertex element) {
 		if (beforeDeleteVertexEvents == null) {
 			return;
 		}
@@ -284,8 +286,7 @@ public class ECARuleManager implements ECARuleManagerInterface {
 	 * fireAfterDeleteVertexEvents(java.lang.Class)
 	 */
 	@Override
-	public void fireAfterDeleteVertexEvents(
-			Class<? extends AttributedElement> elementClass) {
+	public void fireAfterDeleteVertexEvents(VertexClass vc) {
 		if (afterDeleteVertexEvents == null) {
 			return;
 		}
@@ -294,7 +295,7 @@ public class ECARuleManager implements ECARuleManagerInterface {
 		}
 		int max = afterDeleteVertexEvents.size();
 		for (int i = 0; i < max; i++) {
-			afterDeleteVertexEvents.get(i).fire(elementClass);
+			afterDeleteVertexEvents.get(i).fire(vc);
 		}
 		nestedTriggerCalls--;
 
@@ -308,8 +309,7 @@ public class ECARuleManager implements ECARuleManagerInterface {
 	 * (java.lang.Class)
 	 */
 	@Override
-	public void fireBeforeCreateEdgeEvents(
-			Class<? extends AttributedElement> elementClass) {
+	public void fireBeforeCreateEdgeEvents(EdgeClass elementClass) {
 		if (beforeCreateEdgeEvents == null) {
 			return;
 		}
@@ -332,7 +332,7 @@ public class ECARuleManager implements ECARuleManagerInterface {
 	 * (de.uni_koblenz.jgralab.GraphElement)
 	 */
 	@Override
-	public void fireAfterCreateEdgeEvents(GraphElement element) {
+	public void fireAfterCreateEdgeEvents(Edge element) {
 		if (afterCreateEdgeEvents == null) {
 			return;
 		}
@@ -355,7 +355,7 @@ public class ECARuleManager implements ECARuleManagerInterface {
 	 * (de.uni_koblenz.jgralab.GraphElement)
 	 */
 	@Override
-	public void fireBeforeDeleteEdgeEvents(GraphElement element) {
+	public void fireBeforeDeleteEdgeEvents(Edge element) {
 		if (beforeDeleteEdgeEvents == null) {
 			return;
 		}
@@ -378,8 +378,7 @@ public class ECARuleManager implements ECARuleManagerInterface {
 	 * (java.lang.Class)
 	 */
 	@Override
-	public void fireAfterDeleteEdgeEvents(
-			Class<? extends AttributedElement> elementClass) {
+	public void fireAfterDeleteEdgeEvents(EdgeClass ec) {
 		if (afterDeleteEdgeEvents == null) {
 			return;
 		}
@@ -388,7 +387,7 @@ public class ECARuleManager implements ECARuleManagerInterface {
 		}
 		int max = afterDeleteEdgeEvents.size();
 		for (int i = 0; i < max; i++) {
-			afterDeleteEdgeEvents.get(i).fire(elementClass);
+			afterDeleteEdgeEvents.get(i).fire(ec);
 		}
 		nestedTriggerCalls--;
 
@@ -402,7 +401,7 @@ public class ECARuleManager implements ECARuleManagerInterface {
 	 * de.uni_koblenz.jgralab.Vertex, de.uni_koblenz.jgralab.Vertex)
 	 */
 	@Override
-	public void fireBeforeChangeAlphaOfEdgeEvents(GraphElement element,
+	public void fireBeforeChangeAlphaOfEdgeEvents(Edge element,
 			Vertex oldVertex, Vertex newVertex) {
 		if (beforeChangeAlphaOfEdgeEvents == null) {
 			return;
@@ -427,7 +426,7 @@ public class ECARuleManager implements ECARuleManagerInterface {
 	 * de.uni_koblenz.jgralab.Vertex, de.uni_koblenz.jgralab.Vertex)
 	 */
 	@Override
-	public void fireAfterChangeAlphaOfEdgeEvents(GraphElement element,
+	public void fireAfterChangeAlphaOfEdgeEvents(Edge element,
 			Vertex oldVertex, Vertex newVertex) {
 		if (afterChangeAlphaOfEdgeEvents == null) {
 			return;
@@ -452,7 +451,7 @@ public class ECARuleManager implements ECARuleManagerInterface {
 	 * de.uni_koblenz.jgralab.Vertex, de.uni_koblenz.jgralab.Vertex)
 	 */
 	@Override
-	public void fireBeforeChangeOmegaOfEdgeEvents(GraphElement element,
+	public void fireBeforeChangeOmegaOfEdgeEvents(Edge element,
 			Vertex oldVertex, Vertex newVertex) {
 		if (beforeChangeOmegaOfEdgeEvents == null) {
 			return;
@@ -477,7 +476,7 @@ public class ECARuleManager implements ECARuleManagerInterface {
 	 * de.uni_koblenz.jgralab.Vertex, de.uni_koblenz.jgralab.Vertex)
 	 */
 	@Override
-	public void fireAfterChangeOmegaOfEdgeEvents(GraphElement element,
+	public void fireAfterChangeOmegaOfEdgeEvents(Edge element,
 			Vertex oldVertex, Vertex newVertex) {
 		if (afterChangeOmegaOfEdgeEvents == null) {
 			return;
@@ -502,8 +501,9 @@ public class ECARuleManager implements ECARuleManagerInterface {
 	 * java.lang.String, java.lang.Object, java.lang.Object)
 	 */
 	@Override
-	public void fireBeforeChangeAttributeEvents(AttributedElement element,
-			String attributeName, Object oldValue, Object newValue) {
+	public <AEC extends AttributedElementClass<AEC, ?>> void fireBeforeChangeAttributeEvents(
+			AttributedElement<AEC, ?> element, String attributeName,
+			Object oldValue, Object newValue) {
 		if (beforeChangeAttributeEvents == null) {
 			return;
 		}
@@ -512,8 +512,10 @@ public class ECARuleManager implements ECARuleManagerInterface {
 		}
 		int max = beforeChangeAttributeEvents.size();
 		for (int i = 0; i < max; i++) {
-			beforeChangeAttributeEvents.get(i).fire(element, attributeName,
-					oldValue, newValue);
+			@SuppressWarnings("unchecked")
+			ChangeAttributeEventDescription<AEC> ed = (ChangeAttributeEventDescription<AEC>) beforeChangeAttributeEvents
+					.get(i);
+			ed.fire(element, attributeName, oldValue, newValue);
 		}
 		nestedTriggerCalls--;
 
@@ -527,8 +529,9 @@ public class ECARuleManager implements ECARuleManagerInterface {
 	 * java.lang.String, java.lang.Object, java.lang.Object)
 	 */
 	@Override
-	public void fireAfterChangeAttributeEvents(AttributedElement element,
-			String attributeName, Object oldValue, Object newValue) {
+	public <AEC extends AttributedElementClass<AEC, ?>> void fireAfterChangeAttributeEvents(
+			AttributedElement<AEC, ?> element, String attributeName,
+			Object oldValue, Object newValue) {
 		if (afterChangeAttributeEvents == null) {
 			return;
 		}
@@ -537,8 +540,10 @@ public class ECARuleManager implements ECARuleManagerInterface {
 		}
 		int max = afterChangeAttributeEvents.size();
 		for (int i = 0; i < max; i++) {
-			afterChangeAttributeEvents.get(i).fire(element, attributeName,
-					oldValue, newValue);
+			@SuppressWarnings("unchecked")
+			ChangeAttributeEventDescription<AEC> ed = (ChangeAttributeEventDescription<AEC>) afterChangeAttributeEvents
+					.get(i);
+			ed.fire(element, attributeName, oldValue, newValue);
 		}
 		nestedTriggerCalls--;
 	}
@@ -578,7 +583,7 @@ public class ECARuleManager implements ECARuleManagerInterface {
 	 * 
 	 * @return the List of ECARules managed by this ECARuleManager
 	 */
-	public List<ECARule> getRules() {
+	public List<ECARule<?>> getRules() {
 		return Collections.unmodifiableList(rules);
 	}
 
@@ -629,8 +634,9 @@ public class ECARuleManager implements ECARuleManagerInterface {
 	 * @param action
 	 *            Action part of Rule
 	 */
-	public void addECARule(EventDescription event, Action action) {
-		ECARule newRule = new ECARule(event, action);
+	public <AEC extends AttributedElementClass<AEC, ?>> void addECARule(
+			EventDescription<AEC> event, Action<AEC> action) {
+		ECARule<AEC> newRule = new ECARule<AEC>(event, action);
 		this.addECARule(newRule);
 
 	}
@@ -647,9 +653,10 @@ public class ECARuleManager implements ECARuleManagerInterface {
 	 * @param action
 	 *            Action part of Rule
 	 */
-	public void addECARule(EventDescription event, Condition condition,
-			Action action) {
-		ECARule newRule = new ECARule(event, condition, action);
+	public <AEC extends AttributedElementClass<AEC, ?>> void addECARule(
+			EventDescription<AEC> event, Condition<AEC> condition,
+			Action<AEC> action) {
+		ECARule<AEC> newRule = new ECARule<AEC>(event, condition, action);
 		this.addECARule(newRule);
 	}
 
@@ -660,14 +667,14 @@ public class ECARuleManager implements ECARuleManagerInterface {
 	 * @param rule
 	 *            the ECARule to add
 	 */
-	public void addECARule(ECARule rule) {
+	public void addECARule(ECARule<?> rule) {
 		if (rule.getECARuleManager() != null) {
 			throw new ECAException(
 					"ERROR: Tried to add an ECARule to an ECARulemanager,"
 							+ " but the ECARule has already a manager.");
 		}
-		EventDescription ev = rule.getEventDescription();
-		for (ECARule temprule : ev.getActiveECARules()) {
+		EventDescription<?> ev = rule.getEventDescription();
+		for (ECARule<?> temprule : ev.getActiveECARules()) {
 			if (temprule.getECARuleManager() != this) {
 				throw new ECAException(
 						"ERROR: Tried to add an ECARule to an ECARulemanager,"
@@ -676,7 +683,7 @@ public class ECARuleManager implements ECARuleManagerInterface {
 		}
 		rules.add(rule);
 		rule.setECARuleManager(this);
-		ev.getActiveECARules().add(rule);
+		ev.addActiveRule(rule);
 		if (ev instanceof CreateVertexEventDescription) {
 			this.addEventToList((CreateVertexEventDescription) ev);
 		}
@@ -693,7 +700,7 @@ public class ECARuleManager implements ECARuleManagerInterface {
 			this.addEventToList((ChangeEdgeEventDescription) ev);
 		}
 		if (ev instanceof ChangeAttributeEventDescription) {
-			this.addEventToList((ChangeAttributeEventDescription) ev);
+			this.addEventToList((ChangeAttributeEventDescription<?>) ev);
 		}
 	}
 
@@ -703,10 +710,10 @@ public class ECARuleManager implements ECARuleManagerInterface {
 	 * @param rule
 	 *            the ECARule to delete
 	 */
-	public void deleteECARule(ECARule rule) {
+	public void deleteECARule(ECARule<?> rule) {
 		rules.remove(rule);
 		rule.setECARuleManager(null);
-		EventDescription ev = rule.getEventDescription();
+		EventDescription<?> ev = rule.getEventDescription();
 		ev.getActiveECARules().remove(rule);
 		if (ev.getActiveECARules().isEmpty()) {
 			if (ev instanceof CreateVertexEventDescription) {
@@ -725,7 +732,7 @@ public class ECARuleManager implements ECARuleManagerInterface {
 				removeEventFromList((ChangeEdgeEventDescription) ev);
 			}
 			if (ev instanceof ChangeAttributeEventDescription) {
-				removeEventFromList((ChangeAttributeEventDescription) ev);
+				removeEventFromList((ChangeAttributeEventDescription<?>) ev);
 			}
 		}
 	}
@@ -882,7 +889,8 @@ public class ECARuleManager implements ECARuleManagerInterface {
 	 * @param e
 	 *            the ChangeAttributeEvent to add
 	 */
-	private void addEventToList(ChangeAttributeEventDescription e) {
+	private <AEC extends AttributedElementClass<AEC, ?>> void addEventToList(
+			ChangeAttributeEventDescription<AEC> e) {
 		if (e.getTime().equals(EventDescription.EventTime.BEFORE)) {
 			createBeforeChangeAttributeEventsLazily();
 			if (!beforeChangeAttributeEvents.contains(e)) {
@@ -981,7 +989,8 @@ public class ECARuleManager implements ECARuleManagerInterface {
 	 * @param e
 	 *            the ChangeAttributeEvent to delete
 	 */
-	private void removeEventFromList(ChangeAttributeEventDescription ev) {
+	private <AEC extends AttributedElementClass<AEC, ?>> void removeEventFromList(
+			ChangeAttributeEventDescription<AEC> ev) {
 		if (ev.getTime().equals(EventDescription.EventTime.BEFORE)) {
 			beforeChangeAttributeEvents.remove(ev);
 		} else {

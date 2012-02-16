@@ -125,7 +125,7 @@ class EdgeTreeNode extends GraphElementTreeNode {
 	}
 
 	@Override
-	protected GraphElement get() {
+	protected GraphElement<?, ?> get() {
 		return e;
 	}
 

@@ -99,11 +99,12 @@ public class IncidenceListTest extends InstanceTest {
 		rnd = new Random(System.currentTimeMillis());
 		switch (implementationType) {
 		case STANDARD:
-			g = MinimalSchema.instance().createMinimalGraph(V, E);
+			g = MinimalSchema.instance().createMinimalGraph(
+					ImplementationType.STANDARD, null, V, E);
 			break;
 		case TRANSACTION:
-			g = MinimalSchema.instance()
-					.createMinimalGraphWithTransactionSupport(V, E);
+			g = MinimalSchema.instance().createMinimalGraph(
+					ImplementationType.TRANSACTION, null, V, E);
 			break;
 		case DATABASE:
 			g = createMinimalGraphWithDatabaseSupport();
@@ -505,13 +506,14 @@ public class IncidenceListTest extends InstanceTest {
 			markInOrder(links, marker);
 
 			createTransaction(g);
-			long version = ((InternalVertex) nodes[0]).getIncidenceListVersion();
+			long version = ((InternalVertex) nodes[0])
+					.getIncidenceListVersion();
 			nodes[0].sortIncidences(comp);
 			commit(g);
 
 			createReadOnlyTransaction(g);
-			assertEquals(version, ((InternalVertex) nodes[0])
-					.getIncidenceListVersion());
+			assertEquals(version,
+					((InternalVertex) nodes[0]).getIncidenceListVersion());
 			checkInOrder(nodes, links);
 			commit(g);
 

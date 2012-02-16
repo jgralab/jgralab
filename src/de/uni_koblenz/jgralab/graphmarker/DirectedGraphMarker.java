@@ -54,7 +54,7 @@ import de.uni_koblenz.jgralab.algolib.functions.entries.FunctionEntry;
  * @param <O>
  */
 public class DirectedGraphMarker<O> extends
-		MapGraphMarker<AttributedElement, O> {
+		MapGraphMarker<AttributedElement<?, ?>, O> {
 
 	/**
 	 * Creates a new GraphMarker
@@ -73,11 +73,11 @@ public class DirectedGraphMarker<O> extends
 	 *         the given element is not marked in this marking.
 	 */
 	@Override
-	public O getMark(AttributedElement elem) {
+	public O getMark(AttributedElement<?, ?> elem) {
 		if (elem == null) {
 			return null;
 		}
-		assert ((elem instanceof GraphElement && ((GraphElement) elem)
+		assert ((elem instanceof GraphElement && ((GraphElement<?, ?>) elem)
 				.getGraph() == graph) || elem == graph);
 		return tempAttributeMap.get(elem);
 	}
@@ -93,8 +93,8 @@ public class DirectedGraphMarker<O> extends
 	 *         marking
 	 */
 	@Override
-	public O mark(AttributedElement elem, O value) {
-		assert ((elem instanceof GraphElement && ((GraphElement) elem)
+	public O mark(AttributedElement<?, ?> elem, O value) {
+		assert ((elem instanceof GraphElement && ((GraphElement<?, ?>) elem)
 				.getGraph() == graph) || elem == graph);
 
 		return tempAttributeMap.put(elem, value);
@@ -108,15 +108,15 @@ public class DirectedGraphMarker<O> extends
 	}
 
 	@Override
-	public boolean isMarked(AttributedElement elem) {
-		assert ((elem instanceof GraphElement && ((GraphElement) elem)
+	public boolean isMarked(AttributedElement<?, ?> elem) {
+		assert ((elem instanceof GraphElement && ((GraphElement<?, ?>) elem)
 				.getGraph() == graph) || elem == graph);
 		return tempAttributeMap.containsKey(elem);
 	}
 
 	@Override
-	public boolean removeMark(AttributedElement elem) {
-		assert ((elem instanceof GraphElement && ((GraphElement) elem)
+	public boolean removeMark(AttributedElement<?, ?> elem) {
+		assert ((elem instanceof GraphElement && ((GraphElement<?, ?>) elem)
 				.getGraph() == graph) || elem == graph);
 		return tempAttributeMap.remove(elem) != null;
 	}
@@ -127,15 +127,15 @@ public class DirectedGraphMarker<O> extends
 	}
 
 	@Override
-	public Iterable<AttributedElement> getDomainElements() {
+	public Iterable<AttributedElement<?, ?>> getDomainElements() {
 		return getMarkedElements();
 	}
 
 	@Override
-	public Iterator<FunctionEntry<AttributedElement, O>> iterator() {
-		final Iterator<AttributedElement> markedElements = getMarkedElements()
+	public Iterator<FunctionEntry<AttributedElement<?, ?>, O>> iterator() {
+		final Iterator<AttributedElement<?, ?>> markedElements = getMarkedElements()
 				.iterator();
-		return new Iterator<FunctionEntry<AttributedElement, O>>() {
+		return new Iterator<FunctionEntry<AttributedElement<?, ?>, O>>() {
 
 			@Override
 			public boolean hasNext() {
@@ -143,10 +143,10 @@ public class DirectedGraphMarker<O> extends
 			}
 
 			@Override
-			public FunctionEntry<AttributedElement, O> next() {
-				AttributedElement currentElement = markedElements.next();
-				return new FunctionEntry<AttributedElement, O>(currentElement,
-						get(currentElement));
+			public FunctionEntry<AttributedElement<?, ?>, O> next() {
+				AttributedElement<?, ?> currentElement = markedElements.next();
+				return new FunctionEntry<AttributedElement<?, ?>, O>(
+						currentElement, get(currentElement));
 			}
 
 			@Override

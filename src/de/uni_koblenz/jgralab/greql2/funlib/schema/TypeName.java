@@ -44,7 +44,7 @@ public class TypeName extends Function {
 				Category.SCHEMA_ACCESS);
 	}
 
-	public String evaluate(AttributedElement el) {
+	public String evaluate(AttributedElement<?, ?> el) {
 		return el.getAttributedElementClass().getQualifiedName();
 	}
 }

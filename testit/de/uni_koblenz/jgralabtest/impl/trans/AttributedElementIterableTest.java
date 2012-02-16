@@ -45,6 +45,7 @@ import org.junit.Test;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.GraphException;
+import de.uni_koblenz.jgralab.ImplementationType;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.impl.trans.AttributedElementIterable;
 import de.uni_koblenz.jgralab.trans.CommitFailedException;
@@ -74,7 +75,8 @@ public class AttributedElementIterableTest {
 	@Before
 	public void setUp() throws CommitFailedException {
 		MotorwayMapSchema schema = MotorwayMapSchema.instance();
-		motorwayMap = schema.createMotorwayMapWithTransactionSupport(V, E);
+		motorwayMap = schema.createMotorwayMap(ImplementationType.TRANSACTION,
+				null, V, E);
 		motorwayMap.newTransaction();
 		// city (v1) and motorway (v2) have 10 incidences
 		// (<e1,e2,e3,e4,e5,e6,...,e10> and

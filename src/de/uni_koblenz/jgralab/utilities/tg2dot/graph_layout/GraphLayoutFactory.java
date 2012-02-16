@@ -60,12 +60,12 @@ import org.pcollections.PSet;
 
 import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
+import de.uni_koblenz.jgralab.schema.GraphElementClass;
 import de.uni_koblenz.jgralab.schema.Schema;
 import de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout.definition.Definition;
 import de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout.definition.ElementDefinition;
 import de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout.definition.TypeDefinition;
 import de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout.reader.GraphLayoutReader;
-import de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout.reader.json.JsonGraphLayoutReader;
 import de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout.reader.plist.PListGraphLayoutReader;
 import de.uni_koblenz.jgralab.utilities.tg2dot.greql2.GreqlEvaluatorFacade;
 
@@ -84,11 +84,6 @@ public class GraphLayoutFactory {
 	public GraphLayoutFactory(GreqlEvaluatorFacade evaluator) {
 		this.evaluator = evaluator;
 		schema = evaluator.getSchema();
-	}
-
-	public void setJsonGraphLayoutFilename(File graphLayoutFile) {
-		this.graphLayoutFile = graphLayoutFile;
-		reader = new JsonGraphLayoutReader(evaluator);
 	}
 
 	public void setPListGraphLayoutFilename(File graphLayoutFile) {
@@ -172,7 +167,7 @@ public class GraphLayoutFactory {
 		definition.setAttribute("shape", "'record'");
 		definition.setAttribute("color", "'#999999'");
 		definition.setAttribute("fontsize", "14");
-		definition.setAttribute("fontname", "'Helvetica'");
+		definition.setAttribute("fontname", "'Sans Serif'");
 		definition.setAttribute("margin", "'0.02,0.005'");
 	}
 
@@ -231,32 +226,35 @@ public class GraphLayoutFactory {
 				+ ") ? omegaRolename(" + ELEMENT + ") : '')");
 		definition.setAttribute("dir", "'both'");
 		definition.setAttribute("fontsize", "14");
-		definition.setAttribute("fontname", "'Helvetica'");
+		definition.setAttribute("fontname", "'Sans Serif'");
 		definition.setAttribute("labelfontsize", "10");
-		definition.setAttribute("labelfontname", "'Helvetica'");
+		definition.setAttribute("labelfontname", "'Sans Serif'");
 	}
 
 	private void applyHierarchieToTypeDefinitions() {
-		applyHierarchie(currentGraphLayout.vertexTypeDefinitions);
-		applyHierarchie(currentGraphLayout.edgeTypeDefinitions);
+		applyHierarchie(currentGraphLayout.vertexTypeDefinitions, true);
+		applyHierarchie(currentGraphLayout.edgeTypeDefinitions, false);
 	}
 
-	private void applyHierarchie(Map<AttributedElementClass, TypeDefinition> map) {
+	@SuppressWarnings("unchecked")
+	private <T extends GraphElementClass<?, ?>> void applyHierarchie(
+			Map<T, TypeDefinition> map, boolean isVertexClasses) {
 
-		List<AttributedElementClass> allSchemaTypes = new ArrayList<AttributedElementClass>();
-		allSchemaTypes.addAll(schema.getVertexClassesInTopologicalOrder());
-		allSchemaTypes.addAll(schema.getEdgeClassesInTopologicalOrder());
+		List<T> allSchemaTypes = new ArrayList<T>();
+		if (isVertexClasses) {
+			allSchemaTypes.addAll((List<T>) schema.getVertexClasses());
+		} else {
+			allSchemaTypes.addAll((List<T>) schema.getEdgeClasses());
+		}
 
-		for (Entry<AttributedElementClass, TypeDefinition> entry : map
-				.entrySet()) {
-			AttributedElementClass type = entry.getKey();
+		for (Entry<T, TypeDefinition> entry : map.entrySet()) {
+			T type = entry.getKey();
 
-			List<AttributedElementClass> allSuperClasses = new ArrayList<AttributedElementClass>(
-					allSchemaTypes);
+			List<T> allSuperClasses = new ArrayList<T>(allSchemaTypes);
 			allSuperClasses.retainAll(type.getAllSuperClasses());
 			Collections.reverse(allSuperClasses);
 
-			for (AttributedElementClass supertype : allSuperClasses) {
+			for (AttributedElementClass<?, ?> supertype : allSuperClasses) {
 				Definition spec = map.get(supertype);
 				entry.getValue().addNonExistingAttributes(spec);
 			}
@@ -268,24 +266,24 @@ public class GraphLayoutFactory {
 			Object result = evaluator.evaluate(definition.getGreqlString());
 			if (result instanceof PSet) {
 				@SuppressWarnings("unchecked")
-				PSet<GraphElement> set = (PSet<GraphElement>) result;
+				PSet<GraphElement<?, ?>> set = (PSet<GraphElement<?, ?>>) result;
 				evaluateJValueSet(set, definition);
 			} else if (result instanceof GraphElement) {
 				addGraphElementToElementDefinition(definition,
-						(GraphElement) result);
+						(GraphElement<?, ?>) result);
 			}
 		}
 	}
 
-	private void evaluateJValueSet(PSet<GraphElement> result,
+	private void evaluateJValueSet(PSet<GraphElement<?, ?>> result,
 			ElementDefinition definition) {
-		for (GraphElement element : result) {
+		for (GraphElement<?, ?> element : result) {
 			addGraphElementToElementDefinition(definition, element);
 		}
 	}
 
 	private void addGraphElementToElementDefinition(
-			ElementDefinition definition, GraphElement el) {
+			ElementDefinition definition, GraphElement<?, ?> el) {
 		if (el != null) {
 			definition.add(el);
 			currentGraphLayout.attributedElementsDefinedByElementDefinitions

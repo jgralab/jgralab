@@ -90,7 +90,7 @@ public class TransactionImpl implements Transaction {
 	protected Map<EdgeImpl, Map<ListPosition, Boolean>> changedEseqEdges;
 	protected Map<VertexImpl, Map<IncidenceImpl, Map<ListPosition, Boolean>>> changedIncidences;
 	protected Map<EdgeImpl, VertexPosition> changedEdges;
-	protected Map<AttributedElement, Set<VersionedDataObject<?>>> changedAttributes;
+	protected Map<AttributedElement<?, ?>, Set<VersionedDataObject<?>>> changedAttributes;
 
 	protected List<VertexImpl> deletedVerticesWhileWriting;
 	protected List<de.uni_koblenz.jgralab.impl.InternalVertex> deleteVertexList;
@@ -252,8 +252,8 @@ public class TransactionImpl implements Transaction {
 			if (internalIsInConflict()) {
 				state = TransactionState.RUNNING;
 				transactionManager.commitSync.writeLock().unlock();
-				throw new CommitFailedException(this, validationComponent
-						.getConflictReason());
+				throw new CommitFailedException(this,
+						validationComponent.getConflictReason());
 			}
 			// make sure no other transaction is executing isInConflict()-method
 			transactionManager.commitValidatingSync.writeLock().lock();
@@ -633,8 +633,8 @@ public class TransactionImpl implements Transaction {
 								.getKey();
 						SortedMap<Long, Object> versionsMap = entries
 								.getValue();
-						temporaryValueMap.put(versionedDataObject, versionsMap
-								.get(versionsMap.lastKey()));
+						temporaryValueMap.put(versionedDataObject,
+								versionsMap.get(versionsMap.lastKey()));
 						temporaryVersionMap.remove(versionedDataObject);
 					}
 					temporaryVersionMap = null;
@@ -737,7 +737,7 @@ public class TransactionImpl implements Transaction {
 				versionedDataObjects.remove(vertex.prevVertex);
 			}
 			if (changedAttributes != null) {
-				for (Entry<AttributedElement, Set<VersionedDataObject<?>>> entry : changedAttributes
+				for (Entry<AttributedElement<?, ?>, Set<VersionedDataObject<?>>> entry : changedAttributes
 						.entrySet()) {
 					Set<VersionedDataObject<?>> attributes = entry.getValue();
 					for (VersionedDataObject<?> attribute : attributes) {

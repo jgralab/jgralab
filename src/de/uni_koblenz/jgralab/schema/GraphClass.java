@@ -37,14 +37,16 @@ package de.uni_koblenz.jgralab.schema;
 
 import java.util.List;
 
+import de.uni_koblenz.jgralab.Graph;
+
 /**
  * Represents a <code>GraphClass</code> in the <code>Schema</code>, that holds
  * all <code>GraphElementClasses</code>.
  * 
  * <p>
- * <b>Note:</b> in the following, <code>graphClass</code>, and <code>graphClass'</code>,
- * will represent the states of the given <code>GraphClass</code> before,
- * respectively after, any operation.
+ * <b>Note:</b> in the following, <code>graphClass</code>, and
+ * <code>graphClass'</code>, will represent the states of the given
+ * <code>GraphClass</code> before, respectively after, any operation.
  * </p>
  * 
  * <p>
@@ -55,7 +57,7 @@ import java.util.List;
  * 
  * @author ist@uni-koblenz.de
  */
-public interface GraphClass extends AttributedElementClass {
+public interface GraphClass extends AttributedElementClass<GraphClass, Graph> {
 
 	public final static String DEFAULTGRAPHCLASS_NAME = "Graph";
 
@@ -107,11 +109,13 @@ public interface GraphClass extends AttributedElementClass {
 	 *            the name to search for
 	 * @return the contained graph element class with the name name
 	 */
-	public GraphElementClass getGraphElementClass(String name);
+	public GraphElementClass<?, ?> getGraphElementClass(String name);
 
 	/**
 	 * @return a list of all EdgeClasses this graphclass knows, including
-	 *         inherited EdgeClasses
+	 *         inherited EdgeClasses. This list is sorted topologically
+	 *         according to the inheritance hierarchy and only includes the
+	 *         classes of this schema, i.e, not the default edge class.
 	 */
 	public List<EdgeClass> getEdgeClasses();
 
@@ -119,11 +123,13 @@ public interface GraphClass extends AttributedElementClass {
 	 * @return a list of all the edge/vertex/aggregation/composition classes of
 	 *         this graph class, including inherited classes
 	 */
-	public List<GraphElementClass> getGraphElementClasses();
+	public List<GraphElementClass<?, ?>> getGraphElementClasses();
 
 	/**
 	 * @return a list of all the vertex classes of this graph class, including
-	 *         inherited vertex classes
+	 *         inherited vertex classes. This list is sorted topologically
+	 *         according to the inheritance hierarchy and only includes the
+	 *         classes of this schema, i.e, not the default vertex class.
 	 */
 	public List<VertexClass> getVertexClasses();
 
@@ -169,7 +175,7 @@ public interface GraphClass extends AttributedElementClass {
 	 *            a vertex/edge/aggregation/composition class
 	 * @return true, if this graph class aggregates aGraphElementClass
 	 */
-	public boolean knowsOwn(GraphElementClass aGraphElementClass);
+	public boolean knowsOwn(GraphElementClass<?, ?> aGraphElementClass);
 
 	/**
 	 * @param aGraphElementClass
@@ -183,7 +189,7 @@ public interface GraphClass extends AttributedElementClass {
 	 *            a vertex/edge/aggregation/composition class name
 	 * @return true, if this graph class aggregates aGraphElementClass
 	 */
-	public boolean knows(GraphElementClass aGraphElementClass);
+	public boolean knows(GraphElementClass<?, ?> aGraphElementClass);
 
 	/**
 	 * @param aGraphElementClass

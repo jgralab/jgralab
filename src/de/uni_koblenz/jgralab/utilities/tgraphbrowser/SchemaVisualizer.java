@@ -86,9 +86,8 @@ public class SchemaVisualizer {
 		code.append("ulRootPackage.id = \"ulRootPackage\";\n");
 		code.append("divPackage.appendChild(ulRootPackage);\n");
 		createEntriesForPackage(code, "ulRootPackage", defaultPackage, true,
-				state.getGraph().getSchema()
-						.getVertexClassesInTopologicalOrder(), state.getGraph()
-						.getSchema().getEdgeClassesInTopologicalOrder());
+				state.getGraph().getSchema().getVertexClasses(), state
+						.getGraph().getSchema().getEdgeClasses());
 	}
 
 	/**
@@ -130,11 +129,11 @@ public class SchemaVisualizer {
 				continue;
 			}
 			// if a supertype was already deselected, ignore this class
-			Iterator<AttributedElementClass> iterator = vc
-					.getDirectSuperClasses().iterator();
+			Iterator<VertexClass> iterator = vc.getDirectSuperClasses()
+					.iterator();
 			boolean superClassIsAlreadyDeselected = false;
 			while (iterator.hasNext() && !superClassIsAlreadyDeselected) {
-				VertexClass next = (VertexClass) iterator.next();
+				VertexClass next = iterator.next();
 				if (next.getQualifiedName().equals("Vertex")) {
 					continue;
 				}
@@ -168,11 +167,10 @@ public class SchemaVisualizer {
 				continue;
 			}
 			// if a supertype was already deselected, ignore this class
-			Iterator<AttributedElementClass> iterator = e
-					.getDirectSuperClasses().iterator();
+			Iterator<EdgeClass> iterator = e.getDirectSuperClasses().iterator();
 			boolean superClassIsAlreadyDeselected = false;
 			while (iterator.hasNext() && !superClassIsAlreadyDeselected) {
-				EdgeClass next = (EdgeClass) iterator.next();
+				EdgeClass next = iterator.next();
 				if (next.getQualifiedName().equals("Edge")
 						|| next.getQualifiedName().equals("Aggregation")
 						|| next.getQualifiedName().equals("Composition")) {
@@ -263,19 +261,18 @@ public class SchemaVisualizer {
 		assert state.getGraph() != null : "graph is null";
 		assert state.getGraph().getSchema() != null : "schema is null";
 		// list of the AttributedElementClasses in topological order
-		List<? extends GraphElementClass> classes = createForVertex ? state
-				.getGraph().getSchema().getVertexClassesInTopologicalOrder()
-				: state.getGraph().getSchema()
-						.getEdgeClassesInTopologicalOrder();
+		List<? extends GraphElementClass<?, ?>> classes = createForVertex ? state
+				.getGraph().getSchema().getVertexClasses()
+				: state.getGraph().getSchema().getEdgeClasses();
 		String var = createForVertex ? "Vertex" : "Edge";
 		createRootUl(code, var);
 		// unsetAEClasses saves the classes which have more than one superclass
-		ArrayList<AttributedElementClass> unsetAEClasses = new ArrayList<AttributedElementClass>();
+		ArrayList<AttributedElementClass<?, ?>> unsetAEClasses = new ArrayList<AttributedElementClass<?, ?>>();
 		// unsetSuperClasses are the superclasses which still need the
 		// representation of the class from unsetAEClasses at the same index
-		ArrayList<Iterator<AttributedElementClass>> unsetSuperClasses = new ArrayList<Iterator<AttributedElementClass>>();
+		ArrayList<Iterator<AttributedElementClass<?, ?>>> unsetSuperClasses = new ArrayList<Iterator<AttributedElementClass<?, ?>>>();
 		// iterate all classes
-		for (AttributedElementClass aeclass : classes) {
+		for (AttributedElementClass<?, ?> aeclass : classes) {
 			if (aeclass.getQualifiedName().equals("Vertex")
 					|| aeclass.getQualifiedName().equals("Edge")
 					|| aeclass.getQualifiedName().equals("Aggregation")
@@ -290,12 +287,13 @@ public class SchemaVisualizer {
 				state.selectedEdgeClasses.put((EdgeClass) aeclass, true);
 			}
 			// create the first entry for this class
-			Set<AttributedElementClass> superClasses = aeclass
+			@SuppressWarnings("unchecked")
+			Set<AttributedElementClass<?, ?>> superClasses = (Set<AttributedElementClass<?, ?>>) aeclass
 					.getDirectSuperClasses();
 			String ulName = "";
-			Iterator<AttributedElementClass> superClassIter = superClasses
+			Iterator<AttributedElementClass<?, ?>> superClassIter = superClasses
 					.iterator();
-			AttributedElementClass superClass = superClassIter.next();
+			AttributedElementClass<?, ?> superClass = superClassIter.next();
 			// check if firstClass is a base class
 			while ((superClass.getQualifiedName().equals("Vertex")
 					|| superClass.getQualifiedName().equals("Edge")
@@ -345,10 +343,10 @@ public class SchemaVisualizer {
 		 */
 		if (!unsetSuperClasses.isEmpty()) {
 			for (int z = unsetAEClasses.size() - 1; z >= 0; z--) {
-				AttributedElementClass aeclass = unsetAEClasses.get(z);
+				AttributedElementClass<?, ?> aeclass = unsetAEClasses.get(z);
 				int i = 0;
 				while (unsetSuperClasses.get(z).hasNext()) {
-					AttributedElementClass cls = unsetSuperClasses.get(z)
+					AttributedElementClass<?, ?> cls = unsetSuperClasses.get(z)
 							.next();
 					String supCls = replaceDollar(cls.getUniqueName());
 					if (state.getGraph().getSchema()
@@ -386,8 +384,8 @@ public class SchemaVisualizer {
 	 *            be put
 	 * @return the needed JavaScript commands
 	 */
-	private void cloneType(StringBuilder code, AttributedElementClass aeclass,
-			int i, String supCls) {
+	private void cloneType(StringBuilder code,
+			AttributedElementClass<?, ?> aeclass, int i, String supCls) {
 		String uniqueName = replaceDollar(aeclass.getUniqueName());
 		code.append("var li").append(uniqueName).append("_").append(i)
 				.append(" = li").append(uniqueName)
@@ -413,8 +411,8 @@ public class SchemaVisualizer {
 	 *            the current number of this clone
 	 * @return the needed JavaScript commands
 	 */
-	private void adaptClone(StringBuilder code, AttributedElementClass aeclass,
-			int i) {
+	private void adaptClone(StringBuilder code,
+			AttributedElementClass<?, ?> aeclass, int i) {
 		String uniqueName = replaceDollar(aeclass.getUniqueName());
 		// function which finds the next unused "_i"
 		code.append("var findFreeNumber = function(prefix){\n");
