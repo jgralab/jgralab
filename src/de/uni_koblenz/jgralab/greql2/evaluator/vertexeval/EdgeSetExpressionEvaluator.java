@@ -43,7 +43,7 @@ import de.uni_koblenz.jgralab.greql2.evaluator.InternalGreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.Query;
 import de.uni_koblenz.jgralab.greql2.schema.EdgeSetExpression;
 import de.uni_koblenz.jgralab.greql2.types.TypeCollection;
-import de.uni_koblenz.jgralab.schema.AttributedElementClass;
+import de.uni_koblenz.jgralab.schema.EdgeClass;
 
 /**
  * Calculates a subset of the datagraph edges
@@ -73,8 +73,7 @@ public class EdgeSetExpressionEvaluator extends
 		Edge currentEdge = query.getQueryGraph().getFirstEdge();
 		TypeCollection typeCollection = getTypeCollection(evaluator);
 		while (currentEdge != null) {
-			AttributedElementClass edgeClass = currentEdge
-					.getAttributedElementClass();
+			EdgeClass edgeClass = currentEdge.getAttributedElementClass();
 			if (typeCollection.acceptsType(edgeClass)) {
 				resultSet = resultSet.plus(currentEdge);
 			}
