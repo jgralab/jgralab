@@ -186,9 +186,16 @@ public class FunctionApplicationEvaluator extends
 		if (typeArgument != null) {
 			parameterCount++;
 		}
+		if (fi.needsEvaluatorArgument()) {
+			parameterCount++;
+		}
 		Object[] parameters = new Object[parameterCount];
 
 		int p = 0;
+
+		if (fi.needsEvaluatorArgument()) {
+			parameters[p++] = evaluator;
+		}
 
 		if (fi.needsGraphArgument()) {
 			parameters[p++] = evaluator.getDataGraph();

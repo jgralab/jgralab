@@ -44,13 +44,16 @@ import java.util.Set;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.graphmarker.GraphMarker;
+import de.uni_koblenz.jgralab.greql2.evaluator.InternalGreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.fa.DFA;
 import de.uni_koblenz.jgralab.greql2.evaluator.fa.NFA;
 import de.uni_koblenz.jgralab.greql2.evaluator.fa.State;
 import de.uni_koblenz.jgralab.greql2.evaluator.fa.Transition;
 import de.uni_koblenz.jgralab.greql2.funlib.Function;
+import de.uni_koblenz.jgralab.greql2.funlib.NeedsEvaluatorArgument;
 import de.uni_koblenz.jgralab.greql2.types.pathsearch.PathSystemMarkerEntry;
 
+@NeedsEvaluatorArgument
 public class PathSystem extends Function {
 
 	public PathSystem() {
@@ -60,12 +63,12 @@ public class PathSystem extends Function {
 	}
 
 	public de.uni_koblenz.jgralab.greql2.types.PathSystem evaluate(
-			Vertex startVertex, NFA nfa) {
-		return evaluate(startVertex, nfa.getDFA());
+			InternalGreqlEvaluator evaluator, Vertex startVertex, NFA nfa) {
+		return evaluate(evaluator, startVertex, nfa.getDFA());
 	}
 
 	public de.uni_koblenz.jgralab.greql2.types.PathSystem evaluate(
-			Vertex startVertex, DFA dfa) {
+			InternalGreqlEvaluator evaluator, Vertex startVertex, DFA dfa) {
 
 		@SuppressWarnings("unchecked")
 		GraphMarker<PathSystemMarkerEntry>[] marker = new GraphMarker[dfa.stateList
@@ -74,8 +77,8 @@ public class PathSystem extends Function {
 			marker[i] = new GraphMarker<PathSystemMarkerEntry>(
 					startVertex.getGraph());
 		}
-		Set<PathSystemMarkerEntry> leaves = markVerticesOfPathSystem(marker,
-				startVertex, dfa);
+		Set<PathSystemMarkerEntry> leaves = markVerticesOfPathSystem(evaluator,
+				marker, startVertex, dfa);
 		de.uni_koblenz.jgralab.greql2.types.PathSystem resultPathSystem = createPathSystemFromMarkings(
 				marker, startVertex, leaves);
 		return resultPathSystem;
@@ -126,6 +129,7 @@ public class PathSystem extends Function {
 	 *             thrown
 	 */
 	private Set<PathSystemMarkerEntry> markVerticesOfPathSystem(
+			InternalGreqlEvaluator evaluator,
 			GraphMarker<PathSystemMarkerEntry>[] marker, Vertex startVertex,
 			DFA dfa) {
 		Set<PathSystemMarkerEntry> finalEntries = new HashSet<PathSystemMarkerEntry>();
@@ -151,7 +155,8 @@ public class PathSystem extends Function {
 
 					if (!isMarked(marker, nextVertex,
 							currentTransition.endState)) {
-						if (currentTransition.accepts(currentVertex, inc)) {
+						if (currentTransition.accepts(currentVertex, inc,
+								evaluator)) {
 							Edge traversedEdge = currentTransition
 									.consumesEdge() ? inc : null;
 							PathSystemMarkerEntry newEntry = markVertex(marker,

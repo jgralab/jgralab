@@ -218,6 +218,7 @@ public class FunLib {
 		Signature[] signatures;
 		boolean needsGraphArgument;
 		boolean acceptsUndefinedValues;
+		boolean needsEvaluatorArgument;
 
 		FunctionInfo(String name, Class<? extends Function> cls) {
 			this.name = name;
@@ -239,6 +240,8 @@ public class FunLib {
 					.isAnnotationPresent(NeedsGraphArgument.class);
 			acceptsUndefinedValues = cls
 					.isAnnotationPresent(AcceptsUndefinedArguments.class);
+			needsEvaluatorArgument = cls
+					.isAnnotationPresent(NeedsEvaluatorArgument.class);
 			registerSignatures(functionSignatures, cls);
 			signatures = new Signature[functionSignatures.size()];
 			functionSignatures.toArray(signatures);
@@ -271,6 +274,10 @@ public class FunLib {
 
 		public final boolean acceptsUndefinedValues() {
 			return acceptsUndefinedValues;
+		}
+
+		public final boolean needsEvaluatorArgument() {
+			return needsEvaluatorArgument;
 		}
 	}
 
@@ -426,7 +433,7 @@ public class FunLib {
 	}
 
 	private static class LaTeXFunctionDocsGenerator {
-		private BufferedWriter bw;
+		private final BufferedWriter bw;
 		private final Map<Category, SortedMap<String, FunctionInfo>> cat2funs = new HashMap<Function.Category, SortedMap<String, FunctionInfo>>();
 
 		LaTeXFunctionDocsGenerator(String fileName,
@@ -452,7 +459,7 @@ public class FunLib {
 		 * Set to true to generate a complete latex doc that can be compiled
 		 * standalone. Useful when changing this generator...
 		 */
-		private boolean STANDALONE = false;
+		private final boolean STANDALONE = false;
 
 		void generate() throws IOException {
 			try {

@@ -42,12 +42,15 @@ import org.pcollections.PSet;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.Vertex;
+import de.uni_koblenz.jgralab.greql2.evaluator.InternalGreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.fa.DFA;
 import de.uni_koblenz.jgralab.greql2.evaluator.fa.State;
 import de.uni_koblenz.jgralab.greql2.evaluator.fa.Transition;
 import de.uni_koblenz.jgralab.greql2.funlib.Function;
+import de.uni_koblenz.jgralab.greql2.funlib.NeedsEvaluatorArgument;
 import de.uni_koblenz.jgralab.greql2.types.pathsearch.VertexStateQueue;
 
+@NeedsEvaluatorArgument
 public class ReachableVertices extends Function {
 	public ReachableVertices() {
 		super(
@@ -56,11 +59,13 @@ public class ReachableVertices extends Function {
 				Category.PATHS_AND_PATHSYSTEMS_AND_SLICES);
 	}
 
-	public PSet<Vertex> evaluate(Vertex v, DFA dfa) {
-		return search(v, dfa);
+	public PSet<Vertex> evaluate(InternalGreqlEvaluator evaluator, Vertex v,
+			DFA dfa) {
+		return search(evaluator, v, dfa);
 	}
 
-	public static PSet<Vertex> search(Vertex v, DFA dfa) {
+	public static PSet<Vertex> search(InternalGreqlEvaluator evaluator,
+			Vertex v, DFA dfa) {
 		PSet<Vertex> resultSet = JGraLab.set();
 
 		@SuppressWarnings("unchecked")
@@ -88,7 +93,7 @@ public class ReachableVertices extends Function {
 							inc);
 					if (!markedElements[currentTransition.endState.number]
 							.contains(nextVertex)) {
-						if (currentTransition.accepts(vertex, inc)) {
+						if (currentTransition.accepts(vertex, inc, evaluator)) {
 							markedElements[currentTransition.endState.number]
 									.add(nextVertex);
 							queue.put(nextVertex, currentTransition.endState);
