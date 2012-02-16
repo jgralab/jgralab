@@ -64,14 +64,14 @@ public class TypeIdEvaluator extends VertexEvaluator<TypeId> {
 	 *            the schema of the datagraph
 	 * @return the generated list of types
 	 */
-	protected List<AttributedElementClass> createTypeList(
+	protected List<AttributedElementClass<?, ?>> createTypeList(
 			InternalGreqlEvaluator evaluator) {
 
-		ArrayList<AttributedElementClass> returnTypes = new ArrayList<AttributedElementClass>();
-		AttributedElementClass elemClass = evaluator
+		ArrayList<AttributedElementClass<?, ?>> returnTypes = new ArrayList<AttributedElementClass<?, ?>>();
+		AttributedElementClass<?, ?> elemClass = query
 				.getAttributedElementClass(vertex.get_name());
 		if (elemClass == null) {
-			elemClass = evaluator.getKnownType(vertex.get_name());
+			elemClass = query.getKnownType(vertex.get_name());
 			if (elemClass == null) {
 				throw new UnknownTypeException(vertex.get_name(),
 						createPossibleSourcePositions());
@@ -88,7 +88,7 @@ public class TypeIdEvaluator extends VertexEvaluator<TypeId> {
 
 	@Override
 	public TypeCollection evaluate(InternalGreqlEvaluator evaluator) {
-		List<AttributedElementClass> typeList = createTypeList(evaluator);
+		List<AttributedElementClass<?, ?>> typeList = createTypeList(evaluator);
 		return new TypeCollection(typeList, vertex.is_excluded());
 	}
 
