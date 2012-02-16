@@ -62,7 +62,6 @@ import de.uni_koblenz.jgralab.greql2.schema.Greql2Graph;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
 import de.uni_koblenz.jgralab.greql2.types.Undefined;
 import de.uni_koblenz.jgralab.impl.ConsoleProgressFunction;
-import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 
 /**
  * This is the core class of the GReQL-2 Evaluator. It takes a GReQL-2 Query as
@@ -70,9 +69,9 @@ import de.uni_koblenz.jgralab.schema.AttributedElementClass;
  * graph. The result is a JValue-object, it can be accessed using the method
  * <code>JValue getEvaluationResult()</code>. TODO [greqlevaluator] Make all
  * occurences of GreqlEvaluatorImpl to use the public Interface.
- *
+ * 
  * @author ist@uni-koblenz.de
- *
+ * 
  */
 public class GreqlEvaluatorImpl implements InternalGreqlEvaluator,
 		GreqlEvaluator {
@@ -133,12 +132,6 @@ public class GreqlEvaluatorImpl implements InternalGreqlEvaluator,
 	 * The GraphMarker that stores all vertex evaluators
 	 */
 	protected GraphMarker<VertexEvaluator> vertexEvalGraphMarker;
-
-	/**
-	 * The map of SimpleName to Type of types that is known in the evaluator by
-	 * import statements in the greql query
-	 */
-	protected Map<String, AttributedElementClass> knownTypes = new HashMap<String, AttributedElementClass>(); // initial
 
 	/**
 	 * returns the vertexEvalGraph marker that is used
@@ -263,7 +256,7 @@ public class GreqlEvaluatorImpl implements InternalGreqlEvaluator,
 
 	/**
 	 * Creates a new GreqlEvaluator for the given Query and Datagraph
-	 *
+	 * 
 	 * @param query
 	 *            the string-representation of the query to evaluate
 	 * @param datagraph
@@ -278,7 +271,6 @@ public class GreqlEvaluatorImpl implements InternalGreqlEvaluator,
 			Map<String, Object> variables, ProgressFunction progressFunction) {
 		this.query = query;
 		this.datagraph = datagraph;
-		knownTypes = new HashMap<String, AttributedElementClass>();
 		variableMap = variables;
 		// this.progressFunction = progressFunction;
 	}
@@ -311,7 +303,7 @@ public class GreqlEvaluatorImpl implements InternalGreqlEvaluator,
 	/**
 	 * clears the tempresults that are stored in the VertexEvaluators-Objects at
 	 * the syntaxgraph nodes
-	 *
+	 * 
 	 * @param optimizer
 	 */
 	private void resetVertexEvaluators() {

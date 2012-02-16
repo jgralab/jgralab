@@ -75,11 +75,11 @@ public class Greql2ExpressionEvaluator extends
 	private Map<String, Object> boundVariables;
 	boolean boundVariablesChanged = true;
 
-	// protected void setBoundVariables(Map<String, Object> boundVariables) {
-	// this.boundVariables = boundVariables;
-	// result = null;
-	// boundVariablesChanged = true;
-	// }
+	protected void setBoundVariables(Map<String, Object> boundVariables) {
+		this.boundVariables = boundVariables;
+		result = null;
+		boundVariablesChanged = true;
+	}
 
 	private void initializeBoundVariables(InternalGreqlEvaluator evaluator) {
 		IsBoundVarOf inc = vertex
@@ -107,8 +107,8 @@ public class Greql2ExpressionEvaluator extends
 	 */
 	public Greql2ExpressionEvaluator(Greql2Expression vertex, Query query) {
 		super(vertex, query);
-		// boundVariables = eval.getVariables();
-		// boundVariablesChanged = true;
+		boundVariables = eval.getVariables();
+		boundVariablesChanged = true;
 	}
 
 	/**
@@ -118,11 +118,11 @@ public class Greql2ExpressionEvaluator extends
 	public Object evaluate(InternalGreqlEvaluator evaluator) {
 		if (boundVariablesChanged) {
 			initializeBoundVariables(evaluator);
-			// boundVariablesChanged = false;
+			boundVariablesChanged = false;
 		}
 
-		if (vertex.get_importedTypes() != null && graph != null) {
-			Schema graphSchema = graph.getSchema();
+		Schema graphSchema = evaluator.getSchemaOfDataGraph();
+		if (vertex.get_importedTypes() != null && graphSchema != null) {
 			for (String importedType : vertex.get_importedTypes()) {
 				if (importedType.endsWith(".*")) {
 					String packageName = importedType.substring(0,
@@ -136,10 +136,10 @@ public class Greql2ExpressionEvaluator extends
 					// greqlEvaluator.addKnownType(elem);
 					// }
 					for (VertexClass elem : p.getVertexClasses().values()) {
-						greqlEvaluator.addKnownType(elem);
+						query.addKnownType(elem);
 					}
 					for (EdgeClass elem : p.getEdgeClasses().values()) {
-						greqlEvaluator.addKnownType(elem);
+						query.addKnownType(elem);
 					}
 				} else {
 					AttributedElementClass<?, ?> elemClass = graphSchema
@@ -148,7 +148,7 @@ public class Greql2ExpressionEvaluator extends
 						throw new UnknownTypeException(importedType,
 								new ArrayList<SourcePosition>());
 					}
-					greqlEvaluator.addKnownType(elemClass);
+					query.addKnownType(elemClass);
 				}
 			}
 		}

@@ -35,6 +35,8 @@
 package de.uni_koblenz.jgralab.greql2.evaluator;
 
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
+import de.uni_koblenz.jgralab.schema.AttributedElementClass;
+import de.uni_koblenz.jgralab.schema.Schema;
 
 public interface InternalGreqlEvaluator {
 	// TODO [greqlevaluator] create internal interface
@@ -49,4 +51,7 @@ public interface InternalGreqlEvaluator {
 
 	public Object removeLocalEvaluationResult(Greql2Vertex vertex);
 
+	public Schema getSchemaOfDataGraph();
+
+	public AttributedElementClass<?, ?> getAttributedElementClass(String name);
 }

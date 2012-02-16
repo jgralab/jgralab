@@ -68,7 +68,7 @@ public class TypeIdEvaluator extends VertexEvaluator<TypeId> {
 			InternalGreqlEvaluator evaluator) {
 
 		ArrayList<AttributedElementClass<?, ?>> returnTypes = new ArrayList<AttributedElementClass<?, ?>>();
-		AttributedElementClass<?, ?> elemClass = query
+		AttributedElementClass<?, ?> elemClass = evaluator
 				.getAttributedElementClass(vertex.get_name());
 		if (elemClass == null) {
 			elemClass = query.getKnownType(vertex.get_name());

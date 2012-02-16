@@ -40,6 +40,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.lang.ref.SoftReference;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 import org.pcollections.PSet;
@@ -64,6 +65,12 @@ public class Query {
 	private final long optimizationTime = -1;
 	private long parseTime = -1;
 	private Greql2Expression rootExpression;
+
+	/**
+	 * The map of SimpleName to Type of types that is known in the evaluator by
+	 * import statements in the greql query
+	 */
+	protected Map<String, AttributedElementClass<?, ?>> knownTypes = new HashMap<String, AttributedElementClass<?, ?>>(); // initial
 
 	/**
 	 * The GraphMarker that stores all vertex evaluators
@@ -139,6 +146,7 @@ public class Query {
 	public Query(String queryText, boolean optimize) {
 		this.queryText = queryText;
 		this.optimize = optimize;
+		knownTypes = new HashMap<String, AttributedElementClass<?, ?>>();
 	}
 
 	public Greql2Graph getQueryGraph() {
@@ -231,17 +239,24 @@ public class Query {
 
 	/**
 	 * @param name
+	 *            {@link String} the simple name of the needed
+	 *            {@link AttributedElementClass}
 	 * @return {@link AttributedElementClass} of the datagraph with the name
 	 *         <code>name</code>
 	 */
 	public AttributedElementClass<?, ?> getKnownType(String name) {
-		// TODO [greqlrenovation]
-		return null;
+		return knownTypes.get(name);
 	}
 
-	public AttributedElementClass<?, ?> getAttributedElementClass(String name) {
-		// TODO [greqlrenovation]
-		return null;
+	/**
+	 * @param elem
+	 *            {@link AttributedElementClass} which will be added to the
+	 *            {@link #knownTypes} with its simple name as key.
+	 * @return @see {@link Map#put(Object, Object)}
+	 */
+	public AttributedElementClass<?, ?> addKnownType(
+			AttributedElementClass<?, ?> elem) {
+		return knownTypes.put(elem.getSimpleName(), elem);
 	}
 
 }
