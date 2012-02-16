@@ -55,7 +55,7 @@ import de.uni_koblenz.jgralab.greql2.schema.*;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 
 public class GreqlParser extends ParserHelper {
-	private Map<RuleEnum, int[]> testedRules = new HashMap<RuleEnum, int[]>();
+	private final Map<RuleEnum, int[]> testedRules = new HashMap<RuleEnum, int[]>();
 
 	private List<Token> tokens = null;
 
@@ -65,9 +65,9 @@ public class GreqlParser extends ParserHelper {
 
 	private ParsingException farestException = null;
 
-	private Stack<Integer> parsingStack;
+	private final Stack<Integer> parsingStack;
 
-	private Stack<Boolean> predicateStack;
+	private final Stack<Boolean> predicateStack;
 
 	private boolean predicateFulfilled = true;
 
@@ -92,7 +92,7 @@ public class GreqlParser extends ParserHelper {
 	 * the current token position. If it was already tested, this method skips
 	 * the number of tokens which were consumed by the rule in its last
 	 * application at the current token
-	 *
+	 * 
 	 * @param rule
 	 *            the rule to test
 	 * @return the current token position if the rule was not applied before or
@@ -136,7 +136,7 @@ public class GreqlParser extends ParserHelper {
 	 * (skipRule(pos)) return null; Expression expr =
 	 * parseQuantifiedExpression(); ruleSucceeded(RuleEnum.EXPRESSION, pos);
 	 * return expr;
-	 *
+	 * 
 	 * @return true if the rule application has already been tested and the
 	 *         parser is still in predicate mode, so the rule and the tokens it
 	 *         matched last time can be skipped, false otherwise
@@ -205,11 +205,11 @@ public class GreqlParser extends ParserHelper {
 				startOffset));
 	}
 
-	public static Greql2 parse(String query) {
+	public static Greql2Graph parse(String query) {
 		return parse(query, null);
 	}
 
-	public static Greql2 parse(String query, Set<String> subQueryNames) {
+	public static Greql2Graph parse(String query, Set<String> subQueryNames) {
 		GreqlParser parser = new GreqlParser(query, subQueryNames);
 		parser.parse();
 		return parser.getGraph();
@@ -818,7 +818,7 @@ public class GreqlParser extends ParserHelper {
 
 	/**
 	 * matches conditional expressions
-	 *
+	 * 
 	 * @return
 	 */
 	private final Expression parseConditionalExpression() {
