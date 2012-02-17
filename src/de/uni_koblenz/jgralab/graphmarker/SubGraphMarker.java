@@ -333,6 +333,7 @@ public class SubGraphMarker extends AbstractGraphMarker<GraphElement<?, ?>>
 
 	@Override
 	public boolean containsEdge(Edge e) {
-		return edgeGraphMarker.isMarked(e);
+		boolean result = edgeGraphMarker.isMarked(e);
+		return result;
 	}
 }

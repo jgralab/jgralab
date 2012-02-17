@@ -364,7 +364,6 @@ public class VertexList extends GraphElementList<DatabasePersistableVertex> {
 	}
 
 	private long getPrevFreeSequenceNumber(DatabasePersistableVertex vertex) {
-		assert !isFirst(vertex);
 		return this.getPrevFreeSequenceNumber(vertex.getSequenceNumberInVSeq());
 	}
 
@@ -376,7 +375,6 @@ public class VertexList extends GraphElementList<DatabasePersistableVertex> {
 	}
 
 	private long getNextFreeSequenceNumber(DatabasePersistableVertex vertex) {
-		assert !isLast(vertex);
 		return this.getNextFreeSequenceNumber(vertex.getSequenceNumberInVSeq());
 	}
 

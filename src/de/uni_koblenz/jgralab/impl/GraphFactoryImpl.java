@@ -57,7 +57,7 @@ import de.uni_koblenz.jgralab.schema.exception.SchemaException;
  * creates an instance of exactly the specified class. To change this use
  * <code>setImplementationClass</code>-methods. Class is abstract because only
  * factories which are specific for their schema should be used.
- *
+ * 
  * @author ist@uni-koblenz.de
  */
 public abstract class GraphFactoryImpl implements GraphFactory {
@@ -252,7 +252,7 @@ public abstract class GraphFactoryImpl implements GraphFactory {
 
 	/**
 	 * tests if a is a superclass of b or the same class than b
-	 *
+	 * 
 	 * @param a
 	 * @param b
 	 * @return
@@ -278,7 +278,7 @@ public abstract class GraphFactoryImpl implements GraphFactory {
 
 	/**
 	 * tests if class a implements the interface b
-	 *
+	 * 
 	 * @param a
 	 * @param b
 	 * @return

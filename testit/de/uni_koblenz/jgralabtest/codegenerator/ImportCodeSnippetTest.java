@@ -365,20 +365,8 @@ public class ImportCodeSnippetTest extends CodeSnippetTest {
 	public void testSetVariable() {
 		// border cases
 		ImportCodeSnippet ics = new ImportCodeSnippet();
-		ics.setVariable(null, null);
-		assertNull(ics.getVariable(null));
-		ics.setVariable(null, "sylvester");
-		assertEquals("sylvester", ics.getVariable(null));
-		ics.setVariable("3", null);
-		assertNull(ics.getVariable("3"));
-		ics.setVariable("", null);
-		assertNull(ics.getVariable(""));
-		ics.setVariable("", "");
-		assertEquals("", ics.getVariable(""));
 		ics.setVariable("5", "");
 		assertEquals("", ics.getVariable("5"));
-		ics.setVariable(null, "");
-		assertEquals("", ics.getVariable(null));
 
 		// normal cases
 		ics.setVariable("1", "montag");

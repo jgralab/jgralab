@@ -341,7 +341,6 @@ public class EdgeList extends GraphElementList<DatabasePersistableEdge> {
 	}
 
 	private long getPrevFreeSequenceNumber(DatabasePersistableEdge edge) {
-		assert !isFirst(edge);
 		return this.getPrevFreeSequenceNumber(edge.getSequenceNumberInESeq());
 	}
 
@@ -386,7 +385,6 @@ public class EdgeList extends GraphElementList<DatabasePersistableEdge> {
 	}
 
 	private long getNextFreeSequenceNumber(DatabasePersistableEdge edge) {
-		assert !isLast(edge);
 		return this.getNextFreeSequenceNumber(edge.getSequenceNumberInESeq());
 	}
 

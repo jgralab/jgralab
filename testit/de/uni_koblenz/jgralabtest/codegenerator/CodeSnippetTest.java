@@ -459,26 +459,6 @@ public class CodeSnippetTest {
 	public void testSetVariable() {
 		// border cases
 		CodeSnippet cs = new CodeSnippet();
-		cs.setVariable(null, null);
-		assertNull(cs.getVariable(null));
-
-		cs.setVariable(null, "");
-		assertEquals("", cs.getVariable(null));
-
-		cs.setVariable(null, "weiß");
-		assertEquals("weiß", cs.getVariable(null));
-
-		cs.setVariable("", null);
-		assertNull(cs.getVariable(""));
-
-		cs.setVariable("", "");
-		assertEquals("", cs.getVariable(""));
-
-		cs.setVariable("", "schwarz");
-		assertEquals("schwarz", cs.getVariable(""));
-
-		cs.setVariable("schneeweiß", null);
-		assertNull(cs.getVariable("schneeweiß"));
 
 		cs.setVariable("nachtschwarz", "");
 		assertEquals("", cs.getVariable("nachtschwarz"));

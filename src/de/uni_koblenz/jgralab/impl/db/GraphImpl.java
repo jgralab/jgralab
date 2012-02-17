@@ -378,6 +378,16 @@ public abstract class GraphImpl extends GraphBaseImpl implements
 	@Override
 	public <T extends Edge> T createEdge(EdgeClass ec, Vertex alpha,
 			Vertex omega) {
+		if (alpha == null) {
+			throw new GraphException("alpha vertex of an edge must not be null");
+		}
+		if (omega == null) {
+			throw new GraphException("alpha vertex of an edge must not be null");
+		}
+		assert alpha.isValid();
+		assert alpha.getGraph() == this;
+		assert omega.isValid();
+		assert omega.getGraph() == this;
 		T edge = graphFactory.createEdge(ec, 0, this, alpha, omega);
 		edge.initializeAttributesWithDefaultValues();
 		graphCache.addEdge((DatabasePersistableEdge) edge);

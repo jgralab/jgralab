@@ -97,6 +97,7 @@ public abstract class VertexImpl extends VertexBaseImpl implements
 	 * 
 	 * @return Primary key of graph this vertex is part of.
 	 */
+	@Override
 	public int getGId() {
 		return graph.getGId();
 	}
@@ -145,6 +146,7 @@ public abstract class VertexImpl extends VertexBaseImpl implements
 	 * @param sequenceNumber
 	 *            Number of vertex mapping it's sequence in VSeq.
 	 */
+	@Override
 	public void setSequenceNumberInVSeq(long sequenceNumber) {
 		if (sequenceNumberInVSeq != sequenceNumber) {
 			updateSequenceNumber(sequenceNumber);
@@ -173,6 +175,7 @@ public abstract class VertexImpl extends VertexBaseImpl implements
 	 * @param sequenceNumber
 	 *            Number mapping incidence's sequence in incidence list.
 	 */
+	@Override
 	public void addIncidence(int eId, long sequenceNumber) {
 		incidenceList.add(eId, sequenceNumber);
 	}
@@ -355,6 +358,7 @@ public abstract class VertexImpl extends VertexBaseImpl implements
 	 * 
 	 * @return true if vertex is persistent, false otherwise.
 	 */
+	@Override
 	public boolean isPersistent() {
 		return persistent;
 	}
@@ -364,6 +368,7 @@ public abstract class VertexImpl extends VertexBaseImpl implements
 	 * 
 	 * @return true if vertex is initialized, false otherwise.
 	 */
+	@Override
 	public boolean isInitialized() {
 		return initialized;
 	}
@@ -374,6 +379,7 @@ public abstract class VertexImpl extends VertexBaseImpl implements
 	 * @param initialized
 	 *            Initialization status to set.
 	 */
+	@Override
 	public void setInitialized(boolean initialized) {
 		this.initialized = initialized;
 	}
@@ -489,7 +495,7 @@ public abstract class VertexImpl extends VertexBaseImpl implements
 	public void deleted() {
 		persistent = false;
 		initialized = false;
-		setId(0);
+		id = 0;
 		graph = null;
 		super.graph = null;
 		incidenceList.clear();

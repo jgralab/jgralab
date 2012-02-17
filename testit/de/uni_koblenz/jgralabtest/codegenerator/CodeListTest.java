@@ -703,22 +703,8 @@ public class CodeListTest {
 	public void testSetVariable() {
 		// border cases
 		CodeList cl = new CodeList();
-		cl.setVariable(null, null);
-		assertNull(cl.getVariable(null));
-		cl.setVariable(null, "");
-		assertEquals("", cl.getVariable(null));
-		cl.setVariable("", null);
-		assertNull(cl.getVariable(""));
-		cl.setVariable("", "");
-		assertEquals("", cl.getVariable(""));
 		cl.setVariable("y", "");
 		assertEquals("", cl.getVariable("y"));
-		cl.setVariable("x", null);
-		assertNull(cl.getVariable("x"));
-		cl.setVariable(null, "w");
-		assertEquals("w", cl.getVariable(null));
-		cl.setVariable("", "q");
-		assertEquals("q", cl.getVariable(""));
 
 		// normal cases
 		cl.setVariable("d", "Dänemark");

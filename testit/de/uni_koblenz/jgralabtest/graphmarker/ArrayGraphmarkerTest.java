@@ -313,18 +313,6 @@ public class ArrayGraphmarkerTest extends InstanceTest {
 	}
 
 	@Test
-	public void testVertexDeleted() throws CommitFailedException {
-		marker.mark(v1, new TestMarkerObject());
-		assertTrue(marker.isMarked(v1));
-		g.deleteVertex(v1);
-		commit(g);
-
-		createReadOnlyTransaction(g);
-		assertFalse(marker.isMarked(v1));
-
-	}
-
-	@Test
 	public void testMaxVertexCountIncreased() {
 		assertEquals(V, marker.maxSize());
 		for (int i = 0; i < V; i++) {

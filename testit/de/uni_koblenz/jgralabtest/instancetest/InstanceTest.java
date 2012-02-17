@@ -36,9 +36,13 @@ package de.uni_koblenz.jgralabtest.instancetest;
 
 import static org.junit.Assert.fail;
 
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Properties;
 
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.ImplementationType;
@@ -56,6 +60,13 @@ public abstract class InstanceTest {
 		// parameters.add(new Object[] { current });
 		// }
 
+		Properties props = new Properties(System.getProperties());
+		try {
+			props.load(new FileReader("testit/jgralabtest.properties"));
+		} catch (FileNotFoundException e) {
+		} catch (IOException e) {
+		}
+
 		printIndex();
 		parameters.add(new Object[] { ImplementationType.STANDARD, null });
 		System.out.println("standard implementation");
@@ -64,18 +75,18 @@ public abstract class InstanceTest {
 		parameters.add(new Object[] { ImplementationType.TRANSACTION, null });
 		System.out.println("transaction implementation");
 
-		String dbURL = System.getProperty("jgralabtest_dbconnection");
+		String dbURL = props.getProperty("jgralabtest_dbconnection");
 		dbURL = dbURL != null && dbURL.startsWith("jdbc") ? dbURL : null;
 
-		String derbyURL = System.getProperty("jgralabtest_derby_dbconnection");
+		String derbyURL = props.getProperty("jgralabtest_derby_dbconnection");
 		derbyURL = derbyURL != null && derbyURL.startsWith("jdbc") ? derbyURL
 				: null;
-		String postgresURL = System
+		String postgresURL = props
 				.getProperty("jgralabtest_postgres_dbconnection");
 		postgresURL = postgresURL != null && postgresURL.startsWith("jdbc") ? postgresURL
 				: null;
 
-		String mysqlURL = System.getProperty("jgralabtest_mysql_dbconnection");
+		String mysqlURL = props.getProperty("jgralabtest_mysql_dbconnection");
 		mysqlURL = mysqlURL != null && mysqlURL.startsWith("jdbc") ? mysqlURL
 				: null;
 
