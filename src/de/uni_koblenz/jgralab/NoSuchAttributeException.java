@@ -36,7 +36,10 @@ package de.uni_koblenz.jgralab;
 
 public class NoSuchAttributeException extends GraphException {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = -8868532586308330345L;
+
+	public NoSuchAttributeException() {
+	}
 
 	public NoSuchAttributeException(String msg) {
 		super(msg);

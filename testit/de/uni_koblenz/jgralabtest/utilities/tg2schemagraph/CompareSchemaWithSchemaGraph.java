@@ -52,7 +52,6 @@ import java.util.SortedSet;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.WorkInProgress;
 import de.uni_koblenz.jgralab.grumlschema.SchemaGraph;
 import de.uni_koblenz.jgralab.grumlschema.domains.CollectionDomain;
 import de.uni_koblenz.jgralab.grumlschema.domains.Domain;
@@ -108,7 +107,6 @@ import de.uni_koblenz.jgralab.schema.StringDomain;
  * 
  * @author mmce, Eckhard Großmann
  */
-@WorkInProgress(responsibleDevelopers = "mmce, Eckhard Großmann", expectedFinishingDate = "2009-04-29")
 public class CompareSchemaWithSchemaGraph {
 
 	/**

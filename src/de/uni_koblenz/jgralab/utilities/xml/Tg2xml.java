@@ -74,7 +74,7 @@ import de.uni_koblenz.jgralab.schema.Schema;
 import de.uni_koblenz.jgralab.utilities.common.GraphVisitor;
 import de.uni_koblenz.jgralab.utilities.common.UtilityMethods;
 
-@WorkInProgress(description = "Attribute values missing, testing required, command line parameter checks missing", responsibleDevelopers = "strauss, riediger", expectedFinishingDate = "2009/08")
+@WorkInProgress(description = "Attribute values missing, testing required, command line parameter checks missing", responsibleDevelopers = "strauss, riediger")
 public class Tg2xml extends GraphVisitor {
 
 	private final String prefix;
