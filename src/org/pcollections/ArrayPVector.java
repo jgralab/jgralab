@@ -236,6 +236,9 @@ public final class ArrayPVector<E> implements PVector<E>, Serializable {
 
 	@Override
 	public Object[] toArray() {
+		if (count == 0) {
+			return new Object[0];
+		}
 		return Arrays.copyOfRange(value, offset, offset + count);
 	}
 
@@ -243,7 +246,9 @@ public final class ArrayPVector<E> implements PVector<E>, Serializable {
 	@Override
 	public <T> T[] toArray(T[] a) {
 		if (a.length >= count) {
-			System.arraycopy(value, offset, a, 0, count);
+			if (count > 0) {
+				System.arraycopy(value, offset, a, 0, count);
+			}
 			if (a.length > count) {
 				a[count] = null;
 			}
