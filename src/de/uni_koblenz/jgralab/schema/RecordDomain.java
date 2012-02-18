@@ -95,13 +95,6 @@ public interface RecordDomain extends CompositeDomain {
 	public Collection<RecordComponent> getComponents();
 
 	/**
-	 * @param name
-	 *            the name of the record domain component in the record domain
-	 * @return the domain of the component with the name name
-	 */
-	public Domain getDomainOfComponent(String name);
-
-	/**
 	 * Adds a record domain component to the internal list
 	 * 
 	 * @param name
@@ -124,6 +117,7 @@ public interface RecordDomain extends CompositeDomain {
 	 * 
 	 * @return java representation of this attribute
 	 */
+	@Override
 	public String getJavaAttributeImplementationTypeName(
 			String schemaRootPackagePrefix);
 

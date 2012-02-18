@@ -34,22 +34,23 @@
  */
 package de.uni_koblenz.jgralab.schema.exception;
 
-/**
- * Thrown when a schema tries to use a reserved word as attribute name or at
- * other places.
- * 
- * @author ist@uni-koblenz.de
- * 
- */
-public class ReservedWordException extends SchemaException {
+public class CycleException extends SchemaException {
+	private static final long serialVersionUID = 6062437865949937921L;
+	private Object alpha;
+	private Object omega;
 
-	/**
-	 *
-	 */
-	private static final long serialVersionUID = -3586887297159374554L;
+	public CycleException(Object alpha, Object omega) {
+		super("Can't add edge from " + alpha + " to " + omega
+				+ " since this would create a cycle.");
+		this.alpha = alpha;
+		this.omega = omega;
+	}
 
-	public ReservedWordException(String reservedWord, String triedUsage) {
-		super("The reserved word " + reservedWord + " may not be used as "
-				+ triedUsage + ".");
+	public Object getAlpha() {
+		return alpha;
+	}
+
+	public Object getOmega() {
+		return omega;
 	}
 }

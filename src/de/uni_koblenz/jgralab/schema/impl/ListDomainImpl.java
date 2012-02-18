@@ -74,13 +74,6 @@ public final class ListDomainImpl extends CollectionDomainImpl implements
 	}
 
 	@Override
-	public Set<Domain> getAllComponentDomains() {
-		HashSet<Domain> componentDomainSet = new HashSet<Domain>(1);
-		componentDomainSet.add(baseDomain);
-		return componentDomainSet;
-	}
-
-	@Override
 	public String getJavaAttributeImplementationTypeName(
 			String schemaRootPackagePrefix) {
 		return LISTDOMAIN_TYPE + "<"

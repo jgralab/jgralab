@@ -35,12 +35,7 @@
 
 package de.uni_koblenz.jgralab.schema.impl;
 
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
-
 import de.uni_koblenz.jgralab.schema.CompositeDomain;
-import de.uni_koblenz.jgralab.schema.Domain;
 import de.uni_koblenz.jgralab.schema.Package;
 
 public abstract class CompositeDomainImpl extends DomainImpl implements
@@ -48,25 +43,6 @@ public abstract class CompositeDomainImpl extends DomainImpl implements
 
 	protected CompositeDomainImpl(String simpleName, Package pkg) {
 		super(simpleName, pkg);
-	}
-
-	@Override
-	public Set<CompositeDomain> getAllComponentCompositeDomains() {
-		Domain d;
-		HashSet<CompositeDomain> componentCompositeDomains = new HashSet<CompositeDomain>();
-		Set<Domain> componentDomains = getAllComponentDomains();
-
-		for (Iterator<Domain> cdit = componentDomains.iterator(); cdit
-				.hasNext();) {
-			d = cdit.next();
-			if (d instanceof CompositeDomain) {
-				componentCompositeDomains.add((CompositeDomain) d);
-			} else {
-				cdit.remove();
-			}
-		}
-
-		return componentCompositeDomains;
 	}
 
 	@Override

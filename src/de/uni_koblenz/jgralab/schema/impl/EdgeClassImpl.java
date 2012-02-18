@@ -127,10 +127,7 @@ public class EdgeClassImpl extends GraphElementClassImpl<EdgeClass, Edge>
 
 	@Override
 	public void addSuperClass(EdgeClass superClass) {
-		// checked in super
-		// if(isFinished()){
-		// throw new SchemaException("No changes to finished schema!");
-		// }
+		assertNotFinished();
 		if ((superClass == this) || (superClass == null)) {
 			return;
 		}

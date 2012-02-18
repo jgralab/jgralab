@@ -36,9 +36,7 @@
 package de.uni_koblenz.jgralab.schema.impl;
 
 import java.io.IOException;
-import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Set;
 
 import org.pcollections.PSet;
 
@@ -61,13 +59,6 @@ public final class SetDomainImpl extends CollectionDomainImpl implements
 		super(SETDOMAIN_NAME + "<"
 				+ aBaseDomain.getTGTypeName(schema.getDefaultPackage()) + ">",
 				schema.getDefaultPackage(), aBaseDomain);
-	}
-
-	@Override
-	public Set<Domain> getAllComponentDomains() {
-		HashSet<Domain> componentDomainSet = new HashSet<Domain>(1);
-		componentDomainSet.add(baseDomain);
-		return componentDomainSet;
 	}
 
 	@Override

@@ -288,7 +288,7 @@ public class SchemaCodeGenerator extends CodeGenerator {
 		code.addNoIndent(new CodeSnippet(
 				true,
 				"/**",
-				" * the weak reference to the singleton instance",
+				" * reference to the singleton instance",
 				" */",
 				"static WeakReference<#simpleClassName#> theInstance = new WeakReference<#simpleClassName#>(null);",
 				"",
@@ -308,7 +308,7 @@ public class SchemaCodeGenerator extends CodeGenerator {
 				"/**",
 				" * Creates a #simpleClassName# and builds its schema classes.",
 				" * This constructor is private. Use the <code>instance()</code> method",
-				" * to acess the schema.", " */",
+				" * to access the schema.", " */",
 				"private #simpleClassName#() {",
 				"\tsuper(\"#simpleClassName#\", \"#schemaPackage#\");"));
 

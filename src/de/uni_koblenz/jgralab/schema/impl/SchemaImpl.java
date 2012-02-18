@@ -95,7 +95,6 @@ import de.uni_koblenz.jgralab.schema.Schema;
 import de.uni_koblenz.jgralab.schema.SetDomain;
 import de.uni_koblenz.jgralab.schema.StringDomain;
 import de.uni_koblenz.jgralab.schema.VertexClass;
-import de.uni_koblenz.jgralab.schema.exception.InvalidNameException;
 import de.uni_koblenz.jgralab.schema.exception.SchemaClassAccessException;
 import de.uni_koblenz.jgralab.schema.exception.SchemaException;
 import de.uni_koblenz.jgralab.schema.impl.compilation.ClassFileManager;
@@ -162,7 +161,7 @@ public class SchemaImpl implements Schema {
 	 * Holds a reference to the {@link GraphClass} of this schema (not the
 	 * default graph class {@link GraphClass})
 	 */
-	private GraphClass graphClass;
+	private GraphClassImpl graphClass;
 
 	/**
 	 * The name of this schema without the package prefix.
@@ -222,7 +221,7 @@ public class SchemaImpl implements Schema {
 	 */
 	public SchemaImpl(String name, String packagePrefix) {
 		if (!SCHEMA_NAME_PATTERN.matcher(name).matches()) {
-			throw new InvalidNameException(
+			throw new SchemaException(
 					"Invalid schema name '"
 							+ name
 							+ "'.\n"
@@ -233,7 +232,7 @@ public class SchemaImpl implements Schema {
 		}
 
 		if (!PACKAGE_PREFIX_PATTERN.matcher(packagePrefix).matches()) {
-			throw new InvalidNameException(
+			throw new SchemaException(
 					"Invalid schema package prefix '"
 							+ packagePrefix
 							+ "'.\n"
@@ -616,9 +615,7 @@ public class SchemaImpl implements Schema {
 	@Override
 	public EnumDomain createEnumDomain(String qualifiedName,
 			List<String> enumComponents) {
-		if (finished) {
-			throw new SchemaException("No changes to finished schema!");
-		}
+		assertNotFinished();
 		String[] components = splitQualifiedName(qualifiedName);
 		PackageImpl parent = (PackageImpl) createPackageWithParents(components[0]);
 		String simpleName = components[1];
@@ -637,13 +634,13 @@ public class SchemaImpl implements Schema {
 		}
 
 		if (simpleName.equals(GraphClass.DEFAULTGRAPHCLASS_NAME)) {
-			throw new InvalidNameException(
+			throw new SchemaException(
 					"A GraphClass must not be named like the default GraphClass ("
 							+ GraphClass.DEFAULTGRAPHCLASS_NAME + ")");
 		}
 
 		if (simpleName.contains(".")) {
-			throw new InvalidNameException(
+			throw new SchemaException(
 					"A GraphClass must always be in the default package!");
 		}
 		GraphClassImpl gc = new GraphClassImpl(simpleName, this);
@@ -1201,7 +1198,7 @@ public class SchemaImpl implements Schema {
 		this.allowLowercaseEnumConstants = allowLowercaseEnumConstants;
 	}
 
-	void setGraphClass(GraphClass gc) {
+	void setGraphClass(GraphClassImpl gc) {
 		if (graphClass != null) {
 			throw new SchemaException("A GraphClass named '"
 					+ graphClass.getQualifiedName()
@@ -1217,7 +1214,7 @@ public class SchemaImpl implements Schema {
 	 */
 	public String getDescriptionString() {
 		return "GraphClass of schema '" + qualifiedName + "':\n\n\n"
-				+ ((GraphClassImpl) graphClass).getDescriptionString();
+				+ graphClass.getDescriptionString();
 	}
 
 	@Override
@@ -1236,9 +1233,9 @@ public class SchemaImpl implements Schema {
 			byteOut.close();
 			schemaDefinition = new String(byteOut.toByteArray());
 		} catch (GraphIOException e) {
-			throw new RuntimeException(e);
+			throw new SchemaException(e);
 		} catch (IOException e) {
-			throw new RuntimeException(e);
+			throw new SchemaException(e);
 		}
 		return schemaDefinition;
 	}
@@ -1258,7 +1255,7 @@ public class SchemaImpl implements Schema {
 			ImplementationType implementationType) {
 		assertFinished();
 		if (implementationType != ImplementationType.GENERIC) {
-			throw new IllegalArgumentException(
+			throw new SchemaException(
 					"Base implementation can't create a GraphFactory for implementation type "
 							+ implementationType
 							+ ". Only GENERIC is supported.");
@@ -1281,13 +1278,13 @@ public class SchemaImpl implements Schema {
 
 	protected void assertFinished() {
 		if (!finished) {
-			throw new IllegalStateException("Schema must be finished.");
+			throw new SchemaException("Schema must be finished.");
 		}
 	}
 
 	protected void assertNotFinished() {
 		if (finished) {
-			throw new IllegalStateException(
+			throw new SchemaException(
 					"No changes allowed in a finished Schema.");
 		}
 	}
@@ -1313,7 +1310,8 @@ public class SchemaImpl implements Schema {
 			throw new SchemaException(
 					"Can't finish a schema without a GraphClass. Create a GraphClass first!");
 		}
-		((GraphClassImpl) graphClass).finish();
+		domainsDag.finish();
+		graphClass.finish();
 		finished = true;
 
 	}
@@ -1324,11 +1322,7 @@ public class SchemaImpl implements Schema {
 	 */
 	@Override
 	public void reopen() {
-		if (!finished) {
-			return;
-		}
-		((GraphClassImpl) graphClass).finish();
-		finished = false;
+		throw new UnsupportedOperationException();
 	}
 
 	@Override

@@ -35,24 +35,28 @@
 
 package de.uni_koblenz.jgralab.schema.impl;
 
-import java.util.ArrayList;
-import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Queue;
 import java.util.Set;
 
+import org.pcollections.ArrayPVector;
+import org.pcollections.PVector;
+
+import de.uni_koblenz.jgralab.schema.exception.CycleException;
+
 public class DirectedAcyclicGraph<T> extends DirectedGraph<T> {
 
-	private List<T> topologicalOrder;
+	private PVector<T> topologicalOrder;
+	private HashMap<T, PVector<T>> cachedPredecessors;
+	private HashMap<T, PVector<T>> cachedSuccessors;
 
 	public DirectedAcyclicGraph() {
-		topologicalOrder = Collections.unmodifiableList(new ArrayList<T>(0));
+		topologicalOrder = ArrayPVector.empty();
 	}
 
 	protected boolean computeTopologicalOrder() {
-		topologicalOrder = new ArrayList<T>(nodes.size());
 		Queue<Node<T>> q = new LinkedList<Node<T>>();
 		// Enter all nodes without a predecessor into q
 		for (Node<T> n : nodes) {
@@ -65,18 +69,19 @@ public class DirectedAcyclicGraph<T> extends DirectedGraph<T> {
 		// Add it to the topolocicalOrder list
 		// Add all of his successors to q for which it is true,
 		// that all predecessors are already in the list
+		topologicalOrder = ArrayPVector.empty();
 		while (!q.isEmpty()) {
 			Node<T> n = q.poll();
-			topologicalOrder.add(n.data);
-			for (Node<T> c : n.successors) {
-				--c.mark;
-				if (c.mark == 0) {
-					q.offer(c);
+			topologicalOrder = topologicalOrder.plus(n.data);
+			for (T c : n.successors) {
+				Node<T> o = entries.get(c);
+				--o.mark;
+				if (o.mark == 0) {
+					q.offer(o);
 				}
 			}
 		}
 		assert topologicalOrder.size() <= nodes.size();
-		topologicalOrder = Collections.unmodifiableList(topologicalOrder);
 		return topologicalOrder.size() == nodes.size();
 	}
 
@@ -86,48 +91,67 @@ public class DirectedAcyclicGraph<T> extends DirectedGraph<T> {
 		computeTopologicalOrder();
 	}
 
-	public List<T> getAllPredecessorsInTopologicalOrder(T data) {
-		Node<T> n = entries.get(data);
-		Set<T> s = new HashSet<T>();
-		Queue<Node<T>> q = new LinkedList<Node<T>>(n.predecessors);
-		while (!q.isEmpty()) {
-			n = q.poll();
-			if (!s.contains(n.data)) {
-				s.add(n.data);
-				for (Node<T> x : n.predecessors) {
-					q.offer(x);
-				}
-			}
+	@Override
+	public void finish() {
+		cachedPredecessors = new HashMap<T, PVector<T>>();
+		cachedSuccessors = new HashMap<T, PVector<T>>();
+		for (Node<T> n : nodes) {
+			cachedPredecessors.put(n.data,
+					getAllPredecessorsInTopologicalOrder(n.data));
+			cachedSuccessors.put(n.data,
+					getAllSuccessorsInTopologicalOrder(n.data));
 		}
-		List<T> result = new ArrayList<T>();
-		for (T x : topologicalOrder) {
-			if (s.contains(x)) {
-				result.add(x);
-			}
-		}
-		return Collections.unmodifiableList(result);
+		super.finish();
 	}
 
-	public List<T> getAllSucccessorsInTopologicalOrder(T data) {
+	public PVector<T> getAllPredecessorsInTopologicalOrder(T data) {
+		if (finished) {
+			return cachedPredecessors.get(data);
+		}
 		Node<T> n = entries.get(data);
 		Set<T> s = new HashSet<T>();
-		Queue<Node<T>> q = new LinkedList<Node<T>>(n.successors);
+		Queue<T> q = new LinkedList<T>(n.predecessors);
 		while (!q.isEmpty()) {
-			n = q.poll();
+			n = entries.get(q.poll());
 			if (!s.contains(n.data)) {
 				s.add(n.data);
-				for (Node<T> x : n.successors) {
+				for (T x : n.predecessors) {
 					q.offer(x);
 				}
 			}
 		}
-		List<T> result = new ArrayList<T>();
+		PVector<T> result = ArrayPVector.empty();
 		for (T x : topologicalOrder) {
 			if (s.contains(x)) {
-				result.add(x);
+				result = result.plus(x);
 			}
 		}
-		return Collections.unmodifiableList(result);
+		return result;
+	}
+
+	public PVector<T> getAllSuccessorsInTopologicalOrder(T data) {
+		if (finished) {
+			return cachedSuccessors.get(data);
+		}
+		Node<T> n = entries.get(data);
+		Set<T> s = new HashSet<T>();
+		Queue<T> q = new LinkedList<T>(n.successors);
+		while (!q.isEmpty()) {
+			n = entries.get(q.poll());
+			if (!s.contains(n.data)) {
+				s.add(n.data);
+				for (T x : n.successors) {
+					q.offer(x);
+				}
+			}
+		}
+		PVector<T> result = ArrayPVector.empty();
+		for (T x : topologicalOrder) {
+			if (s.contains(x)) {
+				result = result.plus(x);
+			}
+		}
+		return result;
 	}
 
 	@Override
@@ -136,14 +160,14 @@ public class DirectedAcyclicGraph<T> extends DirectedGraph<T> {
 		if (!computeTopologicalOrder()) {
 			Node<T> fromNode = entries.get(alpha);
 			Node<T> toNode = entries.get(omega);
-			fromNode.successors.remove(toNode);
-			toNode.predecessors.remove(fromNode);
+			fromNode.successors = fromNode.successors.minus(toNode);
+			toNode.predecessors = toNode.predecessors.minus(fromNode);
 			computeTopologicalOrder();
 			throw new CycleException(alpha, omega);
 		}
 	}
 
-	public List<T> getNodesInTopologicalOrder() {
+	public PVector<T> getNodesInTopologicalOrder() {
 		return topologicalOrder;
 	}
 }

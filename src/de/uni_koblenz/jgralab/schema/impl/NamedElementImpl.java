@@ -48,7 +48,6 @@ import de.uni_koblenz.jgralab.schema.MapDomain;
 import de.uni_koblenz.jgralab.schema.NamedElement;
 import de.uni_koblenz.jgralab.schema.Package;
 import de.uni_koblenz.jgralab.schema.Schema;
-import de.uni_koblenz.jgralab.schema.exception.InvalidNameException;
 import de.uni_koblenz.jgralab.schema.exception.SchemaException;
 
 public abstract class NamedElementImpl implements NamedElement {
@@ -214,7 +213,7 @@ public abstract class NamedElementImpl implements NamedElement {
 	 *            the package containing this named element
 	 * @param schema
 	 *            the schema containing this named element
-	 * @throws InvalidNameException
+	 * @throws IllegalArgumentException
 	 *             if:
 	 *             <ul>
 	 *             <li>the simple name does not meet the required format (see
@@ -292,7 +291,7 @@ public abstract class NamedElementImpl implements NamedElement {
 		if ((this instanceof CollectionDomain) || (this instanceof MapDomain)) {
 			if (!COLLECTION_OR_MAPDOMAIN_NAME_PATTERN.matcher(simpleName)
 					.matches()) {
-				throw new InvalidNameException(
+				throw new SchemaException(
 						"Invalid simpleName for Collection- or MapDomain '"
 								+ simpleName
 								+ "': The simple name must not be empty. "
@@ -301,7 +300,7 @@ public abstract class NamedElementImpl implements NamedElement {
 			}
 		} else if (this instanceof Package) {
 			if (!PACKAGE_NAME_PATTERN.matcher(simpleName).matches()) {
-				throw new InvalidNameException(
+				throw new SchemaException(
 						"Invalid simpleName for Package '"
 								+ simpleName
 								+ "': The simple name must start with a small letter. "
@@ -310,7 +309,7 @@ public abstract class NamedElementImpl implements NamedElement {
 			}
 		} else if (!ATTRELEM_OR_NOCOLLDOMAIN_PATTERN.matcher(simpleName)
 				.matches()) {
-			throw new InvalidNameException(
+			throw new SchemaException(
 					"Invalid simpleName for AttributedElementClass or Domain '"
 							+ simpleName
 							+ "': The simple name must not be empty. "
@@ -324,7 +323,7 @@ public abstract class NamedElementImpl implements NamedElement {
 		 * names.
 		 */
 		if (Schema.RESERVED_JAVA_WORDS.contains(simpleName)) {
-			throw new InvalidNameException("Invalid simpleName '" + simpleName
+			throw new SchemaException("Invalid simpleName '" + simpleName
 					+ "': The simple name must not be a reserved Java word.");
 		}
 

@@ -43,7 +43,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import de.uni_koblenz.jgralab.schema.EnumDomain;
-import de.uni_koblenz.jgralab.schema.exception.InvalidNameException;
+import de.uni_koblenz.jgralab.schema.exception.SchemaException;
 
 public class EnumDomainTest extends BasicDomainTest {
 
@@ -139,19 +139,19 @@ public class EnumDomainTest extends BasicDomainTest {
 		assertTrue(enum1.getConsts().contains("newConstant"));
 	}
 
-	@Test(expected = InvalidNameException.class)
+	@Test(expected = SchemaException.class)
 	public void testAddConst3() {
 		// add constant that already exists
 		domain3.addConst("Sebastian");
 	}
 
-	@Test(expected = InvalidNameException.class)
+	@Test(expected = SchemaException.class)
 	public void testAddConst4() {
 		// add constant that already exists
 		domain3.addConst("-a");
 	}
 
-	@Test(expected = InvalidNameException.class)
+	@Test(expected = SchemaException.class)
 	public void testAddConst5() {
 		// add constant that already exists
 		domain3.addConst("abc%");

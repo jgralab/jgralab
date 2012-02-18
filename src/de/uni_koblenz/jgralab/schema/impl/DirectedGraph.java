@@ -41,43 +41,62 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.pcollections.ArrayPSet;
+import org.pcollections.PSet;
+
+import de.uni_koblenz.jgralab.schema.exception.SchemaException;
+
 public class DirectedGraph<T> {
 
 	protected static class Node<T> {
 		final T data;
-		final Set<Node<T>> successors;
-		final Set<Node<T>> predecessors;
+		PSet<T> successors;
+		PSet<T> predecessors;
+
 		int mark;
 
 		Node(T data) {
 			assert data != null;
 			this.data = data;
-			successors = new HashSet<Node<T>>();
-			predecessors = new HashSet<Node<T>>();
+			successors = ArrayPSet.empty();
+			predecessors = ArrayPSet.empty();
 		}
 	}
 
 	protected final Set<Node<T>> nodes;
 	protected final Map<T, Node<T>> entries;
+	protected boolean finished;
+	protected Set<T> cachedNodes;
 
 	public DirectedGraph() {
 		nodes = new HashSet<Node<T>>();
 		entries = new HashMap<T, Node<T>>();
 	}
 
+	public void finish() {
+		finished = true;
+		cachedNodes = ArrayPSet.<T> empty().plusAll(entries.keySet());
+	}
+
 	public void createEdge(T alpha, T omega) {
+		if (finished) {
+			throw new SchemaException();
+		}
 		if (alpha == omega || alpha.equals(omega)) {
-			throw new IllegalArgumentException("Loops are not supported.");
+			throw new SchemaException("Loops are not supported.");
 		}
 		Node<T> fromNode = entries.get(alpha);
 		assert fromNode != null;
 		Node<T> toNode = entries.get(omega);
 		assert toNode != null;
-		fromNode.successors.add(toNode);
-		toNode.predecessors.add(fromNode);
+		fromNode.successors = fromNode.successors.plus(omega);
+		toNode.predecessors = toNode.predecessors.plus(alpha);
 	}
 
 	public void createNode(T data) {
+		if (finished) {
+			throw new SchemaException();
+		}
 		assert entries.get(data) == null;
 		Node<T> n = new Node<T>(data);
 		nodes.add(n);
@@ -89,19 +108,15 @@ public class DirectedGraph<T> {
 	}
 
 	public Set<T> getNodes() {
-		return Collections.unmodifiableSet(entries.keySet());
+		return finished ? cachedNodes : Collections.unmodifiableSet(entries
+				.keySet());
 	}
 
-	@SuppressWarnings("unchecked")
 	public Set<T> getDirectPredecessors(T data) {
-		return (Set<T>) Collections
-				.unmodifiableSet(entries.get(data).predecessors);
+		return entries.get(data).predecessors;
 	}
 
-	@SuppressWarnings("unchecked")
 	public Set<T> getDirectSucccessors(T data) {
-		return (Set<T>) Collections
-				.unmodifiableSet(entries.get(data).successors);
+		return entries.get(data).successors;
 	}
-
 }

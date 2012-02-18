@@ -35,7 +35,6 @@
 
 package de.uni_koblenz.jgralab.schema;
 
-import java.util.Set;
 
 /**
  * Base class of the composite domains List, Set, Record and Map.
@@ -43,22 +42,4 @@ import java.util.Set;
  * @author ist@uni-koblenz.de
  */
 public interface CompositeDomain extends Domain {
-	/**
-	 * Returns the component composite domains of the composite domain. If the
-	 * component composite domains contain other composite domains, the latter
-	 * are not included in the returned Set.
-	 * 
-	 * @return the Set of the composite domain's component composite domains
-	 */
-	public Set<CompositeDomain> getAllComponentCompositeDomains();
-
-	/**
-	 * Returns the component domains of the composite domain. If component
-	 * composite domains contain other composite domains, the latter are not
-	 * included in the returned Set.
-	 * 
-	 * @return the Set of the composite domain's component domains
-	 */
-	public Set<Domain> getAllComponentDomains();
-
 }

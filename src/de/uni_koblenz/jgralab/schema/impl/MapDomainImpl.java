@@ -38,9 +38,7 @@
 package de.uni_koblenz.jgralab.schema.impl;
 
 import java.io.IOException;
-import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Set;
 
 import org.pcollections.PMap;
 
@@ -96,14 +94,6 @@ public final class MapDomainImpl extends CompositeDomainImpl implements
 		valueDomain = aValueDomain;
 		((SchemaImpl) schema).addDomainDependency(this, keyDomain);
 		((SchemaImpl) schema).addDomainDependency(this, valueDomain);
-	}
-
-	@Override
-	public Set<Domain> getAllComponentDomains() {
-		HashSet<Domain> allComponentDomains = new HashSet<Domain>(2);
-		allComponentDomains.add(keyDomain);
-		allComponentDomains.add(valueDomain);
-		return allComponentDomains;
 	}
 
 	@Override

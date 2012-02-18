@@ -45,15 +45,12 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 
 import de.uni_koblenz.jgralab.AttributedElement;
-import de.uni_koblenz.jgralab.NoSuchAttributeException;
 import de.uni_koblenz.jgralab.schema.Attribute;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.Constraint;
 import de.uni_koblenz.jgralab.schema.Domain;
 import de.uni_koblenz.jgralab.schema.Package;
 import de.uni_koblenz.jgralab.schema.Schema;
-import de.uni_koblenz.jgralab.schema.exception.DuplicateAttributeException;
-import de.uni_koblenz.jgralab.schema.exception.InheritanceException;
 import de.uni_koblenz.jgralab.schema.exception.SchemaClassAccessException;
 import de.uni_koblenz.jgralab.schema.exception.SchemaException;
 import de.uni_koblenz.jgralab.schema.impl.compilation.SchemaClassManager;
@@ -130,7 +127,7 @@ public abstract class AttributedElementClassImpl<SC extends AttributedElementCla
 
 	/**
 	 * builds a new attributed element class
-	 *
+	 * 
 	 * @param qn
 	 *            the unique identifier of the element in the schema
 	 */
@@ -141,24 +138,22 @@ public abstract class AttributedElementClassImpl<SC extends AttributedElementCla
 
 	@Override
 	public void addAttribute(Attribute anAttribute) {
-		if (finished) {
-			throw new SchemaException("No changes to finished schema!");
-		}
+		assertNotFinished();
 
 		if (containsAttribute(anAttribute.getName())) {
-			throw new DuplicateAttributeException(anAttribute.getName(),
-					getQualifiedName());
+			throw new SchemaException("Duplicate attribute '"
+					+ anAttribute.getName() + "' in AttributedElementClass '"
+					+ getQualifiedName() + "'");
 		}
 		// Check if a subclass already contains an attribute with that name. In
 		// that case, it may not be added, too.
 		if (subclassContainsAttribute(anAttribute.getName())) {
-			throw new DuplicateAttributeException(
-					"Duplicate Attribute '"
+			throw new SchemaException(
+					"Duplicate attribute '"
 							+ anAttribute.getName()
 							+ "' in AttributedElementClass '"
 							+ getQualifiedName()
-							+ "'. "
-							+ "A derived AttributedElementClass already contains this Attribute.");
+							+ "'. A derived AttributedElementClass already contains this Attribute.");
 		}
 		attributeList.add(anAttribute);
 	}
@@ -176,23 +171,19 @@ public abstract class AttributedElementClassImpl<SC extends AttributedElementCla
 
 	@Override
 	public void addConstraint(Constraint constraint) {
-		if (finished) {
-			throw new SchemaException("No changes to finished schema!");
-		}
+		assertNotFinished();
 		constraints.add(constraint);
 	}
 
 	/**
 	 * adds a superClass to this class
-	 *
+	 * 
 	 * @param superClass
 	 *            the class to add as superclass
 	 */
 	@SuppressWarnings("unchecked")
 	protected void addSuperClass(SC superClass) {
-		if (finished) {
-			throw new SchemaException("No changes to finished schema!");
-		}
+		assertNotFinished();
 
 		if ((superClass == this) || (superClass == null)) {
 			return;
@@ -203,17 +194,16 @@ public abstract class AttributedElementClassImpl<SC extends AttributedElementCla
 
 		for (Attribute a : superClass.getAttributeList()) {
 			if (getOwnAttribute(a.getName()) != null) {
-				throw new InheritanceException("Cannot add "
+				throw new SchemaException("Cannot add "
 						+ superClass.getQualifiedName() + " as superclass of "
-						+ getQualifiedName() + ", cause: Attribute "
+						+ getQualifiedName() + ". Cause: Attribute "
 						+ a.getName() + " is declared in both classes");
 			}
 		}
 		if (superClass.isSubClassOf((SC) this)) {
-			throw new InheritanceException(
-					"Cycle in class hierarchie for classes: "
-							+ getQualifiedName() + " and "
-							+ superClass.getQualifiedName());
+			throw new SchemaException("Cycle in class hierarchie for classes: "
+					+ getQualifiedName() + " and "
+					+ superClass.getQualifiedName());
 		}
 		directSuperClasses.add(superClass);
 		((AttributedElementClassImpl<SC, IC>) superClass).directSubClasses
@@ -516,29 +506,29 @@ public abstract class AttributedElementClassImpl<SC extends AttributedElementCla
 	 * Called if the schema is reopen
 	 */
 	protected void reopen() {
-		directSubClasses = new HashSet<SC>(directSubClasses);
-		directSuperClasses = new HashSet<SC>(directSuperClasses);
-		allSuperClasses = null;
-		allSubClasses = null;
-		allAttributeList = null;
-
-		finished = false;
+		throw new UnsupportedOperationException();
 	}
 
 	protected boolean isFinished() {
 		return finished;
 	}
 
+	protected void assertNotFinished() {
+		if (finished) {
+			throw new SchemaException(
+					"No changes allowed in a finished Schema.");
+		}
+	}
+
 	@Override
 	public int getAttributeIndex(String name) {
 		Integer i = null;
-		if(finished) {
+		if (finished) {
 			i = attributeIndex.get(name);
-		}
-		else {
+		} else {
 			int j = 0;
 			for (Attribute a : getAttributeList()) {
-				if(a.getName().equals(name)) {
+				if (a.getName().equals(name)) {
 					i = Integer.valueOf(j);
 					break;
 				}
@@ -549,9 +539,8 @@ public abstract class AttributedElementClassImpl<SC extends AttributedElementCla
 		if (i != null) {
 			return i.intValue();
 		} else {
-			throw new NoSuchAttributeException(this.getSimpleName()
+			throw new SchemaException(this.getSimpleName()
 					+ " doesn't contain an attribute " + name);
 		}
-
 	}
 }

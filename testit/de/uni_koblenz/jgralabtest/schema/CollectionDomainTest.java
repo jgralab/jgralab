@@ -40,7 +40,7 @@ import org.junit.Test;
 
 import de.uni_koblenz.jgralab.schema.CollectionDomain;
 import de.uni_koblenz.jgralab.schema.Domain;
-import de.uni_koblenz.jgralab.schema.exception.WrongSchemaException;
+import de.uni_koblenz.jgralab.schema.exception.SchemaException;
 
 public abstract class CollectionDomainTest extends CompositeDomainTest {
 
@@ -58,11 +58,11 @@ public abstract class CollectionDomainTest extends CompositeDomainTest {
 	@Test
 	public void testGetBaseDomain() {
 		// tests if the correct baseDomain is returned
-		assertEquals(expectedBaseDomain, ((CollectionDomain) domain1)
-				.getBaseDomain());
+		assertEquals(expectedBaseDomain,
+				((CollectionDomain) domain1).getBaseDomain());
 	}
 
-	@Test(expected = WrongSchemaException.class)
+	@Test(expected = SchemaException.class)
 	public void testRejectionOfForeignSchemas() {
 		// test if baseDomains of a foreign schema are rejected
 		schema2.createEnumDomain("Enum1");

@@ -49,7 +49,6 @@ import de.uni_koblenz.jgralab.schema.GraphClass;
 import de.uni_koblenz.jgralab.schema.GraphElementClass;
 import de.uni_koblenz.jgralab.schema.Package;
 import de.uni_koblenz.jgralab.schema.VertexClass;
-import de.uni_koblenz.jgralab.schema.exception.InheritanceException;
 import de.uni_koblenz.jgralab.schema.exception.SchemaException;
 
 public final class GraphClassImpl extends
@@ -138,8 +137,7 @@ public final class GraphClassImpl extends
 		// only the internal abstract base class "Graph" can be a superclass
 		if (!superClass.getQualifiedName().equals(
 				getSchema().getDefaultGraphClass().getQualifiedName())) {
-			throw new InheritanceException(
-					"GraphClass can not be generealized.");
+			throw new SchemaException("GraphClass can not be specialized.");
 		}
 		super.addSuperClass(superClass);
 	}

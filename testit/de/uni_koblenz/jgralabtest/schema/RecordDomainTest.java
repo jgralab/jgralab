@@ -51,10 +51,7 @@ import de.uni_koblenz.jgralab.schema.ListDomain;
 import de.uni_koblenz.jgralab.schema.RecordDomain;
 import de.uni_koblenz.jgralab.schema.RecordDomain.RecordComponent;
 import de.uni_koblenz.jgralab.schema.Schema;
-import de.uni_koblenz.jgralab.schema.exception.InvalidNameException;
-import de.uni_koblenz.jgralab.schema.exception.NoSuchRecordComponentException;
 import de.uni_koblenz.jgralab.schema.exception.SchemaException;
-import de.uni_koblenz.jgralab.schema.exception.WrongSchemaException;
 import de.uni_koblenz.jgralab.schema.impl.SchemaImpl;
 
 public class RecordDomainTest extends CompositeDomainTest {
@@ -164,7 +161,7 @@ public class RecordDomainTest extends CompositeDomainTest {
 		return isIn;
 	}
 
-	@Test(expected = InvalidNameException.class)
+	@Test(expected = SchemaException.class)
 	public void testAddComponentWithEmptyNameRejected() {
 		// tests if an empty component name is rejected
 		Schema schema1 = new SchemaImpl("Schema1", "pkgPrefix1");
@@ -243,7 +240,7 @@ public class RecordDomainTest extends CompositeDomainTest {
 		record4.addComponent("theR3", record3);
 	}
 
-	@Test(expected = WrongSchemaException.class)
+	@Test(expected = SchemaException.class)
 	public void testOfIncludingDomainsFromOtherSchema() {
 		// test if the creation of an component with a domain from another
 		// schema is rejected
@@ -283,25 +280,6 @@ public class RecordDomainTest extends CompositeDomainTest {
 		for (RecordComponent component : components) {
 			assertTrue(components.contains(component));
 		}
-	}
-
-	@Test
-	public void testGetDomainOfComponent() {
-		// tests if the correct domain is returned
-		RecordDomain rec1 = (RecordDomain) domain1;
-		assertEquals(schema1.getDomain("Boolean"),
-				rec1.getDomainOfComponent("bool1"));
-		rec1 = (RecordDomain) domain4;
-		assertEquals(domain1, rec1.getDomainOfComponent("aRecord"));
-		assertEquals(schema1.getDomain("List<Boolean>"),
-				rec1.getDomainOfComponent("aList"));
-	}
-
-	@Test(expected = NoSuchRecordComponentException.class)
-	public void testGetDomainOfComponentWithNotExistingComponent() {
-		// tests if getting the domain of a not existing component fails
-		RecordDomain rec1 = (RecordDomain) domain1;
-		rec1.getDomainOfComponent("nonsense");
 	}
 
 	@Override
