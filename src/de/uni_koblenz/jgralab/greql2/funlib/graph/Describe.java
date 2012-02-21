@@ -34,9 +34,8 @@
  */
 package de.uni_koblenz.jgralab.greql2.funlib.graph;
 
-import java.util.Set;
-
 import org.pcollections.PMap;
+import org.pcollections.PVector;
 
 import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Graph;
@@ -62,11 +61,11 @@ public class Describe extends Function {
 		} else {
 			result = result.plus("id", ((GraphElement<?, ?>) el).getId());
 		}
-		Set<Attribute> al = el.getAttributedElementClass().getAttributeList();
+		PVector<Attribute> al = el.getAttributedElementClass()
+				.getAttributeList();
 		if (al.size() > 0) {
 			PMap<String, Object> attrs = JGraLab.map();
-			for (Attribute a : el.getAttributedElementClass()
-					.getAttributeList()) {
+			for (Attribute a : al) {
 				Object val = el.getAttribute(a.getName());
 				attrs = attrs.plus(a.getName(),
 						val == null ? Undefined.UNDEFINED : val);

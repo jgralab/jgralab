@@ -35,12 +35,12 @@
 package de.uni_koblenz.jgralabtest.schema;
 
 import java.util.Set;
-import java.util.SortedSet;
 import java.util.Vector;
 
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.pcollections.PVector;
 
 import de.uni_koblenz.jgralab.schema.Attribute;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
@@ -670,11 +670,10 @@ public abstract class AttributedElementClassImplTest<AEC extends AttributedEleme
 
 		attributedElement.addAttribute(attribute);
 
-		SortedSet<Attribute> attrs = attributedElement.getAttributeList();
+		PVector<Attribute> attrs = attributedElement.getAttributeList();
 
 		Assert.assertEquals(1, attrs.size());
 		Assert.assertTrue(attrs.contains(attribute));
-		Assert.assertNull(attrs.comparator());
 	}
 
 	/**
@@ -691,11 +690,10 @@ public abstract class AttributedElementClassImplTest<AEC extends AttributedEleme
 
 		superClass.addAttribute(attribute);
 
-		SortedSet<Attribute> attrs = attributedElement.getAttributeList();
+		PVector<Attribute> attrs = attributedElement.getAttributeList();
 
 		Assert.assertEquals(1, attrs.size());
 		Assert.assertTrue(attrs.contains(attribute));
-		Assert.assertNull(attrs.comparator());
 	}
 
 	/**
@@ -715,12 +713,11 @@ public abstract class AttributedElementClassImplTest<AEC extends AttributedEleme
 		attributedElement.addAttribute(attribute);
 		superClass.addAttribute(attribute2);
 
-		SortedSet<Attribute> attrs = attributedElement.getAttributeList();
+		PVector<Attribute> attrs = attributedElement.getAttributeList();
 
 		Assert.assertEquals(2, attrs.size());
 		Assert.assertTrue(attrs.contains(attribute));
 		Assert.assertTrue(attrs.contains(attribute2));
-		Assert.assertNull(attrs.comparator());
 	}
 
 	/**
@@ -1062,11 +1059,10 @@ public abstract class AttributedElementClassImplTest<AEC extends AttributedEleme
 
 		attributedElement.addAttribute(attribute);
 
-		SortedSet<Attribute> attrs = attributedElement.getOwnAttributeList();
+		PVector<Attribute> attrs = attributedElement.getOwnAttributeList();
 
 		Assert.assertEquals(1, attrs.size());
 		Assert.assertTrue(attrs.contains(attribute));
-		Assert.assertNull(attrs.comparator());
 	}
 
 	/**
@@ -1085,12 +1081,11 @@ public abstract class AttributedElementClassImplTest<AEC extends AttributedEleme
 		attributedElement.addAttribute(attribute);
 		attributedElement.addAttribute(attribute2);
 
-		SortedSet<Attribute> attrs = attributedElement.getOwnAttributeList();
+		PVector<Attribute> attrs = attributedElement.getOwnAttributeList();
 
 		Assert.assertEquals(2, attrs.size());
 		Assert.assertTrue(attrs.contains(attribute));
 		Assert.assertTrue(attrs.contains(attribute2));
-		Assert.assertNull(attrs.comparator());
 	}
 
 	/**

@@ -35,9 +35,9 @@
 
 package de.uni_koblenz.jgralab.codegenerator;
 
-import java.util.Set;
-import java.util.SortedSet;
 import java.util.TreeSet;
+
+import org.pcollections.PVector;
 
 import de.uni_koblenz.jgralab.schema.Attribute;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
@@ -46,9 +46,9 @@ import de.uni_koblenz.jgralab.schema.VertexClass;
 
 /**
  * TODO add comment
- *
+ * 
  * @author ist@uni-koblenz.de
- *
+ * 
  */
 public class ReversedEdgeCodeGenerator extends AttributedElementCodeGenerator {
 
@@ -168,12 +168,12 @@ public class ReversedEdgeCodeGenerator extends AttributedElementCodeGenerator {
 	}
 
 	@Override
-	protected CodeBlock createGenericGetter(Set<Attribute> attrSet) {
+	protected CodeBlock createGenericGetter(PVector<Attribute> attributes) {
 		return null;
 	}
 
 	@Override
-	protected CodeBlock createGenericSetter(Set<Attribute> attrSet) {
+	protected CodeBlock createGenericSetter(PVector<Attribute> attributes) {
 		return null;
 	}
 
@@ -252,7 +252,7 @@ public class ReversedEdgeCodeGenerator extends AttributedElementCodeGenerator {
 	}
 
 	@Override
-	protected CodeBlock createFields(Set<Attribute> attrSet) {
+	protected CodeBlock createFields(PVector<Attribute> attributes) {
 		return null;
 	}
 
@@ -263,7 +263,7 @@ public class ReversedEdgeCodeGenerator extends AttributedElementCodeGenerator {
 
 	@Override
 	protected CodeBlock createReadAttributesFromStringMethod(
-			Set<Attribute> attrSet) {
+			PVector<Attribute> attributes) {
 		CodeList code = new CodeList();
 		addImports("#jgPackage#.GraphIO", "#jgPackage#.GraphIOException");
 		code.addNoIndent(new CodeSnippet(
@@ -277,7 +277,7 @@ public class ReversedEdgeCodeGenerator extends AttributedElementCodeGenerator {
 
 	@Override
 	protected CodeBlock createWriteAttributeToStringMethod(
-			Set<Attribute> attrSet) {
+			PVector<Attribute> attributes) {
 		CodeList code = new CodeList();
 		addImports("#jgPackage#.GraphIO", "#jgPackage#.GraphIOException");
 		code.addNoIndent(new CodeSnippet(
@@ -290,7 +290,7 @@ public class ReversedEdgeCodeGenerator extends AttributedElementCodeGenerator {
 	}
 
 	@Override
-	protected CodeBlock createReadAttributesMethod(SortedSet<Attribute> attrSet) {
+	protected CodeBlock createReadAttributesMethod(PVector<Attribute> attributes) {
 		CodeList code = new CodeList();
 		addImports("#jgPackage#.GraphIO", "#jgPackage#.GraphIOException");
 		code.addNoIndent(new CodeSnippet(true,
@@ -302,7 +302,8 @@ public class ReversedEdgeCodeGenerator extends AttributedElementCodeGenerator {
 	}
 
 	@Override
-	protected CodeBlock createWriteAttributesMethod(Set<Attribute> attrSet) {
+	protected CodeBlock createWriteAttributesMethod(
+			PVector<Attribute> attributes) {
 		CodeList code = new CodeList();
 		addImports("#jgPackage#.GraphIO", "#jgPackage#.GraphIOException",
 				"java.io.IOException");
@@ -317,7 +318,7 @@ public class ReversedEdgeCodeGenerator extends AttributedElementCodeGenerator {
 
 	@Override
 	protected CodeBlock createGetVersionedAttributesMethod(
-			SortedSet<Attribute> attributeList) {
+			PVector<Attribute> attributes) {
 		if (currentCycle.isTransImpl()) {
 			// delegate to attributes()-method in corresponding normalEdge
 			CodeSnippet code = new CodeSnippet();

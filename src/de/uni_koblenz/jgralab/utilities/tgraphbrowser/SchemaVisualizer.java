@@ -39,9 +39,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.SortedSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import org.pcollections.PVector;
 
 import de.uni_koblenz.jgralab.schema.Attribute;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
@@ -594,7 +595,7 @@ public class SchemaVisualizer {
 	 */
 	private void createP(StringBuilder code, String simpleName,
 			String uniqueName, String qualifiedName, boolean isAbstract,
-			SortedSet<Attribute> attributes) {
+			PVector<Attribute> attributes) {
 		StringBuilder title = new StringBuilder(qualifiedName);
 		if (attributes != null) {
 			if (!attributes.isEmpty()) {

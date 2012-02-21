@@ -41,8 +41,10 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
-import java.util.SortedSet;
 import java.util.TreeSet;
+
+import org.pcollections.ArrayPVector;
+import org.pcollections.PVector;
 
 import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.schema.Attribute;
@@ -62,13 +64,13 @@ public abstract class AttributedElementClassImpl<SC extends AttributedElementCla
 	 * the list of attributes. Only the own attributes of this class are stored
 	 * here, no inherited attributes
 	 */
-	private final TreeSet<Attribute> attributeList = new TreeSet<Attribute>();
+	private PVector<Attribute> ownAttributes = ArrayPVector.empty();
 
 	/**
 	 * the list of all attributes. Own attributes and inherited attributes are
 	 * stored here - but only if the schema is finish
 	 */
-	private SortedSet<Attribute> allAttributeList;
+	private PVector<Attribute> allAttributes;
 
 	/**
 	 * A set of {@link Constraint}s which can be used to validate the graph.
@@ -155,7 +157,7 @@ public abstract class AttributedElementClassImpl<SC extends AttributedElementCla
 							+ getQualifiedName()
 							+ "'. A derived AttributedElementClass already contains this Attribute.");
 		}
-		attributeList.add(anAttribute);
+		ownAttributes = ownAttributes.plus(anAttribute);
 	}
 
 	@Override
@@ -215,17 +217,12 @@ public abstract class AttributedElementClassImpl<SC extends AttributedElementCla
 	 */
 	protected String attributesToString() {
 		StringBuilder output = new StringBuilder("\nSelf Attributes:\n");
-		Iterator<Attribute> it = attributeList.iterator();
-		Attribute a;
-		while (it.hasNext()) {
-			a = it.next();
-			output.append(a.toString() + "\n");
+		for (Attribute a : ownAttributes) {
+			output.append("\t" + a.toString() + "\n");
 		}
 		output.append("\nSelf + Inherited Attributes:\n");
-		it = getAttributeList().iterator();
-		while (it.hasNext()) {
-			a = it.next();
-			output.append(a.toString() + "\n");
+		for (Attribute a : allAttributes) {
+			output.append("\t" + a.toString() + "\n");
 		}
 		return output.toString();
 	}
@@ -267,7 +264,7 @@ public abstract class AttributedElementClassImpl<SC extends AttributedElementCla
 	public Attribute getAttribute(String name) {
 		// TODO ask if Attributes save as map
 		if (finished) {
-			Iterator<Attribute> it = allAttributeList.iterator();
+			Iterator<Attribute> it = allAttributes.iterator();
 			Attribute a;
 			while (it.hasNext()) {
 				a = it.next();
@@ -293,7 +290,7 @@ public abstract class AttributedElementClassImpl<SC extends AttributedElementCla
 	@Override
 	public int getAttributeCount() {
 		if (finished) {
-			return allAttributeList.size();
+			return allAttributes.size();
 		}
 		int attrCount = getOwnAttributeCount();
 		for (SC superClass : directSuperClasses) {
@@ -303,17 +300,17 @@ public abstract class AttributedElementClassImpl<SC extends AttributedElementCla
 	}
 
 	@Override
-	public SortedSet<Attribute> getAttributeList() {
+	public PVector<Attribute> getAttributeList() {
 		if (finished) {
-			return allAttributeList;
+			return allAttributes;
 		}
 
 		TreeSet<Attribute> attrList = new TreeSet<Attribute>();
-		attrList.addAll(attributeList);
+		attrList.addAll(ownAttributes);
 		for (SC superClass : directSuperClasses) {
 			attrList.addAll(superClass.getAttributeList());
 		}
-		return attrList;
+		return ArrayPVector.<Attribute> empty().plusAll(attrList);
 	}
 
 	@Override
@@ -377,7 +374,7 @@ public abstract class AttributedElementClassImpl<SC extends AttributedElementCla
 
 	@Override
 	public Attribute getOwnAttribute(String name) {
-		Iterator<Attribute> it = attributeList.iterator();
+		Iterator<Attribute> it = ownAttributes.iterator();
 		Attribute a;
 		while (it.hasNext()) {
 			a = it.next();
@@ -390,12 +387,16 @@ public abstract class AttributedElementClassImpl<SC extends AttributedElementCla
 
 	@Override
 	public int getOwnAttributeCount() {
-		return attributeList.size();
+		return ownAttributes.size();
 	}
 
 	@Override
-	public SortedSet<Attribute> getOwnAttributeList() {
-		return attributeList;
+	public PVector<Attribute> getOwnAttributeList() {
+		if (finished) {
+			return ownAttributes;
+		}
+		TreeSet<Attribute> s = new TreeSet<Attribute>(ownAttributes);
+		return ArrayPVector.<Attribute> empty().plusAll(s);
 	}
 
 	@Override
@@ -405,7 +406,7 @@ public abstract class AttributedElementClassImpl<SC extends AttributedElementCla
 
 	@Override
 	public boolean hasOwnAttributes() {
-		return !attributeList.isEmpty();
+		return !ownAttributes.isEmpty();
 	}
 
 	@Override
@@ -480,24 +481,24 @@ public abstract class AttributedElementClassImpl<SC extends AttributedElementCla
 			allSubClasses.addAll(subClass.getAllSubClasses());
 		}
 
-		allAttributeList = new TreeSet<Attribute>();
-		allAttributeList.addAll(attributeList);
+		TreeSet<Attribute> s = new TreeSet<Attribute>(ownAttributes);
+		ownAttributes = ArrayPVector.<Attribute> empty().plusAll(s);
 		for (SC superClass : directSuperClasses) {
-			allAttributeList.addAll(superClass.getAttributeList());
+			s.addAll(superClass.getAttributeList());
+		}
+		allAttributes = ArrayPVector.<Attribute> empty().plusAll(s);
+
+		attributeIndex = new HashMap<String, Integer>();
+		int i = 0;
+		for (Attribute a : allAttributes) {
+			attributeIndex.put(a.getName(), i);
+			++i;
 		}
 
 		directSubClasses = Collections.unmodifiableSet(directSubClasses);
 		directSuperClasses = Collections.unmodifiableSet(directSuperClasses);
 		allSuperClasses = Collections.unmodifiableSet(allSuperClasses);
 		allSubClasses = Collections.unmodifiableSet(allSubClasses);
-		allAttributeList = Collections.unmodifiableSortedSet(allAttributeList);
-
-		attributeIndex = new HashMap<String, Integer>();
-		int i = 0;
-		for (Attribute a : allAttributeList) {
-			attributeIndex.put(a.getName(), i);
-			++i;
-		}
 
 		finished = true;
 	}

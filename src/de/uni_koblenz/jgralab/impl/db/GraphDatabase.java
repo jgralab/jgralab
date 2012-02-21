@@ -47,7 +47,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.List;
-import java.util.SortedSet;
 
 import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.EdgeDirection;
@@ -588,9 +587,8 @@ public abstract class GraphDatabase {
 				vertex.getIncidenceListVersion(),
 				vertex.getSequenceNumberInVSeq());
 		insertStatement.executeUpdate();
-		SortedSet<Attribute> attributes = vertex.getAttributedElementClass()
-				.getAttributeList();
-		for (Attribute attribute : attributes) {
+		for (Attribute attribute : vertex.getAttributedElementClass()
+				.getAttributeList()) {
 			int attributeId = getAttributeId(vertex.getGraph(),
 					attribute.getName());
 			String value = convertToString(vertex, attribute.getName());
@@ -647,9 +645,8 @@ public abstract class GraphDatabase {
 				reversedEdge.getSequenceNumberInLambdaSeq());
 		insertStatement.executeUpdate();
 
-		SortedSet<Attribute> attributes = edge.getAttributedElementClass()
-				.getAttributeList();
-		for (Attribute attribute : attributes) {
+		for (Attribute attribute : edge.getAttributedElementClass()
+				.getAttributeList()) {
 			int attributeId = getAttributeId(edge.getGraph(),
 					attribute.getName());
 			String value = convertToString(edge, attribute.getName());
@@ -1683,9 +1680,8 @@ public abstract class GraphDatabase {
 
 	private void insertAttributeValuesOf(DatabasePersistableGraph graph)
 			throws SQLException, GraphIOException {
-		SortedSet<Attribute> attributes = graph.getAttributedElementClass()
-				.getAttributeList();
-		for (Attribute attribute : attributes) {
+		for (Attribute attribute : graph.getAttributedElementClass()
+				.getAttributeList()) {
 			insertAttributeValue(graph, attribute.getName());
 		}
 	}

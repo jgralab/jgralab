@@ -47,7 +47,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-import java.util.SortedSet;
+
+import org.pcollections.PVector;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
@@ -1139,7 +1140,7 @@ public class CompareSchemaWithSchemaGraph {
 	 * @return Map of Attribute objects with their QualifiedName as key.
 	 */
 	final private Map<String, de.uni_koblenz.jgralab.schema.Attribute> getAttributeMap(
-			SortedSet<de.uni_koblenz.jgralab.schema.Attribute> attributeList) {
+			PVector<de.uni_koblenz.jgralab.schema.Attribute> attributeList) {
 
 		Map<String, de.uni_koblenz.jgralab.schema.Attribute> attributes = new HashMap<String, de.uni_koblenz.jgralab.schema.Attribute>();
 

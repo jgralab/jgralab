@@ -36,7 +36,8 @@
 package de.uni_koblenz.jgralab.schema;
 
 import java.util.Set;
-import java.util.SortedSet;
+
+import org.pcollections.PVector;
 
 import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.NoSuchAttributeException;
@@ -368,10 +369,10 @@ public interface AttributedElementClass<SC extends AttributedElementClass<SC, IC
 	 * </ul>
 	 * </p>
 	 * 
-	 * @return a SortedSet of attributes of this element and all inherited
+	 * @return a {@link PVector} of attributes of this element and all inherited
 	 *         attributes
 	 */
-	public SortedSet<Attribute> getAttributeList();
+	public PVector<Attribute> getAttributeList();
 
 	/**
 	 * Returns this element's Set of {@link Constraint}s.
@@ -614,9 +615,9 @@ public interface AttributedElementClass<SC extends AttributedElementClass<SC, IC
 	 * </ul>
 	 * </p>
 	 * 
-	 * @return a SortedSet of attributes of this element
+	 * @return a {@link PVector} of attributes of this element
 	 */
-	public SortedSet<Attribute> getOwnAttributeList();
+	public PVector<Attribute> getOwnAttributeList();
 
 	/**
 	 * Retrieves the name used for elements of this AttributedElementClass in
