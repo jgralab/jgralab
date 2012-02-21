@@ -7,7 +7,9 @@ import de.uni_koblenz.jgralab.ImplementationType;
 public class GraphLoadBenchmark {
 	public static void main(String[] args) {
 		final int N = 10;
-		final String FILENAME = "/Users/riediger/Desktop/tmp/anhang/lr5200.tg";
+		final String FILENAME = "/Users/riediger/Documents/workspace-dev/jgstreetmap/OsmGraph.tg.gz";
+		// final String FILENAME =
+		// "/Users/riediger/Desktop/tmp/anhang/lr5200.tg";
 		try {
 			long min = Long.MAX_VALUE;
 			long max = 0;
