@@ -62,7 +62,7 @@ import de.uni_koblenz.jgralab.schema.exception.SchemaException;
 import de.uni_koblenz.jgralab.schema.exception.WrongSchemaException;
 import de.uni_koblenz.jgralab.schema.impl.compilation.SchemaClassManager;
 
-public final class RecordDomainImpl extends CompositeDomainImpl implements
+public class RecordDomainImpl extends CompositeDomainImpl implements
 		RecordDomain {
 
 	/**
@@ -82,7 +82,7 @@ public final class RecordDomainImpl extends CompositeDomainImpl implements
 	 * @param components
 	 *            a list of the components of the record
 	 */
-	RecordDomainImpl(String sn, Package pkg,
+	protected RecordDomainImpl(String sn, Package pkg,
 			Collection<RecordComponent> components) {
 		super(sn, pkg);
 		if (components != null) {
