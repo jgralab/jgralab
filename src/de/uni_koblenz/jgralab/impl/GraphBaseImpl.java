@@ -973,7 +973,7 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 
 		if (hasECARuleManager()) {
 			getECARuleManager().fireAfterDeleteEdgeEvents(
-					ec);
+					ec,alpha,omega);
 		}
 		edgeAfterDeleted(e, alpha, omega);
 	}

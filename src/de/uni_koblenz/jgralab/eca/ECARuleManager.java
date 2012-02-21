@@ -347,7 +347,7 @@ public class ECARuleManager implements ECARuleManagerInterface {
 	 * (java.lang.Class)
 	 */
 	@Override
-	public void fireAfterDeleteEdgeEvents(EdgeClass ec) {
+	public void fireAfterDeleteEdgeEvents(EdgeClass ec, Vertex oldAlpha, Vertex oldOmega) {
 		if (afterDeleteEdgeEvents == null) {
 			return;
 		}
@@ -356,7 +356,7 @@ public class ECARuleManager implements ECARuleManagerInterface {
 		}
 		int max = afterDeleteEdgeEvents.size();
 		for (int i = 0; i < max; i++) {
-			afterDeleteEdgeEvents.get(i).fire(ec);
+			afterDeleteEdgeEvents.get(i).fire(ec, oldAlpha, oldOmega);
 		}
 		nestedTriggerCalls--;
 

@@ -72,7 +72,7 @@ public interface ECARuleManagerInterface {
 	 * @param elementClass
 	 *            the Class of the deleted Edge
 	 */
-	public abstract void fireAfterDeleteEdgeEvents(EdgeClass elementClass);
+	public abstract void fireAfterDeleteEdgeEvents(EdgeClass elementClass, Vertex oldAlpha, Vertex oldOmega);
 
 	/**
 	 * Fire Events from beforeChangeAlphaOfEdgeEvents list
