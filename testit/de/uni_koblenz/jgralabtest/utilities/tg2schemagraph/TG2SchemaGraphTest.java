@@ -49,34 +49,21 @@ public class TG2SchemaGraphTest {
 
 		// Loads the Schema
 		try {
-			System.out.println("Testing with: " + tgFile);
-			System.out.print("Loading TG and creating Schema ... ");
 			Schema schema = GraphIO.loadSchemaFromFile(tgFile);
-			System.out.println("\tdone");
-
 			// Converts the Schema to a SchemaGraph
-			System.out.print("Converting Schema to SchemaGraph ...");
 			SchemaGraph schemaGraph = new Schema2SchemaGraph()
 					.convert2SchemaGraph(schema);
 			String sgFile = tgFile.substring(tgFile.lastIndexOf("/") + 1);
 			sgFile = "testit/testdata/"
 					+ sgFile.substring(0, sgFile.length() - 3) + ".schema.tg";
 			schemaGraph.save(sgFile);
-			System.out.println("\tdone");
 
 			// Compares the Schema with the created SchemaGraph
-			System.out.print("Testing ...");
 			new CompareSchemaWithSchemaGraph().compare(schema, schemaGraph);
-			System.out.println("\t\t\t\tdone");
-			System.out.println("Succesful!");
 		} catch (Exception e) {
-			System.out.println("An error occurred.\n");
 			e.printStackTrace();
 			fail(e.toString());
-		} finally {
-			System.out.println("\n");
 		}
-
 	}
 
 	@Test

@@ -37,9 +37,9 @@ package de.uni_koblenz.jgralabtest.utilities;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
+import de.uni_koblenz.jgralabtest.non_junit_tests.SchemaGraph2SchemaTest;
 import de.uni_koblenz.jgralabtest.utilities.rsa.Rsa2TgTest;
 import de.uni_koblenz.jgralabtest.utilities.rsa.SchemaGraph2XMITest;
-import de.uni_koblenz.jgralabtest.utilities.schemagraph2schema.SchemaGraph2SchemaTest;
 import de.uni_koblenz.jgralabtest.utilities.tg2schemagraph.TG2SchemaGraphTest;
 
 /**

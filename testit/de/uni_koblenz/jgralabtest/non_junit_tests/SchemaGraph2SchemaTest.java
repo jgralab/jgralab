@@ -32,7 +32,7 @@
  * non-source form of such a combination shall include the source code for
  * the parts of JGraLab used as well as that of the covered work.
  */
-package de.uni_koblenz.jgralabtest.utilities.schemagraph2schema;
+package de.uni_koblenz.jgralabtest.non_junit_tests;
 
 import java.io.IOException;
 import java.util.logging.Level;
@@ -40,7 +40,6 @@ import java.util.logging.Level;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLStreamException;
 
-import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.xml.sax.SAXException;
@@ -72,41 +71,21 @@ public class SchemaGraph2SchemaTest {
 		JGraLab.setLogLevel(Level.OFF);
 	}
 
-	@AfterClass
-	public static void tearDown() {
-		System.out.println("fini.");
-	}
-
 	public void test(String filename) throws GraphIOException, IOException,
 			SAXException, ParserConfigurationException, XMLStreamException {
-		try {
-			r.process(filename);
+		r.process(filename);
 
-			// Loads the SchemaGraph
-			System.out.println("Testing with: " + folder + filename);
-			System.out.print("Loading XMI and creating SchemaGraph ... ");
-			r.setFilenameDot(null);
-			r.setFilenameValidation(null);
-			r.setFilenameSchema(null);
-			r.setFilenameSchemaGraph(null);
+		// Loads the SchemaGraph
+		r.setFilenameDot(null);
+		r.setFilenameValidation(null);
+		r.setFilenameSchema(null);
+		r.setFilenameSchemaGraph(null);
 
-			System.out.println("\tdone");
+		// Converts the SchemaGraph to a Schema
+		Schema schema = new SchemaGraph2Schema().convert(r.getSchemaGraph());
 
-			// Converts the SchemaGraph to a Schema
-			System.out.print("Converting SchemaGraph to Schema ...");
-			Schema schema = new SchemaGraph2Schema()
-					.convert(r.getSchemaGraph());
-			System.out.println("\t\tdone");
-
-			// Compares the SchemaGraph with the created Schema
-			System.out.print("Testing ...");
-			new CompareSchemaWithSchemaGraph().compare(schema, r
-					.getSchemaGraph());
-			System.out.println("\t\t\t\t\tdone");
-
-		} finally {
-			System.out.println("\n");
-		}
+		// Compares the SchemaGraph with the created Schema
+		new CompareSchemaWithSchemaGraph().compare(schema, r.getSchemaGraph());
 	}
 
 	@Test

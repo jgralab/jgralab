@@ -100,13 +100,7 @@ public class SchemaGraph2XMITest {
 
 	@AfterClass
 	public static void tearDown() throws Exception {
-		if (!recursivelyDeleteFileOrDirectory(temp)) {
-			System.out.println(temp.getCanonicalPath()
-					+ " could not be deleted.");
-		} else {
-			System.out.println("successfully deleted "
-					+ temp.getCanonicalPath());
-		}
+		recursivelyDeleteFileOrDirectory(temp);
 	}
 
 	private static boolean recursivelyDeleteFileOrDirectory(File file) {

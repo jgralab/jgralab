@@ -460,9 +460,6 @@ public class CompareSchemaWithSchemaGraph {
 		assertTrue(
 				"There are more VertexClasses in Schema then in the SchemaGraph.",
 				vertexClasses.isEmpty());
-		for (de.uni_koblenz.jgralab.schema.EdgeClass e : edgeClasses.values()) {
-			System.out.println(e.getQualifiedName());
-		}
 		assertTrue(
 				"There are more EdgeClasses in Schema then in the SchemaGraph.",
 				edgeClasses.isEmpty());
