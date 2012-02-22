@@ -46,9 +46,9 @@ import de.uni_koblenz.jgralab.schema.VertexClass;
 
 /**
  * TODO add comment
- *
+ * 
  * @author ist@uni-koblenz.de
- *
+ * 
  */
 public class GraphCodeGenerator extends AttributedElementCodeGenerator {
 
@@ -83,13 +83,14 @@ public class GraphCodeGenerator extends AttributedElementCodeGenerator {
 
 			rootBlock.setVariable("baseClassName", "GraphImpl");
 
+			// TODO [greqlrenovation] adapt to new methods
 			code.add(new CodeSnippet(
 					"@Override",
 					"public synchronized <T extends de.uni_koblenz.jgralab.Vertex> org.pcollections.POrderedSet<T> reachableVertices(de.uni_koblenz.jgralab.Vertex startVertex, String pathDescription, Class<T> vertexType) {",
 					"\tde.uni_koblenz.jgralab.greql2.evaluator.Query q = new de.uni_koblenz.jgralab.greql2.evaluator.Query(\"using v: v \" + pathDescription);",
 					"\tjava.util.HashMap<String, Object> variables = new java.util.HashMap<String, Object>();",
 					"\tvariables.put(\"v\", startVertex);",
-					"\tde.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator eval = new de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator(q, this, variables, null);",
+					"\tde.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator eval = new de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluatorImpl(q, this, variables, null);",
 					"\treturn eval.getResultSet();", "}"));
 		}
 		code.add(createGraphElementClassMethods());
@@ -218,8 +219,7 @@ public class GraphCodeGenerator extends AttributedElementCodeGenerator {
 		if (currentCycle.isAbstract()) {
 			code.add("/**",
 					" * @return the first #ecSimpleName# #ecTypeInComment# in this graph");
-			code.add(" */",
-					"public #ecJavaClassName# getFirst#ecCamelName#();");
+			code.add(" */", "public #ecJavaClassName# getFirst#ecCamelName#();");
 		}
 		if (currentCycle.isStdOrDbImplOrTransImpl()) {
 			code.add(
