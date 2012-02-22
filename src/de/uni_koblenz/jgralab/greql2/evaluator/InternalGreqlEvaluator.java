@@ -42,13 +42,9 @@ import de.uni_koblenz.jgralab.schema.Schema;
 public interface InternalGreqlEvaluator {
 	// TODO [greqlevaluator] create internal interface
 
-	public Object setBoundVariable(String varName, Object value);
+	public Object setVariable(String varName, Object value);
 
-	public Object getBoundVariableValue(String varName);
-
-	public boolean haveBoundVariablesChanged();
-
-	public void setBoundVariablesHaveChanged(boolean boundVariablesHaveChanged);
+	public Object getVariable(String varName);
 
 	public Object setLocalEvaluationResult(Greql2Vertex vertex, Object value);
 

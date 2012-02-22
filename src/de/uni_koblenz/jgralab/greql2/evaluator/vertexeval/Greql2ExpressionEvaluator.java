@@ -72,8 +72,8 @@ public class Greql2ExpressionEvaluator extends
 				.getFirstIsBoundVarOfIncidence(EdgeDirection.IN);
 		while (inc != null) {
 			Variable currentBoundVariable = inc.getAlpha();
-			Object variableValue = evaluator
-					.getBoundVariableValue(currentBoundVariable.get_name());
+			Object variableValue = evaluator.getVariable(currentBoundVariable
+					.get_name());
 			if (variableValue == null) {
 				throw new UndefinedVariableException(currentBoundVariable,
 						createSourcePositions(inc));
@@ -100,10 +100,7 @@ public class Greql2ExpressionEvaluator extends
 	 */
 	@Override
 	public Object evaluate(InternalGreqlEvaluator evaluator) {
-		if (evaluator.haveBoundVariablesChanged()) {
-			initializeBoundVariables(evaluator);
-			evaluator.setBoundVariablesHaveChanged(false);
-		}
+		initializeBoundVariables(evaluator);
 
 		Schema graphSchema = evaluator.getSchemaOfDataGraph();
 		if (vertex.get_importedTypes() != null && graphSchema != null) {
@@ -151,7 +148,7 @@ public class Greql2ExpressionEvaluator extends
 			String varName = storeEval.getResult(evaluator).toString();
 			// TODO [greqlrenovation] VariableDeclaration has an own
 			// toString(InternalGreqlEvaluator)-method. check the use
-			evaluator.setBoundVariable(varName, result);
+			evaluator.setVariable(varName, result);
 		}
 		return result;
 	}

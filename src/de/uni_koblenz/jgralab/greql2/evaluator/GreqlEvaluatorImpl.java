@@ -168,7 +168,6 @@ public class GreqlEvaluatorImpl implements InternalGreqlEvaluator,
 	 * free variables
 	 */
 	private Map<String, Object> variableMap;
-	boolean variablesChanged = true;
 
 	/**
 	 * Stores the evaluation result of the query vertex <code>v</code> at
@@ -207,47 +206,25 @@ public class GreqlEvaluatorImpl implements InternalGreqlEvaluator,
 	/**
 	 * returns the changes variableMap
 	 */
-	public Map<String, Object> getVariables() {
+	public synchronized Map<String, Object> getVariables() {
 		return variableMap;
 	}
 
-	public Object getVariable(String name) {
+	@Override
+	public synchronized Object getVariable(String name) {
 		return variableMap == null ? null : variableMap.get(name);
 	}
 
-	public void setVariables(Map<String, Object> varMap) {
-		if (variableMap != null && !variableMap.isEmpty()) {
-			setBoundVariablesHaveChanged(true);
-		}
+	public synchronized void setVariables(Map<String, Object> varMap) {
 		variableMap = varMap;
 	}
 
-	public Object setVariable(String varName, Object value) {
+	@Override
+	public synchronized Object setVariable(String varName, Object value) {
 		if (variableMap == null) {
 			variableMap = new HashMap<String, Object>();
 		}
-		setBoundVariablesHaveChanged(true);
 		return variableMap.put(varName, value);
-	}
-
-	@Override
-	public Object setBoundVariable(String varName, Object value) {
-		return setVariable(varName, value);
-	}
-
-	@Override
-	public Object getBoundVariableValue(String varName) {
-		return getVariable(varName);
-	}
-
-	@Override
-	public boolean haveBoundVariablesChanged() {
-		return variablesChanged;
-	}
-
-	@Override
-	public void setBoundVariablesHaveChanged(boolean boundVariablesHaveChanged) {
-		variablesChanged = boundVariablesHaveChanged;
 	}
 
 	@Override
@@ -324,8 +301,7 @@ public class GreqlEvaluatorImpl implements InternalGreqlEvaluator,
 			Map<String, Object> variables, ProgressFunction progressFunction) {
 		this.query = query;
 		this.datagraph = datagraph;
-		variableMap = variables;
-		setBoundVariablesHaveChanged(true);
+		setVariables(variables);
 		localEvaluationResults = new Object[query.getQueryGraph().getVCount()];
 		// this.progressFunction = progressFunction;
 	}

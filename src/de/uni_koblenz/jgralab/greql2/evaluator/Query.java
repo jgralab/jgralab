@@ -156,7 +156,7 @@ public class Query {
 	}
 
 	@SuppressWarnings("unchecked")
-	public <V extends Greql2Vertex> VertexEvaluator<V> getVertexEvaluator(
+	public synchronized <V extends Greql2Vertex> VertexEvaluator<V> getVertexEvaluator(
 			V vertex) {
 		initalizeQueryGraph();
 		return (VertexEvaluator<V>) vertexEvaluators.get(vertex);
@@ -284,7 +284,8 @@ public class Query {
 	 * @return {@link AttributedElementClass} of the datagraph with the name
 	 *         <code>name</code>
 	 */
-	public AttributedElementClass<?, ?> getKnownType(String typeSimpleName) {
+	public synchronized AttributedElementClass<?, ?> getKnownType(
+			String typeSimpleName) {
 		return knownTypes.get(typeSimpleName);
 	}
 
@@ -294,7 +295,7 @@ public class Query {
 	 *            {@link #knownTypes} with its simple name as key.
 	 * @return @see {@link Map#put(Object, Object)}
 	 */
-	public AttributedElementClass<?, ?> addKnownType(
+	public synchronized AttributedElementClass<?, ?> addKnownType(
 			AttributedElementClass<?, ?> elem) {
 		return knownTypes.put(elem.getSimpleName(), elem);
 	}
