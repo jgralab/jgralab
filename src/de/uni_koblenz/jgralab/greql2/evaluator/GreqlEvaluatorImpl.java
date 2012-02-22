@@ -244,25 +244,30 @@ public class GreqlEvaluatorImpl implements InternalGreqlEvaluator,
 		return setLocalEvaluationResult(vertex, null);
 	}
 
+	@Override
 	public Object getResult() {
 		return evaluate();
 	}
 
+	@Override
 	@SuppressWarnings("unchecked")
 	public <T> T getSingleResult() {
 		return (T) evaluate();
 	}
 
+	@Override
 	@SuppressWarnings("unchecked")
 	public <T> PVector<T> getResultList() {
 		return (PVector<T>) evaluate();
 	}
 
+	@Override
 	@SuppressWarnings("unchecked")
 	public <K, V> PMap<K, V> getResultMap() {
 		return (PMap<K, V>) evaluate();
 	}
 
+	@Override
 	@SuppressWarnings("unchecked")
 	public <T> POrderedSet<T> getResultSet() {
 		return (POrderedSet<T>) evaluate();

@@ -34,7 +34,19 @@
  */
 package de.uni_koblenz.jgralab.greql2.evaluator;
 
+import org.pcollections.PMap;
+import org.pcollections.POrderedSet;
+import org.pcollections.PVector;
+
 public interface GreqlEvaluator {
 	// TODO [greqlevaluator] create public interface
+	public Object getResult();
 
+	public <T> T getSingleResult();
+
+	public <T> PVector<T> getResultList();
+
+	public <K, V> PMap<K, V> getResultMap();
+
+	public <T> POrderedSet<T> getResultSet();
 }
