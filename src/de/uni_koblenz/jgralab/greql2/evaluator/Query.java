@@ -45,7 +45,9 @@ import java.util.Set;
 
 import org.pcollections.PSet;
 
+import de.uni_koblenz.jgralab.GraphStructureChangedAdapter;
 import de.uni_koblenz.jgralab.JGraLab;
+import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.graphmarker.GraphMarker;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VertexEvaluator;
 import de.uni_koblenz.jgralab.greql2.parser.GreqlParser;
@@ -172,7 +174,8 @@ public class Query {
 		}
 		if (queryGraph == null) {
 			long t0 = System.currentTimeMillis();
-			queryGraph = GreqlParser.parse(queryText);
+			queryGraph = GreqlParser.parse(queryText,
+					new VertexEvaluatorUpdater(this));
 			long t1 = System.currentTimeMillis();
 			parseTime = t1 - t0;
 			// TODO [greqlevaluator] reenable optimize
@@ -298,6 +301,25 @@ public class Query {
 	public synchronized AttributedElementClass<?, ?> addKnownType(
 			AttributedElementClass<?, ?> elem) {
 		return knownTypes.put(elem.getSimpleName(), elem);
+	}
+
+	public class VertexEvaluatorUpdater extends GraphStructureChangedAdapter {
+
+		private final Query query;
+
+		public VertexEvaluatorUpdater(Query query) {
+			this.query = query;
+		}
+
+		@Override
+		public void vertexAdded(Vertex v) {
+			// TODO Auto-generated method stub
+		}
+
+		@Override
+		public void vertexDeleted(Vertex v) {
+			// TODO Auto-generated method stub
+		}
 	}
 
 }
