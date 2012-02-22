@@ -510,7 +510,7 @@ public abstract class VertexEvaluator<V extends Greql2Vertex> {
 				+ evalName;
 		try {
 			Class<?> argsClass[] = new Class[] { Class.forName(fullClassName),
-					GreqlEvaluatorImpl.class };
+					Query.class };
 			Class<?> evalClass = Class.forName(evalName);
 			Constructor<?> constructor = evalClass.getConstructor(argsClass);
 			@SuppressWarnings("unchecked")
