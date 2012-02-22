@@ -175,7 +175,7 @@ public class Query {
 		if (queryGraph == null) {
 			long t0 = System.currentTimeMillis();
 			queryGraph = GreqlParser.parse(queryText,
-					new VertexEvaluatorUpdater(this));
+					new VertexEvaluatorUpdater(vertexEvaluators, this));
 			long t1 = System.currentTimeMillis();
 			parseTime = t1 - t0;
 			// TODO [greqlevaluator] reenable optimize
@@ -192,26 +192,7 @@ public class Query {
 	}
 
 	/**
-	 * TODO [greqlrenovation] move this into GraphStructreChangeListener?<br>
-	 * Creates the VertexEvaluator-Object at the vertices in the syntaxgraph
-	 */
-	void createVertexEvaluators() {
-		Greql2Graph queryGraph = getQueryGraph();
-		vertexEvaluators = new GraphMarker<VertexEvaluator<?>>(queryGraph);
-		Greql2Vertex currentVertex = queryGraph.getFirstGreql2Vertex();
-		while (currentVertex != null) {
-			VertexEvaluator<?> vertexEval = VertexEvaluator
-					.createVertexEvaluator(currentVertex, this);
-			if (vertexEval != null) {
-				vertexEvaluators.mark(currentVertex, vertexEval);
-			}
-			currentVertex = currentVertex.getNextGreql2Vertex();
-		}
-	}
-
-	/**
-	 * TODO [greqlrenovation] move this into GraphStructreChangeListener?<br>
-	 * clears the tempresults that are stored in the VertexEvaluators-Objects at
+	 * clears the tempresults that are stored in the GreqlEvaluators-Objects at
 	 * the syntaxgraph nodes
 	 * 
 	 * @param optimizer
@@ -305,20 +286,26 @@ public class Query {
 
 	public class VertexEvaluatorUpdater extends GraphStructureChangedAdapter {
 
+		private final GraphMarker<VertexEvaluator<? extends Greql2Vertex>> vertexEvaluators;
+
 		private final Query query;
 
-		public VertexEvaluatorUpdater(Query query) {
+		public VertexEvaluatorUpdater(
+				GraphMarker<VertexEvaluator<? extends Greql2Vertex>> vertexEvaluators,
+				Query query) {
+			this.vertexEvaluators = vertexEvaluators;
 			this.query = query;
 		}
 
 		@Override
 		public void vertexAdded(Vertex v) {
-			// TODO Auto-generated method stub
+			vertexEvaluators.mark(v, VertexEvaluator.createVertexEvaluator(
+					(Greql2Vertex) v, query));
 		}
 
 		@Override
 		public void vertexDeleted(Vertex v) {
-			// TODO Auto-generated method stub
+			vertexEvaluators.removeMark(v);
 		}
 	}
 
