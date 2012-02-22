@@ -67,6 +67,8 @@ public class FunctionApplicationEvaluator extends
 
 	protected boolean listCreated = false;
 
+	TypeCollection typeArgument = null;
+
 	/**
 	 * The name of this function
 	 */
@@ -165,15 +167,8 @@ public class FunctionApplicationEvaluator extends
 	public Object evaluate(InternalGreqlEvaluator evaluator) {
 		FunctionInfo fi = getFunctionInfo();
 
-		TypeCollection typeArgument = evaluator
-				.getTypeCollectionForFunctionApplicationEvaluator(this);
-		if (typeArgument == null) {
-			typeArgument = createTypeArgument(evaluator);
-			evaluator.setTypeCollectionForFunctionApplicationEvaluator(this,
-					typeArgument);
-		}
-
 		if (!listCreated) {
+			typeArgument = createTypeArgument(evaluator);
 			parameterEvaluators = createVertexEvaluatorList();
 			paramEvalCount = parameterEvaluators.size();
 			listCreated = true;

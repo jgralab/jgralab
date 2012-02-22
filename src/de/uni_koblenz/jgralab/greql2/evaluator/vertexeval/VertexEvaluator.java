@@ -214,16 +214,16 @@ public abstract class VertexEvaluator<V extends Greql2Vertex> {
 		evaluator.removeLocalEvaluationResult(vertex);
 	}
 
-	// TODO [greqlrenovation] handleResult
 	/**
 	 * resets the VertexEvaluators internal state (evaluation result, costs,
 	 * etc) to the initial one, that means, sets all variables of this
 	 * vertexevaluator to values, that it is in the same state like it was
 	 * directly after creation
+	 * 
+	 * @param evaluator
 	 */
-	@Deprecated
-	public void resetToInitialState() {
-		// result = null;
+	public void resetToInitialState(InternalGreqlEvaluator evaluator) {
+		evaluator.removeLocalEvaluationResult(vertex);
 		// currentSubtreeEvaluationCosts = Long.MIN_VALUE;
 		// initialSubtreeEvaluationCosts = Long.MIN_VALUE;
 		// ownEvaluationCosts = Long.MIN_VALUE;
@@ -232,17 +232,15 @@ public abstract class VertexEvaluator<V extends Greql2Vertex> {
 		// estimatedSelectivity = Double.NaN;
 	}
 
-	// TODO [greqlrenovation] handleResult
-	@Deprecated
-	public void resetSubtreeToInitialState() {
-		// resetToInitialState();
-		// for (Edge e : getVertex().incidences(EdgeDirection.IN)) {
-		// Vertex vertex = e.getThat();
-		// VertexEvaluator eval = vertexEvalMarker.getMark(vertex);
-		// if (eval != null) {
-		// eval.resetSubtreeToInitialState();
-		// }
-		// }
+	public void resetSubtreeToInitialState(InternalGreqlEvaluator evaluator) {
+		resetToInitialState(evaluator);
+		for (Edge e : getVertex().incidences(EdgeDirection.IN)) {
+			Greql2Vertex vertex = (Greql2Vertex) e.getThat();
+			VertexEvaluator<?> eval = query.getVertexEvaluator(vertex);
+			if (eval != null) {
+				eval.resetSubtreeToInitialState(evaluator);
+			}
+		}
 	}
 
 	/**
@@ -493,8 +491,7 @@ public abstract class VertexEvaluator<V extends Greql2Vertex> {
 	 * creates a vertex evaluator for the given vertex
 	 */
 	public static <V extends Greql2Vertex> VertexEvaluator<V> createVertexEvaluator(
-			V vertex, GreqlEvaluatorImpl eval) {
-		// TODO [greqlrenovation] check the creation of VertexEvaluator
+			V vertex, Query query) {
 		Class<?> vertexClass = vertex.getClass();
 		String fullClassName = vertexClass.getName();
 		// remove the "Impl" ...
@@ -518,7 +515,7 @@ public abstract class VertexEvaluator<V extends Greql2Vertex> {
 			Constructor<?> constructor = evalClass.getConstructor(argsClass);
 			@SuppressWarnings("unchecked")
 			VertexEvaluator<V> vertexEval = (VertexEvaluator<V>) constructor
-					.newInstance(vertex, eval);
+					.newInstance(vertex, query);
 			return vertexEval;
 		} catch (ClassNotFoundException ex) {
 			throw new RuntimeException(className, ex);

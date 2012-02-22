@@ -54,21 +54,22 @@ import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.ImplementationType;
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.ProgressFunction;
-import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.graphmarker.GraphMarker;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.CostModel;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VertexEvaluator;
-import de.uni_koblenz.jgralab.greql2.schema.Greql2Graph;
+import de.uni_koblenz.jgralab.greql2.schema.Greql2Expression;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
 import de.uni_koblenz.jgralab.greql2.types.Undefined;
 import de.uni_koblenz.jgralab.impl.ConsoleProgressFunction;
+import de.uni_koblenz.jgralab.schema.AttributedElementClass;
+import de.uni_koblenz.jgralab.schema.Schema;
 
 /**
  * This is the core class of the GReQL-2 Evaluator. It takes a GReQL-2 Query as
  * String or Graph and a JGraLab-Datagraph and evaluates the Query on this
  * graph. The result is a JValue-object, it can be accessed using the method
- * <code>JValue getEvaluationResult()</code>. TODO [greqlevaluator] Make all
- * occurences of GreqlEvaluatorImpl to use the public Interface.
+ * <code>JValue getEvaluationResult()</code>.<br>
+ * TODO [greqlevaluator] Make all occurences of GreqlEvaluatorImpl to use the
+ * public Interface.
  * 
  * @author ist@uni-koblenz.de
  * 
@@ -128,18 +129,6 @@ public class GreqlEvaluatorImpl implements InternalGreqlEvaluator,
 	 */
 	public static final int VERTEX_INDEX_SIZE = 50;
 
-	/**
-	 * The GraphMarker that stores all vertex evaluators
-	 */
-	protected GraphMarker<VertexEvaluator> vertexEvalGraphMarker;
-
-	/**
-	 * returns the vertexEvalGraph marker that is used
-	 */
-	public final GraphMarker<VertexEvaluator> getVertexEvaluatorGraphMarker() {
-		return vertexEvalGraphMarker;
-	}
-
 	private static Logger logger = Logger.getLogger(GreqlEvaluatorImpl.class
 			.getName());
 
@@ -167,7 +156,7 @@ public class GreqlEvaluatorImpl implements InternalGreqlEvaluator,
 	 * holds the number of interpretetation steps that have been passed since
 	 * the last call of the progress function
 	 */
-	private long progressStepsPassed;
+	// private long progressStepsPassed;
 
 	/**
 	 * The plain time needed for evaluation.
@@ -180,6 +169,12 @@ public class GreqlEvaluatorImpl implements InternalGreqlEvaluator,
 	 */
 	private Map<String, Object> variableMap;
 	boolean variablesChanged = true;
+
+	/**
+	 * Stores the evaluation result of the query vertex <code>v</code> at
+	 * <code>localEvaluationResult[v.getId()]</code>
+	 */
+	private final Object[] localEvaluationResults;
 
 	/**
 	 * Holds the estimated needed for evaluation time in abstract units
@@ -221,24 +216,55 @@ public class GreqlEvaluatorImpl implements InternalGreqlEvaluator,
 	}
 
 	public void setVariables(Map<String, Object> varMap) {
+		if (variableMap != null && !variableMap.isEmpty()) {
+			setBoundVariablesHaveChanged(true);
+		}
 		variableMap = varMap;
-		setBoundVariablesHaveChanged(true);
 	}
 
-	public void setVariable(String varName, Object value) {
+	public Object setVariable(String varName, Object value) {
 		if (variableMap == null) {
 			variableMap = new HashMap<String, Object>();
 		}
-		variableMap.put(varName, value);
 		setBoundVariablesHaveChanged(true);
+		return variableMap.put(varName, value);
 	}
 
+	@Override
+	public Object setBoundVariable(String varName, Object value) {
+		return setVariable(varName, value);
+	}
+
+	@Override
+	public Object getBoundVariableValue(String varName) {
+		return getVariable(varName);
+	}
+
+	@Override
 	public boolean haveBoundVariablesChanged() {
 		return variablesChanged;
 	}
 
+	@Override
 	public void setBoundVariablesHaveChanged(boolean boundVariablesHaveChanged) {
 		variablesChanged = boundVariablesHaveChanged;
+	}
+
+	@Override
+	public Object setLocalEvaluationResult(Greql2Vertex vertex, Object value) {
+		Object oldValue = localEvaluationResults[vertex.getId()];
+		localEvaluationResults[vertex.getId()] = value;
+		return oldValue;
+	}
+
+	@Override
+	public Object getLocalEvaluationResult(Greql2Vertex vertex) {
+		return localEvaluationResults[vertex.getId()];
+	}
+
+	@Override
+	public Object removeLocalEvaluationResult(Greql2Vertex vertex) {
+		return setLocalEvaluationResult(vertex, null);
 	}
 
 	public Object getResult() {
@@ -265,6 +291,22 @@ public class GreqlEvaluatorImpl implements InternalGreqlEvaluator,
 		return (POrderedSet<T>) evaluate();
 	}
 
+	@Override
+	public Graph getDataGraph() {
+		return datagraph;
+	}
+
+	@Override
+	public Schema getSchemaOfDataGraph() {
+		return datagraph.getSchema();
+	}
+
+	@Override
+	public AttributedElementClass<?, ?> getAttributedElementClass(
+			String qualifiedName) {
+		return datagraph.getSchema().getAttributedElementClass(qualifiedName);
+	}
+
 	/**
 	 * Creates a new GreqlEvaluator for the given Query and Datagraph
 	 * 
@@ -284,59 +326,14 @@ public class GreqlEvaluatorImpl implements InternalGreqlEvaluator,
 		this.datagraph = datagraph;
 		variableMap = variables;
 		setBoundVariablesHaveChanged(true);
+		localEvaluationResults = new Object[query.getQueryGraph().getVCount()];
 		// this.progressFunction = progressFunction;
-	}
-
-	// public void addKnownType(AttributedElementClass knownType) {
-	// knownTypes.put(knownType.getSimpleName(), knownType);
-	// }
-	//
-	// public AttributedElementClass getKnownType(String typeSimpleName) {
-	// return knownTypes.get(typeSimpleName);
-	// }
-
-	/**
-	 * Creates the VertexEvaluator-Object at the vertices in the syntaxgraph
-	 */
-	private void createVertexEvaluators() {
-		Greql2Graph queryGraph = query.getQueryGraph();
-		vertexEvalGraphMarker = new GraphMarker<VertexEvaluator>(queryGraph);
-		Greql2Vertex currentVertex = queryGraph.getFirstGreql2Vertex();
-		while (currentVertex != null) {
-			VertexEvaluator vertexEval = VertexEvaluator.createVertexEvaluator(
-					currentVertex, this);
-			if (vertexEval != null) {
-				vertexEvalGraphMarker.mark(currentVertex, vertexEval);
-			}
-			currentVertex = currentVertex.getNextGreql2Vertex();
-		}
-	}
-
-	/**
-	 * clears the tempresults that are stored in the VertexEvaluators-Objects at
-	 * the syntaxgraph nodes
-	 * 
-	 * @param optimizer
-	 */
-	private void resetVertexEvaluators() {
-		Greql2Graph queryGraph = query.getQueryGraph();
-		Vertex currentVertex = queryGraph.getFirstVertex();
-		while (currentVertex != null) {
-			VertexEvaluator vertexEval = vertexEvalGraphMarker
-					.getMark(currentVertex);
-			if (vertexEval != null) {
-				vertexEval.resetToInitialState();
-			}
-			currentVertex = currentVertex.getNextVertex();
-		}
 	}
 
 	private Object evaluate() {
 		long startTime = System.currentTimeMillis();
 		evaluationTime = -1;
-		resetVertexEvaluators();
-
-		createVertexEvaluators();
+		query.resetVertexEvaluators(this);
 
 		if (query.getQueryGraph().getVCount() <= 1) {
 			// Graph contains only root vertex
@@ -345,8 +342,8 @@ public class GreqlEvaluatorImpl implements InternalGreqlEvaluator,
 		}
 
 		// Calculate the evaluation costs
-		VertexEvaluator greql2ExpEval = vertexEvalGraphMarker.getMark(query
-				.getRootExpression());
+		VertexEvaluator<Greql2Expression> greql2ExpEval = query
+				.getVertexEvaluator(query.getRootExpression());
 
 		// if (progressFunction != null) {
 		// estimatedInterpretationSteps = greql2ExpEval
@@ -355,7 +352,7 @@ public class GreqlEvaluatorImpl implements InternalGreqlEvaluator,
 		// progressFunction.init(estimatedInterpretationSteps);
 		// }
 
-		result = greql2ExpEval.getResult(datagraph);
+		result = greql2ExpEval.getResult(this);
 
 		// last, remove all added tempAttributes, currently, this are only
 		// subgraphAttributes
@@ -380,4 +377,5 @@ public class GreqlEvaluatorImpl implements InternalGreqlEvaluator,
 		// + estimatedInterpretationSteps : ""));
 		);
 	}
+
 }

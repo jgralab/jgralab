@@ -54,6 +54,7 @@ import de.uni_koblenz.jgralab.greql2.schema.Greql2Graph;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
 import de.uni_koblenz.jgralab.greql2.schema.Identifier;
 import de.uni_koblenz.jgralab.greql2.schema.Variable;
+import de.uni_koblenz.jgralab.impl.GraphBaseImpl;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 
 public class Query {
@@ -70,7 +71,7 @@ public class Query {
 	 * The map of SimpleName to Type of types that is known in the evaluator by
 	 * import statements in the greql query
 	 */
-	protected Map<String, AttributedElementClass<?, ?>> knownTypes = new HashMap<String, AttributedElementClass<?, ?>>(); // initial
+	protected Map<String, AttributedElementClass<?, ?>> knownTypes = new HashMap<String, AttributedElementClass<?, ?>>();
 
 	/**
 	 * The GraphMarker that stores all vertex evaluators
@@ -179,10 +180,49 @@ public class Query {
 			// DefaultOptimizer.optimizeQuery(queryGraph);
 			// optimizationTime = System.currentTimeMillis() - t1;
 			// }
+			((GraphBaseImpl) queryGraph).defragment();
 			rootExpression = queryGraph.getFirstGreql2Expression();
 			vertexEvaluators = new GraphMarker<VertexEvaluator<?>>(queryGraph);
 			queryGraphCache.put(queryText, optimize, queryGraph,
 					vertexEvaluators);
+		}
+	}
+
+	/**
+	 * TODO [greqlrenovation] move this into GraphStructreChangeListener?<br>
+	 * Creates the VertexEvaluator-Object at the vertices in the syntaxgraph
+	 */
+	void createVertexEvaluators() {
+		Greql2Graph queryGraph = getQueryGraph();
+		vertexEvaluators = new GraphMarker<VertexEvaluator<?>>(queryGraph);
+		Greql2Vertex currentVertex = queryGraph.getFirstGreql2Vertex();
+		while (currentVertex != null) {
+			VertexEvaluator<?> vertexEval = VertexEvaluator
+					.createVertexEvaluator(currentVertex, this);
+			if (vertexEval != null) {
+				vertexEvaluators.mark(currentVertex, vertexEval);
+			}
+			currentVertex = currentVertex.getNextGreql2Vertex();
+		}
+	}
+
+	/**
+	 * TODO [greqlrenovation] move this into GraphStructreChangeListener?<br>
+	 * clears the tempresults that are stored in the VertexEvaluators-Objects at
+	 * the syntaxgraph nodes
+	 * 
+	 * @param optimizer
+	 */
+	void resetVertexEvaluators(InternalGreqlEvaluator evaluator) {
+		Greql2Graph queryGraph = getQueryGraph();
+		Greql2Vertex currentVertex = (Greql2Vertex) queryGraph.getFirstVertex();
+		while (currentVertex != null) {
+			VertexEvaluator<?> vertexEval = vertexEvaluators
+					.getMark(currentVertex);
+			if (vertexEval != null) {
+				vertexEval.resetToInitialState(evaluator);
+			}
+			currentVertex = (Greql2Vertex) currentVertex.getNextVertex();
 		}
 	}
 
@@ -238,14 +278,14 @@ public class Query {
 	}
 
 	/**
-	 * @param name
+	 * @param typeSimpleName
 	 *            {@link String} the simple name of the needed
 	 *            {@link AttributedElementClass}
 	 * @return {@link AttributedElementClass} of the datagraph with the name
 	 *         <code>name</code>
 	 */
-	public AttributedElementClass<?, ?> getKnownType(String name) {
-		return knownTypes.get(name);
+	public AttributedElementClass<?, ?> getKnownType(String typeSimpleName) {
+		return knownTypes.get(typeSimpleName);
 	}
 
 	/**
