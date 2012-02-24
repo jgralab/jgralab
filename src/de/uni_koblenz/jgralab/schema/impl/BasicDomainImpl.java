@@ -36,11 +36,10 @@
 package de.uni_koblenz.jgralab.schema.impl;
 
 import de.uni_koblenz.jgralab.schema.BasicDomain;
-import de.uni_koblenz.jgralab.schema.Package;
 
 public abstract class BasicDomainImpl extends DomainImpl implements BasicDomain {
 
-	protected BasicDomainImpl(String simpleName, Package pkg) {
+	protected BasicDomainImpl(String simpleName, PackageImpl pkg) {
 		super(simpleName, pkg);
 	}
 

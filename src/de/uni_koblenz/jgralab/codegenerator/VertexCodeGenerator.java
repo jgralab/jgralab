@@ -39,6 +39,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.TreeSet;
 
+import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.VertexClass;
@@ -46,10 +47,11 @@ import de.uni_koblenz.jgralab.schema.VertexClass;
 /**
  * This class is used by the method Schema.commit() to generate the Java-classes
  * that implement the VertexClasses of a graph schema.
- *
+ * 
  * @author ist@uni-koblenz.de
  */
-public class VertexCodeGenerator extends AttributedElementCodeGenerator {
+public class VertexCodeGenerator extends
+		AttributedElementCodeGenerator<VertexClass, Vertex> {
 
 	private RolenameCodeGenerator rolenameGenerator;
 
@@ -58,7 +60,15 @@ public class VertexCodeGenerator extends AttributedElementCodeGenerator {
 		super(vertexClass, schemaPackageName, config);
 		rootBlock.setVariable("graphElementClass", "Vertex");
 		rootBlock.setVariable("schemaElementClass", "VertexClass");
-		rolenameGenerator = new RolenameCodeGenerator((VertexClass) aec);
+		rolenameGenerator = new RolenameCodeGenerator(aec);
+		for (VertexClass superClass : vertexClass.getDirectSuperClasses()) {
+			interfaces.add(superClass.getQualifiedName());
+		}
+	}
+
+	@Override
+	protected String getSchemaTypeName() {
+		return "VertexClass";
 	}
 
 	/**
@@ -102,14 +112,14 @@ public class VertexCodeGenerator extends AttributedElementCodeGenerator {
 
 	/**
 	 * creates the methods <code>getFirstEdgeName()</code>
-	 *
+	 * 
 	 * @param createClass
 	 *            if set to true, the method bodies will also be created
 	 * @return the CodeBlock that contains the methods
 	 */
 	private CodeBlock createFirstIncidenceMethods() {
 		CodeList code = new CodeList();
-		VertexClass vc = (VertexClass) aec;
+		VertexClass vc = aec;
 		Set<EdgeClass> edgeClassSet = new HashSet<EdgeClass>();
 		if (currentCycle.isStdOrDbImplOrTransImpl()) {
 			edgeClassSet.addAll(vc.getConnectedEdgeClasses());
@@ -121,7 +131,7 @@ public class VertexCodeGenerator extends AttributedElementCodeGenerator {
 			// need also to be considered in generation
 			if (vc.getAllSuperClasses().size() == 1) {
 				for (EdgeClass ec : vc.getConnectedEdgeClasses()) {
-					VertexClass dvc = vc.getGraphClass().getSchema()
+					VertexClass dvc = vc.getGraphClass()
 							.getDefaultVertexClass();
 					if ((ec.getTo().getVertexClass() == dvc)
 							|| (ec.getFrom().getVertexClass() == dvc)) {
@@ -147,7 +157,7 @@ public class VertexCodeGenerator extends AttributedElementCodeGenerator {
 	/**
 	 * creates the method <code>getFirstEdgeName()</code> for the given
 	 * EdgeClass
-	 *
+	 * 
 	 * @param createClass
 	 *            if set to true, the method bodies will also be created
 	 * @param withOrientation
@@ -184,7 +194,7 @@ public class VertexCodeGenerator extends AttributedElementCodeGenerator {
 
 	/**
 	 * Creates <code>getNextVertexClassName()</code> methods
-	 *
+	 * 
 	 * @param createClass
 	 *            if set to true, also the method bodies will be created
 	 * @return the CodeBlock that contains the methods
@@ -211,7 +221,7 @@ public class VertexCodeGenerator extends AttributedElementCodeGenerator {
 	/**
 	 * Creates <code>getNextVertexClassName()</code> method for given
 	 * VertexClass
-	 *
+	 * 
 	 * @param createClass
 	 *            if set to true, the method bodies will also be created
 	 * @return the CodeBlock that contains the method
@@ -241,14 +251,14 @@ public class VertexCodeGenerator extends AttributedElementCodeGenerator {
 
 	/**
 	 * Creates <code>getEdgeNameIncidences</code> methods.
-	 *
+	 * 
 	 * @param createClass
 	 *            if set to true, also the method bodies will be created
 	 * @return the CodeBlock that contains the code for the
 	 *         getEdgeNameIncidences-methods
 	 */
 	private CodeBlock createIncidenceIteratorMethods() {
-		VertexClass vc = (VertexClass) aec;
+		VertexClass vc = aec;
 		CodeList code = new CodeList();
 		Set<EdgeClass> edgeClassSet = new HashSet<EdgeClass>();
 		if (currentCycle.isStdOrDbImplOrTransImpl()) {
@@ -261,7 +271,7 @@ public class VertexCodeGenerator extends AttributedElementCodeGenerator {
 			// need also to be considered in generation
 			if (vc.getAllSuperClasses().size() == 1) {
 				for (EdgeClass ec : vc.getConnectedEdgeClasses()) {
-					VertexClass dvc = vc.getGraphClass().getSchema()
+					VertexClass dvc = vc.getGraphClass()
 							.getDefaultVertexClass();
 					if ((ec.getTo().getVertexClass() == dvc)
 							|| (ec.getFrom().getVertexClass() == dvc)) {

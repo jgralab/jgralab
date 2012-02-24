@@ -51,8 +51,8 @@ import de.uni_koblenz.jgralab.greql2.schema.IsBoundVarOf;
 import de.uni_koblenz.jgralab.greql2.schema.IsIdOf;
 import de.uni_koblenz.jgralab.greql2.schema.SourcePosition;
 import de.uni_koblenz.jgralab.greql2.schema.Variable;
-import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
+import de.uni_koblenz.jgralab.schema.GraphElementClass;
 import de.uni_koblenz.jgralab.schema.Package;
 import de.uni_koblenz.jgralab.schema.Schema;
 import de.uni_koblenz.jgralab.schema.VertexClass;
@@ -157,8 +157,8 @@ public class Greql2ExpressionEvaluator extends VertexEvaluator {
 						greqlEvaluator.addKnownType(elem);
 					}
 				} else {
-					AttributedElementClass<?, ?> elemClass = graphSchema
-							.getAttributedElementClass(importedType);
+					GraphElementClass<?, ?> elemClass = graphSchema
+							.getGraphClass().getGraphElementClass(importedType);
 					if (elemClass == null) {
 						throw new UnknownTypeException(importedType,
 								new ArrayList<SourcePosition>());

@@ -155,6 +155,9 @@ public class GraphValidator {
 
 		// Check if all multiplicities are correct
 		for (EdgeClass ec : graph.getGraphClass().getEdgeClasses()) {
+			if (ec.isInternal()) {
+				continue;
+			}
 			brokenConstraints.addAll(validateMultiplicities(ec));
 		}
 
@@ -164,6 +167,9 @@ public class GraphValidator {
 		aecs.addAll(graph.getSchema().getGraphClass().getVertexClasses());
 		aecs.addAll(graph.getSchema().getGraphClass().getEdgeClasses());
 		for (AttributedElementClass<?, ?> aec : aecs) {
+			if (aec.isInternal()) {
+				continue;
+			}
 			brokenConstraints.addAll(validateConstraints(aec));
 		}
 		return brokenConstraints;

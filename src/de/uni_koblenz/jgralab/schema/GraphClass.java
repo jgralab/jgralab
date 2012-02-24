@@ -59,7 +59,20 @@ import de.uni_koblenz.jgralab.Graph;
  */
 public interface GraphClass extends AttributedElementClass<GraphClass, Graph> {
 
-	public final static String DEFAULTGRAPHCLASS_NAME = "Graph";
+	/**
+	 * creates a vertex class with the vertexclassname name
+	 * 
+	 * @param qualifiedName
+	 *            the qualified name of the vertex class to be created
+	 * @return the created vertex class
+	 */
+	public VertexClass createVertexClass(String qualifiedName);
+
+	/**
+	 * @return the default VertexClass of the schema, that is the VertexClass
+	 *         with the name "Vertex"
+	 */
+	public VertexClass getDefaultVertexClass();
 
 	/**
 	 * creates an edge class between vertex class from, multiplicity fromMin and
@@ -96,13 +109,10 @@ public interface GraphClass extends AttributedElementClass<GraphClass, Graph> {
 			String toRoleName, AggregationKind aggrTo);
 
 	/**
-	 * creates a vertex class with the vertexclassname name
-	 * 
-	 * @param qualifiedName
-	 *            the qualified name of the vertex class to be created
-	 * @return the created vertex class
+	 * @return the default EdgeClass of the schema, that is the EdgeClass with
+	 *         the name "Edge"
 	 */
-	public VertexClass createVertexClass(String qualifiedName);
+	public EdgeClass getDefaultEdgeClass();
 
 	/**
 	 * @param name
@@ -175,21 +185,7 @@ public interface GraphClass extends AttributedElementClass<GraphClass, Graph> {
 	 *            a vertex/edge/aggregation/composition class
 	 * @return true, if this graph class aggregates aGraphElementClass
 	 */
-	public boolean knowsOwn(GraphElementClass<?, ?> aGraphElementClass);
-
-	/**
-	 * @param aGraphElementClass
-	 *            a vertex/edge/aggregation/composition class
-	 * @return true, if this graph class aggregates aGraphElementClass
-	 */
 	public boolean knowsOwn(String aGraphElementClass);
-
-	/**
-	 * @param aGraphElementClass
-	 *            a vertex/edge/aggregation/composition class name
-	 * @return true, if this graph class aggregates aGraphElementClass
-	 */
-	public boolean knows(GraphElementClass<?, ?> aGraphElementClass);
 
 	/**
 	 * @param aGraphElementClass

@@ -47,6 +47,7 @@ import de.uni_koblenz.jgralab.schema.Constraint;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.EnumDomain;
 import de.uni_koblenz.jgralab.schema.GraphClass;
+import de.uni_koblenz.jgralab.schema.GraphElementClass;
 import de.uni_koblenz.jgralab.schema.ListDomain;
 import de.uni_koblenz.jgralab.schema.MapDomain;
 import de.uni_koblenz.jgralab.schema.NamedElement;
@@ -97,6 +98,7 @@ public class SchemaCodeGenerator extends CodeGenerator {
 	protected CodeBlock createHeader() {
 		addImports("#jgSchemaImplPackage#.#baseClassName#");
 		addImports("#jgSchemaPackage#.VertexClass");
+		addImports("#jgSchemaPackage#.EdgeClass");
 		addImports("java.lang.ref.WeakReference");
 		CodeSnippet code = new CodeSnippet(
 				true,
@@ -356,6 +358,10 @@ public class SchemaCodeGenerator extends CodeGenerator {
 		CodeList code = new CodeList();
 		addImports("#jgSchemaPackage#.GraphClass");
 		code.setVariable("gcVariable", "gc");
+		code.setVariable("vcVariable", gc.getDefaultVertexClass()
+				.getVariableName());
+		code.setVariable("ecVariable", gc.getDefaultEdgeClass()
+				.getVariableName());
 		code.setVariable("aecVariable", "gc");
 		code.setVariable("schemaVariable", gc.getVariableName());
 		code.setVariable("gcAbstract", gc.isAbstract() ? "true" : "false");
@@ -363,16 +369,8 @@ public class SchemaCodeGenerator extends CodeGenerator {
 				true,
 				"{",
 				"\tGraphClass #gcVariable# = #schemaVariable# = createGraphClass(\"#gcName#\");",
-				"\t#gcVariable#.setAbstract(#gcAbstract#);"));
-		for (GraphClass superClass : gc.getDirectSuperClasses()) {
-			if (superClass.isInternal()) {
-				continue;
-			}
-			CodeSnippet s = new CodeSnippet(
-					"#gcVariable#.addSuperClass(getGraphClass(\"#superClassName#\"));");
-			s.setVariable("superClassName", superClass.getQualifiedName());
-			code.add(s);
-		}
+				"\t#vcVariable# = #gcVariable#.getDefaultVertexClass();",
+				"\t#ecVariable# = #gcVariable#.getDefaultEdgeClass();"));
 		code.add(createAttributes(gc));
 		code.add(createConstraints(gc));
 		code.add(createComments("gc", gc));
@@ -412,7 +410,7 @@ public class SchemaCodeGenerator extends CodeGenerator {
 	private CodeBlock createEdgeClasses(GraphClass gc) {
 		CodeList code = new CodeList();
 		for (EdgeClass ec : schema.getGraphClass().getEdgeClasses()) {
-			if ((ec.getGraphClass() == gc)) {
+			if (!ec.isInternal()) {
 				code.addNoIndent(createEdgeClass(ec));
 			}
 		}
@@ -486,13 +484,7 @@ public class SchemaCodeGenerator extends CodeGenerator {
 	private CodeBlock createVertexClasses(GraphClass gc) {
 		CodeList code = new CodeList();
 		for (VertexClass vc : schema.getVertexClasses()) {
-			if (vc.isInternal()) {
-				CodeSnippet s = new CodeSnippet();
-				s.setVariable("schemaVariable", vc.getVariableName());
-				s.add("@SuppressWarnings(\"unused\")");
-				s.add("VertexClass #schemaVariable# = getDefaultVertexClass();");
-				code.addNoIndent(s);
-			} else if (vc.getGraphClass() == gc) {
+			if (!vc.isInternal()) {
 				code.addNoIndent(createVertexClass(vc));
 			}
 		}
@@ -528,7 +520,9 @@ public class SchemaCodeGenerator extends CodeGenerator {
 
 	private CodeBlock createAttributes(AttributedElementClass<?, ?> aec) {
 		CodeList code = new CodeList();
-		for (Attribute attr : aec.getOwnAttributeList()) {
+		List<Attribute> attributes = (aec instanceof GraphElementClass) ? ((GraphElementClass<?, ?>) aec)
+				.getOwnAttributeList() : aec.getAttributeList();
+		for (Attribute attr : attributes) {
 			CodeSnippet s = new CodeSnippet(
 					false,
 					"#aecVariable#.addAttribute(createAttribute(\"#attrName#\", getDomain(\"#domainName#\"), getAttributedElementClass(\"#aecName#\"), #defaultValue#));");

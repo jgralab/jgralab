@@ -39,6 +39,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.TreeSet;
 
+import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.GraphClass;
 import de.uni_koblenz.jgralab.schema.GraphElementClass;
@@ -46,11 +47,12 @@ import de.uni_koblenz.jgralab.schema.VertexClass;
 
 /**
  * TODO add comment
- *
+ * 
  * @author ist@uni-koblenz.de
- *
+ * 
  */
-public class GraphCodeGenerator extends AttributedElementCodeGenerator {
+public class GraphCodeGenerator extends
+		AttributedElementCodeGenerator<GraphClass, Graph> {
 
 	public GraphCodeGenerator(GraphClass graphClass, String schemaPackageName,
 			String schemaName, CodeGeneratorConfiguration config) {
@@ -59,6 +61,12 @@ public class GraphCodeGenerator extends AttributedElementCodeGenerator {
 		rootBlock.setVariable("schemaElementClass", "GraphClass");
 		rootBlock.setVariable("schemaName", schemaName);
 		rootBlock.setVariable("theGraph", "this");
+		interfaces.add("Graph");
+	}
+
+	@Override
+	protected String getSchemaTypeName() {
+		return "GraphClass";
 	}
 
 	@Override
@@ -179,10 +187,13 @@ public class GraphCodeGenerator extends AttributedElementCodeGenerator {
 	private CodeBlock createGraphElementClassMethods() {
 		CodeList code = new CodeList();
 
-		GraphClass gc = (GraphClass) aec;
+		GraphClass gc = aec;
 		TreeSet<GraphElementClass<?, ?>> sortedClasses = new TreeSet<GraphElementClass<?, ?>>();
 		sortedClasses.addAll(gc.getGraphElementClasses());
 		for (GraphElementClass<?, ?> gec : sortedClasses) {
+			if (gec.isInternal()) {
+				continue;
+			}
 			CodeList gecCode = new CodeList();
 			code.addNoIndent(gecCode);
 
@@ -226,8 +237,7 @@ public class GraphCodeGenerator extends AttributedElementCodeGenerator {
 		if (currentCycle.isAbstract()) {
 			code.add("/**",
 					" * @return the first #ecSimpleName# #ecTypeInComment# in this graph");
-			code.add(" */",
-					"public #ecJavaClassName# getFirst#ecCamelName#();");
+			code.add(" */", "public #ecJavaClassName# getFirst#ecCamelName#();");
 		}
 		if (currentCycle.isStdOrDbImplOrTransImpl()) {
 			code.add(
@@ -306,7 +316,7 @@ public class GraphCodeGenerator extends AttributedElementCodeGenerator {
 	}
 
 	private CodeBlock createEdgeIteratorMethods() {
-		GraphClass gc = (GraphClass) aec;
+		GraphClass gc = aec;
 
 		CodeList code = new CodeList();
 		if (!config.hasTypeSpecificMethodsSupport()) {
@@ -348,7 +358,7 @@ public class GraphCodeGenerator extends AttributedElementCodeGenerator {
 	}
 
 	private CodeBlock createVertexIteratorMethods() {
-		GraphClass gc = (GraphClass) aec;
+		GraphClass gc = aec;
 
 		CodeList code = new CodeList();
 		if (!config.hasTypeSpecificMethodsSupport()) {

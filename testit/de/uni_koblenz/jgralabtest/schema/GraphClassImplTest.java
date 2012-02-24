@@ -34,8 +34,6 @@
  */
 package de.uni_koblenz.jgralabtest.schema;
 
-import java.util.Vector;
-
 import org.junit.Before;
 import org.junit.Test;
 
@@ -88,63 +86,6 @@ public final class GraphClassImplTest extends
 	@Test
 	public void testCompareTo3() {
 		testCompareTo3(graphClass);
-	}
-
-	/**
-	 * getAllSubClasses()
-	 * 
-	 * TEST CASE: Getting all subclasses of an element that has no subclasses
-	 */
-	@Test
-	public void testGetAllSubClasses4() {
-		// A (virgin) GraphClass has no subclasses.
-		testGetAllSubClasses(new Vector<GraphClass>());
-	}
-
-	/**
-	 * getAllSuperClasses()
-	 * 
-	 * TEST CASE: Getting all superclasses of an element that has no
-	 * superclasses
-	 */
-	@Test
-	public void testGetAllSuperClasses4() {
-		Vector<GraphClass> expectedSuperClasses = new Vector<GraphClass>();
-
-		// Each element has a Default-Class as superclass upon creation.
-		// GraphClass does not allow other superclasses.
-		expectedSuperClasses.add(schema.getDefaultGraphClass());
-
-		testGetAllSuperClasses(expectedSuperClasses);
-	}
-
-	/**
-	 * getDirectSubClasses()
-	 * 
-	 * TEST CASE: Getting all direct subclasses of an element that has no direct
-	 * subclasses.
-	 */
-	@Test
-	public void testGetDirectSubClasses4() {
-		// A (virgin) GraphClass has no subclasses.
-		testGetDirectSubClasses(new Vector<GraphClass>());
-	}
-
-	/**
-	 * getDirectSubClasses()
-	 * 
-	 * TEST CASE: Getting all direct superclasses of an element that has no
-	 * direct superclasses.
-	 */
-	@Test
-	public void testGetDirectSuperClasses4() {
-		Vector<GraphClass> expectedSuperClasses = new Vector<GraphClass>();
-
-		// Each element has a Default-Class as superclass upon creation.
-		// GraphClass does not allow other superclasses.
-		expectedSuperClasses.add(schema.getDefaultGraphClass());
-
-		testGetDirectSuperClasses(expectedSuperClasses);
 	}
 
 	@Test

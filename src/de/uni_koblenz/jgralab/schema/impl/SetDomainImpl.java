@@ -58,7 +58,7 @@ public final class SetDomainImpl extends CollectionDomainImpl implements
 	SetDomainImpl(Schema schema, Domain aBaseDomain) {
 		super(SETDOMAIN_NAME + "<"
 				+ aBaseDomain.getTGTypeName(schema.getDefaultPackage()) + ">",
-				schema.getDefaultPackage(), aBaseDomain);
+				(PackageImpl) schema.getDefaultPackage(), aBaseDomain);
 	}
 
 	@Override

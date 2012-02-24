@@ -45,7 +45,7 @@ import de.uni_koblenz.jgralab.greql2.exception.UnknownTypeException;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
 import de.uni_koblenz.jgralab.greql2.schema.TypeId;
 import de.uni_koblenz.jgralab.greql2.types.TypeCollection;
-import de.uni_koblenz.jgralab.schema.AttributedElementClass;
+import de.uni_koblenz.jgralab.schema.GraphElementClass;
 import de.uni_koblenz.jgralab.schema.Schema;
 
 /**
@@ -78,11 +78,10 @@ public class TypeIdEvaluator extends VertexEvaluator {
 	 *            the schema of the datagraph
 	 * @return the generated list of types
 	 */
-	protected List<AttributedElementClass<?, ?>> createTypeList(Schema schema) {
-
-		ArrayList<AttributedElementClass<?, ?>> returnTypes = new ArrayList<AttributedElementClass<?, ?>>();
-		AttributedElementClass<?, ?> elemClass = schema
-				.getAttributedElementClass(vertex.get_name());
+	protected List<GraphElementClass<?, ?>> createTypeList(Schema schema) {
+		ArrayList<GraphElementClass<?, ?>> returnTypes = new ArrayList<GraphElementClass<?, ?>>();
+		GraphElementClass<?, ?> elemClass = schema.getGraphClass()
+				.getGraphElementClass(vertex.get_name());
 		if (elemClass == null) {
 			elemClass = greqlEvaluator.getKnownType(vertex.get_name());
 			if (elemClass == null) {
@@ -101,7 +100,7 @@ public class TypeIdEvaluator extends VertexEvaluator {
 
 	@Override
 	public Object evaluate() {
-		List<AttributedElementClass<?, ?>> typeList = createTypeList(greqlEvaluator
+		List<GraphElementClass<?, ?>> typeList = createTypeList(greqlEvaluator
 				.getDatagraph().getSchema());
 		return new TypeCollection(typeList, vertex.is_excluded());
 	}

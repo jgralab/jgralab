@@ -82,7 +82,7 @@ public class GenericGraphImpl extends GraphImpl {
 	protected GenericGraphImpl(GraphClass type, String id, int vmax, int emax) {
 		super(id, type, vmax, emax);
 		this.type = type;
-		if(type.getAttributeCount() > 0) {
+		if (type.getAttributeCount() > 0) {
 			attributes = new Object[type.getAttributeCount()];
 			if (!isLoading()) {
 				GenericGraphImpl.initializeGenericAttributeValues(this);
@@ -226,7 +226,7 @@ public class GenericGraphImpl extends GraphImpl {
 	 * Returns the default value for attributes in the generic implementation if
 	 * there is no explicitly defined default value, according to the
 	 * attribute's domain.
-	 *
+	 * 
 	 * @param domain
 	 *            The attribute's domain.
 	 * @return The default value for attributes of the domain.
@@ -273,7 +273,7 @@ public class GenericGraphImpl extends GraphImpl {
 	public boolean isInstanceOf(GraphClass cls) {
 		// Needs to be overridden from the base variant, because that relies on
 		// code generation.
-		return type.equals(cls) || type.isSubClassOf(cls);
+		return type.equals(cls);
 	}
 
 	@Override

@@ -50,7 +50,7 @@ public final class IntegerDomainImpl extends BasicDomainImpl implements
 		IntegerDomain {
 
 	IntegerDomainImpl(Schema schema) {
-		super(INTDOMAIN_NAME, schema.getDefaultPackage());
+		super(INTDOMAIN_NAME, (PackageImpl) schema.getDefaultPackage());
 	}
 
 	@Override

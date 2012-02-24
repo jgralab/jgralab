@@ -71,7 +71,7 @@ public class EdgeClassImplTest extends GraphElementClassImplTest<EdgeClass> {
 
 	/**
 	 * addAttribute(Attribute)
-	 *
+	 * 
 	 * TEST CASE: Adding an attribute, already contained in a superclass of this
 	 * element
 	 */
@@ -107,7 +107,7 @@ public class EdgeClassImplTest extends GraphElementClassImplTest<EdgeClass> {
 
 	/**
 	 * addAttribute(Attribute)
-	 *
+	 * 
 	 * TEST CASE: Adding an attribute, already contained in a subclass of this
 	 * element
 	 */
@@ -123,7 +123,7 @@ public class EdgeClassImplTest extends GraphElementClassImplTest<EdgeClass> {
 
 	/**
 	 * addConstraint(Constraint)
-	 *
+	 * 
 	 * TEST CASE: Adding a constraint, already contained in a superclass of this
 	 * element
 	 */
@@ -139,7 +139,7 @@ public class EdgeClassImplTest extends GraphElementClassImplTest<EdgeClass> {
 
 	/**
 	 * addConstraint(Constraint)
-	 *
+	 * 
 	 * TEST CASE: Adding a constraint, already contained in a subclass of this
 	 * element
 	 */
@@ -155,7 +155,7 @@ public class EdgeClassImplTest extends GraphElementClassImplTest<EdgeClass> {
 
 	/**
 	 * compareTo(AttributedElementClass)
-	 *
+	 * 
 	 * TEST CASE: Comparing this element to another, where this element´s
 	 * qualified name is lexicographically less than the other´s
 	 */
@@ -169,7 +169,7 @@ public class EdgeClassImplTest extends GraphElementClassImplTest<EdgeClass> {
 
 	/**
 	 * compareTo(AttributedElementClass)
-	 *
+	 * 
 	 * TEST CASE: Comparing this element to another, where this element´s
 	 * qualified name is lexicographically greater than the other´s
 	 */
@@ -183,7 +183,7 @@ public class EdgeClassImplTest extends GraphElementClassImplTest<EdgeClass> {
 
 	/**
 	 * compareTo(AttributedElementClass)
-	 *
+	 * 
 	 * TEST CASE: Comparing this element to another, where both element´s
 	 * qualified names are equal
 	 */
@@ -207,7 +207,7 @@ public class EdgeClassImplTest extends GraphElementClassImplTest<EdgeClass> {
 
 	/**
 	 * compareTo(AttributedElementClass)
-	 *
+	 * 
 	 * TEST CASE: Comparing an element to itself
 	 */
 	@Test
@@ -222,7 +222,7 @@ public class EdgeClassImplTest extends GraphElementClassImplTest<EdgeClass> {
 
 	/**
 	 * containsAttribute(String)
-	 *
+	 * 
 	 * TEST CASE: looking for an attribute, present in a superclass of this
 	 * element
 	 */
@@ -238,7 +238,7 @@ public class EdgeClassImplTest extends GraphElementClassImplTest<EdgeClass> {
 
 	/**
 	 * getAllSubClasses()
-	 *
+	 * 
 	 * TEST CASE: Getting all subclasses of an element with one direct subclass
 	 */
 	@Test
@@ -257,7 +257,7 @@ public class EdgeClassImplTest extends GraphElementClassImplTest<EdgeClass> {
 
 	/**
 	 * getAllSubClasses()
-	 *
+	 * 
 	 * TEST CASE: Getting all subclasses of an element with multiple direct
 	 * subclasses
 	 */
@@ -282,7 +282,7 @@ public class EdgeClassImplTest extends GraphElementClassImplTest<EdgeClass> {
 
 	/**
 	 * getAllSubClasses()
-	 *
+	 * 
 	 * TEST CASE: Getting all subclasses of an element with multiple direct and
 	 * indirect subclasses
 	 */
@@ -306,7 +306,7 @@ public class EdgeClassImplTest extends GraphElementClassImplTest<EdgeClass> {
 
 	/**
 	 * getAllSubClasses()
-	 *
+	 * 
 	 * TEST CASE: Getting all subclasses of an element that has no subclasses
 	 */
 	@Test
@@ -317,7 +317,7 @@ public class EdgeClassImplTest extends GraphElementClassImplTest<EdgeClass> {
 
 	/**
 	 * getAllSuperClasses()
-	 *
+	 * 
 	 * TEST CASE: Getting all superclasses of an element with one direct
 	 * superclass
 	 */
@@ -331,7 +331,7 @@ public class EdgeClassImplTest extends GraphElementClassImplTest<EdgeClass> {
 
 		edgeClass.addSuperClass(superClass);
 
-		expectedSuperClasses.add(schema.getDefaultEdgeClass());
+		expectedSuperClasses.add(schema.getGraphClass().getDefaultEdgeClass());
 		expectedSuperClasses.add(superClass);
 
 		testGetAllSuperClasses(expectedSuperClasses);
@@ -339,7 +339,7 @@ public class EdgeClassImplTest extends GraphElementClassImplTest<EdgeClass> {
 
 	/**
 	 * getAllSuperClasses()
-	 *
+	 * 
 	 * TEST CASE: Getting all superclasses of an element with multiple direct
 	 * superclasses
 	 */
@@ -355,7 +355,7 @@ public class EdgeClassImplTest extends GraphElementClassImplTest<EdgeClass> {
 		edgeClass.addSuperClass(superClass);
 		edgeClass.addSuperClass(superClass2);
 
-		expectedSuperClasses.add(schema.getDefaultEdgeClass());
+		expectedSuperClasses.add(schema.getGraphClass().getDefaultEdgeClass());
 		expectedSuperClasses.add(superClass);
 		expectedSuperClasses.add(superClass2);
 
@@ -364,7 +364,7 @@ public class EdgeClassImplTest extends GraphElementClassImplTest<EdgeClass> {
 
 	/**
 	 * getAllSuperClasses()
-	 *
+	 * 
 	 * TEST CASE: Getting all superclasses of an element with multiple direct
 	 * and indirect superclasses
 	 */
@@ -381,7 +381,7 @@ public class EdgeClassImplTest extends GraphElementClassImplTest<EdgeClass> {
 		edgeClass.addSuperClass(superClass);
 		superClass.addSuperClass(superClass2);
 
-		expectedSuperClasses.add(schema.getDefaultEdgeClass());
+		expectedSuperClasses.add(schema.getGraphClass().getDefaultEdgeClass());
 		expectedSuperClasses.add(superClass);
 		expectedSuperClasses.add(superClass2);
 
@@ -390,7 +390,7 @@ public class EdgeClassImplTest extends GraphElementClassImplTest<EdgeClass> {
 
 	/**
 	 * getAllSuperClasses()
-	 *
+	 * 
 	 * TEST CASE: Getting all superclasses of an element that has no
 	 * superclasses
 	 */
@@ -398,14 +398,14 @@ public class EdgeClassImplTest extends GraphElementClassImplTest<EdgeClass> {
 	public void testGetAllSuperClasses4() {
 		Vector<EdgeClass> expectedSuperClasses = new Vector<EdgeClass>();
 
-		expectedSuperClasses.add(schema.getDefaultEdgeClass());
+		expectedSuperClasses.add(schema.getGraphClass().getDefaultEdgeClass());
 
 		testGetAllSuperClasses(expectedSuperClasses);
 	}
 
 	/**
 	 * getAttribute()
-	 *
+	 * 
 	 * TEST CASE: Getting an inherited attribute
 	 */
 	@Test
@@ -421,7 +421,7 @@ public class EdgeClassImplTest extends GraphElementClassImplTest<EdgeClass> {
 
 	/**
 	 * getAttribute()
-	 *
+	 * 
 	 * TEST CASE: Trying to get an attribute present in a subclass of this
 	 * element
 	 */
@@ -437,7 +437,7 @@ public class EdgeClassImplTest extends GraphElementClassImplTest<EdgeClass> {
 
 	/**
 	 * getAttributeCount()
-	 *
+	 * 
 	 * TEST CASE: Getting the number of attributes of an element which has
 	 * exactly only one inherited attribute and no direct attributes
 	 */
@@ -454,7 +454,7 @@ public class EdgeClassImplTest extends GraphElementClassImplTest<EdgeClass> {
 
 	/**
 	 * getAttributeCount()
-	 *
+	 * 
 	 * TEST CASE: Getting the number of attributes of an element which has
 	 * multiple direct and indirect attributes
 	 */
@@ -471,7 +471,7 @@ public class EdgeClassImplTest extends GraphElementClassImplTest<EdgeClass> {
 
 	/**
 	 * getAttributeCount()
-	 *
+	 * 
 	 * TEST CASE: Getting the number of attributes of an element which has no
 	 * direct nor inherited attributes but whose subclass has attributes
 	 */
@@ -488,7 +488,7 @@ public class EdgeClassImplTest extends GraphElementClassImplTest<EdgeClass> {
 
 	/**
 	 * getAttributeList()
-	 *
+	 * 
 	 * TEST CASE: Getting an element´s list of attributes, which has exactly one
 	 * inherited attribute and no direct attributes
 	 */
@@ -505,7 +505,7 @@ public class EdgeClassImplTest extends GraphElementClassImplTest<EdgeClass> {
 
 	/**
 	 * getAttributeList()
-	 *
+	 * 
 	 * TEST CASE: Getting an element´s list of attributes, which has mutliple
 	 * direct and inherited attributes
 	 */
@@ -522,7 +522,7 @@ public class EdgeClassImplTest extends GraphElementClassImplTest<EdgeClass> {
 
 	/**
 	 * getAttributeList()
-	 *
+	 * 
 	 * TEST CASE: Getting an element´s list of attributes, which has no direct
 	 * nor inherited attributes but whose subclass has attributes
 	 */
@@ -539,7 +539,7 @@ public class EdgeClassImplTest extends GraphElementClassImplTest<EdgeClass> {
 
 	/**
 	 * getConstraints()
-	 *
+	 * 
 	 * TEST CASE: Getting an element´s list of constraints, that has a
 	 * superclass with constraints
 	 */
@@ -556,7 +556,7 @@ public class EdgeClassImplTest extends GraphElementClassImplTest<EdgeClass> {
 
 	/**
 	 * getDirectSubClasses()
-	 *
+	 * 
 	 * TEST CASE: Getting all direct subclasses of an element that has one
 	 * direct subclass.
 	 */
@@ -577,7 +577,7 @@ public class EdgeClassImplTest extends GraphElementClassImplTest<EdgeClass> {
 
 	/**
 	 * getDirectSubClasses()
-	 *
+	 * 
 	 * TEST CASE: Getting all direct subclasses of an element that has multiple
 	 * direct subclasses.
 	 */
@@ -602,7 +602,7 @@ public class EdgeClassImplTest extends GraphElementClassImplTest<EdgeClass> {
 
 	/**
 	 * getDirectSubClasses()
-	 *
+	 * 
 	 * TEST CASE: Getting all direct subclasses of an element that has multiple
 	 * direct and indirect subclasses.
 	 */
@@ -629,7 +629,7 @@ public class EdgeClassImplTest extends GraphElementClassImplTest<EdgeClass> {
 
 	/**
 	 * getDirectSubClasses()
-	 *
+	 * 
 	 * TEST CASE: Getting all direct subclasses of an element that has no direct
 	 * subclasses.
 	 */
@@ -640,7 +640,7 @@ public class EdgeClassImplTest extends GraphElementClassImplTest<EdgeClass> {
 
 	/**
 	 * getDirectSuperClasses()
-	 *
+	 * 
 	 * TEST CASE: Getting all direct superclasses of an element that has one
 	 * direct superclass.
 	 */
@@ -660,7 +660,7 @@ public class EdgeClassImplTest extends GraphElementClassImplTest<EdgeClass> {
 
 	/**
 	 * getDirectSuperClasses()
-	 *
+	 * 
 	 * TEST CASE: Getting all direct superclasses of an element that has
 	 * multiple direct superclasses.
 	 */
@@ -684,7 +684,7 @@ public class EdgeClassImplTest extends GraphElementClassImplTest<EdgeClass> {
 
 	/**
 	 * getDirectSuperClasses()
-	 *
+	 * 
 	 * TEST CASE: Getting all direct superclasses of an element that has
 	 * multiple direct and indirect superclasses.
 	 */
@@ -709,7 +709,7 @@ public class EdgeClassImplTest extends GraphElementClassImplTest<EdgeClass> {
 
 	/**
 	 * getDirectSuperClasses()
-	 *
+	 * 
 	 * TEST CASE: Getting all direct superclasses of an element that has no
 	 * direct superclasses.
 	 */
@@ -717,7 +717,7 @@ public class EdgeClassImplTest extends GraphElementClassImplTest<EdgeClass> {
 	public void testGetDirectSuperClasses4() {
 		Vector<EdgeClass> expectedSuperClasses = new Vector<EdgeClass>();
 
-		expectedSuperClasses.add(schema.getDefaultEdgeClass());
+		expectedSuperClasses.add(schema.getGraphClass().getDefaultEdgeClass());
 
 		testGetDirectSuperClasses(expectedSuperClasses);
 	}
@@ -770,7 +770,7 @@ public class EdgeClassImplTest extends GraphElementClassImplTest<EdgeClass> {
 
 	/**
 	 * getOwnAttribute()
-	 *
+	 * 
 	 * TEST CASE: Trying to get an attribute present in a superclass of this
 	 * element
 	 */
@@ -785,7 +785,7 @@ public class EdgeClassImplTest extends GraphElementClassImplTest<EdgeClass> {
 
 	/**
 	 * getOwnAttribute()
-	 *
+	 * 
 	 * TEST CASE: Trying to get an attribute present in a subclass of this
 	 * element
 	 */
@@ -802,7 +802,7 @@ public class EdgeClassImplTest extends GraphElementClassImplTest<EdgeClass> {
 
 	/**
 	 * getOwnAttributeCount()
-	 *
+	 * 
 	 * TEST CASE: Getting the number of attributes of an element that only has
 	 * inherited attributes and no direct attributes
 	 */
@@ -818,7 +818,7 @@ public class EdgeClassImplTest extends GraphElementClassImplTest<EdgeClass> {
 
 	/**
 	 * getOwnAttributeList()
-	 *
+	 * 
 	 * TEST CASE: Getting an element´s list of attributes, that only has
 	 * inherited attributes and no direct attributes
 	 */
@@ -869,7 +869,7 @@ public class EdgeClassImplTest extends GraphElementClassImplTest<EdgeClass> {
 
 	/**
 	 * hasAttributes()
-	 *
+	 * 
 	 * TEST CASE: The element has one inherited attribute
 	 */
 	@Test
@@ -884,7 +884,7 @@ public class EdgeClassImplTest extends GraphElementClassImplTest<EdgeClass> {
 
 	/**
 	 * hasAttributes()
-	 *
+	 * 
 	 * TEST CASE: The element has multiple inherited attributes
 	 */
 	@Test
@@ -899,7 +899,7 @@ public class EdgeClassImplTest extends GraphElementClassImplTest<EdgeClass> {
 
 	/**
 	 * hasAttributes()
-	 *
+	 * 
 	 * TEST CASE: The element has multiple direct and indirect attributes
 	 */
 	@Test
@@ -914,7 +914,7 @@ public class EdgeClassImplTest extends GraphElementClassImplTest<EdgeClass> {
 
 	/**
 	 * hasOwnAttributes()
-	 *
+	 * 
 	 * TEST CASE: The element has direct and inherited attributes
 	 */
 	@Test
@@ -929,7 +929,7 @@ public class EdgeClassImplTest extends GraphElementClassImplTest<EdgeClass> {
 
 	/**
 	 * hasOwnAttributes()
-	 *
+	 * 
 	 * TEST CASE: The element has no direct but indirect attributes
 	 */
 	@Test
@@ -943,177 +943,10 @@ public class EdgeClassImplTest extends GraphElementClassImplTest<EdgeClass> {
 	}
 
 	/**
-	 * isDirectSubClassOf()
-	 *
-	 * TEST CASE: The other element is a direct superclass of this element
-	 */
-	@Test
-	public void testIsDirectSubClassOf() {
-
-		// Normale Kante
-		EdgeClass superClass = createEdgeClass("EdgeClassSuperClass", edgeClass);
-		edgeClass.addSuperClass(superClass);
-
-		testIsDirectSubClassOf(superClass);
-	}
-
-	/**
-	 * isDirectSubClassOf()
-	 *
-	 * TEST CASE: The other element is an inherited superclass of this element
-	 */
-	@Test
-	public void testIsDirectSubClassOf2() {
-
-		// Normale Kanten
-		EdgeClass superClass = createEdgeClass("EdgeClassSuperClass", edgeClass);
-		EdgeClass superClass2 = createEdgeClass("EdgeClassSuperClass2",
-				edgeClass);
-		edgeClass.addSuperClass(superClass);
-		superClass.addSuperClass(superClass2);
-
-		testIsDirectSubClassOf2(superClass2);
-	}
-
-	/**
-	 * isDirectSubClassOf()
-	 *
-	 * TEST CASE: The other element is a subclass of this element
-	 */
-	@Test
-	public void testIsDirectSubClassOf3() {
-
-		// Beispiel Kante
-		EdgeClass subClass = createEdgeClass("EdgeClassSubClass", edgeClass);
-
-		subClass.addSuperClass(edgeClass);
-
-		testIsDirectSubClassOf2(subClass);
-	}
-
-	/**
-	 * isDirectSubClassOf()
-	 *
-	 * TEST CASE: The other element has no relation with this element
-	 */
-	@Test
-	public void testIsDirectSubClassOf4() {
-
-		// Normale Kante
-		EdgeClass edgeClass2 = createEdgeClass("EdgeClass2", edgeClass);
-
-		testIsDirectSubClassOf2(edgeClass2);
-	}
-
-	/**
-	 * isDirectSubClassOf()
-	 *
-	 * TEST CASE: The other element and this element are the same
-	 */
-	@Test
-	public void testIsDirectSubClassOf5() {
-		testIsDirectSubClassOf2(edgeClass);
-	}
-
-	/**
-	 * isDirectSuperClassOf()
-	 *
-	 * TEST CASE: The other element is a direct subclass of this element
-	 */
-	@Test
-	public void testIsDirectSuperClassOf() {
-
-		// Beispiel Kante
-		EdgeClass subClass = createEdgeClass("EdgeClassSubClass", edgeClass);
-
-		subClass.addSuperClass(edgeClass);
-
-		testIsDirectSuperClassOf(subClass);
-	}
-
-	/**
-	 * isDirectSuperClassOf()
-	 *
-	 * TEST CASE: The other element is an inherited subclass of this element
-	 */
-	@Test
-	public void testIsDirectSuperClassOf2() {
-
-		// Beispiel Kante
-		EdgeClass subClass = createEdgeClass("EdgeClassSubClass", edgeClass);
-
-		EdgeClass subClass2 = createEdgeClass("EdgeClassSubClass2", edgeClass);
-
-		subClass.addSuperClass(edgeClass);
-		subClass2.addSuperClass(subClass);
-
-		testIsDirectSuperClassOf2(subClass2);
-	}
-
-	/**
-	 * isDirectSuperClassOf()
-	 *
-	 * TEST CASE: The other element is a superclass of this element
-	 */
-	@Test
-	public void testIsDirectSuperClassOf3() {
-
-		// Normale Kante
-		EdgeClass superClass = createEdgeClass("EdgeClassSuperClass", edgeClass);
-		edgeClass.addSuperClass(superClass);
-
-		testIsDirectSuperClassOf2(superClass);
-	}
-
-	/**
-	 * isDirectSuperClassOf()
-	 *
-	 * TEST CASE: The other element has no relation with this element
-	 */
-	@Test
-	public void testIsDirectSuperClassOf4() {
-
-		// Normale Kante
-		EdgeClass edgeClass2 = createEdgeClass("EdgeClass2", edgeClass);
-
-		testIsDirectSuperClassOf2(edgeClass2);
-	}
-
-	/**
-	 * isDirectSuperClassOf()
-	 *
-	 * TEST CASE: The other element and this element are the same
-	 */
-	@Test
-	public void testIsDirectSuperClassOf5() {
-		testIsDirectSuperClassOf2(edgeClass);
-	}
-
-
-	public final void testIsDirectSubClassOf(EdgeClass other) {
-		Assert.assertTrue(attributedElement.isDirectSubClassOf(other));
-	}
-
-
-	public final void testIsDirectSubClassOf2(EdgeClass other) {
-		Assert.assertFalse(attributedElement.isDirectSubClassOf(other));
-	}
-
-
-	public final void testIsDirectSuperClassOf(EdgeClass other) {
-		Assert.assertTrue(attributedElement.isDirectSuperClassOf(other));
-	}
-
-
-	public final void testIsDirectSuperClassOf2(EdgeClass other) {
-		Assert.assertFalse(attributedElement.isDirectSuperClassOf(other));
-	}
-
-	/**
 	 * isSubClassOf()
-	 *
+	 * 
 	 * TEST CASE: The other element is a direct superclass of this element
-	 *
+	 * 
 	 * TEST CASE: The other element is an inherited superclass of this element
 	 */
 	public final void testIsSubClassOf(EdgeClass other) {
@@ -1122,11 +955,11 @@ public class EdgeClassImplTest extends GraphElementClassImplTest<EdgeClass> {
 
 	/**
 	 * isSubClassOf()
-	 *
+	 * 
 	 * TEST CASE: The other element is a subclass of this element
-	 *
+	 * 
 	 * TEST CASE: The other element has no relation with this element
-	 *
+	 * 
 	 * TEST CASE: The other element and this element are the same
 	 */
 	public final void testIsSubClassOf2(EdgeClass other) {
@@ -1138,9 +971,9 @@ public class EdgeClassImplTest extends GraphElementClassImplTest<EdgeClass> {
 	 */
 	/**
 	 * isSuperClassOf()
-	 *
+	 * 
 	 * TEST CASE: The other element is a direct subclass of this element
-	 *
+	 * 
 	 * TEST CASE: The other element is an inherited subclass of this element
 	 */
 	public final void testIsSuperClassOf(EdgeClass other) {
@@ -1149,11 +982,11 @@ public class EdgeClassImplTest extends GraphElementClassImplTest<EdgeClass> {
 
 	/**
 	 * isDirectSuperClassOf()
-	 *
+	 * 
 	 * TEST CASE: The other element is a superclass of this element
-	 *
+	 * 
 	 * TEST CASE: The other element has no relation with this element
-	 *
+	 * 
 	 * TEST CASE: The other element and this element are the same
 	 */
 	public final void testIsSuperClassOf2(EdgeClass other) {
@@ -1165,11 +998,11 @@ public class EdgeClassImplTest extends GraphElementClassImplTest<EdgeClass> {
 	 */
 	/**
 	 * isSuperClassOfOrEquals()
-	 *
+	 * 
 	 * TEST CASE: The other element is a direct subclass of this element
-	 *
+	 * 
 	 * TEST CASE: The other element is an inherited subclass of this element
-	 *
+	 * 
 	 * TEST CASE: The other element is a superclass of this element
 	 */
 	public final void testIsSuperClassOfOrEquals(EdgeClass other) {
@@ -1178,9 +1011,9 @@ public class EdgeClassImplTest extends GraphElementClassImplTest<EdgeClass> {
 
 	/**
 	 * isSuperClassOfOrEquals()
-	 *
+	 * 
 	 * TEST CASE: The other element has no relation with this element
-	 *
+	 * 
 	 * TEST CASE: The other element and this element are the same
 	 */
 	public final void testIsSuperClassOfOrEquals2(EdgeClass other) {
@@ -1189,7 +1022,7 @@ public class EdgeClassImplTest extends GraphElementClassImplTest<EdgeClass> {
 
 	/**
 	 * isSubClassOf()
-	 *
+	 * 
 	 * TEST CASE: The other element is a direct superclass of this element
 	 */
 	@Test
@@ -1204,7 +1037,7 @@ public class EdgeClassImplTest extends GraphElementClassImplTest<EdgeClass> {
 
 	/**
 	 * isSubClassOf()
-	 *
+	 * 
 	 * TEST CASE: The other element is an inherited superclass of this element
 	 */
 	@Test
@@ -1222,7 +1055,7 @@ public class EdgeClassImplTest extends GraphElementClassImplTest<EdgeClass> {
 
 	/**
 	 * isSubClassOf()
-	 *
+	 * 
 	 * TEST CASE: The other element is a subclass of this element
 	 */
 	@Test
@@ -1238,7 +1071,7 @@ public class EdgeClassImplTest extends GraphElementClassImplTest<EdgeClass> {
 
 	/**
 	 * isSubClassOf()
-	 *
+	 * 
 	 * TEST CASE: The other element has no relation with this element
 	 */
 	@Test
@@ -1252,7 +1085,7 @@ public class EdgeClassImplTest extends GraphElementClassImplTest<EdgeClass> {
 
 	/**
 	 * isSubClassOf()
-	 *
+	 * 
 	 * TEST CASE: The other element and this element are the same
 	 */
 	@Test
@@ -1262,7 +1095,7 @@ public class EdgeClassImplTest extends GraphElementClassImplTest<EdgeClass> {
 
 	/**
 	 * isSuperClassOf()
-	 *
+	 * 
 	 * TEST CASE: The other element is a direct subclass of this element
 	 */
 	@Test
@@ -1278,7 +1111,7 @@ public class EdgeClassImplTest extends GraphElementClassImplTest<EdgeClass> {
 
 	/**
 	 * isSuperClassOf()
-	 *
+	 * 
 	 * TEST CASE: The other element is an inherited subclass of this element
 	 */
 	@Test
@@ -1297,7 +1130,7 @@ public class EdgeClassImplTest extends GraphElementClassImplTest<EdgeClass> {
 
 	/**
 	 * isSuperClassOf()
-	 *
+	 * 
 	 * TEST CASE: The other element is a superclass of this element
 	 */
 	@Test
@@ -1312,7 +1145,7 @@ public class EdgeClassImplTest extends GraphElementClassImplTest<EdgeClass> {
 
 	/**
 	 * isSuperClassOf()
-	 *
+	 * 
 	 * TEST CASE: The other element has no relation with this element
 	 */
 	@Test
@@ -1326,7 +1159,7 @@ public class EdgeClassImplTest extends GraphElementClassImplTest<EdgeClass> {
 
 	/**
 	 * isSuperClassOf()
-	 *
+	 * 
 	 * TEST CASE: The other element and this element are the same
 	 */
 	@Test
@@ -1336,7 +1169,7 @@ public class EdgeClassImplTest extends GraphElementClassImplTest<EdgeClass> {
 
 	/**
 	 * isSuperClassOfOrEquals()
-	 *
+	 * 
 	 * TEST CASE: The other element is a direct subclass of this element
 	 */
 	@Test
@@ -1352,7 +1185,7 @@ public class EdgeClassImplTest extends GraphElementClassImplTest<EdgeClass> {
 
 	/**
 	 * isSuperClassOfOrEquals()
-	 *
+	 * 
 	 * TEST CASE: The other element is an inherited subclass of this element
 	 */
 	@Test
@@ -1371,7 +1204,7 @@ public class EdgeClassImplTest extends GraphElementClassImplTest<EdgeClass> {
 
 	/**
 	 * isSuperClassOfOrEquals()
-	 *
+	 * 
 	 * TEST CASE: The other element and this element are the same
 	 */
 	@Test
@@ -1381,7 +1214,7 @@ public class EdgeClassImplTest extends GraphElementClassImplTest<EdgeClass> {
 
 	/**
 	 * isSuperClassOfOrEquals()
-	 *
+	 * 
 	 * TEST CASE: The other element has no relation with this element
 	 */
 	@Test
@@ -1395,7 +1228,7 @@ public class EdgeClassImplTest extends GraphElementClassImplTest<EdgeClass> {
 
 	/**
 	 * isSuperClassOfOrEquals()
-	 *
+	 * 
 	 * TEST CASE: The other element is a superclass of this element
 	 */
 	@Test

@@ -90,6 +90,9 @@ public class SimpleCopyTransformation extends Transformation<Graph> {
 
 	private void copyEdgeClasses() {
 		for (EdgeClass oldEC : sourceSchema.getGraphClass().getEdgeClasses()) {
+			if (oldEC.isInternal()) {
+				continue;
+			}
 			EdgeClass newEC = null;
 			String qName = oldEC.getQualifiedName();
 			VertexClass newFrom = vc(oldEC.getFrom().getVertexClass()
@@ -125,6 +128,9 @@ public class SimpleCopyTransformation extends Transformation<Graph> {
 	private void copyVertexClasses() {
 		for (VertexClass oldVC : sourceSchema.getGraphClass()
 				.getVertexClasses()) {
+			if (oldVC.isInternal()) {
+				continue;
+			}
 			VertexClass newVC = null;
 			String qName = oldVC.getQualifiedName();
 			if (oldVC.isAbstract()) {

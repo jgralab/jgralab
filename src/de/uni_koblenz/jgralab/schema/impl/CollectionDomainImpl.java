@@ -36,7 +36,6 @@ package de.uni_koblenz.jgralab.schema.impl;
 
 import de.uni_koblenz.jgralab.schema.CollectionDomain;
 import de.uni_koblenz.jgralab.schema.Domain;
-import de.uni_koblenz.jgralab.schema.Package;
 import de.uni_koblenz.jgralab.schema.exception.SchemaException;
 
 public abstract class CollectionDomainImpl extends CompositeDomainImpl
@@ -48,18 +47,18 @@ public abstract class CollectionDomainImpl extends CompositeDomainImpl
 	 */
 	protected Domain baseDomain;
 
-	protected CollectionDomainImpl(String simpleName, Package pkg,
+	protected CollectionDomainImpl(String simpleName, PackageImpl pkg,
 			Domain baseDomain) {
 		super(simpleName, pkg);
 
-		if (getSchema() != baseDomain.getSchema()) {
+		if (schema != ((DomainImpl) baseDomain).schema) {
 			throw new SchemaException("Base domain "
 					+ baseDomain.getQualifiedName()
 					+ " belongs to a different schema.");
 		}
 
 		this.baseDomain = baseDomain;
-		((SchemaImpl) pkg.getSchema()).addDomainDependency(this, baseDomain);
+		schema.addDomainDependency(this, baseDomain);
 	}
 
 	@Override

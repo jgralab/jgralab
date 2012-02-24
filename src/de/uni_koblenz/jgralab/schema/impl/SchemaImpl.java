@@ -140,13 +140,7 @@ public class SchemaImpl implements Schema {
 	 */
 	private boolean allowLowercaseEnumConstants = true;
 
-	private EdgeClass defaultEdgeClass;
-
-	private GraphClass defaultGraphClass;
-
-	private Package defaultPackage;
-
-	private VertexClass defaultVertexClass;
+	private PackageImpl defaultPackage;
 
 	/**
 	 * Maps from qualified name to the {@link Domain}.
@@ -182,7 +176,7 @@ public class SchemaImpl implements Schema {
 	/**
 	 * Maps from qualified name to the {@link Package} with that qualified name.
 	 */
-	private Map<String, Package> packages = new TreeMap<String, Package>();
+	private Map<String, PackageImpl> packages = new TreeMap<String, PackageImpl>();
 
 	/**
 	 * The qualified name of this schema, that is {@link #packagePrefix} DOT
@@ -257,16 +251,6 @@ public class SchemaImpl implements Schema {
 		createIntegerDomain();
 		createLongDomain();
 		createStringDomain();
-
-		/*
-		 * Needs to be created before any GraphElementClass element can be
-		 * created.
-		 */
-		defaultGraphClass = GraphClassImpl.createDefaultGraphClass(this);
-
-		// Creation of default GraphElementClasses
-		defaultVertexClass = VertexClassImpl.createDefaultVertexClass(this);
-		defaultEdgeClass = EdgeClassImpl.createDefaultEdgeClass(this);
 	}
 
 	void addDomain(Domain dom) {
@@ -332,12 +316,18 @@ public class SchemaImpl implements Schema {
 		javaSources.addAll(graphCodeGenerator.createJavaSources());
 
 		for (VertexClass vertexClass : graphClass.getVertexClasses()) {
+			if (vertexClass.isInternal()) {
+				continue;
+			}
 			VertexCodeGenerator codeGen = new VertexCodeGenerator(vertexClass,
 					packagePrefix, config);
 			javaSources.addAll(codeGen.createJavaSources());
 		}
 
 		for (EdgeClass edgeClass : graphClass.getEdgeClasses()) {
+			if (edgeClass.isInternal()) {
+				continue;
+			}
 			CodeGenerator codeGen = new EdgeCodeGenerator(edgeClass,
 					packagePrefix, config);
 			javaSources.addAll(codeGen.createJavaSources());
@@ -462,6 +452,9 @@ public class SchemaImpl implements Schema {
 		graphCodeGenerator.createFiles(pathPrefix);
 
 		for (VertexClass vertexClass : graphClass.getVertexClasses()) {
+			if (vertexClass.isInternal()) {
+				continue;
+			}
 			VertexCodeGenerator codeGen = new VertexCodeGenerator(vertexClass,
 					packagePrefix, config);
 			codeGen.createFiles(pathPrefix);
@@ -476,6 +469,9 @@ public class SchemaImpl implements Schema {
 		}
 
 		for (EdgeClass edgeClass : graphClass.getEdgeClasses()) {
+			if (edgeClass.isInternal()) {
+				continue;
+			}
 			CodeGenerator codeGen = new EdgeCodeGenerator(edgeClass,
 					packagePrefix, config);
 			codeGen.createFiles(pathPrefix);
@@ -617,7 +613,7 @@ public class SchemaImpl implements Schema {
 			List<String> enumComponents) {
 		assertNotFinished();
 		String[] components = splitQualifiedName(qualifiedName);
-		PackageImpl parent = (PackageImpl) createPackageWithParents(components[0]);
+		PackageImpl parent = createPackageWithParents(components[0]);
 		String simpleName = components[1];
 		EnumDomain ed = new EnumDomainImpl(simpleName, parent, enumComponents);
 		return ed;
@@ -633,19 +629,11 @@ public class SchemaImpl implements Schema {
 							+ "' is already there.");
 		}
 
-		if (simpleName.equals(GraphClass.DEFAULTGRAPHCLASS_NAME)) {
-			throw new SchemaException(
-					"A GraphClass must not be named like the default GraphClass ("
-							+ GraphClass.DEFAULTGRAPHCLASS_NAME + ")");
-		}
-
 		if (simpleName.contains(".")) {
 			throw new SchemaException(
 					"A GraphClass must always be in the default package!");
 		}
-		GraphClassImpl gc = new GraphClassImpl(simpleName, this);
-		gc.addSuperClass(defaultGraphClass);
-		return gc;
+		return new GraphClassImpl(simpleName, this);
 	}
 
 	private BooleanDomain createBooleanDomain() {
@@ -709,7 +697,7 @@ public class SchemaImpl implements Schema {
 		return new MapDomainImpl(this, keyDomain, valueDomain);
 	}
 
-	Package createPackage(String sn, Package parentPkg) {
+	PackageImpl createPackage(String sn, PackageImpl parentPkg) {
 		assertNotFinished();
 		return new PackageImpl(sn, parentPkg, this);
 	}
@@ -723,7 +711,7 @@ public class SchemaImpl implements Schema {
 	 * @return a new {@link Package} with the given qualified name, or an
 	 *         existing package with this qualified name.
 	 */
-	Package createPackageWithParents(String qn) {
+	PackageImpl createPackageWithParents(String qn) {
 		assertNotFinished();
 		if (packages.containsKey(qn)) {
 			return packages.get(qn);
@@ -736,7 +724,7 @@ public class SchemaImpl implements Schema {
 		assert !pkgSimpleName.contains(".") : "The package simple name '"
 				+ pkgSimpleName + "' must not contain a dot!";
 
-		Package currentParent = defaultPackage;
+		PackageImpl currentParent = defaultPackage;
 		String currentPkgQName = "";
 
 		if (!packages.containsKey(parent)) {
@@ -807,7 +795,7 @@ public class SchemaImpl implements Schema {
 			Collection<RecordComponent> recordComponents) {
 		assertNotFinished();
 		String[] components = splitQualifiedName(qualifiedName);
-		PackageImpl parent = (PackageImpl) createPackageWithParents(components[0]);
+		PackageImpl parent = createPackageWithParents(components[0]);
 		String simpleName = components[1];
 		RecordDomain rd = new RecordDomainImpl(simpleName, parent,
 				recordComponents);
@@ -913,23 +901,8 @@ public class SchemaImpl implements Schema {
 	}
 
 	@Override
-	public EdgeClass getDefaultEdgeClass() {
-		return defaultEdgeClass;
-	}
-
-	@Override
-	public GraphClass getDefaultGraphClass() {
-		return defaultGraphClass;
-	}
-
-	@Override
 	public Package getDefaultPackage() {
 		return defaultPackage;
-	}
-
-	@Override
-	public VertexClass getDefaultVertexClass() {
-		return defaultVertexClass;
 	}
 
 	@Override
@@ -948,12 +921,7 @@ public class SchemaImpl implements Schema {
 
 	@Override
 	public List<EdgeClass> getEdgeClasses() {
-		List<EdgeClass> ec_top = new ArrayList<EdgeClass>();
-		ec_top.add(defaultEdgeClass);
-		for (EdgeClass ec : graphClass.getEdgeClasses()) {
-			ec_top.add(ec);
-		}
-		return ec_top;
+		return graphClass.getEdgeClasses();
 	}
 
 	@Override
@@ -1119,11 +1087,6 @@ public class SchemaImpl implements Schema {
 	}
 
 	@Override
-	public Map<String, Package> getPackages() {
-		return packages;
-	}
-
-	@Override
 	public String getQualifiedName() {
 		return qualifiedName;
 	}
@@ -1143,12 +1106,7 @@ public class SchemaImpl implements Schema {
 
 	@Override
 	public List<VertexClass> getVertexClasses() {
-		List<VertexClass> vc_top = new ArrayList<VertexClass>();
-		vc_top.add(defaultVertexClass);
-		for (VertexClass vc : graphClass.getVertexClasses()) {
-			vc_top.add(vc);
-		}
-		return vc_top;
+		return graphClass.getVertexClasses();
 	}
 
 	@Override

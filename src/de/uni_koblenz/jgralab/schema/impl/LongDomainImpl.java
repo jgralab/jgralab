@@ -49,7 +49,7 @@ import de.uni_koblenz.jgralab.schema.Schema;
 public final class LongDomainImpl extends BasicDomainImpl implements LongDomain {
 
 	LongDomainImpl(Schema schema) {
-		super(LONGDOMAIN_NAME, schema.getDefaultPackage());
+		super(LONGDOMAIN_NAME, (PackageImpl) schema.getDefaultPackage());
 	}
 
 	@Override

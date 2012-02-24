@@ -75,7 +75,7 @@ public final class RecordDomainImpl extends CompositeDomainImpl implements
 	 * @param components
 	 *            a list of the components of the record
 	 */
-	RecordDomainImpl(String sn, Package pkg,
+	RecordDomainImpl(String sn, PackageImpl pkg,
 			Collection<RecordComponent> components) {
 		super(sn, pkg);
 		if (components != null) {

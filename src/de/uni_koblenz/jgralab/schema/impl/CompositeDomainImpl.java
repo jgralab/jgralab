@@ -36,12 +36,11 @@
 package de.uni_koblenz.jgralab.schema.impl;
 
 import de.uni_koblenz.jgralab.schema.CompositeDomain;
-import de.uni_koblenz.jgralab.schema.Package;
 
 public abstract class CompositeDomainImpl extends DomainImpl implements
 		CompositeDomain {
 
-	protected CompositeDomainImpl(String simpleName, Package pkg) {
+	protected CompositeDomainImpl(String simpleName, PackageImpl pkg) {
 		super(simpleName, pkg);
 	}
 

@@ -70,7 +70,7 @@ public final class ListDomainImpl extends CollectionDomainImpl implements
 	ListDomainImpl(Schema schema, Domain aBaseDomain) {
 		super(LISTDOMAIN_NAME + "<"
 				+ aBaseDomain.getTGTypeName(schema.getDefaultPackage()) + ">",
-				schema.getDefaultPackage(), aBaseDomain);
+				(PackageImpl) schema.getDefaultPackage(), aBaseDomain);
 	}
 
 	@Override

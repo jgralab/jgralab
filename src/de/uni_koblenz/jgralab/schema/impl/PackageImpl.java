@@ -54,8 +54,6 @@ public final class PackageImpl extends NamedElementImpl implements Package {
 
 	private final Map<String, GraphClass> graphClasses = new TreeMap<String, GraphClass>();
 
-	private final Schema schema;
-
 	private final Map<String, Package> subPackages = new TreeMap<String, Package>();
 
 	private final Map<String, VertexClass> vertexClasses = new TreeMap<String, VertexClass>();
@@ -85,9 +83,9 @@ public final class PackageImpl extends NamedElementImpl implements Package {
 	 *             if the <code>DefaultPackage</code> already exists in the
 	 *             given schema
 	 */
-	static Package createDefaultPackage(Schema schema) {
+	static PackageImpl createDefaultPackage(Schema schema) {
 		assert schema.getDefaultPackage() == null : "DefaultPackage already created!";
-		return new PackageImpl(schema);
+		return new PackageImpl((SchemaImpl) schema);
 	}
 
 	/**
@@ -95,22 +93,16 @@ public final class PackageImpl extends NamedElementImpl implements Package {
 	 * 
 	 * @param schema
 	 */
-	private PackageImpl(Schema schema) {
+	private PackageImpl(SchemaImpl schema) {
 		this(Package.DEFAULTPACKAGE_NAME, null, schema);
 	}
 
-	PackageImpl(String simpleName, Package parentPackage, Schema schema) {
+	PackageImpl(String simpleName, PackageImpl parentPackage, SchemaImpl schema) {
 		super(simpleName, parentPackage, schema);
-		this.schema = schema;
-		register();
-	}
-
-	@Override
-	protected void register() {
 		if (parentPackage != null) {
-			((PackageImpl) parentPackage).addSubPackage(this);
+			parentPackage.addSubPackage(this);
 		}
-		((SchemaImpl) schema).addPackage(this);
+		schema.addPackage(this);
 	}
 
 	void addDomain(Domain dom) {
@@ -202,9 +194,7 @@ public final class PackageImpl extends NamedElementImpl implements Package {
 
 	@Override
 	public boolean containsNamedElement(String sn) {
-		return domains.containsKey(sn)
-				|| edgeClasses.containsKey(sn)
-				|| (isDefaultPackage() && (schema.getDefaultGraphClass() != null))
+		return domains.containsKey(sn) || edgeClasses.containsKey(sn)
 				|| vertexClasses.containsKey(sn) || subPackages.containsKey(sn);
 	}
 

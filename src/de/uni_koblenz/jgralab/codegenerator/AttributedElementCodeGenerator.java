@@ -35,17 +35,15 @@
 
 package de.uni_koblenz.jgralab.codegenerator;
 
+import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-import org.pcollections.PVector;
-
+import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.schema.Attribute;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
-import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.EnumDomain;
 import de.uni_koblenz.jgralab.schema.RecordDomain;
-import de.uni_koblenz.jgralab.schema.VertexClass;
 
 /**
  * TODO add comment
@@ -53,7 +51,8 @@ import de.uni_koblenz.jgralab.schema.VertexClass;
  * @author ist@uni-koblenz.de
  * 
  */
-public abstract class AttributedElementCodeGenerator extends CodeGenerator {
+public abstract class AttributedElementCodeGenerator<SC extends AttributedElementClass<SC, IC>, IC extends AttributedElement<SC, IC>>
+		extends CodeGenerator {
 
 	/**
 	 * all the interfaces of the class which are being implemented
@@ -63,15 +62,14 @@ public abstract class AttributedElementCodeGenerator extends CodeGenerator {
 	/**
 	 * the AttributedElementClass to generate code for
 	 */
-	protected AttributedElementClass<?, ?> aec;
+	protected SC aec;
 
-	protected AttributedElementCodeGenerator(
-			AttributedElementClass<?, ?> attributedElementClass,
+	protected AttributedElementCodeGenerator(SC attributedElementClass,
 			String schemaRootPackageName, CodeGeneratorConfiguration config) {
 		super(schemaRootPackageName, attributedElementClass.getPackageName(),
 				config);
 		aec = attributedElementClass;
-		rootBlock.setVariable("schemaTypeName", getSchemaTypeName(aec));
+		rootBlock.setVariable("schemaTypeName", getSchemaTypeName());
 		rootBlock.setVariable("qualifiedClassName", aec.getQualifiedName());
 		rootBlock.setVariable("schemaName", aec.getSchema().getName());
 		rootBlock.setVariable("schemaVariableName", aec.getVariableName());
@@ -91,21 +89,9 @@ public abstract class AttributedElementCodeGenerator extends CodeGenerator {
 		interfaces.add(aec.getQualifiedName());
 		rootBlock.setVariable("isAbstractClass", aec.isAbstract() ? "true"
 				: "false");
-		for (AttributedElementClass<?, ?> superClass : attributedElementClass
-				.getDirectSuperClasses()) {
-			interfaces.add(superClass.getQualifiedName());
-		}
 	}
 
-	private static String getSchemaTypeName(AttributedElementClass<?, ?> aec) {
-		if (aec instanceof VertexClass) {
-			return "VertexClass";
-		} else if (aec instanceof EdgeClass) {
-			return "EdgeClass";
-		} else {
-			return "GraphClass";
-		}
-	}
+	protected abstract String getSchemaTypeName();
 
 	/**
 	 * Returns the absolute name of the given AttributdelementClass. The name is
@@ -238,7 +224,7 @@ public abstract class AttributedElementCodeGenerator extends CodeGenerator {
 				"\treturn #javaClassName#.class;", "}");
 	}
 
-	protected CodeBlock createGenericGetter(PVector<Attribute> attributes) {
+	protected CodeBlock createGenericGetter(List<Attribute> attributes) {
 		CodeList code = new CodeList();
 		addImports("#jgPackage#.NoSuchAttributeException");
 		CodeSnippet snip = new CodeSnippet(true);
@@ -272,7 +258,7 @@ public abstract class AttributedElementCodeGenerator extends CodeGenerator {
 		return code;
 	}
 
-	protected CodeBlock createGenericSetter(PVector<Attribute> attrSet) {
+	protected CodeBlock createGenericSetter(List<Attribute> attrSet) {
 		CodeList code = new CodeList();
 		addImports("#jgPackage#.NoSuchAttributeException");
 		CodeSnippet snip = new CodeSnippet(true);
@@ -337,7 +323,7 @@ public abstract class AttributedElementCodeGenerator extends CodeGenerator {
 		return code;
 	}
 
-	protected CodeBlock createFields(PVector<Attribute> attributes) {
+	protected CodeBlock createFields(List<Attribute> attributes) {
 		CodeList code = new CodeList();
 		for (Attribute attr : attributes) {
 			code.addNoIndent(createField(attr));
@@ -345,7 +331,7 @@ public abstract class AttributedElementCodeGenerator extends CodeGenerator {
 		return code;
 	}
 
-	protected CodeBlock createGettersAndSetters(PVector<Attribute> attributes) {
+	protected CodeBlock createGettersAndSetters(List<Attribute> attributes) {
 		CodeList code = new CodeList();
 		for (Attribute attr : attributes) {
 			code.addNoIndent(createGetter(attr));
@@ -469,7 +455,7 @@ public abstract class AttributedElementCodeGenerator extends CodeGenerator {
 	}
 
 	protected CodeBlock createReadAttributesFromStringMethod(
-			PVector<Attribute> attributes) {
+			List<Attribute> attributes) {
 		CodeList code = new CodeList();
 		addImports("#jgPackage#.GraphIO", "#jgPackage#.GraphIOException",
 				"#jgPackage#.NoSuchAttributeException");
@@ -519,7 +505,7 @@ public abstract class AttributedElementCodeGenerator extends CodeGenerator {
 	 * @return
 	 */
 	protected CodeBlock createWriteAttributeToStringMethod(
-			PVector<Attribute> attributes) {
+			List<Attribute> attributes) {
 		CodeList code = new CodeList();
 		addImports("#jgPackage#.GraphIO", "#jgPackage#.GraphIOException",
 				"#jgPackage#.NoSuchAttributeException");
@@ -555,7 +541,7 @@ public abstract class AttributedElementCodeGenerator extends CodeGenerator {
 		return code;
 	}
 
-	protected CodeBlock createReadAttributesMethod(PVector<Attribute> attributes) {
+	protected CodeBlock createReadAttributesMethod(List<Attribute> attributes) {
 		CodeList code = new CodeList();
 
 		addImports("#jgPackage#.GraphIO", "#jgPackage#.GraphIOException");
@@ -585,8 +571,7 @@ public abstract class AttributedElementCodeGenerator extends CodeGenerator {
 		return code;
 	}
 
-	protected CodeBlock createWriteAttributesMethod(
-			PVector<Attribute> attributes) {
+	protected CodeBlock createWriteAttributesMethod(List<Attribute> attributes) {
 		CodeList code = new CodeList();
 
 		addImports("#jgPackage#.GraphIO", "#jgPackage#.GraphIOException",
@@ -622,7 +607,7 @@ public abstract class AttributedElementCodeGenerator extends CodeGenerator {
 	 * @return
 	 */
 	protected CodeBlock createGetVersionedAttributesMethod(
-			PVector<Attribute> attributes) {
+			List<Attribute> attributes) {
 		CodeList code = new CodeList();
 		if (currentCycle.isTransImpl()) {
 			CodeSnippet codeSnippet = new CodeSnippet();

@@ -50,7 +50,7 @@ public final class StringDomainImpl extends BasicDomainImpl implements
 		StringDomain {
 
 	StringDomainImpl(Schema schema) {
-		super(STRINGDOMAIN_NAME, schema.getDefaultPackage());
+		super(STRINGDOMAIN_NAME, (PackageImpl) schema.getDefaultPackage());
 	}
 
 	@Override

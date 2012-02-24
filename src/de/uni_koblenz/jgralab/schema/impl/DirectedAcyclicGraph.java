@@ -41,19 +41,43 @@ import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Set;
 
+import org.pcollections.ArrayPSet;
 import org.pcollections.ArrayPVector;
+import org.pcollections.PSet;
 import org.pcollections.PVector;
 
 import de.uni_koblenz.jgralab.schema.exception.CycleException;
+import de.uni_koblenz.jgralab.schema.exception.SchemaException;
 
 public class DirectedAcyclicGraph<T> extends DirectedGraph<T> {
 
 	private PVector<T> topologicalOrder;
-	private HashMap<T, PVector<T>> cachedPredecessors;
-	private HashMap<T, PVector<T>> cachedSuccessors;
+	private HashMap<T, PSet<T>> cachedPredecessors;
+	private HashMap<T, PSet<T>> cachedSuccessors;
+	private boolean transitive;
 
+	/**
+	 * Constructs an empty {@link DirectedAcyclicGraph} with non-transitive
+	 * edges.
+	 */
 	public DirectedAcyclicGraph() {
+		this(false);
+	}
+
+	/**
+	 * Constructs an empty {@link DirectedAcyclicGraph} with the specified
+	 * transitivity.
+	 * 
+	 * @param transitive
+	 *            if set to <code>true</code>, redundant edges are removed,
+	 *            otherwise they are retained. E.g. when edges A-&gt;B, A-&gt;C,
+	 *            B-&gt;C are created, the edge A-&gt;C would be considered
+	 *            redundant and would be removed, since it it implied by the
+	 *            remaining edges A-&gt;B, B-&gt;C.
+	 */
+	public DirectedAcyclicGraph(boolean transitive) {
 		topologicalOrder = ArrayPVector.empty();
+		this.transitive = transitive;
 	}
 
 	protected boolean computeTopologicalOrder() {
@@ -93,8 +117,8 @@ public class DirectedAcyclicGraph<T> extends DirectedGraph<T> {
 
 	@Override
 	public void finish() {
-		cachedPredecessors = new HashMap<T, PVector<T>>();
-		cachedSuccessors = new HashMap<T, PVector<T>>();
+		cachedPredecessors = new HashMap<T, PSet<T>>();
+		cachedSuccessors = new HashMap<T, PSet<T>>();
 		for (Node<T> n : nodes) {
 			cachedPredecessors.put(n.data,
 					getAllPredecessorsInTopologicalOrder(n.data));
@@ -102,9 +126,43 @@ public class DirectedAcyclicGraph<T> extends DirectedGraph<T> {
 					getAllSuccessorsInTopologicalOrder(n.data));
 		}
 		super.finish();
+		if (transitive) {
+			for (T data : topologicalOrder) {
+				Node<T> n = entries.get(data);
+				Set<T> indirectSuccessors = getIndirectSuccessors(data);
+				indirectSuccessors.retainAll(n.successors);
+				n.successors = n.successors.minusAll(indirectSuccessors);
+				for (T p : indirectSuccessors) {
+					Node<T> np = entries.get(p);
+					np.predecessors = np.predecessors.minus(data);
+				}
+			}
+		}
 	}
 
-	public PVector<T> getAllPredecessorsInTopologicalOrder(T data) {
+	private Set<T> getIndirectSuccessors(T data) {
+		if (!finished) {
+			throw new SchemaException();
+		}
+		Node<T> n = entries.get(data);
+		Set<T> s = new HashSet<T>();
+		Queue<T> q = new LinkedList<T>();
+		for (T p : n.successors) {
+			q.addAll(entries.get(p).successors);
+		}
+		while (!q.isEmpty()) {
+			n = entries.get(q.poll());
+			if (!s.contains(n.data)) {
+				s.add(n.data);
+				for (T x : n.successors) {
+					q.offer(x);
+				}
+			}
+		}
+		return s;
+	}
+
+	public PSet<T> getAllPredecessorsInTopologicalOrder(T data) {
 		if (finished) {
 			return cachedPredecessors.get(data);
 		}
@@ -120,7 +178,7 @@ public class DirectedAcyclicGraph<T> extends DirectedGraph<T> {
 				}
 			}
 		}
-		PVector<T> result = ArrayPVector.empty();
+		PSet<T> result = ArrayPSet.empty();
 		for (T x : topologicalOrder) {
 			if (s.contains(x)) {
 				result = result.plus(x);
@@ -129,7 +187,7 @@ public class DirectedAcyclicGraph<T> extends DirectedGraph<T> {
 		return result;
 	}
 
-	public PVector<T> getAllSuccessorsInTopologicalOrder(T data) {
+	public PSet<T> getAllSuccessorsInTopologicalOrder(T data) {
 		if (finished) {
 			return cachedSuccessors.get(data);
 		}
@@ -145,7 +203,7 @@ public class DirectedAcyclicGraph<T> extends DirectedGraph<T> {
 				}
 			}
 		}
-		PVector<T> result = ArrayPVector.empty();
+		PSet<T> result = ArrayPSet.empty();
 		for (T x : topologicalOrder) {
 			if (s.contains(x)) {
 				result = result.plus(x);
@@ -169,5 +227,28 @@ public class DirectedAcyclicGraph<T> extends DirectedGraph<T> {
 
 	public PVector<T> getNodesInTopologicalOrder() {
 		return topologicalOrder;
+	}
+
+	@Override
+	public String toString() {
+		HashMap<T, Integer> idx = new HashMap<T, Integer>();
+		StringBuilder sb = new StringBuilder();
+		sb.append("digraph g {\n");
+		int i = 0;
+		for (T data : topologicalOrder) {
+			idx.put(data, i);
+			sb.append("\tn").append(i).append(" [ label=\"")
+					.append(data.toString()).append("\" ];\n");
+			++i;
+		}
+		for (T data : topologicalOrder) {
+			Node<T> n = entries.get(data);
+			for (T s : n.successors) {
+				sb.append("\tn").append(idx.get(data)).append(" -> n")
+						.append(idx.get(s)).append(";\n");
+			}
+		}
+		sb.append("}\n");
+		return sb.toString();
 	}
 }

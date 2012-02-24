@@ -859,11 +859,10 @@ public class GraphIO {
 		write("TGraph " + TGFILE_VERSION + ";\n");
 	}
 
-	private void writeHierarchy(Package pkg, AttributedElementClass<?, ?> aec)
+	private void writeHierarchy(Package pkg, GraphElementClass<?, ?> aec)
 			throws IOException {
 		String delim = ":";
-		for (AttributedElementClass<?, ?> superClass : aec
-				.getDirectSuperClasses()) {
+		for (GraphElementClass<?, ?> superClass : aec.getDirectSuperClasses()) {
 			if (!superClass.isInternal()) {
 				write(delim);
 				space();
@@ -875,12 +874,14 @@ public class GraphIO {
 
 	private void writeAttributes(Package pkg, AttributedElementClass<?, ?> aec)
 			throws IOException {
-		if (aec.hasOwnAttributes()) {
-			write(" {");
+		List<Attribute> attributes = aec.getOwnAttributeList();
+		if (attributes.isEmpty()) {
+			return;
 		}
-		for (Iterator<Attribute> ait = aec.getOwnAttributeList().iterator(); ait
-				.hasNext();) {
-			Attribute a = ait.next();
+		String delim = " {";
+		for (Attribute a : attributes) {
+			write(delim);
+			delim = ",";
 			space();
 			writeIdentifier(a.getName());
 			write(": ");
@@ -891,12 +892,8 @@ public class GraphIO {
 				write(" = ");
 				writeUtfString(a.getDefaultValueAsString());
 			}
-			if (ait.hasNext()) {
-				write(", ");
-			} else {
-				write(" }");
-			}
 		}
+		write(" }");
 	}
 
 	public final void write(String s) throws IOException {

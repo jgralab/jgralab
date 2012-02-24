@@ -35,9 +35,7 @@
 
 package de.uni_koblenz.jgralab.schema.impl;
 
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -63,29 +61,36 @@ public class DirectedGraph<T> {
 		}
 	}
 
-	protected final Set<Node<T>> nodes;
+	protected PSet<Node<T>> nodes;
 	protected final Map<T, Node<T>> entries;
 	protected boolean finished;
-	protected Set<T> cachedNodes;
+	protected PSet<T> nodeValues;
 
 	public DirectedGraph() {
-		nodes = new HashSet<Node<T>>();
+		nodes = ArrayPSet.empty();
 		entries = new HashMap<T, Node<T>>();
+		nodeValues = ArrayPSet.empty();
 	}
 
 	public void finish() {
 		finished = true;
-		cachedNodes = ArrayPSet.<T> empty().plusAll(entries.keySet());
 	}
 
 	public void createEdge(T alpha, T omega) {
+		assert nodeValues.contains(alpha);
+		assert nodeValues.contains(omega);
 		if (finished) {
 			throw new SchemaException();
 		}
-		if (alpha == omega || alpha.equals(omega)) {
+		if (alpha.equals(omega)) {
+			// don't allow loops
 			throw new SchemaException("Loops are not supported.");
 		}
 		Node<T> fromNode = entries.get(alpha);
+		if (fromNode.successors.contains(omega)) {
+			// don't create parallel edges
+			return;
+		}
 		assert fromNode != null;
 		Node<T> toNode = entries.get(omega);
 		assert toNode != null;
@@ -97,26 +102,33 @@ public class DirectedGraph<T> {
 		if (finished) {
 			throw new SchemaException();
 		}
+		assert !nodeValues.contains(data);
 		assert entries.get(data) == null;
+		nodeValues = nodeValues.plus(data);
 		Node<T> n = new Node<T>(data);
-		nodes.add(n);
+		nodes = nodes.plus(n);
 		entries.put(data, n);
 	}
 
 	public int getNodeCount() {
-		return nodes.size();
+		return nodeValues.size();
 	}
 
 	public Set<T> getNodes() {
-		return finished ? cachedNodes : Collections.unmodifiableSet(entries
-				.keySet());
+		return nodeValues;
+	}
+
+	public boolean isConnected(T alpha, T omega) {
+		return entries.get(alpha).successors.contains(omega);
 	}
 
 	public Set<T> getDirectPredecessors(T data) {
+		assert nodeValues.contains(data);
 		return entries.get(data).predecessors;
 	}
 
 	public Set<T> getDirectSucccessors(T data) {
+		assert nodeValues.contains(data);
 		return entries.get(data).successors;
 	}
 }

@@ -44,10 +44,7 @@ import java.util.Set;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
-import de.uni_koblenz.jgralab.schema.GraphClass;
 import de.uni_koblenz.jgralab.schema.IncidenceClass;
-import de.uni_koblenz.jgralab.schema.Package;
-import de.uni_koblenz.jgralab.schema.Schema;
 import de.uni_koblenz.jgralab.schema.VertexClass;
 import de.uni_koblenz.jgralab.schema.exception.SchemaException;
 
@@ -96,32 +93,14 @@ public final class VertexClassImpl extends
 
 	private Map<String, DirectedSchemaEdgeClass> farRoleNameToEdgeClass;
 
-	static VertexClass createDefaultVertexClass(Schema schema) {
-		assert schema.getDefaultGraphClass() != null : "DefaultGraphClass has not yet been created!";
-		assert schema.getDefaultVertexClass() == null : "DefaultVertexClass already created!";
-		VertexClass vc = schema.getDefaultGraphClass().createVertexClass(
-				DEFAULTVERTEXCLASS_NAME);
-		vc.setAbstract(true);
-		((VertexClassImpl) vc).setInternal(true);
-		return vc;
-	}
-
 	/**
 	 * builds a new vertex class object
-	 *
-	 * @param qn
-	 *            the unique identifier of the vertex class in the schema
 	 */
-	protected VertexClassImpl(String simpleName, Package pkg,
-			GraphClass aGraphClass) {
-		super(simpleName, pkg, aGraphClass);
-		register();
-	}
-
-	@Override
-	protected void register() {
-		((PackageImpl) parentPackage).addVertexClass(this);
-		((GraphClassImpl) graphClass).addVertexClass(this);
+	protected VertexClassImpl(String simpleName, PackageImpl pkg,
+			GraphClassImpl gc) {
+		super(simpleName, pkg, gc, gc.vertexClassDag);
+		parentPackage.addVertexClass(this);
+		graphClass.addVertexClass(this);
 	}
 
 	@Override
@@ -218,15 +197,11 @@ public final class VertexClassImpl extends
 		// if(isFinished()){
 		// throw new SchemaException("No changes to finished schema!");
 		// }
-		if ((superClass == this) || (superClass == null)) {
+		if (superClass == this) {
 			return;
 		}
 		checkDuplicateRolenames(superClass);
 		super.addSuperClass(superClass);
-		if (!superClass.equals(getSchema().getDefaultVertexClass())) {
-			((GraphClassImpl) getSchema().getGraphClass()).getVertexCsDag()
-					.createEdge(superClass, this);
-		}
 	}
 
 	private void checkDuplicateRolenames(VertexClass superClass) {
@@ -247,7 +222,7 @@ public final class VertexClassImpl extends
 	 * For a vertexclass A are all edgeclasses valid froms, which (1) run from A
 	 * to a B or (2) run from a superclass of A to a B and whose end b at B is
 	 * not redefined by A or a superclass of A
-	 *
+	 * 
 	 */
 
 	@Override
@@ -470,28 +445,6 @@ public final class VertexClassImpl extends
 	@Override
 	public boolean isValidToFor(EdgeClass ec) {
 		return getValidToEdgeClasses().contains(ec);
-	}
-
-	@Override
-	protected void reopen() {
-		allInIncidenceClasses = null;
-		allOutIncidenceClasses = null;
-		validFromFarIncidenceClasses = null;
-		validToFarIncidenceClasses = null;
-		validFromEdgeClasses = null;
-		validToEdgeClasses = null;
-		inIncidenceClasses = new HashSet<IncidenceClass>(inIncidenceClasses);
-		outIncidenceClasses = new HashSet<IncidenceClass>(outIncidenceClasses);
-		farRoleNameToEdgeClass = null;
-
-		for (IncidenceClass ic : inIncidenceClasses) {
-			((IncidenceClassImpl) ic).reopen();
-		}
-		for (IncidenceClass ic : outIncidenceClasses) {
-			((IncidenceClassImpl) ic).reopen();
-		}
-
-		super.reopen();
 	}
 
 	@Override

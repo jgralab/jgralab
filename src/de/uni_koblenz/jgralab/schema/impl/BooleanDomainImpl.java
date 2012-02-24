@@ -50,7 +50,7 @@ public final class BooleanDomainImpl extends BasicDomainImpl implements
 		BooleanDomain {
 
 	BooleanDomainImpl(Schema schema) {
-		super(BOOLEANDOMAIN_NAME, schema.getDefaultPackage());
+		super(BOOLEANDOMAIN_NAME, (PackageImpl) schema.getDefaultPackage());
 	}
 
 	@Override

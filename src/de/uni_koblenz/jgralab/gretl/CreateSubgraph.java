@@ -203,7 +203,7 @@ public class CreateSubgraph extends Transformation<Void> {
 		}
 
 		VertexClass mostSpecialVClass = context.getTargetSchema()
-				.getDefaultVertexClass();
+				.getGraphClass().getDefaultVertexClass();
 		for (CreateEdge e : v.getCreateEdgeIncidences()) {
 			String eType = e.get_typeName();
 			EdgeClass eClass = (EdgeClass) context.getTargetSchema()
@@ -215,7 +215,7 @@ public class CreateSubgraph extends Transformation<Void> {
 			}
 		}
 
-		if (mostSpecialVClass == context.getTargetSchema()
+		if (mostSpecialVClass == context.getTargetSchema().getGraphClass()
 				.getDefaultVertexClass()) {
 			throw new GReTLException(context,
 					"Couldn't determine typeName for " + v + ".");

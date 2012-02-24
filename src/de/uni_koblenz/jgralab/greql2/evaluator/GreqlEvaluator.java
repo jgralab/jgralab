@@ -91,7 +91,7 @@ import de.uni_koblenz.jgralab.greql2.schema.Variable;
 import de.uni_koblenz.jgralab.greql2.serialising.GreqlSerializer;
 import de.uni_koblenz.jgralab.greql2.types.Undefined;
 import de.uni_koblenz.jgralab.impl.ConsoleProgressFunction;
-import de.uni_koblenz.jgralab.schema.AttributedElementClass;
+import de.uni_koblenz.jgralab.schema.GraphElementClass;
 import de.uni_koblenz.jgralab.utilities.tgmerge.TGMerge;
 
 /**
@@ -215,7 +215,7 @@ public class GreqlEvaluator {
 	 * The map of SimpleName to Type of types that is known in the evaluator by
 	 * import statements in the greql query
 	 */
-	protected Map<String, AttributedElementClass<?, ?>> knownTypes = new HashMap<String, AttributedElementClass<?, ?>>();
+	protected Map<String, GraphElementClass<?, ?>> knownTypes = new HashMap<String, GraphElementClass<?, ?>>();
 
 	/**
 	 * returns the vertexEvalGraph marker that is used
@@ -283,8 +283,7 @@ public class GreqlEvaluator {
 
 		if (index == null) {
 			index = new GraphIndex(graph);
-			graphIndizes.put(graph,
-					new SoftReference<GraphIndex>(index));
+			graphIndizes.put(graph, new SoftReference<GraphIndex>(index));
 		}
 		index.addVertexSet(queryPart, vertexSet);
 	}
@@ -370,7 +369,7 @@ public class GreqlEvaluator {
 			throws GraphIOException {
 		if (!(optimizedSyntaxGraphsDirectory.exists()
 				&& optimizedSyntaxGraphsDirectory.canRead() && optimizedSyntaxGraphsDirectory
-				.canExecute())) {
+					.canExecute())) {
 			throw new GraphIOException(
 					optimizedSyntaxGraphsDirectory.getPath()
 							+ " is not accessible.  Does it really exist and are the permissions ok?");
@@ -746,17 +745,17 @@ public class GreqlEvaluator {
 	private GreqlEvaluator(Graph datagraph, Map<String, Object> variables,
 			ProgressFunction progressFunction) {
 		this.datagraph = datagraph;
-		knownTypes = new HashMap<String, AttributedElementClass<?, ?>>();
+		knownTypes = new HashMap<String, GraphElementClass<?, ?>>();
 		variableMap = variables;
 		subQueryMap = new LinkedHashMap<String, Greql2>();
 		this.progressFunction = progressFunction;
 	}
 
-	public void addKnownType(AttributedElementClass<?, ?> knownType) {
+	public void addKnownType(GraphElementClass<?, ?> knownType) {
 		knownTypes.put(knownType.getSimpleName(), knownType);
 	}
 
-	public AttributedElementClass<?, ?> getKnownType(String typeSimpleName) {
+	public GraphElementClass<?, ?> getKnownType(String typeSimpleName) {
 		return knownTypes.get(typeSimpleName);
 	}
 

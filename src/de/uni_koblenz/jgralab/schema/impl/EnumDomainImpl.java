@@ -70,7 +70,7 @@ public final class EnumDomainImpl extends DomainImpl implements EnumDomain {
 	 * @param constants
 	 *            holds a list of the components of the enumeration
 	 */
-	EnumDomainImpl(String sn, Package pkg, List<String> constants) {
+	EnumDomainImpl(String sn, PackageImpl pkg, List<String> constants) {
 		super(sn, pkg);
 		for (String c : constants) {
 			addConst(c);

@@ -38,11 +38,8 @@ package de.uni_koblenz.jgralab.schema.impl;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.schema.AggregationKind;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
-import de.uni_koblenz.jgralab.schema.GraphClass;
 import de.uni_koblenz.jgralab.schema.IncidenceClass;
 import de.uni_koblenz.jgralab.schema.IncidenceDirection;
-import de.uni_koblenz.jgralab.schema.Package;
-import de.uni_koblenz.jgralab.schema.Schema;
 import de.uni_koblenz.jgralab.schema.VertexClass;
 import de.uni_koblenz.jgralab.schema.exception.SchemaException;
 
@@ -50,20 +47,6 @@ public class EdgeClassImpl extends GraphElementClassImpl<EdgeClass, Edge>
 		implements EdgeClass {
 
 	private IncidenceClass from, to;
-
-	static EdgeClass createDefaultEdgeClass(Schema schema) {
-		assert schema.getDefaultGraphClass() != null : "DefaultGraphClass has not yet been created!";
-		assert schema.getDefaultVertexClass() != null : "DefaultVertexClass has not yet been created!";
-		assert schema.getDefaultEdgeClass() == null : "DefaultEdgeClass already created!";
-		EdgeClass ec = schema.getDefaultGraphClass().createEdgeClass(
-				DEFAULTEDGECLASS_NAME, schema.getDefaultVertexClass(), 0,
-				Integer.MAX_VALUE, "", AggregationKind.NONE,
-				schema.getDefaultVertexClass(), 0, Integer.MAX_VALUE, "",
-				AggregationKind.NONE);
-		ec.setAbstract(true);
-		((EdgeClassImpl) ec).setInternal(true);
-		return ec;
-	}
 
 	/**
 	 * builds a new edge class
@@ -97,11 +80,11 @@ public class EdgeClassImpl extends GraphElementClassImpl<EdgeClass, Edge>
 	 *            a name which identifies the 'to' side of the edge class in a
 	 *            unique way
 	 */
-	protected EdgeClassImpl(String simpleName, Package pkg,
-			GraphClass aGraphClass, VertexClass from, int fromMin, int fromMax,
+	protected EdgeClassImpl(String simpleName, PackageImpl pkg,
+			GraphClassImpl gc, VertexClass from, int fromMin, int fromMax,
 			String fromRoleName, AggregationKind aggrFrom, VertexClass to,
 			int toMin, int toMax, String toRoleName, AggregationKind aggrTo) {
-		super(simpleName, pkg, aGraphClass);
+		super(simpleName, pkg, gc, gc.edgeClassDag);
 		IncidenceClass fromInc = new IncidenceClassImpl(this, from,
 				fromRoleName, fromMin, fromMax, IncidenceDirection.OUT,
 				aggrFrom);
@@ -111,13 +94,8 @@ public class EdgeClassImpl extends GraphElementClassImpl<EdgeClass, Edge>
 		this.to = toInc;
 		((VertexClassImpl) from).addOutIncidenceClass(fromInc);
 		((VertexClassImpl) to).addInIncidenceClass(toInc);
-		register();
-	}
-
-	@Override
-	protected void register() {
-		((PackageImpl) parentPackage).addEdgeClass(this);
-		((GraphClassImpl) graphClass).addEdgeClass(this);
+		parentPackage.addEdgeClass(this);
+		graphClass.addEdgeClass(this);
 	}
 
 	@Override
@@ -128,16 +106,13 @@ public class EdgeClassImpl extends GraphElementClassImpl<EdgeClass, Edge>
 	@Override
 	public void addSuperClass(EdgeClass superClass) {
 		assertNotFinished();
-		if ((superClass == this) || (superClass == null)) {
+		if (superClass == this) {
 			return;
 		}
 		checkIncidenceClassSpecialization(getFrom(), superClass.getFrom());
 		checkIncidenceClassSpecialization(getTo(), superClass.getTo());
 		super.addSuperClass(superClass);
-		if (!superClass.equals(getSchema().getDefaultEdgeClass())) {
-			((GraphClassImpl) getSchema().getGraphClass()).getEdgeCsDag()
-					.createEdge(superClass, (this));
-		}
+
 		((IncidenceClassImpl) getFrom()).addSubsettedIncidenceClass(superClass
 				.getFrom());
 		((IncidenceClassImpl) getTo()).addSubsettedIncidenceClass(superClass
@@ -221,6 +196,6 @@ public class EdgeClassImpl extends GraphElementClassImpl<EdgeClass, Edge>
 								+ " at end " + dir);
 			}
 		}
-
 	}
+
 }

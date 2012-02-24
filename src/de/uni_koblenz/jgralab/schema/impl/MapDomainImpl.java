@@ -75,7 +75,7 @@ public final class MapDomainImpl extends CompositeDomainImpl implements
 		super(MAPDOMAIN_NAME + "<"
 				+ aKeyDomain.getTGTypeName(schema.getDefaultPackage()) + ", "
 				+ aValueDomain.getTGTypeName(schema.getDefaultPackage()) + ">",
-				schema.getDefaultPackage());
+				(PackageImpl) schema.getDefaultPackage());
 
 		if (parentPackage.getSchema().getDomain(aKeyDomain.getQualifiedName()) == null) {
 			throw new SchemaException("Key domain '"

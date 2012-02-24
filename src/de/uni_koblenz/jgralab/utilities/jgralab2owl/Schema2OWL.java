@@ -525,30 +525,9 @@ class Schema2OWL {
 	 * @see #writeRoleElement(boolean from, String gecStringRep)
 	 */
 	private void convertGraphClasses(Schema schema) throws XMLStreamException {
-		// create OWL class for Default GraphClass
-		GraphClass gc = schema.getDefaultGraphClass();
-		writeOwlClassStartElement(gc.getQualifiedName());
-
-		// if gc is abstract and has subclasses, create union of subclasses
-		if (gc.isAbstract() && !gc.getDirectSubClasses().isEmpty()) {
-			writeUnionOfSubclasses(gc);
-		}
-
-		writer.writeEndElement();
-
 		// create OWL class for "other" GraphClass
-		gc = schema.getGraphClass();
+		GraphClass gc = schema.getGraphClass();
 		writeOwlClassStartElement(gc.getQualifiedName());
-
-		// create references to superclasses
-		for (GraphClass superGC : gc.getDirectSuperClasses()) {
-			writeRdfsSubClassOfEmptyElement("#" + superGC.getQualifiedName());
-		}
-
-		// if gc is abstract and has subclasses, create union of subclasses
-		if (gc.isAbstract() && !gc.getDirectSubClasses().isEmpty()) {
-			writeUnionOfSubclasses(gc);
-		}
 
 		writer.writeEndElement();
 
@@ -1439,7 +1418,7 @@ class Schema2OWL {
 	 *            element shall be created.
 	 * @throws XMLStreamException
 	 */
-	private void writeUnionOfSubclasses(AttributedElementClass<?, ?> aec)
+	private void writeUnionOfSubclasses(GraphElementClass<?, ?> aec)
 			throws XMLStreamException {
 		// create unionOf element
 		writer.writeStartElement(JGraLab2OWL.owlNS, "unionOf");
@@ -1447,7 +1426,7 @@ class Schema2OWL {
 
 		// create owl:Class element for every direct subclass of aec and build
 		// the subtree
-		for (AttributedElementClass<?, ?> subclass : aec.getDirectSubClasses()) {
+		for (GraphElementClass<?, ?> subclass : aec.getDirectSubClasses()) {
 			writeOwlClassEmptyElement();
 
 			if (subclass instanceof EdgeClass) {

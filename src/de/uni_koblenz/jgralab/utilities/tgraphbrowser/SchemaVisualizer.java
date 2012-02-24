@@ -42,8 +42,6 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.pcollections.PVector;
-
 import de.uni_koblenz.jgralab.schema.Attribute;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
@@ -268,16 +266,13 @@ public class SchemaVisualizer {
 		String var = createForVertex ? "Vertex" : "Edge";
 		createRootUl(code, var);
 		// unsetAEClasses saves the classes which have more than one superclass
-		ArrayList<AttributedElementClass<?, ?>> unsetAEClasses = new ArrayList<AttributedElementClass<?, ?>>();
+		ArrayList<GraphElementClass<?, ?>> unsetAEClasses = new ArrayList<GraphElementClass<?, ?>>();
 		// unsetSuperClasses are the superclasses which still need the
 		// representation of the class from unsetAEClasses at the same index
-		ArrayList<Iterator<AttributedElementClass<?, ?>>> unsetSuperClasses = new ArrayList<Iterator<AttributedElementClass<?, ?>>>();
+		ArrayList<Iterator<GraphElementClass<?, ?>>> unsetSuperClasses = new ArrayList<Iterator<GraphElementClass<?, ?>>>();
 		// iterate all classes
-		for (AttributedElementClass<?, ?> aeclass : classes) {
-			if (aeclass.getQualifiedName().equals("Vertex")
-					|| aeclass.getQualifiedName().equals("Edge")
-					|| aeclass.getQualifiedName().equals("Aggregation")
-					|| aeclass.getQualifiedName().equals("Composition")) {
+		for (GraphElementClass<?, ?> aeclass : classes) {
+			if (aeclass.isInternal()) {
 				// ignore the base classes
 				continue;
 			}
@@ -289,12 +284,12 @@ public class SchemaVisualizer {
 			}
 			// create the first entry for this class
 			@SuppressWarnings("unchecked")
-			Set<AttributedElementClass<?, ?>> superClasses = (Set<AttributedElementClass<?, ?>>) aeclass
+			Set<GraphElementClass<?, ?>> superClasses = (Set<GraphElementClass<?, ?>>) aeclass
 					.getDirectSuperClasses();
 			String ulName = "";
-			Iterator<AttributedElementClass<?, ?>> superClassIter = superClasses
+			Iterator<GraphElementClass<?, ?>> superClassIter = superClasses
 					.iterator();
-			AttributedElementClass<?, ?> superClass = superClassIter.next();
+			GraphElementClass<?, ?> superClass = superClassIter.next();
 			// check if firstClass is a base class
 			while ((superClass.getQualifiedName().equals("Vertex")
 					|| superClass.getQualifiedName().equals("Edge")
@@ -595,7 +590,7 @@ public class SchemaVisualizer {
 	 */
 	private void createP(StringBuilder code, String simpleName,
 			String uniqueName, String qualifiedName, boolean isAbstract,
-			PVector<Attribute> attributes) {
+			List<Attribute> attributes) {
 		StringBuilder title = new StringBuilder(qualifiedName);
 		if (attributes != null) {
 			if (!attributes.isEmpty()) {

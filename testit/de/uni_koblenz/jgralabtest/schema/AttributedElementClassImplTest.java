@@ -34,13 +34,11 @@
  */
 package de.uni_koblenz.jgralabtest.schema;
 
-import java.util.Set;
-import java.util.Vector;
+import java.util.List;
 
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.pcollections.PVector;
 
 import de.uni_koblenz.jgralab.schema.Attribute;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
@@ -417,91 +415,6 @@ public abstract class AttributedElementClassImplTest<AEC extends AttributedEleme
 	}
 
 	/*
-	 * Tests for the getAllSubClasses() method.
-	 */
-	/**
-	 * getAllSubClasses()
-	 * 
-	 * TEST CASE: Getting all subclasses of an element with one direct subclass
-	 * 
-	 * TEST CASE: Getting all subclasses of an element with multiple direct
-	 * subclasses
-	 * 
-	 * TEST CASE: Getting all subclasses of an element with multiple direct and
-	 * indirect subclasses
-	 * 
-	 * TEST CASE: Getting all subclasses of an element that has no subclasses
-	 * 
-	 * NOTE: This method is called upon in all of this classes´ subclasses.
-	 */
-	public final void testGetAllSubClasses(Vector<AEC> expectedSubClasses) {
-		@SuppressWarnings("unchecked")
-		Set<AEC> subClasses = (Set<AEC>) attributedElement.getAllSubClasses();
-
-		Assert.assertEquals(expectedSubClasses.size(), subClasses.size());
-
-		// Check if this element contains all expected subclasses
-		for (AEC expectedSubClass : expectedSubClasses) {
-			boolean expectedSubClassFound = false;
-			for (AEC subClass : subClasses) {
-				if (subClass.getQualifiedName().equals(
-						expectedSubClass.getQualifiedName())) {
-					expectedSubClassFound = true;
-					break;
-				}
-			}
-			Assert.assertTrue(
-					"The following subclass was expected but not found: "
-							+ expectedSubClass.getQualifiedName(),
-					expectedSubClassFound);
-		}
-	}
-
-	/*
-	 * Tests for the getAllSuperClasses() method.
-	 */
-	/**
-	 * getAllSuperClasses()
-	 * 
-	 * TEST CASE: Getting all superclasses of an element with one direct
-	 * superclass
-	 * 
-	 * TEST CASE: Getting all superclasses of an element with multiple direct
-	 * superclasses
-	 * 
-	 * TEST CASE: Getting all superclasses of an element with multiple direct
-	 * and indirect superclasses
-	 * 
-	 * TEST CASE: Getting all superclasses of an element that has no
-	 * superclasses
-	 * 
-	 * NOTE: This method is called upon in all of this classes´ subclasses.
-	 */
-	public final void testGetAllSuperClasses(Vector<AEC> expectedSuperClasses) {
-		@SuppressWarnings("unchecked")
-		Set<AEC> superClasses = (Set<AEC>) attributedElement
-				.getAllSuperClasses();
-
-		Assert.assertEquals(expectedSuperClasses.size(), superClasses.size());
-
-		// Check if this element contains all expected superclasses
-		for (AEC expectedSuperClass : expectedSuperClasses) {
-			boolean expectedSuperClassFound = false;
-			for (AEC superClass : superClasses) {
-				if (superClass.getQualifiedName().equals(
-						expectedSuperClass.getQualifiedName())) {
-					expectedSuperClassFound = true;
-					break;
-				}
-			}
-			Assert.assertTrue(
-					"The following superclass was expected but not found: "
-							+ expectedSuperClass.getQualifiedName(),
-					expectedSuperClassFound);
-		}
-	}
-
-	/*
 	 * Tests for the getAttribute(String) method.
 	 */
 	/**
@@ -670,7 +583,7 @@ public abstract class AttributedElementClassImplTest<AEC extends AttributedEleme
 
 		attributedElement.addAttribute(attribute);
 
-		PVector<Attribute> attrs = attributedElement.getAttributeList();
+		List<Attribute> attrs = attributedElement.getAttributeList();
 
 		Assert.assertEquals(1, attrs.size());
 		Assert.assertTrue(attrs.contains(attribute));
@@ -690,7 +603,7 @@ public abstract class AttributedElementClassImplTest<AEC extends AttributedEleme
 
 		superClass.addAttribute(attribute);
 
-		PVector<Attribute> attrs = attributedElement.getAttributeList();
+		List<Attribute> attrs = attributedElement.getAttributeList();
 
 		Assert.assertEquals(1, attrs.size());
 		Assert.assertTrue(attrs.contains(attribute));
@@ -713,7 +626,7 @@ public abstract class AttributedElementClassImplTest<AEC extends AttributedEleme
 		attributedElement.addAttribute(attribute);
 		superClass.addAttribute(attribute2);
 
-		PVector<Attribute> attrs = attributedElement.getAttributeList();
+		List<Attribute> attrs = attributedElement.getAttributeList();
 
 		Assert.assertEquals(2, attrs.size());
 		Assert.assertTrue(attrs.contains(attribute));
@@ -813,92 +726,6 @@ public abstract class AttributedElementClassImplTest<AEC extends AttributedEleme
 	@Test
 	public void testGetDirectoryName() {
 		// TODO Auto-generated method stub
-	}
-
-	/*
-	 * Tests for the getDirectSubClasses() method.
-	 */
-	/**
-	 * getDirectSubClasses()
-	 * 
-	 * 
-	 * TEST CASE: Getting all direct subclasses of an element that has one
-	 * direct subclass.
-	 * 
-	 * TEST CASE: Getting all direct subclasses of an element that has multiple
-	 * direct subclasses.
-	 * 
-	 * TEST CASE: Getting all direct subclasses of an element that has multiple
-	 * direct and indirect subclasses.
-	 * 
-	 * TEST CASE: Getting all direct subclasses of an element that has no direct
-	 * subclasses.
-	 * 
-	 * NOTE: This method is called upon in all of this classes´ subclasses.
-	 */
-	public final void testGetDirectSubClasses(Vector<AEC> expectedSubClasses) {
-		@SuppressWarnings("unchecked")
-		Set<AEC> subClasses = (Set<AEC>) attributedElement
-				.getDirectSubClasses();
-
-		Assert.assertEquals(subClasses.size(), expectedSubClasses.size());
-
-		// Check if subClasses contains all expected subclasses, and only these
-		for (AEC subClass : subClasses) {
-			boolean subClassFound = false;
-			for (AEC expectedSubClass : expectedSubClasses) {
-				if (expectedSubClass.getQualifiedName().equals(
-						subClass.getQualifiedName())) {
-					subClassFound = true;
-					break;
-				}
-			}
-			Assert.assertTrue("The following subclass is unexpected: "
-					+ subClass.getQualifiedName(), subClassFound);
-		}
-	}
-
-	/*
-	 * Tests for the getDirectSuperClasses() method.
-	 */
-	/**
-	 * getDirectSuperClasses()
-	 * 
-	 * TEST CASE: Getting all direct superclasses of an element that has one
-	 * direct superclass.
-	 * 
-	 * TEST CASE: Getting all direct superclasses of an element that has
-	 * multiple direct superclasses.
-	 * 
-	 * TEST CASE: Getting all direct superclasses of an element that has
-	 * multiple direct and indirect superclasses.
-	 * 
-	 * TEST CASE: Getting all direct superclasses of an element that has no
-	 * direct superclasses.
-	 * 
-	 * NOTE: This method is called upon in all of this classes´ subclasses.
-	 */
-	public final void testGetDirectSuperClasses(Vector<AEC> expectedSuperClasses) {
-		@SuppressWarnings("unchecked")
-		Set<AEC> superClasses = (Set<AEC>) attributedElement
-				.getDirectSuperClasses();
-
-		Assert.assertEquals(expectedSuperClasses.size(), superClasses.size());
-
-		// Check if superClasses contains all expected superclasses, and only
-		// these
-		for (AEC superClass : superClasses) {
-			boolean superClassFound = false;
-			for (AEC expectedSuperClass : expectedSuperClasses) {
-				if (expectedSuperClass.getQualifiedName().equals(
-						superClass.getQualifiedName())) {
-					superClassFound = true;
-					break;
-				}
-			}
-			Assert.assertTrue("The following superclass is unexpected: "
-					+ superClass.getQualifiedName(), superClassFound);
-		}
 	}
 
 	@Test
@@ -1059,7 +886,7 @@ public abstract class AttributedElementClassImplTest<AEC extends AttributedEleme
 
 		attributedElement.addAttribute(attribute);
 
-		PVector<Attribute> attrs = attributedElement.getOwnAttributeList();
+		List<Attribute> attrs = attributedElement.getOwnAttributeList();
 
 		Assert.assertEquals(1, attrs.size());
 		Assert.assertTrue(attrs.contains(attribute));
@@ -1081,7 +908,7 @@ public abstract class AttributedElementClassImplTest<AEC extends AttributedEleme
 		attributedElement.addAttribute(attribute);
 		attributedElement.addAttribute(attribute2);
 
-		PVector<Attribute> attrs = attributedElement.getOwnAttributeList();
+		List<Attribute> attrs = attributedElement.getOwnAttributeList();
 
 		Assert.assertEquals(2, attrs.size());
 		Assert.assertTrue(attrs.contains(attribute));
@@ -1371,7 +1198,7 @@ public abstract class AttributedElementClassImplTest<AEC extends AttributedEleme
 	@Test
 	public void testIsInternal() {
 		for (VertexClass vc : schema.getVertexClasses()) {
-			if (vc == schema.getDefaultVertexClass()) {
+			if (vc == schema.getGraphClass().getDefaultVertexClass()) {
 				Assert.assertTrue(vc.isInternal());
 			} else {
 				Assert.assertFalse(vc.isInternal());
@@ -1379,14 +1206,13 @@ public abstract class AttributedElementClassImplTest<AEC extends AttributedEleme
 		}
 
 		for (EdgeClass ec : schema.getEdgeClasses()) {
-			if (ec == schema.getDefaultEdgeClass()) {
+			if (ec == schema.getGraphClass().getDefaultEdgeClass()) {
 				Assert.assertTrue(ec.isInternal());
 			} else {
 				Assert.assertFalse(ec.isInternal());
 			}
 		}
 
-		Assert.assertTrue(schema.getDefaultGraphClass().isInternal());
 		Assert.assertFalse(schema.getGraphClass().isInternal());
 	}
 

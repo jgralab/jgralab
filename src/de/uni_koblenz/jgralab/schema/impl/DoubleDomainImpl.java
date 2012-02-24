@@ -50,7 +50,7 @@ public final class DoubleDomainImpl extends BasicDomainImpl implements
 		DoubleDomain {
 
 	DoubleDomainImpl(Schema schema) {
-		super(DOUBLEDOMAIN_NAME, schema.getDefaultPackage());
+		super(DOUBLEDOMAIN_NAME, (PackageImpl) schema.getDefaultPackage());
 	}
 
 	@Override

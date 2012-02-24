@@ -34,11 +34,11 @@
  */
 package de.uni_koblenz.jgralab.greql2.funlib.schema;
 
-import de.uni_koblenz.jgralab.AttributedElement;
+import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.greql2.exception.GreqlException;
 import de.uni_koblenz.jgralab.greql2.funlib.Function;
 import de.uni_koblenz.jgralab.greql2.types.TypeCollection;
-import de.uni_koblenz.jgralab.schema.AttributedElementClass;
+import de.uni_koblenz.jgralab.schema.GraphElementClass;
 
 public class HasType extends Function {
 
@@ -48,7 +48,7 @@ public class HasType extends Function {
 				Category.SCHEMA_ACCESS);
 	}
 
-	public <SC extends AttributedElementClass<SC, IC>, IC extends AttributedElement<SC, IC>> Boolean evaluate(
+	public <SC extends GraphElementClass<SC, IC>, IC extends GraphElement<SC, IC>> Boolean evaluate(
 			IC el, String qn) {
 		SC aec = el.getSchema().getAttributedElementClass(qn);
 		if (aec == null) {
@@ -57,13 +57,13 @@ public class HasType extends Function {
 		return evaluate(el, aec);
 	}
 
-	private <SC extends AttributedElementClass<SC, IC>, IC extends AttributedElement<SC, IC>> Boolean evaluate(
+	private <SC extends GraphElementClass<SC, IC>, IC extends GraphElement<SC, IC>> Boolean evaluate(
 			IC el, SC aec) {
 		SC c = el.getAttributedElementClass();
 		return c.equals(aec) || c.isSubClassOf(aec);
 	}
 
-	public <SC extends AttributedElementClass<SC, IC>, IC extends AttributedElement<SC, IC>> Boolean evaluate(
+	public <SC extends GraphElementClass<SC, IC>, IC extends GraphElement<SC, IC>> Boolean evaluate(
 			IC el, TypeCollection tc) {
 		SC c = el.getAttributedElementClass();
 		return tc.acceptsType(c);

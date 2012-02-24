@@ -52,11 +52,13 @@ import de.uni_koblenz.jgralab.schema.exception.SchemaException;
 
 public abstract class NamedElementImpl implements NamedElement {
 
+	protected final SchemaImpl schema;
+
 	/**
 	 * The package containing this named element. <code>null</code> if this
 	 * named element is the <code>DefaultPackage</code>.
 	 */
-	protected final Package parentPackage;
+	protected final PackageImpl parentPackage;
 
 	/**
 	 * The fully qualified name of an element in a schema.<br />
@@ -239,7 +241,8 @@ public abstract class NamedElementImpl implements NamedElement {
 	 *             that has the exact same qualified name</li>
 	 *             </ul>
 	 */
-	protected NamedElementImpl(String simpleName, Package pkg, Schema schema) {
+	protected NamedElementImpl(String simpleName, PackageImpl pkg,
+			SchemaImpl schema) {
 		/*
 		 * Every named element must be contained in a schema.
 		 */
@@ -248,6 +251,8 @@ public abstract class NamedElementImpl implements NamedElement {
 					+ simpleName
 					+ "' because no containing schema was specified.");
 		}
+
+		this.schema = schema;
 
 		/*
 		 * An empty (null) parent package is only allowed for the
@@ -372,20 +377,9 @@ public abstract class NamedElementImpl implements NamedElement {
 		if (this instanceof AttributedElementClass) {
 			uniqueName = simpleName;
 		}
-		((SchemaImpl) schema).addNamedElement(this);
+		schema.addNamedElement(this);
 		comments = new ArrayList<String>();
 	}
-
-	/**
-	 * Register this named element wherever it has to be known.
-	 * 
-	 * For example, a package has to be added as subpackage of its parent
-	 * package and to the schema; the same holds for domains.
-	 * 
-	 * A vertex class has to add itself to the graph class and the package; same
-	 * holds for edge classes (+ subclasses).
-	 */
-	protected abstract void register();
 
 	@Override
 	public String toString() {
@@ -447,8 +441,7 @@ public abstract class NamedElementImpl implements NamedElement {
 
 	@Override
 	public Schema getSchema() {
-		assert parentPackage != null : "There's no parent package!";
-		return parentPackage.getSchema();
+		return schema;
 	}
 
 	@Override
@@ -463,7 +456,7 @@ public abstract class NamedElementImpl implements NamedElement {
 
 	@Override
 	public final int hashCode() {
-		return qualifiedName.hashCode() + getSchema().hashCode();
+		return qualifiedName.hashCode() + schema.hashCode();
 	}
 
 	@Override
@@ -471,8 +464,8 @@ public abstract class NamedElementImpl implements NamedElement {
 		if (o == null || !(o instanceof NamedElement)) {
 			return false;
 		}
-		NamedElement other = (NamedElement) o;
-		return getSchema().equals(other.getSchema())
+		NamedElementImpl other = (NamedElementImpl) o;
+		return schema.equals(other.schema)
 				&& qualifiedName.equals(other.getQualifiedName());
 	}
 
