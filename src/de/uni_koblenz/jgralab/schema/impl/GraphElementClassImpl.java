@@ -35,6 +35,7 @@
 
 package de.uni_koblenz.jgralab.schema.impl;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -54,29 +55,36 @@ public abstract class GraphElementClassImpl<SC extends GraphElementClass<SC, IC>
 		extends AttributedElementClassImpl<SC, IC> implements
 		GraphElementClass<SC, IC> {
 
-	protected GraphClassImpl graphClass;
+	/**
+	 * The {@link GraphClass} of this {@link GraphElementClass}.
+	 */
+	protected final GraphClassImpl graphClass;
 
 	/**
-	 * the list of attributes. Only the own attributes of this class are stored
-	 * here, no inherited attributes
+	 * The list of attributes. Only the own attributes of this class are stored
+	 * here, no inherited attributes.
 	 */
 	protected PVector<Attribute> ownAttributes;
 
 	/**
-	 * the sub classes of this class - only set if the schema is finish
+	 * The subclasses of this class - only set if the schema is finished. The
+	 * HashSet is used to speed up isInstance test.
 	 */
 	protected PSet<SC> allSubClasses;
+	protected HashSet<SC> allSubClassesHash;
 
 	/**
-	 * the super classes of this class - only set if the schema is finish
+	 * The superclasses of this class - only set if the schema is finished. The
+	 * HashSet is used to speed up isInstance test.
 	 */
 	protected PSet<SC> allSuperClasses;
+	protected HashSet<SC> allSuperClassesHash;
 
 	/**
 	 * A {@link DirectedAcyclicGraph} representing the generalization hierarchy.
 	 * Edges direction is from superclass to subclass.
 	 */
-	protected DirectedAcyclicGraph<GraphElementClass<SC, IC>> subclassDag;
+	protected final DirectedAcyclicGraph<GraphElementClass<SC, IC>> subclassDag;
 
 	/**
 	 * delegates its constructor to the generalized class
@@ -130,13 +138,6 @@ public abstract class GraphElementClassImpl<SC extends GraphElementClass<SC, IC>
 			return;
 		}
 		subclassDag.createEdge(superClass, this);
-
-		// if (superClass.isSubClassOf((SC) this)) {
-		// throw new SchemaException("Cycle in class hierarchie for classes: "
-		// + getQualifiedName() + " and "
-		// + superClass.getQualifiedName());
-		// }
-
 		for (Attribute a : superClass.getAttributeList()) {
 			if (getOwnAttribute(a.getName()) != null) {
 				throw new SchemaException("Cannot add "
@@ -178,22 +179,22 @@ public abstract class GraphElementClassImpl<SC extends GraphElementClass<SC, IC>
 	}
 
 	@Override
-	public boolean isSubClassOf(SC anAttributedElementClass) {
+	public final boolean isSubClassOf(SC anAttributedElementClass) {
+		if (finished) {
+			return allSuperClassesHash.contains(anAttributedElementClass);
+		}
 		return getAllSuperClasses().contains(anAttributedElementClass);
 	}
 
 	@Override
-	public boolean isSuperClassOf(SC anAttributedElementClass) {
-		return anAttributedElementClass.getAllSuperClasses().contains(this);
+	public final boolean isSuperClassOf(SC anAttributedElementClass) {
+		if (finished) {
+			return allSubClassesHash.contains(anAttributedElementClass);
+		}
+		return getAllSubClasses().contains(anAttributedElementClass);
 	}
 
-	@Override
-	public boolean isSuperClassOfOrEquals(SC anAttributedElementClass) {
-		return (this == anAttributedElementClass)
-				|| (isSuperClassOf(anAttributedElementClass));
-	}
-
-	protected boolean subclassContainsAttribute(String name) {
+	private boolean subclassContainsAttribute(String name) {
 		for (SC subClass : getAllSubClasses()) {
 			if (subClass.getAttribute(name) != null) {
 				return true;
@@ -207,9 +208,11 @@ public abstract class GraphElementClassImpl<SC extends GraphElementClass<SC, IC>
 	protected void finish() {
 		allSuperClasses = (PSet<SC>) subclassDag
 				.getAllPredecessorsInTopologicalOrder(this);
-
+		allSuperClassesHash = new HashSet<SC>(allSuperClasses);
 		allSubClasses = (PSet<SC>) subclassDag
 				.getAllSuccessorsInTopologicalOrder(this);
+		allSubClassesHash = new HashSet<SC>(allSubClasses);
+
 		TreeSet<Attribute> s = new TreeSet<Attribute>(ownAttributes);
 		for (AttributedElementClass<SC, IC> superClass : subclassDag
 				.getDirectPredecessors(this)) {
@@ -300,18 +303,20 @@ public abstract class GraphElementClassImpl<SC extends GraphElementClass<SC, IC>
 		if (isAbstract()) {
 			output.append(" (abstract)");
 		}
-		output.append(": \n");
+		output.append(":\n");
 
-		output.append("subClasses of '" + getQualifiedName() + "': ");
+		output.append("Subclasses of '" + getQualifiedName() + "': ");
 
 		for (SC aec : getAllSubClasses()) {
 			output.append("'" + aec.getQualifiedName() + "' ");
 		}
-		output.append("\nsuperClasses of '" + getQualifiedName() + "': ");
+
+		output.append("\nSuperclasses of '" + getQualifiedName() + "': ");
 		for (SC aec : getAllSuperClasses()) {
 			output.append("'" + aec.getQualifiedName() + "' ");
 		}
-		output.append("\ndirectSuperClasses of '" + getQualifiedName() + "': ");
+
+		output.append("\nDirect Superclasses of '" + getQualifiedName() + "': ");
 		for (SC aec : getDirectSuperClasses()) {
 			output.append("'" + aec.getQualifiedName() + "' ");
 		}

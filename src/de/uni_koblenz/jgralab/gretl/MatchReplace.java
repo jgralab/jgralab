@@ -350,7 +350,8 @@ public class MatchReplace extends InPlaceTransformation {
 			}
 			VertexClass f = ec.getFrom().getVertexClass();
 			VertexClass t = ec.getTo().getVertexClass();
-			if (f.isSuperClassOfOrEquals(from) && t.isSuperClassOfOrEquals(to)) {
+			if ((f.equals(from) || f.isSuperClassOf(from))
+					&& (t.equals(to) || t.isSuperClassOf(to))) {
 				possibles.add(ec);
 			}
 		}

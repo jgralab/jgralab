@@ -6,10 +6,10 @@ import de.uni_koblenz.jgralab.ImplementationType;
 
 public class GraphLoadBenchmark {
 	public static void main(String[] args) {
-		final int N = 10;
-		final String FILENAME = "/Users/riediger/Documents/workspace-dev/jgstreetmap/OsmGraph.tg.gz";
+		final int N = 100;
 		// final String FILENAME =
-		// "/Users/riediger/Desktop/tmp/anhang/lr5200.tg";
+		// "/Users/riediger/Documents/workspace-dev/jgstreetmap/OsmGraph.tg.gz";
+		final String FILENAME = "/Users/riediger/Desktop/tmp/anhang/lr5200.tg";
 		try {
 			long min = Long.MAX_VALUE;
 			long max = 0;
@@ -17,8 +17,8 @@ public class GraphLoadBenchmark {
 			for (int i = 1; i <= N + 2; ++i) {
 				System.out.println(i);
 				long t0 = System.currentTimeMillis();
-				GraphIO.loadGraphFromFile(FILENAME, ImplementationType.GENERIC,
-						null);
+				GraphIO.loadGraphFromFile(FILENAME,
+						ImplementationType.STANDARD, null);
 				long t1 = System.currentTimeMillis();
 				long t = t1 - t0;
 				min = Math.min(min, t);

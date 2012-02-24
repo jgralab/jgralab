@@ -50,7 +50,6 @@ import de.uni_koblenz.jgralab.schema.exception.SchemaException;
 
 public final class VertexClassImpl extends
 		GraphElementClassImpl<VertexClass, Vertex> implements VertexClass {
-
 	/**
 	 * the own in IncidenceClasses
 	 */
@@ -110,7 +109,7 @@ public final class VertexClassImpl extends
 
 	void addInIncidenceClass(IncidenceClass incClass) {
 		if (incClass.getVertexClass() != this) {
-			throwSchemaException();
+			throwSchemaException(incClass);
 		}
 		checkDuplicateRolenames(incClass);
 		inIncidenceClasses.add(incClass);
@@ -118,22 +117,18 @@ public final class VertexClassImpl extends
 
 	void addOutIncidenceClass(IncidenceClass incClass) {
 		if (incClass.getVertexClass() != this) {
-			throwSchemaException();
+			throwSchemaException(incClass);
 		}
 		checkDuplicateRolenames(incClass);
 		outIncidenceClasses.add(incClass);
 	}
 
 	private void checkDuplicateRolenames(IncidenceClass incClass) {
-
 		String rolename = incClass.getOpposite().getRolename();
-
 		if (rolename.isEmpty()) {
 			return;
 		}
-
 		checkDuplicatedRolenameForACyclicIncidence(incClass);
-
 		checkDuplicatedRolenameForAllIncidences(incClass,
 				getAllInIncidenceClasses());
 		checkDuplicatedRolenameForAllIncidences(incClass,
@@ -142,61 +137,50 @@ public final class VertexClassImpl extends
 
 	private void checkDuplicatedRolenameForACyclicIncidence(
 			IncidenceClass incClass) {
-
 		String rolename = incClass.getOpposite().getRolename();
 		VertexClass oppositeVertexClass = incClass.getOpposite()
 				.getVertexClass();
-
 		boolean equalRolenames = incClass.getRolename().equals(rolename);
 		boolean identicalClasses = this == oppositeVertexClass;
-
 		if (equalRolenames && identicalClasses) {
-			throwSchemaException(incClass);
+			throw new SchemaException(
+					"The rolename "
+							+ incClass.getRolename()
+							+ " may be not used at both ends of the reflexive edge class "
+							+ incClass.getEdgeClass().getQualifiedName());
 		}
 	}
 
 	private void checkDuplicatedRolenameForAllIncidences(
 			IncidenceClass incClass, Set<IncidenceClass> incidenceSet) {
-
 		String rolename = incClass.getOpposite().getRolename();
-
 		if (rolename.isEmpty()) {
 			return;
 		}
-
 		for (IncidenceClass incidence : incidenceSet) {
 			if (incidence == incClass) {
 				continue;
 			}
 			if (incidence.getOpposite().getRolename().equals(rolename)) {
-				throwSchemaExceptionRolenameUsedTwice(incidence);
+				throw new SchemaException("The rolename "
+						+ incidence.getOpposite().getRolename()
+						+ " is used twice at class " + getQualifiedName());
 			}
 		}
 	}
 
-	private void throwSchemaExceptionRolenameUsedTwice(IncidenceClass incidence) {
-		throw new SchemaException("The rolename "
-				+ incidence.getOpposite().getRolename()
-				+ " is used twice at class " + getQualifiedName());
-	}
-
-	private void throwSchemaException(IncidenceClass incClass) {
-		throw new SchemaException("The rolename " + incClass.getRolename()
-				+ " may be not used at both ends of the reflexive edge class "
-				+ incClass.getEdgeClass().getQualifiedName());
-	}
-
-	private void throwSchemaException() {
+	private void throwSchemaException(IncidenceClass ic) {
 		throw new SchemaException(
-				"IncidenceClasses may be added only to vertices they are connected to");
+				"Try to add IncidenceClass ending at '"
+						+ ic.getVertexClass().getQualifiedName()
+						+ "' to VertexClass '"
+						+ getQualifiedName()
+						+ "'.IncidenceClasses may be added only to VertexClasses they are connected to.");
 	}
 
 	@Override
 	public void addSuperClass(VertexClass superClass) {
-		// Checked in super class
-		// if(isFinished()){
-		// throw new SchemaException("No changes to finished schema!");
-		// }
+		assertNotFinished();
 		if (superClass == this) {
 			return;
 		}
@@ -433,7 +417,6 @@ public final class VertexClassImpl extends
 		for (IncidenceClass ic : outIncidenceClasses) {
 			((IncidenceClassImpl) ic).finish();
 		}
-
 		super.finish();
 	}
 

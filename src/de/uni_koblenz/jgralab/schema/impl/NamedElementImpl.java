@@ -350,7 +350,7 @@ public abstract class NamedElementImpl implements NamedElement {
 		 */
 		if ((this instanceof BasicDomain) || (this instanceof CollectionDomain)
 				|| (this instanceof MapDomain) || (this instanceof GraphClass)) {
-			if (!isInDefaultPackage()) {
+			if (!parentPackage.isDefaultPackage()) {
 				throw new SchemaException(
 						"Invalid parent package '"
 								+ pkg.getQualifiedName()
@@ -466,12 +466,7 @@ public abstract class NamedElementImpl implements NamedElement {
 		}
 		NamedElementImpl other = (NamedElementImpl) o;
 		return schema.equals(other.schema)
-				&& qualifiedName.equals(other.getQualifiedName());
-	}
-
-	@Override
-	public final boolean isInDefaultPackage() {
-		return (parentPackage != null) && parentPackage.isDefaultPackage();
+				&& qualifiedName.equals(other.qualifiedName);
 	}
 
 	/**
@@ -510,7 +505,7 @@ public abstract class NamedElementImpl implements NamedElement {
 
 	@Override
 	public void addComment(String comment) {
-		((SchemaImpl) getSchema()).assertNotFinished();
+		schema.assertNotFinished();
 		if (comment == null) {
 			return;
 		}

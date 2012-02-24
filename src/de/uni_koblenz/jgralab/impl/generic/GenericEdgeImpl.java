@@ -63,8 +63,9 @@ public class GenericEdgeImpl extends EdgeImpl {
 	public GenericEdgeImpl(EdgeClass type, int anId, Graph graph, Vertex alpha,
 			Vertex omega) {
 		super(anId, graph, alpha, omega);
-		if(type.isAbstract()) {
-			throw new GraphException("Cannot create instances of abstract type " + type);
+		if (type.isAbstract()) {
+			throw new GraphException(
+					"Cannot create instances of abstract type " + type);
 		}
 		this.type = type;
 		if (type.getAttributeCount() > 0) {
@@ -135,12 +136,12 @@ public class GenericEdgeImpl extends EdgeImpl {
 
 	@Override
 	public AggregationKind getAlphaAggregationKind() {
-		return (getAttributedElementClass()).getFrom().getAggregationKind();
+		return getAttributedElementClass().getFrom().getAggregationKind();
 	}
 
 	@Override
 	public AggregationKind getOmegaAggregationKind() {
-		return (getAttributedElementClass()).getTo().getAggregationKind();
+		return getAttributedElementClass().getTo().getAggregationKind();
 	}
 
 	@SuppressWarnings("unchecked")

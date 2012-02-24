@@ -215,7 +215,7 @@ public abstract class EdgeBaseImpl extends IncidenceImpl implements Edge,
 	@Override
 	public String getThatRole() {
 		assert isValid();
-		return (getAttributedElementClass()).getTo().getRolename();
+		return getAttributedElementClass().getTo().getRolename();
 	}
 
 	/*
@@ -237,7 +237,7 @@ public abstract class EdgeBaseImpl extends IncidenceImpl implements Edge,
 	@Override
 	public String getThisRole() {
 		assert isValid();
-		return (getAttributedElementClass()).getFrom().getRolename();
+		return getAttributedElementClass().getFrom().getRolename();
 	}
 
 	/*

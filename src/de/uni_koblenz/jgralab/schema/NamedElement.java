@@ -296,40 +296,13 @@ public interface NamedElement extends Comparable<NamedElement> {
 	public String getUniqueName();
 
 	/**
-	 * Checks if this named element is in the <code>DefaultPackage</code>.
-	 * 
-	 * <p>
-	 * <b>Pattern:</b>
-	 * <code>isInDefaultPackage = namedElement.isInDefaultPackage();</code>
-	 * </p>
-	 * 
-	 * <p>
-	 * <b>Preconditions:</b> none
-	 * </p>
-	 * 
-	 * <p>
-	 * <b>Postconditions:</b> <code>isInDefaultPackage</code> is:
-	 * <ul>
-	 * <li><code>true</code> if <code>namedElement</code> lies directly in the
-	 * <code>DefaultPackage</code></li>
-	 * <li><code>false</code> if <code>namedElement</code> is the
-	 * <code>DefaultPackage</code></li>
-	 * <li><code>false</code> in any other case
-	 * </ul>
-	 * </p>
-	 * 
-	 * @return <code>true</code> if this element lies directly in the
-	 *         <code>DefaultPackage</code>, <code>false</code> otherwise
-	 */
-	public boolean isInDefaultPackage();
-
-	/**
 	 * Returns a textual representation of this named element.
 	 * 
 	 * <p>
 	 * This method has to be implemented by each specialising class.
 	 * </p>
 	 */
+	@Override
 	public String toString();
 
 	/**

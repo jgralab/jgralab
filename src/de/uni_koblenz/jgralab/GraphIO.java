@@ -1111,6 +1111,7 @@ public class GraphIO {
 							SchemaClassManager.instance(schemaQName));
 				} catch (ClassNotFoundException e) {
 					// schema class not found, try compile schema in-memory
+					io.schema.finish();
 					io.schema.compile(CodeGeneratorConfiguration.MINIMAL);
 					try {
 						schemaClass = Class.forName(schemaQName, true,

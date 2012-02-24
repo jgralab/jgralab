@@ -120,12 +120,12 @@ public class EdgeClassImpl extends GraphElementClassImpl<EdgeClass, Edge>
 	}
 
 	@Override
-	public IncidenceClass getFrom() {
+	public final IncidenceClass getFrom() {
 		return from;
 	}
 
 	@Override
-	public IncidenceClass getTo() {
+	public final IncidenceClass getTo() {
 		return to;
 	}
 
@@ -142,8 +142,8 @@ public class EdgeClassImpl extends GraphElementClassImpl<EdgeClass, Edge>
 	static void checkIncidenceClassSpecialization(IncidenceClass special,
 			IncidenceClass general) {
 		// Vertex same
-		if ((!general.getVertexClass().isSuperClassOfOrEquals(
-				special.getVertexClass()))) {
+		if (!(general.getVertexClass().equals(special.getVertexClass()) || general
+				.getVertexClass().isSuperClassOf(special.getVertexClass()))) {
 			String dir = special.getDirection() == IncidenceDirection.OUT ? "Alpha"
 					: "Omega";
 			throw new SchemaException(
@@ -197,5 +197,4 @@ public class EdgeClassImpl extends GraphElementClassImpl<EdgeClass, Edge>
 			}
 		}
 	}
-
 }

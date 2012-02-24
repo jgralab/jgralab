@@ -913,69 +913,6 @@ public final class VertexClassImplTest extends
 	}
 
 	/**
-	 * isSuperClassOfOrEquals()
-	 * 
-	 * TEST CASE: The other element is a direct subclass of this element
-	 */
-	@Test
-	public void testIsSuperClassOfOrEquals() {
-		VertexClass subClass = graphClass.createVertexClass("Subclass");
-		subClass.addSuperClass(vertexClass);
-
-		testIsSuperClassOfOrEquals(subClass);
-	}
-
-	/**
-	 * isSuperClassOfOrEquals()
-	 * 
-	 * TEST CASE: The other element is an indirect subclass of this element
-	 */
-	@Test
-	public void testIsSuperClassOfOrEquals2() {
-		VertexClass subClass = graphClass.createVertexClass("SubClass");
-		VertexClass subClass2 = graphClass.createVertexClass("SubClass2");
-		subClass.addSuperClass(vertexClass);
-		subClass2.addSuperClass(subClass);
-
-		testIsSuperClassOfOrEquals(subClass2);
-	}
-
-	/**
-	 * isSuperClassOfOrEquals()
-	 * 
-	 * TEST CASE: The other element and this element are the same
-	 */
-	@Test
-	public void testIsSuperClassOfOrEquals3() {
-		testIsSuperClassOfOrEquals(vertexClass);
-	}
-
-	/**
-	 * isSuperClassOfOrEquals()
-	 * 
-	 * TEST CASE: The other element has no relation with this element
-	 */
-	@Test
-	public void testIsSuperClassOfOrEquals4() {
-		VertexClass vertexClass2 = graphClass.createVertexClass("VertexClass2");
-
-		testIsSuperClassOfOrEquals2(vertexClass2);
-	}
-
-	/**
-	 * isSuperClassOfOrEquals()
-	 * 
-	 * TEST CASE: The other element is a superclass of this element
-	 */
-	@Test
-	public void testIsSuperClassOfOrEquals5() {
-		VertexClass superClass = graphClass.createVertexClass("SuperClass");
-		vertexClass.addSuperClass(superClass);
-
-		testIsSuperClassOfOrEquals2(superClass);
-	}
-
-	/**
 	 * isSubClassOf()
 	 * 
 	 * TEST CASE: The other element is a direct superclass of this element
@@ -1024,33 +961,6 @@ public final class VertexClassImplTest extends
 	 */
 	public final void testIsSuperClassOf2(VertexClass other) {
 		Assert.assertFalse(attributedElement.isSuperClassOf(other));
-	}
-
-	/*
-	 * Tests for the isSuperClassOfOrEquals() method.
-	 */
-	/**
-	 * isSuperClassOfOrEquals()
-	 * 
-	 * TEST CASE: The other element is a direct subclass of this element
-	 * 
-	 * TEST CASE: The other element is an inherited subclass of this element
-	 * 
-	 * TEST CASE: The other element is a superclass of this element
-	 */
-	public final void testIsSuperClassOfOrEquals(VertexClass other) {
-		Assert.assertTrue(attributedElement.isSuperClassOfOrEquals(other));
-	}
-
-	/**
-	 * isSuperClassOfOrEquals()
-	 * 
-	 * TEST CASE: The other element has no relation with this element
-	 * 
-	 * TEST CASE: The other element and this element are the same
-	 */
-	public final void testIsSuperClassOfOrEquals2(VertexClass other) {
-		Assert.assertFalse(attributedElement.isSuperClassOfOrEquals(other));
 	}
 
 }

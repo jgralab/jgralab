@@ -817,7 +817,7 @@ public class SchemaImpl implements Schema {
 		if ((other == null) || !(other instanceof Schema)) {
 			return false;
 		}
-		return qualifiedName.equals(((Schema) other).getQualifiedName());
+		return qualifiedName.equals(((SchemaImpl) other).qualifiedName);
 	}
 
 	@Override
@@ -1271,7 +1271,6 @@ public class SchemaImpl implements Schema {
 		domainsDag.finish();
 		graphClass.finish();
 		finished = true;
-
 	}
 
 	/**

@@ -133,43 +133,6 @@ public interface GraphElementClass<SC extends GraphElementClass<SC, IC>, IC exte
 	public boolean isSuperClassOf(SC anAttributedElementClass);
 
 	/**
-	 * Tests if the current element equals another attributed element or is
-	 * another attributes element´s direct or indirect superclass.
-	 * 
-	 * <p>
-	 * <b>Pattern:</b>
-	 * <code> isSuperClassOrEquals = attrElement.isSuperClassOfOrEquals(other);</code>
-	 * </p>
-	 * 
-	 * <p>
-	 * <b>Preconditions:</b> none
-	 * </p>
-	 * 
-	 * <p>
-	 * <b>Postconditions:</b> <code>isSuperClassOrEquals</code> is:
-	 * <ul>
-	 * <li><code>true</code> if one of the following occurs:
-	 * <ul>
-	 * <li>the <code>other</code> attributed element is a direct or indirect
-	 * subclass of this element</li>
-	 * <li><code>attrElement == other</code></li>
-	 * </ul>
-	 * </li>
-	 * <li><code>false</code> if the <code>other</code> attributed element has
-	 * no relation with <code>attrElement</code> (not the same, not a direct or
-	 * indirect subclass)</li>
-	 * </ul>
-	 * </p>
-	 * 
-	 * @param anAttributedElementClass
-	 *            the possible subclass of this attributed element
-	 * @return <code>true</code> if <code>anAttributedElementClass</code> is a
-	 *         direct or indirect subclass of this element or <code>this</code>
-	 *         attributed element itself, otherwise <code>false</code>
-	 */
-	public boolean isSuperClassOfOrEquals(SC anAttributedElementClass);
-
-	/**
 	 * Lists all direct subclasses of this element.
 	 * 
 	 * <p>

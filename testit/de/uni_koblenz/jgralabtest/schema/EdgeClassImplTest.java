@@ -993,33 +993,6 @@ public class EdgeClassImplTest extends GraphElementClassImplTest<EdgeClass> {
 		Assert.assertFalse(attributedElement.isSuperClassOf(other));
 	}
 
-	/*
-	 * Tests for the isSuperClassOfOrEquals() method.
-	 */
-	/**
-	 * isSuperClassOfOrEquals()
-	 * 
-	 * TEST CASE: The other element is a direct subclass of this element
-	 * 
-	 * TEST CASE: The other element is an inherited subclass of this element
-	 * 
-	 * TEST CASE: The other element is a superclass of this element
-	 */
-	public final void testIsSuperClassOfOrEquals(EdgeClass other) {
-		Assert.assertTrue(attributedElement.isSuperClassOfOrEquals(other));
-	}
-
-	/**
-	 * isSuperClassOfOrEquals()
-	 * 
-	 * TEST CASE: The other element has no relation with this element
-	 * 
-	 * TEST CASE: The other element and this element are the same
-	 */
-	public final void testIsSuperClassOfOrEquals2(EdgeClass other) {
-		Assert.assertFalse(attributedElement.isSuperClassOfOrEquals(other));
-	}
-
 	/**
 	 * isSubClassOf()
 	 * 
@@ -1165,78 +1138,6 @@ public class EdgeClassImplTest extends GraphElementClassImplTest<EdgeClass> {
 	@Test
 	public void testIsSuperClassOf5() {
 		testIsSuperClassOf2(edgeClass);
-	}
-
-	/**
-	 * isSuperClassOfOrEquals()
-	 * 
-	 * TEST CASE: The other element is a direct subclass of this element
-	 */
-	@Test
-	public void testIsSuperClassOfOrEquals() {
-
-		// Beispiel Kante
-		EdgeClass subClass = createEdgeClass("EdgeClassSubClass", edgeClass);
-
-		subClass.addSuperClass(edgeClass);
-
-		testIsSuperClassOfOrEquals(subClass);
-	}
-
-	/**
-	 * isSuperClassOfOrEquals()
-	 * 
-	 * TEST CASE: The other element is an inherited subclass of this element
-	 */
-	@Test
-	public void testIsSuperClassOfOrEquals2() {
-
-		// Beispiel Kanten
-		EdgeClass subClass = createEdgeClass("EdgeClassSubClass", edgeClass);
-
-		EdgeClass subClass2 = createEdgeClass("EdgeClassSubClass2", edgeClass);
-
-		subClass.addSuperClass(edgeClass);
-		subClass2.addSuperClass(subClass);
-
-		testIsSuperClassOfOrEquals(subClass2);
-	}
-
-	/**
-	 * isSuperClassOfOrEquals()
-	 * 
-	 * TEST CASE: The other element and this element are the same
-	 */
-	@Test
-	public void testIsSuperClassOfOrEquals3() {
-		testIsSuperClassOfOrEquals(edgeClass);
-	}
-
-	/**
-	 * isSuperClassOfOrEquals()
-	 * 
-	 * TEST CASE: The other element has no relation with this element
-	 */
-	@Test
-	public void testIsSuperClassOfOrEquals4() {
-
-		// Normale Kante
-		EdgeClass edgeClass2 = createEdgeClass("EdgeClass2", edgeClass);
-
-		testIsSuperClassOfOrEquals2(edgeClass2);
-	}
-
-	/**
-	 * isSuperClassOfOrEquals()
-	 * 
-	 * TEST CASE: The other element is a superclass of this element
-	 */
-	@Test
-	public void testIsSuperClassOfOrEquals5() {
-		EdgeClass superClass = createEdgeClass("EdgeClassSuperClass", edgeClass);
-		edgeClass.addSuperClass(superClass);
-
-		testIsSuperClassOfOrEquals2(superClass);
 	}
 
 	@Test
