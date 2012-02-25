@@ -1,29 +1,29 @@
 /*
  * JGraLab - The Java Graph Laboratory
- * 
+ *
  * Copyright (C) 2006-2012 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
- * 
+ *
  * For bug reports, documentation and further information, visit
- * 
+ *
  *                         https://github.com/jgralab/jgralab
- * 
+ *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
  * Free Software Foundation; either version 3 of the License, or (at your
  * option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, see <http://www.gnu.org/licenses>.
- * 
+ *
  * Additional permission under GNU GPL version 3 section 7
- * 
+ *
  * If you modify this Program, or any covered work, by linking or combining
  * it with Eclipse (or a modified version of that program or an Eclipse
  * plugin), containing parts covered by the terms of the Eclipse Public
@@ -45,11 +45,14 @@ import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.NoSuchAttributeException;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.impl.InternalGraph;
+import de.uni_koblenz.jgralab.impl.RecordImpl;
 import de.uni_koblenz.jgralab.impl.ReversedEdgeBaseImpl;
 import de.uni_koblenz.jgralab.impl.std.EdgeImpl;
 import de.uni_koblenz.jgralab.schema.AggregationKind;
 import de.uni_koblenz.jgralab.schema.Attribute;
+import de.uni_koblenz.jgralab.schema.Domain;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
+import de.uni_koblenz.jgralab.schema.RecordDomain;
 
 /**
  * A generic {@link Edge}-Implementation that can represent edges of arbitrary
@@ -159,7 +162,13 @@ public class GenericEdgeImpl extends EdgeImpl {
 				.isConformGenericValue(data)) {
 			attributes[i] = data;
 		} else {
-			throw new ClassCastException();
+			Domain d = type.getAttribute(name).getDomain();
+			throw new ClassCastException("Expected "
+					+ ((d instanceof RecordDomain) ? RecordImpl.class.getName()
+							: d.getJavaAttributeImplementationTypeName(d
+									.getPackageName()))
+					+ " object, but received " + data.getClass().getName()
+					+ " object instead");
 		}
 	}
 
@@ -220,24 +229,41 @@ public class GenericEdgeImpl extends EdgeImpl {
 	}
 
 	// ************** unsupported methods ***************/
+
+	/**
+	 * This method is not supported by the generic implementation and therefore
+	 * throws an {@link UnsupportedOperationException}.
+	 */
 	@Override
 	public Class<? extends Edge> getSchemaClass() {
 		throw new UnsupportedOperationException(
 				"This method is not supported by the generic implementation");
 	}
 
+	/**
+	 * This method is not supported by the generic implementation and therefore
+	 * throws an {@link UnsupportedOperationException}.
+	 */
 	@Override
 	public Edge getNextEdge(Class<? extends Edge> anEdgeClass) {
 		throw new UnsupportedOperationException(
 				"This method is not supported by the generic implementation");
 	}
 
+	/**
+	 * This method is not supported by the generic implementation and therefore
+	 * throws an {@link UnsupportedOperationException}.
+	 */
 	@Override
 	public Edge getNextIncidence(Class<? extends Edge> anEdgeClass) {
 		throw new UnsupportedOperationException(
 				"This method is not supported by the generic implementation");
 	}
 
+	/**
+	 * This method is not supported by the generic implementation and therefore
+	 * throws an {@link UnsupportedOperationException}.
+	 */
 	@Override
 	public Edge getNextIncidence(Class<? extends Edge> anEdgeClass,
 			boolean noSubclasses) {
@@ -245,6 +271,10 @@ public class GenericEdgeImpl extends EdgeImpl {
 				"This method is not supported by the generic implementation");
 	}
 
+	/**
+	 * This method is not supported by the generic implementation and therefore
+	 * throws an {@link UnsupportedOperationException}.
+	 */
 	@Override
 	public Edge getNextIncidence(Class<? extends Edge> anEdgeClass,
 			EdgeDirection orientation) {
@@ -259,6 +289,10 @@ public class GenericEdgeImpl extends EdgeImpl {
 				"This method is not supported by the generic implementation");
 	}
 
+	/**
+	 * This method is not supported by the generic implementation and therefore
+	 * throws an {@link UnsupportedOperationException}.
+	 */
 	@Override
 	public boolean isInstanceOf(EdgeClass cls) {
 		// Needs to be overridden from the base variant, because that relies on
