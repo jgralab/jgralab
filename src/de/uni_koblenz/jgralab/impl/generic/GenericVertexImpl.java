@@ -66,9 +66,10 @@ public class GenericVertexImpl extends VertexImpl {
 
 	protected GenericVertexImpl(VertexClass type, int id, Graph graph) {
 		super(id, graph);
-		if(type.isAbstract()) {
+		if (type.isAbstract()) {
 			graph.deleteVertex(this);
-			throw new GraphException("Cannot create instances of abstract type " + type);
+			throw new GraphException(
+					"Cannot create instances of abstract type " + type);
 		}
 		this.type = type;
 		if (type.getAttributeCount() > 0) {
@@ -123,29 +124,26 @@ public class GenericVertexImpl extends VertexImpl {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public <T> T getAttribute(String name) throws NoSuchAttributeException {
+	public <T> T getAttribute(String name) {
 		int i = type.getAttributeIndex(name);
 		return (T) attributes[i];
 	}
 
 	@Override
-	public <T> void setAttribute(String name, T data)
-			throws NoSuchAttributeException {
+	public <T> void setAttribute(String name, T data) {
 		int i = type.getAttributeIndex(name);
 		if (getAttributedElementClass().getAttribute(name).getDomain()
 				.isConformGenericValue(data)) {
-			
-			if(this.getGraph().hasECARuleManager()){
+			if (graph.hasECARuleManager()) {
 				T oldValue = this.getAttribute(name);
-				this.getGraph().getECARuleManager().
-						fireBeforeChangeAttributeEvents(this, name, oldValue, data);
+				graph.getECARuleManager().fireBeforeChangeAttributeEvents(this,
+						name, oldValue, data);
 				attributes[i] = data;
-				this.graph.getECARuleManager().
-						fireAfterChangeAttributeEvents(this, name, oldValue, data);
-			}else{
-				attributes[i] = data;				
+				graph.getECARuleManager().fireAfterChangeAttributeEvents(this,
+						name, oldValue, data);
+			} else {
+				attributes[i] = data;
 			}
-			
 		} else {
 			Domain d = type.getAttribute(name).getDomain();
 			throw new ClassCastException("Expected "

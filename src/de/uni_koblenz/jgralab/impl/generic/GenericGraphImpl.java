@@ -163,25 +163,24 @@ public class GenericGraphImpl extends GraphImpl {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public <T> T getAttribute(String name) throws NoSuchAttributeException {
+	public <T> T getAttribute(String name) {
 		int i = getAttributedElementClass().getAttributeIndex(name);
 		return (T) attributes[i];
 	}
 
 	@Override
-	public <T> void setAttribute(String name, T data)
-			throws NoSuchAttributeException {
+	public <T> void setAttribute(String name, T data) {
 		int i = getAttributedElementClass().getAttributeIndex(name);
 		if (type.getAttribute(name).getDomain().isConformGenericValue(data)) {
-			if(this.hasECARuleManager()){
-				T oldValue = this.getAttribute(name);
-				this.getECARuleManager().
-						fireBeforeChangeAttributeEvents(this, name, oldValue, data);
+			if (hasECARuleManager()) {
+				T oldValue = getAttribute(name);
+				getECARuleManager().fireBeforeChangeAttributeEvents(this, name,
+						oldValue, data);
 				attributes[i] = data;
-				this.getECARuleManager().
-						fireAfterChangeAttributeEvents(this, name, oldValue, data);
-			}else{
-				attributes[i] = data;				
+				getECARuleManager().fireAfterChangeAttributeEvents(this, name,
+						oldValue, data);
+			} else {
+				attributes[i] = data;
 			}
 		} else {
 			Domain d = type.getAttribute(name).getDomain();
@@ -241,7 +240,7 @@ public class GenericGraphImpl extends GraphImpl {
 	 * Returns the default value for attributes in the generic implementation if
 	 * there is no explicitly defined default value, according to the
 	 * attribute's domain.
-	 *
+	 * 
 	 * @param domain
 	 *            The attribute's domain.
 	 * @return The default value for attributes of the domain.

@@ -397,7 +397,8 @@ public abstract class AttributedElementCodeGenerator<SC extends AttributedElemen
 					"\tecaAttributeChanging(\"#name#\", this._#name#, _#name#);",
 					"\tObject oldValue = this._#name#;",
 					"\tthis._#name# = _#name#;", "\tgraphModified();",
-					"ecaAttributeChanged(\"#name#\", oldValue, _#name#);", "}");
+					"\tecaAttributeChanged(\"#name#\", oldValue, _#name#);",
+					"}");
 			break;
 		case DBIMPL:
 			code.add("public void set_#name#(#type# _#name#) {");
