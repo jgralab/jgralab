@@ -173,7 +173,16 @@ public class GenericGraphImpl extends GraphImpl {
 			throws NoSuchAttributeException {
 		int i = getAttributedElementClass().getAttributeIndex(name);
 		if (type.getAttribute(name).getDomain().isConformGenericValue(data)) {
-			attributes[i] = data;
+			if(this.hasECARuleManager()){
+				T oldValue = this.getAttribute(name);
+				this.getECARuleManager().
+						fireBeforeChangeAttributeEvents(this, name, oldValue, data);
+				attributes[i] = data;
+				this.getECARuleManager().
+						fireAfterChangeAttributeEvents(this, name, oldValue, data);
+			}else{
+				attributes[i] = data;				
+			}
 		} else {
 			Domain d = type.getAttribute(name).getDomain();
 			throw new ClassCastException("Expected "

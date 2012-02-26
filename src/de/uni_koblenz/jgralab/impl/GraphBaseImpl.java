@@ -270,9 +270,6 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 	@Override
 	public void internalEdgeAdded(InternalEdge e) {
 		notifyEdgeAdded(e);
-		if (hasECARuleManager()) {
-			getECARuleManager().fireAfterCreateEdgeEvents(e);
-		}
 	}
 
 	@Override
@@ -314,9 +311,6 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 	@Override
 	public void internalVertexAdded(InternalVertex v) {
 		notifyVertexAdded(v);
-		if (hasECARuleManager()) {
-			getECARuleManager().fireAfterCreateVertexEvents(v);
-		}
 	}
 
 	@Override
@@ -975,7 +969,7 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 
 		if (hasECARuleManager()) {
 			getECARuleManager().fireAfterDeleteEdgeEvents(
-					e.getAttributedElementClass());
+					e.getAttributedElementClass(), alpha, omega);
 		}
 		edgeAfterDeleted(e, alpha, omega);
 	}

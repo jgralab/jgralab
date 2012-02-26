@@ -36,6 +36,7 @@ package de.uni_koblenz.jgralab.eca.events;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
+import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.eca.ECAException;
 import de.uni_koblenz.jgralab.eca.ECARule;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
@@ -96,15 +97,19 @@ public class DeleteEdgeEventDescription extends EventDescription<EdgeClass> {
 	 * 
 	 * @param type
 	 *            the type of the Edge that is deleted
+	 * @param oldAlpha
+	 * 				the old alpha {@link Vertex} of the deleted {@link Edge}
+	 * @param oldOmega
+	 * 				the old omega {@link Vertex} of the deleted {@link Edge}
 	 */
-	public void fire(EdgeClass type) {
+	public void fire(EdgeClass type, Vertex oldAlpha, Vertex oldOmega) {
 		if (super.checkContext(type)) {
 			int nested = getActiveECARules().get(0).getECARuleManager()
 					.getNestedTriggerCalls();
 			Graph graph = getActiveECARules().get(0).getECARuleManager()
 					.getGraph();
 			for (ECARule<EdgeClass> rule : activeRules) {
-				rule.trigger(new DeleteEdgeEvent(nested, graph, type));
+				rule.trigger(new DeleteEdgeEvent(nested, graph, type,oldAlpha,oldOmega));
 			}
 		}
 	}

@@ -168,6 +168,9 @@ public abstract class GraphFactoryImpl implements GraphFactory {
 			@SuppressWarnings("unchecked")
 			E newInstance = (E) edgeMap.get(ec)
 					.newInstance(id, g, alpha, omega);
+			if (!((InternalGraph) g).isLoading() && (g.hasECARuleManager())) {
+				g.getECARuleManager().fireAfterCreateEdgeEvents(newInstance);
+			}
 			return newInstance;
 		} catch (Exception ex) {
 			if (ex.getCause() instanceof GraphException) {
@@ -187,6 +190,9 @@ public abstract class GraphFactoryImpl implements GraphFactory {
 			}
 			@SuppressWarnings("unchecked")
 			V newInstance = (V) vertexMap.get(vc).newInstance(id, g);
+			if (!((InternalGraph) g).isLoading() && (g.hasECARuleManager())) {
+				g.getECARuleManager().fireAfterCreateVertexEvents(newInstance);
+			}
 			return newInstance;
 		} catch (Exception ex) {
 			if (ex.getCause() instanceof GraphException) {

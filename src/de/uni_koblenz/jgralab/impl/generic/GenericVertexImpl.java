@@ -134,7 +134,18 @@ public class GenericVertexImpl extends VertexImpl {
 		int i = type.getAttributeIndex(name);
 		if (getAttributedElementClass().getAttribute(name).getDomain()
 				.isConformGenericValue(data)) {
-			attributes[i] = data;
+			
+			if(this.getGraph().hasECARuleManager()){
+				T oldValue = this.getAttribute(name);
+				this.getGraph().getECARuleManager().
+						fireBeforeChangeAttributeEvents(this, name, oldValue, data);
+				attributes[i] = data;
+				this.graph.getECARuleManager().
+						fireAfterChangeAttributeEvents(this, name, oldValue, data);
+			}else{
+				attributes[i] = data;				
+			}
+			
 		} else {
 			Domain d = type.getAttribute(name).getDomain();
 			throw new ClassCastException("Expected "
