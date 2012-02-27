@@ -207,7 +207,7 @@ public final class VertexClassImpl extends
 	 * For a vertexclass A are all edgeclasses valid froms, which (1) run from A
 	 * to a B or (2) run from a superclass of A to a B and whose end b at B is
 	 * not redefined by A or a superclass of A
-	 *
+	 * 
 	 */
 
 	@Override
@@ -403,8 +403,12 @@ public final class VertexClassImpl extends
 
 		farRoleNameToEdgeClass = new HashMap<String, DirectedSchemaEdgeClass>();
 		for (IncidenceClass ic : getOwnAndInheritedFarIncidenceClasses()) {
-			farRoleNameToEdgeClass.put(ic.getRolename(),
-					getDirectedEdgeClassForFarEndRole(ic.getRolename()));
+			String role = ic.getRolename();
+			if (role == null || role.length() == 0) {
+				continue;
+			}
+			farRoleNameToEdgeClass.put(role,
+					getDirectedEdgeClassForFarEndRole(role));
 		}
 		farRoleNameToEdgeClass = Collections
 				.unmodifiableMap(farRoleNameToEdgeClass);
@@ -438,6 +442,7 @@ public final class VertexClassImpl extends
 			return farRoleNameToEdgeClass.get(roleName);
 		}
 		for (IncidenceClass ic : getOwnAndInheritedFarIncidenceClasses()) {
+			String role = ic.getRolename();
 			if (roleName.equals(ic.getRolename())) {
 				EdgeClass ec = ic.getEdgeClass();
 				return new DirectedSchemaEdgeClass(
