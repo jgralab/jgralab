@@ -59,6 +59,11 @@ results are accessible at our
 Eventually, we are going to create appropriate documentation in the Wiki, so
 stay tuned.
 
+### Getting Help
+
+Join us on the official [JGraLab IRC Channel](irc://irc.freenode.net/#jgralab)
+(channel `#jgralab` on `irc.freenode.net`).
+
 ## License
 
 Copyright (C) 2007-2012 The JGraLab Team <ist@uni-koblenz.de>
