@@ -46,9 +46,9 @@ import de.uni_koblenz.jgralab.schema.VertexClass;
 
 /**
  * represents a vertex, schema classes inherit from this class
- *
+ * 
  * @author ist@uni-koblenz.de
- *
+ * 
  */
 public interface Vertex extends GraphElement<VertexClass, Vertex> {
 
@@ -157,24 +157,24 @@ public interface Vertex extends GraphElement<VertexClass, Vertex> {
 	 * <br/>
 	 * For example, this returns the first edge to a parent vertex in the
 	 * containment hierarchy.
-	 *
+	 * 
 	 * <pre>
 	 * v.getFirstIncidence(true, AggregationKind.SHARED, AggregationKind.COMPOSITE)
 	 * </pre>
-	 *
+	 * 
 	 * And this returns the first edge to a child vertex in the containment
 	 * hierarchy.
-	 *
+	 * 
 	 * <pre>
 	 * v.getFirstIncidence(false, AggregationKind.SHARED, AggregationKind.COMPOSITE)
 	 * </pre>
-	 *
+	 * 
 	 * @see Edge#getNextIncidence(boolean, AggregationKind...)
-	 *
+	 * 
 	 * @param thisIncidence
 	 *            if true, <code>kinds</code> has to match the incidence at this
 	 *            vertex, else it has to match the opposite incidence
-	 *
+	 * 
 	 * @return the first incident edge where the incidence at this vertex
 	 *         (thisIncidence == true) or that vertex (thisIncidence == false)
 	 *         has one of the aggregation semantics given by <code>kind</code>.
@@ -228,7 +228,7 @@ public interface Vertex extends GraphElement<VertexClass, Vertex> {
 
 	/**
 	 * puts this vertex immediately before v in vSeq
-	 *
+	 * 
 	 * @param v
 	 */
 	public void putBefore(Vertex v);
@@ -241,7 +241,7 @@ public interface Vertex extends GraphElement<VertexClass, Vertex> {
 
 	/**
 	 * puts this vertex immediately after v in vSeq
-	 *
+	 * 
 	 * @param v
 	 */
 	public void putAfter(Vertex v);
@@ -249,26 +249,11 @@ public interface Vertex extends GraphElement<VertexClass, Vertex> {
 	/**
 	 * Using this method, one can simply iterate over all incident edges of this
 	 * vertex using the advanced for-loop
-	 *
+	 * 
 	 * @return a iterable object which can be iterated through using the
 	 *         advanced for-loop
 	 */
 	public Iterable<Edge> incidences();
-
-	/**
-	 * Return an List&lt;vertexType&gt; over all vertices reachable from this
-	 * vertex via the specified <code>pathDescription</code>.
-	 *
-	 * @param pathDescription
-	 *            a GReQL path description like
-	 *            <code>-->{EdgeType1}+ <>--{EdgeType2}</code>
-	 * @param vertexType
-	 *            the class of the vertices you can reach with that path (acts
-	 *            as implicit GoalRestriction)
-	 * @return a List of the reachable vertices
-	 */
-	public <T extends Vertex> POrderedSet<T> reachableVertices(
-			String pathDescription, Class<T> vertexType);
 
 	/**
 	 * @param <T>
@@ -286,7 +271,7 @@ public interface Vertex extends GraphElement<VertexClass, Vertex> {
 	/**
 	 * Using this method, one can simply iterate over all incident edges of this
 	 * vertex using the advanced for-loop
-	 *
+	 * 
 	 * @param dir
 	 *            the direction of the edges which should be iterated, either
 	 *            EdgeDirection.IN or EdgeDirection.OUT
@@ -298,7 +283,7 @@ public interface Vertex extends GraphElement<VertexClass, Vertex> {
 	/**
 	 * Using this method, one can simply iterate over all incident edges of this
 	 * vertex using the advanced for-loop
-	 *
+	 * 
 	 * @param eclass
 	 *            the EdgeClass of the edges which should be iterated
 	 * @param dir
@@ -312,7 +297,7 @@ public interface Vertex extends GraphElement<VertexClass, Vertex> {
 	/**
 	 * Using this method, one can simply iterate over all incident edges of this
 	 * vertex using the advanced for-loop
-	 *
+	 * 
 	 * @param eclass
 	 *            the schema class of the edges which should be iterated
 	 * @param dir
@@ -327,7 +312,7 @@ public interface Vertex extends GraphElement<VertexClass, Vertex> {
 	/**
 	 * Using this method, one can simply iterate over all incident edges of this
 	 * vertex using the advanced for-loop
-	 *
+	 * 
 	 * @param eclass
 	 *            the EdgeClass of the edges which should be iterated
 	 * @return a iterable object which can be iterated through using the
@@ -338,7 +323,7 @@ public interface Vertex extends GraphElement<VertexClass, Vertex> {
 	/**
 	 * Using this method, one can simply iterate over all incident edges of this
 	 * vertex using the advanced for-loop
-	 *
+	 * 
 	 * @param eclass
 	 *            the schema class of the edges which should be iterated
 	 * @return a iterable object which can be iterated through using the
@@ -349,7 +334,7 @@ public interface Vertex extends GraphElement<VertexClass, Vertex> {
 	/**
 	 * Sorts the incidence sequence according to the given comparator in
 	 * ascending order.
-	 *
+	 * 
 	 * @param comp
 	 *            the comparator that defines the desired incidence order.
 	 */

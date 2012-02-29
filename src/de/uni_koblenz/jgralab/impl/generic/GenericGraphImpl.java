@@ -37,8 +37,6 @@ package de.uni_koblenz.jgralab.impl.generic;
 import java.io.IOException;
 import java.util.Map;
 
-import org.pcollections.POrderedSet;
-
 import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
@@ -82,7 +80,7 @@ public class GenericGraphImpl extends GraphImpl {
 	protected GenericGraphImpl(GraphClass type, String id, int vmax, int emax) {
 		super(id, type, vmax, emax);
 		this.type = type;
-		if(type.getAttributeCount() > 0) {
+		if (type.getAttributeCount() > 0) {
 			attributes = new Object[type.getAttributeCount()];
 			if (!isLoading()) {
 				GenericGraphImpl.initializeGenericAttributeValues(this);
@@ -226,7 +224,7 @@ public class GenericGraphImpl extends GraphImpl {
 	 * Returns the default value for attributes in the generic implementation if
 	 * there is no explicitly defined default value, according to the
 	 * attribute's domain.
-	 *
+	 * 
 	 * @param domain
 	 *            The attribute's domain.
 	 * @return The default value for attributes of the domain.
@@ -325,13 +323,6 @@ public class GenericGraphImpl extends GraphImpl {
 
 	@Override
 	public Iterable<Edge> edges(Class<? extends Edge> edgeClass) {
-		throw new UnsupportedOperationException(
-				"This method is not supported by the generic implementation");
-	}
-
-	@Override
-	public <T extends Vertex> POrderedSet<T> reachableVertices(
-			Vertex startVertex, String pathDescription, Class<T> vertexType) {
 		throw new UnsupportedOperationException(
 				"This method is not supported by the generic implementation");
 	}
