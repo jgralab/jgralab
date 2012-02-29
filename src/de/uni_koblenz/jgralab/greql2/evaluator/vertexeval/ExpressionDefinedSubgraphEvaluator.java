@@ -36,7 +36,7 @@ package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.greql2.evaluator.InternalGreqlEvaluator;
-import de.uni_koblenz.jgralab.greql2.evaluator.Query;
+import de.uni_koblenz.jgralab.greql2.evaluator.QueryImpl;
 import de.uni_koblenz.jgralab.greql2.schema.Expression;
 import de.uni_koblenz.jgralab.greql2.schema.ExpressionDefinedSubgraph;
 import de.uni_koblenz.jgralab.greql2.schema.IsSubgraphDefiningExpression;
@@ -47,7 +47,7 @@ public class ExpressionDefinedSubgraphEvaluator extends
 	VertexEvaluator<? extends Expression> subgraphDefExprEvaluator = null;
 
 	public ExpressionDefinedSubgraphEvaluator(ExpressionDefinedSubgraph vertex,
-			Query query) {
+			QueryImpl query) {
 		super(vertex, query);
 	}
 

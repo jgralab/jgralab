@@ -39,7 +39,7 @@ import java.util.ArrayList;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.greql2.evaluator.InternalGreqlEvaluator;
-import de.uni_koblenz.jgralab.greql2.evaluator.Query;
+import de.uni_koblenz.jgralab.greql2.evaluator.QueryImpl;
 import de.uni_koblenz.jgralab.greql2.evaluator.fa.NFA;
 import de.uni_koblenz.jgralab.greql2.schema.AlternativePathDescription;
 import de.uni_koblenz.jgralab.greql2.schema.IsAlternativePathOf;
@@ -63,7 +63,7 @@ public class AlternativePathDescriptionEvaluator extends
 	 *            the vertex this VertexEvaluator evaluates
 	 */
 	public AlternativePathDescriptionEvaluator(
-			AlternativePathDescription vertex, Query query) {
+			AlternativePathDescription vertex, QueryImpl query) {
 		super(vertex, query);
 	}
 

@@ -36,7 +36,7 @@
 package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 
 import de.uni_koblenz.jgralab.greql2.evaluator.InternalGreqlEvaluator;
-import de.uni_koblenz.jgralab.greql2.evaluator.Query;
+import de.uni_koblenz.jgralab.greql2.evaluator.QueryImpl;
 import de.uni_koblenz.jgralab.greql2.schema.Identifier;
 
 /**
@@ -48,7 +48,7 @@ import de.uni_koblenz.jgralab.greql2.schema.Identifier;
  */
 public class IdentifierEvaluator extends VertexEvaluator<Identifier> {
 
-	public IdentifierEvaluator(Identifier vertex, Query query) {
+	public IdentifierEvaluator(Identifier vertex, QueryImpl query) {
 		super(vertex, query);
 	}
 

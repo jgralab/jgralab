@@ -39,7 +39,7 @@ import org.pcollections.PCollection;
 
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.greql2.evaluator.InternalGreqlEvaluator;
-import de.uni_koblenz.jgralab.greql2.evaluator.Query;
+import de.uni_koblenz.jgralab.greql2.evaluator.QueryImpl;
 import de.uni_koblenz.jgralab.greql2.schema.SetComprehension;
 
 /**
@@ -59,7 +59,7 @@ public class SetComprehensionEvaluator extends
 	 * @param vertex
 	 *            the vertex this VertexEvaluator evaluates
 	 */
-	public SetComprehensionEvaluator(SetComprehension vertex, Query query) {
+	public SetComprehensionEvaluator(SetComprehension vertex, QueryImpl query) {
 		super(vertex, query);
 	}
 

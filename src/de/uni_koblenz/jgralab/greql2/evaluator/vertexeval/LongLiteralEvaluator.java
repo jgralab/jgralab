@@ -36,7 +36,7 @@
 package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 
 import de.uni_koblenz.jgralab.greql2.evaluator.InternalGreqlEvaluator;
-import de.uni_koblenz.jgralab.greql2.evaluator.Query;
+import de.uni_koblenz.jgralab.greql2.evaluator.QueryImpl;
 import de.uni_koblenz.jgralab.greql2.schema.LongLiteral;
 
 /**
@@ -50,7 +50,7 @@ import de.uni_koblenz.jgralab.greql2.schema.LongLiteral;
  */
 public class LongLiteralEvaluator extends VertexEvaluator<LongLiteral> {
 
-	public LongLiteralEvaluator(LongLiteral vertex, Query query) {
+	public LongLiteralEvaluator(LongLiteral vertex, QueryImpl query) {
 		super(vertex, query);
 	}
 

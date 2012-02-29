@@ -94,7 +94,7 @@ public class GreqlEvaluatorImpl implements InternalGreqlEvaluator,
 							"Loading"));
 		}
 
-		GreqlEvaluatorImpl eval = new GreqlEvaluatorImpl(new Query(query),
+		GreqlEvaluatorImpl eval = new GreqlEvaluatorImpl(new QueryImpl(query),
 				datagraph, null, null);
 		Object result = eval.getResult();
 		System.out.println("Evaluation Result:");
@@ -185,7 +185,7 @@ public class GreqlEvaluatorImpl implements InternalGreqlEvaluator,
 	 */
 	private long passedInterpretationSteps;
 
-	private final Query query;
+	private final QueryImpl query;
 
 	/**
 	 * should be called by every vertex evaluator to indicate a progress. The
@@ -302,7 +302,7 @@ public class GreqlEvaluatorImpl implements InternalGreqlEvaluator,
 	 *            the ProgressFunction which indicates the progress, for
 	 *            instance display a progress bar etc.
 	 */
-	public GreqlEvaluatorImpl(Query query, Graph datagraph,
+	public GreqlEvaluatorImpl(QueryImpl query, Graph datagraph,
 			Map<String, Object> variables, ProgressFunction progressFunction) {
 		this.query = query;
 		this.datagraph = datagraph;

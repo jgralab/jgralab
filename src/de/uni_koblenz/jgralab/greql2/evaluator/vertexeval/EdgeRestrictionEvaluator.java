@@ -40,7 +40,7 @@ import java.util.Set;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.greql2.evaluator.InternalGreqlEvaluator;
-import de.uni_koblenz.jgralab.greql2.evaluator.Query;
+import de.uni_koblenz.jgralab.greql2.evaluator.QueryImpl;
 import de.uni_koblenz.jgralab.greql2.schema.EdgeRestriction;
 import de.uni_koblenz.jgralab.greql2.schema.Expression;
 import de.uni_koblenz.jgralab.greql2.schema.IsBooleanPredicateOfEdgeRestriction;
@@ -96,7 +96,7 @@ public class EdgeRestrictionEvaluator extends VertexEvaluator<EdgeRestriction> {
 	 * @param vertex
 	 * @param eval
 	 */
-	public EdgeRestrictionEvaluator(EdgeRestriction vertex, Query query) {
+	public EdgeRestrictionEvaluator(EdgeRestriction vertex, QueryImpl query) {
 		super(vertex, query);
 	}
 

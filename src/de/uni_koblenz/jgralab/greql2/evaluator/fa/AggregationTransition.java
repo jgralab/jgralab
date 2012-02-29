@@ -40,7 +40,7 @@ import java.util.Set;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql2.evaluator.InternalGreqlEvaluator;
-import de.uni_koblenz.jgralab.greql2.evaluator.Query;
+import de.uni_koblenz.jgralab.greql2.evaluator.QueryImpl;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.ThisEdgeEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VertexEvaluator;
 import de.uni_koblenz.jgralab.greql2.schema.Expression;
@@ -196,7 +196,7 @@ public class AggregationTransition extends Transition {
 	public AggregationTransition(State start, State end, boolean aggregateFrom,
 			TypeCollection typeCollection, Set<String> roles,
 			VertexEvaluator<? extends Expression> predicateEvaluator,
-			Query query) {
+			QueryImpl query) {
 		super(start, end);
 		this.aggregateFrom = aggregateFrom;
 		validToEdgeRoles = roles;

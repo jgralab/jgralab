@@ -41,7 +41,7 @@ import java.util.List;
 import java.util.Queue;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
-import de.uni_koblenz.jgralab.greql2.evaluator.Query;
+import de.uni_koblenz.jgralab.greql2.evaluator.QueryImpl;
 import de.uni_koblenz.jgralab.greql2.schema.Expression;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Aggregation;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
@@ -65,7 +65,7 @@ public class ThisVertexEvaluator extends VariableEvaluator<ThisVertex> {
 	 * @param vertex
 	 *            the vertex which gets evaluated by this VertexEvaluator
 	 */
-	public ThisVertexEvaluator(ThisVertex vertex, Query query) {
+	public ThisVertexEvaluator(ThisVertex vertex, QueryImpl query) {
 		super(vertex, query);
 	}
 

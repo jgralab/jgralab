@@ -39,7 +39,7 @@ import java.util.ArrayList;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.greql2.evaluator.InternalGreqlEvaluator;
-import de.uni_koblenz.jgralab.greql2.evaluator.Query;
+import de.uni_koblenz.jgralab.greql2.evaluator.QueryImpl;
 import de.uni_koblenz.jgralab.greql2.exception.GreqlException;
 import de.uni_koblenz.jgralab.greql2.funlib.FunLib;
 import de.uni_koblenz.jgralab.greql2.funlib.FunLib.FunctionInfo;
@@ -114,7 +114,7 @@ public class FunctionApplicationEvaluator extends
 	 * @param vertex
 	 *            the vertex which gets evaluated by this VertexEvaluator
 	 */
-	public FunctionApplicationEvaluator(FunctionApplication vertex, Query query) {
+	public FunctionApplicationEvaluator(FunctionApplication vertex, QueryImpl query) {
 		super(vertex, query);
 	}
 

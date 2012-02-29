@@ -38,7 +38,7 @@ package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.greql2.evaluator.InternalGreqlEvaluator;
-import de.uni_koblenz.jgralab.greql2.evaluator.Query;
+import de.uni_koblenz.jgralab.greql2.evaluator.QueryImpl;
 import de.uni_koblenz.jgralab.greql2.evaluator.fa.NFA;
 import de.uni_koblenz.jgralab.greql2.schema.EdgePathDescription;
 import de.uni_koblenz.jgralab.greql2.schema.Expression;
@@ -54,7 +54,7 @@ import de.uni_koblenz.jgralab.greql2.types.TypeCollection;
 public class EdgePathDescriptionEvaluator extends
 		PrimaryPathDescriptionEvaluator<EdgePathDescription> {
 
-	public EdgePathDescriptionEvaluator(EdgePathDescription vertex, Query query) {
+	public EdgePathDescriptionEvaluator(EdgePathDescription vertex, QueryImpl query) {
 		super(vertex, query);
 	}
 

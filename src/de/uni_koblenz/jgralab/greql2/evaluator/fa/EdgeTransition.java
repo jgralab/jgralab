@@ -40,7 +40,7 @@ import java.util.Set;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql2.evaluator.InternalGreqlEvaluator;
-import de.uni_koblenz.jgralab.greql2.evaluator.Query;
+import de.uni_koblenz.jgralab.greql2.evaluator.QueryImpl;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VertexEvaluator;
 import de.uni_koblenz.jgralab.greql2.schema.Expression;
 import de.uni_koblenz.jgralab.greql2.types.TypeCollection;
@@ -181,7 +181,7 @@ public class EdgeTransition extends SimpleTransition {
 	public EdgeTransition(State start, State end, AllowedEdgeDirection dir,
 			TypeCollection typeCollection, Set<String> roles,
 			VertexEvaluator<?> edgeEval,
-			VertexEvaluator<? extends Expression> predicateEval, Query query) {
+			VertexEvaluator<? extends Expression> predicateEval, QueryImpl query) {
 		super(start, end, dir, typeCollection, roles, predicateEval, query);
 		allowedEdgeEvaluator = edgeEval;
 	}

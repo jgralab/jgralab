@@ -38,7 +38,7 @@ package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql2.evaluator.InternalGreqlEvaluator;
-import de.uni_koblenz.jgralab.greql2.evaluator.Query;
+import de.uni_koblenz.jgralab.greql2.evaluator.QueryImpl;
 import de.uni_koblenz.jgralab.greql2.funlib.FunLib;
 import de.uni_koblenz.jgralab.greql2.funlib.FunLib.FunctionInfo;
 import de.uni_koblenz.jgralab.greql2.schema.Expression;
@@ -56,7 +56,7 @@ public class PathExistenceEvaluator extends PathSearchEvaluator<PathExistence> {
 
 	private FunctionInfo fi;
 
-	public PathExistenceEvaluator(PathExistence vertex, Query query) {
+	public PathExistenceEvaluator(PathExistence vertex, QueryImpl query) {
 		super(vertex, query);
 	}
 

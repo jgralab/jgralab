@@ -37,7 +37,7 @@ package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.greql2.evaluator.InternalGreqlEvaluator;
-import de.uni_koblenz.jgralab.greql2.evaluator.Query;
+import de.uni_koblenz.jgralab.greql2.evaluator.QueryImpl;
 import de.uni_koblenz.jgralab.greql2.schema.SetConstruction;
 
 /**
@@ -49,7 +49,7 @@ import de.uni_koblenz.jgralab.greql2.schema.SetConstruction;
 public class SetConstructionEvaluator extends
 		ValueConstructionEvaluator<SetConstruction> {
 
-	public SetConstructionEvaluator(SetConstruction vertex, Query query) {
+	public SetConstructionEvaluator(SetConstruction vertex, QueryImpl query) {
 		super(vertex, query);
 	}
 

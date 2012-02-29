@@ -37,7 +37,7 @@ package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.greql2.evaluator.InternalGreqlEvaluator;
-import de.uni_koblenz.jgralab.greql2.evaluator.Query;
+import de.uni_koblenz.jgralab.greql2.evaluator.QueryImpl;
 import de.uni_koblenz.jgralab.greql2.evaluator.fa.NFA;
 import de.uni_koblenz.jgralab.greql2.schema.Expression;
 import de.uni_koblenz.jgralab.greql2.schema.IntermediateVertexPathDescription;
@@ -62,7 +62,7 @@ public class IntermediateVertexPathDescriptionEvaluator extends
 	 *            the vertex this VertexEvaluator evaluates
 	 */
 	public IntermediateVertexPathDescriptionEvaluator(
-			IntermediateVertexPathDescription vertex, Query query) {
+			IntermediateVertexPathDescription vertex, QueryImpl query) {
 		super(vertex, query);
 	}
 

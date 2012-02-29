@@ -38,7 +38,7 @@ package de.uni_koblenz.jgralab.greql2.evaluator.fa;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql2.evaluator.InternalGreqlEvaluator;
-import de.uni_koblenz.jgralab.greql2.evaluator.Query;
+import de.uni_koblenz.jgralab.greql2.evaluator.QueryImpl;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.ThisVertexEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VertexEvaluator;
 import de.uni_koblenz.jgralab.greql2.schema.Expression;
@@ -108,7 +108,7 @@ public class BoolExpressionTransition extends Transition {
 	 * Creates a new transition from start state to end state.
 	 */
 	public BoolExpressionTransition(State start, State end,
-			VertexEvaluator<? extends Expression> boolEval, Query query) {
+			VertexEvaluator<? extends Expression> boolEval, QueryImpl query) {
 		super(start, end);
 		boolExpressionEvaluator = boolEval;
 		ThisVertex v = (ThisVertex) query.getQueryGraph().getFirstVertex(

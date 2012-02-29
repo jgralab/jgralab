@@ -37,7 +37,7 @@ package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.greql2.evaluator.InternalGreqlEvaluator;
-import de.uni_koblenz.jgralab.greql2.evaluator.Query;
+import de.uni_koblenz.jgralab.greql2.evaluator.QueryImpl;
 import de.uni_koblenz.jgralab.greql2.schema.Expression;
 import de.uni_koblenz.jgralab.greql2.schema.IsTypeRestrOfExpression;
 import de.uni_koblenz.jgralab.greql2.schema.TypeId;
@@ -55,7 +55,7 @@ import de.uni_koblenz.jgralab.greql2.types.TypeCollection;
 public abstract class AbstractGraphElementCollectionEvaluator<V extends Expression>
 		extends VertexEvaluator<V> {
 
-	public AbstractGraphElementCollectionEvaluator(V vertex, Query query) {
+	public AbstractGraphElementCollectionEvaluator(V vertex, QueryImpl query) {
 		super(vertex, query);
 	}
 

@@ -37,7 +37,7 @@ package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.greql2.evaluator.InternalGreqlEvaluator;
-import de.uni_koblenz.jgralab.greql2.evaluator.Query;
+import de.uni_koblenz.jgralab.greql2.evaluator.QueryImpl;
 import de.uni_koblenz.jgralab.greql2.schema.ConditionalExpression;
 import de.uni_koblenz.jgralab.greql2.schema.Expression;
 
@@ -59,7 +59,7 @@ public class ConditionalExpressionEvaluator extends
 	 *            the vertex this VertexEvaluator evaluates
 	 */
 	public ConditionalExpressionEvaluator(ConditionalExpression vertex,
-			Query query) {
+			QueryImpl query) {
 		super(vertex, query);
 	}
 

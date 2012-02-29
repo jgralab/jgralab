@@ -38,7 +38,7 @@ package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql2.evaluator.InternalGreqlEvaluator;
-import de.uni_koblenz.jgralab.greql2.evaluator.Query;
+import de.uni_koblenz.jgralab.greql2.evaluator.QueryImpl;
 import de.uni_koblenz.jgralab.greql2.evaluator.fa.DFA;
 import de.uni_koblenz.jgralab.greql2.funlib.graph.ReachableVertices;
 import de.uni_koblenz.jgralab.greql2.schema.Expression;
@@ -54,7 +54,7 @@ import de.uni_koblenz.jgralab.greql2.schema.PathDescription;
 public class ForwardVertexSetEvaluator extends
 		PathSearchEvaluator<ForwardVertexSet> {
 
-	public ForwardVertexSetEvaluator(ForwardVertexSet vertex, Query query) {
+	public ForwardVertexSetEvaluator(ForwardVertexSet vertex, QueryImpl query) {
 		super(vertex, query);
 	}
 

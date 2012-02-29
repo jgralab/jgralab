@@ -39,7 +39,7 @@ import java.util.ArrayList;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.greql2.evaluator.InternalGreqlEvaluator;
-import de.uni_koblenz.jgralab.greql2.evaluator.Query;
+import de.uni_koblenz.jgralab.greql2.evaluator.QueryImpl;
 import de.uni_koblenz.jgralab.greql2.evaluator.fa.NFA;
 import de.uni_koblenz.jgralab.greql2.schema.IsSequenceElementOf;
 import de.uni_koblenz.jgralab.greql2.schema.SequentialPathDescription;
@@ -56,7 +56,7 @@ public class SequentialPathDescriptionEvaluator extends
 	 *            the vertex this VertexEvaluator evaluates
 	 */
 	public SequentialPathDescriptionEvaluator(SequentialPathDescription vertex,
-			Query query) {
+			QueryImpl query) {
 		super(vertex, query);
 	}
 

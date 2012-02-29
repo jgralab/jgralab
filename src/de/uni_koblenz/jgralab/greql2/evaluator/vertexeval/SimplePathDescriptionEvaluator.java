@@ -37,7 +37,7 @@ package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.greql2.evaluator.InternalGreqlEvaluator;
-import de.uni_koblenz.jgralab.greql2.evaluator.Query;
+import de.uni_koblenz.jgralab.greql2.evaluator.QueryImpl;
 import de.uni_koblenz.jgralab.greql2.evaluator.fa.NFA;
 import de.uni_koblenz.jgralab.greql2.schema.Expression;
 import de.uni_koblenz.jgralab.greql2.schema.IsEdgeRestrOf;
@@ -55,7 +55,7 @@ public class SimplePathDescriptionEvaluator extends
 		PrimaryPathDescriptionEvaluator<SimplePathDescription> {
 
 	public SimplePathDescriptionEvaluator(SimplePathDescription vertex,
-			Query query) {
+			QueryImpl query) {
 		super(vertex, query);
 	}
 
