@@ -46,7 +46,6 @@ import org.pcollections.PVector;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
-import de.uni_koblenz.jgralab.GraphStructureChangedListener;
 import de.uni_koblenz.jgralab.ImplementationType;
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.Vertex;
@@ -147,19 +146,15 @@ public class GreqlParser extends ParserHelper {
 	}
 
 	public GreqlParser(String source) {
-		this(source, null, null);
+		this(source, null);
 	}
 
-	public GreqlParser(String source, Set<String> subQueryNames,
-			GraphStructureChangedListener gscl) {
+	public GreqlParser(String source, Set<String> subQueryNames) {
 		query = source;
 		parsingStack = new Stack<Integer>();
 		predicateStack = new Stack<Boolean>();
 		schema = Greql2Schema.instance();
 		graph = schema.createGreql2Graph(ImplementationType.STANDARD);
-		if (gscl != null) {
-			graph.addGraphStructureChangedListener(gscl);
-		}
 		tokens = GreqlLexer.scan(source);
 		afterParsingvariableSymbolTable = new SymbolTable();
 		duringParsingvariableSymbolTable = new SimpleSymbolTable();
@@ -211,21 +206,11 @@ public class GreqlParser extends ParserHelper {
 	}
 
 	public static Greql2Graph parse(String query) {
-		return parse(query, null, null);
-	}
-
-	public static Greql2Graph parse(String query,
-			GraphStructureChangedListener gscl) {
-		return parse(query, null, gscl);
+		return parse(query, null);
 	}
 
 	public static Greql2Graph parse(String query, Set<String> subQueryNames) {
-		return parse(query, subQueryNames, null);
-	}
-
-	public static Greql2Graph parse(String query, Set<String> subQueryNames,
-			GraphStructureChangedListener gscl) {
-		GreqlParser parser = new GreqlParser(query, subQueryNames, gscl);
+		GreqlParser parser = new GreqlParser(query, subQueryNames);
 		parser.parse();
 		return parser.getGraph();
 	}

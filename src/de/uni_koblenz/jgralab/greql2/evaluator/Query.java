@@ -46,6 +46,7 @@ import java.util.Set;
 import org.pcollections.PSet;
 
 import de.uni_koblenz.jgralab.GraphStructureChangedAdapter;
+import de.uni_koblenz.jgralab.GraphStructureChangedListener;
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.graphmarker.GraphMarker;
@@ -174,7 +175,8 @@ public class Query extends GraphStructureChangedAdapter {
 		}
 		if (queryGraph == null) {
 			long t0 = System.currentTimeMillis();
-			queryGraph = GreqlParser.parse(queryText, this);
+			queryGraph = GreqlParserWithVertexEvaluatorUpdates.parse(queryText,
+					this);
 			long t1 = System.currentTimeMillis();
 			parseTime = t1 - t0;
 			// TODO [greqlevaluator] reenable optimize
@@ -292,6 +294,32 @@ public class Query extends GraphStructureChangedAdapter {
 	@Override
 	public void vertexDeleted(Vertex v) {
 		vertexEvaluators.removeMark(v);
+	}
+
+	private static class GreqlParserWithVertexEvaluatorUpdates extends
+			GreqlParser {
+
+		public GreqlParserWithVertexEvaluatorUpdates(String source,
+				Set<String> subQueryNames, GraphStructureChangedListener gscl) {
+			super(source, subQueryNames);
+			if (gscl != null) {
+				graph.addGraphStructureChangedListener(gscl);
+			}
+		}
+
+		public static Greql2Graph parse(String query,
+				GraphStructureChangedListener gscl) {
+			return parse(query, null, gscl);
+		}
+
+		public static Greql2Graph parse(String query,
+				Set<String> subQueryNames, GraphStructureChangedListener gscl) {
+			GreqlParser parser = new GreqlParserWithVertexEvaluatorUpdates(
+					query, subQueryNames, gscl);
+			parser.parse();
+			return parser.getGraph();
+		}
+
 	}
 
 }
