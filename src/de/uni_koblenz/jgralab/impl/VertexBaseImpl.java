@@ -967,7 +967,7 @@ public abstract class VertexBaseImpl extends
 	@Override
 	@SuppressWarnings("unchecked")
 	public <T extends Vertex> POrderedSet<T> reachableVertices(
-			Class<T> returnType, PathElement... pathElements) {
+			PathElement... pathElements) {
 		PSet<T> result = JGraLab.set();
 		Queue<Vertex> q = new LinkedList<Vertex>();
 		q.add(this);
@@ -980,13 +980,11 @@ public abstract class VertexBaseImpl extends
 			while (vx != null) {
 				for (Edge e : vx.incidences(t.edgeClass, t.edgeDirection)) {
 					if (!t.strictType
-							|| (t.strictType && (t.edgeClass == e
+							|| (t.strictType && (t.edgeClass.getSchemaClass() == e
 									.getSchemaClass()))) {
 						if (i == (pathElements.length - 1)) {
 							Vertex r = e.getThat();
-							if (returnType.isInstance(r)) {
-								result = result.plus((T) r);
-							}
+							result = result.plus((T) r);
 						} else {
 							q.add(e.getThat());
 						}

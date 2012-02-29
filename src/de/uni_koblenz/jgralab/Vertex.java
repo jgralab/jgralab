@@ -257,16 +257,13 @@ public interface Vertex extends GraphElement<VertexClass, Vertex> {
 
 	/**
 	 * @param <T>
-	 * @param returnType
-	 *            the class of the vertices you can reach with that path (acts
-	 *            as implicit GoalRestriction)
 	 * @param pathElements
 	 *            an array of {@link PathElement}s
 	 * @return a Set of vertices reachable by traversing the path given by
 	 *         pathElements
 	 */
 	public <T extends Vertex> POrderedSet<T> reachableVertices(
-			Class<T> returnType, PathElement... pathElements);
+			PathElement... pathElements);
 
 	/**
 	 * Using this method, one can simply iterate over all incident edges of this
