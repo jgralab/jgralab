@@ -77,7 +77,7 @@ public class QueryImpl extends GraphStructureChangedAdapter implements Query {
 	protected Map<String, AttributedElementClass<?, ?>> knownTypes = new HashMap<String, AttributedElementClass<?, ?>>();
 
 	/**
-	 * The GraphMarker that stores all vertex evaluators
+	 * The {@link GraphMarker} that stores all vertex evaluators
 	 */
 	private GraphMarker<VertexEvaluator<? extends Greql2Vertex>> vertexEvaluators;
 
