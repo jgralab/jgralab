@@ -59,7 +59,7 @@ import de.uni_koblenz.jgralab.greql2.schema.Variable;
 import de.uni_koblenz.jgralab.impl.GraphBaseImpl;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 
-public class Query {
+public class Query extends GraphStructureChangedAdapter {
 	private final String queryText;
 	private Greql2Graph queryGraph;
 	private PSet<String> usedVariables;
@@ -174,8 +174,7 @@ public class Query {
 		}
 		if (queryGraph == null) {
 			long t0 = System.currentTimeMillis();
-			queryGraph = GreqlParser.parse(queryText,
-					new VertexEvaluatorUpdater(vertexEvaluators, this));
+			queryGraph = GreqlParser.parse(queryText, this);
 			long t1 = System.currentTimeMillis();
 			parseTime = t1 - t0;
 			// TODO [greqlevaluator] reenable optimize
@@ -284,29 +283,15 @@ public class Query {
 		return knownTypes.put(elem.getSimpleName(), elem);
 	}
 
-	public class VertexEvaluatorUpdater extends GraphStructureChangedAdapter {
+	@Override
+	public void vertexAdded(Vertex v) {
+		vertexEvaluators.mark(v,
+				VertexEvaluator.createVertexEvaluator((Greql2Vertex) v, this));
+	}
 
-		private final GraphMarker<VertexEvaluator<? extends Greql2Vertex>> vertexEvaluators;
-
-		private final Query query;
-
-		public VertexEvaluatorUpdater(
-				GraphMarker<VertexEvaluator<? extends Greql2Vertex>> vertexEvaluators,
-				Query query) {
-			this.vertexEvaluators = vertexEvaluators;
-			this.query = query;
-		}
-
-		@Override
-		public void vertexAdded(Vertex v) {
-			vertexEvaluators.mark(v, VertexEvaluator.createVertexEvaluator(
-					(Greql2Vertex) v, query));
-		}
-
-		@Override
-		public void vertexDeleted(Vertex v) {
-			vertexEvaluators.removeMark(v);
-		}
+	@Override
+	public void vertexDeleted(Vertex v) {
+		vertexEvaluators.removeMark(v);
 	}
 
 }
