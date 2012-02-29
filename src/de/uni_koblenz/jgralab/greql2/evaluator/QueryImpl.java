@@ -71,8 +71,8 @@ public class QueryImpl extends GraphStructureChangedAdapter implements Query {
 	private Greql2Expression rootExpression;
 
 	/**
-	 * The map of SimpleName to Type of types that is known in the evaluator by
-	 * import statements in the greql query
+	 * The {@link Map} of SimpleName to Type of types that is known in the
+	 * evaluator by import statements in the greql query
 	 */
 	protected Map<String, AttributedElementClass<?, ?>> knownTypes = new HashMap<String, AttributedElementClass<?, ?>>();
 
