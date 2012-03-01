@@ -712,9 +712,9 @@ public class Schema2SchemaGraph {
 
 			assert ((vertexClass != null) && (vertexClass.getQualifiedName() != null)) : "FIXME! No QualifiedName for this VertexClass defined!";
 			// Skips object, which already exists internal
-			if (vertexClass.isInternal()) {
-				continue;
-			}
+//			if (vertexClass.isInternal()) {
+//				continue;
+//			}
 
 			// Creates an VertexClass
 			gVertexClass = schemaGraph.createVertexClass();
@@ -778,9 +778,9 @@ public class Schema2SchemaGraph {
 			assert ((edgeClass != null) && (edgeClass.getQualifiedName() != null)) : "FIXME! No QualifiedName for this EdgeClass defined!";
 
 			// Skips all internal present objects.
-			if (edgeClass.isInternal()) {
-				continue;
-			}
+//			if (edgeClass.isInternal()) {
+//				continue;
+//			}
 
 			// Creates an EdgeClass.
 			gEdgeClass = createEdgeClass(edgeClass);
@@ -998,6 +998,8 @@ public class Schema2SchemaGraph {
 		for (Entry<de.uni_koblenz.jgralab.schema.EdgeClass, EdgeClass> entry : edgeClassMap
 				.entrySet()) {
 			// Creates From and To edge
+			System.out.println("Key is: " + entry.getKey());
+			System.out.println("Value is: " + entry.getValue());
 			createIncidenceClass(entry.getKey(), entry.getValue());
 		}
 	}
