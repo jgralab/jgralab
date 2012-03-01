@@ -38,14 +38,20 @@ package de.uni_koblenz.jgralabtest.greql2;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.junit.Test;
 import org.pcollections.PCollection;
+import org.pcollections.PSet;
 import org.pcollections.PVector;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Graph;
+import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.Vertex;
+import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.parser.GreqlParser;
 import de.uni_koblenz.jgralab.greql2.types.Table;
 import de.uni_koblenz.jgralab.greql2.types.Tuple;
@@ -163,4 +169,30 @@ public class SystemTest extends GenericTest {
 
 		assertEquals(crossroadCount, result.size());
 	}
+	
+	@Test
+	public void testSimpleQuery() {
+		Map<String, Object> boundVars = new HashMap<String, Object>();
+		PSet x = JGraLab.set();
+		for (int i=1; i<2000; i++) {
+			x = x.plus(i);
+		}
+		PSet y = JGraLab.set();
+		for (int i=1; i<3000; i++) {
+			y = y.plus(i);
+		}
+		boundVars.put("X", x);
+		boundVars.put("Y", y);
+	//	String query = "using X,Y: from x:X, y:Y reportList x*y end";
+	//	String query = "using X,Y: from x:X, y:Y with (y % 2 <> 1) and (x % 3 = 0) reportList x*y end";
+		String query = //"using X,Y: forall x:X, y:Y @ x*y > 0";
+		"using X,Y: from x:X, y:Y reportMap y->x end";
+		long startTime = System.currentTimeMillis();
+		GreqlEvaluator eval = new GreqlEvaluator(query, null, boundVars);
+		eval.startEvaluation();
+		eval.getResult();
+		long usedTime = System.currentTimeMillis() - startTime;
+		System.out.println("Evaluation of interpreted query took " + usedTime + "msec");
+	}
+	
 }
