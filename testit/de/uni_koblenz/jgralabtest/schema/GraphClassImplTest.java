@@ -1,29 +1,29 @@
 /*
  * JGraLab - The Java Graph Laboratory
- * 
- * Copyright (C) 2006-2011 Institute for Software Technology
+ *
+ * Copyright (C) 2006-2012 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
- * 
+ *
  * For bug reports, documentation and further information, visit
- * 
- *                         http://jgralab.uni-koblenz.de
- * 
+ *
+ *                         https://github.com/jgralab/jgralab
+ *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
  * Free Software Foundation; either version 3 of the License, or (at your
  * option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, see <http://www.gnu.org/licenses>.
- * 
+ *
  * Additional permission under GNU GPL version 3 section 7
- * 
+ *
  * If you modify this Program, or any covered work, by linking or combining
  * it with Eclipse (or a modified version of that program or an Eclipse
  * plugin), containing parts covered by the terms of the Eclipse Public
@@ -33,8 +33,6 @@
  * the parts of JGraLab used as well as that of the covered work.
  */
 package de.uni_koblenz.jgralabtest.schema;
-
-import java.util.Vector;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -88,63 +86,6 @@ public final class GraphClassImplTest extends
 	@Test
 	public void testCompareTo3() {
 		testCompareTo3(graphClass);
-	}
-
-	/**
-	 * getAllSubClasses()
-	 * 
-	 * TEST CASE: Getting all subclasses of an element that has no subclasses
-	 */
-	@Test
-	public void testGetAllSubClasses4() {
-		// A (virgin) GraphClass has no subclasses.
-		testGetAllSubClasses(new Vector<GraphClass>());
-	}
-
-	/**
-	 * getAllSuperClasses()
-	 * 
-	 * TEST CASE: Getting all superclasses of an element that has no
-	 * superclasses
-	 */
-	@Test
-	public void testGetAllSuperClasses4() {
-		Vector<GraphClass> expectedSuperClasses = new Vector<GraphClass>();
-
-		// Each element has a Default-Class as superclass upon creation.
-		// GraphClass does not allow other superclasses.
-		expectedSuperClasses.add(schema.getDefaultGraphClass());
-
-		testGetAllSuperClasses(expectedSuperClasses);
-	}
-
-	/**
-	 * getDirectSubClasses()
-	 * 
-	 * TEST CASE: Getting all direct subclasses of an element that has no direct
-	 * subclasses.
-	 */
-	@Test
-	public void testGetDirectSubClasses4() {
-		// A (virgin) GraphClass has no subclasses.
-		testGetDirectSubClasses(new Vector<GraphClass>());
-	}
-
-	/**
-	 * getDirectSubClasses()
-	 * 
-	 * TEST CASE: Getting all direct superclasses of an element that has no
-	 * direct superclasses.
-	 */
-	@Test
-	public void testGetDirectSuperClasses4() {
-		Vector<GraphClass> expectedSuperClasses = new Vector<GraphClass>();
-
-		// Each element has a Default-Class as superclass upon creation.
-		// GraphClass does not allow other superclasses.
-		expectedSuperClasses.add(schema.getDefaultGraphClass());
-
-		testGetDirectSuperClasses(expectedSuperClasses);
 	}
 
 	@Test

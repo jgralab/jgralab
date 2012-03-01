@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Ant-Version: Apache Ant 1.8.2
 Created-By: 1.6.0_29-b11-402-10M3527 (Apple Inc.)
 Main-Class: de.uni_koblenz.jgralab.JGraLab
-Bundle-Version: 6.0.4.Falkarius
+Bundle-Version: 6.1.2.Falkarius
 Bundle-ManifestVersion: 2
 Bundle-Name: JGraLab
 Bundle-SymbolicName: de.uni_koblenz.jgralab;singleton:=true
@@ -57,31 +57,28 @@ Export-Package: de.uni_koblenz.jgralab,de.uni_koblenz.jgralab.algolib.
  z.jgralab.schema.impl,de.uni_koblenz.jgralab.schema.impl.compilation,
  de.uni_koblenz.jgralab.trans,de.uni_koblenz.jgralab.utilities,de.uni_
  koblenz.jgralab.utilities.ant,de.uni_koblenz.jgralab.utilities.common
- ,de.uni_koblenz.jgralab.utilities.common.json,de.uni_koblenz.jgralab.
- utilities.converter,de.uni_koblenz.jgralab.utilities.csv2tg,de.uni_ko
- blenz.jgralab.utilities.greqlinterface,de.uni_koblenz.jgralab.utiliti
- es.jgralab2owl,de.uni_koblenz.jgralab.utilities.rsa,de.uni_koblenz.jg
- ralab.utilities.schemacompare,de.uni_koblenz.jgralab.utilities.tg2dot
- ,de.uni_koblenz.jgralab.utilities.tg2dot.dot,de.uni_koblenz.jgralab.u
- tilities.tg2dot.graph_layout,de.uni_koblenz.jgralab.utilities.tg2dot.
- graph_layout.definition,de.uni_koblenz.jgralab.utilities.tg2dot.graph
- _layout.reader,de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout.r
- eader.json,de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout.reade
- r.plist,de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout.writer,d
- e.uni_koblenz.jgralab.utilities.tg2dot.graph_layout.writer.json,de.un
- i_koblenz.jgralab.utilities.tg2dot.greql2,de.uni_koblenz.jgralab.util
- ities.tg2dot.greql2.funlib,de.uni_koblenz.jgralab.utilities.tg2gdl,de
- .uni_koblenz.jgralab.utilities.tg2gxl,de.uni_koblenz.jgralab.utilitie
- s.tg2schemagraph,de.uni_koblenz.jgralab.utilities.tg2sidiff,de.uni_ko
- blenz.jgralab.utilities.tg2whatever,de.uni_koblenz.jgralab.utilities.
- tgmerge,de.uni_koblenz.jgralab.utilities.tgraphbrowser,de.uni_koblenz
- .jgralab.utilities.tgschema2java,de.uni_koblenz.jgralab.utilities.tgt
- ree,de.uni_koblenz.jgralab.utilities.xml,org.pcollections
+ ,de.uni_koblenz.jgralab.utilities.converter,de.uni_koblenz.jgralab.ut
+ ilities.csv2tg,de.uni_koblenz.jgralab.utilities.greqlinterface,de.uni
+ _koblenz.jgralab.utilities.jgralab2owl,de.uni_koblenz.jgralab.utiliti
+ es.rsa,de.uni_koblenz.jgralab.utilities.schemacompare,de.uni_koblenz.
+ jgralab.utilities.tg2dot,de.uni_koblenz.jgralab.utilities.tg2dot.dot,
+ de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout,de.uni_koblenz.j
+ gralab.utilities.tg2dot.graph_layout.definition,de.uni_koblenz.jgrala
+ b.utilities.tg2dot.graph_layout.reader,de.uni_koblenz.jgralab.utiliti
+ es.tg2dot.graph_layout.reader.plist,de.uni_koblenz.jgralab.utilities.
+ tg2dot.greql2,de.uni_koblenz.jgralab.utilities.tg2dot.greql2.funlib,d
+ e.uni_koblenz.jgralab.utilities.tg2gdl,de.uni_koblenz.jgralab.utiliti
+ es.tg2gxl,de.uni_koblenz.jgralab.utilities.tg2schemagraph,de.uni_kobl
+ enz.jgralab.utilities.tg2sidiff,de.uni_koblenz.jgralab.utilities.tg2w
+ hatever,de.uni_koblenz.jgralab.utilities.tgmerge,de.uni_koblenz.jgral
+ ab.utilities.tgraphbrowser,de.uni_koblenz.jgralab.utilities.tgschema2
+ java,de.uni_koblenz.jgralab.utilities.tgtree,de.uni_koblenz.jgralab.u
+ tilities.xml,org.pcollections
 Bundle-ActivationPolicy: lazy
 
 Name: de/uni_koblenz/jgralab/
 Implementation-Title: JGraLab
-Implementation-Version: 6.0.4@Falkarius
+Implementation-Version: 6.1.2@Falkarius
 Implementation-Vendor: University of Koblenz, Institute for Software T
  echnology
 

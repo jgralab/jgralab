@@ -1,13 +1,13 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2011 Institute for Software Technology
+ * Copyright (C) 2006-2012 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
  * For bug reports, documentation and further information, visit
  *
- *                         http://jgralab.uni-koblenz.de
+ *                         https://github.com/jgralab/jgralab
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -49,7 +49,7 @@ import de.uni_koblenz.jgralab.schema.Schema;
 public final class LongDomainImpl extends BasicDomainImpl implements LongDomain {
 
 	LongDomainImpl(Schema schema) {
-		super(LONGDOMAIN_NAME, schema.getDefaultPackage());
+		super(LONGDOMAIN_NAME, (PackageImpl) schema.getDefaultPackage());
 	}
 
 	@Override

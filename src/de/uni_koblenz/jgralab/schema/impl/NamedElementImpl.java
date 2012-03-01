@@ -1,29 +1,29 @@
 /*
  * JGraLab - The Java Graph Laboratory
- * 
- * Copyright (C) 2006-2011 Institute for Software Technology
+ *
+ * Copyright (C) 2006-2012 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
- * 
+ *
  * For bug reports, documentation and further information, visit
- * 
- *                         http://jgralab.uni-koblenz.de
- * 
+ *
+ *                         https://github.com/jgralab/jgralab
+ *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
  * Free Software Foundation; either version 3 of the License, or (at your
  * option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, see <http://www.gnu.org/licenses>.
- * 
+ *
  * Additional permission under GNU GPL version 3 section 7
- * 
+ *
  * If you modify this Program, or any covered work, by linking or combining
  * it with Eclipse (or a modified version of that program or an Eclipse
  * plugin), containing parts covered by the terms of the Eclipse Public
@@ -48,16 +48,17 @@ import de.uni_koblenz.jgralab.schema.MapDomain;
 import de.uni_koblenz.jgralab.schema.NamedElement;
 import de.uni_koblenz.jgralab.schema.Package;
 import de.uni_koblenz.jgralab.schema.Schema;
-import de.uni_koblenz.jgralab.schema.exception.InvalidNameException;
 import de.uni_koblenz.jgralab.schema.exception.SchemaException;
 
 public abstract class NamedElementImpl implements NamedElement {
+
+	protected final SchemaImpl schema;
 
 	/**
 	 * The package containing this named element. <code>null</code> if this
 	 * named element is the <code>DefaultPackage</code>.
 	 */
-	protected final Package parentPackage;
+	protected final PackageImpl parentPackage;
 
 	/**
 	 * The fully qualified name of an element in a schema.<br />
@@ -214,7 +215,7 @@ public abstract class NamedElementImpl implements NamedElement {
 	 *            the package containing this named element
 	 * @param schema
 	 *            the schema containing this named element
-	 * @throws InvalidNameException
+	 * @throws IllegalArgumentException
 	 *             if:
 	 *             <ul>
 	 *             <li>the simple name does not meet the required format (see
@@ -240,7 +241,8 @@ public abstract class NamedElementImpl implements NamedElement {
 	 *             that has the exact same qualified name</li>
 	 *             </ul>
 	 */
-	protected NamedElementImpl(String simpleName, Package pkg, Schema schema) {
+	protected NamedElementImpl(String simpleName, PackageImpl pkg,
+			SchemaImpl schema) {
 		/*
 		 * Every named element must be contained in a schema.
 		 */
@@ -249,6 +251,8 @@ public abstract class NamedElementImpl implements NamedElement {
 					+ simpleName
 					+ "' because no containing schema was specified.");
 		}
+
+		this.schema = schema;
 
 		/*
 		 * An empty (null) parent package is only allowed for the
@@ -292,7 +296,7 @@ public abstract class NamedElementImpl implements NamedElement {
 		if ((this instanceof CollectionDomain) || (this instanceof MapDomain)) {
 			if (!COLLECTION_OR_MAPDOMAIN_NAME_PATTERN.matcher(simpleName)
 					.matches()) {
-				throw new InvalidNameException(
+				throw new SchemaException(
 						"Invalid simpleName for Collection- or MapDomain '"
 								+ simpleName
 								+ "': The simple name must not be empty. "
@@ -301,7 +305,7 @@ public abstract class NamedElementImpl implements NamedElement {
 			}
 		} else if (this instanceof Package) {
 			if (!PACKAGE_NAME_PATTERN.matcher(simpleName).matches()) {
-				throw new InvalidNameException(
+				throw new SchemaException(
 						"Invalid simpleName for Package '"
 								+ simpleName
 								+ "': The simple name must start with a small letter. "
@@ -310,7 +314,7 @@ public abstract class NamedElementImpl implements NamedElement {
 			}
 		} else if (!ATTRELEM_OR_NOCOLLDOMAIN_PATTERN.matcher(simpleName)
 				.matches()) {
-			throw new InvalidNameException(
+			throw new SchemaException(
 					"Invalid simpleName for AttributedElementClass or Domain '"
 							+ simpleName
 							+ "': The simple name must not be empty. "
@@ -324,7 +328,7 @@ public abstract class NamedElementImpl implements NamedElement {
 		 * names.
 		 */
 		if (Schema.RESERVED_JAVA_WORDS.contains(simpleName)) {
-			throw new InvalidNameException("Invalid simpleName '" + simpleName
+			throw new SchemaException("Invalid simpleName '" + simpleName
 					+ "': The simple name must not be a reserved Java word.");
 		}
 
@@ -346,7 +350,7 @@ public abstract class NamedElementImpl implements NamedElement {
 		 */
 		if ((this instanceof BasicDomain) || (this instanceof CollectionDomain)
 				|| (this instanceof MapDomain) || (this instanceof GraphClass)) {
-			if (!isInDefaultPackage()) {
+			if (!parentPackage.isDefaultPackage()) {
 				throw new SchemaException(
 						"Invalid parent package '"
 								+ pkg.getQualifiedName()
@@ -373,20 +377,9 @@ public abstract class NamedElementImpl implements NamedElement {
 		if (this instanceof AttributedElementClass) {
 			uniqueName = simpleName;
 		}
-		((SchemaImpl) schema).addNamedElement(this);
+		schema.addNamedElement(this);
 		comments = new ArrayList<String>();
 	}
-
-	/**
-	 * Register this named element wherever it has to be known.
-	 * 
-	 * For example, a package has to be added as subpackage of its parent
-	 * package and to the schema; the same holds for domains.
-	 * 
-	 * A vertex class has to add itself to the graph class and the package; same
-	 * holds for edge classes (+ subclasses).
-	 */
-	protected abstract void register();
 
 	@Override
 	public String toString() {
@@ -448,8 +441,7 @@ public abstract class NamedElementImpl implements NamedElement {
 
 	@Override
 	public Schema getSchema() {
-		assert parentPackage != null : "There's no parent package!";
-		return parentPackage.getSchema();
+		return schema;
 	}
 
 	@Override
@@ -464,7 +456,7 @@ public abstract class NamedElementImpl implements NamedElement {
 
 	@Override
 	public final int hashCode() {
-		return qualifiedName.hashCode() + getSchema().hashCode();
+		return qualifiedName.hashCode() + schema.hashCode();
 	}
 
 	@Override
@@ -472,14 +464,9 @@ public abstract class NamedElementImpl implements NamedElement {
 		if (o == null || !(o instanceof NamedElement)) {
 			return false;
 		}
-		NamedElement other = (NamedElement) o;
-		return getSchema().equals(other.getSchema())
-				&& qualifiedName.equals(other.getQualifiedName());
-	}
-
-	@Override
-	public final boolean isInDefaultPackage() {
-		return (parentPackage != null) && parentPackage.isDefaultPackage();
+		NamedElementImpl other = (NamedElementImpl) o;
+		return schema.equals(other.schema)
+				&& qualifiedName.equals(other.qualifiedName);
 	}
 
 	/**
@@ -518,9 +505,7 @@ public abstract class NamedElementImpl implements NamedElement {
 
 	@Override
 	public void addComment(String comment) {
-		if(((SchemaImpl)getSchema()).isFinished()){
-			throw new SchemaException("No changes to finished schema!");
-		}
+		schema.assertNotFinished();
 		if (comment == null) {
 			return;
 		}

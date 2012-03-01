@@ -1,13 +1,13 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2011 Institute for Software Technology
+ * Copyright (C) 2006-2012 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
  * For bug reports, documentation and further information, visit
  *
- *                         http://jgralab.uni-koblenz.de
+ *                         https://github.com/jgralab/jgralab
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -43,7 +43,7 @@ import de.uni_koblenz.jgralab.schema.Domain;
 import de.uni_koblenz.jgralab.schema.exception.SchemaException;
 
 /**
- * TODO add comment
+ * AttributeImpl represents a grUML attribute on the schema level.
  * 
  * @author ist@uni-koblenz.de
  */
@@ -109,7 +109,7 @@ public class AttributeImpl implements Attribute, Comparable<Attribute> {
 	 */
 	@Override
 	public String toString() {
-		return "attribute " + sortKey;
+		return "Attribute " + sortKey;
 	}
 
 	/*
@@ -182,14 +182,15 @@ public class AttributeImpl implements Attribute, Comparable<Attribute> {
 	public void setDefaultTransactionValue(AttributedElement<?, ?> element)
 			throws GraphIOException {
 		if (defaultValueAsString != null) {
-			if (!defaultTransactionValueComputed) {
-				element.readAttributeValueFromString(name, defaultValueAsString);
-				if (!domain.isComposite()) {
-					defaultTransactionValue = element.getAttribute(name);
-					defaultTransactionValueComputed = true;
-				}
-			} else {
+			if (defaultTransactionValueComputed) {
 				element.setAttribute(name, defaultTransactionValue);
+			} else {
+				if (defaultValueAsString != null) {
+					element.readAttributeValueFromString(name,
+							defaultValueAsString);
+				}
+				defaultTransactionValue = element.getAttribute(name);
+				defaultTransactionValueComputed = true;
 			}
 		}
 	}
@@ -197,14 +198,14 @@ public class AttributeImpl implements Attribute, Comparable<Attribute> {
 	@Override
 	public void setDefaultValue(AttributedElement<?, ?> element)
 			throws GraphIOException {
-		if (!defaultValueComputed) {
+		if (defaultValueComputed) {
+			element.setAttribute(name, defaultValue);
+		} else {
 			if (defaultValueAsString != null) {
 				element.readAttributeValueFromString(name, defaultValueAsString);
 			}
 			defaultValue = element.getAttribute(name);
 			defaultValueComputed = true;
-		} else {
-			element.setAttribute(name, defaultValue);
 		}
 	}
 }

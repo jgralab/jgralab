@@ -1,13 +1,13 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2011 Institute for Software Technology
+ * Copyright (C) 2006-2012 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
  * For bug reports, documentation and further information, visit
  *
- *                         http://jgralab.uni-koblenz.de
+ *                         https://github.com/jgralab/jgralab
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -378,6 +378,16 @@ public abstract class GraphImpl extends GraphBaseImpl implements
 	@Override
 	public <T extends Edge> T createEdge(EdgeClass ec, Vertex alpha,
 			Vertex omega) {
+		if (alpha == null) {
+			throw new GraphException("Alpha vertex of an edge must not be null");
+		}
+		if (omega == null) {
+			throw new GraphException("Omega vertex of an edge must not be null");
+		}
+		assert alpha.isValid();
+		assert alpha.getGraph() == this;
+		assert omega.isValid();
+		assert omega.getGraph() == this;
 		T edge = graphFactory.createEdge(ec, 0, this, alpha, omega);
 		edge.initializeAttributesWithDefaultValues();
 		graphCache.addEdge((DatabasePersistableEdge) edge);

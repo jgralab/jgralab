@@ -1,13 +1,13 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2011 Institute for Software Technology
+ * Copyright (C) 2006-2012 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
  * For bug reports, documentation and further information, visit
  *
- *                         http://jgralab.uni-koblenz.de
+ *                         https://github.com/jgralab/jgralab
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -48,7 +48,6 @@ import de.uni_koblenz.jgralab.codegenerator.CodeGenerator;
 import de.uni_koblenz.jgralab.codegenerator.CodeSnippet;
 import de.uni_koblenz.jgralab.schema.EnumDomain;
 import de.uni_koblenz.jgralab.schema.Package;
-import de.uni_koblenz.jgralab.schema.exception.InvalidNameException;
 import de.uni_koblenz.jgralab.schema.exception.SchemaClassAccessException;
 import de.uni_koblenz.jgralab.schema.exception.SchemaException;
 import de.uni_koblenz.jgralab.schema.impl.compilation.SchemaClassManager;
@@ -71,7 +70,7 @@ public final class EnumDomainImpl extends DomainImpl implements EnumDomain {
 	 * @param constants
 	 *            holds a list of the components of the enumeration
 	 */
-	EnumDomainImpl(String sn, Package pkg, List<String> constants) {
+	EnumDomainImpl(String sn, PackageImpl pkg, List<String> constants) {
 		super(sn, pkg);
 		for (String c : constants) {
 			addConst(c);
@@ -80,15 +79,14 @@ public final class EnumDomainImpl extends DomainImpl implements EnumDomain {
 
 	@Override
 	public void addConst(String aConst) {
-		if(((SchemaImpl)getSchema()).isFinished()){
-			throw new SchemaException("No changes to finished schema!");
-		}
+		SchemaImpl s = (SchemaImpl) getSchema();
+		s.assertNotFinished();
 		if (constants.contains(aConst)) {
-			throw new InvalidNameException("Try to add duplicate constant '"
+			throw new SchemaException("Try to add duplicate constant '"
 					+ aConst + "' to EnumDomain" + getQualifiedName());
 		}
-		if (!getSchema().isValidEnumConstant(aConst)) {
-			throw new InvalidNameException(aConst
+		if (!s.isValidEnumConstant(aConst)) {
+			throw new SchemaException(aConst
 					+ " is not a valid enumeration constant.");
 		}
 		constants = constants.plus(aConst);

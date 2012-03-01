@@ -1,13 +1,13 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2011 Institute for Software Technology
+ * Copyright (C) 2006-2012 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
  * For bug reports, documentation and further information, visit
  *
- *                         http://jgralab.uni-koblenz.de
+ *                         https://github.com/jgralab/jgralab
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -36,13 +36,15 @@
 package de.uni_koblenz.jgralab.schema.impl;
 
 import java.lang.reflect.Field;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
-import java.util.SortedSet;
 import java.util.TreeSet;
+
+import org.pcollections.ArrayPSet;
+import org.pcollections.ArrayPVector;
+import org.pcollections.PSet;
+import org.pcollections.PVector;
 
 import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.NoSuchAttributeException;
@@ -50,10 +52,6 @@ import de.uni_koblenz.jgralab.schema.Attribute;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.Constraint;
 import de.uni_koblenz.jgralab.schema.Domain;
-import de.uni_koblenz.jgralab.schema.Package;
-import de.uni_koblenz.jgralab.schema.Schema;
-import de.uni_koblenz.jgralab.schema.exception.DuplicateAttributeException;
-import de.uni_koblenz.jgralab.schema.exception.InheritanceException;
 import de.uni_koblenz.jgralab.schema.exception.SchemaClassAccessException;
 import de.uni_koblenz.jgralab.schema.exception.SchemaException;
 import de.uni_koblenz.jgralab.schema.impl.compilation.SchemaClassManager;
@@ -62,36 +60,15 @@ public abstract class AttributedElementClassImpl<SC extends AttributedElementCla
 		extends NamedElementImpl implements AttributedElementClass<SC, IC> {
 
 	/**
-	 * the list of attributes. Only the own attributes of this class are stored
-	 * here, no inherited attributes
-	 */
-	private final TreeSet<Attribute> attributeList = new TreeSet<Attribute>();
-
-	/**
 	 * the list of all attributes. Own attributes and inherited attributes are
 	 * stored here - but only if the schema is finish
 	 */
-	private SortedSet<Attribute> allAttributeList;
+	protected PVector<Attribute> allAttributes;
 
 	/**
 	 * A set of {@link Constraint}s which can be used to validate the graph.
 	 */
-	protected HashSet<Constraint> constraints = new HashSet<Constraint>(1);
-
-	/**
-	 * the immediate sub classes of this class
-	 */
-	protected Set<SC> directSubClasses = new HashSet<SC>();
-
-	/**
-	 * the sub classes of this class - only set if the schema is finish
-	 */
-	protected Set<SC> allSubClasses;
-
-	/**
-	 * the immediate super classes of this class
-	 */
-	protected Set<SC> directSuperClasses = new HashSet<SC>();
+	protected PSet<Constraint> constraints;
 
 	/**
 	 * maps each attribute to an index
@@ -99,21 +76,16 @@ public abstract class AttributedElementClassImpl<SC extends AttributedElementCla
 	protected HashMap<String, Integer> attributeIndex;
 
 	/**
-	 * the super classes of this class - only set if the schema is finish
-	 */
-	protected Set<SC> allSuperClasses;
-
-	/**
 	 * true if the schema is finish
 	 */
-	private boolean finished = false;
+	protected boolean finished;
 
 	/**
 	 * true if element class is abstract
 	 */
-	private boolean isAbstract = false;
+	private boolean isAbstract;
 
-	private boolean internal = false;
+	private boolean internal;
 
 	/**
 	 * The class object representing the generated interface for this
@@ -128,39 +100,25 @@ public abstract class AttributedElementClassImpl<SC extends AttributedElementCla
 	 */
 	private Class<IC> schemaImplementationClass;
 
-	/**
-	 * builds a new attributed element class
-	 *
-	 * @param qn
-	 *            the unique identifier of the element in the schema
-	 */
-	protected AttributedElementClassImpl(String simpleName, Package pkg,
-			Schema schema) {
+	protected AttributedElementClassImpl(String simpleName, PackageImpl pkg,
+			SchemaImpl schema) {
 		super(simpleName, pkg, schema);
+		allAttributes = ArrayPVector.empty();
+		constraints = ArrayPSet.empty();
 	}
 
 	@Override
 	public void addAttribute(Attribute anAttribute) {
-		if (finished) {
-			throw new SchemaException("No changes to finished schema!");
-		}
+		assertNotFinished();
 
 		if (containsAttribute(anAttribute.getName())) {
-			throw new DuplicateAttributeException(anAttribute.getName(),
-					getQualifiedName());
+			throw new SchemaException("Duplicate attribute '"
+					+ anAttribute.getName() + "' in AttributedElementClass '"
+					+ getQualifiedName() + "'");
 		}
-		// Check if a subclass already contains an attribute with that name. In
-		// that case, it may not be added, too.
-		if (subclassContainsAttribute(anAttribute.getName())) {
-			throw new DuplicateAttributeException(
-					"Duplicate Attribute '"
-							+ anAttribute.getName()
-							+ "' in AttributedElementClass '"
-							+ getQualifiedName()
-							+ "'. "
-							+ "A derived AttributedElementClass already contains this Attribute.");
-		}
-		attributeList.add(anAttribute);
+		TreeSet<Attribute> s = new TreeSet<Attribute>(allAttributes);
+		s.add(anAttribute);
+		allAttributes = ArrayPVector.<Attribute> empty().plusAll(s);
 	}
 
 	@Override
@@ -176,125 +134,34 @@ public abstract class AttributedElementClassImpl<SC extends AttributedElementCla
 
 	@Override
 	public void addConstraint(Constraint constraint) {
-		if (finished) {
-			throw new SchemaException("No changes to finished schema!");
-		}
-		constraints.add(constraint);
-	}
-
-	/**
-	 * adds a superClass to this class
-	 *
-	 * @param superClass
-	 *            the class to add as superclass
-	 */
-	@SuppressWarnings("unchecked")
-	protected void addSuperClass(SC superClass) {
-		if (finished) {
-			throw new SchemaException("No changes to finished schema!");
-		}
-
-		if ((superClass == this) || (superClass == null)) {
-			return;
-		}
-		directSuperClasses.remove(getSchema().getDefaultGraphClass());
-		directSuperClasses.remove(getSchema().getDefaultEdgeClass());
-		directSuperClasses.remove(getSchema().getDefaultVertexClass());
-
-		for (Attribute a : superClass.getAttributeList()) {
-			if (getOwnAttribute(a.getName()) != null) {
-				throw new InheritanceException("Cannot add "
-						+ superClass.getQualifiedName() + " as superclass of "
-						+ getQualifiedName() + ", cause: Attribute "
-						+ a.getName() + " is declared in both classes");
-			}
-		}
-		if (superClass.isSubClassOf((SC) this)) {
-			throw new InheritanceException(
-					"Cycle in class hierarchie for classes: "
-							+ getQualifiedName() + " and "
-							+ superClass.getQualifiedName());
-		}
-		directSuperClasses.add(superClass);
-		((AttributedElementClassImpl<SC, IC>) superClass).directSubClasses
-				.add((SC) this);
+		assertNotFinished();
+		constraints = constraints.plus(constraint);
 	}
 
 	/**
 	 * @return a textual representation of all attributes the element holds
 	 */
 	protected String attributesToString() {
-		StringBuilder output = new StringBuilder("\nSelf Attributes:\n");
-		Iterator<Attribute> it = attributeList.iterator();
-		Attribute a;
-		while (it.hasNext()) {
-			a = it.next();
-			output.append(a.toString() + "\n");
-		}
-		output.append("\nSelf + Inherited Attributes:\n");
-		it = getAttributeList().iterator();
-		while (it.hasNext()) {
-			a = it.next();
-			output.append(a.toString() + "\n");
+		StringBuilder output = new StringBuilder("Attributes:\n");
+		for (Attribute a : getAttributeList()) {
+			output.append("\t" + a.toString() + "\n");
 		}
 		return output.toString();
 	}
 
 	@Override
 	public boolean containsAttribute(String name) {
+		if (finished) {
+			return attributeIndex.containsKey(name);
+		}
 		return (getAttribute(name) != null);
 	}
 
 	@Override
-	public Set<SC> getAllSubClasses() {
-		if (finished) {
-			return allSubClasses;
-		}
-
-		Set<SC> returnSet = new HashSet<SC>();
-		for (SC subclass : directSubClasses) {
-			returnSet.add(subclass);
-			returnSet.addAll(subclass.getAllSubClasses());
-		}
-		return returnSet;
-	}
-
-	@Override
-	public Set<SC> getAllSuperClasses() {
-		if (finished) {
-			return allSuperClasses;
-		}
-
-		HashSet<SC> allSuperClasses = new HashSet<SC>();
-		allSuperClasses.addAll(directSuperClasses);
-		for (SC superClass : directSuperClasses) {
-			allSuperClasses.addAll(superClass.getAllSuperClasses());
-		}
-		return allSuperClasses;
-	}
-
-	@Override
 	public Attribute getAttribute(String name) {
-		// TODO ask if Attributes save as map
-		if (finished) {
-			Iterator<Attribute> it = allAttributeList.iterator();
-			Attribute a;
-			while (it.hasNext()) {
-				a = it.next();
-				if (a.getName().equals(name)) {
-					return a;
-				}
-			}
-		}
-
-		Attribute ownAttr = getOwnAttribute(name);
-		if (ownAttr != null) {
-			return ownAttr;
-		}
-		for (SC superClass : directSuperClasses) {
-			Attribute inheritedAttr = superClass.getAttribute(name);
-			if (inheritedAttr != null) {
-				return inheritedAttr;
+		for (Attribute a : allAttributes) {
+			if (a.getName().equals(name)) {
+				return a;
 			}
 		}
 		return null;
@@ -302,28 +169,12 @@ public abstract class AttributedElementClassImpl<SC extends AttributedElementCla
 
 	@Override
 	public int getAttributeCount() {
-		if (finished) {
-			return allAttributeList.size();
-		}
-		int attrCount = getOwnAttributeCount();
-		for (SC superClass : directSuperClasses) {
-			attrCount += superClass.getAttributeCount();
-		}
-		return attrCount;
+		return allAttributes.size();
 	}
 
 	@Override
-	public SortedSet<Attribute> getAttributeList() {
-		if (finished) {
-			return allAttributeList;
-		}
-
-		TreeSet<Attribute> attrList = new TreeSet<Attribute>();
-		attrList.addAll(attributeList);
-		for (SC superClass : directSuperClasses) {
-			attrList.addAll(superClass.getAttributeList());
-		}
-		return attrList;
+	public List<Attribute> getAttributeList() {
+		return allAttributes;
 	}
 
 	@Override
@@ -331,26 +182,15 @@ public abstract class AttributedElementClassImpl<SC extends AttributedElementCla
 		return constraints;
 	}
 
-	@Override
-	public Set<SC> getDirectSubClasses() {
-		return directSubClasses;
-	}
-
-	@Override
-	public Set<SC> getDirectSuperClasses() {
-		return directSuperClasses;
-	}
-
 	@SuppressWarnings("unchecked")
 	@Override
 	public Class<IC> getSchemaClass() {
 		if (schemaClass == null) {
-			String schemaClassName = getSchema().getPackagePrefix() + "."
+			String schemaClassName = schema.getPackagePrefix() + "."
 					+ getQualifiedName();
 			try {
 				schemaClass = (Class<IC>) Class.forName(schemaClassName, true,
-						SchemaClassManager.instance(getSchema()
-								.getQualifiedName()));
+						SchemaClassManager.instance(schema.getQualifiedName()));
 			} catch (ClassNotFoundException e) {
 				throw new SchemaClassAccessException(
 						"Can't load (generated) schema class for AttributedElementClass '"
@@ -386,52 +226,13 @@ public abstract class AttributedElementClassImpl<SC extends AttributedElementCla
 	}
 
 	@Override
-	public Attribute getOwnAttribute(String name) {
-		Iterator<Attribute> it = attributeList.iterator();
-		Attribute a;
-		while (it.hasNext()) {
-			a = it.next();
-			if (a.getName().equals(name)) {
-				return a;
-			}
-		}
-		return null;
-	}
-
-	@Override
-	public int getOwnAttributeCount() {
-		return attributeList.size();
-	}
-
-	@Override
-	public SortedSet<Attribute> getOwnAttributeList() {
-		return attributeList;
-	}
-
-	@Override
 	public boolean hasAttributes() {
 		return !getAttributeList().isEmpty();
 	}
 
 	@Override
-	public boolean hasOwnAttributes() {
-		return !attributeList.isEmpty();
-	}
-
-	@Override
 	public boolean isAbstract() {
 		return isAbstract;
-	}
-
-	@Override
-	public boolean isDirectSubClassOf(SC anAttributedElementClass) {
-		return directSuperClasses.contains(anAttributedElementClass);
-	}
-
-	@Override
-	public boolean isDirectSuperClassOf(SC anAttributedElementClass) {
-		return ((AttributedElementClassImpl<SC, IC>) anAttributedElementClass).directSuperClasses
-				.contains(this);
 	}
 
 	@Override
@@ -444,33 +245,8 @@ public abstract class AttributedElementClassImpl<SC extends AttributedElementCla
 	}
 
 	@Override
-	public boolean isSubClassOf(SC anAttributedElementClass) {
-		return getAllSuperClasses().contains(anAttributedElementClass);
-	}
-
-	@Override
-	public boolean isSuperClassOf(SC anAttributedElementClass) {
-		return anAttributedElementClass.getAllSuperClasses().contains(this);
-	}
-
-	@Override
-	public boolean isSuperClassOfOrEquals(SC anAttributedElementClass) {
-		return ((this == anAttributedElementClass) || (isSuperClassOf(anAttributedElementClass)));
-	}
-
-	@Override
 	public void setAbstract(boolean isAbstract) {
 		this.isAbstract = isAbstract;
-	}
-
-	protected boolean subclassContainsAttribute(String name) {
-		for (SC subClass : getAllSubClasses()) {
-			Attribute subclassAttr = subClass.getAttribute(name);
-			if (subclassAttr != null) {
-				return true;
-			}
-		}
-		return false;
 	}
 
 	/**
@@ -478,33 +254,11 @@ public abstract class AttributedElementClassImpl<SC extends AttributedElementCla
 	 * attribute list
 	 */
 	protected void finish() {
-		allSuperClasses = new HashSet<SC>();
-		allSuperClasses.addAll(directSuperClasses);
-		for (SC superClass : directSuperClasses) {
-			allSuperClasses.addAll(superClass.getAllSuperClasses());
-		}
-
-		allSubClasses = new HashSet<SC>();
-		allSubClasses.addAll(directSubClasses);
-		for (SC subClass : directSubClasses) {
-			allSubClasses.addAll(subClass.getAllSubClasses());
-		}
-
-		allAttributeList = new TreeSet<Attribute>();
-		allAttributeList.addAll(attributeList);
-		for (SC superClass : directSuperClasses) {
-			allAttributeList.addAll(superClass.getAttributeList());
-		}
-
-		directSubClasses = Collections.unmodifiableSet(directSubClasses);
-		directSuperClasses = Collections.unmodifiableSet(directSuperClasses);
-		allSuperClasses = Collections.unmodifiableSet(allSuperClasses);
-		allSubClasses = Collections.unmodifiableSet(allSubClasses);
-		allAttributeList = Collections.unmodifiableSortedSet(allAttributeList);
+		assert allAttributes != null;
 
 		attributeIndex = new HashMap<String, Integer>();
 		int i = 0;
-		for (Attribute a : allAttributeList) {
+		for (Attribute a : allAttributes) {
 			attributeIndex.put(a.getName(), i);
 			++i;
 		}
@@ -512,46 +266,34 @@ public abstract class AttributedElementClassImpl<SC extends AttributedElementCla
 		finished = true;
 	}
 
-	/**
-	 * Called if the schema is reopen
-	 */
-	protected void reopen() {
-		directSubClasses = new HashSet<SC>(directSubClasses);
-		directSuperClasses = new HashSet<SC>(directSuperClasses);
-		allSuperClasses = null;
-		allSubClasses = null;
-		allAttributeList = null;
-
-		finished = false;
-	}
-
 	protected boolean isFinished() {
 		return finished;
 	}
 
+	protected void assertNotFinished() {
+		if (finished) {
+			throw new SchemaException(
+					"No changes allowed in a finished Schema.");
+		}
+	}
+
 	@Override
 	public int getAttributeIndex(String name) {
-		Integer i;
-		if(isFinished()) {
-			i = attributeIndex.get(name);
-		}
-		else {
-			int j = 0;
-			for (Attribute a : getAttributeList()) {
-				if(a.getName().equals(name)) {
-					break;
-				}
-				++j;
+		if (finished) {
+			Integer i = attributeIndex.get(name);
+			if (i != null) {
+				return i;
 			}
-			i = Integer.valueOf(j);
-		}
-
-		if (i != null && i < allAttributeList.size()) {
-			return i.intValue();
 		} else {
-			throw new NoSuchAttributeException(this.getSimpleName()
-					+ " doesn't contain an attribute " + name);
+			int i = 0;
+			for (Attribute a : getAttributeList()) {
+				if (a.getName().equals(name)) {
+					return i;
+				}
+				++i;
+			}
 		}
-
+		throw new NoSuchAttributeException(getQualifiedName()
+				+ " doesn't contain an attribute '" + name + "'");
 	}
 }

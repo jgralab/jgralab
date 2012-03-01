@@ -1,29 +1,29 @@
 /*
  * JGraLab - The Java Graph Laboratory
- * 
- * Copyright (C) 2006-2011 Institute for Software Technology
+ *
+ * Copyright (C) 2006-2012 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
- * 
+ *
  * For bug reports, documentation and further information, visit
- * 
- *                         http://jgralab.uni-koblenz.de
- * 
+ *
+ *                         https://github.com/jgralab/jgralab
+ *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
  * Free Software Foundation; either version 3 of the License, or (at your
  * option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, see <http://www.gnu.org/licenses>.
- * 
+ *
  * Additional permission under GNU GPL version 3 section 7
- * 
+ *
  * If you modify this Program, or any covered work, by linking or combining
  * it with Eclipse (or a modified version of that program or an Eclipse
  * plugin), containing parts covered by the terms of the Eclipse Public
@@ -51,10 +51,7 @@ import de.uni_koblenz.jgralab.schema.ListDomain;
 import de.uni_koblenz.jgralab.schema.RecordDomain;
 import de.uni_koblenz.jgralab.schema.RecordDomain.RecordComponent;
 import de.uni_koblenz.jgralab.schema.Schema;
-import de.uni_koblenz.jgralab.schema.exception.InvalidNameException;
-import de.uni_koblenz.jgralab.schema.exception.NoSuchRecordComponentException;
-import de.uni_koblenz.jgralab.schema.exception.RecordCycleException;
-import de.uni_koblenz.jgralab.schema.exception.WrongSchemaException;
+import de.uni_koblenz.jgralab.schema.exception.SchemaException;
 import de.uni_koblenz.jgralab.schema.impl.SchemaImpl;
 
 public class RecordDomainTest extends CompositeDomainTest {
@@ -164,7 +161,7 @@ public class RecordDomainTest extends CompositeDomainTest {
 		return isIn;
 	}
 
-	@Test(expected = InvalidNameException.class)
+	@Test(expected = SchemaException.class)
 	public void testAddComponentWithEmptyNameRejected() {
 		// tests if an empty component name is rejected
 		Schema schema1 = new SchemaImpl("Schema1", "pkgPrefix1");
@@ -174,7 +171,7 @@ public class RecordDomainTest extends CompositeDomainTest {
 		record1.addComponent("", schema1.getDomain("Boolean"));
 	}
 
-	@Test(expected = RecordCycleException.class)
+	@Test(expected = SchemaException.class)
 	public void testOfSelfInclusion() {
 		// tests if an exception occurs during creating a RecordDomain which
 		// includes itself
@@ -185,7 +182,7 @@ public class RecordDomainTest extends CompositeDomainTest {
 		record1.addComponent("this", record1);
 	}
 
-	@Test(expected = RecordCycleException.class)
+	@Test(expected = SchemaException.class)
 	public void testOfCyclicInclusion() {
 		// tests if an exception occurs during creating two RecordDomains which
 		// include each other
@@ -196,7 +193,7 @@ public class RecordDomainTest extends CompositeDomainTest {
 		record3.addComponent("theOther", record2);
 	}
 
-	@Test(expected = RecordCycleException.class)
+	@Test(expected = SchemaException.class)
 	public void testOfCyclicInclusion2() {
 		// tests if an exception occurs during creating two RecordDomains which
 		// include each other
@@ -209,7 +206,7 @@ public class RecordDomainTest extends CompositeDomainTest {
 		record4.addComponent("theOther", record2);
 	}
 
-	@Test(expected = RecordCycleException.class)
+	@Test(expected = SchemaException.class)
 	public void testOfCyclicInclusion3() {
 		Schema s = new SchemaImpl("MySchema", "pkgPrefix1");
 		RecordDomain r1 = s.createRecordDomain("test.R1");
@@ -243,7 +240,7 @@ public class RecordDomainTest extends CompositeDomainTest {
 		record4.addComponent("theR3", record3);
 	}
 
-	@Test(expected = WrongSchemaException.class)
+	@Test(expected = SchemaException.class)
 	public void testOfIncludingDomainsFromOtherSchema() {
 		// test if the creation of an component with a domain from another
 		// schema is rejected
@@ -283,25 +280,6 @@ public class RecordDomainTest extends CompositeDomainTest {
 		for (RecordComponent component : components) {
 			assertTrue(components.contains(component));
 		}
-	}
-
-	@Test
-	public void testGetDomainOfComponent() {
-		// tests if the correct domain is returned
-		RecordDomain rec1 = (RecordDomain) domain1;
-		assertEquals(schema1.getDomain("Boolean"),
-				rec1.getDomainOfComponent("bool1"));
-		rec1 = (RecordDomain) domain4;
-		assertEquals(domain1, rec1.getDomainOfComponent("aRecord"));
-		assertEquals(schema1.getDomain("List<Boolean>"),
-				rec1.getDomainOfComponent("aList"));
-	}
-
-	@Test(expected = NoSuchRecordComponentException.class)
-	public void testGetDomainOfComponentWithNotExistingComponent() {
-		// tests if getting the domain of a not existing component fails
-		RecordDomain rec1 = (RecordDomain) domain1;
-		rec1.getDomainOfComponent("nonsense");
 	}
 
 	@Override

@@ -1,29 +1,29 @@
 /*
  * JGraLab - The Java Graph Laboratory
- * 
- * Copyright (C) 2006-2011 Institute for Software Technology
+ *
+ * Copyright (C) 2006-2012 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
- * 
+ *
  * For bug reports, documentation and further information, visit
- * 
- *                         http://jgralab.uni-koblenz.de
- * 
+ *
+ *                         https://github.com/jgralab/jgralab
+ *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
  * Free Software Foundation; either version 3 of the License, or (at your
  * option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, see <http://www.gnu.org/licenses>.
- * 
+ *
  * Additional permission under GNU GPL version 3 section 7
- * 
+ *
  * If you modify this Program, or any covered work, by linking or combining
  * it with Eclipse (or a modified version of that program or an Eclipse
  * plugin), containing parts covered by the terms of the Eclipse Public
@@ -82,11 +82,11 @@ public class IncidenceClassImpl implements IncidenceClass {
 	private Set<IncidenceClass> redefinedIncidenceClasses;
 
 	private Set<IncidenceClass> allRedefinedIncidenceClasses;
-	
+
 	private Set<IncidenceClass> subsettedIncidenceClasses;
 
 	private Set<IncidenceClass> allSubsettedIncidenceClasses;
-	
+
 	@Override
 	public AggregationKind getAggregationKind() {
 		return aggregationKind;
@@ -162,7 +162,7 @@ public class IncidenceClassImpl implements IncidenceClass {
 
 	@Override
 	public Set<IncidenceClass> getSubsettedIncidenceClasses() {
-		if(((VertexClassImpl)vertexClass).isFinished()){
+		if (((VertexClassImpl) vertexClass).isFinished()) {
 			return this.allSubsettedIncidenceClasses;
 		}
 		Set<IncidenceClass> result = new HashSet<IncidenceClass>();
@@ -178,11 +178,12 @@ public class IncidenceClassImpl implements IncidenceClass {
 		return vertexClass;
 	}
 
+	@Override
 	public void addRedefinedRole(String rolename) {
-		if(((VertexClassImpl)vertexClass).isFinished()){
+		if (((VertexClassImpl) vertexClass).isFinished()) {
 			throw new SchemaException("No changes to finished schema!");
 		}
-		
+
 		boolean foundRole = false;
 
 		for (IncidenceClass ic : getSubsettedIncidenceClasses()) {
@@ -203,8 +204,7 @@ public class IncidenceClassImpl implements IncidenceClass {
 					}
 					// determine proper end
 					IncidenceClass other = direction == IncidenceDirection.IN ? ec
-							.getTo()
-							: ec.getFrom();
+							.getTo() : ec.getFrom();
 					if (other.getRedefinedIncidenceClasses().contains(ic)) {
 						throw new SchemaException("The role '" + rolename
 								+ "' of EdgeClass '"
@@ -226,6 +226,7 @@ public class IncidenceClassImpl implements IncidenceClass {
 		}
 	}
 
+	@Override
 	public void addRedefinedRoles(Set<String> rolenames) {
 		if (rolenames == null) {
 			return;
@@ -236,7 +237,7 @@ public class IncidenceClassImpl implements IncidenceClass {
 	}
 
 	public void addSubsettedIncidenceClass(IncidenceClass other) {
-		if(((VertexClassImpl)vertexClass).isFinished()){
+		if (((VertexClassImpl) vertexClass).isFinished()) {
 			throw new SchemaException("No changes to finished schema!");
 		}
 		EdgeClassImpl.checkIncidenceClassSpecialization(this, other);
@@ -247,6 +248,7 @@ public class IncidenceClassImpl implements IncidenceClass {
 		subsettedIncidenceClasses.add(other);
 	}
 
+	@Override
 	public Set<String> getAllRoles() {
 		Set<String> result = new HashSet<String>();
 		result.add(getRolename());
@@ -256,6 +258,7 @@ public class IncidenceClassImpl implements IncidenceClass {
 		return result;
 	}
 
+	@Override
 	public Set<String> getRedefinedRoles() {
 		Set<String> result = new HashSet<String>();
 		for (IncidenceClass ic : getRedefinedIncidenceClasses()) {
@@ -264,39 +267,27 @@ public class IncidenceClassImpl implements IncidenceClass {
 		return result;
 	}
 
-	// public Set<String> getRedefinedAndOwnRoles() {
-	// Set<String> roles = new HashSet<String>(getRedefinedRoles());
-	// roles.add(getRolename());
-	// return roles;
-	// }
-
-	
-	void finish(){
+	void finish() {
 		this.allSubsettedIncidenceClasses = new HashSet<IncidenceClass>();
 		this.allSubsettedIncidenceClasses.addAll(subsettedIncidenceClasses);
 		for (IncidenceClass ic : subsettedIncidenceClasses) {
-			this.allSubsettedIncidenceClasses.addAll(
-					ic.getSubsettedIncidenceClasses());
+			this.allSubsettedIncidenceClasses.addAll(ic
+					.getSubsettedIncidenceClasses());
 		}
-		
+
 		this.allRedefinedIncidenceClasses = new HashSet<IncidenceClass>();
 		this.allRedefinedIncidenceClasses.addAll(redefinedIncidenceClasses);
 		for (IncidenceClass ic : subsettedIncidenceClasses) {
-			this.allRedefinedIncidenceClasses.addAll(
-					ic.getRedefinedIncidenceClasses());
+			this.allRedefinedIncidenceClasses.addAll(ic
+					.getRedefinedIncidenceClasses());
 		}
 		for (IncidenceClass ic : redefinedIncidenceClasses) {
-			this.allRedefinedIncidenceClasses.addAll(
-					ic.getRedefinedIncidenceClasses());
-		}	
-		
-		this.allSubsettedIncidenceClasses = Collections.unmodifiableSet(this.allSubsettedIncidenceClasses);
-		this.allRedefinedIncidenceClasses = Collections.unmodifiableSet(this.allRedefinedIncidenceClasses);
+			this.allRedefinedIncidenceClasses.addAll(ic
+					.getRedefinedIncidenceClasses());
+		}
+		this.allSubsettedIncidenceClasses = Collections
+				.unmodifiableSet(this.allSubsettedIncidenceClasses);
+		this.allRedefinedIncidenceClasses = Collections
+				.unmodifiableSet(this.allRedefinedIncidenceClasses);
 	}
-	
-	void reopen(){
-		this.allSubsettedIncidenceClasses = null;
-		this.allRedefinedIncidenceClasses = null;
-	}
-	
 }

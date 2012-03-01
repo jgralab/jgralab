@@ -1,3 +1,37 @@
+/*
+ * JGraLab - The Java Graph Laboratory
+ *
+ * Copyright (C) 2006-2012 Institute for Software Technology
+ *                         University of Koblenz-Landau, Germany
+ *                         ist@uni-koblenz.de
+ *
+ * For bug reports, documentation and further information, visit
+ *
+ *                         https://github.com/jgralab/jgralab
+ *
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the
+ * Free Software Foundation; either version 3 of the License, or (at your
+ * option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+ * Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, see <http://www.gnu.org/licenses>.
+ *
+ * Additional permission under GNU GPL version 3 section 7
+ *
+ * If you modify this Program, or any covered work, by linking or combining
+ * it with Eclipse (or a modified version of that program or an Eclipse
+ * plugin), containing parts covered by the terms of the Eclipse Public
+ * License (EPL), the licensors of this Program grant you additional
+ * permission to convey the resulting work.  Corresponding Source for a
+ * non-source form of such a combination shall include the source code for
+ * the parts of JGraLab used as well as that of the covered work.
+ */
 package de.uni_koblenz.jgralab.impl.generic;
 
 import java.io.IOException;
@@ -48,7 +82,7 @@ public class GenericGraphImpl extends GraphImpl {
 	protected GenericGraphImpl(GraphClass type, String id, int vmax, int emax) {
 		super(id, type, vmax, emax);
 		this.type = type;
-		if(type.getAttributeCount() > 0) {
+		if (type.getAttributeCount() > 0) {
 			attributes = new Object[type.getAttributeCount()];
 			if (!isLoading()) {
 				GenericGraphImpl.initializeGenericAttributeValues(this);
@@ -129,19 +163,33 @@ public class GenericGraphImpl extends GraphImpl {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public <T> T getAttribute(String name) throws NoSuchAttributeException {
+	public <T> T getAttribute(String name) {
 		int i = getAttributedElementClass().getAttributeIndex(name);
 		return (T) attributes[i];
 	}
 
 	@Override
-	public <T> void setAttribute(String name, T data)
-			throws NoSuchAttributeException {
+	public <T> void setAttribute(String name, T data) {
 		int i = getAttributedElementClass().getAttributeIndex(name);
 		if (type.getAttribute(name).getDomain().isConformGenericValue(data)) {
-			attributes[i] = data;
+			if (hasECARuleManager()) {
+				T oldValue = getAttribute(name);
+				getECARuleManager().fireBeforeChangeAttributeEvents(this, name,
+						oldValue, data);
+				attributes[i] = data;
+				getECARuleManager().fireAfterChangeAttributeEvents(this, name,
+						oldValue, data);
+			} else {
+				attributes[i] = data;
+			}
 		} else {
-			throw new ClassCastException();
+			Domain d = type.getAttribute(name).getDomain();
+			throw new ClassCastException("Expected "
+					+ ((d instanceof RecordDomain) ? RecordImpl.class.getName()
+							: d.getJavaAttributeImplementationTypeName(d
+									.getPackageName()))
+					+ " object, but received " + data.getClass().getName()
+					+ " object instead");
 		}
 	}
 
@@ -192,7 +240,7 @@ public class GenericGraphImpl extends GraphImpl {
 	 * Returns the default value for attributes in the generic implementation if
 	 * there is no explicitly defined default value, according to the
 	 * attribute's domain.
-	 *
+	 * 
 	 * @param domain
 	 *            The attribute's domain.
 	 * @return The default value for attributes of the domain.
@@ -214,30 +262,6 @@ public class GenericGraphImpl extends GraphImpl {
 			return null;
 		}
 	}
-
-	// protected int getAttributeIndex(AttributedElementClass<?, ?> aec,
-	// String name) {
-	// assert (aec.getAttributeCount() > 0);
-	// Map<String, Integer> indexMap = getIndexMap(aec);
-	// Integer i = indexMap.get(name);
-	// return i == null ? Integer.MAX_VALUE : i.intValue();
-	// }
-
-	// protected Map<String, Integer> getIndexMap(AttributedElementClass<?, ?>
-	// aec) {
-	// if (attributeIndexMaps.containsKey(aec)) {
-	// return attributeIndexMaps.get(aec);
-	// } else {
-	// HashMap<String, Integer> valueIndex = new HashMap<String, Integer>();
-	// int i = 0;
-	// for (Attribute a : aec.getAttributeList()) {
-	// valueIndex.put(a.getName(), i);
-	// ++i;
-	// }
-	// attributeIndexMaps.put(aec, valueIndex);
-	// return valueIndex;
-	// }
-	// }
 
 	/**
 	 * Initializes attributes of an (generic) AttributedElement with their
@@ -263,7 +287,7 @@ public class GenericGraphImpl extends GraphImpl {
 	public boolean isInstanceOf(GraphClass cls) {
 		// Needs to be overridden from the base variant, because that relies on
 		// code generation.
-		return type.equals(cls) || type.isSubClassOf(cls);
+		return type.equals(cls);
 	}
 
 	@Override
@@ -289,36 +313,61 @@ public class GenericGraphImpl extends GraphImpl {
 	}
 
 	// ************** unsupported methods ***************/
+
+	/**
+	 * This method is not supported by the generic implementation and therefore
+	 * throws an {@link UnsupportedOperationException}.
+	 */
 	@Override
 	public Class<? extends Graph> getSchemaClass() {
 		throw new UnsupportedOperationException(
 				"This method is not supported by the generic implementation");
 	}
 
+	/**
+	 * This method is not supported by the generic implementation and therefore
+	 * throws an {@link UnsupportedOperationException}.
+	 */
 	@Override
 	public Vertex getFirstVertex(Class<? extends Vertex> vertexClass) {
 		throw new UnsupportedOperationException(
 				"This method is not supported by the generic implementation");
 	}
 
+	/**
+	 * This method is not supported by the generic implementation and therefore
+	 * throws an {@link UnsupportedOperationException}.
+	 */
 	@Override
 	public Iterable<Vertex> vertices(Class<? extends Vertex> vertexClass) {
 		throw new UnsupportedOperationException(
 				"This method is not supported by the generic implementation");
 	}
 
+	/**
+	 * This method is not supported by the generic implementation and therefore
+	 * throws an {@link UnsupportedOperationException}.
+	 */
 	@Override
 	public Edge getFirstEdge(Class<? extends Edge> edgeClass) {
 		throw new UnsupportedOperationException(
 				"This method is not supported by the generic implementation");
 	}
 
+	/**
+	 * This method is not supported by the generic implementation and therefore
+	 * throws an {@link UnsupportedOperationException}.
+	 */
 	@Override
 	public Iterable<Edge> edges(Class<? extends Edge> edgeClass) {
 		throw new UnsupportedOperationException(
 				"This method is not supported by the generic implementation");
 	}
 
+	/**
+	 * This method is not supported by the generic implementation and therefore
+	 * throws an {@link UnsupportedOperationException}.
+	 */
 	@Override
 	public <T extends Vertex> POrderedSet<T> reachableVertices(
 			Vertex startVertex, String pathDescription, Class<T> vertexType) {

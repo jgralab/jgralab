@@ -1,13 +1,13 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2011 Institute for Software Technology
+ * Copyright (C) 2006-2012 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
  * For bug reports, documentation and further information, visit
  *
- *                         http://jgralab.uni-koblenz.de
+ *                         https://github.com/jgralab/jgralab
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -159,7 +159,7 @@ public class EdgeTest extends InstanceTest {
 	 * If you create several edges and you delete one, the next edge should get
 	 * the id of the deleted edge. If you create a further edge it should get
 	 * the next free id.
-	 *
+	 * 
 	 * @throws Exception
 	 */
 	@Test
@@ -212,7 +212,7 @@ public class EdgeTest extends InstanceTest {
 	// tests of the method Edge getNextEdge(EdgeDirection orientation);
 	/**
 	 * There exists only one edge in the graph
-	 *
+	 * 
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -237,7 +237,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Test in a manually built graph.
-	 *
+	 * 
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -308,7 +308,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Test in a randomly built graph
-	 *
+	 * 
 	 * @throws Exception
 	 */
 	@Test
@@ -424,7 +424,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Creates an array of the EdgeClasses.
-	 *
+	 * 
 	 * @return {Link, SubLink, LinkBack}
 	 * @throws CommitFailedException
 	 */
@@ -449,7 +449,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * An edge which has no following edges.
-	 *
+	 * 
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -471,7 +471,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Test in a manually built graph.
-	 *
+	 * 
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -518,7 +518,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Test in a randomly built graph
-	 *
+	 * 
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -608,7 +608,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * An edge which has no following edges.
-	 *
+	 * 
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -628,7 +628,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Test in a manually built graph.
-	 *
+	 * 
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -673,7 +673,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Test in a randomly built graph
-	 *
+	 * 
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -762,7 +762,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * An edge which has no following edges.
-	 *
+	 * 
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -791,7 +791,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Test in a manually built graph.
-	 *
+	 * 
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -912,7 +912,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Test in a randomly built graph
-	 *
+	 * 
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -1103,7 +1103,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * An edge which has no following edges.
-	 *
+	 * 
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -1130,7 +1130,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Test in a manually built graph.
-	 *
+	 * 
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -1255,7 +1255,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Test in a randomly built graph
-	 *
+	 * 
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -1446,7 +1446,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * An edge which has no following edges.
-	 *
+	 * 
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -1469,7 +1469,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Test in a manually built graph.
-	 *
+	 * 
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -1520,7 +1520,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Test in a randomly built graph
-	 *
+	 * 
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -1634,7 +1634,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * An edge which has no following edges.
-	 *
+	 * 
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -1655,7 +1655,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Test in a manually built graph.
-	 *
+	 * 
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -1705,7 +1705,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Test in a randomly built graph
-	 *
+	 * 
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -1818,7 +1818,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * An edge which has no following edges.
-	 *
+	 * 
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -1847,7 +1847,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Test in a manually built graph.
-	 *
+	 * 
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -1974,7 +1974,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Test in a randomly built graph
-	 *
+	 * 
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -2193,7 +2193,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * An edge which has no following edges.
-	 *
+	 * 
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -2220,7 +2220,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Test in a manually built graph.
-	 *
+	 * 
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -2350,7 +2350,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Test in a randomly built graph
-	 *
+	 * 
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -2602,7 +2602,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Test in a manually built graph.
-	 *
+	 * 
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -2628,7 +2628,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Test in a randomly built graph.
-	 *
+	 * 
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -2646,7 +2646,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Test in a manually built graph.
-	 *
+	 * 
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -2672,7 +2672,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Test in a randomly built graph.
-	 *
+	 * 
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -2690,7 +2690,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Test in a manually built graph.
-	 *
+	 * 
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -2717,7 +2717,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Test in a manually built graph.
-	 *
+	 * 
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -2745,7 +2745,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Test for reversedEdge.
-	 *
+	 * 
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -2773,7 +2773,7 @@ public class EdgeTest extends InstanceTest {
 	 * Creates an randomly build graph an returns an 2-dim ArrayList of Edges,
 	 * which are needed to check the equality in respect to the parameters of
 	 * the methods.
-	 *
+	 * 
 	 * @param classedge
 	 * @param nosubclasses
 	 * @return
@@ -2866,7 +2866,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Test for reversedEdge.
-	 *
+	 * 
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -2891,7 +2891,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Tests if an edge has no previous edge in graph.
-	 *
+	 * 
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -2908,7 +2908,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Test in a manually built graph.
-	 *
+	 * 
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -2930,7 +2930,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Test in a randomly built graph.
-	 *
+	 * 
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -2951,7 +2951,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * An edge which has no following edges.
-	 *
+	 * 
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -2974,7 +2974,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Test in a manually built graph.
-	 *
+	 * 
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -3044,7 +3044,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Test in a randomly built graph.
-	 *
+	 * 
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -3077,7 +3077,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * An edge which has no following edges.
-	 *
+	 * 
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -3098,7 +3098,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Test in a manually built graph.
-	 *
+	 * 
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -3166,7 +3166,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Test in a randomly built graph.
-	 *
+	 * 
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -3195,7 +3195,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * An edge which has no following edges.
-	 *
+	 * 
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -3224,7 +3224,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Tests if an edge is before itself.
-	 *
+	 * 
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -3241,7 +3241,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Tests if an edge is direct before another.
-	 *
+	 * 
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -3260,7 +3260,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Tests if an edge is before another.
-	 *
+	 * 
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -3283,7 +3283,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Tests if an edge is after itself.
-	 *
+	 * 
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -3300,7 +3300,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Tests if an edge is direct after another.
-	 *
+	 * 
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -3319,7 +3319,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Tests if an edge is after another.
-	 *
+	 * 
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -3346,7 +3346,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Tests if an edge is before itself.
-	 *
+	 * 
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -3367,7 +3367,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Tests if an edge is before itself.
-	 *
+	 * 
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -3397,7 +3397,7 @@ public class EdgeTest extends InstanceTest {
 	/**
 	 * Tests if the incident edges of <code>c</code> equals the edges of
 	 * <code>incidentEdges</code>.
-	 *
+	 * 
 	 * @param v
 	 * @param incidentEdges
 	 * @throws CommitFailedException
@@ -3419,7 +3419,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Alpha of an edge is changed to another vertex.
-	 *
+	 * 
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -3458,7 +3458,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Alpha of an reversedEdge is changed to another vertex.
-	 *
+	 * 
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -3497,7 +3497,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Alpha of an edge is set to the previous alpha vertex.
-	 *
+	 * 
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -3530,7 +3530,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Alpha of an edge is changed to the omega vertex.
-	 *
+	 * 
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -3570,7 +3570,7 @@ public class EdgeTest extends InstanceTest {
 	/**
 	 * Alpha of an edge is changed to another vertex. And there exists further
 	 * edges.
-	 *
+	 * 
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -3623,7 +3623,7 @@ public class EdgeTest extends InstanceTest {
 	/**
 	 * An exception should occur if you try to set alpha to a vertex which type
 	 * isn't allowed as an alpha vertex for that edge.
-	 *
+	 * 
 	 * @throws CommitFailedException
 	 */
 	@Test(expected = GraphException.class)
@@ -3640,7 +3640,7 @@ public class EdgeTest extends InstanceTest {
 	 * Creates a random graph and returns an 2-dim ArrayList ret.get(0) =
 	 * incident edges of v1 ret.get(1) = incident edges of v2 ret.get(2) =
 	 * incident edges of v3
-	 *
+	 * 
 	 * @return ret
 	 * @throws CommitFailedException
 	 */
@@ -3689,7 +3689,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Random Test
-	 *
+	 * 
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -3750,7 +3750,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Omega of an edge is changed to another vertex.
-	 *
+	 * 
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -3789,7 +3789,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Omega of an reversedEdge is changed to another vertex.
-	 *
+	 * 
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -3828,7 +3828,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Omega of an edge is set to the previous omega vertex.
-	 *
+	 * 
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -3861,7 +3861,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Omega of an edge is changed to the alpha vertex.
-	 *
+	 * 
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -3895,7 +3895,7 @@ public class EdgeTest extends InstanceTest {
 	/**
 	 * Omega of an edge is changed to another vertex. And there exists further
 	 * edges.
-	 *
+	 * 
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -3947,7 +3947,7 @@ public class EdgeTest extends InstanceTest {
 	/**
 	 * An exception should occur if you try to set omega to a vertex which type
 	 * isn't allowed as an omega vertex for that edge.
-	 *
+	 * 
 	 * @throws CommitFailedException
 	 */
 	@Test(expected = GraphException.class)
@@ -3962,7 +3962,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Random Test
-	 *
+	 * 
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -4022,7 +4022,7 @@ public class EdgeTest extends InstanceTest {
 	/**
 	 * This of an edge is changed to another vertex. And there exists further
 	 * edges.
-	 *
+	 * 
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -4098,7 +4098,7 @@ public class EdgeTest extends InstanceTest {
 	/**
 	 * That of an edge is changed to another vertex. And there exists further
 	 * edges.
-	 *
+	 * 
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -4179,7 +4179,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Tests on edges and reversedEdges.
-	 *
+	 * 
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -4210,7 +4210,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Tests on edges and reversedEdges.
-	 *
+	 * 
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -4241,7 +4241,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Tests on edges and reversedEdges.
-	 *
+	 * 
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -4272,7 +4272,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Tests on edges and reversedEdges.
-	 *
+	 * 
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -4305,7 +4305,7 @@ public class EdgeTest extends InstanceTest {
 	// tests of the method Graph getGraph();
 	/**
 	 * Test with edges of two graphs.
-	 *
+	 * 
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -4358,7 +4358,7 @@ public class EdgeTest extends InstanceTest {
 	// TODO maybe move the following two to graphTest
 	/**
 	 * Tests if the graphversion is increased by creating a new edge.
-	 *
+	 * 
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -4383,7 +4383,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Tests if the graphversion is increased by deleting an edge.
-	 *
+	 * 
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -4410,7 +4410,7 @@ public class EdgeTest extends InstanceTest {
 	/**
 	 * Tests if the graphversion is increased by changing the attributes of an
 	 * edge.
-	 *
+	 * 
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -4440,7 +4440,7 @@ public class EdgeTest extends InstanceTest {
 	// tests of the method AttributedElementClass getAttributedElementClass();
 	/**
 	 * Some test cases for getAttributedElementClass
-	 *
+	 * 
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -4470,7 +4470,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Some test cases for getSchemaClass
-	 *
+	 * 
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -4498,7 +4498,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Some test cases for getGraphClass
-	 *
+	 * 
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -4533,12 +4533,15 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Test with null values.
-	 *
+	 * 
 	 * @throws CommitFailedException
 	 */
 	@Test
 	public void writeReadAttributeValues0() throws GraphIOException,
 			IOException, CommitFailedException {
+		if (implementationType == ImplementationType.DATABASE) {
+			return;
+		}
 		createTransaction(g);
 		DoubleSubNode v1 = g.createDoubleSubNode();
 		DoubleSubNode v2 = g.createDoubleSubNode();
@@ -4592,6 +4595,7 @@ public class EdgeTest extends InstanceTest {
 		VertexTestGraph loadedgraph = null;
 		switch (implementationType) {
 		case DATABASE:
+			break;
 		case STANDARD:
 		case TRANSACTION:
 			loadedgraph = VertexTestSchema.instance().loadVertexTestGraph(
@@ -4607,13 +4611,15 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Test with values.
-	 *
+	 * 
 	 * @throws CommitFailedException
 	 */
 	@Test
 	public void writeReadAttributeValues1() throws GraphIOException,
 			IOException, CommitFailedException {
-
+		if (implementationType == ImplementationType.DATABASE) {
+			return;
+		}
 		createTransaction(g);
 		DoubleSubNode v1 = g.createDoubleSubNode();
 		DoubleSubNode v2 = g.createDoubleSubNode();
@@ -4668,7 +4674,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Tests if the value of the correct attribute is returned.
-	 *
+	 * 
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -4688,7 +4694,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Tests if the value of the correct attribute is returned. reversedEdge
-	 *
+	 * 
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -4710,7 +4716,7 @@ public class EdgeTest extends InstanceTest {
 	/**
 	 * Tests if an exception is thrown if you want to get an attribute which
 	 * doesn't exist.
-	 *
+	 * 
 	 * @throws CommitFailedException
 	 */
 	@Test(expected = NoSuchAttributeException.class)
@@ -4729,7 +4735,7 @@ public class EdgeTest extends InstanceTest {
 	/**
 	 * Tests if an exception is thrown if you want to get an attribute with an
 	 * empty name.
-	 *
+	 * 
 	 * @throws CommitFailedException
 	 */
 	@Test(expected = NoSuchAttributeException.class)
@@ -4750,7 +4756,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Tests if an existing attribute is correct set.
-	 *
+	 * 
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -4771,7 +4777,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Tests if an existing attribute is correct set. reversedEdge
-	 *
+	 * 
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -4792,7 +4798,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Tests if an existing attribute is set to null.
-	 *
+	 * 
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -4812,7 +4818,7 @@ public class EdgeTest extends InstanceTest {
 	/**
 	 * Tests if an exception is thrown if you want to get an attribute which
 	 * doesn't exist.
-	 *
+	 * 
 	 * @throws CommitFailedException
 	 */
 	@Test(expected = NoSuchAttributeException.class)
@@ -4827,7 +4833,7 @@ public class EdgeTest extends InstanceTest {
 	/**
 	 * Tests if an exception is thrown if you want to get an attribute with an
 	 * empty name.
-	 *
+	 * 
 	 * @throws CommitFailedException
 	 */
 	@Test(expected = NoSuchAttributeException.class)
@@ -4843,7 +4849,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Some tests.
-	 *
+	 * 
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -4879,7 +4885,7 @@ public class EdgeTest extends InstanceTest {
 	// tests of the method int compareTo(AttributedElement a);
 	/**
 	 * Test if a vertex is equal to itself.
-	 *
+	 * 
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -4897,7 +4903,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Test if a vertex is smaller than another.
-	 *
+	 * 
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -4917,7 +4923,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Test if a vertex is greater than another.
-	 *
+	 * 
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -4939,7 +4945,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Test if a vertex is equal to itself.
-	 *
+	 * 
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -4957,7 +4963,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Test if a vertex is smaller than another.
-	 *
+	 * 
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -4977,7 +4983,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Test if a vertex is greater than another.
-	 *
+	 * 
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -4999,7 +5005,7 @@ public class EdgeTest extends InstanceTest {
 	// normalEdge
 	/**
 	 * Test if a vertex is equal to itself.
-	 *
+	 * 
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -5017,7 +5023,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Test if a vertex is equal to itself.
-	 *
+	 * 
 	 * @throws CommitFailedException
 	 */
 	@Test
