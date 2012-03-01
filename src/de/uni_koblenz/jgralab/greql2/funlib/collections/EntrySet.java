@@ -42,13 +42,15 @@ import org.pcollections.PMap;
 import org.pcollections.PSet;
 
 import de.uni_koblenz.jgralab.JGraLab;
+import de.uni_koblenz.jgralab.greql2.funlib.Description;
 import de.uni_koblenz.jgralab.greql2.funlib.Function;
 
 public class EntrySet extends Function {
 
+	@Description(params = "map", description = "Returns the set of entries of the given map.",
+			categories = Category.COLLECTIONS_AND_MAPS)
 	public EntrySet() {
-		super("Returns the set of entries of the given map.",
-				Category.COLLECTIONS_AND_MAPS);
+		super();
 	}
 
 	public <K, V> PSet<PMap<String, Object>> evaluate(PMap<K, V> map) {

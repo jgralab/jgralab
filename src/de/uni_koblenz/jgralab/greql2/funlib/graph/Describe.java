@@ -42,15 +42,17 @@ import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.JGraLab;
+import de.uni_koblenz.jgralab.greql2.funlib.Description;
 import de.uni_koblenz.jgralab.greql2.funlib.Function;
 import de.uni_koblenz.jgralab.greql2.types.Undefined;
 import de.uni_koblenz.jgralab.schema.Attribute;
 
 public class Describe extends Function {
 
+	@Description(params = "el", description = "Returns a human-readable description of the given element.",
+			categories = Category.GRAPH)
 	public Describe() {
-		super("Returns a human-readable description of the given element.", 10,
-				3, 1.0, Category.GRAPH);
+		super(10, 3, 1.0);
 	}
 
 	public PMap<String, Object> evaluate(AttributedElement<?, ?> el) {

@@ -42,6 +42,7 @@ import org.pcollections.PCollection;
 import org.pcollections.PVector;
 
 import de.uni_koblenz.jgralab.JGraLab;
+import de.uni_koblenz.jgralab.greql2.funlib.Description;
 import de.uni_koblenz.jgralab.greql2.funlib.Function;
 import de.uni_koblenz.jgralab.greql2.types.Table;
 import de.uni_koblenz.jgralab.greql2.types.Tuple;
@@ -49,24 +50,34 @@ import de.uni_koblenz.jgralab.greql2.types.Tuple;
 public class SortByColumn extends Function {
 
 	public SortByColumn() {
-		super("Sorts a collection of tuples by one or many columns.",
-				Category.COLLECTIONS_AND_MAPS);
+		super();
 	}
 
+	@Description(params = {"column", "t"}, description = "Sorts a table of tuples by one column.",
+			categories = Category.COLLECTIONS_AND_MAPS)
 	public Table<Tuple> evaluate(Integer column, Table<Tuple> t) {
 		return evaluate(JGraLab.<Integer> vector().plus(column), t);
 	}
 
+
+	@Description(params = {"columns", "t"}, description = "Sorts a table of tuples by many columns.",
+			categories = Category.COLLECTIONS_AND_MAPS)
 	public Table<Tuple> evaluate(PVector<Integer> columns, Table<Tuple> t) {
 		Table<Tuple> result = Table.empty();
 		return result.withTitles(t.getTitles()).plusAll(
 				evaluate(columns, t.toPVector()));
 	}
 
+
+	@Description(params = {"column", "l"}, description = "Sorts a collection of tuples by one column.",
+			categories = Category.COLLECTIONS_AND_MAPS)
 	public PVector<Tuple> evaluate(Integer column, PCollection<Tuple> l) {
 		return evaluate(JGraLab.<Integer> vector().plus(column), l);
 	}
 
+
+	@Description(params = {"columns", "l"}, description = "Sorts a collection of tuples by many columns.",
+			categories = Category.COLLECTIONS_AND_MAPS)
 	public PVector<Tuple> evaluate(PVector<Integer> columns,
 			PCollection<Tuple> l) {
 		if (columns.isEmpty()) {

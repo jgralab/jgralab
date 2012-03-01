@@ -34,14 +34,16 @@
  */
 package de.uni_koblenz.jgralab.greql2.funlib.graph;
 
+import de.uni_koblenz.jgralab.greql2.funlib.Description;
 import de.uni_koblenz.jgralab.greql2.funlib.Function;
 import de.uni_koblenz.jgralab.greql2.types.PathSystem;
 
 public class Depth extends Function {
 
+	@Description(params = "p", description = "Returns the depth of the given path system.",
+			categories = Category.PATHS_AND_PATHSYSTEMS_AND_SLICES)
 	public Depth() {
-		super("Returns the depth of the given path system.",
-				Category.PATHS_AND_PATHSYSTEMS_AND_SLICES);
+		super();
 	}
 
 	public Integer evaluate(PathSystem p) {

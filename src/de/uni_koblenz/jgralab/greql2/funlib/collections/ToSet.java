@@ -41,14 +41,16 @@ import org.pcollections.PCollection;
 import org.pcollections.PSet;
 
 import de.uni_koblenz.jgralab.JGraLab;
+import de.uni_koblenz.jgralab.greql2.funlib.Description;
 import de.uni_koblenz.jgralab.greql2.funlib.Function;
 import de.uni_koblenz.jgralab.greql2.types.Tuple;
 
 public class ToSet extends Function {
 
+	@Description(params = "c", description = "Converts a collection into a set (removes duplicates).",
+			categories = Category.COLLECTIONS_AND_MAPS)
 	public ToSet() {
-		super("Converts a collection into a set (removes duplicates).",
-				Category.COLLECTIONS_AND_MAPS);
+		super();
 	}
 
 	public PSet<?> evaluate(Tuple t) {

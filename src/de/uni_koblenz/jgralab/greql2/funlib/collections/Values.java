@@ -37,13 +37,15 @@ package de.uni_koblenz.jgralab.greql2.funlib.collections;
 import org.pcollections.PMap;
 import org.pcollections.PVector;
 
+import de.uni_koblenz.jgralab.greql2.funlib.Description;
 import de.uni_koblenz.jgralab.greql2.funlib.Function;
 
 public class Values extends Function {
 
+	@Description(params="map", description = "Returns the collection of values of the given map.",
+			categories = Category.COLLECTIONS_AND_MAPS)
 	public Values() {
-		super("Returns the collection of values of the given map.",
-				Category.COLLECTIONS_AND_MAPS);
+		super();
 	}
 
 	public <K, V> PVector<V> evaluate(PMap<K, V> map) {
