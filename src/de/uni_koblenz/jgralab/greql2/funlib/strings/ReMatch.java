@@ -37,14 +37,16 @@ package de.uni_koblenz.jgralab.greql2.funlib.strings;
 import java.util.HashMap;
 import java.util.regex.Pattern;
 
+import de.uni_koblenz.jgralab.greql2.funlib.Description;
 import de.uni_koblenz.jgralab.greql2.funlib.Function;
 
 public class ReMatch extends Function {
+	
+	@Description(params = {"s", "regex"}, description = "Returns true, iff the given string matches the given regular expression. \n"
+		+ "Can be used as infix operator: myString =\\textasciitilde{} myRegexp.",
+		categories = Category.STRINGS)
 	public ReMatch() {
-		super(
-				"Returns true, iff the given string matches the given regular expression. \n"
-						+ "Can be used as infix operator: myString =\\textasciitilde{} myRegexp.",
-				50, 1, 0.1, Category.STRINGS);
+		super(50, 1, 0.1);
 	}
 
 	// cache is also used by Split function

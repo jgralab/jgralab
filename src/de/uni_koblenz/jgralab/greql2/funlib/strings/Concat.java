@@ -39,24 +39,29 @@ import org.pcollections.PCollection;
 import org.pcollections.PVector;
 
 import de.uni_koblenz.jgralab.JGraLab;
+import de.uni_koblenz.jgralab.greql2.funlib.Description;
 import de.uni_koblenz.jgralab.greql2.funlib.Function;
 
 public class Concat extends Function {
 
 	public Concat() {
-		super(
-				"Concatenates strings and collections. Can be used as infix operator: a ++ b.",
-				3, 1, 1.0, Category.COLLECTIONS_AND_MAPS, Category.STRINGS);
+		super(3, 1, 1.0);
 	}
 
+	@Description(params = {"a","b"}, description = "Concatenates strings. Can be used as infix operator: a ++ b.",
+			categories = Category.STRINGS)
 	public String evaluate(String a, Object b) {
 		return a + b;
 	}
-
+	
+	@Description(params = {"a","b"}, description = "Concatenates strings. Can be used as infix operator: a ++ b.",
+			categories = Category.STRINGS)
 	public String evaluate(Object a, String b) {
 		return a + b;
 	}
 
+	@Description(params = {"a", "b"}, description = "Concatenates collections. Can be used as infix operator: a ++ b.",
+			categories = Category.COLLECTIONS_AND_MAPS)
 	public <T> PVector<T> evaluate(PCollection<T> a, PCollection<T> b) {
 		if (a instanceof ArrayPVector) {
 			return (PVector<T>) a.plusAll(b);

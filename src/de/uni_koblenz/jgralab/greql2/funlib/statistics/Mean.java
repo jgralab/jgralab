@@ -37,13 +37,15 @@ package de.uni_koblenz.jgralab.greql2.funlib.statistics;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import de.uni_koblenz.jgralab.greql2.funlib.Description;
 import de.uni_koblenz.jgralab.greql2.funlib.Function;
 
 public class Mean extends Function {
 
+	@Description(params = "l", description = "Returns the mean value of a collection of numbers.", 
+			categories = Category.STATISTICS)
 	public Mean() {
-		super("Returns the mean value of a collection of numbers.",
-				Category.STATISTICS);
+		super();
 	}
 
 	public Double evaluate(Collection<Number> l) {

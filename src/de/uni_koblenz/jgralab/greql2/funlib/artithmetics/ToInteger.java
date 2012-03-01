@@ -34,12 +34,15 @@
  */
 package de.uni_koblenz.jgralab.greql2.funlib.artithmetics;
 
+import de.uni_koblenz.jgralab.greql2.funlib.Description;
 import de.uni_koblenz.jgralab.greql2.funlib.Function;
 
 public class ToInteger extends Function {
+	
+	@Description(params = "a", description = "Converts the given number into an Integer.",
+			categories = Category.ARITHMETICS)
 	public ToInteger() {
-		super("Converts the given number into an Integer.", 1, 1, 1.0,
-				Category.ARITHMETICS);
+		super(1, 1, 1.0);
 	}
 
 	public Integer evaluate(Number a) {

@@ -34,12 +34,15 @@
  */
 package de.uni_koblenz.jgralab.greql2.funlib.strings;
 
+import de.uni_koblenz.jgralab.greql2.funlib.Description;
 import de.uni_koblenz.jgralab.greql2.funlib.Function;
 
 public class ToString extends Function {
+
+	@Description(params = "o", description = "Returns the string representation of the given object.",
+			categories = Category.STRINGS)
 	public ToString() {
-		super("Returns the string representation of the given object.",
-				Category.STRINGS);
+		super();
 	}
 
 	public String evaluate(Object o) {

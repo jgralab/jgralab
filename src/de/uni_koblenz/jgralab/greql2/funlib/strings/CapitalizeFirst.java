@@ -34,13 +34,15 @@
  */
 package de.uni_koblenz.jgralab.greql2.funlib.strings;
 
+import de.uni_koblenz.jgralab.greql2.funlib.Description;
 import de.uni_koblenz.jgralab.greql2.funlib.Function;
 
 public class CapitalizeFirst extends Function {
+	
+	@Description(params = "s", description = "Returns the given string with the first character made uppercase.",
+			categories = Category.STRINGS )
 	public CapitalizeFirst() {
-		super(
-				"Returns the given string with the first character made uppercase.",
-				Category.STRINGS);
+		super();
 	}
 
 	public String evaluate(String s) {

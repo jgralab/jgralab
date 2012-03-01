@@ -38,16 +38,17 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 
+import de.uni_koblenz.jgralab.greql2.funlib.Description;
 import de.uni_koblenz.jgralab.greql2.funlib.Function;
 
 public class Max extends Function {
 
 	public Max() {
-		super(
-				"Returns the maximum of a collection of comparable things or of the given two numbers.",
-				Category.STATISTICS);
+		super();
 	}
 
+	@Description(params = {"a","b"}, description = "Returns the maximum of the given two numbers.",
+			categories = Category.STATISTICS)
 	public Number evaluate(Number a, Number b) {
 		if ((a instanceof Double) || (b instanceof Double)) {
 			return Math.max(a.doubleValue(), b.doubleValue());
@@ -58,6 +59,8 @@ public class Max extends Function {
 		}
 	}
 
+	@Description(params = {"l"}, description = "Returns the maximum of a collection of comparable things.",
+			categories = {Category.STATISTICS, Category.COLLECTIONS_AND_MAPS})
 	public <T extends Comparable<T>> T evaluate(Collection<T> l) {
 		if (l.isEmpty()) {
 			return null;

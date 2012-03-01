@@ -37,15 +37,16 @@ package de.uni_koblenz.jgralab.greql2.funlib.statistics;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import de.uni_koblenz.jgralab.greql2.funlib.Description;
 import de.uni_koblenz.jgralab.greql2.funlib.Function;
 
 public class Variance extends Function {
 
+	@Description(params = "l", description = "Returns the variance of the given collection of numbers.\n"
+		+ "If the size of the collection is less than 2, the variance is undefined.",
+		categories = Category.STATISTICS)
 	public Variance() {
-		super(
-				"Returns the variance of the given collection of numbers.\n"
-						+ "If the size of the collection is less than 2, the variance is undefined.",
-				Category.STATISTICS);
+		super();
 	}
 
 	public Double evaluate(Collection<Number> l) {

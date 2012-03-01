@@ -35,15 +35,16 @@
 package de.uni_koblenz.jgralab.greql2.funlib.misc;
 
 import de.uni_koblenz.jgralab.greql2.funlib.AcceptsUndefinedArguments;
+import de.uni_koblenz.jgralab.greql2.funlib.Description;
 import de.uni_koblenz.jgralab.greql2.funlib.Function;
 
 @AcceptsUndefinedArguments
 public class Log extends Function {
 
+	@Description(params = {"s", "o"}, description = "Logs a line of the form  $s$ ++ toString($o$) to sysout and returns $o$.",
+			categories = Category.MISCELLANEOUS)
 	public Log() {
-		super(
-				"Logs a line of the form  $s$ ++ toString($o$) to sysout and returns $o$.",
-				Category.MISCELLANEOUS);
+		super();
 	}
 
 	public Object evaluate(String s, Object o) {
