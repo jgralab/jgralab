@@ -173,7 +173,7 @@ public class GreqlEvaluatorImpl implements InternalGreqlEvaluator,
 	 * Stores the evaluation result of the query vertex <code>v</code> at
 	 * <code>localEvaluationResult[v.getId()]</code>
 	 */
-	private final Object[] localEvaluationResults;
+	private Object[] localEvaluationResults;
 
 	/**
 	 * Holds the estimated needed for evaluation time in abstract units
@@ -185,7 +185,7 @@ public class GreqlEvaluatorImpl implements InternalGreqlEvaluator,
 	 */
 	private long passedInterpretationSteps;
 
-	private final QueryImpl query;
+	private QueryImpl query;
 
 	/**
 	 * should be called by every vertex evaluator to indicate a progress. The
@@ -309,6 +309,21 @@ public class GreqlEvaluatorImpl implements InternalGreqlEvaluator,
 		setVariables(variables);
 		localEvaluationResults = new Object[query.getQueryGraph().getVCount()];
 		// this.progressFunction = progressFunction;
+	}
+
+	public GreqlEvaluatorImpl() {
+
+	}
+
+	@Override
+	public Object evaluate(QueryImpl query, Graph datagraph,
+			Map<String, Object> variables, ProgressFunction progressFunction) {
+		this.query = query;
+		this.datagraph = datagraph;
+		setVariables(variables);
+		localEvaluationResults = new Object[query.getQueryGraph().getVCount()];
+		// this.progressFunction = progressFunction;
+		return evaluate();
 	}
 
 	private Object evaluate() {
