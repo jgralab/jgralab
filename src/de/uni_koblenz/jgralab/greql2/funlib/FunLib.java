@@ -38,15 +38,16 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.SortedMap;
-import java.util.TreeMap;
+import java.util.Vector;
 import java.util.logging.Logger;
 
 import de.uni_koblenz.jgralab.Graph;
@@ -425,35 +426,86 @@ public class FunLib {
 		docGen.generate();
 	}
 
+	
+	
 	private static class LaTeXFunctionDocsGenerator {
 		private BufferedWriter bw;
-		private final Map<Category, SortedMap<String, FunctionInfo>> cat2funs = new HashMap<Function.Category, SortedMap<String, FunctionInfo>>();
-
+		//private final Map<Category, SortedMap<String, FunctionInfo>> cat2funs = new HashMap<Function.Category, SortedMap<String, FunctionInfo>>();
+		private final Map<Category, List<AnnotationInfo>> cat2funs = new HashMap<Function.Category, List<AnnotationInfo>>();
+		
 		LaTeXFunctionDocsGenerator(String fileName,
 				final Map<String, FunctionInfo> funs) throws IOException {
 			bw = new BufferedWriter(new FileWriter(fileName));
 			fillCat2Funs(funs);
 		}
 
+		private class AnnotationInfo{
+			String name;
+			String description;
+			String[] params;
+			Signature[] signatures;
+		}
+		
 		private void fillCat2Funs(final Map<String, FunctionInfo> funs) {
 			for (Entry<String, FunctionInfo> e : funs.entrySet()) {
-				//TODO
-//				for (Category cat : e.getValue().getFunction().getCategories()) {
-//					SortedMap<String, FunctionInfo> m = cat2funs.get(cat);
-//					if (m == null) {
-//						m = new TreeMap<String, FunctionInfo>();
-//						cat2funs.put(cat, m);
-//					}
-//					m.put(e.getKey(), e.getValue());
-//				}
+				Class<?> funClass = e.getValue().getFunction().getClass();
+				assert(funClass.getConstructors().length == 1);
+				Constructor<?> cons = funClass.getConstructors()[0];
+				if(cons.getAnnotation(Description.class)!=null){
+					Description des = cons.getAnnotation(Description.class);
+					createAnnotationInfoFunction(e, des);
+				}else{
+					for(Signature sig : e.getValue().signatures){
+						Method m = sig.evaluateMethod;
+						Description des = m.getAnnotation(Description.class);
+						createAnnotationInfoMethod(e, sig, des);
+					}
+				}			
 			}
 		}
+
+		private void createAnnotationInfoMethod(Entry<String, FunctionInfo> e,
+				Signature sig, Description des) {
+			AnnotationInfo aninf = new AnnotationInfo();
+			aninf.name = e.getKey();
+			aninf.description = des.description();
+			aninf.params = des.params();
+			aninf.signatures = new Signature []{sig};
+			for(Category cat : des.categories()){
+				List<AnnotationInfo> m1 = cat2funs.get(cat);
+				if(m1==null){
+					m1 = new Vector<AnnotationInfo>();
+					cat2funs.put(cat,m1);
+				}
+				m1.add(aninf);
+				cat2funs.put(cat, m1);
+			}
+		}
+
+		private void createAnnotationInfoFunction(
+				Entry<String, FunctionInfo> e, Description des) {
+			AnnotationInfo aninf = new AnnotationInfo();
+			aninf.name = e.getKey();
+			aninf.description = des.description();
+			aninf.params = des.params();
+			aninf.signatures = e.getValue().signatures;
+			for(Category cat : des.categories()){
+				List<AnnotationInfo> m = cat2funs.get(cat);
+				if(m==null){
+					m = new Vector<AnnotationInfo>();
+					cat2funs.put(cat,m);
+				}
+				m.add(aninf);
+				cat2funs.put(cat, m);
+			}
+		}
+
 
 		/**
 		 * Set to true to generate a complete latex doc that can be compiled
 		 * standalone. Useful when changing this generator...
 		 */
-		private boolean STANDALONE = false;
+		private boolean STANDALONE = true;
 
 		void generate() throws IOException {
 			try {
@@ -463,7 +515,8 @@ public class FunLib {
 					write("\\begin{document}");
 					newLine();
 				}
-				write("\\twocolumn");
+				//TODO outcomment 
+				//write("\\twocolumn");
 				newLine();
 				newLine();
 				for (Category cat : Category.values()) {
@@ -498,35 +551,36 @@ public class FunLib {
 			write("\\subsection{" + heading + "}");
 			newLine();
 
-			SortedMap<String, FunctionInfo> funs = cat2funs.get(cat);
-			for (Entry<String, FunctionInfo> e : funs.entrySet()) {
-				generateFunctionDocs(e.getKey(), e.getValue());
+			List<AnnotationInfo> funs = cat2funs.get(cat);
+			for (AnnotationInfo e : funs) {
+				generateFunctionDocs(e);
 			}
 		}
 
-		private void generateFunctionDocs(String name, FunctionInfo info)
+		private void generateFunctionDocs(AnnotationInfo info)
 				throws IOException {
 			newLine();
-			write("\\paragraph*{" + name + ".}");
+			write("\\paragraph*{" + info.name + ".}");
 			newLine();
-			//TODO write(info.function.getDescription());
+			write(info.description);
 			newLine();
-
-			generateSignatures(name, info.signatures);
+		
+			generateSignatures(info);
 
 			newLine();
 		}
 
-		private void generateSignatures(String name, Signature[] signatures)
+		private void generateSignatures(AnnotationInfo info)
 				throws IOException {
 			write("\\begin{itemize}");
 
-			for (Signature sig : signatures) {
-				write("\\item $" + name + ": ");
+			for (Signature sig : info.signatures) {
+				write("\\item $" +info.name + ": ");
 				for (int i = 0; i < sig.parameterTypes.length; i++) {
 					if (i != 0) {
 						write(" \\times ");
 					}
+					write(info.params[i]+ " : ");
 					write(Types.getGreqlTypeName(sig.parameterTypes[i]));
 				}
 				write(" \\longrightarrow ");

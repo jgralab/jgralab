@@ -47,7 +47,7 @@ public class SubCollection extends Function {
 		super();
 	}
 
-	@Description(params = {"coll","startIndex"}, description = "Returns a sub PVector starting at the given start index (including),\n"
+	@Description(params = {"coll","startIndex","endIndex"}, description = "Returns a sub PVector starting at the given start index (including),\n"
 						+ "and ending at the given end index (excluding).",
 				categories = Category.COLLECTIONS_AND_MAPS)
 	public <T> PVector<T> evaluate(PVector<T> coll, Integer startIndex,
@@ -64,7 +64,7 @@ public class SubCollection extends Function {
 		return evaluate(coll, startIndex, coll.size());
 	}
 
-	@Description(params = {"coll","startIndex"}, description = "Returns a sub PSet starting at the given start index (including),\n"
+	@Description(params = {"coll","startIndex","endIndex"}, description = "Returns a sub PSet starting at the given start index (including),\n"
 		+ "and ending at the given end index (excluding).",
 		categories = Category.COLLECTIONS_AND_MAPS)
 	public <T> PSet<T> evaluate(PSet<T> coll, Integer startIndex,
