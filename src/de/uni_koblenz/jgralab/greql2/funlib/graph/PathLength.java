@@ -34,13 +34,16 @@
  */
 package de.uni_koblenz.jgralab.greql2.funlib.graph;
 
+import de.uni_koblenz.jgralab.greql2.funlib.Description;
 import de.uni_koblenz.jgralab.greql2.funlib.Function;
 import de.uni_koblenz.jgralab.greql2.types.Path;
 
 public class PathLength extends Function {
 
+	@Description(params = "p", description = "Returns the length of the given Path.",
+			categories = Category.GRAPH)
 	public PathLength() {
-		super("Returns the length of the given Path.", Category.GRAPH);
+		super();
 	}
 
 	public Integer evaluate(Path p) {

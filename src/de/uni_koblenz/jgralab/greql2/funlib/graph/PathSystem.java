@@ -48,15 +48,17 @@ import de.uni_koblenz.jgralab.greql2.evaluator.fa.DFA;
 import de.uni_koblenz.jgralab.greql2.evaluator.fa.NFA;
 import de.uni_koblenz.jgralab.greql2.evaluator.fa.State;
 import de.uni_koblenz.jgralab.greql2.evaluator.fa.Transition;
+import de.uni_koblenz.jgralab.greql2.funlib.Description;
 import de.uni_koblenz.jgralab.greql2.funlib.Function;
 import de.uni_koblenz.jgralab.greql2.types.pathsearch.PathSystemMarkerEntry;
 
 public class PathSystem extends Function {
 
+	@Description(params = {"startVertex","fa"}, description = 
+			"Returns a path system with the given root vertex, which is structured according to the given path description.",
+			categories = Category.PATHS_AND_PATHSYSTEMS_AND_SLICES)
 	public PathSystem() {
-		super(
-				"Returns a path system with the given root vertex, which is structured according to the given path description.",
-				1000, 1, 1.0, Category.PATHS_AND_PATHSYSTEMS_AND_SLICES);
+		super(1000, 1, 1.0);
 	}
 
 	public de.uni_koblenz.jgralab.greql2.types.PathSystem evaluate(

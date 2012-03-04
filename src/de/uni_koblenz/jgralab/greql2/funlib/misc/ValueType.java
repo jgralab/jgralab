@@ -45,7 +45,7 @@ import de.uni_koblenz.jgralab.greql2.types.Types;
 public class ValueType extends Function {
 
 	@Description(params = "val", description = "Returns a String denoting the value type of the given object. Possible value types are: "
-		+ Arrays.toString(Types.getGreqlTypeNames()),
+		/*+ Arrays.toString(Types.getGreqlTypeNames())*/,
 		categories = Category.REFLECTION)
 	public ValueType() {
 		super();
