@@ -1,13 +1,13 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2011 Institute for Software Technology
+ * Copyright (C) 2006-2012 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
  * For bug reports, documentation and further information, visit
  *
- *                         http://jgralab.uni-koblenz.de
+ *                         https://github.com/jgralab/jgralab
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -47,12 +47,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-import java.util.SortedSet;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.WorkInProgress;
 import de.uni_koblenz.jgralab.grumlschema.SchemaGraph;
 import de.uni_koblenz.jgralab.grumlschema.domains.CollectionDomain;
 import de.uni_koblenz.jgralab.grumlschema.domains.Domain;
@@ -108,7 +106,6 @@ import de.uni_koblenz.jgralab.schema.StringDomain;
  * 
  * @author mmce, Eckhard Großmann
  */
-@WorkInProgress(responsibleDevelopers = "mmce, Eckhard Großmann", expectedFinishingDate = "2009-04-29")
 public class CompareSchemaWithSchemaGraph {
 
 	/**
@@ -462,9 +459,6 @@ public class CompareSchemaWithSchemaGraph {
 		assertTrue(
 				"There are more VertexClasses in Schema then in the SchemaGraph.",
 				vertexClasses.isEmpty());
-		for (de.uni_koblenz.jgralab.schema.EdgeClass e : edgeClasses.values()) {
-			System.out.println(e.getQualifiedName());
-		}
 		assertTrue(
 				"There are more EdgeClasses in Schema then in the SchemaGraph.",
 				edgeClasses.isEmpty());
@@ -1144,7 +1138,7 @@ public class CompareSchemaWithSchemaGraph {
 	 * @return Map of Attribute objects with their QualifiedName as key.
 	 */
 	final private Map<String, de.uni_koblenz.jgralab.schema.Attribute> getAttributeMap(
-			SortedSet<de.uni_koblenz.jgralab.schema.Attribute> attributeList) {
+			List<de.uni_koblenz.jgralab.schema.Attribute> attributeList) {
 
 		Map<String, de.uni_koblenz.jgralab.schema.Attribute> attributes = new HashMap<String, de.uni_koblenz.jgralab.schema.Attribute>();
 

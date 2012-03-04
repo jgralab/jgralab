@@ -1,13 +1,13 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2011 Institute for Software Technology
+ * Copyright (C) 2006-2012 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
  * For bug reports, documentation and further information, visit
  *
- *                         http://jgralab.uni-koblenz.de
+ *                         https://github.com/jgralab/jgralab
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -53,9 +53,8 @@ import de.uni_koblenz.jgralabtest.utilities.RunUtilitiesTests;
 @Suite.SuiteClasses({ RunInstanceTests.class, RunSchemaTests.class,
 		GraphIOTest.class, TempAttributeTest.class,
 		RunGraphValidatorTests.class, RunCodeGeneratorTests.class,
-		RunUtilitiesTests.class, RunGretlTests.class, RunECATest.class,
-// RunGreql2Tests.class
-})
+		RunUtilitiesTests.class, RunGretlTests.class, RunECATest.class })
+// TODO: add RunGreql2Tests.class back when it's fixed
 public class RunTests {
 
 }

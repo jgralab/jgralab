@@ -1,13 +1,13 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2011 Institute for Software Technology
+ * Copyright (C) 2006-2012 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
  * For bug reports, documentation and further information, visit
  *
- *                         http://jgralab.uni-koblenz.de
+ *                         https://github.com/jgralab/jgralab
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -57,7 +57,7 @@ import de.uni_koblenz.jgralab.schema.exception.SchemaException;
  * creates an instance of exactly the specified class. To change this use
  * <code>setImplementationClass</code>-methods. Class is abstract because only
  * factories which are specific for their schema should be used.
- *
+ * 
  * @author ist@uni-koblenz.de
  */
 public abstract class GraphFactoryImpl implements GraphFactory {
@@ -258,7 +258,7 @@ public abstract class GraphFactoryImpl implements GraphFactory {
 
 	/**
 	 * tests if a is a superclass of b or the same class than b
-	 *
+	 * 
 	 * @param a
 	 * @param b
 	 * @return
@@ -284,7 +284,7 @@ public abstract class GraphFactoryImpl implements GraphFactory {
 
 	/**
 	 * tests if class a implements the interface b
-	 *
+	 * 
 	 * @param a
 	 * @param b
 	 * @return

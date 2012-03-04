@@ -1,29 +1,29 @@
 /*
  * JGraLab - The Java Graph Laboratory
- * 
- * Copyright (C) 2006-2011 Institute for Software Technology
+ *
+ * Copyright (C) 2006-2012 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
- * 
+ *
  * For bug reports, documentation and further information, visit
- * 
- *                         http://jgralab.uni-koblenz.de
- * 
+ *
+ *                         https://github.com/jgralab/jgralab
+ *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
  * Free Software Foundation; either version 3 of the License, or (at your
  * option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, see <http://www.gnu.org/licenses>.
- * 
+ *
  * Additional permission under GNU GPL version 3 section 7
- * 
+ *
  * If you modify this Program, or any covered work, by linking or combining
  * it with Eclipse (or a modified version of that program or an Eclipse
  * plugin), containing parts covered by the terms of the Eclipse Public
@@ -54,8 +54,6 @@ public class PackageImpl extends NamedElementImpl implements Package {
 
 	private final Map<String, GraphClass> graphClasses = new TreeMap<String, GraphClass>();
 
-	private final Schema schema;
-
 	private final Map<String, Package> subPackages = new TreeMap<String, Package>();
 
 	private final Map<String, VertexClass> vertexClasses = new TreeMap<String, VertexClass>();
@@ -85,9 +83,9 @@ public class PackageImpl extends NamedElementImpl implements Package {
 	 *             if the <code>DefaultPackage</code> already exists in the
 	 *             given schema
 	 */
-	static Package createDefaultPackage(Schema schema) {
+	static PackageImpl createDefaultPackage(Schema schema) {
 		assert schema.getDefaultPackage() == null : "DefaultPackage already created!";
-		return new PackageImpl(schema);
+		return new PackageImpl((SchemaImpl) schema);
 	}
 
 	/**
@@ -95,22 +93,16 @@ public class PackageImpl extends NamedElementImpl implements Package {
 	 * 
 	 * @param schema
 	 */
-	private PackageImpl(Schema schema) {
+	private PackageImpl(SchemaImpl schema) {
 		this(Package.DEFAULTPACKAGE_NAME, null, schema);
 	}
 
-	protected PackageImpl(String simpleName, Package parentPackage, Schema schema) {
+	protected PackageImpl(String simpleName, PackageImpl parentPackage, SchemaImpl schema) {
 		super(simpleName, parentPackage, schema);
-		this.schema = schema;
-		register();
-	}
-
-	@Override
-	protected void register() {
 		if (parentPackage != null) {
-			((PackageImpl) parentPackage).addSubPackage(this);
+			parentPackage.addSubPackage(this);
 		}
-		((SchemaImpl) schema).addPackage(this);
+		schema.addPackage(this);
 	}
 
 	void addDomain(Domain dom) {
@@ -202,9 +194,7 @@ public class PackageImpl extends NamedElementImpl implements Package {
 
 	@Override
 	public boolean containsNamedElement(String sn) {
-		return domains.containsKey(sn)
-				|| edgeClasses.containsKey(sn)
-				|| (isDefaultPackage() && (schema.getDefaultGraphClass() != null))
+		return domains.containsKey(sn) || edgeClasses.containsKey(sn)
 				|| vertexClasses.containsKey(sn) || subPackages.containsKey(sn);
 	}
 

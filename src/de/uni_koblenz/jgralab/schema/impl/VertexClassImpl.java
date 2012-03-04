@@ -1,13 +1,13 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2011 Institute for Software Technology
+ * Copyright (C) 2006-2012 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
  * For bug reports, documentation and further information, visit
  *
- *                         http://jgralab.uni-koblenz.de
+ *                         https://github.com/jgralab/jgralab
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -44,16 +44,13 @@ import java.util.Set;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
-import de.uni_koblenz.jgralab.schema.GraphClass;
 import de.uni_koblenz.jgralab.schema.IncidenceClass;
-import de.uni_koblenz.jgralab.schema.Package;
-import de.uni_koblenz.jgralab.schema.Schema;
+import de.uni_koblenz.jgralab.schema.IncidenceDirection;
 import de.uni_koblenz.jgralab.schema.VertexClass;
 import de.uni_koblenz.jgralab.schema.exception.SchemaException;
 
 public class VertexClassImpl extends
-GraphElementClassImpl<VertexClass, Vertex> implements VertexClass {
-
+		GraphElementClassImpl<VertexClass, Vertex> implements VertexClass {
 	/**
 	 * the own in IncidenceClasses
 	 */
@@ -96,32 +93,14 @@ GraphElementClassImpl<VertexClass, Vertex> implements VertexClass {
 
 	private Map<String, DirectedSchemaEdgeClass> farRoleNameToEdgeClass;
 
-	static VertexClass createDefaultVertexClass(Schema schema) {
-		assert schema.getDefaultGraphClass() != null : "DefaultGraphClass has not yet been created!";
-		assert schema.getDefaultVertexClass() == null : "DefaultVertexClass already created!";
-		VertexClass vc = schema.getDefaultGraphClass().createVertexClass(
-				DEFAULTVERTEXCLASS_NAME);
-		vc.setAbstract(true);
-		((VertexClassImpl) vc).setInternal(true);
-		return vc;
-	}
-
 	/**
 	 * builds a new vertex class object
-	 *
-	 * @param qn
-	 *            the unique identifier of the vertex class in the schema
 	 */
-	protected VertexClassImpl(String simpleName, Package pkg,
-			GraphClass aGraphClass) {
-		super(simpleName, pkg, aGraphClass);
-		this.register();
-	}
-
-	@Override
-	protected void register() {
-		((PackageImpl) this.parentPackage).addVertexClass(this);
-		((GraphClassImpl) this.graphClass).addVertexClass(this);
+	protected VertexClassImpl(String simpleName, PackageImpl pkg,
+			GraphClassImpl gc) {
+		super(simpleName, pkg, gc, gc.vertexClassDag);
+		parentPackage.addVertexClass(this);
+		graphClass.addVertexClass(this);
 	}
 
 	@Override
@@ -131,7 +110,7 @@ GraphElementClassImpl<VertexClass, Vertex> implements VertexClass {
 
 	void addInIncidenceClass(IncidenceClass incClass) {
 		if (incClass.getVertexClass() != this) {
-			this.throwSchemaException();
+			throwSchemaException(incClass);
 		}
 		this.checkDuplicateRolenames(incClass);
 		this.inIncidenceClasses.add(incClass);
@@ -139,95 +118,75 @@ GraphElementClassImpl<VertexClass, Vertex> implements VertexClass {
 
 	void addOutIncidenceClass(IncidenceClass incClass) {
 		if (incClass.getVertexClass() != this) {
-			this.throwSchemaException();
+			throwSchemaException(incClass);
 		}
 		this.checkDuplicateRolenames(incClass);
 		this.outIncidenceClasses.add(incClass);
 	}
 
 	private void checkDuplicateRolenames(IncidenceClass incClass) {
-
 		String rolename = incClass.getOpposite().getRolename();
-
 		if (rolename.isEmpty()) {
 			return;
 		}
-
-		this.checkDuplicatedRolenameForACyclicIncidence(incClass);
-
-		this.checkDuplicatedRolenameForAllIncidences(incClass,
-				this.getAllInIncidenceClasses());
-		this.checkDuplicatedRolenameForAllIncidences(incClass,
-				this.getAllOutIncidenceClasses());
+		checkDuplicatedRolenameForACyclicIncidence(incClass);
+		checkDuplicatedRolenameForAllIncidences(incClass,
+				getAllInIncidenceClasses());
+		checkDuplicatedRolenameForAllIncidences(incClass,
+				getAllOutIncidenceClasses());
 	}
 
 	private void checkDuplicatedRolenameForACyclicIncidence(
 			IncidenceClass incClass) {
-
 		String rolename = incClass.getOpposite().getRolename();
 		VertexClass oppositeVertexClass = incClass.getOpposite()
 				.getVertexClass();
-
 		boolean equalRolenames = incClass.getRolename().equals(rolename);
 		boolean identicalClasses = this == oppositeVertexClass;
-
 		if (equalRolenames && identicalClasses) {
-			this.throwSchemaException(incClass);
+			throw new SchemaException(
+					"The rolename "
+							+ incClass.getRolename()
+							+ " may be not used at both ends of the reflexive edge class "
+							+ incClass.getEdgeClass().getQualifiedName());
 		}
 	}
 
 	private void checkDuplicatedRolenameForAllIncidences(
 			IncidenceClass incClass, Set<IncidenceClass> incidenceSet) {
-
 		String rolename = incClass.getOpposite().getRolename();
-
 		if (rolename.isEmpty()) {
 			return;
 		}
-
 		for (IncidenceClass incidence : incidenceSet) {
 			if (incidence == incClass) {
 				continue;
 			}
 			if (incidence.getOpposite().getRolename().equals(rolename)) {
-				this.throwSchemaExceptionRolenameUsedTwice(incidence);
+				throw new SchemaException("The rolename "
+						+ incidence.getOpposite().getRolename()
+						+ " is used twice at class " + getQualifiedName());
 			}
 		}
 	}
 
-	private void throwSchemaExceptionRolenameUsedTwice(IncidenceClass incidence) {
-		throw new SchemaException("The rolename "
-				+ incidence.getOpposite().getRolename()
-				+ " is used twice at class " + this.getQualifiedName());
-	}
-
-	private void throwSchemaException(IncidenceClass incClass) {
-		throw new SchemaException("The rolename " + incClass.getRolename()
-				+ " may be not used at both ends of the reflexive edge class "
-				+ incClass.getEdgeClass().getQualifiedName());
-	}
-
-	private void throwSchemaException() {
+	private void throwSchemaException(IncidenceClass ic) {
 		throw new SchemaException(
-				"IncidenceClasses may be added only to vertices they are connected to");
+				"Try to add IncidenceClass ending at '"
+						+ ic.getVertexClass().getQualifiedName()
+						+ "' to VertexClass '"
+						+ getQualifiedName()
+						+ "'.IncidenceClasses may be added only to VertexClasses they are connected to.");
 	}
 
 	@Override
 	public void addSuperClass(VertexClass superClass) {
-		// Checked in super class
-		// if(isFinished()){
-		// throw new SchemaException("No changes to finished schema!");
-		// }
-
-		if ((superClass == this) || (superClass == null)) {
+		assertNotFinished();
+		if (superClass == this) {
 			return;
 		}
 		this.checkDuplicateRolenames(superClass);
 		super.addSuperClass(superClass);
-		if (!superClass.equals(this.getSchema().getDefaultVertexClass())) {
-			((GraphClassImpl) this.getSchema().getGraphClass()).getVertexCsDag()
-			.createEdge(superClass, this);
-		}
 	}
 
 	private void checkDuplicateRolenames(VertexClass superClass) {
@@ -249,7 +208,7 @@ GraphElementClassImpl<VertexClass, Vertex> implements VertexClass {
 	 * For a vertexclass A are all edgeclasses valid froms, which (1) run from A
 	 * to a B or (2) run from a superclass of A to a B and whose end b at B is
 	 * not redefined by A or a superclass of A
-	 *
+	 * 
 	 */
 
 	@Override
@@ -451,10 +410,14 @@ GraphElementClassImpl<VertexClass, Vertex> implements VertexClass {
 		this.validToEdgeClasses = Collections
 				.unmodifiableSet(this.getValidToEdgeClasses());
 
-		this.farRoleNameToEdgeClass = new HashMap<String, DirectedSchemaEdgeClass>();
-		for (IncidenceClass ic : this.getOwnAndInheritedFarIncidenceClasses()) {
-			this.farRoleNameToEdgeClass.put(ic.getRolename(),
-					this.getDirectedEdgeClassForFarEndRole(ic.getRolename()));
+		farRoleNameToEdgeClass = new HashMap<String, DirectedSchemaEdgeClass>();
+		for (IncidenceClass ic : getOwnAndInheritedFarIncidenceClasses()) {
+			String role = ic.getRolename();
+			if (role == null || role.length() == 0) {
+				continue;
+			}
+			farRoleNameToEdgeClass.put(role,
+					getDirectedEdgeClassForFarEndRole(role));
 		}
 		this.farRoleNameToEdgeClass = Collections
 				.unmodifiableMap(this.farRoleNameToEdgeClass);
@@ -468,7 +431,6 @@ GraphElementClassImpl<VertexClass, Vertex> implements VertexClass {
 		for (IncidenceClass ic : this.outIncidenceClasses) {
 			((IncidenceClassImpl) ic).finish();
 		}
-
 		super.finish();
 	}
 
@@ -483,39 +445,17 @@ GraphElementClassImpl<VertexClass, Vertex> implements VertexClass {
 	}
 
 	@Override
-	protected void reopen() {
-		this.allInIncidenceClasses = null;
-		this.allOutIncidenceClasses = null;
-		this.validFromFarIncidenceClasses = null;
-		this.validToFarIncidenceClasses = null;
-		this.validFromEdgeClasses = null;
-		this.validToEdgeClasses = null;
-		this.inIncidenceClasses = new HashSet<IncidenceClass>(this.inIncidenceClasses);
-		this.outIncidenceClasses = new HashSet<IncidenceClass>(this.outIncidenceClasses);
-		this.farRoleNameToEdgeClass = null;
-
-		for (IncidenceClass ic : this.inIncidenceClasses) {
-			((IncidenceClassImpl) ic).reopen();
-		}
-		for (IncidenceClass ic : this.outIncidenceClasses) {
-			((IncidenceClassImpl) ic).reopen();
-		}
-
-		super.reopen();
-	}
-
-	@Override
 	public DirectedSchemaEdgeClass getDirectedEdgeClassForFarEndRole(
 			String roleName) {
 		if (this.isFinished()) {
 			return this.farRoleNameToEdgeClass.get(roleName);
 		}
-		for (IncidenceClass ic : this.getOwnAndInheritedFarIncidenceClasses()) {
+		for (IncidenceClass ic : getOwnAndInheritedFarIncidenceClasses()) {
 			if (roleName.equals(ic.getRolename())) {
 				EdgeClass ec = ic.getEdgeClass();
 				return new DirectedSchemaEdgeClass(
 						ec,
-						(this.getValidFromEdgeClasses().contains(ec) ? EdgeDirection.OUT
+						(ic.getDirection() == IncidenceDirection.IN ? EdgeDirection.OUT
 								: EdgeDirection.IN));
 			}
 		}

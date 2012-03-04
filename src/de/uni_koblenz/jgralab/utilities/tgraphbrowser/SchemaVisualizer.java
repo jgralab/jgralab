@@ -1,29 +1,29 @@
 /*
  * JGraLab - The Java Graph Laboratory
- * 
- * Copyright (C) 2006-2011 Institute for Software Technology
+ *
+ * Copyright (C) 2006-2012 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
- * 
+ *
  * For bug reports, documentation and further information, visit
- * 
- *                         http://jgralab.uni-koblenz.de
- * 
+ *
+ *                         https://github.com/jgralab/jgralab
+ *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
  * Free Software Foundation; either version 3 of the License, or (at your
  * option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, see <http://www.gnu.org/licenses>.
- * 
+ *
  * Additional permission under GNU GPL version 3 section 7
- * 
+ *
  * If you modify this Program, or any covered work, by linking or combining
  * it with Eclipse (or a modified version of that program or an Eclipse
  * plugin), containing parts covered by the terms of the Eclipse Public
@@ -39,7 +39,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.SortedSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -267,16 +266,13 @@ public class SchemaVisualizer {
 		String var = createForVertex ? "Vertex" : "Edge";
 		createRootUl(code, var);
 		// unsetAEClasses saves the classes which have more than one superclass
-		ArrayList<AttributedElementClass<?, ?>> unsetAEClasses = new ArrayList<AttributedElementClass<?, ?>>();
+		ArrayList<GraphElementClass<?, ?>> unsetAEClasses = new ArrayList<GraphElementClass<?, ?>>();
 		// unsetSuperClasses are the superclasses which still need the
 		// representation of the class from unsetAEClasses at the same index
-		ArrayList<Iterator<AttributedElementClass<?, ?>>> unsetSuperClasses = new ArrayList<Iterator<AttributedElementClass<?, ?>>>();
+		ArrayList<Iterator<GraphElementClass<?, ?>>> unsetSuperClasses = new ArrayList<Iterator<GraphElementClass<?, ?>>>();
 		// iterate all classes
-		for (AttributedElementClass<?, ?> aeclass : classes) {
-			if (aeclass.getQualifiedName().equals("Vertex")
-					|| aeclass.getQualifiedName().equals("Edge")
-					|| aeclass.getQualifiedName().equals("Aggregation")
-					|| aeclass.getQualifiedName().equals("Composition")) {
+		for (GraphElementClass<?, ?> aeclass : classes) {
+			if (aeclass.isInternal()) {
 				// ignore the base classes
 				continue;
 			}
@@ -288,12 +284,12 @@ public class SchemaVisualizer {
 			}
 			// create the first entry for this class
 			@SuppressWarnings("unchecked")
-			Set<AttributedElementClass<?, ?>> superClasses = (Set<AttributedElementClass<?, ?>>) aeclass
+			Set<GraphElementClass<?, ?>> superClasses = (Set<GraphElementClass<?, ?>>) aeclass
 					.getDirectSuperClasses();
 			String ulName = "";
-			Iterator<AttributedElementClass<?, ?>> superClassIter = superClasses
+			Iterator<GraphElementClass<?, ?>> superClassIter = superClasses
 					.iterator();
-			AttributedElementClass<?, ?> superClass = superClassIter.next();
+			GraphElementClass<?, ?> superClass = superClassIter.next();
 			// check if firstClass is a base class
 			while ((superClass.getQualifiedName().equals("Vertex")
 					|| superClass.getQualifiedName().equals("Edge")
@@ -594,7 +590,7 @@ public class SchemaVisualizer {
 	 */
 	private void createP(StringBuilder code, String simpleName,
 			String uniqueName, String qualifiedName, boolean isAbstract,
-			SortedSet<Attribute> attributes) {
+			List<Attribute> attributes) {
 		StringBuilder title = new StringBuilder(qualifiedName);
 		if (attributes != null) {
 			if (!attributes.isEmpty()) {

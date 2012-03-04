@@ -1,13 +1,13 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2011 Institute for Software Technology
+ * Copyright (C) 2006-2012 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
  * For bug reports, documentation and further information, visit
  *
- *                         http://jgralab.uni-koblenz.de
+ *                         https://github.com/jgralab/jgralab
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -63,7 +63,6 @@ import java.util.Queue;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
-import java.util.logging.Logger;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
@@ -161,8 +160,6 @@ public class GraphIO {
 	}
 
 	protected static final int BUFFER_SIZE = 65536;
-
-	private static Logger logger = Logger.getLogger(GraphIO.class.getName());
 
 	protected InputStream TGIn;
 
@@ -864,11 +861,10 @@ public class GraphIO {
 		this.write("TGraph " + TGFILE_VERSION + ";\n");
 	}
 
-	private void writeHierarchy(Package pkg, AttributedElementClass<?, ?> aec)
+	private void writeHierarchy(Package pkg, GraphElementClass<?, ?> aec)
 			throws IOException {
 		String delim = ":";
-		for (AttributedElementClass<?, ?> superClass : aec
-				.getDirectSuperClasses()) {
+		for (GraphElementClass<?, ?> superClass : aec.getDirectSuperClasses()) {
 			if (!superClass.isInternal()) {
 				this.write(delim);
 				this.space();
@@ -881,15 +877,17 @@ public class GraphIO {
 
 	private void writeAttributes(Package pkg, AttributedElementClass<?, ?> aec)
 			throws IOException {
-		if (aec.hasOwnAttributes()) {
-			this.write(" {");
+		List<Attribute> attributes = aec.getOwnAttributeList();
+		if (attributes.isEmpty()) {
+			return;
 		}
-		for (Iterator<Attribute> ait = aec.getOwnAttributeList().iterator(); ait
-				.hasNext();) {
-			Attribute a = ait.next();
-			this.space();
-			this.writeIdentifier(a.getName());
-			this.write(": ");
+		String delim = " {";
+		for (Attribute a : attributes) {
+			write(delim);
+			delim = ",";
+			space();
+			writeIdentifier(a.getName());
+			write(": ");
 			String domain = a.getDomain().getTGTypeName(pkg);
 			this.write(domain);
 			if ((a.getDefaultValueAsString() != null)
@@ -897,12 +895,8 @@ public class GraphIO {
 				this.write(" = ");
 				this.writeUtfString(a.getDefaultValueAsString());
 			}
-			if (ait.hasNext()) {
-				this.write(", ");
-			} else {
-				this.write(" }");
-			}
 		}
+		write(" }");
 	}
 
 	public final void write(String s) throws IOException {
@@ -1010,7 +1004,6 @@ public class GraphIO {
 
 		FileInputStream fileStream = null;
 		try {
-			logger.finer("Loading graph " + filename);
 			fileStream = new FileInputStream(filename);
 			InputStream inputStream = null;
 			try {
@@ -1060,7 +1053,6 @@ public class GraphIO {
 		}
 		FileInputStream fileStream = null;
 		try {
-			logger.finer("Loading graph " + filename);
 			fileStream = new FileInputStream(filename);
 			InputStream inputStream = null;
 			try {
@@ -1126,6 +1118,7 @@ public class GraphIO {
 							SchemaClassManager.instance(schemaQName));
 				} catch (ClassNotFoundException e) {
 					// schema class not found, try compile schema in-memory
+					io.schema.finish();
 					io.schema.compile(CodeGeneratorConfiguration.MINIMAL);
 					try {
 						schemaClass = Class.forName(schemaQName, true,

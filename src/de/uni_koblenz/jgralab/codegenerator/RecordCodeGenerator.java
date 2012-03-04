@@ -1,13 +1,13 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2011 Institute for Software Technology
+ * Copyright (C) 2006-2012 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
  * For bug reports, documentation and further information, visit
  *
- *                         http://jgralab.uni-koblenz.de
+ *                         https://github.com/jgralab/jgralab
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -42,9 +42,9 @@ import de.uni_koblenz.jgralab.schema.StringDomain;
 
 /**
  * TODO add comment
- *
+ * 
  * @author ist@uni-koblenz.de
- *
+ * 
  */
 public class RecordCodeGenerator extends CodeGenerator {
 
@@ -277,7 +277,7 @@ public class RecordCodeGenerator extends CodeGenerator {
 
 	/**
 	 * Getter-methods for fields needed for transaction support.
-	 *
+	 * 
 	 * @return
 	 */
 	protected CodeBlock createGetterMethods() {
@@ -390,7 +390,7 @@ public class RecordCodeGenerator extends CodeGenerator {
 			if (rc.getDomain().isComposite()) {
 				s.setVariable("toString", "_" + rc.getName() + ".toString()");
 			} else {
-				s.setVariable("toString", "String.valueOf(_#key#);");
+				s.setVariable("toString", "String.valueOf(_#key#)");
 			}
 			code.add(s);
 			delim = ", ";

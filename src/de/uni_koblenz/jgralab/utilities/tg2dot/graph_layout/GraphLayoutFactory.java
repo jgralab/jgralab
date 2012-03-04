@@ -1,13 +1,13 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2011 Institute for Software Technology
+ * Copyright (C) 2006-2012 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
  * For bug reports, documentation and further information, visit
  *
- *                         http://jgralab.uni-koblenz.de
+ *                         https://github.com/jgralab/jgralab
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -66,7 +66,6 @@ import de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout.definition.Definitio
 import de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout.definition.ElementDefinition;
 import de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout.definition.TypeDefinition;
 import de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout.reader.GraphLayoutReader;
-import de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout.reader.json.JsonGraphLayoutReader;
 import de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout.reader.plist.PListGraphLayoutReader;
 import de.uni_koblenz.jgralab.utilities.tg2dot.greql2.GreqlEvaluatorFacade;
 
@@ -85,11 +84,6 @@ public class GraphLayoutFactory {
 	public GraphLayoutFactory(GreqlEvaluatorFacade evaluator) {
 		this.evaluator = evaluator;
 		schema = evaluator.getSchema();
-	}
-
-	public void setJsonGraphLayoutFilename(File graphLayoutFile) {
-		this.graphLayoutFile = graphLayoutFile;
-		reader = new JsonGraphLayoutReader(evaluator);
 	}
 
 	public void setPListGraphLayoutFilename(File graphLayoutFile) {

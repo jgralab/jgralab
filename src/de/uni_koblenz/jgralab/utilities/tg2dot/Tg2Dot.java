@@ -1,13 +1,13 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2011 Institute for Software Technology
+ * Copyright (C) 2006-2012 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
  * For bug reports, documentation and further information, visit
  *
- *                         http://jgralab.uni-koblenz.de
+ *                         https://github.com/jgralab/jgralab
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -60,8 +60,6 @@ import javax.swing.ImageIcon;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
-import org.codehaus.jackson.JsonGenerationException;
-import org.codehaus.jackson.JsonParseException;
 
 import de.uni_koblenz.ist.utilities.option_handler.OptionHandler;
 import de.uni_koblenz.jgralab.AttributedElement;
@@ -85,8 +83,6 @@ import de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout.GraphLayoutFactory;
 import de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout.definition.Definition;
 import de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout.definition.ElementDefinition;
 import de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout.definition.TypeDefinition;
-import de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout.writer.AbstractGraphLayoutWriter;
-import de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout.writer.json.JsonGraphLayoutWriter;
 import de.uni_koblenz.jgralab.utilities.tg2dot.greql2.GreqlEvaluatorFacade;
 import de.uni_koblenz.jgralab.utilities.tg2whatever.Tg2Whatever;
 
@@ -149,8 +145,6 @@ public class Tg2Dot extends Tg2Whatever {
 
 	private GraphVizOutputFormat graphVizOutputFormat;
 
-	private boolean useJsonGraphLayoutReader;
-
 	private boolean debugIterations;
 
 	private boolean debugOptimization;
@@ -160,7 +154,6 @@ public class Tg2Dot extends Tg2Whatever {
 	/**
 	 * @param args
 	 * @throws IOException
-	 * @throws JsonParseException
 	 * @throws GraphIOException
 	 */
 	public static void main(String[] args) {
@@ -368,13 +361,7 @@ public class Tg2Dot extends Tg2Whatever {
 	protected void getAdditionalOptions(CommandLine comLine) {
 		initializeGraphAndSchema();
 
-		if (comLine.hasOption('j') && comLine.hasOption('p')) {
-			throw new RuntimeException(
-					"Only a JSON- or a PList-layout file can be declared. Not both!");
-		}
-		useJsonGraphLayoutReader = comLine.hasOption('j');
-		graphLayoutFilename = useJsonGraphLayoutReader ? comLine
-				.getOptionValue('j') : comLine.getOptionValue('p');
+		graphLayoutFilename = comLine.getOptionValue('p');
 
 		printIncidenceIndices = comLine.hasOption('i');
 		printElementSequenceIndices = comLine.hasOption('m');
@@ -414,14 +401,6 @@ public class Tg2Dot extends Tg2Whatever {
 				"(optional): declares a PList-layout file, which should be used to lay out the given graph.");
 		pListLayout.setRequired(false);
 		optionHandler.addOption(pListLayout);
-
-		Option jsonLayout = new Option(
-				"j",
-				"jsonLayout",
-				true,
-				"(optional): declares a JSON-layout file, which should be used to lay out the given graph.");
-		jsonLayout.setRequired(false);
-		optionHandler.addOption(jsonLayout);
 
 		Option incidenceIndices = new Option("i", "incidenceIndices", false,
 				"(optional): prints the incidence index to every edge.");
@@ -481,11 +460,7 @@ public class Tg2Dot extends Tg2Whatever {
 
 		if (graphLayoutFilename != null) {
 			File layoutFile = new File(graphLayoutFilename);
-			if (useJsonGraphLayoutReader) {
-				factory.setJsonGraphLayoutFilename(layoutFile);
-			} else {
-				factory.setPListGraphLayoutFilename(layoutFile);
-			}
+			factory.setPListGraphLayoutFilename(layoutFile);
 		}
 
 		layout = factory.createGraphLayout();
@@ -819,25 +794,6 @@ public class Tg2Dot extends Tg2Whatever {
 	}
 
 	/**
-	 * Writes the current GraphLayout to a JsonFile. <b>Note:</b><br>
-	 * The written file will not be identical to the read graph layout.
-	 */
-	public void writeGraphLayoutToJsonFile() {
-		if (layout == null) {
-			throw new RuntimeException("There is no graph layout present.");
-		}
-
-		AbstractGraphLayoutWriter writer = new JsonGraphLayoutWriter();
-		try {
-			writer.startProcessing(graphLayoutFilename + ".parsed", layout);
-		} catch (JsonGenerationException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-
-	/**
 	 * All edge instances of an edge type contained in the given set
 	 * <code>reversedEdgeTypes</code> (or subtypes) will be printed reversed.
 	 * This is especially useful when certain conceptual edges are modeled as
@@ -949,13 +905,8 @@ public class Tg2Dot extends Tg2Whatever {
 		return graphLayoutFilename;
 	}
 
-	public void setJsonGraphLayoutFilename(String graphLayoutFilename) {
-		useJsonGraphLayoutReader = true;
-		this.graphLayoutFilename = graphLayoutFilename;
-	}
 
 	public void setPListGraphLayoutFilename(String graphLayoutFilename) {
-		useJsonGraphLayoutReader = false;
 		this.graphLayoutFilename = graphLayoutFilename;
 	}
 

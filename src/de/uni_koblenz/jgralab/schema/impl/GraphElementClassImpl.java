@@ -1,29 +1,29 @@
 /*
  * JGraLab - The Java Graph Laboratory
- * 
- * Copyright (C) 2006-2011 Institute for Software Technology
+ *
+ * Copyright (C) 2006-2012 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
- * 
+ *
  * For bug reports, documentation and further information, visit
- * 
- *                         http://jgralab.uni-koblenz.de
- * 
+ *
+ *                         https://github.com/jgralab/jgralab
+ *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
  * Free Software Foundation; either version 3 of the License, or (at your
  * option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, see <http://www.gnu.org/licenses>.
- * 
+ *
  * Additional permission under GNU GPL version 3 section 7
- * 
+ *
  * If you modify this Program, or any covered work, by linking or combining
  * it with Eclipse (or a modified version of that program or an Eclipse
  * plugin), containing parts covered by the terms of the Eclipse Public
@@ -35,16 +35,56 @@
 
 package de.uni_koblenz.jgralab.schema.impl;
 
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
+
+import org.pcollections.ArrayPVector;
+import org.pcollections.PSet;
+import org.pcollections.PVector;
+
 import de.uni_koblenz.jgralab.GraphElement;
+import de.uni_koblenz.jgralab.schema.Attribute;
+import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.GraphClass;
 import de.uni_koblenz.jgralab.schema.GraphElementClass;
-import de.uni_koblenz.jgralab.schema.Package;
+import de.uni_koblenz.jgralab.schema.exception.SchemaException;
 
 public abstract class GraphElementClassImpl<SC extends GraphElementClass<SC, IC>, IC extends GraphElement<SC, IC>>
 		extends AttributedElementClassImpl<SC, IC> implements
 		GraphElementClass<SC, IC> {
 
-	protected GraphClass graphClass;
+	/**
+	 * The {@link GraphClass} of this {@link GraphElementClass}.
+	 */
+	protected final GraphClassImpl graphClass;
+
+	/**
+	 * The list of attributes. Only the own attributes of this class are stored
+	 * here, no inherited attributes.
+	 */
+	protected PVector<Attribute> ownAttributes;
+
+	/**
+	 * The subclasses of this class - only set if the schema is finished. The
+	 * HashSet is used to speed up isInstance test.
+	 */
+	protected PSet<SC> allSubClasses;
+	protected HashSet<SC> allSubClassesHash;
+
+	/**
+	 * The superclasses of this class - only set if the schema is finished. The
+	 * HashSet is used to speed up isInstance test.
+	 */
+	protected PSet<SC> allSuperClasses;
+	protected HashSet<SC> allSuperClassesHash;
+
+	/**
+	 * A {@link DirectedAcyclicGraph} representing the generalization hierarchy.
+	 * Edges direction is from superclass to subclass.
+	 */
+	protected final DirectedAcyclicGraph<GraphElementClass<SC, IC>> subclassDag;
 
 	/**
 	 * delegates its constructor to the generalized class
@@ -52,15 +92,209 @@ public abstract class GraphElementClassImpl<SC extends GraphElementClass<SC, IC>
 	 * @param qn
 	 *            the unique identifier of the element in the schema
 	 */
-	protected GraphElementClassImpl(String simpleName, Package pkg,
-			GraphClass graphClass) {
-		super(simpleName, pkg, graphClass.getSchema());
+	@SuppressWarnings("unchecked")
+	protected GraphElementClassImpl(String simpleName, PackageImpl pkg,
+			GraphClassImpl graphClass, DirectedAcyclicGraph<SC> dag) {
+		super(simpleName, pkg, graphClass.schema);
+		ownAttributes = ArrayPVector.empty();
+		subclassDag = (DirectedAcyclicGraph<GraphElementClass<SC, IC>>) dag;
+		subclassDag.createNode(this);
 		this.graphClass = graphClass;
+	}
+
+	@Override
+	public void addAttribute(Attribute anAttribute) {
+		assertNotFinished();
+		// Check if a subclass already contains an attribute with that name. In
+		// that case, it may not be added, too.
+		if (subclassContainsAttribute(anAttribute.getName())) {
+			throw new SchemaException(
+					"Duplicate attribute '"
+							+ anAttribute.getName()
+							+ "' in AttributedElementClass '"
+							+ getQualifiedName()
+							+ "'. A derived AttributedElementClass already contains this Attribute.");
+		}
+		super.addAttribute(anAttribute);
+		TreeSet<Attribute> s = new TreeSet<Attribute>(ownAttributes);
+		s.add(anAttribute);
+		ownAttributes = ArrayPVector.<Attribute> empty().plusAll(s);
 	}
 
 	@Override
 	public GraphClass getGraphClass() {
 		return graphClass;
+	}
+
+	/**
+	 * adds a superClass to this class
+	 * 
+	 * @param superClass
+	 *            the class to add as superclass
+	 */
+	protected void addSuperClass(SC superClass) {
+		assertNotFinished();
+		if (superClass == this) {
+			return;
+		}
+		subclassDag.createEdge(superClass, this);
+		for (Attribute a : superClass.getAttributeList()) {
+			if (getOwnAttribute(a.getName()) != null) {
+				throw new SchemaException("Cannot add "
+						+ superClass.getQualifiedName() + " as superclass of "
+						+ getQualifiedName() + ". Cause: Attribute "
+						+ a.getName() + " is declared in both classes");
+			}
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public PSet<SC> getDirectSubClasses() {
+		return (PSet<SC>) subclassDag.getDirectSucccessors(this);
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public PSet<SC> getDirectSuperClasses() {
+		return (PSet<SC>) subclassDag.getDirectPredecessors(this);
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public Set<SC> getAllSubClasses() {
+		if (finished) {
+			return allSubClasses;
+		}
+		return (Set<SC>) subclassDag.getAllSuccessorsInTopologicalOrder(this);
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public Set<SC> getAllSuperClasses() {
+		if (finished) {
+			return allSuperClasses;
+		}
+		return (Set<SC>) subclassDag.getAllPredecessorsInTopologicalOrder(this);
+	}
+
+	@Override
+	public final boolean isSubClassOf(SC anAttributedElementClass) {
+		if (finished) {
+			return allSuperClassesHash.contains(anAttributedElementClass);
+		}
+		return getAllSuperClasses().contains(anAttributedElementClass);
+	}
+
+	@Override
+	public final boolean isSuperClassOf(SC anAttributedElementClass) {
+		if (finished) {
+			return allSubClassesHash.contains(anAttributedElementClass);
+		}
+		return getAllSubClasses().contains(anAttributedElementClass);
+	}
+
+	private boolean subclassContainsAttribute(String name) {
+		for (SC subClass : getAllSubClasses()) {
+			if (subClass.getAttribute(name) != null) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	protected void finish() {
+		allSuperClasses = (PSet<SC>) subclassDag
+				.getAllPredecessorsInTopologicalOrder(this);
+		allSuperClassesHash = new HashSet<SC>(allSuperClasses);
+		allSubClasses = (PSet<SC>) subclassDag
+				.getAllSuccessorsInTopologicalOrder(this);
+		allSubClassesHash = new HashSet<SC>(allSubClasses);
+
+		TreeSet<Attribute> s = new TreeSet<Attribute>(ownAttributes);
+		for (AttributedElementClass<SC, IC> superClass : subclassDag
+				.getDirectPredecessors(this)) {
+			s.addAll(superClass.getAttributeList());
+		}
+
+		allAttributes = ArrayPVector.<Attribute> empty().plusAll(s);
+
+		super.finish();
+	}
+
+	@Override
+	public int getAttributeCount() {
+		if (finished) {
+			return allAttributes.size();
+		}
+		int attrCount = getOwnAttributeCount();
+		for (AttributedElementClass<SC, IC> superClass : subclassDag
+				.getDirectPredecessors(this)) {
+			attrCount += superClass.getAttributeCount();
+		}
+		return attrCount;
+	}
+
+	@Override
+	public List<Attribute> getAttributeList() {
+		if (finished) {
+			return allAttributes;
+		}
+
+		TreeSet<Attribute> attrList = new TreeSet<Attribute>();
+		attrList.addAll(ownAttributes);
+		for (AttributedElementClass<SC, IC> superClass : subclassDag
+				.getDirectPredecessors(this)) {
+			attrList.addAll(superClass.getAttributeList());
+		}
+		return ArrayPVector.<Attribute> empty().plusAll(attrList);
+	}
+
+	@Override
+	public Attribute getAttribute(String name) {
+		if (finished) {
+			return super.getAttribute(name);
+		}
+
+		Attribute ownAttr = getOwnAttribute(name);
+		if (ownAttr != null) {
+			return ownAttr;
+		}
+		for (AttributedElementClass<SC, IC> superClass : subclassDag
+				.getDirectPredecessors(this)) {
+			Attribute inheritedAttr = superClass.getAttribute(name);
+			if (inheritedAttr != null) {
+				return inheritedAttr;
+			}
+		}
+		return null;
+	}
+
+	@Override
+	public Attribute getOwnAttribute(String name) {
+		for (Attribute a : ownAttributes) {
+			if (a.getName().equals(name)) {
+				return a;
+			}
+		}
+		return null;
+	}
+
+	@Override
+	public int getOwnAttributeCount() {
+		return ownAttributes.size();
+	}
+
+	@Override
+	public List<Attribute> getOwnAttributeList() {
+		return ownAttributes;
+	}
+
+	@Override
+	public boolean hasOwnAttributes() {
+		return !ownAttributes.isEmpty();
 	}
 
 	public String getDescriptionString() {
@@ -69,18 +303,20 @@ public abstract class GraphElementClassImpl<SC extends GraphElementClass<SC, IC>
 		if (isAbstract()) {
 			output.append(" (abstract)");
 		}
-		output.append(": \n");
+		output.append(":\n");
 
-		output.append("subClasses of '" + getQualifiedName() + "': ");
+		output.append("Subclasses of '" + getQualifiedName() + "': ");
 
 		for (SC aec : getAllSubClasses()) {
 			output.append("'" + aec.getQualifiedName() + "' ");
 		}
-		output.append("\nsuperClasses of '" + getQualifiedName() + "': ");
+
+		output.append("\nSuperclasses of '" + getQualifiedName() + "': ");
 		for (SC aec : getAllSuperClasses()) {
 			output.append("'" + aec.getQualifiedName() + "' ");
 		}
-		output.append("\ndirectSuperClasses of '" + getQualifiedName() + "': ");
+
+		output.append("\nDirect Superclasses of '" + getQualifiedName() + "': ");
 		for (SC aec : getDirectSuperClasses()) {
 			output.append("'" + aec.getQualifiedName() + "' ");
 		}
