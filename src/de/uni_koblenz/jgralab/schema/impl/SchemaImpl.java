@@ -247,11 +247,11 @@ public class SchemaImpl implements Schema {
 		this.defaultPackage = (PackageImpl) this.createDefaultPackage();
 
 		// Creation of the BasicDomains
-		this.createBooleanDomain();
-		this.createDoubleDomain();
-		this.createIntegerDomain();
-		this.createLongDomain();
-		this.createStringDomain();
+		this.booleanDomain = this.createBooleanDomain();
+		this.doubleDomain = this.createDoubleDomain();
+		this.integerDomain = this.createIntegerDomain();
+		this.longDomain = this.createLongDomain();
+		this.stringDomain = this.createStringDomain();
 	}
 
 	protected Package createDefaultPackage() {
