@@ -34,14 +34,15 @@
  */
 package de.uni_koblenz.jgralab.utilities.tg2dot.greql2.funlib;
 
+import de.uni_koblenz.jgralab.greql2.funlib.Description;
 import de.uni_koblenz.jgralab.greql2.funlib.Function;
 
 public class ToDotString extends Function {
 
+	@Description(params = "arg", description = "Returns a converted DOT string representation of the given string.",
+			categories = Category.STRINGS)
 	public ToDotString() {
-		super(
-				"Returns a converted DOT string representation of the given string.",
-				2, 1, 1.0, Category.STRINGS);
+		super(2, 1, 1.0);
 	}
 
 	public String evaluate(Object arg) {

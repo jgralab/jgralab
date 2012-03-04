@@ -437,14 +437,15 @@ public class FunLib {
 
 		private void fillCat2Funs(final Map<String, FunctionInfo> funs) {
 			for (Entry<String, FunctionInfo> e : funs.entrySet()) {
-				for (Category cat : e.getValue().getFunction().getCategories()) {
-					SortedMap<String, FunctionInfo> m = cat2funs.get(cat);
-					if (m == null) {
-						m = new TreeMap<String, FunctionInfo>();
-						cat2funs.put(cat, m);
-					}
-					m.put(e.getKey(), e.getValue());
-				}
+				//TODO
+//				for (Category cat : e.getValue().getFunction().getCategories()) {
+//					SortedMap<String, FunctionInfo> m = cat2funs.get(cat);
+//					if (m == null) {
+//						m = new TreeMap<String, FunctionInfo>();
+//						cat2funs.put(cat, m);
+//					}
+//					m.put(e.getKey(), e.getValue());
+//				}
 			}
 		}
 
@@ -508,7 +509,7 @@ public class FunLib {
 			newLine();
 			write("\\paragraph*{" + name + ".}");
 			newLine();
-			write(info.function.getDescription());
+			//TODO write(info.function.getDescription());
 			newLine();
 
 			generateSignatures(name, info.signatures);

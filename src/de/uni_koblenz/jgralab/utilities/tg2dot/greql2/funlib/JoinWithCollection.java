@@ -36,14 +36,16 @@ package de.uni_koblenz.jgralab.utilities.tg2dot.greql2.funlib;
 
 import org.pcollections.PCollection;
 
+import de.uni_koblenz.jgralab.greql2.funlib.Description;
 import de.uni_koblenz.jgralab.greql2.funlib.Function;
 
 public class JoinWithCollection extends Function {
 
+	@Description(params = {"delim", "col"}, description = 
+			"Returns a string of joined element of a given delimiter and a collection.",
+			categories = Category.STRINGS)
 	public JoinWithCollection() {
-		super(
-				"Returns a string of joined element of a given delimiter and a collection.",
-				2, 1, 1.0, Category.STRINGS);
+		super(2, 1, 1.0);
 	}
 
 	public String evaluate(String delim, PCollection<?> col) {
