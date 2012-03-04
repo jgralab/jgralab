@@ -247,39 +247,39 @@ public class SchemaImpl implements Schema {
 		this.defaultPackage = (PackageImpl) this.createDefaultPackage();
 
 		// Creation of the BasicDomains
-		createBooleanDomain();
-		createDoubleDomain();
-		createIntegerDomain();
-		createLongDomain();
-		createStringDomain();
+		this.createBooleanDomain();
+		this.createDoubleDomain();
+		this.createIntegerDomain();
+		this.createLongDomain();
+		this.createStringDomain();
 	}
 
 	protected Package createDefaultPackage() {
 		return PackageImpl.createDefaultPackage(this);
 	}
 	void addDomain(Domain dom) {
-		if (domains.containsKey(dom.getQualifiedName())) {
+		if (this.domains.containsKey(dom.getQualifiedName())) {
 			throw new SchemaException("Duplicate Domain '"
 					+ dom.getQualifiedName() + "'");
 		}
-		domains.put(dom.getQualifiedName(), dom);
-		domainsDag.createNode(dom);
+		this.domains.put(dom.getQualifiedName(), dom);
+		this.domainsDag.createNode(dom);
 	}
 
 	void addPackage(PackageImpl pkg) {
-		if (packages.containsKey(pkg.getQualifiedName())) {
+		if (this.packages.containsKey(pkg.getQualifiedName())) {
 			throw new SchemaException("Duplicate Package '"
 					+ pkg.getQualifiedName() + "'");
 		}
-		packages.put(pkg.getQualifiedName(), pkg);
+		this.packages.put(pkg.getQualifiedName(), pkg);
 	}
 
 	void addNamedElement(NamedElement namedElement) {
-		if (namedElements.containsKey(namedElement.getQualifiedName())) {
+		if (this.namedElements.containsKey(namedElement.getQualifiedName())) {
 			throw new SchemaException("Duplicate NamedElement '"
 					+ namedElement.getQualifiedName() + "'");
 		}
-		namedElements.put(namedElement.getQualifiedName(), namedElement);
+		this.namedElements.put(namedElement.getQualifiedName(), namedElement);
 
 		if (!(namedElement instanceof AttributedElementClass)) {
 			return;
@@ -320,7 +320,7 @@ public class SchemaImpl implements Schema {
 				this.graphClass, this.packagePrefix, this.name, config);
 		javaSources.addAll(graphCodeGenerator.createJavaSources());
 
-		for (VertexClass vertexClass : graphClass.getVertexClasses()) {
+		for (VertexClass vertexClass : this.graphClass.getVertexClasses()) {
 			if (vertexClass.isInternal()) {
 				continue;
 			}
@@ -329,7 +329,7 @@ public class SchemaImpl implements Schema {
 			javaSources.addAll(codeGen.createJavaSources());
 		}
 
-		for (EdgeClass edgeClass : graphClass.getEdgeClasses()) {
+		for (EdgeClass edgeClass : this.graphClass.getEdgeClasses()) {
 			if (edgeClass.isInternal()) {
 				continue;
 			}
@@ -363,7 +363,7 @@ public class SchemaImpl implements Schema {
 	@Override
 	public void createJAR(CodeGeneratorConfiguration config, String jarFileName)
 			throws IOException, GraphIOException {
-		assertFinished();
+		this.assertFinished();
 		File tmpFile = File.createTempFile("jar-creation", "tmp");
 		tmpFile.deleteOnExit();
 		File tmpDir = new File(tmpFile.getParent());
@@ -428,7 +428,7 @@ public class SchemaImpl implements Schema {
 	@Override
 	public Vector<InMemoryJavaSourceFile> commit(
 			CodeGeneratorConfiguration config) {
-		assertFinished();
+		this.assertFinished();
 
 		Vector<InMemoryJavaSourceFile> javaSources = new Vector<InMemoryJavaSourceFile>();
 
@@ -442,7 +442,7 @@ public class SchemaImpl implements Schema {
 				this.packagePrefix, config);
 		javaSources.addAll(factoryCodeGenerator.createJavaSources());
 
-		javaSources.addAll(createClasses(config));
+		javaSources.addAll(this.createClasses(config));
 		return javaSources;
 	}
 
@@ -456,7 +456,7 @@ public class SchemaImpl implements Schema {
 				this.graphClass, this.packagePrefix, this.name, config);
 		graphCodeGenerator.createFiles(pathPrefix);
 
-		for (VertexClass vertexClass : graphClass.getVertexClasses()) {
+		for (VertexClass vertexClass : this.graphClass.getVertexClasses()) {
 			if (vertexClass.isInternal()) {
 				continue;
 			}
@@ -473,7 +473,7 @@ public class SchemaImpl implements Schema {
 			}
 		}
 
-		for (EdgeClass edgeClass : graphClass.getEdgeClasses()) {
+		for (EdgeClass edgeClass : this.graphClass.getEdgeClasses()) {
 			if (edgeClass.isInternal()) {
 				continue;
 			}
@@ -529,14 +529,14 @@ public class SchemaImpl implements Schema {
 	@Override
 	public void commit(String pathPrefix, CodeGeneratorConfiguration config)
 			throws GraphIOException {
-		assertFinished();
+		this.assertFinished();
 		this.commit(pathPrefix, config, null);
 	}
 
 	@Override
 	public void commit(String pathPrefix, CodeGeneratorConfiguration config,
 			ProgressFunction progressFunction) throws GraphIOException {
-		assertFinished();
+		this.assertFinished();
 		// progress bar for schema generation
 		// ProgressFunctionImpl pf;
 		long schemaElements = 0, currentCount = 0, interval = 1;
@@ -586,7 +586,7 @@ public class SchemaImpl implements Schema {
 
 	@Override
 	public void compile(CodeGeneratorConfiguration config) {
-		assertFinished();
+		this.assertFinished();
 		JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
 		if (compiler == null) {
 			throw new SchemaException("Cannot compile schema " + this.qualifiedName
@@ -604,7 +604,7 @@ public class SchemaImpl implements Schema {
 	@Override
 	public Attribute createAttribute(String name, Domain dom,
 			AttributedElementClass<?, ?> aec, String defaultValueAsString) {
-		assertNotFinished();
+		this.assertNotFinished();
 		return new AttributeImpl(name, dom, aec, defaultValueAsString);
 	}
 
@@ -616,9 +616,9 @@ public class SchemaImpl implements Schema {
 	@Override
 	public EnumDomain createEnumDomain(String qualifiedName,
 			List<String> enumComponents) {
-		assertNotFinished();
+		this.assertNotFinished();
 		String[] components = splitQualifiedName(qualifiedName);
-		PackageImpl parent = (PackageImpl) createPackageWithParents(components[0]);
+		PackageImpl parent = this.createPackageWithParents(components[0]);
 		String simpleName = components[1];
 		EnumDomain ed = new EnumDomainImpl(simpleName, parent, enumComponents);
 		return ed;
@@ -626,8 +626,8 @@ public class SchemaImpl implements Schema {
 
 	@Override
 	public GraphClass createGraphClass(String simpleName) {
-		assertNotFinished();
-		if (graphClass != null) {
+		this.assertNotFinished();
+		if (this.graphClass != null) {
 			throw new SchemaException(
 					"Only one GraphClass (except DefaultGraphClass) is allowed in a Schema! '"
 							+ this.graphClass.getQualifiedName()
@@ -641,49 +641,49 @@ public class SchemaImpl implements Schema {
 		return new GraphClassImpl(simpleName, this);
 	}
 
-	private BooleanDomain createBooleanDomain() {
-		assertNotFinished();
-		if (booleanDomain == null) {
-			booleanDomain = new BooleanDomainImpl(this);
+	protected BooleanDomain createBooleanDomain() {
+		this.assertNotFinished();
+		if (this.booleanDomain == null) {
+			this.booleanDomain = new BooleanDomainImpl(this);
 		}
-		return booleanDomain;
+		return this.booleanDomain;
 	}
 
-	private DoubleDomain createDoubleDomain() {
-		assertNotFinished();
-		if (doubleDomain == null) {
-			doubleDomain = new DoubleDomainImpl(this);
+	protected DoubleDomain createDoubleDomain() {
+		this.assertNotFinished();
+		if (this.doubleDomain == null) {
+			this.doubleDomain = new DoubleDomainImpl(this);
 		}
-		return doubleDomain;
+		return this.doubleDomain;
 	}
 
-	private IntegerDomain createIntegerDomain() {
-		assertNotFinished();
-		if (integerDomain == null) {
-			integerDomain = new IntegerDomainImpl(this);
+	protected IntegerDomain createIntegerDomain() {
+		this.assertNotFinished();
+		if (this.integerDomain == null) {
+			this.integerDomain = new IntegerDomainImpl(this);
 		}
-		return integerDomain;
+		return this.integerDomain;
 	}
 
-	private LongDomain createLongDomain() {
-		assertNotFinished();
-		if (longDomain == null) {
-			longDomain = new LongDomainImpl(this);
+	protected LongDomain createLongDomain() {
+		this.assertNotFinished();
+		if (this.longDomain == null) {
+			this.longDomain = new LongDomainImpl(this);
 		}
-		return longDomain;
+		return this.longDomain;
 	}
 
-	private StringDomain createStringDomain() {
-		assertNotFinished();
-		if (stringDomain == null) {
-			stringDomain = new StringDomainImpl(this);
+	protected StringDomain createStringDomain() {
+		this.assertNotFinished();
+		if (this.stringDomain == null) {
+			this.stringDomain = new StringDomainImpl(this);
 		}
-		return stringDomain;
+		return this.stringDomain;
 	}
 
 	@Override
 	public ListDomain createListDomain(Domain baseDomain) {
-		assertNotFinished();
+		this.assertNotFinished();
 		String qn = "List<" + baseDomain.getQualifiedName() + ">";
 		if (this.domains.containsKey(qn)) {
 			return (ListDomain) this.domains.get(qn);
@@ -693,7 +693,7 @@ public class SchemaImpl implements Schema {
 
 	@Override
 	public MapDomain createMapDomain(Domain keyDomain, Domain valueDomain) {
-		assertNotFinished();
+		this.assertNotFinished();
 		String qn = "Map<" + keyDomain.getQualifiedName() + ", "
 				+ valueDomain.getQualifiedName() + ">";
 		if (this.domains.containsKey(qn)) {
@@ -703,7 +703,7 @@ public class SchemaImpl implements Schema {
 	}
 
 	protected PackageImpl createPackage(String sn, PackageImpl parentPkg) {
-		assertNotFinished();
+		this.assertNotFinished();
 		return new PackageImpl(sn, parentPkg, this);
 	}
 
@@ -717,9 +717,9 @@ public class SchemaImpl implements Schema {
 	 *         existing package with this qualified name.
 	 */
 	protected PackageImpl createPackageWithParents(String qn) {
-		assertNotFinished();
-		if (packages.containsKey(qn)) {
-			return packages.get(qn);
+		this.assertNotFinished();
+		if (this.packages.containsKey(qn)) {
+			return this.packages.get(qn);
 		}
 
 		String[] components = splitQualifiedName(qn);
@@ -730,7 +730,7 @@ public class SchemaImpl implements Schema {
 		+ pkgSimpleName + "' must not contain a dot!";
 
 
-		PackageImpl currentParent = defaultPackage;
+		PackageImpl currentParent = this.defaultPackage;
 		String currentPkgQName = "";
 
 		if (!this.packages.containsKey(parent)) {
@@ -799,9 +799,9 @@ public class SchemaImpl implements Schema {
 	@Override
 	public RecordDomain createRecordDomain(String qualifiedName,
 			Collection<RecordComponent> recordComponents) {
-		assertNotFinished();
+		this.assertNotFinished();
 		String[] components = splitQualifiedName(qualifiedName);
-		PackageImpl parent = createPackageWithParents(components[0]);
+		PackageImpl parent = this.createPackageWithParents(components[0]);
 		String simpleName = components[1];
 		RecordDomain rd = new RecordDomainImpl(simpleName, parent,
 				recordComponents);
@@ -810,7 +810,7 @@ public class SchemaImpl implements Schema {
 
 	@Override
 	public SetDomain createSetDomain(Domain baseDomain) {
-		assertNotFinished();
+		this.assertNotFinished();
 		String qn = "Set<" + baseDomain.getQualifiedName() + ">";
 		if (this.domains.containsKey(qn)) {
 			return (SetDomain) this.domains.get(qn);
@@ -823,7 +823,7 @@ public class SchemaImpl implements Schema {
 		if ((other == null) || !(other instanceof Schema)) {
 			return false;
 		}
-		return qualifiedName.equals(((SchemaImpl) other).qualifiedName);
+		return this.qualifiedName.equals(((SchemaImpl) other).qualifiedName);
 	}
 
 	@Override
@@ -923,13 +923,13 @@ public class SchemaImpl implements Schema {
 	}
 
 	void addDomainDependency(Domain composite, Domain base) {
-		domainsDag.createEdge(base, composite);
+		this.domainsDag.createEdge(base, composite);
 	}
 
 	@Override
 
 	public List<EdgeClass> getEdgeClasses() {
-		return graphClass.getEdgeClasses();
+		return this.graphClass.getEdgeClasses();
 	}
 
 	@Override
@@ -1093,6 +1093,7 @@ public class SchemaImpl implements Schema {
 		return this.packagePrefix;
 	}
 
+	@Override
 	public String getQualifiedName() {
 		return this.qualifiedName;
 	}
@@ -1112,7 +1113,7 @@ public class SchemaImpl implements Schema {
 
 	@Override
 	public List<VertexClass> getVertexClasses() {
-		return graphClass.getVertexClasses();
+		return this.graphClass.getVertexClasses();
 	}
 
 	@Override
@@ -1163,9 +1164,9 @@ public class SchemaImpl implements Schema {
 	}
 
 	void setGraphClass(GraphClassImpl gc) {
-		if (graphClass != null) {
+		if (this.graphClass != null) {
 			throw new SchemaException("A GraphClass named '"
-					+ graphClass.getQualifiedName()
+					+ this.graphClass.getQualifiedName()
 					+ "' already exists in this Schema!");
 		}
 		this.graphClass = gc;
@@ -1177,8 +1178,8 @@ public class SchemaImpl implements Schema {
 	 *         hierarchy of those classes
 	 */
 	public String getDescriptionString() {
-		return "GraphClass of schema '" + qualifiedName + "':\n\n\n"
-				+ graphClass.getDescriptionString();
+		return "GraphClass of schema '" + this.qualifiedName + "':\n\n\n"
+				+ this.graphClass.getDescriptionString();
 	}
 
 	@Override
@@ -1217,7 +1218,7 @@ public class SchemaImpl implements Schema {
 	@Override
 	public GraphFactory createDefaultGraphFactory(
 			ImplementationType implementationType) {
-		assertFinished();
+		this.assertFinished();
 		if (implementationType != ImplementationType.GENERIC) {
 			throw new SchemaException(
 					"Base implementation can't create a GraphFactory for implementation type "
@@ -1235,19 +1236,19 @@ public class SchemaImpl implements Schema {
 	@Override
 	public Graph createGraph(ImplementationType implementationType, String id,
 			int vMax, int eMax) {
-		assertFinished();
-		GraphFactory factory = createDefaultGraphFactory(implementationType);
-		return factory.createGraph(getGraphClass(), id, vMax, eMax);
+		this.assertFinished();
+		GraphFactory factory = this.createDefaultGraphFactory(implementationType);
+		return factory.createGraph(this.getGraphClass(), id, vMax, eMax);
 	}
 
 	protected void assertFinished() {
-		if (!finished) {
+		if (!this.finished) {
 			throw new SchemaException("Schema must be finished.");
 		}
 	}
 
 	protected void assertNotFinished() {
-		if (finished) {
+		if (this.finished) {
 			throw new SchemaException(
 					"No changes allowed in a finished Schema.");
 		}
@@ -1270,13 +1271,13 @@ public class SchemaImpl implements Schema {
 		if (this.finished) {
 			return;
 		}
-		if (graphClass == null) {
+		if (this.graphClass == null) {
 			throw new SchemaException(
 					"Can't finish a schema without a GraphClass. Create a GraphClass first!");
 		}
-		domainsDag.finish();
-		graphClass.finish();
-		finished = true;
+		this.domainsDag.finish();
+		this.graphClass.finish();
+		this.finished = true;
 	}
 
 	/**
