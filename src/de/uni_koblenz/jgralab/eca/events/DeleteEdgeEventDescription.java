@@ -82,11 +82,11 @@ public class DeleteEdgeEventDescription extends EventDescription<EdgeClass> {
 	 */
 	public void fire(Edge element) {
 		if (this.checkContext(element)) {
-			int nested = getActiveECARules().get(0).getECARuleManager()
+			int nested = this.getActiveECARules().get(0).getECARuleManager()
 					.getNestedTriggerCalls();
-			Graph graph = getActiveECARules().get(0).getECARuleManager()
+			Graph graph = this.getActiveECARules().get(0).getECARuleManager()
 					.getGraph();
-			for (ECARule<EdgeClass> rule : activeRules) {
+			for (ECARule<EdgeClass> rule : this.activeRules) {
 				rule.trigger(new DeleteEdgeEvent(nested, graph, element));
 			}
 		}
@@ -103,12 +103,12 @@ public class DeleteEdgeEventDescription extends EventDescription<EdgeClass> {
 	 * 				the old omega {@link Vertex} of the deleted {@link Edge}
 	 */
 	public void fire(EdgeClass type, Vertex oldAlpha, Vertex oldOmega) {
-		if (super.checkContext(type)) {
-			int nested = getActiveECARules().get(0).getECARuleManager()
+		if (this.checkContext(type)) {
+			int nested = this.getActiveECARules().get(0).getECARuleManager()
 					.getNestedTriggerCalls();
-			Graph graph = getActiveECARules().get(0).getECARuleManager()
+			Graph graph = this.getActiveECARules().get(0).getECARuleManager()
 					.getGraph();
-			for (ECARule<EdgeClass> rule : activeRules) {
+			for (ECARule<EdgeClass> rule : this.activeRules) {
 				rule.trigger(new DeleteEdgeEvent(nested, graph, type,oldAlpha,oldOmega));
 			}
 		}
