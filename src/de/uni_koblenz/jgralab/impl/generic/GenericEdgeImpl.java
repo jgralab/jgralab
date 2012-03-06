@@ -175,8 +175,9 @@ public class GenericEdgeImpl extends EdgeImpl {
 					+ ((d instanceof RecordDomain) ? RecordImpl.class.getName()
 							: d.getJavaAttributeImplementationTypeName(d
 									.getPackageName()))
-					+ " object, but received " + data.getClass().getName()
-					+ " object instead");
+					+ " object, but received " + data == null ? (data
+					.getClass().getName() + " object instead") : data
+					+ " instead");
 		}
 	}
 

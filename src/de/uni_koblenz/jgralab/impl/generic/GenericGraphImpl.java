@@ -77,6 +77,13 @@ public class GenericGraphImpl extends GraphImpl {
 
 	protected GenericGraphImpl(GraphClass type, String id) {
 		super(id, type, 100, 100);
+		this.type = type;
+		if (type.getAttributeCount() > 0) {
+			attributes = new Object[type.getAttributeCount()];
+			if (!isLoading()) {
+				GenericGraphImpl.initializeGenericAttributeValues(this);
+			}
+		}
 	}
 
 	protected GenericGraphImpl(GraphClass type, String id, int vmax, int emax) {
@@ -88,16 +95,6 @@ public class GenericGraphImpl extends GraphImpl {
 				GenericGraphImpl.initializeGenericAttributeValues(this);
 			}
 		}
-	}
-
-	/**
-	 * Creates a new instance of a generic Graph. This method isn't supposed to
-	 * be called manually. Use
-	 * <code>Schema.createGraph(ImplementationType.Generic)</code> instead!
-	 */
-	public static Graph createGraph(GraphClass type, String id, int vmax,
-			int emax) {
-		return new GenericGraphImpl(type, id, vmax, emax);
 	}
 
 	/**
@@ -188,8 +185,9 @@ public class GenericGraphImpl extends GraphImpl {
 					+ ((d instanceof RecordDomain) ? RecordImpl.class.getName()
 							: d.getJavaAttributeImplementationTypeName(d
 									.getPackageName()))
-					+ " object, but received " + data.getClass().getName()
-					+ " object instead");
+					+ " object, but received " + data == null ? (data
+					.getClass().getName() + " object instead") : data
+					+ " instead");
 		}
 	}
 
@@ -240,7 +238,7 @@ public class GenericGraphImpl extends GraphImpl {
 	 * Returns the default value for attributes in the generic implementation if
 	 * there is no explicitly defined default value, according to the
 	 * attribute's domain.
-	 * 
+	 *
 	 * @param domain
 	 *            The attribute's domain.
 	 * @return The default value for attributes of the domain.
