@@ -78,6 +78,14 @@ public class AggregationTransition extends Transition {
 	 * transition. If the transition is valid for all roles, this set is null
 	 */
 	protected Set<String> validToEdgeRoles;
+	
+	public Set<String> getValidToRoles() {
+		return validToEdgeRoles;
+	}
+	
+	public Set<String> getValidFromRoles() {
+		return validFromEdgeRoles;
+	}
 
 	protected Set<String> validFromEdgeRoles;
 

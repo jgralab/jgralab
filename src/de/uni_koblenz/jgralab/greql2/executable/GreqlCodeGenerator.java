@@ -11,6 +11,7 @@ import javax.tools.JavaCompiler;
 import javax.tools.StandardJavaFileManager;
 import javax.tools.ToolProvider;
 
+import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.Vertex;
@@ -21,7 +22,9 @@ import de.uni_koblenz.jgralab.codegenerator.CodeList;
 import de.uni_koblenz.jgralab.codegenerator.CodeSnippet;
 import de.uni_koblenz.jgralab.graphmarker.GraphMarker;
 import de.uni_koblenz.jgralab.greql2.evaluator.fa.AggregationTransition;
+import de.uni_koblenz.jgralab.greql2.evaluator.fa.BoolExpressionTransition;
 import de.uni_koblenz.jgralab.greql2.evaluator.fa.DFA;
+import de.uni_koblenz.jgralab.greql2.evaluator.fa.EdgeTransition;
 import de.uni_koblenz.jgralab.greql2.evaluator.fa.NFA;
 import de.uni_koblenz.jgralab.greql2.evaluator.fa.SimpleTransition;
 import de.uni_koblenz.jgralab.greql2.evaluator.fa.State;
@@ -37,6 +40,7 @@ import de.uni_koblenz.jgralab.greql2.schema.Comprehension;
 import de.uni_koblenz.jgralab.greql2.schema.ConditionalExpression;
 import de.uni_koblenz.jgralab.greql2.schema.Declaration;
 import de.uni_koblenz.jgralab.greql2.schema.DoubleLiteral;
+import de.uni_koblenz.jgralab.greql2.schema.EdgeRestriction;
 import de.uni_koblenz.jgralab.greql2.schema.EdgeSetExpression;
 import de.uni_koblenz.jgralab.greql2.schema.Expression;
 import de.uni_koblenz.jgralab.greql2.schema.ForwardVertexSet;
@@ -74,6 +78,7 @@ import de.uni_koblenz.jgralab.greql2.schema.SetConstruction;
 import de.uni_koblenz.jgralab.greql2.schema.SimpleDeclaration;
 import de.uni_koblenz.jgralab.greql2.schema.StringLiteral;
 import de.uni_koblenz.jgralab.greql2.schema.ThisEdge;
+import de.uni_koblenz.jgralab.greql2.schema.ThisLiteral;
 import de.uni_koblenz.jgralab.greql2.schema.ThisVertex;
 import de.uni_koblenz.jgralab.greql2.schema.TupleConstruction;
 import de.uni_koblenz.jgralab.greql2.schema.TypeId;
@@ -654,10 +659,12 @@ public class GreqlCodeGenerator extends CodeGenerator {
 			return  Boolean.toString(((BoolLiteral)literal).is_boolValue());
 		}
 		if (literal instanceof ThisEdge) {
-			return  "thisIncidence";
+			createThisLiterals();
+			return  "thisEdge";
 		}
 		if (literal instanceof ThisVertex) {
-			return  "thisElement";
+			createThisLiterals();
+			return  "thisVertex";
 		}
 		return "UndefinedLiteral";
 	}
@@ -803,7 +810,7 @@ public class GreqlCodeGenerator extends CodeGenerator {
 				//Generate code to check if next element is marked
 				transBeginSnippet.add("\t\t\tif (!markedElements[" + curTrans.endState.number + "].contains(nextElement)) {");
 				transitionCodeList.add(createCodeForTransition(curTrans),2);
-				transitionCodeList.add(new CodeSnippet("\t\t\t}"));
+				transitionCodeList.add(new CodeSnippet("\t\t}"));
 			}
 			stateCodeList.add(new CodeSnippet("\t\tbreak;//break case block"));
 		}
@@ -829,40 +836,51 @@ public class GreqlCodeGenerator extends CodeGenerator {
 	
 	
 	private CodeBlock createCodeForTransition(Transition trans) {
+		if (trans instanceof EdgeTransition) {
+			return createCodeForEdgeTransition((EdgeTransition) trans);
+		}
 		if (trans instanceof SimpleTransition) {
 			return createCodeForSimpleTransition((SimpleTransition) trans);
 		}
 		if (trans instanceof AggregationTransition) {
 			return createCodeForAggregationTransition((AggregationTransition) trans);
 		}
+		if (trans instanceof BoolExpressionTransition) {
+			return createCodeForBooleanExpressionTransition((BoolExpressionTransition) trans);
+		}
 		return new CodeSnippet("FAILURE: TRANSITION TYPE IS UNKNOWN TO GREQL CODE GENERATOR " + trans.getClass().getSimpleName()); 
 	}
 	
 	private CodeBlock createCodeForSimpleTransition(SimpleTransition trans) {
+		return createCodeForSimpleOrEdgeTransition(trans, null);
+	}
+	
+	
+	private CodeBlock createCodeForSimpleOrEdgeTransition(SimpleTransition trans, CodeBlock edgeTest) {
 		CodeList resultList = new CodeList();
 		CodeList curr = resultList;
 		addImports("de.uni_koblenz.jgralab.greql2.schema.GReQLDirection");
 		if (trans.getAllowedDirection() != GReQLDirection.INOUT) {
 			switch (trans.getAllowedDirection()) {
 			case IN: 
-				curr.add(new CodeSnippet("if (!inc.isNormal()) {" ));
+				curr.add(new CodeSnippet("if (!inc.isNormal()) { //begin of simple transition" ));
 			    break;
 			case OUT: 
-				curr.add(new CodeSnippet("if (inc.isNormal()) {" ));
+				curr.add(new CodeSnippet("if (inc.isNormal()) { //begin of simple transition" ));
 				break;
 			}
 		    CodeList body = new CodeList();
 		    curr.add(body);
-		    curr.add(new CodeSnippet("}"));
+		    curr.add(new CodeSnippet("} //end of simple transition"));
 		    curr = body;
 		}
 		TypeCollection typeCollection = trans.getTypeCollection();
 		if (typeCollection != null) {
 			String fieldName = createInitializerForTypeCollection(typeCollection);
-			curr.add(new CodeSnippet("if (" + fieldName + ".get(((GraphElementClass)inc.getAttributedElementClass()).getGraphElementClassIdInSchema())) {" ));	
+			curr.add(new CodeSnippet("if (" + fieldName + ".get(((GraphElementClass)inc.getAttributedElementClass()).getGraphElementClassIdInSchema())) { //begin of type check "));	
 		    CodeList body = new CodeList();
 		    curr.add(body);
-		    curr.add(new CodeSnippet("}"));
+		    curr.add(new CodeSnippet("} //end of type check"));
 		    curr = body;
 		}
 		
@@ -898,10 +916,10 @@ public class GreqlCodeGenerator extends CodeGenerator {
 			} else {
 				curr.add(new CodeSnippet("IncidenceClass ic = inc.isNormal() ? inc.getAttributedElementClass().getFrom() : inc.getAttributedElementClass().getTo();"));
 			}
-			curr.add(new CodeSnippet("if (" + roleAcceptanceField + ".get(ic.getIncidenceClassIdInSchema())) {" ));	
+			curr.add(new CodeSnippet("if (" + roleAcceptanceField + ".get(ic.getIncidenceClassIdInSchema())) { // begin of role test" ));	
 		    CodeList body = new CodeList();
 		    curr.add(body);
-		    curr.add(new CodeSnippet("}"));
+		    curr.add(new CodeSnippet("} //end of role test"));
 		    curr = body;
 		}
 		
@@ -911,14 +929,16 @@ public class GreqlCodeGenerator extends CodeGenerator {
 			//add class fields for this literals, TODO: only if thisIncidence/thisElement literals are used in this predicate
 			createThisLiterals();
 			CodeSnippet predicateSnippet = new CodeSnippet();
-			predicateSnippet.add("thisEdge = inc;");
-			predicateSnippet.add("thisVertex = element;");
-			predicateSnippet.add("if (" + createCodeForExpression((Expression)predicateEval.getVertex()) + ") {");
+			predicateSnippet.add("setThisEdge(inc);");
+			predicateSnippet.add("setThisVertex(element);");
+			predicateSnippet.add("if (" + createCodeForExpression((Expression)predicateEval.getVertex()) + ") { //begin of predicate check");
+			curr.add(predicateSnippet);
 		    CodeList body = new CodeList();
 		    curr.add(body);
-		    curr.addNoIndent(new CodeSnippet("}"));
+		    curr.addNoIndent(new CodeSnippet("} //end of predicate check"));
 		    curr = body;
 		}
+		curr.add(edgeTest);
 		//add element to queue
 		curr.add(createAddToQueueSnippet(trans.endState.number));
 		return resultList;
@@ -949,7 +969,44 @@ public class GreqlCodeGenerator extends CodeGenerator {
 		    curr.add(new CodeSnippet("}"));
 		    curr = body;
 		}
-		//TODO: Add role acceptance
+		//roles
+		Set<String> roles = trans.getValidToRoles();
+		boolean checkTo = true;
+		if (roles == null) {
+			roles = trans.getValidFromRoles();
+			checkTo = false;
+		}	
+		if (roles != null) {
+			addImports("de.uni_koblenz.jgralab.schema.IncidenceClass");
+			HashSet<IncidenceClass> incidenceClasses = new HashSet<IncidenceClass>();
+			for (EdgeClass ec : schema.getEdgeClasses()) {
+				IncidenceClass to = ec.getTo();
+				if (roles.contains(to.getRolename())) {
+					incidenceClasses.add(to);
+					for (EdgeClass subclass : ec.getAllSubClasses()) {
+						incidenceClasses.add(subclass.getTo());
+					}
+				}
+				IncidenceClass from = ec.getFrom();
+				if (roles.contains(from.getRolename())) {
+					incidenceClasses.add(from);
+					for (EdgeClass subclass : ec.getAllSubClasses()) {
+						incidenceClasses.add(subclass.getFrom());
+					}
+				}
+			}
+			String roleAcceptanceField = createInitializerForIncidenceTypeCollection(incidenceClasses);
+			if (checkTo) {
+				curr.add(new CodeSnippet("IncidenceClass ic = inc.isNormal() ? inc.getAttributedElementClass().getTo() : inc.getAttributedElementClass().getFrom();"));
+			} else {
+				curr.add(new CodeSnippet("IncidenceClass ic = inc.isNormal() ? inc.getAttributedElementClass().getFrom() : inc.getAttributedElementClass().getTo();"));
+			}
+			curr.add(new CodeSnippet("if (" + roleAcceptanceField + ".get(ic.getIncidenceClassIdInSchema())) { // begin of role test" ));	
+		    CodeList body = new CodeList();
+		    curr.add(body);
+		    curr.add(new CodeSnippet("} //end of role test"));
+		    curr = body;
+		}
 		
 		VertexEvaluator predicateEval = trans.getPredicateEvaluator();
 		if (predicateEval != null ) {
@@ -957,8 +1014,8 @@ public class GreqlCodeGenerator extends CodeGenerator {
 			//add class fields for this literals, TODO: only if thisIncidence/thisElement literals are used in this predicate
 			createThisLiterals();
 			CodeSnippet predicateSnippet = new CodeSnippet();
-			predicateSnippet.add("thisEdge = inc;");
-			predicateSnippet.add("thisVertex = element;");
+			predicateSnippet.add("setThisEdge(inc);");
+			predicateSnippet.add("setThisVertex(element);");
 			predicateSnippet.add("if (" + createCodeForExpression((Expression)predicateEval.getVertex()) + ") {");
 		    CodeList body = new CodeList();
 		    curr.add(body);
@@ -969,6 +1026,43 @@ public class GreqlCodeGenerator extends CodeGenerator {
 		curr.add(createAddToQueueSnippet(trans.endState.number));
 		return resultList;
 	}
+	
+
+	
+	
+	private CodeBlock createCodeForBooleanExpressionTransition(BoolExpressionTransition trans) {
+		CodeList resultList = new CodeList();
+		CodeList curr = resultList;
+		
+		VertexEvaluator predicateEval = trans.getBooleanExpressionEvaluator();
+		if (predicateEval != null ) {
+			createThisLiterals();
+			CodeSnippet predicateSnippet = new CodeSnippet();
+			predicateSnippet.add("setThisVertex(element);");
+			predicateSnippet.add("if (" + createCodeForExpression((Expression)predicateEval.getVertex()) + ") {");
+		    CodeList body = new CodeList();
+		    curr.add(body);
+		    curr.add(new CodeSnippet("}"));
+		    curr = body;
+		}
+		//add element to queue
+		curr.add(createAddToQueueSnippet(trans.endState.number));
+		return resultList;
+	}
+	
+	private CodeBlock createCodeForEdgeTransition(EdgeTransition trans) {
+		CodeList list = new CodeList();
+		VertexEvaluator allowedEdgeEvaluator = trans.getAllowedEdgeEvaluator();
+		if (allowedEdgeEvaluator != null) {
+			list.add(new CodeSnippet("Object allowedEdge = " + createCodeForExpression((Expression) allowedEdgeEvaluator.getVertex()) + ";"));
+			list.add(new CodeSnippet("if (edge.getNormalEdge() == allowedEdge.getNormalEdge()"));
+		}
+		return createCodeForSimpleOrEdgeTransition(trans, list);
+	}
+	
+	
+	
+	
 	
 	//Helper methods
 	
@@ -1034,9 +1128,38 @@ public class GreqlCodeGenerator extends CodeGenerator {
 		if (!thisLiteralsCreated) {
 			thisLiteralsCreated = true;
 			addClassField("Edge", "thisEdge", "null");
+			createSetterForThisLiteral(graph.getFirstThisEdge(), "Edge");
 			addClassField("Vertex", "thisVertex", "null");
+			createSetterForThisLiteral(graph.getFirstThisVertex(), "Vertex");
 		}
 	}
+	
+	protected void createSetterForThisLiteral(ThisLiteral lit, String edgeOrVertex) {
+		CodeList method = new CodeList();
+		CodeSnippet snip = new CodeSnippet();
+		method.add(snip);
+		snip.setVariable("edgeOrVertex", edgeOrVertex);
+		snip.add("private final void setThis#edgeOrVertex#(#edgeOrVertex# value) {");
+		if (lit != null) {
+			VariableEvaluator vertexEval = (VariableEvaluator) vertexEvalGraphMarker.getMark(lit);
+			List<VertexEvaluator> dependingExpressions = vertexEval.calculateDependingExpressions();
+			for (VertexEvaluator ve : dependingExpressions) {
+				Vertex currentV = ve.getVertex();
+				if (currentV instanceof Variable)
+					continue;
+				if (currentV instanceof PathDescription)
+					continue;
+				if (currentV instanceof EdgeRestriction)
+					continue;
+				String variableName = getVariableName(Integer.toString(currentV.getId()));
+				snip.add("\t" + variableName + " = null; //result of vertex " + currentV.getAttributedElementClass().getSimpleName());
+			}
+		}	
+		snip.add("\tthis#edgeOrVertex# = value;");
+		snip.add("}");
+		createdMethods.add(method);
+	}
+	
 
 	private void addStaticField(String type, String var, String def) {
 		staticFieldSnippet.add("static " + type + " " + var + " = " + def + ";", "");

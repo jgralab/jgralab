@@ -25,4 +25,7 @@ public abstract class AbstractExecutableQuery implements ExecutableQuery {
 		return execute(datagraph, null);
 	}
 	
+	
+	
+	
 }
