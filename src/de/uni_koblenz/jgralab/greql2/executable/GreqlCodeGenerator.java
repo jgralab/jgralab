@@ -31,6 +31,7 @@ import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VariableEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VertexEvaluator;
 import de.uni_koblenz.jgralab.greql2.funlib.FunLib;
 import de.uni_koblenz.jgralab.greql2.funlib.Function;
+import de.uni_koblenz.jgralab.greql2.schema.BackwardVertexSet;
 import de.uni_koblenz.jgralab.greql2.schema.BoolLiteral;
 import de.uni_koblenz.jgralab.greql2.schema.Comprehension;
 import de.uni_koblenz.jgralab.greql2.schema.ConditionalExpression;
@@ -229,6 +230,9 @@ public class GreqlCodeGenerator extends CodeGenerator {
 		}
 		if (queryExpr instanceof ForwardVertexSet) {
 			return createCodeForForwardVertexSet((ForwardVertexSet) queryExpr);
+		}
+		if (queryExpr instanceof BackwardVertexSet) {
+			return createCodeForBackwardVertexSet((BackwardVertexSet) queryExpr);
 		}
 		return "UnsupportedElement: " + queryExpr.getClass().getSimpleName();
 	}
@@ -726,6 +730,19 @@ public class GreqlCodeGenerator extends CodeGenerator {
 		PathDescriptionEvaluator pathDescrEval = (PathDescriptionEvaluator) vertexEvalGraphMarker.getMark(pathDescr);
 		dfa = ((NFA)pathDescrEval.getResult()).getDFA();
 		Expression startElementExpr = (Expression) fws.getFirstIsStartExprOfIncidence(EdgeDirection.IN).getThat();
+		return createCodeForForwarOrBackwardVertexSet(dfa, startElementExpr, fws);
+	}	
+	
+	private String createCodeForBackwardVertexSet(BackwardVertexSet fws) {
+		DFA dfa = null;
+		PathDescription pathDescr = (PathDescription) fws.getFirstIsPathOfIncidence(EdgeDirection.IN).getThat();
+		PathDescriptionEvaluator pathDescrEval = (PathDescriptionEvaluator) vertexEvalGraphMarker.getMark(pathDescr);
+		dfa = NFA.revertNFA((NFA)pathDescrEval.getResult()).getDFA();		
+		Expression targetElementExpr = (Expression) fws.getFirstIsTargetExprOfIncidence(EdgeDirection.IN).getThat();
+		return createCodeForForwarOrBackwardVertexSet(dfa, targetElementExpr, fws);
+	}	
+		
+	private String createCodeForForwarOrBackwardVertexSet(DFA dfa, Expression startElementExpr, Greql2Vertex syntaxGraphVertex)	{
 		CodeList list = new CodeList();
 		addImports("org.pcollections.PCollection");
 		addImports("org.pcollections.PSet");
@@ -796,7 +813,7 @@ public class GreqlCodeGenerator extends CodeGenerator {
 		finalSnippet.add("}");
 		finalSnippet.add("return resultSet;");
 		list.add(finalSnippet);
-		return createMethod(list, fws);
+		return createMethod(list, syntaxGraphVertex);
 	}
 	
 	
