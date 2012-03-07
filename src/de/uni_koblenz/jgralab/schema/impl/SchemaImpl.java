@@ -1292,4 +1292,21 @@ public class SchemaImpl implements Schema {
 		GraphIO.saveSchemaToStream(this, out);
 	}
 
+	/**
+	 * This field and the method getNextClassId() is used to allow a unique
+	 * mapping of GraphElementClasses to integer values, which is necessary
+	 * for the GReQL code generator
+	 */
+	int nextGraphElementClassId = 0;
+	
+	protected int getNextGraphElementClassId() {
+		return nextGraphElementClassId++;
+	}
+
+	protected int nextIncidenceClassId = 0;
+	
+	public int getNextIncidenceClassId() {
+		return nextIncidenceClassId++;
+	}
+
 }

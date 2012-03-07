@@ -159,7 +159,7 @@ public class VariableEvaluator extends VertexEvaluator {
 		return definedVariables;
 	}
 
-	protected List<VertexEvaluator> calculateDependingExpressions() {
+	public List<VertexEvaluator> calculateDependingExpressions() {
 		Queue<Greql2Vertex> queue = new LinkedList<Greql2Vertex>();
 		List<VertexEvaluator> dependingEvaluators = new ArrayList<VertexEvaluator>();
 		List<Vertex> forbiddenVertices = new ArrayList<Vertex>();

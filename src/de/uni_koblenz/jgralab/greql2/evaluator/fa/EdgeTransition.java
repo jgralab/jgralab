@@ -41,6 +41,7 @@ import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.graphmarker.GraphMarker;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VertexEvaluator;
+import de.uni_koblenz.jgralab.greql2.schema.GReQLDirection;
 import de.uni_koblenz.jgralab.greql2.types.TypeCollection;
 
 /**
@@ -176,7 +177,7 @@ public class EdgeTransition extends SimpleTransition {
 	 *            If this is set, only the resulting edge of this evaluator will
 	 *            be accepted
 	 */
-	public EdgeTransition(State start, State end, AllowedEdgeDirection dir,
+	public EdgeTransition(State start, State end, GReQLDirection dir,
 			TypeCollection typeCollection, Set<String> roles,
 			VertexEvaluator edgeEval, VertexEvaluator predicateEval,
 			GraphMarker<VertexEvaluator> graphMarker) {

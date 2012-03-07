@@ -164,8 +164,7 @@ public class GreqlEvaluatorTest extends GenericTest {
 		Object resultWO = evalQueryWithOptimizer(queryString);
 		assertEquals(result, resultWO);
 
-		// TODO test seriously
-		// System.out.println(result);
+		
 	}
 
 	@Test
