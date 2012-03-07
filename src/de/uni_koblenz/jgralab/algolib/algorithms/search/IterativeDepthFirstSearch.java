@@ -88,13 +88,6 @@ public class IterativeDepthFirstSearch extends DepthFirstSearch {
 	}
 
 	@Override
-	public DepthFirstSearch withParent() {
-		checkStateForSettingParameters();
-		throw new UnsupportedOperationException(
-				"The result \"parent\" is mandatory for iterative DFS and doesn't need to be explicitly activated.");
-	}
-
-	@Override
 	public DepthFirstSearch withoutParent() {
 		checkStateForSettingParameters();
 		throw new UnsupportedOperationException(
