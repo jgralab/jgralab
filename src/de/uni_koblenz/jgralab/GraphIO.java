@@ -63,7 +63,6 @@ import java.util.Queue;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
-import java.util.logging.Logger;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
@@ -161,8 +160,6 @@ public class GraphIO {
 	}
 
 	private static final int BUFFER_SIZE = 65536;
-
-	private static Logger logger = Logger.getLogger(GraphIO.class.getName());
 
 	private InputStream TGIn;
 
@@ -862,11 +859,10 @@ public class GraphIO {
 		write("TGraph " + TGFILE_VERSION + ";\n");
 	}
 
-	private void writeHierarchy(Package pkg, AttributedElementClass<?, ?> aec)
+	private void writeHierarchy(Package pkg, GraphElementClass<?, ?> aec)
 			throws IOException {
 		String delim = ":";
-		for (AttributedElementClass<?, ?> superClass : aec
-				.getDirectSuperClasses()) {
+		for (GraphElementClass<?, ?> superClass : aec.getDirectSuperClasses()) {
 			if (!superClass.isInternal()) {
 				write(delim);
 				space();
@@ -878,12 +874,14 @@ public class GraphIO {
 
 	private void writeAttributes(Package pkg, AttributedElementClass<?, ?> aec)
 			throws IOException {
-		if (aec.hasOwnAttributes()) {
-			write(" {");
+		List<Attribute> attributes = aec.getOwnAttributeList();
+		if (attributes.isEmpty()) {
+			return;
 		}
-		for (Iterator<Attribute> ait = aec.getOwnAttributeList().iterator(); ait
-				.hasNext();) {
-			Attribute a = ait.next();
+		String delim = " {";
+		for (Attribute a : attributes) {
+			write(delim);
+			delim = ",";
 			space();
 			writeIdentifier(a.getName());
 			write(": ");
@@ -894,12 +892,8 @@ public class GraphIO {
 				write(" = ");
 				writeUtfString(a.getDefaultValueAsString());
 			}
-			if (ait.hasNext()) {
-				write(", ");
-			} else {
-				write(" }");
-			}
 		}
+		write(" }");
 	}
 
 	public final void write(String s) throws IOException {
@@ -1004,7 +998,6 @@ public class GraphIO {
 		}
 		FileInputStream fileStream = null;
 		try {
-			logger.finer("Loading graph " + filename);
 			fileStream = new FileInputStream(filename);
 			InputStream inputStream = null;
 			try {
@@ -1054,7 +1047,6 @@ public class GraphIO {
 		}
 		FileInputStream fileStream = null;
 		try {
-			logger.finer("Loading graph " + filename);
 			fileStream = new FileInputStream(filename);
 			InputStream inputStream = null;
 			try {
@@ -1119,6 +1111,7 @@ public class GraphIO {
 							SchemaClassManager.instance(schemaQName));
 				} catch (ClassNotFoundException e) {
 					// schema class not found, try compile schema in-memory
+					io.schema.finish();
 					io.schema.compile(CodeGeneratorConfiguration.MINIMAL);
 					try {
 						schemaClass = Class.forName(schemaQName, true,

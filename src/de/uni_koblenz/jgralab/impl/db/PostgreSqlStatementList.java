@@ -1,29 +1,29 @@
 /*
  * JGraLab - The Java Graph Laboratory
- * 
+ *
  * Copyright (C) 2006-2012 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
- * 
+ *
  * For bug reports, documentation and further information, visit
- * 
+ *
  *                         https://github.com/jgralab/jgralab
- * 
+ *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
  * Free Software Foundation; either version 3 of the License, or (at your
  * option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, see <http://www.gnu.org/licenses>.
- * 
+ *
  * Additional permission under GNU GPL version 3 section 7
- * 
+ *
  * If you modify this Program, or any covered work, by linking or combining
  * it with Eclipse (or a modified version of that program or an Eclipse
  * plugin), containing parts covered by the terms of the Eclipse Public
@@ -38,7 +38,6 @@ import java.sql.CallableStatement;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Types;
-import java.util.SortedSet;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.GraphIOException;
@@ -63,9 +62,9 @@ public class PostgreSqlStatementList extends SqlStatementList {
 
 	@Override
 	public String makeQueryVendorSpecific(String query) {
-		return query.replace(SqlStatementList.QUOTE, "\"").replace(
-				SqlStatementList.EOQ, ";").replace(DIRECTION_TYPE,
-				"?::\"DIRECTION\"");
+		return query.replace(SqlStatementList.QUOTE, "\"")
+				.replace(SqlStatementList.EOQ, ";")
+				.replace(DIRECTION_TYPE, "?::\"DIRECTION\"");
 	}
 
 	private static final String CREATE_GRAPH_SCHEMA_TABLE = "CREATE SEQUENCE \""
@@ -131,10 +130,10 @@ public class PostgreSqlStatementList extends SqlStatementList {
 			+ "\"" + COLUMN_GRAPH_ID + "\" INT4," + "\"" + COLUMN_TYPE_ID
 			+ "\" INT4," + "\"" + COLUMN_VERTEX_LAMBDA_SEQ_VERSION + "\" INT8,"
 			+ // TODO Remove as
-			// this is
-			// really
-			// only needed while an Iterator
-			// is in memory
+				// this is
+				// really
+				// only needed while an Iterator
+				// is in memory
 			"\"" + COLUMN_SEQUENCE_NUMBER + "\" INT8" + ");";
 
 	@Override
@@ -455,9 +454,8 @@ public class PostgreSqlStatementList extends SqlStatementList {
 			DatabasePersistableVertex vertex) throws SQLException,
 			GraphIOException {
 		int i = 6;
-		SortedSet<Attribute> attributes = vertex.getAttributedElementClass()
-				.getAttributeList();
-		for (Attribute attribute : attributes) {
+		for (Attribute attribute : vertex.getAttributedElementClass()
+				.getAttributeList()) {
 			statement.setInt(i, vertex.getId());
 			i++;
 			statement.setInt(i, vertex.getGId());
@@ -466,8 +464,8 @@ public class PostgreSqlStatementList extends SqlStatementList {
 					attribute.getName());
 			statement.setInt(i, attributeId);
 			i++;
-			String value = graphDatabase.convertToString(vertex, attribute
-					.getName());
+			String value = graphDatabase.convertToString(vertex,
+					attribute.getName());
 			statement.setString(i, value);
 			i++;
 		}
@@ -520,9 +518,8 @@ public class PostgreSqlStatementList extends SqlStatementList {
 
 		// insert attribute values
 		int i = 15;
-		SortedSet<Attribute> attributes = edge.getAttributedElementClass()
-				.getAttributeList();
-		for (Attribute attribute : attributes) {
+		for (Attribute attribute : edge.getAttributedElementClass()
+				.getAttributeList()) {
 			statement.setInt(i, edge.getId());
 			i++;
 			statement.setInt(i, edge.getGId());
@@ -531,8 +528,8 @@ public class PostgreSqlStatementList extends SqlStatementList {
 					attribute.getName());
 			statement.setInt(i, attributeId);
 			i++;
-			String value = graphDatabase.convertToString(edge, attribute
-					.getName());
+			String value = graphDatabase.convertToString(edge,
+					attribute.getName());
 			statement.setString(i, value);
 			i++;
 		}

@@ -1,29 +1,29 @@
 /*
  * JGraLab - The Java Graph Laboratory
- * 
+ *
  * Copyright (C) 2006-2012 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
- * 
+ *
  * For bug reports, documentation and further information, visit
- * 
+ *
  *                         https://github.com/jgralab/jgralab
- * 
+ *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
  * Free Software Foundation; either version 3 of the License, or (at your
  * option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, see <http://www.gnu.org/licenses>.
- * 
+ *
  * Additional permission under GNU GPL version 3 section 7
- * 
+ *
  * If you modify this Program, or any covered work, by linking or combining
  * it with Eclipse (or a modified version of that program or an Eclipse
  * plugin), containing parts covered by the terms of the Eclipse Public
@@ -134,8 +134,6 @@ public abstract class VertexBaseImpl extends
 	@Override
 	public Vertex getNextVertex() {
 		TraversalContext tc = graph.getTraversalContext();
-		assert (tc == null) || tc.containsVertex(this); // TODO, fails if first
-														// vertex is not in TC
 		InternalVertex nextVertex = getNextVertexInVSeq();
 		if (!((tc == null) || (nextVertex == null) || tc
 				.containsVertex(nextVertex))) {
@@ -258,7 +256,6 @@ public abstract class VertexBaseImpl extends
 	@Override
 	public Edge getFirstIncidence() {
 		TraversalContext tc = graph.getTraversalContext();
-		assert (tc == null) || tc.containsVertex(this);
 		Edge firstIncidence = getFirstIncidenceInISeq();
 		if (!((tc == null) || (firstIncidence == null) || tc
 				.containsEdge(firstIncidence))) {
@@ -270,7 +267,6 @@ public abstract class VertexBaseImpl extends
 	@Override
 	public Edge getLastIncidence() {
 		TraversalContext tc = graph.getTraversalContext();
-		assert (tc == null) || tc.containsVertex(this);
 		Edge lastIncidence = getLastIncidenceInISeq();
 		if (!((tc == null) || (lastIncidence == null) || tc
 				.containsEdge(lastIncidence))) {
@@ -582,7 +578,6 @@ public abstract class VertexBaseImpl extends
 	 */
 	@Override
 	public String toString() {
-		assert isValid();
 		return "v" + id + ": " + getAttributedElementClass().getQualifiedName();
 	}
 
@@ -681,7 +676,6 @@ public abstract class VertexBaseImpl extends
 	@Override
 	public Vertex getPrevVertex() {
 		TraversalContext tc = graph.getTraversalContext();
-		assert (tc == null) || tc.containsVertex(this);
 		InternalVertex prevVertex = getPrevVertexInVSeq();
 		if (!((tc == null) || (prevVertex == null) || tc
 				.containsVertex(prevVertex))) {

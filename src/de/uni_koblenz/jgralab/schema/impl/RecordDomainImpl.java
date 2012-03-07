@@ -1,29 +1,29 @@
 /*
  * JGraLab - The Java Graph Laboratory
- * 
+ *
  * Copyright (C) 2006-2012 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
- * 
+ *
  * For bug reports, documentation and further information, visit
- * 
+ *
  *                         https://github.com/jgralab/jgralab
- * 
+ *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
  * Free Software Foundation; either version 3 of the License, or (at your
  * option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, see <http://www.gnu.org/licenses>.
- * 
+ *
  * Additional permission under GNU GPL version 3 section 7
- * 
+ *
  * If you modify this Program, or any covered work, by linking or combining
  * it with Eclipse (or a modified version of that program or an Eclipse
  * plugin), containing parts covered by the terms of the Eclipse Public
@@ -37,10 +37,8 @@ package de.uni_koblenz.jgralab.schema.impl;
 
 import java.io.IOException;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Set;
 import java.util.TreeMap;
 
 import de.uni_koblenz.jgralab.GraphIO;
@@ -49,17 +47,12 @@ import de.uni_koblenz.jgralab.Record;
 import de.uni_koblenz.jgralab.codegenerator.CodeBlock;
 import de.uni_koblenz.jgralab.codegenerator.CodeGenerator;
 import de.uni_koblenz.jgralab.codegenerator.CodeSnippet;
-import de.uni_koblenz.jgralab.schema.CompositeDomain;
 import de.uni_koblenz.jgralab.schema.Domain;
 import de.uni_koblenz.jgralab.schema.Package;
 import de.uni_koblenz.jgralab.schema.RecordDomain;
-import de.uni_koblenz.jgralab.schema.exception.DuplicateRecordComponentException;
-import de.uni_koblenz.jgralab.schema.exception.InvalidNameException;
-import de.uni_koblenz.jgralab.schema.exception.NoSuchRecordComponentException;
-import de.uni_koblenz.jgralab.schema.exception.RecordCycleException;
+import de.uni_koblenz.jgralab.schema.exception.CycleException;
 import de.uni_koblenz.jgralab.schema.exception.SchemaClassAccessException;
 import de.uni_koblenz.jgralab.schema.exception.SchemaException;
-import de.uni_koblenz.jgralab.schema.exception.WrongSchemaException;
 import de.uni_koblenz.jgralab.schema.impl.compilation.SchemaClassManager;
 
 public final class RecordDomainImpl extends CompositeDomainImpl implements
@@ -82,7 +75,7 @@ public final class RecordDomainImpl extends CompositeDomainImpl implements
 	 * @param components
 	 *            a list of the components of the record
 	 */
-	RecordDomainImpl(String sn, Package pkg,
+	RecordDomainImpl(String sn, PackageImpl pkg,
 			Collection<RecordComponent> components) {
 		super(sn, pkg);
 		if (components != null) {
@@ -94,53 +87,35 @@ public final class RecordDomainImpl extends CompositeDomainImpl implements
 
 	@Override
 	public void addComponent(String name, Domain domain) {
-		if(((SchemaImpl)getSchema()).isFinished()){
-			throw new SchemaException("No changes to finished schema!");
-		}
-		
+		SchemaImpl s = (SchemaImpl) getSchema();
+		s.assertNotFinished();
+
 		if (name.isEmpty()) {
-			throw new InvalidNameException(
+			throw new SchemaException(
 					"Cannot create a record component with an empty name.");
 		}
 		if (components.containsKey(name)) {
-			throw new DuplicateRecordComponentException(name,
-					getQualifiedName());
+			throw new SchemaException("Duplicate component '" + name + "' in "
+					+ this);
 		}
-		if (parentPackage.getSchema().getDomain(domain.getQualifiedName()) != domain) {
-			throw new WrongSchemaException(domain.getQualifiedName()
-					+ " must be a domain of the schema "
-					+ parentPackage.getSchema().getQualifiedName());
+		if (getSchema() != domain.getSchema()) {
+			throw new SchemaException("Domain " + domain.getQualifiedName()
+					+ " belongs to a different schema.");
 		}
-		if (!staysAcyclicAfterAdding(domain)) {
-			throw new RecordCycleException(
-					"The creation of a component, which has the type " + domain
-							+ ", would create a cycle of RecordDomains.");
+		try {
+			s.addDomainDependency(this, domain);
+		} catch (CycleException e) {
+			throw new SchemaException("Adding the component '" + name
+					+ "' of type '" + domain + "' to '" + this
+					+ "' would create a cycle of RecordDomains.");
 		}
 		RecordComponent c = new RecordComponent(name, domain);
 		components.put(name, c);
-		((SchemaImpl)parentPackage.getSchema()).getDomainsDag().createEdge(domain,this);
-	}
-
-	@Override
-	public Set<Domain> getAllComponentDomains() {
-		Set<Domain> domains = new HashSet<Domain>();
-		for (RecordComponent c : components.values()) {
-			domains.add(c.getDomain());
-		}
-		return domains;
 	}
 
 	@Override
 	public Collection<RecordComponent> getComponents() {
 		return components.values();
-	}
-
-	@Override
-	public Domain getDomainOfComponent(String name) {
-		if (!components.containsKey(name)) {
-			throw new NoSuchRecordComponentException(getQualifiedName(), name);
-		}
-		return components.get(name).getDomain();
 	}
 
 	@Override
@@ -201,28 +176,6 @@ public final class RecordDomainImpl extends CompositeDomainImpl implements
 		return code;
 	}
 
-	/**
-	 * @param d
-	 *            the component domain which should be checked
-	 * @return <code>true</code> if the addition of <code>d</code> wouldn't
-	 *         create an inclusion cycle, <code>false</code> otherwise
-	 */
-	private boolean staysAcyclicAfterAdding(Domain d) {
-		if (d == this) {
-			return false;
-		}
-		if (!(d instanceof CompositeDomain)) {
-			return true;
-		}
-		CompositeDomain c = (CompositeDomain) d;
-		for (CompositeDomain comp : c.getAllComponentCompositeDomains()) {
-			if (!staysAcyclicAfterAdding(comp)) {
-				return false;
-			}
-		}
-		return true;
-	}
-
 	@Override
 	public String toString() {
 		StringBuilder output = new StringBuilder("Record " + getQualifiedName());
@@ -249,7 +202,7 @@ public final class RecordDomainImpl extends CompositeDomainImpl implements
 		code.add("\t" + graphIoVariableName + ".match();");
 		code.add("\t" + variableName + " = null;");
 		code.add("} else {");
-		code.add("\tthrow new GraphIOException(\"This is no record!\");");
+		code.add("\tthrow new GraphIOException(\"Read record: '(' or 'n' expected\");");
 		code.add("}");
 	}
 
@@ -347,7 +300,7 @@ public final class RecordDomainImpl extends CompositeDomainImpl implements
 			io.match();
 			return null;
 		} else {
-			throw new GraphIOException("This is no record!");
+			throw new GraphIOException("Read record: '(' or 'n' excpected");
 		}
 	}
 

@@ -161,19 +161,33 @@ public class GenericGraphImpl extends GraphImpl {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public <T> T getAttribute(String name) throws NoSuchAttributeException {
+	public <T> T getAttribute(String name) {
 		int i = getAttributedElementClass().getAttributeIndex(name);
 		return (T) attributes[i];
 	}
 
 	@Override
-	public <T> void setAttribute(String name, T data)
-			throws NoSuchAttributeException {
+	public <T> void setAttribute(String name, T data) {
 		int i = getAttributedElementClass().getAttributeIndex(name);
 		if (type.getAttribute(name).getDomain().isConformGenericValue(data)) {
-			attributes[i] = data;
+			if (hasECARuleManager()) {
+				T oldValue = getAttribute(name);
+				getECARuleManager().fireBeforeChangeAttributeEvents(this, name,
+						oldValue, data);
+				attributes[i] = data;
+				getECARuleManager().fireAfterChangeAttributeEvents(this, name,
+						oldValue, data);
+			} else {
+				attributes[i] = data;
+			}
 		} else {
-			throw new ClassCastException();
+			Domain d = type.getAttribute(name).getDomain();
+			throw new ClassCastException("Expected "
+					+ ((d instanceof RecordDomain) ? RecordImpl.class.getName()
+							: d.getJavaAttributeImplementationTypeName(d
+									.getPackageName()))
+					+ " object, but received " + data.getClass().getName()
+					+ " object instead");
 		}
 	}
 
@@ -271,7 +285,7 @@ public class GenericGraphImpl extends GraphImpl {
 	public boolean isInstanceOf(GraphClass cls) {
 		// Needs to be overridden from the base variant, because that relies on
 		// code generation.
-		return type.equals(cls) || type.isSubClassOf(cls);
+		return type.equals(cls);
 	}
 
 	@Override
@@ -297,30 +311,51 @@ public class GenericGraphImpl extends GraphImpl {
 	}
 
 	// ************** unsupported methods ***************/
+
+	/**
+	 * This method is not supported by the generic implementation and therefore
+	 * throws an {@link UnsupportedOperationException}.
+	 */
 	@Override
 	public Class<? extends Graph> getSchemaClass() {
 		throw new UnsupportedOperationException(
 				"This method is not supported by the generic implementation");
 	}
 
+	/**
+	 * This method is not supported by the generic implementation and therefore
+	 * throws an {@link UnsupportedOperationException}.
+	 */
 	@Override
 	public Vertex getFirstVertex(Class<? extends Vertex> vertexClass) {
 		throw new UnsupportedOperationException(
 				"This method is not supported by the generic implementation");
 	}
 
+	/**
+	 * This method is not supported by the generic implementation and therefore
+	 * throws an {@link UnsupportedOperationException}.
+	 */
 	@Override
 	public Iterable<Vertex> vertices(Class<? extends Vertex> vertexClass) {
 		throw new UnsupportedOperationException(
 				"This method is not supported by the generic implementation");
 	}
 
+	/**
+	 * This method is not supported by the generic implementation and therefore
+	 * throws an {@link UnsupportedOperationException}.
+	 */
 	@Override
 	public Edge getFirstEdge(Class<? extends Edge> edgeClass) {
 		throw new UnsupportedOperationException(
 				"This method is not supported by the generic implementation");
 	}
 
+	/**
+	 * This method is not supported by the generic implementation and therefore
+	 * throws an {@link UnsupportedOperationException}.
+	 */
 	@Override
 	public Iterable<Edge> edges(Class<? extends Edge> edgeClass) {
 		throw new UnsupportedOperationException(

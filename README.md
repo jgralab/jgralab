@@ -57,7 +57,14 @@ results are accessible at our
 ### Tutorials and Getting Started
 
 Eventually, we are going to create appropriate documentation in the Wiki, so
-stay tuned.
+stay tuned...
+
+### Getting Help
+
+Join us on the official [JGraLab IRC Channel](irc://irc.freenode.net/#jgralab)
+(channel `#jgralab` on `irc.freenode.net`).  If you don't have or don't want to
+install an IRC client, you can also
+[chat directly in your browser](http://webchat.freenode.net/?channels=jgralab).
 
 ## License
 

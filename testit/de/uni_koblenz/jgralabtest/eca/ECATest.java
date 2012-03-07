@@ -1,29 +1,29 @@
 /*
  * JGraLab - The Java Graph Laboratory
- * 
+ *
  * Copyright (C) 2006-2012 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
- * 
+ *
  * For bug reports, documentation and further information, visit
- * 
+ *
  *                         https://github.com/jgralab/jgralab
- * 
+ *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
  * Free Software Foundation; either version 3 of the License, or (at your
  * option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, see <http://www.gnu.org/licenses>.
- * 
+ *
  * Additional permission under GNU GPL version 3 section 7
- * 
+ *
  * If you modify this Program, or any covered work, by linking or combining
  * it with Eclipse (or a modified version of that program or an Eclipse
  * plugin), containing parts covered by the terms of the Eclipse Public
@@ -61,6 +61,7 @@ import de.uni_koblenz.jgralab.eca.events.EventDescription;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.VertexClass;
 import de.uni_koblenz.jgralabtest.eca.useractions.CreateAVertexOfSameTypeAction;
+import de.uni_koblenz.jgralabtest.eca.useractions.PrintAlphaAndOmegaOfDeletedEdge;
 import de.uni_koblenz.jgralabtest.eca.useractions.PrintNewAndOldAttributeValueAction;
 import de.uni_koblenz.jgralabtest.eca.useractions.RevertEdgeChangingAction;
 import de.uni_koblenz.jgralabtest.eca.useractions.RevertEdgeChangingOnHighesLevelAction;
@@ -260,6 +261,27 @@ public class ECATest {
 		System.out.println();
 	}
 
+	@Test
+	public void testAfterDeleteEdgeEvent() {
+		System.out.println("Test if old alpha and omega are accessable in after delete edge event:");
+
+		ECARuleManager ecaRuleManager = (ECARuleManager) simlibgraph
+				.getECARuleManager();
+
+		EventDescription<EdgeClass> aft_ev = new DeleteEdgeEventDescription(
+				EventDescription.EventTime.AFTER, Loans.EC);
+		Action<EdgeClass> aft_act = new PrintAlphaAndOmegaOfDeletedEdge();
+		ECARule<EdgeClass> aft_rule = new ECARule<EdgeClass>(aft_ev, aft_act);
+		ecaRuleManager.addECARule(aft_rule);
+
+		Loans newLoans = simlibgraph.createLoans(user1, newmedia1);
+		simlibgraph.deleteEdge(newLoans);
+
+		ecaRuleManager.deleteECARule(aft_rule);
+
+		System.out.println();
+	}
+	
 	@Test
 	public void testGrequlContextOnEvent() {
 		System.out.println("Test Grequl Context:");

@@ -1,29 +1,29 @@
 /*
  * JGraLab - The Java Graph Laboratory
- * 
+ *
  * Copyright (C) 2006-2012 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
- * 
+ *
  * For bug reports, documentation and further information, visit
- * 
+ *
  *                         https://github.com/jgralab/jgralab
- * 
+ *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
  * Free Software Foundation; either version 3 of the License, or (at your
  * option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, see <http://www.gnu.org/licenses>.
- * 
+ *
  * Additional permission under GNU GPL version 3 section 7
- * 
+ *
  * If you modify this Program, or any covered work, by linking or combining
  * it with Eclipse (or a modified version of that program or an Eclipse
  * plugin), containing parts covered by the terms of the Eclipse Public
@@ -57,7 +57,7 @@ import de.uni_koblenz.jgralab.schema.exception.SchemaException;
  * creates an instance of exactly the specified class. To change this use
  * <code>setImplementationClass</code>-methods. Class is abstract because only
  * factories which are specific for their schema should be used.
- *
+ * 
  * @author ist@uni-koblenz.de
  */
 public abstract class GraphFactoryImpl implements GraphFactory {
@@ -168,6 +168,9 @@ public abstract class GraphFactoryImpl implements GraphFactory {
 			@SuppressWarnings("unchecked")
 			E newInstance = (E) edgeMap.get(ec)
 					.newInstance(id, g, alpha, omega);
+			if (!((InternalGraph) g).isLoading() && (g.hasECARuleManager())) {
+				g.getECARuleManager().fireAfterCreateEdgeEvents(newInstance);
+			}
 			return newInstance;
 		} catch (Exception ex) {
 			if (ex.getCause() instanceof GraphException) {
@@ -187,6 +190,9 @@ public abstract class GraphFactoryImpl implements GraphFactory {
 			}
 			@SuppressWarnings("unchecked")
 			V newInstance = (V) vertexMap.get(vc).newInstance(id, g);
+			if (!((InternalGraph) g).isLoading() && (g.hasECARuleManager())) {
+				g.getECARuleManager().fireAfterCreateVertexEvents(newInstance);
+			}
 			return newInstance;
 		} catch (Exception ex) {
 			if (ex.getCause() instanceof GraphException) {
@@ -252,7 +258,7 @@ public abstract class GraphFactoryImpl implements GraphFactory {
 
 	/**
 	 * tests if a is a superclass of b or the same class than b
-	 *
+	 * 
 	 * @param a
 	 * @param b
 	 * @return
@@ -278,7 +284,7 @@ public abstract class GraphFactoryImpl implements GraphFactory {
 
 	/**
 	 * tests if class a implements the interface b
-	 *
+	 * 
 	 * @param a
 	 * @param b
 	 * @return

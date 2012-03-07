@@ -45,11 +45,14 @@ import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.NoSuchAttributeException;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.impl.InternalGraph;
+import de.uni_koblenz.jgralab.impl.RecordImpl;
 import de.uni_koblenz.jgralab.impl.ReversedEdgeBaseImpl;
 import de.uni_koblenz.jgralab.impl.std.EdgeImpl;
 import de.uni_koblenz.jgralab.schema.AggregationKind;
 import de.uni_koblenz.jgralab.schema.Attribute;
+import de.uni_koblenz.jgralab.schema.Domain;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
+import de.uni_koblenz.jgralab.schema.RecordDomain;
 
 /**
  * A generic {@link Edge}-Implementation that can represent edges of arbitrary
@@ -63,8 +66,9 @@ public class GenericEdgeImpl extends EdgeImpl {
 	public GenericEdgeImpl(EdgeClass type, int anId, Graph graph, Vertex alpha,
 			Vertex omega) {
 		super(anId, graph, alpha, omega);
-		if(type.isAbstract()) {
-			throw new GraphException("Cannot create instances of abstract type " + type);
+		if (type.isAbstract()) {
+			throw new GraphException(
+					"Cannot create instances of abstract type " + type);
 		}
 		this.type = type;
 		if (type.getAttributeCount() > 0) {
@@ -135,30 +139,44 @@ public class GenericEdgeImpl extends EdgeImpl {
 
 	@Override
 	public AggregationKind getAlphaAggregationKind() {
-		return (getAttributedElementClass()).getFrom().getAggregationKind();
+		return getAttributedElementClass().getFrom().getAggregationKind();
 	}
 
 	@Override
 	public AggregationKind getOmegaAggregationKind() {
-		return (getAttributedElementClass()).getTo().getAggregationKind();
+		return getAttributedElementClass().getTo().getAggregationKind();
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public <T> T getAttribute(String name) throws NoSuchAttributeException {
+	public <T> T getAttribute(String name) {
 		int i = type.getAttributeIndex(name);
 		return (T) attributes[i];
 	}
 
 	@Override
-	public <T> void setAttribute(String name, T data)
-			throws NoSuchAttributeException {
+	public <T> void setAttribute(String name, T data) {
 		int i = type.getAttributeIndex(name);
 		if (getAttributedElementClass().getAttribute(name).getDomain()
 				.isConformGenericValue(data)) {
-			attributes[i] = data;
+			if (graph.hasECARuleManager()) {
+				T oldValue = this.getAttribute(name);
+				graph.getECARuleManager().fireBeforeChangeAttributeEvents(this,
+						name, oldValue, data);
+				attributes[i] = data;
+				graph.getECARuleManager().fireAfterChangeAttributeEvents(this,
+						name, oldValue, data);
+			} else {
+				attributes[i] = data;
+			}
 		} else {
-			throw new ClassCastException();
+			Domain d = type.getAttribute(name).getDomain();
+			throw new ClassCastException("Expected "
+					+ ((d instanceof RecordDomain) ? RecordImpl.class.getName()
+							: d.getJavaAttributeImplementationTypeName(d
+									.getPackageName()))
+					+ " object, but received " + data.getClass().getName()
+					+ " object instead");
 		}
 	}
 
@@ -219,24 +237,41 @@ public class GenericEdgeImpl extends EdgeImpl {
 	}
 
 	// ************** unsupported methods ***************/
+
+	/**
+	 * This method is not supported by the generic implementation and therefore
+	 * throws an {@link UnsupportedOperationException}.
+	 */
 	@Override
 	public Class<? extends Edge> getSchemaClass() {
 		throw new UnsupportedOperationException(
 				"This method is not supported by the generic implementation");
 	}
 
+	/**
+	 * This method is not supported by the generic implementation and therefore
+	 * throws an {@link UnsupportedOperationException}.
+	 */
 	@Override
 	public Edge getNextEdge(Class<? extends Edge> anEdgeClass) {
 		throw new UnsupportedOperationException(
 				"This method is not supported by the generic implementation");
 	}
 
+	/**
+	 * This method is not supported by the generic implementation and therefore
+	 * throws an {@link UnsupportedOperationException}.
+	 */
 	@Override
 	public Edge getNextIncidence(Class<? extends Edge> anEdgeClass) {
 		throw new UnsupportedOperationException(
 				"This method is not supported by the generic implementation");
 	}
 
+	/**
+	 * This method is not supported by the generic implementation and therefore
+	 * throws an {@link UnsupportedOperationException}.
+	 */
 	@Override
 	public Edge getNextIncidence(Class<? extends Edge> anEdgeClass,
 			boolean noSubclasses) {
@@ -244,6 +279,10 @@ public class GenericEdgeImpl extends EdgeImpl {
 				"This method is not supported by the generic implementation");
 	}
 
+	/**
+	 * This method is not supported by the generic implementation and therefore
+	 * throws an {@link UnsupportedOperationException}.
+	 */
 	@Override
 	public Edge getNextIncidence(Class<? extends Edge> anEdgeClass,
 			EdgeDirection orientation) {
@@ -258,6 +297,10 @@ public class GenericEdgeImpl extends EdgeImpl {
 				"This method is not supported by the generic implementation");
 	}
 
+	/**
+	 * This method is not supported by the generic implementation and therefore
+	 * throws an {@link UnsupportedOperationException}.
+	 */
 	@Override
 	public boolean isInstanceOf(EdgeClass cls) {
 		// Needs to be overridden from the base variant, because that relies on

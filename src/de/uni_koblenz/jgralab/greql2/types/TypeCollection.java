@@ -1,29 +1,29 @@
 /*
  * JGraLab - The Java Graph Laboratory
- * 
+ *
  * Copyright (C) 2006-2012 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
- * 
+ *
  * For bug reports, documentation and further information, visit
- * 
+ *
  *                         https://github.com/jgralab/jgralab
- * 
+ *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
  * Free Software Foundation; either version 3 of the License, or (at your
  * option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, see <http://www.gnu.org/licenses>.
- * 
+ *
  * Additional permission under GNU GPL version 3 section 7
- * 
+ *
  * If you modify this Program, or any covered work, by linking or combining
  * it with Eclipse (or a modified version of that program or an Eclipse
  * plugin), containing parts covered by the terms of the Eclipse Public
@@ -40,6 +40,7 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
+import de.uni_koblenz.jgralab.schema.GraphElementClass;
 
 /**
  * Represents a set of allowed and forbidden types
@@ -51,18 +52,18 @@ public class TypeCollection {
 	/**
 	 * The set of allowed types
 	 */
-	private TreeSet<AttributedElementClass<?, ?>> allowedTypes;
+	private TreeSet<GraphElementClass<?, ?>> allowedTypes;
 
 	/**
 	 * The set of forbidden types
 	 */
-	private TreeSet<AttributedElementClass<?, ?>> forbiddenTypes;
+	private TreeSet<GraphElementClass<?, ?>> forbiddenTypes;
 
 	/**
 	 * returns the list of allowed types. Creates a copy of that list so the
 	 * internal list is not affected by changes of the returned list
 	 */
-	public Set<AttributedElementClass<?, ?>> getAllowedTypes() {
+	public Set<GraphElementClass<?, ?>> getAllowedTypes() {
 		return allowedTypes;
 	}
 
@@ -70,7 +71,7 @@ public class TypeCollection {
 	 * returns the list of forbidden types. Creates a copy of that list so the
 	 * internal list is not affected by changes of the returned list
 	 */
-	public Set<AttributedElementClass<?, ?>> getForbiddenTypes() {
+	public Set<GraphElementClass<?, ?>> getForbiddenTypes() {
 		return forbiddenTypes;
 	}
 
@@ -78,8 +79,8 @@ public class TypeCollection {
 	 * creates a new typecollection which contains no types
 	 */
 	public TypeCollection() {
-		forbiddenTypes = new TreeSet<AttributedElementClass<?, ?>>();
-		allowedTypes = new TreeSet<AttributedElementClass<?, ?>>();
+		forbiddenTypes = new TreeSet<GraphElementClass<?, ?>>();
+		allowedTypes = new TreeSet<GraphElementClass<?, ?>>();
 	}
 
 	/**
@@ -91,7 +92,7 @@ public class TypeCollection {
 	 *            toggles wether the given types should be added to the allowed
 	 *            or forbidden types
 	 */
-	public TypeCollection(Collection<AttributedElementClass<?, ?>> types,
+	public TypeCollection(Collection<GraphElementClass<?, ?>> types,
 			boolean forbidden) {
 		this();
 		if (forbidden) {
@@ -145,7 +146,7 @@ public class TypeCollection {
 	 * 
 	 * @return true if the given type is allowed, false otherwise
 	 */
-	public final boolean acceptsType(AttributedElementClass<?, ?> type) {
+	public final boolean acceptsType(GraphElementClass<?, ?> type) {
 		if (allowedTypes.isEmpty()) {
 			return (!forbiddenTypes.contains(type));
 		} else {

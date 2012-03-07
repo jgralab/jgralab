@@ -1,29 +1,29 @@
 /*
  * JGraLab - The Java Graph Laboratory
- * 
+ *
  * Copyright (C) 2006-2012 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
- * 
+ *
  * For bug reports, documentation and further information, visit
- * 
+ *
  *                         https://github.com/jgralab/jgralab
- * 
+ *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
  * Free Software Foundation; either version 3 of the License, or (at your
  * option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, see <http://www.gnu.org/licenses>.
- * 
+ *
  * Additional permission under GNU GPL version 3 section 7
- * 
+ *
  * If you modify this Program, or any covered work, by linking or combining
  * it with Eclipse (or a modified version of that program or an Eclipse
  * plugin), containing parts covered by the terms of the Eclipse Public
@@ -36,9 +36,13 @@ package de.uni_koblenz.jgralabtest.instancetest;
 
 import static org.junit.Assert.fail;
 
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Properties;
 
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.ImplementationType;
@@ -56,6 +60,13 @@ public abstract class InstanceTest {
 		// parameters.add(new Object[] { current });
 		// }
 
+		Properties props = new Properties(System.getProperties());
+		try {
+			props.load(new FileReader("testit/jgralabtest.properties"));
+		} catch (FileNotFoundException e) {
+		} catch (IOException e) {
+		}
+
 		printIndex();
 		parameters.add(new Object[] { ImplementationType.STANDARD, null });
 		System.out.println("standard implementation");
@@ -64,18 +75,18 @@ public abstract class InstanceTest {
 		parameters.add(new Object[] { ImplementationType.TRANSACTION, null });
 		System.out.println("transaction implementation");
 
-		String dbURL = System.getProperty("jgralabtest_dbconnection");
+		String dbURL = props.getProperty("jgralabtest_dbconnection");
 		dbURL = dbURL != null && dbURL.startsWith("jdbc") ? dbURL : null;
 
-		String derbyURL = System.getProperty("jgralabtest_derby_dbconnection");
+		String derbyURL = props.getProperty("jgralabtest_derby_dbconnection");
 		derbyURL = derbyURL != null && derbyURL.startsWith("jdbc") ? derbyURL
 				: null;
-		String postgresURL = System
+		String postgresURL = props
 				.getProperty("jgralabtest_postgres_dbconnection");
 		postgresURL = postgresURL != null && postgresURL.startsWith("jdbc") ? postgresURL
 				: null;
 
-		String mysqlURL = System.getProperty("jgralabtest_mysql_dbconnection");
+		String mysqlURL = props.getProperty("jgralabtest_mysql_dbconnection");
 		mysqlURL = mysqlURL != null && mysqlURL.startsWith("jdbc") ? mysqlURL
 				: null;
 
