@@ -11,7 +11,8 @@ import javax.tools.JavaCompiler;
 import javax.tools.StandardJavaFileManager;
 import javax.tools.ToolProvider;
 
-import de.uni_koblenz.jgralab.Edge;
+import org.pcollections.PCollection;
+
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.Vertex;
@@ -25,10 +26,12 @@ import de.uni_koblenz.jgralab.greql2.evaluator.fa.AggregationTransition;
 import de.uni_koblenz.jgralab.greql2.evaluator.fa.BoolExpressionTransition;
 import de.uni_koblenz.jgralab.greql2.evaluator.fa.DFA;
 import de.uni_koblenz.jgralab.greql2.evaluator.fa.EdgeTransition;
+import de.uni_koblenz.jgralab.greql2.evaluator.fa.IntermediateVertexTransition;
 import de.uni_koblenz.jgralab.greql2.evaluator.fa.NFA;
 import de.uni_koblenz.jgralab.greql2.evaluator.fa.SimpleTransition;
 import de.uni_koblenz.jgralab.greql2.evaluator.fa.State;
 import de.uni_koblenz.jgralab.greql2.evaluator.fa.Transition;
+import de.uni_koblenz.jgralab.greql2.evaluator.fa.VertexTypeRestrictionTransition;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.PathDescriptionEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VariableEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VertexEvaluator;
@@ -848,6 +851,12 @@ public class GreqlCodeGenerator extends CodeGenerator {
 		if (trans instanceof BoolExpressionTransition) {
 			return createCodeForBooleanExpressionTransition((BoolExpressionTransition) trans);
 		}
+		if (trans instanceof IntermediateVertexTransition) {
+			return createCodeForIntermediateVertexTransition((IntermediateVertexTransition) trans);
+		}
+		if (trans instanceof VertexTypeRestrictionTransition) {
+			return createCodeForVertexTypeRestrictionTransition((VertexTypeRestrictionTransition) trans);
+		}
 		return new CodeSnippet("FAILURE: TRANSITION TYPE IS UNKNOWN TO GREQL CODE GENERATOR " + trans.getClass().getSimpleName()); 
 	}
 	
@@ -1028,7 +1037,45 @@ public class GreqlCodeGenerator extends CodeGenerator {
 	}
 	
 
+	private CodeBlock createCodeForVertexTypeRestrictionTransition(VertexTypeRestrictionTransition trans) {
+		CodeList resultList = new CodeList();
+		CodeList curr = resultList;
+		TypeCollection typeCollection = trans.getAcceptedVertexTypes();
+		if (typeCollection != null) {
+			String fieldName = createInitializerForTypeCollection(typeCollection);
+			curr.add(new CodeSnippet("if (" + fieldName + ".get(((GraphElementClass)vertex.getAttributedElementClass()).getGraphElementClassIdInSchema())) {//test for VertexTypeRestriction" ));	
+		    CodeList body = new CodeList();
+		    curr.add(body);
+		    curr.add(new CodeSnippet("} //end of vertex type restriction"));
+		    curr = body;
+		}
+
+		//add element to queue
+		curr.add(createAddToQueueSnippet(trans.endState.number));
+		return resultList;
+	}
 	
+	private CodeBlock createCodeForIntermediateVertexTransition(IntermediateVertexTransition trans) {
+		CodeList resultList = new CodeList();
+		CodeList curr = resultList;
+		
+		VertexEvaluator intermediateVertexEval = trans.getIntermediateVertexEvaluator();
+		if (intermediateVertexEval != null ) {
+			createThisLiterals();
+			CodeSnippet predicateSnippet = new CodeSnippet();
+			predicateSnippet.add("setThisVertex(element);");
+			predicateSnippet.add("Object tempRes = " + createCodeForExpression((Expression) intermediateVertexEval.getVertex()) + ";");
+			predicateSnippet.add("if ((tempRes == vertex) || (((PCollection) tempRes).contains(vertex))) { //test of intermediate vertex transition");
+			curr.add(predicateSnippet);
+		    CodeList body = new CodeList();
+		    curr.add(body);
+		    curr.add(new CodeSnippet("} //end of intermediate vertex transition"));
+		    curr = body;
+		}
+		//add element to queue
+		curr.add(createAddToQueueSnippet(trans.endState.number));
+		return resultList;
+	}
 	
 	private CodeBlock createCodeForBooleanExpressionTransition(BoolExpressionTransition trans) {
 		CodeList resultList = new CodeList();

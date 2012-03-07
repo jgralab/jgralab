@@ -163,7 +163,7 @@ public class ExecutableGreqlTest extends GenericTest {
 	
 	@Test
 	public void testGenerateForwardVertexSet() {
-		String query = "from v:V{NamedElement} reportSet v, v.name, v (-->{^connections.Way, ^connections.AirRoute} | (-->{localities.ContainsLocality} -->{connections.AirRoute @ (thisEdge) }))* end";
+		String query = "from v:V{NamedElement} reportSet v, v.name, v (-->{^connections.Way, ^connections.AirRoute} | (-->{localities.ContainsLocality} v -->{connections.AirRoute @ (thisEdge) }))* end";
 		Graph testGraph = null;
 		try {
 			testGraph = getTestGraph(TestVersion.ROUTE_MAP_GRAPH);
