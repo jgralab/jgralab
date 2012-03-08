@@ -7,7 +7,7 @@ import de.uni_koblenz.jgralabtest.schemas.algolib.simple.SimpleVertex;
 
 public class TestGraphs {
 
-	public static SimpleGraph createTestGraph1() {
+	public static SimpleGraph getSimpleCyclicGraph() {
 		SimpleGraph g = SimpleSchema.instance().createSimpleGraph(
 				ImplementationType.STANDARD);
 		SimpleVertex v1 = g.createSimpleVertex();
@@ -23,7 +23,7 @@ public class TestGraphs {
 		return g;
 	}
 
-	public static SimpleGraph createAcyclicTestGraph() {
+	public static SimpleGraph getSimpleAcyclicGraph() {
 		SimpleGraph g = SimpleSchema.instance().createSimpleGraph(
 				ImplementationType.STANDARD);
 		SimpleVertex v1 = g.createSimpleVertex();

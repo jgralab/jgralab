@@ -16,13 +16,12 @@ public class BreadthFirstSearchTest {
 
 	@Before
 	public void setUp() {
-		SimpleGraph g = TestGraphs.createTestGraph1();
+		SimpleGraph g = TestGraphs.getSimpleCyclicGraph();
 		this.g = g;
 	}
 
 	@Test
 	public void testAlgorithm() throws Exception {
-		SearchTestVisitor stv = new SearchTestVisitor();
 		SearchAlgorithm[] algorithms = new SearchAlgorithm[] { new BreadthFirstSearch(
 				g) };
 		Graph[] graphs = new Graph[] { g };
@@ -30,11 +29,12 @@ public class BreadthFirstSearchTest {
 		for (SearchAlgorithm algorithm : algorithms) {
 			for (Graph graph : graphs) {
 				algorithm.setGraph(graph);
+				SearchTestVisitor stv = new SearchTestVisitor();
+
 				algorithm.addVisitor(stv);
-				algorithm.withParent().execute();
-				algorithm.reset();
+				algorithm.withLevel().withParent().execute();
+				stv.performPostTests();
 			}
 		}
 	}
-
 }

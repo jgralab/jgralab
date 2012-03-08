@@ -16,7 +16,7 @@ public class TopologicalOrderTest {
 
 	@Before
 	public void setUp() {
-		SimpleGraph g = TestGraphs.createAcyclicTestGraph();
+		SimpleGraph g = TestGraphs.getSimpleAcyclicGraph();
 		this.g = g;
 	}
 

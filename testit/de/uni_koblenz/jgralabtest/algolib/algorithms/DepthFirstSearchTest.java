@@ -18,13 +18,12 @@ public class DepthFirstSearchTest {
 
 	@Before
 	public void setUp() {
-		SimpleGraph g = TestGraphs.createTestGraph1();
+		SimpleGraph g = TestGraphs.getSimpleCyclicGraph();
 		this.g = g;
 	}
 
 	@Test
 	public void testAlgorithm() throws Exception {
-		DFSTestVisitor dfstv = new DFSTestVisitor();
 		DepthFirstSearch[] algorithms = new DepthFirstSearch[] {
 				new RecursiveDepthFirstSearch(g),
 				new IterativeDepthFirstSearch(g) };
@@ -33,9 +32,10 @@ public class DepthFirstSearchTest {
 		for (DepthFirstSearch dfs : algorithms) {
 			for (Graph graph : graphs) {
 				dfs.setGraph(graph);
+				DFSTestVisitor dfstv = new DFSTestVisitor();
 				dfs.addVisitor(dfstv);
 				dfs.withLevel().withParent().execute();
-				dfs.reset();
+				dfstv.performPostTests();
 			}
 		}
 	}
