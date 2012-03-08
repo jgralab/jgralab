@@ -1,6 +1,7 @@
 package de.uni_koblenz.jgralab.greql2.executable;
 
 import java.lang.reflect.Method;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -13,6 +14,7 @@ import javax.tools.ToolProvider;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.GraphIOException;
+import de.uni_koblenz.jgralab.ImplementationType;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.codegenerator.CodeBlock;
 import de.uni_koblenz.jgralab.codegenerator.CodeGenerator;
@@ -20,6 +22,7 @@ import de.uni_koblenz.jgralab.codegenerator.CodeGeneratorConfiguration;
 import de.uni_koblenz.jgralab.codegenerator.CodeList;
 import de.uni_koblenz.jgralab.codegenerator.CodeSnippet;
 import de.uni_koblenz.jgralab.graphmarker.GraphMarker;
+import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.fa.AggregationTransition;
 import de.uni_koblenz.jgralab.greql2.evaluator.fa.BoolExpressionTransition;
 import de.uni_koblenz.jgralab.greql2.evaluator.fa.DFA;
@@ -92,10 +95,14 @@ import de.uni_koblenz.jgralab.schema.GraphElementClass;
 import de.uni_koblenz.jgralab.schema.IncidenceClass;
 import de.uni_koblenz.jgralab.schema.Schema;
 import de.uni_koblenz.jgralab.schema.exception.SchemaException;
+import de.uni_koblenz.jgralab.schema.impl.compilation.ClassFileManager;
 import de.uni_koblenz.jgralab.schema.impl.compilation.InMemoryJavaSourceFile;
+import de.uni_koblenz.jgralab.schema.impl.compilation.SchemaClassManager;
 
 public class GreqlCodeGenerator extends CodeGenerator {
 
+	public static final String codeGeneratorFileManagerName = "GeneratedQueries";
+	
 	private Greql2 graph;
 	
 	private String classname;
@@ -116,16 +123,75 @@ public class GreqlCodeGenerator extends CodeGenerator {
 	
 	private GraphMarker<VertexEvaluator> vertexEvalGraphMarker;
 	
-	public GreqlCodeGenerator(Greql2 graph, GraphMarker<VertexEvaluator> vertexEvalGraphMarker, Schema datagraphSchema) {
-		super("de.uni_koblenz.jgralab.greql2.executable", "queries", CodeGeneratorConfiguration.WITHOUT_TYPESPECIFIC_METHODS);
+	public GreqlCodeGenerator(Greql2 graph, GraphMarker<VertexEvaluator> vertexEvalGraphMarker, Schema datagraphSchema, String packageName, String classname) {
+		super(packageName, "", CodeGeneratorConfiguration.WITHOUT_TYPESPECIFIC_METHODS);
 		this.graph = graph;
 		this.vertexEvalGraphMarker = vertexEvalGraphMarker;
-		classname = "SampleQuery";
+		this.classname = classname;
 		this.schema = datagraphSchema;
 		scope = new Scope();
-		//this.classname = "Query_" + System.currentTimeMillis();
 	}
 
+	/**
+	 * Generates a Java class implementing a GReQL query. The generated class
+	 * will implement the interface {@link ExecutableQuery}, thus it may be
+	 * evaluated simply by calling its execute-Method. For proper execution, 
+	 * the GReQL function library needs to be available.
+	 * 
+	 * @param query the query in its String representation
+	 * @param datagraphSchema the graph schema of the graph the query should be executed on
+	 * @param classname the fully qualified name of the class to be generated
+	 * @param path the path where the generated file should be stored. Beware, the query will be stored
+	 *        inside a subdirectory of the path defined by its qualified name <code>classname</code>
+	 */
+	public static void generateCode(String query, Schema datagraphSchema, String classname, String path) {
+		GreqlEvaluator eval = new GreqlEvaluator(query,  null, new HashMap<String, Object>());
+		eval.createOptimizedSyntaxGraph();
+		GraphMarker<VertexEvaluator> graphMarker = eval.getVertexEvaluatorGraphMarker();
+		Greql2 queryGraph = eval.getSyntaxGraph();
+		String simpleName = classname;
+		String packageName = "";
+		if (classname.contains(".")) {
+			simpleName = classname.substring(classname.lastIndexOf("."));
+			packageName = classname.substring(0, classname.lastIndexOf("."));
+		}
+		GreqlCodeGenerator greqlcodeGen = new GreqlCodeGenerator(queryGraph, graphMarker, datagraphSchema, packageName, simpleName);
+		try {
+			greqlcodeGen.createFiles(path);
+		} catch (GraphIOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	/**
+	 * Generates and compiles an in-memory Java class implementing a GReQL query.
+	 * The generated class will implement the interface {@link ExecutableQuery},
+	 * thus it may be evaluated simply by calling its execute-method. For proper
+	 * execution, the GReQL function library needs to be available. After calling
+	 * this method, the compiled class <code>classname</code> is available to
+	 * your environment and may be instantiated using reflection, e.g., by
+	 * Class.forName(className).newInstance().
+	 * 
+	 * @param query the query in its String representation
+	 * @param datagraphSchema the graph schema of the graph the query should be executed on
+	 * @param classname the fully qualified name of the class to be generated
+	 */
+	public static Class<ExecutableQuery> generateCode(String query, Schema datagraphSchema, String classname) {
+		GreqlEvaluator eval = new GreqlEvaluator(query,  datagraphSchema.createGraph(ImplementationType.GENERIC), new HashMap<String, Object>());
+		eval.createOptimizedSyntaxGraph();
+		GraphMarker<VertexEvaluator> graphMarker = eval.getVertexEvaluatorGraphMarker();
+		Greql2 queryGraph = eval.getSyntaxGraph();
+		
+		String simpleName = classname;
+		String packageName = "";
+		if (classname.contains(".")) {
+			simpleName = classname.substring(classname.lastIndexOf("."));
+			packageName = classname.substring(0, classname.lastIndexOf("."));
+		}
+		GreqlCodeGenerator greqlcodeGen = new GreqlCodeGenerator(queryGraph, graphMarker, datagraphSchema, packageName, simpleName);
+		return greqlcodeGen.compile();
+	}
+	
 	
 	public CodeBlock createBody() {
 		CodeList code = new CodeList();
@@ -253,13 +319,13 @@ public class GreqlCodeGenerator extends CodeGenerator {
 		if (typeCollection.getAllowedTypes().isEmpty()) {
 			//all types but the forbidden ones are allowed
 			addStaticInitializer(fieldName+ ".set(0," + numberOfTypesInSchema + ", true);");
-			for (GraphElementClass tc : typeCollection.getForbiddenTypes()) {
+			for (GraphElementClass<?, ?> tc : typeCollection.getForbiddenTypes()) {
 				addStaticInitializer(fieldName + ".set(" + tc.getGraphElementClassIdInSchema()  +", false);" );
 			}
 		} else {
 			//only allowed type are allowed, others are forbidden
 			addStaticInitializer(fieldName + ".set(0," + numberOfTypesInSchema + ", false);");
-			for (GraphElementClass tc : typeCollection.getAllowedTypes()) {
+			for (GraphElementClass<?, ?> tc : typeCollection.getAllowedTypes()) {
 				addStaticInitializer(fieldName + ".set(" + tc.getGraphElementClassIdInSchema()  +",  true);" );
 			}
 		}
@@ -1155,22 +1221,31 @@ public class GreqlCodeGenerator extends CodeGenerator {
 	
 	
 	public InMemoryJavaSourceFile createInMemoryJavaSource() {
+		createCode();
 		return new InMemoryJavaSourceFile(this.classname, rootBlock.getCode());
 	}
 
 	
-	public void compile() {
+	@SuppressWarnings("unchecked")
+	public Class<ExecutableQuery> compile() {
 		JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
 		if (compiler == null) {
 			throw new SchemaException("Cannot compile greql query. "
 					+ "Most probably you use a JRE instead of a JDK. "
 					+ "The JRE does not provide a compiler.");
 		}
-		StandardJavaFileManager jfm = compiler.getStandardFileManager(null,
-				null, null);
 		Vector<InMemoryJavaSourceFile> javaSources = new Vector<InMemoryJavaSourceFile>();
 		javaSources.add(createInMemoryJavaSource());
-		compiler.getTask(null, jfm, null, null, null, javaSources).call();
+		StandardJavaFileManager jfm = compiler.getStandardFileManager(null,
+				null, null);
+		ClassFileManager manager = new ClassFileManager(this, jfm);
+		compiler.getTask(null, manager, null, null, null, javaSources).call();
+		try {
+			return (Class<ExecutableQuery>) Class.forName("de.uni_koblenz.jgralab.greql2.executable.queries." +  this.classname, true,
+					SchemaClassManager.instance(codeGeneratorFileManagerName));
+		} catch (ClassNotFoundException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 

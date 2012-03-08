@@ -93,7 +93,7 @@ public class SchemaClassManager extends ClassLoader {
 	}
 
 	@Override
-	protected Class<?> findClass(String name) throws ClassNotFoundException {
+	public Class<?> findClass(String name) throws ClassNotFoundException {
 		// first, look if the class byte code is in the internal map
 		InMemoryClassFile inMemClassFile = schemaClassFiles.get(name);
 		if (inMemClassFile != null) {
@@ -104,6 +104,7 @@ public class SchemaClassManager extends ClassLoader {
 			schemaClassFiles.remove(name);
 			return clazz;
 		}
+		
 		// if not defined internally, use the standard class loader mechanisms
 		return Class.forName(name);
 	}

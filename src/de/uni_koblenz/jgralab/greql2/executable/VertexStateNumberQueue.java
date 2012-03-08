@@ -38,7 +38,6 @@
 package de.uni_koblenz.jgralab.greql2.executable;
 
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.greql2.evaluator.fa.State;
 
 public class VertexStateNumberQueue {
 
@@ -76,9 +75,6 @@ public class VertexStateNumberQueue {
 	public final boolean hasNext() {
 
 		if (first == last) {
-			// if (last < (initialSize / 2)) {
-			// initialSize = last+1;
-			// }
 			return false;
 		}
 		currentVertex = vertices[first % size];
@@ -100,6 +96,5 @@ public class VertexStateNumberQueue {
 		last = size - 1;
 		first = 0;
 		size *= 2;
-		// initialSize *= 2;
 	}
 }

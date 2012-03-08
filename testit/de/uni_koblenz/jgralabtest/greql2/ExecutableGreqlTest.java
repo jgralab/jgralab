@@ -16,8 +16,8 @@ import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.graphmarker.GraphMarker;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VertexEvaluator;
+import de.uni_koblenz.jgralab.greql2.executable.ExecutableQuery;
 import de.uni_koblenz.jgralab.greql2.executable.GreqlCodeGenerator;
-import de.uni_koblenz.jgralab.greql2.executable.queries.SampleQuery;
 import de.uni_koblenz.jgralab.greql2.parser.GreqlParser;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Schema;
@@ -35,16 +35,7 @@ public class ExecutableGreqlTest extends GenericTest {
 	@Test
 	public void testSimpleFunction() {
 		String query = "2 + 3";
-		GreqlEvaluator eval = new GreqlEvaluator(query, null, null);
-		GraphMarker<VertexEvaluator> graphMarker = eval.getVertexEvaluatorGraphMarker();
-		Greql2 queryGraph = eval.getSyntaxGraph();
-		GreqlCodeGenerator greqlcodeGen = new GreqlCodeGenerator(queryGraph, graphMarker, Greql2Schema.instance());
-		try {
-			greqlcodeGen.createFiles(path);
-		} catch (GraphIOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+
 	}
 	
 	
@@ -52,48 +43,21 @@ public class ExecutableGreqlTest extends GenericTest {
 	public void testGenerateComprehension() {
 		String query = "using X,Y: from x:X, y:Y with (y % 2) reportList x*y end";
 		//String query = "using X,Y: from x:X, y:Y with (true) and true reportList x*y end";
-		GreqlEvaluator eval = new GreqlEvaluator(query, null, null);
-		eval.createOptimizedSyntaxGraph();
-		GraphMarker<VertexEvaluator> graphMarker = eval.getVertexEvaluatorGraphMarker();
-		Greql2 queryGraph = eval.getSyntaxGraph();
-		GreqlCodeGenerator greqlcodeGen = new GreqlCodeGenerator(queryGraph, graphMarker, Greql2Schema.instance());
-		try {
-			greqlcodeGen.createFiles(path);
-		} catch (GraphIOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+
 	}
 	
 	@Test
 	public void testGenerateForallExpression() {
 		//String query = "using X,Y: from x:X, y:Y with (y % 2 <> 1) and (x % 3 = 0) reportList x*y end";
 		String query = "using X,Y: forall x:X, y:Y @ x*y > 0";
-		GreqlEvaluator eval = new GreqlEvaluator(query, null, null);
-		GraphMarker<VertexEvaluator> graphMarker = eval.getVertexEvaluatorGraphMarker();
-		Greql2 queryGraph = eval.getSyntaxGraph();
-		GreqlCodeGenerator greqlcodeGen = new GreqlCodeGenerator(queryGraph, graphMarker, Greql2Schema.instance());
-		try {
-			greqlcodeGen.createFiles(path);
-		} catch (GraphIOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+
 	}
 	
 	@Test
 	public void testGenerateListConstruction() {
 		String query = "list(1,2,3)";
-		GreqlEvaluator eval = new GreqlEvaluator(query, null, null);
-		GraphMarker<VertexEvaluator> graphMarker = eval.getVertexEvaluatorGraphMarker();
-		Greql2 queryGraph = eval.getSyntaxGraph();
-		GreqlCodeGenerator greqlcodeGen = new GreqlCodeGenerator(queryGraph, graphMarker, Greql2Schema.instance());
-		try {
-			greqlcodeGen.createFiles(path);
-		} catch (GraphIOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+
+
 	}
 	
 	@Test
@@ -102,13 +66,7 @@ public class ExecutableGreqlTest extends GenericTest {
 		GreqlEvaluator eval = new GreqlEvaluator(query, null, null);
 		GraphMarker<VertexEvaluator> graphMarker = eval.getVertexEvaluatorGraphMarker();
 		Greql2 queryGraph = eval.getSyntaxGraph();
-		GreqlCodeGenerator greqlcodeGen = new GreqlCodeGenerator(queryGraph, graphMarker, Greql2Schema.instance());
-		try {
-			greqlcodeGen.createFiles(path);
-		} catch (GraphIOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+
 	}
 	
 	@Test
@@ -118,13 +76,7 @@ public class ExecutableGreqlTest extends GenericTest {
 		eval.createOptimizedSyntaxGraph();
 		GraphMarker<VertexEvaluator> graphMarker = eval.getVertexEvaluatorGraphMarker();
 		Greql2 queryGraph = eval.getSyntaxGraph();
-		GreqlCodeGenerator greqlcodeGen = new GreqlCodeGenerator(queryGraph, graphMarker, Greql2Schema.instance());
-		try {
-			greqlcodeGen.createFiles(path);
-		} catch (GraphIOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+
 	}
 	
 	@Test
@@ -134,13 +86,7 @@ public class ExecutableGreqlTest extends GenericTest {
 		GreqlEvaluator eval = new GreqlEvaluator(query, null, null);
 		GraphMarker<VertexEvaluator> graphMarker = eval.getVertexEvaluatorGraphMarker();
 		Greql2 queryGraph = eval.getSyntaxGraph();
-		GreqlCodeGenerator greqlcodeGen = new GreqlCodeGenerator(queryGraph, graphMarker, Greql2Schema.instance());
-		try {
-			greqlcodeGen.createFiles(path);
-		} catch (GraphIOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+
 	}
 	
 	
@@ -156,37 +102,23 @@ public class ExecutableGreqlTest extends GenericTest {
 			}
 		}
 
-		SampleQuery generatedQuery = new SampleQuery();
-		Object resultOfGeneratedQuery = generatedQuery.execute(getTestGraph(TestVersion.ROUTE_MAP_GRAPH));
-		assertEquals(result, (PSet<Tuple>)resultOfGeneratedQuery);
+//		SampleQuery generatedQuery = new SampleQuery();
+//		Object resultOfGeneratedQuery = generatedQuery.execute(getTestGraph(TestVersion.ROUTE_MAP_GRAPH));
+//		assertEquals(result, (PSet<Tuple>)resultOfGeneratedQuery);
 	}
 	
 	@Test
-	public void testGenerateForwardVertexSet() {
-		String query = "from v:V{NamedElement} reportSet v, v.name, v (-->{^connections.Way, ^connections.AirRoute} | (-->{localities.ContainsLocality} v -->{connections.AirRoute @ (thisEdge) }))* end";
+	public void testGenerateForwardVertexSet() throws Exception {
+		String query = "from v:V{NamedElement} reportSet v, v.name, v (-->{^connections.Way, ^connections.AirRoute} | (-->{localities.ContainsLocality} v -->{connections.AirRoute}))* end";
 		Graph testGraph = null;
 		try {
 			testGraph = getTestGraph(TestVersion.ROUTE_MAP_GRAPH);
 		} catch (Exception e1) {
 			e1.printStackTrace();
 		}
-		GreqlEvaluator eval = new GreqlEvaluator(query,  testGraph, new HashMap<String, Object>());
-		eval.createOptimizedSyntaxGraph();
-		GraphMarker<VertexEvaluator> graphMarker = eval.getVertexEvaluatorGraphMarker();
-		Greql2 queryGraph = eval.getSyntaxGraph();
-		if (queryGraph == null) {
-			System.out.println("Query graph is null");
-			queryGraph = GreqlParser.parse(query);
-			if (queryGraph == null)
-				System.out.println("Parsing exception");
-		}
-		GreqlCodeGenerator greqlcodeGen = new GreqlCodeGenerator(queryGraph, graphMarker, testGraph.getSchema());
-		try {
-			greqlcodeGen.createFiles(path);
-		} catch (GraphIOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		Class<ExecutableQuery> queryClass = GreqlCodeGenerator.generateCode(query, testGraph.getSchema(), "ForwardVertexSetTest");
+		//System.out.println("Name of class: " + queryClass.getSimpleName());
+		//ExecutableQuery queryObject = queryClass.newInstance();
 	}
 	
 
