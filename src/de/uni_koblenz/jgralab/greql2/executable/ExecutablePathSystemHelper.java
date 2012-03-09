@@ -19,7 +19,7 @@ import de.uni_koblenz.jgralab.graphmarker.GraphMarker;
 public class ExecutablePathSystemHelper {
 
 	
-	private de.uni_koblenz.jgralab.greql2.types.PathSystem createPathSystemFromMarkings(
+	public static de.uni_koblenz.jgralab.greql2.types.PathSystem createPathSystemFromMarkings(
 			GraphMarker<PathSystemMarkerEntry>[] marker, Vertex rootVertex,
 			Set<PathSystemMarkerEntry> leafEntries) {
 		de.uni_koblenz.jgralab.greql2.types.PathSystem pathSystem = new de.uni_koblenz.jgralab.greql2.types.PathSystem(
@@ -69,11 +69,10 @@ public class ExecutablePathSystemHelper {
 	
 	
 	/**
-	 * marks the given vertex with the given PathSystemMarker
-	 * 
+	 * marks the given vertex with the given PathSystemMarker 
 	 * @return the marker created
 	 */
-	protected PathSystemMarkerEntry markVertex(
+	public static PathSystemMarkerEntry markVertex(
 			GraphMarker<PathSystemMarkerEntry>[] marker, Vertex v, int stateNumber,
 			boolean stateIsFinal, Vertex parentVertex, Edge e, int parentStateNumber, int d) {
 		PathSystemMarkerEntry m = new PathSystemMarkerEntry(v, parentVertex, e,
@@ -81,66 +80,18 @@ public class ExecutablePathSystemHelper {
 
 		GraphMarker<PathSystemMarkerEntry> currentMarker = marker[stateNumber];
 		currentMarker.mark(v, m);
-
 		return m;
 	}
 
 	/**
-	 * Checks if the given vertex is marked with the given state
-	 * 
+	 * Checks if the given vertex is marked with the given state 
 	 * @return true if the vertex is marked, false otherwise
 	 */
-	protected boolean isMarked(GraphMarker<PathSystemMarkerEntry>[] marker,
+	public static boolean isMarked(GraphMarker<PathSystemMarkerEntry>[] marker,
 			Vertex v, int stateNumber) {
 		GraphMarker<PathSystemMarkerEntry> currentMarker = marker[stateNumber];
 		return currentMarker.isMarked(v);
 	}
 	
-	class PathSystemMarkerEntry {
-		
-		/**
-		 * The vertex that is marked 
-		 */
-		public Vertex vertex;
 
-		/**
-		 * The number of the state this vertex gets marked with
-		 */
-		public int stateNumber;
-		
-		
-		public boolean stateIsFinal;
-
-		/**
-		 * The number of the state in which the parent vertex in the pathsystem was visited
-		 */
-		public int parentStateNumber;
-
-		/**
-		 * The edge which leads to the parent vertex
-		 */
-		public Edge edgeToParentVertex;
-
-		/**
-		 * The parent vertex itself, needed, because there can be transitions  
-		 * that don't consume edges
-		 */
-		public Vertex parentVertex;
-
-		/**
-		 * the distance to the root vertex of the pathsystem
-		 */
-		public int distanceToRoot;
-
-		public PathSystemMarkerEntry(Vertex vertex, Vertex parentVertex, Edge parentEdge, int stateNumber,	boolean stateIsFinal, int parentStateNumber, int distance) {
-			this.distanceToRoot = distance;
-			this.stateNumber = stateNumber;
-			this.stateIsFinal = stateIsFinal;
-			this.edgeToParentVertex = parentEdge;
-			this.parentVertex = parentVertex;
-			this.parentStateNumber = parentStateNumber;
-			this.vertex = vertex;
-		}
-	}	
-	
 }

@@ -91,6 +91,22 @@ public class ExecutableGreqlTest extends GenericTest {
 	
 	
 	@Test
+	public void testGeneratePathSystem() throws Exception {
+		String query = "from v:V{NamedElement} reportSet v, pathSystem(v, (-->{^connections.Way, ^connections.AirRoute} | (-->{localities.ContainsLocality} -->{connections.AirRoute}))*) end";
+		Graph testGraph = null;
+		try {
+			testGraph = getTestGraph(TestVersion.ROUTE_MAP_GRAPH);
+		} catch (Exception e1) {
+			e1.printStackTrace();
+		}
+		GreqlCodeGenerator.generateCode(query, testGraph.getSchema(), "de.uni_koblenz.jgralabtest.greql2.executable.queries.PathSystemTest", "/Users/dbildh/repos/git/jgralab/testit/");
+
+//		SampleQuery generatedQuery = new SampleQuery();
+//		Object resultOfGeneratedQuery = generatedQuery.execute(getTestGraph(TestVersion.ROUTE_MAP_GRAPH));
+//		assertEquals(result, (PSet<Tuple>)resultOfGeneratedQuery);
+	}
+	
+	@Test
 	public void testEvaluateAlternativePathDescription2() throws Exception {
 		String queryString = "from v:V{NamedElement} reportSet v, v.name, v (-->{^connections.Way, ^connections.AirRoute} | (-->{localities.ContainsLocality} -->{connections.AirRoute}))* end";
 		PSet<Tuple> result = (PSet<Tuple>) evalTestQuery(queryString);
