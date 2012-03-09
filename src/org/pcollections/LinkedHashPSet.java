@@ -4,12 +4,29 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 
+/**
+ * Wraps a {@link LinkedHashSet} and converts to some other {@link POrderedSet}
+ * on "modification".
+ *
+ * CAUTION: Don't ever modify a {@link LinkedHashSet} which backs a
+ * LinkedHashPSet! This will change the LinkedHashPSet as well.
+ *
+ * @param <E>
+ */
 public class LinkedHashPSet<E> implements POrderedSet<E> {
 
 	private LinkedHashSet<E> lhs;
 
-	public LinkedHashPSet(LinkedHashSet<E> l) {
+	private LinkedHashPSet(LinkedHashSet<E> l) {
 		lhs = l;
+	}
+
+	/**
+	 * @param lhs
+	 * @return an immutable POrderedSet wrapping the given {@link LinkedHashSet}
+	 */
+	public static <T> LinkedHashPSet<T> immute(LinkedHashSet<T> lhs) {
+		return new LinkedHashPSet<T>(lhs);
 	}
 
 	@Override
