@@ -116,7 +116,7 @@ public class ExecutableGreqlTest extends GenericTest {
 		} catch (Exception e1) {
 			e1.printStackTrace();
 		}
-		Class<ExecutableQuery> queryClass = GreqlCodeGenerator.generateCode(query, testGraph.getSchema(), "ForwardVertexSetTest");
+		GreqlCodeGenerator.generateCode(query, testGraph.getSchema(), "de.uni_koblenz.jgralab.greql2.executable.queries.ForwardVertexSetTest", "/Users/dbildh/repos/git/jgralab/src/");
 		//System.out.println("Name of class: " + queryClass.getSimpleName());
 		//ExecutableQuery queryObject = queryClass.newInstance();
 	}

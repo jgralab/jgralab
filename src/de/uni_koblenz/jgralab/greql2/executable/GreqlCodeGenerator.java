@@ -106,6 +106,8 @@ public class GreqlCodeGenerator extends CodeGenerator {
 	private Greql2 graph;
 	
 	private String classname;
+	
+	private String packageName;
 		
 	private CodeSnippet classFieldSnippet = new CodeSnippet();
 	
@@ -128,6 +130,7 @@ public class GreqlCodeGenerator extends CodeGenerator {
 		this.graph = graph;
 		this.vertexEvalGraphMarker = vertexEvalGraphMarker;
 		this.classname = classname;
+		this.packageName = packageName;
 		this.schema = datagraphSchema;
 		scope = new Scope();
 	}
@@ -145,14 +148,14 @@ public class GreqlCodeGenerator extends CodeGenerator {
 	 *        inside a subdirectory of the path defined by its qualified name <code>classname</code>
 	 */
 	public static void generateCode(String query, Schema datagraphSchema, String classname, String path) {
-		GreqlEvaluator eval = new GreqlEvaluator(query,  null, new HashMap<String, Object>());
+		GreqlEvaluator eval = new GreqlEvaluator(query,  datagraphSchema.createGraph(ImplementationType.GENERIC), new HashMap<String, Object>());
 		eval.createOptimizedSyntaxGraph();
 		GraphMarker<VertexEvaluator> graphMarker = eval.getVertexEvaluatorGraphMarker();
 		Greql2 queryGraph = eval.getSyntaxGraph();
 		String simpleName = classname;
 		String packageName = "";
 		if (classname.contains(".")) {
-			simpleName = classname.substring(classname.lastIndexOf("."));
+			simpleName = classname.substring(classname.lastIndexOf(".")+1);
 			packageName = classname.substring(0, classname.lastIndexOf("."));
 		}
 		GreqlCodeGenerator greqlcodeGen = new GreqlCodeGenerator(queryGraph, graphMarker, datagraphSchema, packageName, simpleName);
@@ -202,44 +205,15 @@ public class GreqlCodeGenerator extends CodeGenerator {
 		code.add(staticInitializerSnippet);
 		code.add(classFieldSnippet);		
 		Greql2Expression rootExpr = graph.getFirstGreql2Expression();
+		addClassField("Graph", "datagraph", "null");
+		addClassField("java.util.Map<String, Object>", "boundVariables", "null");
 		CodeSnippet method = new CodeSnippet();
-		method.add("");
-		method.add("private Graph datagraph;");
-		method.add("");
-		method.add("public Object execute(de.uni_koblenz.jgralab.Graph graph, java.util.Map<String, Object> boundVariables) {");
-		method.add("\tObject result = null;");
-		method.add("\tdatagraph = graph;");
-
-		
-		//create code for bound variables		
-		scope.blockBegin();
-		for (IsBoundVarOf inc : rootExpr.getIsBoundVarOfIncidences(EdgeDirection.IN)) {
-			Variable var = (Variable) inc.getThat();
-			scope.addVariable(var.get_name());
-			method.add("\tObject " + var.get_name() + " = boundVariables.get(\"" + var.get_name() + "\");");
-		}
+		method.add("public synchronized Object execute(de.uni_koblenz.jgralab.Graph graph, java.util.Map<String, Object> boundVariables) {");
+		method.add("\tthis.datagraph = graph;");
+		method.add("\tthis.boundVariables = boundVariables;");
+		method.add("\treturn " +  createCodeForGreql2Expression(rootExpr) + ";");
+		method.add("}");
 		code.add(method);
-		
-		//create code for main query expression
-		IsQueryExprOf inc = rootExpr.getFirstIsQueryExprOfIncidence(EdgeDirection.IN);
-		Expression queryExpr = (Expression) inc.getThat();
-		code.add( new CodeSnippet("\tresult = " + createCodeForExpression(queryExpr) + ";")  );
-				
-		
-		//create code for store as 
-		CodeSnippet endOfMethod = new CodeSnippet();
-		for (IsIdOfStoreClause storeInc : rootExpr.getIsIdOfStoreClauseIncidences(EdgeDirection.IN)) {
-			Identifier ident = (Identifier) storeInc.getThat();
-			endOfMethod.add("\tboundVariables.put(\"" + ident.get_name() + "\","  + ident.get_name() + ");");
-		}
-		
-		
-		scope.blockEnd();
-		
-		//create code for return and method end
-		endOfMethod.add("\treturn result;");
-		endOfMethod.add("}");
-		code.add(endOfMethod);
 		
 		//add generated methods
 		code.add(new CodeSnippet("",""));
@@ -252,6 +226,32 @@ public class GreqlCodeGenerator extends CodeGenerator {
 	}
 	
 
+	
+	private String createCodeForGreql2Expression(Greql2Expression rootExpr) {
+		CodeList list = new CodeList();
+		scope.blockBegin();
+		//create code for bound variables
+		for (IsBoundVarOf inc : rootExpr.getIsBoundVarOfIncidences(EdgeDirection.IN)) {
+			Variable var = (Variable) inc.getThat();
+			scope.addVariable(var.get_name());
+			list.add(new CodeSnippet("Object " + var.get_name() + " = boundVariables.get(\"" + var.get_name() + "\");"));
+		}
+		
+		//create code for main query expression
+		IsQueryExprOf inc = rootExpr.getFirstIsQueryExprOfIncidence(EdgeDirection.IN);
+		Expression queryExpr = (Expression) inc.getThat();
+		list.add(new CodeSnippet("Object result = " + createCodeForExpression(queryExpr) + ";"));
+				
+		//create code for store as 
+		for (IsIdOfStoreClause storeInc : rootExpr.getIsIdOfStoreClauseIncidences(EdgeDirection.IN)) {
+			Identifier ident = (Identifier) storeInc.getThat();
+			list.add(new CodeSnippet("boundVariables.put(\"" + ident.get_name() + "\","  + ident.get_name() + ");"));
+		}		
+		
+		list.add(new CodeSnippet("return result;"));
+		scope.blockEnd();
+		return createMethod(list, rootExpr);
+	}
 
 	
 	private String createCodeForExpression(Expression queryExpr) {
@@ -517,7 +517,7 @@ public class GreqlCodeGenerator extends CodeGenerator {
 	private String createCodeForComprehension(Comprehension compr) {
 		addImports("de.uni_koblenz.jgralab.JGraLab");
 		addImports("org.pcollections.PCollection");
-		CodeList list = new CodeList();
+		CodeList methodBody = new CodeList();
 		CodeSnippet initSnippet = new CodeSnippet();
 		if (compr instanceof ListComprehension) {
 			initSnippet.add("PCollection result = JGraLab.vector();");
@@ -529,81 +529,73 @@ public class GreqlCodeGenerator extends CodeGenerator {
 			addImports("org.pcollections.PMap");
 			initSnippet.add("PMap result = JGraLab.map();");
 		}
-		list.add(initSnippet);
+		methodBody.add(initSnippet);
 		
 		Declaration decl = (Declaration) compr.getFirstIsCompDeclOfIncidence(EdgeDirection.IN).getThat();
 		
 		//Declarations and variable iteration loops
-		int declaredVars = 0;
-		String tabs = "";
-		int simpleDecls = 0;
+		
+		CodeList varIterationList = new CodeList();
+		methodBody.add(varIterationList);
 		scope.blockBegin();
 		for (IsSimpleDeclOf simpleDeclInc : decl.getIsSimpleDeclOfIncidences(EdgeDirection.IN)) {
 			SimpleDeclaration simpleDecl = (SimpleDeclaration) simpleDeclInc.getThat();
 			Expression domain = (Expression) simpleDecl.getFirstIsTypeExprOfDeclarationIncidence(EdgeDirection.IN).getThat();
 			CodeSnippet simpleDeclSnippet = new CodeSnippet();
-			simpleDeclSnippet.setVariable("simpleDeclNum", Integer.toString(simpleDecls));
-			simpleDeclSnippet.add(tabs + "PCollection domain_#simpleDeclNum# = (PCollection) " + createCodeForExpression(domain) + ";");
-			list.add(simpleDeclSnippet);
+			varIterationList.setVariable("simpleDeclDomainName", "domainOfSimpleDecl_" + Integer.toString(simpleDecl.getId()));
+			simpleDeclSnippet.add("PCollection #simpleDeclDomainName# = (PCollection) " + createCodeForExpression(domain) + ";");
+			varIterationList.add(simpleDeclSnippet);
 			for (IsDeclaredVarOf declaredVarInc : simpleDecl.getIsDeclaredVarOfIncidences(EdgeDirection.IN)) {
-				declaredVars++;
 				Variable var = (Variable) declaredVarInc.getThat();
 				CodeSnippet varIterationSnippet = new CodeSnippet();
 				varIterationSnippet.setVariable("variableName", var.get_name());
-				varIterationSnippet.setVariable("simpleDeclNum", Integer.toString(simpleDecls));
-				varIterationSnippet.add(tabs + "for (Object #variableName# : domain_#simpleDeclNum#) {");
+				varIterationSnippet.add("for (Object #variableName# : #simpleDeclDomainName#) {");
 				VariableEvaluator vertexEval = (VariableEvaluator) vertexEvalGraphMarker.getMark(var);
 				List<VertexEvaluator> dependingExpressions = vertexEval.calculateDependingExpressions();
 				for (VertexEvaluator ve : dependingExpressions) {
 					Vertex currentV = ve.getVertex();
 					if (currentV instanceof Variable)
 						continue;
+					//reset stored evaluation values for expressions depending on variable var
 					String variableName = getVariableName(Integer.toString(currentV.getId()));
 					varIterationSnippet.add("\t" + variableName + " = null;");
 				}
-				tabs += "\t";
 				scope.addVariable(var.get_name());
-				list.add(varIterationSnippet);
+				varIterationList.add(varIterationSnippet);
+				CodeList body = new CodeList();
+				varIterationList.add(body);
+				varIterationList.add(new CodeSnippet("}"));
+				varIterationList = body;
 			}
-			simpleDecls++;
 		}
 		
 		//condition
 		if (decl.getFirstIsConstraintOfIncidence(EdgeDirection.IN) != null) {
 			CodeSnippet constraintSnippet = new CodeSnippet();
-			constraintSnippet.add(tabs + "boolean constraint = true;");
+			constraintSnippet.add("boolean constraint = true;");
 			for (IsConstraintOf constraintInc : decl.getIsConstraintOfIncidences(EdgeDirection.IN)) {
 				Expression constrExpr = (Expression) constraintInc.getThat();
-				constraintSnippet.add(tabs + "constraint = constraint && (Boolean) " + createCodeForExpression(constrExpr) + ";");
+				constraintSnippet.add("constraint = constraint && (Boolean) " + createCodeForExpression(constrExpr) + ";");
 			}
-			constraintSnippet.add(tabs + "if (constraint)");
-			list.add(constraintSnippet);
+			constraintSnippet.add("if (constraint)");
+			varIterationList.add(constraintSnippet);
 		}
-
 
 		//main expression
 		CodeSnippet iteratedExprSnip = new CodeSnippet();
 		if (compr instanceof MapComprehension) {
 			Expression keyExpr = (Expression) ((MapComprehension)compr).getFirstIsKeyExprOfComprehensionIncidence(EdgeDirection.IN).getThat();
 			Expression valueExpr = (Expression) ((MapComprehension)compr).getFirstIsValueExprOfComprehensionIncidence(EdgeDirection.IN).getThat();
-			iteratedExprSnip.add(tabs + "result.put(" + createCodeForExpression(keyExpr) + "," + createCodeForExpression(valueExpr) + ");");
+			iteratedExprSnip.add("result.put(" + createCodeForExpression(keyExpr) + "," + createCodeForExpression(valueExpr) + ");");
 		} else {
 			Expression resultDefinition = (Expression) compr.getFirstIsCompResultDefOfIncidence(EdgeDirection.IN).getThat();
-			iteratedExprSnip.add(tabs + "result = result.plus(" + createCodeForExpression(resultDefinition) + ");");
+			iteratedExprSnip.add("result = result.plus(" + createCodeForExpression(resultDefinition) + ");");
 		}
-		list.add(iteratedExprSnip);
-		//closing parantheses for interation loops
-		for (int curLoop=0; curLoop<declaredVars; curLoop++) {
-			StringBuilder tabBuff = new StringBuilder();
-			for (int i=1; i<(declaredVars-curLoop); i++) {
-				tabBuff.append("\t");
-			}
-			tabs = tabBuff.toString();
-			list.add(new CodeSnippet(tabs + "}"));
-		}
-		list.add(new CodeSnippet("return result;"));
+		varIterationList.add(iteratedExprSnip);
+
+		methodBody.add(new CodeSnippet("return result;"));
 		scope.blockEnd();
-		return createMethod(list, compr);
+		return createMethod(methodBody, compr);
 	}
 	
 	
@@ -828,7 +820,7 @@ public class GreqlCodeGenerator extends CodeGenerator {
 		initSnippet.add("HashSet<Vertex>[] markedElements = new HashSet[#stateCount#];");
 		initSnippet.setVariable("stateCount", Integer.toString(dfa.stateList.size()));
 		initSnippet.add("for (int i=0; i<#stateCount#;i++) {");
-		initSnippet.add("\tmarkedElements[i] = new HashSet(100);");
+		initSnippet.add("\tmarkedElements[i] = new HashSet<Vertex>(100);");
 		initSnippet.add("}");
 		initSnippet.add("BitSet finalStates = new BitSet();");
 		for (State s : dfa.stateList) {
@@ -837,7 +829,6 @@ public class GreqlCodeGenerator extends CodeGenerator {
 			}
 		}
 		initSnippet.add("int stateNumber;");
-		initSnippet.add("int nextStateNumber;");
 		initSnippet.add("Vertex element = (Vertex)" + createCodeForExpression(startElementExpr) + ";");
 		initSnippet.add("Vertex nextElement;");
 		initSnippet.add("VertexStateNumberQueue queue = new VertexStateNumberQueue();");
@@ -1178,7 +1169,9 @@ public class GreqlCodeGenerator extends CodeGenerator {
 	
 	
 	protected void createSetterForThisLiteral(ThisLiteral lit, String edgeOrVertex) {
+		CodeList list = new CodeList();
 		CodeSnippet snip = new CodeSnippet();
+		list.add(snip);
 		snip.setVariable("edgeOrVertex", edgeOrVertex);
 		snip.add("private final void setThis#edgeOrVertex#(#edgeOrVertex# value) {");
 		if (lit != null) {
@@ -1194,7 +1187,7 @@ public class GreqlCodeGenerator extends CodeGenerator {
 		}	
 		snip.add("\tthis#edgeOrVertex# = value;");
 		snip.add("}");
-		createdMethods.add(snip);
+		createdMethods.add(list);
 	}
 	
 
@@ -1241,7 +1234,7 @@ public class GreqlCodeGenerator extends CodeGenerator {
 		ClassFileManager manager = new ClassFileManager(this, jfm);
 		compiler.getTask(null, manager, null, null, null, javaSources).call();
 		try {
-			return (Class<ExecutableQuery>) Class.forName("de.uni_koblenz.jgralab.greql2.executable.queries." +  this.classname, true,
+			return (Class<ExecutableQuery>) Class.forName(packageName + "." +  this.classname, true,
 					SchemaClassManager.instance(codeGeneratorFileManagerName));
 		} catch (ClassNotFoundException e) {
 			throw new RuntimeException(e);
