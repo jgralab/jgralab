@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
 import java.util.Set;
 import java.util.Vector;
 
@@ -12,6 +13,7 @@ import javax.tools.JavaCompiler;
 import javax.tools.StandardJavaFileManager;
 import javax.tools.ToolProvider;
 
+import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.ImplementationType;
@@ -36,6 +38,7 @@ import de.uni_koblenz.jgralab.greql2.evaluator.fa.VertexTypeRestrictionTransitio
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.PathDescriptionEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VariableEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VertexEvaluator;
+import de.uni_koblenz.jgralab.greql2.executable.ExecutablePathSystemHelper.PathSystemMarkerEntry;
 import de.uni_koblenz.jgralab.greql2.funlib.FunLib;
 import de.uni_koblenz.jgralab.greql2.funlib.Function;
 import de.uni_koblenz.jgralab.greql2.schema.BackwardVertexSet;
@@ -732,18 +735,39 @@ public class GreqlCodeGenerator extends CodeGenerator {
 	}
 
 
+	/**
+	 * Creates code for function application. While for most functions efficient
+	 * access routines to the FunLib-function will be created, some of the 
+	 * functions that rely on path descriptions (e.g., pathSystem) are realized
+	 * by code generation for the path search.
+	 * @param funApp
+	 * @return
+	 */
 	private String createCodeForFunctionApplication(
 			FunctionApplication funApp) {
 		addImports("de.uni_koblenz.jgralab.greql2.funlib.FunLib");
 
 		//create static field to access function
 		FunctionId funId = (FunctionId) funApp.getFirstIsFunctionIdOfIncidence(EdgeDirection.IN).getThat();		
+		if (funId.get_name().equals("pathSystem")) {
+			return createCodeForPathSystemFunction(funApp);
+		}
+		if (funId.get_name().equals("forwardVertexSet")) {
+			throw new RuntimeException("Code generation for function forwardVertexSet is not yet implemented. Use the path expression notation v --> instead of forwardVertexSet(v,-->)");
+		}
+		if (funId.get_name().equals("backwardVertexSet")) {
+			throw new RuntimeException("Code generation for function backwardVertexSet is not yet implemented. Use the path expression notation v --> instead of backwardVertexSet(v,-->)");
+		}
+		if (funId.get_name().equals("isReachable")) {
+			throw new RuntimeException("Code generation for function isReachable is not yet implemented. Use the path expression notation v --> w instead of isReachable(v,w,-->)");
+		}
 		Function function = FunLib.getFunctionInfo(funId.get_name()).getFunction();
 
 		String functionName = function.getClass().getName();
 		String functionSimpleName = function.getClass().getSimpleName();
 		if (functionSimpleName.contains("."))
 			functionSimpleName = functionSimpleName.substring(functionSimpleName.lastIndexOf("."));
+		
 		String functionStaticFieldName = functionSimpleName + "_" + funApp.getId();
 		addStaticField(functionName, functionStaticFieldName, "(" + functionName + ") FunLib.getFunctionInfo(\"" + funId.get_name() + "\").getFunction()");		
 		//create code list to evaluate function
@@ -789,19 +813,17 @@ public class GreqlCodeGenerator extends CodeGenerator {
 	
 	
 	private String createCodeForForwardVertexSet(ForwardVertexSet fws) {
-		DFA dfa = null;
 		PathDescription pathDescr = (PathDescription) fws.getFirstIsPathOfIncidence(EdgeDirection.IN).getThat();
 		PathDescriptionEvaluator pathDescrEval = (PathDescriptionEvaluator) vertexEvalGraphMarker.getMark(pathDescr);
-		dfa = ((NFA)pathDescrEval.getResult()).getDFA();
+		DFA dfa = ((NFA)pathDescrEval.getResult()).getDFA();
 		Expression startElementExpr = (Expression) fws.getFirstIsStartExprOfIncidence(EdgeDirection.IN).getThat();
 		return createCodeForForwarOrBackwardVertexSet(dfa, startElementExpr, fws);
 	}	
 	
 	private String createCodeForBackwardVertexSet(BackwardVertexSet fws) {
-		DFA dfa = null;
 		PathDescription pathDescr = (PathDescription) fws.getFirstIsPathOfIncidence(EdgeDirection.IN).getThat();
 		PathDescriptionEvaluator pathDescrEval = (PathDescriptionEvaluator) vertexEvalGraphMarker.getMark(pathDescr);
-		dfa = NFA.revertNFA((NFA)pathDescrEval.getResult()).getDFA();		
+		DFA dfa = NFA.revertNFA((NFA)pathDescrEval.getResult()).getDFA();		
 		Expression targetElementExpr = (Expression) fws.getFirstIsTargetExprOfIncidence(EdgeDirection.IN).getThat();
 		return createCodeForForwarOrBackwardVertexSet(dfa, targetElementExpr, fws);
 	}	
@@ -858,7 +880,7 @@ public class GreqlCodeGenerator extends CodeGenerator {
 				}					
 				//Generate code to check if next element is marked
 				transitionCodeList.add(new CodeSnippet("\t\t\tif (!markedElements[" + curTrans.endState.number + "].contains(nextElement)) {//checking all transitions of state " + curTrans.endState.number));
-				transitionCodeList.add(createCodeForTransition(curTrans),2);
+				transitionCodeList.add(createCodeForTransition(curTrans, false),2);
 				transitionCodeList.add(new CodeSnippet("\t\t} //finished checking transitions of state " + curTrans.endState.number));
 			}
 			stateCodeList.add(new CodeSnippet("\t\tbreak;//break case block"));
@@ -873,55 +895,162 @@ public class GreqlCodeGenerator extends CodeGenerator {
 	}
 	
 	
-	private CodeSnippet createAddToQueueSnippet(int number) {
+	private CodeSnippet createAddToPathSearchQueueSnippet(int number) {
 		CodeSnippet annToQueueSnippet = new CodeSnippet();
 		annToQueueSnippet.add("markedElements[" + number + "].add(nextElement);");
 		annToQueueSnippet.add("queue.put(nextElement," + number + ");");
 		return annToQueueSnippet;
 	}
+	
+	
+	private CodeList createAddToPathSystemQueueSnippet(Transition t) {
+		CodeList list = new CodeList();
+		if (t.consumesEdge()) {
+			list.setVariable("traversedEdge", "inc");
+		} else {
+			list.setVariable("traversedEdge", "null");
+		}
+		list.setVariable("endStateNumber", Integer.toString(t.endState.number));
+		list.setVariable("endStateFinal", Boolean.toString(t.endState.isFinal));
+		list.setVariable("endStateNumber", Integer.toString(t.endState.number));
+		CodeSnippet addSnippet = new CodeSnippet();
+		addSnippet.add("PathSystemMarkerEntry newEntry = markVertex(marker,");
+		addSnippet.add("	nextElement, #endStateNumber#, #endStateFinal#,");
+		addSnippet.add("    element, #traversedEdge#, currentEntry.stateNumber,");
+		addSnippet.add("    currentEntry.distanceToRoot + 1);");
+		if (t.endState.isFinal) {
+			addSnippet.add("finalEntries.add(newEntry);");
+		}
+		addSnippet.add("queue.add(newEntry);");
+		return list;
+	}	
+	
+	
+	private String createCodeForPathSystemFunction(FunctionApplication funApp)	{
+		IsArgumentOf inc = funApp.getFirstIsArgumentOfIncidence(EdgeDirection.IN);
+		Expression startExpr = (Expression) inc.getThat();
+		inc = inc.getNextIsArgumentOfIncidence(EdgeDirection.IN);
+		PathDescription pathDescr = (PathDescription) inc.getThat();
+		PathDescriptionEvaluator pathDescrEval = (PathDescriptionEvaluator) vertexEvalGraphMarker.getMark(pathDescr);
+		DFA dfa = ((NFA)pathDescrEval.getResult()).getDFA();
+		return createCodeForPathSystem(dfa, startExpr, funApp);
+	}
+	
+	private String createCodeForPathSystem(DFA dfa, Expression startElementExpr, Greql2Vertex syntaxGraphVertex)	{
+		CodeList list = new CodeList();
+		addImports("de.uni_koblenz.jgralab.*");
+		addImports("de.uni_koblenz.jgralab.greql2.executable.ExecutablePathSystemHelper");
+		list.setVariable("stateCount", Integer.toString(dfa.stateList.size()));
+		list.setVariable("initialStateNumber", Integer.toString(dfa.initialState.number));
+		list.setVariable("initialStateFinal", Boolean.toString(dfa.initialState.isFinal));
+		CodeSnippet initSnippet = new CodeSnippet();
+		list.add(initSnippet);
+		initSnippet.add("Vertex element = (Vertex)" + createCodeForExpression(startElementExpr) + ";");
+		initSnippet.add("Vertex nextElement;");
+		initSnippet.add("Queue<PathSystemMarkerEntry> queue = new LinkedList<PathSystemMarkerEntry>();");
+		initSnippet.add("GraphMarker<PathSystemMarkerEntry>[] marker = new GraphMarker[#stateCount#];");
+		initSnippet.add("for (int i = 0; i < #stateCount#; i++) {");
+		initSnippet.add("\tmarker[i] = new GraphMarker<PathSystemMarkerEntry>(startVertex.getGraph());");
+		initSnippet.add("}");
+		initSnippet.add("Set<PathSystemMarkerEntry> finalEntries = new HashSet<PathSystemMarkerEntry>();");
+		initSnippet.add("VertexStateNumberDistanceQueue queue = new VertexStateNumberDistanceQueue();");
+		initSnippet.add("PathSystemMarkerEntry currentEntry = ",
+				        "\tmarkVertex(marker, element, #initialStateNumber#, #initialStateFinal#, null, null, 0, 0);");
+		if (dfa.initialState.isFinal) {
+			initSnippet.add("finalEntries.add(currentEntry));");
+		}
+		initSnippet.add("queue.add(currentEntry);");
+		initSnippet.add("while (!queue.isEmpty()) {");
+		initSnippet.add("\tcurrentEntry = queue.poll();");
+		initSnippet.add("\telement = currentEntry.vertex;");
+		initSnippet.add("\tstateNumber = currentEntry.state;");
+		initSnippet.add("\tdistance = currentEntry.distance;");
+		initSnippet.add("\tfor (Edge inc = element.getFirstIncidence();");
+		initSnippet.add("\t\tinc != null; inc = inc.getNextIncidence() ) { //iterating incident edges");
+		initSnippet.add("\t\tswitch (stateNumber) {");
+
+		for (State curState : dfa.stateList) {
+			CodeList stateCodeList = new CodeList();
+			list.add(stateCodeList);
+			stateCodeList.add(new CodeSnippet("\t\tcase " + curState.number + ":"));
+			for (Transition curTrans : curState.outTransitions) {
+				CodeList transitionCodeList = new CodeList();
+				stateCodeList.add(transitionCodeList);
+				//Generate code to get next vertex and state number
+				if (curTrans.consumesEdge()) {
+					transitionCodeList.add(new CodeSnippet("\t\t\tnextElement = inc.getThat();")); 
+				} else {
+					transitionCodeList.add(new CodeSnippet("\t\t\tnextElement = element;"));
+				}					
+				//Generate code to check if next element is marked
+				transitionCodeList.add(new CodeSnippet("\t\t\tif (!markedElements[" + curTrans.endState.number + "].contains(nextElement)) {//checking all transitions of state " + curTrans.endState.number));
+				transitionCodeList.add(createCodeForTransition(curTrans,true),2);
+				transitionCodeList.add(new CodeSnippet("\t\t} //finished checking transitions of state " + curTrans.endState.number));
+			}
+			stateCodeList.add(new CodeSnippet("\t\tbreak;//break case block"));
+		}
+
+		CodeSnippet finalSnippet = new CodeSnippet();
+		finalSnippet.add("\t\t} //end of switch");
+		finalSnippet.add("\t} //end of iterating incident edges ");
+		finalSnippet.add("} //end of processing queue");
+		finalSnippet.add("return resultSet;");
+		list.add(finalSnippet);
+		return createMethod(list, syntaxGraphVertex);
+	}	
+
 
 
 	private int acceptedTypesNumber = 0;
 	
-	
-	private CodeBlock createCodeForTransition(Transition trans) {
+	/**
+	 * Creates code that implements the transition <code>trans</code>. 
+	 * Depending on the value of pathSystem, a successfull "firing" of the
+	 * transition will add the checked element to the queue of a forward
+	 * or backward vertex set, or a new PathSystemQueueEntry will be 
+	 * created. In particular, these functionality is realized by the 
+	 * methods createAddToPathSearchQueueSnippet and createAddToPathSystemQueueSnippet,
+	 * which will be called depending on the pathSystem parameter
+	 * @return a CodeBlock implementing the transition with all its checks
+	 */
+	private CodeBlock createCodeForTransition(Transition trans, boolean pathSystem) {
 		if (trans instanceof EdgeTransition) {
-			return createCodeForEdgeTransition((EdgeTransition) trans);
+			return createCodeForEdgeTransition((EdgeTransition) trans, pathSystem);
 		}
 		if (trans instanceof SimpleTransition) {
-			return createCodeForSimpleTransition((SimpleTransition) trans);
+			return createCodeForSimpleTransition((SimpleTransition) trans, pathSystem);
 		}
 		if (trans instanceof AggregationTransition) {
-			return createCodeForAggregationTransition((AggregationTransition) trans);
+			return createCodeForAggregationTransition((AggregationTransition) trans, pathSystem);
 		}
 		if (trans instanceof BoolExpressionTransition) {
-			return createCodeForBooleanExpressionTransition((BoolExpressionTransition) trans);
+			return createCodeForBooleanExpressionTransition((BoolExpressionTransition) trans, pathSystem);
 		}
 		if (trans instanceof IntermediateVertexTransition) {
-			return createCodeForIntermediateVertexTransition((IntermediateVertexTransition) trans);
+			return createCodeForIntermediateVertexTransition((IntermediateVertexTransition) trans, pathSystem);
 		}
 		if (trans instanceof VertexTypeRestrictionTransition) {
-			return createCodeForVertexTypeRestrictionTransition((VertexTypeRestrictionTransition) trans);
+			return createCodeForVertexTypeRestrictionTransition((VertexTypeRestrictionTransition) trans, pathSystem);
 		}
 		return new CodeSnippet("FAILURE: TRANSITION TYPE IS UNKNOWN TO GREQL CODE GENERATOR " + trans.getClass().getSimpleName()); 
 	}
 	
-	private CodeBlock createCodeForSimpleTransition(SimpleTransition trans) {
-		return createCodeForSimpleOrEdgeTransition(trans, null);
+	private CodeBlock createCodeForSimpleTransition(SimpleTransition trans, boolean pathSystem) {
+		return createCodeForSimpleOrEdgeTransition(trans, pathSystem, null);
 	}
 	
-	private CodeBlock createCodeForEdgeTransition(EdgeTransition trans) {
+	private CodeBlock createCodeForEdgeTransition(EdgeTransition trans, boolean pathSystem) {
 		CodeList curr = new CodeList();
 		VertexEvaluator allowedEdgeEvaluator = trans.getAllowedEdgeEvaluator();
 		if (allowedEdgeEvaluator != null) {
 			curr.add(new CodeSnippet("Object allowedEdge = " + createCodeForExpression((Expression) allowedEdgeEvaluator.getVertex()) + ";"));
 			curr.add(new CodeSnippet("if (edge.getNormalEdge() == allowedEdge.getNormalEdge())"));
 		}
-		return createCodeForSimpleOrEdgeTransition(trans, curr);
+		return createCodeForSimpleOrEdgeTransition(trans, pathSystem, curr);
 	}
 	
 	
-	private CodeBlock createCodeForSimpleOrEdgeTransition(SimpleTransition trans, CodeBlock edgeTest) {
+	private CodeBlock createCodeForSimpleOrEdgeTransition(SimpleTransition trans, boolean pathSystem, CodeBlock edgeTest) {
 		CodeList resultList = new CodeList();
 		CodeList curr = resultList;
 		if (trans.getAllowedDirection() != GReQLDirection.INOUT) {
@@ -943,11 +1072,15 @@ public class GreqlCodeGenerator extends CodeGenerator {
 		curr = createPredicateCheck(curr,trans.getPredicateEvaluator());
 		curr.add(edgeTest);
 		//add element to queue
-		curr.add(createAddToQueueSnippet(trans.endState.number));
+		if (pathSystem) {
+			curr.add(createAddToPathSearchQueueSnippet(trans.endState.number));
+		} else {
+			curr.add(createAddToPathSystemQueueSnippet(trans));
+		}
 		return resultList;
 	}
 	
-	private CodeBlock createCodeForAggregationTransition(AggregationTransition trans) {
+	private CodeBlock createCodeForAggregationTransition(AggregationTransition trans, boolean pathSystem) {
 		CodeList resultList = new CodeList();
 		CodeList curr = resultList;
 		addImports("de.uni_koblenz.jgralab.schema.AggregationKind");
@@ -965,7 +1098,11 @@ public class GreqlCodeGenerator extends CodeGenerator {
 		curr = createRolenameCheck(curr, trans.getValidToRoles(), trans.getValidFromRoles());
 		curr = createPredicateCheck(curr,trans.getPredicateEvaluator());
 		//add element to queue
-		curr.add(createAddToQueueSnippet(trans.endState.number));
+		if (pathSystem) {
+			curr.add(createAddToPathSearchQueueSnippet(trans.endState.number));
+		} else {
+			curr.add(createAddToPathSystemQueueSnippet(trans));
+		}
 		return resultList;
 	}
 	
@@ -1038,7 +1175,7 @@ public class GreqlCodeGenerator extends CodeGenerator {
 	}
 		
 
-	private CodeBlock createCodeForVertexTypeRestrictionTransition(VertexTypeRestrictionTransition trans) {
+	private CodeBlock createCodeForVertexTypeRestrictionTransition(VertexTypeRestrictionTransition trans, boolean pathSystem) {
 		CodeList resultList = new CodeList();
 		CodeList curr = resultList;
 		TypeCollection typeCollection = trans.getAcceptedVertexTypes();
@@ -1052,11 +1189,15 @@ public class GreqlCodeGenerator extends CodeGenerator {
 		}
 
 		//add element to queue
-		curr.add(createAddToQueueSnippet(trans.endState.number));
+		if (pathSystem) {
+			curr.add(createAddToPathSearchQueueSnippet(trans.endState.number));
+		} else {
+			curr.add(createAddToPathSystemQueueSnippet(trans));
+		}
 		return resultList;
 	}
 	
-	private CodeBlock createCodeForIntermediateVertexTransition(IntermediateVertexTransition trans) {
+	private CodeBlock createCodeForIntermediateVertexTransition(IntermediateVertexTransition trans, boolean pathSystem) {
 		CodeList curr = new CodeList();
 		
 		VertexEvaluator intermediateVertexEval = trans.getIntermediateVertexEvaluator();
@@ -1073,11 +1214,15 @@ public class GreqlCodeGenerator extends CodeGenerator {
 		    curr = body;
 		}
 		//add element to queue
-		curr.add(createAddToQueueSnippet(trans.endState.number));
+		if (pathSystem) {
+			curr.add(createAddToPathSearchQueueSnippet(trans.endState.number));
+		} else {
+			curr.add(createAddToPathSystemQueueSnippet(trans));
+		}
 		return curr;
 	}
 	
-	private CodeBlock createCodeForBooleanExpressionTransition(BoolExpressionTransition trans) {
+	private CodeBlock createCodeForBooleanExpressionTransition(BoolExpressionTransition trans, boolean pathSystem) {
 		CodeList curr = new CodeList();
 		
 		VertexEvaluator predicateEval = trans.getBooleanExpressionEvaluator();
@@ -1091,7 +1236,12 @@ public class GreqlCodeGenerator extends CodeGenerator {
 		    curr = body;
 		}
 		//add element to queue
-		curr.add(createAddToQueueSnippet(trans.endState.number));
+		//add element to queue
+		if (pathSystem) {
+			curr.add(createAddToPathSearchQueueSnippet(trans.endState.number));
+		} else {
+			curr.add(createAddToPathSystemQueueSnippet(trans));
+		}
 		return curr;
 	}
 	

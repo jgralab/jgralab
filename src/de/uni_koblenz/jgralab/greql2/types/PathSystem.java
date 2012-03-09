@@ -55,8 +55,8 @@ import de.uni_koblenz.jgralab.greql2.funlib.FunLib;
 public class PathSystem {
 
 	/**
-	 * This HashMap stores references from a tuple (Vertex,State) to a
-	 * tuple(ParentVertex, ParentEdge, ParentState, DistanceToRoot)
+	 * This HashMap stores references from a tuple (Vertex,StateNumber) to a
+	 * tuple(ParentVertex, ParentEdge, ParentStateNumber, DistanceToRoot)
 	 */
 	private final HashMap<PathSystemKey, PathSystemEntry> keyToEntryMap;
 

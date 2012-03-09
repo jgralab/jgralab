@@ -28,4 +28,5 @@ public abstract class AbstractExecutableQuery implements ExecutableQuery {
 	
 	
 	
+	
 }

@@ -41,7 +41,7 @@ import de.uni_koblenz.jgralab.Vertex;
 
 public class VertexStateNumberQueue {
 
-	private static int initialSize = 100;
+	protected static int initialSize = 100;
 
 	public Vertex currentVertex = null;
 
@@ -63,7 +63,7 @@ public class VertexStateNumberQueue {
 		size = initialSize;
 	}
 
-	public final void put(Vertex v, int s) {
+	public void put(Vertex v, int s) {
 		if (last == first + size - 1) {
 			resize();
 		}
@@ -72,8 +72,7 @@ public class VertexStateNumberQueue {
 		last++;
 	}
 
-	public final boolean hasNext() {
-
+	public boolean hasNext() {
 		if (first == last) {
 			return false;
 		}
