@@ -98,7 +98,7 @@ public class GenericGraphImplTest {
 	 *            The element of the <code>Schema</code>, representing the
 	 *            tested.
 	 */
-	private void testElementAttributes(AttributedElement<?, ?> ae,
+	public static void testElementAttributes(AttributedElement<?, ?> ae,
 			AttributedElementClass<?, ?> aec) {
 		for (Attribute a : aec.getAttributeList()) {
 			Object value = ae.getAttribute(a.getName());
@@ -115,7 +115,7 @@ public class GenericGraphImplTest {
 	 * @param value
 	 * @param attribute
 	 */
-	private void testDefaultValue(Object value, Attribute attribute) {
+	public static void testDefaultValue(Object value, Attribute attribute) {
 		try {
 			if (attribute.getDefaultValueAsString() != null) {
 				Object expected = attribute.getDomain().parseGenericAttribute(
@@ -284,7 +284,6 @@ public class GenericGraphImplTest {
 		}
 	}
 
-
 	// try to instantiate a Vertex of an abstract class (VertexTestSchema.tg)
 	// A GraphException is expected
 	@Test
@@ -293,15 +292,15 @@ public class GenericGraphImplTest {
 		Graph g = null;
 		int vCountBefore = 0;
 		try {
-			s = GraphIO.loadSchemaFromFile(SCHEMAFOLDER + "VertexTestSchema.tg");
+			s = GraphIO
+					.loadSchemaFromFile(SCHEMAFOLDER + "VertexTestSchema.tg");
 			g = s.createGraph(ImplementationType.GENERIC);
 			vCountBefore = g.getVCount();
-			g.createVertex(g.getGraphClass().getVertexClass("AbstractSuperNode"));
-		}
-		catch(GraphException e) {
+			g.createVertex(g.getGraphClass()
+					.getVertexClass("AbstractSuperNode"));
+		} catch (GraphException e) {
 			assertEquals(vCountBefore, g.getVCount());
-		}
-		catch (GraphIOException e) {
+		} catch (GraphIOException e) {
 			e.printStackTrace();
 			fail();
 		}
@@ -317,15 +316,15 @@ public class GenericGraphImplTest {
 		try {
 			s = GraphIO.loadSchemaFromFile(SCHEMAFOLDER + "citymapschema.tg");
 			g = s.createGraph(ImplementationType.GENERIC);
-			Vertex v1 = g.createVertex(g.getGraphClass().getVertexClass("Intersection"));
-			Vertex v2 = g.createVertex(g.getGraphClass().getVertexClass("Intersection"));
+			Vertex v1 = g.createVertex(g.getGraphClass().getVertexClass(
+					"Intersection"));
+			Vertex v2 = g.createVertex(g.getGraphClass().getVertexClass(
+					"Intersection"));
 			eCountBefore = g.getECount();
 			g.createEdge(g.getGraphClass().getEdgeClass("Way"), v1, v2);
-		}
-		catch(GraphException e) {
+		} catch (GraphException e) {
 			assertEquals(eCountBefore, g.getECount());
-		}
-		catch (GraphIOException e) {
+		} catch (GraphIOException e) {
 			e.printStackTrace();
 			fail();
 		}
@@ -824,6 +823,221 @@ public class GenericGraphImplTest {
 				i++;
 			}
 		} catch (GraphIOException e) {
+			e.printStackTrace();
+			fail();
+		}
+	}
+
+	// Tests parsing of attribute values (DefaultValueTestSchema.tg)
+	@Test
+	public void testReadAttributeValueFromString() {
+		try {
+			Schema s = GraphIO.loadSchemaFromFile(SCHEMAFOLDER
+					+ "DefaultValueTestSchema.tg");
+			Graph g = s.createGraph(ImplementationType.GENERIC);
+			for (Attribute a : g.getAttributedElementClass().getAttributeList()) {
+				testDefaultValue(g.getAttribute(a.getName()), a);
+			}
+
+			// parse values different from the default ones
+			g.readAttributeValueFromString("boolGraph", "f");
+			assertEquals(false, g.getAttribute("boolGraph"));
+			g.readAttributeValueFromString("complexListGraph", "[[f]]");
+			assertEquals(JGraLab.vector().plus(JGraLab.vector().plus(false)),
+					g.getAttribute("complexListGraph"));
+			g.readAttributeValueFromString("complexMapGraph",
+					"{[t t] - {f} [f f] - {t f}}");
+			assertEquals(
+					JGraLab.map()
+							.plus(JGraLab.vector().plus(true).plus(true),
+									JGraLab.set().plus(false))
+							.plus(JGraLab.vector().plus(false).plus(false),
+									JGraLab.set().plus(true).plus(false)),
+					g.getAttribute("complexMapGraph"));
+			g.readAttributeValueFromString("complexSetGraph", "{{f}}");
+			assertEquals(JGraLab.set().plus(JGraLab.set().plus(false)),
+					g.getAttribute("complexSetGraph"));
+			g.readAttributeValueFromString("doubleGraph", "12.34");
+			assertEquals(12.34d, g.getAttribute("doubleGraph"));
+			g.readAttributeValueFromString("enumGraph", "SECOND");
+			assertEquals("SECOND", g.getAttribute("enumGraph"));
+			g.readAttributeValueFromString("intGraph", "42");
+			assertEquals(42, g.getAttribute("intGraph"));
+			g.readAttributeValueFromString("listGraph", "[t t]");
+			assertEquals(JGraLab.vector().plus(true).plus(true),
+					g.getAttribute("listGraph"));
+			g.readAttributeValueFromString("longGraph", "987654321");
+			assertEquals(987654321l, g.getAttribute("longGraph"));
+			g.readAttributeValueFromString("mapGraph", "{1 - f 2 - t}");
+			assertEquals(JGraLab.map().plus(1, false).plus(2, true),
+					g.getAttribute("mapGraph"));
+			g.readAttributeValueFromString("recordGraph",
+					"(f 2.2 THIRD 42 [f t] 987654321 {1 - f 2 - t} {t} \"some String\")");
+			assertEquals(
+					RecordImpl
+							.empty()
+							.plus("boolRecord", false)
+							.plus("doubleRecord", 2.2d)
+							.plus("enumRecord", "THIRD")
+							.plus("intRecord", 42)
+							.plus("listRecord",
+									JGraLab.vector().plus(false).plus(true))
+							.plus("longRecord", 987654321l)
+							.plus("mapRecord",
+									JGraLab.map().plus(1, false).plus(2, true))
+							.plus("setRecord", JGraLab.set().plus(true))
+							.plus("stringRecord", "some String"),
+					g.getAttribute("recordGraph"));
+			g.readAttributeValueFromString("setGraph", "{f}");
+			assertEquals(JGraLab.set().plus(false), g.getAttribute("setGraph"));
+			g.readAttributeValueFromString("stringGraph", "\"some String\"");
+			assertEquals("some String", g.getAttribute("stringGraph"));
+		} catch (GraphIOException e) {
+			e.printStackTrace();
+			fail();
+		}
+	}
+
+	@Test
+	public void testReadAttributeValues() {
+		try {
+			Schema s = GraphIO.loadSchemaFromFile(SCHEMAFOLDER
+					+ "DefaultValueTestSchema.tg");
+			Graph g = s.createGraph(ImplementationType.GENERIC);
+			for (Attribute a : g.getAttributedElementClass().getAttributeList()) {
+				testDefaultValue(g.getAttribute(a.getName()), a);
+			}
+			g.readAttributeValues(GraphIO.createStringReader(
+					"f " +
+					"[[f]] " +
+					"{[t t] - {f} [f f] - {t f}} " +
+					"{{f}} " +
+					"12.34 " +
+					"SECOND " +
+					"42" +
+					"[t t] " +
+					"987654321 " +
+					"{1 - f 2 - t} " +
+					"(f 2.2 THIRD 42 [f t] 987654321 {1 - f 2 - t} {t} \"some String\") " +
+					"{f} " +
+					"\"some String\"", g.getSchema()));
+
+			// parse values different from the default ones
+			assertEquals(false, g.getAttribute("boolGraph"));
+			assertEquals(JGraLab.vector().plus(JGraLab.vector().plus(false)),
+					g.getAttribute("complexListGraph"));
+			assertEquals(
+					JGraLab.map()
+							.plus(JGraLab.vector().plus(true).plus(true),
+									JGraLab.set().plus(false))
+							.plus(JGraLab.vector().plus(false).plus(false),
+									JGraLab.set().plus(true).plus(false)),
+					g.getAttribute("complexMapGraph"));
+			assertEquals(JGraLab.set().plus(JGraLab.set().plus(false)),
+					g.getAttribute("complexSetGraph"));
+			assertEquals(12.34d, g.getAttribute("doubleGraph"));
+			assertEquals("SECOND", g.getAttribute("enumGraph"));
+			assertEquals(42, g.getAttribute("intGraph"));
+			assertEquals(JGraLab.vector().plus(true).plus(true),
+					g.getAttribute("listGraph"));
+			assertEquals(987654321l, g.getAttribute("longGraph"));
+			assertEquals(JGraLab.map().plus(1, false).plus(2, true),
+					g.getAttribute("mapGraph"));
+			assertEquals(
+					RecordImpl
+							.empty()
+							.plus("boolRecord", false)
+							.plus("doubleRecord", 2.2d)
+							.plus("enumRecord", "THIRD")
+							.plus("intRecord", 42)
+							.plus("listRecord",
+									JGraLab.vector().plus(false).plus(true))
+							.plus("longRecord", 987654321l)
+							.plus("mapRecord",
+									JGraLab.map().plus(1, false).plus(2, true))
+							.plus("setRecord", JGraLab.set().plus(true))
+							.plus("stringRecord", "some String"),
+					g.getAttribute("recordGraph"));
+			assertEquals(JGraLab.set().plus(false), g.getAttribute("setGraph"));
+			assertEquals("some String", g.getAttribute("stringGraph"));
+		} catch (GraphIOException e) {
+			e.printStackTrace();
+			fail();
+		}
+	}
+
+	@Test
+	public void testWriteAttributeValueToString() {
+		try {
+			Schema s = GraphIO.loadSchemaFromFile(SCHEMAFOLDER
+					+ "DefaultValueTestSchema.tg");
+			Graph g = s.createGraph(ImplementationType.GENERIC);
+			for (Attribute a : g.getAttributedElementClass().getAttributeList()) {
+				testDefaultValue(g.getAttribute(a.getName()), a);
+			}
+
+			assertEquals("t", g.writeAttributeValueToString("boolGraph"));
+			assertEquals("[[t] [f] [t]]", g.writeAttributeValueToString("complexListGraph"));
+			assertEquals("{[t] - {t} [f] - {f}}", g.writeAttributeValueToString("complexMapGraph"));
+			assertEquals("{{t} {f}}", g.writeAttributeValueToString("complexSetGraph"));
+			assertEquals("1.1", g.writeAttributeValueToString("doubleGraph"));
+			assertEquals("FIRST", g.writeAttributeValueToString("enumGraph"));
+			assertEquals("1", g.writeAttributeValueToString("intGraph"));
+			assertEquals("[t f t]", g.writeAttributeValueToString("listGraph"));
+			assertEquals("1", g.writeAttributeValueToString("longGraph"));
+			assertEquals("{1 - t 2 - f 3 - t}", g.writeAttributeValueToString("mapGraph"));
+			assertEquals("(t 1.1 FIRST 1 [t f t] 1 {1 - t 2 - f 3 - t} {t f} \"test\")", g.writeAttributeValueToString("recordGraph"));
+			assertEquals("{t f}", g.writeAttributeValueToString("setGraph"));
+			assertEquals("\"test\"", g.writeAttributeValueToString("stringGraph"));
+
+			g.setAttribute("mapGraph", null);
+			assertEquals(GraphIO.NULL_LITERAL, g.writeAttributeValueToString("mapGraph"));
+		} catch (GraphIOException e) {
+			e.printStackTrace();
+			fail();
+		} catch (NoSuchAttributeException e) {
+			e.printStackTrace();
+			fail();
+		} catch (IOException e) {
+			e.printStackTrace();
+			fail();
+		}
+	}
+
+	@Test
+	public void testWriteAttributeValues() {
+		try {
+			Schema s = GraphIO.loadSchemaFromFile(SCHEMAFOLDER
+					+ "DefaultValueTestSchema.tg");
+			Graph g = s.createGraph(ImplementationType.GENERIC);
+			for (Attribute a : g.getAttributedElementClass().getAttributeList()) {
+				testDefaultValue(g.getAttribute(a.getName()), a);
+			}
+
+			GraphIO io = GraphIO.createStringWriter(g.getSchema());
+			g.writeAttributeValues(io);
+			assertEquals(
+						"t " +
+						"[[t] [f] [t]] " +
+						"{[t] - {t} [f] - {f}} " +
+						"{{t} {f}} " +
+						"1.1 " +
+						"FIRST " +
+						"1 " +
+						"[t f t] " +
+						"1 " +
+						"{1 - t 2 - f 3 - t} " +
+						"(t 1.1 FIRST 1 [t f t] 1 {1 - t 2 - f 3 - t} {t f} \"test\") " +
+						"{t f} " +
+						"\"test\"",
+					io.getStringWriterResult());
+		} catch (GraphIOException e) {
+			e.printStackTrace();
+			fail();
+		} catch (NoSuchAttributeException e) {
+			e.printStackTrace();
+			fail();
+		} catch (IOException e) {
 			e.printStackTrace();
 			fail();
 		}
