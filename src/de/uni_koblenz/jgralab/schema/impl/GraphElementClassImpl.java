@@ -35,7 +35,7 @@
 
 package de.uni_koblenz.jgralab.schema.impl;
 
-import java.util.HashSet;
+import java.util.BitSet;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -71,14 +71,14 @@ public abstract class GraphElementClassImpl<SC extends GraphElementClass<SC, IC>
 	 * HashSet is used to speed up isInstance test.
 	 */
 	protected PSet<SC> allSubClasses;
-	protected HashSet<SC> allSubClassesHash;
+	protected BitSet allSubClassesBitSet;
 
 	/**
 	 * The superclasses of this class - only set if the schema is finished. The
 	 * HashSet is used to speed up isInstance test.
 	 */
 	protected PSet<SC> allSuperClasses;
-	protected HashSet<SC> allSuperClassesHash;
+	protected BitSet allSuperClassesBitSet;
 
 	/**
 	 * A {@link DirectedAcyclicGraph} representing the generalization hierarchy.
@@ -86,6 +86,11 @@ public abstract class GraphElementClassImpl<SC extends GraphElementClass<SC, IC>
 	 */
 	protected final DirectedAcyclicGraph<GraphElementClass<SC, IC>> subclassDag;
 
+	/**
+	 * The class id of this class in the schema
+	 */
+	protected final int classId;
+	
 	/**
 	 * delegates its constructor to the generalized class
 	 * 
@@ -100,7 +105,10 @@ public abstract class GraphElementClassImpl<SC extends GraphElementClass<SC, IC>
 		subclassDag = (DirectedAcyclicGraph<GraphElementClass<SC, IC>>) dag;
 		subclassDag.createNode(this);
 		this.graphClass = graphClass;
+		this.classId = schema.getNextGraphElementClassId();
 	}
+	
+
 
 	@Override
 	public void addAttribute(Attribute anAttribute) {
@@ -181,7 +189,7 @@ public abstract class GraphElementClassImpl<SC extends GraphElementClass<SC, IC>
 	@Override
 	public final boolean isSubClassOf(SC anAttributedElementClass) {
 		if (finished) {
-			return allSuperClassesHash.contains(anAttributedElementClass);
+			return allSuperClassesBitSet.get(((GraphElementClass<?,?>)anAttributedElementClass).getGraphElementClassIdInSchema());
 		}
 		return getAllSuperClasses().contains(anAttributedElementClass);
 	}
@@ -189,7 +197,7 @@ public abstract class GraphElementClassImpl<SC extends GraphElementClass<SC, IC>
 	@Override
 	public final boolean isSuperClassOf(SC anAttributedElementClass) {
 		if (finished) {
-			return allSubClassesHash.contains(anAttributedElementClass);
+			return allSubClassesBitSet.get(((GraphElementClass<?,?>)anAttributedElementClass).getGraphElementClassIdInSchema());
 		}
 		return getAllSubClasses().contains(anAttributedElementClass);
 	}
@@ -208,10 +216,16 @@ public abstract class GraphElementClassImpl<SC extends GraphElementClass<SC, IC>
 	protected void finish() {
 		allSuperClasses = (PSet<SC>) subclassDag
 				.getAllPredecessorsInTopologicalOrder(this);
-		allSuperClassesHash = new HashSet<SC>(allSuperClasses);
+		allSuperClassesBitSet = new BitSet();
+		for (GraphElementClass<?,?> superClass : allSuperClasses) {
+			allSuperClassesBitSet.set(superClass.getGraphElementClassIdInSchema(), true);
+		}
 		allSubClasses = (PSet<SC>) subclassDag
 				.getAllSuccessorsInTopologicalOrder(this);
-		allSubClassesHash = new HashSet<SC>(allSubClasses);
+		allSubClassesBitSet = new BitSet();
+		for (GraphElementClass<?,?> subClass : allSubClasses) {
+			allSubClassesBitSet.set(subClass.getGraphElementClassIdInSchema(), true);
+		}
 
 		TreeSet<Attribute> s = new TreeSet<Attribute>(ownAttributes);
 		for (AttributedElementClass<SC, IC> superClass : subclassDag
@@ -325,5 +339,10 @@ public abstract class GraphElementClassImpl<SC extends GraphElementClass<SC, IC>
 		output.append("\n");
 
 		return output.toString();
+	}
+	
+	@Override
+	public int getGraphElementClassIdInSchema() {
+		return classId;
 	}
 }

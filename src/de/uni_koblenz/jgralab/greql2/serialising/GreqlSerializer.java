@@ -63,6 +63,7 @@ import de.uni_koblenz.jgralab.greql2.schema.ExpressionDefinedSubgraph;
 import de.uni_koblenz.jgralab.greql2.schema.ForwardVertexSet;
 import de.uni_koblenz.jgralab.greql2.schema.FunctionApplication;
 import de.uni_koblenz.jgralab.greql2.schema.FunctionId;
+import de.uni_koblenz.jgralab.greql2.schema.GReQLDirection;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Expression;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
@@ -563,27 +564,33 @@ public class GreqlSerializer {
 	}
 
 	private void serializeSimplePathDescription(SimplePathDescription exp) {
-		String dir = exp.get_direction().get_dirValue();
-		if (dir.equals("out")) {
+		GReQLDirection dir = exp.get_direction().get_dirValue();
+		switch (dir) {
+		case OUT:
 			sb.append("-->");
-		} else if (dir.equals("in")) {
+			break;
+		case IN:
 			sb.append("<--");
-		} else {
+			break;
+		default:
 			sb.append("<->");
 		}
 	}
 
 	private void serializeEdgePathDescription(EdgePathDescription exp) {
-		String dir = exp.get_direction().get_dirValue();
-		if (dir.equals("out")) {
+		GReQLDirection dir = exp.get_direction().get_dirValue();
+		switch (dir) {
+		case OUT:
 			sb.append("--");
 			serializeExpression(exp.get_edgeExpr(), false);
 			sb.append("->");
-		} else if (dir.equals("in")) {
+			break;
+		case IN:
 			sb.append("<-");
 			serializeExpression(exp.get_edgeExpr(), false);
 			sb.append("--");
-		} else {
+			break;
+		default:
 			sb.append("<-");
 			serializeExpression(exp.get_edgeExpr(), false);
 			sb.append("->");

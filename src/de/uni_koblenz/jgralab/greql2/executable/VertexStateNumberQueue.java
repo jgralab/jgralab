@@ -32,30 +32,68 @@
  * non-source form of such a combination shall include the source code for
  * the parts of JGraLab used as well as that of the covered work.
  */
-package org.pcollections;
-
-import java.util.Collection;
-import java.util.LinkedHashSet;
-
 /**
- * Like {@link PSet} but preserves insertion order. Persistent equivalent of
- * {@link LinkedHashSet}.
- *
- * @author Tassilo Horn &lt;horn@uni-koblenz.de&gt;
- *
- * @param <E>
+ * 
  */
-public interface POrderedSet<E> extends PSet<E> {
-	E get(int index);
+package de.uni_koblenz.jgralab.greql2.executable;
 
-	int indexOf(Object o);
+import de.uni_koblenz.jgralab.Vertex;
 
-	@Override
-	public POrderedSet<E> plus(E e);
-	@Override
-	public POrderedSet<E> plusAll(Collection<? extends E> list);
-	@Override
-	public POrderedSet<E> minus(Object e);
-	@Override
-	public POrderedSet<E> minusAll(Collection<?> list);
+public class VertexStateNumberQueue {
+
+	protected static int initialSize = 100;
+
+	public Vertex currentVertex = null;
+
+	public int currentState = 0;
+
+	int size = initialSize;
+
+	Vertex[] vertices = null;
+
+	int[] states = null;
+
+	int last = 0;
+
+	int first = 0;
+
+	public VertexStateNumberQueue() {
+		vertices = new Vertex[initialSize];
+		states = new int[initialSize];
+		size = initialSize;
+	}
+
+	public void put(Vertex v, int s) {
+		if (last == first + size - 1) {
+			resize();
+		}
+		vertices[last % size] = v;
+		states[last % size] = s;
+		last++;
+	}
+
+	public boolean hasNext() {
+		if (first == last) {
+			return false;
+		}
+		currentVertex = vertices[first % size];
+		currentState = states[first % size];
+		first++;
+		return true;
+	}
+
+	private final void resize() {
+		Vertex[] newVertices = new Vertex[size * 2];
+		int[] newStates = new int[size * 2];
+
+		for (int i = 0; i < size; i++) {
+			newVertices[i] = vertices[(first + i) % size];
+			newStates[i] = states[(first + i) % size];
+		}
+		states = newStates;
+		vertices = newVertices;
+		last = size - 1;
+		first = 0;
+		size *= 2;
+	}
 }

@@ -47,6 +47,7 @@ import javax.tools.JavaFileObject.Kind;
 
 import de.uni_koblenz.jgralab.EclipseAdapter;
 import de.uni_koblenz.jgralab.JGraLab;
+import de.uni_koblenz.jgralab.greql2.executable.GreqlCodeGenerator;
 import de.uni_koblenz.jgralab.schema.impl.SchemaImpl;
 
 /**
@@ -69,13 +70,18 @@ public class ClassFileManager extends
 
 	private Logger logger;
 
-	private final SchemaImpl schemaImpl;
+	private final String qualifiedSchemaName;
 
 	public ClassFileManager(SchemaImpl schemaImpl, JavaFileManager fm) {
 		super(fm);
 		logger = null;
-		// logger = JGraLab.getLogger(getClass().getPackage().getName());
-		this.schemaImpl = schemaImpl;
+		this.qualifiedSchemaName = schemaImpl.getQualifiedName();
+	}
+	
+	public ClassFileManager(GreqlCodeGenerator codeGenerator, JavaFileManager fm) {
+		super(fm);
+		logger = null;
+		this.qualifiedSchemaName = GreqlCodeGenerator.codeGeneratorFileManagerName;
 	}
 
 	@Override
@@ -107,8 +113,9 @@ public class ClassFileManager extends
 		}
 		// redirect compiler output to InMemoryClassFiles
 		InMemoryClassFile cfa = new InMemoryClassFile(className);
-		SchemaClassManager.instance(schemaImpl.getQualifiedName())
+		SchemaClassManager.instance(qualifiedSchemaName)
 				.putSchemaClass(className, cfa);
+		System.out.println("Registered class");
 		return cfa;
 	}
 

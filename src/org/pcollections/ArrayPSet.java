@@ -44,17 +44,17 @@ import java.util.Set;
  * preserves the insertion order upon iteration. When the size gets above
  * SIZELIMIT elements, a plus() operation automatically promotes to an
  * OrderedPSet.
- * 
+ *
  * This implementation is not thread safe.
- * 
+ *
  * @author ist@uni-koblenz.de
- * 
+ *
  * @param <E>
  */
 public final class ArrayPSet<E> implements POrderedSet<E>, Serializable {
 	private static final long serialVersionUID = 5643294766821496614L;
 	// When to promote to OrderedPSet
-	private static final int SIZELIMIT = 16;
+	static final int SIZELIMIT = 16;
 	private PVector<E> entries;
 	private int hashCode;
 
@@ -106,7 +106,7 @@ public final class ArrayPSet<E> implements POrderedSet<E>, Serializable {
 	}
 
 	@Override
-	public PSet<E> plus(E e) {
+	public POrderedSet<E> plus(E e) {
 		if (contains(e)) {
 			return this;
 		}
@@ -117,16 +117,16 @@ public final class ArrayPSet<E> implements POrderedSet<E>, Serializable {
 		return new ArrayPSet<E>(entries.plus(e));
 	}
 
-	PSet<E> plusWithoutCheck(E e) {
+	POrderedSet<E> plusWithoutCheck(E e) {
 		return new ArrayPSet<E>(entries.plus(e));
 	}
 
 	@Override
-	public PSet<E> plusAll(Collection<? extends E> list) {
+	public POrderedSet<E> plusAll(Collection<? extends E> list) {
 		if (list.isEmpty()) {
 			return this;
 		}
-		PSet<E> r = this;
+		POrderedSet<E> r = this;
 		for (E e : list) {
 			r = r.plus(e);
 		}
@@ -134,7 +134,7 @@ public final class ArrayPSet<E> implements POrderedSet<E>, Serializable {
 	}
 
 	@Override
-	public PSet<E> minus(Object e) {
+	public POrderedSet<E> minus(Object e) {
 		return contains(e) ? new ArrayPSet<E>(entries.minus(e)) : this;
 	}
 
@@ -220,11 +220,11 @@ public final class ArrayPSet<E> implements POrderedSet<E>, Serializable {
 	}
 
 	@Override
-	public PSet<E> minusAll(Collection<?> list) {
+	public POrderedSet<E> minusAll(Collection<?> list) {
 		if (list.isEmpty()) {
 			return this;
 		}
-		PSet<E> r = this;
+		POrderedSet<E> r = this;
 		for (Object e : list) {
 			r = r.minus(e);
 		}

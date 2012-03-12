@@ -5,13 +5,15 @@ import org.junit.Test;
 
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.algolib.algorithms.search.BreadthFirstSearch;
+import de.uni_koblenz.jgralab.algolib.algorithms.search.DepthFirstSearch;
 import de.uni_koblenz.jgralab.algolib.algorithms.search.IterativeDepthFirstSearch;
 import de.uni_koblenz.jgralab.algolib.algorithms.search.RecursiveDepthFirstSearch;
 import de.uni_koblenz.jgralab.algolib.algorithms.search.SearchAlgorithm;
+import de.uni_koblenz.jgralabtest.algolib.algorithms.test_visitors.DFSTestVisitor;
 import de.uni_koblenz.jgralabtest.algolib.algorithms.test_visitors.SearchTestVisitor;
 import de.uni_koblenz.jgralabtest.schemas.algolib.simple.SimpleGraph;
 
-public class BreadthFirstSearchTest {
+public class DepthFirstSearchTest {
 	private SimpleGraph g;
 
 	@Before
@@ -22,19 +24,20 @@ public class BreadthFirstSearchTest {
 
 	@Test
 	public void testAlgorithm() throws Exception {
-		SearchAlgorithm[] algorithms = new SearchAlgorithm[] { new BreadthFirstSearch(
-				g) };
+		DepthFirstSearch[] algorithms = new DepthFirstSearch[] {
+				new RecursiveDepthFirstSearch(g),
+				new IterativeDepthFirstSearch(g) };
 		Graph[] graphs = new Graph[] { g };
 
-		for (SearchAlgorithm algorithm : algorithms) {
+		for (DepthFirstSearch dfs : algorithms) {
 			for (Graph graph : graphs) {
-				algorithm.setGraph(graph);
-				SearchTestVisitor stv = new SearchTestVisitor();
-
-				algorithm.addVisitor(stv);
-				algorithm.withLevel().withParent().execute();
-				stv.performPostTests();
+				dfs.setGraph(graph);
+				DFSTestVisitor dfstv = new DFSTestVisitor();
+				dfs.addVisitor(dfstv);
+				dfs.withLevel().withParent().execute();
+				dfstv.performPostTests();
 			}
 		}
 	}
+
 }

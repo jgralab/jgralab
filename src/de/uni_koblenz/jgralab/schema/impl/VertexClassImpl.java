@@ -404,7 +404,7 @@ public final class VertexClassImpl extends
 		farRoleNameToEdgeClass = new HashMap<String, DirectedSchemaEdgeClass>();
 		for (IncidenceClass ic : getOwnAndInheritedFarIncidenceClasses()) {
 			String role = ic.getRolename();
-			if (role == null || role.length() == 0) {
+			if (role.length() == 0) {
 				continue;
 			}
 			farRoleNameToEdgeClass.put(role,
@@ -442,7 +442,6 @@ public final class VertexClassImpl extends
 			return farRoleNameToEdgeClass.get(roleName);
 		}
 		for (IncidenceClass ic : getOwnAndInheritedFarIncidenceClasses()) {
-			String role = ic.getRolename();
 			if (roleName.equals(ic.getRolename())) {
 				EdgeClass ec = ic.getEdgeClass();
 				return new DirectedSchemaEdgeClass(

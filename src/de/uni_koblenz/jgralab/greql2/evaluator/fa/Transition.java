@@ -46,10 +46,6 @@ import de.uni_koblenz.jgralab.Vertex;
  */
 public abstract class Transition {
 
-	public enum AllowedEdgeDirection {
-		IN, OUT, ANY
-	}
-
 	/**
 	 * The state where this transition starts
 	 */

@@ -70,7 +70,7 @@ public class ThisEdgeEvaluator extends VariableEvaluator {
 	// a fs-approach
 	// which stops at the first path description of each path
 	@Override
-	protected List<VertexEvaluator> calculateDependingExpressions() {
+	public List<VertexEvaluator> calculateDependingExpressions() {
 		Queue<Greql2Vertex> queue = new LinkedList<Greql2Vertex>();
 		List<VertexEvaluator> dependingEvaluators = new ArrayList<VertexEvaluator>();
 		queue.add(vertex);
