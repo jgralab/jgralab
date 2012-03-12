@@ -47,8 +47,6 @@ import javax.tools.JavaFileObject.Kind;
 
 import de.uni_koblenz.jgralab.EclipseAdapter;
 import de.uni_koblenz.jgralab.JGraLab;
-import de.uni_koblenz.jgralab.greql2.executable.GreqlCodeGenerator;
-import de.uni_koblenz.jgralab.schema.impl.SchemaImpl;
 
 /**
  * {@link ClassFileManager} redirects requests of the Java compiler in two
@@ -72,17 +70,12 @@ public class ClassFileManager extends
 
 	private final String qualifiedSchemaName;
 
-	public ClassFileManager(SchemaImpl schemaImpl, JavaFileManager fm) {
+	public ClassFileManager(ManagableArtifact ma, JavaFileManager fm) {
 		super(fm);
 		logger = null;
-		this.qualifiedSchemaName = schemaImpl.getQualifiedName();
+		this.qualifiedSchemaName = ma.getManagedName();
 	}
 	
-	public ClassFileManager(GreqlCodeGenerator codeGenerator, JavaFileManager fm) {
-		super(fm);
-		logger = null;
-		this.qualifiedSchemaName = GreqlCodeGenerator.codeGeneratorFileManagerName;
-	}
 
 	@Override
 	public boolean hasLocation(Location location) {
