@@ -3,22 +3,27 @@ package org.pcollections;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
+import java.util.Set;
 
 /**
  * Wraps a {@link LinkedHashSet} and converts to some other {@link POrderedSet}
  * on "modification".
  *
  * CAUTION: Don't ever modify a {@link LinkedHashSet} which backs a
- * LinkedHashPSet! This will change the LinkedHashPSet as well.
+ * LinkedHashPSet! This will change the LinkedHashPSet as well. (Such
+ * modifications will be detected and you'll get an exception at the next access
+ * to the LinkedHashPSet that's backed by the LinkedHashSet in question).
  *
  * @param <E>
  */
 public class LinkedHashPSet<E> implements POrderedSet<E> {
 
-	private LinkedHashSet<E> lhs;
+	private final LinkedHashSet<E> lhs;
+	private final int storedHashCode;
 
 	private LinkedHashPSet(LinkedHashSet<E> l) {
 		lhs = l;
+		storedHashCode = lhs.hashCode();
 	}
 
 	/**
@@ -29,8 +34,41 @@ public class LinkedHashPSet<E> implements POrderedSet<E> {
 		return new LinkedHashPSet<T>(lhs);
 	}
 
+	private final void checkUnmodified() {
+		if (storedHashCode != lhs.hashCode()) {
+			throw new RuntimeException("Backing LinkedHashSet was modified!");
+		}
+	}
+
 	@Override
-	public POrderedSet<E> plus(E e) {
+	public int hashCode() {
+		checkUnmodified();
+		return storedHashCode;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		checkUnmodified();
+		if ((obj == null) || !(obj instanceof Set)) {
+			return false;
+		} else if (obj == this) {
+			return true;
+		}
+		@SuppressWarnings("rawtypes")
+		Set other = (Set) obj;
+		if (other.size() != lhs.size()) {
+			return false;
+		}
+		for (E item : this) {
+			if (!other.contains(item)) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	@Override
+	public final POrderedSet<E> plus(E e) {
 		if (contains(e)) {
 			return this;
 		} else {
@@ -39,24 +77,27 @@ public class LinkedHashPSet<E> implements POrderedSet<E> {
 	}
 
 	@Override
-	public int size() {
+	public final int size() {
+		checkUnmodified();
 		return lhs.size();
 	}
 
 	@Override
-	public boolean isEmpty() {
+	public final boolean isEmpty() {
+		checkUnmodified();
 		return lhs.isEmpty();
 	}
 
 	@Override
-	public boolean contains(Object o) {
+	public final boolean contains(Object o) {
+		checkUnmodified();
 		return lhs.contains(o);
 	}
 
-	private static class ImmutableIterator<E> implements Iterator<E> {
+	private static final class ImmutableIterator<E> implements Iterator<E> {
 		private Iterator<E> it;
 
-		ImmutableIterator(Iterator<E> i) {
+		private ImmutableIterator(Iterator<E> i) {
 			it = i;
 		}
 
@@ -77,27 +118,31 @@ public class LinkedHashPSet<E> implements POrderedSet<E> {
 	}
 
 	@Override
-	public Iterator<E> iterator() {
+	public final Iterator<E> iterator() {
+		checkUnmodified();
 		return new ImmutableIterator<E>(lhs.iterator());
 	}
 
 	@Override
-	public Object[] toArray() {
+	public final Object[] toArray() {
+		checkUnmodified();
 		return lhs.toArray();
 	}
 
 	@Override
-	public <T> T[] toArray(T[] a) {
+	public final <T> T[] toArray(T[] a) {
+		checkUnmodified();
 		return lhs.toArray(a);
 	}
 
 	@Override
-	public boolean containsAll(Collection<?> c) {
+	public final boolean containsAll(Collection<?> c) {
 		return lhs.containsAll(c);
 	}
 
 	@Override
-	public E get(int index) {
+	public final E get(int index) {
+		checkUnmodified();
 		if ((index < 0) || (index > (size() - 1))) {
 			throw new IndexOutOfBoundsException();
 		}
@@ -112,7 +157,7 @@ public class LinkedHashPSet<E> implements POrderedSet<E> {
 	}
 
 	@Override
-	public int indexOf(Object o) {
+	public final int indexOf(Object o) {
 		if (!contains(o)) {
 			return -1;
 		}
@@ -128,18 +173,19 @@ public class LinkedHashPSet<E> implements POrderedSet<E> {
 	}
 
 	@Override
-	public POrderedSet<E> plusAll(Collection<? extends E> list) {
+	public final POrderedSet<E> plusAll(Collection<? extends E> list) {
+		checkUnmodified();
 		return immute(list.size()).plusAll(list);
 	}
 
-	private POrderedSet<E> immute(int maxAddCount) {
+	private final POrderedSet<E> immute(int maxAddCount) {
 		POrderedSet<E> r = ((lhs.size() + maxAddCount) <= ArrayPSet.SIZELIMIT) ? ArrayPSet
 				.<E> empty() : OrderedPSet.<E> empty();
 		return r.plusAll(lhs);
 	}
 
 	@Override
-	public POrderedSet<E> minus(Object e) {
+	public final POrderedSet<E> minus(Object e) {
 		if (!contains(e)) {
 			return this;
 		} else {
@@ -148,8 +194,23 @@ public class LinkedHashPSet<E> implements POrderedSet<E> {
 	}
 
 	@Override
-	public POrderedSet<E> minusAll(Collection<?> list) {
+	public final POrderedSet<E> minusAll(Collection<?> list) {
+		checkUnmodified();
 		return immute(-list.size()).minusAll(list);
+	}
+
+	@Override
+	public final String toString() {
+		if (isEmpty()) {
+			return "{}";
+		}
+		StringBuilder sb = new StringBuilder();
+		String delim = "{";
+		for (E e : lhs) {
+			sb.append(delim).append(e);
+			delim = ", ";
+		}
+		return sb.append("}").toString();
 	}
 
 	@SuppressWarnings("deprecation")
