@@ -441,62 +441,82 @@ public class FunLib {
 
 		private class AnnotationInfo{
 			String name;
+			String constructorDescription;
+			SigInfo [] signatureInfos;
+		}
+		
+		private class SigInfo{
 			String description;
-			String[] params;
-			Signature[] signatures;
+			String [] params;
+			Signature signatue;
 		}
 		
 		private void fillCat2Funs(final Map<String, FunctionInfo> funs) {
 			for (Entry<String, FunctionInfo> e : funs.entrySet()) {
+				
 				Class<?> funClass = e.getValue().getFunction().getClass();
 				assert(funClass.getConstructors().length == 1);
 				Constructor<?> cons = funClass.getConstructors()[0];
+				
+				String name = e.getKey();
+				String constructorDescription = null;
+				
+				Description consAnno = null;
 				if(cons.getAnnotation(Description.class)!=null){
-					Description des = cons.getAnnotation(Description.class);
-					createAnnotationInfoFunction(e, des);
-				}else{
-					for(Signature sig : e.getValue().signatures){
-						Method m = sig.evaluateMethod;
-						Description des = m.getAnnotation(Description.class);
-						createAnnotationInfoMethod(e, sig, des);
+					consAnno = cons.getAnnotation(Description.class);
+					constructorDescription = consAnno.description();				
+				}
+					
+				HashMap<Category, ArrayList<SigInfo>> cat2sig = new HashMap<Function.Category, ArrayList<SigInfo>>();
+				int methodCount = e.getValue().signatures.length;
+				for(int i = 0;  i< methodCount; i++){
+					createSigInfo(e, consAnno, cat2sig, i);		
+				}
+			
+				for(Category cat : cat2sig.keySet()){
+					List<AnnotationInfo> m = cat2funs.get(cat);
+					if(m==null){
+						m = new Vector<AnnotationInfo>();
+						cat2funs.put(cat,m);
 					}
+					AnnotationInfo aninfo = new AnnotationInfo();
+					aninfo.name = name;
+					aninfo.constructorDescription = constructorDescription;
+					aninfo.signatureInfos = cat2sig.get(cat).toArray(new SigInfo[]{});
+					m.add(aninfo);
+					cat2funs.put(cat, m);
 				}			
 			}
 		}
 
-		private void createAnnotationInfoMethod(Entry<String, FunctionInfo> e,
-				Signature sig, Description des) {
-			AnnotationInfo aninf = new AnnotationInfo();
-			aninf.name = e.getKey();
-			aninf.description = des.description();
-			aninf.params = des.params();
-			aninf.signatures = new Signature []{sig};
-			for(Category cat : des.categories()){
-				List<AnnotationInfo> m1 = cat2funs.get(cat);
-				if(m1==null){
-					m1 = new Vector<AnnotationInfo>();
-					cat2funs.put(cat,m1);
-				}
-				m1.add(aninf);
-				cat2funs.put(cat, m1);
+		private void createSigInfo(Entry<String, FunctionInfo> e,
+				Description consAnno,
+				HashMap<Category, ArrayList<SigInfo>> cat2sig, int i) {
+			SigInfo si = new SigInfo();
+			si.signatue = e.getValue().signatures[i];
+			Method m = si.signatue.evaluateMethod;
+			
+			Description des = m.getAnnotation(Description.class);
+			if(des == null || des.params() == null){
+				si.params = consAnno.params();
+			}else{
+				si.description = des.description();
+				si.params = des.params();
 			}
-		}
-
-		private void createAnnotationInfoFunction(
-				Entry<String, FunctionInfo> e, Description des) {
-			AnnotationInfo aninf = new AnnotationInfo();
-			aninf.name = e.getKey();
-			aninf.description = des.description();
-			aninf.params = des.params();
-			aninf.signatures = e.getValue().signatures;
-			for(Category cat : des.categories()){
-				List<AnnotationInfo> m = cat2funs.get(cat);
-				if(m==null){
-					m = new Vector<AnnotationInfo>();
-					cat2funs.put(cat,m);
+			if(des != null && des.categories() != null){
+				for(Category cat : des.categories()){
+					if(!cat2sig.containsKey(cat)){
+						cat2sig.put(cat, new ArrayList<SigInfo>());
+					}
+					cat2sig.get(cat).add(si); 
 				}
-				m.add(aninf);
-				cat2funs.put(cat, m);
+			}else{
+				for(Category cat : consAnno.categories()){
+					if(!cat2sig.containsKey(cat)){
+						cat2sig.put(cat, new ArrayList<SigInfo>());
+					}
+					cat2sig.get(cat).add(si); 
+				}
 			}
 		}
 
@@ -505,7 +525,7 @@ public class FunLib {
 		 * Set to true to generate a complete latex doc that can be compiled
 		 * standalone. Useful when changing this generator...
 		 */
-		private boolean STANDALONE = true;
+		private boolean STANDALONE = false;
 
 		void generate() throws IOException {
 			try {
@@ -515,8 +535,7 @@ public class FunLib {
 					write("\\begin{document}");
 					newLine();
 				}
-				//TODO outcomment 
-				//write("\\twocolumn");
+				write("\\twocolumn");
 				newLine();
 				newLine();
 				for (Category cat : Category.values()) {
@@ -562,34 +581,47 @@ public class FunLib {
 			newLine();
 			write("\\paragraph*{" + info.name + ".}");
 			newLine();
-			write(info.description);
-			newLine();
-		
+	
 			generateSignatures(info);
-
+			
 			newLine();
+			if(info.constructorDescription != null){
+				write(info.constructorDescription);
+				newLine();
+			}
+			
 		}
 
 		private void generateSignatures(AnnotationInfo info)
 				throws IOException {
+			write("\\renewcommand{\\labelitemi}{}");
 			write("\\begin{itemize}");
-
-			for (Signature sig : info.signatures) {
+			//write("\\begin{description}");
+			
+			for (SigInfo sig : info.signatureInfos) {
 				write("\\item $" +info.name + ": ");
-				for (int i = 0; i < sig.parameterTypes.length; i++) {
+				//write("\\item [$" +info.name + ":$ ] $");
+				for (int i = 0; i < sig.signatue.parameterTypes.length; i++) {
 					if (i != 0) {
 						write(" \\times ");
 					}
-					write(info.params[i]+ " : ");
-					write(Types.getGreqlTypeName(sig.parameterTypes[i]));
+					
+					write(Types.getGreqlTypeName(sig.signatue.parameterTypes[i]));
+					write("\\;\\; ");
+					write(sig.params[i]);
 				}
 				write(" \\longrightarrow ");
 				write(Types
-						.getGreqlTypeName(sig.evaluateMethod.getReturnType()));
+						.getGreqlTypeName(sig.signatue.evaluateMethod.getReturnType()));
 				write("$");
+				if(sig.description != null){
+					write("\\\\");
+					write(sig.description);
+				}
 			}
 
 			write("\\end{itemize}");
+			//write("\\end{description}");
 		}
 	}
 
