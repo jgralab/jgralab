@@ -48,7 +48,7 @@ import de.uni_koblenz.jgralab.greql2.funlib.NeedsGraphArgument;
 @NeedsGraphArgument
 public class ElementSetSubgraph extends Function {
 
-	@Description(params = {"graph","vertexSet","edgeSet"}, 
+	@Description(params = {"g","vs","es"}, 
 			description = "Returns the subgraph induced by the vertex type given.",
 			categories = Category.GRAPH)
 	public ElementSetSubgraph() {

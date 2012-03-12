@@ -44,10 +44,10 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Vector;
+import java.util.SortedMap;
+import java.util.TreeMap;
 import java.util.logging.Logger;
 
 import de.uni_koblenz.jgralab.Graph;
@@ -430,8 +430,7 @@ public class FunLib {
 	
 	private static class LaTeXFunctionDocsGenerator {
 		private BufferedWriter bw;
-		//private final Map<Category, SortedMap<String, FunctionInfo>> cat2funs = new HashMap<Function.Category, SortedMap<String, FunctionInfo>>();
-		private final Map<Category, List<AnnotationInfo>> cat2funs = new HashMap<Function.Category, List<AnnotationInfo>>();
+		private final Map<Category, SortedMap<String,AnnotationInfo>> cat2funs = new HashMap<Function.Category, SortedMap<String,AnnotationInfo>>();
 		
 		LaTeXFunctionDocsGenerator(String fileName,
 				final Map<String, FunctionInfo> funs) throws IOException {
@@ -442,10 +441,10 @@ public class FunLib {
 		private class AnnotationInfo{
 			String name;
 			String constructorDescription;
-			SigInfo [] signatureInfos;
+			SignatureInfo [] signatureInfos;
 		}
 		
-		private class SigInfo{
+		private class SignatureInfo{
 			String description;
 			String [] params;
 			Signature signatue;
@@ -467,23 +466,23 @@ public class FunLib {
 					constructorDescription = consAnno.description();				
 				}
 					
-				HashMap<Category, ArrayList<SigInfo>> cat2sig = new HashMap<Function.Category, ArrayList<SigInfo>>();
+				HashMap<Category, ArrayList<SignatureInfo>> cat2sig = new HashMap<Function.Category, ArrayList<SignatureInfo>>();
 				int methodCount = e.getValue().signatures.length;
 				for(int i = 0;  i< methodCount; i++){
 					createSigInfo(e, consAnno, cat2sig, i);		
 				}
 			
 				for(Category cat : cat2sig.keySet()){
-					List<AnnotationInfo> m = cat2funs.get(cat);
+					SortedMap<String,AnnotationInfo> m = cat2funs.get(cat);
 					if(m==null){
-						m = new Vector<AnnotationInfo>();
+						m = new TreeMap<String,AnnotationInfo>();
 						cat2funs.put(cat,m);
 					}
 					AnnotationInfo aninfo = new AnnotationInfo();
 					aninfo.name = name;
 					aninfo.constructorDescription = constructorDescription;
-					aninfo.signatureInfos = cat2sig.get(cat).toArray(new SigInfo[]{});
-					m.add(aninfo);
+					aninfo.signatureInfos = cat2sig.get(cat).toArray(new SignatureInfo[]{});
+					m.put(aninfo.name, aninfo);
 					cat2funs.put(cat, m);
 				}			
 			}
@@ -491,8 +490,8 @@ public class FunLib {
 
 		private void createSigInfo(Entry<String, FunctionInfo> e,
 				Description consAnno,
-				HashMap<Category, ArrayList<SigInfo>> cat2sig, int i) {
-			SigInfo si = new SigInfo();
+				HashMap<Category, ArrayList<SignatureInfo>> cat2sig, int i) {
+			SignatureInfo si = new SignatureInfo();
 			si.signatue = e.getValue().signatures[i];
 			Method m = si.signatue.evaluateMethod;
 			
@@ -506,14 +505,14 @@ public class FunLib {
 			if(des != null && des.categories() != null){
 				for(Category cat : des.categories()){
 					if(!cat2sig.containsKey(cat)){
-						cat2sig.put(cat, new ArrayList<SigInfo>());
+						cat2sig.put(cat, new ArrayList<SignatureInfo>());
 					}
 					cat2sig.get(cat).add(si); 
 				}
 			}else{
 				for(Category cat : consAnno.categories()){
 					if(!cat2sig.containsKey(cat)){
-						cat2sig.put(cat, new ArrayList<SigInfo>());
+						cat2sig.put(cat, new ArrayList<SignatureInfo>());
 					}
 					cat2sig.get(cat).add(si); 
 				}
@@ -570,8 +569,8 @@ public class FunLib {
 			write("\\subsection{" + heading + "}");
 			newLine();
 
-			List<AnnotationInfo> funs = cat2funs.get(cat);
-			for (AnnotationInfo e : funs) {
+			SortedMap<String, AnnotationInfo> funs = cat2funs.get(cat);
+			for (AnnotationInfo e : funs.values()) {
 				generateFunctionDocs(e);
 			}
 		}
@@ -598,7 +597,7 @@ public class FunLib {
 			write("\\begin{itemize}");
 			//write("\\begin{description}");
 			
-			for (SigInfo sig : info.signatureInfos) {
+			for (SignatureInfo sig : info.signatureInfos) {
 				write("\\item $" +info.name + ": ");
 				//write("\\item [$" +info.name + ":$ ] $");
 				for (int i = 0; i < sig.signatue.parameterTypes.length; i++) {
@@ -607,7 +606,7 @@ public class FunLib {
 					}
 					
 					write(Types.getGreqlTypeName(sig.signatue.parameterTypes[i]));
-					write("\\;\\; ");
+					write("\\; ");
 					write(sig.params[i]);
 				}
 				write(" \\longrightarrow ");
