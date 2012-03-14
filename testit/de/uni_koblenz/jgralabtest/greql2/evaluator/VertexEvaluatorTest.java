@@ -44,13 +44,15 @@ public class VertexEvaluatorTest {
 
 	@Test
 	public void testBoolLiteralEvaluator() throws Exception {
-		try {
-			assertTrue((Boolean) new GreqlEvaluatorImpl(new QueryImpl("true"),
-					datagraph, new HashMap<String, Object>()).getResult());
-		} catch (Exception e) {
-			e.printStackTrace();
-			throw e;
-		}
+		assertTrue((Boolean) evaluateQuery("true"));
+	}
+
+	/**
+	 * @return
+	 */
+	private Object evaluateQuery(String query) {
+		return new GreqlEvaluatorImpl(new QueryImpl(query), datagraph,
+				new HashMap<String, Object>()).getResult();
 	}
 
 }

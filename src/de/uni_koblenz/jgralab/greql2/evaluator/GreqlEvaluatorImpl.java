@@ -304,11 +304,7 @@ public class GreqlEvaluatorImpl implements InternalGreqlEvaluator,
 	 */
 	public GreqlEvaluatorImpl(Query query, Graph datagraph,
 			Map<String, Object> variables, ProgressFunction progressFunction) {
-		this.query = (QueryImpl) query;
-		this.datagraph = datagraph;
-		setVariables(variables);
-		localEvaluationResults = new Object[query.getQueryGraph().getVCount()];
-		// this.progressFunction = progressFunction;
+		initialize(query, datagraph, variables, progressFunction);
 	}
 
 	/**
@@ -323,21 +319,32 @@ public class GreqlEvaluatorImpl implements InternalGreqlEvaluator,
 	 */
 	public GreqlEvaluatorImpl(Query query, Graph datagraph,
 			Map<String, Object> variables) {
-		new GreqlEvaluatorImpl(query, datagraph, variables, null);
+		initialize(query, datagraph, variables, null);
 	}
 
 	public GreqlEvaluatorImpl() {
 
 	}
 
+	/**
+	 * @param query
+	 * @param datagraph
+	 * @param variables
+	 * @param progressFunction
+	 */
+	private void initialize(Query query, Graph datagraph,
+			Map<String, Object> variables, ProgressFunction progressFunction) {
+		this.query = (QueryImpl) query;
+		this.datagraph = datagraph;
+		setVariables(variables);
+		localEvaluationResults = new Object[query.getQueryGraph().getVCount() + 1];
+		// this.progressFunction = progressFunction;
+	}
+
 	@Override
 	public Object evaluate(QueryImpl query, Graph datagraph,
 			Map<String, Object> variables, ProgressFunction progressFunction) {
-		this.query = query;
-		this.datagraph = datagraph;
-		setVariables(variables);
-		localEvaluationResults = new Object[query.getQueryGraph().getVCount()];
-		// this.progressFunction = progressFunction;
+		initialize(query, datagraph, variables, progressFunction);
 		return evaluate();
 	}
 
