@@ -66,7 +66,7 @@ import de.uni_koblenz.jgralab.JGraLab;
 public class ClassFileManager extends
 		ForwardingJavaFileManager<JavaFileManager> {
 
-	private Logger logger;
+	private final Logger logger;
 
 	private final String qualifiedSchemaName;
 
@@ -75,7 +75,6 @@ public class ClassFileManager extends
 		logger = null;
 		this.qualifiedSchemaName = ma.getManagedName();
 	}
-	
 
 	@Override
 	public boolean hasLocation(Location location) {
@@ -106,9 +105,9 @@ public class ClassFileManager extends
 		}
 		// redirect compiler output to InMemoryClassFiles
 		InMemoryClassFile cfa = new InMemoryClassFile(className);
-		SchemaClassManager.instance(qualifiedSchemaName)
-				.putSchemaClass(className, cfa);
-		System.out.println("Registered class");
+		SchemaClassManager.instance(qualifiedSchemaName).putSchemaClass(
+				className, cfa);
+		// System.out.println("Registered class");
 		return cfa;
 	}
 
