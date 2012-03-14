@@ -579,27 +579,24 @@ public class FunLib {
 				throws IOException {
 			newLine();
 			write("\\paragraph*{" + info.name + ".}");
+			if(info.constructorDescription != null){
+				write(info.constructorDescription);
+			}
 			newLine();
 	
 			generateSignatures(info);
 			
 			newLine();
-			if(info.constructorDescription != null){
-				write(info.constructorDescription);
-				newLine();
-			}
+			
 			
 		}
 
 		private void generateSignatures(AnnotationInfo info)
 				throws IOException {
-			write("\\renewcommand{\\labelitemi}{}");
-			write("\\begin{itemize}");
-			//write("\\begin{description}");
+			write("\\begin{description}");
 			
 			for (SignatureInfo sig : info.signatureInfos) {
-				write("\\item $" +info.name + ": ");
-				//write("\\item [$" +info.name + ":$ ] $");
+				write("\\item [$" +info.name + ":$ ] $");
 				for (int i = 0; i < sig.signatue.parameterTypes.length; i++) {
 					if (i != 0) {
 						write(" \\times ");
@@ -618,9 +615,7 @@ public class FunLib {
 					write(sig.description);
 				}
 			}
-
-			write("\\end{itemize}");
-			//write("\\end{description}");
+			write("\\end{description}");
 		}
 	}
 
