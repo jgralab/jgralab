@@ -311,6 +311,21 @@ public class GreqlEvaluatorImpl implements InternalGreqlEvaluator,
 		// this.progressFunction = progressFunction;
 	}
 
+	/**
+	 * Creates a new GreqlEvaluator for the given Query and Datagraph
+	 * 
+	 * @param query
+	 *            the string-representation of the query to evaluate
+	 * @param datagraph
+	 *            the Datagraph on which the query gets evaluated
+	 * @param variables
+	 *            a Map<String, JValue> of bound variables
+	 */
+	public GreqlEvaluatorImpl(Query query, Graph datagraph,
+			Map<String, Object> variables) {
+		new GreqlEvaluatorImpl(query, datagraph, variables, null);
+	}
+
 	public GreqlEvaluatorImpl() {
 
 	}
