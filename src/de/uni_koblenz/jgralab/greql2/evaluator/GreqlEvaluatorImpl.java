@@ -356,7 +356,7 @@ public class GreqlEvaluatorImpl implements InternalGreqlEvaluator,
 		if (query.getQueryGraph().getVCount() <= 1) {
 			// Graph contains only root vertex
 			result = Undefined.UNDEFINED;
-			return true;
+			return result;
 		}
 
 		// Calculate the evaluation costs
