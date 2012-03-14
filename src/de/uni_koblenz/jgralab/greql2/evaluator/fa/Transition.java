@@ -47,10 +47,6 @@ import de.uni_koblenz.jgralab.greql2.evaluator.InternalGreqlEvaluator;
  */
 public abstract class Transition {
 
-	public enum AllowedEdgeDirection {
-		IN, OUT, ANY
-	}
-
 	/**
 	 * The state where this transition starts
 	 */

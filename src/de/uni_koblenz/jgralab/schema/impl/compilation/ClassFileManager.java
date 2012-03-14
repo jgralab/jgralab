@@ -47,7 +47,6 @@ import javax.tools.JavaFileObject.Kind;
 
 import de.uni_koblenz.jgralab.EclipseAdapter;
 import de.uni_koblenz.jgralab.JGraLab;
-import de.uni_koblenz.jgralab.schema.impl.SchemaImpl;
 
 /**
  * {@link ClassFileManager} redirects requests of the Java compiler in two
@@ -69,14 +68,14 @@ public class ClassFileManager extends
 
 	private Logger logger;
 
-	private final SchemaImpl schemaImpl;
+	private final String qualifiedSchemaName;
 
-	public ClassFileManager(SchemaImpl schemaImpl, JavaFileManager fm) {
+	public ClassFileManager(ManagableArtifact ma, JavaFileManager fm) {
 		super(fm);
 		logger = null;
-		// logger = JGraLab.getLogger(getClass().getPackage().getName());
-		this.schemaImpl = schemaImpl;
+		this.qualifiedSchemaName = ma.getManagedName();
 	}
+	
 
 	@Override
 	public boolean hasLocation(Location location) {
@@ -107,8 +106,9 @@ public class ClassFileManager extends
 		}
 		// redirect compiler output to InMemoryClassFiles
 		InMemoryClassFile cfa = new InMemoryClassFile(className);
-		SchemaClassManager.instance(schemaImpl.getQualifiedName())
+		SchemaClassManager.instance(qualifiedSchemaName)
 				.putSchemaClass(className, cfa);
+		System.out.println("Registered class");
 		return cfa;
 	}
 

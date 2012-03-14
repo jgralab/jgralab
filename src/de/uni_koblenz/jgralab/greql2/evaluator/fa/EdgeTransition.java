@@ -43,6 +43,7 @@ import de.uni_koblenz.jgralab.greql2.evaluator.InternalGreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.QueryImpl;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VertexEvaluator;
 import de.uni_koblenz.jgralab.greql2.schema.Expression;
+import de.uni_koblenz.jgralab.greql2.schema.GReQLDirection;
 import de.uni_koblenz.jgralab.greql2.types.TypeCollection;
 
 /**
@@ -65,6 +66,10 @@ public class EdgeTransition extends SimpleTransition {
 	 * the result can be used as allowed edge
 	 */
 	private final VertexEvaluator<?> allowedEdgeEvaluator;
+
+	public VertexEvaluator<?> getAllowedEdgeEvaluator() {
+		return allowedEdgeEvaluator;
+	}
 
 	/**
 	 * returns a string which describes the edge
@@ -178,7 +183,7 @@ public class EdgeTransition extends SimpleTransition {
 	 *            If this is set, only the resulting edge of this evaluator will
 	 *            be accepted
 	 */
-	public EdgeTransition(State start, State end, AllowedEdgeDirection dir,
+	public EdgeTransition(State start, State end, GReQLDirection dir,
 			TypeCollection typeCollection, Set<String> roles,
 			VertexEvaluator<?> edgeEval,
 			VertexEvaluator<? extends Expression> predicateEval, QueryImpl query) {

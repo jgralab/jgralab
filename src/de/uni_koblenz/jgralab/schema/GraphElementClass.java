@@ -251,5 +251,11 @@ public interface GraphElementClass<SC extends GraphElementClass<SC, IC>, IC exte
 	 * @return a Set of all direct and indirect superclasses of this element
 	 */
 	public Set<SC> getAllSuperClasses();
+	
+	
+	/**
+	 * @return  the ID of this GraphElementClass in the schema it belongs to
+	 */
+	public int getGraphElementClassIdInSchema();
 
 }

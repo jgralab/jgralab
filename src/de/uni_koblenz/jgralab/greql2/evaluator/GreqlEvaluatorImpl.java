@@ -302,9 +302,9 @@ public class GreqlEvaluatorImpl implements InternalGreqlEvaluator,
 	 *            the ProgressFunction which indicates the progress, for
 	 *            instance display a progress bar etc.
 	 */
-	public GreqlEvaluatorImpl(QueryImpl query, Graph datagraph,
+	public GreqlEvaluatorImpl(Query query, Graph datagraph,
 			Map<String, Object> variables, ProgressFunction progressFunction) {
-		this.query = query;
+		this.query = (QueryImpl) query;
 		this.datagraph = datagraph;
 		setVariables(variables);
 		localEvaluationResults = new Object[query.getQueryGraph().getVCount()];

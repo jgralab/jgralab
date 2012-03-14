@@ -213,7 +213,6 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 				&& (newEdge.getSchema() == schema) : "The schemas of alpha, omega, newEdge and this graph don't match!";
 		assert (alpha.getGraph() == omega.getGraph())
 				&& (alpha.getGraph() == this) && (newEdge.getGraph() == this) : "The graph of alpha, omega, newEdge and this graph don't match!";
-
 		EdgeBaseImpl e = (EdgeBaseImpl) newEdge;
 		InternalVertex a = (InternalVertex) alpha;
 		InternalVertex o = (InternalVertex) omega;

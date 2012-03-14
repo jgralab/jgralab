@@ -37,21 +37,20 @@ GraphClass Greql2Graph;
 
 EnumDomain IterationType (STAR, PLUS);
 EnumDomain QuantificationType (FORALL, EXISTS, EXISTSONE);
+EnumDomain GReQLDirection (IN, OUT, INOUT);
 RecordDomain SourcePosition (offset:Integer, length: Integer);
 
 // A common superclass for all vertices of GReQL2-vertices
 abstract VertexClass Greql2Vertex;
 
 VertexClass AlternativePathDescription: PathDescription;
-//VertexClass AttributeId: Identifier;
 VertexClass BackwardVertexSet: PathExpression;
 VertexClass ListComprehension: ComprehensionWithTableHeader;
 VertexClass BoolLiteral: Literal { boolValue: Boolean };
-//VertexClass CfGrammar: Expression;
 VertexClass ConditionalExpression: Expression;
 VertexClass Declaration: Greql2Vertex;
 VertexClass Definition: Greql2Vertex;
-VertexClass Direction: Greql2Vertex { dirValue: String };
+VertexClass Direction: Greql2Vertex { dirValue: GReQLDirection };
 VertexClass EdgePathDescription: PrimaryPathDescription;
 VertexClass EdgeRestriction: Greql2Vertex;
 VertexClass EdgeSetExpression: ElementSetExpression;
@@ -118,11 +117,10 @@ abstract VertexClass ValueConstruction: Expression;
 // A common super-class for all Edges that connect PathDescription vertices
 abstract EdgeClass IsPathDescriptionOf : Greql2Aggregation from PathDescription (0,*) aggregation shared to PathDescription(0,*) ;
 
-//EdgeClass IsImportedTypeOf from TypeId (0,*) to Greql2Expression (0,1) ;
 EdgeClass IsAlternativePathOf: IsPathDescriptionOf from PathDescription (2,*) role alternatePath aggregation shared to AlternativePathDescription (0,*);
 EdgeClass IsArgumentOf: Greql2Aggregation from Expression (0,*) role argument aggregation shared to FunctionApplication (0,*);
 EdgeClass IsBoundExprOfDefinition: IsBoundExprOf from Expression (1,1) role boundExprOfDefinition aggregation shared to DefinitionExpression (0,1);
-EdgeClass IsBoundExprOfQuantifier: IsBoundExprOf from Expression (1,1) role boundExprOfQuantifier aggregation shared to QuantifiedExpression (0,*);
+EdgeClass IsBoundExprOfQuantifiedExpression: IsBoundExprOf from Expression (1,1) role boundExprOfQuantifier aggregation shared to QuantifiedExpression (0,*);
 EdgeClass IsBoundVarOf: Greql2Aggregation from Variable (0,*) role boundVar aggregation shared to Greql2Expression (0,1);
 EdgeClass IsColumnHeaderExprOf: Greql2Aggregation from Expression (0,*) role columnHeader  aggregation shared to TableComprehension (0,*);
 EdgeClass IsCompDeclOf: Greql2Aggregation from Declaration (1,1) role compDecl aggregation shared to Comprehension (0,1);
@@ -142,7 +140,7 @@ EdgeClass IsFalseExprOf: Greql2Aggregation from Expression (1,1) role falseExpr 
 EdgeClass IsFirstValueOf: Greql2Aggregation from Expression (1,1) role firstValue aggregation shared to ListRangeConstruction (0,*);
 EdgeClass IsFunctionIdOf: Greql2Aggregation from FunctionId (1,1) role functionId  aggregation shared to FunctionApplication (1,*);
 EdgeClass IsGoalRestrOf: Greql2Aggregation from Expression (0,1) role goalRestr aggregation shared to PathDescription (0,*);
-EdgeClass IsIdOf: Greql2Aggregation from Identifier (0,1) role identifier aggregation shared to Greql2Expression (0,*);
+EdgeClass IsIdOfStoreClause: Greql2Aggregation from Identifier (0,1) role identifier aggregation shared to Greql2Expression (0,*);
 EdgeClass IsIntermediateVertexOf: Greql2Aggregation from Expression (1,1) role intermediateVertex aggregation shared to IntermediateVertexPathDescription (0,*);
 EdgeClass IsIteratedPathOf: IsPathDescriptionOf from PathDescription (1,1) role iteratedPath aggregation shared to IteratedPathDescription (0,*);
 EdgeClass IsLastValueOf: Greql2Aggregation from Expression (1,1) role lastValue aggregation shared to ListRangeConstruction (0,*);

@@ -44,6 +44,7 @@ import java.util.Set;
 
 import de.uni_koblenz.jgralab.greql2.evaluator.QueryImpl;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VertexEvaluator;
+import de.uni_koblenz.jgralab.greql2.schema.GReQLDirection;
 import de.uni_koblenz.jgralab.greql2.schema.Expression;
 import de.uni_koblenz.jgralab.greql2.types.TypeCollection;
 
@@ -301,7 +302,7 @@ public class NFA extends FiniteAutomaton {
 	 * EdgeRestrictions (RoleId, TypeId) are modeled in the Transition.
 	 */
 	public static NFA createEdgePathDescriptionNFA(
-			Transition.AllowedEdgeDirection dir, TypeCollection typeCollection,
+			GReQLDirection dir, TypeCollection typeCollection,
 			Set<String> roles, VertexEvaluator<?> edgeEval,
 			VertexEvaluator<? extends Expression> predicateEvaluator,
 			QueryImpl query) {
@@ -322,7 +323,7 @@ public class NFA extends FiniteAutomaton {
 	 * EdgeRestrictions (RoleId, TypeId) are modeled in the Transition.
 	 */
 	public static NFA createSimplePathDescriptionNFA(
-			Transition.AllowedEdgeDirection dir, TypeCollection typeCollection,
+			GReQLDirection dir, TypeCollection typeCollection,
 			Set<String> roles,
 			VertexEvaluator<? extends Expression> predicateEvaluator,
 			QueryImpl query) {

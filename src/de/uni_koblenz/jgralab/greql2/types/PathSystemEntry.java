@@ -40,7 +40,7 @@ import de.uni_koblenz.jgralab.Vertex;
 
 /**
  * This is the entry of the hashmap which stores the references to the parent
- * vertices. It is _not_ a JValue
+ * vertices.
  */
 public class PathSystemEntry {
 

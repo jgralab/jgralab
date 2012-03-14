@@ -74,7 +74,7 @@ public class ThisVertexEvaluator extends VariableEvaluator<ThisVertex> {
 	// which stops at the first path description of each path
 	@SuppressWarnings("unchecked")
 	@Override
-	protected List<VertexEvaluator<? extends Expression>> calculateDependingExpressions() {
+	public List<VertexEvaluator<? extends Expression>> calculateDependingExpressions() {
 		Queue<Greql2Vertex> queue = new LinkedList<Greql2Vertex>();
 		List<VertexEvaluator<? extends Expression>> dependingEvaluators = new ArrayList<VertexEvaluator<? extends Expression>>();
 		queue.add(vertex);

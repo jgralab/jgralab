@@ -56,6 +56,10 @@ public class BoolExpressionTransition extends Transition {
 
 	private final VertexEvaluator<? extends Expression> boolExpressionEvaluator;
 
+	public VertexEvaluator<? extends Expression> getBooleanExpressionEvaluator() {
+		return boolExpressionEvaluator;
+	}
+
 	private ThisVertexEvaluator thisVertexEvaluator;
 
 	/**

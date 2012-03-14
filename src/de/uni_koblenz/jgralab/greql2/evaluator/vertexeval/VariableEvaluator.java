@@ -134,7 +134,7 @@ public class VariableEvaluator<V extends Variable> extends VertexEvaluator<V> {
 	}
 
 	@SuppressWarnings("unchecked")
-	protected List<VertexEvaluator<? extends Expression>> calculateDependingExpressions() {
+	public List<VertexEvaluator<? extends Expression>> calculateDependingExpressions() {
 		Queue<Greql2Vertex> queue = new LinkedList<Greql2Vertex>();
 		List<VertexEvaluator<? extends Expression>> dependingEvaluators = new ArrayList<VertexEvaluator<? extends Expression>>();
 		List<Vertex> forbiddenVertices = new ArrayList<Vertex>();

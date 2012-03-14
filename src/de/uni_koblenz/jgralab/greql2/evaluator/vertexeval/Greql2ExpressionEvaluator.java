@@ -46,7 +46,7 @@ import de.uni_koblenz.jgralab.greql2.schema.Expression;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Expression;
 import de.uni_koblenz.jgralab.greql2.schema.Identifier;
 import de.uni_koblenz.jgralab.greql2.schema.IsBoundVarOf;
-import de.uni_koblenz.jgralab.greql2.schema.IsIdOf;
+import de.uni_koblenz.jgralab.greql2.schema.IsIdOfStoreClause;
 import de.uni_koblenz.jgralab.greql2.schema.SourcePosition;
 import de.uni_koblenz.jgralab.greql2.schema.Variable;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
@@ -141,7 +141,7 @@ public class Greql2ExpressionEvaluator extends
 		Object result = eval.getResult(evaluator);
 		// if the query contains a "store as " - clause, there is a
 		// "isIdOfInc"-Incidence connected with the Greql2Expression
-		IsIdOf storeInc = vertex.getFirstIsIdOfIncidence(EdgeDirection.IN);
+		IsIdOfStoreClause storeInc = vertex.getFirstIsIdOfStoreClauseIncidence(EdgeDirection.IN);
 		if (storeInc != null) {
 			VertexEvaluator<Identifier> storeEval = query
 					.getVertexEvaluator(storeInc.getAlpha());

@@ -524,7 +524,7 @@ public class GreqlParser extends ParserHelper {
 			Identifier ident = graph.createIdentifier();
 			offset = getCurrentOffset();
 			ident.set_name(matchIdentifier());
-			IsIdOf isId = graph.createIsIdOf(ident, rootExpr);
+			IsIdOfStoreClause isId = graph.createIsIdOfStoreClause(ident, rootExpr);
 			isId.set_sourcePositions(createSourcePositionList(offset));
 		}
 		match(TokenTypes.EOF);
@@ -710,7 +710,7 @@ public class GreqlParser extends ParserHelper {
 						lengthQuantifiedDecl, offsetQuantifiedDecl));
 				// add predicate
 				IsBoundExprOf boundExprOf = graph
-						.createIsBoundExprOfQuantifier(boundExpr,
+						.createIsBoundExprOfQuantifiedExpression(boundExpr,
 								quantifiedExpr);
 				boundExprOf.set_sourcePositions(createSourcePositionList(
 						lengthQuantifiedExpr, offsetQuantifiedExpr));
@@ -1486,14 +1486,14 @@ public class GreqlParser extends ParserHelper {
 	private final PrimaryPathDescription parseSimplePathDescription() {
 		Direction dir = null;
 		EdgeRestriction edgeRestr = null;
-		String direction = "any";
+		GReQLDirection direction = GReQLDirection.INOUT;
 		int offsetDir = getCurrentOffset();
 		int offsetEdgeRestr = 0;
 		int lengthEdgeRestr = 0;
 		if (tryMatch(TokenTypes.RARROW)) {
-			direction = "out";
+			direction = GReQLDirection.OUT;
 		} else if (tryMatch(TokenTypes.LARROW)) {
-			direction = "in";
+			direction = GReQLDirection.IN;
 		} else {
 			match(TokenTypes.ARROW);
 		}
@@ -1566,7 +1566,7 @@ public class GreqlParser extends ParserHelper {
 		Direction dir = null;
 		boolean edgeStart = false;
 		boolean edgeEnd = false;
-		String direction = "any";
+		GReQLDirection direction = GReQLDirection.INOUT;
 		int offsetDir = getCurrentOffset();
 		if (tryMatch(TokenTypes.EDGESTART)) {
 			edgeStart = true;
@@ -1587,9 +1587,9 @@ public class GreqlParser extends ParserHelper {
 			int lengthDir = getLength(offsetDir);
 			EdgePathDescription result = graph.createEdgePathDescription();
 			if (edgeStart && !edgeEnd) {
-				direction = "in";
+				direction = GReQLDirection.IN;
 			} else if (!edgeStart && edgeEnd) {
-				direction = "out";
+				direction = GReQLDirection.OUT;
 			}
 			dir = (Direction) graph.getFirstVertex(Direction.class);
 			while (dir != null) {

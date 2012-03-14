@@ -56,6 +56,10 @@ public class VertexTypeRestrictionTransition extends Transition {
 	 * not
 	 */
 	private final TypeCollection typeCollection;
+	
+	public TypeCollection getAcceptedVertexTypes() {
+		return typeCollection;
+	}
 
 	/**
 	 * returns true if this transition and the given transition t accept the

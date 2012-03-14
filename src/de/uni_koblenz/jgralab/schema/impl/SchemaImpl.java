@@ -99,12 +99,13 @@ import de.uni_koblenz.jgralab.schema.exception.SchemaClassAccessException;
 import de.uni_koblenz.jgralab.schema.exception.SchemaException;
 import de.uni_koblenz.jgralab.schema.impl.compilation.ClassFileManager;
 import de.uni_koblenz.jgralab.schema.impl.compilation.InMemoryJavaSourceFile;
+import de.uni_koblenz.jgralab.schema.impl.compilation.ManagableArtifact;
 import de.uni_koblenz.jgralab.schema.impl.compilation.SchemaClassManager;
 
 /**
  * @author ist@uni-koblenz.de
  */
-public class SchemaImpl implements Schema {
+public class SchemaImpl implements Schema, ManagableArtifact {
 	// we need a hard reference here, cause the SchemaClassManager uses only
 	// weak references. This way, when the schema gets collected, the class
 	// manager is free for collection, too.
@@ -1290,6 +1291,28 @@ public class SchemaImpl implements Schema {
 	@Override
 	public void save(DataOutputStream out) throws GraphIOException {
 		GraphIO.saveSchemaToStream(this, out);
+	}
+
+	/**
+	 * This field and the method getNextClassId() is used to allow a unique
+	 * mapping of GraphElementClasses to integer values, which is necessary
+	 * for the GReQL code generator
+	 */
+	int nextGraphElementClassId = 0;
+	
+	protected int getNextGraphElementClassId() {
+		return nextGraphElementClassId++;
+	}
+
+	protected int nextIncidenceClassId = 0;
+	
+	public int getNextIncidenceClassId() {
+		return nextIncidenceClassId++;
+	}
+
+	@Override
+	public String getManagedName() {
+		return qualifiedName;
 	}
 
 }

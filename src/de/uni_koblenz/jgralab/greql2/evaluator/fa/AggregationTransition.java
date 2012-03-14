@@ -60,6 +60,10 @@ public class AggregationTransition extends Transition {
 
 	private final VertexEvaluator<? extends Expression> predicateEvaluator;
 
+	public VertexEvaluator<? extends Expression> getPredicateEvaluator() {
+		return predicateEvaluator;
+	}
+
 	private ThisEdgeEvaluator thisEdgeEvaluator;
 
 	/**
@@ -67,15 +71,31 @@ public class AggregationTransition extends Transition {
 	 */
 	protected TypeCollection typeCollection;
 
+	public TypeCollection getTypeCollection() {
+		return typeCollection;
+	}
+
 	/**
 	 * an edge may have valid roles. This set holds the valid roles for this
 	 * transition. If the transition is valid for all roles, this set is null
 	 */
 	protected Set<String> validToEdgeRoles;
 
+	public Set<String> getValidToRoles() {
+		return validToEdgeRoles;
+	}
+
+	public Set<String> getValidFromRoles() {
+		return validFromEdgeRoles;
+	}
+
 	protected Set<String> validFromEdgeRoles;
 
 	protected boolean aggregateFrom;
+
+	public boolean isAggregateFrom() {
+		return aggregateFrom;
+	}
 
 	/**
 	 * returns a string which describes the edge
