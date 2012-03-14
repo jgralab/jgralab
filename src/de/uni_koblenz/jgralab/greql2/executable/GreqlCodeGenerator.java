@@ -97,9 +97,10 @@ import de.uni_koblenz.jgralab.schema.Schema;
 import de.uni_koblenz.jgralab.schema.exception.SchemaException;
 import de.uni_koblenz.jgralab.schema.impl.compilation.ClassFileManager;
 import de.uni_koblenz.jgralab.schema.impl.compilation.InMemoryJavaSourceFile;
+import de.uni_koblenz.jgralab.schema.impl.compilation.ManagableArtifact;
 import de.uni_koblenz.jgralab.schema.impl.compilation.SchemaClassManager;
 
-public class GreqlCodeGenerator extends CodeGenerator {
+public class GreqlCodeGenerator extends CodeGenerator implements ManagableArtifact {
 
 	public static final String codeGeneratorFileManagerName = "GeneratedQueries";
 	
@@ -1403,6 +1404,11 @@ public class GreqlCodeGenerator extends CodeGenerator {
 	
 	protected CodeBlock createPackageDeclaration() {
 		return new CodeSnippet("package " + packageName + ";");
+	}
+
+	@Override
+	public String getManagedName() {
+		return codeGeneratorFileManagerName;
 	}
 	
 }
