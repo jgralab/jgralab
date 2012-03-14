@@ -5,6 +5,8 @@ package de.uni_koblenz.jgralabtest.greql2.evaluator;
 
 import static org.junit.Assert.assertTrue;
 
+import java.util.HashMap;
+
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -13,6 +15,8 @@ import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.ImplementationType;
+import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluatorImpl;
+import de.uni_koblenz.jgralab.greql2.evaluator.QueryImpl;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VertexEvaluator;
 
 /**
@@ -26,9 +30,6 @@ public class VertexEvaluatorTest {
 
 	private static Graph datagraph;
 
-	/**
-	 * @throws GraphIOException
-	 */
 	@BeforeClass
 	public static void setUpBeforeClass() throws GraphIOException {
 		datagraph = GraphIO.loadGraphFromFile(
@@ -36,14 +37,20 @@ public class VertexEvaluatorTest {
 				ImplementationType.STANDARD, null);
 	}
 
-	@Test
-	public void test() {
-		assertTrue(true);
-	}
-
 	@AfterClass
 	public static void tearDownAfterClass() {
 		datagraph = null;
+	}
+
+	@Test
+	public void testBoolLiteralEvaluator() throws Exception {
+		try {
+			assertTrue((Boolean) new GreqlEvaluatorImpl(new QueryImpl("true"),
+					datagraph, new HashMap<String, Object>()).getResult());
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw e;
+		}
 	}
 
 }

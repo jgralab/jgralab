@@ -46,7 +46,6 @@ import java.util.Set;
 import org.pcollections.PSet;
 
 import de.uni_koblenz.jgralab.GraphStructureChangedAdapter;
-import de.uni_koblenz.jgralab.GraphStructureChangedListener;
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.graphmarker.GraphMarker;
@@ -155,18 +154,18 @@ public class QueryImpl extends GraphStructureChangedAdapter implements Query {
 
 	@Override
 	public Greql2Graph getQueryGraph() {
-		initalizeQueryGraph();
+		initializeQueryGraph();
 		return queryGraph;
 	}
 
 	@SuppressWarnings("unchecked")
 	public synchronized <V extends Greql2Vertex> VertexEvaluator<V> getVertexEvaluator(
 			V vertex) {
-		initalizeQueryGraph();
+		initializeQueryGraph();
 		return (VertexEvaluator<V>) vertexEvaluators.get(vertex);
 	}
 
-	private void initalizeQueryGraph() {
+	private void initializeQueryGraph() {
 		if (queryGraph == null) {
 			QueryGraphCacheEntry e = queryGraphCache.get(queryText, optimize);
 			if (e != null) {
@@ -187,9 +186,15 @@ public class QueryImpl extends GraphStructureChangedAdapter implements Query {
 			// }
 			((GraphBaseImpl) queryGraph).defragment();
 			rootExpression = queryGraph.getFirstGreql2Expression();
-			vertexEvaluators = new GraphMarker<VertexEvaluator<?>>(queryGraph);
+			initializeVertexEvaluatorsMarker(queryGraph);
 			queryGraphCache.put(queryText, optimize, queryGraph,
 					vertexEvaluators);
+		}
+	}
+
+	private void initializeVertexEvaluatorsMarker(Greql2Graph graph) {
+		if (vertexEvaluators == null) {
+			vertexEvaluators = new GraphMarker<VertexEvaluator<?>>(graph);
 		}
 	}
 
@@ -307,20 +312,20 @@ public class QueryImpl extends GraphStructureChangedAdapter implements Query {
 			GreqlParser {
 
 		public GreqlParserWithVertexEvaluatorUpdates(String source,
-				Set<String> subQueryNames, GraphStructureChangedListener gscl) {
+				Set<String> subQueryNames, QueryImpl gscl) {
 			super(source, subQueryNames);
 			if (gscl != null) {
 				graph.addGraphStructureChangedListener(gscl);
+				gscl.initializeVertexEvaluatorsMarker(graph);
 			}
 		}
 
-		public static Greql2Graph parse(String query,
-				GraphStructureChangedListener gscl) {
+		public static Greql2Graph parse(String query, QueryImpl gscl) {
 			return parse(query, null, gscl);
 		}
 
 		public static Greql2Graph parse(String query,
-				Set<String> subQueryNames, GraphStructureChangedListener gscl) {
+				Set<String> subQueryNames, QueryImpl gscl) {
 			GreqlParser parser = new GreqlParserWithVertexEvaluatorUpdates(
 					query, subQueryNames, gscl);
 			parser.parse();
