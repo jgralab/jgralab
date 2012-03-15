@@ -168,6 +168,11 @@ public final class GraphClassImpl extends
 			AggregationKind aggrFrom, VertexClass to, int toMin, int toMax,
 			String toRoleName, AggregationKind aggrTo) {
 		assertNotFinished();
+		if (from.isInternal() || to.isInternal()) {
+			throw new SchemaException(
+					"EdgeClasses starting or ending at the default "
+							+ "VertexClass Vertex are forbidden.");
+		}
 		if (!(aggrFrom == AggregationKind.NONE)
 				&& !(aggrTo == AggregationKind.NONE)) {
 			throw new SchemaException(
