@@ -81,7 +81,7 @@ public final class GraphClassImpl extends
 	 * visibility of this constructor cannot be changed without causing serious
 	 * issues in the program.
 	 * </p>
-	 * 
+	 *
 	 * @param qn
 	 *            a unique name in the <code>Schema</code>
 	 * @param aSchema
@@ -300,5 +300,19 @@ public final class GraphClassImpl extends
 	@Override
 	public List<Attribute> getOwnAttributeList() {
 		return getAttributeList();
+	}
+
+	@Override
+	protected void reopen() {
+		vertexClassDag.reopen();
+		edgeClassDag.reopen();
+		for (VertexClass vc : vertexClassDag.getNodesInTopologicalOrder()) {
+			((VertexClassImpl) vc).reopen();
+		}
+		for (EdgeClass ec : edgeClassDag.getNodesInTopologicalOrder()) {
+			((EdgeClassImpl) ec).reopen();
+		}
+
+		super.reopen();
 	}
 }

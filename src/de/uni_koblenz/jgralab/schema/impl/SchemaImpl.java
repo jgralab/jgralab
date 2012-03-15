@@ -208,7 +208,7 @@ public class SchemaImpl implements Schema, ManagableArtifact {
 
 	/**
 	 * Creates a new <code>Schema</code>.
-	 * 
+	 *
 	 * @param name
 	 *            Name of schema.
 	 * @param packagePrefix
@@ -706,7 +706,7 @@ public class SchemaImpl implements Schema, ManagableArtifact {
 	/**
 	 * Creates a {@link Package} with given qualified name, or returns an
 	 * existing package with this qualified name.
-	 * 
+	 *
 	 * @param qn
 	 *            the qualified name of the package
 	 * @return a new {@link Package} with the given qualified name, or an
@@ -763,7 +763,7 @@ public class SchemaImpl implements Schema, ManagableArtifact {
 	/**
 	 * Given a qualified name like foo.bar.baz returns a string array with two
 	 * components: the package prefix (foo.bar) and the simple name (baz).
-	 * 
+	 *
 	 * @param qualifiedName
 	 *            a qualified name
 	 * @return a string array with two components: the package prefix and the
@@ -1010,7 +1010,7 @@ public class SchemaImpl implements Schema, ManagableArtifact {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param implementationType
 	 * @return
 	 */
@@ -1070,7 +1070,7 @@ public class SchemaImpl implements Schema, ManagableArtifact {
 
 	/**
 	 * only used internally
-	 * 
+	 *
 	 * @return number of graphelementclasses contained in graphclass
 	 */
 	private int getNumberOfElements() {
@@ -1261,9 +1261,9 @@ public class SchemaImpl implements Schema, ManagableArtifact {
 	 * the change mode call reopen
 	 */
 	@Override
-	public void finish() {
+	public boolean finish() {
 		if (finished) {
-			return;
+			return false;
 		}
 		if (graphClass == null) {
 			throw new SchemaException(
@@ -1272,6 +1272,7 @@ public class SchemaImpl implements Schema, ManagableArtifact {
 		domainsDag.finish();
 		graphClass.finish();
 		finished = true;
+		return true;
 	}
 
 	/**
@@ -1279,8 +1280,16 @@ public class SchemaImpl implements Schema, ManagableArtifact {
 	 * finish
 	 */
 	@Override
-	public void reopen() {
-		throw new UnsupportedOperationException();
+	public boolean reopen() {
+		if (!finished) {
+			return false;
+		}
+
+		domainsDag.reopen();
+		graphClass.reopen();
+		finished = false;
+
+		return true;
 	}
 
 	@Override
@@ -1295,17 +1304,17 @@ public class SchemaImpl implements Schema, ManagableArtifact {
 
 	/**
 	 * This field and the method getNextClassId() is used to allow a unique
-	 * mapping of GraphElementClasses to integer values, which is necessary
-	 * for the GReQL code generator
+	 * mapping of GraphElementClasses to integer values, which is necessary for
+	 * the GReQL code generator
 	 */
 	int nextGraphElementClassId = 0;
-	
+
 	protected int getNextGraphElementClassId() {
 		return nextGraphElementClassId++;
 	}
 
 	protected int nextIncidenceClassId = 0;
-	
+
 	public int getNextIncidenceClassId() {
 		return nextIncidenceClassId++;
 	}

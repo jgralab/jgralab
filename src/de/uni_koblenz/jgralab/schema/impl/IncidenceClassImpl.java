@@ -63,7 +63,8 @@ public class IncidenceClassImpl implements IncidenceClass {
 		this.vertexClass = vertexClass;
 		this.subsettedIncidenceClasses = new HashSet<IncidenceClass>();
 		this.redefinedIncidenceClasses = new HashSet<IncidenceClass>();
-		this.incidenceClassIdInSchema = ((SchemaImpl)edgeClass.getSchema()).getNextIncidenceClassId();
+		this.incidenceClassIdInSchema = ((SchemaImpl) edgeClass.getSchema())
+				.getNextIncidenceClassId();
 	}
 
 	private AggregationKind aggregationKind;
@@ -87,9 +88,9 @@ public class IncidenceClassImpl implements IncidenceClass {
 	private Set<IncidenceClass> subsettedIncidenceClasses;
 
 	private Set<IncidenceClass> allSubsettedIncidenceClasses;
-	
+
 	private final int incidenceClassIdInSchema;
-	
+
 	@Override
 	public AggregationKind getAggregationKind() {
 		return aggregationKind;
@@ -298,5 +299,10 @@ public class IncidenceClassImpl implements IncidenceClass {
 	public int getIncidenceClassIdInSchema() {
 		// TODO Auto-generated method stub
 		return 0;
+	}
+
+	void reopen() {
+		allSubsettedIncidenceClasses = null;
+		allRedefinedIncidenceClasses = null;
 	}
 }

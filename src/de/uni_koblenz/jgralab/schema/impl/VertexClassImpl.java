@@ -91,6 +91,10 @@ public final class VertexClassImpl extends
 	 */
 	private Set<IncidenceClass> validToFarIncidenceClasses;
 
+	/**
+	 * A map from far-end role name to the corresponding directed edge class -
+	 * only set if schema is finished
+	 */
 	private Map<String, DirectedSchemaEdgeClass> farRoleNameToEdgeClass;
 
 	/**
@@ -207,7 +211,7 @@ public final class VertexClassImpl extends
 	 * For a vertexclass A are all edgeclasses valid froms, which (1) run from A
 	 * to a B or (2) run from a superclass of A to a B and whose end b at B is
 	 * not redefined by A or a superclass of A
-	 * 
+	 *
 	 */
 
 	@Override
@@ -451,5 +455,28 @@ public final class VertexClassImpl extends
 			}
 		}
 		return null;
+	}
+
+	@Override
+	protected void reopen() {
+		allInIncidenceClasses = null;
+		allOutIncidenceClasses = null;
+		validFromFarIncidenceClasses = null;
+		validToFarIncidenceClasses = null;
+		validFromEdgeClasses = null;
+		validToEdgeClasses = null;
+		farRoleNameToEdgeClass = null;
+		for (IncidenceClass ic : inIncidenceClasses) {
+			((IncidenceClassImpl) ic).reopen();
+		}
+		for (IncidenceClass ic : outIncidenceClasses) {
+			((IncidenceClassImpl) ic).reopen();
+		}
+
+		// Make em modifiable again
+		inIncidenceClasses = new HashSet<IncidenceClass>(inIncidenceClasses);
+		outIncidenceClasses = new HashSet<IncidenceClass>(outIncidenceClasses);
+
+		super.reopen();
 	}
 }

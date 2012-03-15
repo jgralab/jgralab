@@ -67,7 +67,7 @@ public class DirectedAcyclicGraph<T> extends DirectedGraph<T> {
 	/**
 	 * Constructs an empty {@link DirectedAcyclicGraph} with the specified
 	 * transitivity.
-	 * 
+	 *
 	 * @param transitive
 	 *            if set to <code>true</code>, redundant edges are removed,
 	 *            otherwise they are retained. E.g. when edges A-&gt;B, A-&gt;C,
@@ -250,5 +250,11 @@ public class DirectedAcyclicGraph<T> extends DirectedGraph<T> {
 		}
 		sb.append("}\n");
 		return sb.toString();
+	}
+
+	public void reopen() {
+		cachedPredecessors = null;
+		cachedSuccessors = null;
+		finished = false;
 	}
 }

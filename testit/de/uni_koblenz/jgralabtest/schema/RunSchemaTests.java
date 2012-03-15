@@ -39,11 +39,11 @@ import org.junit.runners.Suite;
 
 /**
  * @author ist@uni-koblenz.de
- * 
+ *
  */
 @RunWith(Suite.class)
-@Suite.SuiteClasses( { RunDomainTests.class, RunAttributedElementTests.class,
-		MultiplicityTest.class })
+@Suite.SuiteClasses({ RunDomainTests.class, RunAttributedElementTests.class,
+		MultiplicityTest.class, SchemaReopeningTest.class })
 public class RunSchemaTests {
 
 }

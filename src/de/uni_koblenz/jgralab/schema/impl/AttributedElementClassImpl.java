@@ -296,4 +296,10 @@ public abstract class AttributedElementClassImpl<SC extends AttributedElementCla
 		throw new NoSuchAttributeException(getQualifiedName()
 				+ " doesn't contain an attribute '" + name + "'");
 	}
+
+	protected void reopen() {
+		attributeIndex = null;
+
+		finished = false;
+	}
 }

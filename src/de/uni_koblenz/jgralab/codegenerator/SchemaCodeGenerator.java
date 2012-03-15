@@ -60,9 +60,9 @@ import de.uni_koblenz.jgralab.schema.VertexClass;
 
 /**
  * TODO add comment
- * 
+ *
  * @author ist@uni-koblenz.de
- * 
+ *
  */
 public class SchemaCodeGenerator extends CodeGenerator {
 
@@ -70,7 +70,7 @@ public class SchemaCodeGenerator extends CodeGenerator {
 
 	/**
 	 * Creates a new SchemaCodeGenerator which creates code for the given schema
-	 * 
+	 *
 	 * @param schema
 	 *            the schema to create the code for
 	 * @param schemaPackageName
@@ -118,6 +118,7 @@ public class SchemaCodeGenerator extends CodeGenerator {
 			code.add(createConstructor());
 			code.add(createGetDefaultGraphFactoryMethod());
 			code.add(createGraphFactoryMethods());
+			code.add(createReopenMethod());
 		}
 		return code;
 	}
@@ -624,5 +625,15 @@ public class SchemaCodeGenerator extends CodeGenerator {
 			}
 		}
 		return code;
+	}
+
+	private CodeBlock createReopenMethod() {
+		CodeSnippet s = new CodeSnippet();
+		s.add("",
+				"@Override",
+				"public boolean reopen() {",
+				"\tthrow new UnsupportedOperationException(\"Cannot reopen a compiled Schema.\");",
+				"}");
+		return s;
 	}
 }
