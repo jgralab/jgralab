@@ -274,7 +274,6 @@ public final class ListDomainImpl extends CollectionDomainImpl implements
 		while (iterator.hasNext() && result) {
 			result &= getBaseDomain().isConformGenericValue(iterator.next());
 		}
-		assert (!iterator.hasNext());
 		return result;
 	}
 }
