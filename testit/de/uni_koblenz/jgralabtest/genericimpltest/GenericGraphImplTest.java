@@ -287,7 +287,7 @@ public class GenericGraphImplTest {
 	// try to instantiate a Vertex of an abstract class (VertexTestSchema.tg)
 	// A GraphException is expected
 	@Test
-	public void testCreateVertexFailure() {
+	public void testCreateVertexFailure1() {
 		Schema s;
 		Graph g = null;
 		int vCountBefore = 0;
@@ -300,6 +300,21 @@ public class GenericGraphImplTest {
 					.getVertexClass("AbstractSuperNode"));
 		} catch (GraphException e) {
 			assertEquals(vCountBefore, g.getVCount());
+		} catch (GraphIOException e) {
+			e.printStackTrace();
+			fail();
+		}
+	}
+
+	// Try to create a Vertex of a VertexClass from a different schema
+	@Test(expected=GraphException.class)
+	public void testCreateVertexFailure2() {
+		try {
+			Schema s1 = GraphIO.loadSchemaFromFile(SCHEMAFOLDER
+					+ "citymapschema.tg");
+			Schema s2 = GraphIO.loadSchemaFromFile(SCHEMAFOLDER + "greqltestschema.tg");
+			Graph g = s1.createGraph(ImplementationType.GENERIC);
+			g.createVertex(s2.getGraphClass().getVertexClass("junctions.Crossroad"));
 		} catch (GraphIOException e) {
 			e.printStackTrace();
 			fail();

@@ -345,7 +345,6 @@ public final class RecordDomainImpl extends CompositeDomainImpl implements
 			result &= component.getDomain().isConformGenericValue(
 					((Record) value).getComponent(component.getName()));
 		}
-		assert (!iterator.hasNext());
 		return result;
 	}
 }
