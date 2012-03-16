@@ -59,7 +59,8 @@ import de.uni_koblenz.jgralab.schema.VertexClass;
  * A generic {@link Vertex}-Implementation that can represent vertices of
  * arbitrary {@link Schema}s.
  */
-public class GenericVertexImpl extends VertexImpl {
+public class GenericVertexImpl extends VertexImpl implements
+		InternalAttributesArrayAccess {
 
 	private final VertexClass type;
 	private Object[] attributes;
@@ -146,11 +147,11 @@ public class GenericVertexImpl extends VertexImpl {
 			}
 		} else {
 			Domain d = type.getAttribute(name).getDomain();
-			throw new ClassCastException("Expected "
+			throw new ClassCastException(("Expected "
 					+ ((d instanceof RecordDomain) ? RecordImpl.class.getName()
 							: d.getJavaAttributeImplementationTypeName(d
 									.getPackageName()))
-					+ " object, but received " + data == null ? (data
+					+ " object, but received " + data) == null ? (data
 					.getClass().getName() + " object instead") : data
 					+ " instead");
 		}
@@ -290,4 +291,10 @@ public class GenericVertexImpl extends VertexImpl {
 		throw new UnsupportedOperationException(
 				"This method is not supported by the generic implementation");
 	}
+
+	@Override
+	public void invokeOnAttributesArray(OnAttributesFunction fn) {
+		attributes = fn.invoke(this, attributes);
+	}
+
 }

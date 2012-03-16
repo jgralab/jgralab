@@ -70,7 +70,8 @@ import de.uni_koblenz.jgralab.schema.VertexClass;
  * A generic {@link Graph}-Implementation that can represent TGraphs of
  * arbitrary {@link Schema}s.
  */
-public class GenericGraphImpl extends GraphImpl {
+public class GenericGraphImpl extends GraphImpl implements
+		InternalAttributesArrayAccess {
 
 	private GraphClass type;
 	private Object[] attributes;
@@ -170,11 +171,11 @@ public class GenericGraphImpl extends GraphImpl {
 			}
 		} else {
 			Domain d = type.getAttribute(name).getDomain();
-			throw new ClassCastException("Expected "
+			throw new ClassCastException(("Expected "
 					+ ((d instanceof RecordDomain) ? RecordImpl.class.getName()
 							: d.getJavaAttributeImplementationTypeName(d
 									.getPackageName()))
-					+ " object, but received " + data == null ? (data
+					+ " object, but received " + data) == null ? (data
 					.getClass().getName() + " object instead") : data
 					+ " instead");
 		}
@@ -360,5 +361,10 @@ public class GenericGraphImpl extends GraphImpl {
 			Vertex startVertex, String pathDescription, Class<T> vertexType) {
 		throw new UnsupportedOperationException(
 				"This method is not supported by the generic implementation");
+	}
+
+	@Override
+	public void invokeOnAttributesArray(OnAttributesFunction fn) {
+		attributes = fn.invoke(this, attributes);
 	}
 }

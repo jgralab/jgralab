@@ -58,7 +58,8 @@ import de.uni_koblenz.jgralab.schema.RecordDomain;
  * A generic {@link Edge}-Implementation that can represent edges of arbitrary
  * {@link Schema}s.
  */
-public class GenericEdgeImpl extends EdgeImpl {
+public class GenericEdgeImpl extends EdgeImpl implements
+		InternalAttributesArrayAccess {
 
 	private EdgeClass type;
 	private Object[] attributes;
@@ -171,11 +172,11 @@ public class GenericEdgeImpl extends EdgeImpl {
 			}
 		} else {
 			Domain d = type.getAttribute(name).getDomain();
-			throw new ClassCastException("Expected "
+			throw new ClassCastException(("Expected "
 					+ ((d instanceof RecordDomain) ? RecordImpl.class.getName()
 							: d.getJavaAttributeImplementationTypeName(d
 									.getPackageName()))
-					+ " object, but received " + data == null ? (data
+					+ " object, but received " + data) == null ? (data
 					.getClass().getName() + " object instead") : data
 					+ " instead");
 		}
@@ -307,6 +308,11 @@ public class GenericEdgeImpl extends EdgeImpl {
 		// Needs to be overridden from the base variant, because that relies on
 		// code generation.
 		return type.equals(cls) || type.isSubClassOf(cls);
+	}
+
+	@Override
+	public void invokeOnAttributesArray(OnAttributesFunction fn) {
+		attributes = fn.invoke(this, attributes);
 	}
 
 }
