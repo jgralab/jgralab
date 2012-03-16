@@ -58,7 +58,7 @@ public abstract class NamedElementImpl implements NamedElement {
 	 * The package containing this named element. <code>null</code> if this
 	 * named element is the <code>DefaultPackage</code>.
 	 */
-	protected final PackageImpl parentPackage;
+	protected PackageImpl parentPackage;
 
 	/**
 	 * The fully qualified name of an element in a schema.<br />
@@ -70,13 +70,13 @@ public abstract class NamedElementImpl implements NamedElement {
 	 * '.' character. <br/>
 	 * <code>qualifiedName = packageName + "." + simpleName</code>
 	 */
-	protected final String qualifiedName;
+	protected String qualifiedName;
 
 	/**
 	 * Unique name of an element in a package without the qualified package
 	 * name.
 	 */
-	protected final String simpleName;
+	protected String simpleName;
 
 	/**
 	 * The unique name of an element in a schema. If there is only one class in
@@ -120,12 +120,12 @@ public abstract class NamedElementImpl implements NamedElement {
 	/**
 	 * Creates a new named element with the specified name in the given parent
 	 * package and schema.
-	 * 
+	 *
 	 * <p>
 	 * <b>Pattern:</b>
 	 * <code>namedElement = new NamedElementImpl(sn, pkg, schema);</code>
 	 * </p>
-	 * 
+	 *
 	 * <p>
 	 * <b>Preconditions:</b>
 	 * <ul>
@@ -165,7 +165,7 @@ public abstract class NamedElementImpl implements NamedElement {
 	 * </li>
 	 * </ul>
 	 * </p>
-	 * 
+	 *
 	 * <p>
 	 * <b>Postconditions:</b>
 	 * <ul>
@@ -208,7 +208,7 @@ public abstract class NamedElementImpl implements NamedElement {
 	 * In either case, all '.' characters are replaced by '$' characters.</li>
 	 * </ul>
 	 * </p>
-	 * 
+	 *
 	 * @param simpleName
 	 *            this named element's simple name
 	 * @param pkg
@@ -288,7 +288,7 @@ public abstract class NamedElementImpl implements NamedElement {
 		 * following character must be alphanumeric and/or a '_' character
 		 * (Composite-/EnumDomain simple names may also have '.<>,' characters).
 		 * The simple name must end with an alphanumeric character.
-		 * 
+		 *
 		 * Simple names of Domains & AttributedElements start with a capital
 		 * letter, whereas the simple name for a Package starts with a small
 		 * letter.
@@ -389,7 +389,7 @@ public abstract class NamedElementImpl implements NamedElement {
 	/**
 	 * This method is invoked on one or more element's bearing the same unique
 	 * name, when a new element is added to the schema.
-	 * 
+	 *
 	 * The unique name is changed to match the qualified name, with all '.'
 	 * replaced by '$' characters.
 	 */
@@ -461,7 +461,7 @@ public abstract class NamedElementImpl implements NamedElement {
 
 	@Override
 	public final boolean equals(Object o) {
-		if (o == null || !(o instanceof NamedElement)) {
+		if ((o == null) || !(o instanceof NamedElement)) {
 			return false;
 		}
 		NamedElementImpl other = (NamedElementImpl) o;
@@ -473,25 +473,25 @@ public abstract class NamedElementImpl implements NamedElement {
 	 * Transforms a qualified name into unique name notation. This is achieved
 	 * by replacing every occurrence of a <code>'.'</code> characters in the
 	 * given qualified name by a <code>'$'</code> character.
-	 * 
+	 *
 	 * <p>
 	 * <b>Pattern:</b> <code>un = NamedElementImpl.toUniqueName(qn);</code>
 	 * </p>
-	 * 
+	 *
 	 * <p>
 	 * <b>Preconditions:</b> none
 	 * </p>
-	 * 
+	 *
 	 * <p>
 	 * <b>Postconditions:</b> <code>un</code> equals <code>qn</code>, except
 	 * that every occurrence of a '.' character has been replaced by a '$'
 	 * character. As no named element allows for '$' characters in it's
 	 * qualified name, there is no problem here.
 	 * </p>
-	 * 
+	 *
 	 * @param qualifiedName
 	 *            the qualified name to convert to unique name notation
-	 * 
+	 *
 	 * @return the unique name derived from a given qualified name
 	 */
 	public static String toUniqueNameNotation(String qualifiedName) {

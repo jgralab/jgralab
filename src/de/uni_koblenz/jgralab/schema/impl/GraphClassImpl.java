@@ -309,15 +309,14 @@ public final class GraphClassImpl extends
 
 	@Override
 	protected void reopen() {
-		vertexClassDag.reopen();
-		edgeClassDag.reopen();
 		for (VertexClass vc : vertexClassDag.getNodesInTopologicalOrder()) {
 			((VertexClassImpl) vc).reopen();
 		}
 		for (EdgeClass ec : edgeClassDag.getNodesInTopologicalOrder()) {
 			((EdgeClassImpl) ec).reopen();
 		}
-
+		vertexClassDag.reopen();
+		edgeClassDag.reopen();
 		super.reopen();
 	}
 }
