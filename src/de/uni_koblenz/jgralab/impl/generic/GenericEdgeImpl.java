@@ -72,7 +72,7 @@ public class GenericEdgeImpl extends EdgeImpl implements
 					"Cannot create instances of abstract type " + type);
 		}
 		this.type = type;
-		if (type.getAttributeCount() > 0) {
+		if (type.hasAttributes()) {
 			attributes = new Object[type.getAttributeCount()];
 			if (!((InternalGraph) graph).isLoading()) {
 				GenericGraphImpl.initializeGenericAttributeValues(this);

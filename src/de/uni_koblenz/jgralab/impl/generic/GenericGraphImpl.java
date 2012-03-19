@@ -79,7 +79,7 @@ public class GenericGraphImpl extends GraphImpl implements
 	protected GenericGraphImpl(GraphClass type, String id, int vmax, int emax) {
 		super(id, type, vmax, emax);
 		this.type = type;
-		if (type.getAttributeCount() > 0) {
+		if (type.hasAttributes()) {
 			attributes = new Object[type.getAttributeCount()];
 			if (!isLoading()) {
 				GenericGraphImpl.initializeGenericAttributeValues(this);
