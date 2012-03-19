@@ -35,11 +35,14 @@
 
 package de.uni_koblenz.jgralab.schema.impl;
 
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
 import de.uni_koblenz.jgralab.schema.Domain;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
+import de.uni_koblenz.jgralab.schema.NamedElement;
 import de.uni_koblenz.jgralab.schema.Package;
 import de.uni_koblenz.jgralab.schema.Schema;
 import de.uni_koblenz.jgralab.schema.VertexClass;
@@ -219,4 +222,52 @@ public final class PackageImpl extends NamedElementImpl implements Package {
 		return qualifiedName;
 	}
 
+	@Override
+	public void setQualifiedName(String newQName) {
+		if (schema.getDefaultPackage() == this) {
+			throw new SchemaException("Cannot rename the default package.");
+		}
+		if (qualifiedName.equals(newQName)) {
+			return;
+		}
+		if (schema.knows(newQName)) {
+			throw new SchemaException(newQName
+					+ " is already known to the schema.");
+		}
+		String[] ps = SchemaImpl.splitQualifiedName(newQName);
+		String newPackageName = ps[0];
+		String newSimpleName = ps[1];
+		if (!NamedElementImpl.PACKAGE_NAME_PATTERN.matcher(newSimpleName)
+				.matches()) {
+			throw new SchemaException("Invalid package name '" + newSimpleName
+					+ "'.");
+		}
+
+		unregister();
+
+		qualifiedName = newQName;
+		simpleName = newSimpleName;
+		parentPackage = schema.createPackageWithParents(newPackageName);
+
+		List<NamedElement> l = new LinkedList<NamedElement>();
+		l.addAll(vertexClasses.values());
+		l.addAll(edgeClasses.values());
+		l.addAll(subPackages.values());
+		for (NamedElement ne : l) {
+			ne.setQualifiedName(qualifiedName + "." + ne.getSimpleName());
+		}
+		register();
+	}
+
+	@Override
+	protected final void register() {
+		super.register();
+		parentPackage.subPackages.put(simpleName, this);
+	}
+
+	@Override
+	protected final void unregister() {
+		super.unregister();
+		parentPackage.subPackages.remove(simpleName);
+	}
 }

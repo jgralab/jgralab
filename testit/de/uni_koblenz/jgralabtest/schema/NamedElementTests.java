@@ -1,6 +1,7 @@
 package de.uni_koblenz.jgralabtest.schema;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 import org.junit.Test;
 
@@ -8,6 +9,8 @@ import de.uni_koblenz.jgralab.schema.AggregationKind;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.EnumDomain;
 import de.uni_koblenz.jgralab.schema.GraphClass;
+import de.uni_koblenz.jgralab.schema.NamedElement;
+import de.uni_koblenz.jgralab.schema.Package;
 import de.uni_koblenz.jgralab.schema.RecordDomain;
 import de.uni_koblenz.jgralab.schema.Schema;
 import de.uni_koblenz.jgralab.schema.VertexClass;
@@ -135,5 +138,29 @@ public class NamedElementTests {
 		assertEquals("p2.MyEnumeration", ed.getQualifiedName());
 		assertEquals("MyEnumeration", ed.getSimpleName());
 		assertEquals("p2.MyEnumeration", ed.getUniqueName());
+	}
+
+	@Test
+	public void testRenamingPackage() {
+		GraphClass gc = createSchemaWithGraphClass();
+		VertexClass foo = gc.createVertexClass("p1.Foo");
+		VertexClass bar = gc.createVertexClass("p1.Bar");
+		EdgeClass baz = gc.createEdgeClass("p1.Baz", foo, 0, 1, "",
+				AggregationKind.NONE, bar, 0, 1, "", AggregationKind.NONE);
+
+		Package p1 = gc.getSchema().getPackage("p1");
+		assertNull(gc.getSchema().getPackage("p2"));
+		p1.setQualifiedName("p2");
+		assertEquals(p1, gc.getSchema().getPackage("p2"));
+		for (NamedElement ne : new NamedElement[] { foo, bar, baz }) {
+			assertEquals("p2." + ne.getSimpleName(), ne.getQualifiedName());
+		}
+	}
+
+	@Test(expected = SchemaException.class)
+	public void testRenamingDefaultPackage() {
+		// The default package must not be renamed
+		GraphClass gc = createSchemaWithGraphClass();
+		gc.getPackage().setQualifiedName("foo");
 	}
 }
