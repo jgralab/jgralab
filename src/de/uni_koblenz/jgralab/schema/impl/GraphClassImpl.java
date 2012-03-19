@@ -87,7 +87,6 @@ public final class GraphClassImpl extends
 	 */
 	GraphClassImpl(String gcName, SchemaImpl schema) {
 		super(gcName, (PackageImpl) schema.getDefaultPackage(), schema);
-		parentPackage.addGraphClass(this);
 		schema.setGraphClass(this);
 		defaultVertexClass = createDefaultVertexClass();
 		defaultEdgeClass = createDefaultEdgeClass();

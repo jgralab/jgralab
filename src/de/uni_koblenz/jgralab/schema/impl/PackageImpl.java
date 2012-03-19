@@ -40,7 +40,6 @@ import java.util.TreeMap;
 
 import de.uni_koblenz.jgralab.schema.Domain;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
-import de.uni_koblenz.jgralab.schema.GraphClass;
 import de.uni_koblenz.jgralab.schema.Package;
 import de.uni_koblenz.jgralab.schema.Schema;
 import de.uni_koblenz.jgralab.schema.VertexClass;
@@ -52,29 +51,27 @@ public final class PackageImpl extends NamedElementImpl implements Package {
 
 	private final Map<String, EdgeClass> edgeClasses = new TreeMap<String, EdgeClass>();
 
-	private final Map<String, GraphClass> graphClasses = new TreeMap<String, GraphClass>();
-
 	private final Map<String, Package> subPackages = new TreeMap<String, Package>();
 
 	private final Map<String, VertexClass> vertexClasses = new TreeMap<String, VertexClass>();
 
 	/**
 	 * Creates a new <code>DefaultPackage</code> in the given Schema.
-	 * 
+	 *
 	 * <p>
 	 * <b>Pattern:</b>
 	 * <code>p = PackageImpl.createDefaultPackage(schema);</code>
 	 * </p>
-	 * 
+	 *
 	 * <p>
 	 * <b>Preconditions:</b> none<br/>
 	 * </p>
-	 * 
+	 *
 	 * <p>
 	 * <b>Postconditions:</b> p is the newly created <code>DefaultPackage</code>
 	 * for this schema
 	 * </p>
-	 * 
+	 *
 	 * @param schema
 	 *            the schema containing the new <code>DefaultPackage</code>
 	 * @return the newly created <code>DefaultPackage</code> for the given
@@ -90,7 +87,7 @@ public final class PackageImpl extends NamedElementImpl implements Package {
 
 	/**
 	 * Constructor for the default package
-	 * 
+	 *
 	 * @param schema
 	 */
 	private PackageImpl(SchemaImpl schema) {
@@ -119,7 +116,7 @@ public final class PackageImpl extends NamedElementImpl implements Package {
 
 	/**
 	 * Adds the EdgeClass <code>ec</code> to this Package.
-	 * 
+	 *
 	 * @param ec
 	 *            an EdgeClass
 	 */
@@ -137,26 +134,8 @@ public final class PackageImpl extends NamedElementImpl implements Package {
 	}
 
 	/**
-	 * Adds the GraphClass gc to this Package. This action is only allowed, if
-	 * this package is the DefaultPackage.
-	 */
-	void addGraphClass(GraphClass gc) {
-		if (!isDefaultPackage()) {
-			throw new SchemaException(
-					"The GraphClass must be situated in the DefaultPackage.");
-		}
-		assert !graphClasses.containsKey(gc.getSimpleName())
-				&& !graphClasses.containsValue(gc) : "This package ("
-				+ getQualifiedName()
-				+ ") already contains a graph class called "
-				+ gc.getSimpleName();
-
-		graphClasses.put(gc.getQualifiedName(), gc);
-	}
-
-	/**
 	 * Adds the subpackage <code>subPkg</code> to this Package.
-	 * 
+	 *
 	 * @param subPkg
 	 *            a subpackage
 	 */
@@ -175,7 +154,7 @@ public final class PackageImpl extends NamedElementImpl implements Package {
 
 	/**
 	 * Adds the VertexClass <code>vc</code> to this Package.
-	 * 
+	 *
 	 * @param vc
 	 *            a VertexClass
 	 */
@@ -206,11 +185,6 @@ public final class PackageImpl extends NamedElementImpl implements Package {
 	@Override
 	public Map<String, EdgeClass> getEdgeClasses() {
 		return edgeClasses;
-	}
-
-	@Override
-	public Map<String, GraphClass> getGraphClasses() {
-		return graphClasses;
 	}
 
 	@Override
