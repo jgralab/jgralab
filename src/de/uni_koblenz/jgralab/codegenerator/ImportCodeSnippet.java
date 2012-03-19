@@ -50,6 +50,7 @@ public class ImportCodeSnippet extends CodeSnippet {
 	 * stores the import-statements
 	 */
 	private SortedSet<String> imports;
+	private boolean separatePackages;
 
 	/**
 	 * creates an empty <code>ImportCodeSnippet</code> by initializing its
@@ -57,7 +58,15 @@ public class ImportCodeSnippet extends CodeSnippet {
 	 * its only content
 	 */
 	public ImportCodeSnippet() {
-		this(null);
+		this(null, true);
+	}
+
+	public ImportCodeSnippet(boolean separatePackages) {
+		this(null, separatePackages);
+	}
+
+	public ImportCodeSnippet(CodeList parent) {
+		this(parent, true);
 	}
 
 	/**
@@ -67,8 +76,9 @@ public class ImportCodeSnippet extends CodeSnippet {
 	 * @param parent
 	 *            is passed to the <code>CodeSnippet</code>
 	 */
-	public ImportCodeSnippet(CodeList parent) {
+	public ImportCodeSnippet(CodeList parent, boolean separatePackages) {
 		super(parent, true);
+		this.separatePackages = separatePackages;
 		imports = new TreeSet<String>();
 	}
 
@@ -111,7 +121,8 @@ public class ImportCodeSnippet extends CodeSnippet {
 		String lastPackageName = null;
 		for (String imp : imports) {
 			String packageName = imp.substring(0, imp.indexOf('.'));
-			if (lastPackageName != null && !lastPackageName.equals(packageName)) {
+			if (separatePackages && lastPackageName != null
+					&& !lastPackageName.equals(packageName)) {
 				lines.add("");
 			}
 			lines.add("import " + imp + ";");

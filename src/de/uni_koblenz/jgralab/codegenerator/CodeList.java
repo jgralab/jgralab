@@ -118,6 +118,18 @@ public class CodeList extends CodeBlock {
 		block.setParent(this);
 	}
 
+	public void add(int index, CodeBlock block, int addIndent) {
+		if (block == null) {
+			return;
+		}
+		block.additionalIndent = addIndent;
+		if (block.getParent() != null) {
+			block.getParent().remove(block);
+		}
+		blocks.add(index, block);
+		block.setParent(this);
+	}
+
 	/**
 	 * adds <code>block</code> to <code>this</code> with -1 as the indent, this
 	 * will result in no tabulators in front of <code>block</code>´s content
