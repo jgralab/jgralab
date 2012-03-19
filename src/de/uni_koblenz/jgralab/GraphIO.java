@@ -96,7 +96,7 @@ import de.uni_koblenz.jgralab.schema.impl.compilation.SchemaClassManager;
 
 /**
  * class for loading and storing schema and graphs in tg format
- * 
+ *
  * @author ist@uni-koblenz.de
  */
 public class GraphIO {
@@ -112,7 +112,7 @@ public class GraphIO {
 
 	/**
 	 * A {@link FilenameFilter} that accepts TG files.
-	 * 
+	 *
 	 * @author ist@uni-koblenz.de
 	 */
 	public static class TGFilenameFilter extends
@@ -132,7 +132,7 @@ public class GraphIO {
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see java.io.FilenameFilter#accept(java.io.File, java.lang.String)
 		 */
 		@Override
@@ -145,7 +145,7 @@ public class GraphIO {
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see java.io.FileFilter#accept(java.io.File)
 		 */
 		@Override
@@ -313,7 +313,7 @@ public class GraphIO {
 	 * <code>filename</code>. When the <code>filename</code> ends with
 	 * <code>.gz</code>, output will be GZIP compressed, otherwise uncompressed
 	 * plain text.
-	 * 
+	 *
 	 * @param schema
 	 *            a schema
 	 * @param filename
@@ -339,7 +339,7 @@ public class GraphIO {
 	/**
 	 * Saves the specified <code>schema</code> to the stream <code>out</code>.
 	 * The stream is <em>not</em> closed.
-	 * 
+	 *
 	 * @param schema
 	 *            a schema
 	 * @param out
@@ -585,7 +585,7 @@ public class GraphIO {
 	 * <code>.gz</code>, output will be GZIP compressed, otherwise uncompressed
 	 * plain text. A {@link ProgressFunction} <code>pf</code> can be used to
 	 * monitor progress.
-	 * 
+	 *
 	 * @param graph
 	 *            a graph
 	 * @param filename
@@ -620,7 +620,7 @@ public class GraphIO {
 	 * <code>filename</code>. A {@link ProgressFunction} <code>pf</code> can be
 	 * used to monitor progress. The stream is <em>not</em> closed. This method
 	 * does <i>not</i> check if the subgraph marker is complete.
-	 * 
+	 *
 	 * @param subGraph
 	 *            a BooleanGraphMarker denoting the subgraph to be saved
 	 * @param filename
@@ -654,7 +654,7 @@ public class GraphIO {
 	 * Saves the specified <code>graph</code> to the stream <code>out</code>. A
 	 * {@link ProgressFunction} <code>pf</code> can be used to monitor progress.
 	 * The stream is <em>not</em> closed.
-	 * 
+	 *
 	 * @param graph
 	 *            a graph
 	 * @param out
@@ -681,7 +681,7 @@ public class GraphIO {
 	 * {@link ProgressFunction} <code>pf</code> can be used to monitor progress.
 	 * The stream is <em>not</em> closed. This method does <i>not</i> check if
 	 * the subgraph marker is complete.
-	 * 
+	 *
 	 * @param out
 	 *            a DataOutputStream
 	 * @param subGraph
@@ -991,8 +991,8 @@ public class GraphIO {
 	public static Graph loadGraphFromFile(String filename,
 			ImplementationType implementationType, ProgressFunction pf)
 			throws GraphIOException {
-		if (implementationType == null
-				|| implementationType == ImplementationType.DATABASE) {
+		if ((implementationType == null)
+				|| (implementationType == ImplementationType.DATABASE)) {
 			throw new IllegalArgumentException(
 					"ImplementationType must be != null and != DATABASE");
 		}
@@ -1030,8 +1030,8 @@ public class GraphIO {
 		if (schema == null) {
 			throw new IllegalArgumentException("Schema must be != null");
 		}
-		if (implementationType == null
-				|| implementationType == ImplementationType.DATABASE) {
+		if ((implementationType == null)
+				|| (implementationType == ImplementationType.DATABASE)) {
 			throw new IllegalArgumentException(
 					"ImplementationType must be != null and != DATABASE");
 		}
@@ -1139,8 +1139,8 @@ public class GraphIO {
 								+ graphFactory.getSchema().getQualifiedName()
 								+ "'.");
 			}
-			if (implementationType != null
-					&& graphFactory.getImplementationType() != implementationType) {
+			if ((implementationType != null)
+					&& (graphFactory.getImplementationType() != implementationType)) {
 				throw new GraphIOException(
 						"Graph factory has wrong implementation type: Expected '"
 								+ implementationType + "', found '"
@@ -1173,7 +1173,7 @@ public class GraphIO {
 
 	/**
 	 * Reads TG File header and checks if the file version can be processed.
-	 * 
+	 *
 	 * @throws GraphIOException
 	 *             if version number in file can not be processed
 	 */
@@ -1190,7 +1190,7 @@ public class GraphIO {
 	/**
 	 * Reads a Schema together with its Domains, GraphClasses and
 	 * GraphElementClasses from a TG-file. Subsequently, the Schema is created.
-	 * 
+	 *
 	 * @throws GraphIOException
 	 */
 	private void schema() throws GraphIOException, SchemaException {
@@ -1259,7 +1259,7 @@ public class GraphIO {
 
 	/**
 	 * Adds comments collected during schema parsing to the annotated elements.
-	 * 
+	 *
 	 * @throws GraphIOException
 	 */
 	private void processComments() throws GraphIOException {
@@ -1283,7 +1283,7 @@ public class GraphIO {
 
 	/**
 	 * Creates the Domains contained in a Schema.
-	 * 
+	 *
 	 * @return A Map of the Domain names to the concrete Domain objects.
 	 * @throws GraphIOException
 	 */
@@ -1297,7 +1297,7 @@ public class GraphIO {
 
 	/**
 	 * Reads an EnumDomain, i.e. its name along with the enum constants.
-	 * 
+	 *
 	 * @throws GraphIOException
 	 */
 	private void parseEnumDomain() throws GraphIOException {
@@ -1325,7 +1325,7 @@ public class GraphIO {
 
 	/**
 	 * Read a RecordDomain, i.e. its name along with the components.
-	 * 
+	 *
 	 * @throws GraphIOException
 	 */
 	private void parseRecordDomain() throws GraphIOException {
@@ -1368,7 +1368,7 @@ public class GraphIO {
 	/**
 	 * Reads Schema's Domains and GraphClasses with contained
 	 * GraphElementClasses from TG-file.
-	 * 
+	 *
 	 * @throws GraphIOException
 	 */
 	private void parseSchema() throws GraphIOException, SchemaException {
@@ -1432,7 +1432,7 @@ public class GraphIO {
 	/**
 	 * Creates the GraphClass contained in the Schema along with its
 	 * GraphElementClasses.
-	 * 
+	 *
 	 * @throws GraphIOException
 	 * @throws SchemaException
 	 */
@@ -1450,7 +1450,7 @@ public class GraphIO {
 
 	/**
 	 * Reads a GraphClass from a TG-file.
-	 * 
+	 *
 	 * @return The name of the read GraphClass.
 	 * @throws GraphIOException
 	 * @throws SchemaException
@@ -1481,7 +1481,7 @@ public class GraphIO {
 
 	/**
 	 * Creates a GraphClass based on the given GraphClassData.
-	 * 
+	 *
 	 * @param gcData
 	 *            The GraphClassData used to create the GraphClass.
 	 * @return The created GraphClass.
@@ -1506,7 +1506,7 @@ public class GraphIO {
 	/**
 	 * Reads the direct superclasses of a GraphClass or a GraphElementClass from
 	 * the TG-file.
-	 * 
+	 *
 	 * @return A list of the direct super classes.
 	 * @throws GraphIOException
 	 */
@@ -1577,7 +1577,7 @@ public class GraphIO {
 	/**
 	 * Reads an Attribute's domain from the TG-file and stores it in the list
 	 * given as argument.
-	 * 
+	 *
 	 * @param attrDomain
 	 *            The list to which an attribute's domain shall be added.
 	 * @throws GraphIOException
@@ -1625,7 +1625,7 @@ public class GraphIO {
 	/**
 	 * Creates a Domain corresponding to a list of domain names representing a,
 	 * probably composite, domain.
-	 * 
+	 *
 	 * @param domainNames
 	 *            The list containing the names of, probably composite, domains.
 	 * @return The created Domain.
@@ -1695,7 +1695,7 @@ public class GraphIO {
 	/**
 	 * Reads the a GraphElementClass of the GraphClass indicated by the given
 	 * name.
-	 * 
+	 *
 	 * @throws GraphIOException
 	 */
 	private void parseGraphElementClass(String gcName) throws GraphIOException,
@@ -1813,7 +1813,7 @@ public class GraphIO {
 
 	/**
 	 * Reads a multiplicity of an EdgeClass.
-	 * 
+	 *
 	 * @return An array with two elements. The first element represents the
 	 *         multiplicity's lower bound. The second element represents the
 	 *         upper bound.
@@ -1848,7 +1848,7 @@ public class GraphIO {
 
 	/**
 	 * Reads a role name of an EdgeClass.
-	 * 
+	 *
 	 * @return A role name.
 	 * @throws GraphIOException
 	 */
@@ -1863,7 +1863,7 @@ public class GraphIO {
 
 	/**
 	 * Reads the redefinition of a rolename of an EdgeClass
-	 * 
+	 *
 	 * @return A Set<String> of redefined rolenames or <code>null</code> if no
 	 *         rolenames were redefined
 	 * @throw GraphIOException
@@ -1956,7 +1956,7 @@ public class GraphIO {
 	/**
 	 * Reads the constants of an EnumDomain. Duplicate constant names are
 	 * rejected.
-	 * 
+	 *
 	 * @return A list of String containing the constants.
 	 * @throws GraphIOException
 	 *             if duplicate constant names are read.
@@ -1996,8 +1996,8 @@ public class GraphIO {
 				}
 				if (aec instanceof VertexClass) {
 					for (String superClassName : vData.directSuperClasses) {
-						superClass = (VertexClass) GECsearch.get(aec)
-								.getGraphElementClass(superClassName);
+						superClass = GECsearch.get(aec).getVertexClass(
+								superClassName);
 						if (superClass == null) {
 							throw new GraphIOException(
 									"Undefined VertexClass '" + superClassName
@@ -2032,8 +2032,8 @@ public class GraphIO {
 				}
 				EdgeClass ec = (EdgeClass) aec;
 				for (String superClassName : eData.directSuperClasses) {
-					superClass = (EdgeClass) GECsearch.get(aec)
-							.getGraphElementClass(superClassName);
+					superClass = GECsearch.get(aec)
+							.getEdgeClass(superClassName);
 					if (superClass == null) {
 						throw new GraphIOException("Undefined EdgeClass '"
 								+ superClassName + "'");
@@ -2263,7 +2263,7 @@ public class GraphIO {
 
 	/**
 	 * Parses an identifier, checks it for validity and returns it.
-	 * 
+	 *
 	 * @param isUpperCase
 	 *            If true, the identifier must begin with an uppercase character
 	 * @return the parsed identifier
@@ -2286,7 +2286,7 @@ public class GraphIO {
 
 	/**
 	 * Parses an identifier, checks it for validity and returns it.
-	 * 
+	 *
 	 * @param isUpperCase
 	 *            If true, the identifier must begin with an uppercase character
 	 * @return An array of the form {parentPackage, simpleName}
@@ -2588,7 +2588,7 @@ public class GraphIO {
 	 * Converts a String value with arbitrary characters to a quoted string
 	 * value containing only ASCII characters and escaped unicode sequences as
 	 * required by the TG file format.
-	 * 
+	 *
 	 * @param value
 	 *            a string
 	 * @return a quoted string suitable for storage in TG files.

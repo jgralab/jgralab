@@ -37,7 +37,6 @@ package de.uni_koblenz.jgralab.schema.impl;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -53,13 +52,11 @@ import de.uni_koblenz.jgralab.schema.exception.SchemaException;
 public final class GraphClassImpl extends
 		AttributedElementClassImpl<GraphClass, Graph> implements GraphClass {
 
-	private Map<String, GraphElementClass<?, ?>> graphElementClasses = new HashMap<String, GraphElementClass<?, ?>>();
-
-	private Map<String, VertexClass> vertexClasses = new HashMap<String, VertexClass>();
+	Map<String, VertexClass> vertexClasses = new HashMap<String, VertexClass>();
 
 	DirectedAcyclicGraph<VertexClass> vertexClassDag = new DirectedAcyclicGraph<VertexClass>(
 			true);
-	private Map<String, EdgeClass> edgeClasses = new HashMap<String, EdgeClass>();
+	Map<String, EdgeClass> edgeClasses = new HashMap<String, EdgeClass>();
 
 	DirectedAcyclicGraph<EdgeClass> edgeClassDag = new DirectedAcyclicGraph<EdgeClass>(
 			true);
@@ -133,12 +130,6 @@ public final class GraphClassImpl extends
 			throw new SchemaException("Duplicate edge class name '"
 					+ ec.getQualifiedName() + "'");
 		}
-		if (graphElementClasses.containsKey(ec.getQualifiedName())) {
-			throw new SchemaException("Edge class name '"
-					+ ec.getQualifiedName()
-					+ "' already used as vertex class name");
-		}
-		graphElementClasses.put(ec.getQualifiedName(), ec);
 		edgeClasses.put(ec.getQualifiedName(), ec);
 	}
 
@@ -147,13 +138,6 @@ public final class GraphClassImpl extends
 			throw new SchemaException("Duplicate vertex class name '"
 					+ vc.getQualifiedName() + "'");
 		}
-		if (graphElementClasses.containsKey(vc.getQualifiedName())) {
-			throw new SchemaException("Vertex class name '"
-					+ vc.getQualifiedName()
-					+ "' already used as edge class name");
-		}
-
-		graphElementClasses.put(vc.getQualifiedName(), vc);
 		vertexClasses.put(vc.getQualifiedName(), vc);
 	}
 
@@ -205,42 +189,20 @@ public final class GraphClassImpl extends
 	}
 
 	@Override
-	public boolean knowsOwn(String qn) {
-		return (graphElementClasses.containsKey(qn));
-	}
-
-	@Override
-	public boolean knows(String qn) {
-		return graphElementClasses.containsKey(qn);
-	}
-
-	@Override
 	public GraphElementClass<?, ?> getGraphElementClass(String qn) {
-		return graphElementClasses.get(qn);
-	}
-
-	public String getDescriptionString() {
-		StringBuilder output = new StringBuilder("GraphClassImpl '"
-				+ getQualifiedName() + "'");
-		if (isAbstract()) {
-			output.append(" (abstract)");
+		GraphElementClass<?, ?> gec = vertexClasses.get(qn);
+		if (gec != null) {
+			return gec;
 		}
-		output.append(":\n");
-		output.append(attributesToString());
-		output.append("\n\nGraphElementClasses of '" + getQualifiedName()
-				+ "':\n\n");
-		Iterator<GraphElementClass<?, ?>> it3 = graphElementClasses.values()
-				.iterator();
-		while (it3.hasNext()) {
-			output.append(it3.next().toString() + "\n");
-		}
-		return output.toString();
+		return edgeClasses.get(qn);
 	}
 
 	@Override
 	public List<GraphElementClass<?, ?>> getGraphElementClasses() {
-		return new ArrayList<GraphElementClass<?, ?>>(
-				graphElementClasses.values());
+		List<GraphElementClass<?, ?>> l = new ArrayList<GraphElementClass<?, ?>>(
+				vertexClasses.values());
+		l.addAll(edgeClasses.values());
+		return l;
 	}
 
 	@Override

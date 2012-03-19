@@ -1146,16 +1146,6 @@ public class SchemaImpl implements Schema, ManagableArtifact {
 		graphClass = gc;
 	}
 
-	/**
-	 * @return the textual representation of the schema with all graph classes,
-	 *         their edge and vertex classes, all attributes and the whole
-	 *         hierarchy of those classes
-	 */
-	public String getDescriptionString() {
-		return "GraphClass of schema '" + qualifiedName + "':\n\n\n"
-				+ graphClass.getDescriptionString();
-	}
-
 	@Override
 	public String toString() {
 		return getQualifiedName();

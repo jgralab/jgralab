@@ -42,26 +42,26 @@ import de.uni_koblenz.jgralab.Graph;
 /**
  * Represents a <code>GraphClass</code> in the <code>Schema</code>, that holds
  * all <code>GraphElementClasses</code>.
- * 
+ *
  * <p>
  * <b>Note:</b> in the following, <code>graphClass</code>, and
  * <code>graphClass'</code>, will represent the states of the given
  * <code>GraphClass</code> before, respectively after, any operation.
  * </p>
- * 
+ *
  * <p>
  * <b>Note:</b> in the following it is understood that method arguments differ
  * from <code>null</code>. Therefore there will be no preconditions addressing
  * this matter.
  * </p>
- * 
+ *
  * @author ist@uni-koblenz.de
  */
 public interface GraphClass extends AttributedElementClass<GraphClass, Graph> {
 
 	/**
 	 * creates a vertex class with the vertexclassname name
-	 * 
+	 *
 	 * @param qualifiedName
 	 *            the qualified name of the vertex class to be created
 	 * @return the created vertex class
@@ -78,7 +78,7 @@ public interface GraphClass extends AttributedElementClass<GraphClass, Graph> {
 	 * creates an edge class between vertex class from, multiplicity fromMin and
 	 * fromMax with the rolename fromRoleName, and vertex class to, multiplicity
 	 * toMin and toMax with the rolename toRoleName and the edgeclassname name
-	 * 
+	 *
 	 * @param qualifiedName
 	 *            a unique name in the schema
 	 * @param from
@@ -146,7 +146,7 @@ public interface GraphClass extends AttributedElementClass<GraphClass, Graph> {
 	/**
 	 * Returns the VertexClass with the given name. This GraphClass and the
 	 * superclasses will be searched for a VertexClass with this name
-	 * 
+	 *
 	 * @param name
 	 *            the name of the VertexClass to search for
 	 * @return the VertexClass with the given name or null, if no such
@@ -156,7 +156,7 @@ public interface GraphClass extends AttributedElementClass<GraphClass, Graph> {
 
 	/**
 	 * Returns the number of VertexClasses defined in this GraphClass.
-	 * 
+	 *
 	 * @return the number of VertexClasses defined in this GraphClass.
 	 */
 	public int getVertexClassCount();
@@ -164,7 +164,7 @@ public interface GraphClass extends AttributedElementClass<GraphClass, Graph> {
 	/**
 	 * Returns the EdgeClass with the given name. This GraphClass and the
 	 * superclasses will be searched for a EdgeClass with this name
-	 * 
+	 *
 	 * @param name
 	 *            the name of the EdgeClass to search for
 	 * @return the EdgeClass with the given name or null, if no such EdgeClass
@@ -175,22 +175,9 @@ public interface GraphClass extends AttributedElementClass<GraphClass, Graph> {
 	/**
 	 * Returns the number of EdgeClasses (that is Edge-/Aggregation- and
 	 * CompositionClasses) defined in this GraphClass.
-	 * 
+	 *
 	 * @return the number of EdgeClasses defined in this GraphClass.
 	 */
 	public int getEdgeClassCount();
 
-	/**
-	 * @param aGraphElementClass
-	 *            a vertex/edge/aggregation/composition class
-	 * @return true, if this graph class aggregates aGraphElementClass
-	 */
-	public boolean knowsOwn(String aGraphElementClass);
-
-	/**
-	 * @param aGraphElementClass
-	 *            a vertex/edge/aggregation/composition class name
-	 * @return true, if this graph class aggregates aGraphElementClass
-	 */
-	public boolean knows(String aGraphElementClass);
 }
