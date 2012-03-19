@@ -614,7 +614,10 @@ public class SchemaImpl implements Schema, ManagableArtifact {
 			throw new SchemaException(
 					"A GraphClass must always be in the default package!");
 		}
-		return new GraphClassImpl(simpleName, this);
+		GraphClassImpl gc = new GraphClassImpl(simpleName, this);
+		gc.initializeDefaultVertexClass();
+		gc.initializeDefaultEdgeClass();
+		return gc;
 	}
 
 	private BooleanDomain createBooleanDomain() {

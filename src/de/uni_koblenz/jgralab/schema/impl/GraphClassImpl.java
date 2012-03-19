@@ -88,25 +88,23 @@ public final class GraphClassImpl extends
 	GraphClassImpl(String gcName, SchemaImpl schema) {
 		super(gcName, (PackageImpl) schema.getDefaultPackage(), schema);
 		schema.setGraphClass(this);
-		defaultVertexClass = createDefaultVertexClass();
-		defaultEdgeClass = createDefaultEdgeClass();
 	}
 
 	@Override
-	public VertexClass getDefaultVertexClass() {
+	public final VertexClass getDefaultVertexClass() {
 		return defaultVertexClass;
 	}
 
-	private VertexClassImpl createDefaultVertexClass() {
+	final void initializeDefaultVertexClass() {
 		VertexClassImpl vc = new VertexClassImpl(
 				VertexClass.DEFAULTVERTEXCLASS_NAME,
 				(PackageImpl) schema.getDefaultPackage(), this);
 		vc.setAbstract(true);
 		vc.setInternal(true);
-		return vc;
+		defaultVertexClass = vc;
 	}
 
-	private EdgeClassImpl createDefaultEdgeClass() {
+	final void initializeDefaultEdgeClass() {
 		assert getDefaultVertexClass() != null : "Default VertexClass has not yet been created!";
 		assert getDefaultEdgeClass() == null : "Default EdgeClass already created!";
 		EdgeClassImpl ec = new EdgeClassImpl(EdgeClass.DEFAULTEDGECLASS_NAME,
@@ -116,11 +114,11 @@ public final class GraphClassImpl extends
 				"", AggregationKind.NONE);
 		ec.setAbstract(true);
 		ec.setInternal(true);
-		return ec;
+		defaultEdgeClass = ec;
 	}
 
 	@Override
-	public EdgeClass getDefaultEdgeClass() {
+	public final EdgeClass getDefaultEdgeClass() {
 		return defaultEdgeClass;
 	}
 
@@ -146,8 +144,8 @@ public final class GraphClassImpl extends
 	}
 
 	@Override
-	public EdgeClass createEdgeClass(String qualifiedName, VertexClass from,
-			int fromMin, int fromMax, String fromRoleName,
+	public final EdgeClass createEdgeClass(String qualifiedName,
+			VertexClass from, int fromMin, int fromMax, String fromRoleName,
 			AggregationKind aggrFrom, VertexClass to, int toMin, int toMax,
 			String toRoleName, AggregationKind aggrTo) {
 		assertNotFinished();
@@ -174,7 +172,7 @@ public final class GraphClassImpl extends
 	}
 
 	@Override
-	public VertexClass createVertexClass(String qualifiedName) {
+	public final VertexClass createVertexClass(String qualifiedName) {
 		assertNotFinished();
 
 		String[] qn = SchemaImpl.splitQualifiedName(qualifiedName);
@@ -188,7 +186,7 @@ public final class GraphClassImpl extends
 	}
 
 	@Override
-	public GraphElementClass<?, ?> getGraphElementClass(String qn) {
+	public final GraphElementClass<?, ?> getGraphElementClass(String qn) {
 		GraphElementClass<?, ?> gec = vertexClasses.get(qn);
 		if (gec != null) {
 			return gec;
@@ -197,7 +195,7 @@ public final class GraphClassImpl extends
 	}
 
 	@Override
-	public List<GraphElementClass<?, ?>> getGraphElementClasses() {
+	public final List<GraphElementClass<?, ?>> getGraphElementClasses() {
 		List<GraphElementClass<?, ?>> l = new ArrayList<GraphElementClass<?, ?>>(
 				vertexClasses.values());
 		l.addAll(edgeClasses.values());
@@ -205,37 +203,37 @@ public final class GraphClassImpl extends
 	}
 
 	@Override
-	public List<EdgeClass> getEdgeClasses() {
+	public final List<EdgeClass> getEdgeClasses() {
 		return edgeClassDag.getNodesInTopologicalOrder();
 	}
 
 	@Override
-	public List<VertexClass> getVertexClasses() {
+	public final List<VertexClass> getVertexClasses() {
 		return vertexClassDag.getNodesInTopologicalOrder();
 	}
 
 	@Override
-	public VertexClass getVertexClass(String qn) {
+	public final VertexClass getVertexClass(String qn) {
 		return vertexClasses.get(qn);
 	}
 
 	@Override
-	public EdgeClass getEdgeClass(String qn) {
+	public final EdgeClass getEdgeClass(String qn) {
 		return edgeClasses.get(qn);
 	}
 
 	@Override
-	public int getEdgeClassCount() {
+	public final int getEdgeClassCount() {
 		return edgeClasses.size();
 	}
 
 	@Override
-	public int getVertexClassCount() {
+	public final int getVertexClassCount() {
 		return vertexClasses.size();
 	}
 
 	@Override
-	protected void finish() {
+	protected final void finish() {
 		assertNotFinished();
 		vertexClassDag.finish();
 		edgeClassDag.finish();
@@ -249,27 +247,27 @@ public final class GraphClassImpl extends
 	}
 
 	@Override
-	public boolean hasOwnAttributes() {
+	public final boolean hasOwnAttributes() {
 		return hasAttributes();
 	}
 
 	@Override
-	public Attribute getOwnAttribute(String name) {
+	public final Attribute getOwnAttribute(String name) {
 		return getAttribute(name);
 	}
 
 	@Override
-	public int getOwnAttributeCount() {
+	public final int getOwnAttributeCount() {
 		return getAttributeCount();
 	}
 
 	@Override
-	public List<Attribute> getOwnAttributeList() {
+	public final List<Attribute> getOwnAttributeList() {
 		return getAttributeList();
 	}
 
 	@Override
-	protected void reopen() {
+	protected final void reopen() {
 		for (VertexClass vc : vertexClassDag.getNodesInTopologicalOrder()) {
 			((VertexClassImpl) vc).reopen();
 		}
