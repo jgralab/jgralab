@@ -59,4 +59,18 @@ public abstract class DomainImpl extends NamedElementImpl implements Domain {
 	public boolean isBoolean() {
 		return false;
 	}
+
+	@Override
+	protected final void register() {
+		super.register();
+		schema.domains.put(qualifiedName, this);
+		parentPackage.domains.put(simpleName, this);
+	}
+
+	@Override
+	protected final void unregister() {
+		super.unregister();
+		schema.domains.remove(qualifiedName);
+		parentPackage.domains.remove(simpleName);
+	}
 }

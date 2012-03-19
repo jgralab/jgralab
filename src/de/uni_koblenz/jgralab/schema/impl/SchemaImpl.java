@@ -146,7 +146,7 @@ public class SchemaImpl implements Schema, ManagableArtifact {
 	/**
 	 * Maps from qualified name to the {@link Domain}.
 	 */
-	private Map<String, Domain> domains = new HashMap<String, Domain>();
+	Map<String, Domain> domains = new HashMap<String, Domain>();
 
 	private DirectedAcyclicGraph<Domain> domainsDag = new DirectedAcyclicGraph<Domain>();
 

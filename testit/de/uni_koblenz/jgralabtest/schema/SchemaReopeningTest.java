@@ -55,13 +55,20 @@ public class SchemaReopeningTest {
 	}
 
 	@Test(expected = UnsupportedOperationException.class)
-	public void testSchemaReopeningWithCompiledSchema3() throws ClassNotFoundException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
+	public void testSchemaReopeningWithCompiledSchema3()
+			throws ClassNotFoundException, IllegalAccessException,
+			IllegalArgumentException, InvocationTargetException,
+			NoSuchMethodException, SecurityException {
 		Schema s = new SchemaImpl("ReopenTestSchema", "foo.reopen.test");
 		s.createGraphClass("ReopenTestGraph");
 		s.finish();
 		s.compile(CodeGeneratorConfiguration.MINIMAL);
-		Class<?> csc = Class.forName("foo.reopen.test.ReopenTestSchema", true, SchemaClassManager.instance("foo.reopen.test.ReopenTestSchema"));
+		Class<?> csc = Class
+				.forName("foo.reopen.test.ReopenTestSchema", true,
+						SchemaClassManager
+								.instance("foo.reopen.test.ReopenTestSchema"));
 		Schema cs = (Schema) csc.getMethod("instance").invoke(null);
 		cs.reopen();
 	}
+
 }

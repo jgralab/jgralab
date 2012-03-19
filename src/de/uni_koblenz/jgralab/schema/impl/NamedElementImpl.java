@@ -90,7 +90,7 @@ public abstract class NamedElementImpl implements NamedElement {
 	 * Check the preconditions section
 	 * {@link #NamedElementImpl(String, Package, Schema) here} for details.
 	 */
-	private static final Pattern PACKAGE_NAME_PATTERN = Pattern
+	static final Pattern PACKAGE_NAME_PATTERN = Pattern
 			.compile("\\p{Lower}\\w*");
 
 	/**
@@ -99,7 +99,7 @@ public abstract class NamedElementImpl implements NamedElement {
 	 * Check the preconditions section
 	 * {@link #NamedElementImpl(String, Package, Schema) here} for details.
 	 */
-	private static final Pattern ATTRELEM_OR_NOCOLLDOMAIN_PATTERN = Pattern
+	static final Pattern ATTRELEM_OR_NOCOLLDOMAIN_PATTERN = Pattern
 			.compile("\\p{Upper}\\w*?");
 
 	/**
@@ -493,5 +493,30 @@ public abstract class NamedElementImpl implements NamedElement {
 			}
 			this.comments.add(comment);
 		}
+	}
+
+	@Override
+	public void setQualifiedName(String newQName) {
+		throw new UnsupportedOperationException("Renaming not allowed for "
+				+ getClass().getName());
+	}
+
+	/**
+	 * Registers this element's qualified name with the schema (and graph class
+	 * for graph element classes), and the simple name with the containing
+	 * package.
+	 */
+	protected void register() {
+		schema.namedElements.put(qualifiedName, this);
+	}
+
+	/**
+	 * Removes this element's qualified name from the schema's namedElements map
+	 * (and the graph class vertexClasses/edgeClasses maps for graph element
+	 * classes), and also removes this element's simple name from the containing
+	 * package's maps.
+	 */
+	protected void unregister() {
+		schema.namedElements.remove(qualifiedName);
 	}
 }

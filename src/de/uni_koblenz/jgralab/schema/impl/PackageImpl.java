@@ -47,13 +47,10 @@ import de.uni_koblenz.jgralab.schema.exception.SchemaException;
 
 public final class PackageImpl extends NamedElementImpl implements Package {
 
-	private final Map<String, Domain> domains = new TreeMap<String, Domain>();
-
-	private final Map<String, EdgeClass> edgeClasses = new TreeMap<String, EdgeClass>();
-
+	final Map<String, Domain> domains = new TreeMap<String, Domain>();
+	final Map<String, EdgeClass> edgeClasses = new TreeMap<String, EdgeClass>();
+	final Map<String, VertexClass> vertexClasses = new TreeMap<String, VertexClass>();
 	private final Map<String, Package> subPackages = new TreeMap<String, Package>();
-
-	private final Map<String, VertexClass> vertexClasses = new TreeMap<String, VertexClass>();
 
 	/**
 	 * Creates a new <code>DefaultPackage</code> in the given Schema.
@@ -221,4 +218,5 @@ public final class PackageImpl extends NamedElementImpl implements Package {
 	public String getUniqueName() {
 		return qualifiedName;
 	}
+
 }

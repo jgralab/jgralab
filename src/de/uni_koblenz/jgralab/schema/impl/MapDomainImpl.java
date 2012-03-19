@@ -57,7 +57,7 @@ import de.uni_koblenz.jgralab.schema.exception.SchemaException;
 
 /**
  * @author Tassilo Horn <horn@uni-koblenz.de>
- * 
+ *
  */
 public final class MapDomainImpl extends CompositeDomainImpl implements
 		MapDomain {
@@ -361,4 +361,5 @@ public final class MapDomainImpl extends CompositeDomainImpl implements
 		}
 		return result;
 	}
+
 }

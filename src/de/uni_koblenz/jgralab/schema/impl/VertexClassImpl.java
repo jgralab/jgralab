@@ -479,4 +479,18 @@ public final class VertexClassImpl extends
 
 		super.reopen();
 	}
+
+	@Override
+	protected final void register() {
+		super.register();
+		graphClass.vertexClasses.put(qualifiedName, this);
+		parentPackage.vertexClasses.put(simpleName, this);
+	}
+
+	@Override
+	protected final void unregister() {
+		super.unregister();
+		graphClass.vertexClasses.remove(qualifiedName);
+		parentPackage.vertexClasses.remove(simpleName);
+	}
 }

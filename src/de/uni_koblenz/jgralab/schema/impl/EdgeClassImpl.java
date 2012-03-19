@@ -50,7 +50,7 @@ public class EdgeClassImpl extends GraphElementClassImpl<EdgeClass, Edge>
 
 	/**
 	 * builds a new edge class
-	 * 
+	 *
 	 * @param qn
 	 *            the unique identifier of the edge class in the schema
 	 * @param from
@@ -133,7 +133,7 @@ public class EdgeClassImpl extends GraphElementClassImpl<EdgeClass, Edge>
 	 * checks if the incidence classes own and inherited are compatible, i.e. if
 	 * the upper multiplicity of own is lower or equal than the one of inherited
 	 * and so on
-	 * 
+	 *
 	 * @param special
 	 * @param general
 	 * @throws SchemaException
@@ -196,5 +196,19 @@ public class EdgeClassImpl extends GraphElementClassImpl<EdgeClass, Edge>
 								+ " at end " + dir);
 			}
 		}
+	}
+
+	@Override
+	protected void register() {
+		super.register();
+		graphClass.edgeClasses.put(qualifiedName, this);
+		parentPackage.edgeClasses.put(simpleName, this);
+	}
+
+	@Override
+	protected void unregister() {
+		super.unregister();
+		graphClass.edgeClasses.remove(qualifiedName);
+		parentPackage.edgeClasses.remove(simpleName);
 	}
 }

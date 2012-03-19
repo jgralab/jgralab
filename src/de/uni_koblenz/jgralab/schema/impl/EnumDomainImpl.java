@@ -244,7 +244,34 @@ public final class EnumDomainImpl extends DomainImpl implements EnumDomain {
 		if (value == null) {
 			return result;
 		}
-		return result &= value instanceof String
+		return result &= (value instanceof String)
 				&& this.getConsts().contains(value);
+	}
+
+	@Override
+	public void setQualifiedName(String newQName) {
+		if (qualifiedName.equals(newQName)) {
+			return;
+		}
+		if (schema.knows(newQName)) {
+			throw new SchemaException(newQName
+					+ " is already known to the schema.");
+		}
+		String[] ps = SchemaImpl.splitQualifiedName(newQName);
+		String newPackageName = ps[0];
+		String newSimpleName = ps[1];
+		if (!NamedElementImpl.ATTRELEM_OR_NOCOLLDOMAIN_PATTERN.matcher(
+				newSimpleName).matches()) {
+			throw new SchemaException("Invalid enum domain name '"
+					+ newSimpleName + "'.");
+		}
+
+		unregister();
+
+		qualifiedName = newQName;
+		simpleName = newSimpleName;
+		parentPackage = schema.createPackageWithParents(newPackageName);
+
+		register();
 	}
 }

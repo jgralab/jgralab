@@ -267,6 +267,29 @@ public final class GraphClassImpl extends
 	}
 
 	@Override
+	public void setQualifiedName(String newQName) {
+		if (qualifiedName.equals(newQName)) {
+			return;
+		}
+		if (schema.knows(newQName)) {
+			throw new SchemaException(newQName
+					+ " is already known to the schema.");
+		}
+		if (newQName.contains(".")) {
+			throw new SchemaException(
+					"The GraphClass must be in the default package. "
+							+ "You tried to move it to '" + newQName + "'.");
+		}
+
+		unregister();
+
+		qualifiedName = newQName;
+		simpleName = newQName;
+
+		register();
+	}
+
+	@Override
 	protected final void reopen() {
 		for (VertexClass vc : vertexClassDag.getNodesInTopologicalOrder()) {
 			((VertexClassImpl) vc).reopen();
@@ -278,4 +301,5 @@ public final class GraphClassImpl extends
 		edgeClassDag.reopen();
 		super.reopen();
 	}
+
 }
