@@ -169,12 +169,6 @@ public class SchemaImpl implements Schema, ManagableArtifact {
 	private String packagePrefix;
 
 	/**
-	 * Maps from simple names to a set of {@link NamedElement}s which have this
-	 * simple name. Used for creation of unique names.
-	 */
-	private Map<String, AttributedElementClass<?, ?>> duplicateSimpleNames = new HashMap<String, AttributedElementClass<?, ?>>();
-
-	/**
 	 * Maps from qualified name to the {@link Package} with that qualified name.
 	 */
 	private Map<String, PackageImpl> packages = new TreeMap<String, PackageImpl>();
@@ -188,7 +182,7 @@ public class SchemaImpl implements Schema, ManagableArtifact {
 	/**
 	 * A set of all qualified names known to this schema.
 	 */
-	private Map<String, NamedElement> namedElements = new TreeMap<String, NamedElement>();
+	Map<String, NamedElement> namedElements = new TreeMap<String, NamedElement>();
 
 	private BooleanDomain booleanDomain;
 
@@ -280,20 +274,6 @@ public class SchemaImpl implements Schema, ManagableArtifact {
 
 		if (!(namedElement instanceof AttributedElementClass)) {
 			return;
-		}
-
-		AttributedElementClass<?, ?> aec = (AttributedElementClass<?, ?>) namedElement;
-
-		if (duplicateSimpleNames.containsKey(aec.getSimpleName())) {
-			AttributedElementClass<?, ?> other = duplicateSimpleNames.get(aec
-					.getSimpleName());
-			if (other != null) {
-				((NamedElementImpl) other).changeUniqueName();
-				duplicateSimpleNames.put(aec.getSimpleName(), null);
-			}
-			((NamedElementImpl) aec).changeUniqueName();
-		} else {
-			duplicateSimpleNames.put(aec.getSimpleName(), aec);
 		}
 	}
 

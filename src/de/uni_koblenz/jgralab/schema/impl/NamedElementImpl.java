@@ -40,7 +40,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.BasicDomain;
 import de.uni_koblenz.jgralab.schema.CollectionDomain;
 import de.uni_koblenz.jgralab.schema.GraphClass;
@@ -77,14 +76,6 @@ public abstract class NamedElementImpl implements NamedElement {
 	 * name.
 	 */
 	protected String simpleName;
-
-	/**
-	 * The unique name of an element in a schema. If there is only one class in
-	 * the schema with this simple name, the unique name is the simple name.
-	 * Otherwise, the unique name is the same as the qualified name, except that
-	 * all <code>'.'</code> are replaced by <code>'$'</code>characters.
-	 */
-	protected String uniqueName;
 
 	/**
 	 * Pattern to match the simple name of Collection-/Map-Domain elements with.<br />
@@ -270,7 +261,6 @@ public abstract class NamedElementImpl implements NamedElement {
 				this.qualifiedName = Package.DEFAULTPACKAGE_NAME;
 				this.parentPackage = null;
 				this.simpleName = Package.DEFAULTPACKAGE_NAME;
-				this.uniqueName = Package.DEFAULTPACKAGE_NAME;
 				comments = new ArrayList<String>();
 				return;
 			} else {
@@ -370,13 +360,6 @@ public abstract class NamedElementImpl implements NamedElement {
 							+ qualifiedName + "'.");
 		}
 
-		/*
-		 * If the unique name is in use, then addToKnownElements() will change
-		 * it.
-		 */
-		if (this instanceof AttributedElementClass) {
-			uniqueName = simpleName;
-		}
 		schema.addNamedElement(this);
 		comments = new ArrayList<String>();
 	}
@@ -384,17 +367,6 @@ public abstract class NamedElementImpl implements NamedElement {
 	@Override
 	public String toString() {
 		return getQualifiedName();
-	}
-
-	/**
-	 * This method is invoked on one or more element's bearing the same unique
-	 * name, when a new element is added to the schema.
-	 *
-	 * The unique name is changed to match the qualified name, with all '.'
-	 * replaced by '$' characters.
-	 */
-	final void changeUniqueName() {
-		uniqueName = toUniqueNameNotation(qualifiedName);
 	}
 
 	@Override
@@ -451,7 +423,12 @@ public abstract class NamedElementImpl implements NamedElement {
 
 	@Override
 	public String getUniqueName() {
-		return uniqueName;
+		for (NamedElement n : schema.namedElements.values()) {
+			if (n.getSimpleName().equals(simpleName) && (n != this)) {
+				return toUniqueNameNotation(qualifiedName);
+			}
+		}
+		return simpleName;
 	}
 
 	@Override
