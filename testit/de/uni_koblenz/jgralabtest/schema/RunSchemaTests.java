@@ -44,7 +44,7 @@ import org.junit.runners.Suite;
 @RunWith(Suite.class)
 @Suite.SuiteClasses({ RunDomainTests.class, RunAttributedElementTests.class,
 		MultiplicityTest.class, SchemaReopeningTest.class,
-		NamedElementTests.class })
+		SchemaModificationTests.class })
 public class RunSchemaTests {
 
 }

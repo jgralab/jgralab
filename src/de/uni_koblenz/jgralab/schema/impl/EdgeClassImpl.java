@@ -211,4 +211,12 @@ public class EdgeClassImpl extends GraphElementClassImpl<EdgeClass, Edge>
 		graphClass.edgeClasses.remove(qualifiedName);
 		parentPackage.edgeClasses.remove(simpleName);
 	}
+
+	@Override
+	public void delete() {
+		schema.namedElements.remove(qualifiedName);
+		graphClass.edgeClasses.remove(qualifiedName);
+		graphClass.edgeClassDag.delete(this);
+		parentPackage.edgeClasses.remove(simpleName);
+	}
 }

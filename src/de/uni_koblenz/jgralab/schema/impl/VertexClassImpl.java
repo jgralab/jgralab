@@ -493,4 +493,12 @@ public final class VertexClassImpl extends
 		graphClass.vertexClasses.remove(qualifiedName);
 		parentPackage.vertexClasses.remove(simpleName);
 	}
+
+	@Override
+	public void delete() {
+		schema.namedElements.remove(qualifiedName);
+		graphClass.vertexClasses.remove(qualifiedName);
+		graphClass.vertexClassDag.delete(this);
+		parentPackage.vertexClasses.remove(simpleName);
+	}
 }

@@ -257,4 +257,10 @@ public class DirectedAcyclicGraph<T> extends DirectedGraph<T> {
 		cachedSuccessors = null;
 		finished = false;
 	}
+
+	@Override
+	public void delete(T data) {
+		super.delete(data);
+		computeTopologicalOrder();
+	}
 }

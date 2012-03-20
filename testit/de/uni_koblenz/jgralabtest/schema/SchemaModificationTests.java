@@ -1,8 +1,10 @@
 package de.uni_koblenz.jgralabtest.schema;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
@@ -18,9 +20,9 @@ import de.uni_koblenz.jgralab.schema.VertexClass;
 import de.uni_koblenz.jgralab.schema.exception.SchemaException;
 import de.uni_koblenz.jgralab.schema.impl.SchemaImpl;
 
-public class NamedElementTests {
+public class SchemaModificationTests {
 
-	private static GraphClass createSchemaWithGraphClass() {
+	static GraphClass createSchemaWithGraphClass() {
 		Schema s = new SchemaImpl("TestSchema", "de.testschema");
 		GraphClass gc = s.createGraphClass("TestGraph");
 		return gc;
@@ -176,5 +178,19 @@ public class NamedElementTests {
 		// The default package must not be renamed
 		GraphClass gc = createSchemaWithGraphClass();
 		gc.getPackage().setQualifiedName("foo");
+	}
+
+	@Test
+	public void testDeleteVertexClass() {
+		GraphClass gc = createSchemaWithGraphClass();
+		VertexClass vc1 = gc.createVertexClass("VC1");
+		VertexClass vc2 = gc.createVertexClass("VC2");
+		vc1.delete();
+
+		assertFalse(gc.getSchema().knows("VC1"));
+		// 1 or 2? Should getVertexClasses really return Vertex?
+		assertEquals(2, gc.getVertexClasses().size());
+		assertTrue(gc.getGraphElementClasses().contains(vc2));
+		assertFalse(gc.getGraphElementClasses().contains(vc1));
 	}
 }

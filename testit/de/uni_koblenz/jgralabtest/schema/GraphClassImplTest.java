@@ -90,16 +90,6 @@ public final class GraphClassImplTest extends
 	}
 
 	@Test
-	public void testCreateAggregationClass() {
-		// TODO Auto-generated method stub
-	}
-
-	@Test
-	public void testCreateCompositionClass() {
-		// TODO Auto-generated method stub
-	}
-
-	@Test
 	public void testCreateEdgeClass() {
 		// TODO Auto-generated method stub
 	}
@@ -114,26 +104,6 @@ public final class GraphClassImplTest extends
 
 	@Test
 	public void testCreateVertexClass() {
-		// TODO Auto-generated method stub
-	}
-
-	@Test
-	public void testGetAggregationClass() {
-		// TODO Auto-generated method stub
-	}
-
-	@Test
-	public void testGetAggregationClasses() {
-		// TODO Auto-generated method stub
-	}
-
-	@Test
-	public void testGetCompositionClass() {
-		// TODO Auto-generated method stub
-	}
-
-	@Test
-	public void testGetCompositionClasses() {
 		// TODO Auto-generated method stub
 	}
 
@@ -154,16 +124,6 @@ public final class GraphClassImplTest extends
 
 	@Test
 	public void testGetGraphElementClasses() {
-		// TODO Auto-generated method stub
-	}
-
-	@Test
-	public void testGetOwnAggregationClasses() {
-		// TODO Auto-generated method stub
-	}
-
-	@Test
-	public void testGetOwnCompositionClasses() {
 		// TODO Auto-generated method stub
 	}
 

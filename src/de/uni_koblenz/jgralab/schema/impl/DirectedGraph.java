@@ -131,4 +131,22 @@ public class DirectedGraph<T> {
 		assert nodeValues.contains(data);
 		return entries.get(data).successors;
 	}
+
+	public void delete(T data) {
+		if (finished) {
+			throw new SchemaException();
+		}
+		Node<T> node = entries.get(data);
+		entries.remove(data);
+		nodes = nodes.minus(node);
+		nodeValues = nodeValues.minus(node);
+		for (T pred : node.predecessors) {
+			Node<T> predNode = entries.get(pred);
+			predNode.successors = predNode.successors.minus(data);
+		}
+		for (T succ : node.successors) {
+			Node<T> succNode = entries.get(succ);
+			succNode.predecessors = succNode.predecessors.minus(data);
+		}
+	}
 }
