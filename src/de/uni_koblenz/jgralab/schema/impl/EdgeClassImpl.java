@@ -85,6 +85,20 @@ public class EdgeClassImpl extends GraphElementClassImpl<EdgeClass, Edge>
 			String fromRoleName, AggregationKind aggrFrom, VertexClass to,
 			int toMin, int toMax, String toRoleName, AggregationKind aggrTo) {
 		super(simpleName, pkg, gc, gc.edgeClassDag);
+
+		if (pkg.isDefaultPackage() && simpleName.equals(DEFAULTEDGECLASS_NAME)) {
+			// the default EC is just created
+		} else {
+			if ((from == graphClass.getDefaultVertexClass())
+					|| (to == graphClass.getDefaultVertexClass())) {
+				throw new SchemaException(
+						"EdgeClasses from/to the default vertex class are forbidden!\n "
+								+ "Tried to create edge class " + simpleName
+								+ ": " + to.getQualifiedName() + " -> "
+								+ to.getQualifiedName());
+			}
+		}
+
 		IncidenceClass fromInc = new IncidenceClassImpl(this, from,
 				fromRoleName, fromMin, fromMax, IncidenceDirection.OUT,
 				aggrFrom);
