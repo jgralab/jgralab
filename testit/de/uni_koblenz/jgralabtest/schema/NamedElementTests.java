@@ -1,6 +1,7 @@
 package de.uni_koblenz.jgralabtest.schema;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
 import org.junit.Test;
@@ -155,6 +156,19 @@ public class NamedElementTests {
 		for (NamedElement ne : new NamedElement[] { foo, bar, baz }) {
 			assertEquals("p2." + ne.getSimpleName(), ne.getQualifiedName());
 		}
+		// now we have 2 packages
+		assertNotNull(gc.getSchema().getPackage("p1"));
+		assertNotNull(gc.getSchema().getPackage("p2"));
+		// and p1 is empty
+		assertEquals(0, gc.getSchema().getPackage("p1").getVertexClasses()
+				.keySet().size()
+				+ gc.getSchema().getPackage("p1").getEdgeClasses().keySet()
+						.size());
+		// and p2 contains 2 vertex classes and 1 edge class
+		assertEquals(2, gc.getSchema().getPackage("p2").getVertexClasses()
+				.keySet().size());
+		assertEquals(1, gc.getSchema().getPackage("p2").getEdgeClasses()
+				.keySet().size());
 	}
 
 	@Test(expected = SchemaException.class)
