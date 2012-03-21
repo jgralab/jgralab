@@ -68,11 +68,12 @@ public interface AttributedElementClass<SC extends AttributedElementClass<SC, IC
 		extends NamedElement {
 
 	/**
-	 * Adds an attribute with the given <code>name</code>, <code>domain</code>,
-	 * and default value to this element.
+	 * Creates and returns an attribute with the given <code>name</code>,
+	 * <code>domain</code>, and default value to this element.
 	 *
 	 * <p>
-	 * <b>Pattern:</b> <code>attrElement.addAttribute(name, domain, "7");</code>
+	 * <b>Pattern:</b>
+	 * <code>attrElement.createAttribute(name, domain, "7");</code>
 	 * </p>
 	 *
 	 * <p>
@@ -105,16 +106,16 @@ public interface AttributedElementClass<SC extends AttributedElementClass<SC, IC
 	 *             if this element has a direct or inherited attribute with the
 	 *             same <code>name</code>
 	 */
-	public Attribute addAttribute(String name, Domain domain,
+	public Attribute createAttribute(String name, Domain domain,
 			String defaultValueAsString);
 
 	/**
-	 * Adds an attribute with the given <code>name</code> and
+	 * Creates and returns an attribute with the given <code>name</code> and
 	 * <code>domain</code> to this element. The attribute does not have a
 	 * default value.
 	 *
 	 * <p>
-	 * <b>Pattern:</b> <code>attrElement.addAttribute(name, domain);</code>
+	 * <b>Pattern:</b> <code>attrElement.createAttribute(name, domain);</code>
 	 * </p>
 	 *
 	 * <p>
@@ -142,7 +143,7 @@ public interface AttributedElementClass<SC extends AttributedElementClass<SC, IC
 	 *             if this element has a direct or inherited attribute with the
 	 *             same <code>name</code>
 	 */
-	public Attribute addAttribute(String name, Domain domain);
+	public Attribute createAttribute(String name, Domain domain);
 
 	/**
 	 * Adds a {@link Constraint} to this attributed element. Constraints are

@@ -105,7 +105,7 @@ public abstract class AttributedElementClassImpl<SC extends AttributedElementCla
 		constraints = ArrayPSet.empty();
 	}
 
-	protected Attribute addAttribute(Attribute anAttribute) {
+	protected Attribute createAttribute(Attribute anAttribute) {
 		assertNotFinished();
 
 		if (containsAttribute(anAttribute.getName())) {
@@ -120,15 +120,15 @@ public abstract class AttributedElementClassImpl<SC extends AttributedElementCla
 	}
 
 	@Override
-	public Attribute addAttribute(String name, Domain domain,
+	public Attribute createAttribute(String name, Domain domain,
 			String defaultValueAsString) {
-		return addAttribute(new AttributeImpl(name, domain, this,
+		return createAttribute(new AttributeImpl(name, domain, this,
 				defaultValueAsString));
 	}
 
 	@Override
-	public Attribute addAttribute(String name, Domain domain) {
-		return addAttribute(new AttributeImpl(name, domain, this, null));
+	public Attribute createAttribute(String name, Domain domain) {
+		return createAttribute(new AttributeImpl(name, domain, this, null));
 	}
 
 	@Override
