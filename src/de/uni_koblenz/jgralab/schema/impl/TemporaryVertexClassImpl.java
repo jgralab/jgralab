@@ -3,6 +3,7 @@ package de.uni_koblenz.jgralab.schema.impl;
 import java.util.List;
 import java.util.Set;
 
+import org.pcollections.ArrayPSet;
 import org.pcollections.PSet;
 
 import de.uni_koblenz.jgralab.NoSuchAttributeException;
@@ -15,12 +16,12 @@ import de.uni_koblenz.jgralab.schema.IncidenceClass;
 import de.uni_koblenz.jgralab.schema.VertexClass;
 
 public class TemporaryVertexClassImpl extends
-		GraphElementClassImpl<VertexClass, Vertex> implements VertexClass {
+		VertexClassImpl implements VertexClass {
 
 	protected TemporaryVertexClassImpl(
 			GraphClassImpl gc) {
 		super("TemporaryVertexClass", (PackageImpl) gc.getSchema().getDefaultPackage(), 
-				gc, gc.vertexClassDag);
+				gc);
 	}
 
 	@Override
@@ -30,22 +31,22 @@ public class TemporaryVertexClassImpl extends
 
 	@Override
 	public PSet<VertexClass> getDirectSubClasses() {
-		return null;
+		return ArrayPSet.empty();
 	}
 
 	@Override
 	public PSet<VertexClass> getDirectSuperClasses() {
-		return null;
+		return ArrayPSet.empty();
 	}
 
 	@Override
 	public PSet<VertexClass> getAllSubClasses() {
-		return null;
+		return ArrayPSet.empty();
 	}
 
 	@Override
 	public PSet<VertexClass> getAllSuperClasses() {
-		return null;
+		return ArrayPSet.empty();
 	}
 
 	@Override
@@ -176,27 +177,27 @@ public class TemporaryVertexClassImpl extends
 
 	@Override
 	public Set<IncidenceClass> getAllInIncidenceClasses() {
-		return null;
+		return ArrayPSet.empty();
 	}
 
 	@Override
 	public Set<IncidenceClass> getAllOutIncidenceClasses() {
-		return null;
+		return ArrayPSet.empty();
 	}
 
 	@Override
 	public Set<IncidenceClass> getValidFromFarIncidenceClasses() {
-		return null;
+		return ArrayPSet.empty();
 	}
 
 	@Override
 	public Set<IncidenceClass> getValidToFarIncidenceClasses() {
-		return null;
+		return ArrayPSet.empty();
 	}
 
 	@Override
 	public Set<IncidenceClass> getOwnAndInheritedFarIncidenceClasses() {
-		return null;
+		return ArrayPSet.empty();
 	}
 
 	@Override
@@ -217,22 +218,22 @@ public class TemporaryVertexClassImpl extends
 
 	@Override
 	public Set<EdgeClass> getValidToEdgeClasses() {
-		return null;
+		return ArrayPSet.empty();
 	}
 
 	@Override
 	public Set<EdgeClass> getValidFromEdgeClasses() {
-		return null;
+		return ArrayPSet.empty();
 	}
 
 	@Override
 	public Set<EdgeClass> getConnectedEdgeClasses() {
-		return null;
+		return ArrayPSet.empty();
 	}
 
 	@Override
 	public Set<EdgeClass> getOwnConnectedEdgeClasses() {
-		return null;
+		return ArrayPSet.empty();
 	}
 
 	@Override

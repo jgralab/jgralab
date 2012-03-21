@@ -431,11 +431,17 @@ public class VertexClassImpl extends
 
 	@Override
 	public boolean isValidFromFor(EdgeClass ec) {
+		if(ec.equals(this.graphClass.getTemporaryEdgeClass())){
+			return true;
+		}
 		return getValidFromEdgeClasses().contains(ec);
 	}
 
 	@Override
 	public boolean isValidToFor(EdgeClass ec) {
+		if(ec.equals(this.graphClass.getTemporaryEdgeClass())){
+			return true;
+		}
 		return getValidToEdgeClasses().contains(ec);
 	}
 

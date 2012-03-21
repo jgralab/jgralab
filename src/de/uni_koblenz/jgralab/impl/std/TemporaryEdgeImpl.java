@@ -10,6 +10,7 @@ import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.NoSuchAttributeException;
 import de.uni_koblenz.jgralab.TemporaryEdge;
 import de.uni_koblenz.jgralab.Vertex;
+import de.uni_koblenz.jgralab.impl.GraphBaseImpl;
 import de.uni_koblenz.jgralab.impl.ReversedEdgeBaseImpl;
 import de.uni_koblenz.jgralab.schema.AggregationKind;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
@@ -22,6 +23,7 @@ public class TemporaryEdgeImpl extends EdgeImpl implements TemporaryEdge{
 			Vertex omega) {
 		super(anId, graph, alpha, omega);
 		this.attributes = new HashMap<String, Object>();
+		((GraphBaseImpl)graph).addEdge(this, alpha, omega);
 	}
 
 	@Override

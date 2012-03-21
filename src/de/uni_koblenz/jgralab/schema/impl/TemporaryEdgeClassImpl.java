@@ -3,6 +3,7 @@ package de.uni_koblenz.jgralab.schema.impl;
 import java.util.List;
 import java.util.Set;
 
+import org.pcollections.ArrayPSet;
 import org.pcollections.PSet;
 
 import de.uni_koblenz.jgralab.Edge;
@@ -12,46 +13,37 @@ import de.uni_koblenz.jgralab.schema.Attribute;
 import de.uni_koblenz.jgralab.schema.Constraint;
 import de.uni_koblenz.jgralab.schema.Domain;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
-import de.uni_koblenz.jgralab.schema.IncidenceClass;
-import de.uni_koblenz.jgralab.schema.IncidenceDirection;
 
-public class TemporaryEdgeClassImpl extends GraphElementClassImpl<EdgeClass, Edge> implements EdgeClass {
-
-	private IncidenceClass from, to;
-
+public class TemporaryEdgeClassImpl extends EdgeClassImpl implements EdgeClass {
 	
 	protected TemporaryEdgeClassImpl(
 			GraphClassImpl graphClass) {
-		super("TemporaryEdgeClass", (PackageImpl)graphClass.getSchema().getDefaultPackage(), 
-				graphClass, graphClass.edgeClassDag);
-		
-		IncidenceClass fromInc = new IncidenceClassImpl(this, graphClass.getDefaultVertexClass(),
-				"", 0, Integer.MAX_VALUE, IncidenceDirection.OUT,
-				AggregationKind.NONE);
-		IncidenceClass toInc = new IncidenceClassImpl(this, graphClass.getDefaultVertexClass(), "",
-				0, Integer.MAX_VALUE, IncidenceDirection.IN, AggregationKind.NONE);
-		this.from = fromInc;
-		this.to = toInc;
+		//super(simpleName, pkg, gc, from, fromMin, fromMax, fromRoleName, aggrFrom, to, toMin, toMax, toRoleName, aggrTo)
+		super("TemporaryEdgeClass", 
+				(PackageImpl)graphClass.getSchema().getDefaultPackage(), 
+				graphClass, 
+				graphClass.getDefaultVertexClass(), 0, Integer.MAX_VALUE,"",AggregationKind.NONE,
+				graphClass.getDefaultVertexClass(),0, Integer.MAX_VALUE, "", AggregationKind.NONE);
 	}
 
 	@Override
 	public PSet<EdgeClass> getDirectSubClasses() {
-		return null;
+		return ArrayPSet.empty();
 	}
 
 	@Override
 	public PSet<EdgeClass> getDirectSuperClasses() {
-		return null;
+		return ArrayPSet.empty();
 	}
 
 	@Override
 	public PSet<EdgeClass> getAllSubClasses() {
-		return null;
+		return ArrayPSet.empty();
 	}
 
 	@Override
 	public PSet<EdgeClass> getAllSuperClasses() {
-		return null;
+		return ArrayPSet.empty();
 	}
 
 	@Override
@@ -183,16 +175,6 @@ public class TemporaryEdgeClassImpl extends GraphElementClassImpl<EdgeClass, Edg
 	@Override
 	public void addSuperClass(EdgeClass superClass) {
 		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	public IncidenceClass getFrom() {
-		return this.from;
-	}
-
-	@Override
-	public IncidenceClass getTo() {
-		return this.to;
 	}
 
 	@Override

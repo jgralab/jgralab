@@ -231,14 +231,16 @@ public final class GraphClassImpl extends
 	public final List<EdgeClass> getEdgeClasses() {
 		PVector<EdgeClass> vec = edgeClassDag.getNodesInTopologicalOrder();
 		assert vec.get(0) == defaultEdgeClass;
-		return vec.subList(1, vec.size());
+		assert vec.get(1) == tempEdgeClass;
+		return vec.subList(2, vec.size());
 	}
 
 	@Override
 	public final List<VertexClass> getVertexClasses() {
 		PVector<VertexClass> vec = vertexClassDag.getNodesInTopologicalOrder();
 		assert vec.get(0) == defaultVertexClass;
-		return vec.subList(1, vec.size());
+		assert vec.get(1) == tempVertexClass;
+		return vec.subList(2, vec.size());
 	}
 
 	@Override
