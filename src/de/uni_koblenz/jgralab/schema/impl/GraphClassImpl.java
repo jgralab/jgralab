@@ -40,6 +40,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.pcollections.PVector;
+
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.schema.AggregationKind;
 import de.uni_koblenz.jgralab.schema.Attribute;
@@ -204,12 +206,16 @@ public final class GraphClassImpl extends
 
 	@Override
 	public final List<EdgeClass> getEdgeClasses() {
-		return edgeClassDag.getNodesInTopologicalOrder();
+		PVector<EdgeClass> vec = edgeClassDag.getNodesInTopologicalOrder();
+		assert vec.get(0) == defaultEdgeClass;
+		return vec.subList(1, vec.size());
 	}
 
 	@Override
 	public final List<VertexClass> getVertexClasses() {
-		return vertexClassDag.getNodesInTopologicalOrder();
+		PVector<VertexClass> vec = vertexClassDag.getNodesInTopologicalOrder();
+		assert vec.get(0) == defaultVertexClass;
+		return vec.subList(1, vec.size());
 	}
 
 	@Override
@@ -224,12 +230,14 @@ public final class GraphClassImpl extends
 
 	@Override
 	public final int getEdgeClassCount() {
-		return edgeClasses.size();
+		// -1, cause the defaul edge class doesn't count
+		return edgeClasses.size() - 1;
 	}
 
 	@Override
 	public final int getVertexClassCount() {
-		return vertexClasses.size();
+		// -1, cause the defaul vertex class doesn't count
+		return vertexClasses.size() - 1;
 	}
 
 	@Override

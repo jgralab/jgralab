@@ -188,8 +188,7 @@ public class SchemaModificationTests {
 		vc1.delete();
 
 		assertFalse(gc.getSchema().knows("VC1"));
-		// 1 or 2? Should getVertexClasses really return Vertex?
-		assertEquals(2, gc.getVertexClasses().size());
+		assertEquals(1, gc.getVertexClasses().size());
 		assertTrue(gc.getGraphElementClasses().contains(vc2));
 		assertFalse(gc.getGraphElementClasses().contains(vc1));
 	}

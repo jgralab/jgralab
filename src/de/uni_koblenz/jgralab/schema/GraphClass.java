@@ -155,7 +155,8 @@ public interface GraphClass extends AttributedElementClass<GraphClass, Graph> {
 	public VertexClass getVertexClass(String name);
 
 	/**
-	 * Returns the number of VertexClasses defined in this GraphClass.
+	 * Returns the number of VertexClasses defined in this GraphClass excluding
+	 * the default vertex class.
 	 *
 	 * @return the number of VertexClasses defined in this GraphClass.
 	 */
@@ -173,8 +174,8 @@ public interface GraphClass extends AttributedElementClass<GraphClass, Graph> {
 	public EdgeClass getEdgeClass(String name);
 
 	/**
-	 * Returns the number of EdgeClasses (that is Edge-/Aggregation- and
-	 * CompositionClasses) defined in this GraphClass.
+	 * Returns the number of EdgeClasses defined in this GraphClass excluding
+	 * the default edge class.
 	 *
 	 * @return the number of EdgeClasses defined in this GraphClass.
 	 */

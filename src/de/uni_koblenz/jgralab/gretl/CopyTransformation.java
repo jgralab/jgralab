@@ -62,36 +62,36 @@ import de.uni_koblenz.jgralab.schema.VertexClass;
  * target graph is the union of the source graph's graph element instances, too.
  * It has to be noted, that the id's won't be retained. <br/>
  * <br/>
- * 
+ *
  * In case of more than one source graph, the qualified names of their schema
  * elements must be disjoint. As an exception to this rule, if there a multiple
  * source graphs conforming to the same schema, then the schema element creation
  * will only be performed once, but all vertices and edges from all graphs will
  * be copied to the target graph.<br/>
  * <br/>
- * 
+ *
  * To exclude elements simply provide a regular expression {@link Pattern} to
  * the <code>excludePattern</code> constructor parameter. There's also an
  * <code>includePattern</code> parameter, which overrides the exclude pattern.
  * If the exclude pattern is omitted, only the elements matching the include
  * pattern are copied.
- * 
+ *
  * To exclude/include attributes use a syntax like this:
  * <code>"bar\\.Foo\\.(a|c)"</code>. This would omit the attributes
  * <code>a</code> and <code>c</code> of the element <code>bar.Foo</code>.<br/>
  * <br/>
- * 
+ *
  * One usecase for this transformation is <b>schema evolution</b>, thas is, you
  * want to create a schema update transformation. Therefore, you want to copy
  * all unchanged parts (schema elements and their instances) and exclude the
  * parts that have changed for which you want to provide custom operation calls. <br/>
  * <br/>
- * 
+ *
  * To do so, derive your own transformation from {@link CopyTransformation}, and
  * put the custom vertex class creation operations in a method overriding
  * {@link #transformVertexClasses()} and the edge creation operations in a
  * method overriding {@link #transformEdgeClasses()}.
- * 
+ *
  * @author Tassilo Horn &lt;horn@uni-koblenz.de&gt;
  */
 public class CopyTransformation extends Transformation<Graph> {
@@ -116,7 +116,7 @@ public class CopyTransformation extends Transformation<Graph> {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.uni_koblenz.jgralab.gretl.Transformation#transform()
 	 */
 	@Override
@@ -255,7 +255,7 @@ public class CopyTransformation extends Transformation<Graph> {
 	 * <code>recordInstance(record_my$Record, rec(a : varName.a, b : varName.b))</code>
 	 * , and simply <code>varName.attrName</code> for simple domains (that is,
 	 * domains that can be assigned between graphs).
-	 * 
+	 *
 	 * @param varName
 	 *            the name of the attributed element variable in the query
 	 * @param attrName
@@ -263,7 +263,7 @@ public class CopyTransformation extends Transformation<Graph> {
 	 * @param domain
 	 *            domain of the attribute
 	 * @return see description...
-	 * 
+	 *
 	 *         // TODO: this won't do the trick for complex attributes that
 	 *         contain records or enums, like Set&lt;MyRecord&gt;...
 	 */
@@ -422,9 +422,6 @@ public class CopyTransformation extends Transformation<Graph> {
 
 			for (VertexClass oldVC : e.getValue().getSchema().getGraphClass()
 					.getVertexClasses()) {
-				if (oldVC.isInternal()) {
-					continue;
-				}
 				// Skip excluded elements
 				if (isExcluded(oldVC.getQualifiedName())) {
 					log.finer("CopyTransformation: Skipped rule for VertexClass "

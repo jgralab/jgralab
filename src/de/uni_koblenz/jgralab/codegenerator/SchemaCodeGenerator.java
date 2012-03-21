@@ -397,10 +397,13 @@ public class SchemaCodeGenerator extends CodeGenerator {
 		code.addNoIndent(new CodeSnippet("public final GraphClass "
 				+ schema.getGraphClass().getVariableName() + ";"));
 
+		code.addNoIndent(new CodeSnippet("public final VertexClass vc_Vertex;"));
 		for (VertexClass vc : schema.getGraphClass().getVertexClasses()) {
 			code.addNoIndent(new CodeSnippet("public final VertexClass "
 					+ vc.getVariableName() + ";"));
 		}
+
+		code.addNoIndent(new CodeSnippet("public final EdgeClass ec_Edge;"));
 		for (EdgeClass ec : schema.getGraphClass().getEdgeClasses()) {
 			code.addNoIndent(new CodeSnippet("public final EdgeClass "
 					+ ec.getVariableName() + ";"));
@@ -411,9 +414,7 @@ public class SchemaCodeGenerator extends CodeGenerator {
 	private CodeBlock createEdgeClasses(GraphClass gc) {
 		CodeList code = new CodeList();
 		for (EdgeClass ec : schema.getGraphClass().getEdgeClasses()) {
-			if (!ec.isInternal()) {
-				code.addNoIndent(createEdgeClass(ec));
-			}
+			code.addNoIndent(createEdgeClass(ec));
 		}
 		return code;
 	}
@@ -485,9 +486,7 @@ public class SchemaCodeGenerator extends CodeGenerator {
 	private CodeBlock createVertexClasses(GraphClass gc) {
 		CodeList code = new CodeList();
 		for (VertexClass vc : schema.getVertexClasses()) {
-			if (!vc.isInternal()) {
-				code.addNoIndent(createVertexClass(vc));
-			}
+			code.addNoIndent(createVertexClass(vc));
 		}
 		return code;
 	}

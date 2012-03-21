@@ -52,7 +52,8 @@ public interface Package extends NamedElement {
 	public static final String DEFAULTPACKAGE_NAME = "";
 
 	/**
-	 * Returns all EdgeClasses of this package.
+	 * Returns all EdgeClasses of this package. Note that the default package
+	 * also contains the default edge class.
 	 *
 	 * @return a Map containing all EdgeClasses of this Package, mapped to their
 	 *         simple names.
@@ -103,7 +104,8 @@ public interface Package extends NamedElement {
 	public Map<String, Package> getSubPackages();
 
 	/**
-	 * Returns all VertexClasses of this package.
+	 * Returns all VertexClasses of this package. Note that the default package
+	 * also contains the default vertex class.
 	 *
 	 * @return a Map containing all VertexClasses of this Package, mapped to
 	 *         their simple names.

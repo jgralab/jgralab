@@ -297,18 +297,12 @@ public class SchemaImpl implements Schema, ManagableArtifact {
 		javaSources.addAll(graphCodeGenerator.createJavaSources());
 
 		for (VertexClass vertexClass : graphClass.getVertexClasses()) {
-			if (vertexClass.isInternal()) {
-				continue;
-			}
 			VertexCodeGenerator codeGen = new VertexCodeGenerator(vertexClass,
 					packagePrefix, config);
 			javaSources.addAll(codeGen.createJavaSources());
 		}
 
 		for (EdgeClass edgeClass : graphClass.getEdgeClasses()) {
-			if (edgeClass.isInternal()) {
-				continue;
-			}
 			CodeGenerator codeGen = new EdgeCodeGenerator(edgeClass,
 					packagePrefix, config);
 			javaSources.addAll(codeGen.createJavaSources());
