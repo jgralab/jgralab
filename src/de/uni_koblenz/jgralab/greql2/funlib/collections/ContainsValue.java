@@ -36,13 +36,16 @@ package de.uni_koblenz.jgralab.greql2.funlib.collections;
 
 import org.pcollections.PMap;
 
+import de.uni_koblenz.jgralab.greql2.funlib.Description;
 import de.uni_koblenz.jgralab.greql2.funlib.Function;
 
 public class ContainsValue extends Function {
 
+	@Description(params = {"map","value"}, description = 
+		"Returns true, iff the given map contains the given value.",
+		categories = Category.COLLECTIONS_AND_MAPS)
 	public ContainsValue() {
-		super("Returns true, iff the given map contains the given value.", 4,
-				1, 0.2, Category.COLLECTIONS_AND_MAPS);
+		super(4, 1, 0.2);
 	}
 
 	public <K, V> Boolean evaluate(PMap<K, V> map, V value) {

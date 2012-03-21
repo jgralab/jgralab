@@ -34,14 +34,16 @@
  */
 package de.uni_koblenz.jgralab.greql2.funlib.artithmetics;
 
+import de.uni_koblenz.jgralab.greql2.funlib.Description;
 import de.uni_koblenz.jgralab.greql2.funlib.Function;
 
 public class Sub extends Function {
+	
+	@Description(params = {"a","b"}, description = 
+		"Substracts the second number from the first number with the usual Java overflow "
+		+ "semantics. Can be used as operator: a - b.", categories = Category.ARITHMETICS)
 	public Sub() {
-		super(
-				"Substracts the second number from the first number with the usual Java overflow "
-						+ "semantics. Can be used as operator: a - b.", 4, 1,
-				1.0, Category.ARITHMETICS);
+		super(4, 1, 1.0);
 	}
 
 	public Number evaluate(Number a, Number b) {

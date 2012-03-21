@@ -203,7 +203,7 @@ public class SchemaCompare {
 		}
 
 		for (GraphElementClass<?, ?> gec : g.getGraphElementClasses()) {
-			if (gec.isInternal()) {
+			if (gec.isDefaultGraphElementClass()) {
 				continue;
 			}
 			compareGraphElementClass(gec,

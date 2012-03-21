@@ -100,34 +100,38 @@ import de.uni_koblenz.jgralab.schema.impl.compilation.InMemoryJavaSourceFile;
 import de.uni_koblenz.jgralab.schema.impl.compilation.ManagableArtifact;
 import de.uni_koblenz.jgralab.schema.impl.compilation.SchemaClassManager;
 
-public class GreqlCodeGenerator extends CodeGenerator implements ManagableArtifact {
+public class GreqlCodeGenerator extends CodeGenerator implements
+		ManagableArtifact {
 
 	public static final String codeGeneratorFileManagerName = "GeneratedQueries";
-	
+
 	private Greql2 graph;
-	
+
 	private String classname;
-	
+
 	private String packageName;
-		
+
 	private CodeSnippet classFieldSnippet = new CodeSnippet();
-	
+
 	private CodeSnippet staticFieldSnippet = new CodeSnippet();
-	
+
 	private CodeSnippet staticInitializerSnippet = new CodeSnippet("static {");
-	
+
 	private List<CodeBlock> createdMethods = new LinkedList<CodeBlock>();
-	
+
 	private Scope scope;
-	
+
 	private Schema schema;
-	
+
 	private boolean thisLiteralsCreated = false;
-	
+
 	private GraphMarker<VertexEvaluator> vertexEvalGraphMarker;
-	
-	public GreqlCodeGenerator(Greql2 graph, GraphMarker<VertexEvaluator> vertexEvalGraphMarker, Schema datagraphSchema, String packageName, String classname) {
-		super(packageName, "", CodeGeneratorConfiguration.WITHOUT_TYPESPECIFIC_METHODS);
+
+	public GreqlCodeGenerator(Greql2 graph,
+			GraphMarker<VertexEvaluator> vertexEvalGraphMarker,
+			Schema datagraphSchema, String packageName, String classname) {
+		super(packageName, "",
+				CodeGeneratorConfiguration.WITHOUT_TYPESPECIFIC_METHODS);
 		this.graph = graph;
 		this.vertexEvalGraphMarker = vertexEvalGraphMarker;
 		this.classname = classname;
@@ -139,72 +143,91 @@ public class GreqlCodeGenerator extends CodeGenerator implements ManagableArtifa
 	/**
 	 * Generates a Java class implementing a GReQL query. The generated class
 	 * will implement the interface {@link ExecutableQuery}, thus it may be
-	 * evaluated simply by calling its execute-Method. For proper execution, 
-	 * the GReQL function library needs to be available.
-	 * 
-	 * @param query the query in its String representation
-	 * @param datagraphSchema the graph schema of the graph the query should be executed on
-	 * @param classname the fully qualified name of the class to be generated
-	 * @param path the path where the generated file should be stored. Beware, the query will be stored
-	 *        inside a subdirectory of the path defined by its qualified name <code>classname</code>
+	 * evaluated simply by calling its execute-Method. For proper execution, the
+	 * GReQL function library needs to be available.
+	 *
+	 * @param query
+	 *            the query in its String representation
+	 * @param datagraphSchema
+	 *            the graph schema of the graph the query should be executed on
+	 * @param classname
+	 *            the fully qualified name of the class to be generated
+	 * @param path
+	 *            the path where the generated file should be stored. Beware,
+	 *            the query will be stored inside a subdirectory of the path
+	 *            defined by its qualified name <code>classname</code>
 	 */
-	public static void generateCode(String query, Schema datagraphSchema, String classname, String path) {
-		GreqlEvaluator eval = new GreqlEvaluator(query,  datagraphSchema.createGraph(ImplementationType.GENERIC), new HashMap<String, Object>());
+	public static void generateCode(String query, Schema datagraphSchema,
+			String classname, String path) {
+		GreqlEvaluator eval = new GreqlEvaluator(query,
+				datagraphSchema.createGraph(ImplementationType.GENERIC),
+				new HashMap<String, Object>());
 		eval.createOptimizedSyntaxGraph();
-		GraphMarker<VertexEvaluator> graphMarker = eval.getVertexEvaluatorGraphMarker();
+		GraphMarker<VertexEvaluator> graphMarker = eval
+				.getVertexEvaluatorGraphMarker();
 		Greql2 queryGraph = eval.getSyntaxGraph();
 		String simpleName = classname;
 		String packageName = "";
 		if (classname.contains(".")) {
-			simpleName = classname.substring(classname.lastIndexOf(".")+1);
+			simpleName = classname.substring(classname.lastIndexOf(".") + 1);
 			packageName = classname.substring(0, classname.lastIndexOf("."));
 		}
-		GreqlCodeGenerator greqlcodeGen = new GreqlCodeGenerator(queryGraph, graphMarker, datagraphSchema, packageName, simpleName);
+		GreqlCodeGenerator greqlcodeGen = new GreqlCodeGenerator(queryGraph,
+				graphMarker, datagraphSchema, packageName, simpleName);
 		try {
 			greqlcodeGen.createFiles(path);
 		} catch (GraphIOException e) {
 			e.printStackTrace();
 		}
 	}
-	
+
 	/**
-	 * Generates and compiles an in-memory Java class implementing a GReQL query.
-	 * The generated class will implement the interface {@link ExecutableQuery},
-	 * thus it may be evaluated simply by calling its execute-method. For proper
-	 * execution, the GReQL function library needs to be available. After calling
-	 * this method, the compiled class <code>classname</code> is available to
-	 * your environment and may be instantiated using reflection, e.g., by
+	 * Generates and compiles an in-memory Java class implementing a GReQL
+	 * query. The generated class will implement the interface
+	 * {@link ExecutableQuery}, thus it may be evaluated simply by calling its
+	 * execute-method. For proper execution, the GReQL function library needs to
+	 * be available. After calling this method, the compiled class
+	 * <code>classname</code> is available to your environment and may be
+	 * instantiated using reflection, e.g., by
 	 * Class.forName(className).newInstance().
-	 * 
-	 * @param query the query in its String representation
-	 * @param datagraphSchema the graph schema of the graph the query should be executed on
-	 * @param classname the fully qualified name of the class to be generated
+	 *
+	 * @param query
+	 *            the query in its String representation
+	 * @param datagraphSchema
+	 *            the graph schema of the graph the query should be executed on
+	 * @param classname
+	 *            the fully qualified name of the class to be generated
 	 */
-	public static Class<ExecutableQuery> generateCode(String query, Schema datagraphSchema, String classname) {
-		GreqlEvaluator eval = new GreqlEvaluator(query,  datagraphSchema.createGraph(ImplementationType.GENERIC), new HashMap<String, Object>());
+	public static Class<ExecutableQuery> generateCode(String query,
+			Schema datagraphSchema, String classname) {
+		GreqlEvaluator eval = new GreqlEvaluator(query,
+				datagraphSchema.createGraph(ImplementationType.GENERIC),
+				new HashMap<String, Object>());
 		eval.createOptimizedSyntaxGraph();
-		GraphMarker<VertexEvaluator> graphMarker = eval.getVertexEvaluatorGraphMarker();
+		GraphMarker<VertexEvaluator> graphMarker = eval
+				.getVertexEvaluatorGraphMarker();
 		Greql2 queryGraph = eval.getSyntaxGraph();
-		
+
 		String simpleName = classname;
 		String packageName = "";
 		if (classname.contains(".")) {
 			simpleName = classname.substring(classname.lastIndexOf("."));
 			packageName = classname.substring(0, classname.lastIndexOf("."));
 		}
-		GreqlCodeGenerator greqlcodeGen = new GreqlCodeGenerator(queryGraph, graphMarker, datagraphSchema, packageName, simpleName);
+		GreqlCodeGenerator greqlcodeGen = new GreqlCodeGenerator(queryGraph,
+				graphMarker, datagraphSchema, packageName, simpleName);
 		return greqlcodeGen.compile();
 	}
-	
-	
+
+	@Override
 	public CodeBlock createBody() {
 		CodeList code = new CodeList();
-		
+
 		addImports("de.uni_koblenz.jgralab.greql2.executable.*");
 		addImports("de.uni_koblenz.jgralab.Graph");
 		code.add(staticFieldSnippet);
 		code.add(staticInitializerSnippet);
-		code.add(classFieldSnippet);		
+		code.add(classFieldSnippet);
 		Greql2Expression rootExpr = graph.getFirstGreql2Expression();
 		addClassField("Graph", "datagraph", "null");
 		addClassField("java.util.Map<String, Object>", "boundVariables", "null");
@@ -212,49 +235,52 @@ public class GreqlCodeGenerator extends CodeGenerator implements ManagableArtifa
 		method.add("public synchronized Object execute(de.uni_koblenz.jgralab.Graph graph, java.util.Map<String, Object> boundVariables) {");
 		method.add("\tthis.datagraph = graph;");
 		method.add("\tthis.boundVariables = boundVariables;");
-		method.add("\treturn " +  createCodeForGreql2Expression(rootExpr) + ";");
+		method.add("\treturn " + createCodeForGreql2Expression(rootExpr) + ";");
 		method.add("}");
 		code.add(method);
-		
-		//add generated methods
-		code.add(new CodeSnippet("",""));
+
+		// add generated methods
+		code.add(new CodeSnippet("", ""));
 		for (CodeBlock methodBlock : createdMethods) {
 			code.addNoIndent(methodBlock);
-			code.add(new CodeSnippet("",""));
+			code.add(new CodeSnippet("", ""));
 		}
 		staticInitializerSnippet.add("}");
 		return code;
 	}
-	
 
-	
 	private String createCodeForGreql2Expression(Greql2Expression rootExpr) {
 		CodeList list = new CodeList();
 		scope.blockBegin();
-		//create code for bound variables
-		for (IsBoundVarOf inc : rootExpr.getIsBoundVarOfIncidences(EdgeDirection.IN)) {
+		// create code for bound variables
+		for (IsBoundVarOf inc : rootExpr
+				.getIsBoundVarOfIncidences(EdgeDirection.IN)) {
 			Variable var = (Variable) inc.getThat();
 			scope.addVariable(var.get_name());
-			list.add(new CodeSnippet("Object " + var.get_name() + " = boundVariables.get(\"" + var.get_name() + "\");"));
+			list.add(new CodeSnippet("Object " + var.get_name()
+					+ " = boundVariables.get(\"" + var.get_name() + "\");"));
 		}
-		
-		//create code for main query expression
-		IsQueryExprOf inc = rootExpr.getFirstIsQueryExprOfIncidence(EdgeDirection.IN);
+
+		// create code for main query expression
+		IsQueryExprOf inc = rootExpr
+				.getFirstIsQueryExprOfIncidence(EdgeDirection.IN);
 		Expression queryExpr = (Expression) inc.getThat();
-		list.add(new CodeSnippet("Object result = " + createCodeForExpression(queryExpr) + ";"));
-				
-		//create code for store as 
-		for (IsIdOfStoreClause storeInc : rootExpr.getIsIdOfStoreClauseIncidences(EdgeDirection.IN)) {
+		list.add(new CodeSnippet("Object result = "
+				+ createCodeForExpression(queryExpr) + ";"));
+
+		// create code for store as
+		for (IsIdOfStoreClause storeInc : rootExpr
+				.getIsIdOfStoreClauseIncidences(EdgeDirection.IN)) {
 			Identifier ident = (Identifier) storeInc.getThat();
-			list.add(new CodeSnippet("boundVariables.put(\"" + ident.get_name() + "\","  + ident.get_name() + ");"));
-		}		
-		
+			list.add(new CodeSnippet("boundVariables.put(\"" + ident.get_name()
+					+ "\"," + ident.get_name() + ");"));
+		}
+
 		list.add(new CodeSnippet("return result;"));
 		scope.blockEnd();
 		return createMethod(list, rootExpr);
 	}
 
-	
 	private String createCodeForExpression(Expression queryExpr) {
 		if (queryExpr instanceof FunctionApplication) {
 			return createCodeForFunctionApplication((FunctionApplication) queryExpr);
@@ -295,8 +321,8 @@ public class GreqlCodeGenerator extends CodeGenerator implements ManagableArtifa
 		if (queryExpr instanceof Variable) {
 			return createCodeForVariable((Variable) queryExpr);
 		}
-		if (queryExpr instanceof Identifier) { 
-			//Identifiers that are not variables 
+		if (queryExpr instanceof Identifier) {
+			// Identifiers that are not variables
 			return createCodeForIdentifier((Identifier) queryExpr);
 		}
 		if (queryExpr instanceof ForwardVertexSet) {
@@ -307,46 +333,55 @@ public class GreqlCodeGenerator extends CodeGenerator implements ManagableArtifa
 		}
 		return "UnsupportedElement: " + queryExpr.getClass().getSimpleName();
 	}
-	
+
 	private String createCodeForIdentifier(Identifier ident) {
 		return "\"" + ident.get_name() + "\"";
 	}
-	
 
-	private String createInitializerForTypeCollection(TypeCollection typeCollection) {
+	private String createInitializerForTypeCollection(
+			TypeCollection typeCollection) {
 		String fieldName = "acceptedType_" + acceptedTypesNumber++;
-		int numberOfTypesInSchema = schema.getVertexClasses().size() + schema.getEdgeClasses().size();
-		addStaticField("java.util.BitSet", fieldName, "new java.util.BitSet();");	
+		int numberOfTypesInSchema = schema.getGraphClass().getVertexClasses()
+				.size()
+				+ schema.getGraphClass().getEdgeClasses().size();
+		addStaticField("java.util.BitSet", fieldName, "new java.util.BitSet();");
 		if (typeCollection.getAllowedTypes().isEmpty()) {
-			//all types but the forbidden ones are allowed
-			addStaticInitializer(fieldName+ ".set(0," + numberOfTypesInSchema + ", true);");
-			for (GraphElementClass<?, ?> tc : typeCollection.getForbiddenTypes()) {
-				addStaticInitializer(fieldName + ".set(" + tc.getGraphElementClassIdInSchema()  +", false);" );
+			// all types but the forbidden ones are allowed
+			addStaticInitializer(fieldName + ".set(0," + numberOfTypesInSchema
+					+ ", true);");
+			for (GraphElementClass<?, ?> tc : typeCollection
+					.getForbiddenTypes()) {
+				addStaticInitializer(fieldName + ".set("
+						+ tc.getGraphElementClassIdInSchema() + ", false);");
 			}
 		} else {
-			//only allowed type are allowed, others are forbidden
-			addStaticInitializer(fieldName + ".set(0," + numberOfTypesInSchema + ", false);");
+			// only allowed type are allowed, others are forbidden
+			addStaticInitializer(fieldName + ".set(0," + numberOfTypesInSchema
+					+ ", false);");
 			for (GraphElementClass<?, ?> tc : typeCollection.getAllowedTypes()) {
-				addStaticInitializer(fieldName + ".set(" + tc.getGraphElementClassIdInSchema()  +",  true);" );
+				addStaticInitializer(fieldName + ".set("
+						+ tc.getGraphElementClassIdInSchema() + ",  true);");
 			}
 		}
 		return fieldName;
 	}
-	
-	private String createInitializerForIncidenceTypeCollection(Set<IncidenceClass> incidenceClasses) {
+
+	private String createInitializerForIncidenceTypeCollection(
+			Set<IncidenceClass> incidenceClasses) {
 		String fieldName = "acceptedType_" + acceptedTypesNumber++;
-		int numberOfTypesInSchema = schema.getEdgeClasses().size()*2;
-		addStaticField("java.util.BitSet", fieldName, "new java.util.BitSet();");	
-		addStaticInitializer(fieldName + ".set(0," + numberOfTypesInSchema + ", false);");
+		int numberOfTypesInSchema = schema.getGraphClass().getEdgeClasses()
+				.size() * 2;
+		addStaticField("java.util.BitSet", fieldName, "new java.util.BitSet();");
+		addStaticInitializer(fieldName + ".set(0," + numberOfTypesInSchema
+				+ ", false);");
 		for (IncidenceClass tc : incidenceClasses) {
-			addStaticInitializer(fieldName + ".set(" + tc.getIncidenceClassIdInSchema()  +",  true);" );
+			addStaticInitializer(fieldName + ".set("
+					+ tc.getIncidenceClassIdInSchema() + ",  true);");
 		}
 		return fieldName;
 	}
 
-	
-	
-	//EdgeSetExpression
+	// EdgeSetExpression
 	private String createCodeForEdgeSetExpression(EdgeSetExpression setExpr) {
 		addImports("org.pcollections.PCollection");
 		addImports("de.uni_koblenz.jgralab.JGraLab");
@@ -357,15 +392,20 @@ public class GreqlCodeGenerator extends CodeGenerator implements ManagableArtifa
 		addImports("java.util.LinkedList");
 		CodeList list = new CodeList();
 		TypeCollection typeCol = new TypeCollection();
-		for (IsTypeRestrOfExpression inc : setExpr.getIsTypeRestrOfExpressionIncidences(EdgeDirection.IN)) {
+		for (IsTypeRestrOfExpression inc : setExpr
+				.getIsTypeRestrOfExpressionIncidences(EdgeDirection.IN)) {
 			TypeId typeId = (TypeId) inc.getThat();
-			typeCol.addTypes((TypeCollection) vertexEvalGraphMarker.getMark(typeId).getResult());
+			typeCol.addTypes((TypeCollection) vertexEvalGraphMarker.getMark(
+					typeId).getResult());
 		}
 		String acceptedTypesField = createInitializerForTypeCollection(typeCol);
 		CodeSnippet createEdgeSetSnippet = new CodeSnippet();
 		createEdgeSetSnippet.add("PCollection<Edge> edgeSet = JGraLab.set();");
 		createEdgeSetSnippet.add("for (Edge e : datagraph.edges()) {");
-		createEdgeSetSnippet.add("\tif (" + acceptedTypesField + ".get(e.getAttributedElementClass().getGraphElementClassIdInSchema())) {");
+		createEdgeSetSnippet
+				.add("\tif ("
+						+ acceptedTypesField
+						+ ".get(e.getAttributedElementClass().getGraphElementClassIdInSchema())) {");
 		createEdgeSetSnippet.add("\t\tedgeSet = edgeSet.plus(e);");
 		createEdgeSetSnippet.add("\t}");
 		createEdgeSetSnippet.add("}");
@@ -373,8 +413,8 @@ public class GreqlCodeGenerator extends CodeGenerator implements ManagableArtifa
 		list.add(createEdgeSetSnippet);
 		return createMethod(list, setExpr);
 	}
-	
-	//VertexSetExpression
+
+	// VertexSetExpression
 	private String createCodeForVertexSetExpression(VertexSetExpression setExpr) {
 		addImports("org.pcollections.PCollection");
 		addImports("de.uni_koblenz.jgralab.JGraLab");
@@ -385,15 +425,21 @@ public class GreqlCodeGenerator extends CodeGenerator implements ManagableArtifa
 		addImports("java.util.LinkedList");
 		CodeList list = new CodeList();
 		TypeCollection typeCol = new TypeCollection();
-		for (IsTypeRestrOfExpression inc : setExpr.getIsTypeRestrOfExpressionIncidences(EdgeDirection.IN)) {
+		for (IsTypeRestrOfExpression inc : setExpr
+				.getIsTypeRestrOfExpressionIncidences(EdgeDirection.IN)) {
 			TypeId typeId = (TypeId) inc.getThat();
-			typeCol.addTypes((TypeCollection) vertexEvalGraphMarker.getMark(typeId).getResult());
+			typeCol.addTypes((TypeCollection) vertexEvalGraphMarker.getMark(
+					typeId).getResult());
 		}
 		String acceptedTypesField = createInitializerForTypeCollection(typeCol);
 		CodeSnippet createVertexSetSnippet = new CodeSnippet();
-		createVertexSetSnippet.add("PCollection<Vertex> vertexSet = JGraLab.set();");
+		createVertexSetSnippet
+				.add("PCollection<Vertex> vertexSet = JGraLab.set();");
 		createVertexSetSnippet.add("for (Vertex e : datagraph.vertices()) {");
-		createVertexSetSnippet.add("\tif (" + acceptedTypesField + ".get(e.getAttributedElementClass().getGraphElementClassIdInSchema())) {");
+		createVertexSetSnippet
+				.add("\tif ("
+						+ acceptedTypesField
+						+ ".get(e.getAttributedElementClass().getGraphElementClassIdInSchema())) {");
 		createVertexSetSnippet.add("\t\tvertexSet = vertexSet.plus(e);");
 		createVertexSetSnippet.add("\t}");
 		createVertexSetSnippet.add("}");
@@ -402,26 +448,26 @@ public class GreqlCodeGenerator extends CodeGenerator implements ManagableArtifa
 		return createMethod(list, setExpr);
 	}
 
-	
-	
-	
-	private String createCodeForListRangeConstruction(ListRangeConstruction listConstr) {
+	private String createCodeForListRangeConstruction(
+			ListRangeConstruction listConstr) {
 		addImports("org.pcollections.PCollection");
 		addImports("de.uni_koblenz.jgralab.JGraLab");
 		CodeList list = new CodeList();
 		CodeSnippet listSnippet = new CodeSnippet();
 		listSnippet.add("PCollection list = JGraLab.vector();");
-		Expression startExpr = (Expression) listConstr.getFirstIsFirstValueOfIncidence(EdgeDirection.IN).getThat();
-		Expression endExpr = (Expression) listConstr.getFirstIsLastValueOfIncidence(EdgeDirection.IN).getThat();
-		listSnippet.add("for (int i= " + createCodeForExpression(startExpr) + "; i<" + createCodeForExpression(endExpr) + "; i++) {");
+		Expression startExpr = (Expression) listConstr
+				.getFirstIsFirstValueOfIncidence(EdgeDirection.IN).getThat();
+		Expression endExpr = (Expression) listConstr
+				.getFirstIsLastValueOfIncidence(EdgeDirection.IN).getThat();
+		listSnippet.add("for (int i= " + createCodeForExpression(startExpr)
+				+ "; i<" + createCodeForExpression(endExpr) + "; i++) {");
 		listSnippet.add("list = list.plus(i);");
 		listSnippet.add("}");
 		listSnippet.add("return list;");
 		list.add(listSnippet);
 		return createMethod(list, listConstr);
 	}
-	
-	
+
 	private String createCodeForListConstruction(ListConstruction listConstr) {
 		addImports("org.pcollections.PCollection");
 		addImports("de.uni_koblenz.jgralab.JGraLab");
@@ -439,7 +485,7 @@ public class GreqlCodeGenerator extends CodeGenerator implements ManagableArtifa
 		list.add(listSnippet);
 		return createMethod(list, listConstr);
 	}
-	
+
 	private String createCodeForSetConstruction(SetConstruction setConstr) {
 		addImports("org.pcollections.PCollection");
 		addImports("de.uni_koblenz.jgralab.JGraLab");
@@ -457,7 +503,7 @@ public class GreqlCodeGenerator extends CodeGenerator implements ManagableArtifa
 		list.add(listSnippet);
 		return createMethod(list, setConstr);
 	}
-	
+
 	private String createCodeForTupleConstruction(TupleConstruction tupleConstr) {
 		addImports("org.pcollections.PCollection");
 		addImports("de.uni_koblenz.jgralab.JGraLab");
@@ -476,18 +522,24 @@ public class GreqlCodeGenerator extends CodeGenerator implements ManagableArtifa
 		list.add(listSnippet);
 		return createMethod(list, tupleConstr);
 	}
-		
-	private String createCodeForRecordConstruction(RecordConstruction recordConstr) {
+
+	private String createCodeForRecordConstruction(
+			RecordConstruction recordConstr) {
 		addImports("de.uni_koblenz.jgralab.impl.RecordImpl");
 		CodeList list = new CodeList();
 		CodeSnippet listSnippet = new CodeSnippet();
 		listSnippet.add("RecordImpl resultRecord = RecordImpl.empty();");
 		StringBuilder builder = new StringBuilder("resultRecord = resultRecord");
-		for (IsRecordElementOf inc : recordConstr.getIsRecordElementOfIncidences(EdgeDirection.IN)) {
+		for (IsRecordElementOf inc : recordConstr
+				.getIsRecordElementOfIncidences(EdgeDirection.IN)) {
 			RecordElement currentElement = inc.getAlpha();
-			Identifier ident = (Identifier) currentElement.getFirstIsRecordIdOfIncidence(EdgeDirection.IN).getThat();
-			Expression expr = (Expression) currentElement.getFirstIsRecordExprOfIncidence(EdgeDirection.IN).getThat();
-			builder.append(".plus(\"" + ident.get_name() + "\"," + createCodeForExpression(expr) + ")");
+			Identifier ident = (Identifier) currentElement
+					.getFirstIsRecordIdOfIncidence(EdgeDirection.IN).getThat();
+			Expression expr = (Expression) currentElement
+					.getFirstIsRecordExprOfIncidence(EdgeDirection.IN)
+					.getThat();
+			builder.append(".plus(\"" + ident.get_name() + "\","
+					+ createCodeForExpression(expr) + ")");
 		}
 		builder.append(";");
 		listSnippet.add(builder.toString());
@@ -495,26 +547,30 @@ public class GreqlCodeGenerator extends CodeGenerator implements ManagableArtifa
 		list.add(listSnippet);
 		return createMethod(list, recordConstr);
 	}
-	
-	private String createCodeForConditionalExpression(ConditionalExpression condExpr) {
+
+	private String createCodeForConditionalExpression(
+			ConditionalExpression condExpr) {
 		CodeList list = new CodeList();
 
-		Expression condition = (Expression) condExpr.getFirstIsConditionOfIncidence(EdgeDirection.IN).getThat();
-		Expression trueExpr = (Expression) condExpr.getFirstIsTrueExprOfIncidence(EdgeDirection.IN).getThat();
-		Expression falseExpr = (Expression) condExpr.getFirstIsFalseExprOfIncidence(EdgeDirection.IN).getThat();
-		
+		Expression condition = (Expression) condExpr
+				.getFirstIsConditionOfIncidence(EdgeDirection.IN).getThat();
+		Expression trueExpr = (Expression) condExpr
+				.getFirstIsTrueExprOfIncidence(EdgeDirection.IN).getThat();
+		Expression falseExpr = (Expression) condExpr
+				.getFirstIsFalseExprOfIncidence(EdgeDirection.IN).getThat();
+
 		CodeSnippet snip = new CodeSnippet();
 		list.add(snip);
-		snip.add("if ((Boolean) " + createCodeForExpression(condition) + ") {" );
-		snip.add("\treturn " + createCodeForExpression(trueExpr) + ";" );
+		snip.add("if ((Boolean) " + createCodeForExpression(condition) + ") {");
+		snip.add("\treturn " + createCodeForExpression(trueExpr) + ";");
 		snip.add("} else {");
-		snip.add("\treturn " + createCodeForExpression(falseExpr) + ";" );
+		snip.add("\treturn " + createCodeForExpression(falseExpr) + ";");
 		snip.add("}");
-		
+
 		String retVal = createMethod(list, condExpr);
 		return retVal;
 	}
-	
+
 	private String createCodeForComprehension(Comprehension compr) {
 		addImports("de.uni_koblenz.jgralab.JGraLab");
 		addImports("org.pcollections.PCollection");
@@ -531,34 +587,51 @@ public class GreqlCodeGenerator extends CodeGenerator implements ManagableArtifa
 			initSnippet.add("PMap result = JGraLab.map();");
 		}
 		methodBody.add(initSnippet);
-		
-		Declaration decl = (Declaration) compr.getFirstIsCompDeclOfIncidence(EdgeDirection.IN).getThat();
-		
-		//Declarations and variable iteration loops
-		
+
+		Declaration decl = (Declaration) compr.getFirstIsCompDeclOfIncidence(
+				EdgeDirection.IN).getThat();
+
+		// Declarations and variable iteration loops
+
 		CodeList varIterationList = new CodeList();
 		methodBody.add(varIterationList);
 		scope.blockBegin();
-		for (IsSimpleDeclOf simpleDeclInc : decl.getIsSimpleDeclOfIncidences(EdgeDirection.IN)) {
-			SimpleDeclaration simpleDecl = (SimpleDeclaration) simpleDeclInc.getThat();
-			Expression domain = (Expression) simpleDecl.getFirstIsTypeExprOfDeclarationIncidence(EdgeDirection.IN).getThat();
+		for (IsSimpleDeclOf simpleDeclInc : decl
+				.getIsSimpleDeclOfIncidences(EdgeDirection.IN)) {
+			SimpleDeclaration simpleDecl = (SimpleDeclaration) simpleDeclInc
+					.getThat();
+			Expression domain = (Expression) simpleDecl
+					.getFirstIsTypeExprOfDeclarationIncidence(EdgeDirection.IN)
+					.getThat();
 			CodeSnippet simpleDeclSnippet = new CodeSnippet();
-			varIterationList.setVariable("simpleDeclDomainName", "domainOfSimpleDecl_" + Integer.toString(simpleDecl.getId()));
-			simpleDeclSnippet.add("PCollection #simpleDeclDomainName# = (PCollection) " + createCodeForExpression(domain) + ";");
+			varIterationList.setVariable(
+					"simpleDeclDomainName",
+					"domainOfSimpleDecl_"
+							+ Integer.toString(simpleDecl.getId()));
+			simpleDeclSnippet
+					.add("PCollection #simpleDeclDomainName# = (PCollection) "
+							+ createCodeForExpression(domain) + ";");
 			varIterationList.add(simpleDeclSnippet);
-			for (IsDeclaredVarOf declaredVarInc : simpleDecl.getIsDeclaredVarOfIncidences(EdgeDirection.IN)) {
+			for (IsDeclaredVarOf declaredVarInc : simpleDecl
+					.getIsDeclaredVarOfIncidences(EdgeDirection.IN)) {
 				Variable var = (Variable) declaredVarInc.getThat();
 				CodeSnippet varIterationSnippet = new CodeSnippet();
 				varIterationSnippet.setVariable("variableName", var.get_name());
-				varIterationSnippet.add("for (Object #variableName# : #simpleDeclDomainName#) {");
-				VariableEvaluator vertexEval = (VariableEvaluator) vertexEvalGraphMarker.getMark(var);
-				List<VertexEvaluator> dependingExpressions = vertexEval.calculateDependingExpressions();
+				varIterationSnippet
+						.add("for (Object #variableName# : #simpleDeclDomainName#) {");
+				VariableEvaluator vertexEval = (VariableEvaluator) vertexEvalGraphMarker
+						.getMark(var);
+				List<VertexEvaluator> dependingExpressions = vertexEval
+						.calculateDependingExpressions();
 				for (VertexEvaluator ve : dependingExpressions) {
 					Vertex currentV = ve.getVertex();
-					if (currentV instanceof Variable)
+					if (currentV instanceof Variable) {
 						continue;
-					//reset stored evaluation values for expressions depending on variable var
-					String variableName = getVariableName(Integer.toString(currentV.getId()));
+					}
+					// reset stored evaluation values for expressions depending
+					// on variable var
+					String variableName = getVariableName(Integer
+							.toString(currentV.getId()));
 					varIterationSnippet.add("\t" + variableName + " = null;");
 				}
 				scope.addVariable(var.get_name());
@@ -569,28 +642,39 @@ public class GreqlCodeGenerator extends CodeGenerator implements ManagableArtifa
 				varIterationList = body;
 			}
 		}
-		
-		//condition
+
+		// condition
 		if (decl.getFirstIsConstraintOfIncidence(EdgeDirection.IN) != null) {
 			CodeSnippet constraintSnippet = new CodeSnippet();
 			constraintSnippet.add("boolean constraint = true;");
-			for (IsConstraintOf constraintInc : decl.getIsConstraintOfIncidences(EdgeDirection.IN)) {
+			for (IsConstraintOf constraintInc : decl
+					.getIsConstraintOfIncidences(EdgeDirection.IN)) {
 				Expression constrExpr = (Expression) constraintInc.getThat();
-				constraintSnippet.add("constraint = constraint && (Boolean) " + createCodeForExpression(constrExpr) + ";");
+				constraintSnippet.add("constraint = constraint && (Boolean) "
+						+ createCodeForExpression(constrExpr) + ";");
 			}
 			constraintSnippet.add("if (constraint)");
 			varIterationList.add(constraintSnippet);
 		}
 
-		//main expression
+		// main expression
 		CodeSnippet iteratedExprSnip = new CodeSnippet();
 		if (compr instanceof MapComprehension) {
-			Expression keyExpr = (Expression) ((MapComprehension)compr).getFirstIsKeyExprOfComprehensionIncidence(EdgeDirection.IN).getThat();
-			Expression valueExpr = (Expression) ((MapComprehension)compr).getFirstIsValueExprOfComprehensionIncidence(EdgeDirection.IN).getThat();
-			iteratedExprSnip.add("result.put(" + createCodeForExpression(keyExpr) + "," + createCodeForExpression(valueExpr) + ");");
+			Expression keyExpr = (Expression) ((MapComprehension) compr)
+					.getFirstIsKeyExprOfComprehensionIncidence(EdgeDirection.IN)
+					.getThat();
+			Expression valueExpr = (Expression) ((MapComprehension) compr)
+					.getFirstIsValueExprOfComprehensionIncidence(
+							EdgeDirection.IN).getThat();
+			iteratedExprSnip.add("result.put("
+					+ createCodeForExpression(keyExpr) + ","
+					+ createCodeForExpression(valueExpr) + ");");
 		} else {
-			Expression resultDefinition = (Expression) compr.getFirstIsCompResultDefOfIncidence(EdgeDirection.IN).getThat();
-			iteratedExprSnip.add("result = result.plus(" + createCodeForExpression(resultDefinition) + ");");
+			Expression resultDefinition = (Expression) compr
+					.getFirstIsCompResultDefOfIncidence(EdgeDirection.IN)
+					.getThat();
+			iteratedExprSnip.add("result = result.plus("
+					+ createCodeForExpression(resultDefinition) + ");");
 		}
 		varIterationList.add(iteratedExprSnip);
 
@@ -598,87 +682,113 @@ public class GreqlCodeGenerator extends CodeGenerator implements ManagableArtifa
 		scope.blockEnd();
 		return createMethod(methodBody, compr);
 	}
-	
-	
-	private String createCodeForQuantifiedExpression(QuantifiedExpression quantExpr) {
+
+	private String createCodeForQuantifiedExpression(
+			QuantifiedExpression quantExpr) {
 		CodeList list = new CodeList();
 		addImports("org.pcollections.PCollection");
-		Declaration decl = (Declaration) quantExpr.getFirstIsQuantifiedDeclOfIncidence(EdgeDirection.IN).getThat();
-		
-		//Declarations and variable iteration loops
+		Declaration decl = (Declaration) quantExpr
+				.getFirstIsQuantifiedDeclOfIncidence(EdgeDirection.IN)
+				.getThat();
+
+		// Declarations and variable iteration loops
 		int declaredVars = 0;
 		String tabs = "";
 		int simpleDecls = 0;
-		//quantifier
-		Quantifier quantifier = (Quantifier) quantExpr.getFirstIsQuantifierOfIncidence(EdgeDirection.IN).getThat();
+		// quantifier
+		Quantifier quantifier = (Quantifier) quantExpr
+				.getFirstIsQuantifierOfIncidence(EdgeDirection.IN).getThat();
 		switch (quantifier.get_type()) {
 		case FORALL:
 			break;
 		case EXISTS:
 			break;
-		case EXISTSONE:	
+		case EXISTSONE:
 			list.add(new CodeSnippet("boolean result = false;"));
 			break;
 		}
 		scope.blockBegin();
-		for (IsSimpleDeclOf simpleDeclInc : decl.getIsSimpleDeclOfIncidences(EdgeDirection.IN)) {
-			SimpleDeclaration simpleDecl = (SimpleDeclaration) simpleDeclInc.getThat();
-			Expression domain = (Expression) simpleDecl.getFirstIsTypeExprOfDeclarationIncidence(EdgeDirection.IN).getThat();
+		for (IsSimpleDeclOf simpleDeclInc : decl
+				.getIsSimpleDeclOfIncidences(EdgeDirection.IN)) {
+			SimpleDeclaration simpleDecl = (SimpleDeclaration) simpleDeclInc
+					.getThat();
+			Expression domain = (Expression) simpleDecl
+					.getFirstIsTypeExprOfDeclarationIncidence(EdgeDirection.IN)
+					.getThat();
 			CodeSnippet simpleDeclSnippet = new CodeSnippet();
-			simpleDeclSnippet.setVariable("simpleDeclNum", Integer.toString(simpleDecls));
-			simpleDeclSnippet.add(tabs + "PCollection domain_#simpleDeclNum# = (PCollection) " + createCodeForExpression(domain) + ";");
+			simpleDeclSnippet.setVariable("simpleDeclNum",
+					Integer.toString(simpleDecls));
+			simpleDeclSnippet.add(tabs
+					+ "PCollection domain_#simpleDeclNum# = (PCollection) "
+					+ createCodeForExpression(domain) + ";");
 			list.add(simpleDeclSnippet);
-			for (IsDeclaredVarOf declaredVarInc : simpleDecl.getIsDeclaredVarOfIncidences(EdgeDirection.IN)) {
+			for (IsDeclaredVarOf declaredVarInc : simpleDecl
+					.getIsDeclaredVarOfIncidences(EdgeDirection.IN)) {
 				declaredVars++;
 				Variable var = (Variable) declaredVarInc.getThat();
 				CodeSnippet varIterationSnippet = new CodeSnippet();
 				varIterationSnippet.setVariable("variableName", var.get_name());
-				varIterationSnippet.setVariable("simpleDeclNum", Integer.toString(simpleDecls));
-				varIterationSnippet.add(tabs + "for (Object #variableName# : domain_#simpleDeclNum#) {");
+				varIterationSnippet.setVariable("simpleDeclNum",
+						Integer.toString(simpleDecls));
+				varIterationSnippet
+						.add(tabs
+								+ "for (Object #variableName# : domain_#simpleDeclNum#) {");
 				tabs += "\t";
 				scope.addVariable(var.get_name());
 				list.add(varIterationSnippet);
 			}
 			simpleDecls++;
 		}
-		
-		//condition
+
+		// condition
 		if (decl.getFirstIsConstraintOfIncidence(EdgeDirection.IN) != null) {
 			CodeSnippet constraintSnippet = new CodeSnippet();
 			constraintSnippet.add(tabs + "boolean constraint = true;");
-			for (IsConstraintOf constraintInc : decl.getIsConstraintOfIncidences(EdgeDirection.IN)) {
+			for (IsConstraintOf constraintInc : decl
+					.getIsConstraintOfIncidences(EdgeDirection.IN)) {
 				Expression constrExpr = (Expression) constraintInc.getThat();
-				constraintSnippet.add(tabs + "constraint = constraint && (Boolean) " + createCodeForExpression(constrExpr) + ";");
+				constraintSnippet.add(tabs
+						+ "constraint = constraint && (Boolean) "
+						+ createCodeForExpression(constrExpr) + ";");
 			}
 			constraintSnippet.add(tabs + "if (constraint)");
 			list.add(constraintSnippet);
 		}
 
-		//main expression
-		Expression resultDefinition = (Expression) quantExpr.getFirstIsBoundExprOfQuantifiedExpressionIncidence(EdgeDirection.IN).getThat();
+		// main expression
+		Expression resultDefinition = (Expression) quantExpr
+				.getFirstIsBoundExprOfQuantifiedExpressionIncidence(
+						EdgeDirection.IN).getThat();
 		CodeSnippet iteratedExprSnip = new CodeSnippet();
 		switch (quantifier.get_type()) {
 		case FORALL:
-			iteratedExprSnip.add(tabs + "if ( ! (Boolean) " + createCodeForExpression(resultDefinition) + ") return false;");
+			iteratedExprSnip.add(tabs + "if ( ! (Boolean) "
+					+ createCodeForExpression(resultDefinition)
+					+ ") return false;");
 			break;
-		case EXISTS:	
-			iteratedExprSnip.add(tabs + "if ( (Boolean) " + createCodeForExpression(resultDefinition) + ") return true;");
+		case EXISTS:
+			iteratedExprSnip.add(tabs + "if ( (Boolean) "
+					+ createCodeForExpression(resultDefinition)
+					+ ") return true;");
 			break;
 		case EXISTSONE:
-			iteratedExprSnip.add(tabs + "if ( (Boolean) " + createCodeForExpression(resultDefinition) + ") {");
+			iteratedExprSnip.add(tabs + "if ( (Boolean) "
+					+ createCodeForExpression(resultDefinition) + ") {");
 			iteratedExprSnip.add(tabs + "\tif (result) {");
-			iteratedExprSnip.add(tabs + "\t\treturn false; //two elements exists");
+			iteratedExprSnip.add(tabs
+					+ "\t\treturn false; //two elements exists");
 			iteratedExprSnip.add(tabs + "\t} else {");
-			iteratedExprSnip.add(tabs + "\t\tresult = true; //first element found");
+			iteratedExprSnip.add(tabs
+					+ "\t\tresult = true; //first element found");
 			iteratedExprSnip.add(tabs + "\t}");
 			iteratedExprSnip.add(tabs + "}");
 		}
 
 		list.add(iteratedExprSnip);
-		//closing parantheses for interation loops
-		for (int curLoop=0; curLoop<declaredVars; curLoop++) {
+		// closing parantheses for interation loops
+		for (int curLoop = 0; curLoop < declaredVars; curLoop++) {
 			StringBuilder tabBuff = new StringBuilder();
-			for (int i=1; i<(declaredVars-curLoop); i++) {
+			for (int i = 1; i < (declaredVars - curLoop); i++) {
 				tabBuff.append("\t");
 			}
 			tabs = tabBuff.toString();
@@ -688,116 +798,132 @@ public class GreqlCodeGenerator extends CodeGenerator implements ManagableArtifa
 		case FORALL:
 			list.add(new CodeSnippet("return true;"));
 			break;
-		case EXISTSONE:	
+		case EXISTSONE:
 			list.add(new CodeSnippet("return result;"));
 			break;
 		case EXISTS:
 			list.add(new CodeSnippet("return false;"));
-		}	
+		}
 		scope.blockEnd();
 		return createMethod(list, quantExpr);
 	}
-	
-	
-	
+
 	private String createCodeForLiteral(Literal literal) {
 		if (literal instanceof StringLiteral) {
-			return "\"" + ((StringLiteral)literal).get_stringValue() + "\"";
+			return "\"" + ((StringLiteral) literal).get_stringValue() + "\"";
 		}
 		if (literal instanceof IntLiteral) {
-			return  Integer.toString(((IntLiteral)literal).get_intValue());
+			return Integer.toString(((IntLiteral) literal).get_intValue());
 		}
 		if (literal instanceof LongLiteral) {
-			return  Long.toString(((LongLiteral)literal).get_longValue());
+			return Long.toString(((LongLiteral) literal).get_longValue());
 		}
 		if (literal instanceof DoubleLiteral) {
-			return  Double.toString(((DoubleLiteral)literal).get_doubleValue());
+			return Double.toString(((DoubleLiteral) literal).get_doubleValue());
 		}
 		if (literal instanceof BoolLiteral) {
-			return  Boolean.toString(((BoolLiteral)literal).is_boolValue());
+			return Boolean.toString(((BoolLiteral) literal).is_boolValue());
 		}
 		if (literal instanceof ThisEdge) {
 			createThisLiterals();
-			return  "thisEdge";
+			return "thisEdge";
 		}
 		if (literal instanceof ThisVertex) {
 			createThisLiterals();
-			return  "thisVertex";
+			return "thisVertex";
 		}
 		return "UndefinedLiteral";
 	}
-
 
 	private String createCodeForVariable(Variable var) {
 		return var.get_name();
 	}
 
-
 	/**
 	 * Creates code for function application. While for most functions efficient
-	 * access routines to the FunLib-function will be created, some of the 
+	 * access routines to the FunLib-function will be created, some of the
 	 * functions that rely on path descriptions (e.g., pathSystem) are realized
 	 * by code generation for the path search.
+	 *
 	 * @param funApp
 	 * @return
 	 */
-	private String createCodeForFunctionApplication(
-			FunctionApplication funApp) {
+	private String createCodeForFunctionApplication(FunctionApplication funApp) {
 
-		//create static field to access function
-		FunctionId funId = (FunctionId) funApp.getFirstIsFunctionIdOfIncidence(EdgeDirection.IN).getThat();		
+		// create static field to access function
+		FunctionId funId = (FunctionId) funApp.getFirstIsFunctionIdOfIncidence(
+				EdgeDirection.IN).getThat();
 		if (funId.get_name().equals("pathSystem")) {
 			return createCodeForPathSystemFunction(funApp);
 		}
 		if (funId.get_name().equals("forwardVertexSet")) {
-			throw new RuntimeException("Code generation for function forwardVertexSet is not yet implemented. Use the path expression notation v --> instead of forwardVertexSet(v,-->)");
+			throw new RuntimeException(
+					"Code generation for function forwardVertexSet is not yet implemented. Use the path expression notation v --> instead of forwardVertexSet(v,-->)");
 		}
 		if (funId.get_name().equals("backwardVertexSet")) {
-			throw new RuntimeException("Code generation for function backwardVertexSet is not yet implemented. Use the path expression notation v --> instead of backwardVertexSet(v,-->)");
+			throw new RuntimeException(
+					"Code generation for function backwardVertexSet is not yet implemented. Use the path expression notation v --> instead of backwardVertexSet(v,-->)");
 		}
 		if (funId.get_name().equals("isReachable")) {
-			throw new RuntimeException("Code generation for function isReachable is not yet implemented. Use the path expression notation v --> w instead of isReachable(v,w,-->)");
+			throw new RuntimeException(
+					"Code generation for function isReachable is not yet implemented. Use the path expression notation v --> w instead of isReachable(v,w,-->)");
 		}
 		addImports("de.uni_koblenz.jgralab.greql2.funlib.FunLib");
-		Function function = FunLib.getFunctionInfo(funId.get_name()).getFunction();
+		Function function = FunLib.getFunctionInfo(funId.get_name())
+				.getFunction();
 
 		String functionName = function.getClass().getName();
 		String functionSimpleName = function.getClass().getSimpleName();
-		if (functionSimpleName.contains("."))
-			functionSimpleName = functionSimpleName.substring(functionSimpleName.lastIndexOf("."));
-		
-		String functionStaticFieldName = functionSimpleName + "_" + funApp.getId();
-		addStaticField(functionName, functionStaticFieldName, "(" + functionName + ") FunLib.getFunctionInfo(\"" + funId.get_name() + "\").getFunction()");		
-		//create code list to evaluate function
+		if (functionSimpleName.contains(".")) {
+			functionSimpleName = functionSimpleName
+					.substring(functionSimpleName.lastIndexOf("."));
+		}
+
+		String functionStaticFieldName = functionSimpleName + "_"
+				+ funApp.getId();
+		addStaticField(
+				functionName,
+				functionStaticFieldName,
+				"(" + functionName + ") FunLib.getFunctionInfo(\""
+						+ funId.get_name() + "\").getFunction()");
+		// create code list to evaluate function
 		CodeList list = new CodeList();
 
-		int argNumber=0;
-		for (IsArgumentOf argInc : funApp.getIsArgumentOfIncidences(EdgeDirection.IN)) {
+		int argNumber = 0;
+		for (IsArgumentOf argInc : funApp
+				.getIsArgumentOfIncidences(EdgeDirection.IN)) {
 			Expression expr = (Expression) argInc.getThat();
-			list.add(new CodeSnippet("Object arg_" + argNumber++  + " = " + createCodeForExpression(expr) + ";"));
+			list.add(new CodeSnippet("Object arg_" + argNumber++ + " = "
+					+ createCodeForExpression(expr) + ";"));
 		}
 		if (funApp.getFirstIsTypeExprOfFunctionIncidence(EdgeDirection.IN) != null) {
-			Expression typeExpr = (Expression) funApp.getFirstIsTypeExprOfFunctionIncidence(EdgeDirection.IN).getThat();
-			list.add(new CodeSnippet("Object arg_" + argNumber++  + " = " + createCodeForExpression(typeExpr) + ";"));
+			Expression typeExpr = (Expression) funApp
+					.getFirstIsTypeExprOfFunctionIncidence(EdgeDirection.IN)
+					.getThat();
+			list.add(new CodeSnippet("Object arg_" + argNumber++ + " = "
+					+ createCodeForExpression(typeExpr) + ";"));
 		}
 		list.add(new CodeSnippet("boolean matches;"));
 		Method[] methods = function.getClass().getMethods();
 		for (Method m : methods) {
 			if (m.getName() == "evaluate") {
 				Class<?>[] paramTypes = m.getParameterTypes();
-				//TODO subgraph parameter
+				// TODO subgraph parameter
 				if (paramTypes.length == argNumber) {
 					CodeSnippet checkSnippet = new CodeSnippet();
 					checkSnippet.add("matches = true;");
-					for (int i=0;i<paramTypes.length; i++) {
-						checkSnippet.add("matches &= arg_" + i + " instanceof " + paramTypes[i].getCanonicalName() + ";");
+					for (int i = 0; i < paramTypes.length; i++) {
+						checkSnippet.add("matches &= arg_" + i + " instanceof "
+								+ paramTypes[i].getCanonicalName() + ";");
 					}
 					checkSnippet.add("if (matches)");
 					String delim = "";
 					StringBuilder argBuilder = new StringBuilder();
-					argBuilder.append("\treturn " + functionStaticFieldName + ".evaluate(");
-					for (int i=0;i<paramTypes.length; i++) {
-						String cast = "(" + paramTypes[i].getCanonicalName() + ")";
+					argBuilder.append("\treturn " + functionStaticFieldName
+							+ ".evaluate(");
+					for (int i = 0; i < paramTypes.length; i++) {
+						String cast = "(" + paramTypes[i].getCanonicalName()
+								+ ")";
 						argBuilder.append("\t" + delim + cast + "arg_" + i);
 						delim = ",";
 					}
@@ -807,30 +933,38 @@ public class GreqlCodeGenerator extends CodeGenerator implements ManagableArtifa
 				}
 			}
 		}
-		list.add(new CodeSnippet("throw new RuntimeException(\"Given arguments don't match available GReQL function." +
-				" If you have added a function, you need to recompile the GReQL query for the function to be available\");"));
+		list.add(new CodeSnippet(
+				"throw new RuntimeException(\"Given arguments don't match available GReQL function."
+						+ " If you have added a function, you need to recompile the GReQL query for the function to be available\");"));
 		return createMethod(list, funApp);
 	}
-	
-	
-	
+
 	private String createCodeForForwardVertexSet(ForwardVertexSet fws) {
-		PathDescription pathDescr = (PathDescription) fws.getFirstIsPathOfIncidence(EdgeDirection.IN).getThat();
-		PathDescriptionEvaluator pathDescrEval = (PathDescriptionEvaluator) vertexEvalGraphMarker.getMark(pathDescr);
-		DFA dfa = ((NFA)pathDescrEval.getResult()).getDFA();
-		Expression startElementExpr = (Expression) fws.getFirstIsStartExprOfIncidence(EdgeDirection.IN).getThat();
-		return createCodeForForwarOrBackwardVertexSet(dfa, startElementExpr, fws);
-	}	
-	
+		PathDescription pathDescr = (PathDescription) fws
+				.getFirstIsPathOfIncidence(EdgeDirection.IN).getThat();
+		PathDescriptionEvaluator pathDescrEval = (PathDescriptionEvaluator) vertexEvalGraphMarker
+				.getMark(pathDescr);
+		DFA dfa = ((NFA) pathDescrEval.getResult()).getDFA();
+		Expression startElementExpr = (Expression) fws
+				.getFirstIsStartExprOfIncidence(EdgeDirection.IN).getThat();
+		return createCodeForForwarOrBackwardVertexSet(dfa, startElementExpr,
+				fws);
+	}
+
 	private String createCodeForBackwardVertexSet(BackwardVertexSet fws) {
-		PathDescription pathDescr = (PathDescription) fws.getFirstIsPathOfIncidence(EdgeDirection.IN).getThat();
-		PathDescriptionEvaluator pathDescrEval = (PathDescriptionEvaluator) vertexEvalGraphMarker.getMark(pathDescr);
-		DFA dfa = NFA.revertNFA((NFA)pathDescrEval.getResult()).getDFA();		
-		Expression targetElementExpr = (Expression) fws.getFirstIsTargetExprOfIncidence(EdgeDirection.IN).getThat();
-		return createCodeForForwarOrBackwardVertexSet(dfa, targetElementExpr, fws);
-	}	
-		
-	private String createCodeForForwarOrBackwardVertexSet(DFA dfa, Expression startElementExpr, Greql2Vertex syntaxGraphVertex)	{
+		PathDescription pathDescr = (PathDescription) fws
+				.getFirstIsPathOfIncidence(EdgeDirection.IN).getThat();
+		PathDescriptionEvaluator pathDescrEval = (PathDescriptionEvaluator) vertexEvalGraphMarker
+				.getMark(pathDescr);
+		DFA dfa = NFA.revertNFA((NFA) pathDescrEval.getResult()).getDFA();
+		Expression targetElementExpr = (Expression) fws
+				.getFirstIsTargetExprOfIncidence(EdgeDirection.IN).getThat();
+		return createCodeForForwarOrBackwardVertexSet(dfa, targetElementExpr,
+				fws);
+	}
+
+	private String createCodeForForwarOrBackwardVertexSet(DFA dfa,
+			Expression startElementExpr, Greql2Vertex syntaxGraphVertex) {
 		CodeList list = new CodeList();
 		addImports("org.pcollections.PSet");
 		addImports("java.util.HashSet");
@@ -841,8 +975,10 @@ public class GreqlCodeGenerator extends CodeGenerator implements ManagableArtifa
 		list.add(initSnippet);
 		initSnippet.add("PSet<Vertex> resultSet = JGraLab.set();");
 		initSnippet.add("//one BitSet for each state");
-		initSnippet.add("HashSet<Vertex>[] markedElements = new HashSet[#stateCount#];");
-		initSnippet.setVariable("stateCount", Integer.toString(dfa.stateList.size()));
+		initSnippet
+				.add("HashSet<Vertex>[] markedElements = new HashSet[#stateCount#];");
+		initSnippet.setVariable("stateCount",
+				Integer.toString(dfa.stateList.size()));
 		initSnippet.add("for (int i=0; i<#stateCount#;i++) {");
 		initSnippet.add("\tmarkedElements[i] = new HashSet<Vertex>(100);");
 		initSnippet.add("}");
@@ -853,11 +989,15 @@ public class GreqlCodeGenerator extends CodeGenerator implements ManagableArtifa
 			}
 		}
 		initSnippet.add("int stateNumber;");
-		initSnippet.add("Vertex element = (Vertex)" + createCodeForExpression(startElementExpr) + ";");
+		initSnippet.add("Vertex element = (Vertex)"
+				+ createCodeForExpression(startElementExpr) + ";");
 		initSnippet.add("Vertex nextElement;");
-		initSnippet.add("VertexStateNumberQueue queue = new VertexStateNumberQueue();");
-		initSnippet.add("markedElements[" + dfa.initialState.number + "].add(element);");
-		initSnippet.add("queue.put((Vertex) v, " + dfa.initialState.number + ");");
+		initSnippet
+				.add("VertexStateNumberQueue queue = new VertexStateNumberQueue();");
+		initSnippet.add("markedElements[" + dfa.initialState.number
+				+ "].add(element);");
+		initSnippet.add("queue.put((Vertex) v, " + dfa.initialState.number
+				+ ");");
 		initSnippet.add("while (queue.hasNext()) {");
 		initSnippet.add("\telement = queue.currentVertex;");
 		initSnippet.add("\tstateNumber = queue.currentState;");
@@ -865,25 +1005,37 @@ public class GreqlCodeGenerator extends CodeGenerator implements ManagableArtifa
 		initSnippet.add("\t\tresultSet = resultSet.plus(element);");
 		initSnippet.add("\t}");
 		initSnippet.add("\tfor (Edge inc = element.getFirstIncidence();");
-		initSnippet.add("\t\tinc != null; inc = inc.getNextIncidence() ) { //iterating incident edges");
+		initSnippet
+				.add("\t\tinc != null; inc = inc.getNextIncidence() ) { //iterating incident edges");
 		initSnippet.add("\t\tswitch (stateNumber) {");
 		for (State curState : dfa.stateList) {
 			CodeList stateCodeList = new CodeList();
 			list.add(stateCodeList);
-			stateCodeList.add(new CodeSnippet("\t\tcase " + curState.number + ":"));
+			stateCodeList.add(new CodeSnippet("\t\tcase " + curState.number
+					+ ":"));
 			for (Transition curTrans : curState.outTransitions) {
 				CodeList transitionCodeList = new CodeList();
 				stateCodeList.add(transitionCodeList);
-				//Generate code to get next vertex and state number
+				// Generate code to get next vertex and state number
 				if (curTrans.consumesEdge()) {
-					transitionCodeList.add(new CodeSnippet("\t\t\tnextElement = inc.getThat();")); 
+					transitionCodeList.add(new CodeSnippet(
+							"\t\t\tnextElement = inc.getThat();"));
 				} else {
-					transitionCodeList.add(new CodeSnippet("\t\t\tnextElement = element;"));
-				}					
-				//Generate code to check if next element is marked
-				transitionCodeList.add(new CodeSnippet("\t\t\tif (!markedElements[" + curTrans.endState.number + "].contains(nextElement)) {//checking all transitions of state " + curTrans.endState.number));
-				transitionCodeList.add(createCodeForTransition(curTrans, false),2);
-				transitionCodeList.add(new CodeSnippet("\t\t} //finished checking transitions of state " + curTrans.endState.number));
+					transitionCodeList.add(new CodeSnippet(
+							"\t\t\tnextElement = element;"));
+				}
+				// Generate code to check if next element is marked
+				transitionCodeList
+						.add(new CodeSnippet(
+								"\t\t\tif (!markedElements["
+										+ curTrans.endState.number
+										+ "].contains(nextElement)) {//checking all transitions of state "
+										+ curTrans.endState.number));
+				transitionCodeList.add(
+						createCodeForTransition(curTrans, false), 2);
+				transitionCodeList.add(new CodeSnippet(
+						"\t\t} //finished checking transitions of state "
+								+ curTrans.endState.number));
 			}
 			stateCodeList.add(new CodeSnippet("\t\tbreak;//break case block"));
 		}
@@ -895,16 +1047,15 @@ public class GreqlCodeGenerator extends CodeGenerator implements ManagableArtifa
 		list.add(finalSnippet);
 		return createMethod(list, syntaxGraphVertex);
 	}
-	
-	
+
 	private CodeSnippet createAddToPathSearchQueueSnippet(int number) {
 		CodeSnippet annToQueueSnippet = new CodeSnippet();
-		annToQueueSnippet.add("markedElements[" + number + "].add(nextElement);");
+		annToQueueSnippet.add("markedElements[" + number
+				+ "].add(nextElement);");
 		annToQueueSnippet.add("queue.put(nextElement," + number + ");");
 		return annToQueueSnippet;
 	}
-	
-	
+
 	private CodeList createAddToPathSystemQueueSnippet(Transition t) {
 		CodeList list = new CodeList();
 		if (t.consumesEdge()) {
@@ -918,27 +1069,30 @@ public class GreqlCodeGenerator extends CodeGenerator implements ManagableArtifa
 		CodeSnippet addSnippet = new CodeSnippet();
 		addSnippet.add("PathSystemMarkerEntry newEntry = markVertex(marker,");
 		addSnippet.add("	nextElement, #endStateNumber#, #endStateFinal#,");
-		addSnippet.add("    element, #traversedEdge#, currentEntry.stateNumber,");
+		addSnippet
+				.add("    element, #traversedEdge#, currentEntry.stateNumber,");
 		addSnippet.add("    currentEntry.distanceToRoot + 1);");
 		if (t.endState.isFinal) {
 			addSnippet.add("finalEntries.add(newEntry);");
 		}
 		addSnippet.add("queue.add(newEntry);");
 		return list;
-	}	
-	
-	
-	private String createCodeForPathSystemFunction(FunctionApplication funApp)	{
-		IsArgumentOf inc = funApp.getFirstIsArgumentOfIncidence(EdgeDirection.IN);
+	}
+
+	private String createCodeForPathSystemFunction(FunctionApplication funApp) {
+		IsArgumentOf inc = funApp
+				.getFirstIsArgumentOfIncidence(EdgeDirection.IN);
 		Expression startExpr = (Expression) inc.getThat();
 		inc = inc.getNextIsArgumentOfIncidence(EdgeDirection.IN);
 		PathDescription pathDescr = (PathDescription) inc.getThat();
-		PathDescriptionEvaluator pathDescrEval = (PathDescriptionEvaluator) vertexEvalGraphMarker.getMark(pathDescr);
-		DFA dfa = ((NFA)pathDescrEval.getResult()).getDFA();
+		PathDescriptionEvaluator pathDescrEval = (PathDescriptionEvaluator) vertexEvalGraphMarker
+				.getMark(pathDescr);
+		DFA dfa = ((NFA) pathDescrEval.getResult()).getDFA();
 		return createCodeForPathSystem(dfa, startExpr, funApp);
 	}
-	
-	private String createCodeForPathSystem(DFA dfa, Expression startElementExpr, Greql2Vertex syntaxGraphVertex)	{
+
+	private String createCodeForPathSystem(DFA dfa,
+			Expression startElementExpr, Greql2Vertex syntaxGraphVertex) {
 		CodeList list = new CodeList();
 		addImports("de.uni_koblenz.jgralab.*");
 		addImports("de.uni_koblenz.jgralab.greql2.executable.ExecutablePathSystemHelper");
@@ -948,21 +1102,29 @@ public class GreqlCodeGenerator extends CodeGenerator implements ManagableArtifa
 		addImports("java.util.LinkedList");
 		addImports("java.util.HashSet");
 		list.setVariable("stateCount", Integer.toString(dfa.stateList.size()));
-		list.setVariable("initialStateNumber", Integer.toString(dfa.initialState.number));
-		list.setVariable("initialStateFinal", Boolean.toString(dfa.initialState.isFinal));
+		list.setVariable("initialStateNumber",
+				Integer.toString(dfa.initialState.number));
+		list.setVariable("initialStateFinal",
+				Boolean.toString(dfa.initialState.isFinal));
 		CodeSnippet initSnippet = new CodeSnippet();
 		list.add(initSnippet);
-		initSnippet.add("Vertex element = (Vertex)" + createCodeForExpression(startElementExpr) + ";");
+		initSnippet.add("Vertex element = (Vertex)"
+				+ createCodeForExpression(startElementExpr) + ";");
 		initSnippet.add("Vertex nextElement;");
-		initSnippet.add("Queue<PathSystemMarkerEntry> queue = new LinkedList<PathSystemMarkerEntry>();");
+		initSnippet
+				.add("Queue<PathSystemMarkerEntry> queue = new LinkedList<PathSystemMarkerEntry>();");
 		initSnippet.add("@SuppressWarnings(\"unchecked\")");
-		initSnippet.add("GraphMarker<PathSystemMarkerEntry>[] marker = new GraphMarker[#stateCount#];");
+		initSnippet
+				.add("GraphMarker<PathSystemMarkerEntry>[] marker = new GraphMarker[#stateCount#];");
 		initSnippet.add("for (int i = 0; i < #stateCount#; i++) {");
-		initSnippet.add("\tmarker[i] = new GraphMarker<PathSystemMarkerEntry>(element.getGraph());");
+		initSnippet
+				.add("\tmarker[i] = new GraphMarker<PathSystemMarkerEntry>(element.getGraph());");
 		initSnippet.add("}");
-		initSnippet.add("HashSet<PathSystemMarkerEntry> finalEntries = new HashSet<PathSystemMarkerEntry>();");
-		initSnippet.add("PathSystemMarkerEntry currentEntry = ",
-				        "\tExecutablePathSystemHelper.markVertex(marker, element, #initialStateNumber#, #initialStateFinal#, null, null, 0, 0);");
+		initSnippet
+				.add("HashSet<PathSystemMarkerEntry> finalEntries = new HashSet<PathSystemMarkerEntry>();");
+		initSnippet
+				.add("PathSystemMarkerEntry currentEntry = ",
+						"\tExecutablePathSystemHelper.markVertex(marker, element, #initialStateNumber#, #initialStateFinal#, null, null, 0, 0);");
 		if (dfa.initialState.isFinal) {
 			initSnippet.add("finalEntries.add(currentEntry);");
 		}
@@ -971,26 +1133,37 @@ public class GreqlCodeGenerator extends CodeGenerator implements ManagableArtifa
 		initSnippet.add("\tcurrentEntry = queue.poll();");
 		initSnippet.add("\telement = currentEntry.vertex;");
 		initSnippet.add("\tfor (Edge inc = element.getFirstIncidence();");
-		initSnippet.add("\t\tinc != null; inc = inc.getNextIncidence() ) { //iterating incident edges");
+		initSnippet
+				.add("\t\tinc != null; inc = inc.getNextIncidence() ) { //iterating incident edges");
 		initSnippet.add("\t\tswitch (currentEntry.stateNumber) {");
 
 		for (State curState : dfa.stateList) {
 			CodeList stateCodeList = new CodeList();
 			list.add(stateCodeList);
-			stateCodeList.add(new CodeSnippet("\t\tcase " + curState.number + ":"));
+			stateCodeList.add(new CodeSnippet("\t\tcase " + curState.number
+					+ ":"));
 			for (Transition curTrans : curState.outTransitions) {
 				CodeList transitionCodeList = new CodeList();
 				stateCodeList.add(transitionCodeList);
-				//Generate code to get next vertex and state number
+				// Generate code to get next vertex and state number
 				if (curTrans.consumesEdge()) {
-					transitionCodeList.add(new CodeSnippet("\t\t\tnextElement = inc.getThat();")); 
+					transitionCodeList.add(new CodeSnippet(
+							"\t\t\tnextElement = inc.getThat();"));
 				} else {
-					transitionCodeList.add(new CodeSnippet("\t\t\tnextElement = element;"));
-				}					
-				//Generate code to check if next element is marked
-				transitionCodeList.add(new CodeSnippet("\t\t\tif (!ExecutablePathSystemHelper.isMarked(marker, nextElement, " + curTrans.endState.number + ")) {//checking all transitions of state " + curTrans.endState.number));
-				transitionCodeList.add(createCodeForTransition(curTrans,true),2);
-				transitionCodeList.add(new CodeSnippet("\t\t} //finished checking transitions of state " + curTrans.endState.number));
+					transitionCodeList.add(new CodeSnippet(
+							"\t\t\tnextElement = element;"));
+				}
+				// Generate code to check if next element is marked
+				transitionCodeList.add(new CodeSnippet(
+						"\t\t\tif (!ExecutablePathSystemHelper.isMarked(marker, nextElement, "
+								+ curTrans.endState.number
+								+ ")) {//checking all transitions of state "
+								+ curTrans.endState.number));
+				transitionCodeList.add(createCodeForTransition(curTrans, true),
+						2);
+				transitionCodeList.add(new CodeSnippet(
+						"\t\t} //finished checking transitions of state "
+								+ curTrans.endState.number));
 			}
 			stateCodeList.add(new CodeSnippet("\t\tbreak;//break case block"));
 		}
@@ -999,84 +1172,101 @@ public class GreqlCodeGenerator extends CodeGenerator implements ManagableArtifa
 		finalSnippet.add("\t\t} //end of switch");
 		finalSnippet.add("\t} //end of iterating incident edges ");
 		finalSnippet.add("} //end of processing queue");
-		finalSnippet.add("return ExecutablePathSystemHelper.createPathSystemFromMarkings(marker, (Vertex)v, finalEntries);");
+		finalSnippet
+				.add("return ExecutablePathSystemHelper.createPathSystemFromMarkings(marker, (Vertex)v, finalEntries);");
 		list.add(finalSnippet);
 		return createMethod(list, syntaxGraphVertex);
-	}	
-
-
+	}
 
 	private int acceptedTypesNumber = 0;
-	
+
 	/**
-	 * Creates code that implements the transition <code>trans</code>. 
-	 * Depending on the value of pathSystem, a successfull "firing" of the
-	 * transition will add the checked element to the queue of a forward
-	 * or backward vertex set, or a new PathSystemQueueEntry will be 
-	 * created. In particular, these functionality is realized by the 
-	 * methods createAddToPathSearchQueueSnippet and createAddToPathSystemQueueSnippet,
+	 * Creates code that implements the transition <code>trans</code>. Depending
+	 * on the value of pathSystem, a successfull "firing" of the transition will
+	 * add the checked element to the queue of a forward or backward vertex set,
+	 * or a new PathSystemQueueEntry will be created. In particular, these
+	 * functionality is realized by the methods
+	 * createAddToPathSearchQueueSnippet and createAddToPathSystemQueueSnippet,
 	 * which will be called depending on the pathSystem parameter
+	 *
 	 * @return a CodeBlock implementing the transition with all its checks
 	 */
-	private CodeBlock createCodeForTransition(Transition trans, boolean pathSystem) {
+	private CodeBlock createCodeForTransition(Transition trans,
+			boolean pathSystem) {
 		if (trans instanceof EdgeTransition) {
-			return createCodeForEdgeTransition((EdgeTransition) trans, pathSystem);
+			return createCodeForEdgeTransition((EdgeTransition) trans,
+					pathSystem);
 		}
 		if (trans instanceof SimpleTransition) {
-			return createCodeForSimpleTransition((SimpleTransition) trans, pathSystem);
+			return createCodeForSimpleTransition((SimpleTransition) trans,
+					pathSystem);
 		}
 		if (trans instanceof AggregationTransition) {
-			return createCodeForAggregationTransition((AggregationTransition) trans, pathSystem);
+			return createCodeForAggregationTransition(
+					(AggregationTransition) trans, pathSystem);
 		}
 		if (trans instanceof BoolExpressionTransition) {
-			return createCodeForBooleanExpressionTransition((BoolExpressionTransition) trans, pathSystem);
+			return createCodeForBooleanExpressionTransition(
+					(BoolExpressionTransition) trans, pathSystem);
 		}
 		if (trans instanceof IntermediateVertexTransition) {
-			return createCodeForIntermediateVertexTransition((IntermediateVertexTransition) trans, pathSystem);
+			return createCodeForIntermediateVertexTransition(
+					(IntermediateVertexTransition) trans, pathSystem);
 		}
 		if (trans instanceof VertexTypeRestrictionTransition) {
-			return createCodeForVertexTypeRestrictionTransition((VertexTypeRestrictionTransition) trans, pathSystem);
+			return createCodeForVertexTypeRestrictionTransition(
+					(VertexTypeRestrictionTransition) trans, pathSystem);
 		}
-		return new CodeSnippet("FAILURE: TRANSITION TYPE IS UNKNOWN TO GREQL CODE GENERATOR " + trans.getClass().getSimpleName()); 
+		return new CodeSnippet(
+				"FAILURE: TRANSITION TYPE IS UNKNOWN TO GREQL CODE GENERATOR "
+						+ trans.getClass().getSimpleName());
 	}
-	
-	private CodeBlock createCodeForSimpleTransition(SimpleTransition trans, boolean pathSystem) {
+
+	private CodeBlock createCodeForSimpleTransition(SimpleTransition trans,
+			boolean pathSystem) {
 		return createCodeForSimpleOrEdgeTransition(trans, pathSystem, null);
 	}
-	
-	private CodeBlock createCodeForEdgeTransition(EdgeTransition trans, boolean pathSystem) {
+
+	private CodeBlock createCodeForEdgeTransition(EdgeTransition trans,
+			boolean pathSystem) {
 		CodeList curr = new CodeList();
 		VertexEvaluator allowedEdgeEvaluator = trans.getAllowedEdgeEvaluator();
 		if (allowedEdgeEvaluator != null) {
-			curr.add(new CodeSnippet("Object allowedEdge = " + createCodeForExpression((Expression) allowedEdgeEvaluator.getVertex()) + ";"));
-			curr.add(new CodeSnippet("if (edge.getNormalEdge() == allowedEdge.getNormalEdge())"));
+			curr.add(new CodeSnippet("Object allowedEdge = "
+					+ createCodeForExpression((Expression) allowedEdgeEvaluator
+							.getVertex()) + ";"));
+			curr.add(new CodeSnippet(
+					"if (edge.getNormalEdge() == allowedEdge.getNormalEdge())"));
 		}
 		return createCodeForSimpleOrEdgeTransition(trans, pathSystem, curr);
 	}
-	
-	
-	private CodeBlock createCodeForSimpleOrEdgeTransition(SimpleTransition trans, boolean pathSystem, CodeBlock edgeTest) {
+
+	private CodeBlock createCodeForSimpleOrEdgeTransition(
+			SimpleTransition trans, boolean pathSystem, CodeBlock edgeTest) {
 		CodeList resultList = new CodeList();
 		CodeList curr = resultList;
 		if (trans.getAllowedDirection() != GReQLDirection.INOUT) {
 			switch (trans.getAllowedDirection()) {
-			case IN: 
-				curr.add(new CodeSnippet("if (!inc.isNormal()) { //begin of simple transition" ));
-			    break;
-			case OUT: 
-				curr.add(new CodeSnippet("if (inc.isNormal()) { //begin of simple transition" ));
+			case IN:
+				curr.add(new CodeSnippet(
+						"if (!inc.isNormal()) { //begin of simple transition"));
+				break;
+			case OUT:
+				curr.add(new CodeSnippet(
+						"if (inc.isNormal()) { //begin of simple transition"));
 				break;
 			}
-		    CodeList body = new CodeList();
-		    curr.add(body);
-		    curr.add(new CodeSnippet("} //end of simple transition"));
-		    curr = body;
+			CodeList body = new CodeList();
+			curr.add(body);
+			curr.add(new CodeSnippet("} //end of simple transition"));
+			curr = body;
 		}
-		curr = createTypeCollectionCheck(curr, trans.getTypeCollection()); 
-		curr = createRolenameCheck(curr, trans.getValidToRoles(), trans.getValidFromRoles());
-		curr = createPredicateCheck(curr,trans.getPredicateEvaluator());
+		curr = createTypeCollectionCheck(curr, trans.getTypeCollection());
+		curr = createRolenameCheck(curr, trans.getValidToRoles(),
+				trans.getValidFromRoles());
+		curr = createPredicateCheck(curr, trans.getPredicateEvaluator());
 		curr.add(edgeTest);
-		//add element to queue
+		// add element to queue
 		if (pathSystem) {
 			curr.add(createAddToPathSystemQueueSnippet(trans));
 		} else {
@@ -1084,25 +1274,30 @@ public class GreqlCodeGenerator extends CodeGenerator implements ManagableArtifa
 		}
 		return resultList;
 	}
-	
-	private CodeBlock createCodeForAggregationTransition(AggregationTransition trans, boolean pathSystem) {
+
+	private CodeBlock createCodeForAggregationTransition(
+			AggregationTransition trans, boolean pathSystem) {
 		CodeList resultList = new CodeList();
 		CodeList curr = resultList;
 		addImports("de.uni_koblenz.jgralab.schema.AggregationKind");
 		if (trans.isAggregateFrom()) {
-			curr.add(new CodeSnippet("AggregationKind aggrKind = inc.getThisAggregationKind();"));
+			curr.add(new CodeSnippet(
+					"AggregationKind aggrKind = inc.getThisAggregationKind();"));
 		} else {
-			curr.add(new CodeSnippet("AggregationKind aggrKind = inc.getThatAggregationKind();"));
+			curr.add(new CodeSnippet(
+					"AggregationKind aggrKind = inc.getThatAggregationKind();"));
 		}
-		curr.add(new CodeSnippet("if ((aggrKind == AggregationKind.SHARED) || (aggrKind == AggregationKind.COMPOSITE)) {" ));
-	    CodeList body = new CodeList();
-	    curr.add(body);
-	    curr.add(new CodeSnippet("} //of of check aggregation kind"));
-	    curr = body;
-		curr = createTypeCollectionCheck(curr, trans.getTypeCollection()); 
-		curr = createRolenameCheck(curr, trans.getValidToRoles(), trans.getValidFromRoles());
-		curr = createPredicateCheck(curr,trans.getPredicateEvaluator());
-		//add element to queue
+		curr.add(new CodeSnippet(
+				"if ((aggrKind == AggregationKind.SHARED) || (aggrKind == AggregationKind.COMPOSITE)) {"));
+		CodeList body = new CodeList();
+		curr.add(body);
+		curr.add(new CodeSnippet("} //of of check aggregation kind"));
+		curr = body;
+		curr = createTypeCollectionCheck(curr, trans.getTypeCollection());
+		curr = createRolenameCheck(curr, trans.getValidToRoles(),
+				trans.getValidFromRoles());
+		curr = createPredicateCheck(curr, trans.getPredicateEvaluator());
+		// add element to queue
 		if (pathSystem) {
 			curr.add(createAddToPathSearchQueueSnippet(trans.endState.number));
 		} else {
@@ -1110,31 +1305,35 @@ public class GreqlCodeGenerator extends CodeGenerator implements ManagableArtifa
 		}
 		return resultList;
 	}
-	
-	
-	private CodeList createTypeCollectionCheck(CodeList curr, TypeCollection typeCollection) {
+
+	private CodeList createTypeCollectionCheck(CodeList curr,
+			TypeCollection typeCollection) {
 		if (typeCollection != null) {
 			String fieldName = createInitializerForTypeCollection(typeCollection);
-			curr.add(new CodeSnippet("if (" + fieldName + ".get(((GraphElementClass<?,?>)inc.getAttributedElementClass()).getGraphElementClassIdInSchema())) { //check type collection" ));	
-		    CodeList body = new CodeList();
-		    curr.add(body);
-		    curr.add(new CodeSnippet("} //end of check type collection"));
-		    curr = body;
+			curr.add(new CodeSnippet(
+					"if ("
+							+ fieldName
+							+ ".get(((GraphElementClass<?,?>)inc.getAttributedElementClass()).getGraphElementClassIdInSchema())) { //check type collection"));
+			CodeList body = new CodeList();
+			curr.add(body);
+			curr.add(new CodeSnippet("} //end of check type collection"));
+			curr = body;
 		}
 		return curr;
 	}
-	
-	private CodeList createRolenameCheck(CodeList curr, Set<String> validToRoles, Set<String> validFromRoles) {
+
+	private CodeList createRolenameCheck(CodeList curr,
+			Set<String> validToRoles, Set<String> validFromRoles) {
 		Set<String> roles = validToRoles;
 		boolean checkTo = true;
 		if (roles == null) {
 			roles = validFromRoles;
 			checkTo = false;
-		}	
+		}
 		if (roles != null) {
 			addImports("de.uni_koblenz.jgralab.schema.IncidenceClass");
 			HashSet<IncidenceClass> incidenceClasses = new HashSet<IncidenceClass>();
-			for (EdgeClass ec : schema.getEdgeClasses()) {
+			for (EdgeClass ec : schema.getGraphClass().getEdgeClasses()) {
 				IncidenceClass to = ec.getTo();
 				if (roles.contains(to.getRolename())) {
 					incidenceClasses.add(to);
@@ -1152,48 +1351,59 @@ public class GreqlCodeGenerator extends CodeGenerator implements ManagableArtifa
 			}
 			String roleAcceptanceField = createInitializerForIncidenceTypeCollection(incidenceClasses);
 			if (checkTo) {
-				curr.add(new CodeSnippet("IncidenceClass ic = inc.isNormal() ? inc.getAttributedElementClass().getTo() : inc.getAttributedElementClass().getFrom();"));
+				curr.add(new CodeSnippet(
+						"IncidenceClass ic = inc.isNormal() ? inc.getAttributedElementClass().getTo() : inc.getAttributedElementClass().getFrom();"));
 			} else {
-				curr.add(new CodeSnippet("IncidenceClass ic = inc.isNormal() ? inc.getAttributedElementClass().getFrom() : inc.getAttributedElementClass().getTo();"));
+				curr.add(new CodeSnippet(
+						"IncidenceClass ic = inc.isNormal() ? inc.getAttributedElementClass().getFrom() : inc.getAttributedElementClass().getTo();"));
 			}
-			curr.add(new CodeSnippet("if (" + roleAcceptanceField + ".get(ic.getIncidenceClassIdInSchema())) { // begin of role test" ));	
+			curr.add(new CodeSnippet(
+					"if ("
+							+ roleAcceptanceField
+							+ ".get(ic.getIncidenceClassIdInSchema())) { // begin of role test"));
 			CodeList body = new CodeList();
 			curr.add(body);
-		    curr.add(new CodeSnippet("} //end of role test"));
-		    curr = body;
+			curr.add(new CodeSnippet("} //end of role test"));
+			curr = body;
 		}
 		return curr;
 	}
-	
-	private CodeList createPredicateCheck(CodeList curr, VertexEvaluator predicateEval) {
-		if (predicateEval != null ) {
+
+	private CodeList createPredicateCheck(CodeList curr,
+			VertexEvaluator predicateEval) {
+		if (predicateEval != null) {
 			createThisLiterals();
 			curr.add(new CodeSnippet("setThisEdge(inc);"));
 			curr.add(new CodeSnippet("setThisVertex(element);"));
-			curr.add(new CodeSnippet("if (" + createCodeForExpression((Expression)predicateEval.getVertex()) + ") { //begin check predicate"));
-		    CodeList body = new CodeList();
-		    curr.add(body);
-		    curr.add(new CodeSnippet("} //end of predicate check"));
-		    curr = body;
+			curr.add(new CodeSnippet("if ("
+					+ createCodeForExpression((Expression) predicateEval
+							.getVertex()) + ") { //begin check predicate"));
+			CodeList body = new CodeList();
+			curr.add(body);
+			curr.add(new CodeSnippet("} //end of predicate check"));
+			curr = body;
 		}
 		return curr;
 	}
-		
 
-	private CodeBlock createCodeForVertexTypeRestrictionTransition(VertexTypeRestrictionTransition trans, boolean pathSystem) {
+	private CodeBlock createCodeForVertexTypeRestrictionTransition(
+			VertexTypeRestrictionTransition trans, boolean pathSystem) {
 		CodeList resultList = new CodeList();
 		CodeList curr = resultList;
 		TypeCollection typeCollection = trans.getAcceptedVertexTypes();
 		if (typeCollection != null) {
 			String fieldName = createInitializerForTypeCollection(typeCollection);
-			curr.add(new CodeSnippet("if (" + fieldName + ".get(((GraphElementClass)vertex.getAttributedElementClass()).getGraphElementClassIdInSchema())) {//test for VertexTypeRestriction" ));	
-		    CodeList body = new CodeList();
-		    curr.add(body);
-		    curr.add(new CodeSnippet("} //end of vertex type restriction"));
-		    curr = body;
+			curr.add(new CodeSnippet(
+					"if ("
+							+ fieldName
+							+ ".get(((GraphElementClass)vertex.getAttributedElementClass()).getGraphElementClassIdInSchema())) {//test for VertexTypeRestriction"));
+			CodeList body = new CodeList();
+			curr.add(body);
+			curr.add(new CodeSnippet("} //end of vertex type restriction"));
+			curr = body;
 		}
 
-		//add element to queue
+		// add element to queue
 		if (pathSystem) {
 			curr.add(createAddToPathSearchQueueSnippet(trans.endState.number));
 		} else {
@@ -1201,24 +1411,31 @@ public class GreqlCodeGenerator extends CodeGenerator implements ManagableArtifa
 		}
 		return resultList;
 	}
-	
-	private CodeBlock createCodeForIntermediateVertexTransition(IntermediateVertexTransition trans, boolean pathSystem) {
+
+	private CodeBlock createCodeForIntermediateVertexTransition(
+			IntermediateVertexTransition trans, boolean pathSystem) {
 		CodeList curr = new CodeList();
-		
-		VertexEvaluator intermediateVertexEval = trans.getIntermediateVertexEvaluator();
-		if (intermediateVertexEval != null ) {
+
+		VertexEvaluator intermediateVertexEval = trans
+				.getIntermediateVertexEvaluator();
+		if (intermediateVertexEval != null) {
 			createThisLiterals();
 			CodeSnippet predicateSnippet = new CodeSnippet();
 			predicateSnippet.add("setThisVertex(element);");
-			predicateSnippet.add("Object tempRes = " + createCodeForExpression((Expression) intermediateVertexEval.getVertex()) + ";");
-			predicateSnippet.add("if ((tempRes == element) || (((PCollection) tempRes).contains(element))) { //test of intermediate vertex transition");
+			predicateSnippet
+					.add("Object tempRes = "
+							+ createCodeForExpression((Expression) intermediateVertexEval
+									.getVertex()) + ";");
+			predicateSnippet
+					.add("if ((tempRes == element) || (((PCollection) tempRes).contains(element))) { //test of intermediate vertex transition");
 			curr.add(predicateSnippet);
-		    CodeList body = new CodeList();
-		    curr.add(body);
-		    curr.add(new CodeSnippet("} //end of intermediate vertex transition"));
-		    curr = body;
+			CodeList body = new CodeList();
+			curr.add(body);
+			curr.add(new CodeSnippet(
+					"} //end of intermediate vertex transition"));
+			curr = body;
 		}
-		//add element to queue
+		// add element to queue
 		if (pathSystem) {
 			curr.add(createAddToPathSearchQueueSnippet(trans.endState.number));
 		} else {
@@ -1226,22 +1443,25 @@ public class GreqlCodeGenerator extends CodeGenerator implements ManagableArtifa
 		}
 		return curr;
 	}
-	
-	private CodeBlock createCodeForBooleanExpressionTransition(BoolExpressionTransition trans, boolean pathSystem) {
+
+	private CodeBlock createCodeForBooleanExpressionTransition(
+			BoolExpressionTransition trans, boolean pathSystem) {
 		CodeList curr = new CodeList();
-		
+
 		VertexEvaluator predicateEval = trans.getBooleanExpressionEvaluator();
-		if (predicateEval != null ) {
+		if (predicateEval != null) {
 			createThisLiterals();
 			curr.add(new CodeSnippet("setThisVertex(element);"));
-			curr.add(new CodeSnippet("if (" + createCodeForExpression((Expression)predicateEval.getVertex()) + ") {"));
-		    CodeList body = new CodeList();
-		    curr.add(body);
-		    curr.add(new CodeSnippet("}"));
-		    curr = body;
+			curr.add(new CodeSnippet("if ("
+					+ createCodeForExpression((Expression) predicateEval
+							.getVertex()) + ") {"));
+			CodeList body = new CodeList();
+			curr.add(body);
+			curr.add(new CodeSnippet("}"));
+			curr = body;
 		}
-		//add element to queue
-		//add element to queue
+		// add element to queue
+		// add element to queue
 		if (pathSystem) {
 			curr.add(createAddToPathSearchQueueSnippet(trans.endState.number));
 		} else {
@@ -1249,28 +1469,28 @@ public class GreqlCodeGenerator extends CodeGenerator implements ManagableArtifa
 		}
 		return curr;
 	}
-	
 
-	
-	
-	//Helper methods
-	
+	// Helper methods
+
 	/*
-	 * returns the name of the variable holding the partial result for the expression
-	 * with the given id
+	 * returns the name of the variable holding the partial result for the
+	 * expression with the given id
 	 */
 	private String getVariableName(String uniqueId) {
 		return "result_" + uniqueId;
 	}
-	
-	
+
 	Set<Integer> alreadyCreatedEvaluateFunctions = new HashSet<Integer>();
-	
+
 	/**
-	 * Creates a method encapsulating the codelist given and returns the call of that method as a String
+	 * Creates a method encapsulating the codelist given and returns the call of
+	 * that method as a String
+	 *
 	 * @param list
-	 * @param uniqueId a unique Id used to create a global variable that stores the value of this method
-	 *        to allow a re-calculation only if the variables this expression depends on have changed
+	 * @param uniqueId
+	 *            a unique Id used to create a global variable that stores the
+	 *            value of this method to allow a re-calculation only if the
+	 *            variables this expression depends on have changed
 	 * @return
 	 */
 	private String createMethod(CodeList methodBody, Greql2Vertex vertex) {
@@ -1281,37 +1501,42 @@ public class GreqlCodeGenerator extends CodeGenerator implements ManagableArtifa
 		StringBuilder actualParams = new StringBuilder();
 		String delim = "";
 		for (String s : scope.getDefinedVariables()) {
-			formalParams.append(delim +  "Object " + s);
-			actualParams.append(delim +  s);
+			formalParams.append(delim + "Object " + s);
+			actualParams.append(delim + s);
 			delim = ",";
 		}
-		if (!alreadyCreatedEvaluateFunctions.contains(vertex.getId()))	{
+		if (!alreadyCreatedEvaluateFunctions.contains(vertex.getId())) {
 			alreadyCreatedEvaluateFunctions.add(vertex.getId());
 			CodeList evaluateMethodBlock = new CodeList();
-			evaluateMethodBlock.setVariable("actualParams", actualParams.toString());
-			evaluateMethodBlock.setVariable("formalParams", formalParams.toString());
-			evaluateMethodBlock.add(new CodeSnippet("private Object " + getVariableName(uniqueId) + " = null;"));
+			evaluateMethodBlock.setVariable("actualParams",
+					actualParams.toString());
+			evaluateMethodBlock.setVariable("formalParams",
+					formalParams.toString());
+			evaluateMethodBlock.add(new CodeSnippet("private Object "
+					+ getVariableName(uniqueId) + " = null;"));
 			CodeSnippet checkVariableMethod = new CodeSnippet();
-			checkVariableMethod.add("private Object " + methodName + "(#formalParams#) {");
+			checkVariableMethod.add("private Object " + methodName
+					+ "(#formalParams#) {");
 			checkVariableMethod.add("\tif (result_" + uniqueId + " == null) {");
-			checkVariableMethod.add("\t\tresult_" + uniqueId + " = internal_" + methodName + "(#actualParams#);");
+			checkVariableMethod.add("\t\tresult_" + uniqueId + " = internal_"
+					+ methodName + "(#actualParams#);");
 			checkVariableMethod.add("\t}");
 			checkVariableMethod.add("\treturn result_" + uniqueId + ";");
 			checkVariableMethod.add("}\n");
 			evaluateMethodBlock.add(checkVariableMethod);
-		
+
 			evaluateMethodBlock.add(new CodeSnippet(comment));
-			evaluateMethodBlock.add(new CodeSnippet("private Object internal_" + methodName + "(#formalParams#) {"));
+			evaluateMethodBlock.add(new CodeSnippet("private Object internal_"
+					+ methodName + "(#formalParams#) {"));
 			evaluateMethodBlock.add(methodBody);
 			evaluateMethodBlock.add(new CodeSnippet("}\n"));
-		
+
 			createdMethods.add(evaluateMethodBlock);
 		}
-		
+
 		return methodName + "(" + actualParams.toString() + ")";
 	}
 
-	
 	private void createThisLiterals() {
 		if (!thisLiteralsCreated) {
 			thisLiteralsCreated = true;
@@ -1321,59 +1546,62 @@ public class GreqlCodeGenerator extends CodeGenerator implements ManagableArtifa
 			createSetterForThisLiteral(graph.getFirstThisVertex(), "Vertex");
 		}
 	}
-	
-	
-	protected void createSetterForThisLiteral(ThisLiteral lit, String edgeOrVertex) {
+
+	protected void createSetterForThisLiteral(ThisLiteral lit,
+			String edgeOrVertex) {
 		CodeList list = new CodeList();
 		CodeSnippet snip = new CodeSnippet();
 		list.add(snip);
 		snip.setVariable("edgeOrVertex", edgeOrVertex);
 		snip.add("private final void setThis#edgeOrVertex#(#edgeOrVertex# value) {");
 		if (lit != null) {
-			VariableEvaluator vertexEval = (VariableEvaluator) vertexEvalGraphMarker.getMark(lit);
-			List<VertexEvaluator> dependingExpressions = vertexEval.calculateDependingExpressions();
+			VariableEvaluator vertexEval = (VariableEvaluator) vertexEvalGraphMarker
+					.getMark(lit);
+			List<VertexEvaluator> dependingExpressions = vertexEval
+					.calculateDependingExpressions();
 			for (VertexEvaluator ve : dependingExpressions) {
 				Vertex currentV = ve.getVertex();
-				if ((currentV instanceof Variable) || (currentV instanceof PathDescription) || (currentV instanceof EdgeRestriction))
+				if ((currentV instanceof Variable)
+						|| (currentV instanceof PathDescription)
+						|| (currentV instanceof EdgeRestriction)) {
 					continue;
-				String variableName = getVariableName(Integer.toString(currentV.getId()));
-				snip.add("\t" + variableName + " = null; //result of vertex " + currentV.getAttributedElementClass().getSimpleName());
+				}
+				String variableName = getVariableName(Integer.toString(currentV
+						.getId()));
+				snip.add("\t" + variableName + " = null; //result of vertex "
+						+ currentV.getAttributedElementClass().getSimpleName());
 			}
-		}	
+		}
 		snip.add("\tthis#edgeOrVertex# = value;");
 		snip.add("}");
 		createdMethods.add(list);
 	}
-	
 
 	private void addStaticField(String type, String var, String def) {
-		staticFieldSnippet.add("static " + type + " " + var + " = " + def + ";", "");
+		staticFieldSnippet.add(
+				"static " + type + " " + var + " = " + def + ";", "");
 	}
-	
-	
+
 	private void addClassField(String type, String var, String def) {
 		classFieldSnippet.add(type + " " + var + " = " + def + ";", "");
 	}
 
-	
 	private void addStaticInitializer(String statement) {
-		staticInitializerSnippet.add(statement);		
+		staticInitializerSnippet.add(statement);
 	}
 
-
+	@Override
 	public void createFiles(String pathPrefix) throws GraphIOException {
 		String schemaPackage = rootBlock.getVariable("schemaPackage");
 		createCode();
 		writeCodeToFile(pathPrefix, this.classname + ".java", schemaPackage);
 	}
-	
-	
+
 	public InMemoryJavaSourceFile createInMemoryJavaSource() {
 		createCode();
 		return new InMemoryJavaSourceFile(this.classname, rootBlock.getCode());
 	}
 
-	
 	@SuppressWarnings("unchecked")
 	public Class<ExecutableQuery> compile() {
 		JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
@@ -1389,19 +1617,23 @@ public class GreqlCodeGenerator extends CodeGenerator implements ManagableArtifa
 		ClassFileManager manager = new ClassFileManager(this, jfm);
 		compiler.getTask(null, manager, null, null, null, javaSources).call();
 		try {
-			return (Class<ExecutableQuery>) Class.forName(packageName + "." +  this.classname, true,
+			return (Class<ExecutableQuery>) Class.forName(packageName + "."
+					+ this.classname, true,
 					SchemaClassManager.instance(codeGeneratorFileManagerName));
 		} catch (ClassNotFoundException e) {
 			throw new RuntimeException(e);
 		}
 	}
 
-
 	@Override
 	protected CodeBlock createHeader() {
-		return new CodeSnippet("public class " + classname + " extends AbstractExecutableQuery implements ExecutableQuery {");
+		return new CodeSnippet(
+				"public class "
+						+ classname
+						+ " extends AbstractExecutableQuery implements ExecutableQuery {");
 	}
-	
+
+	@Override
 	protected CodeBlock createPackageDeclaration() {
 		return new CodeSnippet("package " + packageName + ";");
 	}
@@ -1410,5 +1642,5 @@ public class GreqlCodeGenerator extends CodeGenerator implements ManagableArtifa
 	public String getManagedName() {
 		return codeGeneratorFileManagerName;
 	}
-	
+
 }

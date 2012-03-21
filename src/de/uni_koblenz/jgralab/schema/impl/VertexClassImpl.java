@@ -91,6 +91,10 @@ public final class VertexClassImpl extends
 	 */
 	private Set<IncidenceClass> validToFarIncidenceClasses;
 
+	/**
+	 * A map from far-end role name to the corresponding directed edge class -
+	 * only set if schema is finished
+	 */
 	private Map<String, DirectedSchemaEdgeClass> farRoleNameToEdgeClass;
 
 	/**
@@ -207,7 +211,7 @@ public final class VertexClassImpl extends
 	 * For a vertexclass A are all edgeclasses valid froms, which (1) run from A
 	 * to a B or (2) run from a superclass of A to a B and whose end b at B is
 	 * not redefined by A or a superclass of A
-	 * 
+	 *
 	 */
 
 	@Override
@@ -223,7 +227,7 @@ public final class VertexClassImpl extends
 		}
 		for (VertexClass aec : getAllSuperClasses()) {
 			VertexClass vc = aec;
-			if (vc.isInternal()) {
+			if (vc.isDefaultGraphElementClass()) {
 				continue;
 			}
 			for (IncidenceClass ic : vc.getAllOutIncidenceClasses()) {
@@ -251,7 +255,7 @@ public final class VertexClassImpl extends
 		}
 		for (VertexClass aec : getAllSuperClasses()) {
 			VertexClass vc = aec;
-			if (vc.isInternal()) {
+			if (vc.isDefaultGraphElementClass()) {
 				continue;
 			}
 			for (IncidenceClass ic : vc.getAllInIncidenceClasses()) {
@@ -275,7 +279,7 @@ public final class VertexClassImpl extends
 		// System.err.print("+");
 		Set<EdgeClass> validFrom = new HashSet<EdgeClass>();
 		for (IncidenceClass ic : getValidFromFarIncidenceClasses()) {
-			if (!ic.getEdgeClass().isInternal()) {
+			if (!ic.getEdgeClass().isDefaultGraphElementClass()) {
 				validFrom.add(ic.getEdgeClass());
 			}
 		}
@@ -290,7 +294,7 @@ public final class VertexClassImpl extends
 		// System.err.print("-");
 		Set<EdgeClass> validTo = new HashSet<EdgeClass>();
 		for (IncidenceClass ic : getValidToFarIncidenceClasses()) {
-			if (!ic.getEdgeClass().isInternal()) {
+			if (!ic.getEdgeClass().isDefaultGraphElementClass()) {
 				validTo.add(ic.getEdgeClass());
 			}
 		}
@@ -451,5 +455,60 @@ public final class VertexClassImpl extends
 			}
 		}
 		return null;
+	}
+
+	@Override
+	protected void reopen() {
+		allInIncidenceClasses = null;
+		allOutIncidenceClasses = null;
+		validFromFarIncidenceClasses = null;
+		validToFarIncidenceClasses = null;
+		validFromEdgeClasses = null;
+		validToEdgeClasses = null;
+		farRoleNameToEdgeClass = null;
+		for (IncidenceClass ic : inIncidenceClasses) {
+			((IncidenceClassImpl) ic).reopen();
+		}
+		for (IncidenceClass ic : outIncidenceClasses) {
+			((IncidenceClassImpl) ic).reopen();
+		}
+
+		// Make em modifiable again
+		inIncidenceClasses = new HashSet<IncidenceClass>(inIncidenceClasses);
+		outIncidenceClasses = new HashSet<IncidenceClass>(outIncidenceClasses);
+
+		super.reopen();
+	}
+
+	@Override
+	protected final void register() {
+		super.register();
+		graphClass.vertexClasses.put(qualifiedName, this);
+		parentPackage.vertexClasses.put(simpleName, this);
+	}
+
+	@Override
+	protected final void unregister() {
+		super.unregister();
+		graphClass.vertexClasses.remove(qualifiedName);
+		parentPackage.vertexClasses.remove(simpleName);
+	}
+
+	@Override
+	public void delete() {
+		schema.namedElements.remove(qualifiedName);
+		graphClass.vertexClasses.remove(qualifiedName);
+		graphClass.vertexClassDag.delete(this);
+		parentPackage.vertexClasses.remove(simpleName);
+	}
+
+	@Override
+	protected VertexClass getDefaultClass() {
+		return graphClass.getDefaultVertexClass();
+	}
+
+	@Override
+	public boolean isDefaultGraphElementClass() {
+		return this == graphClass.getDefaultVertexClass();
 	}
 }

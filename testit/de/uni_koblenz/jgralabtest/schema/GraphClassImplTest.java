@@ -37,6 +37,7 @@ package de.uni_koblenz.jgralabtest.schema;
 import org.junit.Before;
 import org.junit.Test;
 
+import de.uni_koblenz.jgralab.schema.AggregationKind;
 import de.uni_koblenz.jgralab.schema.GraphClass;
 import de.uni_koblenz.jgralab.schema.Schema;
 import de.uni_koblenz.jgralab.schema.exception.SchemaException;
@@ -54,7 +55,7 @@ public final class GraphClassImplTest extends
 
 	/**
 	 * compareTo(AttributedElementClass)
-	 * 
+	 *
 	 * TEST CASE: An Exception must be thrown if you try to create a second
 	 * GraphClass.
 	 */
@@ -65,7 +66,7 @@ public final class GraphClassImplTest extends
 
 	/**
 	 * compareTo(AttributedElementClass)
-	 * 
+	 *
 	 * TEST CASE: Comparing this element to another, where both element´s
 	 * qualified names are equal
 	 */
@@ -80,7 +81,7 @@ public final class GraphClassImplTest extends
 
 	/**
 	 * compareTo(AttributedElementClass)
-	 * 
+	 *
 	 * TEST CASE: Comparing an element to itself
 	 */
 	@Test
@@ -89,42 +90,20 @@ public final class GraphClassImplTest extends
 	}
 
 	@Test
-	public void testCreateAggregationClass() {
-		// TODO Auto-generated method stub
-	}
-
-	@Test
-	public void testCreateCompositionClass() {
-		// TODO Auto-generated method stub
-	}
-
-	@Test
 	public void testCreateEdgeClass() {
 		// TODO Auto-generated method stub
 	}
 
+	@Test(expected = SchemaException.class)
+	public void testCreateEdgeClassForbidden() {
+		graphClass.createEdgeClass("FooFoo",
+				graphClass.getDefaultVertexClass(), 0, 1, "",
+				AggregationKind.NONE, graphClass.getDefaultVertexClass(), 0, 1,
+				"", AggregationKind.NONE);
+	}
+
 	@Test
 	public void testCreateVertexClass() {
-		// TODO Auto-generated method stub
-	}
-
-	@Test
-	public void testGetAggregationClass() {
-		// TODO Auto-generated method stub
-	}
-
-	@Test
-	public void testGetAggregationClasses() {
-		// TODO Auto-generated method stub
-	}
-
-	@Test
-	public void testGetCompositionClass() {
-		// TODO Auto-generated method stub
-	}
-
-	@Test
-	public void testGetCompositionClasses() {
 		// TODO Auto-generated method stub
 	}
 
@@ -145,16 +124,6 @@ public final class GraphClassImplTest extends
 
 	@Test
 	public void testGetGraphElementClasses() {
-		// TODO Auto-generated method stub
-	}
-
-	@Test
-	public void testGetOwnAggregationClasses() {
-		// TODO Auto-generated method stub
-	}
-
-	@Test
-	public void testGetOwnCompositionClasses() {
 		// TODO Auto-generated method stub
 	}
 

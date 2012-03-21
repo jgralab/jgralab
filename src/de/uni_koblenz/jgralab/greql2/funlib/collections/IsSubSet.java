@@ -38,14 +38,16 @@ import java.util.ArrayList;
 
 import org.pcollections.PSet;
 
+import de.uni_koblenz.jgralab.greql2.funlib.Description;
 import de.uni_koblenz.jgralab.greql2.funlib.Function;
 
 public class IsSubSet extends Function {
 
+	@Description(params = {"a","b"}, description = 
+		"Returns true, iff the set given as first parameter is subset of the set given as second parameter.",
+			categories = Category.COLLECTIONS_AND_MAPS)
 	public IsSubSet() {
-		super(
-				"Returns true, iff the set given as first parameter is subset of the set given as second parameter.",
-				Category.COLLECTIONS_AND_MAPS);
+		super();
 	}
 
 	public <T> Boolean evaluate(PSet<T> a, PSet<T> b) {

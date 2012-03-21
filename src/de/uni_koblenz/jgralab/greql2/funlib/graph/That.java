@@ -36,12 +36,15 @@ package de.uni_koblenz.jgralab.greql2.funlib.graph;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Vertex;
+import de.uni_koblenz.jgralab.greql2.funlib.Description;
 import de.uni_koblenz.jgralab.greql2.funlib.Function;
 
 public class That extends Function {
+	
+	@Description(params = "e", description = "Returns the far vertex of an oriented edge.",
+			categories = Category.GRAPH)
 	public That() {
-		super("Returns the far vertex of an oriented edge.", 1, 1, 1.0,
-				Category.GRAPH);
+		super(1, 1, 1.0);
 	}
 
 	public Vertex evaluate(Edge e) {

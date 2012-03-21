@@ -34,12 +34,15 @@
  */
 package de.uni_koblenz.jgralab.greql2.funlib.bitops;
 
+import de.uni_koblenz.jgralab.greql2.funlib.Description;
 import de.uni_koblenz.jgralab.greql2.funlib.Function;
 
 public class BitXor extends Function {
+	
+	@Description(params = {"a","b"}, description = "Calculates the bitwise XOR of the given two numbers.",
+			categories = Category.ARITHMETICS)
 	public BitXor() {
-		super("Calculates the bitwise XOR of the given two numbers.", 4, 1,
-				1.0, Category.ARITHMETICS);
+		super(4, 1, 1.0);
 	}
 
 	public Integer evaluate(Integer a, Integer b) {

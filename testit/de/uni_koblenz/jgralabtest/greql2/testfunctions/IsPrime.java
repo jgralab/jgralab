@@ -35,6 +35,7 @@
 
 package de.uni_koblenz.jgralabtest.greql2.testfunctions;
 
+import de.uni_koblenz.jgralab.greql2.funlib.Description;
 import de.uni_koblenz.jgralab.greql2.funlib.Function;
 
 /**
@@ -67,14 +68,7 @@ import de.uni_koblenz.jgralab.greql2.funlib.Function;
 public class IsPrime extends Function {
 
 	public IsPrime() {
-		super(
-				"Return true, if the given number is a prime number.\n"
-						+ "This function performs the Miller-Rabin pseudo primality\n"
-						+ "test. The optional second parameter $k$ is an integer that\n"
-						+ "specifies influences the probability of being a prime.\n"
-						+ "The chances of being prime is $1- (\\frac{1}{4})^k$.  The default\n"
-						+ "value of $k$ is 10.", 50, 1, 1.0 / Math.log(5000),
-				Category.ARITHMETICS);
+		super(50, 1, 1.0 / Math.log(5000));
 	}
 
 	/**
@@ -141,6 +135,11 @@ public class IsPrime extends Function {
 		return true;
 	}
 
+	@Description(params = "number", description = "Return true, if the given number is a prime number.\n"
+			+ "This function performs the Miller-Rabin pseudo primality test.\n"
+			+ "The chances of being prime is $1- (\\frac{1}{4})^k$.  The default\n"
+			+ "value of $k$ is 10.",
+			categories = Category.ARITHMETICS)
 	public Boolean evaluate(Long number) {
 		if (number < 2) {
 			return false;
@@ -148,10 +147,22 @@ public class IsPrime extends Function {
 		return isPrime(number, 10);
 	}
 
+	@Description(params = "number", description = "Return true, if the given number is a prime number.\n"
+			+ "This function performs the Miller-Rabin pseudo primality test.\n"
+			+ "The chances of being prime is $1- (\\frac{1}{4})^k$.  The default\n"
+			+ "value of $k$ is 10.",
+			categories = Category.ARITHMETICS)
 	public Boolean evaluate(Integer number) {
 		return evaluate(Long.valueOf(number));
 	}
 
+	@Description(params = {"number", "noOfTestRuns"}, description = "Return true, if the given number is a prime number.\n"
+			+ "This function performs the Miller-Rabin pseudo primality\n"
+			+ "test. The second parameter $k$ is an integer that\n"
+			+ "specifies influences the probability of being a prime.\n"
+			+ "The chances of being prime is $1- (\\frac{1}{4})^k$.  The default\n"
+			+ "value of $k$ is 10.",
+			categories = Category.ARITHMETICS)
 	public Boolean evaluate(Long number, Integer noOfTestRuns) {
 		if (noOfTestRuns <= 0) {
 			throw new IllegalArgumentException(
@@ -163,6 +174,13 @@ public class IsPrime extends Function {
 		return isPrime(number, noOfTestRuns);
 	}
 
+	@Description(params = {"number", "noOfTestRuns"}, description = "Return true, if the given number is a prime number.\n"
+			+ "This function performs the Miller-Rabin pseudo primality\n"
+			+ "test. The second parameter $k$ is an integer that\n"
+			+ "specifies influences the probability of being a prime.\n"
+			+ "The chances of being prime is $1- (\\frac{1}{4})^k$.  The default\n"
+			+ "value of $k$ is 10.",
+			categories = Category.ARITHMETICS)
 	public Boolean evaluate(Integer number, Integer noOfTestRuns) {
 		return evaluate(Long.valueOf(number), noOfTestRuns);
 	}

@@ -42,14 +42,16 @@ import org.pcollections.PCollection;
 import org.pcollections.PVector;
 
 import de.uni_koblenz.jgralab.JGraLab;
+import de.uni_koblenz.jgralab.greql2.funlib.Description;
 import de.uni_koblenz.jgralab.greql2.funlib.Function;
 import de.uni_koblenz.jgralab.greql2.types.Tuple;
 
 public class Sort extends Function {
 
+	@Description(params ="l", description = "Sorts the given collection according to natural ordering.",
+			categories = Category.COLLECTIONS_AND_MAPS)
 	public Sort() {
-		super("Sorts the given collection according to natural ordering.",
-				Category.COLLECTIONS_AND_MAPS);
+		super();
 	}
 
 	public PVector<?> evaluate(Tuple t) {

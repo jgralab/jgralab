@@ -47,9 +47,9 @@ import de.uni_koblenz.jgralab.schema.VertexClass;
 
 /**
  * TODO add comment
- * 
+ *
  * @author ist@uni-koblenz.de
- * 
+ *
  */
 public class GraphCodeGenerator extends
 		AttributedElementCodeGenerator<GraphClass, Graph> {
@@ -174,7 +174,7 @@ public class GraphCodeGenerator extends
 		TreeSet<GraphElementClass<?, ?>> sortedClasses = new TreeSet<GraphElementClass<?, ?>>();
 		sortedClasses.addAll(gc.getGraphElementClasses());
 		for (GraphElementClass<?, ?> gec : sortedClasses) {
-			if (gec.isInternal()) {
+			if (gec.isDefaultGraphElementClass()) {
 				continue;
 			}
 			CodeList gecCode = new CodeList();
@@ -306,13 +306,7 @@ public class GraphCodeGenerator extends
 			return code;
 		}
 
-		Set<EdgeClass> edgeClassSet = new HashSet<EdgeClass>();
-		edgeClassSet.addAll(gc.getEdgeClasses());
-
-		for (EdgeClass edge : edgeClassSet) {
-			if (edge.isInternal()) {
-				continue;
-			}
+		for (EdgeClass edge : gc.getEdgeClasses()) {
 			if (currentCycle.isStdOrDbImplOrTransImpl()) {
 				addImports("#jgImplPackage#.EdgeIterable");
 			}
@@ -352,7 +346,7 @@ public class GraphCodeGenerator extends
 		vertexClassSet.addAll(gc.getVertexClasses());
 
 		for (VertexClass vertex : vertexClassSet) {
-			if (vertex.isInternal()) {
+			if (vertex.isDefaultGraphElementClass()) {
 				continue;
 			}
 			if (currentCycle.isStdOrDbImplOrTransImpl()) {

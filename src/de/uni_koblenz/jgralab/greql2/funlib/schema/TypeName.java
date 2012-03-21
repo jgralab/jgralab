@@ -35,13 +35,15 @@
 package de.uni_koblenz.jgralab.greql2.funlib.schema;
 
 import de.uni_koblenz.jgralab.AttributedElement;
+import de.uni_koblenz.jgralab.greql2.funlib.Description;
 import de.uni_koblenz.jgralab.greql2.funlib.Function;
 
 public class TypeName extends Function {
 
+	@Description(params = "el", description = "Returns the qualified name of the given element's type.",
+			categories = Category.SCHEMA_ACCESS)
 	public TypeName() {
-		super("Returns the qualified name of the given element's type.",
-				Category.SCHEMA_ACCESS);
+		super();
 	}
 
 	public String evaluate(AttributedElement<?, ?> el) {

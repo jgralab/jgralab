@@ -34,13 +34,15 @@
  */
 package de.uni_koblenz.jgralab.greql2.funlib.artithmetics;
 
+import de.uni_koblenz.jgralab.greql2.funlib.Description;
 import de.uni_koblenz.jgralab.greql2.funlib.Function;
 
 public class Add extends Function {
-	public Add() {
-		super(
-				"Adds the given two numbers with the usual Java overflow semantics. Can be used as operator: a + b.",
-				4, 1, 1.0, Category.ARITHMETICS);
+	
+	@Description(params = { "a", "b" }, categories = Category.ARITHMETICS, description = "Adds the given two numbers with the usual "
+		+ "Java overflow semantics. Can be used as operator: $a + b$.")	
+		public Add() {
+		super(4, 1, 1.0);
 	}
 
 	public Number evaluate(Number a, Number b) {

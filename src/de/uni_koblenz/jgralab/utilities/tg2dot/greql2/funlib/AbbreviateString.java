@@ -34,11 +34,15 @@
  */
 package de.uni_koblenz.jgralab.utilities.tg2dot.greql2.funlib;
 
+import de.uni_koblenz.jgralab.greql2.funlib.Description;
 import de.uni_koblenz.jgralab.greql2.funlib.Function;
 
 public class AbbreviateString extends Function {
+	
+	@Description(params = "string", description = "Returns an abbreviated String.",
+			categories = Category.STRINGS)
 	public AbbreviateString() {
-		super("Returns an abbreviated String.", Category.STRINGS);
+		super();
 	}
 
 	public String evaluate(String string) {

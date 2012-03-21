@@ -345,7 +345,33 @@ public final class RecordDomainImpl extends CompositeDomainImpl implements
 			result &= component.getDomain().isConformGenericValue(
 					((Record) value).getComponent(component.getName()));
 		}
-		assert (!iterator.hasNext());
 		return result;
+	}
+
+	@Override
+	public void setQualifiedName(String newQName) {
+		if (qualifiedName.equals(newQName)) {
+			return;
+		}
+		if (schema.knows(newQName)) {
+			throw new SchemaException(newQName
+					+ " is already known to the schema.");
+		}
+		String[] ps = SchemaImpl.splitQualifiedName(newQName);
+		String newPackageName = ps[0];
+		String newSimpleName = ps[1];
+		if (!NamedElementImpl.ATTRELEM_OR_NOCOLLDOMAIN_PATTERN.matcher(
+				newSimpleName).matches()) {
+			throw new SchemaException("Invalid record domain name '"
+					+ newSimpleName + "'.");
+		}
+
+		unregister();
+
+		qualifiedName = newQName;
+		simpleName = newSimpleName;
+		parentPackage = schema.createPackageWithParents(newPackageName);
+
+		register();
 	}
 }

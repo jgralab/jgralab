@@ -146,7 +146,7 @@ public class SchemaImpl implements Schema, ManagableArtifact {
 	/**
 	 * Maps from qualified name to the {@link Domain}.
 	 */
-	private Map<String, Domain> domains = new HashMap<String, Domain>();
+	Map<String, Domain> domains = new HashMap<String, Domain>();
 
 	private DirectedAcyclicGraph<Domain> domainsDag = new DirectedAcyclicGraph<Domain>();
 
@@ -169,12 +169,6 @@ public class SchemaImpl implements Schema, ManagableArtifact {
 	private String packagePrefix;
 
 	/**
-	 * Maps from simple names to a set of {@link NamedElement}s which have this
-	 * simple name. Used for creation of unique names.
-	 */
-	private Map<String, AttributedElementClass<?, ?>> duplicateSimpleNames = new HashMap<String, AttributedElementClass<?, ?>>();
-
-	/**
 	 * Maps from qualified name to the {@link Package} with that qualified name.
 	 */
 	private Map<String, PackageImpl> packages = new TreeMap<String, PackageImpl>();
@@ -188,7 +182,7 @@ public class SchemaImpl implements Schema, ManagableArtifact {
 	/**
 	 * A set of all qualified names known to this schema.
 	 */
-	private Map<String, NamedElement> namedElements = new TreeMap<String, NamedElement>();
+	Map<String, NamedElement> namedElements = new TreeMap<String, NamedElement>();
 
 	private BooleanDomain booleanDomain;
 
@@ -208,7 +202,7 @@ public class SchemaImpl implements Schema, ManagableArtifact {
 
 	/**
 	 * Creates a new <code>Schema</code>.
-	 * 
+	 *
 	 * @param name
 	 *            Name of schema.
 	 * @param packagePrefix
@@ -281,20 +275,6 @@ public class SchemaImpl implements Schema, ManagableArtifact {
 		if (!(namedElement instanceof AttributedElementClass)) {
 			return;
 		}
-
-		AttributedElementClass<?, ?> aec = (AttributedElementClass<?, ?>) namedElement;
-
-		if (duplicateSimpleNames.containsKey(aec.getSimpleName())) {
-			AttributedElementClass<?, ?> other = duplicateSimpleNames.get(aec
-					.getSimpleName());
-			if (other != null) {
-				((NamedElementImpl) other).changeUniqueName();
-				duplicateSimpleNames.put(aec.getSimpleName(), null);
-			}
-			((NamedElementImpl) aec).changeUniqueName();
-		} else {
-			duplicateSimpleNames.put(aec.getSimpleName(), aec);
-		}
 	}
 
 	@Override
@@ -317,18 +297,12 @@ public class SchemaImpl implements Schema, ManagableArtifact {
 		javaSources.addAll(graphCodeGenerator.createJavaSources());
 
 		for (VertexClass vertexClass : graphClass.getVertexClasses()) {
-			if (vertexClass.isInternal()) {
-				continue;
-			}
 			VertexCodeGenerator codeGen = new VertexCodeGenerator(vertexClass,
 					packagePrefix, config);
 			javaSources.addAll(codeGen.createJavaSources());
 		}
 
 		for (EdgeClass edgeClass : graphClass.getEdgeClasses()) {
-			if (edgeClass.isInternal()) {
-				continue;
-			}
 			CodeGenerator codeGen = new EdgeCodeGenerator(edgeClass,
 					packagePrefix, config);
 			javaSources.addAll(codeGen.createJavaSources());
@@ -453,9 +427,6 @@ public class SchemaImpl implements Schema, ManagableArtifact {
 		graphCodeGenerator.createFiles(pathPrefix);
 
 		for (VertexClass vertexClass : graphClass.getVertexClasses()) {
-			if (vertexClass.isInternal()) {
-				continue;
-			}
 			VertexCodeGenerator codeGen = new VertexCodeGenerator(vertexClass,
 					packagePrefix, config);
 			codeGen.createFiles(pathPrefix);
@@ -470,7 +441,7 @@ public class SchemaImpl implements Schema, ManagableArtifact {
 		}
 
 		for (EdgeClass edgeClass : graphClass.getEdgeClasses()) {
-			if (edgeClass.isInternal()) {
+			if (edgeClass.isDefaultGraphElementClass()) {
 				continue;
 			}
 			CodeGenerator codeGen = new EdgeCodeGenerator(edgeClass,
@@ -634,7 +605,10 @@ public class SchemaImpl implements Schema, ManagableArtifact {
 			throw new SchemaException(
 					"A GraphClass must always be in the default package!");
 		}
-		return new GraphClassImpl(simpleName, this);
+		GraphClassImpl gc = new GraphClassImpl(simpleName, this);
+		gc.initializeDefaultVertexClass();
+		gc.initializeDefaultEdgeClass();
+		return gc;
 	}
 
 	private BooleanDomain createBooleanDomain() {
@@ -706,7 +680,7 @@ public class SchemaImpl implements Schema, ManagableArtifact {
 	/**
 	 * Creates a {@link Package} with given qualified name, or returns an
 	 * existing package with this qualified name.
-	 * 
+	 *
 	 * @param qn
 	 *            the qualified name of the package
 	 * @return a new {@link Package} with the given qualified name, or an
@@ -763,7 +737,7 @@ public class SchemaImpl implements Schema, ManagableArtifact {
 	/**
 	 * Given a qualified name like foo.bar.baz returns a string array with two
 	 * components: the package prefix (foo.bar) and the simple name (baz).
-	 * 
+	 *
 	 * @param qualifiedName
 	 *            a qualified name
 	 * @return a string array with two components: the package prefix and the
@@ -921,11 +895,6 @@ public class SchemaImpl implements Schema, ManagableArtifact {
 	}
 
 	@Override
-	public List<EdgeClass> getEdgeClasses() {
-		return graphClass.getEdgeClasses();
-	}
-
-	@Override
 	public Method getEdgeCreateMethod(String edgeClassName,
 			ImplementationType implementationType) {
 		// Edge class create method cannot be found directly by its signature
@@ -1010,7 +979,7 @@ public class SchemaImpl implements Schema, ManagableArtifact {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param implementationType
 	 * @return
 	 */
@@ -1070,7 +1039,7 @@ public class SchemaImpl implements Schema, ManagableArtifact {
 
 	/**
 	 * only used internally
-	 * 
+	 *
 	 * @return number of graphelementclasses contained in graphclass
 	 */
 	private int getNumberOfElements() {
@@ -1103,11 +1072,6 @@ public class SchemaImpl implements Schema, ManagableArtifact {
 		}
 
 		return recordList;
-	}
-
-	@Override
-	public List<VertexClass> getVertexClasses() {
-		return graphClass.getVertexClasses();
 	}
 
 	@Override
@@ -1164,16 +1128,6 @@ public class SchemaImpl implements Schema, ManagableArtifact {
 					+ "' already exists in this Schema!");
 		}
 		graphClass = gc;
-	}
-
-	/**
-	 * @return the textual representation of the schema with all graph classes,
-	 *         their edge and vertex classes, all attributes and the whole
-	 *         hierarchy of those classes
-	 */
-	public String getDescriptionString() {
-		return "GraphClass of schema '" + qualifiedName + "':\n\n\n"
-				+ graphClass.getDescriptionString();
 	}
 
 	@Override
@@ -1261,9 +1215,9 @@ public class SchemaImpl implements Schema, ManagableArtifact {
 	 * the change mode call reopen
 	 */
 	@Override
-	public void finish() {
+	public boolean finish() {
 		if (finished) {
-			return;
+			return false;
 		}
 		if (graphClass == null) {
 			throw new SchemaException(
@@ -1272,6 +1226,7 @@ public class SchemaImpl implements Schema, ManagableArtifact {
 		domainsDag.finish();
 		graphClass.finish();
 		finished = true;
+		return true;
 	}
 
 	/**
@@ -1279,8 +1234,16 @@ public class SchemaImpl implements Schema, ManagableArtifact {
 	 * finish
 	 */
 	@Override
-	public void reopen() {
-		throw new UnsupportedOperationException();
+	public boolean reopen() {
+		if (!finished) {
+			return false;
+		}
+
+		domainsDag.reopen();
+		graphClass.reopen();
+		finished = false;
+
+		return true;
 	}
 
 	@Override
@@ -1295,17 +1258,17 @@ public class SchemaImpl implements Schema, ManagableArtifact {
 
 	/**
 	 * This field and the method getNextClassId() is used to allow a unique
-	 * mapping of GraphElementClasses to integer values, which is necessary
-	 * for the GReQL code generator
+	 * mapping of GraphElementClasses to integer values, which is necessary for
+	 * the GReQL code generator
 	 */
 	int nextGraphElementClassId = 0;
-	
+
 	protected int getNextGraphElementClassId() {
 		return nextGraphElementClassId++;
 	}
 
 	protected int nextIncidenceClassId = 0;
-	
+
 	public int getNextIncidenceClassId() {
 		return nextIncidenceClassId++;
 	}

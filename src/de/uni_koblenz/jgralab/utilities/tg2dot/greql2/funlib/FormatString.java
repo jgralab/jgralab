@@ -37,12 +37,15 @@ package de.uni_koblenz.jgralab.utilities.tg2dot.greql2.funlib;
 
 import org.pcollections.PCollection;
 
+import de.uni_koblenz.jgralab.greql2.funlib.Description;
 import de.uni_koblenz.jgralab.greql2.funlib.Function;
 
 public class FormatString extends Function {
+	
+	@Description(params = {"format","col"}, description = "Formats a given Java format String with all provided strings.",
+			categories = Category.STRINGS)
 	public FormatString() {
-		super("Formats a given Java format String with all provided strings.",
-				2, 1, 1.0, Category.STRINGS);
+		super(2, 1, 1.0);
 	}
 
 	public String evaluate(String format, PCollection<?> col) {

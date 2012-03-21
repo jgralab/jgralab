@@ -42,15 +42,17 @@ import org.pcollections.PMap;
 import org.pcollections.PSet;
 
 import de.uni_koblenz.jgralab.JGraLab;
+import de.uni_koblenz.jgralab.greql2.funlib.Description;
 import de.uni_koblenz.jgralab.greql2.funlib.Function;
 
 public class Difference extends Function {
 
 	public Difference() {
-		super("Returns the set-difference of the given two sets or maps.",
-				Category.COLLECTIONS_AND_MAPS);
+		super();
 	}
 
+	@Description(params = {"a","b"}, description = "Returns the set-difference of the given two sets.",
+				categories = Category.COLLECTIONS_AND_MAPS)
 	public <T> PSet<T> evaluate(PSet<T> a, PSet<T> b) {
 		if (b.isEmpty()) {
 			if (a instanceof ArrayPSet) {
@@ -67,6 +69,8 @@ public class Difference extends Function {
 		}
 	}
 
+	@Description(params = {"a","b"}, description = "Returns the set-difference of the given two maps.",
+			categories = Category.COLLECTIONS_AND_MAPS)
 	public <K, V> PMap<K, V> evaluate(PMap<K, V> a, PMap<K, V> b) {
 		if (b.isEmpty()) {
 			if (a instanceof ArrayPMap) {

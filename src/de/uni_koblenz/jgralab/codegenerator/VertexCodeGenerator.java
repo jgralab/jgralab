@@ -40,14 +40,14 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
+import de.uni_koblenz.jgralab.schema.GraphElementClass;
 import de.uni_koblenz.jgralab.schema.VertexClass;
 
 /**
  * This class is used by the method Schema.commit() to generate the Java-classes
  * that implement the VertexClasses of a graph schema.
- * 
+ *
  * @author ist@uni-koblenz.de
  */
 public class VertexCodeGenerator extends
@@ -61,7 +61,8 @@ public class VertexCodeGenerator extends
 		rootBlock.setVariable("graphElementClass", "Vertex");
 		rootBlock.setVariable("schemaElementClass", "VertexClass");
 		rolenameGenerator = new RolenameCodeGenerator(aec);
-		for (VertexClass superClass : vertexClass.getDirectSuperClasses()) {
+		for (VertexClass superClass : vertexClass.getDirectSuperClasses().plus(
+				vertexClass.getGraphClass().getDefaultVertexClass())) {
 			interfaces.add(superClass.getQualifiedName());
 		}
 	}
@@ -112,7 +113,7 @@ public class VertexCodeGenerator extends
 
 	/**
 	 * creates the methods <code>getFirstEdgeName()</code>
-	 * 
+	 *
 	 * @param createClass
 	 *            if set to true, the method bodies will also be created
 	 * @return the CodeBlock that contains the methods
@@ -142,7 +143,7 @@ public class VertexCodeGenerator extends
 		}
 
 		for (EdgeClass ec : edgeClassSet) {
-			if (ec.isInternal()) {
+			if (ec.isDefaultGraphElementClass()) {
 				continue;
 			}
 			addImports("#jgPackage#.EdgeDirection");
@@ -157,7 +158,7 @@ public class VertexCodeGenerator extends
 	/**
 	 * creates the method <code>getFirstEdgeName()</code> for the given
 	 * EdgeClass
-	 * 
+	 *
 	 * @param createClass
 	 *            if set to true, the method bodies will also be created
 	 * @param withOrientation
@@ -194,7 +195,7 @@ public class VertexCodeGenerator extends
 
 	/**
 	 * Creates <code>getNextVertexClassName()</code> methods
-	 * 
+	 *
 	 * @param createClass
 	 *            if set to true, also the method bodies will be created
 	 * @return the CodeBlock that contains the methods
@@ -202,15 +203,12 @@ public class VertexCodeGenerator extends
 	private CodeBlock createNextVertexMethods() {
 		CodeList code = new CodeList();
 
-		TreeSet<AttributedElementClass<?, ?>> superClasses = new TreeSet<AttributedElementClass<?, ?>>();
+		TreeSet<GraphElementClass<?, ?>> superClasses = new TreeSet<GraphElementClass<?, ?>>();
 		superClasses.addAll(aec.getAllSuperClasses());
 		superClasses.add(aec);
 
 		if (config.hasTypeSpecificMethodsSupport()) {
-			for (AttributedElementClass<?, ?> ec : superClasses) {
-				if (ec.isInternal()) {
-					continue;
-				}
+			for (GraphElementClass<?, ?> ec : superClasses) {
 				VertexClass vc = (VertexClass) ec;
 				code.addNoIndent(createNextVertexMethod(vc));
 			}
@@ -221,7 +219,7 @@ public class VertexCodeGenerator extends
 	/**
 	 * Creates <code>getNextVertexClassName()</code> method for given
 	 * VertexClass
-	 * 
+	 *
 	 * @param createClass
 	 *            if set to true, the method bodies will also be created
 	 * @return the CodeBlock that contains the method
@@ -251,7 +249,7 @@ public class VertexCodeGenerator extends
 
 	/**
 	 * Creates <code>getEdgeNameIncidences</code> methods.
-	 * 
+	 *
 	 * @param createClass
 	 *            if set to true, also the method bodies will be created
 	 * @return the CodeBlock that contains the code for the
@@ -282,7 +280,7 @@ public class VertexCodeGenerator extends
 		}
 
 		for (EdgeClass ec : edgeClassSet) {
-			if (ec.isInternal()) {
+			if (ec.isDefaultGraphElementClass()) {
 				continue;
 			}
 

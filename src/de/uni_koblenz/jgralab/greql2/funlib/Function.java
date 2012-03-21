@@ -46,24 +46,20 @@ public abstract class Function {
 		SCHEMA_ACCESS, STATISTICS, STRINGS, MISCELLANEOUS, UNDEFINED
 	}
 
-	private String description;
-	private Category[] categories;
 	private long costs;
 	private long cardinality;
 	private double selectivity;
 
-	public Function(String description, Category... categories) {
-		this(description, 1, 1, 1.0, categories);
+	public Function() {
+		this( 1, 1, 1.0);
 
 	}
 
-	public Function(String description, long costs, long cardinality,
-			double selectivity, Category... categories) {
-		this.description = description;
+	public Function(long costs, long cardinality,
+			double selectivity) {
 		this.costs = costs;
 		this.cardinality = cardinality;
 		this.selectivity = selectivity;
-		this.categories = categories;
 	}
 
 	protected final void printArguments(Object[] args) {
@@ -104,16 +100,5 @@ public abstract class Function {
 	 */
 	public long getEstimatedCardinality(int inElements) {
 		return cardinality;
-	}
-
-	/**
-	 * @return a textual descriptionof this function (can contain LaTeX syntax)
-	 */
-	public String getDescription() {
-		return description;
-	}
-
-	public Category[] getCategories() {
-		return categories;
 	}
 }

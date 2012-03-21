@@ -34,12 +34,15 @@
  */
 package de.uni_koblenz.jgralab.greql2.funlib.logics;
 
+import de.uni_koblenz.jgralab.greql2.funlib.Description;
 import de.uni_koblenz.jgralab.greql2.funlib.Function;
 
 public class And extends Function {
+	
+	@Description(params = {"a","b"}, description = "Logical AND. Can be used as infix operator: a and b.",
+			categories = Category.LOGICS)
 	public And() {
-		super("Logical AND. Can be used as infix operator: a and b.", 2,
-				1, 0.5, Category.LOGICS);
+		super(2, 1, 0.5);
 	}
 
 	public Boolean evaluate(Boolean a, Boolean b) {

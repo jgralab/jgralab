@@ -69,7 +69,7 @@ import de.uni_koblenz.jgralab.schema.VertexClass;
  * with one DBMS. To change DBMS create a new graph database with
  * <code>openGraphDatabase(...)</code>. Keep in mind that a database is always
  * specific to it's schema.
- * 
+ *
  * @author ultbreit@uni-koblenz.de
  */
 public abstract class GraphDatabase {
@@ -84,7 +84,7 @@ public abstract class GraphDatabase {
 	 * credentials. Factory method churning open graph databases. This method
 	 * takes the url in jdbc format for including the user name and the password
 	 * in a single string.
-	 * 
+	 *
 	 * @param url
 	 *            URL to the graph database in the format
 	 *            <code>driver://username:password@host:port/database</code>
@@ -116,7 +116,7 @@ public abstract class GraphDatabase {
 	 * password) from a system property <code>jgralab_dbconnection</code>, which
 	 * has to be set in order to use this method. The format of the url is the
 	 * following: <code>driver://username:password@host:port/database</code>
-	 * 
+	 *
 	 * @return An open graph database.
 	 * @throws GraphDatabaseException
 	 *             if there was no URL provided by the system property
@@ -164,7 +164,7 @@ public abstract class GraphDatabase {
 
 	/**
 	 * Creates and initializes a new <code>GraphDatabase</code>.
-	 * 
+	 *
 	 * @param url
 	 *            Location of graph database.
 	 * @throws GraphDatabaseException
@@ -176,7 +176,7 @@ public abstract class GraphDatabase {
 
 	/**
 	 * Creates tables in database to persist graphs.
-	 * 
+	 *
 	 * @throws GraphDatabaseException
 	 *             Creation of tables not successful.
 	 */
@@ -254,7 +254,7 @@ public abstract class GraphDatabase {
 
 	/**
 	 * Connects to graph database located at url specified in constructor.
-	 * 
+	 *
 	 * @throws GraphDatabaseException
 	 *             Database vendor not supported or identified. JDBC driver not
 	 *             found. Connection attempt failed.
@@ -285,7 +285,7 @@ public abstract class GraphDatabase {
 
 	/**
 	 * Gets JDBC connection to database.
-	 * 
+	 *
 	 * @return JDBC connection to database.
 	 */
 	protected Connection getConnection() {
@@ -294,7 +294,7 @@ public abstract class GraphDatabase {
 
 	/**
 	 * Begins a database transaction.
-	 * 
+	 *
 	 * @throws GraphDatabaseException
 	 *             Transaction could not be begun.
 	 */
@@ -310,7 +310,7 @@ public abstract class GraphDatabase {
 
 	/**
 	 * Commits a database transaction.
-	 * 
+	 *
 	 * @throws GraphDatabaseException
 	 *             Transaction could not be committed.
 	 */
@@ -327,7 +327,7 @@ public abstract class GraphDatabase {
 
 	/**
 	 * Sets auto commit mode of database.
-	 * 
+	 *
 	 * @param autoCommitMode
 	 *            Auto commit mode to set.
 	 * @throws GraphDatabaseException
@@ -347,7 +347,7 @@ public abstract class GraphDatabase {
 	/**
 	 * Closes database, writes back graph version and commits any open
 	 * transactions.
-	 * 
+	 *
 	 * @throws GraphDatabaseException
 	 *             An error occurred on close.
 	 */
@@ -379,7 +379,7 @@ public abstract class GraphDatabase {
 
 	/**
 	 * Deletes a graph from database.
-	 * 
+	 *
 	 * @param id
 	 *            Id of graph to delete.
 	 * @throws GraphDatabaseException
@@ -392,7 +392,7 @@ public abstract class GraphDatabase {
 
 	/**
 	 * Deletes a graph from database.
-	 * 
+	 *
 	 * @param graph
 	 *            Graph to delete.
 	 * @throws GraphDatabaseException
@@ -449,7 +449,7 @@ public abstract class GraphDatabase {
 
 	/**
 	 * Deletes a vertex from database.
-	 * 
+	 *
 	 * @param vertex
 	 *            Vertex to delete.
 	 * @throws GraphDatabaseException
@@ -519,7 +519,7 @@ public abstract class GraphDatabase {
 
 	/**
 	 * Deletes an edge from database.
-	 * 
+	 *
 	 * @param edge
 	 *            Edge to delete.
 	 * @throws GraphException
@@ -560,7 +560,7 @@ public abstract class GraphDatabase {
 
 	/**
 	 * Inserts a new vertex without any incidences into database.
-	 * 
+	 *
 	 * @param vertex
 	 *            Vertex to insert.
 	 * @throws GraphDatabaseException
@@ -600,7 +600,7 @@ public abstract class GraphDatabase {
 
 	/**
 	 * Inserts an edge into database.
-	 * 
+	 *
 	 * @param edge
 	 *            Edge to insert.
 	 * @param alpha
@@ -658,7 +658,7 @@ public abstract class GraphDatabase {
 
 	/**
 	 * Gets type id of an edge.
-	 * 
+	 *
 	 * @param edge
 	 *            Edge to get it's type id.
 	 * @return Type id of edge.
@@ -671,7 +671,7 @@ public abstract class GraphDatabase {
 
 	/**
 	 * Updates version of a graph.
-	 * 
+	 *
 	 * @param graph
 	 *            Graph to update it's version.
 	 * @throws GraphDatabaseException
@@ -693,7 +693,7 @@ public abstract class GraphDatabase {
 
 	/**
 	 * Updates vertex list version of a graph.
-	 * 
+	 *
 	 * @param graph
 	 *            Graph to update it's vertex list version.
 	 * @throws GraphDatabaseException
@@ -716,7 +716,7 @@ public abstract class GraphDatabase {
 
 	/**
 	 * Updates edge list version of a graph.
-	 * 
+	 *
 	 * @param graph
 	 *            Graph to update it's edge list version.
 	 * @throws GraphDatabaseException
@@ -739,7 +739,7 @@ public abstract class GraphDatabase {
 
 	/**
 	 * Updates attribute value of a graph.
-	 * 
+	 *
 	 * @param graph
 	 *            Graph with attribute value to update.
 	 * @param attributeName
@@ -765,7 +765,7 @@ public abstract class GraphDatabase {
 
 	/**
 	 * Updates attribute value of a vertex.
-	 * 
+	 *
 	 * @param vertex
 	 *            Vertex with attribute value to update.
 	 * @param attributeName
@@ -792,7 +792,7 @@ public abstract class GraphDatabase {
 
 	/**
 	 * Updates attribute value of an edge.
-	 * 
+	 *
 	 * @param edge
 	 *            Edge with attribute value to update.
 	 * @param attributeName
@@ -819,7 +819,7 @@ public abstract class GraphDatabase {
 
 	/**
 	 * Updates incidence list of a vertex.
-	 * 
+	 *
 	 * @param vertex
 	 *            Vertex with incidence list to update.
 	 * @throws GraphDatabaseException
@@ -842,7 +842,7 @@ public abstract class GraphDatabase {
 
 	/**
 	 * Updates number mapping vertex's sequence in VSeq.
-	 * 
+	 *
 	 * @param vertex
 	 *            Vertex to update.
 	 * @throws GraphDatabaseException
@@ -865,7 +865,7 @@ public abstract class GraphDatabase {
 
 	/**
 	 * Updates id of vertex in graph to database.
-	 * 
+	 *
 	 * @param vertex
 	 *            Vertex to update it's id.
 	 * @throws GraphDatabaseException
@@ -887,7 +887,7 @@ public abstract class GraphDatabase {
 
 	/**
 	 * Updates id of edge in graph in database.
-	 * 
+	 *
 	 * @param edge
 	 *            Edge to update.
 	 * @throws GraphDatabaseException
@@ -909,7 +909,7 @@ public abstract class GraphDatabase {
 
 	/**
 	 * Updates id of a graph.
-	 * 
+	 *
 	 * @param graph
 	 *            Graph to update.
 	 * @throws GraphDatabaseException
@@ -930,7 +930,7 @@ public abstract class GraphDatabase {
 
 	/**
 	 * Updates incident vertex of an edge.
-	 * 
+	 *
 	 * @param incidence
 	 *            Incidence to update.
 	 * @throws GraphDatabaseException
@@ -959,7 +959,7 @@ public abstract class GraphDatabase {
 
 	/**
 	 * Updates number mapping edge's sequence in ESeq.
-	 * 
+	 *
 	 * @param edge
 	 *            Edge to update.
 	 * @throws GraphDatabaseException
@@ -984,7 +984,7 @@ public abstract class GraphDatabase {
 
 	/**
 	 * Updates number mapping edge's sequence in LambdaSeq of incident vertex.
-	 * 
+	 *
 	 * @param incidence
 	 *            Incidence to update.
 	 * @throws GraphDatabaseException
@@ -1014,7 +1014,7 @@ public abstract class GraphDatabase {
 
 	/**
 	 * Gets a vertex.
-	 * 
+	 *
 	 * @param vId
 	 *            Identifier of vertex to get.
 	 * @return A vertex.
@@ -1123,7 +1123,7 @@ public abstract class GraphDatabase {
 	/**
 	 * Use it to get prev/next edge in graph as no incident vertices have to be
 	 * known.
-	 * 
+	 *
 	 * @param eId
 	 *            Id of edge to get.
 	 * @param graph
@@ -1236,7 +1236,7 @@ public abstract class GraphDatabase {
 
 	/**
 	 * Counts vertices of a graph in database.
-	 * 
+	 *
 	 * @param graph
 	 *            Graph to count it's vertices.
 	 * @return Amount of vertices in graph.
@@ -1263,7 +1263,7 @@ public abstract class GraphDatabase {
 
 	/**
 	 * Counts edges of a graph in database.
-	 * 
+	 *
 	 * @param graph
 	 *            Graph to count it's edges.
 	 * @return Amount of edges in graph.
@@ -1289,7 +1289,7 @@ public abstract class GraphDatabase {
 
 	/**
 	 * Gets a graph from database.
-	 * 
+	 *
 	 * @param id
 	 *            Identifier of graph to get.
 	 * @return Graph with given identifier.
@@ -1500,7 +1500,7 @@ public abstract class GraphDatabase {
 
 	/**
 	 * Checks if database contains a graph.
-	 * 
+	 *
 	 * @param id
 	 *            Id of graph to check for.
 	 * @throws GraphDatabaseException
@@ -1524,11 +1524,11 @@ public abstract class GraphDatabase {
 	/**
 	 * Inserts a freshly created graph that has no vertices and edges into
 	 * database.
-	 * 
+	 *
 	 * Precondition: A suiting schema exists in database.
-	 * 
+	 *
 	 * Postcondition: State of graph has been persisted to database.
-	 * 
+	 *
 	 * @throws GraphDatabaseException
 	 */
 	public void insert(GraphImpl graph) throws GraphDatabaseException {
@@ -1542,7 +1542,7 @@ public abstract class GraphDatabase {
 
 	/**
 	 * Checks if database contains schema.
-	 * 
+	 *
 	 * @param schema
 	 *            Schema to check for.
 	 * @return true if graph contains schema, otherwise false.
@@ -1555,7 +1555,7 @@ public abstract class GraphDatabase {
 
 	/**
 	 * Checks if database contains schema.
-	 * 
+	 *
 	 * @param packagePrefix
 	 *            Package prefix of schema.
 	 * @param name
@@ -1662,7 +1662,7 @@ public abstract class GraphDatabase {
 
 	/**
 	 * Gets type id of a vertex.
-	 * 
+	 *
 	 * @param vertex
 	 *            Vertex to get type id for.
 	 * @return Type id of vertex.
@@ -1697,7 +1697,7 @@ public abstract class GraphDatabase {
 
 	/**
 	 * Gets if of a graph attribute.
-	 * 
+	 *
 	 * @param graph
 	 *            Graph to get id of attribute.
 	 * @param attributeName
@@ -1711,7 +1711,7 @@ public abstract class GraphDatabase {
 
 	/**
 	 * Converts an attribute value to string.
-	 * 
+	 *
 	 * @param attributedElement
 	 *            Element with attribute to convert.
 	 * @param attributeName
@@ -1756,7 +1756,7 @@ public abstract class GraphDatabase {
 
 	/**
 	 * Inserts a schema.
-	 * 
+	 *
 	 * @param schema
 	 *            Schema to insert.
 	 */
@@ -1798,8 +1798,8 @@ public abstract class GraphDatabase {
 	private void insertDefinedTypesOf(Schema schema, int schemaId)
 			throws SQLException {
 		insertGraphClass(schema.getGraphClass(), schemaId);
-		insertVertexClasses(schema.getVertexClasses(), schemaId);
-		insertEdgeClasses(schema.getEdgeClasses(), schemaId);
+		insertVertexClasses(schema.getGraphClass().getVertexClasses(), schemaId);
+		insertEdgeClasses(schema.getGraphClass().getEdgeClasses(), schemaId);
 		insertAttributes(schemaId);
 	}
 
@@ -1855,7 +1855,7 @@ public abstract class GraphDatabase {
 
 	/**
 	 * Reorganizes a vertex list.
-	 * 
+	 *
 	 * @param graph
 	 *            Graph with vertex list to reorganize.
 	 * @param start
@@ -1879,7 +1879,7 @@ public abstract class GraphDatabase {
 
 	/**
 	 * Reorganizes an edge list.
-	 * 
+	 *
 	 * @param graph
 	 *            Graph with edge list to reorganize.
 	 * @param start
@@ -1905,7 +1905,7 @@ public abstract class GraphDatabase {
 
 	/**
 	 * Reorganizes a vertex list.
-	 * 
+	 *
 	 * @param vertex
 	 *            Vertex with incidence list to reorganize.
 	 * @param start
@@ -1930,7 +1930,7 @@ public abstract class GraphDatabase {
 
 	/**
 	 * Checks if connection to database is still upheld.
-	 * 
+	 *
 	 * @return true if connection is upheld, otherwise false.
 	 * @throws GraphDatabaseException
 	 *             Check could not performed.
@@ -1947,7 +1947,7 @@ public abstract class GraphDatabase {
 
 	/**
 	 * Deletes a schema from database.
-	 * 
+	 *
 	 * @param prefix
 	 *            Package prefix of schema.
 	 * @param name
@@ -1981,7 +1981,7 @@ public abstract class GraphDatabase {
 
 	/**
 	 * Gets list of ids of contained graphs.
-	 * 
+	 *
 	 * @return A list of ids which can be empty if no graphs have been persisted
 	 *         in database.
 	 * @throws GraphDatabaseException
@@ -2007,7 +2007,7 @@ public abstract class GraphDatabase {
 
 	/**
 	 * Gets schema definition.
-	 * 
+	 *
 	 * @param packagePrefix
 	 *            Package prefix of schema.
 	 * @param schemaName

@@ -45,7 +45,8 @@ import de.uni_koblenz.jgralab.NoSuchAttributeException;
 import de.uni_koblenz.jgralab.impl.std.ReversedEdgeImpl;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 
-public class GenericReversedEdgeImpl extends ReversedEdgeImpl {
+public class GenericReversedEdgeImpl extends ReversedEdgeImpl implements
+		InternalAttributesArrayAccess {
 
 	protected GenericReversedEdgeImpl(GenericEdgeImpl e, Graph g) {
 		super(e, g);
@@ -75,8 +76,7 @@ public class GenericReversedEdgeImpl extends ReversedEdgeImpl {
 	}
 
 	@Override
-	public Edge getNextIncidence(EdgeClass anEdgeClass,
-			boolean noSubClasses) {
+	public Edge getNextIncidence(EdgeClass anEdgeClass, boolean noSubClasses) {
 		return getNextIncidence(anEdgeClass, EdgeDirection.INOUT, noSubClasses);
 	}
 
@@ -148,4 +148,10 @@ public class GenericReversedEdgeImpl extends ReversedEdgeImpl {
 		// code generation.
 		return getNormalEdge().isInstanceOf(cls);
 	}
+
+	@Override
+	public void invokeOnAttributesArray(OnAttributesFunction fn) {
+		((GenericEdgeImpl) getNormalEdge()).invokeOnAttributesArray(fn);
+	}
+
 }

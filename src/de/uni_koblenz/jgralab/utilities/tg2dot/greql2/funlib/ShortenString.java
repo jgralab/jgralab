@@ -34,12 +34,15 @@
  */
 package de.uni_koblenz.jgralab.utilities.tg2dot.greql2.funlib;
 
+import de.uni_koblenz.jgralab.greql2.funlib.Description;
 import de.uni_koblenz.jgralab.greql2.funlib.Function;
 
 public class ShortenString extends Function {
+
+	@Description(params = {"string","maxLength"}, description = "Returns a String shortened to the maximum allowed length.",
+			categories = Category.STRINGS)
 	public ShortenString() {
-		super("Returns a String shortened to the maximum allowed length.",
-				Category.STRINGS);
+		super();
 	}
 
 	public String evaluate(String string, Integer maxLength) {

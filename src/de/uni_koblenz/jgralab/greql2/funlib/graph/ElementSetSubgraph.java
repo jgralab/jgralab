@@ -41,16 +41,18 @@ import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.graphmarker.SubGraphMarker;
+import de.uni_koblenz.jgralab.greql2.funlib.Description;
 import de.uni_koblenz.jgralab.greql2.funlib.Function;
 import de.uni_koblenz.jgralab.greql2.funlib.NeedsGraphArgument;
 
 @NeedsGraphArgument
 public class ElementSetSubgraph extends Function {
 
+	@Description(params = {"g","vs","es"}, 
+			description = "Returns the subgraph induced by the vertex type given.",
+			categories = Category.GRAPH)
 	public ElementSetSubgraph() {
-		super(
-				"Returns the subgraph induced by the vertex type given.",
-				7, 1, 1.0, Category.GRAPH);
+		super(7, 1, 1.0);
 	}
 
 	public SubGraphMarker evaluate(Graph graph, PCollection<Vertex> vertexSet, PCollection<Edge> edgeSet) {

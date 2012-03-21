@@ -242,9 +242,9 @@ public class GraphLayoutFactory {
 
 		List<T> allSchemaTypes = new ArrayList<T>();
 		if (isVertexClasses) {
-			allSchemaTypes.addAll((List<T>) schema.getVertexClasses());
+			allSchemaTypes.addAll((List<T>) schema.getGraphClass().getVertexClasses());
 		} else {
-			allSchemaTypes.addAll((List<T>) schema.getEdgeClasses());
+			allSchemaTypes.addAll((List<T>) schema.getGraphClass().getEdgeClasses());
 		}
 
 		for (Entry<T, TypeDefinition> entry : map.entrySet()) {

@@ -430,7 +430,7 @@ public class GraphIO {
 
 			// write vertex classes
 			for (VertexClass vc : pkg.getVertexClasses().values()) {
-				if (vc.isInternal()) {
+				if (vc.isDefaultGraphElementClass()) {
 					continue;
 				}
 				if (vc.isAbstract()) {
@@ -448,7 +448,7 @@ public class GraphIO {
 
 			// write edge classes
 			for (EdgeClass ec : pkg.getEdgeClasses().values()) {
-				if (ec.isInternal()) {
+				if (ec.isDefaultGraphElementClass()) {
 					continue;
 				}
 				if (ec.isAbstract()) {
@@ -863,12 +863,10 @@ public class GraphIO {
 			throws IOException {
 		String delim = ":";
 		for (GraphElementClass<?, ?> superClass : aec.getDirectSuperClasses()) {
-			if (!superClass.isInternal()) {
-				write(delim);
-				space();
-				writeIdentifier(superClass.getQualifiedName(pkg));
-				delim = ",";
-			}
+			write(delim);
+			space();
+			writeIdentifier(superClass.getQualifiedName(pkg));
+			delim = ",";
 		}
 	}
 
@@ -1996,8 +1994,8 @@ public class GraphIO {
 				}
 				if (aec instanceof VertexClass) {
 					for (String superClassName : vData.directSuperClasses) {
-						superClass = (VertexClass) GECsearch.get(aec)
-								.getGraphElementClass(superClassName);
+						superClass = GECsearch.get(aec).getVertexClass(
+								superClassName);
 						if (superClass == null) {
 							throw new GraphIOException(
 									"Undefined VertexClass '" + superClassName
@@ -2032,8 +2030,8 @@ public class GraphIO {
 				}
 				EdgeClass ec = (EdgeClass) aec;
 				for (String superClassName : eData.directSuperClasses) {
-					superClass = (EdgeClass) GECsearch.get(aec)
-							.getGraphElementClass(superClassName);
+					superClass = GECsearch.get(aec)
+							.getEdgeClass(superClassName);
 					if (superClass == null) {
 						throw new GraphIOException("Undefined EdgeClass '"
 								+ superClassName + "'");

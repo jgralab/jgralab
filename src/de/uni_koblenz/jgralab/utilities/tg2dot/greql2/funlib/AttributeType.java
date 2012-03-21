@@ -35,6 +35,7 @@
 package de.uni_koblenz.jgralab.utilities.tg2dot.greql2.funlib;
 
 import de.uni_koblenz.jgralab.AttributedElement;
+import de.uni_koblenz.jgralab.greql2.funlib.Description;
 import de.uni_koblenz.jgralab.greql2.funlib.Function;
 import de.uni_koblenz.jgralab.schema.Attribute;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
@@ -42,14 +43,17 @@ import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 public class AttributeType extends Function {
 
 	public AttributeType() {
-		super("Returns the domain type name of a given attribute as String.",
-				Category.SCHEMA_ACCESS);
+		super();
 	}
 
+	@Description(params = {"el", "name"}, description = "Returns the domain type name of a given attribute as String.",
+			categories = Category.SCHEMA_ACCESS)
 	public String evaluate(AttributedElement<?, ?> el, String name) {
 		return evaluate(el.getAttributedElementClass(), name);
 	}
 
+	@Description(params = {"aec", "name"}, description = "Returns the domain type name of a given attribute as String.",
+			categories = Category.SCHEMA_ACCESS)
 	public String evaluate(AttributedElementClass<?, ?> aec, String name) {
 		Attribute attribute = aec.getAttribute(name);
 		return attribute != null ? attribute.getDomain().getQualifiedName()

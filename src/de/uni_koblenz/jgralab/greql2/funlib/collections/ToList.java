@@ -42,15 +42,17 @@ import org.pcollections.PCollection;
 import org.pcollections.PVector;
 
 import de.uni_koblenz.jgralab.JGraLab;
+import de.uni_koblenz.jgralab.greql2.funlib.Description;
 import de.uni_koblenz.jgralab.greql2.funlib.Function;
 import de.uni_koblenz.jgralab.greql2.types.Table;
 import de.uni_koblenz.jgralab.greql2.types.Tuple;
 
 public class ToList extends Function {
 
+	@Description(params = "l", description = "Converts a collection into a list.",
+			categories = Category.COLLECTIONS_AND_MAPS)
 	public ToList() {
-		super("Converts a collection into a list.",
-				Category.COLLECTIONS_AND_MAPS);
+		super();
 	}
 
 	public PVector<?> evaluate(Tuple t) {

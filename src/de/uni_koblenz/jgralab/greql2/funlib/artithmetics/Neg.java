@@ -34,12 +34,14 @@
  */
 package de.uni_koblenz.jgralab.greql2.funlib.artithmetics;
 
+import de.uni_koblenz.jgralab.greql2.funlib.Description;
 import de.uni_koblenz.jgralab.greql2.funlib.Function;
 
 public class Neg extends Function {
+	@Description(params = "a", description = "Negates the given number. Can be used as unary operator: -x.",
+			categories = Category.ARITHMETICS)
 	public Neg() {
-		super("Negates the given number. Can be used as unary operator: -x.",
-				4, 1, 1.0, Category.ARITHMETICS);
+		super(4, 1, 1.0);
 	}
 
 	public Number evaluate(Number a) {

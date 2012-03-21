@@ -35,15 +35,17 @@
 package de.uni_koblenz.jgralab.greql2.funlib.misc;
 
 import de.uni_koblenz.jgralab.greql2.funlib.AcceptsUndefinedArguments;
+import de.uni_koblenz.jgralab.greql2.funlib.Description;
 import de.uni_koblenz.jgralab.greql2.funlib.Function;
 import de.uni_koblenz.jgralab.greql2.types.Undefined;
 
 @AcceptsUndefinedArguments
 public class IsUndefined extends Function {
 
+	@Description(params = "val", description = "Returns true, iff the given object is undefined.",
+			categories = Category.MISCELLANEOUS)
 	public IsUndefined() {
-		super("Returns true, iff the given object is undefined.",
-				Category.MISCELLANEOUS);
+		super();
 	}
 
 	public Boolean evaluate(Object val) {

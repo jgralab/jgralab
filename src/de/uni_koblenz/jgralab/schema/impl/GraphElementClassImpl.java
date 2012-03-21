@@ -37,7 +37,6 @@ package de.uni_koblenz.jgralab.schema.impl;
 
 import java.util.BitSet;
 import java.util.List;
-import java.util.Set;
 import java.util.TreeSet;
 
 import org.pcollections.ArrayPVector;
@@ -90,10 +89,10 @@ public abstract class GraphElementClassImpl<SC extends GraphElementClass<SC, IC>
 	 * The class id of this class in the schema
 	 */
 	protected final int classId;
-	
+
 	/**
 	 * delegates its constructor to the generalized class
-	 * 
+	 *
 	 * @param qn
 	 *            the unique identifier of the element in the schema
 	 */
@@ -107,8 +106,6 @@ public abstract class GraphElementClassImpl<SC extends GraphElementClass<SC, IC>
 		this.graphClass = graphClass;
 		this.classId = schema.getNextGraphElementClassId();
 	}
-	
-
 
 	@Override
 	public void addAttribute(Attribute anAttribute) {
@@ -136,7 +133,7 @@ public abstract class GraphElementClassImpl<SC extends GraphElementClass<SC, IC>
 
 	/**
 	 * adds a superClass to this class
-	 * 
+	 *
 	 * @param superClass
 	 *            the class to add as superclass
 	 */
@@ -162,34 +159,43 @@ public abstract class GraphElementClassImpl<SC extends GraphElementClass<SC, IC>
 		return (PSet<SC>) subclassDag.getDirectSucccessors(this);
 	}
 
+	/**
+	 * @return either the default vertex class or the default edge class
+	 */
+	protected abstract SC getDefaultClass();
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public PSet<SC> getDirectSuperClasses() {
-		return (PSet<SC>) subclassDag.getDirectPredecessors(this);
+		return ((PSet<SC>) subclassDag.getDirectPredecessors(this))
+				.minus(getDefaultClass());
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public Set<SC> getAllSubClasses() {
+	public PSet<SC> getAllSubClasses() {
 		if (finished) {
 			return allSubClasses;
 		}
-		return (Set<SC>) subclassDag.getAllSuccessorsInTopologicalOrder(this);
+		return (PSet<SC>) subclassDag.getAllSuccessorsInTopologicalOrder(this);
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public Set<SC> getAllSuperClasses() {
+	public PSet<SC> getAllSuperClasses() {
 		if (finished) {
 			return allSuperClasses;
 		}
-		return (Set<SC>) subclassDag.getAllPredecessorsInTopologicalOrder(this);
+		return (PSet<SC>) subclassDag.getAllPredecessorsInTopologicalOrder(this).minus(
+				getDefaultClass());
 	}
 
 	@Override
 	public final boolean isSubClassOf(SC anAttributedElementClass) {
 		if (finished) {
-			return allSuperClassesBitSet.get(((GraphElementClass<?,?>)anAttributedElementClass).getGraphElementClassIdInSchema());
+			return allSuperClassesBitSet
+					.get(((GraphElementClass<?, ?>) anAttributedElementClass)
+							.getGraphElementClassIdInSchema());
 		}
 		return getAllSuperClasses().contains(anAttributedElementClass);
 	}
@@ -197,7 +203,9 @@ public abstract class GraphElementClassImpl<SC extends GraphElementClass<SC, IC>
 	@Override
 	public final boolean isSuperClassOf(SC anAttributedElementClass) {
 		if (finished) {
-			return allSubClassesBitSet.get(((GraphElementClass<?,?>)anAttributedElementClass).getGraphElementClassIdInSchema());
+			return allSubClassesBitSet
+					.get(((GraphElementClass<?, ?>) anAttributedElementClass)
+							.getGraphElementClassIdInSchema());
 		}
 		return getAllSubClasses().contains(anAttributedElementClass);
 	}
@@ -211,20 +219,19 @@ public abstract class GraphElementClassImpl<SC extends GraphElementClass<SC, IC>
 		return false;
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	protected void finish() {
-		allSuperClasses = (PSet<SC>) subclassDag
-				.getAllPredecessorsInTopologicalOrder(this);
+		allSuperClasses = getAllSuperClasses();
 		allSuperClassesBitSet = new BitSet();
-		for (GraphElementClass<?,?> superClass : allSuperClasses) {
-			allSuperClassesBitSet.set(superClass.getGraphElementClassIdInSchema(), true);
+		for (GraphElementClass<?, ?> superClass : allSuperClasses) {
+			allSuperClassesBitSet.set(
+					superClass.getGraphElementClassIdInSchema(), true);
 		}
-		allSubClasses = (PSet<SC>) subclassDag
-				.getAllSuccessorsInTopologicalOrder(this);
+		allSubClasses = getAllSubClasses();
 		allSubClassesBitSet = new BitSet();
-		for (GraphElementClass<?,?> subClass : allSubClasses) {
-			allSubClassesBitSet.set(subClass.getGraphElementClassIdInSchema(), true);
+		for (GraphElementClass<?, ?> subClass : allSubClasses) {
+			allSubClassesBitSet.set(subClass.getGraphElementClassIdInSchema(),
+					true);
 		}
 
 		TreeSet<Attribute> s = new TreeSet<Attribute>(ownAttributes);
@@ -340,9 +347,46 @@ public abstract class GraphElementClassImpl<SC extends GraphElementClass<SC, IC>
 
 		return output.toString();
 	}
-	
+
 	@Override
 	public int getGraphElementClassIdInSchema() {
 		return classId;
+	}
+
+	@Override
+	public void setQualifiedName(String newQName) {
+		if (qualifiedName.equals(newQName)) {
+			return;
+		}
+		if (schema.knows(newQName)) {
+			throw new SchemaException(newQName
+					+ " is already known to the schema.");
+		}
+		String[] ps = SchemaImpl.splitQualifiedName(newQName);
+		String newPackageName = ps[0];
+		String newSimpleName = ps[1];
+		if (!NamedElementImpl.ATTRELEM_OR_NOCOLLDOMAIN_PATTERN.matcher(
+				newSimpleName).matches()) {
+			throw new SchemaException("Invalid graph element class name '"
+					+ newSimpleName + "'.");
+		}
+
+		unregister();
+
+		qualifiedName = newQName;
+		simpleName = newSimpleName;
+		parentPackage = schema.createPackageWithParents(newPackageName);
+
+		register();
+	}
+
+	@Override
+	protected void reopen() {
+		allSuperClasses = null;
+		allSuperClassesBitSet = null;
+		allSubClasses = null;
+		allSubClassesBitSet = null;
+
+		super.reopen();
 	}
 }

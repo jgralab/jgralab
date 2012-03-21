@@ -37,19 +37,23 @@ package de.uni_koblenz.jgralab.greql2.funlib.statistics;
 import java.util.Collection;
 import java.util.Map;
 
+import de.uni_koblenz.jgralab.greql2.funlib.Description;
 import de.uni_koblenz.jgralab.greql2.funlib.Function;
 
 public class Count extends Function {
 
 	public Count() {
-		super("Returns the number of items in the given collection or map.",
-				Category.STATISTICS, Category.COLLECTIONS_AND_MAPS);
+		super();
 	}
 
+	@Description(params = "l", description = "Returns the number of items in the given collection.",
+			categories = {Category.STATISTICS, Category.COLLECTIONS_AND_MAPS})
 	public Integer evaluate(Collection<Object> l) {
 		return l.size();
 	}
 
+	@Description(params = "m", description = "Returns the number of items in the given map.",
+			categories = {Category.STATISTICS, Category.COLLECTIONS_AND_MAPS})
 	public Integer evaluate(Map<?, ?> m) {
 		return m.size();
 	}

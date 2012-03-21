@@ -34,7 +34,11 @@
  */
 package de.uni_koblenz.jgralabtest.genericimpltest;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.fail;
+
+import java.io.IOException;
 
 import org.junit.Test;
 
@@ -46,9 +50,11 @@ import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.ImplementationType;
 import de.uni_koblenz.jgralab.JGraLab;
+import de.uni_koblenz.jgralab.NoSuchAttributeException;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.impl.RecordImpl;
 import de.uni_koblenz.jgralab.schema.AggregationKind;
+import de.uni_koblenz.jgralab.schema.Attribute;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.Schema;
 
@@ -57,24 +63,34 @@ public class GenericEdgeImplTest {
 	@Test
 	public void testAccessAttributes() {
 		try {
-			Schema s = GraphIO.loadSchemaFromFile(GenericGraphImplTest.SCHEMAFOLDER
-					+ "DefaultValueTestSchema.tg");
+			Schema s = GraphIO
+					.loadSchemaFromFile(GenericGraphImplTest.SCHEMAFOLDER
+							+ "DefaultValueTestSchema.tg");
 			Graph g = s.createGraph(ImplementationType.GENERIC);
-			Vertex v1 = g.createVertex(g.getGraphClass().getVertexClass("TestVertex"));
-			Vertex v2 = g.createVertex(g.getGraphClass().getVertexClass("TestVertex"));
-			Edge e1 = g.createEdge(g.getGraphClass().getEdgeClass("TestEdge"), v1, v2);
+			Vertex v1 = g.createVertex(g.getGraphClass().getVertexClass(
+					"TestVertex"));
+			Vertex v2 = g.createVertex(g.getGraphClass().getVertexClass(
+					"TestVertex"));
+			Edge e1 = g.createEdge(g.getGraphClass().getEdgeClass("TestEdge"),
+					v1, v2);
 
 			// accessing default values
 			assertEquals(true, e1.getAttribute("boolEdge"));
 			assertEquals(
 					JGraLab.vector().plus(JGraLab.vector().plus(true))
-							.plus(JGraLab.vector().plus(false)).plus(JGraLab.vector().plus(true)),
+							.plus(JGraLab.vector().plus(false))
+							.plus(JGraLab.vector().plus(true)),
 					e1.getAttribute("complexListEdge"));
-			assertEquals(JGraLab.map().plus(JGraLab.vector().plus(true), JGraLab.set().plus(true))
-					.plus(JGraLab.vector().plus(false), JGraLab.set().plus(false)),
+			assertEquals(
+					JGraLab.map()
+							.plus(JGraLab.vector().plus(true),
+									JGraLab.set().plus(true))
+							.plus(JGraLab.vector().plus(false),
+									JGraLab.set().plus(false)),
 					e1.getAttribute("complexMapEdge"));
 			assertEquals(
-					JGraLab.set().plus(JGraLab.set().plus(true)).plus(JGraLab.set().plus(false)),
+					JGraLab.set().plus(JGraLab.set().plus(true))
+							.plus(JGraLab.set().plus(false)),
 					e1.getAttribute("complexSetEdge"));
 			assertEquals(1.1d, e1.getAttribute("doubleEdge"));
 			assertEquals("FIRST", e1.getAttribute("enumEdge"));
@@ -82,7 +98,8 @@ public class GenericEdgeImplTest {
 			assertEquals(JGraLab.vector().plus(true).plus(false).plus(true),
 					e1.getAttribute("listEdge"));
 			assertEquals(1l, e1.getAttribute("longEdge"));
-			assertEquals(JGraLab.map().plus(1, true).plus(2, false).plus(3, true),
+			assertEquals(
+					JGraLab.map().plus(1, true).plus(2, false).plus(3, true),
 					e1.getAttribute("mapEdge"));
 			assertEquals(
 					RecordImpl
@@ -91,36 +108,47 @@ public class GenericEdgeImplTest {
 							.plus("doubleRecord", 1.1d)
 							.plus("enumRecord", "FIRST")
 							.plus("intRecord", 1)
-							.plus("listRecord", JGraLab.vector().plus(true).plus(false).plus(true))
+							.plus("listRecord",
+									JGraLab.vector().plus(true).plus(false)
+											.plus(true))
 							.plus("longRecord", 1l)
 							.plus("mapRecord",
-									JGraLab.map().plus(1, true).plus(2, false).plus(3, true))
-							.plus("setRecord", JGraLab.set().plus(true).plus(false))
-							.plus("stringRecord", "test"), e1.getAttribute("recordEdge"));
-			assertEquals(JGraLab.set().plus(true).plus(false), e1.getAttribute("setEdge"));
+									JGraLab.map().plus(1, true).plus(2, false)
+											.plus(3, true))
+							.plus("setRecord",
+									JGraLab.set().plus(true).plus(false))
+							.plus("stringRecord", "test"),
+					e1.getAttribute("recordEdge"));
+			assertEquals(JGraLab.set().plus(true).plus(false),
+					e1.getAttribute("setEdge"));
 			assertEquals("test", e1.getAttribute("stringEdge"));
 
 			// changing values
 			e1.setAttribute("boolEdge", false);
 			assertEquals(false, e1.getAttribute("boolEdge"));
-			e1.setAttribute("complexListEdge", JGraLab.vector().plus(JGraLab.vector().plus(false))
-					.plus(JGraLab.vector().plus(false)));
-			assertEquals(
+			e1.setAttribute(
+					"complexListEdge",
 					JGraLab.vector().plus(JGraLab.vector().plus(false))
-							.plus(JGraLab.vector().plus(false)), e1.getAttribute("complexListEdge"));
+							.plus(JGraLab.vector().plus(false)));
+			assertEquals(JGraLab.vector().plus(JGraLab.vector().plus(false))
+					.plus(JGraLab.vector().plus(false)),
+					e1.getAttribute("complexListEdge"));
 			e1.setAttribute(
 					"complexMapEdge",
 					JGraLab.map()
 							.plus(JGraLab.vector().plus(true).plus(false),
 									JGraLab.set().plus(false))
-							.plus(JGraLab.vector().plus(false).plus(true), JGraLab.set().plus(true)));
+							.plus(JGraLab.vector().plus(false).plus(true),
+									JGraLab.set().plus(true)));
 			assertEquals(
 					JGraLab.map()
 							.plus(JGraLab.vector().plus(true).plus(false),
 									JGraLab.set().plus(false))
-							.plus(JGraLab.vector().plus(false).plus(true), JGraLab.set().plus(true)),
+							.plus(JGraLab.vector().plus(false).plus(true),
+									JGraLab.set().plus(true)),
 					e1.getAttribute("complexMapEdge"));
-			e1.setAttribute("complexSetEdge", JGraLab.set().plus(JGraLab.set().plus(false)));
+			e1.setAttribute("complexSetEdge",
+					JGraLab.set().plus(JGraLab.set().plus(false)));
 			assertEquals(JGraLab.set().plus(JGraLab.set().plus(false)),
 					e1.getAttribute("complexSetEdge"));
 			e1.setAttribute("doubleEdge", 2.2d);
@@ -129,13 +157,16 @@ public class GenericEdgeImplTest {
 			assertEquals("SECOND", e1.getAttribute("enumEdge"));
 			e1.setAttribute("intEdge", 42);
 			assertEquals(42, e1.getAttribute("intEdge"));
-			e1.setAttribute("listEdge", JGraLab.vector().plus(false).plus(false).plus(true));
+			e1.setAttribute("listEdge", JGraLab.vector().plus(false)
+					.plus(false).plus(true));
 			assertEquals(JGraLab.vector().plus(false).plus(false).plus(true),
 					e1.getAttribute("listEdge"));
 			e1.setAttribute("longEdge", 987654321l);
 			assertEquals(987654321l, e1.getAttribute("longEdge"));
-			e1.setAttribute("mapEdge", JGraLab.map().plus(42, true).plus(24, false));
-			assertEquals(JGraLab.map().plus(42, true).plus(24, false), e1.getAttribute("mapEdge"));
+			e1.setAttribute("mapEdge",
+					JGraLab.map().plus(42, true).plus(24, false));
+			assertEquals(JGraLab.map().plus(42, true).plus(24, false),
+					e1.getAttribute("mapEdge"));
 			e1.setAttribute(
 					"recordEdge",
 					RecordImpl
@@ -144,9 +175,13 @@ public class GenericEdgeImplTest {
 							.plus("doubleRecord", 1.3d)
 							.plus("enumRecord", "THIRD")
 							.plus("intRecord", 42)
-							.plus("listRecord", JGraLab.vector().plus(false).plus(true).plus(false))
+							.plus("listRecord",
+									JGraLab.vector().plus(false).plus(true)
+											.plus(false))
 							.plus("longRecord", 987654321l)
-							.plus("mapRecord", JGraLab.map().plus(42, true).plus(24, false))
+							.plus("mapRecord",
+									JGraLab.map().plus(42, true)
+											.plus(24, false))
 							.plus("setRecord", JGraLab.set().plus(false))
 							.plus("stringRecord", "more test"));
 			assertEquals(
@@ -156,11 +191,16 @@ public class GenericEdgeImplTest {
 							.plus("doubleRecord", 1.3d)
 							.plus("enumRecord", "THIRD")
 							.plus("intRecord", 42)
-							.plus("listRecord", JGraLab.vector().plus(false).plus(true).plus(false))
+							.plus("listRecord",
+									JGraLab.vector().plus(false).plus(true)
+											.plus(false))
 							.plus("longRecord", 987654321l)
-							.plus("mapRecord", JGraLab.map().plus(42, true).plus(24, false))
+							.plus("mapRecord",
+									JGraLab.map().plus(42, true)
+											.plus(24, false))
 							.plus("setRecord", JGraLab.set().plus(false))
-							.plus("stringRecord", "more test"), e1.getAttribute("recordEdge"));
+							.plus("stringRecord", "more test"),
+					e1.getAttribute("recordEdge"));
 			e1.setAttribute("setEdge", JGraLab.set().plus(true));
 			assertEquals(JGraLab.set().plus(true), e1.getAttribute("setEdge"));
 			e1.setAttribute("stringEdge", "some String");
@@ -175,12 +215,16 @@ public class GenericEdgeImplTest {
 	@Test(expected = GraphException.class)
 	public void testAccessAttributesFailure1() {
 		try {
-			Schema s = GraphIO.loadSchemaFromFile(GenericGraphImplTest.SCHEMAFOLDER
-					+ "DefaultValueTestSchema.tg");
+			Schema s = GraphIO
+					.loadSchemaFromFile(GenericGraphImplTest.SCHEMAFOLDER
+							+ "DefaultValueTestSchema.tg");
 			Graph g = s.createGraph(ImplementationType.GENERIC);
-			Vertex v1 = g.createVertex(g.getGraphClass().getVertexClass("TestVertex"));
-			Vertex v2 = g.createVertex(g.getGraphClass().getVertexClass("TestVertex"));
-			Edge e1 = g.createEdge(g.getGraphClass().getEdgeClass("TestEdge"), v1, v2);
+			Vertex v1 = g.createVertex(g.getGraphClass().getVertexClass(
+					"TestVertex"));
+			Vertex v2 = g.createVertex(g.getGraphClass().getVertexClass(
+					"TestVertex"));
+			Edge e1 = g.createEdge(g.getGraphClass().getEdgeClass("TestEdge"),
+					v1, v2);
 			e1.setAttribute("MapEdge", JGraLab.map());
 		} catch (GraphIOException e) {
 			e.printStackTrace();
@@ -191,12 +235,16 @@ public class GenericEdgeImplTest {
 	@Test(expected = GraphException.class)
 	public void testAccessAttributesFailure2() {
 		try {
-			Schema s = GraphIO.loadSchemaFromFile(GenericGraphImplTest.SCHEMAFOLDER
-					+ "DefaultValueTestSchema.tg");
+			Schema s = GraphIO
+					.loadSchemaFromFile(GenericGraphImplTest.SCHEMAFOLDER
+							+ "DefaultValueTestSchema.tg");
 			Graph g = s.createGraph(ImplementationType.GENERIC);
-			Vertex v1 = g.createVertex(g.getGraphClass().getVertexClass("TestVertex"));
-			Vertex v2 = g.createVertex(g.getGraphClass().getVertexClass("TestVertex"));
-			Edge e1 = g.createEdge(g.getGraphClass().getEdgeClass("TestEdge"), v1, v2);
+			Vertex v1 = g.createVertex(g.getGraphClass().getVertexClass(
+					"TestVertex"));
+			Vertex v2 = g.createVertex(g.getGraphClass().getVertexClass(
+					"TestVertex"));
+			Edge e1 = g.createEdge(g.getGraphClass().getEdgeClass("TestEdge"),
+					v1, v2);
 			e1.setAttribute("SapEdge", JGraLab.set().plus(false));
 		} catch (GraphIOException e) {
 			e.printStackTrace();
@@ -208,12 +256,16 @@ public class GenericEdgeImplTest {
 	@Test(expected = ClassCastException.class)
 	public void testAccessAttributesFailure3() {
 		try {
-			Schema s = GraphIO.loadSchemaFromFile(GenericGraphImplTest.SCHEMAFOLDER
-					+ "DefaultValueTestSchema.tg");
+			Schema s = GraphIO
+					.loadSchemaFromFile(GenericGraphImplTest.SCHEMAFOLDER
+							+ "DefaultValueTestSchema.tg");
 			Graph g = s.createGraph(ImplementationType.GENERIC);
-			Vertex v1 = g.createVertex(g.getGraphClass().getVertexClass("TestVertex"));
-			Vertex v2 = g.createVertex(g.getGraphClass().getVertexClass("TestVertex"));
-			Edge e1 = g.createEdge(g.getGraphClass().getEdgeClass("TestEdge"), v1, v2);
+			Vertex v1 = g.createVertex(g.getGraphClass().getVertexClass(
+					"TestVertex"));
+			Vertex v2 = g.createVertex(g.getGraphClass().getVertexClass(
+					"TestVertex"));
+			Edge e1 = g.createEdge(g.getGraphClass().getEdgeClass("TestEdge"),
+					v1, v2);
 			e1.setAttribute("mapEdge", JGraLab.set());
 		} catch (GraphIOException e) {
 			e.printStackTrace();
@@ -224,8 +276,9 @@ public class GenericEdgeImplTest {
 	@Test
 	public void testGetNextEdge() {
 		try {
-			Schema s = GraphIO.loadSchemaFromFile(GenericGraphImplTest.SCHEMAFOLDER
-					+ "VertexTestSchema.tg");
+			Schema s = GraphIO
+					.loadSchemaFromFile(GenericGraphImplTest.SCHEMAFOLDER
+							+ "VertexTestSchema.tg");
 			Graph g = s.createGraph(ImplementationType.GENERIC);
 
 			Vertex[] vertices = new Vertex[6];
@@ -233,8 +286,10 @@ public class GenericEdgeImplTest {
 			vertices[1] = g.createVertex(g.getGraphClass().getVertexClass("B"));
 			vertices[2] = g.createVertex(g.getGraphClass().getVertexClass("C"));
 			vertices[3] = g.createVertex(g.getGraphClass().getVertexClass("D"));
-			vertices[4] = g.createVertex(g.getGraphClass().getVertexClass("C2"));
-			vertices[5] = g.createVertex(g.getGraphClass().getVertexClass("D2"));
+			vertices[4] = g
+					.createVertex(g.getGraphClass().getVertexClass("C2"));
+			vertices[5] = g
+					.createVertex(g.getGraphClass().getVertexClass("D2"));
 
 			EdgeClass[] edgeClasses = new EdgeClass[7];
 			edgeClasses[0] = g.getGraphClass().getEdgeClass("E");
@@ -272,8 +327,9 @@ public class GenericEdgeImplTest {
 	@Test
 	public void testGetNextIncidence() {
 		try {
-			Schema s = GraphIO.loadSchemaFromFile(GenericGraphImplTest.SCHEMAFOLDER
-					+ "VertexTestSchema.tg");
+			Schema s = GraphIO
+					.loadSchemaFromFile(GenericGraphImplTest.SCHEMAFOLDER
+							+ "VertexTestSchema.tg");
 			Graph g = s.createGraph(ImplementationType.GENERIC);
 
 			Vertex[] vertices = new Vertex[6];
@@ -281,8 +337,10 @@ public class GenericEdgeImplTest {
 			vertices[1] = g.createVertex(g.getGraphClass().getVertexClass("B"));
 			vertices[2] = g.createVertex(g.getGraphClass().getVertexClass("C"));
 			vertices[3] = g.createVertex(g.getGraphClass().getVertexClass("D"));
-			vertices[4] = g.createVertex(g.getGraphClass().getVertexClass("C2"));
-			vertices[5] = g.createVertex(g.getGraphClass().getVertexClass("D2"));
+			vertices[4] = g
+					.createVertex(g.getGraphClass().getVertexClass("C2"));
+			vertices[5] = g
+					.createVertex(g.getGraphClass().getVertexClass("D2"));
 
 			EdgeClass[] edgeClasses = new EdgeClass[7];
 			edgeClasses[0] = g.getGraphClass().getEdgeClass("E");
@@ -311,10 +369,13 @@ public class GenericEdgeImplTest {
 			assertEquals(edges[6], edges[0].getNextIncidence(edgeClasses[6]));
 			assertEquals(edges[2], edges[1].getNextIncidence(edgeClasses[0]));
 			assertEquals(edges[2], edges[1].getNextIncidence(edgeClasses[2]));
-			
-			assertEquals(edges[4].getReversedEdge(), edges[0].getNextIncidence(edgeClasses[4], EdgeDirection.IN));
-			assertEquals(edges[4].getReversedEdge(), edges[3].getNextIncidence(edgeClasses[4], EdgeDirection.IN));
-			assertNull(edges[1].getNextIncidence(edgeClasses[1], EdgeDirection.IN));
+
+			assertEquals(edges[4].getReversedEdge(),
+					edges[0].getNextIncidence(edgeClasses[4], EdgeDirection.IN));
+			assertEquals(edges[4].getReversedEdge(),
+					edges[3].getNextIncidence(edgeClasses[4], EdgeDirection.IN));
+			assertNull(edges[1].getNextIncidence(edgeClasses[1],
+					EdgeDirection.IN));
 			assertNull(edges[0].getNextIncidence(edgeClasses[0], true));
 		} catch (GraphIOException e) {
 			e.printStackTrace();
@@ -325,23 +386,32 @@ public class GenericEdgeImplTest {
 	@Test
 	public void testGetAggregationKind() {
 		try {
-			Schema s = GraphIO.loadSchemaFromFile(GenericGraphImplTest.SCHEMAFOLDER
-					+ "VertexTestSchema.tg");
+			Schema s = GraphIO
+					.loadSchemaFromFile(GenericGraphImplTest.SCHEMAFOLDER
+							+ "VertexTestSchema.tg");
 			Graph g = s.createGraph(ImplementationType.GENERIC);
-			
-			Vertex superNode = g.createVertex(g.getGraphClass().getVertexClass("SuperNode"));
-			Vertex subNode = g.createVertex(g.getGraphClass().getVertexClass("SubNode"));
-			Vertex doubleSubNode = g.createVertex(g.getGraphClass().getVertexClass("DoubleSubNode"));
-			
-			Edge link = g.createEdge(g.getGraphClass().getEdgeClass("Link"), subNode, superNode);
-			Edge linkBack = g.createEdge(g.getGraphClass().getEdgeClass("LinkBack"), superNode, subNode);
-			Edge subLink = g.createEdge(g.getGraphClass().getEdgeClass("SubLink"), doubleSubNode, superNode);
-			
-			assertEquals(AggregationKind.COMPOSITE, subLink.getAggregationKind());
+
+			Vertex superNode = g.createVertex(g.getGraphClass().getVertexClass(
+					"SuperNode"));
+			Vertex subNode = g.createVertex(g.getGraphClass().getVertexClass(
+					"SubNode"));
+			Vertex doubleSubNode = g.createVertex(g.getGraphClass()
+					.getVertexClass("DoubleSubNode"));
+
+			Edge link = g.createEdge(g.getGraphClass().getEdgeClass("Link"),
+					subNode, superNode);
+			Edge linkBack = g.createEdge(
+					g.getGraphClass().getEdgeClass("LinkBack"), superNode,
+					subNode);
+			Edge subLink = g.createEdge(
+					g.getGraphClass().getEdgeClass("SubLink"), doubleSubNode,
+					superNode);
+
+			assertEquals(AggregationKind.COMPOSITE,
+					subLink.getAggregationKind());
 			assertEquals(AggregationKind.NONE, link.getAggregationKind());
 			assertEquals(AggregationKind.SHARED, linkBack.getAggregationKind());
-		}
-		catch (GraphIOException e) {
+		} catch (GraphIOException e) {
 			e.printStackTrace();
 			fail();
 		}
@@ -350,26 +420,292 @@ public class GenericEdgeImplTest {
 	@Test
 	public void testGetAlphaOmegaAggregationKind() {
 		try {
-			Schema s = GraphIO.loadSchemaFromFile(GenericGraphImplTest.SCHEMAFOLDER
-					+ "VertexTestSchema.tg");
+			Schema s = GraphIO
+					.loadSchemaFromFile(GenericGraphImplTest.SCHEMAFOLDER
+							+ "VertexTestSchema.tg");
 			Graph g = s.createGraph(ImplementationType.GENERIC);
-			
-			Vertex superNode = g.createVertex(g.getGraphClass().getVertexClass("SuperNode"));
-			Vertex subNode = g.createVertex(g.getGraphClass().getVertexClass("SubNode"));
-			Vertex doubleSubNode = g.createVertex(g.getGraphClass().getVertexClass("DoubleSubNode"));
-			
-			Edge link = g.createEdge(g.getGraphClass().getEdgeClass("Link"), subNode, superNode);
-			Edge linkBack = g.createEdge(g.getGraphClass().getEdgeClass("LinkBack"), superNode, subNode);
-			Edge subLink = g.createEdge(g.getGraphClass().getEdgeClass("SubLink"), doubleSubNode, superNode);
-			
-			assertEquals(AggregationKind.NONE, subLink.getAlphaAggregationKind());
-			assertEquals(AggregationKind.COMPOSITE, subLink.getOmegaAggregationKind());
+
+			Vertex superNode = g.createVertex(g.getGraphClass().getVertexClass(
+					"SuperNode"));
+			Vertex subNode = g.createVertex(g.getGraphClass().getVertexClass(
+					"SubNode"));
+			Vertex doubleSubNode = g.createVertex(g.getGraphClass()
+					.getVertexClass("DoubleSubNode"));
+
+			Edge link = g.createEdge(g.getGraphClass().getEdgeClass("Link"),
+					subNode, superNode);
+			Edge linkBack = g.createEdge(
+					g.getGraphClass().getEdgeClass("LinkBack"), superNode,
+					subNode);
+			Edge subLink = g.createEdge(
+					g.getGraphClass().getEdgeClass("SubLink"), doubleSubNode,
+					superNode);
+
+			assertEquals(AggregationKind.NONE,
+					subLink.getAlphaAggregationKind());
+			assertEquals(AggregationKind.COMPOSITE,
+					subLink.getOmegaAggregationKind());
 			assertEquals(AggregationKind.NONE, link.getAlphaAggregationKind());
 			assertEquals(AggregationKind.NONE, link.getOmegaAggregationKind());
-			assertEquals(AggregationKind.NONE, linkBack.getAlphaAggregationKind());
-			assertEquals(AggregationKind.SHARED, linkBack.getOmegaAggregationKind());
+			assertEquals(AggregationKind.NONE,
+					linkBack.getAlphaAggregationKind());
+			assertEquals(AggregationKind.SHARED,
+					linkBack.getOmegaAggregationKind());
+		} catch (GraphIOException e) {
+			e.printStackTrace();
+			fail();
 		}
-		catch (GraphIOException e) {
+	}
+
+	// Tests parsing of attribute values (DefaultValueTestSchema.tg)
+	@Test
+	public void testReadAttributeValueFromString() {
+		try {
+			Schema s = GraphIO
+					.loadSchemaFromFile(GenericGraphImplTest.SCHEMAFOLDER
+							+ "DefaultValueTestSchema.tg");
+			Graph g = s.createGraph(ImplementationType.GENERIC);
+			Edge e = g.createEdge(
+					g.getGraphClass().getEdgeClass("TestEdge"),
+					g.createVertex(g.getGraphClass().getVertexClass(
+							"TestSubVertex")),
+					g.createVertex(g.getGraphClass().getVertexClass(
+							"TestSubVertex")));
+			for (Attribute a : e.getAttributedElementClass().getAttributeList()) {
+				GenericGraphImplTest.testDefaultValue(
+						e.getAttribute(a.getName()), a);
+			}
+
+			// parse values different from the default ones
+			e.readAttributeValueFromString("boolEdge", "f");
+			assertEquals(false, e.getAttribute("boolEdge"));
+			e.readAttributeValueFromString("complexListEdge", "[[f]]");
+			assertEquals(JGraLab.vector().plus(JGraLab.vector().plus(false)),
+					e.getAttribute("complexListEdge"));
+			e.readAttributeValueFromString("complexMapEdge",
+					"{[t t] - {f} [f f] - {t f}}");
+			assertEquals(
+					JGraLab.map()
+							.plus(JGraLab.vector().plus(true).plus(true),
+									JGraLab.set().plus(false))
+							.plus(JGraLab.vector().plus(false).plus(false),
+									JGraLab.set().plus(true).plus(false)),
+					e.getAttribute("complexMapEdge"));
+			e.readAttributeValueFromString("complexSetEdge", "{{f}}");
+			assertEquals(JGraLab.set().plus(JGraLab.set().plus(false)),
+					e.getAttribute("complexSetEdge"));
+			e.readAttributeValueFromString("doubleEdge", "12.34");
+			assertEquals(12.34d, e.getAttribute("doubleEdge"));
+			e.readAttributeValueFromString("enumEdge", "SECOND");
+			assertEquals("SECOND", e.getAttribute("enumEdge"));
+			e.readAttributeValueFromString("intEdge", "42");
+			assertEquals(42, e.getAttribute("intEdge"));
+			e.readAttributeValueFromString("listEdge", "[t t]");
+			assertEquals(JGraLab.vector().plus(true).plus(true),
+					e.getAttribute("listEdge"));
+			e.readAttributeValueFromString("longEdge", "987654321");
+			assertEquals(987654321l, e.getAttribute("longEdge"));
+			e.readAttributeValueFromString("mapEdge", "{1 - f 2 - t}");
+			assertEquals(JGraLab.map().plus(1, false).plus(2, true),
+					e.getAttribute("mapEdge"));
+			e.readAttributeValueFromString("recordEdge",
+					"(f 2.2 THIRD 42 [f t] 987654321 {1 - f 2 - t} {t} \"some String\")");
+			assertEquals(
+					RecordImpl
+							.empty()
+							.plus("boolRecord", false)
+							.plus("doubleRecord", 2.2d)
+							.plus("enumRecord", "THIRD")
+							.plus("intRecord", 42)
+							.plus("listRecord",
+									JGraLab.vector().plus(false).plus(true))
+							.plus("longRecord", 987654321l)
+							.plus("mapRecord",
+									JGraLab.map().plus(1, false).plus(2, true))
+							.plus("setRecord", JGraLab.set().plus(true))
+							.plus("stringRecord", "some String"),
+					e.getAttribute("recordEdge"));
+			e.readAttributeValueFromString("setEdge", "{f}");
+			assertEquals(JGraLab.set().plus(false), e.getAttribute("setEdge"));
+			e.readAttributeValueFromString("stringEdge", "\"some String\"");
+			assertEquals("some String", e.getAttribute("stringEdge"));
+		} catch (GraphIOException e) {
+			e.printStackTrace();
+			fail();
+		}
+	}
+
+	@Test
+	public void testReadAttributeValues() {
+		try {
+			Schema s = GraphIO
+					.loadSchemaFromFile(GenericGraphImplTest.SCHEMAFOLDER
+							+ "DefaultValueTestSchema.tg");
+			Graph g = s.createGraph(ImplementationType.GENERIC);
+			Edge e = g.createEdge(
+					g.getGraphClass().getEdgeClass("TestEdge"),
+					g.createVertex(g.getGraphClass().getVertexClass(
+							"TestSubVertex")),
+					g.createVertex(g.getGraphClass().getVertexClass(
+							"TestSubVertex")));
+			for (Attribute a : e.getAttributedElementClass().getAttributeList()) {
+				GenericGraphImplTest.testDefaultValue(
+						e.getAttribute(a.getName()), a);
+			}
+
+			e.readAttributeValues(GraphIO
+					.createStringReader(
+							"f "
+									+ "[[f]] "
+									+ "{[t t] - {f} [f f] - {t f}} "
+									+ "{{f}} "
+									+ "12.34 "
+									+ "SECOND "
+									+ "42"
+									+ "[t t] "
+									+ "987654321 "
+									+ "{1 - f 2 - t} "
+									+ "(f 2.2 THIRD 42 [f t] 987654321 {1 - f 2 - t} {t} \"some String\") "
+									+ "{f} " + "\"some String\"", e.getSchema()));
+
+			// parse values different from the default ones
+			assertEquals(false, e.getAttribute("boolEdge"));
+			assertEquals(JGraLab.vector().plus(JGraLab.vector().plus(false)),
+					e.getAttribute("complexListEdge"));
+			assertEquals(
+					JGraLab.map()
+							.plus(JGraLab.vector().plus(true).plus(true),
+									JGraLab.set().plus(false))
+							.plus(JGraLab.vector().plus(false).plus(false),
+									JGraLab.set().plus(true).plus(false)),
+					e.getAttribute("complexMapEdge"));
+			assertEquals(JGraLab.set().plus(JGraLab.set().plus(false)),
+					e.getAttribute("complexSetEdge"));
+			assertEquals(12.34d, e.getAttribute("doubleEdge"));
+			assertEquals("SECOND", e.getAttribute("enumEdge"));
+			assertEquals(42, e.getAttribute("intEdge"));
+			assertEquals(JGraLab.vector().plus(true).plus(true),
+					e.getAttribute("listEdge"));
+			assertEquals(987654321l, e.getAttribute("longEdge"));
+			assertEquals(JGraLab.map().plus(1, false).plus(2, true),
+					e.getAttribute("mapEdge"));
+			assertEquals(
+					RecordImpl
+							.empty()
+							.plus("boolRecord", false)
+							.plus("doubleRecord", 2.2d)
+							.plus("enumRecord", "THIRD")
+							.plus("intRecord", 42)
+							.plus("listRecord",
+									JGraLab.vector().plus(false).plus(true))
+							.plus("longRecord", 987654321l)
+							.plus("mapRecord",
+									JGraLab.map().plus(1, false).plus(2, true))
+							.plus("setRecord", JGraLab.set().plus(true))
+							.plus("stringRecord", "some String"),
+					e.getAttribute("recordEdge"));
+			assertEquals(JGraLab.set().plus(false), e.getAttribute("setEdge"));
+			assertEquals("some String", e.getAttribute("stringEdge"));
+		} catch (GraphIOException e) {
+			e.printStackTrace();
+			fail();
+		}
+	}
+
+	@Test
+	public void testWriteAttributeValueToString() {
+		try {
+			Schema s = GraphIO
+					.loadSchemaFromFile(GenericGraphImplTest.SCHEMAFOLDER
+							+ "DefaultValueTestSchema.tg");
+			Graph g = s.createGraph(ImplementationType.GENERIC);
+			Edge e = g.createEdge(
+					g.getGraphClass().getEdgeClass("TestEdge"),
+					g.createVertex(g.getGraphClass().getVertexClass(
+							"TestSubVertex")),
+					g.createVertex(g.getGraphClass().getVertexClass(
+							"TestSubVertex")));
+			for (Attribute a : e.getAttributedElementClass().getAttributeList()) {
+				GenericGraphImplTest.testDefaultValue(
+						e.getAttribute(a.getName()), a);
+			}
+
+			assertEquals("t", e.writeAttributeValueToString("boolEdge"));
+			assertEquals("[[t] [f] [t]]",
+					e.writeAttributeValueToString("complexListEdge"));
+			assertEquals("{[t] - {t} [f] - {f}}",
+					e.writeAttributeValueToString("complexMapEdge"));
+			assertEquals("{{t} {f}}",
+					e.writeAttributeValueToString("complexSetEdge"));
+			assertEquals("1.1", e.writeAttributeValueToString("doubleEdge"));
+			assertEquals("FIRST", e.writeAttributeValueToString("enumEdge"));
+			assertEquals("1", e.writeAttributeValueToString("intEdge"));
+			assertEquals("[t f t]", e.writeAttributeValueToString("listEdge"));
+			assertEquals("1", e.writeAttributeValueToString("longEdge"));
+			assertEquals("{1 - t 2 - f 3 - t}",
+					e.writeAttributeValueToString("mapEdge"));
+			assertEquals(
+					"(t 1.1 FIRST 1 [t f t] 1 {1 - t 2 - f 3 - t} {t f} \"test\")",
+					e.writeAttributeValueToString("recordEdge"));
+			assertEquals("{t f}", e.writeAttributeValueToString("setEdge"));
+			assertEquals("\"test\"",
+					e.writeAttributeValueToString("stringEdge"));
+
+			e.setAttribute("mapEdge", null);
+			assertEquals(GraphIO.NULL_LITERAL,
+					e.writeAttributeValueToString("mapEdge"));
+		} catch (GraphIOException e) {
+			e.printStackTrace();
+			fail();
+		} catch (NoSuchAttributeException e) {
+			e.printStackTrace();
+			fail();
+		} catch (IOException e) {
+			e.printStackTrace();
+			fail();
+		}
+	}
+
+	@Test
+	public void testWriteAttributeValues() {
+		try {
+			Schema s = GraphIO
+					.loadSchemaFromFile(GenericGraphImplTest.SCHEMAFOLDER
+							+ "DefaultValueTestSchema.tg");
+			Graph g = s.createGraph(ImplementationType.GENERIC);
+			Edge e = g.createEdge(
+					g.getGraphClass().getEdgeClass("TestEdge"),
+					g.createVertex(g.getGraphClass().getVertexClass(
+							"TestSubVertex")),
+					g.createVertex(g.getGraphClass().getVertexClass(
+							"TestSubVertex")));
+			for (Attribute a : e.getAttributedElementClass().getAttributeList()) {
+				GenericGraphImplTest.testDefaultValue(
+						e.getAttribute(a.getName()), a);
+			}
+
+			GraphIO io = GraphIO.createStringWriter(e.getSchema());
+			e.writeAttributeValues(io);
+			assertEquals(
+					"t "
+							+ "[[t] [f] [t]] "
+							+ "{[t] - {t} [f] - {f}} "
+							+ "{{t} {f}} "
+							+ "1.1 "
+							+ "FIRST "
+							+ "1 "
+							+ "[t f t] "
+							+ "1 "
+							+ "{1 - t 2 - f 3 - t} "
+							+ "(t 1.1 FIRST 1 [t f t] 1 {1 - t 2 - f 3 - t} {t f} \"test\") "
+							+ "{t f} " + "\"test\"", io.getStringWriterResult());
+		} catch (GraphIOException e) {
+			e.printStackTrace();
+			fail();
+		} catch (NoSuchAttributeException e) {
+			e.printStackTrace();
+			fail();
+		} catch (IOException e) {
 			e.printStackTrace();
 			fail();
 		}

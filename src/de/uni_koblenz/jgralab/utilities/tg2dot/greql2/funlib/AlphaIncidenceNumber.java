@@ -36,13 +36,15 @@
 package de.uni_koblenz.jgralab.utilities.tg2dot.greql2.funlib;
 
 import de.uni_koblenz.jgralab.Edge;
+import de.uni_koblenz.jgralab.greql2.funlib.Description;
 import de.uni_koblenz.jgralab.greql2.funlib.Function;
 
 public class AlphaIncidenceNumber extends Function {
+	
+	@Description(params = "edge", description = "Returns the alpha incidence number of the given edge starting with 1.",
+			categories = Category.GRAPH)
 	public AlphaIncidenceNumber() {
-		super(
-				"Returns the alpha incidence number of the given edge starting with 1.",
-				2, 1, 1.0, Category.GRAPH);
+		super(2, 1, 1.0);
 	}
 
 	public Integer evaluate(Edge edge) {

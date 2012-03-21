@@ -34,15 +34,18 @@
  */
 package de.uni_koblenz.jgralab.greql2.funlib.artithmetics;
 
+import de.uni_koblenz.jgralab.greql2.funlib.Description;
 import de.uni_koblenz.jgralab.greql2.funlib.Function;
 
 public class Sqrt extends Function {
+	
+	@Description(params = "a", description = "Returns the square root of the given number.", 
+			categories = Category.ARITHMETICS)
 	public Sqrt() {
-		super("Returns the square root of the given number.", 4, 1, 1.0,
-				Category.ARITHMETICS);
+		super(4, 1, 1.0);
 	}
 
-	public Number evaluate(Number a) {
+	public Double evaluate(Number a) {
 		return Math.sqrt(a.doubleValue());
 	}
 }

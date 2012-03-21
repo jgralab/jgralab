@@ -38,23 +38,29 @@ import org.pcollections.PMap;
 import org.pcollections.PSet;
 import org.pcollections.PVector;
 
+import de.uni_koblenz.jgralab.greql2.funlib.Description;
 import de.uni_koblenz.jgralab.greql2.funlib.Function;
 
 public class IsEmpty extends Function {
 
 	public IsEmpty() {
-		super("Returns true, iff the given collection is empty.", 2, 1, 0.01,
-				Category.STATISTICS);
+		super(2, 1, 0.01);
 	}
 
+	@Description(params = {"l"}, description = "Returns true, iff the given PVector is empty.",
+			categories = Category.STATISTICS)
 	public <T> Boolean evaluate(PVector<T> c) {
 		return c.isEmpty();
 	}
-
+	
+	@Description(params = {"s"}, description = "Returns true, iff the given PSet is empty.",
+			categories = Category.STATISTICS)
 	public <T> Boolean evaluate(PSet<T> c) {
 		return c.isEmpty();
 	}
 
+	@Description(params = {"m"}, description = "Returns true, iff the given PMap is empty.",
+			categories = Category.STATISTICS)
 	public <K, V> Boolean evaluate(PMap<K, V> c) {
 		return c.isEmpty();
 	}

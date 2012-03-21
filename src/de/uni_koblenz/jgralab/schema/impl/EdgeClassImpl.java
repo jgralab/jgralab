@@ -50,7 +50,7 @@ public class EdgeClassImpl extends GraphElementClassImpl<EdgeClass, Edge>
 
 	/**
 	 * builds a new edge class
-	 * 
+	 *
 	 * @param qn
 	 *            the unique identifier of the edge class in the schema
 	 * @param from
@@ -85,6 +85,20 @@ public class EdgeClassImpl extends GraphElementClassImpl<EdgeClass, Edge>
 			String fromRoleName, AggregationKind aggrFrom, VertexClass to,
 			int toMin, int toMax, String toRoleName, AggregationKind aggrTo) {
 		super(simpleName, pkg, gc, gc.edgeClassDag);
+
+		if (pkg.isDefaultPackage() && simpleName.equals(DEFAULTEDGECLASS_NAME)) {
+			// the default EC is just created
+		} else {
+			if ((from == graphClass.getDefaultVertexClass())
+					|| (to == graphClass.getDefaultVertexClass())) {
+				throw new SchemaException(
+						"EdgeClasses from/to the default vertex class are forbidden!\n "
+								+ "Tried to create edge class " + simpleName
+								+ ": " + to.getQualifiedName() + " -> "
+								+ to.getQualifiedName());
+			}
+		}
+
 		IncidenceClass fromInc = new IncidenceClassImpl(this, from,
 				fromRoleName, fromMin, fromMax, IncidenceDirection.OUT,
 				aggrFrom);
@@ -133,7 +147,7 @@ public class EdgeClassImpl extends GraphElementClassImpl<EdgeClass, Edge>
 	 * checks if the incidence classes own and inherited are compatible, i.e. if
 	 * the upper multiplicity of own is lower or equal than the one of inherited
 	 * and so on
-	 * 
+	 *
 	 * @param special
 	 * @param general
 	 * @throws SchemaException
@@ -196,5 +210,37 @@ public class EdgeClassImpl extends GraphElementClassImpl<EdgeClass, Edge>
 								+ " at end " + dir);
 			}
 		}
+	}
+
+	@Override
+	protected void register() {
+		super.register();
+		graphClass.edgeClasses.put(qualifiedName, this);
+		parentPackage.edgeClasses.put(simpleName, this);
+	}
+
+	@Override
+	protected void unregister() {
+		super.unregister();
+		graphClass.edgeClasses.remove(qualifiedName);
+		parentPackage.edgeClasses.remove(simpleName);
+	}
+
+	@Override
+	public void delete() {
+		schema.namedElements.remove(qualifiedName);
+		graphClass.edgeClasses.remove(qualifiedName);
+		graphClass.edgeClassDag.delete(this);
+		parentPackage.edgeClasses.remove(simpleName);
+	}
+
+	@Override
+	protected EdgeClass getDefaultClass() {
+		return graphClass.getDefaultEdgeClass();
+	}
+
+	@Override
+	public boolean isDefaultGraphElementClass() {
+		return this == graphClass.getDefaultEdgeClass();
 	}
 }

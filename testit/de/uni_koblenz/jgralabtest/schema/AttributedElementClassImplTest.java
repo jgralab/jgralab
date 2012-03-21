@@ -68,7 +68,7 @@ public abstract class AttributedElementClassImplTest<AEC extends AttributedEleme
 	/*
 	 * Tests for the addAttribute(Attribute) and addAttribute(QualifiedName,
 	 * Domain) methods.
-	 * 
+	 *
 	 * NOTE: As addAttribute(QualifiedName, Domain) only creates an attribute
 	 * with the given parameters then calling the addAttribute(Attribute) method
 	 * and in accordance with the specification of addAttribute(QualifiedName,
@@ -80,7 +80,7 @@ public abstract class AttributedElementClassImplTest<AEC extends AttributedEleme
 	 */
 	/**
 	 * addAttribute(Attribute)
-	 * 
+	 *
 	 * TEST CASE: Adding an attribute, which is not yet present in this element,
 	 * nor in this element´s direct and indirect super-/subclasses
 	 */
@@ -101,7 +101,7 @@ public abstract class AttributedElementClassImplTest<AEC extends AttributedEleme
 
 	/**
 	 * addAttribute(Attribute)
-	 * 
+	 *
 	 * TEST CASE: Adding two distinct attributes which are not yet present in
 	 * this element, nor in this element´s direct and indirect superclasses (and
 	 * subclasses)
@@ -128,7 +128,7 @@ public abstract class AttributedElementClassImplTest<AEC extends AttributedEleme
 
 	/**
 	 * addAttribute(Attribute)
-	 * 
+	 *
 	 * TEST CASE: Adding an attribute, already contained directly in this
 	 * element.
 	 */
@@ -154,10 +154,10 @@ public abstract class AttributedElementClassImplTest<AEC extends AttributedEleme
 
 	/**
 	 * addAttribute(Attribute)
-	 * 
+	 *
 	 * TEST CASE: Adding an attribute, already contained in a superclass of this
 	 * element
-	 * 
+	 *
 	 * NOTE: This method is called upon in all of this classes´ subclasses.
 	 */
 	public final void testAddAttribute4(AEC superclass) {
@@ -183,10 +183,10 @@ public abstract class AttributedElementClassImplTest<AEC extends AttributedEleme
 
 	/**
 	 * addAttribute(Attribute)
-	 * 
+	 *
 	 * TEST CASE: Adding an attribute, already contained in a subclass of this
 	 * element
-	 * 
+	 *
 	 * NOTE: This method is called upon in all of this classes´ subclasses.
 	 */
 	public final void testAddAttribute5(AEC subclass) {
@@ -216,7 +216,7 @@ public abstract class AttributedElementClassImplTest<AEC extends AttributedEleme
 
 	/**
 	 * addConstraint(Constraint)
-	 * 
+	 *
 	 * TEST CASE: Adding a constraint, which is not yet present in this element,
 	 * nor in this element´s direct and indirect super-/subclasses
 	 */
@@ -235,7 +235,7 @@ public abstract class AttributedElementClassImplTest<AEC extends AttributedEleme
 
 	/**
 	 * addConstraint(Constraint)
-	 * 
+	 *
 	 * TEST CASE: Adding two distinct constraints which are not yet present in
 	 * this element, nor in this element´s direct and indirect super-/subclasses
 	 */
@@ -257,7 +257,7 @@ public abstract class AttributedElementClassImplTest<AEC extends AttributedEleme
 
 	/**
 	 * addConstraint(Constraint)
-	 * 
+	 *
 	 * TEST CASE: Adding a constraint, already contained directly in this
 	 * element
 	 */
@@ -278,10 +278,10 @@ public abstract class AttributedElementClassImplTest<AEC extends AttributedEleme
 
 	/**
 	 * addConstraint(Constraint)
-	 * 
+	 *
 	 * TEST CASE: Adding a constraint, already contained in a superclass of this
 	 * element
-	 * 
+	 *
 	 * NOTE: This method is called upon in all of this classes´ subclasses.
 	 */
 	public final void testAddConstraint4(AEC superClass) {
@@ -299,10 +299,10 @@ public abstract class AttributedElementClassImplTest<AEC extends AttributedEleme
 
 	/**
 	 * addConstraint(Constraint)
-	 * 
+	 *
 	 * TEST CASE: Adding a constraint, already contained in a subclass of this
 	 * element
-	 * 
+	 *
 	 * NOTE: This method is called upon in all of this classes´ subclasses.
 	 */
 	public final void testAddConstraint5(AEC subClass) {
@@ -324,10 +324,10 @@ public abstract class AttributedElementClassImplTest<AEC extends AttributedEleme
 
 	/**
 	 * compareTo(AttributedElementClass)
-	 * 
+	 *
 	 * TEST CASE: Comparing this element to another, where this element´s
 	 * qualified name is lexicographically less than the other´s
-	 * 
+	 *
 	 * Note: This method is called upon in all of this classes´ subclasses.
 	 */
 	public final void testCompareTo(AEC other) {
@@ -338,10 +338,10 @@ public abstract class AttributedElementClassImplTest<AEC extends AttributedEleme
 
 	/**
 	 * compareTo(AttributedElementClass)
-	 * 
+	 *
 	 * TEST CASE: Comparing this element to another, where this element´s
 	 * qualified name is lexicographically greater than the other´s
-	 * 
+	 *
 	 * Note: This method is called upon in all of this classes´ subclasses.
 	 */
 	public final void testCompareTo2(AEC other) {
@@ -352,12 +352,12 @@ public abstract class AttributedElementClassImplTest<AEC extends AttributedEleme
 
 	/**
 	 * compareTo(AttributedElementClass)
-	 * 
+	 *
 	 * TEST CASE: Comparing this element to another, where both element´s
 	 * qualified names are equal
-	 * 
+	 *
 	 * TEST CASE: Comparing an element to itself
-	 * 
+	 *
 	 * Note: This method is called upon in all of this classes´ subclasses.
 	 */
 	public final void testCompareTo3(AEC other) {
@@ -371,7 +371,7 @@ public abstract class AttributedElementClassImplTest<AEC extends AttributedEleme
 	 */
 	/**
 	 * containsAttribute(String)
-	 * 
+	 *
 	 * TEST CASE: looking for a non-present attribute
 	 */
 	@Test
@@ -382,7 +382,7 @@ public abstract class AttributedElementClassImplTest<AEC extends AttributedEleme
 
 	/**
 	 * containsAttribute(String)
-	 * 
+	 *
 	 * TEST CASE: looking for an attribute, directly present in this element
 	 */
 	@Test
@@ -398,10 +398,10 @@ public abstract class AttributedElementClassImplTest<AEC extends AttributedEleme
 
 	/**
 	 * containsAttribute(String)
-	 * 
+	 *
 	 * TEST CASE: looking for an attribute, present in a superclass of this
 	 * element
-	 * 
+	 *
 	 * NOTE: This method is called upon in all of this classes´ subclasses.
 	 */
 	public final void testContainsAttribute3(AEC superClass) {
@@ -419,7 +419,7 @@ public abstract class AttributedElementClassImplTest<AEC extends AttributedEleme
 	 */
 	/**
 	 * getAttribute()
-	 * 
+	 *
 	 * TEST CASE: Getting a direct attribute
 	 */
 	@Test
@@ -436,9 +436,9 @@ public abstract class AttributedElementClassImplTest<AEC extends AttributedEleme
 
 	/**
 	 * getAttribute()
-	 * 
+	 *
 	 * TEST CASE: Getting an inherited attribute
-	 * 
+	 *
 	 * NOTE: This method is called upon in all of this classes´ subclasses.
 	 */
 	public final void testGetAttribute2(AEC superClass) {
@@ -455,7 +455,7 @@ public abstract class AttributedElementClassImplTest<AEC extends AttributedEleme
 
 	/**
 	 * getAttribute()
-	 * 
+	 *
 	 * TEST CASE: Trying to get a non existent attribute
 	 */
 	@Test
@@ -466,7 +466,7 @@ public abstract class AttributedElementClassImplTest<AEC extends AttributedEleme
 
 	/**
 	 * getAttribute()
-	 * 
+	 *
 	 * TEST CASE: Trying to get an attribute with an empty name
 	 */
 	@Test
@@ -476,10 +476,10 @@ public abstract class AttributedElementClassImplTest<AEC extends AttributedEleme
 
 	/**
 	 * getAttribute()
-	 * 
+	 *
 	 * TEST CASE: Trying to get an attribute present in a subclass of this
 	 * element
-	 * 
+	 *
 	 * NOTE: This method is called upon in all of this classes´ subclasses.
 	 */
 	public final void testGetAttribute5(AEC subClass) {
@@ -496,7 +496,7 @@ public abstract class AttributedElementClassImplTest<AEC extends AttributedEleme
 	 */
 	/**
 	 * getAttributeCount()
-	 * 
+	 *
 	 * TEST CASE: Getting the number of attributes of an element which has only
 	 * one direct attribute and no inherited attributes
 	 */
@@ -510,10 +510,10 @@ public abstract class AttributedElementClassImplTest<AEC extends AttributedEleme
 
 	/**
 	 * getAttributeCount()
-	 * 
+	 *
 	 * TEST CASE: Getting the number of attributes of an element which has
 	 * exactly only one inherited attribute and no direct attributes
-	 * 
+	 *
 	 * NOTE: This method is called upon in all of this classes´ subclasses.
 	 */
 	public final void testGetAttributeCount2(AEC superClass) {
@@ -525,10 +525,10 @@ public abstract class AttributedElementClassImplTest<AEC extends AttributedEleme
 
 	/**
 	 * getAttributeCount()
-	 * 
+	 *
 	 * TEST CASE: Getting the number of attributes of an element which has
 	 * multiple direct and indirect attributes
-	 * 
+	 *
 	 * NOTE: This method is called upon in all of this classes´ subclasses.
 	 */
 	public final void testGetAttributeCount3(AEC superClass) {
@@ -543,7 +543,7 @@ public abstract class AttributedElementClassImplTest<AEC extends AttributedEleme
 
 	/**
 	 * getAttributeCount()
-	 * 
+	 *
 	 * TEST CASE: Getting the number of attributes of an element which has no
 	 * direct nor inherited attributes
 	 */
@@ -554,10 +554,10 @@ public abstract class AttributedElementClassImplTest<AEC extends AttributedEleme
 
 	/**
 	 * getAttributeCount()
-	 * 
+	 *
 	 * TEST CASE: Getting the number of attributes of an element which has no
 	 * direct nor inherited attributes but whose subclass has attributes
-	 * 
+	 *
 	 * NOTE: This method is called upon in all of this classes´ subclasses.
 	 */
 	public final void testGetAttributeCount5(AEC subClass) {
@@ -572,7 +572,7 @@ public abstract class AttributedElementClassImplTest<AEC extends AttributedEleme
 	 */
 	/**
 	 * getAttributeList()
-	 * 
+	 *
 	 * TEST CASE: Getting an element´s list of attributes, which has only one
 	 * direct attribute and no inherited attributes
 	 */
@@ -591,10 +591,10 @@ public abstract class AttributedElementClassImplTest<AEC extends AttributedEleme
 
 	/**
 	 * getAttributeList()
-	 * 
+	 *
 	 * TEST CASE: Getting an element´s list of attributes, which has exactly one
 	 * inherited attribute and no direct attributes
-	 * 
+	 *
 	 * NOTE: This method is called upon in all of this classes´ subclasses.
 	 */
 	public final void testGetAttributeList2(AEC superClass) {
@@ -611,10 +611,10 @@ public abstract class AttributedElementClassImplTest<AEC extends AttributedEleme
 
 	/**
 	 * getAttributeList()
-	 * 
+	 *
 	 * TEST CASE: Getting an element´s list of attributes, which has mutliple
 	 * direct and inherited attributes
-	 * 
+	 *
 	 * NOTE: This method is called upon in all of this classes´ subclasses.
 	 */
 	public final void testGetAttributeList3(AEC superClass) {
@@ -635,7 +635,7 @@ public abstract class AttributedElementClassImplTest<AEC extends AttributedEleme
 
 	/**
 	 * getAttributeList()
-	 * 
+	 *
 	 * TEST CASE: Getting an element´s list of attributes, which has no direct
 	 * nor inherited attributes
 	 */
@@ -646,10 +646,10 @@ public abstract class AttributedElementClassImplTest<AEC extends AttributedEleme
 
 	/**
 	 * getAttributeList()
-	 * 
+	 *
 	 * TEST CASE: Getting an element´s list of attributes, which has no direct
 	 * nor inherited attributes but whose subclass has attributes
-	 * 
+	 *
 	 * NOTE: This method is called upon in all of this classes´ subclasses.
 	 */
 	public final void testGetAttributeList5(AEC subClass) {
@@ -661,7 +661,7 @@ public abstract class AttributedElementClassImplTest<AEC extends AttributedEleme
 	 */
 	/**
 	 * getConstraints()
-	 * 
+	 *
 	 * TEST CASE: Getting an element´s list of constraints, that has only one
 	 * constraint
 	 */
@@ -677,7 +677,7 @@ public abstract class AttributedElementClassImplTest<AEC extends AttributedEleme
 
 	/**
 	 * getConstraints()
-	 * 
+	 *
 	 * TEST CASE: Getting an element´s list of constraints, that has only one
 	 * constraint
 	 */
@@ -696,7 +696,7 @@ public abstract class AttributedElementClassImplTest<AEC extends AttributedEleme
 
 	/**
 	 * getConstraints()
-	 * 
+	 *
 	 * TEST CASE: Getting an element´s list of constraints, that has no
 	 * constraints at all
 	 */
@@ -707,10 +707,10 @@ public abstract class AttributedElementClassImplTest<AEC extends AttributedEleme
 
 	/**
 	 * getConstraints()
-	 * 
+	 *
 	 * TEST CASE: Getting an element´s list of constraints, that has a
 	 * superclass with constraints
-	 * 
+	 *
 	 * Note: This method is called upon in all of this classes´ subclasses.
 	 */
 	public final void testGetConstraints4(AEC superClass) {
@@ -749,7 +749,7 @@ public abstract class AttributedElementClassImplTest<AEC extends AttributedEleme
 
 	/**
 	 * getOwnAttribute()
-	 * 
+	 *
 	 * TEST CASE: Getting a direct attribute
 	 */
 	@Test
@@ -766,7 +766,7 @@ public abstract class AttributedElementClassImplTest<AEC extends AttributedEleme
 
 	/**
 	 * getOwnAttribute()
-	 * 
+	 *
 	 * TEST CASE: Trying to get a non existent attribute
 	 */
 	@Test
@@ -777,7 +777,7 @@ public abstract class AttributedElementClassImplTest<AEC extends AttributedEleme
 
 	/**
 	 * getOwnAttribute()
-	 * 
+	 *
 	 * TEST CASE: Trying to get an attribute with an empty name
 	 */
 	@Test
@@ -787,13 +787,13 @@ public abstract class AttributedElementClassImplTest<AEC extends AttributedEleme
 
 	/**
 	 * getOwnAttribute()
-	 * 
+	 *
 	 * TEST CASE: Trying to get an attribute present in a superclass of this
 	 * element
-	 * 
+	 *
 	 * TEST CASE: Trying to get an attribute present in a subclass of this
 	 * element
-	 * 
+	 *
 	 * NOTE: This method is called upon in all of this classes´ subclasses.
 	 */
 	public final void testGetOwnAttribute4(AEC otherClass) {
@@ -810,7 +810,7 @@ public abstract class AttributedElementClassImplTest<AEC extends AttributedEleme
 	 */
 	/**
 	 * getOwnAttributeCount()
-	 * 
+	 *
 	 * TEST CASE: Getting the number of attributes of an element that only has
 	 * one direct attribute
 	 */
@@ -826,7 +826,7 @@ public abstract class AttributedElementClassImplTest<AEC extends AttributedEleme
 
 	/**
 	 * getOwnAttributeCount()
-	 * 
+	 *
 	 * TEST CASE: Getting the number of attributes of an element that has
 	 * multiple direct attributes
 	 */
@@ -845,7 +845,7 @@ public abstract class AttributedElementClassImplTest<AEC extends AttributedEleme
 
 	/**
 	 * getOwnAttributeCount()
-	 * 
+	 *
 	 * TEST CASE: Getting the number of attributes of an element that has no
 	 * direct attributes
 	 */
@@ -856,10 +856,10 @@ public abstract class AttributedElementClassImplTest<AEC extends AttributedEleme
 
 	/**
 	 * getOwnAttributeCount()
-	 * 
+	 *
 	 * TEST CASE: Getting the number of attributes of an element that only has
 	 * inherited attributes and no direct attributes
-	 * 
+	 *
 	 * NOTE: This method is called upon in all of this classes´ subclasses.
 	 */
 	public final void testGetOwnAttributeCount4(AEC superClass) {
@@ -875,7 +875,7 @@ public abstract class AttributedElementClassImplTest<AEC extends AttributedEleme
 	 */
 	/**
 	 * getOwnAttributeList()
-	 * 
+	 *
 	 * TEST CASE: Getting an element´s list of attributes, that has one direct
 	 * attribute
 	 */
@@ -894,7 +894,7 @@ public abstract class AttributedElementClassImplTest<AEC extends AttributedEleme
 
 	/**
 	 * getOwnAttributeList()
-	 * 
+	 *
 	 * TEST CASE: Getting an element´s list of attributes, that has mutliple
 	 * direct attributes
 	 */
@@ -917,7 +917,7 @@ public abstract class AttributedElementClassImplTest<AEC extends AttributedEleme
 
 	/**
 	 * getOwnAttributeList()
-	 * 
+	 *
 	 * TEST CASE: Getting an element´s list of attributes, that has no direct
 	 * attributes
 	 */
@@ -928,10 +928,10 @@ public abstract class AttributedElementClassImplTest<AEC extends AttributedEleme
 
 	/**
 	 * getOwnAttributeList()
-	 * 
+	 *
 	 * TEST CASE: Getting an element´s list of attributes, that only has
 	 * inherited attributes and no direct attributes
-	 * 
+	 *
 	 * NOTE: This method is called upon in all of this classes´ subclasses.
 	 */
 	public final void testGetOwnAttributeList4(AEC superClass) {
@@ -982,7 +982,7 @@ public abstract class AttributedElementClassImplTest<AEC extends AttributedEleme
 	 */
 	/**
 	 * hasAttributes()
-	 * 
+	 *
 	 * TEST CASE: The element has one direct attribute
 	 */
 	@Test
@@ -996,7 +996,7 @@ public abstract class AttributedElementClassImplTest<AEC extends AttributedEleme
 
 	/**
 	 * hasAttributes()
-	 * 
+	 *
 	 * TEST CASE: The element has multiple direct attributes
 	 */
 	@Test
@@ -1013,9 +1013,9 @@ public abstract class AttributedElementClassImplTest<AEC extends AttributedEleme
 
 	/**
 	 * hasAttributes()
-	 * 
+	 *
 	 * TEST CASE: The element has one inherited attribute
-	 * 
+	 *
 	 * NOTE: This method is called upon in all of this classes´ subclasses.
 	 */
 	public final void testHasAttributes3(AEC superClass) {
@@ -1028,9 +1028,9 @@ public abstract class AttributedElementClassImplTest<AEC extends AttributedEleme
 
 	/**
 	 * hasAttributes()
-	 * 
+	 *
 	 * TEST CASE: The element has multiple inherited attributes
-	 * 
+	 *
 	 * NOTE: This method is called upon in all of this classes´ subclasses.
 	 */
 	public final void testHasAttributes4(AEC superClass) {
@@ -1046,9 +1046,9 @@ public abstract class AttributedElementClassImplTest<AEC extends AttributedEleme
 
 	/**
 	 * hasAttributes()
-	 * 
+	 *
 	 * TEST CASE: The element has multiple direct and indirect attributes
-	 * 
+	 *
 	 * NOTE: This method is called upon in all of this classes´ subclasses.
 	 */
 	public final void testHasAttributes5(AEC superClass) {
@@ -1070,7 +1070,7 @@ public abstract class AttributedElementClassImplTest<AEC extends AttributedEleme
 
 	/**
 	 * hasAttributes()
-	 * 
+	 *
 	 * TEST CASE: The element has no direct and no indirect attributes
 	 */
 	@Test
@@ -1083,7 +1083,7 @@ public abstract class AttributedElementClassImplTest<AEC extends AttributedEleme
 	 */
 	/**
 	 * hasOwnAttributes()
-	 * 
+	 *
 	 * TEST CASE: The element has one direct attribute
 	 */
 	@Test
@@ -1097,7 +1097,7 @@ public abstract class AttributedElementClassImplTest<AEC extends AttributedEleme
 
 	/**
 	 * hasOwnAttributes()
-	 * 
+	 *
 	 * TEST CASE: The element has multiple direct attributes
 	 */
 	@Test
@@ -1114,7 +1114,7 @@ public abstract class AttributedElementClassImplTest<AEC extends AttributedEleme
 
 	/**
 	 * hasOwnAttributes()
-	 * 
+	 *
 	 * TEST CASE: The element has no direct and no indirect attributes
 	 */
 	@Test
@@ -1124,9 +1124,9 @@ public abstract class AttributedElementClassImplTest<AEC extends AttributedEleme
 
 	/**
 	 * hasOwnAttributes()
-	 * 
+	 *
 	 * TEST CASE: The element has direct and inherited attributes
-	 * 
+	 *
 	 * NOTE: This method is called upon in all of this classes´ subclasses.
 	 */
 	public final void testHasOwnAttributes4(AEC superClass) {
@@ -1142,9 +1142,9 @@ public abstract class AttributedElementClassImplTest<AEC extends AttributedEleme
 
 	/**
 	 * hasOwnAttributes()
-	 * 
+	 *
 	 * TEST CASE: The element has no direct but indirect attributes
-	 * 
+	 *
 	 * NOTE: This method is called upon in all of this classes´ subclasses.
 	 */
 	public final void testHasOwnAttributes5(AEC superClass) {
@@ -1163,7 +1163,7 @@ public abstract class AttributedElementClassImplTest<AEC extends AttributedEleme
 	 */
 	/**
 	 * isAbstract()
-	 * 
+	 *
 	 * TEST CASE: The element is abstract
 	 */
 	@Test
@@ -1176,7 +1176,7 @@ public abstract class AttributedElementClassImplTest<AEC extends AttributedEleme
 
 	/**
 	 * isAbstract()
-	 * 
+	 *
 	 * TEST CASE: The element is not abstract
 	 */
 	@Test
@@ -1192,28 +1192,27 @@ public abstract class AttributedElementClassImplTest<AEC extends AttributedEleme
 
 	/**
 	 * isInternal()
-	 * 
+	 *
 	 * TEST CASE: The element is not for internal use
 	 */
 	@Test
 	public void testIsInternal() {
-		for (VertexClass vc : schema.getVertexClasses()) {
+		for (VertexClass vc : schema.getGraphClass().getVertexClasses()) {
 			if (vc == schema.getGraphClass().getDefaultVertexClass()) {
-				Assert.assertTrue(vc.isInternal());
+				Assert.assertTrue(vc.isDefaultGraphElementClass());
 			} else {
-				Assert.assertFalse(vc.isInternal());
+				Assert.assertFalse(vc.isDefaultGraphElementClass());
 			}
 		}
 
-		for (EdgeClass ec : schema.getEdgeClasses()) {
+		for (EdgeClass ec : schema.getGraphClass().getEdgeClasses()) {
 			if (ec == schema.getGraphClass().getDefaultEdgeClass()) {
-				Assert.assertTrue(ec.isInternal());
+				Assert.assertTrue(ec.isDefaultGraphElementClass());
 			} else {
-				Assert.assertFalse(ec.isInternal());
+				Assert.assertFalse(ec.isDefaultGraphElementClass());
 			}
 		}
 
-		Assert.assertFalse(schema.getGraphClass().isInternal());
 	}
 
 	/*
@@ -1225,7 +1224,7 @@ public abstract class AttributedElementClassImplTest<AEC extends AttributedEleme
 	 */
 	/**
 	 * setAbstract()
-	 * 
+	 *
 	 * TEST CASE: The element is set to an abstract state
 	 */
 	@Test
@@ -1237,7 +1236,7 @@ public abstract class AttributedElementClassImplTest<AEC extends AttributedEleme
 
 	/**
 	 * setAbstract()
-	 * 
+	 *
 	 * TEST CASE: The element is set to a non-abstract state
 	 */
 	@Test

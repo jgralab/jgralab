@@ -35,14 +35,16 @@
 package de.uni_koblenz.jgralab.greql2.funlib.schema;
 
 import de.uni_koblenz.jgralab.Record;
+import de.uni_koblenz.jgralab.greql2.funlib.Description;
 import de.uni_koblenz.jgralab.greql2.funlib.Function;
 
 public class HasComponent extends Function {
 
+	@Description(params = {"r", "name"}, description = 
+		"Returns true, iff the given record has a component with the given name.",
+		categories = Category.SCHEMA_ACCESS)
 	public HasComponent() {
-		super(
-				"Returns true, iff the given record has a component with the given name.",
-				Category.SCHEMA_ACCESS);
+		super();
 	}
 
 	public Boolean evaluate(Record r, String name) {

@@ -36,14 +36,17 @@ package de.uni_koblenz.jgralab.greql2.funlib.graph;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
+import de.uni_koblenz.jgralab.greql2.funlib.Description;
 import de.uni_koblenz.jgralab.greql2.funlib.Function;
 import de.uni_koblenz.jgralab.greql2.funlib.NeedsGraphArgument;
 
 @NeedsGraphArgument
 public class GetEdge extends Function {
 
+	@Description(params = {"graph","id"}, description = "Returns the edge with the given id.", 
+			categories = Category.GRAPH)
 	public GetEdge() {
-		super("Returns the edge with the given id.", Category.GRAPH);
+		super();
 	}
 
 	public Edge evaluate(Graph graph, Integer id) {

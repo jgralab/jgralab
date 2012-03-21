@@ -35,14 +35,16 @@
 package de.uni_koblenz.jgralab.greql2.funlib.schema;
 
 import de.uni_koblenz.jgralab.AttributedElement;
+import de.uni_koblenz.jgralab.greql2.funlib.Description;
 import de.uni_koblenz.jgralab.greql2.funlib.Function;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 
 public class Type extends Function {
 
+	@Description(params = "el", description = "Returns the AttributedElementClass of the given element.",
+			categories = Category.SCHEMA_ACCESS)
 	public Type() {
-		super("Returns the AttributedElementClass of the given element.",
-				Category.SCHEMA_ACCESS);
+		super();
 	}
 
 	public AttributedElementClass<?, ?> evaluate(AttributedElement<?, ?> el) {

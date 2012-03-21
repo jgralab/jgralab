@@ -85,8 +85,6 @@ public abstract class AttributedElementClassImpl<SC extends AttributedElementCla
 	 */
 	private boolean isAbstract;
 
-	private boolean internal;
-
 	/**
 	 * The class object representing the generated interface for this
 	 * AttributedElementClass
@@ -236,15 +234,6 @@ public abstract class AttributedElementClassImpl<SC extends AttributedElementCla
 	}
 
 	@Override
-	public boolean isInternal() {
-		return internal;
-	}
-
-	void setInternal(Boolean b) {
-		internal = b;
-	}
-
-	@Override
 	public void setAbstract(boolean isAbstract) {
 		this.isAbstract = isAbstract;
 	}
@@ -295,5 +284,11 @@ public abstract class AttributedElementClassImpl<SC extends AttributedElementCla
 		}
 		throw new NoSuchAttributeException(getQualifiedName()
 				+ " doesn't contain an attribute '" + name + "'");
+	}
+
+	protected void reopen() {
+		attributeIndex = null;
+
+		finished = false;
 	}
 }
