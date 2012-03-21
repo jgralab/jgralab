@@ -196,11 +196,30 @@ public class VertexEvaluatorTest {
 
 	/**
 	 * Test of query:<br>
-	 * fffffffffh
+	 * 0xfffffffff
 	 */
 	@Test
 	public void testLongLiteralEvaluator_HexaNotation() {
-		assertEquals(0xfffffffffL, evaluateQuery("fffffffffh"));
+		assertEquals(0xfffffffffL, evaluateQuery("0xfffffffff"));
+	}
+
+	/**
+	 * Test of query:<br>
+	 * 0xfl
+	 */
+	@Test
+	public void testLongLiteralEvaluator_HexaNotationWithSuffix() {
+		assertEquals(0xfl, evaluateQuery("0xfl"));
+	}
+
+	/*
+	 * Tests of StringLiteralEvaluator
+	 */
+
+	@Test
+	public void testStringLiteralEvaluator() {
+		assertEquals("this is a test \r\n\t\"String\"",
+				evaluateQuery("\"this is a test \r\n\t\\\"String\\\"\""));
 	}
 
 }
