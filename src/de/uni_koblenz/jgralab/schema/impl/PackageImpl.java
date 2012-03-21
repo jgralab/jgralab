@@ -270,4 +270,17 @@ public final class PackageImpl extends NamedElementImpl implements Package {
 		super.unregister();
 		parentPackage.subPackages.remove(simpleName);
 	}
+
+	@Override
+	public void delete() {
+		schema.assertNotFinished();
+		if (isDefaultPackage()) {
+			throw new SchemaException("The default package cannot be deleted.");
+		}
+		if ((domains.size() != 0) || (vertexClasses.size() != 0)
+				|| (edgeClasses.size() != 0)) {
+			throw new SchemaException("Only empty packages can be deleted!");
+		}
+		parentPackage.subPackages.remove(this);
+	}
 }

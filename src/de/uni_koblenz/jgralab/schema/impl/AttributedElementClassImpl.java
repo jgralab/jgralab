@@ -105,8 +105,7 @@ public abstract class AttributedElementClassImpl<SC extends AttributedElementCla
 		constraints = ArrayPSet.empty();
 	}
 
-	@Override
-	public void addAttribute(Attribute anAttribute) {
+	protected Attribute addAttribute(Attribute anAttribute) {
 		assertNotFinished();
 
 		if (containsAttribute(anAttribute.getName())) {
@@ -117,17 +116,19 @@ public abstract class AttributedElementClassImpl<SC extends AttributedElementCla
 		TreeSet<Attribute> s = new TreeSet<Attribute>(allAttributes);
 		s.add(anAttribute);
 		allAttributes = ArrayPVector.<Attribute> empty().plusAll(s);
+		return anAttribute;
 	}
 
 	@Override
-	public void addAttribute(String name, Domain domain,
+	public Attribute addAttribute(String name, Domain domain,
 			String defaultValueAsString) {
-		addAttribute(new AttributeImpl(name, domain, this, defaultValueAsString));
+		return addAttribute(new AttributeImpl(name, domain, this,
+				defaultValueAsString));
 	}
 
 	@Override
-	public void addAttribute(String name, Domain domain) {
-		addAttribute(new AttributeImpl(name, domain, this, null));
+	public Attribute addAttribute(String name, Domain domain) {
+		return addAttribute(new AttributeImpl(name, domain, this, null));
 	}
 
 	@Override
@@ -291,4 +292,6 @@ public abstract class AttributedElementClassImpl<SC extends AttributedElementCla
 
 		finished = false;
 	}
+
+	protected abstract void deleteAttribute(AttributeImpl attr);
 }

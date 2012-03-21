@@ -74,7 +74,6 @@ import de.uni_koblenz.jgralab.codegenerator.SchemaCodeGenerator;
 import de.uni_koblenz.jgralab.codegenerator.VertexCodeGenerator;
 import de.uni_koblenz.jgralab.impl.ConsoleProgressFunction;
 import de.uni_koblenz.jgralab.impl.generic.GenericGraphFactoryImpl;
-import de.uni_koblenz.jgralab.schema.Attribute;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.BooleanDomain;
 import de.uni_koblenz.jgralab.schema.CompositeDomain;
@@ -566,13 +565,6 @@ public class SchemaImpl implements Schema, ManagableArtifact {
 		ClassFileManager manager = new ClassFileManager(this, jfm);
 		Vector<InMemoryJavaSourceFile> javaSources = commit(config);
 		compiler.getTask(null, manager, null, null, null, javaSources).call();
-	}
-
-	@Override
-	public Attribute createAttribute(String name, Domain dom,
-			AttributedElementClass<?, ?> aec, String defaultValueAsString) {
-		assertNotFinished();
-		return new AttributeImpl(name, dom, aec, defaultValueAsString);
 	}
 
 	@Override

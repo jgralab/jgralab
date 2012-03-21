@@ -145,4 +145,10 @@ public interface Package extends NamedElement {
 	 * @return true iff this Package is the default Package.
 	 */
 	public boolean isDefaultPackage();
+
+	/**
+	 * Deletes this package. Only empty packages can be deleted. Note that the
+	 * default package cannot be deleted.
+	 */
+	public void delete();
 }

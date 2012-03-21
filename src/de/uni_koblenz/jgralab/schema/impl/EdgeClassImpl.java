@@ -228,6 +228,10 @@ public class EdgeClassImpl extends GraphElementClassImpl<EdgeClass, Edge>
 
 	@Override
 	public void delete() {
+		if (this == graphClass.getDefaultEdgeClass()) {
+			throw new SchemaException(
+					"The default edge class cannot be deleted.");
+		}
 		schema.namedElements.remove(qualifiedName);
 		graphClass.edgeClasses.remove(qualifiedName);
 		graphClass.edgeClassDag.delete(this);

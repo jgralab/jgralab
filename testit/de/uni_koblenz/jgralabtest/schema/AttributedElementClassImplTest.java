@@ -47,8 +47,6 @@ import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.GraphClass;
 import de.uni_koblenz.jgralab.schema.Schema;
 import de.uni_koblenz.jgralab.schema.VertexClass;
-import de.uni_koblenz.jgralab.schema.exception.SchemaException;
-import de.uni_koblenz.jgralab.schema.impl.AttributeImpl;
 import de.uni_koblenz.jgralab.schema.impl.ConstraintImpl;
 import de.uni_koblenz.jgralab.schema.impl.SchemaImpl;
 
@@ -78,137 +76,6 @@ public abstract class AttributedElementClassImplTest<AEC extends AttributedEleme
 	 * Domain) addressing these special error-sources, as the rest is already
 	 * covered by the tests for addAttribute(anAttribute).
 	 */
-	/**
-	 * addAttribute(Attribute)
-	 *
-	 * TEST CASE: Adding an attribute, which is not yet present in this element,
-	 * nor in this element´s direct and indirect super-/subclasses
-	 */
-	@Test
-	public final void testAddAttribute() {
-		Attribute attribute = new AttributeImpl("testAttribute",
-				schema.getBooleanDomain(), attributedElement, "null");
-
-		int attributeCountBefore = attributedElement.getAttributeCount();
-
-		attributedElement.addAttribute(attribute);
-
-		Assert.assertEquals(attributeCountBefore + 1,
-				attributedElement.getAttributeCount());
-		Assert.assertTrue(attributedElement.containsAttribute(attribute
-				.getName()));
-	}
-
-	/**
-	 * addAttribute(Attribute)
-	 *
-	 * TEST CASE: Adding two distinct attributes which are not yet present in
-	 * this element, nor in this element´s direct and indirect superclasses (and
-	 * subclasses)
-	 */
-	@Test
-	public final void testAddAttribute2() {
-		Attribute attribute = new AttributeImpl("testAttribute",
-				schema.getBooleanDomain(), attributedElement, "null");
-		Attribute attribute2 = new AttributeImpl("testAttribute2",
-				schema.getBooleanDomain(), attributedElement, "null");
-
-		int attributeCountBefore = attributedElement.getAttributeCount();
-
-		attributedElement.addAttribute(attribute);
-		attributedElement.addAttribute(attribute2);
-
-		Assert.assertEquals(attributeCountBefore + 2,
-				attributedElement.getAttributeCount());
-		Assert.assertTrue(attributedElement.containsAttribute(attribute
-				.getName()));
-		Assert.assertTrue(attributedElement.containsAttribute(attribute2
-				.getName()));
-	}
-
-	/**
-	 * addAttribute(Attribute)
-	 *
-	 * TEST CASE: Adding an attribute, already contained directly in this
-	 * element.
-	 */
-	@Test
-	public final void testAddAttribute3() {
-		Attribute attribute = new AttributeImpl("testAttribute",
-				schema.getBooleanDomain(), attributedElement, "null");
-		int attributeCountBefore;
-
-		attributedElement.addAttribute(attribute);
-		attributeCountBefore = attributedElement.getAttributeCount();
-
-		try {
-			attributedElement.addAttribute(attribute);
-			Assert.fail("SchemaException expected!");
-		} catch (SchemaException e) {
-		}
-
-		// The number of attributes does not change
-		Assert.assertEquals(attributeCountBefore,
-				attributedElement.getAttributeCount());
-	}
-
-	/**
-	 * addAttribute(Attribute)
-	 *
-	 * TEST CASE: Adding an attribute, already contained in a superclass of this
-	 * element
-	 *
-	 * NOTE: This method is called upon in all of this classes´ subclasses.
-	 */
-	public final void testAddAttribute4(AEC superclass) {
-		Attribute attribute = new AttributeImpl("testAttribute",
-				schema.getBooleanDomain(), attributedElement, "null");
-
-		int attributeCountBefore;
-
-		superclass.addAttribute(attribute);
-
-		attributeCountBefore = attributedElement.getAttributeCount();
-
-		try {
-			attributedElement.addAttribute(attribute);
-			Assert.fail("SchemaException expected!");
-		} catch (SchemaException e) {
-		}
-
-		// The number of attributes does not change
-		Assert.assertEquals(attributeCountBefore,
-				attributedElement.getAttributeCount());
-	}
-
-	/**
-	 * addAttribute(Attribute)
-	 *
-	 * TEST CASE: Adding an attribute, already contained in a subclass of this
-	 * element
-	 *
-	 * NOTE: This method is called upon in all of this classes´ subclasses.
-	 */
-	public final void testAddAttribute5(AEC subclass) {
-		Attribute attribute = new AttributeImpl("testAttribute",
-				schema.getBooleanDomain(), attributedElement, "null");
-
-		int attributeCountBefore;
-
-		subclass.addAttribute(attribute);
-
-		attributeCountBefore = attributedElement.getAttributeCount();
-
-		try {
-			attributedElement.addAttribute(attribute);
-			Assert.fail("SchemaException expected!");
-		} catch (SchemaException e) {
-		}
-
-		// The number of attributes does not change
-		Assert.assertEquals(attributeCountBefore,
-				attributedElement.getAttributeCount());
-	}
 
 	/*
 	 * Tests for the addConstraint(String) method.
@@ -381,79 +248,6 @@ public abstract class AttributedElementClassImplTest<AEC extends AttributedEleme
 	}
 
 	/**
-	 * containsAttribute(String)
-	 *
-	 * TEST CASE: looking for an attribute, directly present in this element
-	 */
-	@Test
-	public final void testContainsAttribute2() {
-		Attribute attribute = new AttributeImpl("testAttribute",
-				schema.getBooleanDomain(), attributedElement, "null");
-
-		attributedElement.addAttribute(attribute);
-
-		Assert.assertTrue(attributedElement.containsAttribute(attribute
-				.getName()));
-	}
-
-	/**
-	 * containsAttribute(String)
-	 *
-	 * TEST CASE: looking for an attribute, present in a superclass of this
-	 * element
-	 *
-	 * NOTE: This method is called upon in all of this classes´ subclasses.
-	 */
-	public final void testContainsAttribute3(AEC superClass) {
-		Attribute attribute = new AttributeImpl("testAttribute",
-				schema.getBooleanDomain(), attributedElement, "null");
-
-		superClass.addAttribute(attribute);
-
-		Assert.assertTrue(attributedElement.containsAttribute(attribute
-				.getName()));
-	}
-
-	/*
-	 * Tests for the getAttribute(String) method.
-	 */
-	/**
-	 * getAttribute()
-	 *
-	 * TEST CASE: Getting a direct attribute
-	 */
-	@Test
-	public final void testGetAttribute() {
-		Attribute attribute = new AttributeImpl("testAttribute",
-				schema.getBooleanDomain(), attributedElement, "null");
-
-		attributedElement.addAttribute(attribute);
-
-		Attribute attr = attributedElement.getAttribute(attribute.getName());
-
-		Assert.assertSame(attribute, attr);
-	}
-
-	/**
-	 * getAttribute()
-	 *
-	 * TEST CASE: Getting an inherited attribute
-	 *
-	 * NOTE: This method is called upon in all of this classes´ subclasses.
-	 */
-	public final void testGetAttribute2(AEC superClass) {
-		Attribute attribute = new AttributeImpl("testAttribute",
-				schema.getBooleanDomain(), attributedElement, "null");
-
-		// Adding the attribute to the superclass
-		superClass.addAttribute(attribute);
-
-		Attribute attr = attributedElement.getAttribute(attribute.getName());
-
-		Assert.assertSame(attribute, attr);
-	}
-
-	/**
 	 * getAttribute()
 	 *
 	 * TEST CASE: Trying to get a non existent attribute
@@ -475,73 +269,6 @@ public abstract class AttributedElementClassImplTest<AEC extends AttributedEleme
 	}
 
 	/**
-	 * getAttribute()
-	 *
-	 * TEST CASE: Trying to get an attribute present in a subclass of this
-	 * element
-	 *
-	 * NOTE: This method is called upon in all of this classes´ subclasses.
-	 */
-	public final void testGetAttribute5(AEC subClass) {
-		Attribute attribute = new AttributeImpl("testAttribute",
-				schema.getBooleanDomain(), attributedElement, "null");
-
-		subClass.addAttribute(attribute);
-
-		Assert.assertNull(attributedElement.getAttribute(attribute.getName()));
-	}
-
-	/*
-	 * Tests for the getAttributeCount() method.
-	 */
-	/**
-	 * getAttributeCount()
-	 *
-	 * TEST CASE: Getting the number of attributes of an element which has only
-	 * one direct attribute and no inherited attributes
-	 */
-	@Test
-	public final void testGetAttributeCount() {
-		attributedElement.addAttribute(new AttributeImpl("testAttribute",
-				schema.getBooleanDomain(), attributedElement, "null"));
-
-		Assert.assertEquals(1, attributedElement.getAttributeCount());
-	}
-
-	/**
-	 * getAttributeCount()
-	 *
-	 * TEST CASE: Getting the number of attributes of an element which has
-	 * exactly only one inherited attribute and no direct attributes
-	 *
-	 * NOTE: This method is called upon in all of this classes´ subclasses.
-	 */
-	public final void testGetAttributeCount2(AEC superClass) {
-		superClass.addAttribute(new AttributeImpl("testAttribute", schema
-				.getBooleanDomain(), attributedElement, "null"));
-
-		Assert.assertEquals(1, attributedElement.getAttributeCount());
-	}
-
-	/**
-	 * getAttributeCount()
-	 *
-	 * TEST CASE: Getting the number of attributes of an element which has
-	 * multiple direct and indirect attributes
-	 *
-	 * NOTE: This method is called upon in all of this classes´ subclasses.
-	 */
-	public final void testGetAttributeCount3(AEC superClass) {
-		attributedElement.addAttribute(new AttributeImpl("testAttribute",
-				schema.getBooleanDomain(), attributedElement, "null"));
-
-		superClass.addAttribute(new AttributeImpl("testAttribute2", schema
-				.getBooleanDomain(), attributedElement, "null"));
-
-		Assert.assertEquals(2, attributedElement.getAttributeCount());
-	}
-
-	/**
 	 * getAttributeCount()
 	 *
 	 * TEST CASE: Getting the number of attributes of an element which has no
@@ -550,87 +277,6 @@ public abstract class AttributedElementClassImplTest<AEC extends AttributedEleme
 	@Test
 	public final void testGetAttributeCount4() {
 		Assert.assertEquals(0, attributedElement.getAttributeCount());
-	}
-
-	/**
-	 * getAttributeCount()
-	 *
-	 * TEST CASE: Getting the number of attributes of an element which has no
-	 * direct nor inherited attributes but whose subclass has attributes
-	 *
-	 * NOTE: This method is called upon in all of this classes´ subclasses.
-	 */
-	public final void testGetAttributeCount5(AEC subClass) {
-		subClass.addAttribute(new AttributeImpl("testAttribute", schema
-				.getBooleanDomain(), attributedElement, "null"));
-
-		Assert.assertEquals(0, attributedElement.getAttributeCount());
-	}
-
-	/*
-	 * Tests for the getAttributeList() method.
-	 */
-	/**
-	 * getAttributeList()
-	 *
-	 * TEST CASE: Getting an element´s list of attributes, which has only one
-	 * direct attribute and no inherited attributes
-	 */
-	@Test
-	public final void testGetAttributeList() {
-		Attribute attribute = new AttributeImpl("testAttribute",
-				schema.getBooleanDomain(), attributedElement, "null");
-
-		attributedElement.addAttribute(attribute);
-
-		List<Attribute> attrs = attributedElement.getAttributeList();
-
-		Assert.assertEquals(1, attrs.size());
-		Assert.assertTrue(attrs.contains(attribute));
-	}
-
-	/**
-	 * getAttributeList()
-	 *
-	 * TEST CASE: Getting an element´s list of attributes, which has exactly one
-	 * inherited attribute and no direct attributes
-	 *
-	 * NOTE: This method is called upon in all of this classes´ subclasses.
-	 */
-	public final void testGetAttributeList2(AEC superClass) {
-		Attribute attribute = new AttributeImpl("testAttribute",
-				schema.getBooleanDomain(), attributedElement, "null");
-
-		superClass.addAttribute(attribute);
-
-		List<Attribute> attrs = attributedElement.getAttributeList();
-
-		Assert.assertEquals(1, attrs.size());
-		Assert.assertTrue(attrs.contains(attribute));
-	}
-
-	/**
-	 * getAttributeList()
-	 *
-	 * TEST CASE: Getting an element´s list of attributes, which has mutliple
-	 * direct and inherited attributes
-	 *
-	 * NOTE: This method is called upon in all of this classes´ subclasses.
-	 */
-	public final void testGetAttributeList3(AEC superClass) {
-		Attribute attribute = new AttributeImpl("testAttribute",
-				schema.getBooleanDomain(), attributedElement, "null");
-		Attribute attribute2 = new AttributeImpl("testAttribute2",
-				schema.getBooleanDomain(), attributedElement, "null");
-
-		attributedElement.addAttribute(attribute);
-		superClass.addAttribute(attribute2);
-
-		List<Attribute> attrs = attributedElement.getAttributeList();
-
-		Assert.assertEquals(2, attrs.size());
-		Assert.assertTrue(attrs.contains(attribute));
-		Assert.assertTrue(attrs.contains(attribute2));
 	}
 
 	/**
@@ -754,10 +400,8 @@ public abstract class AttributedElementClassImplTest<AEC extends AttributedEleme
 	 */
 	@Test
 	public final void testGetOwnAttribute() {
-		Attribute attribute = new AttributeImpl("testAttribute",
-				schema.getBooleanDomain(), attributedElement, "null");
-
-		attributedElement.addAttribute(attribute);
+		Attribute attribute = attributedElement.addAttribute("testAttribute",
+				schema.getBooleanDomain(), "null");
 
 		Attribute attr = attributedElement.getOwnAttribute(attribute.getName());
 
@@ -797,10 +441,8 @@ public abstract class AttributedElementClassImplTest<AEC extends AttributedEleme
 	 * NOTE: This method is called upon in all of this classes´ subclasses.
 	 */
 	public final void testGetOwnAttribute4(AEC otherClass) {
-		Attribute attribute = new AttributeImpl("testAttribute",
-				schema.getBooleanDomain(), attributedElement, "null");
-
-		otherClass.addAttribute(attribute);
+		Attribute attribute = otherClass.addAttribute("testAttribute",
+				schema.getBooleanDomain(), "null");
 
 		Assert.assertNull(attributedElement.getOwnAttribute(attribute.getName()));
 	}
@@ -816,10 +458,8 @@ public abstract class AttributedElementClassImplTest<AEC extends AttributedEleme
 	 */
 	@Test
 	public final void testGetOwnAttributeCount() {
-		Attribute attribute = new AttributeImpl("testAttribute",
-				schema.getBooleanDomain(), attributedElement, "null");
-
-		attributedElement.addAttribute(attribute);
+		attributedElement.addAttribute("testAttribute",
+				schema.getBooleanDomain(), "null");
 
 		Assert.assertEquals(1, attributedElement.getOwnAttributeCount());
 	}
@@ -832,13 +472,10 @@ public abstract class AttributedElementClassImplTest<AEC extends AttributedEleme
 	 */
 	@Test
 	public final void testGetOwnAttributeCount2() {
-		Attribute attribute = new AttributeImpl("testAttribute",
-				schema.getBooleanDomain(), attributedElement, "null");
-		Attribute attribute2 = new AttributeImpl("testAttribute2",
-				schema.getBooleanDomain(), attributedElement, "null");
-
-		attributedElement.addAttribute(attribute);
-		attributedElement.addAttribute(attribute2);
+		attributedElement.addAttribute("testAttribute",
+				schema.getBooleanDomain(), "null");
+		attributedElement.addAttribute("testAttribute2",
+				schema.getBooleanDomain(), "null");
 
 		Assert.assertEquals(2, attributedElement.getOwnAttributeCount());
 	}
@@ -863,9 +500,8 @@ public abstract class AttributedElementClassImplTest<AEC extends AttributedEleme
 	 * NOTE: This method is called upon in all of this classes´ subclasses.
 	 */
 	public final void testGetOwnAttributeCount4(AEC superClass) {
-		Attribute attribute = new AttributeImpl("testAttribute",
-				schema.getBooleanDomain(), attributedElement, "null");
-		superClass.addAttribute(attribute);
+		superClass.addAttribute("testAttribute", schema.getBooleanDomain(),
+				"null");
 
 		Assert.assertEquals(0, attributedElement.getOwnAttributeCount());
 	}
@@ -881,10 +517,9 @@ public abstract class AttributedElementClassImplTest<AEC extends AttributedEleme
 	 */
 	@Test
 	public final void testGetOwnAttributeList() {
-		Attribute attribute = new AttributeImpl("testAttribute",
-				schema.getBooleanDomain(), attributedElement, "null");
 
-		attributedElement.addAttribute(attribute);
+		Attribute attribute = attributedElement.addAttribute("testAttribute",
+				schema.getBooleanDomain(), "null");
 
 		List<Attribute> attrs = attributedElement.getOwnAttributeList();
 
@@ -900,13 +535,10 @@ public abstract class AttributedElementClassImplTest<AEC extends AttributedEleme
 	 */
 	@Test
 	public final void testGetOwnAttributeList2() {
-		Attribute attribute = new AttributeImpl("testAttribute",
-				schema.getBooleanDomain(), attributedElement, "null");
-		Attribute attribute2 = new AttributeImpl("testAttribute2",
-				schema.getBooleanDomain(), attributedElement, "null");
-
-		attributedElement.addAttribute(attribute);
-		attributedElement.addAttribute(attribute2);
+		Attribute attribute = attributedElement.addAttribute("testAttribute",
+				schema.getBooleanDomain(), "null");
+		Attribute attribute2 = attributedElement.addAttribute("testAttribute2",
+				schema.getBooleanDomain(), "null");
 
 		List<Attribute> attrs = attributedElement.getOwnAttributeList();
 
@@ -935,9 +567,8 @@ public abstract class AttributedElementClassImplTest<AEC extends AttributedEleme
 	 * NOTE: This method is called upon in all of this classes´ subclasses.
 	 */
 	public final void testGetOwnAttributeList4(AEC superClass) {
-		Attribute attribute = new AttributeImpl("testAttribute",
-				schema.getBooleanDomain(), attributedElement, "null");
-		superClass.addAttribute(attribute);
+		superClass.addAttribute("testAttribute", schema.getBooleanDomain(),
+				"null");
 
 		Assert.assertTrue(attributedElement.getOwnAttributeList().isEmpty());
 	}
@@ -987,9 +618,8 @@ public abstract class AttributedElementClassImplTest<AEC extends AttributedEleme
 	 */
 	@Test
 	public final void testHasAttributes() {
-		Attribute attribute = new AttributeImpl("testAttribute",
-				schema.getBooleanDomain(), attributedElement, "null");
-		attributedElement.addAttribute(attribute);
+		attributedElement.addAttribute("testAttribute",
+				schema.getBooleanDomain(), "null");
 
 		Assert.assertTrue(attributedElement.hasAttributes());
 	}
@@ -1001,12 +631,11 @@ public abstract class AttributedElementClassImplTest<AEC extends AttributedEleme
 	 */
 	@Test
 	public final void testHasAttributes2() {
-		Attribute attribute = new AttributeImpl("testAttribute",
-				schema.getBooleanDomain(), attributedElement, "null");
-		Attribute attribute2 = new AttributeImpl("testAttribute2",
-				schema.getBooleanDomain(), attributedElement, "null");
-		attributedElement.addAttribute(attribute);
-		attributedElement.addAttribute(attribute2);
+
+		attributedElement.addAttribute("testAttribute",
+				schema.getBooleanDomain(), "null");
+		attributedElement.addAttribute("testAttribute2",
+				schema.getBooleanDomain(), "null");
 
 		Assert.assertTrue(attributedElement.hasAttributes());
 	}
@@ -1019,9 +648,9 @@ public abstract class AttributedElementClassImplTest<AEC extends AttributedEleme
 	 * NOTE: This method is called upon in all of this classes´ subclasses.
 	 */
 	public final void testHasAttributes3(AEC superClass) {
-		Attribute attribute = new AttributeImpl("testAttribute",
-				schema.getBooleanDomain(), attributedElement, "null");
-		superClass.addAttribute(attribute);
+
+		superClass.addAttribute("testAttribute", schema.getBooleanDomain(),
+				"null");
 
 		Assert.assertTrue(attributedElement.hasAttributes());
 	}
@@ -1034,12 +663,10 @@ public abstract class AttributedElementClassImplTest<AEC extends AttributedEleme
 	 * NOTE: This method is called upon in all of this classes´ subclasses.
 	 */
 	public final void testHasAttributes4(AEC superClass) {
-		Attribute attribute = new AttributeImpl("testAttribute",
-				schema.getBooleanDomain(), attributedElement, "null");
-		Attribute attribute2 = new AttributeImpl("testAttribute2",
-				schema.getBooleanDomain(), attributedElement, "null");
-		superClass.addAttribute(attribute);
-		superClass.addAttribute(attribute2);
+		superClass.addAttribute("testAttribute", schema.getBooleanDomain(),
+				"null");
+		superClass.addAttribute("testAttribute2", schema.getBooleanDomain(),
+				"null");
 
 		Assert.assertTrue(attributedElement.hasAttributes());
 	}
@@ -1052,18 +679,14 @@ public abstract class AttributedElementClassImplTest<AEC extends AttributedEleme
 	 * NOTE: This method is called upon in all of this classes´ subclasses.
 	 */
 	public final void testHasAttributes5(AEC superClass) {
-		Attribute attribute = new AttributeImpl("testAttribute",
-				schema.getBooleanDomain(), attributedElement, "null");
-		Attribute attribute2 = new AttributeImpl("testAttribute2",
-				schema.getBooleanDomain(), attributedElement, "null");
-		Attribute attribute3 = new AttributeImpl("testAttribute3",
-				schema.getBooleanDomain(), attributedElement, "null");
-		Attribute attribute4 = new AttributeImpl("testAttribute4",
-				schema.getBooleanDomain(), attributedElement, "null");
-		attributedElement.addAttribute(attribute);
-		attributedElement.addAttribute(attribute2);
-		superClass.addAttribute(attribute3);
-		superClass.addAttribute(attribute4);
+		attributedElement.addAttribute("testAttribute",
+				schema.getBooleanDomain(), "null");
+		attributedElement.addAttribute("testAttribute2",
+				schema.getBooleanDomain(), "null");
+		superClass.addAttribute("testAttribute3", schema.getBooleanDomain(),
+				"null");
+		superClass.addAttribute("testAttribute4", schema.getBooleanDomain(),
+				"null");
 
 		Assert.assertTrue(attributedElement.hasAttributes());
 	}
@@ -1088,9 +711,8 @@ public abstract class AttributedElementClassImplTest<AEC extends AttributedEleme
 	 */
 	@Test
 	public final void testHasOwnAttributes() {
-		Attribute attribute = new AttributeImpl("testAttribute",
-				schema.getBooleanDomain(), attributedElement, "null");
-		attributedElement.addAttribute(attribute);
+		attributedElement.addAttribute("testAttribute",
+				schema.getBooleanDomain(),  "null");
 
 		Assert.assertTrue(attributedElement.hasOwnAttributes());
 	}
@@ -1102,12 +724,10 @@ public abstract class AttributedElementClassImplTest<AEC extends AttributedEleme
 	 */
 	@Test
 	public final void testHasOwnAttributes2() {
-		Attribute attribute = new AttributeImpl("testAttribute",
-				schema.getBooleanDomain(), attributedElement, "null");
-		Attribute attribute2 = new AttributeImpl("testAttribute2",
-				schema.getBooleanDomain(), attributedElement, "null");
-		attributedElement.addAttribute(attribute);
-		attributedElement.addAttribute(attribute2);
+		attributedElement.addAttribute("testAttribute",
+				schema.getBooleanDomain(),  "null");
+		attributedElement.addAttribute("testAttribute2",
+				schema.getBooleanDomain(),  "null");
 
 		Assert.assertTrue(attributedElement.hasOwnAttributes());
 	}
@@ -1130,33 +750,15 @@ public abstract class AttributedElementClassImplTest<AEC extends AttributedEleme
 	 * NOTE: This method is called upon in all of this classes´ subclasses.
 	 */
 	public final void testHasOwnAttributes4(AEC superClass) {
-		Attribute attribute = new AttributeImpl("testAttribute",
-				schema.getBooleanDomain(), attributedElement, "null");
-		Attribute attribute2 = new AttributeImpl("testAttribute2",
-				schema.getBooleanDomain(), attributedElement, "null");
-		attributedElement.addAttribute(attribute);
-		superClass.addAttribute(attribute2);
+		attributedElement.addAttribute("testAttribute",
+				schema.getBooleanDomain(),  "null");
+		superClass.addAttribute("testAttribute2",
+				schema.getBooleanDomain(),  "null");
 
 		Assert.assertTrue(attributedElement.hasOwnAttributes());
 	}
 
-	/**
-	 * hasOwnAttributes()
-	 *
-	 * TEST CASE: The element has no direct but indirect attributes
-	 *
-	 * NOTE: This method is called upon in all of this classes´ subclasses.
-	 */
-	public final void testHasOwnAttributes5(AEC superClass) {
-		Attribute attribute = new AttributeImpl("testAttribute",
-				schema.getBooleanDomain(), attributedElement, "null");
-		Attribute attribute2 = new AttributeImpl("testAttribute2",
-				schema.getBooleanDomain(), attributedElement, "null");
-		superClass.addAttribute(attribute);
-		superClass.addAttribute(attribute2);
 
-		Assert.assertFalse(attributedElement.hasOwnAttributes());
-	}
 
 	/*
 	 * Tests for the isAbstract() method.

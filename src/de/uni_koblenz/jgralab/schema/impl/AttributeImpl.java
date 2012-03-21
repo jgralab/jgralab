@@ -44,7 +44,7 @@ import de.uni_koblenz.jgralab.schema.exception.SchemaException;
 
 /**
  * AttributeImpl represents a grUML attribute on the schema level.
- * 
+ *
  * @author ist@uni-koblenz.de
  */
 public class AttributeImpl implements Attribute, Comparable<Attribute> {
@@ -81,7 +81,7 @@ public class AttributeImpl implements Attribute, Comparable<Attribute> {
 
 	/**
 	 * builds a new attribute
-	 * 
+	 *
 	 * @param name
 	 *            the name of the attribute
 	 * @param domain
@@ -93,18 +93,20 @@ public class AttributeImpl implements Attribute, Comparable<Attribute> {
 	 *            a String in TG value format denoting the default value of this
 	 *            Attribute, or null if no default value shall be specified.
 	 */
-	public AttributeImpl(String name, Domain domain,
-			AttributedElementClass<?, ?> aec, String defaultValue) {
+	AttributeImpl(String name, Domain domain, AttributedElementClass<?, ?> aec,
+			String defaultValue) {
 		this.name = name;
 		this.domain = domain;
 		this.aec = aec;
 		sortKey = name + ":" + domain.getQualifiedName();
 		setDefaultValueAsString(defaultValue);
+		DomainImpl d = ((DomainImpl) this.domain);
+		d.attributes = d.attributes.plus(this);
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
@@ -114,7 +116,7 @@ public class AttributeImpl implements Attribute, Comparable<Attribute> {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see jgralab.Attribute#getDomain()
 	 */
 	@Override
@@ -124,7 +126,7 @@ public class AttributeImpl implements Attribute, Comparable<Attribute> {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see jgralab.Attribute#getName()
 	 */
 	@Override
@@ -207,5 +209,13 @@ public class AttributeImpl implements Attribute, Comparable<Attribute> {
 			defaultValue = element.getAttribute(name);
 			defaultValueComputed = true;
 		}
+	}
+
+	@Override
+	public void delete() {
+		((SchemaImpl) aec.getSchema()).assertNotFinished();
+		((AttributedElementClassImpl<?, ?>) aec).deleteAttribute(this);
+		DomainImpl d = (DomainImpl) domain;
+		d.attributes = d.attributes.minus(this);
 	}
 }

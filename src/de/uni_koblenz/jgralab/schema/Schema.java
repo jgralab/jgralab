@@ -160,24 +160,6 @@ public interface Schema extends Comparable<Schema> {
 			throws IOException, GraphIOException;
 
 	/**
-	 * Creates a new Attribute <code>name</code> with domain <code>dom</code>.
-	 *
-	 * @param name
-	 *            the attribute name
-	 * @param dom
-	 *            the domain for the attribute
-	 * @param aec
-	 *            the {@link AttributedElementClass} owning the
-	 *            {@link Attribute}
-	 * @param defaultValueAsString
-	 *            a String for the default value in TG value syntax, or null if
-	 *            no default value is to be set
-	 * @return the new Attribute
-	 */
-	public Attribute createAttribute(String name, Domain dom,
-			AttributedElementClass<?, ?> aec, String defaultValueAsString);
-
-	/**
 	 * Builds a new enumeration domain, multiple domains may exist in a schema.
 	 *
 	 * @param qualifiedName

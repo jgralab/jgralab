@@ -35,9 +35,19 @@
 
 package de.uni_koblenz.jgralab.schema.impl;
 
+import org.pcollections.ArrayPSet;
+import org.pcollections.PSet;
+
+import de.uni_koblenz.jgralab.schema.Attribute;
 import de.uni_koblenz.jgralab.schema.Domain;
+import de.uni_koblenz.jgralab.schema.exception.SchemaException;
 
 public abstract class DomainImpl extends NamedElementImpl implements Domain {
+
+	/**
+	 * All Attributes that have this domain.
+	 */
+	PSet<Attribute> attributes = ArrayPSet.<Attribute> empty();
 
 	protected DomainImpl(String simpleName, PackageImpl pkg) {
 		super(simpleName, pkg, (SchemaImpl) pkg.getSchema());
@@ -72,5 +82,15 @@ public abstract class DomainImpl extends NamedElementImpl implements Domain {
 		super.unregister();
 		schema.domains.remove(qualifiedName);
 		parentPackage.domains.remove(simpleName);
+	}
+
+	@Override
+	public void delete() {
+		throw new SchemaException("Cannot delete domain " + qualifiedName);
+	}
+
+	@Override
+	public PSet<Attribute> getAttributes() {
+		return attributes;
 	}
 }

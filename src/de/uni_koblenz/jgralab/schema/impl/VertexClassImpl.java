@@ -496,6 +496,10 @@ public final class VertexClassImpl extends
 
 	@Override
 	public void delete() {
+		if (this == graphClass.getDefaultVertexClass()) {
+			throw new SchemaException(
+					"The default vertex class cannot be deleted.");
+		}
 		schema.namedElements.remove(qualifiedName);
 		graphClass.vertexClasses.remove(qualifiedName);
 		graphClass.vertexClassDag.delete(this);

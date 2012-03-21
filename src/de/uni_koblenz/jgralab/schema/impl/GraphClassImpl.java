@@ -149,7 +149,8 @@ public final class GraphClassImpl extends
 			AggregationKind aggrFrom, VertexClass to, int toMin, int toMax,
 			String toRoleName, AggregationKind aggrTo) {
 		assertNotFinished();
-		if (from.isDefaultGraphElementClass() || to.isDefaultGraphElementClass()) {
+		if (from.isDefaultGraphElementClass()
+				|| to.isDefaultGraphElementClass()) {
 			throw new SchemaException(
 					"EdgeClasses starting or ending at the default "
 							+ "VertexClass Vertex are forbidden.");
@@ -306,6 +307,11 @@ public final class GraphClassImpl extends
 		vertexClassDag.reopen();
 		edgeClassDag.reopen();
 		super.reopen();
+	}
+
+	@Override
+	protected void deleteAttribute(AttributeImpl attr) {
+		allAttributes = allAttributes.minus(attr);
 	}
 
 }

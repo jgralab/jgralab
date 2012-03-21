@@ -374,4 +374,18 @@ public final class RecordDomainImpl extends CompositeDomainImpl implements
 
 		register();
 	}
+
+	@Override
+	public void delete() {
+		schema.assertNotFinished();
+		if (!attributes.isEmpty()) {
+			throw new SchemaException(
+					"Cannot delete record domain that is still used by attributes: "
+							+ attributes);
+		}
+		parentPackage.domains.remove(simpleName);
+		schema.namedElements.remove(qualifiedName);
+		schema.domains.remove(qualifiedName);
+	}
+
 }
