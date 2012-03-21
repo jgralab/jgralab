@@ -761,6 +761,9 @@ public class GraphIO {
 				if ((subGraph != null) && !subGraph.isMarked(nextV)) {
 					nextV = nextV.getNextVertex();
 					continue;
+				}else if (nextV instanceof TemporaryVertex) {
+					nextV = nextV.getNextVertex();
+					continue;
 				}
 				vId = nextV.getId();
 				AttributedElementClass<?, ?> aec = nextV
@@ -782,6 +785,9 @@ public class GraphIO {
 				noSpace();
 				// System.out.print("  Writing incidences of vertex.");
 				while (nextI != null) {
+					if(nextI instanceof TemporaryEdge){
+						nextI = nextI.getNextIncidence();
+					}
 					if ((subGraph != null) && !subGraph.isMarked(nextI)) {
 						nextI = nextI.getNextIncidence();
 						continue;
@@ -811,6 +817,10 @@ public class GraphIO {
 			Edge nextE = graph.getFirstEdge();
 			while (nextE != null) {
 				if ((subGraph != null) && !subGraph.isMarked(nextE)) {
+					nextE = nextE.getNextEdge();
+					continue;
+				}
+				else if (nextE instanceof TemporaryEdge) {
 					nextE = nextE.getNextEdge();
 					continue;
 				}

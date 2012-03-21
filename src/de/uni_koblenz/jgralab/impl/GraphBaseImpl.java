@@ -225,6 +225,9 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 					+ " may not start at vertices of class "
 					+ aVC.getQualifiedName());
 		}
+		if(o == null){
+			System.out.println("DEBUG");
+		}
 		VertexClass oVC = o.getAttributedElementClass();
 		if (!oVC.isValidToFor(myEC)) {
 			throw new GraphException("Edges of class "
