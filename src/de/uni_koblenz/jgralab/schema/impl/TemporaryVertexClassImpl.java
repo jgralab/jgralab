@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.pcollections.ArrayPSet;
+import org.pcollections.ArrayPVector;
 import org.pcollections.PSet;
 
 import de.uni_koblenz.jgralab.NoSuchAttributeException;
@@ -101,11 +102,6 @@ public class TemporaryVertexClassImpl extends
 	}
 
 	@Override
-	public Set<Constraint> getConstraints() {
-		return null;
-	}
-
-	@Override
 	public Class<Vertex> getSchemaClass() {
 		return null;
 	}
@@ -142,7 +138,7 @@ public class TemporaryVertexClassImpl extends
 
 	@Override
 	public List<Attribute> getOwnAttributeList() {
-		return null;
+		return ArrayPVector.empty();
 	}
 
 	@Override
@@ -168,11 +164,6 @@ public class TemporaryVertexClassImpl extends
 	@Override
 	public void addComment(String comment) {
 		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	public List<String> getComments() {
-		return null;
 	}
 
 	@Override

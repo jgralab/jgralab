@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.pcollections.ArrayPSet;
+import org.pcollections.ArrayPVector;
 import org.pcollections.PSet;
 
 import de.uni_koblenz.jgralab.Edge;
@@ -98,11 +99,6 @@ public class TemporaryEdgeClassImpl extends EdgeClassImpl implements EdgeClass {
 	}
 
 	@Override
-	public Set<Constraint> getConstraints() {
-		return null;
-	}
-
-	@Override
 	public Class<Edge> getSchemaClass() {
 		return null;
 	}
@@ -139,7 +135,7 @@ public class TemporaryEdgeClassImpl extends EdgeClassImpl implements EdgeClass {
 
 	@Override
 	public List<Attribute> getOwnAttributeList() {
-		return null;
+		return ArrayPVector.empty();
 	}
 
 	@Override
@@ -166,12 +162,7 @@ public class TemporaryEdgeClassImpl extends EdgeClassImpl implements EdgeClass {
 	public void addComment(String comment) {
 		throw new UnsupportedOperationException();
 	}
-
-	@Override
-	public List<String> getComments() {
-		return null;
-	}
-
+	
 	@Override
 	public void addSuperClass(EdgeClass superClass) {
 		throw new UnsupportedOperationException();
