@@ -40,8 +40,8 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
+import de.uni_koblenz.jgralab.schema.GraphElementClass;
 import de.uni_koblenz.jgralab.schema.VertexClass;
 
 /**
@@ -143,7 +143,7 @@ public class VertexCodeGenerator extends
 		}
 
 		for (EdgeClass ec : edgeClassSet) {
-			if (ec.isInternal()) {
+			if (ec.isDefaultGraphElementClass()) {
 				continue;
 			}
 			addImports("#jgPackage#.EdgeDirection");
@@ -203,15 +203,12 @@ public class VertexCodeGenerator extends
 	private CodeBlock createNextVertexMethods() {
 		CodeList code = new CodeList();
 
-		TreeSet<AttributedElementClass<?, ?>> superClasses = new TreeSet<AttributedElementClass<?, ?>>();
+		TreeSet<GraphElementClass<?, ?>> superClasses = new TreeSet<GraphElementClass<?, ?>>();
 		superClasses.addAll(aec.getAllSuperClasses());
 		superClasses.add(aec);
 
 		if (config.hasTypeSpecificMethodsSupport()) {
-			for (AttributedElementClass<?, ?> ec : superClasses) {
-				if (ec.isInternal()) {
-					continue;
-				}
+			for (GraphElementClass<?, ?> ec : superClasses) {
 				VertexClass vc = (VertexClass) ec;
 				code.addNoIndent(createNextVertexMethod(vc));
 			}
@@ -283,7 +280,7 @@ public class VertexCodeGenerator extends
 		}
 
 		for (EdgeClass ec : edgeClassSet) {
-			if (ec.isInternal()) {
+			if (ec.isDefaultGraphElementClass()) {
 				continue;
 			}
 

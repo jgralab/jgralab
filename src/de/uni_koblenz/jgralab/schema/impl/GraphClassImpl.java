@@ -102,7 +102,6 @@ public final class GraphClassImpl extends
 				VertexClass.DEFAULTVERTEXCLASS_NAME,
 				(PackageImpl) schema.getDefaultPackage(), this);
 		vc.setAbstract(true);
-		vc.setInternal(true);
 		defaultVertexClass = vc;
 	}
 
@@ -115,7 +114,6 @@ public final class GraphClassImpl extends
 				AggregationKind.NONE, defaultVertexClass, 0, Integer.MAX_VALUE,
 				"", AggregationKind.NONE);
 		ec.setAbstract(true);
-		ec.setInternal(true);
 		defaultEdgeClass = ec;
 	}
 
@@ -151,7 +149,7 @@ public final class GraphClassImpl extends
 			AggregationKind aggrFrom, VertexClass to, int toMin, int toMax,
 			String toRoleName, AggregationKind aggrTo) {
 		assertNotFinished();
-		if (from.isInternal() || to.isInternal()) {
+		if (from.isDefaultGraphElementClass() || to.isDefaultGraphElementClass()) {
 			throw new SchemaException(
 					"EdgeClasses starting or ending at the default "
 							+ "VertexClass Vertex are forbidden.");

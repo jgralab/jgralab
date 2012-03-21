@@ -263,4 +263,10 @@ public interface GraphElementClass<SC extends GraphElementClass<SC, IC>, IC exte
 	 */
 	public void delete();
 
+	/**
+	 * @return true, if this GraphElementClass is either the default VertexClass
+	 *         or the default EdgeClass
+	 */
+	public boolean isDefaultGraphElementClass();
+
 }

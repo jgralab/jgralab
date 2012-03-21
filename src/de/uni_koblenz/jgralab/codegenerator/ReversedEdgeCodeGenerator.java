@@ -40,8 +40,8 @@ import java.util.TreeSet;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.schema.Attribute;
-import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
+import de.uni_koblenz.jgralab.schema.GraphElementClass;
 import de.uni_koblenz.jgralab.schema.VertexClass;
 
 /**
@@ -190,14 +190,11 @@ public class ReversedEdgeCodeGenerator extends
 	private CodeBlock createNextEdgeMethods() {
 		CodeList code = new CodeList();
 
-		TreeSet<AttributedElementClass<?, ?>> superClasses = new TreeSet<AttributedElementClass<?, ?>>();
+		TreeSet<GraphElementClass<?, ?>> superClasses = new TreeSet<GraphElementClass<?, ?>>();
 		superClasses.addAll(aec.getAllSuperClasses());
 		superClasses.add(aec);
 
-		for (AttributedElementClass<?, ?> ec : superClasses) {
-			if (ec.isInternal()) {
-				continue;
-			}
+		for (GraphElementClass<?, ?> ec : superClasses) {
 			EdgeClass ecl = (EdgeClass) ec;
 			code.addNoIndent(createNextEdgeMethod(ecl));
 		}
@@ -222,14 +219,11 @@ public class ReversedEdgeCodeGenerator extends
 	private CodeBlock createNextIncidenceMethods() {
 		CodeList code = new CodeList();
 
-		TreeSet<AttributedElementClass<?, ?>> superClasses = new TreeSet<AttributedElementClass<?, ?>>();
+		TreeSet<GraphElementClass<?, ?>> superClasses = new TreeSet<GraphElementClass<?, ?>>();
 		superClasses.addAll(aec.getAllSuperClasses());
 		superClasses.add(aec);
 
-		for (AttributedElementClass<?, ?> ec : superClasses) {
-			if (ec.isInternal()) {
-				continue;
-			}
+		for (GraphElementClass<?, ?> ec : superClasses) {
 			addImports("#jgPackage#.EdgeDirection");
 			EdgeClass ecl = (EdgeClass) ec;
 			code.addNoIndent(createNextIncidenceMethod(ecl, false));

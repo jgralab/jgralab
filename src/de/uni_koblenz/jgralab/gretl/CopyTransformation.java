@@ -375,7 +375,7 @@ public class CopyTransformation extends Transformation<Graph> {
 
 				// Add generalizations
 				for (EdgeClass superEC : oldEC.getDirectSuperClasses()) {
-					if (superEC.isInternal()
+					if (superEC.isDefaultGraphElementClass()
 							|| isExcluded(superEC.getQualifiedName())) {
 						continue;
 					}
@@ -441,7 +441,7 @@ public class CopyTransformation extends Transformation<Graph> {
 
 				// Add generalizations
 				for (VertexClass superVC : oldVC.getDirectSuperClasses()) {
-					if (superVC.isInternal()
+					if (superVC.isDefaultGraphElementClass()
 							|| isExcluded(superVC.getQualifiedName())) {
 						continue;
 					}

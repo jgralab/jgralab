@@ -155,26 +155,26 @@ public class EdgeCodeGenerator extends
 		VertexClass to = ec.getTo().getVertexClass();
 		b.setVariable("fromVertexClass", from.getSimpleName());
 		b.setVariable("toVertexClass", to.getSimpleName());
-		if (!from.isInternal()) {
+		if (!from.isDefaultGraphElementClass()) {
 			addImports(schemaRootPackageName + "." + from.getQualifiedName());
 		}
-		if (!to.isInternal()) {
+		if (!to.isDefaultGraphElementClass()) {
 			addImports(schemaRootPackageName + "." + to.getQualifiedName());
 		}
 		if (currentCycle.isAbstract()) {
-			if (!from.isInternal()) {
+			if (!from.isDefaultGraphElementClass()) {
 				b.add("public #fromVertexClass# getAlpha();");
 			}
-			if (!to.isInternal()) {
+			if (!to.isDefaultGraphElementClass()) {
 				b.add("public #toVertexClass# getOmega();");
 			}
 		} else {
-			if (!from.isInternal()) {
+			if (!from.isDefaultGraphElementClass()) {
 				b.add("public #fromVertexClass# getAlpha() {");
 				b.add("\treturn (#fromVertexClass#) super.getAlpha();");
 				b.add("}");
 			}
-			if (!to.isInternal()) {
+			if (!to.isDefaultGraphElementClass()) {
 				b.add("public #toVertexClass# getOmega() {");
 				b.add("\treturn (#toVertexClass#) super.getOmega();");
 				b.add("}");
@@ -250,10 +250,7 @@ public class EdgeCodeGenerator extends
 		superClasses.add(aec);
 
 		if (config.hasTypeSpecificMethodsSupport()) {
-			for (AttributedElementClass<?, ?> ec : superClasses) {
-				if (ec.isInternal()) {
-					continue;
-				}
+			for (GraphElementClass<?, ?> ec : superClasses) {
 				addImports("#jgPackage#.EdgeDirection");
 				EdgeClass ecl = (EdgeClass) ec;
 				code.addNoIndent(createNextIncidenceMethod(ecl, false));

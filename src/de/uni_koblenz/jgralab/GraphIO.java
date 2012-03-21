@@ -430,7 +430,7 @@ public class GraphIO {
 
 			// write vertex classes
 			for (VertexClass vc : pkg.getVertexClasses().values()) {
-				if (vc.isInternal()) {
+				if (vc.isDefaultGraphElementClass()) {
 					continue;
 				}
 				if (vc.isAbstract()) {
@@ -448,7 +448,7 @@ public class GraphIO {
 
 			// write edge classes
 			for (EdgeClass ec : pkg.getEdgeClasses().values()) {
-				if (ec.isInternal()) {
+				if (ec.isDefaultGraphElementClass()) {
 					continue;
 				}
 				if (ec.isAbstract()) {

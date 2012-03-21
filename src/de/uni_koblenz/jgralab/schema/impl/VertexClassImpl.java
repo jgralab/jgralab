@@ -227,7 +227,7 @@ public final class VertexClassImpl extends
 		}
 		for (VertexClass aec : getAllSuperClasses()) {
 			VertexClass vc = aec;
-			if (vc.isInternal()) {
+			if (vc.isDefaultGraphElementClass()) {
 				continue;
 			}
 			for (IncidenceClass ic : vc.getAllOutIncidenceClasses()) {
@@ -255,7 +255,7 @@ public final class VertexClassImpl extends
 		}
 		for (VertexClass aec : getAllSuperClasses()) {
 			VertexClass vc = aec;
-			if (vc.isInternal()) {
+			if (vc.isDefaultGraphElementClass()) {
 				continue;
 			}
 			for (IncidenceClass ic : vc.getAllInIncidenceClasses()) {
@@ -279,7 +279,7 @@ public final class VertexClassImpl extends
 		// System.err.print("+");
 		Set<EdgeClass> validFrom = new HashSet<EdgeClass>();
 		for (IncidenceClass ic : getValidFromFarIncidenceClasses()) {
-			if (!ic.getEdgeClass().isInternal()) {
+			if (!ic.getEdgeClass().isDefaultGraphElementClass()) {
 				validFrom.add(ic.getEdgeClass());
 			}
 		}
@@ -294,7 +294,7 @@ public final class VertexClassImpl extends
 		// System.err.print("-");
 		Set<EdgeClass> validTo = new HashSet<EdgeClass>();
 		for (IncidenceClass ic : getValidToFarIncidenceClasses()) {
-			if (!ic.getEdgeClass().isInternal()) {
+			if (!ic.getEdgeClass().isDefaultGraphElementClass()) {
 				validTo.add(ic.getEdgeClass());
 			}
 		}
@@ -507,4 +507,8 @@ public final class VertexClassImpl extends
 		return graphClass.getDefaultVertexClass();
 	}
 
+	@Override
+	public boolean isDefaultGraphElementClass() {
+		return this == graphClass.getDefaultVertexClass();
+	}
 }

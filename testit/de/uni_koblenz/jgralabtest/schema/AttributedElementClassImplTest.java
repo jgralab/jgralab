@@ -1199,21 +1199,20 @@ public abstract class AttributedElementClassImplTest<AEC extends AttributedEleme
 	public void testIsInternal() {
 		for (VertexClass vc : schema.getGraphClass().getVertexClasses()) {
 			if (vc == schema.getGraphClass().getDefaultVertexClass()) {
-				Assert.assertTrue(vc.isInternal());
+				Assert.assertTrue(vc.isDefaultGraphElementClass());
 			} else {
-				Assert.assertFalse(vc.isInternal());
+				Assert.assertFalse(vc.isDefaultGraphElementClass());
 			}
 		}
 
 		for (EdgeClass ec : schema.getGraphClass().getEdgeClasses()) {
 			if (ec == schema.getGraphClass().getDefaultEdgeClass()) {
-				Assert.assertTrue(ec.isInternal());
+				Assert.assertTrue(ec.isDefaultGraphElementClass());
 			} else {
-				Assert.assertFalse(ec.isInternal());
+				Assert.assertFalse(ec.isDefaultGraphElementClass());
 			}
 		}
 
-		Assert.assertFalse(schema.getGraphClass().isInternal());
 	}
 
 	/*

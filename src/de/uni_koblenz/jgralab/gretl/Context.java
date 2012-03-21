@@ -284,9 +284,6 @@ public class Context {
 				.entrySet()) {
 			AttributedElementClass<?, ?> aec = e.getKey();
 			PMap<Object, AttributedElement<?, ?>> img = e.getValue();
-			if (aec.isInternal()) {
-				continue;
-			}
 			System.out.println("Mappings for: " + aec.getQualifiedName());
 			for (Entry<Object, AttributedElement<?, ?>> entry : img.entrySet()) {
 				System.out.println("    " + entry.getKey() + " ==> "

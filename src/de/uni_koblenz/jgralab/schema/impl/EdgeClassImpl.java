@@ -238,4 +238,9 @@ public class EdgeClassImpl extends GraphElementClassImpl<EdgeClass, Edge>
 	protected EdgeClass getDefaultClass() {
 		return graphClass.getDefaultEdgeClass();
 	}
+
+	@Override
+	public boolean isDefaultGraphElementClass() {
+		return this == graphClass.getDefaultEdgeClass();
+	}
 }

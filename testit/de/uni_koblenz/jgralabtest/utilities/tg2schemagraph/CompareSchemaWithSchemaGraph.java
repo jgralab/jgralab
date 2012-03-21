@@ -405,7 +405,7 @@ public class CompareSchemaWithSchemaGraph {
 		// This loop prevents the comparison of internal structures
 		for (Iterator<Entry<String, de.uni_koblenz.jgralab.schema.VertexClass>> it = vertexClasses
 				.entrySet().iterator(); it.hasNext();) {
-			if (it.next().getValue().isInternal()) {
+			if (it.next().getValue().isDefaultGraphElementClass()) {
 				it.remove();
 			}
 		}
@@ -413,7 +413,7 @@ public class CompareSchemaWithSchemaGraph {
 		// This loop prevents the comparison of internal structures
 		for (Iterator<Entry<String, de.uni_koblenz.jgralab.schema.EdgeClass>> it = edgeClasses
 				.entrySet().iterator(); it.hasNext();) {
-			if (it.next().getValue().isInternal()) {
+			if (it.next().getValue().isDefaultGraphElementClass()) {
 				it.remove();
 			}
 		}
@@ -974,7 +974,7 @@ public class CompareSchemaWithSchemaGraph {
 				.getSubsettedIncidenceClasses()) {
 			de.uni_koblenz.jgralab.schema.EdgeClass edgeClass = subsettedIncidenceClass
 					.getEdgeClass();
-			if (edgeClass.isInternal()) {
+			if (edgeClass.isDefaultGraphElementClass()) {
 				continue;
 			}
 			subsettedIncidenceClasses.add(edgeClass.getQualifiedName());
@@ -1165,7 +1165,7 @@ public class CompareSchemaWithSchemaGraph {
 
 		// Fills the map
 		for (T element : elementSet) {
-			if (!element.isInternal()) {
+			if (!element.isDefaultGraphElementClass()) {
 				map.put(element.getQualifiedName(), element);
 			}
 		}

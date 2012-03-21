@@ -85,8 +85,6 @@ public abstract class AttributedElementClassImpl<SC extends AttributedElementCla
 	 */
 	private boolean isAbstract;
 
-	private boolean internal;
-
 	/**
 	 * The class object representing the generated interface for this
 	 * AttributedElementClass
@@ -233,15 +231,6 @@ public abstract class AttributedElementClassImpl<SC extends AttributedElementCla
 	@Override
 	public boolean isAbstract() {
 		return isAbstract;
-	}
-
-	@Override
-	public boolean isInternal() {
-		return internal;
-	}
-
-	void setInternal(Boolean b) {
-		internal = b;
 	}
 
 	@Override

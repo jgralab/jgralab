@@ -318,8 +318,6 @@ public class Schema2SchemaGraph {
 		de.uni_koblenz.jgralab.schema.GraphClass graphClass = schema
 				.getGraphClass();
 
-		assert ((graphClass != null) && !graphClass.isInternal()) : "There have to be a GraphClass, which isn't internal!";
-
 		assert (attributedElementClassMap != null);
 		// Is needed to reference to the new AttributedElementClass-objects.
 		attributedElementClassMap.put(graphClass, gGraphClass);
@@ -712,7 +710,7 @@ public class Schema2SchemaGraph {
 
 			assert ((vertexClass != null) && (vertexClass.getQualifiedName() != null)) : "FIXME! No QualifiedName for this VertexClass defined!";
 			// Skips object, which already exists internal
-			if (vertexClass.isInternal()) {
+			if (vertexClass.isDefaultGraphElementClass()) {
 				continue;
 			}
 
@@ -778,7 +776,7 @@ public class Schema2SchemaGraph {
 			assert ((edgeClass != null) && (edgeClass.getQualifiedName() != null)) : "FIXME! No QualifiedName for this EdgeClass defined!";
 
 			// Skips all internal present objects.
-			if (edgeClass.isInternal()) {
+			if (edgeClass.isDefaultGraphElementClass()) {
 				continue;
 			}
 
@@ -850,14 +848,8 @@ public class Schema2SchemaGraph {
 		for (Entry<de.uni_koblenz.jgralab.schema.EdgeClass, EdgeClass> entry : edgeClassMap
 				.entrySet()) {
 			// Loop over all superclass's of the current entry
-			for (de.uni_koblenz.jgralab.schema.AttributedElementClass<?, ?> superClass : entry
+			for (de.uni_koblenz.jgralab.schema.EdgeClass superClass : entry
 					.getKey().getDirectSuperClasses()) {
-
-				// Skips predefined classes
-				if (superClass.isInternal()) {
-					continue;
-				}
-
 				// Links the superclass with its subclass
 				SpecializesEdgeClass link = schemaGraph
 						.createSpecializesEdgeClass(entry.getValue(),
@@ -1107,7 +1099,7 @@ public class Schema2SchemaGraph {
 			if (subsettedIncidences != null) {
 				for (de.uni_koblenz.jgralab.schema.IncidenceClass subsettedIncidence : subsettedIncidences) {
 					assert subsettedIncidence != null : "FIXME! No subsetted IncidenceClass defined!";
-					if (!subsettedIncidence.getEdgeClass().isInternal()) {
+					if (!subsettedIncidence.getEdgeClass().isDefaultGraphElementClass()) {
 						IncidenceClass gSubsettedIncidence = incidenceClassMap
 								.get(subsettedIncidence);
 						assert gSubsettedIncidence != null : "FIXME! No subsetted IncidenceClass created yet!";
