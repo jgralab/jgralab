@@ -225,11 +225,7 @@ public final class VertexClassImpl extends
 			IncidenceClass farInc = ic.getEdgeClass().getTo();
 			validFromInc.add(farInc);
 		}
-		for (VertexClass aec : getAllSuperClasses()) {
-			VertexClass vc = aec;
-			if (vc.isDefaultGraphElementClass()) {
-				continue;
-			}
+		for (VertexClass vc : getAllSuperClasses()) {
 			for (IncidenceClass ic : vc.getAllOutIncidenceClasses()) {
 				IncidenceClass farInc = ic.getEdgeClass().getTo();
 				validFromInc.add(farInc);
@@ -253,11 +249,7 @@ public final class VertexClassImpl extends
 			IncidenceClass farInc = ic.getEdgeClass().getFrom();
 			validToInc.add(farInc);
 		}
-		for (VertexClass aec : getAllSuperClasses()) {
-			VertexClass vc = aec;
-			if (vc.isDefaultGraphElementClass()) {
-				continue;
-			}
+		for (VertexClass vc : getAllSuperClasses()) {
 			for (IncidenceClass ic : vc.getAllInIncidenceClasses()) {
 				IncidenceClass farInc = ic.getEdgeClass().getFrom();
 				validToInc.add(farInc);

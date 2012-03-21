@@ -709,10 +709,6 @@ public class Schema2SchemaGraph {
 				.getVertexClasses().values()) {
 
 			assert ((vertexClass != null) && (vertexClass.getQualifiedName() != null)) : "FIXME! No QualifiedName for this VertexClass defined!";
-			// Skips object, which already exists internal
-			if (vertexClass.isDefaultGraphElementClass()) {
-				continue;
-			}
 
 			// Creates an VertexClass
 			gVertexClass = schemaGraph.createVertexClass();
@@ -774,11 +770,6 @@ public class Schema2SchemaGraph {
 				.getEdgeClasses().values()) {
 
 			assert ((edgeClass != null) && (edgeClass.getQualifiedName() != null)) : "FIXME! No QualifiedName for this EdgeClass defined!";
-
-			// Skips all internal present objects.
-			if (edgeClass.isDefaultGraphElementClass()) {
-				continue;
-			}
 
 			// Creates an EdgeClass.
 			gEdgeClass = createEdgeClass(edgeClass);
@@ -1099,7 +1090,8 @@ public class Schema2SchemaGraph {
 			if (subsettedIncidences != null) {
 				for (de.uni_koblenz.jgralab.schema.IncidenceClass subsettedIncidence : subsettedIncidences) {
 					assert subsettedIncidence != null : "FIXME! No subsetted IncidenceClass defined!";
-					if (!subsettedIncidence.getEdgeClass().isDefaultGraphElementClass()) {
+					if (!subsettedIncidence.getEdgeClass()
+							.isDefaultGraphElementClass()) {
 						IncidenceClass gSubsettedIncidence = incidenceClassMap
 								.get(subsettedIncidence);
 						assert gSubsettedIncidence != null : "FIXME! No subsetted IncidenceClass created yet!";

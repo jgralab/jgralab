@@ -440,9 +440,6 @@ public class SchemaImpl implements Schema, ManagableArtifact {
 		}
 
 		for (EdgeClass edgeClass : graphClass.getEdgeClasses()) {
-			if (edgeClass.isDefaultGraphElementClass()) {
-				continue;
-			}
 			CodeGenerator codeGen = new EdgeCodeGenerator(edgeClass,
 					packagePrefix, config);
 			codeGen.createFiles(pathPrefix);

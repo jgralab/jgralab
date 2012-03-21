@@ -430,9 +430,6 @@ public class GraphIO {
 
 			// write vertex classes
 			for (VertexClass vc : pkg.getVertexClasses().values()) {
-				if (vc.isDefaultGraphElementClass()) {
-					continue;
-				}
 				if (vc.isAbstract()) {
 					write("abstract ");
 				}

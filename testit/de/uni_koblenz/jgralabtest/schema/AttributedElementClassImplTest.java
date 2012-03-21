@@ -43,10 +43,8 @@ import org.junit.Test;
 import de.uni_koblenz.jgralab.schema.Attribute;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.Constraint;
-import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.GraphClass;
 import de.uni_koblenz.jgralab.schema.Schema;
-import de.uni_koblenz.jgralab.schema.VertexClass;
 import de.uni_koblenz.jgralab.schema.impl.ConstraintImpl;
 import de.uni_koblenz.jgralab.schema.impl.SchemaImpl;
 
@@ -400,8 +398,8 @@ public abstract class AttributedElementClassImplTest<AEC extends AttributedEleme
 	 */
 	@Test
 	public final void testGetOwnAttribute() {
-		Attribute attribute = attributedElement.createAttribute("testAttribute",
-				schema.getBooleanDomain(), "null");
+		Attribute attribute = attributedElement.createAttribute(
+				"testAttribute", schema.getBooleanDomain(), "null");
 
 		Attribute attr = attributedElement.getOwnAttribute(attribute.getName());
 
@@ -518,8 +516,8 @@ public abstract class AttributedElementClassImplTest<AEC extends AttributedEleme
 	@Test
 	public final void testGetOwnAttributeList() {
 
-		Attribute attribute = attributedElement.createAttribute("testAttribute",
-				schema.getBooleanDomain(), "null");
+		Attribute attribute = attributedElement.createAttribute(
+				"testAttribute", schema.getBooleanDomain(), "null");
 
 		List<Attribute> attrs = attributedElement.getOwnAttributeList();
 
@@ -535,10 +533,10 @@ public abstract class AttributedElementClassImplTest<AEC extends AttributedEleme
 	 */
 	@Test
 	public final void testGetOwnAttributeList2() {
-		Attribute attribute = attributedElement.createAttribute("testAttribute",
-				schema.getBooleanDomain(), "null");
-		Attribute attribute2 = attributedElement.createAttribute("testAttribute2",
-				schema.getBooleanDomain(), "null");
+		Attribute attribute = attributedElement.createAttribute(
+				"testAttribute", schema.getBooleanDomain(), "null");
+		Attribute attribute2 = attributedElement.createAttribute(
+				"testAttribute2", schema.getBooleanDomain(), "null");
 
 		List<Attribute> attrs = attributedElement.getOwnAttributeList();
 
@@ -712,7 +710,7 @@ public abstract class AttributedElementClassImplTest<AEC extends AttributedEleme
 	@Test
 	public final void testHasOwnAttributes() {
 		attributedElement.createAttribute("testAttribute",
-				schema.getBooleanDomain(),  "null");
+				schema.getBooleanDomain(), "null");
 
 		Assert.assertTrue(attributedElement.hasOwnAttributes());
 	}
@@ -725,9 +723,9 @@ public abstract class AttributedElementClassImplTest<AEC extends AttributedEleme
 	@Test
 	public final void testHasOwnAttributes2() {
 		attributedElement.createAttribute("testAttribute",
-				schema.getBooleanDomain(),  "null");
+				schema.getBooleanDomain(), "null");
 		attributedElement.createAttribute("testAttribute2",
-				schema.getBooleanDomain(),  "null");
+				schema.getBooleanDomain(), "null");
 
 		Assert.assertTrue(attributedElement.hasOwnAttributes());
 	}
@@ -751,14 +749,12 @@ public abstract class AttributedElementClassImplTest<AEC extends AttributedEleme
 	 */
 	public final void testHasOwnAttributes4(AEC superClass) {
 		attributedElement.createAttribute("testAttribute",
-				schema.getBooleanDomain(),  "null");
-		superClass.createAttribute("testAttribute2",
-				schema.getBooleanDomain(),  "null");
+				schema.getBooleanDomain(), "null");
+		superClass.createAttribute("testAttribute2", schema.getBooleanDomain(),
+				"null");
 
 		Assert.assertTrue(attributedElement.hasOwnAttributes());
 	}
-
-
 
 	/*
 	 * Tests for the isAbstract() method.
@@ -787,39 +783,6 @@ public abstract class AttributedElementClassImplTest<AEC extends AttributedEleme
 
 		Assert.assertFalse(attributedElement.isAbstract());
 	}
-
-	/*
-	 * Tests for the isInternal() method.
-	 */
-
-	/**
-	 * isInternal()
-	 *
-	 * TEST CASE: The element is not for internal use
-	 */
-	@Test
-	public void testIsInternal() {
-		for (VertexClass vc : schema.getGraphClass().getVertexClasses()) {
-			if (vc == schema.getGraphClass().getDefaultVertexClass()) {
-				Assert.assertTrue(vc.isDefaultGraphElementClass());
-			} else {
-				Assert.assertFalse(vc.isDefaultGraphElementClass());
-			}
-		}
-
-		for (EdgeClass ec : schema.getGraphClass().getEdgeClasses()) {
-			if (ec == schema.getGraphClass().getDefaultEdgeClass()) {
-				Assert.assertTrue(ec.isDefaultGraphElementClass());
-			} else {
-				Assert.assertFalse(ec.isDefaultGraphElementClass());
-			}
-		}
-
-	}
-
-	/*
-	 * Tests for the isSubClassOf() method.
-	 */
 
 	/*
 	 * Tests for the setAbstract() method.

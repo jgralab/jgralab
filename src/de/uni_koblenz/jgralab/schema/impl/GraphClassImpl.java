@@ -127,7 +127,10 @@ public final class GraphClassImpl extends
 			throw new SchemaException("Duplicate edge class name '"
 					+ ec.getQualifiedName() + "'");
 		}
-		edgeClasses.put(ec.getQualifiedName(), ec);
+		// Don't track the default EC
+		if (!ec.getQualifiedName().equals(EdgeClass.DEFAULTEDGECLASS_NAME)) {
+			edgeClasses.put(ec.getQualifiedName(), ec);
+		}
 	}
 
 	void addVertexClass(VertexClass vc) {
@@ -135,7 +138,10 @@ public final class GraphClassImpl extends
 			throw new SchemaException("Duplicate vertex class name '"
 					+ vc.getQualifiedName() + "'");
 		}
-		vertexClasses.put(vc.getQualifiedName(), vc);
+		// Don't track the default VC
+		if (!vc.getQualifiedName().equals(VertexClass.DEFAULTVERTEXCLASS_NAME)) {
+			vertexClasses.put(vc.getQualifiedName(), vc);
+		}
 	}
 
 	@Override

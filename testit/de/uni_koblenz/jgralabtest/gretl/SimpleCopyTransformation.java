@@ -113,9 +113,6 @@ public class SimpleCopyTransformation extends Transformation<Graph> {
 			}
 
 			for (EdgeClass oldSuperEC : oldEC.getDirectSuperClasses()) {
-				if (oldSuperEC.isDefaultGraphElementClass()) {
-					continue;
-				}
 				new AddSuperClass(context, newEC,
 						ec(oldSuperEC.getQualifiedName())).execute();
 			}
@@ -134,9 +131,6 @@ public class SimpleCopyTransformation extends Transformation<Graph> {
 						+ "!}").execute();
 			}
 			for (VertexClass oldSuperVC : oldVC.getDirectSuperClasses()) {
-				if (oldSuperVC.isDefaultGraphElementClass()) {
-					continue;
-				}
 				new AddSuperClass(context, newVC,
 						vc(oldSuperVC.getQualifiedName())).execute();
 			}

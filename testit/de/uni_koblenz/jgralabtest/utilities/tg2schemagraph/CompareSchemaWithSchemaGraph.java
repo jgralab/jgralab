@@ -42,10 +42,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 
 import de.uni_koblenz.jgralab.Edge;
@@ -98,12 +96,12 @@ import de.uni_koblenz.jgralab.schema.StringDomain;
 
 /**
  * Compares a given Schema and SchemaGraph with each other.
- * 
+ *
  * Note:
- * 
+ *
  * This class exists only for test purposes. Because of the use of a lot of
  * Assert of JUnit, it will crash without catching these exceptions.
- * 
+ *
  * @author mmce, Eckhard Großmann
  */
 public class CompareSchemaWithSchemaGraph {
@@ -128,7 +126,7 @@ public class CompareSchemaWithSchemaGraph {
 
 	/**
 	 * Compares the given Schema with the given SchemaGraph.
-	 * 
+	 *
 	 * @param schema
 	 *            Schema, which should be compared.
 	 * @param schemaGraph
@@ -144,7 +142,7 @@ public class CompareSchemaWithSchemaGraph {
 
 	/**
 	 * Compares a Schema and a Schema from a SchemaGraph with each other.
-	 * 
+	 *
 	 * @param schema
 	 *            Schema, which is compared.
 	 * @param gSchema
@@ -256,9 +254,9 @@ public class CompareSchemaWithSchemaGraph {
 	/**
 	 * Compares a Package of a Schema and a Package of a SchemaGraph with each
 	 * other.
-	 * 
+	 *
 	 * It also compares all subpackages.
-	 * 
+	 *
 	 * @param xPackage
 	 *            Package, which should be compared.
 	 * @param gPackage
@@ -327,7 +325,7 @@ public class CompareSchemaWithSchemaGraph {
 
 	/**
 	 * Compares all Domain objects of two Package objects.
-	 * 
+	 *
 	 * @param xPackage
 	 *            Package from the Schema, of which all Domain objects are
 	 *            compared.
@@ -386,7 +384,7 @@ public class CompareSchemaWithSchemaGraph {
 
 	/**
 	 * Compares all GraphElementClass objects in two Packages.
-	 * 
+	 *
 	 * @param xPackage
 	 *            Package from the Schema, of which all GraphElementClass
 	 *            objects should be compared.
@@ -401,22 +399,6 @@ public class CompareSchemaWithSchemaGraph {
 				xPackage.getVertexClasses());
 		Map<String, de.uni_koblenz.jgralab.schema.EdgeClass> edgeClasses = new HashMap<String, de.uni_koblenz.jgralab.schema.EdgeClass>(
 				xPackage.getEdgeClasses());
-
-		// This loop prevents the comparison of internal structures
-		for (Iterator<Entry<String, de.uni_koblenz.jgralab.schema.VertexClass>> it = vertexClasses
-				.entrySet().iterator(); it.hasNext();) {
-			if (it.next().getValue().isDefaultGraphElementClass()) {
-				it.remove();
-			}
-		}
-
-		// This loop prevents the comparison of internal structures
-		for (Iterator<Entry<String, de.uni_koblenz.jgralab.schema.EdgeClass>> it = edgeClasses
-				.entrySet().iterator(); it.hasNext();) {
-			if (it.next().getValue().isDefaultGraphElementClass()) {
-				it.remove();
-			}
-		}
 
 		// Loop over all ContainsGraphElementClass edges
 		for (ContainsGraphElementClass containsGraphElementClass : gPackage
@@ -466,7 +448,7 @@ public class CompareSchemaWithSchemaGraph {
 
 	/**
 	 * Compares all SubPackage objects of two Package objects.
-	 * 
+	 *
 	 * @param xPackage
 	 *            Package from the Schema, of which all Packages should be
 	 *            compared.
@@ -508,7 +490,7 @@ public class CompareSchemaWithSchemaGraph {
 
 	/**
 	 * Compares two Domains with each other.
-	 * 
+	 *
 	 * @param domain
 	 *            Domain from the Schema, which should be compared.
 	 * @param gDomain
@@ -549,7 +531,7 @@ public class CompareSchemaWithSchemaGraph {
 
 	/**
 	 * Compares two RecordDomain objects with each other.
-	 * 
+	 *
 	 * @param domain
 	 *            RecordDomain from Schema, which should be compared.
 	 * @param gDomain
@@ -598,7 +580,7 @@ public class CompareSchemaWithSchemaGraph {
 
 	/**
 	 * Compares tow MapDomain objects with each other.
-	 * 
+	 *
 	 * @param domain
 	 *            MapDomain from the Schema, which should be compared.
 	 * @param gDomain
@@ -644,7 +626,7 @@ public class CompareSchemaWithSchemaGraph {
 
 	/**
 	 * Compares two CollectionDomain objects with each other.
-	 * 
+	 *
 	 * @param domain
 	 *            CollectionDomain from the Schema, which should be compared.
 	 * @param gDomain
@@ -675,7 +657,7 @@ public class CompareSchemaWithSchemaGraph {
 
 	/**
 	 * Compares two EnumDomain objects with each other.
-	 * 
+	 *
 	 * @param domain
 	 *            EnumDomain from the Schema, which should be compared.
 	 * @param gDomain
@@ -698,7 +680,7 @@ public class CompareSchemaWithSchemaGraph {
 
 	/**
 	 * Compares two AttributedElementClass with each other.
-	 * 
+	 *
 	 * @param element
 	 *            An AttributedElementClass from the Schema, which should be
 	 *            compared.
@@ -734,7 +716,7 @@ public class CompareSchemaWithSchemaGraph {
 
 	/**
 	 * Compares two VertexClass objects with each other.
-	 * 
+	 *
 	 * @param vertexClass
 	 *            VertexClass from the Schema, which should be compared.
 	 * @param gVertexClass
@@ -770,7 +752,7 @@ public class CompareSchemaWithSchemaGraph {
 
 	/**
 	 * Compares two EdgeClass objects with each other.
-	 * 
+	 *
 	 * @param edgeClass
 	 *            EdgeClass from the Schema, which should be compared.
 	 * @param gEdgeClass
@@ -820,7 +802,7 @@ public class CompareSchemaWithSchemaGraph {
 
 	/**
 	 * Compares two IncidenceClasses objects.
-	 * 
+	 *
 	 * @param incidence
 	 *            IncidenceClasses from the Schema.
 	 * @param gIncidence
@@ -935,7 +917,7 @@ public class CompareSchemaWithSchemaGraph {
 
 	/**
 	 * Compares two sets of RedefinedRoles with each other.
-	 * 
+	 *
 	 * @param redefinedRoles
 	 *            Set of RedefinedRoles of an edge from the Schema.
 	 * @param gRedefinedRoles
@@ -1019,7 +1001,7 @@ public class CompareSchemaWithSchemaGraph {
 	/**
 	 * Compares all Attribute objects of two AttributedElementClass objects with
 	 * each other.
-	 * 
+	 *
 	 * @param element
 	 *            AttributedElementClass from the Schema, of which all Attribute
 	 *            objects should be compared.
@@ -1072,7 +1054,7 @@ public class CompareSchemaWithSchemaGraph {
 	/**
 	 * Compares all Constraint objects of two AttributedElementClass objects
 	 * with each other.
-	 * 
+	 *
 	 * @param element
 	 *            AttributedElementClass from the Schema, of which all
 	 *            Constraint objects should be compared.
@@ -1131,7 +1113,7 @@ public class CompareSchemaWithSchemaGraph {
 
 	/**
 	 * Creates an Attribute map out of an Attribute set.
-	 * 
+	 *
 	 * @param attributeList
 	 *            Set of Attribute object, of which a map of Attributes should
 	 *            be created.
@@ -1151,7 +1133,7 @@ public class CompareSchemaWithSchemaGraph {
 
 	/**
 	 * Makes out of an element set an element map.
-	 * 
+	 *
 	 * @param elementSet
 	 *            Set of AttributedElementClass objects.
 	 * @return The new map of AttributedElementClass objects with their
