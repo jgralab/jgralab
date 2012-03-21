@@ -1498,10 +1498,6 @@ public class Rsa2Tg extends XmlProcessor {
 				System.err.println("The schema graph is not valid:");
 				for (ConstraintViolation currentViolation : s) {
 					// print out violations
-					for (AttributedElement ae : currentViolation
-							.getOffendingElements()) {
-						System.out.println(ae);
-					}
 					System.err.println(currentViolation);
 				}
 			}
