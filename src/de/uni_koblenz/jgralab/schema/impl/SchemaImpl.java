@@ -427,9 +427,6 @@ public class SchemaImpl implements Schema, ManagableArtifact {
 		graphCodeGenerator.createFiles(pathPrefix);
 
 		for (VertexClass vertexClass : graphClass.getVertexClasses()) {
-			if (vertexClass.isInternal()) {
-				continue;
-			}
 			VertexCodeGenerator codeGen = new VertexCodeGenerator(vertexClass,
 					packagePrefix, config);
 			codeGen.createFiles(pathPrefix);
@@ -898,11 +895,6 @@ public class SchemaImpl implements Schema, ManagableArtifact {
 	}
 
 	@Override
-	public List<EdgeClass> getEdgeClasses() {
-		return graphClass.getEdgeClasses();
-	}
-
-	@Override
 	public Method getEdgeCreateMethod(String edgeClassName,
 			ImplementationType implementationType) {
 		// Edge class create method cannot be found directly by its signature
@@ -1080,11 +1072,6 @@ public class SchemaImpl implements Schema, ManagableArtifact {
 		}
 
 		return recordList;
-	}
-
-	@Override
-	public List<VertexClass> getVertexClasses() {
-		return graphClass.getVertexClasses();
 	}
 
 	@Override

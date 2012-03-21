@@ -46,9 +46,9 @@ import de.uni_koblenz.jgralab.schema.VertexClass;
 
 /**
  * TODO add comment
- * 
+ *
  * @author ist@uni-koblenz.de
- * 
+ *
  */
 public class ReversedEdgeCodeGenerator extends
 		AttributedElementCodeGenerator<EdgeClass, Edge> {
@@ -67,7 +67,8 @@ public class ReversedEdgeCodeGenerator extends
 				"Reversed" + edgeClass.getSimpleName() + "Impl");
 		rootBlock.setVariable("normalQualifiedClassName", schemaRootPackageName
 				+ "." + edgeClass.getQualifiedName());
-		for (EdgeClass superClass : edgeClass.getDirectSuperClasses()) {
+		for (EdgeClass superClass : edgeClass.getDirectSuperClasses().plus(
+				edgeClass.getGraphClass().getDefaultEdgeClass())) {
 			interfaces.add(superClass.getQualifiedName());
 		}
 	}

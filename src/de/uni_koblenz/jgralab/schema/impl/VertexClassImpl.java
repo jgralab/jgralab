@@ -501,4 +501,10 @@ public final class VertexClassImpl extends
 		graphClass.vertexClassDag.delete(this);
 		parentPackage.vertexClasses.remove(simpleName);
 	}
+
+	@Override
+	protected VertexClass getDefaultClass() {
+		return graphClass.getDefaultVertexClass();
+	}
+
 }

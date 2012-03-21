@@ -838,12 +838,6 @@ public class Schema2SchemaGraph {
 			// Loop over all superclass's of the current entry
 			for (de.uni_koblenz.jgralab.schema.AttributedElementClass<?, ?> superClass : entry
 					.getKey().getDirectSuperClasses()) {
-
-				// Skips predefined classes
-				if (superClass.isInternal()) {
-					continue;
-				}
-
 				// Links the superclass with its subclass.
 				SpecializesVertexClass link = schemaGraph
 						.createSpecializesVertexClass(entry.getValue(),

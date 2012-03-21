@@ -59,9 +59,9 @@ public class SchemaVisualizer {
 	/**
 	 * Returns the JavaScript-code to create the representation of the
 	 * inheritance hierarchy of the EdgeClasses and the VertexClasses.
-	 * 
+	 *
 	 * @param code
-	 * 
+	 *
 	 * @param state
 	 */
 	public void createSchemaRepresentation(StringBuilder code, State state) {
@@ -72,9 +72,9 @@ public class SchemaVisualizer {
 
 	/**
 	 * Creates the code for the representation of the packages.
-	 * 
+	 *
 	 * @param code
-	 * 
+	 *
 	 * @param state
 	 */
 	private void createPackageRepresentation(StringBuilder code, State state) {
@@ -85,16 +85,16 @@ public class SchemaVisualizer {
 		code.append("ulRootPackage.id = \"ulRootPackage\";\n");
 		code.append("divPackage.appendChild(ulRootPackage);\n");
 		createEntriesForPackage(code, "ulRootPackage", defaultPackage, true,
-				state.getGraph().getSchema().getVertexClasses(), state
-						.getGraph().getSchema().getEdgeClasses());
+				state.getGraph().getSchema().getGraphClass().getVertexClasses(), state
+						.getGraph().getSchema().getGraphClass().getEdgeClasses());
 	}
 
 	/**
 	 * Creates the representation of the package <code>currentPackage</code> and
 	 * its containing packages.
-	 * 
+	 *
 	 * @param code
-	 * 
+	 *
 	 * @param parentUl
 	 *            the JavaScript variable name of the parent ul
 	 * @param currentPackage
@@ -235,7 +235,7 @@ public class SchemaVisualizer {
 	/**
 	 * Returns a String in which all occurrences of "$" in
 	 * <code>uniqueName</code> are replaced by "".
-	 * 
+	 *
 	 * @param uniqueName
 	 * @return
 	 */
@@ -247,9 +247,9 @@ public class SchemaVisualizer {
 	/**
 	 * If <code>createForVertex</code> == true the representation for the
 	 * VertexClasses is created. Otherwise for the EdgeClasses
-	 * 
+	 *
 	 * @param code
-	 * 
+	 *
 	 * @param state
 	 * @param createForVertex
 	 * @return the needed JavaScript commands
@@ -261,8 +261,8 @@ public class SchemaVisualizer {
 		assert state.getGraph().getSchema() != null : "schema is null";
 		// list of the AttributedElementClasses in topological order
 		List<? extends GraphElementClass<?, ?>> classes = createForVertex ? state
-				.getGraph().getSchema().getVertexClasses()
-				: state.getGraph().getSchema().getEdgeClasses();
+				.getGraph().getSchema().getGraphClass().getVertexClasses()
+				: state.getGraph().getSchema().getGraphClass().getEdgeClasses();
 		String var = createForVertex ? "Vertex" : "Edge";
 		createRootUl(code, var);
 		// unsetAEClasses saves the classes which have more than one superclass
@@ -272,10 +272,6 @@ public class SchemaVisualizer {
 		ArrayList<Iterator<GraphElementClass<?, ?>>> unsetSuperClasses = new ArrayList<Iterator<GraphElementClass<?, ?>>>();
 		// iterate all classes
 		for (GraphElementClass<?, ?> aeclass : classes) {
-			if (aeclass.isInternal()) {
-				// ignore the base classes
-				continue;
-			}
 			// mark all Classes as selected
 			if (createForVertex) {
 				state.selectedVertexClasses.put((VertexClass) aeclass, true);
@@ -345,10 +341,10 @@ public class SchemaVisualizer {
 					AttributedElementClass<?, ?> cls = unsetSuperClasses.get(z)
 							.next();
 					String supCls = replaceDollar(cls.getUniqueName());
-					if (state.getGraph().getSchema()
-							.getAttributedElementClass("Aggregation") != cls
-							&& state.getGraph().getSchema()
-									.getAttributedElementClass("Composition") != cls) {
+					if ((state.getGraph().getSchema()
+							.getAttributedElementClass("Aggregation") != cls)
+							&& (state.getGraph().getSchema()
+									.getAttributedElementClass("Composition") != cls)) {
 						aeclass.getSchemaClass();
 						// copy aeEntry.getKey() and all subclasses to new
 						// position
@@ -368,9 +364,9 @@ public class SchemaVisualizer {
 	 * position. <b>Created variables:</b><br>
 	 * <code>"li"+aeclass.getUniqueName()+"_"+i</code>: the clone of
 	 * <code>"li"+aeclass.getUniqueName()</code><br>
-	 * 
+	 *
 	 * @param code
-	 * 
+	 *
 	 * @param aeclass
 	 *            the class which representation is cloned
 	 * @param i
@@ -398,9 +394,9 @@ public class SchemaVisualizer {
 	 * Adds to all ids and names <code>":"+i</code>. It adapts the
 	 * onclick-events and the hrefs to the new ids. The checkboxes are set
 	 * checked again, because the Internet Explorer doesn't clone these values.
-	 * 
+	 *
 	 * @param code
-	 * 
+	 *
 	 * @param aeclass
 	 *            the class which cloned representation is adapted
 	 * @param i
@@ -505,9 +501,9 @@ public class SchemaVisualizer {
 	 * <code>"ulRoot"+var</code>: the root ul<br>
 	 * <b>The created Tag has the form:</b><br>
 	 * &lt;ul id="ulRoot<code>var</code>"&gt;&lt;/ul&gt;
-	 * 
+	 *
 	 * @param code
-	 * 
+	 *
 	 * @param var
 	 *            equals "Vertex", if we create the representation of the
 	 *            VertexClasses. It equals "Edge" otherwise.
@@ -536,9 +532,9 @@ public class SchemaVisualizer {
 	 * &lt;a id="a<code>uniqueName</code>" href="javascript:expand('ul
 	 * <code>uniqueName</code>','a<code>uniqueName</code>');"&gt;&lt;img
 	 * src="plus.png" alt="+" /&gt;&lt;/a&gt;
-	 * 
+	 *
 	 * @param code
-	 * 
+	 *
 	 * @param uniqueName
 	 */
 	private void convertToTypeWithSubtypes(StringBuilder code, String uniqueName) {
@@ -578,9 +574,9 @@ public class SchemaVisualizer {
 	 * <b>The created Tag has the form:</b><br>
 	 * &lt;p title="<code>qualifiedName</code>+attributes"&gt;
 	 * <code>simpleName</code> &lt;/p&gt;
-	 * 
+	 *
 	 * @param code
-	 * 
+	 *
 	 * @param simpleName
 	 * @param uniqueName
 	 * @param qualifiedName
@@ -622,9 +618,9 @@ public class SchemaVisualizer {
 	 * " type="checkbox" checked="checked" name="input<code>uniqueName</code>
 	 * " value="<code>qualifiedName</code>" onclick="<code>additionalCode</code>
 	 * ;deSelect(' <code>uniqueName</code>',this.id);" /&gt;
-	 * 
+	 *
 	 * @param code
-	 * 
+	 *
 	 * @param uniqueName
 	 * @param qualifiedName
 	 * @param additionalCode
@@ -667,11 +663,11 @@ public class SchemaVisualizer {
 	 * <code>"li"+uniqueName</code>: the created li-tag<br>
 	 * <code>"ws"+uniqueName</code>: the whitspaces in the tag<br>
 	 * <b>The created Tag has the form:</b><br>
-	 * &lt;li id="li+<code>uniqueName</code> 
+	 * &lt;li id="li+<code>uniqueName</code>
 	 * "&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;/li&gt;
-	 * 
+	 *
 	 * @param code
-	 * 
+	 *
 	 * @param parentUl
 	 *            the name of the variable of the parent ul
 	 * @param uniqueName

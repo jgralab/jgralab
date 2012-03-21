@@ -233,4 +233,9 @@ public class EdgeClassImpl extends GraphElementClassImpl<EdgeClass, Edge>
 		graphClass.edgeClassDag.delete(this);
 		parentPackage.edgeClasses.remove(simpleName);
 	}
+
+	@Override
+	protected EdgeClass getDefaultClass() {
+		return graphClass.getDefaultEdgeClass();
+	}
 }

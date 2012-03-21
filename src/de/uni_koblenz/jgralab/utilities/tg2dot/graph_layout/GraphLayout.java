@@ -136,13 +136,13 @@ public class GraphLayout {
 	void initiateAllTypeDefinitions() {
 		VertexClass defaultVC = schema.getGraphClass().getDefaultVertexClass();
 		vertexTypeDefinitions.put(defaultVC, new TypeDefinition(defaultVC));
-		for (VertexClass type : schema.getVertexClasses()) {
+		for (VertexClass type : schema.getGraphClass().getVertexClasses()) {
 			vertexTypeDefinitions.put(type, new TypeDefinition(type));
 		}
 
 		EdgeClass defaultEC = schema.getGraphClass().getDefaultEdgeClass();
 		edgeTypeDefinitions.put(defaultEC, new TypeDefinition(defaultEC));
-		for (EdgeClass type : schema.getEdgeClasses()) {
+		for (EdgeClass type : schema.getGraphClass().getEdgeClasses()) {
 			edgeTypeDefinitions.put(type, new TypeDefinition(type));
 		}
 	}

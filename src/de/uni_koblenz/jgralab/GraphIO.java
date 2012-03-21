@@ -863,12 +863,10 @@ public class GraphIO {
 			throws IOException {
 		String delim = ":";
 		for (GraphElementClass<?, ?> superClass : aec.getDirectSuperClasses()) {
-			if (!superClass.isInternal()) {
-				write(delim);
-				space();
-				writeIdentifier(superClass.getQualifiedName(pkg));
-				delim = ",";
-			}
+			write(delim);
+			space();
+			writeIdentifier(superClass.getQualifiedName(pkg));
+			delim = ",";
 		}
 	}
 

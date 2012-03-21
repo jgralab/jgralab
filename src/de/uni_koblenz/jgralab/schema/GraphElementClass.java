@@ -35,7 +35,7 @@
 
 package de.uni_koblenz.jgralab.schema;
 
-import java.util.Set;
+import org.pcollections.PSet;
 
 import de.uni_koblenz.jgralab.GraphElement;
 
@@ -158,7 +158,7 @@ public interface GraphElementClass<SC extends GraphElementClass<SC, IC>, IC exte
 	 *
 	 * @return a Set of all direct subclasses of this element
 	 */
-	public Set<SC> getDirectSubClasses();
+	public PSet<SC> getDirectSubClasses();
 
 	/**
 	 * Returns all direct superclasses of this element.
@@ -192,7 +192,7 @@ public interface GraphElementClass<SC extends GraphElementClass<SC, IC>, IC exte
 	 *
 	 * @return a Set of all direct superclasses of this element
 	 */
-	public Set<SC> getDirectSuperClasses();
+	public PSet<SC> getDirectSuperClasses();
 
 	/**
 	 * Returns all direct and indirect subclasses of this element.
@@ -217,7 +217,7 @@ public interface GraphElementClass<SC extends GraphElementClass<SC, IC>, IC exte
 	 *
 	 * @return a Set of all direct and indirect subclasses of this element
 	 */
-	public Set<SC> getAllSubClasses();
+	public PSet<SC> getAllSubClasses();
 
 	/**
 	 * Lists all direct and indirect superclasses of this element.
@@ -250,7 +250,7 @@ public interface GraphElementClass<SC extends GraphElementClass<SC, IC>, IC exte
 	 *
 	 * @return a Set of all direct and indirect superclasses of this element
 	 */
-	public Set<SC> getAllSuperClasses();
+	public PSet<SC> getAllSuperClasses();
 
 	/**
 	 * @return the ID of this GraphElementClass in the schema it belongs to

@@ -46,13 +46,11 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.Vector;
 
-import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphFactory;
 import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.ImplementationType;
 import de.uni_koblenz.jgralab.ProgressFunction;
-import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.codegenerator.CodeGeneratorConfiguration;
 import de.uni_koblenz.jgralab.schema.RecordDomain.RecordComponent;
 import de.uni_koblenz.jgralab.schema.impl.compilation.InMemoryJavaSourceFile;
@@ -306,18 +304,6 @@ public interface Schema extends Comparable<Schema> {
 	public DoubleDomain getDoubleDomain();
 
 	/**
-	 * Returns an topologically ordered list of all edge classes in the schema
-	 * (including aggregation and composition classes), i.e. the edge classes
-	 * are ordered according to their inheritance hierarchy. In contrast to
-	 * {@link GraphClass#getEdgeClasses()}, this list also includes the default
-	 * {@link EdgeClass} corresponding to {@link Edge} as its first element.
-	 *
-	 * @return an topologically ordered list of all edge classes including the
-	 *         default edge class
-	 */
-	public List<EdgeClass> getEdgeClasses();
-
-	/**
 	 * Gets the method to create a new edge with the given name
 	 *
 	 * @param edgeClassName
@@ -368,19 +354,6 @@ public interface Schema extends Comparable<Schema> {
 	public List<RecordDomain> getRecordDomains();
 
 	public StringDomain getStringDomain();
-
-	/**
-	 * Returns an topologically ordered list of all vertex classes in the
-	 * schema, i.e. the vertex classes are ordered according to their
-	 * inheritance hierarchy. In contrast to
-	 * {@link GraphClass#getVertexClasses()}, this list also includes the
-	 * default {@link VertexClass} corresponding to {@link Vertex} as its first
-	 * element.
-	 *
-	 * @return an topologically ordered list of all vertex classes including the
-	 *         default vertex class
-	 */
-	public List<VertexClass> getVertexClasses();
 
 	/**
 	 * Gets the method to create a new vertex with the given name

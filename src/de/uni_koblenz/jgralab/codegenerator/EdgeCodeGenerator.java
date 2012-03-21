@@ -46,9 +46,9 @@ import de.uni_koblenz.jgralab.schema.VertexClass;
 
 /**
  * TODO add comment
- * 
+ *
  * @author ist@uni-koblenz.de
- * 
+ *
  */
 public class EdgeCodeGenerator extends
 		AttributedElementCodeGenerator<EdgeClass, Edge> {
@@ -58,7 +58,8 @@ public class EdgeCodeGenerator extends
 		super(edgeClass, schemaPackageName, config);
 		rootBlock.setVariable("graphElementClass", "Edge");
 		rootBlock.setVariable("schemaElementClass", "EdgeClass");
-		for (EdgeClass superClass : edgeClass.getDirectSuperClasses()) {
+		for (EdgeClass superClass : edgeClass.getDirectSuperClasses().plus(
+				edgeClass.getGraphClass().getDefaultEdgeClass())) {
 			interfaces.add(superClass.getQualifiedName());
 		}
 	}
@@ -183,7 +184,7 @@ public class EdgeCodeGenerator extends
 	}
 
 	/**
-	 * 
+	 *
 	 * @return
 	 */
 	private CodeBlock createReversedEdgeMethod() {
@@ -211,9 +212,6 @@ public class EdgeCodeGenerator extends
 
 		if (config.hasTypeSpecificMethodsSupport()) {
 			for (AttributedElementClass<?, ?> ec : superClasses) {
-				if (ec.isInternal()) {
-					continue;
-				}
 				EdgeClass ecl = (EdgeClass) ec;
 				code.addNoIndent(createNextEdgeMethod(ecl));
 			}

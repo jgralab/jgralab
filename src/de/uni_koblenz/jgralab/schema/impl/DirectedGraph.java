@@ -37,7 +37,6 @@ package de.uni_koblenz.jgralab.schema.impl;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 import org.pcollections.ArrayPSet;
 import org.pcollections.PSet;
@@ -114,7 +113,7 @@ public class DirectedGraph<T> {
 		return nodeValues.size();
 	}
 
-	public Set<T> getNodes() {
+	public PSet<T> getNodes() {
 		return nodeValues;
 	}
 
@@ -122,12 +121,12 @@ public class DirectedGraph<T> {
 		return entries.get(alpha).successors.contains(omega);
 	}
 
-	public Set<T> getDirectPredecessors(T data) {
+	public PSet<T> getDirectPredecessors(T data) {
 		assert nodeValues.contains(data);
 		return entries.get(data).predecessors;
 	}
 
-	public Set<T> getDirectSucccessors(T data) {
+	public PSet<T> getDirectSucccessors(T data) {
 		assert nodeValues.contains(data);
 		return entries.get(data).successors;
 	}

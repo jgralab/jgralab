@@ -47,9 +47,9 @@ import de.uni_koblenz.jgralab.schema.VertexClass;
 
 /**
  * TODO add comment
- * 
+ *
  * @author ist@uni-koblenz.de
- * 
+ *
  */
 public class GraphCodeGenerator extends
 		AttributedElementCodeGenerator<GraphClass, Graph> {
@@ -323,13 +323,7 @@ public class GraphCodeGenerator extends
 			return code;
 		}
 
-		Set<EdgeClass> edgeClassSet = new HashSet<EdgeClass>();
-		edgeClassSet.addAll(gc.getEdgeClasses());
-
-		for (EdgeClass edge : edgeClassSet) {
-			if (edge.isInternal()) {
-				continue;
-			}
+		for (EdgeClass edge : gc.getEdgeClasses()) {
 			if (currentCycle.isStdOrDbImplOrTransImpl()) {
 				addImports("#jgImplPackage#.EdgeIterable");
 			}

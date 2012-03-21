@@ -453,9 +453,6 @@ public class SchemaCodeGenerator extends CodeGenerator {
 				"\t#aecVariable#.setAbstract(#ecAbstract#);"));
 
 		for (EdgeClass superClass : ec.getDirectSuperClasses()) {
-			if (superClass.isInternal()) {
-				continue;
-			}
 			CodeSnippet s = new CodeSnippet(
 					"#aecVariable#.addSuperClass(#superClassName#);");
 			s.setVariable("superClassName", superClass.getVariableName());
@@ -485,7 +482,7 @@ public class SchemaCodeGenerator extends CodeGenerator {
 
 	private CodeBlock createVertexClasses(GraphClass gc) {
 		CodeList code = new CodeList();
-		for (VertexClass vc : schema.getVertexClasses()) {
+		for (VertexClass vc : schema.getGraphClass().getVertexClasses()) {
 			code.addNoIndent(createVertexClass(vc));
 		}
 		return code;
@@ -502,15 +499,14 @@ public class SchemaCodeGenerator extends CodeGenerator {
 				"{",
 				"\tVertexClass #aecVariable# = #schemaVariable# = #gcVariable#.createVertexClass(\"#vcName#\");",
 				"\t#aecVariable#.setAbstract(#vcAbstract#);"));
-		for (VertexClass superClass : vc.getDirectSuperClasses()) {
-			if (superClass.isInternal()) {
-				continue;
-			}
+		for (VertexClass superClass : vc.getDirectSuperClasses().plus(
+				vc.getGraphClass().getDefaultVertexClass())) {
 			CodeSnippet s = new CodeSnippet(
 					"#aecVariable#.addSuperClass(#superClassName#);");
 			s.setVariable("superClassName", superClass.getVariableName());
 			code.add(s);
 		}
+
 		code.add(createAttributes(vc));
 		code.add(createConstraints(vc));
 		code.add(createComments("vc", vc));

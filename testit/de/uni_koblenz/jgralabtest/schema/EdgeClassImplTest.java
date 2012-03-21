@@ -332,7 +332,6 @@ public class EdgeClassImplTest extends GraphElementClassImplTest<EdgeClass> {
 
 		edgeClass.addSuperClass(superClass);
 
-		expectedSuperClasses.add(schema.getGraphClass().getDefaultEdgeClass());
 		expectedSuperClasses.add(superClass);
 
 		testGetAllSuperClasses(expectedSuperClasses);
@@ -356,7 +355,6 @@ public class EdgeClassImplTest extends GraphElementClassImplTest<EdgeClass> {
 		edgeClass.addSuperClass(superClass);
 		edgeClass.addSuperClass(superClass2);
 
-		expectedSuperClasses.add(schema.getGraphClass().getDefaultEdgeClass());
 		expectedSuperClasses.add(superClass);
 		expectedSuperClasses.add(superClass2);
 
@@ -382,7 +380,6 @@ public class EdgeClassImplTest extends GraphElementClassImplTest<EdgeClass> {
 		edgeClass.addSuperClass(superClass);
 		superClass.addSuperClass(superClass2);
 
-		expectedSuperClasses.add(schema.getGraphClass().getDefaultEdgeClass());
 		expectedSuperClasses.add(superClass);
 		expectedSuperClasses.add(superClass2);
 
@@ -398,8 +395,6 @@ public class EdgeClassImplTest extends GraphElementClassImplTest<EdgeClass> {
 	@Test
 	public void testGetAllSuperClasses4() {
 		Vector<EdgeClass> expectedSuperClasses = new Vector<EdgeClass>();
-
-		expectedSuperClasses.add(schema.getGraphClass().getDefaultEdgeClass());
 
 		testGetAllSuperClasses(expectedSuperClasses);
 	}
@@ -717,8 +712,6 @@ public class EdgeClassImplTest extends GraphElementClassImplTest<EdgeClass> {
 	@Test
 	public void testGetDirectSuperClasses4() {
 		Vector<EdgeClass> expectedSuperClasses = new Vector<EdgeClass>();
-
-		expectedSuperClasses.add(schema.getGraphClass().getDefaultEdgeClass());
 
 		testGetDirectSuperClasses(expectedSuperClasses);
 	}
