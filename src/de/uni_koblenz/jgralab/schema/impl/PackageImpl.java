@@ -130,7 +130,11 @@ public final class PackageImpl extends NamedElementImpl implements Package {
 				+ getQualifiedName()
 				+ ") already contains an edge class called "
 				+ ec.getSimpleName();
-		edgeClasses.put(ec.getSimpleName(), ec);
+		// Don't track the default edge class
+		if (!(isDefaultPackage() && ec.getSimpleName().equals(
+				EdgeClass.DEFAULTEDGECLASS_NAME))) {
+			edgeClasses.put(ec.getSimpleName(), ec);
+		}
 	}
 
 	/**
@@ -168,7 +172,11 @@ public final class PackageImpl extends NamedElementImpl implements Package {
 				+ getQualifiedName()
 				+ ") already contains a vertex class called \""
 				+ vc.getSimpleName() + "\"";
-		vertexClasses.put(vc.getSimpleName(), vc);
+		// Don't track the default vertex class
+		if (!(isDefaultPackage() && vc.getSimpleName().equals(
+				VertexClass.DEFAULTVERTEXCLASS_NAME))) {
+			vertexClasses.put(vc.getSimpleName(), vc);
+		}
 	}
 
 	@Override
