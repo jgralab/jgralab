@@ -49,7 +49,7 @@ import de.uni_koblenz.jgralab.schema.IncidenceDirection;
 import de.uni_koblenz.jgralab.schema.VertexClass;
 import de.uni_koblenz.jgralab.schema.exception.SchemaException;
 
-public final class VertexClassImpl extends
+public class VertexClassImpl extends
 		GraphElementClassImpl<VertexClass, Vertex> implements VertexClass {
 	/**
 	 * the own in IncidenceClasses

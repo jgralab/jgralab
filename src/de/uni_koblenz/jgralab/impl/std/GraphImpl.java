@@ -37,6 +37,8 @@ package de.uni_koblenz.jgralab.impl.std;
 import java.util.List;
 
 import de.uni_koblenz.jgralab.Edge;
+import de.uni_koblenz.jgralab.TemporaryEdge;
+import de.uni_koblenz.jgralab.TemporaryVertex;
 import de.uni_koblenz.jgralab.TraversalContext;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.impl.FreeIndexList;
@@ -345,5 +347,15 @@ public abstract class GraphImpl extends
 		TraversalContext oldTc = this.tc;
 		this.tc = tc;
 		return oldTc;
+	}
+	
+	@Override
+	public TemporaryVertex createTemporaryVertex(){
+		return new TemporaryVertexImpl(0, this);
+	}
+	
+	@Override
+	public TemporaryEdge createTemporaryEdge(Vertex alpha, Vertex omega){
+		return new TemporaryEdgeImpl(0, this, alpha, omega);
 	}
 }

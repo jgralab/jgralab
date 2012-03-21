@@ -66,6 +66,10 @@ public final class GraphClassImpl extends
 	private VertexClassImpl defaultVertexClass;
 
 	private EdgeClassImpl defaultEdgeClass;
+	
+	private TemporaryVertexClassImpl tempVertexClass;
+	
+	private TemporaryEdgeClassImpl tempEdgeClass;
 
 	/**
 	 * Creates the <b>sole</b> <code>GraphClass</code> in the
@@ -117,6 +121,27 @@ public final class GraphClassImpl extends
 		defaultEdgeClass = ec;
 	}
 
+	@Override
+	public final VertexClass getTemporaryVertexClass() {
+		return tempVertexClass;
+	}
+	
+	final void initializeTemporaryVertexClass() {
+		assert getTemporaryVertexClass() == null : "TemporaryVertexClass already created!";
+		tempVertexClass = new TemporaryVertexClassImpl(this);
+	}
+
+	final void initializeTemporaryEdgeClass() {
+		assert getDefaultVertexClass() != null : "Default VertexClass has not yet been created!";
+		assert getTemporaryEdgeClass() == null : "TemporaryEdgeClass already created!";
+		this.tempEdgeClass = new TemporaryEdgeClassImpl(this);
+	}
+	
+	@Override
+	public final EdgeClass getTemporaryEdgeClass(){
+		return tempEdgeClass;
+	}
+	
 	@Override
 	public final EdgeClass getDefaultEdgeClass() {
 		return defaultEdgeClass;
