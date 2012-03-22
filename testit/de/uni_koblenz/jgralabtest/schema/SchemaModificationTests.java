@@ -337,6 +337,8 @@ public class SchemaModificationTests {
 		vc.delete();
 		assertEquals(0, gc.getVertexClassCount());
 		p.delete();
+		assertNull(gc.getSchema().getPackage("foo"));
+		assertNull(gc.getSchema().getNamedElement("foo"));
 		assertTrue(gc.getSchema().getDefaultPackage().getSubPackages()
 				.isEmpty());
 	}

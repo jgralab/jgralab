@@ -170,7 +170,7 @@ public class SchemaImpl implements Schema, ManagableArtifact {
 	/**
 	 * Maps from qualified name to the {@link Package} with that qualified name.
 	 */
-	private Map<String, PackageImpl> packages = new TreeMap<String, PackageImpl>();
+	Map<String, PackageImpl> packages = new TreeMap<String, PackageImpl>();
 
 	/**
 	 * The qualified name of this schema, that is {@link #packagePrefix} DOT
