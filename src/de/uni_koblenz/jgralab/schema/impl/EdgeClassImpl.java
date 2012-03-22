@@ -232,7 +232,14 @@ public class EdgeClassImpl extends GraphElementClassImpl<EdgeClass, Edge>
 			throw new SchemaException(
 					"The default edge class cannot be deleted.");
 		}
+
+		VertexClassImpl fromVC = (VertexClassImpl) from.getVertexClass();
+		VertexClassImpl toVC = (VertexClassImpl) to.getVertexClass();
+		fromVC.unlink(from);
+		toVC.unlink(to);
+
 		super.delete();
+
 		graphClass.edgeClasses.remove(qualifiedName);
 		graphClass.edgeClassDag.delete(this);
 		parentPackage.edgeClasses.remove(simpleName);

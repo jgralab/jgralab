@@ -488,6 +488,7 @@ public final class VertexClassImpl extends
 
 	@Override
 	public void delete() {
+		schema.assertNotFinished();
 		if (this == graphClass.getDefaultVertexClass()) {
 			throw new SchemaException(
 					"The default vertex class cannot be deleted.");
@@ -502,6 +503,17 @@ public final class VertexClassImpl extends
 		graphClass.vertexClasses.remove(qualifiedName);
 		graphClass.vertexClassDag.delete(this);
 		parentPackage.vertexClasses.remove(simpleName);
+	}
+
+	/**
+	 * Called when an edge class connected to this vertex class is deleted
+	 *
+	 * @param ic
+	 */
+	void unlink(IncidenceClass ic) {
+		schema.assertNotFinished();
+		outIncidenceClasses.remove(ic);
+		inIncidenceClasses.remove(ic);
 	}
 
 	@Override
