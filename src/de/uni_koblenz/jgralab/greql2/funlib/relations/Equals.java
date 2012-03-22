@@ -39,8 +39,7 @@ import de.uni_koblenz.jgralab.greql2.funlib.Function;
 
 public class Equals extends Function {
 
-	@Description(params = {"a","b"}, description = "Determines if $a$ and $b$ are equal. Alternative: a = b",
-			categories = Category.RELATIONS)
+	@Description(params = { "a", "b" }, description = "Determines if $a$ and $b$ are equal. Alternative: a = b", categories = Category.RELATIONS)
 	public Equals() {
 		super(2, 1, 0.05);
 	}
