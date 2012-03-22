@@ -397,4 +397,14 @@ public abstract class GraphElementClassImpl<SC extends GraphElementClass<SC, IC>
 		allAttributes = allAttributes.minus(attr);
 		ownAttributes = ownAttributes.minus(attr);
 	}
+
+	@Override
+	public void delete() {
+		for (Attribute a : ownAttributes) {
+			a.delete();
+		}
+		ownAttributes = null;
+		allAttributes = null;
+		schema.namedElements.remove(qualifiedName);
+	}
 }

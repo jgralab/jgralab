@@ -235,14 +235,12 @@ public final class GraphClassImpl extends
 
 	@Override
 	public final int getEdgeClassCount() {
-		// -1, cause the defaul edge class doesn't count
-		return edgeClasses.size() - 1;
+		return edgeClasses.size();
 	}
 
 	@Override
 	public final int getVertexClassCount() {
-		// -1, cause the defaul vertex class doesn't count
-		return vertexClasses.size() - 1;
+		return vertexClasses.size();
 	}
 
 	@Override

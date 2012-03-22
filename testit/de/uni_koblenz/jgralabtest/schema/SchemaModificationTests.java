@@ -28,6 +28,13 @@ public class SchemaModificationTests {
 		return gc;
 	}
 
+	static EdgeClass createEdgeClass(GraphClass gc, String qname,
+			VertexClass from, VertexClass to) {
+		return gc.createEdgeClass(qname, from, 0, Integer.MAX_VALUE, "",
+				AggregationKind.NONE, to, 0, Integer.MAX_VALUE, "",
+				AggregationKind.NONE);
+	}
+
 	@Test
 	public void testUniqueName() {
 		GraphClass gc = createSchemaWithGraphClass();
@@ -40,12 +47,10 @@ public class SchemaModificationTests {
 		assertEquals("p2$Foo", p2foo.getUniqueName());
 
 		// Test the same for EdgeClasses
-		EdgeClass p1bar = gc.createEdgeClass("p1.Bar", p1foo, 0, 1, "",
-				AggregationKind.NONE, p2foo, 0, 1, "", AggregationKind.NONE);
+		EdgeClass p1bar = createEdgeClass(gc, "p1.Bar", p1foo, p2foo);
 		// Now, Bar is unique
 		assertEquals("Bar", p1bar.getUniqueName());
-		EdgeClass p1p3bar = gc.createEdgeClass("p1.p3.Bar", p1foo, 0, 1, "",
-				AggregationKind.NONE, p2foo, 0, 1, "", AggregationKind.NONE);
+		EdgeClass p1p3bar = createEdgeClass(gc, "p1.p3.Bar", p1foo, p2foo);
 		assertEquals("p1$Bar", p1bar.getUniqueName());
 		assertEquals("p1$p3$Bar", p1p3bar.getUniqueName());
 	}
@@ -148,8 +153,7 @@ public class SchemaModificationTests {
 		GraphClass gc = createSchemaWithGraphClass();
 		VertexClass foo = gc.createVertexClass("p1.Foo");
 		VertexClass bar = gc.createVertexClass("p1.Bar");
-		EdgeClass baz = gc.createEdgeClass("p1.Baz", foo, 0, 1, "",
-				AggregationKind.NONE, bar, 0, 1, "", AggregationKind.NONE);
+		EdgeClass baz = createEdgeClass(gc, "p1.Baz", foo, bar);
 
 		Package p1 = gc.getSchema().getPackage("p1");
 		assertNull(gc.getSchema().getPackage("p2"));
@@ -191,5 +195,51 @@ public class SchemaModificationTests {
 		assertEquals(1, gc.getVertexClasses().size());
 		assertTrue(gc.getGraphElementClasses().contains(vc2));
 		assertFalse(gc.getGraphElementClasses().contains(vc1));
+	}
+
+	@Test(expected = SchemaException.class)
+	public void testDeleteVCWithConnectedEC() {
+		// must not delete vertex class that still has connected edge classes
+		GraphClass gc = createSchemaWithGraphClass();
+		VertexClass vc1 = gc.createVertexClass("VC1");
+		VertexClass vc2 = gc.createVertexClass("VC2");
+		createEdgeClass(gc, "EC1", vc1, vc2);
+		vc1.delete();
+	}
+
+	@Test
+	public void testDeleteVC() {
+		// must not delete vertex class that still has connected edge classes
+		GraphClass gc = createSchemaWithGraphClass();
+		VertexClass vc1 = gc.createVertexClass("VC1");
+		VertexClass vc2 = gc.createVertexClass("VC2");
+		EdgeClass ec1 = createEdgeClass(gc, "EC1", vc1, vc2);
+		EdgeClass ec2 = createEdgeClass(gc, "EC2", vc2, vc2);
+		assertEquals(2, gc.getEdgeClassCount());
+		assertEquals(2, gc.getVertexClassCount());
+
+		ec1.delete();
+		assertNull(gc.getEdgeClass("EC1"));
+		assertFalse(gc.getSchema().knows("EC1"));
+		assertEquals(1, gc.getEdgeClassCount());
+		assertEquals(2, gc.getVertexClassCount());
+
+		vc1.delete();
+		assertNull(gc.getVertexClass("VC1"));
+		assertFalse(gc.getSchema().knows("VC1"));
+		assertEquals(1, gc.getEdgeClassCount());
+		assertEquals(1, gc.getVertexClassCount());
+
+		ec2.delete();
+		assertNull(gc.getEdgeClass("EC2"));
+		assertFalse(gc.getSchema().knows("EC2"));
+		assertEquals(0, gc.getEdgeClassCount());
+		assertEquals(1, gc.getVertexClassCount());
+
+		vc2.delete();
+		assertNull(gc.getVertexClass("VC2"));
+		assertFalse(gc.getSchema().knows("VC2"));
+		assertEquals(0, gc.getEdgeClassCount());
+		assertEquals(0, gc.getVertexClassCount());
 	}
 }
