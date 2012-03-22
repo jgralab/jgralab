@@ -38,7 +38,6 @@ package de.uni_koblenz.jgralab.schema.impl;
 import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
 import java.util.TreeSet;
 
 import org.pcollections.ArrayPSet;
@@ -177,7 +176,7 @@ public abstract class AttributedElementClassImpl<SC extends AttributedElementCla
 	}
 
 	@Override
-	public Set<Constraint> getConstraints() {
+	public PSet<Constraint> getConstraints() {
 		return constraints;
 	}
 

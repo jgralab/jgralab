@@ -41,10 +41,11 @@ import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.Vector;
+
+import org.pcollections.PSet;
 
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphFactory;
@@ -181,6 +182,19 @@ public interface Schema extends Comparable<Schema> {
 			List<String> enumComponents);
 
 	/**
+	 * Builds a new enumeration domain, multiple domains may exist in a schema
+	 *
+	 * @param qualifiedName
+	 *            the qualified name of the {@link EnumDomain}
+	 * @param enumComponents
+	 *            an array of strings which state the constants of the
+	 *            enumeration
+	 * @return a new enumeration domain
+	 */
+	public EnumDomain createEnumDomain(String qualifiedName,
+			String... enumComponents);
+
+	/**
 	 * Creates a new {@link GraphClass} and saves it to the schema object
 	 *
 	 * @param simpleName
@@ -281,7 +295,7 @@ public interface Schema extends Comparable<Schema> {
 	/**
 	 * @return all the domains in the schema
 	 */
-	public Map<String, Domain> getDomains();
+	public PSet<Domain> getDomains();
 
 	public DoubleDomain getDoubleDomain();
 

@@ -40,6 +40,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import org.pcollections.ArrayPSet;
+import org.pcollections.PSet;
+
 import de.uni_koblenz.jgralab.schema.Domain;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.NamedElement;
@@ -186,13 +189,13 @@ public final class PackageImpl extends NamedElementImpl implements Package {
 	}
 
 	@Override
-	public Map<String, Domain> getDomains() {
-		return domains;
+	public PSet<Domain> getDomains() {
+		return ArrayPSet.<Domain> empty().plusAll(domains.values());
 	}
 
 	@Override
-	public Map<String, EdgeClass> getEdgeClasses() {
-		return edgeClasses;
+	public PSet<EdgeClass> getEdgeClasses() {
+		return ArrayPSet.<EdgeClass> empty().plusAll(edgeClasses.values());
 	}
 
 	@Override
@@ -206,13 +209,13 @@ public final class PackageImpl extends NamedElementImpl implements Package {
 	}
 
 	@Override
-	public Map<String, Package> getSubPackages() {
-		return subPackages;
+	public PSet<Package> getSubPackages() {
+		return ArrayPSet.<Package> empty().plusAll(subPackages.values());
 	}
 
 	@Override
-	public Map<String, VertexClass> getVertexClasses() {
-		return vertexClasses;
+	public PSet<VertexClass> getVertexClasses() {
+		return ArrayPSet.<VertexClass> empty().plusAll(vertexClasses.values());
 	}
 
 	@Override
@@ -292,5 +295,20 @@ public final class PackageImpl extends NamedElementImpl implements Package {
 		parentPackage.subPackages.remove(simpleName);
 		schema.packages.remove(qualifiedName);
 		schema.namedElements.remove(qualifiedName);
+	}
+
+	@Override
+	public EdgeClass getEdgeClass(String simpleName) {
+		return edgeClasses.get(simpleName);
+	}
+
+	@Override
+	public Domain getDomain(String simpleName) {
+		return domains.get(simpleName);
+	}
+
+	@Override
+	public VertexClass getVertexClass(String simpleName) {
+		return vertexClasses.get(simpleName);
 	}
 }

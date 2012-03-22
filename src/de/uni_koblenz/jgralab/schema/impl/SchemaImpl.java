@@ -41,6 +41,7 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -54,6 +55,9 @@ import javax.tools.JavaCompiler;
 import javax.tools.JavaFileObject;
 import javax.tools.StandardJavaFileManager;
 import javax.tools.ToolProvider;
+
+import org.pcollections.ArrayPSet;
+import org.pcollections.PSet;
 
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphFactory;
@@ -581,6 +585,12 @@ public class SchemaImpl implements Schema, ManagableArtifact {
 	}
 
 	@Override
+	public EnumDomain createEnumDomain(String qualifiedName,
+			String... enumComponents) {
+		return createEnumDomain(qualifiedName, Arrays.asList(enumComponents));
+	}
+
+	@Override
 	public GraphClass createGraphClass(String simpleName) {
 		assertNotFinished();
 		if (graphClass != null) {
@@ -875,8 +885,8 @@ public class SchemaImpl implements Schema, ManagableArtifact {
 	}
 
 	@Override
-	public Map<String, Domain> getDomains() {
-		return domains;
+	public PSet<Domain> getDomains() {
+		return ArrayPSet.<Domain> empty().plusAll(domains.values());
 	}
 
 	void addDomainDependency(Domain composite, Domain base) {

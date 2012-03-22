@@ -87,12 +87,7 @@ import de.uni_koblenz.jgralab.grumlschema.structure.SpecializesEdgeClass;
 import de.uni_koblenz.jgralab.grumlschema.structure.SpecializesVertexClass;
 import de.uni_koblenz.jgralab.grumlschema.structure.Subsets;
 import de.uni_koblenz.jgralab.grumlschema.structure.VertexClass;
-import de.uni_koblenz.jgralab.schema.BooleanDomain;
-import de.uni_koblenz.jgralab.schema.DoubleDomain;
-import de.uni_koblenz.jgralab.schema.IntegerDomain;
-import de.uni_koblenz.jgralab.schema.LongDomain;
 import de.uni_koblenz.jgralab.schema.RecordDomain.RecordComponent;
-import de.uni_koblenz.jgralab.schema.StringDomain;
 
 /**
  * Compares a given Schema and SchemaGraph with each other.
@@ -335,10 +330,6 @@ public class CompareSchemaWithSchemaGraph {
 	 */
 	final private void compareAllDomains(
 			de.uni_koblenz.jgralab.schema.Package xPackage, Package gPackage) {
-		// Gets all Domains (clone of the map) of a Schema
-		Map<String, de.uni_koblenz.jgralab.schema.Domain> domains = new HashMap<String, de.uni_koblenz.jgralab.schema.Domain>(
-				xPackage.getDomains());
-
 		// Loop over all ContainsDomain edges
 		for (ContainsDomain containsDomain : gPackage
 				.getContainsDomainIncidences(OUTGOING)) {
@@ -350,29 +341,14 @@ public class CompareSchemaWithSchemaGraph {
 					.getSimpleName();
 
 			// Gets, removes and compares at the same time both Domain objects.
-			de.uni_koblenz.jgralab.schema.Domain domain = domains
-					.remove(simpleName);
-			assertFalse("There is corresponding Domain of name \"" + simpleName
-					+ "\" in the Schema.", domain == null);
+			de.uni_koblenz.jgralab.schema.Domain domain = xPackage
+					.getDomain(simpleName);
+			assertTrue("There is corresponding Domain of name \"" + simpleName
+					+ "\" in the Schema.", domain != null);
 
 			compareDomain(domain, gDomain);
 		}
 
-		clearBasicDomains(domains);
-
-		// After all this, the Domain map should be empty
-		assertTrue(
-				"There are more Domains in the Schema then in the SchemaGraph.",
-				domains.isEmpty());
-	}
-
-	private void clearBasicDomains(
-			Map<String, de.uni_koblenz.jgralab.schema.Domain> domains) {
-		domains.remove(BooleanDomain.BOOLEANDOMAIN_NAME);
-		domains.remove(IntegerDomain.INTDOMAIN_NAME);
-		domains.remove(LongDomain.LONGDOMAIN_NAME);
-		domains.remove(DoubleDomain.DOUBLEDOMAIN_NAME);
-		domains.remove(StringDomain.STRINGDOMAIN_NAME);
 	}
 
 	private Domain retrieveDomain(ContainsDomain containsDomain) {
@@ -394,11 +370,11 @@ public class CompareSchemaWithSchemaGraph {
 	 */
 	final private void compareAllGraphElementClasses(
 			de.uni_koblenz.jgralab.schema.Package xPackage, Package gPackage) {
-		// Gets a cloned map of all VertexClass and EdgeClass objects
-		Map<String, de.uni_koblenz.jgralab.schema.VertexClass> vertexClasses = new HashMap<String, de.uni_koblenz.jgralab.schema.VertexClass>(
-				xPackage.getVertexClasses());
-		Map<String, de.uni_koblenz.jgralab.schema.EdgeClass> edgeClasses = new HashMap<String, de.uni_koblenz.jgralab.schema.EdgeClass>(
-				xPackage.getEdgeClasses());
+
+		assertEquals("The number of graph element classes in package "
+				+ xPackage + " don't match!", xPackage.getVertexClasses()
+				.size() + xPackage.getEdgeClasses().size(),
+				gPackage.getDegree(ContainsGraphElementClass.class));
 
 		// Loop over all ContainsGraphElementClass edges
 		for (ContainsGraphElementClass containsGraphElementClass : gPackage
@@ -420,7 +396,7 @@ public class CompareSchemaWithSchemaGraph {
 						gVertexClass.get_qualifiedName()).getSimpleName();
 				// Queries, removes and compares at the same time two
 				// VertexClass objects
-				compareVertexClass(vertexClasses.remove(simpleName),
+				compareVertexClass(xPackage.getVertexClass(simpleName),
 						gVertexClass);
 			} else if (omega instanceof EdgeClass) {
 				// The Same for the EdgeClass comparison
@@ -430,20 +406,12 @@ public class CompareSchemaWithSchemaGraph {
 						gEdgeClass.get_qualifiedName()).getSimpleName();
 				// Queries, removes and compares at the same time two EdgeClass
 				// objects
-				compareEdgeClass(edgeClasses.remove(simpleName), gEdgeClass);
+				compareEdgeClass(xPackage.getEdgeClass(simpleName), gEdgeClass);
 			} else {
 				throw new RuntimeException("Unexpected type " + omega);
 			}
 		}
 
-		// Both maps should be empty.
-
-		assertTrue(
-				"There are more VertexClasses in Schema then in the SchemaGraph.",
-				vertexClasses.isEmpty());
-		assertTrue(
-				"There are more EdgeClasses in Schema then in the SchemaGraph.",
-				edgeClasses.isEmpty());
 	}
 
 	/**
@@ -458,9 +426,10 @@ public class CompareSchemaWithSchemaGraph {
 	 */
 	final private void compareAllSubPackages(
 			de.uni_koblenz.jgralab.schema.Package xPackage, Package gPackage) {
-		// Map of SubPackages is cloned
-		Map<String, de.uni_koblenz.jgralab.schema.Package> subPackages = new HashMap<String, de.uni_koblenz.jgralab.schema.Package>(
-				xPackage.getSubPackages());
+
+		assertEquals("The number of subpackages in package " + xPackage
+				+ " don't match!", xPackage.getSubPackages().size(),
+				gPackage.getDegree(ContainsSubPackage.class, EdgeDirection.OUT));
 
 		// Loop over all ContainsSubPackage edges
 		for (ContainsSubPackage containsSubPackage : gPackage
@@ -476,16 +445,12 @@ public class CompareSchemaWithSchemaGraph {
 			assertTrue("There is no corresponding Package in Schema.",
 					subpackage != null);
 			assertTrue("There is no corresponding Package in Schema.",
-					subPackages.containsKey(subpackage.getSimpleName()));
+					xPackage.getSubPackage(subpackage.getSimpleName()) != null);
 
 			// Gets, removes and compares both Package objects with each other
-			comparePackage(subPackages.remove(subpackage.getSimpleName()),
-					gSubPackage);
+			comparePackage(subpackage, gSubPackage);
 		}
-		// There shouldn't be any Package left in the map
-		assertTrue(
-				"There are more Packages in the Schema then in the SchemaGraph.",
-				subPackages.isEmpty());
+
 	}
 
 	/**

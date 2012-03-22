@@ -168,14 +168,12 @@ public class SchemaModificationTests {
 		assertNotNull(gc.getSchema().getPackage("p2"));
 		// and p1 is empty
 		assertEquals(0, gc.getSchema().getPackage("p1").getVertexClasses()
-				.keySet().size()
-				+ gc.getSchema().getPackage("p1").getEdgeClasses().keySet()
-						.size());
+				.size()
+				+ gc.getSchema().getPackage("p1").getEdgeClasses().size());
 		// and p2 contains 2 vertex classes and 1 edge class
 		assertEquals(2, gc.getSchema().getPackage("p2").getVertexClasses()
-				.keySet().size());
-		assertEquals(1, gc.getSchema().getPackage("p2").getEdgeClasses()
-				.keySet().size());
+				.size());
+		assertEquals(1, gc.getSchema().getPackage("p2").getEdgeClasses().size());
 	}
 
 	@Test(expected = SchemaException.class)
@@ -341,5 +339,53 @@ public class SchemaModificationTests {
 		assertNull(gc.getSchema().getNamedElement("foo"));
 		assertTrue(gc.getSchema().getDefaultPackage().getSubPackages()
 				.isEmpty());
+	}
+
+	@Test(expected = SchemaException.class)
+	public void testDeleteUsedDomain() {
+		// must not delete domain that is still in use!
+		GraphClass gc = createSchemaWithGraphClass();
+		EnumDomain ed = gc.getSchema().createEnumDomain("MyEnum", "FOO", "BAR",
+				"BAZ");
+		gc.createAttribute("enumAttr", ed);
+		ed.delete();
+	}
+
+	@Test(expected = SchemaException.class)
+	public void testDeleteBasicDomain() {
+		// must not delete basic domain
+		GraphClass gc = createSchemaWithGraphClass();
+		gc.getSchema().getStringDomain().delete();
+	}
+
+	@Test(expected = SchemaException.class)
+	public void testDeleteCollectionDomain() {
+		// must not delete collection domain
+		GraphClass gc = createSchemaWithGraphClass();
+		gc.getSchema().createListDomain(gc.getSchema().getIntegerDomain())
+				.delete();
+	}
+
+	@Test(expected = SchemaException.class)
+	public void testDeleteMapDomain() {
+		// must not delete map domain
+		GraphClass gc = createSchemaWithGraphClass();
+		gc.getSchema()
+				.createMapDomain(gc.getSchema().getIntegerDomain(),
+						gc.getSchema().getIntegerDomain()).delete();
+	}
+
+	@Test
+	public void testDeleteDomain() {
+		// must not delete map domain
+		GraphClass gc = createSchemaWithGraphClass();
+		EnumDomain ed = gc.getSchema().createEnumDomain("MyEnum", "FOO", "BAR",
+				"BAZ");
+		assertEquals(ed, gc.getSchema().getDomain("MyEnum"));
+		ed.delete();
+		assertFalse(gc.getSchema().knows("MyEnum"));
+		assertNull(gc.getSchema().getDomain("MyEnum"));
+		assertNull(gc.getSchema().getNamedElement("MyEnum"));
+		assertNull(gc.getSchema().getDefaultPackage().getDomain("MyEnum"));
 	}
 }
