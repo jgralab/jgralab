@@ -9,6 +9,7 @@ import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 
 import de.uni_koblenz.jgralab.schema.AggregationKind;
+import de.uni_koblenz.jgralab.schema.Attribute;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.EnumDomain;
 import de.uni_koblenz.jgralab.schema.GraphClass;
@@ -241,5 +242,24 @@ public class SchemaModificationTests {
 		assertFalse(gc.getSchema().knows("VC2"));
 		assertEquals(0, gc.getEdgeClassCount());
 		assertEquals(0, gc.getVertexClassCount());
+	}
+
+	@Test
+	public void testGCAttributeDeletion() {
+		GraphClass gc = createSchemaWithGraphClass();
+		Attribute a1 = gc.createAttribute("a1", gc.getSchema()
+				.getStringDomain());
+		Attribute a2 = gc.createAttribute("a2", gc.getSchema()
+				.getStringDomain());
+		assertEquals(2, gc.getAttributeCount());
+		assertEquals(2, gc.getSchema().getStringDomain().getAttributes().size());
+
+		a1.delete();
+		assertEquals(1, gc.getAttributeCount());
+		assertEquals(1, gc.getSchema().getStringDomain().getAttributes().size());
+
+		a2.delete();
+		assertEquals(0, gc.getAttributeCount());
+		assertEquals(0, gc.getSchema().getStringDomain().getAttributes().size());
 	}
 }
