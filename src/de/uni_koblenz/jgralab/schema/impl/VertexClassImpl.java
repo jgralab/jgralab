@@ -492,7 +492,13 @@ public final class VertexClassImpl extends
 			throw new SchemaException(
 					"The default vertex class cannot be deleted.");
 		}
-		schema.namedElements.remove(qualifiedName);
+		if (!getConnectedEdgeClasses().isEmpty()) {
+			throw new SchemaException("Cannot delete vertex class "
+					+ qualifiedName
+					+ " because there are still connected edge classes: "
+					+ getConnectedEdgeClasses());
+		}
+		super.delete();
 		graphClass.vertexClasses.remove(qualifiedName);
 		graphClass.vertexClassDag.delete(this);
 		parentPackage.vertexClasses.remove(simpleName);
