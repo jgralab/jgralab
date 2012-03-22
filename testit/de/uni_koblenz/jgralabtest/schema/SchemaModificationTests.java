@@ -262,4 +262,57 @@ public class SchemaModificationTests {
 		assertEquals(0, gc.getAttributeCount());
 		assertEquals(0, gc.getSchema().getStringDomain().getAttributes().size());
 	}
+
+	@Test
+	public void testVCAttributeDeletion() {
+		GraphClass gc = createSchemaWithGraphClass();
+		VertexClass vc = gc.createVertexClass("VC");
+		Attribute a1 = vc.createAttribute("a1", vc.getSchema()
+				.getStringDomain());
+		Attribute a2 = vc.createAttribute("a2", vc.getSchema()
+				.getStringDomain());
+		assertEquals(2, vc.getAttributeCount());
+		assertEquals(2, vc.getSchema().getStringDomain().getAttributes().size());
+
+		a1.delete();
+		assertEquals(1, vc.getAttributeCount());
+		assertEquals(1, vc.getSchema().getStringDomain().getAttributes().size());
+
+		a2.delete();
+		assertEquals(0, vc.getAttributeCount());
+		assertEquals(0, vc.getSchema().getStringDomain().getAttributes().size());
+	}
+
+	@Test
+	public void testVCAttributeDeletionWithHierarchy() {
+		GraphClass gc = createSchemaWithGraphClass();
+		VertexClass vc = gc.createVertexClass("VC1");
+		VertexClass vc2 = gc.createVertexClass("VC2");
+		Attribute a1 = vc.createAttribute("a1", vc.getSchema()
+				.getStringDomain());
+		Attribute a2 = vc2.createAttribute("a2", vc.getSchema()
+				.getStringDomain());
+		Attribute a3 = vc.createAttribute("a3", vc.getSchema()
+				.getStringDomain());
+		vc2.addSuperClass(vc);
+
+		assertEquals(2, vc.getAttributeCount());
+		assertEquals(3, vc2.getAttributeCount());
+		assertEquals(3, vc.getSchema().getStringDomain().getAttributes().size());
+
+		a1.delete();
+		assertEquals(1, vc.getAttributeCount());
+		assertEquals(2, vc2.getAttributeCount());
+		assertEquals(2, vc.getSchema().getStringDomain().getAttributes().size());
+
+		a2.delete();
+		assertEquals(1, vc.getAttributeCount());
+		assertEquals(1, vc2.getAttributeCount());
+		assertEquals(1, vc.getSchema().getStringDomain().getAttributes().size());
+
+		a3.delete();
+		assertEquals(0, vc.getAttributeCount());
+		assertEquals(0, vc2.getAttributeCount());
+		assertEquals(0, vc.getSchema().getStringDomain().getAttributes().size());
+	}
 }
