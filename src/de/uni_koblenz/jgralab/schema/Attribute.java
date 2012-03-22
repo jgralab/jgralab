@@ -64,6 +64,12 @@ public interface Attribute {
 	public String getName();
 
 	/**
+	 * @param newName
+	 *            the new attribute name
+	 */
+	public void setName(String newName);
+
+	/**
 	 * Returns the default value of this Attribute as String conforming to the
 	 * TG representation of the default value.
 	 *

@@ -45,6 +45,7 @@ import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.Constraint;
 import de.uni_koblenz.jgralab.schema.GraphClass;
 import de.uni_koblenz.jgralab.schema.Schema;
+import de.uni_koblenz.jgralab.schema.exception.SchemaException;
 import de.uni_koblenz.jgralab.schema.impl.ConstraintImpl;
 import de.uni_koblenz.jgralab.schema.impl.SchemaImpl;
 
@@ -824,6 +825,24 @@ public abstract class AttributedElementClassImplTest<AEC extends AttributedEleme
 	@Test
 	public void testSubclassContainsAttribute() {
 		// TODO Auto-generated method stub
+	}
+
+	@Test(expected = SchemaException.class)
+	public void testCreateAttributeInvalid() {
+		// spaces in attr name
+		attributedElement.createAttribute("bla bla", schema.getStringDomain());
+	}
+
+	@Test(expected = SchemaException.class)
+	public void testCreateAttributeInvalid2() {
+		// leading number
+		attributedElement.createAttribute("3bla", schema.getStringDomain());
+	}
+
+	@Test(expected = SchemaException.class)
+	public void testCreateAttributeInvalid3() {
+		// against convention
+		attributedElement.createAttribute("Bla", schema.getStringDomain());
 	}
 
 	public abstract void testToString();

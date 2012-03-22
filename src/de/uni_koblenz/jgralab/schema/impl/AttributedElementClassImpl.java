@@ -70,7 +70,7 @@ public abstract class AttributedElementClassImpl<SC extends AttributedElementCla
 	protected PSet<Constraint> constraints;
 
 	/**
-	 * maps each attribute to an index
+	 * maps each attribute to an index -- computed on schema finish
 	 */
 	protected HashMap<String, Integer> attributeIndex;
 

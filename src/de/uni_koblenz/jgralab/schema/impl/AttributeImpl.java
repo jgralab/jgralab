@@ -35,6 +35,8 @@
 
 package de.uni_koblenz.jgralab.schema.impl;
 
+import java.util.regex.Pattern;
+
 import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.schema.Attribute;
@@ -49,10 +51,13 @@ import de.uni_koblenz.jgralab.schema.exception.SchemaException;
  */
 public class AttributeImpl implements Attribute, Comparable<Attribute> {
 
+	private static final Pattern ATTRIBUTE_NAME_PATTERN = Pattern
+			.compile("\\p{Lower}\\w*");
+
 	/**
 	 * the name of the attribute
 	 */
-	private final String name;
+	private String name;
 
 	/**
 	 * the domain of the attribute
@@ -95,6 +100,9 @@ public class AttributeImpl implements Attribute, Comparable<Attribute> {
 	 */
 	AttributeImpl(String name, Domain domain, AttributedElementClass<?, ?> aec,
 			String defaultValue) {
+		if (!ATTRIBUTE_NAME_PATTERN.matcher(name).matches()) {
+			throw new SchemaException("Invalid attribute name '" + name + "'.");
+		}
 		this.name = name;
 		this.domain = domain;
 		this.aec = aec;
@@ -217,5 +225,14 @@ public class AttributeImpl implements Attribute, Comparable<Attribute> {
 		((AttributedElementClassImpl<?, ?>) aec).deleteAttribute(this);
 		DomainImpl d = (DomainImpl) domain;
 		d.attributes = d.attributes.minus(this);
+	}
+
+	@Override
+	public void setName(String newName) {
+		((SchemaImpl) aec.getSchema()).assertNotFinished();
+		if (!ATTRIBUTE_NAME_PATTERN.matcher(newName).matches()) {
+			throw new SchemaException("Invalid attribute name '" + name + "'.");
+		}
+		name = newName;
 	}
 }

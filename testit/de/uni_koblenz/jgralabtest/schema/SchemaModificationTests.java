@@ -184,6 +184,25 @@ public class SchemaModificationTests {
 	}
 
 	@Test
+	public void testRenameAttribute() {
+		GraphClass gc = createSchemaWithGraphClass();
+		Attribute a = gc.createAttribute("foo", gc.getSchema()
+				.getStringDomain());
+		a.setName("bar");
+		assertNull(gc.getAttribute("foo"));
+		assertEquals(a, gc.getAttribute("bar"));
+	}
+
+	@Test(expected = SchemaException.class)
+	public void testRenameAttribute2() {
+		// invalid attribute name
+		GraphClass gc = createSchemaWithGraphClass();
+		Attribute a = gc.createAttribute("foo", gc.getSchema()
+				.getStringDomain());
+		a.setName("2bar");
+	}
+
+	@Test
 	public void testDeleteVertexClass() {
 		GraphClass gc = createSchemaWithGraphClass();
 		VertexClass vc1 = gc.createVertexClass("VC1");
