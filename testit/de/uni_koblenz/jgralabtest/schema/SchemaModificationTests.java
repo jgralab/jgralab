@@ -315,4 +315,29 @@ public class SchemaModificationTests {
 		assertEquals(0, vc2.getAttributeCount());
 		assertEquals(0, vc.getSchema().getStringDomain().getAttributes().size());
 	}
+
+	@Test(expected = SchemaException.class)
+	public void testDeleteDefaultPackage() {
+		createSchemaWithGraphClass().getPackage().delete();
+	}
+
+	@Test(expected = SchemaException.class)
+	public void testDeleteNonEmptyPackage() {
+		GraphClass gc = createSchemaWithGraphClass();
+		gc.createVertexClass("foo.Bar");
+		Package p = gc.getPackage().getSubPackage("foo");
+		p.delete();
+	}
+
+	@Test
+	public void testDeletePackage() {
+		GraphClass gc = createSchemaWithGraphClass();
+		VertexClass vc = gc.createVertexClass("foo.Bar");
+		Package p = gc.getPackage().getSubPackage("foo");
+		vc.delete();
+		assertEquals(0, gc.getVertexClassCount());
+		p.delete();
+		assertTrue(gc.getSchema().getDefaultPackage().getSubPackages()
+				.isEmpty());
+	}
 }

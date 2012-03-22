@@ -289,6 +289,6 @@ public final class PackageImpl extends NamedElementImpl implements Package {
 				|| (edgeClasses.size() != 0)) {
 			throw new SchemaException("Only empty packages can be deleted!");
 		}
-		parentPackage.subPackages.remove(this);
+		parentPackage.subPackages.remove(simpleName);
 	}
 }
