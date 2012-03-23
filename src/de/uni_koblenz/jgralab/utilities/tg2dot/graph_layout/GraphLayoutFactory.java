@@ -251,8 +251,15 @@ public class GraphLayoutFactory {
 		for (Entry<T, TypeDefinition> entry : map.entrySet()) {
 			T type = entry.getKey();
 
-			List<T> allSuperClasses = new ArrayList<T>(allSchemaTypes);
+			ArrayList<T> allSuperClasses = new ArrayList<T>(allSchemaTypes);
 			allSuperClasses.retainAll(type.getAllSuperClasses());
+			if (isVertexClasses) {
+				allSuperClasses.add(0, (T) type.getGraphClass()
+						.getDefaultVertexClass());
+			} else {
+				allSuperClasses.add(0, (T) type.getGraphClass()
+						.getDefaultEdgeClass());
+			}
 			Collections.reverse(allSuperClasses);
 
 			for (AttributedElementClass<?, ?> supertype : allSuperClasses) {
