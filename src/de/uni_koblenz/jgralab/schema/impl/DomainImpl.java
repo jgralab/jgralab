@@ -93,4 +93,17 @@ public abstract class DomainImpl extends NamedElementImpl implements Domain {
 	public PSet<Attribute> getAttributes() {
 		return attributes;
 	}
+
+	/**
+	 * Registers the given attribute as user of this domain. Collection, Map,
+	 * and RecordDomains override this and also register their base/key/value
+	 * domains or their record component domains.
+	 *
+	 * That's done for disallowing the deletion of domains that are still used
+	 * as attribute domain. E.g., if there's still an List&lt;Map&lt;String,
+	 * FooRecord&gt;&gt; attribute, you must not delete the FooRecord domain.
+	 */
+	protected void registerAttribute(Attribute a) {
+		attributes = attributes.plus(a);
+	}
 }

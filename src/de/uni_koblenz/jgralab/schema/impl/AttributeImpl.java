@@ -109,7 +109,7 @@ public class AttributeImpl implements Attribute, Comparable<Attribute> {
 		sortKey = name + ":" + domain.getQualifiedName();
 		setDefaultValueAsString(defaultValue);
 		DomainImpl d = ((DomainImpl) this.domain);
-		d.attributes = d.attributes.plus(this);
+		d.registerAttribute(this);
 	}
 
 	/*
