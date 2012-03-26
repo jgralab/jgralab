@@ -47,6 +47,7 @@ import de.uni_koblenz.jgralab.Record;
 import de.uni_koblenz.jgralab.codegenerator.CodeBlock;
 import de.uni_koblenz.jgralab.codegenerator.CodeGenerator;
 import de.uni_koblenz.jgralab.codegenerator.CodeSnippet;
+import de.uni_koblenz.jgralab.schema.Attribute;
 import de.uni_koblenz.jgralab.schema.Domain;
 import de.uni_koblenz.jgralab.schema.Package;
 import de.uni_koblenz.jgralab.schema.RecordDomain;
@@ -373,5 +374,26 @@ public final class RecordDomainImpl extends CompositeDomainImpl implements
 		parentPackage = schema.createPackageWithParents(newPackageName);
 
 		register();
+	}
+
+	@Override
+	public void delete() {
+		schema.assertNotFinished();
+		if (!attributes.isEmpty()) {
+			throw new SchemaException(
+					"Cannot delete record domain that is still used by attributes: "
+							+ attributes);
+		}
+		parentPackage.domains.remove(simpleName);
+		schema.namedElements.remove(qualifiedName);
+		schema.domains.remove(qualifiedName);
+	}
+
+	@Override
+	protected void registerAttribute(Attribute a) {
+		attributes = attributes.plus(a);
+		for (RecordComponent rc : components.values()) {
+			((DomainImpl) rc.getDomain()).registerAttribute(a);
+		}
 	}
 }

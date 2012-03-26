@@ -169,30 +169,32 @@ public class SystemTest extends GenericTest {
 
 		assertEquals(crossroadCount, result.size());
 	}
-	
+
 	@Test
 	public void testSimpleQuery() {
 		Map<String, Object> boundVars = new HashMap<String, Object>();
-		PSet x = JGraLab.set();
-		for (int i=1; i<2000; i++) {
+		PSet<Integer> x = JGraLab.set();
+		for (int i = 1; i < 2000; i++) {
 			x = x.plus(i);
 		}
-		PSet y = JGraLab.set();
-		for (int i=1; i<3000; i++) {
+		PSet<Integer> y = JGraLab.set();
+		for (int i = 1; i < 3000; i++) {
 			y = y.plus(i);
 		}
 		boundVars.put("X", x);
 		boundVars.put("Y", y);
-	//	String query = "using X,Y: from x:X, y:Y reportList x*y end";
-	//	String query = "using X,Y: from x:X, y:Y with (y % 2 <> 1) and (x % 3 = 0) reportList x*y end";
-		String query = //"using X,Y: forall x:X, y:Y @ x*y > 0";
+		// String query = "using X,Y: from x:X, y:Y reportList x*y end";
+		// String query =
+		// "using X,Y: from x:X, y:Y with (y % 2 <> 1) and (x % 3 = 0) reportList x*y end";
+		String query = // "using X,Y: forall x:X, y:Y @ x*y > 0";
 		"using X,Y: from x:X, y:Y reportMap y->x end";
 		long startTime = System.currentTimeMillis();
 		GreqlEvaluator eval = new GreqlEvaluator(query, null, boundVars);
 		eval.startEvaluation();
 		eval.getResult();
 		long usedTime = System.currentTimeMillis() - startTime;
-		System.out.println("Evaluation of interpreted query took " + usedTime + "msec");
+		System.out.println("Evaluation of interpreted query took " + usedTime
+				+ "msec");
 	}
-	
+
 }

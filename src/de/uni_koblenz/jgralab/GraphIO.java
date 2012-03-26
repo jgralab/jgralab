@@ -92,8 +92,6 @@ import de.uni_koblenz.jgralab.schema.exception.SchemaException;
 import de.uni_koblenz.jgralab.schema.impl.BasicDomainImpl;
 import de.uni_koblenz.jgralab.schema.impl.ConstraintImpl;
 import de.uni_koblenz.jgralab.schema.impl.SchemaImpl;
-import de.uni_koblenz.jgralab.schema.impl.TemporaryEdgeClassImpl;
-import de.uni_koblenz.jgralab.schema.impl.TemporaryVertexClassImpl;
 import de.uni_koblenz.jgralab.schema.impl.compilation.SchemaClassManager;
 
 /**
@@ -383,7 +381,7 @@ public class GraphIO {
 		worklist.offer(s.getDefaultPackage());
 		while (!worklist.isEmpty()) {
 			Package pkg = worklist.poll();
-			worklist.addAll(pkg.getSubPackages().values());
+			worklist.addAll(pkg.getSubPackages());
 
 			// write package declaration
 			if (!pkg.isDefaultPackage()) {
@@ -394,7 +392,7 @@ public class GraphIO {
 			}
 
 			// write domains
-			for (Domain dom : pkg.getDomains().values()) {
+			for (Domain dom : pkg.getDomains()) {
 				if (dom instanceof EnumDomain) {
 					EnumDomain ed = (EnumDomain) dom;
 					write("EnumDomain");
@@ -431,12 +429,7 @@ public class GraphIO {
 			}
 
 			// write vertex classes
-			for (VertexClass vc : pkg.getVertexClasses().values()) {
-				if (vc.isDefaultGraphElementClass()) {
-					continue;
-				}else if(vc instanceof TemporaryVertexClassImpl){
-					continue;
-				}
+			for (VertexClass vc : pkg.getVertexClasses()) {
 				if (vc.isAbstract()) {
 					write("abstract ");
 				}
@@ -451,10 +444,8 @@ public class GraphIO {
 			}
 
 			// write edge classes
-			for (EdgeClass ec : pkg.getEdgeClasses().values()) {
+			for (EdgeClass ec : pkg.getEdgeClasses()) {
 				if (ec.isDefaultGraphElementClass()) {
-					continue;
-				}else if(ec instanceof TemporaryEdgeClassImpl){
 					continue;
 				}
 				if (ec.isAbstract()) {
@@ -1577,7 +1568,7 @@ public class GraphIO {
 	private void addAttributes(List<AttributeData> attributesData,
 			AttributedElementClass<?, ?> aec) throws GraphIOException {
 		for (AttributeData ad : attributesData) {
-			aec.addAttribute(ad.name, attrDomain(ad.domainDescription),
+			aec.createAttribute(ad.name, attrDomain(ad.domainDescription),
 					ad.defaultValue);
 		}
 	}

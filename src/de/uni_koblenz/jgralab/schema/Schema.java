@@ -41,10 +41,11 @@ import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.Vector;
+
+import org.pcollections.PSet;
 
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphFactory;
@@ -160,24 +161,6 @@ public interface Schema extends Comparable<Schema> {
 			throws IOException, GraphIOException;
 
 	/**
-	 * Creates a new Attribute <code>name</code> with domain <code>dom</code>.
-	 *
-	 * @param name
-	 *            the attribute name
-	 * @param dom
-	 *            the domain for the attribute
-	 * @param aec
-	 *            the {@link AttributedElementClass} owning the
-	 *            {@link Attribute}
-	 * @param defaultValueAsString
-	 *            a String for the default value in TG value syntax, or null if
-	 *            no default value is to be set
-	 * @return the new Attribute
-	 */
-	public Attribute createAttribute(String name, Domain dom,
-			AttributedElementClass<?, ?> aec, String defaultValueAsString);
-
-	/**
 	 * Builds a new enumeration domain, multiple domains may exist in a schema.
 	 *
 	 * @param qualifiedName
@@ -197,6 +180,19 @@ public interface Schema extends Comparable<Schema> {
 	 */
 	public EnumDomain createEnumDomain(String qualifiedName,
 			List<String> enumComponents);
+
+	/**
+	 * Builds a new enumeration domain, multiple domains may exist in a schema
+	 *
+	 * @param qualifiedName
+	 *            the qualified name of the {@link EnumDomain}
+	 * @param enumComponents
+	 *            an array of strings which state the constants of the
+	 *            enumeration
+	 * @return a new enumeration domain
+	 */
+	public EnumDomain createEnumDomain(String qualifiedName,
+			String... enumComponents);
 
 	/**
 	 * Creates a new {@link GraphClass} and saves it to the schema object
@@ -299,7 +295,7 @@ public interface Schema extends Comparable<Schema> {
 	/**
 	 * @return all the domains in the schema
 	 */
-	public Map<String, Domain> getDomains();
+	public PSet<Domain> getDomains();
 
 	public DoubleDomain getDoubleDomain();
 

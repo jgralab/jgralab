@@ -152,7 +152,10 @@ public final class GraphClassImpl extends
 			throw new SchemaException("Duplicate edge class name '"
 					+ ec.getQualifiedName() + "'");
 		}
-		edgeClasses.put(ec.getQualifiedName(), ec);
+		// Don't track the default EC
+		if (!ec.getQualifiedName().equals(EdgeClass.DEFAULTEDGECLASS_NAME)) {
+			edgeClasses.put(ec.getQualifiedName(), ec);
+		}
 	}
 
 	void addVertexClass(VertexClass vc) {
@@ -160,7 +163,10 @@ public final class GraphClassImpl extends
 			throw new SchemaException("Duplicate vertex class name '"
 					+ vc.getQualifiedName() + "'");
 		}
-		vertexClasses.put(vc.getQualifiedName(), vc);
+		// Don't track the default VC
+		if (!vc.getQualifiedName().equals(VertexClass.DEFAULTVERTEXCLASS_NAME)) {
+			vertexClasses.put(vc.getQualifiedName(), vc);
+		}
 	}
 
 	@Override
@@ -174,7 +180,8 @@ public final class GraphClassImpl extends
 			AggregationKind aggrFrom, VertexClass to, int toMin, int toMax,
 			String toRoleName, AggregationKind aggrTo) {
 		assertNotFinished();
-		if (from.isDefaultGraphElementClass() || to.isDefaultGraphElementClass()) {
+		if (from.isDefaultGraphElementClass()
+				|| to.isDefaultGraphElementClass()) {
 			throw new SchemaException(
 					"EdgeClasses starting or ending at the default "
 							+ "VertexClass Vertex are forbidden.");
@@ -255,14 +262,12 @@ public final class GraphClassImpl extends
 
 	@Override
 	public final int getEdgeClassCount() {
-		// -1, cause the defaul edge class doesn't count
-		return edgeClasses.size() - 1;
+		return edgeClasses.size();
 	}
 
 	@Override
 	public final int getVertexClassCount() {
-		// -1, cause the defaul vertex class doesn't count
-		return vertexClasses.size() - 1;
+		return vertexClasses.size();
 	}
 
 	@Override
@@ -333,6 +338,11 @@ public final class GraphClassImpl extends
 		vertexClassDag.reopen();
 		edgeClassDag.reopen();
 		super.reopen();
+	}
+
+	@Override
+	protected void deleteAttribute(AttributeImpl attr) {
+		allAttributes = allAttributes.minus(attr);
 	}
 
 }

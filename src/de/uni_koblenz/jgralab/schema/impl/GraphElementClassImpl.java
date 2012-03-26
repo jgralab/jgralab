@@ -108,7 +108,7 @@ public abstract class GraphElementClassImpl<SC extends GraphElementClass<SC, IC>
 	}
 
 	@Override
-	public void addAttribute(Attribute anAttribute) {
+	protected Attribute createAttribute(Attribute anAttribute) {
 		assertNotFinished();
 		// Check if a subclass already contains an attribute with that name. In
 		// that case, it may not be added, too.
@@ -120,10 +120,11 @@ public abstract class GraphElementClassImpl<SC extends GraphElementClass<SC, IC>
 							+ getQualifiedName()
 							+ "'. A derived AttributedElementClass already contains this Attribute.");
 		}
-		super.addAttribute(anAttribute);
+		super.createAttribute(anAttribute);
 		TreeSet<Attribute> s = new TreeSet<Attribute>(ownAttributes);
 		s.add(anAttribute);
 		ownAttributes = ArrayPVector.<Attribute> empty().plusAll(s);
+		return anAttribute;
 	}
 
 	@Override
@@ -186,8 +187,9 @@ public abstract class GraphElementClassImpl<SC extends GraphElementClass<SC, IC>
 		if (finished) {
 			return allSuperClasses;
 		}
-		return (PSet<SC>) subclassDag.getAllPredecessorsInTopologicalOrder(this).minus(
-				getDefaultClass());
+		return (PSet<SC>) subclassDag
+				.getAllPredecessorsInTopologicalOrder(this).minus(
+						getDefaultClass());
 	}
 
 	@Override
@@ -388,5 +390,21 @@ public abstract class GraphElementClassImpl<SC extends GraphElementClass<SC, IC>
 		allSubClassesBitSet = null;
 
 		super.reopen();
+	}
+
+	@Override
+	protected void deleteAttribute(AttributeImpl attr) {
+		allAttributes = allAttributes.minus(attr);
+		ownAttributes = ownAttributes.minus(attr);
+	}
+
+	@Override
+	public void delete() {
+		for (Attribute a : ownAttributes) {
+			a.delete();
+		}
+		ownAttributes = null;
+		allAttributes = null;
+		schema.namedElements.remove(qualifiedName);
 	}
 }

@@ -68,40 +68,12 @@ public interface AttributedElementClass<SC extends AttributedElementClass<SC, IC
 		extends NamedElement {
 
 	/**
-	 * Adds a new attribute <code>anAttribute</code> to this element.
+	 * Creates and returns an attribute with the given <code>name</code>,
+	 * <code>domain</code>, and default value to this element.
 	 *
 	 * <p>
-	 * <b>Pattern:</b> <code>attrElement.addAttribute(anAttribute);</code>
-	 * </p>
-	 *
-	 * <p>
-	 * <b>Preconditions:</b> <code>anAttribute´s</code> name must be distinct
-	 * from all of this <code>attrElement´s</code> direct and inherited
-	 * attributes´ names.
-	 * </p>
-	 *
-	 * <p>
-	 * <b>Postconditions:</b> In addition to the direct and inherited
-	 * attributes(s) of <code>attrElement</code>, <code>attrElement'</code>
-	 * holds a new attribute with the specified <code>name</code> and
-	 * <code>domain</code>.
-	 * </p>
-	 *
-	 * @param anAttribute
-	 *            the new attribute to be added to this element
-	 *
-	 * @throws DuplicateAttributeException
-	 *             if this element has a direct or inherited attribute with the
-	 *             same <code>name</code>
-	 */
-	public void addAttribute(Attribute anAttribute);
-
-	/**
-	 * Adds an attribute with the given <code>name</code>, <code>domain</code>,
-	 * and default value to this element.
-	 *
-	 * <p>
-	 * <b>Pattern:</b> <code>attrElement.addAttribute(name, domain, "7");</code>
+	 * <b>Pattern:</b>
+	 * <code>attrElement.createAttribute(name, domain, "7");</code>
 	 * </p>
 	 *
 	 * <p>
@@ -129,20 +101,21 @@ public interface AttributedElementClass<SC extends AttributedElementClass<SC, IC
 	 *            a String representing the default value of the nerw Attribute
 	 *            in TG value syntax, or null if no default value is to be
 	 *            specified
+	 * @return the new attribute
 	 * @throws DuplicateAttributeException
 	 *             if this element has a direct or inherited attribute with the
 	 *             same <code>name</code>
 	 */
-	public void addAttribute(String name, Domain domain,
+	public Attribute createAttribute(String name, Domain domain,
 			String defaultValueAsString);
 
 	/**
-	 * Adds an attribute with the given <code>name</code> and
+	 * Creates and returns an attribute with the given <code>name</code> and
 	 * <code>domain</code> to this element. The attribute does not have a
 	 * default value.
 	 *
 	 * <p>
-	 * <b>Pattern:</b> <code>attrElement.addAttribute(name, domain);</code>
+	 * <b>Pattern:</b> <code>attrElement.createAttribute(name, domain);</code>
 	 * </p>
 	 *
 	 * <p>
@@ -165,12 +138,12 @@ public interface AttributedElementClass<SC extends AttributedElementClass<SC, IC
 	 *            and inherited attributes
 	 * @param domain
 	 *            the <code>domain</code> of the new <code>Attribute</code>
-	 *
+	 * @return the new attribute
 	 * @throws DuplicateAttributeException
 	 *             if this element has a direct or inherited attribute with the
 	 *             same <code>name</code>
 	 */
-	public void addAttribute(String name, Domain domain);
+	public Attribute createAttribute(String name, Domain domain);
 
 	/**
 	 * Adds a {@link Constraint} to this attributed element. Constraints are
@@ -592,7 +565,6 @@ public interface AttributedElementClass<SC extends AttributedElementClass<SC, IC
 	 *         <code>false</code>
 	 */
 	public boolean isAbstract();
-
 
 	/**
 	 * Defines if this attributed element is abstract. Abstract elements can´t

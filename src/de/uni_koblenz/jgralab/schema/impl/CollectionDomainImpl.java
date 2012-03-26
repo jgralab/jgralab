@@ -34,6 +34,7 @@
  */
 package de.uni_koblenz.jgralab.schema.impl;
 
+import de.uni_koblenz.jgralab.schema.Attribute;
 import de.uni_koblenz.jgralab.schema.CollectionDomain;
 import de.uni_koblenz.jgralab.schema.Domain;
 import de.uni_koblenz.jgralab.schema.exception.SchemaException;
@@ -64,5 +65,11 @@ public abstract class CollectionDomainImpl extends CompositeDomainImpl
 	@Override
 	public Domain getBaseDomain() {
 		return baseDomain;
+	}
+
+	@Override
+	protected void registerAttribute(Attribute a) {
+		attributes = attributes.plus(a);
+		((DomainImpl) baseDomain).registerAttribute(a);
 	}
 }

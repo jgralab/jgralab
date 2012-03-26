@@ -9,6 +9,7 @@ import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 
 import de.uni_koblenz.jgralab.schema.AggregationKind;
+import de.uni_koblenz.jgralab.schema.Attribute;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.EnumDomain;
 import de.uni_koblenz.jgralab.schema.GraphClass;
@@ -28,6 +29,13 @@ public class SchemaModificationTests {
 		return gc;
 	}
 
+	static EdgeClass createEdgeClass(GraphClass gc, String qname,
+			VertexClass from, VertexClass to) {
+		return gc.createEdgeClass(qname, from, 0, Integer.MAX_VALUE, "",
+				AggregationKind.NONE, to, 0, Integer.MAX_VALUE, "",
+				AggregationKind.NONE);
+	}
+
 	@Test
 	public void testUniqueName() {
 		GraphClass gc = createSchemaWithGraphClass();
@@ -40,12 +48,10 @@ public class SchemaModificationTests {
 		assertEquals("p2$Foo", p2foo.getUniqueName());
 
 		// Test the same for EdgeClasses
-		EdgeClass p1bar = gc.createEdgeClass("p1.Bar", p1foo, 0, 1, "",
-				AggregationKind.NONE, p2foo, 0, 1, "", AggregationKind.NONE);
+		EdgeClass p1bar = createEdgeClass(gc, "p1.Bar", p1foo, p2foo);
 		// Now, Bar is unique
 		assertEquals("Bar", p1bar.getUniqueName());
-		EdgeClass p1p3bar = gc.createEdgeClass("p1.p3.Bar", p1foo, 0, 1, "",
-				AggregationKind.NONE, p2foo, 0, 1, "", AggregationKind.NONE);
+		EdgeClass p1p3bar = createEdgeClass(gc, "p1.p3.Bar", p1foo, p2foo);
 		assertEquals("p1$Bar", p1bar.getUniqueName());
 		assertEquals("p1$p3$Bar", p1p3bar.getUniqueName());
 	}
@@ -148,8 +154,7 @@ public class SchemaModificationTests {
 		GraphClass gc = createSchemaWithGraphClass();
 		VertexClass foo = gc.createVertexClass("p1.Foo");
 		VertexClass bar = gc.createVertexClass("p1.Bar");
-		EdgeClass baz = gc.createEdgeClass("p1.Baz", foo, 0, 1, "",
-				AggregationKind.NONE, bar, 0, 1, "", AggregationKind.NONE);
+		EdgeClass baz = createEdgeClass(gc, "p1.Baz", foo, bar);
 
 		Package p1 = gc.getSchema().getPackage("p1");
 		assertNull(gc.getSchema().getPackage("p2"));
@@ -163,14 +168,12 @@ public class SchemaModificationTests {
 		assertNotNull(gc.getSchema().getPackage("p2"));
 		// and p1 is empty
 		assertEquals(0, gc.getSchema().getPackage("p1").getVertexClasses()
-				.keySet().size()
-				+ gc.getSchema().getPackage("p1").getEdgeClasses().keySet()
-						.size());
+				.size()
+				+ gc.getSchema().getPackage("p1").getEdgeClasses().size());
 		// and p2 contains 2 vertex classes and 1 edge class
 		assertEquals(2, gc.getSchema().getPackage("p2").getVertexClasses()
-				.keySet().size());
-		assertEquals(1, gc.getSchema().getPackage("p2").getEdgeClasses()
-				.keySet().size());
+				.size());
+		assertEquals(1, gc.getSchema().getPackage("p2").getEdgeClasses().size());
 	}
 
 	@Test(expected = SchemaException.class)
@@ -178,6 +181,25 @@ public class SchemaModificationTests {
 		// The default package must not be renamed
 		GraphClass gc = createSchemaWithGraphClass();
 		gc.getPackage().setQualifiedName("foo");
+	}
+
+	@Test
+	public void testRenameAttribute() {
+		GraphClass gc = createSchemaWithGraphClass();
+		Attribute a = gc.createAttribute("foo", gc.getSchema()
+				.getStringDomain());
+		a.setName("bar");
+		assertNull(gc.getAttribute("foo"));
+		assertEquals(a, gc.getAttribute("bar"));
+	}
+
+	@Test(expected = SchemaException.class)
+	public void testRenameAttribute2() {
+		// invalid attribute name
+		GraphClass gc = createSchemaWithGraphClass();
+		Attribute a = gc.createAttribute("foo", gc.getSchema()
+				.getStringDomain());
+		a.setName("2bar");
 	}
 
 	@Test
@@ -191,5 +213,198 @@ public class SchemaModificationTests {
 		assertEquals(1, gc.getVertexClasses().size());
 		assertTrue(gc.getGraphElementClasses().contains(vc2));
 		assertFalse(gc.getGraphElementClasses().contains(vc1));
+	}
+
+	@Test(expected = SchemaException.class)
+	public void testDeleteVCWithConnectedEC() {
+		// must not delete vertex class that still has connected edge classes
+		GraphClass gc = createSchemaWithGraphClass();
+		VertexClass vc1 = gc.createVertexClass("VC1");
+		VertexClass vc2 = gc.createVertexClass("VC2");
+		createEdgeClass(gc, "EC1", vc1, vc2);
+		vc1.delete();
+	}
+
+	@Test
+	public void testDeleteVC() {
+		// must not delete vertex class that still has connected edge classes
+		GraphClass gc = createSchemaWithGraphClass();
+		VertexClass vc1 = gc.createVertexClass("VC1");
+		VertexClass vc2 = gc.createVertexClass("VC2");
+		EdgeClass ec1 = createEdgeClass(gc, "EC1", vc1, vc2);
+		EdgeClass ec2 = createEdgeClass(gc, "EC2", vc2, vc2);
+		assertEquals(2, gc.getEdgeClassCount());
+		assertEquals(2, gc.getVertexClassCount());
+
+		ec1.delete();
+		assertNull(gc.getEdgeClass("EC1"));
+		assertFalse(gc.getSchema().knows("EC1"));
+		assertEquals(1, gc.getEdgeClassCount());
+		assertEquals(2, gc.getVertexClassCount());
+
+		vc1.delete();
+		assertNull(gc.getVertexClass("VC1"));
+		assertFalse(gc.getSchema().knows("VC1"));
+		assertEquals(1, gc.getEdgeClassCount());
+		assertEquals(1, gc.getVertexClassCount());
+
+		ec2.delete();
+		assertNull(gc.getEdgeClass("EC2"));
+		assertFalse(gc.getSchema().knows("EC2"));
+		assertEquals(0, gc.getEdgeClassCount());
+		assertEquals(1, gc.getVertexClassCount());
+
+		vc2.delete();
+		assertNull(gc.getVertexClass("VC2"));
+		assertFalse(gc.getSchema().knows("VC2"));
+		assertEquals(0, gc.getEdgeClassCount());
+		assertEquals(0, gc.getVertexClassCount());
+	}
+
+	@Test
+	public void testGCAttributeDeletion() {
+		GraphClass gc = createSchemaWithGraphClass();
+		Attribute a1 = gc.createAttribute("a1", gc.getSchema()
+				.getStringDomain());
+		Attribute a2 = gc.createAttribute("a2", gc.getSchema()
+				.getStringDomain());
+		assertEquals(2, gc.getAttributeCount());
+		assertEquals(2, gc.getSchema().getStringDomain().getAttributes().size());
+
+		a1.delete();
+		assertEquals(1, gc.getAttributeCount());
+		assertEquals(1, gc.getSchema().getStringDomain().getAttributes().size());
+
+		a2.delete();
+		assertEquals(0, gc.getAttributeCount());
+		assertEquals(0, gc.getSchema().getStringDomain().getAttributes().size());
+	}
+
+	@Test
+	public void testVCAttributeDeletion() {
+		GraphClass gc = createSchemaWithGraphClass();
+		VertexClass vc = gc.createVertexClass("VC");
+		Attribute a1 = vc.createAttribute("a1", vc.getSchema()
+				.getStringDomain());
+		Attribute a2 = vc.createAttribute("a2", vc.getSchema()
+				.getStringDomain());
+		assertEquals(2, vc.getAttributeCount());
+		assertEquals(2, vc.getSchema().getStringDomain().getAttributes().size());
+
+		a1.delete();
+		assertEquals(1, vc.getAttributeCount());
+		assertEquals(1, vc.getSchema().getStringDomain().getAttributes().size());
+
+		a2.delete();
+		assertEquals(0, vc.getAttributeCount());
+		assertEquals(0, vc.getSchema().getStringDomain().getAttributes().size());
+	}
+
+	@Test
+	public void testVCAttributeDeletionWithHierarchy() {
+		GraphClass gc = createSchemaWithGraphClass();
+		VertexClass vc = gc.createVertexClass("VC1");
+		VertexClass vc2 = gc.createVertexClass("VC2");
+		Attribute a1 = vc.createAttribute("a1", vc.getSchema()
+				.getStringDomain());
+		Attribute a2 = vc2.createAttribute("a2", vc.getSchema()
+				.getStringDomain());
+		Attribute a3 = vc.createAttribute("a3", vc.getSchema()
+				.getStringDomain());
+		vc2.addSuperClass(vc);
+
+		assertEquals(2, vc.getAttributeCount());
+		assertEquals(3, vc2.getAttributeCount());
+		assertEquals(3, vc.getSchema().getStringDomain().getAttributes().size());
+
+		a1.delete();
+		assertEquals(1, vc.getAttributeCount());
+		assertEquals(2, vc2.getAttributeCount());
+		assertEquals(2, vc.getSchema().getStringDomain().getAttributes().size());
+
+		a2.delete();
+		assertEquals(1, vc.getAttributeCount());
+		assertEquals(1, vc2.getAttributeCount());
+		assertEquals(1, vc.getSchema().getStringDomain().getAttributes().size());
+
+		a3.delete();
+		assertEquals(0, vc.getAttributeCount());
+		assertEquals(0, vc2.getAttributeCount());
+		assertEquals(0, vc.getSchema().getStringDomain().getAttributes().size());
+	}
+
+	@Test(expected = SchemaException.class)
+	public void testDeleteDefaultPackage() {
+		createSchemaWithGraphClass().getPackage().delete();
+	}
+
+	@Test(expected = SchemaException.class)
+	public void testDeleteNonEmptyPackage() {
+		GraphClass gc = createSchemaWithGraphClass();
+		gc.createVertexClass("foo.Bar");
+		Package p = gc.getPackage().getSubPackage("foo");
+		p.delete();
+	}
+
+	@Test
+	public void testDeletePackage() {
+		GraphClass gc = createSchemaWithGraphClass();
+		VertexClass vc = gc.createVertexClass("foo.Bar");
+		Package p = gc.getPackage().getSubPackage("foo");
+		vc.delete();
+		assertEquals(0, gc.getVertexClassCount());
+		p.delete();
+		assertNull(gc.getSchema().getPackage("foo"));
+		assertNull(gc.getSchema().getNamedElement("foo"));
+		assertTrue(gc.getSchema().getDefaultPackage().getSubPackages()
+				.isEmpty());
+	}
+
+	@Test(expected = SchemaException.class)
+	public void testDeleteUsedDomain() {
+		// must not delete domain that is still in use!
+		GraphClass gc = createSchemaWithGraphClass();
+		EnumDomain ed = gc.getSchema().createEnumDomain("MyEnum", "FOO", "BAR",
+				"BAZ");
+		gc.createAttribute("enumAttr", ed);
+		ed.delete();
+	}
+
+	@Test(expected = SchemaException.class)
+	public void testDeleteBasicDomain() {
+		// must not delete basic domain
+		GraphClass gc = createSchemaWithGraphClass();
+		gc.getSchema().getStringDomain().delete();
+	}
+
+	@Test(expected = SchemaException.class)
+	public void testDeleteCollectionDomain() {
+		// must not delete collection domain
+		GraphClass gc = createSchemaWithGraphClass();
+		gc.getSchema().createListDomain(gc.getSchema().getIntegerDomain())
+				.delete();
+	}
+
+	@Test(expected = SchemaException.class)
+	public void testDeleteMapDomain() {
+		// must not delete map domain
+		GraphClass gc = createSchemaWithGraphClass();
+		gc.getSchema()
+				.createMapDomain(gc.getSchema().getIntegerDomain(),
+						gc.getSchema().getIntegerDomain()).delete();
+	}
+
+	@Test
+	public void testDeleteDomain() {
+		// must not delete map domain
+		GraphClass gc = createSchemaWithGraphClass();
+		EnumDomain ed = gc.getSchema().createEnumDomain("MyEnum", "FOO", "BAR",
+				"BAZ");
+		assertEquals(ed, gc.getSchema().getDomain("MyEnum"));
+		ed.delete();
+		assertFalse(gc.getSchema().knows("MyEnum"));
+		assertNull(gc.getSchema().getDomain("MyEnum"));
+		assertNull(gc.getSchema().getNamedElement("MyEnum"));
+		assertNull(gc.getSchema().getDefaultPackage().getDomain("MyEnum"));
 	}
 }

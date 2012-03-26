@@ -225,11 +225,7 @@ public class VertexClassImpl extends
 			IncidenceClass farInc = ic.getEdgeClass().getTo();
 			validFromInc.add(farInc);
 		}
-		for (VertexClass aec : getAllSuperClasses()) {
-			VertexClass vc = aec;
-			if (vc.isDefaultGraphElementClass()) {
-				continue;
-			}
+		for (VertexClass vc : getAllSuperClasses()) {
 			for (IncidenceClass ic : vc.getAllOutIncidenceClasses()) {
 				IncidenceClass farInc = ic.getEdgeClass().getTo();
 				validFromInc.add(farInc);
@@ -253,11 +249,7 @@ public class VertexClassImpl extends
 			IncidenceClass farInc = ic.getEdgeClass().getFrom();
 			validToInc.add(farInc);
 		}
-		for (VertexClass aec : getAllSuperClasses()) {
-			VertexClass vc = aec;
-			if (vc.isDefaultGraphElementClass()) {
-				continue;
-			}
+		for (VertexClass vc : getAllSuperClasses()) {
 			for (IncidenceClass ic : vc.getAllInIncidenceClasses()) {
 				IncidenceClass farInc = ic.getEdgeClass().getFrom();
 				validToInc.add(farInc);
@@ -502,10 +494,32 @@ public class VertexClassImpl extends
 
 	@Override
 	public void delete() {
-		schema.namedElements.remove(qualifiedName);
+		schema.assertNotFinished();
+		if (this == graphClass.getDefaultVertexClass()) {
+			throw new SchemaException(
+					"The default vertex class cannot be deleted.");
+		}
+		if (!getConnectedEdgeClasses().isEmpty()) {
+			throw new SchemaException("Cannot delete vertex class "
+					+ qualifiedName
+					+ " because there are still connected edge classes: "
+					+ getConnectedEdgeClasses());
+		}
+		super.delete();
 		graphClass.vertexClasses.remove(qualifiedName);
 		graphClass.vertexClassDag.delete(this);
 		parentPackage.vertexClasses.remove(simpleName);
+	}
+
+	/**
+	 * Called when an edge class connected to this vertex class is deleted
+	 *
+	 * @param ic
+	 */
+	void unlink(IncidenceClass ic) {
+		schema.assertNotFinished();
+		outIncidenceClasses.remove(ic);
+		inIncidenceClasses.remove(ic);
 	}
 
 	@Override

@@ -431,7 +431,7 @@ public class Schema2SchemaGraph {
 
 		// Loop over all subpackages of the given Package.
 		for (de.uni_koblenz.jgralab.schema.Package subPackage : xPackage
-				.getSubPackages().values()) {
+				.getSubPackages()) {
 
 			assert ((subPackage != null) && (subPackage.getQualifiedName() != null)) : "FIXME! This Package has no QualifiedName defined!";
 
@@ -469,7 +469,7 @@ public class Schema2SchemaGraph {
 
 			// Loop over all Domains in the current Package
 			for (de.uni_koblenz.jgralab.schema.Domain domain : entry.getKey()
-					.getDomains().values()) {
+					.getDomains()) {
 				createDomain(domain);
 			}
 		}
@@ -706,13 +706,9 @@ public class Schema2SchemaGraph {
 		VertexClass gVertexClass;
 		// Loop over all existing VertexClass objects
 		for (de.uni_koblenz.jgralab.schema.VertexClass vertexClass : xPackage
-				.getVertexClasses().values()) {
+				.getVertexClasses()) {
 
 			assert ((vertexClass != null) && (vertexClass.getQualifiedName() != null)) : "FIXME! No QualifiedName for this VertexClass defined!";
-			// Skips object, which already exists internal
-			if (vertexClass.isDefaultGraphElementClass()) {
-				continue;
-			}
 
 			// Creates an VertexClass
 			gVertexClass = schemaGraph.createVertexClass();
@@ -771,14 +767,9 @@ public class Schema2SchemaGraph {
 		EdgeClass gEdgeClass;
 		// Loop over all old Packages
 		for (de.uni_koblenz.jgralab.schema.EdgeClass edgeClass : xPackage
-				.getEdgeClasses().values()) {
+				.getEdgeClasses()) {
 
 			assert ((edgeClass != null) && (edgeClass.getQualifiedName() != null)) : "FIXME! No QualifiedName for this EdgeClass defined!";
-
-			// Skips all internal present objects.
-			if (edgeClass.isDefaultGraphElementClass()) {
-				continue;
-			}
 
 			// Creates an EdgeClass.
 			gEdgeClass = createEdgeClass(edgeClass);
@@ -1099,7 +1090,8 @@ public class Schema2SchemaGraph {
 			if (subsettedIncidences != null) {
 				for (de.uni_koblenz.jgralab.schema.IncidenceClass subsettedIncidence : subsettedIncidences) {
 					assert subsettedIncidence != null : "FIXME! No subsetted IncidenceClass defined!";
-					if (!subsettedIncidence.getEdgeClass().isDefaultGraphElementClass()) {
+					if (!subsettedIncidence.getEdgeClass()
+							.isDefaultGraphElementClass()) {
 						IncidenceClass gSubsettedIncidence = incidenceClassMap
 								.get(subsettedIncidence);
 						assert gSubsettedIncidence != null : "FIXME! No subsetted IncidenceClass created yet!";

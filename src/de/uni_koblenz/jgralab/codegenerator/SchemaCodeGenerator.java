@@ -331,7 +331,7 @@ public class SchemaCodeGenerator extends CodeGenerator {
 		boolean hasComment = false;
 		while (!s.isEmpty()) {
 			pkg = s.pop();
-			for (Package sub : pkg.getSubPackages().values()) {
+			for (Package sub : pkg.getSubPackages()) {
 				s.push(sub);
 			}
 			List<String> comments = pkg.getComments();
@@ -521,7 +521,7 @@ public class SchemaCodeGenerator extends CodeGenerator {
 		for (Attribute attr : attributes) {
 			CodeSnippet s = new CodeSnippet(
 					false,
-					"#aecVariable#.addAttribute(createAttribute(\"#attrName#\", getDomain(\"#domainName#\"), getAttributedElementClass(\"#aecName#\"), #defaultValue#));");
+					"#aecVariable#.createAttribute(\"#attrName#\", getDomain(\"#domainName#\"), #defaultValue#);");
 			s.setVariable("attrName", attr.getName());
 			s.setVariable("domainName", attr.getDomain().getQualifiedName());
 			s.setVariable("aecName", aec.getQualifiedName());

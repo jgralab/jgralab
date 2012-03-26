@@ -74,7 +74,7 @@ public class CreateAttribute extends Transformation<Attribute> {
 	protected Attribute transform() {
 		switch (context.phase) {
 		case SCHEMA:
-			attrSpec.aec.addAttribute(attrSpec.name, attrSpec.domain,
+			attrSpec.aec.createAttribute(attrSpec.name, attrSpec.domain,
 					attrSpec.defaultValue);
 			Attribute attr = attrSpec.aec.getAttribute(attrSpec.name);
 			// System.out.println("attr = " + attr);

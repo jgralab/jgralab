@@ -274,4 +274,17 @@ public final class EnumDomainImpl extends DomainImpl implements EnumDomain {
 
 		register();
 	}
+
+	@Override
+	public void delete() {
+		schema.assertNotFinished();
+		if (!attributes.isEmpty()) {
+			throw new SchemaException(
+					"Cannot delete enum domain that is still used by attributes: "
+							+ attributes);
+		}
+		parentPackage.domains.remove(simpleName);
+		schema.namedElements.remove(qualifiedName);
+		schema.domains.remove(qualifiedName);
+	}
 }

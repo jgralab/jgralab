@@ -1,7 +1,6 @@
 package de.uni_koblenz.jgralab.schema.impl;
 
 import java.util.List;
-import java.util.Set;
 
 import org.pcollections.ArrayPSet;
 import org.pcollections.ArrayPVector;
@@ -58,18 +57,18 @@ public class TemporaryEdgeClassImpl extends EdgeClassImpl implements EdgeClass {
 	}
 
 	@Override
-	public void addAttribute(Attribute anAttribute) {
+	public Attribute createAttribute(Attribute anAttribute) {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public void addAttribute(String name, Domain domain,
+	public Attribute createAttribute(String name, Domain domain,
 			String defaultValueAsString) {
 		throw new UnsupportedOperationException();	
 	}
 
 	@Override
-	public void addAttribute(String name, Domain domain) {
+	public Attribute createAttribute(String name, Domain domain) {
 		throw new UnsupportedOperationException();
 	}
 

@@ -61,18 +61,18 @@ public class TemporaryVertexClassImpl extends
 	}
 
 	@Override
-	public void addAttribute(Attribute anAttribute) {
+	public Attribute createAttribute(Attribute anAttribute) {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public void addAttribute(String name, Domain domain,
+	public Attribute createAttribute(String name, Domain domain,
 			String defaultValueAsString) {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public void addAttribute(String name, Domain domain) {
+	public Attribute createAttribute(String name, Domain domain) {
 		throw new UnsupportedOperationException();
 	}
 

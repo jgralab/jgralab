@@ -880,7 +880,7 @@ public class SchemaGraph2Schema {
 			assert (hasDomain != null) : "No \"HasDomain\" edge has been defined.";
 			assert (hasDomain.getThat() instanceof Domain) : "That should be an instance of Domain.";
 			// Creates and adds an Attribute
-			element.addAttribute(attribute.get_name(),
+			element.createAttribute(attribute.get_name(),
 					queryDomain((Domain) hasDomain.getThat()),
 					attribute.get_defaultValue());
 			assert (hasDomain.getNextHasDomainIncidence(OUTGOING) == null);
