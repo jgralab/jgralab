@@ -95,6 +95,8 @@ import de.uni_koblenz.jgralab.schema.IntegerDomain;
 import de.uni_koblenz.jgralab.schema.LongDomain;
 import de.uni_koblenz.jgralab.schema.RecordDomain.RecordComponent;
 import de.uni_koblenz.jgralab.schema.StringDomain;
+import de.uni_koblenz.jgralab.schema.impl.TemporaryEdgeClassImpl;
+import de.uni_koblenz.jgralab.schema.impl.TemporaryVertexClassImpl;
 
 /**
  * Compares a given Schema and SchemaGraph with each other.
@@ -405,7 +407,10 @@ public class CompareSchemaWithSchemaGraph {
 		// This loop prevents the comparison of internal structures
 		for (Iterator<Entry<String, de.uni_koblenz.jgralab.schema.VertexClass>> it = vertexClasses
 				.entrySet().iterator(); it.hasNext();) {
-			if (it.next().getValue().isDefaultGraphElementClass()) {
+			de.uni_koblenz.jgralab.schema.VertexClass vc = it.next().getValue();
+			if (vc.isDefaultGraphElementClass()) {
+				it.remove();
+			}else if(vc instanceof TemporaryVertexClassImpl){
 				it.remove();
 			}
 		}
@@ -413,7 +418,10 @@ public class CompareSchemaWithSchemaGraph {
 		// This loop prevents the comparison of internal structures
 		for (Iterator<Entry<String, de.uni_koblenz.jgralab.schema.EdgeClass>> it = edgeClasses
 				.entrySet().iterator(); it.hasNext();) {
-			if (it.next().getValue().isDefaultGraphElementClass()) {
+			de.uni_koblenz.jgralab.schema.EdgeClass ec = it.next().getValue();
+			if (ec.isDefaultGraphElementClass()) {
+				it.remove();
+			}else if (ec instanceof TemporaryEdgeClassImpl){
 				it.remove();
 			}
 		}

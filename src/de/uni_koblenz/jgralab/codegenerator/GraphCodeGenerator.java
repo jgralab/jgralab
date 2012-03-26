@@ -44,6 +44,8 @@ import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.GraphClass;
 import de.uni_koblenz.jgralab.schema.GraphElementClass;
 import de.uni_koblenz.jgralab.schema.VertexClass;
+import de.uni_koblenz.jgralab.schema.impl.TemporaryEdgeClassImpl;
+import de.uni_koblenz.jgralab.schema.impl.TemporaryVertexClassImpl;
 
 /**
  * TODO add comment
@@ -192,6 +194,8 @@ public class GraphCodeGenerator extends
 		sortedClasses.addAll(gc.getGraphElementClasses());
 		for (GraphElementClass<?, ?> gec : sortedClasses) {
 			if (gec.isDefaultGraphElementClass()) {
+				continue;
+			}else if(gec instanceof TemporaryVertexClassImpl || gec instanceof TemporaryEdgeClassImpl){
 				continue;
 			}
 			CodeList gecCode = new CodeList();
@@ -364,6 +368,8 @@ public class GraphCodeGenerator extends
 
 		for (VertexClass vertex : vertexClassSet) {
 			if (vertex.isDefaultGraphElementClass()) {
+				continue;
+			}else if(vertex instanceof TemporaryVertexClassImpl){
 				continue;
 			}
 			if (currentCycle.isStdOrDbImplOrTransImpl()) {

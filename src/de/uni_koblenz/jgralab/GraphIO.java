@@ -92,6 +92,8 @@ import de.uni_koblenz.jgralab.schema.exception.SchemaException;
 import de.uni_koblenz.jgralab.schema.impl.BasicDomainImpl;
 import de.uni_koblenz.jgralab.schema.impl.ConstraintImpl;
 import de.uni_koblenz.jgralab.schema.impl.SchemaImpl;
+import de.uni_koblenz.jgralab.schema.impl.TemporaryEdgeClassImpl;
+import de.uni_koblenz.jgralab.schema.impl.TemporaryVertexClassImpl;
 import de.uni_koblenz.jgralab.schema.impl.compilation.SchemaClassManager;
 
 /**
@@ -432,6 +434,8 @@ public class GraphIO {
 			for (VertexClass vc : pkg.getVertexClasses().values()) {
 				if (vc.isDefaultGraphElementClass()) {
 					continue;
+				}else if(vc instanceof TemporaryVertexClassImpl){
+					continue;
 				}
 				if (vc.isAbstract()) {
 					write("abstract ");
@@ -449,6 +453,8 @@ public class GraphIO {
 			// write edge classes
 			for (EdgeClass ec : pkg.getEdgeClasses().values()) {
 				if (ec.isDefaultGraphElementClass()) {
+					continue;
+				}else if(ec instanceof TemporaryEdgeClassImpl){
 					continue;
 				}
 				if (ec.isAbstract()) {

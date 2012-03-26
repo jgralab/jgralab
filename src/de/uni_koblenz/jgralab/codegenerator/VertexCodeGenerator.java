@@ -43,6 +43,7 @@ import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.GraphElementClass;
 import de.uni_koblenz.jgralab.schema.VertexClass;
+import de.uni_koblenz.jgralab.schema.impl.TemporaryEdgeClassImpl;
 
 /**
  * This class is used by the method Schema.commit() to generate the Java-classes
@@ -144,6 +145,8 @@ public class VertexCodeGenerator extends
 
 		for (EdgeClass ec : edgeClassSet) {
 			if (ec.isDefaultGraphElementClass()) {
+				continue;
+			}else if (ec instanceof TemporaryEdgeClassImpl){
 				continue;
 			}
 			addImports("#jgPackage#.EdgeDirection");
@@ -281,6 +284,8 @@ public class VertexCodeGenerator extends
 
 		for (EdgeClass ec : edgeClassSet) {
 			if (ec.isDefaultGraphElementClass()) {
+				continue;
+			}else if (ec instanceof TemporaryEdgeClassImpl){
 				continue;
 			}
 
