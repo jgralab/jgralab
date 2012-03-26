@@ -34,8 +34,8 @@ public class TemporaryEdgeImpl extends EdgeImpl implements TemporaryEdge{
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public Object getAttribute(String name) throws NoSuchAttributeException {
-		return this.attributes.get(name);
+	public <T> T getAttribute(String name) throws NoSuchAttributeException {
+		return (T) this.attributes.get(name);
 	}
 
 	@Override
