@@ -784,6 +784,15 @@ public class GraphIO {
 				while (nextI != null) {
 					if(nextI instanceof TemporaryEdge){
 						nextI = nextI.getNextIncidence();
+						continue;
+					}
+					if(nextI.getOmega() instanceof TemporaryVertex){
+						nextI = nextI.getNextIncidence();
+						continue;
+					}
+					if(nextI.getAlpha() instanceof TemporaryVertex){
+						nextI = nextI.getNextIncidence();
+						continue;
 					}
 					if ((subGraph != null) && !subGraph.isMarked(nextI)) {
 						nextI = nextI.getNextIncidence();
@@ -818,6 +827,10 @@ public class GraphIO {
 					continue;
 				}
 				else if (nextE instanceof TemporaryEdge) {
+					nextE = nextE.getNextEdge();
+					continue;
+				}else if(nextE.getAlpha() instanceof TemporaryVertex || 
+						nextE.getOmega() instanceof TemporaryVertex){
 					nextE = nextE.getNextEdge();
 					continue;
 				}

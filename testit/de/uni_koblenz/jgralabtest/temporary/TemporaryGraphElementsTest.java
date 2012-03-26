@@ -4,6 +4,7 @@ import org.junit.Test;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
+import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.ImplementationType;
 import de.uni_koblenz.jgralab.TemporaryVertex;
 import de.uni_koblenz.jgralab.Vertex;
@@ -15,9 +16,9 @@ import de.uni_koblenz.jgralabtest.schemas.citymap.impl.std.CityMapImpl;
 public class TemporaryGraphElementsTest {
 
 	@Test
-	public void test(){
+	public void test() throws GraphIOException{
 		Schema schema = CityMapSchema.instance();
-		Graph g = schema.createGraph(ImplementationType.GENERIC);
+		Graph g = schema.createGraph(ImplementationType.STANDARD);
 		
 		Vertex v1 = g.createVertex(schema.getGraphClass().getVertexClass("ParkingGarage"));
 		
@@ -38,6 +39,8 @@ public class TemporaryGraphElementsTest {
 		System.out.println(v1.getDegree());
 		
 		System.out.println(tempv.getDegree());
+		
+		g.save("testit/testdata/tempTest1.tg");
 		
 		
 	}

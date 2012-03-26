@@ -35,7 +35,6 @@
 
 package de.uni_koblenz.jgralab.greql2.evaluator.fa;
 
-import java.util.BitSet;
 import java.util.Set;
 
 import de.uni_koblenz.jgralab.Edge;
@@ -48,7 +47,6 @@ import de.uni_koblenz.jgralab.greql2.schema.ThisEdge;
 import de.uni_koblenz.jgralab.greql2.types.TypeCollection;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
-import de.uni_koblenz.jgralab.schema.IncidenceClass;
 
 /**
  * This transition accepts a SimplePathDescription. A SimplePathDescription is

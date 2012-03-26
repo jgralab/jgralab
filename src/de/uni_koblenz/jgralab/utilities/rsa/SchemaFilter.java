@@ -337,13 +337,13 @@ public class SchemaFilter {
 		for (EdgeClass currentEdgeClass : schemaGraph.getEdgeClassVertices()) {
 			if (includes.isMarked(currentEdgeClass)) {
 				// only look at included EdgeClasses
-				IncidenceClass fromIC = currentEdgeClass
+				IncidenceClass fromIC = (IncidenceClass) currentEdgeClass
 						.getFirstComesFromIncidence().getOmega();
-				VertexClass fromVC = fromIC.getFirstEndsAtIncidence()
+				VertexClass fromVC = (VertexClass) fromIC.getFirstEndsAtIncidence()
 						.getOmega();
-				IncidenceClass toIC = currentEdgeClass
+				IncidenceClass toIC = (IncidenceClass) currentEdgeClass
 						.getFirstGoesToIncidence().getOmega();
-				VertexClass toVC = toIC.getFirstEndsAtIncidence().getOmega();
+				VertexClass toVC = (VertexClass) toIC.getFirstEndsAtIncidence().getOmega();
 				if (!includes.isMarked(fromVC) || !includes.isMarked(toVC)) {
 					// exclude all EdgeClasses whose to or from VertexClasses
 					// are already excluded

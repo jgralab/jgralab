@@ -98,7 +98,7 @@ public class Greql2ExpressionEvaluator extends VertexEvaluator {
 		IsBoundVarOf inc = vertex
 				.getFirstIsBoundVarOfIncidence(EdgeDirection.IN);
 		while (inc != null) {
-			Variable currentBoundVariable = inc.getAlpha();
+			Variable currentBoundVariable = (Variable) inc.getAlpha();
 			Object variableValue = boundVariables.get(currentBoundVariable
 					.get_name());
 			if (variableValue == null) {
@@ -168,7 +168,7 @@ public class Greql2ExpressionEvaluator extends VertexEvaluator {
 			}
 		}
 
-		Expression boundExpression = vertex.getFirstIsQueryExprOfIncidence(
+		Expression boundExpression = (Expression) vertex.getFirstIsQueryExprOfIncidence(
 				EdgeDirection.IN).getAlpha();
 		VertexEvaluator eval = vertexEvalMarker.getMark(boundExpression);
 		Object result = eval.getResult();
