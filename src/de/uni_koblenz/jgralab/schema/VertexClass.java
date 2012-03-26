@@ -48,7 +48,8 @@ import de.uni_koblenz.jgralab.schema.impl.DirectedSchemaEdgeClass;
 public interface VertexClass extends GraphElementClass<VertexClass, Vertex> {
 
 	public final static String DEFAULTVERTEXCLASS_NAME = "Vertex";
-
+	public final static String TEMPORARYVERTEXCLASS_NAME = "TemporaryVertexClass";
+	
 	/**
 	 * adds a superclass to the list of superclasses, all attributes get
 	 * inherited from those classes

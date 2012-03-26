@@ -153,7 +153,8 @@ public final class GraphClassImpl extends
 					+ ec.getQualifiedName() + "'");
 		}
 		// Don't track the default EC
-		if (!ec.getQualifiedName().equals(EdgeClass.DEFAULTEDGECLASS_NAME)) {
+		if (!ec.getQualifiedName().equals(EdgeClass.DEFAULTEDGECLASS_NAME) && 
+				!ec.getQualifiedName().equals(EdgeClass.TEMPORARYEDGECLASS_NAME)) {
 			edgeClasses.put(ec.getQualifiedName(), ec);
 		}
 	}
@@ -164,9 +165,11 @@ public final class GraphClassImpl extends
 					+ vc.getQualifiedName() + "'");
 		}
 		// Don't track the default VC
-		if (!vc.getQualifiedName().equals(VertexClass.DEFAULTVERTEXCLASS_NAME)) {
+		if (!vc.getQualifiedName().equals(VertexClass.DEFAULTVERTEXCLASS_NAME) && 
+				!vc.getQualifiedName().equals(VertexClass.TEMPORARYVERTEXCLASS_NAME)) {
 			vertexClasses.put(vc.getQualifiedName(), vc);
 		}
+		
 	}
 
 	@Override
