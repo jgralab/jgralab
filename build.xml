@@ -75,6 +75,9 @@
 				<testsources dir="${testcases.dir}" includes="**/*.java" />
 			</current>
 		</clover-report>
+		<!-- After generating the report, delete the clover db and its
+		     clover record files. -->
+		<clover-clean/>
 	</target>
 
 
