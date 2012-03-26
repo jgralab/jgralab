@@ -56,7 +56,7 @@ public class TemporaryEdgeImpl extends EdgeImpl implements TemporaryEdge{
 	}
 
 	@Override
-	public EdgeClass transformToRealGraphElement() {
+	public Edge transformToRealGraphElement(EdgeClass edgeClass) {
 		// TODO Auto-generated method stub
 		return null;
 	}

@@ -3,12 +3,15 @@ package de.uni_koblenz.jgralab.impl.std;
 import java.io.IOException;
 import java.util.HashMap;
 
+import de.uni_koblenz.jgralab.Edge;
+import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.NoSuchAttributeException;
 import de.uni_koblenz.jgralab.TemporaryVertex;
 import de.uni_koblenz.jgralab.Vertex;
+import de.uni_koblenz.jgralab.impl.VertexBaseImpl;
 import de.uni_koblenz.jgralab.schema.VertexClass;
 
 public class TemporaryVertexImpl extends VertexImpl implements TemporaryVertex {
@@ -79,9 +82,31 @@ public class TemporaryVertexImpl extends VertexImpl implements TemporaryVertex {
 	}
 
 	@Override
-	public VertexClass transformToRealGraphElement() {
-		// TODO Auto-generated method stub
-		return null;
+	public Vertex transformToRealGraphElement(VertexClass vc) {
+		int id = this.id;
+		Graph g = this.graph;
+		Vertex newVertex = g.createVertex(vc);
+		for(String attrName : this.attributes.keySet()){
+			if(newVertex.getAttributedElementClass().containsAttribute(attrName)){
+				newVertex.setAttribute(attrName, this.attributes.get(attrName));
+			}
+		}
+		
+		Edge e = this.getFirstIncidence(EdgeDirection.OUT);	
+		while(e != null){
+			e.setAlpha(newVertex);
+			e = this.getFirstIncidence(EdgeDirection.OUT);
+		}
+		e = this.getFirstIncidence(EdgeDirection.IN);
+		while(e != null){
+			e.setOmega(newVertex);
+			e = this.getFirstIncidence(EdgeDirection.IN);
+		}
+			
+		this.delete();
+
+		((VertexBaseImpl)newVertex).setId(id);
+		return newVertex;
 	}
 
 	@Override

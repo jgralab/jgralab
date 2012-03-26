@@ -2,6 +2,7 @@ package de.uni_koblenz.jgralab.impl.std;
 
 import java.io.IOException;
 
+import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.GraphIOException;
@@ -46,8 +47,8 @@ public class TemporaryReversedEdgeImpl extends ReversedEdgeImpl implements Tempo
 	}
 
 	@Override
-	public EdgeClass transformToRealGraphElement() {
-		return ((TemporaryEdge)this.getNormalEdge()).transformToRealGraphElement();
+	public Edge transformToRealGraphElement(EdgeClass edgeClass) {
+		return ((TemporaryEdge)this.getNormalEdge()).transformToRealGraphElement(edgeClass);
 	}
 
 	@Override
