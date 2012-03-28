@@ -80,7 +80,7 @@ public class TryAStar {
 			graphGenerator.createKDTree(graph);
 		} else {
 			sw.start();
-			graph = graphGenerator.createPlanarRandomGraph(VERTEXCOUNT,
+			graph = graphGenerator.createRandomWeightedGraph(VERTEXCOUNT,
 					EDGESPERVERTEX);
 			sw.stop();
 			System.out.println(sw.getDurationString());

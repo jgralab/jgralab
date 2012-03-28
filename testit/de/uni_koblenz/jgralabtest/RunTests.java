@@ -37,6 +37,7 @@ package de.uni_koblenz.jgralabtest;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
+import de.uni_koblenz.jgralabtest.algolib.algorithms.RunAlgolibTests;
 import de.uni_koblenz.jgralabtest.codegenerator.RunCodeGeneratorTests;
 import de.uni_koblenz.jgralabtest.eca.RunECATest;
 import de.uni_koblenz.jgralabtest.genericimpltest.RunGenericTests;
@@ -52,10 +53,10 @@ import de.uni_koblenz.jgralabtest.utilities.RunUtilitiesTests;
  */
 @RunWith(Suite.class)
 @Suite.SuiteClasses({ RunGenericTests.class, RunInstanceTests.class,
-		RunSchemaTests.class, GraphIOTest.class, TempAttributeTest.class,
-		RunGraphValidatorTests.class, RunCodeGeneratorTests.class,
-		RunUtilitiesTests.class, RunGretlTests.class, RunECATest.class,
-		RunGenericTests.class })
+		RunAlgolibTests.class, RunSchemaTests.class, GraphIOTest.class,
+		TempAttributeTest.class, RunGraphValidatorTests.class,
+		RunCodeGeneratorTests.class, RunUtilitiesTests.class,
+		RunGretlTests.class, RunECATest.class, RunGenericTests.class })
 // TODO: add RunGreql2Tests.class back when it's fixed
 public class RunTests {
 
