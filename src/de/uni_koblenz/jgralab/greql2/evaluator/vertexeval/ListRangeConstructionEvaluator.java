@@ -91,22 +91,25 @@ public class ListRangeConstructionEvaluator extends
 		Object firstElement = firstElementEvaluator.getResult(evaluator);
 		Object lastElement = lastElementEvaluator.getResult(evaluator);
 		if (firstElement instanceof Integer && lastElement instanceof Integer) {
-			if ((Integer) firstElement < (Integer) lastElement) {
-				for (int i = (Integer) firstElement; i < (Integer) lastElement + 1; i++) {
-					// +1 needed because the top element should also belong
-					// to the list
-					resultList = resultList.plus(i);
-				}
+			int firstInt = (Integer) firstElement;
+			int lastInt = (Integer) lastElement;
+			if (firstInt == lastInt) {
+				resultList = resultList.plus(firstInt);
 			} else {
-				for (int i = (Integer) lastElement; i < (Integer) firstElement + 1; i++) {
-					resultList = resultList.plus(i);
+				if (firstInt < lastInt) {
+					for (int i = firstInt; i <= lastInt; i++) {
+						resultList = resultList.plus(i);
+					}
+				} else {
+					for (int i = firstInt; i >= lastInt; i--) {
+						resultList = resultList.plus(i);
+					}
 				}
 			}
 		}
 
 		return resultList;
 	}
-
 	// @Override
 	// public VertexCosts calculateSubtreeEvaluationCosts() {
 	// return greqlEvaluator.getCostModel()
