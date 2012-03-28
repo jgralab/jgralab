@@ -35,7 +35,7 @@
 
 package de.uni_koblenz.jgralab.schema;
 
-import java.util.Map;
+import org.pcollections.PSet;
 
 /**
  * The class <code>Package</code> represents a grUML package. A
@@ -52,13 +52,14 @@ public interface Package extends NamedElement {
 	public static final String DEFAULTPACKAGE_NAME = "";
 
 	/**
-	 * Returns all EdgeClasses of this package. Note that the default package
-	 * also contains the default edge class.
+	 * Returns all EdgeClasses of this package.
 	 *
 	 * @return a Map containing all EdgeClasses of this Package, mapped to their
 	 *         simple names.
 	 */
-	public Map<String, EdgeClass> getEdgeClasses();
+	public PSet<EdgeClass> getEdgeClasses();
+
+	public EdgeClass getEdgeClass(String simpleName);
 
 	/**
 	 * Returns all Domains of this package.
@@ -66,7 +67,9 @@ public interface Package extends NamedElement {
 	 * @return a Map containing all Domains of this Package, mapped to their
 	 *         simple names.
 	 */
-	public Map<String, Domain> getDomains();
+	public PSet<Domain> getDomains();
+
+	public Domain getDomain(String simpleName);
 
 	/**
 	 * Retrieves the subpackage with the given simple name.
@@ -101,7 +104,7 @@ public interface Package extends NamedElement {
 	 * @return a Map containing all subpackages of this Package, mapped to their
 	 *         simple names.
 	 */
-	public Map<String, Package> getSubPackages();
+	public PSet<Package> getSubPackages();
 
 	/**
 	 * Returns all VertexClasses of this package. Note that the default package
@@ -110,7 +113,9 @@ public interface Package extends NamedElement {
 	 * @return a Map containing all VertexClasses of this Package, mapped to
 	 *         their simple names.
 	 */
-	public Map<String, VertexClass> getVertexClasses();
+	public PSet<VertexClass> getVertexClasses();
+
+	public VertexClass getVertexClass(String simpleName);
 
 	/**
 	 * Checks if this package contains a named element with the given simple
@@ -145,4 +150,10 @@ public interface Package extends NamedElement {
 	 * @return true iff this Package is the default Package.
 	 */
 	public boolean isDefaultPackage();
+
+	/**
+	 * Deletes this package. Only empty packages can be deleted. Note that the
+	 * default package cannot be deleted.
+	 */
+	public void delete();
 }

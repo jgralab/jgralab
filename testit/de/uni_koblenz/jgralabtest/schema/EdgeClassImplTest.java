@@ -70,23 +70,6 @@ public class EdgeClassImplTest extends GraphElementClassImplTest<EdgeClass> {
 				"EdgeClassToRoleName", AggregationKind.NONE);
 	}
 
-	/**
-	 * addAttribute(Attribute)
-	 *
-	 * TEST CASE: Adding an attribute, already contained in a superclass of this
-	 * element
-	 */
-	@Test
-	public void testAddAttribute4() {
-		// Normale Kante
-		// TODO possible error? two times targetVertexClass
-		EdgeClass superClass = createEdgeClass("EdgeClassSuperClass", edgeClass);
-
-		edgeClass.addSuperClass(superClass);
-
-		testAddAttribute4(superClass);
-	}
-
 	private EdgeClass createEdgeClass(String name, EdgeClass addaptedEdgeClass) {
 		return createEdgeClass(graphClass, name, addaptedEdgeClass,
 				addaptedEdgeClass.getFrom().getVertexClass(), addaptedEdgeClass
@@ -104,22 +87,6 @@ public class EdgeClassImplTest extends GraphElementClassImplTest<EdgeClass> {
 				addaptedEdgeClass.getFrom().getMax(), "", AggregationKind.NONE,
 				to, edgeClass.getTo().getMin(), addaptedEdgeClass.getTo()
 						.getMax(), "", AggregationKind.NONE);
-	}
-
-	/**
-	 * addAttribute(Attribute)
-	 *
-	 * TEST CASE: Adding an attribute, already contained in a subclass of this
-	 * element
-	 */
-	@Test
-	public void testAddAttribute5() {
-		// Beispiel Kante
-		EdgeClass subClass = createEdgeClass("EdgeClassSubClass", edgeClass);
-
-		subClass.addSuperClass(edgeClass);
-
-		testAddAttribute5(subClass);
 	}
 
 	/**
@@ -220,22 +187,6 @@ public class EdgeClassImplTest extends GraphElementClassImplTest<EdgeClass> {
 	 * TODO: Compare edge class without aggregation ends with one with
 	 * aggregation ends
 	 */
-
-	/**
-	 * containsAttribute(String)
-	 *
-	 * TEST CASE: looking for an attribute, present in a superclass of this
-	 * element
-	 */
-	@Test
-	public void testContainsAttribute3() {
-		// Normale Kante
-		EdgeClass superClass = createEdgeClass("EdgeClassSuperClass", edgeClass);
-
-		edgeClass.addSuperClass(superClass);
-
-		testContainsAttribute3(superClass);
-	}
 
 	/**
 	 * getAllSubClasses()
@@ -397,123 +348,6 @@ public class EdgeClassImplTest extends GraphElementClassImplTest<EdgeClass> {
 		Vector<EdgeClass> expectedSuperClasses = new Vector<EdgeClass>();
 
 		testGetAllSuperClasses(expectedSuperClasses);
-	}
-
-	/**
-	 * getAttribute()
-	 *
-	 * TEST CASE: Getting an inherited attribute
-	 */
-	@Test
-	public void testGetAttribute2() {
-
-		// Normale Kante
-		EdgeClass superClass = createEdgeClass("EdgeClassSuperClass", edgeClass);
-
-		edgeClass.addSuperClass(superClass);
-
-		testGetAttribute2(superClass);
-	}
-
-	/**
-	 * getAttribute()
-	 *
-	 * TEST CASE: Trying to get an attribute present in a subclass of this
-	 * element
-	 */
-	@Test
-	public void testGetAttribute5() {
-		// Beispiel kante
-		EdgeClass subClass = createEdgeClass("EdgeClassSubClass", edgeClass);
-
-		subClass.addSuperClass(edgeClass);
-
-		testGetAttribute5(subClass);
-	}
-
-	/**
-	 * getAttributeCount()
-	 *
-	 * TEST CASE: Getting the number of attributes of an element which has
-	 * exactly only one inherited attribute and no direct attributes
-	 */
-	@Test
-	public void testGetAttributeCount2() {
-
-		// NOrmale Kante
-		EdgeClass superClass = createEdgeClass("EdgeClassSuperClass", edgeClass);
-
-		edgeClass.addSuperClass(superClass);
-
-		testGetAttributeCount2(superClass);
-	}
-
-	/**
-	 * getAttributeCount()
-	 *
-	 * TEST CASE: Getting the number of attributes of an element which has
-	 * multiple direct and indirect attributes
-	 */
-	@Test
-	public void testGetAttributeCount3() {
-
-		// Normale Kante
-		EdgeClass superClass = createEdgeClass("EdgeClassSuperClass", edgeClass);
-
-		edgeClass.addSuperClass(superClass);
-
-		testGetAttributeCount3(superClass);
-	}
-
-	/**
-	 * getAttributeCount()
-	 *
-	 * TEST CASE: Getting the number of attributes of an element which has no
-	 * direct nor inherited attributes but whose subclass has attributes
-	 */
-	@Test
-	public void testGetAttributeCount5() {
-
-		// Beispiel kante
-		EdgeClass subClass = createEdgeClass("EdgeClassSubClass", edgeClass);
-
-		subClass.addSuperClass(edgeClass);
-
-		testGetAttributeCount5(subClass);
-	}
-
-	/**
-	 * getAttributeList()
-	 *
-	 * TEST CASE: Getting an element´s list of attributes, which has exactly one
-	 * inherited attribute and no direct attributes
-	 */
-	@Test
-	public void testGetAttributeList2() {
-
-		// Normale Kante
-		EdgeClass superClass = createEdgeClass("EdgeClassSuperClass", edgeClass);
-
-		edgeClass.addSuperClass(superClass);
-
-		testGetAttributeList2(superClass);
-	}
-
-	/**
-	 * getAttributeList()
-	 *
-	 * TEST CASE: Getting an element´s list of attributes, which has mutliple
-	 * direct and inherited attributes
-	 */
-	@Test
-	public void testGetAttributeList3() {
-
-		// Normale Kante
-		EdgeClass superClass = createEdgeClass("EdgeClassSuperClass", edgeClass);
-
-		edgeClass.addSuperClass(superClass);
-
-		testGetAttributeList3(superClass);
 	}
 
 	/**
@@ -919,21 +753,6 @@ public class EdgeClassImplTest extends GraphElementClassImplTest<EdgeClass> {
 		edgeClass.addSuperClass(superClass);
 
 		testHasOwnAttributes4(superClass);
-	}
-
-	/**
-	 * hasOwnAttributes()
-	 *
-	 * TEST CASE: The element has no direct but indirect attributes
-	 */
-	@Test
-	public void testHasOwnAttributes5() {
-
-		// Normale Kante
-		EdgeClass superClass = createEdgeClass("EdgeClassSuperClass", edgeClass);
-		edgeClass.addSuperClass(superClass);
-
-		testHasOwnAttributes5(superClass);
 	}
 
 	/**

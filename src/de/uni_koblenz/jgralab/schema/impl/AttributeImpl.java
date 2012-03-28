@@ -35,6 +35,8 @@
 
 package de.uni_koblenz.jgralab.schema.impl;
 
+import java.util.regex.Pattern;
+
 import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.schema.Attribute;
@@ -49,10 +51,13 @@ import de.uni_koblenz.jgralab.schema.exception.SchemaException;
  */
 public class AttributeImpl implements Attribute, Comparable<Attribute> {
 
+	private static final Pattern ATTRIBUTE_NAME_PATTERN = Pattern
+			.compile("\\p{Lower}\\w*");
+
 	/**
 	 * the name of the attribute
 	 */
-	private final String name;
+	private String name;
 
 	/**
 	 * the domain of the attribute
@@ -93,13 +98,18 @@ public class AttributeImpl implements Attribute, Comparable<Attribute> {
 	 *            a String in TG value format denoting the default value of this
 	 *            Attribute, or null if no default value shall be specified.
 	 */
-	public AttributeImpl(String name, Domain domain,
-			AttributedElementClass<?, ?> aec, String defaultValue) {
+	AttributeImpl(String name, Domain domain, AttributedElementClass<?, ?> aec,
+			String defaultValue) {
+		if (!ATTRIBUTE_NAME_PATTERN.matcher(name).matches()) {
+			throw new SchemaException("Invalid attribute name '" + name + "'.");
+		}
 		this.name = name;
 		this.domain = domain;
 		this.aec = aec;
 		sortKey = name + ":" + domain.getQualifiedName();
 		setDefaultValueAsString(defaultValue);
+		DomainImpl d = ((DomainImpl) this.domain);
+		d.registerAttribute(this);
 	}
 
 	/*
@@ -207,5 +217,22 @@ public class AttributeImpl implements Attribute, Comparable<Attribute> {
 			defaultValue = element.getAttribute(name);
 			defaultValueComputed = true;
 		}
+	}
+
+	@Override
+	public void delete() {
+		((SchemaImpl) aec.getSchema()).assertNotFinished();
+		((AttributedElementClassImpl<?, ?>) aec).deleteAttribute(this);
+		DomainImpl d = (DomainImpl) domain;
+		d.attributes = d.attributes.minus(this);
+	}
+
+	@Override
+	public void setName(String newName) {
+		((SchemaImpl) aec.getSchema()).assertNotFinished();
+		if (!ATTRIBUTE_NAME_PATTERN.matcher(newName).matches()) {
+			throw new SchemaException("Invalid attribute name '" + newName + "'.");
+		}
+		name = newName;
 	}
 }

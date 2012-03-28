@@ -41,6 +41,7 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -54,6 +55,9 @@ import javax.tools.JavaCompiler;
 import javax.tools.JavaFileObject;
 import javax.tools.StandardJavaFileManager;
 import javax.tools.ToolProvider;
+
+import org.pcollections.ArrayPSet;
+import org.pcollections.PSet;
 
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphFactory;
@@ -74,7 +78,6 @@ import de.uni_koblenz.jgralab.codegenerator.SchemaCodeGenerator;
 import de.uni_koblenz.jgralab.codegenerator.VertexCodeGenerator;
 import de.uni_koblenz.jgralab.impl.ConsoleProgressFunction;
 import de.uni_koblenz.jgralab.impl.generic.GenericGraphFactoryImpl;
-import de.uni_koblenz.jgralab.schema.Attribute;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.BooleanDomain;
 import de.uni_koblenz.jgralab.schema.CompositeDomain;
@@ -171,7 +174,7 @@ public class SchemaImpl implements Schema, ManagableArtifact {
 	/**
 	 * Maps from qualified name to the {@link Package} with that qualified name.
 	 */
-	private Map<String, PackageImpl> packages = new TreeMap<String, PackageImpl>();
+	Map<String, PackageImpl> packages = new TreeMap<String, PackageImpl>();
 
 	/**
 	 * The qualified name of this schema, that is {@link #packagePrefix} DOT
@@ -441,9 +444,6 @@ public class SchemaImpl implements Schema, ManagableArtifact {
 		}
 
 		for (EdgeClass edgeClass : graphClass.getEdgeClasses()) {
-			if (edgeClass.isDefaultGraphElementClass()) {
-				continue;
-			}
 			CodeGenerator codeGen = new EdgeCodeGenerator(edgeClass,
 					packagePrefix, config);
 			codeGen.createFiles(pathPrefix);
@@ -569,13 +569,6 @@ public class SchemaImpl implements Schema, ManagableArtifact {
 	}
 
 	@Override
-	public Attribute createAttribute(String name, Domain dom,
-			AttributedElementClass<?, ?> aec, String defaultValueAsString) {
-		assertNotFinished();
-		return new AttributeImpl(name, dom, aec, defaultValueAsString);
-	}
-
-	@Override
 	public EnumDomain createEnumDomain(String qualifiedName) {
 		return createEnumDomain(qualifiedName, new ArrayList<String>());
 	}
@@ -589,6 +582,12 @@ public class SchemaImpl implements Schema, ManagableArtifact {
 		String simpleName = components[1];
 		EnumDomain ed = new EnumDomainImpl(simpleName, parent, enumComponents);
 		return ed;
+	}
+
+	@Override
+	public EnumDomain createEnumDomain(String qualifiedName,
+			String... enumComponents) {
+		return createEnumDomain(qualifiedName, Arrays.asList(enumComponents));
 	}
 
 	@Override
@@ -886,8 +885,8 @@ public class SchemaImpl implements Schema, ManagableArtifact {
 	}
 
 	@Override
-	public Map<String, Domain> getDomains() {
-		return domains;
+	public PSet<Domain> getDomains() {
+		return ArrayPSet.<Domain> empty().plusAll(domains.values());
 	}
 
 	void addDomainDependency(Domain composite, Domain base) {

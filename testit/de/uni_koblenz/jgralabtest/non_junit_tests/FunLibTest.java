@@ -189,5 +189,12 @@ public class FunLibTest {
 		}
 		l = (PSet<Integer>) FunLib.apply(os, "subCollection", l, 5);
 		l = (PSet<Integer>) FunLib.apply(os, "subCollection", l, 2, 4);
+
+		FunLib.apply(os, "equals", Color.RED, "RED");
+		FunLib.apply(os, "equals", Color.GREEN, "RED");
+		FunLib.apply(os, "equals", "RED", Color.RED);
+		FunLib.apply(os, "nequals", Color.RED, "RED");
+		FunLib.apply(os, "nequals", Color.GREEN, "RED");
+		FunLib.apply(os, "ndequals", "RED", Color.RED);
 	}
 }

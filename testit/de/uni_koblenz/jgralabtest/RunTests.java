@@ -48,11 +48,11 @@ import de.uni_koblenz.jgralabtest.utilities.RunUtilitiesTests;
 
 /**
  * @author ist@uni-koblenz.de
- *
+ * 
  */
 @RunWith(Suite.class)
-@Suite.SuiteClasses({ RunInstanceTests.class, RunSchemaTests.class,
-		GraphIOTest.class, TempAttributeTest.class,
+@Suite.SuiteClasses({ RunGenericTests.class, RunInstanceTests.class,
+		RunSchemaTests.class, GraphIOTest.class, TempAttributeTest.class,
 		RunGraphValidatorTests.class, RunCodeGeneratorTests.class,
 		RunUtilitiesTests.class, RunGretlTests.class, RunECATest.class,
 		RunGenericTests.class })

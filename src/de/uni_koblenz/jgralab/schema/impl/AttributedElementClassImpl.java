@@ -38,7 +38,6 @@ package de.uni_koblenz.jgralab.schema.impl;
 import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
 import java.util.TreeSet;
 
 import org.pcollections.ArrayPSet;
@@ -71,7 +70,7 @@ public abstract class AttributedElementClassImpl<SC extends AttributedElementCla
 	protected PSet<Constraint> constraints;
 
 	/**
-	 * maps each attribute to an index
+	 * maps each attribute to an index -- computed on schema finish
 	 */
 	protected HashMap<String, Integer> attributeIndex;
 
@@ -105,8 +104,7 @@ public abstract class AttributedElementClassImpl<SC extends AttributedElementCla
 		constraints = ArrayPSet.empty();
 	}
 
-	@Override
-	public void addAttribute(Attribute anAttribute) {
+	protected Attribute createAttribute(Attribute anAttribute) {
 		assertNotFinished();
 
 		if (containsAttribute(anAttribute.getName())) {
@@ -117,17 +115,19 @@ public abstract class AttributedElementClassImpl<SC extends AttributedElementCla
 		TreeSet<Attribute> s = new TreeSet<Attribute>(allAttributes);
 		s.add(anAttribute);
 		allAttributes = ArrayPVector.<Attribute> empty().plusAll(s);
+		return anAttribute;
 	}
 
 	@Override
-	public void addAttribute(String name, Domain domain,
+	public Attribute createAttribute(String name, Domain domain,
 			String defaultValueAsString) {
-		addAttribute(new AttributeImpl(name, domain, this, defaultValueAsString));
+		return createAttribute(new AttributeImpl(name, domain, this,
+				defaultValueAsString));
 	}
 
 	@Override
-	public void addAttribute(String name, Domain domain) {
-		addAttribute(new AttributeImpl(name, domain, this, null));
+	public Attribute createAttribute(String name, Domain domain) {
+		return createAttribute(new AttributeImpl(name, domain, this, null));
 	}
 
 	@Override
@@ -176,7 +176,7 @@ public abstract class AttributedElementClassImpl<SC extends AttributedElementCla
 	}
 
 	@Override
-	public Set<Constraint> getConstraints() {
+	public PSet<Constraint> getConstraints() {
 		return constraints;
 	}
 
@@ -291,4 +291,6 @@ public abstract class AttributedElementClassImpl<SC extends AttributedElementCla
 
 		finished = false;
 	}
+
+	protected abstract void deleteAttribute(AttributeImpl attr);
 }

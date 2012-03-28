@@ -253,7 +253,7 @@ public class TgSchema2Java {
 	/**
 	 * Checks if all .java-files belonging to the specified Schema already exist
 	 * in the commit path. There also must not exist any surplus .java-files.
-	 * 
+	 *
 	 * @param schema
 	 *            the Schema whose files shall be checked for existence
 	 * @return true if all .java-files already exist; false otherwise
@@ -270,7 +270,7 @@ public class TgSchema2Java {
 		requiredFilePaths.add(commitPath + File.separator
 				+ schema.getPathName() + File.separator + "impl"
 				+ File.separator + schema.getName() + "Factory.java");
-		for (Domain d : schema.getDomains().values()) {
+		for (Domain d : schema.getDomains()) {
 			pathName = d.getPathName();
 
 			if (pathName != "") {
@@ -331,7 +331,7 @@ public class TgSchema2Java {
 						+ schemaPath + File.separator + "impl"
 						+ File.separator + pathName + "Reversed"
 						+ ec.getSimpleName() + "Impl.java");
-			}		
+			}
 		}
 
 		/*
@@ -500,6 +500,7 @@ public class TgSchema2Java {
 	}
 
 	static class JavaFileFilter implements FileFilter {
+		@Override
 		public boolean accept(File file) {
 			return (file.isDirectory() || file.getName().endsWith(".java"));
 		}

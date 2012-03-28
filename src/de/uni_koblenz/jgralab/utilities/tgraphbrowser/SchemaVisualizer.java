@@ -37,7 +37,6 @@ package de.uni_koblenz.jgralab.utilities.tgraphbrowser;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -84,9 +83,13 @@ public class SchemaVisualizer {
 		code.append("var ulRootPackage = document.createElement(\"ul\");\n");
 		code.append("ulRootPackage.id = \"ulRootPackage\";\n");
 		code.append("divPackage.appendChild(ulRootPackage);\n");
-		createEntriesForPackage(code, "ulRootPackage", defaultPackage, true,
-				state.getGraph().getSchema().getGraphClass().getVertexClasses(), state
-						.getGraph().getSchema().getGraphClass().getEdgeClasses());
+		createEntriesForPackage(
+				code,
+				"ulRootPackage",
+				defaultPackage,
+				true,
+				state.getGraph().getSchema().getGraphClass().getVertexClasses(),
+				state.getGraph().getSchema().getGraphClass().getEdgeClasses());
 	}
 
 	/**
@@ -208,10 +211,10 @@ public class SchemaVisualizer {
 		createLi(code, parentUl, uniqueName, simpleName);
 		createCheckBox(code, uniqueName, qualifiedName, additionalCode);
 		createP(code, simpleName, uniqueName, qualifiedName, false, null);
-		Map<String, Package> subPackages = currentPackage.getSubPackages();
+		Set<Package> subPackages = currentPackage.getSubPackages();
 		if (!subPackages.isEmpty()) {
 			convertToTypeWithSubtypes(code, uniqueName);
-			for (Package p : subPackages.values()) {
+			for (Package p : subPackages) {
 				// get vertices of this package
 				ArrayList<VertexClass> verticesOfThisPackage = new ArrayList<VertexClass>();
 				for (VertexClass vc : vertices) {

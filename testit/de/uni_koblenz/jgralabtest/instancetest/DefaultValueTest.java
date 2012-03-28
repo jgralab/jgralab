@@ -406,46 +406,46 @@ public class DefaultValueTest extends InstanceTest {
 
 		GraphClass graphClass = schema
 				.createGraphClass("DefaultValueTestGraph");
-		graphClass.addAttribute("boolGraph", schema.getBooleanDomain(), "t");
-		graphClass.addAttribute("intGraph", schema.getIntegerDomain(), "1");
-		graphClass.addAttribute("doubleGraph", schema.getDoubleDomain(), "1.1");
-		graphClass.addAttribute("longGraph", schema.getLongDomain(), "1");
-		graphClass.addAttribute("stringGraph", schema.getStringDomain(),
+		graphClass.createAttribute("boolGraph", schema.getBooleanDomain(), "t");
+		graphClass.createAttribute("intGraph", schema.getIntegerDomain(), "1");
+		graphClass.createAttribute("doubleGraph", schema.getDoubleDomain(), "1.1");
+		graphClass.createAttribute("longGraph", schema.getLongDomain(), "1");
+		graphClass.createAttribute("stringGraph", schema.getStringDomain(),
 				"\"test\"");
-		graphClass.addAttribute("enumGraph", enumDomain, "FIRST");
-		graphClass.addAttribute("listGraph", simpleListDomain, "[t f t]");
-		graphClass.addAttribute("complexListGraph", complexListDomain,
+		graphClass.createAttribute("enumGraph", enumDomain, "FIRST");
+		graphClass.createAttribute("listGraph", simpleListDomain, "[t f t]");
+		graphClass.createAttribute("complexListGraph", complexListDomain,
 				"[[t] [f] [t]]");
-		graphClass.addAttribute("setGraph", simpleSetDomain, "{t f}");
-		graphClass.addAttribute("complexSetGraph", complexSetDomain,
+		graphClass.createAttribute("setGraph", simpleSetDomain, "{t f}");
+		graphClass.createAttribute("complexSetGraph", complexSetDomain,
 				"{{t} {f}}");
-		graphClass.addAttribute("mapGraph", simpleMapDomain,
+		graphClass.createAttribute("mapGraph", simpleMapDomain,
 				"{1 - t 2 - f 3 - t}");
-		graphClass.addAttribute("complexMapGraph", complexMapDomain,
+		graphClass.createAttribute("complexMapGraph", complexMapDomain,
 				"{[t] - {t} [f] - {f}}");
-		graphClass.addAttribute("recordGraph", recordDomain,
+		graphClass.createAttribute("recordGraph", recordDomain,
 				"(t 1.1 FIRST 1 [t f t] 1 {1 - t 2 - f 3 - t} {t f} \"test\")");
 
 		VertexClass vertexClass = graphClass.createVertexClass("TestVertex");
-		vertexClass.addAttribute("boolVertex", schema.getBooleanDomain(), "t");
-		vertexClass.addAttribute("intVertex", schema.getIntegerDomain(), "1");
-		vertexClass.addAttribute("doubleVertex", schema.getDoubleDomain(),
+		vertexClass.createAttribute("boolVertex", schema.getBooleanDomain(), "t");
+		vertexClass.createAttribute("intVertex", schema.getIntegerDomain(), "1");
+		vertexClass.createAttribute("doubleVertex", schema.getDoubleDomain(),
 				"1.1");
-		vertexClass.addAttribute("longVertex", schema.getLongDomain(), "1");
-		vertexClass.addAttribute("stringVertex", schema.getStringDomain(),
+		vertexClass.createAttribute("longVertex", schema.getLongDomain(), "1");
+		vertexClass.createAttribute("stringVertex", schema.getStringDomain(),
 				"\"test\"");
-		vertexClass.addAttribute("enumVertex", enumDomain, "FIRST");
-		vertexClass.addAttribute("listVertex", simpleListDomain, "[t f t]");
-		vertexClass.addAttribute("complexListVertex", complexListDomain,
+		vertexClass.createAttribute("enumVertex", enumDomain, "FIRST");
+		vertexClass.createAttribute("listVertex", simpleListDomain, "[t f t]");
+		vertexClass.createAttribute("complexListVertex", complexListDomain,
 				"[[t] [f] [t]]");
-		vertexClass.addAttribute("setVertex", simpleSetDomain, "{t f}");
-		vertexClass.addAttribute("complexSetVertex", complexSetDomain,
+		vertexClass.createAttribute("setVertex", simpleSetDomain, "{t f}");
+		vertexClass.createAttribute("complexSetVertex", complexSetDomain,
 				"{{t} {f}}");
-		vertexClass.addAttribute("mapVertex", simpleMapDomain,
+		vertexClass.createAttribute("mapVertex", simpleMapDomain,
 				"{1 - t 2 - f 3 - t}");
-		vertexClass.addAttribute("complexMapVertex", complexMapDomain,
+		vertexClass.createAttribute("complexMapVertex", complexMapDomain,
 				"{[t] - {t} [f] - {f}}");
-		vertexClass.addAttribute("recordVertex", recordDomain,
+		vertexClass.createAttribute("recordVertex", recordDomain,
 				"(t 1.1 FIRST 1 [t f t] 1 {1 - t 2 - f 3 - t} {t f} \"test\")");
 
 		VertexClass subVertexClass = graphClass
@@ -456,23 +456,23 @@ public class DefaultValueTest extends InstanceTest {
 				vertexClass, 0, Integer.MAX_VALUE, "start",
 				AggregationKind.NONE, vertexClass, 0, Integer.MAX_VALUE, "end",
 				AggregationKind.NONE);
-		edgeClass.addAttribute("boolEdge", schema.getBooleanDomain(), "t");
-		edgeClass.addAttribute("intEdge", schema.getIntegerDomain(), "1");
-		edgeClass.addAttribute("doubleEdge", schema.getDoubleDomain(), "1.1");
-		edgeClass.addAttribute("longEdge", schema.getLongDomain(), "1");
-		edgeClass.addAttribute("stringEdge", schema.getStringDomain(),
+		edgeClass.createAttribute("boolEdge", schema.getBooleanDomain(), "t");
+		edgeClass.createAttribute("intEdge", schema.getIntegerDomain(), "1");
+		edgeClass.createAttribute("doubleEdge", schema.getDoubleDomain(), "1.1");
+		edgeClass.createAttribute("longEdge", schema.getLongDomain(), "1");
+		edgeClass.createAttribute("stringEdge", schema.getStringDomain(),
 				"\"test\"");
-		edgeClass.addAttribute("enumEdge", enumDomain, "FIRST");
-		edgeClass.addAttribute("listEdge", simpleListDomain, "[t f t]");
-		edgeClass.addAttribute("complexListEdge", complexListDomain,
+		edgeClass.createAttribute("enumEdge", enumDomain, "FIRST");
+		edgeClass.createAttribute("listEdge", simpleListDomain, "[t f t]");
+		edgeClass.createAttribute("complexListEdge", complexListDomain,
 				"[[t] [f] [t]]");
-		edgeClass.addAttribute("setEdge", simpleSetDomain, "{t f}");
-		edgeClass.addAttribute("complexSetEdge", complexSetDomain, "{{t} {f}}");
-		edgeClass.addAttribute("mapEdge", simpleMapDomain,
+		edgeClass.createAttribute("setEdge", simpleSetDomain, "{t f}");
+		edgeClass.createAttribute("complexSetEdge", complexSetDomain, "{{t} {f}}");
+		edgeClass.createAttribute("mapEdge", simpleMapDomain,
 				"{1 - t 2 - f 3 - t}");
-		edgeClass.addAttribute("complexMapEdge", complexMapDomain,
+		edgeClass.createAttribute("complexMapEdge", complexMapDomain,
 				"{[t] - {t} [f] - {f}}");
-		edgeClass.addAttribute("recordEdge", recordDomain,
+		edgeClass.createAttribute("recordEdge", recordDomain,
 				"(t 1.1 FIRST 1 [t f t] 1 {1 - t 2 - f 3 - t} {t f} \"test\")");
 
 		schema.commit(new CodeGeneratorConfiguration()

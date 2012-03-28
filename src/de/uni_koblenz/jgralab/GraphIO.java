@@ -381,7 +381,7 @@ public class GraphIO {
 		worklist.offer(s.getDefaultPackage());
 		while (!worklist.isEmpty()) {
 			Package pkg = worklist.poll();
-			worklist.addAll(pkg.getSubPackages().values());
+			worklist.addAll(pkg.getSubPackages());
 
 			// write package declaration
 			if (!pkg.isDefaultPackage()) {
@@ -392,7 +392,7 @@ public class GraphIO {
 			}
 
 			// write domains
-			for (Domain dom : pkg.getDomains().values()) {
+			for (Domain dom : pkg.getDomains()) {
 				if (dom instanceof EnumDomain) {
 					EnumDomain ed = (EnumDomain) dom;
 					write("EnumDomain");
@@ -429,10 +429,7 @@ public class GraphIO {
 			}
 
 			// write vertex classes
-			for (VertexClass vc : pkg.getVertexClasses().values()) {
-				if (vc.isDefaultGraphElementClass()) {
-					continue;
-				}
+			for (VertexClass vc : pkg.getVertexClasses()) {
 				if (vc.isAbstract()) {
 					write("abstract ");
 				}
@@ -447,7 +444,7 @@ public class GraphIO {
 			}
 
 			// write edge classes
-			for (EdgeClass ec : pkg.getEdgeClasses().values()) {
+			for (EdgeClass ec : pkg.getEdgeClasses()) {
 				if (ec.isDefaultGraphElementClass()) {
 					continue;
 				}
@@ -1561,7 +1558,7 @@ public class GraphIO {
 	private void addAttributes(List<AttributeData> attributesData,
 			AttributedElementClass<?, ?> aec) throws GraphIOException {
 		for (AttributeData ad : attributesData) {
-			aec.addAttribute(ad.name, attrDomain(ad.domainDescription),
+			aec.createAttribute(ad.name, attrDomain(ad.domainDescription),
 					ad.defaultValue);
 		}
 	}

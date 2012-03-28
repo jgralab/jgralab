@@ -56,35 +56,8 @@ public final class VertexClassImplTest extends
 				.createVertexClass("VertexClass1");
 	}
 
-	/**
-	 * addAttribute(Attribute)
-	 *
-	 * TEST CASE: Adding an attribute, already contained in a superclass of this
-	 * element
-	 */
-	@Test
-	public void testAddAttribute4() {
-		VertexClass superClass = graphClass
-				.createVertexClass("VertexClassSuperClass");
-		vertexClass.addSuperClass(superClass);
 
-		testAddAttribute4(superClass);
-	}
 
-	/**
-	 * addAttribute(Attribute)
-	 *
-	 * TEST CASE: Adding an attribute, already contained in a subclass of this
-	 * element
-	 */
-	@Test
-	public void testAddAttribute5() {
-		VertexClass subClass = graphClass
-				.createVertexClass("VertexClassSubClass");
-		subClass.addSuperClass(vertexClass);
-
-		testAddAttribute5(subClass);
-	}
 
 	/**
 	 * addConstraint(Constraint)
@@ -116,21 +89,7 @@ public final class VertexClassImplTest extends
 		testAddConstraint5(subClass);
 	}
 
-	/**
-	 * containsAttribute(String)
-	 *
-	 * TEST CASE: looking for an attribute, present in a superclass of this
-	 * element
-	 */
-	@Test
-	public void testContainsAttribute3() {
-		VertexClass superClass = graphClass
-				.createVertexClass("VertexClassSuperClass");
 
-		vertexClass.addSuperClass(superClass);
-
-		testContainsAttribute3(superClass);
-	}
 
 	/**
 	 * getAllSubClasses()
@@ -291,116 +250,6 @@ public final class VertexClassImplTest extends
 		testGetAllSuperClasses(expectedSuperClasses);
 	}
 
-	/**
-	 * getAttribute()
-	 *
-	 * TEST CASE: Getting an inherited attribute
-	 */
-	@Test
-	public void testGetAttribute2() {
-		VertexClass superClass = graphClass
-				.createVertexClass("VertexClassSuperClass");
-
-		vertexClass.addSuperClass(superClass);
-
-		testGetAttribute2(superClass);
-	}
-
-	/**
-	 * getAttribute()
-	 *
-	 * TEST CASE: Trying to get an attribute present in a subclass of this
-	 * element
-	 */
-	@Test
-	public void testGetAttribute5() {
-		VertexClass subClass = graphClass
-				.createVertexClass("VertexClassSubClass");
-
-		subClass.addSuperClass(vertexClass);
-
-		testGetAttribute5(subClass);
-	}
-
-	/**
-	 * getAttributeCount()
-	 *
-	 * TEST CASE: Getting the number of attributes of an element which has
-	 * exactly only one inherited attribute and no direct attributes
-	 */
-	@Test
-	public void testGetAttributeCount2() {
-		VertexClass superClass = graphClass
-				.createVertexClass("VertexClassSuperClass");
-
-		vertexClass.addSuperClass(superClass);
-
-		testGetAttributeCount2(superClass);
-	}
-
-	/**
-	 * getAttributeCount()
-	 *
-	 * TEST CASE: Getting the number of attributes of an element which has
-	 * multiple direct and indirect attributes
-	 */
-	@Test
-	public void testGetAttributeCount3() {
-		VertexClass superClass = graphClass
-				.createVertexClass("VertexClassSuperClass");
-
-		vertexClass.addSuperClass(superClass);
-
-		testGetAttributeCount3(superClass);
-	}
-
-	/**
-	 * getAttributeCount()
-	 *
-	 * TEST CASE: Getting the number of attributes of an element which has no
-	 * direct nor inherited attributes but whose subclass has attributes
-	 */
-	@Test
-	public void testGetAttributeCount5() {
-		VertexClass subClass = graphClass
-				.createVertexClass("VertexClassSubClass");
-
-		subClass.addSuperClass(vertexClass);
-
-		testGetAttributeCount5(subClass);
-	}
-
-	/**
-	 * getAttributeList()
-	 *
-	 * TEST CASE: Getting an element´s list of attributes, which has exactly one
-	 * inherited attribute and no direct attributes
-	 */
-	@Test
-	public void testGetAttributeList2() {
-		VertexClass superClass = graphClass
-				.createVertexClass("VertexClassSuperClass");
-
-		vertexClass.addSuperClass(superClass);
-
-		testGetAttributeList2(superClass);
-	}
-
-	/**
-	 * getAttributeList()
-	 *
-	 * TEST CASE: Getting an element´s list of attributes, which has mutliple
-	 * direct and inherited attributes
-	 */
-	@Test
-	public void testGetAttributeList3() {
-		VertexClass superClass = graphClass
-				.createVertexClass("VertexClassSuperClass");
-
-		vertexClass.addSuperClass(superClass);
-
-		testGetAttributeList3(superClass);
-	}
 
 	/**
 	 * getAttributeList()
@@ -761,18 +610,6 @@ public final class VertexClassImplTest extends
 		testHasOwnAttributes4(superClass);
 	}
 
-	/**
-	 * hasOwnAttributes()
-	 *
-	 * TEST CASE: The element has no direct but indirect attributes
-	 */
-	@Test
-	public void testHasOwnAttributes5() {
-		VertexClass superClass = graphClass.createVertexClass("Superclass");
-		vertexClass.addSuperClass(superClass);
-
-		testHasOwnAttributes5(superClass);
-	}
 
 	/**
 	 * isSubClassOf()

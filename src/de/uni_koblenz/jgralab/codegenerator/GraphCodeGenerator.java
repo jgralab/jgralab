@@ -174,9 +174,6 @@ public class GraphCodeGenerator extends
 		TreeSet<GraphElementClass<?, ?>> sortedClasses = new TreeSet<GraphElementClass<?, ?>>();
 		sortedClasses.addAll(gc.getGraphElementClasses());
 		for (GraphElementClass<?, ?> gec : sortedClasses) {
-			if (gec.isDefaultGraphElementClass()) {
-				continue;
-			}
 			CodeList gecCode = new CodeList();
 			code.addNoIndent(gecCode);
 
@@ -346,9 +343,6 @@ public class GraphCodeGenerator extends
 		vertexClassSet.addAll(gc.getVertexClasses());
 
 		for (VertexClass vertex : vertexClassSet) {
-			if (vertex.isDefaultGraphElementClass()) {
-				continue;
-			}
 			if (currentCycle.isStdOrDbImplOrTransImpl()) {
 				addImports("#jgImplPackage#.VertexIterable");
 			}
