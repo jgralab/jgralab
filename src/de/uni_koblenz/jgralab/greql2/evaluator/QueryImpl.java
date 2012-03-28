@@ -171,6 +171,7 @@ public class QueryImpl extends GraphStructureChangedAdapter implements Query {
 			if (e != null) {
 				queryGraph = e.graph;
 				vertexEvaluators = e.eval;
+				rootExpression = queryGraph.getFirstGreql2Expression();
 			}
 		}
 		if (queryGraph == null) {
