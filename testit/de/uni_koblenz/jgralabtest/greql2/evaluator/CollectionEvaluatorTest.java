@@ -20,7 +20,6 @@ import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.ImplementationType;
 import de.uni_koblenz.jgralab.Record;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluatorImpl;
-import de.uni_koblenz.jgralab.greql2.evaluator.Query;
 import de.uni_koblenz.jgralab.greql2.evaluator.QueryImpl;
 import de.uni_koblenz.jgralab.greql2.types.Tuple;
 
@@ -386,20 +385,5 @@ public class CollectionEvaluatorTest {
 		Record rec = (Record) erg;
 		assertEquals(1, rec.size());
 		assertEquals("a", rec.getComponent("a"));
-	}
-
-	/**
-	 * Test of query:<br>
-	 * rec(a:3,a:"a")
-	 * 
-	 * @throws GraphIOException
-	 */
-	@Test
-	public void test() throws GraphIOException {
-		Query query = new QueryImpl("rec(a:3,b:\"a\").a");
-		GraphIO.saveGraphToFile(query.getQueryGraph(),
-				"D:/graphen/greqltest.tg", null);
-		Object erg = evaluateQuery("rec(a:3,b:\"a\").a");
-		System.out.println(erg);
 	}
 }
