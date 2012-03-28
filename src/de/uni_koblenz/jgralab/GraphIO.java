@@ -786,11 +786,7 @@ public class GraphIO {
 						nextI = nextI.getNextIncidence();
 						continue;
 					}
-					if(nextI.getOmega() instanceof TemporaryVertex){
-						nextI = nextI.getNextIncidence();
-						continue;
-					}
-					if(nextI.getAlpha() instanceof TemporaryVertex){
+					if(nextI.getThat() instanceof TemporaryVertex){
 						nextI = nextI.getNextIncidence();
 						continue;
 					}

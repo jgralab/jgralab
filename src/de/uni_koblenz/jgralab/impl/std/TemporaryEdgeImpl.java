@@ -5,12 +5,16 @@ import java.util.HashMap;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
+import de.uni_koblenz.jgralab.GraphException;
 import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.NoSuchAttributeException;
 import de.uni_koblenz.jgralab.TemporaryEdge;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.impl.GraphBaseImpl;
+import de.uni_koblenz.jgralab.impl.InternalEdge;
+import de.uni_koblenz.jgralab.impl.InternalGraph;
+import de.uni_koblenz.jgralab.impl.InternalVertex;
 import de.uni_koblenz.jgralab.impl.ReversedEdgeBaseImpl;
 import de.uni_koblenz.jgralab.schema.AggregationKind;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
@@ -57,8 +61,95 @@ public class TemporaryEdgeImpl extends EdgeImpl implements TemporaryEdge{
 
 	@Override
 	public Edge transformToRealGraphElement(EdgeClass edgeClass) {
-		// TODO Auto-generated method stub
-		return null;
+		
+		//test if valid
+		if(!this.getAlpha().getAttributedElementClass().isValidFromFor(edgeClass)){
+			throw new GraphException("Transformation of temporary edge "+this+ " failed. " 
+					+ this.getAlpha() + " is not a valid source for "+ edgeClass);
+		}
+		if(!this.getOmega().getAttributedElementClass().isValidToFor(edgeClass)){
+			throw new GraphException("Transformation of temporary edge "+this+ " failed. "
+					+ this.getOmega() + " is not a valid target for "+ edgeClass);
+		}
+		
+		// save properties
+		Graph g = graph;
+		int tempID = id;
+		InternalEdge prevEdge = this.getPrevEdgeInESeq();
+		InternalEdge nextEdge = this.getNextEdgeInESeq();
+		
+		InternalEdge prevIncidence = this.getPrevIncidenceInISeq();
+		InternalEdge nextIncidence = this.getNextIncidenceInISeq();
+		
+		InternalEdge prevIncidenceReversed = ((InternalEdge)this.getReversedEdge()).getPrevIncidenceInISeq();
+		InternalEdge nextIncidenceReversed = ((InternalEdge) this.getReversedEdge()).getNextIncidenceInISeq();
+		
+		// create new edge
+		InternalEdge newEdge = g.createEdge(edgeClass, getAlpha(), getOmega());
+		
+		// attributes
+		for(String attrName : this.attributes.keySet()){
+			if(newEdge.getAttributedElementClass().containsAttribute(attrName)){
+				newEdge.setAttribute(attrName, this.attributes.get(attrName));
+			}
+		}
+				
+		InternalEdge newLastEdge = newEdge.getPrevEdgeInESeq();
+		InternalEdge newLastIncidence = newEdge.getPrevIncidenceInISeq();
+		System.out.println("DEBUG: "+newLastIncidence);
+		InternalEdge newLastIncidenceReversed = ((InternalEdge)newEdge.getReversedEdge()).getPrevIncidenceInISeq();
+		System.out.println("DEBUG: "+newLastIncidenceReversed);
+
+		this.delete();
+		
+		// eSeq
+		if(nextEdge != null){
+			nextEdge.setPrevEdgeInGraph(newEdge);
+			newEdge.setNextEdgeInGraph(nextEdge);
+			newEdge.setPrevEdgeInGraph(prevEdge);
+			
+			newLastEdge.setNextEdgeInGraph(null);
+			
+			if(prevEdge != null){
+				prevEdge.setNextEdgeInGraph(newEdge);
+			}else{// Temporary Edge is first Edge in graph
+				((InternalGraph)g).setFirstEdgeInGraph(newEdge);
+			}
+
+			((InternalGraph)g).setLastEdgeInGraph(newLastEdge);
+		}
+		
+		// iSeq edge
+		correctISeq(prevIncidence, nextIncidence, newEdge, newLastIncidence);
+		
+		// iSeq reversed
+		correctISeq(prevIncidenceReversed, nextIncidenceReversed, 
+				(InternalEdge) newEdge.getReversedEdge(), newLastIncidenceReversed);
+		
+		
+		
+		newEdge.setId(tempID);
+		return newEdge;
+	}
+
+	private void correctISeq(InternalEdge prevIncidence,
+			InternalEdge nextIncidence, InternalEdge newEdge,
+			InternalEdge newLastIncidence) {
+		if(nextIncidence != null){
+			nextIncidence.setPrevIncidenceInternal(newEdge);
+			newEdge.setNextIncidenceInternal(nextIncidence);
+			newEdge.setPrevIncidenceInternal(prevIncidence);
+			
+			newLastIncidence.setNextIncidenceInternal(null);
+			
+			if(prevIncidence != null){
+				prevIncidence.setNextIncidenceInternal(newEdge);
+			}else{// Temporary Edge is first incidence
+				((InternalVertex)newEdge.getThis()).setFirstIncidence(newEdge);
+			}
+			
+			((InternalVertex)newEdge.getThis()).setLastIncidence(newLastIncidence);
+		}
 	}
 
 	@Override
