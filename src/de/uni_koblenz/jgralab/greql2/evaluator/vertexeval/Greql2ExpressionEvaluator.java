@@ -60,9 +60,9 @@ import de.uni_koblenz.jgralab.schema.VertexClass;
  * GReQL2-Expression is the rootvertex of the GReQL-2Syntaxgraph. It contains
  * the bound/free variables, that are defined via "using" and binds them to the
  * values in the variableMap of the Greql2Evaluator.
- *
+ * 
  * @author ist@uni-koblenz.de
- *
+ * 
  */
 public class Greql2ExpressionEvaluator extends
 		VertexEvaluator<Greql2Expression> {
@@ -103,7 +103,7 @@ public class Greql2ExpressionEvaluator extends
 		initializeBoundVariables(evaluator);
 
 		Schema graphSchema = evaluator.getSchemaOfDataGraph();
-		if ((vertex.get_importedTypes() != null) && (graph != null)) {
+		if ((vertex.get_importedTypes() != null) && (graphSchema != null)) {
 			for (String importedType : vertex.get_importedTypes()) {
 				if (importedType.endsWith(".*")) {
 					String packageName = importedType.substring(0,
@@ -141,7 +141,8 @@ public class Greql2ExpressionEvaluator extends
 		Object result = eval.getResult(evaluator);
 		// if the query contains a "store as " - clause, there is a
 		// "isIdOfInc"-Incidence connected with the Greql2Expression
-		IsIdOfStoreClause storeInc = vertex.getFirstIsIdOfStoreClauseIncidence(EdgeDirection.IN);
+		IsIdOfStoreClause storeInc = vertex
+				.getFirstIsIdOfStoreClauseIncidence(EdgeDirection.IN);
 		if (storeInc != null) {
 			VertexEvaluator<Identifier> storeEval = query
 					.getVertexEvaluator(storeInc.getAlpha());
