@@ -11,6 +11,7 @@ import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.NoSuchAttributeException;
 import de.uni_koblenz.jgralab.TemporaryVertex;
 import de.uni_koblenz.jgralab.Vertex;
+import de.uni_koblenz.jgralab.impl.InternalVertex;
 import de.uni_koblenz.jgralab.impl.VertexBaseImpl;
 import de.uni_koblenz.jgralab.schema.VertexClass;
 
@@ -85,6 +86,9 @@ public class TemporaryVertexImpl extends VertexImpl implements TemporaryVertex {
 	public Vertex transformToRealGraphElement(VertexClass vc) {
 		int id = this.id;
 		Graph g = this.graph;
+		InternalVertex prevVertex = this.getPrevVertexInVSeq();
+		InternalVertex nextVertex = this.getNextVertexInVSeq();
+		
 		Vertex newVertex = g.createVertex(vc);
 		for(String attrName : this.attributes.keySet()){
 			if(newVertex.getAttributedElementClass().containsAttribute(attrName)){
@@ -102,9 +106,20 @@ public class TemporaryVertexImpl extends VertexImpl implements TemporaryVertex {
 			e.setOmega(newVertex);
 			e = this.getFirstIncidence(EdgeDirection.IN);
 		}
-			
+		
+		InternalVertex newLastVertex = ((InternalVertex)newVertex).getPrevVertexInVSeq();
+		
 		this.delete();
 
+		if(nextVertex != null){
+			prevVertex.setNextVertex(newVertex);
+			nextVertex.setPrevVertex(newVertex);
+			((InternalVertex)newVertex).setNextVertex(nextVertex);
+			((InternalVertex)newVertex).setPrevVertex(prevVertex);
+			
+			newLastVertex.setNextVertex(null);
+		}
+		
 		((VertexBaseImpl)newVertex).setId(id);
 		return newVertex;
 	}

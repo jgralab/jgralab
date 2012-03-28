@@ -75,6 +75,8 @@ public class TemporaryGraphElementsTest {
 		tempv.setAttribute("hugoAtt", "Talils");
 		tempv.setAttribute("name", "HugoJunction");
 		
+		Vertex v3 = g.createVertex(schema.getGraphClass().getVertexClass("Intersection"));
+		
 		Vertex v = tempv.transformToRealGraphElement(schema.getGraphClass().getVertexClass("Intersection"));
 		System.out.println(v);
 
