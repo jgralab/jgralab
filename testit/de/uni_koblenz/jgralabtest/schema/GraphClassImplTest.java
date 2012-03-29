@@ -108,16 +108,14 @@ public final class GraphClassImplTest extends
 	}
 
 	@Test(expected = GraphIOException.class)
-	public void testCreateEdgeClassForbiddenFromTG() {
+	public void testCreateEdgeClassForbiddenFromTG() throws Exception {
 		// EdgeClasses connected to default VC Vertex are forbidden!
-		String s = "TGraph 2;\n" + "Schema foo.bar.BrokenSchema;\n"
-				+ "GraphClass BrokenGraph;\n"
+		String s = "TGraph 2;                                    \n"
+				+ "Schema foo.bar.BrokenSchema;                  \n"
+				+ "GraphClass BrokenGraph;                       \n"
 				+ "EdgeClass E from Vertex (0,1) to Vertex (0,1);\n";
-		try {
-			GraphIO.loadSchemaFromStream(new ByteArrayInputStream(s.getBytes()));
-		} catch (GraphIOException e) {
-			e.printStackTrace();
-		}
+
+		GraphIO.loadSchemaFromStream(new ByteArrayInputStream(s.getBytes()));
 	}
 
 	@Test
