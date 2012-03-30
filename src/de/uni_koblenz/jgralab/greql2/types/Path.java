@@ -66,10 +66,10 @@ public class Path {
 	public Path reverse() {
 		PVector<Vertex> vs = JGraLab.vector();
 		PVector<Edge> es = JGraLab.vector();
-		for (int i = vs.size() - 1; i >= 0; --i) {
+		for (int i = vertices.size() - 1; i >= 0; --i) {
 			vs = vs.plus(vertices.get(i));
 		}
-		for (int i = es.size() - 1; i >= 0; --i) {
+		for (int i = edges.size() - 1; i >= 0; --i) {
 			es = es.plus(edges.get(i).getReversedEdge());
 		}
 		return new Path(vs, es);
