@@ -62,16 +62,30 @@ public class RandomGraph {
 	}
 
 	public static SimpleGraph createEmptyGraph() {
-		System.out.println("Creating empty graph.");
-		SimpleGraph out = SimpleSchema.instance().createSimpleGraph(ImplementationType.STANDARD);
+		// System.out.println("Creating empty graph.");
+		SimpleGraph out = SimpleSchema.instance().createSimpleGraph(
+				ImplementationType.STANDARD);
 		return out;
+	}
+
+	public static SimpleGraph createGraphWithWeakComponents(long seed,
+			int kappa, int vertexCountPerComponent,
+			int additionalEdgeCountPerComponent) {
+		SimpleGraph g = createEmptyGraph();
+
+		for (int i = 0; i < kappa; i++) {
+			addWeakComponent(seed + i, g, vertexCountPerComponent,
+					additionalEdgeCountPerComponent);
+		}
+
+		return g;
 	}
 
 	public static void addWeakComponent(long seed, SimpleGraph g,
 			int vertexCount, int additionalEdgeCount) {
-		System.out.println("Adding weak component with " + vertexCount
-				+ " vertices and " + (vertexCount + additionalEdgeCount)
-				+ " edges.");
+		// System.out.println("Adding weak component with " + vertexCount
+		// + " vertices and " + (vertexCount + additionalEdgeCount)
+		// + " edges.");
 		SimpleVertex[] vertices = new SimpleVertex[vertexCount];
 		int filled = 0;
 		// create "root"

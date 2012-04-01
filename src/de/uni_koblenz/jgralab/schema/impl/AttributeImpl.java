@@ -231,7 +231,7 @@ public class AttributeImpl implements Attribute, Comparable<Attribute> {
 	public void setName(String newName) {
 		((SchemaImpl) aec.getSchema()).assertNotFinished();
 		if (!ATTRIBUTE_NAME_PATTERN.matcher(newName).matches()) {
-			throw new SchemaException("Invalid attribute name '" + name + "'.");
+			throw new SchemaException("Invalid attribute name '" + newName + "'.");
 		}
 		name = newName;
 	}
