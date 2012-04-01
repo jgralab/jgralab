@@ -14,6 +14,7 @@ import de.uni_koblenz.jgralab.schema.Attribute;
 import de.uni_koblenz.jgralab.schema.Constraint;
 import de.uni_koblenz.jgralab.schema.Domain;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
+import de.uni_koblenz.jgralab.schema.exception.SchemaException;
 
 public class TemporaryEdgeClassImpl extends EdgeClassImpl implements EdgeClass {
 	
@@ -49,7 +50,8 @@ public class TemporaryEdgeClassImpl extends EdgeClassImpl implements EdgeClass {
 
 	@Override
 	public void delete() {
-		throw new UnsupportedOperationException();
+		throw new SchemaException(
+				"The temporary vertex class cannot be deleted.");
 	}
 
 	@Override
@@ -166,12 +168,6 @@ public class TemporaryEdgeClassImpl extends EdgeClassImpl implements EdgeClass {
 	@Override
 	public void addSuperClass(EdgeClass superClass) {
 		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	protected EdgeClass getDefaultClass() {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 }

@@ -7,6 +7,7 @@ import static org.junit.Assert.assertTrue;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.util.Set;
 
 import org.junit.Test;
 
@@ -19,6 +20,7 @@ import de.uni_koblenz.jgralab.TemporaryEdge;
 import de.uni_koblenz.jgralab.TemporaryGraphElementConversionException;
 import de.uni_koblenz.jgralab.TemporaryVertex;
 import de.uni_koblenz.jgralab.Vertex;
+import de.uni_koblenz.jgralab.schema.IncidenceClass;
 import de.uni_koblenz.jgralab.schema.Schema;
 import de.uni_koblenz.jgralabtest.schemas.citymap.CityMapSchema;
 
@@ -255,4 +257,14 @@ public class TemporaryGraphElementsTest {
 		assertTrue(e2.isTemporary());
 	}
 	
+	@Test
+	public void test(){
+		Schema schema = CityMapSchema.instance();
+		Set<IncidenceClass> incs= schema.getGraphClass().getVertexClass("Intersection").getAllOutIncidenceClasses();
+		for(IncidenceClass inc : incs){
+			System.out.println(" - "+inc.getVertexClass() + " " + inc.getEdgeClass());
+		}
+		System.out.println(schema.getGraphClass().getDefaultVertexClass().getConnectedEdgeClasses());
+		System.out.println(schema.getGraphClass().getVertexClass("Junction").getDirectSuperClasses());
+	}
 }
