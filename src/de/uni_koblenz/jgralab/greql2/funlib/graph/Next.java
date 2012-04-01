@@ -36,26 +36,36 @@ package de.uni_koblenz.jgralab.greql2.funlib.graph;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Vertex;
+import de.uni_koblenz.jgralab.greql2.funlib.Description;
 import de.uni_koblenz.jgralab.greql2.funlib.Function;
 import de.uni_koblenz.jgralab.greql2.types.TypeCollection;
 
 public class Next extends Function {
 	public Next() {
-		super(
-				"Returns the next edge or vertex for a given element, optionally restricted by a type collection."
-						+ " For edges, the optional boolean parameter decides if successor is taken from the global edge sequence (true),"
-						+ " or from the incidence sequence (false).", 2, 1,
-				1.0, Category.GRAPH);
+		super(2, 1, 1.0);
 	}
 
+	@Description(params = "e", description = 
+			"Returns the next edge for a given element from the incidence sequence.",
+			categories = Category.GRAPH)
 	public Edge evaluate(Edge e) {
 		return e.getNextIncidence();
 	}
 
+	@Description(params = {"e","global"}, description = 
+			"Returns the next edge for a given element."
+			+ " The boolean parameter $global$ decides if successor is taken from the global edge sequence (true),"
+			+ " or from the incidence sequence (false).",
+			categories = Category.GRAPH)
 	public Edge evaluate(Edge e, Boolean global) {
 		return global ? e.getNextEdge() : e.getNextIncidence();
 	}
 
+	@Description(params = {"e","global","tc"}, description = 
+			"Returns the next edge for a given element, restricted by a type collection."
+			+ " The boolean parameter $global$ decides if successor is taken from the global edge sequence (true),"
+			+ " or from the incidence sequence (false).",
+			categories = Category.GRAPH)
 	public Edge evaluate(Edge e, Boolean global, TypeCollection tc) {
 		if (global) {
 			for (Edge n = e.getNextEdge(); n != null; n = n.getNextEdge()) {
@@ -69,6 +79,9 @@ public class Next extends Function {
 		}
 	}
 
+	@Description(params = {"e","tc"}, description = 
+			"Returns the next edge for a given element, restricted by a type collection.",
+			categories = Category.GRAPH)
 	public Edge evaluate(Edge e, TypeCollection tc) {
 		for (Edge n = e.getNextIncidence(); n != null; n = n.getNextIncidence()) {
 			if (tc.acceptsType(n.getAttributedElementClass())) {
@@ -78,10 +91,15 @@ public class Next extends Function {
 		return null;
 	}
 
+	@Description(params = "v", description = "Returns the next vertex for a given element.",
+			categories = Category.GRAPH)
 	public Vertex evaluate(Vertex v) {
 		return v.getNextVertex();
 	}
 
+	@Description(params = {"v","tc"}, description = 
+			"Returns the next vertex for a given element, restricted by a type collection.",
+			categories = Category.GRAPH)
 	public Vertex evaluate(Vertex v, TypeCollection tc) {
 		for (Vertex n = v.getNextVertex(); n != null; n = n.getNextVertex()) {
 			if (tc.acceptsType(n.getAttributedElementClass())) {

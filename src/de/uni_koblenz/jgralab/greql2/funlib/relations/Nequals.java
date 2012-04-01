@@ -34,13 +34,15 @@
  */
 package de.uni_koblenz.jgralab.greql2.funlib.relations;
 
+import de.uni_koblenz.jgralab.greql2.funlib.Description;
 import de.uni_koblenz.jgralab.greql2.funlib.Function;
 
 public class Nequals extends Function {
 
+	@Description(params = {"a","b"}, description = "Determines if $a$ and $b$ are different. Alternative: a <> b",
+			categories = Category.RELATIONS)
 	public Nequals() {
-		super("Determines if $a$ and $b$ are different. Alternative: a <> b", 1, 1,
-				0.95, Category.RELATIONS);
+		super(1, 1, 0.95);
 	}
 
 	public Boolean evaluate(String s, Enum<?> e) {

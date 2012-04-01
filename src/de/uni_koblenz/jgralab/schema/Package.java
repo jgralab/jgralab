@@ -35,13 +35,13 @@
 
 package de.uni_koblenz.jgralab.schema;
 
-import java.util.Map;
+import org.pcollections.PSet;
 
 /**
  * The class <code>Package</code> represents a grUML package. A
  * <code>Package</code> can contain <code>Domain</code>s and
  * <code>GraphElementClass</code>es, as well as other <code>Package</code>s.
- * 
+ *
  * @author ist@uni-koblenz.de
  */
 public interface Package extends NamedElement {
@@ -53,33 +53,35 @@ public interface Package extends NamedElement {
 
 	/**
 	 * Returns all EdgeClasses of this package.
-	 * 
+	 *
 	 * @return a Map containing all EdgeClasses of this Package, mapped to their
 	 *         simple names.
 	 */
-	public Map<String, EdgeClass> getEdgeClasses();
+	public PSet<EdgeClass> getEdgeClasses();
+
+	public EdgeClass getEdgeClass(String simpleName);
 
 	/**
 	 * Returns all Domains of this package.
-	 * 
+	 *
 	 * @return a Map containing all Domains of this Package, mapped to their
 	 *         simple names.
 	 */
-	public Map<String, Domain> getDomains();
+	public PSet<Domain> getDomains();
 
-	public Map<String, GraphClass> getGraphClasses();
+	public Domain getDomain(String simpleName);
 
 	/**
 	 * Retrieves the subpackage with the given simple name.
-	 * 
+	 *
 	 * <p>
 	 * <b>Pattern:</b> <code>p = package.getSubPackage(sn);</code>
 	 * </p>
-	 * 
+	 *
 	 * <p>
 	 * <b>Preconditions:</b> none<br/>
 	 * </p>
-	 * 
+	 *
 	 * <p>
 	 * <b>Postconditions:</b> p takes one of the following values:
 	 * <ul>
@@ -88,7 +90,7 @@ public interface Package extends NamedElement {
 	 * <li>the package in the other case</code>
 	 * </ul>
 	 * </p>
-	 * 
+	 *
 	 * @param sn
 	 *            the simple name of the subpackage to obtain from this package
 	 * @return the subpackage matching the simple name in this package,
@@ -98,39 +100,42 @@ public interface Package extends NamedElement {
 
 	/**
 	 * Returns all subpackages of this Package.
-	 * 
+	 *
 	 * @return a Map containing all subpackages of this Package, mapped to their
 	 *         simple names.
 	 */
-	public Map<String, Package> getSubPackages();
+	public PSet<Package> getSubPackages();
 
 	/**
-	 * Returns all VertexClasses of this package.
-	 * 
+	 * Returns all VertexClasses of this package. Note that the default package
+	 * also contains the default vertex class.
+	 *
 	 * @return a Map containing all VertexClasses of this Package, mapped to
 	 *         their simple names.
 	 */
-	public Map<String, VertexClass> getVertexClasses();
+	public PSet<VertexClass> getVertexClasses();
+
+	public VertexClass getVertexClass(String simpleName);
 
 	/**
 	 * Checks if this package contains a named element with the given simple
 	 * name.
-	 * 
+	 *
 	 * <p>
 	 * <b>Pattern:</b>
 	 * <code>containsNE = package.containsNamedElement(sn);</code>
 	 * </p>
-	 * 
+	 *
 	 * <p>
 	 * <b>Preconditions:</b> none<br/>
 	 * </p>
-	 * 
+	 *
 	 * <p>
 	 * <b>Postconditions:</b> <code>containsNE</code> is <code>true</code>, if
 	 * this package contains a named element with the given simple name. Else it
 	 * is <code>false</code>.
 	 * </p>
-	 * 
+	 *
 	 * @param sn
 	 *            the simple name of the named element to look for in this
 	 *            package
@@ -141,8 +146,14 @@ public interface Package extends NamedElement {
 
 	/**
 	 * Checks if this Package is the default Package.
-	 * 
+	 *
 	 * @return true iff this Package is the default Package.
 	 */
 	public boolean isDefaultPackage();
+
+	/**
+	 * Deletes this package. Only empty packages can be deleted. Note that the
+	 * default package cannot be deleted.
+	 */
+	public void delete();
 }

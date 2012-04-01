@@ -35,12 +35,17 @@
 
 package de.uni_koblenz.jgralab.schema.impl;
 
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import org.pcollections.ArrayPSet;
+import org.pcollections.PSet;
+
 import de.uni_koblenz.jgralab.schema.Domain;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
-import de.uni_koblenz.jgralab.schema.GraphClass;
+import de.uni_koblenz.jgralab.schema.NamedElement;
 import de.uni_koblenz.jgralab.schema.Package;
 import de.uni_koblenz.jgralab.schema.Schema;
 import de.uni_koblenz.jgralab.schema.VertexClass;
@@ -48,33 +53,28 @@ import de.uni_koblenz.jgralab.schema.exception.SchemaException;
 
 public class PackageImpl extends NamedElementImpl implements Package {
 
-	private final Map<String, Domain> domains = new TreeMap<String, Domain>();
-
-	private final Map<String, EdgeClass> edgeClasses = new TreeMap<String, EdgeClass>();
-
-	private final Map<String, GraphClass> graphClasses = new TreeMap<String, GraphClass>();
-
+	final Map<String, Domain> domains = new TreeMap<String, Domain>();
+	final Map<String, EdgeClass> edgeClasses = new TreeMap<String, EdgeClass>();
+	final Map<String, VertexClass> vertexClasses = new TreeMap<String, VertexClass>();
 	private final Map<String, Package> subPackages = new TreeMap<String, Package>();
-
-	private final Map<String, VertexClass> vertexClasses = new TreeMap<String, VertexClass>();
 
 	/**
 	 * Creates a new <code>DefaultPackage</code> in the given Schema.
-	 * 
+	 *
 	 * <p>
 	 * <b>Pattern:</b>
 	 * <code>p = PackageImpl.createDefaultPackage(schema);</code>
 	 * </p>
-	 * 
+	 *
 	 * <p>
 	 * <b>Preconditions:</b> none<br/>
 	 * </p>
-	 * 
+	 *
 	 * <p>
 	 * <b>Postconditions:</b> p is the newly created <code>DefaultPackage</code>
 	 * for this schema
 	 * </p>
-	 * 
+	 *
 	 * @param schema
 	 *            the schema containing the new <code>DefaultPackage</code>
 	 * @return the newly created <code>DefaultPackage</code> for the given
@@ -90,7 +90,7 @@ public class PackageImpl extends NamedElementImpl implements Package {
 
 	/**
 	 * Constructor for the default package
-	 * 
+	 *
 	 * @param schema
 	 */
 	private PackageImpl(SchemaImpl schema) {
@@ -119,7 +119,7 @@ public class PackageImpl extends NamedElementImpl implements Package {
 
 	/**
 	 * Adds the EdgeClass <code>ec</code> to this Package.
-	 * 
+	 *
 	 * @param ec
 	 *            an EdgeClass
 	 */
@@ -133,30 +133,16 @@ public class PackageImpl extends NamedElementImpl implements Package {
 				+ getQualifiedName()
 				+ ") already contains an edge class called "
 				+ ec.getSimpleName();
-		edgeClasses.put(ec.getSimpleName(), ec);
-	}
-
-	/**
-	 * Adds the GraphClass gc to this Package. This action is only allowed, if
-	 * this package is the DefaultPackage.
-	 */
-	void addGraphClass(GraphClass gc) {
-		if (!isDefaultPackage()) {
-			throw new SchemaException(
-					"The GraphClass must be situated in the DefaultPackage.");
+		// Don't track the default edge class
+		if (!(isDefaultPackage() && ec.getSimpleName().equals(
+				EdgeClass.DEFAULTEDGECLASS_NAME))) {
+			edgeClasses.put(ec.getSimpleName(), ec);
 		}
-		assert !graphClasses.containsKey(gc.getSimpleName())
-				&& !graphClasses.containsValue(gc) : "This package ("
-				+ getQualifiedName()
-				+ ") already contains a graph class called "
-				+ gc.getSimpleName();
-
-		graphClasses.put(gc.getQualifiedName(), gc);
 	}
 
 	/**
 	 * Adds the subpackage <code>subPkg</code> to this Package.
-	 * 
+	 *
 	 * @param subPkg
 	 *            a subpackage
 	 */
@@ -175,7 +161,7 @@ public class PackageImpl extends NamedElementImpl implements Package {
 
 	/**
 	 * Adds the VertexClass <code>vc</code> to this Package.
-	 * 
+	 *
 	 * @param vc
 	 *            a VertexClass
 	 */
@@ -189,7 +175,11 @@ public class PackageImpl extends NamedElementImpl implements Package {
 				+ getQualifiedName()
 				+ ") already contains a vertex class called \""
 				+ vc.getSimpleName() + "\"";
-		vertexClasses.put(vc.getSimpleName(), vc);
+		// Don't track the default vertex class
+		if (!(isDefaultPackage() && vc.getSimpleName().equals(
+				VertexClass.DEFAULTVERTEXCLASS_NAME))) {
+			vertexClasses.put(vc.getSimpleName(), vc);
+		}
 	}
 
 	@Override
@@ -199,18 +189,13 @@ public class PackageImpl extends NamedElementImpl implements Package {
 	}
 
 	@Override
-	public Map<String, Domain> getDomains() {
-		return domains;
+	public PSet<Domain> getDomains() {
+		return ArrayPSet.<Domain> empty().plusAll(domains.values());
 	}
 
 	@Override
-	public Map<String, EdgeClass> getEdgeClasses() {
-		return edgeClasses;
-	}
-
-	@Override
-	public Map<String, GraphClass> getGraphClasses() {
-		return graphClasses;
+	public PSet<EdgeClass> getEdgeClasses() {
+		return ArrayPSet.<EdgeClass> empty().plusAll(edgeClasses.values());
 	}
 
 	@Override
@@ -224,13 +209,13 @@ public class PackageImpl extends NamedElementImpl implements Package {
 	}
 
 	@Override
-	public Map<String, Package> getSubPackages() {
-		return subPackages;
+	public PSet<Package> getSubPackages() {
+		return ArrayPSet.<Package> empty().plusAll(subPackages.values());
 	}
 
 	@Override
-	public Map<String, VertexClass> getVertexClasses() {
-		return vertexClasses;
+	public PSet<VertexClass> getVertexClasses() {
+		return ArrayPSet.<VertexClass> empty().plusAll(vertexClasses.values());
 	}
 
 	@Override
@@ -246,5 +231,84 @@ public class PackageImpl extends NamedElementImpl implements Package {
 	@Override
 	public String getUniqueName() {
 		return qualifiedName;
+	}
+
+	@Override
+	public void setQualifiedName(String newQName) {
+		if (schema.getDefaultPackage() == this) {
+			throw new SchemaException("Cannot rename the default package.");
+		}
+		if (qualifiedName.equals(newQName)) {
+			return;
+		}
+		if (schema.knows(newQName)) {
+			throw new SchemaException(newQName
+					+ " is already known to the schema.");
+		}
+		String[] ps = SchemaImpl.splitQualifiedName(newQName);
+		String newPackageName = ps[0];
+		String newSimpleName = ps[1];
+		if (!NamedElementImpl.PACKAGE_NAME_PATTERN.matcher(newSimpleName)
+				.matches()) {
+			throw new SchemaException("Invalid package name '" + newSimpleName
+					+ "'.");
+		}
+
+		unregister();
+
+		qualifiedName = newQName;
+		simpleName = newSimpleName;
+		parentPackage = schema.createPackageWithParents(newPackageName);
+
+		List<NamedElement> l = new LinkedList<NamedElement>();
+		l.addAll(vertexClasses.values());
+		l.addAll(edgeClasses.values());
+		l.addAll(subPackages.values());
+		for (NamedElement ne : l) {
+			ne.setQualifiedName(qualifiedName + "." + ne.getSimpleName());
+		}
+		register();
+	}
+
+	@Override
+	protected final void register() {
+		super.register();
+		parentPackage.subPackages.put(simpleName, this);
+	}
+
+	@Override
+	protected final void unregister() {
+		super.unregister();
+		parentPackage.subPackages.remove(simpleName);
+	}
+
+	@Override
+	public void delete() {
+		schema.assertNotFinished();
+		if (isDefaultPackage()) {
+			throw new SchemaException("The default package cannot be deleted.");
+		}
+		if ((domains.size() != 0) || (vertexClasses.size() != 0)
+				|| (edgeClasses.size() != 0)) {
+			throw new SchemaException("Only empty packages can be deleted!");
+		}
+		parentPackage.subPackages.remove(simpleName);
+		schema.packages.remove(qualifiedName);
+		schema.namedElements.remove(qualifiedName);
+	}
+
+	@Override
+	public EdgeClass getEdgeClass(String simpleName) {
+		return edgeClasses.get(simpleName);
+	}
+
+	@Override
+	public Domain getDomain(String simpleName) {
+		return domains.get(simpleName);
+	}
+
+	@Override
+	public VertexClass getVertexClass(String simpleName) {
+		return vertexClasses.get(simpleName);
 	}
 }

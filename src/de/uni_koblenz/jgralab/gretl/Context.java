@@ -170,7 +170,7 @@ public class Context {
 
 	/**
 	 * Creates a new Context object
-	 * 
+	 *
 	 * @param targetSchemaName
 	 *            The name of the target schema
 	 * @param targetGraphClassName
@@ -255,7 +255,7 @@ public class Context {
 	/**
 	 * Ensures that theres a function for this attributed element class, even
 	 * though this function may be empty.
-	 * 
+	 *
 	 * @param aec
 	 *            the AttributedElementClass for which to ensure the
 	 *            archMap/imgMap mappings
@@ -284,9 +284,6 @@ public class Context {
 				.entrySet()) {
 			AttributedElementClass<?, ?> aec = e.getKey();
 			PMap<Object, AttributedElement<?, ?>> img = e.getValue();
-			if (aec.isInternal()) {
-				continue;
-			}
 			System.out.println("Mappings for: " + aec.getQualifiedName());
 			for (Entry<Object, AttributedElement<?, ?>> entry : img.entrySet()) {
 				System.out.println("    " + entry.getKey() + " ==> "
@@ -309,9 +306,6 @@ public class Context {
 			final GraphElement<?, ?> image) {
 		for (AttributedElementClass<?, ?> superClass : subClass
 				.getAllSuperClasses()) {
-			if (superClass.isInternal()) {
-				continue;
-			}
 			addMappingToClass(superClass, archetype, image);
 		}
 	}
@@ -462,7 +456,7 @@ public class Context {
 	 * Swap this context object. E.g. make the current target graph the default
 	 * source graph and reinitialize all member vars such as archMap/imgMap.
 	 * This is mainly useful for chaining multiple transformations.
-	 * 
+	 *
 	 * @return this context object itself
 	 */
 	public final Context swap() {
@@ -501,7 +495,7 @@ public class Context {
 	 * Reset this context, so that the same context can be passed to another
 	 * transformation. This means, everything except the source graph is
 	 * cleared.
-	 * 
+	 *
 	 * @return the context
 	 */
 	public final Context reset(boolean forgetTargetSchema) {
@@ -533,7 +527,7 @@ public class Context {
 
 	/**
 	 * Sets the (default) source graph for the transformation
-	 * 
+	 *
 	 * @param sourceGraph
 	 *            the source graph
 	 */
@@ -543,7 +537,7 @@ public class Context {
 
 	/**
 	 * adds a source graph for the transformation
-	 * 
+	 *
 	 * @param alias
 	 *            the alias to access this source graph (used as prefix #name#
 	 *            in semantic expressions)
@@ -598,7 +592,7 @@ public class Context {
 	/**
 	 * returns the target graph of the transformation if no target graph exists,
 	 * it will be created
-	 * 
+	 *
 	 * @return the target graph
 	 */
 	public final Graph getTargetGraph() {

@@ -46,9 +46,9 @@ import de.uni_koblenz.jgralab.schema.VertexClass;
 
 /**
  * TODO add comment
- * 
+ *
  * @author ist@uni-koblenz.de
- * 
+ *
  */
 public class EdgeCodeGenerator extends
 		AttributedElementCodeGenerator<EdgeClass, Edge> {
@@ -58,7 +58,8 @@ public class EdgeCodeGenerator extends
 		super(edgeClass, schemaPackageName, config);
 		rootBlock.setVariable("graphElementClass", "Edge");
 		rootBlock.setVariable("schemaElementClass", "EdgeClass");
-		for (EdgeClass superClass : edgeClass.getDirectSuperClasses()) {
+		for (EdgeClass superClass : edgeClass.getDirectSuperClasses().plus(
+				edgeClass.getGraphClass().getDefaultEdgeClass())) {
 			interfaces.add(superClass.getQualifiedName());
 		}
 	}
@@ -154,26 +155,26 @@ public class EdgeCodeGenerator extends
 		VertexClass to = ec.getTo().getVertexClass();
 		b.setVariable("fromVertexClass", from.getSimpleName());
 		b.setVariable("toVertexClass", to.getSimpleName());
-		if (!from.isInternal()) {
+		if (!from.isDefaultGraphElementClass()) {
 			addImports(schemaRootPackageName + "." + from.getQualifiedName());
 		}
-		if (!to.isInternal()) {
+		if (!to.isDefaultGraphElementClass()) {
 			addImports(schemaRootPackageName + "." + to.getQualifiedName());
 		}
 		if (currentCycle.isAbstract()) {
-			if (!from.isInternal()) {
+			if (!from.isDefaultGraphElementClass()) {
 				b.add("public #fromVertexClass# getAlpha();");
 			}
-			if (!to.isInternal()) {
+			if (!to.isDefaultGraphElementClass()) {
 				b.add("public #toVertexClass# getOmega();");
 			}
 		} else {
-			if (!from.isInternal()) {
+			if (!from.isDefaultGraphElementClass()) {
 				b.add("public #fromVertexClass# getAlpha() {");
 				b.add("\treturn (#fromVertexClass#) super.getAlpha();");
 				b.add("}");
 			}
-			if (!to.isInternal()) {
+			if (!to.isDefaultGraphElementClass()) {
 				b.add("public #toVertexClass# getOmega() {");
 				b.add("\treturn (#toVertexClass#) super.getOmega();");
 				b.add("}");
@@ -183,7 +184,7 @@ public class EdgeCodeGenerator extends
 	}
 
 	/**
-	 * 
+	 *
 	 * @return
 	 */
 	private CodeBlock createReversedEdgeMethod() {
@@ -211,9 +212,6 @@ public class EdgeCodeGenerator extends
 
 		if (config.hasTypeSpecificMethodsSupport()) {
 			for (AttributedElementClass<?, ?> ec : superClasses) {
-				if (ec.isInternal()) {
-					continue;
-				}
 				EdgeClass ecl = (EdgeClass) ec;
 				code.addNoIndent(createNextEdgeMethod(ecl));
 			}
@@ -252,10 +250,7 @@ public class EdgeCodeGenerator extends
 		superClasses.add(aec);
 
 		if (config.hasTypeSpecificMethodsSupport()) {
-			for (AttributedElementClass<?, ?> ec : superClasses) {
-				if (ec.isInternal()) {
-					continue;
-				}
+			for (GraphElementClass<?, ?> ec : superClasses) {
 				addImports("#jgPackage#.EdgeDirection");
 				EdgeClass ecl = (EdgeClass) ec;
 				code.addNoIndent(createNextIncidenceMethod(ecl, false));

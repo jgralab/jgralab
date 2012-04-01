@@ -37,14 +37,16 @@ package de.uni_koblenz.jgralab.greql2.funlib.graph;
 import org.pcollections.PVector;
 
 import de.uni_koblenz.jgralab.Edge;
+import de.uni_koblenz.jgralab.greql2.funlib.Description;
 import de.uni_koblenz.jgralab.greql2.funlib.Function;
 import de.uni_koblenz.jgralab.greql2.types.Path;
 
 public class EdgeTrace extends Function {
 
+	@Description(params = "p", description = "Returns the edge trace of a Path $p$.",
+			categories = Category.PATHS_AND_PATHSYSTEMS_AND_SLICES)
 	public EdgeTrace() {
-		super("Returns the edge trace of a Path $p$.",
-				Category.PATHS_AND_PATHSYSTEMS_AND_SLICES);
+		super();
 	}
 
 	public PVector<Edge> evaluate(Path p) {

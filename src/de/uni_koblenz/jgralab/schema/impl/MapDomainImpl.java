@@ -49,6 +49,7 @@ import de.uni_koblenz.jgralab.codegenerator.CodeBlock;
 import de.uni_koblenz.jgralab.codegenerator.CodeGenerator;
 import de.uni_koblenz.jgralab.codegenerator.CodeList;
 import de.uni_koblenz.jgralab.codegenerator.CodeSnippet;
+import de.uni_koblenz.jgralab.schema.Attribute;
 import de.uni_koblenz.jgralab.schema.Domain;
 import de.uni_koblenz.jgralab.schema.MapDomain;
 import de.uni_koblenz.jgralab.schema.Package;
@@ -57,7 +58,7 @@ import de.uni_koblenz.jgralab.schema.exception.SchemaException;
 
 /**
  * @author Tassilo Horn <horn@uni-koblenz.de>
- * 
+ *
  */
 public class MapDomainImpl extends CompositeDomainImpl implements
 MapDomain {
@@ -361,5 +362,12 @@ MapDomain {
 							((PMap<?, ?>) value).get(key));
 		}
 		return result;
+	}
+
+	@Override
+	protected void registerAttribute(Attribute a) {
+		attributes = attributes.plus(a);
+		((DomainImpl) keyDomain).registerAttribute(a);
+		((DomainImpl) valueDomain).registerAttribute(a);
 	}
 }

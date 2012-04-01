@@ -397,7 +397,7 @@ public class LoadTest extends InstanceTest {
 		for (int i = 0; i < 100; i++) {
 			VertexClass vertexClass = gc.getVertexClasses().get(
 					i % gc.getVertexClasses().size());
-			if (vertexClass.isInternal() || vertexClass.isAbstract()) {
+			if (vertexClass.isAbstract()) {
 				continue;
 			}
 			g1.createVertex(vertexClass);

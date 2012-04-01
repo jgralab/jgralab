@@ -274,7 +274,6 @@ ListDomain {
 		while (iterator.hasNext() && result) {
 			result &= this.getBaseDomain().isConformGenericValue(iterator.next());
 		}
-		assert (!iterator.hasNext());
 		return result;
 	}
 }

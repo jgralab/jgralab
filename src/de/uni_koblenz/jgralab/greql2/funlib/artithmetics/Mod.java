@@ -34,13 +34,15 @@
  */
 package de.uni_koblenz.jgralab.greql2.funlib.artithmetics;
 
+import de.uni_koblenz.jgralab.greql2.funlib.Description;
 import de.uni_koblenz.jgralab.greql2.funlib.Function;
 
 public class Mod extends Function {
+	
+	@Description(params = {"a", "b"}, description = "Calculates the remainder of the division $a/b$. Alternative usage: a \\% b.",
+			categories = Category.ARITHMETICS)
 	public Mod() {
-		super(
-				"Calculates the remainder of the division $a/b$. Alternative usage: a \\% b.",
-				4, 1, 1.0, Category.ARITHMETICS);
+		super(4, 1, 1.0);
 	}
 
 	public Number evaluate(Number a, Number b) {

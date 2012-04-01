@@ -34,12 +34,15 @@
  */
 package de.uni_koblenz.jgralab.greql2.funlib.bitops;
 
+import de.uni_koblenz.jgralab.greql2.funlib.Description;
 import de.uni_koblenz.jgralab.greql2.funlib.Function;
 
 public class BitNot extends Function {
+	
+	@Description(params = "a", description = "Calculates the bitwise negation of the given number.",
+			categories = Category.ARITHMETICS)
 	public BitNot() {
-		super("Calculates the bitwise negation of the given number.", 4, 1,
-				1.0, Category.ARITHMETICS);
+		super(4, 1, 1.0);
 	}
 
 	public Integer evaluate(Integer a) {

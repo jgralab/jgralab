@@ -83,7 +83,7 @@ public class OrderedPSet<E> implements POrderedSet<E> {
 	}
 
 	@Override
-	public PSet<E> plus(E e) {
+	public POrderedSet<E> plus(E e) {
 		if (contents.contains(e)) {
 			return this;
 		}
@@ -91,8 +91,8 @@ public class OrderedPSet<E> implements POrderedSet<E> {
 	}
 
 	@Override
-	public PSet<E> plusAll(Collection<? extends E> list) {
-		PSet<E> s = this;
+	public POrderedSet<E> plusAll(Collection<? extends E> list) {
+		POrderedSet<E> s = this;
 		for (E e : list) {
 			s = s.plus(e);
 		}
@@ -100,7 +100,7 @@ public class OrderedPSet<E> implements POrderedSet<E> {
 	}
 
 	@Override
-	public PSet<E> minus(Object e) {
+	public POrderedSet<E> minus(Object e) {
 		if (!contents.contains(e)) {
 			return this;
 		}
@@ -108,8 +108,8 @@ public class OrderedPSet<E> implements POrderedSet<E> {
 	}
 
 	@Override
-	public PSet<E> minusAll(Collection<?> list) {
-		PSet<E> s = this;
+	public POrderedSet<E> minusAll(Collection<?> list) {
+		POrderedSet<E> s = this;
 		for (Object e : list) {
 			s = s.minus(e);
 		}

@@ -36,11 +36,15 @@ package de.uni_koblenz.jgralab.greql2.funlib.graph;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Vertex;
+import de.uni_koblenz.jgralab.greql2.funlib.Description;
 import de.uni_koblenz.jgralab.greql2.funlib.Function;
 
 public class Omega extends Function {
+
+	@Description(params = "e", description = "Returns the end vertex of an edge.",
+			categories = Category.GRAPH)
 	public Omega() {
-		super("Returns the end vertex of an edge.", 1, 1, 1.0, Category.GRAPH);
+		super(1, 1, 1.0);
 	}
 
 	public Vertex evaluate(Edge e) {

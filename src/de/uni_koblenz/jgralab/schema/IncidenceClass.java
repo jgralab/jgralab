@@ -137,4 +137,10 @@ public interface IncidenceClass {
 	 */
 	public IncidenceClass getOpposite();
 
+	/**
+	 * 
+	 * @return the numeric id of this incidence class in the schema
+	 */
+	public int getIncidenceClassIdInSchema();
+
 }

@@ -40,7 +40,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.BasicDomain;
 import de.uni_koblenz.jgralab.schema.CollectionDomain;
 import de.uni_koblenz.jgralab.schema.GraphClass;
@@ -58,7 +57,7 @@ public abstract class NamedElementImpl implements NamedElement {
 	 * The package containing this named element. <code>null</code> if this
 	 * named element is the <code>DefaultPackage</code>.
 	 */
-	protected final PackageImpl parentPackage;
+	protected PackageImpl parentPackage;
 
 	/**
 	 * The fully qualified name of an element in a schema.<br />
@@ -70,21 +69,13 @@ public abstract class NamedElementImpl implements NamedElement {
 	 * '.' character. <br/>
 	 * <code>qualifiedName = packageName + "." + simpleName</code>
 	 */
-	protected final String qualifiedName;
+	protected String qualifiedName;
 
 	/**
 	 * Unique name of an element in a package without the qualified package
 	 * name.
 	 */
-	protected final String simpleName;
-
-	/**
-	 * The unique name of an element in a schema. If there is only one class in
-	 * the schema with this simple name, the unique name is the simple name.
-	 * Otherwise, the unique name is the same as the qualified name, except that
-	 * all <code>'.'</code> are replaced by <code>'$'</code>characters.
-	 */
-	protected String uniqueName;
+	protected String simpleName;
 
 	/**
 	 * Pattern to match the simple name of Collection-/Map-Domain elements with.<br />
@@ -99,7 +90,7 @@ public abstract class NamedElementImpl implements NamedElement {
 	 * Check the preconditions section
 	 * {@link #NamedElementImpl(String, Package, Schema) here} for details.
 	 */
-	private static final Pattern PACKAGE_NAME_PATTERN = Pattern
+	static final Pattern PACKAGE_NAME_PATTERN = Pattern
 			.compile("\\p{Lower}\\w*");
 
 	/**
@@ -108,7 +99,7 @@ public abstract class NamedElementImpl implements NamedElement {
 	 * Check the preconditions section
 	 * {@link #NamedElementImpl(String, Package, Schema) here} for details.
 	 */
-	private static final Pattern ATTRELEM_OR_NOCOLLDOMAIN_PATTERN = Pattern
+	static final Pattern ATTRELEM_OR_NOCOLLDOMAIN_PATTERN = Pattern
 			.compile("\\p{Upper}\\w*?");
 
 	/**
@@ -120,12 +111,12 @@ public abstract class NamedElementImpl implements NamedElement {
 	/**
 	 * Creates a new named element with the specified name in the given parent
 	 * package and schema.
-	 * 
+	 *
 	 * <p>
 	 * <b>Pattern:</b>
 	 * <code>namedElement = new NamedElementImpl(sn, pkg, schema);</code>
 	 * </p>
-	 * 
+	 *
 	 * <p>
 	 * <b>Preconditions:</b>
 	 * <ul>
@@ -165,7 +156,7 @@ public abstract class NamedElementImpl implements NamedElement {
 	 * </li>
 	 * </ul>
 	 * </p>
-	 * 
+	 *
 	 * <p>
 	 * <b>Postconditions:</b>
 	 * <ul>
@@ -208,7 +199,7 @@ public abstract class NamedElementImpl implements NamedElement {
 	 * In either case, all '.' characters are replaced by '$' characters.</li>
 	 * </ul>
 	 * </p>
-	 * 
+	 *
 	 * @param simpleName
 	 *            this named element's simple name
 	 * @param pkg
@@ -270,7 +261,6 @@ public abstract class NamedElementImpl implements NamedElement {
 				this.qualifiedName = Package.DEFAULTPACKAGE_NAME;
 				this.parentPackage = null;
 				this.simpleName = Package.DEFAULTPACKAGE_NAME;
-				this.uniqueName = Package.DEFAULTPACKAGE_NAME;
 				comments = new ArrayList<String>();
 				return;
 			} else {
@@ -288,7 +278,7 @@ public abstract class NamedElementImpl implements NamedElement {
 		 * following character must be alphanumeric and/or a '_' character
 		 * (Composite-/EnumDomain simple names may also have '.<>,' characters).
 		 * The simple name must end with an alphanumeric character.
-		 * 
+		 *
 		 * Simple names of Domains & AttributedElements start with a capital
 		 * letter, whereas the simple name for a Package starts with a small
 		 * letter.
@@ -370,13 +360,6 @@ public abstract class NamedElementImpl implements NamedElement {
 							+ qualifiedName + "'.");
 		}
 
-		/*
-		 * If the unique name is in use, then addToKnownElements() will change
-		 * it.
-		 */
-		if (this instanceof AttributedElementClass) {
-			uniqueName = simpleName;
-		}
 		schema.addNamedElement(this);
 		comments = new ArrayList<String>();
 	}
@@ -384,17 +367,6 @@ public abstract class NamedElementImpl implements NamedElement {
 	@Override
 	public String toString() {
 		return getQualifiedName();
-	}
-
-	/**
-	 * This method is invoked on one or more element's bearing the same unique
-	 * name, when a new element is added to the schema.
-	 * 
-	 * The unique name is changed to match the qualified name, with all '.'
-	 * replaced by '$' characters.
-	 */
-	final void changeUniqueName() {
-		uniqueName = toUniqueNameNotation(qualifiedName);
 	}
 
 	@Override
@@ -451,7 +423,12 @@ public abstract class NamedElementImpl implements NamedElement {
 
 	@Override
 	public String getUniqueName() {
-		return uniqueName;
+		for (NamedElement n : schema.namedElements.values()) {
+			if (n.getSimpleName().equals(simpleName) && (n != this)) {
+				return toUniqueNameNotation(qualifiedName);
+			}
+		}
+		return simpleName;
 	}
 
 	@Override
@@ -461,7 +438,7 @@ public abstract class NamedElementImpl implements NamedElement {
 
 	@Override
 	public final boolean equals(Object o) {
-		if (o == null || !(o instanceof NamedElement)) {
+		if ((o == null) || !(o instanceof NamedElement)) {
 			return false;
 		}
 		NamedElementImpl other = (NamedElementImpl) o;
@@ -473,25 +450,25 @@ public abstract class NamedElementImpl implements NamedElement {
 	 * Transforms a qualified name into unique name notation. This is achieved
 	 * by replacing every occurrence of a <code>'.'</code> characters in the
 	 * given qualified name by a <code>'$'</code> character.
-	 * 
+	 *
 	 * <p>
 	 * <b>Pattern:</b> <code>un = NamedElementImpl.toUniqueName(qn);</code>
 	 * </p>
-	 * 
+	 *
 	 * <p>
 	 * <b>Preconditions:</b> none
 	 * </p>
-	 * 
+	 *
 	 * <p>
 	 * <b>Postconditions:</b> <code>un</code> equals <code>qn</code>, except
 	 * that every occurrence of a '.' character has been replaced by a '$'
 	 * character. As no named element allows for '$' characters in it's
 	 * qualified name, there is no problem here.
 	 * </p>
-	 * 
+	 *
 	 * @param qualifiedName
 	 *            the qualified name to convert to unique name notation
-	 * 
+	 *
 	 * @return the unique name derived from a given qualified name
 	 */
 	public static String toUniqueNameNotation(String qualifiedName) {
@@ -516,5 +493,30 @@ public abstract class NamedElementImpl implements NamedElement {
 			}
 			this.comments.add(comment);
 		}
+	}
+
+	@Override
+	public void setQualifiedName(String newQName) {
+		throw new UnsupportedOperationException("Renaming not allowed for "
+				+ getClass().getName());
+	}
+
+	/**
+	 * Registers this element's qualified name with the schema (and graph class
+	 * for graph element classes), and the simple name with the containing
+	 * package.
+	 */
+	protected void register() {
+		schema.namedElements.put(qualifiedName, this);
+	}
+
+	/**
+	 * Removes this element's qualified name from the schema's namedElements map
+	 * (and the graph class vertexClasses/edgeClasses maps for graph element
+	 * classes), and also removes this element's simple name from the containing
+	 * package's maps.
+	 */
+	protected void unregister() {
+		schema.namedElements.remove(qualifiedName);
 	}
 }

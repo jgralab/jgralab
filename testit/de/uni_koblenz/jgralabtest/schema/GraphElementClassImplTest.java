@@ -53,17 +53,17 @@ public abstract class GraphElementClassImplTest<GEC extends GraphElementClass<?,
 	 */
 	/**
 	 * getAllSubClasses()
-	 * 
+	 *
 	 * TEST CASE: Getting all subclasses of an element with one direct subclass
-	 * 
+	 *
 	 * TEST CASE: Getting all subclasses of an element with multiple direct
 	 * subclasses
-	 * 
+	 *
 	 * TEST CASE: Getting all subclasses of an element with multiple direct and
 	 * indirect subclasses
-	 * 
+	 *
 	 * TEST CASE: Getting all subclasses of an element that has no subclasses
-	 * 
+	 *
 	 * NOTE: This method is called upon in all of this classes´ subclasses.
 	 */
 	public final void testGetAllSubClasses(Vector<GEC> expectedSubClasses) {
@@ -96,19 +96,19 @@ public abstract class GraphElementClassImplTest<GEC extends GraphElementClass<?,
 	 */
 	/**
 	 * getAllSuperClasses()
-	 * 
+	 *
 	 * TEST CASE: Getting all superclasses of an element with one direct
 	 * superclass
-	 * 
+	 *
 	 * TEST CASE: Getting all superclasses of an element with multiple direct
 	 * superclasses
-	 * 
+	 *
 	 * TEST CASE: Getting all superclasses of an element with multiple direct
 	 * and indirect superclasses
-	 * 
+	 *
 	 * TEST CASE: Getting all superclasses of an element that has no
 	 * superclasses
-	 * 
+	 *
 	 * NOTE: This method is called upon in all of this classes´ subclasses.
 	 */
 	public final void testGetAllSuperClasses(Vector<GEC> expectedSuperClasses) {
@@ -142,20 +142,20 @@ public abstract class GraphElementClassImplTest<GEC extends GraphElementClass<?,
 	 */
 	/**
 	 * getDirectSubClasses()
-	 * 
-	 * 
+	 *
+	 *
 	 * TEST CASE: Getting all direct subclasses of an element that has one
 	 * direct subclass.
-	 * 
+	 *
 	 * TEST CASE: Getting all direct subclasses of an element that has multiple
 	 * direct subclasses.
-	 * 
+	 *
 	 * TEST CASE: Getting all direct subclasses of an element that has multiple
 	 * direct and indirect subclasses.
-	 * 
+	 *
 	 * TEST CASE: Getting all direct subclasses of an element that has no direct
 	 * subclasses.
-	 * 
+	 *
 	 * NOTE: This method is called upon in all of this classes´ subclasses.
 	 */
 	public final void testGetDirectSubClasses(Vector<GEC> expectedSubClasses) {
@@ -187,19 +187,19 @@ public abstract class GraphElementClassImplTest<GEC extends GraphElementClass<?,
 	 */
 	/**
 	 * getDirectSuperClasses()
-	 * 
+	 *
 	 * TEST CASE: Getting all direct superclasses of an element that has one
 	 * direct superclass.
-	 * 
+	 *
 	 * TEST CASE: Getting all direct superclasses of an element that has
 	 * multiple direct superclasses.
-	 * 
+	 *
 	 * TEST CASE: Getting all direct superclasses of an element that has
 	 * multiple direct and indirect superclasses.
-	 * 
+	 *
 	 * TEST CASE: Getting all direct superclasses of an element that has no
 	 * direct superclasses.
-	 * 
+	 *
 	 * NOTE: This method is called upon in all of this classes´ subclasses.
 	 */
 	public final void testGetDirectSuperClasses(Vector<GEC> expectedSuperClasses) {
@@ -247,4 +247,5 @@ public abstract class GraphElementClassImplTest<GEC extends GraphElementClass<?,
 	public void testToString() {
 		// TODO Auto-generated method stub
 	}
+
 }

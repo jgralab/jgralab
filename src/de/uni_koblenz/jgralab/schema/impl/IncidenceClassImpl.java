@@ -51,18 +51,25 @@ public class IncidenceClassImpl implements IncidenceClass {
 			String rolename, int minEdgesAtVertex, int maxEdgesAtVertex,
 			IncidenceDirection direction, AggregationKind aggregationKind) {
 		super();
-		this.aggregationKind = aggregationKind;
+		if (aggregationKind == null) {
+			this.aggregationKind = AggregationKind.NONE;
+		} else {
+			this.aggregationKind = aggregationKind;
+		}
 		this.direction = direction;
 		this.edgeClass = edgeClass;
 		this.maxEdgesAtVertex = maxEdgesAtVertex;
 		this.minEdgesAtVertex = minEdgesAtVertex;
-		this.rolename = rolename;
 		if (rolename == null) {
-			rolename = "";
+			this.rolename = "";
+		} else {
+			this.rolename = rolename;
 		}
 		this.vertexClass = vertexClass;
 		this.subsettedIncidenceClasses = new HashSet<IncidenceClass>();
 		this.redefinedIncidenceClasses = new HashSet<IncidenceClass>();
+		this.incidenceClassIdInSchema = ((SchemaImpl) edgeClass.getSchema())
+				.getNextIncidenceClassId();
 	}
 
 	private AggregationKind aggregationKind;
@@ -86,6 +93,8 @@ public class IncidenceClassImpl implements IncidenceClass {
 	private Set<IncidenceClass> subsettedIncidenceClasses;
 
 	private Set<IncidenceClass> allSubsettedIncidenceClasses;
+
+	private final int incidenceClassIdInSchema;
 
 	@Override
 	public AggregationKind getAggregationKind() {
@@ -289,5 +298,15 @@ public class IncidenceClassImpl implements IncidenceClass {
 				.unmodifiableSet(this.allSubsettedIncidenceClasses);
 		this.allRedefinedIncidenceClasses = Collections
 				.unmodifiableSet(this.allRedefinedIncidenceClasses);
+	}
+
+	@Override
+	public int getIncidenceClassIdInSchema() {
+		return incidenceClassIdInSchema;
+	}
+
+	void reopen() {
+		allSubsettedIncidenceClasses = null;
+		allRedefinedIncidenceClasses = null;
 	}
 }

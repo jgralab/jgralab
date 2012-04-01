@@ -34,13 +34,14 @@
  */
 package de.uni_koblenz.jgralab.greql2.funlib.relations;
 
+import de.uni_koblenz.jgralab.greql2.funlib.Description;
 import de.uni_koblenz.jgralab.greql2.funlib.Function;
 
 public class Equals extends Function {
 
+	@Description(params = { "a", "b" }, description = "Determines if $a$ and $b$ are equal. Alternative: a = b", categories = Category.RELATIONS)
 	public Equals() {
-		super("Determines if $a$ and $b$ are equal. Alternative: a = b", 2,
-				1, 0.05, Category.RELATIONS);
+		super(2, 1, 0.05);
 	}
 
 	public Boolean evaluate(String s, Enum<?> e) {

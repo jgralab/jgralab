@@ -35,9 +35,19 @@
 
 package de.uni_koblenz.jgralab.schema.impl;
 
+import org.pcollections.ArrayPSet;
+import org.pcollections.PSet;
+
+import de.uni_koblenz.jgralab.schema.Attribute;
 import de.uni_koblenz.jgralab.schema.Domain;
+import de.uni_koblenz.jgralab.schema.exception.SchemaException;
 
 public abstract class DomainImpl extends NamedElementImpl implements Domain {
+
+	/**
+	 * All Attributes that have this domain.
+	 */
+	PSet<Attribute> attributes = ArrayPSet.<Attribute> empty();
 
 	protected DomainImpl(String simpleName, PackageImpl pkg) {
 		super(simpleName, pkg, (SchemaImpl) pkg.getSchema());
@@ -58,5 +68,42 @@ public abstract class DomainImpl extends NamedElementImpl implements Domain {
 	@Override
 	public boolean isBoolean() {
 		return false;
+	}
+
+	@Override
+	protected final void register() {
+		super.register();
+		schema.domains.put(qualifiedName, this);
+		parentPackage.domains.put(simpleName, this);
+	}
+
+	@Override
+	protected final void unregister() {
+		super.unregister();
+		schema.domains.remove(qualifiedName);
+		parentPackage.domains.remove(simpleName);
+	}
+
+	@Override
+	public void delete() {
+		throw new SchemaException("Cannot delete domain " + qualifiedName);
+	}
+
+	@Override
+	public PSet<Attribute> getAttributes() {
+		return attributes;
+	}
+
+	/**
+	 * Registers the given attribute as user of this domain. Collection, Map,
+	 * and RecordDomains override this and also register their base/key/value
+	 * domains or their record component domains.
+	 *
+	 * That's done for disallowing the deletion of domains that are still used
+	 * as attribute domain. E.g., if there's still an List&lt;Map&lt;String,
+	 * FooRecord&gt;&gt; attribute, you must not delete the FooRecord domain.
+	 */
+	protected void registerAttribute(Attribute a) {
+		attributes = attributes.plus(a);
 	}
 }

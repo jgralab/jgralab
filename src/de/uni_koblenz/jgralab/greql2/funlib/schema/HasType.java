@@ -36,6 +36,7 @@ package de.uni_koblenz.jgralab.greql2.funlib.schema;
 
 import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.greql2.exception.GreqlException;
+import de.uni_koblenz.jgralab.greql2.funlib.Description;
 import de.uni_koblenz.jgralab.greql2.funlib.Function;
 import de.uni_koblenz.jgralab.greql2.types.TypeCollection;
 import de.uni_koblenz.jgralab.schema.GraphElementClass;
@@ -43,11 +44,12 @@ import de.uni_koblenz.jgralab.schema.GraphElementClass;
 public class HasType extends Function {
 
 	public HasType() {
-		super(
-				"Returns true, iff the given attributed element or attributed element class has an attribute with the given name.",
-				Category.SCHEMA_ACCESS);
+		super();
 	}
 
+	@Description(params = {"el","qn"}, description = 
+		"Returns true, iff the given attributed element has an attributed element class with the given qualified name.",
+				categories = Category.SCHEMA_ACCESS)
 	public <SC extends GraphElementClass<SC, IC>, IC extends GraphElement<SC, IC>> Boolean evaluate(
 			IC el, String qn) {
 		SC aec = el.getSchema().getAttributedElementClass(qn);
@@ -57,12 +59,18 @@ public class HasType extends Function {
 		return evaluate(el, aec);
 	}
 
+	@Description(params = {"el","aec"}, description = 
+		"Returns true, iff the given attributed element has the given attributed element class",
+				categories = Category.SCHEMA_ACCESS)
 	private <SC extends GraphElementClass<SC, IC>, IC extends GraphElement<SC, IC>> Boolean evaluate(
 			IC el, SC aec) {
 		SC c = el.getAttributedElementClass();
 		return c.equals(aec) || c.isSubClassOf(aec);
 	}
 
+	@Description(params = {"el", "tc"}, description = 
+		"Returns true, iff the given attributed element has an attributed element class accepted by the given type collection.",
+				categories = Category.SCHEMA_ACCESS)
 	public <SC extends GraphElementClass<SC, IC>, IC extends GraphElement<SC, IC>> Boolean evaluate(
 			IC el, TypeCollection tc) {
 		SC c = el.getAttributedElementClass();

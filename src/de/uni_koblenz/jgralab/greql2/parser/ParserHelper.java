@@ -67,7 +67,7 @@ import de.uni_koblenz.jgralab.greql2.schema.Greql2Schema;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
 import de.uni_koblenz.jgralab.greql2.schema.IsArgumentOf;
 import de.uni_koblenz.jgralab.greql2.schema.IsBooleanPredicateOfEdgeRestriction;
-import de.uni_koblenz.jgralab.greql2.schema.IsBoundExprOfQuantifier;
+import de.uni_koblenz.jgralab.greql2.schema.IsBoundExprOfQuantifiedExpression;
 import de.uni_koblenz.jgralab.greql2.schema.IsBoundVarOf;
 import de.uni_koblenz.jgralab.greql2.schema.IsColumnHeaderExprOf;
 import de.uni_koblenz.jgralab.greql2.schema.IsConstraintOf;
@@ -434,8 +434,8 @@ public abstract class ParserHelper {
 		IsQuantifiedDeclOf isQuantifiedDeclOf = v
 				.getFirstIsQuantifiedDeclOfIncidence(EdgeDirection.IN);
 		mergeVariablesInDeclaration(isQuantifiedDeclOf.getAlpha());
-		IsBoundExprOfQuantifier isBoundExprOfQuantifier = v
-				.getFirstIsBoundExprOfQuantifierIncidence(EdgeDirection.IN);
+		IsBoundExprOfQuantifiedExpression isBoundExprOfQuantifier = v
+				.getFirstIsBoundExprOfQuantifiedExpressionIncidence(EdgeDirection.IN);
 		mergeVariables(isBoundExprOfQuantifier.getAlpha(), true);
 		if (separateScope) {
 			afterParsingvariableSymbolTable.blockEnd();

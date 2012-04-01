@@ -39,14 +39,17 @@ import de.uni_koblenz.jgralab.algolib.algorithms.AlgorithmTerminatedException;
 import de.uni_koblenz.jgralab.algolib.algorithms.search.DepthFirstSearch;
 import de.uni_koblenz.jgralab.algolib.algorithms.search.IterativeDepthFirstSearch;
 import de.uni_koblenz.jgralab.algolib.algorithms.topological_order.TopologicalOrderWithDFS;
+import de.uni_koblenz.jgralab.greql2.funlib.Description;
 import de.uni_koblenz.jgralab.greql2.funlib.Function;
 import de.uni_koblenz.jgralab.greql2.funlib.NeedsGraphArgument;
 
 @NeedsGraphArgument
 public class IsAcyclic extends Function {
+	
+	@Description(params = "g", description = "Returns true, iff the graph is acyclic.", 
+			categories = Category.GRAPH)
 	public IsAcyclic() {
-		super("Returns true, iff the graph is acyclic.", 100, 1, 0.1,
-				Category.GRAPH);
+		super(100, 1, 0.1);
 	}
 
 	public Boolean evaluate(Graph g) {

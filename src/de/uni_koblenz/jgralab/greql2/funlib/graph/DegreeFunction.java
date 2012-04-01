@@ -45,8 +45,8 @@ public abstract class DegreeFunction extends Function {
 
 	private EdgeDirection direction;
 
-	public DegreeFunction(String description, EdgeDirection direction) {
-		super(description, 10, 1, 1, Category.GRAPH);
+	public DegreeFunction(EdgeDirection direction) {
+		super(10, 1, 1);
 		this.direction = direction;
 	}
 

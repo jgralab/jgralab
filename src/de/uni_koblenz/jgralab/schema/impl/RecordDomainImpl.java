@@ -47,6 +47,7 @@ import de.uni_koblenz.jgralab.Record;
 import de.uni_koblenz.jgralab.codegenerator.CodeBlock;
 import de.uni_koblenz.jgralab.codegenerator.CodeGenerator;
 import de.uni_koblenz.jgralab.codegenerator.CodeSnippet;
+import de.uni_koblenz.jgralab.schema.Attribute;
 import de.uni_koblenz.jgralab.schema.Domain;
 import de.uni_koblenz.jgralab.schema.Package;
 import de.uni_koblenz.jgralab.schema.RecordDomain;
@@ -345,7 +346,54 @@ public class RecordDomainImpl extends CompositeDomainImpl implements
 			result &= component.getDomain().isConformGenericValue(
 					((Record) value).getComponent(component.getName()));
 		}
-		assert (!iterator.hasNext());
 		return result;
+	}
+
+	@Override
+	public void setQualifiedName(String newQName) {
+		if (qualifiedName.equals(newQName)) {
+			return;
+		}
+		if (schema.knows(newQName)) {
+			throw new SchemaException(newQName
+					+ " is already known to the schema.");
+		}
+		String[] ps = SchemaImpl.splitQualifiedName(newQName);
+		String newPackageName = ps[0];
+		String newSimpleName = ps[1];
+		if (!NamedElementImpl.ATTRELEM_OR_NOCOLLDOMAIN_PATTERN.matcher(
+				newSimpleName).matches()) {
+			throw new SchemaException("Invalid record domain name '"
+					+ newSimpleName + "'.");
+		}
+
+		unregister();
+
+		qualifiedName = newQName;
+		simpleName = newSimpleName;
+		parentPackage = schema.createPackageWithParents(newPackageName);
+
+		register();
+	}
+
+	@Override
+	public void delete() {
+		schema.assertNotFinished();
+		if (!attributes.isEmpty()) {
+			throw new SchemaException(
+					"Cannot delete record domain that is still used by attributes: "
+							+ attributes);
+		}
+		parentPackage.domains.remove(simpleName);
+		schema.namedElements.remove(qualifiedName);
+		schema.domains.remove(qualifiedName);
+	}
+
+	@Override
+	protected void registerAttribute(Attribute a) {
+		attributes = attributes.plus(a);
+		for (RecordComponent rc : components.values()) {
+			((DomainImpl) rc.getDomain()).registerAttribute(a);
+		}
 	}
 }

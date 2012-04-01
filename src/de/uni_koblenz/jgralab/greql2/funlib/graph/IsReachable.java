@@ -44,6 +44,7 @@ import de.uni_koblenz.jgralab.graphmarker.BooleanGraphMarker;
 import de.uni_koblenz.jgralab.greql2.evaluator.fa.DFA;
 import de.uni_koblenz.jgralab.greql2.evaluator.fa.State;
 import de.uni_koblenz.jgralab.greql2.evaluator.fa.Transition;
+import de.uni_koblenz.jgralab.greql2.funlib.Description;
 import de.uni_koblenz.jgralab.greql2.funlib.Function;
 import de.uni_koblenz.jgralab.greql2.types.pathsearch.PathSearchQueueEntry;
 
@@ -51,13 +52,13 @@ public class IsReachable extends Function {
 
 	public static boolean PRINT_STOP_VERTICES = false;
 
+	@Description(params = {"u","v","dfa"}, description = 
+			"Returns true, iff there is a path from vertex given as first argument to vertex "
+					+ "given as second argument that matches the path description given as second argument. "
+					+ "Usually invoked like so: myVertex (--> | <>--)+ myOtherVertex.",
+			categories = {Category.GRAPH,Category.PATHS_AND_PATHSYSTEMS_AND_SLICES})
 	public IsReachable() {
-		super(
-				"Returns true, iff there is a path from vertex given as first argument to vertex "
-						+ "given as second argument that matches the path description given as second argument. "
-						+ "Usually invoked like so: myVertex (--> | <>--)+ myOtherVertex.",
-				50, 1, 0.01, Category.GRAPH,
-				Category.PATHS_AND_PATHSYSTEMS_AND_SLICES);
+		super(50, 1, 0.01);
 	}
 
 	public Boolean evaluate(Vertex u, Vertex v, DFA dfa) {

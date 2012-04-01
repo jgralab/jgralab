@@ -35,13 +35,13 @@
 
 package de.uni_koblenz.jgralab.schema;
 
-import java.util.Set;
+import org.pcollections.PSet;
 
 import de.uni_koblenz.jgralab.GraphElement;
 
 /**
  * Base class for VertexClass and EdgeClass.
- * 
+ *
  * @author ist@uni-koblenz.de
  */
 public interface GraphElementClass<SC extends GraphElementClass<SC, IC>, IC extends GraphElement<SC, IC>>
@@ -49,7 +49,7 @@ public interface GraphElementClass<SC extends GraphElementClass<SC, IC>, IC exte
 
 	/**
 	 * Returns the GraphClass of this AttributedElementClass.
-	 * 
+	 *
 	 * @return the GraphClass in which this graph element class resides
 	 */
 	public GraphClass getGraphClass();
@@ -57,16 +57,16 @@ public interface GraphElementClass<SC extends GraphElementClass<SC, IC>, IC exte
 	/**
 	 * Checks if the current element is a direct or indirect subclass of another
 	 * attributed element.
-	 * 
+	 *
 	 * <p>
 	 * <b>Pattern:</b>
 	 * <code> isSubClass = attrElement.isSubClassOf(other);</code>
 	 * </p>
-	 * 
+	 *
 	 * <p>
 	 * <b>Preconditions:</b> none
 	 * </p>
-	 * 
+	 *
 	 * <p>
 	 * <b>Postconditions:</b> <code>isSubClass</code> is:
 	 * <ul>
@@ -84,7 +84,7 @@ public interface GraphElementClass<SC extends GraphElementClass<SC, IC>, IC exte
 	 * </li>
 	 * </ul>
 	 * </p>
-	 * 
+	 *
 	 * @param anAttributedElementClass
 	 *            the possible superclass of this attributed element
 	 * @return <code>true</code> if <code>anAttributedElementClass</code> is a
@@ -96,16 +96,16 @@ public interface GraphElementClass<SC extends GraphElementClass<SC, IC>, IC exte
 	/**
 	 * Checks if the current element is a direct or inherited superclass of
 	 * another attributed element.
-	 * 
+	 *
 	 * <p>
 	 * <b>Pattern:</b>
 	 * <code> isSuperClass = attrElement.isSuperClass(other);</code>
 	 * </p>
-	 * 
+	 *
 	 * <p>
 	 * <b>Preconditions:</b> none
 	 * </p>
-	 * 
+	 *
 	 * <p>
 	 * <b>Postconditions:</b> <code>isSuperClass</code> is:
 	 * <ul>
@@ -123,7 +123,7 @@ public interface GraphElementClass<SC extends GraphElementClass<SC, IC>, IC exte
 	 * </li>
 	 * </ul>
 	 * </p>
-	 * 
+	 *
 	 * @param anAttributedElementClass
 	 *            the possible subclass of this attributed element
 	 * @return <code>true</code> if <code>anAttributedElementClass</code> is a
@@ -134,16 +134,16 @@ public interface GraphElementClass<SC extends GraphElementClass<SC, IC>, IC exte
 
 	/**
 	 * Lists all direct subclasses of this element.
-	 * 
+	 *
 	 * <p>
 	 * <b>Pattern:</b>
 	 * <code>subClasses = attrElement.getDirectSubClasses();</code>
 	 * </p>
-	 * 
+	 *
 	 * <p>
 	 * <b>Preconditions:</b> none
 	 * </p>
-	 * 
+	 *
 	 * <p>
 	 * <b>Postconditions:</b>
 	 * <ul>
@@ -155,29 +155,29 @@ public interface GraphElementClass<SC extends GraphElementClass<SC, IC>, IC exte
 	 * <code>attrElement´s</code> inherited subclasses</li>
 	 * </ul>
 	 * </p>
-	 * 
+	 *
 	 * @return a Set of all direct subclasses of this element
 	 */
-	public Set<SC> getDirectSubClasses();
+	public PSet<SC> getDirectSubClasses();
 
 	/**
 	 * Returns all direct superclasses of this element.
-	 * 
+	 *
 	 * <p>
 	 * <b>Note:</b> Each instance of a subclass of
 	 * <code>AttributedElementClass</code> has one default direct superclass.
 	 * Please consult the specifications of the used subclass for details.
 	 * </p>
-	 * 
+	 *
 	 * <p>
 	 * <b>Pattern:</b>
 	 * <code>superClasses = attrElement.getDirectSuperClasses();</code>
 	 * </p>
-	 * 
+	 *
 	 * <p>
 	 * <b>Preconditions:</b> none
 	 * </p>
-	 * 
+	 *
 	 * <p>
 	 * <b>Postconditions:</b>
 	 * <ul>
@@ -189,22 +189,22 @@ public interface GraphElementClass<SC extends GraphElementClass<SC, IC>, IC exte
 	 * <code>attrElement´s</code> inherited superclasses
 	 * </ul>
 	 * </p>
-	 * 
+	 *
 	 * @return a Set of all direct superclasses of this element
 	 */
-	public Set<SC> getDirectSuperClasses();
+	public PSet<SC> getDirectSuperClasses();
 
 	/**
 	 * Returns all direct and indirect subclasses of this element.
-	 * 
+	 *
 	 * <p>
 	 * <b>Pattern:</b> <code>subClasses = attrElement.getAllSubClasses();</code>
 	 * </p>
-	 * 
+	 *
 	 * <p>
 	 * <b>Preconditions:</b> none
 	 * </p>
-	 * 
+	 *
 	 * <p>
 	 * <b>Postconditions:</b>
 	 * <ul>
@@ -214,30 +214,30 @@ public interface GraphElementClass<SC extends GraphElementClass<SC, IC>, IC exte
 	 * direct and indirect subclasses</li>
 	 * </ul>
 	 * </p>
-	 * 
+	 *
 	 * @return a Set of all direct and indirect subclasses of this element
 	 */
-	public Set<SC> getAllSubClasses();
+	public PSet<SC> getAllSubClasses();
 
 	/**
 	 * Lists all direct and indirect superclasses of this element.
-	 * 
+	 *
 	 * <p>
 	 * <b>Note:</b> Each instance of a subclass of
 	 * <code>AttributedElementClass</code> has a dedicated default superclass at
 	 * the top of its inheritance hierarchy. Please consult the specifications
 	 * of the used subclass for details.
 	 * </p>
-	 * 
+	 *
 	 * <p>
 	 * <b>Pattern:</b>
 	 * <code>superClasses = attrElement.getAllSuperClasses();</code>
 	 * </p>
-	 * 
+	 *
 	 * <p>
 	 * <b>Preconditions:</b> none
 	 * </p>
-	 * 
+	 *
 	 * <p>
 	 * <b>Postconditions:</b>
 	 * <ul>
@@ -247,9 +247,26 @@ public interface GraphElementClass<SC extends GraphElementClass<SC, IC>, IC exte
 	 * direct and indirect superclasses (including the default superclass)</li>
 	 * </ul>
 	 * </p>
-	 * 
+	 *
 	 * @return a Set of all direct and indirect superclasses of this element
 	 */
-	public Set<SC> getAllSuperClasses();
+	public PSet<SC> getAllSuperClasses();
+
+	/**
+	 * @return the ID of this GraphElementClass in the schema it belongs to
+	 */
+	public int getGraphElementClassIdInSchema();
+
+	/**
+	 * Deletes this graph element class from its graph class (package, and
+	 * schema)
+	 */
+	public void delete();
+
+	/**
+	 * @return true, if this GraphElementClass is either the default VertexClass
+	 *         or the default EdgeClass
+	 */
+	public boolean isDefaultGraphElementClass();
 
 }

@@ -889,7 +889,7 @@ public class DefaultCostModel extends CostModelBase implements CostModel {
 		long declCosts = declEval.getCurrentSubtreeEvaluationCosts(graphSize);
 
 		VertexEvaluator boundExprEval = e.getVertexEvalMarker().getMark(
-				quantifiedExpr.getFirstIsBoundExprOfQuantifierIncidence()
+				quantifiedExpr.getFirstIsBoundExprOfQuantifiedExpressionIncidence()
 						.getAlpha());
 		long boundExprCosts = boundExprEval
 				.getCurrentSubtreeEvaluationCosts(graphSize);

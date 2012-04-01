@@ -961,7 +961,7 @@ public class GreqlEvaluator {
 	 * syntaxgraph, adds the VertexEvaluator object to the vertices of that
 	 * graph and stores this as attribute queryGraph.
 	 */
-	protected void createOptimizedSyntaxGraph() throws OptimizerException {
+	public void createOptimizedSyntaxGraph() throws OptimizerException {
 		long optimizerStartTime = System.currentTimeMillis();
 		if (optimizer == null) {
 			optimizer = new DefaultOptimizer();

@@ -34,12 +34,15 @@
  */
 package de.uni_koblenz.jgralab.greql2.funlib.strings;
 
+import de.uni_koblenz.jgralab.greql2.funlib.Description;
 import de.uni_koblenz.jgralab.greql2.funlib.Function;
 
 public class EndsWith extends Function {
+	
+	@Description(params = {"suffix", "s"}, description = "Returns true, iff the given string ends with the given suffix.",
+			categories = Category.STRINGS)
 	public EndsWith() {
-		super("Returns true, iff the given string ends with the given suffix.",
-				3, 1, 0.05, Category.STRINGS);
+		super(3, 1, 0.05);
 	}
 
 	public Boolean evaluate(String suffix, String s) {

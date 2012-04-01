@@ -37,13 +37,15 @@ package de.uni_koblenz.jgralab.greql2.funlib.collections;
 import org.pcollections.PMap;
 import org.pcollections.PSet;
 
+import de.uni_koblenz.jgralab.greql2.funlib.Description;
 import de.uni_koblenz.jgralab.greql2.funlib.Function;
 
 public class KeySet extends Function {
 
+	@Description(params = "map", description = "Returns the set of keys of the given map.",
+			categories = Category.COLLECTIONS_AND_MAPS)
 	public KeySet() {
-		super("Returns the set of keys of the given map.",
-				Category.COLLECTIONS_AND_MAPS);
+		super();
 	}
 
 	public <K, V> PSet<K> evaluate(PMap<K, V> map) {

@@ -38,10 +38,13 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -127,6 +130,7 @@ public class FunLib {
 		register(de.uni_koblenz.jgralab.greql2.funlib.graph.EdgeSetSubgraph.class);
 		register(de.uni_koblenz.jgralab.greql2.funlib.graph.ElementSetSubgraph.class);
 		register(de.uni_koblenz.jgralab.greql2.funlib.graph.EndVertex.class);
+		register(de.uni_koblenz.jgralab.greql2.funlib.graph.ExtractPaths.class);
 		register(de.uni_koblenz.jgralab.greql2.funlib.graph.GetEdge.class);
 		register(de.uni_koblenz.jgralab.greql2.funlib.graph.GetValue.class);
 		register(de.uni_koblenz.jgralab.greql2.funlib.graph.GetVertex.class);
@@ -194,6 +198,30 @@ public class FunLib {
 	private FunLib() {
 	}
 
+	private static class SignatureComparator implements Comparator<Signature> {
+
+		@Override
+		public int compare(Signature s1, Signature s2) {
+			for (int i = 0; i < Math.min(s1.parameterTypes.length,
+					s2.parameterTypes.length); i++) {
+				Class<?> ps1 = s1.parameterTypes[i];
+				Class<?> ps2 = s2.parameterTypes[i];
+				if (ps1 == ps2) {
+					continue;
+				} else if (ps1.isAssignableFrom(ps2)) {
+					// ps1 is a super type of ps2
+					return 1;
+				} else if (ps2.isAssignableFrom(ps1)) {
+					// ps2 is a super type of ps1
+					return -1;
+				}
+			}
+			// Ok, we cannot decide cause none of the parameter types are
+			// subtypes of each other.
+			return 0;
+		}
+	}
+
 	private static class Signature {
 		Class<?>[] parameterTypes;
 		Method evaluateMethod;
@@ -208,6 +236,24 @@ public class FunLib {
 				}
 			}
 			return true;
+		}
+
+		@Override
+		public String toString() {
+			StringBuilder sb = new StringBuilder();
+			sb.append(evaluateMethod.getName());
+			sb.append("(");
+			boolean first = true;
+			for (Class<?> pt : parameterTypes) {
+				if (first) {
+					first = false;
+				} else {
+					sb.append(", ");
+				}
+				sb.append(pt.getName());
+			}
+			sb.append(")");
+			return sb.toString();
 		}
 	}
 
@@ -242,6 +288,7 @@ public class FunLib {
 			registerSignatures(functionSignatures, cls);
 			signatures = new Signature[functionSignatures.size()];
 			functionSignatures.toArray(signatures);
+			Arrays.sort(signatures, new SignatureComparator());
 		}
 
 		void registerSignatures(ArrayList<Signature> signatures,
@@ -304,7 +351,7 @@ public class FunLib {
 
 	public static final Object apply(PrintStream os, String name,
 			Object... args) {
-		assert name != null && name.length() >= 1;
+		assert (name != null) && (name.length() >= 1);
 		assert args != null;
 		assert validArgumentTypes(args);
 		StringBuilder sb = new StringBuilder();
@@ -329,7 +376,7 @@ public class FunLib {
 		assert fi != null;
 		if (!fi.acceptsUndefinedValues) {
 			for (Object arg : args) {
-				if (arg == null || arg == Undefined.UNDEFINED) {
+				if ((arg == null) || (arg == Undefined.UNDEFINED)) {
 					return Undefined.UNDEFINED;
 				}
 			}
@@ -363,7 +410,7 @@ public class FunLib {
 	}
 
 	public static final Object apply(String name, Object... args) {
-		assert name != null && name.length() >= 1;
+		assert (name != null) && (name.length() >= 1);
 		assert args != null;
 		assert validArgumentTypes(args);
 		FunctionInfo fi = getFunctionInfo(name);
@@ -427,7 +474,7 @@ public class FunLib {
 
 	private static class LaTeXFunctionDocsGenerator {
 		private BufferedWriter bw;
-		private final Map<Category, SortedMap<String, FunctionInfo>> cat2funs = new HashMap<Function.Category, SortedMap<String, FunctionInfo>>();
+		private final Map<Category, SortedMap<String, AnnotationInfo>> cat2funs = new HashMap<Function.Category, SortedMap<String, AnnotationInfo>>();
 
 		LaTeXFunctionDocsGenerator(String fileName,
 				final Map<String, FunctionInfo> funs) throws IOException {
@@ -435,15 +482,84 @@ public class FunLib {
 			fillCat2Funs(funs);
 		}
 
+		private class AnnotationInfo {
+			String name;
+			String constructorDescription;
+			SignatureInfo[] signatureInfos;
+		}
+
+		private class SignatureInfo {
+			String description;
+			String[] params;
+			Signature signatue;
+		}
+
 		private void fillCat2Funs(final Map<String, FunctionInfo> funs) {
 			for (Entry<String, FunctionInfo> e : funs.entrySet()) {
-				for (Category cat : e.getValue().getFunction().getCategories()) {
-					SortedMap<String, FunctionInfo> m = cat2funs.get(cat);
+
+				Class<?> funClass = e.getValue().getFunction().getClass();
+				assert (funClass.getConstructors().length == 1);
+				Constructor<?> cons = funClass.getConstructors()[0];
+
+				String name = e.getKey();
+				String constructorDescription = null;
+
+				Description consAnno = null;
+				if (cons.getAnnotation(Description.class) != null) {
+					consAnno = cons.getAnnotation(Description.class);
+					constructorDescription = consAnno.description();
+				}
+
+				HashMap<Category, ArrayList<SignatureInfo>> cat2sig = new HashMap<Function.Category, ArrayList<SignatureInfo>>();
+				int methodCount = e.getValue().signatures.length;
+				for (int i = 0; i < methodCount; i++) {
+					createSigInfo(e, consAnno, cat2sig, i);
+				}
+
+				for (Category cat : cat2sig.keySet()) {
+					SortedMap<String, AnnotationInfo> m = cat2funs.get(cat);
 					if (m == null) {
-						m = new TreeMap<String, FunctionInfo>();
+						m = new TreeMap<String, AnnotationInfo>();
 						cat2funs.put(cat, m);
 					}
-					m.put(e.getKey(), e.getValue());
+					AnnotationInfo aninfo = new AnnotationInfo();
+					aninfo.name = name;
+					aninfo.constructorDescription = constructorDescription;
+					aninfo.signatureInfos = cat2sig.get(cat).toArray(
+							new SignatureInfo[] {});
+					m.put(aninfo.name, aninfo);
+					cat2funs.put(cat, m);
+				}
+			}
+		}
+
+		private void createSigInfo(Entry<String, FunctionInfo> e,
+				Description consAnno,
+				HashMap<Category, ArrayList<SignatureInfo>> cat2sig, int i) {
+			SignatureInfo si = new SignatureInfo();
+			si.signatue = e.getValue().signatures[i];
+			Method m = si.signatue.evaluateMethod;
+
+			Description des = m.getAnnotation(Description.class);
+			if ((des == null) || (des.params() == null)) {
+				si.params = consAnno.params();
+			} else {
+				si.description = des.description();
+				si.params = des.params();
+			}
+			if ((des != null) && (des.categories() != null)) {
+				for (Category cat : des.categories()) {
+					if (!cat2sig.containsKey(cat)) {
+						cat2sig.put(cat, new ArrayList<SignatureInfo>());
+					}
+					cat2sig.get(cat).add(si);
+				}
+			} else {
+				for (Category cat : consAnno.categories()) {
+					if (!cat2sig.containsKey(cat)) {
+						cat2sig.put(cat, new ArrayList<SignatureInfo>());
+					}
+					cat2sig.get(cat).add(si);
 				}
 			}
 		}
@@ -497,44 +613,52 @@ public class FunLib {
 			write("\\subsection{" + heading + "}");
 			newLine();
 
-			SortedMap<String, FunctionInfo> funs = cat2funs.get(cat);
-			for (Entry<String, FunctionInfo> e : funs.entrySet()) {
-				generateFunctionDocs(e.getKey(), e.getValue());
+			SortedMap<String, AnnotationInfo> funs = cat2funs.get(cat);
+			for (AnnotationInfo e : funs.values()) {
+				generateFunctionDocs(e);
 			}
 		}
 
-		private void generateFunctionDocs(String name, FunctionInfo info)
+		private void generateFunctionDocs(AnnotationInfo info)
 				throws IOException {
 			newLine();
-			write("\\paragraph*{" + name + ".}");
-			newLine();
-			write(info.function.getDescription());
+			write("\\paragraph*{" + info.name + ".}");
+			if (info.constructorDescription != null) {
+				write(info.constructorDescription);
+			}
 			newLine();
 
-			generateSignatures(name, info.signatures);
+			generateSignatures(info);
 
 			newLine();
+
 		}
 
-		private void generateSignatures(String name, Signature[] signatures)
-				throws IOException {
-			write("\\begin{itemize}");
+		private void generateSignatures(AnnotationInfo info) throws IOException {
+			write("\\begin{description}");
 
-			for (Signature sig : signatures) {
-				write("\\item $" + name + ": ");
-				for (int i = 0; i < sig.parameterTypes.length; i++) {
+			for (SignatureInfo sig : info.signatureInfos) {
+				write("\\item [$" + info.name + ":$ ] $");
+				for (int i = 0; i < sig.signatue.parameterTypes.length; i++) {
 					if (i != 0) {
 						write(" \\times ");
 					}
-					write(Types.getGreqlTypeName(sig.parameterTypes[i]));
+
+					write(Types
+							.getGreqlTypeName(sig.signatue.parameterTypes[i]));
+					write("\\; ");
+					write(sig.params[i]);
 				}
 				write(" \\longrightarrow ");
-				write(Types
-						.getGreqlTypeName(sig.evaluateMethod.getReturnType()));
+				write(Types.getGreqlTypeName(sig.signatue.evaluateMethod
+						.getReturnType()));
 				write("$");
+				if (sig.description != null) {
+					write("\\\\");
+					write(sig.description);
+				}
 			}
-
-			write("\\end{itemize}");
+			write("\\end{description}");
 		}
 	}
 

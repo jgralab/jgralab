@@ -42,17 +42,17 @@ import org.pcollections.PMap;
 import org.pcollections.PSet;
 
 import de.uni_koblenz.jgralab.JGraLab;
+import de.uni_koblenz.jgralab.greql2.funlib.Description;
 import de.uni_koblenz.jgralab.greql2.funlib.Function;
 
 public class Union extends Function {
 
 	public Union() {
-		super(
-				"Computes the union of the given two sets or maps.\n"
-						+ "In case of common keys in maps, the entries of the second one override the first one's entries.",
-				Category.COLLECTIONS_AND_MAPS);
+		super();
 	}
 
+	@Description(params = {"a","b"}, description = "Computes the union of the given two sets.",
+				categories = Category.COLLECTIONS_AND_MAPS)
 	public <T> PSet<T> evaluate(PSet<T> a, PSet<T> b) {
 		if (b.isEmpty()) {
 			if (a instanceof ArrayPSet) {
@@ -69,6 +69,9 @@ public class Union extends Function {
 		}
 	}
 
+	@Description(params = {"a","b"}, description = "Computes the union of the given maps.\n"
+				+ "In case of common keys in maps, the entries of the second one override the first one's entries.",
+				categories = Category.COLLECTIONS_AND_MAPS)
 	public <K, V> PMap<K, V> evaluate(PMap<K, V> a, PMap<K, V> b) {
 		if (b.isEmpty()) {
 			if (a instanceof ArrayPMap) {

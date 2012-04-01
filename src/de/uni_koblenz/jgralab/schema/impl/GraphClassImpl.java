@@ -37,9 +37,10 @@ package de.uni_koblenz.jgralab.schema.impl;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
+import org.pcollections.PVector;
 
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.schema.AggregationKind;
@@ -54,13 +55,11 @@ import de.uni_koblenz.jgralab.schema.exception.SchemaException;
 public class GraphClassImpl extends
 		AttributedElementClassImpl<GraphClass, Graph> implements GraphClass {
 
-	private Map<String, GraphElementClass<?, ?>> graphElementClasses = new HashMap<String, GraphElementClass<?, ?>>();
-
-	private Map<String, VertexClass> vertexClasses = new HashMap<String, VertexClass>();
+	Map<String, VertexClass> vertexClasses = new HashMap<String, VertexClass>();
 
 	DirectedAcyclicGraph<VertexClass> vertexClassDag = new DirectedAcyclicGraph<VertexClass>(
 			true);
-	private Map<String, EdgeClass> edgeClasses = new HashMap<String, EdgeClass>();
+	Map<String, EdgeClass> edgeClasses = new HashMap<String, EdgeClass>();
 
 	DirectedAcyclicGraph<EdgeClass> edgeClassDag = new DirectedAcyclicGraph<EdgeClass>(
 			true);
@@ -82,7 +81,7 @@ public class GraphClassImpl extends
 	 * visibility of this constructor cannot be changed without causing serious
 	 * issues in the program.
 	 * </p>
-	 * 
+	 *
 	 * @param qn
 	 *            a unique name in the <code>Schema</code>
 	 * @param aSchema
@@ -91,27 +90,23 @@ public class GraphClassImpl extends
 	 */
 	protected GraphClassImpl(String gcName, SchemaImpl schema) {
 		super(gcName, (PackageImpl) schema.getDefaultPackage(), schema);
-		parentPackage.addGraphClass(this);
 		schema.setGraphClass(this);
-		defaultVertexClass = createDefaultVertexClass();
-		defaultEdgeClass = createDefaultEdgeClass();
 	}
 
 	@Override
-	public VertexClass getDefaultVertexClass() {
+	public final VertexClass getDefaultVertexClass() {
 		return defaultVertexClass;
 	}
 
-	private VertexClassImpl createDefaultVertexClass() {
+	protected void initializeDefaultVertexClass() {
 		VertexClassImpl vc = new VertexClassImpl(
 				VertexClass.DEFAULTVERTEXCLASS_NAME,
 				(PackageImpl) schema.getDefaultPackage(), this);
 		vc.setAbstract(true);
-		vc.setInternal(true);
-		return vc;
+		defaultVertexClass = vc;
 	}
 
-	private EdgeClassImpl createDefaultEdgeClass() {
+	protected void initializeDefaultEdgeClass() {
 		assert getDefaultVertexClass() != null : "Default VertexClass has not yet been created!";
 		assert getDefaultEdgeClass() == null : "Default EdgeClass already created!";
 		EdgeClassImpl ec = new EdgeClassImpl(EdgeClass.DEFAULTEDGECLASS_NAME,
@@ -120,12 +115,11 @@ public class GraphClassImpl extends
 				AggregationKind.NONE, defaultVertexClass, 0, Integer.MAX_VALUE,
 				"", AggregationKind.NONE);
 		ec.setAbstract(true);
-		ec.setInternal(true);
-		return ec;
+		defaultEdgeClass = ec;
 	}
 
 	@Override
-	public EdgeClass getDefaultEdgeClass() {
+	public final EdgeClass getDefaultEdgeClass() {
 		return defaultEdgeClass;
 	}
 
@@ -134,13 +128,10 @@ public class GraphClassImpl extends
 			throw new SchemaException("Duplicate edge class name '"
 					+ ec.getQualifiedName() + "'");
 		}
-		if (graphElementClasses.containsKey(ec.getQualifiedName())) {
-			throw new SchemaException("Edge class name '"
-					+ ec.getQualifiedName()
-					+ "' already used as vertex class name");
+		// Don't track the default EC
+		if (!ec.getQualifiedName().equals(EdgeClass.DEFAULTEDGECLASS_NAME)) {
+			edgeClasses.put(ec.getQualifiedName(), ec);
 		}
-		graphElementClasses.put(ec.getQualifiedName(), ec);
-		edgeClasses.put(ec.getQualifiedName(), ec);
 	}
 
 	void addVertexClass(VertexClass vc) {
@@ -148,14 +139,10 @@ public class GraphClassImpl extends
 			throw new SchemaException("Duplicate vertex class name '"
 					+ vc.getQualifiedName() + "'");
 		}
-		if (graphElementClasses.containsKey(vc.getQualifiedName())) {
-			throw new SchemaException("Vertex class name '"
-					+ vc.getQualifiedName()
-					+ "' already used as edge class name");
+		// Don't track the default VC
+		if (!vc.getQualifiedName().equals(VertexClass.DEFAULTVERTEXCLASS_NAME)) {
+			vertexClasses.put(vc.getQualifiedName(), vc);
 		}
-
-		graphElementClasses.put(vc.getQualifiedName(), vc);
-		vertexClasses.put(vc.getQualifiedName(), vc);
 	}
 
 	@Override
@@ -164,11 +151,17 @@ public class GraphClassImpl extends
 	}
 
 	@Override
-	public EdgeClass createEdgeClass(String qualifiedName, VertexClass from,
-			int fromMin, int fromMax, String fromRoleName,
+	public EdgeClass createEdgeClass(String qualifiedName,
+			VertexClass from, int fromMin, int fromMax, String fromRoleName,
 			AggregationKind aggrFrom, VertexClass to, int toMin, int toMax,
 			String toRoleName, AggregationKind aggrTo) {
 		assertNotFinished();
+		if (from.isDefaultGraphElementClass()
+				|| to.isDefaultGraphElementClass()) {
+			throw new SchemaException(
+					"EdgeClasses starting or ending at the default "
+							+ "VertexClass Vertex are forbidden.");
+		}
 		if (!(aggrFrom == AggregationKind.NONE)
 				&& !(aggrTo == AggregationKind.NONE)) {
 			throw new SchemaException(
@@ -201,71 +194,53 @@ public class GraphClassImpl extends
 	}
 
 	@Override
-	public boolean knowsOwn(String qn) {
-		return (graphElementClasses.containsKey(qn));
-	}
-
-	@Override
-	public boolean knows(String qn) {
-		return graphElementClasses.containsKey(qn);
-	}
-
-	@Override
-	public GraphElementClass<?, ?> getGraphElementClass(String qn) {
-		return graphElementClasses.get(qn);
-	}
-
-	public String getDescriptionString() {
-		StringBuilder output = new StringBuilder("GraphClassImpl '"
-				+ getQualifiedName() + "'");
-		if (isAbstract()) {
-			output.append(" (abstract)");
+	public final GraphElementClass<?, ?> getGraphElementClass(String qn) {
+		GraphElementClass<?, ?> gec = vertexClasses.get(qn);
+		if (gec != null) {
+			return gec;
 		}
-		output.append(":\n");
-		output.append(attributesToString());
-		output.append("\n\nGraphElementClasses of '" + getQualifiedName()
-				+ "':\n\n");
-		Iterator<GraphElementClass<?, ?>> it3 = graphElementClasses.values()
-				.iterator();
-		while (it3.hasNext()) {
-			output.append(it3.next().toString() + "\n");
-		}
-		return output.toString();
-	}
-
-	@Override
-	public List<GraphElementClass<?, ?>> getGraphElementClasses() {
-		return new ArrayList<GraphElementClass<?, ?>>(
-				graphElementClasses.values());
-	}
-
-	@Override
-	public List<EdgeClass> getEdgeClasses() {
-		return edgeClassDag.getNodesInTopologicalOrder();
-	}
-
-	@Override
-	public List<VertexClass> getVertexClasses() {
-		return vertexClassDag.getNodesInTopologicalOrder();
-	}
-
-	@Override
-	public VertexClass getVertexClass(String qn) {
-		return vertexClasses.get(qn);
-	}
-
-	@Override
-	public EdgeClass getEdgeClass(String qn) {
 		return edgeClasses.get(qn);
 	}
 
 	@Override
-	public int getEdgeClassCount() {
+	public final List<GraphElementClass<?, ?>> getGraphElementClasses() {
+		List<GraphElementClass<?, ?>> l = new ArrayList<GraphElementClass<?, ?>>(
+				vertexClasses.values());
+		l.addAll(edgeClasses.values());
+		return l;
+	}
+
+	@Override
+	public final List<EdgeClass> getEdgeClasses() {
+		PVector<EdgeClass> vec = edgeClassDag.getNodesInTopologicalOrder();
+		assert vec.get(0) == defaultEdgeClass;
+		return vec.subList(1, vec.size());
+	}
+
+	@Override
+	public final List<VertexClass> getVertexClasses() {
+		PVector<VertexClass> vec = vertexClassDag.getNodesInTopologicalOrder();
+		assert vec.get(0) == defaultVertexClass;
+		return vec.subList(1, vec.size());
+	}
+
+	@Override
+	public final VertexClass getVertexClass(String qn) {
+		return vertexClasses.get(qn);
+	}
+
+	@Override
+	public final EdgeClass getEdgeClass(String qn) {
+		return edgeClasses.get(qn);
+	}
+
+	@Override
+	public final int getEdgeClassCount() {
 		return edgeClasses.size();
 	}
 
 	@Override
-	public int getVertexClassCount() {
+	public final int getVertexClassCount() {
 		return vertexClasses.size();
 	}
 
@@ -284,22 +259,64 @@ public class GraphClassImpl extends
 	}
 
 	@Override
-	public boolean hasOwnAttributes() {
+	public final boolean hasOwnAttributes() {
 		return hasAttributes();
 	}
 
 	@Override
-	public Attribute getOwnAttribute(String name) {
+	public final Attribute getOwnAttribute(String name) {
 		return getAttribute(name);
 	}
 
 	@Override
-	public int getOwnAttributeCount() {
+	public final int getOwnAttributeCount() {
 		return getAttributeCount();
 	}
 
 	@Override
-	public List<Attribute> getOwnAttributeList() {
+	public final List<Attribute> getOwnAttributeList() {
 		return getAttributeList();
 	}
+
+	@Override
+	public void setQualifiedName(String newQName) {
+		if (qualifiedName.equals(newQName)) {
+			return;
+		}
+		if (schema.knows(newQName)) {
+			throw new SchemaException(newQName
+					+ " is already known to the schema.");
+		}
+		if (newQName.contains(".")) {
+			throw new SchemaException(
+					"The GraphClass must be in the default package. "
+							+ "You tried to move it to '" + newQName + "'.");
+		}
+
+		unregister();
+
+		qualifiedName = newQName;
+		simpleName = newQName;
+
+		register();
+	}
+
+	@Override
+	protected final void reopen() {
+		for (VertexClass vc : vertexClassDag.getNodesInTopologicalOrder()) {
+			((VertexClassImpl) vc).reopen();
+		}
+		for (EdgeClass ec : edgeClassDag.getNodesInTopologicalOrder()) {
+			((EdgeClassImpl) ec).reopen();
+		}
+		vertexClassDag.reopen();
+		edgeClassDag.reopen();
+		super.reopen();
+	}
+
+	@Override
+	protected void deleteAttribute(AttributeImpl attr) {
+		allAttributes = allAttributes.minus(attr);
+	}
+
 }

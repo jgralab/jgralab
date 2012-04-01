@@ -39,6 +39,7 @@ import org.pcollections.PVector;
 
 import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.JGraLab;
+import de.uni_koblenz.jgralab.greql2.funlib.Description;
 import de.uni_koblenz.jgralab.greql2.funlib.Function;
 import de.uni_koblenz.jgralab.schema.Attribute;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
@@ -46,12 +47,13 @@ import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 public class Attributes extends Function {
 
 	public Attributes() {
-		super(
-				"Returns the attribute names and domains of the specified element or schema class "
-						+ "in terms of a vector containing one map per attribute with the keys name and domain.",
-				2, 1, 1.0, Category.SCHEMA_ACCESS);
+		super(2, 1, 1.0);
 	}
 
+	@Description(params = "cls", description = 
+		"Returns the attribute names and domains of the specified schema class "
+		+ "in terms of a vector containing one map per attribute with the keys name and domain.",
+		categories = Category.SCHEMA_ACCESS)
 	public PVector<PMap<String, String>> evaluate(
 			AttributedElementClass<?, ?> cls) {
 		PVector<PMap<String, String>> result = JGraLab.vector();
@@ -64,6 +66,10 @@ public class Attributes extends Function {
 		return result;
 	}
 
+	@Description(params = "el", description = 
+		"Returns the attribute names and domains of the specified element "
+		+ "in terms of a vector containing one map per attribute with the keys name and domain.",
+		categories = Category.SCHEMA_ACCESS)
 	public PVector<PMap<String, String>> evaluate(AttributedElement<?, ?> el) {
 		return evaluate(el.getAttributedElementClass());
 	}

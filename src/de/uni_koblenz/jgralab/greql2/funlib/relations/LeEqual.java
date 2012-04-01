@@ -34,13 +34,15 @@
  */
 package de.uni_koblenz.jgralab.greql2.funlib.relations;
 
+import de.uni_koblenz.jgralab.greql2.funlib.Description;
 import de.uni_koblenz.jgralab.greql2.funlib.Function;
 
 public class LeEqual extends Function {
 
+	@Description(params = {"a","b"}, description = "Determines if $a \\leq b$. Alternative: a <= b",
+			categories = Category.RELATIONS)
 	public LeEqual() {
-		super("Determines if $a \\leq b$. Alternative: a <= b", 2, 1, 0.5,
-				Category.RELATIONS);
+		super(2, 1, 0.5);
 	}
 
 	public <T extends Comparable<? super T>> Boolean evaluate(T a, T b) {

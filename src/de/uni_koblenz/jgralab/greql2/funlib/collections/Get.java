@@ -40,6 +40,7 @@ import org.pcollections.PMap;
 import org.pcollections.POrderedSet;
 import org.pcollections.PVector;
 
+import de.uni_koblenz.jgralab.greql2.funlib.Description;
 import de.uni_koblenz.jgralab.greql2.funlib.Function;
 import de.uni_koblenz.jgralab.greql2.types.Table;
 import de.uni_koblenz.jgralab.greql2.types.Tuple;
@@ -47,29 +48,45 @@ import de.uni_koblenz.jgralab.greql2.types.Tuple;
 public class Get extends Function {
 
 	public Get() {
-		super(
-				"Returns the value associated with the given kep in the given map, "
-						+ "or the element at the given index in the given collection.\n"
-						+ "Shorthand notation: myMap[KEY] or myCollection[INDEX]",
-				2, 1, 1.0, Category.COLLECTIONS_AND_MAPS);
+		super(2, 1, 1.0);
 	}
 
+	@Description(params = {"l", "i"}, description = 
+		"Returns the value associated with the given index in the given PVector.\n "
+						+ "Shorthand notation: myPVector[INDEX]",
+						categories = Category.COLLECTIONS_AND_MAPS)
 	public <T> T evaluate(PVector<T> l, Integer i) {
 		return (i < 0) || (i >= l.size()) ? null : l.get(i);
 	}
 
+	@Description(params = {"l", "i"}, description = 
+		"Returns the value associated with the given index in the given POrderedSet.\n "
+						+ "Shorthand notation: myPOrderedSet[INDEX]",
+						categories = Category.COLLECTIONS_AND_MAPS)
 	public <T> T evaluate(POrderedSet<T> l, Integer i) {
 		return (i < 0) || (i >= l.size()) ? null : l.get(i);
 	}
 
+	@Description(params = {"l", "i"}, description = 
+		"Returns the value associated with the given index in the given Table.\n "
+						+ "Shorthand notation: myTable[INDEX]",
+						categories = Category.COLLECTIONS_AND_MAPS)
 	public <T> T evaluate(Table<T> l, Integer i) {
 		return (i < 0) || (i >= l.size()) ? null : l.get(i);
 	}
 
+	@Description(params = {"l", "i"}, description = 
+		"Returns the value associated with the given index in the given Tuple.\n "
+						+ "Shorthand notation: myTuple[INDEX]",
+						categories = Category.COLLECTIONS_AND_MAPS)
 	public Object evaluate(Tuple t, Integer i) {
 		return (i < 0) || (i >= t.size()) ? null : t.get(i);
 	}
 
+	@Description(params = {"map", "key"}, description = 
+		"Returns the value associated with the given kep in the given PMap.\n "
+						+ "Shorthand notation: myPMap[KEY]",
+						categories = Category.COLLECTIONS_AND_MAPS)
 	public <K, V> V evaluate(PMap<K, V> m, K key) {
 		return m.get(key);
 	}

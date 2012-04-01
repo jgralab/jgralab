@@ -70,34 +70,21 @@ import de.uni_koblenz.jgralab.schema.VertexClass;
  * A generic {@link Graph}-Implementation that can represent TGraphs of
  * arbitrary {@link Schema}s.
  */
-public class GenericGraphImpl extends GraphImpl {
+public class GenericGraphImpl extends GraphImpl implements
+		InternalAttributesArrayAccess {
 
 	private GraphClass type;
 	private Object[] attributes;
 
-	protected GenericGraphImpl(GraphClass type, String id) {
-		super(id, type, 100, 100);
-	}
-
 	protected GenericGraphImpl(GraphClass type, String id, int vmax, int emax) {
 		super(id, type, vmax, emax);
 		this.type = type;
-		if (type.getAttributeCount() > 0) {
+		if (type.hasAttributes()) {
 			attributes = new Object[type.getAttributeCount()];
 			if (!isLoading()) {
 				GenericGraphImpl.initializeGenericAttributeValues(this);
 			}
 		}
-	}
-
-	/**
-	 * Creates a new instance of a generic Graph. This method isn't supposed to
-	 * be called manually. Use
-	 * <code>Schema.createGraph(ImplementationType.Generic)</code> instead!
-	 */
-	public static Graph createGraph(GraphClass type, String id, int vmax,
-			int emax) {
-		return new GenericGraphImpl(type, id, vmax, emax);
 	}
 
 	/**
@@ -184,12 +171,13 @@ public class GenericGraphImpl extends GraphImpl {
 			}
 		} else {
 			Domain d = type.getAttribute(name).getDomain();
-			throw new ClassCastException("Expected "
+			throw new ClassCastException(("Expected "
 					+ ((d instanceof RecordDomain) ? RecordImpl.class.getName()
 							: d.getJavaAttributeImplementationTypeName(d
 									.getPackageName()))
-					+ " object, but received " + data.getClass().getName()
-					+ " object instead");
+					+ " object, but received " + data) == null ? (data
+					.getClass().getName() + " object instead") : data
+					+ " instead");
 		}
 	}
 
@@ -240,7 +228,7 @@ public class GenericGraphImpl extends GraphImpl {
 	 * Returns the default value for attributes in the generic implementation if
 	 * there is no explicitly defined default value, according to the
 	 * attribute's domain.
-	 * 
+	 *
 	 * @param domain
 	 *            The attribute's domain.
 	 * @return The default value for attributes of the domain.
@@ -373,5 +361,10 @@ public class GenericGraphImpl extends GraphImpl {
 			Vertex startVertex, String pathDescription, Class<T> vertexType) {
 		throw new UnsupportedOperationException(
 				"This method is not supported by the generic implementation");
+	}
+
+	@Override
+	public void invokeOnAttributesArray(OnAttributesFunction fn) {
+		attributes = fn.invoke(this, attributes);
 	}
 }

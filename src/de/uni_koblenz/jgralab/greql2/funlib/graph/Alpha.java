@@ -36,11 +36,15 @@ package de.uni_koblenz.jgralab.greql2.funlib.graph;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Vertex;
+import de.uni_koblenz.jgralab.greql2.funlib.Description;
 import de.uni_koblenz.jgralab.greql2.funlib.Function;
 
 public class Alpha extends Function {
+	
+	@Description(params = "e", description = "Returns the start vertex of an edge.",
+			categories = Category.GRAPH)
 	public Alpha() {
-		super("Returns the start vertex of an edge.", 1, 1, 1.0, Category.GRAPH);
+		super(1, 1, 1.0);
 	}
 
 	public Vertex evaluate(Edge e) {

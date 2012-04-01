@@ -34,13 +34,16 @@
  */
 package de.uni_koblenz.jgralab.greql2.funlib.bitops;
 
+import de.uni_koblenz.jgralab.greql2.funlib.Description;
 import de.uni_koblenz.jgralab.greql2.funlib.Function;
 
 public class BitShl extends Function {
+	
+	@Description(params = {"a", "b"}, description = 
+		"Shifts the first number by the second argument's number of bits to the left.",
+			categories = Category.ARITHMETICS)
 	public BitShl() {
-		super(
-				"Shifts the first number by the second argument's number of bits to the left.",
-				4, 1, 1.0, Category.ARITHMETICS);
+		super(4, 1, 1.0);
 	}
 
 	public Integer evaluate(Integer a, Integer n) {

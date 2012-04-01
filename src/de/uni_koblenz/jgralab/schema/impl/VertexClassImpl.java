@@ -91,6 +91,10 @@ public class VertexClassImpl extends
 	 */
 	private Set<IncidenceClass> validToFarIncidenceClasses;
 
+	/**
+	 * A map from far-end role name to the corresponding directed edge class -
+	 * only set if schema is finished
+	 */
 	private Map<String, DirectedSchemaEdgeClass> farRoleNameToEdgeClass;
 
 	/**
@@ -208,7 +212,7 @@ public class VertexClassImpl extends
 	 * For a vertexclass A are all edgeclasses valid froms, which (1) run from A
 	 * to a B or (2) run from a superclass of A to a B and whose end b at B is
 	 * not redefined by A or a superclass of A
-	 * 
+	 *
 	 */
 
 	@Override
@@ -223,11 +227,7 @@ public class VertexClassImpl extends
 			IncidenceClass farInc = ic.getEdgeClass().getTo();
 			validFromInc.add(farInc);
 		}
-		for (VertexClass aec : this.getAllSuperClasses()) {
-			VertexClass vc = aec;
-			if (vc.isInternal()) {
-				continue;
-			}
+		for (VertexClass vc : getAllSuperClasses()) {
 			for (IncidenceClass ic : vc.getAllOutIncidenceClasses()) {
 				IncidenceClass farInc = ic.getEdgeClass().getTo();
 				validFromInc.add(farInc);
@@ -252,12 +252,7 @@ public class VertexClassImpl extends
 			IncidenceClass farInc = ic.getEdgeClass().getFrom();
 			validToInc.add(farInc);
 		}
-
-		for (VertexClass aec : this.getAllSuperClasses()) {
-			VertexClass vc = aec;
-			if (vc.isInternal()) {
-				continue;
-			}
+		for (VertexClass vc : getAllSuperClasses()) {
 			for (IncidenceClass ic : vc.getAllInIncidenceClasses()) {
 				IncidenceClass farInc = ic.getEdgeClass().getFrom();
 				validToInc.add(farInc);
@@ -279,8 +274,8 @@ public class VertexClassImpl extends
 		}
 		// System.err.print("+");
 		Set<EdgeClass> validFrom = new HashSet<EdgeClass>();
-		for (IncidenceClass ic : this.getValidFromFarIncidenceClasses()) {
-			if (!ic.getEdgeClass().isInternal()) {
+		for (IncidenceClass ic : getValidFromFarIncidenceClasses()) {
+			if (!ic.getEdgeClass().isDefaultGraphElementClass()) {
 				validFrom.add(ic.getEdgeClass());
 			}
 		}
@@ -295,8 +290,9 @@ public class VertexClassImpl extends
 		}
 		// System.err.print("-");
 		Set<EdgeClass> validTo = new HashSet<EdgeClass>();
-		for (IncidenceClass ic : this.getValidToFarIncidenceClasses()) {
-			if (!ic.getEdgeClass().isInternal()) {
+
+		for (IncidenceClass ic : getValidToFarIncidenceClasses()) {
+			if (!ic.getEdgeClass().isDefaultGraphElementClass()) {
 				validTo.add(ic.getEdgeClass());
 			}
 		}
@@ -413,7 +409,7 @@ public class VertexClassImpl extends
 		farRoleNameToEdgeClass = new HashMap<String, DirectedSchemaEdgeClass>();
 		for (IncidenceClass ic : getOwnAndInheritedFarIncidenceClasses()) {
 			String role = ic.getRolename();
-			if (role == null || role.length() == 0) {
+			if (role.length() == 0) {
 				continue;
 			}
 			farRoleNameToEdgeClass.put(role,
@@ -460,5 +456,82 @@ public class VertexClassImpl extends
 			}
 		}
 		return null;
+	}
+
+	@Override
+	protected void reopen() {
+		allInIncidenceClasses = null;
+		allOutIncidenceClasses = null;
+		validFromFarIncidenceClasses = null;
+		validToFarIncidenceClasses = null;
+		validFromEdgeClasses = null;
+		validToEdgeClasses = null;
+		farRoleNameToEdgeClass = null;
+		for (IncidenceClass ic : inIncidenceClasses) {
+			((IncidenceClassImpl) ic).reopen();
+		}
+		for (IncidenceClass ic : outIncidenceClasses) {
+			((IncidenceClassImpl) ic).reopen();
+		}
+
+		// Make em modifiable again
+		inIncidenceClasses = new HashSet<IncidenceClass>(inIncidenceClasses);
+		outIncidenceClasses = new HashSet<IncidenceClass>(outIncidenceClasses);
+
+		super.reopen();
+	}
+
+	@Override
+	protected final void register() {
+		super.register();
+		graphClass.vertexClasses.put(qualifiedName, this);
+		parentPackage.vertexClasses.put(simpleName, this);
+	}
+
+	@Override
+	protected final void unregister() {
+		super.unregister();
+		graphClass.vertexClasses.remove(qualifiedName);
+		parentPackage.vertexClasses.remove(simpleName);
+	}
+
+	@Override
+	public void delete() {
+		schema.assertNotFinished();
+		if (this == graphClass.getDefaultVertexClass()) {
+			throw new SchemaException(
+					"The default vertex class cannot be deleted.");
+		}
+		if (!getConnectedEdgeClasses().isEmpty()) {
+			throw new SchemaException("Cannot delete vertex class "
+					+ qualifiedName
+					+ " because there are still connected edge classes: "
+					+ getConnectedEdgeClasses());
+		}
+		super.delete();
+		graphClass.vertexClasses.remove(qualifiedName);
+		graphClass.vertexClassDag.delete(this);
+		parentPackage.vertexClasses.remove(simpleName);
+	}
+
+	/**
+	 * Called when an edge class connected to this vertex class is deleted
+	 *
+	 * @param ic
+	 */
+	void unlink(IncidenceClass ic) {
+		schema.assertNotFinished();
+		outIncidenceClasses.remove(ic);
+		inIncidenceClasses.remove(ic);
+	}
+
+	@Override
+	protected VertexClass getDefaultClass() {
+		return graphClass.getDefaultVertexClass();
+	}
+
+	@Override
+	public boolean isDefaultGraphElementClass() {
+		return this == graphClass.getDefaultVertexClass();
 	}
 }

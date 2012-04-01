@@ -45,15 +45,17 @@ import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql2.evaluator.fa.DFA;
 import de.uni_koblenz.jgralab.greql2.evaluator.fa.State;
 import de.uni_koblenz.jgralab.greql2.evaluator.fa.Transition;
+import de.uni_koblenz.jgralab.greql2.funlib.Description;
 import de.uni_koblenz.jgralab.greql2.funlib.Function;
 import de.uni_koblenz.jgralab.greql2.types.pathsearch.VertexStateQueue;
 
 public class ReachableVertices extends Function {
+	
+	@Description(params = {"v","dfa"}, description = 
+			"Returns all vertices that are reachable from the given vertex by a path matching the the given path description.",
+			categories = {Category.GRAPH, Category.PATHS_AND_PATHSYSTEMS_AND_SLICES})
 	public ReachableVertices() {
-		super(
-				"Returns all vertices that are reachable from the given vertex by a path matching the the given path description.",
-				100, 10, 1.0, Category.GRAPH,
-				Category.PATHS_AND_PATHSYSTEMS_AND_SLICES);
+		super(100, 10, 1.0);
 	}
 
 	public PSet<Vertex> evaluate(Vertex v, DFA dfa) {

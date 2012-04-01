@@ -38,17 +38,18 @@ import org.pcollections.PSet;
 import org.pcollections.PVector;
 
 import de.uni_koblenz.jgralab.JGraLab;
+import de.uni_koblenz.jgralab.greql2.funlib.Description;
 import de.uni_koblenz.jgralab.greql2.funlib.Function;
 
 public class SubCollection extends Function {
 
 	public SubCollection() {
-		super(
-				"Returns a sub collection starting at the given start index (including),\n"
-						+ "and ending at the given end index (excluding).",
-				Category.COLLECTIONS_AND_MAPS);
+		super();
 	}
 
+	@Description(params = {"coll","startIndex","endIndex"}, description = "Returns a sub PVector starting at the given start index (including),\n"
+						+ "and ending at the given end index (excluding).",
+				categories = Category.COLLECTIONS_AND_MAPS)
 	public <T> PVector<T> evaluate(PVector<T> coll, Integer startIndex,
 			Integer endIndex) {
 		if (startIndex < 0 || endIndex > coll.size() || startIndex > endIndex) {
@@ -57,10 +58,15 @@ public class SubCollection extends Function {
 		return coll.subList(startIndex, endIndex);
 	}
 
+	@Description(params = {"coll","startIndex"}, description = "Returns a sub PVector starting at the given start index (including).",
+		categories = Category.COLLECTIONS_AND_MAPS)
 	public <T> PVector<T> evaluate(PVector<T> coll, Integer startIndex) {
 		return evaluate(coll, startIndex, coll.size());
 	}
 
+	@Description(params = {"coll","startIndex","endIndex"}, description = "Returns a sub PSet starting at the given start index (including),\n"
+		+ "and ending at the given end index (excluding).",
+		categories = Category.COLLECTIONS_AND_MAPS)
 	public <T> PSet<T> evaluate(PSet<T> coll, Integer startIndex,
 			Integer endIndex) {
 		if (startIndex < 0 || endIndex > coll.size() || startIndex > endIndex) {
@@ -80,6 +86,8 @@ public class SubCollection extends Function {
 		return result;
 	}
 
+	@Description(params = {"coll","startIndex"}, description = "Returns a sub PSet starting at the given start index (including).",
+		categories = Category.COLLECTIONS_AND_MAPS)
 	public <T> PSet<T> evaluate(PSet<T> coll, Integer startIndex) {
 		return evaluate(coll, startIndex, coll.size());
 	}

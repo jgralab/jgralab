@@ -37,15 +37,16 @@ package de.uni_koblenz.jgralab.greql2.funlib.statistics;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import de.uni_koblenz.jgralab.greql2.funlib.Description;
 import de.uni_koblenz.jgralab.greql2.funlib.Function;
 
 public class Sdev extends Function {
 
+	@Description(params = "l", description = "Returns the standard deviation of a collection of numbers.\n"
+		+ "If the collection's size is less than 2, the standard deviation is undefined.",
+		categories = Category.STATISTICS)
 	public Sdev() {
-		super(
-				"Returns the standard deviation of a collection of numbers.\n"
-						+ "If the collection's size is less than 2, the standard deviation is undefined.",
-				Category.STATISTICS);
+		super();
 	}
 
 	public Double evaluate(Collection<Number> l) {

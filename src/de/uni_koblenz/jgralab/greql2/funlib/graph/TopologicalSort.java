@@ -44,16 +44,19 @@ import de.uni_koblenz.jgralab.algolib.algorithms.search.DepthFirstSearch;
 import de.uni_koblenz.jgralab.algolib.algorithms.search.IterativeDepthFirstSearch;
 import de.uni_koblenz.jgralab.algolib.algorithms.topological_order.TopologicalOrderWithDFS;
 import de.uni_koblenz.jgralab.algolib.functions.Permutation;
+import de.uni_koblenz.jgralab.greql2.funlib.Description;
 import de.uni_koblenz.jgralab.greql2.funlib.Function;
 import de.uni_koblenz.jgralab.greql2.funlib.NeedsGraphArgument;
 
 @NeedsGraphArgument
 public class TopologicalSort extends Function {
+	
+	@Description(params = "g", description = 
+			"Returns a list of vertices in topological order, iff the graph $g$ is acyclic."
+			+ " Otherwise, the result is undefined.",
+			categories = Category.GRAPH)
 	public TopologicalSort() {
-		super(
-				"Returns a list of vertices in topological order, iff the graph $g$ is acyclic."
-						+ " Otherwise, the result is undefined.", 100, 1, 0.1,
-				Category.GRAPH);
+		super(100, 1, 0.1);
 	}
 
 	public PVector<? extends Vertex> evaluate(Graph g) {

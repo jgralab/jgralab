@@ -56,39 +56,12 @@ public final class VertexClassImplTest extends
 				.createVertexClass("VertexClass1");
 	}
 
-	/**
-	 * addAttribute(Attribute)
-	 * 
-	 * TEST CASE: Adding an attribute, already contained in a superclass of this
-	 * element
-	 */
-	@Test
-	public void testAddAttribute4() {
-		VertexClass superClass = graphClass
-				.createVertexClass("VertexClassSuperClass");
-		vertexClass.addSuperClass(superClass);
 
-		testAddAttribute4(superClass);
-	}
 
-	/**
-	 * addAttribute(Attribute)
-	 * 
-	 * TEST CASE: Adding an attribute, already contained in a subclass of this
-	 * element
-	 */
-	@Test
-	public void testAddAttribute5() {
-		VertexClass subClass = graphClass
-				.createVertexClass("VertexClassSubClass");
-		subClass.addSuperClass(vertexClass);
-
-		testAddAttribute5(subClass);
-	}
 
 	/**
 	 * addConstraint(Constraint)
-	 * 
+	 *
 	 * TEST CASE: Adding a constraint, already contained in a superclass of this
 	 * element
 	 */
@@ -103,7 +76,7 @@ public final class VertexClassImplTest extends
 
 	/**
 	 * addConstraint(Constraint)
-	 * 
+	 *
 	 * TEST CASE: Adding a constraint, already contained in a subclass of this
 	 * element
 	 */
@@ -116,25 +89,11 @@ public final class VertexClassImplTest extends
 		testAddConstraint5(subClass);
 	}
 
-	/**
-	 * containsAttribute(String)
-	 * 
-	 * TEST CASE: looking for an attribute, present in a superclass of this
-	 * element
-	 */
-	@Test
-	public void testContainsAttribute3() {
-		VertexClass superClass = graphClass
-				.createVertexClass("VertexClassSuperClass");
 
-		vertexClass.addSuperClass(superClass);
-
-		testContainsAttribute3(superClass);
-	}
 
 	/**
 	 * getAllSubClasses()
-	 * 
+	 *
 	 * TEST CASE: Getting all subclasses of an element with one direct subclass
 	 */
 	@Test
@@ -153,7 +112,7 @@ public final class VertexClassImplTest extends
 
 	/**
 	 * getAllSubClasses()
-	 * 
+	 *
 	 * TEST CASE: Getting all subclasses of an element with multiple direct
 	 * subclasses
 	 */
@@ -177,7 +136,7 @@ public final class VertexClassImplTest extends
 
 	/**
 	 * getAllSubClasses()
-	 * 
+	 *
 	 * TEST CASE: Getting all subclasses of an element with multiple direct and
 	 * indirect subclasses
 	 */
@@ -201,7 +160,7 @@ public final class VertexClassImplTest extends
 
 	/**
 	 * getAllSubClasses()
-	 * 
+	 *
 	 * TEST CASE: Getting all subclasses of an element that has no subclasses
 	 */
 	@Test
@@ -212,7 +171,7 @@ public final class VertexClassImplTest extends
 
 	/**
 	 * getAllSuperClasses()
-	 * 
+	 *
 	 * TEST CASE: Getting all superclasses of an element with one direct
 	 * superclass
 	 */
@@ -225,8 +184,6 @@ public final class VertexClassImplTest extends
 
 		vertexClass.addSuperClass(superClass);
 
-		expectedSuperClasses
-				.add(schema.getGraphClass().getDefaultVertexClass());
 		expectedSuperClasses.add(superClass);
 
 		testGetAllSuperClasses(expectedSuperClasses);
@@ -234,7 +191,7 @@ public final class VertexClassImplTest extends
 
 	/**
 	 * getAllSuperClasses()
-	 * 
+	 *
 	 * TEST CASE: Getting all superclasses of an element with multiple direct
 	 * superclasses
 	 */
@@ -250,8 +207,6 @@ public final class VertexClassImplTest extends
 		vertexClass.addSuperClass(superClass);
 		vertexClass.addSuperClass(superClass2);
 
-		expectedSuperClasses
-				.add(schema.getGraphClass().getDefaultVertexClass());
 		expectedSuperClasses.add(superClass);
 		expectedSuperClasses.add(superClass2);
 
@@ -260,7 +215,7 @@ public final class VertexClassImplTest extends
 
 	/**
 	 * getAllSuperClasses()
-	 * 
+	 *
 	 * TEST CASE: Getting all superclasses of an element with multiple direct
 	 * and indirect superclasses
 	 */
@@ -276,8 +231,6 @@ public final class VertexClassImplTest extends
 		vertexClass.addSuperClass(superClass);
 		superClass.addSuperClass(superClass2);
 
-		expectedSuperClasses
-				.add(schema.getGraphClass().getDefaultVertexClass());
 		expectedSuperClasses.add(superClass);
 		expectedSuperClasses.add(superClass2);
 
@@ -286,7 +239,7 @@ public final class VertexClassImplTest extends
 
 	/**
 	 * getAllSuperClasses()
-	 * 
+	 *
 	 * TEST CASE: Getting all superclasses of an element that has no
 	 * superclasses
 	 */
@@ -294,126 +247,13 @@ public final class VertexClassImplTest extends
 	public void testGetAllSuperClasses4() {
 		Vector<VertexClass> expectedSuperClasses = new Vector<VertexClass>();
 
-		expectedSuperClasses
-				.add(schema.getGraphClass().getDefaultVertexClass());
-
 		testGetAllSuperClasses(expectedSuperClasses);
 	}
 
-	/**
-	 * getAttribute()
-	 * 
-	 * TEST CASE: Getting an inherited attribute
-	 */
-	@Test
-	public void testGetAttribute2() {
-		VertexClass superClass = graphClass
-				.createVertexClass("VertexClassSuperClass");
-
-		vertexClass.addSuperClass(superClass);
-
-		testGetAttribute2(superClass);
-	}
-
-	/**
-	 * getAttribute()
-	 * 
-	 * TEST CASE: Trying to get an attribute present in a subclass of this
-	 * element
-	 */
-	@Test
-	public void testGetAttribute5() {
-		VertexClass subClass = graphClass
-				.createVertexClass("VertexClassSubClass");
-
-		subClass.addSuperClass(vertexClass);
-
-		testGetAttribute5(subClass);
-	}
-
-	/**
-	 * getAttributeCount()
-	 * 
-	 * TEST CASE: Getting the number of attributes of an element which has
-	 * exactly only one inherited attribute and no direct attributes
-	 */
-	@Test
-	public void testGetAttributeCount2() {
-		VertexClass superClass = graphClass
-				.createVertexClass("VertexClassSuperClass");
-
-		vertexClass.addSuperClass(superClass);
-
-		testGetAttributeCount2(superClass);
-	}
-
-	/**
-	 * getAttributeCount()
-	 * 
-	 * TEST CASE: Getting the number of attributes of an element which has
-	 * multiple direct and indirect attributes
-	 */
-	@Test
-	public void testGetAttributeCount3() {
-		VertexClass superClass = graphClass
-				.createVertexClass("VertexClassSuperClass");
-
-		vertexClass.addSuperClass(superClass);
-
-		testGetAttributeCount3(superClass);
-	}
-
-	/**
-	 * getAttributeCount()
-	 * 
-	 * TEST CASE: Getting the number of attributes of an element which has no
-	 * direct nor inherited attributes but whose subclass has attributes
-	 */
-	@Test
-	public void testGetAttributeCount5() {
-		VertexClass subClass = graphClass
-				.createVertexClass("VertexClassSubClass");
-
-		subClass.addSuperClass(vertexClass);
-
-		testGetAttributeCount5(subClass);
-	}
 
 	/**
 	 * getAttributeList()
-	 * 
-	 * TEST CASE: Getting an element´s list of attributes, which has exactly one
-	 * inherited attribute and no direct attributes
-	 */
-	@Test
-	public void testGetAttributeList2() {
-		VertexClass superClass = graphClass
-				.createVertexClass("VertexClassSuperClass");
-
-		vertexClass.addSuperClass(superClass);
-
-		testGetAttributeList2(superClass);
-	}
-
-	/**
-	 * getAttributeList()
-	 * 
-	 * TEST CASE: Getting an element´s list of attributes, which has mutliple
-	 * direct and inherited attributes
-	 */
-	@Test
-	public void testGetAttributeList3() {
-		VertexClass superClass = graphClass
-				.createVertexClass("VertexClassSuperClass");
-
-		vertexClass.addSuperClass(superClass);
-
-		testGetAttributeList3(superClass);
-	}
-
-	/**
-	 * getAttributeList()
-	 * 
+	 *
 	 * TEST CASE: Getting an element´s list of attributes, which has no direct
 	 * nor inherited attributes but whose subclass has attributes
 	 */
@@ -429,7 +269,7 @@ public final class VertexClassImplTest extends
 
 	/**
 	 * getConstraints()
-	 * 
+	 *
 	 * TEST CASE: Getting an element´s list of constraints, that has a
 	 * superclass with constraints
 	 */
@@ -445,7 +285,7 @@ public final class VertexClassImplTest extends
 
 	/**
 	 * getDirectSubClasses()
-	 * 
+	 *
 	 * TEST CASE: Getting all direct subclasses of an element that has one
 	 * direct subclass.
 	 */
@@ -465,7 +305,7 @@ public final class VertexClassImplTest extends
 
 	/**
 	 * getDirectSubClasses()
-	 * 
+	 *
 	 * TEST CASE: Getting all direct subclasses of an element that has multiple
 	 * direct subclasses.
 	 */
@@ -489,7 +329,7 @@ public final class VertexClassImplTest extends
 
 	/**
 	 * getDirectSubClasses()
-	 * 
+	 *
 	 * TEST CASE: Getting all direct subclasses of an element that has multiple
 	 * direct and indirect subclasses.
 	 */
@@ -512,7 +352,7 @@ public final class VertexClassImplTest extends
 
 	/**
 	 * getDirectSubClasses()
-	 * 
+	 *
 	 * TEST CASE: Getting all direct subclasses of an element that has no direct
 	 * subclasses.
 	 */
@@ -523,7 +363,7 @@ public final class VertexClassImplTest extends
 
 	/**
 	 * getDirectSuperClasses()
-	 * 
+	 *
 	 * TEST CASE: Getting all direct superclasses of an element that has one
 	 * direct superclass.
 	 */
@@ -543,7 +383,7 @@ public final class VertexClassImplTest extends
 
 	/**
 	 * getDirectSuperClasses()
-	 * 
+	 *
 	 * TEST CASE: Getting all direct superclasses of an element that has
 	 * multiple direct superclasses.
 	 */
@@ -567,7 +407,7 @@ public final class VertexClassImplTest extends
 
 	/**
 	 * getDirectSuperClasses()
-	 * 
+	 *
 	 * TEST CASE: Getting all direct superclasses of an element that has
 	 * multiple direct and indirect superclasses.
 	 */
@@ -590,16 +430,13 @@ public final class VertexClassImplTest extends
 
 	/**
 	 * getDirectSuperClasses()
-	 * 
+	 *
 	 * TEST CASE: Getting all direct superclasses of an element that has no
 	 * direct superclasses.
 	 */
 	@Test
 	public void testGetDirectSuperClasses4() {
 		Vector<VertexClass> expectedSuperClasses = new Vector<VertexClass>();
-
-		expectedSuperClasses
-				.add(schema.getGraphClass().getDefaultVertexClass());
 
 		testGetDirectSuperClasses(expectedSuperClasses);
 	}
@@ -626,7 +463,7 @@ public final class VertexClassImplTest extends
 
 	/**
 	 * getOwnAttribute()
-	 * 
+	 *
 	 * TEST CASE: Trying to get an attribute present in a superclass of this
 	 * element
 	 */
@@ -640,7 +477,7 @@ public final class VertexClassImplTest extends
 
 	/**
 	 * getOwnAttribute()
-	 * 
+	 *
 	 * TEST CASE: Trying to get an attribute present in a subclass of this
 	 * element
 	 */
@@ -654,7 +491,7 @@ public final class VertexClassImplTest extends
 
 	/**
 	 * getOwnAttributeCount()
-	 * 
+	 *
 	 * TEST CASE: Getting the number of attributes of an element that only has
 	 * inherited attributes and no direct attributes
 	 */
@@ -668,7 +505,7 @@ public final class VertexClassImplTest extends
 
 	/**
 	 * getOwnAttributeList()
-	 * 
+	 *
 	 * TEST CASE: Getting an element´s list of attributes, that only has
 	 * inherited attributes and no direct attributes
 	 */
@@ -723,7 +560,7 @@ public final class VertexClassImplTest extends
 
 	/**
 	 * hasAttributes()
-	 * 
+	 *
 	 * TEST CASE: The element has one inherited attribute
 	 */
 	@Test
@@ -736,7 +573,7 @@ public final class VertexClassImplTest extends
 
 	/**
 	 * hasAttributes()
-	 * 
+	 *
 	 * TEST CASE: The element has multiple inherited attributes
 	 */
 	@Test
@@ -749,7 +586,7 @@ public final class VertexClassImplTest extends
 
 	/**
 	 * hasAttributes()
-	 * 
+	 *
 	 * TEST CASE: The element has multiple direct and indirect attributes
 	 */
 	@Test
@@ -762,7 +599,7 @@ public final class VertexClassImplTest extends
 
 	/**
 	 * hasOwnAttributes()
-	 * 
+	 *
 	 * TEST CASE: The element has direct and inherited attributes
 	 */
 	@Test
@@ -773,22 +610,10 @@ public final class VertexClassImplTest extends
 		testHasOwnAttributes4(superClass);
 	}
 
-	/**
-	 * hasOwnAttributes()
-	 * 
-	 * TEST CASE: The element has no direct but indirect attributes
-	 */
-	@Test
-	public void testHasOwnAttributes5() {
-		VertexClass superClass = graphClass.createVertexClass("Superclass");
-		vertexClass.addSuperClass(superClass);
-
-		testHasOwnAttributes5(superClass);
-	}
 
 	/**
 	 * isSubClassOf()
-	 * 
+	 *
 	 * TEST CASE: The other element is a direct superclass of this element
 	 */
 	@Test
@@ -801,7 +626,7 @@ public final class VertexClassImplTest extends
 
 	/**
 	 * isSubClassOf()
-	 * 
+	 *
 	 * TEST CASE: The other element is an inherited superclass of this element
 	 */
 	@Test
@@ -816,7 +641,7 @@ public final class VertexClassImplTest extends
 
 	/**
 	 * isSubClassOf()
-	 * 
+	 *
 	 * TEST CASE: The other element is a subclass of this element
 	 */
 	@Test
@@ -829,7 +654,7 @@ public final class VertexClassImplTest extends
 
 	/**
 	 * isSubClassOf()
-	 * 
+	 *
 	 * TEST CASE: The other element has no relation with this element
 	 */
 	@Test
@@ -841,7 +666,7 @@ public final class VertexClassImplTest extends
 
 	/**
 	 * isSubClassOf()
-	 * 
+	 *
 	 * TEST CASE: The other element and this element are the same
 	 */
 	@Test
@@ -851,7 +676,7 @@ public final class VertexClassImplTest extends
 
 	/**
 	 * isSuperClassOf()
-	 * 
+	 *
 	 * TEST CASE: The other element is a direct subclass of this element
 	 */
 	@Test
@@ -864,7 +689,7 @@ public final class VertexClassImplTest extends
 
 	/**
 	 * isSuperClassOf()
-	 * 
+	 *
 	 * TEST CASE: The other element is an inherited subclass of this element
 	 */
 	@Test
@@ -879,7 +704,7 @@ public final class VertexClassImplTest extends
 
 	/**
 	 * isSuperClassOf()
-	 * 
+	 *
 	 * TEST CASE: The other element is a superclass of this element
 	 */
 	@Test
@@ -892,7 +717,7 @@ public final class VertexClassImplTest extends
 
 	/**
 	 * isSuperClassOf()
-	 * 
+	 *
 	 * TEST CASE: The other element has no relation with this element
 	 */
 	@Test
@@ -904,7 +729,7 @@ public final class VertexClassImplTest extends
 
 	/**
 	 * isSuperClassOf()
-	 * 
+	 *
 	 * TEST CASE: The other element and this element are the same
 	 */
 	@Test
@@ -914,9 +739,9 @@ public final class VertexClassImplTest extends
 
 	/**
 	 * isSubClassOf()
-	 * 
+	 *
 	 * TEST CASE: The other element is a direct superclass of this element
-	 * 
+	 *
 	 * TEST CASE: The other element is an inherited superclass of this element
 	 */
 	public final void testIsSubClassOf(VertexClass other) {
@@ -925,11 +750,11 @@ public final class VertexClassImplTest extends
 
 	/**
 	 * isSubClassOf()
-	 * 
+	 *
 	 * TEST CASE: The other element is a subclass of this element
-	 * 
+	 *
 	 * TEST CASE: The other element has no relation with this element
-	 * 
+	 *
 	 * TEST CASE: The other element and this element are the same
 	 */
 	public final void testIsSubClassOf2(VertexClass other) {
@@ -941,9 +766,9 @@ public final class VertexClassImplTest extends
 	 */
 	/**
 	 * isSuperClassOf()
-	 * 
+	 *
 	 * TEST CASE: The other element is a direct subclass of this element
-	 * 
+	 *
 	 * TEST CASE: The other element is an inherited subclass of this element
 	 */
 	public final void testIsSuperClassOf(VertexClass other) {
@@ -952,11 +777,11 @@ public final class VertexClassImplTest extends
 
 	/**
 	 * isDirectSuperClassOf()
-	 * 
+	 *
 	 * TEST CASE: The other element is a superclass of this element
-	 * 
+	 *
 	 * TEST CASE: The other element has no relation with this element
-	 * 
+	 *
 	 * TEST CASE: The other element and this element are the same
 	 */
 	public final void testIsSuperClassOf2(VertexClass other) {

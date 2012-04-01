@@ -34,12 +34,14 @@
  */
 package de.uni_koblenz.jgralab.greql2.funlib.artithmetics;
 
+import de.uni_koblenz.jgralab.greql2.funlib.Description;
 import de.uni_koblenz.jgralab.greql2.funlib.Function;
 
 public class Abs extends Function {
+	@Description(params = "a", categories = Category.ARITHMETICS, 
+			description = "Calculates the absolute value of the given number." )
 	public Abs() {
-		super("Calculates the absolute value of the given number.", 4, 1, 1.0,
-				Category.ARITHMETICS);
+		super (4, 1, 1.0);
 	}
 
 	public Number evaluate(Number a) {

@@ -40,13 +40,16 @@ import java.util.regex.Pattern;
 import org.pcollections.PVector;
 
 import de.uni_koblenz.jgralab.JGraLab;
+import de.uni_koblenz.jgralab.greql2.funlib.Description;
 import de.uni_koblenz.jgralab.greql2.funlib.Function;
 
 public class Split extends Function {
+	
+	@Description(params = {"s", "regex"}, description = 
+		"Splits the given string according to the given regular expression and returns the parts as list.",
+		categories = Category.STRINGS)
 	public Split() {
-		super(
-				"Splits the given string according to the given regular expression and returns the parts as list.",
-				10, 3, 0.1, Category.STRINGS);
+		super(10, 3, 0.1);
 	}
 
 	public List<String> evaluate(String s, String regex) {

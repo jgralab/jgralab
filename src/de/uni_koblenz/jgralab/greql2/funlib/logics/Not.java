@@ -34,12 +34,15 @@
  */
 package de.uni_koblenz.jgralab.greql2.funlib.logics;
 
+import de.uni_koblenz.jgralab.greql2.funlib.Description;
 import de.uni_koblenz.jgralab.greql2.funlib.Function;
 
 public class Not extends Function {
+	
+	@Description(params = "a", description = "Logical NOT. Can be used as unary operator: not a.",
+			categories = Category.LOGICS)
 	public Not() {
-		super("Logical NOT. Can be used as unary operator: not a.", 2, 1,
-				1.0 / 3, Category.LOGICS);
+		super(2, 1, 1.0 / 3);
 	}
 
 	public Boolean evaluate(Boolean a) {

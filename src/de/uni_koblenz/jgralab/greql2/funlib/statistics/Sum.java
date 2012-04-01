@@ -37,13 +37,15 @@ package de.uni_koblenz.jgralab.greql2.funlib.statistics;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import de.uni_koblenz.jgralab.greql2.funlib.Description;
 import de.uni_koblenz.jgralab.greql2.funlib.Function;
 
 public class Sum extends Function {
 
+	@Description(params = "l", description = "Returns the sum of the given collection of numbers.",
+			categories = Category.STATISTICS)
 	public Sum() {
-		super("Returns the sum of the given collection of numbers.",
-				Category.STATISTICS);
+		super();
 	}
 
 	public Number evaluate(Collection<Number> l) {

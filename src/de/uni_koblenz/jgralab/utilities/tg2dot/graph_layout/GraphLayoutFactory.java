@@ -138,8 +138,8 @@ public class GraphLayoutFactory {
 	}
 
 	private void setDefaultVertexLayout() {
-		TypeDefinition definition = currentGraphLayout
-				.getTypeDefinition("Vertex");
+		TypeDefinition definition = currentGraphLayout.getTypeDefinition(schema
+				.getGraphClass().getDefaultVertexClass());
 		definition
 				.setAttribute(
 						"label",
@@ -172,9 +172,8 @@ public class GraphLayoutFactory {
 	}
 
 	private void setDefaultEdgeLayout() {
-
-		TypeDefinition definition = currentGraphLayout
-				.getTypeDefinition("Edge");
+		TypeDefinition definition = currentGraphLayout.getTypeDefinition(schema
+				.getGraphClass().getDefaultEdgeClass());
 		definition.setAttribute("color", "'gray'");
 		definition
 				.setAttribute(
@@ -242,16 +241,25 @@ public class GraphLayoutFactory {
 
 		List<T> allSchemaTypes = new ArrayList<T>();
 		if (isVertexClasses) {
-			allSchemaTypes.addAll((List<T>) schema.getVertexClasses());
+			allSchemaTypes.addAll((List<T>) schema.getGraphClass()
+					.getVertexClasses());
 		} else {
-			allSchemaTypes.addAll((List<T>) schema.getEdgeClasses());
+			allSchemaTypes.addAll((List<T>) schema.getGraphClass()
+					.getEdgeClasses());
 		}
 
 		for (Entry<T, TypeDefinition> entry : map.entrySet()) {
 			T type = entry.getKey();
 
-			List<T> allSuperClasses = new ArrayList<T>(allSchemaTypes);
+			ArrayList<T> allSuperClasses = new ArrayList<T>(allSchemaTypes);
 			allSuperClasses.retainAll(type.getAllSuperClasses());
+			if (isVertexClasses) {
+				allSuperClasses.add(0, (T) type.getGraphClass()
+						.getDefaultVertexClass());
+			} else {
+				allSuperClasses.add(0, (T) type.getGraphClass()
+						.getDefaultEdgeClass());
+			}
 			Collections.reverse(allSuperClasses);
 
 			for (AttributedElementClass<?, ?> supertype : allSuperClasses) {

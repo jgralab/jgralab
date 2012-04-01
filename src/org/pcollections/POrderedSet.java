@@ -34,18 +34,28 @@
  */
 package org.pcollections;
 
+import java.util.Collection;
 import java.util.LinkedHashSet;
 
 /**
  * Like {@link PSet} but preserves insertion order. Persistent equivalent of
  * {@link LinkedHashSet}.
- * 
+ *
  * @author Tassilo Horn &lt;horn@uni-koblenz.de&gt;
- * 
+ *
  * @param <E>
  */
 public interface POrderedSet<E> extends PSet<E> {
 	E get(int index);
 
 	int indexOf(Object o);
+
+	@Override
+	public POrderedSet<E> plus(E e);
+	@Override
+	public POrderedSet<E> plusAll(Collection<? extends E> list);
+	@Override
+	public POrderedSet<E> minus(Object e);
+	@Override
+	public POrderedSet<E> minusAll(Collection<?> list);
 }

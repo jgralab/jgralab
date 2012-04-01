@@ -38,6 +38,7 @@ import org.pcollections.PSet;
 
 import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.JGraLab;
+import de.uni_koblenz.jgralab.greql2.funlib.Description;
 import de.uni_koblenz.jgralab.greql2.funlib.Function;
 import de.uni_koblenz.jgralab.schema.Attribute;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
@@ -45,11 +46,11 @@ import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 public class AttributeNames extends Function {
 
 	public AttributeNames() {
-		super(
-				"Returns the set of attribute names of the specified element or schema class.",
-				5, 5, 1.0, Category.SCHEMA_ACCESS);
+		super(5, 5, 1.0);
 	}
 
+	@Description(params = "cls", description = "Returns the set of attribute names of the specified schema class.", 
+			categories = Category.SCHEMA_ACCESS)
 	public PSet<String> evaluate(AttributedElementClass<?, ?> cls) {
 		PSet<String> result = JGraLab.set();
 		for (Attribute a : cls.getAttributeList()) {
@@ -58,6 +59,8 @@ public class AttributeNames extends Function {
 		return result;
 	}
 
+	@Description(params = "el", description = "Returns the set of attribute names of the specified element.", 
+			categories = Category.SCHEMA_ACCESS)
 	public PSet<String> evaluate(AttributedElement<?, ?> el) {
 		return evaluate(el.getAttributedElementClass());
 	}

@@ -38,6 +38,7 @@ import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.graphmarker.SubGraphMarker;
+import de.uni_koblenz.jgralab.greql2.funlib.Description;
 import de.uni_koblenz.jgralab.greql2.funlib.Function;
 import de.uni_koblenz.jgralab.greql2.funlib.NeedsGraphArgument;
 import de.uni_koblenz.jgralab.greql2.types.TypeCollection;
@@ -45,10 +46,11 @@ import de.uni_koblenz.jgralab.greql2.types.TypeCollection;
 @NeedsGraphArgument
 public class VertexTypeSubgraph extends Function {
 
+	@Description(params = {"graph","typeCollection"}, description = 
+			"Returns the subgraph induced by the vertex type given.",
+			categories = Category.GRAPH) 
 	public VertexTypeSubgraph() {
-		super(
-				"Returns the subgraph induced by the vertex type given.",
-				7, 1, 1.0, Category.GRAPH);
+		super(7, 1, 1.0);
 	}
 
 	public SubGraphMarker evaluate(Graph graph, TypeCollection typeCollection) {

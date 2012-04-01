@@ -60,9 +60,9 @@ import de.uni_koblenz.jgralab.schema.VertexClass;
 
 /**
  * TODO add comment
- * 
+ *
  * @author ist@uni-koblenz.de
- * 
+ *
  */
 public class SchemaCodeGenerator extends CodeGenerator {
 
@@ -70,7 +70,7 @@ public class SchemaCodeGenerator extends CodeGenerator {
 
 	/**
 	 * Creates a new SchemaCodeGenerator which creates code for the given schema
-	 * 
+	 *
 	 * @param schema
 	 *            the schema to create the code for
 	 * @param schemaPackageName
@@ -118,6 +118,7 @@ public class SchemaCodeGenerator extends CodeGenerator {
 			code.add(createConstructor());
 			code.add(createGetDefaultGraphFactoryMethod());
 			code.add(createGraphFactoryMethods());
+			code.add(createReopenMethod());
 		}
 		return code;
 	}
@@ -330,7 +331,7 @@ public class SchemaCodeGenerator extends CodeGenerator {
 		boolean hasComment = false;
 		while (!s.isEmpty()) {
 			pkg = s.pop();
-			for (Package sub : pkg.getSubPackages().values()) {
+			for (Package sub : pkg.getSubPackages()) {
 				s.push(sub);
 			}
 			List<String> comments = pkg.getComments();
@@ -396,10 +397,13 @@ public class SchemaCodeGenerator extends CodeGenerator {
 		code.addNoIndent(new CodeSnippet("public final GraphClass "
 				+ schema.getGraphClass().getVariableName() + ";"));
 
+		code.addNoIndent(new CodeSnippet("public final VertexClass vc_Vertex;"));
 		for (VertexClass vc : schema.getGraphClass().getVertexClasses()) {
 			code.addNoIndent(new CodeSnippet("public final VertexClass "
 					+ vc.getVariableName() + ";"));
 		}
+
+		code.addNoIndent(new CodeSnippet("public final EdgeClass ec_Edge;"));
 		for (EdgeClass ec : schema.getGraphClass().getEdgeClasses()) {
 			code.addNoIndent(new CodeSnippet("public final EdgeClass "
 					+ ec.getVariableName() + ";"));
@@ -410,9 +414,7 @@ public class SchemaCodeGenerator extends CodeGenerator {
 	private CodeBlock createEdgeClasses(GraphClass gc) {
 		CodeList code = new CodeList();
 		for (EdgeClass ec : schema.getGraphClass().getEdgeClasses()) {
-			if (!ec.isInternal()) {
-				code.addNoIndent(createEdgeClass(ec));
-			}
+			code.addNoIndent(createEdgeClass(ec));
 		}
 		return code;
 	}
@@ -451,9 +453,6 @@ public class SchemaCodeGenerator extends CodeGenerator {
 				"\t#aecVariable#.setAbstract(#ecAbstract#);"));
 
 		for (EdgeClass superClass : ec.getDirectSuperClasses()) {
-			if (superClass.isInternal()) {
-				continue;
-			}
 			CodeSnippet s = new CodeSnippet(
 					"#aecVariable#.addSuperClass(#superClassName#);");
 			s.setVariable("superClassName", superClass.getVariableName());
@@ -483,10 +482,8 @@ public class SchemaCodeGenerator extends CodeGenerator {
 
 	private CodeBlock createVertexClasses(GraphClass gc) {
 		CodeList code = new CodeList();
-		for (VertexClass vc : schema.getVertexClasses()) {
-			if (!vc.isInternal()) {
-				code.addNoIndent(createVertexClass(vc));
-			}
+		for (VertexClass vc : schema.getGraphClass().getVertexClasses()) {
+			code.addNoIndent(createVertexClass(vc));
 		}
 		return code;
 	}
@@ -502,15 +499,14 @@ public class SchemaCodeGenerator extends CodeGenerator {
 				"{",
 				"\tVertexClass #aecVariable# = #schemaVariable# = #gcVariable#.createVertexClass(\"#vcName#\");",
 				"\t#aecVariable#.setAbstract(#vcAbstract#);"));
-		for (VertexClass superClass : vc.getDirectSuperClasses()) {
-			if (superClass.isInternal()) {
-				continue;
-			}
+		for (VertexClass superClass : vc.getDirectSuperClasses().plus(
+				vc.getGraphClass().getDefaultVertexClass())) {
 			CodeSnippet s = new CodeSnippet(
 					"#aecVariable#.addSuperClass(#superClassName#);");
 			s.setVariable("superClassName", superClass.getVariableName());
 			code.add(s);
 		}
+
 		code.add(createAttributes(vc));
 		code.add(createConstraints(vc));
 		code.add(createComments("vc", vc));
@@ -525,7 +521,7 @@ public class SchemaCodeGenerator extends CodeGenerator {
 		for (Attribute attr : attributes) {
 			CodeSnippet s = new CodeSnippet(
 					false,
-					"#aecVariable#.addAttribute(createAttribute(\"#attrName#\", getDomain(\"#domainName#\"), getAttributedElementClass(\"#aecName#\"), #defaultValue#));");
+					"#aecVariable#.createAttribute(\"#attrName#\", getDomain(\"#domainName#\"), #defaultValue#);");
 			s.setVariable("attrName", attr.getName());
 			s.setVariable("domainName", attr.getDomain().getQualifiedName());
 			s.setVariable("aecName", aec.getQualifiedName());
@@ -624,5 +620,15 @@ public class SchemaCodeGenerator extends CodeGenerator {
 			}
 		}
 		return code;
+	}
+
+	private CodeBlock createReopenMethod() {
+		CodeSnippet s = new CodeSnippet();
+		s.add("",
+				"@Override",
+				"public boolean reopen() {",
+				"\tthrow new UnsupportedOperationException(\"Cannot reopen a compiled Schema.\");",
+				"}");
+		return s;
 	}
 }

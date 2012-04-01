@@ -35,9 +35,8 @@
 
 package de.uni_koblenz.jgralab.schema.impl;
 
-import java.util.HashSet;
+import java.util.BitSet;
 import java.util.List;
-import java.util.Set;
 import java.util.TreeSet;
 
 import org.pcollections.ArrayPVector;
@@ -71,14 +70,14 @@ public abstract class GraphElementClassImpl<SC extends GraphElementClass<SC, IC>
 	 * HashSet is used to speed up isInstance test.
 	 */
 	protected PSet<SC> allSubClasses;
-	protected HashSet<SC> allSubClassesHash;
+	protected BitSet allSubClassesBitSet;
 
 	/**
 	 * The superclasses of this class - only set if the schema is finished. The
 	 * HashSet is used to speed up isInstance test.
 	 */
 	protected PSet<SC> allSuperClasses;
-	protected HashSet<SC> allSuperClassesHash;
+	protected BitSet allSuperClassesBitSet;
 
 	/**
 	 * A {@link DirectedAcyclicGraph} representing the generalization hierarchy.
@@ -87,8 +86,13 @@ public abstract class GraphElementClassImpl<SC extends GraphElementClass<SC, IC>
 	protected final DirectedAcyclicGraph<GraphElementClass<SC, IC>> subclassDag;
 
 	/**
+	 * The class id of this class in the schema
+	 */
+	protected final int classId;
+
+	/**
 	 * delegates its constructor to the generalized class
-	 * 
+	 *
 	 * @param qn
 	 *            the unique identifier of the element in the schema
 	 */
@@ -100,10 +104,11 @@ public abstract class GraphElementClassImpl<SC extends GraphElementClass<SC, IC>
 		subclassDag = (DirectedAcyclicGraph<GraphElementClass<SC, IC>>) dag;
 		subclassDag.createNode(this);
 		this.graphClass = graphClass;
+		this.classId = schema.getNextGraphElementClassId();
 	}
 
 	@Override
-	public void addAttribute(Attribute anAttribute) {
+	protected Attribute createAttribute(Attribute anAttribute) {
 		assertNotFinished();
 		// Check if a subclass already contains an attribute with that name. In
 		// that case, it may not be added, too.
@@ -115,10 +120,11 @@ public abstract class GraphElementClassImpl<SC extends GraphElementClass<SC, IC>
 							+ getQualifiedName()
 							+ "'. A derived AttributedElementClass already contains this Attribute.");
 		}
-		super.addAttribute(anAttribute);
+		super.createAttribute(anAttribute);
 		TreeSet<Attribute> s = new TreeSet<Attribute>(ownAttributes);
 		s.add(anAttribute);
 		ownAttributes = ArrayPVector.<Attribute> empty().plusAll(s);
+		return anAttribute;
 	}
 
 	@Override
@@ -128,7 +134,7 @@ public abstract class GraphElementClassImpl<SC extends GraphElementClass<SC, IC>
 
 	/**
 	 * adds a superClass to this class
-	 * 
+	 *
 	 * @param superClass
 	 *            the class to add as superclass
 	 */
@@ -154,34 +160,45 @@ public abstract class GraphElementClassImpl<SC extends GraphElementClass<SC, IC>
 		return (PSet<SC>) subclassDag.getDirectSucccessors(this);
 	}
 
+	/**
+	 * @return either the default vertex class or the default edge class
+	 */
+	protected abstract SC getDefaultClass();
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public PSet<SC> getDirectSuperClasses() {
-		return (PSet<SC>) subclassDag.getDirectPredecessors(this);
+		return ((PSet<SC>) subclassDag.getDirectPredecessors(this))
+				.minus(getDefaultClass());
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public Set<SC> getAllSubClasses() {
+	public PSet<SC> getAllSubClasses() {
 		if (finished) {
 			return allSubClasses;
 		}
-		return (Set<SC>) subclassDag.getAllSuccessorsInTopologicalOrder(this);
+		return (PSet<SC>) subclassDag.getAllSuccessorsInTopologicalOrder(this);
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public Set<SC> getAllSuperClasses() {
+	public PSet<SC> getAllSuperClasses() {
 		if (finished) {
 			return allSuperClasses;
 		}
-		return (Set<SC>) subclassDag.getAllPredecessorsInTopologicalOrder(this);
+		System.err.println("DEBUG: "+getDefaultClass() + " " + this);
+		return (PSet<SC>) subclassDag
+				.getAllPredecessorsInTopologicalOrder(this).minus(
+						getDefaultClass());
 	}
 
 	@Override
 	public final boolean isSubClassOf(SC anAttributedElementClass) {
 		if (finished) {
-			return allSuperClassesHash.contains(anAttributedElementClass);
+			return allSuperClassesBitSet
+					.get(((GraphElementClass<?, ?>) anAttributedElementClass)
+							.getGraphElementClassIdInSchema());
 		}
 		return getAllSuperClasses().contains(anAttributedElementClass);
 	}
@@ -189,7 +206,9 @@ public abstract class GraphElementClassImpl<SC extends GraphElementClass<SC, IC>
 	@Override
 	public final boolean isSuperClassOf(SC anAttributedElementClass) {
 		if (finished) {
-			return allSubClassesHash.contains(anAttributedElementClass);
+			return allSubClassesBitSet
+					.get(((GraphElementClass<?, ?>) anAttributedElementClass)
+							.getGraphElementClassIdInSchema());
 		}
 		return getAllSubClasses().contains(anAttributedElementClass);
 	}
@@ -203,15 +222,20 @@ public abstract class GraphElementClassImpl<SC extends GraphElementClass<SC, IC>
 		return false;
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	protected void finish() {
-		allSuperClasses = (PSet<SC>) subclassDag
-				.getAllPredecessorsInTopologicalOrder(this);
-		allSuperClassesHash = new HashSet<SC>(allSuperClasses);
-		allSubClasses = (PSet<SC>) subclassDag
-				.getAllSuccessorsInTopologicalOrder(this);
-		allSubClassesHash = new HashSet<SC>(allSubClasses);
+		allSuperClasses = getAllSuperClasses();
+		allSuperClassesBitSet = new BitSet();
+		for (GraphElementClass<?, ?> superClass : allSuperClasses) {
+			allSuperClassesBitSet.set(
+					superClass.getGraphElementClassIdInSchema(), true);
+		}
+		allSubClasses = getAllSubClasses();
+		allSubClassesBitSet = new BitSet();
+		for (GraphElementClass<?, ?> subClass : allSubClasses) {
+			allSubClassesBitSet.set(subClass.getGraphElementClassIdInSchema(),
+					true);
+		}
 
 		TreeSet<Attribute> s = new TreeSet<Attribute>(ownAttributes);
 		for (AttributedElementClass<SC, IC> superClass : subclassDag
@@ -325,5 +349,63 @@ public abstract class GraphElementClassImpl<SC extends GraphElementClass<SC, IC>
 		output.append("\n");
 
 		return output.toString();
+	}
+
+	@Override
+	public int getGraphElementClassIdInSchema() {
+		return classId;
+	}
+
+	@Override
+	public void setQualifiedName(String newQName) {
+		if (qualifiedName.equals(newQName)) {
+			return;
+		}
+		if (schema.knows(newQName)) {
+			throw new SchemaException(newQName
+					+ " is already known to the schema.");
+		}
+		String[] ps = SchemaImpl.splitQualifiedName(newQName);
+		String newPackageName = ps[0];
+		String newSimpleName = ps[1];
+		if (!NamedElementImpl.ATTRELEM_OR_NOCOLLDOMAIN_PATTERN.matcher(
+				newSimpleName).matches()) {
+			throw new SchemaException("Invalid graph element class name '"
+					+ newSimpleName + "'.");
+		}
+
+		unregister();
+
+		qualifiedName = newQName;
+		simpleName = newSimpleName;
+		parentPackage = schema.createPackageWithParents(newPackageName);
+
+		register();
+	}
+
+	@Override
+	protected void reopen() {
+		allSuperClasses = null;
+		allSuperClassesBitSet = null;
+		allSubClasses = null;
+		allSubClassesBitSet = null;
+
+		super.reopen();
+	}
+
+	@Override
+	protected void deleteAttribute(AttributeImpl attr) {
+		allAttributes = allAttributes.minus(attr);
+		ownAttributes = ownAttributes.minus(attr);
+	}
+
+	@Override
+	public void delete() {
+		for (Attribute a : ownAttributes) {
+			a.delete();
+		}
+		ownAttributes = null;
+		allAttributes = null;
+		schema.namedElements.remove(qualifiedName);
 	}
 }

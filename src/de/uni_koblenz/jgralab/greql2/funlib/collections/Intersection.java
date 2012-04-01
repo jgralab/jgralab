@@ -39,13 +39,15 @@ import java.util.ArrayList;
 import org.pcollections.PSet;
 
 import de.uni_koblenz.jgralab.JGraLab;
+import de.uni_koblenz.jgralab.greql2.funlib.Description;
 import de.uni_koblenz.jgralab.greql2.funlib.Function;
 
 public class Intersection extends Function {
 
+	@Description(params = {"a","b"}, description = "Returns the intersection of the given two sets.",
+			categories = Category.COLLECTIONS_AND_MAPS)
 	public Intersection() {
-		super("Returns the intersection of the given two sets.",
-				Category.COLLECTIONS_AND_MAPS);
+		super();
 	}
 
 	public <T> PSet<T> evaluate(PSet<T> a, PSet<T> b) {

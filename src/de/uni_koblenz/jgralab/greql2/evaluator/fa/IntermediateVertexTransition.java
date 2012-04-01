@@ -49,6 +49,10 @@ public class IntermediateVertexTransition extends Transition {
 	 * the result of this VertexEvaluator
 	 */
 	public VertexEvaluator intermediateVertexEvaluator;
+	
+	public VertexEvaluator getIntermediateVertexEvaluator() {
+		return intermediateVertexEvaluator;
+	}
 
 	/**
 	 * returns true if this transition and the given transition t accept the

@@ -36,6 +36,7 @@ package de.uni_koblenz.jgralab.impl.generic;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
+import de.uni_koblenz.jgralab.GraphException;
 import de.uni_koblenz.jgralab.ImplementationType;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.impl.GraphFactoryImpl;
@@ -71,7 +72,9 @@ public class GenericGraphFactoryImpl extends GraphFactoryImpl {
 	@Override
 	public <G extends Graph> G createGraph(GraphClass gc, String id, int vMax,
 			int eMax) {
-		assert schema == gc.getSchema();
+		if(schema != gc.getSchema()) {
+			throw new GraphException(gc + " is not in schema " + schema);
+		}
 		@SuppressWarnings("unchecked")
 		G graph = (G) new GenericGraphImpl(gc, id, vMax, eMax);
 		graph.setGraphFactory(this);
@@ -80,7 +83,9 @@ public class GenericGraphFactoryImpl extends GraphFactoryImpl {
 
 	@Override
 	public <V extends Vertex> V createVertex(VertexClass vc, int id, Graph g) {
-		assert schema == vc.getSchema();
+		if(schema != vc.getSchema()) {
+			throw new GraphException(vc + " is not in schema " + schema);
+		}
 		if (!((InternalGraph) g).isLoading() && (g.hasECARuleManager())) {
 			g.getECARuleManager().fireBeforeCreateVertexEvents(vc);
 		}
@@ -95,7 +100,9 @@ public class GenericGraphFactoryImpl extends GraphFactoryImpl {
 	@Override
 	public <E extends Edge> E createEdge(EdgeClass ec, int id, Graph g,
 			Vertex alpha, Vertex omega) {
-		assert schema == ec.getSchema();
+		if(schema != ec.getSchema()) {
+			throw new GraphException(ec + " is not in schema " + schema);
+		}
 		if (!((InternalGraph) g).isLoading() && (g.hasECARuleManager())) {
 			g.getECARuleManager().fireBeforeCreateEdgeEvents(ec);
 		}

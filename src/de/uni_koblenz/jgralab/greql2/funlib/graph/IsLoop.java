@@ -35,14 +35,16 @@
 package de.uni_koblenz.jgralab.greql2.funlib.graph;
 
 import de.uni_koblenz.jgralab.Edge;
+import de.uni_koblenz.jgralab.greql2.funlib.Description;
 import de.uni_koblenz.jgralab.greql2.funlib.Function;
 
 public class IsLoop extends Function {
 
+	@Description(params = "e", description = 
+			"Returns true, iff the given edge is a loop, i.e. it starts and ends at the same vertex.",
+			categories = Category.GRAPH)
 	public IsLoop() {
-		super(
-				"Returns true, iff the given edge is a loop, i.e. it starts and ends at the same vertex.",
-				1, 1, 0.01, Category.GRAPH);
+		super(1, 1, 0.01);
 	}
 
 	public Boolean evaluate(Edge e) {

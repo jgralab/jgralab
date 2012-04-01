@@ -36,20 +36,23 @@
 package de.uni_koblenz.jgralab.utilities.tg2dot.greql2.funlib;
 
 import de.uni_koblenz.jgralab.Edge;
+import de.uni_koblenz.jgralab.greql2.funlib.Description;
 import de.uni_koblenz.jgralab.greql2.funlib.Function;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 
 public class OmegaRolename extends Function {
 	public OmegaRolename() {
-		super(
-				"Returns the omega rolename of the given edge or null otherwise.",
-				Category.SCHEMA_ACCESS);
+		super();
 	}
 
+	@Description(params = "e", description = "Returns the omega rolename of the given edge or null otherwise.",
+			categories = Category.SCHEMA_ACCESS)
 	public String evaluate(Edge e) {
 		return evaluate((EdgeClass) e.getAttributedElementClass());
 	}
 
+	@Description(params = "ec", description = "Returns the omega rolename of the given edge or null otherwise.",
+			categories = Category.SCHEMA_ACCESS)
 	public String evaluate(EdgeClass ec) {
 		String rolename = ec.getTo().getRolename();
 		rolename = rolename == null ? "" : rolename;

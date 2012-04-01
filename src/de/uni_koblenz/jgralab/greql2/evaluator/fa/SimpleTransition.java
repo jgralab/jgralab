@@ -42,6 +42,7 @@ import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.graphmarker.GraphMarker;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.ThisEdgeEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VertexEvaluator;
+import de.uni_koblenz.jgralab.greql2.schema.GReQLDirection;
 import de.uni_koblenz.jgralab.greql2.schema.ThisEdge;
 import de.uni_koblenz.jgralab.greql2.types.TypeCollection;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
@@ -58,12 +59,20 @@ public class SimpleTransition extends Transition {
 
 	protected VertexEvaluator predicateEvaluator;
 
+	public VertexEvaluator getPredicateEvaluator() {
+		return predicateEvaluator;
+	}
+
 	protected ThisEdgeEvaluator thisEdgeEvaluator;
 
 	/**
 	 * The collection of types that are accepted by this transition
 	 */
 	protected TypeCollection typeCollection;
+
+	public TypeCollection getTypeCollection() {
+		return typeCollection;
+	}
 
 	/**
 	 * an edge may have valid roles. This set holds the valid roles at the other
@@ -72,6 +81,10 @@ public class SimpleTransition extends Transition {
 	 */
 	protected Set<String> validToEdgeRoles;
 
+	public Set<String> getValidToRoles() {
+		return validToEdgeRoles;
+	}
+
 	/**
 	 * an edge may have valid roles. This set holds the valid roles at the other
 	 * end of an edge accepted by this transition. If the transition is valid
@@ -79,10 +92,18 @@ public class SimpleTransition extends Transition {
 	 */
 	protected Set<String> validFromEdgeRoles;
 
+	public Set<String> getValidFromRoles() {
+		return validFromEdgeRoles;
+	}
+
 	/**
 	 * this transition may accept edges in direction in, out or any
 	 */
-	protected AllowedEdgeDirection validDirection;
+	protected GReQLDirection validDirection;
+
+	public GReQLDirection getAllowedDirection() {
+		return validDirection;
+	}
 
 	/**
 	 * returns a string which describes the edge
@@ -192,7 +213,7 @@ public class SimpleTransition extends Transition {
 	 *            The direction of the accepted edges, may be EdeDirection.IN,
 	 *            EdgeDirection.OUT or EdgeDirection.ANY
 	 */
-	public SimpleTransition(State start, State end, AllowedEdgeDirection dir) {
+	public SimpleTransition(State start, State end, GReQLDirection dir) {
 		super(start, end);
 		validDirection = dir;
 		typeCollection = new TypeCollection();
@@ -217,7 +238,7 @@ public class SimpleTransition extends Transition {
 	 *            The set of accepted edge role names, or null if any role is
 	 *            accepted
 	 */
-	public SimpleTransition(State start, State end, AllowedEdgeDirection dir,
+	public SimpleTransition(State start, State end, GReQLDirection dir,
 			TypeCollection typeCollection, Set<String> roles,
 			VertexEvaluator predicateEvaluator,
 			GraphMarker<VertexEvaluator> graphMarker) {
@@ -241,10 +262,10 @@ public class SimpleTransition extends Transition {
 	@Override
 	public void reverse() {
 		super.reverse();
-		if (validDirection == AllowedEdgeDirection.IN) {
-			validDirection = AllowedEdgeDirection.OUT;
-		} else if (validDirection == AllowedEdgeDirection.OUT) {
-			validDirection = AllowedEdgeDirection.IN;
+		if (validDirection == GReQLDirection.IN) {
+			validDirection = GReQLDirection.OUT;
+		} else if (validDirection == GReQLDirection.OUT) {
+			validDirection = GReQLDirection.IN;
 		}
 		Set<String> tempSet = validFromEdgeRoles;
 		validFromEdgeRoles = validToEdgeRoles;
@@ -271,11 +292,11 @@ public class SimpleTransition extends Transition {
 		if (e == null) {
 			return false;
 		}
-		if (validDirection == AllowedEdgeDirection.OUT) {
+		if (validDirection == GReQLDirection.OUT) {
 			if (!e.isNormal()) {
 				return false;
 			}
-		} else if (validDirection == AllowedEdgeDirection.IN) {
+		} else if (validDirection == GReQLDirection.IN) {
 			if (e.isNormal()) {
 				return false;
 			}
@@ -355,9 +376,9 @@ public class SimpleTransition extends Transition {
 			delim = ",";
 		}
 		String symbol = "<->";
-		if (validDirection == AllowedEdgeDirection.IN) {
+		if (validDirection == GReQLDirection.IN) {
 			symbol = "<--";
-		} else if (validDirection == AllowedEdgeDirection.OUT) {
+		} else if (validDirection == GReQLDirection.OUT) {
 			symbol = "-->";
 		}
 		return symbol + "{" + b + "}";
