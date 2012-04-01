@@ -664,6 +664,10 @@ public class GraphIO {
 	public static void saveGraphToStream(Graph graph, DataOutputStream out,
 			ProgressFunction pf) throws GraphIOException {
 		try {
+			if(hasTemporaryElements(graph)){
+				throw new GraphIOException("Savin graph "+graph+ " is not possible. "
+						+ "It contains temporary graph elements.");
+			}
 			GraphIO io = new GraphIO();
 			io.TGOut = out;
 			io.saveGraph((InternalGraph) graph, pf, null);
@@ -691,6 +695,12 @@ public class GraphIO {
 	public static void saveGraphToStream(BooleanGraphMarker subGraph,
 			DataOutputStream out, ProgressFunction pf) throws GraphIOException {
 		try {
+			if(hasTemporaryElements(subGraph, subGraph.getGraph())){
+				throw new GraphIOException("Savin sub graph "+subGraph+" of "
+						+subGraph.getGraph()+  " is not possible. "
+						+ "It contains temporary graph elements.");
+			}
+			
 			GraphIO io = new GraphIO();
 			io.TGOut = out;
 			io.saveGraph((InternalGraph) subGraph.getGraph(), pf, subGraph);
@@ -700,6 +710,26 @@ public class GraphIO {
 		}
 	}
 
+	private static boolean hasTemporaryElements(Graph g){
+		if(g.vertices(g.getGraphClass().getTemporaryVertexClass()).iterator().hasNext()){
+			return true;
+		}
+		if(g.edges(g.getGraphClass().getTemporaryEdgeClass()).iterator().hasNext()){
+			return true;
+		}
+		return false;
+	}
+	
+	private static boolean hasTemporaryElements(BooleanGraphMarker marker,Graph g){
+		for(Vertex v : g.vertices(g.getGraphClass().getTemporaryVertexClass())){
+			if(marker.isMarked(v)) return true;
+		}
+		for(Edge e : g.edges(g.getGraphClass().getTemporaryEdgeClass())){
+			if(marker.isMarked(e)) return true;
+		}
+		return false;
+	}
+	
 	private void saveGraph(InternalGraph graph, ProgressFunction pf,
 			BooleanGraphMarker subGraph) throws IOException, GraphIOException {
 		TraversalContext tc = graph.setTraversalContext(null);
@@ -758,9 +788,6 @@ public class GraphIO {
 				if ((subGraph != null) && !subGraph.isMarked(nextV)) {
 					nextV = nextV.getNextVertex();
 					continue;
-				}else if (nextV instanceof TemporaryVertex) {
-					nextV = nextV.getNextVertex();
-					continue;
 				}
 				vId = nextV.getId();
 				AttributedElementClass<?, ?> aec = nextV
@@ -782,14 +809,6 @@ public class GraphIO {
 				noSpace();
 				// System.out.print("  Writing incidences of vertex.");
 				while (nextI != null) {
-					if(nextI instanceof TemporaryEdge){
-						nextI = nextI.getNextIncidence();
-						continue;
-					}
-					if(nextI.getThat() instanceof TemporaryVertex){
-						nextI = nextI.getNextIncidence();
-						continue;
-					}
 					if ((subGraph != null) && !subGraph.isMarked(nextI)) {
 						nextI = nextI.getNextIncidence();
 						continue;
@@ -819,14 +838,6 @@ public class GraphIO {
 			Edge nextE = graph.getFirstEdge();
 			while (nextE != null) {
 				if ((subGraph != null) && !subGraph.isMarked(nextE)) {
-					nextE = nextE.getNextEdge();
-					continue;
-				}
-				else if (nextE instanceof TemporaryEdge) {
-					nextE = nextE.getNextEdge();
-					continue;
-				}else if(nextE.getAlpha() instanceof TemporaryVertex || 
-						nextE.getOmega() instanceof TemporaryVertex){
 					nextE = nextE.getNextEdge();
 					continue;
 				}

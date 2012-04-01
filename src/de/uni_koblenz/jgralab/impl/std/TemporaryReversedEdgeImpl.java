@@ -47,8 +47,8 @@ public class TemporaryReversedEdgeImpl extends ReversedEdgeImpl implements Tempo
 	}
 
 	@Override
-	public Edge transformToRealGraphElement(EdgeClass edgeClass) {
-		return ((TemporaryEdge)this.getNormalEdge()).transformToRealGraphElement(edgeClass);
+	public Edge convertToRealGraphElement(EdgeClass edgeClass) {
+		return ((TemporaryEdge)this.getNormalEdge()).convertToRealGraphElement(edgeClass);
 	}
 
 	@Override

@@ -8,6 +8,7 @@ import org.pcollections.PSet;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.NoSuchAttributeException;
+import de.uni_koblenz.jgralab.TemporaryEdge;
 import de.uni_koblenz.jgralab.schema.AggregationKind;
 import de.uni_koblenz.jgralab.schema.Attribute;
 import de.uni_koblenz.jgralab.schema.Constraint;
@@ -99,7 +100,7 @@ public class TemporaryEdgeClassImpl extends EdgeClassImpl implements EdgeClass {
 
 	@Override
 	public Class<Edge> getSchemaClass() {
-		return null;
+		return (Class<Edge>)(Class<?>) TemporaryEdge.class;
 	}
 
 	@Override

@@ -5,11 +5,11 @@ import java.util.HashMap;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
-import de.uni_koblenz.jgralab.GraphException;
 import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.NoSuchAttributeException;
 import de.uni_koblenz.jgralab.TemporaryEdge;
+import de.uni_koblenz.jgralab.TemporaryGraphElementConversionException;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.impl.GraphBaseImpl;
 import de.uni_koblenz.jgralab.impl.InternalEdge;
@@ -60,20 +60,13 @@ public class TemporaryEdgeImpl extends EdgeImpl implements TemporaryEdge{
 	}
 
 	@Override
-	public Edge transformToRealGraphElement(EdgeClass edgeClass) {
+	public Edge convertToRealGraphElement(EdgeClass edgeClass) {
 		
 		//test if valid
-		if(!this.getAlpha().getAttributedElementClass().isValidFromFor(edgeClass)){
-			throw new GraphException("Transformation of temporary edge "+this+ " failed. " 
-					+ this.getAlpha() + " is not a valid source for "+ edgeClass);
-		}
-		if(!this.getOmega().getAttributedElementClass().isValidToFor(edgeClass)){
-			throw new GraphException("Transformation of temporary edge "+this+ " failed. "
-					+ this.getOmega() + " is not a valid target for "+ edgeClass);
-		}
+		validateConversion(edgeClass);
 		
 		// save properties
-		Graph g = graph;
+		InternalGraph g = graph;
 		int tempID = id;
 		InternalEdge prevEdge = this.getPrevEdgeInESeq();
 		InternalEdge nextEdge = this.getNextEdgeInESeq();
@@ -96,9 +89,7 @@ public class TemporaryEdgeImpl extends EdgeImpl implements TemporaryEdge{
 				
 		InternalEdge newLastEdge = newEdge.getPrevEdgeInESeq();
 		InternalEdge newLastIncidence = newEdge.getPrevIncidenceInISeq();
-		System.out.println("DEBUG: "+newLastIncidence);
 		InternalEdge newLastIncidenceReversed = ((InternalEdge)newEdge.getReversedEdge()).getPrevIncidenceInISeq();
-		System.out.println("DEBUG: "+newLastIncidenceReversed);
 
 		this.delete();
 		
@@ -113,10 +104,10 @@ public class TemporaryEdgeImpl extends EdgeImpl implements TemporaryEdge{
 			if(prevEdge != null){
 				prevEdge.setNextEdgeInGraph(newEdge);
 			}else{// Temporary Edge is first Edge in graph
-				((InternalGraph)g).setFirstEdgeInGraph(newEdge);
+				g.setFirstEdgeInGraph(newEdge);
 			}
 
-			((InternalGraph)g).setLastEdgeInGraph(newLastEdge);
+			g.setLastEdgeInGraph(newLastEdge);
 		}
 		
 		// iSeq edge
@@ -127,9 +118,34 @@ public class TemporaryEdgeImpl extends EdgeImpl implements TemporaryEdge{
 				(InternalEdge) newEdge.getReversedEdge(), newLastIncidenceReversed);
 		
 		
-		
+		int idToFree = newEdge.getId();
 		newEdge.setId(tempID);
+		g.freeEdgeIndex(idToFree);
+		
 		return newEdge;
+		
+	}
+
+	private void validateConversion(EdgeClass edgeClass) {
+		if(!this.getAlpha().getAttributedElementClass().isValidFromFor(edgeClass)){
+			throw new TemporaryGraphElementConversionException("Transformation of temporary edge "+this+ " failed. " 
+					+ this.getAlpha() + " is not a valid source for "+ edgeClass);
+		}
+		if(!this.getOmega().getAttributedElementClass().isValidToFor(edgeClass)){
+			throw new TemporaryGraphElementConversionException("Transformation of temporary edge "+this+ " failed. "
+					+ this.getOmega() + " is not a valid target for "+ edgeClass);
+		}
+		
+		for(String atname : this.attributes.keySet()){
+			if(edgeClass.containsAttribute(atname)){
+				if(!edgeClass.getAttribute(atname).getDomain()
+					.isConformGenericValue(this.attributes.get(atname))){
+					throw new TemporaryGraphElementConversionException("Transformation of temporary vertex "+this+ " failed. "
+							+ edgeClass + " has an attribute " + atname + " but " + this.attributes.get(atname)
+							+ " is not a valid value.");
+				}
+			}
+		}
 	}
 
 	private void correctISeq(InternalEdge prevIncidence,
