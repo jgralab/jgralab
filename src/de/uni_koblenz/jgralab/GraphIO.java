@@ -883,11 +883,11 @@ public class GraphIO {
 		}
 		String delim = " {";
 		for (Attribute a : attributes) {
-			write(delim);
+			this.write(delim);
 			delim = ",";
-			space();
-			writeIdentifier(a.getName());
-			write(": ");
+			this.space();
+			this.writeIdentifier(a.getName());
+			this.write(": ");
 			String domain = a.getDomain().getTGTypeName(pkg);
 			this.write(domain);
 			if ((a.getDefaultValueAsString() != null)
@@ -896,7 +896,7 @@ public class GraphIO {
 				this.writeUtfString(a.getDefaultValueAsString());
 			}
 		}
-		write(" }");
+		this.write(" }");
 	}
 
 	public final void write(String s) throws IOException {
@@ -2469,6 +2469,7 @@ public class GraphIO {
 		}
 		GraphBaseImpl graph = this.graphFactory.createGraph(this.schema.getGraphClass(),
 				graphId, maxV, maxE);
+		System.err.println("Set loading to true");
 		graph.setLoading(true);
 		graph.readAttributeValues(this);
 		this.match(";");
@@ -2518,6 +2519,7 @@ public class GraphIO {
 		graph.internalLoadingCompleted(this.firstIncidence, this.nextIncidence);
 		this.firstIncidence = null;
 		this.nextIncidence = null;
+		System.err.println("set loading to false");
 		graph.setLoading(false);
 		graph.loadingCompleted();
 		return graph;

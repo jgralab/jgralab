@@ -5,7 +5,7 @@ Main-Class: de.uni_koblenz.jgralab.JGraLab
 Bundle-Version: 6.1.2.Falkarius
 Bundle-ManifestVersion: 2
 Bundle-Name: JGraLab
-Bundle-SymbolicName: de.uni_koblenz.jgralab;singleton:=true
+Bundle-SymbolicName: de.uni_koblenz.jgralab.gremf;singleton:=true
 Bundle-Activator: de.uni_koblenz.jgralab.plugin.Activator
 Bundle-Vendor: Institute for Software Technology, University of Koblen
  z-Landau
