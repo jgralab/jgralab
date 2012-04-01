@@ -120,6 +120,7 @@ public class TemporaryEdgeImpl extends EdgeImpl implements TemporaryEdge{
 		
 		int idToFree = newEdge.getId();
 		newEdge.setId(tempID);
+		g.allocateEdgeIndex(tempID);
 		g.freeEdgeIndex(idToFree);
 		
 		return newEdge;
@@ -230,5 +231,10 @@ public class TemporaryEdgeImpl extends EdgeImpl implements TemporaryEdge{
 				.getAggregationKind();
 		return fromAK != AggregationKind.NONE ? fromAK
 				: (toAK != AggregationKind.NONE ? toAK : AggregationKind.NONE);
+	}
+	
+	@Override
+	public boolean isTemporary(){
+		return true;
 	}
 }

@@ -57,4 +57,8 @@ public class TemporaryReversedEdgeImpl extends ReversedEdgeImpl implements Tempo
 		
 	}
 
+	@Override
+	public boolean isTemporary(){
+		return true;
+	}
 }

@@ -135,6 +135,7 @@ public class TemporaryVertexImpl extends VertexImpl implements TemporaryVertex {
 		// Set id 
 		int idToFree = newVertex.getId();
 		newVertex.setId(id);
+		g.allocateVertexIndex(id);
 		g.freeVertexIndex(idToFree);
 		return newVertex;
 	}
@@ -170,6 +171,11 @@ public class TemporaryVertexImpl extends VertexImpl implements TemporaryVertex {
 	@Override
 	public void deleteAttribute(String name) {
 		this.attributes.remove(name);
+	}
+	
+	@Override
+	public boolean isTemporary(){
+		return true;
 	}
 
 }

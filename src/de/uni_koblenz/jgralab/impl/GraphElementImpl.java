@@ -154,5 +154,10 @@ public abstract class GraphElementImpl<SC extends GraphElementClass<SC, IC>, IC 
 		// needs to implement this with a schema lookup.
 		return cls.getSchemaClass().isInstance(this);
 	}
+	
+	@Override
+	public boolean isTemporary(){
+		return false;
+	}
 
 }

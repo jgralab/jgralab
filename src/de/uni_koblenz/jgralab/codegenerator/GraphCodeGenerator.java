@@ -193,10 +193,6 @@ public class GraphCodeGenerator extends
 		TreeSet<GraphElementClass<?, ?>> sortedClasses = new TreeSet<GraphElementClass<?, ?>>();
 		sortedClasses.addAll(gc.getGraphElementClasses());
 		for (GraphElementClass<?, ?> gec : sortedClasses) {
-			if(gec instanceof TemporaryVertexClassImpl || gec instanceof TemporaryEdgeClassImpl){
-				continue;
-			}
-
 			CodeList gecCode = new CodeList();
 			code.addNoIndent(gecCode);
 

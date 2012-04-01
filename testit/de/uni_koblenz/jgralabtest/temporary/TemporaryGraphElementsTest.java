@@ -2,6 +2,7 @@ package de.uni_koblenz.jgralabtest.temporary;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
@@ -207,6 +208,23 @@ public class TemporaryGraphElementsTest {
 		v.convertToRealGraphElement(g.getGraphClass().getVertexClass("Intersection"));
 	}
 	
+	@Test
+	public void testTransformFreeID(){
+		Schema schema = CityMapSchema.instance();
+		Graph g = schema.createGraph(impl);
+		
+		Vertex v1 = g.createVertex(g.getGraphClass().getVertexClass("Intersection"));
+		TemporaryVertex v2 = g.createTemporaryVertex();
+		Vertex v3 = g.createVertex(g.getGraphClass().getVertexClass("Intersection"));
+		Vertex cv2 = v2.convertToRealGraphElement(g.getGraphClass().getVertexClass("Intersection"));
+		Vertex v4 = g.createVertex(g.getGraphClass().getVertexClass("Intersection"));
+		
+		assertEquals(1, v1.getId());
+		assertEquals(2, cv2.getId());
+		assertEquals(3, v3.getId());
+		assertEquals(4, v4.getId());
+	}
+	
 	private void writeTgToConsole(Graph g) throws GraphIOException{
 		try {
 			ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -217,6 +235,24 @@ public class TemporaryGraphElementsTest {
 		} catch (IOException e) {
 			e.printStackTrace();
 		} 
+	}
+	
+	@Test
+	public void testIsTemporary(){
+		Schema schema = CityMapSchema.instance();
+		Graph g = schema.createGraph(impl);
+		
+		Vertex v1 = g.createVertex(g.getGraphClass().getVertexClass("Intersection"));
+		assertFalse(v1.isTemporary());
+		
+		Vertex v2 = g.createTemporaryVertex();
+		assertTrue(v2.isTemporary());
+		
+		Edge e1 = g.createEdge(schema.getGraphClass().getEdgeClass("Bridge"), v1,v2);
+		assertFalse(e1.isTemporary());
+		
+		Edge e2 = g.createTemporaryEdge(v2, v1);
+		assertTrue(e2.isTemporary());
 	}
 	
 }
