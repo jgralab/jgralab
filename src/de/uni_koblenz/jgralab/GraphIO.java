@@ -2463,7 +2463,6 @@ public class GraphIO {
 		}
 		GraphBaseImpl graph = this.graphFactory.createGraph(this.schema.getGraphClass(),
 				graphId, maxV, maxE);
-		System.err.println("Set loading to true");
 		graph.setLoading(true);
 		graph.readAttributeValues(this);
 		this.match(";");
@@ -2513,7 +2512,6 @@ public class GraphIO {
 		graph.internalLoadingCompleted(this.firstIncidence, this.nextIncidence);
 		this.firstIncidence = null;
 		this.nextIncidence = null;
-		System.err.println("set loading to false");
 		graph.setLoading(false);
 		graph.loadingCompleted();
 		return graph;

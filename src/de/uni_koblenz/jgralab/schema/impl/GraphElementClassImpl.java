@@ -187,7 +187,6 @@ public abstract class GraphElementClassImpl<SC extends GraphElementClass<SC, IC>
 		if (finished) {
 			return allSuperClasses;
 		}
-		System.err.println("DEBUG: "+getDefaultClass() + " " + this);
 		return (PSet<SC>) subclassDag
 				.getAllPredecessorsInTopologicalOrder(this).minus(
 						getDefaultClass());
