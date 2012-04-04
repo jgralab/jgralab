@@ -44,8 +44,6 @@ import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.GraphClass;
 import de.uni_koblenz.jgralab.schema.GraphElementClass;
 import de.uni_koblenz.jgralab.schema.VertexClass;
-import de.uni_koblenz.jgralab.schema.impl.TemporaryEdgeClassImpl;
-import de.uni_koblenz.jgralab.schema.impl.TemporaryVertexClassImpl;
 
 /**
  * TODO add comment

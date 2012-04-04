@@ -329,34 +329,12 @@ public final class RecordDomainImpl extends CompositeDomainImpl implements
 	}
 
 	@Override
-	public boolean isConformGenericValue(Object value) {
-		boolean result = true;
-		if (value == null) {
-			return result;
-		}
-		result &= value instanceof Record;
-		if (!result) {
-			return false;
-		}
-		// RecordDomainImpl uses a TreeMap for storing the components.
-		// The iterator is backed by the TreeMap and iterates over its
-		// elements in the order of the TreeMap's keys.
-		Iterator<RecordComponent> iterator = getComponents().iterator();
-		while (iterator.hasNext() && result) {
-			RecordComponent component = iterator.next();
-			result &= component.getDomain().isConformGenericValue(
-					((Record) value).getComponent(component.getName()));
-		}
-		return result;
-	}
-	
-	//@Override
 	public boolean isConformValue(Object value) {
 		boolean result = true;
 		if (value == null) {
 			return result;
 		}
-		if(value.getClass().equals(RecordImpl.class)){
+		if(value instanceof RecordImpl){
 			//generic
 			result &= value instanceof Record;
 			if (!result) {
@@ -368,15 +346,17 @@ public final class RecordDomainImpl extends CompositeDomainImpl implements
 			Iterator<RecordComponent> iterator = getComponents().iterator();
 			while (iterator.hasNext() && result) {
 				RecordComponent component = iterator.next();
-				result &= component.getDomain().isConformGenericValue(
+				result &= component.getDomain().isConformValue(
 						((Record) value).getComponent(component.getName()));
 			}
 			return result;
-		}else{
+		}else if(value instanceof Record){
 			// generated
 			if(value.getClass().equals(this.getSchemaClass())){
 				return true;
 			}
+			return false;
+		}else{
 			return false;
 		}
 		

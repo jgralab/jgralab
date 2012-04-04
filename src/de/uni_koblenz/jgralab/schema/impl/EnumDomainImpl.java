@@ -239,16 +239,6 @@ public final class EnumDomainImpl extends DomainImpl implements EnumDomain {
 	}
 
 	@Override
-	public boolean isConformGenericValue(Object value) {
-		boolean result = true;
-		if (value == null) {
-			return result;
-		}
-		return result &= (value instanceof String)
-				&& this.getConsts().contains(value);
-	}
-
-	@Override
 	public void setQualifiedName(String newQName) {
 		if (qualifiedName.equals(newQName)) {
 			return;
@@ -294,7 +284,6 @@ public final class EnumDomainImpl extends DomainImpl implements EnumDomain {
 		if (value == null) {
 			return result;
 		}
-		//TODO check if it works now for every domain
 		if(value instanceof Enum){
 			if(this.getSchemaClass().isInstance(value)){
 				return true;

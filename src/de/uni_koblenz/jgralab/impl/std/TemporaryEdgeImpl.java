@@ -140,7 +140,7 @@ public class TemporaryEdgeImpl extends EdgeImpl implements TemporaryEdge{
 		for(String atname : this.attributes.keySet()){
 			if(edgeClass.containsAttribute(atname)){
 				if(!edgeClass.getAttribute(atname).getDomain()
-					.isConformGenericValue(this.attributes.get(atname))){
+					.isConformValue(this.attributes.get(atname))){
 					throw new TemporaryGraphElementConversionException("Transformation of temporary vertex "+this+ " failed. "
 							+ edgeClass + " has an attribute " + atname + " but " + this.attributes.get(atname)
 							+ " is not a valid value.");

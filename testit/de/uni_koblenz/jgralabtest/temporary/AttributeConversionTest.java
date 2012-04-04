@@ -151,6 +151,15 @@ public class AttributeConversionTest {
 		tempV.setAttribute("tags", map);
 		tempV.convertToRealGraphElement(schema.vc_localities_County);
 	}
+	
+	@Test
+	public void testEnumAcceptString(){
+		TemporaryVertex tempV = graph.createTemporaryVertex();
+		PMap<String,Double> map = ArrayPMap.empty();
+		map = map.plus("AREA", 0.12);
+		tempV.setAttribute("tags", map);
+		tempV.convertToRealGraphElement(schema.vc_localities_County);
+	}
 
 	@Test 
 	public void testConvertRecord(){

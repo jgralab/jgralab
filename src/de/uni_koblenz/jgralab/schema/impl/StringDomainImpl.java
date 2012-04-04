@@ -141,11 +141,6 @@ public final class StringDomainImpl extends BasicDomainImpl implements
 	}
 
 	@Override
-	public boolean isConformGenericValue(Object value) {
-		return value == null || String.class.isInstance(value);
-	}
-
-	@Override
 	public boolean isConformValue(Object value) {
 		return value == null || String.class.isInstance(value);
 	}

@@ -100,6 +100,7 @@ public class TemporaryEdgeClassImpl extends EdgeClassImpl implements EdgeClass {
 		return null;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public Class<Edge> getSchemaClass() {
 		return (Class<Edge>)(Class<?>) TemporaryEdge.class;

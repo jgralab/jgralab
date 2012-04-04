@@ -217,15 +217,11 @@ public interface Domain extends NamedElement {
 	 */
 	public void serializeGenericAttribute(GraphIO io, Object data)
 			throws IOException;
-
-	/**
-	 * Checks, if an attribute value in the generic implementation conforms to
-	 * this domain.
-	 */
-	public boolean isConformGenericValue(Object value);
 	
 	/**
 	 * Checks, if an attribute value conforms to this domain.
+	 * Be careful with Records and Enums, generic and generated values
+	 * will be accept both.
 	 */
 	public boolean isConformValue(Object value);
 	
