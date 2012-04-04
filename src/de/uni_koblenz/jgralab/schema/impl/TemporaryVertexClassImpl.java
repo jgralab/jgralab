@@ -150,7 +150,7 @@ public class TemporaryVertexClassImpl extends
 
 	@Override
 	public void setAbstract(boolean isAbstract) {
-		throw new UnsupportedOperationException("Temporary VertexClass can not be abstract.");
+		throw new UnsupportedOperationException("TemporaryVertexClass can not be abstract.");
 	}
 
 	@Override
@@ -160,7 +160,7 @@ public class TemporaryVertexClassImpl extends
 
 	@Override
 	public void setQualifiedName(String newQName) {
-		throw new UnsupportedOperationException();
+		throw new UnsupportedOperationException("Name of TemporaryVertexClass can not be changed.");
 	}
 
 	@Override

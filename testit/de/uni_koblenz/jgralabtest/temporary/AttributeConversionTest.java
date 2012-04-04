@@ -185,7 +185,7 @@ public class AttributeConversionTest {
 	public void testConvertRecordFail2(){
 		TemporaryVertex v = graph.createTemporaryVertex();
 		PMap<String, Object> componentValues = ArrayPMap.empty();
-		componentValues = componentValues.plus("day", 2);
+		componentValues = componentValues.plus("days", 2);
 		componentValues = componentValues.plus("month", Month.JAN);
 		componentValues = componentValues.plus("year", 2012);
 		RecordImpl record = RecordImpl.empty();

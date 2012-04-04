@@ -45,6 +45,7 @@ import de.uni_koblenz.jgralabtest.graphvalidator.RunGraphValidatorTests;
 import de.uni_koblenz.jgralabtest.gretl.RunGretlTests;
 import de.uni_koblenz.jgralabtest.instancetest.RunInstanceTests;
 import de.uni_koblenz.jgralabtest.schema.RunSchemaTests;
+import de.uni_koblenz.jgralabtest.temporary.RunTemporaryElementsTests;
 import de.uni_koblenz.jgralabtest.utilities.RunUtilitiesTests;
 
 /**
@@ -56,7 +57,8 @@ import de.uni_koblenz.jgralabtest.utilities.RunUtilitiesTests;
 		RunAlgolibTests.class, RunSchemaTests.class, GraphIOTest.class,
 		TempAttributeTest.class, RunGraphValidatorTests.class,
 		RunCodeGeneratorTests.class, RunUtilitiesTests.class,
-		RunGretlTests.class, RunECATest.class, RunGenericTests.class })
+		RunGretlTests.class, RunECATest.class, RunGenericTests.class, 
+		RunTemporaryElementsTests.class })
 // TODO: add RunGreql2Tests.class back when it's fixed
 public class RunTests {
 
