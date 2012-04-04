@@ -5,7 +5,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -19,6 +18,7 @@ import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.ImplementationType;
 import de.uni_koblenz.jgralab.Record;
+import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEnvironmentAdapter;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluatorImpl;
 import de.uni_koblenz.jgralab.greql2.evaluator.QueryImpl;
 import de.uni_koblenz.jgralab.greql2.types.Tuple;
@@ -41,7 +41,7 @@ public class CollectionEvaluatorTest {
 
 	private Object evaluateQuery(String query) {
 		return new GreqlEvaluatorImpl(new QueryImpl(query), datagraph,
-				new HashMap<String, Object>()).getResult();
+				new GreqlEnvironmentAdapter()).getResult();
 	}
 
 	/*

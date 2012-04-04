@@ -37,7 +37,6 @@ package de.uni_koblenz.jgralab.greql2.evaluator;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.logging.Level;
@@ -164,12 +163,6 @@ public class GreqlEvaluatorImpl implements InternalGreqlEvaluator,
 	private long evaluationTime;
 
 	/**
-	 * Holds the variables that are defined via using, they are called bound or
-	 * free variables
-	 */
-	private Map<String, Object> variableMap;
-
-	/**
 	 * Stores the evaluation result of the query vertex <code>v</code> at
 	 * <code>localEvaluationResult[v.getId()]</code>
 	 */
@@ -187,6 +180,8 @@ public class GreqlEvaluatorImpl implements InternalGreqlEvaluator,
 
 	private QueryImpl query;
 
+	private GreqlEnvironment environment;
+
 	/**
 	 * should be called by every vertex evaluator to indicate a progress. The
 	 * given value should be the ownEvaluationCosts of that VertexEvaluator.
@@ -202,30 +197,6 @@ public class GreqlEvaluatorImpl implements InternalGreqlEvaluator,
 	// }
 	// passedInterpretationSteps += value;
 	// }
-
-	/**
-	 * returns the changes variableMap
-	 */
-	public synchronized Map<String, Object> getVariables() {
-		return variableMap;
-	}
-
-	@Override
-	public synchronized Object getVariable(String name) {
-		return variableMap == null ? null : variableMap.get(name);
-	}
-
-	public synchronized void setVariables(Map<String, Object> varMap) {
-		variableMap = varMap;
-	}
-
-	@Override
-	public synchronized Object setVariable(String varName, Object value) {
-		if (variableMap == null) {
-			variableMap = new HashMap<String, Object>();
-		}
-		return variableMap.put(varName, value);
-	}
 
 	@Override
 	public Object setLocalEvaluationResult(Greql2Vertex vertex, Object value) {
@@ -296,15 +267,15 @@ public class GreqlEvaluatorImpl implements InternalGreqlEvaluator,
 	 *            the string-representation of the query to evaluate
 	 * @param datagraph
 	 *            the Datagraph on which the query gets evaluated
-	 * @param variables
-	 *            a Map<String, JValue> of bound variables
+	 * @param environment
+	 *            {@link GreqlEnvironment} with the bound variables
 	 * @param progressFunction
 	 *            the ProgressFunction which indicates the progress, for
 	 *            instance display a progress bar etc.
 	 */
 	public GreqlEvaluatorImpl(Query query, Graph datagraph,
-			Map<String, Object> variables, ProgressFunction progressFunction) {
-		initialize(query, datagraph, variables, progressFunction);
+			GreqlEnvironment environment, ProgressFunction progressFunction) {
+		initialize(query, datagraph, environment, progressFunction);
 	}
 
 	/**
@@ -314,12 +285,12 @@ public class GreqlEvaluatorImpl implements InternalGreqlEvaluator,
 	 *            the string-representation of the query to evaluate
 	 * @param datagraph
 	 *            the Datagraph on which the query gets evaluated
-	 * @param variables
-	 *            a Map<String, JValue> of bound variables
+	 * @param environment
+	 *            {@link GreqlEnvironment} with the bound variables
 	 */
 	public GreqlEvaluatorImpl(Query query, Graph datagraph,
-			Map<String, Object> variables) {
-		initialize(query, datagraph, variables, null);
+			GreqlEnvironment environment) {
+		initialize(query, datagraph, environment, null);
 	}
 
 	public GreqlEvaluatorImpl() {
@@ -333,18 +304,18 @@ public class GreqlEvaluatorImpl implements InternalGreqlEvaluator,
 	 * @param progressFunction
 	 */
 	private void initialize(Query query, Graph datagraph,
-			Map<String, Object> variables, ProgressFunction progressFunction) {
+			GreqlEnvironment environment, ProgressFunction progressFunction) {
 		this.query = (QueryImpl) query;
 		this.datagraph = datagraph;
-		setVariables(variables);
+		this.environment = environment;
 		localEvaluationResults = new Object[query.getQueryGraph().getVCount() + 1];
 		// this.progressFunction = progressFunction;
 	}
 
 	@Override
 	public Object evaluate(QueryImpl query, Graph datagraph,
-			Map<String, Object> variables, ProgressFunction progressFunction) {
-		initialize(query, datagraph, variables, progressFunction);
+			GreqlEnvironment environment, ProgressFunction progressFunction) {
+		initialize(query, datagraph, environment, progressFunction);
 		return evaluate();
 	}
 
@@ -394,6 +365,16 @@ public class GreqlEvaluatorImpl implements InternalGreqlEvaluator,
 		// + (progressFunction != null ? " Estimated evaluation costs: "
 		// + estimatedInterpretationSteps : ""));
 		);
+	}
+
+	@Override
+	public Object setVariable(String varName, Object value) {
+		return environment.setVariable(varName, value);
+	}
+
+	@Override
+	public Object getVariable(String varName) {
+		return environment.getVariable(varName);
 	}
 
 }

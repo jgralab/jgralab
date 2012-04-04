@@ -4,8 +4,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import java.util.HashMap;
-
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -14,6 +12,7 @@ import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.ImplementationType;
+import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEnvironmentAdapter;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluatorImpl;
 import de.uni_koblenz.jgralab.greql2.evaluator.QueryImpl;
 import de.uni_koblenz.jgralab.greql2.types.Undefined;
@@ -36,7 +35,7 @@ public class LiteralEvaluatorTest {
 
 	private Object evaluateQuery(String query) {
 		return new GreqlEvaluatorImpl(new QueryImpl(query), datagraph,
-				new HashMap<String, Object>()).getResult();
+				new GreqlEnvironmentAdapter()).getResult();
 	}
 
 	/**

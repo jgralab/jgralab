@@ -34,8 +34,6 @@
  */
 package de.uni_koblenz.jgralab.greql2.evaluator;
 
-import java.util.Map;
-
 import org.pcollections.PMap;
 import org.pcollections.POrderedSet;
 import org.pcollections.PVector;
@@ -56,5 +54,5 @@ public interface GreqlEvaluator {
 	public <T> POrderedSet<T> getResultSet();
 
 	public Object evaluate(QueryImpl query, Graph datagraph,
-			Map<String, Object> variables, ProgressFunction progressFunction);
+			GreqlEnvironment environment, ProgressFunction progressFunction);
 }
