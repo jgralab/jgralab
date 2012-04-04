@@ -2852,12 +2852,10 @@ public class GraphIO {
 						.entrySet()) {
 					for (GraphElementClassData vc : graphClassVertex.getValue()) {
 						if (ec.fromVertexClassName
-								.equals(vc.getQualifiedName())
-								|| ec.fromVertexClassName.equals("Vertex")) {
+								.equals(vc.getQualifiedName())) {
 							existingFromVertexClass = true;
 						}
-						if (ec.toVertexClassName.equals(vc.getQualifiedName())
-								|| ec.toVertexClassName.equals("Vertex")) {
+						if (ec.toVertexClassName.equals(vc.getQualifiedName())) {
 							existingToVertexClass = true;
 						}
 						if (existingFromVertexClass && existingToVertexClass) {
@@ -2869,14 +2867,14 @@ public class GraphIO {
 					}
 				}
 				if (!existingFromVertexClass) {
-					throw new GraphIOException("FromVertexClass "
+					throw new GraphIOException("From-VertexClass "
 							+ ec.fromVertexClassName + " at EdgeClass "
-							+ ec.getQualifiedName() + " + does not exist");
+							+ ec.getQualifiedName() + " does not exist.");
 				}
 				if (!existingToVertexClass) {
-					throw new GraphIOException("ToVertexClass "
+					throw new GraphIOException("To-VertexClass "
 							+ ec.toVertexClassName + " at EdgeClass "
-							+ ec.getQualifiedName() + " does not exist");
+							+ ec.getQualifiedName() + " does not exist.");
 				}
 			}
 		}

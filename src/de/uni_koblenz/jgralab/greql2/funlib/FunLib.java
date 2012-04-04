@@ -130,6 +130,7 @@ public class FunLib {
 		register(de.uni_koblenz.jgralab.greql2.funlib.graph.EdgeSetSubgraph.class);
 		register(de.uni_koblenz.jgralab.greql2.funlib.graph.ElementSetSubgraph.class);
 		register(de.uni_koblenz.jgralab.greql2.funlib.graph.EndVertex.class);
+		register(de.uni_koblenz.jgralab.greql2.funlib.graph.ExtractPaths.class);
 		register(de.uni_koblenz.jgralab.greql2.funlib.graph.GetEdge.class);
 		register(de.uni_koblenz.jgralab.greql2.funlib.graph.GetValue.class);
 		register(de.uni_koblenz.jgralab.greql2.funlib.graph.GetVertex.class);

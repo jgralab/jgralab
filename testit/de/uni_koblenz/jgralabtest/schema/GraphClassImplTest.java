@@ -34,9 +34,13 @@
  */
 package de.uni_koblenz.jgralabtest.schema;
 
+import java.io.ByteArrayInputStream;
+
 import org.junit.Before;
 import org.junit.Test;
 
+import de.uni_koblenz.jgralab.GraphIO;
+import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.schema.AggregationKind;
 import de.uni_koblenz.jgralab.schema.GraphClass;
 import de.uni_koblenz.jgralab.schema.Schema;
@@ -96,10 +100,22 @@ public final class GraphClassImplTest extends
 
 	@Test(expected = SchemaException.class)
 	public void testCreateEdgeClassForbidden() {
+		// EdgeClasses connected to default VC Vertex are forbidden!
 		graphClass.createEdgeClass("FooFoo",
 				graphClass.getDefaultVertexClass(), 0, 1, "",
 				AggregationKind.NONE, graphClass.getDefaultVertexClass(), 0, 1,
 				"", AggregationKind.NONE);
+	}
+
+	@Test(expected = GraphIOException.class)
+	public void testCreateEdgeClassForbiddenFromTG() throws Exception {
+		// EdgeClasses connected to default VC Vertex are forbidden!
+		String s = "TGraph 2;                                    \n"
+				+ "Schema foo.bar.BrokenSchema;                  \n"
+				+ "GraphClass BrokenGraph;                       \n"
+				+ "EdgeClass E from Vertex (0,1) to Vertex (0,1);\n";
+
+		GraphIO.loadSchemaFromStream(new ByteArrayInputStream(s.getBytes()));
 	}
 
 	@Test
