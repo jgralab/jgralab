@@ -7,7 +7,7 @@ import static org.junit.Assert.assertTrue;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.util.Set;
+import java.util.Iterator;
 
 import org.junit.Test;
 
@@ -20,7 +20,6 @@ import de.uni_koblenz.jgralab.TemporaryEdge;
 import de.uni_koblenz.jgralab.TemporaryGraphElementConversionException;
 import de.uni_koblenz.jgralab.TemporaryVertex;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.schema.IncidenceClass;
 import de.uni_koblenz.jgralab.schema.Schema;
 import de.uni_koblenz.jgralabtest.schemas.citymap.CityMapSchema;
 
@@ -128,17 +127,24 @@ public class TemporaryGraphElementsTest {
 	}
 	
 	@Test
-	public void testOnlyTemp() throws GraphIOException{
+	public void testFirstVertexTemp() throws GraphIOException{
 		Schema schema = CityMapSchema.instance();
 		Graph g = schema.createGraph(impl);
 		TemporaryVertex tempv = g.createTemporaryVertex();
-		g.createEdge(schema.getGraphClass().getEdgeClass("Street"), tempv, tempv);
+		Edge e = g.createEdge(schema.getGraphClass().getEdgeClass("Street"), tempv, tempv);
 		
-		g.createVertex(schema.getGraphClass().getVertexClass("Intersection"));
+		Vertex v = g.createVertex(schema.getGraphClass().getVertexClass("Intersection"));
 		
 		Vertex transformed = tempv.convertToRealGraphElement(schema.getGraphClass().getVertexClass("Intersection"));
 		
-		assertEquals(transformed, g.getFirstVertex());		
+		assertEquals(transformed, g.getFirstVertex());
+		assertEquals(1, transformed.getId());
+		assertEquals(2, v.getId());
+		assertEquals(v, transformed.getNextVertex());
+		Iterator<Edge> it =  transformed.incidences().iterator();
+		assertEquals(e, it.next());
+		assertEquals(e.getReversedEdge(),it.next());
+
 	}
 	
 	@Test
@@ -227,17 +233,6 @@ public class TemporaryGraphElementsTest {
 		assertEquals(4, v4.getId());
 	}
 	
-	private void writeTgToConsole(Graph g) throws GraphIOException{
-		try {
-			ByteArrayOutputStream out = new ByteArrayOutputStream();
-			GraphIO.saveGraphToStream(g, new DataOutputStream(out), null);		
-			out.flush();
-			System.out.println(out.toString());	
-
-		} catch (IOException e) {
-			e.printStackTrace();
-		} 
-	}
 	
 	@Test
 	public void testIsTemporary(){
@@ -257,14 +252,158 @@ public class TemporaryGraphElementsTest {
 		assertTrue(e2.isTemporary());
 	}
 	
+	
 	@Test
-	public void test(){
+	public void testGetTemporaryClasses(){
 		Schema schema = CityMapSchema.instance();
-		Set<IncidenceClass> incs= schema.getGraphClass().getVertexClass("Intersection").getAllOutIncidenceClasses();
-		for(IncidenceClass inc : incs){
-			System.out.println(" - "+inc.getVertexClass() + " " + inc.getEdgeClass());
-		}
-		System.out.println(schema.getGraphClass().getDefaultVertexClass().getConnectedEdgeClasses());
-		System.out.println(schema.getGraphClass().getVertexClass("Junction").getDirectSuperClasses());
+		Graph g = schema.createGraph(impl);
+		
+		Vertex v1 = g.createVertex(g.getGraphClass().getVertexClass("Intersection"));
+		Vertex v2 = g.createVertex(g.getGraphClass().getVertexClass("Intersection"));
+		Vertex v3_t = g.createTemporaryVertex();
+		Vertex v4 = g.createVertex(g.getGraphClass().getVertexClass("Intersection"));
+		Vertex v5_t = g.createTemporaryVertex();
+		
+		g.createEdge(schema.getGraphClass().getEdgeClass("Bridge"), v1,v2);
+		g.createEdge(schema.getGraphClass().getEdgeClass("Bridge"), v1,v3_t);
+		Edge e3_t = g.createTemporaryEdge(v3_t, v4);
+		Edge e4_t = g.createTemporaryEdge(v2, v4);
+		g.createEdge(schema.getGraphClass().getEdgeClass("Street"), v4, v1);
+		
+		Iterator<Edge> it = g.edges(schema.getGraphClass().getTemporaryEdgeClass()).iterator();
+		assertEquals(e3_t, it.next());
+		assertEquals(e4_t, it.next());
+		assertFalse(it.hasNext());
+		
+		Iterator<Vertex> itv = g.vertices(schema.getGraphClass().getTemporaryVertexClass()).iterator();
+		assertEquals(v3_t, itv.next());
+		assertEquals(v5_t, itv.next());
+		assertFalse(itv.hasNext());
+
 	}
+	
+	@Test
+	public void testConvertTemporaryEdge(){
+		Schema schema = CityMapSchema.instance();
+		Graph g = schema.createGraph(impl);
+		
+		Vertex v1 = g.createVertex(g.getGraphClass().getVertexClass("Intersection"));
+		Vertex v2 = g.createVertex(g.getGraphClass().getVertexClass("Intersection"));
+		Vertex v3 = g.createVertex(g.getGraphClass().getVertexClass("Intersection"));
+		Vertex v4 = g.createVertex(g.getGraphClass().getVertexClass("Intersection"));
+
+		Edge e1_1_2 = g.createEdge(schema.getGraphClass().getEdgeClass("Street"), v1, v2);
+		Edge e2_2_3 = g.createEdge(schema.getGraphClass().getEdgeClass("Street"), v2, v3);
+		Edge e3_3_4 = g.createEdge(schema.getGraphClass().getEdgeClass("Street"), v3, v4);
+		Edge e4_4_1 = g.createEdge(schema.getGraphClass().getEdgeClass("Street"), v4, v1);
+		Edge e5_1_3 = g.createEdge(schema.getGraphClass().getEdgeClass("Street"), v1, v3);
+		
+		TemporaryEdge e6_3_2_t = g.createTemporaryEdge(v3, v2);
+		
+		Edge e7_4_2 = g.createEdge(schema.getGraphClass().getEdgeClass("Street"), v4, v2);
+		Edge e8_2_2 = g.createEdge(schema.getGraphClass().getEdgeClass("Street"), v2, v2);
+		
+		Edge e6_3_2 = e6_3_2_t.convertToRealGraphElement(schema.getGraphClass().getEdgeClass("Bridge"));
+		
+		assertEquals(v3, e6_3_2.getAlpha());
+		assertEquals(v2, e6_3_2.getOmega());
+		
+		assertEquals(6, e6_3_2.getId());
+		assertEquals(7, e7_4_2.getId());
+		assertEquals(8, e8_2_2.getId());
+		
+		assertEquals(e1_1_2, g.getFirstEdge());
+		assertEquals(e2_2_3, e1_1_2.getNextEdge());
+		assertEquals(e3_3_4, e2_2_3.getNextEdge());
+		assertEquals(e4_4_1, e3_3_4.getNextEdge());
+		assertEquals(e5_1_3, e4_4_1.getNextEdge());
+		assertEquals(e6_3_2, e5_1_3.getNextEdge());
+		assertEquals(e7_4_2, e6_3_2.getNextEdge());
+		assertEquals(e8_2_2, e7_4_2.getNextEdge());
+		assertEquals(null, e8_2_2.getNextEdge());
+		assertEquals(e8_2_2, g.getLastEdge());
+		assertEquals(e6_3_2, e7_4_2.getPrevEdge());
+		assertEquals(e5_1_3, e6_3_2.getPrevEdge());
+		
+		Iterator<Edge> it = v3.incidences().iterator();
+		
+		assertEquals(e2_2_3.getReversedEdge(), it.next());
+		assertEquals(e3_3_4, it.next());
+		assertEquals(e5_1_3.getReversedEdge(), it.next());
+		assertEquals(e6_3_2, it.next());
+		assertFalse(it.hasNext());
+		
+		Iterator<Edge> it2 = v2.incidences().iterator();
+		assertEquals(e1_1_2.getReversedEdge(), it2.next());
+		assertEquals(e2_2_3, it2.next());
+		assertEquals(e6_3_2.getReversedEdge(), it2.next());
+		assertEquals(e7_4_2.getReversedEdge(), it2.next());
+		assertEquals(e8_2_2, it2.next());
+		assertEquals(e8_2_2.getReversedEdge(), it2.next());
+		assertFalse(it2.hasNext());
+	}
+	
+	@Test
+	public void testConvertTemporaryVertex(){
+		Schema schema = CityMapSchema.instance();
+		Graph g = schema.createGraph(impl);
+		
+		Vertex v1 = g.createVertex(g.getGraphClass().getVertexClass("Intersection"));
+		Vertex v2 = g.createVertex(g.getGraphClass().getVertexClass("Intersection"));
+		Vertex v3 = g.createVertex(g.getGraphClass().getVertexClass("Intersection"));
+		
+		Edge e2_2_3 = g.createEdge(schema.getGraphClass().getEdgeClass("Street"), v2, v3);
+		
+		TemporaryVertex v4_t = g.createTemporaryVertex();
+		
+		Edge e4_4_2 = g.createEdge(schema.getGraphClass().getEdgeClass("Street"), v4_t, v2);
+		e2_2_3.setOmega(v4_t);
+		Edge e5_1_4 = g.createEdge(schema.getGraphClass().getEdgeClass("Street"), v1, v4_t);
+		
+		Vertex v5 = g.createVertex(g.getGraphClass().getVertexClass("Intersection"));
+		Vertex v6 = g.createVertex(g.getGraphClass().getVertexClass("Intersection"));
+		
+		Vertex v4 = v4_t.convertToRealGraphElement(schema.getGraphClass().getVertexClass("Intersection"));
+
+		Vertex v7 = g.createVertex(g.getGraphClass().getVertexClass("Intersection"));
+
+		assertEquals(4, v4.getId());
+		
+		assertEquals(v1, g.getFirstVertex());
+		assertEquals(v2, v1.getNextVertex());
+		assertEquals(v3, v2.getNextVertex());
+		assertEquals(v4, v3.getNextVertex());
+		assertEquals(v5, v4.getNextVertex());
+		assertEquals(v6, v5.getNextVertex());
+		assertEquals(v7, v6.getNextVertex());
+		assertEquals(null, v7.getNextVertex());
+		assertEquals(v7, g.getLastVertex());
+		assertEquals(v4, v5.getPrevVertex());
+		assertEquals(v3, v4.getPrevVertex());
+		
+		Iterator<Edge> it = v4.incidences().iterator();
+		assertEquals(e4_4_2, it.next());
+		assertEquals(e2_2_3.getReversedEdge(), it.next());
+		assertEquals(e5_1_4.getReversedEdge(), it.next());
+		assertFalse(it.hasNext());
+		
+		assertEquals(v4, e4_4_2.getAlpha());
+		assertEquals(v4, e2_2_3.getOmega());
+		assertEquals(v4, e5_1_4.getOmega());
+		
+	}
+	
+	private void writeTgToConsole(Graph g) throws GraphIOException{
+		try {
+			ByteArrayOutputStream out = new ByteArrayOutputStream();
+			GraphIO.saveGraphToStream(g, new DataOutputStream(out), null);		
+			out.flush();
+			System.out.println(out.toString());	
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		} 
+	}
+	
+
 }
