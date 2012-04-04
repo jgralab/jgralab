@@ -142,4 +142,9 @@ public final class DoubleDomainImpl extends BasicDomainImpl implements
 	public boolean isConformGenericValue(Object value) {
 		return Double.class.isInstance(value);
 	}
+
+	@Override
+	public boolean isConformValue(Object value) {
+		return Double.class.isInstance(value);
+	}
 }

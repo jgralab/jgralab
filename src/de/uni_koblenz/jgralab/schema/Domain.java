@@ -223,7 +223,12 @@ public interface Domain extends NamedElement {
 	 * this domain.
 	 */
 	public boolean isConformGenericValue(Object value);
-
+	
+	/**
+	 * Checks, if an attribute value conforms to this domain.
+	 */
+	public boolean isConformValue(Object value);
+	
 	/**
 	 * Deletes this Domain from the schema. Note that only user-specified
 	 * domains (enum and record domains) can be deleted, and even those must not

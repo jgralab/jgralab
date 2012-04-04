@@ -148,4 +148,9 @@ public final class BooleanDomainImpl extends BasicDomainImpl implements
 	public boolean isConformGenericValue(Object value) {
 		return Boolean.class.isInstance(value);
 	}
+
+	@Override
+	public boolean isConformValue(Object value) {
+		return Boolean.class.isInstance(value);
+	}
 }

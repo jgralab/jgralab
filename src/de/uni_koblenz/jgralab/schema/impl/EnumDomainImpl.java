@@ -244,13 +244,6 @@ public final class EnumDomainImpl extends DomainImpl implements EnumDomain {
 		if (value == null) {
 			return result;
 		}
-		//TODO check if it works now for every domain
-		if(value instanceof Enum){
-			if(!this.getSchemaClass().isInstance(value)){
-				return false;
-			}
-			return true;
-		}
 		return result &= (value instanceof String)
 				&& this.getConsts().contains(value);
 	}
@@ -293,5 +286,22 @@ public final class EnumDomainImpl extends DomainImpl implements EnumDomain {
 		parentPackage.domains.remove(simpleName);
 		schema.namedElements.remove(qualifiedName);
 		schema.domains.remove(qualifiedName);
+	}
+
+	@Override
+	public boolean isConformValue(Object value) {
+		boolean result = true;
+		if (value == null) {
+			return result;
+		}
+		//TODO check if it works now for every domain
+		if(value instanceof Enum){
+			if(this.getSchemaClass().isInstance(value)){
+				return true;
+			}
+			return false;
+		}
+		return result &= (value instanceof String)
+				&& this.getConsts().contains(value);
 	}
 }

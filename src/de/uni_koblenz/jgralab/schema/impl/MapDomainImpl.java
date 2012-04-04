@@ -369,4 +369,24 @@ public final class MapDomainImpl extends CompositeDomainImpl implements
 		((DomainImpl) keyDomain).registerAttribute(a);
 		((DomainImpl) valueDomain).registerAttribute(a);
 	}
+
+	@Override
+	public boolean isConformValue(Object value) {
+		boolean result = true;
+		if (value == null) {
+			return result;
+		}
+		result &= value instanceof PMap;
+		if (!result) {
+			return false;
+		}
+		Iterator<?> iterator = ((PMap<?, ?>) value).keySet().iterator();
+		while (iterator.hasNext() && result) {
+			Object key = iterator.next();
+			result &= getKeyDomain().isConformValue(key)
+					&& getValueDomain().isConformValue(
+							((PMap<?, ?>) value).get(key));
+		}
+		return result;
+	}
 }

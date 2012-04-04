@@ -275,4 +275,21 @@ public final class SetDomainImpl extends CollectionDomainImpl implements
 		}
 		return result;
 	}
+
+	@Override
+	public boolean isConformValue(Object value) {
+		boolean result = true;
+		if (value == null) {
+			return result;
+		}
+		result &= value instanceof PSet;
+		if (!result) {
+			return false;
+		}
+		Iterator<?> iterator = ((PSet<?>) value).iterator();
+		while (iterator.hasNext() && result) {
+			result &= getBaseDomain().isConformValue(iterator.next());
+		}
+		return result;
+	}
 }

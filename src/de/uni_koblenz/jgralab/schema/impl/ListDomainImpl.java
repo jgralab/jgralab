@@ -276,4 +276,21 @@ public final class ListDomainImpl extends CollectionDomainImpl implements
 		}
 		return result;
 	}
+
+	@Override
+	public boolean isConformValue(Object value) {
+		boolean result = true;
+		if (value == null) {
+			return result;
+		}
+		result &= (value instanceof PVector);
+		if (!result) {
+			return false;
+		}
+		Iterator<?> iterator = ((PVector<?>) value).iterator();
+		while (iterator.hasNext() && result) {
+			result &= getBaseDomain().isConformValue(iterator.next());
+		}
+		return result;
+	}
 }

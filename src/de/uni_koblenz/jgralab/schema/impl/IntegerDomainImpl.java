@@ -142,4 +142,9 @@ public final class IntegerDomainImpl extends BasicDomainImpl implements
 	public boolean isConformGenericValue(Object value) {
 		return Integer.class.isInstance(value);
 	}
+
+	@Override
+	public boolean isConformValue(Object value) {
+		return Integer.class.isInstance(value);
+	}
 }
