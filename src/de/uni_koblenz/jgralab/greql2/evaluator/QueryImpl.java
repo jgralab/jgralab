@@ -300,8 +300,16 @@ public class QueryImpl extends GraphStructureChangedAdapter implements Query {
 
 	@Override
 	public void vertexAdded(Vertex v) {
-		vertexEvaluators.mark(v,
-				VertexEvaluator.createVertexEvaluator((Greql2Vertex) v, this));
+		try {
+			vertexEvaluators.mark(v, VertexEvaluator.createVertexEvaluator(
+					(Greql2Vertex) v, this));
+		} catch (RuntimeException e) {
+			if (!(e.getCause() instanceof ClassNotFoundException)) {
+				// Some vertices of the query graph do not have an Evaluator
+				// e.g. Definition
+				throw e;
+			}
+		}
 	}
 
 	@Override
