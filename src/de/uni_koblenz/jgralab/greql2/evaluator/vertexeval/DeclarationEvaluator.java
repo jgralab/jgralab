@@ -73,7 +73,7 @@ public class DeclarationEvaluator extends VertexEvaluator<Declaration> {
 		for (IsConstraintOf consInc : vertex
 				.getIsConstraintOfIncidences(EdgeDirection.IN)) {
 			VertexEvaluator<? extends Expression> curEval = query
-					.getVertexEvaluator(consInc.getAlpha());
+					.getVertexEvaluator((Expression) consInc.getAlpha());
 			if (curEval != null) {
 				constraintList.add(curEval);
 			}
@@ -82,7 +82,7 @@ public class DeclarationEvaluator extends VertexEvaluator<Declaration> {
 		List<VariableDeclaration> varDeclList = new ArrayList<VariableDeclaration>();
 		for (IsSimpleDeclOf inc : vertex
 				.getIsSimpleDeclOfIncidences(EdgeDirection.IN)) {
-			SimpleDeclaration simpleDecl = inc.getAlpha();
+			SimpleDeclaration simpleDecl = (SimpleDeclaration) inc.getAlpha();
 			SimpleDeclarationEvaluator simpleDeclEval = (SimpleDeclarationEvaluator) query
 					.getVertexEvaluator(simpleDecl);
 			@SuppressWarnings("unchecked")

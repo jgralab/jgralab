@@ -81,8 +81,9 @@ public class FunctionApplicationEvaluator extends
 	 */
 	public String getFunctionName() {
 		if (functionName == null) {
-			FunctionId id = vertex.getFirstIsFunctionIdOfIncidence(
-					EdgeDirection.IN).getAlpha();
+			FunctionId id = (FunctionId) vertex
+					.getFirstIsFunctionIdOfIncidence(EdgeDirection.IN)
+					.getAlpha();
 			functionName = id.get_name();
 		}
 		return functionName;
@@ -114,7 +115,8 @@ public class FunctionApplicationEvaluator extends
 	 * @param vertex
 	 *            the vertex which gets evaluated by this VertexEvaluator
 	 */
-	public FunctionApplicationEvaluator(FunctionApplication vertex, QueryImpl query) {
+	public FunctionApplicationEvaluator(FunctionApplication vertex,
+			QueryImpl query) {
 		super(vertex, query);
 	}
 
@@ -127,7 +129,7 @@ public class FunctionApplicationEvaluator extends
 		IsArgumentOf inc = vertex
 				.getFirstIsArgumentOfIncidence(EdgeDirection.IN);
 		while (inc != null) {
-			Expression currentParameterExpr = inc.getAlpha();
+			Expression currentParameterExpr = (Expression) inc.getAlpha();
 			// maybe the vertex has no evaluator
 			VertexEvaluator<? extends Expression> paramEval = query
 					.getVertexEvaluator(currentParameterExpr);

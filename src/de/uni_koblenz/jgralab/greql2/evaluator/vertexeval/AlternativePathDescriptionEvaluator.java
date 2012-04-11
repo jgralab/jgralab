@@ -43,6 +43,7 @@ import de.uni_koblenz.jgralab.greql2.evaluator.QueryImpl;
 import de.uni_koblenz.jgralab.greql2.evaluator.fa.NFA;
 import de.uni_koblenz.jgralab.greql2.schema.AlternativePathDescription;
 import de.uni_koblenz.jgralab.greql2.schema.IsAlternativePathOf;
+import de.uni_koblenz.jgralab.greql2.schema.PathDescription;
 
 /**
  * Evaluates an alternative path description. Creates a NFA that accepts the
@@ -80,7 +81,7 @@ public class AlternativePathDescriptionEvaluator extends
 		ArrayList<NFA> nfaList = new ArrayList<NFA>();
 		while (inc != null) {
 			PathDescriptionEvaluator<?> pathEval = (PathDescriptionEvaluator<?>) query
-					.getVertexEvaluator(inc.getAlpha());
+					.getVertexEvaluator((PathDescription) inc.getAlpha());
 			nfaList.add(pathEval.getNFA(evaluator));
 			inc = inc.getNextIsAlternativePathOfIncidence(EdgeDirection.IN);
 		}

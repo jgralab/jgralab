@@ -42,6 +42,7 @@ import de.uni_koblenz.jgralab.greql2.evaluator.InternalGreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.QueryImpl;
 import de.uni_koblenz.jgralab.greql2.evaluator.fa.NFA;
 import de.uni_koblenz.jgralab.greql2.schema.IsSequenceElementOf;
+import de.uni_koblenz.jgralab.greql2.schema.PathDescription;
 import de.uni_koblenz.jgralab.greql2.schema.SequentialPathDescription;
 
 public class SequentialPathDescriptionEvaluator extends
@@ -67,7 +68,7 @@ public class SequentialPathDescriptionEvaluator extends
 		ArrayList<NFA> nfaList = new ArrayList<NFA>();
 		while (inc != null) {
 			PathDescriptionEvaluator<?> pathEval = (PathDescriptionEvaluator<?>) query
-					.getVertexEvaluator(inc.getAlpha());
+					.getVertexEvaluator((PathDescription) inc.getAlpha());
 			nfaList.add(pathEval.getNFA(evaluator));
 			inc = inc.getNextIsSequenceElementOfIncidence(EdgeDirection.IN);
 		}

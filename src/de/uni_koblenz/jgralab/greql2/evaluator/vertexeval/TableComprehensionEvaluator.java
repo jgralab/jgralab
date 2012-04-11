@@ -78,21 +78,24 @@ public class TableComprehensionEvaluator extends
 	private boolean initialized = false;
 
 	private void initialize(InternalGreqlEvaluator evaluator) {
-		Declaration d = vertex.getFirstIsCompDeclOfIncidence(EdgeDirection.IN)
-				.getAlpha();
+		Declaration d = (Declaration) vertex.getFirstIsCompDeclOfIncidence(
+				EdgeDirection.IN).getAlpha();
 		DeclarationEvaluator declEval = (DeclarationEvaluator) query
 				.getVertexEvaluator(d);
 		declarationLayer = (VariableDeclarationLayer) declEval
 				.getResult(evaluator);
 
-		Expression columnHeader = vertex.getFirstIsColumnHeaderExprOfIncidence(
-				EdgeDirection.IN).getAlpha();
+		Expression columnHeader = (Expression) vertex
+				.getFirstIsColumnHeaderExprOfIncidence(EdgeDirection.IN)
+				.getAlpha();
 		columnHeaderEval = query.getVertexEvaluator(columnHeader);
-		Expression rowHeader = vertex.getFirstIsRowHeaderExprOfIncidence(
-				EdgeDirection.IN).getAlpha();
+		Expression rowHeader = (Expression) vertex
+				.getFirstIsRowHeaderExprOfIncidence(EdgeDirection.IN)
+				.getAlpha();
 		rowHeaderEval = query.getVertexEvaluator(rowHeader);
-		Expression resultDef = vertex.getFirstIsCompResultDefOfIncidence(
-				EdgeDirection.IN).getAlpha();
+		Expression resultDef = (Expression) vertex
+				.getFirstIsCompResultDefOfIncidence(EdgeDirection.IN)
+				.getAlpha();
 		resultDefEval = query.getVertexEvaluator(resultDef);
 		initialized = true;
 	}
@@ -105,7 +108,8 @@ public class TableComprehensionEvaluator extends
 	 * @param vertex
 	 *            the vertex this VertexEvaluator evaluates
 	 */
-	public TableComprehensionEvaluator(TableComprehension vertex, QueryImpl query) {
+	public TableComprehensionEvaluator(TableComprehension vertex,
+			QueryImpl query) {
 		super(vertex, query);
 	}
 
@@ -145,7 +149,7 @@ public class TableComprehensionEvaluator extends
 				.getFirstIsTableHeaderOfIncidence(EdgeDirection.IN);
 		if (tHeader != null) {
 			VertexEvaluator<? extends Expression> theval = query
-					.getVertexEvaluator(tHeader.getAlpha());
+					.getVertexEvaluator((Expression) tHeader.getAlpha());
 			headerTuple = headerTuple
 					.plus((String) theval.getResult(evaluator));
 		} else {

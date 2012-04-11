@@ -65,7 +65,7 @@ public class MapConstructionEvaluator extends VertexEvaluator<MapConstruction> {
 		PVector<Object> keys = JGraLab.vector();
 		for (IsKeyExprOfConstruction e : vertex
 				.getIsKeyExprOfConstructionIncidences(EdgeDirection.IN)) {
-			Expression exp = e.getAlpha();
+			Expression exp = (Expression) e.getAlpha();
 			VertexEvaluator<? extends Expression> expEval = query
 					.getVertexEvaluator(exp);
 			keys = keys.plus(expEval.getResult(evaluator));
@@ -74,7 +74,7 @@ public class MapConstructionEvaluator extends VertexEvaluator<MapConstruction> {
 		PVector<Object> values = JGraLab.vector();
 		for (IsValueExprOfConstruction e : vertex
 				.getIsValueExprOfConstructionIncidences(EdgeDirection.IN)) {
-			Expression exp = e.getAlpha();
+			Expression exp = (Expression) e.getAlpha();
 			VertexEvaluator<? extends Expression> expEval = query
 					.getVertexEvaluator(exp);
 			values = values.plus(expEval.getResult(evaluator));

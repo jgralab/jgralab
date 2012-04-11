@@ -69,13 +69,14 @@ public class ExponentiatedPathDescriptionEvaluator extends
 
 	@Override
 	public NFA evaluate(InternalGreqlEvaluator evaluator) {
-		PathDescription p = vertex.getFirstIsExponentiatedPathOfIncidence()
-				.getAlpha();
+		PathDescription p = (PathDescription) vertex
+				.getFirstIsExponentiatedPathOfIncidence().getAlpha();
 		PathDescriptionEvaluator<?> pathEval = (PathDescriptionEvaluator<?>) query
 				.getVertexEvaluator(p);
 		VertexEvaluator<? extends Expression> exponentEvaluator = query
-				.getVertexEvaluator(vertex.getFirstIsExponentOfIncidence(
-						EdgeDirection.IN).getAlpha());
+				.getVertexEvaluator((Expression) vertex
+						.getFirstIsExponentOfIncidence(EdgeDirection.IN)
+						.getAlpha());
 		Object exponentValue = exponentEvaluator.getResult(evaluator);
 		int exponent = 0;
 		if (exponentValue instanceof Integer) {

@@ -73,9 +73,9 @@ public class ListRangeConstructionEvaluator extends
 	private VertexEvaluator<? extends Expression> lastElementEvaluator = null;
 
 	private void getEvals() {
-		Expression firstElementExpression = vertex
+		Expression firstElementExpression = (Expression) vertex
 				.getFirstIsFirstValueOfIncidence(EdgeDirection.IN).getAlpha();
-		Expression lastElementExpression = vertex
+		Expression lastElementExpression = (Expression) vertex
 				.getFirstIsLastValueOfIncidence(EdgeDirection.IN).getAlpha();
 		firstElementEvaluator = query
 				.getVertexEvaluator(firstElementExpression);

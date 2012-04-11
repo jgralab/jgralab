@@ -71,8 +71,8 @@ public class BackwardVertexSetEvaluator extends
 		PathDescriptionEvaluator<?> pathDescEval = (PathDescriptionEvaluator<?>) query
 				.getVertexEvaluator(p);
 
-		Expression targetExpression = vertex.getFirstIsTargetExprOfIncidence(
-				EdgeDirection.IN).getAlpha();
+		Expression targetExpression = (Expression) vertex
+				.getFirstIsTargetExprOfIncidence(EdgeDirection.IN).getAlpha();
 		targetEval = query.getVertexEvaluator(targetExpression);
 		NFA revertedNFA = NFA.revertNFA(pathDescEval.getNFA(evaluator));
 		searchAutomaton = new DFA(revertedNFA);

@@ -41,6 +41,7 @@ import de.uni_koblenz.jgralab.greql2.evaluator.InternalGreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.QueryImpl;
 import de.uni_koblenz.jgralab.greql2.evaluator.fa.NFA;
 import de.uni_koblenz.jgralab.greql2.schema.EdgePathDescription;
+import de.uni_koblenz.jgralab.greql2.schema.EdgeRestriction;
 import de.uni_koblenz.jgralab.greql2.schema.Expression;
 import de.uni_koblenz.jgralab.greql2.schema.IsEdgeRestrOf;
 import de.uni_koblenz.jgralab.greql2.types.TypeCollection;
@@ -54,7 +55,8 @@ import de.uni_koblenz.jgralab.greql2.types.TypeCollection;
 public class EdgePathDescriptionEvaluator extends
 		PrimaryPathDescriptionEvaluator<EdgePathDescription> {
 
-	public EdgePathDescriptionEvaluator(EdgePathDescription vertex, QueryImpl query) {
+	public EdgePathDescriptionEvaluator(EdgePathDescription vertex,
+			QueryImpl query) {
 		super(vertex, query);
 	}
 
@@ -75,7 +77,7 @@ public class EdgePathDescriptionEvaluator extends
 		VertexEvaluator<? extends Expression> predicateEvaluator = null;
 		if (inc != null) {
 			edgeRestEval = (EdgeRestrictionEvaluator) query
-					.getVertexEvaluator(inc.getAlpha());
+					.getVertexEvaluator((EdgeRestriction) inc.getAlpha());
 			typeCollection.addTypes(edgeRestEval.getTypeCollection(evaluator));
 			predicateEvaluator = edgeRestEval.getPredicateEvaluator();
 		}

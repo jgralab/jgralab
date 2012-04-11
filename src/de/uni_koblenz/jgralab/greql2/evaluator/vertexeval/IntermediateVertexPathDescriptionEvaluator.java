@@ -42,6 +42,7 @@ import de.uni_koblenz.jgralab.greql2.evaluator.fa.NFA;
 import de.uni_koblenz.jgralab.greql2.schema.Expression;
 import de.uni_koblenz.jgralab.greql2.schema.IntermediateVertexPathDescription;
 import de.uni_koblenz.jgralab.greql2.schema.IsSubPathOf;
+import de.uni_koblenz.jgralab.greql2.schema.PathDescription;
 
 /**
  * Evaluates an IntermediateVertexPathDescription.
@@ -70,14 +71,14 @@ public class IntermediateVertexPathDescriptionEvaluator extends
 	public NFA evaluate(InternalGreqlEvaluator evaluator) {
 		IsSubPathOf inc = vertex.getFirstIsSubPathOfIncidence(EdgeDirection.IN);
 		PathDescriptionEvaluator<?> firstEval = (PathDescriptionEvaluator<?>) query
-				.getVertexEvaluator(inc.getAlpha());
+				.getVertexEvaluator((PathDescription) inc.getAlpha());
 		NFA firstNFA = firstEval.getNFA(evaluator);
 		inc = inc.getNextIsSubPathOfIncidence(EdgeDirection.IN);
 		PathDescriptionEvaluator<?> secondEval = (PathDescriptionEvaluator<?>) query
-				.getVertexEvaluator(inc.getAlpha());
+				.getVertexEvaluator((PathDescription) inc.getAlpha());
 		NFA secondNFA = secondEval.getNFA(evaluator);
 		VertexEvaluator<? extends Expression> vertexEval = query
-				.getVertexEvaluator(vertex
+				.getVertexEvaluator((Expression) vertex
 						.getFirstIsIntermediateVertexOfIncidence(
 								EdgeDirection.IN).getAlpha());
 		return NFA.createIntermediateVertexPathDescriptionNFA(firstNFA,

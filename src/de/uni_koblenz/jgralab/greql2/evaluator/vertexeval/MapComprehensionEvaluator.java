@@ -71,12 +71,14 @@ public class MapComprehensionEvaluator extends
 
 		PMap<Object, Object> resultMap = JGraLab.map();
 
-		Expression key = vertex.getFirstIsKeyExprOfComprehensionIncidence(
-				EdgeDirection.IN).getAlpha();
+		Expression key = (Expression) vertex
+				.getFirstIsKeyExprOfComprehensionIncidence(EdgeDirection.IN)
+				.getAlpha();
 		VertexEvaluator<? extends Expression> keyEval = query
 				.getVertexEvaluator(key);
-		Expression val = vertex.getFirstIsValueExprOfComprehensionIncidence(
-				EdgeDirection.IN).getAlpha();
+		Expression val = (Expression) vertex
+				.getFirstIsValueExprOfComprehensionIncidence(EdgeDirection.IN)
+				.getAlpha();
 		VertexEvaluator<? extends Expression> valEval = query
 				.getVertexEvaluator(val);
 		declLayer.reset();

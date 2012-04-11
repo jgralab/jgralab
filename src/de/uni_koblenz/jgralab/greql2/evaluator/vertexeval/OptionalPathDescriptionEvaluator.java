@@ -67,8 +67,8 @@ public class OptionalPathDescriptionEvaluator extends
 
 	@Override
 	public NFA evaluate(InternalGreqlEvaluator evaluator) {
-		PathDescription p = vertex.getFirstIsOptionalPathOfIncidence(
-				EdgeDirection.IN).getAlpha();
+		PathDescription p = (PathDescription) vertex
+				.getFirstIsOptionalPathOfIncidence(EdgeDirection.IN).getAlpha();
 		PathDescriptionEvaluator<?> pathEval = (PathDescriptionEvaluator<?>) query
 				.getVertexEvaluator(p);
 		return NFA.createOptionalPathDescriptionNFA(pathEval.getNFA(evaluator));

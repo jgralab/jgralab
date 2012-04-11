@@ -69,7 +69,7 @@ public abstract class AbstractGraphElementCollectionEvaluator<V extends Expressi
 			while (inc != null) {
 				if (inc.getAlpha() instanceof TypeId) {
 					TypeIdEvaluator typeEval = (TypeIdEvaluator) query
-							.getVertexEvaluator(inc.getAlpha());
+							.getVertexEvaluator((TypeId) inc.getAlpha());
 					typeCollection.addTypes((TypeCollection) typeEval
 							.getResult(evaluator));
 				}

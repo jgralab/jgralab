@@ -75,17 +75,18 @@ public class QuantifiedExpressionEvaluator extends
 	}
 
 	private void initialize(InternalGreqlEvaluator evaluator) {
-		Declaration d = vertex.getFirstIsQuantifiedDeclOfIncidence(
-				EdgeDirection.IN).getAlpha();
+		Declaration d = (Declaration) vertex
+				.getFirstIsQuantifiedDeclOfIncidence(EdgeDirection.IN)
+				.getAlpha();
 		DeclarationEvaluator declEval = (DeclarationEvaluator) query
 				.getVertexEvaluator(d);
 		declarationLayer = (VariableDeclarationLayer) declEval
 				.getResult(evaluator);
-		Quantifier quantifier = vertex.getFirstIsQuantifierOfIncidence(
-				EdgeDirection.IN).getAlpha();
+		Quantifier quantifier = (Quantifier) vertex
+				.getFirstIsQuantifierOfIncidence(EdgeDirection.IN).getAlpha();
 		quantificationType = quantifier.get_type();
-		Expression b = vertex.getFirstIsBoundExprOfIncidence(EdgeDirection.IN)
-				.getAlpha();
+		Expression b = (Expression) vertex.getFirstIsBoundExprOfIncidence(
+				EdgeDirection.IN).getAlpha();
 		predicateEvaluator = query.getVertexEvaluator(b);
 		initialized = true;
 	}

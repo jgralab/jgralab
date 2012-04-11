@@ -57,8 +57,8 @@ public class RecordElementEvaluator extends VertexEvaluator<RecordElement> {
 
 	public String getId() {
 		if (id == null) {
-			RecordId idVertex = vertex.getFirstIsRecordIdOfIncidence(
-					EdgeDirection.IN).getAlpha();
+			RecordId idVertex = (RecordId) vertex
+					.getFirstIsRecordIdOfIncidence(EdgeDirection.IN).getAlpha();
 			id = idVertex.get_name();
 		}
 		return id;
@@ -79,7 +79,7 @@ public class RecordElementEvaluator extends VertexEvaluator<RecordElement> {
 	@Override
 	public Object evaluate(InternalGreqlEvaluator evaluator) {
 		if (expEval == null) {
-			Expression recordElementExp = vertex
+			Expression recordElementExp = (Expression) vertex
 					.getFirstIsRecordExprOfIncidence(EdgeDirection.IN)
 					.getAlpha();
 			expEval = query.getVertexEvaluator(recordElementExp);

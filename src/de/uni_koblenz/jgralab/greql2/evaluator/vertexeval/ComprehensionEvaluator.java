@@ -59,7 +59,7 @@ public abstract class ComprehensionEvaluator<V extends Comprehension> extends
 
 	protected final VertexEvaluator<? extends Expression> getResultDefinitionEvaluator() {
 		if (resultDefinitionEvaluator == null) {
-			Expression resultDefinition = getVertex()
+			Expression resultDefinition = (Expression) getVertex()
 					.getFirstIsCompResultDefOfIncidence(EdgeDirection.IN)
 					.getAlpha();
 			resultDefinitionEvaluator = query
@@ -71,8 +71,8 @@ public abstract class ComprehensionEvaluator<V extends Comprehension> extends
 	protected final VariableDeclarationLayer getVariableDeclationLayer(
 			InternalGreqlEvaluator evaluator) {
 		if (varDeclLayer == null) {
-			Declaration d = getVertex().getFirstIsCompDeclOfIncidence(
-					EdgeDirection.IN).getAlpha();
+			Declaration d = (Declaration) getVertex()
+					.getFirstIsCompDeclOfIncidence(EdgeDirection.IN).getAlpha();
 			DeclarationEvaluator declEval = (DeclarationEvaluator) query
 					.getVertexEvaluator(d);
 			varDeclLayer = (VariableDeclarationLayer) declEval

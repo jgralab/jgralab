@@ -118,7 +118,7 @@ public abstract class PathDescriptionEvaluator<V extends PathDescription>
 		TypeCollection typeCollection = new TypeCollection();
 		while (inc != null) {
 			VertexEvaluator<? extends Expression> vertexEval = query
-					.getVertexEvaluator(inc.getAlpha());
+					.getVertexEvaluator((Expression) inc.getAlpha());
 			if (vertexEval instanceof TypeIdEvaluator) {
 				TypeIdEvaluator typeEval = (TypeIdEvaluator) vertexEval;
 				typeCollection.addTypes((TypeCollection) typeEval
@@ -152,7 +152,7 @@ public abstract class PathDescriptionEvaluator<V extends PathDescription>
 		TypeCollection typeCollection = new TypeCollection();
 		while (inc != null) {
 			VertexEvaluator<? extends Expression> vertexEval = query
-					.getVertexEvaluator(inc.getAlpha());
+					.getVertexEvaluator((Expression) inc.getAlpha());
 			if (vertexEval instanceof TypeIdEvaluator) {
 				TypeIdEvaluator typeEval = (TypeIdEvaluator) vertexEval;
 				typeCollection.addTypes((TypeCollection) typeEval

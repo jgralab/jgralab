@@ -74,7 +74,7 @@ abstract public class ValueConstructionEvaluator<V extends ValueConstruction>
 			partEvaluators = new ArrayList<VertexEvaluator<? extends Expression>>(
 					partCount);
 			while (inc != null) {
-				Expression currentExpression = inc.getAlpha();
+				Expression currentExpression = (Expression) inc.getAlpha();
 				VertexEvaluator<? extends Expression> vertexEval = query
 						.getVertexEvaluator(currentExpression);
 				partEvaluators.add(vertexEval);

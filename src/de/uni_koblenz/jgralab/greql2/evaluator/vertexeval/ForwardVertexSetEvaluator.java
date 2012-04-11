@@ -68,8 +68,8 @@ public class ForwardVertexSetEvaluator extends
 		PathDescriptionEvaluator<?> pathDescEval = (PathDescriptionEvaluator<?>) query
 				.getVertexEvaluator(p);
 
-		Expression startExpression = vertex.getFirstIsStartExprOfIncidence(
-				EdgeDirection.IN).getAlpha();
+		Expression startExpression = (Expression) vertex
+				.getFirstIsStartExprOfIncidence(EdgeDirection.IN).getAlpha();
 		startEval = query.getVertexEvaluator(startExpression);
 		searchAutomaton = new DFA(pathDescEval.getNFA(evaluator));
 

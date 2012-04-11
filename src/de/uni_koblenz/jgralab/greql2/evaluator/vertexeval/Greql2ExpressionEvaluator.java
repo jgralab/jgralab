@@ -134,8 +134,8 @@ public class Greql2ExpressionEvaluator extends
 			}
 		}
 
-		Expression boundExpression = (Expression) vertex.getFirstIsQueryExprOfIncidence(
-				EdgeDirection.IN).getAlpha();
+		Expression boundExpression = (Expression) vertex
+				.getFirstIsQueryExprOfIncidence(EdgeDirection.IN).getAlpha();
 		VertexEvaluator<? extends Expression> eval = query
 				.getVertexEvaluator(boundExpression);
 		Object result = eval.getResult(evaluator);
@@ -145,7 +145,7 @@ public class Greql2ExpressionEvaluator extends
 				.getFirstIsIdOfStoreClauseIncidence(EdgeDirection.IN);
 		if (storeInc != null) {
 			VertexEvaluator<Identifier> storeEval = query
-					.getVertexEvaluator(storeInc.getAlpha());
+					.getVertexEvaluator((Identifier) storeInc.getAlpha());
 			String varName = storeEval.getResult(evaluator).toString();
 			// TODO [greqlrenovation] VariableDeclaration has an own
 			// toString(InternalGreqlEvaluator)-method. check the use

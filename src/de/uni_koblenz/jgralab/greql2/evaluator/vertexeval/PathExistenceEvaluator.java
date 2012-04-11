@@ -66,8 +66,8 @@ public class PathExistenceEvaluator extends PathSearchEvaluator<PathExistence> {
 				EdgeDirection.IN).getAlpha();
 		PathDescriptionEvaluator<?> pathDescEval = (PathDescriptionEvaluator<?>) query
 				.getVertexEvaluator(p);
-		Expression startExpression = vertex.getFirstIsStartExprOfIncidence(
-				EdgeDirection.IN).getAlpha();
+		Expression startExpression = (Expression) vertex
+				.getFirstIsStartExprOfIncidence(EdgeDirection.IN).getAlpha();
 		VertexEvaluator<? extends Expression> startEval = query
 				.getVertexEvaluator(startExpression);
 		Object res = startEval.getResult(evaluator);
@@ -80,8 +80,8 @@ public class PathExistenceEvaluator extends PathSearchEvaluator<PathExistence> {
 		}
 		Vertex startVertex = (Vertex) res;
 
-		Expression targetExpression = vertex.getFirstIsTargetExprOfIncidence(
-				EdgeDirection.IN).getAlpha();
+		Expression targetExpression = (Expression) vertex
+				.getFirstIsTargetExprOfIncidence(EdgeDirection.IN).getAlpha();
 		VertexEvaluator<? extends Expression> targetEval = query
 				.getVertexEvaluator(targetExpression);
 		Vertex targetVertex = null;

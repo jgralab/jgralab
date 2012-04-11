@@ -68,8 +68,8 @@ public class ConditionalExpressionEvaluator extends
 	 */
 	@Override
 	public Object evaluate(InternalGreqlEvaluator evaluator) {
-		Expression condition = vertex.getFirstIsConditionOfIncidence(
-				EdgeDirection.IN).getAlpha();
+		Expression condition = (Expression) vertex
+				.getFirstIsConditionOfIncidence(EdgeDirection.IN).getAlpha();
 		VertexEvaluator<? extends Expression> conditionEvaluator = query
 				.getVertexEvaluator(condition);
 		Object conditionResult = conditionEvaluator.getResult(evaluator);
@@ -77,11 +77,12 @@ public class ConditionalExpressionEvaluator extends
 
 		Boolean value = (Boolean) conditionResult;
 		if (value.booleanValue()) {
-			expressionToEvaluate = vertex.getFirstIsTrueExprOfIncidence(
-					EdgeDirection.IN).getAlpha();
+			expressionToEvaluate = (Expression) vertex
+					.getFirstIsTrueExprOfIncidence(EdgeDirection.IN).getAlpha();
 		} else {
-			expressionToEvaluate = vertex.getFirstIsFalseExprOfIncidence(
-					EdgeDirection.IN).getAlpha();
+			expressionToEvaluate = (Expression) vertex
+					.getFirstIsFalseExprOfIncidence(EdgeDirection.IN)
+					.getAlpha();
 		}
 
 		Object result = null;

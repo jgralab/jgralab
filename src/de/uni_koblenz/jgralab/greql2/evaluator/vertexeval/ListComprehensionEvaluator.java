@@ -85,7 +85,8 @@ public class ListComprehensionEvaluator extends
 				for (IsTableHeaderOf tableInc : vertex
 						.getIsTableHeaderOfIncidences(EdgeDirection.IN)) {
 					VertexEvaluator<? extends Expression> headerEval = query
-							.getVertexEvaluator(tableInc.getAlpha());
+							.getVertexEvaluator((Expression) tableInc
+									.getAlpha());
 					headerEvaluators.add(headerEval);
 				}
 			} else {

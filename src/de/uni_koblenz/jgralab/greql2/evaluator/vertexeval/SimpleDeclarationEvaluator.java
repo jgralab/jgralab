@@ -74,7 +74,7 @@ public class SimpleDeclarationEvaluator extends
 			InternalGreqlEvaluator evaluator) {
 		IsTypeExprOf inc = vertex
 				.getFirstIsTypeExprOfIncidence(EdgeDirection.IN);
-		Expression typeExpression = inc.getAlpha();
+		Expression typeExpression = (Expression) inc.getAlpha();
 		VertexEvaluator<? extends Expression> exprEval = query
 				.getVertexEvaluator(typeExpression);
 		PVector<VariableDeclaration> varDeclList = JGraLab.vector();
@@ -82,9 +82,9 @@ public class SimpleDeclarationEvaluator extends
 				.getFirstIsDeclaredVarOfIncidence(EdgeDirection.IN);
 		while (varInc != null) {
 			VariableDeclaration varDecl = new VariableDeclaration(
-					varInc.getAlpha(), exprEval,
+					(Variable) varInc.getAlpha(), exprEval,
 					(VariableEvaluator<Variable>) query
-							.getVertexEvaluator(varInc.getAlpha()));
+							.getVertexEvaluator((Variable) varInc.getAlpha()));
 			varDeclList = varDeclList.plus(varDecl);
 			varInc = varInc.getNextIsDeclaredVarOfIncidence(EdgeDirection.IN);
 		}
