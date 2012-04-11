@@ -95,10 +95,11 @@ public class PathExistenceEvaluator extends PathSearchEvaluator<PathExistence> {
 			searchAutomaton = pathDescEval.getNFA(evaluator).getDFA();
 			// searchAutomaton.printAscii();
 		}
-		Object[] arguments = new Object[3];
-		arguments[0] = startVertex;
-		arguments[1] = targetVertex;
-		arguments[2] = searchAutomaton;
+		Object[] arguments = new Object[4];
+		arguments[0] = evaluator;
+		arguments[1] = startVertex;
+		arguments[2] = targetVertex;
+		arguments[3] = searchAutomaton;
 		if (fi == null) {
 			fi = FunLib.getFunctionInfo("isReachable");
 		}
