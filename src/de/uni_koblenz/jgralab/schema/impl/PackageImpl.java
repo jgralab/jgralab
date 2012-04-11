@@ -135,7 +135,9 @@ public final class PackageImpl extends NamedElementImpl implements Package {
 				+ ec.getSimpleName();
 		// Don't track the default edge class
 		if (!(isDefaultPackage() && ec.getSimpleName().equals(
-				EdgeClass.DEFAULTEDGECLASS_NAME))) {
+				EdgeClass.DEFAULTEDGECLASS_NAME)) && 
+				!(isDefaultPackage() && ec.getSimpleName().equals(
+						EdgeClass.TEMPORARYEDGECLASS_NAME))) {
 			edgeClasses.put(ec.getSimpleName(), ec);
 		}
 	}
@@ -177,7 +179,9 @@ public final class PackageImpl extends NamedElementImpl implements Package {
 				+ vc.getSimpleName() + "\"";
 		// Don't track the default vertex class
 		if (!(isDefaultPackage() && vc.getSimpleName().equals(
-				VertexClass.DEFAULTVERTEXCLASS_NAME))) {
+				VertexClass.DEFAULTVERTEXCLASS_NAME)) && 
+				!(isDefaultPackage() && vc.getSimpleName().equals(
+						VertexClass.TEMPORARYVERTEXCLASS_NAME))) {
 			vertexClasses.put(vc.getSimpleName(), vc);
 		}
 	}

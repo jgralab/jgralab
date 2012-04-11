@@ -158,6 +158,7 @@ public abstract class GraphFactoryImpl implements GraphFactory {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public <E extends Edge> E createEdge(EdgeClass ec, int id, Graph g,
 			Vertex alpha, Vertex omega) {
@@ -165,9 +166,13 @@ public abstract class GraphFactoryImpl implements GraphFactory {
 			if (!((InternalGraph) g).isLoading() && (g.hasECARuleManager())) {
 				g.getECARuleManager().fireBeforeCreateEdgeEvents(ec);
 			}
-			@SuppressWarnings("unchecked")
-			E newInstance = (E) edgeMap.get(ec)
+			E newInstance;
+			if(ec.equals(g.getGraphClass().getTemporaryEdgeClass())){
+				newInstance = (E) g.createTemporaryEdge(alpha, omega);
+			}else{
+				newInstance = (E) edgeMap.get(ec)
 					.newInstance(id, g, alpha, omega);
+			}
 			if (!((InternalGraph) g).isLoading() && (g.hasECARuleManager())) {
 				g.getECARuleManager().fireAfterCreateEdgeEvents(newInstance);
 			}
@@ -182,14 +187,19 @@ public abstract class GraphFactoryImpl implements GraphFactory {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public <V extends Vertex> V createVertex(VertexClass vc, int id, Graph g) {
 		try {
 			if (!((InternalGraph) g).isLoading() && (g.hasECARuleManager())) {
 				g.getECARuleManager().fireBeforeCreateVertexEvents(vc);
 			}
-			@SuppressWarnings("unchecked")
-			V newInstance = (V) vertexMap.get(vc).newInstance(id, g);
+			V newInstance;
+			if(vc.equals(g.getGraphClass().getTemporaryVertexClass())){
+				newInstance = (V) g.createTemporaryVertex();
+			}else{
+				newInstance = (V) vertexMap.get(vc).newInstance(id, g);
+			}
 			if (!((InternalGraph) g).isLoading() && (g.hasECARuleManager())) {
 				g.getECARuleManager().fireAfterCreateVertexEvents(newInstance);
 			}

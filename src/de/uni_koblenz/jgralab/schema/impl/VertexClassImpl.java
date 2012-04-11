@@ -49,7 +49,7 @@ import de.uni_koblenz.jgralab.schema.IncidenceDirection;
 import de.uni_koblenz.jgralab.schema.VertexClass;
 import de.uni_koblenz.jgralab.schema.exception.SchemaException;
 
-public final class VertexClassImpl extends
+public class VertexClassImpl extends
 		GraphElementClassImpl<VertexClass, Vertex> implements VertexClass {
 	/**
 	 * the own in IncidenceClasses
@@ -423,11 +423,17 @@ public final class VertexClassImpl extends
 
 	@Override
 	public boolean isValidFromFor(EdgeClass ec) {
+		if(ec.equals(this.graphClass.getTemporaryEdgeClass())){
+			return true;
+		}
 		return getValidFromEdgeClasses().contains(ec);
 	}
 
 	@Override
 	public boolean isValidToFor(EdgeClass ec) {
+		if(ec.equals(this.graphClass.getTemporaryEdgeClass())){
+			return true;
+		}
 		return getValidToEdgeClasses().contains(ec);
 	}
 

@@ -139,7 +139,7 @@ public final class LongDomainImpl extends BasicDomainImpl implements LongDomain 
 	}
 
 	@Override
-	public boolean isConformGenericValue(Object value) {
+	public boolean isConformValue(Object value) {
 		return Long.class.isInstance(value);
 	}
 }

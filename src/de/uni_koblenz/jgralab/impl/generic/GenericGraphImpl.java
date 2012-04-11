@@ -156,7 +156,7 @@ public class GenericGraphImpl extends GraphImpl implements
 	@Override
 	public <T> void setAttribute(String name, T data) {
 		int i = getAttributedElementClass().getAttributeIndex(name);
-		if (type.getAttribute(name).getDomain().isConformGenericValue(data)) {
+		if (type.getAttribute(name).getDomain().isConformValue(data)) {
 			if (hasECARuleManager()) {
 				T oldValue = getAttribute(name);
 				getECARuleManager().fireBeforeChangeAttributeEvents(this, name,

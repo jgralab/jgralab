@@ -88,7 +88,9 @@ public class EdgeClassImpl extends GraphElementClassImpl<EdgeClass, Edge>
 
 		if (pkg.isDefaultPackage() && simpleName.equals(DEFAULTEDGECLASS_NAME)) {
 			// the default EC is just created
-		} else {
+		} else if (pkg.isDefaultPackage() && simpleName.equals(TEMPORARYEDGECLASS_NAME)){
+			// the temporary EC is just created
+		}else {
 			if ((from == graphClass.getDefaultVertexClass())
 					|| (to == graphClass.getDefaultVertexClass())) {
 				throw new SchemaException(

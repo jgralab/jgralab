@@ -46,6 +46,7 @@ import de.uni_koblenz.jgralab.Edge;
 public interface EdgeClass extends GraphElementClass<EdgeClass, Edge> {
 
 	public static final String DEFAULTEDGECLASS_NAME = "Edge";
+	public static final String TEMPORARYEDGECLASS_NAME = "TemporaryEdgeClass";
 
 	/**
 	 * adds a superclass to the list of superclasses, all attributes get

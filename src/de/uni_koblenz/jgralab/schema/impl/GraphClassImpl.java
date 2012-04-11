@@ -66,6 +66,10 @@ public final class GraphClassImpl extends
 	private VertexClassImpl defaultVertexClass;
 
 	private EdgeClassImpl defaultEdgeClass;
+	
+	private TemporaryVertexClassImpl tempVertexClass;
+	
+	private TemporaryEdgeClassImpl tempEdgeClass;
 
 	/**
 	 * Creates the <b>sole</b> <code>GraphClass</code> in the
@@ -118,6 +122,27 @@ public final class GraphClassImpl extends
 	}
 
 	@Override
+	public final VertexClass getTemporaryVertexClass() {
+		return tempVertexClass;
+	}
+	
+	final void initializeTemporaryVertexClass() {
+		assert getTemporaryVertexClass() == null : "TemporaryVertexClass already created!";
+		tempVertexClass = new TemporaryVertexClassImpl(this);
+	}
+
+	final void initializeTemporaryEdgeClass() {
+		assert getDefaultVertexClass() != null : "Default VertexClass has not yet been created!";
+		assert getTemporaryEdgeClass() == null : "TemporaryEdgeClass already created!";
+		this.tempEdgeClass = new TemporaryEdgeClassImpl(this);
+	}
+	
+	@Override
+	public final EdgeClass getTemporaryEdgeClass(){
+		return tempEdgeClass;
+	}
+	
+	@Override
 	public final EdgeClass getDefaultEdgeClass() {
 		return defaultEdgeClass;
 	}
@@ -128,7 +153,8 @@ public final class GraphClassImpl extends
 					+ ec.getQualifiedName() + "'");
 		}
 		// Don't track the default EC
-		if (!ec.getQualifiedName().equals(EdgeClass.DEFAULTEDGECLASS_NAME)) {
+		if (!ec.getQualifiedName().equals(EdgeClass.DEFAULTEDGECLASS_NAME) && 
+				!ec.getQualifiedName().equals(EdgeClass.TEMPORARYEDGECLASS_NAME)) {
 			edgeClasses.put(ec.getQualifiedName(), ec);
 		}
 	}
@@ -139,9 +165,11 @@ public final class GraphClassImpl extends
 					+ vc.getQualifiedName() + "'");
 		}
 		// Don't track the default VC
-		if (!vc.getQualifiedName().equals(VertexClass.DEFAULTVERTEXCLASS_NAME)) {
+		if (!vc.getQualifiedName().equals(VertexClass.DEFAULTVERTEXCLASS_NAME) && 
+				!vc.getQualifiedName().equals(VertexClass.TEMPORARYVERTEXCLASS_NAME)) {
 			vertexClasses.put(vc.getQualifiedName(), vc);
 		}
+		
 	}
 
 	@Override
@@ -213,14 +241,16 @@ public final class GraphClassImpl extends
 	public final List<EdgeClass> getEdgeClasses() {
 		PVector<EdgeClass> vec = edgeClassDag.getNodesInTopologicalOrder();
 		assert vec.get(0) == defaultEdgeClass;
-		return vec.subList(1, vec.size());
+		assert vec.get(1) == tempEdgeClass;
+		return vec.subList(2, vec.size());
 	}
 
 	@Override
 	public final List<VertexClass> getVertexClasses() {
 		PVector<VertexClass> vec = vertexClassDag.getNodesInTopologicalOrder();
 		assert vec.get(0) == defaultVertexClass;
-		return vec.subList(1, vec.size());
+		assert vec.get(1) == tempVertexClass;
+		return vec.subList(2, vec.size());
 	}
 
 	@Override

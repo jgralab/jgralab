@@ -134,6 +134,7 @@ import de.uni_koblenz.jgralab.grumlschema.structure.EdgeClass;
 import de.uni_koblenz.jgralab.grumlschema.structure.GraphClass;
 import de.uni_koblenz.jgralab.grumlschema.structure.GraphElementClass;
 import de.uni_koblenz.jgralab.grumlschema.structure.HasAttribute;
+import de.uni_koblenz.jgralab.grumlschema.structure.NamedElement;
 import de.uni_koblenz.jgralab.grumlschema.structure.Schema;
 import de.uni_koblenz.jgralab.grumlschema.structure.SpecializesEdgeClass;
 import de.uni_koblenz.jgralab.grumlschema.structure.SpecializesVertexClass;
@@ -1162,7 +1163,7 @@ public class SchemaGraph2XSD {
 	 */
 	private void writeAttribute(Attribute attribute) throws XMLStreamException {
 		String name = attribute.get_name();
-		Domain type = attribute.getFirstHasDomainIncidence(EdgeDirection.OUT)
+		Domain type = (Domain) attribute.getFirstHasDomainIncidence(EdgeDirection.OUT)
 				.getOmega();
 		writeXSDAttribute(name, getXSDType(type), XSD_REQUIRED);
 	}
@@ -1201,7 +1202,7 @@ public class SchemaGraph2XSD {
 				.getHasAttributeIncidences(EdgeDirection.OUT)) {
 			// Adds the Attribute with its corresponding AttributedElementClass,
 			// in which it's defined.
-			attributes.put(ha.getOmega(), attrElemClass);
+			attributes.put((Attribute) ha.getOmega(), attrElemClass);
 		}
 
 		// Loop over all AttributedElementClasses, which are extended by the
@@ -1211,13 +1212,13 @@ public class SchemaGraph2XSD {
 			for (SpecializesVertexClass s : ((VertexClass) attrElemClass)
 					.getSpecializesVertexClassIncidences(EdgeDirection.OUT)) {
 				// Recursive call of this method with a specialized VertexClass.
-				collectAttributes(s.getOmega(), attributes);
+				collectAttributes((AttributedElementClass) s.getOmega(), attributes);
 			}
 		} else if (attrElemClass instanceof EdgeClass) {
 			for (SpecializesEdgeClass s : ((EdgeClass) attrElemClass)
 					.getSpecializesEdgeClassIncidences(EdgeDirection.OUT)) {
 				// Recursive call of this method with a specialized EdgeClass.
-				collectAttributes(s.getOmega(), attributes);
+				collectAttributes((AttributedElementClass) s.getOmega(), attributes);
 			}
 		} else if (attrElemClass instanceof GraphClass) {
 			// nothing to do here
@@ -1299,7 +1300,7 @@ public class SchemaGraph2XSD {
 				 */
 				stringWriter.append(a.get_name());
 				stringWriter.append(" : ");
-				stringWriter.append((a.getFirstHasDomainIncidence().getOmega())
+				stringWriter.append(((NamedElement) a.getFirstHasDomainIncidence().getOmega())
 						.get_qualifiedName());
 				stringWriter.append(" (from ");
 				stringWriter.append(e.getValue().get_qualifiedName());
@@ -1333,7 +1334,7 @@ public class SchemaGraph2XSD {
 			// Puts the current Attribute as String with it's corresponding
 			// Domain as String in the SortedMap.
 			map.put(component.get_name(),
-					getXSDTypeWithoutPrefix(component.getOmega()));
+					getXSDTypeWithoutPrefix((Domain) component.getOmega()));
 		}
 
 		// Loop over all entries in alphabetically order (key).

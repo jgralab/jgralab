@@ -71,7 +71,7 @@ public class RecordConstructionEvaluator extends
 		IsRecordElementOf inc = vertex
 				.getFirstIsRecordElementOfIncidence(EdgeDirection.IN);
 		while (inc != null) {
-			RecordElement currentElement = inc.getAlpha();
+			RecordElement currentElement = (RecordElement) inc.getAlpha();
 			RecordElementEvaluator vertexEval = (RecordElementEvaluator) query
 					.getVertexEvaluator(currentElement);
 			resultRecord = resultRecord.plus(vertexEval.getId(),

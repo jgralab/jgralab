@@ -344,7 +344,14 @@ public final class MapDomainImpl extends CompositeDomainImpl implements
 	}
 
 	@Override
-	public boolean isConformGenericValue(Object value) {
+	protected void registerAttribute(Attribute a) {
+		attributes = attributes.plus(a);
+		((DomainImpl) keyDomain).registerAttribute(a);
+		((DomainImpl) valueDomain).registerAttribute(a);
+	}
+
+	@Override
+	public boolean isConformValue(Object value) {
 		boolean result = true;
 		if (value == null) {
 			return result;
@@ -356,17 +363,10 @@ public final class MapDomainImpl extends CompositeDomainImpl implements
 		Iterator<?> iterator = ((PMap<?, ?>) value).keySet().iterator();
 		while (iterator.hasNext() && result) {
 			Object key = iterator.next();
-			result &= getKeyDomain().isConformGenericValue(key)
-					&& getValueDomain().isConformGenericValue(
+			result &= getKeyDomain().isConformValue(key)
+					&& getValueDomain().isConformValue(
 							((PMap<?, ?>) value).get(key));
 		}
 		return result;
-	}
-
-	@Override
-	protected void registerAttribute(Attribute a) {
-		attributes = attributes.plus(a);
-		((DomainImpl) keyDomain).registerAttribute(a);
-		((DomainImpl) valueDomain).registerAttribute(a);
 	}
 }

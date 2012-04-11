@@ -143,9 +143,6 @@ public class VertexCodeGenerator extends
 		}
 
 		for (EdgeClass ec : edgeClassSet) {
-			if (ec.isDefaultGraphElementClass()) {
-				continue;
-			}
 			addImports("#jgPackage#.EdgeDirection");
 			if (config.hasTypeSpecificMethodsSupport()) {
 				code.addNoIndent(createFirstIncidenceMethod(ec, false));
@@ -280,10 +277,6 @@ public class VertexCodeGenerator extends
 		}
 
 		for (EdgeClass ec : edgeClassSet) {
-			if (ec.isDefaultGraphElementClass()) {
-				continue;
-			}
-
 			if (currentCycle.isStdOrDbImplOrTransImpl()) {
 				addImports("#jgImplPackage#.IncidenceIterable");
 			}

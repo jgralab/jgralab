@@ -1297,8 +1297,8 @@ public class Rsa2Tg extends XmlProcessor {
 		// between their incidence classes
 		SpecializesEdgeClass spec = sg.getFirstSpecializesEdgeClass();
 		while (spec != null) {
-			EdgeClass subClass = spec.getAlpha();
-			EdgeClass superClass = spec.getOmega();
+			EdgeClass subClass = (EdgeClass) spec.getAlpha();
+			EdgeClass superClass = (EdgeClass) spec.getOmega();
 
 			assert subClass.getFirstComesFromIncidence() != null;
 			assert superClass.getFirstComesFromIncidence() != null;
@@ -1343,7 +1343,7 @@ public class Rsa2Tg extends XmlProcessor {
 					}
 					for (Subsets si : curr
 							.getSubsetsIncidences(EdgeDirection.OUT)) {
-						IncidenceClass i = si.getOmega();
+						IncidenceClass i = (IncidenceClass) si.getOmega();
 						if (!m.isMarked(i)) {
 							m.mark(i);
 							q.offer(i);
@@ -1358,7 +1358,7 @@ public class Rsa2Tg extends XmlProcessor {
 					// delete direct subsets edge from inc to sup
 					for (Subsets si : inc
 							.getSubsetsIncidences(EdgeDirection.OUT)) {
-						IncidenceClass i = si.getOmega();
+						IncidenceClass i = (IncidenceClass) si.getOmega();
 						if (i == sup) {
 							assert !(si instanceof Redefines);
 							si.delete();
@@ -2107,7 +2107,7 @@ public class Rsa2Tg extends XmlProcessor {
 
 			Domain dom = (Domain) idMap.get(domainId);
 			if (dom != null) {
-				Domain d = comp.getOmega();
+				Domain d = (Domain) comp.getOmega();
 
 				// preliminary domain vertex exists and has type StringDomain,
 				// but the name of the StringDomain is the "real" domain name
@@ -2777,7 +2777,7 @@ public class Rsa2Tg extends XmlProcessor {
 		if (currentRecordDomain != null) {
 			// type of record domain component
 			assert currentRecordDomainComponent != null;
-			Domain d = currentRecordDomainComponent.getOmega();
+			Domain d = (Domain) currentRecordDomainComponent.getOmega();
 			assert (d instanceof StringDomain)
 					&& (d.get_qualifiedName() == null)
 					&& preliminaryVertices.contains(d);

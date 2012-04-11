@@ -217,13 +217,14 @@ public interface Domain extends NamedElement {
 	 */
 	public void serializeGenericAttribute(GraphIO io, Object data)
 			throws IOException;
-
+	
 	/**
-	 * Checks, if an attribute value in the generic implementation conforms to
-	 * this domain.
+	 * Checks, if an attribute value conforms to this domain.
+	 * Be careful with Records and Enums, generic and generated values
+	 * will be accept both.
 	 */
-	public boolean isConformGenericValue(Object value);
-
+	public boolean isConformValue(Object value);
+	
 	/**
 	 * Deletes this Domain from the schema. Note that only user-specified
 	 * domains (enum and record domains) can be deleted, and even those must not

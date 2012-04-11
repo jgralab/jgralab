@@ -102,7 +102,7 @@ public class GenericGraphImplTest {
 			AttributedElementClass<?, ?> aec) {
 		for (Attribute a : aec.getAttributeList()) {
 			Object value = ae.getAttribute(a.getName());
-			assertTrue(a.getDomain().isConformGenericValue(value));
+			assertTrue(a.getDomain().isConformValue(value));
 		}
 	}
 

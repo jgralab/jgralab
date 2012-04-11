@@ -46,6 +46,7 @@ import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.exception.OptimizerException;
 import de.uni_koblenz.jgralab.greql2.schema.Declaration;
+import de.uni_koblenz.jgralab.greql2.schema.Expression;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Expression;
 import de.uni_koblenz.jgralab.greql2.schema.IsBoundVarOf;
@@ -138,7 +139,7 @@ public abstract class OptimizerBase implements Optimizer {
 				// Externally bound vars are always before locally declared vars
 				return true;
 			}
-			Greql2Expression root = ibvo1.getOmega();
+			Greql2Expression root = (Greql2Expression) ibvo1.getOmega();
 			for (IsBoundVarOf ibvo : root.getIsBoundVarOfIncidences()) {
 				ibvo = (IsBoundVarOf) ibvo.getNormalEdge();
 				if (ibvo == ibvo1) {
@@ -153,13 +154,13 @@ public abstract class OptimizerBase implements Optimizer {
 			return false;
 		}
 
-		SimpleDeclaration sd1 = var1.getFirstIsDeclaredVarOfIncidence(
+		SimpleDeclaration sd1 = (SimpleDeclaration) var1.getFirstIsDeclaredVarOfIncidence(
 				EdgeDirection.OUT).getOmega();
-		Declaration decl1 = sd1.getFirstIsSimpleDeclOfIncidence(
+		Declaration decl1 = (Declaration) sd1.getFirstIsSimpleDeclOfIncidence(
 				EdgeDirection.OUT).getOmega();
-		SimpleDeclaration sd2 = var2.getFirstIsDeclaredVarOfIncidence(
+		SimpleDeclaration sd2 = (SimpleDeclaration) var2.getFirstIsDeclaredVarOfIncidence(
 				EdgeDirection.OUT).getOmega();
-		Declaration decl2 = sd2.getFirstIsSimpleDeclOfIncidence(
+		Declaration decl2 = (Declaration) sd2.getFirstIsSimpleDeclOfIncidence(
 				EdgeDirection.OUT).getOmega();
 
 		if (decl1 == decl2) {
@@ -257,13 +258,13 @@ public abstract class OptimizerBase implements Optimizer {
 			// there's nothing to split out anymore
 			return sd;
 		}
-		Declaration parentDecl = sd.getFirstIsSimpleDeclOfIncidence(
+		Declaration parentDecl = (Declaration) sd.getFirstIsSimpleDeclOfIncidence(
 				EdgeDirection.OUT).getOmega();
 		IsSimpleDeclOf oldEdge = sd.getFirstIsSimpleDeclOfIncidence();
 		SimpleDeclaration newSD = syntaxgraph.createSimpleDeclaration();
 		IsSimpleDeclOf newEdge = syntaxgraph.createIsSimpleDeclOf(newSD,
 				parentDecl);
-		syntaxgraph.createIsTypeExprOfDeclaration(sd
+		syntaxgraph.createIsTypeExprOfDeclaration((Expression) sd
 				.getFirstIsTypeExprOfDeclarationIncidence(EdgeDirection.IN)
 				.getAlpha(), newSD);
 		newEdge.getReversedEdge().putIncidenceAfter(oldEdge.getReversedEdge());

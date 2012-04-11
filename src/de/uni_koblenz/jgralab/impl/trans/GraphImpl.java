@@ -51,6 +51,8 @@ import de.uni_koblenz.jgralab.GraphException;
 import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.GraphStructureChangedListener;
 import de.uni_koblenz.jgralab.JGraLab;
+import de.uni_koblenz.jgralab.TemporaryEdge;
+import de.uni_koblenz.jgralab.TemporaryVertex;
 import de.uni_koblenz.jgralab.TraversalContext;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.impl.FreeIndexList;
@@ -1550,5 +1552,15 @@ public abstract class GraphImpl extends
 	@Override
 	public synchronized TraversalContext setTraversalContext(TraversalContext tc) {
 		return getCurrentTransaction().setTraversalContext(tc);
+	}
+	
+	@Override
+	public TemporaryVertex createTemporaryVertex(){
+		throw new UnsupportedOperationException();
+	}
+	
+	@Override
+	public TemporaryEdge createTemporaryEdge(Vertex alpha, Vertex omega){
+		throw new UnsupportedOperationException();
 	}
 }

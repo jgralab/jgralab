@@ -71,4 +71,9 @@ public interface GraphElement<SC extends GraphElementClass<SC, IC>, IC extends G
 	 * removes this graph element
 	 */
 	public void delete();
+	
+	/**
+	 * @return true if this GraphElement is temporary
+	 */
+	public boolean isTemporary();
 }
