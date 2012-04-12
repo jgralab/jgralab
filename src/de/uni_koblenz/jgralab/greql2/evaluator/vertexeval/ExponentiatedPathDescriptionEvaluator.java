@@ -85,6 +85,11 @@ public class ExponentiatedPathDescriptionEvaluator extends
 			throw new GreqlException(
 					"Exponent of ExponentiatedPathDescription is not convertable to integer value");
 		}
+		if (exponent <= 0) {
+			throw new GreqlException(
+					"Exponent of ExponentiatedPathDescription is " + exponent
+							+ " but must be >=1.");
+		}
 		return NFA.createExponentiatedPathDescriptionNFA(
 				pathEval.getNFA(evaluator), exponent);
 	}
