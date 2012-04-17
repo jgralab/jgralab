@@ -41,39 +41,36 @@ import de.uni_koblenz.jgralab.gretl.parser.TokenTypes;
 
 public class NTimes extends InPlaceTransformation {
 
-	private CountingTransformation[] transforms;
+	private Transformation<?>[] transforms;
 	private final int times;
 
 	public NTimes(Context context, int times,
-			CountingTransformation... transformations) {
+			Transformation<?>... transformations) {
 		super(context);
 		this.transforms = transformations;
 		this.times = times;
 	}
 
 	public static NTimes parseAndCreate(ExecuteTransformation et) {
-		List<CountingTransformation> ts = new LinkedList<CountingTransformation>();
+		List<Transformation<?>> ts = new LinkedList<Transformation<?>>();
 		int times = Integer.valueOf(et.match(TokenTypes.IDENT).value);
-
 		while (et.tryMatchTransformation()) {
-			CountingTransformation t = (CountingTransformation) et
-					.matchTransformation();
+			Transformation<?> t = et.matchTransformation();
 			ts.add(t);
 		}
-		return new NTimes(et.context, times,
-				ts.toArray(new CountingTransformation[ts.size()]));
+		return new NTimes(et.context, times, ts.toArray(new Transformation[ts
+				.size()]));
 	}
 
 	@Override
 	protected Integer transform() {
 		for (int i = 0; i < times; i++) {
-			for (CountingTransformation t : transforms) {
+			for (Transformation<?> t : transforms) {
 				// System.out.println(t.getClass().getSimpleName() +
 				// ", iteration " + iterations);
 				t.execute();
 			}
 		}
-
 		return times;
 	}
 
