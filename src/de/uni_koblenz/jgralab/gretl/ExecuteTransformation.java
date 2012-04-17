@@ -121,6 +121,7 @@ public class ExecuteTransformation extends Transformation<Graph> {
 		registerTransformation(Iteratively.class);
 		registerTransformation(MatchReplace.class);
 		registerTransformation(MergeVertices.class);
+		registerTransformation(NTimes.class);
 		registerTransformation(PrintGraph.class);
 		registerTransformation(RedefineFromRole.class);
 		registerTransformation(RedefineFromRoles.class);
@@ -420,7 +421,7 @@ public class ExecuteTransformation extends Transformation<Graph> {
 
 	/**
 	 * concrete syntax for string arrays: (val1, val2, ...)
-	 * 
+	 *
 	 * @return an array of identifiers
 	 */
 	public String[] matchIdentifierArray() {
