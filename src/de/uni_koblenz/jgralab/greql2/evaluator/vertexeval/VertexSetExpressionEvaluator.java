@@ -64,7 +64,8 @@ public class VertexSetExpressionEvaluator extends
 	 * @param vertex
 	 *            the vertex this VertexEvaluator evaluates
 	 */
-	public VertexSetExpressionEvaluator(VertexSetExpression vertex, QueryImpl query) {
+	public VertexSetExpressionEvaluator(VertexSetExpression vertex,
+			QueryImpl query) {
 		super(vertex, query);
 	}
 
@@ -74,7 +75,7 @@ public class VertexSetExpressionEvaluator extends
 		PSet<Vertex> resultSet = null;
 		if (resultSet == null) {
 			resultSet = JGraLab.set();
-			Vertex currentVertex = query.getQueryGraph().getFirstVertex();
+			Vertex currentVertex = evaluator.getDataGraph().getFirstVertex();
 			while (currentVertex != null) {
 				if (typeCollection.acceptsType(currentVertex
 						.getAttributedElementClass())) {

@@ -251,7 +251,7 @@ public class GreqlEvaluatorImpl implements InternalGreqlEvaluator,
 
 	@Override
 	public Schema getSchemaOfDataGraph() {
-		return datagraph.getSchema();
+		return datagraph == null ? null : datagraph.getSchema();
 	}
 
 	@Override
