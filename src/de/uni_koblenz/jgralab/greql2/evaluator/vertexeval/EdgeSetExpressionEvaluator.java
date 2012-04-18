@@ -70,7 +70,7 @@ public class EdgeSetExpressionEvaluator extends
 	public PSet<Edge> evaluate(InternalGreqlEvaluator evaluator) {
 		// create the resulting set
 		PSet<Edge> resultSet = JGraLab.set();
-		Edge currentEdge = query.getQueryGraph().getFirstEdge();
+		Edge currentEdge = evaluator.getDataGraph().getFirstEdge();
 		TypeCollection typeCollection = getTypeCollection(evaluator);
 		while (currentEdge != null) {
 			EdgeClass edgeClass = currentEdge.getAttributedElementClass();
