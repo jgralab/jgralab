@@ -49,6 +49,7 @@ public abstract class ComprehensionEvaluator<V extends Comprehension> extends
 
 	private VariableDeclarationLayer varDeclLayer = null;
 	private VertexEvaluator<? extends Expression> resultDefinitionEvaluator = null;
+	private long maxCount = Long.MAX_VALUE;
 
 	public ComprehensionEvaluator(V vertex, QueryImpl query) {
 		super(vertex, query);
@@ -83,15 +84,19 @@ public abstract class ComprehensionEvaluator<V extends Comprehension> extends
 
 	@Override
 	public Object evaluate(InternalGreqlEvaluator evaluator) {
+		if (getVertex().get_maxCount() != null) {
+			VertexEvaluator<? extends Expression> maxCountEval = query
+					.getVertexEvaluator(getVertex().get_maxCount());
+			maxCount = ((Number) maxCountEval.getResult(evaluator)).longValue();
+		}
 		VariableDeclarationLayer declLayer = getVariableDeclationLayer(evaluator);
 		VertexEvaluator<? extends Expression> resultDefEval = getResultDefinitionEvaluator();
 		PCollection<Object> resultCollection = getResultDatastructure(evaluator);
 		declLayer.reset();
-		while (declLayer.iterate(null)) {
+		while (declLayer.iterate(null) && (resultCollection.size() < maxCount)) {
 			Object localResult = resultDefEval.getResult(evaluator);
 			resultCollection = resultCollection.plus(localResult);
 		}
 		return resultCollection;
 	}
-
 }

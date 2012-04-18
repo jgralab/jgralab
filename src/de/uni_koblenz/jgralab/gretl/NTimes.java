@@ -32,25 +32,46 @@
  * non-source form of such a combination shall include the source code for
  * the parts of JGraLab used as well as that of the covered work.
  */
-package de.uni_koblenz.jgralab.greql2.parser;
+package de.uni_koblenz.jgralab.gretl;
 
-public enum TokenTypes {
+import java.util.LinkedList;
+import java.util.List;
 
-	T, AND, FALSE, NOT, UNDEFINED, OR, TRUE, XOR, AS, MAP, E,
+import de.uni_koblenz.jgralab.gretl.parser.TokenTypes;
 
-	EXISTS_ONE, EXISTS, END, FORALL, FROM, ON, IN, LET, LIST, REC, REPORT, REPORTSET, REPORTSETN,
+public class NTimes extends InPlaceTransformation {
 
-	REPORTLIST, REPORTLISTN, REPORTTABLE, REPORTMAP, REPORTMAPN, STORE, SET, TUP, USING, V,
+	private Transformation<?>[] transforms;
+	private final int times;
 
-	WHERE, WITH, QUESTION, EXCL, COLON, COMMA, DOT, DOTDOT, AT, LPAREN, RPAREN,
+	public NTimes(Context context, int times,
+			Transformation<?>... transformations) {
+		super(context);
+		this.transforms = transformations;
+		this.times = times;
+	}
 
-	LBRACK, RBRACK, LCURLY, RCURLY, EDGESTART, EDGEEND, EDGE, RARROW, LARROW,
+	public static NTimes parseAndCreate(ExecuteTransformation et) {
+		List<Transformation<?>> ts = new LinkedList<Transformation<?>>();
+		int times = Integer.valueOf(et.match(TokenTypes.IDENT).value);
+		while (et.tryMatchTransformation()) {
+			Transformation<?> t = et.matchTransformation();
+			ts.add(t);
+		}
+		return new NTimes(et.context, times, ts.toArray(new Transformation[ts
+				.size()]));
+	}
 
-	ARROW, ASSIGN, EQUAL, MATCH, NOT_EQUAL, LE, GE, L_T, G_T, DIV, PLUS, MINUS,
+	@Override
+	protected Integer transform() {
+		for (int i = 0; i < times; i++) {
+			for (Transformation<?> t : transforms) {
+				// System.out.println(t.getClass().getSimpleName() +
+				// ", iteration " + iterations);
+				t.execute();
+			}
+		}
+		return times;
+	}
 
-	STAR, MOD, SEMI, CARET, BOR, AMP, SMILEY, HASH, OUTAGGREGATION, INAGGREGATION,
-
-	PATHSYSTEMSTART, IMPORT, MLCOMMENT, STRING, IDENTIFIER, DOUBLELITERAL, HEXLITERAL,
-
-	OCTLITERAL, INTLITERAL, THISEDGE, THISVERTEX, EOF, PLUSPLUS, POS_INFINITY, NEG_INFINITY, NOT_A_NUMBER;
 }
