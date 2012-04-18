@@ -165,11 +165,21 @@ public class LiteralEvaluatorTest {
 	 */
 
 	/**
+	 * Test of query (Long.MAX_VALUE):<br>
+	 * 9223372036854775807
+	 */
+	@Test
+	public void testLongLiteralEvaluator() {
+		assertEquals(Long.MAX_VALUE,
+				evaluateQuery(new Long(Long.MAX_VALUE).toString()));
+	}
+
+	/**
 	 * Test of query:<br>
 	 * 12L
 	 */
 	@Test
-	public void testLongLiteralEvaluator() {
+	public void testLongLiteralEvaluator_withSuffix() {
 		assertEquals(12L, evaluateQuery("12L"));
 	}
 
