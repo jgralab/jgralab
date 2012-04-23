@@ -132,7 +132,7 @@ import de.uni_koblenz.jgralabtest.greql2.testfunctions.IsPrime;
  *
  *
  *
- * 
+ *
  *
  */
 
@@ -491,10 +491,16 @@ public class ParserTest {
 		IsRecordElementOf recElemEdge = constr
 				.getFirstIsRecordElementOfIncidence();
 		RecordElement elem = (RecordElement) recElemEdge.getAlpha();
-		RecordId recId = (RecordId) elem.getFirstIsRecordIdOfIncidence().getAlpha();
+		RecordId recId = (RecordId) elem.getFirstIsRecordIdOfIncidence()
+				.getAlpha();
 		assertEquals("a", recId.get_name());
 		Vertex recExpr = elem.getFirstIsRecordExprOfIncidence().getAlpha();
 		assertEquals(5, ((IntLiteral) recExpr).get_intValue());
+	}
+
+	@Test
+	public void testRecordConstruction2() throws Exception {
+		parseQuery("rec(F2: 1).F2");
 	}
 
 	@Test
@@ -505,8 +511,8 @@ public class ParserTest {
 		assertEquals("v", var.get_name());
 		QuantifiedExpression expr = graph.getFirstQuantifiedExpression();
 		assertNotNull(expr);
-		Quantifier quantifier = (Quantifier) expr.getFirstIsQuantifierOfIncidence()
-				.getAlpha();
+		Quantifier quantifier = (Quantifier) expr
+				.getFirstIsQuantifierOfIncidence().getAlpha();
 		assertNotNull(quantifier);
 		assertEquals(QuantificationType.FORALL, quantifier.get_type());
 	}
@@ -519,8 +525,8 @@ public class ParserTest {
 		assertEquals("v", var.get_name());
 		QuantifiedExpression expr = graph.getFirstQuantifiedExpression();
 		assertNotNull(expr);
-		Quantifier quantifier = (Quantifier) expr.getFirstIsQuantifierOfIncidence()
-				.getAlpha();
+		Quantifier quantifier = (Quantifier) expr
+				.getFirstIsQuantifierOfIncidence().getAlpha();
 		assertNotNull(quantifier);
 		assertEquals(QuantificationType.EXISTS, quantifier.get_type());
 	}
@@ -533,8 +539,8 @@ public class ParserTest {
 		assertEquals("v", var.get_name());
 		QuantifiedExpression expr = graph.getFirstQuantifiedExpression();
 		assertNotNull(expr);
-		Quantifier quantifier = (Quantifier) expr.getFirstIsQuantifierOfIncidence()
-				.getAlpha();
+		Quantifier quantifier = (Quantifier) expr
+				.getFirstIsQuantifierOfIncidence().getAlpha();
 		assertNotNull(quantifier);
 		assertEquals(QuantificationType.EXISTSONE, quantifier.get_type());
 	}
@@ -584,7 +590,8 @@ public class ParserTest {
 		assertNotNull(constraintEdge);
 		FunctionApplication funAp = (FunctionApplication) constraintEdge
 				.getAlpha();
-		FunctionId funId = (FunctionId) funAp.getFirstIsFunctionIdOfIncidence().getAlpha();
+		FunctionId funId = (FunctionId) funAp.getFirstIsFunctionIdOfIncidence()
+				.getAlpha();
 		assertEquals("isPrime", funId.get_name());
 	}
 
@@ -605,8 +612,10 @@ public class ParserTest {
 		/* testing first simple declaration var:V{Definition} */
 		IsSimpleDeclOf simpleDeclEdge = decl.getFirstIsSimpleDeclOfIncidence();
 		assertNotNull(simpleDeclEdge);
-		SimpleDeclaration simpleDecl = (SimpleDeclaration) simpleDeclEdge.getAlpha();
-		var = (Variable) simpleDecl.getFirstIsDeclaredVarOfIncidence().getAlpha();
+		SimpleDeclaration simpleDecl = (SimpleDeclaration) simpleDeclEdge
+				.getAlpha();
+		var = (Variable) simpleDecl.getFirstIsDeclaredVarOfIncidence()
+				.getAlpha();
 		assertEquals("var", var.get_name());
 		VertexSetExpression vset = (VertexSetExpression) simpleDecl
 				.getFirstIsTypeExprOfIncidence().getAlpha();
@@ -619,7 +628,8 @@ public class ParserTest {
 		simpleDeclEdge = simpleDeclEdge.getNextIsSimpleDeclOfIncidence();
 		assertNotNull(simpleDeclEdge);
 		simpleDecl = (SimpleDeclaration) simpleDeclEdge.getAlpha();
-		var = (Variable) simpleDecl.getFirstIsDeclaredVarOfIncidence().getAlpha();
+		var = (Variable) simpleDecl.getFirstIsDeclaredVarOfIncidence()
+				.getAlpha();
 		assertEquals("def", var.get_name());
 		vset = (VertexSetExpression) simpleDecl.getFirstIsTypeExprOfIncidence()
 				.getAlpha();
@@ -640,8 +650,10 @@ public class ParserTest {
 		/* testing first simple declaration var:V{Definition} */
 		IsSimpleDeclOf simpleDeclEdge = decl.getFirstIsSimpleDeclOfIncidence();
 		assertNotNull(simpleDeclEdge);
-		SimpleDeclaration simpleDecl = (SimpleDeclaration) simpleDeclEdge.getAlpha();
-		Variable var = (Variable) simpleDecl.getFirstIsDeclaredVarOfIncidence().getAlpha();
+		SimpleDeclaration simpleDecl = (SimpleDeclaration) simpleDeclEdge
+				.getAlpha();
+		Variable var = (Variable) simpleDecl.getFirstIsDeclaredVarOfIncidence()
+				.getAlpha();
 		assertEquals("var", var.get_name());
 		VertexSetExpression vset = (VertexSetExpression) simpleDecl
 				.getFirstIsTypeExprOfIncidence().getAlpha();
@@ -654,7 +666,8 @@ public class ParserTest {
 		simpleDeclEdge = simpleDeclEdge.getNextIsSimpleDeclOfIncidence();
 		assertNotNull(simpleDeclEdge);
 		simpleDecl = (SimpleDeclaration) simpleDeclEdge.getAlpha();
-		var = (Variable) simpleDecl.getFirstIsDeclaredVarOfIncidence().getAlpha();
+		var = (Variable) simpleDecl.getFirstIsDeclaredVarOfIncidence()
+				.getAlpha();
 		assertEquals("def", var.get_name());
 		vset = (VertexSetExpression) simpleDecl.getFirstIsTypeExprOfIncidence()
 				.getAlpha();
@@ -682,14 +695,15 @@ public class ParserTest {
 		assertNotNull(altEdge);
 		SimplePathDescription simplePath = (SimplePathDescription) altEdge
 				.getAlpha();
-		EdgeRestriction edgeRestr = (EdgeRestriction) simplePath.getFirstIsEdgeRestrOfIncidence()
-				.getAlpha();
+		EdgeRestriction edgeRestr = (EdgeRestriction) simplePath
+				.getFirstIsEdgeRestrOfIncidence().getAlpha();
 		typeId = (TypeId) edgeRestr.getFirstIsTypeIdOfIncidence().getAlpha();
 		assertEquals("IsDefinitionOf", typeId.get_name());
 		altEdge = altEdge.getNextIsAlternativePathOfIncidence();
 		assertNotNull(altEdge);
 		simplePath = (SimplePathDescription) altEdge.getAlpha();
-		edgeRestr = (EdgeRestriction) simplePath.getFirstIsEdgeRestrOfIncidence().getAlpha();
+		edgeRestr = (EdgeRestriction) simplePath
+				.getFirstIsEdgeRestrOfIncidence().getAlpha();
 		typeId = (TypeId) edgeRestr.getFirstIsTypeIdOfIncidence().getAlpha();
 		assertEquals("IsVarOf", typeId.get_name());
 		IsCompResultDefOf resultEdge = comp
@@ -718,12 +732,15 @@ public class ParserTest {
 		/* testing first simple declaration var:V{Definition} */
 		IsSimpleDeclOf simpleDeclEdge = decl.getFirstIsSimpleDeclOfIncidence();
 		assertNotNull(simpleDeclEdge);
-		SimpleDeclaration simpleDecl = (SimpleDeclaration) simpleDeclEdge.getAlpha();
-		Variable var = (Variable) simpleDecl.getFirstIsDeclaredVarOfIncidence().getAlpha();
+		SimpleDeclaration simpleDecl = (SimpleDeclaration) simpleDeclEdge
+				.getAlpha();
+		Variable var = (Variable) simpleDecl.getFirstIsDeclaredVarOfIncidence()
+				.getAlpha();
 		assertEquals("i", var.get_name());
 		FunctionApplication funAp = (FunctionApplication) simpleDecl
 				.getFirstIsTypeExprOfIncidence().getAlpha();
-		FunctionId funId = (FunctionId) funAp.getFirstIsFunctionIdOfIncidence().getAlpha();
+		FunctionId funId = (FunctionId) funAp.getFirstIsFunctionIdOfIncidence()
+				.getAlpha();
 		assertEquals("toSet", funId.get_name());
 		var = (Variable) funAp.getFirstIsArgumentOfIncidence().getAlpha();
 		assertEquals("FOO", var.get_name());
@@ -794,7 +811,8 @@ public class ParserTest {
 		assertNotNull(expr);
 		FunctionApplication funAp = graph.getFirstFunctionApplication();
 		assertNotNull(funAp);
-		FunctionId funId = (FunctionId) funAp.getFirstIsFunctionIdOfIncidence().getAlpha();
+		FunctionId funId = (FunctionId) funAp.getFirstIsFunctionIdOfIncidence()
+				.getAlpha();
 		assertEquals("degree", funId.get_name());
 	}
 
@@ -806,8 +824,8 @@ public class ParserTest {
 		FunctionApplication condition = (FunctionApplication) condExpr
 				.getFirstIsConditionOfIncidence().getAlpha();
 		assertNotNull(condition);
-		FunctionId conditionId = (FunctionId) condition.getFirstIsFunctionIdOfIncidence()
-				.getAlpha();
+		FunctionId conditionId = (FunctionId) condition
+				.getFirstIsFunctionIdOfIncidence().getAlpha();
 		assertNotNull(conditionId);
 		assertEquals("equals", conditionId.get_name());
 		IntLiteral arg1 = (IntLiteral) condition
@@ -841,8 +859,8 @@ public class ParserTest {
 		FunctionApplication condition = (FunctionApplication) condExpr
 				.getFirstIsConditionOfIncidence().getAlpha();
 		assertNotNull(condition);
-		FunctionId conditionId = (FunctionId) condition.getFirstIsFunctionIdOfIncidence()
-				.getAlpha();
+		FunctionId conditionId = (FunctionId) condition
+				.getFirstIsFunctionIdOfIncidence().getAlpha();
 		assertNotNull(conditionId);
 		assertEquals("equals", conditionId.get_name());
 		IntLiteral arg1 = (IntLiteral) condition
@@ -937,7 +955,8 @@ public class ParserTest {
 
 		IsEdgeRestrOf restrEdge = spd.getFirstIsEdgeRestrOfIncidence();
 		assertNotNull(restrEdge);
-		EdgeRestriction edgeRestriction = (EdgeRestriction) restrEdge.getAlpha();
+		EdgeRestriction edgeRestriction = (EdgeRestriction) restrEdge
+				.getAlpha();
 		IsTypeIdOf typeEdge = edgeRestriction.getFirstIsTypeIdOfIncidence();
 		assertNotNull(typeEdge);
 		TypeId type = (TypeId) typeEdge.getAlpha();
@@ -988,7 +1007,8 @@ public class ParserTest {
 		assertNotNull(simplepd);
 		IsEdgeRestrOf restrEdge = simplepd.getFirstIsEdgeRestrOfIncidence();
 		assertNotNull(restrEdge);
-		EdgeRestriction edgeRestriction = (EdgeRestriction) restrEdge.getAlpha();
+		EdgeRestriction edgeRestriction = (EdgeRestriction) restrEdge
+				.getAlpha();
 		IsTypeIdOf typeEdge = edgeRestriction.getFirstIsTypeIdOfIncidence();
 		assertNotNull(typeEdge);
 		TypeId type = (TypeId) typeEdge.getAlpha();
@@ -1068,7 +1088,8 @@ public class ParserTest {
 				.getFirstIsStartRestrOfIncidence(EdgeDirection.IN);
 		assertNotNull(restrEdge);
 		FunctionApplication restr = (FunctionApplication) restrEdge.getAlpha();
-		FunctionId funId = (FunctionId) restr.getFirstIsFunctionIdOfIncidence().getAlpha();
+		FunctionId funId = (FunctionId) restr.getFirstIsFunctionIdOfIncidence()
+				.getAlpha();
 		assertEquals("equals", funId.get_name());
 
 		ForwardVertexSet vset = graph.getFirstForwardVertexSet();
@@ -1265,4 +1286,5 @@ public class ParserTest {
 				+ "report d.qualifiedName as \"Class\" " + "end";
 		parseQuery(query);
 	}
+
 }
