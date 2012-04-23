@@ -147,23 +147,21 @@ public class GReTLLexer {
 	 * @return
 	 */
 	private int skipString() {
-		char separator = transformText.charAt(position);
+		char quoteChar = transformText.charAt(position);
+		if (!isStringQuote(quoteChar)) {
+			throw new RuntimeException();
+		}
 		int start = position;
 		position++;
 		while ((position < transformText.length())
-				&& (transformText.charAt(position) != separator)) {
-			if (transformText.charAt(position) == '\\') {
-				if (position == transformText.length()) {
-					throw new RuntimeException("String started at position "
-							+ start + " but is not closed in query: "
-							+ transformText.substring(start, position));
-				}
-				if ((transformText.charAt(position + 1) == separator)
-						|| (transformText.charAt(position + 1) == '\\')) {
-					position++;
-				}
-			}
+				&& (transformText.charAt(position) != quoteChar)) {
 			position++;
+			if (transformText.charAt(position - 1) == '\\') {
+				position++;
+			}
+		}
+		if (transformText.charAt(position) != quoteChar) {
+			throw new RuntimeException();
 		}
 		// skip the trailing " or '
 		position++;
@@ -178,48 +176,28 @@ public class GReTLLexer {
 	}
 
 	private final void skipWhitespacesAndComments() {
+		boolean skipped = false;
 		do {
+			skipped = false;
 			// skip whitespace
 			while ((position < transformText.length())
 					&& Character.isWhitespace(transformText.charAt(position))) {
 				position++;
+				skipped = true;
 			}
 			// skip single line comments
 			if ((position < (transformText.length() - 2))
 					&& (transformText.substring(position, position + 2)
 							.equals("//"))) {
-				position++;
+				skipped = true;
+				position += 2;
 				while ((position < transformText.length())
 						&& (transformText.charAt(position) != '\n')) {
 					position++;
 				}
-				if ((position < transformText.length())
-						&& (transformText.charAt(position) == '\n')) {
-					position++;
-				}
-			}
-			// skip multiline comments
-			if ((position < (transformText.length() - 4))
-					&& (transformText.substring(position, position + 2)
-							.equals("/*"))) {
 				position++;
-				while ((position < (transformText.length() - 1))
-						&& (transformText.substring(position, position + 2)
-								.equals("*/"))) {
-					position++;
-				}
-				if ((position < transformText.length())
-						&& (transformText.substring(position, position + 2)
-								.equals("*/"))) {
-					position += 2;
-				}
 			}
-		} while (((position < transformText.length()) && (Character
-				.isWhitespace(transformText.charAt(position))))
-				|| ((position < (transformText.length() - 2)) && (transformText
-						.substring(position, position + 2).equals("//")))
-				|| ((position < (transformText.length() - 4)) && (transformText
-						.substring(position, position + 2).equals("/*"))));
+		} while (skipped);
 	}
 
 	public static List<Token> scan(String query) {
@@ -323,14 +301,16 @@ public class GReTLLexer {
 	}
 
 	private int skipToSemicolonOrArrow() {
-		// TODO: we also need to handle comments in here...
+		skipWhitespacesAndComments();
 		int start = position;
-		char c = transformText.charAt(position);
+		char c;
 		do {
+			c = transformText.charAt(++position);
 			if (isStringQuote(c)) {
 				skipString();
 			}
-			c = transformText.charAt(++position);
+			// TODO: Why does that error???
+			// skipWhitespacesAndComments();
 		} while ((c != ';')
 				&& (!transformText.substring(position, position + 3).equals(
 						fixedTokens.get(TokenTypes.TRANSFORM_ARROW))));
@@ -343,7 +323,7 @@ public class GReTLLexer {
 	 */
 	public static void main(String[] args) throws IOException {
 		BufferedReader r = new BufferedReader(new FileReader(new File(
-				"testit/transforms/F2G_ICMT2011.gretl")));
+				"/home/horn/test.gretl")));
 		StringBuilder sb = new StringBuilder();
 		String line = null;
 		while ((line = r.readLine()) != null) {
