@@ -500,7 +500,7 @@ public class ParserTest {
 
 	@Test
 	public void testRecordConstruction2() throws Exception {
-		parseQuery("rec(F2: 1).F2");
+		parseQuery("rec(T2: 1).T2");
 	}
 
 	@Test
