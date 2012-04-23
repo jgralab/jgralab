@@ -834,6 +834,9 @@ public class GreqlEvaluator {
 	}
 
 	private void weaveInSubQueries() {
+		if ((subQueryMap == null) || subQueryMap.isEmpty()) {
+			return;
+		}
 		FunctionApplication subqueryCall = findSubQueryCall();
 		while (subqueryCall != null) {
 			TGMerge tgm = new TGMerge(queryGraph, subQueryMap.get(subqueryCall
