@@ -42,7 +42,6 @@ import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.schema.Attribute;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.GraphElementClass;
-import de.uni_koblenz.jgralab.schema.VertexClass;
 
 /**
  * TODO add comment
@@ -96,7 +95,6 @@ public class ReversedEdgeCodeGenerator extends
 				code.add(createNextEdgeMethods());
 				code.add(createNextIncidenceMethods());
 			}
-			code.add(createGetAlphaOmegaOverrides());
 		}
 		return code;
 	}
@@ -116,26 +114,6 @@ public class ReversedEdgeCodeGenerator extends
 
 		return new CodeSnippet(true, "#className#Impl(EdgeImpl e, Graph g) {",
 				"\tsuper(e, g);", "}");
-	}
-
-	private CodeBlock createGetAlphaOmegaOverrides() {
-		CodeSnippet b = new CodeSnippet();
-		EdgeClass ec = aec;
-		VertexClass from = ec.getFrom().getVertexClass();
-		VertexClass to = ec.getTo().getVertexClass();
-		b.setVariable("fromVertexClass", from.getSimpleName());
-		b.setVariable("toVertexClass", to.getSimpleName());
-		addImports(schemaRootPackageName + "." + from.getQualifiedName());
-		addImports(schemaRootPackageName + "." + to.getQualifiedName());
-		if (!currentCycle.isAbstract()) {
-			b.add("public #fromVertexClass# getAlpha() {");
-			b.add("\treturn (#fromVertexClass#) super.getAlpha();");
-			b.add("}");
-			b.add("public #toVertexClass# getOmega() {");
-			b.add("\treturn (#toVertexClass#) super.getOmega();");
-			b.add("}");
-		}
-		return b;
 	}
 
 	@Override

@@ -161,7 +161,7 @@ public class DefaultCostModel extends CostModelBase implements CostModel {
 	public long calculateCardinalityListComprehension(ComprehensionEvaluator e,
 			GraphSize graphSize) {
 		ListComprehension listComp = (ListComprehension) e.getVertex();
-		Declaration decl = listComp.getFirstIsCompDeclOfIncidence().getAlpha();
+		Declaration decl = (Declaration) listComp.getFirstIsCompDeclOfIncidence().getAlpha();
 		DeclarationEvaluator declEval = (DeclarationEvaluator) e
 				.getVertexEvalMarker().getMark(decl);
 		return declEval.getEstimatedCardinality(graphSize);
@@ -314,7 +314,7 @@ public class DefaultCostModel extends CostModelBase implements CostModel {
 	public long calculateCardinalitySetComprehension(
 			SetComprehensionEvaluator e, GraphSize graphSize) {
 		SetComprehension setComp = e.getVertex();
-		Declaration decl = setComp.getFirstIsCompDeclOfIncidence().getAlpha();
+		Declaration decl = (Declaration) setComp.getFirstIsCompDeclOfIncidence().getAlpha();
 		DeclarationEvaluator declEval = (DeclarationEvaluator) e
 				.getVertexEvalMarker().getMark(decl);
 		return declEval.getEstimatedCardinality(graphSize);
@@ -352,7 +352,7 @@ public class DefaultCostModel extends CostModelBase implements CostModel {
 	public long calculateCardinalityTableComprehension(
 			TableComprehensionEvaluator e, GraphSize graphSize) {
 		TableComprehension tableComp = (TableComprehension) e.getVertex();
-		Declaration decl = tableComp.getFirstIsCompDeclOfIncidence().getAlpha();
+		Declaration decl = (Declaration) tableComp.getFirstIsCompDeclOfIncidence().getAlpha();
 		DeclarationEvaluator declEval = (DeclarationEvaluator) e
 				.getVertexEvalMarker().getMark(decl);
 		return declEval.getEstimatedCardinality(graphSize);
@@ -412,7 +412,7 @@ public class DefaultCostModel extends CostModelBase implements CostModel {
 	public VertexCosts calculateCostsBackwardVertexSet(
 			BackwardVertexSetEvaluator e, GraphSize graphSize) {
 		BackwardVertexSet bwvertex = (BackwardVertexSet) e.getVertex();
-		Expression targetExpression = bwvertex
+		Expression targetExpression = (Expression) bwvertex
 				.getFirstIsTargetExprOfIncidence().getAlpha();
 		VertexEvaluator vertexEval = e.getVertexEvalMarker().getMark(
 				targetExpression);
@@ -445,7 +445,7 @@ public class DefaultCostModel extends CostModelBase implements CostModel {
 	public VertexCosts calculateCostsListComprehension(
 			ComprehensionEvaluator e, GraphSize graphSize) {
 		ListComprehension listComp = (ListComprehension) e.getVertex();
-		Declaration decl = listComp.getFirstIsCompDeclOfIncidence().getAlpha();
+		Declaration decl = (Declaration) listComp.getFirstIsCompDeclOfIncidence().getAlpha();
 		DeclarationEvaluator declEval = (DeclarationEvaluator) e
 				.getVertexEvalMarker().getMark(decl);
 		long declCosts = declEval.getCurrentSubtreeEvaluationCosts(graphSize);
@@ -468,19 +468,19 @@ public class DefaultCostModel extends CostModelBase implements CostModel {
 	public VertexCosts calculateCostsConditionalExpression(
 			ConditionalExpressionEvaluator e, GraphSize graphSize) {
 		ConditionalExpression vertex = (ConditionalExpression) e.getVertex();
-		Expression condition = vertex.getFirstIsConditionOfIncidence()
+		Expression condition = (Expression) vertex.getFirstIsConditionOfIncidence()
 				.getAlpha();
 		VertexEvaluator conditionEvaluator = e.getVertexEvalMarker().getMark(
 				condition);
 		long conditionCosts = conditionEvaluator
 				.getCurrentSubtreeEvaluationCosts(graphSize);
 		Expression expressionToEvaluate;
-		expressionToEvaluate = vertex.getFirstIsTrueExprOfIncidence()
+		expressionToEvaluate = (Expression) vertex.getFirstIsTrueExprOfIncidence()
 				.getAlpha();
 		VertexEvaluator vertexEval = e.getVertexEvalMarker().getMark(
 				expressionToEvaluate);
 		long trueCosts = vertexEval.getCurrentSubtreeEvaluationCosts(graphSize);
-		expressionToEvaluate = vertex.getFirstIsFalseExprOfIncidence()
+		expressionToEvaluate = (Expression) vertex.getFirstIsFalseExprOfIncidence()
 				.getAlpha();
 		vertexEval = e.getVertexEvalMarker().getMark(expressionToEvaluate);
 		long falseCosts = vertexEval
@@ -511,7 +511,7 @@ public class DefaultCostModel extends CostModelBase implements CostModel {
 		IsSimpleDeclOf inc = decl.getFirstIsSimpleDeclOfIncidence();
 		long simpleDeclCosts = 0;
 		while (inc != null) {
-			SimpleDeclaration simpleDecl = inc.getAlpha();
+			SimpleDeclaration simpleDecl = (SimpleDeclaration) inc.getAlpha();
 			SimpleDeclarationEvaluator simpleEval = (SimpleDeclarationEvaluator) e
 					.getVertexEvalMarker().getMark(simpleDecl);
 			simpleDeclCosts += simpleEval
@@ -635,7 +635,7 @@ public class DefaultCostModel extends CostModelBase implements CostModel {
 	public VertexCosts calculateCostsForwardVertexSet(
 			ForwardVertexSetEvaluator e, GraphSize graphSize) {
 		ForwardVertexSet bwvertex = (ForwardVertexSet) e.getVertex();
-		Expression targetExpression = bwvertex.getFirstIsStartExprOfIncidence()
+		Expression targetExpression = (Expression) bwvertex.getFirstIsStartExprOfIncidence()
 				.getAlpha();
 		VertexEvaluator vertexEval = e.getVertexEvalMarker().getMark(
 				targetExpression);
@@ -841,13 +841,13 @@ public class DefaultCostModel extends CostModelBase implements CostModel {
 	public VertexCosts calculateCostsPathExistence(PathExistenceEvaluator e,
 			GraphSize graphSize) {
 		PathExistence existence = (PathExistence) e.getVertex();
-		Expression startExpression = existence.getFirstIsStartExprOfIncidence()
+		Expression startExpression = (Expression) existence.getFirstIsStartExprOfIncidence()
 				.getAlpha();
 		VertexEvaluator vertexEval = e.getVertexEvalMarker().getMark(
 				startExpression);
 		long startCosts = vertexEval
 				.getCurrentSubtreeEvaluationCosts(graphSize);
-		Expression targetExpression = existence
+		Expression targetExpression = (Expression) existence
 				.getFirstIsTargetExprOfIncidence().getAlpha();
 		vertexEval = e.getVertexEvalMarker().getMark(targetExpression);
 		long targetCosts = vertexEval
@@ -989,7 +989,7 @@ public class DefaultCostModel extends CostModelBase implements CostModel {
 	public VertexCosts calculateCostsSetComprehension(
 			SetComprehensionEvaluator e, GraphSize graphSize) {
 		SetComprehension setComp = e.getVertex();
-		Declaration decl = setComp.getFirstIsCompDeclOfIncidence().getAlpha();
+		Declaration decl = (Declaration) setComp.getFirstIsCompDeclOfIncidence().getAlpha();
 		DeclarationEvaluator declEval = (DeclarationEvaluator) e
 				.getVertexEvalMarker().getMark(decl);
 		long declCosts = declEval.getCurrentSubtreeEvaluationCosts(graphSize);
@@ -1107,7 +1107,7 @@ public class DefaultCostModel extends CostModelBase implements CostModel {
 		// costs differ from a ListComprehension?
 		TableComprehension tableComp = (TableComprehension) e.getVertex();
 
-		Declaration decl = tableComp.getFirstIsCompDeclOfIncidence().getAlpha();
+		Declaration decl = (Declaration) tableComp.getFirstIsCompDeclOfIncidence().getAlpha();
 		DeclarationEvaluator declEval = (DeclarationEvaluator) e
 				.getVertexEvalMarker().getMark(decl);
 		long declCosts = declEval.getCurrentSubtreeEvaluationCosts(graphSize);
@@ -1278,7 +1278,7 @@ public class DefaultCostModel extends CostModelBase implements CostModel {
 		Variable v = (Variable) e.getVertex();
 		IsDeclaredVarOf inc = v.getFirstIsDeclaredVarOfIncidence();
 		if (inc != null) {
-			SimpleDeclaration decl = inc.getOmega();
+			SimpleDeclaration decl = (SimpleDeclaration) inc.getOmega();
 			VertexEvaluator typeExpEval = e.getVertexEvalMarker().getMark(
 					decl.getFirstIsTypeExprOfIncidence().getAlpha());
 			return typeExpEval.getEstimatedCardinality(graphSize);
@@ -1355,7 +1355,7 @@ public class DefaultCostModel extends CostModelBase implements CostModel {
 	public VertexCosts calculateCostsMapComprehension(
 			MapComprehensionEvaluator e, GraphSize graphSize) {
 		MapComprehension mapComp = (MapComprehension) e.getVertex();
-		Declaration decl = mapComp.getFirstIsCompDeclOfIncidence().getAlpha();
+		Declaration decl = (Declaration) mapComp.getFirstIsCompDeclOfIncidence().getAlpha();
 		DeclarationEvaluator declEval = (DeclarationEvaluator) e
 				.getVertexEvalMarker().getMark(decl);
 		long declCosts = declEval.getCurrentSubtreeEvaluationCosts(graphSize);
@@ -1382,7 +1382,7 @@ public class DefaultCostModel extends CostModelBase implements CostModel {
 	public long calculateCardinalityMapComprehension(
 			MapComprehensionEvaluator e, GraphSize graphSize) {
 		MapComprehension setComp = (MapComprehension) e.getVertex();
-		Declaration decl = setComp.getFirstIsCompDeclOfIncidence().getAlpha();
+		Declaration decl = (Declaration) setComp.getFirstIsCompDeclOfIncidence().getAlpha();
 		DeclarationEvaluator declEval = (DeclarationEvaluator) e
 				.getVertexEvalMarker().getMark(decl);
 		return declEval.getEstimatedCardinality(graphSize);

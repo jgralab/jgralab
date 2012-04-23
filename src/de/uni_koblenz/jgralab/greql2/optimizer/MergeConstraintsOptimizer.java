@@ -137,13 +137,13 @@ public class MergeConstraintsOptimizer extends OptimizerBase {
 	public Expression createConjunction(List<IsConstraintOf> constraintEdges,
 			Greql2 syntaxgraph) {
 		if (constraintEdges.size() == 1) {
-			return constraintEdges.get(0).getAlpha();
+			return (Expression) constraintEdges.get(0).getAlpha();
 		}
 		FunctionApplication funApp = syntaxgraph.createFunctionApplication();
 		FunctionId funId = OptimizerUtility.findOrCreateFunctionId("and",
 				syntaxgraph);
 		syntaxgraph.createIsFunctionIdOf(funId, funApp);
-		syntaxgraph.createIsArgumentOf(constraintEdges.get(0).getAlpha(),
+		syntaxgraph.createIsArgumentOf((Expression) constraintEdges.get(0).getAlpha(),
 				funApp);
 		syntaxgraph.createIsArgumentOf(
 				createConjunction(

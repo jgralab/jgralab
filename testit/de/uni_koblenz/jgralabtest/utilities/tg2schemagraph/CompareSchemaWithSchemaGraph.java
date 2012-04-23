@@ -354,7 +354,7 @@ public class CompareSchemaWithSchemaGraph {
 	private Domain retrieveDomain(ContainsDomain containsDomain) {
 		assertTrue("ContainsDomain is not an instance of type Domain.",
 				containsDomain.getOmega() instanceof Domain);
-		Domain gDomain = containsDomain.getOmega();
+		Domain gDomain = (Domain) containsDomain.getOmega();
 		return gDomain;
 	}
 
@@ -437,7 +437,7 @@ public class CompareSchemaWithSchemaGraph {
 
 			assertTrue("Omega should be an instance of \"Package\".",
 					containsSubPackage.getOmega() instanceof Package);
-			Package gSubPackage = containsSubPackage.getOmega();
+			Package gSubPackage = (Package) containsSubPackage.getOmega();
 			de.uni_koblenz.jgralab.schema.Package subpackage = schema
 					.getPackage(gSubPackage.get_qualifiedName());
 
@@ -520,7 +520,7 @@ public class CompareSchemaWithSchemaGraph {
 			assertTrue("Omega should be an instance of Domain.",
 					hasRecordDomainComponent.getOmega() instanceof Domain);
 			// Gets the Domain
-			Domain domainComponent = hasRecordDomainComponent.getOmega();
+			Domain domainComponent = (Domain) hasRecordDomainComponent.getOmega();
 
 			// Get and removes the Domain and compares.
 			// The comparison of the Component name is missed out, because
@@ -701,7 +701,7 @@ public class CompareSchemaWithSchemaGraph {
 		// Loop over all SpecializesVertexClass edges
 		for (SpecializesVertexClass specializesVertexClass : gVertexClass
 				.getSpecializesVertexClassIncidences(OUTGOING)) {
-			AttributedElementClass element = specializesVertexClass.getOmega();
+			AttributedElementClass element = (AttributedElementClass) specializesVertexClass.getOmega();
 			// It gets, removes and compare the QualifiedNames
 			assertEquals(
 					"SuperClasses of these AttributeElementClass objects are different.",
@@ -737,7 +737,7 @@ public class CompareSchemaWithSchemaGraph {
 		// Loop over all SpecializesEdgeClass edges
 		for (SpecializesEdgeClass specializesEdgeClass : gEdgeClass
 				.getSpecializesEdgeClassIncidences(OUTGOING)) {
-			AttributedElementClass gElement = specializesEdgeClass.getOmega();
+			AttributedElementClass gElement = (AttributedElementClass) specializesEdgeClass.getOmega();
 
 			// Gets, removes and compares the QualifiedNames
 			de.uni_koblenz.jgralab.schema.EdgeClass element = superClasses
@@ -1042,7 +1042,7 @@ public class CompareSchemaWithSchemaGraph {
 			// Gets the Constraint
 			assertTrue("Omega should be an instance of \"Constraint\".",
 					hasConstraint.getOmega() instanceof Constraint);
-			Constraint gConstraint = hasConstraint.getOmega();
+			Constraint gConstraint = (Constraint) hasConstraint.getOmega();
 
 			boolean foundMatch = false;
 			boolean equal = false;

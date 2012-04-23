@@ -103,15 +103,21 @@ public class RandomGraphForAStar {
 		return kdtree;
 	}
 
-	public WeightedGraph createPlanarRandomGraph(int vertexCount,
-			int edgesPerVertex) {
-		WeightedGraph graph = WeightedSchema.instance().createWeightedGraph(ImplementationType.STANDARD);
+	public WeightedGraph createRandomWeightedGraph(int vertexCount,
+			int edgesPerVertex, boolean verbose) {
+		WeightedGraph graph = WeightedSchema.instance().createWeightedGraph(
+				ImplementationType.STANDARD);
 		Random rng = new Random();
-		return createPlanarRandomGraph(graph, vertexCount, edgesPerVertex, rng,
-				true);
+		return createRandomWeightedGraph(graph, vertexCount, edgesPerVertex,
+				rng, verbose);
 	}
 
-	public WeightedGraph createPlanarRandomGraph(WeightedGraph graph,
+	public WeightedGraph createRandomWeightedGraph(int vertexCount,
+			int edgesPerVertex) {
+		return createRandomWeightedGraph(vertexCount, edgesPerVertex, true);
+	}
+
+	public WeightedGraph createRandomWeightedGraph(WeightedGraph graph,
 			int vertexCount, int edgesPerVertex, Random rng, boolean verbose) {
 		int chunkSize = vertexCount / 100;
 		createRandomVertices(vertexCount, rng, graph, chunkSize, verbose);
@@ -170,8 +176,8 @@ public class RandomGraphForAStar {
 
 	private void createEdgePair(Random rng, WeightedGraph graph,
 			Location alpha, Location omega) {
-		double distance = euclideanDistance(alpha.get_x(), alpha.get_y(), omega
-				.get_x(), omega.get_y());
+		double distance = euclideanDistance(alpha.get_x(), alpha.get_y(),
+				omega.get_x(), omega.get_y());
 		double weight = distance + rng.nextDouble() * maxDeviation;
 
 		boolean create = true;

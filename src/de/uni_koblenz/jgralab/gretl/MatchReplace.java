@@ -51,6 +51,7 @@ import org.pcollections.PSet;
 import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.GraphElement;
+import de.uni_koblenz.jgralab.Record;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.gretl.Context.TransformationPhase;
 import de.uni_koblenz.jgralab.gretl.parser.TokenTypes;
@@ -85,7 +86,7 @@ public class MatchReplace extends InPlaceTransformation {
 
 	/**
 	 * Creates a new {@link MatchReplace} transformation.
-	 * 
+	 *
 	 * @param context
 	 *            the {@link Context}
 	 * @param replaceGraph
@@ -110,8 +111,8 @@ public class MatchReplace extends InPlaceTransformation {
 	 * is true. This has to be done with caution, because if you delete an edge
 	 * or vertex for which some mapping exists (or which is contained as part of
 	 * a value in some mapping) later, then your mappings are skrewed up!
-	 * 
-	 * 
+	 *
+	 *
 	 * @param context
 	 * @param replaceGraph
 	 * @param addGlobalMappings
@@ -192,10 +193,13 @@ public class MatchReplace extends InPlaceTransformation {
 			matchedVertices.add((Vertex) matchedElem);
 		} else if (matchedElem instanceof Edge) {
 			matchedEdges.add(((Edge) matchedElem).getNormalEdge());
-
 		} else if (matchedElem instanceof Collection) {
 			for (Object j : (Collection<Object>) matchedElem) {
 				calculateMatchedElements(j);
+			}
+		} else if (matchedElem instanceof Record) {
+			for (Object o : ((Record) matchedElem).toPMap().values()) {
+				calculateMatchedElements(o);
 			}
 		} else if (matchedElem instanceof Map) {
 			Map<Object, Object> m = (Map<Object, Object>) matchedElem;

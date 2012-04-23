@@ -532,7 +532,7 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 		StringBuilder builder = new StringBuilder("resultRecord = resultRecord");
 		for (IsRecordElementOf inc : recordConstr
 				.getIsRecordElementOfIncidences(EdgeDirection.IN)) {
-			RecordElement currentElement = inc.getAlpha();
+			RecordElement currentElement = (RecordElement) inc.getAlpha();
 			Identifier ident = (Identifier) currentElement
 					.getFirstIsRecordIdOfIncidence(EdgeDirection.IN).getThat();
 			Expression expr = (Expression) currentElement

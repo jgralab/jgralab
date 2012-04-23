@@ -159,7 +159,7 @@ public class GenericEdgeImpl extends EdgeImpl implements
 	public <T> void setAttribute(String name, T data) {
 		int i = type.getAttributeIndex(name);
 		if (getAttributedElementClass().getAttribute(name).getDomain()
-				.isConformGenericValue(data)) {
+				.isConformValue(data)) {
 			if (graph.hasECARuleManager()) {
 				T oldValue = this.getAttribute(name);
 				graph.getECARuleManager().fireBeforeChangeAttributeEvents(this,

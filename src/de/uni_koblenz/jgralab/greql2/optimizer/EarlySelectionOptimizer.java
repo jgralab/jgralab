@@ -155,7 +155,7 @@ public class EarlySelectionOptimizer extends OptimizerBase {
 			IsConstraintOf isConst = decl
 					.getFirstIsConstraintOfIncidence(EdgeDirection.IN);
 			while (isConst != null) {
-				Expression exp = isConst.getAlpha();
+				Expression exp = (Expression) isConst.getAlpha();
 				for (Entry<SimpleDeclaration, Set<Expression>> e : collectMovableExpressions(
 						exp).entrySet()) {
 					if (movableExpressions.containsKey(e.getKey())) {
@@ -187,9 +187,9 @@ public class EarlySelectionOptimizer extends OptimizerBase {
 					@Override
 					public int compare(SimpleDeclaration sd1,
 							SimpleDeclaration sd2) {
-						Declaration decl1 = sd1
+						Declaration decl1 = (Declaration) sd1
 								.getFirstIsSimpleDeclOfIncidence().getOmega();
-						Declaration decl2 = sd2
+						Declaration decl2 = (Declaration) sd2
 								.getFirstIsSimpleDeclOfIncidence().getOmega();
 						if (OptimizerUtility.isAbove(decl1, decl2)) {
 							return 1;
@@ -202,7 +202,7 @@ public class EarlySelectionOptimizer extends OptimizerBase {
 				});
 
 		for (SimpleDeclaration sd : simpleDeclsWithMovableExpressions) {
-			Declaration parentDecl = sd.getFirstIsSimpleDeclOfIncidence()
+			Declaration parentDecl = (Declaration) sd.getFirstIsSimpleDeclOfIncidence()
 					.getOmega();
 			Set<Variable> varsDeclaredBySd = OptimizerUtility
 					.collectVariablesDeclaredBy(sd);
@@ -280,7 +280,7 @@ public class EarlySelectionOptimizer extends OptimizerBase {
 		}
 		logger.finer(sb.toString() + " with predicates " + predicates + ".");
 
-		Declaration parentDeclOfOrigSD = origSD
+		Declaration parentDeclOfOrigSD = (Declaration) origSD
 				.getFirstIsSimpleDeclOfIncidence(EdgeDirection.OUT).getOmega();
 		assert parentDeclOfOrigSD.getDegree(EdgeDirection.OUT) == 1;
 
@@ -400,7 +400,7 @@ public class EarlySelectionOptimizer extends OptimizerBase {
 		syntaxgraph.createIsCompResultDefOf(newInnerVar, newSetComp);
 
 		for (Expression exp : predicates) {
-			removeExpressionFromOriginalConstraint(exp, origSD
+			removeExpressionFromOriginalConstraint(exp, (Declaration) origSD
 					.getFirstIsSimpleDeclOfIncidence().getOmega());
 		}
 	}
@@ -444,7 +444,7 @@ public class EarlySelectionOptimizer extends OptimizerBase {
 			for (IsArgumentOf inc : funApp
 					.getIsArgumentOfIncidences(EdgeDirection.IN)) {
 				if (inc.getNormalEdge() != upEdge.getNormalEdge()) {
-					otherArg = inc.getAlpha();
+					otherArg = (Expression) inc.getAlpha();
 				}
 			}
 			ArrayList<Edge> funAppEdges = new ArrayList<Edge>();
@@ -553,7 +553,7 @@ public class EarlySelectionOptimizer extends OptimizerBase {
 					.getFirstIsArgumentOfIncidence(EdgeDirection.IN);
 			while (isArg != null) {
 				for (Entry<SimpleDeclaration, Set<Expression>> entry : collectMovableExpressions(
-						isArg.getAlpha()).entrySet()) {
+						(Expression) isArg.getAlpha()).entrySet()) {
 					if (movableExpressions.containsKey(entry.getKey())) {
 						movableExpressions.get(entry.getKey()).addAll(
 								entry.getValue());
@@ -572,7 +572,7 @@ public class EarlySelectionOptimizer extends OptimizerBase {
 			// Only collect those SimpleDeclarations whose parent Declaration
 			// has more than one SimpleDeclaration or which declare more than
 			// one variable.
-			Declaration parent = sd.getFirstIsSimpleDeclOfIncidence(
+			Declaration parent = (Declaration) sd.getFirstIsSimpleDeclOfIncidence(
 					EdgeDirection.OUT).getOmega();
 			if ((collectSimpleDeclarationsOf(parent).size() > 1)
 					|| (OptimizerUtility.collectVariablesDeclaredBy(sd).size() > 1)) {
@@ -607,7 +607,7 @@ public class EarlySelectionOptimizer extends OptimizerBase {
 
 		SimpleDeclaration sd = null, oldSd = null;
 		for (Variable var : neededVars) {
-			sd = var.getFirstIsDeclaredVarOfIncidence().getOmega();
+			sd = (SimpleDeclaration) var.getFirstIsDeclaredVarOfIncidence().getOmega();
 			if ((oldSd != null) && (sd != oldSd)) {
 				// the last variable was declared in another
 				// SimpleDeclaration
@@ -691,7 +691,7 @@ public class EarlySelectionOptimizer extends OptimizerBase {
 		ArrayList<SimpleDeclaration> sds = new ArrayList<SimpleDeclaration>();
 		for (IsSimpleDeclOf inc : decl
 				.getIsSimpleDeclOfIncidences(EdgeDirection.IN)) {
-			sds.add(inc.getAlpha());
+			sds.add((SimpleDeclaration) inc.getAlpha());
 		}
 		return sds;
 	}

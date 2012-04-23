@@ -317,6 +317,8 @@ public class GreqlGui extends SwingApplication {
 				recentGraphList.rememberFile(file);
 				graphLoading = false;
 			} catch (Exception e1) {
+				brm.setValue(brm.getMinimum());
+				progressBar.setIndeterminate(false);
 				graph = null;
 				ex = e1;
 			} finally {
@@ -349,7 +351,7 @@ public class GreqlGui extends SwingApplication {
 								.setText(
 										MessageFormat
 												.format(getMessage("GreqlGui.StatusMessage.GraphLoadingFinished"), //$NON-NLS-1$
-												graph.getId()));
+														graph.getId()));
 					}
 					updateActions();
 				}
@@ -452,6 +454,16 @@ public class GreqlGui extends SwingApplication {
 										"greqlQueryResult.xml"); //$NON-NLS-1$
 								XMLOutputWriter xw = new XMLOutputWriter(graph);
 								xw.writeValue(result, xmlResultFile);
+							} catch (SerialisingException e) {
+								JOptionPane.showMessageDialog(GreqlGui.this,
+										"Exception during XML output of result: " //$NON-NLS-1$
+												+ e.toString());
+							} catch (XMLStreamException e) {
+								JOptionPane.showMessageDialog(GreqlGui.this,
+										"Exception during XML output of result: " //$NON-NLS-1$
+												+ e.toString());
+							}
+							try {
 								File resultFile = new File(
 										"greqlQueryResult.html"); //$NON-NLS-1$
 								// File resultFile = File.createTempFile(
@@ -479,9 +491,6 @@ public class GreqlGui extends SwingApplication {
 								JOptionPane.showMessageDialog(GreqlGui.this,
 										"Exception during HTML output of result: " //$NON-NLS-1$
 												+ e.toString());
-							} catch (XMLStreamException e) {
-								// TODO Auto-generated catch block
-								e.printStackTrace();
 							}
 						}
 					});
@@ -536,13 +545,13 @@ public class GreqlGui extends SwingApplication {
 
 	private void loadFontSettings() {
 		String fontName = prefs
-				.get(PREFS_KEY_QUERY_FONT, "Monospaced-plain-14"); //$NON-NLS-1$ //$NON-NLS-2$
+				.get(PREFS_KEY_QUERY_FONT, "Monospaced-plain-14"); //$NON-NLS-1$ 
 		queryFont = Font.decode(fontName);
 		if (queryFont == null) {
 			queryFont = new Font("Monospaced", Font.PLAIN, 14); //$NON-NLS-1$
 		}
 
-		fontName = prefs.get(PREFS_KEY_RESULT_FONT, "Monospaced-plain-14"); //$NON-NLS-1$ //$NON-NLS-2$
+		fontName = prefs.get(PREFS_KEY_RESULT_FONT, "Monospaced-plain-14"); //$NON-NLS-1$ 
 		resultFont = Font.decode(fontName);
 		if (resultFont == null) {
 			resultFont = new Font("Monospaced", Font.PLAIN, 14); //$NON-NLS-1$
@@ -818,7 +827,7 @@ public class GreqlGui extends SwingApplication {
 									.setText(
 											MessageFormat
 													.format(getMessage("GreqlGui.StatusMessage.ResultComplete"), //$NON-NLS-1$
-													evaluationTime));
+															evaluationTime));
 						}
 					}
 				});

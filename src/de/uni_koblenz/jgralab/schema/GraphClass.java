@@ -74,6 +74,8 @@ public interface GraphClass extends AttributedElementClass<GraphClass, Graph> {
 	 */
 	public VertexClass getDefaultVertexClass();
 
+	public VertexClass getTemporaryVertexClass();
+	
 	/**
 	 * creates an edge class between vertex class from, multiplicity fromMin and
 	 * fromMax with the rolename fromRoleName, and vertex class to, multiplicity
@@ -114,6 +116,8 @@ public interface GraphClass extends AttributedElementClass<GraphClass, Graph> {
 	 */
 	public EdgeClass getDefaultEdgeClass();
 
+	public EdgeClass getTemporaryEdgeClass();
+	
 	/**
 	 * @param name
 	 *            the name to search for

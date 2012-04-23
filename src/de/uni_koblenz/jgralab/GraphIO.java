@@ -664,6 +664,10 @@ public class GraphIO {
 	public static void saveGraphToStream(Graph graph, DataOutputStream out,
 			ProgressFunction pf) throws GraphIOException {
 		try {
+			if(hasTemporaryElements(graph)){
+				throw new GraphIOException("Savin graph "+graph+ " is not possible. "
+						+ "It contains temporary graph elements.");
+			}
 			GraphIO io = new GraphIO();
 			io.TGOut = out;
 			io.saveGraph((InternalGraph) graph, pf, null);
@@ -691,6 +695,12 @@ public class GraphIO {
 	public static void saveGraphToStream(BooleanGraphMarker subGraph,
 			DataOutputStream out, ProgressFunction pf) throws GraphIOException {
 		try {
+			if(hasTemporaryElements(subGraph, subGraph.getGraph())){
+				throw new GraphIOException("Savin sub graph "+subGraph+" of "
+						+subGraph.getGraph()+  " is not possible. "
+						+ "It contains temporary graph elements.");
+			}
+			
 			GraphIO io = new GraphIO();
 			io.TGOut = out;
 			io.saveGraph((InternalGraph) subGraph.getGraph(), pf, subGraph);
@@ -700,6 +710,26 @@ public class GraphIO {
 		}
 	}
 
+	private static boolean hasTemporaryElements(Graph g){
+		if(g.vertices(g.getGraphClass().getTemporaryVertexClass()).iterator().hasNext()){
+			return true;
+		}
+		if(g.edges(g.getGraphClass().getTemporaryEdgeClass()).iterator().hasNext()){
+			return true;
+		}
+		return false;
+	}
+	
+	private static boolean hasTemporaryElements(BooleanGraphMarker marker,Graph g){
+		for(Vertex v : g.vertices(g.getGraphClass().getTemporaryVertexClass())){
+			if(marker.isMarked(v)) return true;
+		}
+		for(Edge e : g.edges(g.getGraphClass().getTemporaryEdgeClass())){
+			if(marker.isMarked(e)) return true;
+		}
+		return false;
+	}
+	
 	private void saveGraph(InternalGraph graph, ProgressFunction pf,
 			BooleanGraphMarker subGraph) throws IOException, GraphIOException {
 		TraversalContext tc = graph.setTraversalContext(null);
@@ -2852,12 +2882,10 @@ public class GraphIO {
 						.entrySet()) {
 					for (GraphElementClassData vc : graphClassVertex.getValue()) {
 						if (ec.fromVertexClassName
-								.equals(vc.getQualifiedName())
-								|| ec.fromVertexClassName.equals("Vertex")) {
+								.equals(vc.getQualifiedName())) {
 							existingFromVertexClass = true;
 						}
-						if (ec.toVertexClassName.equals(vc.getQualifiedName())
-								|| ec.toVertexClassName.equals("Vertex")) {
+						if (ec.toVertexClassName.equals(vc.getQualifiedName())) {
 							existingToVertexClass = true;
 						}
 						if (existingFromVertexClass && existingToVertexClass) {
@@ -2869,14 +2897,14 @@ public class GraphIO {
 					}
 				}
 				if (!existingFromVertexClass) {
-					throw new GraphIOException("FromVertexClass "
+					throw new GraphIOException("From-VertexClass "
 							+ ec.fromVertexClassName + " at EdgeClass "
-							+ ec.getQualifiedName() + " + does not exist");
+							+ ec.getQualifiedName() + " does not exist.");
 				}
 				if (!existingToVertexClass) {
-					throw new GraphIOException("ToVertexClass "
+					throw new GraphIOException("To-VertexClass "
 							+ ec.toVertexClassName + " at EdgeClass "
-							+ ec.getQualifiedName() + " does not exist");
+							+ ec.getQualifiedName() + " does not exist.");
 				}
 			}
 		}

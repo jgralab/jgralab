@@ -137,9 +137,9 @@ public final class DoubleDomainImpl extends BasicDomainImpl implements
 			throws IOException {
 		io.writeDouble((Double) data);
 	}
-
+	
 	@Override
-	public boolean isConformGenericValue(Object value) {
+	public boolean isConformValue(Object value) {
 		return Double.class.isInstance(value);
 	}
 }

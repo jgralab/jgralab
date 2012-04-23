@@ -92,7 +92,7 @@ public class GreqlParser extends ParserHelper {
 	 * the current token position. If it was already tested, this method skips
 	 * the number of tokens which were consumed by the rule in its last
 	 * application at the current token
-	 * 
+	 *
 	 * @param rule
 	 *            the rule to test
 	 * @return the current token position if the rule was not applied before or
@@ -136,7 +136,7 @@ public class GreqlParser extends ParserHelper {
 	 * (skipRule(pos)) return null; Expression expr =
 	 * parseQuantifiedExpression(); ruleSucceeded(RuleEnum.EXPRESSION, pos);
 	 * return expr;
-	 * 
+	 *
 	 * @return true if the rule application has already been tested and the
 	 *         parser is still in predicate mode, so the rule and the tokens it
 	 *         matched last time can be skipped, false otherwise
@@ -191,7 +191,7 @@ public class GreqlParser extends ParserHelper {
 	}
 
 	private final TokenTypes lookAhead(int i) {
-		if (current + i < tokens.size()) {
+		if ((current + i) < tokens.size()) {
 			return tokens.get(current + i).type;
 		} else {
 			return TokenTypes.EOF;
@@ -417,7 +417,7 @@ public class GreqlParser extends ParserHelper {
 	}
 
 	private String getLookAheadValue(int i) {
-		if (current + i < tokens.size()) {
+		if ((current + i) < tokens.size()) {
 			Token t = tokens.get(current + i);
 			return t.getValue();
 		} else {
@@ -524,7 +524,8 @@ public class GreqlParser extends ParserHelper {
 			Identifier ident = graph.createIdentifier();
 			offset = getCurrentOffset();
 			ident.set_name(matchIdentifier());
-			IsIdOfStoreClause isId = graph.createIsIdOfStoreClause(ident, rootExpr);
+			IsIdOfStoreClause isId = graph.createIsIdOfStoreClause(ident,
+					rootExpr);
 			isId.set_sourcePositions(createSourcePositionList(offset));
 		}
 		match(TokenTypes.EOF);
@@ -818,7 +819,7 @@ public class GreqlParser extends ParserHelper {
 
 	/**
 	 * matches conditional expressions
-	 * 
+	 *
 	 * @return
 	 */
 	private final Expression parseConditionalExpression() {
@@ -2156,20 +2157,37 @@ public class GreqlParser extends ParserHelper {
 		boolean vartable = false;
 		boolean map = false;
 		TokenTypes separator = TokenTypes.COMMA;
-		switch (lookAhead(0)) {
+		TokenTypes comprehensionType = lookAhead(0);
+		switch (comprehensionType) {
 		case REPORT:
 			return parseLabeledReportList();
 		case REPORTLIST:
+		case REPORTLISTN:
 			if (!inPredicateMode()) {
 				comprehension = graph.createListComprehension();
 			}
 			match();
+			if (comprehensionType == TokenTypes.REPORTLISTN) {
+				Expression limit = parseExpression();
+				if (!inPredicateMode()) {
+					comprehension.add_maxCount(limit);
+				}
+				match(TokenTypes.COLON);
+			}
 			break;
 		case REPORTSET:
+		case REPORTSETN:
 			if (!inPredicateMode()) {
 				comprehension = graph.createSetComprehension();
 			}
 			match();
+			if (comprehensionType == TokenTypes.REPORTSETN) {
+				Expression limit = parseExpression();
+				if (!inPredicateMode()) {
+					comprehension.add_maxCount(limit);
+				}
+				match(TokenTypes.COLON);
+			}
 			break;
 		case REPORTTABLE:
 			if (!inPredicateMode()) {
@@ -2179,12 +2197,20 @@ public class GreqlParser extends ParserHelper {
 			match();
 			break;
 		case REPORTMAP:
+		case REPORTMAPN:
 			if (!inPredicateMode()) {
 				comprehension = graph.createMapComprehension();
 			}
 			map = true;
 			separator = TokenTypes.EDGEEND;
 			match();
+			if (comprehensionType == TokenTypes.REPORTMAPN) {
+				Expression limit = parseExpression();
+				if (!inPredicateMode()) {
+					comprehension.add_maxCount(limit);
+				}
+				match(TokenTypes.COLON);
+			}
 			break;
 		default:
 			fail("Unrecognized token");

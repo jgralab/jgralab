@@ -302,8 +302,7 @@ public class IncidenceClassImpl implements IncidenceClass {
 
 	@Override
 	public int getIncidenceClassIdInSchema() {
-		// TODO Auto-generated method stub
-		return 0;
+		return incidenceClassIdInSchema;
 	}
 
 	void reopen() {

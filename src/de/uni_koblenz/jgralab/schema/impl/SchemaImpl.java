@@ -607,6 +607,8 @@ public class SchemaImpl implements Schema, ManagableArtifact {
 		GraphClassImpl gc = new GraphClassImpl(simpleName, this);
 		gc.initializeDefaultVertexClass();
 		gc.initializeDefaultEdgeClass();
+		gc.initializeTemporaryVertexClass();
+		gc.initializeTemporaryEdgeClass();
 		return gc;
 	}
 

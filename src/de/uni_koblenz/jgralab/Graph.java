@@ -88,6 +88,10 @@ public interface Graph extends AttributedElement<GraphClass, Graph> {
 	public <T extends Edge> T createEdge(EdgeClass ec, Vertex alpha,
 			Vertex omega);
 
+	public TemporaryVertex createTemporaryVertex();
+	
+	public TemporaryEdge createTemporaryEdge(Vertex alpha, Vertex omega);
+	
 	/**
 	 * Retrieves the enum constant of an {@link EnumDomain} given by
 	 * <code>constantName</code>.

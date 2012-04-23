@@ -455,7 +455,7 @@ public class GreqlSerializer {
 			// subgraph expression defined by arbitrary expression
 			IsSubgraphDefiningExpression isDefExpr = ((ExpressionDefinedSubgraph) def)
 					.getFirstIsSubgraphDefiningExpressionIncidence(EdgeDirection.IN);
-			serializeExpression(isDefExpr.getAlpha(), true);
+			serializeExpression((Expression) isDefExpr.getAlpha(), true);
 		}
 	}
 
