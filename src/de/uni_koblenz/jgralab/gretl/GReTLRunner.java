@@ -47,6 +47,7 @@ import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.JGraLab;
+import de.uni_koblenz.jgralab.greql2.schema.Greql2Schema;
 import de.uni_koblenz.jgralab.impl.ConsoleProgressFunction;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.Schema;
@@ -164,6 +165,10 @@ public class GReTLRunner {
 			c = new Context(schema, graphclass);
 		}
 
+		// Load the greql schema so that the class loading time doesn't count
+		// for the transformation time.
+		Greql2Schema.instance();
+
 		if (cli.getArgs().length == 0) {
 			if (cli.hasOption('u') || cli.hasOption('i')) {
 				System.err
@@ -239,7 +244,7 @@ public class GReTLRunner {
 		GraphIO.saveGraphToFile(outGraph, outFileName,
 				new ConsoleProgressFunction("Saving"));
 		if (cli.hasOption('z')) {
-			if (outGraph.getVCount() + outGraph.getECount() > MAX_VISUALIZATION_SIZE) {
+			if ((outGraph.getVCount() + outGraph.getECount()) > MAX_VISUALIZATION_SIZE) {
 				System.err.println("Sorry, graph is too big to be dotted.");
 			} else {
 				String pdf = outFileName.replaceFirst("\\.tg(\\.gz)?$", ".pdf");
