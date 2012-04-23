@@ -55,6 +55,7 @@ import de.uni_koblenz.jgralab.greql2.schema.*;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 
 public class GreqlParser extends ParserHelper {
+	private static final Greql2Schema SCHEMA = Greql2Schema.instance();
 	private Map<RuleEnum, int[]> testedRules = new HashMap<RuleEnum, int[]>();
 
 	private List<Token> tokens = null;
@@ -71,7 +72,6 @@ public class GreqlParser extends ParserHelper {
 
 	private boolean predicateFulfilled = true;
 
-	private Greql2Schema schema = null;
 	private Set<String> subQueryNames = null;
 
 	/**
@@ -153,8 +153,7 @@ public class GreqlParser extends ParserHelper {
 		query = source;
 		parsingStack = new Stack<Integer>();
 		predicateStack = new Stack<Boolean>();
-		schema = Greql2Schema.instance();
-		graph = schema.createGreql2(ImplementationType.STANDARD);
+		graph = SCHEMA.createGreql2(ImplementationType.STANDARD);
 		tokens = GreqlLexer.scan(source);
 		afterParsingvariableSymbolTable = new SymbolTable();
 		duringParsingvariableSymbolTable = new SimpleSymbolTable();
@@ -1396,11 +1395,10 @@ public class GreqlParser extends ParserHelper {
 						.createTransposedPathDescription();
 				IsTransposedPathOf transposedPathOf = graph
 						.createIsTransposedPathOf(iteratedPath, tpd);
-				transposedPathOf
-						.set_sourcePositions(createSourcePositionList(
-								lengthPath, offsetPath));
+				transposedPathOf.set_sourcePositions(createSourcePositionList(
+						lengthPath, offsetPath));
 				result = tpd;
-			}	
+			}
 		} else if (tryMatch(TokenTypes.CARET)) {
 			int offsetExpr = getCurrentOffset();
 			Expression ie = parseNumericLiteral();
@@ -1415,7 +1413,7 @@ public class GreqlParser extends ParserHelper {
 						.createIsExponentiatedPathOf(iteratedPath, epd);
 				exponentiatedPathOf
 						.set_sourcePositions(createSourcePositionList(
-									lengthPath, offsetPath));
+								lengthPath, offsetPath));
 				IsExponentOf exponentOf = graph.createIsExponentOf(
 						(IntLiteral) ie, epd);
 				exponentOf.set_sourcePositions(createSourcePositionList(
@@ -2661,7 +2659,7 @@ public class GreqlParser extends ParserHelper {
 	}
 
 	public Greql2Schema getSchema() {
-		return schema;
+		return SCHEMA;
 	}
 
 }

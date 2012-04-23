@@ -99,9 +99,9 @@ import de.uni_koblenz.jgralab.utilities.tgmerge.TGMerge;
  * String or Graph and a JGraLab-Datagraph and evaluates the Query on this
  * graph. The result is a JValue-object, it can be accessed using the method
  * <code>JValue getEvaluationResult()</code>.
- * 
+ *
  * @author ist@uni-koblenz.de
- * 
+ *
  */
 public class GreqlEvaluator {
 
@@ -238,7 +238,7 @@ public class GreqlEvaluator {
 
 	/**
 	 * Gets a vertex index for a part of a query
-	 * 
+	 *
 	 * @param graph
 	 *            the graph to get an index for
 	 * @param queryPart
@@ -359,7 +359,7 @@ public class GreqlEvaluator {
 	/**
 	 * Load all optimized {@link SyntaxGraphEntry}s in
 	 * optimizedSyntaxGraphsDirectory.
-	 * 
+	 *
 	 * @throws GraphIOException
 	 *             if the optimizedGraphsDirectory is not accessible.
 	 * @see #setOptimizedSyntaxGraphsDirectory(File)
@@ -725,7 +725,7 @@ public class GreqlEvaluator {
 
 	/**
 	 * Creates a new GreqlEvaluator for the given Query and Datagraph
-	 * 
+	 *
 	 * @param query
 	 *            the string-representation of the query to evaluate
 	 * @param datagraph
@@ -761,7 +761,7 @@ public class GreqlEvaluator {
 
 	/**
 	 * Creates a new GreqlEvaluator for the given Query and Datagraph
-	 * 
+	 *
 	 * @param query
 	 *            the string-representation of the query to evaluate
 	 * @param datagraph
@@ -777,7 +777,7 @@ public class GreqlEvaluator {
 	/**
 	 * Creates an new GreqlEvaluator for the query in the given file and the
 	 * given datagraph
-	 * 
+	 *
 	 * @param queryFile
 	 *            the name of the file whehre the query to evaluate is stored in
 	 * @param datagraph
@@ -799,7 +799,7 @@ public class GreqlEvaluator {
 	/**
 	 * Creates an new GreqlEvaluator for the query in the given file and the
 	 * given datagraph
-	 * 
+	 *
 	 * @param queryFile
 	 *            the name of the file whehre the query to evaluate is stored in
 	 * @param datagraph
@@ -941,7 +941,7 @@ public class GreqlEvaluator {
 	/**
 	 * clears the tempresults that are stored in the VertexEvaluators-Objects at
 	 * the syntaxgraph nodes
-	 * 
+	 *
 	 * @param optimizer
 	 */
 	private void resetVertexEvaluators() {
@@ -1018,7 +1018,7 @@ public class GreqlEvaluator {
 	/**
 	 * Starts the evaluation. If the query is a store-query, modifies the bound
 	 * variables
-	 * 
+	 *
 	 * @return true on success, false otherwise
 	 */
 	public boolean startEvaluation() throws OptimizerException {
@@ -1148,7 +1148,7 @@ public class GreqlEvaluator {
 
 	/**
 	 * Sets the optimizer to optimize the syntaxgraph this evaluator evaluates
-	 * 
+	 *
 	 * @param optimizer
 	 *            the optimizer to use
 	 */
@@ -1209,18 +1209,14 @@ public class GreqlEvaluator {
 
 	public void printEvaluationTimes() {
 		logger.info("Overall evaluation took "
-				+ overallEvaluationTime
-				/ 1000d
+				+ (overallEvaluationTime / 1000d)
 				+ " seconds.\n"
 				+ " --> parsing time         : "
-				+ parseTime
-				/ 1000d
+				+ (parseTime / 1000d)
 				+ "\n --> optimization time    : "
-				+ optimizationTime
-				/ 1000d
+				+ (optimizationTime / 1000d)
 				+ "\n --> plain evaluation time: "
-				+ plainEvaluationTime
-				/ 1000d
+				+ (plainEvaluationTime / 1000d)
 				+ "\n"
 				+ (progressFunction != null ? "Estimated evaluation costs: "
 						+ estimatedInterpretationSteps : ""));
