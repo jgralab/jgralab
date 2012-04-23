@@ -1389,42 +1389,40 @@ public class GreqlParser extends ParserHelper {
 						lengthPath, offsetPath));
 				result = ipd;
 			}
+		} else if (tryMatch(TokenTypes.TRANSPOSED)) {
+			if (!inPredicateMode()) {
+				TransposedPathDescription tpd = graph
+						.createTransposedPathDescription();
+				IsTransposedPathOf transposedPathOf = graph
+						.createIsTransposedPathOf(iteratedPath, tpd);
+				transposedPathOf
+						.set_sourcePositions(createSourcePositionList(
+								lengthPath, offsetPath));
+				result = tpd;
+			}	
 		} else if (tryMatch(TokenTypes.CARET)) {
-			if (tryMatch(TokenTypes.T)) {
-				if (!inPredicateMode()) {
-					TransposedPathDescription tpd = graph
-							.createTransposedPathDescription();
-					IsTransposedPathOf transposedPathOf = graph
-							.createIsTransposedPathOf(iteratedPath, tpd);
-					transposedPathOf
-							.set_sourcePositions(createSourcePositionList(
-									lengthPath, offsetPath));
-					result = tpd;
+			int offsetExpr = getCurrentOffset();
+			Expression ie = parseNumericLiteral();
+			if (!inPredicateMode()) {
+				if (!(ie instanceof IntLiteral)) {
+					fail("Expected integer constant as iteration quantifier or T, but found");
 				}
-			} else {
-				int offsetExpr = getCurrentOffset();
-				Expression ie = parseNumericLiteral();
-				if (!inPredicateMode()) {
-					if (!(ie instanceof IntLiteral)) {
-						fail("Expected integer constant as iteration quantifier or T, but found");
-					}
-					int lengthExpr = getLength(offsetExpr);
-					ExponentiatedPathDescription epd = graph
-							.createExponentiatedPathDescription();
-					IsExponentiatedPathOf exponentiatedPathOf = graph
-							.createIsExponentiatedPathOf(iteratedPath, epd);
-					exponentiatedPathOf
-							.set_sourcePositions(createSourcePositionList(
+				int lengthExpr = getLength(offsetExpr);
+				ExponentiatedPathDescription epd = graph
+						.createExponentiatedPathDescription();
+				IsExponentiatedPathOf exponentiatedPathOf = graph
+						.createIsExponentiatedPathOf(iteratedPath, epd);
+				exponentiatedPathOf
+						.set_sourcePositions(createSourcePositionList(
 									lengthPath, offsetPath));
-					IsExponentOf exponentOf = graph.createIsExponentOf(
-							(IntLiteral) ie, epd);
-					exponentOf.set_sourcePositions(createSourcePositionList(
-							lengthExpr, offsetExpr));
-					result = epd;
-				}
+				IsExponentOf exponentOf = graph.createIsExponentOf(
+						(IntLiteral) ie, epd);
+				exponentOf.set_sourcePositions(createSourcePositionList(
+						lengthExpr, offsetExpr));
+				result = epd;
 			}
 		} else {
-			fail("No iteration at iterated path description");
+			fail("No iteration or transposition at iterated path description");
 		}
 		if ((lookAhead(0) == TokenTypes.STAR)
 				|| (lookAhead(0) == TokenTypes.PLUS)

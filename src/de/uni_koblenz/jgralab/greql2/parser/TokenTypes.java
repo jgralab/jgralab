@@ -36,7 +36,7 @@ package de.uni_koblenz.jgralab.greql2.parser;
 
 public enum TokenTypes {
 
-	T, AND, FALSE, NOT, UNDEFINED, OR, TRUE, XOR, AS, MAP, E, 
+	TRANSPOSED, AND, FALSE, NOT, UNDEFINED, OR, TRUE, XOR, AS, MAP, E, 
 
 	EXISTS_ONE, EXISTS, END, FORALL, FROM, ON, IN, LET, LIST, REC, REPORT, REPORTSET,
 
