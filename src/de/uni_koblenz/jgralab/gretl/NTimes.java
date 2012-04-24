@@ -63,7 +63,7 @@ public class NTimes extends InPlaceTransformation {
 		List<Transformation<?>> ts = new LinkedList<Transformation<?>>();
 		int times = Integer.valueOf(et.match(TokenTypes.IDENT).value);
 		while (et.tryMatchTransformationCall()) {
-			Transformation<?> t = et.matchTransformation();
+			Transformation<?> t = et.matchTransformationCall();
 			ts.add(t);
 		}
 		return new NTimes(et.context, times,

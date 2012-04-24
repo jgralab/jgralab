@@ -101,6 +101,7 @@ public class GReTLLexer {
 		fixedTokens.put(TokenTypes.TO, "to");
 		fixedTokens.put(TokenTypes.TRANSFORM_ARROW, "<==");
 		fixedTokens.put(TokenTypes.DEFINES, ":=");
+		fixedTokens.put(TokenTypes.DEFINES_TRANSFORMATION, "::=");
 		fixedTokens.put(TokenTypes.PAREN_OPEN, "(");
 		fixedTokens.put(TokenTypes.PAREN_CLOSE, ")");
 		fixedTokens.put(TokenTypes.COLON, ":");
@@ -328,8 +329,10 @@ public class GReTLLexer {
 	 * @throws IOException
 	 */
 	public static void main(String[] args) throws IOException {
-		BufferedReader r = new BufferedReader(new FileReader(new File(
-				"/home/horn/test.gretl")));
+		BufferedReader r = new BufferedReader(
+				new FileReader(
+						new File(
+								"/home/horn/Repos/uni/jgralab/testit/de/uni_koblenz/jgralabtest/gretl/transforms/AddressBookRefactoring.gretl")));
 		StringBuilder sb = new StringBuilder();
 		String line = null;
 		while ((line = r.readLine()) != null) {
@@ -337,7 +340,8 @@ public class GReTLLexer {
 			sb.append('\n');
 		}
 
-		List<Token> tokens = GReTLLexer.scan(sb.toString());
+		// List<Token> tokens = GReTLLexer.scan(sb.toString());
+
 		// List<Token> tokens = GReTLLexer.scan("// Comment1 bla bla\n"
 		// + "CreateVertexClassDisjoint // Comment2\n"
 		// + "  Chassis // Comment3\n"
@@ -345,6 +349,10 @@ public class GReTLLexer {
 		// + "<== #bedsl# from e : V{Entity}, se : e <--{HasSupertype}+\n"
 		// + "            with containsKey(img_Chassis, e.name)\n"
 		// + "            reportSet se.name end;\n");
+
+		List<Token> tokens = GReTLLexer
+				.scan("makeAddressBook ::= CreateVertexClass AddressBook <== set(1);\n"
+						+ "Call makeAddressBook;\n");
 		for (Token t : tokens) {
 			System.out.println(t);
 		}

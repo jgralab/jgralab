@@ -1,8 +1,10 @@
 transformation AddressBookRefactoring;
 
 // In the new graph we want only one AddressBook, but with multiple
-// categories. As archetye set we use the set containing only the number 1.
-CreateVertexClass AddressBook <== set(1);
+// categories. As archetype set we use the set containing only the number 1.
+// For fun, we declare the operation and call it afterwards.
+makeAddressBook ::= CreateVertexClass AddressBook <== set(1);
+Call makeAddressBook;
 
 // For each source AddressBook, we now create a Category in the new
 // AddressBook.
@@ -40,10 +42,12 @@ CreateEdgeClass Contains from Category to Contact aggregation composite
 // splitting the 3 parts of an address at spaces.
 CreateVertexClass Address <== V{Contact};
 
-CreateAttributes Address.city : String,
-                 Address.state : String,
-                 Address.country : String
+setAddressAttributes
+  ::= CreateAttributes Address.city : String,
+                       Address.state : String,
+                       Address.country : String
   <== from c : V{Contact} reportMap c -> split(c.address, ",[ ]*") end;
+Call setAddressAttributes;
 
 CreateEdgeClass HasAddress from Contact (1,*) to Address (1,*)
   <== from c : V{Contact} reportSet c, c, c end;
