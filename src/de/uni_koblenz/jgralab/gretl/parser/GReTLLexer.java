@@ -131,9 +131,9 @@ public class GReTLLexer {
 	private Token nextIdentifier() {
 		StringBuilder nextPossibleToken = new StringBuilder();
 		int start = position;
-		while ((position < transformText.length())
-				&& (!isSeparator(transformText.charAt(position)))) {
+		while (!isSeparator(transformText.charAt(position))) {
 			nextPossibleToken.append(transformText.charAt(position++));
+			checkPosition("reading identifier");
 		}
 		String tokenText = nextPossibleToken.toString();
 		// System.out.println(tokenText);
@@ -152,31 +152,37 @@ public class GReTLLexer {
 			throw new RuntimeException();
 		}
 		int start = position;
-		position++;
-		while ((position < transformText.length())
-				&& (transformText.charAt(position) != quoteChar)) {
+		do {
 			position++;
-			if (transformText.charAt(position - 1) == '\\') {
+			if ((transformText.charAt(position - 2) != '\\')
+					&& (transformText.charAt(position - 1) == '\\')) {
 				position++;
 			}
-		}
+			checkPosition("skipping string");
+		} while (transformText.charAt(position) != quoteChar);
+
 		if (transformText.charAt(position) != quoteChar) {
 			throw new RuntimeException();
 		}
+
 		// skip the trailing " or '
 		position++;
 
-		if (position >= transformText.length()) {
-			throw new RuntimeException("String started at position " + start
-					+ " but is not closed in query: "
-					+ transformText.substring(start));
-		}
+		checkPosition("skipping string");
 
 		return start;
 	}
 
-	private final void skipWhitespacesAndComments() {
+	private void checkPosition(String txt) {
+		if (position >= transformText.length()) {
+			throw new RuntimeException("EOF while " + txt + " (position "
+					+ position + ")");
+		}
+	}
+
+	private final boolean skipWhitespacesAndComments() {
 		boolean skipped = false;
+		boolean everSkipped = false;
 		do {
 			skipped = false;
 			// skip whitespace
@@ -184,20 +190,23 @@ public class GReTLLexer {
 					&& Character.isWhitespace(transformText.charAt(position))) {
 				position++;
 				skipped = true;
+				everSkipped = true;
+			}
+			if (position == transformText.length()) {
+				return everSkipped;
 			}
 			// skip single line comments
-			if ((position < (transformText.length() - 2))
-					&& (transformText.substring(position, position + 2)
-							.equals("//"))) {
+			if (transformText.substring(position, position + 2).equals("//")) {
 				skipped = true;
 				position += 2;
-				while ((position < transformText.length())
-						&& (transformText.charAt(position) != '\n')) {
+				while (transformText.charAt(position) != '\n') {
 					position++;
 				}
 				position++;
+				everSkipped = true;
 			}
 		} while (skipped);
+		return everSkipped;
 	}
 
 	public static List<Token> scan(String query) {
@@ -235,8 +244,7 @@ public class GReTLLexer {
 				continue nextToken;
 			} else {
 				// First, check if it is a string
-				if ((transformText.charAt(position) == '\'')
-						|| (transformText.charAt(position) == '"')) {
+				if (isStringQuote(transformText.charAt(position))) {
 					int start = skipString();
 					Token t = new Token(TokenTypes.STRING,
 							transformText.substring(start + 1, position - 1),
@@ -303,17 +311,15 @@ public class GReTLLexer {
 	private int skipToSemicolonOrArrow() {
 		skipWhitespacesAndComments();
 		int start = position;
-		char c;
-		do {
-			c = transformText.charAt(++position);
-			if (isStringQuote(c)) {
-				skipString();
-			}
-			// TODO: Why does that error???
-			// skipWhitespacesAndComments();
-		} while ((c != ';')
+		char c = transformText.charAt(position);
+		while ((c != ';')
 				&& (!transformText.substring(position, position + 3).equals(
-						fixedTokens.get(TokenTypes.TRANSFORM_ARROW))));
+						fixedTokens.get(TokenTypes.TRANSFORM_ARROW)))) {
+			if (!skipWhitespacesAndComments()) {
+				position++;
+			}
+			c = transformText.charAt(position);
+		}
 		return start;
 	}
 
@@ -332,6 +338,13 @@ public class GReTLLexer {
 		}
 
 		List<Token> tokens = GReTLLexer.scan(sb.toString());
+		// List<Token> tokens = GReTLLexer.scan("// Comment1 bla bla\n"
+		// + "CreateVertexClassDisjoint // Comment2\n"
+		// + "  Chassis // Comment3\n"
+		// + "<== #pddsl# from c : V{Chassis} reportSet c.name end\n"
+		// + "<== #bedsl# from e : V{Entity}, se : e <--{HasSupertype}+\n"
+		// + "            with containsKey(img_Chassis, e.name)\n"
+		// + "            reportSet se.name end;\n");
 		for (Token t : tokens) {
 			System.out.println(t);
 		}
