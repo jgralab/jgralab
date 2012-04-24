@@ -221,7 +221,7 @@ public class ExecuteTransformation extends Transformation<Graph> {
 	}
 
 	private void matchAndExecute() {
-		if (tryMatchTransformation()) {
+		if (tryMatchTransformationCall()) {
 			// This is a transformation op.
 			Transformation<?> t = matchTransformation();
 			t.execute();
@@ -269,10 +269,20 @@ public class ExecuteTransformation extends Transformation<Graph> {
 		};
 	}
 
-	public boolean tryMatchTransformation() {
+	public boolean tryMatchTransformationCall() {
 		Token t = lookAhead(0);
 		return (t.type == TokenTypes.IDENT)
 				&& knownTransformations.containsKey(t.value);
+	}
+
+	private boolean tryMatchTransformationDefinition() {
+		Token id = lookAhead(0);
+		Token assign = lookAhead(1);
+		Token trans = lookAhead(2);
+		return (id.type == TokenTypes.IDENT)
+				&& (assign.type == TokenTypes.ASSIGN)
+				&& (trans.type == TokenTypes.IDENT)
+				&& knownTransformations.containsKey(trans.value);
 	}
 
 	private boolean tryMatchHelperDefinition() {
