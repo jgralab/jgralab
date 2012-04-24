@@ -9,23 +9,24 @@ import de.uni_koblenz.jgralab.gretl.parser.TokenTypes;
  * @author horn
  *
  */
-public class Call extends Transformation<Object> {
+public class Call extends CountingTransformation {
 
-	private final Transformation<? extends Object> transformation;
+	private final CountingTransformation transformation;
 
-	public Call(Context c, Transformation<? extends Object> transform) {
+	public Call(Context c, CountingTransformation transform) {
 		super(c);
 		transformation = transform;
 	}
 
 	public static Call parseAndCreate(ExecuteTransformation et) {
 		String name = et.match(TokenTypes.IDENT).value;
-		Transformation<?> t = et.getDefinedTransformation(name);
+		CountingTransformation t = (CountingTransformation) et
+				.getDefinedTransformation(name);
 		return new Call(et.context, t);
 	}
 
 	@Override
-	protected Object transform() {
+	protected Integer transform() {
 		return transformation.execute();
 	}
 
