@@ -34,10 +34,12 @@
  */
 package de.uni_koblenz.jgralab.utilities.ant;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
@@ -52,12 +54,42 @@ public class RetrieveVersion extends Task {
 	private static final String MINOR = "minor";
 	private static final String MICRO = "micro";
 	private static final String CODENAME = "codename";
+	private static final String HEAD = "head";
 
 	private final Properties prop = new Properties();
 	protected String major;
 	protected String minor;
 	protected String micro;
+	protected String head;
 	protected String codename;
+
+	private void checkExisting(File f) {
+		if (!f.exists() || !f.canRead()) {
+			throw new RuntimeException(f.getAbsolutePath() + " doesn't exist!");
+		}
+	}
+
+	protected void setHEAD() {
+		File headFile = new File(getProject().getBaseDir() + File.separator
+				+ ".git" + File.separator + "HEAD");
+		checkExisting(headFile);
+		BufferedReader rb = null;
+		try {
+			rb = new BufferedReader(new FileReader(headFile));
+			String ref = rb.readLine();
+			int idx = ref.indexOf(' ');
+			ref = ref.substring(idx + 1).replace('/', File.separatorChar);
+			rb.close();
+			File headRefFile = new File(getProject().getBaseDir()
+					+ File.separator + ".git" + File.separator + ref);
+			checkExisting(headRefFile);
+			rb = new BufferedReader(new FileReader(headRefFile));
+			head = rb.readLine();
+			rb.close();
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
 
 	@Override
 	public void execute() {
@@ -67,6 +99,7 @@ public class RetrieveVersion extends Task {
 		getProject().setNewProperty("version.major", major);
 		getProject().setNewProperty("version.minor", minor);
 		getProject().setNewProperty("version.micro", micro);
+		getProject().setNewProperty("version.head", head);
 		getProject().setNewProperty("version.codename", codename);
 	}
 
@@ -83,6 +116,7 @@ public class RetrieveVersion extends Task {
 		major = prop.getProperty(MAJOR, "0");
 		minor = prop.getProperty(MINOR, "0");
 		micro = prop.getProperty(MICRO, "0");
+		head = prop.getProperty(HEAD, "<unknown>");
 		codename = prop.getProperty(CODENAME, "?");
 	}
 
@@ -92,6 +126,7 @@ public class RetrieveVersion extends Task {
 		prop.put(MAJOR, major);
 		prop.put(MINOR, minor);
 		prop.put(MICRO, micro);
+		prop.put(HEAD, head);
 		prop.put(CODENAME, codename);
 		try {
 			prop.store(new FileOutputStream(propertyFile),
