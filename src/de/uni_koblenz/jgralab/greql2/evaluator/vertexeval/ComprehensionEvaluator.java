@@ -93,7 +93,8 @@ public abstract class ComprehensionEvaluator<V extends Comprehension> extends
 		VertexEvaluator<? extends Expression> resultDefEval = getResultDefinitionEvaluator();
 		PCollection<Object> resultCollection = getResultDatastructure(evaluator);
 		declLayer.reset();
-		while (declLayer.iterate(null) && (resultCollection.size() < maxCount)) {
+		while (declLayer.iterate(evaluator)
+				&& (resultCollection.size() < maxCount)) {
 			Object localResult = resultDefEval.getResult(evaluator);
 			resultCollection = resultCollection.plus(localResult);
 		}
