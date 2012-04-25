@@ -123,7 +123,7 @@ public class TableComprehensionEvaluator extends
 		TreeSet<Object> rowHeaderSet = new TreeSet<Object>();
 
 		declarationLayer.reset();
-		while (declarationLayer.iterate(null)) {
+		while (declarationLayer.iterate(evaluator)) {
 			Object columnHeaderEntry = columnHeaderEval.getResult(evaluator);
 			completeColumnHeaderTuple.add(columnHeaderEntry);
 			Object rowHeaderEntry = rowHeaderEval.getResult(evaluator);

@@ -4,11 +4,14 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.pcollections.PVector;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
@@ -20,6 +23,8 @@ import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEnvironmentAdapter;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluatorImpl;
 import de.uni_koblenz.jgralab.greql2.evaluator.QueryImpl;
+import de.uni_koblenz.jgralab.greql2.exception.UnknownTypeException;
+import de.uni_koblenz.jgralab.greql2.types.Table;
 import de.uni_koblenz.jgralab.schema.GraphElementClass;
 
 public class ResidualEvaluatorTest {
@@ -344,6 +349,15 @@ public class ResidualEvaluatorTest {
 	// }
 
 	/*
+	 * TypeIdEvaluator
+	 */
+
+	@Test(expected = UnknownTypeException.class)
+	public void testTypeId_UnknownType() {
+		evaluateQuery("import junctions.*;V{UnknownType}");
+	}
+
+	/*
 	 * QuantifiedExpressionEvaluator
 	 */
 
@@ -360,6 +374,11 @@ public class ResidualEvaluatorTest {
 	@Test
 	public void testQuantifiedExpressionEvaluaotr_forall_false_onlyone() {
 		assertFalse((Boolean) evaluateQuery("forall n:list(1..9)@n<9"));
+	}
+
+	@Test
+	public void testQuantifiedExpressionEvaluaotr_withNonBooleanPredicate() {
+		assertTrue((Boolean) evaluateQuery("forall n:list(1..9)@V{}"));
 	}
 
 	@Test
@@ -391,4 +410,50 @@ public class ResidualEvaluatorTest {
 	public void testQuantifiedExpressionEvaluaotr_existsExactly_false_noneExists() {
 		assertFalse((Boolean) evaluateQuery("exists! n:list(1..9)@n<0"));
 	}
+
+	/*
+	 * FWRExpression
+	 */
+
+	@Test
+	public void testFWRExpression_reportSet() {
+		Set<?> ergSet = (Set<?>) evaluateQuery("from n:list(1..3) with true reportSet n end");
+		assertEquals(3, ergSet.size());
+		assertTrue(ergSet.contains(1));
+		assertTrue(ergSet.contains(2));
+		assertTrue(ergSet.contains(3));
+	}
+
+	@Test
+	public void testFWRExpression_reportList() {
+		List<?> ergList = (List<?>) evaluateQuery("from n:list(1..3) with true reportList n end");
+		assertEquals(3, ergList.size());
+		assertEquals(1, ergList.get(0));
+		assertEquals(2, ergList.get(1));
+		assertEquals(3, ergList.get(2));
+	}
+
+	@Test
+	public void testFWRExpression_reportMap() {
+		Map<?, ?> ergMap = (Map<?, ?>) evaluateQuery("from n:list(1,2) with true reportMap n->getVertex(n) end");
+		assertEquals(2, ergMap.size());
+		assertEquals(datagraph.getVertex(1), ergMap.get(1));
+		assertEquals(datagraph.getVertex(2), ergMap.get(2));
+	}
+
+	@Test
+	public void testFWRExpression_reportTable() {
+		Table<?> ergTable = (Table<?>) evaluateQuery("from n:list(1..3) report n as \"Column1\" end");
+		assertEquals(3, ergTable.size());
+		assertEquals(1, ergTable.get(0));
+		assertEquals(2, ergTable.get(1));
+		assertEquals(3, ergTable.get(2));
+		PVector<String> titles = ergTable.getTitles();
+		assertEquals(1, titles.size());
+		assertEquals("Column1", titles.get(0));
+	}
+
+	// TODO from n:list(1..3) report x as "Column1" x*x as "Column2"
+	// TODO from n,m:list(1..3) reportTable n,m,n*m end
+
 }
