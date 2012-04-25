@@ -342,4 +342,53 @@ public class ResidualEvaluatorTest {
 	// }
 	// }
 	// }
+
+	/*
+	 * QuantifiedExpressionEvaluator
+	 */
+
+	@Test
+	public void testQuantifiedExpressionEvaluaotr_forall_true() {
+		assertTrue((Boolean) evaluateQuery("forall n:list(1..9)@n>0"));
+	}
+
+	@Test
+	public void testQuantifiedExpressionEvaluaotr_forall_false() {
+		assertFalse((Boolean) evaluateQuery("forall n:list(1..9)@n<0"));
+	}
+
+	@Test
+	public void testQuantifiedExpressionEvaluaotr_forall_false_onlyone() {
+		assertFalse((Boolean) evaluateQuery("forall n:list(1..9)@n<9"));
+	}
+
+	@Test
+	public void testQuantifiedExpressionEvaluaotr_eixtst_true() {
+		assertTrue((Boolean) evaluateQuery("exists n:list(1..9)@n>0"));
+	}
+
+	@Test
+	public void testQuantifiedExpressionEvaluaotr_eixtst_onlyone() {
+		assertTrue((Boolean) evaluateQuery("exists n:list(1..9)@n>8"));
+	}
+
+	@Test
+	public void testQuantifiedExpressionEvaluaotr_exists_false() {
+		assertFalse((Boolean) evaluateQuery("exists n:list(1..9)@n<0"));
+	}
+
+	@Test
+	public void testQuantifiedExpressionEvaluaotr_eixtstExactly_true() {
+		assertTrue((Boolean) evaluateQuery("exists! n:list(1..9)@n=5"));
+	}
+
+	@Test
+	public void testQuantifiedExpressionEvaluaotr_existsExactly_false_severalExists() {
+		assertFalse((Boolean) evaluateQuery("exists! n:list(1..9)@n>0"));
+	}
+
+	@Test
+	public void testQuantifiedExpressionEvaluaotr_existsExactly_false_noneExists() {
+		assertFalse((Boolean) evaluateQuery("exists! n:list(1..9)@n<0"));
+	}
 }
