@@ -49,9 +49,9 @@ public class Iteratively extends InPlaceTransformation {
 
 	public static Iteratively parseAndCreate(ExecuteTransformation et) {
 		List<CountingTransformation> ts = new LinkedList<CountingTransformation>();
-		while (et.tryMatchTransformation()) {
+		while (et.tryMatchTransformationCall()) {
 			CountingTransformation t = (CountingTransformation) et
-					.matchTransformation();
+					.matchTransformationCall();
 			ts.add(t);
 		}
 		return new Iteratively(et.context,

@@ -46,7 +46,11 @@ import de.uni_koblenz.ist.utilities.option_handler.OptionHandler;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.GraphIOException;
+import de.uni_koblenz.jgralab.ImplementationType;
 import de.uni_koblenz.jgralab.JGraLab;
+import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
+import de.uni_koblenz.jgralab.greql2.schema.Greql2Schema;
+import de.uni_koblenz.jgralab.gretl.template.TemplateSchema;
 import de.uni_koblenz.jgralab.impl.ConsoleProgressFunction;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.Schema;
@@ -60,6 +64,19 @@ public class GReTLRunner {
 
 	static {
 		JGraLab.setLogLevel(Level.OFF);
+
+		// Load the greql schema so that the class loading time doesn't count
+		// for the transformation time.
+		Greql2Schema.instance().createGraph(ImplementationType.STANDARD);
+
+		// Also load the greql machinery
+		GreqlEvaluator eval = new GreqlEvaluator(
+				"from x: list(1..10) with x = 5 reportSet x end", null, null);
+		eval.startEvaluation();
+		eval.getResult();
+
+		// Ditto for the template schema
+		TemplateSchema.instance().createGraph(ImplementationType.STANDARD);
 	}
 
 	private OptionHandler oh = null;
@@ -191,6 +208,7 @@ public class GReTLRunner {
 					c.setTargetGraph(inGraph);
 				}
 				c.setSourceGraph(inGraph);
+
 				Graph outGraph = executeTransformation(c,
 						new File(cli.getOptionValue('t')));
 				String outFileName = null;
@@ -239,7 +257,7 @@ public class GReTLRunner {
 		GraphIO.saveGraphToFile(outGraph, outFileName,
 				new ConsoleProgressFunction("Saving"));
 		if (cli.hasOption('z')) {
-			if (outGraph.getVCount() + outGraph.getECount() > MAX_VISUALIZATION_SIZE) {
+			if ((outGraph.getVCount() + outGraph.getECount()) > MAX_VISUALIZATION_SIZE) {
 				System.err.println("Sorry, graph is too big to be dotted.");
 			} else {
 				String pdf = outFileName.replaceFirst("\\.tg(\\.gz)?$", ".pdf");

@@ -39,39 +39,51 @@ import java.util.List;
 
 import de.uni_koblenz.jgralab.gretl.parser.TokenTypes;
 
-public class NTimes extends InPlaceTransformation {
+/**
+ * Executes the given {@link CountingTransformation}s at most N times. If an
+ * earlier application doesn't succeed, it may shortcut. Returns the actual
+ * number of applications.
+ *
+ * @author horn
+ *
+ */
+public class NTimes extends CountingTransformation {
 
-	private Transformation<?>[] transforms;
+	private CountingTransformation[] transforms;
 	private final int times;
 
 	public NTimes(Context context, int times,
-			Transformation<?>... transformations) {
+			CountingTransformation... transformations) {
 		super(context);
 		this.transforms = transformations;
 		this.times = times;
 	}
 
 	public static NTimes parseAndCreate(ExecuteTransformation et) {
-		List<Transformation<?>> ts = new LinkedList<Transformation<?>>();
+		List<CountingTransformation> ts = new LinkedList<CountingTransformation>();
 		int times = Integer.valueOf(et.match(TokenTypes.IDENT).value);
-		while (et.tryMatchTransformation()) {
-			Transformation<?> t = et.matchTransformation();
+		while (et.tryMatchTransformationCall()) {
+			CountingTransformation t = (CountingTransformation) et
+					.matchTransformationCall();
 			ts.add(t);
 		}
-		return new NTimes(et.context, times, ts.toArray(new Transformation[ts
-				.size()]));
+		return new NTimes(et.context, times,
+				ts.toArray(new CountingTransformation[ts.size()]));
 	}
 
 	@Override
 	protected Integer transform() {
-		for (int i = 0; i < times; i++) {
-			for (Transformation<?> t : transforms) {
+		int cnt = Integer.MAX_VALUE;
+		int i = 0;
+		for (; (i < times) && (cnt > 0); i++) {
+			cnt = 0;
+			for (CountingTransformation t : transforms) {
 				// System.out.println(t.getClass().getSimpleName() +
 				// ", iteration " + iterations);
-				t.execute();
+				cnt += t.execute();
 			}
 		}
-		return times;
+		return i;
 	}
 
 }

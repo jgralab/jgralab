@@ -50,7 +50,7 @@ public class GreqlLexer {
 	protected static final Map<TokenTypes, String> fixedTokens = Collections
 			.unmodifiableMap(new EnumMap<TokenTypes, String>(TokenTypes.class) {
 				{
-					put(TokenTypes.T, "T");
+					put(TokenTypes.TRANSPOSED, "^T");
 					put(TokenTypes.AND, "and");
 					put(TokenTypes.FALSE, "false");
 					put(TokenTypes.NOT, "not");

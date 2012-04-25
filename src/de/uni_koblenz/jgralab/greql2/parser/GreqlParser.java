@@ -55,6 +55,7 @@ import de.uni_koblenz.jgralab.greql2.schema.*;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 
 public class GreqlParser extends ParserHelper {
+	private static final Greql2Schema SCHEMA = Greql2Schema.instance();
 	private final Map<RuleEnum, int[]> testedRules = new HashMap<RuleEnum, int[]>();
 
 	private List<Token> tokens = null;
@@ -71,7 +72,6 @@ public class GreqlParser extends ParserHelper {
 
 	private boolean predicateFulfilled = true;
 
-	private Greql2Schema schema = null;
 	private Set<String> subQueryNames = null;
 
 	/**
@@ -92,7 +92,7 @@ public class GreqlParser extends ParserHelper {
 	 * the current token position. If it was already tested, this method skips
 	 * the number of tokens which were consumed by the rule in its last
 	 * application at the current token
-	 *
+	 * 
 	 * @param rule
 	 *            the rule to test
 	 * @return the current token position if the rule was not applied before or
@@ -136,7 +136,7 @@ public class GreqlParser extends ParserHelper {
 	 * (skipRule(pos)) return null; Expression expr =
 	 * parseQuantifiedExpression(); ruleSucceeded(RuleEnum.EXPRESSION, pos);
 	 * return expr;
-	 *
+	 * 
 	 * @return true if the rule application has already been tested and the
 	 *         parser is still in predicate mode, so the rule and the tokens it
 	 *         matched last time can be skipped, false otherwise
@@ -153,8 +153,7 @@ public class GreqlParser extends ParserHelper {
 		query = source;
 		parsingStack = new Stack<Integer>();
 		predicateStack = new Stack<Boolean>();
-		schema = Greql2Schema.instance();
-		graph = schema.createGreql2Graph(ImplementationType.STANDARD);
+		graph = SCHEMA.createGreql2Graph(ImplementationType.STANDARD);
 		tokens = GreqlLexer.scan(source);
 		afterParsingvariableSymbolTable = new SymbolTable();
 		duringParsingvariableSymbolTable = new SimpleSymbolTable();
@@ -819,7 +818,7 @@ public class GreqlParser extends ParserHelper {
 
 	/**
 	 * matches conditional expressions
-	 *
+	 * 
 	 * @return
 	 */
 	private final Expression parseConditionalExpression() {
@@ -1390,42 +1389,39 @@ public class GreqlParser extends ParserHelper {
 						lengthPath, offsetPath));
 				result = ipd;
 			}
+		} else if (tryMatch(TokenTypes.TRANSPOSED)) {
+			if (!inPredicateMode()) {
+				TransposedPathDescription tpd = graph
+						.createTransposedPathDescription();
+				IsTransposedPathOf transposedPathOf = graph
+						.createIsTransposedPathOf(iteratedPath, tpd);
+				transposedPathOf.set_sourcePositions(createSourcePositionList(
+						lengthPath, offsetPath));
+				result = tpd;
+			}
 		} else if (tryMatch(TokenTypes.CARET)) {
-			if (tryMatch(TokenTypes.T)) {
-				if (!inPredicateMode()) {
-					TransposedPathDescription tpd = graph
-							.createTransposedPathDescription();
-					IsTransposedPathOf transposedPathOf = graph
-							.createIsTransposedPathOf(iteratedPath, tpd);
-					transposedPathOf
-							.set_sourcePositions(createSourcePositionList(
-									lengthPath, offsetPath));
-					result = tpd;
+			int offsetExpr = getCurrentOffset();
+			Expression ie = parseNumericLiteral();
+			if (!inPredicateMode()) {
+				if (!(ie instanceof IntLiteral)) {
+					fail("Expected integer constant as iteration quantifier or T, but found");
 				}
-			} else {
-				int offsetExpr = getCurrentOffset();
-				Expression ie = parseNumericLiteral();
-				if (!inPredicateMode()) {
-					if (!(ie instanceof IntLiteral)) {
-						fail("Expected integer constant as iteration quantifier or T, but found");
-					}
-					int lengthExpr = getLength(offsetExpr);
-					ExponentiatedPathDescription epd = graph
-							.createExponentiatedPathDescription();
-					IsExponentiatedPathOf exponentiatedPathOf = graph
-							.createIsExponentiatedPathOf(iteratedPath, epd);
-					exponentiatedPathOf
-							.set_sourcePositions(createSourcePositionList(
-									lengthPath, offsetPath));
-					IsExponentOf exponentOf = graph.createIsExponentOf(
-							(IntLiteral) ie, epd);
-					exponentOf.set_sourcePositions(createSourcePositionList(
-							lengthExpr, offsetExpr));
-					result = epd;
-				}
+				int lengthExpr = getLength(offsetExpr);
+				ExponentiatedPathDescription epd = graph
+						.createExponentiatedPathDescription();
+				IsExponentiatedPathOf exponentiatedPathOf = graph
+						.createIsExponentiatedPathOf(iteratedPath, epd);
+				exponentiatedPathOf
+						.set_sourcePositions(createSourcePositionList(
+								lengthPath, offsetPath));
+				IsExponentOf exponentOf = graph.createIsExponentOf(
+						(IntLiteral) ie, epd);
+				exponentOf.set_sourcePositions(createSourcePositionList(
+						lengthExpr, offsetExpr));
+				result = epd;
 			}
 		} else {
-			fail("No iteration at iterated path description");
+			fail("No iteration or transposition at iterated path description");
 		}
 		if ((lookAhead(0) == TokenTypes.STAR)
 				|| (lookAhead(0) == TokenTypes.PLUS)
@@ -2663,7 +2659,7 @@ public class GreqlParser extends ParserHelper {
 	}
 
 	public Greql2Schema getSchema() {
-		return schema;
+		return SCHEMA;
 	}
 
 }

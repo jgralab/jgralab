@@ -1,7 +1,7 @@
 transformation AddressBookRefactoring;
 
 // In the new graph we want only one AddressBook, but with multiple
-// categories. As archetye set we use the set containing only the number 1.
+// categories. As archetype set we use the set containing only the number 1.
 CreateVertexClass AddressBook <== set(1);
 
 // For each source AddressBook, we now create a Category in the new

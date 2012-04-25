@@ -52,7 +52,6 @@ import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql2.exception.DuplicateVariableException;
 import de.uni_koblenz.jgralab.greql2.exception.ParsingException;
 import de.uni_koblenz.jgralab.greql2.exception.UndefinedVariableException;
-import de.uni_koblenz.jgralab.greql2.funlib.FunLib;
 import de.uni_koblenz.jgralab.greql2.schema.Comprehension;
 import de.uni_koblenz.jgralab.greql2.schema.Declaration;
 import de.uni_koblenz.jgralab.greql2.schema.Definition;
@@ -107,17 +106,13 @@ public abstract class ParserHelper {
 
 	protected Greql2Graph graph;
 
-	protected Greql2Schema schema = null;
-
 	protected SymbolTable afterParsingvariableSymbolTable = null;
 
 	protected SimpleSymbolTable duringParsingvariableSymbolTable = null;
 
-	protected Map<String, FunctionId> functionSymbolTable = null;
+	protected Map<String, FunctionId> functionSymbolTable;
 
 	protected boolean graphCleaned = false;
-
-	protected FunLib funlib = null;
 
 	protected Token lookAhead = null;
 
@@ -241,8 +236,9 @@ public abstract class ParserHelper {
 				}
 				variable.delete();
 			}
-			Expression boundExpr = (Expression) exp.getFirstIsBoundExprOfIncidence(
-					EdgeDirection.IN).getAlpha();
+			Expression boundExpr = (Expression) exp
+					.getFirstIsBoundExprOfIncidence(EdgeDirection.IN)
+					.getAlpha();
 			Edge e = exp.getFirstIncidence(EdgeDirection.OUT);
 			while (e != null) {
 				e.setAlpha(boundExpr);
@@ -372,8 +368,8 @@ public abstract class ParserHelper {
 		for (IsDefinitionOf currentEdge : v
 				.getIsDefinitionOfIncidences(EdgeDirection.IN)) {
 			Definition definition = (Definition) currentEdge.getAlpha();
-			Expression expr = (Expression) definition.getFirstIsExprOfIncidence(
-					EdgeDirection.IN).getAlpha();
+			Expression expr = (Expression) definition
+					.getFirstIsExprOfIncidence(EdgeDirection.IN).getAlpha();
 			mergeVariables(expr, true);
 		}
 
@@ -395,7 +391,8 @@ public abstract class ParserHelper {
 			throws DuplicateVariableException, UndefinedVariableException {
 		for (IsSimpleDeclOf currentEdge : v
 				.getIsSimpleDeclOfIncidences(EdgeDirection.IN)) {
-			SimpleDeclaration simpleDecl = (SimpleDeclaration) currentEdge.getAlpha();
+			SimpleDeclaration simpleDecl = (SimpleDeclaration) currentEdge
+					.getAlpha();
 			for (IsDeclaredVarOf isDeclaredVarOf : simpleDecl
 					.getIsDeclaredVarOfIncidences(EdgeDirection.IN)) {
 				Variable variable = (Variable) isDeclaredVarOf.getAlpha();
@@ -406,9 +403,10 @@ public abstract class ParserHelper {
 
 		for (IsSimpleDeclOf currentEdge : v
 				.getIsSimpleDeclOfIncidences(EdgeDirection.IN)) {
-			SimpleDeclaration simpleDecl = (SimpleDeclaration) currentEdge.getAlpha();
-			Expression expr = (Expression) simpleDecl.getFirstIsTypeExprOfIncidence(
-					EdgeDirection.IN).getAlpha();
+			SimpleDeclaration simpleDecl = (SimpleDeclaration) currentEdge
+					.getAlpha();
+			Expression expr = (Expression) simpleDecl
+					.getFirstIsTypeExprOfIncidence(EdgeDirection.IN).getAlpha();
 			mergeVariables(expr, true);
 		}
 
