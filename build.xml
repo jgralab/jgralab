@@ -447,9 +447,8 @@
 			<attribute name="Main-Class" value="${main.fq}" />
 			<section name="de/uni_koblenz/jgralab/">
 				<attribute name="Implementation-Title" value="JGraLab" />
-				<attribute name="Implementation-Version" value="${version}@${version.codename}" />
+				<attribute name="Implementation-Version" value="${version}@${version.codename}@${version.head}" />
 				<attribute name="Implementation-Vendor" value="University of Koblenz, Institute for Software Technology" />
-				<attribute name="Implementation-Head" value="${version.head}" />
 			</section>
 		</manifest>
 	</target>
