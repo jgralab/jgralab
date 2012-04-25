@@ -190,7 +190,7 @@ public class VariableDeclarationLayer {
 			while (pointer < size) {
 				currDecl = variableDeclarations.get(pointer++);
 				currDecl.reset(evaluator);
-				if (!currDecl.iterate(null)) {
+				if (!currDecl.iterate(evaluator)) {
 					pointer -= 2;
 					iterate = true;
 					break;

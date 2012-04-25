@@ -82,7 +82,7 @@ public class MapComprehensionEvaluator extends
 		VertexEvaluator<? extends Expression> valEval = query
 				.getVertexEvaluator(val);
 		declLayer.reset();
-		while (declLayer.iterate(null)) {
+		while (declLayer.iterate(evaluator)) {
 			Object jkey = keyEval.getResult(evaluator);
 			Object jval = valEval.getResult(evaluator);
 			resultMap = resultMap.plus(jkey, jval);
