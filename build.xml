@@ -457,13 +457,17 @@
 	<!-- calls targets modify, clean, jar, test and document -->
 	<target name="release" depends="cleanall,bumpmicro,build,sourcejar,document" />
 
-	<target name="bumpmicro" depends="versiontasks">
+	<target name="bumpmicro_internal" depends="versiontasks">
 		<bump_micro />
 	</target>
 
-	<target name="bumpminor" depends="versiontasks">
+	<target name="bumpmicro" depends="bumpmicro_internal,modify_manifest" />
+
+	<target name="bumpminor_internal" depends="versiontasks">
 		<bump_minor />
 	</target>
+
+	<target name="bumpminor" depends="bumpminor_internal,modify_manifest" />
 
 	<target name="testcompile" depends="generatetestschemas,common.testcompile" />
 
