@@ -104,7 +104,7 @@ public class QuantifiedExpressionEvaluator extends
 		declarationLayer.reset();
 		switch (quantificationType) {
 		case EXISTS:
-			while (declarationLayer.iterate(null)) {
+			while (declarationLayer.iterate(evaluator)) {
 				Object tempResult = predicateEvaluator.getResult(evaluator);
 				if (tempResult instanceof Boolean) {
 					if ((Boolean) tempResult) {
@@ -114,7 +114,7 @@ public class QuantifiedExpressionEvaluator extends
 			}
 			return Boolean.FALSE;
 		case EXISTSONE:
-			while (declarationLayer.iterate(null)) {
+			while (declarationLayer.iterate(evaluator)) {
 				Object tempResult = predicateEvaluator.getResult(evaluator);
 				if (tempResult instanceof Boolean) {
 					if ((Boolean) tempResult) {
@@ -131,7 +131,7 @@ public class QuantifiedExpressionEvaluator extends
 			}
 			return Boolean.FALSE;
 		case FORALL:
-			while (declarationLayer.iterate(null)) {
+			while (declarationLayer.iterate(evaluator)) {
 				Object tempResult = predicateEvaluator.getResult(evaluator);
 				if (tempResult instanceof Boolean) {
 					if (!(Boolean) tempResult) {
