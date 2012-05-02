@@ -153,9 +153,8 @@ public class TableComprehensionEvaluator extends
 			headerTuple = headerTuple
 					.plus((String) theval.getResult(evaluator));
 		} else {
-			headerTuple.plus(""); // dummy entry in the upper
-			// left
-			// corner
+			// dummy entry in the upper left corner
+			headerTuple = headerTuple.plus("");
 		}
 		while (colIter.hasNext()) {
 			headerTuple = headerTuple.plus(colIter.next().toString());
