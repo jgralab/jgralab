@@ -35,11 +35,11 @@
 package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
+import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.TraversalContext;
 import de.uni_koblenz.jgralab.greql2.evaluator.InternalGreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.QueryImpl;
 import de.uni_koblenz.jgralab.greql2.schema.Expression;
-import de.uni_koblenz.jgralab.greql2.schema.Greql2Graph;
 import de.uni_koblenz.jgralab.greql2.schema.IsExpressionOnSubgraph;
 import de.uni_koblenz.jgralab.greql2.schema.IsSubgraphDefinitionOf;
 import de.uni_koblenz.jgralab.greql2.schema.SubgraphDefinition;
@@ -79,7 +79,7 @@ public class SubgraphRestrictedExpressionEvaluator extends
 			exprEval = query.getVertexEvaluator(expr);
 		}
 
-		Greql2Graph graph = query.getQueryGraph();
+		Graph graph = evaluator.getDataGraph();
 
 		// set traversal context
 		TraversalContext oldTraversalContext = graph.getTraversalContext();

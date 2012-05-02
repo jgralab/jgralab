@@ -19,7 +19,8 @@ import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VertexEvaluator;
 @RunWith(Suite.class)
 @Suite.SuiteClasses({ LiteralEvaluatorTest.class,
 		CollectionEvaluatorTest.class, VariableEvaluatorTest.class,
-		PathExpressionTest.class, ResidualEvaluatorTest.class })
+		PathExpressionTest.class, ResidualEvaluatorTest.class,
+		SubgraphEvaluatorTest.class })
 public class VertexEvaluatorTest {
 
 }
