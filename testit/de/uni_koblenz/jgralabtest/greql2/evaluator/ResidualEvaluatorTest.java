@@ -25,6 +25,7 @@ import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluatorImpl;
 import de.uni_koblenz.jgralab.greql2.evaluator.QueryImpl;
 import de.uni_koblenz.jgralab.greql2.exception.UnknownTypeException;
 import de.uni_koblenz.jgralab.greql2.types.Table;
+import de.uni_koblenz.jgralab.greql2.types.Tuple;
 import de.uni_koblenz.jgralab.schema.GraphElementClass;
 
 public class ResidualEvaluatorTest {
@@ -412,6 +413,20 @@ public class ResidualEvaluatorTest {
 	}
 
 	/*
+	 * ConditionalExpression
+	 */
+
+	@Test
+	public void testConditionalExpressionEvaluator_true() {
+		assertEquals(1, evaluateQuery("1=1?1:2"));
+	}
+
+	@Test
+	public void testConditionalExpressionEvaluator_false() {
+		assertEquals(2, evaluateQuery("1=2?1:2"));
+	}
+
+	/*
 	 * FWRExpression
 	 */
 
@@ -425,12 +440,30 @@ public class ResidualEvaluatorTest {
 	}
 
 	@Test
+	public void testFWRExpression_reportSetN() {
+		Set<?> ergSet = (Set<?>) evaluateQuery("from n:list(10..100) with true reportSetN 10: n end");
+		assertEquals(10, ergSet.size());
+		for (int i = 10; i < 20; i++) {
+			assertTrue(ergSet.contains(i));
+		}
+	}
+
+	@Test
 	public void testFWRExpression_reportList() {
 		List<?> ergList = (List<?>) evaluateQuery("from n:list(1..3) with true reportList n end");
 		assertEquals(3, ergList.size());
 		assertEquals(1, ergList.get(0));
 		assertEquals(2, ergList.get(1));
 		assertEquals(3, ergList.get(2));
+	}
+
+	@Test
+	public void testFWRExpression_reportListN() {
+		List<?> ergList = (List<?>) evaluateQuery("from n:list(10..100) with true reportListN 10: n end");
+		assertEquals(10, ergList.size());
+		for (int i = 0; i < ergList.size(); i++) {
+			assertEquals(i + 10, ergList.get(i));
+		}
 	}
 
 	@Test
@@ -442,7 +475,16 @@ public class ResidualEvaluatorTest {
 	}
 
 	@Test
-	public void testFWRExpression_reportTable() {
+	public void testFWRExpression_reportMapN() {
+		Map<?, ?> ergMap = (Map<?, ?>) evaluateQuery("from n:list(1..100) with true reportMapN 10: n->getVertex(n) end");
+		assertEquals(10, ergMap.size());
+		for (int i = 1; i <= 10; i++) {
+			assertEquals(datagraph.getVertex(i), ergMap.get(i));
+		}
+	}
+
+	@Test
+	public void testFWRExpression_reportTable_oneNamedColumn() {
 		Table<?> ergTable = (Table<?>) evaluateQuery("from n:list(1..3) report n as \"Column1\" end");
 		assertEquals(3, ergTable.size());
 		assertEquals(1, ergTable.get(0));
@@ -453,7 +495,43 @@ public class ResidualEvaluatorTest {
 		assertEquals("Column1", titles.get(0));
 	}
 
-	// TODO from n:list(1..3) report x as "Column1" x*x as "Column2"
-	// TODO from n,m:list(1..3) reportTable n,m,n*m end
+	@Test
+	public void testFWRExpression_reportTable_twoNamedColumns() {
+		Table<?> ergTable = (Table<?>) evaluateQuery("from x:list(1..3) report x as \"Column1\", x*x as \"Column2\" end");
+		assertEquals(3, ergTable.size());
+		for (int i = 0; i < ergTable.size(); i++) {
+			Tuple ergTuple = (Tuple) ergTable.get(i);
+			int x = i + 1;
+			assertEquals(x, ergTuple.get(0));
+			assertEquals(x * x, ergTuple.get(1));
+		}
+		PVector<String> titles = ergTable.getTitles();
+		assertEquals(2, titles.size());
+		assertEquals("Column1", titles.get(0));
+		assertEquals("Column2", titles.get(1));
+	}
+
+	@Test
+	public void testFWRExpression_reportTable_twoVariablesAndThreeColumns() {
+		Table<?> ergTable = (Table<?>) evaluateQuery("from n,m:list(1..3) reportTable n,m,n*m end");
+		System.out.println(ergTable);
+		assertEquals(3, ergTable.size());
+		for (int i = 0; i < ergTable.size(); i++) {
+			int n = i + 1;
+			Tuple ergLine = (Tuple) ergTable.get(i);
+			assertEquals(n, ergLine.get(0));
+			for (int j = 1; j < ergLine.size(); j++) {
+				int m = j;
+				assertEquals("check result for " + n + "*" + m, n * m,
+						ergLine.get(j));
+			}
+		}
+		PVector<String> titles = ergTable.getTitles();
+		assertEquals(4, titles.size());
+		assertEquals("", titles.get(0));
+		assertEquals("1", titles.get(1));
+		assertEquals("2", titles.get(2));
+		assertEquals("3", titles.get(3));
+	}
 
 }
