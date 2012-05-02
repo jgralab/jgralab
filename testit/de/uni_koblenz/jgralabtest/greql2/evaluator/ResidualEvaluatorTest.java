@@ -514,7 +514,6 @@ public class ResidualEvaluatorTest {
 	@Test
 	public void testFWRExpression_reportTable_twoVariablesAndThreeColumns() {
 		Table<?> ergTable = (Table<?>) evaluateQuery("from n,m:list(1..3) reportTable n,m,n*m end");
-		System.out.println(ergTable);
 		assertEquals(3, ergTable.size());
 		for (int i = 0; i < ergTable.size(); i++) {
 			int n = i + 1;

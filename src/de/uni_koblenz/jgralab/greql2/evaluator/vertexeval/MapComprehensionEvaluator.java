@@ -60,15 +60,16 @@ public class MapComprehensionEvaluator extends
 	}
 
 	// @Override
-	// protected VertexCosts calculateSubtreeEvaluationCosts() {
-	// return greqlEvaluator.getCostModel().calculateCostsMapComprehension(
-	// this);
+	// protected VertexCosts calculateSubtreeEvaluationCosts(GraphSize
+	// graphSize) {
+	// return this.greqlEvaluator.getCostModel()
+	// .calculateCostsMapComprehension(this, graphSize);
 	// }
 
 	@Override
 	public Object evaluate(InternalGreqlEvaluator evaluator) {
+		initializeMaxCount(evaluator);
 		VariableDeclarationLayer declLayer = getVariableDeclationLayer(evaluator);
-
 		PMap<Object, Object> resultMap = JGraLab.map();
 
 		Expression key = (Expression) vertex
@@ -82,7 +83,7 @@ public class MapComprehensionEvaluator extends
 		VertexEvaluator<? extends Expression> valEval = query
 				.getVertexEvaluator(val);
 		declLayer.reset();
-		while (declLayer.iterate(evaluator)) {
+		while (declLayer.iterate(evaluator) && (resultMap.size() < maxCount)) {
 			Object jkey = keyEval.getResult(evaluator);
 			Object jval = valEval.getResult(evaluator);
 			resultMap = resultMap.plus(jkey, jval);
