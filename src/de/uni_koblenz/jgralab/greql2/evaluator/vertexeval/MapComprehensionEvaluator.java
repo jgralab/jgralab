@@ -52,7 +52,7 @@ import de.uni_koblenz.jgralab.greql2.schema.MapComprehension;
 
 /**
  * @author Tassilo Horn <horn@uni-koblenz.de>
- * 
+ *
  */
 public class MapComprehensionEvaluator extends ComprehensionEvaluator {
 	private MapComprehension vertex;
@@ -65,7 +65,7 @@ public class MapComprehensionEvaluator extends ComprehensionEvaluator {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @seede.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VertexEvaluator#
 	 * calculateSubtreeEvaluationCosts
 	 * (de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize)
@@ -78,15 +78,15 @@ public class MapComprehensionEvaluator extends ComprehensionEvaluator {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VertexEvaluator#evaluate
 	 * ()
 	 */
 	@Override
 	public Object evaluate() {
+		initializeMaxCount();
 		VariableDeclarationLayer declLayer = getVariableDeclationLayer();
-
 		PMap<Object, Object> resultMap = JGraLab.map();
 
 		Vertex key = vertex.getFirstIsKeyExprOfComprehensionIncidence(
@@ -96,7 +96,7 @@ public class MapComprehensionEvaluator extends ComprehensionEvaluator {
 				EdgeDirection.IN).getAlpha();
 		VertexEvaluator valEval = vertexEvalMarker.getMark(val);
 		declLayer.reset();
-		while (declLayer.iterate()) {
+		while (declLayer.iterate() && (resultMap.size() < maxCount)) {
 			Object jkey = keyEval.getResult();
 			Object jval = valEval.getResult();
 			resultMap = resultMap.plus(jkey, jval);
@@ -106,7 +106,7 @@ public class MapComprehensionEvaluator extends ComprehensionEvaluator {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VertexEvaluator#getVertex
 	 * ()
