@@ -48,9 +48,9 @@ import de.uni_koblenz.jgralab.Vertex;
 
 /**
  * This class contains the computed index for a graph
- * 
+ *
  * @author ist@uni-koblenz.de
- * 
+ *
  */
 public class GraphIndex {
 
@@ -100,7 +100,7 @@ public class GraphIndex {
 
 	/**
 	 * Creates a new GraphIndex for the graph
-	 * 
+	 *
 	 * @param graph
 	 *            the graph to create the Index for
 	 */
@@ -115,8 +115,7 @@ public class GraphIndex {
 	 * @return true iff this index is still valid for the given graph
 	 */
 	public boolean isValid(Graph g) {
-		return ((g == graph) && (!g
-				.isGraphModified(graphVersion)));
+		return ((g == graph) && (!g.isGraphModified(graphVersion)));
 	}
 
 	/**
@@ -128,7 +127,7 @@ public class GraphIndex {
 
 	/**
 	 * adds a indexed vertex set
-	 * 
+	 *
 	 * @param query
 	 *            the query which constructs this set, e.g. "V{Identifier}"
 	 */
@@ -154,7 +153,7 @@ public class GraphIndex {
 	/**
 	 * removes as much entrys as are needed to push the index size below the
 	 * given value in graph elements
-	 * 
+	 *
 	 * @param maxIndexSize
 	 *            the method will remove as much indix entrys as needed to get
 	 *            the index size lower than maxIndexSize, measured in
@@ -166,6 +165,7 @@ public class GraphIndex {
 		}
 		TreeSet<Entry<String, VertexIndexEntry>> entrySet = new TreeSet<Entry<String, VertexIndexEntry>>(
 				new Comparator<Entry<String, VertexIndexEntry>>() {
+					@Override
 					public int compare(Entry<String, VertexIndexEntry> o1,
 							Entry<String, VertexIndexEntry> o2) {
 						return (int) (o1.getValue().modificationTime - o2
