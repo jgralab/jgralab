@@ -47,7 +47,7 @@ public abstract class ComprehensionEvaluator extends VertexEvaluator {
 
 	private VariableDeclarationLayer varDeclLayer = null;
 	private VertexEvaluator resultDefinitionEvaluator = null;
-	private long maxCount = Long.MAX_VALUE;
+	protected long maxCount = Long.MAX_VALUE;
 
 	@Override
 	public abstract Comprehension getVertex();
@@ -80,14 +80,17 @@ public abstract class ComprehensionEvaluator extends VertexEvaluator {
 		return varDeclLayer;
 	}
 
-	@Override
-	public Object evaluate() {
+	protected final void initializeMaxCount() {
 		if (getVertex().get_maxCount() != null) {
 			VertexEvaluator maxCountEval = vertexEvalMarker.getMark(getVertex()
 					.get_maxCount());
 			maxCount = ((Number) maxCountEval.getResult()).longValue();
 		}
+	}
 
+	@Override
+	public Object evaluate() {
+		initializeMaxCount();
 		VariableDeclarationLayer declLayer = getVariableDeclationLayer();
 		VertexEvaluator resultDefEval = getResultDefinitionEvaluator();
 		PCollection<Object> resultCollection = getResultDatastructure();

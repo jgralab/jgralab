@@ -447,7 +447,7 @@
 			<attribute name="Main-Class" value="${main.fq}" />
 			<section name="de/uni_koblenz/jgralab/">
 				<attribute name="Implementation-Title" value="JGraLab" />
-				<attribute name="Implementation-Version" value="${version}@${version.codename}" />
+				<attribute name="Implementation-Version" value="${version}@${version.codename}@${version.head}" />
 				<attribute name="Implementation-Vendor" value="University of Koblenz, Institute for Software Technology" />
 			</section>
 		</manifest>
@@ -457,13 +457,17 @@
 	<!-- calls targets modify, clean, jar, test and document -->
 	<target name="release" depends="cleanall,bumpmicro,build,sourcejar,document" />
 
-	<target name="bumpmicro" depends="versiontasks">
+	<target name="bumpmicro_internal" depends="versiontasks">
 		<bump_micro />
 	</target>
 
-	<target name="bumpminor" depends="versiontasks">
+	<target name="bumpmicro" depends="bumpmicro_internal,modify_manifest" />
+
+	<target name="bumpminor_internal" depends="versiontasks">
 		<bump_minor />
 	</target>
+
+	<target name="bumpminor" depends="bumpminor_internal,modify_manifest" />
 
 	<target name="testcompile" depends="generatetestschemas,common.testcompile" />
 

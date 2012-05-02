@@ -66,9 +66,11 @@ public class ExecuteTransformation extends Transformation<Graph> {
 
 	static String FACTORY_METHOD_NAME = "parseAndCreate";
 
-	private static HashMap<String, Method> knownTransformations = new HashMap<String, Method>();
+	private static final HashMap<String, Method> knownTransformationClasses = new HashMap<String, Method>();
 	private static Logger logger = JGraLab
 			.getLogger(ExecuteTransformation.class.getPackage().getName());
+
+	private final HashMap<String, Transformation<?>> definedTransformations = new HashMap<String, Transformation<?>>();
 
 	public static void registerTransformation(
 			Class<? extends Transformation<?>> tClass) {
@@ -86,7 +88,7 @@ public class ExecuteTransformation extends Transformation<Graph> {
 					+ "(ExecuteTransformation) method.", e);
 		}
 
-		knownTransformations.put(className, createMethod);
+		knownTransformationClasses.put(className, createMethod);
 		logger.finer("Registered transformation " + className + ".");
 	}
 
@@ -99,6 +101,7 @@ public class ExecuteTransformation extends Transformation<Graph> {
 		registerTransformation(AddSuperClasses.class);
 		registerTransformation(Assert.class);
 		registerTransformation(ExecuteTransformation.class);
+		registerTransformation(Call.class);
 		registerTransformation(CopyDomain.class);
 		registerTransformation(CopyEdgeClass.class);
 		registerTransformation(CopyVertexClass.class);
@@ -221,9 +224,12 @@ public class ExecuteTransformation extends Transformation<Graph> {
 	}
 
 	private void matchAndExecute() {
-		if (tryMatchTransformation()) {
+		if (tryMatchTransformationDefinition()) {
+			matchTransformationDefinition();
+			return;
+		} else if (tryMatchTransformationCall()) {
 			// This is a transformation op.
-			Transformation<?> t = matchTransformation();
+			Transformation<?> t = matchTransformationCall();
 			t.execute();
 			return;
 		} else if (tryMatchHelperDefinition()) {
@@ -269,10 +275,27 @@ public class ExecuteTransformation extends Transformation<Graph> {
 		};
 	}
 
-	public boolean tryMatchTransformation() {
+	public boolean tryMatchTransformationCall() {
 		Token t = lookAhead(0);
 		return (t.type == TokenTypes.IDENT)
-				&& knownTransformations.containsKey(t.value);
+				&& knownTransformationClasses.containsKey(t.value);
+	}
+
+	private boolean tryMatchTransformationDefinition() {
+		Token id = lookAhead(0);
+		Token definesTransform = lookAhead(1);
+		Token trans = lookAhead(2);
+		return (id.type == TokenTypes.IDENT)
+				&& (definesTransform.type == TokenTypes.DEFINES_TRANSFORMATION)
+				&& (trans.type == TokenTypes.IDENT)
+				&& knownTransformationClasses.containsKey(trans.value);
+	}
+
+	private void matchTransformationDefinition() {
+		String name = match(TokenTypes.IDENT).value;
+		match(TokenTypes.DEFINES_TRANSFORMATION);
+		Transformation<?> t = matchTransformationCall();
+		definedTransformations.put(name, t);
 	}
 
 	private boolean tryMatchHelperDefinition() {
@@ -288,9 +311,9 @@ public class ExecuteTransformation extends Transformation<Graph> {
 				&& (lookAhead(1).type == TokenTypes.DEFINES);
 	}
 
-	public Transformation<?> matchTransformation() {
+	public Transformation<?> matchTransformationCall() {
 		String transformName = match(TokenTypes.IDENT).value;
-		Method createMethod = knownTransformations.get(transformName);
+		Method createMethod = knownTransformationClasses.get(transformName);
 		if (createMethod == null) {
 			throw new GReTLParsingException(context,
 					"Unknown transformation class '" + transformName + "'.");
@@ -587,6 +610,15 @@ public class ExecuteTransformation extends Transformation<Graph> {
 			return tokens.get(idx);
 		}
 		return null;
+	}
+
+	public Transformation<?> getDefinedTransformation(String name) {
+		Transformation<?> t = definedTransformations.get(name);
+		if (t == null) {
+			throw new GReTLParsingException(context, "No '" + name
+					+ "' Transformation defined!");
+		}
+		return t;
 	}
 
 }
