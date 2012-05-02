@@ -2499,12 +2499,12 @@ public class GreqlParser extends ParserHelper {
 		}
 		if ((lookAhead(0) == TokenTypes.HEXLITERAL)
 				|| (lookAhead(0) == TokenTypes.OCTLITERAL)) {
-			if (((IntegerToken) lookAhead).getNumber().intValue() == ((IntegerToken) lookAhead)
+			if (((LongToken) lookAhead).getNumber().intValue() == ((LongToken) lookAhead)
 					.getNumber().longValue()) {
 				IntLiteral literal = null;
 				if (!inPredicateMode()) {
 					literal = graph.createIntLiteral();
-					literal.set_intValue(((IntegerToken) lookAhead).getNumber()
+					literal.set_intValue(((LongToken) lookAhead).getNumber()
 							.intValue());
 				}
 				match();
@@ -2513,7 +2513,7 @@ public class GreqlParser extends ParserHelper {
 				LongLiteral literal = null;
 				if (!inPredicateMode()) {
 					literal = graph.createLongLiteral();
-					literal.set_longValue(((IntegerToken) lookAhead)
+					literal.set_longValue(((LongToken) lookAhead)
 							.getNumber());
 				}
 				match();
@@ -2521,7 +2521,7 @@ public class GreqlParser extends ParserHelper {
 			}
 		}
 		if ((lookAhead(0) == TokenTypes.INTLITERAL)) {
-			long value = ((IntegerToken) lookAhead).getNumber().longValue();
+			long value = ((LongToken) lookAhead).getNumber().longValue();
 			String integerPart = lookAhead.getValue();
 			match();
 			if (lookAhead(0) == TokenTypes.DOT) {
@@ -2529,7 +2529,7 @@ public class GreqlParser extends ParserHelper {
 				match();
 				if ((lookAhead(0) == TokenTypes.INTLITERAL)
 						|| (lookAhead(0) == TokenTypes.OCTLITERAL)) {
-					decimalPart = ((IntegerToken) lookAhead).getValue();
+					decimalPart = ((LongToken) lookAhead).getValue();
 					match();
 					// } else if (lookAhead(0) == TokenTypes.REALLITERAL) {
 					// decimalPart = lookAhead.getValue().substring(0,

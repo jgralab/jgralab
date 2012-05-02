@@ -34,20 +34,16 @@
  */
 package de.uni_koblenz.jgralab.greql2.parser;
 
-public class IntegerToken extends Token {
+public class LongToken extends Token {
 
 	Long intValue = null;
-
-	Long decValue = null;
 	
 	String value = null;
 
-	public IntegerToken(TokenTypes type, int offset, int length, String value, Long intValue,
-			Long decValue) {
+	public LongToken(TokenTypes type, int offset, int length, String value, Long intValue) {
 		super(type, offset, length);
 		this.value = value;
 		this.intValue = intValue;
-		this.decValue = decValue;
 	}
 
 	@Override
@@ -65,8 +61,5 @@ public class IntegerToken extends Token {
 		return intValue;
 	}
 
-	public Long getDecValue() {
-		return decValue;
-	}
 
 }

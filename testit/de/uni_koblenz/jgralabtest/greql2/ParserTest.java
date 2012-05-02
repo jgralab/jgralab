@@ -100,6 +100,7 @@ import de.uni_koblenz.jgralab.greql2.schema.IteratedPathDescription;
 import de.uni_koblenz.jgralab.greql2.schema.ListComprehension;
 import de.uni_koblenz.jgralab.greql2.schema.ListConstruction;
 import de.uni_koblenz.jgralab.greql2.schema.ListRangeConstruction;
+import de.uni_koblenz.jgralab.greql2.schema.LongLiteral;
 import de.uni_koblenz.jgralab.greql2.schema.PathExistence;
 import de.uni_koblenz.jgralab.greql2.schema.QuantificationType;
 import de.uni_koblenz.jgralab.greql2.schema.QuantifiedExpression;
@@ -372,9 +373,18 @@ public class ParserTest {
 	}
 
 	@Test
+	public void testLongLiteral() throws Exception {
+		Greql2 graph = parseQuery(Long.toString(Long.MAX_VALUE));
+		LongLiteral lit = graph.getFirstLongLiteral();
+		assertNotNull(lit);
+		assertEquals(Long.MAX_VALUE, lit.get_longValue());
+	}
+	
+	@Test
 	public void testDoubleLiteral() throws Exception {
 		assertDoubleLiteralEquals("5.0", 5.0);
 		assertDoubleLiteralEquals("0.5", 0.5);
+		assertDoubleLiteralEquals("046e3", 046e3);
 	}
 
 	static final double DELTA = 0.00000001;
