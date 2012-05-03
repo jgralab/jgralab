@@ -63,6 +63,12 @@ public class VariableEvaluatorTest {
 		assertEquals(22, erg);
 	}
 
+	@Test
+	public void testSeveralLet() throws GraphIOException {
+		Object erg = evaluateQuery("let x:=10 in let y:=x+2 in x+y");
+		assertEquals(22, erg);
+	}
+
 	/**
 	 * Tests the query:<br>
 	 * x+y where x:=10, y:=12

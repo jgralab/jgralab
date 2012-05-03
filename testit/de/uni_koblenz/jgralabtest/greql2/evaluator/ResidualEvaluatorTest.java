@@ -543,4 +543,13 @@ public class ResidualEvaluatorTest {
 		assertEquals("3", titles.get(3));
 	}
 
+	/*
+	 * Missing FunctionApplication tests
+	 */
+
+	@Test
+	public void testFunctionApplication_withEvaluatorParam() {
+		assertTrue((Boolean) evaluateQuery("isReachable(<->*,getVertex(1),getVertex(2))"));
+	}
+
 }
