@@ -1363,6 +1363,7 @@ public class GreqlParser extends ParserHelper {
 		int lengthPath = getLength(offsetPath);
 		if ((lookAhead(0) == TokenTypes.STAR)
 				|| (lookAhead(0) == TokenTypes.PLUS)
+				|| (lookAhead(0) == TokenTypes.TRANSPOSED)
 				|| (lookAhead(0) == TokenTypes.CARET)) {
 			return parseIteration(pathDescr, offsetPath, lengthPath);
 		}
