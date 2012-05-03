@@ -56,17 +56,21 @@ public class IsReachable extends Function {
 
 	public static boolean PRINT_STOP_VERTICES = false;
 
-	@Description(params = {"u","v","dfa"}, description = 
-			"Returns true, iff there is a path from vertex given as first argument to vertex "
-					+ "given as second argument that matches the path description given as second argument. "
-					+ "Usually invoked like so: myVertex (--> | <>--)+ myOtherVertex.",
-			categories = {Category.GRAPH,Category.PATHS_AND_PATHSYSTEMS_AND_SLICES})
+	@Description(params = { "u", "v", "dfa" }, description = "Returns true, iff there is a path from vertex given as first argument to vertex "
+			+ "given as second argument that matches the path description given as second argument. "
+			+ "Usually invoked like so: myVertex (--> | <>--)+ myOtherVertex.", categories = {
+			Category.GRAPH, Category.PATHS_AND_PATHSYSTEMS_AND_SLICES })
 	public IsReachable() {
 		super(50, 1, 0.01);
 	}
 
-	public Boolean evaluate(InternalGreqlEvaluator evaluator, Vertex u, Vertex v, NFA nfa) {
-		DFA dfa = nfa.getDFA();
+	public Boolean evaluate(InternalGreqlEvaluator evaluator, Vertex u,
+			Vertex v, NFA nfa) {
+		return evaluate(evaluator, u, v, nfa.getDFA());
+	}
+
+	public Boolean evaluate(InternalGreqlEvaluator evaluator, Vertex u,
+			Vertex v, DFA dfa) {
 		if (u.getGraph() != v.getGraph()) {
 			throw new IllegalArgumentException(
 					"The vertices are in different graphs, but must be in the same graph.");
@@ -92,7 +96,8 @@ public class IsReachable extends Function {
 							currentEntry.vertex, inc);
 					boolean isMarked = markers[currentTransition.endState.number]
 							.isMarked(nextVertex);
-					boolean transitionIsPossible = currentTransition.accepts( currentEntry.vertex, inc, evaluator);
+					boolean transitionIsPossible = currentTransition.accepts(
+							currentEntry.vertex, inc, evaluator);
 					if (!isMarked && transitionIsPossible) {
 						PathSearchQueueEntry nextEntry = new PathSearchQueueEntry(
 								nextVertex, currentTransition.endState);

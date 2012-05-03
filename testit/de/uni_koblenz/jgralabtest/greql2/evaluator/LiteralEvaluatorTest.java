@@ -71,14 +71,14 @@ public class LiteralEvaluatorTest {
 		assertEquals(1d, evaluateQuery("1.0"));
 	}
 
-	/**
-	 * Test of negative double value:<br>
-	 * -1L
-	 */
-	@Test
-	public void testDoubleLiteralEvaluator_WithSuffix() {
-		assertEquals(-10d, evaluateQuery("-10d"));
-	}
+	// /**
+	// * Test of negative double value:<br>
+	// * -10d
+	// */
+	// @Test
+	// public void testDoubleLiteralEvaluator_WithSuffix() {
+	// assertEquals(-10d, evaluateQuery("-10d"));
+	// }
 
 	/**
 	 * Test of exponential double value:<br>
@@ -89,34 +89,34 @@ public class LiteralEvaluatorTest {
 		assertEquals(23e-7, evaluateQuery("23e-7"));
 	}
 
-	/**
-	 * Test of query:<br>
-	 * POSITIVE_INFINITY
-	 */
-	@Test
-	public void testDoubleLiteralEvaluator_PositivInfinity() {
-		assertEquals(Double.POSITIVE_INFINITY,
-				evaluateQuery("POSITIVE_INFINITY"));
-	}
+	// /**
+	// * Test of query:<br>
+	// * POSITIVE_INFINITY
+	// */
+	// @Test
+	// public void testDoubleLiteralEvaluator_PositivInfinity() {
+	// assertEquals(Double.POSITIVE_INFINITY,
+	// evaluateQuery("POSITIVE_INFINITY"));
+	// }
 
-	/**
-	 * Test of query:<br>
-	 * NEGATIVE_INFINITY
-	 */
-	@Test
-	public void testDoubleLiteralEvaluator_NegativInfinity() {
-		assertEquals(Double.NEGATIVE_INFINITY,
-				evaluateQuery("NEGATIVE_INFINITY"));
-	}
+	// /**
+	// * Test of query:<br>
+	// * NEGATIVE_INFINITY
+	// */
+	// @Test
+	// public void testDoubleLiteralEvaluator_NegativInfinity() {
+	// assertEquals(Double.NEGATIVE_INFINITY,
+	// evaluateQuery("NEGATIVE_INFINITY"));
+	// }
 
-	/**
-	 * Test of query:<br>
-	 * NaN
-	 */
-	@Test
-	public void testDoubleLiteralEvaluator_NaN() {
-		assertEquals(Double.NaN, evaluateQuery("NaN"));
-	}
+	// /**
+	// * Test of query:<br>
+	// * NaN
+	// */
+	// @Test
+	// public void testDoubleLiteralEvaluator_NaN() {
+	// assertEquals(Double.NaN, evaluateQuery("NaN"));
+	// }
 
 	/*
 	 * Tests of IntLiteralEvaluator
@@ -163,23 +163,23 @@ public class LiteralEvaluatorTest {
 				evaluateQuery(new Long(Long.MAX_VALUE).toString()));
 	}
 
-	/**
-	 * Test of query:<br>
-	 * 12L
-	 */
-	@Test
-	public void testLongLiteralEvaluator_withSuffix() {
-		assertEquals(12L, evaluateQuery("12L"));
-	}
+	// /**
+	// * Test of query:<br>
+	// * 12L
+	// */
+	// @Test
+	// public void testLongLiteralEvaluator_withSuffix() {
+	// assertEquals(12L, evaluateQuery("12L"));
+	// }
 
-	/**
-	 * Test of query:<br>
-	 * -051L
-	 */
-	@Test
-	public void testLongLiteralEvaluator_OctalNotation() {
-		assertEquals(-051L, evaluateQuery("-051L"));
-	}
+	// /**
+	// * Test of query:<br>
+	// * -051L
+	// */
+	// @Test
+	// public void testLongLiteralEvaluator_OctalNotation() {
+	// assertEquals(-051L, evaluateQuery("-051L"));
+	// }
 
 	/**
 	 * Test of query:<br>
@@ -190,14 +190,14 @@ public class LiteralEvaluatorTest {
 		assertEquals(0xfffffffffL, evaluateQuery("0xfffffffff"));
 	}
 
-	/**
-	 * Test of query:<br>
-	 * 0xfl
-	 */
-	@Test
-	public void testLongLiteralEvaluator_HexaNotationWithSuffix() {
-		assertEquals(0xfl, evaluateQuery("0xfl"));
-	}
+	// /**
+	// * Test of query:<br>
+	// * 0xfl
+	// */
+	// @Test
+	// public void testLongLiteralEvaluator_HexaNotationWithSuffix() {
+	// assertEquals(0xfl, evaluateQuery("0xfl"));
+	// }
 
 	/*
 	 * Tests of StringLiteralEvaluator
