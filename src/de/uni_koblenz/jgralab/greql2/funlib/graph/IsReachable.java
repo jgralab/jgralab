@@ -42,6 +42,7 @@ import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.graphmarker.BooleanGraphMarker;
 import de.uni_koblenz.jgralab.greql2.evaluator.fa.DFA;
+import de.uni_koblenz.jgralab.greql2.evaluator.fa.NFA;
 import de.uni_koblenz.jgralab.greql2.evaluator.fa.State;
 import de.uni_koblenz.jgralab.greql2.evaluator.fa.Transition;
 import de.uni_koblenz.jgralab.greql2.funlib.Description;
@@ -61,7 +62,8 @@ public class IsReachable extends Function {
 		super(50, 1, 0.01);
 	}
 
-	public Boolean evaluate(Vertex u, Vertex v, DFA dfa) {
+	public Boolean evaluate(Vertex u, Vertex v, NFA nfa) {
+		DFA dfa = nfa.getDFA();
 		if (u.getGraph() != v.getGraph()) {
 			throw new IllegalArgumentException(
 					"The vertices are in different graphs, but must be in the same graph.");
