@@ -99,6 +99,10 @@ public abstract class PathDescriptionEvaluator<V extends PathDescription>
 			addGoalRestrictions(evaluator);
 			addStartRestrictions(evaluator);
 		}
+		assert createdNFA != null;
+		if (evaluator.getLocalEvaluationResult(vertex) == null) {
+			evaluator.setLocalEvaluationResult(vertex, createdNFA);
+		}
 		return evaluator.getLocalEvaluationResult(vertex);
 	}
 
