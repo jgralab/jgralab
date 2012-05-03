@@ -419,7 +419,12 @@ public class ResidualEvaluatorTest {
 
 	@Test
 	public void testQuantifiedExpressionEvaluator_existsExactly_withNonBooleanPredicate() {
-		assertTrue((Boolean) evaluateQuery("exists! n:list(1..9)@V{}"));
+		assertFalse((Boolean) evaluateQuery("exists! n:list(1..9)@V{}"));
+	}
+
+	@Test
+	public void testQuantifiedExpressionEvaluator_existsExactly_withNonBooleanPredicate_OnlyOneElem() {
+		assertTrue((Boolean) evaluateQuery("exists! n:list(1..1)@V{}"));
 	}
 
 	/*
