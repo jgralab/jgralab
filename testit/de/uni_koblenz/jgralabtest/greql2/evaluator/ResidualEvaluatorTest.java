@@ -549,7 +549,12 @@ public class ResidualEvaluatorTest {
 
 	@Test
 	public void testFunctionApplication_withEvaluatorParam() {
-		assertTrue((Boolean) evaluateQuery("isReachable(<->*,getVertex(1),getVertex(2))"));
+		assertTrue((Boolean) evaluateQuery("reachableVertices(getVertex(1),<->*)"));
+	}
+
+	@Test
+	public void testFunctionApplication_callSameFunctionSeveralTimes() {
+		assertFalse((Boolean) evaluateQuery("and(isReachable(getVertex(1),getVertex(23),->),isReachable(getVertex(1),getVertex(2),->))"));
 	}
 
 }
