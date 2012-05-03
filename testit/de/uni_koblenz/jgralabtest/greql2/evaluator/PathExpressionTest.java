@@ -428,6 +428,25 @@ public class PathExpressionTest {
 	}
 
 	/*
+	 * TransposedPathDescription
+	 */
+
+	@Test
+	public void testTransposedPathDescription_OneEdge_false() {
+		assertFalse((Boolean) evaluateQuery("getVertex(144) -->^T getVertex(154)"));
+	}
+
+	@Test
+	public void testTransposedPathDescription_OneEdge_true() {
+		assertTrue((Boolean) evaluateQuery("getVertex(144) (<--)^T getVertex(154)"));
+	}
+
+	@Test
+	public void testTransposedPathDescription_SeveralEdges() {
+		assertTrue((Boolean) evaluateQuery("getVertex(144)(<--<--^3)^T getVertex(16)"));
+	}
+
+	/*
 	 * VertexRestriction
 	 */
 

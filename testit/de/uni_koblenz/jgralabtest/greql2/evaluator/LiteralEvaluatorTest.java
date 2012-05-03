@@ -28,6 +28,15 @@ public class LiteralEvaluatorTest {
 	}
 
 	/*
+	 * UndefinedLiteral
+	 */
+
+	@Test
+	public void testUndefinedLiteral() {
+		assertEquals(Undefined.UNDEFINED, evaluateQuery("undefined"));
+	}
+
+	/*
 	 * Tests of BoolLiteralEvaluator
 	 */
 
