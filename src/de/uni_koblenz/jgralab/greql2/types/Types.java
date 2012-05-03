@@ -54,6 +54,7 @@ import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.Record;
 import de.uni_koblenz.jgralab.TraversalContext;
 import de.uni_koblenz.jgralab.Vertex;
+import de.uni_koblenz.jgralab.greql2.evaluator.InternalGreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.fa.FiniteAutomaton;
 import de.uni_koblenz.jgralab.greql2.exception.GreqlException;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
@@ -66,7 +67,8 @@ public class Types {
 			TypeCollection.class, Enum.class, Record.class, Table.class,
 			Tuple.class, PVector.class, PSet.class, POrderedSet.class,
 			PCollection.class, PMap.class, AttributedElementClass.class,
-			FiniteAutomaton.class, TraversalContext.class, Undefined.class };
+			FiniteAutomaton.class, TraversalContext.class, Undefined.class,
+			InternalGreqlEvaluator.class };
 
 	private static final HashMap<Class<?>, String> typeNames;
 	private static final HashSet<Class<?>> types;
