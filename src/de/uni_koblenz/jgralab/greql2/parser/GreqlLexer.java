@@ -45,7 +45,7 @@ import java.util.Map;
 import de.uni_koblenz.jgralab.greql2.exception.ParsingException;
 
 public class GreqlLexer {
-
+	
 	@SuppressWarnings("serial")
 	protected static final Map<TokenTypes, String> fixedTokens = Collections
 			.unmodifiableMap(new EnumMap<TokenTypes, String>(TokenTypes.class) {
@@ -303,6 +303,7 @@ public class GreqlLexer {
 		return recognizedToken;
 	}
 
+	
 	private final Token matchDoubleConstantToken(int start, int i,
 			String tokenText) {
 		Double value = Double.parseDouble(tokenText);
@@ -318,60 +319,51 @@ public class GreqlLexer {
 	// TODO: Exponenten
 	private final Token matchNumericToken(int start, int end, String text) {
 		long value = 0;
-		long decValue = 0;
-		String stringValue = "0";
 		TokenTypes type = null;
-		stringValue = text;
-		if (text.charAt(0) == '0') {
-			if (text.length() == 1) {
-				type = TokenTypes.INTLITERAL;
-				value = 0;
-			} else if ((text.charAt(1) == 'x') || (text.charAt(1) == 'X')) {
-				type = TokenTypes.HEXLITERAL;
+		
+		if ((text.charAt(0) == '0') && (text.length() > 1)) {
+			//might be hex or octal literal
+			if ((text.charAt(1) == 'x') || (text.charAt(1) == 'X')) {
 				try {
-					value = Integer.parseInt(text.substring(2), 16);
+					type = TokenTypes.HEXLITERAL;
+					value = Long.parseLong(text.substring(2), 16);
+					return new LongToken(type, start, end - start, text, value);
 				} catch (NumberFormatException ex) {
 					throw new ParsingException("Not a valid hex number", text,
 							start, end - start, query);
 				}
-			} else {
-				type = TokenTypes.OCTLITERAL;
+			}
+			if (!text.contains("e")) {
 				try {
-					value = Integer.parseInt(text.substring(1), 8);
-					decValue = Integer.parseInt(text);
+					type = TokenTypes.OCTLITERAL;
+					value = Long.parseLong(text.substring(1), 8);
+					return new LongToken(type, start, end - start, text, value);
 				} catch (NumberFormatException ex) {
 					throw new ParsingException("Not a valid octal number",
 							text, start, end - start, query);
 				}
 			}
-		} else {
-			switch (text.charAt(text.length() - 1)) {
-			case 'h':
-				type = TokenTypes.HEXLITERAL;
-				try {
-					value = Integer.parseInt(
-							text.substring(0, text.length() - 1), 16);
-				} catch (NumberFormatException ex) {
-					throw new ParsingException("Not a valid hex number", text,
-							start, end - start, query);
-				}
-				break;
-			default:
-				type = TokenTypes.INTLITERAL;
-				try {
-					value = Integer.parseInt(text);
-				} catch (NumberFormatException ex) {
-					throw new ParsingException("Not a valid integer number",
-							text, start, end - start, query);
-				}
+		}
+		if (text.contains("e")) {
+			//double token
+			try {
+				type = TokenTypes.DOUBLELITERAL;
+				Double d = Double.parseDouble(text);
+				return new DoubleToken(type, start, end - start, text, d);
+			} catch (NumberFormatException ex) {
+				throw new ParsingException("Not a valid double number", text,
+						start, end - start, query);
 			}
+		} 
+		//integer token
+		try {
+			type = TokenTypes.INTLITERAL;
+			value = Long.parseLong(text);
+			return new LongToken(type, start, end - start, text, value);
+		} catch (NumberFormatException ex) {
+			throw new ParsingException("Not a valid integer number",
+					text, start, end - start, query);
 		}
-		if (type != TokenTypes.OCTLITERAL) {
-			decValue = value;
-		}
-		return new IntegerToken(type, start, end - start, stringValue, value,
-				decValue);
-
 	}
 
 	public boolean hasNextToken() {
