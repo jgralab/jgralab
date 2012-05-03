@@ -24,6 +24,7 @@ import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEnvironmentAdapter;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluatorImpl;
 import de.uni_koblenz.jgralab.greql2.evaluator.QueryImpl;
 import de.uni_koblenz.jgralab.greql2.exception.UnknownTypeException;
+import de.uni_koblenz.jgralab.greql2.types.Slice;
 import de.uni_koblenz.jgralab.greql2.types.Table;
 import de.uni_koblenz.jgralab.greql2.types.Tuple;
 import de.uni_koblenz.jgralab.schema.GraphElementClass;
@@ -560,6 +561,18 @@ public class ResidualEvaluatorTest {
 	@Test
 	public void testFunctionApplication_callSameFunctionSeveralTimes() {
 		assertFalse((Boolean) evaluateQuery("and(isReachable(getVertex(1),getVertex(23),-->),isReachable(getVertex(1),getVertex(2),-->))"));
+	}
+
+	/*
+	 * miscellaneous
+	 */
+
+	@Test
+	public void testUseQuerySeveralTimes() {
+		Slice slice1 = (Slice) evaluateQuery("slice(getVertex(1),-->)");
+		Slice slice2 = (Slice) evaluateQuery("slice(getVertex(1),-->)");
+		assertEquals(slice1.getEdges(), slice2.getEdges());
+		assertEquals(slice1.getVertices(), slice2.getVertices());
 	}
 
 }
