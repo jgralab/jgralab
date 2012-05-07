@@ -334,8 +334,8 @@ public final class RecordDomainImpl extends CompositeDomainImpl implements
 		if (value == null) {
 			return result;
 		}
-		if(value instanceof RecordImpl){
-			//generic
+		if (value instanceof RecordImpl) {
+			// generic
 			result &= value instanceof Record;
 			if (!result) {
 				return false;
@@ -350,16 +350,16 @@ public final class RecordDomainImpl extends CompositeDomainImpl implements
 						((Record) value).getComponent(component.getName()));
 			}
 			return result;
-		}else if(value instanceof Record){
+		} else if (value instanceof Record) {
 			// generated
-			if(value.getClass().equals(this.getSchemaClass())){
+			if (value.getClass().equals(this.getSchemaClass())) {
 				return true;
 			}
 			return false;
-		}else{
+		} else {
 			return false;
 		}
-		
+
 	}
 
 	@Override

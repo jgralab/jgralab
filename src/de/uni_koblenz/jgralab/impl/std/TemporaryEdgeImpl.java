@@ -88,7 +88,6 @@ public class TemporaryEdgeImpl extends EdgeImpl implements TemporaryEdge {
 			}
 		}
 
-		InternalEdge newLastEdge = newEdge.getPrevEdgeInESeq();
 		InternalEdge newLastIncidence = newEdge.getPrevIncidenceInISeq();
 		InternalEdge newLastIncidenceReversed = ((InternalEdge) newEdge
 				.getReversedEdge()).getPrevIncidenceInISeq();
@@ -97,19 +96,10 @@ public class TemporaryEdgeImpl extends EdgeImpl implements TemporaryEdge {
 
 		// eSeq
 		if (nextEdge != null) {
-			nextEdge.setPrevEdgeInGraph(newEdge);
-			newEdge.setNextEdgeInGraph(nextEdge);
-			newEdge.setPrevEdgeInGraph(prevEdge);
-
-			newLastEdge.setNextEdgeInGraph(null);
-
-			if (prevEdge != null) {
-				prevEdge.setNextEdgeInGraph(newEdge);
-			} else {// Temporary Edge is first Edge in graph
-				g.setFirstEdgeInGraph(newEdge);
-			}
-
-			g.setLastEdgeInGraph(newLastEdge);
+			newEdge.putBeforeEdge(nextEdge);
+		}
+		if (prevEdge != null) {
+			newEdge.putAfterEdge(prevEdge);
 		}
 
 		// iSeq edge
@@ -120,10 +110,18 @@ public class TemporaryEdgeImpl extends EdgeImpl implements TemporaryEdge {
 				(InternalEdge) newEdge.getReversedEdge(),
 				newLastIncidenceReversed);
 
+		// set id
 		int idToFree = newEdge.getId();
 		newEdge.setId(tempID);
 		g.allocateEdgeIndex(tempID);
 		g.freeEdgeIndex(idToFree);
+		// fix edge[] & revEdge
+		InternalEdge[] edge = g.getEdge();
+		edge[tempID] = newEdge;
+		edge[idToFree] = null;
+		InternalEdge[] revEdge = g.getRevEdge();
+		revEdge[tempID] = (InternalEdge) newEdge.getReversedEdge();
+		revEdge[idToFree] = null;
 
 		return newEdge;
 

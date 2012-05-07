@@ -112,24 +112,13 @@ public class TemporaryVertexImpl extends VertexImpl implements TemporaryVertex {
 			e = this.getFirstIncidence();
 		}
 
-		InternalVertex newLastVertex = newVertex.getPrevVertexInVSeq();
-
 		this.delete();
 
 		if (nextVertex != null) {
-			nextVertex.setPrevVertex(newVertex);
-			newVertex.setNextVertex(nextVertex);
-			newVertex.setPrevVertex(prevVertex);
-
-			newLastVertex.setNextVertex(null);
-
-			if (prevVertex != null) {
-				prevVertex.setNextVertex(newVertex);
-			} else {// Temporary Vertex is first Vertex in graph
-				g.setFirstVertex(newVertex);
-			}
-
-			g.setLastVertex(newLastVertex);
+			newVertex.putBefore(nextVertex);
+		}
+		if (prevVertex != null) {
+			newVertex.putAfter(prevVertex);
 		}
 
 		// Set id
@@ -137,6 +126,10 @@ public class TemporaryVertexImpl extends VertexImpl implements TemporaryVertex {
 		newVertex.setId(id);
 		g.allocateVertexIndex(id);
 		g.freeVertexIndex(idToFree);
+		// fixup vertex[]
+		InternalVertex[] vertex = g.getVertex();
+		vertex[id] = newVertex;
+		vertex[idToFree] = null;
 		return newVertex;
 	}
 
