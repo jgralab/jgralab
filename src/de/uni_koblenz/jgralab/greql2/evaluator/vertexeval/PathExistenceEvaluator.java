@@ -39,6 +39,7 @@ import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql2.evaluator.InternalGreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.QueryImpl;
+import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
 import de.uni_koblenz.jgralab.greql2.funlib.FunLib;
 import de.uni_koblenz.jgralab.greql2.funlib.FunLib.FunctionInfo;
 import de.uni_koblenz.jgralab.greql2.schema.Expression;
@@ -106,15 +107,35 @@ public class PathExistenceEvaluator extends PathSearchEvaluator<PathExistence> {
 		return FunLib.apply(fi, arguments);
 	}
 
-	// @Override
-	// public VertexCosts calculateSubtreeEvaluationCosts() {
-	// return greqlEvaluator.getCostModel().calculateCostsPathExistence(this);
-	// }
-	//
-	// @Override
-	// public double calculateEstimatedSelectivity() {
-	// return greqlEvaluator.getCostModel().calculateSelectivityPathExistence(
-	// this);
-	// }
+	@Override
+	public VertexCosts calculateSubtreeEvaluationCosts() {
+		PathExistence existence = getVertex();
+		Expression startExpression = (Expression) existence
+				.getFirstIsStartExprOfIncidence().getAlpha();
+		VertexEvaluator<? extends Expression> vertexEval = query
+				.getVertexEvaluator(startExpression);
+		long startCosts = vertexEval.getCurrentSubtreeEvaluationCosts();
+		Expression targetExpression = (Expression) existence
+				.getFirstIsTargetExprOfIncidence().getAlpha();
+		vertexEval = query.getVertexEvaluator(targetExpression);
+		long targetCosts = vertexEval.getCurrentSubtreeEvaluationCosts();
+		PathDescription p = (PathDescription) existence
+				.getFirstIsPathOfIncidence().getAlpha();
+		PathDescriptionEvaluator<? extends PathDescription> pathDescEval = (PathDescriptionEvaluator<? extends PathDescription>) query
+				.getVertexEvaluator(p);
+		long pathDescCosts = pathDescEval.getCurrentSubtreeEvaluationCosts();
+		long searchCosts = Math.round(((pathDescCosts * searchFactor) / 2.0)
+				* Math.sqrt(query.getGraphSize().getEdgeCount()));
+		long ownCosts = searchCosts;
+		long iteratedCosts = ownCosts * getVariableCombinations();
+		long subtreeCosts = targetCosts + pathDescCosts + iteratedCosts
+				+ startCosts;
+		return new VertexCosts(ownCosts, iteratedCosts, subtreeCosts);
+	}
+
+	@Override
+	public double calculateEstimatedSelectivity() {
+		return 0.1;
+	}
 
 }

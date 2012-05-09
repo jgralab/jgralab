@@ -38,6 +38,7 @@ package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.greql2.evaluator.InternalGreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.QueryImpl;
+import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
 import de.uni_koblenz.jgralab.greql2.evaluator.fa.NFA;
 import de.uni_koblenz.jgralab.greql2.schema.OptionalPathDescription;
 import de.uni_koblenz.jgralab.greql2.schema.PathDescription;
@@ -74,10 +75,18 @@ public class OptionalPathDescriptionEvaluator extends
 		return NFA.createOptionalPathDescriptionNFA(pathEval.getNFA(evaluator));
 	}
 
-	// @Override
-	// public VertexCosts calculateSubtreeEvaluationCosts() {
-	// return greqlEvaluator.getCostModel()
-	// .calculateCostsOptionalPathDescription(this);
-	// }
+	@Override
+	public VertexCosts calculateSubtreeEvaluationCosts() {
+		OptionalPathDescription iterPath = getVertex();
+		VertexEvaluator<? extends PathDescription> pathEval = query
+				.getVertexEvaluator((PathDescription) iterPath
+						.getFirstIsOptionalPathOfIncidence(EdgeDirection.IN)
+						.getAlpha());
+		long ownCosts = 5;
+		long iteratedCosts = 5;
+		long subtreeCosts = ownCosts
+				+ pathEval.getCurrentSubtreeEvaluationCosts();
+		return new VertexCosts(ownCosts, iteratedCosts, subtreeCosts);
+	}
 
 }

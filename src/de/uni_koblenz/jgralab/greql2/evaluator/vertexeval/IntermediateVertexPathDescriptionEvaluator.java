@@ -38,6 +38,7 @@ package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.greql2.evaluator.InternalGreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.QueryImpl;
+import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
 import de.uni_koblenz.jgralab.greql2.evaluator.fa.NFA;
 import de.uni_koblenz.jgralab.greql2.schema.Expression;
 import de.uni_koblenz.jgralab.greql2.schema.IntermediateVertexPathDescription;
@@ -85,11 +86,26 @@ public class IntermediateVertexPathDescriptionEvaluator extends
 				vertexEval, secondNFA);
 	}
 
-	// @Override
-	// public VertexCosts calculateSubtreeEvaluationCosts() {
-	// return greqlEvaluator.getCostModel()
-	// .calculateCostsIntermediateVertexPathDescription(this,
-	// graphSize);
-	// }
+	@Override
+	public VertexCosts calculateSubtreeEvaluationCosts() {
+		IntermediateVertexPathDescription pathDesc = getVertex();
+		IsSubPathOf inc = pathDesc.getFirstIsSubPathOfIncidence();
+		PathDescriptionEvaluator<? extends PathDescription> firstPathEval = (PathDescriptionEvaluator<? extends PathDescription>) query
+				.getVertexEvaluator((PathDescription) inc.getAlpha());
+		inc = inc.getNextIsSubPathOfIncidence();
+		PathDescriptionEvaluator<? extends PathDescription> secondPathEval = (PathDescriptionEvaluator<? extends PathDescription>) query
+				.getVertexEvaluator((PathDescription) inc.getAlpha());
+		long firstCosts = firstPathEval.getCurrentSubtreeEvaluationCosts();
+		long secondCosts = secondPathEval.getCurrentSubtreeEvaluationCosts();
+		VertexEvaluator<? extends Expression> vertexEval = query
+				.getVertexEvaluator((Expression) pathDesc
+						.getFirstIsIntermediateVertexOfIncidence().getAlpha());
+		long intermVertexCosts = vertexEval.getCurrentSubtreeEvaluationCosts();
+		long ownCosts = 10;
+		long iteratedCosts = 10;
+		long subtreeCosts = iteratedCosts + intermVertexCosts + firstCosts
+				+ secondCosts;
+		return new VertexCosts(ownCosts, iteratedCosts, subtreeCosts);
+	}
 
 }

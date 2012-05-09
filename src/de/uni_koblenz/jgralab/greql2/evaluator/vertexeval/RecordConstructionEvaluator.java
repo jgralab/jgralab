@@ -39,6 +39,8 @@ import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Record;
 import de.uni_koblenz.jgralab.greql2.evaluator.InternalGreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.QueryImpl;
+import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
+import de.uni_koblenz.jgralab.greql2.schema.IsPartOf;
 import de.uni_koblenz.jgralab.greql2.schema.IsRecordElementOf;
 import de.uni_koblenz.jgralab.greql2.schema.RecordConstruction;
 import de.uni_koblenz.jgralab.greql2.schema.RecordElement;
@@ -54,6 +56,12 @@ public class RecordConstructionEvaluator extends
 		VertexEvaluator<RecordConstruction> {
 
 	/**
+	 * describes, how much interpretation steps it takes to add a element to a
+	 * record
+	 */
+	protected static final int addToRecordCosts = 10;
+
+	/**
 	 * Creates a new RecordConstructionEvaluator for the given vertex
 	 * 
 	 * @param eval
@@ -61,7 +69,8 @@ public class RecordConstructionEvaluator extends
 	 * @param vertex
 	 *            the vertex this VertexEvaluator evaluates
 	 */
-	public RecordConstructionEvaluator(RecordConstruction vertex, QueryImpl query) {
+	public RecordConstructionEvaluator(RecordConstruction vertex,
+			QueryImpl query) {
 		super(vertex, query);
 	}
 
@@ -81,16 +90,38 @@ public class RecordConstructionEvaluator extends
 		return resultRecord;
 	}
 
-	// @Override
-	// public VertexCosts calculateSubtreeEvaluationCosts() {
-	// return greqlEvaluator.getCostModel().calculateCostsRecordConstruction(
-	// this);
-	// }
-	//
-	// @Override
-	// public long calculateEstimatedCardinality() {
-	// return greqlEvaluator.getCostModel()
-	// .calculateCardinalityRecordConstruction(this);
-	// }
+	@Override
+	public VertexCosts calculateSubtreeEvaluationCosts() {
+		RecordConstruction recCons = getVertex();
+		IsPartOf inc = recCons.getFirstIsPartOfIncidence(EdgeDirection.IN);
+		long recElems = 0;
+		long recElemCosts = 0;
+		while (inc != null) {
+			RecordElement recElem = (RecordElement) inc.getAlpha();
+			VertexEvaluator<RecordElement> veval = query
+					.getVertexEvaluator(recElem);
+			recElemCosts += veval.getCurrentSubtreeEvaluationCosts();
+			recElems++;
+			inc = inc.getNextIsPartOfIncidence(EdgeDirection.IN);
+		}
+
+		long ownCosts = (recElems * addToRecordCosts) + 2;
+		long iteratedCosts = ownCosts * getVariableCombinations();
+		long subtreeCosts = iteratedCosts + recElemCosts;
+		return new VertexCosts(ownCosts, iteratedCosts, subtreeCosts);
+	}
+
+	@Override
+	public long calculateEstimatedCardinality() {
+		RecordConstruction recCons = getVertex();
+		IsRecordElementOf inc = recCons
+				.getFirstIsRecordElementOfIncidence(EdgeDirection.IN);
+		long parts = 0;
+		while (inc != null) {
+			parts++;
+			inc = inc.getNextIsRecordElementOfIncidence(EdgeDirection.IN);
+		}
+		return parts;
+	}
 
 }

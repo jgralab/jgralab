@@ -41,6 +41,7 @@ import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.greql2.evaluator.InternalGreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.QueryImpl;
+import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
 import de.uni_koblenz.jgralab.greql2.schema.Expression;
 import de.uni_koblenz.jgralab.greql2.schema.ListRangeConstruction;
 
@@ -54,6 +55,12 @@ import de.uni_koblenz.jgralab.greql2.schema.ListRangeConstruction;
  */
 public class ListRangeConstructionEvaluator extends
 		VertexEvaluator<ListRangeConstruction> {
+
+	/**
+	 * the default value that is estimated if the size of a listrange cannot be
+	 * estimated
+	 */
+	protected static final int defaultListRangeSize = 50;
 
 	/**
 	 * Creates a new ListRangeConstructionEvaluator for the given vertex
@@ -110,16 +117,69 @@ public class ListRangeConstructionEvaluator extends
 
 		return resultList;
 	}
-	// @Override
-	// public VertexCosts calculateSubtreeEvaluationCosts() {
-	// return greqlEvaluator.getCostModel()
-	// .calculateCostsListRangeConstruction(this);
-	// }
-	//
-	// @Override
-	// public long calculateEstimatedCardinality() {
-	// return greqlEvaluator.getCostModel()
-	// .calculateCardinalityListRangeConstruction(this);
-	// }
+
+	@Override
+	public VertexCosts calculateSubtreeEvaluationCosts() {
+		ListRangeConstruction exp = getVertex();
+		VertexEvaluator<? extends Expression> startExpEval = query
+				.getVertexEvaluator((Expression) exp
+						.getFirstIsFirstValueOfIncidence().getAlpha());
+		VertexEvaluator<? extends Expression> targetExpEval = query
+				.getVertexEvaluator((Expression) exp
+						.getFirstIsLastValueOfIncidence().getAlpha());
+		long startCosts = startExpEval.getCurrentSubtreeEvaluationCosts();
+		long targetCosts = targetExpEval.getCurrentSubtreeEvaluationCosts();
+		long range = 0;
+		if (startExpEval instanceof IntLiteralEvaluator) {
+			if (targetExpEval instanceof IntLiteralEvaluator) {
+				try {
+					range = (((Number) targetExpEval.getResult(null))
+							.longValue() - ((Number) startExpEval
+							.getResult(null)).longValue()) + 1;
+				} catch (Exception ex) {
+					// if an exception occurs, the default value is used, so no
+					// exceptionhandling is needed
+				}
+			}
+		}
+		if (range <= 0) {
+			range = defaultListRangeSize;
+		}
+		long ownCosts = addToListCosts * range;
+		long iteratedCosts = ownCosts * getVariableCombinations();
+		long subtreeCosts = iteratedCosts + startCosts + targetCosts;
+		return new VertexCosts(ownCosts, iteratedCosts, subtreeCosts);
+	}
+
+	@Override
+	public long calculateEstimatedCardinality() {
+		ListRangeConstruction exp = getVertex();
+		VertexEvaluator<? extends Expression> startExpEval = query
+				.getVertexEvaluator((Expression) exp
+						.getFirstIsFirstValueOfIncidence(EdgeDirection.IN)
+						.getAlpha());
+		VertexEvaluator<? extends Expression> targetExpEval = query
+				.getVertexEvaluator((Expression) exp
+						.getFirstIsLastValueOfIncidence(EdgeDirection.IN)
+						.getAlpha());
+		long range = 0;
+		if (startExpEval instanceof IntLiteralEvaluator) {
+			if (targetExpEval instanceof IntLiteralEvaluator) {
+				try {
+					range = (((Number) targetExpEval.getResult(null))
+							.longValue() - ((Number) startExpEval
+							.getResult(null)).longValue()) + 1;
+				} catch (Exception ex) {
+					// if an exception occurs, the default value is used, so no
+					// exceptionhandling is needed
+				}
+			}
+		}
+		if (range > 0) {
+			return range;
+		} else {
+			return defaultListRangeSize;
+		}
+	}
 
 }

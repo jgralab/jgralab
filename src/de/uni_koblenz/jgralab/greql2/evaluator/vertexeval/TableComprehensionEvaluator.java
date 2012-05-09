@@ -49,6 +49,7 @@ import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.greql2.evaluator.InternalGreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.QueryImpl;
 import de.uni_koblenz.jgralab.greql2.evaluator.VariableDeclarationLayer;
+import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
 import de.uni_koblenz.jgralab.greql2.schema.Declaration;
 import de.uni_koblenz.jgralab.greql2.schema.Expression;
 import de.uni_koblenz.jgralab.greql2.schema.TableComprehension;
@@ -169,16 +170,39 @@ public class TableComprehensionEvaluator extends
 		return resultTable;
 	}
 
-	// @Override
-	// public VertexCosts calculateSubtreeEvaluationCosts() {
-	// return greqlEvaluator.getCostModel().calculateCostsTableComprehension(
-	// this);
-	// }
-	//
-	// @Override
-	// public long calculateEstimatedCardinality() {
-	// return greqlEvaluator.getCostModel()
-	// .calculateCardinalityTableComprehension(this);
-	// }
+	@Override
+	public VertexCosts calculateSubtreeEvaluationCosts() {
+		// TODO (heimdall): What is a TableComprehension? Syntax? Where do the
+		// costs differ from a ListComprehension?
+		TableComprehension tableComp = getVertex();
+
+		Declaration decl = (Declaration) tableComp
+				.getFirstIsCompDeclOfIncidence().getAlpha();
+		DeclarationEvaluator declEval = (DeclarationEvaluator) query
+				.getVertexEvaluator(decl);
+		long declCosts = declEval.getCurrentSubtreeEvaluationCosts();
+
+		Expression resultDef = (Expression) tableComp
+				.getFirstIsCompResultDefOfIncidence().getAlpha();
+		VertexEvaluator<? extends Expression> resultDefEval = query
+				.getVertexEvaluator(resultDef);
+		long resultCosts = resultDefEval.getCurrentSubtreeEvaluationCosts();
+
+		long ownCosts = resultDefEval.getEstimatedCardinality()
+				* addToListCosts;
+		long iteratedCosts = ownCosts * getVariableCombinations();
+		long subtreeCosts = iteratedCosts + resultCosts + declCosts;
+		return new VertexCosts(ownCosts, iteratedCosts, subtreeCosts);
+	}
+
+	@Override
+	public long calculateEstimatedCardinality() {
+		TableComprehension tableComp = getVertex();
+		Declaration decl = (Declaration) tableComp
+				.getFirstIsCompDeclOfIncidence().getAlpha();
+		DeclarationEvaluator declEval = (DeclarationEvaluator) query
+				.getVertexEvaluator(decl);
+		return declEval.getEstimatedCardinality();
+	}
 
 }

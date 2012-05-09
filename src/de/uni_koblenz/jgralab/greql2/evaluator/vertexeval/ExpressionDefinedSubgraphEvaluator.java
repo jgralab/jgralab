@@ -37,6 +37,7 @@ package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.greql2.evaluator.InternalGreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.QueryImpl;
+import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
 import de.uni_koblenz.jgralab.greql2.schema.Expression;
 import de.uni_koblenz.jgralab.greql2.schema.ExpressionDefinedSubgraph;
 import de.uni_koblenz.jgralab.greql2.schema.IsSubgraphDefiningExpression;
@@ -65,17 +66,15 @@ public class ExpressionDefinedSubgraphEvaluator extends
 		return subgraphDefExprEvaluator.getResult(evaluator);
 	}
 
-	// @Override
-	// protected VertexCosts calculateSubtreeEvaluationCosts() {
-	// ExpressionDefinedSubgraph exprDefinedSubgraph =
-	// (ExpressionDefinedSubgraph) vertex;
-	// IsSubgraphDefiningExpression isSubgraphDefiningExpression =
-	// exprDefinedSubgraph
-	// .getFirstIsSubgraphDefiningExpressionIncidence(EdgeDirection.IN);
-	// Expression subgraphDefExpr = (Expression) isSubgraphDefiningExpression
-	// .getThat();
-	// subgraphDefExprEvaluator = vertexEvalMarker.getMark(subgraphDefExpr);
-	// return subgraphDefExprEvaluator.calculateSubtreeEvaluationCosts();
-	// }
+	@Override
+	protected VertexCosts calculateSubtreeEvaluationCosts() {
+		ExpressionDefinedSubgraph exprDefinedSubgraph = vertex;
+		IsSubgraphDefiningExpression isSubgraphDefiningExpression = exprDefinedSubgraph
+				.getFirstIsSubgraphDefiningExpressionIncidence(EdgeDirection.IN);
+		Expression subgraphDefExpr = (Expression) isSubgraphDefiningExpression
+				.getThat();
+		subgraphDefExprEvaluator = query.getVertexEvaluator(subgraphDefExpr);
+		return subgraphDefExprEvaluator.calculateSubtreeEvaluationCosts();
+	}
 
 }

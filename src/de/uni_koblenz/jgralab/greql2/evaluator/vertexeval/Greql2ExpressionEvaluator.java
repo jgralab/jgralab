@@ -40,6 +40,7 @@ import java.util.ArrayList;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.greql2.evaluator.InternalGreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.QueryImpl;
+import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
 import de.uni_koblenz.jgralab.greql2.exception.UndefinedVariableException;
 import de.uni_koblenz.jgralab.greql2.exception.UnknownTypeException;
 import de.uni_koblenz.jgralab.greql2.schema.Expression;
@@ -66,6 +67,8 @@ import de.uni_koblenz.jgralab.schema.VertexClass;
  */
 public class Greql2ExpressionEvaluator extends
 		VertexEvaluator<Greql2Expression> {
+
+	protected static final int greql2ExpressionCostsFactor = 3;
 
 	private void initializeBoundVariables(InternalGreqlEvaluator evaluator) {
 		IsBoundVarOf inc = vertex
@@ -153,10 +156,25 @@ public class Greql2ExpressionEvaluator extends
 		}
 		return result;
 	}
-	// @Override
-	// public VertexCosts calculateSubtreeEvaluationCosts() {
-	// return greqlEvaluator.getCostModel().calculateCostsGreql2Expression(
-	// this);
-	// }
+
+	@Override
+	public VertexCosts calculateSubtreeEvaluationCosts() {
+		Greql2Expression greqlExp = getVertex();
+		VertexEvaluator<? extends Expression> queryExpEval = query
+				.getVertexEvaluator((Expression) greqlExp
+						.getFirstIsQueryExprOfIncidence().getAlpha());
+		long queryCosts = queryExpEval.getCurrentSubtreeEvaluationCosts();
+		VertexEvaluator.logger.info("QueryCosts: " + queryCosts);
+		IsBoundVarOf boundVarInc = greqlExp.getFirstIsBoundVarOfIncidence();
+		int boundVars = 0;
+		while (boundVarInc != null) {
+			boundVars++;
+			boundVarInc = boundVarInc.getNextIsBoundVarOfIncidence();
+		}
+		long ownCosts = boundVars * greql2ExpressionCostsFactor;
+		long iteratedCosts = ownCosts;
+		long subtreeCosts = ownCosts + queryCosts;
+		return new VertexCosts(ownCosts, iteratedCosts, subtreeCosts);
+	}
 
 }

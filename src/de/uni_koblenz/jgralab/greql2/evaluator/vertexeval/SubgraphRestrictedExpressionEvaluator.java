@@ -39,6 +39,7 @@ import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.TraversalContext;
 import de.uni_koblenz.jgralab.greql2.evaluator.InternalGreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.QueryImpl;
+import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
 import de.uni_koblenz.jgralab.greql2.schema.Expression;
 import de.uni_koblenz.jgralab.greql2.schema.IsExpressionOnSubgraph;
 import de.uni_koblenz.jgralab.greql2.schema.IsSubgraphDefinitionOf;
@@ -94,34 +95,33 @@ public class SubgraphRestrictedExpressionEvaluator extends
 		return result;
 	}
 
-	// @Override
-	// protected VertexCosts calculateSubtreeEvaluationCosts() {
-	// // return
-	// //
-	// greqlEvaluator.getCostModel().calculateCostsSubgraphRestrictedExpression(this);
-	// if (subgraphDefinitionEval == null) {
-	// IsSubgraphDefinitionOf isSubgraphDef = vertex
-	// .getFirstIsSubgraphDefinitionOfIncidence(EdgeDirection.IN);
-	// SubgraphDefinition defVertex = (SubgraphDefinition) isSubgraphDef
-	// .getThat();
-	// subgraphDefinitionEval = (SubgraphDefinitionEvaluator) vertexEvalMarker
-	// .getMark(defVertex);
-	// }
-	//
-	// // take restricted expression
-	// if (exprEval == null) {
-	// IsExpressionOnSubgraph isExprOn = vertex
-	// .getFirstIsExpressionOnSubgraphIncidence(EdgeDirection.IN);
-	// Expression expr = (Expression) isExprOn.getThat();
-	// exprEval = vertexEvalMarker.getMark(expr);
-	// }
-	// long ownCosts = 10;
-	// long iteratedCosts = ownCosts * getVariableCombinations();
-	// long subtree = subgraphDefinitionEval
-	// .getCurrentSubtreeEvaluationCosts()
-	// + exprEval.getCurrentSubtreeEvaluationCosts() + iteratedCosts;
-	//
-	// return new VertexCosts(ownCosts, iteratedCosts, subtree);
-	// }
+	@Override
+	protected VertexCosts calculateSubtreeEvaluationCosts() {
+		// return
+		// greqlEvaluator.getCostModel().calculateCostsSubgraphRestrictedExpression(this);
+		if (subgraphDefinitionEval == null) {
+			IsSubgraphDefinitionOf isSubgraphDef = vertex
+					.getFirstIsSubgraphDefinitionOfIncidence(EdgeDirection.IN);
+			SubgraphDefinition defVertex = (SubgraphDefinition) isSubgraphDef
+					.getThat();
+			subgraphDefinitionEval = (SubgraphDefinitionEvaluator<?>) query
+					.getVertexEvaluator(defVertex);
+		}
+
+		// take restricted expression
+		if (exprEval == null) {
+			IsExpressionOnSubgraph isExprOn = vertex
+					.getFirstIsExpressionOnSubgraphIncidence(EdgeDirection.IN);
+			Expression expr = (Expression) isExprOn.getThat();
+			exprEval = query.getVertexEvaluator(expr);
+		}
+		long ownCosts = 10;
+		long iteratedCosts = ownCosts * getVariableCombinations();
+		long subtree = subgraphDefinitionEval
+				.getCurrentSubtreeEvaluationCosts()
+				+ exprEval.getCurrentSubtreeEvaluationCosts() + iteratedCosts;
+
+		return new VertexCosts(ownCosts, iteratedCosts, subtree);
+	}
 
 }

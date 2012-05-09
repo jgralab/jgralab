@@ -39,6 +39,7 @@ import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql2.evaluator.InternalGreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.QueryImpl;
+import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
 import de.uni_koblenz.jgralab.greql2.evaluator.fa.DFA;
 import de.uni_koblenz.jgralab.greql2.funlib.graph.ReachableVertices;
 import de.uni_koblenz.jgralab.greql2.schema.Expression;
@@ -87,16 +88,30 @@ public class ForwardVertexSetEvaluator extends
 				.search(evaluator, startVertex, searchAutomaton);
 	}
 
-	// @Override
-	// public VertexCosts calculateSubtreeEvaluationCosts() {
-	// return greqlEvaluator.getCostModel().calculateCostsForwardVertexSet(
-	// this);
-	// }
-	//
-	// @Override
-	// public long calculateEstimatedCardinality() {
-	// return greqlEvaluator.getCostModel()
-	// .calculateCardinalityForwardVertexSet(this);
-	// }
+	@Override
+	public VertexCosts calculateSubtreeEvaluationCosts() {
+		ForwardVertexSet bwvertex = getVertex();
+		Expression targetExpression = (Expression) bwvertex
+				.getFirstIsStartExprOfIncidence().getAlpha();
+		VertexEvaluator<? extends Expression> vertexEval = query
+				.getVertexEvaluator(targetExpression);
+		long targetCosts = vertexEval.getCurrentSubtreeEvaluationCosts();
+		PathDescription p = (PathDescription) bwvertex
+				.getFirstIsPathOfIncidence().getAlpha();
+		PathDescriptionEvaluator<? extends PathDescription> pathDescEval = (PathDescriptionEvaluator<? extends PathDescription>) query
+				.getVertexEvaluator(p);
+		long pathDescCosts = pathDescEval.getCurrentSubtreeEvaluationCosts();
+		long searchCosts = Math.round(pathDescCosts * searchFactor
+				* Math.sqrt(query.getGraphSize().getEdgeCount()));
+		long ownCosts = searchCosts;
+		long iteratedCosts = ownCosts * getVariableCombinations();
+		long subtreeCosts = targetCosts + pathDescCosts + iteratedCosts;
+		return new VertexCosts(ownCosts, iteratedCosts, subtreeCosts);
+	}
+
+	@Override
+	public long calculateEstimatedCardinality() {
+		return 5;
+	}
 
 }

@@ -40,6 +40,7 @@ import java.util.ArrayList;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.greql2.evaluator.InternalGreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.QueryImpl;
+import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
 import de.uni_koblenz.jgralab.greql2.exception.GreqlException;
 import de.uni_koblenz.jgralab.greql2.funlib.FunLib;
 import de.uni_koblenz.jgralab.greql2.funlib.FunLib.FunctionInfo;
@@ -209,22 +210,58 @@ public class FunctionApplicationEvaluator extends
 		return FunLib.apply(fi, parameters);
 	}
 
-	// @Override
-	// public VertexCosts calculateSubtreeEvaluationCosts() {
-	// return greqlEvaluator.getCostModel().calculateCostsFunctionApplication(
-	// this);
-	// }
-	//
-	// @Override
-	// public double calculateEstimatedSelectivity() {
-	// return greqlEvaluator.getCostModel()
-	// .calculateSelectivityFunctionApplication(this);
-	// }
-	//
-	// @Override
-	// public long calculateEstimatedCardinality() {
-	// return greqlEvaluator.getCostModel()
-	// .calculateCardinalityFunctionApplication(this);
-	// }
+	@Override
+	public VertexCosts calculateSubtreeEvaluationCosts() {
+		FunctionApplication funApp = getVertex();
+
+		IsArgumentOf inc = funApp
+				.getFirstIsArgumentOfIncidence(EdgeDirection.IN);
+		long argCosts = 0;
+		ArrayList<Long> elements = new ArrayList<Long>();
+		while (inc != null) {
+			VertexEvaluator<? extends Expression> argEval = query
+					.getVertexEvaluator((Expression) inc.getAlpha());
+			argCosts += argEval.getCurrentSubtreeEvaluationCosts();
+			elements.add(argEval.getEstimatedCardinality());
+			inc = inc.getNextIsArgumentOfIncidence(EdgeDirection.IN);
+		}
+
+		Function func = getFunction();
+		long ownCosts = func.getEstimatedCosts(elements);
+		long iteratedCosts = ownCosts * getVariableCombinations();
+		long subtreeCosts = iteratedCosts + argCosts;
+		return new VertexCosts(ownCosts, iteratedCosts, subtreeCosts);
+	}
+
+	@Override
+	public double calculateEstimatedSelectivity() {
+		Function func = getFunction();
+		if (func != null) {
+			return func.getSelectivity();
+		} else {
+			return 1;
+		}
+	}
+
+	@Override
+	public long calculateEstimatedCardinality() {
+		FunctionApplication funApp = getVertex();
+		IsArgumentOf inc = funApp
+				.getFirstIsArgumentOfIncidence(EdgeDirection.IN);
+		int elements = 0;
+		while (inc != null) {
+			VertexEvaluator<? extends Expression> argEval = query
+					.getVertexEvaluator((Expression) inc.getAlpha());
+			elements += argEval.getEstimatedCardinality();
+			inc = inc.getNextIsArgumentOfIncidence(EdgeDirection.IN);
+		}
+
+		Function func = getFunction();
+		if (func != null) {
+			return func.getEstimatedCardinality(elements);
+		} else {
+			return 1;
+		}
+	}
 
 }

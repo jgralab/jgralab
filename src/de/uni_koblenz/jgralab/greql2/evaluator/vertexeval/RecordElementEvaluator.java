@@ -38,7 +38,9 @@ package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.greql2.evaluator.InternalGreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.QueryImpl;
+import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
 import de.uni_koblenz.jgralab.greql2.schema.Expression;
+import de.uni_koblenz.jgralab.greql2.schema.IsRecordExprOf;
 import de.uni_koblenz.jgralab.greql2.schema.RecordElement;
 import de.uni_koblenz.jgralab.greql2.schema.RecordId;
 
@@ -87,9 +89,19 @@ public class RecordElementEvaluator extends VertexEvaluator<RecordElement> {
 		return expEval.getResult(evaluator);
 	}
 
-	// @Override
-	// public VertexCosts calculateSubtreeEvaluationCosts() {
-	// return greqlEvaluator.getCostModel().calculateCostsRecordElement(this);
-	// }
+	@Override
+	public VertexCosts calculateSubtreeEvaluationCosts() {
+		RecordElement recElem = getVertex();
+
+		IsRecordExprOf inc = recElem.getFirstIsRecordExprOfIncidence();
+		VertexEvaluator<? extends Expression> veval = query
+				.getVertexEvaluator((Expression) inc.getAlpha());
+		long recordExprCosts = veval.getCurrentSubtreeEvaluationCosts();
+
+		long ownCosts = 3;
+		long iteratedCosts = ownCosts * getVariableCombinations();
+		long subtreeCosts = recordExprCosts + iteratedCosts;
+		return new VertexCosts(ownCosts, iteratedCosts, subtreeCosts);
+	}
 
 }

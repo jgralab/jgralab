@@ -40,6 +40,7 @@ import java.util.List;
 
 import de.uni_koblenz.jgralab.greql2.evaluator.InternalGreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.QueryImpl;
+import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
 import de.uni_koblenz.jgralab.greql2.exception.UnknownTypeException;
 import de.uni_koblenz.jgralab.greql2.schema.TypeId;
 import de.uni_koblenz.jgralab.greql2.types.TypeCollection;
@@ -93,15 +94,33 @@ public class TypeIdEvaluator extends VertexEvaluator<TypeId> {
 		return new TypeCollection(typeList, vertex.is_excluded());
 	}
 
-	// @Override
-	// public VertexCosts calculateSubtreeEvaluationCosts() {
-	// return greqlEvaluator.getCostModel().calculateCostsTypeId(this);
-	// }
-	//
-	// @Override
-	// public double calculateEstimatedSelectivity() {
-	// return greqlEvaluator.getCostModel().calculateSelectivityTypeId(this);
-	// }
+	@Override
+	public VertexCosts calculateSubtreeEvaluationCosts() {
+		long costs = query.getGraphSize().getKnownEdgeTypes()
+				+ query.getGraphSize().getKnownVertexTypes();
+		return new VertexCosts(costs, costs, costs);
+	}
+
+	@Override
+	public double calculateEstimatedSelectivity() {
+		int typesInSchema = (int) Math.round((query.getGraphSize()
+				.getKnownEdgeTypes() + query.getGraphSize()
+				.getKnownVertexTypes()) / 2.0);
+		double selectivity = 1.0;
+		TypeId id = getVertex();
+		if (id.is_type()) {
+			selectivity = 1.0 / typesInSchema;
+		} else {
+			double avgSubclasses = (query.getGraphSize()
+					.getAverageEdgeSubclasses() + query.getGraphSize()
+					.getAverageVertexSubclasses()) / 2.0;
+			selectivity = avgSubclasses / typesInSchema;
+		}
+		if (id.is_excluded()) {
+			selectivity = 1 - selectivity;
+		}
+		return selectivity;
+	}
 
 	@Override
 	public String getLoggingName() {

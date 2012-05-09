@@ -41,6 +41,7 @@ import java.util.Set;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.greql2.evaluator.InternalGreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.QueryImpl;
+import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
 import de.uni_koblenz.jgralab.greql2.schema.EdgeRestriction;
 import de.uni_koblenz.jgralab.greql2.schema.Expression;
 import de.uni_koblenz.jgralab.greql2.schema.IsBooleanPredicateOfEdgeRestriction;
@@ -136,10 +137,23 @@ public class EdgeRestrictionEvaluator extends VertexEvaluator<EdgeRestriction> {
 		return null;
 	}
 
-	// @Override
-	// public VertexCosts calculateSubtreeEvaluationCosts() {
-	// return greqlEvaluator.getCostModel()
-	// .calculateCostsEdgeRestriction(this);
-	// }
+	@Override
+	public VertexCosts calculateSubtreeEvaluationCosts() {
+		EdgeRestriction er = getVertex();
+
+		long subtreeCosts = 0;
+		if (er.getFirstIsTypeIdOfIncidence(EdgeDirection.IN) != null) {
+			TypeIdEvaluator tEval = (TypeIdEvaluator) query
+					.getVertexEvaluator((TypeId) er
+							.getFirstIsTypeIdOfIncidence(EdgeDirection.IN)
+							.getAlpha());
+			subtreeCosts += tEval.getCurrentSubtreeEvaluationCosts();
+		}
+		if (er.getFirstIsRoleIdOfIncidence(EdgeDirection.IN) != null) {
+			subtreeCosts += 1;
+		}
+		return new VertexCosts(transitionCosts, transitionCosts, subtreeCosts
+				+ transitionCosts);
+	}
 
 }

@@ -41,7 +41,10 @@ import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.greql2.evaluator.InternalGreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.QueryImpl;
+import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
 import de.uni_koblenz.jgralab.greql2.schema.EdgeSetExpression;
+import de.uni_koblenz.jgralab.greql2.schema.IsTypeRestrOfExpression;
+import de.uni_koblenz.jgralab.greql2.schema.TypeId;
 import de.uni_koblenz.jgralab.greql2.types.TypeCollection;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 
@@ -53,6 +56,12 @@ import de.uni_koblenz.jgralab.schema.EdgeClass;
  */
 public class EdgeSetExpressionEvaluator extends
 		ElementSetExpressionEvaluator<EdgeSetExpression> {
+
+	/**
+	 * A factor that will be multiplied with the number of edges of the
+	 * datagraph to estimate the own costs of a {@link EdgeSetExpression}.
+	 */
+	protected static final int edgeSetExpressionCostsFactor = 3;
 
 	/**
 	 * Creates a new ElementSetExpressionEvaluator for the given vertex
@@ -82,16 +91,37 @@ public class EdgeSetExpressionEvaluator extends
 		return resultSet;
 	}
 
-	// @Override
-	// public VertexCosts calculateSubtreeEvaluationCosts() {
-	// return greqlEvaluator.getCostModel().calculateCostsEdgeSetExpression(
-	// this);
-	// }
-	//
-	// @Override
-	// public long calculateEstimatedCardinality() {
-	// return greqlEvaluator.getCostModel()
-	// .calculateCardinalityEdgeSetExpression(this);
-	// }
+	@Override
+	public VertexCosts calculateSubtreeEvaluationCosts() {
+		EdgeSetExpression ese = getVertex();
+
+		long typeRestrCosts = 0;
+		IsTypeRestrOfExpression inc = ese
+				.getFirstIsTypeRestrOfExpressionIncidence();
+		while (inc != null) {
+			TypeIdEvaluator tideval = (TypeIdEvaluator) query
+					.getVertexEvaluator((TypeId) inc.getAlpha());
+			typeRestrCosts += tideval.getCurrentSubtreeEvaluationCosts();
+			inc = inc.getNextIsTypeRestrOfExpressionIncidence();
+		}
+
+		long ownCosts = query.getGraphSize().getEdgeCount()
+				* edgeSetExpressionCostsFactor;
+		return new VertexCosts(ownCosts, ownCosts, typeRestrCosts + ownCosts);
+	}
+
+	@Override
+	public long calculateEstimatedCardinality() {
+		EdgeSetExpression exp = getVertex();
+		IsTypeRestrOfExpression inc = exp
+				.getFirstIsTypeRestrOfExpressionIncidence();
+		double selectivity = 1.0;
+		if (inc != null) {
+			TypeIdEvaluator typeIdEval = (TypeIdEvaluator) query
+					.getVertexEvaluator((TypeId) inc.getAlpha());
+			selectivity = typeIdEval.getEstimatedSelectivity();
+		}
+		return Math.round(query.getGraphSize().getEdgeCount() * selectivity);
+	}
 
 }

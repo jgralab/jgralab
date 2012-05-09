@@ -36,6 +36,7 @@
 package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.pcollections.PVector;
@@ -45,11 +46,13 @@ import de.uni_koblenz.jgralab.greql2.evaluator.InternalGreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.QueryImpl;
 import de.uni_koblenz.jgralab.greql2.evaluator.VariableDeclaration;
 import de.uni_koblenz.jgralab.greql2.evaluator.VariableDeclarationLayer;
+import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
 import de.uni_koblenz.jgralab.greql2.schema.Declaration;
 import de.uni_koblenz.jgralab.greql2.schema.Expression;
 import de.uni_koblenz.jgralab.greql2.schema.IsConstraintOf;
 import de.uni_koblenz.jgralab.greql2.schema.IsSimpleDeclOf;
 import de.uni_koblenz.jgralab.greql2.schema.SimpleDeclaration;
+import de.uni_koblenz.jgralab.greql2.schema.Variable;
 
 /**
  * Evaluates a Declaration vertex in the GReQL-2 Syntaxgraph
@@ -58,6 +61,12 @@ import de.uni_koblenz.jgralab.greql2.schema.SimpleDeclaration;
  * 
  */
 public class DeclarationEvaluator extends VertexEvaluator<Declaration> {
+
+	/**
+	 * A factor that will be multiplied with the number of variable combinations
+	 * to estimate the own costs of a {@link Declaration}.
+	 */
+	protected static final int declarationCostsFactor = 5;
 
 	/**
 	 * @param vertex
@@ -97,29 +106,64 @@ public class DeclarationEvaluator extends VertexEvaluator<Declaration> {
 		return declarationLayer;
 	}
 
-	// @Override
-	// public VertexCosts calculateSubtreeEvaluationCosts() {
-	// return greqlEvaluator.getCostModel().calculateCostsDeclaration(this);
-	// }
-	//
-	// /**
-	// * Returns the number of combinations of the variables this vertex defines
-	// */
-	// public long getDefinedVariableCombinations() {
-	// long combinations = 1;
-	// Iterator<Variable> iter = getDefinedVariables().iterator();
-	// while (iter.hasNext()) {
-	// VariableEvaluator veval = (VariableEvaluator) vertexEvalMarker
-	// .getMark(iter.next());
-	// combinations *= veval.getVariableCombinations();
-	// }
-	// return combinations;
-	// }
-	//
-	// @Override
-	// public long calculateEstimatedCardinality() {
-	// return greqlEvaluator.getCostModel().calculateCardinalityDeclaration(
-	// this);
-	// }
+	@Override
+	public VertexCosts calculateSubtreeEvaluationCosts() {
+		Declaration decl = getVertex();
+
+		IsSimpleDeclOf inc = decl.getFirstIsSimpleDeclOfIncidence();
+		long simpleDeclCosts = 0;
+		while (inc != null) {
+			SimpleDeclaration simpleDecl = (SimpleDeclaration) inc.getAlpha();
+			SimpleDeclarationEvaluator simpleEval = (SimpleDeclarationEvaluator) query
+					.getVertexEvaluator(simpleDecl);
+			simpleDeclCosts += simpleEval.getCurrentSubtreeEvaluationCosts();
+			inc = inc.getNextIsSimpleDeclOfIncidence();
+		}
+
+		IsConstraintOf consInc = decl.getFirstIsConstraintOfIncidence();
+		int constraintsCosts = 0;
+		while (consInc != null) {
+			VertexEvaluator<? extends Expression> constraint = query
+					.getVertexEvaluator((Expression) consInc.getAlpha());
+			constraintsCosts += constraint.getCurrentSubtreeEvaluationCosts();
+			consInc = consInc.getNextIsConstraintOfIncidence();
+		}
+
+		long iterationCosts = getDefinedVariableCombinations()
+				* declarationCostsFactor;
+		long ownCosts = iterationCosts + 2;
+		long iteratedCosts = ownCosts * getVariableCombinations();
+		long subtreeCosts = iteratedCosts + constraintsCosts + simpleDeclCosts;
+		return new VertexCosts(ownCosts, iteratedCosts, subtreeCosts);
+	}
+
+	/**
+	 * Returns the number of combinations of the variables this vertex defines
+	 */
+	public long getDefinedVariableCombinations() {
+		long combinations = 1;
+		Iterator<Variable> iter = getDefinedVariables().iterator();
+		while (iter.hasNext()) {
+			VariableEvaluator<? extends Variable> veval = (VariableEvaluator<? extends Variable>) query
+					.getVertexEvaluator(iter.next());
+			combinations *= veval.getVariableCombinations();
+		}
+		return combinations;
+	}
+
+	@Override
+	public long calculateEstimatedCardinality() {
+		Declaration decl = getVertex();
+		IsConstraintOf inc = decl
+				.getFirstIsConstraintOfIncidence(EdgeDirection.IN);
+		double selectivity = 1.0;
+		while (inc != null) {
+			VertexEvaluator<? extends Expression> constEval = query
+					.getVertexEvaluator((Expression) inc.getAlpha());
+			selectivity *= constEval.getEstimatedSelectivity();
+			inc = inc.getNextIsConstraintOfIncidence(EdgeDirection.IN);
+		}
+		return Math.round(getDefinedVariableCombinations() * selectivity);
+	}
 
 }

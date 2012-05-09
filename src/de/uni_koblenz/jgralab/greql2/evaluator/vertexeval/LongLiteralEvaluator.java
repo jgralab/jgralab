@@ -37,6 +37,7 @@ package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 
 import de.uni_koblenz.jgralab.greql2.evaluator.InternalGreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.QueryImpl;
+import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
 import de.uni_koblenz.jgralab.greql2.schema.LongLiteral;
 
 /**
@@ -59,9 +60,9 @@ public class LongLiteralEvaluator extends VertexEvaluator<LongLiteral> {
 		return vertex.get_longValue();
 	}
 
-	// @Override
-	// public VertexCosts calculateSubtreeEvaluationCosts() {
-	// return new VertexCosts(1, 1, 1);
-	// }
+	@Override
+	public VertexCosts calculateSubtreeEvaluationCosts() {
+		return new VertexCosts(1, 1, 1);
+	}
 
 }

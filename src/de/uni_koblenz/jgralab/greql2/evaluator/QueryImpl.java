@@ -49,6 +49,7 @@ import de.uni_koblenz.jgralab.GraphStructureChangedAdapter;
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.graphmarker.GraphMarker;
+import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VertexEvaluator;
 import de.uni_koblenz.jgralab.greql2.parser.GreqlParser;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Expression;
@@ -68,6 +69,7 @@ public class QueryImpl extends GraphStructureChangedAdapter implements Query {
 	private final long optimizationTime = -1;
 	private long parseTime = -1;
 	private Greql2Expression rootExpression;
+	private final GraphSize graphsize;
 
 	/**
 	 * The {@link Map} of SimpleName to Type of types that is known in the
@@ -121,6 +123,11 @@ public class QueryImpl extends GraphStructureChangedAdapter implements Query {
 	}
 
 	public static Query readQuery(File f, boolean optimize) throws IOException {
+		return readQuery(f, optimize, new GraphSize(100, 100, 20, 20));
+	}
+
+	public static Query readQuery(File f, boolean optimize, GraphSize graphsize)
+			throws IOException {
 		BufferedReader reader = null;
 		try {
 			reader = new BufferedReader(new FileReader(f));
@@ -131,7 +138,7 @@ public class QueryImpl extends GraphStructureChangedAdapter implements Query {
 				sb.append(line);
 				sb.append('\n');
 			}
-			return new QueryImpl(sb.toString(), optimize);
+			return new QueryImpl(sb.toString(), optimize, graphsize);
 		} finally {
 			try {
 				reader.close();
@@ -147,8 +154,13 @@ public class QueryImpl extends GraphStructureChangedAdapter implements Query {
 	}
 
 	public QueryImpl(String queryText, boolean optimize) {
+		this(queryText, optimize, new GraphSize(100, 100, 20, 20));
+	}
+
+	public QueryImpl(String queryText, boolean optimize, GraphSize graphsize) {
 		this.queryText = queryText;
 		this.optimize = optimize;
+		this.graphsize = graphsize;
 		knownTypes = new HashMap<String, AttributedElementClass<?, ?>>();
 	}
 
@@ -341,6 +353,10 @@ public class QueryImpl extends GraphStructureChangedAdapter implements Query {
 			return parser.getGraph();
 		}
 
+	}
+
+	public GraphSize getGraphSize() {
+		return graphsize;
 	}
 
 }

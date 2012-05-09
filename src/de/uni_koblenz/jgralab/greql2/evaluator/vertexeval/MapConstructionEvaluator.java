@@ -41,6 +41,7 @@ import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.greql2.evaluator.InternalGreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.QueryImpl;
+import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
 import de.uni_koblenz.jgralab.greql2.exception.GreqlException;
 import de.uni_koblenz.jgralab.greql2.schema.Expression;
 import de.uni_koblenz.jgralab.greql2.schema.IsKeyExprOfConstruction;
@@ -53,11 +54,35 @@ public class MapConstructionEvaluator extends VertexEvaluator<MapConstruction> {
 		super(vertex, query);
 	}
 
-	// @Override
-	// protected VertexCosts calculateSubtreeEvaluationCosts() {
-	// return greqlEvaluator.getCostModel()
-	// .calculateCostsMapConstruction(this);
-	// }
+	@Override
+	protected VertexCosts calculateSubtreeEvaluationCosts() {
+		MapConstruction mapCons = getVertex();
+		IsKeyExprOfConstruction keyInc = mapCons
+				.getFirstIsKeyExprOfConstructionIncidence(EdgeDirection.IN);
+		IsValueExprOfConstruction valInc = mapCons
+				.getFirstIsValueExprOfConstructionIncidence(EdgeDirection.IN);
+		long parts = 0;
+		long partCosts = 0;
+		while (keyInc != null) {
+			VertexEvaluator<? extends Expression> keyEval = query
+					.getVertexEvaluator((Expression) keyInc.getAlpha());
+			partCosts += keyEval.getCurrentSubtreeEvaluationCosts();
+			VertexEvaluator<? extends Expression> valueEval = query
+					.getVertexEvaluator((Expression) valInc.getAlpha());
+			partCosts += keyEval.getCurrentSubtreeEvaluationCosts()
+					+ valueEval.getCurrentSubtreeEvaluationCosts();
+			parts++;
+			keyInc = keyInc
+					.getNextIsKeyExprOfConstructionIncidence(EdgeDirection.IN);
+			valInc = valInc
+					.getNextIsValueExprOfConstructionIncidence(EdgeDirection.IN);
+		}
+
+		long ownCosts = (parts * addToSetCosts) + 2;
+		long iteratedCosts = ownCosts * getVariableCombinations();
+		long subtreeCosts = iteratedCosts + partCosts;
+		return new VertexCosts(ownCosts, iteratedCosts, subtreeCosts);
+	}
 
 	@Override
 	public Object evaluate(InternalGreqlEvaluator evaluator) {
@@ -92,10 +117,17 @@ public class MapConstructionEvaluator extends VertexEvaluator<MapConstruction> {
 		return map;
 	}
 
-	// @Override
-	// public long calculateEstimatedCardinality() {
-	// return greqlEvaluator.getCostModel()
-	// .calculateCardinalityMapConstruction(this);
-	// }
+	@Override
+	public long calculateEstimatedCardinality() {
+		long mappings = 0;
+		MapConstruction mapCons = getVertex();
+		IsKeyExprOfConstruction inc = mapCons
+				.getFirstIsKeyExprOfConstructionIncidence(EdgeDirection.IN);
+		while (inc != null) {
+			mappings++;
+			inc = inc.getNextIsKeyExprOfConstructionIncidence(EdgeDirection.IN);
+		}
+		return mappings;
+	}
 
 }

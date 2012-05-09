@@ -39,6 +39,7 @@ import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.greql2.evaluator.InternalGreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.QueryImpl;
 import de.uni_koblenz.jgralab.greql2.evaluator.VariableDeclarationLayer;
+import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
 import de.uni_koblenz.jgralab.greql2.schema.Declaration;
 import de.uni_koblenz.jgralab.greql2.schema.Expression;
 import de.uni_koblenz.jgralab.greql2.schema.QuantificationType;
@@ -155,10 +156,26 @@ public class QuantifiedExpressionEvaluator extends
 					+ quantificationType);
 		}
 	}
-	// @Override
-	// public VertexCosts calculateSubtreeEvaluationCosts() {
-	// return greqlEvaluator.getCostModel()
-	// .calculateCostsQuantifiedExpression(this);
-	// }
+
+	@Override
+	public VertexCosts calculateSubtreeEvaluationCosts() {
+		QuantifiedExpression quantifiedExpr = getVertex();
+
+		VertexEvaluator<? extends Declaration> declEval = query
+				.getVertexEvaluator((Declaration) quantifiedExpr
+						.getFirstIsQuantifiedDeclOfIncidence().getAlpha());
+		long declCosts = declEval.getCurrentSubtreeEvaluationCosts();
+
+		VertexEvaluator<? extends Expression> boundExprEval = query
+				.getVertexEvaluator((Expression) quantifiedExpr
+						.getFirstIsBoundExprOfQuantifiedExpressionIncidence()
+						.getAlpha());
+		long boundExprCosts = boundExprEval.getCurrentSubtreeEvaluationCosts();
+
+		long ownCosts = 20;
+		long iteratedCosts = ownCosts * getVariableCombinations();
+		long subtreeCosts = iteratedCosts + declCosts + boundExprCosts;
+		return new VertexCosts(ownCosts, iteratedCosts, subtreeCosts);
+	}
 
 }

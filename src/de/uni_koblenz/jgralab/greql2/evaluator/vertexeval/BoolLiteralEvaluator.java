@@ -37,6 +37,7 @@ package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 
 import de.uni_koblenz.jgralab.greql2.evaluator.InternalGreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.QueryImpl;
+import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
 import de.uni_koblenz.jgralab.greql2.schema.BoolLiteral;
 
 /**
@@ -59,18 +60,18 @@ public class BoolLiteralEvaluator extends VertexEvaluator<BoolLiteral> {
 		return vertex.is_boolValue();
 	}
 
-	// @Override
-	// public VertexCosts calculateSubtreeEvaluationCosts() {
-	// return new VertexCosts(1, 1, 1);
-	// }
-	//
-	// @Override
-	// public double calculateEstimatedSelectivity() {
-	// // true has selectivity 1, but false and null can never be true, so
-	// // their selectivity is 0.
-	// if (vertex.is_boolValue()) {
-	// return 1;
-	// }
-	// return 0;
-	// }
+	@Override
+	public VertexCosts calculateSubtreeEvaluationCosts() {
+		return new VertexCosts(1, 1, 1);
+	}
+
+	@Override
+	public double calculateEstimatedSelectivity() {
+		// true has selectivity 1, but false and null can never be true, so
+		// their selectivity is 0.
+		if (vertex.is_boolValue()) {
+			return 1;
+		}
+		return 0;
+	}
 }

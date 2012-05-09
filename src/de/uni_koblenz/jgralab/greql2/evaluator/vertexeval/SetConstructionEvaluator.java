@@ -35,9 +35,13 @@
 
 package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 
+import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.greql2.evaluator.InternalGreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.QueryImpl;
+import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
+import de.uni_koblenz.jgralab.greql2.schema.Expression;
+import de.uni_koblenz.jgralab.greql2.schema.IsPartOf;
 import de.uni_koblenz.jgralab.greql2.schema.SetConstruction;
 
 /**
@@ -58,16 +62,36 @@ public class SetConstructionEvaluator extends
 		return createValue(JGraLab.set(), evaluator);
 	}
 
-	// @Override
-	// public VertexCosts calculateSubtreeEvaluationCosts() {
-	// return greqlEvaluator.getCostModel()
-	// .calculateCostsSetConstruction(this);
-	// }
-	//
-	// @Override
-	// public long calculateEstimatedCardinality() {
-	// return greqlEvaluator.getCostModel()
-	// .calculateCardinalitySetConstruction(this);
-	// }
+	@Override
+	public VertexCosts calculateSubtreeEvaluationCosts() {
+		SetConstruction setCons = getVertex();
+		IsPartOf inc = setCons.getFirstIsPartOfIncidence(EdgeDirection.IN);
+		long parts = 0;
+		long partCosts = 0;
+		while (inc != null) {
+			VertexEvaluator<? extends Expression> veval = query
+					.getVertexEvaluator((Expression) inc.getAlpha());
+			partCosts += veval.getCurrentSubtreeEvaluationCosts();
+			parts++;
+			inc = inc.getNextIsPartOfIncidence(EdgeDirection.IN);
+		}
+
+		long ownCosts = (parts * addToSetCosts) + 2;
+		long iteratedCosts = ownCosts * getVariableCombinations();
+		long subtreeCosts = iteratedCosts + partCosts;
+		return new VertexCosts(ownCosts, iteratedCosts, subtreeCosts);
+	}
+
+	@Override
+	public long calculateEstimatedCardinality() {
+		SetConstruction setCons = getVertex();
+		IsPartOf inc = setCons.getFirstIsPartOfIncidence();
+		long parts = 0;
+		while (inc != null) {
+			parts++;
+			inc = inc.getNextIsPartOfIncidence();
+		}
+		return parts;
+	}
 
 }

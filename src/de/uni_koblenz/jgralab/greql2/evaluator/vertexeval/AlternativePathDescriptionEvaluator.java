@@ -40,6 +40,7 @@ import java.util.ArrayList;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.greql2.evaluator.InternalGreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.QueryImpl;
+import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
 import de.uni_koblenz.jgralab.greql2.evaluator.fa.NFA;
 import de.uni_koblenz.jgralab.greql2.schema.AlternativePathDescription;
 import de.uni_koblenz.jgralab.greql2.schema.IsAlternativePathOf;
@@ -88,10 +89,23 @@ public class AlternativePathDescriptionEvaluator extends
 		return NFA.createAlternativePathDescriptionNFA(nfaList);
 	}
 
-	// @Override
-	// public VertexCosts calculateSubtreeEvaluationCosts() {
-	// return greqlEvaluator.getCostModel()
-	// .calculateCostsAlternativePathDescription(this);
-	// }
+	@Override
+	public VertexCosts calculateSubtreeEvaluationCosts() {
+		AlternativePathDescription p = getVertex();
+		long aggregatedCosts = 0;
+		IsAlternativePathOf inc = p
+				.getFirstIsAlternativePathOfIncidence(EdgeDirection.IN);
+		long alternatives = 0;
+		while (inc != null) {
+			PathDescriptionEvaluator<? extends PathDescription> pathEval = (PathDescriptionEvaluator<? extends PathDescription>) query
+					.getVertexEvaluator((PathDescription) inc.getAlpha());
+			aggregatedCosts += pathEval.getCurrentSubtreeEvaluationCosts();
+			inc = inc.getNextIsAlternativePathOfIncidence(EdgeDirection.IN);
+			alternatives++;
+		}
+		aggregatedCosts += 10 * alternatives;
+		return new VertexCosts(10 * alternatives, 10 * alternatives,
+				aggregatedCosts);
+	}
 
 }

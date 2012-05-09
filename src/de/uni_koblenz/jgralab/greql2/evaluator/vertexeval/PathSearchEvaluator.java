@@ -50,6 +50,13 @@ public abstract class PathSearchEvaluator<V extends PathExpression> extends
 		VertexEvaluator<V> {
 
 	/**
+	 * describes, how much interpretation steps it takes to do a regular
+	 * pathsearch in relation to the size of the search automaton and the size
+	 * of the datagraph.
+	 */
+	protected static final int searchFactor = 20;
+
+	/**
 	 * The DFA used for PathSearch
 	 */
 	protected DFA searchAutomaton;

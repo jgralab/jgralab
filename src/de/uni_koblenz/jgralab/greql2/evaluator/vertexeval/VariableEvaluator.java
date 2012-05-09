@@ -46,10 +46,12 @@ import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql2.evaluator.InternalGreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.QueryImpl;
+import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
 import de.uni_koblenz.jgralab.greql2.schema.Declaration;
 import de.uni_koblenz.jgralab.greql2.schema.Expression;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Aggregation;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
+import de.uni_koblenz.jgralab.greql2.schema.IsDeclaredVarOf;
 import de.uni_koblenz.jgralab.greql2.schema.SimpleDeclaration;
 import de.uni_koblenz.jgralab.greql2.schema.Variable;
 
@@ -69,7 +71,7 @@ public class VariableEvaluator<V extends Variable> extends VertexEvaluator<V> {
 	/**
 	 * This is the estimated cardinality of the definitionset of this variable
 	 */
-	private final long estimatedAssignments = Long.MIN_VALUE;
+	private long estimatedAssignments = Long.MIN_VALUE;
 
 	/**
 	 * Sets the given value as "result" of this variable, so it can be uses via
@@ -195,25 +197,37 @@ public class VariableEvaluator<V extends Variable> extends VertexEvaluator<V> {
 	 * @return the estimated number of possible different values this variable
 	 *         may get during evaluation
 	 */
-	// @Override
-	// public long getVariableCombinations() {
-	// if (estimatedAssignments == Long.MIN_VALUE) {
-	// estimatedAssignments = calculateEstimatedAssignments();
-	// }
-	// return estimatedAssignments;
-	// }
+	@Override
+	public long getVariableCombinations() {
+		if (estimatedAssignments == Long.MIN_VALUE) {
+			estimatedAssignments = calculateEstimatedAssignments();
+		}
+		return estimatedAssignments;
+	}
 
 	/**
 	 * calculated the estimated number of possible different values this
 	 * variable may get during evaluation
 	 */
-	// public long calculateEstimatedAssignments() {
-	// return greqlEvaluator.getCostModel().calculateVariableAssignments(this);
-	// }
+	public long calculateEstimatedAssignments() {
+		Variable v = getVertex();
+		IsDeclaredVarOf inc = v.getFirstIsDeclaredVarOfIncidence();
+		if (inc != null) {
+			SimpleDeclaration decl = (SimpleDeclaration) inc.getOmega();
+			VertexEvaluator<? extends Expression> typeExpEval = query
+					.getVertexEvaluator((Expression) decl
+							.getFirstIsTypeExprOfIncidence().getAlpha());
+			return typeExpEval.getEstimatedCardinality();
+		} else {
+			// if there exists no "isDeclaredVarOf"-Edge the variable is not
+			// declared but defined, so there exists only 1 possible assignment
+			return 1;
+		}
+	}
 
-	// @Override
-	// public VertexCosts calculateSubtreeEvaluationCosts() {
-	// return greqlEvaluator.getCostModel().calculateCostsVariable(this);
-	// }
+	@Override
+	public VertexCosts calculateSubtreeEvaluationCosts() {
+		return new VertexCosts(1, 1, 1);
+	}
 
 }
