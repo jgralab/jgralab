@@ -51,7 +51,6 @@ import de.uni_koblenz.jgralab.greql2.evaluator.QueryImpl;
 import de.uni_koblenz.jgralab.greql2.evaluator.VariableDeclarationLayer;
 import de.uni_koblenz.jgralab.greql2.schema.Declaration;
 import de.uni_koblenz.jgralab.greql2.schema.Expression;
-import de.uni_koblenz.jgralab.greql2.schema.IsTableHeaderOf;
 import de.uni_koblenz.jgralab.greql2.schema.TableComprehension;
 import de.uni_koblenz.jgralab.greql2.types.Table;
 import de.uni_koblenz.jgralab.greql2.types.Tuple;
@@ -145,17 +144,8 @@ public class TableComprehensionEvaluator extends
 			completeColumnHeaderTreeSet.add(jValueImpl);
 		}
 		Iterator<Object> colIter = completeColumnHeaderTreeSet.iterator();
-		IsTableHeaderOf tHeader = vertex
-				.getFirstIsTableHeaderOfIncidence(EdgeDirection.IN);
-		if (tHeader != null) {
-			VertexEvaluator<? extends Expression> theval = query
-					.getVertexEvaluator((Expression) tHeader.getAlpha());
-			headerTuple = headerTuple
-					.plus((String) theval.getResult(evaluator));
-		} else {
-			// dummy entry in the upper left corner
-			headerTuple = headerTuple.plus("");
-		}
+		// dummy entry in the upper left corner
+		headerTuple = headerTuple.plus("");
 		while (colIter.hasNext()) {
 			headerTuple = headerTuple.plus(colIter.next().toString());
 		}

@@ -47,7 +47,6 @@ import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql2.evaluator.InternalGreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.QueryImpl;
 import de.uni_koblenz.jgralab.greql2.schema.Declaration;
-import de.uni_koblenz.jgralab.greql2.schema.Definition;
 import de.uni_koblenz.jgralab.greql2.schema.Expression;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Aggregation;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
@@ -157,18 +156,6 @@ public class VariableEvaluator<V extends Variable> extends VertexEvaluator<V> {
 				forbiddenVertices.add(declaringVertex
 						.getFirstIsQuantifiedDeclOfIncidence(EdgeDirection.OUT)
 						.getThat());
-			}
-		} else {
-			if (vertex.getFirstIsVarOfIncidence(EdgeDirection.OUT) != null) {
-				Definition definingVertex = (Definition) vertex
-						.getFirstIsVarOfIncidence(EdgeDirection.OUT).getThat();
-				forbiddenVertices.add(definingVertex);
-				forbiddenVertices.add(definingVertex
-						.getFirstIsDefinitionOfIncidence(EdgeDirection.OUT)
-						.getThat());
-			} else {
-				// thisvertex, thisedge
-
 			}
 		}
 
