@@ -110,6 +110,9 @@ public class QuantifiedExpressionEvaluator extends
 					if ((Boolean) tempResult) {
 						return Boolean.TRUE;
 					}
+				} else {
+					// every result which is not a Boolean evaluates to true
+					return Boolean.TRUE;
 				}
 			}
 			return Boolean.FALSE;
@@ -123,6 +126,13 @@ public class QuantifiedExpressionEvaluator extends
 						} else {
 							foundTrue = true;
 						}
+					}
+				} else {
+					// every result which is not a Boolean evaluates to true
+					if (foundTrue == true) {
+						return Boolean.FALSE;
+					} else {
+						foundTrue = true;
 					}
 				}
 			}
@@ -145,7 +155,6 @@ public class QuantifiedExpressionEvaluator extends
 					+ quantificationType);
 		}
 	}
-
 	// @Override
 	// public VertexCosts calculateSubtreeEvaluationCosts() {
 	// return greqlEvaluator.getCostModel()
