@@ -292,7 +292,10 @@ public class GenericGraphImpl extends GraphImpl implements
 			Map<String, Object> values) {
 		RecordImpl record = RecordImpl.empty();
 		for (RecordComponent c : recordDomain.getComponents()) {
-			assert (values.containsKey(c.getName()));
+			if (!values.containsKey(c.getName())) {
+				throw new GraphException("The provided Map misses a " + c.getName()
+						+ " key!");
+			}
 			record = record.plus(c.getName(), values.get(c.getName()));
 		}
 		return record;

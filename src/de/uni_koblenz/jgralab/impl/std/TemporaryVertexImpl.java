@@ -18,8 +18,8 @@ import de.uni_koblenz.jgralab.schema.VertexClass;
 
 public class TemporaryVertexImpl extends VertexImpl implements TemporaryVertex {
 
-	private HashMap<String,Object> attributes;
-	
+	private HashMap<String, Object> attributes;
+
 	protected TemporaryVertexImpl(int id, Graph graph) {
 		super(id, graph);
 		this.attributes = new HashMap<String, Object>();
@@ -34,7 +34,6 @@ public class TemporaryVertexImpl extends VertexImpl implements TemporaryVertex {
 	public Class<? extends Vertex> getSchemaClass() {
 		throw new UnsupportedOperationException();
 	}
-
 
 	@Override
 	public void readAttributeValueFromString(String attributeName, String value)
@@ -69,7 +68,7 @@ public class TemporaryVertexImpl extends VertexImpl implements TemporaryVertex {
 	public <T> void setAttribute(String name, T data)
 			throws NoSuchAttributeException {
 		this.attributes.put(name, data);
-		
+
 	}
 
 	@Override
@@ -85,84 +84,86 @@ public class TemporaryVertexImpl extends VertexImpl implements TemporaryVertex {
 
 	@Override
 	public Vertex convertToRealGraphElement(VertexClass vc) {
-		
-		//Test if vc is valid
+
+		// Test if vc is valid
 		validateConversion(vc);
-		
+
 		// save properties
 		int id = this.id;
 		InternalGraph g = this.graph;
 		InternalVertex prevVertex = this.getPrevVertexInVSeq();
 		InternalVertex nextVertex = this.getNextVertexInVSeq();
-		
-		// create new vertex 
+
+		// create new vertex
 		InternalVertex newVertex = g.createVertex(vc);
-		
+
 		// attributes
-		for(String attrName : this.attributes.keySet()){
-			if(newVertex.getAttributedElementClass().containsAttribute(attrName)){
+		for (String attrName : this.attributes.keySet()) {
+			if (newVertex.getAttributedElementClass().containsAttribute(
+					attrName)) {
 				newVertex.setAttribute(attrName, this.attributes.get(attrName));
 			}
 		}
-		
+
 		// incidences
-		Edge e = this.getFirstIncidence();	
-		while(e != null){
+		Edge e = this.getFirstIncidence();
+		while (e != null) {
 			e.setThis(newVertex);
 			e = this.getFirstIncidence();
 		}
-		
-		InternalVertex newLastVertex = newVertex.getPrevVertexInVSeq();
-		
+
 		this.delete();
 
-		if(nextVertex != null){
-			nextVertex.setPrevVertex(newVertex);
-			newVertex.setNextVertex(nextVertex);
-			newVertex.setPrevVertex(prevVertex);
-			
-			newLastVertex.setNextVertex(null);
-			
-			if(prevVertex != null){
-				prevVertex.setNextVertex(newVertex);
-			}else{// Temporary Vertex is first Vertex in graph
-				g.setFirstVertex(newVertex);
-			}
-
-			g.setLastVertex(newLastVertex);
+		if (nextVertex != null) {
+			newVertex.putBefore(nextVertex);
 		}
-		
-		// Set id 
+		if (prevVertex != null) {
+			newVertex.putAfter(prevVertex);
+		}
+
+		// Set id
 		int idToFree = newVertex.getId();
 		newVertex.setId(id);
 		g.allocateVertexIndex(id);
 		g.freeVertexIndex(idToFree);
+		// fixup vertex[]
+		InternalVertex[] vertex = g.getVertex();
+		vertex[id] = newVertex;
+		vertex[idToFree] = null;
 		return newVertex;
 	}
 
 	private void validateConversion(VertexClass vc) {
-		// TODO maybe faster if iterate over all incidences at once and checking direction every time
-		for(Edge e : this.incidences(EdgeDirection.OUT)){
-			if(!vc.isValidFromFor(e.getAttributedElementClass())){
-				throw new TemporaryGraphElementConversionException("Transformation of temporary vertex "+this+ " failed. "
-						+ vc +" is not a valid source for edge "+ e +".");
+		// TODO maybe faster if iterate over all incidences at once and checking
+		// direction every time
+		for (Edge e : this.incidences(EdgeDirection.OUT)) {
+			if (!vc.isValidFromFor(e.getAttributedElementClass())) {
+				throw new TemporaryGraphElementConversionException(
+						"Transformation of temporary vertex " + this
+								+ " failed. " + vc
+								+ " is not a valid source for edge " + e + ".");
 			}
 		}
-		
-		for(Edge e : this.incidences(EdgeDirection.IN)){
-			if(!vc.isValidToFor(e.getAttributedElementClass())){
-				throw new TemporaryGraphElementConversionException("Transformation of temporary vertex "+this+ " failed. "
-						+ vc +" is not a valid target for edge "+ e +".");
+
+		for (Edge e : this.incidences(EdgeDirection.IN)) {
+			if (!vc.isValidToFor(e.getAttributedElementClass())) {
+				throw new TemporaryGraphElementConversionException(
+						"Transformation of temporary vertex " + this
+								+ " failed. " + vc
+								+ " is not a valid target for edge " + e + ".");
 			}
 		}
-		
-		for(String atname : this.attributes.keySet()){
-			if(vc.containsAttribute(atname)){
-				if(!vc.getAttribute(atname).getDomain()
-					.isConformValue(this.attributes.get(atname))){
-					throw new TemporaryGraphElementConversionException("Transformation of temporary vertex "+this+ " failed. "
-							+ vc + " has an attribute " + atname + " but " + this.attributes.get(atname)
-							+ " is not a valid value.");
+
+		for (String atname : this.attributes.keySet()) {
+			if (vc.containsAttribute(atname)) {
+				if (!vc.getAttribute(atname).getDomain()
+						.isConformValue(this.attributes.get(atname))) {
+					throw new TemporaryGraphElementConversionException(
+							"Transformation of temporary vertex " + this
+									+ " failed. " + vc + " has an attribute "
+									+ atname + " but "
+									+ this.attributes.get(atname)
+									+ " is not a valid value.");
 				}
 			}
 		}
@@ -172,9 +173,9 @@ public class TemporaryVertexImpl extends VertexImpl implements TemporaryVertex {
 	public void deleteAttribute(String name) {
 		this.attributes.remove(name);
 	}
-	
+
 	@Override
-	public boolean isTemporary(){
+	public boolean isTemporary() {
 		return true;
 	}
 

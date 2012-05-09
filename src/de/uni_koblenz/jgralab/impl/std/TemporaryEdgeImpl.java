@@ -19,22 +19,21 @@ import de.uni_koblenz.jgralab.impl.ReversedEdgeBaseImpl;
 import de.uni_koblenz.jgralab.schema.AggregationKind;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 
-public class TemporaryEdgeImpl extends EdgeImpl implements TemporaryEdge{
+public class TemporaryEdgeImpl extends EdgeImpl implements TemporaryEdge {
 
-	private HashMap<String,Object> attributes;
-	
+	private HashMap<String, Object> attributes;
+
 	protected TemporaryEdgeImpl(int anId, Graph graph, Vertex alpha,
 			Vertex omega) {
 		super(anId, graph, alpha, omega);
 		this.attributes = new HashMap<String, Object>();
-		((GraphBaseImpl)graph).addEdge(this, alpha, omega);
+		((GraphBaseImpl) graph).addEdge(this, alpha, omega);
 	}
 
 	@Override
 	public EdgeClass getAttributedElementClass() {
 		return graph.getGraphClass().getTemporaryEdgeClass();
 	}
-
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -61,89 +60,99 @@ public class TemporaryEdgeImpl extends EdgeImpl implements TemporaryEdge{
 
 	@Override
 	public Edge convertToRealGraphElement(EdgeClass edgeClass) {
-		
-		//test if valid
+
+		// test if valid
 		validateConversion(edgeClass);
-		
+
 		// save properties
 		InternalGraph g = graph;
 		int tempID = id;
 		InternalEdge prevEdge = this.getPrevEdgeInESeq();
 		InternalEdge nextEdge = this.getNextEdgeInESeq();
-		
+
 		InternalEdge prevIncidence = this.getPrevIncidenceInISeq();
 		InternalEdge nextIncidence = this.getNextIncidenceInISeq();
-		
-		InternalEdge prevIncidenceReversed = ((InternalEdge)this.getReversedEdge()).getPrevIncidenceInISeq();
-		InternalEdge nextIncidenceReversed = ((InternalEdge) this.getReversedEdge()).getNextIncidenceInISeq();
-		
+
+		InternalEdge prevIncidenceReversed = ((InternalEdge) this
+				.getReversedEdge()).getPrevIncidenceInISeq();
+		InternalEdge nextIncidenceReversed = ((InternalEdge) this
+				.getReversedEdge()).getNextIncidenceInISeq();
+
 		// create new edge
 		InternalEdge newEdge = g.createEdge(edgeClass, getAlpha(), getOmega());
-		
+
 		// attributes
-		for(String attrName : this.attributes.keySet()){
-			if(newEdge.getAttributedElementClass().containsAttribute(attrName)){
+		for (String attrName : this.attributes.keySet()) {
+			if (newEdge.getAttributedElementClass().containsAttribute(attrName)) {
 				newEdge.setAttribute(attrName, this.attributes.get(attrName));
 			}
 		}
-				
-		InternalEdge newLastEdge = newEdge.getPrevEdgeInESeq();
+
 		InternalEdge newLastIncidence = newEdge.getPrevIncidenceInISeq();
-		InternalEdge newLastIncidenceReversed = ((InternalEdge)newEdge.getReversedEdge()).getPrevIncidenceInISeq();
+		InternalEdge newLastIncidenceReversed = ((InternalEdge) newEdge
+				.getReversedEdge()).getPrevIncidenceInISeq();
 
 		this.delete();
-		
-		// eSeq
-		if(nextEdge != null){
-			nextEdge.setPrevEdgeInGraph(newEdge);
-			newEdge.setNextEdgeInGraph(nextEdge);
-			newEdge.setPrevEdgeInGraph(prevEdge);
-			
-			newLastEdge.setNextEdgeInGraph(null);
-			
-			if(prevEdge != null){
-				prevEdge.setNextEdgeInGraph(newEdge);
-			}else{// Temporary Edge is first Edge in graph
-				g.setFirstEdgeInGraph(newEdge);
-			}
 
-			g.setLastEdgeInGraph(newLastEdge);
+		// eSeq
+		if (nextEdge != null) {
+			newEdge.putBeforeEdge(nextEdge);
 		}
-		
+		if (prevEdge != null) {
+			newEdge.putAfterEdge(prevEdge);
+		}
+
 		// iSeq edge
 		correctISeq(prevIncidence, nextIncidence, newEdge, newLastIncidence);
-		
+
 		// iSeq reversed
-		correctISeq(prevIncidenceReversed, nextIncidenceReversed, 
-				(InternalEdge) newEdge.getReversedEdge(), newLastIncidenceReversed);
-		
-		
+		correctISeq(prevIncidenceReversed, nextIncidenceReversed,
+				(InternalEdge) newEdge.getReversedEdge(),
+				newLastIncidenceReversed);
+
+		// set id
 		int idToFree = newEdge.getId();
 		newEdge.setId(tempID);
 		g.allocateEdgeIndex(tempID);
 		g.freeEdgeIndex(idToFree);
-		
+		// fix edge[] & revEdge
+		InternalEdge[] edge = g.getEdge();
+		edge[tempID] = newEdge;
+		edge[idToFree] = null;
+		InternalEdge[] revEdge = g.getRevEdge();
+		revEdge[tempID] = (InternalEdge) newEdge.getReversedEdge();
+		revEdge[idToFree] = null;
+
 		return newEdge;
-		
+
 	}
 
 	private void validateConversion(EdgeClass edgeClass) {
-		if(!this.getAlpha().getAttributedElementClass().isValidFromFor(edgeClass)){
-			throw new TemporaryGraphElementConversionException("Transformation of temporary edge "+this+ " failed. " 
-					+ this.getAlpha() + " is not a valid source for "+ edgeClass);
+		if (!this.getAlpha().getAttributedElementClass()
+				.isValidFromFor(edgeClass)) {
+			throw new TemporaryGraphElementConversionException(
+					"Transformation of temporary edge " + this + " failed. "
+							+ this.getAlpha() + " is not a valid source for "
+							+ edgeClass);
 		}
-		if(!this.getOmega().getAttributedElementClass().isValidToFor(edgeClass)){
-			throw new TemporaryGraphElementConversionException("Transformation of temporary edge "+this+ " failed. "
-					+ this.getOmega() + " is not a valid target for "+ edgeClass);
+		if (!this.getOmega().getAttributedElementClass()
+				.isValidToFor(edgeClass)) {
+			throw new TemporaryGraphElementConversionException(
+					"Transformation of temporary edge " + this + " failed. "
+							+ this.getOmega() + " is not a valid target for "
+							+ edgeClass);
 		}
-		
-		for(String atname : this.attributes.keySet()){
-			if(edgeClass.containsAttribute(atname)){
-				if(!edgeClass.getAttribute(atname).getDomain()
-					.isConformValue(this.attributes.get(atname))){
-					throw new TemporaryGraphElementConversionException("Transformation of temporary vertex "+this+ " failed. "
-							+ edgeClass + " has an attribute " + atname + " but " + this.attributes.get(atname)
-							+ " is not a valid value.");
+
+		for (String atname : this.attributes.keySet()) {
+			if (edgeClass.containsAttribute(atname)) {
+				if (!edgeClass.getAttribute(atname).getDomain()
+						.isConformValue(this.attributes.get(atname))) {
+					throw new TemporaryGraphElementConversionException(
+							"Transformation of temporary vertex " + this
+									+ " failed. " + edgeClass
+									+ " has an attribute " + atname + " but "
+									+ this.attributes.get(atname)
+									+ " is not a valid value.");
 				}
 			}
 		}
@@ -152,34 +161,35 @@ public class TemporaryEdgeImpl extends EdgeImpl implements TemporaryEdge{
 	private void correctISeq(InternalEdge prevIncidence,
 			InternalEdge nextIncidence, InternalEdge newEdge,
 			InternalEdge newLastIncidence) {
-		if(nextIncidence != null){
+		if (nextIncidence != null) {
 			nextIncidence.setPrevIncidenceInternal(newEdge);
 			newEdge.setNextIncidenceInternal(nextIncidence);
 			newEdge.setPrevIncidenceInternal(prevIncidence);
-			
+
 			newLastIncidence.setNextIncidenceInternal(null);
-			
-			if(prevIncidence != null){
+
+			if (prevIncidence != null) {
 				prevIncidence.setNextIncidenceInternal(newEdge);
-			}else{// Temporary Edge is first incidence
-				((InternalVertex)newEdge.getThis()).setFirstIncidence(newEdge);
+			} else {// Temporary Edge is first incidence
+				((InternalVertex) newEdge.getThis()).setFirstIncidence(newEdge);
 			}
-			
-			((InternalVertex)newEdge.getThis()).setLastIncidence(newLastIncidence);
+
+			((InternalVertex) newEdge.getThis())
+					.setLastIncidence(newLastIncidence);
 		}
 	}
 
 	@Override
 	public void deleteAttribute(String name) {
-		((TemporaryEdge)this.getNormalEdge()).deleteAttribute(name);
-		
+		((TemporaryEdge) this.getNormalEdge()).deleteAttribute(name);
+
 	}
 
 	@Override
 	protected ReversedEdgeBaseImpl createReversedEdge() {
 		return new TemporaryReversedEdgeImpl(this, graph);
 	}
-	
+
 	@Override
 	public AggregationKind getAlphaAggregationKind() {
 		return getAttributedElementClass().getFrom().getAggregationKind();
@@ -190,10 +200,7 @@ public class TemporaryEdgeImpl extends EdgeImpl implements TemporaryEdge{
 		return getAttributedElementClass().getTo().getAggregationKind();
 	}
 
-	
-	//........................................................
-	
-	
+	// ........................................................
 
 	@Override
 	public Class<? extends Edge> getSchemaClass() {
@@ -232,9 +239,9 @@ public class TemporaryEdgeImpl extends EdgeImpl implements TemporaryEdge{
 		return fromAK != AggregationKind.NONE ? fromAK
 				: (toAK != AggregationKind.NONE ? toAK : AggregationKind.NONE);
 	}
-	
+
 	@Override
-	public boolean isTemporary(){
+	public boolean isTemporary() {
 		return true;
 	}
 }

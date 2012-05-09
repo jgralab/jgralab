@@ -38,35 +38,43 @@ public class GenericTemporaryGraphElementsTest {
 	private EdgeClass ec_Street;
 	private EdgeClass ec_AirRoute;
 	private EdgeClass ec_ContainsCrossroad;
-	
+
 	private Graph graph;
-	
+
 	@Before
-	public void setUp() throws GraphIOException{
-		this.schema = GraphIO.loadSchemaFromFile("testit"+ File.separator + 
-				"testschemas" + File.separator + "greqltestschema.tg");
-		this.vc_CrossRoad = schema.getGraphClass().getVertexClass("junctions.Crossroad");
-		this.vc_Plaza = schema.getGraphClass().getVertexClass("junctions.Plaza");
-		this.vc_Airport = schema.getGraphClass().getVertexClass("junctions.Airport");
+	public void setUp() throws GraphIOException {
+		this.schema = GraphIO.loadSchemaFromFile("testit" + File.separator
+				+ "testschemas" + File.separator + "greqltestschema.tg");
+		this.vc_CrossRoad = schema.getGraphClass().getVertexClass(
+				"junctions.Crossroad");
+		this.vc_Plaza = schema.getGraphClass()
+				.getVertexClass("junctions.Plaza");
+		this.vc_Airport = schema.getGraphClass().getVertexClass(
+				"junctions.Airport");
 		this.vc_Town = schema.getGraphClass().getVertexClass("localities.Town");
-		this.ec_Street = schema.getGraphClass().getEdgeClass("connections.Street");
-		this.ec_AirRoute = schema.getGraphClass().getEdgeClass("connections.AirRoute");
-		this.ec_ContainsCrossroad = schema.getGraphClass().getEdgeClass("localities.ContainsCrossroad");
+		this.ec_Street = schema.getGraphClass().getEdgeClass(
+				"connections.Street");
+		this.ec_AirRoute = schema.getGraphClass().getEdgeClass(
+				"connections.AirRoute");
+		this.ec_ContainsCrossroad = schema.getGraphClass().getEdgeClass(
+				"localities.ContainsCrossroad");
 		this.graph = schema.createGraph(ImplementationType.GENERIC);
 	}
 
 	@Test
-	public void testIsTemporary(){
+	public void testIsTemporary() {
 		Vertex v1_town = graph.createVertex(vc_Town);
 		Vertex v2_crossroad = graph.createVertex(vc_CrossRoad);
 		Vertex v3_crossroad = graph.createVertex(vc_CrossRoad);
 		Vertex v4_temp = graph.createTemporaryVertex();
-		Edge e1_street = graph.createEdge(ec_Street, v3_crossroad, v2_crossroad);
+		Edge e1_street = graph
+				.createEdge(ec_Street, v3_crossroad, v2_crossroad);
 		Edge e2_street = graph.createEdge(ec_Street, v3_crossroad, v4_temp);
-		Edge e3_street = graph.createEdge(ec_ContainsCrossroad,v1_town,v4_temp);
+		Edge e3_street = graph.createEdge(ec_ContainsCrossroad, v1_town,
+				v4_temp);
 		Edge e4_temp = graph.createTemporaryEdge(v2_crossroad, v3_crossroad);
 		Edge e5_temp = graph.createTemporaryEdge(v1_town, v4_temp);
-		
+
 		assertFalse(v1_town.isTemporary());
 		assertFalse(v2_crossroad.isTemporary());
 		assertFalse(v3_crossroad.isTemporary());
@@ -77,28 +85,28 @@ public class GenericTemporaryGraphElementsTest {
 		assertTrue(e4_temp.isTemporary());
 		assertTrue(e5_temp.isTemporary());
 	}
-	
+
 	@Test
-	public void testConvertTemporaryVertex(){
+	public void testConvertTemporaryVertex() {
 		Vertex v1_plaza = graph.createVertex(vc_Plaza);
 		Vertex v2_crossroad = graph.createVertex(vc_CrossRoad);
 		Vertex v3_crossroad = graph.createVertex(vc_CrossRoad);
-		
+
 		TemporaryVertex v4_temp = graph.createTemporaryVertex();
 
 		Vertex v5_crossroad = graph.createVertex(vc_CrossRoad);
-		
+
 		Edge e1_street = graph.createEdge(ec_Street, v5_crossroad, v4_temp);
 		Edge e2_street = graph.createEdge(ec_Street, v4_temp, v2_crossroad);
 		Edge e3_street = graph.createEdge(ec_Street, v3_crossroad, v4_temp);
-		
+
 		Vertex v4_plaza = v4_temp.convertToRealGraphElement(vc_Plaza);
-		
+
 		Vertex v6_plaza = graph.createVertex(vc_Plaza);
-		
+
 		assertEquals(4, v4_plaza.getId());
 		assertEquals(vc_Plaza, v4_plaza.getAttributedElementClass());
-		
+
 		assertEquals(v1_plaza, graph.getFirstVertex());
 		assertEquals(v6_plaza, graph.getLastVertex());
 		assertEquals(v2_crossroad, v1_plaza.getNextVertex());
@@ -110,54 +118,55 @@ public class GenericTemporaryGraphElementsTest {
 		assertEquals(null, v6_plaza.getNextVertex());
 		assertEquals(v4_plaza, v5_crossroad.getPrevVertex());
 		assertEquals(v3_crossroad, v4_plaza.getPrevVertex());
-		
+
 		Iterator<Edge> it = v4_plaza.incidences().iterator();
 		assertEquals(e1_street.getReversedEdge(), it.next());
 		assertEquals(e2_street, it.next());
 		assertEquals(e3_street.getReversedEdge(), it.next());
-		
+
 	}
-	
+
 	@Test
-	public void testFailConvertTemporaryVertex(){
+	public void testFailConvertTemporaryVertex() {
 		Vertex v1_plaza = graph.createVertex(vc_Plaza);
 		TemporaryVertex v2_temp = graph.createTemporaryVertex();
 		Vertex v3_airport = graph.createVertex(vc_Airport);
-		
+
 		graph.createEdge(ec_Street, v1_plaza, v2_temp);
 		graph.createEdge(ec_AirRoute, v2_temp, v3_airport);
-		
-		try{
+
+		try {
 			v2_temp.convertToRealGraphElement(vc_Airport);
 			fail();
-		}catch(TemporaryGraphElementConversionException ex){
+		} catch (TemporaryGraphElementConversionException ex) {
 			assertTrue(v2_temp.isValid());
 		}
 	}
-	
+
 	@Test
-	public void testConvertTemporaryEdge(){
+	public void testConvertTemporaryEdge() {
 		Vertex v1_plaza = graph.createVertex(vc_Plaza);
 		Vertex v2_crossroad = graph.createVertex(vc_CrossRoad);
 		Vertex v3_crossroad = graph.createVertex(vc_CrossRoad);
 		Vertex v4_plaza = graph.createVertex(vc_Plaza);
-		
+
 		Edge e1_street = graph.createEdge(ec_Street, v1_plaza, v2_crossroad);
 		Edge e2_street = graph.createEdge(ec_Street, v2_crossroad, v4_plaza);
-		
-		TemporaryEdge e3_temp = graph.createTemporaryEdge(v2_crossroad, v3_crossroad);
-		
+
+		TemporaryEdge e3_temp = graph.createTemporaryEdge(v2_crossroad,
+				v3_crossroad);
+
 		Edge e4_street = graph.createEdge(ec_Street, v3_crossroad, v1_plaza);
 		Edge e5_street = graph.createEdge(ec_Street, v4_plaza, v2_crossroad);
 		Edge e6_street = graph.createEdge(ec_Street, v4_plaza, v3_crossroad);
-		
+
 		Edge e3_street = e3_temp.convertToRealGraphElement(ec_Street);
-		
+
 		assertEquals(3, e3_street.getId());
 		assertEquals(ec_Street, e3_street.getAttributedElementClass());
 		assertEquals(v2_crossroad, e3_street.getAlpha());
 		assertEquals(v3_crossroad, e3_street.getOmega());
-		
+
 		assertEquals(e1_street, graph.getFirstEdge());
 		assertEquals(e6_street, graph.getLastEdge());
 		assertEquals(e2_street, e1_street.getNextEdge());
@@ -175,68 +184,70 @@ public class GenericTemporaryGraphElementsTest {
 		assertEquals(e3_street, incV2.next());
 		assertEquals(e5_street.getReversedEdge(), incV2.next());
 		assertFalse(incV2.hasNext());
-		
+
 		Iterator<Edge> incV3 = v3_crossroad.incidences().iterator();
 		assertEquals(e3_street.getReversedEdge(), incV3.next());
 		assertEquals(e4_street, incV3.next());
 		assertEquals(e6_street.getReversedEdge(), incV3.next());
 		assertFalse(incV3.hasNext());
-		
+
 	}
-	
+
 	@Test
-	public void testConvertTemporaryEdgeFail(){
+	public void testConvertTemporaryEdgeFail() {
 		Vertex v1_crossroad = graph.createVertex(vc_CrossRoad);
 		Vertex v2_airport = graph.createVertex(vc_Airport);
-		
-		TemporaryEdge e1_temp = graph.createTemporaryEdge(v1_crossroad, v2_airport);
-		
-		try{
+
+		TemporaryEdge e1_temp = graph.createTemporaryEdge(v1_crossroad,
+				v2_airport);
+
+		try {
 			e1_temp.convertToRealGraphElement(ec_Street);
 			fail();
-		}catch(TemporaryGraphElementConversionException e){
+		} catch (TemporaryGraphElementConversionException e) {
 			assertTrue(e1_temp.isValid());
 		}
 	}
-	
+
 	@Test
-	public void testConvertTemporaryVertexWithStringAttribute(){
+	public void testConvertTemporaryVertexWithStringAttribute() {
 		TemporaryVertex v_temp = graph.createTemporaryVertex();
 		v_temp.setAttribute("name", "Plaza of Cats");
-		
+
 		Vertex v_plaza = v_temp.convertToRealGraphElement(vc_Plaza);
-		
+
 		assertEquals(1, v_plaza.getId());
 		assertEquals(vc_Plaza, v_plaza.getAttributedElementClass());
 		assertEquals("Plaza of Cats", v_plaza.getAttribute("name"));
 	}
 
 	@Test
-	public void testConvertTemporaryVertexWithStringAttributeFail(){
+	public void testConvertTemporaryVertexWithStringAttributeFail() {
 		TemporaryVertex v_temp = graph.createTemporaryVertex();
 		v_temp.setAttribute("name", 1234);
-		
-		try{
+
+		try {
 			v_temp.convertToRealGraphElement(vc_Plaza);
 			fail();
-		}catch(TemporaryGraphElementConversionException ex){
+		} catch (TemporaryGraphElementConversionException ex) {
 			assertTrue(v_temp.isValid());
 		}
 
 	}
-	
+
 	@Test
-	public void testConvertTemporaryEdgeWithPrimitiveAttributes(){
+	public void testConvertTemporaryEdgeWithPrimitiveAttributes() {
 		Vertex v1_crossroad = graph.createVertex(vc_CrossRoad);
 		Vertex v2_crossroad = graph.createVertex(vc_CrossRoad);
-		TemporaryEdge e_temp = graph.createTemporaryEdge(v1_crossroad, v2_crossroad);
+		TemporaryEdge e_temp = graph.createTemporaryEdge(v1_crossroad,
+				v2_crossroad);
 		e_temp.setAttribute("name", "Gandhi-Street");
 		e_temp.setAttribute("oneway", true);
 		e_temp.setAttribute("length", 111.11);
 		e_temp.setAttribute("attributeThatDoesNotExist", "Hugo");
-		
+
 		Edge e_street = e_temp.convertToRealGraphElement(ec_Street);
-		
+
 		assertEquals(1, e_street.getId());
 		assertEquals(ec_Street, e_street.getAttributedElementClass());
 		assertEquals(v1_crossroad, e_street.getAlpha());
@@ -245,40 +256,46 @@ public class GenericTemporaryGraphElementsTest {
 		assertEquals(true, e_street.getAttribute("oneway"));
 		assertEquals(111.11, e_street.getAttribute("length"));
 	}
-	
+
 	@Test
-	public void testConvertVertexWithRecordAttribute(){
+	public void testConvertVertexWithRecordAttribute() {
 		TemporaryVertex v1_temp = graph.createTemporaryVertex();
 		PMap<String, Object> values = ArrayPMap.empty();
 		values = values.plus("day", 8);
 		values = values.plus("month", "AUG");
 		values = values.plus("year", 2008);
-		Record record = graph.createRecord((RecordDomain)schema.getDomain("Date"), values);
+		Record record = graph.createRecord(
+				(RecordDomain) schema.getDomain("Date"), values);
 		v1_temp.setAttribute("foundingDate", record);
-		
+
 		Vertex v1_town = v1_temp.convertToRealGraphElement(vc_Town);
-		
+
 		assertEquals(1, v1_town.getId());
 		assertEquals(vc_Town, v1_town.getAttributedElementClass());
 		assertEquals(record, v1_town.getAttribute("foundingDate"));
 	}
-	
-	@Test
-	public void testConvertVertexWithRecordAttributeFail(){
+
+	// TODO kristina: What's that test good for? Here, createRecord() will
+	// already fail, because "days" is not a valid component for the
+	// RecordDomain Date. (It used to test that with an assertion, which was
+	// wrong. Now it really checks and throws an GraphException here.).
+	// @Test
+	public void testConvertVertexWithRecordAttributeFail() {
 		TemporaryVertex v1_temp = graph.createTemporaryVertex();
 		PMap<String, Object> values = ArrayPMap.empty();
-		values = values.plus("days", 8);
+		values = values.plus("days", 8); // it's actually "day", not "days"
 		values = values.plus("month", "AUG");
 		values = values.plus("year", 2008);
-		Record record = graph.createRecord((RecordDomain)schema.getDomain("Date"), values);
+		Record record = graph.createRecord(
+				(RecordDomain) schema.getDomain("Date"), values);
 		v1_temp.setAttribute("foundingDate", record);
-		
-		try{
+
+		try {
 			v1_temp.convertToRealGraphElement(vc_Town);
 			fail();
-		}catch(TemporaryGraphElementConversionException ex ){
+		} catch (TemporaryGraphElementConversionException ex) {
 			assertTrue(v1_temp.isValid());
 		}
 	}
-	
+
 }

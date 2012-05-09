@@ -42,7 +42,7 @@ import de.uni_koblenz.jgralab.impl.InternalVertex;
 /**
  * The implementation of a <code>Vertex</code> accessing attributes without
  * versioning.
- * 
+ *
  * @author Jose Monte(monte@uni-koblenz.de)
  */
 public abstract class VertexImpl extends
@@ -62,7 +62,7 @@ public abstract class VertexImpl extends
 
 	@Override
 	public InternalVertex getNextVertexInVSeq() {
-		assert isValid();
+		assert isValid() : this + " is not valid.";
 		return nextVertex;
 	}
 
@@ -114,7 +114,7 @@ public abstract class VertexImpl extends
 	}
 
 	/**
-	 * 
+	 *
 	 * @param id
 	 * @param graph
 	 */

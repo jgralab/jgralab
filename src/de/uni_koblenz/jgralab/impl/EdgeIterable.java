@@ -41,6 +41,8 @@ import java.util.NoSuchElementException;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
+import de.uni_koblenz.jgralab.GraphException;
+import de.uni_koblenz.jgralab.TemporaryEdge;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 
 /**
@@ -50,9 +52,9 @@ import de.uni_koblenz.jgralab.schema.EdgeClass;
  * methods <code>edges(params)</code> of th graph. Every special graphclass
  * contains generated methods similar to <code>edges(params)</code> for every
  * EdgeClass that is part of the GraphClass.
- * 
+ *
  * @author ist@uni-koblenz.de
- * 
+ *
  * @param <E>
  *            The type of the Edges to iterate over. To mention it again,
  *            <b>don't</b> create instances of this class directly.
@@ -65,8 +67,6 @@ public class EdgeIterable<E extends Edge> implements Iterable<E> {
 
 		protected InternalGraph graph = null;
 
-		protected Class<? extends Edge> ec;
-		
 		protected EdgeClass schemaEc;
 
 		/**
@@ -80,10 +80,19 @@ public class EdgeIterable<E extends Edge> implements Iterable<E> {
 		@SuppressWarnings("unchecked")
 		EdgeIterator(InternalGraph g, Class<? extends Edge> ec) {
 			graph = g;
-			this.ec = ec;
+			try {
+				if (ec == TemporaryEdge.class) {
+					schemaEc = graph.getGraphClass().getTemporaryEdgeClass();
+				} else {
+					schemaEc = (EdgeClass) (ec.getField("EC").get(null));
+				}
+			} catch (Exception e) {
+				throw new GraphException("Couldn't read constant EC field of "
+						+ ec.getName(), e);
+			}
 			edgeListVersion = g.getEdgeListVersion();
-			current = (E) (ec == null ? graph.getFirstEdge() : graph
-					.getFirstEdge(ec));
+			current = (E) (schemaEc == null ? graph.getFirstEdge() : graph
+					.getFirstEdge(schemaEc));
 		}
 
 		@SuppressWarnings("unchecked")
@@ -91,10 +100,11 @@ public class EdgeIterable<E extends Edge> implements Iterable<E> {
 			graph = g;
 			schemaEc = ec;
 			edgeListVersion = g.getEdgeListVersion();
-			current = (E) (ec == null ? graph.getFirstEdge() : graph
-					.getFirstEdge(ec));
+			current = (E) (schemaEc == null ? graph.getFirstEdge() : graph
+					.getFirstEdge(schemaEc));
 		}
 
+		@Override
 		@SuppressWarnings("unchecked")
 		public E next() {
 			if (graph.isEdgeListModified(edgeListVersion)) {
@@ -105,15 +115,17 @@ public class EdgeIterable<E extends Edge> implements Iterable<E> {
 				throw new NoSuchElementException();
 			}
 			E result = current;
-			current = (E) (ec == null && schemaEc == null ? current.getNextEdge() : schemaEc == null? current
-					.getNextEdge(ec) : current.getNextEdge(schemaEc));
+			current = (E) (schemaEc == null ? current.getNextEdge() : current
+					.getNextEdge(schemaEc));
 			return result;
 		}
 
+		@Override
 		public boolean hasNext() {
 			return current != null;
 		}
 
+		@Override
 		public void remove() {
 			throw new UnsupportedOperationException(
 					"It is not allowed to remove edges during iteration.");
@@ -124,7 +136,7 @@ public class EdgeIterable<E extends Edge> implements Iterable<E> {
 	private EdgeIterator iter;
 
 	public EdgeIterable(Graph g) {
-		this(g, (Class<? extends Edge>) null);
+		this(g, (EdgeClass) null);
 	}
 
 	public EdgeIterable(Graph g, Class<? extends Edge> ec) {
@@ -137,6 +149,7 @@ public class EdgeIterable<E extends Edge> implements Iterable<E> {
 		iter = new EdgeIterator((InternalGraph) g, ec);
 	}
 
+	@Override
 	public Iterator<E> iterator() {
 		return iter;
 	}

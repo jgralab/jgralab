@@ -11,7 +11,8 @@ import de.uni_koblenz.jgralab.TemporaryEdge;
 import de.uni_koblenz.jgralab.impl.EdgeBaseImpl;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 
-public class TemporaryReversedEdgeImpl extends ReversedEdgeImpl implements TemporaryEdge{
+public class TemporaryReversedEdgeImpl extends ReversedEdgeImpl implements
+		TemporaryEdge {
 
 	protected TemporaryReversedEdgeImpl(EdgeBaseImpl normalEdge, Graph graph) {
 		super(normalEdge, graph);
@@ -43,22 +44,23 @@ public class TemporaryReversedEdgeImpl extends ReversedEdgeImpl implements Tempo
 
 	@Override
 	public void readAttributeValues(GraphIO io) throws GraphIOException {
-		throw new UnsupportedOperationException();		
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
 	public Edge convertToRealGraphElement(EdgeClass edgeClass) {
-		return ((TemporaryEdge)this.getNormalEdge()).convertToRealGraphElement(edgeClass);
+		return ((TemporaryEdge) this.getNormalEdge())
+				.convertToRealGraphElement(edgeClass);
 	}
 
 	@Override
 	public void deleteAttribute(String name) {
-		((TemporaryEdge)this.getNormalEdge()).deleteAttribute(name);
-		
+		((TemporaryEdge) this.getNormalEdge()).deleteAttribute(name);
+
 	}
 
 	@Override
-	public boolean isTemporary(){
+	public boolean isTemporary() {
 		return true;
 	}
 }

@@ -40,6 +40,8 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 import de.uni_koblenz.jgralab.Graph;
+import de.uni_koblenz.jgralab.GraphException;
+import de.uni_koblenz.jgralab.TemporaryVertex;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.schema.VertexClass;
 
@@ -51,9 +53,9 @@ import de.uni_koblenz.jgralab.schema.VertexClass;
  * graphclass contains generated methods similar to
  * <code>vertices(params)</code> for every VertexClass that is part of the
  * GraphClass.
- * 
+ *
  * @author ist@uni-koblenz.de
- * 
+ *
  * @param <V>
  *            The type of the vertices to iterate over. To mention it again,
  *            <b>don't</b> create instances of this class directly.
@@ -62,9 +64,9 @@ public class VertexIterable<V extends Vertex> implements Iterable<V> {
 
 	/**
 	 * This Iterator iterates over all vertices in a graph
-	 * 
+	 *
 	 * @author ist@uni-koblenz.de
-	 * 
+	 *
 	 */
 	class VertexIterator implements Iterator<V> {
 
@@ -79,8 +81,6 @@ public class VertexIterable<V extends Vertex> implements Iterable<V> {
 		 */
 		protected InternalGraph graph = null;
 
-		protected Class<? extends Vertex> vc;
-		
 		protected VertexClass schemaVc;
 
 		/**
@@ -93,25 +93,37 @@ public class VertexIterable<V extends Vertex> implements Iterable<V> {
 
 		/**
 		 * creates a new VertexIterator for the given graph
-		 * 
+		 *
 		 * @param g
 		 *            the graph to work on
 		 */
 		@SuppressWarnings("unchecked")
 		VertexIterator(InternalGraph g, Class<? extends Vertex> vc) {
 			graph = g;
-			this.vc = vc;
+			try {
+				if (vc == TemporaryVertex.class) {
+					schemaVc = graph.getGraphClass().getTemporaryVertexClass();
+				} else {
+					schemaVc = (VertexClass) vc.getField("VC").get(null);
+				}
+			} catch (Exception e) {
+				throw new GraphException("Couldn't read constant VC field of "
+						+ vc.getName(), e);
+			}
 			vertexListVersion = g.getVertexListVersion();
-			current = (V) (vc == null ? graph.getFirstVertex() : graph
-					.getFirstVertex(vc));
+			current = (V) (schemaVc == null ? graph.getFirstVertex() : graph
+					.getFirstVertex(schemaVc));
 		}
-		
+
 		/**
-		 * Creates a new Vertex iterator for the given <code>Graph</code>, that iterates over
-		 * vertices of a given <code>VertexClass</code>
-		 * @param g The <code>Graph</code>.
-		 * @param vc They <code>VertexClass</code> determining which type of vertex should be
-		 * iterated over.
+		 * Creates a new Vertex iterator for the given <code>Graph</code>, that
+		 * iterates over vertices of a given <code>VertexClass</code>
+		 *
+		 * @param g
+		 *            The <code>Graph</code>.
+		 * @param vc
+		 *            They <code>VertexClass</code> determining which type of
+		 *            vertex should be iterated over.
 		 */
 		@SuppressWarnings("unchecked")
 		VertexIterator(InternalGraph g, VertexClass vc) {
@@ -126,6 +138,7 @@ public class VertexIterable<V extends Vertex> implements Iterable<V> {
 		 * @return the next vertex in the graph which mathes the conditions of
 		 *         this iterator
 		 */
+		@Override
 		@SuppressWarnings("unchecked")
 		public V next() {
 			if (graph.isVertexListModified(vertexListVersion)) {
@@ -136,14 +149,15 @@ public class VertexIterable<V extends Vertex> implements Iterable<V> {
 				throw new NoSuchElementException();
 			}
 			V result = current;
-			current = (V) (vc == null && schemaVc == null ? current.getNextVertex() : schemaVc == null ? current
-					.getNextVertex(vc) : current.getNextVertex(schemaVc));
+			current = (V) (schemaVc == null ? current.getNextVertex() : current
+					.getNextVertex(schemaVc));
 			return result;
 		}
 
 		/**
 		 * @return true iff there is at least one next vertex to retrieve
 		 */
+		@Override
 		public boolean hasNext() {
 			return current != null;
 		}
@@ -152,9 +166,10 @@ public class VertexIterable<V extends Vertex> implements Iterable<V> {
 		 * Using the VertexIterator, it is <b>not</b> possible to remove
 		 * vertices from a graph neither the iterator will recognize such a
 		 * removal.
-		 * 
+		 *
 		 * @throw UnsupportedOperationException every time the method is called
 		 */
+		@Override
 		public void remove() {
 			throw new UnsupportedOperationException(
 					"It is not allowed to remove vertices during iteration.");
@@ -164,7 +179,7 @@ public class VertexIterable<V extends Vertex> implements Iterable<V> {
 	private VertexIterator iter;
 
 	public VertexIterable(Graph g) {
-		this(g, (Class<? extends Vertex>) null);
+		this(g, (VertexClass) null);
 	}
 
 	public VertexIterable(Graph g, Class<? extends Vertex> vc) {
@@ -177,6 +192,7 @@ public class VertexIterable<V extends Vertex> implements Iterable<V> {
 		iter = new VertexIterator((InternalGraph) g, vc);
 	}
 
+	@Override
 	public Iterator<V> iterator() {
 		return iter;
 	}
