@@ -36,10 +36,12 @@
 package de.uni_koblenz.jgralab.impl;
 
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Vertex;
+import de.uni_koblenz.jgralab.VertexFilter;
 
 /**
  * This class provides an Iterable for the Vertices adjacent to a given vertex.
@@ -48,41 +50,8 @@ import de.uni_koblenz.jgralab.Vertex;
  */
 public class NeighbourIterable<E extends Edge, V extends Vertex> implements
 		Iterable<V> {
-	/**
-	 * Creates an Iterable for all neighbours adjacent to <code>v</code>.
-	 * 
-	 * @param v
-	 *            a Vertex
-	 */
-	public NeighbourIterable(Vertex v) {
-		this(v, null, EdgeDirection.INOUT);
-	}
-
-	/**
-	 * Creates an Iterable for all neighbours adjacent to <code>v</code> via
-	 * edges of the specified edgeclass <code>ec</code>.
-	 * 
-	 * @param v
-	 *            a Vertex
-	 * @param ec
-	 *            restricts edges to that class or subclasses
-	 */
-	public NeighbourIterable(Vertex v, Class<? extends Edge> ec) {
-		this(v, ec, EdgeDirection.INOUT);
-	}
-
-	/**
-	 * Creates an Iterable for all neighbours adjacent to <code>v</code> via
-	 * edges of the specified <code>orientation</code>.
-	 * 
-	 * @param v
-	 *            a Vertex
-	 * @param dir
-	 *            desired orientation
-	 */
-	public NeighbourIterable(Vertex v, EdgeDirection dir) {
-		this(v, null, dir);
-	}
+	private IncidenceIterable<E> it;
+	private VertexFilter<V> filter;
 
 	/**
 	 * Creates an Iterable for all neighbours adjacent to <code>v</code> via
@@ -97,28 +66,45 @@ public class NeighbourIterable<E extends Edge, V extends Vertex> implements
 	 *            desired orientation
 	 */
 	public NeighbourIterable(Vertex v, Class<? extends Edge> ec,
-			EdgeDirection dir) {
+			EdgeDirection dir, VertexFilter<V> filter) {
 		assert v != null && v.isValid();
-		Iterable<E> it = new IncidenceIterable<E>(v, ec, dir);
-		neighbourIterator = new NeigbourIterator(it.iterator());
+		this.filter = filter;
+		it = new IncidenceIterable<E>(v, ec, dir);
 	}
 
 	class NeigbourIterator implements Iterator<V> {
 		Iterator<E> incidenceIterator;
+		V current;
 
 		public NeigbourIterator(Iterator<E> i) {
 			incidenceIterator = i;
+			getNext();
 		}
 
 		@Override
 		public boolean hasNext() {
-			return incidenceIterator.hasNext();
+			return current != null;
+		}
+
+		@Override
+		public V next() {
+			if (current == null) {
+				throw new NoSuchElementException();
+			}
+			V result = current;
+			getNext();
+			return result;
 		}
 
 		@SuppressWarnings("unchecked")
-		@Override
-		public V next() {
-			return (V) incidenceIterator.next().getThat();
+		private void getNext() {
+			while (incidenceIterator.hasNext()) {
+				current = (V) incidenceIterator.next().getThat();
+				if (filter == null || filter.accepts(current)) {
+					return;
+				}
+			}
+			current = null;
 		}
 
 		@Override
@@ -127,10 +113,8 @@ public class NeighbourIterable<E extends Edge, V extends Vertex> implements
 		}
 	}
 
-	private Iterator<V> neighbourIterator;
-
 	@Override
 	public Iterator<V> iterator() {
-		return neighbourIterator;
+		return new NeigbourIterator(it.iterator());
 	}
 }

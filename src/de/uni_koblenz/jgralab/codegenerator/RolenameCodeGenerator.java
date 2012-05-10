@@ -45,9 +45,9 @@ import de.uni_koblenz.jgralab.schema.VertexClass;
 
 /**
  * TODO add comment
- *
+ * 
  * @author ist@uni-koblenz.de
- *
+ * 
  */
 public class RolenameCodeGenerator {
 
@@ -169,12 +169,19 @@ public class RolenameCodeGenerator {
 						" * @return an Iterable of all vertices adjacent to this one with the rolename '#rolename#'",
 						" *         (connected with a <code>#edgeClassName#</code> edge).",
 						" */",
-						"public Iterable<? extends #vertexClassName#> get_#rolename#();");
+						"public <V extends #vertexClassName#> Iterable<V> get_#rolename#();",
+						"",
+						"public <V extends #vertexClassName#> Iterable<V> get_#rolename#(#jgPackage#.VertexFilter<V> filter);");
 			} else {
 				code.add(
 						"@Override",
-						"public Iterable<? extends #vertexClassName#> get_#rolename#() {",
-						"\treturn new de.uni_koblenz.jgralab.impl.NeighbourIterable<#edgeClassName#, #vertexClassName#>(this, #edgeClassName#.class, #dir#);",
+						"public <V extends #vertexClassName#> Iterable<V> get_#rolename#() {",
+						"\treturn new de.uni_koblenz.jgralab.impl.NeighbourIterable<#edgeClassName#, V>(this, #edgeClassName#.class, #dir#, null);",
+						"}",
+						"",
+						"@Override",
+						"public <V extends #vertexClassName#> Iterable<V> get_#rolename#(#jgPackage#.VertexFilter<V> filter) {",
+						"\treturn new de.uni_koblenz.jgralab.impl.NeighbourIterable<#edgeClassName#, V>(this, #edgeClassName#.class, #dir#, filter);",
 						"}");
 			}
 		}

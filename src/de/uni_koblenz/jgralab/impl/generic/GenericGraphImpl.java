@@ -48,6 +48,7 @@ import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.NoSuchAttributeException;
 import de.uni_koblenz.jgralab.Record;
 import de.uni_koblenz.jgralab.Vertex;
+import de.uni_koblenz.jgralab.VertexFilter;
 import de.uni_koblenz.jgralab.impl.EdgeIterable;
 import de.uni_koblenz.jgralab.impl.RecordImpl;
 import de.uni_koblenz.jgralab.impl.VertexIterable;
@@ -210,8 +211,8 @@ public class GenericGraphImpl extends GraphImpl implements
 	}
 
 	@Override
-	public Iterable<Vertex> vertices(VertexClass vc) {
-		return new VertexIterable<Vertex>(this, vc);
+	public Iterable<Vertex> vertices(VertexClass vc, VertexFilter<Vertex> filter) {
+		return new VertexIterable<Vertex>(this, vc, filter);
 	}
 
 	@Override
@@ -228,7 +229,7 @@ public class GenericGraphImpl extends GraphImpl implements
 	 * Returns the default value for attributes in the generic implementation if
 	 * there is no explicitly defined default value, according to the
 	 * attribute's domain.
-	 *
+	 * 
 	 * @param domain
 	 *            The attribute's domain.
 	 * @return The default value for attributes of the domain.
@@ -295,8 +296,8 @@ public class GenericGraphImpl extends GraphImpl implements
 		RecordImpl record = RecordImpl.empty();
 		for (RecordComponent c : recordDomain.getComponents()) {
 			if (!values.containsKey(c.getName())) {
-				throw new GraphException("The provided Map misses a " + c.getName()
-						+ " key!");
+				throw new GraphException("The provided Map misses a "
+						+ c.getName() + " key!");
 			}
 			record = record.plus(c.getName(), values.get(c.getName()));
 		}
@@ -321,16 +322,6 @@ public class GenericGraphImpl extends GraphImpl implements
 	 */
 	@Override
 	public Vertex getFirstVertex(Class<? extends Vertex> vertexClass) {
-		throw new UnsupportedOperationException(
-				"This method is not supported by the generic implementation");
-	}
-
-	/**
-	 * This method is not supported by the generic implementation and therefore
-	 * throws an {@link UnsupportedOperationException}.
-	 */
-	@Override
-	public Iterable<Vertex> vertices(Class<? extends Vertex> vertexClass) {
 		throw new UnsupportedOperationException(
 				"This method is not supported by the generic implementation");
 	}

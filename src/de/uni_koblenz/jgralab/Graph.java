@@ -56,50 +56,50 @@ import de.uni_koblenz.jgralab.trans.Transaction;
  * The interface Graph is the base of all JGraLab graphs. It provides access to
  * global graph properties and to the Vertex and Edge sequence. Creation and
  * removal of vertices and edges, as well as validity checks, are provided.
- *
+ * 
  * Additionally, convenient methods for traversal, either based on separate
  * calls (getFirst/getNext) or on Iterables, can be used to traverse the graph.
- *
+ * 
  * @author ist@uni-koblenz.de
  */
 public interface Graph extends AttributedElement<GraphClass, Graph> {
 
 	/**
-	 * Creates a {@link Vertex} of the specified {@link VertexClass} and adds the new
-	 * vertex to this {@link Graph}.
+	 * Creates a {@link Vertex} of the specified {@link VertexClass} and adds
+	 * the new vertex to this {@link Graph}.
 	 * 
-	 * @param vc 
-	 * 			the {@link VertexClass} of the new {@link Vertex}
+	 * @param vc
+	 *            the {@link VertexClass} of the new {@link Vertex}
 	 */
 	public <T extends Vertex> T createVertex(VertexClass vc);
 
 	/**
-	 * Creates an {@link Edge} of the specified {@link EdgeClass} <code>ec</code> that
-	 * connects <code>alpha</code> and </code>omega</code> vertices and adds the
-	 * new edge to this {@link Graph}.
+	 * Creates an {@link Edge} of the specified {@link EdgeClass}
+	 * <code>ec</code> that connects <code>alpha</code> and </code>omega</code>
+	 * vertices and adds the new edge to this {@link Graph}.
 	 * 
 	 * @param ec
-	 * 			the {@link EdgeClass} of the new {@link Edge}
+	 *            the {@link EdgeClass} of the new {@link Edge}
 	 * @param alpha
-	 * 			the alpha {@link Vertex} of the new {@link Edge}
+	 *            the alpha {@link Vertex} of the new {@link Edge}
 	 * @param omega
-	 * 			the omega {@link Vertex} of the new {@link Edge}
+	 *            the omega {@link Vertex} of the new {@link Edge}
 	 */
 	public <T extends Edge> T createEdge(EdgeClass ec, Vertex alpha,
 			Vertex omega);
 
 	public TemporaryVertex createTemporaryVertex();
-	
+
 	public TemporaryEdge createTemporaryEdge(Vertex alpha, Vertex omega);
-	
+
 	/**
 	 * Retrieves the enum constant of an {@link EnumDomain} given by
 	 * <code>constantName</code>.
-	 *
+	 * 
 	 * @param enumDomain
-	 * 			the {@link EnumDomain} to create a constant for
+	 *            the {@link EnumDomain} to create a constant for
 	 * @param constantName
-	 * 			the {@code String} value of the constant to create
+	 *            the {@code String} value of the constant to create
 	 * 
 	 * @return the retrieved constant
 	 */
@@ -108,11 +108,11 @@ public interface Graph extends AttributedElement<GraphClass, Graph> {
 	/**
 	 * Creates a {@link Record} of type {@link RecordDomain} with values as
 	 * specified by <code>values</code>.
-	 *
+	 * 
 	 * @param recordDomain
-	 * 			the {@link RecordDomain} to create a {@link Record} for
+	 *            the {@link RecordDomain} to create a {@link Record} for
 	 * @param values
-	 * 			the {@code Map} with the records components
+	 *            the {@code Map} with the records components
 	 * 
 	 * @return the created {@link Record}
 	 */
@@ -121,10 +121,11 @@ public interface Graph extends AttributedElement<GraphClass, Graph> {
 
 	/**
 	 * Checks whether this {@link Graph} has changed with respect to the given
-	 * <code>previousVersion</code>. Every change in this {@link Graph}, e.g. adding,
-	 * creating and reordering of {@link Edge} and {@link Vertex} instances or changes 
-	 * of attributes of the graph, an {@link Edge} or a {@link Vertex} are treated as a change.
-	 *
+	 * <code>previousVersion</code>. Every change in this {@link Graph}, e.g.
+	 * adding, creating and reordering of {@link Edge} and {@link Vertex}
+	 * instances or changes of attributes of the graph, an {@link Edge} or a
+	 * {@link Vertex} are treated as a change.
+	 * 
 	 * @param previousVersion
 	 *            The version to check against
 	 * @return <code>true</code> if the internal graph version of the graph is
@@ -134,133 +135,142 @@ public interface Graph extends AttributedElement<GraphClass, Graph> {
 
 	/**
 	 * Returns the version counter of this {@link Graph}.
-	 *
+	 * 
 	 * @return the graph version
 	 * @see #isGraphModified(long)
 	 */
 	public long getGraphVersion();
 
 	/**
-	 * @return true if this {@link Graph} contains the given {@link Vertex} <code>v</code>.
+	 * @return true if this {@link Graph} contains the given {@link Vertex}
+	 *         <code>v</code>.
 	 */
 	public boolean containsVertex(Vertex v);
 
 	/**
-	 * @return true if this {@link Graph} contains the given {@link Edge} <code>e</code>.
+	 * @return true if this {@link Graph} contains the given {@link Edge}
+	 *         <code>e</code>.
 	 */
 	boolean containsEdge(Edge e);
 
 	/**
-	 * Removes the {@link Vertex} <code>v</code> from the vertex sequence of this {@link Graph}.
-	 * Also, any edges incident to {@link Vertex} <code>v</code> are deleted. If
-	 * <code>v</code> is the parent of a composition, all child vertices are
-	 * also deleted.
-	 *
+	 * Removes the {@link Vertex} <code>v</code> from the vertex sequence of
+	 * this {@link Graph}. Also, any edges incident to {@link Vertex}
+	 * <code>v</code> are deleted. If <code>v</code> is the parent of a
+	 * composition, all child vertices are also deleted.
+	 * 
 	 * Preconditions: v.isValid()
-	 *
+	 * 
 	 * Postconditions: !v.isValid() && !containsVertex(v) &&
 	 * getVertex(v.getId()) == null
-	 *
+	 * 
 	 * @param v
 	 *            the {@link Vertex} to be deleted
 	 */
 	public void deleteVertex(Vertex v);
 
 	/**
-	 * Removes the {@link Edge} <code>e</code> from the edge sequence of this {@link Graph}.
-	 * This implies changes to the incidence lists of the alpha and omega {@link Vertex}
-	 * of <code>e</code>.
-	 *
+	 * Removes the {@link Edge} <code>e</code> from the edge sequence of this
+	 * {@link Graph}. This implies changes to the incidence lists of the alpha
+	 * and omega {@link Vertex} of <code>e</code>.
+	 * 
 	 * Preconditions: e.isValid()
-	 *
+	 * 
 	 * Postconditions: !e.isValid() && !containsEdge(e) && getEdge(e.getId()) ==
 	 * null
-	 *
+	 * 
 	 * @param e
 	 *            the {@link Edge} to be deleted
 	 */
 	public void deleteEdge(Edge e);
 
 	/**
-	 * Returns the first {@link Vertex} in the vertex sequence of this {@link Graph}.
-	 *
-	 * @return the first {@link Vertex}, or null if this {@link Graph} contains no vertices.
+	 * Returns the first {@link Vertex} in the vertex sequence of this
+	 * {@link Graph}.
+	 * 
+	 * @return the first {@link Vertex}, or null if this {@link Graph} contains
+	 *         no vertices.
 	 */
 	public Vertex getFirstVertex();
 
 	/**
-	 * Returns the last {@link Vertex} in the vertex sequence of this {@link Graph}.
-	 *
-	 * @return the last {@link Vertex}, or null if this graph contains no vertices.
+	 * Returns the last {@link Vertex} in the vertex sequence of this
+	 * {@link Graph}.
+	 * 
+	 * @return the last {@link Vertex}, or null if this graph contains no
+	 *         vertices.
 	 */
 	public Vertex getLastVertex();
 
 	/**
 	 * Returns the first {@link Vertex} of the specified {@link VertexClass}
 	 * (including subclasses) in the vertex sequence of this {@link Graph}.
-	 *
+	 * 
 	 * @param vertexClass
 	 *            a {@link VertexClass} (i.e. an instance of schema.VertexClass)
-	 *
-	 * @return the first {@link Vertex}, or null if this {@link Graph} contains no vertices of
-	 *         the specified {@link VertexClass}
+	 * 
+	 * @return the first {@link Vertex}, or null if this {@link Graph} contains
+	 *         no vertices of the specified {@link VertexClass}
 	 */
 	public Vertex getFirstVertex(VertexClass vertexClass);
 
 	/**
-	 * Returns the first {@link Vertex} of the specified VertexClass
-	 * (including subclasses) in the vertex sequence of this {@link Graph}.
-	 *
+	 * Returns the first {@link Vertex} of the specified VertexClass (including
+	 * subclasses) in the vertex sequence of this {@link Graph}.
+	 * 
 	 * @param vertexClass
-	 *            a VertexClass (i.e. an schema interface extending {@link Vertex})
-	 *
-	 * @return the first {@link Vertex}, or null if this {@link Graph} contains no vertices of
-	 *         the specified <code>vertexClass</code>.
+	 *            a VertexClass (i.e. an schema interface extending
+	 *            {@link Vertex})
+	 * 
+	 * @return the first {@link Vertex}, or null if this {@link Graph} contains
+	 *         no vertices of the specified <code>vertexClass</code>.
 	 */
 	public Vertex getFirstVertex(Class<? extends Vertex> vertexClass);
 
 	/**
-	 * Returns the first {@link Edge} in the edge sequence of this {@link Graph}.
-	 *
-	 * @return the first {@link Edge}, or null if this {@link Graph} contains no edges.
+	 * Returns the first {@link Edge} in the edge sequence of this {@link Graph}
+	 * .
+	 * 
+	 * @return the first {@link Edge}, or null if this {@link Graph} contains no
+	 *         edges.
 	 */
 	public Edge getFirstEdge();
 
 	/**
 	 * Returns the last {@link Edge} in the edge sequence of this {@link Graph}.
-	 *
+	 * 
 	 * @return the last Edge, or null if this graph contains no edges.
 	 */
 	public Edge getLastEdge();
 
 	/**
-	 * Returns the first {@link Edge} of the specified {@link EdgeClass} (including
-	 * subclasses) in the edge sequence of this {@link Graph}.
-	 *
+	 * Returns the first {@link Edge} of the specified {@link EdgeClass}
+	 * (including subclasses) in the edge sequence of this {@link Graph}.
+	 * 
 	 * @param edgeClass
 	 *            an {@link EdgeClass} (i.e. an instance of schema.EdgeClass)
-	 *
-	 * @return the first {@link Edge}, or null if this {@link Graph} contains no edges of the
-	 *         specified {@link EdgeClass}.
+	 * 
+	 * @return the first {@link Edge}, or null if this {@link Graph} contains no
+	 *         edges of the specified {@link EdgeClass}.
 	 */
 	public Edge getFirstEdge(EdgeClass edgeClass);
 
 	/**
-	 * Returns the first {@link Edge} of the specified <code>edgeClass</code> (including
-	 * subclasses) in the edge sequence of this {@link Graph}.
-	 *
+	 * Returns the first {@link Edge} of the specified <code>edgeClass</code>
+	 * (including subclasses) in the edge sequence of this {@link Graph}.
+	 * 
 	 * @param edgeClass
 	 *            an EdgeClass (i.e. an schema interface extending Edge)
-	 *
-	 * @return the first {@link Edge}, or null if this {@link Graph} contains no edges of the
-	 *         specified <code>edgeClass</code>.
+	 * 
+	 * @return the first {@link Edge}, or null if this {@link Graph} contains no
+	 *         edges of the specified <code>edgeClass</code>.
 	 */
 	public Edge getFirstEdge(Class<? extends Edge> edgeClass);
 
 	/**
-	 * Returns the {@link Vertex} with the specified <code>id</code> if such a vertex
-	 * exists in this {@link Graph}.
-	 *
+	 * Returns the {@link Vertex} with the specified <code>id</code> if such a
+	 * vertex exists in this {@link Graph}.
+	 * 
 	 * @param id
 	 *            the id of the {@link Vertex} (must be > 0)
 	 * @return the {@link Vertex}, or null if no such vertex exists
@@ -268,10 +278,11 @@ public interface Graph extends AttributedElement<GraphClass, Graph> {
 	public Vertex getVertex(int id);
 
 	/**
-	 * Returns the oriented {@link Edge} with the specified <code>id</code> if such an
-	 * edge exists in this {@link Graph}. If <code>id</code> is positive, the normal
-	 * edge is returned, otherwise, the reversed Edge is returned.
-	 *
+	 * Returns the oriented {@link Edge} with the specified <code>id</code> if
+	 * such an edge exists in this {@link Graph}. If <code>id</code> is
+	 * positive, the normal edge is returned, otherwise, the reversed Edge is
+	 * returned.
+	 * 
 	 * @param id
 	 *            the id of the edge (must be != 0)
 	 * @return the Edge, or null if no such edge exists
@@ -280,62 +291,64 @@ public interface Graph extends AttributedElement<GraphClass, Graph> {
 
 	/**
 	 * Returns the number of vertices in this {@link Graph}.
-	 *
+	 * 
 	 * @return the number of vertices
 	 */
 	public int getVCount();
 
 	/**
 	 * Returns the number of edges in this {@link Graph}.
-	 *
+	 * 
 	 * @return the number of edges
 	 */
 	public int getECount();
 
 	/**
-	 * Returns the <code>id</code> of this {@link Graph}. JGraLab assigns a 128 bit
-	 * random id to all Graphs upon creation. This initial id is most likely
+	 * Returns the <code>id</code> of this {@link Graph}. JGraLab assigns a 128
+	 * bit random id to all Graphs upon creation. This initial id is most likely
 	 * (but not guaranteed) unique.
-	 *
+	 * 
 	 * @return the id of this graph
 	 */
 	public String getId();
 
 	/**
-	 * Returns an {@code Iterable} which iterates over all edges of this {@link Graph} in the
-	 * order determined by the edge sequence.
-	 *
+	 * Returns an {@code Iterable} which iterates over all edges of this
+	 * {@link Graph} in the order determined by the edge sequence.
+	 * 
 	 * @return an {@code Iterable} for all edges
 	 */
 	public Iterable<Edge> edges();
 
 	/**
-	 * Returns an {@code Iterable} which iterates over all edges of this {@link Graph} which
-	 * have the specified {@link EdgeClass} (including subclasses), in the
-	 * order determined by the edge sequence.
-	 *
+	 * Returns an {@code Iterable} which iterates over all edges of this
+	 * {@link Graph} which have the specified {@link EdgeClass} (including
+	 * subclasses), in the order determined by the edge sequence.
+	 * 
 	 * @param edgeClass
 	 *            an {@link EdgeClass} (i.e. instance of schema.EdgeClass)
-	 *
-	 * @return an {@code Iterable} for all edges of the specified {@link EdgeClass}
+	 * 
+	 * @return an {@code Iterable} for all edges of the specified
+	 *         {@link EdgeClass}
 	 */
 	public Iterable<Edge> edges(EdgeClass edgeClass);
 
 	/**
-	 * Returns an {@code Iterable} which iterates over all edges of this {@link Graph} which
-	 * have the specified <code>edgeClass</code> (including subclasses), in the
-	 * order determined by the edge sequence.
-	 *
+	 * Returns an {@code Iterable} which iterates over all edges of this
+	 * {@link Graph} which have the specified <code>edgeClass</code> (including
+	 * subclasses), in the order determined by the edge sequence.
+	 * 
 	 * @param edgeClass
 	 *            an EdgeClass (i.e. an schema interface extending Edge)
-	 *
-	 * @return an {@code Iterable} for all edges of the specified <code>edgeClass</code>
+	 * 
+	 * @return an {@code Iterable} for all edges of the specified
+	 *         <code>edgeClass</code>
 	 */
 	public Iterable<Edge> edges(Class<? extends Edge> edgeClass);
 
 	/**
 	 * Returns the list of reachable vertices.
-	 *
+	 * 
 	 * @param startVertex
 	 *            a start {@link Vertex}
 	 * @param pathDescription
@@ -351,38 +364,30 @@ public interface Graph extends AttributedElement<GraphClass, Graph> {
 			Vertex startVertex, String pathDescription, Class<T> vertexType);
 
 	/**
-	 * Returns an {@code Iterable} which iterates over all vertices of this {@link Graph} in the
-	 * order determined by the vertex sequence.
-	 *
+	 * Returns an {@code Iterable} which iterates over all vertices of this
+	 * {@link Graph} in the order determined by the vertex sequence.
+	 * 
 	 * @return an {@code Iterable} for all vertices
 	 */
 	public Iterable<Vertex> vertices();
 
+	public Iterable<Vertex> vertices(VertexFilter<Vertex> filter);
+
 	/**
-	 * Returns an {@code Iterable} which iterates over all vertices of this {@link Graph} which
-	 * have the specified {@link VertexClass} (including subclasses), in
-	 * the order determined by the vertex sequence.
-	 *
+	 * Returns an {@code Iterable} which iterates over all vertices of this
+	 * {@link Graph} which have the specified {@link VertexClass} (including
+	 * subclasses), in the order determined by the vertex sequence.
+	 * 
 	 * @param vertexclass
 	 *            a {@link VertexClass} (i.e. instance of schema.VertexClass)
-	 *
+	 * 
 	 * @return an {@code Iterable} for all vertices of the specified
 	 *         {@link VertexClass}
 	 */
 	public Iterable<Vertex> vertices(VertexClass vertexclass);
 
-	/**
-	 * Returns an {@link Iterable} which iterates over all vertices of this {@link Graph} which
-	 * have the specified <code>vertexClass</code> (including subclasses), in
-	 * the order determined by the vertex sequence.
-	 *
-	 * @param vertexClass
-	 *            a VertexClass (i.e. a schema interface extending Vertex)
-	 *
-	 * @return a {@code Iterable} for all vertices of the specified
-	 *         <code>vertexClass</code>
-	 */
-	public Iterable<Vertex> vertices(Class<? extends Vertex> vertexClass);
+	public Iterable<Vertex> vertices(VertexClass vertexclass,
+			VertexFilter<Vertex> filter);
 
 	// ---- transaction support ----
 	/**
@@ -396,9 +401,9 @@ public interface Graph extends AttributedElement<GraphClass, Graph> {
 	public Transaction newReadOnlyTransaction();
 
 	/**
-	 * Sets the given <code>transaction</code> as the active
-	 * {@link Transaction} for the current thread.
-	 *
+	 * Sets the given <code>transaction</code> as the active {@link Transaction}
+	 * for the current thread.
+	 * 
 	 * @param transaction
 	 */
 	public void setCurrentTransaction(Transaction transaction);
@@ -412,7 +417,7 @@ public interface Graph extends AttributedElement<GraphClass, Graph> {
 	/**
 	 * Delegates to {@link Graph#getCurrentTransaction()
 	 * getCurrentTransaction()}.
-	 *
+	 * 
 	 * @throws CommitFailedException
 	 *             if commit fails
 	 */
@@ -427,7 +432,7 @@ public interface Graph extends AttributedElement<GraphClass, Graph> {
 	/**
 	 * Delegates to {@link Graph#getCurrentTransaction()
 	 * getCurrentTransaction()}.
-	 *
+	 * 
 	 * @return the defined <code>Savepoint</code>
 	 */
 	public Savepoint defineSavepoint();
@@ -435,10 +440,10 @@ public interface Graph extends AttributedElement<GraphClass, Graph> {
 	/**
 	 * Delegates to {@link Graph#getCurrentTransaction()
 	 * getCurrentTransaction()}.
-	 *
+	 * 
 	 * @param savepoint
 	 *            the <code>Savepoint</code> to be restored.
-	 *
+	 * 
 	 * @throws InvalidSavepointException
 	 */
 	public void restoreSavepoint(Savepoint savepoint)
@@ -446,7 +451,7 @@ public interface Graph extends AttributedElement<GraphClass, Graph> {
 
 	/**
 	 * Tells whether this graph instance supports transactions.
-	 *
+	 * 
 	 * @return true if this graph instance supports transactions.
 	 */
 	public boolean hasTransactionSupport();
@@ -454,7 +459,7 @@ public interface Graph extends AttributedElement<GraphClass, Graph> {
 	/**
 	 * Sorts the vertex sequence according to the given comparator in ascending
 	 * order.
-	 *
+	 * 
 	 * @param comp
 	 *            the comparator defining the desired vertex order.
 	 */
@@ -463,7 +468,7 @@ public interface Graph extends AttributedElement<GraphClass, Graph> {
 	/**
 	 * Sorts the edge sequence according to the given comparator in ascending
 	 * order.
-	 *
+	 * 
 	 * @param comp
 	 *            the comparator defining the desired edge order.
 	 */
@@ -472,7 +477,7 @@ public interface Graph extends AttributedElement<GraphClass, Graph> {
 	/**
 	 * Registers the given <code>newListener</code> to the internal listener
 	 * list.
-	 *
+	 * 
 	 * @param newListener
 	 *            the new <code>GraphStructureChangedListener</code> to
 	 *            register.
@@ -482,7 +487,7 @@ public interface Graph extends AttributedElement<GraphClass, Graph> {
 
 	/**
 	 * Removes the given <code>listener</code> from the internal listener list.
-	 *
+	 * 
 	 * @param listener
 	 *            the <code>GraphStructureChangedListener</code> to be removed.
 	 */
@@ -498,25 +503,25 @@ public interface Graph extends AttributedElement<GraphClass, Graph> {
 	/**
 	 * Returns the amount of registered
 	 * <code>GraphStructureChangedListener</code>s.
-	 *
+	 * 
 	 * @return the amount of registered
 	 *         <code>GraphStructureChangedListener</code>s
 	 */
 	public int getGraphStructureChangedListenerCount();
 
 	/**
-	 * Returns the {@link de.uni_koblenz.jgralab.eca.ECARuleManager} of
-	 * this {@link Graph}, if the {@link de.uni_koblenz.jgralab.eca.ECARuleManager}
+	 * Returns the {@link de.uni_koblenz.jgralab.eca.ECARuleManager} of this
+	 * {@link Graph}, if the {@link de.uni_koblenz.jgralab.eca.ECARuleManager}
 	 * is not instantiated, an instance is created
 	 * 
-	 * @return the {@link de.uni_koblenz.jgralab.eca.ECARuleManager} of this 
-	 * 			{@link Graph}
+	 * @return the {@link de.uni_koblenz.jgralab.eca.ECARuleManager} of this
+	 *         {@link Graph}
 	 */
 	public ECARuleManagerInterface getECARuleManager();
 
 	/**
-	 * @return whether the {@link de.uni_koblenz.jgralab.eca.ECARuleManager}
-	 * 			of this {@link Graph} is instantiated
+	 * @return whether the {@link de.uni_koblenz.jgralab.eca.ECARuleManager} of
+	 *         this {@link Graph} is instantiated
 	 */
 	public boolean hasECARuleManager();
 
@@ -525,79 +530,79 @@ public interface Graph extends AttributedElement<GraphClass, Graph> {
 	public TraversalContext getTraversalContext();
 
 	/**
-	 * Returns the {@link GraphFactory} this {@link Graph} uses to 
-	 * create {@link Vertex} and {@link Edge} instances
+	 * Returns the {@link GraphFactory} this {@link Graph} uses to create
+	 * {@link Vertex} and {@link Edge} instances
 	 * 
 	 * @return the {@link GraphFactory} of this {@link Graph}
 	 */
 	public GraphFactory getGraphFactory();
 
 	/**
-	 * Set the {@link GraphFactory} this {@link Graph} uses to 
-	 * create {@link Vertex} and {@link Edge} instances
+	 * Set the {@link GraphFactory} this {@link Graph} uses to create
+	 * {@link Vertex} and {@link Edge} instances
 	 * 
 	 * @param graphFactory
-	 * 				the {@link GraphFactory} to replace the current
-	 * 				{@link GraphFactory} of this {@link Graph}
+	 *            the {@link GraphFactory} to replace the current
+	 *            {@link GraphFactory} of this {@link Graph}
 	 */
 	public void setGraphFactory(GraphFactory graphFactory);
 
 	/**
-	 * Saves this {@link Graph} to the file named <code>filename</code>. 
+	 * Saves this {@link Graph} to the file named <code>filename</code>.
 	 * 
 	 * @param filename
-	 * 				the name of the TG file to be written
+	 *            the name of the TG file to be written
 	 * 
 	 * @throws GraphIOException
-	 * 				if an IOException occurs
+	 *             if an IOException occurs
 	 */
 	public void save(String filename) throws GraphIOException;
 
 	/**
-	 * Saves this {@link Graph} to the file named <code>filename</code>. 
-	 * A {@link ProgressFunction} <code>pf</code> can be used to monitor progress.
+	 * Saves this {@link Graph} to the file named <code>filename</code>. A
+	 * {@link ProgressFunction} <code>pf</code> can be used to monitor progress.
 	 * 
 	 * @param filename
-	 * 				the name of the TG file to be written
+	 *            the name of the TG file to be written
 	 * @param pf
-	 * 				a {@link ProgressFunction}, may be <code>null</code>
+	 *            a {@link ProgressFunction}, may be <code>null</code>
 	 * 
-	 * @throws GraphIOException 
-	 * 				if an IOException occurs
+	 * @throws GraphIOException
+	 *             if an IOException occurs
 	 */
 	public void save(String filename, ProgressFunction pf)
 			throws GraphIOException;
 
 	/**
-	 * Saves this {@link Graph} to the stream <code>out</code>. 
-	 * The stream is <em>not</em> closed.
+	 * Saves this {@link Graph} to the stream <code>out</code>. The stream is
+	 * <em>not</em> closed.
 	 * 
 	 * @param out
-	 * 			a DataOutputStream
-	 *            
+	 *            a DataOutputStream
+	 * 
 	 * @throws GraphIOException
 	 *             if an IOException occurs
 	 */
 	public void save(DataOutputStream out) throws GraphIOException;
 
 	/**
-	 * Saves this {@link Graph} to the stream <code>out</code>. 
-	 * A {@link ProgressFunction} <code>pf</code> can be used to monitor progress.
+	 * Saves this {@link Graph} to the stream <code>out</code>. A
+	 * {@link ProgressFunction} <code>pf</code> can be used to monitor progress.
 	 * The stream is <em>not</em> closed.
 	 * 
 	 * @param out
-	 * 			a DataOutputStream
+	 *            a DataOutputStream
 	 * @param pf
 	 *            a {@link ProgressFunction}, may be <code>null</code>
-	 *            
+	 * 
 	 * @throws GraphIOException
 	 *             if an IOException occurs
 	 */
 	public void save(DataOutputStream out, ProgressFunction pf)
 			throws GraphIOException;
+
 	/**
-	 * @return the {@link GraphClass} of this
-	 *         {@link Graph}
+	 * @return the {@link GraphClass} of this {@link Graph}
 	 */
 	@Override
 	public GraphClass getAttributedElementClass();
