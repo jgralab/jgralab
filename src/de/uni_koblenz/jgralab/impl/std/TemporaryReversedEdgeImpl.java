@@ -48,9 +48,9 @@ public class TemporaryReversedEdgeImpl extends ReversedEdgeImpl implements
 	}
 
 	@Override
-	public Edge convertToRealGraphElement(EdgeClass edgeClass) {
+	public Edge bless(EdgeClass edgeClass) {
 		return ((TemporaryEdge) this.getNormalEdge())
-				.convertToRealGraphElement(edgeClass);
+				.bless(edgeClass);
 	}
 
 	@Override
