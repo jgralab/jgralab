@@ -41,6 +41,8 @@ import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import de.uni_koblenz.jgralab.greql2.exception.ParsingException;
 
@@ -202,25 +204,7 @@ public class GreqlLexer {
 			}
 			currLength += 1;
 		}
-
-		// // recognize fixed tokens
-		// for (Entry<TokenTypes, String> currentEntry : fixedTokens.entrySet())
-		// {
-		// String currentString = currentEntry.getValue();
-		// int currLen = currentString.length();
-		// if (bml > currLen) {
-		// continue;
-		// }
-		// if (query.regionMatches(position, currentString, 0, currLen)) {
-		// if (((position + currLen) == query.length())
-		// || isSeparator(query.charAt(position + currLen - 1))
-		// || isSeparator(query.charAt(position + currLen))) {
-		// bml = currLen;
-		// recognizedTokenType = currentEntry.getKey();
-		// }
-		// }
-		// }
-		// recognize strings and identifiers
+		// recognize numbers, strings and identifiers
 		if (recognizedTokenType == null) {
 			char separator = query.charAt(position);
 			if ((separator == '\"') || (separator == '\'')) { // String
@@ -256,39 +240,66 @@ public class GreqlLexer {
 						position, sb.toString());
 				position++;
 			} else {
-				// identifier and literals
-				StringBuilder nextPossibleToken = new StringBuilder();
-				int start = position;
-				while ((query.length() > position)
-						&& (!isSeparator(query.charAt(position)))) {
-					nextPossibleToken.append(query.charAt(position++));
-				}
-				if (query.length() < position) {
-					return new SimpleToken(TokenTypes.EOF, start, 0);
-				}
-				String tokenText = nextPossibleToken.toString();
-				if (tokenText.equals("thisVertex")) {
-					recognizedToken = new ComplexToken(TokenTypes.THISVERTEX,
-							start, position - start, tokenText);
-				} else if (tokenText.equals("thisEdge")) {
-					recognizedToken = new ComplexToken(TokenTypes.THISEDGE,
-							start, position - start, tokenText);
-				} else if (tokenText.equals(fixedTokens
-						.get(TokenTypes.POS_INFINITY))
-						|| tokenText.equals(fixedTokens
-								.get(TokenTypes.NEG_INFINITY))
-						|| tokenText.equals(fixedTokens
-								.get(TokenTypes.NOT_A_NUMBER))) {
-					recognizedToken = matchDoubleConstantToken(start, position
-							- start, tokenText);
-				} else if (startsWithNumber(tokenText)) {
-					recognizedToken = matchNumericToken(start,
-							position - start, tokenText);
+				char c = query.charAt(position);
+				if (isNumber(c)) {
+					//match double or long value 
+					Matcher m = Pattern.compile("(0[xX][0-9A-Fa-f]+)|([0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?)").matcher(query.substring(position));
+					m.lookingAt();
+					int end = m.end() + position;
+					position+=m.end();
+					String matchedString = m.group();
+					if (matchedString.startsWith("0x") || matchedString.startsWith("0X")) {
+						Long hexValue = Long.parseLong(matchedString.substring(2), 16);
+						return new LongToken(TokenTypes.LONGLITERAL, position, end, matchedString, hexValue);
+					} 
+					if (matchedString.startsWith("0")) {
+						//might be an octal value
+						try {
+							Long octValue = Long.parseLong(matchedString.substring(1), 8);
+							return new LongToken(TokenTypes.LONGLITERAL, position, end, matchedString, octValue);
+						} catch (Exception ex) {
+							//no octal value
+						}
+					}
+					try {
+						Long decValue = Long.parseLong(matchedString);
+						return new LongToken(TokenTypes.LONGLITERAL, position, end, matchedString, decValue);
+					} catch (Exception ex) {
+						//no decimal long value
+					}
+					Double doubleValue = Double.parseDouble(matchedString);
+					return new DoubleToken(TokenTypes.DOUBLELITERAL, position, end, matchedString, doubleValue);
 				} else {
-					recognizedToken = new ComplexToken(TokenTypes.IDENTIFIER,
-							start, position - start, tokenText);
+					// identifier and literals
+					StringBuilder nextPossibleToken = new StringBuilder();
+					int start = position;
+					while ((query.length() > position)
+							&& (!isSeparator(query.charAt(position)))) {
+						nextPossibleToken.append(query.charAt(position++));
+					}
+					if (query.length() < position) {
+						return new SimpleToken(TokenTypes.EOF, start, 0);
+					}
+					String tokenText = nextPossibleToken.toString();
+					if (tokenText.equals("thisVertex")) {
+						recognizedToken = new ComplexToken(TokenTypes.THISVERTEX,
+								start, position - start, tokenText);
+					} else if (tokenText.equals("thisEdge")) {
+						recognizedToken = new ComplexToken(TokenTypes.THISEDGE,
+								start, position - start, tokenText);
+					} else if (tokenText.equals(fixedTokens
+							.get(TokenTypes.POS_INFINITY))
+							|| tokenText.equals(fixedTokens
+									.get(TokenTypes.NEG_INFINITY))
+							|| tokenText.equals(fixedTokens
+									.get(TokenTypes.NOT_A_NUMBER))) {
+						recognizedToken = matchDoubleConstantToken(start, position
+								- start, tokenText);
+					}  else {
+						recognizedToken = new ComplexToken(TokenTypes.IDENTIFIER,
+								start, position - start, tokenText);
+					}
 				}
-
 			}
 		} else {
 			recognizedToken = new SimpleToken(recognizedTokenType, position,
@@ -311,61 +322,10 @@ public class GreqlLexer {
 				value);
 	}
 
-	private final boolean startsWithNumber(String text) {
-		char c = text.charAt(0);
+	private final boolean isNumber(char c) {
 		return (c >= Character.valueOf('0')) && (c <= Character.valueOf('9'));
 	}
 
-
-	private final Token matchNumericToken(int start, int end, String text) {
-		long value = 0;
-		TokenTypes type = null;
-		
-		if ((text.charAt(0) == '0') && (text.length() > 1)) {
-			//might be hex or octal literal
-			if ((text.charAt(1) == 'x') || (text.charAt(1) == 'X')) {
-				try {
-					type = TokenTypes.HEXLITERAL;
-					value = Long.parseLong(text.substring(2), 16);
-					return new LongToken(type, start, end - start, text, value);
-				} catch (NumberFormatException ex) {
-					throw new ParsingException("Not a valid hex number", text,
-							start, end - start, query);
-				}
-			}
-			if (!text.contains("e")) {
-				try {
-					type = TokenTypes.OCTLITERAL;
-					value = Long.parseLong(text.substring(1), 8);
-					return new LongToken(type, start, end - start, text, value);
-				} catch (NumberFormatException ex) {
-					throw new ParsingException("Not a valid octal number",
-							text, start, end - start, query);
-				}
-			}
-		}
-		if ((text.contains("E")) || (text.contains("e"))) {
-			//double token
-			try {
-				type = TokenTypes.DOUBLELITERAL;
-				System.out.println("Text of double literal: " + text);
-				Double d = Double.parseDouble(text);
-				return new DoubleToken(type, start, end - start, text, d);
-			} catch (NumberFormatException ex) {
-				throw new ParsingException("Not a valid double number", text,
-						start, end - start, query);
-			}
-		} 
-		//integer token
-		try {
-			type = TokenTypes.INTLITERAL;
-			value = Long.parseLong(text);
-			return new LongToken(type, start, end - start, text, value);
-		} catch (NumberFormatException ex) {
-			throw new ParsingException("Not a valid integer number",
-					text, start, end - start, query);
-		}
-	}
 
 	public boolean hasNextToken() {
 		skipWs();
