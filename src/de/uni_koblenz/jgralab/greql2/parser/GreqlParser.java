@@ -2532,10 +2532,6 @@ public class GreqlParser extends ParserHelper {
 						|| (lookAhead(0) == TokenTypes.OCTLITERAL)) {
 					decimalPart = ((LongToken) lookAhead).getValue();
 					match();
-					// } else if (lookAhead(0) == TokenTypes.REALLITERAL) {
-					// decimalPart = lookAhead.getValue().substring(0,
-					// lookAhead.getValue().length() - 1);
-					// match();
 				} else {
 					fail("Unrecognized token as part of decimal value");
 				}

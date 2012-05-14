@@ -385,6 +385,7 @@ public class ParserTest {
 		assertDoubleLiteralEquals("5.0", 5.0);
 		assertDoubleLiteralEquals("0.5", 0.5);
 		assertDoubleLiteralEquals("046e3", 046e3);
+		assertDoubleLiteralEquals("046e-3", 046e-3);
 	}
 
 	static final double DELTA = 0.00000001;

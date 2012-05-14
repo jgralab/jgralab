@@ -316,7 +316,7 @@ public class GreqlLexer {
 		return (c >= Character.valueOf('0')) && (c <= Character.valueOf('9'));
 	}
 
-	// TODO: Exponenten
+
 	private final Token matchNumericToken(int start, int end, String text) {
 		long value = 0;
 		TokenTypes type = null;
@@ -344,10 +344,11 @@ public class GreqlLexer {
 				}
 			}
 		}
-		if (text.contains("e")) {
+		if ((text.contains("E")) || (text.contains("e"))) {
 			//double token
 			try {
 				type = TokenTypes.DOUBLELITERAL;
+				System.out.println("Text of double literal: " + text);
 				Double d = Double.parseDouble(text);
 				return new DoubleToken(type, start, end - start, text, d);
 			} catch (NumberFormatException ex) {

@@ -132,7 +132,7 @@ public class RolenameCodeGenerator {
 	}
 
 	private CodeBlock createGetAdjacencesSnippet(IncidenceClass incClass,
-			VertexClass allowedVertexClass, EdgeDirection dir,
+			VertexClass allowedVertexClass, VertexClass definingVertexClass, EdgeDirection dir,
 			boolean createClass) {
 		CodeSnippet code = new CodeSnippet();
 		code.setVariable("rolename", incClass.getRolename());
@@ -141,6 +141,8 @@ public class RolenameCodeGenerator {
 		code.setVariable("dir", "EdgeDirection." + dir.toString());
 		code.setVariable("vertexClassName", schemaRootPackageName
 				+ allowedVertexClass.getQualifiedName());
+		code.setVariable("definingVertexClassName", schemaRootPackageName
+				+ definingVertexClass.getQualifiedName());
 
 		if (incClass.getMax() == 1) {
 			// if the rolename has an upper multiplicity of 1, create a method
@@ -169,18 +171,18 @@ public class RolenameCodeGenerator {
 						" * @return an Iterable of all vertices adjacent to this one with the rolename '#rolename#'",
 						" *         (connected with a <code>#edgeClassName#</code> edge).",
 						" */",
-						"public <V extends #vertexClassName#> Iterable<V> get_#rolename#();",
+						"public <V extends #definingVertexClassName#> Iterable<V> get_#rolename#();",
 						"",
-						"public <V extends #vertexClassName#> Iterable<V> get_#rolename#(#jgPackage#.VertexFilter<V> filter);");
+						"public <V extends #definingVertexClassName#> Iterable<V> get_#rolename#(#jgPackage#.VertexFilter<V> filter);");
 			} else {
 				code.add(
 						"@Override",
-						"public <V extends #vertexClassName#> Iterable<V> get_#rolename#() {",
+						"public <V extends #definingVertexClassName#> Iterable<V> get_#rolename#() {",
 						"\treturn new de.uni_koblenz.jgralab.impl.NeighbourIterable<#edgeClassName#, V>(this, #edgeClassName#.class, #dir#, null);",
 						"}",
 						"",
 						"@Override",
-						"public <V extends #vertexClassName#> Iterable<V> get_#rolename#(#jgPackage#.VertexFilter<V> filter) {",
+						"public <V extends #definingVertexClassName#> Iterable<V> get_#rolename#(#jgPackage#.VertexFilter<V> filter) {",
 						"\treturn new de.uni_koblenz.jgralab.impl.NeighbourIterable<#edgeClassName#, V>(this, #edgeClassName#.class, #dir#, filter);",
 						"}");
 			}
@@ -279,7 +281,7 @@ public class RolenameCodeGenerator {
 			list.addNoIndent(createRemoveAdjacenceSnippet(rolename, ec, vc,
 					dir, createClass));
 			list.addNoIndent(createGetAdjacencesSnippet(definingIncidenceClass,
-					allowedVC, dir, createClass));
+					allowedVC, vc, dir, createClass));
 		}
 		return list;
 	}
