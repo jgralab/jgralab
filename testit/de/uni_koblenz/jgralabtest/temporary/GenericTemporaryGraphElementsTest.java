@@ -20,7 +20,7 @@ import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.ImplementationType;
 import de.uni_koblenz.jgralab.Record;
 import de.uni_koblenz.jgralab.TemporaryEdge;
-import de.uni_koblenz.jgralab.TemporaryGraphElementConversionException;
+import de.uni_koblenz.jgralab.TemporaryGraphElementBlessingException;
 import de.uni_koblenz.jgralab.TemporaryVertex;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
@@ -100,7 +100,9 @@ public class GenericTemporaryGraphElementsTest {
 		Edge e2_street = graph.createEdge(ec_Street, v4_temp, v2_crossroad);
 		Edge e3_street = graph.createEdge(ec_Street, v3_crossroad, v4_temp);
 
-		Vertex v4_plaza = v4_temp.convertToRealGraphElement(vc_Plaza);
+		Vertex v4_plaza = v4_temp.bless(vc_Plaza);
+		assertTrue(v4_plaza.isValid());
+		assertFalse(v4_temp.isValid());
 
 		Vertex v6_plaza = graph.createVertex(vc_Plaza);
 
@@ -136,9 +138,9 @@ public class GenericTemporaryGraphElementsTest {
 		graph.createEdge(ec_AirRoute, v2_temp, v3_airport);
 
 		try {
-			v2_temp.convertToRealGraphElement(vc_Airport);
+			v2_temp.bless(vc_Airport);
 			fail();
-		} catch (TemporaryGraphElementConversionException ex) {
+		} catch (TemporaryGraphElementBlessingException ex) {
 			assertTrue(v2_temp.isValid());
 		}
 	}
@@ -160,7 +162,9 @@ public class GenericTemporaryGraphElementsTest {
 		Edge e5_street = graph.createEdge(ec_Street, v4_plaza, v2_crossroad);
 		Edge e6_street = graph.createEdge(ec_Street, v4_plaza, v3_crossroad);
 
-		Edge e3_street = e3_temp.convertToRealGraphElement(ec_Street);
+		Edge e3_street = e3_temp.bless(ec_Street);
+		assertTrue(e3_street.isValid());
+		assertFalse(e3_temp.isValid());
 
 		assertEquals(3, e3_street.getId());
 		assertEquals(ec_Street, e3_street.getAttributedElementClass());
@@ -202,9 +206,9 @@ public class GenericTemporaryGraphElementsTest {
 				v2_airport);
 
 		try {
-			e1_temp.convertToRealGraphElement(ec_Street);
+			e1_temp.bless(ec_Street);
 			fail();
-		} catch (TemporaryGraphElementConversionException e) {
+		} catch (TemporaryGraphElementBlessingException e) {
 			assertTrue(e1_temp.isValid());
 		}
 	}
@@ -214,8 +218,9 @@ public class GenericTemporaryGraphElementsTest {
 		TemporaryVertex v_temp = graph.createTemporaryVertex();
 		v_temp.setAttribute("name", "Plaza of Cats");
 
-		Vertex v_plaza = v_temp.convertToRealGraphElement(vc_Plaza);
-
+		Vertex v_plaza = v_temp.bless(vc_Plaza);
+		assertTrue(v_plaza.isValid());
+		assertFalse(v_temp.isValid());
 		assertEquals(1, v_plaza.getId());
 		assertEquals(vc_Plaza, v_plaza.getAttributedElementClass());
 		assertEquals("Plaza of Cats", v_plaza.getAttribute("name"));
@@ -227,9 +232,9 @@ public class GenericTemporaryGraphElementsTest {
 		v_temp.setAttribute("name", 1234);
 
 		try {
-			v_temp.convertToRealGraphElement(vc_Plaza);
+			v_temp.bless(vc_Plaza);
 			fail();
-		} catch (TemporaryGraphElementConversionException ex) {
+		} catch (TemporaryGraphElementBlessingException ex) {
 			assertTrue(v_temp.isValid());
 		}
 
@@ -246,7 +251,9 @@ public class GenericTemporaryGraphElementsTest {
 		e_temp.setAttribute("length", 111.11);
 		e_temp.setAttribute("attributeThatDoesNotExist", "Hugo");
 
-		Edge e_street = e_temp.convertToRealGraphElement(ec_Street);
+		Edge e_street = e_temp.bless(ec_Street);
+		assertTrue(e_street.isValid());
+		assertFalse(e_temp.isValid());
 
 		assertEquals(1, e_street.getId());
 		assertEquals(ec_Street, e_street.getAttributedElementClass());
@@ -268,8 +275,9 @@ public class GenericTemporaryGraphElementsTest {
 				(RecordDomain) schema.getDomain("Date"), values);
 		v1_temp.setAttribute("foundingDate", record);
 
-		Vertex v1_town = v1_temp.convertToRealGraphElement(vc_Town);
-
+		Vertex v1_town = v1_temp.bless(vc_Town);
+		assertTrue(v1_town.isValid());
+		assertFalse(v1_temp.isValid());
 		assertEquals(1, v1_town.getId());
 		assertEquals(vc_Town, v1_town.getAttributedElementClass());
 		assertEquals(record, v1_town.getAttribute("foundingDate"));
@@ -291,9 +299,9 @@ public class GenericTemporaryGraphElementsTest {
 		v1_temp.setAttribute("foundingDate", record);
 
 		try {
-			v1_temp.convertToRealGraphElement(vc_Town);
+			v1_temp.bless(vc_Town);
 			fail();
-		} catch (TemporaryGraphElementConversionException ex) {
+		} catch (TemporaryGraphElementBlessingException ex) {
 			assertTrue(v1_temp.isValid());
 		}
 	}
