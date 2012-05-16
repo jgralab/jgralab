@@ -2763,6 +2763,8 @@ public class Rsa2Tg extends XmlProcessor {
 			dom = createDomain("Integer");
 		} else if (href.endsWith("#Boolean")) {
 			dom = createDomain("Boolean");
+		}else if (href.endsWith("#double")){
+			dom = createDomain("Double");
 		} else {
 			throw new ProcessingException(getParser(), getFileName(),
 					"Unknown primitive type with href '" + href
