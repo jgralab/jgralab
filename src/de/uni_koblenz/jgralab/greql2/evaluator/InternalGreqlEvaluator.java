@@ -40,7 +40,6 @@ import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.Schema;
 
 public interface InternalGreqlEvaluator {
-	// TODO [greqlevaluator] create internal interface
 
 	public Object setVariable(String varName, Object value);
 

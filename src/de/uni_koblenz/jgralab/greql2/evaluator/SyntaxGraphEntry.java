@@ -39,6 +39,7 @@ import java.io.File;
 import java.util.logging.Logger;
 
 import de.uni_koblenz.jgralab.GraphIOException;
+import de.uni_koblenz.jgralab.greql2.optimizer.Optimizer;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Expression;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Graph;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Schema;
@@ -88,8 +89,7 @@ public class SyntaxGraphEntry {
 	/**
 	 * the optimizer that ist used to optimize this syntaxgraph
 	 */
-	// TODO [greqlevaluator] reenable optimizer
-	// private Optimizer optimizer;
+	private Optimizer optimizer;
 
 	/**
 	 * The GReQL2 query in text form.
@@ -99,10 +99,9 @@ public class SyntaxGraphEntry {
 	/**
 	 * @return the optimzer that is used to optimize this syntaxgraph
 	 */
-	// TODO [greqlevaluator] reenable optimizer
-	// public Optimizer getOptimizer() {
-	// return optimizer;
-	// }
+	public Optimizer getOptimizer() {
+		return optimizer;
+	}
 
 	/**
 	 * Locks the given SyntaxGraphEntry
@@ -151,13 +150,11 @@ public class SyntaxGraphEntry {
 	 * @param locked
 	 *            specifies, wether the graph should be locked or not
 	 */
-	// TODO [greqlevaluator] reenable optimizer
 	public SyntaxGraphEntry(String queryText, Greql2Graph graph,
-	// Optimizer optimizer,
-			boolean locked) {
+			Optimizer optimizer, boolean locked) {
 		this.queryText = queryText;
 		syntaxGraph = graph;
-		// this.optimizer = optimizer;
+		this.optimizer = optimizer;
 		this.locked = locked;
 	}
 
@@ -188,11 +185,10 @@ public class SyntaxGraphEntry {
 		try {
 			queryText = (String) g2e.getAttribute("_queryText");
 			String optimizerClass = (String) g2e.getAttribute("_optimizer");
-			// TODO [greqlevaluator] reenable optimizer
-			// if (!optimizerClass.isEmpty()) {
-			// optimizer = (Optimizer) Class.forName(optimizerClass)
-			// .newInstance();
-			// }
+			if (!optimizerClass.isEmpty()) {
+				optimizer = (Optimizer) Class.forName(optimizerClass)
+						.newInstance();
+			}
 			locked = false;
 			// Now delete the attribute values. They're not needed anymore.
 			g2e.setAttribute("_queryText", null);
@@ -220,11 +216,10 @@ public class SyntaxGraphEntry {
 		Greql2Expression g2e = syntaxGraph.getFirstGreql2Expression();
 		g2e.set_queryText(queryText);
 
-		// TODO [greqlevaluator] reenable optimizer
-		// if (optimizer != null) {
-		// optimizerClass = optimizer.getClass().getName();
-		// optimizerClassSimple = optimizer.getClass().getSimpleName();
-		// }
+		if (optimizer != null) {
+			optimizerClass = optimizer.getClass().getName();
+			optimizerClassSimple = optimizer.getClass().getSimpleName();
+		}
 		g2e.set_optimizer(optimizerClass);
 
 		String fileName = directory.getPath() + File.separator
@@ -246,19 +241,14 @@ public class SyntaxGraphEntry {
 		if (o instanceof SyntaxGraphEntry) {
 			SyntaxGraphEntry e = (SyntaxGraphEntry) o;
 			return queryText.equals(e.queryText)
-			// TODO [greqlevaluator] reenable optimizer
-			// && optimizer.getClass().equals(e.optimizer.getClass())
-			;
+					&& optimizer.getClass().equals(e.optimizer.getClass());
 		}
 		return false;
 	}
 
 	@Override
 	public int hashCode() {
-		return queryText.hashCode()
-		// TODO [greqlevaluator] reenable optimizer
-		// + optimizer.getClass().hashCode()
-		;
+		return queryText.hashCode() + optimizer.getClass().hashCode();
 	}
 
 	public String getQueryText() {
@@ -268,8 +258,6 @@ public class SyntaxGraphEntry {
 	@Override
 	public String toString() {
 		return "{SyntaxGraphEntry@" + syntaxGraph.hashCode() + ":"
-		// TODO [greqlevaluator] reenable optimizer
-		// + optimizer.getClass().getSimpleName()
-				+ "}";
+				+ optimizer.getClass().getSimpleName() + "}";
 	}
 }

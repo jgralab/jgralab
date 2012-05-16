@@ -50,6 +50,7 @@ import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.graphmarker.GraphMarker;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VertexEvaluator;
+import de.uni_koblenz.jgralab.greql2.optimizer.DefaultOptimizer;
 import de.uni_koblenz.jgralab.greql2.optimizer.OptimizerUtility;
 import de.uni_koblenz.jgralab.greql2.parser.GreqlParser;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Expression;
@@ -67,7 +68,7 @@ public class QueryImpl extends GraphStructureChangedAdapter implements Query {
 	private PSet<String> usedVariables;
 	private PSet<String> storedVariables;
 	private final boolean optimize;
-	private final long optimizationTime = -1;
+	private long optimizationTime = -1;
 	private long parseTime = -1;
 	private Greql2Expression rootExpression;
 	private final OptimizerInfo optimizerInfo;
@@ -124,7 +125,8 @@ public class QueryImpl extends GraphStructureChangedAdapter implements Query {
 	}
 
 	public static Query readQuery(File f, boolean optimize) throws IOException {
-		return readQuery(f, optimize, OptimizerUtility.getDefaultOptimizerInfo());
+		return readQuery(f, optimize,
+				OptimizerUtility.getDefaultOptimizerInfo());
 	}
 
 	public static Query readQuery(File f, boolean optimize,
@@ -194,11 +196,10 @@ public class QueryImpl extends GraphStructureChangedAdapter implements Query {
 					this);
 			long t1 = System.currentTimeMillis();
 			parseTime = t1 - t0;
-			// TODO [greqlevaluator] reenable optimize
-			// if (optimize) {
-			// DefaultOptimizer.optimizeQuery(queryGraph);
-			// optimizationTime = System.currentTimeMillis() - t1;
-			// }
+			if (optimize) {
+				new DefaultOptimizer().optimize(this);
+				optimizationTime = System.currentTimeMillis() - t1;
+			}
 			((GraphBaseImpl) queryGraph).defragment();
 			rootExpression = queryGraph.getFirstGreql2Expression();
 			initializeVertexEvaluatorsMarker(queryGraph);

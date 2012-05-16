@@ -42,7 +42,6 @@ import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.ProgressFunction;
 
 public interface GreqlEvaluator {
-	// TODO [greqlevaluator] create public interface
 	public Object getResult();
 
 	public <T> T getSingleResult();
