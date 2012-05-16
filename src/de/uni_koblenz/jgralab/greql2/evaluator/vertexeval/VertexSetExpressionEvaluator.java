@@ -110,7 +110,7 @@ public class VertexSetExpressionEvaluator extends
 			inc = inc.getNextIsTypeRestrOfExpressionIncidence();
 		}
 
-		long ownCosts = query.getGraphSize().getVertexCount()
+		long ownCosts = query.getOptimizerInfo().getVertexCount()
 				* vertexSetExpressionCostsFactor;
 		return new VertexCosts(ownCosts, ownCosts, typeRestrCosts + ownCosts);
 	}
@@ -126,7 +126,7 @@ public class VertexSetExpressionEvaluator extends
 					.getVertexEvaluator((TypeId) inc.getAlpha());
 			selectivity = typeIdEval.getEstimatedSelectivity();
 		}
-		return Math.round(query.getGraphSize().getVertexCount() * selectivity);
+		return Math.round(query.getOptimizerInfo().getVertexCount() * selectivity);
 	}
 
 }

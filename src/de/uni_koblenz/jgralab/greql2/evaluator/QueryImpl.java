@@ -69,7 +69,7 @@ public class QueryImpl extends GraphStructureChangedAdapter implements Query {
 	private final long optimizationTime = -1;
 	private long parseTime = -1;
 	private Greql2Expression rootExpression;
-	private final GraphSize graphsize;
+	private final OptimizerInfo optimizerInfo;
 
 	/**
 	 * The {@link Map} of SimpleName to Type of types that is known in the
@@ -126,8 +126,8 @@ public class QueryImpl extends GraphStructureChangedAdapter implements Query {
 		return readQuery(f, optimize, OptimizerUtility.getDefaultGraphSize());
 	}
 
-	public static Query readQuery(File f, boolean optimize, GraphSize graphsize)
-			throws IOException {
+	public static Query readQuery(File f, boolean optimize,
+			OptimizerInfo optimizerInfo) throws IOException {
 		BufferedReader reader = null;
 		try {
 			reader = new BufferedReader(new FileReader(f));
@@ -138,7 +138,7 @@ public class QueryImpl extends GraphStructureChangedAdapter implements Query {
 				sb.append(line);
 				sb.append('\n');
 			}
-			return new QueryImpl(sb.toString(), optimize, graphsize);
+			return new QueryImpl(sb.toString(), optimize, optimizerInfo);
 		} finally {
 			try {
 				reader.close();
@@ -154,13 +154,14 @@ public class QueryImpl extends GraphStructureChangedAdapter implements Query {
 	}
 
 	public QueryImpl(String queryText, boolean optimize) {
-		this(queryText, optimize, new GraphSize(100, 100, 20, 20));
+		this(queryText, optimize, OptimizerUtility.getDefaultGraphSize());
 	}
 
-	public QueryImpl(String queryText, boolean optimize, GraphSize graphsize) {
+	public QueryImpl(String queryText, boolean optimize,
+			OptimizerInfo optimizerInfo) {
 		this.queryText = queryText;
 		this.optimize = optimize;
-		this.graphsize = graphsize;
+		this.optimizerInfo = optimizerInfo;
 		knownTypes = new HashMap<String, AttributedElementClass<?, ?>>();
 	}
 
@@ -355,8 +356,8 @@ public class QueryImpl extends GraphStructureChangedAdapter implements Query {
 
 	}
 
-	public GraphSize getGraphSize() {
-		return graphsize;
+	public OptimizerInfo getOptimizerInfo() {
+		return optimizerInfo;
 	}
 
 }

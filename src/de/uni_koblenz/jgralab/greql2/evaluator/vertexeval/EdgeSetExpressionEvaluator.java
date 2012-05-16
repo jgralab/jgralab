@@ -105,7 +105,7 @@ public class EdgeSetExpressionEvaluator extends
 			inc = inc.getNextIsTypeRestrOfExpressionIncidence();
 		}
 
-		long ownCosts = query.getGraphSize().getEdgeCount()
+		long ownCosts = query.getOptimizerInfo().getEdgeCount()
 				* edgeSetExpressionCostsFactor;
 		return new VertexCosts(ownCosts, ownCosts, typeRestrCosts + ownCosts);
 	}
@@ -121,7 +121,7 @@ public class EdgeSetExpressionEvaluator extends
 					.getVertexEvaluator((TypeId) inc.getAlpha());
 			selectivity = typeIdEval.getEstimatedSelectivity();
 		}
-		return Math.round(query.getGraphSize().getEdgeCount() * selectivity);
+		return Math.round(query.getOptimizerInfo().getEdgeCount() * selectivity);
 	}
 
 }

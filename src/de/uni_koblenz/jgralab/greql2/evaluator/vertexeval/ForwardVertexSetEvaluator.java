@@ -102,7 +102,7 @@ public class ForwardVertexSetEvaluator extends
 				.getVertexEvaluator(p);
 		long pathDescCosts = pathDescEval.getCurrentSubtreeEvaluationCosts();
 		long searchCosts = Math.round(pathDescCosts * searchFactor
-				* Math.sqrt(query.getGraphSize().getEdgeCount()));
+				* Math.sqrt(query.getOptimizerInfo().getEdgeCount()));
 		long ownCosts = searchCosts;
 		long iteratedCosts = ownCosts * getVariableCombinations();
 		long subtreeCosts = targetCosts + pathDescCosts + iteratedCosts;

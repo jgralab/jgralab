@@ -44,7 +44,7 @@ import de.uni_koblenz.jgralab.schema.GraphClass;
  * 
  * @author ist@uni-koblenz.de
  */
-public class GraphSize {
+public class GraphSize implements OptimizerInfo {
 
 	private long vertexCount;
 
@@ -54,9 +54,9 @@ public class GraphSize {
 
 	private int knownEdgeTypes;
 
-	private double averageEdgeSubclasses = 2;
+	private final double averageEdgeSubclasses = 2;
 
-	private double averageVertexSubclasses = 2;
+	private final double averageVertexSubclasses = 2;
 
 	/**
 	 * constructs a new GraphSize object for the given graph
@@ -70,8 +70,7 @@ public class GraphSize {
 		}
 		vertexCount = dataGraph.getVCount();
 		edgeCount = dataGraph.getECount();
-		GraphClass graphClass = (GraphClass) dataGraph
-				.getAttributedElementClass();
+		GraphClass graphClass = dataGraph.getAttributedElementClass();
 		knownVertexTypes = graphClass.getVertexClassCount();
 		knownEdgeTypes = graphClass.getEdgeClassCount();
 	}
@@ -130,6 +129,7 @@ public class GraphSize {
 	 * 
 	 * @return the number of EdgeTypes this GraphSize object knows
 	 */
+	@Override
 	public int getKnownEdgeTypes() {
 		return knownEdgeTypes;
 	}
@@ -138,6 +138,7 @@ public class GraphSize {
 	 * 
 	 * @return the number of VertexTypes this GraphSize object knows
 	 */
+	@Override
 	public int getKnownVertexTypes() {
 		return knownVertexTypes;
 	}
@@ -145,6 +146,7 @@ public class GraphSize {
 	/**
 	 * @return the number of vertices in this graphsize object
 	 */
+	@Override
 	public long getVertexCount() {
 		return vertexCount;
 	}
@@ -152,6 +154,7 @@ public class GraphSize {
 	/**
 	 * sets the number of vertices in this GraphSize object
 	 */
+	@Override
 	public void setVertexCount(long count) {
 		vertexCount = count;
 	}
@@ -159,6 +162,7 @@ public class GraphSize {
 	/**
 	 * @return the number of edge in this graphsize object
 	 */
+	@Override
 	public long getEdgeCount() {
 		return edgeCount;
 	}
@@ -166,6 +170,7 @@ public class GraphSize {
 	/**
 	 * sets the number of edges in this GraphSize object
 	 */
+	@Override
 	public void setEdgeCount(long count) {
 		edgeCount = count;
 	}
@@ -173,6 +178,7 @@ public class GraphSize {
 	/**
 	 * @return the average number of subclasses of a vertex class
 	 */
+	@Override
 	public double getAverageVertexSubclasses() {
 		return averageVertexSubclasses;
 	}
@@ -180,6 +186,7 @@ public class GraphSize {
 	/**
 	 * @return the average number of subclasses of an edge class
 	 */
+	@Override
 	public double getAverageEdgeSubclasses() {
 		return averageEdgeSubclasses;
 	}

@@ -46,8 +46,6 @@ import java.util.logging.Logger;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
-import de.uni_koblenz.jgralab.Graph;
-import de.uni_koblenz.jgralab.greql2.evaluator.GraphSize;
 import de.uni_koblenz.jgralab.greql2.evaluator.InternalGreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.QueryImpl;
 import de.uni_koblenz.jgralab.greql2.evaluator.VertexCosts;
@@ -311,9 +309,6 @@ public abstract class VertexEvaluator<V extends Greql2Vertex> {
 	 * Get the costs for evaluating the associated vertex one time. No subtree
 	 * or iteration costs are taken into account.
 	 * 
-	 * @param graphSize
-	 *            a {@link GraphSize} object indicating the size of the data-
-	 *            {@link Graph}
 	 * @return the costs for evaluating the associated vertex one time excluding
 	 *         subtree and iteration costs
 	 */

@@ -96,23 +96,23 @@ public class TypeIdEvaluator extends VertexEvaluator<TypeId> {
 
 	@Override
 	public VertexCosts calculateSubtreeEvaluationCosts() {
-		long costs = query.getGraphSize().getKnownEdgeTypes()
-				+ query.getGraphSize().getKnownVertexTypes();
+		long costs = query.getOptimizerInfo().getKnownEdgeTypes()
+				+ query.getOptimizerInfo().getKnownVertexTypes();
 		return new VertexCosts(costs, costs, costs);
 	}
 
 	@Override
 	public double calculateEstimatedSelectivity() {
-		int typesInSchema = (int) Math.round((query.getGraphSize()
-				.getKnownEdgeTypes() + query.getGraphSize()
+		int typesInSchema = (int) Math.round((query.getOptimizerInfo()
+				.getKnownEdgeTypes() + query.getOptimizerInfo()
 				.getKnownVertexTypes()) / 2.0);
 		double selectivity = 1.0;
 		TypeId id = getVertex();
 		if (id.is_type()) {
 			selectivity = 1.0 / typesInSchema;
 		} else {
-			double avgSubclasses = (query.getGraphSize()
-					.getAverageEdgeSubclasses() + query.getGraphSize()
+			double avgSubclasses = (query.getOptimizerInfo()
+					.getAverageEdgeSubclasses() + query.getOptimizerInfo()
 					.getAverageVertexSubclasses()) / 2.0;
 			selectivity = avgSubclasses / typesInSchema;
 		}
