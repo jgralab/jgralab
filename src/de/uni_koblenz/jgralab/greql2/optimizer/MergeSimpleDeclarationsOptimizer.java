@@ -41,7 +41,7 @@ import java.util.logging.Logger;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.JGraLab;
-import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
+import de.uni_koblenz.jgralab.greql2.evaluator.QueryImpl;
 import de.uni_koblenz.jgralab.greql2.schema.Declaration;
 import de.uni_koblenz.jgralab.greql2.schema.Expression;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Graph;
@@ -94,12 +94,10 @@ public class MergeSimpleDeclarationsOptimizer extends OptimizerBase {
 	 * de.uni_koblenz.jgralab.greql2.schema.Greql2)
 	 */
 	@Override
-	public boolean optimize(GreqlEvaluator eval, Greql2Graph syntaxgraph) {
+	public boolean optimize(QueryImpl query) {
 		anOptimizationWasDone = false;
 
-		findAndMergeSimpleDeclarations(syntaxgraph);
-		// TODO [greqlrenovation]
-		// recreateVertexEvaluators(eval);
+		findAndMergeSimpleDeclarations(query.getQueryGraph());
 		return anOptimizationWasDone;
 	}
 

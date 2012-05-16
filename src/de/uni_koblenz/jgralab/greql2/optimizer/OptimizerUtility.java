@@ -48,6 +48,7 @@ import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql2.evaluator.GraphSize;
+import de.uni_koblenz.jgralab.greql2.evaluator.OptimizerInfo;
 import de.uni_koblenz.jgralab.greql2.schema.FunctionApplication;
 import de.uni_koblenz.jgralab.greql2.schema.FunctionId;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Aggregation;
@@ -325,7 +326,7 @@ public class OptimizerUtility {
 	 * 
 	 * @return the created {@link GraphSize} object
 	 */
-	public static GraphSize getDefaultGraphSize() {
+	public static OptimizerInfo getDefaultOptimizerInfo() {
 		return new GraphSize(100, 100, 20, 20);
 	}
 }

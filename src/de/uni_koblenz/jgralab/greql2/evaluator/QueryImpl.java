@@ -124,7 +124,7 @@ public class QueryImpl extends GraphStructureChangedAdapter implements Query {
 	}
 
 	public static Query readQuery(File f, boolean optimize) throws IOException {
-		return readQuery(f, optimize, OptimizerUtility.getDefaultGraphSize());
+		return readQuery(f, optimize, OptimizerUtility.getDefaultOptimizerInfo());
 	}
 
 	public static Query readQuery(File f, boolean optimize,
@@ -155,7 +155,7 @@ public class QueryImpl extends GraphStructureChangedAdapter implements Query {
 	}
 
 	public QueryImpl(String queryText, boolean optimize) {
-		this(queryText, optimize, OptimizerUtility.getDefaultGraphSize());
+		this(queryText, optimize, OptimizerUtility.getDefaultOptimizerInfo());
 	}
 
 	public QueryImpl(String queryText, boolean optimize,

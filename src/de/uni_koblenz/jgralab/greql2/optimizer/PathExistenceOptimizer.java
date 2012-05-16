@@ -46,7 +46,7 @@ import java.util.logging.Logger;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.JGraLab;
-import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
+import de.uni_koblenz.jgralab.greql2.evaluator.QueryImpl;
 import de.uni_koblenz.jgralab.greql2.exception.OptimizerException;
 import de.uni_koblenz.jgralab.greql2.schema.BackwardVertexSet;
 import de.uni_koblenz.jgralab.greql2.schema.Expression;
@@ -99,8 +99,9 @@ public class PathExistenceOptimizer extends OptimizerBase {
 	 * de.uni_koblenz.jgralab.greql2.schema.Greql2)
 	 */
 	@Override
-	public boolean optimize(GreqlEvaluator eval, Greql2Graph syntaxgraph)
-			throws OptimizerException {
+	public boolean optimize(QueryImpl query) throws OptimizerException {
+		Greql2Graph syntaxgraph = query.getQueryGraph();
+
 		if (syntaxgraph.getFirstVertex(PathExistence.class) == null) {
 			return false;
 		}
@@ -109,9 +110,6 @@ public class PathExistenceOptimizer extends OptimizerBase {
 		this.syntaxgraph = syntaxgraph;
 
 		runOptimization();
-
-		// TODO [greqlrenovation]
-		// recreateVertexEvaluators(eval);
 
 		OptimizerUtility.createMissingSourcePositions(syntaxgraph);
 

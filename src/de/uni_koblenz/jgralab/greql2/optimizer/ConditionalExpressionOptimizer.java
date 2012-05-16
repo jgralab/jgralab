@@ -47,13 +47,12 @@ import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
+import de.uni_koblenz.jgralab.greql2.evaluator.QueryImpl;
 import de.uni_koblenz.jgralab.greql2.exception.OptimizerException;
 import de.uni_koblenz.jgralab.greql2.optimizer.condexp.Formula;
 import de.uni_koblenz.jgralab.greql2.schema.BoolLiteral;
 import de.uni_koblenz.jgralab.greql2.schema.FunctionApplication;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Expression;
-import de.uni_koblenz.jgralab.greql2.schema.Greql2Graph;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
 import de.uni_koblenz.jgralab.greql2.schema.IsConstraintOf;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
@@ -104,17 +103,16 @@ public class ConditionalExpressionOptimizer extends OptimizerBase {
 	 * de.uni_koblenz.jgralab.greql2.schema.Greql2)
 	 */
 	@Override
-	public boolean optimize(GreqlEvaluator eval, Greql2Graph syntaxgraph)
-			throws OptimizerException {
+	public boolean optimize(QueryImpl query) throws OptimizerException {
 		boolean simplifiedOrOptimized = false;
 		// System.out.println("Before CEO: "
 		// + GreqlSerializer.serializeGraph(syntaxgraph));
 
-		FunctionApplication top = findAndOrNotFunApp(syntaxgraph
+		FunctionApplication top = findAndOrNotFunApp(query.getQueryGraph()
 				.getFirstGreql2Expression());
 		while (top != null) {
 			LinkedList<VertexEdgeClassTuple> relinkables = rememberConnections(top);
-			Formula formula = Formula.createFormulaFromExpression(top, eval);
+			Formula formula = Formula.createFormulaFromExpression(top, query);
 			// System.out.println("Formula = " + formula);
 			Formula optimizedFormula = formula.simplify().optimize();
 			if (!formula.equals(optimizedFormula)) {
@@ -124,10 +122,11 @@ public class ConditionalExpressionOptimizer extends OptimizerBase {
 						+ "\nto\n    " + optimizedFormula + ".");
 				Greql2Vertex newTop = optimizedFormula.toExpression();
 				for (VertexEdgeClassTuple vect : relinkables) {
-					syntaxgraph.createEdge(vect.ec, newTop, vect.v);
+					query.getQueryGraph().createEdge(vect.ec, newTop, vect.v);
 				}
 				top.delete();
-				top = findAndOrNotFunApp(syntaxgraph.getFirstGreql2Expression());
+				top = findAndOrNotFunApp(query.getQueryGraph()
+						.getFirstGreql2Expression());
 			} else {
 				top = null;
 			}
@@ -135,7 +134,8 @@ public class ConditionalExpressionOptimizer extends OptimizerBase {
 
 		// delete "with true" constraints
 		Set<Vertex> verticesToDelete = new HashSet<Vertex>();
-		for (IsConstraintOf ico : syntaxgraph.getIsConstraintOfEdges()) {
+		for (IsConstraintOf ico : query.getQueryGraph()
+				.getIsConstraintOfEdges()) {
 			Vertex alpha = ico.getAlpha();
 			if (alpha instanceof BoolLiteral) {
 				BoolLiteral bl = (BoolLiteral) alpha;
@@ -148,9 +148,7 @@ public class ConditionalExpressionOptimizer extends OptimizerBase {
 			bl.delete();
 		}
 
-		// TODO [greqlrenovation]
-		// recreateVertexEvaluators(eval);
-		OptimizerUtility.createMissingSourcePositions(syntaxgraph);
+		OptimizerUtility.createMissingSourcePositions(query.getQueryGraph());
 
 		// System.out.println("After CEO: "
 		// + GreqlSerializer.serializeGraph(syntaxgraph));

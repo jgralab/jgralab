@@ -53,7 +53,7 @@ import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
+import de.uni_koblenz.jgralab.greql2.evaluator.QueryImpl;
 import de.uni_koblenz.jgralab.greql2.exception.OptimizerException;
 import de.uni_koblenz.jgralab.greql2.schema.Declaration;
 import de.uni_koblenz.jgralab.greql2.schema.Expression;
@@ -113,9 +113,8 @@ public class EarlySelectionOptimizer extends OptimizerBase {
 	 * de.uni_koblenz.jgralab.greql2.schema.Greql2)
 	 */
 	@Override
-	public boolean optimize(GreqlEvaluator eval, Greql2Graph syntaxgraph)
-			throws OptimizerException {
-		this.syntaxgraph = syntaxgraph;
+	public boolean optimize(QueryImpl query) throws OptimizerException {
+		this.syntaxgraph = query.getQueryGraph();
 
 		int noOfRuns = 1;
 		while (runOptimization()) {
@@ -134,9 +133,6 @@ public class EarlySelectionOptimizer extends OptimizerBase {
 		}
 
 		OptimizerUtility.createMissingSourcePositions(syntaxgraph);
-
-		// TODO [greqlrenovation]
-		// recreateVertexEvaluators(eval);
 
 		// If there was more than one optimization run, a transformation was
 		// done.

@@ -39,11 +39,8 @@ package de.uni_koblenz.jgralab.greql2.optimizer.condexp;
 
 import java.util.ArrayList;
 
-import de.uni_koblenz.jgralab.graphmarker.GraphMarker;
-import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
-import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize;
+import de.uni_koblenz.jgralab.greql2.evaluator.QueryImpl;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VertexEvaluator;
-import de.uni_koblenz.jgralab.greql2.optimizer.OptimizerUtility;
 import de.uni_koblenz.jgralab.greql2.schema.Expression;
 
 /**
@@ -56,8 +53,8 @@ public class NonConstantTerm extends Formula {
 
 	protected Expression expression;
 
-	public NonConstantTerm(GreqlEvaluator eval, Expression exp) {
-		super(eval);
+	public NonConstantTerm(QueryImpl query, Expression exp) {
+		super(query);
 		expression = exp;
 	}
 
@@ -94,17 +91,9 @@ public class NonConstantTerm extends Formula {
 
 	@Override
 	public double getSelectivity() {
-		GraphSize graphSize = null;
-		if (greqlEvaluator.getDatagraph() != null) {
-			graphSize = new GraphSize(greqlEvaluator.getDatagraph());
-		} else {
-			graphSize = OptimizerUtility.getDefaultGraphSize();
-		}
-
-		GraphMarker<VertexEvaluator> marker = greqlEvaluator
-				.getVertexEvaluatorGraphMarker();
-		VertexEvaluator veval = marker.getMark(expression);
-		double selectivity = veval.calculateEstimatedSelectivity(graphSize);
+		VertexEvaluator<? extends Expression> veval = query
+				.getVertexEvaluator(expression);
+		double selectivity = veval.calculateEstimatedSelectivity();
 		logger.finer("selectivity[" + this + "] = " + selectivity);
 		return selectivity;
 	}

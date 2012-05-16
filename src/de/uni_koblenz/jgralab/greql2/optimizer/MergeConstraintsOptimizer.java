@@ -43,7 +43,7 @@ import java.util.logging.Logger;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.JGraLab;
-import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
+import de.uni_koblenz.jgralab.greql2.evaluator.QueryImpl;
 import de.uni_koblenz.jgralab.greql2.exception.OptimizerException;
 import de.uni_koblenz.jgralab.greql2.schema.Declaration;
 import de.uni_koblenz.jgralab.greql2.schema.Expression;
@@ -89,8 +89,9 @@ public class MergeConstraintsOptimizer extends OptimizerBase {
 	 * de.uni_koblenz.jgralab.greql2.schema.Greql2)
 	 */
 	@Override
-	public boolean optimize(GreqlEvaluator eval, Greql2Graph syntaxgraph)
-			throws OptimizerException {
+	public boolean optimize(QueryImpl query) throws OptimizerException {
+		Greql2Graph syntaxgraph = query.getQueryGraph();
+
 		ArrayList<Declaration> declarations = new ArrayList<Declaration>();
 		for (Declaration decl : syntaxgraph.getDeclarationVertices()) {
 			declarations.add(decl);
@@ -119,8 +120,6 @@ public class MergeConstraintsOptimizer extends OptimizerBase {
 				syntaxgraph.createIsConstraintOf(singleConstraint, decl);
 			}
 		}
-		// TODO [greqlrenovation]
-		// recreateVertexEvaluators(eval);
 		return constraintsGotMerged;
 	}
 

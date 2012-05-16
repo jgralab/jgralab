@@ -238,7 +238,9 @@ public abstract class VertexEvaluator<V extends Greql2Vertex> {
 	 * @param evaluator
 	 */
 	public void resetToInitialState(InternalGreqlEvaluator evaluator) {
-		evaluator.removeLocalEvaluationResult(vertex);
+		if (evaluator != null) {
+			evaluator.removeLocalEvaluationResult(vertex);
+		}
 		currentSubtreeEvaluationCosts = Long.MIN_VALUE;
 		initialSubtreeEvaluationCosts = Long.MIN_VALUE;
 		ownEvaluationCosts = Long.MIN_VALUE;

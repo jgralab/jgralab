@@ -67,12 +67,6 @@ public abstract class OptimizerBase implements Optimizer {
 		return "*** " + this.getClass().getSimpleName() + ": ";
 	}
 
-	// TODO [greqlrenovation] this is done in the QueryImpl
-	// (GraphStructureChangeListener)
-	// protected void recreateVertexEvaluators(GreqlEvaluator eval) {
-	// eval.createVertexEvaluators();
-	// }
-
 	/**
 	 * Put all edges going in or coming out of vertex <code>from</code> to
 	 * vertex <code>to</code>. If there's already an edge of exactly that type
