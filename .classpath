@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry excluding="de/uni_koblenz/jgralab/plugin/|de/uni_koblenz/jgralab/greql2/exception/OptimizerException.java|de/uni_koblenz/jgralab/greql2/executable/" kind="src" path="src"/>
+	<classpathentry excluding="de/uni_koblenz/jgralab/plugin/|de/uni_koblenz/jgralab/greql2/exception/OptimizerException.java|de/uni_koblenz/jgralab/greql2/executable/|de/uni_koblenz/jgralab/greql2/evaluator/costmodel/" kind="src" path="src"/>
 	<classpathentry kind="src" path="testit"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>

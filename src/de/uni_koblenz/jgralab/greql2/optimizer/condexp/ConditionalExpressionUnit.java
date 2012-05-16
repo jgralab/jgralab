@@ -37,7 +37,7 @@
  */
 package de.uni_koblenz.jgralab.greql2.optimizer.condexp;
 
-import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize;
+import de.uni_koblenz.jgralab.greql2.evaluator.GraphSize;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VertexEvaluator;
 import de.uni_koblenz.jgralab.greql2.optimizer.OptimizerUtility;
 import de.uni_koblenz.jgralab.greql2.schema.Expression;

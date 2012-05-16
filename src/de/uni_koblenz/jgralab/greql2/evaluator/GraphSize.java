@@ -33,7 +33,7 @@
  * the parts of JGraLab used as well as that of the covered work.
  */
 
-package de.uni_koblenz.jgralab.greql2.evaluator.costmodel;
+package de.uni_koblenz.jgralab.greql2.evaluator;
 
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.schema.GraphClass;
