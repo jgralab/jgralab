@@ -59,6 +59,7 @@ public class SetConstructionEvaluator extends
 
 	@Override
 	public Object evaluate(InternalGreqlEvaluator evaluator) {
+		evaluator.progress(getOwnEvaluationCosts());
 		return createValue(JGraLab.set(), evaluator);
 	}
 

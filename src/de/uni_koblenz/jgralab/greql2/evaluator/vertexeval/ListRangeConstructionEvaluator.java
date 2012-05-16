@@ -91,6 +91,7 @@ public class ListRangeConstructionEvaluator extends
 
 	@Override
 	public PVector<Integer> evaluate(InternalGreqlEvaluator evaluator) {
+		evaluator.progress(getOwnEvaluationCosts());
 		PVector<Integer> resultList = JGraLab.vector();
 		if (firstElementEvaluator == null) {
 			getEvals();

@@ -57,6 +57,7 @@ public class IntLiteralEvaluator extends VertexEvaluator<IntLiteral> {
 
 	@Override
 	public Integer evaluate(InternalGreqlEvaluator evaluator) {
+		evaluator.progress(getOwnEvaluationCosts());
 		return vertex.get_intValue();
 	}
 

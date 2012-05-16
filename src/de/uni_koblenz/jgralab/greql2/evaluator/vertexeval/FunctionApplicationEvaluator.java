@@ -168,6 +168,7 @@ public class FunctionApplicationEvaluator extends
 	 */
 	@Override
 	public Object evaluate(InternalGreqlEvaluator evaluator) {
+		evaluator.progress(getOwnEvaluationCosts());
 		FunctionInfo fi = getFunctionInfo();
 
 		if (!listCreated) {

@@ -60,6 +60,7 @@ public class SubgraphRestrictedExpressionEvaluator extends
 
 	@Override
 	public Object evaluate(InternalGreqlEvaluator evaluator) {
+		evaluator.progress(getOwnEvaluationCosts());
 		// take traversal context for subgraph
 		if (subgraphDefinitionEval == null) {
 			IsSubgraphDefinitionOf isSubgraphDef = vertex

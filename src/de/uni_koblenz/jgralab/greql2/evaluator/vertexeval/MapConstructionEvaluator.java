@@ -86,6 +86,7 @@ public class MapConstructionEvaluator extends VertexEvaluator<MapConstruction> {
 
 	@Override
 	public Object evaluate(InternalGreqlEvaluator evaluator) {
+		evaluator.progress(getOwnEvaluationCosts());
 		PMap<Object, Object> map = JGraLab.map();
 		PVector<Object> keys = JGraLab.vector();
 		for (IsKeyExprOfConstruction e : vertex

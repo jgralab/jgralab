@@ -57,6 +57,7 @@ public class DoubleLiteralEvaluator extends VertexEvaluator<DoubleLiteral> {
 
 	@Override
 	public Double evaluate(InternalGreqlEvaluator evaluator) {
+		evaluator.progress(getOwnEvaluationCosts());
 		return vertex.get_doubleValue();
 	}
 

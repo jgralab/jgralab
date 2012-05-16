@@ -92,6 +92,7 @@ public abstract class ComprehensionEvaluator<V extends Comprehension> extends
 
 	@Override
 	public Object evaluate(InternalGreqlEvaluator evaluator) {
+		evaluator.progress(getOwnEvaluationCosts());
 		initializeMaxCount(evaluator);
 		VariableDeclarationLayer declLayer = getVariableDeclationLayer(evaluator);
 		VertexEvaluator<?> resultDefEval = getResultDefinitionEvaluator();

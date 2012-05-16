@@ -54,6 +54,7 @@ public class ExpressionDefinedSubgraphEvaluator extends
 
 	@Override
 	public Object evaluate(InternalGreqlEvaluator evaluator) {
+		evaluator.progress(getOwnEvaluationCosts());
 		if (subgraphDefExprEvaluator == null) {
 			ExpressionDefinedSubgraph exprDefinedSubgraph = vertex;
 			IsSubgraphDefiningExpression isSubgraphDefiningExpression = exprDefinedSubgraph

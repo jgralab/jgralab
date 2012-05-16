@@ -77,6 +77,7 @@ public class EdgeSetExpressionEvaluator extends
 
 	@Override
 	public PSet<Edge> evaluate(InternalGreqlEvaluator evaluator) {
+		evaluator.progress(getOwnEvaluationCosts());
 		// create the resulting set
 		PSet<Edge> resultSet = JGraLab.set();
 		Edge currentEdge = evaluator.getDataGraph().getFirstEdge();
@@ -121,7 +122,8 @@ public class EdgeSetExpressionEvaluator extends
 					.getVertexEvaluator((TypeId) inc.getAlpha());
 			selectivity = typeIdEval.getEstimatedSelectivity();
 		}
-		return Math.round(query.getOptimizerInfo().getEdgeCount() * selectivity);
+		return Math
+				.round(query.getOptimizerInfo().getEdgeCount() * selectivity);
 	}
 
 }

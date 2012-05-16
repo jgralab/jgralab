@@ -57,6 +57,7 @@ public class StringLiteralEvaluator extends VertexEvaluator<StringLiteral> {
 
 	@Override
 	public String evaluate(InternalGreqlEvaluator evaluator) {
+		evaluator.progress(getOwnEvaluationCosts());
 		return vertex.get_stringValue();
 	}
 

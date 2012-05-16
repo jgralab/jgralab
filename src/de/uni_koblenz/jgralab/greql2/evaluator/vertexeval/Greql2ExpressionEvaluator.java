@@ -103,6 +103,7 @@ public class Greql2ExpressionEvaluator extends
 	 */
 	@Override
 	public Object evaluate(InternalGreqlEvaluator evaluator) {
+		evaluator.progress(getOwnEvaluationCosts());
 		initializeBoundVariables(evaluator);
 
 		Schema graphSchema = evaluator.getSchemaOfDataGraph();

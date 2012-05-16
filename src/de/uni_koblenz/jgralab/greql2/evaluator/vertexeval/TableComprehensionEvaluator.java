@@ -118,6 +118,7 @@ public class TableComprehensionEvaluator extends
 		if (!initialized) {
 			initialize(evaluator);
 		}
+		evaluator.progress(getOwnEvaluationCosts());
 		TreeMap<Object, HashMap<Object, Object>> tableMap = new TreeMap<Object, HashMap<Object, Object>>();
 		Set<Object> completeColumnHeaderTuple = new HashSet<Object>();
 		TreeSet<Object> rowHeaderSet = new TreeSet<Object>();

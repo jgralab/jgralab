@@ -86,6 +86,7 @@ public class BackwardVertexSetEvaluator extends
 		if (!initialized) {
 			initialize(evaluator);
 		}
+		evaluator.progress(getOwnEvaluationCosts());
 		Vertex targetVertex = null;
 		targetVertex = (Vertex) targetEval.getResult(evaluator);
 

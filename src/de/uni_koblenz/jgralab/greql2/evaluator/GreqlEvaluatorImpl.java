@@ -141,17 +141,6 @@ public class GreqlEvaluatorImpl implements InternalGreqlEvaluator,
 	private Object result = null;
 
 	/**
-	 * The progress function this evaluator uses, may be null
-	 */
-	// private ProgressFunction progressFunction = null;
-
-	/**
-	 * holds the number of interpretetation steps that have been passed since
-	 * the last call of the progress function
-	 */
-	// private long progressStepsPassed;
-
-	/**
 	 * The plain time needed for evaluation.
 	 */
 	private long evaluationTime;
@@ -163,6 +152,17 @@ public class GreqlEvaluatorImpl implements InternalGreqlEvaluator,
 	private Object[] localEvaluationResults;
 
 	/**
+	 * The progress function this evaluator uses, may be null
+	 */
+	private ProgressFunction progressFunction = null;
+
+	/**
+	 * holds the number of interpretetation steps that have been passed since
+	 * the last call of the progress function
+	 */
+	private long progressStepsPassed;
+
+	/**
 	 * Holds the estimated needed for evaluation time in abstract units
 	 */
 	private long estimatedInterpretationSteps;
@@ -170,7 +170,7 @@ public class GreqlEvaluatorImpl implements InternalGreqlEvaluator,
 	/**
 	 * Holds the already passed time in abstract time units
 	 */
-	private long passedInterpretationSteps;
+	// private long passedInterpretationSteps;
 
 	private QueryImpl query;
 
@@ -181,16 +181,17 @@ public class GreqlEvaluatorImpl implements InternalGreqlEvaluator,
 	 * given value should be the ownEvaluationCosts of that VertexEvaluator.
 	 * Calls the progress()-Method of the progress function this evaluator uses
 	 */
-	// public final void progress(long value) {
-	// progressStepsPassed += value;
-	// if (progressFunction != null) {
-	// while (progressStepsPassed > progressFunction.getUpdateInterval()) {
-	// progressFunction.progress(1);
-	// progressStepsPassed -= progressFunction.getUpdateInterval();
-	// }
-	// }
-	// passedInterpretationSteps += value;
-	// }
+	@Override
+	public final void progress(long value) {
+		progressStepsPassed += value;
+		if (progressFunction != null) {
+			while (progressStepsPassed > progressFunction.getUpdateInterval()) {
+				progressFunction.progress(1);
+				progressStepsPassed -= progressFunction.getUpdateInterval();
+			}
+		}
+		// passedInterpretationSteps += value;
+	}
 
 	@Override
 	public Object setLocalEvaluationResult(Greql2Vertex vertex, Object value) {
@@ -303,7 +304,7 @@ public class GreqlEvaluatorImpl implements InternalGreqlEvaluator,
 		this.datagraph = datagraph;
 		this.environment = environment;
 		localEvaluationResults = new Object[query.getQueryGraph().getVCount() + 1];
-		// this.progressFunction = progressFunction;
+		this.progressFunction = progressFunction;
 	}
 
 	@Override
@@ -328,20 +329,20 @@ public class GreqlEvaluatorImpl implements InternalGreqlEvaluator,
 		VertexEvaluator<Greql2Expression> greql2ExpEval = query
 				.getVertexEvaluator(query.getRootExpression());
 
-		// if (progressFunction != null) {
-		// estimatedInterpretationSteps = greql2ExpEval
-		// .getInitialSubtreeEvaluationCosts(new GraphSize(datagraph));
-		//
-		// progressFunction.init(estimatedInterpretationSteps);
-		// }
+		if (progressFunction != null) {
+			estimatedInterpretationSteps = greql2ExpEval
+					.getInitialSubtreeEvaluationCosts();
+
+			progressFunction.init(estimatedInterpretationSteps);
+		}
 
 		result = greql2ExpEval.getResult(this);
 
 		// last, remove all added tempAttributes, currently, this are only
 		// subgraphAttributes
-		// if (progressFunction != null) {
-		// progressFunction.finished();
-		// }
+		if (progressFunction != null) {
+			progressFunction.finished();
+		}
 
 		evaluationTime = System.currentTimeMillis() - startTime;
 		return result;
@@ -355,10 +356,11 @@ public class GreqlEvaluatorImpl implements InternalGreqlEvaluator,
 	}
 
 	public void printEvaluationTimes() {
-		logger.info("Evaluation took " + evaluationTime + "ms."
-		// + (progressFunction != null ? " Estimated evaluation costs: "
-		// + estimatedInterpretationSteps : ""));
-		);
+		logger.info("Evaluation took "
+				+ evaluationTime
+				+ "ms."
+				+ (progressFunction != null ? " Estimated evaluation costs: "
+						+ estimatedInterpretationSteps : ""));
 	}
 
 	@Override

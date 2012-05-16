@@ -75,6 +75,7 @@ public class SimpleDeclarationEvaluator extends
 	@Override
 	public PVector<VariableDeclaration> evaluate(
 			InternalGreqlEvaluator evaluator) {
+		evaluator.progress(getOwnEvaluationCosts());
 		IsTypeExprOf inc = vertex
 				.getFirstIsTypeExprOfIncidence(EdgeDirection.IN);
 		Expression typeExpression = (Expression) inc.getAlpha();

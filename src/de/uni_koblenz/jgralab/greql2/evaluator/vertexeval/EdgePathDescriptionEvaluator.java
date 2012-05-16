@@ -63,6 +63,7 @@ public class EdgePathDescriptionEvaluator extends
 
 	@Override
 	public NFA evaluate(InternalGreqlEvaluator evaluator) {
+		evaluator.progress(getOwnEvaluationCosts());
 		Edge evalEdge = vertex.getFirstIsEdgeExprOfIncidence();
 		VertexEvaluator<? extends Expression> edgeEval = null;
 		if (evalEdge != null) {

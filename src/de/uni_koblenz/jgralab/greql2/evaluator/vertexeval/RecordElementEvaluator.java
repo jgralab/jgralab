@@ -80,6 +80,7 @@ public class RecordElementEvaluator extends VertexEvaluator<RecordElement> {
 
 	@Override
 	public Object evaluate(InternalGreqlEvaluator evaluator) {
+		evaluator.progress(getOwnEvaluationCosts());
 		if (expEval == null) {
 			Expression recordElementExp = (Expression) vertex
 					.getFirstIsRecordExprOfIncidence(EdgeDirection.IN)

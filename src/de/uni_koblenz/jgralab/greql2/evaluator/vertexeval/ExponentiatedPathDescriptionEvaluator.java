@@ -77,6 +77,7 @@ public class ExponentiatedPathDescriptionEvaluator extends
 
 	@Override
 	public NFA evaluate(InternalGreqlEvaluator evaluator) {
+		evaluator.progress(getOwnEvaluationCosts());
 		PathDescription p = (PathDescription) vertex
 				.getFirstIsExponentiatedPathOfIncidence().getAlpha();
 		PathDescriptionEvaluator<?> pathEval = (PathDescriptionEvaluator<?>) query

@@ -59,6 +59,7 @@ public class UndefinedLiteralEvaluator extends
 
 	@Override
 	public Undefined evaluate(InternalGreqlEvaluator evaluator) {
+		evaluator.progress(getOwnEvaluationCosts());
 		return Undefined.UNDEFINED;
 	}
 

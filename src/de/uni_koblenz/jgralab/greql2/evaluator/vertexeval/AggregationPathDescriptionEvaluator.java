@@ -64,6 +64,7 @@ public class AggregationPathDescriptionEvaluator extends
 
 	@Override
 	public NFA evaluate(InternalGreqlEvaluator evaluator) {
+		evaluator.progress(getOwnEvaluationCosts());
 		TypeCollection typeCollection = new TypeCollection();
 		IsEdgeRestrOf inc = vertex
 				.getFirstIsEdgeRestrOfIncidence(EdgeDirection.IN);

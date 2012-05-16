@@ -100,6 +100,7 @@ public class QuantifiedExpressionEvaluator extends
 		if (!initialized) {
 			initialize(evaluator);
 		}
+		evaluator.progress(getOwnEvaluationCosts());
 
 		boolean foundTrue = false;
 		declarationLayer.reset();

@@ -64,6 +64,7 @@ public class SequentialPathDescriptionEvaluator extends
 
 	@Override
 	public NFA evaluate(InternalGreqlEvaluator evaluator) {
+		evaluator.progress(getOwnEvaluationCosts());
 		IsSequenceElementOf inc = vertex
 				.getFirstIsSequenceElementOfIncidence(EdgeDirection.IN);
 		ArrayList<NFA> nfaList = new ArrayList<NFA>();

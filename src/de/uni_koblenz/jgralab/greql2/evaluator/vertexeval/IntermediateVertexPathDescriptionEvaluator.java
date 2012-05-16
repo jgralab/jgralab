@@ -70,6 +70,7 @@ public class IntermediateVertexPathDescriptionEvaluator extends
 
 	@Override
 	public NFA evaluate(InternalGreqlEvaluator evaluator) {
+		evaluator.progress(getOwnEvaluationCosts());
 		IsSubPathOf inc = vertex.getFirstIsSubPathOfIncidence(EdgeDirection.IN);
 		PathDescriptionEvaluator<?> firstEval = (PathDescriptionEvaluator<?>) query
 				.getVertexEvaluator((PathDescription) inc.getAlpha());

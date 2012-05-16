@@ -109,6 +109,7 @@ public class VariableEvaluator<V extends Variable> extends VertexEvaluator<V> {
 
 	@Override
 	public Object evaluate(InternalGreqlEvaluator evaluator) {
+		evaluator.progress(getOwnEvaluationCosts());
 		return getValue(evaluator);
 	}
 

@@ -57,6 +57,7 @@ public class BoolLiteralEvaluator extends VertexEvaluator<BoolLiteral> {
 
 	@Override
 	public Boolean evaluate(InternalGreqlEvaluator evaluator) {
+		evaluator.progress(getOwnEvaluationCosts());
 		return vertex.is_boolValue();
 	}
 

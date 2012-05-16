@@ -67,6 +67,7 @@ public class TupleConstructionEvaluator extends
 
 	@Override
 	public PCollection<Object> evaluate(InternalGreqlEvaluator evaluator) {
+		evaluator.progress(getOwnEvaluationCosts());
 		return createValue(Tuple.empty(), evaluator);
 	}
 

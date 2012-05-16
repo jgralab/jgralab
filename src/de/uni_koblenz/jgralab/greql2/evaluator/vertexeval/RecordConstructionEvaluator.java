@@ -76,6 +76,7 @@ public class RecordConstructionEvaluator extends
 
 	@Override
 	public Record evaluate(InternalGreqlEvaluator evaluator) {
+		evaluator.progress(getOwnEvaluationCosts());
 		RecordImpl resultRecord = RecordImpl.empty();
 		IsRecordElementOf inc = vertex
 				.getFirstIsRecordElementOfIncidence(EdgeDirection.IN);

@@ -78,6 +78,7 @@ public class DeclarationEvaluator extends VertexEvaluator<Declaration> {
 
 	@Override
 	public VariableDeclarationLayer evaluate(InternalGreqlEvaluator evaluator) {
+		evaluator.progress(getOwnEvaluationCosts());
 		ArrayList<VertexEvaluator<? extends Expression>> constraintList = new ArrayList<VertexEvaluator<? extends Expression>>();
 		for (IsConstraintOf consInc : vertex
 				.getIsConstraintOfIncidences(EdgeDirection.IN)) {

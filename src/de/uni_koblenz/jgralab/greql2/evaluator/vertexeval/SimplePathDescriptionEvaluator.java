@@ -63,6 +63,7 @@ public class SimplePathDescriptionEvaluator extends
 
 	@Override
 	public NFA evaluate(InternalGreqlEvaluator evaluator) {
+		evaluator.progress(getOwnEvaluationCosts());
 		TypeCollection typeCollection = new TypeCollection();
 		EdgeRestrictionEvaluator edgeRestEval = null;
 		VertexEvaluator<? extends Expression> predicateEvaluator = null;

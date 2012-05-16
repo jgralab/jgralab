@@ -57,4 +57,11 @@ public interface InternalGreqlEvaluator {
 
 	public AttributedElementClass<?, ?> getAttributedElementClass(
 			String qualifiedName);
+
+	/**
+	 * should be called by every vertex evaluator to indicate a progress. The
+	 * given value should be the ownEvaluationCosts of that VertexEvaluator.
+	 * Calls the progress()-Method of the progress function this evaluator uses
+	 */
+	public void progress(long value);
 }

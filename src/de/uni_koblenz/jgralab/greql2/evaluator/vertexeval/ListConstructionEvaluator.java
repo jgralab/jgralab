@@ -60,6 +60,7 @@ public class ListConstructionEvaluator extends
 
 	@Override
 	public PCollection<Object> evaluate(InternalGreqlEvaluator evaluator) {
+		evaluator.progress(getOwnEvaluationCosts());
 		return createValue(JGraLab.vector(), evaluator);
 	}
 

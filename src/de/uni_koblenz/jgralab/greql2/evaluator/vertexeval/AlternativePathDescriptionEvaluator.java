@@ -77,6 +77,7 @@ public class AlternativePathDescriptionEvaluator extends
 
 	@Override
 	public NFA evaluate(InternalGreqlEvaluator evaluator) {
+		evaluator.progress(getOwnEvaluationCosts());
 		IsAlternativePathOf inc = vertex
 				.getFirstIsAlternativePathOfIncidence(EdgeDirection.IN);
 		ArrayList<NFA> nfaList = new ArrayList<NFA>();

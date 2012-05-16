@@ -80,6 +80,7 @@ public class VertexSetExpressionEvaluator extends
 
 	@Override
 	public Object evaluate(InternalGreqlEvaluator evaluator) {
+		evaluator.progress(getOwnEvaluationCosts());
 		TypeCollection typeCollection = getTypeCollection(evaluator);
 		PSet<Vertex> resultSet = null;
 		if (resultSet == null) {
@@ -126,7 +127,8 @@ public class VertexSetExpressionEvaluator extends
 					.getVertexEvaluator((TypeId) inc.getAlpha());
 			selectivity = typeIdEval.getEstimatedSelectivity();
 		}
-		return Math.round(query.getOptimizerInfo().getVertexCount() * selectivity);
+		return Math.round(query.getOptimizerInfo().getVertexCount()
+				* selectivity);
 	}
 
 }

@@ -63,6 +63,7 @@ public class PathExistenceEvaluator extends PathSearchEvaluator<PathExistence> {
 
 	@Override
 	public Object evaluate(InternalGreqlEvaluator evaluator) {
+		evaluator.progress(getOwnEvaluationCosts());
 		PathDescription p = (PathDescription) vertex.getFirstIsPathOfIncidence(
 				EdgeDirection.IN).getAlpha();
 		PathDescriptionEvaluator<?> pathDescEval = (PathDescriptionEvaluator<?>) query

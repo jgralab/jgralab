@@ -57,6 +57,7 @@ public class LongLiteralEvaluator extends VertexEvaluator<LongLiteral> {
 
 	@Override
 	public Long evaluate(InternalGreqlEvaluator evaluator) {
+		evaluator.progress(getOwnEvaluationCosts());
 		return vertex.get_longValue();
 	}
 

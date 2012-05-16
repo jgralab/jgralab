@@ -55,6 +55,7 @@ public class IdentifierEvaluator extends VertexEvaluator<Identifier> {
 
 	@Override
 	public String evaluate(InternalGreqlEvaluator evaluator) {
+		evaluator.progress(getOwnEvaluationCosts());
 		return vertex.get_name();
 	}
 

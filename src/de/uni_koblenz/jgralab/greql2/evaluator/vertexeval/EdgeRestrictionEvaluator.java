@@ -107,6 +107,7 @@ public class EdgeRestrictionEvaluator extends VertexEvaluator<EdgeRestriction> {
 	 */
 	@Override
 	public Object evaluate(InternalGreqlEvaluator evaluator) {
+		evaluator.progress(getOwnEvaluationCosts());
 		if (typeCollection == null) {
 			typeCollection = new TypeCollection();
 			IsTypeIdOf typeInc = vertex

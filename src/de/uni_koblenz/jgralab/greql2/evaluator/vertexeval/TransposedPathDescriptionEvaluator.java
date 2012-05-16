@@ -68,6 +68,7 @@ public class TransposedPathDescriptionEvaluator extends
 
 	@Override
 	public NFA evaluate(InternalGreqlEvaluator evaluator) {
+		evaluator.progress(getOwnEvaluationCosts());
 		PathDescription p = (PathDescription) vertex
 				.getFirstIsTransposedPathOfIncidence(EdgeDirection.IN)
 				.getAlpha();

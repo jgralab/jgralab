@@ -90,6 +90,7 @@ public class TypeIdEvaluator extends VertexEvaluator<TypeId> {
 
 	@Override
 	public TypeCollection evaluate(InternalGreqlEvaluator evaluator) {
+		evaluator.progress(getOwnEvaluationCosts());
 		List<GraphElementClass<?, ?>> typeList = createTypeList(evaluator);
 		return new TypeCollection(typeList, vertex.is_excluded());
 	}

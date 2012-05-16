@@ -93,6 +93,7 @@ public class MapComprehensionEvaluator extends
 
 	@Override
 	public Object evaluate(InternalGreqlEvaluator evaluator) {
+		evaluator.progress(getOwnEvaluationCosts());
 		initializeMaxCount(evaluator);
 		VariableDeclarationLayer declLayer = getVariableDeclationLayer(evaluator);
 		PMap<Object, Object> resultMap = JGraLab.map();

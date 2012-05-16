@@ -82,6 +82,7 @@ public class ForwardVertexSetEvaluator extends
 		if (!initialized) {
 			initialize(evaluator);
 		}
+		evaluator.progress(getOwnEvaluationCosts());
 		Vertex startVertex = null;
 		startVertex = (Vertex) startEval.getResult(evaluator);
 		return ReachableVertices

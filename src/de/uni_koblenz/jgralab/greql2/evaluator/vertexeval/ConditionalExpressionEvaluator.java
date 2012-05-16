@@ -71,6 +71,7 @@ public class ConditionalExpressionEvaluator extends
 	 */
 	@Override
 	public Object evaluate(InternalGreqlEvaluator evaluator) {
+		evaluator.progress(getOwnEvaluationCosts());
 		Expression condition = (Expression) vertex
 				.getFirstIsConditionOfIncidence(EdgeDirection.IN).getAlpha();
 		VertexEvaluator<? extends Expression> conditionEvaluator = query

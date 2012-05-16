@@ -69,6 +69,7 @@ public class IteratedPathDescriptionEvaluator extends
 
 	@Override
 	public NFA evaluate(InternalGreqlEvaluator evaluator) {
+		evaluator.progress(getOwnEvaluationCosts());
 		PathDescription p = (PathDescription) vertex
 				.getFirstIsIteratedPathOfIncidence(EdgeDirection.IN).getAlpha();
 		PathDescriptionEvaluator<?> pathEval = (PathDescriptionEvaluator<?>) query
