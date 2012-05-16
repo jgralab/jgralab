@@ -37,7 +37,7 @@ package de.uni_koblenz.jgralab.greql2.optimizer;
 
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.exception.OptimizerException;
-import de.uni_koblenz.jgralab.greql2.schema.Greql2;
+import de.uni_koblenz.jgralab.greql2.schema.Greql2Graph;
 
 /**
  * This interface should be implemented by all optimizers, that could be used
@@ -62,7 +62,7 @@ public interface Optimizer {
 	 * @throws OptimizerException
 	 *             on failures while optimization
 	 */
-	public boolean optimize(GreqlEvaluator eval, Greql2 syntaxgraph)
+	public boolean optimize(GreqlEvaluator eval, Greql2Graph syntaxgraph)
 			throws OptimizerException;
 
 	/**

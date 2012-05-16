@@ -49,7 +49,7 @@ import de.uni_koblenz.jgralab.greql2.schema.Declaration;
 import de.uni_koblenz.jgralab.greql2.schema.Expression;
 import de.uni_koblenz.jgralab.greql2.schema.FunctionApplication;
 import de.uni_koblenz.jgralab.greql2.schema.FunctionId;
-import de.uni_koblenz.jgralab.greql2.schema.Greql2;
+import de.uni_koblenz.jgralab.greql2.schema.Greql2Graph;
 import de.uni_koblenz.jgralab.greql2.schema.IsConstraintOf;
 
 /**
@@ -89,7 +89,7 @@ public class MergeConstraintsOptimizer extends OptimizerBase {
 	 * de.uni_koblenz.jgralab.greql2.schema.Greql2)
 	 */
 	@Override
-	public boolean optimize(GreqlEvaluator eval, Greql2 syntaxgraph)
+	public boolean optimize(GreqlEvaluator eval, Greql2Graph syntaxgraph)
 			throws OptimizerException {
 		ArrayList<Declaration> declarations = new ArrayList<Declaration>();
 		for (Declaration decl : syntaxgraph.getDeclarationVertices()) {
@@ -119,7 +119,8 @@ public class MergeConstraintsOptimizer extends OptimizerBase {
 				syntaxgraph.createIsConstraintOf(singleConstraint, decl);
 			}
 		}
-		recreateVertexEvaluators(eval);
+		// TODO [greqlrenovation]
+		// recreateVertexEvaluators(eval);
 		return constraintsGotMerged;
 	}
 
@@ -135,7 +136,7 @@ public class MergeConstraintsOptimizer extends OptimizerBase {
 	 * @return a conjunction of all constraints
 	 */
 	public Expression createConjunction(List<IsConstraintOf> constraintEdges,
-			Greql2 syntaxgraph) {
+			Greql2Graph syntaxgraph) {
 		if (constraintEdges.size() == 1) {
 			return (Expression) constraintEdges.get(0).getAlpha();
 		}
@@ -143,8 +144,8 @@ public class MergeConstraintsOptimizer extends OptimizerBase {
 		FunctionId funId = OptimizerUtility.findOrCreateFunctionId("and",
 				syntaxgraph);
 		syntaxgraph.createIsFunctionIdOf(funId, funApp);
-		syntaxgraph.createIsArgumentOf((Expression) constraintEdges.get(0).getAlpha(),
-				funApp);
+		syntaxgraph.createIsArgumentOf((Expression) constraintEdges.get(0)
+				.getAlpha(), funApp);
 		syntaxgraph.createIsArgumentOf(
 				createConjunction(
 						constraintEdges.subList(1, constraintEdges.size()),

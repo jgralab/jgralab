@@ -50,6 +50,7 @@ import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.graphmarker.GraphMarker;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VertexEvaluator;
+import de.uni_koblenz.jgralab.greql2.optimizer.OptimizerUtility;
 import de.uni_koblenz.jgralab.greql2.parser.GreqlParser;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Expression;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Graph;
@@ -122,7 +123,7 @@ public class QueryImpl extends GraphStructureChangedAdapter implements Query {
 	}
 
 	public static Query readQuery(File f, boolean optimize) throws IOException {
-		return readQuery(f, optimize, new GraphSize(100, 100, 20, 20));
+		return readQuery(f, optimize, OptimizerUtility.getDefaultGraphSize());
 	}
 
 	public static Query readQuery(File f, boolean optimize, GraphSize graphsize)

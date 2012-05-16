@@ -47,13 +47,13 @@ import java.util.logging.Logger;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.graphmarker.GraphMarker;
+import de.uni_koblenz.jgralab.greql2.evaluator.GraphSize;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
-import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.SimpleDeclarationEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VertexEvaluator;
 import de.uni_koblenz.jgralab.greql2.exception.OptimizerException;
 import de.uni_koblenz.jgralab.greql2.schema.Declaration;
-import de.uni_koblenz.jgralab.greql2.schema.Greql2;
+import de.uni_koblenz.jgralab.greql2.schema.Greql2Graph;
 import de.uni_koblenz.jgralab.greql2.schema.IsDeclaredVarOf;
 import de.uni_koblenz.jgralab.greql2.schema.IsSimpleDeclOf;
 import de.uni_koblenz.jgralab.greql2.schema.SimpleDeclaration;
@@ -107,7 +107,7 @@ public class VariableDeclarationOrderOptimizer extends OptimizerBase {
 	 * de.uni_koblenz.jgralab.greql2.schema.Greql2)
 	 */
 	@Override
-	public boolean optimize(GreqlEvaluator eval, Greql2 syntaxgraph)
+	public boolean optimize(GreqlEvaluator eval, Greql2Graph syntaxgraph)
 			throws OptimizerException {
 		GraphSize graphSize;
 		if (eval.getDatagraph() != null) {
@@ -168,10 +168,10 @@ public class VariableDeclarationOrderOptimizer extends OptimizerBase {
 					SimpleDeclaration newSD = syntaxgraph
 							.createSimpleDeclaration();
 					syntaxgraph.createIsDeclaredVarOf(var, newSD);
-					syntaxgraph.createIsTypeExprOfDeclaration(unit
-							.getTypeExpressionOfVariable(), newSD);
-					syntaxgraph.createIsSimpleDeclOf(newSD, unit
-							.getDeclaringDeclaration());
+					syntaxgraph.createIsTypeExprOfDeclaration(
+							unit.getTypeExpressionOfVariable(), newSD);
+					syntaxgraph.createIsSimpleDeclOf(newSD,
+							unit.getDeclaringDeclaration());
 					marker.mark(newSD, new SimpleDeclarationEvaluator(newSD,
 							eval));
 				}

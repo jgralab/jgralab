@@ -45,7 +45,7 @@ import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.graphmarker.GraphMarker;
-import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize;
+import de.uni_koblenz.jgralab.greql2.evaluator.GraphSize;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VertexEvaluator;
 import de.uni_koblenz.jgralab.greql2.schema.Declaration;
 import de.uni_koblenz.jgralab.greql2.schema.Expression;
@@ -63,15 +63,15 @@ import de.uni_koblenz.jgralab.greql2.schema.Variable;
  */
 public class VariableDeclarationOrderUnit implements
 		Comparable<VariableDeclarationOrderUnit> {
-	private Variable variable;
-	private Declaration declaringDeclaration;
-	private Set<Vertex> dependentVertices;
+	private final Variable variable;
+	private final Declaration declaringDeclaration;
+	private final Set<Vertex> dependentVertices;
 	private long variableValueChangeCosts = Long.MIN_VALUE;
 	private long typeExpressionCardinality = Long.MIN_VALUE;
-	private GraphMarker<VertexEvaluator> vertexEvalMarker;
-	private GraphSize graphSize;
-	private SimpleDeclaration simpleDeclarationOfVariable;
-	private Expression typeExpressionOfVariable;
+	private final GraphMarker<VertexEvaluator> vertexEvalMarker;
+	private final GraphSize graphSize;
+	private final SimpleDeclaration simpleDeclarationOfVariable;
+	private final Expression typeExpressionOfVariable;
 
 	/**
 	 * Creates a new {@link VariableDeclarationOrderUnit}.

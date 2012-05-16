@@ -47,12 +47,12 @@ import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize;
+import de.uni_koblenz.jgralab.greql2.evaluator.GraphSize;
 import de.uni_koblenz.jgralab.greql2.schema.FunctionApplication;
 import de.uni_koblenz.jgralab.greql2.schema.FunctionId;
-import de.uni_koblenz.jgralab.greql2.schema.Greql2;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Aggregation;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Expression;
+import de.uni_koblenz.jgralab.greql2.schema.Greql2Graph;
 import de.uni_koblenz.jgralab.greql2.schema.IsDeclaredVarOf;
 import de.uni_koblenz.jgralab.greql2.schema.SimpleDeclaration;
 import de.uni_koblenz.jgralab.greql2.schema.SourcePosition;
@@ -181,13 +181,14 @@ public class OptimizerUtility {
 	 *            the value of the name attribute of the {@link FunctionId} 
 	 *            we're looking for
 	 * @param graph
-	 *            the {@link Greql2} graph where we look for the
+	 *            the {@link Greql2Graph} graph where we look for the
 	 *            {@link FunctionId}
 	 * @return the {@link FunctionId} in the {@link Greql2} graph that has
 	 *         <code>name</code> as its name attribute. If no such
 	 *         {@link FunctionId} exists it will be created.
 	 */
-	public static FunctionId findOrCreateFunctionId(String name, Greql2 graph) {
+	public static FunctionId findOrCreateFunctionId(String name,
+			Greql2Graph graph) {
 		for (FunctionId fid : graph.getFunctionIdVertices()) {
 			if (fid.get_name().equals(name)) {
 				return fid;
@@ -204,9 +205,9 @@ public class OptimizerUtility {
 	 * <code>null</code> with an empty {@link ArrayList}.
 	 * 
 	 * @param graph
-	 *            the {@link Greql2} syntaxgraph
+	 *            the {@link Greql2Graph} syntaxgraph
 	 */
-	public static void createMissingSourcePositions(Greql2 graph) {
+	public static void createMissingSourcePositions(Greql2Graph graph) {
 		for (Greql2Aggregation aggr : graph.getGreql2AggregationEdges()) {
 			if (aggr.get_sourcePositions() == null) {
 				PVector<SourcePosition> l = JGraLab.vector();

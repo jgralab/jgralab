@@ -44,7 +44,7 @@ import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.schema.Declaration;
 import de.uni_koblenz.jgralab.greql2.schema.Expression;
-import de.uni_koblenz.jgralab.greql2.schema.Greql2;
+import de.uni_koblenz.jgralab.greql2.schema.Greql2Graph;
 import de.uni_koblenz.jgralab.greql2.schema.IsDeclaredVarOf;
 import de.uni_koblenz.jgralab.greql2.schema.IsSimpleDeclOf;
 import de.uni_koblenz.jgralab.greql2.schema.IsTargetExprOf;
@@ -94,11 +94,12 @@ public class MergeSimpleDeclarationsOptimizer extends OptimizerBase {
 	 * de.uni_koblenz.jgralab.greql2.schema.Greql2)
 	 */
 	@Override
-	public boolean optimize(GreqlEvaluator eval, Greql2 syntaxgraph) {
+	public boolean optimize(GreqlEvaluator eval, Greql2Graph syntaxgraph) {
 		anOptimizationWasDone = false;
 
 		findAndMergeSimpleDeclarations(syntaxgraph);
-		recreateVertexEvaluators(eval);
+		// TODO [greqlrenovation]
+		// recreateVertexEvaluators(eval);
 		return anOptimizationWasDone;
 	}
 
@@ -113,14 +114,15 @@ public class MergeSimpleDeclarationsOptimizer extends OptimizerBase {
 	 * @param syntaxgraph
 	 *            a {@link Greql2} graph
 	 */
-	private void findAndMergeSimpleDeclarations(Greql2 syntaxgraph) {
+	private void findAndMergeSimpleDeclarations(Greql2Graph syntaxgraph) {
 		HashMap<String, ArrayList<SimpleDeclaration>> mergableSDMap = new HashMap<String, ArrayList<SimpleDeclaration>>();
 		Declaration decl = syntaxgraph.getFirstDeclaration();
 		while (decl != null) {
 			IsSimpleDeclOf isSimpleDeclOf = decl
 					.getFirstIsSimpleDeclOfIncidence(EdgeDirection.IN);
 			while (isSimpleDeclOf != null) {
-				SimpleDeclaration sDecl = (SimpleDeclaration) isSimpleDeclOf.getAlpha();
+				SimpleDeclaration sDecl = (SimpleDeclaration) isSimpleDeclOf
+						.getAlpha();
 				String key = decl.getId()
 						+ "-"
 						+ sDecl.getFirstIsTypeExprOfIncidence(EdgeDirection.IN)
@@ -156,8 +158,8 @@ public class MergeSimpleDeclarationsOptimizer extends OptimizerBase {
 		for (Entry<String, ArrayList<SimpleDeclaration>> e : mergableSDMap
 				.entrySet()) {
 			SimpleDeclaration survivor = e.getValue().get(0);
-			Declaration decl = (Declaration) survivor.getFirstIsSimpleDeclOfIncidence()
-					.getOmega();
+			Declaration decl = (Declaration) survivor
+					.getFirstIsSimpleDeclOfIncidence().getOmega();
 			IsSimpleDeclOf isSDOfSurvivor = survivor
 					.getFirstIsSimpleDeclOfIncidence(EdgeDirection.OUT);
 			IsTypeExprOfDeclaration isTEODSurvivor = survivor
