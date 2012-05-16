@@ -39,11 +39,12 @@ package de.uni_koblenz.jgralab.greql2.optimizer.condexp;
 
 import java.util.ArrayList;
 
+import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.optimizer.OptimizerUtility;
 import de.uni_koblenz.jgralab.greql2.schema.Expression;
 import de.uni_koblenz.jgralab.greql2.schema.FunctionApplication;
 import de.uni_koblenz.jgralab.greql2.schema.FunctionId;
-import de.uni_koblenz.jgralab.greql2.schema.Greql2Graph;
+import de.uni_koblenz.jgralab.greql2.schema.Greql2;
 
 /**
  * TODO: (heimdall) Comment class!
@@ -55,7 +56,8 @@ public class Not extends Formula {
 
 	protected Formula formula;
 
-	public Not(Formula formula) {
+	public Not(GreqlEvaluator eval, Formula formula) {
+		super(eval);
 		this.formula = formula;
 	}
 
@@ -66,7 +68,7 @@ public class Not extends Formula {
 
 	@Override
 	public Expression toExpression() {
-		Greql2Graph syntaxgraph = greqlEvaluator.getSyntaxGraph();
+		Greql2 syntaxgraph = greqlEvaluator.getSyntaxGraph();
 		FunctionApplication funApp = syntaxgraph.createFunctionApplication();
 		FunctionId funId = OptimizerUtility.findOrCreateFunctionId("not",
 				syntaxgraph);

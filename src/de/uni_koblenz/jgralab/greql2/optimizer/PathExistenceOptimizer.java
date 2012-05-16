@@ -46,14 +46,14 @@ import java.util.logging.Logger;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.JGraLab;
-import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.CostModel;
+import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.exception.OptimizerException;
 import de.uni_koblenz.jgralab.greql2.schema.BackwardVertexSet;
 import de.uni_koblenz.jgralab.greql2.schema.Expression;
 import de.uni_koblenz.jgralab.greql2.schema.ForwardVertexSet;
 import de.uni_koblenz.jgralab.greql2.schema.FunctionApplication;
 import de.uni_koblenz.jgralab.greql2.schema.FunctionId;
-import de.uni_koblenz.jgralab.greql2.schema.Greql2Graph;
+import de.uni_koblenz.jgralab.greql2.schema.Greql2;
 import de.uni_koblenz.jgralab.greql2.schema.PathExistence;
 import de.uni_koblenz.jgralab.greql2.schema.PathExpression;
 import de.uni_koblenz.jgralab.greql2.schema.Variable;
@@ -66,12 +66,12 @@ import de.uni_koblenz.jgralab.greql2.schema.Variable;
  * @author ist@uni-koblenz.de
  * 
  */
-public class PathExistenceOptimizer extends Optimizer {
+public class PathExistenceOptimizer extends OptimizerBase {
 
 	private static Logger logger = JGraLab
 			.getLogger(PathExistenceOptimizer.class.getPackage().getName());
 
-	private Greql2Graph syntaxgraph;
+	private Greql2 syntaxgraph;
 
 	private boolean anOptimizationWasDone = false;
 
@@ -83,15 +83,23 @@ public class PathExistenceOptimizer extends Optimizer {
 	 * .jgralab.greql2.optimizer.Optimizer)
 	 */
 	@Override
-	protected boolean isEquivalent(Optimizer optimizer) {
+	public boolean isEquivalent(Optimizer optimizer) {
 		if (optimizer instanceof PathExistenceOptimizer) {
 			return true;
 		}
 		return false;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.uni_koblenz.jgralab.greql2.optimizer.Optimizer#optimize(de.uni_koblenz
+	 * .jgralab.greql2.evaluator.GreqlEvaluator,
+	 * de.uni_koblenz.jgralab.greql2.schema.Greql2)
+	 */
 	@Override
-	protected boolean optimize(Greql2Graph syntaxgraph, CostModel costModel)
+	public boolean optimize(GreqlEvaluator eval, Greql2 syntaxgraph)
 			throws OptimizerException {
 		if (syntaxgraph.getFirstVertex(PathExistence.class) == null) {
 			return false;
@@ -101,6 +109,8 @@ public class PathExistenceOptimizer extends Optimizer {
 		this.syntaxgraph = syntaxgraph;
 
 		runOptimization();
+
+		recreateVertexEvaluators(eval);
 
 		OptimizerUtility.createMissingSourcePositions(syntaxgraph);
 
@@ -148,9 +158,9 @@ public class PathExistenceOptimizer extends Optimizer {
 	 *            a {@link PathExistence} vertex
 	 */
 	private void maybeTransformPathExistence(PathExistence pe) {
-		Expression startExp = pe.getFirstIsStartExprOfIncidence(
+		Expression startExp = (Expression) pe.getFirstIsStartExprOfIncidence(
 				EdgeDirection.IN).getAlpha();
-		Expression targetExp = pe.getFirstIsTargetExprOfIncidence(
+		Expression targetExp = (Expression) pe.getFirstIsTargetExprOfIncidence(
 				EdgeDirection.IN).getAlpha();
 
 		if ((startExp instanceof Variable) && (targetExp instanceof Variable)) {
@@ -252,8 +262,8 @@ public class PathExistenceOptimizer extends Optimizer {
 			syntaxgraph.createIsTargetExprOf(startOrTargetExp, vertexSet);
 		}
 		syntaxgraph.createIsPathOf(
-				pe.getFirstIsPathOfIncidence(EdgeDirection.IN).getAlpha(),
-				vertexSet);
+				(Expression) pe.getFirstIsPathOfIncidence(EdgeDirection.IN)
+						.getAlpha(), vertexSet);
 
 		syntaxgraph.createIsArgumentOf(vertexSet, contains);
 		syntaxgraph.createIsArgumentOf(otherExp, contains);

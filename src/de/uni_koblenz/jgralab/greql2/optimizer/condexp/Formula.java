@@ -45,16 +45,19 @@ import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.Vertex;
+import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
+import de.uni_koblenz.jgralab.greql2.optimizer.OptimizerUtility;
 import de.uni_koblenz.jgralab.greql2.schema.BoolLiteral;
 import de.uni_koblenz.jgralab.greql2.schema.Expression;
 import de.uni_koblenz.jgralab.greql2.schema.FunctionApplication;
+import de.uni_koblenz.jgralab.greql2.schema.FunctionId;
 import de.uni_koblenz.jgralab.greql2.schema.IsArgumentOf;
 
 /**
  * TODO: (heimdall) Comment class!
- * 
+ *
  * @author ist@uni-koblenz.de
- * 
+ *
  */
 public abstract class Formula {
 	/**
@@ -67,26 +70,34 @@ public abstract class Formula {
 	protected static Logger logger = JGraLab.getLogger(Formula.class
 			.getPackage().getName());
 
+	protected GreqlEvaluator greqlEvaluator;
+
 	@Override
 	public abstract String toString();
 
 	public abstract Expression toExpression();
 
-	public static Formula createFormulaFromExpression(Expression exp) {
-		Formula formula = createFormulaFromExpressionInternal(exp);
+	public static Formula createFormulaFromExpression(Expression exp,
+			GreqlEvaluator eval) {
+		Formula formula = createFormulaFromExpressionInternal(eval, exp);
 		OptimizerUtility.deleteOrphanedVerticesBelow(exp, new HashSet<Vertex>(
 				formula.getNonConstantTermExpressions()));
 		return formula;
 	}
 
-	private static Formula createFormulaFromExpressionInternal(Expression exp) {
+	public Formula(GreqlEvaluator eval) {
+		this.greqlEvaluator = eval;
+	}
+
+	private static Formula createFormulaFromExpressionInternal(
+			GreqlEvaluator eval, Expression exp) {
 		assert exp.isValid() : exp + " is not valid!";
 		if (exp instanceof BoolLiteral) {
 			BoolLiteral bool = (BoolLiteral) exp;
 			if (bool.is_boolValue()) {
-				return new True();
+				return new True(eval);
 			} else {
-				return new False();
+				return new False(eval);
 			}
 		}
 
@@ -95,30 +106,35 @@ public abstract class Formula {
 			if (OptimizerUtility.isAnd(funApp)) {
 				IsArgumentOf inc = funApp
 						.getFirstIsArgumentOfIncidence(EdgeDirection.IN);
-				Expression leftArg = inc.getAlpha();
-				Expression rightArg = inc.getNextIsArgumentOfIncidence(
-						EdgeDirection.IN).getAlpha();
-				return new And(createFormulaFromExpressionInternal(leftArg),
-						createFormulaFromExpressionInternal(rightArg));
+				Expression leftArg = (Expression) inc.getAlpha();
+				Expression rightArg = (Expression) inc
+						.getNextIsArgumentOfIncidence(EdgeDirection.IN)
+						.getAlpha();
+				return new And(eval, createFormulaFromExpressionInternal(eval,
+						leftArg), createFormulaFromExpressionInternal(eval,
+						rightArg));
 			}
 			if (OptimizerUtility.isOr(funApp)) {
 				IsArgumentOf inc = funApp
 						.getFirstIsArgumentOfIncidence(EdgeDirection.IN);
-				Expression leftArg = inc.getAlpha();
-				Expression rightArg = inc.getNextIsArgumentOfIncidence(
-						EdgeDirection.IN).getAlpha();
-				return new Or(createFormulaFromExpressionInternal(leftArg),
-						createFormulaFromExpressionInternal(rightArg));
+				Expression leftArg = (Expression) inc.getAlpha();
+				Expression rightArg = (Expression) inc
+						.getNextIsArgumentOfIncidence(EdgeDirection.IN)
+						.getAlpha();
+				return new Or(eval, createFormulaFromExpressionInternal(eval,
+						leftArg), createFormulaFromExpressionInternal(eval,
+						rightArg));
 			}
 			if (OptimizerUtility.isNot(funApp)) {
 				IsArgumentOf inc = funApp
 						.getFirstIsArgumentOfIncidence(EdgeDirection.IN);
-				Expression arg = inc.getAlpha();
-				return new Not(createFormulaFromExpressionInternal(arg));
+				Expression arg = (Expression) inc.getAlpha();
+				return new Not(eval, createFormulaFromExpressionInternal(eval,
+						arg));
 			}
 		}
 
-		return new NonConstantTerm(exp);
+		return new NonConstantTerm(eval, exp);
 	}
 
 	public Formula optimize() {
@@ -185,8 +201,8 @@ public abstract class Formula {
 	private boolean isFunApp(Vertex exp, String functionName) {
 		if (exp instanceof FunctionApplication) {
 			FunctionApplication funApp = (FunctionApplication) exp;
-			return (funApp.getFirstIsFunctionIdOfIncidence().getAlpha())
-					.get_name().equals(functionName);
+			return ((FunctionId) funApp.getFirstIsFunctionIdOfIncidence()
+					.getAlpha()).get_name().equals(functionName);
 		}
 		return false;
 	}
@@ -215,7 +231,7 @@ public abstract class Formula {
 	 * Create a new {@link Formula} where each {@link NonConstantTerm} that
 	 * represents the {@link Expression} <code>exp</code> is replaced by
 	 * <code>literal</code>.
-	 * 
+	 *
 	 * @param exp
 	 *            the {@link Expression} whose {@link NonConstantTerm}s should
 	 *            be replaced
@@ -232,7 +248,7 @@ public abstract class Formula {
 	 * <code>a or true = true</code>, <code>a or false = a</code>,
 	 * <code>not true = false</code>, <code>not false = true</code>,
 	 * <code>not not a = a</code>.
-	 * 
+	 *
 	 * @return a simplified {@link Formula}
 	 */
 	public abstract Formula simplify();

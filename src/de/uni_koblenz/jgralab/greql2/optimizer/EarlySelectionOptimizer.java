@@ -53,13 +53,13 @@ import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.CostModel;
+import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.exception.OptimizerException;
 import de.uni_koblenz.jgralab.greql2.schema.Declaration;
 import de.uni_koblenz.jgralab.greql2.schema.Expression;
 import de.uni_koblenz.jgralab.greql2.schema.FunctionApplication;
 import de.uni_koblenz.jgralab.greql2.schema.FunctionId;
-import de.uni_koblenz.jgralab.greql2.schema.Greql2Graph;
+import de.uni_koblenz.jgralab.greql2.schema.Greql2;
 import de.uni_koblenz.jgralab.greql2.schema.Identifier;
 import de.uni_koblenz.jgralab.greql2.schema.IsArgumentOf;
 import de.uni_koblenz.jgralab.greql2.schema.IsBoundVarOf;
@@ -78,27 +78,43 @@ import de.uni_koblenz.jgralab.schema.Attribute;
 /**
  * This {@link Optimizer} implements the transformation "Selection as early as
  * possible".
- * 
+ *
  * @author ist@uni-koblenz.de
- * 
+ *
  */
-public class EarlySelectionOptimizer extends Optimizer {
+public class EarlySelectionOptimizer extends OptimizerBase {
 
 	private static Logger logger = JGraLab
 			.getLogger(EarlySelectionOptimizer.class.getPackage().getName());
 
-	private Greql2Graph syntaxgraph;
+	private Greql2 syntaxgraph;
 
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see
+	 * de.uni_koblenz.jgralab.greql2.optimizer.Optimizer#isEquivalent(de.uni_koblenz
+	 * .jgralab.greql2.optimizer.Optimizer)
+	 */
 	@Override
-	protected boolean isEquivalent(Optimizer optimizer) {
+	public boolean isEquivalent(Optimizer optimizer) {
 		if (optimizer instanceof EarlySelectionOptimizer) {
 			return true;
 		}
 		return false;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see
+	 * de.uni_koblenz.jgralab.greql2.optimizer.Optimizer#optimize(de.uni_koblenz
+	 * .jgralab.greql2.evaluator.GreqlEvaluator,
+	 * de.uni_koblenz.jgralab.greql2.schema.Greql2)
+	 */
 	@Override
-	protected boolean optimize(Greql2Graph syntaxgraph, CostModel costModel) {
+	public boolean optimize(GreqlEvaluator eval, Greql2 syntaxgraph)
+			throws OptimizerException {
 		this.syntaxgraph = syntaxgraph;
 
 		int noOfRuns = 1;
@@ -119,6 +135,8 @@ public class EarlySelectionOptimizer extends Optimizer {
 
 		OptimizerUtility.createMissingSourcePositions(syntaxgraph);
 
+		recreateVertexEvaluators(eval);
+
 		// If there was more than one optimization run, a transformation was
 		// done.
 		return noOfRuns > 1;
@@ -126,7 +144,7 @@ public class EarlySelectionOptimizer extends Optimizer {
 
 	/**
 	 * Do an optimization run.
-	 * 
+	 *
 	 * @throws OptimizerException
 	 */
 	private boolean runOptimization() throws OptimizerException {
@@ -445,7 +463,7 @@ public class EarlySelectionOptimizer extends Optimizer {
 	 * Collects all edges running out of the given Variable, which represent
 	 * accesses. Basically, those are all outgoing edges except IsDeclaredVarOf,
 	 * IsBoundVarOf and IsVarOf edges.
-	 * 
+	 *
 	 * @param var
 	 *            a Variable
 	 * @return all edges running out of the given Variable representing variable
@@ -492,7 +510,7 @@ public class EarlySelectionOptimizer extends Optimizer {
 	 * with exceptions for {@link FunctionId}s (never copied) and
 	 * {@link Variable}s (only those in <code>varsToBeCopied</code> will be
 	 * copied ONCE).
-	 * 
+	 *
 	 * @param predicates
 	 *            a {@link List} of {@link Expression}s
 	 * @param varsToBeCopied
@@ -513,12 +531,12 @@ public class EarlySelectionOptimizer extends Optimizer {
 	/**
 	 * Find all {@link Expression}s below <code>exp</code> that can be moved and
 	 * return them.
-	 * 
+	 *
 	 * An {@link Expression} is considered movable if it needs only
 	 * {@link Variable}s that are locally declared in one
 	 * {@link SimpleDeclaration} and this {@link SimpleDeclaration} is not the
 	 * only one in the parent {@link Declaration}.
-	 * 
+	 *
 	 * @param exp
 	 *            the {@link Expression} below which to look for movable
 	 *            {@link Expression}s
@@ -575,7 +593,7 @@ public class EarlySelectionOptimizer extends Optimizer {
 	 * {@link Variable}s the {@link Expression} <code>exp</code> needs. If
 	 * <code>exp</code> doesn't need any variables or such an
 	 * {@link SimpleDeclaration} doesn't exist, return <code>null</code>.
-	 * 
+	 *
 	 * @param exp
 	 *            an {@link Expression}
 	 * @return the {@link SimpleDeclaration} that declares all local
@@ -663,7 +681,7 @@ public class EarlySelectionOptimizer extends Optimizer {
 	/**
 	 * Collect all {@link SimpleDeclaration}s of <code>decl</code> in a
 	 * {@link List}.
-	 * 
+	 *
 	 * @param decl
 	 *            a {@link Declaration}
 	 * @return a {@link List} of all {@link SimpleDeclaration}s that are part of
@@ -681,7 +699,7 @@ public class EarlySelectionOptimizer extends Optimizer {
 	/**
 	 * Collect the {@link Variable}s that have no outgoing
 	 * {@link IsDeclaredVarOf} edges and are located below <code>v</code>.
-	 * 
+	 *
 	 * @param vertex
 	 *            the root {@link Vertex} below which to look for undeclared
 	 *            {@link Variable}s
@@ -710,7 +728,7 @@ public class EarlySelectionOptimizer extends Optimizer {
 	 * ONCE. After that the one and only copy is used instead of creating a new
 	 * copy. That's what <code>copiedVarMap</code> is for. So normally you'd
 	 * provide an empty {@link HashMap}.
-	 * 
+	 *
 	 * @param origVertex
 	 *            the root {@link Vertex} of the subgraph to be copied
 	 * @param graph
@@ -722,8 +740,7 @@ public class EarlySelectionOptimizer extends Optimizer {
 	 *            one and only copy
 	 * @return the root {@link Vertex} of the copy
 	 */
-	@SuppressWarnings("unchecked")
-	private Vertex copySubgraph(Vertex origVertex, Greql2Graph graph,
+	private Vertex copySubgraph(Vertex origVertex, Greql2 graph,
 			Set<Variable> variablesToBeCopied,
 			HashMap<Variable, Variable> copiedVarMap) {
 		// GreqlEvaluator.println("copySubgraph(" + origVertex + ", graph, "
@@ -741,9 +758,9 @@ public class EarlySelectionOptimizer extends Optimizer {
 			}
 		}
 
-		Class<? extends Vertex> vertexClass = (Class<? extends Vertex>) origVertex
-				.getAttributedElementClass().getSchemaClass();
-		Vertex topVertex = graph.createVertex(vertexClass);
+
+		Vertex topVertex = graph.createVertex(origVertex
+				.getAttributedElementClass());
 		copyAttributes(origVertex, topVertex);
 
 		if (topVertex instanceof Variable) {
@@ -758,9 +775,8 @@ public class EarlySelectionOptimizer extends Optimizer {
 		while (origEdge != null) {
 			subVertex = copySubgraph(origEdge.getAlpha(), graph,
 					variablesToBeCopied, copiedVarMap);
-			Class<? extends Edge> edgeClass = (Class<? extends Edge>) origEdge
-					.getAttributedElementClass().getSchemaClass();
-			graph.createEdge(edgeClass, subVertex, topVertex);
+			graph.createEdge(origEdge.getAttributedElementClass(), subVertex,
+					topVertex);
 			origEdge = origEdge.getNextIncidence(EdgeDirection.IN);
 		}
 
@@ -770,14 +786,15 @@ public class EarlySelectionOptimizer extends Optimizer {
 	/**
 	 * Copy the attribute values of <code>from</code> to <code>to</code>. The
 	 * types of the given {@link AttributedElement}s have to be equal.
-	 * 
+	 *
 	 * @param from
 	 *            an {@link AttributedElement}
 	 * @param to
 	 *            another {@link AttributedElement} whose runtime type equals
 	 *            <code>from</code>'s type.
 	 */
-	private void copyAttributes(AttributedElement from, AttributedElement to) {
+	private void copyAttributes(AttributedElement<?, ?> from,
+			AttributedElement<?, ?> to) {
 		for (Attribute attr : from.getAttributedElementClass()
 				.getAttributeList()) {
 			to.setAttribute(attr.getName(), from.getAttribute(attr.getName()));

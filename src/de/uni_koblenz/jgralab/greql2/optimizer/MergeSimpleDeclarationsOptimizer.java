@@ -41,10 +41,10 @@ import java.util.logging.Logger;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.JGraLab;
-import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.CostModel;
+import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.schema.Declaration;
 import de.uni_koblenz.jgralab.greql2.schema.Expression;
-import de.uni_koblenz.jgralab.greql2.schema.Greql2Graph;
+import de.uni_koblenz.jgralab.greql2.schema.Greql2;
 import de.uni_koblenz.jgralab.greql2.schema.IsDeclaredVarOf;
 import de.uni_koblenz.jgralab.greql2.schema.IsSimpleDeclOf;
 import de.uni_koblenz.jgralab.greql2.schema.IsTargetExprOf;
@@ -62,7 +62,7 @@ import de.uni_koblenz.jgralab.impl.InternalEdge;
  * 
  * @author ist@uni-koblenz.de
  */
-public class MergeSimpleDeclarationsOptimizer extends Optimizer {
+public class MergeSimpleDeclarationsOptimizer extends OptimizerBase {
 
 	private static Logger logger = JGraLab
 			.getLogger(MergeSimpleDeclarationsOptimizer.class.getPackage()
@@ -85,10 +85,20 @@ public class MergeSimpleDeclarationsOptimizer extends Optimizer {
 		return false;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.uni_koblenz.jgralab.greql2.optimizer.Optimizer#optimize(de.uni_koblenz
+	 * .jgralab.greql2.evaluator.GreqlEvaluator,
+	 * de.uni_koblenz.jgralab.greql2.schema.Greql2)
+	 */
 	@Override
-	protected boolean optimize(Greql2Graph syntaxgraph, CostModel costModel) {
+	public boolean optimize(GreqlEvaluator eval, Greql2 syntaxgraph) {
 		anOptimizationWasDone = false;
+
 		findAndMergeSimpleDeclarations(syntaxgraph);
+		recreateVertexEvaluators(eval);
 		return anOptimizationWasDone;
 	}
 
@@ -103,7 +113,7 @@ public class MergeSimpleDeclarationsOptimizer extends Optimizer {
 	 * @param syntaxgraph
 	 *            a {@link Greql2} graph
 	 */
-	private void findAndMergeSimpleDeclarations(Greql2Graph syntaxgraph) {
+	private void findAndMergeSimpleDeclarations(Greql2 syntaxgraph) {
 		HashMap<String, ArrayList<SimpleDeclaration>> mergableSDMap = new HashMap<String, ArrayList<SimpleDeclaration>>();
 		Declaration decl = syntaxgraph.getFirstDeclaration();
 		while (decl != null) {

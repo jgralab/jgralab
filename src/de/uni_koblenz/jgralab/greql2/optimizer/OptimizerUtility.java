@@ -47,12 +47,12 @@ import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.greql2.evaluator.GraphSize;
+import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize;
 import de.uni_koblenz.jgralab.greql2.schema.FunctionApplication;
 import de.uni_koblenz.jgralab.greql2.schema.FunctionId;
+import de.uni_koblenz.jgralab.greql2.schema.Greql2;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Aggregation;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Expression;
-import de.uni_koblenz.jgralab.greql2.schema.Greql2Graph;
 import de.uni_koblenz.jgralab.greql2.schema.IsDeclaredVarOf;
 import de.uni_koblenz.jgralab.greql2.schema.SimpleDeclaration;
 import de.uni_koblenz.jgralab.greql2.schema.SourcePosition;
@@ -65,7 +65,7 @@ import de.uni_koblenz.jgralab.greql2.schema.Variable;
  * @author ist@uni-koblenz.de
  * 
  */
-class OptimizerUtility {
+public class OptimizerUtility {
 	/**
 	 * Checks if <code>v1</code> is above <code>v2</code> in the {@link Greql2}
 	 * syntaxgraph. The {@link Greql2Expression} is considered to be above all
@@ -82,7 +82,7 @@ class OptimizerUtility {
 	 * @return <code>true</code> if v1 is above or == v2, <code>false</code>
 	 *         otherwise
 	 */
-	static boolean isAbove(Vertex v1, Vertex v2) {
+	public static boolean isAbove(Vertex v1, Vertex v2) {
 		// GreqlEvaluator.println("isAbove(" + v1 +", " + v2 +")");
 		if (v1 == v2) {
 			return true;
@@ -103,9 +103,9 @@ class OptimizerUtility {
 	 * @return <code>true</code> if <code>funApp</code> is a
 	 *         {@link FunctionApplication} of {@link And}.
 	 */
-	static boolean isAnd(FunctionApplication funApp) {
-		return (funApp.getFirstIsFunctionIdOfIncidence().getAlpha()).get_name()
-				.equals("and");
+	public static boolean isAnd(FunctionApplication funApp) {
+		return ((FunctionId) funApp.getFirstIsFunctionIdOfIncidence()
+				.getAlpha()).get_name().equals("and");
 	}
 
 	/**
@@ -116,9 +116,9 @@ class OptimizerUtility {
 	 * @return <code>true</code> if <code>funApp</code> is a
 	 *         {@link FunctionApplication} of {@link And}.
 	 */
-	static boolean isOr(FunctionApplication funApp) {
-		return (funApp.getFirstIsFunctionIdOfIncidence().getAlpha()).get_name()
-				.equals("or");
+	public static boolean isOr(FunctionApplication funApp) {
+		return ((FunctionId) funApp.getFirstIsFunctionIdOfIncidence()
+				.getAlpha()).get_name().equals("or");
 	}
 
 	/**
@@ -129,9 +129,9 @@ class OptimizerUtility {
 	 * @return <code>true</code> if <code>funApp</code> is a
 	 *         {@link FunctionApplication} of {@link And}.
 	 */
-	static boolean isXor(FunctionApplication funApp) {
-		return (funApp.getFirstIsFunctionIdOfIncidence().getAlpha()).get_name()
-				.equals("xor");
+	public static boolean isXor(FunctionApplication funApp) {
+		return ((FunctionId) funApp.getFirstIsFunctionIdOfIncidence()
+				.getAlpha()).get_name().equals("xor");
 	}
 
 	/**
@@ -142,9 +142,9 @@ class OptimizerUtility {
 	 * @return <code>true</code> if <code>funApp</code> is a
 	 *         {@link FunctionApplication} of {@link And}.
 	 */
-	static boolean isNot(FunctionApplication funApp) {
-		return (funApp.getFirstIsFunctionIdOfIncidence().getAlpha()).get_name()
-				.equals("not");
+	public static boolean isNot(FunctionApplication funApp) {
+		return ((FunctionId) funApp.getFirstIsFunctionIdOfIncidence()
+				.getAlpha()).get_name().equals("not");
 	}
 
 	/**
@@ -158,7 +158,7 @@ class OptimizerUtility {
 	 * @param to
 	 *            another {@link Greql2Aggregation}
 	 */
-	static void mergeSourcePositions(Greql2Aggregation from,
+	public static void mergeSourcePositions(Greql2Aggregation from,
 			Greql2Aggregation to) {
 		PVector<SourcePosition> toSourcePositions = to.get_sourcePositions();
 		if (toSourcePositions == null) {
@@ -187,7 +187,7 @@ class OptimizerUtility {
 	 *         <code>name</code> as its name attribute. If no such
 	 *         {@link FunctionId} exists it will be created.
 	 */
-	static FunctionId findOrCreateFunctionId(String name, Greql2Graph graph) {
+	public static FunctionId findOrCreateFunctionId(String name, Greql2 graph) {
 		for (FunctionId fid : graph.getFunctionIdVertices()) {
 			if (fid.get_name().equals(name)) {
 				return fid;
@@ -206,7 +206,7 @@ class OptimizerUtility {
 	 * @param graph
 	 *            the {@link Greql2} syntaxgraph
 	 */
-	static void createMissingSourcePositions(Greql2Graph graph) {
+	public static void createMissingSourcePositions(Greql2 graph) {
 		for (Greql2Aggregation aggr : graph.getGreql2AggregationEdges()) {
 			if (aggr.get_sourcePositions() == null) {
 				PVector<SourcePosition> l = JGraLab.vector();
@@ -221,11 +221,11 @@ class OptimizerUtility {
 	 * @return a {@link Set} of all {@link Variable}s declared by
 	 *         <code>sd</code>
 	 */
-	static Set<Variable> collectVariablesDeclaredBy(SimpleDeclaration sd) {
+	public static Set<Variable> collectVariablesDeclaredBy(SimpleDeclaration sd) {
 		HashSet<Variable> vars = new HashSet<Variable>();
 		for (IsDeclaredVarOf inc : sd
 				.getIsDeclaredVarOfIncidences(EdgeDirection.IN)) {
-			vars.add(inc.getAlpha());
+			vars.add((Variable) inc.getAlpha());
 		}
 		return vars;
 	}
@@ -241,7 +241,8 @@ class OptimizerUtility {
 	 * @return a {@link Set} of {@link Variable}s that are located below
 	 *         <code>v</code>
 	 */
-	static Set<Variable> collectInternallyDeclaredVariablesBelow(Vertex vertex) {
+	public static Set<Variable> collectInternallyDeclaredVariablesBelow(
+			Vertex vertex) {
 		return collectInternallyDeclaredVariablesBelow(vertex,
 				new HashSet<Variable>());
 	}
@@ -256,8 +257,8 @@ class OptimizerUtility {
 	 * @return the set of {@link Variable} vertices that are located in the
 	 *         subgraph below <code>vertex</code>
 	 */
-	static Set<Variable> collectInternallyDeclaredVariablesBelow(Vertex vertex,
-			Set<Variable> vars) {
+	private static Set<Variable> collectInternallyDeclaredVariablesBelow(
+			Vertex vertex, Set<Variable> vars) {
 		// GreqlEvaluator.println("collectVariablesBelow(" + vertex + ")");
 		if ((vertex instanceof Variable) && !(vertex instanceof ThisLiteral)) {
 			Variable v = (Variable) vertex;
@@ -285,14 +286,14 @@ class OptimizerUtility {
 	 * @param verticesToOmit
 	 *            a set of vertices whose subgraph shouldn't be deleted
 	 */
-	static void deleteOrphanedVerticesBelow(Vertex vertex,
+	public static void deleteOrphanedVerticesBelow(Vertex vertex,
 			HashSet<Vertex> verticesToOmit) {
 		// System.out.println("deleteOrphanedVerticesBelow(" + vertex + ")");
 		deleteOrphanedVerticesBelow(vertex, verticesToOmit,
 				new HashSet<Vertex>());
 	}
 
-	static void deleteOrphanedVerticesBelow(Vertex vertex,
+	private static void deleteOrphanedVerticesBelow(Vertex vertex,
 			HashSet<Vertex> verticesToOmit,
 			HashSet<Vertex> alreadyDeletedVertices) {
 		assert vertex.isValid();
@@ -323,7 +324,7 @@ class OptimizerUtility {
 	 * 
 	 * @return the created {@link GraphSize} object
 	 */
-	static GraphSize getDefaultGraphSize() {
+	public static GraphSize getDefaultGraphSize() {
 		return new GraphSize(100, 100, 20, 20);
 	}
 }

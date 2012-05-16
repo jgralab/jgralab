@@ -45,7 +45,7 @@ import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.graphmarker.GraphMarker;
-import de.uni_koblenz.jgralab.greql2.evaluator.GraphSize;
+import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VertexEvaluator;
 import de.uni_koblenz.jgralab.greql2.schema.Declaration;
 import de.uni_koblenz.jgralab.greql2.schema.Expression;
@@ -87,13 +87,13 @@ public class VariableDeclarationOrderUnit implements
 	 */
 	VariableDeclarationOrderUnit(Variable var, Declaration declaringDecl,
 			GraphMarker<VertexEvaluator> marker, GraphSize graphSize) {
-		variable = var;
-		declaringDeclaration = declaringDecl;
-		vertexEvalMarker = marker;
+		this.variable = var;
+		this.declaringDeclaration = declaringDecl;
+		this.vertexEvalMarker = marker;
 		this.graphSize = graphSize;
-		simpleDeclarationOfVariable = variable
+		this.simpleDeclarationOfVariable = (SimpleDeclaration) this.variable
 				.getFirstIsDeclaredVarOfIncidence(EdgeDirection.OUT).getOmega();
-		typeExpressionOfVariable = simpleDeclarationOfVariable
+		this.typeExpressionOfVariable = (Expression) this.simpleDeclarationOfVariable
 				.getFirstIsTypeExprOfIncidence(EdgeDirection.IN).getAlpha();
 
 		// Collect all vertices that depend on the variable and thus need to be
@@ -186,7 +186,7 @@ public class VariableDeclarationOrderUnit implements
 		for (Vertex vertex : dependentVertices) {
 			VertexEvaluator eval = vertexEvalMarker.getMark(vertex);
 			assert eval != null;
-			costs += eval.getOwnEvaluationCosts();
+			costs += eval.getOwnEvaluationCosts(graphSize);
 		}
 		return costs;
 	}
@@ -289,7 +289,7 @@ public class VariableDeclarationOrderUnit implements
 	private long calculateTypeExpressionCardinality() {
 		VertexEvaluator veval = vertexEvalMarker
 				.getMark(typeExpressionOfVariable);
-		return veval.getEstimatedCardinality();
+		return veval.getEstimatedCardinality(graphSize);
 	}
 
 	/**

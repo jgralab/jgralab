@@ -39,6 +39,7 @@ package de.uni_koblenz.jgralab.greql2.optimizer.condexp;
 
 import java.util.ArrayList;
 
+import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.schema.Expression;
 
 /**
@@ -48,6 +49,11 @@ import de.uni_koblenz.jgralab.greql2.schema.Expression;
  * 
  */
 public abstract class Literal extends Formula {
+
+	public Literal(GreqlEvaluator eval) {
+		super(eval);
+	}
+
 	@Override
 	protected ArrayList<Expression> getNonConstantTermExpressions() {
 		return new ArrayList<Expression>();

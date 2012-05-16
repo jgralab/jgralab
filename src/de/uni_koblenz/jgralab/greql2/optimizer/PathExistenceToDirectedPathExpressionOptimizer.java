@@ -48,14 +48,15 @@ import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.CostModel;
+import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
+import de.uni_koblenz.jgralab.greql2.exception.OptimizerException;
 import de.uni_koblenz.jgralab.greql2.funlib.collections.Intersection;
 import de.uni_koblenz.jgralab.greql2.schema.BoolLiteral;
 import de.uni_koblenz.jgralab.greql2.schema.Declaration;
 import de.uni_koblenz.jgralab.greql2.schema.EdgePathDescription;
 import de.uni_koblenz.jgralab.greql2.schema.Expression;
 import de.uni_koblenz.jgralab.greql2.schema.FunctionApplication;
-import de.uni_koblenz.jgralab.greql2.schema.Greql2Graph;
+import de.uni_koblenz.jgralab.greql2.schema.Greql2;
 import de.uni_koblenz.jgralab.greql2.schema.IsBoundVarOf;
 import de.uni_koblenz.jgralab.greql2.schema.IsDeclaredVarOf;
 import de.uni_koblenz.jgralab.greql2.schema.IsPathDescriptionOf;
@@ -71,22 +72,39 @@ import de.uni_koblenz.jgralab.greql2.schema.VertexSetExpression;
  * @author Tassilo Horn &lt;horn@uni-koblenz.de&gt;
  * 
  */
-public class PathExistenceToDirectedPathExpressionOptimizer extends Optimizer {
+public class PathExistenceToDirectedPathExpressionOptimizer extends
+		OptimizerBase {
 
 	private static Logger logger = JGraLab
 			.getLogger(PathExistenceToDirectedPathExpressionOptimizer.class
 					.getPackage().getName());
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.uni_koblenz.jgralab.greql2.optimizer.Optimizer#isEquivalent(de.uni_koblenz
+	 * .jgralab.greql2.optimizer.Optimizer)
+	 */
 	@Override
-	protected boolean isEquivalent(Optimizer optimizer) {
+	public boolean isEquivalent(Optimizer optimizer) {
 		if (optimizer instanceof PathExistenceToDirectedPathExpressionOptimizer) {
 			return true;
 		}
 		return false;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.uni_koblenz.jgralab.greql2.optimizer.Optimizer#optimize(de.uni_koblenz
+	 * .jgralab.greql2.evaluator.GreqlEvaluator,
+	 * de.uni_koblenz.jgralab.greql2.schema.Greql2)
+	 */
 	@Override
-	protected boolean optimize(Greql2Graph syntaxgraph, CostModel costModel) {
+	public boolean optimize(GreqlEvaluator eval, Greql2 syntaxgraph)
+			throws OptimizerException {
 		if (syntaxgraph.getFirstVertex(PathExistence.class) == null) {
 			return false;
 		}
@@ -124,6 +142,7 @@ public class PathExistenceToDirectedPathExpressionOptimizer extends Optimizer {
 		// System.out.println("PETDPEO: "
 		// + ((SerializableGreql2) syntaxgraph).serialize());
 
+		recreateVertexEvaluators(eval);
 		OptimizerUtility.createMissingSourcePositions(syntaxgraph);
 		return !pes.isEmpty();
 	}
@@ -201,7 +220,7 @@ public class PathExistenceToDirectedPathExpressionOptimizer extends Optimizer {
 			// start is a bound var, target is declared
 			anchorVar = start;
 			sdsVar = target;
-			SimpleDeclaration targetSD = target
+			SimpleDeclaration targetSD = (SimpleDeclaration) target
 					.getFirstIsDeclaredVarOfIncidence().getOmega();
 			if (targetSD.getDegree(IsDeclaredVarOf.class) > 1) {
 				sd = splitSimpleDecl(targetSD, target);
@@ -212,7 +231,7 @@ public class PathExistenceToDirectedPathExpressionOptimizer extends Optimizer {
 			// target is a bound var, start is declared
 			anchorVar = target;
 			sdsVar = start;
-			SimpleDeclaration startSD = start
+			SimpleDeclaration startSD = (SimpleDeclaration) start
 					.getFirstIsDeclaredVarOfIncidence().getOmega();
 			if (startSD.getDegree(IsDeclaredVarOf.class) > 1) {
 				sd = splitSimpleDecl(startSD, target);
@@ -221,9 +240,9 @@ public class PathExistenceToDirectedPathExpressionOptimizer extends Optimizer {
 			}
 		} else {
 			// both are declared vars
-			SimpleDeclaration startSD = start
+			SimpleDeclaration startSD = (SimpleDeclaration) start
 					.getFirstIsDeclaredVarOfIncidence().getOmega();
-			SimpleDeclaration targetSD = target
+			SimpleDeclaration targetSD = (SimpleDeclaration) target
 					.getFirstIsDeclaredVarOfIncidence().getOmega();
 
 			if (targetSD == startSD) {
@@ -264,7 +283,7 @@ public class PathExistenceToDirectedPathExpressionOptimizer extends Optimizer {
 
 		// The path expression must be in a constraint and it must be in a
 		// top-level conjunction.
-		if (!isConstraintAndTopLevelConjunction(pe, sd
+		if (!isConstraintAndTopLevelConjunction(pe, (Declaration) sd
 				.getFirstIsSimpleDeclOfIncidence().getOmega())) {
 			logger.finer(optimizerHeaderString()
 					+ pe
@@ -303,7 +322,7 @@ public class PathExistenceToDirectedPathExpressionOptimizer extends Optimizer {
 		// vertex set.
 
 		sd.getFirstIsTypeExprOfDeclarationIncidence(EdgeDirection.IN).delete();
-		Greql2Graph g = (Greql2Graph) typeExp.getGraph();
+		Greql2 g = (Greql2) typeExp.getGraph();
 		FunctionApplication diff = g.createFunctionApplication();
 		g.createIsFunctionIdOf(OptimizerUtility.findOrCreateFunctionId(
 				Intersection.class.getSimpleName().toLowerCase(), g), diff);
@@ -360,7 +379,7 @@ public class PathExistenceToDirectedPathExpressionOptimizer extends Optimizer {
 	private PathExpression createForwardOrBackwardVertexSet(boolean forward,
 			Variable anchor, PathDescription path,
 			Iterable<? extends TypeId> restrictions) {
-		Greql2Graph g = (Greql2Graph) path.getGraph();
+		Greql2 g = (Greql2) path.getGraph();
 
 		PathExpression newPE = null;
 		if (forward) {
@@ -392,7 +411,7 @@ public class PathExistenceToDirectedPathExpressionOptimizer extends Optimizer {
 			forward = false;
 		}
 
-		Greql2Graph g = (Greql2Graph) pe.getGraph();
+		Greql2 g = (Greql2) pe.getGraph();
 
 		PathExpression newPE = createForwardOrBackwardVertexSet(forward,
 				otherVar, (PathDescription) pe.get_path(), vse.get_typeRestr());
