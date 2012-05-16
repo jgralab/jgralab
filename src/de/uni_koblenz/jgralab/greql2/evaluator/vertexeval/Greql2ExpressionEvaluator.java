@@ -120,10 +120,12 @@ public class Greql2ExpressionEvaluator extends
 					// greqlEvaluator.addKnownType(elem);
 					// }
 					for (VertexClass elem : p.getVertexClasses()) {
-						query.addKnownType(elem);
+						query.addKnownType(evaluator.getSchemaOfDataGraph(),
+								elem);
 					}
 					for (EdgeClass elem : p.getEdgeClasses()) {
-						query.addKnownType(elem);
+						query.addKnownType(evaluator.getSchemaOfDataGraph(),
+								elem);
 					}
 				} else {
 					GraphElementClass<?, ?> elemClass = graphSchema
@@ -132,7 +134,8 @@ public class Greql2ExpressionEvaluator extends
 						throw new UnknownTypeException(importedType,
 								new ArrayList<SourcePosition>());
 					}
-					query.addKnownType(elemClass);
+					query.addKnownType(evaluator.getSchemaOfDataGraph(),
+							elemClass);
 				}
 			}
 		}

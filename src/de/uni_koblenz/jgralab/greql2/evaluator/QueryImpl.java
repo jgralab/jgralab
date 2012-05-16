@@ -59,6 +59,7 @@ import de.uni_koblenz.jgralab.greql2.schema.Identifier;
 import de.uni_koblenz.jgralab.greql2.schema.Variable;
 import de.uni_koblenz.jgralab.impl.GraphBaseImpl;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
+import de.uni_koblenz.jgralab.schema.Schema;
 
 public class QueryImpl extends GraphStructureChangedAdapter implements Query {
 	private final String queryText;
@@ -75,7 +76,7 @@ public class QueryImpl extends GraphStructureChangedAdapter implements Query {
 	 * The {@link Map} of SimpleName to Type of types that is known in the
 	 * evaluator by import statements in the greql query
 	 */
-	protected Map<String, AttributedElementClass<?, ?>> knownTypes = new HashMap<String, AttributedElementClass<?, ?>>();
+	protected Map<Schema, Map<String, AttributedElementClass<?, ?>>> knownTypes = new HashMap<Schema, Map<String, AttributedElementClass<?, ?>>>();
 
 	/**
 	 * The {@link GraphMarker} that stores all vertex evaluators
@@ -162,7 +163,7 @@ public class QueryImpl extends GraphStructureChangedAdapter implements Query {
 		this.queryText = queryText;
 		this.optimize = optimize;
 		this.optimizerInfo = optimizerInfo;
-		knownTypes = new HashMap<String, AttributedElementClass<?, ?>>();
+		knownTypes = new HashMap<Schema, Map<String, AttributedElementClass<?, ?>>>();
 	}
 
 	@Override
@@ -296,8 +297,8 @@ public class QueryImpl extends GraphStructureChangedAdapter implements Query {
 	 *         <code>name</code>
 	 */
 	public synchronized AttributedElementClass<?, ?> getKnownType(
-			String typeSimpleName) {
-		return knownTypes.get(typeSimpleName);
+			Schema schema, String typeSimpleName) {
+		return knownTypes.get(schema).get(typeSimpleName);
 	}
 
 	/**
@@ -307,8 +308,14 @@ public class QueryImpl extends GraphStructureChangedAdapter implements Query {
 	 * @return @see {@link Map#put(Object, Object)}
 	 */
 	public synchronized AttributedElementClass<?, ?> addKnownType(
-			AttributedElementClass<?, ?> elem) {
-		return knownTypes.put(elem.getSimpleName(), elem);
+			Schema schema, AttributedElementClass<?, ?> elem) {
+		Map<String, AttributedElementClass<?, ?>> kTypes = knownTypes
+				.get(schema);
+		if (kTypes == null) {
+			kTypes = new HashMap<String, AttributedElementClass<?, ?>>();
+			knownTypes.put(schema, kTypes);
+		}
+		return kTypes.put(elem.getSimpleName(), elem);
 	}
 
 	@Override
@@ -328,6 +335,10 @@ public class QueryImpl extends GraphStructureChangedAdapter implements Query {
 	@Override
 	public void vertexDeleted(Vertex v) {
 		vertexEvaluators.removeMark(v);
+	}
+
+	public OptimizerInfo getOptimizerInfo() {
+		return optimizerInfo;
 	}
 
 	private static class GreqlParserWithVertexEvaluatorUpdates extends
@@ -354,10 +365,6 @@ public class QueryImpl extends GraphStructureChangedAdapter implements Query {
 			return parser.getGraph();
 		}
 
-	}
-
-	public OptimizerInfo getOptimizerInfo() {
-		return optimizerInfo;
 	}
 
 }
