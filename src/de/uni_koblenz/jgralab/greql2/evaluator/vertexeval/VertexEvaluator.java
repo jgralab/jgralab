@@ -50,7 +50,7 @@ import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.greql2.evaluator.GraphSize;
 import de.uni_koblenz.jgralab.greql2.evaluator.InternalGreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.QueryImpl;
-import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
+import de.uni_koblenz.jgralab.greql2.evaluator.VertexCosts;
 import de.uni_koblenz.jgralab.greql2.exception.QuerySourceException;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Aggregation;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;

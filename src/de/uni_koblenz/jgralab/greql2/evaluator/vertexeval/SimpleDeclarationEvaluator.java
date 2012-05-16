@@ -44,7 +44,7 @@ import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.greql2.evaluator.InternalGreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.QueryImpl;
 import de.uni_koblenz.jgralab.greql2.evaluator.VariableDeclaration;
-import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
+import de.uni_koblenz.jgralab.greql2.evaluator.VertexCosts;
 import de.uni_koblenz.jgralab.greql2.schema.Expression;
 import de.uni_koblenz.jgralab.greql2.schema.IsDeclaredVarOf;
 import de.uni_koblenz.jgralab.greql2.schema.IsTypeExprOf;

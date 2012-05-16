@@ -39,7 +39,7 @@ import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.greql2.evaluator.InternalGreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.QueryImpl;
-import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
+import de.uni_koblenz.jgralab.greql2.evaluator.VertexCosts;
 import de.uni_koblenz.jgralab.greql2.evaluator.fa.NFA;
 import de.uni_koblenz.jgralab.greql2.schema.EdgePathDescription;
 import de.uni_koblenz.jgralab.greql2.schema.EdgeRestriction;

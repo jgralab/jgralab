@@ -37,7 +37,7 @@ package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 
 import de.uni_koblenz.jgralab.greql2.evaluator.InternalGreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.QueryImpl;
-import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
+import de.uni_koblenz.jgralab.greql2.evaluator.VertexCosts;
 import de.uni_koblenz.jgralab.greql2.schema.UndefinedLiteral;
 import de.uni_koblenz.jgralab.greql2.types.Undefined;
 

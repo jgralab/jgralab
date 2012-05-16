@@ -41,7 +41,7 @@ import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.greql2.evaluator.InternalGreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.QueryImpl;
-import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
+import de.uni_koblenz.jgralab.greql2.evaluator.VertexCosts;
 import de.uni_koblenz.jgralab.greql2.schema.EdgeSetExpression;
 import de.uni_koblenz.jgralab.greql2.schema.IsTypeRestrOfExpression;
 import de.uni_koblenz.jgralab.greql2.schema.TypeId;
