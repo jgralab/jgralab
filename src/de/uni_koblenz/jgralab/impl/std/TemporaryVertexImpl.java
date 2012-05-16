@@ -9,7 +9,7 @@ import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.NoSuchAttributeException;
-import de.uni_koblenz.jgralab.TemporaryGraphElementConversionException;
+import de.uni_koblenz.jgralab.TemporaryGraphElementBlessingException;
 import de.uni_koblenz.jgralab.TemporaryVertex;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.impl.InternalGraph;
@@ -83,7 +83,7 @@ public class TemporaryVertexImpl extends VertexImpl implements TemporaryVertex {
 	}
 
 	@Override
-	public Vertex convertToRealGraphElement(VertexClass vc) {
+	public Vertex bless(VertexClass vc) {
 
 		// Test if vc is valid
 		validateConversion(vc);
@@ -138,7 +138,7 @@ public class TemporaryVertexImpl extends VertexImpl implements TemporaryVertex {
 		// direction every time
 		for (Edge e : this.incidences(EdgeDirection.OUT)) {
 			if (!vc.isValidFromFor(e.getAttributedElementClass())) {
-				throw new TemporaryGraphElementConversionException(
+				throw new TemporaryGraphElementBlessingException(
 						"Transformation of temporary vertex " + this
 								+ " failed. " + vc
 								+ " is not a valid source for edge " + e + ".");
@@ -147,7 +147,7 @@ public class TemporaryVertexImpl extends VertexImpl implements TemporaryVertex {
 
 		for (Edge e : this.incidences(EdgeDirection.IN)) {
 			if (!vc.isValidToFor(e.getAttributedElementClass())) {
-				throw new TemporaryGraphElementConversionException(
+				throw new TemporaryGraphElementBlessingException(
 						"Transformation of temporary vertex " + this
 								+ " failed. " + vc
 								+ " is not a valid target for edge " + e + ".");
@@ -158,7 +158,7 @@ public class TemporaryVertexImpl extends VertexImpl implements TemporaryVertex {
 			if (vc.containsAttribute(atname)) {
 				if (!vc.getAttribute(atname).getDomain()
 						.isConformValue(this.attributes.get(atname))) {
-					throw new TemporaryGraphElementConversionException(
+					throw new TemporaryGraphElementBlessingException(
 							"Transformation of temporary vertex " + this
 									+ " failed. " + vc + " has an attribute "
 									+ atname + " but "

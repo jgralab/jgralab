@@ -40,7 +40,7 @@ public class LongToken extends Token {
 	
 	String value = null;
 
-	public LongToken(TokenTypes type, int offset, int length, String value, Long intValue) {
+	public LongToken(TokenTypes type, int offset, int length, String value, long intValue) {
 		super(type, offset, length);
 		this.value = value;
 		this.intValue = intValue;

@@ -9,7 +9,7 @@ import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.NoSuchAttributeException;
 import de.uni_koblenz.jgralab.TemporaryEdge;
-import de.uni_koblenz.jgralab.TemporaryGraphElementConversionException;
+import de.uni_koblenz.jgralab.TemporaryGraphElementBlessingException;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.impl.GraphBaseImpl;
 import de.uni_koblenz.jgralab.impl.InternalEdge;
@@ -59,7 +59,7 @@ public class TemporaryEdgeImpl extends EdgeImpl implements TemporaryEdge {
 	}
 
 	@Override
-	public Edge convertToRealGraphElement(EdgeClass edgeClass) {
+	public Edge bless(EdgeClass edgeClass) {
 
 		// test if valid
 		validateConversion(edgeClass);
@@ -130,14 +130,14 @@ public class TemporaryEdgeImpl extends EdgeImpl implements TemporaryEdge {
 	private void validateConversion(EdgeClass edgeClass) {
 		if (!this.getAlpha().getAttributedElementClass()
 				.isValidFromFor(edgeClass)) {
-			throw new TemporaryGraphElementConversionException(
+			throw new TemporaryGraphElementBlessingException(
 					"Transformation of temporary edge " + this + " failed. "
 							+ this.getAlpha() + " is not a valid source for "
 							+ edgeClass);
 		}
 		if (!this.getOmega().getAttributedElementClass()
 				.isValidToFor(edgeClass)) {
-			throw new TemporaryGraphElementConversionException(
+			throw new TemporaryGraphElementBlessingException(
 					"Transformation of temporary edge " + this + " failed. "
 							+ this.getOmega() + " is not a valid target for "
 							+ edgeClass);
@@ -147,7 +147,7 @@ public class TemporaryEdgeImpl extends EdgeImpl implements TemporaryEdge {
 			if (edgeClass.containsAttribute(atname)) {
 				if (!edgeClass.getAttribute(atname).getDomain()
 						.isConformValue(this.attributes.get(atname))) {
-					throw new TemporaryGraphElementConversionException(
+					throw new TemporaryGraphElementBlessingException(
 							"Transformation of temporary vertex " + this
 									+ " failed. " + edgeClass
 									+ " has an attribute " + atname + " but "

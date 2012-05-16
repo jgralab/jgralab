@@ -60,6 +60,7 @@ import de.uni_koblenz.jgralab.RandomIdGenerator;
 import de.uni_koblenz.jgralab.Record;
 import de.uni_koblenz.jgralab.TraversalContext;
 import de.uni_koblenz.jgralab.Vertex;
+import de.uni_koblenz.jgralab.VertexFilter;
 import de.uni_koblenz.jgralab.eca.ECARuleManagerInterface;
 import de.uni_koblenz.jgralab.graphmarker.SubGraphMarker;
 import de.uni_koblenz.jgralab.schema.AggregationKind;
@@ -1402,17 +1403,30 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 	 */
 	@Override
 	public Iterable<Vertex> vertices() {
-		return new VertexIterable<Vertex>(this);
+		return new VertexIterable<Vertex>(this, null, null);
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uni_koblenz.jgralab.Graph#vertices(java.lang.Class)
+	 * @see
+	 * de.uni_koblenz.jgralab.Graph#vertices(de.uni_koblenz.jgralab.VertexFilter
+	 * )
 	 */
 	@Override
-	public Iterable<Vertex> vertices(Class<? extends Vertex> vertexClass) {
-		return new VertexIterable<Vertex>(this, vertexClass);
+	public Iterable<Vertex> vertices(VertexFilter<Vertex> filter) {
+		return new VertexIterable<Vertex>(this, null, filter);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uni_koblenz.jgralab.Graph#vertices(de.uni_koblenz.jgralab.schema.
+	 * VertexClass)
+	 */
+	@Override
+	public Iterable<Vertex> vertices(VertexClass vertexClass) {
+		return new VertexIterable<Vertex>(this, vertexClass, null);
 	}
 
 	/*
@@ -1422,8 +1436,9 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 	 * VertexClass)
 	 */
 	@Override
-	public Iterable<Vertex> vertices(VertexClass vertexClass) {
-		return new VertexIterable<Vertex>(this, vertexClass.getSchemaClass());
+	public Iterable<Vertex> vertices(VertexClass vertexClass,
+			VertexFilter<Vertex> filter) {
+		return new VertexIterable<Vertex>(this, vertexClass, filter);
 	}
 
 	/*

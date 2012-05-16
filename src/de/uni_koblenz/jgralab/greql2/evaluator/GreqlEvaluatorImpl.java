@@ -53,7 +53,6 @@ import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.ImplementationType;
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.ProgressFunction;
-import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.CostModel;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VertexEvaluator;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Expression;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
@@ -140,11 +139,6 @@ public class GreqlEvaluatorImpl implements InternalGreqlEvaluator,
 	 * This attribute holds the result of the evaluation
 	 */
 	private Object result = null;
-
-	/**
-	 * This attribute holds the CostModel which estimates the evaluation costs
-	 */
-	private final CostModel costModel = null;
 
 	/**
 	 * The progress function this evaluator uses, may be null

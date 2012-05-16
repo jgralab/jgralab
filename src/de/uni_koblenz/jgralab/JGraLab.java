@@ -83,9 +83,8 @@ public class JGraLab {
 				Enumeration<URL> resources = JGraLab.class.getClassLoader()
 						.getResources("META-INF/MANIFEST.MF");
 				while (resources.hasMoreElements()) {
-
-					Manifest manifest = new Manifest(resources.nextElement()
-							.openStream());
+					URL url = resources.nextElement();
+					Manifest manifest = new Manifest(url.openStream());
 					Map<String, Attributes> entries = manifest.getEntries();
 					Attributes info = entries.get("de/uni_koblenz/jgralab/");
 					if (info == null) {

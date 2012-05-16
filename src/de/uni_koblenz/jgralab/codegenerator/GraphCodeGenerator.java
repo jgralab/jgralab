@@ -47,9 +47,9 @@ import de.uni_koblenz.jgralab.schema.VertexClass;
 
 /**
  * TODO add comment
- *
+ * 
  * @author ist@uni-koblenz.de
- *
+ * 
  */
 public class GraphCodeGenerator extends
 		AttributedElementCodeGenerator<GraphClass, Graph> {
@@ -358,10 +358,16 @@ public class GraphCodeGenerator extends
 				s.add(" * @return an Iterable for all vertices of this graph that are of type #vertexQualifiedName# or subtypes.");
 				s.add(" */");
 				s.add("public Iterable<#vertexJavaClassName#> get#vertexCamelName#Vertices();");
+				s.add("",
+						"public Iterable<#vertexJavaClassName#> get#vertexCamelName#Vertices(#jgPackage#.VertexFilter<#vertexJavaClassName#> filter);");
 			}
 			if (currentCycle.isStdOrDbImplOrTransImpl()) {
 				s.add("public Iterable<#vertexJavaClassName#> get#vertexCamelName#Vertices() {");
-				s.add("\treturn new VertexIterable<#vertexJavaClassName#>(this, #vertexJavaClassName#.class);");
+				s.add("\treturn new VertexIterable<#vertexJavaClassName#>(this, #vertexJavaClassName#.VC, null);");
+				s.add("}");
+				s.add("",
+						"public Iterable<#vertexJavaClassName#> get#vertexCamelName#Vertices(#jgPackage#.VertexFilter<#vertexJavaClassName#> filter) {");
+				s.add("\treturn new VertexIterable<#vertexJavaClassName#>(this, #vertexJavaClassName#.VC, filter);");
 				s.add("}");
 			}
 			s.add("");

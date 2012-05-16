@@ -55,6 +55,7 @@ import de.uni_koblenz.jgralab.TemporaryEdge;
 import de.uni_koblenz.jgralab.TemporaryVertex;
 import de.uni_koblenz.jgralab.TraversalContext;
 import de.uni_koblenz.jgralab.Vertex;
+import de.uni_koblenz.jgralab.VertexFilter;
 import de.uni_koblenz.jgralab.impl.FreeIndexList;
 import de.uni_koblenz.jgralab.impl.IncidenceImpl;
 import de.uni_koblenz.jgralab.impl.InternalEdge;
@@ -1392,20 +1393,16 @@ public abstract class GraphImpl extends
 	}
 
 	@Override
-	public Iterable<Vertex> vertices() {
-		return new AttributedElementIterable<Vertex>(super.vertices(), this);
+	public Iterable<Vertex> vertices(VertexFilter<Vertex> filter) {
+		return new AttributedElementIterable<Vertex>(super.vertices(filter),
+				this);
 	}
 
 	@Override
-	public Iterable<Vertex> vertices(Class<? extends Vertex> vertexClass) {
-		return new AttributedElementIterable<Vertex>(
-				super.vertices(vertexClass), this);
-	}
-
-	@Override
-	public Iterable<Vertex> vertices(VertexClass vertexClass) {
-		return new AttributedElementIterable<Vertex>(
-				super.vertices(vertexClass), this);
+	public Iterable<Vertex> vertices(VertexClass vertexClass,
+			VertexFilter<Vertex> filter) {
+		return new AttributedElementIterable<Vertex>(super.vertices(
+				vertexClass, filter), this);
 	}
 
 	@Override
@@ -1553,14 +1550,14 @@ public abstract class GraphImpl extends
 	public synchronized TraversalContext setTraversalContext(TraversalContext tc) {
 		return getCurrentTransaction().setTraversalContext(tc);
 	}
-	
+
 	@Override
-	public TemporaryVertex createTemporaryVertex(){
+	public TemporaryVertex createTemporaryVertex() {
 		throw new UnsupportedOperationException();
 	}
-	
+
 	@Override
-	public TemporaryEdge createTemporaryEdge(Vertex alpha, Vertex omega){
+	public TemporaryEdge createTemporaryEdge(Vertex alpha, Vertex omega) {
 		throw new UnsupportedOperationException();
 	}
 }
