@@ -389,6 +389,13 @@ public interface Graph extends AttributedElement<GraphClass, Graph> {
 	public Iterable<Vertex> vertices(VertexClass vertexclass,
 			VertexFilter<Vertex> filter);
 
+	/**
+	 * @return true if there are {@link TemporaryVertex} or 
+	 * 			{@link TemporaryEdge} elements in this {@link Graph}
+	 */
+	public boolean hasTemporaryElements();
+	
+	
 	// ---- transaction support ----
 	/**
 	 * @return a read-write-<code>Transaction</code>

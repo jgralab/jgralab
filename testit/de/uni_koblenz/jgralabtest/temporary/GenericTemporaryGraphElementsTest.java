@@ -6,6 +6,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Iterator;
 
 import org.junit.Before;
@@ -25,6 +26,7 @@ import de.uni_koblenz.jgralab.TemporaryVertex;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.RecordDomain;
+import de.uni_koblenz.jgralab.schema.RecordDomain.RecordComponent;
 import de.uni_koblenz.jgralab.schema.Schema;
 import de.uni_koblenz.jgralab.schema.VertexClass;
 
@@ -283,19 +285,18 @@ public class GenericTemporaryGraphElementsTest {
 		assertEquals(record, v1_town.getAttribute("foundingDate"));
 	}
 
-	// TODO kristina: What's that test good for? Here, createRecord() will
-	// already fail, because "days" is not a valid component for the
-	// RecordDomain Date. (It used to test that with an assertion, which was
-	// wrong. Now it really checks and throws an GraphException here.).
-	// @Test
+	 @Test
 	public void testConvertVertexWithRecordAttributeFail() {
+		 schema.reopen();
+		 ArrayList<RecordComponent> recordComponents = new ArrayList<RecordComponent>();
+		 recordComponents.add(new RecordComponent("test", schema.getStringDomain()));
+		 RecordDomain d = schema.createRecordDomain("NewRecordDomain",recordComponents);
+		 schema.finish();
+		 
 		TemporaryVertex v1_temp = graph.createTemporaryVertex();
 		PMap<String, Object> values = ArrayPMap.empty();
-		values = values.plus("days", 8); // it's actually "day", not "days"
-		values = values.plus("month", "AUG");
-		values = values.plus("year", 2008);
-		Record record = graph.createRecord(
-				(RecordDomain) schema.getDomain("Date"), values);
+		values = values.plus("test", "Hallo"); // it's actually "day", not "days"
+		Record record = graph.createRecord(d, values);
 		v1_temp.setAttribute("foundingDate", record);
 
 		try {
@@ -304,6 +305,41 @@ public class GenericTemporaryGraphElementsTest {
 		} catch (TemporaryGraphElementBlessingException ex) {
 			assertTrue(v1_temp.isValid());
 		}
+	}
+	 
+	@Test
+	public void testHasTemporaryGraphElements(){
+		
+		assertFalse(graph.hasTemporaryElements());
+		
+		Vertex v1 = graph.createVertex(vc_CrossRoad);
+		
+		assertFalse(graph.hasTemporaryElements());
+		
+		TemporaryVertex tempv = graph.createTemporaryVertex();
+		
+		assertTrue(graph.hasTemporaryElements());
+		
+		TemporaryEdge tempe = graph.createTemporaryEdge(v1, tempv);
+		
+		assertTrue(graph.hasTemporaryElements());
+		
+		tempe.bless(ec_Street);
+		
+		assertTrue(graph.hasTemporaryElements());
+		
+		tempv.bless(vc_CrossRoad);
+		
+		assertFalse(graph.hasTemporaryElements());
+		
+		TemporaryVertex tempv2 = graph.createTemporaryVertex();
+		
+		assertTrue(graph.hasTemporaryElements());
+		
+		tempv2.delete();
+		
+		assertFalse(graph.hasTemporaryElements());
+		
 	}
 
 }
