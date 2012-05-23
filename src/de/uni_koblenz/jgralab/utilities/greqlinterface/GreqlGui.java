@@ -49,7 +49,6 @@ import java.io.PrintStream;
 import java.net.URL;
 import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.prefs.BackingStoreException;
@@ -89,7 +88,11 @@ import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.ImplementationType;
 import de.uni_koblenz.jgralab.ProgressFunction;
+import de.uni_koblenz.jgralab.greql2.evaluator.GraphSize;
+import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEnvironmentAdapter;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
+import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluatorImpl;
+import de.uni_koblenz.jgralab.greql2.evaluator.QueryImpl;
 import de.uni_koblenz.jgralab.greql2.exception.GreqlException;
 import de.uni_koblenz.jgralab.greql2.exception.ParsingException;
 import de.uni_koblenz.jgralab.greql2.exception.QuerySourceException;
@@ -138,7 +141,7 @@ public class GreqlGui extends SwingApplication {
 
 	private Evaluator evaluator;
 
-	private FileDialog fd;
+	private final FileDialog fd;
 
 	private Action insertJavaQuotesAction;
 	private Action removeJavaQuotesAction;
@@ -163,11 +166,11 @@ public class GreqlGui extends SwingApplication {
 
 	private boolean resultFontSet;
 
-	private Preferences prefs;
+	private final Preferences prefs;
 
-	private RecentFilesList recentQueryList;
-	private RecentFilesList recentGraphList;
-	private StringListPreferences greqlFunctionList;
+	private final RecentFilesList recentQueryList;
+	private final RecentFilesList recentGraphList;
+	private final StringListPreferences greqlFunctionList;
 	private JMenu recentGraphsMenu;
 
 	private Font queryFont;
@@ -297,7 +300,7 @@ public class GreqlGui extends SwingApplication {
 	}
 
 	class GraphLoader extends Worker {
-		private File file;
+		private final File file;
 
 		GraphLoader(BoundedRangeModel brm, File file) {
 			super(brm);
@@ -373,24 +376,26 @@ public class GreqlGui extends SwingApplication {
 	}
 
 	class Evaluator extends Worker {
-		private String query;
+		private final String queryString;
 
 		Evaluator(BoundedRangeModel brm, String query) {
 			super(brm);
-			this.query = query;
+			this.queryString = query;
 		}
 
 		@Override
 		public void run() {
 			progressBar.setIndeterminate(true);
 			try {
-				final GreqlEvaluator eval = new GreqlEvaluator(query, graph,
-						new HashMap<String, Object>(), this);
-				eval.setOptimize(enableOptimizerCheckBoxItem.isSelected());
-				GreqlEvaluator.DEBUG_OPTIMIZATION = debugOptimizerCheckBoxItem
+				final QueryImpl query = new QueryImpl(queryString,
+						enableOptimizerCheckBoxItem.isSelected(),
+						new GraphSize(graph));
+				QueryImpl.DEBUG_OPTIMIZATION = debugOptimizerCheckBoxItem
 						.isSelected();
+				final GreqlEvaluator eval = new GreqlEvaluatorImpl();
 				try {
-					eval.startEvaluation();
+					eval.evaluate(query, graph, new GreqlEnvironmentAdapter(),
+							this);
 				} catch (Exception e1) {
 					ex = e1;
 				}

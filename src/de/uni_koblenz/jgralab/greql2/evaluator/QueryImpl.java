@@ -39,6 +39,8 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.lang.ref.SoftReference;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -46,6 +48,7 @@ import java.util.Set;
 import org.pcollections.PSet;
 
 import de.uni_koblenz.jgralab.Graph;
+import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.GraphStructureChangedAdapter;
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.ProgressFunction;
@@ -60,6 +63,7 @@ import de.uni_koblenz.jgralab.greql2.schema.Greql2Graph;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
 import de.uni_koblenz.jgralab.greql2.schema.Identifier;
 import de.uni_koblenz.jgralab.greql2.schema.Variable;
+import de.uni_koblenz.jgralab.impl.ConsoleProgressFunction;
 import de.uni_koblenz.jgralab.impl.GraphBaseImpl;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.Schema;
@@ -74,6 +78,12 @@ public class QueryImpl extends GraphStructureChangedAdapter implements Query {
 	private long parseTime = -1;
 	private Greql2Expression rootExpression;
 	private final OptimizerInfo optimizerInfo;
+
+	/**
+	 * Print the text representation of the optimized query after optimization.
+	 */
+	public static boolean DEBUG_OPTIMIZATION = Boolean.parseBoolean(System
+			.getProperty("greqlDebugOptimization", "false"));
 
 	/**
 	 * The {@link Map} of SimpleName to Type of types that is known in the
@@ -201,12 +211,58 @@ public class QueryImpl extends GraphStructureChangedAdapter implements Query {
 			if (optimize) {
 				new DefaultOptimizer().optimize(this);
 				optimizationTime = System.currentTimeMillis() - t1;
+				if (DEBUG_OPTIMIZATION) {
+					System.out
+							.println("#########################################################");
+					System.out
+							.println("################## Unoptimized Query ####################");
+					System.out
+							.println("#########################################################");
+					String name = "__greql-query.";
+					try {
+						queryGraph.save(name + "tg",
+								new ConsoleProgressFunction(
+										"Saving broken GReQL graph:"));
+						printGraphAsDot(queryGraph, true, name + "dot");
+					} catch (GraphIOException e) {
+						e.printStackTrace();
+					}
+					System.out.println("Saved query graph to " + name
+							+ "tg/dot.");
+					System.out
+							.println("#########################################################");
+				}
 			}
 			((GraphBaseImpl) queryGraph).defragment();
 			rootExpression = queryGraph.getFirstGreql2Expression();
 			initializeVertexEvaluatorsMarker(queryGraph);
 			queryGraphCache.put(queryText, optimize, queryGraph,
 					vertexEvaluators);
+		}
+	}
+
+	private void printGraphAsDot(Graph graph, boolean reversedEdges,
+			String outputFilename) {
+
+		try {
+			Class<?> tg2DotClass = Class
+					.forName("de.uni_koblenz.jgralab.utilities.tg2dot.Tg2Dot");
+			Method printMethod = tg2DotClass.getMethod("convertGraph",
+					Graph.class, String.class, boolean.class);
+			printMethod.invoke(tg2DotClass, new Object[] { graph,
+					outputFilename, reversedEdges });
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		} catch (SecurityException e) {
+			e.printStackTrace();
+		} catch (NoSuchMethodException e) {
+			e.printStackTrace();
+		} catch (IllegalArgumentException e) {
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+		} catch (InvocationTargetException e) {
+			e.printStackTrace();
 		}
 	}
 
@@ -394,7 +450,8 @@ public class QueryImpl extends GraphStructureChangedAdapter implements Query {
 	@Override
 	public Object evaluate(Graph datagraph, GreqlEnvironment environment,
 			ProgressFunction progressFunction) {
-		return new GreqlEvaluatorImpl(this, datagraph, environment,
+		Object result = new GreqlEvaluatorImpl(this, datagraph, environment,
 				progressFunction).getResult();
+		return result;
 	}
 }

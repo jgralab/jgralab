@@ -54,4 +54,15 @@ public interface GreqlEvaluator {
 
 	public Object evaluate(QueryImpl query, Graph datagraph,
 			GreqlEnvironment environment, ProgressFunction progressFunction);
+
+	/**
+	 * @return the time needed for plain evaluation.
+	 */
+	public long getEvaluationTime();
+
+	/**
+	 * @return the time the ovarall evaluation (parsing + optimization +
+	 *         evluation) took in milliseconds
+	 */
+	public long getOverallEvaluationTime();
 }

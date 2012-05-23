@@ -351,6 +351,7 @@ public class GreqlEvaluatorImpl implements InternalGreqlEvaluator,
 	/**
 	 * @return the time needed for plain evaluation.
 	 */
+	@Override
 	public long getEvaluationTime() {
 		return evaluationTime;
 	}
@@ -371,6 +372,12 @@ public class GreqlEvaluatorImpl implements InternalGreqlEvaluator,
 	@Override
 	public Object getVariable(String varName) {
 		return environment.getVariable(varName);
+	}
+
+	@Override
+	public long getOverallEvaluationTime() {
+		return query.getParseTime() + query.getOptimizationTime()
+				+ getEvaluationTime();
 	}
 
 }
