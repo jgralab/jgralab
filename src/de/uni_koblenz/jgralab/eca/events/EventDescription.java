@@ -40,8 +40,9 @@ import java.util.List;
 import org.pcollections.PCollection;
 
 import de.uni_koblenz.jgralab.AttributedElement;
+import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.eca.ECARule;
-import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluatorImpl;
+import de.uni_koblenz.jgralab.greql2.evaluator.QueryImpl;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 
 public abstract class EventDescription<AEC extends AttributedElementClass<AEC, ?>> {
@@ -54,7 +55,7 @@ public abstract class EventDescription<AEC extends AttributedElementClass<AEC, ?
 	/**
 	 * EventTime: BEFORE or AFTER
 	 */
-	private EventTime time;
+	private final EventTime time;
 
 	public enum EventTime {
 		BEFORE, AFTER
@@ -64,7 +65,7 @@ public abstract class EventDescription<AEC extends AttributedElementClass<AEC, ?
 	 * Context, specifies whether this Event monitors a single Class of elements
 	 * or all elements, queried by a contextExpression
 	 */
-	private Context context;
+	private final Context context;
 
 	public enum Context {
 		TYPE, EXPRESSION
@@ -148,11 +149,9 @@ public abstract class EventDescription<AEC extends AttributedElementClass<AEC, ?
 				return false;
 			}
 		} else {
-			GreqlEvaluatorImpl eval = activeRules.get(0).getECARuleManager()
-					.getGreqlEvaluator();
-			eval.setQuery(contextExpression);
-			eval.startEvaluation();
-			Object resultingContext = eval.getResult();
+			Graph graph = activeRules.get(0).getECARuleManager().getGraph();
+			Object resultingContext = new QueryImpl(contextExpression)
+					.evaluate(graph);
 			if (resultingContext instanceof PCollection) {
 				PCollection<?> col = (PCollection<?>) resultingContext;
 				for (Object val : col) {
