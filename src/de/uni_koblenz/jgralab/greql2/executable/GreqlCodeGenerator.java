@@ -1,7 +1,6 @@
 package de.uni_koblenz.jgralab.greql2.executable;
 
 import java.lang.reflect.Method;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -21,8 +20,11 @@ import de.uni_koblenz.jgralab.codegenerator.CodeGenerator;
 import de.uni_koblenz.jgralab.codegenerator.CodeGeneratorConfiguration;
 import de.uni_koblenz.jgralab.codegenerator.CodeList;
 import de.uni_koblenz.jgralab.codegenerator.CodeSnippet;
-import de.uni_koblenz.jgralab.graphmarker.GraphMarker;
-import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
+import de.uni_koblenz.jgralab.greql2.evaluator.GraphSize;
+import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEnvironmentAdapter;
+import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluatorImpl;
+import de.uni_koblenz.jgralab.greql2.evaluator.InternalGreqlEvaluator;
+import de.uni_koblenz.jgralab.greql2.evaluator.QueryImpl;
 import de.uni_koblenz.jgralab.greql2.evaluator.fa.AggregationTransition;
 import de.uni_koblenz.jgralab.greql2.evaluator.fa.BoolExpressionTransition;
 import de.uni_koblenz.jgralab.greql2.evaluator.fa.DFA;
@@ -51,8 +53,8 @@ import de.uni_koblenz.jgralab.greql2.schema.ForwardVertexSet;
 import de.uni_koblenz.jgralab.greql2.schema.FunctionApplication;
 import de.uni_koblenz.jgralab.greql2.schema.FunctionId;
 import de.uni_koblenz.jgralab.greql2.schema.GReQLDirection;
-import de.uni_koblenz.jgralab.greql2.schema.Greql2;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Expression;
+import de.uni_koblenz.jgralab.greql2.schema.Greql2Graph;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
 import de.uni_koblenz.jgralab.greql2.schema.Identifier;
 import de.uni_koblenz.jgralab.greql2.schema.IntLiteral;
@@ -105,39 +107,43 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 
 	public static final String codeGeneratorFileManagerName = "GeneratedQueries";
 
-	private Greql2 graph;
+	private final Greql2Graph graph;
 
-	private String classname;
+	private final String classname;
 
-	private String packageName;
+	private final String packageName;
 
-	private CodeSnippet classFieldSnippet = new CodeSnippet();
+	private final CodeSnippet classFieldSnippet = new CodeSnippet();
 
-	private CodeSnippet staticFieldSnippet = new CodeSnippet();
+	private final CodeSnippet staticFieldSnippet = new CodeSnippet();
 
-	private CodeSnippet staticInitializerSnippet = new CodeSnippet("static {");
+	private final CodeSnippet staticInitializerSnippet = new CodeSnippet(
+			"static {");
 
-	private List<CodeBlock> createdMethods = new LinkedList<CodeBlock>();
+	private final List<CodeBlock> createdMethods = new LinkedList<CodeBlock>();
 
-	private Scope scope;
+	private final Scope scope;
 
-	private Schema schema;
+	private final Schema schema;
 
 	private boolean thisLiteralsCreated = false;
 
-	private GraphMarker<VertexEvaluator> vertexEvalGraphMarker;
+	private final QueryImpl query;
 
-	public GreqlCodeGenerator(Greql2 graph,
-			GraphMarker<VertexEvaluator> vertexEvalGraphMarker,
-			Schema datagraphSchema, String packageName, String classname) {
+	private final InternalGreqlEvaluator evaluator;
+
+	public GreqlCodeGenerator(QueryImpl query, Schema datagraphSchema,
+			String packageName, String classname) {
 		super(packageName, "",
 				CodeGeneratorConfiguration.WITHOUT_TYPESPECIFIC_METHODS);
-		this.graph = graph;
-		this.vertexEvalGraphMarker = vertexEvalGraphMarker;
+		graph = query.getQueryGraph();
+		this.query = query;
 		this.classname = classname;
 		this.packageName = packageName;
 		this.schema = datagraphSchema;
 		scope = new Scope();
+		evaluator = new GreqlEvaluatorImpl(query, null,
+				new GreqlEnvironmentAdapter());
 	}
 
 	/**
@@ -145,8 +151,8 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 	 * will implement the interface {@link ExecutableQuery}, thus it may be
 	 * evaluated simply by calling its execute-Method. For proper execution, the
 	 * GReQL function library needs to be available.
-	 *
-	 * @param query
+	 * 
+	 * @param queryString
 	 *            the query in its String representation
 	 * @param datagraphSchema
 	 *            the graph schema of the graph the query should be executed on
@@ -157,23 +163,19 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 	 *            the query will be stored inside a subdirectory of the path
 	 *            defined by its qualified name <code>classname</code>
 	 */
-	public static void generateCode(String query, Schema datagraphSchema,
+	public static void generateCode(String queryString, Schema datagraphSchema,
 			String classname, String path) {
-		GreqlEvaluator eval = new GreqlEvaluator(query,
-				datagraphSchema.createGraph(ImplementationType.GENERIC),
-				new HashMap<String, Object>());
-		eval.createOptimizedSyntaxGraph();
-		GraphMarker<VertexEvaluator> graphMarker = eval
-				.getVertexEvaluatorGraphMarker();
-		Greql2 queryGraph = eval.getSyntaxGraph();
+		QueryImpl query = new QueryImpl(queryString, true, new GraphSize(
+				datagraphSchema.createGraph(ImplementationType.GENERIC)));
+
 		String simpleName = classname;
 		String packageName = "";
 		if (classname.contains(".")) {
 			simpleName = classname.substring(classname.lastIndexOf(".") + 1);
 			packageName = classname.substring(0, classname.lastIndexOf("."));
 		}
-		GreqlCodeGenerator greqlcodeGen = new GreqlCodeGenerator(queryGraph,
-				graphMarker, datagraphSchema, packageName, simpleName);
+		GreqlCodeGenerator greqlcodeGen = new GreqlCodeGenerator(query,
+				datagraphSchema, packageName, simpleName);
 		try {
 			greqlcodeGen.createFiles(path);
 		} catch (GraphIOException e) {
@@ -190,23 +192,18 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 	 * <code>classname</code> is available to your environment and may be
 	 * instantiated using reflection, e.g., by
 	 * Class.forName(className).newInstance().
-	 *
-	 * @param query
+	 * 
+	 * @param queryString
 	 *            the query in its String representation
 	 * @param datagraphSchema
 	 *            the graph schema of the graph the query should be executed on
 	 * @param classname
 	 *            the fully qualified name of the class to be generated
 	 */
-	public static Class<ExecutableQuery> generateCode(String query,
+	public static Class<ExecutableQuery> generateCode(String queryString,
 			Schema datagraphSchema, String classname) {
-		GreqlEvaluator eval = new GreqlEvaluator(query,
-				datagraphSchema.createGraph(ImplementationType.GENERIC),
-				new HashMap<String, Object>());
-		eval.createOptimizedSyntaxGraph();
-		GraphMarker<VertexEvaluator> graphMarker = eval
-				.getVertexEvaluatorGraphMarker();
-		Greql2 queryGraph = eval.getSyntaxGraph();
+		QueryImpl query = new QueryImpl(queryString, true, new GraphSize(
+				datagraphSchema.createGraph(ImplementationType.GENERIC)));
 
 		String simpleName = classname;
 		String packageName = "";
@@ -214,8 +211,8 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 			simpleName = classname.substring(classname.lastIndexOf("."));
 			packageName = classname.substring(0, classname.lastIndexOf("."));
 		}
-		GreqlCodeGenerator greqlcodeGen = new GreqlCodeGenerator(queryGraph,
-				graphMarker, datagraphSchema, packageName, simpleName);
+		GreqlCodeGenerator greqlcodeGen = new GreqlCodeGenerator(query,
+				datagraphSchema, packageName, simpleName);
 		return greqlcodeGen.compile();
 	}
 
@@ -395,8 +392,8 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 		for (IsTypeRestrOfExpression inc : setExpr
 				.getIsTypeRestrOfExpressionIncidences(EdgeDirection.IN)) {
 			TypeId typeId = (TypeId) inc.getThat();
-			typeCol.addTypes((TypeCollection) vertexEvalGraphMarker.getMark(
-					typeId).getResult());
+			typeCol.addTypes((TypeCollection) query.getVertexEvaluator(typeId)
+					.getResult(evaluator));
 		}
 		String acceptedTypesField = createInitializerForTypeCollection(typeCol);
 		CodeSnippet createEdgeSetSnippet = new CodeSnippet();
@@ -428,8 +425,8 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 		for (IsTypeRestrOfExpression inc : setExpr
 				.getIsTypeRestrOfExpressionIncidences(EdgeDirection.IN)) {
 			TypeId typeId = (TypeId) inc.getThat();
-			typeCol.addTypes((TypeCollection) vertexEvalGraphMarker.getMark(
-					typeId).getResult());
+			typeCol.addTypes((TypeCollection) query.getVertexEvaluator(typeId)
+					.getResult(evaluator));
 		}
 		String acceptedTypesField = createInitializerForTypeCollection(typeCol);
 		CodeSnippet createVertexSetSnippet = new CodeSnippet();
@@ -619,11 +616,11 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 				varIterationSnippet.setVariable("variableName", var.get_name());
 				varIterationSnippet
 						.add("for (Object #variableName# : #simpleDeclDomainName#) {");
-				VariableEvaluator vertexEval = (VariableEvaluator) vertexEvalGraphMarker
-						.getMark(var);
-				List<VertexEvaluator> dependingExpressions = vertexEval
+				VariableEvaluator<? extends Variable> vertexEval = (VariableEvaluator<? extends Variable>) query
+						.getVertexEvaluator(var);
+				List<VertexEvaluator<? extends Expression>> dependingExpressions = vertexEval
 						.calculateDependingExpressions();
-				for (VertexEvaluator ve : dependingExpressions) {
+				for (VertexEvaluator<? extends Expression> ve : dependingExpressions) {
 					Vertex currentV = ve.getVertex();
 					if (currentV instanceof Variable) {
 						continue;
@@ -844,7 +841,7 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 	 * access routines to the FunLib-function will be created, some of the
 	 * functions that rely on path descriptions (e.g., pathSystem) are realized
 	 * by code generation for the path search.
-	 *
+	 * 
 	 * @param funApp
 	 * @return
 	 */
@@ -942,9 +939,9 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 	private String createCodeForForwardVertexSet(ForwardVertexSet fws) {
 		PathDescription pathDescr = (PathDescription) fws
 				.getFirstIsPathOfIncidence(EdgeDirection.IN).getThat();
-		PathDescriptionEvaluator pathDescrEval = (PathDescriptionEvaluator) vertexEvalGraphMarker
-				.getMark(pathDescr);
-		DFA dfa = ((NFA) pathDescrEval.getResult()).getDFA();
+		PathDescriptionEvaluator<? extends PathDescription> pathDescrEval = (PathDescriptionEvaluator<? extends PathDescription>) query
+				.getVertexEvaluator(pathDescr);
+		DFA dfa = ((NFA) pathDescrEval.getResult(evaluator)).getDFA();
 		Expression startElementExpr = (Expression) fws
 				.getFirstIsStartExprOfIncidence(EdgeDirection.IN).getThat();
 		return createCodeForForwarOrBackwardVertexSet(dfa, startElementExpr,
@@ -954,9 +951,10 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 	private String createCodeForBackwardVertexSet(BackwardVertexSet fws) {
 		PathDescription pathDescr = (PathDescription) fws
 				.getFirstIsPathOfIncidence(EdgeDirection.IN).getThat();
-		PathDescriptionEvaluator pathDescrEval = (PathDescriptionEvaluator) vertexEvalGraphMarker
-				.getMark(pathDescr);
-		DFA dfa = NFA.revertNFA((NFA) pathDescrEval.getResult()).getDFA();
+		PathDescriptionEvaluator<? extends PathDescription> pathDescrEval = (PathDescriptionEvaluator<? extends PathDescription>) query
+				.getVertexEvaluator(pathDescr);
+		DFA dfa = NFA.revertNFA((NFA) pathDescrEval.getResult(evaluator))
+				.getDFA();
 		Expression targetElementExpr = (Expression) fws
 				.getFirstIsTargetExprOfIncidence(EdgeDirection.IN).getThat();
 		return createCodeForForwarOrBackwardVertexSet(dfa, targetElementExpr,
@@ -1085,9 +1083,9 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 		Expression startExpr = (Expression) inc.getThat();
 		inc = inc.getNextIsArgumentOfIncidence(EdgeDirection.IN);
 		PathDescription pathDescr = (PathDescription) inc.getThat();
-		PathDescriptionEvaluator pathDescrEval = (PathDescriptionEvaluator) vertexEvalGraphMarker
-				.getMark(pathDescr);
-		DFA dfa = ((NFA) pathDescrEval.getResult()).getDFA();
+		PathDescriptionEvaluator<? extends PathDescription> pathDescrEval = (PathDescriptionEvaluator<? extends PathDescription>) query
+				.getVertexEvaluator(pathDescr);
+		DFA dfa = ((NFA) pathDescrEval.getResult(evaluator)).getDFA();
 		return createCodeForPathSystem(dfa, startExpr, funApp);
 	}
 
@@ -1188,7 +1186,7 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 	 * functionality is realized by the methods
 	 * createAddToPathSearchQueueSnippet and createAddToPathSystemQueueSnippet,
 	 * which will be called depending on the pathSystem parameter
-	 *
+	 * 
 	 * @return a CodeBlock implementing the transition with all its checks
 	 */
 	private CodeBlock createCodeForTransition(Transition trans,
@@ -1230,7 +1228,8 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 	private CodeBlock createCodeForEdgeTransition(EdgeTransition trans,
 			boolean pathSystem) {
 		CodeList curr = new CodeList();
-		VertexEvaluator allowedEdgeEvaluator = trans.getAllowedEdgeEvaluator();
+		VertexEvaluator<?> allowedEdgeEvaluator = trans
+				.getAllowedEdgeEvaluator();
 		if (allowedEdgeEvaluator != null) {
 			curr.add(new CodeSnippet("Object allowedEdge = "
 					+ createCodeForExpression((Expression) allowedEdgeEvaluator
@@ -1370,14 +1369,14 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 	}
 
 	private CodeList createPredicateCheck(CodeList curr,
-			VertexEvaluator predicateEval) {
+			VertexEvaluator<? extends Expression> predicateEval) {
 		if (predicateEval != null) {
 			createThisLiterals();
 			curr.add(new CodeSnippet("setThisEdge(inc);"));
 			curr.add(new CodeSnippet("setThisVertex(element);"));
 			curr.add(new CodeSnippet("if ("
-					+ createCodeForExpression((Expression) predicateEval
-							.getVertex()) + ") { //begin check predicate"));
+					+ createCodeForExpression(predicateEval.getVertex())
+					+ ") { //begin check predicate"));
 			CodeList body = new CodeList();
 			curr.add(body);
 			curr.add(new CodeSnippet("} //end of predicate check"));
@@ -1416,7 +1415,7 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 			IntermediateVertexTransition trans, boolean pathSystem) {
 		CodeList curr = new CodeList();
 
-		VertexEvaluator intermediateVertexEval = trans
+		VertexEvaluator<?> intermediateVertexEval = trans
 				.getIntermediateVertexEvaluator();
 		if (intermediateVertexEval != null) {
 			createThisLiterals();
@@ -1448,13 +1447,14 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 			BoolExpressionTransition trans, boolean pathSystem) {
 		CodeList curr = new CodeList();
 
-		VertexEvaluator predicateEval = trans.getBooleanExpressionEvaluator();
+		VertexEvaluator<? extends Expression> predicateEval = trans
+				.getBooleanExpressionEvaluator();
 		if (predicateEval != null) {
 			createThisLiterals();
 			curr.add(new CodeSnippet("setThisVertex(element);"));
 			curr.add(new CodeSnippet("if ("
-					+ createCodeForExpression((Expression) predicateEval
-							.getVertex()) + ") {"));
+					+ createCodeForExpression(predicateEval.getVertex())
+					+ ") {"));
 			CodeList body = new CodeList();
 			curr.add(body);
 			curr.add(new CodeSnippet("}"));
@@ -1485,7 +1485,7 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 	/**
 	 * Creates a method encapsulating the codelist given and returns the call of
 	 * that method as a String
-	 *
+	 * 
 	 * @param list
 	 * @param uniqueId
 	 *            a unique Id used to create a global variable that stores the
@@ -1555,11 +1555,11 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 		snip.setVariable("edgeOrVertex", edgeOrVertex);
 		snip.add("private final void setThis#edgeOrVertex#(#edgeOrVertex# value) {");
 		if (lit != null) {
-			VariableEvaluator vertexEval = (VariableEvaluator) vertexEvalGraphMarker
-					.getMark(lit);
-			List<VertexEvaluator> dependingExpressions = vertexEval
+			VariableEvaluator<? extends Variable> vertexEval = (VariableEvaluator<? extends Variable>) query
+					.getVertexEvaluator(lit);
+			List<VertexEvaluator<? extends Expression>> dependingExpressions = vertexEval
 					.calculateDependingExpressions();
-			for (VertexEvaluator ve : dependingExpressions) {
+			for (VertexEvaluator<? extends Expression> ve : dependingExpressions) {
 				Vertex currentV = ve.getVertex();
 				if ((currentV instanceof Variable)
 						|| (currentV instanceof PathDescription)
