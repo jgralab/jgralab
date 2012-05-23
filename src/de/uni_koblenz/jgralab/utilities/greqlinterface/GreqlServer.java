@@ -55,7 +55,9 @@ import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.graphmarker.BooleanGraphMarker;
-import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluatorImpl;
+import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEnvironmentAdapter;
+import de.uni_koblenz.jgralab.greql2.evaluator.Query;
+import de.uni_koblenz.jgralab.greql2.evaluator.QueryImpl;
 import de.uni_koblenz.jgralab.greql2.types.Path;
 import de.uni_koblenz.jgralab.greql2.types.PathSystem;
 import de.uni_koblenz.jgralab.greql2.types.Slice;
@@ -71,7 +73,7 @@ public class GreqlServer extends Thread {
 	private final Socket socket;
 	private final BufferedReader in;
 	private final PrintWriter out;
-	private final GreqlEvaluatorImpl eval;
+	private Graph graph;
 	private String graphFile;
 	private static Map<String, Graph> dataGraphs = Collections
 			.synchronizedMap(new HashMap<String, Graph>());
@@ -84,7 +86,6 @@ public class GreqlServer extends Thread {
 		socket = s;
 		in = new BufferedReader(new InputStreamReader(s.getInputStream()));
 		out = new PrintWriter(new OutputStreamWriter(s.getOutputStream()));
-		eval = new GreqlEvaluatorImpl((String) null, (Graph) null, null);
 		println("Hi! I'm your GreqlServer (" + socket.getInetAddress() + ")",
 				PrintTarget.BOTH, true);
 	}
@@ -128,7 +129,7 @@ public class GreqlServer extends Thread {
 								new ConsoleProgressFunction("Loading"));
 						dataGraphs.put(graphFile, g);
 					}
-					eval.setDatagraph(g);
+					graph = g;
 				} else if (line.startsWith("q:")) {
 					evalQuery(line.substring(2));
 				} else if (line.startsWith("d:")) {
@@ -158,7 +159,7 @@ public class GreqlServer extends Thread {
 	}
 
 	private void saveAsDot(Object val, String dotFileName) throws IOException {
-		Graph g = eval.getDatagraph();
+		Graph g = graph;
 		BooleanGraphMarker marker = new BooleanGraphMarker(g);
 		markResultElements(val, marker);
 		for (Edge e : g.edges()) {
@@ -216,12 +217,11 @@ public class GreqlServer extends Thread {
 
 	private Object evalQuery(String queryFile) throws IOException {
 		println("Evaling query file " + queryFile + ".", PrintTarget.BOTH, true);
-		eval.setQueryFile(new File(queryFile));
+		Query query = QueryImpl.readQuery(new File(queryFile));
 		Object result = null;
 		try {
 			long startTime = System.currentTimeMillis();
-			eval.startEvaluation();
-			result = eval.getResult();
+			result = query.evaluate(graph, new GreqlEnvironmentAdapter(), null);
 			long evalTime = System.currentTimeMillis() - startTime;
 			println("<result not printed>", PrintTarget.SERVER, false);
 			out.println();
