@@ -41,9 +41,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.logging.Level;
 
 import org.apache.commons.cli.CommandLine;
@@ -56,7 +54,8 @@ import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.WorkInProgress;
 import de.uni_koblenz.jgralab.codegenerator.CodeGeneratorConfiguration;
-import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluatorImpl;
+import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEnvironmentAdapter;
+import de.uni_koblenz.jgralab.greql2.evaluator.QueryImpl;
 import de.uni_koblenz.jgralab.greql2.exception.GreqlException;
 import de.uni_koblenz.jgralab.greql2.serialising.HTMLOutputWriter;
 import de.uni_koblenz.jgralab.impl.ConsoleProgressFunction;
@@ -144,19 +143,14 @@ public class GReQLConsole {
 	private Object performQuery(File queryFile) {
 		Object result = null;
 		try {
-			Map<String, Object> boundVariables = new HashMap<String, Object>();
 			for (String query : loadQueries(queryFile)) {
 				if (verbose) {
 					System.out.println("Evaluating query: ");
 					System.out.println(query);
 				}
-				GreqlEvaluatorImpl eval = new GreqlEvaluatorImpl(query, graph,
-						boundVariables,
+				result = new QueryImpl(query).evaluate(graph,
+						new GreqlEnvironmentAdapter(),
 						(verbose ? new ConsoleProgressFunction() : null));
-				// eval.setOptimize(false);
-				eval.startEvaluation();
-
-				result = eval.getResult();
 				if (verbose && result instanceof Collection) {
 					System.out.println("Result size is: "
 							+ ((Collection<?>) result).size());
