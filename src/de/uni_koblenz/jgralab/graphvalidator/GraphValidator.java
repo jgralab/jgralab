@@ -51,7 +51,6 @@ import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluatorImpl;
 import de.uni_koblenz.jgralab.greql2.evaluator.QueryImpl;
 import de.uni_koblenz.jgralab.greql2.exception.GreqlException;
 import de.uni_koblenz.jgralab.impl.ConsoleProgressFunction;
@@ -181,17 +180,13 @@ public class GraphValidator {
 		SortedSet<ConstraintViolation> brokenConstraints = new TreeSet<ConstraintViolation>();
 		for (Constraint constraint : aec.getConstraints()) {
 			String query = constraint.getPredicate();
-			GreqlEvaluatorImpl eval = new GreqlEvaluatorImpl(new QueryImpl(
-					query), graph, null, null);
 			try {
-
-				if (!eval.<Boolean> getSingleResult()) {
+				if (!(Boolean) new QueryImpl(query).evaluate(graph)) {
 					if (constraint.getOffendingElementsQuery() != null) {
-						String oeq = constraint.getOffendingElementsQuery();
-						GreqlEvaluatorImpl eval1 = new GreqlEvaluatorImpl(
-								new QueryImpl(oeq), graph, null, null);
-						Set<AttributedElement<?, ?>> resultSet = eval1
-								.<AttributedElement<?, ?>> getResultSet();
+						query = constraint.getOffendingElementsQuery();
+						@SuppressWarnings("unchecked")
+						Set<AttributedElement<?, ?>> resultSet = (Set<AttributedElement<?, ?>>) new QueryImpl(
+								query).evaluate(graph);
 						brokenConstraints.add(new GReQLConstraintViolation(aec,
 								constraint, resultSet));
 					} else {
