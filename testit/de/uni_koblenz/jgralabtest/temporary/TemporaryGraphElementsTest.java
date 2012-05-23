@@ -465,6 +465,45 @@ public class TemporaryGraphElementsTest {
 		assertEquals(v4, e5_1_4.getOmega());
 
 	}
+	
+	@Test
+	public void testHasTemporaryGraphElements(){
+		Schema schema = CityMapSchema.instance();
+		Graph g = schema.createGraph(impl);
+		
+		assertFalse(g.hasTemporaryElements());
+		
+		Vertex v1 = g.createVertex(g.getGraphClass().getVertexClass(
+				"Intersection"));
+		
+		assertFalse(g.hasTemporaryElements());
+		
+		TemporaryVertex tempv = g.createTemporaryVertex();
+		
+		assertTrue(g.hasTemporaryElements());
+		
+		TemporaryEdge tempe = g.createTemporaryEdge(v1, tempv);
+		
+		assertTrue(g.hasTemporaryElements());
+		
+		tempe.bless(schema.getGraphClass()
+				.getEdgeClass("Street"));
+		
+		assertTrue(g.hasTemporaryElements());
+		
+		tempv.bless(schema.getGraphClass().getVertexClass("Intersection"));
+		
+		assertFalse(g.hasTemporaryElements());
+		
+		TemporaryVertex tempv2 = g.createTemporaryVertex();
+		
+		assertTrue(g.hasTemporaryElements());
+		
+		tempv2.delete();
+		
+		assertFalse(g.hasTemporaryElements());
+		
+	}
 
 	private void writeTgToConsole(Graph g) throws GraphIOException {
 		try {

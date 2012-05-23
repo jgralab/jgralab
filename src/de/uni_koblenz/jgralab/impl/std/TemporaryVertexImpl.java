@@ -156,8 +156,14 @@ public class TemporaryVertexImpl extends VertexImpl implements TemporaryVertex {
 
 		for (String atname : this.attributes.keySet()) {
 			if (vc.containsAttribute(atname)) {
-				if (!vc.getAttribute(atname).getDomain()
-						.isConformValue(this.attributes.get(atname))) {
+				boolean valid = true;
+				try{
+					valid = vc.getAttribute(atname).getDomain()
+							.isConformValue(this.attributes.get(atname));
+				}catch(NoSuchAttributeException ex){
+					valid = false;
+				}
+				if (!valid) {
 					throw new TemporaryGraphElementBlessingException(
 							"Transformation of temporary vertex " + this
 									+ " failed. " + vc + " has an attribute "

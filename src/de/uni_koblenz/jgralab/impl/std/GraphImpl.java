@@ -358,4 +358,11 @@ public abstract class GraphImpl extends
 	public TemporaryEdge createTemporaryEdge(Vertex alpha, Vertex omega){
 		return new TemporaryEdgeImpl(0, this, alpha, omega);
 	}
+	
+	@Override
+	public boolean hasTemporaryElements(){
+		return this.getFirstVertex(this.getGraphClass().getTemporaryVertexClass()) != null || 
+				this.getFirstEdge(this.getGraphClass().getTemporaryEdgeClass()) != null;
+	}
+
 }
