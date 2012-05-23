@@ -54,8 +54,7 @@ import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.ImplementationType;
 import de.uni_koblenz.jgralab.JGraLab;
-import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluatorImpl;
-import de.uni_koblenz.jgralab.greql2.evaluator.QueryImpl;
+import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.GraphClass;
 import de.uni_koblenz.jgralab.schema.GraphElementClass;
@@ -80,6 +79,7 @@ public class Context {
 
 	private final Map<String, Graph> sourceGraphs = new HashMap<String, Graph>(
 			1);
+	private GreqlEvaluator eval = null;
 
 	Schema targetSchema = null;
 
@@ -136,6 +136,11 @@ public class Context {
 		greqlExtraVars.put(name, evaluateGReQLQuery(greqlExpression));
 	}
 
+	final void setGReQLHelper(String name, String greqlExpression) {
+		ensureGreqlEvaluator();
+		eval.setSubQuery(name, greqlExpression);
+	}
+
 	final void addGReQLImport(String qualifiedName) {
 		greqlImports.add(qualifiedName);
 	}
@@ -185,6 +190,9 @@ public class Context {
 		} catch (Exception e) {
 			// Failing is ok here.
 		}
+		// Do it here, cause that takes some time. We don't want to have that
+		// counted to the transformation time...
+		ensureGreqlEvaluator();
 	}
 
 	/**
@@ -193,6 +201,9 @@ public class Context {
 	public Context(Schema targetSchema) {
 		this.targetSchema = targetSchema;
 		targetSchemaName = targetSchema.getQualifiedName();
+		// Do it here, cause that takes some time. We don't want to have that
+		// counted to the transformation time...
+		ensureGreqlEvaluator();
 
 	}
 
@@ -203,6 +214,9 @@ public class Context {
 	public Context(Graph g) {
 		setTargetGraph(g);
 		setSourceGraph(g);
+		// Do it here, cause that takes some time. We don't want to have that
+		// counted to the transformation time...
+		ensureGreqlEvaluator();
 	}
 
 	/**
@@ -501,7 +515,8 @@ public class Context {
 
 		// reset the GreqlEvaluator index cache, they prevent garbage
 		// collection!
-		GreqlEvaluatorImpl.resetGraphIndizes();
+		GreqlEvaluator.resetGraphIndizes();
+		GreqlEvaluator.resetOptimizedSyntaxGraphs();
 
 		// clear imports/extra vars
 		greqlExtraVars.clear();
@@ -693,10 +708,26 @@ public class Context {
 		String query = sb.toString();
 		logger.finest("GReQL: " + semanticExpression);
 
-		GreqlEvaluatorImpl eval = new GreqlEvaluatorImpl(new QueryImpl(query), graph,
-				greqlMapping, null);
+		ensureGreqlEvaluator();
+		eval.setDatagraph(graph);
+		eval.setQuery(query);
+		eval.setVariables(greqlMapping);
+
+		// eval.setOptimize(false);
+
 		eval.startEvaluation();
+
+		// log.fine("GReQL result: " + result);
 		return (T) eval.getResult();
+	}
+
+	/**
+	 * Ensure that the {@link GreqlEvaluator} <code>eval</code> exists.
+	 */
+	private void ensureGreqlEvaluator() {
+		if (eval == null) {
+			eval = new GreqlEvaluator((String) null, null, null);
+		}
 	}
 
 	private final PMap<String, Object> getGreqlVariablesNeededByQuery(
