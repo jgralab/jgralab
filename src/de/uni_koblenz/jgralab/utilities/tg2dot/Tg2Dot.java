@@ -70,6 +70,7 @@ import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.graphmarker.BooleanGraphMarker;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluatorImpl;
+import de.uni_koblenz.jgralab.greql2.evaluator.QueryImpl;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.Schema;
@@ -429,9 +430,9 @@ public class Tg2Dot extends Tg2Whatever {
 		// Disable debugging to prevent recursive execution and restore it in
 		// graphEnd()
 		debugIterations = GreqlEvaluatorImpl.DEBUG_DECLARATION_ITERATIONS;
-		debugOptimization = GreqlEvaluatorImpl.DEBUG_OPTIMIZATION;
+		debugOptimization = QueryImpl.DEBUG_OPTIMIZATION;
 		GreqlEvaluatorImpl.DEBUG_DECLARATION_ITERATIONS = false;
-		GreqlEvaluatorImpl.DEBUG_OPTIMIZATION = false;
+		QueryImpl.DEBUG_OPTIMIZATION = false;
 		jGraLabLogLevel = JGraLab.getRootLogger().getLevel();
 		JGraLab.setLogLevel(Level.OFF);
 
@@ -602,8 +603,8 @@ public class Tg2Dot extends Tg2Whatever {
 	/**
 	 * Creates a evaluated style attribute list of the given {@link Definition}.
 	 * <b>Note:</b><br>
-	 * The current element has been set to the {@link GreqlEvaluatorImpl} via the
-	 * method
+	 * The current element has been set to the {@link GreqlEvaluatorImpl} via
+	 * the method
 	 * {@link GreqlEvaluatorFacade#setVariablesOfGreqlEvaluator(AttributedElement, int)}
 	 * .
 	 * 
@@ -731,7 +732,7 @@ public class Tg2Dot extends Tg2Whatever {
 		writer.close();
 		writer = null;
 		GreqlEvaluatorImpl.DEBUG_DECLARATION_ITERATIONS = debugIterations;
-		GreqlEvaluatorImpl.DEBUG_OPTIMIZATION = debugOptimization;
+		QueryImpl.DEBUG_OPTIMIZATION = debugOptimization;
 		JGraLab.setLogLevel(jGraLabLogLevel);
 	}
 
@@ -904,7 +905,6 @@ public class Tg2Dot extends Tg2Whatever {
 	public String getGraphLayoutFilename() {
 		return graphLayoutFilename;
 	}
-
 
 	public void setPListGraphLayoutFilename(String graphLayoutFilename) {
 		this.graphLayoutFilename = graphLayoutFilename;
