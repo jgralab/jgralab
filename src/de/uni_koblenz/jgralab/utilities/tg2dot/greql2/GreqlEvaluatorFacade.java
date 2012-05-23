@@ -42,7 +42,10 @@ import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.Vertex;
+import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEnvironment;
+import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEnvironmentAdapter;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluatorImpl;
+import de.uni_koblenz.jgralab.greql2.evaluator.QueryImpl;
 import de.uni_koblenz.jgralab.greql2.funlib.FunLib;
 import de.uni_koblenz.jgralab.schema.AggregationKind;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
@@ -113,10 +116,14 @@ public class GreqlEvaluatorFacade {
 		FunLib.register(AttributeType.class);
 	}
 
-	/**
-	 * The actual GreqlEvaluator used for evaluations.
-	 */
-	private final GreqlEvaluatorImpl evaluator;
+	// /**
+	// * The actual GreqlEvaluator used for evaluations.
+	// */
+	// private final GreqlEvaluatorImpl evaluator;
+
+	private final Graph dataGraph;
+
+	private final GreqlEnvironment greqlEnvironment;
 
 	/**
 	 * Current known variable set used by the
@@ -137,9 +144,10 @@ public class GreqlEvaluatorFacade {
 	 *            Graph for which this GreqlEvaluatorFacade is used for.
 	 */
 	public GreqlEvaluatorFacade(Graph graph) {
-		evaluator = new GreqlEvaluatorImpl((String) null, graph, null);
+		dataGraph = graph;
 		knownVariableHashCode = 0;
-		evaluator.setVariables(new HashMap<String, Object>());
+		greqlEnvironment = new GreqlEnvironmentAdapter();
+		greqlEnvironment.setVariables(new HashMap<String, Object>());
 	}
 
 	/**
@@ -265,7 +273,8 @@ public class GreqlEvaluatorFacade {
 	 */
 	public String getUsingString() {
 		// Warning! This could be a source of errors.
-		int currentVariablesHashCode = evaluator.getVariables().hashCode();
+		int currentVariablesHashCode = greqlEnvironment.getVariables()
+				.hashCode();
 
 		boolean areEqual = currentVariablesHashCode == knownVariableHashCode;
 
@@ -285,7 +294,7 @@ public class GreqlEvaluatorFacade {
 
 		StringBuilder sb = new StringBuilder();
 		String delimiter = "using ";
-		for (String knownVariable : evaluator.getVariables().keySet()) {
+		for (String knownVariable : greqlEnvironment.getVariables().keySet()) {
 			sb.append(delimiter);
 			delimiter = ", ";
 			sb.append(knownVariable);
@@ -305,16 +314,15 @@ public class GreqlEvaluatorFacade {
 	 */
 	public Object evaluate(String query) {
 		query = getUsingString() + query;
-		evaluator.setQuery(query);
+		Object result = null;
 		try {
-			evaluator.startEvaluation();
+			result = new QueryImpl(query).evaluate(dataGraph, greqlEnvironment);
 		} catch (RuntimeException parse) {
 			parse.printStackTrace();
 			throw parse;
 		}
-		Object result = evaluator.getResult();
 		GreqlEvaluatorImpl.DEBUG_DECLARATION_ITERATIONS = false;
-		GreqlEvaluatorImpl.DEBUG_OPTIMIZATION = false;
+		QueryImpl.DEBUG_OPTIMIZATION = false;
 		return result;
 	}
 
@@ -338,7 +346,7 @@ public class GreqlEvaluatorFacade {
 	 *            Object as value.
 	 */
 	public void setVariable(String name, Object value) {
-		evaluator.setVariable(name, value);
+		greqlEnvironment.setVariable(name, value);
 	}
 
 	/**
@@ -351,11 +359,11 @@ public class GreqlEvaluatorFacade {
 
 		for (Entry<String, String> variableEntry : variables.entrySet()) {
 			Object result = evaluate(variableEntry.getValue());
-			evaluator.setVariable(variableEntry.getKey(), result);
+			greqlEnvironment.setVariable(variableEntry.getKey(), result);
 		}
 	}
 
 	public Schema getSchema() {
-		return evaluator.getDatagraph().getSchema();
+		return dataGraph.getSchema();
 	}
 }
