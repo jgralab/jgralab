@@ -45,8 +45,10 @@ import java.util.Set;
 
 import org.pcollections.PSet;
 
+import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphStructureChangedAdapter;
 import de.uni_koblenz.jgralab.JGraLab;
+import de.uni_koblenz.jgralab.ProgressFunction;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.graphmarker.GraphMarker;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VertexEvaluator;
@@ -368,4 +370,31 @@ public class QueryImpl extends GraphStructureChangedAdapter implements Query {
 
 	}
 
+	@Override
+	public Object evaluate() {
+		return evaluate(null, new GreqlEnvironmentAdapter(), null);
+	}
+
+	@Override
+	public Object evaluate(Graph datagraph) {
+		return evaluate(datagraph, new GreqlEnvironmentAdapter(), null);
+	}
+
+	@Override
+	public Object evaluate(Graph datagraph, GreqlEnvironment environment) {
+		return evaluate(datagraph, environment, null);
+	}
+
+	@Override
+	public Object evaluate(Graph datagraph, ProgressFunction progressFunction) {
+		return evaluate(datagraph, new GreqlEnvironmentAdapter(),
+				progressFunction);
+	}
+
+	@Override
+	public Object evaluate(Graph datagraph, GreqlEnvironment environment,
+			ProgressFunction progressFunction) {
+		return new GreqlEvaluatorImpl(this, datagraph, environment,
+				progressFunction).getResult();
+	}
 }
