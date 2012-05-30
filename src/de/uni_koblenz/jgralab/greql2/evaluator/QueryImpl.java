@@ -85,7 +85,7 @@ import de.uni_koblenz.jgralab.schema.Schema;
 import de.uni_koblenz.jgralab.utilities.tgmerge.TGMerge;
 
 public class QueryImpl extends GraphStructureChangedAdapter implements Query {
-	private String queryText;
+	private final String queryText;
 	private Greql2Graph queryGraph;
 	private PSet<String> usedVariables;
 	private PSet<String> storedVariables;
@@ -100,7 +100,8 @@ public class QueryImpl extends GraphStructureChangedAdapter implements Query {
 	/**
 	 * Holds the greql subqueries that can be called like other greql functions.
 	 */
-	protected LinkedHashMap<String, Greql2Graph> subQueryMap = null;
+	protected LinkedHashMap<String, QueryImpl> subQueryMap = null;
+	private Set<String> subQueryNames;
 
 	/**
 	 * Print the text representation of the optimized query after optimization.
@@ -210,13 +211,19 @@ public class QueryImpl extends GraphStructureChangedAdapter implements Query {
 		this.optimize = optimize;
 		this.optimizerInfo = optimizerInfo;
 		knownTypes = new HashMap<Schema, Map<String, AttributedElementClass<?, ?>>>();
-		subQueryMap = new LinkedHashMap<String, Greql2Graph>();
+		subQueryMap = new LinkedHashMap<String, QueryImpl>();
+		subQueryNames = new HashSet<String>();
 	}
 
 	public QueryImpl(String queryText, boolean optimize,
 			OptimizerInfo optimizerInfo, Optimizer optimizer) {
 		this(queryText, optimize, optimizerInfo);
 		this.optimizer = optimizer;
+	}
+
+	public QueryImpl(String greqlQuery, Set<String> subQueryNames) {
+		this(greqlQuery);
+		this.subQueryNames = subQueryNames;
 	}
 
 	@Override
@@ -249,8 +256,10 @@ public class QueryImpl extends GraphStructureChangedAdapter implements Query {
 		}
 		if (queryGraph == null) {
 			long t0 = System.currentTimeMillis();
+			subQueryNames.addAll(subQueryMap.keySet());
+
 			queryGraph = GreqlParserWithVertexEvaluatorUpdates.parse(queryText,
-					this, subQueryMap.keySet());
+					this, subQueryNames);
 			weaveInSubQueries();
 			long t1 = System.currentTimeMillis();
 			parseTime = t1 - t0;
@@ -526,21 +535,10 @@ public class QueryImpl extends GraphStructureChangedAdapter implements Query {
 				definedSubQueries.size() + 1);
 		subQueryNames.addAll(definedSubQueries);
 		subQueryNames.add(name);
-		GreqlParser parser = new GreqlParser(greqlQuery, subQueryNames);
 
-		parser.parse();
-
-		Greql2Graph subQueryGraph = parser.getGraph();
+		QueryImpl greqlQueryObject = new QueryImpl(greqlQuery, subQueryNames);
+		Greql2Graph subQueryGraph = greqlQueryObject.getQueryGraph();
 		subQueryGraph.getFirstGreql2Expression().set_queryText(name);
-		if (optimize) {
-			Greql2Graph oldQueryGraph = queryGraph;
-			String oldQueryString = queryText;
-			queryGraph = subQueryGraph;
-			queryText = greqlQuery;
-			initializeQueryGraph();
-			queryGraph = oldQueryGraph;
-			queryText = oldQueryString;
-		}
 		for (FunctionApplication fa : subQueryGraph
 				.getFunctionApplicationVertices()) {
 			if (name.equals(fa.get_functionId().get_name())) {
@@ -548,14 +546,17 @@ public class QueryImpl extends GraphStructureChangedAdapter implements Query {
 						+ "' is recursive.  That's not allowed!");
 			}
 		}
-		subQueryMap.put(name, subQueryGraph);
-		// System.out.println("\nGiven subquery:");
-		// System.out.println(greqlQuery);
-		// System.out.println("\nOptimized subquery:");
-		// System.out.println(Greql2Serializer.serialize(subQueryGraph));
+		subQueryMap.put(name, greqlQueryObject);
+		if (queryText != null) {
+			weaveInSubQueries();
+			// System.out.println("\nGiven subquery:");
+			// System.out.println(greqlQuery);
+			// System.out.println("\nOptimized subquery:");
+			// System.out.println(Greql2Serializer.serialize(subQueryGraph));
+		}
 	}
 
-	public Greql2Graph getSubQuery(String name) {
+	public Query getSubQuery(String name) {
 		return subQueryMap.get(name);
 	}
 
@@ -565,8 +566,8 @@ public class QueryImpl extends GraphStructureChangedAdapter implements Query {
 		}
 		FunctionApplication subqueryCall = findSubQueryCall();
 		while (subqueryCall != null) {
-			TGMerge tgm = new TGMerge(queryGraph, subQueryMap.get(subqueryCall
-					.get_functionId().get_name()));
+			TGMerge tgm = new TGMerge(queryGraph, subQueryMap.get(
+					subqueryCall.get_functionId().get_name()).getQueryGraph());
 			tgm.merge();
 			weaveInSubquery(subqueryCall);
 			subqueryCall = findSubQueryCall();
@@ -574,7 +575,7 @@ public class QueryImpl extends GraphStructureChangedAdapter implements Query {
 	}
 
 	private FunctionApplication findSubQueryCall() {
-		for (FunctionApplication fa : queryGraph
+		for (FunctionApplication fa : getQueryGraph()
 				.getFunctionApplicationVertices()) {
 			if (subQueryMap.containsKey(fa.get_functionId().get_name())) {
 				return fa;
@@ -648,6 +649,14 @@ public class QueryImpl extends GraphStructureChangedAdapter implements Query {
 		}
 	}
 
+	public LinkedHashMap<String, QueryImpl> getSubQueryMap() {
+		return subQueryMap;
+	}
+
+	public void setSubQueryMap(LinkedHashMap<String, QueryImpl> subQueryMap) {
+		this.subQueryMap = subQueryMap;
+	}
+
 	/**
 	 * stores the graph indizes (maps graphId values to GraphIndizes)
 	 */
@@ -676,8 +685,8 @@ public class QueryImpl extends GraphStructureChangedAdapter implements Query {
 	}
 
 	/**
-	 * Creates the map of optimized syntaxgraphs as soon as the GreqlEvaluator
-	 * gets loaded
+	 * Creates the map of optimized syntaxgraphs as soon as the QueryImpl gets
+	 * loaded
 	 */
 	static {
 		resetOptimizedSyntaxGraphs();

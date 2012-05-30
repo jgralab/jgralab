@@ -386,10 +386,10 @@ public class GenericTest {
 
 	protected Object evalTestQuery(String functionName, String query,
 			Optimizer optimizer, Graph datagraph) throws Exception {
-		this.query = new QueryImpl(query, optimizer);
-		this.query.setUseSavedOptimizedSyntaxGraph(false);
+		GenericTest.query = new QueryImpl(query, optimizer);
+		GenericTest.query.setUseSavedOptimizedSyntaxGraph(false);
 
-		Object result = this.query.evaluate(datagraph, environment);
+		Object result = GenericTest.query.evaluate(datagraph, environment);
 
 		if (DEBUG_SYNTAXGRAPHS) {
 			printDebuggingSyntaxGraph(optimizer);

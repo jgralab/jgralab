@@ -196,5 +196,4 @@ public class SystemTest extends GenericTest {
 		System.out.println("Evaluation of interpreted query took " + usedTime
 				+ "msec");
 	}
-
 }

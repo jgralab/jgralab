@@ -712,7 +712,11 @@ public class Context {
 		String query = sb.toString();
 		logger.finest("GReQL: " + semanticExpression);
 
-		this.query = new QueryImpl(query);
+		QueryImpl newQuery = new QueryImpl(query);
+		if (this.query != null) {
+			newQuery.setSubQueryMap(((QueryImpl) this.query).getSubQueryMap());
+		}
+		this.query = newQuery;
 		// this.query = new QueryImpl(query, false);
 		GreqlEnvironment environment = new GreqlEnvironmentAdapter(greqlMapping);
 		T result = (T) this.query.evaluate(graph, environment);
