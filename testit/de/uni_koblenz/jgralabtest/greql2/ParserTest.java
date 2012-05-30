@@ -308,7 +308,7 @@ public class ParserTest {
 
 	@Test
 	public void testLessThanExpression() throws Exception {
-		Greql2 graph = parseQuery("5456 < 4");
+		Greql2Graph graph = parseQuery("5456 < 4");
 		FunctionApplication funAp = graph.getFirstFunctionApplication();
 		assertNotNull(funAp);
 		IsFunctionIdOf isIdOf = funAp.getFirstIsFunctionIdOfIncidence();
@@ -358,7 +358,7 @@ public class ParserTest {
 		lit = graph.getFirstIntLiteral();
 		assertNotNull(lit);
 		assertEquals(10, lit.get_intValue());
-		int x = 0x5;
+		// int x = 0x5;
 	}
 
 	@Test
@@ -375,17 +375,17 @@ public class ParserTest {
 
 	@Test
 	public void testLongLiteral() throws Exception {
-		Greql2 graph = parseQuery(Long.toString(Long.MAX_VALUE));
+		Greql2Graph graph = parseQuery(Long.toString(Long.MAX_VALUE));
 		LongLiteral lit = graph.getFirstLongLiteral();
 		assertNotNull(lit);
 		assertEquals(Long.MAX_VALUE, lit.get_longValue());
 		assertLongLiteralEquals("7", 7);
 	}
-	
+
 	@Test
 	public void testDoubleLiteral() throws Exception {
-	//	assertDoubleLiteralEquals("5.0", 5.0);
-	//	assertDoubleLiteralEquals("0.5", 0.5);
+		// assertDoubleLiteralEquals("5.0", 5.0);
+		// assertDoubleLiteralEquals("0.5", 0.5);
 		assertDoubleLiteralEquals("046E3", 046e3);
 		assertDoubleLiteralEquals("046e-3", 046e-3);
 	}
@@ -400,15 +400,16 @@ public class ParserTest {
 		assertNotNull(value);
 		assertEquals(expectedValue, value, DELTA);
 	}
-	
+
 	public void assertLongLiteralEquals(String literal, long expectedValue) {
-		Greql2 graph = parseQuery(literal);
+		Greql2Graph graph = parseQuery(literal);
 		LongLiteral lit = graph.getFirstLongLiteral();
 		long value = 0;
-		if (lit != null)
+		if (lit != null) {
 			value = lit.get_longValue();
-		else 
+		} else {
 			value = graph.getFirstIntLiteral().get_intValue();
+		}
 		System.out.println("Value in graph " + value);
 		assertNotNull(value);
 		assertEquals(expectedValue, value);
@@ -1242,7 +1243,7 @@ public class ParserTest {
 	@Test
 	public void testLexer() {
 		String queryString = "let a:= 7 in a";
-		Greql2 graph = parseQuery(queryString);
+		Greql2Graph graph = parseQuery(queryString);
 		assertNotNull(graph);
 	}
 

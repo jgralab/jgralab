@@ -65,6 +65,7 @@ import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VertexEvaluator;
 import de.uni_koblenz.jgralab.greql2.exception.GreqlException;
 import de.uni_koblenz.jgralab.greql2.funlib.FunLib;
 import de.uni_koblenz.jgralab.greql2.optimizer.DefaultOptimizer;
+import de.uni_koblenz.jgralab.greql2.optimizer.Optimizer;
 import de.uni_koblenz.jgralab.greql2.optimizer.OptimizerUtility;
 import de.uni_koblenz.jgralab.greql2.parser.GreqlParser;
 import de.uni_koblenz.jgralab.greql2.schema.Expression;
@@ -93,6 +94,8 @@ public class QueryImpl extends GraphStructureChangedAdapter implements Query {
 	private long parseTime = -1;
 	private Greql2Expression rootExpression;
 	private final OptimizerInfo optimizerInfo;
+	private Optimizer optimizer;
+	private boolean useSavedOptimizedSyntaxGraph = true;
 
 	/**
 	 * Holds the greql subqueries that can be called like other greql functions.
@@ -192,6 +195,15 @@ public class QueryImpl extends GraphStructureChangedAdapter implements Query {
 		this(queryText, optimize, OptimizerUtility.getDefaultOptimizerInfo());
 	}
 
+	public QueryImpl(String queryText, OptimizerInfo optimizerInfo) {
+		this(queryText, true, optimizerInfo);
+	}
+
+	public QueryImpl(String queryText, Optimizer optimizer) {
+		this(queryText, optimizer != null, OptimizerUtility
+				.getDefaultOptimizerInfo(), optimizer);
+	}
+
 	public QueryImpl(String queryText, boolean optimize,
 			OptimizerInfo optimizerInfo) {
 		this.queryText = queryText;
@@ -199,6 +211,18 @@ public class QueryImpl extends GraphStructureChangedAdapter implements Query {
 		this.optimizerInfo = optimizerInfo;
 		knownTypes = new HashMap<Schema, Map<String, AttributedElementClass<?, ?>>>();
 		subQueryMap = new LinkedHashMap<String, Greql2Graph>();
+	}
+
+	public QueryImpl(String queryText, boolean optimize,
+			OptimizerInfo optimizerInfo, Optimizer optimizer) {
+		this(queryText, optimize, optimizerInfo);
+		this.optimizer = optimizer;
+	}
+
+	@Override
+	public void setUseSavedOptimizedSyntaxGraph(
+			boolean useSavedOptimizedSyntaxGraph) {
+		this.useSavedOptimizedSyntaxGraph = useSavedOptimizedSyntaxGraph;
 	}
 
 	@Override
@@ -215,7 +239,7 @@ public class QueryImpl extends GraphStructureChangedAdapter implements Query {
 	}
 
 	private void initializeQueryGraph() {
-		if (queryGraph == null) {
+		if (queryGraph == null && useSavedOptimizedSyntaxGraph) {
 			QueryGraphCacheEntry e = queryGraphCache.get(queryText, optimize);
 			if (e != null) {
 				queryGraph = e.graph;
@@ -231,7 +255,8 @@ public class QueryImpl extends GraphStructureChangedAdapter implements Query {
 			long t1 = System.currentTimeMillis();
 			parseTime = t1 - t0;
 			if (optimize) {
-				new DefaultOptimizer().optimize(this);
+				(optimizer == null ? new DefaultOptimizer() : optimizer)
+						.optimize(this);
 				optimizationTime = System.currentTimeMillis() - t1;
 				if (DEBUG_OPTIMIZATION) {
 					System.out

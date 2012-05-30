@@ -41,7 +41,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.lang.reflect.Field;
-import java.util.HashMap;
+import java.util.Collection;
 
 import org.junit.Test;
 import org.pcollections.PSet;
@@ -49,13 +49,11 @@ import org.pcollections.PVector;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Graph;
-import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.funlib.FunLib;
 import de.uni_koblenz.jgralab.greql2.optimizer.DefaultOptimizer;
 import de.uni_koblenz.jgralab.greql2.optimizer.VariableDeclarationOrderOptimizer;
-import de.uni_koblenz.jgralab.greql2.schema.impl.std.Greql2Impl;
 import de.uni_koblenz.jgralab.greql2.types.Tuple;
 import de.uni_koblenz.jgralabtest.greql2.GenericTest;
 import de.uni_koblenz.jgralabtest.greql2.testfunctions.IsPrime;
@@ -77,30 +75,22 @@ public class GreqlEvaluatorTest extends GenericTest {
 			"Flugplatz Koblenz-Winningen", "Winningen", "Lautzenhausen",
 			"Montabaur", "Flughafen Frankfurt-Hahn" };
 
-	
-
 	@Test
-	public void testCombinations() {
+	public void testCombinations() throws Exception {
 		String query = "from a:list(1..10), b:list(1..10), c:list(1..10), d:list(1..10) report d end";
-		GreqlEvaluator eval = new GreqlEvaluator(query, new Greql2Impl(),
-				new HashMap<String, Object>());
-		eval.startEvaluation();
 		// TODO test seriously
 		@SuppressWarnings("unused")
-		Object result = eval.getResult();
+		Object result = evalTestQuery(query);
 		// for (JValue v : result.toCollection()) {
 		// System.out.println(v);
 		// }
 	}
 
 	@Test
-	public void testCombinations2() {
-		HashMap<String, Object> boundVars = new HashMap<String, Object>();
-		GreqlEvaluator eval = null;
+	public void testCombinations2() throws Exception {
 		String createboundVars = "set(1,2,3) store as s123";
 		String createboundVars2 = "set(4,5,6) store as s456 ";
-		eval = new GreqlEvaluator(createboundVars, new Greql2Impl(), boundVars);
-		eval.startEvaluation();
+		evalTestQuery(createboundVars);
 		// TODO test seriously
 		// System.out.println("HashMap: " + boundVars.size());
 		// for (java.util.Map.Entry<String, JValue> entry :
@@ -108,8 +98,7 @@ public class GreqlEvaluatorTest extends GenericTest {
 		// System.out.println("<" + entry.getKey() + "," + entry.getValue()
 		// + ">");
 		// }
-		eval = new GreqlEvaluator(createboundVars2, new Greql2Impl(), boundVars);
-		eval.startEvaluation();
+		evalTestQuery(createboundVars2);
 		String query = "using s123, s456: "
 				+ // img_Action, img_State
 				"from t:s123, "
@@ -118,13 +107,10 @@ public class GreqlEvaluatorTest extends GenericTest {
 				+ // keySet img_state
 				"     m: from _m:list(t..5) reportSet _m end " + "with a < m "
 				+ "reportSet t,a end";
-		eval = new GreqlEvaluator(query, new Greql2Impl(), boundVars);
-		eval.setOptimize(false);
-		eval.startEvaluation();
 
 		// TODO test seriously
 		@SuppressWarnings("unused")
-		Object result = eval.getResult();
+		Object result = evalQuery(query, null, null);
 		// for (JValue v : result.toCollection()) {
 		// System.out.println(v);
 		// }
@@ -164,15 +150,14 @@ public class GreqlEvaluatorTest extends GenericTest {
 		Object resultWO = evalQueryWithOptimizer(queryString);
 		assertEquals(result, resultWO);
 
-		
 	}
 
 	@Test
 	public void testEvaluateExponentiatedPathDescription() throws Exception {
 		String queryString = "from airport: V{junctions.Airport} with airport  <->^2 airport report airport end";
-		JValue result = evalTestQuery(queryString);
-		assertEquals(airportCount, result.toCollection().size());
-		JValue resultWO = evalQueryWithOptimizer(queryString);
+		Collection<?> result = (Collection<?>) evalTestQuery(queryString);
+		assertEquals(airportCount, result.size());
+		Object resultWO = evalQueryWithOptimizer(queryString);
 		assertEquals(result, resultWO);
 	}
 
@@ -185,13 +170,12 @@ public class GreqlEvaluatorTest extends GenericTest {
 	public void testEvaluateBackwardVertexSet() throws Exception {
 		String queryString = "from airport: V{junctions.Airport} "
 				+ "report airport <--{connections.AirRoute} <--{localities.ContainsLocality} end";
-		JValue result = evalTestQuery(queryString);
+		Collection<Collection<Vertex>> result = (Collection<Collection<Vertex>>) evalTestQuery(queryString);
 
-		assertEquals(airportCount, result.toCollection().size());
-		for (JValue j : result.toCollection()) {
-			JValueCollection collection = j.toCollection();
+		assertEquals(airportCount, result.size());
+		for (Collection<Vertex> collection : result) {
 			if (!collection.isEmpty()) {
-				for (JValue vertex : collection) {
+				for (Vertex vertex : collection) {
 					setBoundVariable("x", vertex);
 					assertQueryEquals(
 							"using x: exists airport:V{junctions.Airport} "
@@ -199,7 +183,7 @@ public class GreqlEvaluatorTest extends GenericTest {
 				}
 			}
 		}
-		JValue resultWO = evalQueryWithOptimizer(queryString);
+		Object resultWO = evalQueryWithOptimizer(queryString);
 		assertEquals(result, resultWO);
 	}
 
@@ -207,9 +191,9 @@ public class GreqlEvaluatorTest extends GenericTest {
 	public void testReachability() throws Exception {
 		String queryString = "forall e: E{IsDefinitionOf}"
 				+ "  @ startVertex(e) -->{IsDefinitionOf} endVertex(e)";
-		JValue result = evalTestQuery("Reachability", queryString);
-		assertTrue(result.toBoolean());
-		JValue resultWO = evalTestQuery("BackwardVertexSet1 (wo)", queryString,
+		Object result = evalTestQuery("Reachability", queryString);
+		assertTrue(result instanceof Boolean);
+		Object resultWO = evalTestQuery("BackwardVertexSet1 (wo)", queryString,
 				new DefaultOptimizer());
 		assertEquals(result, resultWO);
 	}
@@ -222,19 +206,17 @@ public class GreqlEvaluatorTest extends GenericTest {
 	@Test
 	public void testEvaluateBackwardVertexSet2() throws Exception {
 		String queryString = "from w: V{junctions.Junction} report w <--{localities.ContainsCrossroad} [<--{localities.ContainsLocality}] end";
-		JValue result = evalTestQuery(queryString);
+		Collection<Collection<Vertex>> result = (Collection<Collection<Vertex>>) evalTestQuery(queryString);
 
-		assertEquals(crossroadCount + airportCount, result.toCollection()
-				.size());
-		for (JValue j : result.toCollection()) {
-			for (JValue value : j.toCollection()) {
-				Vertex vertex = value.toVertex();
+		assertEquals(crossroadCount + airportCount, result.size());
+		for (Collection<Vertex> collection : result) {
+			for (Vertex vertex : collection) {
 				if (!(vertex instanceof Locality || vertex instanceof County)) {
 					fail();
 				}
 			}
 		}
-		JValue resultWO = evalQueryWithOptimizer(queryString);
+		Object resultWO = evalQueryWithOptimizer(queryString);
 		assertEquals(result, resultWO);
 	}
 
@@ -245,11 +227,11 @@ public class GreqlEvaluatorTest extends GenericTest {
 	 */
 	@Test
 	public void testUsing() throws Exception {
-		setBoundVariable("FOO", new JValueImpl("A String"));
+		setBoundVariable("FOO", "A String");
 		String queryString = "using FOO: FOO";
-		JValue result = evalTestQuery("Using", queryString);
-		assertEquals("A String", result.toString());
-		JValue resultWO = evalTestQuery("Using", queryString,
+		Object result = evalTestQuery("Using", queryString);
+		assertEquals("A String", result);
+		Object resultWO = evalTestQuery("Using", queryString,
 				new DefaultOptimizer());
 		assertEquals(result, resultWO);
 	}

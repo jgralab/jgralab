@@ -43,4 +43,7 @@ public interface Query {
 
 	public void setSubQuery(String name, String greqlQuery);
 
+	public void setUseSavedOptimizedSyntaxGraph(
+			boolean useSavedOptimizedSyntaxGraph);
+
 }

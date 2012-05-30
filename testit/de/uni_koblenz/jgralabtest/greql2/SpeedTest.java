@@ -38,7 +38,8 @@ package de.uni_koblenz.jgralabtest.greql2;
 import org.junit.Test;
 
 import de.uni_koblenz.jgralab.Graph;
-import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
+import de.uni_koblenz.jgralab.greql2.evaluator.GraphSize;
+import de.uni_koblenz.jgralab.greql2.evaluator.QueryImpl;
 import de.uni_koblenz.jgralab.greql2.parser.GreqlParser;
 
 public class SpeedTest extends GenericTest {
@@ -68,9 +69,9 @@ public class SpeedTest extends GenericTest {
 		Graph datagraph = getTestGraph();
 
 		// System.out.println("Creating evaluator");
-		GreqlEvaluator eval = new GreqlEvaluator(queryString, datagraph, null);
 		// System.out.println("Starting evaluation");
-		eval.startEvaluation();
+		new QueryImpl(queryString, new GraphSize(datagraph))
+				.evaluate(datagraph);
 
 		// TODO test seriously
 		// System.out.println("Result of the evaluation was: "
