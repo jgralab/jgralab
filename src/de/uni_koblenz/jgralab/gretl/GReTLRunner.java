@@ -198,6 +198,7 @@ public class GReTLRunner {
 		} else {
 			for (String in : cli.getArgs()) {
 				Graph inGraph = GraphIO.loadGraphFromFile(in,
+						ImplementationType.GENERIC,
 						new ConsoleProgressFunction("Loading"));
 				if (cli.hasOption('u')) {
 					c = new Context(inGraph.getSchema());
