@@ -66,8 +66,6 @@ import de.uni_koblenz.jgralab.schema.Schema;
  * String or Graph and a JGraLab-Datagraph and evaluates the Query on this
  * graph. The result is a JValue-object, it can be accessed using the method
  * <code>JValue getEvaluationResult()</code>.<br>
- * TODO [greqlevaluator] Make all occurences of GreqlEvaluatorImpl to use the
- * public Interface.
  * 
  * @author ist@uni-koblenz.de
  * 
@@ -314,7 +312,7 @@ public class GreqlEvaluatorImpl implements InternalGreqlEvaluator,
 		return evaluate();
 	}
 
-	private Object evaluate() {
+	public Object evaluate() {
 		long startTime = System.currentTimeMillis();
 		evaluationTime = -1;
 		query.resetVertexEvaluators(this);

@@ -41,7 +41,12 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.junit.Test;
 import org.pcollections.PSet;
@@ -49,11 +54,20 @@ import org.pcollections.PVector;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Graph;
+import de.uni_koblenz.jgralab.JGraLab;
+import de.uni_koblenz.jgralab.Record;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
+import de.uni_koblenz.jgralab.greql2.evaluator.GraphSize;
+import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEnvironmentAdapter;
+import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluatorImpl;
+import de.uni_koblenz.jgralab.greql2.evaluator.OptimizerInfo;
+import de.uni_koblenz.jgralab.greql2.evaluator.Query;
+import de.uni_koblenz.jgralab.greql2.evaluator.QueryImpl;
 import de.uni_koblenz.jgralab.greql2.funlib.FunLib;
 import de.uni_koblenz.jgralab.greql2.optimizer.DefaultOptimizer;
 import de.uni_koblenz.jgralab.greql2.optimizer.VariableDeclarationOrderOptimizer;
+import de.uni_koblenz.jgralab.greql2.types.PathSystem;
+import de.uni_koblenz.jgralab.greql2.types.Table;
 import de.uni_koblenz.jgralab.greql2.types.Tuple;
 import de.uni_koblenz.jgralabtest.greql2.GenericTest;
 import de.uni_koblenz.jgralabtest.greql2.testfunctions.IsPrime;
@@ -81,7 +95,7 @@ public class GreqlEvaluatorTest extends GenericTest {
 		// TODO test seriously
 		@SuppressWarnings("unused")
 		Object result = evalTestQuery(query);
-		// for (JValue v : result.toCollection()) {
+		// for (Object v : ((Collection<?>)result)) {
 		// System.out.println(v);
 		// }
 	}
@@ -111,7 +125,7 @@ public class GreqlEvaluatorTest extends GenericTest {
 		// TODO test seriously
 		@SuppressWarnings("unused")
 		Object result = evalQuery(query, null, null);
-		// for (JValue v : result.toCollection()) {
+		// for (Object v : ((Collection<?>)result)) {
 		// System.out.println(v);
 		// }
 	}
@@ -126,6 +140,7 @@ public class GreqlEvaluatorTest extends GenericTest {
 		String queryString = "from airport: V{junctions.Airport}, x: V with x "
 				+ "(-->{localities.ContainsLocality} | -->{connections.AirRoute}) airport "
 				+ "report x end";
+		@SuppressWarnings("unchecked")
 		PVector<Vertex> result = (PVector<Vertex>) evalTestQuery(queryString);
 
 		assertFalse(result.isEmpty());
@@ -139,6 +154,7 @@ public class GreqlEvaluatorTest extends GenericTest {
 	@Test
 	public void testEvaluateAlternativePathDescription2() throws Exception {
 		String queryString = "from v:V{NamedElement} reportSet v, v.name, v (-->{^connections.Way, ^connections.AirRoute} | (-->{localities.ContainsLocality} -->{connections.AirRoute}))* end";
+		@SuppressWarnings("unchecked")
 		PSet<Tuple> result = (PSet<Tuple>) evalTestQuery(queryString);
 
 		for (Tuple tuple : result) {
@@ -170,6 +186,7 @@ public class GreqlEvaluatorTest extends GenericTest {
 	public void testEvaluateBackwardVertexSet() throws Exception {
 		String queryString = "from airport: V{junctions.Airport} "
 				+ "report airport <--{connections.AirRoute} <--{localities.ContainsLocality} end";
+		@SuppressWarnings("unchecked")
 		Collection<Collection<Vertex>> result = (Collection<Collection<Vertex>>) evalTestQuery(queryString);
 
 		assertEquals(airportCount, result.size());
@@ -206,6 +223,7 @@ public class GreqlEvaluatorTest extends GenericTest {
 	@Test
 	public void testEvaluateBackwardVertexSet2() throws Exception {
 		String queryString = "from w: V{junctions.Junction} report w <--{localities.ContainsCrossroad} [<--{localities.ContainsLocality}] end";
+		@SuppressWarnings("unchecked")
 		Collection<Collection<Vertex>> result = (Collection<Collection<Vertex>>) evalTestQuery(queryString);
 
 		assertEquals(crossroadCount + airportCount, result.size());
@@ -243,11 +261,11 @@ public class GreqlEvaluatorTest extends GenericTest {
 	 */
 	@Test
 	public void testUsingWithFunction() throws Exception {
-		setBoundVariable("FOO", new JValueImpl("A String"));
+		setBoundVariable("FOO", "A String");
 		String queryString = "using FOO: concat(FOO, \" Another String\")";
-		JValue result = evalTestQuery("UsingWithFunction", queryString);
+		Object result = evalTestQuery("UsingWithFunction", queryString);
 		assertEquals("A String Another String", result.toString());
-		JValue resultWO = evalTestQuery("UsingWithFunction", queryString,
+		Object resultWO = evalTestQuery("UsingWithFunction", queryString,
 				new DefaultOptimizer());
 		assertEquals(result, resultWO);
 	}
@@ -262,9 +280,10 @@ public class GreqlEvaluatorTest extends GenericTest {
 		String queryString = "getVertex(1) store as FOO";
 		evalTestQuery("", queryString);
 		queryString = "using FOO: pathSystem(FOO, (-->))";
-		JValue result = evalTestQuery("UsingWithPath", queryString);
-		JValue resultWO = evalTestQuery("UsingWithPath", queryString,
-				new DefaultOptimizer());
+		PathSystem result = (PathSystem) evalTestQuery("UsingWithPath",
+				queryString);
+		PathSystem resultWO = (PathSystem) evalTestQuery("UsingWithPath",
+				queryString, new DefaultOptimizer());
 		assertEquals(result, resultWO);
 	}
 
@@ -275,11 +294,11 @@ public class GreqlEvaluatorTest extends GenericTest {
 	 */
 	@Test
 	public void testPathSystem() throws Exception {
-		String queryString = "pathSystem(getVertex(1), -->{Edge})";
+		String queryString = "pathSystem(getVertex(1), -->)";
 		// String queryString = "getVertex(1) :-) -->{Edge}";
-		JValue result = evalTestQuery("UsingWithPath", queryString);
+		Object result = evalTestQuery("UsingWithPath", queryString);
 		// assertEquals("A String Another String", result.toString());
-		JValue resultWO = evalTestQuery("UsingWithPath", queryString,
+		Object resultWO = evalTestQuery("UsingWithPath", queryString,
 				new DefaultOptimizer());
 		assertEquals(result, resultWO);
 	}
@@ -295,9 +314,9 @@ public class GreqlEvaluatorTest extends GenericTest {
 				+ "with county (-->{localities.ContainsLocality}) | "
 				+ "(-->{localities.HasCapital}) locality "
 				+ "reportSet locality end";
-		JValue result = evalTestQuery(queryString);
-		assertEquals(localityCount, result.toCollection().size());
-		JValue resultWO = evalQueryWithOptimizer(queryString);
+		Object result = evalTestQuery(queryString);
+		assertEquals(localityCount, ((Collection<?>) result).size());
+		Object resultWO = evalQueryWithOptimizer(queryString);
 		assertEquals(result, resultWO);
 	}
 
@@ -309,27 +328,27 @@ public class GreqlEvaluatorTest extends GenericTest {
 	@Test
 	public void testEvaluateConditionalExpression() throws Exception {
 		String queryString = "1=1?1:2";
-		JValue result = evalTestQuery("ConditionalExpression", queryString);
-		assertEquals(1, (int) result.toInteger());
-		JValue resultWO = evalQueryWithOptimizer(queryString);
+		Object result = evalTestQuery("ConditionalExpression", queryString);
+		assertEquals(1, ((Integer) result).intValue());
+		Object resultWO = evalQueryWithOptimizer(queryString);
 		assertEquals(result, resultWO);
 	}
 
 	@Test
 	public void testEvaluateConditionalExpression2() throws Exception {
 		String queryString = "1=2?1:2";
-		JValue result = evalTestQuery("ConditionalExpression2", queryString);
-		assertEquals(2, (int) result.toInteger());
-		JValue resultWO = evalQueryWithOptimizer(queryString);
+		Object result = evalTestQuery("ConditionalExpression2", queryString);
+		assertEquals(2, ((Integer) result).intValue());
+		Object resultWO = evalQueryWithOptimizer(queryString);
 		assertEquals(result, resultWO);
 	}
 
 	@Test
 	public void testEvaluateConditionalExpression3() throws Exception {
 		String queryString = "false ? 1 : 2";
-		JValue result = evalTestQuery("ConditionalExpression3", queryString);
-		assertEquals(2, (int) result.toInteger());
-		JValue resultWO = evalQueryWithOptimizer(queryString);
+		Object result = evalTestQuery("ConditionalExpression3", queryString);
+		assertEquals(2, ((Integer) result).intValue());
+		Object resultWO = evalQueryWithOptimizer(queryString);
 		assertEquals(result, resultWO);
 	}
 
@@ -340,12 +359,11 @@ public class GreqlEvaluatorTest extends GenericTest {
 	 */
 	@Test
 	public void testEvaluateEdgePathDescription() throws Exception {
-		String queryString = "from edge: E, origin: V{junctions.Plaza}, target: V{junctions.Crossroad} "
-				+ "in eSubgraph{connections.Footpath!} with origin <-edge-> target "
-				+ "report target end";
-		JValue result = evalTestQuery(queryString);
-		assertEquals(1, result.toCollection().size());
-		JValue resultWO = evalQueryWithOptimizer(queryString);
+		String queryString = "on edgeTypeSubgraph{connections.Footpath!}(): from edge: E, origin: V{junctions.Plaza}, target: V{junctions.Crossroad} "
+				+ "with origin <-edge-> target " + "report target end";
+		Object result = evalTestQuery(queryString);
+		assertEquals(1, ((Collection<?>) result).size());
+		Object resultWO = evalQueryWithOptimizer(queryString);
 		assertEquals(result, resultWO);
 	}
 
@@ -356,12 +374,12 @@ public class GreqlEvaluatorTest extends GenericTest {
 	 */
 	@Test
 	public void testEvaluateEdgePathDescription2() throws Exception {
-		String queryString = "flatten(from edge: E in eSubgraph{connections.Footpath!} report "
+		String queryString = "on edgeTypeSubgraph{connections.Footpath!}(): flatten(from edge: E report "
 				+ "from origin: V{junctions.Plaza}, target: V{junctions.Crossroad} "
 				+ "with origin <-edge-> target report target end end)";
-		JValue result = evalTestQuery(queryString);
-		assertEquals(1, result.toCollection().size());
-		JValue resultWO = evalQueryWithOptimizer(queryString);
+		Object result = evalTestQuery(queryString);
+		assertEquals(1, ((Collection<?>) result).size());
+		Object resultWO = evalQueryWithOptimizer(queryString);
 		assertEquals(result, resultWO);
 	}
 
@@ -372,15 +390,15 @@ public class GreqlEvaluatorTest extends GenericTest {
 	 */
 	@Test
 	public void testEvaluateEdgePathDescription3() throws Exception {
-		String queryString = "flatten(from edge: E in eSubgraph{connections.Footpath!} report "
+		String queryString = "on edgeTypeSubgraph{connections.Footpath!}(): flatten(from edge: E report "
 				+ "from origin: V{junctions.Plaza}, target: V{junctions.Crossroad} "
 				+ "with origin <-edge-> target report target end end)";
-		String queryString2 = "flatten(from edge: E in eSubgraph{connections.Footpath!} report "
+		String queryString2 = "on edgeTypeSubgraph{connections.Footpath!}(): flatten(from edge: E report "
 				+ "from origin: V{junctions.Plaza}, target: V{junctions.Crossroad} "
 				+ "with contains(<-edge-> target, origin) report target end end)";
-		JValue result = evalTestQuery(queryString);
-		assertEquals(1, result.toCollection().size());
-		JValue resultWO = evalTestQuery(queryString2);
+		Object result = evalTestQuery(queryString);
+		assertEquals(1, ((Collection<?>) result).size());
+		Object resultWO = evalTestQuery(queryString2);
 		assertEquals(result, resultWO);
 	}
 
@@ -391,13 +409,14 @@ public class GreqlEvaluatorTest extends GenericTest {
 	 */
 	@Test
 	public void testEvaluateEdgePathDescription4() throws Exception {
-		String queryString = "from edge: E in eSubgraph{connections.Footpath} report from plaza: V{junctions.Plaza} report plaza end end";
-		JValue result = evalTestQuery(queryString);
-		assertEquals(16, result.toCollection().size());
-		for (JValue j : result.toCollection()) {
-			assertEquals(6, j.toCollection().size());
+		String queryString = "on edgeTypeSubgraph{connections.Footpath}(): from edge: E report from plaza: V{junctions.Plaza} report plaza end end";
+		@SuppressWarnings("unchecked")
+		Collection<Collection<?>> result = (Collection<Collection<?>>) evalTestQuery(queryString);
+		assertEquals(16, result.size());
+		for (Collection<?> j : result) {
+			assertEquals(6, j.size());
 		}
-		JValue resultWO = evalQueryWithOptimizer(queryString);
+		Object resultWO = evalQueryWithOptimizer(queryString);
 		assertEquals(result, resultWO);
 	}
 
@@ -409,18 +428,18 @@ public class GreqlEvaluatorTest extends GenericTest {
 	@Test
 	public void testEvaluateEdgeSetExpression() throws Exception {
 		String queryString = "from footpath:E{connections.Footpath} report footpath end";
-		JValue result = evalTestQuery(queryString);
-		assertEquals(footpathCount, result.toCollection().size());
-		JValue resultWO = evalQueryWithOptimizer(queryString);
+		Object result = evalTestQuery(queryString);
+		assertEquals(footpathCount, ((Collection<?>) result).size());
+		Object resultWO = evalQueryWithOptimizer(queryString);
 		assertEquals(result, resultWO);
 	}
 
 	@Test
 	public void testEvaluateEdgeSubgraphExpression1() throws Exception {
-		String queryString = "from footpath: E in eSubgraph{connections.Footpath} report footpath end";
-		JValue result = evalTestQuery(queryString);
-		assertEquals(footpathCount, result.toCollection().size());
-		JValue resultWO = evalQueryWithOptimizer(queryString);
+		String queryString = "on edgeTypeSubgraph{connections.Footpath}(): from footpath: E report footpath end";
+		Object result = evalTestQuery(queryString);
+		assertEquals(footpathCount, ((Collection<?>) result).size());
+		Object resultWO = evalQueryWithOptimizer(queryString);
 		assertEquals(result, resultWO);
 	}
 
@@ -432,7 +451,8 @@ public class GreqlEvaluatorTest extends GenericTest {
 
 	@Test
 	public void testEvaluateEdgeSubgraphExpression2() throws Exception {
-		String queryString = "from i: V in eSubgraph{connections.Footpath} report i end";
+		String queryString = "on edgeTypeSubgraph{connections.Footpath}(): from i: V report i end";
+		@SuppressWarnings("unchecked")
 		PVector<Vertex> result = (PVector<Vertex>) evalTestQuery(queryString);
 		assertEquals(24, result.size());
 		Object resultWO = evalQueryWithOptimizer(queryString);
@@ -441,7 +461,8 @@ public class GreqlEvaluatorTest extends GenericTest {
 
 	@Test
 	public void testEvaluateEdgeSubgraphExpression3() throws Exception {
-		String queryString = "from i: V in eSubgraph{^connections.Footpath} report i end";
+		String queryString = "on edgeTypeSubgraph{^connections.Footpath}(): from i: V report i end";
+		@SuppressWarnings("unchecked")
 		PVector<Vertex> result = (PVector<Vertex>) evalTestQuery(queryString);
 		assertEquals(156, result.size());
 		Object resultWO = evalQueryWithOptimizer(queryString);
@@ -451,6 +472,7 @@ public class GreqlEvaluatorTest extends GenericTest {
 	@Test
 	public void testEvaluateExponentiatedPathDescription1() throws Exception {
 		String queryString = "from origin: V{junctions.Airport}, target: V{junctions.Airport} with origin <--{connections.AirRoute}^1 target report origin end";
+		@SuppressWarnings("unchecked")
 		PVector<Vertex> result = (PVector<Vertex>) evalTestQuery(queryString);
 		assertEquals(3, result.size());
 		Object resultWO = evalQueryWithOptimizer(queryString);
@@ -460,18 +482,18 @@ public class GreqlEvaluatorTest extends GenericTest {
 	@Test
 	public void testEvaluateExponentiatedPathDescription2() throws Exception {
 		String queryString = "from origin: V{junctions.Airport}, target: V{junctions.Airport} with origin <--{connections.AirRoute}^2 target report origin end";
-		JValue result = evalTestQuery(queryString);
-		assertEquals(1, result.toCollection().size());
-		JValue resultWO = evalQueryWithOptimizer(queryString);
+		Object result = evalTestQuery(queryString);
+		assertEquals(1, ((Collection<?>) result).size());
+		Object resultWO = evalQueryWithOptimizer(queryString);
 		assertEquals(result, resultWO);
 	}
 
 	@Test
 	public void testEvaluateExponentiatedPathDescription3() throws Exception {
 		String queryString = "from origin: V{junctions.Airport}, target: V{junctions.Airport} with origin <--{connections.AirRoute}^3 target report origin end";
-		JValue result = evalTestQuery(queryString);
-		assertEquals(0, result.toCollection().size());
-		JValue resultWO = evalQueryWithOptimizer(queryString);
+		Object result = evalTestQuery(queryString);
+		assertEquals(0, ((Collection<?>) result).size());
+		Object resultWO = evalQueryWithOptimizer(queryString);
 		assertEquals(result, resultWO);
 	}
 
@@ -483,9 +505,9 @@ public class GreqlEvaluatorTest extends GenericTest {
 	@Test
 	public void testEvaluateForwardVertexSet() throws Exception {
 		String queryString = "from airport: V{junctions.Airport} report airport --> end";
-		JValue result = evalTestQuery(queryString);
-		assertEquals(airportCount, result.toCollection().size());
-		JValue resultWO = evalQueryWithOptimizer(queryString);
+		Object result = evalTestQuery(queryString);
+		assertEquals(airportCount, ((Collection<?>) result).size());
+		Object resultWO = evalQueryWithOptimizer(queryString);
 		assertEquals(result, resultWO);
 	}
 
@@ -494,13 +516,15 @@ public class GreqlEvaluatorTest extends GenericTest {
 	 * 'greql2.evaluator.GreqlEvaluator.evaluateSequentialPathDescription(SequentialPathDescription,
 	 * Graph)'
 	 */
+	@SuppressWarnings("unchecked")
 	@Test
 	public void testEvaluateGoalRestriction1() throws Exception {
 		String queryString = "from county: V{localities.County}, junction: V{junctions.Junction} with county -->{localities.ContainsLocality} & {localities.Town!} -->{localities.ContainsCrossroad} junction report junction end";
-		JValue result = evalTestQuery(queryString);
-		assertEquals(3, result.toCollection().size());
-		JValue resultWO = evalQueryWithOptimizer(queryString);
-		assertEquals(result.toJValueSet(), resultWO.toJValueSet());
+		Object result = evalTestQuery(queryString);
+		assertEquals(3, ((Collection<?>) result).size());
+		Object resultWO = evalQueryWithOptimizer(queryString);
+		containsAllElements((Collection<Object>) result,
+				(Collection<Object>) resultWO);
 	}
 
 	/*
@@ -511,9 +535,9 @@ public class GreqlEvaluatorTest extends GenericTest {
 	@Test
 	public void testEvaluateGoalRestriction2() throws Exception {
 		String queryString = "from var: V{Variable}, def: V{WhereExpression} with var  -->{IsVarOf} & {DefinitionExpression} -->{IsDefinitionOf} def report var end";
-		JValue result = evalTestQuery("GoalRestriction2", queryString);
-		assertEquals(0, result.toCollection().size());
-		JValue resultWO = evalTestQuery("GoalRestriction2 (wo)", queryString,
+		Object result = evalTestQuery("GoalRestriction2", queryString);
+		assertEquals(0, ((Collection<?>) result).size());
+		Object resultWO = evalTestQuery("GoalRestriction2 (wo)", queryString,
 				new DefaultOptimizer());
 		assertEquals(result, resultWO);
 	}
@@ -526,9 +550,9 @@ public class GreqlEvaluatorTest extends GenericTest {
 	@Test
 	public void testEvaluateRestrictedEdgePathDescription() throws Exception {
 		String queryString = "from var: V{Variable}, def: V{WhereExpression} with var  -->{IsVarOf @ thisEdge <> def} def report var end";
-		JValue result = evalTestQuery("GoalRestriction2", queryString);
-		assertEquals(0, result.toCollection().size());
-		JValue resultWO = evalTestQuery("GoalRestriction2 (wo)", queryString,
+		Object result = evalTestQuery("GoalRestriction2", queryString);
+		assertEquals(0, ((Collection<?>) result).size());
+		Object resultWO = evalTestQuery("GoalRestriction2 (wo)", queryString,
 				new DefaultOptimizer());
 		assertEquals(result, resultWO);
 	}
@@ -541,12 +565,12 @@ public class GreqlEvaluatorTest extends GenericTest {
 	@Test
 	public void testEvaluateGreql2Expression() throws Exception {
 		String queryString = "using FOO: from i: FOO report i end";
-		JValue result = evalTestQuery("EvaluateGreql2Expression", queryString);
-		assertEquals(1, result.toCollection().size());
-		for (JValue j : result.toCollection()) {
+		Object result = evalTestQuery("EvaluateGreql2Expression", queryString);
+		assertEquals(1, ((Collection<?>) result).size());
+		for (Object j : ((Collection<?>) result)) {
 			assertEquals("Currywurst", j.toString());
 		}
-		JValue resultWO = evalTestQuery("EvaluateGreql2Expression (wo)",
+		Object resultWO = evalTestQuery("EvaluateGreql2Expression (wo)",
 				queryString, new DefaultOptimizer());
 		assertEquals(result, resultWO);
 	}
@@ -561,9 +585,9 @@ public class GreqlEvaluatorTest extends GenericTest {
 		String queryString = "from origin: V{junctions.Crossroad}, target: V{junctions.Airport} "
 				+ "with origin  -->{connections.Street}* <--{localities.ContainsCrossroad} target "
 				+ "report origin end";
-		JValue result = evalTestQuery(queryString);
-		assertEquals(180, result.toCollection().size());
-		JValue resultWO = evalQueryWithOptimizer(queryString);
+		Object result = evalTestQuery(queryString);
+		assertEquals(180, ((Collection<?>) result).size());
+		Object resultWO = evalQueryWithOptimizer(queryString);
 		assertEquals(result, resultWO);
 	}
 
@@ -572,8 +596,8 @@ public class GreqlEvaluatorTest extends GenericTest {
 		String queryString = "from origin: V{junctions.Crossroad}, target: V{junctions.Airport} "
 				+ "with origin  -->{connections.Street}* <--{localities.ContainsCrossroad} target "
 				+ "report origin end";
-		JValue result = evalTestQuery(queryString);
-		assertEquals(180, result.toCollection().size());
+		Object result = evalTestQuery(queryString);
+		assertEquals(180, ((Collection<?>) result).size());
 
 		String queryString2 = "from origin: V{junctions.Crossroad}, "
 				+ " target: origin  -->{connections.Street}* <--{localities.ContainsCrossroad} &{junctions.Airport} "
@@ -594,9 +618,9 @@ public class GreqlEvaluatorTest extends GenericTest {
 	@Test
 	public void testEvaluateIteratedPathDescription2() throws Exception {
 		String queryString = "from var: V{Definition}, def: V{WhereExpression} with var -->{IsVarOf}+ -->{IsDefinitionOf} def report var end";
-		JValue result = evalTestQuery("IteratedPathDescription2", queryString);
-		assertEquals(0, result.toCollection().size());
-		JValue resultWO = evalTestQuery("IteratedPathDescription2 (wo)",
+		Object result = evalTestQuery("IteratedPathDescription2", queryString);
+		assertEquals(0, ((Collection<?>) result).size());
+		Object resultWO = evalTestQuery("IteratedPathDescription2 (wo)",
 				queryString, new DefaultOptimizer());
 		assertEquals(result, resultWO);
 	}
@@ -606,9 +630,9 @@ public class GreqlEvaluatorTest extends GenericTest {
 		String queryString = "from origin: V{junctions.Crossroad}, target: V{junctions.Airport} "
 				+ "with origin  -->{connections.Street}+ <--{localities.ContainsCrossroad} target "
 				+ "report origin end";
-		JValue result = evalTestQuery(queryString);
-		assertEquals(177, result.toCollection().size());
-		JValue resultWO = evalQueryWithOptimizer(queryString);
+		Object result = evalTestQuery(queryString);
+		assertEquals(177, ((Collection<?>) result).size());
+		Object resultWO = evalQueryWithOptimizer(queryString);
 		assertEquals(result, resultWO);
 	}
 
@@ -617,9 +641,9 @@ public class GreqlEvaluatorTest extends GenericTest {
 		String queryString = "from origin: V{junctions.Crossroad}, target: V{junctions.Airport} "
 				+ "with origin  -->{connections.Street}* <--{localities.ContainsCrossroad} -->{connections.AirRoute} target "
 				+ "report origin end";
-		JValue result = evalTestQuery(queryString);
-		assertEquals(127, result.toCollection().size());
-		JValue resultWO = evalQueryWithOptimizer(queryString);
+		Object result = evalTestQuery(queryString);
+		assertEquals(127, ((Collection<?>) result).size());
+		Object resultWO = evalQueryWithOptimizer(queryString);
 		assertEquals(result, resultWO);
 	}
 
@@ -627,16 +651,15 @@ public class GreqlEvaluatorTest extends GenericTest {
 	public void testEvaluateIteratedKleneePathDescriptionReflexivity()
 			throws Exception {
 		String queryString = "from def: V{Definition} reportSet def, def <--* end";
-		JValueSet result = evalTestQuery(
-				"IteratedKleneePathDescriptionReflexivity", queryString)
-				.toJValueSet();
+		@SuppressWarnings("unchecked")
+		Set<Tuple> result = (Set<Tuple>) evalTestQuery(
+				"IteratedKleneePathDescriptionReflexivity", queryString);
 
-		for (JValue val : result) {
-			JValueTuple tup = val.toJValueTuple();
-			assertTrue(tup.get(1).toJValueSet().contains(tup.get(0)));
+		for (Tuple tup : result) {
+			assertTrue(((Set<?>) tup.get(1)).contains(tup.get(0)));
 		}
 
-		JValue resultWO = evalTestQuery(
+		Object resultWO = evalTestQuery(
 				"IteratedKleneePathDescriptionReflexivity (wo)", queryString,
 				new DefaultOptimizer());
 		assertEquals(result, resultWO);
@@ -646,16 +669,15 @@ public class GreqlEvaluatorTest extends GenericTest {
 	public void testEvaluateIteratedKleneePathDescriptionReflexivity2()
 			throws Exception {
 		String queryString = "from def: V{Definition} reportSet def, def (<--{IsVarOf} <--)* end";
-		JValueSet result = evalTestQuery(
-				"IteratedKleneePathDescriptionReflexivity2", queryString)
-				.toJValueSet();
+		@SuppressWarnings("unchecked")
+		Set<Tuple> result = (Set<Tuple>) evalTestQuery(
+				"IteratedKleneePathDescriptionReflexivity2", queryString);
 
-		for (JValue val : result) {
-			JValueTuple tup = val.toJValueTuple();
-			assertTrue(tup.get(1).toJValueSet().contains(tup.get(0)));
+		for (Tuple tup : result) {
+			assertTrue(((Set<?>) tup.get(1)).contains(tup.get(0)));
 		}
 
-		JValue resultWO = evalTestQuery(
+		Object resultWO = evalTestQuery(
 				"IteratedKleneePathDescriptionReflexivity2 (wo)", queryString,
 				new DefaultOptimizer());
 		assertEquals(result, resultWO);
@@ -669,11 +691,12 @@ public class GreqlEvaluatorTest extends GenericTest {
 	@Test
 	public void testEvaluateLetExpression() throws Exception {
 		String queryString = "let a := 7 , b:=a, c:=b in from i:c report i end";
-		JValue result = evalTestQuery("LetExpression", queryString);
-		assertEquals(1, result.toCollection().size());
-		JValueList list = result.toCollection().toJValueList();
-		assertEquals(7, (int) list.get(0).toInteger());
-		JValue resultWO = evalTestQuery("LetExpression (wo)", queryString,
+		Object result = evalTestQuery("LetExpression", queryString);
+		assertEquals(1, ((Collection<?>) result).size());
+		@SuppressWarnings("unchecked")
+		List<Object> list = ((List<Object>) result);
+		assertEquals(7, ((Integer) list.get(0)).intValue());
+		Object resultWO = evalTestQuery("LetExpression (wo)", queryString,
 				new DefaultOptimizer());
 		assertEquals(result, resultWO);
 	}
@@ -686,16 +709,17 @@ public class GreqlEvaluatorTest extends GenericTest {
 	@Test
 	public void testEvaluateListConstruction() throws Exception {
 		String queryString = "list ( \"bratwurst\",\"currywurst\", \"steak\", \"kaenguruhfleisch\", \"spiessbraten\", \"kaenguruhfleisch\")";
-		JValue result = evalTestQuery("ListConstruction", queryString);
-		assertEquals(6, result.toCollection().size());
-		JValueList list = result.toCollection().toJValueTuple();
+		Object result = evalTestQuery("ListConstruction", queryString);
+		assertEquals(6, ((Collection<?>) result).size());
+		@SuppressWarnings("unchecked")
+		List<Object> list = ((List<Object>) result);
 		assertEquals("bratwurst", list.get(0).toString());
 		assertEquals("currywurst", list.get(1).toString());
 		assertEquals("steak", list.get(2).toString());
 		assertEquals("kaenguruhfleisch", list.get(3).toString());
 		assertEquals("spiessbraten", list.get(4).toString());
 		assertEquals("kaenguruhfleisch", list.get(5).toString());
-		JValue resultWO = evalTestQuery("ListConstruction (wo)", queryString,
+		Object resultWO = evalTestQuery("ListConstruction (wo)", queryString,
 				new DefaultOptimizer());
 		assertEquals(result, resultWO);
 	}
@@ -708,13 +732,14 @@ public class GreqlEvaluatorTest extends GenericTest {
 	@Test
 	public void testEvaluateListRangeConstruction() throws Exception {
 		String queryString = "list (5..13)";
-		JValue result = evalTestQuery("ListRangeConstruction", queryString);
-		assertEquals(9, result.toCollection().size());
-		JValueList list = result.toCollection().toJValueList();
+		Object result = evalTestQuery("ListRangeConstruction", queryString);
+		assertEquals(9, ((Collection<?>) result).size());
+		@SuppressWarnings("unchecked")
+		List<Object> list = ((List<Object>) result);
 		for (int i = 0; i < 9; i++) {
-			assertEquals(i + 5, (int) list.get(i).toInteger());
+			assertEquals(i + 5, ((Integer) list.get(i)).intValue());
 		}
-		JValue resultWO = evalTestQuery("ListRangeConstruction (wo)",
+		Object resultWO = evalTestQuery("ListRangeConstruction (wo)",
 				queryString, new DefaultOptimizer());
 		assertEquals(result, resultWO);
 	}
@@ -722,13 +747,14 @@ public class GreqlEvaluatorTest extends GenericTest {
 	@Test
 	public void testEvaluateListRangeConstruction2() throws Exception {
 		String queryString = "list (16..6)";
-		JValue result = evalTestQuery("ListRangeConstruction2", queryString);
-		assertEquals(11, result.toCollection().size());
-		JValueList list = result.toCollection().toJValueList();
+		Object result = evalTestQuery("ListRangeConstruction2", queryString);
+		assertEquals(11, ((Collection<?>) result).size());
+		@SuppressWarnings("unchecked")
+		List<Object> list = ((List<Object>) result);
 		for (int i = 0; i < 11; i++) {
-			assertEquals(6 + i, (int) list.get(i).toInteger());
+			assertEquals(6 + i, ((Integer) list.get(i)).intValue());
 		}
-		JValue resultWO = evalTestQuery("ListRangeConstruction2 (wo)",
+		Object resultWO = evalTestQuery("ListRangeConstruction2 (wo)",
 				queryString, new DefaultOptimizer());
 		assertEquals(result, resultWO);
 	}
@@ -736,11 +762,12 @@ public class GreqlEvaluatorTest extends GenericTest {
 	@Test
 	public void testEvaluateListRangeConstruction3() throws Exception {
 		String queryString = "list (7..7)";
-		JValue result = evalTestQuery("ListRangeConstruction3", queryString);
-		assertEquals(1, result.toCollection().size());
-		JValueList list = result.toCollection().toJValueList();
-		assertEquals(7, (int) list.get(0).toInteger());
-		JValue resultWO = evalTestQuery("ListRangeConstruction3 (wo)",
+		Object result = evalTestQuery("ListRangeConstruction3", queryString);
+		assertEquals(1, ((Collection<?>) result).size());
+		@SuppressWarnings("unchecked")
+		List<Object> list = ((List<Object>) result);
+		assertEquals(7, ((Integer) list.get(0)).intValue());
+		Object resultWO = evalTestQuery("ListRangeConstruction3 (wo)",
 				queryString, new DefaultOptimizer());
 		assertEquals(result, resultWO);
 	}
@@ -748,13 +775,14 @@ public class GreqlEvaluatorTest extends GenericTest {
 	@Test
 	public void testEvaluateListRangeConstruction4() throws Exception {
 		String queryString = "list (-6..1)";
-		JValue result = evalTestQuery("ListRangeConstruction4", queryString);
-		assertEquals(8, result.toCollection().size());
-		JValueList list = result.toCollection().toJValueList();
+		Object result = evalTestQuery("ListRangeConstruction4", queryString);
+		assertEquals(8, ((Collection<?>) result).size());
+		@SuppressWarnings("unchecked")
+		List<Object> list = ((List<Object>) result);
 		for (int i = 0; i < 8; i++) {
-			assertEquals(i - 6, (int) list.get(i).toInteger());
+			assertEquals(i - 6, ((Integer) list.get(i)).intValue());
 		}
-		JValue resultWO = evalTestQuery("ListRangeConstruction4 (wo)",
+		Object resultWO = evalTestQuery("ListRangeConstruction4 (wo)",
 				queryString, new DefaultOptimizer());
 		assertEquals(result, resultWO);
 	}
@@ -762,10 +790,10 @@ public class GreqlEvaluatorTest extends GenericTest {
 	@Test
 	public void testEvaluateDependentDeclarations() throws Exception {
 		String queryString = "from x:list(1..10), z:list(1..x), y:list(x..13) report isPrime(z), isPrime(z*z), isPrime(z+z*z-1) end";
-		JValue result = evalTestQuery("DependentDeclarations", queryString);
-		assertEquals(385, result.toCollection().size());
-		result.toCollection().toJValueSet();
-		JValue resultWO = evalTestQuery("DependentDeclarations (wo)",
+		Object result = evalTestQuery("DependentDeclarations", queryString);
+		assertEquals(385, ((Collection<?>) result).size());
+		assertTrue(result instanceof Set<?>);
+		Object resultWO = evalTestQuery("DependentDeclarations (wo)",
 				queryString, new VariableDeclarationOrderOptimizer());
 		assertEquals(result, resultWO);
 	}
@@ -773,10 +801,10 @@ public class GreqlEvaluatorTest extends GenericTest {
 	@Test
 	public void testEvaluateDependentDeclarations1() throws Exception {
 		String queryString = "from x:list(1..3), y:list(x..3) report x,y end";
-		JValue result = evalTestQuery("DependentDeclarations1", queryString);
-		assertEquals(6, result.toCollection().size());
-		result.toCollection().toJValueSet();
-		JValue resultWO = evalTestQuery("DependentDeclarations (wo)",
+		Object result = evalTestQuery("DependentDeclarations1", queryString);
+		assertEquals(6, ((Collection<?>) result).size());
+		assertTrue(result instanceof Set<?>);
+		Object resultWO = evalTestQuery("DependentDeclarations (wo)",
 				queryString, new VariableDeclarationOrderOptimizer());
 		assertEquals(result, resultWO);
 	}
@@ -784,32 +812,34 @@ public class GreqlEvaluatorTest extends GenericTest {
 	@Test
 	public void testEvaluateDependentDeclarations2() throws Exception {
 		String queryString = "from airport: V{junctions.Airport}, destination: -->{connections.AirRoute} airport reportSet destination end";
-		JValue result = evalTestQuery(queryString);
-		assertEquals(airportCount - 1, result.toCollection().size());
-		JValueSet set = result.toCollection().toJValueSet();
+		Object result = evalTestQuery(queryString);
+		assertEquals(airportCount - 1, ((Collection<?>) result).size());
+		@SuppressWarnings("unchecked")
+		Set<Object> set = (Set<Object>) result;
 		for (Airport airport : ((RouteMap) getTestGraph(TestVersion.ROUTE_MAP_GRAPH))
 				.getAirportVertices()) {
 			if (airport.getDegree(AirRoute.class, EdgeDirection.OUT) != 0) {
-				assertTrue(set.contains(new JValueImpl(airport)));
+				assertTrue(set.contains(airport));
 			}
 		}
-		JValue resultWO = evalQueryWithOptimizer(queryString);
+		Object resultWO = evalQueryWithOptimizer(queryString);
 		assertEquals(result, resultWO);
 	}
 
 	@Test
 	public void testEvaluateDependentDeclarations3() throws Exception {
 		String queryString = "from airport: V{junctions.Airport}, destination: <--{connections.AirRoute} airport reportSet airport end";
-		JValue result = evalTestQuery(queryString);
-		assertEquals(airportCount - 1, result.toCollection().size());
-		JValueSet set = result.toCollection().toJValueSet();
+		Object result = evalTestQuery(queryString);
+		assertEquals(airportCount - 1, ((Collection<?>) result).size());
+		@SuppressWarnings("unchecked")
+		Set<Object> set = (Set<Object>) result;
 		for (Airport airport : ((RouteMap) getTestGraph(TestVersion.ROUTE_MAP_GRAPH))
 				.getAirportVertices()) {
 			if (airport.getDegree(AirRoute.class, EdgeDirection.OUT) != 0) {
-				assertTrue(set.contains(new JValueImpl(airport)));
+				assertTrue(set.contains(airport));
 			}
 		}
-		JValue resultWO = evalQueryWithOptimizer(queryString);
+		Object resultWO = evalQueryWithOptimizer(queryString);
 		assertEquals(result, resultWO);
 	}
 
@@ -821,18 +851,18 @@ public class GreqlEvaluatorTest extends GenericTest {
 	@Test
 	public void testEvaluateOptionalPathDescription() throws Exception {
 		String queryString = "from junction: V{junctions.Junction}, airport: V{junctions.Airport} with junction [ -->{connections.Street} ] -->{connections.AirRoute} airport report junction end";
-		JValue result = evalTestQuery(queryString);
-		assertEquals(3, result.toCollection().size());
-		JValue resultWO = evalQueryWithOptimizer(queryString);
+		Object result = evalTestQuery(queryString);
+		assertEquals(3, ((Collection<?>) result).size());
+		Object resultWO = evalQueryWithOptimizer(queryString);
 		assertEquals(result, resultWO);
 	}
 
 	@Test
 	public void testEvaluateOptionalPathDescription2() throws Exception {
 		String queryString = "from junction: V{junctions.Junction}, airport: V{junctions.Airport} with junction  -->{connections.Street}  [-->{connections.AirRoute}] airport report junction end";
-		JValue result = evalTestQuery(queryString);
-		assertEquals(0, result.toCollection().size());
-		JValue resultWO = evalQueryWithOptimizer(queryString);
+		Object result = evalTestQuery(queryString);
+		assertEquals(0, ((Collection<?>) result).size());
+		Object resultWO = evalQueryWithOptimizer(queryString);
 		assertEquals(result, resultWO);
 	}
 
@@ -844,9 +874,9 @@ public class GreqlEvaluatorTest extends GenericTest {
 	@Test
 	public void testEvaluatePrimaryPathDescription1() throws Exception {
 		String queryString = "from town: V{localities.Town}, plaza: V{junctions.Plaza} with town -->{localities.ContainsCrossroad} plaza report town end";
-		JValue result = evalTestQuery(queryString);
-		assertEquals(plazaCount, result.toCollection().size());
-		JValue resultWO = evalQueryWithOptimizer(queryString);
+		Object result = evalTestQuery(queryString);
+		assertEquals(plazaCount, ((Collection<?>) result).size());
+		Object resultWO = evalQueryWithOptimizer(queryString);
 		assertEquals(result, resultWO);
 	}
 
@@ -858,9 +888,9 @@ public class GreqlEvaluatorTest extends GenericTest {
 	@Test
 	public void testEvaluatePrimaryPathDescription2() throws Exception {
 		String queryString = "from town: V{localities.Town}, plaza: V{junctions.Plaza} with town --> plaza report town end";
-		JValue result = evalTestQuery(queryString);
-		assertEquals(plazaCount, result.toCollection().size());
-		JValue resultWO = evalQueryWithOptimizer(queryString);
+		Object result = evalTestQuery(queryString);
+		assertEquals(plazaCount, ((Collection<?>) result).size());
+		Object resultWO = evalQueryWithOptimizer(queryString);
 		assertEquals(result, resultWO);
 	}
 
@@ -872,9 +902,9 @@ public class GreqlEvaluatorTest extends GenericTest {
 	@Test
 	public void testEvaluatePrimaryPathDescription3() throws Exception {
 		String queryString = "from town: V{localities.Town}, plaza: V{junctions.Plaza} with town --> {connections.AirRoute} plaza report town end";
-		JValue result = evalTestQuery(queryString);
-		assertEquals(0, result.toCollection().size());
-		JValue resultWO = evalQueryWithOptimizer(queryString);
+		Object result = evalTestQuery(queryString);
+		assertEquals(0, ((Collection<?>) result).size());
+		Object resultWO = evalQueryWithOptimizer(queryString);
 		assertEquals(result, resultWO);
 	}
 
@@ -886,23 +916,23 @@ public class GreqlEvaluatorTest extends GenericTest {
 	@Test
 	public void testEvaluatePrimaryPathDescription4() throws Exception {
 		String queryString = "from origin: V{junctions.Crossroad}, target: V{junctions.Plaza} with origin <->{connections.Footpath!} target report origin end";
-		JValue result = evalTestQuery(queryString);
-		assertEquals(1, result.toCollection().size());
-		JValue resultWO = evalQueryWithOptimizer(queryString);
+		Object result = evalTestQuery(queryString);
+		assertEquals(1, ((Collection<?>) result).size());
+		Object resultWO = evalQueryWithOptimizer(queryString);
 		assertEquals(result, resultWO);
 	}
 
 	@Test
 	public void testEvaluateQuantifiedExpression1() throws Exception {
-		JValueSet set = new JValueSet();
-		set.add(new JValueImpl(false));
-		set.add(new JValueImpl(true));
-		set.add(new JValueImpl(false));
+		Set<Boolean> set = new HashSet<Boolean>();
+		set.add(false);
+		set.add(true);
+		set.add(false);
 		setBoundVariable("FOO", set);
 		String queryString = "using FOO: forall s: FOO @ s = false";
-		JValue result = evalTestQuery("QuantifiedExpression1", queryString);
-		assertFalse(result.toBoolean());
-		JValue resultWO = evalTestQuery("QuantifiedExpression1 (wo)",
+		Object result = evalTestQuery("QuantifiedExpression1", queryString);
+		assertFalse(((Boolean) result));
+		Object resultWO = evalTestQuery("QuantifiedExpression1 (wo)",
 				queryString, new DefaultOptimizer());
 		assertEquals(result, resultWO);
 	}
@@ -914,15 +944,15 @@ public class GreqlEvaluatorTest extends GenericTest {
 	 */
 	@Test
 	public void testEvaluateQuantifiedExpression2() throws Exception {
-		JValueSet set = new JValueSet();
-		set.add(new JValueImpl(false));
-		set.add(new JValueImpl(true));
-		set.add(new JValueImpl(false));
+		Set<Boolean> set = new HashSet<Boolean>();
+		set.add(false);
+		set.add(true);
+		set.add(false);
 		setBoundVariable("FOO", set);
 		String queryString = "using FOO: exists s: FOO @ s = false";
-		JValue result = evalTestQuery("QuantifiedExpression2", queryString);
-		assertTrue(result.toBoolean());
-		JValue resultWO = evalTestQuery("QuantifiedExpression2 (wo)",
+		Object result = evalTestQuery("QuantifiedExpression2", queryString);
+		assertTrue(((Boolean) result));
+		Object resultWO = evalTestQuery("QuantifiedExpression2 (wo)",
 				queryString, new DefaultOptimizer());
 		assertEquals(result, resultWO);
 	}
@@ -934,15 +964,15 @@ public class GreqlEvaluatorTest extends GenericTest {
 	 */
 	@Test
 	public void testEvaluateQuantifiedExpression3() throws Exception {
-		JValueSet set = new JValueSet();
-		set.add(new JValueImpl(false));
-		set.add(new JValueImpl(true));
-		set.add(new JValueImpl(false));
+		Set<Boolean> set = new HashSet<Boolean>();
+		set.add(false);
+		set.add(true);
+		set.add(false);
 		setBoundVariable("FOO", set);
 		String queryString = "using FOO: exists s: FOO @ s = false";
-		JValue result = evalTestQuery("QuantifiedExpression3", queryString);
-		assertTrue(result.toBoolean());
-		JValue resultWO = evalTestQuery("QuantifiedExpression3 (wo)",
+		Object result = evalTestQuery("QuantifiedExpression3", queryString);
+		assertTrue(((Boolean) result));
+		Object resultWO = evalTestQuery("QuantifiedExpression3 (wo)",
 				queryString, new DefaultOptimizer());
 		assertEquals(result, resultWO);
 	}
@@ -954,16 +984,16 @@ public class GreqlEvaluatorTest extends GenericTest {
 	 */
 	@Test
 	public void testEvaluateQuantifiedExpression4() throws Exception {
-		JValueSet set = new JValueSet();
-		set.add(new JValueImpl(2));
-		set.add(new JValueImpl(1));
-		set.add(new JValueImpl(3));
-		set.add(new JValueImpl(4));
+		Set<Integer> set = new HashSet<Integer>();
+		set.add(2);
+		set.add(1);
+		set.add(3);
+		set.add(4);
 		setBoundVariable("FOO", set);
 		String queryString = "using FOO: exists! s: FOO @ s = 3";
-		JValue result = evalTestQuery("QuantifiedExpression4", queryString);
-		assertTrue(result.toBoolean());
-		JValue resultWO = evalTestQuery("QuantifiedExpression4 (wo)",
+		Object result = evalTestQuery("QuantifiedExpression4", queryString);
+		assertTrue(((Boolean) result));
+		Object resultWO = evalTestQuery("QuantifiedExpression4 (wo)",
 				queryString, new DefaultOptimizer());
 		assertEquals(result, resultWO);
 	}
@@ -976,15 +1006,16 @@ public class GreqlEvaluatorTest extends GenericTest {
 	@Test
 	public void testEvaluateRecordConstruction() throws Exception {
 		String queryString = "rec ( menue1:\"bratwurst\", menue2:\"currywurst\", menue3:\"steak\", menue4:\"kaenguruhfleisch\", menue5:\"spiessbraten\")";
-		JValue result = evalTestQuery("RecordConstruction", queryString);
-		assertEquals(5, result.toCollection().size());
-		JValueRecord rec = result.toCollection().toJValueRecord();
-		assertEquals("bratwurst", rec.get("menue1").toString());
-		assertEquals("currywurst", rec.get("menue2").toString());
-		assertEquals("steak", rec.get("menue3").toString());
-		assertEquals("kaenguruhfleisch", rec.get("menue4").toString());
-		assertEquals("spiessbraten", rec.get("menue5").toString());
-		JValue resultWO = evalTestQuery("RecordConstruction (wo)", queryString,
+		Record result = (Record) evalTestQuery("RecordConstruction",
+				queryString);
+		assertEquals(5, result.size());
+		assertEquals("bratwurst", result.getComponent("menue1").toString());
+		assertEquals("currywurst", result.getComponent("menue2").toString());
+		assertEquals("steak", result.getComponent("menue3").toString());
+		assertEquals("kaenguruhfleisch", result.getComponent("menue4")
+				.toString());
+		assertEquals("spiessbraten", result.getComponent("menue5").toString());
+		Object resultWO = evalTestQuery("RecordConstruction (wo)", queryString,
 				new DefaultOptimizer());
 		assertEquals(result, resultWO);
 	}
@@ -997,9 +1028,9 @@ public class GreqlEvaluatorTest extends GenericTest {
 	@Test
 	public void testEvaluateSequentialPathDescription1() throws Exception {
 		String queryString = "from county: V{localities.County}, airport: V{junctions.Airport} with county -->{localities.ContainsLocality} -->{connections.AirRoute} airport report county end";
-		JValue result = evalTestQuery(queryString);
-		assertEquals(airportCount, result.toCollection().size());
-		JValue resultWO = evalQueryWithOptimizer(queryString);
+		Object result = evalTestQuery(queryString);
+		assertEquals(airportCount, ((Collection<?>) result).size());
+		Object resultWO = evalQueryWithOptimizer(queryString);
 		assertEquals(result, resultWO);
 	}
 
@@ -1011,9 +1042,9 @@ public class GreqlEvaluatorTest extends GenericTest {
 	@Test
 	public void testEvaluateSequentialPathDescription2() throws Exception {
 		String queryString = "from var: V{Variable}, def: V{WhereExpression} with var  -->{IsBoundExprOf} -->{IsDefinitionOf} def report var end";
-		JValue result = evalTestQuery("SequentialPathDescription2", queryString);
-		assertEquals(0, result.toCollection().size());
-		JValue resultWO = evalTestQuery("SequentialPathDescription2 (wo)",
+		Object result = evalTestQuery("SequentialPathDescription2", queryString);
+		assertEquals(0, ((Collection<?>) result).size());
+		Object resultWO = evalTestQuery("SequentialPathDescription2 (wo)",
 				queryString, new DefaultOptimizer());
 		assertEquals(result, resultWO);
 	}
@@ -1028,14 +1059,22 @@ public class GreqlEvaluatorTest extends GenericTest {
 		PVector<String> list = createListWithMeat();
 		setBoundVariable("FOO", list);
 		String queryString = "using FOO: from i: toSet(FOO) reportSet i end";
-		JValue result = evalTestQuery("SetComprehension", queryString);
-		assertEquals(8, result.toCollection().size());
-		for (JValue v : list) {
-			assertTrue(result.toCollection().contains(v));
+		Object result = evalTestQuery("SetComprehension", queryString);
+		assertEquals(8, ((Collection<?>) result).size());
+		for (Object v : list) {
+			assertTrue(((Collection<?>) result).contains(v));
 		}
-		JValue resultWO = evalTestQuery("SetComprehension (wo)", queryString,
+		Object resultWO = evalTestQuery("SetComprehension (wo)", queryString,
 				new DefaultOptimizer());
 		assertEquals(result, resultWO);
+	}
+
+	private PVector<String> createListWithMeat() {
+		PVector<String> vector = JGraLab.vector();
+		vector = vector.plus("a");
+		vector = vector.plus("b");
+		vector = vector.plus("c");
+		return vector;
 	}
 
 	/*
@@ -1046,18 +1085,20 @@ public class GreqlEvaluatorTest extends GenericTest {
 	@Test
 	public void testEvaluateSetConstruction() throws Exception {
 		String queryString = "set ( 1 , 2 , 3 , 7 , 34, 456, 7, 5, 455, 456, 457, 1, 2, 3 )";
-		JValue result = evalTestQuery("SetConstruction", queryString);
-		assertEquals(9, result.toCollection().size());
-		assertTrue(result.toCollection().contains(new JValueImpl(1)));
-		assertTrue(result.toCollection().contains(new JValueImpl(2)));
-		assertTrue(result.toCollection().contains(new JValueImpl(3)));
-		assertTrue(result.toCollection().contains(new JValueImpl(5)));
-		assertTrue(result.toCollection().contains(new JValueImpl(7)));
-		assertTrue(result.toCollection().contains(new JValueImpl(34)));
-		assertTrue(result.toCollection().contains(new JValueImpl(455)));
-		assertTrue(result.toCollection().contains(new JValueImpl(456)));
-		assertTrue(result.toCollection().contains(new JValueImpl(457)));
-		JValue resultWO = evalTestQuery("SetConstruction (wo)", queryString,
+		@SuppressWarnings("unchecked")
+		Collection<Integer> result = (Collection<Integer>) evalTestQuery(
+				"SetConstruction", queryString);
+		assertEquals(9, ((Collection<?>) result).size());
+		assertTrue(((Collection<?>) result).contains(1));
+		assertTrue(((Collection<?>) result).contains(2));
+		assertTrue(((Collection<?>) result).contains(3));
+		assertTrue(((Collection<?>) result).contains(5));
+		assertTrue(((Collection<?>) result).contains(7));
+		assertTrue(((Collection<?>) result).contains(34));
+		assertTrue(((Collection<?>) result).contains(455));
+		assertTrue(((Collection<?>) result).contains(456));
+		assertTrue(((Collection<?>) result).contains(457));
+		Object resultWO = evalTestQuery("SetConstruction (wo)", queryString,
 				new DefaultOptimizer());
 		assertEquals(result, resultWO);
 	}
@@ -1070,18 +1111,18 @@ public class GreqlEvaluatorTest extends GenericTest {
 	@Test
 	public void testEvaluateSimplePathDescription1() throws Exception {
 		String queryString = "from county: V{localities.County}, airport: V{junctions.Airport} with county --> airport report county end";
-		JValue result = evalTestQuery(queryString);
-		assertEquals(airportCount, result.toCollection().size());
-		JValue resultWO = evalQueryWithOptimizer(queryString);
+		Object result = evalTestQuery(queryString);
+		assertEquals(airportCount, ((Collection<?>) result).size());
+		Object resultWO = evalQueryWithOptimizer(queryString);
 		assertEquals(result, resultWO);
 	}
 
 	@Test
 	public void testEvaluateSimplePathDescription2() throws Exception {
 		String queryString = "from var: V{Definition}, def: V{LetExpression} with var --> def report var end";
-		JValue result = evalTestQuery("SimplePathDescription2", queryString);
-		assertEquals(0, result.toCollection().size());
-		JValue resultWO = evalTestQuery("SimplePathDescription2 (wo)",
+		Object result = evalTestQuery("SimplePathDescription2", queryString);
+		assertEquals(0, ((Collection<?>) result).size());
+		Object resultWO = evalTestQuery("SimplePathDescription2 (wo)",
 				queryString, new DefaultOptimizer());
 		assertEquals(result, resultWO);
 	}
@@ -1089,37 +1130,40 @@ public class GreqlEvaluatorTest extends GenericTest {
 	@Test
 	public void testEvaluateSimplePathDescription3() throws Exception {
 		String queryString = "from county: V{localities.County}, airport: V{junctions.Airport, localities.Town} with county --> airport report county end";
-		JValue result = evalTestQuery(queryString);
-		assertEquals(airportCount + townCount, result.toCollection().size());
-		JValue resultWO = evalQueryWithOptimizer(queryString);
+		Object result = evalTestQuery(queryString);
+		assertEquals(airportCount + townCount, ((Collection<?>) result).size());
+		Object resultWO = evalQueryWithOptimizer(queryString);
 		assertEquals(result, resultWO);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Test
 	public void testEvaluateAggregationPathDescription1() throws Exception {
 		String queryString = "from county: V{localities.County}, loc: V{localities.Locality} with loc --<> county report loc end";
-		JValue result = evalTestQuery(queryString);
-		assertEquals(localityCount, result.toCollection().size());
-		JValue resultWO = evalQueryWithOptimizer(queryString);
-		assertEquals(result.toJValueSet(), resultWO.toJValueSet());
+		Object result = evalTestQuery(queryString);
+		assertEquals(localityCount, ((Collection<?>) result).size());
+		Object resultWO = evalQueryWithOptimizer(queryString);
+		containsAllElements((Collection<Object>) result,
+				(Collection<Object>) resultWO);
 	}
 
 	@Test
 	public void testEvaluateAggregationPathDescription2() throws Exception {
 		String queryString = "from county: V{localities.County}, loc: V{localities.Locality} with county <>-- loc report loc end";
-		JValue result = evalTestQuery(queryString);
-		assertEquals(localityCount, result.toCollection().size());
-		JValue resultWO = evalQueryWithOptimizer(queryString);
-		assertEquals(result.toJValueSet(), resultWO.toJValueSet());
+		Object result = evalTestQuery(queryString);
+		assertEquals(localityCount, ((Collection<?>) result).size());
+		Object resultWO = evalQueryWithOptimizer(queryString);
+		containsAllElements((Collection<Object>) result,
+				(Collection<Object>) resultWO);
 	}
 
 	@Test
 	public void testEvaluateAggregationPathDescriptionWithRole()
 			throws Exception {
 		String queryString = "from var: V{Variable}, def: V{Definition} with def <>--{undefeeeinedRole} var report var end";
-		JValue result = evalTestQuery("SimplePathDescription2", queryString);
-		assertEquals(0, result.toCollection().size());
-		JValue resultWO = evalTestQuery("SimplePathDescription2 (wo)",
+		Object result = evalTestQuery("SimplePathDescription2", queryString);
+		assertEquals(0, ((Collection<?>) result).size());
+		Object resultWO = evalTestQuery("SimplePathDescription2 (wo)",
 				queryString, new DefaultOptimizer());
 		assertEquals(result, resultWO);
 	}
@@ -1128,9 +1172,9 @@ public class GreqlEvaluatorTest extends GenericTest {
 	public void testEvaluateStartRestriction5() throws Exception {
 		String queryString1 = "from county: V{localities.County}, plaza: V{junctions.Plaza} with county -->{localities.ContainsLocality} {localities.Town} & -->{localities.ContainsCrossroad} plaza report county end";
 		String queryString2 = "from county: V{localities.County}, plaza: V{junctions.Plaza} with contains(-->{localities.ContainsLocality} {localities.Town} & -->{localities.ContainsCrossroad} plaza, county) report county end";
-		JValue result = evalTestQuery(queryString1);
-		assertEquals(plazaCount, result.toCollection().size());
-		JValue resultWO = evalQueryWithOptimizer(queryString2);
+		Object result = evalTestQuery(queryString1);
+		assertEquals(plazaCount, ((Collection<?>) result).size());
+		Object resultWO = evalQueryWithOptimizer(queryString2);
 		assertEquals(result, resultWO);
 	}
 
@@ -1139,27 +1183,27 @@ public class GreqlEvaluatorTest extends GenericTest {
 		String queryString1 = "from var: V, def: V with var -->{Edge} {Definition} & --> def report var end";
 		String queryString2 = "from var: V, def: V with contains(-->{Edge} {Definition} & --> def, var) report var end";
 		String queryString3 = "from var: V, def: V with contains(var -->{Edge} {Definition} & -->, def) report var end";
-		JValue result1 = evalTestQuery("StartRestriction6 1", queryString1);
-		JValue result2 = evalTestQuery("StartRestriction6 2", queryString2);
-		JValue result3 = evalTestQuery("StartRestriction6 3", queryString3);
+		Object result1 = evalTestQuery("StartRestriction6 1", queryString1);
+		Object result2 = evalTestQuery("StartRestriction6 2", queryString2);
+		Object result3 = evalTestQuery("StartRestriction6 3", queryString3);
 		assertEquals(result1, result2);
 		assertEquals(result1, result3);
 
 		String queryString4 = "from var: V, def: V with var --> & {Definition} --> def report var end";
 		String queryString5 = "from var: V, def: V with contains(--> & {Definition} --> def, var) report var end";
 		String queryString6 = "from var: V, def: V with contains(var --> & {Definition} -->, def) report var end";
-		JValue result4 = evalTestQuery("GoalRestriction6 1", queryString4);
-		JValue result5 = evalTestQuery("GoalRestriction6 2", queryString5);
-		JValue result6 = evalTestQuery("GoalRestriction6 3", queryString6);
+		Object result4 = evalTestQuery("GoalRestriction6 1", queryString4);
+		Object result5 = evalTestQuery("GoalRestriction6 2", queryString5);
+		Object result6 = evalTestQuery("GoalRestriction6 3", queryString6);
 		assertEquals(result4, result5);
 		assertEquals(result4, result6);
 
 		String queryString7 = "from var: V, def: V with var {Variable} & --> def report var end";
 		String queryString8 = "from var: V, def: V with contains(var {Variable} & -->, def) report var end";
 		String queryString9 = "from var: V, def: V with contains({Variable} & --> def, var) report var end";
-		JValue result7 = evalTestQuery("StartRestriction6 4", queryString7);
-		JValue result8 = evalTestQuery("StartRestriction6 5", queryString8);
-		JValue result9 = evalTestQuery("StartRestriction6 6", queryString9);
+		Object result7 = evalTestQuery("StartRestriction6 4", queryString7);
+		Object result8 = evalTestQuery("StartRestriction6 5", queryString8);
+		Object result9 = evalTestQuery("StartRestriction6 6", queryString9);
 		assertEquals(result7, result8);
 		assertEquals(result7, result9);
 	}
@@ -1172,9 +1216,9 @@ public class GreqlEvaluatorTest extends GenericTest {
 	@Test
 	public void testEvaluateStartRestriction2() throws Exception {
 		String queryString = "from var: V{Variable}, def: V{WhereExpression} with var  -->{IsVarOf} {DefinitionExpression} & -->{IsDefinitionOf} def report var end";
-		JValue result = evalTestQuery("StartRestriction2", queryString);
-		assertEquals(0, result.toCollection().size());
-		JValue resultWO = evalTestQuery("StartRestriction2 (wo)", queryString,
+		Object result = evalTestQuery("StartRestriction2", queryString);
+		assertEquals(0, ((Collection<?>) result).size());
+		Object resultWO = evalTestQuery("StartRestriction2 (wo)", queryString,
 				new DefaultOptimizer());
 		assertEquals(result, resultWO);
 	}
@@ -1187,9 +1231,9 @@ public class GreqlEvaluatorTest extends GenericTest {
 	@Test
 	public void testEvaluateStartRestriction3() throws Exception {
 		String queryString = "from var: V{Variable}, def: V{WhereExpression} with var  -->{IsVarOf} & {@1 = 2} -->{IsDefinitionOf} def  report var end";
-		JValue result = evalTestQuery("StartRestriction3", queryString);
-		assertEquals(0, result.toCollection().size());
-		JValue resultWO = evalTestQuery("StartRestriction3 (wo)", queryString,
+		Object result = evalTestQuery("StartRestriction3", queryString);
+		assertEquals(0, ((Collection<?>) result).size());
+		Object resultWO = evalTestQuery("StartRestriction3 (wo)", queryString,
 				new DefaultOptimizer());
 		assertEquals(result, resultWO);
 	}
@@ -1202,9 +1246,9 @@ public class GreqlEvaluatorTest extends GenericTest {
 	@Test
 	public void testEvaluateStartRestriction4() throws Exception {
 		String queryString = "from county: V{localities.County}, plaza: V{junctions.Plaza} with county -->{localities.ContainsLocality} {@ 1 = 1} & -->{localities.ContainsCrossroad} plaza report county end";
-		JValue result = evalTestQuery(queryString);
-		assertEquals(plazaCount, result.toCollection().size());
-		JValue resultWO = evalQueryWithOptimizer(queryString);
+		Object result = evalTestQuery(queryString);
+		assertEquals(plazaCount, ((Collection<?>) result).size());
+		Object resultWO = evalQueryWithOptimizer(queryString);
 		assertEquals(result, resultWO);
 	}
 
@@ -1213,9 +1257,9 @@ public class GreqlEvaluatorTest extends GenericTest {
 		// TODO: Broken, because the GReQL parser removes all WhereExpressions
 		// and LetExpressions!
 		String queryString = "from d:V{Definition} report d as \"Definition\" end";
-		JValue result = evalTestQuery("TableComprehension", queryString);
-		assertEquals(4, result.toCollection().size());
-		JValue resultWO = evalTestQuery("TableComprehension (wo)", queryString,
+		Object result = evalTestQuery("TableComprehension", queryString);
+		assertEquals(4, ((Collection<?>) result).size());
+		Object resultWO = evalTestQuery("TableComprehension (wo)", queryString,
 				new DefaultOptimizer());
 		assertEquals(result, resultWO);
 	}
@@ -1225,9 +1269,9 @@ public class GreqlEvaluatorTest extends GenericTest {
 		// TODO: Broken, because the GReQL parser removes all WhereExpressions
 		// and LetExpressions!
 		String queryString = "from d:V{Definition}, w:V{WhereExpression} with d --> w report d as \"name\", w as \"where\" end";
-		JValue result = evalTestQuery("TableComprehension2", queryString);
-		assertEquals(4, result.toCollection().size());
-		JValue resultWO = evalTestQuery("TableComprehension2 (wo)",
+		Object result = evalTestQuery("TableComprehension2", queryString);
+		assertEquals(4, ((Collection<?>) result).size());
+		Object resultWO = evalTestQuery("TableComprehension2 (wo)",
 				queryString, new DefaultOptimizer());
 		assertEquals(result, resultWO);
 	}
@@ -1242,9 +1286,9 @@ public class GreqlEvaluatorTest extends GenericTest {
 		// TODO: Broken, because the GReQL parser removes all WhereExpressions
 		// and LetExpressions!
 		String queryString = "from def: V{Definition}, whe: V{WhereExpression} with def <--{IsDefinitionOf}^T whe report def end";
-		JValue result = evalTestQuery("TransposedPathDescription", queryString);
-		assertEquals(4, result.toCollection().size());
-		JValue resultWO = evalTestQuery("TransposedPathDescription (wo)",
+		Object result = evalTestQuery("TransposedPathDescription", queryString);
+		assertEquals(4, ((Collection<?>) result).size());
+		Object resultWO = evalTestQuery("TransposedPathDescription (wo)",
 				queryString, new DefaultOptimizer());
 		assertEquals(result, resultWO);
 	}
@@ -1257,18 +1301,17 @@ public class GreqlEvaluatorTest extends GenericTest {
 	@Test
 	public void testEvaluateTupleConstruction() throws Exception {
 		String queryString = "tup ( \"bratwurst\",\"currywurst\", \"steak\", \"kaenguruhfleisch\", \"spiessbraten\", \"kaenguruhfleisch\")";
-		JValue result = evalTestQuery("TupleConstruction", queryString);
-		assertEquals(6, result.toCollection().size());
-		JValueTuple tup = result.toCollection().toJValueTuple();
+		Tuple tup = (Tuple) evalTestQuery("TupleConstruction", queryString);
+		assertEquals(6, tup.size());
 		assertEquals("bratwurst", tup.get(0).toString());
 		assertEquals("currywurst", tup.get(1).toString());
 		assertEquals("steak", tup.get(2).toString());
 		assertEquals("kaenguruhfleisch", tup.get(3).toString());
 		assertEquals("spiessbraten", tup.get(4).toString());
 		assertEquals("kaenguruhfleisch", tup.get(5).toString());
-		JValue resultWO = evalTestQuery("TupleConstruction (wo)", queryString,
+		Object resultWO = evalTestQuery("TupleConstruction (wo)", queryString,
 				new DefaultOptimizer());
-		assertEquals(result, resultWO);
+		assertEquals(tup, resultWO);
 	}
 
 	/*
@@ -1278,38 +1321,40 @@ public class GreqlEvaluatorTest extends GenericTest {
 	 */
 	@Test
 	public void testEvaluateVarTableComprehension1() throws Exception {
-		JValueList list = new JValueList();
-		list.add(new JValueImpl(3));
-		list.add(new JValueImpl(4));
-		list.add(new JValueImpl(5));
+		List<Integer> list = new ArrayList<Integer>();
+		list.add(3);
+		list.add(4);
+		list.add(5);
 		setBoundVariable("FOO", list);
 		String queryString = "using FOO: from i:FOO, j:FOO reportTable i,j,i*j end";
-		JValue result = evalTestQuery("VarTableComprehension1", queryString);
-		assertEquals(3, result.toCollection().size());
-		for (JValue v : result.toCollection()) {
-			assertEquals(4, v.toCollection().size());
+		@SuppressWarnings("unchecked")
+		Collection<Collection<?>> result = (Collection<Collection<?>>) evalTestQuery(
+				"VarTableComprehension1", queryString);
+		assertEquals(3, result.size());
+		for (Collection<?> v : result) {
+			assertEquals(4, v.size());
 		}
-		JValue resultWO = evalTestQuery("VarTableComprehension1 (wo)",
+		Object resultWO = evalTestQuery("VarTableComprehension1 (wo)",
 				queryString, new DefaultOptimizer());
 		assertEquals(result, resultWO);
 	}
 
 	@Test
 	public void testEvaluateVarTableComprehension2() throws Exception {
-		JValueList list = new JValueList();
-		list.add(new JValueImpl(3));
-		list.add(new JValueImpl(4));
-		list.add(new JValueImpl(5));
+		List<Integer> list = new ArrayList<Integer>();
+		list.add(3);
+		list.add(4);
+		list.add(5);
 		setBoundVariable("FOO", list);
 		String queryString = "using FOO: from i:FOO, j:FOO reportTable i,j,i*j,\"MultiplicationMatrix\" end";
-		JValue result = evalTestQuery("VarTableComprehension2", queryString);
-		assertEquals(3, result.toCollection().size());
-		for (JValue v : result.toCollection()) {
-			assertEquals(4, v.toCollection().size());
+		@SuppressWarnings("unchecked")
+		Collection<Collection<?>> result = (Collection<Collection<?>>) evalTestQuery(
+				"VarTableComprehension2", queryString);
+		assertEquals(3, ((Collection<?>) result).size());
+		for (Collection<?> v : result) {
+			assertEquals(4, v.size());
 		}
-		JValueTable resultTable = (JValueTable) result;
-		resultTable.printTable();
-		JValue resultWO = evalTestQuery("VarTableComprehension2 (wo)",
+		Object resultWO = evalTestQuery("VarTableComprehension2 (wo)",
 				queryString, new DefaultOptimizer());
 		assertEquals(result, resultWO);
 	}
@@ -1322,10 +1367,10 @@ public class GreqlEvaluatorTest extends GenericTest {
 	@Test
 	public void testEvaluateVertexSetExpression() throws Exception {
 		String queryString = "from i: V{localities.County} report i.name end";
-		JValue result = evalTestQuery(queryString);
-		containsAllElements(COUNTIES, result.toCollection());
+		Object result = evalTestQuery(queryString);
+		containsAllElements(COUNTIES, ((Collection<?>) result));
 
-		JValue resultWO = evalQueryWithOptimizer(queryString);
+		Object resultWO = evalQueryWithOptimizer(queryString);
 		assertEquals(result, resultWO);
 	}
 
@@ -1336,11 +1381,11 @@ public class GreqlEvaluatorTest extends GenericTest {
 	 */
 	@Test
 	public void testEvaluateVertexSubgraphExpression1() throws Exception {
-		String queryString = "from i:V{NamedElement} in vSubgraph{localities.Locality, ^localities.City} report i.name end";
-		JValue result = evalTestQuery(queryString);
-		containsAllElements(LOCALITIES_WITHOUT_CITIES, result.toCollection());
+		String queryString = "on vertexTypeSubgraph{localities.Locality, ^localities.City}(): from i:V{NamedElement} report i.name end";
+		Object result = evalTestQuery(queryString);
+		containsAllElements(LOCALITIES_WITHOUT_CITIES, ((Collection<?>) result));
 
-		JValue resultWO = evalTestQuery("VertexSubgraphExpression1 (wo)",
+		Object resultWO = evalTestQuery("VertexSubgraphExpression1 (wo)",
 				queryString, new DefaultOptimizer(),
 				TestVersion.ROUTE_MAP_GRAPH);
 		assertEquals(result, resultWO);
@@ -1348,53 +1393,54 @@ public class GreqlEvaluatorTest extends GenericTest {
 
 	@Test
 	public void testEvaluateVertexSubgraphExpression2() throws Exception {
-		String queryString = "from i:V{NamedElement} in vSubgraph{^localities.Locality} report i.name end";
-		JValue result = evalTestQuery(queryString);
-		containsAllElements(COUNTIES, result.toCollection());
+		String queryString = "on vertexTypeSubgraph{^localities.Locality}(): from i:V{NamedElement} report i.name end";
+		Object result = evalTestQuery(queryString);
+		containsAllElements(COUNTIES, ((Collection<?>) result));
 
-		JValue resultWO = evalQueryWithOptimizer(queryString);
+		Object resultWO = evalQueryWithOptimizer(queryString);
 		assertEquals(result, resultWO);
 	}
 
 	@Test
 	public void testEvaluateVertexSubgraphExpression3() throws Exception {
-		String queryString = "from i:V{localities.County} in vSubgraph{localities.County} report i.name end";
-		JValue result = evalTestQuery(queryString);
+		String queryString = "on vertexTypeSubgraph{localities.County}(): from i:V{localities.County} report i.name end";
+		Object result = evalTestQuery(queryString);
 
-		containsAllElements(COUNTIES, result.toCollection());
-		JValue resultWO = evalQueryWithOptimizer(queryString);
+		containsAllElements(COUNTIES, ((Collection<?>) result));
+		Object resultWO = evalQueryWithOptimizer(queryString);
 		assertEquals(result, resultWO);
 	}
 
 	@Test
 	public void testEvaluateVertexSubgraphExpression4() throws Exception {
-		String queryString = "from i:V{Identifier} in vSubgraph{Definition} report i.name end";
-		JValue result = evalTestQuery("VertexSubgraphExpression4", queryString);
-		assertEquals(0, result.toCollection().size());
-		JValue resultWO = evalTestQuery("VertexSubgraphExpression4 (wo)",
+		String queryString = "on vertexTypeSubgraph{Definition}(): from i:V{Identifier} report i.name end";
+		Object result = evalTestQuery("VertexSubgraphExpression4", queryString);
+		assertEquals(0, ((Collection<?>) result).size());
+		Object resultWO = evalTestQuery("VertexSubgraphExpression4 (wo)",
 				queryString, new DefaultOptimizer());
 		assertEquals(result, resultWO);
 	}
 
 	@Test
 	public void testEvaluateVertexSubgraphExpression5() throws Exception {
-		String queryString = "from i:V{localities.Locality} in vSubgraph{^localities.City} report i.name end";
-		JValue result = evalTestQuery(queryString);
+		String queryString = "on vertexTypeSubgraph{^localities.City}(): from i:V{localities.Locality} report i.name end";
+		Object result = evalTestQuery(queryString);
 
-		containsAllElements(LOCALITIES_WITHOUT_CITIES, result.toCollection());
+		containsAllElements(LOCALITIES_WITHOUT_CITIES, ((Collection<?>) result));
 
-		JValue resultWO = evalQueryWithOptimizer(queryString);
+		Object resultWO = evalQueryWithOptimizer(queryString);
 		assertEquals(result, resultWO);
 	}
 
 	@Test
 	public void testEvaluateWhereExpression() throws Exception {
 		String queryString = "from i:c report i end where c:=b, b:=a, a:=\"Mensaessen\"";
-		JValue result = evalTestQuery("WhereExpression", queryString);
-		assertEquals(1, result.toCollection().size());
-		JValueList list = result.toCollection().toJValueList();
+		Object result = evalTestQuery("WhereExpression", queryString);
+		assertEquals(1, ((Collection<?>) result).size());
+		@SuppressWarnings("unchecked")
+		List<Object> list = ((List<Object>) result);
 		assertEquals("Mensaessen", list.get(0).toString());
-		JValue resultWO = evalTestQuery("WhereExpression (wo)", queryString,
+		Object resultWO = evalTestQuery("WhereExpression (wo)", queryString,
 				new DefaultOptimizer());
 		assertEquals(result, resultWO);
 	}
@@ -1403,11 +1449,12 @@ public class GreqlEvaluatorTest extends GenericTest {
 	public void testMultipleEvaluation() throws Exception {
 		String queryString = "from i:c report i end where c:=b, b:=a, a:=\"Mensaessen\"";
 		String queryString2 = "from i:c report i end where c:=b, b:=a, a:=\"Mensaessen\"";
-		JValue result = evalTestQuery("WhereExpression", queryString);
-		assertEquals(1, result.toCollection().size());
-		JValueList list = result.toCollection().toJValueList();
+		Object result = evalTestQuery("WhereExpression", queryString);
+		assertEquals(1, ((Collection<?>) result).size());
+		@SuppressWarnings("unchecked")
+		List<Object> list = ((List<Object>) result);
 		assertEquals("Mensaessen", list.get(0).toString());
-		JValue resultWO = evalTestQuery("MultipleEvaluation (wo)", queryString,
+		Object resultWO = evalTestQuery("MultipleEvaluation (wo)", queryString,
 				new DefaultOptimizer());
 		assertEquals(result, resultWO);
 		result = evalTestQuery("MultipleEvaluation", queryString2);
@@ -1423,18 +1470,20 @@ public class GreqlEvaluatorTest extends GenericTest {
 	public void testMultipleEvaluationStarts() throws Exception {
 		String queryString = "from i: V{Identifier} report i.name end";
 		Graph datagraph = getTestGraph(TestVersion.GREQL_GRAPH);
-		GreqlEvaluator eval = new GreqlEvaluator(queryString, datagraph, null);
-		eval.startEvaluation();
-		eval.startEvaluation();
-		eval.startEvaluation();
-		eval.startEvaluation();
-		eval.startEvaluation();
+		Query query = new QueryImpl(queryString, new GraphSize(datagraph));
+		GreqlEvaluatorImpl eval = new GreqlEvaluatorImpl(query, datagraph,
+				new GreqlEnvironmentAdapter());
+		eval.evaluate();
+		eval.evaluate();
+		eval.evaluate();
+		eval.evaluate();
+		eval.evaluate();
 		eval.getResult();
-		eval.startEvaluation();
-		eval.startEvaluation();
-		eval.startEvaluation();
-		eval.startEvaluation();
-		eval.startEvaluation();
+		eval.evaluate();
+		eval.evaluate();
+		eval.evaluate();
+		eval.evaluate();
+		eval.evaluate();
 	}
 
 	/*
@@ -1452,7 +1501,7 @@ public class GreqlEvaluatorTest extends GenericTest {
 	@Test
 	public void testStartEvaluation() throws Exception {
 		String queryString = "from i: V{Identifier} report i.name end";
-		JValue result = evalTestQuery("StartEvaluation", queryString);
+		Object result = evalTestQuery("StartEvaluation", queryString);
 		assertTrue(result != null);
 	}
 
@@ -1465,8 +1514,7 @@ public class GreqlEvaluatorTest extends GenericTest {
 	public void testStore() throws Exception {
 		String queryString = "from v: V{localities.County} report v.name end store as CountyNames";
 		evalTestQuery(queryString);
-		JValueList storedList = getBoundVariable("CountyNames").toCollection()
-				.toJValueList();
+		Collection<?> storedList = (Collection<?>) getBoundVariable("CountyNames");
 
 		containsAllElements(COUNTIES, storedList);
 	}
@@ -1474,80 +1522,90 @@ public class GreqlEvaluatorTest extends GenericTest {
 	@Test
 	public void testTableComprehension() throws Exception {
 		String queryString = "from x,y:list(1..10) reportTable \"X\", \"Y\", x*y end";
-		JValue result = evalTestQuery("TableComprehension", queryString);
-		assertTrue(result.toCollection().isJValueTable());
+		Object result = evalTestQuery("TableComprehension", queryString);
+		assertTrue(result instanceof Table);
 
 	}
 
 	@Test
 	public void testMapComprehension() throws Exception {
 		String queryString = "from x : set(1, 2, 3, 4, 5) reportMap x -> x*x end";
-		JValue result = evalTestQuery("MapComprehension", queryString);
-		assertTrue(result.isMap());
-		JValueMap map = result.toJValueMap();
+		Object result = evalTestQuery("MapComprehension", queryString);
+		assertTrue(result instanceof Map);
+		@SuppressWarnings("unchecked")
+		Map<Integer, Integer> map = (Map<Integer, Integer>) result;
 		assertEquals(5, map.size());
-		assertEquals(new JValueImpl(1), map.get(new JValueImpl(1)));
-		assertEquals(new JValueImpl(4), map.get(new JValueImpl(2)));
-		assertEquals(new JValueImpl(9), map.get(new JValueImpl(3)));
-		assertEquals(new JValueImpl(16), map.get(new JValueImpl(4)));
-		assertEquals(new JValueImpl(25), map.get(new JValueImpl(5)));
+		assertEquals(1, map.get(1).intValue());
+		assertEquals(4, map.get(2).intValue());
+		assertEquals(9, map.get(3).intValue());
+		assertEquals(16, map.get(4).intValue());
+		assertEquals(25, map.get(5).intValue());
 	}
 
 	@Test
 	public void testMapComprehension2() throws Exception {
 		String queryString = "from x : V{localities.County} reportMap x.name -> x end";
-		JValueMap map = evalTestQuery(queryString).toJValueMap();
+		@SuppressWarnings("unchecked")
+		Map<Object, Object> map = (Map<Object, Object>) evalTestQuery(queryString);
 
 		containsAllKeys(COUNTIES, map);
 	}
 
-	private void containsAllKeys(Object[] counties, JValueMap map) {
+	private void containsAllKeys(Object[] counties, Map<Object, Object> map) {
 		assertEquals(counties.length, map.size());
 		containsAllElements(counties, map.keySet());
 	}
 
-	private void containsAllElements(Object[] elements,
-			JValueCollection collection) {
+	private <V> void containsAllElements(Object[] elements,
+			Collection<V> collection) {
 
-		JValueList list = new JValueList(collection);
-		assertEquals(elements.length, list.size());
+		assertEquals(elements.length, collection.size());
 		for (Object county : elements) {
-			assertTrue(list.remove(new JValueImpl(county)));
+			assertTrue(collection.contains(county));
 		}
-		assertTrue(list.isEmpty());
+	}
+
+	private <V> void containsAllElements(Collection<V> elements,
+			Collection<V> collection) {
+
+		assertEquals(elements.size(), collection.size());
+		for (Object county : elements) {
+			assertTrue(collection.contains(county));
+		}
 	}
 
 	@Test
 	public void testMapComprehension3() throws Exception {
 		// GreqlEvaluator.DEBUG_DECLARATION_ITERATIONS = true;
 		String queryString = "from x : list(1..3) reportMap x -> from y : list(1..x) reportMap y -> list(y..x) end end";
-		JValue result = evalTestQuery("MapComprehension3", queryString);
-		JValueMap map = result.toJValueMap();
+		Object result = evalTestQuery("MapComprehension3", queryString);
+		@SuppressWarnings("unchecked")
+		Map<Integer, Map<Integer, List<Integer>>> map = (Map<Integer, Map<Integer, List<Integer>>>) result;
 
 		assertEquals(3, map.size());
 
-		JValueMap resultVal1 = map.get(new JValueImpl(1)).toJValueMap();
+		Map<Integer, List<Integer>> resultVal1 = map.get(1);
 		assertEquals(1, resultVal1.size());
-		assertEquals(1, resultVal1.get(new JValueImpl(1)).toJValueList().size());
+		assertEquals(1, resultVal1.get(1).size());
 
-		JValueMap resultVal2 = map.get(new JValueImpl(2)).toJValueMap();
+		Map<Integer, List<Integer>> resultVal2 = map.get(2);
 		assertEquals(2, resultVal2.size());
-		assertEquals(2, resultVal2.get(new JValueImpl(1)).toJValueList().size());
-		assertEquals(1, resultVal2.get(new JValueImpl(2)).toJValueList().size());
+		assertEquals(2, resultVal2.get(1).size());
+		assertEquals(1, resultVal2.get(2).size());
 
-		JValueMap resultVal3 = map.get(new JValueImpl(3)).toJValueMap();
+		Map<Integer, List<Integer>> resultVal3 = map.get(3);
 		assertEquals(3, resultVal3.size());
-		assertEquals(3, resultVal3.get(new JValueImpl(1)).toJValueList().size());
-		assertEquals(2, resultVal3.get(new JValueImpl(2)).toJValueList().size());
-		assertEquals(1, resultVal3.get(new JValueImpl(3)).toJValueList().size());
+		assertEquals(3, resultVal3.get(1).size());
+		assertEquals(2, resultVal3.get(2).size());
+		assertEquals(1, resultVal3.get(3).size());
 	}
 
 	@Test
 	public void testQueryWithoutDatagraph() throws Exception {
 		String queryString = "(3 + 4) * 7";
-		JValue result = evalTestQuery("QueryWithoutDatagraph", queryString,
+		Object result = evalTestQuery("QueryWithoutDatagraph", queryString,
 				(Graph) null);
-		assertEquals(49, result.toInteger().intValue());
+		assertEquals(49, ((Integer) result).intValue());
 	}
 
 	@Test
@@ -1559,20 +1617,14 @@ public class GreqlEvaluatorTest extends GenericTest {
 				+ "                   with isPrime(y+x) and isPrime(z+x) "
 				+ "                   reportSet y, z end      "
 				+ "      end                                  ";
-		GreqlEvaluator e1 = new GreqlEvaluator(query1, null, null);
-		e1.setOptimize(false);
-		e1.startEvaluation();
-		JValue r1 = e1.getResult();
+		Object r1 = new QueryImpl(query1, false).evaluate();
 		String query2 = "from x : list(1..5)                   "
 				+ "      with isPrime(x)                       "
 				+ "      reportSet x, from y : from a : list(21..25) with isPrime(a+x) reportSet a end,"
 				+ "                        z : from b : list(21..30) with isPrime(b+x) reportSet b end "
 				+ "                   reportSet y, z end       "
 				+ "      end                                   ";
-		GreqlEvaluator e2 = new GreqlEvaluator(query2, null, null);
-		e2.setOptimize(false);
-		e2.startEvaluation();
-		JValue r2 = e2.getResult();
+		Object r2 = new QueryImpl(query2, false).evaluate();
 
 		assertEquals(r1, r2);
 	}
@@ -1580,26 +1632,26 @@ public class GreqlEvaluatorTest extends GenericTest {
 	@Test
 	public void testWhereWithSameScope() throws Exception {
 		String query = "from a,b:list(1..10) with equivalent reportSet a end where equivalent := a=b";
-		JValue result = evalTestQuery("WhereWithSameScope", query);
-		assertTrue(result.isCollection());
-		assertTrue(result.toCollection().isJValueSet());
-		JValueSet resSet = result.toJValueSet();
+		Object result = evalTestQuery("WhereWithSameScope", query);
+		assertTrue(result instanceof Set);
+		@SuppressWarnings("unchecked")
+		Set<Integer> resSet = (Set<Integer>) result;
 		assertEquals(10, resSet.size());
 		for (int i = 1; i < 11; i++) {
-			assertTrue(resSet.contains(new JValueImpl(i)));
+			assertTrue(resSet.contains(i));
 		}
 	}
 
 	@Test
 	public void testLetWithSameScope() throws Exception {
 		String query = "let equivalent := a=b in from a,b:list(1..10) with equivalent reportSet a end";
-		JValue result = evalTestQuery("LetWithSameScope", query);
-		assertTrue(result.isCollection());
-		assertTrue(result.toCollection().isJValueSet());
-		JValueSet resSet = result.toJValueSet();
+		Object result = evalTestQuery("LetWithSameScope", query);
+		assertTrue(result instanceof Set);
+		@SuppressWarnings("unchecked")
+		Set<Integer> resSet = (Set<Integer>) result;
 		assertEquals(10, resSet.size());
 		for (int i = 1; i < 11; i++) {
-			assertTrue(resSet.contains(new JValueImpl(i)));
+			assertTrue(resSet.contains(i));
 		}
 	}
 
@@ -1662,41 +1714,38 @@ public class GreqlEvaluatorTest extends GenericTest {
 				+ "     with isPrime(a + 1) and isPrime(b)        "
 				+ "          and (exists! x : list(1..30), y : list(10..20), x+a<y+b @ isPrime(x+y)) "
 				+ "     reportSet a, b end";
-		GreqlEvaluator eval = new GreqlEvaluator((String) null,
-				getTestGraph(TestVersion.GREQL_GRAPH), null);
+		OptimizerInfo oInfo = new GraphSize(
+				getTestGraph(TestVersion.GREQL_GRAPH));
 
-		Field parseTime = eval.getClass().getDeclaredField("parseTime");
+		Field parseTime = QueryImpl.class.getDeclaredField("parseTime");
 		parseTime.setAccessible(true);
-		Field optimizationTime = eval.getClass().getDeclaredField(
-				"optimizationTime");
+		Field optimizationTime = QueryImpl.class
+				.getDeclaredField("optimizationTime");
 		optimizationTime.setAccessible(true);
 
 		for (int i = 0; i < 6; i++) {
-			eval.setQuery((i % 2 == 0) ? query1 : query2);
-			eval.startEvaluation();
-			eval.getResult();
+			Query query = new QueryImpl((i % 2 == 0) ? query1 : query2, oInfo);
+			query.evaluate();
 			// eval.printEvaluationTimes();
 			if (i < 2) {
 				// The first two times, both parsing and optimizing have to be
 				// done!
-				assertTrue(parseTime.getLong(eval) > 0);
-				assertTrue(optimizationTime.getLong(eval) > 0);
+				assertTrue(parseTime.getLong(query) > 0);
+				assertTrue(optimizationTime.getLong(query) > 0);
 			} else {
 				// From that on, there should be no parsing and optimizing
 				// anymore, cause the optimized graph is cached.
-				assertEquals(0, parseTime.getLong(eval));
-				assertEquals(0, optimizationTime.getLong(eval));
+				assertEquals(0, parseTime.getLong(query));
+				assertEquals(0, optimizationTime.getLong(query));
 			}
 		}
 
-		eval.setOptimize(false);
 		for (int i = 0; i < 6; i++) {
-			eval.setQuery((i % 2 == 0) ? query1 : query2);
-			eval.startEvaluation();
-			eval.getResult();
+			Query query = new QueryImpl((i % 2 == 0) ? query1 : query2, false);
+			query.evaluate();
 			// eval.printEvaluationTimes();
-			assertTrue(parseTime.getLong(eval) > 0);
-			assertEquals(0, optimizationTime.getLong(eval));
+			assertTrue(parseTime.getLong(query) > 0);
+			assertEquals(0, optimizationTime.getLong(query));
 		}
 	}
 

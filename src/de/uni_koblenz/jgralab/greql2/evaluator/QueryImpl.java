@@ -503,6 +503,11 @@ public class QueryImpl extends GraphStructureChangedAdapter implements Query {
 		return result;
 	}
 
+	@Override
+	public String toString() {
+		return queryText;
+	}
+
 	public void setSubQuery(String name, String greqlQuery) {
 		if (name == null) {
 			throw new GreqlException("The name of a subquery must not be null!");

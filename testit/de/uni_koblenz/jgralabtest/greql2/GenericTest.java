@@ -386,10 +386,10 @@ public class GenericTest {
 
 	protected Object evalTestQuery(String functionName, String query,
 			Optimizer optimizer, Graph datagraph) throws Exception {
-		Query queryObj = new QueryImpl(query, optimizer);
-		queryObj.setUseSavedOptimizedSyntaxGraph(false);
+		this.query = new QueryImpl(query, optimizer);
+		this.query.setUseSavedOptimizedSyntaxGraph(false);
 
-		Object result = queryObj.evaluate(datagraph, environment);
+		Object result = this.query.evaluate(datagraph, environment);
 
 		if (DEBUG_SYNTAXGRAPHS) {
 			printDebuggingSyntaxGraph(optimizer);
@@ -419,6 +419,7 @@ public class GenericTest {
 			System.out.println("Unoptimized Query:");
 			dotFileName += "unoptimized-query.dot";
 		}
+
 		System.out
 				.println(GreqlSerializer.serializeGraph(query.getQueryGraph()));
 		try {
