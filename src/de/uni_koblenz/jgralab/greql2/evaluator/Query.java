@@ -41,4 +41,6 @@ public interface Query {
 	public Object evaluate(Graph datagraph, GreqlEnvironment environment,
 			ProgressFunction progressFunction);
 
+	public void setSubQuery(String name, String greqlQuery);
+
 }

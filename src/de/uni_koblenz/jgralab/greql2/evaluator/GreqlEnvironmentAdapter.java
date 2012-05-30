@@ -11,6 +11,14 @@ public class GreqlEnvironmentAdapter implements GreqlEnvironment {
 	 */
 	private Map<String, Object> variableMap;
 
+	public GreqlEnvironmentAdapter() {
+		this(new HashMap<String, Object>());
+	}
+
+	public GreqlEnvironmentAdapter(Map<String, Object> greqlMapping) {
+		variableMap = greqlMapping;
+	}
+
 	/**
 	 * returns the changes variableMap
 	 */
