@@ -58,9 +58,9 @@ public class SchemaVisualizer {
 	/**
 	 * Returns the JavaScript-code to create the representation of the
 	 * inheritance hierarchy of the EdgeClasses and the VertexClasses.
-	 *
+	 * 
 	 * @param code
-	 *
+	 * 
 	 * @param state
 	 */
 	public void createSchemaRepresentation(StringBuilder code, State state) {
@@ -71,9 +71,9 @@ public class SchemaVisualizer {
 
 	/**
 	 * Creates the code for the representation of the packages.
-	 *
+	 * 
 	 * @param code
-	 *
+	 * 
 	 * @param state
 	 */
 	private void createPackageRepresentation(StringBuilder code, State state) {
@@ -95,9 +95,9 @@ public class SchemaVisualizer {
 	/**
 	 * Creates the representation of the package <code>currentPackage</code> and
 	 * its containing packages.
-	 *
+	 * 
 	 * @param code
-	 *
+	 * 
 	 * @param parentUl
 	 *            the JavaScript variable name of the parent ul
 	 * @param currentPackage
@@ -238,7 +238,7 @@ public class SchemaVisualizer {
 	/**
 	 * Returns a String in which all occurrences of "$" in
 	 * <code>uniqueName</code> are replaced by "".
-	 *
+	 * 
 	 * @param uniqueName
 	 * @return
 	 */
@@ -250,9 +250,9 @@ public class SchemaVisualizer {
 	/**
 	 * If <code>createForVertex</code> == true the representation for the
 	 * VertexClasses is created. Otherwise for the EdgeClasses
-	 *
+	 * 
 	 * @param code
-	 *
+	 * 
 	 * @param state
 	 * @param createForVertex
 	 * @return the needed JavaScript commands
@@ -288,31 +288,35 @@ public class SchemaVisualizer {
 			String ulName = "";
 			Iterator<GraphElementClass<?, ?>> superClassIter = superClasses
 					.iterator();
-			GraphElementClass<?, ?> superClass = superClassIter.next();
-			// check if firstClass is a base class
-			while ((superClass.getQualifiedName().equals("Vertex")
-					|| superClass.getQualifiedName().equals("Edge")
-					|| superClass.getQualifiedName().equals("Aggregation") || superClass
-					.getQualifiedName().equals("Composition"))
-					&& superClassIter.hasNext()) {
-				// find first superclass whicht is not a base class
-				superClass = superClassIter.next();
-			}
-			if (superClass.getQualifiedName().equals("Vertex")
-					|| superClass.getQualifiedName().equals("Edge")
-					|| superClass.getQualifiedName().equals("Aggregation")
-					|| superClass.getQualifiedName().equals("Composition")) {
-				// This class is a rootClass in the representation
-				ulName = "Root" + var;
-			} else {
-				// this class is not a rootClass in the representation
-				ulName = replaceDollar(superClass.getUniqueName());
-				if (superClassIter.hasNext()) {
-					// this class has several superclasses
-					// put further superclasses in unsetSuperClasses
-					unsetAEClasses.add(aeclass);
-					unsetSuperClasses.add(superClassIter);
+			if (superClassIter.hasNext()) {
+				GraphElementClass<?, ?> superClass = superClassIter.next();
+				// check if firstClass is a base class
+				while ((superClass.getQualifiedName().equals("Vertex")
+						|| superClass.getQualifiedName().equals("Edge")
+						|| superClass.getQualifiedName().equals("Aggregation") || superClass
+						.getQualifiedName().equals("Composition"))
+						&& superClassIter.hasNext()) {
+					// find first superclass whicht is not a base class
+					superClass = superClassIter.next();
 				}
+				if (superClass.getQualifiedName().equals("Vertex")
+						|| superClass.getQualifiedName().equals("Edge")
+						|| superClass.getQualifiedName().equals("Aggregation")
+						|| superClass.getQualifiedName().equals("Composition")) {
+					// This class is a rootClass in the representation
+					ulName = "Root" + var;
+				} else {
+					// this class is not a rootClass in the representation
+					ulName = replaceDollar(superClass.getUniqueName());
+					if (superClassIter.hasNext()) {
+						// this class has several superclasses
+						// put further superclasses in unsetSuperClasses
+						unsetAEClasses.add(aeclass);
+						unsetSuperClasses.add(superClassIter);
+					}
+				}
+			} else {
+				ulName = "Root" + var;
 			}
 			createLi(code, "ul" + ulName,
 					replaceDollar(aeclass.getUniqueName()),
@@ -367,9 +371,9 @@ public class SchemaVisualizer {
 	 * position. <b>Created variables:</b><br>
 	 * <code>"li"+aeclass.getUniqueName()+"_"+i</code>: the clone of
 	 * <code>"li"+aeclass.getUniqueName()</code><br>
-	 *
+	 * 
 	 * @param code
-	 *
+	 * 
 	 * @param aeclass
 	 *            the class which representation is cloned
 	 * @param i
@@ -397,9 +401,9 @@ public class SchemaVisualizer {
 	 * Adds to all ids and names <code>":"+i</code>. It adapts the
 	 * onclick-events and the hrefs to the new ids. The checkboxes are set
 	 * checked again, because the Internet Explorer doesn't clone these values.
-	 *
+	 * 
 	 * @param code
-	 *
+	 * 
 	 * @param aeclass
 	 *            the class which cloned representation is adapted
 	 * @param i
@@ -504,9 +508,9 @@ public class SchemaVisualizer {
 	 * <code>"ulRoot"+var</code>: the root ul<br>
 	 * <b>The created Tag has the form:</b><br>
 	 * &lt;ul id="ulRoot<code>var</code>"&gt;&lt;/ul&gt;
-	 *
+	 * 
 	 * @param code
-	 *
+	 * 
 	 * @param var
 	 *            equals "Vertex", if we create the representation of the
 	 *            VertexClasses. It equals "Edge" otherwise.
@@ -535,9 +539,9 @@ public class SchemaVisualizer {
 	 * &lt;a id="a<code>uniqueName</code>" href="javascript:expand('ul
 	 * <code>uniqueName</code>','a<code>uniqueName</code>');"&gt;&lt;img
 	 * src="plus.png" alt="+" /&gt;&lt;/a&gt;
-	 *
+	 * 
 	 * @param code
-	 *
+	 * 
 	 * @param uniqueName
 	 */
 	private void convertToTypeWithSubtypes(StringBuilder code, String uniqueName) {
@@ -577,9 +581,9 @@ public class SchemaVisualizer {
 	 * <b>The created Tag has the form:</b><br>
 	 * &lt;p title="<code>qualifiedName</code>+attributes"&gt;
 	 * <code>simpleName</code> &lt;/p&gt;
-	 *
+	 * 
 	 * @param code
-	 *
+	 * 
 	 * @param simpleName
 	 * @param uniqueName
 	 * @param qualifiedName
@@ -621,9 +625,9 @@ public class SchemaVisualizer {
 	 * " type="checkbox" checked="checked" name="input<code>uniqueName</code>
 	 * " value="<code>qualifiedName</code>" onclick="<code>additionalCode</code>
 	 * ;deSelect(' <code>uniqueName</code>',this.id);" /&gt;
-	 *
+	 * 
 	 * @param code
-	 *
+	 * 
 	 * @param uniqueName
 	 * @param qualifiedName
 	 * @param additionalCode
@@ -666,11 +670,11 @@ public class SchemaVisualizer {
 	 * <code>"li"+uniqueName</code>: the created li-tag<br>
 	 * <code>"ws"+uniqueName</code>: the whitspaces in the tag<br>
 	 * <b>The created Tag has the form:</b><br>
-	 * &lt;li id="li+<code>uniqueName</code>
+	 * &lt;li id="li+<code>uniqueName</code> 
 	 * "&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;/li&gt;
-	 *
+	 * 
 	 * @param code
-	 *
+	 * 
 	 * @param parentUl
 	 *            the name of the variable of the parent ul
 	 * @param uniqueName

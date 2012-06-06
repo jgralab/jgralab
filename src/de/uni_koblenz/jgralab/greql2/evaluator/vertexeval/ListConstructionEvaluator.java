@@ -38,9 +38,11 @@ package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 import org.pcollections.PCollection;
 
 import de.uni_koblenz.jgralab.JGraLab;
-import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
-import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize;
-import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
+import de.uni_koblenz.jgralab.greql2.evaluator.InternalGreqlEvaluator;
+import de.uni_koblenz.jgralab.greql2.evaluator.QueryImpl;
+import de.uni_koblenz.jgralab.greql2.evaluator.VertexCosts;
+import de.uni_koblenz.jgralab.greql2.schema.Expression;
+import de.uni_koblenz.jgralab.greql2.schema.IsPartOf;
 import de.uni_koblenz.jgralab.greql2.schema.ListConstruction;
 
 /**
@@ -49,28 +51,49 @@ import de.uni_koblenz.jgralab.greql2.schema.ListConstruction;
  * @author ist@uni-koblenz.de
  * 
  */
-public class ListConstructionEvaluator extends ValueConstructionEvaluator {
+public class ListConstructionEvaluator extends
+		ValueConstructionEvaluator<ListConstruction> {
 
-	public ListConstructionEvaluator(ListConstruction vertex,
-			GreqlEvaluator eval) {
-		super(vertex, eval);
+	public ListConstructionEvaluator(ListConstruction vertex, QueryImpl query) {
+		super(vertex, query);
 	}
 
 	@Override
-	public PCollection<Object> evaluate() {
-		return createValue(JGraLab.vector());
+	public PCollection<Object> evaluate(InternalGreqlEvaluator evaluator) {
+		evaluator.progress(getOwnEvaluationCosts());
+		return createValue(JGraLab.vector(), evaluator);
 	}
 
 	@Override
-	public VertexCosts calculateSubtreeEvaluationCosts(GraphSize graphSize) {
-		return this.greqlEvaluator.getCostModel()
-				.calculateCostsListConstruction(this, graphSize);
+	public VertexCosts calculateSubtreeEvaluationCosts() {
+		ListConstruction listCons = getVertex();
+		IsPartOf inc = listCons.getFirstIsPartOfIncidence();
+		long parts = 0;
+		long partCosts = 0;
+		while (inc != null) {
+			VertexEvaluator<? extends Expression> veval = query
+					.getVertexEvaluator((Expression) inc.getAlpha());
+			partCosts += veval.getCurrentSubtreeEvaluationCosts();
+			parts++;
+			inc = inc.getNextIsPartOfIncidence();
+		}
+
+		long ownCosts = (parts * addToListCosts) + 2;
+		long iteratedCosts = ownCosts * getVariableCombinations();
+		long subtreeCosts = iteratedCosts + partCosts;
+		return new VertexCosts(ownCosts, iteratedCosts, subtreeCosts);
 	}
 
 	@Override
-	public long calculateEstimatedCardinality(GraphSize graphSize) {
-		return greqlEvaluator.getCostModel()
-				.calculateCardinalityListConstruction(this, graphSize);
+	public long calculateEstimatedCardinality() {
+		ListConstruction listCons = getVertex();
+		IsPartOf inc = listCons.getFirstIsPartOfIncidence();
+		long parts = 0;
+		while (inc != null) {
+			parts++;
+			inc = inc.getNextIsPartOfIncidence();
+		}
+		return parts;
 	}
 
 }

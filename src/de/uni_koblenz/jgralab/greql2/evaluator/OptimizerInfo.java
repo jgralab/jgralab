@@ -33,9 +33,57 @@
  * the parts of JGraLab used as well as that of the covered work.
  */
 
+package de.uni_koblenz.jgralab.greql2.evaluator;
+
+
 /**
- * This package is part of the GReQL2-evaluator.
+ * This class is needed to propagate the size of the currently used graph along
+ * different calculate methods
+ * 
+ * @author ist@uni-koblenz.de
  */
+public interface OptimizerInfo {
 
-package de.uni_koblenz.jgralab.greql2.evaluator.costmodel;
+	/**
+	 * 
+	 * @return the number of EdgeTypes this GraphSize object knows
+	 */
+	public int getKnownEdgeTypes();
 
+	/**
+	 * 
+	 * @return the number of VertexTypes this GraphSize object knows
+	 */
+	public int getKnownVertexTypes();
+
+	/**
+	 * @return the number of vertices in this graphsize object
+	 */
+	public long getVertexCount();
+
+	/**
+	 * sets the number of vertices in this GraphSize object
+	 */
+	public void setVertexCount(long count);
+
+	/**
+	 * @return the number of edge in this graphsize object
+	 */
+	public long getEdgeCount();
+
+	/**
+	 * sets the number of edges in this GraphSize object
+	 */
+	public void setEdgeCount(long count);
+
+	/**
+	 * @return the average number of subclasses of a vertex class
+	 */
+	public double getAverageVertexSubclasses();
+
+	/**
+	 * @return the average number of subclasses of an edge class
+	 */
+	public double getAverageEdgeSubclasses();
+
+}

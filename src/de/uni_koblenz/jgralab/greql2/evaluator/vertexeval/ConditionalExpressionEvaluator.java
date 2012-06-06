@@ -36,12 +36,13 @@
 package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
-import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
-import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize;
-import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
+import de.uni_koblenz.jgralab.greql2.evaluator.InternalGreqlEvaluator;
+import de.uni_koblenz.jgralab.greql2.evaluator.QueryImpl;
+import de.uni_koblenz.jgralab.greql2.evaluator.VertexCosts;
 import de.uni_koblenz.jgralab.greql2.schema.ConditionalExpression;
 import de.uni_koblenz.jgralab.greql2.schema.Expression;
-import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
+import de.uni_koblenz.jgralab.greql2.schema.IsFalseExprOf;
+import de.uni_koblenz.jgralab.greql2.schema.IsTrueExprOf;
 
 /**
  * Evaluates a ConditionalExpression vertex in the GReQL-2 Syntaxgraph
@@ -49,20 +50,8 @@ import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
  * @author ist@uni-koblenz.de
  * 
  */
-public class ConditionalExpressionEvaluator extends VertexEvaluator {
-
-	/**
-	 * The ConditionalExpression-Vertex this evaluator evaluates
-	 */
-	private ConditionalExpression vertex;
-
-	/**
-	 * returns the vertex this VertexEvaluator evaluates
-	 */
-	@Override
-	public Greql2Vertex getVertex() {
-		return vertex;
-	}
+public class ConditionalExpressionEvaluator extends
+		VertexEvaluator<ConditionalExpression> {
 
 	/**
 	 * Creates a new ConditionExpressionEvaluator for the given vertex
@@ -73,21 +62,21 @@ public class ConditionalExpressionEvaluator extends VertexEvaluator {
 	 *            the vertex this VertexEvaluator evaluates
 	 */
 	public ConditionalExpressionEvaluator(ConditionalExpression vertex,
-			GreqlEvaluator eval) {
-		super(eval);
-		this.vertex = vertex;
+			QueryImpl query) {
+		super(vertex, query);
 	}
 
 	/**
 	 * evaluates the conditional expression
 	 */
 	@Override
-	public Object evaluate() {
+	public Object evaluate(InternalGreqlEvaluator evaluator) {
+		evaluator.progress(getOwnEvaluationCosts());
 		Expression condition = (Expression) vertex
 				.getFirstIsConditionOfIncidence(EdgeDirection.IN).getAlpha();
-		VertexEvaluator conditionEvaluator = vertexEvalMarker
-				.getMark(condition);
-		Object conditionResult = conditionEvaluator.getResult();
+		VertexEvaluator<? extends Expression> conditionEvaluator = query
+				.getVertexEvaluator(condition);
+		Object conditionResult = conditionEvaluator.getResult(evaluator);
 		Expression expressionToEvaluate = null;
 
 		Boolean value = (Boolean) conditionResult;
@@ -100,20 +89,70 @@ public class ConditionalExpressionEvaluator extends VertexEvaluator {
 					.getAlpha();
 		}
 
+		Object result = null;
 		if (expressionToEvaluate != null) {
-			VertexEvaluator exprEvaluator = vertexEvalMarker
-					.getMark(expressionToEvaluate);
-			result = exprEvaluator.getResult();
+			VertexEvaluator<? extends Expression> exprEvaluator = query
+					.getVertexEvaluator(expressionToEvaluate);
+			result = exprEvaluator.getResult(evaluator);
+			evaluator.setLocalEvaluationResult(vertex, result);
 		} else {
+			evaluator.removeLocalEvaluationResult(vertex);
 			result = null;
 		}
 		return result;
 	}
 
 	@Override
-	public VertexCosts calculateSubtreeEvaluationCosts(GraphSize graphSize) {
-		return greqlEvaluator.getCostModel()
-				.calculateCostsConditionalExpression(this, graphSize);
+	public VertexCosts calculateSubtreeEvaluationCosts() {
+		ConditionalExpression vertex = getVertex();
+		Expression condition = (Expression) vertex
+				.getFirstIsConditionOfIncidence().getAlpha();
+		VertexEvaluator<? extends Expression> conditionEvaluator = query
+				.getVertexEvaluator(condition);
+		long conditionCosts = conditionEvaluator
+				.getCurrentSubtreeEvaluationCosts();
+		Expression expressionToEvaluate;
+		expressionToEvaluate = (Expression) vertex
+				.getFirstIsTrueExprOfIncidence().getAlpha();
+		VertexEvaluator<? extends Expression> vertexEval = query
+				.getVertexEvaluator(expressionToEvaluate);
+		long trueCosts = vertexEval.getCurrentSubtreeEvaluationCosts();
+		expressionToEvaluate = (Expression) vertex
+				.getFirstIsFalseExprOfIncidence().getAlpha();
+		vertexEval = query.getVertexEvaluator(expressionToEvaluate);
+		long falseCosts = vertexEval.getCurrentSubtreeEvaluationCosts();
+		long maxCosts = trueCosts;
+		if (falseCosts > trueCosts) {
+			maxCosts = falseCosts;
+		}
+		long ownCosts = 4;
+		long iteratedCosts = ownCosts * getVariableCombinations();
+		long subtreeCosts = iteratedCosts + maxCosts + conditionCosts;
+		return new VertexCosts(ownCosts, iteratedCosts, subtreeCosts);
+	}
+
+	@Override
+	public long calculateEstimatedCardinality() {
+		ConditionalExpression condExp = getVertex();
+		IsTrueExprOf trueInc = condExp.getFirstIsTrueExprOfIncidence();
+		long trueCard = 0;
+		if (trueInc != null) {
+			VertexEvaluator<? extends Expression> trueEval = query
+					.getVertexEvaluator((Expression) trueInc.getAlpha());
+			trueCard = trueEval.getEstimatedCardinality();
+		}
+		IsFalseExprOf falseInc = condExp.getFirstIsFalseExprOfIncidence();
+		long falseCard = 0;
+		if (falseInc != null) {
+			VertexEvaluator<? extends Expression> falseEval = query
+					.getVertexEvaluator((Expression) falseInc.getAlpha());
+			falseCard = falseEval.getEstimatedCardinality();
+		}
+		long maxCard = trueCard;
+		if (falseCard > maxCard) {
+			maxCard = falseCard;
+		}
+		return maxCard;
 	}
 
 }

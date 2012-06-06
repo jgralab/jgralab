@@ -37,7 +37,7 @@
  */
 package de.uni_koblenz.jgralab.greql2.optimizer.condexp;
 
-import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
+import de.uni_koblenz.jgralab.greql2.evaluator.QueryImpl;
 import de.uni_koblenz.jgralab.greql2.schema.BoolLiteral;
 import de.uni_koblenz.jgralab.greql2.schema.Expression;
 
@@ -49,8 +49,8 @@ import de.uni_koblenz.jgralab.greql2.schema.Expression;
  */
 public class False extends Literal {
 
-	public False(GreqlEvaluator eval) {
-		super(eval);
+	public False(QueryImpl query) {
+		super(query);
 	}
 
 	@Override
@@ -60,7 +60,7 @@ public class False extends Literal {
 
 	@Override
 	public Expression toExpression() {
-		BoolLiteral bool = greqlEvaluator.getSyntaxGraph().createBoolLiteral();
+		BoolLiteral bool = query.getQueryGraph().createBoolLiteral();
 		bool.set_boolValue(false);
 		return bool;
 	}

@@ -39,6 +39,7 @@ import org.pcollections.PCollection;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Vertex;
+import de.uni_koblenz.jgralab.greql2.evaluator.InternalGreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VertexEvaluator;
 import de.uni_koblenz.jgralab.greql2.serialising.GreqlSerializer;
 
@@ -48,9 +49,9 @@ public class IntermediateVertexTransition extends Transition {
 	 * this transition may only fire, if the end-vertex of the edge e is part of
 	 * the result of this VertexEvaluator
 	 */
-	public VertexEvaluator intermediateVertexEvaluator;
-	
-	public VertexEvaluator getIntermediateVertexEvaluator() {
+	public VertexEvaluator<?> intermediateVertexEvaluator;
+
+	public VertexEvaluator<?> getIntermediateVertexEvaluator() {
 		return intermediateVertexEvaluator;
 	}
 
@@ -81,9 +82,9 @@ public class IntermediateVertexTransition extends Transition {
 	 *            the collection of intermediate vertices
 	 */
 	public IntermediateVertexTransition(State start, State end,
-			VertexEvaluator intermediateVertices) {
+			VertexEvaluator<?> intermediateVertices) {
 		super(start, end);
-		this.intermediateVertexEvaluator = intermediateVertices;
+		intermediateVertexEvaluator = intermediateVertices;
 	}
 
 	/**
@@ -128,12 +129,12 @@ public class IntermediateVertexTransition extends Transition {
 	 * @see greql2.evaluator.fa.Transition#accepts(jgralab.Vertex, jgralab.Edge)
 	 */
 	@Override
-	public boolean accepts(Vertex v, Edge e) {
+	public boolean accepts(Vertex v, Edge e, InternalGreqlEvaluator evaluator) {
 		// checks if a intermediateVertexExpression exists and if the end-vertex
 		// of e is part of the result of this expression
 
 		if (intermediateVertexEvaluator != null) {
-			Object tempRes = intermediateVertexEvaluator.getResult();
+			Object tempRes = intermediateVertexEvaluator.getResult(evaluator);
 			if (tempRes instanceof PCollection) {
 				@SuppressWarnings("unchecked")
 				PCollection<Vertex> intermediateVertices = (PCollection<Vertex>) tempRes;

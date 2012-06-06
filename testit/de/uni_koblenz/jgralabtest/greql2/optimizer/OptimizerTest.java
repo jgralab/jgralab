@@ -39,7 +39,7 @@ import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 
 import de.uni_koblenz.jgralab.Graph;
-import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
+import de.uni_koblenz.jgralab.greql2.evaluator.QueryImpl;
 import de.uni_koblenz.jgralab.greql2.exception.OptimizerException;
 import de.uni_koblenz.jgralab.greql2.funlib.FunLib;
 import de.uni_koblenz.jgralab.greql2.optimizer.CommonSubgraphOptimizer;
@@ -53,7 +53,6 @@ import de.uni_koblenz.jgralab.greql2.optimizer.PathExistenceOptimizer;
 import de.uni_koblenz.jgralab.greql2.optimizer.PathExistenceToDirectedPathExpressionOptimizer;
 import de.uni_koblenz.jgralab.greql2.optimizer.VariableDeclarationOrderOptimizer;
 import de.uni_koblenz.jgralab.greql2.parser.GreqlParser;
-import de.uni_koblenz.jgralab.greql2.schema.Greql2;
 import de.uni_koblenz.jgralabtest.greql2.GenericTest;
 import de.uni_koblenz.jgralabtest.greql2.testfunctions.IsPrime;
 
@@ -63,17 +62,17 @@ public class OptimizerTest extends GenericTest {
 		FunLib.register(IsPrime.class);
 	}
 
-	private Optimizer cso = new CommonSubgraphOptimizer();
-	private Optimizer eso = new EarlySelectionOptimizer();
-	private Optimizer peo = new PathExistenceOptimizer();
-	private Optimizer petdpeo = new PathExistenceToDirectedPathExpressionOptimizer();
-	private Optimizer defo = new DefaultOptimizer();
-	private Optimizer vdoo = new VariableDeclarationOrderOptimizer();
-	private Optimizer csoAndMsdo = new CommonSubgraphAndMergeSDOptimizer();
-	private Optimizer ceoAndCso = new CommonSubgraphAndConditionalExpressionOptimizer();
+	private final Optimizer cso = new CommonSubgraphOptimizer();
+	private final Optimizer eso = new EarlySelectionOptimizer();
+	private final Optimizer peo = new PathExistenceOptimizer();
+	private final Optimizer petdpeo = new PathExistenceToDirectedPathExpressionOptimizer();
+	private final Optimizer defo = new DefaultOptimizer();
+	private final Optimizer vdoo = new VariableDeclarationOrderOptimizer();
+	private final Optimizer csoAndMsdo = new CommonSubgraphAndMergeSDOptimizer();
+	private final Optimizer ceoAndCso = new CommonSubgraphAndConditionalExpressionOptimizer();
 
 	private class CommonSubgraphAndMergeSDOptimizer extends OptimizerBase {
-		private Optimizer msdo = new MergeSimpleDeclarationsOptimizer();
+		private final Optimizer msdo = new MergeSimpleDeclarationsOptimizer();
 
 		@Override
 		public boolean isEquivalent(Optimizer optimizer) {
@@ -81,16 +80,15 @@ public class OptimizerTest extends GenericTest {
 		}
 
 		@Override
-		public boolean optimize(GreqlEvaluator eval, Greql2 syntaxgraph)
-				throws OptimizerException {
-			boolean csoOptimized = cso.optimize(eval, syntaxgraph);
-			return csoOptimized | msdo.optimize(eval, syntaxgraph);
+		public boolean optimize(QueryImpl query) throws OptimizerException {
+			boolean csoOptimized = cso.optimize(query);
+			return csoOptimized | msdo.optimize(query);
 		}
 	};
 
 	private class CommonSubgraphAndConditionalExpressionOptimizer extends
 			OptimizerBase {
-		private Optimizer ceo = new ConditionalExpressionOptimizer();
+		private final Optimizer ceo = new ConditionalExpressionOptimizer();
 
 		@Override
 		public boolean isEquivalent(Optimizer optimizer) {
@@ -98,10 +96,9 @@ public class OptimizerTest extends GenericTest {
 		}
 
 		@Override
-		public boolean optimize(GreqlEvaluator eval, Greql2 syntaxgraph)
-				throws OptimizerException {
-			boolean csoOptimized = ceo.optimize(eval, syntaxgraph);
-			return csoOptimized | cso.optimize(eval, syntaxgraph);
+		public boolean optimize(QueryImpl query) throws OptimizerException {
+			boolean csoOptimized = ceo.optimize(query);
+			return csoOptimized | cso.optimize(query);
 		}
 	};
 

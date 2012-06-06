@@ -46,14 +46,10 @@ import java.util.logging.Logger;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.JGraLab;
-import de.uni_koblenz.jgralab.graphmarker.GraphMarker;
-import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
-import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize;
-import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.SimpleDeclarationEvaluator;
-import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VertexEvaluator;
+import de.uni_koblenz.jgralab.greql2.evaluator.QueryImpl;
 import de.uni_koblenz.jgralab.greql2.exception.OptimizerException;
 import de.uni_koblenz.jgralab.greql2.schema.Declaration;
-import de.uni_koblenz.jgralab.greql2.schema.Greql2;
+import de.uni_koblenz.jgralab.greql2.schema.Greql2Graph;
 import de.uni_koblenz.jgralab.greql2.schema.IsDeclaredVarOf;
 import de.uni_koblenz.jgralab.greql2.schema.IsSimpleDeclOf;
 import de.uni_koblenz.jgralab.greql2.schema.SimpleDeclaration;
@@ -107,17 +103,8 @@ public class VariableDeclarationOrderOptimizer extends OptimizerBase {
 	 * de.uni_koblenz.jgralab.greql2.schema.Greql2)
 	 */
 	@Override
-	public boolean optimize(GreqlEvaluator eval, Greql2 syntaxgraph)
-			throws OptimizerException {
-		GraphSize graphSize;
-		if (eval.getDatagraph() != null) {
-			graphSize = new GraphSize(eval.getDatagraph());
-		} else {
-			graphSize = OptimizerUtility.getDefaultGraphSize();
-		}
-
-		GraphMarker<VertexEvaluator> marker = eval
-				.getVertexEvaluatorGraphMarker();
+	public boolean optimize(QueryImpl query) throws OptimizerException {
+		Greql2Graph syntaxgraph = query.getQueryGraph();
 
 		ArrayList<List<VariableDeclarationOrderUnit>> unitsList = new ArrayList<List<VariableDeclarationOrderUnit>>();
 		for (Declaration decl : syntaxgraph.getDeclarationVertices()) {
@@ -130,8 +117,7 @@ public class VariableDeclarationOrderOptimizer extends OptimizerBase {
 			}
 
 			for (Variable var : varsOfDecl) {
-				units.add(new VariableDeclarationOrderUnit(var, decl, marker,
-						graphSize));
+				units.add(new VariableDeclarationOrderUnit(var, decl, query));
 			}
 			unitsList.add(units);
 		}
@@ -168,22 +154,18 @@ public class VariableDeclarationOrderOptimizer extends OptimizerBase {
 					SimpleDeclaration newSD = syntaxgraph
 							.createSimpleDeclaration();
 					syntaxgraph.createIsDeclaredVarOf(var, newSD);
-					syntaxgraph.createIsTypeExprOfDeclaration(unit
-							.getTypeExpressionOfVariable(), newSD);
-					syntaxgraph.createIsSimpleDeclOf(newSD, unit
-							.getDeclaringDeclaration());
-					marker.mark(newSD, new SimpleDeclarationEvaluator(newSD,
-							eval));
+					syntaxgraph.createIsTypeExprOfDeclaration(
+							unit.getTypeExpressionOfVariable(), newSD);
+					syntaxgraph.createIsSimpleDeclOf(newSD,
+							unit.getDeclaringDeclaration());
 				}
 
 			}
 		}
 		for (SimpleDeclaration sd : oldSDs) {
-			marker.removeMark(sd);
 			sd.delete();
 		}
 
-		recreateVertexEvaluators(eval);
 		OptimizerUtility.createMissingSourcePositions(syntaxgraph);
 
 		// Tg2Dot.printGraphAsDot(syntaxgraph, true, "/home/horn/vdoo.dot");

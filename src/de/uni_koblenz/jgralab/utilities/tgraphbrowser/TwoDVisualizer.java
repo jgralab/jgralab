@@ -325,7 +325,7 @@ public class TwoDVisualizer {
 		StringBuilder query = new StringBuilder("using current: ");
 		query.append("slice(current,<->" + state.getEdgeTypeSet() + "^1");
 		for (int i = 2; i <= pathLength; i++) {
-			query.append("|<->" + state.getVertexTypeSet() + "^" + i);
+			query.append("|<->" + state.getEdgeTypeSet() + "^" + i);
 		}
 		query.append(")");
 		return (Slice) StateRepository.evaluateGReQL(query.toString(), graph,

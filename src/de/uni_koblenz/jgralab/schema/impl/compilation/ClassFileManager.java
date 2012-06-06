@@ -66,7 +66,7 @@ import de.uni_koblenz.jgralab.JGraLab;
 public class ClassFileManager extends
 		ForwardingJavaFileManager<JavaFileManager> {
 
-	private Logger logger;
+	private final Logger logger;
 
 	private final String qualifiedSchemaName;
 

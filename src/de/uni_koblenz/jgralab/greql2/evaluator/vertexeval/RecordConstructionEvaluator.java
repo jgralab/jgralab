@@ -37,10 +37,10 @@ package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Record;
-import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
-import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize;
-import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
-import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
+import de.uni_koblenz.jgralab.greql2.evaluator.InternalGreqlEvaluator;
+import de.uni_koblenz.jgralab.greql2.evaluator.QueryImpl;
+import de.uni_koblenz.jgralab.greql2.evaluator.VertexCosts;
+import de.uni_koblenz.jgralab.greql2.schema.IsPartOf;
 import de.uni_koblenz.jgralab.greql2.schema.IsRecordElementOf;
 import de.uni_koblenz.jgralab.greql2.schema.RecordConstruction;
 import de.uni_koblenz.jgralab.greql2.schema.RecordElement;
@@ -52,17 +52,14 @@ import de.uni_koblenz.jgralab.impl.RecordImpl;
  * @author ist@uni-koblenz.de
  * 
  */
-public class RecordConstructionEvaluator extends VertexEvaluator {
-
-	private RecordConstruction vertex;
+public class RecordConstructionEvaluator extends
+		VertexEvaluator<RecordConstruction> {
 
 	/**
-	 * returns the vertex this VertexEvaluator evaluates
+	 * describes, how much interpretation steps it takes to add a element to a
+	 * record
 	 */
-	@Override
-	public Greql2Vertex getVertex() {
-		return vertex;
-	}
+	protected static final int addToRecordCosts = 10;
 
 	/**
 	 * Creates a new RecordConstructionEvaluator for the given vertex
@@ -73,37 +70,59 @@ public class RecordConstructionEvaluator extends VertexEvaluator {
 	 *            the vertex this VertexEvaluator evaluates
 	 */
 	public RecordConstructionEvaluator(RecordConstruction vertex,
-			GreqlEvaluator eval) {
-		super(eval);
-		this.vertex = vertex;
+			QueryImpl query) {
+		super(vertex, query);
 	}
 
 	@Override
-	public Record evaluate() {
+	public Record evaluate(InternalGreqlEvaluator evaluator) {
+		evaluator.progress(getOwnEvaluationCosts());
 		RecordImpl resultRecord = RecordImpl.empty();
 		IsRecordElementOf inc = vertex
 				.getFirstIsRecordElementOfIncidence(EdgeDirection.IN);
 		while (inc != null) {
 			RecordElement currentElement = (RecordElement) inc.getAlpha();
-			RecordElementEvaluator vertexEval = (RecordElementEvaluator) vertexEvalMarker
-					.getMark(currentElement);
+			RecordElementEvaluator vertexEval = (RecordElementEvaluator) query
+					.getVertexEvaluator(currentElement);
 			resultRecord = resultRecord.plus(vertexEval.getId(),
-					vertexEval.getResult());
+					vertexEval.getResult(evaluator));
 			inc = inc.getNextIsRecordElementOfIncidence(EdgeDirection.IN);
 		}
 		return resultRecord;
 	}
 
 	@Override
-	public VertexCosts calculateSubtreeEvaluationCosts(GraphSize graphSize) {
-		return greqlEvaluator.getCostModel().calculateCostsRecordConstruction(
-				this, graphSize);
+	public VertexCosts calculateSubtreeEvaluationCosts() {
+		RecordConstruction recCons = getVertex();
+		IsPartOf inc = recCons.getFirstIsPartOfIncidence(EdgeDirection.IN);
+		long recElems = 0;
+		long recElemCosts = 0;
+		while (inc != null) {
+			RecordElement recElem = (RecordElement) inc.getAlpha();
+			VertexEvaluator<RecordElement> veval = query
+					.getVertexEvaluator(recElem);
+			recElemCosts += veval.getCurrentSubtreeEvaluationCosts();
+			recElems++;
+			inc = inc.getNextIsPartOfIncidence(EdgeDirection.IN);
+		}
+
+		long ownCosts = (recElems * addToRecordCosts) + 2;
+		long iteratedCosts = ownCosts * getVariableCombinations();
+		long subtreeCosts = iteratedCosts + recElemCosts;
+		return new VertexCosts(ownCosts, iteratedCosts, subtreeCosts);
 	}
 
 	@Override
-	public long calculateEstimatedCardinality(GraphSize graphSize) {
-		return greqlEvaluator.getCostModel()
-				.calculateCardinalityRecordConstruction(this, graphSize);
+	public long calculateEstimatedCardinality() {
+		RecordConstruction recCons = getVertex();
+		IsRecordElementOf inc = recCons
+				.getFirstIsRecordElementOfIncidence(EdgeDirection.IN);
+		long parts = 0;
+		while (inc != null) {
+			parts++;
+			inc = inc.getNextIsRecordElementOfIncidence(EdgeDirection.IN);
+		}
+		return parts;
 	}
 
 }

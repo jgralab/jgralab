@@ -36,13 +36,14 @@
 package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
-import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
-import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize;
-import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
+import de.uni_koblenz.jgralab.greql2.evaluator.InternalGreqlEvaluator;
+import de.uni_koblenz.jgralab.greql2.evaluator.QueryImpl;
+import de.uni_koblenz.jgralab.greql2.evaluator.VertexCosts;
 import de.uni_koblenz.jgralab.greql2.evaluator.fa.NFA;
 import de.uni_koblenz.jgralab.greql2.exception.GreqlException;
 import de.uni_koblenz.jgralab.greql2.schema.ExponentiatedPathDescription;
-import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
+import de.uni_koblenz.jgralab.greql2.schema.Expression;
+import de.uni_koblenz.jgralab.greql2.schema.IntLiteral;
 import de.uni_koblenz.jgralab.greql2.schema.PathDescription;
 
 /**
@@ -53,20 +54,13 @@ import de.uni_koblenz.jgralab.greql2.schema.PathDescription;
  * 
  */
 public class ExponentiatedPathDescriptionEvaluator extends
-		PathDescriptionEvaluator {
+		PathDescriptionEvaluator<ExponentiatedPathDescription> {
 
 	/**
-	 * The ExponentiatedPathDescription-Vertex this evaluator evaluates
+	 * the default exponent that is used if the exponent of an exponentiated
+	 * path description is not an integer literal but some complex expression
 	 */
-	private ExponentiatedPathDescription vertex;
-
-	/**
-	 * returns the vertex this VertexEvaluator evaluates
-	 */
-	@Override
-	public Greql2Vertex getVertex() {
-		return vertex;
-	}
+	protected static final int defaultExponent = 3;
 
 	/**
 	 * Creates a new ExponentiatedPathDescriptionEvaluator for the given vertex
@@ -77,20 +71,22 @@ public class ExponentiatedPathDescriptionEvaluator extends
 	 *            the vertex this VertexEvaluator evaluates
 	 */
 	public ExponentiatedPathDescriptionEvaluator(
-			ExponentiatedPathDescription vertex, GreqlEvaluator eval) {
-		super(eval);
-		this.vertex = vertex;
+			ExponentiatedPathDescription vertex, QueryImpl query) {
+		super(vertex, query);
 	}
 
 	@Override
-	public NFA evaluate() {
+	public NFA evaluate(InternalGreqlEvaluator evaluator) {
+		evaluator.progress(getOwnEvaluationCosts());
 		PathDescription p = (PathDescription) vertex
 				.getFirstIsExponentiatedPathOfIncidence().getAlpha();
-		PathDescriptionEvaluator pathEval = (PathDescriptionEvaluator) vertexEvalMarker
-				.getMark(p);
-		VertexEvaluator exponentEvaluator = vertexEvalMarker.getMark(vertex
-				.getFirstIsExponentOfIncidence(EdgeDirection.IN).getAlpha());
-		Object exponentValue = exponentEvaluator.getResult();
+		PathDescriptionEvaluator<?> pathEval = (PathDescriptionEvaluator<?>) query
+				.getVertexEvaluator(p);
+		VertexEvaluator<? extends Expression> exponentEvaluator = query
+				.getVertexEvaluator((Expression) vertex
+						.getFirstIsExponentOfIncidence(EdgeDirection.IN)
+						.getAlpha());
+		Object exponentValue = exponentEvaluator.getResult(evaluator);
 		int exponent = 0;
 		if (exponentValue instanceof Integer) {
 			exponent = (Integer) exponentValue;
@@ -98,14 +94,38 @@ public class ExponentiatedPathDescriptionEvaluator extends
 			throw new GreqlException(
 					"Exponent of ExponentiatedPathDescription is not convertable to integer value");
 		}
-		return NFA.createExponentiatedPathDescriptionNFA(pathEval.getNFA(),
-				exponent);
+		if (exponent <= 0) {
+			throw new GreqlException(
+					"Exponent of ExponentiatedPathDescription is " + exponent
+							+ " but must be >=1.");
+		}
+		return NFA.createExponentiatedPathDescriptionNFA(
+				pathEval.getNFA(evaluator), exponent);
 	}
 
 	@Override
-	public VertexCosts calculateSubtreeEvaluationCosts(GraphSize graphSize) {
-		return this.greqlEvaluator.getCostModel()
-				.calculateCostsExponentiatedPathDescription(this, graphSize);
+	public VertexCosts calculateSubtreeEvaluationCosts() {
+		ExponentiatedPathDescription p = getVertex();
+		long exponent = defaultExponent;
+		VertexEvaluator<IntLiteral> expEval = query
+				.getVertexEvaluator((IntLiteral) p
+						.getFirstIsExponentOfIncidence(EdgeDirection.IN)
+						.getAlpha());
+		if (expEval instanceof IntLiteralEvaluator) {
+			try {
+				exponent = ((Number) expEval.getResult(null)).longValue();
+			} catch (Exception ex) {
+			}
+		}
+		long exponentCosts = expEval.getCurrentSubtreeEvaluationCosts();
+		VertexEvaluator<? extends PathDescription> pathEval = query
+				.getVertexEvaluator((PathDescription) p
+						.getFirstIsExponentiatedPathOfIncidence(
+								EdgeDirection.IN).getAlpha());
+		long pathCosts = pathEval.getCurrentSubtreeEvaluationCosts();
+		long ownCosts = ((pathCosts * exponent) * 1) / 3;
+		long subtreeCosts = pathCosts + ownCosts + exponentCosts;
+		return new VertexCosts(ownCosts, ownCosts, subtreeCosts);
 	}
 
 }

@@ -39,8 +39,10 @@ import java.util.Set;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.graphmarker.GraphMarker;
+import de.uni_koblenz.jgralab.greql2.evaluator.InternalGreqlEvaluator;
+import de.uni_koblenz.jgralab.greql2.evaluator.QueryImpl;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VertexEvaluator;
+import de.uni_koblenz.jgralab.greql2.schema.Expression;
 import de.uni_koblenz.jgralab.greql2.schema.GReQLDirection;
 import de.uni_koblenz.jgralab.greql2.types.TypeCollection;
 
@@ -63,9 +65,9 @@ public class EdgeTransition extends SimpleTransition {
 	 * the VertexEvalutor which evaluates this edge expression is stored here so
 	 * the result can be used as allowed edge
 	 */
-	private VertexEvaluator allowedEdgeEvaluator;
-	
-	public VertexEvaluator getAllowedEdgeEvaluator() {
+	private final VertexEvaluator<?> allowedEdgeEvaluator;
+
+	public VertexEvaluator<?> getAllowedEdgeEvaluator() {
 		return allowedEdgeEvaluator;
 	}
 
@@ -183,10 +185,9 @@ public class EdgeTransition extends SimpleTransition {
 	 */
 	public EdgeTransition(State start, State end, GReQLDirection dir,
 			TypeCollection typeCollection, Set<String> roles,
-			VertexEvaluator edgeEval, VertexEvaluator predicateEval,
-			GraphMarker<VertexEvaluator> graphMarker) {
-		super(start, end, dir, typeCollection, roles, predicateEval,
-				graphMarker);
+			VertexEvaluator<?> edgeEval,
+			VertexEvaluator<? extends Expression> predicateEval, QueryImpl query) {
+		super(start, end, dir, typeCollection, roles, predicateEval, query);
 		allowedEdgeEvaluator = edgeEval;
 	}
 
@@ -195,15 +196,15 @@ public class EdgeTransition extends SimpleTransition {
 	 * 
 	 * @see greql2.evaluator.fa.Transition#accepts(jgralab.Vertex, jgralab.Edge)
 	 */@Override
-	public boolean accepts(Vertex v, Edge e) {
-		if (!super.accepts(v, e)) {
+	public boolean accepts(Vertex v, Edge e, InternalGreqlEvaluator evaluator) {
+		if (!super.accepts(v, e, evaluator)) {
 			return false;
 		}
 		// checks if only one edge is allowed an if e is this allowed edge
 		if (allowedEdgeEvaluator != null) {
 
-			Edge allowedEdge = ((Edge) allowedEdgeEvaluator.getResult())
-					.getNormalEdge();
+			Edge allowedEdge = ((Edge) allowedEdgeEvaluator
+					.getResult(evaluator)).getNormalEdge();
 			if (e.getNormalEdge() != allowedEdge) {
 				return false;
 			}

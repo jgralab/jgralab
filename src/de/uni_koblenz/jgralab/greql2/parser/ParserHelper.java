@@ -59,9 +59,9 @@ import de.uni_koblenz.jgralab.greql2.schema.DefinitionExpression;
 import de.uni_koblenz.jgralab.greql2.schema.Expression;
 import de.uni_koblenz.jgralab.greql2.schema.FunctionApplication;
 import de.uni_koblenz.jgralab.greql2.schema.FunctionId;
-import de.uni_koblenz.jgralab.greql2.schema.Greql2;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Aggregation;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Expression;
+import de.uni_koblenz.jgralab.greql2.schema.Greql2Graph;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
 import de.uni_koblenz.jgralab.greql2.schema.Identifier;
 import de.uni_koblenz.jgralab.greql2.schema.IsArgumentOf;
@@ -103,7 +103,7 @@ public abstract class ParserHelper {
 
 	protected String query = null;
 
-	protected Greql2 graph;
+	protected Greql2Graph graph;
 
 	protected SymbolTable afterParsingvariableSymbolTable = null;
 
@@ -147,10 +147,10 @@ public abstract class ParserHelper {
 
 	/**
 	 * Returns the abstract syntax graph for the input
-	 *
+	 * 
 	 * @return the abstract syntax graph representing a GReQL 2 query
 	 */
-	public Greql2 getGraph() {
+	public Greql2Graph getGraph() {
 		if (graph == null) {
 			return null;
 		}
@@ -262,7 +262,7 @@ public abstract class ParserHelper {
 	/**
 	 * merges variable-vertices in the subgraph with the root-vertex
 	 * <code>v</code>
-	 *
+	 * 
 	 * @param v
 	 *            root of the subgraph
 	 * @param separateScope
@@ -320,7 +320,7 @@ public abstract class ParserHelper {
 	 * Inserts variable-vertices that are declared in the <code>using</code>
 	 * -clause into the variables symbol table and merges variables within the
 	 * query-expression.
-	 *
+	 * 
 	 * @param root
 	 *            root of the graph, represents a <code>Greql2Expression</code>
 	 */
@@ -343,7 +343,7 @@ public abstract class ParserHelper {
 	 * Inserts variables that are defined in the definitions of let- or
 	 * where-expressions and merges variables used in these definitions and in
 	 * the bound expression
-	 *
+	 * 
 	 * @param v
 	 *            contains a let- or where-expression.
 	 */
@@ -382,7 +382,7 @@ public abstract class ParserHelper {
 	 * a quantified expression into the symbol-table and merges variables that
 	 * are used in these declaration (in typeexpressions, constraints, or
 	 * subgraphs)
-	 *
+	 * 
 	 * @param v
 	 *            contains a declaration
 	 */
@@ -419,7 +419,7 @@ public abstract class ParserHelper {
 	 * Inserts variable-vertices that are declared in the quantified expression
 	 * represented by <code>v</code> into the variables symbol table and merges
 	 * variables within the bound expression.
-	 *
+	 * 
 	 * @param v
 	 *            contains a quantified expression
 	 */
@@ -443,7 +443,7 @@ public abstract class ParserHelper {
 	/**
 	 * Inserts declared variable-vertices into the variables symbol table and
 	 * merges variables within the comprehension result and tableheaders
-	 *
+	 * 
 	 * @param v
 	 *            contains a set- or a list-comprehension
 	 */

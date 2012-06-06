@@ -37,13 +37,12 @@ package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
-import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize;
-import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
+import de.uni_koblenz.jgralab.greql2.evaluator.InternalGreqlEvaluator;
+import de.uni_koblenz.jgralab.greql2.evaluator.QueryImpl;
+import de.uni_koblenz.jgralab.greql2.evaluator.VertexCosts;
 import de.uni_koblenz.jgralab.greql2.funlib.FunLib;
 import de.uni_koblenz.jgralab.greql2.funlib.FunLib.FunctionInfo;
 import de.uni_koblenz.jgralab.greql2.schema.Expression;
-import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
 import de.uni_koblenz.jgralab.greql2.schema.PathDescription;
 import de.uni_koblenz.jgralab.greql2.schema.PathExistence;
 
@@ -54,38 +53,26 @@ import de.uni_koblenz.jgralab.greql2.schema.PathExistence;
  * @author ist@uni-koblenz.de
  * 
  */
-public class PathExistenceEvaluator extends PathSearchEvaluator {
+public class PathExistenceEvaluator extends PathSearchEvaluator<PathExistence> {
 
-	/**
-	 * this is the PathExistence vertex in the GReQL Syntaxgraph this evaluator
-	 * evaluates
-	 */
-	private PathExistence vertex;
 	private FunctionInfo fi;
 
-	/**
-	 * returns the vertex this VertexEvaluator evaluates
-	 */
-	@Override
-	public Greql2Vertex getVertex() {
-		return vertex;
-	}
-
-	public PathExistenceEvaluator(PathExistence vertex, GreqlEvaluator eval) {
-		super(eval);
-		this.vertex = vertex;
+	public PathExistenceEvaluator(PathExistence vertex, QueryImpl query) {
+		super(vertex, query);
 	}
 
 	@Override
-	public Object evaluate() {
+	public Object evaluate(InternalGreqlEvaluator evaluator) {
+		evaluator.progress(getOwnEvaluationCosts());
 		PathDescription p = (PathDescription) vertex.getFirstIsPathOfIncidence(
 				EdgeDirection.IN).getAlpha();
-		PathDescriptionEvaluator pathDescEval = (PathDescriptionEvaluator) vertexEvalMarker
-				.getMark(p);
+		PathDescriptionEvaluator<?> pathDescEval = (PathDescriptionEvaluator<?>) query
+				.getVertexEvaluator(p);
 		Expression startExpression = (Expression) vertex
 				.getFirstIsStartExprOfIncidence(EdgeDirection.IN).getAlpha();
-		VertexEvaluator startEval = vertexEvalMarker.getMark(startExpression);
-		Object res = startEval.getResult();
+		VertexEvaluator<? extends Expression> startEval = query
+				.getVertexEvaluator(startExpression);
+		Object res = startEval.getResult(evaluator);
 		/**
 		 * check if the result is invalid, this may occur because the
 		 * restrictedExpression may return a null-value
@@ -97,22 +84,24 @@ public class PathExistenceEvaluator extends PathSearchEvaluator {
 
 		Expression targetExpression = (Expression) vertex
 				.getFirstIsTargetExprOfIncidence(EdgeDirection.IN).getAlpha();
-		VertexEvaluator targetEval = vertexEvalMarker.getMark(targetExpression);
+		VertexEvaluator<? extends Expression> targetEval = query
+				.getVertexEvaluator(targetExpression);
 		Vertex targetVertex = null;
-		res = targetEval.getResult();
+		res = targetEval.getResult(evaluator);
 		if (res == null) {
 			return null;
 		}
 		targetVertex = (Vertex) res;
 
 		if (searchAutomaton == null) {
-			searchAutomaton = pathDescEval.getNFA().getDFA();
+			searchAutomaton = pathDescEval.getNFA(evaluator).getDFA();
 			// searchAutomaton.printAscii();
 		}
-		Object[] arguments = new Object[3];
-		arguments[0] = startVertex;
-		arguments[1] = targetVertex;
-		arguments[2] = searchAutomaton;
+		Object[] arguments = new Object[4];
+		arguments[0] = evaluator;
+		arguments[1] = startVertex;
+		arguments[2] = targetVertex;
+		arguments[3] = searchAutomaton;
 		if (fi == null) {
 			fi = FunLib.getFunctionInfo("isReachable");
 		}
@@ -120,15 +109,34 @@ public class PathExistenceEvaluator extends PathSearchEvaluator {
 	}
 
 	@Override
-	public VertexCosts calculateSubtreeEvaluationCosts(GraphSize graphSize) {
-		return this.greqlEvaluator.getCostModel().calculateCostsPathExistence(
-				this, graphSize);
+	public VertexCosts calculateSubtreeEvaluationCosts() {
+		PathExistence existence = getVertex();
+		Expression startExpression = (Expression) existence
+				.getFirstIsStartExprOfIncidence().getAlpha();
+		VertexEvaluator<? extends Expression> vertexEval = query
+				.getVertexEvaluator(startExpression);
+		long startCosts = vertexEval.getCurrentSubtreeEvaluationCosts();
+		Expression targetExpression = (Expression) existence
+				.getFirstIsTargetExprOfIncidence().getAlpha();
+		vertexEval = query.getVertexEvaluator(targetExpression);
+		long targetCosts = vertexEval.getCurrentSubtreeEvaluationCosts();
+		PathDescription p = (PathDescription) existence
+				.getFirstIsPathOfIncidence().getAlpha();
+		PathDescriptionEvaluator<? extends PathDescription> pathDescEval = (PathDescriptionEvaluator<? extends PathDescription>) query
+				.getVertexEvaluator(p);
+		long pathDescCosts = pathDescEval.getCurrentSubtreeEvaluationCosts();
+		long searchCosts = Math.round(((pathDescCosts * searchFactor) / 2.0)
+				* Math.sqrt(query.getOptimizerInfo().getEdgeCount()));
+		long ownCosts = searchCosts;
+		long iteratedCosts = ownCosts * getVariableCombinations();
+		long subtreeCosts = targetCosts + pathDescCosts + iteratedCosts
+				+ startCosts;
+		return new VertexCosts(ownCosts, iteratedCosts, subtreeCosts);
 	}
 
 	@Override
-	public double calculateEstimatedSelectivity(GraphSize graphSize) {
-		return greqlEvaluator.getCostModel().calculateSelectivityPathExistence(
-				this, graphSize);
+	public double calculateEstimatedSelectivity() {
+		return 0.1;
 	}
 
 }

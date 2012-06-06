@@ -43,21 +43,21 @@ import java.util.logging.Logger;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.JGraLab;
-import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
+import de.uni_koblenz.jgralab.greql2.evaluator.QueryImpl;
 import de.uni_koblenz.jgralab.greql2.exception.OptimizerException;
 import de.uni_koblenz.jgralab.greql2.schema.Expression;
 import de.uni_koblenz.jgralab.greql2.schema.FunctionApplication;
 import de.uni_koblenz.jgralab.greql2.schema.FunctionId;
-import de.uni_koblenz.jgralab.greql2.schema.Greql2;
+import de.uni_koblenz.jgralab.greql2.schema.Greql2Graph;
 import de.uni_koblenz.jgralab.greql2.schema.IsArgumentOf;
 
 /**
  * Replaces all {@link Xor} {@link FunctionApplication}s in the {@link Greql2}
  * graph according the rule
  * <code>a xor b = (a and not b) or (not a and b)</code>.
- *
+ * 
  * @author ist@uni-koblenz.de
- *
+ * 
  */
 public class TransformXorFunctionApplicationOptimizer extends OptimizerBase {
 
@@ -67,7 +67,7 @@ public class TransformXorFunctionApplicationOptimizer extends OptimizerBase {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see
 	 * de.uni_koblenz.jgralab.greql2.optimizer.Optimizer#isEquivalent(de.uni_koblenz
 	 * .jgralab.greql2.optimizer.Optimizer)
@@ -82,15 +82,16 @@ public class TransformXorFunctionApplicationOptimizer extends OptimizerBase {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see
 	 * de.uni_koblenz.jgralab.greql2.optimizer.Optimizer#optimize(de.uni_koblenz
 	 * .jgralab.greql2.evaluator.GreqlEvaluator,
 	 * de.uni_koblenz.jgralab.greql2.schema.Greql2)
 	 */
 	@Override
-	public boolean optimize(GreqlEvaluator eval, Greql2 syntaxgraph)
-			throws OptimizerException {
+	public boolean optimize(QueryImpl query) throws OptimizerException {
+		Greql2Graph syntaxgraph = query.getQueryGraph();
+
 		ArrayList<FunctionApplication> xors = new ArrayList<FunctionApplication>();
 		for (FunctionApplication funApp : syntaxgraph
 				.getFunctionApplicationVertices()) {
@@ -167,7 +168,6 @@ public class TransformXorFunctionApplicationOptimizer extends OptimizerBase {
 			xor.delete();
 		}
 
-		recreateVertexEvaluators(eval);
 		return somethingWasTransformed;
 	}
 

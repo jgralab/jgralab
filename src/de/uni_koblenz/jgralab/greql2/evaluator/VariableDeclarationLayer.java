@@ -40,6 +40,7 @@ import java.util.List;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VertexEvaluator;
 import de.uni_koblenz.jgralab.greql2.exception.WrongResultTypeException;
 import de.uni_koblenz.jgralab.greql2.schema.Declaration;
+import de.uni_koblenz.jgralab.greql2.schema.Expression;
 
 /**
  * This class models all Variables of one Declaration-Vertex. It allows to
@@ -57,12 +58,12 @@ public class VariableDeclarationLayer {
 	 * Holds a VariableDeclaration for each Variable which is declared in this
 	 * Declaration
 	 */
-	private List<VariableDeclaration> variableDeclarations;
+	private final List<VariableDeclaration> variableDeclarations;
 
 	/**
 	 * this is the list of constraint vertices
 	 */
-	private List<VertexEvaluator> constraintList;
+	private final List<VertexEvaluator<? extends Expression>> constraintList;
 
 	/**
 	 * true if the next variable iteration is the first one, that means, if
@@ -86,8 +87,8 @@ public class VariableDeclarationLayer {
 	 */
 	public VariableDeclarationLayer(Declaration vertex,
 			List<VariableDeclaration> varDecls,
-			List<VertexEvaluator> constraintList) {
-		this.declaration = vertex;
+			List<VertexEvaluator<? extends Expression>> constraintList) {
+		declaration = vertex;
 		variableDeclarations = varDecls;
 		this.constraintList = constraintList;
 	}
@@ -99,9 +100,9 @@ public class VariableDeclarationLayer {
 	 * 
 	 * @return true if another possible combination was found, false otherwise
 	 */
-	public boolean iterate() {
+	public boolean iterate(InternalGreqlEvaluator evaluator) {
 		StringBuilder sb = null;
-		if (GreqlEvaluator.DEBUG_DECLARATION_ITERATIONS) {
+		if (GreqlEvaluatorImpl.DEBUG_DECLARATION_ITERATIONS) {
 			sb = new StringBuilder();
 			sb.append("### New Declaration Layer Iteration (");
 			sb.append(declaration);
@@ -109,8 +110,8 @@ public class VariableDeclarationLayer {
 		}
 		boolean constraintsFullfilled = false;
 		if (firstIteration) {
-			if (!getFirstCombination()) {
-				if (GreqlEvaluator.DEBUG_DECLARATION_ITERATIONS) {
+			if (!getFirstCombination(evaluator)) {
+				if (GreqlEvaluatorImpl.DEBUG_DECLARATION_ITERATIONS) {
 					sb.append("## 1st. iteration: returning false (");
 					sb.append(declaration);
 					sb.append(")");
@@ -118,12 +119,12 @@ public class VariableDeclarationLayer {
 				}
 				return false; // no more combinations exists
 			}
-			constraintsFullfilled = fullfillsConstraints();
+			constraintsFullfilled = fullfillsConstraints(evaluator);
 			firstIteration = false;
 		}
 		while (!constraintsFullfilled) {
-			if (!getNextCombination(false)) {
-				if (GreqlEvaluator.DEBUG_DECLARATION_ITERATIONS) {
+			if (!getNextCombination(false, evaluator)) {
+				if (GreqlEvaluatorImpl.DEBUG_DECLARATION_ITERATIONS) {
 					sb.append("## nth iteration: returning false (");
 					sb.append(declaration);
 					sb.append(")");
@@ -131,10 +132,10 @@ public class VariableDeclarationLayer {
 				}
 				return false; // no more combinations exists
 			}
-			constraintsFullfilled = fullfillsConstraints();
+			constraintsFullfilled = fullfillsConstraints(evaluator);
 		}
 
-		if (GreqlEvaluator.DEBUG_DECLARATION_ITERATIONS) {
+		if (GreqlEvaluatorImpl.DEBUG_DECLARATION_ITERATIONS) {
 			boolean first = true;
 			for (VariableDeclaration dec : variableDeclarations) {
 				if (first) {
@@ -158,9 +159,9 @@ public class VariableDeclarationLayer {
 	 * 
 	 * @return true if a first combination exists, false otherwise
 	 */
-	private boolean getFirstCombination() {
-		variableDeclarations.get(0).reset();
-		return getNextCombination(true);
+	private boolean getFirstCombination(InternalGreqlEvaluator evaluator) {
+		variableDeclarations.get(0).reset(evaluator);
+		return getNextCombination(true, evaluator);
 	}
 
 	/**
@@ -169,7 +170,8 @@ public class VariableDeclarationLayer {
 	 * @return true if a next combination exists, false otherwise
 	 */
 
-	private boolean getNextCombination(boolean firstCombination) {
+	private boolean getNextCombination(boolean firstCombination,
+			InternalGreqlEvaluator evaluator) {
 
 		int pointer = firstCombination ? 0 : variableDeclarations.size() - 1;
 
@@ -182,13 +184,13 @@ public class VariableDeclarationLayer {
 					return false;
 				}
 				currDecl = variableDeclarations.get(pointer--); // pointer = -1
-			} while (!currDecl.iterate());
+			} while (!currDecl.iterate(evaluator));
 			pointer += 2; // pointer = 3
 			int size = variableDeclarations.size();
 			while (pointer < size) {
 				currDecl = variableDeclarations.get(pointer++);
-				currDecl.reset();
-				if (!currDecl.iterate()) {
+				currDecl.reset(evaluator);
+				if (!currDecl.iterate(evaluator)) {
 					pointer -= 2;
 					iterate = true;
 					break;
@@ -203,13 +205,14 @@ public class VariableDeclarationLayer {
 	 * 
 	 * @return true if the combination fulfills the constraint, false otherwise
 	 */
-	private boolean fullfillsConstraints() {
+	private boolean fullfillsConstraints(InternalGreqlEvaluator evaluator) {
 		if ((constraintList == null) || (constraintList.isEmpty())) {
 			return true;
 		}
 		for (int i = 0; i < constraintList.size(); i++) {
-			VertexEvaluator currentEval = constraintList.get(i);
-			Object tempResult = currentEval.getResult();
+			VertexEvaluator<? extends Expression> currentEval = constraintList
+					.get(i);
+			Object tempResult = currentEval.getResult(evaluator);
 
 			if (tempResult instanceof Boolean) {
 				if ((Boolean) tempResult != Boolean.TRUE) {

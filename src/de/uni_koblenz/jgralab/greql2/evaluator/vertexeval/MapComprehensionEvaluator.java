@@ -42,88 +42,94 @@ import org.pcollections.PMap;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.JGraLab;
-import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
+import de.uni_koblenz.jgralab.greql2.evaluator.InternalGreqlEvaluator;
+import de.uni_koblenz.jgralab.greql2.evaluator.QueryImpl;
 import de.uni_koblenz.jgralab.greql2.evaluator.VariableDeclarationLayer;
-import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize;
-import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
-import de.uni_koblenz.jgralab.greql2.schema.Comprehension;
+import de.uni_koblenz.jgralab.greql2.evaluator.VertexCosts;
+import de.uni_koblenz.jgralab.greql2.schema.Declaration;
+import de.uni_koblenz.jgralab.greql2.schema.Expression;
 import de.uni_koblenz.jgralab.greql2.schema.MapComprehension;
 
 /**
  * @author Tassilo Horn <horn@uni-koblenz.de>
- *
+ * 
  */
-public class MapComprehensionEvaluator extends ComprehensionEvaluator {
-	private MapComprehension vertex;
+public class MapComprehensionEvaluator extends
+		ComprehensionEvaluator<MapComprehension> {
 
-	public MapComprehensionEvaluator(MapComprehension vertex,
-			GreqlEvaluator eval) {
-		super(eval);
-		this.vertex = vertex;
+	public MapComprehensionEvaluator(MapComprehension vertex, QueryImpl query) {
+		super(vertex, query);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @seede.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VertexEvaluator#
-	 * calculateSubtreeEvaluationCosts
-	 * (de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize)
-	 */
 	@Override
-	protected VertexCosts calculateSubtreeEvaluationCosts(GraphSize graphSize) {
-		return this.greqlEvaluator.getCostModel()
-				.calculateCostsMapComprehension(this, graphSize);
+	protected VertexCosts calculateSubtreeEvaluationCosts() {
+		MapComprehension mapComp = getVertex();
+		Declaration decl = (Declaration) mapComp
+				.getFirstIsCompDeclOfIncidence().getAlpha();
+		DeclarationEvaluator declEval = (DeclarationEvaluator) query
+				.getVertexEvaluator(decl);
+		long declCosts = declEval.getCurrentSubtreeEvaluationCosts();
+
+		Expression key = (Expression) mapComp
+				.getFirstIsKeyExprOfComprehensionIncidence(EdgeDirection.IN)
+				.getAlpha();
+		VertexEvaluator<? extends Expression> keyEval = query
+				.getVertexEvaluator(key);
+		Expression value = (Expression) mapComp
+				.getFirstIsValueExprOfComprehensionIncidence(EdgeDirection.IN)
+				.getAlpha();
+		VertexEvaluator<? extends Expression> valEval = query
+				.getVertexEvaluator(value);
+
+		long resultCosts = keyEval.getCurrentSubtreeEvaluationCosts()
+				+ valEval.getCurrentSubtreeEvaluationCosts();
+
+		long ownCosts = keyEval.getEstimatedCardinality()
+				+ (valEval.getEstimatedCardinality() * addToSetCosts);
+		long iteratedCosts = ownCosts * getVariableCombinations();
+		long subtreeCosts = iteratedCosts + resultCosts + declCosts;
+		return new VertexCosts(ownCosts, iteratedCosts, subtreeCosts);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VertexEvaluator#evaluate
-	 * ()
-	 */
 	@Override
-	public Object evaluate() {
-		initializeMaxCount();
-		VariableDeclarationLayer declLayer = getVariableDeclationLayer();
+	public Object evaluate(InternalGreqlEvaluator evaluator) {
+		evaluator.progress(getOwnEvaluationCosts());
+		initializeMaxCount(evaluator);
+		VariableDeclarationLayer declLayer = getVariableDeclationLayer(evaluator);
 		PMap<Object, Object> resultMap = JGraLab.map();
 
-		Vertex key = vertex.getFirstIsKeyExprOfComprehensionIncidence(
-				EdgeDirection.IN).getAlpha();
-		VertexEvaluator keyEval = vertexEvalMarker.getMark(key);
-		Vertex val = vertex.getFirstIsValueExprOfComprehensionIncidence(
-				EdgeDirection.IN).getAlpha();
-		VertexEvaluator valEval = vertexEvalMarker.getMark(val);
+		Expression key = (Expression) vertex
+				.getFirstIsKeyExprOfComprehensionIncidence(EdgeDirection.IN)
+				.getAlpha();
+		VertexEvaluator<? extends Expression> keyEval = query
+				.getVertexEvaluator(key);
+		Expression val = (Expression) vertex
+				.getFirstIsValueExprOfComprehensionIncidence(EdgeDirection.IN)
+				.getAlpha();
+		VertexEvaluator<? extends Expression> valEval = query
+				.getVertexEvaluator(val);
 		declLayer.reset();
-		while (declLayer.iterate() && (resultMap.size() < maxCount)) {
-			Object jkey = keyEval.getResult();
-			Object jval = valEval.getResult();
+		while (declLayer.iterate(evaluator) && (resultMap.size() < maxCount)) {
+			Object jkey = keyEval.getResult(evaluator);
+			Object jval = valEval.getResult(evaluator);
 			resultMap = resultMap.plus(jkey, jval);
 		}
 		return resultMap;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VertexEvaluator#getVertex
-	 * ()
-	 */
 	@Override
-	public Comprehension getVertex() {
-		return vertex;
+	public long calculateEstimatedCardinality() {
+		MapComprehension setComp = getVertex();
+		Declaration decl = (Declaration) setComp
+				.getFirstIsCompDeclOfIncidence().getAlpha();
+		DeclarationEvaluator declEval = (DeclarationEvaluator) query
+				.getVertexEvaluator(decl);
+		return declEval.getEstimatedCardinality();
 	}
 
 	@Override
-	public long calculateEstimatedCardinality(GraphSize graphSize) {
-		return greqlEvaluator.getCostModel()
-				.calculateCardinalityMapComprehension(this, graphSize);
-	}
-
-	@Override
-	protected PCollection<Object> getResultDatastructure() {
+	protected PCollection<Object> getResultDatastructure(
+			InternalGreqlEvaluator evaluator) {
 		return null;
 	}
 

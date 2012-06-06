@@ -38,7 +38,7 @@ package de.uni_koblenz.jgralab.greql2.exception;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.uni_koblenz.jgralab.greql2.schema.Greql2;
+import de.uni_koblenz.jgralab.greql2.schema.Greql2Graph;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
 import de.uni_koblenz.jgralab.greql2.schema.SourcePosition;
 import de.uni_koblenz.jgralab.greql2.serialising.GreqlSerializer;
@@ -146,7 +146,7 @@ public class QuerySourceException extends GreqlException {
 
 		if (element != null) {
 			sb.append("\nComplete (optimized) Query: ");
-			sb.append(GreqlSerializer.serializeGraph((Greql2) element
+			sb.append(GreqlSerializer.serializeGraph((Greql2Graph) element
 					.getGraph()));
 		}
 

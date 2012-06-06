@@ -43,9 +43,8 @@ import java.util.logging.Logger;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.JGraLab;
-import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
+import de.uni_koblenz.jgralab.greql2.evaluator.QueryImpl;
 import de.uni_koblenz.jgralab.greql2.exception.OptimizerException;
-import de.uni_koblenz.jgralab.greql2.schema.Greql2;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Aggregation;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
 import de.uni_koblenz.jgralab.greql2.schema.PathDescription;
@@ -55,7 +54,7 @@ import de.uni_koblenz.jgralab.schema.Attribute;
 /**
  * This {@link Optimizer} finds all subgraps in a {@link Greql2} syntaxgraph
  * that are equal. Two subgraphs are considered equal, if and only if
- *
+ * 
  * <ul>
  * <li>their root vertices have the same type,</li>
  * <li>the same {@link Attribute}s and {@link Attribute} values in the same
@@ -64,10 +63,10 @@ import de.uni_koblenz.jgralab.schema.Attribute;
  * <li>the Greql2Vertices (see {@link Greql2Vertex}) that are the sources of
  * those {@link Edge}s are equal in the same respect.</li>
  * </ul>
- *
+ * 
  * When such equal subgraphs are found they are merged. This merging works in
  * three steps.
- *
+ * 
  * <nl>
  * <li>The sourcePositions {@link Attribute}s of the {@link Greql2Aggregation}
  * edges that run into the root-Greql2Vertices are merged recursively.</li>
@@ -77,9 +76,9 @@ import de.uni_koblenz.jgralab.schema.Attribute;
  * <li>The root-{@link Greql2Vertex} with the higher Id is deleted (and thus is
  * the subgaph below it).</li>
  * </nl>
- *
+ * 
  * @author ist@uni-koblenz.de
- *
+ * 
  */
 public class CommonSubgraphOptimizer extends OptimizerBase {
 
@@ -91,14 +90,14 @@ public class CommonSubgraphOptimizer extends OptimizerBase {
 	/**
 	 * Maps hash-values to Greql2Vertices (see {@link Greql2Vertex}).
 	 */
-	private HashMap<String, Greql2Vertex> subgraphMap;
+	private final HashMap<String, Greql2Vertex> subgraphMap;
 
 	/**
 	 * Maps Greql2Vertices to their hash-value. Used to omit double calculation
 	 * of hash-values from vertices that have several parent nodes (yeah, these
 	 * are {@link Variable} vertices).
 	 */
-	private HashMap<Greql2Vertex, String> reverseSubgraphMap;
+	private final HashMap<Greql2Vertex, String> reverseSubgraphMap;
 
 	public CommonSubgraphOptimizer() {
 		subgraphMap = new HashMap<String, Greql2Vertex>();
@@ -107,7 +106,7 @@ public class CommonSubgraphOptimizer extends OptimizerBase {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see
 	 * de.uni_koblenz.jgralab.greql2.optimizer.Optimizer#isEquivalent(de.uni_koblenz
 	 * .jgralab.greql2.optimizer.Optimizer)
@@ -123,20 +122,18 @@ public class CommonSubgraphOptimizer extends OptimizerBase {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see
 	 * de.uni_koblenz.jgralab.greql2.optimizer.Optimizer#optimize(de.uni_koblenz
 	 * .jgralab.greql2.evaluator.GreqlEvaluator,
 	 * de.uni_koblenz.jgralab.greql2.schema.Greql2)
 	 */
 	@Override
-	public boolean optimize(GreqlEvaluator eval, Greql2 syntaxgraph)
-			throws OptimizerException {
+	public boolean optimize(QueryImpl query) throws OptimizerException {
 		anOptimizationWasDone = false;
 
-		computeHashAndProcess(syntaxgraph.getFirstGreql2Expression());
+		computeHashAndProcess(query.getQueryGraph().getFirstGreql2Expression());
 
-		recreateVertexEvaluators(eval);
 		return anOptimizationWasDone;
 	}
 
@@ -146,7 +143,7 @@ public class CommonSubgraphOptimizer extends OptimizerBase {
 	 * merge them (see
 	 * {@link CommonSubgraphOptimizer#mergeVertices(Greql2Vertex, Greql2Vertex)}
 	 * ).
-	 *
+	 * 
 	 * @param vertex
 	 *            the {@link Greql2Vertex} for which to compute the hash value
 	 *            and to process
@@ -207,7 +204,7 @@ public class CommonSubgraphOptimizer extends OptimizerBase {
 	/**
 	 * Compute the attribute part of the hash value of the given
 	 * {@link Greql2Vertex}.
-	 *
+	 * 
 	 * @param vertex
 	 *            a {@link Greql2Vertex}
 	 * @return the attribute part of <code>vertex</code>'s hash value
@@ -233,10 +230,10 @@ public class CommonSubgraphOptimizer extends OptimizerBase {
 
 	/**
 	 * Merge the given two vertices (see {@link Greql2Vertex}).
-	 *
+	 * 
 	 * The second {@link Greql2Vertex} will be merged into first
 	 * {@link Greql2Vertex}. This is done in three steps:
-	 *
+	 * 
 	 * <nl>
 	 * <li>The sourcePosition {@link Attribute}s of the
 	 * {@link Greql2Aggregation}s in the subgraph below the second
@@ -247,9 +244,9 @@ public class CommonSubgraphOptimizer extends OptimizerBase {
 	 * {@link Greql2Vertex} is set to the first {@link Greql2Vertex}.</li>
 	 * <li>Then the second {@link Greql2Vertex} is deleted.</li>
 	 * </nl>
-	 *
+	 * 
 	 * Note that vertices of type {@link PathDescription} are not merged.
-	 *
+	 * 
 	 * @param lowerVertex
 	 *            a {@link Greql2Vertex}
 	 * @param higherVertex
@@ -279,7 +276,7 @@ public class CommonSubgraphOptimizer extends OptimizerBase {
 	 * in the subgraph below the {@link Greql2Vertex} <code>higherVertex</code>
 	 * are merged into the corresponding {@link Greql2Aggregation}s in the
 	 * subgraph of <code>lowerVertex</code>.
-	 *
+	 * 
 	 * @param lowerVertex
 	 *            a {@link Greql2Vertex}
 	 * @param higherVertex

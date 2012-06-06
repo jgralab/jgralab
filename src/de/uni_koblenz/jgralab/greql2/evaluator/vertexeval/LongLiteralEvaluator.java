@@ -35,10 +35,9 @@
 
 package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 
-import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
-import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize;
-import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
-import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
+import de.uni_koblenz.jgralab.greql2.evaluator.InternalGreqlEvaluator;
+import de.uni_koblenz.jgralab.greql2.evaluator.QueryImpl;
+import de.uni_koblenz.jgralab.greql2.evaluator.VertexCosts;
 import de.uni_koblenz.jgralab.greql2.schema.LongLiteral;
 
 /**
@@ -50,30 +49,20 @@ import de.uni_koblenz.jgralab.greql2.schema.LongLiteral;
  * @author ist@uni-koblenz.de
  * 
  */
-public class LongLiteralEvaluator extends VertexEvaluator {
+public class LongLiteralEvaluator extends VertexEvaluator<LongLiteral> {
 
-	private LongLiteral vertex;
-
-	/**
-	 * returns the vertex this VertexEvaluator evaluates
-	 */
-	@Override
-	public Greql2Vertex getVertex() {
-		return vertex;
-	}
-
-	public LongLiteralEvaluator(LongLiteral vertex, GreqlEvaluator eval) {
-		super(eval);
-		this.vertex = vertex;
+	public LongLiteralEvaluator(LongLiteral vertex, QueryImpl query) {
+		super(vertex, query);
 	}
 
 	@Override
-	public Long evaluate() {
+	public Long evaluate(InternalGreqlEvaluator evaluator) {
+		evaluator.progress(getOwnEvaluationCosts());
 		return vertex.get_longValue();
 	}
 
 	@Override
-	public VertexCosts calculateSubtreeEvaluationCosts(GraphSize graphSize) {
+	public VertexCosts calculateSubtreeEvaluationCosts() {
 		return new VertexCosts(1, 1, 1);
 	}
 

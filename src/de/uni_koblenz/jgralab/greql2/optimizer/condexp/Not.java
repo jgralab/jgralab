@@ -39,12 +39,12 @@ package de.uni_koblenz.jgralab.greql2.optimizer.condexp;
 
 import java.util.ArrayList;
 
-import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
+import de.uni_koblenz.jgralab.greql2.evaluator.QueryImpl;
 import de.uni_koblenz.jgralab.greql2.optimizer.OptimizerUtility;
 import de.uni_koblenz.jgralab.greql2.schema.Expression;
 import de.uni_koblenz.jgralab.greql2.schema.FunctionApplication;
 import de.uni_koblenz.jgralab.greql2.schema.FunctionId;
-import de.uni_koblenz.jgralab.greql2.schema.Greql2;
+import de.uni_koblenz.jgralab.greql2.schema.Greql2Graph;
 
 /**
  * TODO: (heimdall) Comment class!
@@ -56,8 +56,8 @@ public class Not extends Formula {
 
 	protected Formula formula;
 
-	public Not(GreqlEvaluator eval, Formula formula) {
-		super(eval);
+	public Not(QueryImpl query, Formula formula) {
+		super(query);
 		this.formula = formula;
 	}
 
@@ -68,7 +68,7 @@ public class Not extends Formula {
 
 	@Override
 	public Expression toExpression() {
-		Greql2 syntaxgraph = greqlEvaluator.getSyntaxGraph();
+		Greql2Graph syntaxgraph = query.getQueryGraph();
 		FunctionApplication funApp = syntaxgraph.createFunctionApplication();
 		FunctionId funId = OptimizerUtility.findOrCreateFunctionId("not",
 				syntaxgraph);
@@ -85,8 +85,7 @@ public class Not extends Formula {
 	@Override
 	protected Formula calculateReplacementFormula(Expression exp,
 			Literal literal) {
-		return new Not(greqlEvaluator, formula.calculateReplacementFormula(exp,
-				literal));
+		return new Not(query, formula.calculateReplacementFormula(exp, literal));
 	}
 
 	@Override
@@ -94,11 +93,11 @@ public class Not extends Formula {
 		Formula f = formula.simplify();
 
 		if (f instanceof True) {
-			return new False(greqlEvaluator);
+			return new False(query);
 		}
 
 		if (f instanceof False) {
-			return new True(greqlEvaluator);
+			return new True(query);
 		}
 
 		if (f instanceof Not) {
@@ -110,19 +109,19 @@ public class Not extends Formula {
 			And and = (And) f;
 			Formula left = and.leftHandSide;
 			Formula right = and.rightHandSide;
-			return new Or(greqlEvaluator, new Not(greqlEvaluator, left),
-					new Not(greqlEvaluator, right)).simplify();
+			return new Or(query, new Not(query, left), new Not(query, right))
+					.simplify();
 		}
 
 		if (f instanceof Or) {
 			Or or = (Or) f;
 			Formula left = or.leftHandSide;
 			Formula right = or.rightHandSide;
-			return new And(greqlEvaluator, new Not(greqlEvaluator, left),
-					new Not(greqlEvaluator, right)).simplify();
+			return new And(query, new Not(query, left), new Not(query, right))
+					.simplify();
 		}
 
-		return new Not(greqlEvaluator, f);
+		return new Not(query, f);
 	}
 
 	@Override

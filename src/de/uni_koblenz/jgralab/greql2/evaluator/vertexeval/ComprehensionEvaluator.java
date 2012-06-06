@@ -37,66 +37,70 @@ package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 import org.pcollections.PCollection;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
-import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
+import de.uni_koblenz.jgralab.greql2.evaluator.InternalGreqlEvaluator;
+import de.uni_koblenz.jgralab.greql2.evaluator.QueryImpl;
 import de.uni_koblenz.jgralab.greql2.evaluator.VariableDeclarationLayer;
 import de.uni_koblenz.jgralab.greql2.schema.Comprehension;
 import de.uni_koblenz.jgralab.greql2.schema.Declaration;
 import de.uni_koblenz.jgralab.greql2.schema.Expression;
 
-public abstract class ComprehensionEvaluator extends VertexEvaluator {
+public abstract class ComprehensionEvaluator<V extends Comprehension> extends
+		VertexEvaluator<V> {
 
 	private VariableDeclarationLayer varDeclLayer = null;
-	private VertexEvaluator resultDefinitionEvaluator = null;
+	private VertexEvaluator<? extends Expression> resultDefinitionEvaluator = null;
 	protected long maxCount = Long.MAX_VALUE;
 
-	@Override
-	public abstract Comprehension getVertex();
-
-	public ComprehensionEvaluator(GreqlEvaluator eval) {
-		super(eval);
+	public ComprehensionEvaluator(V vertex, QueryImpl query) {
+		super(vertex, query);
 	}
 
-	protected abstract PCollection<Object> getResultDatastructure();
+	protected abstract PCollection<Object> getResultDatastructure(
+			InternalGreqlEvaluator evaluator);
 
-	protected final VertexEvaluator getResultDefinitionEvaluator() {
+	protected final VertexEvaluator<? extends Expression> getResultDefinitionEvaluator() {
 		if (resultDefinitionEvaluator == null) {
 			Expression resultDefinition = (Expression) getVertex()
 					.getFirstIsCompResultDefOfIncidence(EdgeDirection.IN)
 					.getAlpha();
-			resultDefinitionEvaluator = vertexEvalMarker
-					.getMark(resultDefinition);
+			resultDefinitionEvaluator = query
+					.getVertexEvaluator(resultDefinition);
 		}
 		return resultDefinitionEvaluator;
 	}
 
-	protected final VariableDeclarationLayer getVariableDeclationLayer() {
+	protected final VariableDeclarationLayer getVariableDeclationLayer(
+			InternalGreqlEvaluator evaluator) {
 		if (varDeclLayer == null) {
 			Declaration d = (Declaration) getVertex()
 					.getFirstIsCompDeclOfIncidence(EdgeDirection.IN).getAlpha();
-			DeclarationEvaluator declEval = (DeclarationEvaluator) vertexEvalMarker
-					.getMark(d);
-			varDeclLayer = (VariableDeclarationLayer) declEval.getResult();
+			DeclarationEvaluator declEval = (DeclarationEvaluator) query
+					.getVertexEvaluator(d);
+			varDeclLayer = (VariableDeclarationLayer) declEval
+					.getResult(evaluator);
 		}
 		return varDeclLayer;
 	}
 
-	protected final void initializeMaxCount() {
+	protected final void initializeMaxCount(InternalGreqlEvaluator evaluator) {
 		if (getVertex().get_maxCount() != null) {
-			VertexEvaluator maxCountEval = vertexEvalMarker.getMark(getVertex()
-					.get_maxCount());
-			maxCount = ((Number) maxCountEval.getResult()).longValue();
+			VertexEvaluator<? extends Expression> maxCountEval = query
+					.getVertexEvaluator(getVertex().get_maxCount());
+			maxCount = ((Number) maxCountEval.getResult(evaluator)).longValue();
 		}
 	}
 
 	@Override
-	public Object evaluate() {
-		initializeMaxCount();
-		VariableDeclarationLayer declLayer = getVariableDeclationLayer();
-		VertexEvaluator resultDefEval = getResultDefinitionEvaluator();
-		PCollection<Object> resultCollection = getResultDatastructure();
+	public Object evaluate(InternalGreqlEvaluator evaluator) {
+		evaluator.progress(getOwnEvaluationCosts());
+		initializeMaxCount(evaluator);
+		VariableDeclarationLayer declLayer = getVariableDeclationLayer(evaluator);
+		VertexEvaluator<?> resultDefEval = getResultDefinitionEvaluator();
+		PCollection<Object> resultCollection = getResultDatastructure(evaluator);
 		declLayer.reset();
-		while (declLayer.iterate() && (resultCollection.size() < maxCount)) {
-			Object localResult = resultDefEval.getResult();
+		while (declLayer.iterate(evaluator)
+				&& (resultCollection.size() < maxCount)) {
+			Object localResult = resultDefEval.getResult(evaluator);
 			resultCollection = resultCollection.plus(localResult);
 		}
 		return resultCollection;
