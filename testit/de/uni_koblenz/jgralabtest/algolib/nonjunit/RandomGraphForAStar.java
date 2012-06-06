@@ -34,8 +34,10 @@
  */
 package de.uni_koblenz.jgralabtest.algolib.nonjunit;
 
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 import de.uni_koblenz.jgralab.ImplementationType;
@@ -72,10 +74,10 @@ public class RandomGraphForAStar {
 
 	}
 
-	private KDTree<LocationPoint> kdtree;
 	private double width;
 	private double height;
 	private double maxDeviation;
+	private Map<WeightedGraph, KDTree<LocationPoint>> kdTrees;
 
 	public RandomGraphForAStar(double width, double height, double maxDeviation) {
 		assert width > 0;
@@ -95,12 +97,17 @@ public class RandomGraphForAStar {
 		}
 
 		// System.out.println("Creating KD-tree...");
-		kdtree = new KDTree<LocationPoint>(locations, KD_SEGMENT_SIZE);
+		KDTree<LocationPoint> kdtree = new KDTree<LocationPoint>(locations,
+				KD_SEGMENT_SIZE);
+		if (kdTrees == null) {
+			kdTrees = new HashMap<WeightedGraph, KDTree<LocationPoint>>();
+		}
+		kdTrees.put(graph, kdtree);
 		return locations;
 	}
 
-	public KDTree<LocationPoint> getKDTree() {
-		return kdtree;
+	public KDTree<LocationPoint> getKDTree(WeightedGraph graph) {
+		return kdTrees.get(graph);
 	}
 
 	public WeightedGraph createRandomWeightedGraph(int vertexCount,
@@ -134,7 +141,7 @@ public class RandomGraphForAStar {
 				printPoint(chunkSize, i);
 			}
 			Location alpha = currentAlpha.l;
-			List<LocationPoint> nearestNeighbors = getNearestNeighbors(
+			List<LocationPoint> nearestNeighbors = getNearestNeighbors(graph,
 					currentAlpha, edgesPerVertex);
 			// System.out.println(nearestNeighbors);
 			// Location[] omegas = getNearestNeighbors(graph, alpha,
@@ -208,7 +215,8 @@ public class RandomGraphForAStar {
 		return value;
 	}
 
-	public List<LocationPoint> getNearestNeighbors(LocationPoint from, int count) {
-		return kdtree.getNearestNeighbors(from, count);
+	public List<LocationPoint> getNearestNeighbors(WeightedGraph graph,
+			LocationPoint from, int count) {
+		return getKDTree(graph).getNearestNeighbors(from, count);
 	}
 }

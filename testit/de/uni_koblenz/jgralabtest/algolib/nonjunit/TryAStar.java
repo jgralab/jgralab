@@ -181,12 +181,12 @@ public class TryAStar {
 		nearBorder.set_x(0.0);
 		nearBorder.set_y(0.0);
 		LocationPoint from = new LocationPoint(nearBorder);
-		start = graphGenerator.getNearestNeighbors(from, 1).get(0).l;
+		start = graphGenerator.getNearestNeighbors(graph, from, 1).get(0).l;
 		Location nearCenter = graph.createLocation();
 		nearCenter.set_x(MAX / 2.0);
 		nearCenter.set_y(MAX / 2.0);
 		LocationPoint to = new LocationPoint(nearCenter);
-		target = graphGenerator.getNearestNeighbors(to, 1).get(0).l;
+		target = graphGenerator.getNearestNeighbors(graph, to, 1).get(0).l;
 		double distance = RandomGraphForAStar.euclideanDistance(start.get_x(),
 				start.get_y(), target.get_x(), target.get_y());
 		System.out.println("Selected start vertex at location: ("
