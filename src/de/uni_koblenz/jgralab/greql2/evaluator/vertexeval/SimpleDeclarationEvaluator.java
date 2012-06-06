@@ -41,12 +41,11 @@ import org.pcollections.PVector;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.JGraLab;
-import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
+import de.uni_koblenz.jgralab.greql2.evaluator.InternalGreqlEvaluator;
+import de.uni_koblenz.jgralab.greql2.evaluator.QueryImpl;
 import de.uni_koblenz.jgralab.greql2.evaluator.VariableDeclaration;
-import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize;
-import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
+import de.uni_koblenz.jgralab.greql2.evaluator.VertexCosts;
 import de.uni_koblenz.jgralab.greql2.schema.Expression;
-import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
 import de.uni_koblenz.jgralab.greql2.schema.IsDeclaredVarOf;
 import de.uni_koblenz.jgralab.greql2.schema.IsTypeExprOf;
 import de.uni_koblenz.jgralab.greql2.schema.SimpleDeclaration;
@@ -55,50 +54,41 @@ import de.uni_koblenz.jgralab.greql2.schema.Variable;
 /**
  * Evaluates a simple declaration. Creates a VariableDeclaration-object, that
  * provides methods to iterate over all possible values.
- *
+ * 
  * @author ist@uni-koblenz.de
- *
+ * 
  */
-public class SimpleDeclarationEvaluator extends VertexEvaluator {
-
-	private SimpleDeclaration vertex;
-
-	/**
-	 * returns the vertex this VertexEvaluator evaluates
-	 */
-	@Override
-	public Greql2Vertex getVertex() {
-		return vertex;
-	}
+public class SimpleDeclarationEvaluator extends
+		VertexEvaluator<SimpleDeclaration> {
 
 	/**
-	 * @param eval
-	 *            the SimpleDeclarationEvaluator this VertexEvaluator belongs to
 	 * @param vertex
 	 *            the vertex which gets evaluated by this VertexEvaluator
 	 */
-	public SimpleDeclarationEvaluator(SimpleDeclaration vertex,
-			GreqlEvaluator eval) {
-		super(eval);
-		this.vertex = vertex;
+	public SimpleDeclarationEvaluator(SimpleDeclaration vertex, QueryImpl query) {
+		super(vertex, query);
 	}
 
 	/**
 	 * returns a JValueList of VariableDeclaration objects
 	 */
 	@Override
-	public PVector<VariableDeclaration> evaluate() {
+	public PVector<VariableDeclaration> evaluate(
+			InternalGreqlEvaluator evaluator) {
+		evaluator.progress(getOwnEvaluationCosts());
 		IsTypeExprOf inc = vertex
 				.getFirstIsTypeExprOfIncidence(EdgeDirection.IN);
 		Expression typeExpression = (Expression) inc.getAlpha();
-		VertexEvaluator exprEval = vertexEvalMarker.getMark(typeExpression);
+		VertexEvaluator<? extends Expression> exprEval = query
+				.getVertexEvaluator(typeExpression);
 		PVector<VariableDeclaration> varDeclList = JGraLab.vector();
 		IsDeclaredVarOf varInc = vertex
 				.getFirstIsDeclaredVarOfIncidence(EdgeDirection.IN);
 		while (varInc != null) {
 			VariableDeclaration varDecl = new VariableDeclaration(
-					(Variable) varInc.getAlpha(), exprEval, vertex,
-					greqlEvaluator);
+					(Variable) varInc.getAlpha(), exprEval,
+					(VariableEvaluator<Variable>) query
+							.getVertexEvaluator((Variable) varInc.getAlpha()));
 			varDeclList = varDeclList.plus(varDecl);
 			varInc = varInc.getNextIsDeclaredVarOfIncidence(EdgeDirection.IN);
 		}
@@ -106,9 +96,31 @@ public class SimpleDeclarationEvaluator extends VertexEvaluator {
 	}
 
 	@Override
-	public VertexCosts calculateSubtreeEvaluationCosts(GraphSize graphSize) {
-		return this.greqlEvaluator.getCostModel()
-				.calculateCostsSimpleDeclaration(this, graphSize);
+	public VertexCosts calculateSubtreeEvaluationCosts() {
+		SimpleDeclaration simpleDecl = getVertex();
+
+		// Calculate the costs for the type definition
+		VertexEvaluator<? extends Expression> typeExprEval = query
+				.getVertexEvaluator((Expression) simpleDecl
+						.getFirstIsTypeExprOfIncidence().getAlpha());
+
+		long typeCosts = typeExprEval.getCurrentSubtreeEvaluationCosts();
+
+		// Calculate the costs for the declared variables
+		long declaredVarCosts = 0;
+		IsDeclaredVarOf inc = simpleDecl
+				.getFirstIsDeclaredVarOfIncidence(EdgeDirection.IN);
+		while (inc != null) {
+			VariableEvaluator<? extends Variable> varEval = (VariableEvaluator<? extends Variable>) query
+					.getVertexEvaluator((Variable) inc.getAlpha());
+			declaredVarCosts += varEval.getCurrentSubtreeEvaluationCosts();
+			inc = inc.getNextIsDeclaredVarOfIncidence(EdgeDirection.IN);
+		}
+
+		long ownCosts = 2;
+		long iteratedCosts = ownCosts * getVariableCombinations();
+		long subtreeCosts = iteratedCosts + declaredVarCosts + typeCosts;
+		return new VertexCosts(ownCosts, iteratedCosts, subtreeCosts);
 	}
 
 	@Override
@@ -124,8 +136,8 @@ public class SimpleDeclarationEvaluator extends VertexEvaluator {
 		IsTypeExprOf typeInc = vertex
 				.getFirstIsTypeExprOfIncidence(EdgeDirection.IN);
 		if (typeInc != null) {
-			VertexEvaluator veval = vertexEvalMarker
-					.getMark(typeInc.getAlpha());
+			VertexEvaluator<? extends Expression> veval = query
+					.getVertexEvaluator((Expression) typeInc.getAlpha());
 			if (veval != null) {
 				neededVariables.addAll(veval.getNeededVariables());
 			}
@@ -133,9 +145,16 @@ public class SimpleDeclarationEvaluator extends VertexEvaluator {
 	}
 
 	@Override
-	public long calculateEstimatedCardinality(GraphSize graphSize) {
-		return greqlEvaluator.getCostModel()
-				.calculateCardinalitySimpleDeclaration(this, graphSize);
+	public long calculateEstimatedCardinality() {
+		SimpleDeclaration decl = getVertex();
+		VertexEvaluator<? extends Expression> typeExprEval = query
+				.getVertexEvaluator((Expression) decl
+						.getFirstIsTypeExprOfIncidence(EdgeDirection.IN)
+						.getAlpha());
+		long singleCardinality = typeExprEval.getEstimatedCardinality();
+		long wholeCardinality = singleCardinality
+				* getDefinedVariables().size();
+		return wholeCardinality;
 	}
 
 }

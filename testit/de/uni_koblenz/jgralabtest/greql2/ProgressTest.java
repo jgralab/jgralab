@@ -38,9 +38,8 @@ package de.uni_koblenz.jgralabtest.greql2;
 import org.junit.Test;
 
 import de.uni_koblenz.jgralab.Graph;
-import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
+import de.uni_koblenz.jgralab.greql2.evaluator.QueryImpl;
 import de.uni_koblenz.jgralab.greql2.parser.GreqlParser;
-import de.uni_koblenz.jgralab.impl.ConsoleProgressFunction;
 
 public class ProgressTest extends GenericTest {
 
@@ -66,9 +65,7 @@ public class ProgressTest extends GenericTest {
 		String queryString = "list(tup(\"Nodes:\", count(from  v:V{} report v end)), tup(\"Edges:\", count(from  e:E{} report e end)))";
 		Graph datagraph = getTestGraph();
 
-		GreqlEvaluator eval = new GreqlEvaluator(queryString, datagraph, null,
-				new ConsoleProgressFunction());
-		eval.startEvaluation();
+		new QueryImpl(queryString).evaluate(datagraph);
 		// TODO test seriously
 		// System.out.println("Result of the evaluation was: "
 		// + eval.getEvaluationResult().toString());

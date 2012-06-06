@@ -56,7 +56,6 @@ import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.JGraLab;
-import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.grumlschema.GrumlSchema;
 import de.uni_koblenz.jgralab.grumlschema.SchemaGraph;
 import de.uni_koblenz.jgralab.grumlschema.domains.BooleanDomain;
@@ -119,11 +118,6 @@ public class SchemaGraph2XMI {
 	 * which are bidirectional navigable.
 	 */
 	private boolean isBidirectional = false;
-
-	/**
-	 * Stores the current {@link SchemaGraph} which is converted to a XMI.
-	 */
-	private SchemaGraph schemaGraph;
 
 	/**
 	 * Processes an TG-file as schema or a schema in a grUML graph to a XMI
@@ -256,7 +250,6 @@ public class SchemaGraph2XMI {
 	 */
 	private void createXMI(String xmiName, SchemaGraph schemaGraph)
 			throws XMLStreamException, IOException {
-		this.schemaGraph = schemaGraph;
 		Writer out = null;
 		XMLStreamWriter writer = null;
 		try {
@@ -1124,17 +1117,19 @@ public class SchemaGraph2XMI {
 		HashMap<String, Object> boundVars = new HashMap<String, Object>();
 		boundVars.put("start", connectedVertexClass);
 		int counter = 0;
-		Object result;
-		do {
-			counter++;
-			GreqlEvaluator eval = new GreqlEvaluator(
-					"using start:"
-							+ "exists ic:start<->{structure.SpecializesVertexClass}*<->{structure.EndsAt}<->{structure.ComesFrom,structure.GoesTo}^2@ic.roleName=\""
-							+ baseRolename + (counter == 1 ? "" : counter)
-							+ "\"", schemaGraph, boundVars);
-			eval.startEvaluation();
-			result = eval.getResult();
-		} while (result instanceof Boolean ? (Boolean) result : false);
+		// TODO [greqlevaluator]
+		// Object result;
+		// do {
+		// counter++;
+		// GreqlEvaluator eval = new GreqlEvaluator(
+		// "using start:"
+		// +
+		// "exists ic:start<->{structure.SpecializesVertexClass}*<->{structure.EndsAt}<->{structure.ComesFrom,structure.GoesTo}^2@ic.roleName=\""
+		// + baseRolename + (counter == 1 ? "" : counter)
+		// + "\"", schemaGraph, boundVars);
+		// eval.startEvaluation();
+		// result = eval.getResult();
+		// } while (result instanceof Boolean ? (Boolean) result : false);
 
 		return baseRolename + (counter == 1 ? "" : counter);
 	}
@@ -1155,7 +1150,7 @@ public class SchemaGraph2XMI {
 	private boolean isRoleNameNecessary(EdgeClass edgeClass,
 			String qualifiedName) {
 		if (isBidirectional) {
-			// the association is bidirectional navigable
+			// the association is bidirectionally navigable
 			return true;
 		} else if (((VertexClass) ((IncidenceClass) edgeClass
 				.getFirstGoesToIncidence().getThat()).getFirstEndsAtIncidence()

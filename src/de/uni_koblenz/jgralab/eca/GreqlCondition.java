@@ -35,16 +35,20 @@
 package de.uni_koblenz.jgralab.eca;
 
 import de.uni_koblenz.jgralab.AttributedElement;
+import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.eca.events.Event;
-import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
+import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEnvironment;
+import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEnvironmentAdapter;
+import de.uni_koblenz.jgralab.greql2.evaluator.Query;
+import de.uni_koblenz.jgralab.greql2.evaluator.QueryImpl;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 
-public class GreqlCondition<AEC extends AttributedElementClass<AEC, ?>> implements
-		Condition<AEC> {
+public class GreqlCondition<AEC extends AttributedElementClass<AEC, ?>>
+		implements Condition<AEC> {
 	/**
 	 * Condition as GReQuL Query
 	 */
-	private String conditionExpression;
+	private final String conditionExpression;
 
 	// +++++++++++++++++++++++++++++++++++++++++++++++++
 
@@ -70,16 +74,17 @@ public class GreqlCondition<AEC extends AttributedElementClass<AEC, ?>> implemen
 	@Override
 	public boolean evaluate(Event<AEC> event) {
 		AttributedElement<AEC, ?> element = event.getElement();
-		GreqlEvaluator greqlEvaluator = ((ECARuleManager) event.getGraph()
-				.getECARuleManager()).getGreqlEvaluator();
+		Graph datagraph = ((ECARuleManager) event.getGraph()
+				.getECARuleManager()).getGraph();
+		Query query = null;
+		GreqlEnvironment environment = new GreqlEnvironmentAdapter();
 		if (conditionExpression.contains("context")) {
-			greqlEvaluator.setQuery("using context: " + conditionExpression);
-			greqlEvaluator.setVariable("context", element);
+			query = new QueryImpl("using context: " + conditionExpression);
+			environment.setVariable("context", element);
 		} else {
-			greqlEvaluator.setQuery(conditionExpression);
+			query = new QueryImpl(conditionExpression);
 		}
-		greqlEvaluator.startEvaluation();
-		return (Boolean) greqlEvaluator.getResult();
+		return (Boolean) query.evaluate(datagraph, environment);
 	}
 
 	// +++++++++++++++++++++++++++++++++++++++++++++++++

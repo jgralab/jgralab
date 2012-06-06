@@ -38,62 +38,62 @@ package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 import java.util.ArrayList;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
-import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
-import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize;
-import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
+import de.uni_koblenz.jgralab.greql2.evaluator.InternalGreqlEvaluator;
+import de.uni_koblenz.jgralab.greql2.evaluator.QueryImpl;
+import de.uni_koblenz.jgralab.greql2.evaluator.VertexCosts;
 import de.uni_koblenz.jgralab.greql2.evaluator.fa.NFA;
-import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
 import de.uni_koblenz.jgralab.greql2.schema.IsSequenceElementOf;
+import de.uni_koblenz.jgralab.greql2.schema.PathDescription;
 import de.uni_koblenz.jgralab.greql2.schema.SequentialPathDescription;
 
 public class SequentialPathDescriptionEvaluator extends
-		PathDescriptionEvaluator {
-
-	/**
-	 * The SequentialPathDescription-Vertex this evaluator evaluates
-	 */
-	private SequentialPathDescription vertex;
-
-	/**
-	 * returns the vertex this VertexEvaluator evaluates
-	 */
-	@Override
-	public Greql2Vertex getVertex() {
-		return vertex;
-	}
+		PathDescriptionEvaluator<SequentialPathDescription> {
 
 	/**
 	 * Creates a new IteratedPathDescriptionEvaluator for the given vertex
-	 *
+	 * 
 	 * @param eval
 	 *            the GreqlEvaluator instance this VertexEvaluator belong to
 	 * @param vertex
 	 *            the vertex this VertexEvaluator evaluates
 	 */
 	public SequentialPathDescriptionEvaluator(SequentialPathDescription vertex,
-			GreqlEvaluator eval) {
-		super(eval);
-		this.vertex = vertex;
+			QueryImpl query) {
+		super(vertex, query);
 	}
 
 	@Override
-	public NFA evaluate() {
+	public NFA evaluate(InternalGreqlEvaluator evaluator) {
+		evaluator.progress(getOwnEvaluationCosts());
 		IsSequenceElementOf inc = vertex
 				.getFirstIsSequenceElementOfIncidence(EdgeDirection.IN);
 		ArrayList<NFA> nfaList = new ArrayList<NFA>();
 		while (inc != null) {
-			PathDescriptionEvaluator pathEval = (PathDescriptionEvaluator) vertexEvalMarker
-					.getMark(inc.getAlpha());
-			nfaList.add(pathEval.getNFA());
+			PathDescriptionEvaluator<?> pathEval = (PathDescriptionEvaluator<?>) query
+					.getVertexEvaluator((PathDescription) inc.getAlpha());
+			nfaList.add(pathEval.getNFA(evaluator));
 			inc = inc.getNextIsSequenceElementOfIncidence(EdgeDirection.IN);
 		}
 		return NFA.createSequentialPathDescriptionNFA(nfaList);
 	}
 
 	@Override
-	public VertexCosts calculateSubtreeEvaluationCosts(GraphSize graphSize) {
-		return this.greqlEvaluator.getCostModel()
-				.calculateCostsSequentialPathDescription(this, graphSize);
+	public VertexCosts calculateSubtreeEvaluationCosts() {
+		SequentialPathDescription p = getVertex();
+		long aggregatedCosts = 0;
+		IsSequenceElementOf inc = p
+				.getFirstIsSequenceElementOfIncidence(EdgeDirection.IN);
+		long alternatives = 0;
+		while (inc != null) {
+			PathDescriptionEvaluator<? extends PathDescription> pathEval = (PathDescriptionEvaluator<? extends PathDescription>) query
+					.getVertexEvaluator((PathDescription) inc.getAlpha());
+			aggregatedCosts += pathEval.getCurrentSubtreeEvaluationCosts();
+			inc = inc.getNextIsSequenceElementOfIncidence(EdgeDirection.IN);
+			alternatives++;
+		}
+		aggregatedCosts += 10 * alternatives;
+		return new VertexCosts(10 * alternatives, 10 * alternatives,
+				aggregatedCosts);
 	}
 
 }

@@ -36,8 +36,10 @@
 package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
-import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
+import de.uni_koblenz.jgralab.greql2.evaluator.InternalGreqlEvaluator;
+import de.uni_koblenz.jgralab.greql2.evaluator.QueryImpl;
 import de.uni_koblenz.jgralab.greql2.evaluator.fa.NFA;
+import de.uni_koblenz.jgralab.greql2.schema.Expression;
 import de.uni_koblenz.jgralab.greql2.schema.IsGoalRestrOf;
 import de.uni_koblenz.jgralab.greql2.schema.IsStartRestrOf;
 import de.uni_koblenz.jgralab.greql2.schema.PathDescription;
@@ -50,11 +52,12 @@ import de.uni_koblenz.jgralab.greql2.types.TypeCollection;
  * because the method PathDescriptionEvaluator.getResult(...) automaticly adds
  * start- and goalrestrictions to the pathdescription, if a start or
  * goalrestriction exists.
- *
+ * 
  * @author ist@uni-koblenz.de
- *
+ * 
  */
-public abstract class PathDescriptionEvaluator extends VertexEvaluator {
+public abstract class PathDescriptionEvaluator<V extends PathDescription>
+		extends VertexEvaluator<V> {
 
 	/**
 	 * The NFA which is created out of this PathDescription
@@ -63,19 +66,19 @@ public abstract class PathDescriptionEvaluator extends VertexEvaluator {
 
 	/**
 	 * Creates a new PathDescriptionEvaluator
-	 *
+	 * 
 	 * @param eval
 	 */
-	public PathDescriptionEvaluator(GreqlEvaluator eval) {
-		super(eval);
+	public PathDescriptionEvaluator(V vertex, QueryImpl query) {
+		super(vertex, query);
 	}
 
 	/**
 	 * returns the nfa
 	 */
-	public NFA getNFA() {
+	public NFA getNFA(InternalGreqlEvaluator evaluator) {
 		if (createdNFA == null) {
-			getResult();
+			getResult(evaluator);
 		}
 		return createdNFA;
 	}
@@ -84,18 +87,23 @@ public abstract class PathDescriptionEvaluator extends VertexEvaluator {
 	 * Returns the created NFA, encapsulated in a JValue The NFA for the path
 	 * description doesn't depend on the subgraph, so the getResult-Methode is
 	 * overwritten
-	 *
+	 * 
 	 * @return the result as jvalue
 	 */
 	@Override
-	public Object getResult() {
+	public Object getResult(InternalGreqlEvaluator evaluator) {
 		if (createdNFA == null) {
-			result = evaluate();
+			Object result = evaluate(evaluator);
 			createdNFA = (NFA) result;
-			addGoalRestrictions();
-			addStartRestrictions();
+			evaluator.setLocalEvaluationResult(vertex, result);
+			addGoalRestrictions(evaluator);
+			addStartRestrictions(evaluator);
 		}
-		return result;
+		assert createdNFA != null;
+		if (evaluator.getLocalEvaluationResult(vertex) == null) {
+			evaluator.setLocalEvaluationResult(vertex, createdNFA);
+		}
+		return evaluator.getLocalEvaluationResult(vertex);
 	}
 
 	/**
@@ -103,9 +111,9 @@ public abstract class PathDescriptionEvaluator extends VertexEvaluator {
 	 * belong to this path descritpion and adds the transitions that accepts
 	 * them to the nfa
 	 */
-	protected void addGoalRestrictions() {
-		PathDescription pathDesc = (PathDescription) getVertex();
-		VertexEvaluator goalRestEval = null;
+	protected void addGoalRestrictions(InternalGreqlEvaluator evaluator) {
+		PathDescription pathDesc = getVertex();
+		VertexEvaluator<? extends Expression> goalRestEval = null;
 		IsGoalRestrOf inc = pathDesc
 				.getFirstIsGoalRestrOfIncidence(EdgeDirection.IN);
 		if (inc == null) {
@@ -113,32 +121,33 @@ public abstract class PathDescriptionEvaluator extends VertexEvaluator {
 		}
 		TypeCollection typeCollection = new TypeCollection();
 		while (inc != null) {
-			VertexEvaluator vertexEval = vertexEvalMarker.getMark(inc
-					.getAlpha());
+			VertexEvaluator<? extends Expression> vertexEval = query
+					.getVertexEvaluator((Expression) inc.getAlpha());
 			if (vertexEval instanceof TypeIdEvaluator) {
 				TypeIdEvaluator typeEval = (TypeIdEvaluator) vertexEval;
-				typeCollection.addTypes((TypeCollection) typeEval.getResult());
+				typeCollection.addTypes((TypeCollection) typeEval
+						.getResult(evaluator));
 			} else {
 				goalRestEval = vertexEval;
 			}
 			inc = inc.getNextIsGoalRestrOfIncidence(EdgeDirection.IN);
 		}
-		NFA.addGoalTypeRestriction(getNFA(), typeCollection);
+		NFA.addGoalTypeRestriction(getNFA(evaluator), typeCollection);
 		if (goalRestEval != null) {
-			NFA.addGoalBooleanRestriction(getNFA(), goalRestEval,
-					vertexEvalMarker);
+			NFA.addGoalBooleanRestriction(getNFA(evaluator), goalRestEval,
+					query);
 		}
 	}
 
 	/**
 	 * creates the lists of start and goal type restrictions from all
 	 * TypeId-Vertices that belong to this path descritpion
-	 *
+	 * 
 	 * @return the generated list of types
 	 */
-	protected void addStartRestrictions() {
-		PathDescription pathDesc = (PathDescription) getVertex();
-		VertexEvaluator startRestEval = null;
+	protected void addStartRestrictions(InternalGreqlEvaluator evaluator) {
+		PathDescription pathDesc = getVertex();
+		VertexEvaluator<? extends Expression> startRestEval = null;
 		IsStartRestrOf inc = pathDesc
 				.getFirstIsStartRestrOfIncidence(EdgeDirection.IN);
 		if (inc == null) {
@@ -146,20 +155,21 @@ public abstract class PathDescriptionEvaluator extends VertexEvaluator {
 		}
 		TypeCollection typeCollection = new TypeCollection();
 		while (inc != null) {
-			VertexEvaluator vertexEval = vertexEvalMarker.getMark(inc
-					.getAlpha());
+			VertexEvaluator<? extends Expression> vertexEval = query
+					.getVertexEvaluator((Expression) inc.getAlpha());
 			if (vertexEval instanceof TypeIdEvaluator) {
 				TypeIdEvaluator typeEval = (TypeIdEvaluator) vertexEval;
-				typeCollection.addTypes((TypeCollection) typeEval.getResult());
+				typeCollection.addTypes((TypeCollection) typeEval
+						.getResult(evaluator));
 			} else {
 				startRestEval = vertexEval;
 			}
 			inc = inc.getNextIsStartRestrOfIncidence(EdgeDirection.IN);
 		}
-		NFA.addStartTypeRestriction(getNFA(), typeCollection);
+		NFA.addStartTypeRestriction(getNFA(evaluator), typeCollection);
 		if (startRestEval != null) {
-			NFA.addStartBooleanRestriction(getNFA(), startRestEval,
-					vertexEvalMarker);
+			NFA.addStartBooleanRestriction(getNFA(evaluator), startRestEval,
+					query);
 		}
 	}
 

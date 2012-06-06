@@ -39,10 +39,9 @@ import java.io.File;
 import java.util.logging.Logger;
 
 import de.uni_koblenz.jgralab.GraphIOException;
-import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.CostModel;
 import de.uni_koblenz.jgralab.greql2.optimizer.Optimizer;
-import de.uni_koblenz.jgralab.greql2.schema.Greql2;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Expression;
+import de.uni_koblenz.jgralab.greql2.schema.Greql2Graph;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Schema;
 
 /**
@@ -54,12 +53,12 @@ public class SyntaxGraphEntry {
 	/**
 	 * the SyntaxGraph this entry represents
 	 */
-	private Greql2 syntaxGraph;
+	private final Greql2Graph syntaxGraph;
 
 	/**
 	 * @return the SyntaxGraph this entry represents
 	 */
-	public Greql2 getSyntaxGraph() {
+	public Greql2Graph getSyntaxGraph() {
 		return syntaxGraph;
 	}
 
@@ -85,20 +84,6 @@ public class SyntaxGraphEntry {
 	 */
 	public boolean lock() {
 		return lockGraph(this);
-	}
-
-	/**
-	 * the costmodel that is used to calculate the evaluation costs of this
-	 * syntaxgraph
-	 */
-	private CostModel costModel;
-
-	/**
-	 * @return the CostModel that is used to calculate the evaluation costs of
-	 *         this syntaxgraph
-	 */
-	public CostModel getCostModel() {
-		return costModel;
 	}
 
 	/**
@@ -162,17 +147,14 @@ public class SyntaxGraphEntry {
 	 *            the Greql2 Syntaxgraph to store in this entry
 	 * @param optimizer
 	 *            the Optimizer that was used to optimize this syntaxgraph
-	 * @param costModel
-	 *            the CostModel that was used to calculate teh evaluation costs
 	 * @param locked
 	 *            specifies, wether the graph should be locked or not
 	 */
-	public SyntaxGraphEntry(String queryText, Greql2 graph,
-			Optimizer optimizer, CostModel costModel, boolean locked) {
+	public SyntaxGraphEntry(String queryText, Greql2Graph graph,
+			Optimizer optimizer, boolean locked) {
 		this.queryText = queryText;
 		syntaxGraph = graph;
 		this.optimizer = optimizer;
-		this.costModel = costModel;
 		this.locked = locked;
 	}
 
@@ -197,7 +179,8 @@ public class SyntaxGraphEntry {
 	 *             contain a constructor with zero parameters.
 	 */
 	public SyntaxGraphEntry(File fileName) throws GraphIOException {
-		syntaxGraph = Greql2Schema.instance().loadGreql2(fileName.getPath());
+		syntaxGraph = Greql2Schema.instance().loadGreql2Graph(
+				fileName.getPath());
 		Greql2Expression g2e = syntaxGraph.getFirstGreql2Expression();
 		try {
 			queryText = (String) g2e.getAttribute("_queryText");
@@ -206,16 +189,10 @@ public class SyntaxGraphEntry {
 				optimizer = (Optimizer) Class.forName(optimizerClass)
 						.newInstance();
 			}
-			String costModelClass = (String) g2e.getAttribute("_costModel");
-			if (!costModelClass.isEmpty()) {
-				costModel = (CostModel) Class.forName(costModelClass)
-						.newInstance();
-			}
 			locked = false;
 			// Now delete the attribute values. They're not needed anymore.
 			g2e.setAttribute("_queryText", null);
 			g2e.setAttribute("_optimizer", null);
-			g2e.setAttribute("_costModel", null);
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new GraphIOException(e.getMessage());
@@ -235,8 +212,6 @@ public class SyntaxGraphEntry {
 	public void saveToDirectory(File directory) throws GraphIOException {
 		String optimizerClass = "";
 		String optimizerClassSimple = "";
-		String costModelClass = "";
-		String costModelClassSimple = "";
 
 		Greql2Expression g2e = syntaxGraph.getFirstGreql2Expression();
 		g2e.set_queryText(queryText);
@@ -247,15 +222,8 @@ public class SyntaxGraphEntry {
 		}
 		g2e.set_optimizer(optimizerClass);
 
-		if (costModel != null) {
-			costModelClass = costModel.getClass().getName();
-			costModelClassSimple = costModel.getClass().getSimpleName();
-		}
-		g2e.set_costModel(costModelClass);
-
 		String fileName = directory.getPath() + File.separator
-				+ queryText.hashCode() + "-" + costModelClassSimple + "-"
-				+ optimizerClassSimple + ".tg";
+				+ queryText.hashCode() + "-" + optimizerClassSimple + ".tg";
 		syntaxGraph.save(fileName);
 		logger.info("Saved SyntaxGraphEntry to \"" + fileName + "\".");
 	}
@@ -273,16 +241,14 @@ public class SyntaxGraphEntry {
 		if (o instanceof SyntaxGraphEntry) {
 			SyntaxGraphEntry e = (SyntaxGraphEntry) o;
 			return queryText.equals(e.queryText)
-					&& optimizer.getClass().equals(e.optimizer.getClass())
-					&& costModel.getClass().equals(e.costModel.getClass());
+					&& optimizer.getClass().equals(e.optimizer.getClass());
 		}
 		return false;
 	}
 
 	@Override
 	public int hashCode() {
-		return queryText.hashCode() + optimizer.getClass().hashCode()
-				+ costModel.getClass().hashCode();
+		return queryText.hashCode() + optimizer.getClass().hashCode();
 	}
 
 	public String getQueryText() {
@@ -292,7 +258,6 @@ public class SyntaxGraphEntry {
 	@Override
 	public String toString() {
 		return "{SyntaxGraphEntry@" + syntaxGraph.hashCode() + ":"
-				+ costModel.getClass().getSimpleName() + ":"
 				+ optimizer.getClass().getSimpleName() + "}";
 	}
 }

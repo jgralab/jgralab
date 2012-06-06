@@ -33,7 +33,7 @@
 
 TGraph 2;
 Schema de.uni_koblenz.jgralab.greql2.schema.Greql2Schema;
-GraphClass Greql2;
+GraphClass Greql2Graph;
 
 EnumDomain IterationType (STAR, PLUS);
 EnumDomain QuantificationType (FORALL, EXISTS, EXISTSONE);
@@ -58,7 +58,7 @@ VertexClass ExponentiatedPathDescription: PathDescription;
 VertexClass ForwardVertexSet: PathExpression;
 VertexClass FunctionApplication: Expression;
 VertexClass FunctionId: Identifier;
-VertexClass Greql2Expression: Greql2Vertex { importedTypes: Set<String>, queryText: String, optimizer: String, costModel: String };
+VertexClass Greql2Expression: Greql2Vertex { importedTypes: Set<String>, queryText: String, optimizer: String };
 VertexClass Identifier : Expression { name: String };
 VertexClass IntLiteral: Literal { intValue: Integer };
 VertexClass LongLiteral: Literal { longValue: Long };

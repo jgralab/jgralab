@@ -36,11 +36,10 @@
 package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
-import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
-import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize;
-import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
+import de.uni_koblenz.jgralab.greql2.evaluator.InternalGreqlEvaluator;
+import de.uni_koblenz.jgralab.greql2.evaluator.QueryImpl;
+import de.uni_koblenz.jgralab.greql2.evaluator.VertexCosts;
 import de.uni_koblenz.jgralab.greql2.evaluator.fa.NFA;
-import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
 import de.uni_koblenz.jgralab.greql2.schema.PathDescription;
 import de.uni_koblenz.jgralab.greql2.schema.TransposedPathDescription;
 
@@ -52,20 +51,7 @@ import de.uni_koblenz.jgralab.greql2.schema.TransposedPathDescription;
  * 
  */
 public class TransposedPathDescriptionEvaluator extends
-		PathDescriptionEvaluator {
-
-	/**
-	 * The IteratedPathDescription-Vertex this evaluator evaluates
-	 */
-	private TransposedPathDescription vertex;
-
-	/**
-	 * returns the vertex this VertexEvaluator evaluates
-	 */
-	@Override
-	public Greql2Vertex getVertex() {
-		return vertex;
-	}
+		PathDescriptionEvaluator<TransposedPathDescription> {
 
 	/**
 	 * Creates a new TransposedPathDescriptionEvaluator for the given vertex
@@ -76,25 +62,33 @@ public class TransposedPathDescriptionEvaluator extends
 	 *            the vertex this VertexEvaluator evaluates
 	 */
 	public TransposedPathDescriptionEvaluator(TransposedPathDescription vertex,
-			GreqlEvaluator eval) {
-		super(eval);
-		this.vertex = vertex;
+			QueryImpl query) {
+		super(vertex, query);
 	}
 
 	@Override
-	public NFA evaluate() {
+	public NFA evaluate(InternalGreqlEvaluator evaluator) {
+		evaluator.progress(getOwnEvaluationCosts());
 		PathDescription p = (PathDescription) vertex
 				.getFirstIsTransposedPathOfIncidence(EdgeDirection.IN)
 				.getAlpha();
-		PathDescriptionEvaluator pathEval = (PathDescriptionEvaluator) vertexEvalMarker
-				.getMark(p);
-		return NFA.createTransposedPathDescriptionNFA(pathEval.getNFA());
+		PathDescriptionEvaluator<?> pathEval = (PathDescriptionEvaluator<?>) query
+				.getVertexEvaluator(p);
+		return NFA.createTransposedPathDescriptionNFA(pathEval
+				.getNFA(evaluator));
 	}
 
 	@Override
-	public VertexCosts calculateSubtreeEvaluationCosts(GraphSize graphSize) {
-		return this.greqlEvaluator.getCostModel()
-				.calculateCostsTransposedPathDescription(this, graphSize);
+	public VertexCosts calculateSubtreeEvaluationCosts() {
+		TransposedPathDescription transPath = getVertex();
+		PathDescriptionEvaluator<? extends PathDescription> pathEval = (PathDescriptionEvaluator<? extends PathDescription>) query
+				.getVertexEvaluator((PathDescription) transPath
+						.getFirstIsTransposedPathOfIncidence().getAlpha());
+		long pathCosts = pathEval.getCurrentSubtreeEvaluationCosts();
+		long transpositionCosts = pathCosts / 20;
+		long subtreeCosts = transpositionCosts + pathCosts;
+		return new VertexCosts(transpositionCosts, transpositionCosts,
+				subtreeCosts);
 	}
 
 }

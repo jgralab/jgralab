@@ -50,7 +50,6 @@ import de.uni_koblenz.jgralab.eca.events.CreateVertexEventDescription;
 import de.uni_koblenz.jgralab.eca.events.DeleteEdgeEventDescription;
 import de.uni_koblenz.jgralab.eca.events.DeleteVertexEventDescription;
 import de.uni_koblenz.jgralab.eca.events.EventDescription;
-import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.VertexClass;
@@ -70,8 +69,6 @@ public class ECARuleManager implements ECARuleManagerInterface {
 	 * List with all ECARules managed by this ECARuleManager
 	 */
 	private List<ECARule<?>> rules;
-
-	private GreqlEvaluator greqlEvaluator;
 
 	private int nestedTriggerCalls = 0;
 	private int maxNestedTriggerCalls = 30;
@@ -588,13 +585,6 @@ public class ECARuleManager implements ECARuleManagerInterface {
 	 */
 	public List<ECARule<?>> getRules() {
 		return Collections.unmodifiableList(rules);
-	}
-
-	public GreqlEvaluator getGreqlEvaluator() {
-		if (greqlEvaluator == null) {
-			greqlEvaluator = new GreqlEvaluator("", graph, null);
-		}
-		return greqlEvaluator;
 	}
 
 	/*

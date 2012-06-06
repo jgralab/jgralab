@@ -54,7 +54,11 @@ import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.ImplementationType;
 import de.uni_koblenz.jgralab.JGraLab;
+import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEnvironment;
+import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEnvironmentAdapter;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
+import de.uni_koblenz.jgralab.greql2.evaluator.Query;
+import de.uni_koblenz.jgralab.greql2.evaluator.QueryImpl;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.GraphClass;
 import de.uni_koblenz.jgralab.schema.GraphElementClass;
@@ -79,7 +83,7 @@ public class Context {
 
 	private final Map<String, Graph> sourceGraphs = new HashMap<String, Graph>(
 			1);
-	private GreqlEvaluator eval = null;
+	private Query query = null;
 
 	Schema targetSchema = null;
 
@@ -117,13 +121,13 @@ public class Context {
 	 * Maps from {@link AttributedElementClass} to a map, mapping old elements
 	 * to their images. (zeta-reverse)
 	 */
-	private Map<AttributedElementClass<?, ?>, PMap<Object, AttributedElement<?, ?>>> imgMap = new HashMap<AttributedElementClass<?, ?>, PMap<Object, AttributedElement<?, ?>>>();
+	private final Map<AttributedElementClass<?, ?>, PMap<Object, AttributedElement<?, ?>>> imgMap = new HashMap<AttributedElementClass<?, ?>, PMap<Object, AttributedElement<?, ?>>>();
 
 	/**
 	 * Maps from {@link AttributedElementClass} to a map, mapping new elements
 	 * to the elements they were created for (their archetypes). (zeta)
 	 */
-	private Map<AttributedElementClass<?, ?>, PMap<AttributedElement<?, ?>, Object>> archMap = new HashMap<AttributedElementClass<?, ?>, PMap<AttributedElement<?, ?>, Object>>();
+	private final Map<AttributedElementClass<?, ?>, PMap<AttributedElement<?, ?>, Object>> archMap = new HashMap<AttributedElementClass<?, ?>, PMap<AttributedElement<?, ?>, Object>>();
 
 	private final Map<String, Object> greqlExtraVars = new HashMap<String, Object>();
 	private final Set<String> greqlImports = new HashSet<String>();
@@ -137,8 +141,8 @@ public class Context {
 	}
 
 	final void setGReQLHelper(String name, String greqlExpression) {
-		ensureGreqlEvaluator();
-		eval.setSubQuery(name, greqlExpression);
+		ensureQuery();
+		query.setSubQuery(name, greqlExpression);
 	}
 
 	final void addGReQLImport(String qualifiedName) {
@@ -170,7 +174,7 @@ public class Context {
 
 	/**
 	 * Creates a new Context object
-	 *
+	 * 
 	 * @param targetSchemaName
 	 *            The name of the target schema
 	 * @param targetGraphClassName
@@ -192,7 +196,7 @@ public class Context {
 		}
 		// Do it here, cause that takes some time. We don't want to have that
 		// counted to the transformation time...
-		ensureGreqlEvaluator();
+		ensureQuery();
 	}
 
 	/**
@@ -203,7 +207,7 @@ public class Context {
 		targetSchemaName = targetSchema.getQualifiedName();
 		// Do it here, cause that takes some time. We don't want to have that
 		// counted to the transformation time...
-		ensureGreqlEvaluator();
+		ensureQuery();
 
 	}
 
@@ -216,7 +220,7 @@ public class Context {
 		setSourceGraph(g);
 		// Do it here, cause that takes some time. We don't want to have that
 		// counted to the transformation time...
-		ensureGreqlEvaluator();
+		ensureQuery();
 	}
 
 	/**
@@ -255,7 +259,7 @@ public class Context {
 	/**
 	 * Ensures that theres a function for this attributed element class, even
 	 * though this function may be empty.
-	 *
+	 * 
 	 * @param aec
 	 *            the AttributedElementClass for which to ensure the
 	 *            archMap/imgMap mappings
@@ -359,7 +363,7 @@ public class Context {
 		imgMap.put(attrElemClass, map);
 	}
 
-	private Random uniqueSeed = new Random();
+	private final Random uniqueSeed = new Random();
 
 	/**
 	 * @return a String that is guaranteed to be unique (used for implicit
@@ -456,7 +460,7 @@ public class Context {
 	 * Swap this context object. E.g. make the current target graph the default
 	 * source graph and reinitialize all member vars such as archMap/imgMap.
 	 * This is mainly useful for chaining multiple transformations.
-	 *
+	 * 
 	 * @return this context object itself
 	 */
 	public final Context swap() {
@@ -495,7 +499,7 @@ public class Context {
 	 * Reset this context, so that the same context can be passed to another
 	 * transformation. This means, everything except the source graph is
 	 * cleared.
-	 *
+	 * 
 	 * @return the context
 	 */
 	public final Context reset(boolean forgetTargetSchema) {
@@ -513,10 +517,10 @@ public class Context {
 		archMap.clear();
 		imgMap.clear();
 
-		// reset the GreqlEvaluator index cache, they prevent garbage
+		// reset the QueryImpl index cache, they prevent garbage
 		// collection!
-		GreqlEvaluator.resetGraphIndizes();
-		GreqlEvaluator.resetOptimizedSyntaxGraphs();
+		QueryImpl.resetGraphIndizes();
+		QueryImpl.resetOptimizedSyntaxGraphs();
 
 		// clear imports/extra vars
 		greqlExtraVars.clear();
@@ -527,7 +531,7 @@ public class Context {
 
 	/**
 	 * Sets the (default) source graph for the transformation
-	 *
+	 * 
 	 * @param sourceGraph
 	 *            the source graph
 	 */
@@ -537,7 +541,7 @@ public class Context {
 
 	/**
 	 * adds a source graph for the transformation
-	 *
+	 * 
 	 * @param alias
 	 *            the alias to access this source graph (used as prefix #name#
 	 *            in semantic expressions)
@@ -592,7 +596,7 @@ public class Context {
 	/**
 	 * returns the target graph of the transformation if no target graph exists,
 	 * it will be created
-	 *
+	 * 
 	 * @return the target graph
 	 */
 	public final Graph getTargetGraph() {
@@ -708,25 +712,25 @@ public class Context {
 		String query = sb.toString();
 		logger.finest("GReQL: " + semanticExpression);
 
-		ensureGreqlEvaluator();
-		eval.setDatagraph(graph);
-		eval.setQuery(query);
-		eval.setVariables(greqlMapping);
-
-		// eval.setOptimize(false);
-
-		eval.startEvaluation();
+		QueryImpl newQuery = new QueryImpl(query);
+		if (this.query != null) {
+			newQuery.setSubQueryMap(((QueryImpl) this.query).getSubQueryMap());
+		}
+		this.query = newQuery;
+		// this.query = new QueryImpl(query, false);
+		GreqlEnvironment environment = new GreqlEnvironmentAdapter(greqlMapping);
+		T result = (T) this.query.evaluate(graph, environment);
 
 		// log.fine("GReQL result: " + result);
-		return (T) eval.getResult();
+		return result;
 	}
 
 	/**
 	 * Ensure that the {@link GreqlEvaluator} <code>eval</code> exists.
 	 */
-	private void ensureGreqlEvaluator() {
-		if (eval == null) {
-			eval = new GreqlEvaluator((String) null, null, null);
+	private void ensureQuery() {
+		if (query == null) {
+			query = new QueryImpl((String) null);
 		}
 	}
 

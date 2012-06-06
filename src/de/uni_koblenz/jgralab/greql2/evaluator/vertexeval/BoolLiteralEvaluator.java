@@ -35,11 +35,10 @@
 
 package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 
-import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
-import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize;
-import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
+import de.uni_koblenz.jgralab.greql2.evaluator.InternalGreqlEvaluator;
+import de.uni_koblenz.jgralab.greql2.evaluator.QueryImpl;
+import de.uni_koblenz.jgralab.greql2.evaluator.VertexCosts;
 import de.uni_koblenz.jgralab.greql2.schema.BoolLiteral;
-import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
 
 /**
  * Evaluates a boolean literal, that means, provides access to the literal value
@@ -50,38 +49,25 @@ import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
  * @author ist@uni-koblenz.de
  * 
  */
-public class BoolLiteralEvaluator extends VertexEvaluator {
+public class BoolLiteralEvaluator extends VertexEvaluator<BoolLiteral> {
 
-	/**
-	 * The BoolLiteral this evluator provides acces to
-	 */
-	private BoolLiteral vertex;
-
-	/**
-	 * returns the vertex this VertexEvaluator evaluates
-	 */
-	@Override
-	public Greql2Vertex getVertex() {
-		return vertex;
-	}
-
-	public BoolLiteralEvaluator(BoolLiteral vertex, GreqlEvaluator eval) {
-		super(eval);
-		this.vertex = vertex;
+	public BoolLiteralEvaluator(BoolLiteral vertex, QueryImpl query) {
+		super(vertex, query);
 	}
 
 	@Override
-	public Boolean evaluate() {
+	public Boolean evaluate(InternalGreqlEvaluator evaluator) {
+		evaluator.progress(getOwnEvaluationCosts());
 		return vertex.is_boolValue();
 	}
 
 	@Override
-	public VertexCosts calculateSubtreeEvaluationCosts(GraphSize graphSize) {
+	public VertexCosts calculateSubtreeEvaluationCosts() {
 		return new VertexCosts(1, 1, 1);
 	}
 
 	@Override
-	public double calculateEstimatedSelectivity(GraphSize graphSize) {
+	public double calculateEstimatedSelectivity() {
 		// true has selectivity 1, but false and null can never be true, so
 		// their selectivity is 0.
 		if (vertex.is_boolValue()) {

@@ -37,9 +37,11 @@ package de.uni_koblenz.jgralab.greql2.evaluator.fa;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.graphmarker.GraphMarker;
+import de.uni_koblenz.jgralab.greql2.evaluator.InternalGreqlEvaluator;
+import de.uni_koblenz.jgralab.greql2.evaluator.QueryImpl;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.ThisVertexEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VertexEvaluator;
+import de.uni_koblenz.jgralab.greql2.schema.Expression;
 import de.uni_koblenz.jgralab.greql2.schema.ThisVertex;
 import de.uni_koblenz.jgralab.greql2.serialising.GreqlSerializer;
 
@@ -52,9 +54,9 @@ import de.uni_koblenz.jgralab.greql2.serialising.GreqlSerializer;
  */
 public class BoolExpressionTransition extends Transition {
 
-	private VertexEvaluator boolExpressionEvaluator;
+	private final VertexEvaluator<? extends Expression> boolExpressionEvaluator;
 
-	public VertexEvaluator getBooleanExpressionEvaluator() {
+	public VertexEvaluator<? extends Expression> getBooleanExpressionEvaluator() {
 		return boolExpressionEvaluator;
 	}
 
@@ -82,7 +84,7 @@ public class BoolExpressionTransition extends Transition {
 			return false;
 		}
 		BoolExpressionTransition bt = (BoolExpressionTransition) t;
-		if (bt.boolExpressionEvaluator == this.boolExpressionEvaluator) {
+		if (bt.boolExpressionEvaluator == boolExpressionEvaluator) {
 			return true;
 		}
 		return false;
@@ -110,12 +112,14 @@ public class BoolExpressionTransition extends Transition {
 	 * Creates a new transition from start state to end state.
 	 */
 	public BoolExpressionTransition(State start, State end,
-			VertexEvaluator boolEval, GraphMarker<VertexEvaluator> graphMarker) {
+			VertexEvaluator<? extends Expression> boolEval, QueryImpl query) {
 		super(start, end);
 		boolExpressionEvaluator = boolEval;
-		Vertex v = graphMarker.getGraph().getFirstVertex(ThisVertex.VC);
+		ThisVertex v = (ThisVertex) query.getQueryGraph().getFirstVertex(
+				ThisVertex.VC);
 		if (v != null) {
-			thisVertexEvaluator = (ThisVertexEvaluator) graphMarker.getMark(v);
+			thisVertexEvaluator = (ThisVertexEvaluator) query
+					.getVertexEvaluator(v);
 		}
 	}
 
@@ -135,11 +139,11 @@ public class BoolExpressionTransition extends Transition {
 	 * @see greql2.evaluator.fa.Transition#accepts(jgralab.Vertex, jgralab.Edge)
 	 */
 	@Override
-	public boolean accepts(Vertex v, Edge e) {
+	public boolean accepts(Vertex v, Edge e, InternalGreqlEvaluator evaluator) {
 		if (thisVertexEvaluator != null) {
-			thisVertexEvaluator.setValue(v);
+			thisVertexEvaluator.setValue(v, evaluator);
 		}
-		Object res = boolExpressionEvaluator.getResult();
+		Object res = boolExpressionEvaluator.getResult(evaluator);
 		if ((res instanceof Boolean) && ((Boolean) res).equals(Boolean.TRUE)) {
 			return true;
 		}

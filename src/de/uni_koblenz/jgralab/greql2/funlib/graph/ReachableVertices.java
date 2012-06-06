@@ -42,29 +42,32 @@ import org.pcollections.PSet;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.Vertex;
+import de.uni_koblenz.jgralab.greql2.evaluator.InternalGreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.fa.DFA;
 import de.uni_koblenz.jgralab.greql2.evaluator.fa.NFA;
 import de.uni_koblenz.jgralab.greql2.evaluator.fa.State;
 import de.uni_koblenz.jgralab.greql2.evaluator.fa.Transition;
 import de.uni_koblenz.jgralab.greql2.funlib.Description;
 import de.uni_koblenz.jgralab.greql2.funlib.Function;
+import de.uni_koblenz.jgralab.greql2.funlib.NeedsEvaluatorArgument;
 import de.uni_koblenz.jgralab.greql2.types.pathsearch.VertexStateQueue;
 
+@NeedsEvaluatorArgument
 public class ReachableVertices extends Function {
-	
-	@Description(params = {"v","dfa"}, description = 
-			"Returns all vertices that are reachable from the given vertex by a path matching the the given path description.",
-			categories = {Category.GRAPH, Category.PATHS_AND_PATHSYSTEMS_AND_SLICES})
+
+	@Description(params = { "v", "dfa" }, description = "Returns all vertices that are reachable from the given vertex by a path matching the the given path description.", categories = {
+			Category.GRAPH, Category.PATHS_AND_PATHSYSTEMS_AND_SLICES })
 	public ReachableVertices() {
 		super(100, 10, 1.0);
 	}
 
-
-	public PSet<Vertex> evaluate(Vertex v, NFA nfa) {
-		return search(v, nfa.getDFA());
+	public PSet<Vertex> evaluate(InternalGreqlEvaluator evaluator, Vertex v,
+			NFA nfa) {
+		return search(evaluator, v, nfa.getDFA());
 	}
 
-	public static PSet<Vertex> search(Vertex v, DFA dfa) {
+	public static PSet<Vertex> search(InternalGreqlEvaluator evaluator,
+			Vertex v, DFA dfa) {
 		PSet<Vertex> resultSet = JGraLab.set();
 
 		@SuppressWarnings("unchecked")
@@ -92,7 +95,7 @@ public class ReachableVertices extends Function {
 							inc);
 					if (!markedElements[currentTransition.endState.number]
 							.contains(nextVertex)) {
-						if (currentTransition.accepts(vertex, inc)) {
+						if (currentTransition.accepts(vertex, inc, evaluator)) {
 							markedElements[currentTransition.endState.number]
 									.add(nextVertex);
 							queue.put(nextVertex, currentTransition.endState);

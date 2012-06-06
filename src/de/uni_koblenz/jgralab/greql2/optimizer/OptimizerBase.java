@@ -43,12 +43,11 @@ import java.util.Set;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.exception.OptimizerException;
 import de.uni_koblenz.jgralab.greql2.schema.Declaration;
 import de.uni_koblenz.jgralab.greql2.schema.Expression;
-import de.uni_koblenz.jgralab.greql2.schema.Greql2;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Expression;
+import de.uni_koblenz.jgralab.greql2.schema.Greql2Graph;
 import de.uni_koblenz.jgralab.greql2.schema.IsBoundVarOf;
 import de.uni_koblenz.jgralab.greql2.schema.IsDeclaredVarOf;
 import de.uni_koblenz.jgralab.greql2.schema.IsSimpleDeclOf;
@@ -66,10 +65,6 @@ public abstract class OptimizerBase implements Optimizer {
 
 	protected String optimizerHeaderString() {
 		return "*** " + this.getClass().getSimpleName() + ": ";
-	}
-
-	protected void recreateVertexEvaluators(GreqlEvaluator eval) {
-		eval.createVertexEvaluators();
 	}
 
 	/**
@@ -154,12 +149,12 @@ public abstract class OptimizerBase implements Optimizer {
 			return false;
 		}
 
-		SimpleDeclaration sd1 = (SimpleDeclaration) var1.getFirstIsDeclaredVarOfIncidence(
-				EdgeDirection.OUT).getOmega();
+		SimpleDeclaration sd1 = (SimpleDeclaration) var1
+				.getFirstIsDeclaredVarOfIncidence(EdgeDirection.OUT).getOmega();
 		Declaration decl1 = (Declaration) sd1.getFirstIsSimpleDeclOfIncidence(
 				EdgeDirection.OUT).getOmega();
-		SimpleDeclaration sd2 = (SimpleDeclaration) var2.getFirstIsDeclaredVarOfIncidence(
-				EdgeDirection.OUT).getOmega();
+		SimpleDeclaration sd2 = (SimpleDeclaration) var2
+				.getFirstIsDeclaredVarOfIncidence(EdgeDirection.OUT).getOmega();
 		Declaration decl2 = (Declaration) sd2.getFirstIsSimpleDeclOfIncidence(
 				EdgeDirection.OUT).getOmega();
 
@@ -250,7 +245,7 @@ public abstract class OptimizerBase implements Optimizer {
 	 */
 	protected SimpleDeclaration splitSimpleDeclaration(SimpleDeclaration sd,
 			Set<Variable> varsToBeSplit) {
-		Greql2 syntaxgraph = (Greql2) sd.getGraph();
+		Greql2Graph syntaxgraph = (Greql2Graph) sd.getGraph();
 		Set<Variable> varsDeclaredBySD = OptimizerUtility
 				.collectVariablesDeclaredBy(sd);
 
@@ -258,8 +253,8 @@ public abstract class OptimizerBase implements Optimizer {
 			// there's nothing to split out anymore
 			return sd;
 		}
-		Declaration parentDecl = (Declaration) sd.getFirstIsSimpleDeclOfIncidence(
-				EdgeDirection.OUT).getOmega();
+		Declaration parentDecl = (Declaration) sd
+				.getFirstIsSimpleDeclOfIncidence(EdgeDirection.OUT).getOmega();
 		IsSimpleDeclOf oldEdge = sd.getFirstIsSimpleDeclOfIncidence();
 		SimpleDeclaration newSD = syntaxgraph.createSimpleDeclaration();
 		IsSimpleDeclOf newEdge = syntaxgraph.createIsSimpleDeclOf(newSD,

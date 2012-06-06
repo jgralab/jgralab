@@ -37,6 +37,7 @@ package de.uni_koblenz.jgralab.greql2.evaluator.fa;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Vertex;
+import de.uni_koblenz.jgralab.greql2.evaluator.InternalGreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.types.TypeCollection;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.VertexClass;
@@ -54,7 +55,7 @@ public class VertexTypeRestrictionTransition extends Transition {
 	 * The type collection that toggles which types are accepted and which are
 	 * not
 	 */
-	private TypeCollection typeCollection;
+	private final TypeCollection typeCollection;
 	
 	public TypeCollection getAcceptedVertexTypes() {
 		return typeCollection;
@@ -140,7 +141,7 @@ public class VertexTypeRestrictionTransition extends Transition {
 	 * @return true if the transition can fire with e, false otherwise
 	 */
 	@Override
-	public boolean accepts(Vertex v, Edge e) {
+	public boolean accepts(Vertex v, Edge e, InternalGreqlEvaluator evaluator) {
 		VertexClass vertexClass = v.getAttributedElementClass();
 		if (!typeCollection.acceptsType(vertexClass)) {
 			return false;

@@ -39,11 +39,10 @@ import org.pcollections.PVector;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.JGraLab;
-import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
-import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize;
-import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
+import de.uni_koblenz.jgralab.greql2.evaluator.InternalGreqlEvaluator;
+import de.uni_koblenz.jgralab.greql2.evaluator.QueryImpl;
+import de.uni_koblenz.jgralab.greql2.evaluator.VertexCosts;
 import de.uni_koblenz.jgralab.greql2.schema.Expression;
-import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
 import de.uni_koblenz.jgralab.greql2.schema.ListRangeConstruction;
 
 /**
@@ -54,17 +53,14 @@ import de.uni_koblenz.jgralab.greql2.schema.ListRangeConstruction;
  * @author ist@uni-koblenz.de
  * 
  */
-public class ListRangeConstructionEvaluator extends VertexEvaluator {
-
-	private ListRangeConstruction vertex;
+public class ListRangeConstructionEvaluator extends
+		VertexEvaluator<ListRangeConstruction> {
 
 	/**
-	 * returns the vertex this VertexEvaluator evaluates
+	 * the default value that is estimated if the size of a listrange cannot be
+	 * estimated
 	 */
-	@Override
-	public Greql2Vertex getVertex() {
-		return vertex;
-	}
+	protected static final int defaultListRangeSize = 50;
 
 	/**
 	 * Creates a new ListRangeConstructionEvaluator for the given vertex
@@ -75,43 +71,47 @@ public class ListRangeConstructionEvaluator extends VertexEvaluator {
 	 *            the vertex this VertexEvaluator evaluates
 	 */
 	public ListRangeConstructionEvaluator(ListRangeConstruction vertex,
-			GreqlEvaluator eval) {
-		super(eval);
-		this.vertex = vertex;
+			QueryImpl query) {
+		super(vertex, query);
 	}
 
-	private VertexEvaluator firstElementEvaluator = null;
+	private VertexEvaluator<? extends Expression> firstElementEvaluator = null;
 
-	private VertexEvaluator lastElementEvaluator = null;
+	private VertexEvaluator<? extends Expression> lastElementEvaluator = null;
 
 	private void getEvals() {
 		Expression firstElementExpression = (Expression) vertex
 				.getFirstIsFirstValueOfIncidence(EdgeDirection.IN).getAlpha();
 		Expression lastElementExpression = (Expression) vertex
 				.getFirstIsLastValueOfIncidence(EdgeDirection.IN).getAlpha();
-		firstElementEvaluator = vertexEvalMarker
-				.getMark(firstElementExpression);
-		lastElementEvaluator = vertexEvalMarker.getMark(lastElementExpression);
+		firstElementEvaluator = query
+				.getVertexEvaluator(firstElementExpression);
+		lastElementEvaluator = query.getVertexEvaluator(lastElementExpression);
 	}
 
 	@Override
-	public PVector<Integer> evaluate() {
+	public PVector<Integer> evaluate(InternalGreqlEvaluator evaluator) {
+		evaluator.progress(getOwnEvaluationCosts());
 		PVector<Integer> resultList = JGraLab.vector();
 		if (firstElementEvaluator == null) {
 			getEvals();
 		}
-		Object firstElement = firstElementEvaluator.getResult();
-		Object lastElement = lastElementEvaluator.getResult();
+		Object firstElement = firstElementEvaluator.getResult(evaluator);
+		Object lastElement = lastElementEvaluator.getResult(evaluator);
 		if (firstElement instanceof Integer && lastElement instanceof Integer) {
-			if ((Integer) firstElement < (Integer) lastElement) {
-				for (int i = (Integer) firstElement; i < (Integer) lastElement + 1; i++) {
-					// +1 needed because the top element should also belong
-					// to the list
-					resultList = resultList.plus(i);
-				}
+			int firstInt = (Integer) firstElement;
+			int lastInt = (Integer) lastElement;
+			if (firstInt == lastInt) {
+				resultList = resultList.plus(firstInt);
 			} else {
-				for (int i = (Integer) lastElement; i < (Integer) firstElement + 1; i++) {
-					resultList = resultList.plus(i);
+				if (firstInt < lastInt) {
+					for (int i = firstInt; i <= lastInt; i++) {
+						resultList = resultList.plus(i);
+					}
+				} else {
+					for (int i = firstInt; i >= lastInt; i--) {
+						resultList = resultList.plus(i);
+					}
 				}
 			}
 		}
@@ -120,15 +120,67 @@ public class ListRangeConstructionEvaluator extends VertexEvaluator {
 	}
 
 	@Override
-	public VertexCosts calculateSubtreeEvaluationCosts(GraphSize graphSize) {
-		return this.greqlEvaluator.getCostModel()
-				.calculateCostsListRangeConstruction(this, graphSize);
+	public VertexCosts calculateSubtreeEvaluationCosts() {
+		ListRangeConstruction exp = getVertex();
+		VertexEvaluator<? extends Expression> startExpEval = query
+				.getVertexEvaluator((Expression) exp
+						.getFirstIsFirstValueOfIncidence().getAlpha());
+		VertexEvaluator<? extends Expression> targetExpEval = query
+				.getVertexEvaluator((Expression) exp
+						.getFirstIsLastValueOfIncidence().getAlpha());
+		long startCosts = startExpEval.getCurrentSubtreeEvaluationCosts();
+		long targetCosts = targetExpEval.getCurrentSubtreeEvaluationCosts();
+		long range = 0;
+		if (startExpEval instanceof IntLiteralEvaluator) {
+			if (targetExpEval instanceof IntLiteralEvaluator) {
+				try {
+					range = (((Number) targetExpEval.getResult(null))
+							.longValue() - ((Number) startExpEval
+							.getResult(null)).longValue()) + 1;
+				} catch (Exception ex) {
+					// if an exception occurs, the default value is used, so no
+					// exceptionhandling is needed
+				}
+			}
+		}
+		if (range <= 0) {
+			range = defaultListRangeSize;
+		}
+		long ownCosts = addToListCosts * range;
+		long iteratedCosts = ownCosts * getVariableCombinations();
+		long subtreeCosts = iteratedCosts + startCosts + targetCosts;
+		return new VertexCosts(ownCosts, iteratedCosts, subtreeCosts);
 	}
 
 	@Override
-	public long calculateEstimatedCardinality(GraphSize graphSize) {
-		return greqlEvaluator.getCostModel()
-				.calculateCardinalityListRangeConstruction(this, graphSize);
+	public long calculateEstimatedCardinality() {
+		ListRangeConstruction exp = getVertex();
+		VertexEvaluator<? extends Expression> startExpEval = query
+				.getVertexEvaluator((Expression) exp
+						.getFirstIsFirstValueOfIncidence(EdgeDirection.IN)
+						.getAlpha());
+		VertexEvaluator<? extends Expression> targetExpEval = query
+				.getVertexEvaluator((Expression) exp
+						.getFirstIsLastValueOfIncidence(EdgeDirection.IN)
+						.getAlpha());
+		long range = 0;
+		if (startExpEval instanceof IntLiteralEvaluator) {
+			if (targetExpEval instanceof IntLiteralEvaluator) {
+				try {
+					range = (((Number) targetExpEval.getResult(null))
+							.longValue() - ((Number) startExpEval
+							.getResult(null)).longValue()) + 1;
+				} catch (Exception ex) {
+					// if an exception occurs, the default value is used, so no
+					// exceptionhandling is needed
+				}
+			}
+		}
+		if (range > 0) {
+			return range;
+		} else {
+			return defaultListRangeSize;
+		}
 	}
 
 }

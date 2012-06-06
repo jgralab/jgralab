@@ -46,14 +46,12 @@ import java.util.TreeSet;
 import org.pcollections.PVector;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
-import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
+import de.uni_koblenz.jgralab.greql2.evaluator.InternalGreqlEvaluator;
+import de.uni_koblenz.jgralab.greql2.evaluator.QueryImpl;
 import de.uni_koblenz.jgralab.greql2.evaluator.VariableDeclarationLayer;
-import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize;
-import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
+import de.uni_koblenz.jgralab.greql2.evaluator.VertexCosts;
 import de.uni_koblenz.jgralab.greql2.schema.Declaration;
 import de.uni_koblenz.jgralab.greql2.schema.Expression;
-import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
-import de.uni_koblenz.jgralab.greql2.schema.IsTableHeaderOf;
 import de.uni_koblenz.jgralab.greql2.schema.TableComprehension;
 import de.uni_koblenz.jgralab.greql2.types.Table;
 import de.uni_koblenz.jgralab.greql2.types.Tuple;
@@ -66,51 +64,40 @@ import de.uni_koblenz.jgralab.greql2.types.Tuple;
  * @author ist@uni-koblenz.de
  * 
  */
-public class TableComprehensionEvaluator extends VertexEvaluator {
-
-	/**
-	 * The TableComprehension-Vertex this evaluator evaluates
-	 */
-	private TableComprehension vertex;
+public class TableComprehensionEvaluator extends
+		VertexEvaluator<TableComprehension> {
 
 	private VariableDeclarationLayer declarationLayer;
 
-	private VertexEvaluator columnHeaderEval = null;
+	private VertexEvaluator<? extends Expression> columnHeaderEval = null;
 
-	private VertexEvaluator rowHeaderEval = null;
+	private VertexEvaluator<? extends Expression> rowHeaderEval = null;
 
-	private VertexEvaluator resultDefEval = null;
+	private VertexEvaluator<? extends Expression> resultDefEval = null;
 
 	private boolean initialized = false;
 
-	private void initialize() {
+	private void initialize(InternalGreqlEvaluator evaluator) {
 		Declaration d = (Declaration) vertex.getFirstIsCompDeclOfIncidence(
 				EdgeDirection.IN).getAlpha();
-		DeclarationEvaluator declEval = (DeclarationEvaluator) vertexEvalMarker
-				.getMark(d);
-		declarationLayer = (VariableDeclarationLayer) declEval.getResult();
+		DeclarationEvaluator declEval = (DeclarationEvaluator) query
+				.getVertexEvaluator(d);
+		declarationLayer = (VariableDeclarationLayer) declEval
+				.getResult(evaluator);
 
 		Expression columnHeader = (Expression) vertex
 				.getFirstIsColumnHeaderExprOfIncidence(EdgeDirection.IN)
 				.getAlpha();
-		columnHeaderEval = vertexEvalMarker.getMark(columnHeader);
+		columnHeaderEval = query.getVertexEvaluator(columnHeader);
 		Expression rowHeader = (Expression) vertex
 				.getFirstIsRowHeaderExprOfIncidence(EdgeDirection.IN)
 				.getAlpha();
-		rowHeaderEval = vertexEvalMarker.getMark(rowHeader);
+		rowHeaderEval = query.getVertexEvaluator(rowHeader);
 		Expression resultDef = (Expression) vertex
 				.getFirstIsCompResultDefOfIncidence(EdgeDirection.IN)
 				.getAlpha();
-		resultDefEval = vertexEvalMarker.getMark(resultDef);
+		resultDefEval = query.getVertexEvaluator(resultDef);
 		initialized = true;
-	}
-
-	/**
-	 * returns the vertex this VertexEvaluator evaluates
-	 */
-	@Override
-	public Greql2Vertex getVertex() {
-		return vertex;
 	}
 
 	/**
@@ -122,26 +109,26 @@ public class TableComprehensionEvaluator extends VertexEvaluator {
 	 *            the vertex this VertexEvaluator evaluates
 	 */
 	public TableComprehensionEvaluator(TableComprehension vertex,
-			GreqlEvaluator eval) {
-		super(eval);
-		this.vertex = vertex;
+			QueryImpl query) {
+		super(vertex, query);
 	}
 
 	@Override
-	public Object evaluate() {
+	public Object evaluate(InternalGreqlEvaluator evaluator) {
 		if (!initialized) {
-			initialize();
+			initialize(evaluator);
 		}
+		evaluator.progress(getOwnEvaluationCosts());
 		TreeMap<Object, HashMap<Object, Object>> tableMap = new TreeMap<Object, HashMap<Object, Object>>();
 		Set<Object> completeColumnHeaderTuple = new HashSet<Object>();
 		TreeSet<Object> rowHeaderSet = new TreeSet<Object>();
 
 		declarationLayer.reset();
-		while (declarationLayer.iterate()) {
-			Object columnHeaderEntry = columnHeaderEval.getResult();
+		while (declarationLayer.iterate(evaluator)) {
+			Object columnHeaderEntry = columnHeaderEval.getResult(evaluator);
 			completeColumnHeaderTuple.add(columnHeaderEntry);
-			Object rowHeaderEntry = rowHeaderEval.getResult();
-			Object localResult = resultDefEval.getResult();
+			Object rowHeaderEntry = rowHeaderEval.getResult(evaluator);
+			Object localResult = resultDefEval.getResult(evaluator);
 			HashMap<Object, Object> row = tableMap.get(rowHeaderEntry);
 			if (row == null) {
 				row = new HashMap<Object, Object>();
@@ -159,19 +146,10 @@ public class TableComprehensionEvaluator extends VertexEvaluator {
 			completeColumnHeaderTreeSet.add(jValueImpl);
 		}
 		Iterator<Object> colIter = completeColumnHeaderTreeSet.iterator();
-		IsTableHeaderOf tHeader = vertex
-				.getFirstIsTableHeaderOfIncidence(EdgeDirection.IN);
-		if (tHeader != null) {
-			VertexEvaluator theval = vertexEvalMarker.getMark(tHeader
-					.getAlpha());
-			headerTuple = headerTuple.plus((String) theval.getResult());
-		} else {
-			headerTuple.plus(""); // dummy entry in the upper
-			// left
-			// corner
-		}
-		while (colIter.hasNext()) {	
-			headerTuple = headerTuple.plus( colIter.next().toString());
+		// dummy entry in the upper left corner
+		headerTuple = headerTuple.plus("");
+		while (colIter.hasNext()) {
+			headerTuple = headerTuple.plus(colIter.next().toString());
 		}
 		resultTable = resultTable.withTitles(headerTuple);
 		Iterator<Entry<Object, HashMap<Object, Object>>> rowIter = tableMap
@@ -194,15 +172,38 @@ public class TableComprehensionEvaluator extends VertexEvaluator {
 	}
 
 	@Override
-	public VertexCosts calculateSubtreeEvaluationCosts(GraphSize graphSize) {
-		return this.greqlEvaluator.getCostModel()
-				.calculateCostsTableComprehension(this, graphSize);
+	public VertexCosts calculateSubtreeEvaluationCosts() {
+		// TODO (heimdall): What is a TableComprehension? Syntax? Where do the
+		// costs differ from a ListComprehension?
+		TableComprehension tableComp = getVertex();
+
+		Declaration decl = (Declaration) tableComp
+				.getFirstIsCompDeclOfIncidence().getAlpha();
+		DeclarationEvaluator declEval = (DeclarationEvaluator) query
+				.getVertexEvaluator(decl);
+		long declCosts = declEval.getCurrentSubtreeEvaluationCosts();
+
+		Expression resultDef = (Expression) tableComp
+				.getFirstIsCompResultDefOfIncidence().getAlpha();
+		VertexEvaluator<? extends Expression> resultDefEval = query
+				.getVertexEvaluator(resultDef);
+		long resultCosts = resultDefEval.getCurrentSubtreeEvaluationCosts();
+
+		long ownCosts = resultDefEval.getEstimatedCardinality()
+				* addToListCosts;
+		long iteratedCosts = ownCosts * getVariableCombinations();
+		long subtreeCosts = iteratedCosts + resultCosts + declCosts;
+		return new VertexCosts(ownCosts, iteratedCosts, subtreeCosts);
 	}
 
 	@Override
-	public long calculateEstimatedCardinality(GraphSize graphSize) {
-		return greqlEvaluator.getCostModel()
-				.calculateCardinalityTableComprehension(this, graphSize);
+	public long calculateEstimatedCardinality() {
+		TableComprehension tableComp = getVertex();
+		Declaration decl = (Declaration) tableComp
+				.getFirstIsCompDeclOfIncidence().getAlpha();
+		DeclarationEvaluator declEval = (DeclarationEvaluator) query
+				.getVertexEvaluator(decl);
+		return declEval.getEstimatedCardinality();
 	}
 
 }

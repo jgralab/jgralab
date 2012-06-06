@@ -38,9 +38,11 @@ package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 import org.pcollections.PCollection;
 
 import de.uni_koblenz.jgralab.JGraLab;
-import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
-import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize;
-import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
+import de.uni_koblenz.jgralab.greql2.evaluator.InternalGreqlEvaluator;
+import de.uni_koblenz.jgralab.greql2.evaluator.QueryImpl;
+import de.uni_koblenz.jgralab.greql2.evaluator.VertexCosts;
+import de.uni_koblenz.jgralab.greql2.schema.Declaration;
+import de.uni_koblenz.jgralab.greql2.schema.Expression;
 import de.uni_koblenz.jgralab.greql2.schema.SetComprehension;
 
 /**
@@ -49,20 +51,8 @@ import de.uni_koblenz.jgralab.greql2.schema.SetComprehension;
  * @author ist@uni-koblenz.de
  * 
  */
-public class SetComprehensionEvaluator extends ComprehensionEvaluator {
-
-	/**
-	 * The SetComprehension-Vertex this evaluator evaluates
-	 */
-	private SetComprehension vertex;
-
-	/**
-	 * returns the vertex this VertexEvaluator evaluates
-	 */
-	@Override
-	public SetComprehension getVertex() {
-		return vertex;
-	}
+public class SetComprehensionEvaluator extends
+		ComprehensionEvaluator<SetComprehension> {
 
 	/**
 	 * Creates a new SetComprehensionEvaluator for the given vertex
@@ -72,27 +62,45 @@ public class SetComprehensionEvaluator extends ComprehensionEvaluator {
 	 * @param vertex
 	 *            the vertex this VertexEvaluator evaluates
 	 */
-	public SetComprehensionEvaluator(SetComprehension vertex,
-			GreqlEvaluator eval) {
-		super(eval);
-		this.vertex = vertex;
+	public SetComprehensionEvaluator(SetComprehension vertex, QueryImpl query) {
+		super(vertex, query);
 	}
 
 	@Override
-	protected PCollection<Object> getResultDatastructure() {
+	protected PCollection<Object> getResultDatastructure(
+			InternalGreqlEvaluator evaluator) {
 		return JGraLab.set();
 	}
 
 	@Override
-	public VertexCosts calculateSubtreeEvaluationCosts(GraphSize graphSize) {
-		return this.greqlEvaluator.getCostModel()
-				.calculateCostsSetComprehension(this, graphSize);
+	public VertexCosts calculateSubtreeEvaluationCosts() {
+		SetComprehension setComp = getVertex();
+		Declaration decl = (Declaration) setComp
+				.getFirstIsCompDeclOfIncidence().getAlpha();
+		DeclarationEvaluator declEval = (DeclarationEvaluator) query
+				.getVertexEvaluator(decl);
+		long declCosts = declEval.getCurrentSubtreeEvaluationCosts();
+
+		Expression resultDef = (Expression) setComp
+				.getFirstIsCompResultDefOfIncidence().getAlpha();
+		VertexEvaluator<? extends Expression> resultDefEval = query
+				.getVertexEvaluator(resultDef);
+		long resultCosts = resultDefEval.getCurrentSubtreeEvaluationCosts();
+
+		long ownCosts = resultDefEval.getEstimatedCardinality() * addToSetCosts;
+		long iteratedCosts = ownCosts * getVariableCombinations();
+		long subtreeCosts = iteratedCosts + resultCosts + declCosts;
+		return new VertexCosts(ownCosts, iteratedCosts, subtreeCosts);
 	}
 
 	@Override
-	public long calculateEstimatedCardinality(GraphSize graphSize) {
-		return greqlEvaluator.getCostModel()
-				.calculateCardinalitySetComprehension(this, graphSize);
+	public long calculateEstimatedCardinality() {
+		SetComprehension setComp = getVertex();
+		Declaration decl = (Declaration) setComp
+				.getFirstIsCompDeclOfIncidence().getAlpha();
+		DeclarationEvaluator declEval = (DeclarationEvaluator) query
+				.getVertexEvaluator(decl);
+		return declEval.getEstimatedCardinality();
 	}
 
 }

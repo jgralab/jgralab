@@ -36,11 +36,11 @@
 package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
-import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
-import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize;
-import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
+import de.uni_koblenz.jgralab.greql2.evaluator.InternalGreqlEvaluator;
+import de.uni_koblenz.jgralab.greql2.evaluator.QueryImpl;
+import de.uni_koblenz.jgralab.greql2.evaluator.VertexCosts;
 import de.uni_koblenz.jgralab.greql2.schema.Expression;
-import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
+import de.uni_koblenz.jgralab.greql2.schema.IsRecordExprOf;
 import de.uni_koblenz.jgralab.greql2.schema.RecordElement;
 import de.uni_koblenz.jgralab.greql2.schema.RecordId;
 
@@ -51,21 +51,11 @@ import de.uni_koblenz.jgralab.greql2.schema.RecordId;
  * @author ist@uni-koblenz.de November 2006
  * 
  */
-public class RecordElementEvaluator extends VertexEvaluator {
-
-	private RecordElement vertex;
+public class RecordElementEvaluator extends VertexEvaluator<RecordElement> {
 
 	private String id = null;
 
-	private VertexEvaluator expEval = null;
-
-	/**
-	 * returns the vertex this VertexEvaluator evaluates
-	 */
-	@Override
-	public Greql2Vertex getVertex() {
-		return vertex;
-	}
+	private VertexEvaluator<? extends Expression> expEval = null;
 
 	public String getId() {
 		if (id == null) {
@@ -84,26 +74,35 @@ public class RecordElementEvaluator extends VertexEvaluator {
 	 * @param vertex
 	 *            the vertex this VertexEvaluator evaluates
 	 */
-	public RecordElementEvaluator(RecordElement vertex, GreqlEvaluator eval) {
-		super(eval);
-		this.vertex = vertex;
+	public RecordElementEvaluator(RecordElement vertex, QueryImpl query) {
+		super(vertex, query);
 	}
 
 	@Override
-	public Object evaluate() {
+	public Object evaluate(InternalGreqlEvaluator evaluator) {
+		evaluator.progress(getOwnEvaluationCosts());
 		if (expEval == null) {
 			Expression recordElementExp = (Expression) vertex
 					.getFirstIsRecordExprOfIncidence(EdgeDirection.IN)
 					.getAlpha();
-			expEval = vertexEvalMarker.getMark(recordElementExp);
+			expEval = query.getVertexEvaluator(recordElementExp);
 		}
-		return expEval.getResult();
+		return expEval.getResult(evaluator);
 	}
 
 	@Override
-	public VertexCosts calculateSubtreeEvaluationCosts(GraphSize graphSize) {
-		return this.greqlEvaluator.getCostModel().calculateCostsRecordElement(
-				this, graphSize);
+	public VertexCosts calculateSubtreeEvaluationCosts() {
+		RecordElement recElem = getVertex();
+
+		IsRecordExprOf inc = recElem.getFirstIsRecordExprOfIncidence();
+		VertexEvaluator<? extends Expression> veval = query
+				.getVertexEvaluator((Expression) inc.getAlpha());
+		long recordExprCosts = veval.getCurrentSubtreeEvaluationCosts();
+
+		long ownCosts = 3;
+		long iteratedCosts = ownCosts * getVariableCombinations();
+		long subtreeCosts = recordExprCosts + iteratedCosts;
+		return new VertexCosts(ownCosts, iteratedCosts, subtreeCosts);
 	}
 
 }

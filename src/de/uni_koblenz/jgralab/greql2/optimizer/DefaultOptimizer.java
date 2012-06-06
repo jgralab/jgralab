@@ -39,13 +39,13 @@ import java.util.Set;
 import java.util.logging.Logger;
 
 import de.uni_koblenz.jgralab.JGraLab;
-import de.uni_koblenz.jgralab.graphmarker.GraphMarker;
-import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
-import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize;
+import de.uni_koblenz.jgralab.greql2.evaluator.GraphSize;
+import de.uni_koblenz.jgralab.greql2.evaluator.OptimizerInfo;
+import de.uni_koblenz.jgralab.greql2.evaluator.QueryImpl;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VertexEvaluator;
 import de.uni_koblenz.jgralab.greql2.exception.OptimizerException;
-import de.uni_koblenz.jgralab.greql2.schema.Greql2;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Expression;
+import de.uni_koblenz.jgralab.greql2.schema.Greql2Graph;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
 import de.uni_koblenz.jgralab.greql2.schema.Variable;
 
@@ -86,9 +86,9 @@ public class DefaultOptimizer extends OptimizerBase {
 	 * .jgralab.greql2.evaluator.GreqlEvaluator,
 	 * de.uni_koblenz.jgralab.greql2.schema.Greql2)
 	 */
-	public boolean optimize(GreqlEvaluator eval, Greql2 syntaxgraph)
-			throws OptimizerException {
-		if (syntaxgraph.getVCount() <= 1) {
+	public boolean optimize(QueryImpl query) throws OptimizerException {
+
+		if (query.getQueryGraph().getVCount() <= 1) {
 			return false;
 		}
 
@@ -115,45 +115,45 @@ public class DefaultOptimizer extends OptimizerBase {
 		// do the optimization
 		while (
 		// First merge common subgraphs
-		cso.optimize(eval, syntaxgraph)
+		cso.optimize(query)
 		// then transform all Xors to (x & ~y) | (~x & y).
-				| txfao.optimize(eval, syntaxgraph)
+				| txfao.optimize(query)
 				// Again, merge common subgraphs that may be the result of the
 				// previous step.
-				| cso.optimize(eval, syntaxgraph)
+				| cso.optimize(query)
 				// For each declaration merge its constraints into a single
 				// conjunction.
-				| mco.optimize(eval, syntaxgraph)
+				| mco.optimize(query)
 				// Then try to pull up path existences as forward/backward
 				// vertex sets into the type expressions of the start or target
 				// expression variabse.
-				| pe2dpeo.optimize(eval, syntaxgraph)
+				| pe2dpeo.optimize(query)
 				// Now move predicates that are part of a conjunction and thus
 				// movable into the type expression of the simple declaration
 				// that declares all needed local variables of it.
-				| eso.optimize(eval, syntaxgraph)
+				| eso.optimize(query)
 				// Merge common subgraphs again.
-				| cso.optimize(eval, syntaxgraph)
+				| cso.optimize(query)
 				// Reorder the variable declarations in all declaration vertices
 				// so that these assertions hold: 1. Variables which cause high
 				// recalculation costs on value changes are declared first. 2.
 				// If two variables cause the same recalculation costs the
 				// variable with lower cardinality is declared before the other
 				// one.
-				| vdoo.optimize(eval, syntaxgraph)
+				| vdoo.optimize(query)
 				// Now merge the common subgraphs again.
-				| cso.optimize(eval, syntaxgraph)
+				| cso.optimize(query)
 				// Transform path existence predicates to function applications
 				// of the "contains" function.
-				| peo.optimize(eval, syntaxgraph)
+				| peo.optimize(query)
 				// Transform complex constraint expressions to conditional
 				// expressions to simulate short circuit evaluation.
-				| ceo.optimize(eval, syntaxgraph)
+				| ceo.optimize(query)
 				// At last, merge common subgraphs and
-				| cso.optimize(eval, syntaxgraph)
+				| cso.optimize(query)
 				// merge simple declarations which have the same type
 				// expression.
-				| msdo.optimize(eval, syntaxgraph)) {
+				| msdo.optimize(query)) {
 			aTransformationWasDone = true;
 			noOfRuns++;
 
@@ -178,35 +178,36 @@ public class DefaultOptimizer extends OptimizerBase {
 	}
 
 	@SuppressWarnings("unused")
-	private void printCosts(GreqlEvaluator eval, Greql2 syntaxgraph) {
+	private void printCosts(QueryImpl query) {
+		Greql2Graph syntaxgraph = query.getQueryGraph();
+
 		logger.fine("Optimizer: Optimizing " + syntaxgraph.getId() + ".\n"
 				+ "This syntaxgraph has " + syntaxgraph.getECount()
 				+ " edges and " + syntaxgraph.getVCount() + " vertexes.");
-		GraphMarker<VertexEvaluator> marker = eval
-				.getVertexEvaluatorGraphMarker();
-		VertexEvaluator veval;
-		GraphSize graphSize = new GraphSize(syntaxgraph);
+		VertexEvaluator<? extends Greql2Vertex> veval;
+		OptimizerInfo optimizerInfo = new GraphSize(syntaxgraph);
 
 		// Calculate the cost of the root vertex so that all initial costs of
 		// the vertices below are properly initialized.
 		Greql2Expression rootVertex = syntaxgraph.getFirstGreql2Expression();
-		VertexEvaluator rootEval = marker.getMark(rootVertex);
-		rootEval.getInitialSubtreeEvaluationCosts(graphSize);
-		rootEval.getEstimatedCardinality(graphSize);
-		rootEval.calculateEstimatedSelectivity(graphSize);
+		VertexEvaluator<Greql2Expression> rootEval = query
+				.getVertexEvaluator(rootVertex);
+		rootEval.getInitialSubtreeEvaluationCosts();
+		rootEval.getEstimatedCardinality();
+		rootEval.calculateEstimatedSelectivity();
 
 		Greql2Vertex vertex = syntaxgraph.getFirstGreql2Vertex();
 		logger.fine("=========================================================");
 		while (vertex != null) {
 			logger.fine("Current Node: " + vertex);
-			veval = marker.getMark(vertex);
+			veval = query.getVertexEvaluator(vertex);
 			if (veval != null) {
-				long costs = veval.getInitialSubtreeEvaluationCosts(graphSize);
-				long card = veval.getEstimatedCardinality(graphSize);
+				long costs = veval.getInitialSubtreeEvaluationCosts();
+				long card = veval.getEstimatedCardinality();
 				Set<Variable> neededVars = veval.getNeededVariables();
 				Set<Variable> definedVars = veval.getDefinedVariables();
-				long varCombs = veval.getVariableCombinations(graphSize);
-				double sel = veval.getEstimatedSelectivity(graphSize);
+				long varCombs = veval.getVariableCombinations();
+				double sel = veval.getEstimatedSelectivity();
 				logger.fine("Costs for subtree evaluation: " + costs + "\n"
 						+ "Estimated cardinality: " + card + "\n"
 						+ "Estimated selectivity: " + sel + "\n"
@@ -217,11 +218,11 @@ public class DefaultOptimizer extends OptimizerBase {
 			logger.fine("=========================================================");
 			vertex = vertex.getNextGreql2Vertex();
 		}
-		VertexEvaluator greql2ExpEval = marker.getMark(syntaxgraph
-				.getFirstGreql2Expression());
-		greql2ExpEval.resetSubtreeToInitialState();
+		VertexEvaluator<Greql2Expression> greql2ExpEval = query
+				.getVertexEvaluator(syntaxgraph.getFirstGreql2Expression());
+		greql2ExpEval.resetSubtreeToInitialState(null);
 		long estimatedInterpretationSteps = greql2ExpEval
-				.getCurrentSubtreeEvaluationCosts(graphSize);
+				.getCurrentSubtreeEvaluationCosts();
 		logger.fine("Costs for the whole query: "
 				+ estimatedInterpretationSteps);
 	}

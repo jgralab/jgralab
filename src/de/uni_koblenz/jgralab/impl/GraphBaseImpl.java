@@ -1460,14 +1460,14 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 						assert eId >= 1;
 						InternalEdge e = getEdge()[eId];
 						getEdge()[eId] = null;
-						// ReversedEdgeImpl r = getRevEdge()[eId];
-						// getRevEdge()[eId] = null;
+						InternalEdge r = getRevEdge()[eId];
+						getRevEdge()[eId] = null;
 						getFreeEdgeList().freeIndex(eId);
 						int newId = allocateEdgeIndex(eId);
 						assert newId < eId;
 						e.setId(newId);
 						getEdge()[newId] = e;
-						// getRevEdge()[newId] = r;
+						getRevEdge()[newId] = r;
 						--eId;
 					}
 				}

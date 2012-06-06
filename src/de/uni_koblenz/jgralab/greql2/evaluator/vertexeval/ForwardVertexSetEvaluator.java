@@ -37,14 +37,13 @@ package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
-import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize;
-import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
+import de.uni_koblenz.jgralab.greql2.evaluator.InternalGreqlEvaluator;
+import de.uni_koblenz.jgralab.greql2.evaluator.QueryImpl;
+import de.uni_koblenz.jgralab.greql2.evaluator.VertexCosts;
 import de.uni_koblenz.jgralab.greql2.evaluator.fa.DFA;
 import de.uni_koblenz.jgralab.greql2.funlib.graph.ReachableVertices;
 import de.uni_koblenz.jgralab.greql2.schema.Expression;
 import de.uni_koblenz.jgralab.greql2.schema.ForwardVertexSet;
-import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
 import de.uni_koblenz.jgralab.greql2.schema.PathDescription;
 
 /**
@@ -53,62 +52,67 @@ import de.uni_koblenz.jgralab.greql2.schema.PathDescription;
  * @author ist@uni-koblenz.de
  * 
  */
-public class ForwardVertexSetEvaluator extends PathSearchEvaluator {
+public class ForwardVertexSetEvaluator extends
+		PathSearchEvaluator<ForwardVertexSet> {
 
-	private ForwardVertexSet vertex;
-
-	/**
-	 * returns the vertex this VertexEvaluator evaluates
-	 */
-	@Override
-	public Greql2Vertex getVertex() {
-		return vertex;
-	}
-
-	public ForwardVertexSetEvaluator(ForwardVertexSet vertex,
-			GreqlEvaluator eval) {
-		super(eval);
-		this.vertex = vertex;
+	public ForwardVertexSetEvaluator(ForwardVertexSet vertex, QueryImpl query) {
+		super(vertex, query);
 	}
 
 	private boolean initialized = false;
 
-	private VertexEvaluator startEval = null;
+	private VertexEvaluator<? extends Expression> startEval = null;
 
-	private final void initialize() {
+	private final void initialize(InternalGreqlEvaluator evaluator) {
 		PathDescription p = (PathDescription) vertex.getFirstIsPathOfIncidence(
 				EdgeDirection.IN).getAlpha();
-		PathDescriptionEvaluator pathDescEval = (PathDescriptionEvaluator) vertexEvalMarker
-				.getMark(p);
+		PathDescriptionEvaluator<?> pathDescEval = (PathDescriptionEvaluator<?>) query
+				.getVertexEvaluator(p);
 
 		Expression startExpression = (Expression) vertex
 				.getFirstIsStartExprOfIncidence(EdgeDirection.IN).getAlpha();
-		startEval = vertexEvalMarker.getMark(startExpression);
-		searchAutomaton = new DFA(pathDescEval.getNFA());
+		startEval = query.getVertexEvaluator(startExpression);
+		searchAutomaton = new DFA(pathDescEval.getNFA(evaluator));
 
 		initialized = true;
 	}
 
 	@Override
-	public Object evaluate() {
+	public Object evaluate(InternalGreqlEvaluator evaluator) {
 		if (!initialized) {
-			initialize();
+			initialize(evaluator);
 		}
+		evaluator.progress(getOwnEvaluationCosts());
 		Vertex startVertex = null;
-		startVertex = (Vertex) startEval.getResult();
-		return ReachableVertices.search(startVertex, searchAutomaton);
+		startVertex = (Vertex) startEval.getResult(evaluator);
+		return ReachableVertices
+				.search(evaluator, startVertex, searchAutomaton);
 	}
 
 	@Override
-	public VertexCosts calculateSubtreeEvaluationCosts(GraphSize graphSize) {
-		return this.greqlEvaluator.getCostModel()
-				.calculateCostsForwardVertexSet(this, graphSize);
+	public VertexCosts calculateSubtreeEvaluationCosts() {
+		ForwardVertexSet bwvertex = getVertex();
+		Expression targetExpression = (Expression) bwvertex
+				.getFirstIsStartExprOfIncidence().getAlpha();
+		VertexEvaluator<? extends Expression> vertexEval = query
+				.getVertexEvaluator(targetExpression);
+		long targetCosts = vertexEval.getCurrentSubtreeEvaluationCosts();
+		PathDescription p = (PathDescription) bwvertex
+				.getFirstIsPathOfIncidence().getAlpha();
+		PathDescriptionEvaluator<? extends PathDescription> pathDescEval = (PathDescriptionEvaluator<? extends PathDescription>) query
+				.getVertexEvaluator(p);
+		long pathDescCosts = pathDescEval.getCurrentSubtreeEvaluationCosts();
+		long searchCosts = Math.round(pathDescCosts * searchFactor
+				* Math.sqrt(query.getOptimizerInfo().getEdgeCount()));
+		long ownCosts = searchCosts;
+		long iteratedCosts = ownCosts * getVariableCombinations();
+		long subtreeCosts = targetCosts + pathDescCosts + iteratedCosts;
+		return new VertexCosts(ownCosts, iteratedCosts, subtreeCosts);
 	}
 
 	@Override
-	public long calculateEstimatedCardinality(GraphSize graphSize) {
-		return greqlEvaluator.getCostModel()
-				.calculateCardinalityForwardVertexSet(this, graphSize);
+	public long calculateEstimatedCardinality() {
+		return 5;
 	}
 
 }

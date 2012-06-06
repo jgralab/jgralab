@@ -37,10 +37,8 @@
  */
 package de.uni_koblenz.jgralab.greql2.optimizer.condexp;
 
-import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
-import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize;
+import de.uni_koblenz.jgralab.greql2.evaluator.QueryImpl;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VertexEvaluator;
-import de.uni_koblenz.jgralab.greql2.optimizer.OptimizerUtility;
 import de.uni_koblenz.jgralab.greql2.schema.Expression;
 
 /**
@@ -51,45 +49,39 @@ import de.uni_koblenz.jgralab.greql2.schema.Expression;
  */
 public class ConditionalExpressionUnit {
 
-	private GreqlEvaluator greqlEvaluator;
+	private final QueryImpl query;
 
-	private Expression condition;
-	private Formula trueFormula, falseFormula;
+	private final Expression condition;
+	private final Formula trueFormula, falseFormula;
 	private double influenceCostRatio = -1;
 
 	public ConditionalExpressionUnit(Expression exp, Formula origFormula) {
-		greqlEvaluator = origFormula.greqlEvaluator;
+		query = origFormula.query;
 		condition = exp;
 		trueFormula = origFormula.calculateReplacementFormula(condition,
-				new True(greqlEvaluator)).simplify();
+				new True(query)).simplify();
 		falseFormula = origFormula.calculateReplacementFormula(condition,
-				new False(greqlEvaluator)).simplify();
+				new False(query)).simplify();
 	}
 
 	private double calculateInfluenceCostRatio() {
-		Formula boolDiff = new Not(greqlEvaluator, new Equiv(greqlEvaluator,
-				trueFormula, new Not(greqlEvaluator, falseFormula)));
+		Formula boolDiff = new Not(query, new Equiv(query, trueFormula,
+				new Not(query, falseFormula)));
 		boolDiff = boolDiff.simplify();
 
 		// selectivity of the boolean difference
 		double selectivity = boolDiff.getSelectivity();
 
 		// costs of the condition expression
-		VertexEvaluator veval = greqlEvaluator.getVertexEvaluatorGraphMarker()
-				.getMark(condition);
-		GraphSize graphSize = null;
-		if (greqlEvaluator.getDatagraph() != null) {
-			graphSize = new GraphSize(greqlEvaluator.getDatagraph());
-		} else {
-			graphSize = OptimizerUtility.getDefaultGraphSize();
-		}
-		long costs = veval.getInitialSubtreeEvaluationCosts(graphSize);
+		VertexEvaluator<? extends Expression> veval = query
+				.getVertexEvaluator(condition);
+		long costs = veval.getInitialSubtreeEvaluationCosts();
 		return selectivity / costs;
 	}
 
 	ConditionalExpression toConditionalExpression() {
-		return new ConditionalExpression(greqlEvaluator, condition, trueFormula
-				.optimize(), falseFormula.optimize());
+		return new ConditionalExpression(query, condition,
+				trueFormula.optimize(), falseFormula.optimize());
 	}
 
 	public double getInfluenceCostRatio() {

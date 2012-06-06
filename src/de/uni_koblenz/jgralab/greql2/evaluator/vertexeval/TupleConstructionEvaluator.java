@@ -37,9 +37,12 @@ package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 
 import org.pcollections.PCollection;
 
-import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
-import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize;
-import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
+import de.uni_koblenz.jgralab.EdgeDirection;
+import de.uni_koblenz.jgralab.greql2.evaluator.InternalGreqlEvaluator;
+import de.uni_koblenz.jgralab.greql2.evaluator.QueryImpl;
+import de.uni_koblenz.jgralab.greql2.evaluator.VertexCosts;
+import de.uni_koblenz.jgralab.greql2.schema.Expression;
+import de.uni_koblenz.jgralab.greql2.schema.IsPartOf;
 import de.uni_koblenz.jgralab.greql2.schema.TupleConstruction;
 import de.uni_koblenz.jgralab.greql2.types.Tuple;
 
@@ -49,28 +52,55 @@ import de.uni_koblenz.jgralab.greql2.types.Tuple;
  * @author ist@uni-koblenz.de
  * 
  */
-public class TupleConstructionEvaluator extends ValueConstructionEvaluator {
+public class TupleConstructionEvaluator extends
+		ValueConstructionEvaluator<TupleConstruction> {
 
-	public TupleConstructionEvaluator(TupleConstruction vertex,
-			GreqlEvaluator eval) {
-		super(vertex, eval);
+	/**
+	 * describes, how much interpretation steps it takes to add a element to a
+	 * tuple
+	 */
+	protected static final int addToTupleCosts = 5;
+
+	public TupleConstructionEvaluator(TupleConstruction vertex, QueryImpl query) {
+		super(vertex, query);
 	}
 
 	@Override
-	public PCollection<Object> evaluate() {
-		return createValue(Tuple.empty());
+	public PCollection<Object> evaluate(InternalGreqlEvaluator evaluator) {
+		evaluator.progress(getOwnEvaluationCosts());
+		return createValue(Tuple.empty(), evaluator);
 	}
 
 	@Override
-	public VertexCosts calculateSubtreeEvaluationCosts(GraphSize graphSize) {
-		return this.greqlEvaluator.getCostModel()
-				.calculateCostsTupleConstruction(this, graphSize);
+	public VertexCosts calculateSubtreeEvaluationCosts() {
+		TupleConstruction tupCons = getVertex();
+		IsPartOf inc = tupCons.getFirstIsPartOfIncidence(EdgeDirection.IN);
+		long parts = 0;
+		long partCosts = 0;
+		while (inc != null) {
+			VertexEvaluator<? extends Expression> veval = query
+					.getVertexEvaluator((Expression) inc.getAlpha());
+			partCosts += veval.getCurrentSubtreeEvaluationCosts();
+			parts++;
+			inc = inc.getNextIsPartOfIncidence(EdgeDirection.IN);
+		}
+
+		long ownCosts = (parts * addToTupleCosts) + 2;
+		long iteratedCosts = ownCosts * getVariableCombinations();
+		long subtreeCosts = iteratedCosts + partCosts;
+		return new VertexCosts(ownCosts, iteratedCosts, subtreeCosts);
 	}
 
 	@Override
-	public long calculateEstimatedCardinality(GraphSize graphSize) {
-		return greqlEvaluator.getCostModel()
-				.calculateCardinalityTupleConstruction(this, graphSize);
+	public long calculateEstimatedCardinality() {
+		TupleConstruction tupleCons = getVertex();
+		IsPartOf inc = tupleCons.getFirstIsPartOfIncidence(EdgeDirection.IN);
+		long parts = 0;
+		while (inc != null) {
+			parts++;
+			inc = inc.getNextIsPartOfIncidence(EdgeDirection.IN);
+		}
+		return parts;
 	}
 
 }

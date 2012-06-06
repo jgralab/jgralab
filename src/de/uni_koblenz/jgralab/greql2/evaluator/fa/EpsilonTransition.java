@@ -37,6 +37,7 @@ package de.uni_koblenz.jgralab.greql2.evaluator.fa;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Vertex;
+import de.uni_koblenz.jgralab.greql2.evaluator.InternalGreqlEvaluator;
 
 /**
  * A epsilon transition which may fire without any restrictions. Epsilon
@@ -93,7 +94,7 @@ public class EpsilonTransition extends Transition {
 	 * be eliminated before the pathsearch strarts
 	 */
 	@Override
-	public boolean accepts(Vertex v, Edge e) {
+	public boolean accepts(Vertex v, Edge e, InternalGreqlEvaluator evaluator) {
 		throw new UnsupportedOperationException(
 				"EpsilonTransition.accepts(...) has been called. That should not happen, there should be no epsilon-transitions in the DFA used for path search. Check the DFA-Constructor");
 	}

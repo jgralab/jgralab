@@ -45,7 +45,7 @@ import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
+import de.uni_koblenz.jgralab.greql2.evaluator.QueryImpl;
 import de.uni_koblenz.jgralab.greql2.optimizer.OptimizerUtility;
 import de.uni_koblenz.jgralab.greql2.schema.BoolLiteral;
 import de.uni_koblenz.jgralab.greql2.schema.Expression;
@@ -55,9 +55,9 @@ import de.uni_koblenz.jgralab.greql2.schema.IsArgumentOf;
 
 /**
  * TODO: (heimdall) Comment class!
- *
+ * 
  * @author ist@uni-koblenz.de
- *
+ * 
  */
 public abstract class Formula {
 	/**
@@ -70,7 +70,7 @@ public abstract class Formula {
 	protected static Logger logger = JGraLab.getLogger(Formula.class
 			.getPackage().getName());
 
-	protected GreqlEvaluator greqlEvaluator;
+	protected QueryImpl query;
 
 	@Override
 	public abstract String toString();
@@ -78,26 +78,26 @@ public abstract class Formula {
 	public abstract Expression toExpression();
 
 	public static Formula createFormulaFromExpression(Expression exp,
-			GreqlEvaluator eval) {
-		Formula formula = createFormulaFromExpressionInternal(eval, exp);
+			QueryImpl query) {
+		Formula formula = createFormulaFromExpressionInternal(query, exp);
 		OptimizerUtility.deleteOrphanedVerticesBelow(exp, new HashSet<Vertex>(
 				formula.getNonConstantTermExpressions()));
 		return formula;
 	}
 
-	public Formula(GreqlEvaluator eval) {
-		this.greqlEvaluator = eval;
+	public Formula(QueryImpl query) {
+		this.query = query;
 	}
 
-	private static Formula createFormulaFromExpressionInternal(
-			GreqlEvaluator eval, Expression exp) {
+	private static Formula createFormulaFromExpressionInternal(QueryImpl query,
+			Expression exp) {
 		assert exp.isValid() : exp + " is not valid!";
 		if (exp instanceof BoolLiteral) {
 			BoolLiteral bool = (BoolLiteral) exp;
 			if (bool.is_boolValue()) {
-				return new True(eval);
+				return new True(query);
 			} else {
-				return new False(eval);
+				return new False(query);
 			}
 		}
 
@@ -110,9 +110,9 @@ public abstract class Formula {
 				Expression rightArg = (Expression) inc
 						.getNextIsArgumentOfIncidence(EdgeDirection.IN)
 						.getAlpha();
-				return new And(eval, createFormulaFromExpressionInternal(eval,
-						leftArg), createFormulaFromExpressionInternal(eval,
-						rightArg));
+				return new And(query, createFormulaFromExpressionInternal(
+						query, leftArg), createFormulaFromExpressionInternal(
+						query, rightArg));
 			}
 			if (OptimizerUtility.isOr(funApp)) {
 				IsArgumentOf inc = funApp
@@ -121,20 +121,20 @@ public abstract class Formula {
 				Expression rightArg = (Expression) inc
 						.getNextIsArgumentOfIncidence(EdgeDirection.IN)
 						.getAlpha();
-				return new Or(eval, createFormulaFromExpressionInternal(eval,
-						leftArg), createFormulaFromExpressionInternal(eval,
+				return new Or(query, createFormulaFromExpressionInternal(query,
+						leftArg), createFormulaFromExpressionInternal(query,
 						rightArg));
 			}
 			if (OptimizerUtility.isNot(funApp)) {
 				IsArgumentOf inc = funApp
 						.getFirstIsArgumentOfIncidence(EdgeDirection.IN);
 				Expression arg = (Expression) inc.getAlpha();
-				return new Not(eval, createFormulaFromExpressionInternal(eval,
-						arg));
+				return new Not(query, createFormulaFromExpressionInternal(
+						query, arg));
 			}
 		}
 
-		return new NonConstantTerm(eval, exp);
+		return new NonConstantTerm(query, exp);
 	}
 
 	public Formula optimize() {
@@ -231,7 +231,7 @@ public abstract class Formula {
 	 * Create a new {@link Formula} where each {@link NonConstantTerm} that
 	 * represents the {@link Expression} <code>exp</code> is replaced by
 	 * <code>literal</code>.
-	 *
+	 * 
 	 * @param exp
 	 *            the {@link Expression} whose {@link NonConstantTerm}s should
 	 *            be replaced
@@ -248,7 +248,7 @@ public abstract class Formula {
 	 * <code>a or true = true</code>, <code>a or false = a</code>,
 	 * <code>not true = false</code>, <code>not false = true</code>,
 	 * <code>not not a = a</code>.
-	 *
+	 * 
 	 * @return a simplified {@link Formula}
 	 */
 	public abstract Formula simplify();

@@ -40,39 +40,29 @@ import java.util.ArrayList;
 import org.pcollections.PCollection;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
-import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
+import de.uni_koblenz.jgralab.greql2.evaluator.InternalGreqlEvaluator;
+import de.uni_koblenz.jgralab.greql2.evaluator.QueryImpl;
 import de.uni_koblenz.jgralab.greql2.schema.Expression;
-import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
 import de.uni_koblenz.jgralab.greql2.schema.IsPartOf;
 import de.uni_koblenz.jgralab.greql2.schema.ValueConstruction;
 
 /**
  * This is the abstract base class for all ValueConstructions
- *
+ * 
  * @author ist@uni-koblenz.de
- *
+ * 
  */
-abstract public class ValueConstructionEvaluator extends VertexEvaluator {
+abstract public class ValueConstructionEvaluator<V extends ValueConstruction>
+		extends VertexEvaluator<V> {
 
-	protected ValueConstruction vertex;
+	private ArrayList<VertexEvaluator<? extends Expression>> partEvaluators = null;
 
-	private ArrayList<VertexEvaluator> partEvaluators = null;
-
-	/**
-	 * returns the vertex this VertexEvaluator evaluates
-	 */
-	@Override
-	public Greql2Vertex getVertex() {
-		return vertex;
+	public ValueConstructionEvaluator(V vertex, QueryImpl query) {
+		super(vertex, query);
 	}
 
-	public ValueConstructionEvaluator(ValueConstruction vertex,
-			GreqlEvaluator eval) {
-		super(eval);
-		this.vertex = vertex;
-	}
-
-	public final PCollection<Object> createValue(PCollection<Object> collection) {
+	public final PCollection<Object> createValue(
+			PCollection<Object> collection, InternalGreqlEvaluator evaluator) {
 		if (partEvaluators == null) {
 			int partCount = 0;
 			IsPartOf inc = vertex.getFirstIsPartOfIncidence(EdgeDirection.IN);
@@ -81,17 +71,19 @@ abstract public class ValueConstructionEvaluator extends VertexEvaluator {
 				inc = inc.getNextIsPartOfIncidence(EdgeDirection.IN);
 			}
 			inc = vertex.getFirstIsPartOfIncidence(EdgeDirection.IN);
-			partEvaluators = new ArrayList<VertexEvaluator>(partCount);
+			partEvaluators = new ArrayList<VertexEvaluator<? extends Expression>>(
+					partCount);
 			while (inc != null) {
 				Expression currentExpression = (Expression) inc.getAlpha();
-				VertexEvaluator vertexEval = vertexEvalMarker
-						.getMark(currentExpression);
+				VertexEvaluator<? extends Expression> vertexEval = query
+						.getVertexEvaluator(currentExpression);
 				partEvaluators.add(vertexEval);
 				inc = inc.getNextIsPartOfIncidence(EdgeDirection.IN);
 			}
 		}
 		for (int i = 0; i < partEvaluators.size(); i++) {
-			collection = collection.plus(partEvaluators.get(i).getResult());
+			collection = collection.plus(partEvaluators.get(i).getResult(
+					evaluator));
 		}
 		return collection;
 	}

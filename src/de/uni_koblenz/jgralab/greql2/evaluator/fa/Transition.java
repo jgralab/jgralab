@@ -37,6 +37,7 @@ package de.uni_koblenz.jgralab.greql2.evaluator.fa;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Vertex;
+import de.uni_koblenz.jgralab.greql2.evaluator.InternalGreqlEvaluator;
 
 /**
  * Is baseclass of all transitions. Has one start and one endstate.
@@ -170,7 +171,8 @@ public abstract class Transition {
 	 * returns true if this transition accepts the given combination of Vertex
 	 * and Edge
 	 */
-	public abstract boolean accepts(Vertex v, Edge e);
+	public abstract boolean accepts(Vertex v, Edge e,
+			InternalGreqlEvaluator evaluator);
 
 	/**
 	 * returns the vertex of the datagraph which can be visited after this

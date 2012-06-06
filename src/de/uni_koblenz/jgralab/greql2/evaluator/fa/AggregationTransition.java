@@ -39,9 +39,11 @@ import java.util.Set;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.graphmarker.GraphMarker;
+import de.uni_koblenz.jgralab.greql2.evaluator.InternalGreqlEvaluator;
+import de.uni_koblenz.jgralab.greql2.evaluator.QueryImpl;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.ThisEdgeEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VertexEvaluator;
+import de.uni_koblenz.jgralab.greql2.schema.Expression;
 import de.uni_koblenz.jgralab.greql2.schema.ThisEdge;
 import de.uni_koblenz.jgralab.greql2.types.TypeCollection;
 import de.uni_koblenz.jgralab.schema.AggregationKind;
@@ -56,9 +58,9 @@ import de.uni_koblenz.jgralab.schema.EdgeClass;
  */
 public class AggregationTransition extends Transition {
 
-	private VertexEvaluator predicateEvaluator;
+	private final VertexEvaluator<? extends Expression> predicateEvaluator;
 
-	public VertexEvaluator getPredicateEvaluator() {
+	public VertexEvaluator<? extends Expression> getPredicateEvaluator() {
 		return predicateEvaluator;
 	}
 
@@ -213,17 +215,18 @@ public class AggregationTransition extends Transition {
 	 */
 	public AggregationTransition(State start, State end, boolean aggregateFrom,
 			TypeCollection typeCollection, Set<String> roles,
-			VertexEvaluator predicateEvaluator,
-			GraphMarker<VertexEvaluator> graphMarker) {
+			VertexEvaluator<? extends Expression> predicateEvaluator,
+			QueryImpl query) {
 		super(start, end);
 		this.aggregateFrom = aggregateFrom;
 		validToEdgeRoles = roles;
 		validFromEdgeRoles = null;
 		this.typeCollection = typeCollection;
 		this.predicateEvaluator = predicateEvaluator;
-		Vertex v = graphMarker.getGraph().getFirstVertex(ThisEdge.VC);
+		ThisEdge v = (ThisEdge) query.getQueryGraph().getFirstVertex(
+				ThisEdge.VC);
 		if (v != null) {
-			thisEdgeEvaluator = (ThisEdgeEvaluator) graphMarker.getMark(v);
+			thisEdgeEvaluator = (ThisEdgeEvaluator) query.getVertexEvaluator(v);
 		}
 	}
 
@@ -257,7 +260,7 @@ public class AggregationTransition extends Transition {
 	 * @see greql2.evaluator.fa.Transition#accepts(jgralab.Vertex, jgralab.Edge)
 	 */
 	@Override
-	public boolean accepts(Vertex v, Edge e) {
+	public boolean accepts(Vertex v, Edge e, InternalGreqlEvaluator evaluator) {
 		if (e == null) {
 			return false;
 		}
@@ -315,8 +318,8 @@ public class AggregationTransition extends Transition {
 
 		// checks if a boolean expression exists and if it evaluates to true
 		if (predicateEvaluator != null) {
-			thisEdgeEvaluator.setValue(e);
-			Object res = predicateEvaluator.getResult();
+			thisEdgeEvaluator.setValue(e, evaluator);
+			Object res = predicateEvaluator.getResult(evaluator);
 			if (res instanceof Boolean) {
 				if (((Boolean) res).equals(Boolean.TRUE)) {
 					return true;

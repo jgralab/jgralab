@@ -39,85 +39,82 @@ import junit.framework.Assert;
 
 import org.junit.Test;
 
-import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
+import de.uni_koblenz.jgralab.greql2.evaluator.Query;
+import de.uni_koblenz.jgralab.greql2.evaluator.QueryImpl;
 import de.uni_koblenz.jgralab.greql2.exception.GreqlException;
 
 public class SubQueryTest extends GenericTest {
 
-	private GreqlEvaluator eval = new GreqlEvaluator((String) null,
-			getTestTree(), null);
-
 	@Test
 	public void testSimpleSubQuery() {
-		eval.setSubQuery("one", "1");
-		eval.setSubQuery("two", "2");
-		eval.setSubQuery("three", "3");
-		eval.setQuery("one() + two() + three()");
-		eval.startEvaluation();
-		Object r = eval.getResult();
+		Query query = new QueryImpl("one() + two() + three()");
+		query.setSubQuery("one", "1");
+		query.setSubQuery("two", "2");
+		query.setSubQuery("three", "3");
+		Object r = query.evaluate(getTestTree());
 		Assert.assertEquals(6, ((Integer) r).intValue());
 	}
 
 	@Test
 	public void testSubQueryWithSQsUsingOtherSQs() {
-		eval.setSubQuery("one", "1");
-		eval.setSubQuery("two", "one() + one()");
-		eval.setSubQuery("three", "one() + two() - two() + one() + one()");
-		eval.setQuery("one() + two() + three()");
-		eval.startEvaluation();
-		Object r = eval.getResult();
+		Query query = new QueryImpl("one() + two() + three()");
+		query.setSubQuery("one", "1");
+		query.setSubQuery("two", "one() + one()");
+		query.setSubQuery("three", "one() + two() - two() + one() + one()");
+		Object r = query.evaluate(getTestTree());
 		Assert.assertEquals(6, ((Integer) r).intValue());
 	}
 
 	@Test(expected = GreqlException.class)
 	public void testRecursiveSubQueryError() {
+		Query query = new QueryImpl(null);
 		// recursive defs are not allowed
-		eval.setSubQuery("x", "using val: (val > 0 ? x(val - 1) : 0)");
+		query.setSubQuery("x", "using val: (val > 0 ? x(val - 1) : 0)");
 	}
 
 	@Test(expected = GreqlException.class)
 	public void testShadowingSubQueryError() {
+		Query query = new QueryImpl(null);
 		// A subquery def must error if it shadows a function from the funlib
-		eval.setSubQuery("and", "true");
+		query.setSubQuery("and", "true");
 	}
 
 	@Test(expected = GreqlException.class)
 	public void testSubQueryArgCountMismatchError1() {
-		eval.setSubQuery("add3", "using a, b, c: a + b + c");
-		eval.setQuery("add3()");
-		eval.startEvaluation();
+		Query query = new QueryImpl("add3()");
+		query.setSubQuery("add3", "using a, b, c: a + b + c");
+		query.evaluate(getTestTree());
 	}
 
 	@Test(expected = GreqlException.class)
 	public void testSubQueryArgCountMismatchError2() {
-		eval.setSubQuery("add3", "using a, b, c: a + b + c");
-		eval.setQuery("add3(1)");
-		eval.startEvaluation();
+		Query query = new QueryImpl("add3(1)");
+		query.setSubQuery("add3", "using a, b, c: a + b + c");
+		query.evaluate(getTestTree());
 	}
 
 	@Test(expected = GreqlException.class)
 	public void testSubQueryArgCountMismatchError3() {
-		eval.setSubQuery("add3", "using a, b, c: a + b + c");
-		eval.setQuery("add3(1, 2)");
-		eval.startEvaluation();
+		Query query = new QueryImpl("add3(1, 2)");
+		query.setSubQuery("add3", "using a, b, c: a + b + c");
+		query.evaluate(getTestTree());
 	}
 
 	@Test(expected = GreqlException.class)
 	public void testSubQueryArgCountMismatchError4() {
-		eval.setSubQuery("add3", "using a, b, c: a + b + c");
-		eval.setQuery("add3(1, 2, 3, 4)");
-		eval.startEvaluation();
+		Query query = new QueryImpl("add3(1, 2, 3, 4)");
+		query.setSubQuery("add3", "using a, b, c: a + b + c");
+		query.evaluate(getTestTree());
 	}
 
 	@Test
 	public void testSubQueryAdd3() {
-		eval.setSubQuery("add3", "using a, b, c: a + b + c");
-		eval.setSubQuery("one", "1");
-		eval.setSubQuery("two", "one() + one()");
-		eval.setSubQuery("three", "one() + two() - two() + one() + one()");
-		eval.setQuery("add3(one(), two(), three())");
-		eval.startEvaluation();
-		Object r = eval.getResult();
+		Query query = new QueryImpl("add3(one(), two(), three())");
+		query.setSubQuery("add3", "using a, b, c: a + b + c");
+		query.setSubQuery("one", "1");
+		query.setSubQuery("two", "one() + one()");
+		query.setSubQuery("three", "one() + two() - two() + one() + one()");
+		Object r = query.evaluate(getTestTree());
 		Assert.assertEquals(6, ((Integer) r).intValue());
 	}
 }

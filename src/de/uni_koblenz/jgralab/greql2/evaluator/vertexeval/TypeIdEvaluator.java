@@ -38,15 +38,13 @@ package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
-import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize;
-import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
+import de.uni_koblenz.jgralab.greql2.evaluator.InternalGreqlEvaluator;
+import de.uni_koblenz.jgralab.greql2.evaluator.QueryImpl;
+import de.uni_koblenz.jgralab.greql2.evaluator.VertexCosts;
 import de.uni_koblenz.jgralab.greql2.exception.UnknownTypeException;
-import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
 import de.uni_koblenz.jgralab.greql2.schema.TypeId;
 import de.uni_koblenz.jgralab.greql2.types.TypeCollection;
 import de.uni_koblenz.jgralab.schema.GraphElementClass;
-import de.uni_koblenz.jgralab.schema.Schema;
 
 /**
  * Creates a List of types out of the TypeId-Vertex.
@@ -54,21 +52,10 @@ import de.uni_koblenz.jgralab.schema.Schema;
  * @author ist@uni-koblenz.de
  * 
  */
-public class TypeIdEvaluator extends VertexEvaluator {
+public class TypeIdEvaluator extends VertexEvaluator<TypeId> {
 
-	/**
-	 * returns the vertex this VertexEvaluator evaluates
-	 */
-	@Override
-	public Greql2Vertex getVertex() {
-		return vertex;
-	}
-
-	private TypeId vertex;
-
-	public TypeIdEvaluator(TypeId vertex, GreqlEvaluator eval) {
-		super(eval);
-		this.vertex = vertex;
+	public TypeIdEvaluator(TypeId vertex, QueryImpl query) {
+		super(vertex, query);
 	}
 
 	/**
@@ -78,12 +65,15 @@ public class TypeIdEvaluator extends VertexEvaluator {
 	 *            the schema of the datagraph
 	 * @return the generated list of types
 	 */
-	protected List<GraphElementClass<?, ?>> createTypeList(Schema schema) {
+	protected List<GraphElementClass<?, ?>> createTypeList(
+			InternalGreqlEvaluator evaluator) {
+
 		ArrayList<GraphElementClass<?, ?>> returnTypes = new ArrayList<GraphElementClass<?, ?>>();
-		GraphElementClass<?, ?> elemClass = schema.getGraphClass()
-				.getGraphElementClass(vertex.get_name());
+		GraphElementClass<?, ?> elemClass = (GraphElementClass<?, ?>) evaluator
+				.getAttributedElementClass(vertex.get_name());
 		if (elemClass == null) {
-			elemClass = greqlEvaluator.getKnownType(vertex.get_name());
+			elemClass = (GraphElementClass<?, ?>) query.getKnownType(
+					evaluator.getSchemaOfDataGraph(), vertex.get_name());
 			if (elemClass == null) {
 				throw new UnknownTypeException(vertex.get_name(),
 						createPossibleSourcePositions());
@@ -99,30 +89,40 @@ public class TypeIdEvaluator extends VertexEvaluator {
 	}
 
 	@Override
-	public Object evaluate() {
-		List<GraphElementClass<?, ?>> typeList = createTypeList(greqlEvaluator
-				.getDatagraph().getSchema());
+	public TypeCollection evaluate(InternalGreqlEvaluator evaluator) {
+		evaluator.progress(getOwnEvaluationCosts());
+		List<GraphElementClass<?, ?>> typeList = createTypeList(evaluator);
 		return new TypeCollection(typeList, vertex.is_excluded());
 	}
 
 	@Override
-	public VertexCosts calculateSubtreeEvaluationCosts(GraphSize graphSize) {
-		return greqlEvaluator.getCostModel().calculateCostsTypeId(this,
-				graphSize);
+	public VertexCosts calculateSubtreeEvaluationCosts() {
+		long costs = query.getOptimizerInfo().getKnownEdgeTypes()
+				+ query.getOptimizerInfo().getKnownVertexTypes();
+		return new VertexCosts(costs, costs, costs);
 	}
 
 	@Override
-	public double calculateEstimatedSelectivity(GraphSize graphSize) {
-		return greqlEvaluator.getCostModel().calculateSelectivityTypeId(this,
-				graphSize);
+	public double calculateEstimatedSelectivity() {
+		int typesInSchema = (int) Math.round((query.getOptimizerInfo()
+				.getKnownEdgeTypes() + query.getOptimizerInfo()
+				.getKnownVertexTypes()) / 2.0);
+		double selectivity = 1.0;
+		TypeId id = getVertex();
+		if (id.is_type()) {
+			selectivity = 1.0 / typesInSchema;
+		} else {
+			double avgSubclasses = (query.getOptimizerInfo()
+					.getAverageEdgeSubclasses() + query.getOptimizerInfo()
+					.getAverageVertexSubclasses()) / 2.0;
+			selectivity = avgSubclasses / typesInSchema;
+		}
+		if (id.is_excluded()) {
+			selectivity = 1 - selectivity;
+		}
+		return selectivity;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @seede.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VertexEvaluator#
-	 * getLoggingName()
-	 */
 	@Override
 	public String getLoggingName() {
 		StringBuilder name = new StringBuilder();

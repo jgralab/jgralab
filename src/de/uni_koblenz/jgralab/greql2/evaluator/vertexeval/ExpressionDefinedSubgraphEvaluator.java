@@ -35,45 +35,47 @@
 package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
-import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
-import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize;
-import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
+import de.uni_koblenz.jgralab.greql2.evaluator.InternalGreqlEvaluator;
+import de.uni_koblenz.jgralab.greql2.evaluator.QueryImpl;
+import de.uni_koblenz.jgralab.greql2.evaluator.VertexCosts;
 import de.uni_koblenz.jgralab.greql2.schema.Expression;
 import de.uni_koblenz.jgralab.greql2.schema.ExpressionDefinedSubgraph;
 import de.uni_koblenz.jgralab.greql2.schema.IsSubgraphDefiningExpression;
 
-public class ExpressionDefinedSubgraphEvaluator extends SubgraphDefinitionEvaluator {
+public class ExpressionDefinedSubgraphEvaluator extends
+		SubgraphDefinitionEvaluator<ExpressionDefinedSubgraph> {
 
-	VertexEvaluator subgraphDefExprEvaluator = null;
-	
-	//ExpressionDefinedSubgraph vertex;
-	
-	public ExpressionDefinedSubgraphEvaluator(ExpressionDefinedSubgraph vertex, GreqlEvaluator eval) {
-		super(vertex, eval);
-	//	this.vertex = vertex;
-	}
-	
+	VertexEvaluator<? extends Expression> subgraphDefExprEvaluator = null;
 
-	@Override
-	public Object evaluate() {
-		if (subgraphDefExprEvaluator == null) {	
-			ExpressionDefinedSubgraph exprDefinedSubgraph = (ExpressionDefinedSubgraph) vertex;
-			IsSubgraphDefiningExpression isSubgraphDefiningExpression = exprDefinedSubgraph.getFirstIsSubgraphDefiningExpressionIncidence(EdgeDirection.IN);
-			Expression subgraphDefExpr = (Expression) isSubgraphDefiningExpression.getThat();
-			subgraphDefExprEvaluator = vertexEvalMarker.getMark(subgraphDefExpr);
-		}	
-		return subgraphDefExprEvaluator.getResult();
+	public ExpressionDefinedSubgraphEvaluator(ExpressionDefinedSubgraph vertex,
+			QueryImpl query) {
+		super(vertex, query);
 	}
 
 	@Override
-	protected VertexCosts calculateSubtreeEvaluationCosts(GraphSize graphSize) {
-		ExpressionDefinedSubgraph exprDefinedSubgraph = (ExpressionDefinedSubgraph) vertex;
-		IsSubgraphDefiningExpression isSubgraphDefiningExpression = exprDefinedSubgraph.getFirstIsSubgraphDefiningExpressionIncidence(EdgeDirection.IN);
-		Expression subgraphDefExpr = (Expression) isSubgraphDefiningExpression.getThat();
-		subgraphDefExprEvaluator = vertexEvalMarker.getMark(subgraphDefExpr);
-		return subgraphDefExprEvaluator.calculateSubtreeEvaluationCosts(graphSize);
+	public Object evaluate(InternalGreqlEvaluator evaluator) {
+		evaluator.progress(getOwnEvaluationCosts());
+		if (subgraphDefExprEvaluator == null) {
+			ExpressionDefinedSubgraph exprDefinedSubgraph = vertex;
+			IsSubgraphDefiningExpression isSubgraphDefiningExpression = exprDefinedSubgraph
+					.getFirstIsSubgraphDefiningExpressionIncidence(EdgeDirection.IN);
+			Expression subgraphDefExpr = (Expression) isSubgraphDefiningExpression
+					.getThat();
+			subgraphDefExprEvaluator = query
+					.getVertexEvaluator(subgraphDefExpr);
+		}
+		return subgraphDefExprEvaluator.getResult(evaluator);
 	}
 
-
+	@Override
+	protected VertexCosts calculateSubtreeEvaluationCosts() {
+		ExpressionDefinedSubgraph exprDefinedSubgraph = vertex;
+		IsSubgraphDefiningExpression isSubgraphDefiningExpression = exprDefinedSubgraph
+				.getFirstIsSubgraphDefiningExpressionIncidence(EdgeDirection.IN);
+		Expression subgraphDefExpr = (Expression) isSubgraphDefiningExpression
+				.getThat();
+		subgraphDefExprEvaluator = query.getVertexEvaluator(subgraphDefExpr);
+		return subgraphDefExprEvaluator.calculateSubtreeEvaluationCosts();
+	}
 
 }

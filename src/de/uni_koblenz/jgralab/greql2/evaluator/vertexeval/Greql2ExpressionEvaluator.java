@@ -36,17 +36,16 @@
 package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 
 import java.util.ArrayList;
-import java.util.Map;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
-import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
-import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize;
-import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
+import de.uni_koblenz.jgralab.greql2.evaluator.InternalGreqlEvaluator;
+import de.uni_koblenz.jgralab.greql2.evaluator.QueryImpl;
+import de.uni_koblenz.jgralab.greql2.evaluator.VertexCosts;
 import de.uni_koblenz.jgralab.greql2.exception.UndefinedVariableException;
 import de.uni_koblenz.jgralab.greql2.exception.UnknownTypeException;
 import de.uni_koblenz.jgralab.greql2.schema.Expression;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Expression;
-import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
+import de.uni_koblenz.jgralab.greql2.schema.Identifier;
 import de.uni_koblenz.jgralab.greql2.schema.IsBoundVarOf;
 import de.uni_koblenz.jgralab.greql2.schema.IsIdOfStoreClause;
 import de.uni_koblenz.jgralab.greql2.schema.SourcePosition;
@@ -62,52 +61,29 @@ import de.uni_koblenz.jgralab.schema.VertexClass;
  * GReQL2-Expression is the rootvertex of the GReQL-2Syntaxgraph. It contains
  * the bound/free variables, that are defined via "using" and binds them to the
  * values in the variableMap of the Greql2Evaluator.
- *
+ * 
  * @author ist@uni-koblenz.de
- *
+ * 
  */
-public class Greql2ExpressionEvaluator extends VertexEvaluator {
+public class Greql2ExpressionEvaluator extends
+		VertexEvaluator<Greql2Expression> {
 
-	/**
-	 * The Greql2Expression-Vertex this evaluator evaluates
-	 */
-	private Greql2Expression vertex;
+	protected static final int greql2ExpressionCostsFactor = 3;
 
-	/**
-	 * returns the vertex this VertexEvaluator evaluates
-	 */
-	@Override
-	public Greql2Vertex getVertex() {
-		return vertex;
-	}
-
-	/**
-	 * The varibles that are defined via the <code>using</code> clause. They are
-	 * called bound or also free variables
-	 */
-	private Map<String, Object> boundVariables;
-	boolean boundVariablesChanged = true;
-
-	protected void setBoundVariables(Map<String, Object> boundVariables) {
-		this.boundVariables = boundVariables;
-		result = null;
-		boundVariablesChanged = true;
-	}
-
-	private void initializeBoundVariables() {
+	private void initializeBoundVariables(InternalGreqlEvaluator evaluator) {
 		IsBoundVarOf inc = vertex
 				.getFirstIsBoundVarOfIncidence(EdgeDirection.IN);
 		while (inc != null) {
 			Variable currentBoundVariable = (Variable) inc.getAlpha();
-			Object variableValue = boundVariables.get(currentBoundVariable
+			Object variableValue = evaluator.getVariable(currentBoundVariable
 					.get_name());
 			if (variableValue == null) {
 				throw new UndefinedVariableException(currentBoundVariable,
 						createSourcePositions(inc));
 			}
-			VariableEvaluator variableEval = (VariableEvaluator) vertexEvalMarker
-					.getMark(currentBoundVariable);
-			variableEval.setValue(variableValue);
+			VariableEvaluator<Variable> variableEval = (VariableEvaluator<Variable>) query
+					.getVertexEvaluator(currentBoundVariable);
+			variableEval.setValue(variableValue, evaluator);
 			inc = inc.getNextIsBoundVarOfIncidence(EdgeDirection.IN);
 		}
 	}
@@ -118,26 +94,20 @@ public class Greql2ExpressionEvaluator extends VertexEvaluator {
 	 * @param vertex
 	 *            the vertex which gets evaluated by this VertexEvaluator
 	 */
-	public Greql2ExpressionEvaluator(Greql2Expression vertex,
-			GreqlEvaluator eval) {
-		super(eval);
-		this.vertex = vertex;
-		boundVariables = eval.getVariables();
-		boundVariablesChanged = true;
+	public Greql2ExpressionEvaluator(Greql2Expression vertex, QueryImpl query) {
+		super(vertex, query);
 	}
 
 	/**
 	 * sets the values of all bound variables and evaluates the queryexpression
 	 */
 	@Override
-	public Object evaluate() {
-		if (boundVariablesChanged) {
-			initializeBoundVariables();
-			boundVariablesChanged = false;
-		}
+	public Object evaluate(InternalGreqlEvaluator evaluator) {
+		evaluator.progress(getOwnEvaluationCosts());
+		initializeBoundVariables(evaluator);
 
-		if ((vertex.get_importedTypes() != null) && (graph != null)) {
-			Schema graphSchema = graph.getSchema();
+		Schema graphSchema = evaluator.getSchemaOfDataGraph();
+		if ((vertex.get_importedTypes() != null) && (graphSchema != null)) {
 			for (String importedType : vertex.get_importedTypes()) {
 				if (importedType.endsWith(".*")) {
 					String packageName = importedType.substring(0,
@@ -151,10 +121,12 @@ public class Greql2ExpressionEvaluator extends VertexEvaluator {
 					// greqlEvaluator.addKnownType(elem);
 					// }
 					for (VertexClass elem : p.getVertexClasses()) {
-						greqlEvaluator.addKnownType(elem);
+						query.addKnownType(evaluator.getSchemaOfDataGraph(),
+								elem);
 					}
 					for (EdgeClass elem : p.getEdgeClasses()) {
-						greqlEvaluator.addKnownType(elem);
+						query.addKnownType(evaluator.getSchemaOfDataGraph(),
+								elem);
 					}
 				} else {
 					GraphElementClass<?, ?> elemClass = graphSchema
@@ -163,31 +135,50 @@ public class Greql2ExpressionEvaluator extends VertexEvaluator {
 						throw new UnknownTypeException(importedType,
 								new ArrayList<SourcePosition>());
 					}
-					greqlEvaluator.addKnownType(elemClass);
+					query.addKnownType(evaluator.getSchemaOfDataGraph(),
+							elemClass);
 				}
 			}
 		}
 
-		Expression boundExpression = (Expression) vertex.getFirstIsQueryExprOfIncidence(
-				EdgeDirection.IN).getAlpha();
-		VertexEvaluator eval = vertexEvalMarker.getMark(boundExpression);
-		Object result = eval.getResult();
+		Expression boundExpression = (Expression) vertex
+				.getFirstIsQueryExprOfIncidence(EdgeDirection.IN).getAlpha();
+		VertexEvaluator<? extends Expression> eval = query
+				.getVertexEvaluator(boundExpression);
+		Object result = eval.getResult(evaluator);
 		// if the query contains a "store as " - clause, there is a
 		// "isIdOfInc"-Incidence connected with the Greql2Expression
-		IsIdOfStoreClause storeInc = vertex.getFirstIsIdOfStoreClauseIncidence(EdgeDirection.IN);
+		IsIdOfStoreClause storeInc = vertex
+				.getFirstIsIdOfStoreClauseIncidence(EdgeDirection.IN);
 		if (storeInc != null) {
-			VertexEvaluator storeEval = vertexEvalMarker.getMark(storeInc
-					.getAlpha());
-			String varName = storeEval.getResult().toString();
-			boundVariables.put(varName, result);
+			VertexEvaluator<Identifier> storeEval = query
+					.getVertexEvaluator((Identifier) storeInc.getAlpha());
+			String varName = storeEval.getResult(evaluator).toString();
+			// TODO [greqlrenovation] VariableDeclaration has an own
+			// toString(InternalGreqlEvaluator)-method. check the use
+			evaluator.setVariable(varName, result);
 		}
 		return result;
 	}
 
 	@Override
-	public VertexCosts calculateSubtreeEvaluationCosts(GraphSize graphSize) {
-		return greqlEvaluator.getCostModel().calculateCostsGreql2Expression(
-				this, graphSize);
+	public VertexCosts calculateSubtreeEvaluationCosts() {
+		Greql2Expression greqlExp = getVertex();
+		VertexEvaluator<? extends Expression> queryExpEval = query
+				.getVertexEvaluator((Expression) greqlExp
+						.getFirstIsQueryExprOfIncidence().getAlpha());
+		long queryCosts = queryExpEval.getCurrentSubtreeEvaluationCosts();
+		VertexEvaluator.logger.info("QueryCosts: " + queryCosts);
+		IsBoundVarOf boundVarInc = greqlExp.getFirstIsBoundVarOfIncidence();
+		int boundVars = 0;
+		while (boundVarInc != null) {
+			boundVars++;
+			boundVarInc = boundVarInc.getNextIsBoundVarOfIncidence();
+		}
+		long ownCosts = boundVars * greql2ExpressionCostsFactor;
+		long iteratedCosts = ownCosts;
+		long subtreeCosts = ownCosts + queryCosts;
+		return new VertexCosts(ownCosts, iteratedCosts, subtreeCosts);
 	}
 
 }

@@ -78,8 +78,8 @@ public class SettingsDialog extends JDialog implements ActionListener,
 	private JTextField resultFontLabel;
 	private JButton resultFontButton;
 
-	private JList greqlFunctionList;
-	private DefaultListModel greqlFunctionModel;
+	private JList<Object> greqlFunctionList;
+	private DefaultListModel<Object> greqlFunctionModel;
 	private Action removeAction;
 	private Action addAction;
 	private JTextField functionNameField;
@@ -151,11 +151,11 @@ public class SettingsDialog extends JDialog implements ActionListener,
 		c.gridwidth = 4;
 		c.weightx = c.weighty = 1;
 		c.fill = GridBagConstraints.BOTH;
-		greqlFunctionModel = new DefaultListModel();
+		greqlFunctionModel = new DefaultListModel<Object>();
 		for (String s : greqlFunctions) {
 			greqlFunctionModel.addElement(s);
 		}
-		greqlFunctionList = new JList(greqlFunctionModel);
+		greqlFunctionList = new JList<Object>(greqlFunctionModel);
 		greqlFunctionList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		greqlFunctionList.setToolTipText(gui
 				.getMessage("SettingsDialog.FunctionListToolTip")); //$NON-NLS-1$
@@ -210,7 +210,6 @@ public class SettingsDialog extends JDialog implements ActionListener,
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// TODO Auto-generated method stub
 				String name = functionNameField.getText().trim();
 
 				// User didn't type in a unique name...

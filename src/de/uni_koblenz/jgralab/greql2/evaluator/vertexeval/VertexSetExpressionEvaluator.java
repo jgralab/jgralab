@@ -37,12 +37,13 @@ package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 
 import org.pcollections.PSet;
 
-import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
-import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize;
-import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
+import de.uni_koblenz.jgralab.greql2.evaluator.InternalGreqlEvaluator;
+import de.uni_koblenz.jgralab.greql2.evaluator.QueryImpl;
+import de.uni_koblenz.jgralab.greql2.evaluator.VertexCosts;
+import de.uni_koblenz.jgralab.greql2.schema.IsTypeRestrOfExpression;
+import de.uni_koblenz.jgralab.greql2.schema.TypeId;
 import de.uni_koblenz.jgralab.greql2.schema.VertexSetExpression;
 import de.uni_koblenz.jgralab.greql2.types.TypeCollection;
 
@@ -51,39 +52,40 @@ import de.uni_koblenz.jgralab.greql2.types.TypeCollection;
  * V:{Department} will be evaluated by this evaluator, it will construct the set
  * of vertices in the datagraph that have the type Department or a type that is
  * derived from Department
- *
+ * 
  * @author ist@uni-koblenz.de
- *
+ * 
  */
-public class VertexSetExpressionEvaluator extends ElementSetExpressionEvaluator {
+public class VertexSetExpressionEvaluator extends
+		ElementSetExpressionEvaluator<VertexSetExpression> {
+
+	/**
+	 * A factor that will be multiplied with the number of vertices of the
+	 * datagraph to estimate the own costs of a {@link VertexSetExpression}.
+	 */
+	protected static final int vertexSetExpressionCostsFactor = 3;
 
 	/**
 	 * Creates a new ElementSetExpressionEvaluator for the given vertex
-	 *
+	 * 
 	 * @param eval
 	 *            the GreqlEvaluator instance this VertexEvaluator belong to
 	 * @param vertex
 	 *            the vertex this VertexEvaluator evaluates
 	 */
 	public VertexSetExpressionEvaluator(VertexSetExpression vertex,
-			GreqlEvaluator eval) {
-		super(vertex, eval);
+			QueryImpl query) {
+		super(vertex, query);
 	}
 
 	@Override
-	public Object evaluate() {
-		Graph datagraph = greqlEvaluator.getDatagraph();
-		TypeCollection typeCollection = getTypeCollection();
+	public Object evaluate(InternalGreqlEvaluator evaluator) {
+		evaluator.progress(getOwnEvaluationCosts());
+		TypeCollection typeCollection = getTypeCollection(evaluator);
 		PSet<Vertex> resultSet = null;
-		String indexKey = null;
-		if (GreqlEvaluator.VERTEX_INDEXING) {
-			indexKey = typeCollection.toString();
-			resultSet = GreqlEvaluator.getVertexIndex(datagraph, indexKey);
-		}
 		if (resultSet == null) {
-			long startTime = System.currentTimeMillis();
 			resultSet = JGraLab.set();
-			Vertex currentVertex = datagraph.getFirstVertex();
+			Vertex currentVertex = evaluator.getDataGraph().getFirstVertex();
 			while (currentVertex != null) {
 				if (typeCollection.acceptsType(currentVertex
 						.getAttributedElementClass())) {
@@ -91,27 +93,42 @@ public class VertexSetExpressionEvaluator extends ElementSetExpressionEvaluator 
 				}
 				currentVertex = currentVertex.getNextVertex();
 			}
-			if (GreqlEvaluator.VERTEX_INDEXING) {
-				if ((System.currentTimeMillis() - startTime) > greqlEvaluator
-						.getIndexTimeBarrier()) {
-					GreqlEvaluator.addVertexIndex(datagraph, indexKey,
-							resultSet);
-				}
-			}
 		}
 		return resultSet;
 	}
 
 	@Override
-	public VertexCosts calculateSubtreeEvaluationCosts(GraphSize graphSize) {
-		return this.greqlEvaluator.getCostModel()
-				.calculateCostsVertexSetExpression(this, graphSize);
+	public VertexCosts calculateSubtreeEvaluationCosts() {
+		VertexSetExpression vse = getVertex();
+
+		long typeRestrCosts = 0;
+		IsTypeRestrOfExpression inc = vse
+				.getFirstIsTypeRestrOfExpressionIncidence();
+		while (inc != null) {
+			TypeIdEvaluator tideval = (TypeIdEvaluator) query
+					.getVertexEvaluator((TypeId) inc.getAlpha());
+			typeRestrCosts += tideval.getCurrentSubtreeEvaluationCosts();
+			inc = inc.getNextIsTypeRestrOfExpressionIncidence();
+		}
+
+		long ownCosts = query.getOptimizerInfo().getVertexCount()
+				* vertexSetExpressionCostsFactor;
+		return new VertexCosts(ownCosts, ownCosts, typeRestrCosts + ownCosts);
 	}
 
 	@Override
-	public long calculateEstimatedCardinality(GraphSize graphSize) {
-		return greqlEvaluator.getCostModel()
-				.calculateCardinalityVertexSetExpression(this, graphSize);
+	public long calculateEstimatedCardinality() {
+		VertexSetExpression exp = getVertex();
+		IsTypeRestrOfExpression inc = exp
+				.getFirstIsTypeRestrOfExpressionIncidence();
+		double selectivity = 1.0;
+		if (inc != null) {
+			TypeIdEvaluator typeIdEval = (TypeIdEvaluator) query
+					.getVertexEvaluator((TypeId) inc.getAlpha());
+			selectivity = typeIdEval.getEstimatedSelectivity();
+		}
+		return Math.round(query.getOptimizerInfo().getVertexCount()
+				* selectivity);
 	}
 
 }

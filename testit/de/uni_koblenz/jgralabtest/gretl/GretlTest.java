@@ -59,7 +59,7 @@ import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.ImplementationType;
 import de.uni_koblenz.jgralab.JGraLab;
-import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
+import de.uni_koblenz.jgralab.greql2.evaluator.QueryImpl;
 import de.uni_koblenz.jgralab.gretl.AddSuperClass;
 import de.uni_koblenz.jgralab.gretl.Context;
 import de.uni_koblenz.jgralab.gretl.CopyTransformation;
@@ -615,8 +615,8 @@ public class GretlTest {
 		}
 
 		context = null;
-		GreqlEvaluator.resetGraphIndizes();
-		GreqlEvaluator.resetOptimizedSyntaxGraphs();
+		QueryImpl.resetGraphIndizes();
+		QueryImpl.resetOptimizedSyntaxGraphs();
 	}
 
 	private static void dotty(Graph g, String file,

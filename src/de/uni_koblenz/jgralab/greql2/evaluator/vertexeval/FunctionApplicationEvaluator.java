@@ -38,9 +38,9 @@ package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 import java.util.ArrayList;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
-import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
-import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize;
-import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
+import de.uni_koblenz.jgralab.greql2.evaluator.InternalGreqlEvaluator;
+import de.uni_koblenz.jgralab.greql2.evaluator.QueryImpl;
+import de.uni_koblenz.jgralab.greql2.evaluator.VertexCosts;
 import de.uni_koblenz.jgralab.greql2.exception.GreqlException;
 import de.uni_koblenz.jgralab.greql2.funlib.FunLib;
 import de.uni_koblenz.jgralab.greql2.funlib.FunLib.FunctionInfo;
@@ -48,7 +48,6 @@ import de.uni_koblenz.jgralab.greql2.funlib.Function;
 import de.uni_koblenz.jgralab.greql2.schema.Expression;
 import de.uni_koblenz.jgralab.greql2.schema.FunctionApplication;
 import de.uni_koblenz.jgralab.greql2.schema.FunctionId;
-import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
 import de.uni_koblenz.jgralab.greql2.schema.IsArgumentOf;
 import de.uni_koblenz.jgralab.greql2.schema.IsTypeExprOf;
 import de.uni_koblenz.jgralab.greql2.schema.TypeId;
@@ -56,31 +55,20 @@ import de.uni_koblenz.jgralab.greql2.types.TypeCollection;
 
 /**
  * Evaluates a FunctionApplication vertex in the GReQL-2 Syntaxgraph
- *
+ * 
  * @author ist@uni-koblenz.de
- *
+ * 
  */
-public class FunctionApplicationEvaluator extends VertexEvaluator {
+public class FunctionApplicationEvaluator extends
+		VertexEvaluator<FunctionApplication> {
 
-	protected FunctionApplication vertex;
-
-	/**
-	 * returns the vertex this VertexEvaluator evaluates
-	 */
-	@Override
-	public Greql2Vertex getVertex() {
-		return vertex;
-	}
-
-	protected ArrayList<VertexEvaluator> parameterEvaluators = null;
-
-	protected TypeCollection typeArgument = null;
-
-	protected Object[] parameters = null;
+	protected ArrayList<VertexEvaluator<? extends Expression>> parameterEvaluators = null;
 
 	protected int paramEvalCount = 0;
 
 	protected boolean listCreated = false;
+
+	TypeCollection typeArgument = null;
 
 	/**
 	 * The name of this function
@@ -117,12 +105,6 @@ public class FunctionApplicationEvaluator extends VertexEvaluator {
 		return getFunctionInfo().getFunction();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @seede.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VertexEvaluator#
-	 * getLoggingName()
-	 */
 	@Override
 	public String getLoggingName() {
 		return getFunctionName();
@@ -135,24 +117,23 @@ public class FunctionApplicationEvaluator extends VertexEvaluator {
 	 *            the vertex which gets evaluated by this VertexEvaluator
 	 */
 	public FunctionApplicationEvaluator(FunctionApplication vertex,
-			GreqlEvaluator eval) {
-		super(eval);
-		this.vertex = vertex;
+			QueryImpl query) {
+		super(vertex, query);
 	}
 
 	/**
 	 * creates the list of parameter evaluators so that it would not be
 	 * necessary to build it up each time the function gets evaluated
 	 */
-	protected ArrayList<VertexEvaluator> createVertexEvaluatorList() {
-		ArrayList<VertexEvaluator> vertexEvalList = new ArrayList<VertexEvaluator>();
+	protected ArrayList<VertexEvaluator<? extends Expression>> createVertexEvaluatorList() {
+		ArrayList<VertexEvaluator<? extends Expression>> vertexEvalList = new ArrayList<VertexEvaluator<? extends Expression>>();
 		IsArgumentOf inc = vertex
 				.getFirstIsArgumentOfIncidence(EdgeDirection.IN);
 		while (inc != null) {
 			Expression currentParameterExpr = (Expression) inc.getAlpha();
 			// maybe the vertex has no evaluator
-			VertexEvaluator paramEval = vertexEvalMarker
-					.getMark(currentParameterExpr);
+			VertexEvaluator<? extends Expression> paramEval = query
+					.getVertexEvaluator(currentParameterExpr);
 			vertexEvalList.add(paramEval);
 			inc = inc.getNextIsArgumentOfIncidence(EdgeDirection.IN);
 		}
@@ -162,7 +143,7 @@ public class FunctionApplicationEvaluator extends VertexEvaluator {
 	/**
 	 * creates the type-argument
 	 */
-	private TypeCollection createTypeArgument() {
+	private TypeCollection createTypeArgument(InternalGreqlEvaluator evaluator) {
 		TypeId typeId;
 		IsTypeExprOf typeEdge = vertex
 				.getFirstIsTypeExprOfIncidence(EdgeDirection.IN);
@@ -171,10 +152,12 @@ public class FunctionApplicationEvaluator extends VertexEvaluator {
 			typeCollection = new TypeCollection();
 			while (typeEdge != null) {
 				typeId = (TypeId) typeEdge.getAlpha();
-				TypeIdEvaluator typeEval = (TypeIdEvaluator) vertexEvalMarker
-						.getMark(typeId);
-				typeCollection.addTypes((TypeCollection) typeEval.getResult());
-				typeEdge = typeEdge.getNextIsTypeExprOfIncidence(EdgeDirection.IN);
+				TypeIdEvaluator typeEval = (TypeIdEvaluator) query
+						.getVertexEvaluator(typeId);
+				typeCollection.addTypes((TypeCollection) typeEval
+						.getResult(evaluator));
+				typeEdge = typeEdge
+						.getNextIsTypeExprOfIncidence(EdgeDirection.IN);
 			}
 		}
 		return typeCollection;
@@ -184,31 +167,41 @@ public class FunctionApplicationEvaluator extends VertexEvaluator {
 	 * evaluates the function, calls the right function of the function libary
 	 */
 	@Override
-	public Object evaluate() {
+	public Object evaluate(InternalGreqlEvaluator evaluator) {
+		evaluator.progress(getOwnEvaluationCosts());
 		FunctionInfo fi = getFunctionInfo();
+
 		if (!listCreated) {
-			typeArgument = createTypeArgument();
+			typeArgument = createTypeArgument(evaluator);
 			parameterEvaluators = createVertexEvaluatorList();
-			int parameterCount = parameterEvaluators.size();
-			if (fi.needsGraphArgument()) {
-				parameterCount++;
-			}
-			if (typeArgument != null) {
-				parameterCount++;
-			}
-			parameters = new Object[parameterCount];
 			paramEvalCount = parameterEvaluators.size();
 			listCreated = true;
 		}
 
+		int parameterCount = parameterEvaluators.size();
+		if (fi.needsGraphArgument()) {
+			parameterCount++;
+		}
+		if (typeArgument != null) {
+			parameterCount++;
+		}
+		if (fi.needsEvaluatorArgument()) {
+			parameterCount++;
+		}
+		Object[] parameters = new Object[parameterCount];
+
 		int p = 0;
 
+		if (fi.needsEvaluatorArgument()) {
+			parameters[p++] = evaluator;
+		}
+
 		if (fi.needsGraphArgument()) {
-			parameters[p++] = graph;
+			parameters[p++] = evaluator.getDataGraph();
 		}
 
 		for (int i = 0; i < paramEvalCount; i++) {
-			parameters[p++] = parameterEvaluators.get(i).getResult();
+			parameters[p++] = parameterEvaluators.get(i).getResult(evaluator);
 		}
 
 		if (typeArgument != null) {
@@ -219,21 +212,57 @@ public class FunctionApplicationEvaluator extends VertexEvaluator {
 	}
 
 	@Override
-	public VertexCosts calculateSubtreeEvaluationCosts(GraphSize graphSize) {
-		return this.greqlEvaluator.getCostModel()
-				.calculateCostsFunctionApplication(this, graphSize);
+	public VertexCosts calculateSubtreeEvaluationCosts() {
+		FunctionApplication funApp = getVertex();
+
+		IsArgumentOf inc = funApp
+				.getFirstIsArgumentOfIncidence(EdgeDirection.IN);
+		long argCosts = 0;
+		ArrayList<Long> elements = new ArrayList<Long>();
+		while (inc != null) {
+			VertexEvaluator<? extends Expression> argEval = query
+					.getVertexEvaluator((Expression) inc.getAlpha());
+			argCosts += argEval.getCurrentSubtreeEvaluationCosts();
+			elements.add(argEval.getEstimatedCardinality());
+			inc = inc.getNextIsArgumentOfIncidence(EdgeDirection.IN);
+		}
+
+		Function func = getFunction();
+		long ownCosts = func.getEstimatedCosts(elements);
+		long iteratedCosts = ownCosts * getVariableCombinations();
+		long subtreeCosts = iteratedCosts + argCosts;
+		return new VertexCosts(ownCosts, iteratedCosts, subtreeCosts);
 	}
 
 	@Override
-	public double calculateEstimatedSelectivity(GraphSize graphSize) {
-		return this.greqlEvaluator.getCostModel()
-				.calculateSelectivityFunctionApplication(this, graphSize);
+	public double calculateEstimatedSelectivity() {
+		Function func = getFunction();
+		if (func != null) {
+			return func.getSelectivity();
+		} else {
+			return 1;
+		}
 	}
 
 	@Override
-	public long calculateEstimatedCardinality(GraphSize graphSize) {
-		return greqlEvaluator.getCostModel()
-				.calculateCardinalityFunctionApplication(this, graphSize);
+	public long calculateEstimatedCardinality() {
+		FunctionApplication funApp = getVertex();
+		IsArgumentOf inc = funApp
+				.getFirstIsArgumentOfIncidence(EdgeDirection.IN);
+		int elements = 0;
+		while (inc != null) {
+			VertexEvaluator<? extends Expression> argEval = query
+					.getVertexEvaluator((Expression) inc.getAlpha());
+			elements += argEval.getEstimatedCardinality();
+			inc = inc.getNextIsArgumentOfIncidence(EdgeDirection.IN);
+		}
+
+		Function func = getFunction();
+		if (func != null) {
+			return func.getEstimatedCardinality(elements);
+		} else {
+			return 1;
+		}
 	}
 
 }
