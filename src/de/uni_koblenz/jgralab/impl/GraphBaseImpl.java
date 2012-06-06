@@ -562,7 +562,7 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 	 */
 	@Override
 	public Iterable<Edge> edges(EdgeClass edgeClass) {
-		return new EdgeIterable<Edge>(this, edgeClass.getSchemaClass());
+		return new EdgeIterable<Edge>(this, edgeClass);
 	}
 
 	/**
