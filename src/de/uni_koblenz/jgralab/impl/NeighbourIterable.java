@@ -42,10 +42,11 @@ import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.VertexFilter;
+import de.uni_koblenz.jgralab.schema.EdgeClass;
 
 /**
  * This class provides an Iterable for the Vertices adjacent to a given vertex.
- * 
+ *
  * @author ist@uni-koblenz.de
  */
 public class NeighbourIterable<E extends Edge, V extends Vertex> implements
@@ -57,7 +58,7 @@ public class NeighbourIterable<E extends Edge, V extends Vertex> implements
 	 * Creates an Iterable for all neighbours adjacent to <code>v</code> via
 	 * edges of the specified edgeclass <code>ec</code> and
 	 * <code>orientation</code>.
-	 * 
+	 *
 	 * @param v
 	 *            a Vertex
 	 * @param ec
@@ -65,9 +66,9 @@ public class NeighbourIterable<E extends Edge, V extends Vertex> implements
 	 * @param dir
 	 *            desired orientation
 	 */
-	public NeighbourIterable(Vertex v, Class<? extends Edge> ec,
-			EdgeDirection dir, VertexFilter<V> filter) {
-		assert v != null && v.isValid();
+	public NeighbourIterable(Vertex v, EdgeClass ec, EdgeDirection dir,
+			VertexFilter<V> filter) {
+		assert (v != null) && v.isValid();
 		this.filter = filter;
 		it = new IncidenceIterable<E>(v, ec, dir);
 	}
@@ -100,7 +101,7 @@ public class NeighbourIterable<E extends Edge, V extends Vertex> implements
 		private void getNext() {
 			while (incidenceIterator.hasNext()) {
 				current = (V) incidenceIterator.next().getThat();
-				if (filter == null || filter.accepts(current)) {
+				if ((filter == null) || filter.accepts(current)) {
 					return;
 				}
 			}
