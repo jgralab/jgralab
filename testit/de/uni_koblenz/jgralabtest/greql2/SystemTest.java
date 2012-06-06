@@ -160,7 +160,7 @@ public class SystemTest extends GenericTest {
 					usage_count);
 
 			int n = 0;
-			for (Edge edge : vertex.incidences(Way.class, EdgeDirection.OUT)) {
+			for (Edge edge : vertex.incidences(Way.EC, EdgeDirection.OUT)) {
 				++n;
 				assertTrue(usages.contains(edge));
 			}

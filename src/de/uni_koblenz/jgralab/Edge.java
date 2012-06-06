@@ -99,31 +99,12 @@ public interface Edge extends GraphElement<EdgeClass, Edge> {
 	/**
 	 * @param anEdgeClass
 	 *            the edge class to search for
-	 * @return the next incidence in iSeq where the corresponding edge is of
-	 *         class anEdgeClass
-	 */
-	public Edge getNextIncidence(Class<? extends Edge> anEdgeClass);
-
-	/**
-	 * @param anEdgeClass
-	 *            the edge class to search for
 	 * @param orientation
 	 *            the orientation the next incidence should have
 	 * @return the next incidence in iSeq where the corresponding edge is of
 	 *         class anEdgeClass
 	 */
 	public Edge getNextIncidence(EdgeClass anEdgeClass,
-			EdgeDirection orientation);
-
-	/**
-	 * @param anEdgeClass
-	 *            the edge class to search for
-	 * @param orientation
-	 *            the orientation the next incidence should have
-	 * @return the next incidence in iSeq where the corresponding edge is of
-	 *         class anEdgeClass
-	 */
-	public Edge getNextIncidence(Class<? extends Edge> anEdgeClass,
 			EdgeDirection orientation);
 
 	/**
@@ -139,17 +120,6 @@ public interface Edge extends GraphElement<EdgeClass, Edge> {
 	/**
 	 * @param anEdgeClass
 	 *            the edge class to search for
-	 * @param noSubclasses
-	 *            if true, no subclasses are returned
-	 * @return the next incidence in iSeq where the corresponding edge is of
-	 *         explicit class anEdgeClass
-	 */
-	public Edge getNextIncidence(Class<? extends Edge> anEdgeClass,
-			boolean noSubclasses);
-
-	/**
-	 * @param anEdgeClass
-	 *            the edge class to search for
 	 * @param orientation
 	 *            the orientation the next incidence should have
 	 * @param noSubclasses
@@ -158,19 +128,6 @@ public interface Edge extends GraphElement<EdgeClass, Edge> {
 	 *         explicit class anEdgeClass
 	 */
 	public Edge getNextIncidence(EdgeClass anEdgeClass,
-			EdgeDirection orientation, boolean noSubclasses);
-
-	/**
-	 * @param anEdgeClass
-	 *            the edge class to search for
-	 * @param orientation
-	 *            the orientation the next incidence should have
-	 * @param noSubclasses
-	 *            if true, no subclasses are returned
-	 * @return the next incidence in iSeq where the corresponding edge is of
-	 *         explicit class anEdgeClass
-	 */
-	public Edge getNextIncidence(Class<? extends Edge> anEdgeClass,
 			EdgeDirection orientation, boolean noSubclasses);
 
 	/**
@@ -242,12 +199,6 @@ public interface Edge extends GraphElement<EdgeClass, Edge> {
 	 * @return next edge of anEdgeClass or its superclasses in eSeq
 	 */
 	public Edge getNextEdge(EdgeClass anEdgeClass);
-
-	/**
-	 * @param anEdgeClass
-	 * @return next edge of anEdgeClass or its superclasses in eSeq
-	 */
-	public Edge getNextEdge(Class<? extends Edge> anEdgeClass);
 
 	/**
 	 * @return the alpha vertex of this edge

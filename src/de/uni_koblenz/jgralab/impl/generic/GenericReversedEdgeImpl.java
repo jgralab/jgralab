@@ -123,26 +123,6 @@ public class GenericReversedEdgeImpl extends ReversedEdgeImpl implements
 	}
 
 	@Override
-	public Edge getNextIncidence(Class<? extends Edge> anEdgeClass) {
-		throw new UnsupportedOperationException(
-				"Can not call readAttributeValuesFromString for reversed Edges.");
-	}
-
-	@Override
-	public Edge getNextIncidence(Class<? extends Edge> anEdgeClass,
-			EdgeDirection orientation) {
-		throw new UnsupportedOperationException(
-				"Can not call readAttributeValuesFromString for reversed Edges.");
-	}
-
-	@Override
-	public Edge getNextIncidence(Class<? extends Edge> anEdgeClass,
-			EdgeDirection orientation, boolean noSubclasses) {
-		throw new UnsupportedOperationException(
-				"Can not call readAttributeValuesFromString for reversed Edges.");
-	}
-
-	@Override
 	public boolean isInstanceOf(EdgeClass cls) {
 		// Needs to be overridden from the base variant, because that relies on
 		// code generation.

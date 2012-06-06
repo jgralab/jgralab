@@ -44,7 +44,7 @@ import de.uni_koblenz.jgralab.schema.EdgeClass;
 
 /**
  * TODO add comment
- * 
+ *
  * @author ist@uni-koblenz.de
  */
 public abstract class ReversedEdgeBaseImpl extends IncidenceImpl implements
@@ -128,11 +128,6 @@ public abstract class ReversedEdgeBaseImpl extends IncidenceImpl implements
 
 	@Override
 	public Edge getNextEdge(EdgeClass anEdgeClass) {
-		return normalEdge.getNextEdge(anEdgeClass);
-	}
-
-	@Override
-	public Edge getNextEdge(Class<? extends Edge> anEdgeClass) {
 		return normalEdge.getNextEdge(anEdgeClass);
 	}
 

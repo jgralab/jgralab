@@ -546,16 +546,6 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 	/*
 	 * (non-Javadoc)
 	 *
-	 * @see de.uni_koblenz.jgralab.Graph#edges(java.lang.Class)
-	 */
-	@Override
-	public Iterable<Edge> edges(Class<? extends Edge> edgeClass) {
-		return new EdgeIterable<Edge>(this, edgeClass);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 *
 	 * @see
 	 * de.uni_koblenz.jgralab.Graph#edges(de.uni_koblenz.jgralab.schema.EdgeClass
 	 * )
@@ -703,25 +693,6 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 	 * (non-Javadoc)
 	 *
 	 * @see
-	 * de.uni_koblenz.jgralab.Graph#getFirstEdgeOfClassInGraph(java.lang.Class)
-	 */
-	@Override
-	public Edge getFirstEdge(Class<? extends Edge> edgeClass) {
-		assert edgeClass != null;
-		Edge currentEdge = getFirstEdge();
-		if (currentEdge == null) {
-			return null;
-		}
-		if (edgeClass.isInstance(currentEdge)) {
-			return currentEdge;
-		}
-		return currentEdge.getNextEdge(edgeClass);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
 	 * de.uni_koblenz.jgralab.Graph#getFirstEdgeOfClassInGraph(de.uni_koblenz
 	 * .jgralab.schema.EdgeClass)
 	 */
@@ -769,24 +740,6 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 			lastVertex = lastVertex.getPrevVertex();
 		}
 		return lastVertex;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see de.uni_koblenz.jgralab.Graph#getFirstVertexOfClass(java.lang.Class)
-	 */
-	@Override
-	public Vertex getFirstVertex(Class<? extends Vertex> vertexClass) {
-		assert vertexClass != null;
-		Vertex firstVertex = getFirstVertex();
-		if (firstVertex == null) {
-			return null;
-		}
-		if (vertexClass.isInstance(firstVertex)) {
-			return firstVertex;
-		}
-		return firstVertex.getNextVertex(vertexClass);
 	}
 
 	/*

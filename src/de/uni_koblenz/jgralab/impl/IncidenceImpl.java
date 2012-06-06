@@ -45,7 +45,7 @@ import de.uni_koblenz.jgralab.schema.EdgeClass;
 /**
  * Common base class for EdgeImpl and ReversedEdgeImpl. Implements incidence
  * list and related operations.
- * 
+ *
  * @author ist@uni-koblenz.de
  */
 public abstract class IncidenceImpl extends GraphElementImpl<EdgeClass, Edge>
@@ -58,9 +58,9 @@ public abstract class IncidenceImpl extends GraphElementImpl<EdgeClass, Edge>
 	public InternalEdge getNextIncidence() {
 		TraversalContext tc = graph.getTraversalContext();
 		InternalEdge nextIncidence = getNextIncidenceInISeq();
-		if (!(tc == null || nextIncidence == null || tc
+		if (!((tc == null) || (nextIncidence == null) || tc
 				.containsEdge(nextIncidence))) {
-			while (!(nextIncidence == null || tc.containsEdge(nextIncidence))) {
+			while (!((nextIncidence == null) || tc.containsEdge(nextIncidence))) {
 				nextIncidence = nextIncidence.getNextIncidenceInISeq();
 			}
 		}
@@ -71,9 +71,9 @@ public abstract class IncidenceImpl extends GraphElementImpl<EdgeClass, Edge>
 	public InternalEdge getPrevIncidence() {
 		TraversalContext tc = graph.getTraversalContext();
 		InternalEdge prevIncidence = getPrevIncidenceInISeq();
-		if (!(tc == null || prevIncidence == null || tc
+		if (!((tc == null) || (prevIncidence == null) || tc
 				.containsEdge(prevIncidence))) {
-			while (!(prevIncidence == null || tc.containsEdge(prevIncidence))) {
+			while (!((prevIncidence == null) || tc.containsEdge(prevIncidence))) {
 				prevIncidence = prevIncidence.getPrevIncidenceInISeq();
 			}
 		}
@@ -82,7 +82,7 @@ public abstract class IncidenceImpl extends GraphElementImpl<EdgeClass, Edge>
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.uni_koblenz.jgralab.Edge#getNextEdge(de.uni_koblenz.jgralab.EdgeDirection
 	 * )
@@ -111,7 +111,7 @@ public abstract class IncidenceImpl extends GraphElementImpl<EdgeClass, Edge>
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.uni_koblenz.jgralab.Edge#getNextEdge(boolean,
 	 * de.uni_koblenz.jgralab.schema.AggregationKind[])
 	 */
@@ -137,11 +137,13 @@ public abstract class IncidenceImpl extends GraphElementImpl<EdgeClass, Edge>
 
 	/*
 	 * (non-Javadoc)
-	 * 
-	 * @see de.uni_koblenz.jgralab.Edge#getNextEdgeOfClass(java.lang.Class)
+	 *
+	 * @see
+	 * de.uni_koblenz.jgralab.Edge#getNextEdgeOfClass(de.uni_koblenz.jgralab
+	 * .schema.EdgeClass)
 	 */
 	@Override
-	public Edge getNextIncidence(Class<? extends Edge> anEdgeClass) {
+	public Edge getNextIncidence(EdgeClass anEdgeClass) {
 		assert anEdgeClass != null;
 		assert isValid();
 		return getNextIncidence(anEdgeClass, EdgeDirection.INOUT, false);
@@ -149,12 +151,27 @@ public abstract class IncidenceImpl extends GraphElementImpl<EdgeClass, Edge>
 
 	/*
 	 * (non-Javadoc)
-	 * 
-	 * @see de.uni_koblenz.jgralab.Edge#getNextEdgeOfClass(java.lang.Class,
-	 * de.uni_koblenz.jgralab.EdgeDirection)
+	 *
+	 * @see
+	 * de.uni_koblenz.jgralab.Edge#getNextEdgeOfClass(de.uni_koblenz.jgralab
+	 * .schema.EdgeClass, boolean)
 	 */
 	@Override
-	public Edge getNextIncidence(Class<? extends Edge> anEdgeClass,
+	public Edge getNextIncidence(EdgeClass anEdgeClass, boolean noSubclasses) {
+		assert anEdgeClass != null;
+		assert isValid();
+		return getNextIncidence(anEdgeClass, EdgeDirection.INOUT, noSubclasses);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see
+	 * de.uni_koblenz.jgralab.Edge#getNextEdgeOfClass(de.uni_koblenz.jgralab
+	 * .schema.EdgeClass, de.uni_koblenz.jgralab.EdgeDirection)
+	 */
+	@Override
+	public Edge getNextIncidence(EdgeClass anEdgeClass,
 			EdgeDirection orientation) {
 		assert anEdgeClass != null;
 		assert isValid();
@@ -163,23 +180,24 @@ public abstract class IncidenceImpl extends GraphElementImpl<EdgeClass, Edge>
 
 	/*
 	 * (non-Javadoc)
-	 * 
-	 * @see de.uni_koblenz.jgralab.Edge#getNextEdgeOfClass(java.lang.Class,
-	 * de.uni_koblenz.jgralab.EdgeDirection, boolean)
+	 *
+	 * @see
+	 * de.uni_koblenz.jgralab.Edge#getNextEdgeOfClass(de.uni_koblenz.jgralab
+	 * .schema.EdgeClass, de.uni_koblenz.jgralab.EdgeDirection, boolean)
 	 */
 	@Override
-	public Edge getNextIncidence(Class<? extends Edge> anEdgeClass,
+	public Edge getNextIncidence(EdgeClass anEdgeClass,
 			EdgeDirection orientation, boolean noSubclasses) {
 		assert anEdgeClass != null;
 		assert isValid();
 		Edge currentEdge = getNextIncidence(orientation);
 		while (currentEdge != null) {
 			if (noSubclasses) {
-				if (anEdgeClass == currentEdge.getSchemaClass()) {
+				if (anEdgeClass == currentEdge.getAttributedElementClass()) {
 					return currentEdge;
 				}
 			} else {
-				if (anEdgeClass.isInstance(currentEdge)) {
+				if (currentEdge.isInstanceOf(anEdgeClass)) {
 					return currentEdge;
 				}
 			}
@@ -190,75 +208,7 @@ public abstract class IncidenceImpl extends GraphElementImpl<EdgeClass, Edge>
 
 	/*
 	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * de.uni_koblenz.jgralab.Edge#getNextEdgeOfClass(de.uni_koblenz.jgralab
-	 * .schema.EdgeClass)
-	 */
-	@Override
-	public Edge getNextIncidence(EdgeClass anEdgeClass) {
-		assert anEdgeClass != null;
-		assert isValid();
-		return getNextIncidence(anEdgeClass.getSchemaClass(),
-				EdgeDirection.INOUT, false);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * de.uni_koblenz.jgralab.Edge#getNextEdgeOfClass(de.uni_koblenz.jgralab
-	 * .schema.EdgeClass, boolean)
-	 */
-	@Override
-	public Edge getNextIncidence(EdgeClass anEdgeClass, boolean noSubclasses) {
-		assert anEdgeClass != null;
-		assert isValid();
-		return getNextIncidence(anEdgeClass.getSchemaClass(),
-				EdgeDirection.INOUT, noSubclasses);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * de.uni_koblenz.jgralab.Edge#getNextEdgeOfClass(de.uni_koblenz.jgralab
-	 * .schema.EdgeClass, de.uni_koblenz.jgralab.EdgeDirection)
-	 */
-	@Override
-	public Edge getNextIncidence(EdgeClass anEdgeClass,
-			EdgeDirection orientation) {
-		assert anEdgeClass != null;
-		assert isValid();
-		return getNextIncidence(anEdgeClass.getSchemaClass(), orientation,
-				false);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * de.uni_koblenz.jgralab.Edge#getNextEdgeOfClass(de.uni_koblenz.jgralab
-	 * .schema.EdgeClass, de.uni_koblenz.jgralab.EdgeDirection, boolean)
-	 */
-	@Override
-	public Edge getNextIncidence(EdgeClass anEdgeClass,
-			EdgeDirection orientation, boolean noSubclasses) {
-		assert anEdgeClass != null;
-		assert isValid();
-		return getNextIncidence(anEdgeClass.getSchemaClass(), orientation,
-				noSubclasses);
-	}
-
-	@Override
-	public Edge getNextIncidence(Class<? extends Edge> anEdgeClass,
-			boolean noSubclasses) {
-		return getNextIncidence(anEdgeClass, EdgeDirection.INOUT, noSubclasses);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.uni_koblenz.jgralab.Edge#isBefore(de.uni_koblenz.jgralab.Edge)
 	 */
 	@Override
@@ -281,7 +231,7 @@ public abstract class IncidenceImpl extends GraphElementImpl<EdgeClass, Edge>
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.uni_koblenz.jgralab.Edge#isAfter(de.uni_koblenz.jgralab.Edge)
 	 */
 	@Override
@@ -304,7 +254,7 @@ public abstract class IncidenceImpl extends GraphElementImpl<EdgeClass, Edge>
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.uni_koblenz.jgralab.Edge#putEdgeBefore(de.uni_koblenz.jgralab.Edge)
 	 */
@@ -326,7 +276,7 @@ public abstract class IncidenceImpl extends GraphElementImpl<EdgeClass, Edge>
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.uni_koblenz.jgralab.Edge#putEdgeAfter(de.uni_koblenz.jgralab.Edge)
 	 */

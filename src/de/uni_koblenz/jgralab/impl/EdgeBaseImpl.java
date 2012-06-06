@@ -135,26 +135,6 @@ public abstract class EdgeBaseImpl extends IncidenceImpl implements Edge,
 	 * (non-Javadoc)
 	 *
 	 * @see
-	 * de.uni_koblenz.jgralab.Edge#getNextEdgeOfClassInGraph(java.lang.Class)
-	 */
-	@Override
-	public Edge getNextEdge(Class<? extends Edge> anEdgeClass) {
-		assert anEdgeClass != null;
-		assert isValid();
-		Edge currentEdge = getNextEdge();
-		while (currentEdge != null) {
-			if (anEdgeClass.isInstance(currentEdge)) {
-				return currentEdge;
-			}
-			currentEdge = currentEdge.getNextEdge();
-		}
-		return null;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
 	 * de.uni_koblenz.jgralab.Edge#getNextEdgeOfClassInGraph(de.uni_koblenz.
 	 * jgralab.schema.EdgeClass)
 	 */

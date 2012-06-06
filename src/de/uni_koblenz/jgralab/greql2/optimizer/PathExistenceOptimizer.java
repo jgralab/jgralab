@@ -62,9 +62,9 @@ import de.uni_koblenz.jgralab.greql2.schema.Variable;
  * This {@link Optimizer} transforms {@link PathExistence} vertices to
  * {@link FunctionApplication}s of the {@link Contains} function applied to a
  * {@link PathExpression}.
- * 
+ *
  * @author ist@uni-koblenz.de
- * 
+ *
  */
 public class PathExistenceOptimizer extends OptimizerBase {
 
@@ -77,7 +77,7 @@ public class PathExistenceOptimizer extends OptimizerBase {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.uni_koblenz.jgralab.greql2.optimizer.Optimizer#isEquivalent(de.uni_koblenz
 	 * .jgralab.greql2.optimizer.Optimizer)
@@ -92,7 +92,7 @@ public class PathExistenceOptimizer extends OptimizerBase {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.uni_koblenz.jgralab.greql2.optimizer.Optimizer#optimize(de.uni_koblenz
 	 * .jgralab.greql2.evaluator.GreqlEvaluator,
@@ -101,7 +101,7 @@ public class PathExistenceOptimizer extends OptimizerBase {
 	@Override
 	public boolean optimize(GreqlEvaluator eval, Greql2 syntaxgraph)
 			throws OptimizerException {
-		if (syntaxgraph.getFirstVertex(PathExistence.class) == null) {
+		if (syntaxgraph.getFirstVertex(PathExistence.VC) == null) {
 			return false;
 		}
 
@@ -136,10 +136,10 @@ public class PathExistenceOptimizer extends OptimizerBase {
 	 * Check if it's worth to replace the given {@link PathExistence}
 	 * <code>pe</code> with a {@link FunctionApplication} of the
 	 * {@link Contains} function combined with a {@link PathExpression}.
-	 * 
+	 *
 	 * Such a transformation remunerates if the {@link PathExpression} isn't
 	 * evaluated as often as the {@link PathExistence} is. Here's an example:
-	 * 
+	 *
 	 * The {@link PathExistence} <code>a --&gt; b</code> has to be evaluated
 	 * whenever <code>a</code> or <code>b</code> change their value. If
 	 * <code>a</code> is declared before <code>b</code>, then
@@ -147,13 +147,13 @@ public class PathExistenceOptimizer extends OptimizerBase {
 	 * {@link ForwardVertexSet} <code>a --&gt;</code> has only to be evaluated
 	 * when <code>a</code> changes its value. In that case that happens only all
 	 * <code>|b|</code> steps.
-	 * 
+	 *
 	 * If <code>b</code> is declared before <code>a</code>, then
 	 * <code>contains(--&gt; b, a)</code> is faster, because the costly
 	 * {@link BackwardVertexSet} <code>--&gt; b</code> has only to be evaluated
 	 * when <code>b</code> changes its value. In that case that happens only all
 	 * <code>|a|</code> steps.
-	 * 
+	 *
 	 * @param pe
 	 *            a {@link PathExistence} vertex
 	 */
@@ -212,7 +212,7 @@ public class PathExistenceOptimizer extends OptimizerBase {
 	/**
 	 * Replace the given {@link PathExistence} vertex <code>pe</code> with a
 	 * {@link FunctionApplication} of the {@link Contains} function.
-	 * 
+	 *
 	 * @param pe
 	 *            the {@link PathExistence} to replace
 	 * @param startOrTargetExp
@@ -276,7 +276,7 @@ public class PathExistenceOptimizer extends OptimizerBase {
 	/**
 	 * Collect all {@link PathExistence} vertices in the current {@link Greql2}
 	 * graph.
-	 * 
+	 *
 	 * @return a {@link Set} of all {@link PathExistence} vertices of the
 	 *         current {@link Greql2} graph.
 	 */

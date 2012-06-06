@@ -358,7 +358,6 @@ public class ParserTest {
 		lit = graph.getFirstIntLiteral();
 		assertNotNull(lit);
 		assertEquals(10, lit.get_intValue());
-		int x = 0x5;
 	}
 
 	@Test
@@ -381,11 +380,11 @@ public class ParserTest {
 		assertEquals(Long.MAX_VALUE, lit.get_longValue());
 		assertLongLiteralEquals("7", 7);
 	}
-	
+
 	@Test
 	public void testDoubleLiteral() throws Exception {
-	//	assertDoubleLiteralEquals("5.0", 5.0);
-	//	assertDoubleLiteralEquals("0.5", 0.5);
+		// assertDoubleLiteralEquals("5.0", 5.0);
+		// assertDoubleLiteralEquals("0.5", 0.5);
 		assertDoubleLiteralEquals("046E3", 046e3);
 		assertDoubleLiteralEquals("046e-3", 046e-3);
 	}
@@ -400,15 +399,16 @@ public class ParserTest {
 		assertNotNull(value);
 		assertEquals(expectedValue, value, DELTA);
 	}
-	
+
 	public void assertLongLiteralEquals(String literal, long expectedValue) {
 		Greql2 graph = parseQuery(literal);
 		LongLiteral lit = graph.getFirstLongLiteral();
 		long value = 0;
-		if (lit != null)
+		if (lit != null) {
 			value = lit.get_longValue();
-		else 
+		} else {
 			value = graph.getFirstIntLiteral().get_intValue();
+		}
 		System.out.println("Value in graph " + value);
 		assertNotNull(value);
 		assertEquals(expectedValue, value);
@@ -441,7 +441,7 @@ public class ParserTest {
 		Greql2 graph = parseQuery("list(10,11,12,13)");
 		ListConstruction constr = graph.getFirstListConstruction();
 		assertNotNull(constr);
-		assertEquals(4, constr.getDegree(IsPartOf.class));
+		assertEquals(4, constr.getDegree(IsPartOf.EC));
 	}
 
 	@Test
@@ -507,7 +507,7 @@ public class ParserTest {
 		Greql2 graph = parseQuery("set(10,11,12,13)");
 		SetConstruction constr = graph.getFirstSetConstruction();
 		assertNotNull(constr);
-		assertEquals(4, constr.getDegree(IsPartOf.class));
+		assertEquals(4, constr.getDegree(IsPartOf.EC));
 	}
 
 	@Test
@@ -910,7 +910,7 @@ public class ParserTest {
 		Greql2 graph = parseQuery("V{FirstType, SecondType, ^ThirdType}");
 		VertexSetExpression vset = graph.getFirstVertexSetExpression();
 		assertNotNull(vset);
-		assertEquals(3, vset.getDegree(IsTypeRestrOfExpression.class));
+		assertEquals(3, vset.getDegree(IsTypeRestrOfExpression.EC));
 		IsTypeRestrOfExpression typeEdge = vset
 				.getFirstIsTypeRestrOfExpressionIncidence();
 		TypeId typeId = (TypeId) typeEdge.getAlpha();
@@ -931,7 +931,7 @@ public class ParserTest {
 		Greql2 graph = parseQuery("E{^FirstType, ^SecondType, ThirdType}");
 		EdgeSetExpression vset = graph.getFirstEdgeSetExpression();
 		assertNotNull(vset);
-		assertEquals(3, vset.getDegree(IsTypeRestrOfExpression.class));
+		assertEquals(3, vset.getDegree(IsTypeRestrOfExpression.EC));
 		IsTypeRestrOfExpression typeEdge = vset
 				.getFirstIsTypeRestrOfExpressionIncidence();
 		TypeId typeId = (TypeId) typeEdge.getAlpha();

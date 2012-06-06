@@ -213,19 +213,6 @@ public interface Graph extends AttributedElement<GraphClass, Graph> {
 	public Vertex getFirstVertex(VertexClass vertexClass);
 
 	/**
-	 * Returns the first {@link Vertex} of the specified VertexClass (including
-	 * subclasses) in the vertex sequence of this {@link Graph}.
-	 *
-	 * @param vertexClass
-	 *            a VertexClass (i.e. an schema interface extending
-	 *            {@link Vertex})
-	 *
-	 * @return the first {@link Vertex}, or null if this {@link Graph} contains
-	 *         no vertices of the specified <code>vertexClass</code>.
-	 */
-	public Vertex getFirstVertex(Class<? extends Vertex> vertexClass);
-
-	/**
 	 * Returns the first {@link Edge} in the edge sequence of this {@link Graph}
 	 * .
 	 *
@@ -252,18 +239,6 @@ public interface Graph extends AttributedElement<GraphClass, Graph> {
 	 *         edges of the specified {@link EdgeClass}.
 	 */
 	public Edge getFirstEdge(EdgeClass edgeClass);
-
-	/**
-	 * Returns the first {@link Edge} of the specified <code>edgeClass</code>
-	 * (including subclasses) in the edge sequence of this {@link Graph}.
-	 *
-	 * @param edgeClass
-	 *            an EdgeClass (i.e. an schema interface extending Edge)
-	 *
-	 * @return the first {@link Edge}, or null if this {@link Graph} contains no
-	 *         edges of the specified <code>edgeClass</code>.
-	 */
-	public Edge getFirstEdge(Class<? extends Edge> edgeClass);
 
 	/**
 	 * Returns the {@link Vertex} with the specified <code>id</code> if such a
@@ -330,19 +305,6 @@ public interface Graph extends AttributedElement<GraphClass, Graph> {
 	 *         {@link EdgeClass}
 	 */
 	public Iterable<Edge> edges(EdgeClass edgeClass);
-
-	/**
-	 * Returns an {@code Iterable} which iterates over all edges of this
-	 * {@link Graph} which have the specified <code>edgeClass</code> (including
-	 * subclasses), in the order determined by the edge sequence.
-	 *
-	 * @param edgeClass
-	 *            an EdgeClass (i.e. an schema interface extending Edge)
-	 *
-	 * @return an {@code Iterable} for all edges of the specified
-	 *         <code>edgeClass</code>
-	 */
-	public Iterable<Edge> edges(Class<? extends Edge> edgeClass);
 
 	/**
 	 * Returns an {@code Iterable} which iterates over all vertices of this

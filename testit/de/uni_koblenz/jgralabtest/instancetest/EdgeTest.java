@@ -159,7 +159,7 @@ public class EdgeTest extends InstanceTest {
 	 * If you create several edges and you delete one, the next edge should get
 	 * the id of the deleted edge. If you create a further edge it should get
 	 * the next free id.
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	@Test
@@ -212,7 +212,7 @@ public class EdgeTest extends InstanceTest {
 	// tests of the method Edge getNextEdge(EdgeDirection orientation);
 	/**
 	 * There exists only one edge in the graph
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -237,7 +237,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Test in a manually built graph.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -308,7 +308,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Test in a randomly built graph
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	@Test
@@ -424,7 +424,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Creates an array of the EdgeClasses.
-	 * 
+	 *
 	 * @return {Link, SubLink, LinkBack}
 	 * @throws CommitFailedException
 	 */
@@ -449,7 +449,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * An edge which has no following edges.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -471,7 +471,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Test in a manually built graph.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -518,7 +518,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Test in a randomly built graph
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -608,7 +608,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * An edge which has no following edges.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -620,15 +620,15 @@ public class EdgeTest extends InstanceTest {
 		commit(g);
 
 		createReadOnlyTransaction(g);
-		assertNull(e1.getNextIncidence(Link.class));
-		assertNull(e1.getNextIncidence(SubLink.class));
-		assertNull(e1.getNextIncidence(LinkBack.class));
+		assertNull(e1.getNextIncidence(Link.EC));
+		assertNull(e1.getNextIncidence(SubLink.EC));
+		assertNull(e1.getNextIncidence(LinkBack.EC));
 		commit(g);
 	}
 
 	/**
 	 * Test in a manually built graph.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -645,35 +645,35 @@ public class EdgeTest extends InstanceTest {
 
 		createReadOnlyTransaction(g);
 		// test of edge e1
-		assertEquals(e3.getReversedEdge(), e1.getNextIncidence(Link.class));
-		assertEquals(e3.getReversedEdge(), e1.getNextIncidence(SubLink.class));
-		assertEquals(e2, e1.getNextIncidence(LinkBack.class));
+		assertEquals(e3.getReversedEdge(), e1.getNextIncidence(Link.EC));
+		assertEquals(e3.getReversedEdge(), e1.getNextIncidence(SubLink.EC));
+		assertEquals(e2, e1.getNextIncidence(LinkBack.EC));
 		// test of edge e2
-		assertEquals(e3.getReversedEdge(), e2.getNextIncidence(Link.class));
-		assertEquals(e3.getReversedEdge(), e2.getNextIncidence(SubLink.class));
-		assertEquals(e5, e2.getNextIncidence(LinkBack.class));
+		assertEquals(e3.getReversedEdge(), e2.getNextIncidence(Link.EC));
+		assertEquals(e3.getReversedEdge(), e2.getNextIncidence(SubLink.EC));
+		assertEquals(e5, e2.getNextIncidence(LinkBack.EC));
 		// test of edge e3
-		assertEquals(e4, e3.getReversedEdge().getNextIncidence(Link.class));
-		assertNull(e3.getReversedEdge().getNextIncidence(SubLink.class));
-		assertEquals(e5, e3.getReversedEdge().getNextIncidence(LinkBack.class));
+		assertEquals(e4, e3.getReversedEdge().getNextIncidence(Link.EC));
+		assertNull(e3.getReversedEdge().getNextIncidence(SubLink.EC));
+		assertEquals(e5, e3.getReversedEdge().getNextIncidence(LinkBack.EC));
 		// test of edge e4
-		assertEquals(e4.getReversedEdge(), e4.getNextIncidence(Link.class));
-		assertNull(e4.getNextIncidence(SubLink.class));
-		assertEquals(e5, e4.getNextIncidence(LinkBack.class));
+		assertEquals(e4.getReversedEdge(), e4.getNextIncidence(Link.EC));
+		assertNull(e4.getNextIncidence(SubLink.EC));
+		assertEquals(e5, e4.getNextIncidence(LinkBack.EC));
 		// test of edge e4.getReversedEdge
-		assertNull(e4.getReversedEdge().getNextIncidence(Link.class));
-		assertNull(e4.getReversedEdge().getNextIncidence(SubLink.class));
-		assertEquals(e5, e4.getReversedEdge().getNextIncidence(LinkBack.class));
+		assertNull(e4.getReversedEdge().getNextIncidence(Link.EC));
+		assertNull(e4.getReversedEdge().getNextIncidence(SubLink.EC));
+		assertEquals(e5, e4.getReversedEdge().getNextIncidence(LinkBack.EC));
 		// test of edge e5
-		assertNull(e5.getNextIncidence(Link.class));
-		assertNull(e5.getNextIncidence(SubLink.class));
-		assertNull(e5.getNextIncidence(LinkBack.class));
+		assertNull(e5.getNextIncidence(Link.EC));
+		assertNull(e5.getNextIncidence(SubLink.EC));
+		assertNull(e5.getNextIncidence(LinkBack.EC));
 		commit(g);
 	}
 
 	/**
 	 * Test in a randomly built graph
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -749,9 +749,9 @@ public class EdgeTest extends InstanceTest {
 			createReadOnlyTransaction(g);
 			for (int k = 0; k < edges.length; k++) {
 				Edge e = edges[k];
-				assertEquals(link[k], e.getNextIncidence(Link.class));
-				assertEquals(sublink[k], e.getNextIncidence(SubLink.class));
-				assertEquals(linkback[k], e.getNextIncidence(LinkBack.class));
+				assertEquals(link[k], e.getNextIncidence(Link.EC));
+				assertEquals(sublink[k], e.getNextIncidence(SubLink.EC));
+				assertEquals(linkback[k], e.getNextIncidence(LinkBack.EC));
 			}
 			commit(g);
 		}
@@ -762,7 +762,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * An edge which has no following edges.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -791,7 +791,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Test in a manually built graph.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -912,7 +912,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Test in a randomly built graph
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -1103,7 +1103,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * An edge which has no following edges.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -1116,21 +1116,21 @@ public class EdgeTest extends InstanceTest {
 		commit(g);
 
 		createReadOnlyTransaction(g);
-		assertNull(e1.getNextIncidence(Link.class, EdgeDirection.INOUT));
-		assertNull(e1.getNextIncidence(SubLink.class, EdgeDirection.INOUT));
-		assertNull(e1.getNextIncidence(LinkBack.class, EdgeDirection.INOUT));
-		assertNull(e1.getNextIncidence(Link.class, EdgeDirection.OUT));
-		assertNull(e1.getNextIncidence(SubLink.class, EdgeDirection.OUT));
-		assertNull(e1.getNextIncidence(LinkBack.class, EdgeDirection.OUT));
-		assertNull(e1.getNextIncidence(Link.class, EdgeDirection.IN));
-		assertNull(e1.getNextIncidence(SubLink.class, EdgeDirection.IN));
-		assertNull(e1.getNextIncidence(LinkBack.class, EdgeDirection.IN));
+		assertNull(e1.getNextIncidence(Link.EC, EdgeDirection.INOUT));
+		assertNull(e1.getNextIncidence(SubLink.EC, EdgeDirection.INOUT));
+		assertNull(e1.getNextIncidence(LinkBack.EC, EdgeDirection.INOUT));
+		assertNull(e1.getNextIncidence(Link.EC, EdgeDirection.OUT));
+		assertNull(e1.getNextIncidence(SubLink.EC, EdgeDirection.OUT));
+		assertNull(e1.getNextIncidence(LinkBack.EC, EdgeDirection.OUT));
+		assertNull(e1.getNextIncidence(Link.EC, EdgeDirection.IN));
+		assertNull(e1.getNextIncidence(SubLink.EC, EdgeDirection.IN));
+		assertNull(e1.getNextIncidence(LinkBack.EC, EdgeDirection.IN));
 		commit(g);
 	}
 
 	/**
 	 * Test in a manually built graph.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -1149,113 +1149,113 @@ public class EdgeTest extends InstanceTest {
 		createReadOnlyTransaction(g);
 		// test of edge e1
 		assertEquals(e3.getReversedEdge(),
-				e1.getNextIncidence(Link.class, EdgeDirection.INOUT));
+				e1.getNextIncidence(Link.EC, EdgeDirection.INOUT));
 		assertEquals(e3.getReversedEdge(),
-				e1.getNextIncidence(SubLink.class, EdgeDirection.INOUT));
+				e1.getNextIncidence(SubLink.EC, EdgeDirection.INOUT));
 		assertEquals(e2,
-				e1.getNextIncidence(LinkBack.class, EdgeDirection.INOUT));
-		assertEquals(e4, e1.getNextIncidence(Link.class, EdgeDirection.OUT));
-		assertNull(e1.getNextIncidence(SubLink.class, EdgeDirection.OUT));
-		assertEquals(e2, e1.getNextIncidence(LinkBack.class, EdgeDirection.OUT));
+				e1.getNextIncidence(LinkBack.EC, EdgeDirection.INOUT));
+		assertEquals(e4, e1.getNextIncidence(Link.EC, EdgeDirection.OUT));
+		assertNull(e1.getNextIncidence(SubLink.EC, EdgeDirection.OUT));
+		assertEquals(e2, e1.getNextIncidence(LinkBack.EC, EdgeDirection.OUT));
 		assertEquals(e3.getReversedEdge(),
-				e1.getNextIncidence(Link.class, EdgeDirection.IN));
+				e1.getNextIncidence(Link.EC, EdgeDirection.IN));
 		assertEquals(e3.getReversedEdge(),
-				e1.getNextIncidence(SubLink.class, EdgeDirection.IN));
-		assertNull(e1.getNextIncidence(LinkBack.class, EdgeDirection.IN));
+				e1.getNextIncidence(SubLink.EC, EdgeDirection.IN));
+		assertNull(e1.getNextIncidence(LinkBack.EC, EdgeDirection.IN));
 		// test of edge e2
 		assertEquals(e3.getReversedEdge(),
-				e2.getNextIncidence(Link.class, EdgeDirection.INOUT));
+				e2.getNextIncidence(Link.EC, EdgeDirection.INOUT));
 		assertEquals(e3.getReversedEdge(),
-				e2.getNextIncidence(SubLink.class, EdgeDirection.INOUT));
+				e2.getNextIncidence(SubLink.EC, EdgeDirection.INOUT));
 		assertEquals(e5,
-				e2.getNextIncidence(LinkBack.class, EdgeDirection.INOUT));
-		assertEquals(e4, e2.getNextIncidence(Link.class, EdgeDirection.OUT));
-		assertNull(e2.getNextIncidence(SubLink.class, EdgeDirection.OUT));
-		assertEquals(e5, e2.getNextIncidence(LinkBack.class, EdgeDirection.OUT));
+				e2.getNextIncidence(LinkBack.EC, EdgeDirection.INOUT));
+		assertEquals(e4, e2.getNextIncidence(Link.EC, EdgeDirection.OUT));
+		assertNull(e2.getNextIncidence(SubLink.EC, EdgeDirection.OUT));
+		assertEquals(e5, e2.getNextIncidence(LinkBack.EC, EdgeDirection.OUT));
 		assertEquals(e3.getReversedEdge(),
-				e2.getNextIncidence(Link.class, EdgeDirection.IN));
+				e2.getNextIncidence(Link.EC, EdgeDirection.IN));
 		assertEquals(e3.getReversedEdge(),
-				e2.getNextIncidence(SubLink.class, EdgeDirection.IN));
-		assertNull(e2.getNextIncidence(LinkBack.class, EdgeDirection.IN));
+				e2.getNextIncidence(SubLink.EC, EdgeDirection.IN));
+		assertNull(e2.getNextIncidence(LinkBack.EC, EdgeDirection.IN));
 		// test of edge e3
 		assertEquals(
 				e4,
-				e3.getReversedEdge().getNextIncidence(Link.class,
+				e3.getReversedEdge().getNextIncidence(Link.EC,
 						EdgeDirection.INOUT));
-		assertNull(e3.getReversedEdge().getNextIncidence(SubLink.class,
+		assertNull(e3.getReversedEdge().getNextIncidence(SubLink.EC,
 				EdgeDirection.INOUT));
 		assertEquals(
 				e5,
-				e3.getReversedEdge().getNextIncidence(LinkBack.class,
+				e3.getReversedEdge().getNextIncidence(LinkBack.EC,
 						EdgeDirection.INOUT));
 		assertEquals(
 				e4,
-				e3.getReversedEdge().getNextIncidence(Link.class,
+				e3.getReversedEdge().getNextIncidence(Link.EC,
 						EdgeDirection.OUT));
-		assertNull(e3.getReversedEdge().getNextIncidence(SubLink.class,
+		assertNull(e3.getReversedEdge().getNextIncidence(SubLink.EC,
 				EdgeDirection.OUT));
 		assertEquals(
 				e5,
-				e3.getReversedEdge().getNextIncidence(LinkBack.class,
+				e3.getReversedEdge().getNextIncidence(LinkBack.EC,
 						EdgeDirection.OUT));
 		assertEquals(e4.getReversedEdge(), e3.getReversedEdge()
-				.getNextIncidence(Link.class, EdgeDirection.IN));
-		assertNull(e3.getReversedEdge().getNextIncidence(SubLink.class,
+				.getNextIncidence(Link.EC, EdgeDirection.IN));
+		assertNull(e3.getReversedEdge().getNextIncidence(SubLink.EC,
 				EdgeDirection.IN));
-		assertNull(e3.getReversedEdge().getNextIncidence(LinkBack.class,
+		assertNull(e3.getReversedEdge().getNextIncidence(LinkBack.EC,
 				EdgeDirection.IN));
 		// test of edge e4
 		assertEquals(e4.getReversedEdge(),
-				e4.getNextIncidence(Link.class, EdgeDirection.INOUT));
-		assertNull(e4.getNextIncidence(SubLink.class, EdgeDirection.INOUT));
+				e4.getNextIncidence(Link.EC, EdgeDirection.INOUT));
+		assertNull(e4.getNextIncidence(SubLink.EC, EdgeDirection.INOUT));
 		assertEquals(e5,
-				e4.getNextIncidence(LinkBack.class, EdgeDirection.INOUT));
-		assertNull(e4.getNextIncidence(Link.class, EdgeDirection.OUT));
-		assertNull(e4.getNextIncidence(SubLink.class, EdgeDirection.OUT));
-		assertEquals(e5, e4.getNextIncidence(LinkBack.class, EdgeDirection.OUT));
+				e4.getNextIncidence(LinkBack.EC, EdgeDirection.INOUT));
+		assertNull(e4.getNextIncidence(Link.EC, EdgeDirection.OUT));
+		assertNull(e4.getNextIncidence(SubLink.EC, EdgeDirection.OUT));
+		assertEquals(e5, e4.getNextIncidence(LinkBack.EC, EdgeDirection.OUT));
 		assertEquals(e4.getReversedEdge(),
-				e4.getNextIncidence(Link.class, EdgeDirection.IN));
-		assertNull(e4.getNextIncidence(SubLink.class, EdgeDirection.IN));
-		assertNull(e4.getNextIncidence(LinkBack.class, EdgeDirection.IN));
+				e4.getNextIncidence(Link.EC, EdgeDirection.IN));
+		assertNull(e4.getNextIncidence(SubLink.EC, EdgeDirection.IN));
+		assertNull(e4.getNextIncidence(LinkBack.EC, EdgeDirection.IN));
 		// test of edge e4.getReversedEdge
-		assertNull(e4.getReversedEdge().getNextIncidence(Link.class,
+		assertNull(e4.getReversedEdge().getNextIncidence(Link.EC,
 				EdgeDirection.INOUT));
-		assertNull(e4.getReversedEdge().getNextIncidence(SubLink.class,
+		assertNull(e4.getReversedEdge().getNextIncidence(SubLink.EC,
 				EdgeDirection.INOUT));
 		assertEquals(
 				e5,
-				e4.getReversedEdge().getNextIncidence(LinkBack.class,
+				e4.getReversedEdge().getNextIncidence(LinkBack.EC,
 						EdgeDirection.INOUT));
-		assertNull(e4.getReversedEdge().getNextIncidence(Link.class,
+		assertNull(e4.getReversedEdge().getNextIncidence(Link.EC,
 				EdgeDirection.OUT));
-		assertNull(e4.getReversedEdge().getNextIncidence(SubLink.class,
+		assertNull(e4.getReversedEdge().getNextIncidence(SubLink.EC,
 				EdgeDirection.OUT));
 		assertEquals(
 				e5,
-				e4.getReversedEdge().getNextIncidence(LinkBack.class,
+				e4.getReversedEdge().getNextIncidence(LinkBack.EC,
 						EdgeDirection.OUT));
-		assertNull(e4.getReversedEdge().getNextIncidence(Link.class,
+		assertNull(e4.getReversedEdge().getNextIncidence(Link.EC,
 				EdgeDirection.IN));
-		assertNull(e4.getReversedEdge().getNextIncidence(SubLink.class,
+		assertNull(e4.getReversedEdge().getNextIncidence(SubLink.EC,
 				EdgeDirection.IN));
-		assertNull(e4.getReversedEdge().getNextIncidence(LinkBack.class,
+		assertNull(e4.getReversedEdge().getNextIncidence(LinkBack.EC,
 				EdgeDirection.IN));
 		// test of edge e5
-		assertNull(e5.getNextIncidence(Link.class, EdgeDirection.INOUT));
-		assertNull(e5.getNextIncidence(SubLink.class, EdgeDirection.INOUT));
-		assertNull(e5.getNextIncidence(LinkBack.class, EdgeDirection.INOUT));
-		assertNull(e5.getNextIncidence(Link.class, EdgeDirection.OUT));
-		assertNull(e5.getNextIncidence(SubLink.class, EdgeDirection.OUT));
-		assertNull(e5.getNextIncidence(LinkBack.class, EdgeDirection.OUT));
-		assertNull(e5.getNextIncidence(Link.class, EdgeDirection.IN));
-		assertNull(e5.getNextIncidence(SubLink.class, EdgeDirection.IN));
-		assertNull(e5.getNextIncidence(LinkBack.class, EdgeDirection.IN));
+		assertNull(e5.getNextIncidence(Link.EC, EdgeDirection.INOUT));
+		assertNull(e5.getNextIncidence(SubLink.EC, EdgeDirection.INOUT));
+		assertNull(e5.getNextIncidence(LinkBack.EC, EdgeDirection.INOUT));
+		assertNull(e5.getNextIncidence(Link.EC, EdgeDirection.OUT));
+		assertNull(e5.getNextIncidence(SubLink.EC, EdgeDirection.OUT));
+		assertNull(e5.getNextIncidence(LinkBack.EC, EdgeDirection.OUT));
+		assertNull(e5.getNextIncidence(Link.EC, EdgeDirection.IN));
+		assertNull(e5.getNextIncidence(SubLink.EC, EdgeDirection.IN));
+		assertNull(e5.getNextIncidence(LinkBack.EC, EdgeDirection.IN));
 		commit(g);
 	}
 
 	/**
 	 * Test in a randomly built graph
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -1419,23 +1419,23 @@ public class EdgeTest extends InstanceTest {
 			for (int k = 0; k < edges.length; k++) {
 				Edge e = edges[k];
 				assertEquals(linkinout[k],
-						e.getNextIncidence(Link.class, EdgeDirection.INOUT));
+						e.getNextIncidence(Link.EC, EdgeDirection.INOUT));
 				assertEquals(sublinkinout[k],
-						e.getNextIncidence(SubLink.class, EdgeDirection.INOUT));
+						e.getNextIncidence(SubLink.EC, EdgeDirection.INOUT));
 				assertEquals(linkbackinout[k],
-						e.getNextIncidence(LinkBack.class, EdgeDirection.INOUT));
+						e.getNextIncidence(LinkBack.EC, EdgeDirection.INOUT));
 				assertEquals(linkout[k],
-						e.getNextIncidence(Link.class, EdgeDirection.OUT));
+						e.getNextIncidence(Link.EC, EdgeDirection.OUT));
 				assertEquals(sublinkout[k],
-						e.getNextIncidence(SubLink.class, EdgeDirection.OUT));
+						e.getNextIncidence(SubLink.EC, EdgeDirection.OUT));
 				assertEquals(linkbackout[k],
-						e.getNextIncidence(LinkBack.class, EdgeDirection.OUT));
+						e.getNextIncidence(LinkBack.EC, EdgeDirection.OUT));
 				assertEquals(linkin[k],
-						e.getNextIncidence(Link.class, EdgeDirection.IN));
+						e.getNextIncidence(Link.EC, EdgeDirection.IN));
 				assertEquals(sublinkin[k],
-						e.getNextIncidence(SubLink.class, EdgeDirection.IN));
+						e.getNextIncidence(SubLink.EC, EdgeDirection.IN));
 				assertEquals(linkbackin[k],
-						e.getNextIncidence(LinkBack.class, EdgeDirection.IN));
+						e.getNextIncidence(LinkBack.EC, EdgeDirection.IN));
 			}
 			commit(g);
 		}
@@ -1446,7 +1446,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * An edge which has no following edges.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -1469,7 +1469,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Test in a manually built graph.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -1520,7 +1520,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Test in a randomly built graph
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -1634,7 +1634,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * An edge which has no following edges.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -1647,15 +1647,15 @@ public class EdgeTest extends InstanceTest {
 		commit(g);
 
 		createReadOnlyTransaction(g);
-		assertNull(e1.getNextIncidence(Link.class));
-		assertNull(e1.getNextIncidence(SubLink.class));
-		assertNull(e1.getNextIncidence(LinkBack.class));
+		assertNull(e1.getNextIncidence(Link.EC));
+		assertNull(e1.getNextIncidence(SubLink.EC));
+		assertNull(e1.getNextIncidence(LinkBack.EC));
 		commit(g);
 	}
 
 	/**
 	 * Test in a manually built graph.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -1673,39 +1673,39 @@ public class EdgeTest extends InstanceTest {
 
 		createReadOnlyTransaction(g);
 		// test of edge e1
-		assertEquals(e3.getReversedEdge(), e1.getNextIncidence(Link.class));
-		assertEquals(e3.getReversedEdge(), e1.getNextIncidence(SubLink.class));
-		assertEquals(e2, e1.getNextIncidence(LinkBack.class));
+		assertEquals(e3.getReversedEdge(), e1.getNextIncidence(Link.EC));
+		assertEquals(e3.getReversedEdge(), e1.getNextIncidence(SubLink.EC));
+		assertEquals(e2, e1.getNextIncidence(LinkBack.EC));
 		// test of edge e2
-		assertEquals(e3.getReversedEdge(), e2.getNextIncidence(Link.class));
-		assertEquals(e3.getReversedEdge(), e2.getNextIncidence(SubLink.class));
-		assertEquals(e5, e2.getNextIncidence(LinkBack.class));
+		assertEquals(e3.getReversedEdge(), e2.getNextIncidence(Link.EC));
+		assertEquals(e3.getReversedEdge(), e2.getNextIncidence(SubLink.EC));
+		assertEquals(e5, e2.getNextIncidence(LinkBack.EC));
 		assertEquals(e3.getReversedEdge(),
-				e2.getNextIncidence(Link.class, EdgeDirection.IN));
+				e2.getNextIncidence(Link.EC, EdgeDirection.IN));
 		assertEquals(e3.getReversedEdge(),
-				e2.getNextIncidence(SubLink.class, EdgeDirection.IN));
+				e2.getNextIncidence(SubLink.EC, EdgeDirection.IN));
 		// test of edge e3
-		assertEquals(e4, e3.getReversedEdge().getNextIncidence(Link.class));
-		assertNull(e3.getReversedEdge().getNextIncidence(SubLink.class));
-		assertEquals(e5, e3.getReversedEdge().getNextIncidence(LinkBack.class));
+		assertEquals(e4, e3.getReversedEdge().getNextIncidence(Link.EC));
+		assertNull(e3.getReversedEdge().getNextIncidence(SubLink.EC));
+		assertEquals(e5, e3.getReversedEdge().getNextIncidence(LinkBack.EC));
 		// test of edge e4
-		assertEquals(e4.getReversedEdge(), e4.getNextIncidence(Link.class));
-		assertNull(e4.getNextIncidence(SubLink.class));
-		assertEquals(e5, e4.getNextIncidence(LinkBack.class));
+		assertEquals(e4.getReversedEdge(), e4.getNextIncidence(Link.EC));
+		assertNull(e4.getNextIncidence(SubLink.EC));
+		assertEquals(e5, e4.getNextIncidence(LinkBack.EC));
 		// test of edge e4.getReversedEdge
-		assertNull(e4.getReversedEdge().getNextIncidence(Link.class));
-		assertNull(e4.getReversedEdge().getNextIncidence(SubLink.class));
-		assertEquals(e5, e4.getReversedEdge().getNextIncidence(LinkBack.class));
+		assertNull(e4.getReversedEdge().getNextIncidence(Link.EC));
+		assertNull(e4.getReversedEdge().getNextIncidence(SubLink.EC));
+		assertEquals(e5, e4.getReversedEdge().getNextIncidence(LinkBack.EC));
 		// test of edge e5
-		assertNull(e5.getNextIncidence(Link.class));
-		assertNull(e5.getNextIncidence(SubLink.class));
-		assertNull(e5.getNextIncidence(LinkBack.class));
+		assertNull(e5.getNextIncidence(Link.EC));
+		assertNull(e5.getNextIncidence(SubLink.EC));
+		assertNull(e5.getNextIncidence(LinkBack.EC));
 		commit(g);
 	}
 
 	/**
 	 * Test in a randomly built graph
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -1804,10 +1804,10 @@ public class EdgeTest extends InstanceTest {
 			createReadOnlyTransaction(g);
 			for (int k = 0; k < edges.length; k++) {
 				Edge e = edges[k];
-				assertEquals(linkfalse[k], e.getNextIncidence(Link.class));
-				assertEquals(sublinkfalse[k], e.getNextIncidence(SubLink.class));
+				assertEquals(linkfalse[k], e.getNextIncidence(Link.EC));
+				assertEquals(sublinkfalse[k], e.getNextIncidence(SubLink.EC));
 				assertEquals(linkbackfalse[k],
-						e.getNextIncidence(LinkBack.class));
+						e.getNextIncidence(LinkBack.EC));
 			}
 			commit(g);
 		}
@@ -1818,7 +1818,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * An edge which has no following edges.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -1847,7 +1847,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Test in a manually built graph.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -1974,7 +1974,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Test in a randomly built graph
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -2193,7 +2193,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * An edge which has no following edges.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -2206,21 +2206,21 @@ public class EdgeTest extends InstanceTest {
 		commit(g);
 
 		createReadOnlyTransaction(g);
-		assertNull(e1.getNextIncidence(Link.class, EdgeDirection.INOUT));
-		assertNull(e1.getNextIncidence(SubLink.class, EdgeDirection.INOUT));
-		assertNull(e1.getNextIncidence(LinkBack.class, EdgeDirection.INOUT));
-		assertNull(e1.getNextIncidence(Link.class, EdgeDirection.OUT));
-		assertNull(e1.getNextIncidence(SubLink.class, EdgeDirection.OUT));
-		assertNull(e1.getNextIncidence(LinkBack.class, EdgeDirection.OUT));
-		assertNull(e1.getNextIncidence(Link.class, EdgeDirection.IN));
-		assertNull(e1.getNextIncidence(SubLink.class, EdgeDirection.IN));
-		assertNull(e1.getNextIncidence(LinkBack.class, EdgeDirection.IN));
+		assertNull(e1.getNextIncidence(Link.EC, EdgeDirection.INOUT));
+		assertNull(e1.getNextIncidence(SubLink.EC, EdgeDirection.INOUT));
+		assertNull(e1.getNextIncidence(LinkBack.EC, EdgeDirection.INOUT));
+		assertNull(e1.getNextIncidence(Link.EC, EdgeDirection.OUT));
+		assertNull(e1.getNextIncidence(SubLink.EC, EdgeDirection.OUT));
+		assertNull(e1.getNextIncidence(LinkBack.EC, EdgeDirection.OUT));
+		assertNull(e1.getNextIncidence(Link.EC, EdgeDirection.IN));
+		assertNull(e1.getNextIncidence(SubLink.EC, EdgeDirection.IN));
+		assertNull(e1.getNextIncidence(LinkBack.EC, EdgeDirection.IN));
 		commit(g);
 	}
 
 	/**
 	 * Test in a manually built graph.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -2239,118 +2239,118 @@ public class EdgeTest extends InstanceTest {
 		createReadOnlyTransaction(g);
 		// test of edge e1
 		assertEquals(e3.getReversedEdge(),
-				e1.getNextIncidence(Link.class, EdgeDirection.INOUT));
+				e1.getNextIncidence(Link.EC, EdgeDirection.INOUT));
 		assertEquals(e3.getReversedEdge(),
-				e1.getNextIncidence(SubLink.class, EdgeDirection.INOUT));
+				e1.getNextIncidence(SubLink.EC, EdgeDirection.INOUT));
 		assertEquals(e2,
-				e1.getNextIncidence(LinkBack.class, EdgeDirection.INOUT));
-		assertEquals(e4, e1.getNextIncidence(Link.class, EdgeDirection.OUT));
-		assertNull(e1.getNextIncidence(SubLink.class, EdgeDirection.OUT));
-		assertEquals(e2, e1.getNextIncidence(LinkBack.class, EdgeDirection.OUT));
+				e1.getNextIncidence(LinkBack.EC, EdgeDirection.INOUT));
+		assertEquals(e4, e1.getNextIncidence(Link.EC, EdgeDirection.OUT));
+		assertNull(e1.getNextIncidence(SubLink.EC, EdgeDirection.OUT));
+		assertEquals(e2, e1.getNextIncidence(LinkBack.EC, EdgeDirection.OUT));
 		assertEquals(e3.getReversedEdge(),
-				e1.getNextIncidence(Link.class, EdgeDirection.IN));
+				e1.getNextIncidence(Link.EC, EdgeDirection.IN));
 		assertEquals(e3.getReversedEdge(),
-				e1.getNextIncidence(SubLink.class, EdgeDirection.IN));
-		assertNull(e1.getNextIncidence(LinkBack.class, EdgeDirection.IN));
+				e1.getNextIncidence(SubLink.EC, EdgeDirection.IN));
+		assertNull(e1.getNextIncidence(LinkBack.EC, EdgeDirection.IN));
 
 		// test of edge e2
 		assertEquals(e3.getReversedEdge(),
-				e2.getNextIncidence(Link.class, EdgeDirection.INOUT));
+				e2.getNextIncidence(Link.EC, EdgeDirection.INOUT));
 		assertEquals(e3.getReversedEdge(),
-				e2.getNextIncidence(SubLink.class, EdgeDirection.INOUT));
+				e2.getNextIncidence(SubLink.EC, EdgeDirection.INOUT));
 		assertEquals(e5,
-				e2.getNextIncidence(LinkBack.class, EdgeDirection.INOUT));
-		assertEquals(e4, e2.getNextIncidence(Link.class, EdgeDirection.OUT));
-		assertNull(e2.getNextIncidence(SubLink.class, EdgeDirection.OUT));
-		assertEquals(e5, e2.getNextIncidence(LinkBack.class, EdgeDirection.OUT));
+				e2.getNextIncidence(LinkBack.EC, EdgeDirection.INOUT));
+		assertEquals(e4, e2.getNextIncidence(Link.EC, EdgeDirection.OUT));
+		assertNull(e2.getNextIncidence(SubLink.EC, EdgeDirection.OUT));
+		assertEquals(e5, e2.getNextIncidence(LinkBack.EC, EdgeDirection.OUT));
 		assertEquals(e3.getReversedEdge(),
-				e2.getNextIncidence(Link.class, EdgeDirection.IN));
+				e2.getNextIncidence(Link.EC, EdgeDirection.IN));
 		assertEquals(e3.getReversedEdge(),
-				e2.getNextIncidence(SubLink.class, EdgeDirection.IN));
-		assertNull(e2.getNextIncidence(LinkBack.class, EdgeDirection.IN));
+				e2.getNextIncidence(SubLink.EC, EdgeDirection.IN));
+		assertNull(e2.getNextIncidence(LinkBack.EC, EdgeDirection.IN));
 
 		// test of edge e3
 		assertEquals(
 				e4,
-				e3.getReversedEdge().getNextIncidence(Link.class,
+				e3.getReversedEdge().getNextIncidence(Link.EC,
 						EdgeDirection.INOUT));
-		assertNull(e3.getReversedEdge().getNextIncidence(SubLink.class,
+		assertNull(e3.getReversedEdge().getNextIncidence(SubLink.EC,
 				EdgeDirection.INOUT));
 		assertEquals(
 				e5,
-				e3.getReversedEdge().getNextIncidence(LinkBack.class,
+				e3.getReversedEdge().getNextIncidence(LinkBack.EC,
 						EdgeDirection.INOUT));
 		assertEquals(
 				e4,
-				e3.getReversedEdge().getNextIncidence(Link.class,
+				e3.getReversedEdge().getNextIncidence(Link.EC,
 						EdgeDirection.OUT));
-		assertNull(e3.getReversedEdge().getNextIncidence(SubLink.class,
+		assertNull(e3.getReversedEdge().getNextIncidence(SubLink.EC,
 				EdgeDirection.OUT));
 		assertEquals(
 				e5,
-				e3.getReversedEdge().getNextIncidence(LinkBack.class,
+				e3.getReversedEdge().getNextIncidence(LinkBack.EC,
 						EdgeDirection.OUT));
 		assertEquals(e4.getReversedEdge(), e3.getReversedEdge()
-				.getNextIncidence(Link.class, EdgeDirection.IN));
-		assertNull(e3.getReversedEdge().getNextIncidence(SubLink.class,
+				.getNextIncidence(Link.EC, EdgeDirection.IN));
+		assertNull(e3.getReversedEdge().getNextIncidence(SubLink.EC,
 				EdgeDirection.IN));
-		assertNull(e3.getReversedEdge().getNextIncidence(LinkBack.class,
+		assertNull(e3.getReversedEdge().getNextIncidence(LinkBack.EC,
 				EdgeDirection.IN));
 
 		// test of edge e4
 		assertEquals(e4.getReversedEdge(),
-				e4.getNextIncidence(Link.class, EdgeDirection.INOUT));
-		assertNull(e4.getNextIncidence(SubLink.class, EdgeDirection.INOUT));
+				e4.getNextIncidence(Link.EC, EdgeDirection.INOUT));
+		assertNull(e4.getNextIncidence(SubLink.EC, EdgeDirection.INOUT));
 		assertEquals(e5,
-				e4.getNextIncidence(LinkBack.class, EdgeDirection.INOUT));
-		assertNull(e4.getNextIncidence(Link.class, EdgeDirection.OUT));
-		assertNull(e4.getNextIncidence(SubLink.class, EdgeDirection.OUT));
-		assertEquals(e5, e4.getNextIncidence(LinkBack.class, EdgeDirection.OUT));
+				e4.getNextIncidence(LinkBack.EC, EdgeDirection.INOUT));
+		assertNull(e4.getNextIncidence(Link.EC, EdgeDirection.OUT));
+		assertNull(e4.getNextIncidence(SubLink.EC, EdgeDirection.OUT));
+		assertEquals(e5, e4.getNextIncidence(LinkBack.EC, EdgeDirection.OUT));
 		assertEquals(e4.getReversedEdge(),
-				e4.getNextIncidence(Link.class, EdgeDirection.IN));
-		assertNull(e4.getNextIncidence(SubLink.class, EdgeDirection.IN));
-		assertNull(e4.getNextIncidence(LinkBack.class, EdgeDirection.IN));
+				e4.getNextIncidence(Link.EC, EdgeDirection.IN));
+		assertNull(e4.getNextIncidence(SubLink.EC, EdgeDirection.IN));
+		assertNull(e4.getNextIncidence(LinkBack.EC, EdgeDirection.IN));
 
 		// test of edge e4.getReversedEdge
-		assertNull(e4.getReversedEdge().getNextIncidence(Link.class,
+		assertNull(e4.getReversedEdge().getNextIncidence(Link.EC,
 				EdgeDirection.INOUT));
-		assertNull(e4.getReversedEdge().getNextIncidence(SubLink.class,
+		assertNull(e4.getReversedEdge().getNextIncidence(SubLink.EC,
 				EdgeDirection.INOUT));
 		assertEquals(
 				e5,
-				e4.getReversedEdge().getNextIncidence(LinkBack.class,
+				e4.getReversedEdge().getNextIncidence(LinkBack.EC,
 						EdgeDirection.INOUT));
-		assertNull(e4.getReversedEdge().getNextIncidence(Link.class,
+		assertNull(e4.getReversedEdge().getNextIncidence(Link.EC,
 				EdgeDirection.OUT));
-		assertNull(e4.getReversedEdge().getNextIncidence(SubLink.class,
+		assertNull(e4.getReversedEdge().getNextIncidence(SubLink.EC,
 				EdgeDirection.OUT));
 		assertEquals(
 				e5,
-				e4.getReversedEdge().getNextIncidence(LinkBack.class,
+				e4.getReversedEdge().getNextIncidence(LinkBack.EC,
 						EdgeDirection.OUT));
-		assertNull(e4.getReversedEdge().getNextIncidence(Link.class,
+		assertNull(e4.getReversedEdge().getNextIncidence(Link.EC,
 				EdgeDirection.IN));
-		assertNull(e4.getReversedEdge().getNextIncidence(SubLink.class,
+		assertNull(e4.getReversedEdge().getNextIncidence(SubLink.EC,
 				EdgeDirection.IN));
-		assertNull(e4.getReversedEdge().getNextIncidence(LinkBack.class,
+		assertNull(e4.getReversedEdge().getNextIncidence(LinkBack.EC,
 				EdgeDirection.IN));
 
 		// test of edge e5
-		assertNull(e5.getNextIncidence(Link.class, EdgeDirection.INOUT));
-		assertNull(e5.getNextIncidence(SubLink.class, EdgeDirection.INOUT));
-		assertNull(e5.getNextIncidence(LinkBack.class, EdgeDirection.INOUT));
-		assertNull(e5.getNextIncidence(Link.class, EdgeDirection.OUT));
-		assertNull(e5.getNextIncidence(SubLink.class, EdgeDirection.OUT));
-		assertNull(e5.getNextIncidence(LinkBack.class, EdgeDirection.OUT));
-		assertNull(e5.getNextIncidence(Link.class, EdgeDirection.IN));
-		assertNull(e5.getNextIncidence(SubLink.class, EdgeDirection.IN));
-		assertNull(e5.getNextIncidence(LinkBack.class, EdgeDirection.IN));
+		assertNull(e5.getNextIncidence(Link.EC, EdgeDirection.INOUT));
+		assertNull(e5.getNextIncidence(SubLink.EC, EdgeDirection.INOUT));
+		assertNull(e5.getNextIncidence(LinkBack.EC, EdgeDirection.INOUT));
+		assertNull(e5.getNextIncidence(Link.EC, EdgeDirection.OUT));
+		assertNull(e5.getNextIncidence(SubLink.EC, EdgeDirection.OUT));
+		assertNull(e5.getNextIncidence(LinkBack.EC, EdgeDirection.OUT));
+		assertNull(e5.getNextIncidence(Link.EC, EdgeDirection.IN));
+		assertNull(e5.getNextIncidence(SubLink.EC, EdgeDirection.IN));
+		assertNull(e5.getNextIncidence(LinkBack.EC, EdgeDirection.IN));
 		commit(g);
 	}
 
 	/**
 	 * Test in a randomly built graph
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -2541,23 +2541,23 @@ public class EdgeTest extends InstanceTest {
 			for (int k = 0; k < edges.length; k++) {
 				Edge e = edges[k];
 				assertEquals(linkinoutfalse[k],
-						e.getNextIncidence(Link.class, EdgeDirection.INOUT));
+						e.getNextIncidence(Link.EC, EdgeDirection.INOUT));
 				assertEquals(sublinkinout[k],
-						e.getNextIncidence(SubLink.class, EdgeDirection.INOUT));
+						e.getNextIncidence(SubLink.EC, EdgeDirection.INOUT));
 				assertEquals(linkbackinout[k],
-						e.getNextIncidence(LinkBack.class, EdgeDirection.INOUT));
+						e.getNextIncidence(LinkBack.EC, EdgeDirection.INOUT));
 				assertEquals(linkoutfalse[k],
-						e.getNextIncidence(Link.class, EdgeDirection.OUT));
+						e.getNextIncidence(Link.EC, EdgeDirection.OUT));
 				assertEquals(sublinkout[k],
-						e.getNextIncidence(SubLink.class, EdgeDirection.OUT));
+						e.getNextIncidence(SubLink.EC, EdgeDirection.OUT));
 				assertEquals(linkbackout[k],
-						e.getNextIncidence(LinkBack.class, EdgeDirection.OUT));
+						e.getNextIncidence(LinkBack.EC, EdgeDirection.OUT));
 				assertEquals(linkinfalse[k],
-						e.getNextIncidence(Link.class, EdgeDirection.IN));
+						e.getNextIncidence(Link.EC, EdgeDirection.IN));
 				assertEquals(sublinkin[k],
-						e.getNextIncidence(SubLink.class, EdgeDirection.IN));
+						e.getNextIncidence(SubLink.EC, EdgeDirection.IN));
 				assertEquals(linkbackin[k],
-						e.getNextIncidence(LinkBack.class, EdgeDirection.IN));
+						e.getNextIncidence(LinkBack.EC, EdgeDirection.IN));
 			}
 			commit(g);
 		}
@@ -2602,7 +2602,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Test in a manually built graph.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -2628,7 +2628,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Test in a randomly built graph.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -2646,7 +2646,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Test in a manually built graph.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -2672,7 +2672,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Test in a randomly built graph.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -2690,7 +2690,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Test in a manually built graph.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -2717,7 +2717,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Test in a manually built graph.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -2745,7 +2745,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Test for reversedEdge.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -2773,7 +2773,7 @@ public class EdgeTest extends InstanceTest {
 	 * Creates an randomly build graph an returns an 2-dim ArrayList of Edges,
 	 * which are needed to check the equality in respect to the parameters of
 	 * the methods.
-	 * 
+	 *
 	 * @param classedge
 	 * @param nosubclasses
 	 * @return
@@ -2866,7 +2866,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Test for reversedEdge.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -2891,7 +2891,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Tests if an edge has no previous edge in graph.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -2908,7 +2908,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Test in a manually built graph.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -2930,7 +2930,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Test in a randomly built graph.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -2951,7 +2951,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * An edge which has no following edges.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -2974,7 +2974,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Test in a manually built graph.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -3044,7 +3044,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Test in a randomly built graph.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -3077,7 +3077,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * An edge which has no following edges.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -3090,15 +3090,15 @@ public class EdgeTest extends InstanceTest {
 		commit(g);
 
 		createReadOnlyTransaction(g);
-		assertNull(e1.getNextEdge(Link.class));
-		assertNull(e1.getNextEdge(SubLink.class));
-		assertNull(e1.getNextEdge(LinkBack.class));
+		assertNull(e1.getNextEdge(Link.EC));
+		assertNull(e1.getNextEdge(SubLink.EC));
+		assertNull(e1.getNextEdge(LinkBack.EC));
 		commit(g);
 	}
 
 	/**
 	 * Test in a manually built graph.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -3116,25 +3116,25 @@ public class EdgeTest extends InstanceTest {
 
 		createReadOnlyTransaction(g);
 		// test of edge e1
-		assertEquals(e3, e1.getNextEdge(Link.class));
-		assertEquals(e3, e1.getNextEdge(SubLink.class));
-		assertEquals(e2, e1.getNextEdge(LinkBack.class));
+		assertEquals(e3, e1.getNextEdge(Link.EC));
+		assertEquals(e3, e1.getNextEdge(SubLink.EC));
+		assertEquals(e2, e1.getNextEdge(LinkBack.EC));
 		// test of edge e2
-		assertEquals(e3, e2.getNextEdge(Link.class));
-		assertEquals(e3, e2.getNextEdge(SubLink.class));
-		assertEquals(e5, e2.getNextEdge(LinkBack.class));
+		assertEquals(e3, e2.getNextEdge(Link.EC));
+		assertEquals(e3, e2.getNextEdge(SubLink.EC));
+		assertEquals(e5, e2.getNextEdge(LinkBack.EC));
 		// test of edge e3
-		assertEquals(e4, e3.getNextEdge(Link.class));
-		assertNull(e3.getNextEdge(SubLink.class));
-		assertEquals(e5, e3.getNextEdge(LinkBack.class));
+		assertEquals(e4, e3.getNextEdge(Link.EC));
+		assertNull(e3.getNextEdge(SubLink.EC));
+		assertEquals(e5, e3.getNextEdge(LinkBack.EC));
 		// test of edge e4
-		assertNull(e4.getNextEdge(Link.class));
-		assertNull(e4.getNextEdge(SubLink.class));
-		assertEquals(e5, e4.getNextEdge(LinkBack.class));
+		assertNull(e4.getNextEdge(Link.EC));
+		assertNull(e4.getNextEdge(SubLink.EC));
+		assertEquals(e5, e4.getNextEdge(LinkBack.EC));
 		// test of edge e5
-		assertNull(e5.getNextEdge(Link.class));
-		assertNull(e5.getNextEdge(SubLink.class));
-		assertNull(e5.getNextEdge(LinkBack.class));
+		assertNull(e5.getNextEdge(Link.EC));
+		assertNull(e5.getNextEdge(SubLink.EC));
+		assertNull(e5.getNextEdge(LinkBack.EC));
 		// test of reversedEdges
 		e1 = e1.getReversedEdge();
 		e2 = e2.getReversedEdge();
@@ -3142,31 +3142,31 @@ public class EdgeTest extends InstanceTest {
 		e4 = e4.getReversedEdge();
 		e5 = e5.getReversedEdge();
 		// test of edge e1
-		assertEquals(e3.getNormalEdge(), e1.getNextEdge(Link.class));
-		assertEquals(e3.getNormalEdge(), e1.getNextEdge(SubLink.class));
-		assertEquals(e2.getNormalEdge(), e1.getNextEdge(LinkBack.class));
+		assertEquals(e3.getNormalEdge(), e1.getNextEdge(Link.EC));
+		assertEquals(e3.getNormalEdge(), e1.getNextEdge(SubLink.EC));
+		assertEquals(e2.getNormalEdge(), e1.getNextEdge(LinkBack.EC));
 		// test of edge e2
-		assertEquals(e3.getNormalEdge(), e2.getNextEdge(Link.class));
-		assertEquals(e3.getNormalEdge(), e2.getNextEdge(SubLink.class));
-		assertEquals(e5.getNormalEdge(), e2.getNextEdge(LinkBack.class));
+		assertEquals(e3.getNormalEdge(), e2.getNextEdge(Link.EC));
+		assertEquals(e3.getNormalEdge(), e2.getNextEdge(SubLink.EC));
+		assertEquals(e5.getNormalEdge(), e2.getNextEdge(LinkBack.EC));
 		// test of edge e3
-		assertEquals(e4.getNormalEdge(), e3.getNextEdge(Link.class));
-		assertNull(e3.getNextEdge(SubLink.class));
-		assertEquals(e5.getNormalEdge(), e3.getNextEdge(LinkBack.class));
+		assertEquals(e4.getNormalEdge(), e3.getNextEdge(Link.EC));
+		assertNull(e3.getNextEdge(SubLink.EC));
+		assertEquals(e5.getNormalEdge(), e3.getNextEdge(LinkBack.EC));
 		// test of edge e4
-		assertNull(e4.getNextEdge(Link.class));
-		assertNull(e4.getNextEdge(SubLink.class));
-		assertEquals(e5.getNormalEdge(), e4.getNextEdge(LinkBack.class));
+		assertNull(e4.getNextEdge(Link.EC));
+		assertNull(e4.getNextEdge(SubLink.EC));
+		assertEquals(e5.getNormalEdge(), e4.getNextEdge(LinkBack.EC));
 		// test of edge e5
-		assertNull(e5.getNextEdge(Link.class));
-		assertNull(e5.getNextEdge(SubLink.class));
-		assertNull(e5.getNextEdge(LinkBack.class));
+		assertNull(e5.getNextEdge(Link.EC));
+		assertNull(e5.getNextEdge(SubLink.EC));
+		assertNull(e5.getNextEdge(LinkBack.EC));
 		commit(g);
 	}
 
 	/**
 	 * Test in a randomly built graph.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -3175,27 +3175,27 @@ public class EdgeTest extends InstanceTest {
 		ArrayList<ArrayList<Edge>> result = createRandomGraph(true, false);
 
 		createReadOnlyTransaction(g);
-		Edge counter = g.getFirstEdge(Link.class);
+		Edge counter = g.getFirstEdge(Link.EC);
 		for (Edge e : result.get(0)) {
 			assertEquals(e, counter);
-			counter = counter.getNextEdge(Link.class);
+			counter = counter.getNextEdge(Link.EC);
 		}
-		counter = g.getFirstEdge(SubLink.class);
+		counter = g.getFirstEdge(SubLink.EC);
 		for (Edge e : result.get(1)) {
 			assertEquals(e, counter);
-			counter = counter.getNextEdge(SubLink.class);
+			counter = counter.getNextEdge(SubLink.EC);
 		}
-		counter = g.getFirstEdge(LinkBack.class);
+		counter = g.getFirstEdge(LinkBack.EC);
 		for (Edge e : result.get(2)) {
 			assertEquals(e, counter);
-			counter = counter.getNextEdge(LinkBack.class);
+			counter = counter.getNextEdge(LinkBack.EC);
 		}
 		commit(g);
 	}
 
 	/**
 	 * An edge which has no following edges.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -3208,9 +3208,9 @@ public class EdgeTest extends InstanceTest {
 		commit(g);
 
 		createReadOnlyTransaction(g);
-		assertNull(e1.getNextEdge(Link.class));
-		assertNull(e1.getNextEdge(SubLink.class));
-		assertNull(e1.getNextEdge(LinkBack.class));
+		assertNull(e1.getNextEdge(Link.EC));
+		assertNull(e1.getNextEdge(SubLink.EC));
+		assertNull(e1.getNextEdge(LinkBack.EC));
 		commit(g);
 	}
 
@@ -3224,7 +3224,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Tests if an edge is before itself.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -3241,7 +3241,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Tests if an edge is direct before another.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -3260,7 +3260,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Tests if an edge is before another.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -3283,7 +3283,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Tests if an edge is after itself.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -3300,7 +3300,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Tests if an edge is direct after another.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -3319,7 +3319,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Tests if an edge is after another.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -3346,7 +3346,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Tests if an edge is before itself.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -3367,7 +3367,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Tests if an edge is before itself.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -3397,7 +3397,7 @@ public class EdgeTest extends InstanceTest {
 	/**
 	 * Tests if the incident edges of <code>c</code> equals the edges of
 	 * <code>incidentEdges</code>.
-	 * 
+	 *
 	 * @param v
 	 * @param incidentEdges
 	 * @throws CommitFailedException
@@ -3419,7 +3419,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Alpha of an edge is changed to another vertex.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -3458,7 +3458,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Alpha of an reversedEdge is changed to another vertex.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -3497,7 +3497,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Alpha of an edge is set to the previous alpha vertex.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -3530,7 +3530,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Alpha of an edge is changed to the omega vertex.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -3570,7 +3570,7 @@ public class EdgeTest extends InstanceTest {
 	/**
 	 * Alpha of an edge is changed to another vertex. And there exists further
 	 * edges.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -3623,7 +3623,7 @@ public class EdgeTest extends InstanceTest {
 	/**
 	 * An exception should occur if you try to set alpha to a vertex which type
 	 * isn't allowed as an alpha vertex for that edge.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test(expected = GraphException.class)
@@ -3640,7 +3640,7 @@ public class EdgeTest extends InstanceTest {
 	 * Creates a random graph and returns an 2-dim ArrayList ret.get(0) =
 	 * incident edges of v1 ret.get(1) = incident edges of v2 ret.get(2) =
 	 * incident edges of v3
-	 * 
+	 *
 	 * @return ret
 	 * @throws CommitFailedException
 	 */
@@ -3689,7 +3689,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Random Test
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -3750,7 +3750,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Omega of an edge is changed to another vertex.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -3789,7 +3789,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Omega of an reversedEdge is changed to another vertex.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -3828,7 +3828,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Omega of an edge is set to the previous omega vertex.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -3861,7 +3861,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Omega of an edge is changed to the alpha vertex.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -3895,7 +3895,7 @@ public class EdgeTest extends InstanceTest {
 	/**
 	 * Omega of an edge is changed to another vertex. And there exists further
 	 * edges.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -3947,7 +3947,7 @@ public class EdgeTest extends InstanceTest {
 	/**
 	 * An exception should occur if you try to set omega to a vertex which type
 	 * isn't allowed as an omega vertex for that edge.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test(expected = GraphException.class)
@@ -3962,7 +3962,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Random Test
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -4022,7 +4022,7 @@ public class EdgeTest extends InstanceTest {
 	/**
 	 * This of an edge is changed to another vertex. And there exists further
 	 * edges.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -4098,7 +4098,7 @@ public class EdgeTest extends InstanceTest {
 	/**
 	 * That of an edge is changed to another vertex. And there exists further
 	 * edges.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -4179,7 +4179,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Tests on edges and reversedEdges.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -4210,7 +4210,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Tests on edges and reversedEdges.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -4241,7 +4241,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Tests on edges and reversedEdges.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -4272,7 +4272,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Tests on edges and reversedEdges.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -4305,7 +4305,7 @@ public class EdgeTest extends InstanceTest {
 	// tests of the method Graph getGraph();
 	/**
 	 * Test with edges of two graphs.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -4358,7 +4358,7 @@ public class EdgeTest extends InstanceTest {
 	// TODO maybe move the following two to graphTest
 	/**
 	 * Tests if the graphversion is increased by creating a new edge.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -4383,7 +4383,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Tests if the graphversion is increased by deleting an edge.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -4410,7 +4410,7 @@ public class EdgeTest extends InstanceTest {
 	/**
 	 * Tests if the graphversion is increased by changing the attributes of an
 	 * edge.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -4440,7 +4440,7 @@ public class EdgeTest extends InstanceTest {
 	// tests of the method AttributedElementClass getAttributedElementClass();
 	/**
 	 * Some test cases for getAttributedElementClass
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -4470,7 +4470,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Some test cases for getSchemaClass
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -4498,7 +4498,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Some test cases for getGraphClass
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -4533,7 +4533,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Test with null values.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -4611,7 +4611,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Test with values.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -4674,7 +4674,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Tests if the value of the correct attribute is returned.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -4694,7 +4694,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Tests if the value of the correct attribute is returned. reversedEdge
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -4716,7 +4716,7 @@ public class EdgeTest extends InstanceTest {
 	/**
 	 * Tests if an exception is thrown if you want to get an attribute which
 	 * doesn't exist.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test(expected = NoSuchAttributeException.class)
@@ -4735,7 +4735,7 @@ public class EdgeTest extends InstanceTest {
 	/**
 	 * Tests if an exception is thrown if you want to get an attribute with an
 	 * empty name.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test(expected = NoSuchAttributeException.class)
@@ -4756,7 +4756,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Tests if an existing attribute is correct set.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -4777,7 +4777,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Tests if an existing attribute is correct set. reversedEdge
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -4798,7 +4798,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Tests if an existing attribute is set to null.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -4818,7 +4818,7 @@ public class EdgeTest extends InstanceTest {
 	/**
 	 * Tests if an exception is thrown if you want to get an attribute which
 	 * doesn't exist.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test(expected = NoSuchAttributeException.class)
@@ -4833,7 +4833,7 @@ public class EdgeTest extends InstanceTest {
 	/**
 	 * Tests if an exception is thrown if you want to get an attribute with an
 	 * empty name.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test(expected = NoSuchAttributeException.class)
@@ -4849,7 +4849,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Some tests.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -4885,7 +4885,7 @@ public class EdgeTest extends InstanceTest {
 	// tests of the method int compareTo(AttributedElement a);
 	/**
 	 * Test if a vertex is equal to itself.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -4903,7 +4903,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Test if a vertex is smaller than another.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -4923,7 +4923,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Test if a vertex is greater than another.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -4945,7 +4945,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Test if a vertex is equal to itself.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -4963,7 +4963,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Test if a vertex is smaller than another.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -4983,7 +4983,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Test if a vertex is greater than another.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -5005,7 +5005,7 @@ public class EdgeTest extends InstanceTest {
 	// normalEdge
 	/**
 	 * Test if a vertex is equal to itself.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -5023,7 +5023,7 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Test if a vertex is equal to itself.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test

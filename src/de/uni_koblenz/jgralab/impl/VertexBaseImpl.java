@@ -147,25 +147,6 @@ public abstract class VertexBaseImpl extends
 	/*
 	 * (non-Javadoc)
 	 *
-	 * @see de.uni_koblenz.jgralab.Vertex#getNextVertexOfClass(java.lang.Class)
-	 */
-	@Override
-	public Vertex getNextVertex(Class<? extends Vertex> vertexClass) {
-		assert vertexClass != null;
-		assert isValid();
-		InternalVertex v = (InternalVertex) getNextVertex();
-		while (v != null) {
-			if (vertexClass.isInstance(v)) {
-				return v;
-			}
-			v = (InternalVertex) v.getNextVertex();
-		}
-		return null;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 *
 	 * @see
 	 * de.uni_koblenz.jgralab.Vertex#getNextVertexOfClass(de.uni_koblenz.jgralab
 	 * .schema.VertexClass)
@@ -347,18 +328,6 @@ public abstract class VertexBaseImpl extends
 	/*
 	 * (non-Javadoc)
 	 *
-	 * @see de.uni_koblenz.jgralab.Vertex#getFirstEdgeOfClass(java.lang.Class)
-	 */
-	@Override
-	public Edge getFirstIncidence(Class<? extends Edge> anEdgeClass) {
-		assert anEdgeClass != null;
-		assert isValid();
-		return getFirstIncidence(anEdgeClass, EdgeDirection.INOUT);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 *
 	 * @see
 	 * de.uni_koblenz.jgralab.Vertex#getFirstEdgeOfClass(de.uni_koblenz.jgralab
 	 * .schema.EdgeClass, de.uni_koblenz.jgralab.EdgeDirection)
@@ -371,27 +340,6 @@ public abstract class VertexBaseImpl extends
 		Edge currentEdge = getFirstIncidence(orientation);
 		while (currentEdge != null) {
 			if (currentEdge.isInstanceOf(anEdgeClass)) {
-				return currentEdge;
-			}
-			currentEdge = currentEdge.getNextIncidence(orientation);
-		}
-		return null;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see de.uni_koblenz.jgralab.Vertex#getFirstEdgeOfClass(java.lang.Class,
-	 * de.uni_koblenz.jgralab.EdgeDirection)
-	 */
-	@Override
-	public Edge getFirstIncidence(Class<? extends Edge> anEdgeClass,
-			EdgeDirection orientation) {
-		assert anEdgeClass != null;
-		assert isValid();
-		Edge currentEdge = getFirstIncidence(orientation);
-		while (currentEdge != null) {
-			if (anEdgeClass.isInstance(currentEdge.getNormalEdge())) {
 				return currentEdge;
 			}
 			currentEdge = currentEdge.getNextIncidence(orientation);
@@ -546,39 +494,10 @@ public abstract class VertexBaseImpl extends
 	/*
 	 * (non-Javadoc)
 	 *
-	 * @see jgralab.Vertex#getDegree(Class)
-	 */
-	@Override
-	public int getDegree(Class<? extends Edge> ec) {
-		assert ec != null;
-		assert isValid();
-		return getDegree(ec, EdgeDirection.INOUT);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 *
 	 * @see jgralab.Vertex#getDegree(jgralab.EdgeClass, jgralab.EdgeDirection)
 	 */
 	@Override
 	public int getDegree(EdgeClass ec, EdgeDirection orientation) {
-		assert ec != null;
-		assert isValid();
-		int degree = 0;
-		for (Edge e = getFirstIncidence(ec, orientation); e != null; e = e
-				.getNextIncidence(ec, orientation)) {
-			++degree;
-		}
-		return degree;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see jgralab.Vertex#getDegree(Class, jgralab.EdgeDirection)
-	 */
-	@Override
-	public int getDegree(Class<? extends Edge> ec, EdgeDirection orientation) {
 		assert ec != null;
 		assert isValid();
 		int degree = 0;
@@ -654,38 +573,12 @@ public abstract class VertexBaseImpl extends
 	/*
 	 * (non-Javadoc)
 	 *
-	 * @see de.uni_koblenz.jgralab.Vertex#incidences(java.lang.Class,
-	 * de.uni_koblenz.jgralab.EdgeDirection)
-	 */
-	@Override
-	public Iterable<Edge> incidences(Class<? extends Edge> eclass,
-			EdgeDirection dir) {
-		assert eclass != null;
-		assert isValid();
-		return new IncidenceIterable<Edge>(this, eclass, dir);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 *
 	 * @see
 	 * de.uni_koblenz.jgralab.Vertex#incidences(de.uni_koblenz.jgralab.schema
 	 * .EdgeClass)
 	 */
 	@Override
 	public Iterable<Edge> incidences(EdgeClass eclass) {
-		assert eclass != null;
-		assert isValid();
-		return new IncidenceIterable<Edge>(this, eclass);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see de.uni_koblenz.jgralab.Vertex#incidences(java.lang.Class)
-	 */
-	@Override
-	public Iterable<Edge> incidences(Class<? extends Edge> eclass) {
 		assert eclass != null;
 		assert isValid();
 		return new IncidenceIterable<Edge>(this, eclass);

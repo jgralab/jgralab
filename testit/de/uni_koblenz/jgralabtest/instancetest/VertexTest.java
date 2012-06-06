@@ -716,9 +716,9 @@ public class VertexTest extends InstanceTest {
 		Vertex v = g.createDoubleSubNode();
 		commit(g);
 		createReadOnlyTransaction(g);
-		assertEquals(0, v.getDegree(Link.class));
-		assertEquals(0, v.getDegree(SubLink.class));
-		assertEquals(0, v.getDegree(LinkBack.class));
+		assertEquals(0, v.getDegree(Link.EC));
+		assertEquals(0, v.getDegree(SubLink.EC));
+		assertEquals(0, v.getDegree(LinkBack.EC));
 		commit(g);
 	}
 
@@ -741,18 +741,18 @@ public class VertexTest extends InstanceTest {
 		g.createSubLink(dsubn, supern);
 		commit(g);
 		createTransaction(g);
-		assertEquals(0, dsubnWithout.getDegree(Link.class));
-		assertEquals(0, dsubnWithout.getDegree(LinkBack.class));
-		assertEquals(0, dsubnWithout.getDegree(SubLink.class));
-		assertEquals(1, subn.getDegree(Link.class));
-		assertEquals(1, subn.getDegree(LinkBack.class));
-		assertEquals(0, subn.getDegree(SubLink.class));
-		assertEquals(3, dsubn.getDegree(Link.class));
-		assertEquals(2, dsubn.getDegree(LinkBack.class));
-		assertEquals(1, dsubn.getDegree(SubLink.class));
-		assertEquals(2, supern.getDegree(Link.class));
-		assertEquals(1, supern.getDegree(LinkBack.class));
-		assertEquals(1, supern.getDegree(SubLink.class));
+		assertEquals(0, dsubnWithout.getDegree(Link.EC));
+		assertEquals(0, dsubnWithout.getDegree(LinkBack.EC));
+		assertEquals(0, dsubnWithout.getDegree(SubLink.EC));
+		assertEquals(1, subn.getDegree(Link.EC));
+		assertEquals(1, subn.getDegree(LinkBack.EC));
+		assertEquals(0, subn.getDegree(SubLink.EC));
+		assertEquals(3, dsubn.getDegree(Link.EC));
+		assertEquals(2, dsubn.getDegree(LinkBack.EC));
+		assertEquals(1, dsubn.getDegree(SubLink.EC));
+		assertEquals(2, supern.getDegree(Link.EC));
+		assertEquals(1, supern.getDegree(LinkBack.EC));
+		assertEquals(1, supern.getDegree(SubLink.EC));
 		commit(g);
 	}
 
@@ -805,18 +805,15 @@ public class VertexTest extends InstanceTest {
 			}
 			commit(g);
 			createReadOnlyTransaction(g);
-			assertEquals(expectedLink[0], nodes[0].getDegree(Link.class));
-			assertEquals(expectedLink[1], nodes[1].getDegree(Link.class));
-			assertEquals(expectedLink[2], nodes[2].getDegree(Link.class));
-			assertEquals(expectedLinkBack[0],
-					nodes[0].getDegree(LinkBack.class));
-			assertEquals(expectedLinkBack[1],
-					nodes[1].getDegree(LinkBack.class));
-			assertEquals(expectedLinkBack[2],
-					nodes[2].getDegree(LinkBack.class));
-			assertEquals(expectedSubLink[0], nodes[0].getDegree(SubLink.class));
-			assertEquals(expectedSubLink[1], nodes[1].getDegree(SubLink.class));
-			assertEquals(expectedSubLink[2], nodes[2].getDegree(SubLink.class));
+			assertEquals(expectedLink[0], nodes[0].getDegree(Link.EC));
+			assertEquals(expectedLink[1], nodes[1].getDegree(Link.EC));
+			assertEquals(expectedLink[2], nodes[2].getDegree(Link.EC));
+			assertEquals(expectedLinkBack[0], nodes[0].getDegree(LinkBack.EC));
+			assertEquals(expectedLinkBack[1], nodes[1].getDegree(LinkBack.EC));
+			assertEquals(expectedLinkBack[2], nodes[2].getDegree(LinkBack.EC));
+			assertEquals(expectedSubLink[0], nodes[0].getDegree(SubLink.EC));
+			assertEquals(expectedSubLink[1], nodes[1].getDegree(SubLink.EC));
+			assertEquals(expectedSubLink[2], nodes[2].getDegree(SubLink.EC));
 			commit(g);
 		}
 		// delete the edges
@@ -842,18 +839,15 @@ public class VertexTest extends InstanceTest {
 				expectedLink[end]--;
 			}
 			g.deleteEdge(e);
-			assertEquals(expectedLink[0], nodes[0].getDegree(Link.class));
-			assertEquals(expectedLink[1], nodes[1].getDegree(Link.class));
-			assertEquals(expectedLink[2], nodes[2].getDegree(Link.class));
-			assertEquals(expectedLinkBack[0],
-					nodes[0].getDegree(LinkBack.class));
-			assertEquals(expectedLinkBack[1],
-					nodes[1].getDegree(LinkBack.class));
-			assertEquals(expectedLinkBack[2],
-					nodes[2].getDegree(LinkBack.class));
-			assertEquals(expectedSubLink[0], nodes[0].getDegree(SubLink.class));
-			assertEquals(expectedSubLink[1], nodes[1].getDegree(SubLink.class));
-			assertEquals(expectedSubLink[2], nodes[2].getDegree(SubLink.class));
+			assertEquals(expectedLink[0], nodes[0].getDegree(Link.EC));
+			assertEquals(expectedLink[1], nodes[1].getDegree(Link.EC));
+			assertEquals(expectedLink[2], nodes[2].getDegree(Link.EC));
+			assertEquals(expectedLinkBack[0], nodes[0].getDegree(LinkBack.EC));
+			assertEquals(expectedLinkBack[1], nodes[1].getDegree(LinkBack.EC));
+			assertEquals(expectedLinkBack[2], nodes[2].getDegree(LinkBack.EC));
+			assertEquals(expectedSubLink[0], nodes[0].getDegree(SubLink.EC));
+			assertEquals(expectedSubLink[1], nodes[1].getDegree(SubLink.EC));
+			assertEquals(expectedSubLink[2], nodes[2].getDegree(SubLink.EC));
 		}
 		commit(g);
 	}
@@ -1196,9 +1190,9 @@ public class VertexTest extends InstanceTest {
 			throws CommitFailedException {
 		createReadOnlyTransaction(g);
 
-		assertEquals(expectedLink, forNode.getDegree(Link.class));
-		assertEquals(expectedSubLink, forNode.getDegree(SubLink.class));
-		assertEquals(expectedLinkBack, forNode.getDegree(LinkBack.class));
+		assertEquals(expectedLink, forNode.getDegree(Link.EC));
+		assertEquals(expectedSubLink, forNode.getDegree(SubLink.EC));
+		assertEquals(expectedLinkBack, forNode.getDegree(LinkBack.EC));
 		commit(g);
 	}
 

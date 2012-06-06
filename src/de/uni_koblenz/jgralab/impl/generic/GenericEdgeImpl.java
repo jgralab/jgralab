@@ -255,55 +255,6 @@ public class GenericEdgeImpl extends EdgeImpl implements
 	 * throws an {@link UnsupportedOperationException}.
 	 */
 	@Override
-	public Edge getNextEdge(Class<? extends Edge> anEdgeClass) {
-		throw new UnsupportedOperationException(
-				"This method is not supported by the generic implementation");
-	}
-
-	/**
-	 * This method is not supported by the generic implementation and therefore
-	 * throws an {@link UnsupportedOperationException}.
-	 */
-	@Override
-	public Edge getNextIncidence(Class<? extends Edge> anEdgeClass) {
-		throw new UnsupportedOperationException(
-				"This method is not supported by the generic implementation");
-	}
-
-	/**
-	 * This method is not supported by the generic implementation and therefore
-	 * throws an {@link UnsupportedOperationException}.
-	 */
-	@Override
-	public Edge getNextIncidence(Class<? extends Edge> anEdgeClass,
-			boolean noSubclasses) {
-		throw new UnsupportedOperationException(
-				"This method is not supported by the generic implementation");
-	}
-
-	/**
-	 * This method is not supported by the generic implementation and therefore
-	 * throws an {@link UnsupportedOperationException}.
-	 */
-	@Override
-	public Edge getNextIncidence(Class<? extends Edge> anEdgeClass,
-			EdgeDirection orientation) {
-		throw new UnsupportedOperationException(
-				"This method is not supported by the generic implementation");
-	}
-
-	@Override
-	public Edge getNextIncidence(Class<? extends Edge> anEdgeClass,
-			EdgeDirection orientation, boolean noSubclasses) {
-		throw new UnsupportedOperationException(
-				"This method is not supported by the generic implementation");
-	}
-
-	/**
-	 * This method is not supported by the generic implementation and therefore
-	 * throws an {@link UnsupportedOperationException}.
-	 */
-	@Override
 	public boolean isInstanceOf(EdgeClass cls) {
 		// Needs to be overridden from the base variant, because that relies on
 		// code generation.

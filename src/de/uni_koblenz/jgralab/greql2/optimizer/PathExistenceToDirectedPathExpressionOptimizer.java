@@ -105,7 +105,7 @@ public class PathExistenceToDirectedPathExpressionOptimizer extends
 	@Override
 	public boolean optimize(GreqlEvaluator eval, Greql2 syntaxgraph)
 			throws OptimizerException {
-		if (syntaxgraph.getFirstVertex(PathExistence.class) == null) {
+		if (syntaxgraph.getFirstVertex(PathExistence.VC) == null) {
 			return false;
 		}
 

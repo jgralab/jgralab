@@ -314,36 +314,6 @@ public class GenericGraphImpl extends GraphImpl implements
 				"This method is not supported by the generic implementation");
 	}
 
-	/**
-	 * This method is not supported by the generic implementation and therefore
-	 * throws an {@link UnsupportedOperationException}.
-	 */
-	@Override
-	public Vertex getFirstVertex(Class<? extends Vertex> vertexClass) {
-		throw new UnsupportedOperationException(
-				"This method is not supported by the generic implementation");
-	}
-
-	/**
-	 * This method is not supported by the generic implementation and therefore
-	 * throws an {@link UnsupportedOperationException}.
-	 */
-	@Override
-	public Edge getFirstEdge(Class<? extends Edge> edgeClass) {
-		throw new UnsupportedOperationException(
-				"This method is not supported by the generic implementation");
-	}
-
-	/**
-	 * This method is not supported by the generic implementation and therefore
-	 * throws an {@link UnsupportedOperationException}.
-	 */
-	@Override
-	public Iterable<Edge> edges(Class<? extends Edge> edgeClass) {
-		throw new UnsupportedOperationException(
-				"This method is not supported by the generic implementation");
-	}
-
 	@Override
 	public void invokeOnAttributesArray(OnAttributesFunction fn) {
 		attributes = fn.invoke(this, attributes);

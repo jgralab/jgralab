@@ -59,9 +59,9 @@ import de.uni_koblenz.jgralab.trans.VersionedDataObject;
 
 /**
  * The implementation of a <code>Vertex</edge> with versioning.
- * 
+ *
  * Next and previous vertex in Vseq, the first and last incidence in Iseq(this) and the incidenceListVersion are versioned.
- * 
+ *
  * @author Jose Monte(monte@uni-koblenz.de)
  */
 public abstract class VertexImpl extends
@@ -79,7 +79,7 @@ public abstract class VertexImpl extends
 	 * Initialization of versioned attributes is avoided here, to not have
 	 * persistent and temporary values for new instances within the transaction
 	 * this instance is created in.
-	 * 
+	 *
 	 * @param graphId
 	 *            the Id of the <code>Vertex</code>
 	 * @param graph
@@ -427,7 +427,7 @@ public abstract class VertexImpl extends
 	/**
 	 * Should be called from generated <code>Vertex</code> implementation
 	 * classes whenever a versioned attribute is changed.
-	 * 
+	 *
 	 * @param versionedAttribute
 	 *            the changed attribute
 	 */
@@ -467,7 +467,7 @@ public abstract class VertexImpl extends
 
 	/**
 	 * Implemented in concrete generated instances.
-	 * 
+	 *
 	 * @return references to all versioned attributes of this instance. Needed
 	 *         for validation!!!
 	 */
@@ -490,20 +490,7 @@ public abstract class VertexImpl extends
 	}
 
 	@Override
-	public Iterable<Edge> incidences(Class<? extends Edge> eclass,
-			EdgeDirection dir) {
-		return new AttributedElementIterable<Edge>(
-				super.incidences(eclass, dir), graph);
-	}
-
-	@Override
 	public Iterable<Edge> incidences(EdgeClass eclass) {
-		return new AttributedElementIterable<Edge>(super.incidences(eclass),
-				graph);
-	}
-
-	@Override
-	public Iterable<Edge> incidences(Class<? extends Edge> eclass) {
 		return new AttributedElementIterable<Edge>(super.incidences(eclass),
 				graph);
 	}

@@ -2149,7 +2149,7 @@ public class Rsa2Tg extends XmlProcessor {
 								.getFirstHasAttributeIncidence().getThat())
 								.get_qualifiedName()
 						+ "' has "
-						+ att.getDegree(HasDomain.class, EdgeDirection.OUT)
+						+ att.getDegree(HasDomain.EC, EdgeDirection.OUT)
 						+ " domain(s)";
 				continue;
 			}
@@ -2163,7 +2163,7 @@ public class Rsa2Tg extends XmlProcessor {
 						"Undefined Domain with ID '" + domainId + "' found.");
 			}
 
-			assert att.getDegree(HasDomain.class, EdgeDirection.OUT) == 1;
+			assert att.getDegree(HasDomain.EC, EdgeDirection.OUT) == 1;
 		}
 
 		// If 'attributeType' is not empty, there will be a Domain objects
@@ -2763,7 +2763,7 @@ public class Rsa2Tg extends XmlProcessor {
 			dom = createDomain("Integer");
 		} else if (href.endsWith("#Boolean")) {
 			dom = createDomain("Boolean");
-		}else if (href.endsWith("#double")){
+		} else if (href.endsWith("#double")) {
 			dom = createDomain("Double");
 		} else {
 			throw new ProcessingException(getParser(), getFileName(),

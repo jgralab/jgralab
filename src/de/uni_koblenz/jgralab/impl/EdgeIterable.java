@@ -41,8 +41,6 @@ import java.util.NoSuchElementException;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
-import de.uni_koblenz.jgralab.GraphException;
-import de.uni_koblenz.jgralab.TemporaryEdge;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 
 /**
@@ -76,24 +74,6 @@ public class EdgeIterable<E extends Edge> implements Iterable<E> {
 		 * time "next()" is called
 		 */
 		protected long edgeListVersion;
-
-		@SuppressWarnings("unchecked")
-		EdgeIterator(InternalGraph g, Class<? extends Edge> ec) {
-			graph = g;
-			try {
-				if (ec == TemporaryEdge.class) {
-					schemaEc = graph.getGraphClass().getTemporaryEdgeClass();
-				} else {
-					schemaEc = (EdgeClass) (ec.getField("EC").get(null));
-				}
-			} catch (Exception e) {
-				throw new GraphException("Couldn't read constant EC field of "
-						+ ec.getName(), e);
-			}
-			edgeListVersion = g.getEdgeListVersion();
-			current = (E) (schemaEc == null ? graph.getFirstEdge() : graph
-					.getFirstEdge(schemaEc));
-		}
 
 		@SuppressWarnings("unchecked")
 		EdgeIterator(InternalGraph g, EdgeClass ec) {
@@ -137,11 +117,6 @@ public class EdgeIterable<E extends Edge> implements Iterable<E> {
 
 	public EdgeIterable(Graph g) {
 		this(g, (EdgeClass) null);
-	}
-
-	public EdgeIterable(Graph g, Class<? extends Edge> ec) {
-		assert g != null;
-		iter = new EdgeIterator((InternalGraph) g, ec);
 	}
 
 	public EdgeIterable(Graph g, EdgeClass ec) {
