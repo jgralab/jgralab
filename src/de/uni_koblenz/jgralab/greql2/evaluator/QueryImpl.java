@@ -547,7 +547,7 @@ public class QueryImpl extends GraphStructureChangedAdapter implements Query {
 			}
 		}
 		subQueryMap.put(name, greqlQueryObject);
-		if (queryText != null) {
+		if (queryText != null && queryGraph != null) {
 			weaveInSubQueries();
 			// System.out.println("\nGiven subquery:");
 			// System.out.println(greqlQuery);
