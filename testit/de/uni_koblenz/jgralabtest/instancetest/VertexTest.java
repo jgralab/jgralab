@@ -138,7 +138,7 @@ public class VertexTest extends InstanceTest {
 	// tests of the method isIncidenceListModified(long incidenceListVersion);
 	/**
 	 * Tests if the incidenceList wasn't modified.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -161,7 +161,7 @@ public class VertexTest extends InstanceTest {
 	/**
 	 * If you create and delete edges, only the incidenceLists of the involved
 	 * nodes may have been modified.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -237,7 +237,7 @@ public class VertexTest extends InstanceTest {
 	/**
 	 * If you create and delete edges, only the incidenceListVersions of the
 	 * involved nodes may have been increased.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -288,7 +288,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * A vertex with no connected incidences has to have a degree of 0.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -303,7 +303,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Checks the degrees in a manually build graph.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -329,7 +329,7 @@ public class VertexTest extends InstanceTest {
 	/**
 	 * Generates a number of edges and checks the correct degrees of the
 	 * vertices. After that it deletes the edges and checks the degrees again.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -390,7 +390,7 @@ public class VertexTest extends InstanceTest {
 	/**
 	 * A vertex with no connected incidences has to have a degree of 0 for each
 	 * EdgeDirection.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -407,7 +407,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Checks the degrees in a manually build graph.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -442,7 +442,7 @@ public class VertexTest extends InstanceTest {
 	 * Generates a number of different edges and checks the correct degrees of
 	 * the vertices considering the different EdgeDirections. After that it
 	 * deletes the edges and checks the degrees again.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -532,7 +532,7 @@ public class VertexTest extends InstanceTest {
 	/**
 	 * A vertex with no connected incidences has to have a degree of 0 for each
 	 * EdgeClass.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -547,7 +547,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Checks the degrees in a manually build graph.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -575,7 +575,7 @@ public class VertexTest extends InstanceTest {
 	 * Generates a number of different edges and checks the correct degrees of
 	 * the vertices considering the different Edgeclasses. After that it deletes
 	 * the edges and checks the degrees again.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -663,7 +663,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Tests if a Vertex has the expected degree considering the EdgeClass.
-	 * 
+	 *
 	 * @param forNode
 	 *            the Vertex, which degrees should be tested
 	 * @param expectedLink
@@ -683,7 +683,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Creates an array of the EdgeClasses.
-	 * 
+	 *
 	 * @return {Link, SubLink, LinkBack}
 	 */
 	private EdgeClass[] getEdgeClasses() {
@@ -707,7 +707,7 @@ public class VertexTest extends InstanceTest {
 	/**
 	 * A vertex with no connected incidences has to have a degree of 0 for each
 	 * Class extends Edge.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -724,7 +724,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Checks the degrees in a manually build graph.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -760,7 +760,7 @@ public class VertexTest extends InstanceTest {
 	 * Generates a number of different edges and checks the correct degrees of
 	 * the vertices considering the different Classes. After that it deletes the
 	 * edges and checks the degrees again.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -863,7 +863,7 @@ public class VertexTest extends InstanceTest {
 	/**
 	 * A vertex with no connected incidences has to have a degree of 0 for each
 	 * EdgeClass.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -876,7 +876,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Checks the degrees in a manually build graph.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -900,7 +900,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Checks the degrees in a manually build graph, which has only SubLinks.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -919,7 +919,7 @@ public class VertexTest extends InstanceTest {
 	 * Generates a number of different edges and checks the correct degrees of
 	 * the vertices considering the different Edgeclasses and their subclasses.
 	 * After that it deletes the edges and checks the degrees again.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -1008,7 +1008,7 @@ public class VertexTest extends InstanceTest {
 	/**
 	 * Tests if a Vertex has the expected degree considering the EdgeClass and
 	 * SubClasses.
-	 * 
+	 *
 	 * @param forNode
 	 *            the Vertex, which degrees should be tested
 	 * @param expectedLink
@@ -1036,7 +1036,7 @@ public class VertexTest extends InstanceTest {
 	/**
 	 * A vertex with no connected incidences has to have a degree of 0 for each
 	 * Class extends Edge.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -1049,7 +1049,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Checks the degrees in a manually build graph.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -1072,7 +1072,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Checks the degrees in a manually build graph, which has only SubLinks.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -1091,7 +1091,7 @@ public class VertexTest extends InstanceTest {
 	 * Generates a number of different edges and checks the correct degrees of
 	 * the vertices considering the different Classes and Subclasses. After that
 	 * it deletes the edges and checks the degrees again.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -1180,7 +1180,7 @@ public class VertexTest extends InstanceTest {
 	/**
 	 * Tests if a Vertex has the expected degree considering the Classes
 	 * extending Edge and SubClasses.
-	 * 
+	 *
 	 * @param forNode
 	 *            the Vertex, which degrees should be tested
 	 * @param expectedLink
@@ -1207,7 +1207,7 @@ public class VertexTest extends InstanceTest {
 	/**
 	 * A vertex with no connected incidences has to have a degree of 0 for each
 	 * EdgeClass.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -1223,7 +1223,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Checks the degrees in a manually build graph.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -1261,7 +1261,7 @@ public class VertexTest extends InstanceTest {
 	/**
 	 * Checks the degrees in a manually build graph, which has only one
 	 * LinkBack.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -1286,7 +1286,7 @@ public class VertexTest extends InstanceTest {
 	 * the vertices considering the different Edgeclasses and their
 	 * EdgeDirections. After that it deletes the edges and checks the degrees
 	 * again.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -1427,7 +1427,7 @@ public class VertexTest extends InstanceTest {
 	/**
 	 * Tests if a Vertex has the expected degree considering the EdgeClass and
 	 * the EdgeDirection.
-	 * 
+	 *
 	 * @param forNode
 	 *            the Vertex, which degrees should be tested
 	 * @param expectedLink
@@ -1457,7 +1457,7 @@ public class VertexTest extends InstanceTest {
 	/**
 	 * A vertex with no connected incidences has to have a degree of 0 for each
 	 * Class.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -1474,7 +1474,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Checks the degrees in a manually build graph.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -1511,7 +1511,7 @@ public class VertexTest extends InstanceTest {
 	/**
 	 * Checks the degrees in a manually build graph, which has only one
 	 * LinkBack.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -1535,7 +1535,7 @@ public class VertexTest extends InstanceTest {
 	 * Generates a number of different edges and checks the correct degrees of
 	 * the vertices considering the different Classes and their EdgeDirections.
 	 * After that it deletes the edges and checks the degrees again.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -1675,7 +1675,7 @@ public class VertexTest extends InstanceTest {
 	/**
 	 * Tests if a Vertex has the expected degree considering the Class and the
 	 * EdgeDirection.
-	 * 
+	 *
 	 * @param forNode
 	 *            the Vertex, which degrees should be tested
 	 * @param expectedLink
@@ -1703,7 +1703,7 @@ public class VertexTest extends InstanceTest {
 	/**
 	 * A vertex with no connected incidences has to have a degree of 0 for each
 	 * EdgeClass.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -1723,7 +1723,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Checks the degrees in a manually build graph.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -1771,7 +1771,7 @@ public class VertexTest extends InstanceTest {
 	/**
 	 * Checks the degrees in a manually build graph, which has only one
 	 * LinkBack.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -1801,7 +1801,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Checks the degrees in a manually build graph, which has only one Link.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -1833,7 +1833,7 @@ public class VertexTest extends InstanceTest {
 	 * the vertices considering the different Edgeclasses, their EdgeDirections
 	 * and their SubClasses. After that it deletes the edges and checks the
 	 * degrees again.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -1980,7 +1980,7 @@ public class VertexTest extends InstanceTest {
 	/**
 	 * Tests if a Vertex has the expected degree considering the EdgeClass, the
 	 * EdgeDirection and the Subclasses.
-	 * 
+	 *
 	 * @param forNode
 	 *            the Vertex, which degrees should be tested
 	 * @param expectedLink
@@ -2007,7 +2007,7 @@ public class VertexTest extends InstanceTest {
 	/**
 	 * A vertex with no connected incidences has to have a degree of 0 for each
 	 * Class.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -2025,7 +2025,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Checks the degrees in a manually build graph.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -2070,7 +2070,7 @@ public class VertexTest extends InstanceTest {
 	/**
 	 * Checks the degrees in a manually build graph, which has only one
 	 * LinkBack.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -2098,7 +2098,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Checks the degrees in a manually build graph, which has only one Link.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -2129,7 +2129,7 @@ public class VertexTest extends InstanceTest {
 	 * the vertices considering the different Classes, their EdgeDirections and
 	 * their SubClasses. After that it deletes the edges and checks the degrees
 	 * again.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -2270,7 +2270,7 @@ public class VertexTest extends InstanceTest {
 	/**
 	 * Tests if a Vertex has the expected degree considering the Class, the
 	 * EdgeDirection and the Subclasses.
-	 * 
+	 *
 	 * @param forNode
 	 *            the Vertex, which degrees should be tested
 	 * @param expectedLink
@@ -2296,7 +2296,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Tests the method if there is only one Vertex in the graph.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -2311,7 +2311,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Tests the correctness in a manually build graph.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -2334,7 +2334,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Tests the correctness in an random graph.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -2397,7 +2397,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Tests the method if there is only one Vertex in the graph.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -2412,7 +2412,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Tests the correctness in a manually build graph.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -2435,7 +2435,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Tests the correctness in an random graph.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -2467,7 +2467,7 @@ public class VertexTest extends InstanceTest {
 	 * ret[1]=SubNode<br>
 	 * ret[2]=SuperNode<br>
 	 * ret[3]=DoubleSubNode
-	 * 
+	 *
 	 * @return an array <code>ret</code> of all VertexClasses
 	 */
 	private VertexClass[] getVertexClasses() {
@@ -2489,7 +2489,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Tests if there is only one vertex in the graph.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -2509,7 +2509,7 @@ public class VertexTest extends InstanceTest {
 	/**
 	 * The next vertex is an instance of a class which is a subclass of another
 	 * vertexclass.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -2530,7 +2530,7 @@ public class VertexTest extends InstanceTest {
 	/**
 	 * The next vertex is an instance of a class which is a subclass of tow
 	 * other vertexclasses.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -2551,7 +2551,7 @@ public class VertexTest extends InstanceTest {
 	/**
 	 * Test in a manually build graph: SubNode SuperNode DoubleSubNode SuperNode
 	 * SubNode SuperNode DoubleSubNode
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -2607,7 +2607,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * RandomTests
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -2724,7 +2724,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Tests if there is only one vertex in the graph.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -2733,17 +2733,17 @@ public class VertexTest extends InstanceTest {
 		Vertex v = g.createSubNode();
 		commit(g);
 		createReadOnlyTransaction(g);
-		assertNull(v.getNextVertex(AbstractSuperNode.class));
-		assertNull(v.getNextVertex(SubNode.class));
-		assertNull(v.getNextVertex(SuperNode.class));
-		assertNull(v.getNextVertex(DoubleSubNode.class));
+		assertNull(v.getNextVertex(AbstractSuperNode.VC));
+		assertNull(v.getNextVertex(SubNode.VC));
+		assertNull(v.getNextVertex(SuperNode.VC));
+		assertNull(v.getNextVertex(DoubleSubNode.VC));
 		commit(g);
 	}
 
 	/**
 	 * The next vertex is an instance of a class which is a subclass of another
 	 * vertexclass.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -2753,17 +2753,17 @@ public class VertexTest extends InstanceTest {
 		Vertex v1 = g.createSubNode();
 		commit(g);
 		createReadOnlyTransaction(g);
-		assertEquals(v1, v0.getNextVertex(AbstractSuperNode.class));
-		assertEquals(v1, v0.getNextVertex(SubNode.class));
-		assertNull(v0.getNextVertex(SuperNode.class));
-		assertNull(v0.getNextVertex(DoubleSubNode.class));
+		assertEquals(v1, v0.getNextVertex(AbstractSuperNode.VC));
+		assertEquals(v1, v0.getNextVertex(SubNode.VC));
+		assertNull(v0.getNextVertex(SuperNode.VC));
+		assertNull(v0.getNextVertex(DoubleSubNode.VC));
 		commit(g);
 	}
 
 	/**
 	 * The next vertex is an instance of a class which is a subclass of tow
 	 * other vertexclasses.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -2773,17 +2773,17 @@ public class VertexTest extends InstanceTest {
 		Vertex v1 = g.createDoubleSubNode();
 		commit(g);
 		createReadOnlyTransaction(g);
-		assertEquals(v1, v0.getNextVertex(AbstractSuperNode.class));
-		assertEquals(v1, v0.getNextVertex(SubNode.class));
-		assertEquals(v1, v0.getNextVertex(SuperNode.class));
-		assertEquals(v1, v0.getNextVertex(DoubleSubNode.class));
+		assertEquals(v1, v0.getNextVertex(AbstractSuperNode.VC));
+		assertEquals(v1, v0.getNextVertex(SubNode.VC));
+		assertEquals(v1, v0.getNextVertex(SuperNode.VC));
+		assertEquals(v1, v0.getNextVertex(DoubleSubNode.VC));
 		commit(g);
 	}
 
 	/**
 	 * Test in a manually build graph: SubNode SuperNode DoubleSubNode SuperNode
 	 * SubNode SuperNode DoubleSubNode
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -2799,46 +2799,46 @@ public class VertexTest extends InstanceTest {
 		commit(g);
 
 		createReadOnlyTransaction(g);
-		assertEquals(v2, v0.getNextVertex(AbstractSuperNode.class));
-		assertEquals(v2, v0.getNextVertex(SubNode.class));
-		assertEquals(v1, v0.getNextVertex(SuperNode.class));
-		assertEquals(v2, v0.getNextVertex(DoubleSubNode.class));
+		assertEquals(v2, v0.getNextVertex(AbstractSuperNode.VC));
+		assertEquals(v2, v0.getNextVertex(SubNode.VC));
+		assertEquals(v1, v0.getNextVertex(SuperNode.VC));
+		assertEquals(v2, v0.getNextVertex(DoubleSubNode.VC));
 
-		assertEquals(v2, v1.getNextVertex(AbstractSuperNode.class));
-		assertEquals(v2, v1.getNextVertex(SubNode.class));
-		assertEquals(v2, v1.getNextVertex(SuperNode.class));
-		assertEquals(v2, v1.getNextVertex(DoubleSubNode.class));
+		assertEquals(v2, v1.getNextVertex(AbstractSuperNode.VC));
+		assertEquals(v2, v1.getNextVertex(SubNode.VC));
+		assertEquals(v2, v1.getNextVertex(SuperNode.VC));
+		assertEquals(v2, v1.getNextVertex(DoubleSubNode.VC));
 
-		assertEquals(v4, v2.getNextVertex(AbstractSuperNode.class));
-		assertEquals(v4, v2.getNextVertex(SubNode.class));
-		assertEquals(v3, v2.getNextVertex(SuperNode.class));
-		assertEquals(v6, v2.getNextVertex(DoubleSubNode.class));
+		assertEquals(v4, v2.getNextVertex(AbstractSuperNode.VC));
+		assertEquals(v4, v2.getNextVertex(SubNode.VC));
+		assertEquals(v3, v2.getNextVertex(SuperNode.VC));
+		assertEquals(v6, v2.getNextVertex(DoubleSubNode.VC));
 
-		assertEquals(v4, v3.getNextVertex(AbstractSuperNode.class));
-		assertEquals(v4, v3.getNextVertex(SubNode.class));
-		assertEquals(v5, v3.getNextVertex(SuperNode.class));
-		assertEquals(v6, v3.getNextVertex(DoubleSubNode.class));
+		assertEquals(v4, v3.getNextVertex(AbstractSuperNode.VC));
+		assertEquals(v4, v3.getNextVertex(SubNode.VC));
+		assertEquals(v5, v3.getNextVertex(SuperNode.VC));
+		assertEquals(v6, v3.getNextVertex(DoubleSubNode.VC));
 
-		assertEquals(v6, v4.getNextVertex(AbstractSuperNode.class));
-		assertEquals(v6, v4.getNextVertex(SubNode.class));
-		assertEquals(v5, v4.getNextVertex(SuperNode.class));
-		assertEquals(v6, v4.getNextVertex(DoubleSubNode.class));
+		assertEquals(v6, v4.getNextVertex(AbstractSuperNode.VC));
+		assertEquals(v6, v4.getNextVertex(SubNode.VC));
+		assertEquals(v5, v4.getNextVertex(SuperNode.VC));
+		assertEquals(v6, v4.getNextVertex(DoubleSubNode.VC));
 
-		assertEquals(v6, v5.getNextVertex(AbstractSuperNode.class));
-		assertEquals(v6, v5.getNextVertex(SubNode.class));
-		assertEquals(v6, v5.getNextVertex(SuperNode.class));
-		assertEquals(v6, v5.getNextVertex(DoubleSubNode.class));
+		assertEquals(v6, v5.getNextVertex(AbstractSuperNode.VC));
+		assertEquals(v6, v5.getNextVertex(SubNode.VC));
+		assertEquals(v6, v5.getNextVertex(SuperNode.VC));
+		assertEquals(v6, v5.getNextVertex(DoubleSubNode.VC));
 
-		assertNull(v6.getNextVertex(AbstractSuperNode.class));
-		assertNull(v6.getNextVertex(SubNode.class));
-		assertNull(v6.getNextVertex(SuperNode.class));
-		assertNull(v6.getNextVertex(DoubleSubNode.class));
+		assertNull(v6.getNextVertex(AbstractSuperNode.VC));
+		assertNull(v6.getNextVertex(SubNode.VC));
+		assertNull(v6.getNextVertex(SuperNode.VC));
+		assertNull(v6.getNextVertex(DoubleSubNode.VC));
 		commit(g);
 	}
 
 	/**
 	 * RandomTests
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -2934,13 +2934,13 @@ public class VertexTest extends InstanceTest {
 			// check nextVertex after creating
 			for (int j = 0; j < vertices.length; j++) {
 				assertEquals(nextAbstractSuperNode[j],
-						vertices[j].getNextVertex(AbstractSuperNode.class));
+						vertices[j].getNextVertex(AbstractSuperNode.VC));
 				assertEquals(nextSubNode[j],
-						vertices[j].getNextVertex(SubNode.class));
+						vertices[j].getNextVertex(SubNode.VC));
 				assertEquals(nextSuperNode[j],
-						vertices[j].getNextVertex(SuperNode.class));
+						vertices[j].getNextVertex(SuperNode.VC));
 				assertEquals(nextDoubleSubNode[j],
-						vertices[j].getNextVertex(DoubleSubNode.class));
+						vertices[j].getNextVertex(DoubleSubNode.VC));
 			}
 			commit(g);
 		}
@@ -2948,7 +2948,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * RandomTests
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -3095,7 +3095,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * RandomTests
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -3224,13 +3224,13 @@ public class VertexTest extends InstanceTest {
 			// check nextVertex after creating
 			for (int j = 0; j < vertices.length; j++) {
 				assertEquals(nextAbstractSuperNodeFalse[j],
-						vertices[j].getNextVertex(AbstractSuperNode.class));
+						vertices[j].getNextVertex(AbstractSuperNode.VC));
 				assertEquals(nextSubNodeFalse[j],
-						vertices[j].getNextVertex(SubNode.class));
+						vertices[j].getNextVertex(SubNode.VC));
 				assertEquals(nextSuperNodeFalse[j],
-						vertices[j].getNextVertex(SuperNode.class));
+						vertices[j].getNextVertex(SuperNode.VC));
 				assertEquals(nextDoubleSubNodeFalse[j],
-						vertices[j].getNextVertex(DoubleSubNode.class));
+						vertices[j].getNextVertex(DoubleSubNode.VC));
 			}
 			commit(g);
 		}
@@ -3246,7 +3246,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Tests if a node has no Edges
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -3263,7 +3263,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Tests if a node has only one Edge
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -3287,7 +3287,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Tests if a node has two Edges with the same direction.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -3312,7 +3312,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Tests if a node has two Edges with different direction.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -3338,7 +3338,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Tests if alpha and omega of an Edge is the same Vertex.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -3357,7 +3357,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Random tests
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -3453,7 +3453,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Tests if a node has no Edges
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -3471,7 +3471,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Tests if a node has only one Edge
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -3494,7 +3494,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Tests if a node has an edge which extends another edge
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -3517,7 +3517,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Tests if a node has two Edges.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -3541,7 +3541,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Tests if alpha and omega of an Edge is the same Vertex.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -3560,7 +3560,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Random tests
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -3648,7 +3648,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Tests if a node has no Edges
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -3657,15 +3657,15 @@ public class VertexTest extends InstanceTest {
 		Vertex v0 = g.createDoubleSubNode();
 		commit(g);
 		createReadOnlyTransaction(g);
-		assertNull(v0.getFirstIncidence(Link.class));
-		assertNull(v0.getFirstIncidence(SubLink.class));
-		assertNull(v0.getFirstIncidence(LinkBack.class));
+		assertNull(v0.getFirstIncidence(Link.EC));
+		assertNull(v0.getFirstIncidence(SubLink.EC));
+		assertNull(v0.getFirstIncidence(LinkBack.EC));
 		commit(g);
 	}
 
 	/**
 	 * Tests if a node has only one Edge
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -3676,18 +3676,18 @@ public class VertexTest extends InstanceTest {
 		Edge e = g.createLink((AbstractSuperNode) v0, (SuperNode) v1);
 		commit(g);
 		createReadOnlyTransaction(g);
-		assertEquals(e, v0.getFirstIncidence(Link.class));
-		assertNull(v0.getFirstIncidence(SubLink.class));
-		assertNull(v0.getFirstIncidence(LinkBack.class));
-		assertEquals(e.getReversedEdge(), v1.getFirstIncidence(Link.class));
-		assertNull(v1.getFirstIncidence(SubLink.class));
-		assertNull(v1.getFirstIncidence(LinkBack.class));
+		assertEquals(e, v0.getFirstIncidence(Link.EC));
+		assertNull(v0.getFirstIncidence(SubLink.EC));
+		assertNull(v0.getFirstIncidence(LinkBack.EC));
+		assertEquals(e.getReversedEdge(), v1.getFirstIncidence(Link.EC));
+		assertNull(v1.getFirstIncidence(SubLink.EC));
+		assertNull(v1.getFirstIncidence(LinkBack.EC));
 		commit(g);
 	}
 
 	/**
 	 * Tests if a node has an edge which extends another edge
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -3698,18 +3698,18 @@ public class VertexTest extends InstanceTest {
 		Edge e1 = g.createSubLink((DoubleSubNode) v0, (SuperNode) v1);
 		commit(g);
 		createReadOnlyTransaction(g);
-		assertEquals(e1, v0.getFirstIncidence(Link.class));
-		assertEquals(e1, v0.getFirstIncidence(SubLink.class));
-		assertNull(v0.getFirstIncidence(LinkBack.class));
-		assertEquals(e1.getReversedEdge(), v1.getFirstIncidence(Link.class));
-		assertEquals(e1.getReversedEdge(), v1.getFirstIncidence(SubLink.class));
-		assertNull(v1.getFirstIncidence(LinkBack.class));
+		assertEquals(e1, v0.getFirstIncidence(Link.EC));
+		assertEquals(e1, v0.getFirstIncidence(SubLink.EC));
+		assertNull(v0.getFirstIncidence(LinkBack.EC));
+		assertEquals(e1.getReversedEdge(), v1.getFirstIncidence(Link.EC));
+		assertEquals(e1.getReversedEdge(), v1.getFirstIncidence(SubLink.EC));
+		assertNull(v1.getFirstIncidence(LinkBack.EC));
 		commit(g);
 	}
 
 	/**
 	 * Tests if a node has two Edges.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -3721,18 +3721,18 @@ public class VertexTest extends InstanceTest {
 		Edge e2 = g.createLinkBack((SuperNode) v1, (AbstractSuperNode) v0);
 		commit(g);
 		createReadOnlyTransaction(g);
-		assertEquals(e1, v0.getFirstIncidence(Link.class));
-		assertNull(v0.getFirstIncidence(SubLink.class));
-		assertEquals(e2.getReversedEdge(), v0.getFirstIncidence(LinkBack.class));
-		assertEquals(e1.getReversedEdge(), v1.getFirstIncidence(Link.class));
-		assertNull(v1.getFirstIncidence(SubLink.class));
-		assertEquals(e2, v1.getFirstIncidence(LinkBack.class));
+		assertEquals(e1, v0.getFirstIncidence(Link.EC));
+		assertNull(v0.getFirstIncidence(SubLink.EC));
+		assertEquals(e2.getReversedEdge(), v0.getFirstIncidence(LinkBack.EC));
+		assertEquals(e1.getReversedEdge(), v1.getFirstIncidence(Link.EC));
+		assertNull(v1.getFirstIncidence(SubLink.EC));
+		assertEquals(e2, v1.getFirstIncidence(LinkBack.EC));
 		commit(g);
 	}
 
 	/**
 	 * Tests if alpha and omega of an Edge is the same Vertex.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -3742,15 +3742,15 @@ public class VertexTest extends InstanceTest {
 		Edge e1 = g.createLink((AbstractSuperNode) v0, (SuperNode) v0);
 		commit(g);
 		createReadOnlyTransaction(g);
-		assertEquals(e1, v0.getFirstIncidence(Link.class));
-		assertNull(v0.getFirstIncidence(SubLink.class));
-		assertNull(v0.getFirstIncidence(LinkBack.class));
+		assertEquals(e1, v0.getFirstIncidence(Link.EC));
+		assertNull(v0.getFirstIncidence(SubLink.EC));
+		assertNull(v0.getFirstIncidence(LinkBack.EC));
 		commit(g);
 	}
 
 	/**
 	 * Random tests
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -3808,24 +3808,21 @@ public class VertexTest extends InstanceTest {
 			}
 			commit(g);
 			createReadOnlyTransaction(g);
-			assertEquals(firstLink[0],
-					vertices[0].getFirstIncidence(Link.class));
-			assertEquals(firstLink[1],
-					vertices[1].getFirstIncidence(Link.class));
-			assertEquals(firstLink[2],
-					vertices[2].getFirstIncidence(Link.class));
+			assertEquals(firstLink[0], vertices[0].getFirstIncidence(Link.EC));
+			assertEquals(firstLink[1], vertices[1].getFirstIncidence(Link.EC));
+			assertEquals(firstLink[2], vertices[2].getFirstIncidence(Link.EC));
 			assertEquals(firstLinkBack[0],
-					vertices[0].getFirstIncidence(LinkBack.class));
+					vertices[0].getFirstIncidence(LinkBack.EC));
 			assertEquals(firstLinkBack[1],
-					vertices[1].getFirstIncidence(LinkBack.class));
+					vertices[1].getFirstIncidence(LinkBack.EC));
 			assertEquals(firstLinkBack[2],
-					vertices[2].getFirstIncidence(LinkBack.class));
+					vertices[2].getFirstIncidence(LinkBack.EC));
 			assertEquals(firstSubLink[0],
-					vertices[0].getFirstIncidence(SubLink.class));
+					vertices[0].getFirstIncidence(SubLink.EC));
 			assertEquals(firstSubLink[1],
-					vertices[1].getFirstIncidence(SubLink.class));
+					vertices[1].getFirstIncidence(SubLink.EC));
 			assertEquals(firstSubLink[2],
-					vertices[2].getFirstIncidence(SubLink.class));
+					vertices[2].getFirstIncidence(SubLink.EC));
 			commit(g);
 		}
 	}
@@ -3835,7 +3832,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Tests if a node has no Edges
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -3863,7 +3860,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Tests if a node has only one Edge
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -3904,7 +3901,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Tests if a node has an edge which extends another edge
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -3947,7 +3944,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Tests if a node has two Edges.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -3991,7 +3988,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Tests if alpha and omega of an Edge is the same Vertex.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -4021,7 +4018,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Random tests
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -4179,7 +4176,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Tests if a node has no Edges
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -4190,23 +4187,23 @@ public class VertexTest extends InstanceTest {
 		commit(g);
 
 		createReadOnlyTransaction(g);
-		assertNull(v0.getFirstIncidence(Link.class, EdgeDirection.INOUT));
-		assertNull(v0.getFirstIncidence(SubLink.class, EdgeDirection.INOUT));
-		assertNull(v0.getFirstIncidence(LinkBack.class, EdgeDirection.INOUT));
+		assertNull(v0.getFirstIncidence(Link.EC, EdgeDirection.INOUT));
+		assertNull(v0.getFirstIncidence(SubLink.EC, EdgeDirection.INOUT));
+		assertNull(v0.getFirstIncidence(LinkBack.EC, EdgeDirection.INOUT));
 
-		assertNull(v0.getFirstIncidence(Link.class, EdgeDirection.OUT));
-		assertNull(v0.getFirstIncidence(SubLink.class, EdgeDirection.OUT));
-		assertNull(v0.getFirstIncidence(LinkBack.class, EdgeDirection.OUT));
+		assertNull(v0.getFirstIncidence(Link.EC, EdgeDirection.OUT));
+		assertNull(v0.getFirstIncidence(SubLink.EC, EdgeDirection.OUT));
+		assertNull(v0.getFirstIncidence(LinkBack.EC, EdgeDirection.OUT));
 
-		assertNull(v0.getFirstIncidence(Link.class, EdgeDirection.IN));
-		assertNull(v0.getFirstIncidence(SubLink.class, EdgeDirection.IN));
-		assertNull(v0.getFirstIncidence(LinkBack.class, EdgeDirection.IN));
+		assertNull(v0.getFirstIncidence(Link.EC, EdgeDirection.IN));
+		assertNull(v0.getFirstIncidence(SubLink.EC, EdgeDirection.IN));
+		assertNull(v0.getFirstIncidence(LinkBack.EC, EdgeDirection.IN));
 		commit(g);
 	}
 
 	/**
 	 * Tests if a node has only one Edge
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -4219,34 +4216,34 @@ public class VertexTest extends InstanceTest {
 		commit(g);
 
 		createReadOnlyTransaction(g);
-		assertEquals(e, v0.getFirstIncidence(Link.class, EdgeDirection.INOUT));
-		assertNull(v0.getFirstIncidence(SubLink.class, EdgeDirection.INOUT));
-		assertNull(v0.getFirstIncidence(LinkBack.class, EdgeDirection.INOUT));
+		assertEquals(e, v0.getFirstIncidence(Link.EC, EdgeDirection.INOUT));
+		assertNull(v0.getFirstIncidence(SubLink.EC, EdgeDirection.INOUT));
+		assertNull(v0.getFirstIncidence(LinkBack.EC, EdgeDirection.INOUT));
 		assertEquals(e.getReversedEdge(),
-				v1.getFirstIncidence(Link.class, EdgeDirection.INOUT));
-		assertNull(v1.getFirstIncidence(SubLink.class, EdgeDirection.INOUT));
-		assertNull(v1.getFirstIncidence(LinkBack.class, EdgeDirection.INOUT));
+				v1.getFirstIncidence(Link.EC, EdgeDirection.INOUT));
+		assertNull(v1.getFirstIncidence(SubLink.EC, EdgeDirection.INOUT));
+		assertNull(v1.getFirstIncidence(LinkBack.EC, EdgeDirection.INOUT));
 
-		assertEquals(e, v0.getFirstIncidence(Link.class, EdgeDirection.OUT));
-		assertNull(v0.getFirstIncidence(SubLink.class, EdgeDirection.OUT));
-		assertNull(v0.getFirstIncidence(LinkBack.class, EdgeDirection.OUT));
-		assertNull(v1.getFirstIncidence(Link.class, EdgeDirection.OUT));
-		assertNull(v1.getFirstIncidence(SubLink.class, EdgeDirection.OUT));
-		assertNull(v1.getFirstIncidence(LinkBack.class, EdgeDirection.OUT));
+		assertEquals(e, v0.getFirstIncidence(Link.EC, EdgeDirection.OUT));
+		assertNull(v0.getFirstIncidence(SubLink.EC, EdgeDirection.OUT));
+		assertNull(v0.getFirstIncidence(LinkBack.EC, EdgeDirection.OUT));
+		assertNull(v1.getFirstIncidence(Link.EC, EdgeDirection.OUT));
+		assertNull(v1.getFirstIncidence(SubLink.EC, EdgeDirection.OUT));
+		assertNull(v1.getFirstIncidence(LinkBack.EC, EdgeDirection.OUT));
 
-		assertNull(v0.getFirstIncidence(Link.class, EdgeDirection.IN));
-		assertNull(v0.getFirstIncidence(SubLink.class, EdgeDirection.IN));
-		assertNull(v0.getFirstIncidence(LinkBack.class, EdgeDirection.IN));
+		assertNull(v0.getFirstIncidence(Link.EC, EdgeDirection.IN));
+		assertNull(v0.getFirstIncidence(SubLink.EC, EdgeDirection.IN));
+		assertNull(v0.getFirstIncidence(LinkBack.EC, EdgeDirection.IN));
 		assertEquals(e.getReversedEdge(),
-				v1.getFirstIncidence(Link.class, EdgeDirection.IN));
-		assertNull(v1.getFirstIncidence(SubLink.class, EdgeDirection.IN));
-		assertNull(v1.getFirstIncidence(LinkBack.class, EdgeDirection.IN));
+				v1.getFirstIncidence(Link.EC, EdgeDirection.IN));
+		assertNull(v1.getFirstIncidence(SubLink.EC, EdgeDirection.IN));
+		assertNull(v1.getFirstIncidence(LinkBack.EC, EdgeDirection.IN));
 		commit(g);
 	}
 
 	/**
 	 * Tests if a node has an edge which extends another edge
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -4259,37 +4256,36 @@ public class VertexTest extends InstanceTest {
 		commit(g);
 
 		createReadOnlyTransaction(g);
-		assertEquals(e1, v0.getFirstIncidence(Link.class, EdgeDirection.INOUT));
-		assertEquals(e1,
-				v0.getFirstIncidence(SubLink.class, EdgeDirection.INOUT));
-		assertNull(v0.getFirstIncidence(LinkBack.class, EdgeDirection.INOUT));
+		assertEquals(e1, v0.getFirstIncidence(Link.EC, EdgeDirection.INOUT));
+		assertEquals(e1, v0.getFirstIncidence(SubLink.EC, EdgeDirection.INOUT));
+		assertNull(v0.getFirstIncidence(LinkBack.EC, EdgeDirection.INOUT));
 		assertEquals(e1.getReversedEdge(),
-				v1.getFirstIncidence(Link.class, EdgeDirection.INOUT));
+				v1.getFirstIncidence(Link.EC, EdgeDirection.INOUT));
 		assertEquals(e1.getReversedEdge(),
-				v1.getFirstIncidence(SubLink.class, EdgeDirection.INOUT));
-		assertNull(v1.getFirstIncidence(LinkBack.class, EdgeDirection.INOUT));
+				v1.getFirstIncidence(SubLink.EC, EdgeDirection.INOUT));
+		assertNull(v1.getFirstIncidence(LinkBack.EC, EdgeDirection.INOUT));
 
-		assertEquals(e1, v0.getFirstIncidence(Link.class, EdgeDirection.OUT));
-		assertEquals(e1, v0.getFirstIncidence(SubLink.class, EdgeDirection.OUT));
-		assertNull(v0.getFirstIncidence(LinkBack.class, EdgeDirection.OUT));
-		assertNull(v1.getFirstIncidence(Link.class, EdgeDirection.OUT));
-		assertNull(v1.getFirstIncidence(SubLink.class, EdgeDirection.OUT));
-		assertNull(v1.getFirstIncidence(LinkBack.class, EdgeDirection.OUT));
+		assertEquals(e1, v0.getFirstIncidence(Link.EC, EdgeDirection.OUT));
+		assertEquals(e1, v0.getFirstIncidence(SubLink.EC, EdgeDirection.OUT));
+		assertNull(v0.getFirstIncidence(LinkBack.EC, EdgeDirection.OUT));
+		assertNull(v1.getFirstIncidence(Link.EC, EdgeDirection.OUT));
+		assertNull(v1.getFirstIncidence(SubLink.EC, EdgeDirection.OUT));
+		assertNull(v1.getFirstIncidence(LinkBack.EC, EdgeDirection.OUT));
 
-		assertNull(v0.getFirstIncidence(Link.class, EdgeDirection.IN));
-		assertNull(v0.getFirstIncidence(SubLink.class, EdgeDirection.IN));
-		assertNull(v0.getFirstIncidence(LinkBack.class, EdgeDirection.IN));
+		assertNull(v0.getFirstIncidence(Link.EC, EdgeDirection.IN));
+		assertNull(v0.getFirstIncidence(SubLink.EC, EdgeDirection.IN));
+		assertNull(v0.getFirstIncidence(LinkBack.EC, EdgeDirection.IN));
 		assertEquals(e1.getReversedEdge(),
-				v1.getFirstIncidence(Link.class, EdgeDirection.IN));
+				v1.getFirstIncidence(Link.EC, EdgeDirection.IN));
 		assertEquals(e1.getReversedEdge(),
-				v1.getFirstIncidence(SubLink.class, EdgeDirection.IN));
-		assertNull(v1.getFirstIncidence(LinkBack.class, EdgeDirection.IN));
+				v1.getFirstIncidence(SubLink.EC, EdgeDirection.IN));
+		assertNull(v1.getFirstIncidence(LinkBack.EC, EdgeDirection.IN));
 		commit(g);
 	}
 
 	/**
 	 * Tests if a node has two Edges.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -4303,38 +4299,36 @@ public class VertexTest extends InstanceTest {
 		commit(g);
 
 		createReadOnlyTransaction(g);
-		assertEquals(e1, v0.getFirstIncidence(Link.class, EdgeDirection.INOUT));
-		assertNull(v0.getFirstIncidence(SubLink.class, EdgeDirection.INOUT));
+		assertEquals(e1, v0.getFirstIncidence(Link.EC, EdgeDirection.INOUT));
+		assertNull(v0.getFirstIncidence(SubLink.EC, EdgeDirection.INOUT));
 		assertEquals(e2.getReversedEdge(),
-				v0.getFirstIncidence(LinkBack.class, EdgeDirection.INOUT));
+				v0.getFirstIncidence(LinkBack.EC, EdgeDirection.INOUT));
 		assertEquals(e1.getReversedEdge(),
-				v1.getFirstIncidence(Link.class, EdgeDirection.INOUT));
-		assertNull(v1.getFirstIncidence(SubLink.class, EdgeDirection.INOUT));
-		assertEquals(e2,
-				v1.getFirstIncidence(LinkBack.class, EdgeDirection.INOUT));
+				v1.getFirstIncidence(Link.EC, EdgeDirection.INOUT));
+		assertNull(v1.getFirstIncidence(SubLink.EC, EdgeDirection.INOUT));
+		assertEquals(e2, v1.getFirstIncidence(LinkBack.EC, EdgeDirection.INOUT));
 
-		assertEquals(e1, v0.getFirstIncidence(Link.class, EdgeDirection.OUT));
-		assertNull(v0.getFirstIncidence(SubLink.class, EdgeDirection.OUT));
-		assertNull(v0.getFirstIncidence(LinkBack.class, EdgeDirection.OUT));
-		assertNull(v1.getFirstIncidence(Link.class, EdgeDirection.OUT));
-		assertNull(v1.getFirstIncidence(SubLink.class, EdgeDirection.OUT));
-		assertEquals(e2,
-				v1.getFirstIncidence(LinkBack.class, EdgeDirection.OUT));
+		assertEquals(e1, v0.getFirstIncidence(Link.EC, EdgeDirection.OUT));
+		assertNull(v0.getFirstIncidence(SubLink.EC, EdgeDirection.OUT));
+		assertNull(v0.getFirstIncidence(LinkBack.EC, EdgeDirection.OUT));
+		assertNull(v1.getFirstIncidence(Link.EC, EdgeDirection.OUT));
+		assertNull(v1.getFirstIncidence(SubLink.EC, EdgeDirection.OUT));
+		assertEquals(e2, v1.getFirstIncidence(LinkBack.EC, EdgeDirection.OUT));
 
-		assertNull(v0.getFirstIncidence(Link.class, EdgeDirection.IN));
-		assertNull(v0.getFirstIncidence(SubLink.class, EdgeDirection.IN));
+		assertNull(v0.getFirstIncidence(Link.EC, EdgeDirection.IN));
+		assertNull(v0.getFirstIncidence(SubLink.EC, EdgeDirection.IN));
 		assertEquals(e2.getReversedEdge(),
-				v0.getFirstIncidence(LinkBack.class, EdgeDirection.IN));
+				v0.getFirstIncidence(LinkBack.EC, EdgeDirection.IN));
 		assertEquals(e1.getReversedEdge(),
-				v1.getFirstIncidence(Link.class, EdgeDirection.IN));
-		assertNull(v1.getFirstIncidence(SubLink.class, EdgeDirection.IN));
-		assertNull(v1.getFirstIncidence(LinkBack.class, EdgeDirection.IN));
+				v1.getFirstIncidence(Link.EC, EdgeDirection.IN));
+		assertNull(v1.getFirstIncidence(SubLink.EC, EdgeDirection.IN));
+		assertNull(v1.getFirstIncidence(LinkBack.EC, EdgeDirection.IN));
 		commit(g);
 	}
 
 	/**
 	 * Tests if alpha and omega of an Edge is the same Vertex.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -4346,24 +4340,24 @@ public class VertexTest extends InstanceTest {
 		commit(g);
 
 		createReadOnlyTransaction(g);
-		assertEquals(e1, v0.getFirstIncidence(Link.class, EdgeDirection.INOUT));
-		assertNull(v0.getFirstIncidence(SubLink.class, EdgeDirection.INOUT));
-		assertNull(v0.getFirstIncidence(LinkBack.class, EdgeDirection.INOUT));
+		assertEquals(e1, v0.getFirstIncidence(Link.EC, EdgeDirection.INOUT));
+		assertNull(v0.getFirstIncidence(SubLink.EC, EdgeDirection.INOUT));
+		assertNull(v0.getFirstIncidence(LinkBack.EC, EdgeDirection.INOUT));
 
-		assertEquals(e1, v0.getFirstIncidence(Link.class, EdgeDirection.OUT));
-		assertNull(v0.getFirstIncidence(SubLink.class, EdgeDirection.OUT));
-		assertNull(v0.getFirstIncidence(LinkBack.class, EdgeDirection.OUT));
+		assertEquals(e1, v0.getFirstIncidence(Link.EC, EdgeDirection.OUT));
+		assertNull(v0.getFirstIncidence(SubLink.EC, EdgeDirection.OUT));
+		assertNull(v0.getFirstIncidence(LinkBack.EC, EdgeDirection.OUT));
 
 		assertEquals(e1.getReversedEdge(),
-				v0.getFirstIncidence(Link.class, EdgeDirection.IN));
-		assertNull(v0.getFirstIncidence(SubLink.class, EdgeDirection.IN));
-		assertNull(v0.getFirstIncidence(LinkBack.class, EdgeDirection.IN));
+				v0.getFirstIncidence(Link.EC, EdgeDirection.IN));
+		assertNull(v0.getFirstIncidence(SubLink.EC, EdgeDirection.IN));
+		assertNull(v0.getFirstIncidence(LinkBack.EC, EdgeDirection.IN));
 		commit(g);
 	}
 
 	/**
 	 * Random tests
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -4453,62 +4447,62 @@ public class VertexTest extends InstanceTest {
 			commit(g);
 
 			createReadOnlyTransaction(g);
-			assertEquals(firstLinkInOut[0], vertices[0].getFirstIncidence(
-					Link.class, EdgeDirection.INOUT));
-			assertEquals(firstLinkInOut[1], vertices[1].getFirstIncidence(
-					Link.class, EdgeDirection.INOUT));
-			assertEquals(firstLinkInOut[2], vertices[2].getFirstIncidence(
-					Link.class, EdgeDirection.INOUT));
+			assertEquals(firstLinkInOut[0],
+					vertices[0].getFirstIncidence(Link.EC, EdgeDirection.INOUT));
+			assertEquals(firstLinkInOut[1],
+					vertices[1].getFirstIncidence(Link.EC, EdgeDirection.INOUT));
+			assertEquals(firstLinkInOut[2],
+					vertices[2].getFirstIncidence(Link.EC, EdgeDirection.INOUT));
 			assertEquals(firstLinkBackInOut[0], vertices[0].getFirstIncidence(
-					LinkBack.class, EdgeDirection.INOUT));
+					LinkBack.EC, EdgeDirection.INOUT));
 			assertEquals(firstLinkBackInOut[1], vertices[1].getFirstIncidence(
-					LinkBack.class, EdgeDirection.INOUT));
+					LinkBack.EC, EdgeDirection.INOUT));
 			assertEquals(firstLinkBackInOut[2], vertices[2].getFirstIncidence(
-					LinkBack.class, EdgeDirection.INOUT));
+					LinkBack.EC, EdgeDirection.INOUT));
 			assertEquals(firstSubLinkInOut[0], vertices[0].getFirstIncidence(
-					SubLink.class, EdgeDirection.INOUT));
+					SubLink.EC, EdgeDirection.INOUT));
 			assertEquals(firstSubLinkInOut[1], vertices[1].getFirstIncidence(
-					SubLink.class, EdgeDirection.INOUT));
+					SubLink.EC, EdgeDirection.INOUT));
 			assertEquals(firstSubLinkInOut[2], vertices[2].getFirstIncidence(
-					SubLink.class, EdgeDirection.INOUT));
+					SubLink.EC, EdgeDirection.INOUT));
 
-			assertEquals(firstLinkOut[0], vertices[0].getFirstIncidence(
-					Link.class, EdgeDirection.OUT));
-			assertEquals(firstLinkOut[1], vertices[1].getFirstIncidence(
-					Link.class, EdgeDirection.OUT));
-			assertEquals(firstLinkOut[2], vertices[2].getFirstIncidence(
-					Link.class, EdgeDirection.OUT));
+			assertEquals(firstLinkOut[0],
+					vertices[0].getFirstIncidence(Link.EC, EdgeDirection.OUT));
+			assertEquals(firstLinkOut[1],
+					vertices[1].getFirstIncidence(Link.EC, EdgeDirection.OUT));
+			assertEquals(firstLinkOut[2],
+					vertices[2].getFirstIncidence(Link.EC, EdgeDirection.OUT));
 			assertEquals(firstLinkBackOut[0], vertices[0].getFirstIncidence(
-					LinkBack.class, EdgeDirection.OUT));
+					LinkBack.EC, EdgeDirection.OUT));
 			assertEquals(firstLinkBackOut[1], vertices[1].getFirstIncidence(
-					LinkBack.class, EdgeDirection.OUT));
+					LinkBack.EC, EdgeDirection.OUT));
 			assertEquals(firstLinkBackOut[2], vertices[2].getFirstIncidence(
-					LinkBack.class, EdgeDirection.OUT));
+					LinkBack.EC, EdgeDirection.OUT));
 			assertEquals(firstSubLinkOut[0], vertices[0].getFirstIncidence(
-					SubLink.class, EdgeDirection.OUT));
+					SubLink.EC, EdgeDirection.OUT));
 			assertEquals(firstSubLinkOut[1], vertices[1].getFirstIncidence(
-					SubLink.class, EdgeDirection.OUT));
+					SubLink.EC, EdgeDirection.OUT));
 			assertEquals(firstSubLinkOut[2], vertices[2].getFirstIncidence(
-					SubLink.class, EdgeDirection.OUT));
+					SubLink.EC, EdgeDirection.OUT));
 
 			assertEquals(firstLinkIn[0],
-					vertices[0].getFirstIncidence(Link.class, EdgeDirection.IN));
+					vertices[0].getFirstIncidence(Link.EC, EdgeDirection.IN));
 			assertEquals(firstLinkIn[1],
-					vertices[1].getFirstIncidence(Link.class, EdgeDirection.IN));
+					vertices[1].getFirstIncidence(Link.EC, EdgeDirection.IN));
 			assertEquals(firstLinkIn[2],
-					vertices[2].getFirstIncidence(Link.class, EdgeDirection.IN));
+					vertices[2].getFirstIncidence(Link.EC, EdgeDirection.IN));
 			assertEquals(firstLinkBackIn[0], vertices[0].getFirstIncidence(
-					LinkBack.class, EdgeDirection.IN));
+					LinkBack.EC, EdgeDirection.IN));
 			assertEquals(firstLinkBackIn[1], vertices[1].getFirstIncidence(
-					LinkBack.class, EdgeDirection.IN));
+					LinkBack.EC, EdgeDirection.IN));
 			assertEquals(firstLinkBackIn[2], vertices[2].getFirstIncidence(
-					LinkBack.class, EdgeDirection.IN));
-			assertEquals(firstSubLinkIn[0], vertices[0].getFirstIncidence(
-					SubLink.class, EdgeDirection.IN));
-			assertEquals(firstSubLinkIn[1], vertices[1].getFirstIncidence(
-					SubLink.class, EdgeDirection.IN));
-			assertEquals(firstSubLinkIn[2], vertices[2].getFirstIncidence(
-					SubLink.class, EdgeDirection.IN));
+					LinkBack.EC, EdgeDirection.IN));
+			assertEquals(firstSubLinkIn[0],
+					vertices[0].getFirstIncidence(SubLink.EC, EdgeDirection.IN));
+			assertEquals(firstSubLinkIn[1],
+					vertices[1].getFirstIncidence(SubLink.EC, EdgeDirection.IN));
+			assertEquals(firstSubLinkIn[2],
+					vertices[2].getFirstIncidence(SubLink.EC, EdgeDirection.IN));
 			commit(g);
 		}
 	}
@@ -4518,7 +4512,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * A vertex is not before itself.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -4539,7 +4533,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * A vertex is not after itself.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -4560,7 +4554,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Deleting v3 in v1<>---e1----v2<>-----e2-----v3
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -4593,7 +4587,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Deleting v2 in v1<>---e1----v2<>-----e2-----v3
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -4624,7 +4618,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Deleting v1 in v1<>---e1----v2<>-----e2-----v3
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -4646,7 +4640,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Deleting v1 in v1<>---e1----v2 v1<>-----e2-----v3
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -4668,7 +4662,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Deleting v1 in v1<>---e1----v2 v1<>-----e2-----v2
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -4689,7 +4683,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Deleting v1 in v1<>---e1----v2-----e2-----v3
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -4715,7 +4709,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * An exception should occur if you want to remove an edge via the iterator.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test(expected = UnsupportedOperationException.class)
@@ -4734,7 +4728,7 @@ public class VertexTest extends InstanceTest {
 	/**
 	 * If you call hasNext several time, the current edge of the iterator must
 	 * stay the same.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -4754,7 +4748,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * If there exists no further edges, hasNext must return false.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -4779,7 +4773,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * An exception should occur if the current edge is deleted.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test(expected = ConcurrentModificationException.class)
@@ -4801,7 +4795,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * An exception should occur if the position of the current edge is changed.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test(expected = ConcurrentModificationException.class)
@@ -4823,7 +4817,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * An exception should occur if a previous edge is deleted.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test(expected = ConcurrentModificationException.class)
@@ -4847,7 +4841,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * An exception should occur if a following edge is deleted.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test(expected = ConcurrentModificationException.class)
@@ -4867,7 +4861,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * An exception should occur if an edge is added.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test(expected = ConcurrentModificationException.class)
@@ -4887,7 +4881,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * An exception should occur if an edge gets another alpha vertex.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test(expected = ConcurrentModificationException.class)
@@ -4909,42 +4903,27 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Checks if the expected incidences equals the returned incidences.
-	 * 
+	 *
 	 * @param v
 	 *            the node of which the incidences should be tested
 	 * @param ec
 	 *            or <code>c</code> must be <code>null</code>
-	 * @param c
-	 *            or <code>ec</code> must be <code>null</code>
 	 * @param dir
 	 *            must be != <code>null</code> if ec==null and c==null
 	 * @param expectedIncidences
 	 *            the expected incidences
 	 */
-	private void checkIncidenceList(Vertex v, EdgeClass ec,
-			Class<? extends Edge> c, EdgeDirection dir,
+	private void checkIncidenceList(Vertex v, EdgeClass ec, EdgeDirection dir,
 			List<Edge> expectedIncidences) {
 		int i = 0;
 		if (dir == null) {
-			if (ec == null) {
-				for (Edge e : v.incidences(c)) {
-					assertEquals(expectedIncidences.get(i), e);
-					i++;
-				}
-			} else {
-				for (Edge e : v.incidences(ec)) {
-					assertEquals(expectedIncidences.get(i), e);
-					i++;
-				}
+			for (Edge e : v.incidences(ec)) {
+				assertEquals(expectedIncidences.get(i), e);
+				i++;
 			}
 		} else {
 			if (ec != null) {
 				for (Edge e : v.incidences(ec, dir)) {
-					assertEquals(expectedIncidences.get(i), e);
-					i++;
-				}
-			} else if (c != null) {
-				for (Edge e : v.incidences(c, dir)) {
 					assertEquals(expectedIncidences.get(i), e);
 					i++;
 				}
@@ -4959,7 +4938,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Checks if a vertex has no incidences.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -4968,18 +4947,16 @@ public class VertexTest extends InstanceTest {
 		Vertex v0 = g.createDoubleSubNode();
 		commit(g);
 		createReadOnlyTransaction(g);
-		checkIncidenceList(v0, null, null, EdgeDirection.INOUT,
+		checkIncidenceList(v0, null, EdgeDirection.INOUT,
 				new LinkedList<Edge>());
-		checkIncidenceList(v0, null, null, EdgeDirection.OUT,
-				new LinkedList<Edge>());
-		checkIncidenceList(v0, null, null, EdgeDirection.IN,
-				new LinkedList<Edge>());
+		checkIncidenceList(v0, null, EdgeDirection.OUT, new LinkedList<Edge>());
+		checkIncidenceList(v0, null, EdgeDirection.IN, new LinkedList<Edge>());
 		commit(g);
 	}
 
 	/**
 	 * Checks if a vertex has only outgoing or ingoing incidences.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -5001,19 +4978,19 @@ public class VertexTest extends InstanceTest {
 		commit(g);
 
 		createReadOnlyTransaction(g);
-		checkIncidenceList(v0, null, null, EdgeDirection.INOUT, v0inout);
-		checkIncidenceList(v0, null, null, EdgeDirection.OUT, v0out);
-		checkIncidenceList(v0, null, null, EdgeDirection.IN, v0in);
+		checkIncidenceList(v0, null, EdgeDirection.INOUT, v0inout);
+		checkIncidenceList(v0, null, EdgeDirection.OUT, v0out);
+		checkIncidenceList(v0, null, EdgeDirection.IN, v0in);
 
-		checkIncidenceList(v1, null, null, EdgeDirection.INOUT, v1inout);
-		checkIncidenceList(v1, null, null, EdgeDirection.OUT, v1out);
-		checkIncidenceList(v1, null, null, EdgeDirection.IN, v1in);
+		checkIncidenceList(v1, null, EdgeDirection.INOUT, v1inout);
+		checkIncidenceList(v1, null, EdgeDirection.OUT, v1out);
+		checkIncidenceList(v1, null, EdgeDirection.IN, v1in);
 		commit(g);
 	}
 
 	/**
 	 * Checks incidences in a manually build graph.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -5054,23 +5031,23 @@ public class VertexTest extends InstanceTest {
 		commit(g);
 
 		createReadOnlyTransaction(g);
-		checkIncidenceList(v0, null, null, EdgeDirection.INOUT, v0inout);
-		checkIncidenceList(v0, null, null, EdgeDirection.OUT, v0out);
-		checkIncidenceList(v0, null, null, EdgeDirection.IN, v0in);
+		checkIncidenceList(v0, null, EdgeDirection.INOUT, v0inout);
+		checkIncidenceList(v0, null, EdgeDirection.OUT, v0out);
+		checkIncidenceList(v0, null, EdgeDirection.IN, v0in);
 
-		checkIncidenceList(v1, null, null, EdgeDirection.INOUT, v1inout);
-		checkIncidenceList(v1, null, null, EdgeDirection.OUT, v1out);
-		checkIncidenceList(v1, null, null, EdgeDirection.IN, v1in);
+		checkIncidenceList(v1, null, EdgeDirection.INOUT, v1inout);
+		checkIncidenceList(v1, null, EdgeDirection.OUT, v1out);
+		checkIncidenceList(v1, null, EdgeDirection.IN, v1in);
 
-		checkIncidenceList(v2, null, null, EdgeDirection.INOUT, v2inout);
-		checkIncidenceList(v2, null, null, EdgeDirection.OUT, v2out);
-		checkIncidenceList(v2, null, null, EdgeDirection.IN, v2in);
+		checkIncidenceList(v2, null, EdgeDirection.INOUT, v2inout);
+		checkIncidenceList(v2, null, EdgeDirection.OUT, v2out);
+		checkIncidenceList(v2, null, EdgeDirection.IN, v2in);
 		commit(g);
 	}
 
 	/**
 	 * Random test.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -5127,33 +5104,27 @@ public class VertexTest extends InstanceTest {
 			commit(g);
 
 			createReadOnlyTransaction(g);
-			checkIncidenceList(vertices[0], null, null, EdgeDirection.INOUT,
+			checkIncidenceList(vertices[0], null, EdgeDirection.INOUT,
 					inout.get(0));
-			checkIncidenceList(vertices[0], null, null, EdgeDirection.OUT,
-					out.get(0));
-			checkIncidenceList(vertices[0], null, null, EdgeDirection.IN,
-					in.get(0));
+			checkIncidenceList(vertices[0], null, EdgeDirection.OUT, out.get(0));
+			checkIncidenceList(vertices[0], null, EdgeDirection.IN, in.get(0));
 
-			checkIncidenceList(vertices[1], null, null, EdgeDirection.INOUT,
+			checkIncidenceList(vertices[1], null, EdgeDirection.INOUT,
 					inout.get(1));
-			checkIncidenceList(vertices[1], null, null, EdgeDirection.OUT,
-					out.get(1));
-			checkIncidenceList(vertices[1], null, null, EdgeDirection.IN,
-					in.get(1));
+			checkIncidenceList(vertices[1], null, EdgeDirection.OUT, out.get(1));
+			checkIncidenceList(vertices[1], null, EdgeDirection.IN, in.get(1));
 
-			checkIncidenceList(vertices[2], null, null, EdgeDirection.INOUT,
+			checkIncidenceList(vertices[2], null, EdgeDirection.INOUT,
 					inout.get(2));
-			checkIncidenceList(vertices[2], null, null, EdgeDirection.OUT,
-					out.get(2));
-			checkIncidenceList(vertices[2], null, null, EdgeDirection.IN,
-					in.get(2));
+			checkIncidenceList(vertices[2], null, EdgeDirection.OUT, out.get(2));
+			checkIncidenceList(vertices[2], null, EdgeDirection.IN, in.get(2));
 			commit(g);
 		}
 	}
 
 	/**
 	 * If the IN-edges are iterated the OUT-edges could not be deleted.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test(expected = ConcurrentModificationException.class)
@@ -5174,7 +5145,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * If the IN-edges are iterated the OUT-edges could not be changed.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test(expected = ConcurrentModificationException.class)
@@ -5195,7 +5166,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * If the IN-edges are iterated a new OUT-edges could not be created.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test(expected = ConcurrentModificationException.class)
@@ -5216,7 +5187,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * If the OUT-edges are iterated the IN-edges could not be deleted.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test(expected = ConcurrentModificationException.class)
@@ -5237,7 +5208,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * If the OUT-edges are iterated the IN-edges could not be changed.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test(expected = ConcurrentModificationException.class)
@@ -5258,7 +5229,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * If the OUT-edges are iterated a new IN-edges could not be created.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test(expected = ConcurrentModificationException.class)
@@ -5281,7 +5252,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Checks if a vertex has no incidences.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -5291,15 +5262,15 @@ public class VertexTest extends InstanceTest {
 		Vertex v0 = g.createDoubleSubNode();
 		commit(g);
 		createReadOnlyTransaction(g);
-		checkIncidenceList(v0, ecs[0], null, null, new LinkedList<Edge>());
-		checkIncidenceList(v0, ecs[1], null, null, new LinkedList<Edge>());
-		checkIncidenceList(v0, ecs[2], null, null, new LinkedList<Edge>());
+		checkIncidenceList(v0, ecs[0], null, new LinkedList<Edge>());
+		checkIncidenceList(v0, ecs[1], null, new LinkedList<Edge>());
+		checkIncidenceList(v0, ecs[2], null, new LinkedList<Edge>());
 		commit(g);
 	}
 
 	/**
 	 * Checks if a vertex has only incident edges of type SubLink.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -5322,19 +5293,19 @@ public class VertexTest extends InstanceTest {
 		commit(g);
 
 		createReadOnlyTransaction(g);
-		checkIncidenceList(v0, ecs[0], null, null, v0link);
-		checkIncidenceList(v0, ecs[1], null, null, v0sublink);
-		checkIncidenceList(v0, ecs[2], null, null, v0linkback);
+		checkIncidenceList(v0, ecs[0], null, v0link);
+		checkIncidenceList(v0, ecs[1], null, v0sublink);
+		checkIncidenceList(v0, ecs[2], null, v0linkback);
 
-		checkIncidenceList(v1, ecs[0], null, null, v1link);
-		checkIncidenceList(v1, ecs[1], null, null, v1sublink);
-		checkIncidenceList(v1, ecs[2], null, null, v1linkback);
+		checkIncidenceList(v1, ecs[0], null, v1link);
+		checkIncidenceList(v1, ecs[1], null, v1sublink);
+		checkIncidenceList(v1, ecs[2], null, v1linkback);
 		commit(g);
 	}
 
 	/**
 	 * Checks incidences in a manually build graph.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -5370,23 +5341,23 @@ public class VertexTest extends InstanceTest {
 		commit(g);
 
 		createReadOnlyTransaction(g);
-		checkIncidenceList(v0, ecs[0], null, null, v0link);
-		checkIncidenceList(v0, ecs[1], null, null, v0sublink);
-		checkIncidenceList(v0, ecs[2], null, null, v0linkback);
+		checkIncidenceList(v0, ecs[0], null, v0link);
+		checkIncidenceList(v0, ecs[1], null, v0sublink);
+		checkIncidenceList(v0, ecs[2], null, v0linkback);
 
-		checkIncidenceList(v1, ecs[0], null, null, v1link);
-		checkIncidenceList(v1, ecs[1], null, null, v1sublink);
-		checkIncidenceList(v1, ecs[2], null, null, v1linkback);
+		checkIncidenceList(v1, ecs[0], null, v1link);
+		checkIncidenceList(v1, ecs[1], null, v1sublink);
+		checkIncidenceList(v1, ecs[2], null, v1linkback);
 
-		checkIncidenceList(v2, ecs[0], null, null, v2link);
-		checkIncidenceList(v2, ecs[1], null, null, v2sublink);
-		checkIncidenceList(v2, ecs[2], null, null, v2linkback);
+		checkIncidenceList(v2, ecs[0], null, v2link);
+		checkIncidenceList(v2, ecs[1], null, v2sublink);
+		checkIncidenceList(v2, ecs[2], null, v2linkback);
 		commit(g);
 	}
 
 	/**
 	 * Random test.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -5440,17 +5411,17 @@ public class VertexTest extends InstanceTest {
 			commit(g);
 
 			createReadOnlyTransaction(g);
-			checkIncidenceList(vertices[0], ecs[0], null, null, link.get(0));
-			checkIncidenceList(vertices[0], ecs[1], null, null, sublink.get(0));
-			checkIncidenceList(vertices[0], ecs[2], null, null, linkback.get(0));
+			checkIncidenceList(vertices[0], ecs[0], null, link.get(0));
+			checkIncidenceList(vertices[0], ecs[1], null, sublink.get(0));
+			checkIncidenceList(vertices[0], ecs[2], null, linkback.get(0));
 
-			checkIncidenceList(vertices[1], ecs[0], null, null, link.get(1));
-			checkIncidenceList(vertices[1], ecs[1], null, null, sublink.get(1));
-			checkIncidenceList(vertices[1], ecs[2], null, null, linkback.get(1));
+			checkIncidenceList(vertices[1], ecs[0], null, link.get(1));
+			checkIncidenceList(vertices[1], ecs[1], null, sublink.get(1));
+			checkIncidenceList(vertices[1], ecs[2], null, linkback.get(1));
 
-			checkIncidenceList(vertices[2], ecs[0], null, null, link.get(2));
-			checkIncidenceList(vertices[2], ecs[1], null, null, sublink.get(2));
-			checkIncidenceList(vertices[2], ecs[2], null, null, linkback.get(2));
+			checkIncidenceList(vertices[2], ecs[0], null, link.get(2));
+			checkIncidenceList(vertices[2], ecs[1], null, sublink.get(2));
+			checkIncidenceList(vertices[2], ecs[2], null, linkback.get(2));
 			commit(g);
 		}
 	}
@@ -5460,7 +5431,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Checks if a vertex has no incidences.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -5469,17 +5440,15 @@ public class VertexTest extends InstanceTest {
 		Vertex v0 = g.createDoubleSubNode();
 		commit(g);
 		createReadOnlyTransaction(g);
-		checkIncidenceList(v0, null, Link.class, null, new LinkedList<Edge>());
-		checkIncidenceList(v0, null, SubLink.class, null,
-				new LinkedList<Edge>());
-		checkIncidenceList(v0, null, LinkBack.class, null,
-				new LinkedList<Edge>());
+		checkIncidenceList(v0, Link.EC, null, new LinkedList<Edge>());
+		checkIncidenceList(v0, SubLink.EC, null, new LinkedList<Edge>());
+		checkIncidenceList(v0, LinkBack.EC, null, new LinkedList<Edge>());
 		commit(g);
 	}
 
 	/**
 	 * Checks if a vertex has only incident edges of type SubLink.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -5501,19 +5470,19 @@ public class VertexTest extends InstanceTest {
 		commit(g);
 
 		createReadOnlyTransaction(g);
-		checkIncidenceList(v0, null, Link.class, null, v0link);
-		checkIncidenceList(v0, null, SubLink.class, null, v0sublink);
-		checkIncidenceList(v0, null, LinkBack.class, null, v0linkback);
+		checkIncidenceList(v0, Link.EC, null, v0link);
+		checkIncidenceList(v0, SubLink.EC, null, v0sublink);
+		checkIncidenceList(v0, LinkBack.EC, null, v0linkback);
 
-		checkIncidenceList(v1, null, Link.class, null, v1link);
-		checkIncidenceList(v1, null, SubLink.class, null, v1sublink);
-		checkIncidenceList(v1, null, LinkBack.class, null, v1linkback);
+		checkIncidenceList(v1, Link.EC, null, v1link);
+		checkIncidenceList(v1, SubLink.EC, null, v1sublink);
+		checkIncidenceList(v1, LinkBack.EC, null, v1linkback);
 		commit(g);
 	}
 
 	/**
 	 * Checks incidences in a manually build graph.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -5548,23 +5517,23 @@ public class VertexTest extends InstanceTest {
 		commit(g);
 
 		createReadOnlyTransaction(g);
-		checkIncidenceList(v0, null, Link.class, null, v0link);
-		checkIncidenceList(v0, null, SubLink.class, null, v0sublink);
-		checkIncidenceList(v0, null, LinkBack.class, null, v0linkback);
+		checkIncidenceList(v0, Link.EC, null, v0link);
+		checkIncidenceList(v0, SubLink.EC, null, v0sublink);
+		checkIncidenceList(v0, LinkBack.EC, null, v0linkback);
 
-		checkIncidenceList(v1, null, Link.class, null, v1link);
-		checkIncidenceList(v1, null, SubLink.class, null, v1sublink);
-		checkIncidenceList(v1, null, LinkBack.class, null, v1linkback);
+		checkIncidenceList(v1, Link.EC, null, v1link);
+		checkIncidenceList(v1, SubLink.EC, null, v1sublink);
+		checkIncidenceList(v1, LinkBack.EC, null, v1linkback);
 
-		checkIncidenceList(v2, null, Link.class, null, v2link);
-		checkIncidenceList(v2, null, SubLink.class, null, v2sublink);
-		checkIncidenceList(v2, null, LinkBack.class, null, v2linkback);
+		checkIncidenceList(v2, Link.EC, null, v2link);
+		checkIncidenceList(v2, SubLink.EC, null, v2sublink);
+		checkIncidenceList(v2, LinkBack.EC, null, v2linkback);
 		commit(g);
 	}
 
 	/**
 	 * Random test.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -5617,23 +5586,17 @@ public class VertexTest extends InstanceTest {
 			commit(g);
 
 			createReadOnlyTransaction(g);
-			checkIncidenceList(vertices[0], null, Link.class, null, link.get(0));
-			checkIncidenceList(vertices[0], null, SubLink.class, null,
-					sublink.get(0));
-			checkIncidenceList(vertices[0], null, LinkBack.class, null,
-					linkback.get(0));
+			checkIncidenceList(vertices[0], Link.EC, null, link.get(0));
+			checkIncidenceList(vertices[0], SubLink.EC, null, sublink.get(0));
+			checkIncidenceList(vertices[0], LinkBack.EC, null, linkback.get(0));
 
-			checkIncidenceList(vertices[1], null, Link.class, null, link.get(1));
-			checkIncidenceList(vertices[1], null, SubLink.class, null,
-					sublink.get(1));
-			checkIncidenceList(vertices[1], null, LinkBack.class, null,
-					linkback.get(1));
+			checkIncidenceList(vertices[1], Link.EC, null, link.get(1));
+			checkIncidenceList(vertices[1], SubLink.EC, null, sublink.get(1));
+			checkIncidenceList(vertices[1], LinkBack.EC, null, linkback.get(1));
 
-			checkIncidenceList(vertices[2], null, Link.class, null, link.get(2));
-			checkIncidenceList(vertices[2], null, SubLink.class, null,
-					sublink.get(2));
-			checkIncidenceList(vertices[2], null, LinkBack.class, null,
-					linkback.get(2));
+			checkIncidenceList(vertices[2], Link.EC, null, link.get(2));
+			checkIncidenceList(vertices[2], SubLink.EC, null, sublink.get(2));
+			checkIncidenceList(vertices[2], LinkBack.EC, null, linkback.get(2));
 			commit(g);
 		}
 	}
@@ -5643,7 +5606,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Checks if a vertex has no incidences.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -5655,32 +5618,29 @@ public class VertexTest extends InstanceTest {
 		commit(g);
 
 		createReadOnlyTransaction(g);
-		checkIncidenceList(v0, ecs[0], null, EdgeDirection.INOUT,
+		checkIncidenceList(v0, ecs[0], EdgeDirection.INOUT,
 				new LinkedList<Edge>());
-		checkIncidenceList(v0, ecs[0], null, EdgeDirection.OUT,
+		checkIncidenceList(v0, ecs[0], EdgeDirection.OUT,
 				new LinkedList<Edge>());
-		checkIncidenceList(v0, ecs[0], null, EdgeDirection.IN,
-				new LinkedList<Edge>());
+		checkIncidenceList(v0, ecs[0], EdgeDirection.IN, new LinkedList<Edge>());
 
-		checkIncidenceList(v0, ecs[1], null, EdgeDirection.INOUT,
+		checkIncidenceList(v0, ecs[1], EdgeDirection.INOUT,
 				new LinkedList<Edge>());
-		checkIncidenceList(v0, ecs[1], null, EdgeDirection.OUT,
+		checkIncidenceList(v0, ecs[1], EdgeDirection.OUT,
 				new LinkedList<Edge>());
-		checkIncidenceList(v0, ecs[1], null, EdgeDirection.IN,
-				new LinkedList<Edge>());
+		checkIncidenceList(v0, ecs[1], EdgeDirection.IN, new LinkedList<Edge>());
 
-		checkIncidenceList(v0, ecs[2], null, EdgeDirection.INOUT,
+		checkIncidenceList(v0, ecs[2], EdgeDirection.INOUT,
 				new LinkedList<Edge>());
-		checkIncidenceList(v0, ecs[2], null, EdgeDirection.OUT,
+		checkIncidenceList(v0, ecs[2], EdgeDirection.OUT,
 				new LinkedList<Edge>());
-		checkIncidenceList(v0, ecs[2], null, EdgeDirection.IN,
-				new LinkedList<Edge>());
+		checkIncidenceList(v0, ecs[2], EdgeDirection.IN, new LinkedList<Edge>());
 		commit(g);
 	}
 
 	/**
 	 * Checks if a vertex has only incident edges of type SubLink.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -5720,39 +5680,35 @@ public class VertexTest extends InstanceTest {
 		commit(g);
 
 		createReadOnlyTransaction(g);
-		checkIncidenceList(v0, ecs[0], null, EdgeDirection.INOUT, v0linkInout);
-		checkIncidenceList(v0, ecs[0], null, EdgeDirection.OUT, v0linkOut);
-		checkIncidenceList(v0, ecs[0], null, EdgeDirection.IN, v0linkIn);
+		checkIncidenceList(v0, ecs[0], EdgeDirection.INOUT, v0linkInout);
+		checkIncidenceList(v0, ecs[0], EdgeDirection.OUT, v0linkOut);
+		checkIncidenceList(v0, ecs[0], EdgeDirection.IN, v0linkIn);
 
-		checkIncidenceList(v0, ecs[1], null, EdgeDirection.INOUT,
-				v0sublinkInout);
-		checkIncidenceList(v0, ecs[1], null, EdgeDirection.OUT, v0sublinkOut);
-		checkIncidenceList(v0, ecs[1], null, EdgeDirection.IN, v0sublinkIn);
+		checkIncidenceList(v0, ecs[1], EdgeDirection.INOUT, v0sublinkInout);
+		checkIncidenceList(v0, ecs[1], EdgeDirection.OUT, v0sublinkOut);
+		checkIncidenceList(v0, ecs[1], EdgeDirection.IN, v0sublinkIn);
 
-		checkIncidenceList(v0, ecs[2], null, EdgeDirection.INOUT,
-				v0linkbackInout);
-		checkIncidenceList(v0, ecs[2], null, EdgeDirection.OUT, v0linkbackOut);
-		checkIncidenceList(v0, ecs[2], null, EdgeDirection.IN, v0linkbackIn);
+		checkIncidenceList(v0, ecs[2], EdgeDirection.INOUT, v0linkbackInout);
+		checkIncidenceList(v0, ecs[2], EdgeDirection.OUT, v0linkbackOut);
+		checkIncidenceList(v0, ecs[2], EdgeDirection.IN, v0linkbackIn);
 
-		checkIncidenceList(v1, ecs[0], null, EdgeDirection.INOUT, v1linkInout);
-		checkIncidenceList(v1, ecs[0], null, EdgeDirection.OUT, v1linkOut);
-		checkIncidenceList(v1, ecs[0], null, EdgeDirection.IN, v1linkIn);
+		checkIncidenceList(v1, ecs[0], EdgeDirection.INOUT, v1linkInout);
+		checkIncidenceList(v1, ecs[0], EdgeDirection.OUT, v1linkOut);
+		checkIncidenceList(v1, ecs[0], EdgeDirection.IN, v1linkIn);
 
-		checkIncidenceList(v1, ecs[1], null, EdgeDirection.INOUT,
-				v1sublinkInout);
-		checkIncidenceList(v1, ecs[1], null, EdgeDirection.OUT, v1sublinkOut);
-		checkIncidenceList(v1, ecs[1], null, EdgeDirection.IN, v1sublinkIn);
+		checkIncidenceList(v1, ecs[1], EdgeDirection.INOUT, v1sublinkInout);
+		checkIncidenceList(v1, ecs[1], EdgeDirection.OUT, v1sublinkOut);
+		checkIncidenceList(v1, ecs[1], EdgeDirection.IN, v1sublinkIn);
 
-		checkIncidenceList(v1, ecs[2], null, EdgeDirection.INOUT,
-				v1linkbackInout);
-		checkIncidenceList(v1, ecs[2], null, EdgeDirection.OUT, v1linkbackOut);
-		checkIncidenceList(v1, ecs[2], null, EdgeDirection.IN, v1linkbackIn);
+		checkIncidenceList(v1, ecs[2], EdgeDirection.INOUT, v1linkbackInout);
+		checkIncidenceList(v1, ecs[2], EdgeDirection.OUT, v1linkbackOut);
+		checkIncidenceList(v1, ecs[2], EdgeDirection.IN, v1linkbackIn);
 		commit(g);
 	}
 
 	/**
 	 * Checks incidences in a manually build graph.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -5817,53 +5773,47 @@ public class VertexTest extends InstanceTest {
 		commit(g);
 
 		createReadOnlyTransaction(g);
-		checkIncidenceList(v0, ecs[0], null, EdgeDirection.INOUT, v0linkInout);
-		checkIncidenceList(v0, ecs[0], null, EdgeDirection.OUT, v0linkOut);
-		checkIncidenceList(v0, ecs[0], null, EdgeDirection.IN, v0linkIn);
+		checkIncidenceList(v0, ecs[0], EdgeDirection.INOUT, v0linkInout);
+		checkIncidenceList(v0, ecs[0], EdgeDirection.OUT, v0linkOut);
+		checkIncidenceList(v0, ecs[0], EdgeDirection.IN, v0linkIn);
 
-		checkIncidenceList(v0, ecs[1], null, EdgeDirection.INOUT,
-				v0sublinkInout);
-		checkIncidenceList(v0, ecs[1], null, EdgeDirection.OUT, v0sublinkOut);
-		checkIncidenceList(v0, ecs[1], null, EdgeDirection.IN, v0sublinkIn);
+		checkIncidenceList(v0, ecs[1], EdgeDirection.INOUT, v0sublinkInout);
+		checkIncidenceList(v0, ecs[1], EdgeDirection.OUT, v0sublinkOut);
+		checkIncidenceList(v0, ecs[1], EdgeDirection.IN, v0sublinkIn);
 
-		checkIncidenceList(v0, ecs[2], null, EdgeDirection.INOUT,
-				v0linkbackInout);
-		checkIncidenceList(v0, ecs[2], null, EdgeDirection.OUT, v0linkbackOut);
-		checkIncidenceList(v0, ecs[2], null, EdgeDirection.IN, v0linkbackIn);
+		checkIncidenceList(v0, ecs[2], EdgeDirection.INOUT, v0linkbackInout);
+		checkIncidenceList(v0, ecs[2], EdgeDirection.OUT, v0linkbackOut);
+		checkIncidenceList(v0, ecs[2], EdgeDirection.IN, v0linkbackIn);
 
-		checkIncidenceList(v1, ecs[0], null, EdgeDirection.INOUT, v1linkInout);
-		checkIncidenceList(v1, ecs[0], null, EdgeDirection.OUT, v1linkOut);
-		checkIncidenceList(v1, ecs[0], null, EdgeDirection.IN, v1linkIn);
+		checkIncidenceList(v1, ecs[0], EdgeDirection.INOUT, v1linkInout);
+		checkIncidenceList(v1, ecs[0], EdgeDirection.OUT, v1linkOut);
+		checkIncidenceList(v1, ecs[0], EdgeDirection.IN, v1linkIn);
 
-		checkIncidenceList(v1, ecs[1], null, EdgeDirection.INOUT,
-				v1sublinkInout);
-		checkIncidenceList(v1, ecs[1], null, EdgeDirection.OUT, v1sublinkOut);
-		checkIncidenceList(v1, ecs[1], null, EdgeDirection.IN, v1sublinkIn);
+		checkIncidenceList(v1, ecs[1], EdgeDirection.INOUT, v1sublinkInout);
+		checkIncidenceList(v1, ecs[1], EdgeDirection.OUT, v1sublinkOut);
+		checkIncidenceList(v1, ecs[1], EdgeDirection.IN, v1sublinkIn);
 
-		checkIncidenceList(v1, ecs[2], null, EdgeDirection.INOUT,
-				v1linkbackInout);
-		checkIncidenceList(v1, ecs[2], null, EdgeDirection.OUT, v1linkbackOut);
-		checkIncidenceList(v1, ecs[2], null, EdgeDirection.IN, v1linkbackIn);
+		checkIncidenceList(v1, ecs[2], EdgeDirection.INOUT, v1linkbackInout);
+		checkIncidenceList(v1, ecs[2], EdgeDirection.OUT, v1linkbackOut);
+		checkIncidenceList(v1, ecs[2], EdgeDirection.IN, v1linkbackIn);
 
-		checkIncidenceList(v2, ecs[0], null, EdgeDirection.INOUT, v2linkInout);
-		checkIncidenceList(v2, ecs[0], null, EdgeDirection.OUT, v2linkOut);
-		checkIncidenceList(v2, ecs[0], null, EdgeDirection.IN, v2linkIn);
+		checkIncidenceList(v2, ecs[0], EdgeDirection.INOUT, v2linkInout);
+		checkIncidenceList(v2, ecs[0], EdgeDirection.OUT, v2linkOut);
+		checkIncidenceList(v2, ecs[0], EdgeDirection.IN, v2linkIn);
 
-		checkIncidenceList(v2, ecs[1], null, EdgeDirection.INOUT,
-				v2sublinkInout);
-		checkIncidenceList(v2, ecs[1], null, EdgeDirection.OUT, v2sublinkOut);
-		checkIncidenceList(v2, ecs[1], null, EdgeDirection.IN, v2sublinkIn);
+		checkIncidenceList(v2, ecs[1], EdgeDirection.INOUT, v2sublinkInout);
+		checkIncidenceList(v2, ecs[1], EdgeDirection.OUT, v2sublinkOut);
+		checkIncidenceList(v2, ecs[1], EdgeDirection.IN, v2sublinkIn);
 
-		checkIncidenceList(v2, ecs[2], null, EdgeDirection.INOUT,
-				v2linkbackInout);
-		checkIncidenceList(v2, ecs[2], null, EdgeDirection.OUT, v2linkbackOut);
-		checkIncidenceList(v2, ecs[2], null, EdgeDirection.IN, v2linkbackIn);
+		checkIncidenceList(v2, ecs[2], EdgeDirection.INOUT, v2linkbackInout);
+		checkIncidenceList(v2, ecs[2], EdgeDirection.OUT, v2linkbackOut);
+		checkIncidenceList(v2, ecs[2], EdgeDirection.IN, v2linkbackIn);
 		commit(g);
 	}
 
 	/**
 	 * Random test.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -5953,67 +5903,67 @@ public class VertexTest extends InstanceTest {
 			commit(g);
 
 			createReadOnlyTransaction(g);
-			checkIncidenceList(vertices[0], ecs[0], null, EdgeDirection.INOUT,
+			checkIncidenceList(vertices[0], ecs[0], EdgeDirection.INOUT,
 					linkinout.get(0));
-			checkIncidenceList(vertices[0], ecs[0], null, EdgeDirection.OUT,
+			checkIncidenceList(vertices[0], ecs[0], EdgeDirection.OUT,
 					linkout.get(0));
-			checkIncidenceList(vertices[0], ecs[0], null, EdgeDirection.IN,
+			checkIncidenceList(vertices[0], ecs[0], EdgeDirection.IN,
 					linkin.get(0));
 
-			checkIncidenceList(vertices[0], ecs[1], null, EdgeDirection.INOUT,
+			checkIncidenceList(vertices[0], ecs[1], EdgeDirection.INOUT,
 					sublinkinout.get(0));
-			checkIncidenceList(vertices[0], ecs[1], null, EdgeDirection.OUT,
+			checkIncidenceList(vertices[0], ecs[1], EdgeDirection.OUT,
 					sublinkout.get(0));
-			checkIncidenceList(vertices[0], ecs[1], null, EdgeDirection.IN,
+			checkIncidenceList(vertices[0], ecs[1], EdgeDirection.IN,
 					sublinkin.get(0));
 
-			checkIncidenceList(vertices[0], ecs[2], null, EdgeDirection.INOUT,
+			checkIncidenceList(vertices[0], ecs[2], EdgeDirection.INOUT,
 					linkbackinout.get(0));
-			checkIncidenceList(vertices[0], ecs[2], null, EdgeDirection.OUT,
+			checkIncidenceList(vertices[0], ecs[2], EdgeDirection.OUT,
 					linkbackout.get(0));
-			checkIncidenceList(vertices[0], ecs[2], null, EdgeDirection.IN,
+			checkIncidenceList(vertices[0], ecs[2], EdgeDirection.IN,
 					linkbackin.get(0));
 
-			checkIncidenceList(vertices[1], ecs[0], null, EdgeDirection.INOUT,
+			checkIncidenceList(vertices[1], ecs[0], EdgeDirection.INOUT,
 					linkinout.get(1));
-			checkIncidenceList(vertices[1], ecs[0], null, EdgeDirection.OUT,
+			checkIncidenceList(vertices[1], ecs[0], EdgeDirection.OUT,
 					linkout.get(1));
-			checkIncidenceList(vertices[1], ecs[0], null, EdgeDirection.IN,
+			checkIncidenceList(vertices[1], ecs[0], EdgeDirection.IN,
 					linkin.get(1));
 
-			checkIncidenceList(vertices[1], ecs[1], null, EdgeDirection.INOUT,
+			checkIncidenceList(vertices[1], ecs[1], EdgeDirection.INOUT,
 					sublinkinout.get(1));
-			checkIncidenceList(vertices[1], ecs[1], null, EdgeDirection.OUT,
+			checkIncidenceList(vertices[1], ecs[1], EdgeDirection.OUT,
 					sublinkout.get(1));
-			checkIncidenceList(vertices[1], ecs[1], null, EdgeDirection.IN,
+			checkIncidenceList(vertices[1], ecs[1], EdgeDirection.IN,
 					sublinkin.get(1));
 
-			checkIncidenceList(vertices[1], ecs[2], null, EdgeDirection.INOUT,
+			checkIncidenceList(vertices[1], ecs[2], EdgeDirection.INOUT,
 					linkbackinout.get(1));
-			checkIncidenceList(vertices[1], ecs[2], null, EdgeDirection.OUT,
+			checkIncidenceList(vertices[1], ecs[2], EdgeDirection.OUT,
 					linkbackout.get(1));
-			checkIncidenceList(vertices[1], ecs[2], null, EdgeDirection.IN,
+			checkIncidenceList(vertices[1], ecs[2], EdgeDirection.IN,
 					linkbackin.get(1));
 
-			checkIncidenceList(vertices[2], ecs[0], null, EdgeDirection.INOUT,
+			checkIncidenceList(vertices[2], ecs[0], EdgeDirection.INOUT,
 					linkinout.get(2));
-			checkIncidenceList(vertices[2], ecs[0], null, EdgeDirection.OUT,
+			checkIncidenceList(vertices[2], ecs[0], EdgeDirection.OUT,
 					linkout.get(2));
-			checkIncidenceList(vertices[2], ecs[0], null, EdgeDirection.IN,
+			checkIncidenceList(vertices[2], ecs[0], EdgeDirection.IN,
 					linkin.get(2));
 
-			checkIncidenceList(vertices[2], ecs[1], null, EdgeDirection.INOUT,
+			checkIncidenceList(vertices[2], ecs[1], EdgeDirection.INOUT,
 					sublinkinout.get(2));
-			checkIncidenceList(vertices[2], ecs[1], null, EdgeDirection.OUT,
+			checkIncidenceList(vertices[2], ecs[1], EdgeDirection.OUT,
 					sublinkout.get(2));
-			checkIncidenceList(vertices[2], ecs[1], null, EdgeDirection.IN,
+			checkIncidenceList(vertices[2], ecs[1], EdgeDirection.IN,
 					sublinkin.get(2));
 
-			checkIncidenceList(vertices[2], ecs[2], null, EdgeDirection.INOUT,
+			checkIncidenceList(vertices[2], ecs[2], EdgeDirection.INOUT,
 					linkbackinout.get(2));
-			checkIncidenceList(vertices[2], ecs[2], null, EdgeDirection.OUT,
+			checkIncidenceList(vertices[2], ecs[2], EdgeDirection.OUT,
 					linkbackout.get(2));
-			checkIncidenceList(vertices[2], ecs[2], null, EdgeDirection.IN,
+			checkIncidenceList(vertices[2], ecs[2], EdgeDirection.IN,
 					linkbackin.get(2));
 			commit(g);
 		}
@@ -6024,7 +5974,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Checks if a vertex has no incidences.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -6035,32 +5985,32 @@ public class VertexTest extends InstanceTest {
 		commit(g);
 
 		createReadOnlyTransaction(g);
-		checkIncidenceList(v0, null, Link.class, EdgeDirection.INOUT,
+		checkIncidenceList(v0, Link.EC, EdgeDirection.INOUT,
 				new LinkedList<Edge>());
-		checkIncidenceList(v0, null, Link.class, EdgeDirection.OUT,
+		checkIncidenceList(v0, Link.EC, EdgeDirection.OUT,
 				new LinkedList<Edge>());
-		checkIncidenceList(v0, null, Link.class, EdgeDirection.IN,
-				new LinkedList<Edge>());
-
-		checkIncidenceList(v0, null, SubLink.class, EdgeDirection.INOUT,
-				new LinkedList<Edge>());
-		checkIncidenceList(v0, null, SubLink.class, EdgeDirection.OUT,
-				new LinkedList<Edge>());
-		checkIncidenceList(v0, null, SubLink.class, EdgeDirection.IN,
+		checkIncidenceList(v0, Link.EC, EdgeDirection.IN,
 				new LinkedList<Edge>());
 
-		checkIncidenceList(v0, null, LinkBack.class, EdgeDirection.INOUT,
+		checkIncidenceList(v0, SubLink.EC, EdgeDirection.INOUT,
 				new LinkedList<Edge>());
-		checkIncidenceList(v0, null, LinkBack.class, EdgeDirection.OUT,
+		checkIncidenceList(v0, SubLink.EC, EdgeDirection.OUT,
 				new LinkedList<Edge>());
-		checkIncidenceList(v0, null, LinkBack.class, EdgeDirection.IN,
+		checkIncidenceList(v0, SubLink.EC, EdgeDirection.IN,
+				new LinkedList<Edge>());
+
+		checkIncidenceList(v0, LinkBack.EC, EdgeDirection.INOUT,
+				new LinkedList<Edge>());
+		checkIncidenceList(v0, LinkBack.EC, EdgeDirection.OUT,
+				new LinkedList<Edge>());
+		checkIncidenceList(v0, LinkBack.EC, EdgeDirection.IN,
 				new LinkedList<Edge>());
 		commit(g);
 	}
 
 	/**
 	 * Checks if a vertex has only incident edges of type SubLink.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -6099,49 +6049,37 @@ public class VertexTest extends InstanceTest {
 		commit(g);
 
 		createReadOnlyTransaction(g);
-		checkIncidenceList(v0, null, Link.class, EdgeDirection.INOUT,
-				v0linkInout);
-		checkIncidenceList(v0, null, Link.class, EdgeDirection.OUT, v0linkOut);
-		checkIncidenceList(v0, null, Link.class, EdgeDirection.IN, v0linkIn);
+		checkIncidenceList(v0, Link.EC, EdgeDirection.INOUT, v0linkInout);
+		checkIncidenceList(v0, Link.EC, EdgeDirection.OUT, v0linkOut);
+		checkIncidenceList(v0, Link.EC, EdgeDirection.IN, v0linkIn);
 
-		checkIncidenceList(v0, null, SubLink.class, EdgeDirection.INOUT,
-				v0sublinkInout);
-		checkIncidenceList(v0, null, SubLink.class, EdgeDirection.OUT,
-				v0sublinkOut);
-		checkIncidenceList(v0, null, SubLink.class, EdgeDirection.IN,
-				v0sublinkIn);
+		checkIncidenceList(v0, SubLink.EC, EdgeDirection.INOUT, v0sublinkInout);
+		checkIncidenceList(v0, SubLink.EC, EdgeDirection.OUT, v0sublinkOut);
+		checkIncidenceList(v0, SubLink.EC, EdgeDirection.IN, v0sublinkIn);
 
-		checkIncidenceList(v0, null, LinkBack.class, EdgeDirection.INOUT,
+		checkIncidenceList(v0, LinkBack.EC, EdgeDirection.INOUT,
 				v0linkbackInout);
-		checkIncidenceList(v0, null, LinkBack.class, EdgeDirection.OUT,
-				v0linkbackOut);
-		checkIncidenceList(v0, null, LinkBack.class, EdgeDirection.IN,
-				v0linkbackIn);
+		checkIncidenceList(v0, LinkBack.EC, EdgeDirection.OUT, v0linkbackOut);
+		checkIncidenceList(v0, LinkBack.EC, EdgeDirection.IN, v0linkbackIn);
 
-		checkIncidenceList(v1, null, Link.class, EdgeDirection.INOUT,
-				v1linkInout);
-		checkIncidenceList(v1, null, Link.class, EdgeDirection.OUT, v1linkOut);
-		checkIncidenceList(v1, null, Link.class, EdgeDirection.IN, v1linkIn);
+		checkIncidenceList(v1, Link.EC, EdgeDirection.INOUT, v1linkInout);
+		checkIncidenceList(v1, Link.EC, EdgeDirection.OUT, v1linkOut);
+		checkIncidenceList(v1, Link.EC, EdgeDirection.IN, v1linkIn);
 
-		checkIncidenceList(v1, null, SubLink.class, EdgeDirection.INOUT,
-				v1sublinkInout);
-		checkIncidenceList(v1, null, SubLink.class, EdgeDirection.OUT,
-				v1sublinkOut);
-		checkIncidenceList(v1, null, SubLink.class, EdgeDirection.IN,
-				v1sublinkIn);
+		checkIncidenceList(v1, SubLink.EC, EdgeDirection.INOUT, v1sublinkInout);
+		checkIncidenceList(v1, SubLink.EC, EdgeDirection.OUT, v1sublinkOut);
+		checkIncidenceList(v1, SubLink.EC, EdgeDirection.IN, v1sublinkIn);
 
-		checkIncidenceList(v1, null, LinkBack.class, EdgeDirection.INOUT,
+		checkIncidenceList(v1, LinkBack.EC, EdgeDirection.INOUT,
 				v1linkbackInout);
-		checkIncidenceList(v1, null, LinkBack.class, EdgeDirection.OUT,
-				v1linkbackOut);
-		checkIncidenceList(v1, null, LinkBack.class, EdgeDirection.IN,
-				v1linkbackIn);
+		checkIncidenceList(v1, LinkBack.EC, EdgeDirection.OUT, v1linkbackOut);
+		checkIncidenceList(v1, LinkBack.EC, EdgeDirection.IN, v1linkbackIn);
 		commit(g);
 	}
 
 	/**
 	 * Checks incidences in a manually build graph.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -6205,68 +6143,50 @@ public class VertexTest extends InstanceTest {
 		commit(g);
 
 		createReadOnlyTransaction(g);
-		checkIncidenceList(v0, null, Link.class, EdgeDirection.INOUT,
-				v0linkInout);
-		checkIncidenceList(v0, null, Link.class, EdgeDirection.OUT, v0linkOut);
-		checkIncidenceList(v0, null, Link.class, EdgeDirection.IN, v0linkIn);
+		checkIncidenceList(v0, Link.EC, EdgeDirection.INOUT, v0linkInout);
+		checkIncidenceList(v0, Link.EC, EdgeDirection.OUT, v0linkOut);
+		checkIncidenceList(v0, Link.EC, EdgeDirection.IN, v0linkIn);
 
-		checkIncidenceList(v0, null, SubLink.class, EdgeDirection.INOUT,
-				v0sublinkInout);
-		checkIncidenceList(v0, null, SubLink.class, EdgeDirection.OUT,
-				v0sublinkOut);
-		checkIncidenceList(v0, null, SubLink.class, EdgeDirection.IN,
-				v0sublinkIn);
+		checkIncidenceList(v0, SubLink.EC, EdgeDirection.INOUT, v0sublinkInout);
+		checkIncidenceList(v0, SubLink.EC, EdgeDirection.OUT, v0sublinkOut);
+		checkIncidenceList(v0, SubLink.EC, EdgeDirection.IN, v0sublinkIn);
 
-		checkIncidenceList(v0, null, LinkBack.class, EdgeDirection.INOUT,
+		checkIncidenceList(v0, LinkBack.EC, EdgeDirection.INOUT,
 				v0linkbackInout);
-		checkIncidenceList(v0, null, LinkBack.class, EdgeDirection.OUT,
-				v0linkbackOut);
-		checkIncidenceList(v0, null, LinkBack.class, EdgeDirection.IN,
-				v0linkbackIn);
+		checkIncidenceList(v0, LinkBack.EC, EdgeDirection.OUT, v0linkbackOut);
+		checkIncidenceList(v0, LinkBack.EC, EdgeDirection.IN, v0linkbackIn);
 
-		checkIncidenceList(v1, null, Link.class, EdgeDirection.INOUT,
-				v1linkInout);
-		checkIncidenceList(v1, null, Link.class, EdgeDirection.OUT, v1linkOut);
-		checkIncidenceList(v1, null, Link.class, EdgeDirection.IN, v1linkIn);
+		checkIncidenceList(v1, Link.EC, EdgeDirection.INOUT, v1linkInout);
+		checkIncidenceList(v1, Link.EC, EdgeDirection.OUT, v1linkOut);
+		checkIncidenceList(v1, Link.EC, EdgeDirection.IN, v1linkIn);
 
-		checkIncidenceList(v1, null, SubLink.class, EdgeDirection.INOUT,
-				v1sublinkInout);
-		checkIncidenceList(v1, null, SubLink.class, EdgeDirection.OUT,
-				v1sublinkOut);
-		checkIncidenceList(v1, null, SubLink.class, EdgeDirection.IN,
-				v1sublinkIn);
+		checkIncidenceList(v1, SubLink.EC, EdgeDirection.INOUT, v1sublinkInout);
+		checkIncidenceList(v1, SubLink.EC, EdgeDirection.OUT, v1sublinkOut);
+		checkIncidenceList(v1, SubLink.EC, EdgeDirection.IN, v1sublinkIn);
 
-		checkIncidenceList(v1, null, LinkBack.class, EdgeDirection.INOUT,
+		checkIncidenceList(v1, LinkBack.EC, EdgeDirection.INOUT,
 				v1linkbackInout);
-		checkIncidenceList(v1, null, LinkBack.class, EdgeDirection.OUT,
-				v1linkbackOut);
-		checkIncidenceList(v1, null, LinkBack.class, EdgeDirection.IN,
-				v1linkbackIn);
+		checkIncidenceList(v1, LinkBack.EC, EdgeDirection.OUT, v1linkbackOut);
+		checkIncidenceList(v1, LinkBack.EC, EdgeDirection.IN, v1linkbackIn);
 
-		checkIncidenceList(v2, null, Link.class, EdgeDirection.INOUT,
-				v2linkInout);
-		checkIncidenceList(v2, null, Link.class, EdgeDirection.OUT, v2linkOut);
-		checkIncidenceList(v2, null, Link.class, EdgeDirection.IN, v2linkIn);
+		checkIncidenceList(v2, Link.EC, EdgeDirection.INOUT, v2linkInout);
+		checkIncidenceList(v2, Link.EC, EdgeDirection.OUT, v2linkOut);
+		checkIncidenceList(v2, Link.EC, EdgeDirection.IN, v2linkIn);
 
-		checkIncidenceList(v2, null, SubLink.class, EdgeDirection.INOUT,
-				v2sublinkInout);
-		checkIncidenceList(v2, null, SubLink.class, EdgeDirection.OUT,
-				v2sublinkOut);
-		checkIncidenceList(v2, null, SubLink.class, EdgeDirection.IN,
-				v2sublinkIn);
+		checkIncidenceList(v2, SubLink.EC, EdgeDirection.INOUT, v2sublinkInout);
+		checkIncidenceList(v2, SubLink.EC, EdgeDirection.OUT, v2sublinkOut);
+		checkIncidenceList(v2, SubLink.EC, EdgeDirection.IN, v2sublinkIn);
 
-		checkIncidenceList(v2, null, LinkBack.class, EdgeDirection.INOUT,
+		checkIncidenceList(v2, LinkBack.EC, EdgeDirection.INOUT,
 				v2linkbackInout);
-		checkIncidenceList(v2, null, LinkBack.class, EdgeDirection.OUT,
-				v2linkbackOut);
-		checkIncidenceList(v2, null, LinkBack.class, EdgeDirection.IN,
-				v2linkbackIn);
+		checkIncidenceList(v2, LinkBack.EC, EdgeDirection.OUT, v2linkbackOut);
+		checkIncidenceList(v2, LinkBack.EC, EdgeDirection.IN, v2linkbackIn);
 		commit(g);
 	}
 
 	/**
 	 * Random test.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -6355,68 +6275,68 @@ public class VertexTest extends InstanceTest {
 			commit(g);
 
 			createReadOnlyTransaction(g);
-			checkIncidenceList(vertices[0], null, Link.class,
-					EdgeDirection.INOUT, linkinout.get(0));
-			checkIncidenceList(vertices[0], null, Link.class,
-					EdgeDirection.OUT, linkout.get(0));
-			checkIncidenceList(vertices[0], null, Link.class, EdgeDirection.IN,
+			checkIncidenceList(vertices[0], Link.EC, EdgeDirection.INOUT,
+					linkinout.get(0));
+			checkIncidenceList(vertices[0], Link.EC, EdgeDirection.OUT,
+					linkout.get(0));
+			checkIncidenceList(vertices[0], Link.EC, EdgeDirection.IN,
 					linkin.get(0));
 
-			checkIncidenceList(vertices[0], null, SubLink.class,
-					EdgeDirection.INOUT, sublinkinout.get(0));
-			checkIncidenceList(vertices[0], null, SubLink.class,
-					EdgeDirection.OUT, sublinkout.get(0));
-			checkIncidenceList(vertices[0], null, SubLink.class,
-					EdgeDirection.IN, sublinkin.get(0));
+			checkIncidenceList(vertices[0], SubLink.EC, EdgeDirection.INOUT,
+					sublinkinout.get(0));
+			checkIncidenceList(vertices[0], SubLink.EC, EdgeDirection.OUT,
+					sublinkout.get(0));
+			checkIncidenceList(vertices[0], SubLink.EC, EdgeDirection.IN,
+					sublinkin.get(0));
 
-			checkIncidenceList(vertices[0], null, LinkBack.class,
-					EdgeDirection.INOUT, linkbackinout.get(0));
-			checkIncidenceList(vertices[0], null, LinkBack.class,
-					EdgeDirection.OUT, linkbackout.get(0));
-			checkIncidenceList(vertices[0], null, LinkBack.class,
-					EdgeDirection.IN, linkbackin.get(0));
+			checkIncidenceList(vertices[0], LinkBack.EC, EdgeDirection.INOUT,
+					linkbackinout.get(0));
+			checkIncidenceList(vertices[0], LinkBack.EC, EdgeDirection.OUT,
+					linkbackout.get(0));
+			checkIncidenceList(vertices[0], LinkBack.EC, EdgeDirection.IN,
+					linkbackin.get(0));
 
-			checkIncidenceList(vertices[1], null, Link.class,
-					EdgeDirection.INOUT, linkinout.get(1));
-			checkIncidenceList(vertices[1], null, Link.class,
-					EdgeDirection.OUT, linkout.get(1));
-			checkIncidenceList(vertices[1], null, Link.class, EdgeDirection.IN,
+			checkIncidenceList(vertices[1], Link.EC, EdgeDirection.INOUT,
+					linkinout.get(1));
+			checkIncidenceList(vertices[1], Link.EC, EdgeDirection.OUT,
+					linkout.get(1));
+			checkIncidenceList(vertices[1], Link.EC, EdgeDirection.IN,
 					linkin.get(1));
 
-			checkIncidenceList(vertices[1], null, SubLink.class,
-					EdgeDirection.INOUT, sublinkinout.get(1));
-			checkIncidenceList(vertices[1], null, SubLink.class,
-					EdgeDirection.OUT, sublinkout.get(1));
-			checkIncidenceList(vertices[1], null, SubLink.class,
-					EdgeDirection.IN, sublinkin.get(1));
+			checkIncidenceList(vertices[1], SubLink.EC, EdgeDirection.INOUT,
+					sublinkinout.get(1));
+			checkIncidenceList(vertices[1], SubLink.EC, EdgeDirection.OUT,
+					sublinkout.get(1));
+			checkIncidenceList(vertices[1], SubLink.EC, EdgeDirection.IN,
+					sublinkin.get(1));
 
-			checkIncidenceList(vertices[1], null, LinkBack.class,
-					EdgeDirection.INOUT, linkbackinout.get(1));
-			checkIncidenceList(vertices[1], null, LinkBack.class,
-					EdgeDirection.OUT, linkbackout.get(1));
-			checkIncidenceList(vertices[1], null, LinkBack.class,
-					EdgeDirection.IN, linkbackin.get(1));
+			checkIncidenceList(vertices[1], LinkBack.EC, EdgeDirection.INOUT,
+					linkbackinout.get(1));
+			checkIncidenceList(vertices[1], LinkBack.EC, EdgeDirection.OUT,
+					linkbackout.get(1));
+			checkIncidenceList(vertices[1], LinkBack.EC, EdgeDirection.IN,
+					linkbackin.get(1));
 
-			checkIncidenceList(vertices[2], null, Link.class,
-					EdgeDirection.INOUT, linkinout.get(2));
-			checkIncidenceList(vertices[2], null, Link.class,
-					EdgeDirection.OUT, linkout.get(2));
-			checkIncidenceList(vertices[2], null, Link.class, EdgeDirection.IN,
+			checkIncidenceList(vertices[2], Link.EC, EdgeDirection.INOUT,
+					linkinout.get(2));
+			checkIncidenceList(vertices[2], Link.EC, EdgeDirection.OUT,
+					linkout.get(2));
+			checkIncidenceList(vertices[2], Link.EC, EdgeDirection.IN,
 					linkin.get(2));
 
-			checkIncidenceList(vertices[2], null, SubLink.class,
-					EdgeDirection.INOUT, sublinkinout.get(2));
-			checkIncidenceList(vertices[2], null, SubLink.class,
-					EdgeDirection.OUT, sublinkout.get(2));
-			checkIncidenceList(vertices[2], null, SubLink.class,
-					EdgeDirection.IN, sublinkin.get(2));
+			checkIncidenceList(vertices[2], SubLink.EC, EdgeDirection.INOUT,
+					sublinkinout.get(2));
+			checkIncidenceList(vertices[2], SubLink.EC, EdgeDirection.OUT,
+					sublinkout.get(2));
+			checkIncidenceList(vertices[2], SubLink.EC, EdgeDirection.IN,
+					sublinkin.get(2));
 
-			checkIncidenceList(vertices[2], null, LinkBack.class,
-					EdgeDirection.INOUT, linkbackinout.get(2));
-			checkIncidenceList(vertices[2], null, LinkBack.class,
-					EdgeDirection.OUT, linkbackout.get(2));
-			checkIncidenceList(vertices[2], null, LinkBack.class,
-					EdgeDirection.IN, linkbackin.get(2));
+			checkIncidenceList(vertices[2], LinkBack.EC, EdgeDirection.INOUT,
+					linkbackinout.get(2));
+			checkIncidenceList(vertices[2], LinkBack.EC, EdgeDirection.OUT,
+					linkbackout.get(2));
+			checkIncidenceList(vertices[2], LinkBack.EC, EdgeDirection.IN,
+					linkbackin.get(2));
 			commit(g);
 		}
 	}
@@ -6428,7 +6348,7 @@ public class VertexTest extends InstanceTest {
 	// tests of the method Graph getGraph();
 	/**
 	 * Checks some cases for true and false.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -6464,7 +6384,7 @@ public class VertexTest extends InstanceTest {
 	// }
 	/**
 	 * Tests if the graphversion is increased by creating a new vertex.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -6486,7 +6406,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Tests if the graphversion is increased by deleting a vertex.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -6508,7 +6428,7 @@ public class VertexTest extends InstanceTest {
 	/**
 	 * Tests if the graphversion is increased by changing the attributes of a
 	 * vertex.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -6534,7 +6454,7 @@ public class VertexTest extends InstanceTest {
 	// tests of the method AttributedElementClass getAttributedElementClass();
 	/**
 	 * Some test cases for getAttributedElementClass
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -6556,7 +6476,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Some test cases for getSchemaClass
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -6577,7 +6497,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Some test cases for getGraphClass
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -6605,7 +6525,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Tests if the value of the correct attribute is returned.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -6627,7 +6547,7 @@ public class VertexTest extends InstanceTest {
 	/**
 	 * Tests if an exception is thrown if you want to get an attribute which
 	 * doesn't exist.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test(expected = NoSuchAttributeException.class)
@@ -6643,7 +6563,7 @@ public class VertexTest extends InstanceTest {
 	/**
 	 * Tests if an exception is thrown if you want to get an attribute with an
 	 * empty name.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test(expected = NoSuchAttributeException.class)
@@ -6661,7 +6581,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Tests if an existing attribute is correct set.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -6682,7 +6602,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Tests if an existing attribute is set to null.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -6701,7 +6621,7 @@ public class VertexTest extends InstanceTest {
 	/**
 	 * Tests if an exception is thrown if you want to get an attribute which
 	 * doesn't exist.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test(expected = NoSuchAttributeException.class)
@@ -6715,7 +6635,7 @@ public class VertexTest extends InstanceTest {
 	/**
 	 * Tests if an exception is thrown if you want to get an attribute with an
 	 * empty name.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test(expected = NoSuchAttributeException.class)
@@ -6730,7 +6650,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Some tests.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -6755,7 +6675,7 @@ public class VertexTest extends InstanceTest {
 	// tests of the method int compareTo(AttributedElement a);
 	/**
 	 * Test if a vertex is equal to itself.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -6770,7 +6690,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Test if a vertex is smaller than another.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -6786,7 +6706,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Test if a vertex is greater than another.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -6986,7 +6906,7 @@ public class VertexTest extends InstanceTest {
 	/**
 	 * Checks if <code>v.incidences()</code> has the same elements in the same
 	 * order like <code>e</code>.
-	 * 
+	 *
 	 * @param v
 	 *            the Vertex which incident edges should be checked
 	 * @param e
@@ -7008,7 +6928,7 @@ public class VertexTest extends InstanceTest {
 	/**
 	 * Checks if <code>graph.edges()</code> has the same elements in the same
 	 * order like <code>e</code>.
-	 * 
+	 *
 	 * @param e
 	 *            the edges to check
 	 */
@@ -7164,7 +7084,7 @@ public class VertexTest extends InstanceTest {
 	// tests of the method remove_sourcec
 	/**
 	 * Removes the sourcec of v0 --&gt v0.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -7181,7 +7101,7 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Removes the sourcec of v0 --&gt v1.
-	 * 
+	 *
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -7886,7 +7806,7 @@ public class VertexTest extends InstanceTest {
 	/**
 	 * Checks if the edges which are returned by an get#Edge#incidences are the
 	 * expected ones.
-	 * 
+	 *
 	 * @param incidenceName
 	 *            Name of #Edge#
 	 * @param v

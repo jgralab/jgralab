@@ -184,7 +184,7 @@ public class VertexCodeGenerator extends
 			code.add(
 					"@Override",
 					"public #ecQualifiedName# getFirst#ecCamelName#Incidence(#formalParams#) {",
-					"\treturn (#ecQualifiedName#)getFirstIncidence(#ecQualifiedName#.class#actualParams#);",
+					"\treturn (#ecQualifiedName#)getFirstIncidence(#ecQualifiedName#.EC#actualParams#);",
 					"}");
 		}
 		return code;
@@ -238,7 +238,7 @@ public class VertexCodeGenerator extends
 			code.add(
 					"@Override",
 					"public #vcQualifiedName# getNext#vcCamelName#(#formalParams#) {",
-					"\treturn (#vcQualifiedName#)getNextVertex(#vcQualifiedName#.class#actualParams#);",
+					"\treturn (#vcQualifiedName#)getNextVertex(#vcQualifiedName#.VC#actualParams#);",
 					"}");
 		}
 		return code;
