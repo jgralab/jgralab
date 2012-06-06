@@ -47,9 +47,9 @@ import de.uni_koblenz.jgralab.schema.VertexClass;
 
 /**
  * TODO add comment
- * 
+ *
  * @author ist@uni-koblenz.de
- * 
+ *
  */
 public class GraphCodeGenerator extends
 		AttributedElementCodeGenerator<GraphClass, Graph> {
@@ -323,7 +323,7 @@ public class GraphCodeGenerator extends
 			}
 			if (currentCycle.isStdOrDbImplOrTransImpl()) {
 				s.add("public Iterable<#edgeJavaClassName#> get#edgeUniqueName#Edges() {");
-				s.add("\treturn new EdgeIterable<#edgeJavaClassName#>(this, #edgeJavaClassName#.class);");
+				s.add("\treturn new EdgeIterable<#edgeJavaClassName#>(this, #edgeJavaClassName#.EC);");
 				s.add("}");
 			}
 			s.add("");

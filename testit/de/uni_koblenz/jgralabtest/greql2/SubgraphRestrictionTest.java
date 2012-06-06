@@ -110,7 +110,7 @@ public class SubgraphRestrictionTest extends GenericTest {
 		for (Object val : result) {
 			assertTrue(val instanceof Vertex);
 			Vertex v = (Vertex) val;
-			assertNotNull(v.getFirstIncidence(Highway.class));
+			assertNotNull(v.getFirstIncidence(Highway.EC));
 			num++;
 		}
 		assertEquals(num, junctionsAtHighways);

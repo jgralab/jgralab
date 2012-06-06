@@ -227,7 +227,7 @@ public class GenericGraphImpl extends GraphImpl implements
 	 * Returns the default value for attributes in the generic implementation if
 	 * there is no explicitly defined default value, according to the
 	 * attribute's domain.
-	 * 
+	 *
 	 * @param domain
 	 *            The attribute's domain.
 	 * @return The default value for attributes of the domain.

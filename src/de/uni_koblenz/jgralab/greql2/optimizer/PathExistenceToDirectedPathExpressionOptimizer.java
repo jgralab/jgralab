@@ -33,7 +33,7 @@
  * the parts of JGraLab used as well as that of the covered work.
  */
 /**
- * 
+ *
  */
 package de.uni_koblenz.jgralab.greql2.optimizer;
 
@@ -70,7 +70,7 @@ import de.uni_koblenz.jgralab.greql2.schema.VertexSetExpression;
 
 /**
  * @author Tassilo Horn &lt;horn@uni-koblenz.de&gt;
- * 
+ *
  */
 public class PathExistenceToDirectedPathExpressionOptimizer extends
 		OptimizerBase {
@@ -81,7 +81,7 @@ public class PathExistenceToDirectedPathExpressionOptimizer extends
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.uni_koblenz.jgralab.greql2.optimizer.Optimizer#isEquivalent(de.uni_koblenz
 	 * .jgralab.greql2.optimizer.Optimizer)
@@ -96,7 +96,7 @@ public class PathExistenceToDirectedPathExpressionOptimizer extends
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.uni_koblenz.jgralab.greql2.optimizer.Optimizer#optimize(de.uni_koblenz
 	 * .jgralab.greql2.evaluator.GreqlEvaluator,
@@ -222,7 +222,7 @@ public class PathExistenceToDirectedPathExpressionOptimizer extends
 			sdsVar = target;
 			SimpleDeclaration targetSD = (SimpleDeclaration) target
 					.getFirstIsDeclaredVarOfIncidence().getOmega();
-			if (targetSD.getDegree(IsDeclaredVarOf.class) > 1) {
+			if (targetSD.getDegree(IsDeclaredVarOf.EC) > 1) {
 				sd = splitSimpleDecl(targetSD, target);
 			} else {
 				sd = targetSD;
@@ -233,7 +233,7 @@ public class PathExistenceToDirectedPathExpressionOptimizer extends
 			sdsVar = start;
 			SimpleDeclaration startSD = (SimpleDeclaration) start
 					.getFirstIsDeclaredVarOfIncidence().getOmega();
-			if (startSD.getDegree(IsDeclaredVarOf.class) > 1) {
+			if (startSD.getDegree(IsDeclaredVarOf.EC) > 1) {
 				sd = splitSimpleDecl(startSD, target);
 			} else {
 				sd = startSD;
@@ -256,7 +256,7 @@ public class PathExistenceToDirectedPathExpressionOptimizer extends
 					sdsVar = start;
 				}
 			} else if (startIsDeclaredFirst) {
-				if (targetSD.getDegree(IsDeclaredVarOf.class) > 1) {
+				if (targetSD.getDegree(IsDeclaredVarOf.EC) > 1) {
 					sd = splitSimpleDecl(targetSD, target);
 				} else {
 					sd = targetSD;
@@ -264,7 +264,7 @@ public class PathExistenceToDirectedPathExpressionOptimizer extends
 				sdsVar = target;
 				anchorVar = start;
 			} else {
-				if (startSD.getDegree(IsDeclaredVarOf.class) > 1) {
+				if (startSD.getDegree(IsDeclaredVarOf.EC) > 1) {
 					sd = splitSimpleDecl(startSD, start);
 				} else {
 					sd = startSD;

@@ -2072,7 +2072,7 @@ public class Rsa2Tg extends XmlProcessor {
 			Domain n = d.getNextDomain();
 			// unused if in-degree of all but Annotates edges is <=1 (one
 			// incoming edge is the ContainsDomain edge from a Package)
-			if ((d.getDegree(EdgeDirection.IN) - d.getDegree(Annotates.class,
+			if ((d.getDegree(EdgeDirection.IN) - d.getDegree(Annotates.EC,
 					EdgeDirection.IN)) <= 1) {
 				// System.out.println("...remove unused domain '"
 				// + d.getQualifiedName() + "'");
@@ -2140,7 +2140,7 @@ public class Rsa2Tg extends XmlProcessor {
 		for (Attribute att : sg.getAttributeVertices()) {
 			String domainId = attributeType.getMark(att);
 			if (domainId == null) {
-				assert att.getDegree(HasDomain.class, EdgeDirection.OUT) == 1 : "Attribute '"
+				assert att.getDegree(HasDomain.EC, EdgeDirection.OUT) == 1 : "Attribute '"
 						+ att.get_name()
 						+ "' of "
 						+ att.getFirstHasAttributeIncidence().getThat()
@@ -2323,7 +2323,7 @@ public class Rsa2Tg extends XmlProcessor {
 		int removed = 0;
 		while (p != null) {
 			Package n = p.getNextPackage();
-			int commentCount = p.getDegree(Annotates.class);
+			int commentCount = p.getDegree(Annotates.EC);
 			if (((p.getDegree() - commentCount) == 1)
 					&& (p.get_qualifiedName().length() > 0)) {
 				System.out

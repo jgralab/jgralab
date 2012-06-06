@@ -60,7 +60,7 @@ import de.uni_koblenz.jgralab.schema.impl.DirectedSchemaEdgeClass;
 
 /**
  * TODO add comment
- * 
+ *
  * @author ist@uni-koblenz.de
  */
 public abstract class VertexBaseImpl extends
@@ -79,7 +79,7 @@ public abstract class VertexBaseImpl extends
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.uni_koblenz.jgralab.Vertex#getDegree()
 	 */
 	@Override
@@ -89,7 +89,7 @@ public abstract class VertexBaseImpl extends
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.uni_koblenz.jgralab.Vertex#getDegree(de.uni_koblenz.jgralab.EdgeDirection
 	 * )
@@ -128,7 +128,7 @@ public abstract class VertexBaseImpl extends
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.uni_koblenz.jgralab.Vertex#getNextVertex()
 	 */
 	@Override
@@ -146,7 +146,7 @@ public abstract class VertexBaseImpl extends
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.uni_koblenz.jgralab.Vertex#getNextVertexOfClass(java.lang.Class)
 	 */
 	@Override
@@ -165,7 +165,7 @@ public abstract class VertexBaseImpl extends
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.uni_koblenz.jgralab.Vertex#getNextVertexOfClass(de.uni_koblenz.jgralab
 	 * .schema.VertexClass)
@@ -174,12 +174,19 @@ public abstract class VertexBaseImpl extends
 	public Vertex getNextVertex(VertexClass vertexClass) {
 		assert vertexClass != null;
 		assert isValid();
-		return getNextVertex(vertexClass.getSchemaClass());
+		Vertex v = getNextVertex();
+		while (v != null) {
+			if (v.isInstanceOf(vertexClass)) {
+				return v;
+			}
+			v = v.getNextVertex();
+		}
+		return null;
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.uni_koblenz.jgralab.Vertex#isBefore(de.uni_koblenz.jgralab.Vertex)
 	 */
@@ -205,7 +212,7 @@ public abstract class VertexBaseImpl extends
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.uni_koblenz.jgralab.Vertex#putBefore(de.uni_koblenz.jgralab.Vertex)
 	 */
@@ -220,7 +227,7 @@ public abstract class VertexBaseImpl extends
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.uni_koblenz.jgralab.Vertex#isAfter(de.uni_koblenz.jgralab.Vertex)
 	 */
 	@Override
@@ -240,7 +247,7 @@ public abstract class VertexBaseImpl extends
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.uni_koblenz.jgralab.Vertex#putAfter(de.uni_koblenz.jgralab.Vertex)
 	 */
@@ -277,7 +284,7 @@ public abstract class VertexBaseImpl extends
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @seede.uni_koblenz.jgralab.Vertex#getFirstEdge(de.uni_koblenz.jgralab.
 	 * EdgeDirection)
 	 */
@@ -325,7 +332,7 @@ public abstract class VertexBaseImpl extends
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.uni_koblenz.jgralab.Vertex#getFirstEdgeOfClass(de.uni_koblenz.jgralab
 	 * .schema.EdgeClass)
@@ -334,13 +341,12 @@ public abstract class VertexBaseImpl extends
 	public Edge getFirstIncidence(EdgeClass anEdgeClass) {
 		assert anEdgeClass != null;
 		assert isValid();
-		return getFirstIncidence(anEdgeClass.getSchemaClass(),
-				EdgeDirection.INOUT);
+		return getFirstIncidence(anEdgeClass, EdgeDirection.INOUT);
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.uni_koblenz.jgralab.Vertex#getFirstEdgeOfClass(java.lang.Class)
 	 */
 	@Override
@@ -352,7 +358,7 @@ public abstract class VertexBaseImpl extends
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.uni_koblenz.jgralab.Vertex#getFirstEdgeOfClass(de.uni_koblenz.jgralab
 	 * .schema.EdgeClass, de.uni_koblenz.jgralab.EdgeDirection)
@@ -362,12 +368,19 @@ public abstract class VertexBaseImpl extends
 			EdgeDirection orientation) {
 		assert anEdgeClass != null;
 		assert isValid();
-		return getFirstIncidence(anEdgeClass.getSchemaClass(), orientation);
+		Edge currentEdge = getFirstIncidence(orientation);
+		while (currentEdge != null) {
+			if (currentEdge.isInstanceOf(anEdgeClass)) {
+				return currentEdge;
+			}
+			currentEdge = currentEdge.getNextIncidence(orientation);
+		}
+		return null;
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.uni_koblenz.jgralab.Vertex#getFirstEdgeOfClass(java.lang.Class,
 	 * de.uni_koblenz.jgralab.EdgeDirection)
 	 */
@@ -388,7 +401,7 @@ public abstract class VertexBaseImpl extends
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.uni_koblenz.jgralab.Vertex#delete()
 	 */
 	@Override
@@ -490,7 +503,7 @@ public abstract class VertexBaseImpl extends
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.uni_koblenz.jgralab.Vertex#getVertexVersion()
 	 */
 	@Override
@@ -498,7 +511,7 @@ public abstract class VertexBaseImpl extends
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.uni_koblenz.jgralab.Vertex#isVertexModified()
 	 */
 	@Override
@@ -509,7 +522,7 @@ public abstract class VertexBaseImpl extends
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.uni_koblenz.jgralab.impl.InternalVertex#incidenceListModified()
 	 */
 	@Override
@@ -520,19 +533,19 @@ public abstract class VertexBaseImpl extends
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see jgralab.Vertex#getDegree(jgralab.EdgeClass)
 	 */
 	@Override
 	public int getDegree(EdgeClass ec) {
 		assert ec != null;
 		assert isValid();
-		return getDegree(ec.getSchemaClass(), EdgeDirection.INOUT);
+		return getDegree(ec, EdgeDirection.INOUT);
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see jgralab.Vertex#getDegree(Class)
 	 */
 	@Override
@@ -544,19 +557,24 @@ public abstract class VertexBaseImpl extends
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see jgralab.Vertex#getDegree(jgralab.EdgeClass, jgralab.EdgeDirection)
 	 */
 	@Override
 	public int getDegree(EdgeClass ec, EdgeDirection orientation) {
 		assert ec != null;
 		assert isValid();
-		return getDegree(ec.getSchemaClass(), orientation);
+		int degree = 0;
+		for (Edge e = getFirstIncidence(ec, orientation); e != null; e = e
+				.getNextIncidence(ec, orientation)) {
+			++degree;
+		}
+		return degree;
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see jgralab.Vertex#getDegree(Class, jgralab.EdgeDirection)
 	 */
 	@Override
@@ -573,7 +591,7 @@ public abstract class VertexBaseImpl extends
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
@@ -583,7 +601,7 @@ public abstract class VertexBaseImpl extends
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see java.lang.Comparable#compareTo(java.lang.Object)
 	 */
 	@Override
@@ -597,7 +615,7 @@ public abstract class VertexBaseImpl extends
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.uni_koblenz.jgralab.Vertex#incidences()
 	 */
 	@Override
@@ -608,7 +626,7 @@ public abstract class VertexBaseImpl extends
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.uni_koblenz.jgralab.Vertex#incidences(de.uni_koblenz.jgralab.EdgeDirection
 	 * )
@@ -621,7 +639,7 @@ public abstract class VertexBaseImpl extends
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.uni_koblenz.jgralab.Vertex#incidences(de.uni_koblenz.jgralab.schema
 	 * .EdgeClass, de.uni_koblenz.jgralab.EdgeDirection)
@@ -630,12 +648,12 @@ public abstract class VertexBaseImpl extends
 	public Iterable<Edge> incidences(EdgeClass eclass, EdgeDirection dir) {
 		assert eclass != null;
 		assert isValid();
-		return new IncidenceIterable<Edge>(this, eclass.getSchemaClass(), dir);
+		return new IncidenceIterable<Edge>(this, eclass, dir);
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.uni_koblenz.jgralab.Vertex#incidences(java.lang.Class,
 	 * de.uni_koblenz.jgralab.EdgeDirection)
 	 */
@@ -649,7 +667,7 @@ public abstract class VertexBaseImpl extends
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.uni_koblenz.jgralab.Vertex#incidences(de.uni_koblenz.jgralab.schema
 	 * .EdgeClass)
@@ -658,12 +676,12 @@ public abstract class VertexBaseImpl extends
 	public Iterable<Edge> incidences(EdgeClass eclass) {
 		assert eclass != null;
 		assert isValid();
-		return new IncidenceIterable<Edge>(this, eclass.getSchemaClass());
+		return new IncidenceIterable<Edge>(this, eclass);
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.uni_koblenz.jgralab.Vertex#incidences(java.lang.Class)
 	 */
 	@Override
@@ -975,7 +993,7 @@ public abstract class VertexBaseImpl extends
 				for (Edge e : vx.incidences(t.edgeClass, t.edgeDirection)) {
 					if (!t.strictType
 							|| (t.strictType && (t.edgeClass.getSchemaClass() == e
-									.getSchemaClass()))) {
+									.getAttributedElementClass()))) {
 						if (i == (pathElements.length - 1)) {
 							Vertex r = e.getThat();
 							result = result.plus((T) r);

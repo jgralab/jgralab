@@ -374,7 +374,7 @@ public class CompareSchemaWithSchemaGraph {
 		assertEquals("The number of graph element classes in package "
 				+ xPackage + " don't match!", xPackage.getVertexClasses()
 				.size() + xPackage.getEdgeClasses().size(),
-				gPackage.getDegree(ContainsGraphElementClass.class));
+				gPackage.getDegree(ContainsGraphElementClass.EC));
 
 		// Loop over all ContainsGraphElementClass edges
 		for (ContainsGraphElementClass containsGraphElementClass : gPackage
@@ -429,7 +429,7 @@ public class CompareSchemaWithSchemaGraph {
 
 		assertEquals("The number of subpackages in package " + xPackage
 				+ " don't match!", xPackage.getSubPackages().size(),
-				gPackage.getDegree(ContainsSubPackage.class, EdgeDirection.OUT));
+				gPackage.getDegree(ContainsSubPackage.EC, EdgeDirection.OUT));
 
 		// Loop over all ContainsSubPackage edges
 		for (ContainsSubPackage containsSubPackage : gPackage

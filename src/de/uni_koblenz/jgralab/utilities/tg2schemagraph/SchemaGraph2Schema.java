@@ -439,7 +439,8 @@ public class SchemaGraph2Schema {
 					.getThat() instanceof Package)) : "FIXME! That should be an instance of Package.";
 
 			// Recursion
-			getAllGraphElementClassesAndDomains((Package) containsSubPackage.getOmega());
+			getAllGraphElementClassesAndDomains((Package) containsSubPackage
+					.getOmega());
 		}
 	}
 
@@ -474,7 +475,7 @@ public class SchemaGraph2Schema {
 			// SpecializesEdgeClass
 			if ((gGraphElementClass instanceof EdgeClass)
 					&& (((EdgeClass) gGraphElementClass).getDegree(
-							SpecializesEdgeClass.class, EdgeDirection.OUT) == 0)) {
+							SpecializesEdgeClass.EC, EdgeDirection.OUT) == 0)) {
 				gSuperEdgeClasses.add((EdgeClass) gGraphElementClass);
 			}
 		}
@@ -574,7 +575,7 @@ public class SchemaGraph2Schema {
 	private String[] createComments(NamedElement gNamedElement) {
 
 		// create array of all comment Strings
-		String[] comments = new String[gNamedElement.getDegree(Annotates.class)];
+		String[] comments = new String[gNamedElement.getDegree(Annotates.EC)];
 		int i = 0;
 		for (Annotates a : gNamedElement.getAnnotatesIncidences()) {
 			Comment comment = (Comment) a.getThat();
@@ -987,7 +988,8 @@ public class SchemaGraph2Schema {
 
 			// Gets the superclass
 			assert (specializesVertexClass.getOmega() instanceof VertexClass) : "That should be an instance of VertexClass.";
-			VertexClass gSuperClass = (VertexClass) specializesVertexClass.getOmega();
+			VertexClass gSuperClass = (VertexClass) specializesVertexClass
+					.getOmega();
 
 			// Gets the corresponding superclass
 			de.uni_koblenz.jgralab.schema.AttributedElementClass<?, ?> superClass = schema
