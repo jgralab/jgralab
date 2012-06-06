@@ -144,6 +144,7 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 		scope = new Scope();
 		evaluator = new GreqlEvaluatorImpl(query, null,
 				new GreqlEnvironmentAdapter());
+		evaluator.setDatagraphSchema(datagraphSchema);
 	}
 
 	/**

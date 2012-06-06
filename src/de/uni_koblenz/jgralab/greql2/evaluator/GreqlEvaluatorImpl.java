@@ -134,6 +134,11 @@ public class GreqlEvaluatorImpl implements InternalGreqlEvaluator,
 	private Graph datagraph = null;
 
 	/**
+	 * This attribute holds the schema of the datagraph
+	 */
+	private Schema datagraphSchema = null;
+
+	/**
 	 * This attribute holds the result of the evaluation
 	 */
 	private Object result = null;
@@ -244,13 +249,13 @@ public class GreqlEvaluatorImpl implements InternalGreqlEvaluator,
 
 	@Override
 	public Schema getSchemaOfDataGraph() {
-		return datagraph == null ? null : datagraph.getSchema();
+		return datagraphSchema;
 	}
 
 	@Override
 	public AttributedElementClass<?, ?> getAttributedElementClass(
 			String qualifiedName) {
-		return datagraph.getSchema().getAttributedElementClass(qualifiedName);
+		return datagraphSchema.getAttributedElementClass(qualifiedName);
 	}
 
 	/**
@@ -300,6 +305,9 @@ public class GreqlEvaluatorImpl implements InternalGreqlEvaluator,
 			GreqlEnvironment environment, ProgressFunction progressFunction) {
 		this.query = (QueryImpl) query;
 		this.datagraph = datagraph;
+		if (datagraph != null) {
+			datagraphSchema = datagraph.getSchema();
+		}
 		this.environment = environment;
 		localEvaluationResults = new Object[query.getQueryGraph().getVCount() + 1];
 		this.progressFunction = progressFunction;
@@ -376,6 +384,11 @@ public class GreqlEvaluatorImpl implements InternalGreqlEvaluator,
 	public long getOverallEvaluationTime() {
 		return query.getParseTime() + query.getOptimizationTime()
 				+ getEvaluationTime();
+	}
+
+	@Override
+	public void setDatagraphSchema(Schema datagraphSchema) {
+		this.datagraphSchema = datagraphSchema;
 	}
 
 }

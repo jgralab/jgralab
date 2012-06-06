@@ -64,4 +64,6 @@ public interface InternalGreqlEvaluator {
 	 * Calls the progress()-Method of the progress function this evaluator uses
 	 */
 	public void progress(long value);
+
+	public void setDatagraphSchema(Schema datagraphSchema);
 }
