@@ -54,10 +54,7 @@ import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.ImplementationType;
 import de.uni_koblenz.jgralab.JGraLab;
-import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEnvironment;
-import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEnvironmentAdapter;
-import de.uni_koblenz.jgralab.greql2.evaluator.Query;
-import de.uni_koblenz.jgralab.greql2.evaluator.QueryImpl;
+import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.optimizer.DefaultOptimizer;
 import de.uni_koblenz.jgralab.greql2.optimizer.Optimizer;
 import de.uni_koblenz.jgralab.greql2.parser.GreqlParser;
@@ -242,22 +239,21 @@ public class GenericTest {
 
 	private static Graph testGraph, oldTestGraph;
 
-	private static GreqlEnvironment environment = new GreqlEnvironmentAdapter();
-
-	public static Query query = new QueryImpl(null);
+	private static GreqlEvaluator eval = new GreqlEvaluator((String) null,
+			null, null);
 
 	@Before
 	public void setUp() throws Exception {
-		environment.setVariable("nix", 133);
-		environment.setVariable("FOO", "Currywurst");
+		eval.setVariable("nix", 133);
+		eval.setVariable("FOO", "Currywurst");
 	}
 
 	protected void setBoundVariable(String varName, Object val) {
-		environment.setVariable(varName, val);
+		eval.setVariable(varName, val);
 	}
 
 	protected Object getBoundVariable(String varName) {
-		return environment.getVariable(varName);
+		return eval.getVariable(varName);
 	}
 
 	protected Graph getTestGraph(TestVersion version) throws Exception {
@@ -386,24 +382,43 @@ public class GenericTest {
 
 	protected Object evalTestQuery(String functionName, String query,
 			Optimizer optimizer, Graph datagraph) throws Exception {
-		GenericTest.query = new QueryImpl(query, optimizer);
-		GenericTest.query.setUseSavedOptimizedSyntaxGraph(false);
+		eval.setQuery(query);
+		eval.setDatagraph(datagraph);
+		eval.setUseSavedOptimizedSyntaxGraph(false);
 
-		Object result = GenericTest.query.evaluate(datagraph, environment);
+		setOptimizer(optimizer);
+
+		eval.startEvaluation();
 
 		if (DEBUG_SYNTAXGRAPHS) {
 			printDebuggingSyntaxGraph(optimizer);
 		}
 
+		Object result = eval.getResult();
+		// eval.printEvaluationTimes();
 		return result;
 	}
 
 	protected Object evalQuery(String query, Optimizer optimizer,
 			Graph datagraph) throws Exception {
-		Query queryObj = new QueryImpl(query, optimizer);
-		queryObj.setUseSavedOptimizedSyntaxGraph(false);
+		eval.setQuery(query);
+		eval.setDatagraph(datagraph);
+		eval.setUseSavedOptimizedSyntaxGraph(false);
 
-		return queryObj.evaluate(datagraph, environment);
+		setOptimizer(optimizer);
+
+		eval.startEvaluation();
+		Object result = eval.getResult();
+		return result;
+	}
+
+	private void setOptimizer(Optimizer optimizer) {
+		if (optimizer != null) {
+			eval.setOptimize(true);
+			eval.setOptimizer(optimizer);
+		} else {
+			eval.setOptimize(false);
+		}
 	}
 
 	private void printDebuggingSyntaxGraph(Optimizer optimizer) {
@@ -419,12 +434,12 @@ public class GenericTest {
 			System.out.println("Unoptimized Query:");
 			dotFileName += "unoptimized-query.dot";
 		}
-
 		System.out
-				.println(GreqlSerializer.serializeGraph(query.getQueryGraph()));
+				.println(GreqlSerializer.serializeGraph(eval.getSyntaxGraph()));
 		try {
-			Tg2Dot.convertGraph(query.getQueryGraph(), dotFileName, true);
+			Tg2Dot.convertGraph(eval.getSyntaxGraph(), dotFileName, true);
 		} catch (IOException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}

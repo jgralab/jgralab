@@ -121,7 +121,7 @@ public class LoadTest extends InstanceTest {
 	private Graph createTestGraph() throws Exception {
 		if (implementationType == ImplementationType.STANDARD) {
 			String query = "from i:c report i end where d:=\"drölfundfünfzig\", c:=b, b:=a, a:=\"Mensaessen\"";
-			return GreqlParser.parse(query);
+			return GreqlParser.parse(query, null);
 		}
 		int vertexClasses = 6;
 		int edgeClasses = 7;
@@ -422,7 +422,7 @@ public class LoadTest extends InstanceTest {
 	 * Returns the freeVertexList of <code>graph</code> if
 	 * <code>getVertexList</code> is set to true else the freeEdgeList is
 	 * returned.
-	 *
+	 * 
 	 * @param graph
 	 *            the graph
 	 * @param getVertexList
@@ -450,7 +450,7 @@ public class LoadTest extends InstanceTest {
 
 	/**
 	 * Returns the runs-Array of <code>fil</code>.
-	 *
+	 * 
 	 * @param fil
 	 *            a FreeIndexList
 	 * @return runs
@@ -479,7 +479,7 @@ public class LoadTest extends InstanceTest {
 	 * vList.runs.length==<code>runsLength</code><br>
 	 * vList.runs starts with the elements of <code>runsValues</code>. The other
 	 * elements of runs must be 0.
-	 *
+	 * 
 	 * @param vList
 	 * @param used
 	 * @param free
@@ -509,7 +509,7 @@ public class LoadTest extends InstanceTest {
 
 	/**
 	 * Test if graph has only one vertex.
-	 *
+	 * 
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -533,7 +533,7 @@ public class LoadTest extends InstanceTest {
 	/**
 	 * Test if graph has a limit of one vertex and you want to create another
 	 * one.
-	 *
+	 * 
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -558,7 +558,7 @@ public class LoadTest extends InstanceTest {
 
 	/**
 	 * Test if you fill runs completely by the allocate method.
-	 *
+	 * 
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -601,7 +601,7 @@ public class LoadTest extends InstanceTest {
 	 * Test if you reach an increase of runs by the allocate method.
 	 * runs=[2,-1,1,-1,1,-1,1,-1,1,-1,1,-1,1,-1,1,-1] and then create a new
 	 * vertex.
-	 *
+	 * 
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -643,7 +643,7 @@ public class LoadTest extends InstanceTest {
 	/**
 	 * Test if you create 17 vertices and you delete every second(FreeIndexList
 	 * must be increased).
-	 *
+	 * 
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -675,7 +675,7 @@ public class LoadTest extends InstanceTest {
 
 	/**
 	 * A graph which has at most 2 vertices. One vertex is created and deleted.
-	 *
+	 * 
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -701,7 +701,7 @@ public class LoadTest extends InstanceTest {
 	/**
 	 * Delete first node at a FreeIndexList.runs= [-2, 1, -1, 1, -1, 1, -1, 1,
 	 * -1, 1, -1, 1, -1, 1, -1, 1]
-	 *
+	 * 
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -743,7 +743,7 @@ public class LoadTest extends InstanceTest {
 	/**
 	 * FreeIndexList.runs= [1, -1, 1, -1, 1, -1, 1, -1, 1, -1, 1, -1, 1, -3, 0,
 	 * 0] Delete the middle vertex of -3.
-	 *
+	 * 
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -784,7 +784,7 @@ public class LoadTest extends InstanceTest {
 	/**
 	 * FreeIndexList.runs= [1, -1, 1, -3, 1, -1, 1, -1, 1, -1, 1, -1, 1, -1, 0,
 	 * 0] Delete the middle vertex of -3.
-	 *
+	 * 
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -826,7 +826,7 @@ public class LoadTest extends InstanceTest {
 
 	/**
 	 * FreeIndexList.runs= [-1, 1, -2, 0,...] Delete the first vertex of -2.
-	 *
+	 * 
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -863,7 +863,7 @@ public class LoadTest extends InstanceTest {
 
 	/**
 	 * FreeIndexList.runs= [-1, 1, -1, 0,...] Delete the last used index.
-	 *
+	 * 
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -898,7 +898,7 @@ public class LoadTest extends InstanceTest {
 	/**
 	 * FreeIndexList.runs= [1,-1,1,-1,1,-1,1,-1,1,-1,1,-1,1,-1,1,-2] Delete the
 	 * last used index.
-	 *
+	 * 
 	 * @throws CommitFailedException
 	 */
 	@Test

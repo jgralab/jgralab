@@ -48,9 +48,7 @@ import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.greql2.evaluator.GraphSize;
-import de.uni_koblenz.jgralab.greql2.evaluator.OptimizerInfo;
-import de.uni_koblenz.jgralab.greql2.evaluator.QueryImpl;
+import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.fa.State;
 import de.uni_koblenz.jgralab.greql2.exception.SerialisingException;
 import de.uni_koblenz.jgralab.greql2.serialising.HTMLOutputWriter;
@@ -62,14 +60,14 @@ import de.uni_koblenz.jgralabtest.schemas.greqltestschema.localities.CountyTags;
 public class StoreValuesTest {
 
 	static Graph graph = null;
-	static OptimizerInfo optimizerInfo;
+	static GreqlEvaluator eval = null;
 	static String testdir = "testit/testdata/";
 
 	@BeforeClass
 	public static void setUp() {
 		try {
 			graph = createTestGraph();
-			optimizerInfo = new GraphSize(graph);
+			eval = new GreqlEvaluator("", graph, null);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -245,9 +243,10 @@ public class StoreValuesTest {
 	public void testOutputOfTupleOfVertices() {
 		String qu = "from a,b:V with connected report a,b end where connected := a-->b";
 
-		@SuppressWarnings("unchecked")
-		PVector<Vertex> result = (PVector<Vertex>) new QueryImpl(qu,
-				optimizerInfo).evaluate(graph);
+		eval.setQuery(qu);
+		eval.startEvaluation();
+
+		PVector<Vertex> result = eval.getResultList();
 
 		generateHTMLandXMLoutput(result.get(0), "outputTupleOfVertices", graph,
 				true);
@@ -270,7 +269,9 @@ public class StoreValuesTest {
 	@Test
 	public void testOutputOfSlice() {
 		String qu = "from w: V{localities.Town} report slice(w, <--) end";
-		Object result = new QueryImpl(qu, optimizerInfo).evaluate(graph);
+		eval.setQuery(qu);
+		eval.startEvaluation();
+		Object result = eval.getResult();
 
 		try {
 			HTMLOutputWriter writer = new HTMLOutputWriter(graph);
@@ -290,7 +291,9 @@ public class StoreValuesTest {
 	@Test(expected = SerialisingException.class)
 	public void testOutputOfSliceException() {
 		String qu = "from w: V{localities.Town} report slice(w, <--) end";
-		Object result = new QueryImpl(qu, optimizerInfo).evaluate(graph);
+		eval.setQuery(qu);
+		eval.startEvaluation();
+		Object result = eval.getResult();
 
 		try {
 			XMLOutputWriter writer = new XMLOutputWriter(graph);
@@ -383,7 +386,10 @@ public class StoreValuesTest {
 
 	public void evaluateQueryAndSaveResult(String query, String filename) {
 
-		Object result = new QueryImpl(query, optimizerInfo).evaluate(graph);
+		eval.setQuery(query);
+		eval.startEvaluation();
+
+		Object result = eval.getResult();
 
 		generateHTMLandXMLoutput(result, filename, graph, true);
 	}
