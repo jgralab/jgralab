@@ -341,8 +341,7 @@ public abstract class VertexBaseImpl extends
 	public Edge getFirstIncidence(EdgeClass anEdgeClass) {
 		assert anEdgeClass != null;
 		assert isValid();
-		return getFirstIncidence(anEdgeClass.getSchemaClass(),
-				EdgeDirection.INOUT);
+		return getFirstIncidence(anEdgeClass, EdgeDirection.INOUT);
 	}
 
 	/*
@@ -369,7 +368,14 @@ public abstract class VertexBaseImpl extends
 			EdgeDirection orientation) {
 		assert anEdgeClass != null;
 		assert isValid();
-		return getFirstIncidence(anEdgeClass.getSchemaClass(), orientation);
+		Edge currentEdge = getFirstIncidence(orientation);
+		while (currentEdge != null) {
+			if (currentEdge.isInstanceOf(anEdgeClass)) {
+				return currentEdge;
+			}
+			currentEdge = currentEdge.getNextIncidence(orientation);
+		}
+		return null;
 	}
 
 	/*
@@ -534,7 +540,7 @@ public abstract class VertexBaseImpl extends
 	public int getDegree(EdgeClass ec) {
 		assert ec != null;
 		assert isValid();
-		return getDegree(ec.getSchemaClass(), EdgeDirection.INOUT);
+		return getDegree(ec, EdgeDirection.INOUT);
 	}
 
 	/*
@@ -558,7 +564,12 @@ public abstract class VertexBaseImpl extends
 	public int getDegree(EdgeClass ec, EdgeDirection orientation) {
 		assert ec != null;
 		assert isValid();
-		return getDegree(ec.getSchemaClass(), orientation);
+		int degree = 0;
+		for (Edge e = getFirstIncidence(ec, orientation); e != null; e = e
+				.getNextIncidence(ec, orientation)) {
+			++degree;
+		}
+		return degree;
 	}
 
 	/*
@@ -637,7 +648,7 @@ public abstract class VertexBaseImpl extends
 	public Iterable<Edge> incidences(EdgeClass eclass, EdgeDirection dir) {
 		assert eclass != null;
 		assert isValid();
-		return new IncidenceIterable<Edge>(this, eclass.getSchemaClass(), dir);
+		return new IncidenceIterable<Edge>(this, eclass, dir);
 	}
 
 	/*
@@ -665,7 +676,7 @@ public abstract class VertexBaseImpl extends
 	public Iterable<Edge> incidences(EdgeClass eclass) {
 		assert eclass != null;
 		assert isValid();
-		return new IncidenceIterable<Edge>(this, eclass.getSchemaClass());
+		return new IncidenceIterable<Edge>(this, eclass);
 	}
 
 	/*

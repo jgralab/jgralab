@@ -1690,11 +1690,10 @@ public class VertexTest extends InstanceTest {
 	private void testVertexForClassEdgeDirection(Vertex forNode,
 			int expectedLink, int expectedSubLink, int expectedLinkBack,
 			EdgeDirection direction) {
-		assertEquals(expectedLink, forNode.getDegree(Link.class, direction));
-		assertEquals(expectedSubLink,
-				forNode.getDegree(SubLink.class, direction));
+		assertEquals(expectedLink, forNode.getDegree(Link.EC, direction));
+		assertEquals(expectedSubLink, forNode.getDegree(SubLink.EC, direction));
 		assertEquals(expectedLinkBack,
-				forNode.getDegree(LinkBack.class, direction));
+				forNode.getDegree(LinkBack.EC, direction));
 	}
 
 	// tests of the method getDegree(EdgeClass ec, EdgeDirection orientation,
@@ -2285,11 +2284,10 @@ public class VertexTest extends InstanceTest {
 	private void testVertexForClassEdgeDirectionBoolean(Vertex forNode,
 			int expectedLink, int expectedSubLink, int expectedLinkBack,
 			EdgeDirection direction) {
-		assertEquals(expectedLink, forNode.getDegree(Link.class, direction));
-		assertEquals(expectedSubLink,
-				forNode.getDegree(SubLink.class, direction));
+		assertEquals(expectedLink, forNode.getDegree(Link.EC, direction));
+		assertEquals(expectedSubLink, forNode.getDegree(SubLink.EC, direction));
 		assertEquals(expectedLinkBack,
-				forNode.getDegree(LinkBack.class, direction));
+				forNode.getDegree(LinkBack.EC, direction));
 	}
 
 	// tests of the method getPrevVertex();

@@ -300,7 +300,7 @@ public class VertexCodeGenerator extends
 			if (currentCycle.isStdOrDbImplOrTransImpl()) {
 				s.add("@Override");
 				s.add("public Iterable<#edgeClassQualifiedName#> get#edgeClassUniqueName#Incidences() {");
-				s.add("\treturn new IncidenceIterable<#edgeClassQualifiedName#>(this, #edgeClassQualifiedName#.class);");
+				s.add("\treturn new IncidenceIterable<#edgeClassQualifiedName#>(this, #edgeClassQualifiedName#.EC);");
 				s.add("}");
 			}
 			s.add("");
@@ -315,7 +315,7 @@ public class VertexCodeGenerator extends
 			if (currentCycle.isStdOrDbImplOrTransImpl()) {
 				s.add("@Override");
 				s.add("public Iterable<#edgeClassQualifiedName#> get#edgeClassUniqueName#Incidences(EdgeDirection direction) {");
-				s.add("\treturn new IncidenceIterable<#edgeClassQualifiedName#>(this, #edgeClassQualifiedName#.class, direction);");
+				s.add("\treturn new IncidenceIterable<#edgeClassQualifiedName#>(this, #edgeClassQualifiedName#.EC, direction);");
 				s.add("}");
 			}
 		}
