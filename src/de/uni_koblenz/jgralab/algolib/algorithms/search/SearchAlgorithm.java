@@ -356,11 +356,15 @@ public abstract class SearchAlgorithm extends StructureOrientedAlgorithm
 
 	@Override
 	public SearchAlgorithm execute() throws AlgorithmTerminatedException {
-		for (Vertex currentRoot : graph.vertices()) {
-			execute(currentRoot);
-			if (state == AlgorithmStates.FINISHED) {
-				break;
+		if (graph.getVCount() > 0) {
+			for (Vertex currentRoot : graph.vertices()) {
+				execute(currentRoot);
+				if (state == AlgorithmStates.FINISHED) {
+					break;
+				}
 			}
+		} else {
+			done();
 		}
 		assert (state == AlgorithmStates.FINISHED);
 		return this;
