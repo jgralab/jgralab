@@ -37,13 +37,13 @@ public class DijkstraAndAStarTest {
 		start = new Location[gs.length];
 		target = new Location[gs.length];
 
-		FordMooreAlgorithm fma = new FordMooreAlgorithm(gs[0]);
+		FordMooreAlgorithm fma;
 
 		for (int i = 0; i < gs.length; i++) {
-			fma.reset();
 			selectVertices(gs[i], rgas, i);
-			fma.setGraph(gs[i]);
-			fma.reset();
+			assert (gs[i] == start[i].getGraph());
+			assert (gs[i] == target[i].getGraph());
+			fma = new FordMooreAlgorithm(gs[i]);
 			try {
 				fma.execute(start[i], target[i]);
 			} catch (AlgorithmTerminatedException e) {
@@ -58,13 +58,16 @@ public class DijkstraAndAStarTest {
 		nearBorder.set_x(0.0);
 		nearBorder.set_y(0.0);
 		LocationPoint from = new LocationPoint(nearBorder);
-		start[position] = graphGenerator.getNearestNeighbors(from, 1).get(0).l;
+		start[position] = graphGenerator.getNearestNeighbors(graph, from, 1)
+				.get(0).l;
+		assert (graph == start[position].getGraph());
 		Location nearCenter = graph.createLocation();
 		nearCenter.set_x(MAX / 2.0);
 		nearCenter.set_y(MAX / 2.0);
 		LocationPoint to = new LocationPoint(nearCenter);
-		target[position] = graphGenerator.getNearestNeighbors(to, 1).get(0).l;
-
+		target[position] = graphGenerator.getNearestNeighbors(graph, to, 1)
+				.get(0).l;
+		assert (graph == target[position].getGraph());
 		nearBorder.delete();
 		nearCenter.delete();
 	}
