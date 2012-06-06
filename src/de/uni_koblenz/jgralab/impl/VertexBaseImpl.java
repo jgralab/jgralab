@@ -976,18 +976,6 @@ public abstract class VertexBaseImpl extends
 				rolename);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see de.uni_koblenz.jgralab.Vertex#reachableVertices(java.lang.String,
-	 * java.lang.Class)
-	 */
-	@Override
-	public <T extends Vertex> POrderedSet<T> reachableVertices(
-			String pathDescription, Class<T> vertexType) {
-		return graph.reachableVertices(this, pathDescription, vertexType);
-	}
-
 	@Override
 	@SuppressWarnings("unchecked")
 	public <T extends Vertex> POrderedSet<T> reachableVertices(
@@ -1005,7 +993,7 @@ public abstract class VertexBaseImpl extends
 				for (Edge e : vx.incidences(t.edgeClass, t.edgeDirection)) {
 					if (!t.strictType
 							|| (t.strictType && (t.edgeClass == e
-									.getSchemaClass()))) {
+									.getAttributedElementClass()))) {
 						if (i == (pathElements.length - 1)) {
 							Vertex r = e.getThat();
 							if (returnType.isInstance(r)) {

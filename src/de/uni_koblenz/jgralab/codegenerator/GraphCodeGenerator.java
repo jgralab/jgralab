@@ -90,23 +90,6 @@ public class GraphCodeGenerator extends
 			}
 
 			rootBlock.setVariable("baseClassName", "GraphImpl");
-
-			// for Vertex.reachableVertices()
-			addImports("org.pcollections.POrderedSet");
-			addImports("#jgPackage#.Vertex");
-			addImports("#jgPackage#.greql2.evaluator.GreqlEvaluator");
-
-			code.add(new CodeSnippet(
-					"\n\tprotected GreqlEvaluator greqlEvaluator;\n",
-					"@Override",
-					"public synchronized <T extends Vertex> POrderedSet<T> reachableVertices(Vertex startVertex, String pathDescription, Class<T> vertexType) {",
-					"\tif (greqlEvaluator == null) {",
-					"\t\tgreqlEvaluator = new GreqlEvaluator((String) null, this, null);",
-					"\t}",
-					"\tgreqlEvaluator.setVariable(\"v\", startVertex);",
-					"\tgreqlEvaluator.setQuery(\"using v: v \" + pathDescription);",
-					"\tgreqlEvaluator.startEvaluation();",
-					"\treturn greqlEvaluator.getResultSet();", "}"));
 		}
 		code.add(createGraphElementClassMethods());
 		code.add(createEdgeIteratorMethods());

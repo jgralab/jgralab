@@ -256,21 +256,6 @@ public interface Vertex extends GraphElement<VertexClass, Vertex> {
 	public Iterable<Edge> incidences();
 
 	/**
-	 * Return an List&lt;vertexType&gt; over all vertices reachable from this
-	 * vertex via the specified <code>pathDescription</code>.
-	 *
-	 * @param pathDescription
-	 *            a GReQL path description like
-	 *            <code>-->{EdgeType1}+ <>--{EdgeType2}</code>
-	 * @param vertexType
-	 *            the class of the vertices you can reach with that path (acts
-	 *            as implicit GoalRestriction)
-	 * @return a List of the reachable vertices
-	 */
-	public <T extends Vertex> POrderedSet<T> reachableVertices(
-			String pathDescription, Class<T> vertexType);
-
-	/**
 	 * @param <T>
 	 * @param returnType
 	 *            the class of the vertices you can reach with that path (acts
