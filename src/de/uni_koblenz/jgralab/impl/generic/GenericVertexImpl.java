@@ -229,6 +229,11 @@ public class GenericVertexImpl extends VertexImpl implements
 		return type.equals(cls) || type.isSubClassOf(cls);
 	}
 
+	@Override
+	public void invokeOnAttributesArray(OnAttributesFunction fn) {
+		attributes = fn.invoke(this, attributes);
+	}
+
 	// ************** unsupported methods ***************/
 
 	/**
@@ -239,62 +244,6 @@ public class GenericVertexImpl extends VertexImpl implements
 	public Class<? extends Vertex> getSchemaClass() {
 		throw new UnsupportedOperationException(
 				"This method is not supported by the generic implementation");
-	}
-
-	/**
-	 * This method is not supported by the generic implementation and therefore
-	 * throws an {@link UnsupportedOperationException}.
-	 */
-	@Override
-	public Vertex getNextVertex(Class<? extends Vertex> vertexClass) {
-		throw new UnsupportedOperationException(
-				"This method is not supported by the generic implementation");
-	}
-
-	/**
-	 * This method is not supported by the generic implementation and therefore
-	 * throws an {@link UnsupportedOperationException}.
-	 */
-	@Override
-	public Edge getFirstIncidence(Class<? extends Edge> anEdgeClass) {
-		throw new UnsupportedOperationException(
-				"This method is not supported by the generic implementation");
-	}
-
-	/**
-	 * This method is not supported by the generic implementation and therefore
-	 * throws an {@link UnsupportedOperationException}.
-	 */
-	@Override
-	public Edge getFirstIncidence(Class<? extends Edge> anEdgeClass,
-			EdgeDirection orientation) {
-		throw new UnsupportedOperationException(
-				"This method is not supported by the generic implementation");
-	}
-
-	/**
-	 * This method is not supported by the generic implementation and therefore
-	 * throws an {@link UnsupportedOperationException}.
-	 */
-	@Override
-	public int getDegree(Class<? extends Edge> ec) {
-		throw new UnsupportedOperationException(
-				"This method is not supported by the generic implementation");
-	}
-
-	/**
-	 * This method is not supported by the generic implementation and therefore
-	 * throws an {@link UnsupportedOperationException}.
-	 */
-	@Override
-	public int getDegree(Class<? extends Edge> ec, EdgeDirection direction) {
-		throw new UnsupportedOperationException(
-				"This method is not supported by the generic implementation");
-	}
-
-	@Override
-	public void invokeOnAttributesArray(OnAttributesFunction fn) {
-		attributes = fn.invoke(this, attributes);
 	}
 
 }

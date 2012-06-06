@@ -156,11 +156,11 @@ public class SystemTest extends GenericTest {
 			PCollection<?> usages = (PCollection<?>) tuple.get(3);
 
 			assertEquals(vertex.getId(), identifier);
-			assertEquals(vertex.getDegree(Way.class, EdgeDirection.OUT),
+			assertEquals(vertex.getDegree(Way.EC, EdgeDirection.OUT),
 					usage_count);
 
 			int n = 0;
-			for (Edge edge : vertex.incidences(Way.class, EdgeDirection.OUT)) {
+			for (Edge edge : vertex.incidences(Way.EC, EdgeDirection.OUT)) {
 				++n;
 				assertTrue(usages.contains(edge));
 			}

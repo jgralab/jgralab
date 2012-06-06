@@ -1503,7 +1503,7 @@ public class GreqlParser extends ParserHelper {
 		}
 		if (!inPredicateMode()) {
 			PrimaryPathDescription result = graph.createSimplePathDescription();
-			dir = (Direction) graph.getFirstVertex(Direction.class);
+			dir = (Direction) graph.getFirstVertex(Direction.VC);
 			while (dir != null) {
 				if (!dir.get_dirValue().equals(direction)) {
 					dir = dir.getNextDirection();
@@ -1589,7 +1589,7 @@ public class GreqlParser extends ParserHelper {
 			} else if (!edgeStart && edgeEnd) {
 				direction = GReQLDirection.OUT;
 			}
-			dir = (Direction) graph.getFirstVertex(Direction.class);
+			dir = (Direction) graph.getFirstVertex(Direction.VC);
 			while (dir != null) {
 				if (!dir.get_dirValue().equals(direction)) {
 					dir = dir.getNextDirection();
@@ -2488,82 +2488,82 @@ public class GreqlParser extends ParserHelper {
 		return null;
 	}
 
-//	private final Expression parseNumericLiteral() {
-//		if (lookAhead(0) == TokenTypes.DOUBLELITERAL) {
-//			DoubleLiteral literal = null;
-//			if (!inPredicateMode()) {
-//				literal = graph.createDoubleLiteral();
-//				literal.set_doubleValue(((DoubleToken) lookAhead).getNumber());
-//			}
-//			match();
-//			return literal;
-//		}
-//		if ((lookAhead(0) == TokenTypes.HEXLITERAL)
-//				|| (lookAhead(0) == TokenTypes.OCTLITERAL)) {
-//			if (((LongToken) lookAhead).getNumber().intValue() == ((LongToken) lookAhead)
-//					.getNumber().longValue()) {
-//				IntLiteral literal = null;
-//				if (!inPredicateMode()) {
-//					literal = graph.createIntLiteral();
-//					literal.set_intValue(((LongToken) lookAhead).getNumber()
-//							.intValue());
-//				}
-//				match();
-//				return literal;
-//			} else {
-//				LongLiteral literal = null;
-//				if (!inPredicateMode()) {
-//					literal = graph.createLongLiteral();
-//					literal.set_longValue(((LongToken) lookAhead)
-//							.getNumber());
-//				}
-//				match();
-//				return literal;
-//			}
-//		}
-//		if ((lookAhead(0) == TokenTypes.INTLITERAL)) {
-//			long value = ((LongToken) lookAhead).getNumber().longValue();
-//			String integerPart = lookAhead.getValue();
-//			match();
-//			if (lookAhead(0) == TokenTypes.DOT) {
-//				String decimalPart = "0";
-//				match();
-//				if ((lookAhead(0) == TokenTypes.INTLITERAL)
-//						|| (lookAhead(0) == TokenTypes.OCTLITERAL)) {
-//					decimalPart = ((LongToken) lookAhead).getValue();
-//					match();
-//				} else {
-//					fail("Unrecognized token as part of decimal value");
-//				}
-//				if (!inPredicateMode()) {
-//					String doubleValue = integerPart + "." + decimalPart;
-//					DoubleLiteral literal = graph.createDoubleLiteral();
-//					// System.out.println("Real Value: '" + realValue + "'");
-//					literal.set_doubleValue(Double.parseDouble(doubleValue));
-//					return literal;
-//				}
-//				return null;
-//			} else {
-//				if (!inPredicateMode()) {
-//					if ((value < Integer.MAX_VALUE)
-//							&& (value > Integer.MIN_VALUE)) {
-//						IntLiteral literal = graph.createIntLiteral();
-//						literal.set_intValue((int) value);
-//						return literal;
-//					} else {
-//						LongLiteral literal = graph.createLongLiteral();
-//						literal.set_longValue(value);
-//						return literal;
-//					}
-//				}
-//				return null;
-//			}
-//		}
-//		fail("No numeric literal");
-//		return null;
-//	}
-	
-	
+	// private final Expression parseNumericLiteral() {
+	// if (lookAhead(0) == TokenTypes.DOUBLELITERAL) {
+	// DoubleLiteral literal = null;
+	// if (!inPredicateMode()) {
+	// literal = graph.createDoubleLiteral();
+	// literal.set_doubleValue(((DoubleToken) lookAhead).getNumber());
+	// }
+	// match();
+	// return literal;
+	// }
+	// if ((lookAhead(0) == TokenTypes.HEXLITERAL)
+	// || (lookAhead(0) == TokenTypes.OCTLITERAL)) {
+	// if (((LongToken) lookAhead).getNumber().intValue() == ((LongToken)
+	// lookAhead)
+	// .getNumber().longValue()) {
+	// IntLiteral literal = null;
+	// if (!inPredicateMode()) {
+	// literal = graph.createIntLiteral();
+	// literal.set_intValue(((LongToken) lookAhead).getNumber()
+	// .intValue());
+	// }
+	// match();
+	// return literal;
+	// } else {
+	// LongLiteral literal = null;
+	// if (!inPredicateMode()) {
+	// literal = graph.createLongLiteral();
+	// literal.set_longValue(((LongToken) lookAhead)
+	// .getNumber());
+	// }
+	// match();
+	// return literal;
+	// }
+	// }
+	// if ((lookAhead(0) == TokenTypes.INTLITERAL)) {
+	// long value = ((LongToken) lookAhead).getNumber().longValue();
+	// String integerPart = lookAhead.getValue();
+	// match();
+	// if (lookAhead(0) == TokenTypes.DOT) {
+	// String decimalPart = "0";
+	// match();
+	// if ((lookAhead(0) == TokenTypes.INTLITERAL)
+	// || (lookAhead(0) == TokenTypes.OCTLITERAL)) {
+	// decimalPart = ((LongToken) lookAhead).getValue();
+	// match();
+	// } else {
+	// fail("Unrecognized token as part of decimal value");
+	// }
+	// if (!inPredicateMode()) {
+	// String doubleValue = integerPart + "." + decimalPart;
+	// DoubleLiteral literal = graph.createDoubleLiteral();
+	// // System.out.println("Real Value: '" + realValue + "'");
+	// literal.set_doubleValue(Double.parseDouble(doubleValue));
+	// return literal;
+	// }
+	// return null;
+	// } else {
+	// if (!inPredicateMode()) {
+	// if ((value < Integer.MAX_VALUE)
+	// && (value > Integer.MIN_VALUE)) {
+	// IntLiteral literal = graph.createIntLiteral();
+	// literal.set_intValue((int) value);
+	// return literal;
+	// } else {
+	// LongLiteral literal = graph.createLongLiteral();
+	// literal.set_longValue(value);
+	// return literal;
+	// }
+	// }
+	// return null;
+	// }
+	// }
+	// fail("No numeric literal");
+	// return null;
+	// }
+
 	private final Expression parseNumericLiteral() {
 		if (lookAhead(0) == TokenTypes.DOUBLELITERAL) {
 			double value = ((DoubleToken) lookAhead).getNumber().doubleValue();
@@ -2582,7 +2582,7 @@ public class GreqlParser extends ParserHelper {
 			if (!inPredicateMode()) {
 				if ((value < Integer.MAX_VALUE) && (value > Integer.MIN_VALUE)) {
 					IntLiteral literal = graph.createIntLiteral();
-					literal.set_intValue((int)value);
+					literal.set_intValue((int) value);
 					return literal;
 				} else {
 					LongLiteral literal = graph.createLongLiteral();

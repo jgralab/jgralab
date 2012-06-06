@@ -86,27 +86,11 @@ public interface Vertex extends GraphElement<VertexClass, Vertex> {
 	/**
 	 * @param ec
 	 *            an EdgeClass
-	 * @return number of IN or OUT incidences of the specified EdgeClass
-	 */
-	public int getDegree(Class<? extends Edge> ec);
-
-	/**
-	 * @param ec
-	 *            an EdgeClass
 	 * @param orientation
 	 *            of connected incidences,
 	 * @return number of IN or OUT incidences connected to the vertex
 	 */
 	public int getDegree(EdgeClass ec, EdgeDirection orientation);
-
-	/**
-	 * @param ec
-	 *            an EdgeClass
-	 * @param orientation
-	 *            of connected incidences,
-	 * @return number of IN or OUT incidences connected to the vertex
-	 */
-	public int getDegree(Class<? extends Edge> ec, EdgeDirection orientation);
 
 	/**
 	 * @return the next vertex in vSeq
@@ -124,13 +108,6 @@ public interface Vertex extends GraphElement<VertexClass, Vertex> {
 	 * @return the next vertex in vSeq of class aVertexClass or its superclasses
 	 */
 	public Vertex getNextVertex(VertexClass vertexClass);
-
-	/**
-	 * @param vertexClass
-	 *            the class of the next vertex
-	 * @return the next vertex in vSeq of class aVertexClass or its superclasses
-	 */
-	public Vertex getNextVertex(Class<? extends Vertex> vertexClass);
 
 	/**
 	 * @return first incident edge of this vertex
@@ -193,31 +170,12 @@ public interface Vertex extends GraphElement<VertexClass, Vertex> {
 	/**
 	 * @param anEdgeClass
 	 *            the edge class to search for
-	 * @return the first incidence in iSeq where the corresponding edge is of
-	 *         class anEdgeClass
-	 */
-	public Edge getFirstIncidence(Class<? extends Edge> anEdgeClass);
-
-	/**
-	 * @param anEdgeClass
-	 *            the edge class to search for
 	 * @param orientation
 	 *            of the edge
 	 * @return the first incidence in iSeq where the corresponding edge is of
 	 *         class anEdgeClass
 	 */
 	public Edge getFirstIncidence(EdgeClass anEdgeClass,
-			EdgeDirection orientation);
-
-	/**
-	 * @param anEdgeClass
-	 *            the edge class to search for
-	 * @param orientation
-	 *            of the edge
-	 * @return the first incidence in iSeq where the corresponding edge is of
-	 *         class anEdgeClass
-	 */
-	public Edge getFirstIncidence(Class<? extends Edge> anEdgeClass,
 			EdgeDirection orientation);
 
 	/**
@@ -254,21 +212,6 @@ public interface Vertex extends GraphElement<VertexClass, Vertex> {
 	 *         advanced for-loop
 	 */
 	public Iterable<Edge> incidences();
-
-	/**
-	 * Return an List&lt;vertexType&gt; over all vertices reachable from this
-	 * vertex via the specified <code>pathDescription</code>.
-	 *
-	 * @param pathDescription
-	 *            a GReQL path description like
-	 *            <code>-->{EdgeType1}+ <>--{EdgeType2}</code>
-	 * @param vertexType
-	 *            the class of the vertices you can reach with that path (acts
-	 *            as implicit GoalRestriction)
-	 * @return a List of the reachable vertices
-	 */
-	public <T extends Vertex> POrderedSet<T> reachableVertices(
-			String pathDescription, Class<T> vertexType);
 
 	/**
 	 * @param <T>
@@ -314,37 +257,11 @@ public interface Vertex extends GraphElement<VertexClass, Vertex> {
 	 * vertex using the advanced for-loop
 	 *
 	 * @param eclass
-	 *            the schema class of the edges which should be iterated
-	 * @param dir
-	 *            the direction of the edges which should be iterated, either
-	 *            EdgeDirection.IN or EdgeDirection.OUT
-	 * @return a iterable object which can be iterated through using the
-	 *         advanced for-loop
-	 */
-	public Iterable<Edge> incidences(Class<? extends Edge> eclass,
-			EdgeDirection dir);
-
-	/**
-	 * Using this method, one can simply iterate over all incident edges of this
-	 * vertex using the advanced for-loop
-	 *
-	 * @param eclass
 	 *            the EdgeClass of the edges which should be iterated
 	 * @return a iterable object which can be iterated through using the
 	 *         advanced for-loop
 	 */
 	public Iterable<Edge> incidences(EdgeClass eclass);
-
-	/**
-	 * Using this method, one can simply iterate over all incident edges of this
-	 * vertex using the advanced for-loop
-	 *
-	 * @param eclass
-	 *            the schema class of the edges which should be iterated
-	 * @return a iterable object which can be iterated through using the
-	 *         advanced for-loop
-	 */
-	public Iterable<Edge> incidences(Class<? extends Edge> eclass);
 
 	/**
 	 * Sorts the incidence sequence according to the given comparator in

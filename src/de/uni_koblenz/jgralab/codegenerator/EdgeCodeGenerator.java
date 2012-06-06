@@ -199,7 +199,7 @@ public class EdgeCodeGenerator extends
 		if (currentCycle.isStdOrDbImplOrTransImpl()) {
 			code.add(
 					"public #ecQualifiedName# getNext#ecCamelName#InGraph(#formalParams#) {",
-					"\treturn (#ecQualifiedName#)getNextEdge(#ecQualifiedName#.class#actualParams#);",
+					"\treturn (#ecQualifiedName#)getNextEdge(#ecQualifiedName#.EC#actualParams#);",
 					"}");
 		}
 		return code;
@@ -248,7 +248,7 @@ public class EdgeCodeGenerator extends
 		if (currentCycle.isStdOrDbImplOrTransImpl()) {
 			code.add(
 					"public #ecQualifiedName# getNext#ecCamelName#Incidence(#formalParams#) {",
-					"\treturn (#ecQualifiedName#)getNextIncidence(#ecQualifiedName#.class#actualParams#);",
+					"\treturn (#ecQualifiedName#)getNextIncidence(#ecQualifiedName#.EC#actualParams#);",
 					"}");
 		}
 		return code;

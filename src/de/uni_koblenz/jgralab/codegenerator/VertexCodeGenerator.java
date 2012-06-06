@@ -184,7 +184,7 @@ public class VertexCodeGenerator extends
 			code.add(
 					"@Override",
 					"public #ecQualifiedName# getFirst#ecCamelName#Incidence(#formalParams#) {",
-					"\treturn (#ecQualifiedName#)getFirstIncidence(#ecQualifiedName#.class#actualParams#);",
+					"\treturn (#ecQualifiedName#)getFirstIncidence(#ecQualifiedName#.EC#actualParams#);",
 					"}");
 		}
 		return code;
@@ -238,7 +238,7 @@ public class VertexCodeGenerator extends
 			code.add(
 					"@Override",
 					"public #vcQualifiedName# getNext#vcCamelName#(#formalParams#) {",
-					"\treturn (#vcQualifiedName#)getNextVertex(#vcQualifiedName#.class#actualParams#);",
+					"\treturn (#vcQualifiedName#)getNextVertex(#vcQualifiedName#.VC#actualParams#);",
 					"}");
 		}
 		return code;
@@ -300,7 +300,7 @@ public class VertexCodeGenerator extends
 			if (currentCycle.isStdOrDbImplOrTransImpl()) {
 				s.add("@Override");
 				s.add("public Iterable<#edgeClassQualifiedName#> get#edgeClassUniqueName#Incidences() {");
-				s.add("\treturn new IncidenceIterable<#edgeClassQualifiedName#>(this, #edgeClassQualifiedName#.class);");
+				s.add("\treturn new IncidenceIterable<#edgeClassQualifiedName#>(this, #edgeClassQualifiedName#.EC);");
 				s.add("}");
 			}
 			s.add("");
@@ -315,7 +315,7 @@ public class VertexCodeGenerator extends
 			if (currentCycle.isStdOrDbImplOrTransImpl()) {
 				s.add("@Override");
 				s.add("public Iterable<#edgeClassQualifiedName#> get#edgeClassUniqueName#Incidences(EdgeDirection direction) {");
-				s.add("\treturn new IncidenceIterable<#edgeClassQualifiedName#>(this, #edgeClassQualifiedName#.class, direction);");
+				s.add("\treturn new IncidenceIterable<#edgeClassQualifiedName#>(this, #edgeClassQualifiedName#.EC, direction);");
 				s.add("}");
 			}
 		}

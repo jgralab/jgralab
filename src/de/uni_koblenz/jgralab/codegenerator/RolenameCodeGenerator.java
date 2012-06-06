@@ -45,9 +45,9 @@ import de.uni_koblenz.jgralab.schema.VertexClass;
 
 /**
  * TODO add comment
- * 
+ *
  * @author ist@uni-koblenz.de
- * 
+ *
  */
 public class RolenameCodeGenerator {
 
@@ -85,9 +85,9 @@ public class RolenameCodeGenerator {
 					"@Override",
 					"public boolean remove_#rolename#(#definingVertexClassName# vertex) {",
 					"\tboolean elementRemoved = false;",
-					"\t#edgeClassName# edge = (#edgeClassName#) getFirstIncidence(#edgeClassName#.class, #dir#);",
+					"\t#edgeClassName# edge = (#edgeClassName#) getFirstIncidence(#edgeClassName#.EC, #dir#);",
 					"\twhile (edge != null) {",
-					"\t\t#edgeClassName# next = (#edgeClassName#) edge.getNextIncidence(#edgeClassName#.class, #dir#);",
+					"\t\t#edgeClassName# next = (#edgeClassName#) edge.getNextIncidence(#edgeClassName#.EC, #dir#);",
 					"\t\tif (edge.getThat().equals(vertex)) {"
 							+ "\t\t\tedge.delete();",
 					"\t\t\telementRemoved = true;", "\t\t}",
@@ -121,9 +121,9 @@ public class RolenameCodeGenerator {
 					"@Override",
 					"public java.util.List<? extends #vertexClassName#> remove_#rolename#() {",
 					"\tjava.util.List<#vertexClassName#> adjacences = new java.util.ArrayList<#vertexClassName#>();",
-					"\t#edgeClassName# edge = (#edgeClassName#) getFirstIncidence(#edgeClassName#.class, #dir#);",
+					"\t#edgeClassName# edge = (#edgeClassName#) getFirstIncidence(#edgeClassName#.EC, #dir#);",
 					"\twhile (edge != null) {",
-					"\t\t#edgeClassName# next = (#edgeClassName#) edge.getNextIncidence(#edgeClassName#.class, #dir#);",
+					"\t\t#edgeClassName# next = (#edgeClassName#) edge.getNextIncidence(#edgeClassName#.EC, #dir#);",
 					"\t\tadjacences.add((#vertexClassName#) edge.getThat());",
 					"\t\tedge.delete();", "\t\tedge = next;", "\t}",
 					"\treturn adjacences;", "}");
@@ -157,7 +157,7 @@ public class RolenameCodeGenerator {
 				code.add(
 						"@Override",
 						"public #vertexClassName# get_#rolename#() {",
-						"\t#edgeClassName# edge = (#edgeClassName#) getFirstIncidence(#edgeClassName#.class, #dir#);",
+						"\t#edgeClassName# edge = (#edgeClassName#) getFirstIncidence(#edgeClassName#.EC, #dir#);",
 						"\tif (edge != null) {",
 						"\t\treturn (#vertexClassName#) edge.getThat();",
 						"\t}", "\treturn null;", "}");
@@ -178,12 +178,12 @@ public class RolenameCodeGenerator {
 				code.add(
 						"@Override",
 						"public <V extends #definingVertexClassName#> Iterable<V> get_#rolename#() {",
-						"\treturn new de.uni_koblenz.jgralab.impl.NeighbourIterable<#edgeClassName#, V>(this, #edgeClassName#.class, #dir#, null);",
+						"\treturn new de.uni_koblenz.jgralab.impl.NeighbourIterable<#edgeClassName#, V>(this, #edgeClassName#.EC, #dir#, null);",
 						"}",
 						"",
 						"@Override",
 						"public <V extends #definingVertexClassName#> Iterable<V> get_#rolename#(#jgPackage#.VertexFilter<V> filter) {",
-						"\treturn new de.uni_koblenz.jgralab.impl.NeighbourIterable<#edgeClassName#, V>(this, #edgeClassName#.class, #dir#, filter);",
+						"\treturn new de.uni_koblenz.jgralab.impl.NeighbourIterable<#edgeClassName#, V>(this, #edgeClassName#.EC, #dir#, filter);",
 						"}");
 			}
 		}

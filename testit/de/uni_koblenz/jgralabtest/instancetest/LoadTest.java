@@ -170,21 +170,21 @@ public class LoadTest extends InstanceTest {
 			C alphaC = cs[r.nextInt(vertexCountPerClass)];
 			D omegaD;
 			omegaD = ds[r.nextInt(vertexCountPerClass)];
-			if (omegaD.getDegree(F.class, EdgeDirection.IN) > 3) {
+			if (omegaD.getDegree(F.EC, EdgeDirection.IN) > 3) {
 				g.createF(alphaC, omegaD);
 			}
 
 			// G
 			alphaC = cs[r.nextInt(vertexCountPerClass)];
 			omegaD = ds[r.nextInt(vertexCountPerClass)];
-			if (omegaD.getDegree(G.class, EdgeDirection.IN) > 3) {
+			if (omegaD.getDegree(G.EC, EdgeDirection.IN) > 3) {
 				g.createG(alphaC, omegaD);
 			}
 
 			// H
 			alphaA = as[r.nextInt(vertexCountPerClass)];
 			omegaB = bs[r.nextInt(vertexCountPerClass)];
-			if (omegaD.getDegree(H.class, EdgeDirection.IN) > 4) {
+			if (omegaD.getDegree(H.EC, EdgeDirection.IN) > 4) {
 				g.createH(alphaA, omegaB);
 			}
 
@@ -196,41 +196,41 @@ public class LoadTest extends InstanceTest {
 			// J
 			C2 alphaC2 = c2s[r.nextInt(vertexCountPerClass)];
 			D2 omegaD2 = d2s[r.nextInt(vertexCountPerClass)];
-			if (omegaD2.getDegree(J.class, EdgeDirection.IN) > 3) {
+			if (omegaD2.getDegree(J.EC, EdgeDirection.IN) > 3) {
 				g.createJ(alphaC2, omegaD2);
 			}
 
 			// K
 			alphaA = as[r.nextInt(vertexCountPerClass)];
 			omegaB = bs[r.nextInt(vertexCountPerClass)];
-			if (omegaB.getDegree(K.class, EdgeDirection.IN) > 3) {
+			if (omegaB.getDegree(K.EC, EdgeDirection.IN) > 3) {
 				g.createK(alphaA, omegaB);
 			}
 		}
 
 		for (int i = 0; i < vertexCountPerClass; i++) {
 			B currentB = bs[i];
-			while (currentB.getDegree(H.class, EdgeDirection.IN) < 1) {
+			while (currentB.getDegree(H.EC, EdgeDirection.IN) < 1) {
 				A alphaA = as[r.nextInt(vertexCountPerClass)];
 				g.createH(alphaA, currentB);
 			}
-			while (currentB.getDegree(K.class, EdgeDirection.IN) < 2) {
+			while (currentB.getDegree(K.EC, EdgeDirection.IN) < 2) {
 				A alphaA = as[r.nextInt(vertexCountPerClass)];
 				g.createK(alphaA, currentB);
 			}
 
 			D currentD = ds[i];
-			while (currentD.getDegree(F.class, EdgeDirection.IN) < 1) {
+			while (currentD.getDegree(F.EC, EdgeDirection.IN) < 1) {
 				C alphaC = cs[r.nextInt(vertexCountPerClass)];
 				g.createF(alphaC, currentD);
 			}
-			while (currentD.getDegree(G.class, EdgeDirection.IN) < 1) {
+			while (currentD.getDegree(G.EC, EdgeDirection.IN) < 1) {
 				C alphaC = cs[r.nextInt(vertexCountPerClass)];
 				g.createG(alphaC, currentD);
 			}
 
 			D2 currentD2 = d2s[i];
-			while (currentD2.getDegree(J.class, EdgeDirection.IN) < 1) {
+			while (currentD2.getDegree(J.EC, EdgeDirection.IN) < 1) {
 				C2 alphaC2 = c2s[r.nextInt(vertexCountPerClass)];
 				g.createJ(alphaC2, currentD2);
 			}

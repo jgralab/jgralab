@@ -51,13 +51,13 @@ import de.uni_koblenz.jgralab.schema.EdgeClass;
 /**
  * This transition accepts an AggregationPathDescription. Am
  * AggregationPathDescription is for instance something like v --<>{isExprOf} w.
- * 
+ *
  * @author ist@uni-koblenz.de
  */
 public class AggregationTransition extends Transition {
 
 	private VertexEvaluator predicateEvaluator;
-	
+
 	public VertexEvaluator getPredicateEvaluator() {
 		return predicateEvaluator;
 	}
@@ -68,7 +68,7 @@ public class AggregationTransition extends Transition {
 	 * The collection of types that are accepted by this transition
 	 */
 	protected TypeCollection typeCollection;
-	
+
 	public TypeCollection getTypeCollection() {
 		return typeCollection;
 	}
@@ -78,11 +78,11 @@ public class AggregationTransition extends Transition {
 	 * transition. If the transition is valid for all roles, this set is null
 	 */
 	protected Set<String> validToEdgeRoles;
-	
+
 	public Set<String> getValidToRoles() {
 		return validToEdgeRoles;
 	}
-	
+
 	public Set<String> getValidFromRoles() {
 		return validFromEdgeRoles;
 	}
@@ -90,7 +90,7 @@ public class AggregationTransition extends Transition {
 	protected Set<String> validFromEdgeRoles;
 
 	protected boolean aggregateFrom;
-	
+
 	public boolean isAggregateFrom() {
 		return aggregateFrom;
 	}
@@ -111,7 +111,7 @@ public class AggregationTransition extends Transition {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * greql2.evaluator.fa.Transition#equalSymbol(greql2.evaluator.fa.EdgeTransition
 	 * )
@@ -196,7 +196,7 @@ public class AggregationTransition extends Transition {
 	 * startVertexType, endVertexType, edgeType and even it's possible to define
 	 * a specific edge. This constructor creates a transition to accept a
 	 * simplePathDescription
-	 * 
+	 *
 	 * @param start
 	 *            The state where this transition starts
 	 * @param end
@@ -221,7 +221,7 @@ public class AggregationTransition extends Transition {
 		validFromEdgeRoles = null;
 		this.typeCollection = typeCollection;
 		this.predicateEvaluator = predicateEvaluator;
-		Vertex v = graphMarker.getGraph().getFirstVertex(ThisEdge.class);
+		Vertex v = graphMarker.getGraph().getFirstVertex(ThisEdge.VC);
 		if (v != null) {
 			thisEdgeEvaluator = (ThisEdgeEvaluator) graphMarker.getMark(v);
 		}
@@ -229,7 +229,7 @@ public class AggregationTransition extends Transition {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see greql2.evaluator.fa.Transition#reverse()
 	 */
 	@Override
@@ -243,7 +243,7 @@ public class AggregationTransition extends Transition {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see greql2.evaluator.fa.Transition#isEpsilon()
 	 */
 	@Override
@@ -253,7 +253,7 @@ public class AggregationTransition extends Transition {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see greql2.evaluator.fa.Transition#accepts(jgralab.Vertex, jgralab.Edge)
 	 */
 	@Override

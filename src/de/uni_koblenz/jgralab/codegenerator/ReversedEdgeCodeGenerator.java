@@ -216,7 +216,7 @@ public class ReversedEdgeCodeGenerator extends
 		CodeSnippet code = new CodeSnippet(
 				true,
 				"public #ecName# getNext#ecCamelName#Incidence(#formalParams#) {",
-				"\treturn (#ecName#)getNextIncidence(#ecName#.class#actualParams#);",
+				"\treturn (#ecName#)getNextIncidence(#ecName#.EC#actualParams#);",
 				"}");
 		code.setVariable("ecName",
 				schemaRootPackageName + "." + ec.getQualifiedName());

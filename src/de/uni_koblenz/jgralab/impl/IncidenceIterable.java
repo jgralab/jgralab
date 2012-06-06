@@ -82,10 +82,6 @@ public class IncidenceIterable<E extends Edge> implements Iterable<E> {
 	 * @param ec
 	 *            restricts edges to that class or subclasses
 	 */
-	public IncidenceIterable(Vertex v, Class<? extends Edge> ec) {
-		this(v, ec, EdgeDirection.INOUT);
-	}
-
 	public IncidenceIterable(Vertex v, EdgeClass ec) {
 		this(v, ec, EdgeDirection.INOUT);
 	}
@@ -101,14 +97,8 @@ public class IncidenceIterable<E extends Edge> implements Iterable<E> {
 	 * @param orientation
 	 *            desired orientation
 	 */
-	public IncidenceIterable(Vertex v, Class<? extends Edge> ec,
-			EdgeDirection orientation) {
-		assert v != null && v.isValid();
-		iter = new IncidenceIterator((InternalVertex) v, ec, orientation);
-	}
-
 	public IncidenceIterable(Vertex v, EdgeClass ec, EdgeDirection orientation) {
-		assert v != null && v.isValid();
+		assert (v != null) && v.isValid();
 		iter = new IncidenceIterator((InternalVertex) v, ec, orientation);
 	}
 
@@ -116,8 +106,6 @@ public class IncidenceIterable<E extends Edge> implements Iterable<E> {
 		protected E current = null;
 
 		protected InternalVertex vertex = null;
-
-		protected Class<? extends Edge> ec;
 
 		protected EdgeClass schemaEc;
 
@@ -130,17 +118,6 @@ public class IncidenceIterable<E extends Edge> implements Iterable<E> {
 		 * the next time "next()" is called
 		 */
 		protected long incidenceListVersion;
-
-		@SuppressWarnings("unchecked")
-		public IncidenceIterator(InternalVertex vertex,
-				Class<? extends Edge> ec, EdgeDirection dir) {
-			this.vertex = vertex;
-			this.ec = ec;
-			this.dir = dir;
-			incidenceListVersion = vertex.getIncidenceListVersion();
-			current = (E) ((ec == null) ? vertex.getFirstIncidence(dir)
-					: vertex.getFirstIncidence(ec, dir));
-		}
 
 		@SuppressWarnings("unchecked")
 		public IncidenceIterator(InternalVertex vertex, EdgeClass ec,
@@ -164,8 +141,8 @@ public class IncidenceIterable<E extends Edge> implements Iterable<E> {
 				throw new NoSuchElementException();
 			}
 			E result = current;
-			current = (E) (ec == null && schemaEc == null ? current
-					.getNextIncidence(dir) : schemaEc == null ? current.getNextIncidence(ec, dir) : current.getNextIncidence(schemaEc, dir));
+			current = (E) (schemaEc == null ? current.getNextIncidence(dir)
+					: current.getNextIncidence(schemaEc, dir));
 			return result;
 		}
 
