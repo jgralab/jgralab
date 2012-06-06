@@ -47,6 +47,7 @@ import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.WeakHashMap;
 
@@ -219,6 +220,49 @@ public class QueryImpl extends GraphStructureChangedAdapter implements Query {
 			OptimizerInfo optimizerInfo, Optimizer optimizer) {
 		this(queryText, optimize, optimizerInfo);
 		this.optimizer = optimizer;
+	}
+
+	public QueryImpl(String queryText, Map<String, String> subqueries) {
+		this(queryText, true);
+		setSubqueries(subqueries);
+	}
+
+	public QueryImpl(String queryText, boolean optimize,
+			Map<String, String> subqueries) {
+		this(queryText, optimize, OptimizerUtility.getDefaultOptimizerInfo());
+		setSubqueries(subqueries);
+	}
+
+	public QueryImpl(String queryText, OptimizerInfo optimizerInfo,
+			Map<String, String> subqueries) {
+		this(queryText, true, optimizerInfo);
+		setSubqueries(subqueries);
+	}
+
+	public QueryImpl(String queryText, Optimizer optimizer,
+			Map<String, String> subqueries) {
+		this(queryText, optimizer != null, OptimizerUtility
+				.getDefaultOptimizerInfo(), optimizer);
+		setSubqueries(subqueries);
+	}
+
+	public QueryImpl(String queryText, boolean optimize,
+			OptimizerInfo optimizerInfo, Map<String, String> subqueries) {
+		this(queryText, optimize, optimizerInfo);
+		setSubqueries(subqueries);
+	}
+
+	private void setSubqueries(Map<String, String> subqueries) {
+		for (Entry<String, String> entry : subqueries.entrySet()) {
+			setSubQuery(entry.getKey(), entry.getValue());
+		}
+	}
+
+	public QueryImpl(String queryText, boolean optimize,
+			OptimizerInfo optimizerInfo, Optimizer optimizer,
+			Map<String, String> subqueries) {
+		this(queryText, optimize, optimizerInfo, optimizer);
+		setSubqueries(subqueries);
 	}
 
 	public QueryImpl(String greqlQuery, Set<String> subQueryNames) {
