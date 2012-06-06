@@ -51,7 +51,8 @@ import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
+import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEnvironmentAdapter;
+import de.uni_koblenz.jgralab.greql2.evaluator.QueryImpl;
 import de.uni_koblenz.jgralab.greql2.parser.GreqlParser;
 import de.uni_koblenz.jgralab.greql2.types.Table;
 import de.uni_koblenz.jgralab.greql2.types.Tuple;
@@ -189,9 +190,8 @@ public class SystemTest extends GenericTest {
 		String query = // "using X,Y: forall x:X, y:Y @ x*y > 0";
 		"using X,Y: from x:X, y:Y reportMap y->x end";
 		long startTime = System.currentTimeMillis();
-		GreqlEvaluator eval = new GreqlEvaluator(query, null, boundVars);
-		eval.startEvaluation();
-		eval.getResult();
+		new QueryImpl(query).evaluate(null, new GreqlEnvironmentAdapter(
+				boundVars));
 		long usedTime = System.currentTimeMillis() - startTime;
 		System.out.println("Evaluation of interpreted query took " + usedTime
 				+ "msec");
