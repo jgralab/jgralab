@@ -29,6 +29,7 @@ public class StrongComponentsTestVisitor extends ReducedGraphVisitorAdapter {
 
 	@Override
 	public void reset() {
+		super.reset();
 		representativeVertexList = new LinkedList<Vertex>();
 		reducedEdgeList = new LinkedList<Edge>();
 
@@ -38,12 +39,14 @@ public class StrongComponentsTestVisitor extends ReducedGraphVisitorAdapter {
 
 	@Override
 	public void visitReducedEdge(Edge e) {
+		super.visitReducedEdge(e);
 		reducedEdgeList.add(e);
 		reducedEdges.add(e);
 	}
 
 	@Override
 	public void visitRepresentativeVertex(Vertex v) {
+		super.visitRepresentativeVertex(v);
 		representativeVertexList.add(v);
 		representativeVertices.add(v);
 	}

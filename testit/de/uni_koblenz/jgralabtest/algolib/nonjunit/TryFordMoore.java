@@ -53,34 +53,31 @@ import de.uni_koblenz.jgralabtest.schemas.algolib.weighted.Way;
 import de.uni_koblenz.jgralabtest.schemas.algolib.weighted.WeightedGraph;
 import de.uni_koblenz.jgralabtest.schemas.algolib.weighted.WeightedSchema;
 
-@SuppressWarnings("unused")
 public class TryFordMoore {
 
-	private static Location[] v;
-	private static WeightedGraph graph;
+	private Location[] v;
+	private WeightedGraph graph;
 	// private static DoubleVertexMarker heuristic;
-	private static DoubleEdgeMarker weightFunction;
-	private static ArrayVertexMarker<String> names;
+	private DoubleEdgeMarker weightFunction;
+	private ArrayVertexMarker<String> names;
 
-	private static void createEdge(int ia, int io, double w) {
+	public TryFordMoore() {
+		createGraph();
+	}
+
+	private void createEdge(int ia, int io, double w) {
 		Way e = graph.createWay(v[ia], v[io]);
 		weightFunction.mark(e, w);
 	}
 
 	public static void main(String[] args) {
-		graph = WeightedSchema.instance().createWeightedGraph(
-				ImplementationType.STANDARD);
-		// heuristic = new DoubleVertexMarker(graph);
-		weightFunction = new DoubleEdgeMarker(graph);
-		names = new ArrayVertexMarker<String>(graph);
-		v = new Location[20];
+		TryFordMoore tfm = new TryFordMoore();
 
-		createGraph();
 		// System.out.println(graph.getECount());
 
 		System.out.println("Floyd");
-		FloydAlgorithm floyd = new FloydAlgorithm(graph);
-		floyd.setEdgeWeight(weightFunction);
+		FloydAlgorithm floyd = new FloydAlgorithm(tfm.getGraph());
+		floyd.setEdgeWeight(tfm.getWeightFunction());
 		try {
 			floyd.execute();
 		} catch (AlgorithmTerminatedException e) {
@@ -89,16 +86,18 @@ public class TryFordMoore {
 		if (floyd.hasNegativeCycles()) {
 			System.out.println("negative cycle detected");
 		} else {
-			printResult(graph, floyd.getDistances(), floyd.getSuccessor());
+			tfm.printMatrix(floyd.getInternalWeightedDistance());
+			tfm.printResult(tfm.getGraph(), floyd.getDistances(),
+					floyd.getSuccessor());
 		}
 
 		System.out.println();
 		System.out.println("Ford-Moore");
 
-		Location start = v[0];
-		Location target = v[1];
-		FordMooreAlgorithm fm = new FordMooreAlgorithm(graph, null,
-				weightFunction);
+		Location start = tfm.getV()[0];
+		Location target = tfm.getV()[1];
+		FordMooreAlgorithm fm = new FordMooreAlgorithm(tfm.getGraph(), null,
+				tfm.getWeightFunction());
 		try {
 			fm.execute(start);
 		} catch (AlgorithmTerminatedException e) {
@@ -107,12 +106,12 @@ public class TryFordMoore {
 		if (fm.hasNegativeCycleDetected()) {
 			System.out.println("negative cycle detected");
 		} else {
-			printResult2(target, fm.getParent(), fm.getDistance());
+			tfm.printResult2(target, fm.getParent(), fm.getDistance());
 		}
 
 	}
 
-	private static void printResult(WeightedGraph graph,
+	private void printResult(WeightedGraph graph,
 			BinaryDoubleFunction<Vertex, Vertex> weightedDistance,
 			BinaryFunction<Vertex, Vertex, Edge> successor) {
 		for (Vertex v : graph.vertices()) {
@@ -130,8 +129,21 @@ public class TryFordMoore {
 		}
 	}
 
-	private static void printResult2(Location target,
-			Function<Vertex, Edge> result, DoubleFunction<Vertex> distance) {
+	private void printMatrix(double[][] matrix) {
+		System.out.print("{");
+		for (int i = 0; i < matrix.length; i++) {
+			System.out.print("{");
+			for (int j = 0; j < matrix[i].length; j++) {
+				double val = matrix[i][j];
+				System.out.print(Double.isInfinite(val) ? "inf" : val);
+				System.out.print(j < matrix[i].length - 1 ? "," : "}");
+			}
+			System.out.println(i < matrix.length - 1 ? "," : "}");
+		}
+	}
+
+	private void printResult2(Location target, Function<Vertex, Edge> result,
+			DoubleFunction<Vertex> distance) {
 		Stack<Vertex> stack = new Stack<Vertex>();
 		stack.push(target);
 		Edge currentEdge = result.get(target);
@@ -147,7 +159,14 @@ public class TryFordMoore {
 		System.out.println("Distance: " + distance.get(target));
 	}
 
-	private static void createGraph() {
+	private void createGraph() {
+		graph = WeightedSchema.instance().createWeightedGraph(
+				ImplementationType.STANDARD);
+		// heuristic = new DoubleVertexMarker(graph);
+		weightFunction = new DoubleEdgeMarker(graph);
+		names = new ArrayVertexMarker<String>(graph);
+		v = new Location[20];
+
 		for (int i = 0; i < v.length; i++) {
 			v[i] = graph.createLocation();
 		}
@@ -163,7 +182,7 @@ public class TryFordMoore {
 		createEdge(1, 5, 211);
 		createEdge(1, 13, 101);
 		createEdge(1, 6, 90);
-		createEdge(1, 17, 85);
+		// createEdge(1, 17, 85);
 
 		v[2].set_name("Craiova");
 		// heuristic.mark(v[2], 160);
@@ -245,7 +264,7 @@ public class TryFordMoore {
 
 		v[17].set_name("Urziceni");
 		// heuristic.mark(v[17], 80);
-		createEdge(17, 1, 85);
+		// createEdge(17, 1, 85);
 		createEdge(17, 18, 142);
 		createEdge(17, 7, 98);
 
@@ -258,5 +277,21 @@ public class TryFordMoore {
 		// heuristic.mark(v[19], 374);
 		createEdge(19, 0, 75);
 		createEdge(19, 12, 71);
+	}
+
+	public Location[] getV() {
+		return v;
+	}
+
+	public WeightedGraph getGraph() {
+		return graph;
+	}
+
+	public DoubleEdgeMarker getWeightFunction() {
+		return weightFunction;
+	}
+
+	public ArrayVertexMarker<String> getNames() {
+		return names;
 	}
 }

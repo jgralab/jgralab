@@ -24,6 +24,7 @@ public class WeakComponentsTestVisitor extends VertexPartitionVisitorAdapter {
 
 	@Override
 	public void reset() {
+		super.reset();
 		representativeVertexList = new LinkedList<Vertex>();
 
 		representativeVertices = new HashSet<Vertex>();
@@ -31,6 +32,7 @@ public class WeakComponentsTestVisitor extends VertexPartitionVisitorAdapter {
 
 	@Override
 	public void visitRepresentativeVertex(Vertex v) {
+		super.visitRepresentativeVertex(v);
 		representativeVertexList.add(v);
 		representativeVertices.add(v);
 	}

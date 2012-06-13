@@ -6,7 +6,8 @@ import org.junit.runners.Suite;
 @RunWith(Suite.class)
 @Suite.SuiteClasses({ BreadthFirstSearchTest.class, DepthFirstSearchTest.class,
 		TopologicalOrderTest.class, StrongComponentsTest.class,
-		WeakComponentsTest.class, IsTreeTest.class, DijkstraAndAStarTest.class })
+		WeakComponentsTest.class, IsTreeTest.class, FloydTest.class,
+		FordMooreTest.class, DijkstraAndAStarTest.class })
 public class RunAlgolibTests {
 
 }

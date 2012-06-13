@@ -46,6 +46,7 @@ public class SearchTestVisitor extends SearchVisitorAdapter {
 
 	@Override
 	public void visitRoot(Vertex v) throws AlgorithmTerminatedException {
+		super.visitRoot(v);
 		currentRoot = v;
 		SearchAlgorithm alg = getAlgorithm();
 		assertFalse("The root has already been visited.", alg
@@ -56,6 +57,7 @@ public class SearchTestVisitor extends SearchVisitorAdapter {
 
 	@Override
 	public void visitVertex(Vertex v) throws AlgorithmTerminatedException {
+		super.visitVertex(v);
 		SearchAlgorithm alg = getAlgorithm();
 		BooleanFunction<Vertex> visitedVertices = alg.getVisitedVertices();
 		assertFalse("The vertex " + v + " has already been visited.",
@@ -75,6 +77,7 @@ public class SearchTestVisitor extends SearchVisitorAdapter {
 
 	@Override
 	public void visitEdge(Edge e) throws AlgorithmTerminatedException {
+		super.visitEdge(e);
 		assertFalse("Edge " + e + " already visited.", getAlgorithm()
 				.getVisitedEdges().get(e));
 		edges.add(e);
@@ -82,6 +85,7 @@ public class SearchTestVisitor extends SearchVisitorAdapter {
 
 	@Override
 	public void visitTreeEdge(Edge e) throws AlgorithmTerminatedException {
+		super.visitTreeEdge(e);
 		SearchAlgorithm alg = getAlgorithm();
 		BooleanFunction<Vertex> visitedVertices = alg.getVisitedVertices();
 		Vertex start = e.getThis();
@@ -95,6 +99,7 @@ public class SearchTestVisitor extends SearchVisitorAdapter {
 
 	@Override
 	public void visitFrond(Edge e) throws AlgorithmTerminatedException {
+		super.visitFrond(e);
 		SearchAlgorithm alg = getAlgorithm();
 		BooleanFunction<Vertex> visitedVertices = alg.getVisitedVertices();
 		Vertex start = e.getThis();
@@ -108,6 +113,7 @@ public class SearchTestVisitor extends SearchVisitorAdapter {
 
 	@Override
 	public void reset() {
+		super.reset();
 		currentRoot = null;
 		vertices = new LinkedList<Vertex>();
 		edges = new LinkedList<Edge>();

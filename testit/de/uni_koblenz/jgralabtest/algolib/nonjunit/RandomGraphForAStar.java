@@ -40,7 +40,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
+import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.ImplementationType;
+import de.uni_koblenz.jgralab.algolib.functions.DoubleFunction;
+import de.uni_koblenz.jgralab.algolib.functions.adapters.MethodCallToDoubleFunctionAdapter;
 import de.uni_koblenz.jgralabtest.algolib.nonjunit.kdtree.KDTree;
 import de.uni_koblenz.jgralabtest.algolib.nonjunit.kdtree.Point;
 import de.uni_koblenz.jgralabtest.schemas.algolib.weighted.Location;
@@ -218,5 +221,22 @@ public class RandomGraphForAStar {
 	public List<LocationPoint> getNearestNeighbors(WeightedGraph graph,
 			LocationPoint from, int count) {
 		return getKDTree(graph).getNearestNeighbors(from, count);
+	}
+
+	public static DoubleFunction<Edge> getWeightFunction() {
+		return new MethodCallToDoubleFunctionAdapter<Edge>() {
+
+			@Override
+			public double get(Edge parameter) {
+				Way edge = (Way) parameter;
+				return edge.get_weight();
+			}
+
+			@Override
+			public boolean isDefined(Edge parameter) {
+				return true;
+			}
+
+		};
 	}
 }

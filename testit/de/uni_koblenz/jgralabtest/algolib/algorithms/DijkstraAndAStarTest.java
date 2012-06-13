@@ -1,12 +1,12 @@
 package de.uni_koblenz.jgralabtest.algolib.algorithms;
 
+import static org.junit.Assert.assertEquals;
+
 import org.junit.Before;
 import org.junit.Test;
-import static org.junit.Assert.assertEquals;
 
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.algolib.algorithms.AlgorithmTerminatedException;
-import de.uni_koblenz.jgralab.algolib.algorithms.GraphAlgorithm;
 import de.uni_koblenz.jgralab.algolib.algorithms.shortest_paths.AStarSearch;
 import de.uni_koblenz.jgralab.algolib.algorithms.shortest_paths.DijkstraAlgorithm;
 import de.uni_koblenz.jgralab.algolib.algorithms.shortest_paths.FordMooreAlgorithm;
@@ -44,6 +44,7 @@ public class DijkstraAndAStarTest {
 			assert (gs[i] == start[i].getGraph());
 			assert (gs[i] == target[i].getGraph());
 			fma = new FordMooreAlgorithm(gs[i]);
+			fma.setEdgeWeight(RandomGraphForAStar.getWeightFunction());
 			try {
 				fma.execute(start[i], target[i]);
 			} catch (AlgorithmTerminatedException e) {
@@ -79,8 +80,10 @@ public class DijkstraAndAStarTest {
 		for (DistanceFromVertexToVertexSolver alg : algs) {
 			for (int i = 0; i < gs.length; i++) {
 				Graph graph = gs[i];
-				((GraphAlgorithm) alg).reset();
+				((AStarSearch) alg).reset();
 				alg.setGraph(graph);
+				((AStarSearch) alg).setEdgeWeight(RandomGraphForAStar
+						.getWeightFunction());
 				try {
 					alg.execute(start[i], target[i]);
 				} catch (AlgorithmTerminatedException e) {

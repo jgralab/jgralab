@@ -14,6 +14,7 @@ public class TopologicalOrderTestVisitor extends TopologicalOrderVisitorAdapter 
 
 	@Override
 	public void visitVertexInTopologicalOrder(Vertex v) {
+		super.visitVertexInTopologicalOrder(v);
 		if (visited == null) {
 			visited = new BitSetVertexMarker(v.getGraph());
 		}
@@ -26,6 +27,7 @@ public class TopologicalOrderTestVisitor extends TopologicalOrderVisitorAdapter 
 
 	@Override
 	public void reset() {
+		super.reset();
 		visited = null;
 	}
 
