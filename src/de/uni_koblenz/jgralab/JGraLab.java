@@ -82,24 +82,39 @@ public class JGraLab {
 			try {
 				Enumeration<URL> resources = JGraLab.class.getClassLoader()
 						.getResources("META-INF/MANIFEST.MF");
-				while (resources.hasMoreElements()) {
-					URL url = resources.nextElement();
-					Manifest manifest = new Manifest(url.openStream());
-					Map<String, Attributes> entries = manifest.getEntries();
-					Attributes info = entries.get("de/uni_koblenz/jgralab/");
-					if (info == null) {
-						continue;
-					}
-					String implTitle = info.getValue("Implementation-Title");
-					if (implTitle.equals("JGraLab")) {
-						String[] versionString = info.getValue(
-								"Implementation-Version").split("@");
-						version = versionString[0];
-						codename = versionString[1];
-					}
 
+				extractVersionInfo(resources);
+
+				if (version.equals("unknown") || codename.equals("unknown")) {
+					resources = JGraLab.class.getClassLoader().getResources(
+							"MANIFEST.MF");
+					extractVersionInfo(resources);
+					if (version.equals("unknown") || codename.equals("unknown")) {
+						getRootLogger().warning("MANIFEST.MF not found.");
+					}
 				}
+
 			} catch (IOException e) {
+			}
+		}
+	}
+
+	private static void extractVersionInfo(Enumeration<URL> resources)
+			throws IOException {
+		while (resources.hasMoreElements()) {
+			URL url = resources.nextElement();
+			Manifest manifest = new Manifest(url.openStream());
+			Map<String, Attributes> entries = manifest.getEntries();
+			Attributes info = entries.get("de/uni_koblenz/jgralab/");
+			if (info == null) {
+				continue;
+			}
+			String implTitle = info.getValue("Implementation-Title");
+			if (implTitle.equals("JGraLab")) {
+				String[] versionString = info
+						.getValue("Implementation-Version").split("@");
+				version = versionString[0];
+				codename = versionString[1];
 			}
 		}
 	}
