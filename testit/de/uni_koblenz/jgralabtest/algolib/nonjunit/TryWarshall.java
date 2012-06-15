@@ -35,7 +35,6 @@
 package de.uni_koblenz.jgralabtest.algolib.nonjunit;
 
 import de.uni_koblenz.jgralab.Edge;
-import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.ImplementationType;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.algolib.algorithms.AlgorithmTerminatedException;
@@ -88,7 +87,8 @@ public class TryWarshall {
 		// };
 
 		// w.addVisitor(visitor);
-		w.setTraversalDirection(EdgeDirection.INOUT);
+		w.undirected();
+		// w.setTraversalDirection(EdgeDirection.INOUT);
 		w.execute();
 		// System.out.println(w.getVertexOrder());
 		// System.out.println(w.getReachabilityRelation());

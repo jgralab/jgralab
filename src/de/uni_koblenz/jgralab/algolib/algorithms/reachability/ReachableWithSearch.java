@@ -35,6 +35,7 @@
 package de.uni_koblenz.jgralab.algolib.algorithms.reachability;
 
 import de.uni_koblenz.jgralab.Edge;
+import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.algolib.algorithms.AlgorithmStates;
@@ -108,7 +109,7 @@ public class ReachableWithSearch extends StructureOrientedAlgorithm implements
 
 	@Override
 	public boolean isDirected() {
-		return search.isDirected();
+		return super.isDirected();
 	}
 
 	@Override
@@ -125,6 +126,7 @@ public class ReachableWithSearch extends StructureOrientedAlgorithm implements
 
 	@Override
 	public void resetParameters() {
+		traversalDirection = EdgeDirection.OUT;
 		reachableVisitor = new SearchVisitorAdapter() {
 
 			@Override

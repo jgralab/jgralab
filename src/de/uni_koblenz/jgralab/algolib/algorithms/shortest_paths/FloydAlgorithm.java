@@ -148,10 +148,8 @@ public class FloydAlgorithm extends StructureOrientedAlgorithm implements
 		indexMapping = search.getNumber();
 		vertexOrder = search.getVertexOrder();
 		vertexCount = graph.getVCount();
-		weightedDistance = weightedDistance == null ? new double[vertexCount + 1][vertexCount + 1]
-				: weightedDistance;
-		successor = successor == null ? new Edge[vertexCount + 1][vertexCount + 1]
-				: successor;
+		weightedDistance = new double[vertexCount + 1][vertexCount + 1];
+		successor = new Edge[vertexCount + 1][vertexCount + 1];
 	}
 
 	@Override

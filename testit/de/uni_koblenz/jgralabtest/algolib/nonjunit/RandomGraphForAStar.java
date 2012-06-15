@@ -42,7 +42,10 @@ import java.util.Random;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.ImplementationType;
+import de.uni_koblenz.jgralab.Vertex;
+import de.uni_koblenz.jgralab.algolib.functions.BinaryDoubleFunction;
 import de.uni_koblenz.jgralab.algolib.functions.DoubleFunction;
+import de.uni_koblenz.jgralab.algolib.functions.adapters.MethodCallToBinaryDoubleFunctionAdapter;
 import de.uni_koblenz.jgralab.algolib.functions.adapters.MethodCallToDoubleFunctionAdapter;
 import de.uni_koblenz.jgralabtest.algolib.nonjunit.kdtree.KDTree;
 import de.uni_koblenz.jgralabtest.algolib.nonjunit.kdtree.Point;
@@ -234,6 +237,25 @@ public class RandomGraphForAStar {
 
 			@Override
 			public boolean isDefined(Edge parameter) {
+				return true;
+			}
+
+		};
+	}
+
+	public static BinaryDoubleFunction<Vertex, Vertex> getHeuristic() {
+		return new MethodCallToBinaryDoubleFunctionAdapter<Vertex, Vertex>() {
+
+			@Override
+			public double get(Vertex parameter1, Vertex parameter2) {
+				Location location = (Location) parameter1;
+				Location target = (Location) parameter2;
+				return euclideanDistance(location.get_x(), location.get_y(),
+						target.get_x(), target.get_y());
+			}
+
+			@Override
+			public boolean isDefined(Vertex parameter1, Vertex parameter2) {
 				return true;
 			}
 

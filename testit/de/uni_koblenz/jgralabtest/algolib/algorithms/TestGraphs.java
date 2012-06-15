@@ -41,6 +41,21 @@ public class TestGraphs {
 		return g;
 	}
 
+	public static SimpleGraph getShortestPathTestGraph() {
+		SimpleGraph g = SimpleSchema.instance().createSimpleGraph(
+				ImplementationType.STANDARD);
+		SimpleVertex v1 = g.createSimpleVertex();
+		SimpleVertex v2 = g.createSimpleVertex();
+		SimpleVertex v3 = g.createSimpleVertex();
+		SimpleVertex v4 = g.createSimpleVertex();
+		g.createSimpleEdge(v1, v2);
+		g.createSimpleEdge(v2, v3);
+		g.createSimpleEdge(v2, v4);
+		g.createSimpleEdge(v3, v4);
+		g.createSimpleEdge(v4, v1);
+		return g;
+	}
+
 	public static SimpleGraph getReachabilityTestGraph() {
 		SimpleGraph g = SimpleSchema.instance().createSimpleGraph(
 				ImplementationType.STANDARD);

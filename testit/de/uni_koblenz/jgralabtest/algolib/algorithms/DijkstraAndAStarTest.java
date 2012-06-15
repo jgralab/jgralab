@@ -92,6 +92,38 @@ public class DijkstraAndAStarTest {
 						0.0001);
 			}
 		}
+	}
 
+	@Test
+	public void testDijkstraAlgorithm() {
+		DijkstraAlgorithm alg = new DijkstraAlgorithm(gs[0]);
+		for (int i = 0; i < gs.length; i++) {
+			Graph graph = gs[i];
+			alg.reset();
+			alg.setGraph(graph);
+			alg.setEdgeWeight(RandomGraphForAStar.getWeightFunction());
+			try {
+				alg.execute(start[i], target[i]);
+			} catch (AlgorithmTerminatedException e) {
+			}
+			assertEquals(expectedResults[i], alg.getDistanceToTarget(), 0.0001);
+		}
+	}
+
+	@Test
+	public void testAStarAlgorithm() {
+		AStarSearch alg = new AStarSearch(gs[0]);
+		for (int i = 0; i < gs.length; i++) {
+			Graph graph = gs[i];
+			alg.reset();
+			alg.setGraph(graph);
+			alg.setEdgeWeight(RandomGraphForAStar.getWeightFunction());
+			alg.setHeuristic(RandomGraphForAStar.getHeuristic());
+			try {
+				alg.execute(start[i], target[i]);
+			} catch (AlgorithmTerminatedException e) {
+			}
+			assertEquals(expectedResults[i], alg.getDistanceToTarget(), 0.0001);
+		}
 	}
 }

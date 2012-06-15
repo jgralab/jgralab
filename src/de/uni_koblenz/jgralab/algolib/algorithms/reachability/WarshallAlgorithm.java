@@ -131,10 +131,8 @@ public class WarshallAlgorithm extends StructureOrientedAlgorithm implements
 		indexMapping = search.getNumber();
 		vertexOrder = search.getVertexOrder();
 		vertexCount = graph.getVCount();
-		reachable = reachable == null ? new boolean[vertexCount + 1][vertexCount + 1]
-				: reachable;
-		successor = successor == null ? new Edge[vertexCount + 1][vertexCount + 1]
-				: successor;
+		reachable = new boolean[vertexCount + 1][vertexCount + 1];
+		successor = new Edge[vertexCount + 1][vertexCount + 1];
 	}
 
 	@Override
@@ -151,7 +149,6 @@ public class WarshallAlgorithm extends StructureOrientedAlgorithm implements
 		int length = vertexCount + 1;
 		for (int vId = 1; vId < length; vId++) {
 			for (int wId = 1; wId < length; wId++) {
-				reachable[vId][wId] = false;
 				successor[vId][wId] = null;
 			}
 			reachable[vId][vId] = true;

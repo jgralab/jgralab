@@ -84,6 +84,7 @@ public abstract class StructureOrientedAlgorithm extends GraphAlgorithm
 	 */
 	public void setTraversalDirection(EdgeDirection traversalDirection) {
 		checkStateForSettingParameters();
+		assert (traversalDirection != null);
 		if (!isHybrid()) {
 			if (isDirected() && traversalDirection == EdgeDirection.INOUT) {
 				throw new UnsupportedOperationException(
