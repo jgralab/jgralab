@@ -10,7 +10,6 @@ import de.uni_koblenz.jgralab.algolib.algorithms.AlgorithmTerminatedException;
 import de.uni_koblenz.jgralab.algolib.algorithms.shortest_paths.AStarSearch;
 import de.uni_koblenz.jgralab.algolib.algorithms.shortest_paths.DijkstraAlgorithm;
 import de.uni_koblenz.jgralab.algolib.algorithms.shortest_paths.FordMooreAlgorithm;
-import de.uni_koblenz.jgralab.algolib.problems.DistanceFromVertexToVertexSolver;
 import de.uni_koblenz.jgralabtest.algolib.nonjunit.RandomGraphForAStar;
 import de.uni_koblenz.jgralabtest.algolib.nonjunit.RandomGraphForAStar.LocationPoint;
 import de.uni_koblenz.jgralabtest.schemas.algolib.weighted.Location;
@@ -74,43 +73,6 @@ public class DijkstraAndAStarTest {
 	}
 
 	@Test
-	public void testAlgorithm() {
-		DistanceFromVertexToVertexSolver[] algs = new DistanceFromVertexToVertexSolver[] {
-				new AStarSearch(gs[0]), new DijkstraAlgorithm(gs[0]) };
-		for (DistanceFromVertexToVertexSolver alg : algs) {
-			for (int i = 0; i < gs.length; i++) {
-				Graph graph = gs[i];
-				((AStarSearch) alg).reset();
-				alg.setGraph(graph);
-				((AStarSearch) alg).setEdgeWeight(RandomGraphForAStar
-						.getWeightFunction());
-				try {
-					alg.execute(start[i], target[i]);
-				} catch (AlgorithmTerminatedException e) {
-				}
-				assertEquals(expectedResults[i], alg.getDistanceToTarget(),
-						0.0001);
-			}
-		}
-	}
-
-	@Test
-	public void testDijkstraAlgorithm() {
-		DijkstraAlgorithm alg = new DijkstraAlgorithm(gs[0]);
-		for (int i = 0; i < gs.length; i++) {
-			Graph graph = gs[i];
-			alg.reset();
-			alg.setGraph(graph);
-			alg.setEdgeWeight(RandomGraphForAStar.getWeightFunction());
-			try {
-				alg.execute(start[i], target[i]);
-			} catch (AlgorithmTerminatedException e) {
-			}
-			assertEquals(expectedResults[i], alg.getDistanceToTarget(), 0.0001);
-		}
-	}
-
-	@Test
 	public void testAStarAlgorithm() {
 		AStarSearch alg = new AStarSearch(gs[0]);
 		for (int i = 0; i < gs.length; i++) {
@@ -126,4 +88,22 @@ public class DijkstraAndAStarTest {
 			assertEquals(expectedResults[i], alg.getDistanceToTarget(), 0.0001);
 		}
 	}
+
+	@Test
+	public void testDijkstraAlgorithm() {
+		DijkstraAlgorithm alg = new DijkstraAlgorithm(gs[0]);
+		for (int i = 0; i < gs.length; i++) {
+			Graph graph = gs[i];
+			alg.reset();
+			alg.setGraph(graph);
+			alg.setEdgeWeight(RandomGraphForAStar.getWeightFunction());
+			try {
+				alg.execute(start[i]);
+			} catch (AlgorithmTerminatedException e) {
+			}
+			assertEquals(expectedResults[i], alg.getDistance().get(target[i]),
+					0.0001);
+		}
+	}
+
 }
