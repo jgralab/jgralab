@@ -48,8 +48,4 @@ public class AlgorithmTerminatedException extends Exception {
 		super(message);
 	}
 
-	public AlgorithmTerminatedException() {
-		super();
-	}
-
 }

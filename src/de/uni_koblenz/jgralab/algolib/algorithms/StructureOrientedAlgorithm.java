@@ -58,10 +58,6 @@ public abstract class StructureOrientedAlgorithm extends GraphAlgorithm
 	 */
 	protected EdgeDirection traversalDirection;
 
-	public StructureOrientedAlgorithm(Graph graph) {
-		this(graph, null);
-	}
-
 	public StructureOrientedAlgorithm(Graph graph,
 			BooleanFunction<Edge> navigable) {
 		super(graph);
