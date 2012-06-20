@@ -44,6 +44,7 @@ import java.util.Set;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Vertex;
+import de.uni_koblenz.jgralab.greql2.evaluator.Query;
 import de.uni_koblenz.jgralab.greql2.evaluator.QueryImpl;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VertexEvaluator;
 import de.uni_koblenz.jgralab.greql2.schema.Declaration;
@@ -68,7 +69,7 @@ public class VariableDeclarationOrderUnit implements
 	private final Set<Vertex> dependentVertices;
 	private long variableValueChangeCosts = Long.MIN_VALUE;
 	private long typeExpressionCardinality = Long.MIN_VALUE;
-	private final QueryImpl query;
+	private final Query query;
 	private final SimpleDeclaration simpleDeclarationOfVariable;
 	private final Expression typeExpressionOfVariable;
 
@@ -80,10 +81,10 @@ public class VariableDeclarationOrderUnit implements
 	 * @param declaringDecl
 	 *            the {@link Declaration} in which <code>var</code> is declared
 	 * @param query
-	 *            the {@link QueryImpl}
+	 *            the {@link Query}
 	 */
 	VariableDeclarationOrderUnit(Variable var, Declaration declaringDecl,
-			QueryImpl query) {
+			Query query) {
 		this.variable = var;
 		this.declaringDeclaration = declaringDecl;
 		this.query = query;
@@ -180,7 +181,7 @@ public class VariableDeclarationOrderUnit implements
 	private int calculateVariableValueChangeCosts() {
 		int costs = 0;
 		for (Vertex vertex : dependentVertices) {
-			VertexEvaluator<? extends Greql2Vertex> eval = query
+			VertexEvaluator<? extends Greql2Vertex> eval = ((QueryImpl) query)
 					.getVertexEvaluator((Greql2Vertex) vertex);
 			assert eval != null;
 			costs += eval.getOwnEvaluationCosts();
@@ -284,7 +285,7 @@ public class VariableDeclarationOrderUnit implements
 	 *         this {@link VariableDeclarationOrderUnit}
 	 */
 	private long calculateTypeExpressionCardinality() {
-		VertexEvaluator<? extends Expression> veval = query
+		VertexEvaluator<? extends Expression> veval = ((QueryImpl) query)
 				.getVertexEvaluator(typeExpressionOfVariable);
 		return veval.getEstimatedCardinality();
 	}

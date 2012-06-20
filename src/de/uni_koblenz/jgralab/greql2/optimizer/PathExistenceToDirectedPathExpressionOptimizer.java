@@ -48,7 +48,7 @@ import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.greql2.evaluator.QueryImpl;
+import de.uni_koblenz.jgralab.greql2.evaluator.Query;
 import de.uni_koblenz.jgralab.greql2.exception.OptimizerException;
 import de.uni_koblenz.jgralab.greql2.funlib.collections.Intersection;
 import de.uni_koblenz.jgralab.greql2.schema.BoolLiteral;
@@ -70,7 +70,7 @@ import de.uni_koblenz.jgralab.greql2.schema.VertexSetExpression;
 
 /**
  * @author Tassilo Horn &lt;horn@uni-koblenz.de&gt;
- *
+ * 
  */
 public class PathExistenceToDirectedPathExpressionOptimizer extends
 		OptimizerBase {
@@ -81,7 +81,7 @@ public class PathExistenceToDirectedPathExpressionOptimizer extends
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see
 	 * de.uni_koblenz.jgralab.greql2.optimizer.Optimizer#isEquivalent(de.uni_koblenz
 	 * .jgralab.greql2.optimizer.Optimizer)
@@ -96,14 +96,14 @@ public class PathExistenceToDirectedPathExpressionOptimizer extends
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see
 	 * de.uni_koblenz.jgralab.greql2.optimizer.Optimizer#optimize(de.uni_koblenz
 	 * .jgralab.greql2.evaluator.GreqlEvaluator,
 	 * de.uni_koblenz.jgralab.greql2.schema.Greql2)
 	 */
 	@Override
-	public boolean optimize(QueryImpl query) throws OptimizerException {
+	public boolean optimize(Query query) throws OptimizerException {
 		Greql2Graph syntaxgraph = query.getQueryGraph();
 
 		if (syntaxgraph.getFirstVertex(PathExistence.VC) == null) {

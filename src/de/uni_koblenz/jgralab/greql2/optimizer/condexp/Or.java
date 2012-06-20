@@ -37,7 +37,7 @@
  */
 package de.uni_koblenz.jgralab.greql2.optimizer.condexp;
 
-import de.uni_koblenz.jgralab.greql2.evaluator.QueryImpl;
+import de.uni_koblenz.jgralab.greql2.evaluator.Query;
 import de.uni_koblenz.jgralab.greql2.optimizer.OptimizerUtility;
 import de.uni_koblenz.jgralab.greql2.schema.Expression;
 import de.uni_koblenz.jgralab.greql2.schema.FunctionApplication;
@@ -52,7 +52,7 @@ import de.uni_koblenz.jgralab.greql2.schema.Greql2Graph;
  */
 public class Or extends BinaryOperator {
 
-	public Or(QueryImpl query, Formula lhs, Formula rhs) {
+	public Or(Query query, Formula lhs, Formula rhs) {
 		super(query, lhs, rhs);
 	}
 

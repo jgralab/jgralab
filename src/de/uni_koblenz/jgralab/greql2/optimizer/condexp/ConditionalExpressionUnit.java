@@ -37,6 +37,7 @@
  */
 package de.uni_koblenz.jgralab.greql2.optimizer.condexp;
 
+import de.uni_koblenz.jgralab.greql2.evaluator.Query;
 import de.uni_koblenz.jgralab.greql2.evaluator.QueryImpl;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VertexEvaluator;
 import de.uni_koblenz.jgralab.greql2.schema.Expression;
@@ -49,7 +50,7 @@ import de.uni_koblenz.jgralab.greql2.schema.Expression;
  */
 public class ConditionalExpressionUnit {
 
-	private final QueryImpl query;
+	private final Query query;
 
 	private final Expression condition;
 	private final Formula trueFormula, falseFormula;
@@ -73,7 +74,7 @@ public class ConditionalExpressionUnit {
 		double selectivity = boolDiff.getSelectivity();
 
 		// costs of the condition expression
-		VertexEvaluator<? extends Expression> veval = query
+		VertexEvaluator<? extends Expression> veval = ((QueryImpl) query)
 				.getVertexEvaluator(condition);
 		long costs = veval.getInitialSubtreeEvaluationCosts();
 		return selectivity / costs;

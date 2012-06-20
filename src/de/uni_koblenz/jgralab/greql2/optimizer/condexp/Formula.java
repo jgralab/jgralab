@@ -45,7 +45,7 @@ import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.greql2.evaluator.QueryImpl;
+import de.uni_koblenz.jgralab.greql2.evaluator.Query;
 import de.uni_koblenz.jgralab.greql2.optimizer.OptimizerUtility;
 import de.uni_koblenz.jgralab.greql2.schema.BoolLiteral;
 import de.uni_koblenz.jgralab.greql2.schema.Expression;
@@ -70,7 +70,7 @@ public abstract class Formula {
 	protected static Logger logger = JGraLab.getLogger(Formula.class
 			.getPackage().getName());
 
-	protected QueryImpl query;
+	protected Query query;
 
 	@Override
 	public abstract String toString();
@@ -78,18 +78,18 @@ public abstract class Formula {
 	public abstract Expression toExpression();
 
 	public static Formula createFormulaFromExpression(Expression exp,
-			QueryImpl query) {
+			Query query) {
 		Formula formula = createFormulaFromExpressionInternal(query, exp);
 		OptimizerUtility.deleteOrphanedVerticesBelow(exp, new HashSet<Vertex>(
 				formula.getNonConstantTermExpressions()));
 		return formula;
 	}
 
-	public Formula(QueryImpl query) {
+	public Formula(Query query) {
 		this.query = query;
 	}
 
-	private static Formula createFormulaFromExpressionInternal(QueryImpl query,
+	private static Formula createFormulaFromExpressionInternal(Query query,
 			Expression exp) {
 		assert exp.isValid() : exp + " is not valid!";
 		if (exp instanceof BoolLiteral) {

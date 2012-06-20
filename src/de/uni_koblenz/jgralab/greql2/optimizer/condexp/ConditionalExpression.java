@@ -39,7 +39,7 @@ package de.uni_koblenz.jgralab.greql2.optimizer.condexp;
 
 import java.util.ArrayList;
 
-import de.uni_koblenz.jgralab.greql2.evaluator.QueryImpl;
+import de.uni_koblenz.jgralab.greql2.evaluator.Query;
 import de.uni_koblenz.jgralab.greql2.schema.Expression;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Graph;
 
@@ -53,7 +53,7 @@ public class ConditionalExpression extends Formula {
 	protected Expression condition;
 	protected Formula trueFormula, falseFormula;
 
-	public ConditionalExpression(QueryImpl query, Expression condition,
+	public ConditionalExpression(Query query, Expression condition,
 			Formula trueExp, Formula falseExp) {
 		super(query);
 		this.condition = condition;

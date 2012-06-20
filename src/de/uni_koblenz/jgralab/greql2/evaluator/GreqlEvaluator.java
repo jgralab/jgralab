@@ -52,7 +52,7 @@ public interface GreqlEvaluator {
 
 	public <T> POrderedSet<T> getResultSet();
 
-	public Object evaluate(QueryImpl query, Graph datagraph,
+	public Object evaluate(Query query, Graph datagraph,
 			GreqlEnvironment environment, ProgressFunction progressFunction);
 
 	/**

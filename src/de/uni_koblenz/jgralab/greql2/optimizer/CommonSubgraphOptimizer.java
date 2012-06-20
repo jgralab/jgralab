@@ -43,7 +43,7 @@ import java.util.logging.Logger;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.JGraLab;
-import de.uni_koblenz.jgralab.greql2.evaluator.QueryImpl;
+import de.uni_koblenz.jgralab.greql2.evaluator.Query;
 import de.uni_koblenz.jgralab.greql2.exception.OptimizerException;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Aggregation;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
@@ -129,7 +129,7 @@ public class CommonSubgraphOptimizer extends OptimizerBase {
 	 * de.uni_koblenz.jgralab.greql2.schema.Greql2)
 	 */
 	@Override
-	public boolean optimize(QueryImpl query) throws OptimizerException {
+	public boolean optimize(Query query) throws OptimizerException {
 		anOptimizationWasDone = false;
 
 		computeHashAndProcess(query.getQueryGraph().getFirstGreql2Expression());

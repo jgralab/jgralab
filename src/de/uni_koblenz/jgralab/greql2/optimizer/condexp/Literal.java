@@ -39,7 +39,7 @@ package de.uni_koblenz.jgralab.greql2.optimizer.condexp;
 
 import java.util.ArrayList;
 
-import de.uni_koblenz.jgralab.greql2.evaluator.QueryImpl;
+import de.uni_koblenz.jgralab.greql2.evaluator.Query;
 import de.uni_koblenz.jgralab.greql2.schema.Expression;
 
 /**
@@ -50,7 +50,7 @@ import de.uni_koblenz.jgralab.greql2.schema.Expression;
  */
 public abstract class Literal extends Formula {
 
-	public Literal(QueryImpl query) {
+	public Literal(Query query) {
 		super(query);
 	}
 
