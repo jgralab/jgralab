@@ -517,11 +517,6 @@ public class Context {
 		archMap.clear();
 		imgMap.clear();
 
-		// reset the QueryImpl index cache, they prevent garbage
-		// collection!
-		QueryImpl.resetGraphIndizes();
-		QueryImpl.resetOptimizedSyntaxGraphs();
-
 		// clear imports/extra vars
 		greqlExtraVars.clear();
 		greqlImports.clear();
@@ -712,11 +707,7 @@ public class Context {
 		String query = sb.toString();
 		logger.finest("GReQL: " + semanticExpression);
 
-		QueryImpl newQuery = new QueryImpl(query);
-		if (this.query != null) {
-			newQuery.setSubQueryMap(((QueryImpl) this.query).getSubQueryMap());
-		}
-		this.query = newQuery;
+		this.query = new QueryImpl(query);
 		// this.query = new QueryImpl(query, false);
 		GreqlEnvironment environment = new GreqlEnvironmentAdapter(greqlMapping);
 		T result = (T) this.query.evaluate(graph, environment);

@@ -54,8 +54,11 @@ import java.util.logging.Logger;
 
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.JGraLab;
+import de.uni_koblenz.jgralab.greql2.evaluator.Query;
 import de.uni_koblenz.jgralab.greql2.exception.GreqlException;
 import de.uni_koblenz.jgralab.greql2.funlib.Function.Category;
+import de.uni_koblenz.jgralab.greql2.funlib.misc.SubQuery;
+import de.uni_koblenz.jgralab.greql2.funlib.misc.SubQueryNeedsGraph;
 import de.uni_koblenz.jgralab.greql2.types.Types;
 import de.uni_koblenz.jgralab.greql2.types.Undefined;
 
@@ -294,6 +297,23 @@ public class FunLib {
 			Arrays.sort(signatures, new SignatureComparator());
 		}
 
+		FunctionInfo(String name, Function func) {
+			this.name = name;
+			functionClass = func.getClass();
+			ArrayList<Signature> functionSignatures = new ArrayList<Signature>();
+			function = func;
+			needsGraphArgument = functionClass
+					.isAnnotationPresent(NeedsGraphArgument.class);
+			acceptsUndefinedValues = functionClass
+					.isAnnotationPresent(AcceptsUndefinedArguments.class);
+			needsEvaluatorArgument = functionClass
+					.isAnnotationPresent(NeedsEvaluatorArgument.class);
+			registerSignatures(functionSignatures, functionClass);
+			signatures = new Signature[functionSignatures.size()];
+			functionSignatures.toArray(signatures);
+			Arrays.sort(signatures, new SignatureComparator());
+		}
+
 		void registerSignatures(ArrayList<Signature> signatures,
 				Class<? extends Function> cls) {
 			for (Method m : cls.getMethods()) {
@@ -462,6 +482,38 @@ public class FunLib {
 			logger.fine("Registering " + cls.getName() + " as '" + name + "'");
 		}
 		functions.put(name, new FunctionInfo(name, cls));
+	}
+
+	public static final void registerSubQueryFunction(String name, Query query,
+			boolean needsGraphArgument) {
+		SubQuery subquery = needsGraphArgument ? new SubQueryNeedsGraph(query)
+				: new SubQuery(query);
+		registerSubquery(name, subquery);
+	}
+
+	public static final void registerSubQueryFunction(String name, Query query,
+			boolean needsGraphArgument, long costs, long cardinality,
+			double selectivity) {
+		SubQuery subquery = needsGraphArgument ? new SubQueryNeedsGraph(query,
+				costs, cardinality, selectivity) : new SubQuery(query, costs,
+				cardinality, selectivity);
+		registerSubquery(name, subquery);
+	}
+
+	private static void registerSubquery(String name, SubQuery subquery) {
+		FunctionInfo fn = functions.get(name);
+		if (fn != null) {
+			if (fn.getFunction().getClass() == subquery.getClass()) {
+				return;
+			}
+			throw new GreqlException("Duplicate function name '" + name + "'");
+		}
+
+		if (logger != null) {
+			logger.fine("Registering " + subquery.getClass().getName()
+					+ " as '" + name + "'");
+		}
+		functions.put(name, new FunctionInfo(name, subquery));
 	}
 
 	public static final FunctionInfo getFunctionInfo(String functionName) {

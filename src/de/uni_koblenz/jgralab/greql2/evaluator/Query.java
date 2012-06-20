@@ -41,6 +41,13 @@ public interface Query {
 	public Object evaluate(Graph datagraph, GreqlEnvironment environment,
 			ProgressFunction progressFunction);
 
+	public void setSubQuery(String name, String greqlQuery,
+			boolean needsGraphArgument, long costs, long cardinality,
+			double selectivity);
+
+	public void setSubQuery(String name, String greqlQuery,
+			boolean needsGraphArgument);
+
 	public void setSubQuery(String name, String greqlQuery);
 
 	public void setUseSavedOptimizedSyntaxGraph(
