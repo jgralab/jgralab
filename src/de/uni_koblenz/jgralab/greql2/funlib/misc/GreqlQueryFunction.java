@@ -10,18 +10,18 @@ import de.uni_koblenz.jgralab.greql2.schema.Greql2Expression;
 import de.uni_koblenz.jgralab.greql2.schema.IsBoundVarOf;
 import de.uni_koblenz.jgralab.greql2.schema.Variable;
 
-public class SubQuery extends Function {
+public class GreqlQueryFunction extends Function {
 
 	protected Query query;
 
 	protected String[] parameterNames;
 
-	public SubQuery(Query query) {
+	public GreqlQueryFunction(Query query) {
 		super();
 		initialize(query);
 	}
 
-	public SubQuery(Query query, long costs, long cardinality,
+	public GreqlQueryFunction(Query query, long costs, long cardinality,
 			double selectivity) {
 		super(costs, cardinality, selectivity);
 		initialize(query);

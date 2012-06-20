@@ -10,13 +10,13 @@ import de.uni_koblenz.jgralab.greql2.schema.IsBoundVarOf;
 import de.uni_koblenz.jgralab.greql2.schema.Variable;
 
 @NeedsGraphArgument
-public class SubQueryNeedsGraph extends SubQuery {
+public class GreqlQueryFunctionNeedsGraph extends GreqlQueryFunction {
 
-	public SubQueryNeedsGraph(Query query) {
+	public GreqlQueryFunctionNeedsGraph(Query query) {
 		super(query);
 	}
 
-	public SubQueryNeedsGraph(Query query, long costs, long cardinality,
+	public GreqlQueryFunctionNeedsGraph(Query query, long costs, long cardinality,
 			double selectivity) {
 		super(query, costs, cardinality, selectivity);
 	}
