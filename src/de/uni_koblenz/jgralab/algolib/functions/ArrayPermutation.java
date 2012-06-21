@@ -36,6 +36,7 @@ package de.uni_koblenz.jgralab.algolib.functions;
 
 import java.util.Arrays;
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 import de.uni_koblenz.jgralab.algolib.functions.entries.PermutationEntry;
 
@@ -51,7 +52,7 @@ public class ArrayPermutation<RANGE> implements Permutation<RANGE> {
 
 		@Override
 		public boolean hasNext() {
-			return i < length;
+			return i <= length;
 		}
 
 		@Override
@@ -74,7 +75,7 @@ public class ArrayPermutation<RANGE> implements Permutation<RANGE> {
 		while (i < values.length && values[i] != null) {
 			i++;
 		}
-		length = i;
+		length = values.length <= 1 ? 0 : i - 1;
 
 	}
 
@@ -85,9 +86,9 @@ public class ArrayPermutation<RANGE> implements Permutation<RANGE> {
 
 	@Override
 	public boolean isDefined(int parameter) {
-		assert (parameter > 0 && parameter < length ? values[parameter] != null
+		assert (parameter > 0 && parameter <= length ? values[parameter] != null
 				: true);
-		return parameter > 0 && parameter < length;
+		return parameter > 0 && parameter <= length;
 	}
 
 	@Override
@@ -113,6 +114,10 @@ public class ArrayPermutation<RANGE> implements Permutation<RANGE> {
 				return new ArrayIterator<RANGE>() {
 					@Override
 					public RANGE next() {
+						if (!hasNext()) {
+							throw new NoSuchElementException(
+									"There are no more elements.");
+						}
 						return values[i++];
 					}
 				};
@@ -130,6 +135,10 @@ public class ArrayPermutation<RANGE> implements Permutation<RANGE> {
 		return new ArrayIterator<PermutationEntry<RANGE>>() {
 			@Override
 			public PermutationEntry<RANGE> next() {
+				if (!hasNext()) {
+					throw new NoSuchElementException(
+							"There are no more elements.");
+				}
 				return new PermutationEntry<RANGE>(i, values[i++]);
 			}
 		};

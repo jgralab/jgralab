@@ -10,6 +10,7 @@ import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.algolib.algorithms.AlgorithmTerminatedException;
 import de.uni_koblenz.jgralab.algolib.algorithms.shortest_paths.FloydAlgorithm;
 import de.uni_koblenz.jgralab.algolib.functions.BinaryDoubleFunction;
+import de.uni_koblenz.jgralab.algolib.functions.BinaryFunction;
 import de.uni_koblenz.jgralab.algolib.functions.DoubleFunction;
 import de.uni_koblenz.jgralabtest.schemas.algolib.simple.SimpleGraph;
 
@@ -38,10 +39,14 @@ public class FloydTest {
 		} catch (AlgorithmTerminatedException e) {
 		}
 		BinaryDoubleFunction<Vertex, Vertex> result = floyd.getDistances();
+		BinaryFunction<Vertex, Vertex, Edge> successor = floyd.getSuccessor();
 		for (Vertex v : g.vertices()) {
 			for (Vertex w : g.vertices()) {
 				assertEquals(expectedResults[v.getId()][w.getId()],
 						result.get(v, w), 0.0001);
+				if (!Double.isInfinite(expectedResults[v.getId()][w.getId()])) {
+					WarshallTest.verifyPath(v, w, successor);
+				}
 			}
 		}
 	}
