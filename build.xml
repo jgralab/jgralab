@@ -37,13 +37,13 @@
 	<!-- override default properties -->
 	<property name="projectname" value="jgralab" />
 	<property name="main" value="JGraLab" />
-	<property name="documentexcludes" value="de.uni_koblenz.jgralab.greql2.schema.*,de.uni_koblenz.jgralab.grumlschema.*,de.uni_koblenz.jgralab.plugin.*" />
+	<property name="documentexcludes" value="de.uni_koblenz.jgralab.greql.schema.*,de.uni_koblenz.jgralab.grumlschema.*,de.uni_koblenz.jgralab.plugin.*" />
 	<property name="unjarexcludes" value="clover/**" />
 	<property name="test.suite" value="de.uni_koblenz.jgralabtest.RunTests" />
 	<property name="manifest.static" value="true" />
 
 	<!-- TODO: Currently the greqltest won't compile -->
-	<property name="testcompileexcludes" value="de/uni_koblenz/jgralabtest/greql2/**" />
+	<property name="testcompileexcludes" value="de/uni_koblenz/jgralabtest/greql/**" />
 
 	<!-- import the common build file -->
 	<import file="../common/common.xml" />
@@ -68,7 +68,7 @@
 				<!-- What to include/exclude from the report (include
 	           everything except the generated schema classes in
 	           src/. -->
-				<fileset dir="${src.dir}" includes="**/*.java" excludes="de/uni_koblenz/jgralab/grumlschema/**/*.java de/uni_koblenz/jgralab/greql2/schema/**/*.java de/uni_koblenz/jgralab/gretl/template/**/*.java" />
+				<fileset dir="${src.dir}" includes="**/*.java" excludes="de/uni_koblenz/jgralab/grumlschema/**/*.java de/uni_koblenz/jgralab/greql/schema/**/*.java de/uni_koblenz/jgralab/gretl/template/**/*.java" />
 				<fileset dir="${testcases.dir}" includes="**/*.java" />
 				<!-- Where are the test classes (listed separately in
 	           the report) -->
@@ -93,7 +93,7 @@
 
 	<!-- set project specific properties -->
 
-	<property name="greql2.schemafile" value="${src.dir}/de/uni_koblenz/jgralab/greql2/GreqlSchema.tg" />
+	<property name="greql.schemafile" value="${src.dir}/de/uni_koblenz/jgralab/greql/GreqlSchema.tg" />
 	<property name="gruml.schemafile" value="${src.dir}/de/uni_koblenz/jgralab/schema/GrumlSchema.tg" />
 	<property name="gretl.templategraphschemafile" value="${src.dir}/de/uni_koblenz/jgralab/gretl/templateGraphSchema.tg" />
 
@@ -110,7 +110,7 @@
 	<property name="tgtools.src" value="${src.dir}/de/uni_koblenz/jgralab/utilities" />
 	<property name="tgtools.includes" value="tgschema2java/** ant/TgSchema2JavaTask.java ant/DeleteGeneratedSchemaTask.java tg2whatever/** tgmerge/**" />
 
-	<property name="greql2.src" value="${src.dir}/de/uni_koblenz/jgralab/greql2" />
+	<property name="greql.src" value="${src.dir}/de/uni_koblenz/jgralab/greql" />
 
 	<property name="gretl_eca.src" value="${src.dir}/de/uni_koblenz/jgralab/" />
 	<property name="gretl_eca.includes" value="gretl/** eca/**" />
@@ -142,7 +142,7 @@
 		<delete file="${jar.dir}/jgralab.jar" />
 		<delete dir="${tmp.dir}" />
 		<delete dir="${testclasses.dir}" />
-		<delete dir="${src.dir}/de/uni_koblenz/jgralab/greql2/schema" />
+		<delete dir="${src.dir}/de/uni_koblenz/jgralab/greql/schema" />
 		<delete dir="${src.dir}/de/uni_koblenz/jgralab/grumlschema" />
 		<delete dir="${src.dir}/de/uni_koblenz/jgralab/gretl/template" />
 		<delete dir="${testcases.dir}/de/uni_koblenz/jgralabtest/schemas" />
@@ -152,7 +152,7 @@
 	</target>
 
 	<!-- compile -->
-	<target name="compile" depends="pcollections,core,tgtools,greql2,algolib,graphvalidator,rsa,utilities,gretl_and_eca,generatetestschemas">
+	<target name="compile" depends="pcollections,core,tgtools,greql,algolib,graphvalidator,rsa,utilities,gretl_and_eca,generatetestschemas">
 		<mkdir dir="testit/testdata" />
 	</target>
 
@@ -235,11 +235,11 @@
 		<taskdef name="deletegeneratedschema" classname="de.uni_koblenz.jgralab.utilities.ant.DeleteGeneratedSchemaTask" classpath="${classes.dir}" />
 	</target>
 
-	<!-- compiles greql2 sources -->
-	<target name="greql2" depends="tgtools,algolib">
-		<tgschema2java schemaFile="${greql2.schemafile}" sourcePath="${src.dir}" implementationMode="standard" />
+	<!-- compiles greql sources -->
+	<target name="greql" depends="tgtools,algolib">
+		<tgschema2java schemaFile="${greql.schemafile}" sourcePath="${src.dir}" implementationMode="standard" />
 		<javac fork="true" 
-			srcdir="${greql2.src}" 
+			srcdir="${greql.src}" 
 			excludes="${no_package_info}"
 			destdir="${classes.dir}"
 			memoryinitialsize="${minmemsize}" 
@@ -272,7 +272,7 @@
 	</target>
 
 	<!-- graphvalidator -->
-	<target name="graphvalidator" depends="greql2">
+	<target name="graphvalidator" depends="greql">
 		<javac fork="true"
 			srcdir="${graphvalidator.src}" 
 			includes="${graphvalidator.includes}"
@@ -309,7 +309,7 @@
 		<taskdef classpathref="classpath" name="rsa2tg" classname="de.uni_koblenz.jgralab.utilities.ant.Rsa2TgTask" />
 	</target>
 
-	<target name="tg2dot" depends="gruml,graphvalidator,greql2,common-tools">
+	<target name="tg2dot" depends="gruml,graphvalidator,greql,common-tools">
 		<javac fork="true" 
 			srcdir="${tg2dot.src}" 
 			includes="${tg2dot.includes}"
@@ -365,7 +365,7 @@
 	</target>
 
 	<!-- generates the gruml schema and compiles it -->
-	<target name="gruml" depends="tgtools,greql2">
+	<target name="gruml" depends="tgtools,greql">
 		<tgschema2java schemaFile="${gruml.schemafile}" sourcePath="${src.dir}" implementationMode="standard" />
 		<javac fork="true" 
 			srcdir="${gruml.src}"
@@ -405,7 +405,7 @@
 	</target>
 
 	<!-- GReTL and ECA -->
-	<target name="gretl_and_eca" depends="greql2">
+	<target name="gretl_and_eca" depends="greql">
 		<tgschema2java schemaFile="${gretl.templategraphschemafile}" sourcePath="${src.dir}" implementationMode="standard" />
 		<javac fork="true" 
 			srcdir="${gretl_eca.src}"
