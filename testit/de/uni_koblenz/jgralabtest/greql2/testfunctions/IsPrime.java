@@ -35,8 +35,8 @@
 
 package de.uni_koblenz.jgralabtest.greql2.testfunctions;
 
-import de.uni_koblenz.jgralab.greql2.funlib.Description;
-import de.uni_koblenz.jgralab.greql2.funlib.Function;
+import de.uni_koblenz.jgralab.greql.funlib.Description;
+import de.uni_koblenz.jgralab.greql.funlib.Function;
 
 /**
  * Checks if the given number is a prime number.

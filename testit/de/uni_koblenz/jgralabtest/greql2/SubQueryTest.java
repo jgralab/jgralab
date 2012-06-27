@@ -39,9 +39,9 @@ import junit.framework.Assert;
 
 import org.junit.Test;
 
-import de.uni_koblenz.jgralab.greql2.evaluator.Query;
-import de.uni_koblenz.jgralab.greql2.evaluator.QueryImpl;
-import de.uni_koblenz.jgralab.greql2.exception.GreqlException;
+import de.uni_koblenz.jgralab.greql.evaluator.Query;
+import de.uni_koblenz.jgralab.greql.evaluator.QueryImpl;
+import de.uni_koblenz.jgralab.greql.exception.GreqlException;
 
 public class SubQueryTest extends GenericTest {
 

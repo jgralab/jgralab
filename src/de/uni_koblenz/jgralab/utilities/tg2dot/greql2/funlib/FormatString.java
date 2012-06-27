@@ -37,8 +37,8 @@ package de.uni_koblenz.jgralab.utilities.tg2dot.greql2.funlib;
 
 import org.pcollections.PCollection;
 
-import de.uni_koblenz.jgralab.greql2.funlib.Description;
-import de.uni_koblenz.jgralab.greql2.funlib.Function;
+import de.uni_koblenz.jgralab.greql.funlib.Description;
+import de.uni_koblenz.jgralab.greql.funlib.Function;
 
 public class FormatString extends Function {
 	

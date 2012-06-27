@@ -41,7 +41,7 @@ import java.util.List;
 
 import org.junit.Test;
 
-import de.uni_koblenz.jgralab.greql2.optimizer.DefaultOptimizer;
+import de.uni_koblenz.jgralab.greql.optimizer.DefaultOptimizer;
 
 public class ThisLiteralTest extends GenericTest {
 

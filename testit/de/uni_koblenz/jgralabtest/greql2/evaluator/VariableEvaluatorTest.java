@@ -6,11 +6,11 @@ import static org.junit.Assert.assertNotNull;
 import org.junit.Test;
 
 import de.uni_koblenz.jgralab.GraphIOException;
-import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEnvironment;
-import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEnvironmentAdapter;
-import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluatorImpl;
-import de.uni_koblenz.jgralab.greql2.evaluator.QueryImpl;
-import de.uni_koblenz.jgralab.greql2.exception.UndefinedVariableException;
+import de.uni_koblenz.jgralab.greql.evaluator.GreqlEnvironment;
+import de.uni_koblenz.jgralab.greql.evaluator.GreqlEnvironmentAdapter;
+import de.uni_koblenz.jgralab.greql.evaluator.GreqlEvaluatorImpl;
+import de.uni_koblenz.jgralab.greql.evaluator.QueryImpl;
+import de.uni_koblenz.jgralab.greql.exception.UndefinedVariableException;
 
 public class VariableEvaluatorTest {
 

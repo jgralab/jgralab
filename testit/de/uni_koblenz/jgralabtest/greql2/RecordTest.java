@@ -42,7 +42,7 @@ import static junit.framework.Assert.assertTrue;
 import org.junit.Test;
 
 import de.uni_koblenz.jgralab.Record;
-import de.uni_koblenz.jgralab.greql2.schema.SourcePosition;
+import de.uni_koblenz.jgralab.greql.schema.SourcePosition;
 import de.uni_koblenz.jgralab.impl.RecordImpl;
 
 public class RecordTest {

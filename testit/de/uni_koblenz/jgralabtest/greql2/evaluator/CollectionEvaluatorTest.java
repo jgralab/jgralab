@@ -12,10 +12,10 @@ import java.util.Set;
 import org.junit.Test;
 
 import de.uni_koblenz.jgralab.Record;
-import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEnvironmentAdapter;
-import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluatorImpl;
-import de.uni_koblenz.jgralab.greql2.evaluator.QueryImpl;
-import de.uni_koblenz.jgralab.greql2.types.Tuple;
+import de.uni_koblenz.jgralab.greql.evaluator.GreqlEnvironmentAdapter;
+import de.uni_koblenz.jgralab.greql.evaluator.GreqlEvaluatorImpl;
+import de.uni_koblenz.jgralab.greql.evaluator.QueryImpl;
+import de.uni_koblenz.jgralab.greql.types.Tuple;
 
 public class CollectionEvaluatorTest {
 

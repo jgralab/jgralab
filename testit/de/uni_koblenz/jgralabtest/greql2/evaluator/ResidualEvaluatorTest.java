@@ -20,14 +20,14 @@ import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.ImplementationType;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEnvironment;
-import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEnvironmentAdapter;
-import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluatorImpl;
-import de.uni_koblenz.jgralab.greql2.evaluator.QueryImpl;
-import de.uni_koblenz.jgralab.greql2.exception.UnknownTypeException;
-import de.uni_koblenz.jgralab.greql2.types.Slice;
-import de.uni_koblenz.jgralab.greql2.types.Table;
-import de.uni_koblenz.jgralab.greql2.types.Tuple;
+import de.uni_koblenz.jgralab.greql.evaluator.GreqlEnvironment;
+import de.uni_koblenz.jgralab.greql.evaluator.GreqlEnvironmentAdapter;
+import de.uni_koblenz.jgralab.greql.evaluator.GreqlEvaluatorImpl;
+import de.uni_koblenz.jgralab.greql.evaluator.QueryImpl;
+import de.uni_koblenz.jgralab.greql.exception.UnknownTypeException;
+import de.uni_koblenz.jgralab.greql.types.Slice;
+import de.uni_koblenz.jgralab.greql.types.Table;
+import de.uni_koblenz.jgralab.greql.types.Tuple;
 import de.uni_koblenz.jgralab.schema.GraphElementClass;
 
 public class ResidualEvaluatorTest {

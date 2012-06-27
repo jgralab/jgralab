@@ -48,13 +48,13 @@ import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.greql2.evaluator.QueryImpl;
-import de.uni_koblenz.jgralab.greql2.evaluator.fa.State;
-import de.uni_koblenz.jgralab.greql2.exception.SerialisingException;
-import de.uni_koblenz.jgralab.greql2.serialising.HTMLOutputWriter;
-import de.uni_koblenz.jgralab.greql2.serialising.XMLOutputWriter;
-import de.uni_koblenz.jgralab.greql2.types.Path;
-import de.uni_koblenz.jgralab.greql2.types.Undefined;
+import de.uni_koblenz.jgralab.greql.evaluator.QueryImpl;
+import de.uni_koblenz.jgralab.greql.evaluator.fa.State;
+import de.uni_koblenz.jgralab.greql.exception.SerialisingException;
+import de.uni_koblenz.jgralab.greql.serialising.HTMLOutputWriter;
+import de.uni_koblenz.jgralab.greql.serialising.XMLOutputWriter;
+import de.uni_koblenz.jgralab.greql.types.Path;
+import de.uni_koblenz.jgralab.greql.types.Undefined;
 import de.uni_koblenz.jgralabtest.schemas.greqltestschema.localities.CountyTags;
 
 public class StoreValuesTest {

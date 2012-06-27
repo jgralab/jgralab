@@ -42,7 +42,7 @@ import org.pcollections.PCollection;
 import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.eca.ECARule;
-import de.uni_koblenz.jgralab.greql2.evaluator.QueryImpl;
+import de.uni_koblenz.jgralab.greql.evaluator.QueryImpl;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 
 public abstract class EventDescription<AEC extends AttributedElementClass<AEC, ?>> {

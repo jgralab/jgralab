@@ -47,7 +47,7 @@ import org.pcollections.PMap;
 import org.pcollections.PSet;
 
 import de.uni_koblenz.jgralab.GraphElement;
-import de.uni_koblenz.jgralab.greql2.types.Tuple;
+import de.uni_koblenz.jgralab.greql.types.Tuple;
 import de.uni_koblenz.jgralab.gretl.Context.GReTLVariableType;
 import de.uni_koblenz.jgralab.gretl.Context.TransformationPhase;
 import de.uni_koblenz.jgralab.gretl.parser.TokenTypes;

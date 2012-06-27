@@ -51,11 +51,11 @@ import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEnvironmentAdapter;
-import de.uni_koblenz.jgralab.greql2.evaluator.QueryImpl;
-import de.uni_koblenz.jgralab.greql2.parser.GreqlParser;
-import de.uni_koblenz.jgralab.greql2.types.Table;
-import de.uni_koblenz.jgralab.greql2.types.Tuple;
+import de.uni_koblenz.jgralab.greql.evaluator.GreqlEnvironmentAdapter;
+import de.uni_koblenz.jgralab.greql.evaluator.QueryImpl;
+import de.uni_koblenz.jgralab.greql.parser.GreqlParser;
+import de.uni_koblenz.jgralab.greql.types.Table;
+import de.uni_koblenz.jgralab.greql.types.Tuple;
 import de.uni_koblenz.jgralabtest.schemas.greqltestschema.connections.Way;
 
 public class SystemTest extends GenericTest {

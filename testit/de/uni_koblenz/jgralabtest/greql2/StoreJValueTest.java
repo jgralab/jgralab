@@ -43,8 +43,8 @@ import java.io.File;
 
 import org.junit.Test;
 
-import de.uni_koblenz.jgralab.greql2.serialising.XMLLoader;
-import de.uni_koblenz.jgralab.greql2.serialising.XMLOutputWriter;
+import de.uni_koblenz.jgralab.greql.serialising.XMLLoader;
+import de.uni_koblenz.jgralab.greql.serialising.XMLOutputWriter;
 
 public class StoreJValueTest extends GenericTest {
 

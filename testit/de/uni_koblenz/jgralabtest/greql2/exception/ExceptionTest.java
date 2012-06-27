@@ -37,8 +37,8 @@ package de.uni_koblenz.jgralabtest.greql2.exception;
 
 import org.junit.Test;
 
-import de.uni_koblenz.jgralab.greql2.exception.GreqlException;
-import de.uni_koblenz.jgralab.greql2.exception.ParsingException;
+import de.uni_koblenz.jgralab.greql.exception.GreqlException;
+import de.uni_koblenz.jgralab.greql.exception.ParsingException;
 import de.uni_koblenz.jgralabtest.greql2.GenericTest;
 
 public class ExceptionTest extends GenericTest {

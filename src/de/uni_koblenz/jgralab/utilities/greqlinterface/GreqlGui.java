@@ -88,19 +88,19 @@ import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.ImplementationType;
 import de.uni_koblenz.jgralab.ProgressFunction;
-import de.uni_koblenz.jgralab.greql2.evaluator.GraphSize;
-import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEnvironmentAdapter;
-import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
-import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluatorImpl;
-import de.uni_koblenz.jgralab.greql2.evaluator.QueryImpl;
-import de.uni_koblenz.jgralab.greql2.exception.GreqlException;
-import de.uni_koblenz.jgralab.greql2.exception.ParsingException;
-import de.uni_koblenz.jgralab.greql2.exception.QuerySourceException;
-import de.uni_koblenz.jgralab.greql2.exception.SerialisingException;
-import de.uni_koblenz.jgralab.greql2.funlib.FunLib;
-import de.uni_koblenz.jgralab.greql2.schema.SourcePosition;
-import de.uni_koblenz.jgralab.greql2.serialising.HTMLOutputWriter;
-import de.uni_koblenz.jgralab.greql2.serialising.XMLOutputWriter;
+import de.uni_koblenz.jgralab.greql.evaluator.GraphSize;
+import de.uni_koblenz.jgralab.greql.evaluator.GreqlEnvironmentAdapter;
+import de.uni_koblenz.jgralab.greql.evaluator.GreqlEvaluator;
+import de.uni_koblenz.jgralab.greql.evaluator.GreqlEvaluatorImpl;
+import de.uni_koblenz.jgralab.greql.evaluator.QueryImpl;
+import de.uni_koblenz.jgralab.greql.exception.GreqlException;
+import de.uni_koblenz.jgralab.greql.exception.ParsingException;
+import de.uni_koblenz.jgralab.greql.exception.QuerySourceException;
+import de.uni_koblenz.jgralab.greql.exception.SerialisingException;
+import de.uni_koblenz.jgralab.greql.funlib.FunLib;
+import de.uni_koblenz.jgralab.greql.schema.SourcePosition;
+import de.uni_koblenz.jgralab.greql.serialising.HTMLOutputWriter;
+import de.uni_koblenz.jgralab.greql.serialising.XMLOutputWriter;
 
 @SuppressWarnings("serial")
 public class GreqlGui extends SwingApplication {

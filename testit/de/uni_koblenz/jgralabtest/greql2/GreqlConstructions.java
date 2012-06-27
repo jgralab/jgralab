@@ -42,8 +42,8 @@ import org.pcollections.PCollection;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.GraphIOException;
-import de.uni_koblenz.jgralab.greql2.types.Path;
-import de.uni_koblenz.jgralab.greql2.types.PathSystem;
+import de.uni_koblenz.jgralab.greql.types.Path;
+import de.uni_koblenz.jgralab.greql.types.PathSystem;
 
 public class GreqlConstructions extends GenericTest {
 

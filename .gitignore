@@ -2,7 +2,7 @@ bin/
 build/
 derby.log
 src/de/uni_koblenz/jgralab/grumlschema/
-src/de/uni_koblenz/jgralab/greql2/schema/
+src/de/uni_koblenz/jgralab/greql/schema/
 src/de/uni_koblenz/jgralab/gretl/template/
 testit/de/uni_koblenz/jgralabtest/schemas/
 testit/jgralabtest.properties

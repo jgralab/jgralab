@@ -7,7 +7,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
 import de.uni_koblenz.jgralab.Graph;
-import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VertexEvaluator;
+import de.uni_koblenz.jgralab.greql.evaluator.vertexeval.VertexEvaluator;
 
 /**
  * Test for all {@link VertexEvaluator}s. Used {@link Graph} is the

@@ -40,9 +40,9 @@ import org.pcollections.PSet;
 import org.pcollections.PVector;
 
 import de.uni_koblenz.jgralab.JGraLab;
-import de.uni_koblenz.jgralab.greql2.funlib.FunLib;
-import de.uni_koblenz.jgralab.greql2.types.Table;
-import de.uni_koblenz.jgralab.greql2.types.Tuple;
+import de.uni_koblenz.jgralab.greql.funlib.FunLib;
+import de.uni_koblenz.jgralab.greql.types.Table;
+import de.uni_koblenz.jgralab.greql.types.Tuple;
 
 public class FunLibTest {
 	enum Color {

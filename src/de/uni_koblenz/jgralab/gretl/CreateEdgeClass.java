@@ -36,7 +36,7 @@ package de.uni_koblenz.jgralab.gretl;
 
 import org.pcollections.PSet;
 
-import de.uni_koblenz.jgralab.greql2.types.Tuple;
+import de.uni_koblenz.jgralab.greql.types.Tuple;
 import de.uni_koblenz.jgralab.schema.AggregationKind;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.IncidenceClass;
