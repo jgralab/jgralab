@@ -141,6 +141,11 @@ public class ArrayPermutationTest {
 		} catch (NoSuchElementException e) {
 		}
 
+		int i = 1;
+		for (PermutationEntry<String> entry : perm) {
+			assertEquals(permArray[i++], entry.getSecond());
+		}
+
 		iter = empty.iterator();
 		assertFalse(iter.hasNext());
 		try {
