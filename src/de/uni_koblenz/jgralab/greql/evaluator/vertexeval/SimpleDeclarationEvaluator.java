@@ -42,7 +42,7 @@ import org.pcollections.PVector;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.greql.evaluator.InternalGreqlEvaluator;
-import de.uni_koblenz.jgralab.greql.evaluator.QueryImpl;
+import de.uni_koblenz.jgralab.greql.evaluator.GreqlQueryImpl;
 import de.uni_koblenz.jgralab.greql.evaluator.VariableDeclaration;
 import de.uni_koblenz.jgralab.greql.evaluator.VertexCosts;
 import de.uni_koblenz.jgralab.greql.schema.Expression;
@@ -65,7 +65,7 @@ public class SimpleDeclarationEvaluator extends
 	 * @param vertex
 	 *            the vertex which gets evaluated by this VertexEvaluator
 	 */
-	public SimpleDeclarationEvaluator(SimpleDeclaration vertex, QueryImpl query) {
+	public SimpleDeclarationEvaluator(SimpleDeclaration vertex, GreqlQueryImpl query) {
 		super(vertex, query);
 	}
 

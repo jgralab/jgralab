@@ -39,7 +39,7 @@ import org.pcollections.PCollection;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.greql.evaluator.InternalGreqlEvaluator;
-import de.uni_koblenz.jgralab.greql.evaluator.QueryImpl;
+import de.uni_koblenz.jgralab.greql.evaluator.GreqlQueryImpl;
 import de.uni_koblenz.jgralab.greql.evaluator.VertexCosts;
 import de.uni_koblenz.jgralab.greql.schema.Expression;
 import de.uni_koblenz.jgralab.greql.schema.IsPartOf;
@@ -61,7 +61,7 @@ public class TupleConstructionEvaluator extends
 	 */
 	protected static final int addToTupleCosts = 5;
 
-	public TupleConstructionEvaluator(TupleConstruction vertex, QueryImpl query) {
+	public TupleConstructionEvaluator(TupleConstruction vertex, GreqlQueryImpl query) {
 		super(vertex, query);
 	}
 

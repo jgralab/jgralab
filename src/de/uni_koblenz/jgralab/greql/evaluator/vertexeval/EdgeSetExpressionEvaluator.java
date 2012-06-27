@@ -40,7 +40,7 @@ import org.pcollections.PSet;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.greql.evaluator.InternalGreqlEvaluator;
-import de.uni_koblenz.jgralab.greql.evaluator.QueryImpl;
+import de.uni_koblenz.jgralab.greql.evaluator.GreqlQueryImpl;
 import de.uni_koblenz.jgralab.greql.evaluator.VertexCosts;
 import de.uni_koblenz.jgralab.greql.schema.EdgeSetExpression;
 import de.uni_koblenz.jgralab.greql.schema.IsTypeRestrOfExpression;
@@ -71,7 +71,7 @@ public class EdgeSetExpressionEvaluator extends
 	 * @param vertex
 	 *            the vertex this VertexEvaluator evaluates
 	 */
-	public EdgeSetExpressionEvaluator(EdgeSetExpression vertex, QueryImpl query) {
+	public EdgeSetExpressionEvaluator(EdgeSetExpression vertex, GreqlQueryImpl query) {
 		super(vertex, query);
 	}
 

@@ -38,7 +38,7 @@ package de.uni_koblenz.jgralab.greql.evaluator.vertexeval;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.greql.evaluator.InternalGreqlEvaluator;
-import de.uni_koblenz.jgralab.greql.evaluator.QueryImpl;
+import de.uni_koblenz.jgralab.greql.evaluator.GreqlQueryImpl;
 import de.uni_koblenz.jgralab.greql.evaluator.VertexCosts;
 import de.uni_koblenz.jgralab.greql.schema.Expression;
 import de.uni_koblenz.jgralab.greql.schema.IsPartOf;
@@ -53,7 +53,7 @@ import de.uni_koblenz.jgralab.greql.schema.SetConstruction;
 public class SetConstructionEvaluator extends
 		ValueConstructionEvaluator<SetConstruction> {
 
-	public SetConstructionEvaluator(SetConstruction vertex, QueryImpl query) {
+	public SetConstructionEvaluator(SetConstruction vertex, GreqlQueryImpl query) {
 		super(vertex, query);
 	}
 

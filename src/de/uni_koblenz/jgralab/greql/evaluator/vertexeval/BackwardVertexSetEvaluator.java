@@ -40,7 +40,7 @@ import org.pcollections.PSet;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql.evaluator.InternalGreqlEvaluator;
-import de.uni_koblenz.jgralab.greql.evaluator.QueryImpl;
+import de.uni_koblenz.jgralab.greql.evaluator.GreqlQueryImpl;
 import de.uni_koblenz.jgralab.greql.evaluator.VertexCosts;
 import de.uni_koblenz.jgralab.greql.evaluator.fa.DFA;
 import de.uni_koblenz.jgralab.greql.evaluator.fa.NFA;
@@ -58,7 +58,7 @@ import de.uni_koblenz.jgralab.greql.schema.PathDescription;
 public class BackwardVertexSetEvaluator extends
 		PathSearchEvaluator<BackwardVertexSet> {
 
-	public BackwardVertexSetEvaluator(BackwardVertexSet vertex, QueryImpl query) {
+	public BackwardVertexSetEvaluator(BackwardVertexSet vertex, GreqlQueryImpl query) {
 		super(vertex, query);
 	}
 

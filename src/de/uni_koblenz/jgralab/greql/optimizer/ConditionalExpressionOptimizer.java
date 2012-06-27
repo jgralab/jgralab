@@ -47,7 +47,7 @@ import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.greql.Query;
+import de.uni_koblenz.jgralab.greql.GreqlQuery;
 import de.uni_koblenz.jgralab.greql.exception.OptimizerException;
 import de.uni_koblenz.jgralab.greql.optimizer.condexp.Formula;
 import de.uni_koblenz.jgralab.greql.schema.BoolLiteral;
@@ -103,7 +103,7 @@ public class ConditionalExpressionOptimizer extends OptimizerBase {
 	 * de.uni_koblenz.jgralab.greql2.schema.Greql2)
 	 */
 	@Override
-	public boolean optimize(Query query) throws OptimizerException {
+	public boolean optimize(GreqlQuery query) throws OptimizerException {
 		boolean simplifiedOrOptimized = false;
 		// System.out.println("Before CEO: "
 		// + GreqlSerializer.serializeGraph(syntaxgraph));

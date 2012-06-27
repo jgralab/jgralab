@@ -3,7 +3,7 @@ package de.uni_koblenz.jgralab.greql.funlib.misc;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.greql.GreqlEnvironment;
-import de.uni_koblenz.jgralab.greql.Query;
+import de.uni_koblenz.jgralab.greql.GreqlQuery;
 import de.uni_koblenz.jgralab.greql.funlib.NeedsGraphArgument;
 import de.uni_koblenz.jgralab.greql.schema.Greql2Expression;
 import de.uni_koblenz.jgralab.greql.schema.IsBoundVarOf;
@@ -12,17 +12,17 @@ import de.uni_koblenz.jgralab.greql.schema.Variable;
 @NeedsGraphArgument
 public class GreqlQueryFunctionWithGraphArgument extends GreqlQueryFunction {
 
-	public GreqlQueryFunctionWithGraphArgument(Query query) {
+	public GreqlQueryFunctionWithGraphArgument(GreqlQuery query) {
 		super(query);
 	}
 
-	public GreqlQueryFunctionWithGraphArgument(Query query, long costs, long cardinality,
+	public GreqlQueryFunctionWithGraphArgument(GreqlQuery query, long costs, long cardinality,
 			double selectivity) {
 		super(query, costs, cardinality, selectivity);
 	}
 
 	@Override
-	protected void initialize(Query query) {
+	protected void initialize(GreqlQuery query) {
 		this.query = query;
 		Greql2Expression greql2Expression = query.getQueryGraph()
 				.getFirstGreql2Expression();

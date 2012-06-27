@@ -70,7 +70,7 @@ import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.graphmarker.BooleanGraphMarker;
 import de.uni_koblenz.jgralab.greql.evaluator.GreqlEvaluatorImpl;
-import de.uni_koblenz.jgralab.greql.evaluator.QueryImpl;
+import de.uni_koblenz.jgralab.greql.evaluator.GreqlQueryImpl;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.Schema;
@@ -430,9 +430,9 @@ public class Tg2Dot extends Tg2Whatever {
 		// Disable debugging to prevent recursive execution and restore it in
 		// graphEnd()
 		debugIterations = GreqlEvaluatorImpl.DEBUG_DECLARATION_ITERATIONS;
-		debugOptimization = QueryImpl.DEBUG_OPTIMIZATION;
+		debugOptimization = GreqlQueryImpl.DEBUG_OPTIMIZATION;
 		GreqlEvaluatorImpl.DEBUG_DECLARATION_ITERATIONS = false;
-		QueryImpl.DEBUG_OPTIMIZATION = false;
+		GreqlQueryImpl.DEBUG_OPTIMIZATION = false;
 		jGraLabLogLevel = JGraLab.getRootLogger().getLevel();
 		JGraLab.setLogLevel(Level.OFF);
 
@@ -732,7 +732,7 @@ public class Tg2Dot extends Tg2Whatever {
 		writer.close();
 		writer = null;
 		GreqlEvaluatorImpl.DEBUG_DECLARATION_ITERATIONS = debugIterations;
-		QueryImpl.DEBUG_OPTIMIZATION = debugOptimization;
+		GreqlQueryImpl.DEBUG_OPTIMIZATION = debugOptimization;
 		JGraLab.setLogLevel(jGraLabLogLevel);
 	}
 

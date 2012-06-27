@@ -39,7 +39,7 @@ package de.uni_koblenz.jgralab.greql.optimizer.condexp;
 
 import java.util.ArrayList;
 
-import de.uni_koblenz.jgralab.greql.Query;
+import de.uni_koblenz.jgralab.greql.GreqlQuery;
 import de.uni_koblenz.jgralab.greql.optimizer.OptimizerUtility;
 import de.uni_koblenz.jgralab.greql.schema.Expression;
 import de.uni_koblenz.jgralab.greql.schema.FunctionApplication;
@@ -56,7 +56,7 @@ public class Not extends Formula {
 
 	protected Formula formula;
 
-	public Not(Query query, Formula formula) {
+	public Not(GreqlQuery query, Formula formula) {
 		super(query);
 		this.formula = formula;
 	}

@@ -56,7 +56,7 @@ import de.uni_koblenz.jgralab.ImplementationType;
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.greql.GreqlEnvironment;
 import de.uni_koblenz.jgralab.greql.GreqlEvaluator;
-import de.uni_koblenz.jgralab.greql.Query;
+import de.uni_koblenz.jgralab.greql.GreqlQuery;
 import de.uni_koblenz.jgralab.greql.evaluator.GreqlEnvironmentAdapter;
 import de.uni_koblenz.jgralab.greql.funlib.FunLib;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
@@ -83,7 +83,7 @@ public class Context {
 
 	private final Map<String, Graph> sourceGraphs = new HashMap<String, Graph>(
 			1);
-	private Query query = null;
+	private GreqlQuery query = null;
 
 	Schema targetSchema = null;
 
@@ -707,7 +707,7 @@ public class Context {
 		String query = sb.toString();
 		logger.finest("GReQL: " + semanticExpression);
 
-		this.query = Query.createQuery(query);
+		this.query = GreqlQuery.createQuery(query);
 		// this.query = new QueryImpl(query, false);
 		GreqlEnvironment environment = new GreqlEnvironmentAdapter(greqlMapping);
 		T result = (T) this.query.evaluate(graph, environment);
@@ -721,7 +721,7 @@ public class Context {
 	 */
 	private void ensureQuery() {
 		if (query == null) {
-			query = Query.createQuery((String) null);
+			query = GreqlQuery.createQuery((String) null);
 		}
 	}
 

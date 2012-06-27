@@ -35,7 +35,7 @@
 
 package de.uni_koblenz.jgralab.greql.evaluator.vertexeval;
 
-import de.uni_koblenz.jgralab.greql.evaluator.QueryImpl;
+import de.uni_koblenz.jgralab.greql.evaluator.GreqlQueryImpl;
 import de.uni_koblenz.jgralab.greql.schema.ElementSetExpression;
 
 /**
@@ -56,7 +56,7 @@ public abstract class ElementSetExpressionEvaluator<V extends ElementSetExpressi
 	 * @param vertex
 	 *            the vertex this VertexEvaluator evaluates
 	 */
-	public ElementSetExpressionEvaluator(V vertex, QueryImpl query) {
+	public ElementSetExpressionEvaluator(V vertex, GreqlQueryImpl query) {
 		super(vertex, query);
 	}
 

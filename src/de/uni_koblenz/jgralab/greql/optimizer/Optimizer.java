@@ -35,7 +35,7 @@
 
 package de.uni_koblenz.jgralab.greql.optimizer;
 
-import de.uni_koblenz.jgralab.greql.Query;
+import de.uni_koblenz.jgralab.greql.GreqlQuery;
 import de.uni_koblenz.jgralab.greql.exception.OptimizerException;
 
 /**
@@ -52,14 +52,14 @@ public interface Optimizer {
 	 * optimized after the method finished.
 	 * 
 	 * @param query
-	 *            the current {@link Query}
+	 *            the current {@link GreqlQuery}
 	 * @return <code>true</code> if a transformation was done,
 	 *         <code>false</code> if this {@link Optimizer} couldn't do
 	 *         anything.
 	 * @throws OptimizerException
 	 *             on failures while optimization
 	 */
-	public boolean optimize(Query query) throws OptimizerException;
+	public boolean optimize(GreqlQuery query) throws OptimizerException;
 
 	/**
 	 * @return true, if this optimizer and the given one are logical equivalent,

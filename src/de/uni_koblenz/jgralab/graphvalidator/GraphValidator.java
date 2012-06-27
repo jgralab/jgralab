@@ -51,7 +51,7 @@ import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.greql.Query;
+import de.uni_koblenz.jgralab.greql.GreqlQuery;
 import de.uni_koblenz.jgralab.greql.exception.GreqlException;
 import de.uni_koblenz.jgralab.impl.ConsoleProgressFunction;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
@@ -181,11 +181,11 @@ public class GraphValidator {
 		for (Constraint constraint : aec.getConstraints()) {
 			String query = constraint.getPredicate();
 			try {
-				if (!(Boolean) Query.createQuery(query).evaluate(graph)) {
+				if (!(Boolean) GreqlQuery.createQuery(query).evaluate(graph)) {
 					if (constraint.getOffendingElementsQuery() != null) {
 						query = constraint.getOffendingElementsQuery();
 						@SuppressWarnings("unchecked")
-						Set<AttributedElement<?, ?>> resultSet = (Set<AttributedElement<?, ?>>) Query
+						Set<AttributedElement<?, ?>> resultSet = (Set<AttributedElement<?, ?>>) GreqlQuery
 								.createQuery(query).evaluate(graph);
 						brokenConstraints.add(new GReQLConstraintViolation(aec,
 								constraint, resultSet));

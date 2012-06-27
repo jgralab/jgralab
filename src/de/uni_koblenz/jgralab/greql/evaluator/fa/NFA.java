@@ -42,7 +42,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import de.uni_koblenz.jgralab.greql.evaluator.QueryImpl;
+import de.uni_koblenz.jgralab.greql.evaluator.GreqlQueryImpl;
 import de.uni_koblenz.jgralab.greql.evaluator.vertexeval.VertexEvaluator;
 import de.uni_koblenz.jgralab.greql.schema.Expression;
 import de.uni_koblenz.jgralab.greql.schema.GReQLDirection;
@@ -305,7 +305,7 @@ public class NFA extends FiniteAutomaton {
 			GReQLDirection dir, TypeCollection typeCollection,
 			Set<String> roles, VertexEvaluator<?> edgeEval,
 			VertexEvaluator<? extends Expression> predicateEvaluator,
-			QueryImpl query) {
+			GreqlQueryImpl query) {
 		NFA nfa = new NFA();
 		nfa.transitionList.clear();
 		nfa.initialState.outTransitions.clear();
@@ -326,7 +326,7 @@ public class NFA extends FiniteAutomaton {
 			GReQLDirection dir, TypeCollection typeCollection,
 			Set<String> roles,
 			VertexEvaluator<? extends Expression> predicateEvaluator,
-			QueryImpl query) {
+			GreqlQueryImpl query) {
 		NFA nfa = new NFA();
 		nfa.transitionList.clear();
 		nfa.initialState.outTransitions.clear();
@@ -347,7 +347,7 @@ public class NFA extends FiniteAutomaton {
 			boolean aggregateFrom, TypeCollection typeCollection,
 			Set<String> roles,
 			VertexEvaluator<? extends Expression> predicateEvaluator,
-			QueryImpl query) {
+			GreqlQueryImpl query) {
 		NFA nfa = new NFA();
 		nfa.transitionList.clear();
 		nfa.initialState.outTransitions.clear();
@@ -419,7 +419,7 @@ public class NFA extends FiniteAutomaton {
 	 *            the VertexEvaluator, which restricts this nfa
 	 */
 	public static void addGoalBooleanRestriction(NFA nfa,
-			VertexEvaluator<? extends Expression> boolEval, QueryImpl query) {
+			VertexEvaluator<? extends Expression> boolEval, GreqlQueryImpl query) {
 		State newEndState;
 		if (nfa.finalStates.size() == 1) {
 			newEndState = nfa.finalStates.get(0);
@@ -451,7 +451,7 @@ public class NFA extends FiniteAutomaton {
 	 *            the VertexEvaluator, which restricts this nfa
 	 */
 	public static void addStartBooleanRestriction(NFA nfa,
-			VertexEvaluator<? extends Expression> boolEval, QueryImpl query) {
+			VertexEvaluator<? extends Expression> boolEval, GreqlQueryImpl query) {
 		State newInitialState = new State();
 		nfa.stateList.add(newInitialState);
 		BoolExpressionTransition trans = new BoolExpressionTransition(

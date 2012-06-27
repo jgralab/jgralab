@@ -37,7 +37,7 @@
  */
 package de.uni_koblenz.jgralab.greql.optimizer.condexp;
 
-import de.uni_koblenz.jgralab.greql.Query;
+import de.uni_koblenz.jgralab.greql.GreqlQuery;
 import de.uni_koblenz.jgralab.greql.schema.BoolLiteral;
 import de.uni_koblenz.jgralab.greql.schema.Expression;
 
@@ -49,7 +49,7 @@ import de.uni_koblenz.jgralab.greql.schema.Expression;
  */
 public class False extends Literal {
 
-	public False(Query query) {
+	public False(GreqlQuery query) {
 		super(query);
 	}
 

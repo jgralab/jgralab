@@ -55,7 +55,7 @@ import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.ProgressFunction;
 import de.uni_koblenz.jgralab.greql.GreqlEnvironment;
 import de.uni_koblenz.jgralab.greql.GreqlEvaluator;
-import de.uni_koblenz.jgralab.greql.Query;
+import de.uni_koblenz.jgralab.greql.GreqlQuery;
 import de.uni_koblenz.jgralab.greql.evaluator.vertexeval.VertexEvaluator;
 import de.uni_koblenz.jgralab.greql.schema.Greql2Expression;
 import de.uni_koblenz.jgralab.greql.schema.Greql2Vertex;
@@ -94,7 +94,7 @@ public class GreqlEvaluatorImpl implements InternalGreqlEvaluator,
 		}
 
 		GreqlEvaluatorImpl eval = new GreqlEvaluatorImpl(
-				Query.createQuery(query), datagraph, null, null);
+				GreqlQuery.createQuery(query), datagraph, null, null);
 		Object result = eval.getResult();
 		System.out.println("Evaluation Result:");
 		System.out.println("==================");
@@ -178,7 +178,7 @@ public class GreqlEvaluatorImpl implements InternalGreqlEvaluator,
 	 */
 	// private long passedInterpretationSteps;
 
-	private QueryImpl query;
+	private GreqlQueryImpl query;
 
 	private GreqlEnvironment environment;
 
@@ -274,7 +274,7 @@ public class GreqlEvaluatorImpl implements InternalGreqlEvaluator,
 	 *            the ProgressFunction which indicates the progress, for
 	 *            instance display a progress bar etc.
 	 */
-	public GreqlEvaluatorImpl(Query query, Graph datagraph,
+	public GreqlEvaluatorImpl(GreqlQuery query, Graph datagraph,
 			GreqlEnvironment environment, ProgressFunction progressFunction) {
 		initialize(query, datagraph, environment, progressFunction);
 	}
@@ -289,7 +289,7 @@ public class GreqlEvaluatorImpl implements InternalGreqlEvaluator,
 	 * @param environment
 	 *            {@link GreqlEnvironment} with the bound variables
 	 */
-	public GreqlEvaluatorImpl(Query query, Graph datagraph,
+	public GreqlEvaluatorImpl(GreqlQuery query, Graph datagraph,
 			GreqlEnvironment environment) {
 		initialize(query, datagraph, environment, null);
 	}
@@ -304,9 +304,9 @@ public class GreqlEvaluatorImpl implements InternalGreqlEvaluator,
 	 * @param variables
 	 * @param progressFunction
 	 */
-	private void initialize(Query query, Graph datagraph,
+	private void initialize(GreqlQuery query, Graph datagraph,
 			GreqlEnvironment environment, ProgressFunction progressFunction) {
-		this.query = (QueryImpl) query;
+		this.query = (GreqlQueryImpl) query;
 		this.datagraph = datagraph;
 		if (datagraph != null) {
 			datagraphSchema = datagraph.getSchema();
@@ -317,7 +317,7 @@ public class GreqlEvaluatorImpl implements InternalGreqlEvaluator,
 	}
 
 	@Override
-	public Object evaluate(Query query, Graph datagraph,
+	public Object evaluate(GreqlQuery query, Graph datagraph,
 			GreqlEnvironment environment, ProgressFunction progressFunction) {
 		initialize(query, datagraph, environment, progressFunction);
 		return evaluate();

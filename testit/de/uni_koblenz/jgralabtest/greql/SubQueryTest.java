@@ -39,7 +39,7 @@ import junit.framework.Assert;
 
 import org.junit.Test;
 
-import de.uni_koblenz.jgralab.greql.Query;
+import de.uni_koblenz.jgralab.greql.GreqlQuery;
 import de.uni_koblenz.jgralab.greql.exception.GreqlException;
 import de.uni_koblenz.jgralab.greql.funlib.FunLib;
 
@@ -50,7 +50,7 @@ public class SubQueryTest extends GenericTest {
 		FunLib.registerSubQueryFunction("one", "1");
 		FunLib.registerSubQueryFunction("two", "2");
 		FunLib.registerSubQueryFunction("three", "3");
-		Object r = Query.createQuery("one() + two() + three()").evaluate(
+		Object r = GreqlQuery.createQuery("one() + two() + three()").evaluate(
 				getTestTree());
 		Assert.assertEquals(6, ((Integer) r).intValue());
 	}
@@ -61,7 +61,7 @@ public class SubQueryTest extends GenericTest {
 		FunLib.registerSubQueryFunction("two", "one() + one()");
 		FunLib.registerSubQueryFunction("three",
 				"one() + two() - two() + one() + one()");
-		Object r = Query.createQuery("one() + two() + three()").evaluate(
+		Object r = GreqlQuery.createQuery("one() + two() + three()").evaluate(
 				getTestTree());
 		Assert.assertEquals(6, ((Integer) r).intValue());
 	}
@@ -82,25 +82,25 @@ public class SubQueryTest extends GenericTest {
 	@Test(expected = GreqlException.class)
 	public void testSubQueryArgCountMismatchError1() {
 		FunLib.registerSubQueryFunction("add3", "using a, b, c: a + b + c");
-		Query.createQuery("add3()").evaluate(getTestTree());
+		GreqlQuery.createQuery("add3()").evaluate(getTestTree());
 	}
 
 	@Test(expected = GreqlException.class)
 	public void testSubQueryArgCountMismatchError2() {
 		FunLib.registerSubQueryFunction("add3", "using a, b, c: a + b + c");
-		Query.createQuery("add3(1)").evaluate(getTestTree());
+		GreqlQuery.createQuery("add3(1)").evaluate(getTestTree());
 	}
 
 	@Test(expected = GreqlException.class)
 	public void testSubQueryArgCountMismatchError3() {
 		FunLib.registerSubQueryFunction("add3", "using a, b, c: a + b + c");
-		Query.createQuery("add3(1, 2)").evaluate(getTestTree());
+		GreqlQuery.createQuery("add3(1, 2)").evaluate(getTestTree());
 	}
 
 	@Test(expected = GreqlException.class)
 	public void testSubQueryArgCountMismatchError4() {
 		FunLib.registerSubQueryFunction("add3", "using a, b, c: a + b + c");
-		Query.createQuery("add3(1, 2, 3, 4)").evaluate(getTestTree());
+		GreqlQuery.createQuery("add3(1, 2, 3, 4)").evaluate(getTestTree());
 	}
 
 	@Test
@@ -110,7 +110,7 @@ public class SubQueryTest extends GenericTest {
 		FunLib.registerSubQueryFunction("two", "one() + one()");
 		FunLib.registerSubQueryFunction("three",
 				"one() + two() - two() + one() + one()");
-		Object r = Query.createQuery("add3(one(), two(), three())").evaluate(
+		Object r = GreqlQuery.createQuery("add3(one(), two(), three())").evaluate(
 				getTestTree());
 		Assert.assertEquals(6, ((Integer) r).intValue());
 	}

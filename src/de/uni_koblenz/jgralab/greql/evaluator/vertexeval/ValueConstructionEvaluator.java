@@ -41,7 +41,7 @@ import org.pcollections.PCollection;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.greql.evaluator.InternalGreqlEvaluator;
-import de.uni_koblenz.jgralab.greql.evaluator.QueryImpl;
+import de.uni_koblenz.jgralab.greql.evaluator.GreqlQueryImpl;
 import de.uni_koblenz.jgralab.greql.schema.Expression;
 import de.uni_koblenz.jgralab.greql.schema.IsPartOf;
 import de.uni_koblenz.jgralab.greql.schema.ValueConstruction;
@@ -57,7 +57,7 @@ abstract public class ValueConstructionEvaluator<V extends ValueConstruction>
 
 	private ArrayList<VertexEvaluator<? extends Expression>> partEvaluators = null;
 
-	public ValueConstructionEvaluator(V vertex, QueryImpl query) {
+	public ValueConstructionEvaluator(V vertex, GreqlQueryImpl query) {
 		super(vertex, query);
 	}
 

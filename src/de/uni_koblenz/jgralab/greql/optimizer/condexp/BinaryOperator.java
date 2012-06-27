@@ -39,7 +39,7 @@ package de.uni_koblenz.jgralab.greql.optimizer.condexp;
 
 import java.util.ArrayList;
 
-import de.uni_koblenz.jgralab.greql.Query;
+import de.uni_koblenz.jgralab.greql.GreqlQuery;
 import de.uni_koblenz.jgralab.greql.schema.Expression;
 
 /**
@@ -51,7 +51,7 @@ import de.uni_koblenz.jgralab.greql.schema.Expression;
 public abstract class BinaryOperator extends Formula {
 	protected Formula leftHandSide, rightHandSide;
 
-	public BinaryOperator(Query query, Formula lhs, Formula rhs) {
+	public BinaryOperator(GreqlQuery query, Formula lhs, Formula rhs) {
 		super(query);
 		leftHandSide = lhs;
 		rightHandSide = rhs;

@@ -67,7 +67,7 @@ import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.ProgressFunction;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql.GreqlEnvironment;
-import de.uni_koblenz.jgralab.greql.Query;
+import de.uni_koblenz.jgralab.greql.GreqlQuery;
 import de.uni_koblenz.jgralab.greql.evaluator.GreqlEnvironmentAdapter;
 import de.uni_koblenz.jgralab.greql.exception.GreqlException;
 import de.uni_koblenz.jgralab.greql.types.Types;
@@ -218,7 +218,7 @@ public class StateRepository {
 			HashMap<String, Object> boundVars) {
 		GreqlEnvironment environment = new GreqlEnvironmentAdapter();
 		environment.setVariables(boundVars);
-		return Query.createQuery(query).evaluate(graph, environment);
+		return GreqlQuery.createQuery(query).evaluate(graph, environment);
 	}
 
 	/**

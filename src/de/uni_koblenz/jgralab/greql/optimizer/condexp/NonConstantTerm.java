@@ -39,8 +39,8 @@ package de.uni_koblenz.jgralab.greql.optimizer.condexp;
 
 import java.util.ArrayList;
 
-import de.uni_koblenz.jgralab.greql.Query;
-import de.uni_koblenz.jgralab.greql.evaluator.QueryImpl;
+import de.uni_koblenz.jgralab.greql.GreqlQuery;
+import de.uni_koblenz.jgralab.greql.evaluator.GreqlQueryImpl;
 import de.uni_koblenz.jgralab.greql.evaluator.vertexeval.VertexEvaluator;
 import de.uni_koblenz.jgralab.greql.schema.Expression;
 
@@ -54,7 +54,7 @@ public class NonConstantTerm extends Formula {
 
 	protected Expression expression;
 
-	public NonConstantTerm(Query query, Expression exp) {
+	public NonConstantTerm(GreqlQuery query, Expression exp) {
 		super(query);
 		expression = exp;
 	}
@@ -92,7 +92,7 @@ public class NonConstantTerm extends Formula {
 
 	@Override
 	public double getSelectivity() {
-		VertexEvaluator<? extends Expression> veval = ((QueryImpl) query)
+		VertexEvaluator<? extends Expression> veval = ((GreqlQueryImpl) query)
 				.getVertexEvaluator(expression);
 		double selectivity = veval.calculateEstimatedSelectivity();
 		logger.finer("selectivity[" + this + "] = " + selectivity);

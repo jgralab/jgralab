@@ -35,7 +35,7 @@
 
 package de.uni_koblenz.jgralab.greql.evaluator.vertexeval;
 
-import de.uni_koblenz.jgralab.greql.evaluator.QueryImpl;
+import de.uni_koblenz.jgralab.greql.evaluator.GreqlQueryImpl;
 import de.uni_koblenz.jgralab.greql.schema.SubgraphDefinition;
 
 /**
@@ -47,7 +47,7 @@ import de.uni_koblenz.jgralab.greql.schema.SubgraphDefinition;
 public abstract class SubgraphDefinitionEvaluator<V extends SubgraphDefinition>
 		extends VertexEvaluator<V> {
 
-	public SubgraphDefinitionEvaluator(V vertex, QueryImpl query) {
+	public SubgraphDefinitionEvaluator(V vertex, GreqlQueryImpl query) {
 		super(vertex, query);
 	}
 

@@ -39,7 +39,7 @@ import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 
 import de.uni_koblenz.jgralab.Graph;
-import de.uni_koblenz.jgralab.greql.Query;
+import de.uni_koblenz.jgralab.greql.GreqlQuery;
 import de.uni_koblenz.jgralab.greql.exception.OptimizerException;
 import de.uni_koblenz.jgralab.greql.funlib.FunLib;
 import de.uni_koblenz.jgralab.greql.optimizer.CommonSubgraphOptimizer;
@@ -80,7 +80,7 @@ public class OptimizerTest extends GenericTest {
 		}
 
 		@Override
-		public boolean optimize(Query query) throws OptimizerException {
+		public boolean optimize(GreqlQuery query) throws OptimizerException {
 			boolean csoOptimized = cso.optimize(query);
 			return csoOptimized | msdo.optimize(query);
 		}
@@ -96,7 +96,7 @@ public class OptimizerTest extends GenericTest {
 		}
 
 		@Override
-		public boolean optimize(Query query) throws OptimizerException {
+		public boolean optimize(GreqlQuery query) throws OptimizerException {
 			boolean csoOptimized = ceo.optimize(query);
 			return csoOptimized | cso.optimize(query);
 		}

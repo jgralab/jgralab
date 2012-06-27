@@ -36,7 +36,7 @@
 package de.uni_koblenz.jgralab.greql.evaluator.vertexeval;
 
 import de.uni_koblenz.jgralab.greql.evaluator.InternalGreqlEvaluator;
-import de.uni_koblenz.jgralab.greql.evaluator.QueryImpl;
+import de.uni_koblenz.jgralab.greql.evaluator.GreqlQueryImpl;
 import de.uni_koblenz.jgralab.greql.evaluator.VertexCosts;
 import de.uni_koblenz.jgralab.greql.schema.UndefinedLiteral;
 import de.uni_koblenz.jgralab.greql.types.Undefined;
@@ -53,7 +53,7 @@ import de.uni_koblenz.jgralab.greql.types.Undefined;
 public class UndefinedLiteralEvaluator extends
 		VertexEvaluator<UndefinedLiteral> {
 
-	public UndefinedLiteralEvaluator(UndefinedLiteral vertex, QueryImpl query) {
+	public UndefinedLiteralEvaluator(UndefinedLiteral vertex, GreqlQueryImpl query) {
 		super(vertex, query);
 	}
 
