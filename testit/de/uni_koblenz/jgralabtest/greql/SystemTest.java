@@ -171,7 +171,7 @@ public class SystemTest extends GenericTest {
 		assertEquals(crossroadCount, result.size());
 	}
 
-	// @Test
+	@Test
 	public void testSimpleQuery() {
 		Map<String, Object> boundVars = new HashMap<String, Object>();
 		PSet<Integer> x = JGraLab.set();

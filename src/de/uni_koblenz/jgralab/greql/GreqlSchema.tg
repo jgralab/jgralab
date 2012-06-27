@@ -32,7 +32,7 @@
 // the parts of JGraLab used as well as that of the covered work.
 
 TGraph 2;
-Schema de.uni_koblenz.jgralab.greql2.schema.Greql2Schema;
+Schema de.uni_koblenz.jgralab.greql.schema.Greql2Schema;
 GraphClass Greql2Graph;
 
 EnumDomain IterationType (STAR, PLUS);
