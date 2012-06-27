@@ -58,7 +58,7 @@ import de.uni_koblenz.jgralab.greql.Query;
 import de.uni_koblenz.jgralab.greql.exception.GreqlException;
 import de.uni_koblenz.jgralab.greql.funlib.Function.Category;
 import de.uni_koblenz.jgralab.greql.funlib.misc.GreqlQueryFunction;
-import de.uni_koblenz.jgralab.greql.funlib.misc.GreqlQueryFunctionNeedsGraph;
+import de.uni_koblenz.jgralab.greql.funlib.misc.GreqlQueryFunctionWithGraphArgument;
 import de.uni_koblenz.jgralab.greql.types.Types;
 import de.uni_koblenz.jgralab.greql.types.Undefined;
 
@@ -486,7 +486,7 @@ public class FunLib {
 
 	public static final void registerSubQueryFunction(String name, Query query,
 			boolean needsGraphArgument) {
-		GreqlQueryFunction subquery = needsGraphArgument ? new GreqlQueryFunctionNeedsGraph(query)
+		GreqlQueryFunction subquery = needsGraphArgument ? new GreqlQueryFunctionWithGraphArgument(query)
 				: new GreqlQueryFunction(query);
 		registerSubquery(name, subquery);
 	}
@@ -494,7 +494,7 @@ public class FunLib {
 	public static final void registerSubQueryFunction(String name, Query query,
 			boolean needsGraphArgument, long costs, long cardinality,
 			double selectivity) {
-		GreqlQueryFunction subquery = needsGraphArgument ? new GreqlQueryFunctionNeedsGraph(query,
+		GreqlQueryFunction subquery = needsGraphArgument ? new GreqlQueryFunctionWithGraphArgument(query,
 				costs, cardinality, selectivity) : new GreqlQueryFunction(query, costs,
 				cardinality, selectivity);
 		registerSubquery(name, subquery);

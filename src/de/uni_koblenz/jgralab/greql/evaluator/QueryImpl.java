@@ -62,7 +62,7 @@ import de.uni_koblenz.jgralab.greql.evaluator.vertexeval.VertexEvaluator;
 import de.uni_koblenz.jgralab.greql.exception.GreqlException;
 import de.uni_koblenz.jgralab.greql.funlib.FunLib;
 import de.uni_koblenz.jgralab.greql.funlib.misc.GreqlQueryFunction;
-import de.uni_koblenz.jgralab.greql.funlib.misc.GreqlQueryFunctionNeedsGraph;
+import de.uni_koblenz.jgralab.greql.funlib.misc.GreqlQueryFunctionWithGraphArgument;
 import de.uni_koblenz.jgralab.greql.optimizer.DefaultOptimizer;
 import de.uni_koblenz.jgralab.greql.optimizer.Optimizer;
 import de.uni_koblenz.jgralab.greql.optimizer.OptimizerUtility;
@@ -531,7 +531,7 @@ public class QueryImpl extends GraphStructureChangedAdapter implements Query {
 			Class<? extends de.uni_koblenz.jgralab.greql.funlib.Function> functionClass = FunLib
 					.getFunctionInfo(name).getFunction().getClass();
 			if (functionClass != GreqlQueryFunction.class
-					&& functionClass != GreqlQueryFunctionNeedsGraph.class) {
+					&& functionClass != GreqlQueryFunctionWithGraphArgument.class) {
 				throw new GreqlException("The subquery '" + name
 						+ "' would shadow a GReQL function!");
 			}
