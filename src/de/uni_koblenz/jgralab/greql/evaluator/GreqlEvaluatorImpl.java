@@ -93,8 +93,8 @@ public class GreqlEvaluatorImpl implements InternalGreqlEvaluator,
 							"Loading"));
 		}
 
-		GreqlEvaluatorImpl eval = new GreqlEvaluatorImpl(new QueryImpl(query),
-				datagraph, null, null);
+		GreqlEvaluatorImpl eval = new GreqlEvaluatorImpl(
+				Query.createQuery(query), datagraph, null, null);
 		Object result = eval.getResult();
 		System.out.println("Evaluation Result:");
 		System.out.println("==================");

@@ -43,6 +43,7 @@ import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql.GreqlEnvironment;
+import de.uni_koblenz.jgralab.greql.Query;
 import de.uni_koblenz.jgralab.greql.evaluator.GreqlEnvironmentAdapter;
 import de.uni_koblenz.jgralab.greql.evaluator.GreqlEvaluatorImpl;
 import de.uni_koblenz.jgralab.greql.evaluator.QueryImpl;
@@ -316,7 +317,8 @@ public class GreqlEvaluatorFacade {
 		query = getUsingString() + query;
 		Object result = null;
 		try {
-			result = new QueryImpl(query).evaluate(dataGraph, greqlEnvironment);
+			result = Query.createQuery(query).evaluate(dataGraph,
+					greqlEnvironment);
 		} catch (RuntimeException parse) {
 			parse.printStackTrace();
 			throw parse;

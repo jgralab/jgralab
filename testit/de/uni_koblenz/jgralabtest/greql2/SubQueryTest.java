@@ -40,14 +40,13 @@ import junit.framework.Assert;
 import org.junit.Test;
 
 import de.uni_koblenz.jgralab.greql.Query;
-import de.uni_koblenz.jgralab.greql.evaluator.QueryImpl;
 import de.uni_koblenz.jgralab.greql.exception.GreqlException;
 
 public class SubQueryTest extends GenericTest {
 
 	@Test
 	public void testSimpleSubQuery() {
-		Query query = new QueryImpl("one() + two() + three()");
+		Query query = Query.createQuery("one() + two() + three()");
 		query.setSubQuery("one", "1");
 		query.setSubQuery("two", "2");
 		query.setSubQuery("three", "3");
@@ -57,7 +56,7 @@ public class SubQueryTest extends GenericTest {
 
 	@Test
 	public void testSubQueryWithSQsUsingOtherSQs() {
-		Query query = new QueryImpl("one() + two() + three()");
+		Query query = Query.createQuery("one() + two() + three()");
 		query.setSubQuery("one", "1");
 		query.setSubQuery("two", "one() + one()");
 		query.setSubQuery("three", "one() + two() - two() + one() + one()");
@@ -67,49 +66,49 @@ public class SubQueryTest extends GenericTest {
 
 	@Test(expected = GreqlException.class)
 	public void testRecursiveSubQueryError() {
-		Query query = new QueryImpl(null);
+		Query query = Query.createQuery(null);
 		// recursive defs are not allowed
 		query.setSubQuery("x", "using val: (val > 0 ? x(val - 1) : 0)");
 	}
 
 	@Test(expected = GreqlException.class)
 	public void testShadowingSubQueryError() {
-		Query query = new QueryImpl(null);
+		Query query = Query.createQuery(null);
 		// A subquery def must error if it shadows a function from the funlib
 		query.setSubQuery("and", "true");
 	}
 
 	@Test(expected = GreqlException.class)
 	public void testSubQueryArgCountMismatchError1() {
-		Query query = new QueryImpl("add3()");
+		Query query = Query.createQuery("add3()");
 		query.setSubQuery("add3", "using a, b, c: a + b + c");
 		query.evaluate(getTestTree());
 	}
 
 	@Test(expected = GreqlException.class)
 	public void testSubQueryArgCountMismatchError2() {
-		Query query = new QueryImpl("add3(1)");
+		Query query = Query.createQuery("add3(1)");
 		query.setSubQuery("add3", "using a, b, c: a + b + c");
 		query.evaluate(getTestTree());
 	}
 
 	@Test(expected = GreqlException.class)
 	public void testSubQueryArgCountMismatchError3() {
-		Query query = new QueryImpl("add3(1, 2)");
+		Query query = Query.createQuery("add3(1, 2)");
 		query.setSubQuery("add3", "using a, b, c: a + b + c");
 		query.evaluate(getTestTree());
 	}
 
 	@Test(expected = GreqlException.class)
 	public void testSubQueryArgCountMismatchError4() {
-		Query query = new QueryImpl("add3(1, 2, 3, 4)");
+		Query query = Query.createQuery("add3(1, 2, 3, 4)");
 		query.setSubQuery("add3", "using a, b, c: a + b + c");
 		query.evaluate(getTestTree());
 	}
 
 	@Test
 	public void testSubQueryAdd3() {
-		Query query = new QueryImpl("add3(one(), two(), three())");
+		Query query = Query.createQuery("add3(one(), two(), three())");
 		query.setSubQuery("add3", "using a, b, c: a + b + c");
 		query.setSubQuery("one", "1");
 		query.setSubQuery("two", "one() + one()");

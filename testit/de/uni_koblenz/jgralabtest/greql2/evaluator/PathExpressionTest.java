@@ -15,9 +15,9 @@ import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.ImplementationType;
 import de.uni_koblenz.jgralab.Vertex;
+import de.uni_koblenz.jgralab.greql.Query;
 import de.uni_koblenz.jgralab.greql.evaluator.GreqlEnvironmentAdapter;
 import de.uni_koblenz.jgralab.greql.evaluator.GreqlEvaluatorImpl;
-import de.uni_koblenz.jgralab.greql.evaluator.QueryImpl;
 import de.uni_koblenz.jgralab.greql.exception.GreqlException;
 import de.uni_koblenz.jgralab.greql.exception.UnknownTypeException;
 
@@ -38,7 +38,7 @@ public class PathExpressionTest {
 	}
 
 	private Object evaluateQuery(String query) {
-		return new GreqlEvaluatorImpl(new QueryImpl(query), datagraph,
+		return new GreqlEvaluatorImpl(Query.createQuery(query), datagraph,
 				new GreqlEnvironmentAdapter()).getResult();
 	}
 

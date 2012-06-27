@@ -20,6 +20,7 @@ import de.uni_koblenz.jgralab.codegenerator.CodeGenerator;
 import de.uni_koblenz.jgralab.codegenerator.CodeGeneratorConfiguration;
 import de.uni_koblenz.jgralab.codegenerator.CodeList;
 import de.uni_koblenz.jgralab.codegenerator.CodeSnippet;
+import de.uni_koblenz.jgralab.greql.Query;
 import de.uni_koblenz.jgralab.greql.evaluator.GraphSize;
 import de.uni_koblenz.jgralab.greql.evaluator.GreqlEnvironmentAdapter;
 import de.uni_koblenz.jgralab.greql.evaluator.GreqlEvaluatorImpl;
@@ -128,11 +129,11 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 
 	private boolean thisLiteralsCreated = false;
 
-	private final QueryImpl query;
+	private final Query query;
 
 	private final InternalGreqlEvaluator evaluator;
 
-	public GreqlCodeGenerator(QueryImpl query, Schema datagraphSchema,
+	public GreqlCodeGenerator(Query query, Schema datagraphSchema,
 			String packageName, String classname) {
 		super(packageName, "",
 				CodeGeneratorConfiguration.WITHOUT_TYPESPECIFIC_METHODS);
@@ -166,7 +167,7 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 	 */
 	public static void generateCode(String queryString, Schema datagraphSchema,
 			String classname, String path) {
-		QueryImpl query = new QueryImpl(queryString, true, new GraphSize(
+		Query query = Query.createQuery(queryString, true, new GraphSize(
 				datagraphSchema.createGraph(ImplementationType.GENERIC)));
 
 		String simpleName = classname;
@@ -203,7 +204,7 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 	 */
 	public static Class<ExecutableQuery> generateCode(String queryString,
 			Schema datagraphSchema, String classname) {
-		QueryImpl query = new QueryImpl(queryString, true, new GraphSize(
+		Query query = Query.createQuery(queryString, true, new GraphSize(
 				datagraphSchema.createGraph(ImplementationType.GENERIC)));
 
 		String simpleName = classname;
@@ -393,8 +394,8 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 		for (IsTypeRestrOfExpression inc : setExpr
 				.getIsTypeRestrOfExpressionIncidences(EdgeDirection.IN)) {
 			TypeId typeId = (TypeId) inc.getThat();
-			typeCol.addTypes((TypeCollection) query.getVertexEvaluator(typeId)
-					.getResult(evaluator));
+			typeCol.addTypes((TypeCollection) ((QueryImpl) query)
+					.getVertexEvaluator(typeId).getResult(evaluator));
 		}
 		String acceptedTypesField = createInitializerForTypeCollection(typeCol);
 		CodeSnippet createEdgeSetSnippet = new CodeSnippet();
@@ -426,8 +427,8 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 		for (IsTypeRestrOfExpression inc : setExpr
 				.getIsTypeRestrOfExpressionIncidences(EdgeDirection.IN)) {
 			TypeId typeId = (TypeId) inc.getThat();
-			typeCol.addTypes((TypeCollection) query.getVertexEvaluator(typeId)
-					.getResult(evaluator));
+			typeCol.addTypes((TypeCollection) ((QueryImpl) query)
+					.getVertexEvaluator(typeId).getResult(evaluator));
 		}
 		String acceptedTypesField = createInitializerForTypeCollection(typeCol);
 		CodeSnippet createVertexSetSnippet = new CodeSnippet();
@@ -617,7 +618,7 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 				varIterationSnippet.setVariable("variableName", var.get_name());
 				varIterationSnippet
 						.add("for (Object #variableName# : #simpleDeclDomainName#) {");
-				VariableEvaluator<? extends Variable> vertexEval = (VariableEvaluator<? extends Variable>) query
+				VariableEvaluator<? extends Variable> vertexEval = (VariableEvaluator<? extends Variable>) ((QueryImpl) query)
 						.getVertexEvaluator(var);
 				List<VertexEvaluator<? extends Expression>> dependingExpressions = vertexEval
 						.calculateDependingExpressions();
@@ -940,7 +941,7 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 	private String createCodeForForwardVertexSet(ForwardVertexSet fws) {
 		PathDescription pathDescr = (PathDescription) fws
 				.getFirstIsPathOfIncidence(EdgeDirection.IN).getThat();
-		PathDescriptionEvaluator<? extends PathDescription> pathDescrEval = (PathDescriptionEvaluator<? extends PathDescription>) query
+		PathDescriptionEvaluator<? extends PathDescription> pathDescrEval = (PathDescriptionEvaluator<? extends PathDescription>) ((QueryImpl) query)
 				.getVertexEvaluator(pathDescr);
 		DFA dfa = ((NFA) pathDescrEval.getResult(evaluator)).getDFA();
 		Expression startElementExpr = (Expression) fws
@@ -952,7 +953,7 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 	private String createCodeForBackwardVertexSet(BackwardVertexSet fws) {
 		PathDescription pathDescr = (PathDescription) fws
 				.getFirstIsPathOfIncidence(EdgeDirection.IN).getThat();
-		PathDescriptionEvaluator<? extends PathDescription> pathDescrEval = (PathDescriptionEvaluator<? extends PathDescription>) query
+		PathDescriptionEvaluator<? extends PathDescription> pathDescrEval = (PathDescriptionEvaluator<? extends PathDescription>) ((QueryImpl) query)
 				.getVertexEvaluator(pathDescr);
 		DFA dfa = NFA.revertNFA((NFA) pathDescrEval.getResult(evaluator))
 				.getDFA();
@@ -1084,7 +1085,7 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 		Expression startExpr = (Expression) inc.getThat();
 		inc = inc.getNextIsArgumentOfIncidence(EdgeDirection.IN);
 		PathDescription pathDescr = (PathDescription) inc.getThat();
-		PathDescriptionEvaluator<? extends PathDescription> pathDescrEval = (PathDescriptionEvaluator<? extends PathDescription>) query
+		PathDescriptionEvaluator<? extends PathDescription> pathDescrEval = (PathDescriptionEvaluator<? extends PathDescription>) ((QueryImpl) query)
 				.getVertexEvaluator(pathDescr);
 		DFA dfa = ((NFA) pathDescrEval.getResult(evaluator)).getDFA();
 		return createCodeForPathSystem(dfa, startExpr, funApp);
@@ -1556,7 +1557,7 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 		snip.setVariable("edgeOrVertex", edgeOrVertex);
 		snip.add("private final void setThis#edgeOrVertex#(#edgeOrVertex# value) {");
 		if (lit != null) {
-			VariableEvaluator<? extends Variable> vertexEval = (VariableEvaluator<? extends Variable>) query
+			VariableEvaluator<? extends Variable> vertexEval = (VariableEvaluator<? extends Variable>) ((QueryImpl) query)
 					.getVertexEvaluator(lit);
 			List<VertexEvaluator<? extends Expression>> dependingExpressions = vertexEval
 					.calculateDependingExpressions();

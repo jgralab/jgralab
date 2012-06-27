@@ -7,9 +7,9 @@ import org.junit.Test;
 
 import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.greql.GreqlEnvironment;
+import de.uni_koblenz.jgralab.greql.Query;
 import de.uni_koblenz.jgralab.greql.evaluator.GreqlEnvironmentAdapter;
 import de.uni_koblenz.jgralab.greql.evaluator.GreqlEvaluatorImpl;
-import de.uni_koblenz.jgralab.greql.evaluator.QueryImpl;
 import de.uni_koblenz.jgralab.greql.exception.UndefinedVariableException;
 
 public class VariableEvaluatorTest {
@@ -19,8 +19,8 @@ public class VariableEvaluatorTest {
 	}
 
 	private Object evaluateQuery(String query, GreqlEnvironment environment) {
-		return new GreqlEvaluatorImpl(new QueryImpl(query), null, environment)
-				.getResult();
+		return new GreqlEvaluatorImpl(Query.createQuery(query), null,
+				environment).getResult();
 	}
 
 	/**

@@ -34,10 +34,6 @@
  */
 package de.uni_koblenz.jgralab.greql.evaluator;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
 import java.lang.ref.SoftReference;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -48,9 +44,10 @@ import java.util.Set;
 
 import org.pcollections.PSet;
 
+import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphIOException;
-import de.uni_koblenz.jgralab.GraphStructureChangedAdapter;
+import de.uni_koblenz.jgralab.GraphStructureChangedListener;
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.ProgressFunction;
 import de.uni_koblenz.jgralab.Vertex;
@@ -77,7 +74,7 @@ import de.uni_koblenz.jgralab.impl.GraphBaseImpl;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.Schema;
 
-public class QueryImpl extends GraphStructureChangedAdapter implements Query {
+public class QueryImpl extends Query implements GraphStructureChangedListener {
 	private final String queryText;
 	private Greql2Graph queryGraph;
 	private PSet<String> usedVariables;
@@ -142,38 +139,6 @@ public class QueryImpl extends GraphStructureChangedAdapter implements Query {
 	}
 
 	private static final QueryGraphCache queryGraphCache = new QueryGraphCache();
-
-	public static Query readQuery(File f) throws IOException {
-		return readQuery(f, true);
-	}
-
-	public static Query readQuery(File f, boolean optimize) throws IOException {
-		return readQuery(f, optimize,
-				OptimizerUtility.getDefaultOptimizerInfo());
-	}
-
-	public static Query readQuery(File f, boolean optimize,
-			OptimizerInfo optimizerInfo) throws IOException {
-		BufferedReader reader = null;
-		try {
-			reader = new BufferedReader(new FileReader(f));
-
-			String line = null;
-			StringBuffer sb = new StringBuffer();
-			while ((line = reader.readLine()) != null) {
-				sb.append(line);
-				sb.append('\n');
-			}
-			return new QueryImpl(sb.toString(), optimize, optimizerInfo);
-		} finally {
-			try {
-				reader.close();
-			} catch (IOException ex) {
-				throw new RuntimeException(
-						"An exception occurred while closing the stream.", ex);
-			}
-		}
-	}
 
 	public QueryImpl(String queryText) {
 		this(queryText, true);
@@ -430,6 +395,22 @@ public class QueryImpl extends GraphStructureChangedAdapter implements Query {
 		vertexEvaluators.removeMark(v);
 	}
 
+	@Override
+	public void edgeAdded(Edge e) {
+	}
+
+	@Override
+	public void edgeDeleted(Edge e) {
+	}
+
+	@Override
+	public void maxEdgeCountIncreased(int newValue) {
+	}
+
+	@Override
+	public void maxVertexCountIncreased(int newValue) {
+	}
+
 	public OptimizerInfo getOptimizerInfo() {
 		return optimizerInfo;
 	}
@@ -505,7 +486,7 @@ public class QueryImpl extends GraphStructureChangedAdapter implements Query {
 			boolean needsGraphArgument) {
 		checkSubQueryConstraints(name);
 
-		FunLib.registerSubQueryFunction(name, new QueryImpl(greqlQuery),
+		FunLib.registerSubQueryFunction(name, Query.createQuery(greqlQuery),
 				needsGraphArgument);
 	}
 
@@ -515,7 +496,7 @@ public class QueryImpl extends GraphStructureChangedAdapter implements Query {
 			double selectivity) {
 		checkSubQueryConstraints(name);
 
-		FunLib.registerSubQueryFunction(name, new QueryImpl(greqlQuery),
+		FunLib.registerSubQueryFunction(name, Query.createQuery(greqlQuery),
 				needsGraphArgument, costs, cardinality, selectivity);
 	}
 

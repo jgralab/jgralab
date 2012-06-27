@@ -21,9 +21,9 @@ import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.ImplementationType;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql.GreqlEnvironment;
+import de.uni_koblenz.jgralab.greql.Query;
 import de.uni_koblenz.jgralab.greql.evaluator.GreqlEnvironmentAdapter;
 import de.uni_koblenz.jgralab.greql.evaluator.GreqlEvaluatorImpl;
-import de.uni_koblenz.jgralab.greql.evaluator.QueryImpl;
 import de.uni_koblenz.jgralab.greql.exception.UnknownTypeException;
 import de.uni_koblenz.jgralab.greql.types.Slice;
 import de.uni_koblenz.jgralab.greql.types.Table;
@@ -47,7 +47,7 @@ public class ResidualEvaluatorTest {
 	}
 
 	private Object evaluateQuery(String query) {
-		return new GreqlEvaluatorImpl(new QueryImpl(query), datagraph,
+		return new GreqlEvaluatorImpl(Query.createQuery(query), datagraph,
 				new GreqlEnvironmentAdapter()).getResult();
 	}
 
@@ -578,7 +578,7 @@ public class ResidualEvaluatorTest {
 
 	@Test
 	public void testValueChangeOfUsedVariable_usingQuery() {
-		QueryImpl query = new QueryImpl("using x: x+3");
+		Query query = Query.createQuery("using x: x+3");
 		GreqlEnvironment environment = new GreqlEnvironmentAdapter();
 		environment.setVariable("x", 3);
 		assertEquals(6, query.evaluate(null, environment));
@@ -589,7 +589,7 @@ public class ResidualEvaluatorTest {
 
 	@Test
 	public void testValueChangeOfUsedVariable_usingGreqlEvaluator() {
-		QueryImpl query = new QueryImpl("using x: x+3");
+		Query query = Query.createQuery("using x: x+3");
 		GreqlEvaluatorImpl evaluator = new GreqlEvaluatorImpl();
 
 		GreqlEnvironment environment = new GreqlEnvironmentAdapter();
@@ -602,7 +602,7 @@ public class ResidualEvaluatorTest {
 
 	@Test
 	public void testValueChangeOfUsedVariable_usingGreqlEvaluator2() {
-		QueryImpl query = new QueryImpl("using x: x+3");
+		Query query = Query.createQuery("using x: x+3");
 		GreqlEvaluatorImpl evaluator = new GreqlEvaluatorImpl();
 
 		GreqlEnvironment environment = new GreqlEnvironmentAdapter();

@@ -12,15 +12,15 @@ import java.util.Set;
 import org.junit.Test;
 
 import de.uni_koblenz.jgralab.Record;
+import de.uni_koblenz.jgralab.greql.Query;
 import de.uni_koblenz.jgralab.greql.evaluator.GreqlEnvironmentAdapter;
 import de.uni_koblenz.jgralab.greql.evaluator.GreqlEvaluatorImpl;
-import de.uni_koblenz.jgralab.greql.evaluator.QueryImpl;
 import de.uni_koblenz.jgralab.greql.types.Tuple;
 
 public class CollectionEvaluatorTest {
 
 	private Object evaluateQuery(String query) {
-		return new GreqlEvaluatorImpl(new QueryImpl(query), null,
+		return new GreqlEvaluatorImpl(Query.createQuery(query), null,
 				new GreqlEnvironmentAdapter()).getResult();
 	}
 
