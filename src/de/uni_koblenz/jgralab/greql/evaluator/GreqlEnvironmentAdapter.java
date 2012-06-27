@@ -3,6 +3,8 @@ package de.uni_koblenz.jgralab.greql.evaluator;
 import java.util.HashMap;
 import java.util.Map;
 
+import de.uni_koblenz.jgralab.greql.GreqlEnvironment;
+
 public class GreqlEnvironmentAdapter implements GreqlEnvironment {
 
 	/**

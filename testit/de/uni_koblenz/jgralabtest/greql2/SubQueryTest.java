@@ -39,7 +39,7 @@ import junit.framework.Assert;
 
 import org.junit.Test;
 
-import de.uni_koblenz.jgralab.greql.evaluator.Query;
+import de.uni_koblenz.jgralab.greql.Query;
 import de.uni_koblenz.jgralab.greql.evaluator.QueryImpl;
 import de.uni_koblenz.jgralab.greql.exception.GreqlException;
 

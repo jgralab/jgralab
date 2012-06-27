@@ -39,9 +39,9 @@ import java.util.Set;
 import java.util.logging.Logger;
 
 import de.uni_koblenz.jgralab.JGraLab;
+import de.uni_koblenz.jgralab.greql.OptimizerInfo;
+import de.uni_koblenz.jgralab.greql.Query;
 import de.uni_koblenz.jgralab.greql.evaluator.GraphSize;
-import de.uni_koblenz.jgralab.greql.evaluator.OptimizerInfo;
-import de.uni_koblenz.jgralab.greql.evaluator.Query;
 import de.uni_koblenz.jgralab.greql.evaluator.QueryImpl;
 import de.uni_koblenz.jgralab.greql.evaluator.vertexeval.VertexEvaluator;
 import de.uni_koblenz.jgralab.greql.exception.OptimizerException;

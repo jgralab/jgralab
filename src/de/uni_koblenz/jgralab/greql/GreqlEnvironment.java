@@ -1,4 +1,4 @@
-package de.uni_koblenz.jgralab.greql.evaluator;
+package de.uni_koblenz.jgralab.greql;
 
 import java.util.Map;
 

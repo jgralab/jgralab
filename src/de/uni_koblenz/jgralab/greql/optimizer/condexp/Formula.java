@@ -45,7 +45,7 @@ import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.greql.evaluator.Query;
+import de.uni_koblenz.jgralab.greql.Query;
 import de.uni_koblenz.jgralab.greql.optimizer.OptimizerUtility;
 import de.uni_koblenz.jgralab.greql.schema.BoolLiteral;
 import de.uni_koblenz.jgralab.greql.schema.Expression;

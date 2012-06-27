@@ -35,7 +35,7 @@
 
 package de.uni_koblenz.jgralab.greql.optimizer;
 
-import de.uni_koblenz.jgralab.greql.evaluator.Query;
+import de.uni_koblenz.jgralab.greql.Query;
 import de.uni_koblenz.jgralab.greql.exception.OptimizerException;
 
 /**

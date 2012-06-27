@@ -39,7 +39,7 @@ package de.uni_koblenz.jgralab.greql.optimizer.condexp;
 
 import java.util.ArrayList;
 
-import de.uni_koblenz.jgralab.greql.evaluator.Query;
+import de.uni_koblenz.jgralab.greql.Query;
 import de.uni_koblenz.jgralab.greql.evaluator.QueryImpl;
 import de.uni_koblenz.jgralab.greql.evaluator.vertexeval.VertexEvaluator;
 import de.uni_koblenz.jgralab.greql.schema.Expression;

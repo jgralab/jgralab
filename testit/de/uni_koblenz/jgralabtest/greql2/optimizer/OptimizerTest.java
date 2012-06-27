@@ -39,7 +39,7 @@ import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 
 import de.uni_koblenz.jgralab.Graph;
-import de.uni_koblenz.jgralab.greql.evaluator.Query;
+import de.uni_koblenz.jgralab.greql.Query;
 import de.uni_koblenz.jgralab.greql.exception.OptimizerException;
 import de.uni_koblenz.jgralab.greql.funlib.FunLib;
 import de.uni_koblenz.jgralab.greql.optimizer.CommonSubgraphOptimizer;

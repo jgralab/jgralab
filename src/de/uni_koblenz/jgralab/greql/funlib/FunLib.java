@@ -54,7 +54,7 @@ import java.util.logging.Logger;
 
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.JGraLab;
-import de.uni_koblenz.jgralab.greql.evaluator.Query;
+import de.uni_koblenz.jgralab.greql.Query;
 import de.uni_koblenz.jgralab.greql.exception.GreqlException;
 import de.uni_koblenz.jgralab.greql.funlib.Function.Category;
 import de.uni_koblenz.jgralab.greql.funlib.misc.GreqlQueryFunction;

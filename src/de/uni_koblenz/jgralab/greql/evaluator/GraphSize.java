@@ -36,6 +36,7 @@
 package de.uni_koblenz.jgralab.greql.evaluator;
 
 import de.uni_koblenz.jgralab.Graph;
+import de.uni_koblenz.jgralab.greql.OptimizerInfo;
 import de.uni_koblenz.jgralab.schema.GraphClass;
 
 /**
