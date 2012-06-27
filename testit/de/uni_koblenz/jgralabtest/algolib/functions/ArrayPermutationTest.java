@@ -14,7 +14,7 @@ import org.junit.Test;
 import de.uni_koblenz.jgralab.algolib.functions.ArrayPermutation;
 import de.uni_koblenz.jgralab.algolib.functions.entries.PermutationEntry;
 
-public class PermutationTest {
+public class ArrayPermutationTest {
 
 	private String[] permArray = new String[] { null, "first", "second",
 			"third", "fourth", "fifth", null };
@@ -139,6 +139,11 @@ public class PermutationTest {
 			iter.next();
 			fail("There should not be any more elements.");
 		} catch (NoSuchElementException e) {
+		}
+
+		int i = 1;
+		for (PermutationEntry<String> entry : perm) {
+			assertEquals(permArray[i++], entry.getSecond());
 		}
 
 		iter = empty.iterator();
