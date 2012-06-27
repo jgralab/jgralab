@@ -34,7 +34,8 @@
  */
 package de.uni_koblenz.jgralab.algolib.util;
 
-import java.util.Comparator; //import java.util.LinkedList;
+import java.util.Comparator;
+import java.util.NoSuchElementException;
 import java.util.Queue;
 
 public class PriorityQueue<T> {
@@ -56,12 +57,8 @@ public class PriorityQueue<T> {
 
 	}
 
-	// private Buffer<ValuePair<T>> queue;
 	private Queue<ValuePair<T>> queue;
 	private Comparator<ValuePair<T>> comparator;
-	private int added;
-
-	// private Queue<ValuePair<T>> reusableElements;
 
 	public PriorityQueue() {
 		comparator = new Comparator<ValuePair<T>>() {
@@ -70,17 +67,15 @@ public class PriorityQueue<T> {
 				return Double.compare(o1.value, o2.value);
 			}
 		};
-
 		queue = new java.util.PriorityQueue<ValuePair<T>>(31, comparator);
-
-		// reusableElements = new LinkedList<ValuePair<T>>();
 	}
 
 	public T getNext() {
-		// ValuePair<T> next = queue.poll();
-		// T element = next.element;
-		// reusableElements.add(next);
-		return queue.poll().element;
+		ValuePair<T> next = queue.poll();
+		if (next == null) {
+			throw new NoSuchElementException("Priority queue is empty.");
+		}
+		return next.element;
 	}
 
 	public boolean isEmpty() {
@@ -88,23 +83,16 @@ public class PriorityQueue<T> {
 	}
 
 	public void put(T element, double value) {
-		// ValuePair<T> newElement = reusableElements.isEmpty() ? new
-		// ValuePair<T>(
-		// element, value)
-		// : reusableElements.poll().set(element, value);
 		ValuePair<T> newElement = new ValuePair<T>(element, value);
 		queue.add(newElement);
-		added++;
 	}
 
-	public int getAddedCount() {
-		// return reusableElements.size();
-		return added;
+	public int size() {
+		return queue.size();
 	}
 
 	public PriorityQueue<T> clear() {
 		queue.clear();
-		// reusableElements.clear();
 		return this;
 	}
 
