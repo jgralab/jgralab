@@ -39,7 +39,7 @@ import java.util.ArrayList;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.greql.evaluator.InternalGreqlEvaluator;
-import de.uni_koblenz.jgralab.greql.evaluator.QueryImpl;
+import de.uni_koblenz.jgralab.greql.evaluator.GreqlQueryImpl;
 import de.uni_koblenz.jgralab.greql.evaluator.VertexCosts;
 import de.uni_koblenz.jgralab.greql.exception.UndefinedVariableException;
 import de.uni_koblenz.jgralab.greql.exception.UnknownTypeException;
@@ -94,7 +94,7 @@ public class Greql2ExpressionEvaluator extends
 	 * @param vertex
 	 *            the vertex which gets evaluated by this VertexEvaluator
 	 */
-	public Greql2ExpressionEvaluator(Greql2Expression vertex, QueryImpl query) {
+	public Greql2ExpressionEvaluator(Greql2Expression vertex, GreqlQueryImpl query) {
 		super(vertex, query);
 	}
 

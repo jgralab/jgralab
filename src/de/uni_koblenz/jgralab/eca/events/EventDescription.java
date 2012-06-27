@@ -42,7 +42,7 @@ import org.pcollections.PCollection;
 import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.eca.ECARule;
-import de.uni_koblenz.jgralab.greql.Query;
+import de.uni_koblenz.jgralab.greql.GreqlQuery;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 
 public abstract class EventDescription<AEC extends AttributedElementClass<AEC, ?>> {
@@ -150,7 +150,7 @@ public abstract class EventDescription<AEC extends AttributedElementClass<AEC, ?
 			}
 		} else {
 			Graph graph = activeRules.get(0).getECARuleManager().getGraph();
-			Object resultingContext = Query.createQuery(contextExpression)
+			Object resultingContext = GreqlQuery.createQuery(contextExpression)
 					.evaluate(graph);
 			if (resultingContext instanceof PCollection) {
 				PCollection<?> col = (PCollection<?>) resultingContext;

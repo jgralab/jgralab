@@ -40,7 +40,7 @@ import org.pcollections.PVector;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.greql.evaluator.InternalGreqlEvaluator;
-import de.uni_koblenz.jgralab.greql.evaluator.QueryImpl;
+import de.uni_koblenz.jgralab.greql.evaluator.GreqlQueryImpl;
 import de.uni_koblenz.jgralab.greql.evaluator.VertexCosts;
 import de.uni_koblenz.jgralab.greql.schema.Expression;
 import de.uni_koblenz.jgralab.greql.schema.ListRangeConstruction;
@@ -71,7 +71,7 @@ public class ListRangeConstructionEvaluator extends
 	 *            the vertex this VertexEvaluator evaluates
 	 */
 	public ListRangeConstructionEvaluator(ListRangeConstruction vertex,
-			QueryImpl query) {
+			GreqlQueryImpl query) {
 		super(vertex, query);
 	}
 

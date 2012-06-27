@@ -40,9 +40,9 @@ import java.util.logging.Logger;
 
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.greql.OptimizerInfo;
-import de.uni_koblenz.jgralab.greql.Query;
+import de.uni_koblenz.jgralab.greql.GreqlQuery;
 import de.uni_koblenz.jgralab.greql.evaluator.GraphSize;
-import de.uni_koblenz.jgralab.greql.evaluator.QueryImpl;
+import de.uni_koblenz.jgralab.greql.evaluator.GreqlQueryImpl;
 import de.uni_koblenz.jgralab.greql.evaluator.vertexeval.VertexEvaluator;
 import de.uni_koblenz.jgralab.greql.exception.OptimizerException;
 import de.uni_koblenz.jgralab.greql.schema.Greql2Expression;
@@ -87,7 +87,7 @@ public class DefaultOptimizer extends OptimizerBase {
 	 * .jgralab.greql2.evaluator.GreqlEvaluator,
 	 * de.uni_koblenz.jgralab.greql2.schema.Greql2)
 	 */
-	public boolean optimize(Query query) throws OptimizerException {
+	public boolean optimize(GreqlQuery query) throws OptimizerException {
 
 		if (query.getQueryGraph().getVCount() <= 1) {
 			return false;
@@ -179,7 +179,7 @@ public class DefaultOptimizer extends OptimizerBase {
 	}
 
 	@SuppressWarnings("unused")
-	private void printCosts(Query query) {
+	private void printCosts(GreqlQuery query) {
 		Greql2Graph syntaxgraph = query.getQueryGraph();
 
 		logger.fine("Optimizer: Optimizing " + syntaxgraph.getId() + ".\n"
@@ -191,7 +191,7 @@ public class DefaultOptimizer extends OptimizerBase {
 		// Calculate the cost of the root vertex so that all initial costs of
 		// the vertices below are properly initialized.
 		Greql2Expression rootVertex = syntaxgraph.getFirstGreql2Expression();
-		VertexEvaluator<Greql2Expression> rootEval = ((QueryImpl) query)
+		VertexEvaluator<Greql2Expression> rootEval = ((GreqlQueryImpl) query)
 				.getVertexEvaluator(rootVertex);
 		rootEval.getInitialSubtreeEvaluationCosts();
 		rootEval.getEstimatedCardinality();
@@ -201,7 +201,7 @@ public class DefaultOptimizer extends OptimizerBase {
 		logger.fine("=========================================================");
 		while (vertex != null) {
 			logger.fine("Current Node: " + vertex);
-			veval = ((QueryImpl) query).getVertexEvaluator(vertex);
+			veval = ((GreqlQueryImpl) query).getVertexEvaluator(vertex);
 			if (veval != null) {
 				long costs = veval.getInitialSubtreeEvaluationCosts();
 				long card = veval.getEstimatedCardinality();
@@ -219,7 +219,7 @@ public class DefaultOptimizer extends OptimizerBase {
 			logger.fine("=========================================================");
 			vertex = vertex.getNextGreql2Vertex();
 		}
-		VertexEvaluator<Greql2Expression> greql2ExpEval = ((QueryImpl) query)
+		VertexEvaluator<Greql2Expression> greql2ExpEval = ((GreqlQueryImpl) query)
 				.getVertexEvaluator(syntaxgraph.getFirstGreql2Expression());
 		greql2ExpEval.resetSubtreeToInitialState(null);
 		long estimatedInterpretationSteps = greql2ExpEval

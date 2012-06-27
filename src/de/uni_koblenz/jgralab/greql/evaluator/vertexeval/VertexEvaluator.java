@@ -47,7 +47,7 @@ import java.util.logging.Logger;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.greql.evaluator.InternalGreqlEvaluator;
-import de.uni_koblenz.jgralab.greql.evaluator.QueryImpl;
+import de.uni_koblenz.jgralab.greql.evaluator.GreqlQueryImpl;
 import de.uni_koblenz.jgralab.greql.evaluator.VertexCosts;
 import de.uni_koblenz.jgralab.greql.exception.QuerySourceException;
 import de.uni_koblenz.jgralab.greql.schema.Greql2Aggregation;
@@ -86,7 +86,7 @@ public abstract class VertexEvaluator<V extends Greql2Vertex> {
 
 	protected V vertex;
 
-	protected QueryImpl query;
+	protected GreqlQueryImpl query;
 
 	/**
 	 * The costs for the current evaluation of the whole subtree in the abstract
@@ -153,9 +153,9 @@ public abstract class VertexEvaluator<V extends Greql2Vertex> {
 	 * @param eval
 	 *            the GreqlEvaluator this VertexEvaluator belongs to
 	 * @param query
-	 *            the {@link QueryImpl} this {@link VertexEvaluator} belongs to
+	 *            the {@link GreqlQueryImpl} this {@link VertexEvaluator} belongs to
 	 */
-	protected VertexEvaluator(V vertex, QueryImpl query) {
+	protected VertexEvaluator(V vertex, GreqlQueryImpl query) {
 		this.vertex = vertex;
 		this.query = query;
 	}
@@ -497,7 +497,7 @@ public abstract class VertexEvaluator<V extends Greql2Vertex> {
 	 * creates a vertex evaluator for the given vertex
 	 */
 	public static <V extends Greql2Vertex> VertexEvaluator<V> createVertexEvaluator(
-			V vertex, QueryImpl query) {
+			V vertex, GreqlQueryImpl query) {
 		Class<?> vertexClass = vertex.getClass();
 		String fullClassName = vertexClass.getName();
 		// remove the "Impl" ...
@@ -516,7 +516,7 @@ public abstract class VertexEvaluator<V extends Greql2Vertex> {
 				+ evalName;
 		try {
 			Class<?> argsClass[] = new Class[] { Class.forName(fullClassName),
-					QueryImpl.class };
+					GreqlQueryImpl.class };
 			Class<?> evalClass = Class.forName(evalName);
 			Constructor<?> constructor = evalClass.getConstructor(argsClass);
 			@SuppressWarnings("unchecked")

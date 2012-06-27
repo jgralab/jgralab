@@ -54,7 +54,7 @@ import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.WorkInProgress;
 import de.uni_koblenz.jgralab.codegenerator.CodeGeneratorConfiguration;
-import de.uni_koblenz.jgralab.greql.Query;
+import de.uni_koblenz.jgralab.greql.GreqlQuery;
 import de.uni_koblenz.jgralab.greql.evaluator.GreqlEnvironmentAdapter;
 import de.uni_koblenz.jgralab.greql.exception.GreqlException;
 import de.uni_koblenz.jgralab.greql.serialising.HTMLOutputWriter;
@@ -148,7 +148,7 @@ public class GReQLConsole {
 					System.out.println("Evaluating query: ");
 					System.out.println(query);
 				}
-				result = Query.createQuery(query).evaluate(graph,
+				result = GreqlQuery.createQuery(query).evaluate(graph,
 						new GreqlEnvironmentAdapter(),
 						(verbose ? new ConsoleProgressFunction() : null));
 				if (verbose && result instanceof Collection) {

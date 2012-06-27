@@ -39,7 +39,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.uni_koblenz.jgralab.greql.evaluator.InternalGreqlEvaluator;
-import de.uni_koblenz.jgralab.greql.evaluator.QueryImpl;
+import de.uni_koblenz.jgralab.greql.evaluator.GreqlQueryImpl;
 import de.uni_koblenz.jgralab.greql.evaluator.VertexCosts;
 import de.uni_koblenz.jgralab.greql.exception.UnknownTypeException;
 import de.uni_koblenz.jgralab.greql.schema.TypeId;
@@ -54,7 +54,7 @@ import de.uni_koblenz.jgralab.schema.GraphElementClass;
  */
 public class TypeIdEvaluator extends VertexEvaluator<TypeId> {
 
-	public TypeIdEvaluator(TypeId vertex, QueryImpl query) {
+	public TypeIdEvaluator(TypeId vertex, GreqlQueryImpl query) {
 		super(vertex, query);
 	}
 

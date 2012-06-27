@@ -48,7 +48,7 @@ import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.greql.Query;
+import de.uni_koblenz.jgralab.greql.GreqlQuery;
 import de.uni_koblenz.jgralab.greql.evaluator.fa.State;
 import de.uni_koblenz.jgralab.greql.exception.SerialisingException;
 import de.uni_koblenz.jgralab.greql.serialising.HTMLOutputWriter;
@@ -242,7 +242,7 @@ public class StoreValuesTest {
 		String qu = "from a,b:V with connected report a,b end where connected := a-->b";
 
 		@SuppressWarnings("unchecked")
-		PVector<Vertex> result = (PVector<Vertex>) Query.createQuery(qu)
+		PVector<Vertex> result = (PVector<Vertex>) GreqlQuery.createQuery(qu)
 				.evaluate(graph);
 
 		generateHTMLandXMLoutput(result.get(0), "outputTupleOfVertices", graph,
@@ -266,7 +266,7 @@ public class StoreValuesTest {
 	@Test
 	public void testOutputOfSlice() {
 		String qu = "from w: V{localities.Town} report slice(w, <--) end";
-		Object result = Query.createQuery(qu).evaluate(graph);
+		Object result = GreqlQuery.createQuery(qu).evaluate(graph);
 
 		try {
 			HTMLOutputWriter writer = new HTMLOutputWriter(graph);
@@ -286,7 +286,7 @@ public class StoreValuesTest {
 	@Test(expected = SerialisingException.class)
 	public void testOutputOfSliceException() {
 		String qu = "from w: V{localities.Town} report slice(w, <--) end";
-		Object result = Query.createQuery(qu).evaluate(graph);
+		Object result = GreqlQuery.createQuery(qu).evaluate(graph);
 
 		try {
 			XMLOutputWriter writer = new XMLOutputWriter(graph);
@@ -379,7 +379,7 @@ public class StoreValuesTest {
 
 	public void evaluateQueryAndSaveResult(String query, String filename) {
 
-		Object result = Query.createQuery(query).evaluate(graph);
+		Object result = GreqlQuery.createQuery(query).evaluate(graph);
 
 		generateHTMLandXMLoutput(result, filename, graph, true);
 	}

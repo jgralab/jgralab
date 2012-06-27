@@ -38,7 +38,7 @@ import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.eca.events.Event;
 import de.uni_koblenz.jgralab.greql.GreqlEnvironment;
-import de.uni_koblenz.jgralab.greql.Query;
+import de.uni_koblenz.jgralab.greql.GreqlQuery;
 import de.uni_koblenz.jgralab.greql.evaluator.GreqlEnvironmentAdapter;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 
@@ -75,13 +75,13 @@ public class GreqlCondition<AEC extends AttributedElementClass<AEC, ?>>
 		AttributedElement<AEC, ?> element = event.getElement();
 		Graph datagraph = ((ECARuleManager) event.getGraph()
 				.getECARuleManager()).getGraph();
-		Query query = null;
+		GreqlQuery query = null;
 		GreqlEnvironment environment = new GreqlEnvironmentAdapter();
 		if (conditionExpression.contains("context")) {
-			query = Query.createQuery("using context: " + conditionExpression);
+			query = GreqlQuery.createQuery("using context: " + conditionExpression);
 			environment.setVariable("context", element);
 		} else {
-			query = Query.createQuery(conditionExpression);
+			query = GreqlQuery.createQuery(conditionExpression);
 		}
 		return (Boolean) query.evaluate(datagraph, environment);
 	}

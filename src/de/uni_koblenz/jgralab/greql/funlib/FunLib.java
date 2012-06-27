@@ -54,7 +54,7 @@ import java.util.logging.Logger;
 
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.JGraLab;
-import de.uni_koblenz.jgralab.greql.Query;
+import de.uni_koblenz.jgralab.greql.GreqlQuery;
 import de.uni_koblenz.jgralab.greql.exception.GreqlException;
 import de.uni_koblenz.jgralab.greql.funlib.Function.Category;
 import de.uni_koblenz.jgralab.greql.funlib.misc.GreqlQueryFunction;
@@ -486,30 +486,30 @@ public class FunLib {
 
 	public static final void registerSubQueryFunction(String name,
 			String queryText) {
-		registerSubQueryFunction(name, Query.createQuery(queryText), true);
+		registerSubQueryFunction(name, GreqlQuery.createQuery(queryText), true);
 	}
 
 	public static final void registerSubQueryFunction(String name,
 			String queryText, boolean needsGraphArgument) {
-		registerSubQueryFunction(name, Query.createQuery(queryText),
+		registerSubQueryFunction(name, GreqlQuery.createQuery(queryText),
 				needsGraphArgument);
 	}
 
 	public static final void registerSubQueryFunction(String name,
 			String queryText, boolean needsGraphArgument, long costs,
 			long cardinality, double selectivity) {
-		registerSubQueryFunction(name, Query.createQuery(queryText),
+		registerSubQueryFunction(name, GreqlQuery.createQuery(queryText),
 				needsGraphArgument, costs, cardinality, selectivity);
 	}
 
-	public static final void registerSubQueryFunction(String name, Query query,
+	public static final void registerSubQueryFunction(String name, GreqlQuery query,
 			boolean needsGraphArgument) {
 		GreqlQueryFunction subquery = needsGraphArgument ? new GreqlQueryFunctionWithGraphArgument(
 				query) : new GreqlQueryFunction(query);
 		registerSubquery(name, subquery);
 	}
 
-	public static final void registerSubQueryFunction(String name, Query query,
+	public static final void registerSubQueryFunction(String name, GreqlQuery query,
 			boolean needsGraphArgument, long costs, long cardinality,
 			double selectivity) {
 		GreqlQueryFunction subquery = needsGraphArgument ? new GreqlQueryFunctionWithGraphArgument(

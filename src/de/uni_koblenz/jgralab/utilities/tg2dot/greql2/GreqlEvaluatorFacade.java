@@ -43,10 +43,10 @@ import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql.GreqlEnvironment;
-import de.uni_koblenz.jgralab.greql.Query;
+import de.uni_koblenz.jgralab.greql.GreqlQuery;
 import de.uni_koblenz.jgralab.greql.evaluator.GreqlEnvironmentAdapter;
 import de.uni_koblenz.jgralab.greql.evaluator.GreqlEvaluatorImpl;
-import de.uni_koblenz.jgralab.greql.evaluator.QueryImpl;
+import de.uni_koblenz.jgralab.greql.evaluator.GreqlQueryImpl;
 import de.uni_koblenz.jgralab.greql.funlib.FunLib;
 import de.uni_koblenz.jgralab.schema.AggregationKind;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
@@ -317,14 +317,14 @@ public class GreqlEvaluatorFacade {
 		query = getUsingString() + query;
 		Object result = null;
 		try {
-			result = Query.createQuery(query).evaluate(dataGraph,
+			result = GreqlQuery.createQuery(query).evaluate(dataGraph,
 					greqlEnvironment);
 		} catch (RuntimeException parse) {
 			parse.printStackTrace();
 			throw parse;
 		}
 		GreqlEvaluatorImpl.DEBUG_DECLARATION_ITERATIONS = false;
-		QueryImpl.DEBUG_OPTIMIZATION = false;
+		GreqlQueryImpl.DEBUG_OPTIMIZATION = false;
 		return result;
 	}
 

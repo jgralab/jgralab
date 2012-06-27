@@ -43,7 +43,7 @@ import org.pcollections.PMap;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.greql.evaluator.InternalGreqlEvaluator;
-import de.uni_koblenz.jgralab.greql.evaluator.QueryImpl;
+import de.uni_koblenz.jgralab.greql.evaluator.GreqlQueryImpl;
 import de.uni_koblenz.jgralab.greql.evaluator.VariableDeclarationLayer;
 import de.uni_koblenz.jgralab.greql.evaluator.VertexCosts;
 import de.uni_koblenz.jgralab.greql.schema.Declaration;
@@ -57,7 +57,7 @@ import de.uni_koblenz.jgralab.greql.schema.MapComprehension;
 public class MapComprehensionEvaluator extends
 		ComprehensionEvaluator<MapComprehension> {
 
-	public MapComprehensionEvaluator(MapComprehension vertex, QueryImpl query) {
+	public MapComprehensionEvaluator(MapComprehension vertex, GreqlQueryImpl query) {
 		super(vertex, query);
 	}
 

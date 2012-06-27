@@ -40,7 +40,7 @@ import java.util.Set;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql.evaluator.InternalGreqlEvaluator;
-import de.uni_koblenz.jgralab.greql.evaluator.QueryImpl;
+import de.uni_koblenz.jgralab.greql.evaluator.GreqlQueryImpl;
 import de.uni_koblenz.jgralab.greql.evaluator.vertexeval.ThisEdgeEvaluator;
 import de.uni_koblenz.jgralab.greql.evaluator.vertexeval.VertexEvaluator;
 import de.uni_koblenz.jgralab.greql.schema.Expression;
@@ -243,7 +243,7 @@ public class SimpleTransition extends Transition {
 	public SimpleTransition(State start, State end, GReQLDirection dir,
 			TypeCollection typeCollection, Set<String> roles,
 			VertexEvaluator<? extends Expression> predicateEvaluator,
-			QueryImpl query) {
+			GreqlQueryImpl query) {
 		super(start, end);
 		validDirection = dir;
 		validToEdgeRoles = roles;

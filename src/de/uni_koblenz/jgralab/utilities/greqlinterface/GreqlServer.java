@@ -55,9 +55,9 @@ import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.graphmarker.BooleanGraphMarker;
-import de.uni_koblenz.jgralab.greql.Query;
+import de.uni_koblenz.jgralab.greql.GreqlQuery;
 import de.uni_koblenz.jgralab.greql.evaluator.GreqlEnvironmentAdapter;
-import de.uni_koblenz.jgralab.greql.evaluator.QueryImpl;
+import de.uni_koblenz.jgralab.greql.evaluator.GreqlQueryImpl;
 import de.uni_koblenz.jgralab.greql.types.Path;
 import de.uni_koblenz.jgralab.greql.types.PathSystem;
 import de.uni_koblenz.jgralab.greql.types.Slice;
@@ -217,7 +217,7 @@ public class GreqlServer extends Thread {
 
 	private Object evalQuery(String queryFile) throws IOException {
 		println("Evaling query file " + queryFile + ".", PrintTarget.BOTH, true);
-		Query query = QueryImpl.readQuery(new File(queryFile));
+		GreqlQuery query = GreqlQueryImpl.readQuery(new File(queryFile));
 		Object result = null;
 		try {
 			long startTime = System.currentTimeMillis();

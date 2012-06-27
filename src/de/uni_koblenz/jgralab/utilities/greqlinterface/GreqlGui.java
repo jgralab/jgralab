@@ -89,11 +89,11 @@ import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.ImplementationType;
 import de.uni_koblenz.jgralab.ProgressFunction;
 import de.uni_koblenz.jgralab.greql.GreqlEvaluator;
-import de.uni_koblenz.jgralab.greql.Query;
+import de.uni_koblenz.jgralab.greql.GreqlQuery;
 import de.uni_koblenz.jgralab.greql.evaluator.GraphSize;
 import de.uni_koblenz.jgralab.greql.evaluator.GreqlEnvironmentAdapter;
 import de.uni_koblenz.jgralab.greql.evaluator.GreqlEvaluatorImpl;
-import de.uni_koblenz.jgralab.greql.evaluator.QueryImpl;
+import de.uni_koblenz.jgralab.greql.evaluator.GreqlQueryImpl;
 import de.uni_koblenz.jgralab.greql.exception.GreqlException;
 import de.uni_koblenz.jgralab.greql.exception.ParsingException;
 import de.uni_koblenz.jgralab.greql.exception.QuerySourceException;
@@ -388,10 +388,10 @@ public class GreqlGui extends SwingApplication {
 		public void run() {
 			progressBar.setIndeterminate(true);
 			try {
-				final Query query = Query.createQuery(queryString,
+				final GreqlQuery query = GreqlQuery.createQuery(queryString,
 						enableOptimizerCheckBoxItem.isSelected(),
 						new GraphSize(graph));
-				QueryImpl.DEBUG_OPTIMIZATION = debugOptimizerCheckBoxItem
+				GreqlQueryImpl.DEBUG_OPTIMIZATION = debugOptimizerCheckBoxItem
 						.isSelected();
 				final GreqlEvaluator eval = new GreqlEvaluatorImpl();
 				try {

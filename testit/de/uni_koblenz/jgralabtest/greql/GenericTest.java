@@ -55,7 +55,7 @@ import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.ImplementationType;
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.greql.GreqlEnvironment;
-import de.uni_koblenz.jgralab.greql.Query;
+import de.uni_koblenz.jgralab.greql.GreqlQuery;
 import de.uni_koblenz.jgralab.greql.evaluator.GreqlEnvironmentAdapter;
 import de.uni_koblenz.jgralab.greql.optimizer.DefaultOptimizer;
 import de.uni_koblenz.jgralab.greql.optimizer.Optimizer;
@@ -243,7 +243,7 @@ public class GenericTest {
 
 	private static GreqlEnvironment environment = new GreqlEnvironmentAdapter();
 
-	public static Query query = Query.createQuery(null);
+	public static GreqlQuery query = GreqlQuery.createQuery(null);
 
 	@Before
 	public void setUp() throws Exception {
@@ -385,7 +385,7 @@ public class GenericTest {
 
 	protected Object evalTestQuery(String functionName, String query,
 			Optimizer optimizer, Graph datagraph) throws Exception {
-		GenericTest.query = Query.createQuery(query, optimizer);
+		GenericTest.query = GreqlQuery.createQuery(query, optimizer);
 		GenericTest.query.setUseSavedOptimizedSyntaxGraph(false);
 
 		Object result = GenericTest.query.evaluate(datagraph, environment);
@@ -399,7 +399,7 @@ public class GenericTest {
 
 	protected Object evalQuery(String query, Optimizer optimizer,
 			Graph datagraph) throws Exception {
-		Query queryObj = Query.createQuery(query, optimizer);
+		GreqlQuery queryObj = GreqlQuery.createQuery(query, optimizer);
 		queryObj.setUseSavedOptimizedSyntaxGraph(false);
 
 		return queryObj.evaluate(datagraph, environment);

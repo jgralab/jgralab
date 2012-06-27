@@ -40,7 +40,7 @@ import org.pcollections.PSet;
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql.evaluator.InternalGreqlEvaluator;
-import de.uni_koblenz.jgralab.greql.evaluator.QueryImpl;
+import de.uni_koblenz.jgralab.greql.evaluator.GreqlQueryImpl;
 import de.uni_koblenz.jgralab.greql.evaluator.VertexCosts;
 import de.uni_koblenz.jgralab.greql.schema.IsTypeRestrOfExpression;
 import de.uni_koblenz.jgralab.greql.schema.TypeId;
@@ -74,7 +74,7 @@ public class VertexSetExpressionEvaluator extends
 	 *            the vertex this VertexEvaluator evaluates
 	 */
 	public VertexSetExpressionEvaluator(VertexSetExpression vertex,
-			QueryImpl query) {
+			GreqlQueryImpl query) {
 		super(vertex, query);
 	}
 

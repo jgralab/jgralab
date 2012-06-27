@@ -38,7 +38,7 @@ import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.TraversalContext;
 import de.uni_koblenz.jgralab.greql.evaluator.InternalGreqlEvaluator;
-import de.uni_koblenz.jgralab.greql.evaluator.QueryImpl;
+import de.uni_koblenz.jgralab.greql.evaluator.GreqlQueryImpl;
 import de.uni_koblenz.jgralab.greql.evaluator.VertexCosts;
 import de.uni_koblenz.jgralab.greql.schema.Expression;
 import de.uni_koblenz.jgralab.greql.schema.IsExpressionOnSubgraph;
@@ -54,7 +54,7 @@ public class SubgraphRestrictedExpressionEvaluator extends
 	VertexEvaluator<? extends Expression> exprEval;
 
 	public SubgraphRestrictedExpressionEvaluator(
-			SubgraphRestrictedExpression vertex, QueryImpl query) {
+			SubgraphRestrictedExpression vertex, GreqlQueryImpl query) {
 		super(vertex, query);
 	}
 

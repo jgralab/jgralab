@@ -54,7 +54,7 @@ import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.graphmarker.GraphMarker;
 import de.uni_koblenz.jgralab.greql.GreqlEnvironment;
 import de.uni_koblenz.jgralab.greql.OptimizerInfo;
-import de.uni_koblenz.jgralab.greql.Query;
+import de.uni_koblenz.jgralab.greql.GreqlQuery;
 import de.uni_koblenz.jgralab.greql.evaluator.vertexeval.VertexEvaluator;
 import de.uni_koblenz.jgralab.greql.optimizer.DefaultOptimizer;
 import de.uni_koblenz.jgralab.greql.optimizer.Optimizer;
@@ -70,7 +70,7 @@ import de.uni_koblenz.jgralab.impl.GraphBaseImpl;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.Schema;
 
-public class QueryImpl extends Query implements GraphStructureChangedListener {
+public class GreqlQueryImpl extends GreqlQuery implements GraphStructureChangedListener {
 	private final String queryText;
 	private Greql2Graph queryGraph;
 	private PSet<String> usedVariables;
@@ -136,24 +136,24 @@ public class QueryImpl extends Query implements GraphStructureChangedListener {
 
 	private static final QueryGraphCache queryGraphCache = new QueryGraphCache();
 
-	public QueryImpl(String queryText) {
+	public GreqlQueryImpl(String queryText) {
 		this(queryText, true);
 	}
 
-	public QueryImpl(String queryText, boolean optimize) {
+	public GreqlQueryImpl(String queryText, boolean optimize) {
 		this(queryText, optimize, OptimizerUtility.getDefaultOptimizerInfo());
 	}
 
-	public QueryImpl(String queryText, OptimizerInfo optimizerInfo) {
+	public GreqlQueryImpl(String queryText, OptimizerInfo optimizerInfo) {
 		this(queryText, true, optimizerInfo);
 	}
 
-	public QueryImpl(String queryText, Optimizer optimizer) {
+	public GreqlQueryImpl(String queryText, Optimizer optimizer) {
 		this(queryText, optimizer != null, OptimizerUtility
 				.getDefaultOptimizerInfo(), optimizer);
 	}
 
-	public QueryImpl(String queryText, boolean optimize,
+	public GreqlQueryImpl(String queryText, boolean optimize,
 			OptimizerInfo optimizerInfo) {
 		this.queryText = queryText;
 		this.optimize = optimize;
@@ -161,7 +161,7 @@ public class QueryImpl extends Query implements GraphStructureChangedListener {
 		knownTypes = new HashMap<Schema, Map<String, AttributedElementClass<?, ?>>>();
 	}
 
-	public QueryImpl(String queryText, boolean optimize,
+	public GreqlQueryImpl(String queryText, boolean optimize,
 			OptimizerInfo optimizerInfo, Optimizer optimizer) {
 		this(queryText, optimize, optimizerInfo);
 		this.optimizer = optimizer;
@@ -415,7 +415,7 @@ public class QueryImpl extends Query implements GraphStructureChangedListener {
 			GreqlParser {
 
 		public GreqlParserWithVertexEvaluatorUpdates(String source,
-				Set<String> subQueryNames, QueryImpl gscl) {
+				Set<String> subQueryNames, GreqlQueryImpl gscl) {
 			super(source, subQueryNames);
 			if (gscl != null) {
 				graph.addGraphStructureChangedListener(gscl);
@@ -423,13 +423,13 @@ public class QueryImpl extends Query implements GraphStructureChangedListener {
 			}
 		}
 
-		public static Greql2Graph parse(String query, QueryImpl gscl,
+		public static Greql2Graph parse(String query, GreqlQueryImpl gscl,
 				Set<String> subQueryNames) {
 			return parse(query, subQueryNames, gscl);
 		}
 
 		public static Greql2Graph parse(String query,
-				Set<String> subQueryNames, QueryImpl gscl) {
+				Set<String> subQueryNames, GreqlQueryImpl gscl) {
 			GreqlParser parser = new GreqlParserWithVertexEvaluatorUpdates(
 					query, subQueryNames, gscl);
 			parser.parse();

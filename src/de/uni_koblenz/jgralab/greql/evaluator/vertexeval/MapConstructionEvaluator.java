@@ -40,7 +40,7 @@ import org.pcollections.PVector;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.greql.evaluator.InternalGreqlEvaluator;
-import de.uni_koblenz.jgralab.greql.evaluator.QueryImpl;
+import de.uni_koblenz.jgralab.greql.evaluator.GreqlQueryImpl;
 import de.uni_koblenz.jgralab.greql.evaluator.VertexCosts;
 import de.uni_koblenz.jgralab.greql.exception.GreqlException;
 import de.uni_koblenz.jgralab.greql.schema.Expression;
@@ -50,7 +50,7 @@ import de.uni_koblenz.jgralab.greql.schema.MapConstruction;
 
 public class MapConstructionEvaluator extends VertexEvaluator<MapConstruction> {
 
-	public MapConstructionEvaluator(MapConstruction vertex, QueryImpl query) {
+	public MapConstructionEvaluator(MapConstruction vertex, GreqlQueryImpl query) {
 		super(vertex, query);
 	}
 

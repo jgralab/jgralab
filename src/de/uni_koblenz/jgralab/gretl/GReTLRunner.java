@@ -48,7 +48,7 @@ import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.ImplementationType;
 import de.uni_koblenz.jgralab.JGraLab;
-import de.uni_koblenz.jgralab.greql.Query;
+import de.uni_koblenz.jgralab.greql.GreqlQuery;
 import de.uni_koblenz.jgralab.greql.schema.Greql2Schema;
 import de.uni_koblenz.jgralab.gretl.template.TemplateSchema;
 import de.uni_koblenz.jgralab.impl.ConsoleProgressFunction;
@@ -70,7 +70,7 @@ public class GReTLRunner {
 		Greql2Schema.instance().createGraph(ImplementationType.STANDARD);
 
 		// Also load the greql machinery
-		Query.createQuery("from x: list(1..10) with x = 5 reportSet x end")
+		GreqlQuery.createQuery("from x: list(1..10) with x = 5 reportSet x end")
 				.evaluate();
 
 		// Ditto for the template schema

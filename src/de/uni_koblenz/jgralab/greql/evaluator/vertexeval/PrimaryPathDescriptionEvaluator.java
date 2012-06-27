@@ -39,7 +39,7 @@ import java.util.Set;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
-import de.uni_koblenz.jgralab.greql.evaluator.QueryImpl;
+import de.uni_koblenz.jgralab.greql.evaluator.GreqlQueryImpl;
 import de.uni_koblenz.jgralab.greql.schema.Direction;
 import de.uni_koblenz.jgralab.greql.schema.GReQLDirection;
 import de.uni_koblenz.jgralab.greql.schema.PrimaryPathDescription;
@@ -55,7 +55,7 @@ public abstract class PrimaryPathDescriptionEvaluator<V extends PrimaryPathDescr
 
 	private GReQLDirection validDirection = null;
 
-	public PrimaryPathDescriptionEvaluator(V vertex, QueryImpl query) {
+	public PrimaryPathDescriptionEvaluator(V vertex, GreqlQueryImpl query) {
 		super(vertex, query);
 	}
 

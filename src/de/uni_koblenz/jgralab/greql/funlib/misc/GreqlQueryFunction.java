@@ -2,7 +2,7 @@ package de.uni_koblenz.jgralab.greql.funlib.misc;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.greql.GreqlEnvironment;
-import de.uni_koblenz.jgralab.greql.Query;
+import de.uni_koblenz.jgralab.greql.GreqlQuery;
 import de.uni_koblenz.jgralab.greql.evaluator.GreqlEnvironmentAdapter;
 import de.uni_koblenz.jgralab.greql.exception.GreqlException;
 import de.uni_koblenz.jgralab.greql.funlib.Function;
@@ -12,22 +12,22 @@ import de.uni_koblenz.jgralab.greql.schema.Variable;
 
 public class GreqlQueryFunction extends Function {
 
-	protected Query query;
+	protected GreqlQuery query;
 
 	protected String[] parameterNames;
 
-	public GreqlQueryFunction(Query query) {
+	public GreqlQueryFunction(GreqlQuery query) {
 		super();
 		initialize(query);
 	}
 
-	public GreqlQueryFunction(Query query, long costs, long cardinality,
+	public GreqlQueryFunction(GreqlQuery query, long costs, long cardinality,
 			double selectivity) {
 		super(costs, cardinality, selectivity);
 		initialize(query);
 	}
 
-	protected void initialize(Query query) {
+	protected void initialize(GreqlQuery query) {
 		this.query = query;
 		Greql2Expression greql2Expression = query.getQueryGraph()
 				.getFirstGreql2Expression();

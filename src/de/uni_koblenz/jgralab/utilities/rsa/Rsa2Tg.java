@@ -128,7 +128,7 @@ import de.uni_koblenz.jgralab.graphmarker.BooleanGraphMarker;
 import de.uni_koblenz.jgralab.graphmarker.GraphMarker;
 import de.uni_koblenz.jgralab.graphvalidator.ConstraintViolation;
 import de.uni_koblenz.jgralab.graphvalidator.GraphValidator;
-import de.uni_koblenz.jgralab.greql.Query;
+import de.uni_koblenz.jgralab.greql.GreqlQuery;
 import de.uni_koblenz.jgralab.grumlschema.GrumlSchema;
 import de.uni_koblenz.jgralab.grumlschema.SchemaGraph;
 import de.uni_koblenz.jgralab.grumlschema.domains.CollectionDomain;
@@ -387,8 +387,8 @@ public class Rsa2Tg extends XmlProcessor {
 
 	private boolean inOwnedAttribute;
 
-	private Query edgeClassAcyclicQuery;
-	private Query vertexClassAcyclicQuery;
+	private GreqlQuery edgeClassAcyclicQuery;
+	private GreqlQuery vertexClassAcyclicQuery;
 
 	private boolean inDefaultValue;
 
@@ -2293,7 +2293,7 @@ public class Rsa2Tg extends XmlProcessor {
 	 */
 	private boolean edgeClassHierarchyIsAcyclic() {
 		if (edgeClassAcyclicQuery == null) {
-			edgeClassAcyclicQuery = Query
+			edgeClassAcyclicQuery = GreqlQuery
 					.createQuery("on edgeTypeSubgraph{structure.SpecializesEdgeClass}(): isAcyclic()");
 		}
 		return (Boolean) edgeClassAcyclicQuery.evaluate(sg);
@@ -2306,7 +2306,7 @@ public class Rsa2Tg extends XmlProcessor {
 	 */
 	private boolean vertexClassHierarchyIsAcyclic() {
 		if (vertexClassAcyclicQuery == null) {
-			vertexClassAcyclicQuery = Query
+			vertexClassAcyclicQuery = GreqlQuery
 					.createQuery("on edgeTypeSubgraph{structure.SpecializesVertexClass}(): isAcyclic()");
 		}
 		return (Boolean) vertexClassAcyclicQuery.evaluate(sg);

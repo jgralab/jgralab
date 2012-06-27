@@ -38,7 +38,7 @@ import org.pcollections.PCollection;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.greql.evaluator.InternalGreqlEvaluator;
-import de.uni_koblenz.jgralab.greql.evaluator.QueryImpl;
+import de.uni_koblenz.jgralab.greql.evaluator.GreqlQueryImpl;
 import de.uni_koblenz.jgralab.greql.evaluator.VariableDeclarationLayer;
 import de.uni_koblenz.jgralab.greql.schema.Comprehension;
 import de.uni_koblenz.jgralab.greql.schema.Declaration;
@@ -51,7 +51,7 @@ public abstract class ComprehensionEvaluator<V extends Comprehension> extends
 	private VertexEvaluator<? extends Expression> resultDefinitionEvaluator = null;
 	protected long maxCount = Long.MAX_VALUE;
 
-	public ComprehensionEvaluator(V vertex, QueryImpl query) {
+	public ComprehensionEvaluator(V vertex, GreqlQueryImpl query) {
 		super(vertex, query);
 	}
 

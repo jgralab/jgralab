@@ -44,8 +44,8 @@ import java.util.Set;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.greql.Query;
-import de.uni_koblenz.jgralab.greql.evaluator.QueryImpl;
+import de.uni_koblenz.jgralab.greql.GreqlQuery;
+import de.uni_koblenz.jgralab.greql.evaluator.GreqlQueryImpl;
 import de.uni_koblenz.jgralab.greql.evaluator.vertexeval.VertexEvaluator;
 import de.uni_koblenz.jgralab.greql.schema.Declaration;
 import de.uni_koblenz.jgralab.greql.schema.Expression;
@@ -69,7 +69,7 @@ public class VariableDeclarationOrderUnit implements
 	private final Set<Vertex> dependentVertices;
 	private long variableValueChangeCosts = Long.MIN_VALUE;
 	private long typeExpressionCardinality = Long.MIN_VALUE;
-	private final Query query;
+	private final GreqlQuery query;
 	private final SimpleDeclaration simpleDeclarationOfVariable;
 	private final Expression typeExpressionOfVariable;
 
@@ -81,10 +81,10 @@ public class VariableDeclarationOrderUnit implements
 	 * @param declaringDecl
 	 *            the {@link Declaration} in which <code>var</code> is declared
 	 * @param query
-	 *            the {@link Query}
+	 *            the {@link GreqlQuery}
 	 */
 	VariableDeclarationOrderUnit(Variable var, Declaration declaringDecl,
-			Query query) {
+			GreqlQuery query) {
 		this.variable = var;
 		this.declaringDeclaration = declaringDecl;
 		this.query = query;
@@ -181,7 +181,7 @@ public class VariableDeclarationOrderUnit implements
 	private int calculateVariableValueChangeCosts() {
 		int costs = 0;
 		for (Vertex vertex : dependentVertices) {
-			VertexEvaluator<? extends Greql2Vertex> eval = ((QueryImpl) query)
+			VertexEvaluator<? extends Greql2Vertex> eval = ((GreqlQueryImpl) query)
 					.getVertexEvaluator((Greql2Vertex) vertex);
 			assert eval != null;
 			costs += eval.getOwnEvaluationCosts();
@@ -285,7 +285,7 @@ public class VariableDeclarationOrderUnit implements
 	 *         this {@link VariableDeclarationOrderUnit}
 	 */
 	private long calculateTypeExpressionCardinality() {
-		VertexEvaluator<? extends Expression> veval = ((QueryImpl) query)
+		VertexEvaluator<? extends Expression> veval = ((GreqlQueryImpl) query)
 				.getVertexEvaluator(typeExpressionOfVariable);
 		return veval.getEstimatedCardinality();
 	}

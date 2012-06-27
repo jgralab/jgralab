@@ -38,7 +38,7 @@ package de.uni_koblenz.jgralab.greql.evaluator.vertexeval;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Record;
 import de.uni_koblenz.jgralab.greql.evaluator.InternalGreqlEvaluator;
-import de.uni_koblenz.jgralab.greql.evaluator.QueryImpl;
+import de.uni_koblenz.jgralab.greql.evaluator.GreqlQueryImpl;
 import de.uni_koblenz.jgralab.greql.evaluator.VertexCosts;
 import de.uni_koblenz.jgralab.greql.schema.IsPartOf;
 import de.uni_koblenz.jgralab.greql.schema.IsRecordElementOf;
@@ -70,7 +70,7 @@ public class RecordConstructionEvaluator extends
 	 *            the vertex this VertexEvaluator evaluates
 	 */
 	public RecordConstructionEvaluator(RecordConstruction vertex,
-			QueryImpl query) {
+			GreqlQueryImpl query) {
 		super(vertex, query);
 	}
 

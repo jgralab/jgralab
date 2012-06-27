@@ -8,23 +8,23 @@ import java.util.Set;
 
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.ProgressFunction;
-import de.uni_koblenz.jgralab.greql.evaluator.QueryImpl;
+import de.uni_koblenz.jgralab.greql.evaluator.GreqlQueryImpl;
 import de.uni_koblenz.jgralab.greql.optimizer.Optimizer;
 import de.uni_koblenz.jgralab.greql.optimizer.OptimizerUtility;
 import de.uni_koblenz.jgralab.greql.schema.Greql2Expression;
 import de.uni_koblenz.jgralab.greql.schema.Greql2Graph;
 
-public abstract class Query {
-	public static Query readQuery(File f) throws IOException {
+public abstract class GreqlQuery {
+	public static GreqlQuery readQuery(File f) throws IOException {
 		return readQuery(f, true);
 	}
 
-	public static Query readQuery(File f, boolean optimize) throws IOException {
+	public static GreqlQuery readQuery(File f, boolean optimize) throws IOException {
 		return readQuery(f, optimize,
 				OptimizerUtility.getDefaultOptimizerInfo());
 	}
 
-	public static Query readQuery(File f, boolean optimize,
+	public static GreqlQuery readQuery(File f, boolean optimize,
 			OptimizerInfo optimizerInfo) throws IOException {
 		BufferedReader reader = null;
 		try {
@@ -47,31 +47,31 @@ public abstract class Query {
 		}
 	}
 
-	public static Query createQuery(String queryText) {
-		return new QueryImpl(queryText);
+	public static GreqlQuery createQuery(String queryText) {
+		return new GreqlQueryImpl(queryText);
 	}
 
-	public static Query createQuery(String queryText, boolean optimize) {
-		return new QueryImpl(queryText, optimize);
+	public static GreqlQuery createQuery(String queryText, boolean optimize) {
+		return new GreqlQueryImpl(queryText, optimize);
 	}
 
-	public static Query createQuery(String queryText,
+	public static GreqlQuery createQuery(String queryText,
 			OptimizerInfo optimizerInfo) {
-		return new QueryImpl(queryText, optimizerInfo);
+		return new GreqlQueryImpl(queryText, optimizerInfo);
 	}
 
-	public static Query createQuery(String queryText, Optimizer optimizer) {
-		return new QueryImpl(queryText, optimizer);
+	public static GreqlQuery createQuery(String queryText, Optimizer optimizer) {
+		return new GreqlQueryImpl(queryText, optimizer);
 	}
 
-	public static Query createQuery(String queryText, boolean optimize,
+	public static GreqlQuery createQuery(String queryText, boolean optimize,
 			OptimizerInfo optimizerInfo) {
-		return new QueryImpl(queryText, optimize, optimizerInfo);
+		return new GreqlQueryImpl(queryText, optimize, optimizerInfo);
 	}
 
-	public static Query createQuery(String queryText, boolean optimize,
+	public static GreqlQuery createQuery(String queryText, boolean optimize,
 			OptimizerInfo optimizerInfo, Optimizer optimizer) {
-		return new QueryImpl(queryText, optimize, optimizerInfo, optimizer);
+		return new GreqlQueryImpl(queryText, optimize, optimizerInfo, optimizer);
 	}
 
 	public abstract Greql2Graph getQueryGraph();

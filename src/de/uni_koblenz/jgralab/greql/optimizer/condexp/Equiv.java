@@ -37,7 +37,7 @@
  */
 package de.uni_koblenz.jgralab.greql.optimizer.condexp;
 
-import de.uni_koblenz.jgralab.greql.Query;
+import de.uni_koblenz.jgralab.greql.GreqlQuery;
 import de.uni_koblenz.jgralab.greql.schema.Expression;
 
 /**
@@ -48,7 +48,7 @@ import de.uni_koblenz.jgralab.greql.schema.Expression;
  */
 public class Equiv extends BinaryOperator {
 
-	public Equiv(Query query, Formula lhs, Formula rhs) {
+	public Equiv(GreqlQuery query, Formula lhs, Formula rhs) {
 		super(query, lhs, rhs);
 	}
 
