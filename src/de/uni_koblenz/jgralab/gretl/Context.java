@@ -58,6 +58,7 @@ import de.uni_koblenz.jgralab.greql.GreqlEnvironment;
 import de.uni_koblenz.jgralab.greql.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql.Query;
 import de.uni_koblenz.jgralab.greql.evaluator.GreqlEnvironmentAdapter;
+import de.uni_koblenz.jgralab.greql.funlib.FunLib;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.GraphClass;
 import de.uni_koblenz.jgralab.schema.GraphElementClass;
@@ -141,7 +142,7 @@ public class Context {
 
 	final void setGReQLHelper(String name, String greqlExpression) {
 		ensureQuery();
-		query.setSubQuery(name, greqlExpression);
+		FunLib.registerSubQueryFunction(name, greqlExpression);
 	}
 
 	final void addGReQLImport(String qualifiedName) {

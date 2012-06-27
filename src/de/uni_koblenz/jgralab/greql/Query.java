@@ -108,15 +108,6 @@ public abstract class Query {
 	public abstract Object evaluate(Graph datagraph,
 			GreqlEnvironment environment, ProgressFunction progressFunction);
 
-	public abstract void setSubQuery(String name, String greqlQuery,
-			boolean needsGraphArgument, long costs, long cardinality,
-			double selectivity);
-
-	public abstract void setSubQuery(String name, String greqlQuery,
-			boolean needsGraphArgument);
-
-	public abstract void setSubQuery(String name, String greqlQuery);
-
 	public abstract void setUseSavedOptimizedSyntaxGraph(
 			boolean useSavedOptimizedSyntaxGraph);
 

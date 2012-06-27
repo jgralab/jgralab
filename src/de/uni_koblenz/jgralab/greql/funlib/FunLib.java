@@ -484,23 +484,43 @@ public class FunLib {
 		functions.put(name, new FunctionInfo(name, cls));
 	}
 
+	public static final void registerSubQueryFunction(String name,
+			String queryText) {
+		registerSubQueryFunction(name, Query.createQuery(queryText), true);
+	}
+
+	public static final void registerSubQueryFunction(String name,
+			String queryText, boolean needsGraphArgument) {
+		registerSubQueryFunction(name, Query.createQuery(queryText),
+				needsGraphArgument);
+	}
+
+	public static final void registerSubQueryFunction(String name,
+			String queryText, boolean needsGraphArgument, long costs,
+			long cardinality, double selectivity) {
+		registerSubQueryFunction(name, Query.createQuery(queryText),
+				needsGraphArgument, costs, cardinality, selectivity);
+	}
+
 	public static final void registerSubQueryFunction(String name, Query query,
 			boolean needsGraphArgument) {
-		GreqlQueryFunction subquery = needsGraphArgument ? new GreqlQueryFunctionWithGraphArgument(query)
-				: new GreqlQueryFunction(query);
+		GreqlQueryFunction subquery = needsGraphArgument ? new GreqlQueryFunctionWithGraphArgument(
+				query) : new GreqlQueryFunction(query);
 		registerSubquery(name, subquery);
 	}
 
 	public static final void registerSubQueryFunction(String name, Query query,
 			boolean needsGraphArgument, long costs, long cardinality,
 			double selectivity) {
-		GreqlQueryFunction subquery = needsGraphArgument ? new GreqlQueryFunctionWithGraphArgument(query,
-				costs, cardinality, selectivity) : new GreqlQueryFunction(query, costs,
-				cardinality, selectivity);
+		GreqlQueryFunction subquery = needsGraphArgument ? new GreqlQueryFunctionWithGraphArgument(
+				query, costs, cardinality, selectivity)
+				: new GreqlQueryFunction(query, costs, cardinality, selectivity);
 		registerSubquery(name, subquery);
 	}
 
-	private static void registerSubquery(String name, GreqlQueryFunction subquery) {
+	private static void registerSubquery(String name,
+			GreqlQueryFunction subquery) {
+		checkSubQueryConstraints(name);
 		FunctionInfo fn = functions.get(name);
 		if (fn != null) {
 			if (fn.getFunction().getClass() == subquery.getClass()) {
@@ -514,6 +534,25 @@ public class FunLib {
 					+ " as '" + name + "'");
 		}
 		functions.put(name, new FunctionInfo(name, subquery));
+	}
+
+	private static void checkSubQueryConstraints(String name) {
+		if (name == null) {
+			throw new GreqlException("The name of a subquery must not be null!");
+		}
+		if (!name.matches("^\\w+$")) {
+			throw new GreqlException("Invalid subquery name '" + name
+					+ "'. Only word chars are allowed.");
+		}
+		if (FunLib.contains(name)) {
+			Class<? extends de.uni_koblenz.jgralab.greql.funlib.Function> functionClass = FunLib
+					.getFunctionInfo(name).getFunction().getClass();
+			if (functionClass != GreqlQueryFunction.class
+					&& functionClass != GreqlQueryFunctionWithGraphArgument.class) {
+				throw new GreqlException("The subquery '" + name
+						+ "' would shadow a GReQL function!");
+			}
+		}
 	}
 
 	public static final FunctionInfo getFunctionInfo(String functionName) {

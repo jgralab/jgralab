@@ -56,10 +56,6 @@ import de.uni_koblenz.jgralab.greql.GreqlEnvironment;
 import de.uni_koblenz.jgralab.greql.OptimizerInfo;
 import de.uni_koblenz.jgralab.greql.Query;
 import de.uni_koblenz.jgralab.greql.evaluator.vertexeval.VertexEvaluator;
-import de.uni_koblenz.jgralab.greql.exception.GreqlException;
-import de.uni_koblenz.jgralab.greql.funlib.FunLib;
-import de.uni_koblenz.jgralab.greql.funlib.misc.GreqlQueryFunction;
-import de.uni_koblenz.jgralab.greql.funlib.misc.GreqlQueryFunctionWithGraphArgument;
 import de.uni_koblenz.jgralab.greql.optimizer.DefaultOptimizer;
 import de.uni_koblenz.jgralab.greql.optimizer.Optimizer;
 import de.uni_koblenz.jgralab.greql.optimizer.OptimizerUtility;
@@ -474,48 +470,5 @@ public class QueryImpl extends Query implements GraphStructureChangedListener {
 	@Override
 	public String toString() {
 		return queryText;
-	}
-
-	@Override
-	public void setSubQuery(String name, String greqlQuery) {
-		setSubQuery(name, greqlQuery, true);
-	}
-
-	@Override
-	public void setSubQuery(String name, String greqlQuery,
-			boolean needsGraphArgument) {
-		checkSubQueryConstraints(name);
-
-		FunLib.registerSubQueryFunction(name, Query.createQuery(greqlQuery),
-				needsGraphArgument);
-	}
-
-	@Override
-	public void setSubQuery(String name, String greqlQuery,
-			boolean needsGraphArgument, long costs, long cardinality,
-			double selectivity) {
-		checkSubQueryConstraints(name);
-
-		FunLib.registerSubQueryFunction(name, Query.createQuery(greqlQuery),
-				needsGraphArgument, costs, cardinality, selectivity);
-	}
-
-	private void checkSubQueryConstraints(String name) {
-		if (name == null) {
-			throw new GreqlException("The name of a subquery must not be null!");
-		}
-		if (!name.matches("^\\w+$")) {
-			throw new GreqlException("Invalid subquery name '" + name
-					+ "'. Only word chars are allowed.");
-		}
-		if (FunLib.contains(name)) {
-			Class<? extends de.uni_koblenz.jgralab.greql.funlib.Function> functionClass = FunLib
-					.getFunctionInfo(name).getFunction().getClass();
-			if (functionClass != GreqlQueryFunction.class
-					&& functionClass != GreqlQueryFunctionWithGraphArgument.class) {
-				throw new GreqlException("The subquery '" + name
-						+ "' would shadow a GReQL function!");
-			}
-		}
 	}
 }
