@@ -14,7 +14,7 @@ import org.junit.Test;
 import de.uni_koblenz.jgralab.algolib.functions.ArrayPermutation;
 import de.uni_koblenz.jgralab.algolib.functions.entries.PermutationEntry;
 
-public class PermutationTest {
+public class ArrayPermutationTest {
 
 	private String[] permArray = new String[] { null, "first", "second",
 			"third", "fourth", "fifth", null };
