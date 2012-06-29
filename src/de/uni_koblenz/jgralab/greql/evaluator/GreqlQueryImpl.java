@@ -53,8 +53,8 @@ import de.uni_koblenz.jgralab.ProgressFunction;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.graphmarker.GraphMarker;
 import de.uni_koblenz.jgralab.greql.GreqlEnvironment;
-import de.uni_koblenz.jgralab.greql.OptimizerInfo;
 import de.uni_koblenz.jgralab.greql.GreqlQuery;
+import de.uni_koblenz.jgralab.greql.OptimizerInfo;
 import de.uni_koblenz.jgralab.greql.evaluator.vertexeval.VertexEvaluator;
 import de.uni_koblenz.jgralab.greql.optimizer.DefaultOptimizer;
 import de.uni_koblenz.jgralab.greql.optimizer.Optimizer;
@@ -70,7 +70,8 @@ import de.uni_koblenz.jgralab.impl.GraphBaseImpl;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.Schema;
 
-public class GreqlQueryImpl extends GreqlQuery implements GraphStructureChangedListener {
+public class GreqlQueryImpl extends GreqlQuery implements
+		GraphStructureChangedListener {
 	private final String queryText;
 	private Greql2Graph queryGraph;
 	private PSet<String> usedVariables;
@@ -78,10 +79,10 @@ public class GreqlQueryImpl extends GreqlQuery implements GraphStructureChangedL
 	private final boolean optimize;
 	private long optimizationTime = -1;
 	private long parseTime = -1;
-	private Greql2Expression rootExpression;
 	private final OptimizerInfo optimizerInfo;
 	private Optimizer optimizer;
 	private boolean useSavedOptimizedSyntaxGraph = true;
+	private Greql2Expression rootExpression;
 
 	/**
 	 * Print the text representation of the optimized query after optimization.
@@ -103,10 +104,20 @@ public class GreqlQueryImpl extends GreqlQuery implements GraphStructureChangedL
 	private static class QueryGraphCacheEntry {
 		Greql2Graph graph;
 		GraphMarker<VertexEvaluator<?>> eval;
+		Map<Schema, Map<String, AttributedElementClass<?, ?>>> knownTypes;
+		long optimizationTime = -1;
+		long parseTime = -1;
 
-		QueryGraphCacheEntry(Greql2Graph g, GraphMarker<VertexEvaluator<?>> e) {
+		QueryGraphCacheEntry(
+				Greql2Graph g,
+				GraphMarker<VertexEvaluator<?>> e,
+				Map<Schema, Map<String, AttributedElementClass<?, ?>>> knownTypes,
+				long optimizationTime, long parseTime) {
 			graph = g;
 			eval = e;
+			this.knownTypes = knownTypes;
+			this.optimizationTime = optimizationTime;
+			this.parseTime = parseTime;
 		}
 	}
 
@@ -126,11 +137,17 @@ public class GreqlQueryImpl extends GreqlQuery implements GraphStructureChangedL
 			return null;
 		}
 
-		void put(String queryText, boolean optimize, Greql2Graph queryGraph,
-				GraphMarker<VertexEvaluator<?>> evaluators) {
+		void put(
+				String queryText,
+				boolean optimize,
+				Greql2Graph queryGraph,
+				GraphMarker<VertexEvaluator<?>> evaluators,
+				Map<Schema, Map<String, AttributedElementClass<?, ?>>> knownTypes,
+				long optimizationTime, long parseTime) {
 			String key = optimize + "#" + queryText;
 			cache.put(key, new SoftReference<QueryGraphCacheEntry>(
-					new QueryGraphCacheEntry(queryGraph, evaluators)));
+					new QueryGraphCacheEntry(queryGraph, evaluators,
+							knownTypes, optimizationTime, parseTime)));
 		}
 	}
 
@@ -193,6 +210,9 @@ public class GreqlQueryImpl extends GreqlQuery implements GraphStructureChangedL
 				queryGraph = e.graph;
 				vertexEvaluators = e.eval;
 				rootExpression = queryGraph.getFirstGreql2Expression();
+				knownTypes = e.knownTypes;
+				parseTime = e.parseTime;
+				optimizationTime = e.optimizationTime;
 			}
 		}
 		if (queryGraph == null) {
@@ -232,7 +252,7 @@ public class GreqlQueryImpl extends GreqlQuery implements GraphStructureChangedL
 			rootExpression = queryGraph.getFirstGreql2Expression();
 			initializeVertexEvaluatorsMarker(queryGraph);
 			queryGraphCache.put(queryText, optimize, queryGraph,
-					vertexEvaluators);
+					vertexEvaluators, knownTypes, optimizationTime, parseTime);
 		}
 	}
 

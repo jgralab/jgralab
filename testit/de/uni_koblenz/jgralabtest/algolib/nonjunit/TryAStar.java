@@ -137,8 +137,6 @@ public class TryAStar {
 			sw.stop();
 			System.out.println(sw.getDurationString());
 			System.out.println(astar.getDistanceToTarget());
-			System.out.println("Max elements in queue: "
-					+ astar.getVertexQueue().getAddedCount());
 		}
 
 		System.out.println();
@@ -157,8 +155,6 @@ public class TryAStar {
 			System.out.println(sw.getDurationString());
 			// System.out.println(dijkstra.getWeightedDistance().get(target));
 			System.out.println(dijkstra.getDistanceToTarget());
-			System.out.println("Max elements in queue: "
-					+ dijkstra.getVertexQueue().getAddedCount());
 		}
 
 		System.out.println();
