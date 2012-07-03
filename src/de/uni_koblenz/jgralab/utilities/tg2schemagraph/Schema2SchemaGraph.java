@@ -975,8 +975,6 @@ public class Schema2SchemaGraph {
 		for (Entry<de.uni_koblenz.jgralab.schema.EdgeClass, EdgeClass> entry : edgeClassMap
 				.entrySet()) {
 			// Creates From and To edge
-			System.out.println("Key is: " + entry.getKey());
-			System.out.println("Value is: " + entry.getValue());
 			createIncidenceClass(entry.getKey(), entry.getValue());
 		}
 	}

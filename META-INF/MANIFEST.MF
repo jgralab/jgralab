@@ -190,7 +190,6 @@ Export-Package: de.uni_koblenz.ist.utilities.csvreader,
    de.uni_koblenz.jgralab",
  de.uni_koblenz.jgralab.greql.types;uses:="de.uni_koblenz.jgralab.schema,org.pcollections,de.uni_koblenz.jgralab",
  de.uni_koblenz.jgralab.greql.types.pathsearch;uses:="de.uni_koblenz.jgralab.greql2.evaluator.fa,de.uni_koblenz.jgralab",
- de.uni_koblenz.jgralab.greql2.evaluator.costmodel;uses:="de.uni_koblenz.jgralab.schema,de.uni_koblenz.jgralab.greql2.evaluator.vertexeval,de.uni_koblenz.jgralab",
  de.uni_koblenz.jgralab.gretl;
   uses:="de.uni_koblenz.jgralab.gretl.template,
    de.uni_koblenz.jgralab.gretl.parser,
