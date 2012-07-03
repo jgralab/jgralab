@@ -32,6 +32,16 @@ public class BreadthFirstSearchTest {
 				algorithm.addVisitor(stv);
 				algorithm.withLevel().withParent().execute();
 				stv.performPostTests();
+
+				algorithm.reset();
+				algorithm.undirected();
+				algorithm.execute();
+				stv.performPostTests();
+
+				algorithm.reset();
+				algorithm.reversed();
+				algorithm.execute();
+				stv.performPostTests();
 			}
 		}
 	}
