@@ -100,4 +100,9 @@ public class BitSetVertexMarker extends BitSetGraphMarker<Vertex> {
 		};
 	}
 
+	@Override
+	public Iterable<Vertex> getDomainElements() {
+		return graph.vertices();
+	}
+
 }

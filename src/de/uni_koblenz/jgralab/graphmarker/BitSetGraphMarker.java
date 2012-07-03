@@ -151,32 +151,27 @@ public abstract class BitSetGraphMarker<T extends GraphElement<?, ?>> extends
 
 	@Override
 	public Iterator<BooleanFunctionEntry<T>> iterator() {
-		final Iterator<T> markedElements = getMarkedElements().iterator();
+		final Iterator<T> domainElements = getDomainElements().iterator();
 		return new Iterator<BooleanFunctionEntry<T>>() {
 
 			@Override
 			public boolean hasNext() {
-				return markedElements.hasNext();
+				return domainElements.hasNext();
 			}
 
 			@Override
 			public BooleanFunctionEntry<T> next() {
-				T currentElement = markedElements.next();
+				T currentElement = domainElements.next();
 				return new BooleanFunctionEntry<T>(currentElement,
 						get(currentElement));
 			}
 
 			@Override
 			public void remove() {
-				markedElements.remove();
+				domainElements.remove();
 			}
 
 		};
-	}
-
-	@Override
-	public Iterable<T> getDomainElements() {
-		return getMarkedElements();
 	}
 
 }

@@ -5,10 +5,18 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.util.Iterator;
+import java.util.NoSuchElementException;
+
 import org.junit.Before;
 import org.junit.Test;
 
 import de.uni_koblenz.jgralab.Vertex;
+import de.uni_koblenz.jgralab.algolib.functions.entries.BooleanFunctionEntry;
+import de.uni_koblenz.jgralab.algolib.functions.entries.DoubleFunctionEntry;
+import de.uni_koblenz.jgralab.algolib.functions.entries.FunctionEntry;
+import de.uni_koblenz.jgralab.algolib.functions.entries.IntFunctionEntry;
+import de.uni_koblenz.jgralab.algolib.functions.entries.LongFunctionEntry;
 import de.uni_koblenz.jgralab.graphmarker.ArrayVertexMarker;
 import de.uni_koblenz.jgralab.graphmarker.BitSetVertexMarker;
 import de.uni_koblenz.jgralab.graphmarker.DoubleVertexMarker;
@@ -37,7 +45,7 @@ public class GraphMarkersAsFunctionTest {
 		intData = new int[] { 0, 16, 42, -47, 8 };
 		longData = new long[] { 0l, 0l, 802398430298098l, -80980983245l, 7l };
 		doubleData = new double[] { 0.0, 16.47, -42.33023, Math.PI, Math.E };
-		booleanData = new boolean[] { false, true, true, false, false };
+		booleanData = new boolean[] { false, true, false, true, false };
 		objectData = new String[] { null, "eins", "zwei", "drei", "vier" };
 
 		graph = TestGraphs.getSimpleCyclicGraph();
@@ -104,11 +112,122 @@ public class GraphMarkersAsFunctionTest {
 
 	@Test
 	public void testGetDomainElements() {
-		fail("Not implemented yet.");
+		Iterable<Vertex> elements;
+
+		elements = intMarker.getDomainElements();
+		assertDomainElementOrder(elements);
+
+		elements = longMarker.getDomainElements();
+		assertDomainElementOrder(elements);
+
+		elements = doubleMarker.getDomainElements();
+		assertDomainElementOrder(elements);
+
+		elements = booleanMarker.getDomainElements();
+		assertDomainElementOrder(elements);
+
+		elements = objectMarker.getDomainElements();
+		assertDomainElementOrder(elements);
+	}
+
+	public void assertDomainElementOrder(Iterable<Vertex> vertexIterable) {
+		Iterable<Vertex> graphVertices = graph.vertices();
+		Iterator<Vertex> expected = graphVertices.iterator();
+		Iterator<Vertex> seen = vertexIterable.iterator();
+		while (expected.hasNext()) {
+			Vertex expectedVertex = expected.next();
+			Vertex seenVertex = seen.next();
+			assertEquals(expectedVertex, seenVertex);
+		}
+		try {
+			seen.next();
+			fail("There should not be any more vertices in the function domain.");
+		} catch (NoSuchElementException e) {
+		}
 	}
 
 	@Test
 	public void testIterator() {
-		fail("Not implemented yet.");
+		Iterator<IntFunctionEntry<Vertex>> intIter = intMarker.iterator();
+		Iterator<LongFunctionEntry<Vertex>> longIter = longMarker.iterator();
+		Iterator<DoubleFunctionEntry<Vertex>> doubleIter = doubleMarker
+				.iterator();
+		Iterator<BooleanFunctionEntry<Vertex>> booleanIter = booleanMarker
+				.iterator();
+		Iterator<FunctionEntry<Vertex, String>> objectIter = objectMarker
+				.iterator();
+
+		for (int i = 1; i <= 4; i++) {
+			System.out.println(i);
+			assertItersHaveNext(intIter, longIter, doubleIter, booleanIter,
+					objectIter);
+
+			Vertex expectedVertex = graph.getVertex(i);
+
+			IntFunctionEntry<Vertex> nextIntEntry = intIter.next();
+			assertEquals(expectedVertex, nextIntEntry.getFirst());
+			assertEquals(intData[i], nextIntEntry.getSecond());
+
+			LongFunctionEntry<Vertex> nextLongEntry = longIter.next();
+			assertEquals(expectedVertex, nextLongEntry.getFirst());
+			assertEquals(longData[i], nextLongEntry.getSecond());
+
+			DoubleFunctionEntry<Vertex> nextDoubleEntry = doubleIter.next();
+			assertEquals(expectedVertex, nextDoubleEntry.getFirst());
+			assertEquals(doubleData[i], nextDoubleEntry.getSecond(), 0.00001);
+
+			BooleanFunctionEntry<Vertex> nextBooleanEntry = booleanIter.next();
+			assertEquals(expectedVertex, nextBooleanEntry.getFirst());
+			assertEquals(booleanData[i], nextBooleanEntry.getSecond());
+
+			FunctionEntry<Vertex, String> nextObjectEntry = objectIter.next();
+			assertEquals(expectedVertex, nextObjectEntry.getFirst());
+			assertEquals(objectData[i], nextObjectEntry.getSecond());
+
+		}
+
+		try {
+			intIter.next();
+			fail("There should not be any more entries in the int function.");
+		} catch (NoSuchElementException e) {
+		}
+
+		try {
+			longIter.next();
+			fail("There should not be any more entries in the long function.");
+		} catch (NoSuchElementException e) {
+		}
+
+		try {
+			doubleIter.next();
+			fail("There should not be any more entries in the double function.");
+		} catch (NoSuchElementException e) {
+		}
+
+		try {
+			booleanIter.next();
+			fail("There should not be any more entries in the boolean function.");
+		} catch (NoSuchElementException e) {
+		}
+
+		try {
+			objectIter.next();
+			fail("There should not be any more entries in the object function.");
+		} catch (NoSuchElementException e) {
+		}
+
+	}
+
+	private void assertItersHaveNext(
+			Iterator<IntFunctionEntry<Vertex>> intIter,
+			Iterator<LongFunctionEntry<Vertex>> longIter,
+			Iterator<DoubleFunctionEntry<Vertex>> doubleIter,
+			Iterator<BooleanFunctionEntry<Vertex>> booleanIter,
+			Iterator<FunctionEntry<Vertex, String>> objectIter) {
+		assertTrue(intIter.hasNext());
+		assertTrue(longIter.hasNext());
+		assertTrue(doubleIter.hasNext());
+		assertTrue(booleanIter.hasNext());
+		assertTrue(objectIter.hasNext());
 	}
 }
