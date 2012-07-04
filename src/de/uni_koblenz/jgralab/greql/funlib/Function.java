@@ -51,12 +51,11 @@ public abstract class Function {
 	private double selectivity;
 
 	public Function() {
-		this( 1, 1, 1.0);
+		this(1, 1, 1.0);
 
 	}
 
-	public Function(long costs, long cardinality,
-			double selectivity) {
+	public Function(long costs, long cardinality, double selectivity) {
 		this.costs = costs;
 		this.cardinality = cardinality;
 		this.selectivity = selectivity;
