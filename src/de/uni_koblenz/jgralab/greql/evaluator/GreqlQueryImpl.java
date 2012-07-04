@@ -100,60 +100,6 @@ public class GreqlQueryImpl extends GreqlQuery implements
 	 */
 	private GraphMarker<VertexEvaluator<? extends Greql2Vertex>> vertexEvaluators;
 
-	// private static class QueryGraphCacheEntry {
-	// Greql2Graph graph;
-	// GraphMarker<VertexEvaluator<?>> eval;
-	// Map<Schema, Map<String, AttributedElementClass<?, ?>>> knownTypes;
-	// long optimizationTime = -1;
-	// long parseTime = -1;
-	//
-	// QueryGraphCacheEntry(
-	// Greql2Graph g,
-	// GraphMarker<VertexEvaluator<?>> e,
-	// Map<Schema, Map<String, AttributedElementClass<?, ?>>> knownTypes,
-	// long optimizationTime, long parseTime) {
-	// graph = g;
-	// eval = e;
-	// this.knownTypes = knownTypes;
-	// this.optimizationTime = optimizationTime;
-	// this.parseTime = parseTime;
-	// }
-	// }
-	//
-	// private static class QueryGraphCache {
-	// HashMap<String, SoftReference<QueryGraphCacheEntry>> cache = new
-	// HashMap<String, SoftReference<QueryGraphCacheEntry>>();
-	//
-	// QueryGraphCacheEntry get(String queryText, boolean optimize) {
-	// String key = optimize + "#" + queryText;
-	// SoftReference<QueryGraphCacheEntry> ref = cache.get(key);
-	// if (ref != null) {
-	// QueryGraphCacheEntry e = ref.get();
-	// if (e == null) {
-	// cache.remove(key);
-	// }
-	// return e;
-	// }
-	// return null;
-	// }
-	//
-	// void put(
-	// String queryText,
-	// boolean optimize,
-	// Greql2Graph queryGraph,
-	// GraphMarker<VertexEvaluator<?>> evaluators,
-	// Map<Schema, Map<String, AttributedElementClass<?, ?>>> knownTypes,
-	// long optimizationTime, long parseTime) {
-	// String key = optimize + "#" + queryText;
-	// cache.put(key, new SoftReference<QueryGraphCacheEntry>(
-	// new QueryGraphCacheEntry(queryGraph, evaluators,
-	// knownTypes, optimizationTime, parseTime)));
-	// }
-	// }
-	//
-	// private static final QueryGraphCache queryGraphCache = new
-	// QueryGraphCache();
-
 	public GreqlQueryImpl(String queryText) {
 		this(queryText, true);
 	}
@@ -184,12 +130,6 @@ public class GreqlQueryImpl extends GreqlQuery implements
 		this(queryText, optimize, optimizerInfo);
 		this.optimizer = optimizer;
 	}
-
-	// @Override
-	// public void setUseSavedOptimizedSyntaxGraph(
-	// boolean useSavedOptimizedSyntaxGraph) {
-	// this.useSavedOptimizedSyntaxGraph = useSavedOptimizedSyntaxGraph;
-	// }
 
 	@Override
 	public Greql2Graph getQueryGraph() {
