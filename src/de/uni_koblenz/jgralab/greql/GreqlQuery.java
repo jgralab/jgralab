@@ -109,7 +109,4 @@ public abstract class GreqlQuery {
 	public abstract Object evaluate(Graph datagraph,
 			GreqlEnvironment environment, ProgressFunction progressFunction);
 
-	// public abstract void setUseSavedOptimizedSyntaxGraph(
-	// boolean useSavedOptimizedSyntaxGraph);
-
 }
