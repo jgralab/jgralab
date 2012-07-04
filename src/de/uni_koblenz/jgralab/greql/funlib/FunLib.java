@@ -502,16 +502,16 @@ public class FunLib {
 				needsGraphArgument, costs, cardinality, selectivity);
 	}
 
-	public static final void registerSubQueryFunction(String name, GreqlQuery query,
-			boolean needsGraphArgument) {
+	public static final void registerSubQueryFunction(String name,
+			GreqlQuery query, boolean needsGraphArgument) {
 		GreqlQueryFunction subquery = needsGraphArgument ? new GreqlQueryFunctionWithGraphArgument(
 				query) : new GreqlQueryFunction(query);
 		registerSubquery(name, subquery);
 	}
 
-	public static final void registerSubQueryFunction(String name, GreqlQuery query,
-			boolean needsGraphArgument, long costs, long cardinality,
-			double selectivity) {
+	public static final void registerSubQueryFunction(String name,
+			GreqlQuery query, boolean needsGraphArgument, long costs,
+			long cardinality, double selectivity) {
 		GreqlQueryFunction subquery = needsGraphArgument ? new GreqlQueryFunctionWithGraphArgument(
 				query, costs, cardinality, selectivity)
 				: new GreqlQueryFunction(query, costs, cardinality, selectivity);

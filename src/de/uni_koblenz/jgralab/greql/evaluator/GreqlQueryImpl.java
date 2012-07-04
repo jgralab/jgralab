@@ -34,7 +34,6 @@
  */
 package de.uni_koblenz.jgralab.greql.evaluator;
 
-import java.lang.ref.SoftReference;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
@@ -81,7 +80,7 @@ public class GreqlQueryImpl extends GreqlQuery implements
 	private long parseTime = -1;
 	private final OptimizerInfo optimizerInfo;
 	private Optimizer optimizer;
-	private boolean useSavedOptimizedSyntaxGraph = true;
+	// private final boolean useSavedOptimizedSyntaxGraph = true;
 	private Greql2Expression rootExpression;
 
 	/**
@@ -100,58 +99,6 @@ public class GreqlQueryImpl extends GreqlQuery implements
 	 * The {@link GraphMarker} that stores all vertex evaluators
 	 */
 	private GraphMarker<VertexEvaluator<? extends Greql2Vertex>> vertexEvaluators;
-
-	private static class QueryGraphCacheEntry {
-		Greql2Graph graph;
-		GraphMarker<VertexEvaluator<?>> eval;
-		Map<Schema, Map<String, AttributedElementClass<?, ?>>> knownTypes;
-		long optimizationTime = -1;
-		long parseTime = -1;
-
-		QueryGraphCacheEntry(
-				Greql2Graph g,
-				GraphMarker<VertexEvaluator<?>> e,
-				Map<Schema, Map<String, AttributedElementClass<?, ?>>> knownTypes,
-				long optimizationTime, long parseTime) {
-			graph = g;
-			eval = e;
-			this.knownTypes = knownTypes;
-			this.optimizationTime = optimizationTime;
-			this.parseTime = parseTime;
-		}
-	}
-
-	private static class QueryGraphCache {
-		HashMap<String, SoftReference<QueryGraphCacheEntry>> cache = new HashMap<String, SoftReference<QueryGraphCacheEntry>>();
-
-		QueryGraphCacheEntry get(String queryText, boolean optimize) {
-			String key = optimize + "#" + queryText;
-			SoftReference<QueryGraphCacheEntry> ref = cache.get(key);
-			if (ref != null) {
-				QueryGraphCacheEntry e = ref.get();
-				if (e == null) {
-					cache.remove(key);
-				}
-				return e;
-			}
-			return null;
-		}
-
-		void put(
-				String queryText,
-				boolean optimize,
-				Greql2Graph queryGraph,
-				GraphMarker<VertexEvaluator<?>> evaluators,
-				Map<Schema, Map<String, AttributedElementClass<?, ?>>> knownTypes,
-				long optimizationTime, long parseTime) {
-			String key = optimize + "#" + queryText;
-			cache.put(key, new SoftReference<QueryGraphCacheEntry>(
-					new QueryGraphCacheEntry(queryGraph, evaluators,
-							knownTypes, optimizationTime, parseTime)));
-		}
-	}
-
-	private static final QueryGraphCache queryGraphCache = new QueryGraphCache();
 
 	public GreqlQueryImpl(String queryText) {
 		this(queryText, true);
@@ -185,12 +132,6 @@ public class GreqlQueryImpl extends GreqlQuery implements
 	}
 
 	@Override
-	public void setUseSavedOptimizedSyntaxGraph(
-			boolean useSavedOptimizedSyntaxGraph) {
-		this.useSavedOptimizedSyntaxGraph = useSavedOptimizedSyntaxGraph;
-	}
-
-	@Override
 	public Greql2Graph getQueryGraph() {
 		initializeQueryGraph();
 		return queryGraph;
@@ -204,17 +145,17 @@ public class GreqlQueryImpl extends GreqlQuery implements
 	}
 
 	private void initializeQueryGraph() {
-		if (queryGraph == null && useSavedOptimizedSyntaxGraph) {
-			QueryGraphCacheEntry e = queryGraphCache.get(queryText, optimize);
-			if (e != null) {
-				queryGraph = e.graph;
-				vertexEvaluators = e.eval;
-				rootExpression = queryGraph.getFirstGreql2Expression();
-				knownTypes = e.knownTypes;
-				parseTime = e.parseTime;
-				optimizationTime = e.optimizationTime;
-			}
-		}
+		// if (queryGraph == null && useSavedOptimizedSyntaxGraph) {
+		// QueryGraphCacheEntry e = queryGraphCache.get(queryText, optimize);
+		// if (e != null) {
+		// queryGraph = e.graph;
+		// vertexEvaluators = e.eval;
+		// rootExpression = queryGraph.getFirstGreql2Expression();
+		// knownTypes = e.knownTypes;
+		// parseTime = e.parseTime;
+		// optimizationTime = e.optimizationTime;
+		// }
+		// }
 		if (queryGraph == null) {
 			long t0 = System.currentTimeMillis();
 
@@ -251,8 +192,8 @@ public class GreqlQueryImpl extends GreqlQuery implements
 			((GraphBaseImpl) queryGraph).defragment();
 			rootExpression = queryGraph.getFirstGreql2Expression();
 			initializeVertexEvaluatorsMarker(queryGraph);
-			queryGraphCache.put(queryText, optimize, queryGraph,
-					vertexEvaluators, knownTypes, optimizationTime, parseTime);
+			// queryGraphCache.put(queryText, optimize, queryGraph,
+			// vertexEvaluators, knownTypes, optimizationTime, parseTime);
 		}
 	}
 

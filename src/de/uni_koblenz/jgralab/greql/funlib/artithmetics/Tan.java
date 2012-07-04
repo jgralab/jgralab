@@ -38,9 +38,8 @@ import de.uni_koblenz.jgralab.greql.funlib.Description;
 import de.uni_koblenz.jgralab.greql.funlib.Function;
 
 public class Tan extends Function {
-	
-	@Description(params = "a", description = "Returns the tangens of the given number.",
-			categories = Category.ARITHMETICS)
+
+	@Description(params = "a", description = "Returns the tangens of the given number.", categories = Category.ARITHMETICS)
 	public Tan() {
 		super(4, 1, 1.0);
 	}

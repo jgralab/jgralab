@@ -38,9 +38,8 @@ import de.uni_koblenz.jgralab.greql.funlib.Description;
 import de.uni_koblenz.jgralab.greql.funlib.Function;
 
 public class Floor extends Function {
-	
-	@Description(params = "a", description = "Returns the floor of the given number.", 
-			categories = Category.ARITHMETICS)
+
+	@Description(params = "a", description = "Returns the floor of the given number.", categories = Category.ARITHMETICS)
 	public Floor() {
 		super(4, 1, 1.0);
 	}

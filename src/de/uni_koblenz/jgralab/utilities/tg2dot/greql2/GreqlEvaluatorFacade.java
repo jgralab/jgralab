@@ -44,6 +44,7 @@ import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql.GreqlEnvironment;
 import de.uni_koblenz.jgralab.greql.GreqlQuery;
+import de.uni_koblenz.jgralab.greql.GreqlQueryCache;
 import de.uni_koblenz.jgralab.greql.evaluator.GreqlEnvironmentAdapter;
 import de.uni_koblenz.jgralab.greql.evaluator.GreqlEvaluatorImpl;
 import de.uni_koblenz.jgralab.greql.evaluator.GreqlQueryImpl;
@@ -136,6 +137,8 @@ public class GreqlEvaluatorFacade {
 	 * Currently used using-preamble.
 	 */
 	private String usingString = "";
+
+	private static GreqlQueryCache greqlQueryCache = new GreqlQueryCache();
 
 	/**
 	 * Constructs a GreqlEvaluatorFacade for a given {@link Graph} and creates
@@ -317,8 +320,7 @@ public class GreqlEvaluatorFacade {
 		query = getUsingString() + query;
 		Object result = null;
 		try {
-			result = GreqlQuery.createQuery(query).evaluate(dataGraph,
-					greqlEnvironment);
+			result = getQuery(query).evaluate(dataGraph, greqlEnvironment);
 		} catch (RuntimeException parse) {
 			parse.printStackTrace();
 			throw parse;
@@ -326,6 +328,14 @@ public class GreqlEvaluatorFacade {
 		GreqlEvaluatorImpl.DEBUG_DECLARATION_ITERATIONS = false;
 		GreqlQueryImpl.DEBUG_OPTIMIZATION = false;
 		return result;
+	}
+
+	/**
+	 * @param query
+	 * @return
+	 */
+	private GreqlQuery getQuery(String query) {
+		return greqlQueryCache.getQuery(query);
 	}
 
 	/**

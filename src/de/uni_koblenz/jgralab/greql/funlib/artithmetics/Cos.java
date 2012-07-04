@@ -38,9 +38,8 @@ import de.uni_koblenz.jgralab.greql.funlib.Description;
 import de.uni_koblenz.jgralab.greql.funlib.Function;
 
 public class Cos extends Function {
-	
-	@Description(params = "a", description = "Returns the cosinus of the given number.", 
-			categories = Category.ARITHMETICS)
+
+	@Description(params = "a", description = "Returns the cosinus of the given number.", categories = Category.ARITHMETICS)
 	public Cos() {
 		super(4, 1, 1.0);
 	}
