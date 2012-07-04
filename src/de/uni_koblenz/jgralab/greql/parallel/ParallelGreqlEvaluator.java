@@ -15,7 +15,9 @@ import de.uni_koblenz.jgralab.algolib.algorithms.search.RecursiveDepthFirstSearc
 import de.uni_koblenz.jgralab.algolib.algorithms.topological_order.TopologicalOrderWithDFS;
 import de.uni_koblenz.jgralab.graphmarker.GraphMarker;
 import de.uni_koblenz.jgralab.graphmarker.IntegerVertexMarker;
+import de.uni_koblenz.jgralab.graphmarker.MapVertexMarker;
 import de.uni_koblenz.jgralab.greql.GreqlEnvironment;
+import de.uni_koblenz.jgralab.greql.GreqlQuery;
 import de.uni_koblenz.jgralab.greql.evaluator.GreqlEnvironmentAdapter;
 import de.uni_koblenz.jgralab.greql.exception.GreqlException;
 import de.uni_koblenz.jgralab.impl.generic.GenericGraphFactoryImpl;
@@ -32,8 +34,6 @@ public class ParallelGreqlEvaluator {
 	 * generic GreqlQueryDebendencySchema definition
 	 */
 
-	static final String QUERY_TEXT_ATTRIBUTE = "queryText";
-
 	private static Schema schema;
 	static {
 		schema = new SchemaImpl("GreqlQueryDebendencySchema",
@@ -48,8 +48,6 @@ public class ParallelGreqlEvaluator {
 	private static VertexClass queryVertexClass;
 	static {
 		queryVertexClass = graphClass.createVertexClass("queries.Query");
-		queryVertexClass.createAttribute(QUERY_TEXT_ATTRIBUTE,
-				schema.getStringDomain());
 	}
 
 	private static EdgeClass dependsOnQueryEdgeClass;
@@ -75,6 +73,7 @@ public class ParallelGreqlEvaluator {
 
 	public Graph createGraph(String id, int vMax, int eMax) {
 		graph = genericGraphFactory.createGraph(graphClass, id, vMax, eMax);
+		greqlQueriesMarker = new MapVertexMarker<GreqlQuery>(graph);
 		return graph;
 	}
 
@@ -82,21 +81,14 @@ public class ParallelGreqlEvaluator {
 		return createGraph(null, 1000, 1000);
 	}
 
-	public void setGraph(Graph graph) {
-		if (graph.getGraphClass() != graphClass) {
-			throw new IllegalArgumentException(
-					"graph must be an instance of graphclass "
-							+ graphClass.getQualifiedName()
-							+ " but was instance of "
-							+ graph.getGraphClass().getQualifiedName() + ".");
-		}
-		this.graph = graph;
+	public Vertex createQueryVertex(int id, String queryText) {
+		return createQueryVertex(id, GreqlQuery.createQuery(queryText));
 	}
 
-	public Vertex createQueryVertex(int id, String queryText) {
+	public Vertex createQueryVertex(int id, GreqlQuery query) {
 		Vertex v = genericGraphFactory
 				.createVertex(queryVertexClass, id, graph);
-		v.setAttribute(QUERY_TEXT_ATTRIBUTE, queryText);
+		greqlQueriesMarker.mark(v, query);
 		return v;
 	}
 
@@ -109,13 +101,10 @@ public class ParallelGreqlEvaluator {
 	 * Methods to execute all queries of a GreqlQueryDependencyGraph parallel
 	 */
 
+	private MapVertexMarker<GreqlQuery> greqlQueriesMarker;
+
 	public ParallelGreqlEvaluator() {
 
-	}
-
-	// TODO optimizer + optimizerinfo
-	public ParallelGreqlEvaluator(Graph graph) {
-		setGraph(graph);
 	}
 
 	public Object evaluate() {
@@ -143,6 +132,8 @@ public class ParallelGreqlEvaluator {
 			e1.printStackTrace();
 		}
 
+		long graphVersion = graph.getGraphVersion();// TODO check graphVersions
+
 		// at least 2 threads, at most available processors + 1 (for the
 		// resultcollector)
 		int threads = Math.max(2,
@@ -166,8 +157,8 @@ public class ParallelGreqlEvaluator {
 			if (v.getDegree(dependsOnQueryEdgeClass, EdgeDirection.OUT) == 0) {
 				finalNodes.add(v);
 			}
-			GreqlEvaluatorTask t = new GreqlEvaluatorTask(v, datagraph,
-					environment);
+			GreqlEvaluatorTask t = new GreqlEvaluatorTask(
+					greqlQueriesMarker.getMark(v), datagraph, environment);
 			evaluators.mark(v, t);
 		}
 
