@@ -33,6 +33,16 @@ public class DepthFirstSearchTest {
 				dfs.addVisitor(dfstv);
 				dfs.withLevel().withParent().execute();
 				dfstv.performPostTests();
+
+				dfs.reset();
+				dfs.undirected();
+				dfs.execute();
+				dfstv.performPostTests();
+
+				dfs.reset();
+				dfs.reversed();
+				dfs.execute();
+				dfstv.performPostTests();
 			}
 		}
 	}

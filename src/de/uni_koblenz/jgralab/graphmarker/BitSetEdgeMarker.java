@@ -114,4 +114,9 @@ public class BitSetEdgeMarker extends BitSetGraphMarker<Edge> {
 
 		};
 	}
+
+	@Override
+	public Iterable<Edge> getDomainElements() {
+		return graph.edges();
+	}
 }
