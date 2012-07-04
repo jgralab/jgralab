@@ -38,9 +38,8 @@ import de.uni_koblenz.jgralab.greql.funlib.Description;
 import de.uni_koblenz.jgralab.greql.funlib.Function;
 
 public class ToDouble extends Function {
-	
-	@Description(params = "a", description = "Converts a Number into a Double.",
-			categories = Category.ARITHMETICS)
+
+	@Description(params = "a", description = "Converts a Number into a Double.", categories = Category.ARITHMETICS)
 	public ToDouble() {
 		super(1, 1, 1.0);
 	}

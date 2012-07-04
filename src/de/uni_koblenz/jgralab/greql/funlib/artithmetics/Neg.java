@@ -38,8 +38,7 @@ import de.uni_koblenz.jgralab.greql.funlib.Description;
 import de.uni_koblenz.jgralab.greql.funlib.Function;
 
 public class Neg extends Function {
-	@Description(params = "a", description = "Negates the given number. Can be used as unary operator: -x.",
-			categories = Category.ARITHMETICS)
+	@Description(params = "a", description = "Negates the given number. Can be used as unary operator: -x.", categories = Category.ARITHMETICS)
 	public Neg() {
 		super(4, 1, 1.0);
 	}

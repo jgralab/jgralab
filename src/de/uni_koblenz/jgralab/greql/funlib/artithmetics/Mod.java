@@ -38,9 +38,8 @@ import de.uni_koblenz.jgralab.greql.funlib.Description;
 import de.uni_koblenz.jgralab.greql.funlib.Function;
 
 public class Mod extends Function {
-	
-	@Description(params = {"a", "b"}, description = "Calculates the remainder of the division $a/b$. Alternative usage: a \\% b.",
-			categories = Category.ARITHMETICS)
+
+	@Description(params = { "a", "b" }, description = "Calculates the remainder of the division $a/b$. Alternative usage: a \\% b.", categories = Category.ARITHMETICS)
 	public Mod() {
 		super(4, 1, 1.0);
 	}

@@ -38,9 +38,8 @@ import de.uni_koblenz.jgralab.greql.funlib.Description;
 import de.uni_koblenz.jgralab.greql.funlib.Function;
 
 public class ToInteger extends Function {
-	
-	@Description(params = "a", description = "Converts the given number into an Integer.",
-			categories = Category.ARITHMETICS)
+
+	@Description(params = "a", description = "Converts the given number into an Integer.", categories = Category.ARITHMETICS)
 	public ToInteger() {
 		super(1, 1, 1.0);
 	}

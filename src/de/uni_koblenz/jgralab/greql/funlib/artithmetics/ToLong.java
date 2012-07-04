@@ -38,9 +38,8 @@ import de.uni_koblenz.jgralab.greql.funlib.Description;
 import de.uni_koblenz.jgralab.greql.funlib.Function;
 
 public class ToLong extends Function {
-	
-	@Description(params = "a", description = "Converts the given number into a Long.",
-			categories = Category.ARITHMETICS)
+
+	@Description(params = "a", description = "Converts the given number into a Long.", categories = Category.ARITHMETICS)
 	public ToLong() {
 		super(1, 1, 1.0);
 	}
