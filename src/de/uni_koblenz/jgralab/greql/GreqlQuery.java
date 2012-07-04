@@ -19,7 +19,8 @@ public abstract class GreqlQuery {
 		return readQuery(f, true);
 	}
 
-	public static GreqlQuery readQuery(File f, boolean optimize) throws IOException {
+	public static GreqlQuery readQuery(File f, boolean optimize)
+			throws IOException {
 		return readQuery(f, optimize,
 				OptimizerUtility.getDefaultOptimizerInfo());
 	}
@@ -108,7 +109,7 @@ public abstract class GreqlQuery {
 	public abstract Object evaluate(Graph datagraph,
 			GreqlEnvironment environment, ProgressFunction progressFunction);
 
-	public abstract void setUseSavedOptimizedSyntaxGraph(
-			boolean useSavedOptimizedSyntaxGraph);
+	// public abstract void setUseSavedOptimizedSyntaxGraph(
+	// boolean useSavedOptimizedSyntaxGraph);
 
 }

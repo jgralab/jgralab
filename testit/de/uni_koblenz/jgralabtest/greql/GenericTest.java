@@ -386,7 +386,7 @@ public class GenericTest {
 	protected Object evalTestQuery(String functionName, String query,
 			Optimizer optimizer, Graph datagraph) throws Exception {
 		GenericTest.query = GreqlQuery.createQuery(query, optimizer);
-		GenericTest.query.setUseSavedOptimizedSyntaxGraph(false);
+		// GenericTest.query.setUseSavedOptimizedSyntaxGraph(false);
 
 		Object result = GenericTest.query.evaluate(datagraph, environment);
 
@@ -400,7 +400,7 @@ public class GenericTest {
 	protected Object evalQuery(String query, Optimizer optimizer,
 			Graph datagraph) throws Exception {
 		GreqlQuery queryObj = GreqlQuery.createQuery(query, optimizer);
-		queryObj.setUseSavedOptimizedSyntaxGraph(false);
+		// queryObj.setUseSavedOptimizedSyntaxGraph(false);
 
 		return queryObj.evaluate(datagraph, environment);
 	}
