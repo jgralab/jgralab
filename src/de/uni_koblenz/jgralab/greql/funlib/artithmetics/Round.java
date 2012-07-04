@@ -38,14 +38,13 @@ import de.uni_koblenz.jgralab.greql.funlib.Description;
 import de.uni_koblenz.jgralab.greql.funlib.Function;
 
 public class Round extends Function {
-	
-	@Description(params = "a", description = "Rounds the given number.",
-			categories = Category.ARITHMETICS)
+
+	@Description(params = "a", description = "Rounds the given number.", categories = Category.ARITHMETICS)
 	public Round() {
 		super(4, 1, 1.0);
 	}
 
-	public Number evaluate(Number a) {
+	public Long evaluate(Number a) {
 		return Math.round(a.doubleValue());
 	}
 }

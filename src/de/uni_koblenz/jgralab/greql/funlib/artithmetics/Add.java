@@ -38,10 +38,10 @@ import de.uni_koblenz.jgralab.greql.funlib.Description;
 import de.uni_koblenz.jgralab.greql.funlib.Function;
 
 public class Add extends Function {
-	
+
 	@Description(params = { "a", "b" }, categories = Category.ARITHMETICS, description = "Adds the given two numbers with the usual "
-		+ "Java overflow semantics. Can be used as operator: $a + b$.")	
-		public Add() {
+			+ "Java overflow semantics. Can be used as operator: $a + b$.")
+	public Add() {
 		super(4, 1, 1.0);
 	}
 

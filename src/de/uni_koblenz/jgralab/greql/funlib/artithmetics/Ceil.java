@@ -38,9 +38,8 @@ import de.uni_koblenz.jgralab.greql.funlib.Description;
 import de.uni_koblenz.jgralab.greql.funlib.Function;
 
 public class Ceil extends Function {
-	
-	@Description(params = "a", description = "Returns the ceiling of the given number.", 
-			categories = Category.ARITHMETICS)
+
+	@Description(params = "a", description = "Returns the ceiling of the given number.", categories = Category.ARITHMETICS)
 	public Ceil() {
 		super(4, 1, 1.0);
 	}

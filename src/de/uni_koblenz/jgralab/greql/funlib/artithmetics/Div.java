@@ -38,9 +38,8 @@ import de.uni_koblenz.jgralab.greql.funlib.Description;
 import de.uni_koblenz.jgralab.greql.funlib.Function;
 
 public class Div extends Function {
-	
-	@Description(params={"a","b"}, description = "Returns the quotient of dividing the first by the second number.", 
-			categories = Category.ARITHMETICS )
+
+	@Description(params = { "a", "b" }, description = "Returns the quotient of dividing the first by the second number.", categories = Category.ARITHMETICS)
 	public Div() {
 		super(4, 1, 1.0);
 	}

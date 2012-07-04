@@ -38,10 +38,9 @@ import de.uni_koblenz.jgralab.greql.funlib.Description;
 import de.uni_koblenz.jgralab.greql.funlib.Function;
 
 public class Sub extends Function {
-	
-	@Description(params = {"a","b"}, description = 
-		"Substracts the second number from the first number with the usual Java overflow "
-		+ "semantics. Can be used as operator: a - b.", categories = Category.ARITHMETICS)
+
+	@Description(params = { "a", "b" }, description = "Substracts the second number from the first number with the usual Java overflow "
+			+ "semantics. Can be used as operator: a - b.", categories = Category.ARITHMETICS)
 	public Sub() {
 		super(4, 1, 1.0);
 	}

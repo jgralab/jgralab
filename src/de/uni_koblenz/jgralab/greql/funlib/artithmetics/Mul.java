@@ -38,9 +38,9 @@ import de.uni_koblenz.jgralab.greql.funlib.Description;
 import de.uni_koblenz.jgralab.greql.funlib.Function;
 
 public class Mul extends Function {
-	
-	@Description(params = {"a","b"}, description = "Multiplies the given two numbers with the usual Java overflow semantics. "
-		+"Can be used as operator: a * b.", categories = Category.ARITHMETICS)
+
+	@Description(params = { "a", "b" }, description = "Multiplies the given two numbers with the usual Java overflow semantics. "
+			+ "Can be used as operator: a * b.", categories = Category.ARITHMETICS)
 	public Mul() {
 		super(4, 1, 1.0);
 	}
