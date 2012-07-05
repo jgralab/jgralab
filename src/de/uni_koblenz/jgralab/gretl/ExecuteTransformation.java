@@ -145,17 +145,28 @@ public class ExecuteTransformation extends Transformation<Graph> {
 		super(c);
 		this.file = file;
 		StringBuilder sb = new StringBuilder();
+		BufferedReader r = null;
 		try {
-			BufferedReader r = new BufferedReader(new FileReader(file));
+			r = new BufferedReader(new FileReader(file));
 			String line = null;
 			while ((line = r.readLine()) != null) {
 				sb.append(line);
 				sb.append('\n');
 			}
+			r.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 			throw new GReTLParsingException(context,
 					"Error while reading transformation...", e);
+		} finally {
+			if (r != null) {
+				try {
+					r.close();
+				} catch (IOException e) {
+					throw new RuntimeException(
+							"Cannot close reader of " + file, e);
+				}
+			}
 		}
 		tokens = GReTLLexer.scan(sb.toString());
 
