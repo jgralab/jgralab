@@ -35,11 +35,11 @@
 
 package de.uni_koblenz.jgralab.utilities.xml;
 
-import static de.uni_koblenz.jgralab.utilities.xml.XMLConstants.GRUML_ATTRIBUTE_FROM;
-import static de.uni_koblenz.jgralab.utilities.xml.XMLConstants.GRUML_ATTRIBUTE_FSEQ;
-import static de.uni_koblenz.jgralab.utilities.xml.XMLConstants.GRUML_ATTRIBUTE_ID;
-import static de.uni_koblenz.jgralab.utilities.xml.XMLConstants.GRUML_ATTRIBUTE_TO;
-import static de.uni_koblenz.jgralab.utilities.xml.XMLConstants.GRUML_ATTRIBUTE_TSEQ;
+import static de.uni_koblenz.jgralab.utilities.xml.SoamigXmlConstants.GRUML_ATTRIBUTE_FROM;
+import static de.uni_koblenz.jgralab.utilities.xml.SoamigXmlConstants.GRUML_ATTRIBUTE_FSEQ;
+import static de.uni_koblenz.jgralab.utilities.xml.SoamigXmlConstants.GRUML_ATTRIBUTE_ID;
+import static de.uni_koblenz.jgralab.utilities.xml.SoamigXmlConstants.GRUML_ATTRIBUTE_TO;
+import static de.uni_koblenz.jgralab.utilities.xml.SoamigXmlConstants.GRUML_ATTRIBUTE_TSEQ;
 import static javax.xml.stream.XMLStreamConstants.END_ELEMENT;
 import static javax.xml.stream.XMLStreamConstants.START_DOCUMENT;
 import static javax.xml.stream.XMLStreamConstants.START_ELEMENT;
@@ -86,7 +86,7 @@ import de.uni_koblenz.jgralab.schema.VertexClass;
 import de.uni_koblenz.jgralab.schema.exception.SchemaException;
 
 @WorkInProgress
-public class Xml2tg {
+public class SoamigXml2tg {
 	private static OptionHandler optionHandler = null;
 
 	public static final int MAX_VERTEX_COUNT = 1024;
@@ -180,14 +180,14 @@ public class Xml2tg {
 		Method inst = currentSchema.getMethod("instance");
 		Schema schema = (Schema) inst.invoke(currentSchema);
 
-		Xml2tg xml2tg = null;
+		SoamigXml2tg xml2tg = null;
 		int i = 0;
 		String[] files = cmdl.getArgs();
 		for (String inputXML : files) {
 			System.out.println("Importing " + inputXML + " (" + ++i + "/"
 					+ files.length + ")");
 			if (xml2tg == null) {
-				xml2tg = new Xml2tg(inputXML, outputFilename, schema);
+				xml2tg = new SoamigXml2tg(inputXML, outputFilename, schema);
 				xml2tg.setAssumeVerticesBeforeEdges(cmdl.hasOption('V'));
 				xml2tg.setMultiXml(cmdl.hasOption('m'));
 				xml2tg.setKeepGoing(cmdl.hasOption('k'));
@@ -201,7 +201,7 @@ public class Xml2tg {
 	}
 
 	private static CommandLine processCommandLineOptions(String[] args) {
-		String toolString = Xml2tg.class.getSimpleName();
+		String toolString = SoamigXml2tg.class.getSimpleName();
 		String versionString = JGraLab.getInfo(false);
 		optionHandler = new OptionHandler(toolString, versionString);
 
@@ -254,7 +254,7 @@ public class Xml2tg {
 		return optionHandler.parse(args);
 	}
 
-	public Xml2tg(String inputXml, String tgOutput, Schema schema)
+	public SoamigXml2tg(String inputXml, String tgOutput, Schema schema)
 			throws XMLStreamException, FileNotFoundException {
 		this.tgOutput = tgOutput;
 		this.schema = schema;

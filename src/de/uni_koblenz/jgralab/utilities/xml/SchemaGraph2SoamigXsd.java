@@ -34,57 +34,57 @@
  */
 package de.uni_koblenz.jgralab.utilities.xml;
 
-import static de.uni_koblenz.jgralab.utilities.xml.XMLConstants.GRUML_ATTRIBUTEDELEMENTTYPE;
-import static de.uni_koblenz.jgralab.utilities.xml.XMLConstants.GRUML_ATTRIBUTE_FROM;
-import static de.uni_koblenz.jgralab.utilities.xml.XMLConstants.GRUML_ATTRIBUTE_FSEQ;
-import static de.uni_koblenz.jgralab.utilities.xml.XMLConstants.GRUML_ATTRIBUTE_ID;
-import static de.uni_koblenz.jgralab.utilities.xml.XMLConstants.GRUML_ATTRIBUTE_TO;
-import static de.uni_koblenz.jgralab.utilities.xml.XMLConstants.GRUML_ATTRIBUTE_TSEQ;
-import static de.uni_koblenz.jgralab.utilities.xml.XMLConstants.GRUML_DOMAIN_BOOLEAN;
-import static de.uni_koblenz.jgralab.utilities.xml.XMLConstants.GRUML_DOMAIN_DOUBLE;
-import static de.uni_koblenz.jgralab.utilities.xml.XMLConstants.GRUML_DOMAIN_ENUM_PREFIX;
-import static de.uni_koblenz.jgralab.utilities.xml.XMLConstants.GRUML_DOMAIN_INTEGER;
-import static de.uni_koblenz.jgralab.utilities.xml.XMLConstants.GRUML_DOMAIN_LIST;
-import static de.uni_koblenz.jgralab.utilities.xml.XMLConstants.GRUML_DOMAIN_LONG;
-import static de.uni_koblenz.jgralab.utilities.xml.XMLConstants.GRUML_DOMAIN_MAP;
-import static de.uni_koblenz.jgralab.utilities.xml.XMLConstants.GRUML_DOMAIN_RECORD_PREFIX;
-import static de.uni_koblenz.jgralab.utilities.xml.XMLConstants.GRUML_DOMAIN_SET;
-import static de.uni_koblenz.jgralab.utilities.xml.XMLConstants.GRUML_DOMAIN_STRING;
-import static de.uni_koblenz.jgralab.utilities.xml.XMLConstants.GRUML_EDGETYPE;
-import static de.uni_koblenz.jgralab.utilities.xml.XMLConstants.GRUML_GRAPHTYPE;
-import static de.uni_koblenz.jgralab.utilities.xml.XMLConstants.GRUML_PREFIX_EDGETYPE;
-import static de.uni_koblenz.jgralab.utilities.xml.XMLConstants.GRUML_PREFIX_GRAPHTYPE;
-import static de.uni_koblenz.jgralab.utilities.xml.XMLConstants.GRUML_PREFIX_VERTEXTYPE;
-import static de.uni_koblenz.jgralab.utilities.xml.XMLConstants.GRUML_VALUE_NULL;
-import static de.uni_koblenz.jgralab.utilities.xml.XMLConstants.GRUML_VERTEXTYPE;
-import static de.uni_koblenz.jgralab.utilities.xml.XMLConstants.XML_DOMAIN_ID;
-import static de.uni_koblenz.jgralab.utilities.xml.XMLConstants.XML_DOMAIN_IDREF;
-import static de.uni_koblenz.jgralab.utilities.xml.XMLConstants.XML_VALUE_TRUE;
-import static de.uni_koblenz.jgralab.utilities.xml.XMLConstants.XSD_ATTRIBUTE;
-import static de.uni_koblenz.jgralab.utilities.xml.XMLConstants.XSD_ATTRIBUTE_ABSTRACT;
-import static de.uni_koblenz.jgralab.utilities.xml.XMLConstants.XSD_ATTRIBUTE_BASE;
-import static de.uni_koblenz.jgralab.utilities.xml.XMLConstants.XSD_ATTRIBUTE_NAME;
-import static de.uni_koblenz.jgralab.utilities.xml.XMLConstants.XSD_ATTRIBUTE_TYPE;
-import static de.uni_koblenz.jgralab.utilities.xml.XMLConstants.XSD_ATTRIBUTE_USE;
-import static de.uni_koblenz.jgralab.utilities.xml.XMLConstants.XSD_ATTRIBUTE_VALUE;
-import static de.uni_koblenz.jgralab.utilities.xml.XMLConstants.XSD_CHOICE;
-import static de.uni_koblenz.jgralab.utilities.xml.XMLConstants.XSD_COMPLEXCONTENT;
-import static de.uni_koblenz.jgralab.utilities.xml.XMLConstants.XSD_COMPLEXTYPE;
-import static de.uni_koblenz.jgralab.utilities.xml.XMLConstants.XSD_DOMAIN_DOUBLE;
-import static de.uni_koblenz.jgralab.utilities.xml.XMLConstants.XSD_DOMAIN_INTEGER;
-import static de.uni_koblenz.jgralab.utilities.xml.XMLConstants.XSD_DOMAIN_LONG;
-import static de.uni_koblenz.jgralab.utilities.xml.XMLConstants.XSD_DOMAIN_STRING;
-import static de.uni_koblenz.jgralab.utilities.xml.XMLConstants.XSD_ELEMENT;
-import static de.uni_koblenz.jgralab.utilities.xml.XMLConstants.XSD_ENUMERATION;
-import static de.uni_koblenz.jgralab.utilities.xml.XMLConstants.XSD_EXTENSION;
-import static de.uni_koblenz.jgralab.utilities.xml.XMLConstants.XSD_NAMESPACE_PREFIX;
-import static de.uni_koblenz.jgralab.utilities.xml.XMLConstants.XSD_PATTERN;
-import static de.uni_koblenz.jgralab.utilities.xml.XMLConstants.XSD_REQUIRED;
-import static de.uni_koblenz.jgralab.utilities.xml.XMLConstants.XSD_RESTRICTION;
-import static de.uni_koblenz.jgralab.utilities.xml.XMLConstants.XSD_SCHEMA;
-import static de.uni_koblenz.jgralab.utilities.xml.XMLConstants.XSD_SIMPLETYPE;
-import static de.uni_koblenz.jgralab.utilities.xml.XMLConstants.XSD_VALUE_MAX_OCCURS;
-import static de.uni_koblenz.jgralab.utilities.xml.XMLConstants.XSD_VALUE_MIN_OCCURS;
+import static de.uni_koblenz.jgralab.utilities.xml.SoamigXmlConstants.GRUML_ATTRIBUTEDELEMENTTYPE;
+import static de.uni_koblenz.jgralab.utilities.xml.SoamigXmlConstants.GRUML_ATTRIBUTE_FROM;
+import static de.uni_koblenz.jgralab.utilities.xml.SoamigXmlConstants.GRUML_ATTRIBUTE_FSEQ;
+import static de.uni_koblenz.jgralab.utilities.xml.SoamigXmlConstants.GRUML_ATTRIBUTE_ID;
+import static de.uni_koblenz.jgralab.utilities.xml.SoamigXmlConstants.GRUML_ATTRIBUTE_TO;
+import static de.uni_koblenz.jgralab.utilities.xml.SoamigXmlConstants.GRUML_ATTRIBUTE_TSEQ;
+import static de.uni_koblenz.jgralab.utilities.xml.SoamigXmlConstants.GRUML_DOMAIN_BOOLEAN;
+import static de.uni_koblenz.jgralab.utilities.xml.SoamigXmlConstants.GRUML_DOMAIN_DOUBLE;
+import static de.uni_koblenz.jgralab.utilities.xml.SoamigXmlConstants.GRUML_DOMAIN_ENUM_PREFIX;
+import static de.uni_koblenz.jgralab.utilities.xml.SoamigXmlConstants.GRUML_DOMAIN_INTEGER;
+import static de.uni_koblenz.jgralab.utilities.xml.SoamigXmlConstants.GRUML_DOMAIN_LIST;
+import static de.uni_koblenz.jgralab.utilities.xml.SoamigXmlConstants.GRUML_DOMAIN_LONG;
+import static de.uni_koblenz.jgralab.utilities.xml.SoamigXmlConstants.GRUML_DOMAIN_MAP;
+import static de.uni_koblenz.jgralab.utilities.xml.SoamigXmlConstants.GRUML_DOMAIN_RECORD_PREFIX;
+import static de.uni_koblenz.jgralab.utilities.xml.SoamigXmlConstants.GRUML_DOMAIN_SET;
+import static de.uni_koblenz.jgralab.utilities.xml.SoamigXmlConstants.GRUML_DOMAIN_STRING;
+import static de.uni_koblenz.jgralab.utilities.xml.SoamigXmlConstants.GRUML_EDGETYPE;
+import static de.uni_koblenz.jgralab.utilities.xml.SoamigXmlConstants.GRUML_GRAPHTYPE;
+import static de.uni_koblenz.jgralab.utilities.xml.SoamigXmlConstants.GRUML_PREFIX_EDGETYPE;
+import static de.uni_koblenz.jgralab.utilities.xml.SoamigXmlConstants.GRUML_PREFIX_GRAPHTYPE;
+import static de.uni_koblenz.jgralab.utilities.xml.SoamigXmlConstants.GRUML_PREFIX_VERTEXTYPE;
+import static de.uni_koblenz.jgralab.utilities.xml.SoamigXmlConstants.GRUML_VALUE_NULL;
+import static de.uni_koblenz.jgralab.utilities.xml.SoamigXmlConstants.GRUML_VERTEXTYPE;
+import static de.uni_koblenz.jgralab.utilities.xml.SoamigXmlConstants.XML_DOMAIN_ID;
+import static de.uni_koblenz.jgralab.utilities.xml.SoamigXmlConstants.XML_DOMAIN_IDREF;
+import static de.uni_koblenz.jgralab.utilities.xml.SoamigXmlConstants.XML_VALUE_TRUE;
+import static de.uni_koblenz.jgralab.utilities.xml.SoamigXmlConstants.XSD_ATTRIBUTE;
+import static de.uni_koblenz.jgralab.utilities.xml.SoamigXmlConstants.XSD_ATTRIBUTE_ABSTRACT;
+import static de.uni_koblenz.jgralab.utilities.xml.SoamigXmlConstants.XSD_ATTRIBUTE_BASE;
+import static de.uni_koblenz.jgralab.utilities.xml.SoamigXmlConstants.XSD_ATTRIBUTE_NAME;
+import static de.uni_koblenz.jgralab.utilities.xml.SoamigXmlConstants.XSD_ATTRIBUTE_TYPE;
+import static de.uni_koblenz.jgralab.utilities.xml.SoamigXmlConstants.XSD_ATTRIBUTE_USE;
+import static de.uni_koblenz.jgralab.utilities.xml.SoamigXmlConstants.XSD_ATTRIBUTE_VALUE;
+import static de.uni_koblenz.jgralab.utilities.xml.SoamigXmlConstants.XSD_CHOICE;
+import static de.uni_koblenz.jgralab.utilities.xml.SoamigXmlConstants.XSD_COMPLEXCONTENT;
+import static de.uni_koblenz.jgralab.utilities.xml.SoamigXmlConstants.XSD_COMPLEXTYPE;
+import static de.uni_koblenz.jgralab.utilities.xml.SoamigXmlConstants.XSD_DOMAIN_DOUBLE;
+import static de.uni_koblenz.jgralab.utilities.xml.SoamigXmlConstants.XSD_DOMAIN_INTEGER;
+import static de.uni_koblenz.jgralab.utilities.xml.SoamigXmlConstants.XSD_DOMAIN_LONG;
+import static de.uni_koblenz.jgralab.utilities.xml.SoamigXmlConstants.XSD_DOMAIN_STRING;
+import static de.uni_koblenz.jgralab.utilities.xml.SoamigXmlConstants.XSD_ELEMENT;
+import static de.uni_koblenz.jgralab.utilities.xml.SoamigXmlConstants.XSD_ENUMERATION;
+import static de.uni_koblenz.jgralab.utilities.xml.SoamigXmlConstants.XSD_EXTENSION;
+import static de.uni_koblenz.jgralab.utilities.xml.SoamigXmlConstants.XSD_NAMESPACE_PREFIX;
+import static de.uni_koblenz.jgralab.utilities.xml.SoamigXmlConstants.XSD_PATTERN;
+import static de.uni_koblenz.jgralab.utilities.xml.SoamigXmlConstants.XSD_REQUIRED;
+import static de.uni_koblenz.jgralab.utilities.xml.SoamigXmlConstants.XSD_RESTRICTION;
+import static de.uni_koblenz.jgralab.utilities.xml.SoamigXmlConstants.XSD_SCHEMA;
+import static de.uni_koblenz.jgralab.utilities.xml.SoamigXmlConstants.XSD_SIMPLETYPE;
+import static de.uni_koblenz.jgralab.utilities.xml.SoamigXmlConstants.XSD_VALUE_MAX_OCCURS;
+import static de.uni_koblenz.jgralab.utilities.xml.SoamigXmlConstants.XSD_VALUE_MIN_OCCURS;
 
 import java.io.BufferedOutputStream;
 import java.io.FileNotFoundException;
@@ -204,7 +204,7 @@ import de.uni_koblenz.jgralab.utilities.tg2schemagraph.Tg2SchemaGraph;
  * @author mmce@uni-koblenz.de
  * @author strauss@uni-koblenz.de
  */
-public class SchemaGraph2XSD {
+public class SchemaGraph2SoamigXsd {
 
 	/**
 	 * Stores String patterns for a RecordDomain in general.
@@ -298,7 +298,7 @@ public class SchemaGraph2XSD {
 	 * 
 	 * @param args
 	 *            Command line parameters. For documentation look at
-	 *            {@link SchemaGraph2XSD#processCommandLineOptions}.
+	 *            {@link SchemaGraph2SoamigXsd#processCommandLineOptions}.
 	 * @throws GraphIOException
 	 * @throws FactoryConfigurationError
 	 * @throws XMLStreamException
@@ -331,7 +331,7 @@ public class SchemaGraph2XSD {
 
 		// SchemaGraph2XSD is instantiated for conversion.
 		System.out.println("\nBeginning convertion:");
-		SchemaGraph2XSD sg2xsd = new SchemaGraph2XSD(sg, namespacePrefix,
+		SchemaGraph2SoamigXsd sg2xsd = new SchemaGraph2SoamigXsd(sg, namespacePrefix,
 				xsdFile);
 
 		// In- and exclude pattern are set.
@@ -402,7 +402,7 @@ public class SchemaGraph2XSD {
 	private static CommandLine processCommandLineOptions(String[] args) {
 
 		// Creates a OptionHandler.
-		String toolString = "java " + SchemaGraph2XSD.class.getName();
+		String toolString = "java " + SchemaGraph2SoamigXsd.class.getName();
 		String versionString = JGraLab.getInfo(false);
 		OptionHandler oh = new OptionHandler(toolString, versionString);
 
@@ -490,7 +490,7 @@ public class SchemaGraph2XSD {
 	 * @throws XMLStreamException
 	 * @throws FactoryConfigurationError
 	 */
-	public SchemaGraph2XSD(SchemaGraph sg, String namespacePrefix,
+	public SchemaGraph2SoamigXsd(SchemaGraph sg, String namespacePrefix,
 			String outFile) throws FileNotFoundException, XMLStreamException,
 			FactoryConfigurationError {
 
@@ -632,7 +632,7 @@ public class SchemaGraph2XSD {
 	 * Writes all predefined domain type definitions to the document. Predefined
 	 * types are: Boolean-, String-, Integer-, Long-, Double-, List-, Set- and
 	 * MapDomain. For Record- and EnumDomain, look at
-	 * {@link SchemaGraph2XSD#writeAllDomainTypes}.
+	 * {@link SchemaGraph2SoamigXsd#writeAllDomainTypes}.
 	 * 
 	 * @throws XMLStreamException
 	 */

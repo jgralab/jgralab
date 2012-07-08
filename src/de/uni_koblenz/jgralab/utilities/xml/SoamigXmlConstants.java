@@ -35,7 +35,7 @@
 
 package de.uni_koblenz.jgralab.utilities.xml;
 
-public class XMLConstants {
+public class SoamigXmlConstants {
 
 	public static final String XSD_NAMESPACE_PREFIX = "xsd";
 	public static final String XSD_INSTANCE_NAMESPACE_PREFIX = "xsi";
