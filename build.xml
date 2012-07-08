@@ -132,7 +132,7 @@
 	<property name="common-tools.includes" value="common/**" />
 
 	<property name="utilities.src" value="${src.dir}/de/uni_koblenz/jgralab/utilities" />
-	<property name="utilities.includes" value="ant/** common/** converter/** csv2tg/** greqlinterface/** jgralab2owl/** schemacompare/** tg2gdl/** tg2gxl/** tg2sidiff/** tgraphbrowser/** tgtree/** xmi2tgschema/** xml/** gui/**" />
+	<property name="utilities.includes" value="ant/** common/** converter/** csv2tg/** greqlinterface/** jgralab2owl/** schemacompare/** tg2gdl/** tg2gxl/** tg2sidiff/** tgraphbrowser/** tgtree/** xmi2tgschema/** xml2tg/** soamig_xml/** gui/**" />
 
 	<!-- The targets -->
 	<target name="build" depends="ist_utilities,clean,compile,modify_manifest,jar" />
@@ -346,7 +346,7 @@
 	</target>
 
 	<!-- compiles utility sources -->
-	<target name="utilities" depends="rsa,gruml">
+	<target name="utilities" depends="rsa,gruml,xmlschema">
 		<javac fork="true"
 			srcdir="${utilities.src}" 
 			includes="${utilities.includes}"
@@ -362,6 +362,11 @@
 			includeantruntime="false">
 			<compilerarg line="-Xlint:unchecked" />
 		</javac>
+	</target>
+
+	<!-- generates the xml graph schema -->
+	<target name="xmlschema" depends="tgtools,greql">
+		<tgschema2java schemaFile="${src.dir}/de/uni_koblenz/jgralab/utilities/xml2tg/XMLSchema.tg" sourcePath="${src.dir}" implementationMode="standard" />
 	</target>
 
 	<!-- generates the gruml schema and compiles it -->

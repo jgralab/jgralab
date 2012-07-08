@@ -1,0 +1,16 @@
+// JGraLab - The Java graph laboratory
+//   Version : 6.1.2
+//   Codename: Falkarius
+
+TGraph 2;
+Schema de.uni_koblenz.jgralab.utilities.xml2tg.schema.XMLSchema;
+GraphClass XMLGraph;
+VertexClass Attribute { name: String, value: String };
+VertexClass Element: Node { name: String };
+abstract VertexClass Node;
+VertexClass Text: Node { content: String };
+EdgeClass HasAttribute from Element (1,1) role element to Attribute (0,*) role attributes aggregation composite;
+EdgeClass HasChild: HasContent from Element (0,1) to Element (0,*) role children aggregation composite;
+abstract EdgeClass HasContent from Element (0,1) role parent to Node (0,*) role contents aggregation composite;
+EdgeClass HasText: HasContent from Element (0,1) to Text (0,*) role texts aggregation composite;
+EdgeClass References from Attribute (0,1) role referent to Element (0,*) role refs;
