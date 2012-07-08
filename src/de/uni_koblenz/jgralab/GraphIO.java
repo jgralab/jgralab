@@ -401,20 +401,21 @@ public class GraphIO {
 					write(" (");
 					for (Iterator<String> eit = ed.getConsts().iterator(); eit
 							.hasNext();) {
-						space();
+						noSpace();
 						writeIdentifier(eit.next());
 						if (eit.hasNext()) {
-							write(",");
+							write(", ");
 						}
 					}
-					write(" );\n");
+					write(");\n");
 					writeComments(ed, ed.getSimpleName());
 				} else if (dom instanceof RecordDomain) {
 					RecordDomain rd = (RecordDomain) dom;
 					write("RecordDomain");
 					space();
 					writeIdentifier(rd.getSimpleName());
-					String delim = " ( ";
+					write(" (");
+					String delim = "";
 					for (RecordComponent rdc : rd.getComponents()) {
 						write(delim);
 						noSpace();
@@ -423,7 +424,7 @@ public class GraphIO {
 						write(rdc.getDomain().getTGTypeName(pkg));
 						delim = ", ";
 					}
-					write(" );\n");
+					write(");\n");
 					writeComments(rd, rd.getSimpleName());
 				}
 			}
