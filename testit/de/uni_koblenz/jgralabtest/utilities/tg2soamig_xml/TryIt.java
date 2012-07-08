@@ -32,7 +32,7 @@
  * non-source form of such a combination shall include the source code for
  * the parts of JGraLab used as well as that of the covered work.
  */
-package de.uni_koblenz.jgralabtest.utilities.tg2xml;
+package de.uni_koblenz.jgralabtest.utilities.tg2soamig_xml;
 
 import java.io.BufferedOutputStream;
 import java.io.FileOutputStream;
@@ -45,7 +45,7 @@ import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.codegenerator.CodeGeneratorConfiguration;
 import de.uni_koblenz.jgralab.impl.ConsoleProgressFunction;
 import de.uni_koblenz.jgralab.schema.Schema;
-import de.uni_koblenz.jgralab.utilities.xml.Tg2xml;
+import de.uni_koblenz.jgralab.utilities.soamig_xml.Tg2SoamigXml;
 
 public class TryIt {
 
@@ -75,7 +75,7 @@ public class TryIt {
 			System.out.println("done");
 			Graph graph = GraphIO.loadGraphFromFile(file,
 					new ConsoleProgressFunction());
-			Tg2xml converter = new Tg2xml(new BufferedOutputStream(
+			Tg2SoamigXml converter = new Tg2SoamigXml(new BufferedOutputStream(
 					new FileOutputStream(outName)), graph, "gruml", "gruml.xsd");
 
 			converter.visitAll();
