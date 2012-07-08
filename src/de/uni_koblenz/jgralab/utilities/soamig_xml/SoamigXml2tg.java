@@ -33,13 +33,13 @@
  * the parts of JGraLab used as well as that of the covered work.
  */
 
-package de.uni_koblenz.jgralab.utilities.xml;
+package de.uni_koblenz.jgralab.utilities.soamig_xml;
 
-import static de.uni_koblenz.jgralab.utilities.xml.SoamigXmlConstants.GRUML_ATTRIBUTE_FROM;
-import static de.uni_koblenz.jgralab.utilities.xml.SoamigXmlConstants.GRUML_ATTRIBUTE_FSEQ;
-import static de.uni_koblenz.jgralab.utilities.xml.SoamigXmlConstants.GRUML_ATTRIBUTE_ID;
-import static de.uni_koblenz.jgralab.utilities.xml.SoamigXmlConstants.GRUML_ATTRIBUTE_TO;
-import static de.uni_koblenz.jgralab.utilities.xml.SoamigXmlConstants.GRUML_ATTRIBUTE_TSEQ;
+import static de.uni_koblenz.jgralab.utilities.soamig_xml.SoamigXmlConstants.GRUML_ATTRIBUTE_FROM;
+import static de.uni_koblenz.jgralab.utilities.soamig_xml.SoamigXmlConstants.GRUML_ATTRIBUTE_FSEQ;
+import static de.uni_koblenz.jgralab.utilities.soamig_xml.SoamigXmlConstants.GRUML_ATTRIBUTE_ID;
+import static de.uni_koblenz.jgralab.utilities.soamig_xml.SoamigXmlConstants.GRUML_ATTRIBUTE_TO;
+import static de.uni_koblenz.jgralab.utilities.soamig_xml.SoamigXmlConstants.GRUML_ATTRIBUTE_TSEQ;
 import static javax.xml.stream.XMLStreamConstants.END_ELEMENT;
 import static javax.xml.stream.XMLStreamConstants.START_DOCUMENT;
 import static javax.xml.stream.XMLStreamConstants.START_ELEMENT;

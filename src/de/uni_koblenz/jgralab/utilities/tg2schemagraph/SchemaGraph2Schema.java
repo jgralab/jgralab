@@ -85,20 +85,20 @@ import de.uni_koblenz.jgralab.schema.impl.SchemaImpl;
 
 /**
  * Converts a GrumlSchema SchemaGraph into a Schema.
- *
+ * 
  * This class is supposed to be used multiple times, but can only be used once
  * at the same time.
- *
+ * 
  * All variables are written like their classes from the package
  * "de.uni_koblenz.jgralab.schema" normal with the exception of the variable for
  * packages. "package" is a keyword. In this case the variable is written with a
  * prefix "x". All variables from the package
  * "de.uni_koblenz.jgralab.grumlschema.structure" are written with an prefix
  * "g".
- *
+ * 
  * All types from "de.uni_koblenz.jgralab.schema" are fully qualified with their
  * package name.;
- *
+ * 
  * @author ist@uni-koblenz.de, Eckhard Großmann
  */
 public class SchemaGraph2Schema {
@@ -169,9 +169,9 @@ public class SchemaGraph2Schema {
 
 	/**
 	 * Deletes every references and frees memory by this.
-	 *
+	 * 
 	 * Note:
-	 *
+	 * 
 	 * A Garbage Collection is performed with processing the finalization queue!
 	 */
 	private void tearDown() {
@@ -191,9 +191,9 @@ public class SchemaGraph2Schema {
 
 	/**
 	 * Converts a Schema of a given SchemaGraph into a Schema.
-	 *
+	 * 
 	 * Note: A Garbage Collection is performed.
-	 *
+	 * 
 	 * @param schemaGraph
 	 *            SchemaGraph, of which a corresponding Schema should be
 	 *            constructed.
@@ -250,7 +250,7 @@ public class SchemaGraph2Schema {
 	/**
 	 * Creates the subsetted and redefined values of all EdgeClasses who have no
 	 * superclass in the schemaGraph.
-	 *
+	 * 
 	 */
 	private void createSubsetsAndRedefinesOfAllEdgeClasses() {
 		for (EdgeClass ec : gSuperEdgeClasses) {
@@ -261,7 +261,7 @@ public class SchemaGraph2Schema {
 	/**
 	 * Creates the subsetted and redefined values of one EdgeClasses and its
 	 * direct and indirect subclasses.
-	 *
+	 * 
 	 * @param gEdgeClass
 	 */
 	private void createSubsetsAndRedefinesOfOneEdgeClass(EdgeClass gEdgeClass) {
@@ -329,7 +329,7 @@ public class SchemaGraph2Schema {
 
 	/**
 	 * Converts the Schema of a SchemaGraph to a Schema.
-	 *
+	 * 
 	 * @param schemaGraph
 	 *            SchemaGraph, of which the Schema should be converted to a
 	 *            Schema.
@@ -415,7 +415,7 @@ public class SchemaGraph2Schema {
 	 * the member variables <code>gGraphElementClasses</code> and
 	 * <code>gDomains</code>. This method is called recursively by itself with
 	 * the subpackages of the current Package object.
-	 *
+	 * 
 	 * @param gPackage
 	 *            Package, of which all GraphElementClass and Domain objects are
 	 *            retrieved.
@@ -447,7 +447,7 @@ public class SchemaGraph2Schema {
 	/**
 	 * Retrieves all GraphElementClass objects and stores them into the member
 	 * variable <code>gGraphElementClasses</code>.
-	 *
+	 * 
 	 * @param gPackage
 	 *            Package, of which all GraphElementClass objects are retrieved.
 	 */
@@ -484,7 +484,7 @@ public class SchemaGraph2Schema {
 	/**
 	 * Retrieves all Domain objects and stores them into the member variable
 	 * <code>gDomains</code>.
-	 *
+	 * 
 	 * @param gPackage
 	 *            Package, of which all Domain objects are retrieved.
 	 */
@@ -518,7 +518,7 @@ public class SchemaGraph2Schema {
 	/**
 	 * Converts a given Domain object of the SchemaGraph into corresponding
 	 * Domain objects of the Schema.
-	 *
+	 * 
 	 * @param gDomain
 	 *            Domain, which is converted into a Domain of the Schema.
 	 * @return Created Domain.
@@ -561,14 +561,15 @@ public class SchemaGraph2Schema {
 			throw new GraphException("FIXME! No \"Domain\" has been created.");
 		}
 
-		assert (domain.getQualifiedName().equals(qualifiedName)) : "FIXME! The attribute \"QualifiedName\" is different.";
+		assert (domain.getQualifiedName().equals(qualifiedName)) : "FIXME! The attribute \"QualifiedName\" is different (expected "
+				+ qualifiedName + ", got " + domain.getQualifiedName() + ")";
 
 		return domain;
 	}
 
 	/**
 	 * Creates an String array of all comments.
-	 *
+	 * 
 	 * @param gNamedElement
 	 * @return String array of all comments
 	 */
@@ -589,7 +590,7 @@ public class SchemaGraph2Schema {
 	/**
 	 * Converts a given EnumDomain object of the SchemaGraph into corresponding
 	 * EnumDomain objects of the Schema.
-	 *
+	 * 
 	 * @param gDomain
 	 *            EnumDomain, which is converted into a Domain of the Schema.
 	 * @return Created EnumDomain.
@@ -604,7 +605,7 @@ public class SchemaGraph2Schema {
 	/**
 	 * Converts a given RecordDomain object of the SchemaGraph into
 	 * corresponding RecordDomain objects of the Schema.
-	 *
+	 * 
 	 * @param gDomain
 	 *            RecordDomain, which is converted into a Domain of the Schema.
 	 * @return Created RecordDomain.
@@ -633,7 +634,7 @@ public class SchemaGraph2Schema {
 	/**
 	 * Converts a given CollectionDomain object of the SchemaGraph into
 	 * corresponding CollectionDomain objects of the Schema.
-	 *
+	 * 
 	 * @param gDomain
 	 *            CollectionDomain, which is converted into a Domain of the
 	 *            Schema.
@@ -661,7 +662,7 @@ public class SchemaGraph2Schema {
 	/**
 	 * Converts a given MapDomain object of the SchemaGraph into corresponding
 	 * MapDomain objects of the Schema.
-	 *
+	 * 
 	 * @param gDomain
 	 *            MapDomain, which is converted into a Domain of the Schema.
 	 * @return Created MapDomain.
@@ -826,7 +827,7 @@ public class SchemaGraph2Schema {
 	/**
 	 * Converts all Constraint objects of a given GraphClassElement and adds
 	 * them to a GraphClassElement of the Schema.
-	 *
+	 * 
 	 * @param element
 	 *            GraphElementClass, to which all converted Constraint objects
 	 *            are added.
@@ -855,7 +856,7 @@ public class SchemaGraph2Schema {
 	/**
 	 * Converts all Attribute objects of a given GraphClassElement and adds them
 	 * to a GraphClassElement of the Schema.
-	 *
+	 * 
 	 * @param element
 	 *            GraphElementClass, to which all converted Attribute objects
 	 *            are added.
@@ -927,7 +928,7 @@ public class SchemaGraph2Schema {
 
 	/**
 	 * Links all EdgeClass objects with their superclass.
-	 *
+	 * 
 	 * @param edgeClass
 	 *            EdgeClass of the Schema, which should be linked with their
 	 *            superclass.
@@ -968,7 +969,7 @@ public class SchemaGraph2Schema {
 
 	/**
 	 * Links all VertexClass objects with their superclass.
-	 *
+	 * 
 	 * @param edgeClass
 	 *            VertexClass of the Schema, which should be linked with their
 	 *            superclass.
@@ -1010,7 +1011,7 @@ public class SchemaGraph2Schema {
 	/**
 	 * Queries the corresponding GraphElementClass in the Schema of a
 	 * GraphElementClass in the SchemaGraph.
-	 *
+	 * 
 	 * @param gElement
 	 *            GraphElementClass, of which the corresponding
 	 *            GraphElementClass should be queried.
@@ -1032,7 +1033,7 @@ public class SchemaGraph2Schema {
 	/**
 	 * Queries the corresponding Domain in the Schema of a Domain in the
 	 * SchemaGraph.
-	 *
+	 * 
 	 * @param gElement
 	 *            Domain, of which the corresponding Domain should be queried.
 	 * @return Domain, which responds to the QualifiedName of the given Domain.

@@ -33,7 +33,7 @@
  * the parts of JGraLab used as well as that of the covered work.
  */
 
-package de.uni_koblenz.jgralab.utilities.xml;
+package de.uni_koblenz.jgralab.utilities.soamig_xml;
 
 public class SoamigXmlConstants {
 

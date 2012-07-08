@@ -36,4 +36,4 @@
  * TODO [documentation] write documentation for this package.
  */
 
-package de.uni_koblenz.jgralab.utilities.xml;
+package de.uni_koblenz.jgralab.utilities.soamig_xml;
