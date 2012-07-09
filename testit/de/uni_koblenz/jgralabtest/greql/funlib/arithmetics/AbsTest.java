@@ -1,6 +1,6 @@
 package de.uni_koblenz.jgralabtest.greql.funlib.arithmetics;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import org.junit.Before;
 import org.junit.Test;
