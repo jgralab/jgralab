@@ -36,6 +36,7 @@ package de.uni_koblenz.jgralab.utilities.tg2schemagraph;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
@@ -523,6 +524,8 @@ public class SchemaGraph2Schema {
 	 *            Domain, which is converted into a Domain of the Schema.
 	 * @return Created Domain.
 	 */
+	private HashSet<String> rdNames = new HashSet<String>();
+
 	private de.uni_koblenz.jgralab.schema.Domain createDomain(Domain gDomain) {
 
 		// Gets the QualifiedName and tries to query a Domain.
@@ -545,8 +548,13 @@ public class SchemaGraph2Schema {
 				domain = createDomain((CollectionDomain) gDomain);
 
 			} else if (gDomain instanceof RecordDomain) {
-
+				if (rdNames.contains(qualifiedName)) {
+					throw new RuntimeException(
+							"Cyclic dependency in record domains: " + rdNames);
+				}
+				rdNames.add(qualifiedName);
 				domain = createDomain((RecordDomain) gDomain);
+				rdNames.remove(qualifiedName);
 			}
 			// set comments
 			if (gDomain.getFirstAnnotatesIncidence() != null) {
