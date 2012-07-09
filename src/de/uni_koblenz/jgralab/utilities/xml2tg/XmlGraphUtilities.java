@@ -1,7 +1,41 @@
+/*
+ * JGraLab - The Java Graph Laboratory
+ *
+ * Copyright (C) 2006-2012 Institute for Software Technology
+ *                         University of Koblenz-Landau, Germany
+ *                         ist@uni-koblenz.de
+ *
+ * For bug reports, documentation and further information, visit
+ *
+ *                         https://github.com/jgralab/jgralab
+ *
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the
+ * Free Software Foundation; either version 3 of the License, or (at your
+ * option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+ * Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, see <http://www.gnu.org/licenses>.
+ *
+ * Additional permission under GNU GPL version 3 section 7
+ *
+ * If you modify this Program, or any covered work, by linking or combining
+ * it with Eclipse (or a modified version of that program or an Eclipse
+ * plugin), containing parts covered by the terms of the Eclipse Public
+ * License (EPL), the licensors of this Program grant you additional
+ * permission to convey the resulting work.  Corresponding Source for a
+ * non-source form of such a combination shall include the source code for
+ * the parts of JGraLab used as well as that of the covered work.
+ */
+
 package de.uni_koblenz.jgralab.utilities.xml2tg;
 
 import java.util.Iterator;
-import java.util.NoSuchElementException;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.NoSuchAttributeException;
@@ -11,6 +45,11 @@ import de.uni_koblenz.jgralab.utilities.xml2tg.schema.Element;
 import de.uni_koblenz.jgralab.utilities.xml2tg.schema.References;
 import de.uni_koblenz.jgralab.utilities.xml2tg.schema.XMLGraph;
 
+/**
+ * XmlGraphUtilities provides access methods to support processing of XMLGraphs.
+ * 
+ * @author ist@uni-koblenz.de
+ */
 public class XmlGraphUtilities {
 	private XMLGraph xg;
 
@@ -88,69 +127,5 @@ public class XmlGraphUtilities {
 			}
 		}
 		return false;
-	}
-
-	private static class VertexFilterIterable<T> implements Iterable<T> {
-
-		private Iterable<T> baseIterable;
-
-		public VertexFilterIterable(Iterable<T> iterable) {
-			this.baseIterable = iterable;
-		}
-
-		protected boolean accept(T vertex) {
-			return true;
-		}
-
-		public Iterable<T> getBaseIterable() {
-			return baseIterable;
-		}
-
-		@Override
-		public Iterator<T> iterator() {
-			return new VertexFilterIterator<T>(this);
-		}
-	}
-
-	private static class VertexFilterIterator<T> implements Iterator<T> {
-		VertexFilterIterable<T> filterIterable;
-		Iterator<T> baseIterator;
-		T current;
-
-		public VertexFilterIterator(VertexFilterIterable<T> baseIterable) {
-			this.filterIterable = baseIterable;
-			baseIterator = filterIterable.getBaseIterable().iterator();
-			getNext();
-		}
-
-		private void getNext() {
-			while (baseIterator.hasNext()) {
-				current = baseIterator.next();
-				if (filterIterable.accept(current)) {
-					return;
-				}
-			}
-			current = null;
-		}
-
-		@Override
-		public boolean hasNext() {
-			return current != null;
-		}
-
-		@Override
-		public T next() {
-			if (current == null) {
-				throw new NoSuchElementException();
-			}
-			T result = current;
-			getNext();
-			return result;
-		}
-
-		@Override
-		public void remove() {
-			throw new UnsupportedOperationException();
-		}
 	}
 }
