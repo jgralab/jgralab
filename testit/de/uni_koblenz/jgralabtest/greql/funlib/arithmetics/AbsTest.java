@@ -7,7 +7,7 @@ import org.junit.Test;
 
 import de.uni_koblenz.jgralab.greql.funlib.artithmetics.Abs;
 
-public class AbsTest extends UnaryFunctionTest {
+public class AbsTest extends ArithmeticTest {
 
 	private Abs abs;
 

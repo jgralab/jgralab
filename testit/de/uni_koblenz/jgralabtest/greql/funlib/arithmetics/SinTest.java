@@ -7,7 +7,7 @@ import org.junit.Test;
 
 import de.uni_koblenz.jgralab.greql.funlib.artithmetics.Sin;
 
-public class SinTest extends UnaryFunctionTest {
+public class SinTest extends ArithmeticTest {
 	private Sin sin;
 
 	@Before

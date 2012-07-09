@@ -7,7 +7,7 @@ import org.junit.Test;
 
 import de.uni_koblenz.jgralab.greql.funlib.artithmetics.Ln;
 
-public class LnTest extends UnaryFunctionTest {
+public class LnTest extends ArithmeticTest {
 	private Ln log;
 
 	@Before

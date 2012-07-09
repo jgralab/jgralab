@@ -1,24 +1,25 @@
 package de.uni_koblenz.jgralabtest.greql.funlib.arithmetics;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 import org.junit.Before;
 import org.junit.Test;
 
-import de.uni_koblenz.jgralab.greql.funlib.artithmetics.Cos;
+import de.uni_koblenz.jgralab.greql.funlib.artithmetics.Exp;
 
-public class CosTest extends ArithmeticTest {
-	private Cos cos;
+public class ExpTest extends ArithmeticTest {
+
+	private Exp exp;
 
 	@Before
 	public void setUp() {
-		cos = new Cos();
+		exp = new Exp();
 	}
 
 	@Test
 	public void testInt() {
 		for (int i = 0; i < intValues.length; i++) {
-			assertEquals(Math.cos(intValues[i]), cos.evaluate(intValues[i]),
+			assertEquals(Math.exp(intValues[i]), exp.evaluate(intValues[i]),
 					RunArithmeticTests.EPSILON);
 		}
 	}
@@ -26,7 +27,7 @@ public class CosTest extends ArithmeticTest {
 	@Test
 	public void testLong() {
 		for (int i = 0; i < longValues.length; i++) {
-			assertEquals(Math.cos(longValues[i]), cos.evaluate(longValues[i]),
+			assertEquals(Math.exp(longValues[i]), exp.evaluate(longValues[i]),
 					RunArithmeticTests.EPSILON);
 		}
 	}
@@ -34,8 +35,8 @@ public class CosTest extends ArithmeticTest {
 	@Test
 	public void testDouble() {
 		for (int i = 0; i < doubleValues.length; i++) {
-			assertEquals(Math.cos(doubleValues[i]),
-					cos.evaluate(doubleValues[i]), RunArithmeticTests.EPSILON);
+			assertEquals(Math.exp(doubleValues[i]),
+					exp.evaluate(doubleValues[i]), RunArithmeticTests.EPSILON);
 		}
 	}
 }

@@ -7,7 +7,7 @@ import org.junit.Test;
 
 import de.uni_koblenz.jgralab.greql.funlib.artithmetics.Neg;
 
-public class NegTest extends UnaryFunctionTest {
+public class NegTest extends ArithmeticTest {
 	private Neg neg;
 
 	@Before

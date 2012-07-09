@@ -7,7 +7,7 @@ import org.junit.Test;
 
 import de.uni_koblenz.jgralab.greql.funlib.artithmetics.ToInteger;
 
-public class ToIntegerTest extends UnaryFunctionTest {
+public class ToIntegerTest extends ArithmeticTest {
 	private ToInteger toInteger;
 
 	@Before

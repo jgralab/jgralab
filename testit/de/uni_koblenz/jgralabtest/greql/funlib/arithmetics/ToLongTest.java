@@ -7,7 +7,7 @@ import org.junit.Test;
 
 import de.uni_koblenz.jgralab.greql.funlib.artithmetics.ToLong;
 
-public class ToLongTest extends UnaryFunctionTest {
+public class ToLongTest extends ArithmeticTest {
 	private ToLong toLong;
 
 	@Before

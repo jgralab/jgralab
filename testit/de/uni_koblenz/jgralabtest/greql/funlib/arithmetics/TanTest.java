@@ -7,7 +7,7 @@ import org.junit.Test;
 
 import de.uni_koblenz.jgralab.greql.funlib.artithmetics.Tan;
 
-public class TanTest extends UnaryFunctionTest {
+public class TanTest extends ArithmeticTest {
 	private Tan tan;
 
 	@Before

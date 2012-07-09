@@ -7,7 +7,7 @@ import org.junit.Test;
 
 import de.uni_koblenz.jgralab.greql.funlib.artithmetics.ToDouble;
 
-public class ToDoubleTest extends UnaryFunctionTest {
+public class ToDoubleTest extends ArithmeticTest {
 	private ToDouble toDouble;
 
 	@Before

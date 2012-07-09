@@ -7,7 +7,7 @@ import org.junit.Test;
 
 import de.uni_koblenz.jgralab.greql.funlib.artithmetics.Sqrt;
 
-public class SqrtTest extends UnaryFunctionTest {
+public class SqrtTest extends ArithmeticTest {
 	private Sqrt sqrt;
 
 	@Before

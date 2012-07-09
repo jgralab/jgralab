@@ -7,7 +7,7 @@ import org.junit.Test;
 
 import de.uni_koblenz.jgralab.greql.funlib.artithmetics.Round;
 
-public class RoundTest extends UnaryFunctionTest {
+public class RoundTest extends ArithmeticTest {
 	private Round round;
 
 	@Before

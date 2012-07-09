@@ -7,7 +7,7 @@ import org.junit.Test;
 
 import de.uni_koblenz.jgralab.greql.funlib.artithmetics.Floor;
 
-public class FloorTest extends UnaryFunctionTest {
+public class FloorTest extends ArithmeticTest {
 	private Floor floor;
 
 	@Before

@@ -7,7 +7,7 @@ import org.junit.Test;
 
 import de.uni_koblenz.jgralab.greql.funlib.artithmetics.Ceil;
 
-public class CeilTest extends UnaryFunctionTest {
+public class CeilTest extends ArithmeticTest {
 	private Ceil ceil;
 
 	@Before
