@@ -339,17 +339,7 @@ public class GReTLLexer {
 			sb.append(line);
 			sb.append('\n');
 		}
-
-		// List<Token> tokens = GReTLLexer.scan(sb.toString());
-
-		// List<Token> tokens = GReTLLexer.scan("// Comment1 bla bla\n"
-		// + "CreateVertexClassDisjoint // Comment2\n"
-		// + "  Chassis // Comment3\n"
-		// + "<== #pddsl# from c : V{Chassis} reportSet c.name end\n"
-		// + "<== #bedsl# from e : V{Entity}, se : e <--{HasSupertype}+\n"
-		// + "            with containsKey(img_Chassis, e.name)\n"
-		// + "            reportSet se.name end;\n");
-
+		r.close();
 		List<Token> tokens = GReTLLexer
 				.scan("makeAddressBook ::= CreateVertexClass AddressBook <== set(1);\n"
 						+ "Call makeAddressBook;\n");

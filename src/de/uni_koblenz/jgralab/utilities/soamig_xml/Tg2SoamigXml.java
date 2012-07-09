@@ -33,15 +33,15 @@
  * the parts of JGraLab used as well as that of the covered work.
  */
 
-package de.uni_koblenz.jgralab.utilities.xml;
+package de.uni_koblenz.jgralab.utilities.soamig_xml;
 
-import static de.uni_koblenz.jgralab.utilities.xml.XMLConstants.GRUML_ATTRIBUTE_FROM;
-import static de.uni_koblenz.jgralab.utilities.xml.XMLConstants.GRUML_ATTRIBUTE_FSEQ;
-import static de.uni_koblenz.jgralab.utilities.xml.XMLConstants.GRUML_ATTRIBUTE_ID;
-import static de.uni_koblenz.jgralab.utilities.xml.XMLConstants.GRUML_ATTRIBUTE_TO;
-import static de.uni_koblenz.jgralab.utilities.xml.XMLConstants.GRUML_ATTRIBUTE_TSEQ;
-import static de.uni_koblenz.jgralab.utilities.xml.XMLConstants.GRUML_ID_PREFIX_GRAPH;
-import static de.uni_koblenz.jgralab.utilities.xml.XMLConstants.GRUML_ID_PREFIX_VERTEX;
+import static de.uni_koblenz.jgralab.utilities.soamig_xml.SoamigXmlConstants.GRUML_ATTRIBUTE_FROM;
+import static de.uni_koblenz.jgralab.utilities.soamig_xml.SoamigXmlConstants.GRUML_ATTRIBUTE_FSEQ;
+import static de.uni_koblenz.jgralab.utilities.soamig_xml.SoamigXmlConstants.GRUML_ATTRIBUTE_ID;
+import static de.uni_koblenz.jgralab.utilities.soamig_xml.SoamigXmlConstants.GRUML_ATTRIBUTE_TO;
+import static de.uni_koblenz.jgralab.utilities.soamig_xml.SoamigXmlConstants.GRUML_ATTRIBUTE_TSEQ;
+import static de.uni_koblenz.jgralab.utilities.soamig_xml.SoamigXmlConstants.GRUML_ID_PREFIX_GRAPH;
+import static de.uni_koblenz.jgralab.utilities.soamig_xml.SoamigXmlConstants.GRUML_ID_PREFIX_VERTEX;
 
 import java.io.BufferedOutputStream;
 import java.io.Closeable;
@@ -75,7 +75,7 @@ import de.uni_koblenz.jgralab.utilities.common.GraphVisitor;
 import de.uni_koblenz.jgralab.utilities.common.UtilityMethods;
 
 @WorkInProgress(description = "Attribute values missing, testing required, command line parameter checks missing", responsibleDevelopers = "strauss, riediger")
-public class Tg2xml extends GraphVisitor {
+public class Tg2SoamigXml extends GraphVisitor {
 
 	private final String prefix;
 	private final String schemaLocation;
@@ -89,7 +89,7 @@ public class Tg2xml extends GraphVisitor {
 
 	private final String namespaceURI;
 
-	public Tg2xml(OutputStream outputStream, Graph graph,
+	public Tg2SoamigXml(OutputStream outputStream, Graph graph,
 			String nameSpacePrefix, String schemaLocation) throws IOException,
 			XMLStreamException {
 		super(graph);
@@ -113,7 +113,7 @@ public class Tg2xml extends GraphVisitor {
 				outputStream, "UTF-8"));
 	}
 
-	public Tg2xml(BufferedOutputStream outputStream, BooleanGraphMarker marker,
+	public Tg2SoamigXml(BufferedOutputStream outputStream, BooleanGraphMarker marker,
 			String nameSpacePrefix, String schemaLocation) throws IOException,
 			XMLStreamException {
 		this(outputStream, marker.getGraph(), nameSpacePrefix, schemaLocation);
@@ -244,7 +244,7 @@ public class Tg2xml extends GraphVisitor {
 		Graph theGraph = GraphIO.loadGraphFromFile(graphFile,
 				new ConsoleProgressFunction("Loading"));
 
-		Tg2xml converter = new Tg2xml(new BufferedOutputStream(
+		Tg2SoamigXml converter = new Tg2SoamigXml(new BufferedOutputStream(
 				new FileOutputStream(outputFile)), theGraph, namespacePrefix,
 				xsdLocation);
 		converter.visitAll();
@@ -252,7 +252,7 @@ public class Tg2xml extends GraphVisitor {
 	}
 
 	private static CommandLine processCommandLineOptions(String[] args) {
-		String toolString = "java " + Tg2xml.class.getName();
+		String toolString = "java " + Tg2SoamigXml.class.getName();
 		String versionString = JGraLab.getInfo(false);
 		OptionHandler oh = new OptionHandler(toolString, versionString);
 

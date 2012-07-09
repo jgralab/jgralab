@@ -32,7 +32,7 @@
  * non-source form of such a combination shall include the source code for
  * the parts of JGraLab used as well as that of the covered work.
  */
-package de.uni_koblenz.jgralabtest.greql;
+package de.uni_koblenz.jgralabtest.greql.parser;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;

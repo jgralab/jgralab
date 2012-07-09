@@ -33,9 +33,9 @@
  * the parts of JGraLab used as well as that of the covered work.
  */
 
-package de.uni_koblenz.jgralab.utilities.xml;
+package de.uni_koblenz.jgralab.utilities.soamig_xml;
 
-public class XMLConstants {
+public class SoamigXmlConstants {
 
 	public static final String XSD_NAMESPACE_PREFIX = "xsd";
 	public static final String XSD_INSTANCE_NAMESPACE_PREFIX = "xsi";

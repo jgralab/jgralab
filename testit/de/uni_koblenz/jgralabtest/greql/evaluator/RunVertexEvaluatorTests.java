@@ -21,6 +21,6 @@ import de.uni_koblenz.jgralab.greql.evaluator.vertexeval.VertexEvaluator;
 		CollectionEvaluatorTest.class, VariableEvaluatorTest.class,
 		PathExpressionTest.class, ResidualEvaluatorTest.class,
 		SubgraphEvaluatorTest.class })
-public class VertexEvaluatorTest {
+public class RunVertexEvaluatorTests {
 
 }
