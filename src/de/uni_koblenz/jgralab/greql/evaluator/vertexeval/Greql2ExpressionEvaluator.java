@@ -38,8 +38,8 @@ package de.uni_koblenz.jgralab.greql.evaluator.vertexeval;
 import java.util.ArrayList;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
-import de.uni_koblenz.jgralab.greql.evaluator.InternalGreqlEvaluator;
 import de.uni_koblenz.jgralab.greql.evaluator.GreqlQueryImpl;
+import de.uni_koblenz.jgralab.greql.evaluator.InternalGreqlEvaluator;
 import de.uni_koblenz.jgralab.greql.evaluator.VertexCosts;
 import de.uni_koblenz.jgralab.greql.exception.UndefinedVariableException;
 import de.uni_koblenz.jgralab.greql.exception.UnknownTypeException;
@@ -94,7 +94,8 @@ public class Greql2ExpressionEvaluator extends
 	 * @param vertex
 	 *            the vertex which gets evaluated by this VertexEvaluator
 	 */
-	public Greql2ExpressionEvaluator(Greql2Expression vertex, GreqlQueryImpl query) {
+	public Greql2ExpressionEvaluator(Greql2Expression vertex,
+			GreqlQueryImpl query) {
 		super(vertex, query);
 	}
 
@@ -168,7 +169,7 @@ public class Greql2ExpressionEvaluator extends
 				.getVertexEvaluator((Expression) greqlExp
 						.getFirstIsQueryExprOfIncidence().getAlpha());
 		long queryCosts = queryExpEval.getCurrentSubtreeEvaluationCosts();
-		VertexEvaluator.logger.info("QueryCosts: " + queryCosts);
+		// VertexEvaluator.logger.info("QueryCosts: " + queryCosts);
 		IsBoundVarOf boundVarInc = greqlExp.getFirstIsBoundVarOfIncidence();
 		int boundVars = 0;
 		while (boundVarInc != null) {
