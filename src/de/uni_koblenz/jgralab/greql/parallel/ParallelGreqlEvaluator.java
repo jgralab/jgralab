@@ -110,7 +110,7 @@ public class ParallelGreqlEvaluator {
 	private IntegerVertexMarker inDegree;
 
 	private ExecutorService executor;
-	
+
 	private GraphMarker<GreqlEvaluatorTask> evaluators;
 
 	public ParallelGreqlEvaluator() {
@@ -150,8 +150,7 @@ public class ParallelGreqlEvaluator {
 		int threads = Math.max(2,
 				Runtime.getRuntime().availableProcessors() + 1);
 		executor = Executors.newFixedThreadPool(threads);
-		evaluators = new GraphMarker<GreqlEvaluatorTask>(
-				graph);
+		evaluators = new GraphMarker<GreqlEvaluatorTask>(graph);
 		inDegree = new IntegerVertexMarker(graph);
 		Map<Vertex, Object> result = new HashMap<Vertex, Object>();
 
@@ -168,7 +167,7 @@ public class ParallelGreqlEvaluator {
 			if (i == 0) {
 				initialNodes.add(v);
 			}
-			if (v.getDegree(dependsOnQueryEdgeClass, EdgeDirection.OUT) == 0) {
+			if (v.getDegree(dependsOnQueryEdgeClass, EdgeDirection.IN) == 0) {
 				finalEvaluators.add(t);
 			}
 		}
@@ -185,23 +184,27 @@ public class ParallelGreqlEvaluator {
 			return result;
 		} catch (InterruptedException e) {
 			e.printStackTrace();
+			shutdownNow();
 			return null;
 		} catch (ExecutionException e) {
 			e.printStackTrace();
+			shutdownNow();
 			return null;
 		}
+	}
+
+	public void shutdownNow() {
+		executor.shutdownNow();
 	}
 
 	public void scheduleNext(Vertex dependencyVertex) {
 		for (Edge isDependingOne : dependencyVertex.incidences(
 				dependsOnQueryEdgeClass, EdgeDirection.IN)) {
 			Vertex s = isDependingOne.getThat();
-			// System.out.println("\t" + l + " -> " + s);
 			synchronized (dependencyVertex.getGraph()) {
 				int i = inDegree.getMark(s) - 1;
 				inDegree.mark(s, i);
 				if (i == 0) {
-					// System.out.println("\t add " + s);
 					executor.execute(evaluators.getMark(s));
 				}
 			}
