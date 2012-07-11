@@ -35,4 +35,12 @@ public class GreqlEvaluatorTask extends FutureTask<Object> {
 		peval.scheduleNext(dependencyVertex);
 	}
 
+	@Override
+	protected void setException(Throwable t) {
+		super.setException(t);
+		peval.shutdownNow(t);
+		// TODO check Exceptions
+		System.out.println();
+	}
+
 }

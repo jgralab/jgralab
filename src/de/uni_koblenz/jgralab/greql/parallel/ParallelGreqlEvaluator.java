@@ -65,9 +65,6 @@ public class ParallelGreqlEvaluator {
 	 * Methods to create a new GreqlQueryDependencyGraph
 	 */
 
-	private final GenericGraphFactoryImpl genericGraphFactory = new GenericGraphFactoryImpl(
-			schema);
-
 	private Graph graph;
 
 	public Graph getGraph() {
@@ -75,7 +72,8 @@ public class ParallelGreqlEvaluator {
 	}
 
 	public Graph createGraph(String id, int vMax, int eMax) {
-		graph = genericGraphFactory.createGraph(graphClass, id, vMax, eMax);
+		graph = new GenericGraphFactoryImpl(schema).createGraph(graphClass, id,
+				vMax, eMax);
 		greqlQueriesMarker = new MapVertexMarker<GreqlQuery>(graph);
 		return graph;
 	}
@@ -84,21 +82,20 @@ public class ParallelGreqlEvaluator {
 		return createGraph(null, 1000, 1000);
 	}
 
-	public Vertex createQueryVertex(int id, String queryText) {
-		return createQueryVertex(id, GreqlQuery.createQuery(queryText));
+	public Vertex createQueryVertex(String queryText) {
+		return createQueryVertex(GreqlQuery.createQuery(queryText));
 	}
 
-	public Vertex createQueryVertex(int id, GreqlQuery query) {
-		Vertex v = genericGraphFactory
-				.createVertex(queryVertexClass, id, graph);
+	public Vertex createQueryVertex(GreqlQuery query) {
+		Vertex v = graph.createVertex(queryVertexClass);
 		greqlQueriesMarker.mark(v, query);
 		return v;
 	}
 
 	// TODO add weight attribute
-	public Edge createDependency(int id, Vertex predecessor, Vertex successor) {
-		return genericGraphFactory.createEdge(dependsOnQueryEdgeClass, id,
-				graph, successor, predecessor);
+	public Edge createDependency(Vertex predecessor, Vertex successor) {
+		return graph
+				.createEdge(dependsOnQueryEdgeClass, successor, predecessor);
 	}
 
 	/*
@@ -117,11 +114,11 @@ public class ParallelGreqlEvaluator {
 
 	}
 
-	public Object evaluate() {
+	public Map<Vertex, Object> evaluate() {
 		return evaluate(null, new GreqlEnvironmentAdapter());
 	}
 
-	public Object evaluate(Graph datagraph) {
+	public Map<Vertex, Object> evaluate(Graph datagraph) {
 		return evaluate(datagraph, new GreqlEnvironmentAdapter());
 	}
 
@@ -134,8 +131,7 @@ public class ParallelGreqlEvaluator {
 		// check acyclicity
 		try {
 			if (!new TopologicalOrderWithDFS(graph,
-					new RecursiveDepthFirstSearch(datagraph)).execute()
-					.isAcyclic()) {
+					new RecursiveDepthFirstSearch(graph)).execute().isAcyclic()) {
 				throw new GreqlException(
 						"The dependency graph must be acyclic.");
 			}
@@ -195,6 +191,11 @@ public class ParallelGreqlEvaluator {
 
 	public void shutdownNow() {
 		executor.shutdownNow();
+	}
+
+	public void shutdownNow(Throwable t) {
+		executor.shutdownNow();
+		t.printStackTrace();
 	}
 
 	public void scheduleNext(Vertex dependencyVertex) {
