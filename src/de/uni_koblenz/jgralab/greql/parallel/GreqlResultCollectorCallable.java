@@ -1,19 +1,23 @@
 package de.uni_koblenz.jgralab.greql.parallel;
 
-import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.Callable;
 
-import de.uni_koblenz.jgralab.Vertex;
+/**
+ * Waits until all queries are evaluated.
+ */
+public class GreqlResultCollectorCallable implements Callable<Void> {
+	private final List<GreqlEvaluatorTask> finalEvaluators;
 
-public class GreqlResultCollectorCallable implements Callable<Object> {
-
-	public GreqlResultCollectorCallable(ArrayList<Vertex> finalNodes) {
-		// TODO Auto-generated constructor stub
+	public GreqlResultCollectorCallable(List<GreqlEvaluatorTask> finalEvaluators) {
+		this.finalEvaluators = finalEvaluators;
 	}
 
 	@Override
-	public Object call() throws Exception {
-		// TODO Auto-generated method stub
+	public Void call() throws Exception {
+		for (GreqlEvaluatorTask finalEvaluator : finalEvaluators) {
+			finalEvaluator.get();
+		}
 		return null;
 	}
 

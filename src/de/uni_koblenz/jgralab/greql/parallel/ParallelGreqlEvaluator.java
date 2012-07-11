@@ -1,6 +1,9 @@
 package de.uni_koblenz.jgralab.greql.parallel;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -92,6 +95,7 @@ public class ParallelGreqlEvaluator {
 		return v;
 	}
 
+	// TODO add weight attribute
 	public Edge createDependency(int id, Vertex predecessor, Vertex successor) {
 		return genericGraphFactory.createEdge(dependsOnQueryEdgeClass, id,
 				graph, successor, predecessor);
@@ -102,6 +106,12 @@ public class ParallelGreqlEvaluator {
 	 */
 
 	private MapVertexMarker<GreqlQuery> greqlQueriesMarker;
+
+	private IntegerVertexMarker inDegree;
+
+	private ExecutorService executor;
+	
+	private GraphMarker<GreqlEvaluatorTask> evaluators;
 
 	public ParallelGreqlEvaluator() {
 
@@ -115,7 +125,8 @@ public class ParallelGreqlEvaluator {
 		return evaluate(datagraph, new GreqlEnvironmentAdapter());
 	}
 
-	public Object evaluate(Graph datagraph, GreqlEnvironment environment) {
+	public Map<Vertex, Object> evaluate(Graph datagraph,
+			GreqlEnvironment environment) {
 		if (graph == null) {
 			throw new GreqlException(
 					"There exists no graph which contains the queries and their dependencies.");
@@ -138,38 +149,38 @@ public class ParallelGreqlEvaluator {
 		// resultcollector)
 		int threads = Math.max(2,
 				Runtime.getRuntime().availableProcessors() + 1);
-		ExecutorService executor = Executors.newFixedThreadPool(threads);
-		GraphMarker<GreqlEvaluatorTask> evaluators = new GraphMarker<GreqlEvaluatorTask>(
+		executor = Executors.newFixedThreadPool(threads);
+		evaluators = new GraphMarker<GreqlEvaluatorTask>(
 				graph);
-		IntegerVertexMarker inDegree = new IntegerVertexMarker(graph);
-		Object result = null;
+		inDegree = new IntegerVertexMarker(graph);
+		Map<Vertex, Object> result = new HashMap<Vertex, Object>();
 
-		ArrayList<Vertex> initialNodes = new ArrayList<Vertex>();
-		ArrayList<Vertex> finalNodes = new ArrayList<Vertex>();
+		List<Vertex> initialNodes = new ArrayList<Vertex>();
+		List<GreqlEvaluatorTask> finalEvaluators = new ArrayList<GreqlEvaluatorTask>();
 
-		// following variables are used for a KahnKnuth acyclicity check
 		for (Vertex v : graph.vertices(queryVertexClass)) {
-			int i = v.getDegree(dependsOnQueryEdgeClass, EdgeDirection.IN);
+			GreqlEvaluatorTask t = new GreqlEvaluatorTask(
+					greqlQueriesMarker.getMark(v), datagraph, environment, v,
+					graphVersion, this);
+			evaluators.mark(v, t);
+			int i = v.getDegree(dependsOnQueryEdgeClass, EdgeDirection.OUT);
 			inDegree.mark(v, i);
 			if (i == 0) {
 				initialNodes.add(v);
 			}
 			if (v.getDegree(dependsOnQueryEdgeClass, EdgeDirection.OUT) == 0) {
-				finalNodes.add(v);
+				finalEvaluators.add(t);
 			}
-			GreqlEvaluatorTask t = new GreqlEvaluatorTask(
-					greqlQueriesMarker.getMark(v), datagraph, environment);
-			evaluators.mark(v, t);
 		}
 
-		FutureTask<Object> rc = new FutureTask<Object>(
-				new GreqlResultCollectorCallable(finalNodes));
+		FutureTask<Void> rc = new FutureTask<Void>(
+				new GreqlResultCollectorCallable(finalEvaluators));
 		executor.execute(rc);
 		for (Vertex v : initialNodes) {
 			executor.execute(evaluators.getMark(v));
 		}
 		try {
-			result = rc.get();
+			rc.get();
 			executor.shutdown();
 			return result;
 		} catch (InterruptedException e) {
@@ -178,6 +189,22 @@ public class ParallelGreqlEvaluator {
 		} catch (ExecutionException e) {
 			e.printStackTrace();
 			return null;
+		}
+	}
+
+	public void scheduleNext(Vertex dependencyVertex) {
+		for (Edge isDependingOne : dependencyVertex.incidences(
+				dependsOnQueryEdgeClass, EdgeDirection.IN)) {
+			Vertex s = isDependingOne.getThat();
+			// System.out.println("\t" + l + " -> " + s);
+			synchronized (dependencyVertex.getGraph()) {
+				int i = inDegree.getMark(s) - 1;
+				inDegree.mark(s, i);
+				if (i == 0) {
+					// System.out.println("\t add " + s);
+					executor.execute(evaluators.getMark(s));
+				}
+			}
 		}
 	}
 
