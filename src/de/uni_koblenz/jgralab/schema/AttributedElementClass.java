@@ -371,14 +371,6 @@ public interface AttributedElementClass<SC extends AttributedElementClass<SC, IC
 	public Class<IC> getSchemaImplementationClass();
 
 	/**
-	 * Retrieves the name used for elements of this AttributedElementClass in
-	 * files created by the code generator.
-	 *
-	 * @return the variable name.
-	 */
-	public String getVariableName();
-
-	/**
 	 * Checks if this element has direct or inherited attributes.
 	 *
 	 * <p>

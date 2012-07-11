@@ -302,10 +302,12 @@ public class EdgeCodeGenerator extends
 
 	@Override
 	protected CodeBlock createAttributedElementClassConstant() {
-		return new CodeSnippet(
+		CodeSnippet s = new CodeSnippet(
 				true,
 				"public static final #jgSchemaPackage#.#schemaElementClass# EC"
-						+ " = #schemaPackageName#.#schemaName#.instance().#schemaVariableName#;");
+						+ " = #schemaPackageName#.#schemaName#.instance().getGraphClass().getEdgeClass(\"#ecQualifiedName#\");");
+		s.setVariable("ecQualifiedName", aec.getQualifiedName());
+		return s;
 	}
 
 	@Override

@@ -22,7 +22,7 @@ public class TemporaryVertexClassImpl extends
 
 	protected TemporaryVertexClassImpl(
 			GraphClassImpl gc) {
-		super("TemporaryVertexClass", (PackageImpl) gc.getSchema().getDefaultPackage(), 
+		super("TemporaryVertexClass", (PackageImpl) gc.getSchema().getDefaultPackage(),
 				gc);
 	}
 
@@ -110,11 +110,6 @@ public class TemporaryVertexClassImpl extends
 
 	@Override
 	public Class<Vertex> getSchemaImplementationClass() {
-		return null;
-	}
-
-	@Override
-	public String getVariableName() {
 		return null;
 	}
 
