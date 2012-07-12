@@ -42,29 +42,26 @@ import de.uni_koblenz.jgralab.greql.types.TypeCollection;
 
 public class OutDegree extends DegreeFunction {
 
-	
 	public OutDegree() {
 		super(EdgeDirection.OUT);
 	}
 
-	@Description(params = "v", description = "Returns the out-degree of the given vertex.",
-			categories = Category.GRAPH)
+	@Description(params = "v", description = "Returns the out-degree of the given vertex.", categories = Category.GRAPH)
 	@Override
 	public Integer evaluate(Vertex v) {
 		return super.evaluate(v);
 	}
 
-	@Description(params = {"v","c"},description = "Returns the out-degree of the given vertex.\n"
-			+ "The scope is limited by an type collection.",
-			categories = Category.GRAPH)
+	@Description(params = { "v", "c" }, description = "Returns the out-degree of the given vertex.\n"
+			+ "The scope is limited by a type collection.", categories = Category.GRAPH)
 	@Override
 	public Integer evaluate(Vertex v, TypeCollection c) {
 		return super.evaluate(v, c);
 	}
-	
-	@Description(params={"v","p"}, description = "Returns the out-degree of the given vertex.\n"
-			+ "The scope is limited by a path, a path system.",
-			categories = {Category.GRAPH, Category.PATHS_AND_PATHSYSTEMS_AND_SLICES})
+
+	@Description(params = { "v", "p" }, description = "Returns the out-degree of the given vertex.\n"
+			+ "The scope is limited by a path, a path system.", categories = {
+			Category.GRAPH, Category.PATHS_AND_PATHSYSTEMS_AND_SLICES })
 	@Override
 	public Integer evaluate(Vertex v, Path p) {
 		return super.evaluate(v, p);

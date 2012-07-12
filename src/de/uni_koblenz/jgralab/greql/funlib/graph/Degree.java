@@ -46,24 +46,22 @@ public class Degree extends DegreeFunction {
 		super(EdgeDirection.INOUT);
 	}
 
-	@Description(params = "v", description = "Returns the degree of the given vertex.",
-			categories = Category.GRAPH)
+	@Description(params = "v", description = "Returns the degree of the given vertex.", categories = Category.GRAPH)
 	@Override
 	public Integer evaluate(Vertex v) {
 		return super.evaluate(v);
 	}
 
-	@Description(params = {"v","c"},description = "Returns the degree of the given vertex.\n"
-			+ "The scope is limited by an type collection.",
-			categories = Category.GRAPH)
+	@Description(params = { "v", "c" }, description = "Returns the degree of the given vertex.\n"
+			+ "The scope is limited by a type collection.", categories = Category.GRAPH)
 	@Override
 	public Integer evaluate(Vertex v, TypeCollection c) {
 		return super.evaluate(v, c);
 	}
-	
-	@Description(params={"v","p"}, description = "Returns the degree of the given vertex.\n"
-			+ "The scope is limited by a path, a path system.",
-			categories = {Category.GRAPH, Category.PATHS_AND_PATHSYSTEMS_AND_SLICES})
+
+	@Description(params = { "v", "p" }, description = "Returns the degree of the given vertex.\n"
+			+ "The scope is limited by a path, a path system.", categories = {
+			Category.GRAPH, Category.PATHS_AND_PATHSYSTEMS_AND_SLICES })
 	@Override
 	public Integer evaluate(Vertex v, Path p) {
 		return super.evaluate(v, p);
