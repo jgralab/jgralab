@@ -49,8 +49,8 @@ import de.uni_koblenz.jgralab.schema.IncidenceDirection;
 import de.uni_koblenz.jgralab.schema.VertexClass;
 import de.uni_koblenz.jgralab.schema.exception.SchemaException;
 
-public class VertexClassImpl extends
-		GraphElementClassImpl<VertexClass, Vertex> implements VertexClass {
+public class VertexClassImpl extends GraphElementClassImpl<VertexClass, Vertex>
+		implements VertexClass {
 	/**
 	 * the own in IncidenceClasses
 	 */
@@ -169,7 +169,10 @@ public class VertexClassImpl extends
 			if (incidence.getOpposite().getRolename().equals(rolename)) {
 				throw new SchemaException("The rolename "
 						+ incidence.getOpposite().getRolename()
-						+ " is used twice at class " + getQualifiedName());
+						+ " is used twice at class " + getQualifiedName()
+						+ ". Concerning edge classes are"
+						+ incClass.getEdgeClass().getQualifiedName() + " and "
+						+ incidence.getEdgeClass().getQualifiedName());
 			}
 		}
 	}
@@ -211,7 +214,7 @@ public class VertexClassImpl extends
 	 * For a vertexclass A are all edgeclasses valid froms, which (1) run from A
 	 * to a B or (2) run from a superclass of A to a B and whose end b at B is
 	 * not redefined by A or a superclass of A
-	 *
+	 * 
 	 */
 
 	@Override
@@ -423,7 +426,7 @@ public class VertexClassImpl extends
 
 	@Override
 	public boolean isValidFromFor(EdgeClass ec) {
-		if(ec.equals(this.graphClass.getTemporaryEdgeClass())){
+		if (ec.equals(this.graphClass.getTemporaryEdgeClass())) {
 			return true;
 		}
 		return getValidFromEdgeClasses().contains(ec);
@@ -431,7 +434,7 @@ public class VertexClassImpl extends
 
 	@Override
 	public boolean isValidToFor(EdgeClass ec) {
-		if(ec.equals(this.graphClass.getTemporaryEdgeClass())){
+		if (ec.equals(this.graphClass.getTemporaryEdgeClass())) {
 			return true;
 		}
 		return getValidToEdgeClasses().contains(ec);
@@ -513,7 +516,7 @@ public class VertexClassImpl extends
 
 	/**
 	 * Called when an edge class connected to this vertex class is deleted
-	 *
+	 * 
 	 * @param ic
 	 */
 	void unlink(IncidenceClass ic) {
