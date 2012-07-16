@@ -170,7 +170,7 @@ public class VertexClassImpl extends GraphElementClassImpl<VertexClass, Vertex>
 				throw new SchemaException("The rolename "
 						+ incidence.getOpposite().getRolename()
 						+ " is used twice at class " + getQualifiedName()
-						+ ". Concerning edge classes are"
+						+ ". Concerning edge classes are "
 						+ incClass.getEdgeClass().getQualifiedName() + " and "
 						+ incidence.getEdgeClass().getQualifiedName());
 			}
