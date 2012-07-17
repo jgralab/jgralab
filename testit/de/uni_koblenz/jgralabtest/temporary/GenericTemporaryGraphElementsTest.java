@@ -71,8 +71,8 @@ public class GenericTemporaryGraphElementsTest {
 		Vertex v4_temp = graph.createTemporaryVertex();
 		Edge e1_street = graph
 				.createEdge(ec_Street, v3_crossroad, v2_crossroad);
-		Edge e2_street = graph.createEdge(ec_Street, v3_crossroad, v4_temp);
-		Edge e3_street = graph.createEdge(ec_ContainsCrossroad, v1_town,
+		Edge e2_street = graph.createTemporaryEdge(ec_Street, v3_crossroad, v4_temp);
+		Edge e3_street = graph.createTemporaryEdge(ec_ContainsCrossroad, v1_town,
 				v4_temp);
 		Edge e4_temp = graph.createTemporaryEdge(v2_crossroad, v3_crossroad);
 		Edge e5_temp = graph.createTemporaryEdge(v1_town, v4_temp);
@@ -82,8 +82,8 @@ public class GenericTemporaryGraphElementsTest {
 		assertFalse(v3_crossroad.isTemporary());
 		assertTrue(v4_temp.isTemporary());
 		assertFalse(e1_street.isTemporary());
-		assertFalse(e2_street.isTemporary());
-		assertFalse(e3_street.isTemporary());
+		assertTrue(e2_street.isTemporary());
+		assertTrue(e3_street.isTemporary());
 		assertTrue(e4_temp.isTemporary());
 		assertTrue(e5_temp.isTemporary());
 	}
@@ -98,10 +98,13 @@ public class GenericTemporaryGraphElementsTest {
 
 		Vertex v5_crossroad = graph.createVertex(vc_CrossRoad);
 
-		Edge e1_street = graph.createEdge(ec_Street, v5_crossroad, v4_temp);
-		Edge e2_street = graph.createEdge(ec_Street, v4_temp, v2_crossroad);
-		Edge e3_street = graph.createEdge(ec_Street, v3_crossroad, v4_temp);
-
+		Edge e1_street = graph.createTemporaryEdge(ec_Street, v5_crossroad, v4_temp);
+		int id_e1_street = e1_street.getId();
+		Edge e2_street = graph.createTemporaryEdge(ec_Street, v4_temp, v2_crossroad);
+		int id_e2_street = e2_street.getId();
+		Edge e3_street = graph.createTemporaryEdge(ec_Street, v3_crossroad, v4_temp);
+		int id_e3_street = e3_street.getId();
+		
 		Vertex v4_plaza = v4_temp.bless(vc_Plaza);
 		assertTrue(v4_plaza.isValid());
 		assertFalse(v4_temp.isValid());
@@ -124,9 +127,9 @@ public class GenericTemporaryGraphElementsTest {
 		assertEquals(v3_crossroad, v4_plaza.getPrevVertex());
 
 		Iterator<Edge> it = v4_plaza.incidences().iterator();
-		assertEquals(e1_street.getReversedEdge(), it.next());
-		assertEquals(e2_street, it.next());
-		assertEquals(e3_street.getReversedEdge(), it.next());
+		assertEquals(graph.getEdge(id_e1_street).getReversedEdge(), it.next());
+		assertEquals(graph.getEdge(id_e2_street), it.next());
+		assertEquals(graph.getEdge(id_e3_street).getReversedEdge(), it.next());
 
 	}
 
@@ -136,14 +139,16 @@ public class GenericTemporaryGraphElementsTest {
 		TemporaryVertex v2_temp = graph.createTemporaryVertex();
 		Vertex v3_airport = graph.createVertex(vc_Airport);
 
-		graph.createEdge(ec_Street, v1_plaza, v2_temp);
-		graph.createEdge(ec_AirRoute, v2_temp, v3_airport);
+		Edge e1 = graph.createTemporaryEdge(ec_Street, v1_plaza, v2_temp);
+		Edge e2 = graph.createTemporaryEdge(ec_AirRoute, v2_temp, v3_airport);
 
 		try {
 			v2_temp.bless(vc_Airport);
 			fail();
 		} catch (TemporaryGraphElementBlessingException ex) {
-			assertTrue(v2_temp.isValid());
+			assertFalse(v2_temp.isValid());
+			assertTrue(e1.isValid());
+			assertFalse(e2.isValid());
 		}
 	}
 
@@ -323,12 +328,12 @@ public class GenericTemporaryGraphElementsTest {
 		TemporaryEdge tempe = graph.createTemporaryEdge(v1, tempv);
 		
 		assertTrue(graph.hasTemporaryElements());
-		
-		tempe.bless(ec_Street);
+
+		tempv.bless(vc_CrossRoad);
 		
 		assertTrue(graph.hasTemporaryElements());
 		
-		tempv.bless(vc_CrossRoad);
+		tempe.bless(ec_Street);
 		
 		assertFalse(graph.hasTemporaryElements());
 		

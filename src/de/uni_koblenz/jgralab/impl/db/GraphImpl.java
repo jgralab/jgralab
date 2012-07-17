@@ -1416,6 +1416,11 @@ public abstract class GraphImpl extends GraphBaseImpl implements
 	}
 	
 	@Override
+	public TemporaryEdge createTemporaryEdge(EdgeClass preliminaryType,Vertex alpha, Vertex omega){
+		throw new UnsupportedOperationException();
+	}
+	
+	@Override
 	public boolean hasTemporaryElements(){
 		return false;
 	}

@@ -40,8 +40,8 @@ public class TemporaryGraphElementsTest {
 
 		TemporaryVertex tempv = g.createTemporaryVertex();
 
-		Edge e2 = g.createEdge(schema.getGraphClass().getEdgeClass("Street"),
-				v1, tempv);
+		TemporaryEdge e2 = g.createTemporaryEdge(v1, tempv);
+		e2.setPreliminaryType(schema.getGraphClass().getEdgeClass("Street"));
 
 		assertEquals(v1, e2.getAlpha());
 		assertEquals(tempv, e2.getOmega());
@@ -79,12 +79,16 @@ public class TemporaryGraphElementsTest {
 
 		TemporaryVertex tempv = g.createTemporaryVertex();
 
-		Edge e2 = g.createEdge(schema.getGraphClass().getEdgeClass("Street"),
+		TemporaryEdge e2 = g.createTemporaryEdge(
 				v1, tempv);
-		Edge e3 = g.createEdge(schema.getGraphClass().getEdgeClass("Bridge"),
+		e2.setPreliminaryType(schema.getGraphClass().getEdgeClass("Street"));
+		int e2_id = e2.getId();
+		TemporaryEdge e3 = g.createTemporaryEdge(schema.getGraphClass().getEdgeClass("Bridge"),
 				v2, tempv);
-		Edge e4 = g.createEdge(schema.getGraphClass().getEdgeClass("Street"),
+		int e3_id = e3.getId();
+		TemporaryEdge e4 = g.createTemporaryEdge(schema.getGraphClass().getEdgeClass("Street"),
 				tempv, v1);
+		int e4_id = e4.getId();
 		Edge tempe = g.createTemporaryEdge(tempv, v2);
 
 		assertEquals(4, tempv.getDegree());
@@ -100,10 +104,10 @@ public class TemporaryGraphElementsTest {
 		assertTrue(v.isValid());
 		assertFalse(tempv.isValid());
 
-		assertEquals(e2.getReversedEdge(), v.getFirstIncidence());
-		assertEquals(e3.getReversedEdge(), v.getFirstIncidence()
+		assertEquals(g.getEdge(e2_id).getReversedEdge(), v.getFirstIncidence());
+		assertEquals(g.getEdge(e3_id).getReversedEdge(), v.getFirstIncidence()
 				.getNextIncidence());
-		assertEquals(e4, v.getFirstIncidence().getNextIncidence()
+		assertEquals(g.getEdge(e4_id), v.getFirstIncidence().getNextIncidence()
 				.getNextIncidence());
 		assertEquals(tempe, v.getFirstIncidence().getNextIncidence()
 				.getNextIncidence().getNextIncidence());
@@ -135,9 +139,9 @@ public class TemporaryGraphElementsTest {
 
 		TemporaryVertex tempv = g.createTemporaryVertex();
 
-		g.createEdge(schema.getGraphClass().getEdgeClass("Street"), v1, tempv);
+		g.createTemporaryEdge(schema.getGraphClass().getEdgeClass("Street"), v1, tempv);
 
-		g.createEdge(schema.getGraphClass().getEdgeClass("Street"), tempv, v1);
+		g.createTemporaryEdge(schema.getGraphClass().getEdgeClass("Street"), tempv, v1);
 
 		writeTgToConsole(g);
 
@@ -148,9 +152,10 @@ public class TemporaryGraphElementsTest {
 		Schema schema = CityMapSchema.instance();
 		Graph g = schema.createGraph(impl);
 		TemporaryVertex tempv = g.createTemporaryVertex();
-		Edge e = g.createEdge(schema.getGraphClass().getEdgeClass("Street"),
+		Edge e = g.createTemporaryEdge(schema.getGraphClass().getEdgeClass("Street"),
 				tempv, tempv);
-
+		System.err.println("debug "+e );
+		
 		Vertex v = g.createVertex(schema.getGraphClass().getVertexClass(
 				"Intersection"));
 
@@ -163,7 +168,7 @@ public class TemporaryGraphElementsTest {
 		assertEquals(2, v.getId());
 		assertEquals(v, transformed.getNextVertex());
 		Iterator<Edge> it = transformed.incidences().iterator();
-		assertEquals(e, it.next());
+		assertEquals(g.getEdge(1), it.next());
 		assertEquals(e.getReversedEdge(), it.next());
 
 	}
@@ -286,9 +291,9 @@ public class TemporaryGraphElementsTest {
 		Vertex v2 = g.createTemporaryVertex();
 		assertTrue(v2.isTemporary());
 
-		Edge e1 = g.createEdge(schema.getGraphClass().getEdgeClass("Bridge"),
+		Edge e1 = g.createTemporaryEdge(schema.getGraphClass().getEdgeClass("Bridge"),
 				v1, v2);
-		assertFalse(e1.isTemporary());
+		assertTrue(e1.isTemporary());
 
 		Edge e2 = g.createTemporaryEdge(v2, v1);
 		assertTrue(e2.isTemporary());
@@ -309,13 +314,14 @@ public class TemporaryGraphElementsTest {
 		Vertex v5_t = g.createTemporaryVertex();
 
 		g.createEdge(schema.getGraphClass().getEdgeClass("Bridge"), v1, v2);
-		g.createEdge(schema.getGraphClass().getEdgeClass("Bridge"), v1, v3_t);
+		Edge e2_t = g.createTemporaryEdge(schema.getGraphClass().getEdgeClass("Bridge"), v1, v3_t);
 		Edge e3_t = g.createTemporaryEdge(v3_t, v4);
 		Edge e4_t = g.createTemporaryEdge(v2, v4);
 		g.createEdge(schema.getGraphClass().getEdgeClass("Street"), v4, v1);
 
 		Iterator<Edge> it = g.edges(
 				schema.getGraphClass().getTemporaryEdgeClass()).iterator();
+		assertEquals(e2_t, it.next());
 		assertEquals(e3_t, it.next());
 		assertEquals(e4_t, it.next());
 		assertFalse(it.hasNext());
@@ -416,16 +422,19 @@ public class TemporaryGraphElementsTest {
 		Vertex v3 = g.createVertex(g.getGraphClass().getVertexClass(
 				"Intersection"));
 
-		Edge e2_2_3 = g.createEdge(schema.getGraphClass()
+		Edge e2_2_3 = g.createTemporaryEdge(schema.getGraphClass()
 				.getEdgeClass("Street"), v2, v3);
+		int id_e2_2_3 = e2_2_3.getId();
 
 		TemporaryVertex v4_t = g.createTemporaryVertex();
 
-		Edge e4_4_2 = g.createEdge(schema.getGraphClass()
+		Edge e4_4_2 = g.createTemporaryEdge(schema.getGraphClass()
 				.getEdgeClass("Street"), v4_t, v2);
+		int id_e4_4_2 = e4_4_2.getId();
 		e2_2_3.setOmega(v4_t);
-		Edge e5_1_4 = g.createEdge(schema.getGraphClass()
+		Edge e5_1_4 = g.createTemporaryEdge(schema.getGraphClass()
 				.getEdgeClass("Street"), v1, v4_t);
+		int id_e5_1_4 = e5_1_4.getId();
 
 		Vertex v5 = g.createVertex(g.getGraphClass().getVertexClass(
 				"Intersection"));
@@ -455,14 +464,14 @@ public class TemporaryGraphElementsTest {
 		assertEquals(v3, v4.getPrevVertex());
 
 		Iterator<Edge> it = v4.incidences().iterator();
-		assertEquals(e4_4_2, it.next());
-		assertEquals(e2_2_3.getReversedEdge(), it.next());
-		assertEquals(e5_1_4.getReversedEdge(), it.next());
+		assertEquals(g.getEdge(id_e4_4_2), it.next());
+		assertEquals(g.getEdge(id_e2_2_3).getReversedEdge(), it.next());
+		assertEquals(g.getEdge(id_e5_1_4).getReversedEdge(), it.next());
 		assertFalse(it.hasNext());
 
-		assertEquals(v4, e4_4_2.getAlpha());
-		assertEquals(v4, e2_2_3.getOmega());
-		assertEquals(v4, e5_1_4.getOmega());
+		assertEquals(v4, g.getEdge(id_e4_4_2).getAlpha());
+		assertEquals(v4, g.getEdge(id_e2_2_3).getOmega());
+		assertEquals(v4, g.getEdge(id_e5_1_4).getOmega());
 
 	}
 	
@@ -486,12 +495,14 @@ public class TemporaryGraphElementsTest {
 		
 		assertTrue(g.hasTemporaryElements());
 		
+		tempv.bless(schema.getGraphClass().getVertexClass("Intersection"));
+
+		assertTrue(g.hasTemporaryElements());
+		
 		tempe.bless(schema.getGraphClass()
 				.getEdgeClass("Street"));
 		
-		assertTrue(g.hasTemporaryElements());
 		
-		tempv.bless(schema.getGraphClass().getVertexClass("Intersection"));
 		
 		assertFalse(g.hasTemporaryElements());
 		

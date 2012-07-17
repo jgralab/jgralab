@@ -196,12 +196,12 @@ public class TemporaryVertexClassImpl extends
 
 	@Override
 	public boolean isValidFromFor(EdgeClass ec) {
-		return true;
+		return ec ==  this.graphClass.getTemporaryEdgeClass();
 	}
 
 	@Override
 	public boolean isValidToFor(EdgeClass ec) {
-		return true;
+		return ec == this.graphClass.getTemporaryEdgeClass();
 	}
 
 	@Override
