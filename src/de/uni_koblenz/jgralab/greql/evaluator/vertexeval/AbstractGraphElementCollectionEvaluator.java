@@ -36,11 +36,10 @@
 package de.uni_koblenz.jgralab.greql.evaluator.vertexeval;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
-import de.uni_koblenz.jgralab.greql.evaluator.InternalGreqlEvaluator;
 import de.uni_koblenz.jgralab.greql.evaluator.GreqlQueryImpl;
+import de.uni_koblenz.jgralab.greql.evaluator.InternalGreqlEvaluator;
 import de.uni_koblenz.jgralab.greql.schema.Expression;
 import de.uni_koblenz.jgralab.greql.schema.IsTypeRestrOfExpression;
-import de.uni_koblenz.jgralab.greql.schema.TypeId;
 import de.uni_koblenz.jgralab.greql.types.TypeCollection;
 
 /**

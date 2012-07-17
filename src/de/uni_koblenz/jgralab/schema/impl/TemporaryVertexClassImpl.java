@@ -206,12 +206,14 @@ public class TemporaryVertexClassImpl extends
 
 	@Override
 	public Set<EdgeClass> getValidToEdgeClasses() {
-		return ArrayPSet.empty();
+		ArrayPSet<EdgeClass> set = ArrayPSet.empty();
+		return set.plus(this.graphClass.getTemporaryEdgeClass());
 	}
 
 	@Override
 	public Set<EdgeClass> getValidFromEdgeClasses() {
-		return ArrayPSet.empty();
+		ArrayPSet<EdgeClass> set = ArrayPSet.empty();
+		return set.plus(this.graphClass.getTemporaryEdgeClass());
 	}
 
 	@Override

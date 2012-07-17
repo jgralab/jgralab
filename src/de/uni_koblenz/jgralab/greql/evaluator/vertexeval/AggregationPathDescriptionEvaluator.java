@@ -36,12 +36,11 @@
 package de.uni_koblenz.jgralab.greql.evaluator.vertexeval;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
-import de.uni_koblenz.jgralab.greql.evaluator.InternalGreqlEvaluator;
 import de.uni_koblenz.jgralab.greql.evaluator.GreqlQueryImpl;
+import de.uni_koblenz.jgralab.greql.evaluator.InternalGreqlEvaluator;
 import de.uni_koblenz.jgralab.greql.evaluator.VertexCosts;
 import de.uni_koblenz.jgralab.greql.evaluator.fa.NFA;
 import de.uni_koblenz.jgralab.greql.schema.AggregationPathDescription;
-import de.uni_koblenz.jgralab.greql.schema.EdgeRestriction;
 import de.uni_koblenz.jgralab.greql.schema.Expression;
 import de.uni_koblenz.jgralab.greql.schema.IsEdgeRestrOf;
 import de.uni_koblenz.jgralab.greql.types.TypeCollection;
