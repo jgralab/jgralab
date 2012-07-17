@@ -4,6 +4,7 @@ derby.log
 src/de/uni_koblenz/jgralab/grumlschema/
 src/de/uni_koblenz/jgralab/greql/schema/
 src/de/uni_koblenz/jgralab/gretl/template/
+src/de/uni_koblenz/jgralab/utilities/xml2tg/schema/
 testit/de/uni_koblenz/jgralabtest/schemas/
 testit/jgralabtest.properties
 testit/testdata/
