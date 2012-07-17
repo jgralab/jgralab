@@ -37,8 +37,8 @@ package de.uni_koblenz.jgralab.greql.evaluator.vertexeval;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.greql.evaluator.InternalGreqlEvaluator;
 import de.uni_koblenz.jgralab.greql.evaluator.GreqlQueryImpl;
+import de.uni_koblenz.jgralab.greql.evaluator.InternalGreqlEvaluator;
 import de.uni_koblenz.jgralab.greql.evaluator.VertexCosts;
 import de.uni_koblenz.jgralab.greql.evaluator.fa.DFA;
 import de.uni_koblenz.jgralab.greql.funlib.graph.ReachableVertices;
@@ -69,7 +69,7 @@ public class ForwardVertexSetEvaluator extends
 		PathDescriptionEvaluator<?> pathDescEval = (PathDescriptionEvaluator<?>) query
 				.getVertexEvaluator(p);
 
-		Expression startExpression = (Expression) vertex
+		Expression startExpression = vertex
 				.getFirstIsStartExprOfIncidence(EdgeDirection.IN).getAlpha();
 		startEval = query.getVertexEvaluator(startExpression);
 		searchAutomaton = new DFA(pathDescEval.getNFA(evaluator));
@@ -92,7 +92,7 @@ public class ForwardVertexSetEvaluator extends
 	@Override
 	public VertexCosts calculateSubtreeEvaluationCosts() {
 		ForwardVertexSet bwvertex = getVertex();
-		Expression targetExpression = (Expression) bwvertex
+		Expression targetExpression = bwvertex
 				.getFirstIsStartExprOfIncidence().getAlpha();
 		VertexEvaluator<? extends Expression> vertexEval = query
 				.getVertexEvaluator(targetExpression);

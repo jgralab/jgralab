@@ -37,8 +37,8 @@ package de.uni_koblenz.jgralab.greql.evaluator.vertexeval;
 import org.pcollections.PCollection;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
-import de.uni_koblenz.jgralab.greql.evaluator.InternalGreqlEvaluator;
 import de.uni_koblenz.jgralab.greql.evaluator.GreqlQueryImpl;
+import de.uni_koblenz.jgralab.greql.evaluator.InternalGreqlEvaluator;
 import de.uni_koblenz.jgralab.greql.evaluator.VariableDeclarationLayer;
 import de.uni_koblenz.jgralab.greql.schema.Comprehension;
 import de.uni_koblenz.jgralab.greql.schema.Declaration;
@@ -60,7 +60,7 @@ public abstract class ComprehensionEvaluator<V extends Comprehension> extends
 
 	protected final VertexEvaluator<? extends Expression> getResultDefinitionEvaluator() {
 		if (resultDefinitionEvaluator == null) {
-			Expression resultDefinition = (Expression) getVertex()
+			Expression resultDefinition =  getVertex()
 					.getFirstIsCompResultDefOfIncidence(EdgeDirection.IN)
 					.getAlpha();
 			resultDefinitionEvaluator = query
@@ -72,7 +72,7 @@ public abstract class ComprehensionEvaluator<V extends Comprehension> extends
 	protected final VariableDeclarationLayer getVariableDeclationLayer(
 			InternalGreqlEvaluator evaluator) {
 		if (varDeclLayer == null) {
-			Declaration d = (Declaration) getVertex()
+			Declaration d = getVertex()
 					.getFirstIsCompDeclOfIncidence(EdgeDirection.IN).getAlpha();
 			DeclarationEvaluator declEval = (DeclarationEvaluator) query
 					.getVertexEvaluator(d);

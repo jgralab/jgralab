@@ -39,8 +39,8 @@ import org.pcollections.PSet;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.greql.evaluator.InternalGreqlEvaluator;
 import de.uni_koblenz.jgralab.greql.evaluator.GreqlQueryImpl;
+import de.uni_koblenz.jgralab.greql.evaluator.InternalGreqlEvaluator;
 import de.uni_koblenz.jgralab.greql.evaluator.VertexCosts;
 import de.uni_koblenz.jgralab.greql.evaluator.fa.DFA;
 import de.uni_koblenz.jgralab.greql.evaluator.fa.NFA;
@@ -72,7 +72,7 @@ public class BackwardVertexSetEvaluator extends
 		PathDescriptionEvaluator<?> pathDescEval = (PathDescriptionEvaluator<?>) query
 				.getVertexEvaluator(p);
 
-		Expression targetExpression = (Expression) vertex
+		Expression targetExpression = vertex
 				.getFirstIsTargetExprOfIncidence(EdgeDirection.IN).getAlpha();
 		targetEval = query.getVertexEvaluator(targetExpression);
 		NFA revertedNFA = NFA.revertNFA(pathDescEval.getNFA(evaluator));
@@ -97,7 +97,7 @@ public class BackwardVertexSetEvaluator extends
 	@Override
 	public VertexCosts calculateSubtreeEvaluationCosts() {
 		BackwardVertexSet bwvertex = getVertex();
-		Expression targetExpression = (Expression) bwvertex
+		Expression targetExpression = bwvertex
 				.getFirstIsTargetExprOfIncidence().getAlpha();
 		VertexEvaluator<? extends Expression> vertexEval = query
 				.getVertexEvaluator(targetExpression);

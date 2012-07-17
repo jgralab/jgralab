@@ -36,8 +36,8 @@
 package de.uni_koblenz.jgralab.greql.evaluator.vertexeval;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
-import de.uni_koblenz.jgralab.greql.evaluator.InternalGreqlEvaluator;
 import de.uni_koblenz.jgralab.greql.evaluator.GreqlQueryImpl;
+import de.uni_koblenz.jgralab.greql.evaluator.InternalGreqlEvaluator;
 import de.uni_koblenz.jgralab.greql.evaluator.VertexCosts;
 import de.uni_koblenz.jgralab.greql.schema.Expression;
 import de.uni_koblenz.jgralab.greql.schema.IsRecordExprOf;
@@ -59,7 +59,7 @@ public class RecordElementEvaluator extends VertexEvaluator<RecordElement> {
 
 	public String getId() {
 		if (id == null) {
-			RecordId idVertex = (RecordId) vertex
+			RecordId idVertex = vertex
 					.getFirstIsRecordIdOfIncidence(EdgeDirection.IN).getAlpha();
 			id = idVertex.get_name();
 		}
@@ -82,7 +82,7 @@ public class RecordElementEvaluator extends VertexEvaluator<RecordElement> {
 	public Object evaluate(InternalGreqlEvaluator evaluator) {
 		evaluator.progress(getOwnEvaluationCosts());
 		if (expEval == null) {
-			Expression recordElementExp = (Expression) vertex
+			Expression recordElementExp =  vertex
 					.getFirstIsRecordExprOfIncidence(EdgeDirection.IN)
 					.getAlpha();
 			expEval = query.getVertexEvaluator(recordElementExp);
@@ -96,7 +96,7 @@ public class RecordElementEvaluator extends VertexEvaluator<RecordElement> {
 
 		IsRecordExprOf inc = recElem.getFirstIsRecordExprOfIncidence();
 		VertexEvaluator<? extends Expression> veval = query
-				.getVertexEvaluator((Expression) inc.getAlpha());
+				.getVertexEvaluator(inc.getAlpha());
 		long recordExprCosts = veval.getCurrentSubtreeEvaluationCosts();
 
 		long ownCosts = 3;

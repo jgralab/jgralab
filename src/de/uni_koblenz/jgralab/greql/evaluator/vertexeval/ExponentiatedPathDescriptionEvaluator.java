@@ -36,8 +36,8 @@
 package de.uni_koblenz.jgralab.greql.evaluator.vertexeval;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
-import de.uni_koblenz.jgralab.greql.evaluator.InternalGreqlEvaluator;
 import de.uni_koblenz.jgralab.greql.evaluator.GreqlQueryImpl;
+import de.uni_koblenz.jgralab.greql.evaluator.InternalGreqlEvaluator;
 import de.uni_koblenz.jgralab.greql.evaluator.VertexCosts;
 import de.uni_koblenz.jgralab.greql.evaluator.fa.NFA;
 import de.uni_koblenz.jgralab.greql.exception.GreqlException;
@@ -78,7 +78,7 @@ public class ExponentiatedPathDescriptionEvaluator extends
 	@Override
 	public NFA evaluate(InternalGreqlEvaluator evaluator) {
 		evaluator.progress(getOwnEvaluationCosts());
-		PathDescription p = (PathDescription) vertex
+		PathDescription p = vertex
 				.getFirstIsExponentiatedPathOfIncidence().getAlpha();
 		PathDescriptionEvaluator<?> pathEval = (PathDescriptionEvaluator<?>) query
 				.getVertexEvaluator(p);
@@ -108,7 +108,7 @@ public class ExponentiatedPathDescriptionEvaluator extends
 		ExponentiatedPathDescription p = getVertex();
 		long exponent = defaultExponent;
 		VertexEvaluator<IntLiteral> expEval = query
-				.getVertexEvaluator((IntLiteral) p
+				.getVertexEvaluator(p
 						.getFirstIsExponentOfIncidence(EdgeDirection.IN)
 						.getAlpha());
 		if (expEval instanceof IntLiteralEvaluator) {
@@ -119,7 +119,7 @@ public class ExponentiatedPathDescriptionEvaluator extends
 		}
 		long exponentCosts = expEval.getCurrentSubtreeEvaluationCosts();
 		VertexEvaluator<? extends PathDescription> pathEval = query
-				.getVertexEvaluator((PathDescription) p
+				.getVertexEvaluator(p
 						.getFirstIsExponentiatedPathOfIncidence(
 								EdgeDirection.IN).getAlpha());
 		long pathCosts = pathEval.getCurrentSubtreeEvaluationCosts();

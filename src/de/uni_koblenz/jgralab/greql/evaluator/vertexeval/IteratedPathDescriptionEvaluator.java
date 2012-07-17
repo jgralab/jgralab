@@ -36,8 +36,8 @@
 package de.uni_koblenz.jgralab.greql.evaluator.vertexeval;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
-import de.uni_koblenz.jgralab.greql.evaluator.InternalGreqlEvaluator;
 import de.uni_koblenz.jgralab.greql.evaluator.GreqlQueryImpl;
+import de.uni_koblenz.jgralab.greql.evaluator.InternalGreqlEvaluator;
 import de.uni_koblenz.jgralab.greql.evaluator.VertexCosts;
 import de.uni_koblenz.jgralab.greql.evaluator.fa.NFA;
 import de.uni_koblenz.jgralab.greql.schema.IteratedPathDescription;
@@ -70,7 +70,7 @@ public class IteratedPathDescriptionEvaluator extends
 	@Override
 	public NFA evaluate(InternalGreqlEvaluator evaluator) {
 		evaluator.progress(getOwnEvaluationCosts());
-		PathDescription p = (PathDescription) vertex
+		PathDescription p =  vertex
 				.getFirstIsIteratedPathOfIncidence(EdgeDirection.IN).getAlpha();
 		PathDescriptionEvaluator<?> pathEval = (PathDescriptionEvaluator<?>) query
 				.getVertexEvaluator(p);
@@ -84,7 +84,7 @@ public class IteratedPathDescriptionEvaluator extends
 	public VertexCosts calculateSubtreeEvaluationCosts() {
 		IteratedPathDescription iterPath = getVertex();
 		VertexEvaluator<? extends PathDescription> pathEval = query
-				.getVertexEvaluator((PathDescription) iterPath
+				.getVertexEvaluator(iterPath
 						.getFirstIsIteratedPathOfIncidence(EdgeDirection.IN)
 						.getAlpha());
 		long ownCosts = 5;

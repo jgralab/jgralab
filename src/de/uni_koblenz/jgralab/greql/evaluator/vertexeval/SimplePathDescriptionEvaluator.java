@@ -36,11 +36,10 @@
 package de.uni_koblenz.jgralab.greql.evaluator.vertexeval;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
-import de.uni_koblenz.jgralab.greql.evaluator.InternalGreqlEvaluator;
 import de.uni_koblenz.jgralab.greql.evaluator.GreqlQueryImpl;
+import de.uni_koblenz.jgralab.greql.evaluator.InternalGreqlEvaluator;
 import de.uni_koblenz.jgralab.greql.evaluator.VertexCosts;
 import de.uni_koblenz.jgralab.greql.evaluator.fa.NFA;
-import de.uni_koblenz.jgralab.greql.schema.EdgeRestriction;
 import de.uni_koblenz.jgralab.greql.schema.Expression;
 import de.uni_koblenz.jgralab.greql.schema.IsEdgeRestrOf;
 import de.uni_koblenz.jgralab.greql.schema.SimplePathDescription;
@@ -70,7 +69,7 @@ public class SimplePathDescriptionEvaluator extends
 		for (IsEdgeRestrOf inc : vertex
 				.getIsEdgeRestrOfIncidences(EdgeDirection.IN)) {
 			edgeRestEval = (EdgeRestrictionEvaluator) query
-					.getVertexEvaluator((EdgeRestriction) inc.getAlpha());
+					.getVertexEvaluator(inc.getAlpha());
 			typeCollection.addTypes(edgeRestEval.getTypeCollection(evaluator));
 			predicateEvaluator = edgeRestEval.getPredicateEvaluator();
 		}

@@ -42,8 +42,8 @@ import java.util.List;
 import org.pcollections.PVector;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
-import de.uni_koblenz.jgralab.greql.evaluator.InternalGreqlEvaluator;
 import de.uni_koblenz.jgralab.greql.evaluator.GreqlQueryImpl;
+import de.uni_koblenz.jgralab.greql.evaluator.InternalGreqlEvaluator;
 import de.uni_koblenz.jgralab.greql.evaluator.VariableDeclaration;
 import de.uni_koblenz.jgralab.greql.evaluator.VariableDeclarationLayer;
 import de.uni_koblenz.jgralab.greql.evaluator.VertexCosts;
@@ -83,7 +83,7 @@ public class DeclarationEvaluator extends VertexEvaluator<Declaration> {
 		for (IsConstraintOf consInc : vertex
 				.getIsConstraintOfIncidences(EdgeDirection.IN)) {
 			VertexEvaluator<? extends Expression> curEval = query
-					.getVertexEvaluator((Expression) consInc.getAlpha());
+					.getVertexEvaluator(consInc.getAlpha());
 			if (curEval != null) {
 				constraintList.add(curEval);
 			}
@@ -92,7 +92,7 @@ public class DeclarationEvaluator extends VertexEvaluator<Declaration> {
 		List<VariableDeclaration> varDeclList = new ArrayList<VariableDeclaration>();
 		for (IsSimpleDeclOf inc : vertex
 				.getIsSimpleDeclOfIncidences(EdgeDirection.IN)) {
-			SimpleDeclaration simpleDecl = (SimpleDeclaration) inc.getAlpha();
+			SimpleDeclaration simpleDecl = inc.getAlpha();
 			SimpleDeclarationEvaluator simpleDeclEval = (SimpleDeclarationEvaluator) query
 					.getVertexEvaluator(simpleDecl);
 			@SuppressWarnings("unchecked")
@@ -114,7 +114,7 @@ public class DeclarationEvaluator extends VertexEvaluator<Declaration> {
 		IsSimpleDeclOf inc = decl.getFirstIsSimpleDeclOfIncidence();
 		long simpleDeclCosts = 0;
 		while (inc != null) {
-			SimpleDeclaration simpleDecl = (SimpleDeclaration) inc.getAlpha();
+			SimpleDeclaration simpleDecl = inc.getAlpha();
 			SimpleDeclarationEvaluator simpleEval = (SimpleDeclarationEvaluator) query
 					.getVertexEvaluator(simpleDecl);
 			simpleDeclCosts += simpleEval.getCurrentSubtreeEvaluationCosts();
@@ -125,7 +125,7 @@ public class DeclarationEvaluator extends VertexEvaluator<Declaration> {
 		int constraintsCosts = 0;
 		while (consInc != null) {
 			VertexEvaluator<? extends Expression> constraint = query
-					.getVertexEvaluator((Expression) consInc.getAlpha());
+					.getVertexEvaluator(consInc.getAlpha());
 			constraintsCosts += constraint.getCurrentSubtreeEvaluationCosts();
 			consInc = consInc.getNextIsConstraintOfIncidence();
 		}
@@ -160,7 +160,7 @@ public class DeclarationEvaluator extends VertexEvaluator<Declaration> {
 		double selectivity = 1.0;
 		while (inc != null) {
 			VertexEvaluator<? extends Expression> constEval = query
-					.getVertexEvaluator((Expression) inc.getAlpha());
+					.getVertexEvaluator(inc.getAlpha());
 			selectivity *= constEval.getEstimatedSelectivity();
 			inc = inc.getNextIsConstraintOfIncidence(EdgeDirection.IN);
 		}

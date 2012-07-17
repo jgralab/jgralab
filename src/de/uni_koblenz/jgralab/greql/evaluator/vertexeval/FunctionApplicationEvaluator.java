@@ -38,13 +38,13 @@ package de.uni_koblenz.jgralab.greql.evaluator.vertexeval;
 import java.util.ArrayList;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
-import de.uni_koblenz.jgralab.greql.evaluator.InternalGreqlEvaluator;
 import de.uni_koblenz.jgralab.greql.evaluator.GreqlQueryImpl;
+import de.uni_koblenz.jgralab.greql.evaluator.InternalGreqlEvaluator;
 import de.uni_koblenz.jgralab.greql.evaluator.VertexCosts;
 import de.uni_koblenz.jgralab.greql.exception.GreqlException;
 import de.uni_koblenz.jgralab.greql.funlib.FunLib;
-import de.uni_koblenz.jgralab.greql.funlib.Function;
 import de.uni_koblenz.jgralab.greql.funlib.FunLib.FunctionInfo;
+import de.uni_koblenz.jgralab.greql.funlib.Function;
 import de.uni_koblenz.jgralab.greql.schema.Expression;
 import de.uni_koblenz.jgralab.greql.schema.FunctionApplication;
 import de.uni_koblenz.jgralab.greql.schema.FunctionId;
@@ -82,7 +82,7 @@ public class FunctionApplicationEvaluator extends
 	 */
 	public String getFunctionName() {
 		if (functionName == null) {
-			FunctionId id = (FunctionId) vertex
+			FunctionId id = vertex
 					.getFirstIsFunctionIdOfIncidence(EdgeDirection.IN)
 					.getAlpha();
 			functionName = id.get_name();
@@ -130,7 +130,7 @@ public class FunctionApplicationEvaluator extends
 		IsArgumentOf inc = vertex
 				.getFirstIsArgumentOfIncidence(EdgeDirection.IN);
 		while (inc != null) {
-			Expression currentParameterExpr = (Expression) inc.getAlpha();
+			Expression currentParameterExpr = inc.getAlpha();
 			// maybe the vertex has no evaluator
 			VertexEvaluator<? extends Expression> paramEval = query
 					.getVertexEvaluator(currentParameterExpr);
@@ -221,7 +221,7 @@ public class FunctionApplicationEvaluator extends
 		ArrayList<Long> elements = new ArrayList<Long>();
 		while (inc != null) {
 			VertexEvaluator<? extends Expression> argEval = query
-					.getVertexEvaluator((Expression) inc.getAlpha());
+					.getVertexEvaluator(inc.getAlpha());
 			argCosts += argEval.getCurrentSubtreeEvaluationCosts();
 			elements.add(argEval.getEstimatedCardinality());
 			inc = inc.getNextIsArgumentOfIncidence(EdgeDirection.IN);
@@ -252,7 +252,7 @@ public class FunctionApplicationEvaluator extends
 		int elements = 0;
 		while (inc != null) {
 			VertexEvaluator<? extends Expression> argEval = query
-					.getVertexEvaluator((Expression) inc.getAlpha());
+					.getVertexEvaluator(inc.getAlpha());
 			elements += argEval.getEstimatedCardinality();
 			inc = inc.getNextIsArgumentOfIncidence(EdgeDirection.IN);
 		}

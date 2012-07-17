@@ -290,8 +290,8 @@ public class CommonSubgraphOptimizer extends OptimizerBase {
 				.getFirstGreql2AggregationIncidence(EdgeDirection.IN);
 		while ((gal != null) && (gah != null)) {
 			OptimizerUtility.mergeSourcePositions(gah, gal);
-			mergeSourcePositionsBelow((Greql2Vertex) gal.getAlpha(),
-					(Greql2Vertex) gah.getAlpha());
+			mergeSourcePositionsBelow( gal.getAlpha(),
+					gah.getAlpha());
 			gal = gal.getNextGreql2AggregationIncidence(EdgeDirection.IN);
 			gah = gah.getNextGreql2AggregationIncidence(EdgeDirection.IN);
 		}

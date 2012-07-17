@@ -72,7 +72,7 @@ public class AggregationPathDescriptionEvaluator extends
 		VertexEvaluator<? extends Expression> predicateEvaluator = null;
 		if (inc != null) {
 			edgeRestEval = (EdgeRestrictionEvaluator) query
-					.getVertexEvaluator((EdgeRestriction) inc.getAlpha());
+					.getVertexEvaluator(inc.getAlpha());
 			typeCollection.addTypes(edgeRestEval.getTypeCollection(evaluator));
 			predicateEvaluator = edgeRestEval.getPredicateEvaluator();
 		}

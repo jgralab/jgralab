@@ -42,8 +42,8 @@ import org.pcollections.PMap;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.JGraLab;
-import de.uni_koblenz.jgralab.greql.evaluator.InternalGreqlEvaluator;
 import de.uni_koblenz.jgralab.greql.evaluator.GreqlQueryImpl;
+import de.uni_koblenz.jgralab.greql.evaluator.InternalGreqlEvaluator;
 import de.uni_koblenz.jgralab.greql.evaluator.VariableDeclarationLayer;
 import de.uni_koblenz.jgralab.greql.evaluator.VertexCosts;
 import de.uni_koblenz.jgralab.greql.schema.Declaration;
@@ -64,18 +64,18 @@ public class MapComprehensionEvaluator extends
 	@Override
 	protected VertexCosts calculateSubtreeEvaluationCosts() {
 		MapComprehension mapComp = getVertex();
-		Declaration decl = (Declaration) mapComp
+		Declaration decl = mapComp
 				.getFirstIsCompDeclOfIncidence().getAlpha();
 		DeclarationEvaluator declEval = (DeclarationEvaluator) query
 				.getVertexEvaluator(decl);
 		long declCosts = declEval.getCurrentSubtreeEvaluationCosts();
 
-		Expression key = (Expression) mapComp
+		Expression key = mapComp
 				.getFirstIsKeyExprOfComprehensionIncidence(EdgeDirection.IN)
 				.getAlpha();
 		VertexEvaluator<? extends Expression> keyEval = query
 				.getVertexEvaluator(key);
-		Expression value = (Expression) mapComp
+		Expression value = mapComp
 				.getFirstIsValueExprOfComprehensionIncidence(EdgeDirection.IN)
 				.getAlpha();
 		VertexEvaluator<? extends Expression> valEval = query
@@ -98,12 +98,12 @@ public class MapComprehensionEvaluator extends
 		VariableDeclarationLayer declLayer = getVariableDeclationLayer(evaluator);
 		PMap<Object, Object> resultMap = JGraLab.map();
 
-		Expression key = (Expression) vertex
+		Expression key = vertex
 				.getFirstIsKeyExprOfComprehensionIncidence(EdgeDirection.IN)
 				.getAlpha();
 		VertexEvaluator<? extends Expression> keyEval = query
 				.getVertexEvaluator(key);
-		Expression val = (Expression) vertex
+		Expression val = vertex
 				.getFirstIsValueExprOfComprehensionIncidence(EdgeDirection.IN)
 				.getAlpha();
 		VertexEvaluator<? extends Expression> valEval = query
@@ -120,7 +120,7 @@ public class MapComprehensionEvaluator extends
 	@Override
 	public long calculateEstimatedCardinality() {
 		MapComprehension setComp = getVertex();
-		Declaration decl = (Declaration) setComp
+		Declaration decl = setComp
 				.getFirstIsCompDeclOfIncidence().getAlpha();
 		DeclarationEvaluator declEval = (DeclarationEvaluator) query
 				.getVertexEvaluator(decl);

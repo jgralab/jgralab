@@ -39,11 +39,10 @@ import org.pcollections.PSet;
 
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.greql.evaluator.InternalGreqlEvaluator;
 import de.uni_koblenz.jgralab.greql.evaluator.GreqlQueryImpl;
+import de.uni_koblenz.jgralab.greql.evaluator.InternalGreqlEvaluator;
 import de.uni_koblenz.jgralab.greql.evaluator.VertexCosts;
 import de.uni_koblenz.jgralab.greql.schema.IsTypeRestrOfExpression;
-import de.uni_koblenz.jgralab.greql.schema.TypeId;
 import de.uni_koblenz.jgralab.greql.schema.VertexSetExpression;
 import de.uni_koblenz.jgralab.greql.types.TypeCollection;
 
@@ -106,7 +105,7 @@ public class VertexSetExpressionEvaluator extends
 				.getFirstIsTypeRestrOfExpressionIncidence();
 		while (inc != null) {
 			TypeIdEvaluator tideval = (TypeIdEvaluator) query
-					.getVertexEvaluator((TypeId) inc.getAlpha());
+					.getVertexEvaluator(inc.getAlpha());
 			typeRestrCosts += tideval.getCurrentSubtreeEvaluationCosts();
 			inc = inc.getNextIsTypeRestrOfExpressionIncidence();
 		}
@@ -124,7 +123,7 @@ public class VertexSetExpressionEvaluator extends
 		double selectivity = 1.0;
 		if (inc != null) {
 			TypeIdEvaluator typeIdEval = (TypeIdEvaluator) query
-					.getVertexEvaluator((TypeId) inc.getAlpha());
+					.getVertexEvaluator(inc.getAlpha());
 			selectivity = typeIdEval.getEstimatedSelectivity();
 		}
 		return Math.round(query.getOptimizerInfo().getVertexCount()

@@ -39,12 +39,11 @@ import org.pcollections.PSet;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.JGraLab;
-import de.uni_koblenz.jgralab.greql.evaluator.InternalGreqlEvaluator;
 import de.uni_koblenz.jgralab.greql.evaluator.GreqlQueryImpl;
+import de.uni_koblenz.jgralab.greql.evaluator.InternalGreqlEvaluator;
 import de.uni_koblenz.jgralab.greql.evaluator.VertexCosts;
 import de.uni_koblenz.jgralab.greql.schema.EdgeSetExpression;
 import de.uni_koblenz.jgralab.greql.schema.IsTypeRestrOfExpression;
-import de.uni_koblenz.jgralab.greql.schema.TypeId;
 import de.uni_koblenz.jgralab.greql.types.TypeCollection;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 
@@ -101,7 +100,7 @@ public class EdgeSetExpressionEvaluator extends
 				.getFirstIsTypeRestrOfExpressionIncidence();
 		while (inc != null) {
 			TypeIdEvaluator tideval = (TypeIdEvaluator) query
-					.getVertexEvaluator((TypeId) inc.getAlpha());
+					.getVertexEvaluator(inc.getAlpha());
 			typeRestrCosts += tideval.getCurrentSubtreeEvaluationCosts();
 			inc = inc.getNextIsTypeRestrOfExpressionIncidence();
 		}
@@ -119,7 +118,7 @@ public class EdgeSetExpressionEvaluator extends
 		double selectivity = 1.0;
 		if (inc != null) {
 			TypeIdEvaluator typeIdEval = (TypeIdEvaluator) query
-					.getVertexEvaluator((TypeId) inc.getAlpha());
+					.getVertexEvaluator(inc.getAlpha());
 			selectivity = typeIdEval.getEstimatedSelectivity();
 		}
 		return Math

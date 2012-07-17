@@ -39,8 +39,8 @@ import org.pcollections.PVector;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.JGraLab;
-import de.uni_koblenz.jgralab.greql.evaluator.InternalGreqlEvaluator;
 import de.uni_koblenz.jgralab.greql.evaluator.GreqlQueryImpl;
+import de.uni_koblenz.jgralab.greql.evaluator.InternalGreqlEvaluator;
 import de.uni_koblenz.jgralab.greql.evaluator.VertexCosts;
 import de.uni_koblenz.jgralab.greql.schema.Expression;
 import de.uni_koblenz.jgralab.greql.schema.ListRangeConstruction;
@@ -80,9 +80,9 @@ public class ListRangeConstructionEvaluator extends
 	private VertexEvaluator<? extends Expression> lastElementEvaluator = null;
 
 	private void getEvals() {
-		Expression firstElementExpression = (Expression) vertex
+		Expression firstElementExpression = vertex
 				.getFirstIsFirstValueOfIncidence(EdgeDirection.IN).getAlpha();
-		Expression lastElementExpression = (Expression) vertex
+		Expression lastElementExpression = vertex
 				.getFirstIsLastValueOfIncidence(EdgeDirection.IN).getAlpha();
 		firstElementEvaluator = query
 				.getVertexEvaluator(firstElementExpression);
@@ -123,10 +123,10 @@ public class ListRangeConstructionEvaluator extends
 	public VertexCosts calculateSubtreeEvaluationCosts() {
 		ListRangeConstruction exp = getVertex();
 		VertexEvaluator<? extends Expression> startExpEval = query
-				.getVertexEvaluator((Expression) exp
+				.getVertexEvaluator(exp
 						.getFirstIsFirstValueOfIncidence().getAlpha());
 		VertexEvaluator<? extends Expression> targetExpEval = query
-				.getVertexEvaluator((Expression) exp
+				.getVertexEvaluator(exp
 						.getFirstIsLastValueOfIncidence().getAlpha());
 		long startCosts = startExpEval.getCurrentSubtreeEvaluationCosts();
 		long targetCosts = targetExpEval.getCurrentSubtreeEvaluationCosts();
@@ -156,11 +156,11 @@ public class ListRangeConstructionEvaluator extends
 	public long calculateEstimatedCardinality() {
 		ListRangeConstruction exp = getVertex();
 		VertexEvaluator<? extends Expression> startExpEval = query
-				.getVertexEvaluator((Expression) exp
+				.getVertexEvaluator(exp
 						.getFirstIsFirstValueOfIncidence(EdgeDirection.IN)
 						.getAlpha());
 		VertexEvaluator<? extends Expression> targetExpEval = query
-				.getVertexEvaluator((Expression) exp
+				.getVertexEvaluator(exp
 						.getFirstIsLastValueOfIncidence(EdgeDirection.IN)
 						.getAlpha());
 		long range = 0;

@@ -42,6 +42,7 @@ import de.uni_koblenz.jgralab.schema.AggregationKind;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.GraphElementClass;
+import de.uni_koblenz.jgralab.schema.VertexClass;
 
 /**
  * TODO add comment
@@ -143,6 +144,8 @@ public class EdgeCodeGenerator extends
 			code.add(createGetOmegaAggregationKindMethod());
 			code.add(createReversedEdgeMethod());
 		}
+		code.add(createGetAlphaOmegaOverrides());
+		
 		return code;
 	}
 
@@ -165,6 +168,44 @@ public class EdgeCodeGenerator extends
 		code.add("\treturn new Reversed#simpleClassName#Impl(this, graph);");
 		code.add("}");
 		return code;
+	}
+	
+	private CodeBlock createGetAlphaOmegaOverrides() {
+
+		CodeSnippet b = new CodeSnippet();
+		EdgeClass ec = aec;
+		VertexClass from = ec.getFrom().getVertexClass();
+		VertexClass to = ec.getTo().getVertexClass();
+		b.setVariable("fromVertexClass", from.getSimpleName());
+		b.setVariable("toVertexClass", to.getSimpleName());
+		if (!from.isDefaultGraphElementClass()) {
+			addImports(schemaRootPackageName + "." + from.getQualifiedName());
+		}
+		if (!to.isDefaultGraphElementClass()) {
+			addImports(schemaRootPackageName + "." + to.getQualifiedName());
+		}
+		if (currentCycle.isAbstract()) {
+			if (!from.isDefaultGraphElementClass()) {
+				b.add("public #fromVertexClass# getAlpha();");
+			}
+			if (!to.isDefaultGraphElementClass()) {
+				b.add("public #toVertexClass# getOmega();");
+			}
+		} else {
+			if (!from.isDefaultGraphElementClass()) {
+				b.add("public #fromVertexClass# getAlpha() {");
+				b.add("\treturn (#fromVertexClass#) super.getAlpha();");
+				b.add("}");
+			}
+			if (!to.isDefaultGraphElementClass()) {
+				b.add("public #toVertexClass# getOmega() {");
+				b.add("\treturn (#toVertexClass#) super.getOmega();");
+				b.add("}");
+			}
+		 }
+
+		return b;
+
 	}
 
 	private CodeBlock createNextEdgeMethods() {

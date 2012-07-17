@@ -67,12 +67,11 @@ public abstract class AbstractGraphElementCollectionEvaluator<V extends Expressi
 			IsTypeRestrOfExpression inc = ((Expression) getVertex())
 					.getFirstIsTypeRestrOfExpressionIncidence(EdgeDirection.IN);
 			while (inc != null) {
-				if (inc.getAlpha() instanceof TypeId) {
 					TypeIdEvaluator typeEval = (TypeIdEvaluator) query
-							.getVertexEvaluator((TypeId) inc.getAlpha());
+							.getVertexEvaluator( inc.getAlpha());
 					typeCollection.addTypes((TypeCollection) typeEval
 							.getResult(evaluator));
-				}
+				
 				inc = inc
 						.getNextIsTypeRestrOfExpressionIncidence(EdgeDirection.IN);
 			}

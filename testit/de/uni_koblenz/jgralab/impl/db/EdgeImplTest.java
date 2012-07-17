@@ -34,7 +34,7 @@
  */
 package de.uni_koblenz.jgralab.impl.db;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import org.junit.After;
 import org.junit.Before;
@@ -67,7 +67,7 @@ public class EdgeImplTest extends ImplTest {
 	@Test
 	public void deletingOneEdgeDecrementsIncidenceCountOfAlphaByOne() {
 		E edge = this.vertexTestGraph.getFirstE();
-		A alpha = (A) edge.getAlpha();
+		A alpha = edge.getAlpha();
 		int degreeBefore = alpha.getDegree();
 		edge.delete();
 		int degreeAfter = alpha.getDegree();
@@ -77,7 +77,7 @@ public class EdgeImplTest extends ImplTest {
 	@Test
 	public void deletingOneEdgeDecrementsIncidenceCountOfOmegaByOne() {
 		E edge = this.vertexTestGraph.getFirstE();
-		B omega = (B) edge.getOmega();
+		B omega = edge.getOmega();
 		int degreeBefore = omega.getDegree();
 		edge.delete();
 		int degreeAfter = omega.getDegree();

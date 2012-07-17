@@ -178,9 +178,9 @@ public class VariableDeclarationOrderOptimizer extends OptimizerBase {
 	private List<Variable> collectVariablesInDeclarationOrder(Declaration decl) {
 		ArrayList<Variable> varList = new ArrayList<Variable>();
 		for (IsSimpleDeclOf isSD : decl.getIsSimpleDeclOfIncidences()) {
-			for (IsDeclaredVarOf isVar : ((SimpleDeclaration) isSD.getAlpha())
+			for (IsDeclaredVarOf isVar : isSD.getAlpha()
 					.getIsDeclaredVarOfIncidences()) {
-				varList.add((Variable) isVar.getAlpha());
+				varList.add(isVar.getAlpha());
 			}
 		}
 		return varList;
@@ -209,7 +209,7 @@ public class VariableDeclarationOrderOptimizer extends OptimizerBase {
 		for (IsSimpleDeclOf inc : decl
 				.getIsSimpleDeclOfIncidences(EdgeDirection.IN)) {
 			vars.addAll(OptimizerUtility
-					.collectVariablesDeclaredBy((SimpleDeclaration) inc
+					.collectVariablesDeclaredBy(inc
 							.getAlpha()));
 		}
 		return vars;

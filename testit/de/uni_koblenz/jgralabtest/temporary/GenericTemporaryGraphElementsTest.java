@@ -140,7 +140,7 @@ public class GenericTemporaryGraphElementsTest {
 		Vertex v3_airport = graph.createVertex(vc_Airport);
 
 		Edge e1 = graph.createTemporaryEdge(ec_Street, v1_plaza, v2_temp);
-		Edge e2 = graph.createTemporaryEdge(ec_AirRoute, v2_temp, v3_airport);
+		graph.createTemporaryEdge(ec_AirRoute, v2_temp, v3_airport);
 
 		try {
 			v2_temp.bless(vc_Airport);
@@ -148,7 +148,6 @@ public class GenericTemporaryGraphElementsTest {
 		} catch (TemporaryGraphElementBlessingException ex) {
 			assertFalse(v2_temp.isValid());
 			assertTrue(e1.isValid());
-			assertFalse(e2.isValid());
 		}
 	}
 

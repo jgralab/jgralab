@@ -41,8 +41,8 @@ import org.pcollections.PVector;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.JGraLab;
-import de.uni_koblenz.jgralab.greql.evaluator.InternalGreqlEvaluator;
 import de.uni_koblenz.jgralab.greql.evaluator.GreqlQueryImpl;
+import de.uni_koblenz.jgralab.greql.evaluator.InternalGreqlEvaluator;
 import de.uni_koblenz.jgralab.greql.evaluator.VariableDeclaration;
 import de.uni_koblenz.jgralab.greql.evaluator.VertexCosts;
 import de.uni_koblenz.jgralab.greql.schema.Expression;
@@ -78,7 +78,7 @@ public class SimpleDeclarationEvaluator extends
 		evaluator.progress(getOwnEvaluationCosts());
 		IsTypeExprOf inc = vertex
 				.getFirstIsTypeExprOfIncidence(EdgeDirection.IN);
-		Expression typeExpression = (Expression) inc.getAlpha();
+		Expression typeExpression = inc.getAlpha();
 		VertexEvaluator<? extends Expression> exprEval = query
 				.getVertexEvaluator(typeExpression);
 		PVector<VariableDeclaration> varDeclList = JGraLab.vector();
@@ -86,9 +86,9 @@ public class SimpleDeclarationEvaluator extends
 				.getFirstIsDeclaredVarOfIncidence(EdgeDirection.IN);
 		while (varInc != null) {
 			VariableDeclaration varDecl = new VariableDeclaration(
-					(Variable) varInc.getAlpha(), exprEval,
+					varInc.getAlpha(), exprEval,
 					(VariableEvaluator<Variable>) query
-							.getVertexEvaluator((Variable) varInc.getAlpha()));
+							.getVertexEvaluator(varInc.getAlpha()));
 			varDeclList = varDeclList.plus(varDecl);
 			varInc = varInc.getNextIsDeclaredVarOfIncidence(EdgeDirection.IN);
 		}
@@ -101,7 +101,7 @@ public class SimpleDeclarationEvaluator extends
 
 		// Calculate the costs for the type definition
 		VertexEvaluator<? extends Expression> typeExprEval = query
-				.getVertexEvaluator((Expression) simpleDecl
+				.getVertexEvaluator(simpleDecl
 						.getFirstIsTypeExprOfIncidence().getAlpha());
 
 		long typeCosts = typeExprEval.getCurrentSubtreeEvaluationCosts();
@@ -112,7 +112,7 @@ public class SimpleDeclarationEvaluator extends
 				.getFirstIsDeclaredVarOfIncidence(EdgeDirection.IN);
 		while (inc != null) {
 			VariableEvaluator<? extends Variable> varEval = (VariableEvaluator<? extends Variable>) query
-					.getVertexEvaluator((Variable) inc.getAlpha());
+					.getVertexEvaluator(inc.getAlpha());
 			declaredVarCosts += varEval.getCurrentSubtreeEvaluationCosts();
 			inc = inc.getNextIsDeclaredVarOfIncidence(EdgeDirection.IN);
 		}
@@ -130,14 +130,14 @@ public class SimpleDeclarationEvaluator extends
 		IsDeclaredVarOf varInc = vertex
 				.getFirstIsDeclaredVarOfIncidence(EdgeDirection.IN);
 		while (varInc != null) {
-			definedVariables.add((Variable) varInc.getAlpha());
+			definedVariables.add(varInc.getAlpha());
 			varInc = varInc.getNextIsDeclaredVarOfIncidence(EdgeDirection.IN);
 		}
 		IsTypeExprOf typeInc = vertex
 				.getFirstIsTypeExprOfIncidence(EdgeDirection.IN);
 		if (typeInc != null) {
 			VertexEvaluator<? extends Expression> veval = query
-					.getVertexEvaluator((Expression) typeInc.getAlpha());
+					.getVertexEvaluator(typeInc.getAlpha());
 			if (veval != null) {
 				neededVariables.addAll(veval.getNeededVariables());
 			}
@@ -148,7 +148,7 @@ public class SimpleDeclarationEvaluator extends
 	public long calculateEstimatedCardinality() {
 		SimpleDeclaration decl = getVertex();
 		VertexEvaluator<? extends Expression> typeExprEval = query
-				.getVertexEvaluator((Expression) decl
+				.getVertexEvaluator(decl
 						.getFirstIsTypeExprOfIncidence(EdgeDirection.IN)
 						.getAlpha());
 		long singleCardinality = typeExprEval.getEstimatedCardinality();

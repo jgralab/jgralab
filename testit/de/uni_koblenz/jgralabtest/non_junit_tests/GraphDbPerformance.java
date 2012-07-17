@@ -322,8 +322,8 @@ public class GraphDbPerformance {
 	private static void createRandomWeight(Random rng, Way newWay) {
 		// set length to at most twice the actual distance and at
 		// least as long as the actual distance
-		Location alpha = (Location) newWay.getAlpha();
-		Location omega = (Location) newWay.getOmega();
+		Location alpha = newWay.getAlpha();
+		Location omega = newWay.getOmega();
 		newWay.set_weight(RandomGraphForAStar.euclideanDistance(alpha.get_x(),
 				alpha.get_y(), omega.get_x(), omega.get_y())
 				* (1 + rng.nextDouble()));

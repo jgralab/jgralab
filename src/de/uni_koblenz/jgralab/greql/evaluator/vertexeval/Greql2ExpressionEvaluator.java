@@ -74,7 +74,7 @@ public class Greql2ExpressionEvaluator extends
 		IsBoundVarOf inc = vertex
 				.getFirstIsBoundVarOfIncidence(EdgeDirection.IN);
 		while (inc != null) {
-			Variable currentBoundVariable = (Variable) inc.getAlpha();
+			Variable currentBoundVariable = inc.getAlpha();
 			Object variableValue = evaluator.getVariable(currentBoundVariable
 					.get_name());
 			if (variableValue == null) {
@@ -142,7 +142,7 @@ public class Greql2ExpressionEvaluator extends
 			}
 		}
 
-		Expression boundExpression = (Expression) vertex
+		Expression boundExpression = vertex
 				.getFirstIsQueryExprOfIncidence(EdgeDirection.IN).getAlpha();
 		VertexEvaluator<? extends Expression> eval = query
 				.getVertexEvaluator(boundExpression);
@@ -153,7 +153,7 @@ public class Greql2ExpressionEvaluator extends
 				.getFirstIsIdOfStoreClauseIncidence(EdgeDirection.IN);
 		if (storeInc != null) {
 			VertexEvaluator<Identifier> storeEval = query
-					.getVertexEvaluator((Identifier) storeInc.getAlpha());
+					.getVertexEvaluator(storeInc.getAlpha());
 			String varName = storeEval.getResult(evaluator).toString();
 			// TODO [greqlrenovation] VariableDeclaration has an own
 			// toString(InternalGreqlEvaluator)-method. check the use
@@ -166,7 +166,7 @@ public class Greql2ExpressionEvaluator extends
 	public VertexCosts calculateSubtreeEvaluationCosts() {
 		Greql2Expression greqlExp = getVertex();
 		VertexEvaluator<? extends Expression> queryExpEval = query
-				.getVertexEvaluator((Expression) greqlExp
+				.getVertexEvaluator(greqlExp
 						.getFirstIsQueryExprOfIncidence().getAlpha());
 		long queryCosts = queryExpEval.getCurrentSubtreeEvaluationCosts();
 		// VertexEvaluator.logger.info("QueryCosts: " + queryCosts);

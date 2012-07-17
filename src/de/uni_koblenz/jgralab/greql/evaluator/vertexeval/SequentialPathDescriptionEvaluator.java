@@ -38,8 +38,8 @@ package de.uni_koblenz.jgralab.greql.evaluator.vertexeval;
 import java.util.ArrayList;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
-import de.uni_koblenz.jgralab.greql.evaluator.InternalGreqlEvaluator;
 import de.uni_koblenz.jgralab.greql.evaluator.GreqlQueryImpl;
+import de.uni_koblenz.jgralab.greql.evaluator.InternalGreqlEvaluator;
 import de.uni_koblenz.jgralab.greql.evaluator.VertexCosts;
 import de.uni_koblenz.jgralab.greql.evaluator.fa.NFA;
 import de.uni_koblenz.jgralab.greql.schema.IsSequenceElementOf;
@@ -70,7 +70,7 @@ public class SequentialPathDescriptionEvaluator extends
 		ArrayList<NFA> nfaList = new ArrayList<NFA>();
 		while (inc != null) {
 			PathDescriptionEvaluator<?> pathEval = (PathDescriptionEvaluator<?>) query
-					.getVertexEvaluator((PathDescription) inc.getAlpha());
+					.getVertexEvaluator(inc.getAlpha());
 			nfaList.add(pathEval.getNFA(evaluator));
 			inc = inc.getNextIsSequenceElementOfIncidence(EdgeDirection.IN);
 		}
@@ -86,7 +86,7 @@ public class SequentialPathDescriptionEvaluator extends
 		long alternatives = 0;
 		while (inc != null) {
 			PathDescriptionEvaluator<? extends PathDescription> pathEval = (PathDescriptionEvaluator<? extends PathDescription>) query
-					.getVertexEvaluator((PathDescription) inc.getAlpha());
+					.getVertexEvaluator(inc.getAlpha());
 			aggregatedCosts += pathEval.getCurrentSubtreeEvaluationCosts();
 			inc = inc.getNextIsSequenceElementOfIncidence(EdgeDirection.IN);
 			alternatives++;

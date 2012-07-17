@@ -63,7 +63,6 @@ import de.uni_koblenz.jgralab.greql.schema.Greql2Aggregation;
 import de.uni_koblenz.jgralab.greql.schema.Greql2Expression;
 import de.uni_koblenz.jgralab.greql.schema.Greql2Graph;
 import de.uni_koblenz.jgralab.greql.schema.Greql2Vertex;
-import de.uni_koblenz.jgralab.greql.schema.Identifier;
 import de.uni_koblenz.jgralab.greql.schema.IsArgumentOf;
 import de.uni_koblenz.jgralab.greql.schema.IsBooleanPredicateOfEdgeRestriction;
 import de.uni_koblenz.jgralab.greql.schema.IsBoundExprOfQuantifiedExpression;
@@ -207,7 +206,7 @@ public abstract class ParserHelper {
 			List<Definition> defList = new ArrayList<Definition>();
 			for (IsDefinitionOf isDefOf : exp
 					.getIsDefinitionOfIncidences(EdgeDirection.IN)) {
-				Definition definition = (Definition) isDefOf.getAlpha();
+				Definition definition = isDefOf.getAlpha();
 				defList.add(definition);
 			}
 			/*
@@ -224,8 +223,8 @@ public abstract class ParserHelper {
 						.getFirstIsExprOfIncidence(EdgeDirection.IN);
 				IsVarOf isVarOf = definition
 						.getFirstIsVarOfIncidence(EdgeDirection.IN);
-				Expression expr = (Expression) isExprOf.getAlpha();
-				Variable variable = (Variable) isVarOf.getAlpha();
+				Expression expr = isExprOf.getAlpha();
+				Variable variable = isVarOf.getAlpha();
 				isVarOf.delete();
 				isExprOf.delete();
 				Edge e = variable.getFirstIncidence(EdgeDirection.OUT);
@@ -235,7 +234,7 @@ public abstract class ParserHelper {
 				}
 				variable.delete();
 			}
-			Expression boundExpr = (Expression) exp
+			Expression boundExpr = exp
 					.getFirstIsBoundExprOfIncidence(EdgeDirection.IN)
 					.getAlpha();
 			Edge e = exp.getFirstIncidence(EdgeDirection.OUT);
@@ -330,7 +329,7 @@ public abstract class ParserHelper {
 		for (IsBoundVarOf isBoundVarOf : root
 				.getIsBoundVarOfIncidences(EdgeDirection.IN)) {
 			afterParsingvariableSymbolTable.insert(
-					((Identifier) isBoundVarOf.getAlpha()).get_name(),
+					(isBoundVarOf.getAlpha()).get_name(),
 					isBoundVarOf.getAlpha());
 		}
 		IsQueryExprOf isQueryExprOf = root
@@ -355,8 +354,8 @@ public abstract class ParserHelper {
 		}
 		for (IsDefinitionOf currentEdge : v
 				.getIsDefinitionOfIncidences(EdgeDirection.IN)) {
-			Definition definition = (Definition) currentEdge.getAlpha();
-			Variable variable = (Variable) definition.getFirstIsVarOfIncidence(
+			Definition definition = currentEdge.getAlpha();
+			Variable variable = definition.getFirstIsVarOfIncidence(
 					EdgeDirection.IN).getAlpha();
 			afterParsingvariableSymbolTable.insert(variable.get_name(),
 					variable);
@@ -366,8 +365,8 @@ public abstract class ParserHelper {
 		mergeVariables(isBoundExprOf.getAlpha(), false);
 		for (IsDefinitionOf currentEdge : v
 				.getIsDefinitionOfIncidences(EdgeDirection.IN)) {
-			Definition definition = (Definition) currentEdge.getAlpha();
-			Expression expr = (Expression) definition
+			Definition definition = currentEdge.getAlpha();
+			Expression expr = definition
 					.getFirstIsExprOfIncidence(EdgeDirection.IN).getAlpha();
 			mergeVariables(expr, true);
 		}
@@ -390,11 +389,11 @@ public abstract class ParserHelper {
 			throws DuplicateVariableException, UndefinedVariableException {
 		for (IsSimpleDeclOf currentEdge : v
 				.getIsSimpleDeclOfIncidences(EdgeDirection.IN)) {
-			SimpleDeclaration simpleDecl = (SimpleDeclaration) currentEdge
+			SimpleDeclaration simpleDecl = currentEdge
 					.getAlpha();
 			for (IsDeclaredVarOf isDeclaredVarOf : simpleDecl
 					.getIsDeclaredVarOfIncidences(EdgeDirection.IN)) {
-				Variable variable = (Variable) isDeclaredVarOf.getAlpha();
+				Variable variable = isDeclaredVarOf.getAlpha();
 				afterParsingvariableSymbolTable.insert(variable.get_name(),
 						variable);
 			}
@@ -402,9 +401,9 @@ public abstract class ParserHelper {
 
 		for (IsSimpleDeclOf currentEdge : v
 				.getIsSimpleDeclOfIncidences(EdgeDirection.IN)) {
-			SimpleDeclaration simpleDecl = (SimpleDeclaration) currentEdge
+			SimpleDeclaration simpleDecl = currentEdge
 					.getAlpha();
-			Expression expr = (Expression) simpleDecl
+			Expression expr = simpleDecl
 					.getFirstIsTypeExprOfIncidence(EdgeDirection.IN).getAlpha();
 			mergeVariables(expr, true);
 		}
@@ -431,7 +430,7 @@ public abstract class ParserHelper {
 		}
 		IsQuantifiedDeclOf isQuantifiedDeclOf = v
 				.getFirstIsQuantifiedDeclOfIncidence(EdgeDirection.IN);
-		mergeVariablesInDeclaration((Declaration) isQuantifiedDeclOf.getAlpha());
+		mergeVariablesInDeclaration(isQuantifiedDeclOf.getAlpha());
 		IsBoundExprOfQuantifiedExpression isBoundExprOfQuantifier = v
 				.getFirstIsBoundExprOfQuantifiedExpressionIncidence(EdgeDirection.IN);
 		mergeVariables(isBoundExprOfQuantifier.getAlpha(), true);

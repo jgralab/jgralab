@@ -40,8 +40,8 @@ import java.util.ArrayList;
 import org.pcollections.PCollection;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
-import de.uni_koblenz.jgralab.greql.evaluator.InternalGreqlEvaluator;
 import de.uni_koblenz.jgralab.greql.evaluator.GreqlQueryImpl;
+import de.uni_koblenz.jgralab.greql.evaluator.InternalGreqlEvaluator;
 import de.uni_koblenz.jgralab.greql.schema.Expression;
 import de.uni_koblenz.jgralab.greql.schema.IsPartOf;
 import de.uni_koblenz.jgralab.greql.schema.ValueConstruction;
@@ -74,7 +74,7 @@ abstract public class ValueConstructionEvaluator<V extends ValueConstruction>
 			partEvaluators = new ArrayList<VertexEvaluator<? extends Expression>>(
 					partCount);
 			while (inc != null) {
-				Expression currentExpression = (Expression) inc.getAlpha();
+				Expression currentExpression = inc.getAlpha();
 				VertexEvaluator<? extends Expression> vertexEval = query
 						.getVertexEvaluator(currentExpression);
 				partEvaluators.add(vertexEval);
