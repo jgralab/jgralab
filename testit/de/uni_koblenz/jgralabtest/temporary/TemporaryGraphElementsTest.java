@@ -155,9 +155,7 @@ public class TemporaryGraphElementsTest {
 		Graph g = schema.createGraph(impl);
 		TemporaryVertex tempv = g.createTemporaryVertex();
 		Edge e = g.createTemporaryEdge(schema.getGraphClass().getEdgeClass("Street"),
-				tempv, tempv);
-		System.err.println("debug "+e );
-		
+				tempv, tempv);		
 		Vertex v = g.createVertex(schema.getGraphClass().getVertexClass(
 				"Intersection"));
 
@@ -447,6 +445,9 @@ public class TemporaryGraphElementsTest {
 				"Intersection"));
 		assertTrue(v4.isValid());
 		assertFalse(v4_t.isValid());
+		assertFalse(e2_2_3.isValid());
+		assertFalse(e4_4_2.isValid());
+		assertFalse(e5_1_4.isValid());
 
 		Vertex v7 = g.createVertex(g.getGraphClass().getVertexClass(
 				"Intersection"));
