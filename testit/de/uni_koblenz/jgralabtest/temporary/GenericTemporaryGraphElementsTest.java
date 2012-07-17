@@ -360,5 +360,21 @@ public class GenericTemporaryGraphElementsTest {
 			assertFalse(graph.edges().iterator().hasNext());	
 		}
 	}
+	
+	@Test
+	public void testFailBlessEdge(){
+		Vertex v1 = graph.createVertex(vc_Plaza);
+		TemporaryVertex tempv2 = graph.createTemporaryVertex();
+		
+		TemporaryEdge tempe = graph.createTemporaryEdge(ec_Street, v1, tempv2);
+		
+		try{
+			tempe.bless(tempe.getPreliminaryType());
+			fail();
+		}catch(TemporaryGraphElementBlessingException ex){
+			assertTrue(tempe.isValid());
+		}
+		
+	}
 
 }

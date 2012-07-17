@@ -534,6 +534,25 @@ public class TemporaryGraphElementsTest {
 		}
 	}
 	
+	@Test
+	public void testFailBlessEdge(){
+		Schema schema = CityMapSchema.instance();
+		Graph g = schema.createGraph(impl);
+		
+		Vertex v1 = g.createVertex(schema.getGraphClass().getVertexClass("Intersection"));
+		TemporaryVertex tempv2 = g.createTemporaryVertex();
+		
+		TemporaryEdge tempe = g.createTemporaryEdge(schema.getGraphClass().getEdgeClass("Street"), v1, tempv2);
+		
+		try{
+			tempe.bless(tempe.getPreliminaryType());
+			fail();
+		}catch(TemporaryGraphElementBlessingException ex){
+			assertTrue(tempe.isValid());
+		}
+		
+	}
+	
 	private void writeTgToConsole(Graph g) throws GraphIOException {
 		try {
 			ByteArrayOutputStream out = new ByteArrayOutputStream();

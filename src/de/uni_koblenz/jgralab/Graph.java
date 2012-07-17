@@ -73,7 +73,7 @@ public interface Graph extends AttributedElement<GraphClass, Graph> {
 
 	/**
 	 * Creates an {@link Edge} of the specified {@link EdgeClass}
-	 * <code>ec</code> that connects <code>alpha</code> and </code>omega</code>
+	 * <code>ec</code> that connects <code>alpha</code> and <code>omega</code>
 	 * vertices and adds the new edge to this {@link Graph}.
 	 *
 	 * @param ec
@@ -86,10 +86,35 @@ public interface Graph extends AttributedElement<GraphClass, Graph> {
 	public <T extends Edge> T createEdge(EdgeClass ec, Vertex alpha,
 			Vertex omega);
 
+	/**
+	 * Creates a {@link TemporaryVertex} and adds it to this {@link Graph}
+	 */
 	public TemporaryVertex createTemporaryVertex();
 
+	/**
+	 * Creates a {@link TemporaryEdge} that connects <code>alpha</code> and
+	 * <code>omega</code> vertices and adds the new edge to this {@link Graph}
+	 * 
+	 * @param alpha
+	 * 			  the alpha {@link Vertex} of the new {@link TemporaryEdge}
+	 * @param omega
+	 * 			  the omega {@link Vertex} of the new {@link TemporaryEdge}
+	 */
 	public TemporaryEdge createTemporaryEdge(Vertex alpha, Vertex omega);
 
+	/**
+	 * Creates a {@link TemporaryEdge} with a given preliminary {@link EdgeClass} 
+	 * that connects <code>alpha</code> and <code>omega</code> vertices and 
+	 * adds the new edge to this {@link Graph}
+	 * 
+	 * @param peliminaryType
+	 * 			  the preliminary {@link EdgeClass} of this {@link TemporaryEdge}
+	 * 
+	 * @param alpha
+	 * 			  the alpha {@link Vertex} of the new {@link TemporaryEdge}
+	 * @param omega
+	 * 			  the omega {@link Vertex} of the new {@link TemporaryEdge}
+	 */
 	public TemporaryEdge createTemporaryEdge(EdgeClass preliminaryType, Vertex alpha, Vertex omega);
 	
 	/**
