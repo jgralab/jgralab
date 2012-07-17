@@ -3,6 +3,7 @@ package de.uni_koblenz.jgralabtest.temporary;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
@@ -13,6 +14,7 @@ import org.junit.Test;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
+import de.uni_koblenz.jgralab.GraphException;
 import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.ImplementationType;
@@ -516,6 +518,22 @@ public class TemporaryGraphElementsTest {
 		
 	}
 
+	@Test
+	public void testFailEdgeAtTempVertex(){
+		Schema schema = CityMapSchema.instance();
+		Graph g = schema.createGraph(impl);
+		
+		Vertex v1 = g.createVertex(schema.getGraphClass().getVertexClass("Intersection"));
+		TemporaryVertex tempv2 = g.createTemporaryVertex();
+		
+		try{
+			g.createEdge(schema.getGraphClass().getEdgeClass("Street"), v1, tempv2);
+			fail();
+		}catch(GraphException ex){
+			assertFalse(g.edges().iterator().hasNext());	
+		}
+	}
+	
 	private void writeTgToConsole(Graph g) throws GraphIOException {
 		try {
 			ByteArrayOutputStream out = new ByteArrayOutputStream();

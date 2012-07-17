@@ -16,6 +16,7 @@ import org.pcollections.PMap;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
+import de.uni_koblenz.jgralab.GraphException;
 import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.ImplementationType;
@@ -344,6 +345,20 @@ public class GenericTemporaryGraphElementsTest {
 		
 		assertFalse(graph.hasTemporaryElements());
 		
+	}
+	
+	@Test
+	public void testFailEdgeAtTempVertex(){
+		
+		Vertex v1 = graph.createVertex(vc_Plaza);
+		TemporaryVertex tempv2 = graph.createTemporaryVertex();
+		
+		try{
+			graph.createEdge(ec_Street, v1, tempv2);
+			fail();
+		}catch(GraphException ex){
+			assertFalse(graph.edges().iterator().hasNext());	
+		}
 	}
 
 }
