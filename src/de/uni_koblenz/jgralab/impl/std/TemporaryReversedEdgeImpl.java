@@ -52,6 +52,12 @@ public class TemporaryReversedEdgeImpl extends ReversedEdgeImpl implements
 		return ((TemporaryEdge) this.getNormalEdge())
 				.bless(edgeClass);
 	}
+	
+	@Override
+	public Edge bless() {
+		return ((TemporaryEdge) this.getNormalEdge())
+				.bless();
+	}
 
 	@Override
 	public void deleteAttribute(String name) {
@@ -73,4 +79,6 @@ public class TemporaryReversedEdgeImpl extends ReversedEdgeImpl implements
 	public void setPreliminaryType(EdgeClass ec) {
 		((TemporaryEdge)this.getNormalEdge()).setPreliminaryType(ec);		
 	}
+
+	
 }
