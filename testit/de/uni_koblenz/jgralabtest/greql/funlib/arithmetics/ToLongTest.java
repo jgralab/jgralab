@@ -1,20 +1,13 @@
 package de.uni_koblenz.jgralabtest.greql.funlib.arithmetics;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
-import org.junit.Before;
 import org.junit.Test;
 
 import de.uni_koblenz.jgralab.greql.funlib.FunLib;
-import de.uni_koblenz.jgralab.greql.funlib.artithmetics.ToLong;
 
 public class ToLongTest extends ArithmeticTest {
-	private ToLong toLong;
-
-	@Before
-	public void setUp() {
-		toLong = new ToLong();
-	}
 
 	@Test
 	public void testInt() {
