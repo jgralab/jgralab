@@ -167,8 +167,11 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 	 */
 	public static void generateCode(String queryString, Schema datagraphSchema,
 			String classname, String path) {
-		GreqlQuery query = GreqlQuery.createQuery(queryString, true, new GraphSize(
-				datagraphSchema.createGraph(ImplementationType.GENERIC)));
+		GreqlQuery query = GreqlQuery.createQuery(
+				queryString,
+				true,
+				new GraphSize(datagraphSchema
+						.createGraph(ImplementationType.GENERIC)));
 
 		String simpleName = classname;
 		String packageName = "";
@@ -204,8 +207,11 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 	 */
 	public static Class<ExecutableQuery> generateCode(String queryString,
 			Schema datagraphSchema, String classname) {
-		GreqlQuery query = GreqlQuery.createQuery(queryString, true, new GraphSize(
-				datagraphSchema.createGraph(ImplementationType.GENERIC)));
+		GreqlQuery query = GreqlQuery.createQuery(
+				queryString,
+				true,
+				new GraphSize(datagraphSchema
+						.createGraph(ImplementationType.GENERIC)));
 
 		String simpleName = classname;
 		String packageName = "";
@@ -222,21 +228,58 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 	public CodeBlock createBody() {
 		CodeList code = new CodeList();
 
-		addImports("de.uni_koblenz.jgralab.greql2.executable.*");
+		addImports("de.uni_koblenz.jgralab.greql.executable.*");
 		addImports("de.uni_koblenz.jgralab.Graph");
+		addImports("de.uni_koblenz.jgralab.greql.GreqlEnvironment");
+		addImports("java.util.Set");
 		code.add(staticFieldSnippet);
 		code.add(staticInitializerSnippet);
 		code.add(classFieldSnippet);
 		Greql2Expression rootExpr = graph.getFirstGreql2Expression();
 		addClassField("Graph", "datagraph", "null");
-		addClassField("java.util.Map<String, Object>", "boundVariables", "null");
-		CodeSnippet method = new CodeSnippet();
-		method.add("public synchronized Object execute(de.uni_koblenz.jgralab.Graph graph, java.util.Map<String, Object> boundVariables) {");
-		method.add("\tthis.datagraph = graph;");
-		method.add("\tthis.boundVariables = boundVariables;");
-		method.add("\treturn " + createCodeForGreql2Expression(rootExpr) + ";");
-		method.add("}");
-		code.add(method);
+		addClassField("GreqlEnvironment", "boundVariables", "null");
+		CodeSnippet methodExecute = new CodeSnippet();
+		methodExecute
+				.add("public synchronized Object execute(de.uni_koblenz.jgralab.Graph graph, GreqlEnvironment boundVariables) {");
+		methodExecute.add("\tthis.datagraph = graph;");
+		methodExecute.add("\tthis.boundVariables = boundVariables;");
+		methodExecute.add("\treturn " + createCodeForGreql2Expression(rootExpr)
+				+ ";");
+		methodExecute.add("}");
+		code.add(methodExecute);
+
+		CodeSnippet methodGetQueryText = new CodeSnippet();
+		methodGetQueryText.add("\n\tpublic String getQueryText() {");
+		methodGetQueryText.add("\treturn \"" + quote(query.getQueryText())
+				+ "\";");
+		methodGetQueryText.add("}");
+		code.add(methodGetQueryText);
+
+		CodeSnippet methodGetUsedVariables = new CodeSnippet();
+		methodGetUsedVariables
+				.add("\n\tpublic Set<String> getUsedVariables() {");
+		methodGetUsedVariables
+				.add("\tSet<String> usedVariables = new HashSet<String>();");
+		for (String usedVariable : query.getUsedVariables()) {
+			methodGetUsedVariables.add("\tusedVariables.add(\"" + usedVariable
+					+ "\");");
+		}
+		methodGetUsedVariables.add("\treturn usedVariables;");
+		methodGetUsedVariables.add("}");
+		code.add(methodGetUsedVariables);
+
+		CodeSnippet methodGetStoredVariables = new CodeSnippet();
+		methodGetStoredVariables
+				.add("\n\tpublic Set<String> getStoredVariables() {");
+		methodGetStoredVariables
+				.add("\tSet<String> storedVariables = new HashSet<String>();");
+		for (String usedVariable : query.getStoredVariables()) {
+			methodGetStoredVariables.add("\tstoredVariables.add(\""
+					+ usedVariable + "\");");
+		}
+		methodGetStoredVariables.add("\treturn storedVariables;");
+		methodGetStoredVariables.add("}");
+		code.add(methodGetStoredVariables);
 
 		// add generated methods
 		code.add(new CodeSnippet("", ""));
@@ -248,6 +291,36 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 		return code;
 	}
 
+	private String quote(String queryText) {
+		StringBuilder appendable = new StringBuilder();
+		for (char c : queryText.toCharArray()) {
+			switch (c) {
+			case '\n':
+				appendable.append("\\\\n");
+				break;
+			case '\r':
+				appendable.append("\\\\r");
+				break;
+			case '\t':
+				appendable.append("\\\\t");
+				break;
+			case '\\':
+				appendable.append("\\\\");
+				break;
+			case '"':
+				appendable.append("\\\"");
+				break;
+			default:
+				if (String.valueOf(c).matches("^[\\p{Cntrl}]$")) {
+					appendable.append("\\\\" + (int) c);
+				} else {
+					appendable.append(c);
+				}
+			}
+		}
+		return appendable.toString();
+	}
+
 	private String createCodeForGreql2Expression(Greql2Expression rootExpr) {
 		CodeList list = new CodeList();
 		scope.blockBegin();
@@ -257,7 +330,8 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 			Variable var = (Variable) inc.getThat();
 			scope.addVariable(var.get_name());
 			list.add(new CodeSnippet("Object " + var.get_name()
-					+ " = boundVariables.get(\"" + var.get_name() + "\");"));
+					+ " = boundVariables.getVariable(\"" + var.get_name()
+					+ "\");"));
 		}
 
 		// create code for main query expression
@@ -271,8 +345,8 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 		for (IsIdOfStoreClause storeInc : rootExpr
 				.getIsIdOfStoreClauseIncidences(EdgeDirection.IN)) {
 			Identifier ident = (Identifier) storeInc.getThat();
-			list.add(new CodeSnippet("boundVariables.put(\"" + ident.get_name()
-					+ "\"," + ident.get_name() + ");"));
+			list.add(new CodeSnippet("boundVariables.setVariable(\""
+					+ ident.get_name() + "\"," + ident.get_name() + ");"));
 		}
 
 		list.add(new CodeSnippet("return result;"));
@@ -385,7 +459,7 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 		addImports("org.pcollections.PCollection");
 		addImports("de.uni_koblenz.jgralab.JGraLab");
 		addImports("de.uni_koblenz.jgralab.Edge");
-		addImports("de.uni_koblenz.jgralab.greql2.types.TypeCollection");
+		addImports("de.uni_koblenz.jgralab.greql.types.TypeCollection");
 		addImports("de.uni_koblenz.jgralab.schema.GraphElementClass");
 		addImports("java.util.Collection");
 		addImports("java.util.LinkedList");
@@ -418,7 +492,7 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 		addImports("org.pcollections.PCollection");
 		addImports("de.uni_koblenz.jgralab.JGraLab");
 		addImports("de.uni_koblenz.jgralab.Vertex");
-		addImports("de.uni_koblenz.jgralab.greql2.types.TypeCollection");
+		addImports("de.uni_koblenz.jgralab.greql.types.TypeCollection");
 		addImports("de.uni_koblenz.jgralab.schema.GraphElementClass");
 		addImports("java.util.Collection");
 		addImports("java.util.LinkedList");
@@ -506,7 +580,7 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 	private String createCodeForTupleConstruction(TupleConstruction tupleConstr) {
 		addImports("org.pcollections.PCollection");
 		addImports("de.uni_koblenz.jgralab.JGraLab");
-		addImports("de.uni_koblenz.jgralab.greql2.types.Tuple");
+		addImports("de.uni_koblenz.jgralab.greql.types.Tuple");
 		CodeList list = new CodeList();
 		CodeSnippet listSnippet = new CodeSnippet();
 		listSnippet.add("PCollection list = Tuple.empty();");
@@ -867,7 +941,7 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 			throw new RuntimeException(
 					"Code generation for function isReachable is not yet implemented. Use the path expression notation v --> w instead of isReachable(v,w,-->)");
 		}
-		addImports("de.uni_koblenz.jgralab.greql2.funlib.FunLib");
+		addImports("de.uni_koblenz.jgralab.greql.funlib.FunLib");
 		Function function = FunLib.getFunctionInfo(funId.get_name())
 				.getFunction();
 
@@ -970,7 +1044,7 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 		addImports("java.util.HashSet");
 		addImports("java.util.BitSet");
 		addImports("de.uni_koblenz.jgralab.*");
-		addImports("de.uni_koblenz.jgralab.greql2.executable.VertexStateNumberQueue");
+		addImports("de.uni_koblenz.jgralab.greql.executable.VertexStateNumberQueue");
 		CodeSnippet initSnippet = new CodeSnippet();
 		list.add(initSnippet);
 		initSnippet.add("PSet<Vertex> resultSet = JGraLab.set();");
@@ -1095,8 +1169,8 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 			Expression startElementExpr, Greql2Vertex syntaxGraphVertex) {
 		CodeList list = new CodeList();
 		addImports("de.uni_koblenz.jgralab.*");
-		addImports("de.uni_koblenz.jgralab.greql2.executable.ExecutablePathSystemHelper");
-		addImports("de.uni_koblenz.jgralab.greql2.executable.PathSystemMarkerEntry");
+		addImports("de.uni_koblenz.jgralab.greql.executable.ExecutablePathSystemHelper");
+		addImports("de.uni_koblenz.jgralab.greql.executable.PathSystemMarkerEntry");
 		addImports("de.uni_koblenz.jgralab.graphmarker.GraphMarker");
 		addImports("java.util.Queue");
 		addImports("java.util.LinkedList");
