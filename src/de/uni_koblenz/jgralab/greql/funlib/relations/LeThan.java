@@ -39,10 +39,20 @@ import de.uni_koblenz.jgralab.greql.funlib.Function;
 
 public class LeThan extends Function {
 
-	@Description(params = {"a","b"}, description = "Determines if $a < b$. Alternative: a < b", 
-			categories = Category.RELATIONS)
+	@Description(params = { "a", "b" }, description = "Determines if $a < b$. Alternative: a < b", categories = Category.RELATIONS)
 	public LeThan() {
 		super(2, 1, 0.5);
+	}
+
+	public Boolean evaluate(Number a, Number b) {
+		if (a instanceof Double || b instanceof Double) {
+			return Double.compare(a.doubleValue(), b.doubleValue()) < 0;
+		}
+		if (a instanceof Long || b instanceof Long) {
+			return a.longValue() < b.longValue();
+		}
+		assert (a instanceof Integer && b instanceof Integer);
+		return a.intValue() < b.intValue();
 	}
 
 	public <T extends Comparable<? super T>> Boolean evaluate(T a, T b) {

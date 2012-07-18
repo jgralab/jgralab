@@ -90,7 +90,7 @@ public class LeThanTest extends RelationsTest {
 
 			for (int j = 0; j < intValues.length; j++) {
 				int second = intValues[j];
-				boolean expected = first < second;
+				boolean expected = Double.compare(first, second) < 0;
 				Object result = FunLib.apply("leThan", first, second);
 				assertTrue(result instanceof Boolean);
 				assertEquals(expected, result);
@@ -98,7 +98,7 @@ public class LeThanTest extends RelationsTest {
 
 			for (int j = 0; j < longValues.length; j++) {
 				long second = longValues[j];
-				boolean expected = first < second;
+				boolean expected = Double.compare(first, second) < 0;
 				Object result = FunLib.apply("leThan", first, second);
 				assertTrue(result instanceof Boolean);
 				assertEquals(expected, result);
