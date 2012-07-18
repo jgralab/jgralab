@@ -1,22 +1,16 @@
 package de.uni_koblenz.jgralabtest.greql.funlib.relations;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
-import org.junit.Before;
 import org.junit.Test;
 
-import de.uni_koblenz.jgralab.greql.funlib.relations.GrThan;
+import de.uni_koblenz.jgralab.greql.funlib.FunLib;
 
 public class GrThanTest extends RelationsTest {
 
-	private GrThan grThan;
 	private Directions[] enumValues1 = Directions.values();
 	private Temperatures[] enumValues2 = Temperatures.values();
-
-	@Before
-	public void setUp() {
-		grThan = new GrThan();
-	}
 
 	@Test
 	public void testInteger() {
@@ -25,7 +19,24 @@ public class GrThanTest extends RelationsTest {
 			for (int j = 0; j < intValues.length; j++) {
 				int second = intValues[j];
 				boolean expected = first > second;
-				Boolean result = grThan.evaluate(first, second);
+				Object result = FunLib.apply("grThan", first, second);
+				assertTrue(result instanceof Boolean);
+				assertEquals(expected, result);
+			}
+
+			for (int j = 0; j < longValues.length; j++) {
+				long second = longValues[j];
+				boolean expected = first > second;
+				Object result = FunLib.apply("grThan", first, second);
+				assertTrue(result instanceof Boolean);
+				assertEquals(expected, result);
+			}
+
+			for (int j = 0; j < doubleValues.length; j++) {
+				double second = doubleValues[j];
+				boolean expected = Double.compare(first, second) > 0;
+				Object result = FunLib.apply("grThan", first, second);
+				assertTrue(result instanceof Boolean);
 				assertEquals(expected, result);
 			}
 		}
@@ -35,12 +46,32 @@ public class GrThanTest extends RelationsTest {
 	public void testLong() {
 		for (int i = 0; i < longValues.length; i++) {
 			long first = longValues[i];
+
 			for (int j = 0; j < longValues.length; j++) {
 				long second = longValues[j];
 				boolean expected = first > second;
-				Boolean result = grThan.evaluate(first, second);
+				Object result = FunLib.apply("grThan", first, second);
+				assertTrue(result instanceof Boolean);
 				assertEquals(expected, result);
 			}
+
+			for (int j = 0; j < intValues.length; j++) {
+				int second = intValues[j];
+				boolean expected = first > second;
+				Object result = FunLib.apply("grThan", first, second);
+				assertTrue(result instanceof Boolean);
+				assertEquals(expected, result);
+			}
+
+			for (int j = 0; j < doubleValues.length; j++) {
+				double second = doubleValues[j];
+				boolean expected = Double.compare(first, second) > 0;
+				Object result = FunLib.apply("grThan", first, second);
+				assertTrue(result instanceof Boolean);
+				assertEquals("Expected " + first + " > " + second + " = "
+						+ expected + ", but was " + result, expected, result);
+			}
+
 		}
 	}
 
@@ -51,10 +82,28 @@ public class GrThanTest extends RelationsTest {
 			for (int j = 0; j < doubleValues.length; j++) {
 				double second = doubleValues[j];
 				boolean expected = Double.compare(first, second) > 0;
-				Boolean result = grThan.evaluate(first, second);
+				Object result = FunLib.apply("grThan", first, second);
+				assertTrue(result instanceof Boolean);
 				assertEquals("Expected " + first + " > " + second + " = "
 						+ expected + ", but was " + result, expected, result);
 			}
+
+			for (int j = 0; j < intValues.length; j++) {
+				int second = intValues[j];
+				boolean expected = first > second;
+				Object result = FunLib.apply("grThan", first, second);
+				assertTrue(result instanceof Boolean);
+				assertEquals(expected, result);
+			}
+
+			for (int j = 0; j < longValues.length; j++) {
+				long second = longValues[j];
+				boolean expected = first > second;
+				Object result = FunLib.apply("grThan", first, second);
+				assertTrue(result instanceof Boolean);
+				assertEquals(expected, result);
+			}
+
 		}
 	}
 
@@ -65,7 +114,8 @@ public class GrThanTest extends RelationsTest {
 			for (int j = 0; j < objectValues.length; j++) {
 				String second = objectValues[j];
 				boolean expected = first.compareTo(second) > 0;
-				Boolean result = grThan.evaluate(first, second);
+				Object result = FunLib.apply("grThan", first, second);
+				assertTrue(result instanceof Boolean);
 				assertEquals(expected, result);
 			}
 		}
@@ -78,7 +128,8 @@ public class GrThanTest extends RelationsTest {
 			for (int j = 0; j < enumValues1.length; j++) {
 				Directions second = enumValues1[j];
 				boolean expected = first.compareTo(second) > 0;
-				Boolean result = grThan.evaluate(first, second);
+				Object result = FunLib.apply("grThan", first, second);
+				assertTrue(result instanceof Boolean);
 				assertEquals(expected, result);
 			}
 		}
@@ -88,7 +139,8 @@ public class GrThanTest extends RelationsTest {
 			for (int j = 0; j < enumValues2.length; j++) {
 				Temperatures second = enumValues2[j];
 				boolean expected = first.compareTo(second) > 0;
-				Boolean result = grThan.evaluate(first, second);
+				Object result = FunLib.apply("grThan", first, second);
+				assertTrue(result instanceof Boolean);
 				assertEquals(expected, result);
 			}
 		}
