@@ -232,6 +232,7 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 		addImports("de.uni_koblenz.jgralab.Graph");
 		addImports("de.uni_koblenz.jgralab.greql.GreqlEnvironment");
 		addImports("java.util.Set");
+		addImports("java.util.HashSet");
 		code.add(staticFieldSnippet);
 		code.add(staticInitializerSnippet);
 		code.add(classFieldSnippet);
