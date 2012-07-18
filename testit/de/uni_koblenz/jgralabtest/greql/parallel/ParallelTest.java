@@ -9,12 +9,15 @@ import org.junit.Before;
 import org.junit.Test;
 
 import de.uni_koblenz.jgralab.Graph;
+import de.uni_koblenz.jgralab.GraphIO;
+import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.ImplementationType;
 import de.uni_koblenz.jgralab.ProgressFunction;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql.GreqlEnvironment;
 import de.uni_koblenz.jgralab.greql.GreqlQuery;
 import de.uni_koblenz.jgralab.greql.exception.GreqlException;
+import de.uni_koblenz.jgralab.greql.executable.GreqlCodeGenerator;
 import de.uni_koblenz.jgralab.greql.funlib.FunLib;
 import de.uni_koblenz.jgralab.greql.parallel.ParallelGreqlEvaluator;
 import de.uni_koblenz.jgralab.greql.schema.Greql2Expression;
@@ -75,6 +78,27 @@ public class ParallelTest {
 				environment.getVariable("vu"));
 		assertEquals(((96 + 63 + 76) + (96 + 63) + 44) + (96 + 63 + 76)
 				+ (96 + 63 + 24) + 4, environment.getVariable("erg3"));
+	}
+
+	@Test
+	public void executionTestWithGeneratedQuery()
+			throws InstantiationException, IllegalAccessException,
+			ClassNotFoundException, GraphIOException {
+		Graph testGraph = GraphIO.loadGraphFromFile(
+				"testit/testgraphs/greqltestgraph.tg", null);
+		String classname = "testdata.GeneratedQuery";
+		GreqlCodeGenerator.generateCode("using erg3: erg3 * 2 store as erg4",
+				testGraph.getSchema(), classname + "2", "./testit/");
+		GreqlCodeGenerator.generateCode("using erg3: erg3 * 2 store as erg4",
+				testGraph.getSchema(), classname);
+		GreqlQuery query = (GreqlQuery) Class.forName(classname).newInstance();
+
+		Vertex vGen = pge.createQueryVertex(query);
+		pge.createDependency(dependencyGraph.getVertex(7), vGen);
+
+		GreqlEnvironment environment = pge.evaluate();
+		assertEquals(((Integer) environment.getVariable("erg3")) * 2,
+				environment.getVariable("erg4"));
 	}
 
 	@Test(expected = GreqlException.class)

@@ -216,7 +216,7 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 		String simpleName = classname;
 		String packageName = "";
 		if (classname.contains(".")) {
-			simpleName = classname.substring(classname.lastIndexOf("."));
+			simpleName = classname.substring(classname.lastIndexOf(".") + 1);
 			packageName = classname.substring(0, classname.lastIndexOf("."));
 		}
 		GreqlCodeGenerator greqlcodeGen = new GreqlCodeGenerator(query,
@@ -339,7 +339,8 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 		IsQueryExprOf inc = rootExpr
 				.getFirstIsQueryExprOfIncidence(EdgeDirection.IN);
 		Expression queryExpr = (Expression) inc.getThat();
-		list.add(new CodeSnippet("Object result = "
+		String resultVariable = "result";
+		list.add(new CodeSnippet("Object " + resultVariable + " = "
 				+ createCodeForExpression(queryExpr) + ";"));
 
 		// create code for store as
@@ -347,7 +348,7 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 				.getIsIdOfStoreClauseIncidences(EdgeDirection.IN)) {
 			Identifier ident = (Identifier) storeInc.getThat();
 			list.add(new CodeSnippet("boundVariables.setVariable(\""
-					+ ident.get_name() + "\"," + ident.get_name() + ");"));
+					+ ident.get_name() + "\"," + resultVariable + ");"));
 		}
 
 		list.add(new CodeSnippet("return result;"));
