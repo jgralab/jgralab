@@ -1,27 +1,22 @@
 package de.uni_koblenz.jgralabtest.greql.funlib.logics;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
-import org.junit.Before;
 import org.junit.Test;
 
-import de.uni_koblenz.jgralab.greql.funlib.logics.And;
+import de.uni_koblenz.jgralab.greql.funlib.FunLib;
 
 public class AndTest extends LogicsTest {
-	private And and;
-
-	@Before
-	public void setUp() {
-		and = new And();
-	}
 
 	@Test
 	public void test() {
 		for (int i = 0; i < booleanValues.length; i++) {
 			for (int j = 0; j < booleanValues.length; j++) {
 				boolean expected = booleanValues[i] & booleanValues[j];
-				Boolean result = and.evaluate(booleanValues[i],
+				Object result = FunLib.apply("and", booleanValues[i],
 						booleanValues[j]);
+				assertTrue(result instanceof Boolean);
 				assertEquals(expected, result);
 			}
 		}

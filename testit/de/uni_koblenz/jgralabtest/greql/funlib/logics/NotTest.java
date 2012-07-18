@@ -1,25 +1,20 @@
 package de.uni_koblenz.jgralabtest.greql.funlib.logics;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
-import org.junit.Before;
 import org.junit.Test;
 
-import de.uni_koblenz.jgralab.greql.funlib.logics.Not;
+import de.uni_koblenz.jgralab.greql.funlib.FunLib;
 
 public class NotTest extends LogicsTest {
-	private Not xor;
-
-	@Before
-	public void setUp() {
-		xor = new Not();
-	}
 
 	@Test
 	public void test() {
 		for (int i = 0; i < booleanValues.length; i++) {
 			boolean expected = !booleanValues[i];
-			Boolean result = xor.evaluate(booleanValues[i]);
+			Object result = FunLib.apply("not", booleanValues[i]);
+			assertTrue(result instanceof Boolean);
 			assertEquals(expected, result);
 
 		}
