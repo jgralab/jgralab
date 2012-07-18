@@ -1,13 +1,12 @@
 package de.uni_koblenz.jgralab.greql.parallel;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.FutureTask;
+import java.util.concurrent.RejectedExecutionException;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
@@ -92,7 +91,6 @@ public class ParallelGreqlEvaluator {
 		return v;
 	}
 
-	// TODO add weight attribute
 	public Edge createDependency(Vertex predecessor, Vertex successor) {
 		return graph
 				.createEdge(dependsOnQueryEdgeClass, successor, predecessor);
@@ -110,19 +108,25 @@ public class ParallelGreqlEvaluator {
 
 	private GraphMarker<GreqlEvaluatorTask> evaluators;
 
+	private RuntimeException exception;
+
 	public ParallelGreqlEvaluator() {
 
 	}
 
-	public Map<Vertex, Object> evaluate() {
-		return evaluate(null, new GreqlEnvironmentAdapter());
+	public GreqlEnvironmentAdapter evaluate() {
+		GreqlEnvironmentAdapter environment = new GreqlEnvironmentAdapter();
+		evaluate(null, environment);
+		return environment;
 	}
 
-	public Map<Vertex, Object> evaluate(Graph datagraph) {
-		return evaluate(datagraph, new GreqlEnvironmentAdapter());
+	public GreqlEnvironment evaluate(Graph datagraph) {
+		GreqlEnvironmentAdapter environment = new GreqlEnvironmentAdapter();
+		evaluate(datagraph, environment);
+		return environment;
 	}
 
-	public Map<Vertex, Object> evaluate(Graph datagraph,
+	public GreqlEnvironment evaluate(Graph datagraph,
 			GreqlEnvironment environment) {
 		if (graph == null) {
 			throw new GreqlException(
@@ -148,7 +152,6 @@ public class ParallelGreqlEvaluator {
 		executor = Executors.newFixedThreadPool(threads);
 		evaluators = new GraphMarker<GreqlEvaluatorTask>(graph);
 		inDegree = new IntegerVertexMarker(graph);
-		Map<Vertex, Object> result = new HashMap<Vertex, Object>();
 
 		List<Vertex> initialNodes = new ArrayList<Vertex>();
 		List<GreqlEvaluatorTask> finalEvaluators = new ArrayList<GreqlEvaluatorTask>();
@@ -177,25 +180,35 @@ public class ParallelGreqlEvaluator {
 		try {
 			rc.get();
 			executor.shutdown();
-			return result;
+			return environment;
 		} catch (InterruptedException e) {
-			e.printStackTrace();
+			// e.printStackTrace();
 			shutdownNow();
-			return null;
+			if (exception != null) {
+				throw exception;
+			}
+			return environment;
 		} catch (ExecutionException e) {
-			e.printStackTrace();
+			// e.printStackTrace();
 			shutdownNow();
-			return null;
+			if (exception != null) {
+				throw exception;
+			}
+			return environment;
 		}
 	}
 
-	public void shutdownNow() {
+	public synchronized void shutdownNow() {
 		executor.shutdownNow();
 	}
 
-	public void shutdownNow(Throwable t) {
-		executor.shutdownNow();
-		t.printStackTrace();
+	public synchronized void shutdownNow(Throwable t) {
+		shutdownNow();
+		if (t instanceof RuntimeException) {
+			assert exception == null : "previous:\n" + exception.toString()
+					+ "\ncurrent:\n" + t.toString();
+			exception = (RuntimeException) t;
+		}
 	}
 
 	public void scheduleNext(Vertex dependencyVertex) {
@@ -206,10 +219,20 @@ public class ParallelGreqlEvaluator {
 				int i = inDegree.getMark(s) - 1;
 				inDegree.mark(s, i);
 				if (i == 0) {
-					executor.execute(evaluators.getMark(s));
+					try {
+						if (exception == null) {
+							executor.execute(evaluators.getMark(s));
+						}
+					} catch (RejectedExecutionException e) {
+						break;
+					}
 				}
 			}
 		}
+	}
+
+	public RuntimeException getException() {
+		return exception;
 	}
 
 }

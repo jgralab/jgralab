@@ -13,34 +13,33 @@ public class GreqlEvaluatorTask extends FutureTask<Object> {
 
 	private final ParallelGreqlEvaluator peval;
 
+	private final String queryString;
+
 	public GreqlEvaluatorTask(GreqlQuery greqlQuery, Graph datagraph,
 			GreqlEnvironment environment, Vertex dependencyVertex,
 			long graphVersion, ParallelGreqlEvaluator peval) {
 		super(new GreqlEvaluatorCallable(greqlQuery, datagraph, environment,
-				dependencyVertex, graphVersion));
+				dependencyVertex, graphVersion, peval));
 		this.dependencyVertex = dependencyVertex;
 		this.peval = peval;
+		queryString = greqlQuery.getQueryText();
 	}
 
 	@Override
 	public void run() {
-		System.out.println("start " + dependencyVertex);
+		System.out.println("start " + dependencyVertex + " query: "
+				+ queryString);
 		super.run();
 	}
 
 	@Override
 	protected void done() {
-		System.out.println("\tdone " + dependencyVertex);
+		if (peval.getException() == null) {
+			System.out.println("\tdone " + dependencyVertex + " query: "
+					+ queryString);
+		}
 		super.done();
 		peval.scheduleNext(dependencyVertex);
-	}
-
-	@Override
-	protected void setException(Throwable t) {
-		super.setException(t);
-		peval.shutdownNow(t);
-		// TODO check Exceptions
-		System.out.println();
 	}
 
 }
