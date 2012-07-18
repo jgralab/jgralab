@@ -67,6 +67,16 @@ public class TemporaryEdgeImpl extends EdgeImpl implements TemporaryEdge {
 	}
 
 	@Override
+	public Edge bless(){
+		if(this.preliminaryType==null){
+			throw new TemporaryGraphElementBlessingException(
+					"Transformation of temporary edge " + this + " failed. " 
+					+ "There is no preliminary EdgeClass set.");
+		}
+		return bless(this.preliminaryType);
+	}
+	
+	@Override
 	public Edge bless(EdgeClass edgeClass) {
 
 		// test if valid

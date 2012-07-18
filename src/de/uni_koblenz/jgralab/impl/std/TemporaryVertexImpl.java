@@ -140,8 +140,12 @@ public class TemporaryVertexImpl extends VertexImpl implements TemporaryVertex {
 				tempEdgeList.add((TemporaryEdge) te.getNormalEdge());
 			}
 		}
-		for(TemporaryEdge tempEdge : tempEdgeList){	
-			tempEdge.bless(tempEdge.getPreliminaryType());
+		for(TemporaryEdge tempEdge : tempEdgeList){
+			try{
+				tempEdge.bless(tempEdge.getPreliminaryType());
+			}catch(TemporaryGraphElementBlessingException ex){
+				// Edge stays temporary
+			}
 		}
 		return newVertex;
 	}
