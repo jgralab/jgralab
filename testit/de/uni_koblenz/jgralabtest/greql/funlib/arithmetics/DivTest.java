@@ -4,18 +4,12 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import org.junit.Before;
 import org.junit.Test;
 
-import de.uni_koblenz.jgralab.greql.funlib.artithmetics.Div;
+import de.uni_koblenz.jgralab.greql.exception.GreqlException;
+import de.uni_koblenz.jgralab.greql.funlib.FunLib;
 
 public class DivTest extends ArithmeticTest {
-	private Div div;
-
-	@Before
-	public void setUp() {
-		div = new Div();
-	}
 
 	@Test
 	public void testInt() {
@@ -23,13 +17,14 @@ public class DivTest extends ArithmeticTest {
 			for (int j = 0; j < intValues.length; j++) {
 				if (intValues[j] == 0) {
 					try {
-						div.evaluate(intValues[i], intValues[j]);
-						fail("This is a division by zero and should throw an ArithmeticException.");
-					} catch (ArithmeticException e) {
+						FunLib.apply("div", intValues[i], intValues[j]);
+						fail("This is a division by zero and should throw a GreqlException.");
+					} catch (GreqlException e) {
 					}
 				} else {
 					int expected = intValues[i] / intValues[j];
-					Number result = div.evaluate(intValues[i], intValues[j]);
+					Object result = FunLib.apply("div", intValues[i],
+							intValues[j]);
 					assertTrue(result instanceof Integer);
 					assertEquals(expected, result);
 				}
@@ -37,20 +32,22 @@ public class DivTest extends ArithmeticTest {
 			for (int j = 0; j < longValues.length; j++) {
 				if (longValues[j] == 0l) {
 					try {
-						div.evaluate(intValues[i], longValues[j]);
-						fail("This is a division by zero and should throw an ArithmeticException.");
-					} catch (ArithmeticException e) {
+						FunLib.apply("div", intValues[i], longValues[j]);
+						fail("This is a division by zero and should throw a GreqlException.");
+					} catch (GreqlException e) {
 					}
 				} else {
 					long expected = intValues[i] / longValues[j];
-					Number result = div.evaluate(intValues[i], longValues[j]);
+					Object result = FunLib.apply("div", intValues[i],
+							longValues[j]);
 					assertTrue(result instanceof Long);
 					assertEquals(expected, result);
 				}
 			}
 			for (int j = 0; j < doubleValues.length; j++) {
 				double expected = intValues[i] / doubleValues[j];
-				Number result = div.evaluate(intValues[i], doubleValues[j]);
+				Object result = FunLib.apply("div", intValues[i],
+						doubleValues[j]);
 				assertTrue(result instanceof Double);
 				assertEquals(expected, (Double) result,
 						RunArithmeticTests.EPSILON);
@@ -64,13 +61,14 @@ public class DivTest extends ArithmeticTest {
 			for (int j = 0; j < intValues.length; j++) {
 				if (intValues[j] == 0) {
 					try {
-						div.evaluate(longValues[i], intValues[j]);
-						fail("This is a division by zero and should throw an ArithmeticException.");
-					} catch (ArithmeticException e) {
+						FunLib.apply("div", longValues[i], intValues[j]);
+						fail("This is a division by zero and should throw an GreqlException.");
+					} catch (GreqlException e) {
 					}
 				} else {
 					long expected = longValues[i] / intValues[j];
-					Number result = div.evaluate(longValues[i], intValues[j]);
+					Object result = FunLib.apply("div", longValues[i],
+							intValues[j]);
 					assertTrue(result instanceof Long);
 					assertEquals(expected, result);
 				}
@@ -78,20 +76,22 @@ public class DivTest extends ArithmeticTest {
 			for (int j = 0; j < longValues.length; j++) {
 				if (longValues[j] == 0l) {
 					try {
-						div.evaluate(longValues[i], longValues[j]);
-						fail("This is a division by zero and should throw an ArithmeticException.");
-					} catch (ArithmeticException e) {
+						FunLib.apply("div", longValues[i], longValues[j]);
+						fail("This is a division by zero and should throw an GreqlException.");
+					} catch (GreqlException e) {
 					}
 				} else {
 					long expected = longValues[i] / longValues[j];
-					Number result = div.evaluate(longValues[i], longValues[j]);
+					Object result = FunLib.apply("div", longValues[i],
+							longValues[j]);
 					assertTrue(result instanceof Long);
 					assertEquals(expected, result);
 				}
 			}
 			for (int j = 0; j < doubleValues.length; j++) {
 				double expected = longValues[i] / doubleValues[j];
-				Number result = div.evaluate(longValues[i], doubleValues[j]);
+				Object result = FunLib.apply("div", longValues[i],
+						doubleValues[j]);
 				assertTrue(result instanceof Double);
 				assertEquals(expected, (Double) result,
 						RunArithmeticTests.EPSILON);
@@ -104,19 +104,22 @@ public class DivTest extends ArithmeticTest {
 		for (int i = 0; i < doubleValues.length; i++) {
 			for (int j = 0; j < intValues.length; j++) {
 				double expected = doubleValues[i] / intValues[j];
-				Number result = div.evaluate(doubleValues[i], intValues[j]);
+				Object result = FunLib.apply("div", doubleValues[i],
+						intValues[j]);
 				assertTrue(result instanceof Double);
 				assertEquals(expected, result);
 			}
 			for (int j = 0; j < longValues.length; j++) {
 				double expected = doubleValues[i] / longValues[j];
-				Number result = div.evaluate(doubleValues[i], longValues[j]);
+				Object result = FunLib.apply("div", doubleValues[i],
+						longValues[j]);
 				assertTrue(result instanceof Double);
 				assertEquals(expected, result);
 			}
 			for (int j = 0; j < doubleValues.length; j++) {
 				double expected = doubleValues[i] / doubleValues[j];
-				Number result = div.evaluate(doubleValues[i], doubleValues[j]);
+				Object result = FunLib.apply("div", doubleValues[i],
+						doubleValues[j]);
 				assertTrue(result instanceof Double);
 				assertEquals(expected, (Double) result,
 						RunArithmeticTests.EPSILON);

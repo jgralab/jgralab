@@ -1,40 +1,39 @@
 package de.uni_koblenz.jgralabtest.greql.funlib.arithmetics;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
-import org.junit.Before;
 import org.junit.Test;
 
-import de.uni_koblenz.jgralab.greql.funlib.artithmetics.Neg;
+import de.uni_koblenz.jgralab.greql.funlib.FunLib;
 
 public class NegTest extends ArithmeticTest {
-	private Neg neg;
-
-	@Before
-	public void setUp() {
-		neg = new Neg();
-	}
 
 	@Test
 	public void testInt() {
 		for (int i = 0; i < intValues.length; i++) {
-			assertEquals(-intValues[i], neg.evaluate(intValues[i]));
+			int expected = -intValues[i];
+			Object result = FunLib.apply("neg", intValues[i]);
+			assertEquals(expected, result);
 		}
 	}
 
 	@Test
 	public void testLong() {
 		for (int i = 0; i < longValues.length; i++) {
-			assertEquals(-longValues[i], neg.evaluate(longValues[i]));
+			long expected = -longValues[i];
+			Object result = FunLib.apply("neg", longValues[i]);
+			assertEquals(expected, result);
 		}
 	}
 
 	@Test
 	public void testDouble() {
 		for (int i = 0; i < doubleValues.length; i++) {
-			assertEquals(-doubleValues[i],
-					(Double) neg.evaluate(doubleValues[i]),
-					RunArithmeticTests.EPSILON);
+			double expected = -doubleValues[i];
+			Object result = FunLib.apply("neg", doubleValues[i]);
+			assertTrue(result instanceof Double);
+			assertEquals(expected, (Double) result, RunArithmeticTests.EPSILON);
 		}
 	}
 }
