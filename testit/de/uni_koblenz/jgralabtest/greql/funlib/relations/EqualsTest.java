@@ -1,20 +1,13 @@
 package de.uni_koblenz.jgralabtest.greql.funlib.relations;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
-import org.junit.Before;
 import org.junit.Test;
 
-import de.uni_koblenz.jgralab.greql.funlib.relations.Equals;
+import de.uni_koblenz.jgralab.greql.funlib.FunLib;
 
 public class EqualsTest extends RelationsTest {
-
-	private Equals equals;
-
-	@Before
-	public void setUp() {
-		equals = new Equals();
-	}
 
 	@Test
 	public void testInteger() {
@@ -23,31 +16,36 @@ public class EqualsTest extends RelationsTest {
 			for (int j = 0; j < intValues.length; j++) {
 				int second = intValues[j];
 				boolean expected = first == second;
-				Boolean result = equals.evaluate(first, second);
+				Object result = FunLib.apply("equals", first, second);
+				assertTrue(result instanceof Boolean);
 				assertEquals(expected, result);
 			}
 			for (int j = 0; j < longValues.length; j++) {
 				long second = longValues[j];
 				boolean expected = first == second;
-				Boolean result = equals.evaluate(first, second);
+				Object result = FunLib.apply("equals", first, second);
+				assertTrue(result instanceof Boolean);
 				assertEquals(expected, result);
 			}
 			for (int j = 0; j < doubleValues.length; j++) {
 				double second = doubleValues[j];
 				boolean expected = first == second;
-				Boolean result = equals.evaluate(first, second);
+				Object result = FunLib.apply("equals", first, second);
+				assertTrue(result instanceof Boolean);
 				assertEquals(expected, result);
 			}
 			for (int j = 0; j < objectValues.length; j++) {
 				String second = objectValues[j];
 				boolean expected = Integer.valueOf(first).equals(second);
-				Boolean result = equals.evaluate(first, second);
+				Object result = FunLib.apply("equals", first, second);
+				assertTrue(result instanceof Boolean);
 				assertEquals(expected, result);
 			}
 			for (int j = 0; j < enumValues.length; j++) {
 				Enum<?> second = enumValues[j];
 				boolean expected = Integer.valueOf(first).equals(second);
-				Boolean result = equals.evaluate(first, second);
+				Object result = FunLib.apply("equals", first, second);
+				assertTrue(result instanceof Boolean);
 				assertEquals(expected, result);
 			}
 		}
@@ -60,31 +58,35 @@ public class EqualsTest extends RelationsTest {
 			for (int j = 0; j < intValues.length; j++) {
 				int second = intValues[j];
 				boolean expected = first == second;
-				Boolean result = equals.evaluate(first, second);
+				Object result = FunLib.apply("equals", first, second);
+				assertTrue(result instanceof Boolean);
 				assertEquals(expected, result);
 			}
 			for (int j = 0; j < longValues.length; j++) {
 				long second = longValues[j];
 				boolean expected = first == second;
-				Boolean result = equals.evaluate(first, second);
+				Object result = FunLib.apply("equals", first, second);
 				assertEquals(expected, result);
 			}
 			for (int j = 0; j < doubleValues.length; j++) {
 				double second = doubleValues[j];
 				boolean expected = first == second;
-				Boolean result = equals.evaluate(first, second);
+				Object result = FunLib.apply("equals", first, second);
+				assertTrue(result instanceof Boolean);
 				assertEquals(expected, result);
 			}
 			for (int j = 0; j < objectValues.length; j++) {
 				String second = objectValues[j];
 				boolean expected = Long.valueOf(first).equals(second);
-				Boolean result = equals.evaluate(first, second);
+				Object result = FunLib.apply("equals", first, second);
+				assertTrue(result instanceof Boolean);
 				assertEquals(expected, result);
 			}
 			for (int j = 0; j < enumValues.length; j++) {
 				Enum<?> second = enumValues[j];
 				boolean expected = Long.valueOf(first).equals(second);
-				Boolean result = equals.evaluate(first, second);
+				Object result = FunLib.apply("equals", first, second);
+				assertTrue(result instanceof Boolean);
 				assertEquals(expected, result);
 			}
 		}
@@ -97,31 +99,35 @@ public class EqualsTest extends RelationsTest {
 			for (int j = 0; j < intValues.length; j++) {
 				int second = intValues[j];
 				boolean expected = first == second;
-				Boolean result = equals.evaluate(first, second);
+				Object result = FunLib.apply("equals", first, second);
+				assertTrue(result instanceof Boolean);
 				assertEquals(expected, result);
 			}
 			for (int j = 0; j < longValues.length; j++) {
 				long second = longValues[j];
 				boolean expected = first == second;
-				Boolean result = equals.evaluate(first, second);
+				Object result = FunLib.apply("equals", first, second);
 				assertEquals(expected, result);
 			}
 			for (int j = 0; j < doubleValues.length; j++) {
 				double second = doubleValues[j];
 				boolean expected = first == second;
-				Boolean result = equals.evaluate(first, second);
+				Object result = FunLib.apply("equals", first, second);
+				assertTrue(result instanceof Boolean);
 				assertEquals(expected, result);
 			}
 			for (int j = 0; j < objectValues.length; j++) {
 				String second = objectValues[j];
 				boolean expected = Double.valueOf(first).equals(second);
-				Boolean result = equals.evaluate(first, second);
+				Object result = FunLib.apply("equals", first, second);
+				assertTrue(result instanceof Boolean);
 				assertEquals(expected, result);
 			}
 			for (int j = 0; j < enumValues.length; j++) {
 				Enum<?> second = enumValues[j];
 				boolean expected = Double.valueOf(first).equals(second);
-				Boolean result = equals.evaluate(first, second);
+				Object result = FunLib.apply("equals", first, second);
+				assertTrue(result instanceof Boolean);
 				assertEquals(expected, result);
 			}
 		}
@@ -134,32 +140,37 @@ public class EqualsTest extends RelationsTest {
 			for (int j = 0; j < intValues.length; j++) {
 				int second = intValues[j];
 				boolean expected = first.equals(second);
-				Boolean result = equals.evaluate(first, second);
+				Object result = FunLib.apply("equals", first, second);
+				assertTrue(result instanceof Boolean);
 				assertEquals(expected, result);
 			}
 			for (int j = 0; j < longValues.length; j++) {
 				long second = longValues[j];
 				boolean expected = first.equals(second);
-				Boolean result = equals.evaluate(first, second);
+				Object result = FunLib.apply("equals", first, second);
+				assertTrue(result instanceof Boolean);
 				assertEquals(expected, result);
 			}
 			for (int j = 0; j < doubleValues.length; j++) {
 				double second = doubleValues[j];
 				boolean expected = first.equals(second);
-				Boolean result = equals.evaluate(first, second);
+				Object result = FunLib.apply("equals", first, second);
+				assertTrue(result instanceof Boolean);
 				assertEquals(expected, result);
 			}
 			for (int j = 0; j < objectValues.length; j++) {
 				String second = objectValues[j];
 				boolean expected = first.equals(second);
-				Boolean result = equals.evaluate(first, second);
+				Object result = FunLib.apply("equals", first, second);
+				assertTrue(result instanceof Boolean);
 				assertEquals(expected, result);
 			}
 			for (int j = 0; j < enumValues.length; j++) {
 				// special case
 				String second = enumValues[j].toString();
 				boolean expected = first.equals(second);
-				Boolean result = equals.evaluate(first, second);
+				Object result = FunLib.apply("equals", first, second);
+				assertTrue(result instanceof Boolean);
 				assertEquals(expected, result);
 			}
 		}
@@ -172,32 +183,37 @@ public class EqualsTest extends RelationsTest {
 			for (int j = 0; j < intValues.length; j++) {
 				int second = intValues[j];
 				boolean expected = first.equals(second);
-				Boolean result = equals.evaluate(first, second);
+				Object result = FunLib.apply("equals", first, second);
+				assertTrue(result instanceof Boolean);
 				assertEquals(expected, result);
 			}
 			for (int j = 0; j < longValues.length; j++) {
 				long second = longValues[j];
 				boolean expected = first.equals(second);
-				Boolean result = equals.evaluate(first, second);
+				Object result = FunLib.apply("equals", first, second);
+				assertTrue(result instanceof Boolean);
 				assertEquals(expected, result);
 			}
 			for (int j = 0; j < doubleValues.length; j++) {
 				double second = doubleValues[j];
 				boolean expected = first.equals(second);
-				Boolean result = equals.evaluate(first, second);
+				Object result = FunLib.apply("equals", first, second);
+				assertTrue(result instanceof Boolean);
 				assertEquals(expected, result);
 			}
 			for (int j = 0; j < objectValues.length; j++) {
 				String second = objectValues[j];
 				// special case
 				boolean expected = first.toString().equals(second);
-				Boolean result = equals.evaluate(first, second);
+				Object result = FunLib.apply("equals", first, second);
+				assertTrue(result instanceof Boolean);
 				assertEquals(expected, result);
 			}
 			for (int j = 0; j < enumValues.length; j++) {
 				Enum<?> second = enumValues[j];
 				boolean expected = first.equals(second);
-				Boolean result = equals.evaluate(first, second);
+				Object result = FunLib.apply("equals", first, second);
+				assertTrue(result instanceof Boolean);
 				assertEquals(expected, result);
 			}
 		}
