@@ -37,12 +37,11 @@ package de.uni_koblenz.jgralab.greql.evaluator.vertexeval;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
-import de.uni_koblenz.jgralab.greql.evaluator.InternalGreqlEvaluator;
 import de.uni_koblenz.jgralab.greql.evaluator.GreqlQueryImpl;
+import de.uni_koblenz.jgralab.greql.evaluator.InternalGreqlEvaluator;
 import de.uni_koblenz.jgralab.greql.evaluator.VertexCosts;
 import de.uni_koblenz.jgralab.greql.evaluator.fa.NFA;
 import de.uni_koblenz.jgralab.greql.schema.EdgePathDescription;
-import de.uni_koblenz.jgralab.greql.schema.EdgeRestriction;
 import de.uni_koblenz.jgralab.greql.schema.Expression;
 import de.uni_koblenz.jgralab.greql.schema.IsEdgeRestrOf;
 import de.uni_koblenz.jgralab.greql.types.TypeCollection;
@@ -79,7 +78,7 @@ public class EdgePathDescriptionEvaluator extends
 		VertexEvaluator<? extends Expression> predicateEvaluator = null;
 		if (inc != null) {
 			edgeRestEval = (EdgeRestrictionEvaluator) query
-					.getVertexEvaluator((EdgeRestriction) inc.getAlpha());
+					.getVertexEvaluator(inc.getAlpha());
 			typeCollection.addTypes(edgeRestEval.getTypeCollection(evaluator));
 			predicateEvaluator = edgeRestEval.getPredicateEvaluator();
 		}
@@ -93,7 +92,7 @@ public class EdgePathDescriptionEvaluator extends
 	public VertexCosts calculateSubtreeEvaluationCosts() {
 		EdgePathDescription edgePathDesc = getVertex();
 		VertexEvaluator<? extends Expression> edgeEval = query
-				.getVertexEvaluator((Expression) edgePathDesc
+				.getVertexEvaluator(edgePathDesc
 						.getFirstIsEdgeExprOfIncidence().getAlpha());
 		long edgeCosts = edgeEval.getCurrentSubtreeEvaluationCosts();
 		return new VertexCosts(transitionCosts, transitionCosts,

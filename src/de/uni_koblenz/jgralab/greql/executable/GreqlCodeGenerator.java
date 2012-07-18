@@ -24,8 +24,8 @@ import de.uni_koblenz.jgralab.greql.GreqlQuery;
 import de.uni_koblenz.jgralab.greql.evaluator.GraphSize;
 import de.uni_koblenz.jgralab.greql.evaluator.GreqlEnvironmentAdapter;
 import de.uni_koblenz.jgralab.greql.evaluator.GreqlEvaluatorImpl;
-import de.uni_koblenz.jgralab.greql.evaluator.InternalGreqlEvaluator;
 import de.uni_koblenz.jgralab.greql.evaluator.GreqlQueryImpl;
+import de.uni_koblenz.jgralab.greql.evaluator.InternalGreqlEvaluator;
 import de.uni_koblenz.jgralab.greql.evaluator.fa.AggregationTransition;
 import de.uni_koblenz.jgralab.greql.evaluator.fa.BoolExpressionTransition;
 import de.uni_koblenz.jgralab.greql.evaluator.fa.DFA;
@@ -531,7 +531,7 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 		StringBuilder builder = new StringBuilder("resultRecord = resultRecord");
 		for (IsRecordElementOf inc : recordConstr
 				.getIsRecordElementOfIncidences(EdgeDirection.IN)) {
-			RecordElement currentElement = (RecordElement) inc.getAlpha();
+			RecordElement currentElement = inc.getAlpha();
 			Identifier ident = (Identifier) currentElement
 					.getFirstIsRecordIdOfIncidence(EdgeDirection.IN).getThat();
 			Expression expr = (Expression) currentElement

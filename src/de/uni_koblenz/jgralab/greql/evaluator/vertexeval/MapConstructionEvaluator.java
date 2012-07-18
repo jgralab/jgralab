@@ -39,8 +39,8 @@ import org.pcollections.PVector;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.JGraLab;
-import de.uni_koblenz.jgralab.greql.evaluator.InternalGreqlEvaluator;
 import de.uni_koblenz.jgralab.greql.evaluator.GreqlQueryImpl;
+import de.uni_koblenz.jgralab.greql.evaluator.InternalGreqlEvaluator;
 import de.uni_koblenz.jgralab.greql.evaluator.VertexCosts;
 import de.uni_koblenz.jgralab.greql.exception.GreqlException;
 import de.uni_koblenz.jgralab.greql.schema.Expression;
@@ -65,10 +65,10 @@ public class MapConstructionEvaluator extends VertexEvaluator<MapConstruction> {
 		long partCosts = 0;
 		while (keyInc != null) {
 			VertexEvaluator<? extends Expression> keyEval = query
-					.getVertexEvaluator((Expression) keyInc.getAlpha());
+					.getVertexEvaluator(keyInc.getAlpha());
 			partCosts += keyEval.getCurrentSubtreeEvaluationCosts();
 			VertexEvaluator<? extends Expression> valueEval = query
-					.getVertexEvaluator((Expression) valInc.getAlpha());
+					.getVertexEvaluator(valInc.getAlpha());
 			partCosts += keyEval.getCurrentSubtreeEvaluationCosts()
 					+ valueEval.getCurrentSubtreeEvaluationCosts();
 			parts++;
@@ -91,7 +91,7 @@ public class MapConstructionEvaluator extends VertexEvaluator<MapConstruction> {
 		PVector<Object> keys = JGraLab.vector();
 		for (IsKeyExprOfConstruction e : vertex
 				.getIsKeyExprOfConstructionIncidences(EdgeDirection.IN)) {
-			Expression exp = (Expression) e.getAlpha();
+			Expression exp = e.getAlpha();
 			VertexEvaluator<? extends Expression> expEval = query
 					.getVertexEvaluator(exp);
 			keys = keys.plus(expEval.getResult(evaluator));
@@ -100,7 +100,7 @@ public class MapConstructionEvaluator extends VertexEvaluator<MapConstruction> {
 		PVector<Object> values = JGraLab.vector();
 		for (IsValueExprOfConstruction e : vertex
 				.getIsValueExprOfConstructionIncidences(EdgeDirection.IN)) {
-			Expression exp = (Expression) e.getAlpha();
+			Expression exp = e.getAlpha();
 			VertexEvaluator<? extends Expression> expEval = query
 					.getVertexEvaluator(exp);
 			values = values.plus(expEval.getResult(evaluator));

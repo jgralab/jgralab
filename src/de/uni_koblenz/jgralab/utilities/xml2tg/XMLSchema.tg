@@ -35,11 +35,15 @@ TGraph 2;
 Schema de.uni_koblenz.jgralab.utilities.xml2tg.schema.XMLSchema;
 GraphClass XMLGraph;
 VertexClass Attribute { name: String, value: String };
-VertexClass Element: Node { name: String };
+VertexClass Element: Node { name: String }
+  ["There must be exactly one root element"
+   "exists! e: V{Element} @ inDegree{HasChild}(e) = 0"
+   "from e: V{Element} with inDegree{HasChild}(e) = 0 report e end"];
+Comment Element "Each element except the root element must have exactly one parent.";
 abstract VertexClass Node;
 VertexClass Text: Node { content: String };
 EdgeClass HasAttribute from Element (1,1) role element to Attribute (0,*) role attributes aggregation composite;
 EdgeClass HasChild: HasContent from Element (0,1) to Element (0,*) role children aggregation composite;
 abstract EdgeClass HasContent from Element (0,1) role parent to Node (0,*) role contents aggregation composite;
-EdgeClass HasText: HasContent from Element (0,1) to Text (0,*) role texts aggregation composite;
-EdgeClass References from Attribute (0,1) role referent to Element (0,*) role refs;
+EdgeClass HasText: HasContent from Element (1,1) to Text (0,*) role texts aggregation composite;
+EdgeClass References from Attribute (0,*) role referent to Element (0,*) role refs;

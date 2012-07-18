@@ -22,7 +22,7 @@ public class TemporaryVertexClassImpl extends
 
 	protected TemporaryVertexClassImpl(
 			GraphClassImpl gc) {
-		super("TemporaryVertexClass", (PackageImpl) gc.getSchema().getDefaultPackage(), 
+		super("TemporaryVertexClass", (PackageImpl) gc.getSchema().getDefaultPackage(),
 				gc);
 	}
 
@@ -114,11 +114,6 @@ public class TemporaryVertexClassImpl extends
 	}
 
 	@Override
-	public String getVariableName() {
-		return null;
-	}
-
-	@Override
 	public boolean hasAttributes() {
 		return false;
 	}
@@ -201,22 +196,24 @@ public class TemporaryVertexClassImpl extends
 
 	@Override
 	public boolean isValidFromFor(EdgeClass ec) {
-		return true;
+		return ec ==  this.graphClass.getTemporaryEdgeClass();
 	}
 
 	@Override
 	public boolean isValidToFor(EdgeClass ec) {
-		return true;
+		return ec == this.graphClass.getTemporaryEdgeClass();
 	}
 
 	@Override
 	public Set<EdgeClass> getValidToEdgeClasses() {
-		return ArrayPSet.empty();
+		ArrayPSet<EdgeClass> set = ArrayPSet.empty();
+		return set.plus(this.graphClass.getTemporaryEdgeClass());
 	}
 
 	@Override
 	public Set<EdgeClass> getValidFromEdgeClasses() {
-		return ArrayPSet.empty();
+		ArrayPSet<EdgeClass> set = ArrayPSet.empty();
+		return set.plus(this.graphClass.getTemporaryEdgeClass());
 	}
 
 	@Override

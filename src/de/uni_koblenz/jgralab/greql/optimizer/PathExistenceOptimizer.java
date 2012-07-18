@@ -157,9 +157,9 @@ public class PathExistenceOptimizer extends OptimizerBase {
 	 *            a {@link PathExistence} vertex
 	 */
 	private void maybeTransformPathExistence(PathExistence pe) {
-		Expression startExp = (Expression) pe.getFirstIsStartExprOfIncidence(
+		Expression startExp = pe.getFirstIsStartExprOfIncidence(
 				EdgeDirection.IN).getAlpha();
-		Expression targetExp = (Expression) pe.getFirstIsTargetExprOfIncidence(
+		Expression targetExp = pe.getFirstIsTargetExprOfIncidence(
 				EdgeDirection.IN).getAlpha();
 
 		if ((startExp instanceof Variable) && (targetExp instanceof Variable)) {
@@ -261,7 +261,7 @@ public class PathExistenceOptimizer extends OptimizerBase {
 			syntaxgraph.createIsTargetExprOf(startOrTargetExp, vertexSet);
 		}
 		syntaxgraph.createIsPathOf(
-				(Expression) pe.getFirstIsPathOfIncidence(EdgeDirection.IN)
+				pe.getFirstIsPathOfIncidence(EdgeDirection.IN)
 						.getAlpha(), vertexSet);
 
 		syntaxgraph.createIsArgumentOf(vertexSet, contains);

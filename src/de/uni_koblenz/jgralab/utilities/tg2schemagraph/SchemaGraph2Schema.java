@@ -746,9 +746,10 @@ public class SchemaGraph2Schema {
 
 			// To and From edges are retrieved
 			GoesTo to = gEdgeClass.getFirstGoesToIncidence(OUTGOING);
+			assert to != null : "No \"To\" edge has been defined.";
 			ComesFrom from = gEdgeClass.getFirstComesFromIncidence(OUTGOING);
+			assert from != null : "No \"From\" edge has been defined.";
 
-			assert ((to != null) && (from != null)) : "No \"To\" or \"From\" edge has been defined.";
 			// An EdgeClass is created
 			element = createEdgeClass(gElement, (IncidenceClass) to.getThat(),
 					(IncidenceClass) from.getThat());
@@ -790,10 +791,11 @@ public class SchemaGraph2Schema {
 		String fromRoleName, toRoleName;
 		de.uni_koblenz.jgralab.schema.AggregationKind aggrFrom, aggrTo;
 
-		assert (gElement != null) : "The given GraphElementClass of the SchemaGraph is null.";
-		assert ((gTo != null) && (gFrom != null)) : "One fo the edges To or From is null.";
-		assert (gTo.getFirstEndsAtIncidence().getThat() != null)
-				&& (gFrom.getFirstEndsAtIncidence().getThat() != null) : "One of the referenced objects is not an instance of the class VertexClass";
+		assert gElement != null : "The given EdgeClass of the SchemaGraph is null";
+		assert gTo != null : "No IncidenceClass for the 'to' end";
+		assert gTo.getFirstEndsAtIncidence() != null : "No target VertexClass at the 'to' end";
+		assert gFrom != null : "No IncidenceClass for the 'from' end";
+		assert gFrom.getFirstEndsAtIncidence() != null : "No target VertexClass at the 'from' end";
 
 		// Gets all attributes of the To edge
 		to = queryVertexClass((VertexClass) gTo.getFirstEndsAtIncidence()

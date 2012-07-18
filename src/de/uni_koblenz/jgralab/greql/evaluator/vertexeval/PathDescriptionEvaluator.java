@@ -36,8 +36,8 @@
 package de.uni_koblenz.jgralab.greql.evaluator.vertexeval;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
-import de.uni_koblenz.jgralab.greql.evaluator.InternalGreqlEvaluator;
 import de.uni_koblenz.jgralab.greql.evaluator.GreqlQueryImpl;
+import de.uni_koblenz.jgralab.greql.evaluator.InternalGreqlEvaluator;
 import de.uni_koblenz.jgralab.greql.evaluator.fa.NFA;
 import de.uni_koblenz.jgralab.greql.schema.Expression;
 import de.uni_koblenz.jgralab.greql.schema.IsGoalRestrOf;
@@ -122,7 +122,7 @@ public abstract class PathDescriptionEvaluator<V extends PathDescription>
 		TypeCollection typeCollection = new TypeCollection();
 		while (inc != null) {
 			VertexEvaluator<? extends Expression> vertexEval = query
-					.getVertexEvaluator((Expression) inc.getAlpha());
+					.getVertexEvaluator(inc.getAlpha());
 			if (vertexEval instanceof TypeIdEvaluator) {
 				TypeIdEvaluator typeEval = (TypeIdEvaluator) vertexEval;
 				typeCollection.addTypes((TypeCollection) typeEval
@@ -156,7 +156,7 @@ public abstract class PathDescriptionEvaluator<V extends PathDescription>
 		TypeCollection typeCollection = new TypeCollection();
 		while (inc != null) {
 			VertexEvaluator<? extends Expression> vertexEval = query
-					.getVertexEvaluator((Expression) inc.getAlpha());
+					.getVertexEvaluator(inc.getAlpha());
 			if (vertexEval instanceof TypeIdEvaluator) {
 				TypeIdEvaluator typeEval = (TypeIdEvaluator) vertexEval;
 				typeCollection.addTypes((TypeCollection) typeEval

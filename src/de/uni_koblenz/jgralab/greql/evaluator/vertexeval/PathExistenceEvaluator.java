@@ -37,8 +37,8 @@ package de.uni_koblenz.jgralab.greql.evaluator.vertexeval;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.greql.evaluator.InternalGreqlEvaluator;
 import de.uni_koblenz.jgralab.greql.evaluator.GreqlQueryImpl;
+import de.uni_koblenz.jgralab.greql.evaluator.InternalGreqlEvaluator;
 import de.uni_koblenz.jgralab.greql.evaluator.VertexCosts;
 import de.uni_koblenz.jgralab.greql.funlib.FunLib;
 import de.uni_koblenz.jgralab.greql.funlib.FunLib.FunctionInfo;
@@ -68,7 +68,7 @@ public class PathExistenceEvaluator extends PathSearchEvaluator<PathExistence> {
 				EdgeDirection.IN).getAlpha();
 		PathDescriptionEvaluator<?> pathDescEval = (PathDescriptionEvaluator<?>) query
 				.getVertexEvaluator(p);
-		Expression startExpression = (Expression) vertex
+		Expression startExpression = vertex
 				.getFirstIsStartExprOfIncidence(EdgeDirection.IN).getAlpha();
 		VertexEvaluator<? extends Expression> startEval = query
 				.getVertexEvaluator(startExpression);
@@ -82,7 +82,7 @@ public class PathExistenceEvaluator extends PathSearchEvaluator<PathExistence> {
 		}
 		Vertex startVertex = (Vertex) res;
 
-		Expression targetExpression = (Expression) vertex
+		Expression targetExpression = vertex
 				.getFirstIsTargetExprOfIncidence(EdgeDirection.IN).getAlpha();
 		VertexEvaluator<? extends Expression> targetEval = query
 				.getVertexEvaluator(targetExpression);
@@ -111,12 +111,12 @@ public class PathExistenceEvaluator extends PathSearchEvaluator<PathExistence> {
 	@Override
 	public VertexCosts calculateSubtreeEvaluationCosts() {
 		PathExistence existence = getVertex();
-		Expression startExpression = (Expression) existence
+		Expression startExpression = existence
 				.getFirstIsStartExprOfIncidence().getAlpha();
 		VertexEvaluator<? extends Expression> vertexEval = query
 				.getVertexEvaluator(startExpression);
 		long startCosts = vertexEval.getCurrentSubtreeEvaluationCosts();
-		Expression targetExpression = (Expression) existence
+		Expression targetExpression = existence
 				.getFirstIsTargetExprOfIncidence().getAlpha();
 		vertexEval = query.getVertexEvaluator(targetExpression);
 		long targetCosts = vertexEval.getCurrentSubtreeEvaluationCosts();

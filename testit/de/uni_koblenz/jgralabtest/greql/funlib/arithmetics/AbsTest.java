@@ -1,41 +1,39 @@
 package de.uni_koblenz.jgralabtest.greql.funlib.arithmetics;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
-import org.junit.Before;
 import org.junit.Test;
 
-import de.uni_koblenz.jgralab.greql.funlib.artithmetics.Abs;
+import de.uni_koblenz.jgralab.greql.funlib.FunLib;
 
 public class AbsTest extends ArithmeticTest {
-
-	private Abs abs;
-
-	@Before
-	public void setUp() {
-		abs = new Abs();
-	}
 
 	@Test
 	public void testInt() {
 		for (int i = 0; i < intValues.length; i++) {
-			assertEquals(Math.abs(intValues[i]), abs.evaluate(intValues[i]));
+			int expected = Math.abs(intValues[i]);
+			Object result = FunLib.apply("abs", intValues[i]);
+			assertEquals(expected, result);
 		}
 	}
 
 	@Test
 	public void testLong() {
 		for (int i = 0; i < longValues.length; i++) {
-			assertEquals(Math.abs(longValues[i]), abs.evaluate(longValues[i]));
+			long expected = Math.abs(longValues[i]);
+			Object result = FunLib.apply("abs", longValues[i]);
+			assertEquals(expected, result);
 		}
 	}
 
 	@Test
 	public void testDouble() {
 		for (int i = 0; i < doubleValues.length; i++) {
-			assertEquals(Math.abs(doubleValues[i]),
-					(Double) abs.evaluate(doubleValues[i]),
-					RunArithmeticTests.EPSILON);
+			double expected = Math.abs(doubleValues[i]);
+			Object result = FunLib.apply("abs", doubleValues[i]);
+			assertTrue(result instanceof Double);
+			assertEquals(expected, (Double) result, RunArithmeticTests.EPSILON);
 		}
 	}
 }

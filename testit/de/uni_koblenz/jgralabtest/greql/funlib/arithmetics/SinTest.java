@@ -1,10 +1,11 @@
 package de.uni_koblenz.jgralabtest.greql.funlib.arithmetics;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 import org.junit.Before;
 import org.junit.Test;
 
+import de.uni_koblenz.jgralab.greql.funlib.FunLib;
 import de.uni_koblenz.jgralab.greql.funlib.artithmetics.Sin;
 
 public class SinTest extends ArithmeticTest {
@@ -18,24 +19,30 @@ public class SinTest extends ArithmeticTest {
 	@Test
 	public void testInt() {
 		for (int i = 0; i < intValues.length; i++) {
-			assertEquals(Math.sin(intValues[i]), sin.evaluate(intValues[i]),
-					RunArithmeticTests.EPSILON);
+			double expected = Math.sin(intValues[i]);
+			Object result = FunLib.apply("sin", intValues[i]);
+			assertTrue(result instanceof Double);
+			assertEquals(expected, (Double) result, RunArithmeticTests.EPSILON);
 		}
 	}
 
 	@Test
 	public void testLong() {
 		for (int i = 0; i < longValues.length; i++) {
-			assertEquals(Math.sin(longValues[i]), sin.evaluate(longValues[i]),
-					RunArithmeticTests.EPSILON);
+			double expected = Math.sin(longValues[i]);
+			Object result = sin.evaluate(longValues[i]);
+			assertTrue(result instanceof Double);
+			assertEquals(expected, (Double) result, RunArithmeticTests.EPSILON);
 		}
 	}
 
 	@Test
 	public void testDouble() {
 		for (int i = 0; i < doubleValues.length; i++) {
-			assertEquals(Math.sin(doubleValues[i]),
-					sin.evaluate(doubleValues[i]), RunArithmeticTests.EPSILON);
+			double expected = Math.sin(doubleValues[i]);
+			Object result = sin.evaluate(doubleValues[i]);
+			assertTrue(result instanceof Double);
+			assertEquals(expected, (Double) result, RunArithmeticTests.EPSILON);
 		}
 	}
 }

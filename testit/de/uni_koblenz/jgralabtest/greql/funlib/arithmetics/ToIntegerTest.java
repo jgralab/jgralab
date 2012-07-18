@@ -1,41 +1,41 @@
 package de.uni_koblenz.jgralabtest.greql.funlib.arithmetics;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
-import org.junit.Before;
 import org.junit.Test;
 
-import de.uni_koblenz.jgralab.greql.funlib.artithmetics.ToInteger;
+import de.uni_koblenz.jgralab.greql.funlib.FunLib;
 
 public class ToIntegerTest extends ArithmeticTest {
-	private ToInteger toInteger;
-
-	@Before
-	public void setUp() {
-		toInteger = new ToInteger();
-	}
 
 	@Test
 	public void testInt() {
 		for (int i = 0; i < intValues.length; i++) {
-			assertEquals((Integer) Integer.valueOf(intValues[i]).intValue(),
-					toInteger.evaluate(intValues[i]));
+			int expected = Integer.valueOf(intValues[i]).intValue();
+			Object result = FunLib.apply("toInteger", intValues[i]);
+			assertTrue(result instanceof Integer);
+			assertEquals(expected, result);
 		}
 	}
 
 	@Test
 	public void testLong() {
 		for (int i = 0; i < longValues.length; i++) {
-			assertEquals((Integer) Long.valueOf(longValues[i]).intValue(),
-					toInteger.evaluate(longValues[i]));
+			int expected = Long.valueOf(longValues[i]).intValue();
+			Object result = FunLib.apply("toInteger", longValues[i]);
+			assertTrue(result instanceof Integer);
+			assertEquals(expected, result);
 		}
 	}
 
 	@Test
 	public void testDouble() {
 		for (int i = 0; i < doubleValues.length; i++) {
-			assertEquals((Integer) Double.valueOf(doubleValues[i]).intValue(),
-					toInteger.evaluate(doubleValues[i]));
+			int expected = Double.valueOf(doubleValues[i]).intValue();
+			Object result = FunLib.apply("toInteger", doubleValues[i]);
+			assertTrue(result instanceof Integer);
+			assertEquals(expected, result);
 		}
 	}
 }

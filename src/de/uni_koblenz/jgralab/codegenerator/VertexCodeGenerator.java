@@ -324,10 +324,12 @@ public class VertexCodeGenerator extends
 
 	@Override
 	protected CodeBlock createAttributedElementClassConstant() {
-		return new CodeSnippet(
+		CodeSnippet s = new CodeSnippet(
 				true,
 				"public static final #jgSchemaPackage#.#schemaElementClass# VC"
-						+ " = #schemaPackageName#.#schemaName#.instance().#schemaVariableName#;");
+						+ " = #schemaPackageName#.#schemaName#.instance().getGraphClass().getVertexClass(\"#vcQualifiedName#\");");
+		s.setVariable("vcQualifiedName", aec.getQualifiedName());
+		return s;
 	}
 
 	@Override

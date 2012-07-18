@@ -38,8 +38,8 @@ package de.uni_koblenz.jgralab.greql.evaluator.vertexeval;
 import org.pcollections.PCollection;
 
 import de.uni_koblenz.jgralab.JGraLab;
-import de.uni_koblenz.jgralab.greql.evaluator.InternalGreqlEvaluator;
 import de.uni_koblenz.jgralab.greql.evaluator.GreqlQueryImpl;
+import de.uni_koblenz.jgralab.greql.evaluator.InternalGreqlEvaluator;
 import de.uni_koblenz.jgralab.greql.evaluator.VertexCosts;
 import de.uni_koblenz.jgralab.greql.schema.Declaration;
 import de.uni_koblenz.jgralab.greql.schema.Expression;
@@ -75,13 +75,13 @@ public class SetComprehensionEvaluator extends
 	@Override
 	public VertexCosts calculateSubtreeEvaluationCosts() {
 		SetComprehension setComp = getVertex();
-		Declaration decl = (Declaration) setComp
+		Declaration decl = setComp
 				.getFirstIsCompDeclOfIncidence().getAlpha();
 		DeclarationEvaluator declEval = (DeclarationEvaluator) query
 				.getVertexEvaluator(decl);
 		long declCosts = declEval.getCurrentSubtreeEvaluationCosts();
 
-		Expression resultDef = (Expression) setComp
+		Expression resultDef = setComp
 				.getFirstIsCompResultDefOfIncidence().getAlpha();
 		VertexEvaluator<? extends Expression> resultDefEval = query
 				.getVertexEvaluator(resultDef);
@@ -96,7 +96,7 @@ public class SetComprehensionEvaluator extends
 	@Override
 	public long calculateEstimatedCardinality() {
 		SetComprehension setComp = getVertex();
-		Declaration decl = (Declaration) setComp
+		Declaration decl = setComp
 				.getFirstIsCompDeclOfIncidence().getAlpha();
 		DeclarationEvaluator declEval = (DeclarationEvaluator) query
 				.getVertexEvaluator(decl);

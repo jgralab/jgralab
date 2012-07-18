@@ -43,8 +43,8 @@ import org.pcollections.PVector;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.JGraLab;
-import de.uni_koblenz.jgralab.greql.evaluator.InternalGreqlEvaluator;
 import de.uni_koblenz.jgralab.greql.evaluator.GreqlQueryImpl;
+import de.uni_koblenz.jgralab.greql.evaluator.InternalGreqlEvaluator;
 import de.uni_koblenz.jgralab.greql.evaluator.VertexCosts;
 import de.uni_koblenz.jgralab.greql.schema.Declaration;
 import de.uni_koblenz.jgralab.greql.schema.Expression;
@@ -87,7 +87,7 @@ public class ListComprehensionEvaluator extends
 				for (IsTableHeaderOf tableInc : vertex
 						.getIsTableHeaderOfIncidences(EdgeDirection.IN)) {
 					VertexEvaluator<? extends Expression> headerEval = query
-							.getVertexEvaluator((Expression) tableInc
+							.getVertexEvaluator(tableInc
 									.getAlpha());
 					headerEvaluators.add(headerEval);
 				}
@@ -110,13 +110,13 @@ public class ListComprehensionEvaluator extends
 	@Override
 	public VertexCosts calculateSubtreeEvaluationCosts() {
 		ListComprehension listComp = getVertex();
-		Declaration decl = (Declaration) listComp
+		Declaration decl = listComp
 				.getFirstIsCompDeclOfIncidence().getAlpha();
 		DeclarationEvaluator declEval = (DeclarationEvaluator) query
 				.getVertexEvaluator(decl);
 		long declCosts = declEval.getCurrentSubtreeEvaluationCosts();
 
-		Expression resultDef = (Expression) listComp
+		Expression resultDef = listComp
 				.getFirstIsCompResultDefOfIncidence().getAlpha();
 		VertexEvaluator<? extends Expression> resultDefEval = query
 				.getVertexEvaluator(resultDef);
@@ -131,7 +131,7 @@ public class ListComprehensionEvaluator extends
 	@Override
 	public long calculateEstimatedCardinality() {
 		ListComprehension listComp = getVertex();
-		Declaration decl = (Declaration) listComp
+		Declaration decl = listComp
 				.getFirstIsCompDeclOfIncidence().getAlpha();
 		DeclarationEvaluator declEval = (DeclarationEvaluator) query
 				.getVertexEvaluator(decl);

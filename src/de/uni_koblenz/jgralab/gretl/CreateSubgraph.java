@@ -250,9 +250,9 @@ public class CreateSubgraph extends Transformation<Void> {
 						.get_archetype()));
 				triple = triple.plus(arch);
 
-				triple = triple.plus(context.evaluateGReQLQuery(((CreateVertex)e.getAlpha())
+				triple = triple.plus(context.evaluateGReQLQuery(e.getAlpha()
 						.get_archetype()));
-				triple = triple.plus(context.evaluateGReQLQuery(((CreateVertex)e.getOmega())
+				triple = triple.plus(context.evaluateGReQLQuery(e.getOmega()
 						.get_archetype()));
 				archTripleSet = archTripleSet.plus(triple);
 			}

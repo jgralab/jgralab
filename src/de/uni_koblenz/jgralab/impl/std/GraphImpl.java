@@ -44,6 +44,7 @@ import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.impl.FreeIndexList;
 import de.uni_koblenz.jgralab.impl.InternalEdge;
 import de.uni_koblenz.jgralab.impl.InternalVertex;
+import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.GraphClass;
 import de.uni_koblenz.jgralab.trans.Savepoint;
 import de.uni_koblenz.jgralab.trans.Transaction;
@@ -357,6 +358,11 @@ public abstract class GraphImpl extends
 	@Override
 	public TemporaryEdge createTemporaryEdge(Vertex alpha, Vertex omega){
 		return new TemporaryEdgeImpl(0, this, alpha, omega);
+	}
+	
+	@Override
+	public TemporaryEdge createTemporaryEdge(EdgeClass preliminaryType, Vertex alpha, Vertex omega){
+		return new TemporaryEdgeImpl(0, this, preliminaryType, alpha, omega);
 	}
 	
 	@Override

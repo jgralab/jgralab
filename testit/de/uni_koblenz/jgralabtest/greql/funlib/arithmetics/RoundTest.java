@@ -2,40 +2,36 @@ package de.uni_koblenz.jgralabtest.greql.funlib.arithmetics;
 
 import static org.junit.Assert.assertEquals;
 
-import org.junit.Before;
 import org.junit.Test;
 
-import de.uni_koblenz.jgralab.greql.funlib.artithmetics.Round;
+import de.uni_koblenz.jgralab.greql.funlib.FunLib;
 
 public class RoundTest extends ArithmeticTest {
-	private Round round;
-
-	@Before
-	public void setUp() {
-		round = new Round();
-	}
 
 	@Test
 	public void testInt() {
 		for (int i = 0; i < intValues.length; i++) {
-			assertEquals((long) Math.round(intValues[i]),
-					(long) round.evaluate(intValues[i]));
+			long expected = Math.round(intValues[i]);
+			Object result = FunLib.apply("round", intValues[i]);
+			assertEquals(expected, result);
 		}
 	}
 
 	@Test
 	public void testLong() {
 		for (int i = 0; i < longValues.length; i++) {
-			assertEquals(Math.round((double) longValues[i]),
-					(long) round.evaluate(longValues[i]));
+			long expected = Math.round((double) longValues[i]);
+			Object result = FunLib.apply("round", longValues[i]);
+			assertEquals(expected, result);
 		}
 	}
 
 	@Test
 	public void testDouble() {
 		for (int i = 0; i < doubleValues.length; i++) {
-			assertEquals(Math.round(doubleValues[i]),
-					(long) round.evaluate(doubleValues[i]));
+			long expected = Math.round(doubleValues[i]);
+			Object result = FunLib.apply("round", doubleValues[i]);
+			assertEquals(expected, result);
 		}
 	}
 }

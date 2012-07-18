@@ -99,6 +99,19 @@ public class XmlGraphUtilities {
 				+ " has no attribute '" + attrName + "'");
 	}
 
+	public String getAttributeValue(Element el, String attrName,
+			boolean upperCaseFirstLetter) {
+		String result = getAttributeValue(el, attrName);
+		if (upperCaseFirstLetter) {
+			result = result.trim();
+			if (result.length() > 0) {
+				result = Character.toUpperCase(result.charAt(0))
+						+ result.substring(1);
+			}
+		}
+		return result;
+	}
+
 	public Element getReferencedElement(Element el, String attrName) {
 		for (Attribute attr : el.get_attributes()) {
 			if (attr.get_name().equals(attrName)) {

@@ -36,8 +36,8 @@
 package de.uni_koblenz.jgralab.greql.evaluator.vertexeval;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
-import de.uni_koblenz.jgralab.greql.evaluator.InternalGreqlEvaluator;
 import de.uni_koblenz.jgralab.greql.evaluator.GreqlQueryImpl;
+import de.uni_koblenz.jgralab.greql.evaluator.InternalGreqlEvaluator;
 import de.uni_koblenz.jgralab.greql.evaluator.VariableDeclarationLayer;
 import de.uni_koblenz.jgralab.greql.evaluator.VertexCosts;
 import de.uni_koblenz.jgralab.greql.schema.Declaration;
@@ -76,17 +76,17 @@ public class QuantifiedExpressionEvaluator extends
 	}
 
 	private void initialize(InternalGreqlEvaluator evaluator) {
-		Declaration d = (Declaration) vertex
+		Declaration d = vertex
 				.getFirstIsQuantifiedDeclOfIncidence(EdgeDirection.IN)
 				.getAlpha();
 		DeclarationEvaluator declEval = (DeclarationEvaluator) query
 				.getVertexEvaluator(d);
 		declarationLayer = (VariableDeclarationLayer) declEval
 				.getResult(evaluator);
-		Quantifier quantifier = (Quantifier) vertex
+		Quantifier quantifier = vertex
 				.getFirstIsQuantifierOfIncidence(EdgeDirection.IN).getAlpha();
 		quantificationType = quantifier.get_type();
-		Expression b = (Expression) vertex.getFirstIsBoundExprOfIncidence(
+		Expression b = vertex.getFirstIsBoundExprOfIncidence(
 				EdgeDirection.IN).getAlpha();
 		predicateEvaluator = query.getVertexEvaluator(b);
 		initialized = true;
@@ -163,12 +163,12 @@ public class QuantifiedExpressionEvaluator extends
 		QuantifiedExpression quantifiedExpr = getVertex();
 
 		VertexEvaluator<? extends Declaration> declEval = query
-				.getVertexEvaluator((Declaration) quantifiedExpr
+				.getVertexEvaluator(quantifiedExpr
 						.getFirstIsQuantifiedDeclOfIncidence().getAlpha());
 		long declCosts = declEval.getCurrentSubtreeEvaluationCosts();
 
 		VertexEvaluator<? extends Expression> boundExprEval = query
-				.getVertexEvaluator((Expression) quantifiedExpr
+				.getVertexEvaluator(quantifiedExpr
 						.getFirstIsBoundExprOfQuantifiedExpressionIncidence()
 						.getAlpha());
 		long boundExprCosts = boundExprEval.getCurrentSubtreeEvaluationCosts();

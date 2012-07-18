@@ -50,7 +50,6 @@ import de.uni_koblenz.jgralab.greql.optimizer.OptimizerUtility;
 import de.uni_koblenz.jgralab.greql.schema.BoolLiteral;
 import de.uni_koblenz.jgralab.greql.schema.Expression;
 import de.uni_koblenz.jgralab.greql.schema.FunctionApplication;
-import de.uni_koblenz.jgralab.greql.schema.FunctionId;
 import de.uni_koblenz.jgralab.greql.schema.IsArgumentOf;
 
 /**
@@ -106,8 +105,8 @@ public abstract class Formula {
 			if (OptimizerUtility.isAnd(funApp)) {
 				IsArgumentOf inc = funApp
 						.getFirstIsArgumentOfIncidence(EdgeDirection.IN);
-				Expression leftArg = (Expression) inc.getAlpha();
-				Expression rightArg = (Expression) inc
+				Expression leftArg = inc.getAlpha();
+				Expression rightArg = inc
 						.getNextIsArgumentOfIncidence(EdgeDirection.IN)
 						.getAlpha();
 				return new And(query, createFormulaFromExpressionInternal(
@@ -117,8 +116,8 @@ public abstract class Formula {
 			if (OptimizerUtility.isOr(funApp)) {
 				IsArgumentOf inc = funApp
 						.getFirstIsArgumentOfIncidence(EdgeDirection.IN);
-				Expression leftArg = (Expression) inc.getAlpha();
-				Expression rightArg = (Expression) inc
+				Expression leftArg = inc.getAlpha();
+				Expression rightArg = inc
 						.getNextIsArgumentOfIncidence(EdgeDirection.IN)
 						.getAlpha();
 				return new Or(query, createFormulaFromExpressionInternal(query,
@@ -128,7 +127,7 @@ public abstract class Formula {
 			if (OptimizerUtility.isNot(funApp)) {
 				IsArgumentOf inc = funApp
 						.getFirstIsArgumentOfIncidence(EdgeDirection.IN);
-				Expression arg = (Expression) inc.getAlpha();
+				Expression arg = inc.getAlpha();
 				return new Not(query, createFormulaFromExpressionInternal(
 						query, arg));
 			}
@@ -201,7 +200,7 @@ public abstract class Formula {
 	private boolean isFunApp(Vertex exp, String functionName) {
 		if (exp instanceof FunctionApplication) {
 			FunctionApplication funApp = (FunctionApplication) exp;
-			return ((FunctionId) funApp.getFirstIsFunctionIdOfIncidence()
+			return (funApp.getFirstIsFunctionIdOfIncidence()
 					.getAlpha()).get_name().equals(functionName);
 		}
 		return false;

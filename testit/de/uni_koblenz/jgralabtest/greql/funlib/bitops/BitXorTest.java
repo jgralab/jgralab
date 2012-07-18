@@ -3,32 +3,26 @@ package de.uni_koblenz.jgralabtest.greql.funlib.bitops;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import org.junit.Before;
 import org.junit.Test;
 
-import de.uni_koblenz.jgralab.greql.funlib.bitops.BitXor;
+import de.uni_koblenz.jgralab.greql.funlib.FunLib;
 
 public class BitXorTest extends BitOpTest {
-
-	private BitXor bitXor;
-
-	@Before
-	public void setUp() {
-		bitXor = new BitXor();
-	}
 
 	@Test
 	public void testInteger() {
 		for (int i = 0; i < intValues.length; i++) {
 			for (int j = 0; j < intValues.length; j++) {
 				int expected = intValues[i] ^ intValues[j];
-				Number result = bitXor.evaluate(intValues[i], intValues[j]);
+				Object result = FunLib.apply("bitXor", intValues[i],
+						intValues[j]);
 				assertTrue(result instanceof Integer);
 				assertEquals(expected, result);
 			}
 			for (int j = 0; j < longValues.length; j++) {
 				long expected = intValues[i] ^ longValues[j];
-				Number result = bitXor.evaluate(intValues[i], longValues[j]);
+				Object result = FunLib.apply("bitXor", intValues[i],
+						longValues[j]);
 				assertTrue(result instanceof Long);
 				assertEquals(expected, result);
 			}
@@ -40,13 +34,15 @@ public class BitXorTest extends BitOpTest {
 		for (int i = 0; i < longValues.length; i++) {
 			for (int j = 0; j < intValues.length; j++) {
 				long expected = longValues[i] ^ intValues[j];
-				Number result = bitXor.evaluate(longValues[i], intValues[j]);
+				Object result = FunLib.apply("bitXor", longValues[i],
+						intValues[j]);
 				assertTrue(result instanceof Long);
 				assertEquals(expected, result);
 			}
 			for (int j = 0; j < longValues.length; j++) {
 				long expected = longValues[i] ^ longValues[j];
-				Number result = bitXor.evaluate(longValues[i], longValues[j]);
+				Object result = FunLib.apply("bitXor", longValues[i],
+						longValues[j]);
 				assertTrue(result instanceof Long);
 				assertEquals(expected, result);
 			}

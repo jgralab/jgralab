@@ -39,8 +39,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
-import de.uni_koblenz.jgralab.greql.evaluator.InternalGreqlEvaluator;
 import de.uni_koblenz.jgralab.greql.evaluator.GreqlQueryImpl;
+import de.uni_koblenz.jgralab.greql.evaluator.InternalGreqlEvaluator;
 import de.uni_koblenz.jgralab.greql.evaluator.VertexCosts;
 import de.uni_koblenz.jgralab.greql.schema.EdgeRestriction;
 import de.uni_koblenz.jgralab.greql.schema.Expression;
@@ -48,7 +48,6 @@ import de.uni_koblenz.jgralab.greql.schema.IsBooleanPredicateOfEdgeRestriction;
 import de.uni_koblenz.jgralab.greql.schema.IsRoleIdOf;
 import de.uni_koblenz.jgralab.greql.schema.IsTypeIdOf;
 import de.uni_koblenz.jgralab.greql.schema.RoleId;
-import de.uni_koblenz.jgralab.greql.schema.TypeId;
 import de.uni_koblenz.jgralab.greql.types.TypeCollection;
 
 /**
@@ -114,7 +113,7 @@ public class EdgeRestrictionEvaluator extends VertexEvaluator<EdgeRestriction> {
 					.getFirstIsTypeIdOfIncidence(EdgeDirection.IN);
 			while (typeInc != null) {
 				TypeIdEvaluator typeEval = (TypeIdEvaluator) query
-						.getVertexEvaluator((TypeId) typeInc.getAlpha());
+						.getVertexEvaluator(typeInc.getAlpha());
 				typeCollection.addTypes((TypeCollection) typeEval
 						.getResult(evaluator));
 				typeInc = typeInc.getNextIsTypeIdOfIncidence(EdgeDirection.IN);
@@ -124,7 +123,7 @@ public class EdgeRestrictionEvaluator extends VertexEvaluator<EdgeRestriction> {
 		if (vertex.getFirstIsRoleIdOfIncidence() != null) {
 			validRoles = new HashSet<String>();
 			for (IsRoleIdOf e : vertex.getIsRoleIdOfIncidences()) {
-				RoleId role = (RoleId) e.getAlpha();
+				RoleId role =  e.getAlpha();
 				validRoles.add(role.get_name());
 			}
 		}
@@ -132,7 +131,7 @@ public class EdgeRestrictionEvaluator extends VertexEvaluator<EdgeRestriction> {
 				.getFirstIsBooleanPredicateOfEdgeRestrictionIncidence(EdgeDirection.IN);
 		if (predInc != null) {
 			// System.out.println("Found a BooleanPredicateOfEdge");
-			predicateEvaluator = query.getVertexEvaluator((Expression) predInc
+			predicateEvaluator = query.getVertexEvaluator(predInc
 					.getAlpha());
 		}
 		return null;
@@ -145,7 +144,7 @@ public class EdgeRestrictionEvaluator extends VertexEvaluator<EdgeRestriction> {
 		long subtreeCosts = 0;
 		if (er.getFirstIsTypeIdOfIncidence(EdgeDirection.IN) != null) {
 			TypeIdEvaluator tEval = (TypeIdEvaluator) query
-					.getVertexEvaluator((TypeId) er
+					.getVertexEvaluator(er
 							.getFirstIsTypeIdOfIncidence(EdgeDirection.IN)
 							.getAlpha());
 			subtreeCosts += tEval.getCurrentSubtreeEvaluationCosts();

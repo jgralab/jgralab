@@ -51,20 +51,21 @@ import de.uni_koblenz.jgralab.TemporaryVertex;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.utilities.xml2tg.schema.Attribute;
 import de.uni_koblenz.jgralab.utilities.xml2tg.schema.Element;
+import de.uni_koblenz.jgralab.utilities.xml2tg.schema.References;
 import de.uni_koblenz.jgralab.utilities.xml2tg.schema.Text;
 import de.uni_koblenz.jgralab.utilities.xml2tg.schema.XMLGraph;
 import de.uni_koblenz.jgralab.utilities.xml2tg.schema.XMLSchema;
 
 /**
  * Xml2Tg reads an XML file and builds a DOM-like XMLGraph.
- * 
+ *
  * Xml2Tg tries to resolve IDREF and IDREFS attributes by creating References
  * edges from the attribute vertices to the referenced elements. The attribute
  * names for ID, IDREF and IDREFS attributes can be defined globally or per
  * element name.
- * 
+ *
  * Optionally, the text contained in the elements can be skippped.
- * 
+ *
  * @author ist@uni-koblenz.de
  */
 public class Xml2Tg extends XmlProcessor {
@@ -151,8 +152,7 @@ public class Xml2Tg extends XmlProcessor {
 						// System.out
 						// .println("convert temporary element with id '"
 						// + id + "'");
-						el = (Element) (((TemporaryVertex) v).bless(XMLSchema
-								.instance().vc_Element));
+						el = (Element) (((TemporaryVertex) v).bless(Element.VC));
 					} else {
 						// System.out.println("use cached element with id '" +
 						// id
@@ -191,8 +191,7 @@ public class Xml2Tg extends XmlProcessor {
 					ref = xmlGraph.createTemporaryVertex();
 					idMap.put(attr.get_value(), ref);
 				}
-				xmlGraph.createEdge(XMLSchema.instance().ec_References, attr,
-						ref);
+				xmlGraph.createEdge(References.EC, attr, ref);
 				// System.out.println("REF(" + el + ") " + name + "/" + attrName
 				// + " -> " + ref);
 			} else if (idRefsAttributes.contains("*/" + attrName)
@@ -207,8 +206,7 @@ public class Xml2Tg extends XmlProcessor {
 						ref = xmlGraph.createTemporaryVertex();
 						idMap.put(val, ref);
 					}
-					xmlGraph.createEdge(XMLSchema.instance().ec_References,
-							attr, ref);
+					xmlGraph.createEdge(References.EC, attr, ref);
 				}
 			}
 		}

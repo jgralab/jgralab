@@ -107,11 +107,6 @@ public class VertexClassImpl extends GraphElementClassImpl<VertexClass, Vertex>
 		graphClass.addVertexClass(this);
 	}
 
-	@Override
-	public String getVariableName() {
-		return "vc_" + getQualifiedName().replace('.', '_');
-	}
-
 	void addInIncidenceClass(IncidenceClass incClass) {
 		if (incClass.getVertexClass() != this) {
 			throwSchemaException(incClass);

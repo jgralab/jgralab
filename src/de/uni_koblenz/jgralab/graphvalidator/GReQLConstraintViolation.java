@@ -82,10 +82,7 @@ public class GReQLConstraintViolation extends ConstraintViolation {
 
 	@Override
 	public int hashCode() {
-		int hash = 29;
-		hash = hash * 97 + constraint.hashCode();
-		hash = hash * 97 + offendingElements.hashCode();
-		return hash;
+		return constraint.hashCode() + offendingElements.hashCode();
 	}
 
 	@Override

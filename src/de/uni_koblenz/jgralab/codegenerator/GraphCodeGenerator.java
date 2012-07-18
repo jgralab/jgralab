@@ -184,7 +184,6 @@ public class GraphCodeGenerator extends
 			gecCode.setVariable("ecSimpleName", gec.getSimpleName());
 			gecCode.setVariable("ecUniqueName", gec.getUniqueName());
 			gecCode.setVariable("ecQualifiedName", gec.getQualifiedName());
-			gecCode.setVariable("ecSchemaVariableName", gec.getVariableName());
 			gecCode.setVariable("ecJavaClassName", schemaRootPackageName + "."
 					+ gec.getQualifiedName());
 			gecCode.setVariable("ecType",
@@ -385,7 +384,7 @@ public class GraphCodeGenerator extends
 		return new CodeSnippet(
 				true,
 				"public static final #jgSchemaPackage#.#schemaElementClass# GC"
-						+ " = #schemaPackageName#.#schemaName#.instance().#schemaVariableName#;");
+						+ " = #schemaPackageName#.#schemaName#.instance().getGraphClass();");
 	}
 
 	@Override

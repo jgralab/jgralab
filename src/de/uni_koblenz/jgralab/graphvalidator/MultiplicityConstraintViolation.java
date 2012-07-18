@@ -34,6 +34,7 @@
  */
 package de.uni_koblenz.jgralab.graphvalidator;
 
+import java.util.Map;
 import java.util.Set;
 
 import de.uni_koblenz.jgralab.AttributedElement;
@@ -46,19 +47,20 @@ import de.uni_koblenz.jgralab.schema.EdgeClass;
 public class MultiplicityConstraintViolation extends ConstraintViolation {
 	private String message;
 
+	Map<AttributedElement<?, ?>, Integer> degreeMap;
+
 	public MultiplicityConstraintViolation(EdgeClass ec, String message,
-			Set<AttributedElement<?, ?>> offendingElems) {
+			Map<AttributedElement<?, ?>, Integer> degreeMap) {
 		super(ec);
 		this.message = message;
-		offendingElements = offendingElems;
+		this.degreeMap = degreeMap;
+		offendingElements = degreeMap.keySet();
 	}
 
 	@Override
 	public int hashCode() {
-		int hash = 23;
-		hash = hash * 571 + message.hashCode();
-		hash = hash * 571 + offendingElements.hashCode();
-		return hash;
+		return message.hashCode() + offendingElements.hashCode()
+				+ degreeMap.hashCode();
 	}
 
 	@Override
@@ -86,6 +88,10 @@ public class MultiplicityConstraintViolation extends ConstraintViolation {
 		return offendingElements;
 	}
 
+	public int getDegree(AttributedElement<?, ?> el) {
+		return degreeMap.get(el);
+	}
+
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
@@ -101,7 +107,7 @@ public class MultiplicityConstraintViolation extends ConstraintViolation {
 			} else {
 				sb.append(", ");
 			}
-			sb.append(v);
+			sb.append(v).append(": ").append(degreeMap.get(v));
 		}
 		return sb.toString();
 	}

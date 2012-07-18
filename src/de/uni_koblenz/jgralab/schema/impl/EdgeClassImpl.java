@@ -115,11 +115,6 @@ public class EdgeClassImpl extends GraphElementClassImpl<EdgeClass, Edge>
 	}
 
 	@Override
-	public String getVariableName() {
-		return "ec_" + getQualifiedName().replace('.', '_');
-	}
-
-	@Override
 	public void addSuperClass(EdgeClass superClass) {
 		assertNotFinished();
 		if (superClass == this) {

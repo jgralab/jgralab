@@ -22,10 +22,19 @@ import de.uni_koblenz.jgralab.schema.EdgeClass;
 public class TemporaryEdgeImpl extends EdgeImpl implements TemporaryEdge {
 
 	private HashMap<String, Object> attributes;
+	private EdgeClass preliminaryType;
 
 	protected TemporaryEdgeImpl(int anId, Graph graph, Vertex alpha,
 			Vertex omega) {
 		super(anId, graph, alpha, omega);
+		this.attributes = new HashMap<String, Object>();
+		((GraphBaseImpl) graph).addEdge(this, alpha, omega);
+	}
+	
+	protected TemporaryEdgeImpl(int anId, Graph graph, EdgeClass preliminaryType, Vertex alpha,
+			Vertex omega) {
+		super(anId, graph, alpha, omega);
+		this.preliminaryType = preliminaryType;
 		this.attributes = new HashMap<String, Object>();
 		((GraphBaseImpl) graph).addEdge(this, alpha, omega);
 	}
@@ -49,7 +58,6 @@ public class TemporaryEdgeImpl extends EdgeImpl implements TemporaryEdge {
 
 	@Override
 	public void initializeAttributesWithDefaultValues() {
-		// TODO Auto-generated method stub
 		// do nothing - no attributes
 	}
 
@@ -243,5 +251,15 @@ public class TemporaryEdgeImpl extends EdgeImpl implements TemporaryEdge {
 	@Override
 	public boolean isTemporary() {
 		return true;
+	}
+
+	@Override
+	public EdgeClass getPreliminaryType() {
+		return this.preliminaryType;
+	}
+
+	@Override
+	public void setPreliminaryType(EdgeClass ec) {
+		this.preliminaryType = ec;
 	}
 }

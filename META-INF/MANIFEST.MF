@@ -22,7 +22,7 @@ Export-Package: de.uni_koblenz.ist.utilities.csvreader,
    javax.swing.event",
  de.uni_koblenz.ist.utilities.license_header,
  de.uni_koblenz.ist.utilities.option_handler;uses:="org.apache.commons.cli",
- de.uni_koblenz.ist.utilities.xml2tg;uses:="javax.xml.stream,javax.xml.namespace",
+ de.uni_koblenz.ist.utilities.xml,
  de.uni_koblenz.jgralab;
   uses:="de.uni_koblenz.jgralab.trans,
    de.uni_koblenz.jgralab.eca,

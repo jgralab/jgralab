@@ -2,6 +2,7 @@ package de.uni_koblenz.jgralab.impl.std;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.HashSet;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
@@ -9,6 +10,7 @@ import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.NoSuchAttributeException;
+import de.uni_koblenz.jgralab.TemporaryEdge;
 import de.uni_koblenz.jgralab.TemporaryGraphElementBlessingException;
 import de.uni_koblenz.jgralab.TemporaryVertex;
 import de.uni_koblenz.jgralab.Vertex;
@@ -130,6 +132,17 @@ public class TemporaryVertexImpl extends VertexImpl implements TemporaryVertex {
 		InternalVertex[] vertex = g.getVertex();
 		vertex[id] = newVertex;
 		vertex[idToFree] = null;
+		
+		//Transform TemporaryEdges with type
+		HashSet<TemporaryEdge> tempEdgeList = new HashSet<TemporaryEdge>();
+		for(Edge te : newVertex.incidences(this.getGraphClass().getTemporaryEdgeClass())){
+			if(((TemporaryEdge)te).getPreliminaryType() != null && te.isValid()){
+				tempEdgeList.add((TemporaryEdge) te.getNormalEdge());
+			}
+		}
+		for(TemporaryEdge tempEdge : tempEdgeList){	
+			tempEdge.bless(tempEdge.getPreliminaryType());
+		}
 		return newVertex;
 	}
 

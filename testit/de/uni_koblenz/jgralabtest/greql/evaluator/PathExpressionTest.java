@@ -146,7 +146,7 @@ public class PathExpressionTest {
 
 	@Test
 	public void testEdgePathDescription_withRestriction() {
-		assertTrue((Boolean) evaluateQuery("getVertex(19)--getEdge(325)->{@thisEdge=getEdge(325)}getVertex(2)"));
+		assertTrue((Boolean) evaluateQuery("getVertex(19) --getEdge(325)->{@ thisEdge=getEdge(325)} getVertex(2)"));
 	}
 
 	/**

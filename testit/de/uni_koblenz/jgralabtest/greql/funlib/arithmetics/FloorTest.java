@@ -1,41 +1,39 @@
 package de.uni_koblenz.jgralabtest.greql.funlib.arithmetics;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
-import org.junit.Before;
 import org.junit.Test;
 
-import de.uni_koblenz.jgralab.greql.funlib.artithmetics.Floor;
+import de.uni_koblenz.jgralab.greql.funlib.FunLib;
 
 public class FloorTest extends ArithmeticTest {
-	private Floor floor;
-
-	@Before
-	public void setUp() {
-		floor = new Floor();
-	}
 
 	@Test
 	public void testInt() {
 		for (int i = 0; i < intValues.length; i++) {
-			assertEquals(Math.floor(intValues[i]), floor.evaluate(intValues[i]));
+			double expected = Math.floor(intValues[i]);
+			Object result = FunLib.apply("floor", intValues[i]);
+			assertEquals(expected, result);
 		}
 	}
 
 	@Test
 	public void testLong() {
 		for (int i = 0; i < longValues.length; i++) {
-			assertEquals(Math.floor(longValues[i]),
-					floor.evaluate(longValues[i]));
+			double expected = Math.floor(longValues[i]);
+			Object result = FunLib.apply("floor", longValues[i]);
+			assertEquals(expected, result);
 		}
 	}
 
 	@Test
 	public void testDouble() {
 		for (int i = 0; i < doubleValues.length; i++) {
-			assertEquals(Math.floor(doubleValues[i]),
-					(Double) floor.evaluate(doubleValues[i]),
-					RunArithmeticTests.EPSILON);
+			double expected = Math.floor(doubleValues[i]);
+			Object result = FunLib.apply("floor", doubleValues[i]);
+			assertTrue(result instanceof Double);
+			assertEquals(expected, (Double) result, RunArithmeticTests.EPSILON);
 		}
 	}
 }

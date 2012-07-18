@@ -114,7 +114,6 @@ public class SchemaCodeGenerator extends CodeGenerator {
 	protected CodeBlock createBody() {
 		CodeList code = new CodeList();
 		if (currentCycle.isClassOnly()) {
-			code.add(createVariables());
 			code.add(createConstructor());
 			code.add(createGetDefaultGraphFactoryMethod());
 			code.add(createGraphFactoryMethods());
@@ -160,8 +159,6 @@ public class SchemaCodeGenerator extends CodeGenerator {
 			addImports("#jgPackage#.GraphException");
 		}
 		CodeList code = new CodeList();
-		code.setVariable("gcVariableName", schema.getGraphClass()
-				.getVariableName());
 		code.addNoIndent(new CodeSnippet(
 				true,
 				"/**",
@@ -180,7 +177,7 @@ public class SchemaCodeGenerator extends CodeGenerator {
 				"*/",
 				"public #gcName# create#gcCamelName#(#jgPackage#.ImplementationType implType, String id, int vMax, int eMax) {",
 				"\t#jgPackage#.GraphFactory factory = createDefaultGraphFactory(implType);",
-				"\treturn factory.createGraph(#gcVariableName#, id, vMax, eMax);",
+				"\treturn factory.createGraph(getGraphClass(), id, vMax, eMax);",
 				"}"));
 
 		code.addNoIndent(new CodeSnippet(
@@ -189,7 +186,7 @@ public class SchemaCodeGenerator extends CodeGenerator {
 				" * Creates a new #gcName# graph.",
 				"*/",
 				"public #gcName# create#gcCamelName#(#jgPackage#.GraphFactory factory) {",
-				"\treturn factory.createGraph(#gcVariableName#, null, 100, 100);",
+				"\treturn factory.createGraph(getGraphClass(), null, 100, 100);",
 				"}"));
 
 		code.addNoIndent(new CodeSnippet(
@@ -198,7 +195,7 @@ public class SchemaCodeGenerator extends CodeGenerator {
 				" * Creates a new #gcName# graph.",
 				"*/",
 				"public #gcName# create#gcCamelName#(#jgPackage#.GraphFactory factory, String id, int vMax, int eMax) {",
-				"\treturn factory.createGraph(#gcVariableName#, id, vMax, eMax);",
+				"\treturn factory.createGraph(getGraphClass(), id, vMax, eMax);",
 				"}"));
 
 		// ---- database support ----
@@ -230,7 +227,7 @@ public class SchemaCodeGenerator extends CodeGenerator {
 			code.add(new CodeSnippet(
 					"#jgImplPackage#.GraphFactoryImpl graphFactory = (#jgImplPackage#.GraphFactoryImpl) createDefaultGraphFactory(#jgPackage#.ImplementationType.DATABASE);",
 					"graphFactory.setGraphDatabase(graphDatabase);",
-					"#gcCamelName# graph = graphFactory.createGraph(#gcVariableName#, id, vMax, eMax);",
+					"#gcCamelName# graph = graphFactory.createGraph(getGraphClass(), id, vMax, eMax);",
 					"if (!graphDatabase.containsGraph(id)) {",
 					"\tgraphDatabase.insert((#jgImplDbPackage#.GraphImpl)graph);",
 					"\treturn graph;",
@@ -359,24 +356,15 @@ public class SchemaCodeGenerator extends CodeGenerator {
 		CodeList code = new CodeList();
 		addImports("#jgSchemaPackage#.GraphClass");
 		code.setVariable("gcVariable", "gc");
-		code.setVariable("vcVariable", gc.getDefaultVertexClass()
-				.getVariableName());
-		code.setVariable("ecVariable", gc.getDefaultEdgeClass()
-				.getVariableName());
 		code.setVariable("aecVariable", "gc");
-		code.setVariable("schemaVariable", gc.getVariableName());
 		code.setVariable("gcAbstract", gc.isAbstract() ? "true" : "false");
-		code.addNoIndent(new CodeSnippet(
-				true,
-				"{",
-				"\tGraphClass #gcVariable# = #schemaVariable# = createGraphClass(\"#gcName#\");",
-				"\t#vcVariable# = #gcVariable#.getDefaultVertexClass();",
-				"\t#ecVariable# = #gcVariable#.getDefaultEdgeClass();"));
-		code.add(createAttributes(gc));
-		code.add(createConstraints(gc));
-		code.add(createComments("gc", gc));
-		code.add(createVertexClasses(gc));
-		code.add(createEdgeClasses(gc));
+		code.addNoIndent(new CodeSnippet(true, "{",
+				"\tGraphClass #gcVariable# = createGraphClass(\"#gcName#\");"));
+		code.addNoIndent(createAttributes(gc));
+		code.addNoIndent(createConstraints(gc));
+		code.addNoIndent(createComments("gc", gc));
+		code.addNoIndent(createVertexClasses(gc));
+		code.addNoIndent(createEdgeClasses(gc));
 		code.addNoIndent(new CodeSnippet(false, "}"));
 		return code;
 	}
@@ -387,26 +375,6 @@ public class SchemaCodeGenerator extends CodeGenerator {
 		for (String comment : ne.getComments()) {
 			code.addNoIndent(new CodeSnippet("#namedElement#.addComment("
 					+ GraphIO.toUtfString(comment) + ");"));
-		}
-		return code;
-	}
-
-	private CodeBlock createVariables() {
-		CodeList code = new CodeList();
-
-		code.addNoIndent(new CodeSnippet("public final GraphClass "
-				+ schema.getGraphClass().getVariableName() + ";"));
-
-		code.addNoIndent(new CodeSnippet("public final VertexClass vc_Vertex;"));
-		for (VertexClass vc : schema.getGraphClass().getVertexClasses()) {
-			code.addNoIndent(new CodeSnippet("public final VertexClass "
-					+ vc.getVariableName() + ";"));
-		}
-
-		code.addNoIndent(new CodeSnippet("public final EdgeClass ec_Edge;"));
-		for (EdgeClass ec : schema.getGraphClass().getEdgeClasses()) {
-			code.addNoIndent(new CodeSnippet("public final EdgeClass "
-					+ ec.getVariableName() + ";"));
 		}
 		return code;
 	}
@@ -425,14 +393,11 @@ public class SchemaCodeGenerator extends CodeGenerator {
 		code.setVariable("ecType", "EdgeClass");
 
 		code.setVariable("ecName", ec.getQualifiedName());
-		code.setVariable("schemaVariable", ec.getVariableName());
-		code.setVariable("aecVariable", "ec");
+		code.setVariable("aecVariable", gecVarName(ec));
 		code.setVariable("ecAbstract", ec.isAbstract() ? "true" : "false");
-		code.setVariable("fromClass", ec.getFrom().getVertexClass()
-				.getVariableName());
+		code.setVariable("fromClass", gecVarName(ec.getFrom().getVertexClass()));
 		code.setVariable("fromRole", ec.getFrom().getRolename());
-		code.setVariable("toClass", ec.getTo().getVertexClass()
-				.getVariableName());
+		code.setVariable("toClass", gecVarName(ec.getTo().getVertexClass()));
 		code.setVariable("toRole", ec.getTo().getRolename());
 		code.setVariable("toAggregation",
 				AggregationKind.class.getCanonicalName() + "."
@@ -447,15 +412,14 @@ public class SchemaCodeGenerator extends CodeGenerator {
 				+ ec.getTo().getMax() + ", \"#toRole#\"" + ", #toAggregation#");
 		code.addNoIndent(new CodeSnippet(
 				true,
-				"{",
-				"\t#ecType# #aecVariable# = #schemaVariable# = #gcVariable#.create#ecType#(\"#ecName#\",",
+				"\t#ecType# #aecVariable# = #gcVariable#.create#ecType#(\"#ecName#\",",
 				"\t\t#fromPart#,", "\t\t#toPart#);",
 				"\t#aecVariable#.setAbstract(#ecAbstract#);"));
 
 		for (EdgeClass superClass : ec.getDirectSuperClasses()) {
 			CodeSnippet s = new CodeSnippet(
 					"#aecVariable#.addSuperClass(#superClassName#);");
-			s.setVariable("superClassName", superClass.getVariableName());
+			s.setVariable("superClassName", gecVarName(superClass));
 			code.add(s);
 		}
 
@@ -475,8 +439,7 @@ public class SchemaCodeGenerator extends CodeGenerator {
 
 		code.add(createAttributes(ec));
 		code.add(createConstraints(ec));
-		code.add(createComments("ec", ec));
-		code.addNoIndent(new CodeSnippet("}"));
+		code.add(createComments(gecVarName(ec), ec));
 		return code;
 	}
 
@@ -488,29 +451,36 @@ public class SchemaCodeGenerator extends CodeGenerator {
 		return code;
 	}
 
+	private String gecVarName(GraphElementClass<?, ?> gec) {
+		StringBuilder sb = new StringBuilder();
+		if (gec instanceof VertexClass) {
+			sb.append("vc_");
+		} else {
+			sb.append("ec_");
+		}
+		sb.append(gec.getUniqueName());
+		return sb.toString();
+	}
+
 	private CodeBlock createVertexClass(VertexClass vc) {
 		CodeList code = new CodeList();
 		code.setVariable("vcName", vc.getQualifiedName());
-		code.setVariable("aecVariable", "vc");
-		code.setVariable("schemaVariable", vc.getVariableName());
+		code.setVariable("aecVariable", gecVarName(vc));
 		code.setVariable("vcAbstract", vc.isAbstract() ? "true" : "false");
 		code.addNoIndent(new CodeSnippet(
 				true,
-				"{",
-				"\tVertexClass #aecVariable# = #schemaVariable# = #gcVariable#.createVertexClass(\"#vcName#\");",
+				"\tVertexClass #aecVariable# = #gcVariable#.createVertexClass(\"#vcName#\");",
 				"\t#aecVariable#.setAbstract(#vcAbstract#);"));
-		for (VertexClass superClass : vc.getDirectSuperClasses().plus(
-				vc.getGraphClass().getDefaultVertexClass())) {
+		for (VertexClass superClass : vc.getDirectSuperClasses()) {
 			CodeSnippet s = new CodeSnippet(
 					"#aecVariable#.addSuperClass(#superClassName#);");
-			s.setVariable("superClassName", superClass.getVariableName());
+			s.setVariable("superClassName", gecVarName(superClass));
 			code.add(s);
 		}
 
 		code.add(createAttributes(vc));
 		code.add(createConstraints(vc));
-		code.add(createComments("vc", vc));
-		code.addNoIndent(new CodeSnippet("}"));
+		code.add(createComments(gecVarName(vc), vc));
 		return code;
 	}
 

@@ -36,8 +36,8 @@
 package de.uni_koblenz.jgralab.greql.evaluator.vertexeval;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
-import de.uni_koblenz.jgralab.greql.evaluator.InternalGreqlEvaluator;
 import de.uni_koblenz.jgralab.greql.evaluator.GreqlQueryImpl;
+import de.uni_koblenz.jgralab.greql.evaluator.InternalGreqlEvaluator;
 import de.uni_koblenz.jgralab.greql.evaluator.VertexCosts;
 import de.uni_koblenz.jgralab.greql.evaluator.fa.NFA;
 import de.uni_koblenz.jgralab.greql.schema.PathDescription;
@@ -69,7 +69,7 @@ public class TransposedPathDescriptionEvaluator extends
 	@Override
 	public NFA evaluate(InternalGreqlEvaluator evaluator) {
 		evaluator.progress(getOwnEvaluationCosts());
-		PathDescription p = (PathDescription) vertex
+		PathDescription p = vertex
 				.getFirstIsTransposedPathOfIncidence(EdgeDirection.IN)
 				.getAlpha();
 		PathDescriptionEvaluator<?> pathEval = (PathDescriptionEvaluator<?>) query
@@ -82,7 +82,7 @@ public class TransposedPathDescriptionEvaluator extends
 	public VertexCosts calculateSubtreeEvaluationCosts() {
 		TransposedPathDescription transPath = getVertex();
 		PathDescriptionEvaluator<? extends PathDescription> pathEval = (PathDescriptionEvaluator<? extends PathDescription>) query
-				.getVertexEvaluator((PathDescription) transPath
+				.getVertexEvaluator(transPath
 						.getFirstIsTransposedPathOfIncidence().getAlpha());
 		long pathCosts = pathEval.getCurrentSubtreeEvaluationCosts();
 		long transpositionCosts = pathCosts / 20;

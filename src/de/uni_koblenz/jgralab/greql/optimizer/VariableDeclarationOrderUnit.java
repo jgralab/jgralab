@@ -88,9 +88,9 @@ public class VariableDeclarationOrderUnit implements
 		this.variable = var;
 		this.declaringDeclaration = declaringDecl;
 		this.query = query;
-		this.simpleDeclarationOfVariable = (SimpleDeclaration) this.variable
+		this.simpleDeclarationOfVariable = this.variable
 				.getFirstIsDeclaredVarOfIncidence(EdgeDirection.OUT).getOmega();
-		this.typeExpressionOfVariable = (Expression) this.simpleDeclarationOfVariable
+		this.typeExpressionOfVariable = this.simpleDeclarationOfVariable
 				.getFirstIsTypeExprOfIncidence(EdgeDirection.IN).getAlpha();
 
 		// Collect all vertices that depend on the variable and thus need to be

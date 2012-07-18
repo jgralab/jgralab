@@ -37,8 +37,8 @@ package de.uni_koblenz.jgralab.greql.evaluator.vertexeval;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Record;
-import de.uni_koblenz.jgralab.greql.evaluator.InternalGreqlEvaluator;
 import de.uni_koblenz.jgralab.greql.evaluator.GreqlQueryImpl;
+import de.uni_koblenz.jgralab.greql.evaluator.InternalGreqlEvaluator;
 import de.uni_koblenz.jgralab.greql.evaluator.VertexCosts;
 import de.uni_koblenz.jgralab.greql.schema.IsPartOf;
 import de.uni_koblenz.jgralab.greql.schema.IsRecordElementOf;
@@ -81,7 +81,7 @@ public class RecordConstructionEvaluator extends
 		IsRecordElementOf inc = vertex
 				.getFirstIsRecordElementOfIncidence(EdgeDirection.IN);
 		while (inc != null) {
-			RecordElement currentElement = (RecordElement) inc.getAlpha();
+			RecordElement currentElement = inc.getAlpha();
 			RecordElementEvaluator vertexEval = (RecordElementEvaluator) query
 					.getVertexEvaluator(currentElement);
 			resultRecord = resultRecord.plus(vertexEval.getId(),

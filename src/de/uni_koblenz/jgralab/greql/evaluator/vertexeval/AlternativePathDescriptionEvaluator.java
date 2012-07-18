@@ -83,7 +83,7 @@ public class AlternativePathDescriptionEvaluator extends
 		ArrayList<NFA> nfaList = new ArrayList<NFA>();
 		while (inc != null) {
 			PathDescriptionEvaluator<?> pathEval = (PathDescriptionEvaluator<?>) query
-					.getVertexEvaluator((PathDescription) inc.getAlpha());
+					.getVertexEvaluator(inc.getAlpha());
 			nfaList.add(pathEval.getNFA(evaluator));
 			inc = inc.getNextIsAlternativePathOfIncidence(EdgeDirection.IN);
 		}
@@ -99,7 +99,7 @@ public class AlternativePathDescriptionEvaluator extends
 		long alternatives = 0;
 		while (inc != null) {
 			PathDescriptionEvaluator<? extends PathDescription> pathEval = (PathDescriptionEvaluator<? extends PathDescription>) query
-					.getVertexEvaluator((PathDescription) inc.getAlpha());
+					.getVertexEvaluator(inc.getAlpha());
 			aggregatedCosts += pathEval.getCurrentSubtreeEvaluationCosts();
 			inc = inc.getNextIsAlternativePathOfIncidence(EdgeDirection.IN);
 			alternatives++;

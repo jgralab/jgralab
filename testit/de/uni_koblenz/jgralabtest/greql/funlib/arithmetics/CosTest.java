@@ -1,41 +1,41 @@
 package de.uni_koblenz.jgralabtest.greql.funlib.arithmetics;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
-import org.junit.Before;
 import org.junit.Test;
 
-import de.uni_koblenz.jgralab.greql.funlib.artithmetics.Cos;
+import de.uni_koblenz.jgralab.greql.funlib.FunLib;
 
 public class CosTest extends ArithmeticTest {
-	private Cos cos;
-
-	@Before
-	public void setUp() {
-		cos = new Cos();
-	}
 
 	@Test
 	public void testInt() {
 		for (int i = 0; i < intValues.length; i++) {
-			assertEquals(Math.cos(intValues[i]), cos.evaluate(intValues[i]),
-					RunArithmeticTests.EPSILON);
+			double expected = Math.cos(intValues[i]);
+			Object result = FunLib.apply("cos", intValues[i]);
+			assertTrue(result instanceof Double);
+			assertEquals(expected, (Double) result, RunArithmeticTests.EPSILON);
 		}
 	}
 
 	@Test
 	public void testLong() {
 		for (int i = 0; i < longValues.length; i++) {
-			assertEquals(Math.cos(longValues[i]), cos.evaluate(longValues[i]),
-					RunArithmeticTests.EPSILON);
+			double expected = Math.cos(longValues[i]);
+			Object result = FunLib.apply("cos", longValues[i]);
+			assertTrue(result instanceof Double);
+			assertEquals(expected, (Double) result, RunArithmeticTests.EPSILON);
 		}
 	}
 
 	@Test
 	public void testDouble() {
 		for (int i = 0; i < doubleValues.length; i++) {
-			assertEquals(Math.cos(doubleValues[i]),
-					cos.evaluate(doubleValues[i]), RunArithmeticTests.EPSILON);
+			double expected = Math.cos(doubleValues[i]);
+			Object result = FunLib.apply("cos", doubleValues[i]);
+			assertTrue(result instanceof Double);
+			assertEquals(expected, (Double) result, RunArithmeticTests.EPSILON);
 		}
 	}
 }

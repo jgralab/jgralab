@@ -44,8 +44,8 @@ import java.util.Set;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.greql.evaluator.InternalGreqlEvaluator;
 import de.uni_koblenz.jgralab.greql.evaluator.GreqlQueryImpl;
+import de.uni_koblenz.jgralab.greql.evaluator.InternalGreqlEvaluator;
 import de.uni_koblenz.jgralab.greql.evaluator.VertexCosts;
 import de.uni_koblenz.jgralab.greql.schema.Declaration;
 import de.uni_koblenz.jgralab.greql.schema.Expression;
@@ -214,9 +214,9 @@ public class VariableEvaluator<V extends Variable> extends VertexEvaluator<V> {
 		Variable v = getVertex();
 		IsDeclaredVarOf inc = v.getFirstIsDeclaredVarOfIncidence();
 		if (inc != null) {
-			SimpleDeclaration decl = (SimpleDeclaration) inc.getOmega();
+			SimpleDeclaration decl = inc.getOmega();
 			VertexEvaluator<? extends Expression> typeExpEval = query
-					.getVertexEvaluator((Expression) decl
+					.getVertexEvaluator(decl
 							.getFirstIsTypeExprOfIncidence().getAlpha());
 			return typeExpEval.getEstimatedCardinality();
 		} else {

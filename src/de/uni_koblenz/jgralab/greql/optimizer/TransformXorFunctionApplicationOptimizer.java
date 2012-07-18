@@ -105,9 +105,9 @@ public class TransformXorFunctionApplicationOptimizer extends OptimizerBase {
 			// Figure out the two arguments of the Xor
 			IsArgumentOf isArgOf = xor
 					.getFirstIsArgumentOfIncidence(EdgeDirection.IN);
-			Expression arg1 = (Expression) isArgOf.getAlpha();
+			Expression arg1 = isArgOf.getAlpha();
 			isArgOf = isArgOf.getNextIsArgumentOfIncidence(EdgeDirection.IN);
-			Expression arg2 = (Expression) isArgOf.getAlpha();
+			Expression arg2 = isArgOf.getAlpha();
 
 			// The rule is: a xor b = a and ~b or ~a and b
 

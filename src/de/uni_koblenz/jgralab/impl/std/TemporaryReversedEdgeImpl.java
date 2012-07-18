@@ -63,4 +63,14 @@ public class TemporaryReversedEdgeImpl extends ReversedEdgeImpl implements
 	public boolean isTemporary() {
 		return true;
 	}
+
+	@Override
+	public EdgeClass getPreliminaryType() {
+		return ((TemporaryEdge)this.getNormalEdge()).getPreliminaryType();
+	}
+
+	@Override
+	public void setPreliminaryType(EdgeClass ec) {
+		((TemporaryEdge)this.getNormalEdge()).setPreliminaryType(ec);		
+	}
 }

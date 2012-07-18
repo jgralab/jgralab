@@ -119,7 +119,7 @@ public class MergeSimpleDeclarationsOptimizer extends OptimizerBase {
 			IsSimpleDeclOf isSimpleDeclOf = decl
 					.getFirstIsSimpleDeclOfIncidence(EdgeDirection.IN);
 			while (isSimpleDeclOf != null) {
-				SimpleDeclaration sDecl = (SimpleDeclaration) isSimpleDeclOf
+				SimpleDeclaration sDecl = isSimpleDeclOf
 						.getAlpha();
 				String key = decl.getId()
 						+ "-"
@@ -156,7 +156,7 @@ public class MergeSimpleDeclarationsOptimizer extends OptimizerBase {
 		for (Entry<String, ArrayList<SimpleDeclaration>> e : mergableSDMap
 				.entrySet()) {
 			SimpleDeclaration survivor = e.getValue().get(0);
-			Declaration decl = (Declaration) survivor
+			Declaration decl = survivor
 					.getFirstIsSimpleDeclOfIncidence().getOmega();
 			IsSimpleDeclOf isSDOfSurvivor = survivor
 					.getFirstIsSimpleDeclOfIncidence(EdgeDirection.OUT);

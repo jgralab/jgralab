@@ -92,7 +92,7 @@ public class GreqlParser extends ParserHelper {
 	 * the current token position. If it was already tested, this method skips
 	 * the number of tokens which were consumed by the rule in its last
 	 * application at the current token
-	 * 
+	 *
 	 * @param rule
 	 *            the rule to test
 	 * @return the current token position if the rule was not applied before or
@@ -136,7 +136,7 @@ public class GreqlParser extends ParserHelper {
 	 * (skipRule(pos)) return null; Expression expr =
 	 * parseQuantifiedExpression(); ruleSucceeded(RuleEnum.EXPRESSION, pos);
 	 * return expr;
-	 * 
+	 *
 	 * @return true if the rule application has already been tested and the
 	 *         parser is still in predicate mode, so the rule and the tokens it
 	 *         matched last time can be skipped, false otherwise
@@ -218,7 +218,7 @@ public class GreqlParser extends ParserHelper {
 			List<VertexPosition<Expression>> expressions,
 			ValueConstruction parent) {
 		return (ValueConstruction) createMultipleEdgesToParent(expressions,
-				parent, Greql2Schema.instance().ec_IsPartOf);
+				parent, IsPartOf.EC);
 	}
 
 	private final Vertex createMultipleEdgesToParent(
@@ -818,7 +818,7 @@ public class GreqlParser extends ParserHelper {
 
 	/**
 	 * matches conditional expressions
-	 * 
+	 *
 	 * @return
 	 */
 	private final Expression parseConditionalExpression() {
@@ -1203,11 +1203,9 @@ public class GreqlParser extends ParserHelper {
 			PathDescription part2 = parseAltPathDescription();
 			int lengthPart2 = getLength(offsetPart2);
 			if (!inPredicateMode()) {
-				part1 = addPathElement(
-						Greql2Schema.instance().vc_AlternativePathDescription,
-						Greql2Schema.instance().ec_IsAlternativePathOf, null,
-						part1, offsetPart1, lengthPart1, part2, offsetPart2,
-						lengthPart2);
+				part1 = addPathElement(AlternativePathDescription.VC,
+						IsAlternativePathOf.EC, null, part1, offsetPart1,
+						lengthPart1, part2, offsetPart2, lengthPart2);
 			}
 		}
 		ruleSucceeds(RuleEnum.ALTERNATIVE_PATH_DESCRIPTION, pos);
@@ -1236,10 +1234,9 @@ public class GreqlParser extends ParserHelper {
 			IntermediateVertexPathDescription result = null;
 			if (!inPredicateMode()) {
 				result = (IntermediateVertexPathDescription) addPathElement(
-						Greql2Schema.instance().vc_IntermediateVertexPathDescription,
-						Greql2Schema.instance().ec_IsSubPathOf, null, part1,
-						offsetPart1, lengthPart1, part2, offsetPart2,
-						lengthPart2);
+						IntermediateVertexPathDescription.VC, IsSubPathOf.EC,
+						null, part1, offsetPart1, lengthPart1, part2,
+						offsetPart2, lengthPart2);
 				IsIntermediateVertexOf intermediateVertexOf = graph
 						.createIsIntermediateVertexOf(restrExpr, result);
 				intermediateVertexOf
@@ -1265,11 +1262,9 @@ public class GreqlParser extends ParserHelper {
 			PathDescription part2 = parseSequentialPathDescription();
 			int lengthPart2 = getLength(offsetPart2);
 			if (!inPredicateMode()) {
-				return addPathElement(
-						Greql2Schema.instance().vc_SequentialPathDescription,
-						Greql2Schema.instance().ec_IsSequenceElementOf, null,
-						part1, offsetPart1, lengthPart1, part2, offsetPart2,
-						lengthPart2);
+				return addPathElement(SequentialPathDescription.VC,
+						IsSequenceElementOf.EC, null, part1, offsetPart1,
+						lengthPart1, part2, offsetPart2, lengthPart2);
 			} else {
 				return null;
 			}
@@ -1863,8 +1858,8 @@ public class GreqlParser extends ParserHelper {
 		Declaration declaration = null;
 		if (!inPredicateMode()) {
 			declaration = (Declaration) createMultipleEdgesToParent(
-					declarations, graph.createDeclaration(),
-					Greql2Schema.instance().ec_IsSimpleDeclOf, false);
+					declarations, graph.createDeclaration(), IsSimpleDeclOf.EC,
+					false);
 		}
 		while (tryMatch(TokenTypes.COMMA)) {
 			int offsetConstraint = getCurrentOffset();
@@ -1887,7 +1882,7 @@ public class GreqlParser extends ParserHelper {
 				declarations = parseDeclarationList();
 				if (!inPredicateMode()) {
 					createMultipleEdgesToParent(declarations, declaration,
-							Greql2Schema.instance().ec_IsSimpleDeclOf, false);
+							IsSimpleDeclOf.EC, false);
 				}
 			}
 		}
@@ -1924,7 +1919,7 @@ public class GreqlParser extends ParserHelper {
 		if (!inPredicateMode()) {
 			SimpleDeclaration simpleDecl = (SimpleDeclaration) createMultipleEdgesToParent(
 					variables, graph.createSimpleDeclaration(),
-					Greql2Schema.instance().ec_IsDeclaredVarOf, "");
+					IsDeclaredVarOf.EC, "");
 			IsTypeExprOf typeExprOf = graph.createIsTypeExprOfDeclaration(expr,
 					simpleDecl);
 			typeExprOf.set_sourcePositions(createSourcePositionList(length,
@@ -1969,8 +1964,7 @@ public class GreqlParser extends ParserHelper {
 				match(TokenTypes.RCURLY);
 				if (!inPredicateMode()) {
 					createMultipleEdgesToParent(typeIds, expr,
-							Greql2Schema.instance().ec_IsTypeRestrOfExpression,
-							0);
+							IsTypeRestrOfExpression.EC, 0);
 				}
 			}
 		}
@@ -2268,7 +2262,7 @@ public class GreqlParser extends ParserHelper {
 				if (reportList.size() > 1) {
 					TupleConstruction tupConstr = (TupleConstruction) createMultipleEdgesToParent(
 							reportList, graph.createTupleConstruction(),
-							Greql2Schema.instance().ec_IsPartOf);
+							IsPartOf.EC);
 					e = graph.createIsCompResultDefOf(tupConstr, comprehension);
 				} else {
 					e = graph.createIsCompResultDefOf(reportList.get(0).node,
@@ -2290,7 +2284,7 @@ public class GreqlParser extends ParserHelper {
 		if (!inPredicateMode()) {
 			declaration = graph.createDeclaration();
 			createMultipleEdgesToParent(declarations, declaration,
-					Greql2Schema.instance().ec_IsSimpleDeclOf, false);
+					IsSimpleDeclOf.EC, false);
 		}
 		if (tryMatch(TokenTypes.WITH)) {
 			int offsetConstraint = getCurrentOffset();

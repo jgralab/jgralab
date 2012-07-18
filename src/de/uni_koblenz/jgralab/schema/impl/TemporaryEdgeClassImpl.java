@@ -17,13 +17,13 @@ import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.exception.SchemaException;
 
 public class TemporaryEdgeClassImpl extends EdgeClassImpl implements EdgeClass {
-	
+
 	protected TemporaryEdgeClassImpl(
 			GraphClassImpl graphClass) {
 		//super(simpleName, pkg, gc, from, fromMin, fromMax, fromRoleName, aggrFrom, to, toMin, toMax, toRoleName, aggrTo)
-		super("TemporaryEdgeClass", 
-				(PackageImpl)graphClass.getSchema().getDefaultPackage(), 
-				graphClass, 
+		super("TemporaryEdgeClass",
+				(PackageImpl)graphClass.getSchema().getDefaultPackage(),
+				graphClass,
 				graphClass.getDefaultVertexClass(), 0, Integer.MAX_VALUE,"",AggregationKind.NONE,
 				graphClass.getDefaultVertexClass(),0, Integer.MAX_VALUE, "", AggregationKind.NONE);
 	}
@@ -67,7 +67,7 @@ public class TemporaryEdgeClassImpl extends EdgeClassImpl implements EdgeClass {
 	@Override
 	public Attribute createAttribute(String name, Domain domain,
 			String defaultValueAsString) {
-		throw new UnsupportedOperationException();	
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
@@ -112,11 +112,6 @@ public class TemporaryEdgeClassImpl extends EdgeClassImpl implements EdgeClass {
 	}
 
 	@Override
-	public String getVariableName() {
-		return null; // no code generation for TemporaryEdgeClass
-	}
-
-	@Override
 	public boolean hasAttributes() {
 		return false;
 	}
@@ -148,7 +143,7 @@ public class TemporaryEdgeClassImpl extends EdgeClassImpl implements EdgeClass {
 
 	@Override
 	public void setAbstract(boolean isAbstract) {
-		throw new UnsupportedOperationException();	
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
@@ -165,7 +160,7 @@ public class TemporaryEdgeClassImpl extends EdgeClassImpl implements EdgeClass {
 	public void addComment(String comment) {
 		throw new UnsupportedOperationException();
 	}
-	
+
 	@Override
 	public void addSuperClass(EdgeClass superClass) {
 		throw new UnsupportedOperationException();

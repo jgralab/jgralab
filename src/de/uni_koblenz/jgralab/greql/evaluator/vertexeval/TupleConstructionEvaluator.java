@@ -38,8 +38,8 @@ package de.uni_koblenz.jgralab.greql.evaluator.vertexeval;
 import org.pcollections.PCollection;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
-import de.uni_koblenz.jgralab.greql.evaluator.InternalGreqlEvaluator;
 import de.uni_koblenz.jgralab.greql.evaluator.GreqlQueryImpl;
+import de.uni_koblenz.jgralab.greql.evaluator.InternalGreqlEvaluator;
 import de.uni_koblenz.jgralab.greql.evaluator.VertexCosts;
 import de.uni_koblenz.jgralab.greql.schema.Expression;
 import de.uni_koblenz.jgralab.greql.schema.IsPartOf;
@@ -79,7 +79,7 @@ public class TupleConstructionEvaluator extends
 		long partCosts = 0;
 		while (inc != null) {
 			VertexEvaluator<? extends Expression> veval = query
-					.getVertexEvaluator((Expression) inc.getAlpha());
+					.getVertexEvaluator(inc.getAlpha());
 			partCosts += veval.getCurrentSubtreeEvaluationCosts();
 			parts++;
 			inc = inc.getNextIsPartOfIncidence(EdgeDirection.IN);

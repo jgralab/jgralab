@@ -105,8 +105,8 @@ public class OptimizerUtility {
 	 *         {@link FunctionApplication} of {@link And}.
 	 */
 	public static boolean isAnd(FunctionApplication funApp) {
-		return ((FunctionId) funApp.getFirstIsFunctionIdOfIncidence()
-				.getAlpha()).get_name().equals("and");
+		return funApp.getFirstIsFunctionIdOfIncidence()
+				.getAlpha().get_name().equals("and");
 	}
 
 	/**
@@ -118,8 +118,8 @@ public class OptimizerUtility {
 	 *         {@link FunctionApplication} of {@link And}.
 	 */
 	public static boolean isOr(FunctionApplication funApp) {
-		return ((FunctionId) funApp.getFirstIsFunctionIdOfIncidence()
-				.getAlpha()).get_name().equals("or");
+		return funApp.getFirstIsFunctionIdOfIncidence()
+				.getAlpha().get_name().equals("or");
 	}
 
 	/**
@@ -131,8 +131,8 @@ public class OptimizerUtility {
 	 *         {@link FunctionApplication} of {@link And}.
 	 */
 	public static boolean isXor(FunctionApplication funApp) {
-		return ((FunctionId) funApp.getFirstIsFunctionIdOfIncidence()
-				.getAlpha()).get_name().equals("xor");
+		return funApp.getFirstIsFunctionIdOfIncidence()
+				.getAlpha().get_name().equals("xor");
 	}
 
 	/**
@@ -144,8 +144,8 @@ public class OptimizerUtility {
 	 *         {@link FunctionApplication} of {@link And}.
 	 */
 	public static boolean isNot(FunctionApplication funApp) {
-		return ((FunctionId) funApp.getFirstIsFunctionIdOfIncidence()
-				.getAlpha()).get_name().equals("not");
+		return funApp.getFirstIsFunctionIdOfIncidence()
+				.getAlpha().get_name().equals("not");
 	}
 
 	/**
@@ -227,7 +227,7 @@ public class OptimizerUtility {
 		HashSet<Variable> vars = new HashSet<Variable>();
 		for (IsDeclaredVarOf inc : sd
 				.getIsDeclaredVarOfIncidences(EdgeDirection.IN)) {
-			vars.add((Variable) inc.getAlpha());
+			vars.add(inc.getAlpha());
 		}
 		return vars;
 	}

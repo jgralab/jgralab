@@ -39,8 +39,9 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -60,10 +61,11 @@ import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.Schema;
 
 /**
- * A <code>GraphValidator</code> can be used to check if all {@link Constraint}s
- * specified in the {@link Schema} of a given {@link Graph} are fulfilled.
+ * A <code>GraphValidator</code> can be used to check whether all
+ * {@link Constraint}s specified in the {@link Schema} of a given {@link Graph}
+ * are fulfilled.
  * 
- * @author Tassilo Horn <horn@uni-koblenz.de>
+ * @author ist@uni-koblenz.de
  */
 public class GraphValidator {
 
@@ -106,11 +108,11 @@ public class GraphValidator {
 
 		int toMin = ec.getTo().getMin();
 		int toMax = ec.getTo().getMax();
-		Set<AttributedElement<?, ?>> badOutgoing = new HashSet<AttributedElement<?, ?>>();
+		Map<AttributedElement<?, ?>, Integer> badOutgoing = new HashMap<AttributedElement<?, ?>, Integer>();
 		for (Vertex v : graph.vertices(ec.getFrom().getVertexClass())) {
 			int degree = v.getDegree(ec, EdgeDirection.OUT);
 			if ((degree < toMin) || (degree > toMax)) {
-				badOutgoing.add(v);
+				badOutgoing.put(v, degree);
 			}
 		}
 		if (!badOutgoing.isEmpty()) {
@@ -122,11 +124,11 @@ public class GraphValidator {
 
 		int fromMin = ec.getFrom().getMin();
 		int fromMax = ec.getFrom().getMax();
-		Set<AttributedElement<?, ?>> badIncoming = new HashSet<AttributedElement<?, ?>>();
+		Map<AttributedElement<?, ?>, Integer> badIncoming = new HashMap<AttributedElement<?, ?>, Integer>();
 		for (Vertex v : graph.vertices(ec.getTo().getVertexClass())) {
 			int degree = v.getDegree(ec, EdgeDirection.IN);
 			if ((degree < fromMin) || (degree > fromMax)) {
-				badIncoming.add(v);
+				badIncoming.put(v, degree);
 			}
 		}
 		if (!badIncoming.isEmpty()) {
@@ -305,6 +307,12 @@ public class GraphValidator {
 						for (AttributedElement<?, ?> ae : ci
 								.getOffendingElements()) {
 							bw.append(ae.toString());
+							if (ci instanceof MultiplicityConstraintViolation) {
+								bw.append(", degree=")
+										.append(Integer
+												.toString(((MultiplicityConstraintViolation) ci)
+														.getDegree(ae)));
+							}
 							bw.append("<br/>");
 						}
 					}
