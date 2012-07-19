@@ -168,8 +168,9 @@ public class NequalsTest extends RelationsTest {
 			}
 			for (int j = 0; j < enumValues.length; j++) {
 				// special case
-				String second = enumValues[j].toString();
-				boolean expected = !first.equals(second);
+				Enum<?> second = enumValues[j];
+				String secondAsString = second.toString();
+				boolean expected = !first.equals(secondAsString);
 				Object result = FunLib.apply("nequals", first, second);
 				assertTrue(result instanceof Boolean);
 				assertEquals(expected, result);
