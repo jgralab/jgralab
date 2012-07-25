@@ -1695,9 +1695,10 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 		ClassFileManager manager = new ClassFileManager(this, jfm);
 		compiler.getTask(null, manager, null, null, null, javaSources).call();
 		try {
+			SchemaClassManager schemaClassManager = SchemaClassManager
+					.instance(codeGeneratorFileManagerName);
 			return (Class<ExecutableQuery>) Class.forName(packageName + "."
-					+ this.classname, true,
-					SchemaClassManager.instance(codeGeneratorFileManagerName));
+					+ this.classname, true, schemaClassManager);
 		} catch (ClassNotFoundException e) {
 			throw new RuntimeException(e);
 		}

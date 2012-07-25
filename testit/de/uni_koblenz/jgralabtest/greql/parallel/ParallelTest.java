@@ -3,6 +3,7 @@ package de.uni_koblenz.jgralabtest.greql.parallel;
 import static org.junit.Assert.assertEquals;
 
 import java.util.ConcurrentModificationException;
+import java.util.HashSet;
 import java.util.Set;
 
 import org.junit.Before;
@@ -17,6 +18,7 @@ import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql.GreqlEnvironment;
 import de.uni_koblenz.jgralab.greql.GreqlQuery;
 import de.uni_koblenz.jgralab.greql.exception.GreqlException;
+import de.uni_koblenz.jgralab.greql.executable.ExecutableQuery;
 import de.uni_koblenz.jgralab.greql.executable.GreqlCodeGenerator;
 import de.uni_koblenz.jgralab.greql.funlib.FunLib;
 import de.uni_koblenz.jgralab.greql.parallel.ParallelGreqlEvaluator;
@@ -87,11 +89,10 @@ public class ParallelTest {
 		Graph testGraph = GraphIO.loadGraphFromFile(
 				"testit/testgraphs/greqltestgraph.tg", null);
 		String classname = "testdata.GeneratedQuery";
-		GreqlCodeGenerator.generateCode("using erg3: erg3 * 2 store as erg4",
-				testGraph.getSchema(), classname + "2", "./testit/");
-		GreqlCodeGenerator.generateCode("using erg3: erg3 * 2 store as erg4",
-				testGraph.getSchema(), classname);
-		GreqlQuery query = (GreqlQuery) Class.forName(classname).newInstance();
+		Class<ExecutableQuery> generatedClass = GreqlCodeGenerator
+				.generateCode("using erg3: erg3 * 2 store as erg4",
+						testGraph.getSchema(), classname);
+		GreqlQuery query = (GreqlQuery) generatedClass.newInstance();
 
 		Vertex vGen = pge.createQueryVertex(query);
 		pge.createDependency(dependencyGraph.getVertex(7), vGen);
@@ -114,12 +115,12 @@ public class ParallelTest {
 
 			@Override
 			public Set<String> getUsedVariables() {
-				throw new UnsupportedOperationException();
+				return new HashSet<String>();
 			}
 
 			@Override
 			public Set<String> getStoredVariables() {
-				throw new UnsupportedOperationException();
+				return new HashSet<String>();
 			}
 
 			@Override

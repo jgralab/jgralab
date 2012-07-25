@@ -91,7 +91,7 @@ public abstract class AbstractExecutableQuery extends GreqlQuery implements
 			throw new UnsupportedOperationException(
 					"This method is not available for generated queries.");
 		}
-		return execute(datagraph);
+		return execute(datagraph, environment);
 	}
 
 }
