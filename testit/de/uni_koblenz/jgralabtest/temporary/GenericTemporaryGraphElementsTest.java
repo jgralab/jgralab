@@ -135,21 +135,19 @@ public class GenericTemporaryGraphElementsTest {
 	}
 
 	@Test
-	public void testFailConvertTemporaryVertex() {
+	public void testConvertTemporaryVertexWithTempEdges() {
 		Vertex v1_plaza = graph.createVertex(vc_Plaza);
 		TemporaryVertex v2_temp = graph.createTemporaryVertex();
 		Vertex v3_airport = graph.createVertex(vc_Airport);
 
 		Edge e1 = graph.createTemporaryEdge(ec_Street, v1_plaza, v2_temp);
-		graph.createTemporaryEdge(ec_AirRoute, v2_temp, v3_airport);
+		Edge e2 = graph.createTemporaryEdge(ec_AirRoute, v2_temp, v3_airport);
 
-		try {
-			v2_temp.bless(vc_Airport);
-			fail();
-		} catch (TemporaryGraphElementBlessingException ex) {
-			assertFalse(v2_temp.isValid());
-			assertTrue(e1.isValid());
-		}
+		v2_temp.bless(vc_Airport);	
+		assertFalse(v2_temp.isValid());
+		assertTrue(e1.isValid());
+		assertFalse(e2.isValid());
+		
 	}
 
 	@Test

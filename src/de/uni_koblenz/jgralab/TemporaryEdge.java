@@ -18,5 +18,7 @@ public interface TemporaryEdge extends Edge,
 		 * 			type of this {@link TemporaryEdge}
 		 */
 		public void setPreliminaryType(EdgeClass ec);
+		
+		public Edge bless();
 	
 }

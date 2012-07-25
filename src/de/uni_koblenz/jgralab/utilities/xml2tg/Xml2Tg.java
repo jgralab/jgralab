@@ -58,14 +58,14 @@ import de.uni_koblenz.jgralab.utilities.xml2tg.schema.XMLSchema;
 
 /**
  * Xml2Tg reads an XML file and builds a DOM-like XMLGraph.
- *
+ * 
  * Xml2Tg tries to resolve IDREF and IDREFS attributes by creating References
  * edges from the attribute vertices to the referenced elements. The attribute
  * names for ID, IDREF and IDREFS attributes can be defined globally or per
  * element name.
- *
+ * 
  * Optionally, the text contained in the elements can be skippped.
- *
+ * 
  * @author ist@uni-koblenz.de
  */
 public class Xml2Tg extends XmlProcessor {
@@ -191,7 +191,11 @@ public class Xml2Tg extends XmlProcessor {
 					ref = xmlGraph.createTemporaryVertex();
 					idMap.put(attr.get_value(), ref);
 				}
-				xmlGraph.createEdge(References.EC, attr, ref);
+				if (ref.isTemporary()) {
+					xmlGraph.createTemporaryEdge(References.EC, attr, ref);
+				} else {
+					xmlGraph.createEdge(References.EC, attr, ref);
+				}
 				// System.out.println("REF(" + el + ") " + name + "/" + attrName
 				// + " -> " + ref);
 			} else if (idRefsAttributes.contains("*/" + attrName)
@@ -206,7 +210,11 @@ public class Xml2Tg extends XmlProcessor {
 						ref = xmlGraph.createTemporaryVertex();
 						idMap.put(val, ref);
 					}
-					xmlGraph.createEdge(References.EC, attr, ref);
+					if (ref.isTemporary()) {
+						xmlGraph.createTemporaryEdge(References.EC, attr, ref);
+					} else {
+						xmlGraph.createEdge(References.EC, attr, ref);
+					}
 				}
 			}
 		}
