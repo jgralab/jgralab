@@ -38,7 +38,7 @@ public class ParallelGreqlEvaluator {
 
 	private static Schema schema;
 	static {
-		schema = new SchemaImpl("GreqlQueryDebendencySchema",
+		schema = new SchemaImpl("GreqlQueryDependencySchema",
 				"de.uni_koblenz.jgralab.greql.parallelgreql");
 	}
 
