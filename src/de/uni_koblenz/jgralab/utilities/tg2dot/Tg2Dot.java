@@ -383,7 +383,7 @@ public class Tg2Dot extends Tg2Whatever {
 		if (gvOutputFormat != null) {
 			try {
 				graphVizOutputFormat = GraphVizOutputFormat
-						.valueOf(gvOutputFormat);
+						.valueOf(gvOutputFormat.toUpperCase());
 			} catch (IllegalArgumentException e) {
 				throw new RuntimeException("Unknown output format  '"
 						+ gvOutputFormat + "'. Possible values are "

@@ -48,10 +48,10 @@ public class StartsWith extends Function {
 		return s.startsWith(prefix);
 	}
 
-	@Description(params = {"prefix", "s", "offset"}, description = 
+	@Description(params = {"prefix", "s", "offset"}, description =
 		"Returns true, iff the given string starts with the given prefix, beginning search at the given offset.",
 			categories = Category.STRINGS)
-	public Boolean evaluate(String prefix, String s, int offset) {
+	public Boolean evaluate(String prefix, String s, Integer offset) {
 		return s.startsWith(prefix, offset);
 	}
 }

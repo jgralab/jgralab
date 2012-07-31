@@ -202,9 +202,31 @@ public class FunLib {
 	}
 
 	private static class SignatureComparator implements Comparator<Signature> {
+		private static int checkSpecialCase(Class<?>[] s1, Class<?>[] s2) {
+			// evaluate(Number, Number) and evaluate(Comparable,Comparable) is a
+			// special case, because it'll sort the comparable version before
+			// the number version, which is wrong since comparisons of Integer
+			// with Doubles etc. have to be supported.
+			if ((s1.length == 2) && (s2.length == 2) && (s1[0] == Number.class)
+					&& (s1[1] == Number.class) && (s2[1] == Comparable.class)
+					&& (s2[0] == Comparable.class)) {
+				return -1;
+			} else if ((s1.length == 2) && (s2.length == 2)
+					&& (s2[0] == Number.class) && (s2[1] == Number.class)
+					&& (s1[1] == Comparable.class)
+					&& (s1[0] == Comparable.class)) {
+				return 1;
+			}
+			return 0;
+		}
 
 		@Override
 		public int compare(Signature s1, Signature s2) {
+			int x = checkSpecialCase(s1.parameterTypes, s2.parameterTypes);
+			if (x != 0) {
+				return x;
+			}
+
 			for (int i = 0; i < Math.min(s1.parameterTypes.length,
 					s2.parameterTypes.length); i++) {
 				Class<?> ps1 = s1.parameterTypes[i];
@@ -547,8 +569,8 @@ public class FunLib {
 		if (FunLib.contains(name)) {
 			Class<? extends de.uni_koblenz.jgralab.greql.funlib.Function> functionClass = FunLib
 					.getFunctionInfo(name).getFunction().getClass();
-			if (functionClass != GreqlQueryFunction.class
-					&& functionClass != GreqlQueryFunctionWithGraphArgument.class) {
+			if ((functionClass != GreqlQueryFunction.class)
+					&& (functionClass != GreqlQueryFunctionWithGraphArgument.class)) {
 				throw new GreqlException("The subquery '" + name
 						+ "' would shadow a GReQL function!");
 			}

@@ -7,6 +7,7 @@ import de.uni_koblenz.jgralabtest.greql.evaluator.RunVertexEvaluatorTests;
 import de.uni_koblenz.jgralabtest.greql.exception.ExceptionTest;
 import de.uni_koblenz.jgralabtest.greql.funlib.RunFunlibTests;
 import de.uni_koblenz.jgralabtest.greql.optimizer.OptimizerTest;
+import de.uni_koblenz.jgralabtest.greql.parallel.ParallelTest;
 
 @RunWith(Suite.class)
 @Suite.SuiteClasses({ ExceptionTest.class, RunFunlibTests.class,
@@ -17,7 +18,7 @@ import de.uni_koblenz.jgralabtest.greql.optimizer.OptimizerTest;
 																				// test?
 		SpeedTest.class, // what does SpeedTest actually test?
 		SystemTest.class, // what does SystemTest actually test?
-		ThisLiteralTest.class, SubQueryTest.class })
+		ThisLiteralTest.class, SubQueryTest.class, ParallelTest.class })
 public class RunGreqlTests {
 
 }

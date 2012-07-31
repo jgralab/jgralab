@@ -27,7 +27,7 @@ public class ConcatTest extends StringsTest {
 	public void testObject() {
 		for (int i = 0; i < objectValues.length; i++) {
 			Object first = objectValues[i];
-			for (int j = 0; j < objectValues.length; j++) {
+			for (int j = 0; j < stringValues.length; j++) {
 				String second = stringValues[j];
 				String expected = first.toString() + second;
 				Object result = FunLib.apply("concat", first, second);

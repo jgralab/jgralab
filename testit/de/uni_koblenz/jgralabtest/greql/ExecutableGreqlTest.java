@@ -123,12 +123,23 @@ public class ExecutableGreqlTest extends GenericTest {
 		} catch (Exception e1) {
 			e1.printStackTrace();
 		}
-		GreqlCodeGenerator
-				.generateCode(
-						query,
-						testGraph.getSchema(),
-						"de.uni_koblenz.jgralab.greql2.executable.queries.ForwardVertexSetTest",
-						"/Users/dbildh/repos/git/jgralab/src/");
+		GreqlCodeGenerator.generateCode(query, testGraph.getSchema(),
+				"testdata.ForwardVertexSetTest", "./testit/");
+		// System.out.println("Name of class: " + queryClass.getSimpleName());
+		// ExecutableQuery queryObject = queryClass.newInstance();
+	}
+
+	@Test
+	public void testGenerateUseAndStore() throws Exception {
+		String query = "using a,b: a+b store as result";
+		Graph testGraph = null;
+		try {
+			testGraph = getTestGraph(TestVersion.ROUTE_MAP_GRAPH);
+		} catch (Exception e1) {
+			e1.printStackTrace();
+		}
+		GreqlCodeGenerator.generateCode(query, testGraph.getSchema(),
+				"testdata.UseAndStore", "./testit/");
 		// System.out.println("Name of class: " + queryClass.getSimpleName());
 		// ExecutableQuery queryObject = queryClass.newInstance();
 	}
