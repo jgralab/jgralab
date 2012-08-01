@@ -60,11 +60,6 @@ public abstract class PathDescriptionEvaluator<V extends PathDescription>
 		extends VertexEvaluator<V> {
 
 	/**
-	 * The NFA which is created out of this PathDescription
-	 */
-	protected NFA createdNFA;
-
-	/**
 	 * Creates a new PathDescriptionEvaluator
 	 * 
 	 * @param eval
@@ -77,8 +72,10 @@ public abstract class PathDescriptionEvaluator<V extends PathDescription>
 	 * returns the nfa
 	 */
 	public NFA getNFA(InternalGreqlEvaluator evaluator) {
+		NFA createdNFA = (NFA) evaluator.getLocalAutomaton(vertex);
 		if (createdNFA == null) {
-			getResult(evaluator);
+			createdNFA = (NFA) getResult(evaluator);
+			evaluator.setLocalAutomaton(vertex, createdNFA);
 		}
 		return createdNFA;
 	}
@@ -92,14 +89,14 @@ public abstract class PathDescriptionEvaluator<V extends PathDescription>
 	 */
 	@Override
 	public Object getResult(InternalGreqlEvaluator evaluator) {
+		NFA createdNFA = (NFA) evaluator.getLocalAutomaton(vertex);
 		if (createdNFA == null) {
 			Object result = evaluate(evaluator);
 			createdNFA = (NFA) result;
-			evaluator.setLocalEvaluationResult(vertex, result);
+			evaluator.setLocalAutomaton(vertex, createdNFA);
 			addGoalRestrictions(evaluator);
 			addStartRestrictions(evaluator);
 		}
-		assert createdNFA != null;
 		if (evaluator.getLocalEvaluationResult(vertex) == null) {
 			evaluator.setLocalEvaluationResult(vertex, createdNFA);
 		}
@@ -108,7 +105,7 @@ public abstract class PathDescriptionEvaluator<V extends PathDescription>
 
 	/**
 	 * creates the lists of goal type restrictions from all TypeId-Vertices that
-	 * belong to this path descritpion and adds the transitions that accepts
+	 * belong to this path description and adds the transitions that accepts
 	 * them to the nfa
 	 */
 	protected void addGoalRestrictions(InternalGreqlEvaluator evaluator) {

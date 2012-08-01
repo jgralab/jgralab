@@ -47,7 +47,6 @@ import de.uni_koblenz.jgralab.greql.schema.Expression;
 public abstract class ComprehensionEvaluator<V extends Comprehension> extends
 		VertexEvaluator<V> {
 
-	private VariableDeclarationLayer varDeclLayer = null;
 	private VertexEvaluator<? extends Expression> resultDefinitionEvaluator = null;
 	protected long maxCount = Long.MAX_VALUE;
 
@@ -60,7 +59,7 @@ public abstract class ComprehensionEvaluator<V extends Comprehension> extends
 
 	protected final VertexEvaluator<? extends Expression> getResultDefinitionEvaluator() {
 		if (resultDefinitionEvaluator == null) {
-			Expression resultDefinition =  getVertex()
+			Expression resultDefinition = getVertex()
 					.getFirstIsCompResultDefOfIncidence(EdgeDirection.IN)
 					.getAlpha();
 			resultDefinitionEvaluator = query
@@ -71,15 +70,11 @@ public abstract class ComprehensionEvaluator<V extends Comprehension> extends
 
 	protected final VariableDeclarationLayer getVariableDeclationLayer(
 			InternalGreqlEvaluator evaluator) {
-		if (varDeclLayer == null) {
-			Declaration d = getVertex()
-					.getFirstIsCompDeclOfIncidence(EdgeDirection.IN).getAlpha();
-			DeclarationEvaluator declEval = (DeclarationEvaluator) query
-					.getVertexEvaluator(d);
-			varDeclLayer = (VariableDeclarationLayer) declEval
-					.getResult(evaluator);
-		}
-		return varDeclLayer;
+		Declaration d = getVertex().getFirstIsCompDeclOfIncidence(
+				EdgeDirection.IN).getAlpha();
+		DeclarationEvaluator declEval = (DeclarationEvaluator) query
+				.getVertexEvaluator(d);
+		return (VariableDeclarationLayer) declEval.getResult(evaluator);
 	}
 
 	protected final void initializeMaxCount(InternalGreqlEvaluator evaluator) {

@@ -55,7 +55,8 @@ import de.uni_koblenz.jgralab.greql.schema.PathDescription;
 public class ForwardVertexSetEvaluator extends
 		PathSearchEvaluator<ForwardVertexSet> {
 
-	public ForwardVertexSetEvaluator(ForwardVertexSet vertex, GreqlQueryImpl query) {
+	public ForwardVertexSetEvaluator(ForwardVertexSet vertex,
+			GreqlQueryImpl query) {
 		super(vertex, query);
 	}
 
@@ -64,15 +65,9 @@ public class ForwardVertexSetEvaluator extends
 	private VertexEvaluator<? extends Expression> startEval = null;
 
 	private final void initialize(InternalGreqlEvaluator evaluator) {
-		PathDescription p = (PathDescription) vertex.getFirstIsPathOfIncidence(
+		Expression startExpression = vertex.getFirstIsStartExprOfIncidence(
 				EdgeDirection.IN).getAlpha();
-		PathDescriptionEvaluator<?> pathDescEval = (PathDescriptionEvaluator<?>) query
-				.getVertexEvaluator(p);
-
-		Expression startExpression = vertex
-				.getFirstIsStartExprOfIncidence(EdgeDirection.IN).getAlpha();
 		startEval = query.getVertexEvaluator(startExpression);
-		searchAutomaton = new DFA(pathDescEval.getNFA(evaluator));
 
 		initialized = true;
 	}
@@ -81,6 +76,15 @@ public class ForwardVertexSetEvaluator extends
 	public Object evaluate(InternalGreqlEvaluator evaluator) {
 		if (!initialized) {
 			initialize(evaluator);
+		}
+		DFA searchAutomaton = (DFA) evaluator.getLocalAutomaton(vertex);
+		if (searchAutomaton == null) {
+			PathDescription p = (PathDescription) vertex
+					.getFirstIsPathOfIncidence(EdgeDirection.IN).getAlpha();
+			PathDescriptionEvaluator<?> pathDescEval = (PathDescriptionEvaluator<?>) query
+					.getVertexEvaluator(p);
+			searchAutomaton = new DFA(pathDescEval.getNFA(evaluator));
+			evaluator.setLocalAutomaton(vertex, searchAutomaton);
 		}
 		evaluator.progress(getOwnEvaluationCosts());
 		Vertex startVertex = null;
@@ -92,8 +96,8 @@ public class ForwardVertexSetEvaluator extends
 	@Override
 	public VertexCosts calculateSubtreeEvaluationCosts() {
 		ForwardVertexSet bwvertex = getVertex();
-		Expression targetExpression = bwvertex
-				.getFirstIsStartExprOfIncidence().getAlpha();
+		Expression targetExpression = bwvertex.getFirstIsStartExprOfIncidence()
+				.getAlpha();
 		VertexEvaluator<? extends Expression> vertexEval = query
 				.getVertexEvaluator(targetExpression);
 		long targetCosts = vertexEval.getCurrentSubtreeEvaluationCosts();

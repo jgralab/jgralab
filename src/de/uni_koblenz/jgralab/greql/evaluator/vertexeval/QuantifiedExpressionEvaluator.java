@@ -56,8 +56,6 @@ import de.uni_koblenz.jgralab.greql.schema.Quantifier;
 public class QuantifiedExpressionEvaluator extends
 		VertexEvaluator<QuantifiedExpression> {
 
-	private VariableDeclarationLayer declarationLayer = null;
-
 	private QuantificationType quantificationType = null;
 
 	private boolean initialized = false;
@@ -76,18 +74,11 @@ public class QuantifiedExpressionEvaluator extends
 	}
 
 	private void initialize(InternalGreqlEvaluator evaluator) {
-		Declaration d = vertex
-				.getFirstIsQuantifiedDeclOfIncidence(EdgeDirection.IN)
-				.getAlpha();
-		DeclarationEvaluator declEval = (DeclarationEvaluator) query
-				.getVertexEvaluator(d);
-		declarationLayer = (VariableDeclarationLayer) declEval
-				.getResult(evaluator);
-		Quantifier quantifier = vertex
-				.getFirstIsQuantifierOfIncidence(EdgeDirection.IN).getAlpha();
-		quantificationType = quantifier.get_type();
-		Expression b = vertex.getFirstIsBoundExprOfIncidence(
+		Quantifier quantifier = vertex.getFirstIsQuantifierOfIncidence(
 				EdgeDirection.IN).getAlpha();
+		quantificationType = quantifier.get_type();
+		Expression b = vertex.getFirstIsBoundExprOfIncidence(EdgeDirection.IN)
+				.getAlpha();
 		predicateEvaluator = query.getVertexEvaluator(b);
 		initialized = true;
 	}
@@ -103,6 +94,12 @@ public class QuantifiedExpressionEvaluator extends
 		evaluator.progress(getOwnEvaluationCosts());
 
 		boolean foundTrue = false;
+		Declaration d = vertex.getFirstIsQuantifiedDeclOfIncidence(
+				EdgeDirection.IN).getAlpha();
+		DeclarationEvaluator declEval = (DeclarationEvaluator) query
+				.getVertexEvaluator(d);
+		VariableDeclarationLayer declarationLayer = (VariableDeclarationLayer) declEval
+				.getResult(evaluator);
 		declarationLayer.reset();
 		switch (quantificationType) {
 		case EXISTS:

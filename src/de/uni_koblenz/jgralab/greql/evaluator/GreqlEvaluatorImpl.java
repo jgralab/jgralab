@@ -37,6 +37,7 @@ package de.uni_koblenz.jgralab.greql.evaluator;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.logging.Level;
@@ -56,6 +57,7 @@ import de.uni_koblenz.jgralab.ProgressFunction;
 import de.uni_koblenz.jgralab.greql.GreqlEnvironment;
 import de.uni_koblenz.jgralab.greql.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql.GreqlQuery;
+import de.uni_koblenz.jgralab.greql.evaluator.fa.FiniteAutomaton;
 import de.uni_koblenz.jgralab.greql.evaluator.vertexeval.VertexEvaluator;
 import de.uni_koblenz.jgralab.greql.schema.Greql2Expression;
 import de.uni_koblenz.jgralab.greql.schema.Greql2Vertex;
@@ -157,6 +159,8 @@ public class GreqlEvaluatorImpl implements InternalGreqlEvaluator,
 	 */
 	private Object[] localEvaluationResults;
 
+	private Map<Greql2Vertex, FiniteAutomaton> localAutomatons;
+
 	/**
 	 * The progress function this evaluator uses, may be null
 	 */
@@ -209,6 +213,17 @@ public class GreqlEvaluatorImpl implements InternalGreqlEvaluator,
 	@Override
 	public Object getLocalEvaluationResult(Greql2Vertex vertex) {
 		return localEvaluationResults[vertex.getId()];
+	}
+
+	@Override
+	public FiniteAutomaton setLocalAutomaton(Greql2Vertex vertex,
+			FiniteAutomaton value) {
+		return localAutomatons.put(vertex, value);
+	}
+
+	@Override
+	public FiniteAutomaton getLocalAutomaton(Greql2Vertex vertex) {
+		return localAutomatons.get(vertex);
 	}
 
 	@Override
@@ -313,6 +328,7 @@ public class GreqlEvaluatorImpl implements InternalGreqlEvaluator,
 		}
 		this.environment = environment;
 		localEvaluationResults = new Object[query.getQueryGraph().getVCount() + 1];
+		localAutomatons = new HashMap<Greql2Vertex, FiniteAutomaton>();
 		this.progressFunction = progressFunction;
 	}
 

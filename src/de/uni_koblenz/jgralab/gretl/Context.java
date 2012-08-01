@@ -721,7 +721,7 @@ public class Context {
 	 */
 	private void ensureQuery() {
 		if (query == null) {
-			query = GreqlQuery.createQuery((String) null);
+			query = GreqlQuery.createQuery("");
 		}
 	}
 

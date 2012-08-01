@@ -35,6 +35,7 @@
 package de.uni_koblenz.jgralab.greql.evaluator;
 
 import de.uni_koblenz.jgralab.Graph;
+import de.uni_koblenz.jgralab.greql.evaluator.fa.FiniteAutomaton;
 import de.uni_koblenz.jgralab.greql.schema.Greql2Vertex;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.Schema;
@@ -66,4 +67,9 @@ public interface InternalGreqlEvaluator {
 	public void progress(long value);
 
 	public void setDatagraphSchema(Schema datagraphSchema);
+
+	public FiniteAutomaton setLocalAutomaton(Greql2Vertex vertex,
+			FiniteAutomaton value);
+
+	public FiniteAutomaton getLocalAutomaton(Greql2Vertex vertex);
 }

@@ -67,8 +67,6 @@ import de.uni_koblenz.jgralab.greql.types.Tuple;
 public class TableComprehensionEvaluator extends
 		VertexEvaluator<TableComprehension> {
 
-	private VariableDeclarationLayer declarationLayer;
-
 	private VertexEvaluator<? extends Expression> columnHeaderEval = null;
 
 	private VertexEvaluator<? extends Expression> rowHeaderEval = null;
@@ -78,24 +76,14 @@ public class TableComprehensionEvaluator extends
 	private boolean initialized = false;
 
 	private void initialize(InternalGreqlEvaluator evaluator) {
-		Declaration d = vertex.getFirstIsCompDeclOfIncidence(
+		Expression columnHeader = vertex.getFirstIsColumnHeaderExprOfIncidence(
 				EdgeDirection.IN).getAlpha();
-		DeclarationEvaluator declEval = (DeclarationEvaluator) query
-				.getVertexEvaluator(d);
-		declarationLayer = (VariableDeclarationLayer) declEval
-				.getResult(evaluator);
-
-		Expression columnHeader = vertex
-				.getFirstIsColumnHeaderExprOfIncidence(EdgeDirection.IN)
-				.getAlpha();
 		columnHeaderEval = query.getVertexEvaluator(columnHeader);
-		Expression rowHeader = vertex
-				.getFirstIsRowHeaderExprOfIncidence(EdgeDirection.IN)
-				.getAlpha();
+		Expression rowHeader = vertex.getFirstIsRowHeaderExprOfIncidence(
+				EdgeDirection.IN).getAlpha();
 		rowHeaderEval = query.getVertexEvaluator(rowHeader);
-		Expression resultDef = vertex
-				.getFirstIsCompResultDefOfIncidence(EdgeDirection.IN)
-				.getAlpha();
+		Expression resultDef = vertex.getFirstIsCompResultDefOfIncidence(
+				EdgeDirection.IN).getAlpha();
 		resultDefEval = query.getVertexEvaluator(resultDef);
 		initialized = true;
 	}
@@ -123,6 +111,12 @@ public class TableComprehensionEvaluator extends
 		Set<Object> completeColumnHeaderTuple = new HashSet<Object>();
 		TreeSet<Object> rowHeaderSet = new TreeSet<Object>();
 
+		Declaration d = vertex.getFirstIsCompDeclOfIncidence(EdgeDirection.IN)
+				.getAlpha();
+		DeclarationEvaluator declEval = (DeclarationEvaluator) query
+				.getVertexEvaluator(d);
+		VariableDeclarationLayer declarationLayer = (VariableDeclarationLayer) declEval
+				.getResult(evaluator);
 		declarationLayer.reset();
 		while (declarationLayer.iterate(evaluator)) {
 			Object columnHeaderEntry = columnHeaderEval.getResult(evaluator);
@@ -177,14 +171,13 @@ public class TableComprehensionEvaluator extends
 		// costs differ from a ListComprehension?
 		TableComprehension tableComp = getVertex();
 
-		Declaration decl = tableComp
-				.getFirstIsCompDeclOfIncidence().getAlpha();
+		Declaration decl = tableComp.getFirstIsCompDeclOfIncidence().getAlpha();
 		DeclarationEvaluator declEval = (DeclarationEvaluator) query
 				.getVertexEvaluator(decl);
 		long declCosts = declEval.getCurrentSubtreeEvaluationCosts();
 
-		Expression resultDef = tableComp
-				.getFirstIsCompResultDefOfIncidence().getAlpha();
+		Expression resultDef = tableComp.getFirstIsCompResultDefOfIncidence()
+				.getAlpha();
 		VertexEvaluator<? extends Expression> resultDefEval = query
 				.getVertexEvaluator(resultDef);
 		long resultCosts = resultDefEval.getCurrentSubtreeEvaluationCosts();
@@ -199,8 +192,7 @@ public class TableComprehensionEvaluator extends
 	@Override
 	public long calculateEstimatedCardinality() {
 		TableComprehension tableComp = getVertex();
-		Declaration decl = tableComp
-				.getFirstIsCompDeclOfIncidence().getAlpha();
+		Declaration decl = tableComp.getFirstIsCompDeclOfIncidence().getAlpha();
 		DeclarationEvaluator declEval = (DeclarationEvaluator) query
 				.getVertexEvaluator(decl);
 		return declEval.getEstimatedCardinality();

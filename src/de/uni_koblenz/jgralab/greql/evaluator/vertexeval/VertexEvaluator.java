@@ -89,6 +89,21 @@ public abstract class VertexEvaluator<V extends Greql2Vertex> {
 	protected GreqlQueryImpl query;
 
 	/**
+	 * The set of variables this vertex depends on
+	 */
+	protected Set<Variable> neededVariables = null;
+
+	/**
+	 * The set of variables this vertex defines and that are valid in all
+	 * subgraphs
+	 */
+	protected Set<Variable> definedVariables = null;
+
+	/*
+	 * The following fields are used by Optimizer
+	 */
+
+	/**
 	 * The costs for the current evaluation of the whole subtree in the abstract
 	 * measurement unit "interpretation steps"
 	 */
@@ -139,21 +154,11 @@ public abstract class VertexEvaluator<V extends Greql2Vertex> {
 	protected double estimatedSelectivity = Double.NaN;
 
 	/**
-	 * The set of variables this vertex depends on
-	 */
-	protected Set<Variable> neededVariables = null;
-
-	/**
-	 * The set of variables this vertex defines and that are valid in all
-	 * subgraphs
-	 */
-	protected Set<Variable> definedVariables = null;
-
-	/**
 	 * @param eval
 	 *            the GreqlEvaluator this VertexEvaluator belongs to
 	 * @param query
-	 *            the {@link GreqlQueryImpl} this {@link VertexEvaluator} belongs to
+	 *            the {@link GreqlQueryImpl} this {@link VertexEvaluator}
+	 *            belongs to
 	 */
 	protected VertexEvaluator(V vertex, GreqlQueryImpl query) {
 		this.vertex = vertex;

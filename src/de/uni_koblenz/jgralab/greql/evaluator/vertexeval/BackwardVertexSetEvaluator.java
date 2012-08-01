@@ -58,7 +58,8 @@ import de.uni_koblenz.jgralab.greql.schema.PathDescription;
 public class BackwardVertexSetEvaluator extends
 		PathSearchEvaluator<BackwardVertexSet> {
 
-	public BackwardVertexSetEvaluator(BackwardVertexSet vertex, GreqlQueryImpl query) {
+	public BackwardVertexSetEvaluator(BackwardVertexSet vertex,
+			GreqlQueryImpl query) {
 		super(vertex, query);
 	}
 
@@ -67,16 +68,10 @@ public class BackwardVertexSetEvaluator extends
 	private VertexEvaluator<? extends Expression> targetEval = null;
 
 	private final void initialize(InternalGreqlEvaluator evaluator) {
-		PathDescription p = (PathDescription) vertex.getFirstIsPathOfIncidence(
-				EdgeDirection.IN).getAlpha();
-		PathDescriptionEvaluator<?> pathDescEval = (PathDescriptionEvaluator<?>) query
-				.getVertexEvaluator(p);
 
-		Expression targetExpression = vertex
-				.getFirstIsTargetExprOfIncidence(EdgeDirection.IN).getAlpha();
+		Expression targetExpression = vertex.getFirstIsTargetExprOfIncidence(
+				EdgeDirection.IN).getAlpha();
 		targetEval = query.getVertexEvaluator(targetExpression);
-		NFA revertedNFA = NFA.revertNFA(pathDescEval.getNFA(evaluator));
-		searchAutomaton = new DFA(revertedNFA);
 
 		initialized = true;
 	}
@@ -85,6 +80,16 @@ public class BackwardVertexSetEvaluator extends
 	public PSet<Vertex> evaluate(InternalGreqlEvaluator evaluator) {
 		if (!initialized) {
 			initialize(evaluator);
+		}
+		DFA searchAutomaton = (DFA) evaluator.getLocalAutomaton(vertex);
+		if (searchAutomaton == null) {
+			PathDescription p = (PathDescription) vertex
+					.getFirstIsPathOfIncidence(EdgeDirection.IN).getAlpha();
+			PathDescriptionEvaluator<?> pathDescEval = (PathDescriptionEvaluator<?>) query
+					.getVertexEvaluator(p);
+			NFA revertedNFA = NFA.revertNFA(pathDescEval.getNFA(evaluator));
+			searchAutomaton = new DFA(revertedNFA);
+			evaluator.setLocalAutomaton(vertex, searchAutomaton);
 		}
 		evaluator.progress(getOwnEvaluationCosts());
 		Vertex targetVertex = null;
