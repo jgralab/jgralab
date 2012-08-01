@@ -44,20 +44,7 @@ public class ParallelTest {
 		Vertex v9 = pge
 				.createQueryVertex("using xo, hv: xo + hv + 38 store as erg2");
 		Vertex v10 = pge.createQueryVertex("using vk: vk + 63 store as xo");
-		pge.createDependency(v5, v7);
-		pge.createDependency(v3, v6);
-		pge.createDependency(v10, v8);
-		pge.createDependency(v10, v5);
-		pge.createDependency(v8, v7);
-		pge.createDependency(v4, v5);
-		pge.createDependency(v3, v2);
-		pge.createDependency(v1, v9);
-		pge.createDependency(v10, v1);
-		pge.createDependency(v4, v7);
-		pge.createDependency(v10, v4);
-		pge.createDependency(v10, v9);
-		pge.createDependency(v2, v7);
-		pge.createDependency(v3, v10);
+		pge.calculateDependencies();
 	}
 
 	@Test

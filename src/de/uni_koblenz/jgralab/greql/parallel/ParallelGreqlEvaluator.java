@@ -1,6 +1,8 @@
 package de.uni_koblenz.jgralab.greql.parallel;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -59,36 +61,69 @@ public class ParallelGreqlEvaluator {
 	}
 
 	public Vertex createQueryVertex(String queryText) {
-		if (!isEvaluating) {
-			synchronized (graph) {
-				return createQueryVertex(GreqlQuery.createQuery(queryText));
+		synchronized (graph) {
+			if (isEvaluating) {
+				throw new IllegalStateException(
+						"The dependency graph is currently evaluating.");
 			}
+			return createQueryVertex(GreqlQuery.createQuery(queryText));
 		}
-		throw new IllegalStateException(
-				"The dependency graph is currently evaluating.");
 	}
 
 	public Vertex createQueryVertex(GreqlQuery query) {
-		if (!isEvaluating) {
-			synchronized (graph) {
-				Vertex v = graph.createVertex(queryVertexClass);
-				greqlQueriesMarker.mark(v, query);
-				return v;
+		synchronized (graph) {
+			if (isEvaluating) {
+				throw new IllegalStateException(
+						"The dependency graph is currently evaluating.");
 			}
+			Vertex v = graph.createVertex(queryVertexClass);
+			greqlQueriesMarker.mark(v, query);
+			return v;
 		}
-		throw new IllegalStateException(
-				"The dependency graph is currently evaluating.");
 	}
 
 	public Edge createDependency(Vertex predecessor, Vertex successor) {
-		if (!isEvaluating) {
-			synchronized (graph) {
-				return graph.createEdge(dependsOnQueryEdgeClass, successor,
-						predecessor);
+		synchronized (graph) {
+			if (isEvaluating) {
+				throw new IllegalStateException(
+						"The dependency graph is currently evaluating.");
+			}
+			return graph.createEdge(dependsOnQueryEdgeClass, successor,
+					predecessor);
+		}
+	}
+
+	public void calculateDependencies() {
+		synchronized (graph) {
+			if (isEvaluating) {
+				throw new IllegalStateException(
+						"The dependency graph is currently evaluating.");
+			}
+			// add dependencies based on variable usage and definitions
+			HashMap<String, HashSet<Vertex>> defs = new HashMap<String, HashSet<Vertex>>();
+			for (Vertex v : graph.vertices()) {
+				GreqlQuery q = greqlQueriesMarker.get(v);
+				for (String var : q.getStoredVariables()) {
+					HashSet<Vertex> vs = defs.get(var);
+					if (vs == null) {
+						vs = new HashSet<Vertex>();
+						defs.put(var, vs);
+					}
+					vs.add(v);
+				}
+			}
+			for (Vertex v : graph.vertices()) {
+				GreqlQuery q = greqlQueriesMarker.get(v);
+				for (String var : q.getUsedVariables()) {
+					HashSet<Vertex> vs = defs.get(var);
+					if (vs != null) {
+						for (Vertex p : vs) {
+							createDependency(p, v);
+						}
+					}
+				}
 			}
 		}
-		throw new IllegalStateException(
-				"The dependency graph is currently evaluating.");
 	}
 
 	/*
@@ -132,10 +167,7 @@ public class ParallelGreqlEvaluator {
 					"The dependency graph is currently evaluating.");
 		}
 		isEvaluating = true;
-		if (graph == null) {
-			throw new GreqlException(
-					"There exists no graph which contains the queries and their dependencies.");
-		}
+
 		// check acyclicity
 		try {
 			if (!new TopologicalOrderWithDFS(graph,
