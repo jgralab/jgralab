@@ -12,9 +12,10 @@ public class GreqlEvaluatorCallable implements Callable<Object> {
 	private final GreqlQuery query;
 	private final Graph datagraph;
 	private final GreqlEnvironment environment;
-	private final Vertex dependencyVertex;
+	final Vertex dependencyVertex;
 	private final long graphVersion;
-	private final ParallelGreqlEvaluator peval;
+	final ParallelGreqlEvaluator peval;
+	private Object result;
 
 	public GreqlEvaluatorCallable(GreqlQuery greqlQuery, Graph datagraph,
 			GreqlEnvironment environment, Vertex dependencyVertex,
@@ -37,13 +38,16 @@ public class GreqlEvaluatorCallable implements Callable<Object> {
 				throw e;
 			}
 		}
-		Object result = null;
 		try {
 			result = query.evaluate(datagraph, environment, null);
 		} catch (RuntimeException e) {
 			peval.shutdownNow(e);
 			throw e;
 		}
+		return result;
+	}
+
+	public Object getResult() {
 		return result;
 	}
 

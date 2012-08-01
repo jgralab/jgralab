@@ -16,10 +16,14 @@ public class GreqlEvaluatorTask extends FutureTask<Object> {
 	public GreqlEvaluatorTask(GreqlQuery greqlQuery, Graph datagraph,
 			GreqlEnvironment environment, Vertex dependencyVertex,
 			long graphVersion, ParallelGreqlEvaluator peval) {
-		super(new GreqlEvaluatorCallable(greqlQuery, datagraph, environment,
+		this(new GreqlEvaluatorCallable(greqlQuery, datagraph, environment,
 				dependencyVertex, graphVersion, peval));
-		this.dependencyVertex = dependencyVertex;
-		this.peval = peval;
+	}
+
+	public GreqlEvaluatorTask(GreqlEvaluatorCallable callable) {
+		super(callable);
+		this.dependencyVertex = callable.dependencyVertex;
+		this.peval = callable.peval;
 	}
 
 	@Override

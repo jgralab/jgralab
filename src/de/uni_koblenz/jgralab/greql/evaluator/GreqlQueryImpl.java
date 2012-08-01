@@ -123,12 +123,17 @@ public class GreqlQueryImpl extends GreqlQuery implements
 		this.optimize = optimize;
 		this.optimizerInfo = optimizerInfo;
 		knownTypes = new HashMap<Schema, Map<String, AttributedElementClass<?, ?>>>();
+		// initializeQueryGraph();
 	}
 
 	public GreqlQueryImpl(String queryText, boolean optimize,
 			OptimizerInfo optimizerInfo, Optimizer optimizer) {
-		this(queryText, optimize, optimizerInfo);
+		this.queryText = queryText;
+		this.optimize = optimize;
+		this.optimizerInfo = optimizerInfo;
+		knownTypes = new HashMap<Schema, Map<String, AttributedElementClass<?, ?>>>();
 		this.optimizer = optimizer;
+		// initializeQueryGraph();
 	}
 
 	@Override
@@ -145,17 +150,6 @@ public class GreqlQueryImpl extends GreqlQuery implements
 	}
 
 	private void initializeQueryGraph() {
-		// if (queryGraph == null && useSavedOptimizedSyntaxGraph) {
-		// QueryGraphCacheEntry e = queryGraphCache.get(queryText, optimize);
-		// if (e != null) {
-		// queryGraph = e.graph;
-		// vertexEvaluators = e.eval;
-		// rootExpression = queryGraph.getFirstGreql2Expression();
-		// knownTypes = e.knownTypes;
-		// parseTime = e.parseTime;
-		// optimizationTime = e.optimizationTime;
-		// }
-		// }
 		if (queryGraph == null) {
 			long t0 = System.currentTimeMillis();
 
