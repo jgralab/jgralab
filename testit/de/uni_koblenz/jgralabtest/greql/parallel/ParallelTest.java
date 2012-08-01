@@ -34,7 +34,7 @@ public class ParallelTest {
 	@Before
 	public void test() {
 		pge = new ParallelGreqlEvaluator();
-		dependencyGraph = pge.createGraph();
+		dependencyGraph = pge.getDependencyGraph();
 		Vertex v1 = pge.createQueryVertex("using xo: xo + 20 store as hv");
 		Vertex v2 = pge.createQueryVertex("using vk: vk + 78 store as qf");
 		Vertex v3 = pge.createQueryVertex("96 store as vk");
