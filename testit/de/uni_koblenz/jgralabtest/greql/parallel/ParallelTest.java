@@ -12,7 +12,6 @@ import org.junit.Test;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.GraphIOException;
-import de.uni_koblenz.jgralab.ImplementationType;
 import de.uni_koblenz.jgralab.ProgressFunction;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql.GreqlEnvironment;
@@ -22,9 +21,6 @@ import de.uni_koblenz.jgralab.greql.executable.ExecutableQuery;
 import de.uni_koblenz.jgralab.greql.executable.GreqlCodeGenerator;
 import de.uni_koblenz.jgralab.greql.funlib.FunLib;
 import de.uni_koblenz.jgralab.greql.parallel.ParallelGreqlEvaluator;
-import de.uni_koblenz.jgralab.greql.schema.Greql2Expression;
-import de.uni_koblenz.jgralab.greql.schema.Greql2Graph;
-import de.uni_koblenz.jgralab.greql.schema.Greql2Schema;
 
 public class ParallelTest {
 
@@ -124,62 +120,9 @@ public class ParallelTest {
 			}
 
 			@Override
-			public Greql2Expression getRootExpression() {
-				throw new UnsupportedOperationException();
-			}
-
-			@Override
-			public String getQueryText() {
-				return "modifying dependency graph ....";
-			}
-
-			@Override
-			public Greql2Graph getQueryGraph() {
-				Greql2Graph graph = Greql2Schema.instance().createGreql2Graph(
-						ImplementationType.STANDARD);
-				graph.createVertex(Greql2Expression.VC);
-				return graph;
-			}
-
-			@Override
-			public long getParseTime() {
-				throw new UnsupportedOperationException();
-			}
-
-			@Override
-			public long getOptimizationTime() {
-				throw new UnsupportedOperationException();
-			}
-
-			@Override
 			public Object evaluate(Graph datagraph,
 					GreqlEnvironment environment,
 					ProgressFunction progressFunction) {
-				modifyGraph();
-				return null;
-			}
-
-			@Override
-			public Object evaluate(Graph datagraph,
-					ProgressFunction progressFunction) {
-				modifyGraph();
-				return null;
-			}
-
-			@Override
-			public Object evaluate(Graph datagraph, GreqlEnvironment environment) {
-				modifyGraph();
-				return null;
-			}
-
-			@Override
-			public Object evaluate(Graph datagraph) {
-				modifyGraph();
-				return null;
-			}
-
-			@Override
-			public Object evaluate() {
 				modifyGraph();
 				return null;
 			}
@@ -193,5 +136,4 @@ public class ParallelTest {
 		pge.createDependency(vMod, dependencyGraph.getVertex(3));
 		pge.evaluate();
 	}
-
 }

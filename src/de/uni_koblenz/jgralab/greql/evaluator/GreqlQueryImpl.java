@@ -121,7 +121,8 @@ public class GreqlQueryImpl extends GreqlQuery implements
 			OptimizerInfo optimizerInfo) {
 		this.queryText = queryText;
 		this.optimize = optimize;
-		this.optimizerInfo = optimizerInfo;
+		this.optimizerInfo = optimizerInfo == null ? OptimizerUtility
+				.getDefaultOptimizerInfo() : optimizerInfo;
 		knownTypes = new HashMap<Schema, Map<String, AttributedElementClass<?, ?>>>();
 		// initializeQueryGraph();
 	}
@@ -130,9 +131,10 @@ public class GreqlQueryImpl extends GreqlQuery implements
 			OptimizerInfo optimizerInfo, Optimizer optimizer) {
 		this.queryText = queryText;
 		this.optimize = optimize;
-		this.optimizerInfo = optimizerInfo;
+		this.optimizerInfo = optimizerInfo == null ? OptimizerUtility
+				.getDefaultOptimizerInfo() : optimizerInfo;
 		knownTypes = new HashMap<Schema, Map<String, AttributedElementClass<?, ?>>>();
-		this.optimizer = optimizer;
+		this.optimizer = optimizer == null ? new DefaultOptimizer() : optimizer;
 		// initializeQueryGraph();
 	}
 
