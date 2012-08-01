@@ -1072,8 +1072,8 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 				.add("VertexStateNumberQueue queue = new VertexStateNumberQueue();");
 		initSnippet.add("markedElements[" + dfa.initialState.number
 				+ "].add(element);");
-		initSnippet.add("queue.put((Vertex) v, " + dfa.initialState.number
-				+ ");");
+		initSnippet.add("queue.put((Vertex) element, "
+				+ dfa.initialState.number + ");");
 		initSnippet.add("while (queue.hasNext()) {");
 		initSnippet.add("\telement = queue.currentVertex;");
 		initSnippet.add("\tstateNumber = queue.currentState;");
@@ -1473,7 +1473,7 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 			curr.add(new CodeSnippet(
 					"if ("
 							+ fieldName
-							+ ".get(((GraphElementClass)vertex.getAttributedElementClass()).getGraphElementClassIdInSchema())) {//test for VertexTypeRestriction"));
+							+ ".get(((GraphElementClass)nextElement.getAttributedElementClass()).getGraphElementClassIdInSchema())) {//test for VertexTypeRestriction"));
 			CodeList body = new CodeList();
 			curr.add(body);
 			curr.add(new CodeSnippet("} //end of vertex type restriction"));
@@ -1482,9 +1482,9 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 
 		// add element to queue
 		if (pathSystem) {
-			curr.add(createAddToPathSearchQueueSnippet(trans.endState.number));
-		} else {
 			curr.add(createAddToPathSystemQueueSnippet(trans));
+		} else {
+			curr.add(createAddToPathSearchQueueSnippet(trans.endState.number));
 		}
 		return resultList;
 	}
@@ -1655,9 +1655,14 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 		createdMethods.add(list);
 	}
 
+	private HashSet<String> staticFieldNames = new HashSet<String>();
+
 	private void addStaticField(String type, String var, String def) {
-		staticFieldSnippet.add(
-				"static " + type + " " + var + " = " + def + ";", "");
+		if (!staticFieldNames.contains(var)) {
+			staticFieldNames.add(var);
+			staticFieldSnippet.add("static " + type + " " + var + " = " + def
+					+ ";", "");
+		}
 	}
 
 	private void addClassField(String type, String var, String def) {
