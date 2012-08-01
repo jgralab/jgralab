@@ -121,31 +121,31 @@ public class GreqlQueryImpl extends GreqlQuery implements
 			OptimizerInfo optimizerInfo) {
 		this.queryText = queryText;
 		this.optimize = optimize;
-		this.optimizerInfo = optimizerInfo;
+		this.optimizerInfo = optimizerInfo == null ? OptimizerUtility
+				.getDefaultOptimizerInfo() : optimizerInfo;
 		knownTypes = new HashMap<Schema, Map<String, AttributedElementClass<?, ?>>>();
-		// initializeQueryGraph();
+		initializeQueryGraph();
 	}
 
 	public GreqlQueryImpl(String queryText, boolean optimize,
 			OptimizerInfo optimizerInfo, Optimizer optimizer) {
 		this.queryText = queryText;
 		this.optimize = optimize;
-		this.optimizerInfo = optimizerInfo;
+		this.optimizerInfo = optimizerInfo == null ? OptimizerUtility
+				.getDefaultOptimizerInfo() : optimizerInfo;
 		knownTypes = new HashMap<Schema, Map<String, AttributedElementClass<?, ?>>>();
-		this.optimizer = optimizer;
-		// initializeQueryGraph();
+		this.optimizer = optimizer == null ? new DefaultOptimizer() : optimizer;
+		initializeQueryGraph();
 	}
 
 	@Override
 	public Greql2Graph getQueryGraph() {
-		initializeQueryGraph();
 		return queryGraph;
 	}
 
 	@SuppressWarnings("unchecked")
 	public synchronized <V extends Greql2Vertex> VertexEvaluator<V> getVertexEvaluator(
 			V vertex) {
-		initializeQueryGraph();
 		return (VertexEvaluator<V>) vertexEvaluators.get(vertex);
 	}
 

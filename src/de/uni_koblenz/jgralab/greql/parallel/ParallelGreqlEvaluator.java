@@ -246,6 +246,10 @@ public class ParallelGreqlEvaluator {
 	}
 
 	public Object getResult(Vertex dependencyVertex) {
+		if (dependencyVertex.getGraph() == graph) {
+			throw new IllegalArgumentException(
+					"The query vertex whose result is requested is not part of the current graph.");
+		}
 		GreqlEvaluatorCallable evaluator = evaluators.get(dependencyVertex);
 		if (!evaluator.isFinished()) {
 			throw new IllegalStateException("The evaluation of "
