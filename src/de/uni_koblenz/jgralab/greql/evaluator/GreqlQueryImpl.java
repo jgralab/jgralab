@@ -124,7 +124,7 @@ public class GreqlQueryImpl extends GreqlQuery implements
 		this.optimizerInfo = optimizerInfo == null ? OptimizerUtility
 				.getDefaultOptimizerInfo() : optimizerInfo;
 		knownTypes = new HashMap<Schema, Map<String, AttributedElementClass<?, ?>>>();
-		// initializeQueryGraph();
+		initializeQueryGraph();
 	}
 
 	public GreqlQueryImpl(String queryText, boolean optimize,
@@ -135,19 +135,17 @@ public class GreqlQueryImpl extends GreqlQuery implements
 				.getDefaultOptimizerInfo() : optimizerInfo;
 		knownTypes = new HashMap<Schema, Map<String, AttributedElementClass<?, ?>>>();
 		this.optimizer = optimizer == null ? new DefaultOptimizer() : optimizer;
-		// initializeQueryGraph();
+		initializeQueryGraph();
 	}
 
 	@Override
 	public Greql2Graph getQueryGraph() {
-		initializeQueryGraph();
 		return queryGraph;
 	}
 
 	@SuppressWarnings("unchecked")
 	public synchronized <V extends Greql2Vertex> VertexEvaluator<V> getVertexEvaluator(
 			V vertex) {
-		initializeQueryGraph();
 		return (VertexEvaluator<V>) vertexEvaluators.get(vertex);
 	}
 
