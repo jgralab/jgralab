@@ -6,14 +6,18 @@ public interface TemporaryGraphElement<SC extends GraphElementClass<SC, IC>, IC 
 		extends GraphElement<SC, IC> {
 
 	/**
-	 * Returns a new graph element of <code>schemaClass</code> that takes the
-	 * place of this temporary element.
-	 *
-	 * @param schemaClass
-	 * @return a new graph element of <code>schemaClass</code> that takes the
-	 *         place of this temporary element.
+	 * @return the preliminary type of this {@link TemporaryGraphElement}
 	 */
-	public IC bless(SC schemaClass);
+	public SC getPreliminaryType();
+	
+	/**
+	 * Sets the preliminary type of this {@link TemporaryGraphElement}
+	 * 
+	 * @param ec
+	 * 			{@link GraphElementClass} representing the new preliminary 
+	 * 			type of this {@link TemporaryEdge}
+	 */
+	public void setPreliminaryType(SC ec);
 
 	public void deleteAttribute(String name);
 

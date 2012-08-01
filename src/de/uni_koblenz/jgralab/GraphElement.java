@@ -76,4 +76,32 @@ public interface GraphElement<SC extends GraphElementClass<SC, IC>, IC extends G
 	 * @return true if this GraphElement is temporary
 	 */
 	public boolean isTemporary();
+	
+	/**
+	 * For temporary elements: returns a new graph element of the set preliminary type
+	 * that takes the place of this temporary element, throws an exception, if the
+	 * preliminary type is not set.
+	 * For non-temporary elements: returns itself
+	 *         
+	 * @throws TemporaryGraphElementBlessingException 
+	 * 			if it is not possible to bless the element to schemaClass
+	 */
+	public IC bless();
+	
+	/**
+	 * For temporary elements: returns a new graph element of <code>schemaClass</code> 
+	 * that takes the place of this temporary element.
+	 * For non-temporary elements: returns itself if schemaClass equals the schema 
+	 * class of the element, otherwise it throws an exception
+	 *
+	 * @param schemaClass
+	 * @return a new graph element of <code>schemaClass</code> that takes the
+	 *         place of this temporary element.
+	 *         
+	 * @throws TemporaryGraphElementBlessingException 
+	 * 			if it is not possible to bless the element to schemaClass
+	 */
+	public IC bless(SC schemaClass);
+
+	
 }

@@ -169,7 +169,11 @@ public abstract class GraphFactoryImpl implements GraphFactory {
 			E newInstance;
 			if(ec.equals(g.getGraphClass().getTemporaryEdgeClass())){
 				newInstance = (E) g.createTemporaryEdge(alpha, omega);
-			}else{
+			}
+			else if(alpha.isTemporary() || omega.isTemporary()){
+				newInstance = (E) g.createTemporaryEdge(ec, alpha, omega);
+			}
+			else{
 				newInstance = (E) edgeMap.get(ec)
 					.newInstance(id, g, alpha, omega);
 			}

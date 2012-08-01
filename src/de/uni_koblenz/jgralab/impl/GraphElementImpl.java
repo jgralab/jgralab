@@ -38,6 +38,7 @@ package de.uni_koblenz.jgralab.impl;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.GraphIOException;
+import de.uni_koblenz.jgralab.TemporaryGraphElementBlessingException;
 import de.uni_koblenz.jgralab.schema.Attribute;
 import de.uni_koblenz.jgralab.schema.GraphClass;
 import de.uni_koblenz.jgralab.schema.GraphElementClass;
@@ -160,4 +161,23 @@ public abstract class GraphElementImpl<SC extends GraphElementClass<SC, IC>, IC 
 		return false;
 	}
 
+	@SuppressWarnings("unchecked")
+	@Override
+	public IC bless(){
+		return (IC) this;
+	}
+	
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public IC bless(SC schemaClass){
+		if(this.getAttributedElementClass().equals(schemaClass)){
+			return (IC) this;
+		}else{
+			throw new TemporaryGraphElementBlessingException(
+					"The graph element "+this+
+					" is not a TemporaryElement and can not be blessed to "+
+					schemaClass+".");
+		}
+	}
 }

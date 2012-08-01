@@ -22,11 +22,19 @@ public class TemporaryVertexImpl extends VertexImpl implements TemporaryVertex {
 
 	private HashMap<String, Object> attributes;
 
+	private VertexClass preliminaryType;
+	
 	protected TemporaryVertexImpl(int id, Graph graph) {
 		super(id, graph);
 		this.attributes = new HashMap<String, Object>();
 	}
 
+	protected TemporaryVertexImpl(int id, Graph graph, VertexClass preliminaryType) {
+		super(id, graph);
+		this.attributes = new HashMap<String, Object>();
+		this.preliminaryType = preliminaryType;
+	}
+	
 	@Override
 	public VertexClass getAttributedElementClass() {
 		return this.graph.getGraphClass().getTemporaryVertexClass();
@@ -84,6 +92,16 @@ public class TemporaryVertexImpl extends VertexImpl implements TemporaryVertex {
 		return cls.equals(this.graph.getGraphClass().getTemporaryVertexClass());
 	}
 
+	@Override
+	public Vertex bless() {
+		if(this.preliminaryType==null){
+			throw new TemporaryGraphElementBlessingException(
+					"Transformation of temporary vertex " + this + " failed. " 
+					+ "There is no preliminary VertexClass set.");
+		}
+		return this.bless(this.preliminaryType);
+	}
+	
 	@Override
 	public Vertex bless(VertexClass vc) {
 
@@ -200,6 +218,18 @@ public class TemporaryVertexImpl extends VertexImpl implements TemporaryVertex {
 	@Override
 	public boolean isTemporary() {
 		return true;
+	}
+
+	
+
+	@Override
+	public VertexClass getPreliminaryType() {
+		return this.preliminaryType;
+	}
+
+	@Override
+	public void setPreliminaryType(VertexClass ec) {
+		this.preliminaryType = ec;
 	}
 
 }

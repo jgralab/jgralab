@@ -92,6 +92,12 @@ public interface Graph extends AttributedElement<GraphClass, Graph> {
 	public TemporaryVertex createTemporaryVertex();
 
 	/**
+	 * Creates a {@link TemporaryVertex} with a give preliminary 
+	 * {@link VertexClass} and adds it to this {@link Graph}
+	 */
+	public TemporaryVertex createTemporaryVertex(VertexClass preliminaryType);
+	
+	/**
 	 * Creates a {@link TemporaryEdge} that connects <code>alpha</code> and
 	 * <code>omega</code> vertices and adds the new edge to this {@link Graph}
 	 * 
