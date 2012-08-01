@@ -1,7 +1,6 @@
 package de.uni_koblenz.jgralab.greql.parallel;
 
 import java.util.ArrayList;
-import java.util.ConcurrentModificationException;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -65,7 +64,7 @@ public class ParallelGreqlEvaluator {
 				return createQueryVertex(GreqlQuery.createQuery(queryText));
 			}
 		}
-		throw new ConcurrentModificationException(
+		throw new IllegalStateException(
 				"The dependency graph is currently evaluating.");
 	}
 
@@ -77,7 +76,7 @@ public class ParallelGreqlEvaluator {
 				return v;
 			}
 		}
-		throw new ConcurrentModificationException(
+		throw new IllegalStateException(
 				"The dependency graph is currently evaluating.");
 	}
 
@@ -88,7 +87,7 @@ public class ParallelGreqlEvaluator {
 						predecessor);
 			}
 		}
-		throw new ConcurrentModificationException(
+		throw new IllegalStateException(
 				"The dependency graph is currently evaluating.");
 	}
 
@@ -129,7 +128,7 @@ public class ParallelGreqlEvaluator {
 	public GreqlEnvironment evaluate(Graph datagraph,
 			GreqlEnvironment environment) {
 		if (isEvaluating) {
-			throw new ConcurrentModificationException(
+			throw new IllegalStateException(
 					"The dependency graph is currently evaluating.");
 		}
 		isEvaluating = true;
@@ -247,7 +246,12 @@ public class ParallelGreqlEvaluator {
 	}
 
 	public Object getResult(Vertex dependencyVertex) {
-		return evaluators.get(dependencyVertex).getResult();
+		GreqlEvaluatorCallable evaluator = evaluators.get(dependencyVertex);
+		if (!evaluator.isFinished()) {
+			throw new IllegalStateException("The evaluation of "
+					+ dependencyVertex + " has not been finished yet.");
+		}
+		return evaluator.getResult();
 	}
 
 }

@@ -16,6 +16,7 @@ public class GreqlEvaluatorCallable implements Callable<Object> {
 	private final long graphVersion;
 	final ParallelGreqlEvaluator peval;
 	private Object result;
+	private boolean isFinished;
 
 	public GreqlEvaluatorCallable(GreqlQuery greqlQuery, Graph datagraph,
 			GreqlEnvironment environment, Vertex dependencyVertex,
@@ -44,7 +45,12 @@ public class GreqlEvaluatorCallable implements Callable<Object> {
 			peval.shutdownNow(e);
 			throw e;
 		}
+		isFinished = true;
 		return result;
+	}
+
+	public boolean isFinished() {
+		return isFinished;
 	}
 
 	public Object getResult() {
