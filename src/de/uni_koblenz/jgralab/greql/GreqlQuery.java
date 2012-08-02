@@ -12,8 +12,8 @@ import de.uni_koblenz.jgralab.greql.evaluator.GreqlEnvironmentAdapter;
 import de.uni_koblenz.jgralab.greql.evaluator.GreqlQueryImpl;
 import de.uni_koblenz.jgralab.greql.optimizer.Optimizer;
 import de.uni_koblenz.jgralab.greql.optimizer.OptimizerUtility;
-import de.uni_koblenz.jgralab.greql.schema.Greql2Expression;
-import de.uni_koblenz.jgralab.greql.schema.Greql2Graph;
+import de.uni_koblenz.jgralab.greql.schema.GreqlExpression;
+import de.uni_koblenz.jgralab.greql.schema.GreqlGraph;
 
 public abstract class GreqlQuery {
 	public static GreqlQuery readQuery(File f) throws IOException {
@@ -76,7 +76,7 @@ public abstract class GreqlQuery {
 		return new GreqlQueryImpl(queryText, optimize, optimizerInfo, optimizer);
 	}
 
-	public Greql2Graph getQueryGraph() {
+	public GreqlGraph getQueryGraph() {
 		return null;
 	}
 
@@ -88,7 +88,7 @@ public abstract class GreqlQuery {
 		return null;
 	}
 
-	public Greql2Expression getRootExpression() {
+	public GreqlExpression getRootExpression() {
 		throw new UnsupportedOperationException();
 	}
 

@@ -50,8 +50,8 @@ import de.uni_koblenz.jgralab.greql.evaluator.GreqlQueryImpl;
 import de.uni_koblenz.jgralab.greql.evaluator.InternalGreqlEvaluator;
 import de.uni_koblenz.jgralab.greql.evaluator.VertexCosts;
 import de.uni_koblenz.jgralab.greql.exception.QuerySourceException;
-import de.uni_koblenz.jgralab.greql.schema.Greql2Aggregation;
-import de.uni_koblenz.jgralab.greql.schema.Greql2Vertex;
+import de.uni_koblenz.jgralab.greql.schema.GreqlAggregation;
+import de.uni_koblenz.jgralab.greql.schema.GreqlVertex;
 import de.uni_koblenz.jgralab.greql.schema.SourcePosition;
 import de.uni_koblenz.jgralab.greql.schema.Variable;
 
@@ -61,7 +61,7 @@ import de.uni_koblenz.jgralab.greql.schema.Variable;
  * 
  * @author ist@uni-koblenz.de
  */
-public abstract class VertexEvaluator<V extends Greql2Vertex> {
+public abstract class VertexEvaluator<V extends GreqlVertex> {
 
 	protected static Logger logger = Logger.getLogger(VertexEvaluator.class
 			.getName());
@@ -173,7 +173,7 @@ public abstract class VertexEvaluator<V extends Greql2Vertex> {
 	}
 
 	/**
-	 * @return the name of the associated {@link Greql2Vertex} used for logging.
+	 * @return the name of the associated {@link GreqlVertex} used for logging.
 	 *         By default this is the type name, i.e. ListComprehension, but
 	 *         subclasses may override this method to get a more finegrained
 	 *         control. For example {@link FunctionApplicationEvaluator}s use
@@ -257,7 +257,7 @@ public abstract class VertexEvaluator<V extends Greql2Vertex> {
 	public void resetSubtreeToInitialState(InternalGreqlEvaluator evaluator) {
 		resetToInitialState(evaluator);
 		for (Edge e : getVertex().incidences(EdgeDirection.IN)) {
-			Greql2Vertex vertex = (Greql2Vertex) e.getThat();
+			GreqlVertex vertex = (GreqlVertex) e.getThat();
 			VertexEvaluator<?> eval = query.getVertexEvaluator(vertex);
 			if (eval != null) {
 				eval.resetSubtreeToInitialState(evaluator);
@@ -336,7 +336,7 @@ public abstract class VertexEvaluator<V extends Greql2Vertex> {
 		Edge inc = getVertex().getFirstIncidence(EdgeDirection.IN);
 		while (inc != null) {
 			VertexEvaluator<?> veval = query
-					.getVertexEvaluator((Greql2Vertex) inc.getAlpha());
+					.getVertexEvaluator((GreqlVertex) inc.getAlpha());
 			if (veval != null) {
 				neededVariables.addAll(veval.getNeededVariables());
 				definedVariables.addAll(veval.getDefinedVariables());
@@ -433,13 +433,13 @@ public abstract class VertexEvaluator<V extends Greql2Vertex> {
 	 * creates a list of possible source positions for the current vertex
 	 */
 	public List<SourcePosition> createPossibleSourcePositions() {
-		Greql2Aggregation inc = (Greql2Aggregation) getVertex()
+		GreqlAggregation inc = (GreqlAggregation) getVertex()
 				.getFirstIncidence(EdgeDirection.OUT);
 		List<SourcePosition> possibleSourcePositions = new ArrayList<SourcePosition>();
 		while (inc != null) {
 			List<SourcePosition> sourcePositions = inc.get_sourcePositions();
 			possibleSourcePositions.addAll(sourcePositions);
-			inc = inc.getNextGreql2AggregationIncidence(EdgeDirection.OUT);
+			inc = inc.getNextGreqlAggregationIncidence(EdgeDirection.OUT);
 		}
 		return possibleSourcePositions;
 	}
@@ -447,7 +447,7 @@ public abstract class VertexEvaluator<V extends Greql2Vertex> {
 	/**
 	 * creates the sourcepositions for the given edge
 	 */
-	protected List<SourcePosition> createSourcePositions(Greql2Aggregation edge) {
+	protected List<SourcePosition> createSourcePositions(GreqlAggregation edge) {
 		List<SourcePosition> possibleSourcePositions = new ArrayList<SourcePosition>();
 		List<SourcePosition> sourcePositions = edge.get_sourcePositions();
 		possibleSourcePositions.addAll(sourcePositions);
@@ -460,13 +460,13 @@ public abstract class VertexEvaluator<V extends Greql2Vertex> {
 	 * vertex
 	 */
 	private void removeInvalidSourcePosition(QuerySourceException ex) {
-		Greql2Aggregation inc = (Greql2Aggregation) getVertex()
+		GreqlAggregation inc = (GreqlAggregation) getVertex()
 				.getFirstIncidence(EdgeDirection.OUT);
 		List<SourcePosition> possibleSourcePositions = new ArrayList<SourcePosition>();
 		while (inc != null) {
 			List<SourcePosition> sourcePositions = inc.get_sourcePositions();
 			possibleSourcePositions.addAll(sourcePositions);
-			inc = inc.getNextGreql2AggregationIncidence(EdgeDirection.OUT);
+			inc = inc.getNextGreqlAggregationIncidence(EdgeDirection.OUT);
 		}
 		if (possibleSourcePositions.size() == 0) {
 			return; // maybe the vertex is the root vertex, than it has no
@@ -501,7 +501,7 @@ public abstract class VertexEvaluator<V extends Greql2Vertex> {
 	/**
 	 * creates a vertex evaluator for the given vertex
 	 */
-	public static <V extends Greql2Vertex> VertexEvaluator<V> createVertexEvaluator(
+	public static <V extends GreqlVertex> VertexEvaluator<V> createVertexEvaluator(
 			V vertex, GreqlQueryImpl query) {
 		Class<?> vertexClass = vertex.getClass();
 		String fullClassName = vertexClass.getName();

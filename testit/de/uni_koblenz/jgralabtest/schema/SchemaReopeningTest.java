@@ -11,7 +11,7 @@ import org.junit.Test;
 import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.codegenerator.CodeGeneratorConfiguration;
-import de.uni_koblenz.jgralab.greql.schema.Greql2Schema;
+import de.uni_koblenz.jgralab.greql.schema.GreqlSchema;
 import de.uni_koblenz.jgralab.schema.Schema;
 import de.uni_koblenz.jgralab.schema.impl.SchemaImpl;
 import de.uni_koblenz.jgralab.schema.impl.compilation.SchemaClassManager;
@@ -51,7 +51,7 @@ public class SchemaReopeningTest {
 
 	@Test(expected = UnsupportedOperationException.class)
 	public void testSchemaReopeningWithCompiledSchema2() {
-		Greql2Schema.instance().reopen();
+		GreqlSchema.instance().reopen();
 	}
 
 	@Test(expected = UnsupportedOperationException.class)

@@ -7,8 +7,8 @@ import de.uni_koblenz.jgralab.greql.GreqlEnvironment;
 import de.uni_koblenz.jgralab.greql.GreqlQuery;
 import de.uni_koblenz.jgralab.greql.evaluator.GreqlEnvironmentAdapter;
 import de.uni_koblenz.jgralab.greql.schema.Direction;
-import de.uni_koblenz.jgralab.greql.schema.Greql2Expression;
-import de.uni_koblenz.jgralab.greql.schema.Greql2Graph;
+import de.uni_koblenz.jgralab.greql.schema.GreqlExpression;
+import de.uni_koblenz.jgralab.greql.schema.GreqlGraph;
 
 /**
  * Abstract base class for all executable queries. Provides some common
@@ -34,13 +34,13 @@ public abstract class AbstractExecutableQuery extends GreqlQuery implements
 	}
 
 	@Override
-	public Greql2Graph getQueryGraph() {
+	public GreqlGraph getQueryGraph() {
 		throw new UnsupportedOperationException(
 				"This method is not available for generated queries.");
 	}
 
 	@Override
-	public Greql2Expression getRootExpression() {
+	public GreqlExpression getRootExpression() {
 		throw new UnsupportedOperationException(
 				"This method is not available for generated queries.");
 	}

@@ -34,13 +34,13 @@
  */
 package de.uni_koblenz.jgralab.utilities.tg2dot;
 
-import static de.uni_koblenz.jgralab.utilities.tg2dot.greql2.GreqlEvaluatorFacade.ABBREVIATE_EDGE_ATTRIBUTE_NAMES;
-import static de.uni_koblenz.jgralab.utilities.tg2dot.greql2.GreqlEvaluatorFacade.PRINT_DOMAIN_NAMES;
-import static de.uni_koblenz.jgralab.utilities.tg2dot.greql2.GreqlEvaluatorFacade.PRINT_EDGE_ATTRIBUTES;
-import static de.uni_koblenz.jgralab.utilities.tg2dot.greql2.GreqlEvaluatorFacade.PRINT_ELEMENT_SEQUENCE_INDICES;
-import static de.uni_koblenz.jgralab.utilities.tg2dot.greql2.GreqlEvaluatorFacade.PRINT_INCIDENCE_INDICES;
-import static de.uni_koblenz.jgralab.utilities.tg2dot.greql2.GreqlEvaluatorFacade.PRINT_ROLENAMES;
-import static de.uni_koblenz.jgralab.utilities.tg2dot.greql2.GreqlEvaluatorFacade.SHORTEN_STRINGS;
+import static de.uni_koblenz.jgralab.utilities.tg2dot.greql.GreqlEvaluatorFacade.ABBREVIATE_EDGE_ATTRIBUTE_NAMES;
+import static de.uni_koblenz.jgralab.utilities.tg2dot.greql.GreqlEvaluatorFacade.PRINT_DOMAIN_NAMES;
+import static de.uni_koblenz.jgralab.utilities.tg2dot.greql.GreqlEvaluatorFacade.PRINT_EDGE_ATTRIBUTES;
+import static de.uni_koblenz.jgralab.utilities.tg2dot.greql.GreqlEvaluatorFacade.PRINT_ELEMENT_SEQUENCE_INDICES;
+import static de.uni_koblenz.jgralab.utilities.tg2dot.greql.GreqlEvaluatorFacade.PRINT_INCIDENCE_INDICES;
+import static de.uni_koblenz.jgralab.utilities.tg2dot.greql.GreqlEvaluatorFacade.PRINT_ROLENAMES;
+import static de.uni_koblenz.jgralab.utilities.tg2dot.greql.GreqlEvaluatorFacade.SHORTEN_STRINGS;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -84,7 +84,7 @@ import de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout.GraphLayoutFactory;
 import de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout.definition.Definition;
 import de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout.definition.ElementDefinition;
 import de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout.definition.TypeDefinition;
-import de.uni_koblenz.jgralab.utilities.tg2dot.greql2.GreqlEvaluatorFacade;
+import de.uni_koblenz.jgralab.utilities.tg2dot.greql.GreqlEvaluatorFacade;
 import de.uni_koblenz.jgralab.utilities.tg2whatever.Tg2Whatever;
 
 /**

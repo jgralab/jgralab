@@ -41,7 +41,7 @@ public class UtilityMethods {
 	 * Generates a URI from a qualified Name for use in XML-files. It replaces
 	 * all occurrences of "_" with "-", swaps the first and the second element
 	 * of the qualified name and appends the remainder as folder structure.
-	 * Example: de.uni_koblenz.jgralab.greql2 => uni-koblenz.de/jgralab/greql2
+	 * Example: de.uni_koblenz.jgralab.greql => uni-koblenz.de/jgralab/greql
 	 * 
 	 * @param qualifiedName
 	 *            the qualified name to convert.

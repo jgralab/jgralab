@@ -48,20 +48,20 @@ import de.uni_koblenz.jgralab.schema.exception.SchemaClassAccessException;
  * This is the base class of any <code>GraphClass</code>/
  * <code>VertexClass</code>/<code>EdgeClass</code>/<code>AggregationClass</code>
  * /<code>CompositionClass</code>.
- *
+ * 
  * <p>
  * <b>Note:</b> in the following, <code>attrElement</code>, and
  * <code>attrElement'</code> , will represent the states of the given
  * <code>AttributedElementClass</code> before, respectively after, any
  * operation.
  * </p>
- *
+ * 
  * <p>
  * <b>Note:</b> in the following it is understood that method arguments differ
  * from <code>null</code>. Therefore there will be no preconditions addressing
  * this matter.
  * </p>
- *
+ * 
  * @author ist@uni-koblenz.de
  */
 public interface AttributedElementClass<SC extends AttributedElementClass<SC, IC>, IC extends AttributedElement<SC, IC>>
@@ -70,12 +70,12 @@ public interface AttributedElementClass<SC extends AttributedElementClass<SC, IC
 	/**
 	 * Creates and returns an attribute with the given <code>name</code>,
 	 * <code>domain</code>, and default value to this element.
-	 *
+	 * 
 	 * <p>
 	 * <b>Pattern:</b>
 	 * <code>attrElement.createAttribute(name, domain, "7");</code>
 	 * </p>
-	 *
+	 * 
 	 * <p>
 	 * <b>Preconditions:</b>
 	 * <ul>
@@ -83,20 +83,20 @@ public interface AttributedElementClass<SC extends AttributedElementClass<SC, IC
 	 * this <code>attrElements</code> direct and inherited attributes names.</li>
 	 * </ul>
 	 * </p>
-	 *
+	 * 
 	 * <p>
 	 * <b>Postconditions:</b> In addition to the direct and inherited
 	 * attributes(s) of <code>attrElement</code>, <code>attrElement'</code>
 	 * holds a new attribute with the specified <code>name</code> and
 	 * <code>domain</code>.
 	 * </p>
-	 *
+	 * 
 	 * @param name
 	 *            a unique <code>name</code> in this element´s list of direct
 	 *            and inherited attributes
 	 * @param domain
 	 *            the <code>domain</code> of the new <code>Attribute</code>
-	 *
+	 * 
 	 * @param defaultValueAsString
 	 *            a String representing the default value of the nerw Attribute
 	 *            in TG value syntax, or null if no default value is to be
@@ -113,11 +113,11 @@ public interface AttributedElementClass<SC extends AttributedElementClass<SC, IC
 	 * Creates and returns an attribute with the given <code>name</code> and
 	 * <code>domain</code> to this element. The attribute does not have a
 	 * default value.
-	 *
+	 * 
 	 * <p>
 	 * <b>Pattern:</b> <code>attrElement.createAttribute(name, domain);</code>
 	 * </p>
-	 *
+	 * 
 	 * <p>
 	 * <b>Preconditions:</b>
 	 * <ul>
@@ -125,14 +125,14 @@ public interface AttributedElementClass<SC extends AttributedElementClass<SC, IC
 	 * this <code>attrElements</code> direct and inherited attributes names.</li>
 	 * </ul>
 	 * </p>
-	 *
+	 * 
 	 * <p>
 	 * <b>Postconditions:</b> In addition to the direct and inherited
 	 * attributes(s) of <code>attrElement</code>, <code>attrElement'</code>
 	 * holds a new attribute with the specified <code>name</code> and
 	 * <code>domain</code>.
 	 * </p>
-	 *
+	 * 
 	 * @param name
 	 *            a unique <code>name</code> in this element´s list of direct
 	 *            and inherited attributes
@@ -147,20 +147,20 @@ public interface AttributedElementClass<SC extends AttributedElementClass<SC, IC
 
 	/**
 	 * Adds a {@link Constraint} to this attributed element. Constraints are
-	 * greql2 predicates, that can be used to validate the graph.
-	 *
+	 * GReQL predicates, that can be used to validate the graph.
+	 * 
 	 * <p>
 	 * <b>Note:</b> Constraints are not inheritable.
 	 * </p>
-	 *
+	 * 
 	 * <p>
 	 * <b>Pattern:</b> <code>attrElement.addConstraint(constr);</code>
 	 * </p>
-	 *
+	 * 
 	 * <p>
 	 * <b>Preconditions:</b> none
 	 * </p>
-	 *
+	 * 
 	 * <p>
 	 * <b>Postconditions:</b>
 	 * <ul>
@@ -175,7 +175,7 @@ public interface AttributedElementClass<SC extends AttributedElementClass<SC, IC
 	 * </ul>
 	 * </p>
 	 * </p>
-	 *
+	 * 
 	 * @param constraint
 	 *            a {@link Constraint} to add to this element
 	 */
@@ -184,41 +184,41 @@ public interface AttributedElementClass<SC extends AttributedElementClass<SC, IC
 	/**
 	 * Checks if this element or a superclass has an attribute with the given
 	 * <code>name</code>.
-	 *
+	 * 
 	 * <p>
 	 * <b>Pattern:</b>
 	 * <code>containsAttr = attrElement.containsAttribute(name);</code>
 	 * </p>
-	 *
+	 * 
 	 * <p>
 	 * <b>Preconditions:</b> The <code>name</code> must not be empty.
 	 * </p>
-	 *
+	 * 
 	 * <p>
 	 * <b>Postconditions:</b> none
 	 * </p>
-	 *
+	 * 
 	 * @param name
 	 *            the <code>name</code> of the attribute to search for
-	 *
+	 * 
 	 * @return <code>true</code>, if the element or a superclass contains an
 	 *         attribute with the specified <code>name</code>
-	 *
+	 * 
 	 */
 	public boolean containsAttribute(String name);
 
 	/**
 	 * Fetches the attribute with the specified <code>name</code> from this
 	 * element or it´s direct and indirect superclasses.
-	 *
+	 * 
 	 * <p>
 	 * <b>Pattern:</b> <code>attr = attrElement.getAttribute(name);</code>
 	 * </p>
-	 *
+	 * 
 	 * <p>
 	 * <b>Preconditions:</b> none
 	 * </p>
-	 *
+	 * 
 	 * <p>
 	 * <b>Postconditions:</b>
 	 * <ul>
@@ -228,7 +228,7 @@ public interface AttributedElementClass<SC extends AttributedElementClass<SC, IC
 	 * or inherited attribute with the given <code>name</code</li>
 	 * </ul>
 	 * </p>
-	 *
+	 * 
 	 * @param name
 	 *            the <code>name</code> of the attribute
 	 * @return the attribute with the specified <code>name</code> or
@@ -239,15 +239,15 @@ public interface AttributedElementClass<SC extends AttributedElementClass<SC, IC
 
 	/**
 	 * Gets the direct and inherited attribute count for this element.
-	 *
+	 * 
 	 * <p>
 	 * <b>Pattern:</b> <code>attrCount = attrElement.getAttributeCount();</code>
 	 * </p>
-	 *
+	 * 
 	 * <p>
 	 * <b>Preconditions:</b> none
 	 * </p>
-	 *
+	 * 
 	 * <p>
 	 * <b>Postconditions:</b>
 	 * <ul>
@@ -256,7 +256,7 @@ public interface AttributedElementClass<SC extends AttributedElementClass<SC, IC
 	 * <code>attrElement´s</code> direct and inherited attributes</li>
 	 * </ul>
 	 * </p>
-	 *
+	 * 
 	 * @return the number of this element´s direct and inherited attributes
 	 */
 	public int getAttributeCount();
@@ -264,15 +264,15 @@ public interface AttributedElementClass<SC extends AttributedElementClass<SC, IC
 	/**
 	 * Returns all of this element´s direct and inherited attributes in natural
 	 * order.
-	 *
+	 * 
 	 * <p>
 	 * <b>Pattern:</b> <code>attrs = attrElement.getAttributeList();</code>
 	 * </p>
-	 *
+	 * 
 	 * <p>
 	 * <b>Preconditions:</b> none
 	 * </p>
-	 *
+	 * 
 	 * <p>
 	 * <b>Postconditions:</b>
 	 * <ul>
@@ -284,7 +284,7 @@ public interface AttributedElementClass<SC extends AttributedElementClass<SC, IC
 	 * their qualified name</li>
 	 * </ul>
 	 * </p>
-	 *
+	 * 
 	 * @return a {@link PVector} of attributes of this element and all inherited
 	 *         attributes
 	 */
@@ -292,21 +292,21 @@ public interface AttributedElementClass<SC extends AttributedElementClass<SC, IC
 
 	/**
 	 * Returns this element's Set of {@link Constraint}s.
-	 *
+	 * 
 	 * <p>
-	 * Constraints are greql2 predicates, that can be used to validate the
-	 * graph. Constraints are bound to a specific attributed element and are not
+	 * Constraints are GReQL predicates, that can be used to validate the graph.
+	 * Constraints are bound to a specific attributed element and are not
 	 * inheritable.
 	 * </p>
-	 *
+	 * 
 	 * <p>
 	 * <b>Pattern:</b> <code>constrs = attrElement.getConstraints();</code>
 	 * </p>
-	 *
+	 * 
 	 * <p>
 	 * <b>Preconditions:</b> none
 	 * </p>
-	 *
+	 * 
 	 * <p>
 	 * <b>Postconditions:</b>
 	 * <ul>
@@ -316,28 +316,28 @@ public interface AttributedElementClass<SC extends AttributedElementClass<SC, IC
 	 * <li><code>constrs</code> does not contain any inherited constraint</li>
 	 * </ul>
 	 * </p>
-	 *
+	 * 
 	 * @return a Set of all {@link Constraint}s of this attributed element
 	 */
 	public Set<Constraint> getConstraints();
 
 	/**
 	 * Returns the schema interface for this attributed element.
-	 *
+	 * 
 	 * <p>
 	 * <b>Pattern:</b> <code>schemaClass = attrElement.getSchemaClass();</code>
 	 * </p>
-	 *
+	 * 
 	 * <p>
 	 * <b>Preconditions:</b> not yet defined
 	 * </p>
-	 *
+	 * 
 	 * <p>
 	 * <b>Postconditions:</b> not yet defined
 	 * </p>
-	 *
+	 * 
 	 * @return the schema interface class for this element
-	 *
+	 * 
 	 * @throws SchemaClassAccessException
 	 *             if reflection exceptions occur.
 	 */
@@ -345,22 +345,22 @@ public interface AttributedElementClass<SC extends AttributedElementClass<SC, IC
 
 	/**
 	 * Returns the schema implementation class for this attributed element.
-	 *
+	 * 
 	 * <p>
 	 * <b>Pattern:</b>
 	 * <code>schemaImplClass = attrElement.getSchemaImplementationClass();</code>
 	 * </p>
-	 *
+	 * 
 	 * <p>
 	 * <b>Preconditions:</b> not yet defined
 	 * </p>
-	 *
+	 * 
 	 * <p>
 	 * <b>Postconditions:</b> not yet defined
 	 * </p>
-	 *
+	 * 
 	 * @return the schema implementation class for this element
-	 *
+	 * 
 	 * @throws SchemaClassAccessException
 	 *             if:
 	 *             <ul>
@@ -372,15 +372,15 @@ public interface AttributedElementClass<SC extends AttributedElementClass<SC, IC
 
 	/**
 	 * Checks if this element has direct or inherited attributes.
-	 *
+	 * 
 	 * <p>
 	 * <b>Pattern:</b> <code>hasAttributes = attrElement.hasAttributes();</code>
 	 * </p>
-	 *
+	 * 
 	 * <p>
 	 * <b>Preconditions:</b> none
 	 * </p>
-	 *
+	 * 
 	 * <p>
 	 * <b>Postconditions:</b> <code>hasAttributes</code> has one of the
 	 * following values:
@@ -394,7 +394,7 @@ public interface AttributedElementClass<SC extends AttributedElementClass<SC, IC
 	 * <li><code>false</code> if the above is not met</li>
 	 * </ul>
 	 * </p>
-	 *
+	 * 
 	 * @return <code>true</code>, if the element has own or inherited
 	 *         attributes, <code>false</code> otherwise
 	 */
@@ -402,16 +402,16 @@ public interface AttributedElementClass<SC extends AttributedElementClass<SC, IC
 
 	/**
 	 * Checks if this element has own attributes, that are not inherited.
-	 *
+	 * 
 	 * <p>
 	 * <b>Pattern:</b>
 	 * <code>hasOwnAttributes = attrElement.hasOwnAttributes();</code>
 	 * </p>
-	 *
+	 * 
 	 * <p>
 	 * <b>Preconditions:</b> none
 	 * </p>
-	 *
+	 * 
 	 * <p>
 	 * <b>Postconditions:</b> <code>hasOwnAttributes</code> has one of the
 	 * following values:
@@ -424,7 +424,7 @@ public interface AttributedElementClass<SC extends AttributedElementClass<SC, IC
 	 * </ul>
 	 * </ul>
 	 * </p>
-	 *
+	 * 
 	 * @return <code>true</code>, if the element has own attributes,
 	 *         <code>false</code> otherwise
 	 */
@@ -439,15 +439,15 @@ public interface AttributedElementClass<SC extends AttributedElementClass<SC, IC
 	 * getAttribute(String name)}, this method does not consider inherited
 	 * attributes.
 	 * </p>
-	 *
+	 * 
 	 * <p>
 	 * <b>Pattern:</b> <code>attr = attrElement.getOwnAttribute(name);</code>
 	 * </p>
-	 *
+	 * 
 	 * <p>
 	 * <b>Preconditions:</b> none
 	 * </p>
-	 *
+	 * 
 	 * <p>
 	 * <b>Postconditions:</b>
 	 * <ul>
@@ -457,7 +457,7 @@ public interface AttributedElementClass<SC extends AttributedElementClass<SC, IC
 	 * attribute with the given <code>name</code</li>
 	 * </ul>
 	 * </p>
-	 *
+	 * 
 	 * @param name
 	 *            the <code>name</code> of the attribute
 	 * @return the attribute with the specified <code>name</code> or
@@ -468,22 +468,22 @@ public interface AttributedElementClass<SC extends AttributedElementClass<SC, IC
 
 	/**
 	 * Gets the attribute count for this element.
-	 *
+	 * 
 	 * <p>
 	 * <b>Pattern:</b>
 	 * <code>attrCount = attrElement.getOwnAttributeCount();</code>
 	 * </p>
-	 *
+	 * 
 	 * <p>
 	 * Unlike
 	 * {@link de.uni_koblenz.jgralab.schema.AttributedElementClass#getAttributeCount()
 	 * getAttributeCount()}, this method does not count inherited attributes.
 	 * </p>
-	 *
+	 * 
 	 * <p>
 	 * <b>Preconditions:</b> none
 	 * </p>
-	 *
+	 * 
 	 * <p>
 	 * <b>Postconditions:</b>
 	 * <ul>
@@ -493,28 +493,28 @@ public interface AttributedElementClass<SC extends AttributedElementClass<SC, IC
 	 * <li><code>attrCount</code> does not contain inherited attributes</li>
 	 * </ul>
 	 * </p>
-	 *
+	 * 
 	 * @return the number of this element´s direct attributes
 	 */
 	public int getOwnAttributeCount();
 
 	/**
 	 * Returns all of this element´s attributes.
-	 *
+	 * 
 	 * <p>
 	 * Unlike
 	 * {@link de.uni_koblenz.jgralab.schema.AttributedElementClass#getAttributeList()
 	 * getAttributeList()}, this method does not consider inherited attributes.
 	 * </p>
-	 *
+	 * 
 	 * <p>
 	 * <b>Pattern:</b> <code>attrs = attrElement.getOwnAttributeList();</code>
 	 * </p>
-	 *
+	 * 
 	 * <p>
 	 * <b>Preconditions:</b> none
 	 * </p>
-	 *
+	 * 
 	 * <p>
 	 * <b>Postconditions:</b>
 	 * <ul>
@@ -528,7 +528,7 @@ public interface AttributedElementClass<SC extends AttributedElementClass<SC, IC
 	 * their qualified name</li>
 	 * </ul>
 	 * </p>
-	 *
+	 * 
 	 * @return a {@link PVector} of attributes of this element
 	 */
 	public List<Attribute> getOwnAttributeList();
@@ -536,15 +536,15 @@ public interface AttributedElementClass<SC extends AttributedElementClass<SC, IC
 	/**
 	 * States if this attributed element is abstract. Abstract elements can´t
 	 * have instances.
-	 *
+	 * 
 	 * <p>
 	 * <b>Pattern:</b> <code>isAbstract = attrElement.isAbstract();</code>
 	 * </p>
-	 *
+	 * 
 	 * <p>
 	 * <b>Preconditions:</b> none
 	 * </p>
-	 *
+	 * 
 	 * <p>
 	 * <b>Postconditions:</b> <code>isAbstract</code> is:
 	 * <ul>
@@ -552,7 +552,7 @@ public interface AttributedElementClass<SC extends AttributedElementClass<SC, IC
 	 * therefore may not have any instances</li>
 	 * <li>otherwise <code>false</code>
 	 * </ul>
-	 *
+	 * 
 	 * @return <code>true</code>, if the element is abstract , otherwise
 	 *         <code>false</code>
 	 */
@@ -561,20 +561,20 @@ public interface AttributedElementClass<SC extends AttributedElementClass<SC, IC
 	/**
 	 * Defines if this attributed element is abstract. Abstract elements can´t
 	 * have instances.
-	 *
+	 * 
 	 * <p>
 	 * <b>Pattern:</b> <code>attrElement.setAbstract(value);</code>
 	 * </p>
-	 *
+	 * 
 	 * <p>
 	 * <b>Preconditions:</b> none
 	 * </p>
-	 *
+	 * 
 	 * <p>
 	 * <b>Postconditions:</b> <code>attrElement'</code> is abstract and no new
 	 * instances can be created
 	 * </p>
-	 *
+	 * 
 	 * @param isAbstract
 	 *            the new value defining the state of this attributed element
 	 */
@@ -584,13 +584,13 @@ public interface AttributedElementClass<SC extends AttributedElementClass<SC, IC
 	 * <p>
 	 * Returns an index for the attribute with the given name.
 	 * </p>
-	 *
+	 * 
 	 * <p>
 	 * The index can be used to dereference the attribute's value in the generic
 	 * implementation. If an attribute by the given name does not exist, a
 	 * {@link NoSuchAttributeException} will be thrown.
 	 * </p>
-	 *
+	 * 
 	 * @param name
 	 *            The attributes's name
 	 * @return An index for the attribute.

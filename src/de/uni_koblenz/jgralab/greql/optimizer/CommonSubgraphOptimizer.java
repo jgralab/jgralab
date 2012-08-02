@@ -45,14 +45,14 @@ import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.greql.GreqlQuery;
 import de.uni_koblenz.jgralab.greql.exception.OptimizerException;
-import de.uni_koblenz.jgralab.greql.schema.Greql2Aggregation;
-import de.uni_koblenz.jgralab.greql.schema.Greql2Vertex;
+import de.uni_koblenz.jgralab.greql.schema.GreqlAggregation;
+import de.uni_koblenz.jgralab.greql.schema.GreqlVertex;
 import de.uni_koblenz.jgralab.greql.schema.PathDescription;
 import de.uni_koblenz.jgralab.greql.schema.Variable;
 import de.uni_koblenz.jgralab.schema.Attribute;
 
 /**
- * This {@link Optimizer} finds all subgraps in a {@link Greql2} syntaxgraph
+ * This {@link Optimizer} finds all subgraps in a {@link Greql} syntaxgraph
  * that are equal. Two subgraphs are considered equal, if and only if
  * 
  * <ul>
@@ -60,7 +60,7 @@ import de.uni_koblenz.jgralab.schema.Attribute;
  * <li>the same {@link Attribute}s and {@link Attribute} values in the same
  * order,</li>
  * <li>the incoming {@link Edge}s have the same types and the same order and</li>
- * <li>the Greql2Vertices (see {@link Greql2Vertex}) that are the sources of
+ * <li>the GreqlVertices (see {@link GreqlVertex}) that are the sources of
  * those {@link Edge}s are equal in the same respect.</li>
  * </ul>
  * 
@@ -68,12 +68,12 @@ import de.uni_koblenz.jgralab.schema.Attribute;
  * three steps.
  * 
  * <nl>
- * <li>The sourcePositions {@link Attribute}s of the {@link Greql2Aggregation}
- * edges that run into the root-Greql2Vertices are merged recursively.</li>
+ * <li>The sourcePositions {@link Attribute}s of the {@link GreqlAggregation}
+ * edges that run into the root-GreqlVertices are merged recursively.</li>
  * <li>The source vertices of the {@link Edge}s that start in the root-
- * {@link Greql2Vertex} with the higher Id are set to the root-
- * {@link Greql2Vertex} with the lower Id.</li>
- * <li>The root-{@link Greql2Vertex} with the higher Id is deleted (and thus is
+ * {@link GreqlVertex} with the higher Id are set to the root-
+ * {@link GreqlVertex} with the lower Id.</li>
+ * <li>The root-{@link GreqlVertex} with the higher Id is deleted (and thus is
  * the subgaph below it).</li>
  * </nl>
  * 
@@ -88,20 +88,20 @@ public class CommonSubgraphOptimizer extends OptimizerBase {
 	private boolean anOptimizationWasDone = false;
 
 	/**
-	 * Maps hash-values to Greql2Vertices (see {@link Greql2Vertex}).
+	 * Maps hash-values to GreqlVertices (see {@link GreqlVertex}).
 	 */
-	private final HashMap<String, Greql2Vertex> subgraphMap;
+	private final HashMap<String, GreqlVertex> subgraphMap;
 
 	/**
-	 * Maps Greql2Vertices to their hash-value. Used to omit double calculation
+	 * Maps GreqlVertices to their hash-value. Used to omit double calculation
 	 * of hash-values from vertices that have several parent nodes (yeah, these
 	 * are {@link Variable} vertices).
 	 */
-	private final HashMap<Greql2Vertex, String> reverseSubgraphMap;
+	private final HashMap<GreqlVertex, String> reverseSubgraphMap;
 
 	public CommonSubgraphOptimizer() {
-		subgraphMap = new HashMap<String, Greql2Vertex>();
-		reverseSubgraphMap = new HashMap<Greql2Vertex, String>();
+		subgraphMap = new HashMap<String, GreqlVertex>();
+		reverseSubgraphMap = new HashMap<GreqlVertex, String>();
 	}
 
 	/*
@@ -126,30 +126,30 @@ public class CommonSubgraphOptimizer extends OptimizerBase {
 	 * @see
 	 * de.uni_koblenz.jgralab.greql2.optimizer.Optimizer#optimize(de.uni_koblenz
 	 * .jgralab.greql2.evaluator.GreqlEvaluator,
-	 * de.uni_koblenz.jgralab.greql2.schema.Greql2)
+	 * de.uni_koblenz.jgralab.greql2.schema.Greql)
 	 */
 	@Override
 	public boolean optimize(GreqlQuery query) throws OptimizerException {
 		anOptimizationWasDone = false;
 
-		computeHashAndProcess(query.getQueryGraph().getFirstGreql2Expression());
+		computeHashAndProcess(query.getQueryGraph().getFirstGreqlExpression());
 
 		return anOptimizationWasDone;
 	}
 
 	/**
-	 * Compute the hash value of the given {@link Greql2Vertex}. If another
-	 * {@link Greql2Vertex} with the same hash value was processed before then
+	 * Compute the hash value of the given {@link GreqlVertex}. If another
+	 * {@link GreqlVertex} with the same hash value was processed before then
 	 * merge them (see
-	 * {@link CommonSubgraphOptimizer#mergeVertices(Greql2Vertex, Greql2Vertex)}
+	 * {@link CommonSubgraphOptimizer#mergeVertices(GreqlVertex, GreqlVertex)}
 	 * ).
 	 * 
 	 * @param vertex
-	 *            the {@link Greql2Vertex} for which to compute the hash value
+	 *            the {@link GreqlVertex} for which to compute the hash value
 	 *            and to process
 	 * @return the hash value of the given vertex
 	 */
-	private String computeHashAndProcess(Greql2Vertex vertex) {
+	private String computeHashAndProcess(GreqlVertex vertex) {
 		if (reverseSubgraphMap.containsKey(vertex)) {
 			return "{V" + vertex.getId() + "}";
 		}
@@ -172,20 +172,20 @@ public class CommonSubgraphOptimizer extends OptimizerBase {
 			buf.append("{E:");
 			buf.append(e.getAttributedElementClass().getQualifiedName());
 			buf.append("}");
-			buf.append(computeHashAndProcess((Greql2Vertex) e.getThat()));
+			buf.append(computeHashAndProcess((GreqlVertex) e.getThat()));
 		}
 		buf.append("}");
 
 		String hash = buf.toString();
 
-		Greql2Vertex lowerVertex = vertex;
+		GreqlVertex lowerVertex = vertex;
 
 		if (subgraphMap.containsKey(hash)) {
-			Greql2Vertex higherVertex = subgraphMap.get(hash);
+			GreqlVertex higherVertex = subgraphMap.get(hash);
 			if (lowerVertex.getId() > higherVertex.getId()) {
 				// swap them so that the higher vertex gets merged into the
 				// lower one.
-				Greql2Vertex tmp = lowerVertex;
+				GreqlVertex tmp = lowerVertex;
 				lowerVertex = higherVertex;
 				higherVertex = tmp;
 				// higherVertex will die, so remove it from the map.
@@ -203,13 +203,13 @@ public class CommonSubgraphOptimizer extends OptimizerBase {
 
 	/**
 	 * Compute the attribute part of the hash value of the given
-	 * {@link Greql2Vertex}.
+	 * {@link GreqlVertex}.
 	 * 
 	 * @param vertex
-	 *            a {@link Greql2Vertex}
+	 *            a {@link GreqlVertex}
 	 * @return the attribute part of <code>vertex</code>'s hash value
 	 */
-	private String computeAttributeHash(Greql2Vertex vertex) {
+	private String computeAttributeHash(GreqlVertex vertex) {
 		StringBuilder buf = new StringBuilder();
 		buf.append("(");
 		for (Attribute attr : vertex.getAttributedElementClass()
@@ -229,31 +229,31 @@ public class CommonSubgraphOptimizer extends OptimizerBase {
 	}
 
 	/**
-	 * Merge the given two vertices (see {@link Greql2Vertex}).
+	 * Merge the given two vertices (see {@link GreqlVertex}).
 	 * 
-	 * The second {@link Greql2Vertex} will be merged into first
-	 * {@link Greql2Vertex}. This is done in three steps:
+	 * The second {@link GreqlVertex} will be merged into first
+	 * {@link GreqlVertex}. This is done in three steps:
 	 * 
 	 * <nl>
 	 * <li>The sourcePosition {@link Attribute}s of the
-	 * {@link Greql2Aggregation}s in the subgraph below the second
-	 * {@link Greql2Vertex} are merged into the corresponding
-	 * {@link Greql2Aggregation}s in the subgraph of the first
-	 * {@link Greql2Vertex}.</li>
+	 * {@link GreqlAggregation}s in the subgraph below the second
+	 * {@link GreqlVertex} are merged into the corresponding
+	 * {@link GreqlAggregation}s in the subgraph of the first
+	 * {@link GreqlVertex}.</li>
 	 * <li>The source of {@link Edge}s that start in the second
-	 * {@link Greql2Vertex} is set to the first {@link Greql2Vertex}.</li>
-	 * <li>Then the second {@link Greql2Vertex} is deleted.</li>
+	 * {@link GreqlVertex} is set to the first {@link GreqlVertex}.</li>
+	 * <li>Then the second {@link GreqlVertex} is deleted.</li>
 	 * </nl>
 	 * 
 	 * Note that vertices of type {@link PathDescription} are not merged.
 	 * 
 	 * @param lowerVertex
-	 *            a {@link Greql2Vertex}
+	 *            a {@link GreqlVertex}
 	 * @param higherVertex
-	 *            another {@link Greql2Vertex}
+	 *            another {@link GreqlVertex}
 	 */
-	private void mergeVertices(Greql2Vertex lowerVertex,
-			Greql2Vertex higherVertex) {
+	private void mergeVertices(GreqlVertex lowerVertex,
+			GreqlVertex higherVertex) {
 		if (!(lowerVertex instanceof PathDescription)) {
 			anOptimizationWasDone = true;
 
@@ -272,28 +272,28 @@ public class CommonSubgraphOptimizer extends OptimizerBase {
 	}
 
 	/**
-	 * The sourcePosition {@link Attribute}s of the {@link Greql2Aggregation}s
-	 * in the subgraph below the {@link Greql2Vertex} <code>higherVertex</code>
-	 * are merged into the corresponding {@link Greql2Aggregation}s in the
+	 * The sourcePosition {@link Attribute}s of the {@link GreqlAggregation}s
+	 * in the subgraph below the {@link GreqlVertex} <code>higherVertex</code>
+	 * are merged into the corresponding {@link GreqlAggregation}s in the
 	 * subgraph of <code>lowerVertex</code>.
 	 * 
 	 * @param lowerVertex
-	 *            a {@link Greql2Vertex}
+	 *            a {@link GreqlVertex}
 	 * @param higherVertex
-	 *            another {@link Greql2Vertex}
+	 *            another {@link GreqlVertex}
 	 */
-	private void mergeSourcePositionsBelow(Greql2Vertex lowerVertex,
-			Greql2Vertex higherVertex) {
-		Greql2Aggregation gal = lowerVertex
-				.getFirstGreql2AggregationIncidence(EdgeDirection.IN);
-		Greql2Aggregation gah = higherVertex
-				.getFirstGreql2AggregationIncidence(EdgeDirection.IN);
+	private void mergeSourcePositionsBelow(GreqlVertex lowerVertex,
+			GreqlVertex higherVertex) {
+		GreqlAggregation gal = lowerVertex
+				.getFirstGreqlAggregationIncidence(EdgeDirection.IN);
+		GreqlAggregation gah = higherVertex
+				.getFirstGreqlAggregationIncidence(EdgeDirection.IN);
 		while ((gal != null) && (gah != null)) {
 			OptimizerUtility.mergeSourcePositions(gah, gal);
 			mergeSourcePositionsBelow( gal.getAlpha(),
 					gah.getAlpha());
-			gal = gal.getNextGreql2AggregationIncidence(EdgeDirection.IN);
-			gah = gah.getNextGreql2AggregationIncidence(EdgeDirection.IN);
+			gal = gal.getNextGreqlAggregationIncidence(EdgeDirection.IN);
+			gah = gah.getNextGreqlAggregationIncidence(EdgeDirection.IN);
 		}
 	}
 }

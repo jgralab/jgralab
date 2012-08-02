@@ -32,7 +32,7 @@
  * non-source form of such a combination shall include the source code for
  * the parts of JGraLab used as well as that of the covered work.
  */
-package de.uni_koblenz.jgralab.utilities.tg2dot.greql2.funlib;
+package de.uni_koblenz.jgralab.utilities.tg2dot.greql.funlib;
 
 import org.pcollections.PCollection;
 

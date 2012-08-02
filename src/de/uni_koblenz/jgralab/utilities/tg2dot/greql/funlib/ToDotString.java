@@ -32,8 +32,32 @@
  * non-source form of such a combination shall include the source code for
  * the parts of JGraLab used as well as that of the covered work.
  */
-/**
- * TODO [documentation] write documentation for this package.
- */
+package de.uni_koblenz.jgralab.utilities.tg2dot.greql.funlib;
 
-package de.uni_koblenz.jgralab.utilities.tg2dot.greql2;
+import de.uni_koblenz.jgralab.greql.funlib.Description;
+import de.uni_koblenz.jgralab.greql.funlib.Function;
+
+public class ToDotString extends Function {
+
+	@Description(params = "arg", description = "Returns a converted DOT string representation of the given string.",
+			categories = Category.STRINGS)
+	public ToDotString() {
+		super(2, 1, 1.0);
+	}
+
+	public String evaluate(Object arg) {
+		String string = arg.toString();
+		if (arg instanceof String) {
+			string = "\"" + string + "\"";
+		}
+		string = string.replace("\\", "\\\\");
+		string = string.replace("|", "\\|");
+		string = string.replace("{", "\\{");
+		string = string.replace("}", "\\}");
+		string = string.replace("\n", "\\n");
+		string = string.replace("\"", "\\\"");
+		string = string.replace("<", "\\<");
+		string = string.replace(">", "\\>");
+		return string;
+	}
+}

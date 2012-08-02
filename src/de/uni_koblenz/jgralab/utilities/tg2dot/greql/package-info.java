@@ -32,30 +32,8 @@
  * non-source form of such a combination shall include the source code for
  * the parts of JGraLab used as well as that of the covered work.
  */
+/**
+ * TODO [documentation] write documentation for this package.
+ */
 
-package de.uni_koblenz.jgralab.utilities.tg2dot.greql2.funlib;
-
-import de.uni_koblenz.jgralab.Edge;
-import de.uni_koblenz.jgralab.greql.funlib.Description;
-import de.uni_koblenz.jgralab.greql.funlib.Function;
-import de.uni_koblenz.jgralab.schema.EdgeClass;
-
-public class OmegaRolename extends Function {
-	public OmegaRolename() {
-		super();
-	}
-
-	@Description(params = "e", description = "Returns the omega rolename of the given edge or null otherwise.",
-			categories = Category.SCHEMA_ACCESS)
-	public String evaluate(Edge e) {
-		return evaluate((EdgeClass) e.getAttributedElementClass());
-	}
-
-	@Description(params = "ec", description = "Returns the omega rolename of the given edge or null otherwise.",
-			categories = Category.SCHEMA_ACCESS)
-	public String evaluate(EdgeClass ec) {
-		String rolename = ec.getTo().getRolename();
-		rolename = rolename == null ? "" : rolename;
-		return rolename;
-	}
-}
+package de.uni_koblenz.jgralab.utilities.tg2dot.greql;

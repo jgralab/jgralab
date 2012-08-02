@@ -37,7 +37,7 @@ package de.uni_koblenz.jgralab.greql.exception;
 
 import java.util.List;
 
-import de.uni_koblenz.jgralab.greql.schema.Greql2Vertex;
+import de.uni_koblenz.jgralab.greql.schema.GreqlVertex;
 import de.uni_koblenz.jgralab.greql.schema.SourcePosition;
 
 /**
@@ -51,14 +51,14 @@ public class WrongResultTypeException extends QuerySourceException {
 
 	static final long serialVersionUID = -1234565;
 
-	public WrongResultTypeException(Greql2Vertex vertex, String expectedType,
+	public WrongResultTypeException(GreqlVertex vertex, String expectedType,
 			String realType, List<SourcePosition> sourcePositions,
 			Exception cause) {
 		super("Wrong result type: got " + realType + " but expected "
 				+ expectedType + "!", vertex, sourcePositions, cause);
 	}
 
-	public WrongResultTypeException(Greql2Vertex vertex, String expectedType,
+	public WrongResultTypeException(GreqlVertex vertex, String expectedType,
 			String realType, List<SourcePosition> sourcePositions) {
 		super("Wrong result type: got " + realType + " but expected "
 				+ expectedType + "!", vertex, sourcePositions);

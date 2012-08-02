@@ -52,8 +52,8 @@ import de.uni_koblenz.jgralab.greql.exception.OptimizerException;
 import de.uni_koblenz.jgralab.greql.optimizer.condexp.Formula;
 import de.uni_koblenz.jgralab.greql.schema.BoolLiteral;
 import de.uni_koblenz.jgralab.greql.schema.FunctionApplication;
-import de.uni_koblenz.jgralab.greql.schema.Greql2Expression;
-import de.uni_koblenz.jgralab.greql.schema.Greql2Vertex;
+import de.uni_koblenz.jgralab.greql.schema.GreqlExpression;
+import de.uni_koblenz.jgralab.greql.schema.GreqlVertex;
 import de.uni_koblenz.jgralab.greql.schema.IsConstraintOf;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 
@@ -70,12 +70,12 @@ public class ConditionalExpressionOptimizer extends OptimizerBase {
 					.getName());
 
 	private static class VertexEdgeClassTuple {
-		public VertexEdgeClassTuple(Greql2Vertex v, EdgeClass ec) {
+		public VertexEdgeClassTuple(GreqlVertex v, EdgeClass ec) {
 			this.v = v;
 			this.ec = ec;
 		}
 
-		Greql2Vertex v;
+		GreqlVertex v;
 		EdgeClass ec;
 	}
 
@@ -100,7 +100,7 @@ public class ConditionalExpressionOptimizer extends OptimizerBase {
 	 * @see
 	 * de.uni_koblenz.jgralab.greql2.optimizer.Optimizer#optimize(de.uni_koblenz
 	 * .jgralab.greql2.evaluator.GreqlEvaluator,
-	 * de.uni_koblenz.jgralab.greql2.schema.Greql2)
+	 * de.uni_koblenz.jgralab.greql2.schema.Greql)
 	 */
 	@Override
 	public boolean optimize(GreqlQuery query) throws OptimizerException {
@@ -109,7 +109,7 @@ public class ConditionalExpressionOptimizer extends OptimizerBase {
 		// + GreqlSerializer.serializeGraph(syntaxgraph));
 
 		FunctionApplication top = findAndOrNotFunApp(query.getQueryGraph()
-				.getFirstGreql2Expression());
+				.getFirstGreqlExpression());
 		while (top != null) {
 			LinkedList<VertexEdgeClassTuple> relinkables = rememberConnections(top);
 			Formula formula = Formula.createFormulaFromExpression(top, query);
@@ -120,13 +120,13 @@ public class ConditionalExpressionOptimizer extends OptimizerBase {
 				logger.fine(optimizerHeaderString()
 						+ "Transformed constraint\n    " + formula
 						+ "\nto\n    " + optimizedFormula + ".");
-				Greql2Vertex newTop = optimizedFormula.toExpression();
+				GreqlVertex newTop = optimizedFormula.toExpression();
 				for (VertexEdgeClassTuple vect : relinkables) {
 					query.getQueryGraph().createEdge(vect.ec, newTop, vect.v);
 				}
 				top.delete();
 				top = findAndOrNotFunApp(query.getQueryGraph()
-						.getFirstGreql2Expression());
+						.getFirstGreqlExpression());
 			} else {
 				top = null;
 			}
@@ -162,17 +162,17 @@ public class ConditionalExpressionOptimizer extends OptimizerBase {
 		LinkedList<VertexEdgeClassTuple> list = new LinkedList<VertexEdgeClassTuple>();
 		assert top.isValid();
 		for (Edge e : top.incidences(EdgeDirection.OUT)) {
-			list.add(new VertexEdgeClassTuple((Greql2Vertex) e.getOmega(), e
+			list.add(new VertexEdgeClassTuple((GreqlVertex) e.getOmega(), e
 					.getAttributedElementClass()));
 		}
 		return list;
 	}
 
-	private FunctionApplication findAndOrNotFunApp(Greql2Expression g) {
-		Queue<Greql2Vertex> queue = new LinkedList<Greql2Vertex>();
+	private FunctionApplication findAndOrNotFunApp(GreqlExpression g) {
+		Queue<GreqlVertex> queue = new LinkedList<GreqlVertex>();
 		queue.add(g);
 		while (!queue.isEmpty()) {
-			Greql2Vertex v = queue.poll();
+			GreqlVertex v = queue.poll();
 			if (v instanceof FunctionApplication) {
 				FunctionApplication f = (FunctionApplication) v;
 				if (OptimizerUtility.isAnd(f) || OptimizerUtility.isOr(f)
@@ -181,7 +181,7 @@ public class ConditionalExpressionOptimizer extends OptimizerBase {
 				}
 			}
 			for (Edge e : v.incidences(EdgeDirection.IN)) {
-				queue.offer((Greql2Vertex) e.getAlpha());
+				queue.offer((GreqlVertex) e.getAlpha());
 			}
 		}
 		return null;

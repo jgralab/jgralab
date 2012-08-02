@@ -48,11 +48,11 @@ import de.uni_koblenz.jgralab.greql.exception.OptimizerException;
 import de.uni_koblenz.jgralab.greql.schema.Expression;
 import de.uni_koblenz.jgralab.greql.schema.FunctionApplication;
 import de.uni_koblenz.jgralab.greql.schema.FunctionId;
-import de.uni_koblenz.jgralab.greql.schema.Greql2Graph;
+import de.uni_koblenz.jgralab.greql.schema.GreqlGraph;
 import de.uni_koblenz.jgralab.greql.schema.IsArgumentOf;
 
 /**
- * Replaces all {@link Xor} {@link FunctionApplication}s in the {@link Greql2}
+ * Replaces all {@link Xor} {@link FunctionApplication}s in the {@link Greql}
  * graph according the rule
  * <code>a xor b = (a and not b) or (not a and b)</code>.
  * 
@@ -86,11 +86,11 @@ public class TransformXorFunctionApplicationOptimizer extends OptimizerBase {
 	 * @see
 	 * de.uni_koblenz.jgralab.greql2.optimizer.Optimizer#optimize(de.uni_koblenz
 	 * .jgralab.greql2.evaluator.GreqlEvaluator,
-	 * de.uni_koblenz.jgralab.greql2.schema.Greql2)
+	 * de.uni_koblenz.jgralab.greql2.schema.Greql)
 	 */
 	@Override
 	public boolean optimize(GreqlQuery query) throws OptimizerException {
-		Greql2Graph syntaxgraph = query.getQueryGraph();
+		GreqlGraph syntaxgraph = query.getQueryGraph();
 
 		ArrayList<FunctionApplication> xors = new ArrayList<FunctionApplication>();
 		for (FunctionApplication funApp : syntaxgraph

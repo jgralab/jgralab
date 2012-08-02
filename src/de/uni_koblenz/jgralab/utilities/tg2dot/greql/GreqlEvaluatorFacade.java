@@ -32,7 +32,7 @@
  * non-source form of such a combination shall include the source code for
  * the parts of JGraLab used as well as that of the covered work.
  */
-package de.uni_koblenz.jgralab.utilities.tg2dot.greql2;
+package de.uni_koblenz.jgralab.utilities.tg2dot.greql;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -54,16 +54,16 @@ import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.Schema;
 import de.uni_koblenz.jgralab.schema.VertexClass;
-import de.uni_koblenz.jgralab.utilities.tg2dot.greql2.funlib.AbbreviateString;
-import de.uni_koblenz.jgralab.utilities.tg2dot.greql2.funlib.AlphaIncidenceNumber;
-import de.uni_koblenz.jgralab.utilities.tg2dot.greql2.funlib.AlphaRolename;
-import de.uni_koblenz.jgralab.utilities.tg2dot.greql2.funlib.AttributeType;
-import de.uni_koblenz.jgralab.utilities.tg2dot.greql2.funlib.FormatString;
-import de.uni_koblenz.jgralab.utilities.tg2dot.greql2.funlib.JoinWithCollection;
-import de.uni_koblenz.jgralab.utilities.tg2dot.greql2.funlib.OmegaIncidenceNumber;
-import de.uni_koblenz.jgralab.utilities.tg2dot.greql2.funlib.OmegaRolename;
-import de.uni_koblenz.jgralab.utilities.tg2dot.greql2.funlib.ShortenString;
-import de.uni_koblenz.jgralab.utilities.tg2dot.greql2.funlib.ToDotString;
+import de.uni_koblenz.jgralab.utilities.tg2dot.greql.funlib.AbbreviateString;
+import de.uni_koblenz.jgralab.utilities.tg2dot.greql.funlib.AlphaIncidenceNumber;
+import de.uni_koblenz.jgralab.utilities.tg2dot.greql.funlib.AlphaRolename;
+import de.uni_koblenz.jgralab.utilities.tg2dot.greql.funlib.AttributeType;
+import de.uni_koblenz.jgralab.utilities.tg2dot.greql.funlib.FormatString;
+import de.uni_koblenz.jgralab.utilities.tg2dot.greql.funlib.JoinWithCollection;
+import de.uni_koblenz.jgralab.utilities.tg2dot.greql.funlib.OmegaIncidenceNumber;
+import de.uni_koblenz.jgralab.utilities.tg2dot.greql.funlib.OmegaRolename;
+import de.uni_koblenz.jgralab.utilities.tg2dot.greql.funlib.ShortenString;
+import de.uni_koblenz.jgralab.utilities.tg2dot.greql.funlib.ToDotString;
 
 /**
  * The {@link GreqlEvaluatorFacade} is just a facade for a

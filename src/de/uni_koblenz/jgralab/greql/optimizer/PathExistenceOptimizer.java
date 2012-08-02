@@ -53,7 +53,7 @@ import de.uni_koblenz.jgralab.greql.schema.Expression;
 import de.uni_koblenz.jgralab.greql.schema.ForwardVertexSet;
 import de.uni_koblenz.jgralab.greql.schema.FunctionApplication;
 import de.uni_koblenz.jgralab.greql.schema.FunctionId;
-import de.uni_koblenz.jgralab.greql.schema.Greql2Graph;
+import de.uni_koblenz.jgralab.greql.schema.GreqlGraph;
 import de.uni_koblenz.jgralab.greql.schema.PathExistence;
 import de.uni_koblenz.jgralab.greql.schema.PathExpression;
 import de.uni_koblenz.jgralab.greql.schema.Variable;
@@ -71,7 +71,7 @@ public class PathExistenceOptimizer extends OptimizerBase {
 	private static Logger logger = JGraLab
 			.getLogger(PathExistenceOptimizer.class.getPackage().getName());
 
-	private Greql2Graph syntaxgraph;
+	private GreqlGraph syntaxgraph;
 
 	private boolean anOptimizationWasDone = false;
 
@@ -96,11 +96,11 @@ public class PathExistenceOptimizer extends OptimizerBase {
 	 * @see
 	 * de.uni_koblenz.jgralab.greql2.optimizer.Optimizer#optimize(de.uni_koblenz
 	 * .jgralab.greql2.evaluator.GreqlEvaluator,
-	 * de.uni_koblenz.jgralab.greql2.schema.Greql2)
+	 * de.uni_koblenz.jgralab.greql2.schema.Greql)
 	 */
 	@Override
 	public boolean optimize(GreqlQuery query) throws OptimizerException {
-		Greql2Graph syntaxgraph = query.getQueryGraph();
+		GreqlGraph syntaxgraph = query.getQueryGraph();
 
 		if (syntaxgraph.getFirstVertex(PathExistence.VC) == null) {
 			return false;
@@ -115,7 +115,7 @@ public class PathExistenceOptimizer extends OptimizerBase {
 
 		// Tg2Dot.printGraphAsDot(syntaxgraph, true, "/home/horn/peo.dot");
 		// System.out.println("Afted PEO:");
-		// System.out.println(((SerializableGreql2) syntaxgraph).serialize());
+		// System.out.println(((SerializableGreql) syntaxgraph).serialize());
 
 		return anOptimizationWasDone;
 	}
@@ -273,11 +273,11 @@ public class PathExistenceOptimizer extends OptimizerBase {
 	}
 
 	/**
-	 * Collect all {@link PathExistence} vertices in the current {@link Greql2}
+	 * Collect all {@link PathExistence} vertices in the current {@link Greql}
 	 * graph.
 	 * 
 	 * @return a {@link Set} of all {@link PathExistence} vertices of the
-	 *         current {@link Greql2} graph.
+	 *         current {@link Greql} graph.
 	 */
 	private Set<PathExistence> collectPathExistenceVertices() {
 		HashSet<PathExistence> pathExistenceVertices = new HashSet<PathExistence>();

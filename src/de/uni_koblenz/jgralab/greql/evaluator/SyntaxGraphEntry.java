@@ -40,9 +40,9 @@ import java.util.logging.Logger;
 
 import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.greql.optimizer.Optimizer;
-import de.uni_koblenz.jgralab.greql.schema.Greql2Expression;
-import de.uni_koblenz.jgralab.greql.schema.Greql2Graph;
-import de.uni_koblenz.jgralab.greql.schema.Greql2Schema;
+import de.uni_koblenz.jgralab.greql.schema.GreqlExpression;
+import de.uni_koblenz.jgralab.greql.schema.GreqlGraph;
+import de.uni_koblenz.jgralab.greql.schema.GreqlSchema;
 
 /**
  * This class is one entry in the Map from Query+CostModel+Optimizer to
@@ -53,12 +53,12 @@ public class SyntaxGraphEntry {
 	/**
 	 * the SyntaxGraph this entry represents
 	 */
-	private final Greql2Graph syntaxGraph;
+	private final GreqlGraph syntaxGraph;
 
 	/**
 	 * @return the SyntaxGraph this entry represents
 	 */
-	public Greql2Graph getSyntaxGraph() {
+	public GreqlGraph getSyntaxGraph() {
 		return syntaxGraph;
 	}
 
@@ -144,13 +144,13 @@ public class SyntaxGraphEntry {
 	 * Creates a new SyntaxGraphEntry
 	 * 
 	 * @param graph
-	 *            the Greql2 Syntaxgraph to store in this entry
+	 *            the Greql Syntaxgraph to store in this entry
 	 * @param optimizer
 	 *            the Optimizer that was used to optimize this syntaxgraph
 	 * @param locked
 	 *            specifies, wether the graph should be locked or not
 	 */
-	public SyntaxGraphEntry(String queryText, Greql2Graph graph,
+	public SyntaxGraphEntry(String queryText, GreqlGraph graph,
 			Optimizer optimizer, boolean locked) {
 		this.queryText = queryText;
 		syntaxGraph = graph;
@@ -179,9 +179,9 @@ public class SyntaxGraphEntry {
 	 *             contain a constructor with zero parameters.
 	 */
 	public SyntaxGraphEntry(File fileName) throws GraphIOException {
-		syntaxGraph = Greql2Schema.instance().loadGreql2Graph(
+		syntaxGraph = GreqlSchema.instance().loadGreqlGraph(
 				fileName.getPath());
-		Greql2Expression g2e = syntaxGraph.getFirstGreql2Expression();
+		GreqlExpression g2e = syntaxGraph.getFirstGreqlExpression();
 		try {
 			queryText = (String) g2e.getAttribute("_queryText");
 			String optimizerClass = (String) g2e.getAttribute("_optimizer");
@@ -213,7 +213,7 @@ public class SyntaxGraphEntry {
 		String optimizerClass = "";
 		String optimizerClassSimple = "";
 
-		Greql2Expression g2e = syntaxGraph.getFirstGreql2Expression();
+		GreqlExpression g2e = syntaxGraph.getFirstGreqlExpression();
 		g2e.set_queryText(queryText);
 
 		if (optimizer != null) {

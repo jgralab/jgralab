@@ -13,7 +13,6 @@ import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql.GreqlQuery;
 import de.uni_koblenz.jgralab.greql.executable.GreqlCodeGenerator;
-import de.uni_koblenz.jgralab.greql.schema.Greql2Graph;
 import de.uni_koblenz.jgralab.greql.types.Tuple;
 import de.uni_koblenz.jgralabtest.schemas.greqltestschema.junctions.Airport;
 import de.uni_koblenz.jgralabtest.schemas.greqltestschema.localities.County;
@@ -50,13 +49,13 @@ public class ExecutableGreqlTest extends GenericTest {
 	@Test
 	public void testGenerateListRangeConstruction() {
 		String query = "list(1..1000)";
-		Greql2Graph queryGraph = GreqlQuery.createQuery(query).getQueryGraph();
+		GreqlQuery.createQuery(query).getQueryGraph();
 	}
 
 	@Test
 	public void testGenerateMapComprehension() {
 		String query = "using X,Y: from x:X, y:Y reportMap y->x end";
-		Greql2Graph queryGraph = GreqlQuery.createQuery(query).getQueryGraph();
+		GreqlQuery.createQuery(query).getQueryGraph();
 	}
 
 	@Test
@@ -64,7 +63,7 @@ public class ExecutableGreqlTest extends GenericTest {
 		// String query =
 		// "using X,Y: from x:X, y:Y with (y % 2 <> 1) and (x % 3 = 0) reportList x*y end";
 		String query = "from v:V{MyVertex} report v end";
-		Greql2Graph queryGraph = GreqlQuery.createQuery(query).getQueryGraph();
+		GreqlQuery.createQuery(query).getQueryGraph();
 	}
 
 	@Test

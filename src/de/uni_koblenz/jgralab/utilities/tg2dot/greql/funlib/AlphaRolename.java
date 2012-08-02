@@ -33,28 +33,31 @@
  * the parts of JGraLab used as well as that of the covered work.
  */
 
-package de.uni_koblenz.jgralab.utilities.tg2dot.greql2.funlib;
+package de.uni_koblenz.jgralab.utilities.tg2dot.greql.funlib;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.greql.funlib.Description;
 import de.uni_koblenz.jgralab.greql.funlib.Function;
+import de.uni_koblenz.jgralab.schema.EdgeClass;
 
-public class AlphaIncidenceNumber extends Function {
+public class AlphaRolename extends Function {
 	
-	@Description(params = "edge", description = "Returns the alpha incidence number of the given edge starting with 1.",
-			categories = Category.GRAPH)
-	public AlphaIncidenceNumber() {
-		super(2, 1, 1.0);
+	public AlphaRolename() {
+		super();
 	}
 
-	public Integer evaluate(Edge edge) {
-		int num = 1;
-		for (Edge incidence : edge.getAlpha().incidences()) {
-			if (incidence == edge) {
-				return num;
-			}
-			num++;
-		}
-		return null;
+	@Description(params = "e", description = "Returns the omega rolename of the given edge or null otherwise.",
+			categories = Category.SCHEMA_ACCESS)
+	public String evaluate(Edge e) {
+		return evaluate((EdgeClass) e.getAttributedElementClass());
 	}
+
+	@Description(params = "ec", description = "Returns the omega rolename of the given edge class or null otherwise.",
+			categories = Category.SCHEMA_ACCESS)
+	public String evaluate(EdgeClass ec) {
+		String rolename = ec.getFrom().getRolename();
+		rolename = rolename == null ? "" : rolename;
+		return rolename;
+	}
+
 }

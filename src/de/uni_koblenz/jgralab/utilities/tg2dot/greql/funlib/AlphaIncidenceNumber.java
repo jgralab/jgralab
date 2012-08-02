@@ -32,31 +32,29 @@
  * non-source form of such a combination shall include the source code for
  * the parts of JGraLab used as well as that of the covered work.
  */
-package de.uni_koblenz.jgralab.utilities.tg2dot.greql2.funlib;
 
-import de.uni_koblenz.jgralab.AttributedElement;
+package de.uni_koblenz.jgralab.utilities.tg2dot.greql.funlib;
+
+import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.greql.funlib.Description;
 import de.uni_koblenz.jgralab.greql.funlib.Function;
-import de.uni_koblenz.jgralab.schema.Attribute;
-import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 
-public class AttributeType extends Function {
-
-	public AttributeType() {
-		super();
+public class AlphaIncidenceNumber extends Function {
+	
+	@Description(params = "edge", description = "Returns the alpha incidence number of the given edge starting with 1.",
+			categories = Category.GRAPH)
+	public AlphaIncidenceNumber() {
+		super(2, 1, 1.0);
 	}
 
-	@Description(params = {"el", "name"}, description = "Returns the domain type name of a given attribute as String.",
-			categories = Category.SCHEMA_ACCESS)
-	public String evaluate(AttributedElement<?, ?> el, String name) {
-		return evaluate(el.getAttributedElementClass(), name);
-	}
-
-	@Description(params = {"aec", "name"}, description = "Returns the domain type name of a given attribute as String.",
-			categories = Category.SCHEMA_ACCESS)
-	public String evaluate(AttributedElementClass<?, ?> aec, String name) {
-		Attribute attribute = aec.getAttribute(name);
-		return attribute != null ? attribute.getDomain().getQualifiedName()
-				: null;
+	public Integer evaluate(Edge edge) {
+		int num = 1;
+		for (Edge incidence : edge.getAlpha().incidences()) {
+			if (incidence == edge) {
+				return num;
+			}
+			num++;
+		}
+		return null;
 	}
 }

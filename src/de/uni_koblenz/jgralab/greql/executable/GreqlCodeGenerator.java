@@ -54,9 +54,9 @@ import de.uni_koblenz.jgralab.greql.schema.ForwardVertexSet;
 import de.uni_koblenz.jgralab.greql.schema.FunctionApplication;
 import de.uni_koblenz.jgralab.greql.schema.FunctionId;
 import de.uni_koblenz.jgralab.greql.schema.GReQLDirection;
-import de.uni_koblenz.jgralab.greql.schema.Greql2Expression;
-import de.uni_koblenz.jgralab.greql.schema.Greql2Graph;
-import de.uni_koblenz.jgralab.greql.schema.Greql2Vertex;
+import de.uni_koblenz.jgralab.greql.schema.GreqlExpression;
+import de.uni_koblenz.jgralab.greql.schema.GreqlGraph;
+import de.uni_koblenz.jgralab.greql.schema.GreqlVertex;
 import de.uni_koblenz.jgralab.greql.schema.Identifier;
 import de.uni_koblenz.jgralab.greql.schema.IntLiteral;
 import de.uni_koblenz.jgralab.greql.schema.IsArgumentOf;
@@ -108,7 +108,7 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 
 	public static final String codeGeneratorFileManagerName = "GeneratedQueries";
 
-	private final Greql2Graph graph;
+	private final GreqlGraph graph;
 
 	private final String classname;
 
@@ -236,7 +236,7 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 		code.add(staticFieldSnippet);
 		code.add(staticInitializerSnippet);
 		code.add(classFieldSnippet);
-		Greql2Expression rootExpr = graph.getFirstGreql2Expression();
+		GreqlExpression rootExpr = graph.getFirstGreqlExpression();
 		addClassField("Graph", "datagraph", "null");
 		addClassField("GreqlEnvironment", "boundVariables", "null");
 		CodeSnippet methodExecute = new CodeSnippet();
@@ -244,7 +244,7 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 				.add("public synchronized Object execute(de.uni_koblenz.jgralab.Graph graph, GreqlEnvironment boundVariables) {");
 		methodExecute.add("\tthis.datagraph = graph;");
 		methodExecute.add("\tthis.boundVariables = boundVariables;");
-		methodExecute.add("\treturn " + createCodeForGreql2Expression(rootExpr)
+		methodExecute.add("\treturn " + createCodeForGreqlExpression(rootExpr)
 				+ ";");
 		methodExecute.add("}");
 		code.add(methodExecute);
@@ -322,7 +322,7 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 		return appendable.toString();
 	}
 
-	private String createCodeForGreql2Expression(Greql2Expression rootExpr) {
+	private String createCodeForGreqlExpression(GreqlExpression rootExpr) {
 		CodeList list = new CodeList();
 		scope.blockBegin();
 		// create code for bound variables
@@ -1040,7 +1040,7 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 	}
 
 	private String createCodeForForwarOrBackwardVertexSet(DFA dfa,
-			Expression startElementExpr, Greql2Vertex syntaxGraphVertex) {
+			Expression startElementExpr, GreqlVertex syntaxGraphVertex) {
 		CodeList list = new CodeList();
 		addImports("org.pcollections.PSet");
 		addImports("java.util.HashSet");
@@ -1168,7 +1168,7 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 	}
 
 	private String createCodeForPathSystem(DFA dfa,
-			Expression startElementExpr, Greql2Vertex syntaxGraphVertex) {
+			Expression startElementExpr, GreqlVertex syntaxGraphVertex) {
 		CodeList list = new CodeList();
 		addImports("de.uni_koblenz.jgralab.*");
 		addImports("de.uni_koblenz.jgralab.greql.executable.ExecutablePathSystemHelper");
@@ -1571,7 +1571,7 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 	 *            variables this expression depends on have changed
 	 * @return
 	 */
-	private String createMethod(CodeList methodBody, Greql2Vertex vertex) {
+	private String createMethod(CodeList methodBody, GreqlVertex vertex) {
 		String comment = "//" + GreqlSerializer.serializeVertex(vertex);
 		String methodName = "evaluationMethod_" + vertex.getId();
 		String uniqueId = Integer.toString(vertex.getId());

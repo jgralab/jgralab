@@ -78,7 +78,7 @@ public class FunctionApplicationEvaluator extends
 	private FunctionInfo fi = null;
 
 	/**
-	 * Returns the name of the Greql2Function
+	 * Returns the name of the GreqlFunction
 	 */
 	public String getFunctionName() {
 		if (functionName == null) {

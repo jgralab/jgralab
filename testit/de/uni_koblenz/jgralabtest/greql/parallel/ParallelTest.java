@@ -31,19 +31,16 @@ public class ParallelTest {
 	public void test() {
 		pge = new ParallelGreqlEvaluator();
 		dependencyGraph = pge.getDependencyGraph();
-		Vertex v1 = pge.createQueryVertex("using xo: xo + 20 store as hv");
-		Vertex v2 = pge.createQueryVertex("using vk: vk + 78 store as qf");
-		Vertex v3 = pge.createQueryVertex("96 store as vk");
-		Vertex v4 = pge.createQueryVertex("using xo: xo + 76 store as ae");
-		Vertex v5 = pge
-				.createQueryVertex("using ae, xo: ae + xo + 44 store as vu");
-		Vertex v6 = pge.createQueryVertex("using vk: vk + 48 store as erg1");
-		Vertex v7 = pge
-				.createQueryVertex("using ya, ae, vu: ya + ae + vu + 4 store as erg3");
-		Vertex v8 = pge.createQueryVertex("using xo: xo + 24 store as ya");
-		Vertex v9 = pge
-				.createQueryVertex("using xo, hv: xo + hv + 38 store as erg2");
-		Vertex v10 = pge.createQueryVertex("using vk: vk + 63 store as xo");
+		pge.createQueryVertex("using xo: xo + 20 store as hv");
+		pge.createQueryVertex("using vk: vk + 78 store as qf");
+		pge.createQueryVertex("96 store as vk");
+		pge.createQueryVertex("using xo: xo + 76 store as ae");
+		pge.createQueryVertex("using ae, xo: ae + xo + 44 store as vu");
+		pge.createQueryVertex("using vk: vk + 48 store as erg1");
+		pge.createQueryVertex("using ya, ae, vu: ya + ae + vu + 4 store as erg3");
+		pge.createQueryVertex("using xo: xo + 24 store as ya");
+		pge.createQueryVertex("using xo, hv: xo + hv + 38 store as erg2");
+		pge.createQueryVertex("using vk: vk + 63 store as xo");
 		pge.calculateDependencies();
 	}
 

@@ -36,7 +36,7 @@ package de.uni_koblenz.jgralab.greql.evaluator;
 
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.greql.evaluator.fa.FiniteAutomaton;
-import de.uni_koblenz.jgralab.greql.schema.Greql2Vertex;
+import de.uni_koblenz.jgralab.greql.schema.GreqlVertex;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.Schema;
 
@@ -46,11 +46,11 @@ public interface InternalGreqlEvaluator {
 
 	public Object getVariable(String varName);
 
-	public Object setLocalEvaluationResult(Greql2Vertex vertex, Object value);
+	public Object setLocalEvaluationResult(GreqlVertex vertex, Object value);
 
-	public Object getLocalEvaluationResult(Greql2Vertex vertex);
+	public Object getLocalEvaluationResult(GreqlVertex vertex);
 
-	public Object removeLocalEvaluationResult(Greql2Vertex vertex);
+	public Object removeLocalEvaluationResult(GreqlVertex vertex);
 
 	public Graph getDataGraph();
 
@@ -68,8 +68,8 @@ public interface InternalGreqlEvaluator {
 
 	public void setDatagraphSchema(Schema datagraphSchema);
 
-	public FiniteAutomaton setLocalAutomaton(Greql2Vertex vertex,
+	public FiniteAutomaton setLocalAutomaton(GreqlVertex vertex,
 			FiniteAutomaton value);
 
-	public FiniteAutomaton getLocalAutomaton(Greql2Vertex vertex);
+	public FiniteAutomaton getLocalAutomaton(GreqlVertex vertex);
 }

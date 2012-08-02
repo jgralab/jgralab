@@ -49,7 +49,7 @@ import de.uni_koblenz.jgralab.greql.schema.Declaration;
 import de.uni_koblenz.jgralab.greql.schema.Expression;
 import de.uni_koblenz.jgralab.greql.schema.FunctionApplication;
 import de.uni_koblenz.jgralab.greql.schema.FunctionId;
-import de.uni_koblenz.jgralab.greql.schema.Greql2Graph;
+import de.uni_koblenz.jgralab.greql.schema.GreqlGraph;
 import de.uni_koblenz.jgralab.greql.schema.IsConstraintOf;
 
 /**
@@ -86,11 +86,11 @@ public class MergeConstraintsOptimizer extends OptimizerBase {
 	 * @see
 	 * de.uni_koblenz.jgralab.greql2.optimizer.Optimizer#optimize(de.uni_koblenz
 	 * .jgralab.greql2.evaluator.GreqlEvaluator,
-	 * de.uni_koblenz.jgralab.greql2.schema.Greql2)
+	 * de.uni_koblenz.jgralab.greql2.schema.Greql)
 	 */
 	@Override
 	public boolean optimize(GreqlQuery query) throws OptimizerException {
-		Greql2Graph syntaxgraph = query.getQueryGraph();
+		GreqlGraph syntaxgraph = query.getQueryGraph();
 
 		ArrayList<Declaration> declarations = new ArrayList<Declaration>();
 		for (Declaration decl : syntaxgraph.getDeclarationVertices()) {
@@ -135,7 +135,7 @@ public class MergeConstraintsOptimizer extends OptimizerBase {
 	 * @return a conjunction of all constraints
 	 */
 	public Expression createConjunction(List<IsConstraintOf> constraintEdges,
-			Greql2Graph syntaxgraph) {
+			GreqlGraph syntaxgraph) {
 		if (constraintEdges.size() == 1) {
 			return constraintEdges.get(0).getAlpha();
 		}

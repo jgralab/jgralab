@@ -51,9 +51,9 @@ import de.uni_koblenz.jgralab.greql.OptimizerInfo;
 import de.uni_koblenz.jgralab.greql.evaluator.GraphSize;
 import de.uni_koblenz.jgralab.greql.schema.FunctionApplication;
 import de.uni_koblenz.jgralab.greql.schema.FunctionId;
-import de.uni_koblenz.jgralab.greql.schema.Greql2Aggregation;
-import de.uni_koblenz.jgralab.greql.schema.Greql2Expression;
-import de.uni_koblenz.jgralab.greql.schema.Greql2Graph;
+import de.uni_koblenz.jgralab.greql.schema.GreqlAggregation;
+import de.uni_koblenz.jgralab.greql.schema.GreqlExpression;
+import de.uni_koblenz.jgralab.greql.schema.GreqlGraph;
 import de.uni_koblenz.jgralab.greql.schema.IsDeclaredVarOf;
 import de.uni_koblenz.jgralab.greql.schema.SimpleDeclaration;
 import de.uni_koblenz.jgralab.greql.schema.SourcePosition;
@@ -68,10 +68,10 @@ import de.uni_koblenz.jgralab.greql.schema.Variable;
  */
 public class OptimizerUtility {
 	/**
-	 * Checks if <code>v1</code> is above <code>v2</code> in the {@link Greql2}
-	 * syntaxgraph. The {@link Greql2Expression} is considered to be above all
+	 * Checks if <code>v1</code> is above <code>v2</code> in the {@link Greql}
+	 * syntaxgraph. The {@link GreqlExpression} is considered to be above all
 	 * other vertices, meaning the root is the top, too. The
-	 * {@link Greql2Aggregation}s in the syntaxgraph point in up-direction.
+	 * {@link GreqlAggregation}s in the syntaxgraph point in up-direction.
 	 * 
 	 * The <code>isAbove</code> relation is reflexive, e.g.
 	 * <code>isAbove(v1, v1)</code> returns <code>true</code>.
@@ -155,12 +155,12 @@ public class OptimizerUtility {
 	 * added again.
 	 * 
 	 * @param from
-	 *            a {@link Greql2Aggregation}
+	 *            a {@link GreqlAggregation}
 	 * @param to
-	 *            another {@link Greql2Aggregation}
+	 *            another {@link GreqlAggregation}
 	 */
-	public static void mergeSourcePositions(Greql2Aggregation from,
-			Greql2Aggregation to) {
+	public static void mergeSourcePositions(GreqlAggregation from,
+			GreqlAggregation to) {
 		PVector<SourcePosition> toSourcePositions = to.get_sourcePositions();
 		if (toSourcePositions == null) {
 			toSourcePositions = JGraLab.vector();
@@ -174,7 +174,7 @@ public class OptimizerUtility {
 	}
 
 	/**
-	 * Find the {@link FunctionId} in the {@link Greql2} graph that has
+	 * Find the {@link FunctionId} in the {@link Greql} graph that has
 	 * <code>name</code> as its name attribute. If no such {@link FunctionId}
 	 * exists it will be created.
 	 * 
@@ -182,14 +182,14 @@ public class OptimizerUtility {
 	 *            the value of the name attribute of the {@link FunctionId} 
 	 *            we're looking for
 	 * @param graph
-	 *            the {@link Greql2Graph} graph where we look for the
+	 *            the {@link GreqlGraph} graph where we look for the
 	 *            {@link FunctionId}
-	 * @return the {@link FunctionId} in the {@link Greql2} graph that has
+	 * @return the {@link FunctionId} in the {@link Greql} graph that has
 	 *         <code>name</code> as its name attribute. If no such
 	 *         {@link FunctionId} exists it will be created.
 	 */
 	public static FunctionId findOrCreateFunctionId(String name,
-			Greql2Graph graph) {
+			GreqlGraph graph) {
 		for (FunctionId fid : graph.getFunctionIdVertices()) {
 			if (fid.get_name().equals(name)) {
 				return fid;
@@ -206,10 +206,10 @@ public class OptimizerUtility {
 	 * <code>null</code> with an empty {@link ArrayList}.
 	 * 
 	 * @param graph
-	 *            the {@link Greql2Graph} syntaxgraph
+	 *            the {@link GreqlGraph} syntaxgraph
 	 */
-	public static void createMissingSourcePositions(Greql2Graph graph) {
-		for (Greql2Aggregation aggr : graph.getGreql2AggregationEdges()) {
+	public static void createMissingSourcePositions(GreqlGraph graph) {
+		for (GreqlAggregation aggr : graph.getGreqlAggregationEdges()) {
 			if (aggr.get_sourcePositions() == null) {
 				PVector<SourcePosition> l = JGraLab.vector();
 				aggr.set_sourcePositions(l);

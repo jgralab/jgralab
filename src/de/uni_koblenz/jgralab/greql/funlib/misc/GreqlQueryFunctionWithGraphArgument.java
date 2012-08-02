@@ -5,7 +5,7 @@ import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.greql.GreqlEnvironment;
 import de.uni_koblenz.jgralab.greql.GreqlQuery;
 import de.uni_koblenz.jgralab.greql.funlib.NeedsGraphArgument;
-import de.uni_koblenz.jgralab.greql.schema.Greql2Expression;
+import de.uni_koblenz.jgralab.greql.schema.GreqlExpression;
 import de.uni_koblenz.jgralab.greql.schema.IsBoundVarOf;
 import de.uni_koblenz.jgralab.greql.schema.Variable;
 
@@ -24,8 +24,8 @@ public class GreqlQueryFunctionWithGraphArgument extends GreqlQueryFunction {
 	@Override
 	protected void initialize(GreqlQuery query) {
 		this.query = query;
-		Greql2Expression greql2Expression = query.getQueryGraph()
-				.getFirstGreql2Expression();
+		GreqlExpression greql2Expression = query.getQueryGraph()
+				.getFirstGreqlExpression();
 		parameterNames = new String[greql2Expression.getDegree(IsBoundVarOf.EC,
 				EdgeDirection.IN) + 1];
 		parameterNames[0] = "datagraph";

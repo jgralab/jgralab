@@ -90,7 +90,6 @@ public abstract class CodeGenerator {
 			return this == STDIMPL;
 		}
 
-
 		/**
 		 * 
 		 * @return Returns true if support for database impl classes is enabled,
@@ -155,18 +154,18 @@ public abstract class CodeGenerator {
 	 * 
 	 * @param schemaRootPackageName
 	 *            the name of the root package of the schema, for instance
-	 *            de.uni_koblenz.jgralab.greql2
+	 *            de.uni_koblenz.jgralab.greql
 	 * @param packageName
 	 *            the name of the package the class is located in, for instance
 	 *            comprehensions Out of the three parameters, the CodeGenerator
 	 *            calculates the name
 	 *            schemaRootPackageName.packageName.implementationName, in the
 	 *            example
-	 *            "de.uni_koblenz.jgralab.greql2.comprehension.Listcomprehension"
+	 *            "de.uni_koblenz.jgralab.greql.comprehension.Listcomprehension"
 	 *            for the interface and possibly
 	 *            schemaRootPackageName.impl.packageName.implementationName, in
 	 *            the example
-	 *            "de.uni_koblenz.jgralab.greql2.impl.comprehension.Listcomprehension"
+	 *            "de.uni_koblenz.jgralab.greql.impl.comprehension.Listcomprehension"
 	 *            for the default implementation class
 	 * @param config
 	 *            The {@link CodeGeneratorConfiguration} to be used when
@@ -293,9 +292,7 @@ public abstract class CodeGenerator {
 		while (currentCycle != null) {
 			createCode();
 			if (currentCycle.isAbstract()) {
-				logger
-						.finer("Creating interface for class: "
-								+ simpleClassName);
+				logger.finer("Creating interface for class: " + simpleClassName);
 				logger.finer("Writing file to: " + pathPrefix + "/"
 						+ schemaPackage);
 			}
@@ -303,9 +300,7 @@ public abstract class CodeGenerator {
 				if (currentCycle.isStdImpl()) {
 					schemaImplPackage = rootBlock
 							.getVariable("schemaImplStdPackage");
-					logger
-							.finer(" - schemaImplStdPackage="
-									+ schemaImplPackage);
+					logger.finer(" - schemaImplStdPackage=" + schemaImplPackage);
 				}
 				if (currentCycle.isTransImpl()) {
 					schemaImplPackage = rootBlock
