@@ -49,7 +49,7 @@ import de.uni_koblenz.jgralab.greql.evaluator.GreqlQueryImpl;
 import de.uni_koblenz.jgralab.greql.evaluator.vertexeval.VertexEvaluator;
 import de.uni_koblenz.jgralab.greql.schema.Declaration;
 import de.uni_koblenz.jgralab.greql.schema.Expression;
-import de.uni_koblenz.jgralab.greql.schema.Greql2Vertex;
+import de.uni_koblenz.jgralab.greql.schema.GreqlVertex;
 import de.uni_koblenz.jgralab.greql.schema.IsTypeExprOf;
 import de.uni_koblenz.jgralab.greql.schema.SimpleDeclaration;
 import de.uni_koblenz.jgralab.greql.schema.Variable;
@@ -181,8 +181,8 @@ public class VariableDeclarationOrderUnit implements
 	private int calculateVariableValueChangeCosts() {
 		int costs = 0;
 		for (Vertex vertex : dependentVertices) {
-			VertexEvaluator<? extends Greql2Vertex> eval = ((GreqlQueryImpl) query)
-					.getVertexEvaluator((Greql2Vertex) vertex);
+			VertexEvaluator<? extends GreqlVertex> eval = ((GreqlQueryImpl) query)
+					.getVertexEvaluator((GreqlVertex) vertex);
 			assert eval != null;
 			costs += eval.getOwnEvaluationCosts();
 		}

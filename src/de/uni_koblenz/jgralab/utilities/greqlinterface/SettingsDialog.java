@@ -86,7 +86,7 @@ public class SettingsDialog extends JDialog implements ActionListener,
 	private Action addAction;
 	private JTextField functionNameField;
 
-	@SuppressWarnings({ "serial", "unchecked", "rawtypes" })
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public SettingsDialog(GreqlGui app, Font qf, Font rf,
 			List<String> greqlFunctions) {
 		super(app, app.getApplicationName()
@@ -172,6 +172,7 @@ public class SettingsDialog extends JDialog implements ActionListener,
 		c.weighty = 0;
 		removeAction = new AbstractAction(
 				gui.getMessage("SettingsDialog.RemoveFunctionAction")) { //$NON-NLS-1$
+			private static final long serialVersionUID = 5701993491246301105L;
 			{
 				setEnabled(false);
 			}
@@ -209,6 +210,7 @@ public class SettingsDialog extends JDialog implements ActionListener,
 		++c.gridx;
 		addAction = new AbstractAction(
 				gui.getMessage("SettingsDialog.AddFunctionAction")) { //$NON-NLS-1$
+			private static final long serialVersionUID = 727631592422400160L;
 
 			@Override
 			public void actionPerformed(ActionEvent e) {

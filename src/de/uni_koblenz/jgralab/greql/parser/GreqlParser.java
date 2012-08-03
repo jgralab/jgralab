@@ -55,7 +55,7 @@ import de.uni_koblenz.jgralab.greql.schema.*;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 
 public class GreqlParser extends ParserHelper {
-	private static final Greql2Schema SCHEMA = Greql2Schema.instance();
+	private static final GreqlSchema SCHEMA = GreqlSchema.instance();
 	private final Map<RuleEnum, int[]> testedRules = new HashMap<RuleEnum, int[]>();
 
 	private List<Token> tokens = null;
@@ -153,7 +153,7 @@ public class GreqlParser extends ParserHelper {
 		query = source;
 		parsingStack = new Stack<Integer>();
 		predicateStack = new Stack<Boolean>();
-		graph = SCHEMA.createGreql2Graph(ImplementationType.STANDARD);
+		graph = SCHEMA.createGreqlGraph(ImplementationType.STANDARD);
 		tokens = GreqlLexer.scan(source);
 		afterParsingvariableSymbolTable = new SymbolTable();
 		duringParsingvariableSymbolTable = new SimpleSymbolTable();
@@ -204,11 +204,11 @@ public class GreqlParser extends ParserHelper {
 				startOffset));
 	}
 
-	public static Greql2Graph parse(String query) {
+	public static GreqlGraph parse(String query) {
 		return parse(query, null);
 	}
 
-	public static Greql2Graph parse(String query, Set<String> subQueryNames) {
+	public static GreqlGraph parse(String query, Set<String> subQueryNames) {
 		GreqlParser parser = new GreqlParser(query, subQueryNames);
 		parser.parse();
 		return parser.getGraph();
@@ -226,7 +226,7 @@ public class GreqlParser extends ParserHelper {
 			EdgeClass edgeClass) {
 		if (expressions != null) {
 			for (VertexPosition<? extends Vertex> expr : expressions) {
-				Greql2Aggregation edge = (Greql2Aggregation) graph.createEdge(
+				GreqlAggregation edge = (GreqlAggregation) graph.createEdge(
 						edgeClass, expr.node, parent);
 				edge.set_sourcePositions(createSourcePositionList(expr.length,
 						expr.offset));
@@ -240,7 +240,7 @@ public class GreqlParser extends ParserHelper {
 			EdgeClass edgeClass, int i) {
 		if (expressions != null) {
 			for (VertexPosition<? extends Vertex> expr : expressions) {
-				Greql2Aggregation edge = (Greql2Aggregation) graph.createEdge(
+				GreqlAggregation edge = (GreqlAggregation) graph.createEdge(
 						edgeClass, expr.node, parent);
 				edge.set_sourcePositions(createSourcePositionList(expr.length,
 						expr.offset));
@@ -254,7 +254,7 @@ public class GreqlParser extends ParserHelper {
 			EdgeClass edgeClass, boolean b) {
 		if (expressions != null) {
 			for (VertexPosition<? extends Vertex> expr : expressions) {
-				Greql2Aggregation edge = (Greql2Aggregation) graph.createEdge(
+				GreqlAggregation edge = (GreqlAggregation) graph.createEdge(
 						edgeClass, expr.node, parent);
 				edge.set_sourcePositions(createSourcePositionList(expr.length,
 						expr.offset));
@@ -268,7 +268,7 @@ public class GreqlParser extends ParserHelper {
 			EdgeClass edgeClass, String s) {
 		if (expressions != null) {
 			for (VertexPosition<? extends Vertex> expr : expressions) {
-				Greql2Aggregation edge = (Greql2Aggregation) graph.createEdge(
+				GreqlAggregation edge = (GreqlAggregation) graph.createEdge(
 						edgeClass, expr.node, parent);
 				edge.set_sourcePositions(createSourcePositionList(expr.length,
 						expr.offset));
@@ -497,7 +497,7 @@ public class GreqlParser extends ParserHelper {
 		if (lookAhead(0) == TokenTypes.EOF) {
 			return;
 		}
-		Greql2Expression rootExpr = graph.createGreql2Expression();
+		GreqlExpression rootExpr = graph.createGreqlExpression();
 		rootExpr.set_importedTypes(parseImports());
 		if (lookAhead(0) == TokenTypes.USING) {
 			match();
@@ -529,7 +529,7 @@ public class GreqlParser extends ParserHelper {
 		}
 		match(TokenTypes.EOF);
 		testIllegalThisLiterals();
-		mergeVariablesInGreql2Expression(rootExpr);
+		mergeVariablesInGreqlExpression(rootExpr);
 	}
 
 	private final PSet<String> parseImports() {
@@ -2681,7 +2681,7 @@ public class GreqlParser extends ParserHelper {
 		return null;
 	}
 
-	public Greql2Schema getSchema() {
+	public GreqlSchema getSchema() {
 		return SCHEMA;
 	}
 

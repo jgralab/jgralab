@@ -64,9 +64,9 @@ import de.uni_koblenz.jgralab.greql.schema.ForwardVertexSet;
 import de.uni_koblenz.jgralab.greql.schema.FunctionApplication;
 import de.uni_koblenz.jgralab.greql.schema.FunctionId;
 import de.uni_koblenz.jgralab.greql.schema.GReQLDirection;
-import de.uni_koblenz.jgralab.greql.schema.Greql2Expression;
-import de.uni_koblenz.jgralab.greql.schema.Greql2Graph;
-import de.uni_koblenz.jgralab.greql.schema.Greql2Vertex;
+import de.uni_koblenz.jgralab.greql.schema.GreqlExpression;
+import de.uni_koblenz.jgralab.greql.schema.GreqlGraph;
+import de.uni_koblenz.jgralab.greql.schema.GreqlVertex;
 import de.uni_koblenz.jgralab.greql.schema.Identifier;
 import de.uni_koblenz.jgralab.greql.schema.IntLiteral;
 import de.uni_koblenz.jgralab.greql.schema.IntermediateVertexPathDescription;
@@ -121,23 +121,23 @@ public class GreqlSerializer {
 
 	private StringBuffer sb = null;
 
-	public static String serializeGraph(Greql2Graph greqlGraph) {
+	public static String serializeGraph(GreqlGraph greqlGraph) {
 		GreqlSerializer s = new GreqlSerializer();
-		return s.serializeGreqlVertex(greqlGraph.getFirstGreql2Expression());
+		return s.serializeGreqlVertex(greqlGraph.getFirstGreqlExpression());
 	}
 
-	public static String serializeVertex(Greql2Vertex v) {
+	public static String serializeVertex(GreqlVertex v) {
 		GreqlSerializer s = new GreqlSerializer();
 		return s.serializeGreqlVertex(v);
 	}
 
-	public String serializeGreqlVertex(Greql2Vertex v) {
+	public String serializeGreqlVertex(GreqlVertex v) {
 		sb = new StringBuffer();
-		serializeGreql2Vertex(v, false);
+		serializeGreqlVertex(v, false);
 		return sb.toString();
 	}
 
-	private void serializeGreql2Vertex(Greql2Vertex v, boolean addSpace) {
+	private void serializeGreqlVertex(GreqlVertex v, boolean addSpace) {
 		if (v instanceof Declaration) {
 			Declaration d = (Declaration) v;
 			if (d.getFirstIsQuantifiedDeclOfIncidence() != null) {
@@ -151,8 +151,8 @@ public class GreqlSerializer {
 			serializeDirection((Direction) v);
 		} else if (v instanceof EdgeRestriction) {
 			serializeEdgeRestriction((EdgeRestriction) v);
-		} else if (v instanceof Greql2Expression) {
-			serializeGreql2Expression((Greql2Expression) v);
+		} else if (v instanceof GreqlExpression) {
+			serializeGreqlExpression((GreqlExpression) v);
 		} else if (v instanceof Quantifier) {
 			serializeQuantifier((Quantifier) v);
 		} else if (v instanceof RecordElement) {
@@ -162,7 +162,7 @@ public class GreqlSerializer {
 		} else if (v instanceof Expression) {
 			serializeExpression((Expression) v, false);
 		} else {
-			throw new GreqlException("Unknown Greql2Vertex " + v + ".");
+			throw new GreqlException("Unknown GreqlVertex " + v + ".");
 		}
 		if (addSpace) {
 			sb.append(' ');
@@ -259,7 +259,7 @@ public class GreqlSerializer {
 		}
 	}
 
-	private void serializeGreql2Expression(Greql2Expression greql2Expression) {
+	private void serializeGreqlExpression(GreqlExpression greql2Expression) {
 		Iterable<? extends Variable> boundVars = greql2Expression
 				.get_boundVar();
 		if (boundVars.iterator().hasNext()) {

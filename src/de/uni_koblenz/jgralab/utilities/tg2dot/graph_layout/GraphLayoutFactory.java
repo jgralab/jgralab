@@ -34,19 +34,19 @@
  */
 package de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout;
 
-import static de.uni_koblenz.jgralab.utilities.tg2dot.greql2.GreqlEvaluatorFacade.ABBREVIATE_EDGE_ATTRIBUTE_NAMES;
-import static de.uni_koblenz.jgralab.utilities.tg2dot.greql2.GreqlEvaluatorFacade.COMPOSITE_THAT;
-import static de.uni_koblenz.jgralab.utilities.tg2dot.greql2.GreqlEvaluatorFacade.COMPOSITE_THIS;
-import static de.uni_koblenz.jgralab.utilities.tg2dot.greql2.GreqlEvaluatorFacade.ELEMENT;
-import static de.uni_koblenz.jgralab.utilities.tg2dot.greql2.GreqlEvaluatorFacade.ELEMENT_SEQUENCE_INDEX;
-import static de.uni_koblenz.jgralab.utilities.tg2dot.greql2.GreqlEvaluatorFacade.PRINT_DOMAIN_NAMES;
-import static de.uni_koblenz.jgralab.utilities.tg2dot.greql2.GreqlEvaluatorFacade.PRINT_EDGE_ATTRIBUTES;
-import static de.uni_koblenz.jgralab.utilities.tg2dot.greql2.GreqlEvaluatorFacade.PRINT_ELEMENT_SEQUENCE_INDICES;
-import static de.uni_koblenz.jgralab.utilities.tg2dot.greql2.GreqlEvaluatorFacade.PRINT_INCIDENCE_INDICES;
-import static de.uni_koblenz.jgralab.utilities.tg2dot.greql2.GreqlEvaluatorFacade.PRINT_ROLENAMES;
-import static de.uni_koblenz.jgralab.utilities.tg2dot.greql2.GreqlEvaluatorFacade.SHARED_THAT;
-import static de.uni_koblenz.jgralab.utilities.tg2dot.greql2.GreqlEvaluatorFacade.SHARED_THIS;
-import static de.uni_koblenz.jgralab.utilities.tg2dot.greql2.GreqlEvaluatorFacade.SHORTEN_STRINGS;
+import static de.uni_koblenz.jgralab.utilities.tg2dot.greql.GreqlEvaluatorFacade.ABBREVIATE_EDGE_ATTRIBUTE_NAMES;
+import static de.uni_koblenz.jgralab.utilities.tg2dot.greql.GreqlEvaluatorFacade.COMPOSITE_THAT;
+import static de.uni_koblenz.jgralab.utilities.tg2dot.greql.GreqlEvaluatorFacade.COMPOSITE_THIS;
+import static de.uni_koblenz.jgralab.utilities.tg2dot.greql.GreqlEvaluatorFacade.ELEMENT;
+import static de.uni_koblenz.jgralab.utilities.tg2dot.greql.GreqlEvaluatorFacade.ELEMENT_SEQUENCE_INDEX;
+import static de.uni_koblenz.jgralab.utilities.tg2dot.greql.GreqlEvaluatorFacade.PRINT_DOMAIN_NAMES;
+import static de.uni_koblenz.jgralab.utilities.tg2dot.greql.GreqlEvaluatorFacade.PRINT_EDGE_ATTRIBUTES;
+import static de.uni_koblenz.jgralab.utilities.tg2dot.greql.GreqlEvaluatorFacade.PRINT_ELEMENT_SEQUENCE_INDICES;
+import static de.uni_koblenz.jgralab.utilities.tg2dot.greql.GreqlEvaluatorFacade.PRINT_INCIDENCE_INDICES;
+import static de.uni_koblenz.jgralab.utilities.tg2dot.greql.GreqlEvaluatorFacade.PRINT_ROLENAMES;
+import static de.uni_koblenz.jgralab.utilities.tg2dot.greql.GreqlEvaluatorFacade.SHARED_THAT;
+import static de.uni_koblenz.jgralab.utilities.tg2dot.greql.GreqlEvaluatorFacade.SHARED_THIS;
+import static de.uni_koblenz.jgralab.utilities.tg2dot.greql.GreqlEvaluatorFacade.SHORTEN_STRINGS;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -67,7 +67,7 @@ import de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout.definition.ElementDe
 import de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout.definition.TypeDefinition;
 import de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout.reader.GraphLayoutReader;
 import de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout.reader.plist.PListGraphLayoutReader;
-import de.uni_koblenz.jgralab.utilities.tg2dot.greql2.GreqlEvaluatorFacade;
+import de.uni_koblenz.jgralab.utilities.tg2dot.greql.GreqlEvaluatorFacade;
 
 public class GraphLayoutFactory {
 

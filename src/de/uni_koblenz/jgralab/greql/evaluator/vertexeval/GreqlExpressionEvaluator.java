@@ -44,7 +44,7 @@ import de.uni_koblenz.jgralab.greql.evaluator.VertexCosts;
 import de.uni_koblenz.jgralab.greql.exception.UndefinedVariableException;
 import de.uni_koblenz.jgralab.greql.exception.UnknownTypeException;
 import de.uni_koblenz.jgralab.greql.schema.Expression;
-import de.uni_koblenz.jgralab.greql.schema.Greql2Expression;
+import de.uni_koblenz.jgralab.greql.schema.GreqlExpression;
 import de.uni_koblenz.jgralab.greql.schema.Identifier;
 import de.uni_koblenz.jgralab.greql.schema.IsBoundVarOf;
 import de.uni_koblenz.jgralab.greql.schema.IsIdOfStoreClause;
@@ -57,16 +57,16 @@ import de.uni_koblenz.jgralab.schema.Schema;
 import de.uni_koblenz.jgralab.schema.VertexClass;
 
 /**
- * Evaluates a Greql2Expression vertex in the GReQL-2 Syntaxgraph. A
+ * Evaluates a GreqlExpression vertex in the GReQL-2 Syntaxgraph. A
  * GReQL2-Expression is the rootvertex of the GReQL-2Syntaxgraph. It contains
  * the bound/free variables, that are defined via "using" and binds them to the
- * values in the variableMap of the Greql2Evaluator.
+ * values in the variableMap of the GreqlEvaluator.
  * 
  * @author ist@uni-koblenz.de
  * 
  */
-public class Greql2ExpressionEvaluator extends
-		VertexEvaluator<Greql2Expression> {
+public class GreqlExpressionEvaluator extends
+		VertexEvaluator<GreqlExpression> {
 
 	protected static final int greql2ExpressionCostsFactor = 3;
 
@@ -94,7 +94,7 @@ public class Greql2ExpressionEvaluator extends
 	 * @param vertex
 	 *            the vertex which gets evaluated by this VertexEvaluator
 	 */
-	public Greql2ExpressionEvaluator(Greql2Expression vertex,
+	public GreqlExpressionEvaluator(GreqlExpression vertex,
 			GreqlQueryImpl query) {
 		super(vertex, query);
 	}
@@ -148,7 +148,7 @@ public class Greql2ExpressionEvaluator extends
 				.getVertexEvaluator(boundExpression);
 		Object result = eval.getResult(evaluator);
 		// if the query contains a "store as " - clause, there is a
-		// "isIdOfInc"-Incidence connected with the Greql2Expression
+		// "isIdOfInc"-Incidence connected with the GreqlExpression
 		IsIdOfStoreClause storeInc = vertex
 				.getFirstIsIdOfStoreClauseIncidence(EdgeDirection.IN);
 		if (storeInc != null) {
@@ -164,7 +164,7 @@ public class Greql2ExpressionEvaluator extends
 
 	@Override
 	public VertexCosts calculateSubtreeEvaluationCosts() {
-		Greql2Expression greqlExp = getVertex();
+		GreqlExpression greqlExp = getVertex();
 		VertexEvaluator<? extends Expression> queryExpEval = query
 				.getVertexEvaluator(greqlExp
 						.getFirstIsQueryExprOfIncidence().getAlpha());

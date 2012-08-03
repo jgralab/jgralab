@@ -59,10 +59,10 @@ import de.uni_koblenz.jgralab.greql.schema.DefinitionExpression;
 import de.uni_koblenz.jgralab.greql.schema.Expression;
 import de.uni_koblenz.jgralab.greql.schema.FunctionApplication;
 import de.uni_koblenz.jgralab.greql.schema.FunctionId;
-import de.uni_koblenz.jgralab.greql.schema.Greql2Aggregation;
-import de.uni_koblenz.jgralab.greql.schema.Greql2Expression;
-import de.uni_koblenz.jgralab.greql.schema.Greql2Graph;
-import de.uni_koblenz.jgralab.greql.schema.Greql2Vertex;
+import de.uni_koblenz.jgralab.greql.schema.GreqlAggregation;
+import de.uni_koblenz.jgralab.greql.schema.GreqlExpression;
+import de.uni_koblenz.jgralab.greql.schema.GreqlGraph;
+import de.uni_koblenz.jgralab.greql.schema.GreqlVertex;
 import de.uni_koblenz.jgralab.greql.schema.IsArgumentOf;
 import de.uni_koblenz.jgralab.greql.schema.IsBooleanPredicateOfEdgeRestriction;
 import de.uni_koblenz.jgralab.greql.schema.IsBoundExprOfQuantifiedExpression;
@@ -102,7 +102,7 @@ public abstract class ParserHelper {
 
 	protected String query = null;
 
-	protected Greql2Graph graph;
+	protected GreqlGraph graph;
 
 	protected SymbolTable afterParsingvariableSymbolTable = null;
 
@@ -131,14 +131,14 @@ public abstract class ParserHelper {
 			PathDescription pathDescr, PathDescription part1, int offsetPart1,
 			int lengthPart1, PathDescription part2, int offsetPart2,
 			int lengthPart2) {
-		Greql2Aggregation edge = null;
+		GreqlAggregation edge = null;
 		if (pathDescr == null) {
 			pathDescr = graph.createVertex(vc);
-			edge = (Greql2Aggregation) graph.createEdge(ec, part1, pathDescr);
+			edge = (GreqlAggregation) graph.createEdge(ec, part1, pathDescr);
 			edge.set_sourcePositions(createSourcePositionList(lengthPart1,
 					offsetPart1));
 		}
-		edge = (Greql2Aggregation) graph.createEdge(ec, part2, pathDescr);
+		edge = (GreqlAggregation) graph.createEdge(ec, part2, pathDescr);
 		edge.set_sourcePositions(createSourcePositionList(lengthPart2,
 				offsetPart2));
 		return pathDescr;
@@ -149,7 +149,7 @@ public abstract class ParserHelper {
 	 * 
 	 * @return the abstract syntax graph representing a GReQL 2 query
 	 */
-	public Greql2Graph getGraph() {
+	public GreqlGraph getGraph() {
 		if (graph == null) {
 			return null;
 		}
@@ -161,7 +161,7 @@ public abstract class ParserHelper {
 		if (!graphCleaned) {
 			Set<Vertex> reachableVertices = new HashSet<Vertex>();
 			Queue<Vertex> queue = new LinkedList<Vertex>();
-			Greql2Expression root = graph.getFirstGreql2Expression();
+			GreqlExpression root = graph.getFirstGreqlExpression();
 			queue.add(root);
 			while (!queue.isEmpty()) {
 				Vertex current = queue.poll();
@@ -234,9 +234,8 @@ public abstract class ParserHelper {
 				}
 				variable.delete();
 			}
-			Expression boundExpr = exp
-					.getFirstIsBoundExprOfIncidence(EdgeDirection.IN)
-					.getAlpha();
+			Expression boundExpr = exp.getFirstIsBoundExprOfIncidence(
+					EdgeDirection.IN).getAlpha();
 			Edge e = exp.getFirstIncidence(EdgeDirection.OUT);
 			while (e != null) {
 				e.setAlpha(boundExpr);
@@ -281,8 +280,8 @@ public abstract class ParserHelper {
 		} else if (v instanceof QuantifiedExpression) {
 			mergeVariablesInQuantifiedExpression((QuantifiedExpression) v,
 					separateScope);
-		} else if (v instanceof Greql2Expression) {
-			mergeVariablesInGreql2Expression((Greql2Expression) v);
+		} else if (v instanceof GreqlExpression) {
+			mergeVariablesInGreqlExpression((GreqlExpression) v);
 		} else if (v instanceof ThisLiteral) {
 			return;
 		} else if (v instanceof Variable) {
@@ -297,7 +296,7 @@ public abstract class ParserHelper {
 					}
 				}
 			} else {
-				Greql2Aggregation e = (Greql2Aggregation) v
+				GreqlAggregation e = (GreqlAggregation) v
 						.getFirstIncidence(EdgeDirection.OUT);
 				throw new UndefinedVariableException((Variable) v,
 						e.get_sourcePositions());
@@ -321,9 +320,9 @@ public abstract class ParserHelper {
 	 * query-expression.
 	 * 
 	 * @param root
-	 *            root of the graph, represents a <code>Greql2Expression</code>
+	 *            root of the graph, represents a <code>GreqlExpression</code>
 	 */
-	protected final void mergeVariablesInGreql2Expression(Greql2Expression root)
+	protected final void mergeVariablesInGreqlExpression(GreqlExpression root)
 			throws DuplicateVariableException, UndefinedVariableException {
 		afterParsingvariableSymbolTable.blockBegin();
 		for (IsBoundVarOf isBoundVarOf : root
@@ -366,8 +365,8 @@ public abstract class ParserHelper {
 		for (IsDefinitionOf currentEdge : v
 				.getIsDefinitionOfIncidences(EdgeDirection.IN)) {
 			Definition definition = currentEdge.getAlpha();
-			Expression expr = definition
-					.getFirstIsExprOfIncidence(EdgeDirection.IN).getAlpha();
+			Expression expr = definition.getFirstIsExprOfIncidence(
+					EdgeDirection.IN).getAlpha();
 			mergeVariables(expr, true);
 		}
 
@@ -389,8 +388,7 @@ public abstract class ParserHelper {
 			throws DuplicateVariableException, UndefinedVariableException {
 		for (IsSimpleDeclOf currentEdge : v
 				.getIsSimpleDeclOfIncidences(EdgeDirection.IN)) {
-			SimpleDeclaration simpleDecl = currentEdge
-					.getAlpha();
+			SimpleDeclaration simpleDecl = currentEdge.getAlpha();
 			for (IsDeclaredVarOf isDeclaredVarOf : simpleDecl
 					.getIsDeclaredVarOfIncidences(EdgeDirection.IN)) {
 				Variable variable = isDeclaredVarOf.getAlpha();
@@ -401,10 +399,9 @@ public abstract class ParserHelper {
 
 		for (IsSimpleDeclOf currentEdge : v
 				.getIsSimpleDeclOfIncidences(EdgeDirection.IN)) {
-			SimpleDeclaration simpleDecl = currentEdge
-					.getAlpha();
-			Expression expr = simpleDecl
-					.getFirstIsTypeExprOfIncidence(EdgeDirection.IN).getAlpha();
+			SimpleDeclaration simpleDecl = currentEdge.getAlpha();
+			Expression expr = simpleDecl.getFirstIsTypeExprOfIncidence(
+					EdgeDirection.IN).getAlpha();
 			mergeVariables(expr, true);
 		}
 
@@ -599,33 +596,33 @@ public abstract class ParserHelper {
 	 * outside a PathDescription is found, a ParseException is thrown.
 	 */
 	protected final void testIllegalThisLiterals() {
-		Set<Class<? extends Greql2Aggregation>> allowedEdgesForThisVertex = new HashSet<Class<? extends Greql2Aggregation>>();
-		Set<Class<? extends Greql2Aggregation>> allowedEdgesForThisEdge = new HashSet<Class<? extends Greql2Aggregation>>();
+		Set<Class<? extends GreqlAggregation>> allowedEdgesForThisVertex = new HashSet<Class<? extends GreqlAggregation>>();
+		Set<Class<? extends GreqlAggregation>> allowedEdgesForThisEdge = new HashSet<Class<? extends GreqlAggregation>>();
 		allowedEdgesForThisVertex.add(IsGoalRestrOf.class);
 		allowedEdgesForThisVertex.add(IsStartRestrOf.class);
 		allowedEdgesForThisEdge.add(IsBooleanPredicateOfEdgeRestriction.class);
 
 		for (ThisLiteral vertex : graph.getThisVertexVertices()) {
 			for (Edge sourcePositionEdge : vertex.incidences(EdgeDirection.OUT)) {
-				Queue<Greql2Vertex> queue = new LinkedList<Greql2Vertex>();
+				Queue<GreqlVertex> queue = new LinkedList<GreqlVertex>();
 				queue.add(vertex);
 				while (!queue.isEmpty()) {
-					Greql2Vertex currentVertex = queue.poll();
+					GreqlVertex currentVertex = queue.poll();
 					for (Edge edge : currentVertex
 							.incidences(EdgeDirection.OUT)) {
 						if (allowedEdgesForThisVertex.contains(edge
 								.getSchemaClass())) {
 							continue;
 						}
-						Greql2Vertex omega = (Greql2Vertex) edge.getOmega();
-						if (omega instanceof Greql2Expression) {
+						GreqlVertex omega = (GreqlVertex) edge.getOmega();
+						if (omega instanceof GreqlExpression) {
 							throw new ParsingException(
 									"This literals must not be used outside pathdescriptions",
 									vertex.get_name(),
-									((Greql2Aggregation) sourcePositionEdge)
+									((GreqlAggregation) sourcePositionEdge)
 											.get_sourcePositions().get(0)
 											.get_offset(),
-									((Greql2Aggregation) sourcePositionEdge)
+									((GreqlAggregation) sourcePositionEdge)
 											.get_sourcePositions().get(0)
 											.get_length(), query);
 						}
@@ -637,25 +634,25 @@ public abstract class ParserHelper {
 
 		for (ThisLiteral vertex : graph.getThisEdgeVertices()) {
 			for (Edge sourcePositionEdge : vertex.incidences(EdgeDirection.OUT)) {
-				Queue<Greql2Vertex> queue = new LinkedList<Greql2Vertex>();
+				Queue<GreqlVertex> queue = new LinkedList<GreqlVertex>();
 				queue.add(vertex);
 				while (!queue.isEmpty()) {
-					Greql2Vertex currentVertex = queue.poll();
+					GreqlVertex currentVertex = queue.poll();
 					for (Edge edge : currentVertex
 							.incidences(EdgeDirection.OUT)) {
 						if (allowedEdgesForThisEdge.contains(edge
 								.getSchemaClass())) {
 							continue;
 						}
-						Greql2Vertex omega = (Greql2Vertex) edge.getOmega();
-						if (omega instanceof Greql2Expression) {
+						GreqlVertex omega = (GreqlVertex) edge.getOmega();
+						if (omega instanceof GreqlExpression) {
 							throw new ParsingException(
 									"This literals must not be used outside pathdescriptions",
 									vertex.get_name(),
-									((Greql2Aggregation) sourcePositionEdge)
+									((GreqlAggregation) sourcePositionEdge)
 											.get_sourcePositions().get(0)
 											.get_offset(),
-									((Greql2Aggregation) sourcePositionEdge)
+									((GreqlAggregation) sourcePositionEdge)
 											.get_sourcePositions().get(0)
 											.get_length(), query);
 						}

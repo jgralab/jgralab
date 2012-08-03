@@ -43,6 +43,7 @@ import de.uni_koblenz.jgralab.VertexFilter;
 import de.uni_koblenz.jgralab.utilities.xml2tg.schema.Attribute;
 import de.uni_koblenz.jgralab.utilities.xml2tg.schema.Element;
 import de.uni_koblenz.jgralab.utilities.xml2tg.schema.References;
+import de.uni_koblenz.jgralab.utilities.xml2tg.schema.Text;
 import de.uni_koblenz.jgralab.utilities.xml2tg.schema.XMLGraph;
 
 /**
@@ -141,4 +142,13 @@ public class XmlGraphUtilities {
 		}
 		return false;
 	}
+
+	public String getText(Element el) {
+		StringBuilder sb = new StringBuilder();
+		for (Text t : el.get_texts()) {
+			sb.append(t.get_content());
+		}
+		return sb.toString();
+	}
+
 }

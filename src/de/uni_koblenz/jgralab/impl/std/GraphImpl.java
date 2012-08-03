@@ -46,6 +46,7 @@ import de.uni_koblenz.jgralab.impl.InternalEdge;
 import de.uni_koblenz.jgralab.impl.InternalVertex;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.GraphClass;
+import de.uni_koblenz.jgralab.schema.VertexClass;
 import de.uni_koblenz.jgralab.trans.Savepoint;
 import de.uni_koblenz.jgralab.trans.Transaction;
 
@@ -353,6 +354,11 @@ public abstract class GraphImpl extends
 	@Override
 	public TemporaryVertex createTemporaryVertex(){
 		return new TemporaryVertexImpl(0, this);
+	}
+	
+	@Override
+	public TemporaryVertex createTemporaryVertex(VertexClass preliminaryType){
+		return new TemporaryVertexImpl(0, this, preliminaryType);
 	}
 	
 	@Override

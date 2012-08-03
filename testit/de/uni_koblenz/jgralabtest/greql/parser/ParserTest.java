@@ -67,8 +67,8 @@ import de.uni_koblenz.jgralab.greql.schema.EdgeSetExpression;
 import de.uni_koblenz.jgralab.greql.schema.ForwardVertexSet;
 import de.uni_koblenz.jgralab.greql.schema.FunctionApplication;
 import de.uni_koblenz.jgralab.greql.schema.FunctionId;
-import de.uni_koblenz.jgralab.greql.schema.Greql2Expression;
-import de.uni_koblenz.jgralab.greql.schema.Greql2Graph;
+import de.uni_koblenz.jgralab.greql.schema.GreqlExpression;
+import de.uni_koblenz.jgralab.greql.schema.GreqlGraph;
 import de.uni_koblenz.jgralab.greql.schema.IntLiteral;
 import de.uni_koblenz.jgralab.greql.schema.IntermediateVertexPathDescription;
 import de.uni_koblenz.jgralab.greql.schema.IsAlternativePathOf;
@@ -142,13 +142,13 @@ public class ParserTest {
 		FunLib.register(IsPrime.class);
 	}
 
-	private Greql2Graph parseQuery(String query) throws ParsingException {
+	private GreqlGraph parseQuery(String query) throws ParsingException {
 		return parseQuery(query, null);
 	}
 
-	private Greql2Graph parseQuery(String query, String file)
+	private GreqlGraph parseQuery(String query, String file)
 			throws ParsingException {
-		Greql2Graph graph = GreqlParser.parse(query);
+		GreqlGraph graph = GreqlParser.parse(query);
 		if (file != null) {
 			try {
 				graph.save(file);
@@ -162,13 +162,13 @@ public class ParserTest {
 	}
 
 	@Test
-	public void testGreql2TestGraph() throws ParsingException {
+	public void testGreqlTestGraph() throws ParsingException {
 		parseQuery("from i:c report i end where d:=\"drölfundfünfzig\", c:=b, b:=a, a:=\"Mensaessen\"");
 	}
 
 	@Test
 	public void testWhereWithSameScope() throws ParsingException {
-		Greql2Graph graph = parseQuery("from a,b:V with connected report a,b end where connected := a-->b");
+		GreqlGraph graph = parseQuery("from a,b:V with connected report a,b end where connected := a-->b");
 
 		Map<String, Variable> map = new HashMap<String, Variable>();
 
@@ -187,7 +187,7 @@ public class ParserTest {
 
 	@Test
 	public void testExistsOne() throws Exception {
-		Greql2Graph graph = parseQuery("exists! x:list(1..5) @ x = 5");
+		GreqlGraph graph = parseQuery("exists! x:list(1..5) @ x = 5");
 		Quantifier quantifier = graph.getFirstQuantifier();
 		assertEquals(QuantificationType.EXISTSONE, quantifier.get_type());
 		quantifier = quantifier.getNextQuantifier();
@@ -196,7 +196,7 @@ public class ParserTest {
 
 	@Test
 	public void testOrExpression() throws Exception {
-		Greql2Graph graph = parseQuery("true or false");
+		GreqlGraph graph = parseQuery("true or false");
 		FunctionApplication funAp = graph.getFirstFunctionApplication();
 		assertNotNull(funAp);
 		IsFunctionIdOf isIdOf = funAp.getFirstIsFunctionIdOfIncidence();
@@ -207,7 +207,7 @@ public class ParserTest {
 
 	@Test
 	public void testAndExpression() throws Exception {
-		Greql2Graph graph = parseQuery("true and false");
+		GreqlGraph graph = parseQuery("true and false");
 		FunctionApplication funAp = graph.getFirstFunctionApplication();
 		assertNotNull(funAp);
 		IsFunctionIdOf isIdOf = funAp.getFirstIsFunctionIdOfIncidence();
@@ -218,7 +218,7 @@ public class ParserTest {
 
 	@Test
 	public void testXorExpression() throws Exception {
-		Greql2Graph graph = parseQuery("true xor false");
+		GreqlGraph graph = parseQuery("true xor false");
 		FunctionApplication funAp = graph.getFirstFunctionApplication();
 		assertNotNull(funAp);
 		IsFunctionIdOf isIdOf = funAp.getFirstIsFunctionIdOfIncidence();
@@ -229,7 +229,7 @@ public class ParserTest {
 
 	@Test
 	public void testEqualityExpression() throws Exception {
-		Greql2Graph graph = parseQuery("true = false");
+		GreqlGraph graph = parseQuery("true = false");
 		FunctionApplication funAp = graph.getFirstFunctionApplication();
 		assertNotNull(funAp);
 		IsFunctionIdOf isIdOf = funAp.getFirstIsFunctionIdOfIncidence();
@@ -240,7 +240,7 @@ public class ParserTest {
 
 	@Test
 	public void testMatchExpression() throws Exception {
-		Greql2Graph graph = parseQuery("true =~ false");
+		GreqlGraph graph = parseQuery("true =~ false");
 		FunctionApplication funAp = graph.getFirstFunctionApplication();
 		assertNotNull(funAp);
 		IsFunctionIdOf isIdOf = funAp.getFirstIsFunctionIdOfIncidence();
@@ -251,7 +251,7 @@ public class ParserTest {
 
 	@Test
 	public void testIdentifierWithDollar() throws Exception {
-		Greql2Graph graph = parseQuery("from $i : V{} report $i end");
+		GreqlGraph graph = parseQuery("from $i : V{} report $i end");
 		Variable v = graph.getFirstVariable();
 		assertNotNull(v);
 		assertEquals("$i", v.get_name());
@@ -259,7 +259,7 @@ public class ParserTest {
 
 	@Test
 	public void testIdentifierWithDollar2() throws Exception {
-		Greql2Graph graph = parseQuery("using $: from i:$ report i end");
+		GreqlGraph graph = parseQuery("using $: from i:$ report i end");
 		Variable v = graph.getFirstVariable();
 		assertNotNull(v);
 		assertEquals("$", v.get_name());
@@ -267,7 +267,7 @@ public class ParserTest {
 
 	@Test
 	public void testTypeId() throws Exception {
-		Greql2Graph graph = parseQuery("V{Part!}");
+		GreqlGraph graph = parseQuery("V{Part!}");
 		TypeId t = graph.getFirstTypeId();
 		assertNotNull(t);
 		assertEquals("Part", t.get_name());
@@ -277,7 +277,7 @@ public class ParserTest {
 
 	@Test
 	public void testTypeId2() throws Exception {
-		Greql2Graph graph = parseQuery("V{^Part!}");
+		GreqlGraph graph = parseQuery("V{^Part!}");
 		TypeId t = graph.getFirstTypeId();
 		assertNotNull(t);
 		assertEquals("Part", t.get_name());
@@ -287,7 +287,7 @@ public class ParserTest {
 
 	@Test
 	public void testTypeId3() throws Exception {
-		Greql2Graph graph = parseQuery("V{^Part}");
+		GreqlGraph graph = parseQuery("V{^Part}");
 		TypeId t = graph.getFirstTypeId();
 		assertNotNull(t);
 		assertEquals("Part", t.get_name());
@@ -297,7 +297,7 @@ public class ParserTest {
 
 	@Test
 	public void testNotEqualExpression() throws Exception {
-		Greql2Graph graph = parseQuery("true <> false");
+		GreqlGraph graph = parseQuery("true <> false");
 		FunctionApplication funAp = graph.getFirstFunctionApplication();
 		assertNotNull(funAp);
 		IsFunctionIdOf isIdOf = funAp.getFirstIsFunctionIdOfIncidence();
@@ -308,7 +308,7 @@ public class ParserTest {
 
 	@Test
 	public void testLessThanExpression() throws Exception {
-		Greql2Graph graph = parseQuery("5456 < 4");
+		GreqlGraph graph = parseQuery("5456 < 4");
 		FunctionApplication funAp = graph.getFirstFunctionApplication();
 		assertNotNull(funAp);
 		IsFunctionIdOf isIdOf = funAp.getFirstIsFunctionIdOfIncidence();
@@ -319,7 +319,7 @@ public class ParserTest {
 
 	@Test
 	public void testLessOrEqualExpression() throws Exception {
-		Greql2Graph graph = parseQuery("5 <= 6");
+		GreqlGraph graph = parseQuery("5 <= 6");
 		FunctionApplication funAp = graph.getFirstFunctionApplication();
 		assertNotNull(funAp);
 		IsFunctionIdOf isIdOf = funAp.getFirstIsFunctionIdOfIncidence();
@@ -330,7 +330,7 @@ public class ParserTest {
 
 	@Test
 	public void testBooleanLiteral() throws Exception {
-		Greql2Graph graph = parseQuery("true");
+		GreqlGraph graph = parseQuery("true");
 		BoolLiteral lit = graph.getFirstBoolLiteral();
 		assertNotNull(lit);
 		assertTrue(lit.is_boolValue());
@@ -342,7 +342,7 @@ public class ParserTest {
 
 	@Test
 	public void testIntegerLiteral() throws Exception {
-		Greql2Graph graph = parseQuery("5");
+		GreqlGraph graph = parseQuery("5");
 		IntLiteral lit = graph.getFirstIntLiteral();
 		assertNotNull(lit);
 		assertEquals(5, lit.get_intValue());
@@ -350,7 +350,7 @@ public class ParserTest {
 
 	@Test
 	public void testHexLiteral() throws Exception {
-		Greql2Graph graph = parseQuery("0x5");
+		GreqlGraph graph = parseQuery("0x5");
 		IntLiteral lit = graph.getFirstIntLiteral();
 		assertNotNull(lit);
 		assertEquals(5, lit.get_intValue());
@@ -362,7 +362,7 @@ public class ParserTest {
 
 	@Test
 	public void testOctLiteral() throws Exception {
-		Greql2Graph graph = parseQuery("05");
+		GreqlGraph graph = parseQuery("05");
 		IntLiteral lit = graph.getFirstIntLiteral();
 		assertNotNull(lit);
 		assertEquals(5, lit.get_intValue());
@@ -374,7 +374,7 @@ public class ParserTest {
 
 	@Test
 	public void testLongLiteral() throws Exception {
-		Greql2Graph graph = parseQuery(Long.toString(Long.MAX_VALUE));
+		GreqlGraph graph = parseQuery(Long.toString(Long.MAX_VALUE));
 		LongLiteral lit = graph.getFirstLongLiteral();
 		assertNotNull(lit);
 		assertEquals(Long.MAX_VALUE, lit.get_longValue());
@@ -392,7 +392,7 @@ public class ParserTest {
 	static final double DELTA = 0.00000001;
 
 	public void assertDoubleLiteralEquals(String literal, double expectedValue) {
-		Greql2Graph graph = parseQuery(literal);
+		GreqlGraph graph = parseQuery(literal);
 		DoubleLiteral lit = graph.getFirstDoubleLiteral();
 		Double value = lit.get_doubleValue();
 		System.out.println("Value in graph " + value);
@@ -401,7 +401,7 @@ public class ParserTest {
 	}
 
 	public void assertLongLiteralEquals(String literal, long expectedValue) {
-		Greql2Graph graph = parseQuery(literal);
+		GreqlGraph graph = parseQuery(literal);
 		LongLiteral lit = graph.getFirstLongLiteral();
 		long value = 0;
 		if (lit != null) {
@@ -416,7 +416,7 @@ public class ParserTest {
 
 	@Test
 	public void testUnaryExpressionNeg() throws Exception {
-		Greql2Graph graph = parseQuery("-5");
+		GreqlGraph graph = parseQuery("-5");
 		FunctionApplication funAp = graph.getFirstFunctionApplication();
 		assertNotNull(funAp);
 		IsFunctionIdOf isIdOf = funAp.getFirstIsFunctionIdOfIncidence();
@@ -427,7 +427,7 @@ public class ParserTest {
 
 	@Test
 	public void testUnaryExpressionNot() throws Exception {
-		Greql2Graph graph = parseQuery("not true");
+		GreqlGraph graph = parseQuery("not true");
 		FunctionApplication funAp = graph.getFirstFunctionApplication();
 		assertNotNull(funAp);
 		IsFunctionIdOf isIdOf = funAp.getFirstIsFunctionIdOfIncidence();
@@ -438,7 +438,7 @@ public class ParserTest {
 
 	@Test
 	public void testListConstruction() throws Exception {
-		Greql2Graph graph = parseQuery("list(10,11,12,13)");
+		GreqlGraph graph = parseQuery("list(10,11,12,13)");
 		ListConstruction constr = graph.getFirstListConstruction();
 		assertNotNull(constr);
 		assertEquals(4, constr.getDegree(IsPartOf.EC));
@@ -448,7 +448,7 @@ public class ParserTest {
 	public void testGreTLQuery() throws Exception {
 		String query = "from t : V{Vertex}    " + "report t --> "
 				+ "     & {@hasType(thisVertex, \"MyType\")} " + "end";
-		Greql2Graph graph = parseQuery(query);
+		GreqlGraph graph = parseQuery(query);
 		assertNotNull(graph);
 		ThisVertex tv = graph.getFirstThisVertex();
 		assertNotNull(tv);
@@ -469,7 +469,7 @@ public class ParserTest {
 	@Test
 	public void testRole() throws Exception {
 		String queryString = "from var: V{Variable} report <>--{undefinedRole} end";
-		Greql2Graph graph = parseQuery(queryString);
+		GreqlGraph graph = parseQuery(queryString);
 		assertNotNull(graph);
 		RoleId id = graph.getFirstRoleId();
 		assertNotNull(id);
@@ -487,7 +487,7 @@ public class ParserTest {
 
 	@Test
 	public void testListRangeConstruction() throws Exception {
-		Greql2Graph graph = parseQuery("list(10..13)");
+		GreqlGraph graph = parseQuery("list(10..13)");
 		ListRangeConstruction constr = graph.getFirstListRangeConstruction();
 		assertNotNull(constr);
 		IsFirstValueOf firstValueEdge = constr
@@ -504,7 +504,7 @@ public class ParserTest {
 
 	@Test
 	public void testSetConstruction() throws Exception {
-		Greql2Graph graph = parseQuery("set(10,11,12,13)");
+		GreqlGraph graph = parseQuery("set(10,11,12,13)");
 		SetConstruction constr = graph.getFirstSetConstruction();
 		assertNotNull(constr);
 		assertEquals(4, constr.getDegree(IsPartOf.EC));
@@ -512,7 +512,7 @@ public class ParserTest {
 
 	@Test
 	public void testRecordConstruction() throws Exception {
-		Greql2Graph graph = parseQuery("rec(a:5,b:\"Yes\")");
+		GreqlGraph graph = parseQuery("rec(a:5,b:\"Yes\")");
 		RecordConstruction constr = graph.getFirstRecordConstruction();
 		assertNotNull(constr);
 		IsRecordElementOf recElemEdge = constr
@@ -532,7 +532,7 @@ public class ParserTest {
 
 	@Test
 	public void testForallExpression() throws Exception {
-		Greql2Graph graph = parseQuery("forall v:set(1,2,3) @ v < 7");
+		GreqlGraph graph = parseQuery("forall v:set(1,2,3) @ v < 7");
 		Variable var = graph.getFirstVariable();
 		assertNotNull(var);
 		assertEquals("v", var.get_name());
@@ -546,7 +546,7 @@ public class ParserTest {
 
 	@Test
 	public void testExistsExpression() throws Exception {
-		Greql2Graph graph = parseQuery("exists v:set(1,2,3) @ v < 7");
+		GreqlGraph graph = parseQuery("exists v:set(1,2,3) @ v < 7");
 		Variable var = graph.getFirstVariable();
 		assertNotNull(var);
 		assertEquals("v", var.get_name());
@@ -560,7 +560,7 @@ public class ParserTest {
 
 	@Test
 	public void testExistsOneExpression() throws Exception {
-		Greql2Graph graph = parseQuery("exists! v:set(1,2,3) @ v < 7");
+		GreqlGraph graph = parseQuery("exists! v:set(1,2,3) @ v < 7");
 		Variable var = graph.getFirstVariable();
 		assertNotNull(var);
 		assertEquals("v", var.get_name());
@@ -574,7 +574,7 @@ public class ParserTest {
 
 	// @Test
 	// public void testExistsOneQuantifier() throws Exception {
-	// ManualGreql2Parser parser = getParser("exists!");
+	// ManualGreqlParser parser = getParser("exists!");
 	// parser.initialize();
 	// try {
 	// Quantifier q = parser.quantifier();
@@ -587,7 +587,7 @@ public class ParserTest {
 
 	@Test
 	public void testVariableList() throws Exception {
-		Greql2Graph graph = parseQuery("from a,b,c,d:V report a end");
+		GreqlGraph graph = parseQuery("from a,b,c,d:V report a end");
 		Variable var = graph.getFirstVariable();
 		assertNotNull(var);
 		assertEquals("a", var.get_name());
@@ -604,7 +604,7 @@ public class ParserTest {
 
 	@Test
 	public void testSimpleQueryWithConstraint() throws Exception {
-		Greql2Graph graph = parseQuery("from var: V with isPrime(var) report var end");
+		GreqlGraph graph = parseQuery("from var: V with isPrime(var) report var end");
 		Variable var = graph.getFirstVariable();
 		assertNotNull(var);
 		assertEquals("var", var.get_name());
@@ -624,7 +624,7 @@ public class ParserTest {
 
 	@Test
 	public void testSimpleQueryWithMultipleDeclarations() throws Exception {
-		Greql2Graph graph = parseQuery("from var: V{Definition}, def: V{WhereExpression} report var end");
+		GreqlGraph graph = parseQuery("from var: V{Definition}, def: V{WhereExpression} report var end");
 		Variable var = graph.getFirstVariable();
 		assertNotNull(var);
 		assertEquals("var", var.get_name());
@@ -668,7 +668,7 @@ public class ParserTest {
 
 	@Test
 	public void testSimpleQuery1() throws Exception {
-		Greql2Graph graph = parseQuery("from var: V{Definition}, def: V{WhereExpression} with var -->{IsDefinitionOf} | -->{IsVarOf}  def report var end");
+		GreqlGraph graph = parseQuery("from var: V{Definition}, def: V{WhereExpression} with var -->{IsDefinitionOf} | -->{IsVarOf}  def report var end");
 		ListComprehension comp = graph.getFirstListComprehension();
 		assertNotNull(comp);
 		IsCompDeclOf declEdge = comp.getFirstIsCompDeclOfIncidence();
@@ -742,8 +742,8 @@ public class ParserTest {
 
 	@Test
 	public void testSimpleQuery2() throws Exception {
-		Greql2Graph graph = parseQuery("using FOO: from i: toSet(FOO) report i end");
-		Greql2Expression root = graph.getFirstGreql2Expression();
+		GreqlGraph graph = parseQuery("using FOO: from i: toSet(FOO) report i end");
+		GreqlExpression root = graph.getFirstGreqlExpression();
 		assertNotNull(root);
 		IsBoundVarOf boundVarEdge = root.getFirstIsBoundVarOfIncidence();
 		assertNotNull(boundVarEdge);
@@ -776,8 +776,8 @@ public class ParserTest {
 
 	@Test
 	public void testUsing() throws Exception {
-		Greql2Graph graph = parseQuery("using A: from b:A report b end");
-		Greql2Expression root = graph.getFirstGreql2Expression();
+		GreqlGraph graph = parseQuery("using A: from b:A report b end");
+		GreqlExpression root = graph.getFirstGreqlExpression();
 		assertNotNull(root);
 		IsBoundVarOf boundVarEdge = root.getFirstIsBoundVarOfIncidence();
 		assertNotNull(boundVarEdge);
@@ -814,13 +814,13 @@ public class ParserTest {
 
 	@Test
 	public void testLetExpression2() throws Exception {
-		Greql2Graph graph = parseQuery("let x:= list (5..13) in count(x)");
+		GreqlGraph graph = parseQuery("let x:= list (5..13) in count(x)");
 		assertNotNull(graph);
 	}
 
 	@Test
 	public void testFRQuery() throws Exception {
-		Greql2Graph graph = parseQuery("from v:V report v end");
+		GreqlGraph graph = parseQuery("from v:V report v end");
 		Variable var = graph.getFirstVariable();
 		assertNotNull(var);
 		assertEquals("v", var.get_name());
@@ -830,7 +830,7 @@ public class ParserTest {
 
 	@Test
 	public void testFunctionApplication() throws Exception {
-		Greql2Graph graph = parseQuery("from v:V report degree(v) end");
+		GreqlGraph graph = parseQuery("from v:V report degree(v) end");
 		Variable var = graph.getFirstVariable();
 		assertNotNull(var);
 		assertEquals("v", var.get_name());
@@ -845,7 +845,7 @@ public class ParserTest {
 
 	@Test
 	public void testConditionalExpression() throws Exception {
-		Greql2Graph graph = parseQuery("1=2 ? true : false");
+		GreqlGraph graph = parseQuery("1=2 ? true : false");
 		ConditionalExpression condExpr = graph.getFirstConditionalExpression();
 		assertNotNull(condExpr);
 		FunctionApplication condition = (FunctionApplication) condExpr
@@ -874,8 +874,8 @@ public class ParserTest {
 
 	@Test
 	public void testConditionalExpression2() throws Exception {
-		Greql2Graph graph = parseQuery("1=1?1:2");
-		Greql2Expression root = graph.getFirstGreql2Expression();
+		GreqlGraph graph = parseQuery("1=1?1:2");
+		GreqlExpression root = graph.getFirstGreqlExpression();
 		assertNotNull(root);
 		IsQueryExprOf queryEdge = root
 				.getFirstIsQueryExprOfIncidence(EdgeDirection.IN);
@@ -907,7 +907,7 @@ public class ParserTest {
 
 	@Test
 	public void testVertexSetExpression() throws Exception {
-		Greql2Graph graph = parseQuery("V{FirstType, SecondType, ^ThirdType}");
+		GreqlGraph graph = parseQuery("V{FirstType, SecondType, ^ThirdType}");
 		VertexSetExpression vset = graph.getFirstVertexSetExpression();
 		assertNotNull(vset);
 		assertEquals(3, vset.getDegree(IsTypeRestrOfExpression.EC));
@@ -928,7 +928,7 @@ public class ParserTest {
 
 	@Test
 	public void testEdgeSetExpression() throws Exception {
-		Greql2Graph graph = parseQuery("E{^FirstType, ^SecondType, ThirdType}");
+		GreqlGraph graph = parseQuery("E{^FirstType, ^SecondType, ThirdType}");
 		EdgeSetExpression vset = graph.getFirstEdgeSetExpression();
 		assertNotNull(vset);
 		assertEquals(3, vset.getDegree(IsTypeRestrOfExpression.EC));
@@ -954,7 +954,7 @@ public class ParserTest {
 
 	@Test
 	public void testSimplePathDescription() throws Exception {
-		Greql2Graph graph = parseQuery("using v: v --> ");
+		GreqlGraph graph = parseQuery("using v: v --> ");
 		SimplePathDescription pathDescr = graph.getFirstSimplePathDescription();
 		// TODO test seriously
 		// for (Vertex v : graph.vertices()) {
@@ -965,7 +965,7 @@ public class ParserTest {
 
 	@Test
 	public void testAlternativePathDescriptionWithTypes() throws Exception {
-		Greql2Graph graph = parseQuery("using v: v -->{AType} | <--{AnotherType}");
+		GreqlGraph graph = parseQuery("using v: v -->{AType} | <--{AnotherType}");
 		Variable var = graph.getFirstVariable();
 		assertNotNull(var);
 		assertEquals("v", var.get_name());
@@ -1007,7 +1007,7 @@ public class ParserTest {
 
 	@Test
 	public void testPathDescriptionWithParantheses1() throws Exception {
-		Greql2Graph graph = parseQuery("(--> | <--)");
+		GreqlGraph graph = parseQuery("(--> | <--)");
 		AlternativePathDescription apd = graph
 				.getFirstAlternativePathDescription();
 		assertNotNull(apd);
@@ -1023,7 +1023,7 @@ public class ParserTest {
 
 	@Test
 	public void testTypedPathDescription() throws Exception {
-		Greql2Graph graph = parseQuery("using v: v -->{AType} ");
+		GreqlGraph graph = parseQuery("using v: v -->{AType} ");
 		Variable var = graph.getFirstVariable();
 		assertNotNull(var);
 		assertEquals("v", var.get_name());
@@ -1046,7 +1046,7 @@ public class ParserTest {
 
 	@Test
 	public void testAlternativePathDescription() throws Exception {
-		Greql2Graph graph = parseQuery("using v: v --> | <-- ");
+		GreqlGraph graph = parseQuery("using v: v --> | <-- ");
 		Variable var = graph.getFirstVariable();
 		assertNotNull(var);
 		assertEquals("v", var.get_name());
@@ -1067,7 +1067,7 @@ public class ParserTest {
 
 	@Test
 	public void testIntermediateVertexPathDescription() throws Exception {
-		Greql2Graph graph = parseQuery("using v: v --> v <-- ");
+		GreqlGraph graph = parseQuery("using v: v --> v <-- ");
 		ForwardVertexSet vset = graph.getFirstForwardVertexSet();
 		assertNotNull(vset);
 
@@ -1088,7 +1088,7 @@ public class ParserTest {
 
 	@Test
 	public void testSequentialPathDescription() throws Exception {
-		Greql2Graph graph = parseQuery("using v: v --> <-- ");
+		GreqlGraph graph = parseQuery("using v: v --> <-- ");
 		ForwardVertexSet vset = graph.getFirstForwardVertexSet();
 		assertNotNull(vset);
 
@@ -1107,7 +1107,7 @@ public class ParserTest {
 	@Test
 	public void testStartRestrictedPathDescriptionWithExpression()
 			throws Exception {
-		Greql2Graph graph = parseQuery("using v: v {@v.a=3} & --> ");
+		GreqlGraph graph = parseQuery("using v: v {@v.a=3} & --> ");
 
 		SimplePathDescription srpd = graph.getFirstSimplePathDescription();
 		assertNotNull(srpd);
@@ -1125,7 +1125,7 @@ public class ParserTest {
 
 	@Test
 	public void testStartRestrictedPathDescriptionWithType() throws Exception {
-		Greql2Graph graph = parseQuery("using v: v {MyType} & --> ");
+		GreqlGraph graph = parseQuery("using v: v {MyType} & --> ");
 
 		SimplePathDescription srpd = graph.getFirstSimplePathDescription();
 		assertNotNull(srpd);
@@ -1143,7 +1143,7 @@ public class ParserTest {
 
 	@Test
 	public void testGoalRestrictedPathDescription() throws Exception {
-		Greql2Graph graph = parseQuery("using v: v --> & {@false} ");
+		GreqlGraph graph = parseQuery("using v: v --> & {@false} ");
 		ForwardVertexSet vset = graph.getFirstForwardVertexSet();
 		assertNotNull(vset);
 
@@ -1156,7 +1156,7 @@ public class ParserTest {
 
 	@Test
 	public void testIteratedPathDescription() throws Exception {
-		Greql2Graph graph = parseQuery("using v: v -->* ");
+		GreqlGraph graph = parseQuery("using v: v -->* ");
 		ForwardVertexSet vset = graph.getFirstForwardVertexSet();
 		assertNotNull(vset);
 
@@ -1167,7 +1167,7 @@ public class ParserTest {
 
 	@Test
 	public void testPathExistence() throws Exception {
-		Greql2Graph graph = parseQuery("using v,w: v --> w ");
+		GreqlGraph graph = parseQuery("using v,w: v --> w ");
 		PathExistence pathExistence = graph.getFirstPathExistence();
 		assertNotNull(pathExistence);
 		IsStartExprOf startEdge = pathExistence
@@ -1189,7 +1189,7 @@ public class ParserTest {
 
 	@Test
 	public void testEdgePathDescription() throws Exception {
-		Greql2Graph graph = parseQuery("using e,v : v --e-> ");
+		GreqlGraph graph = parseQuery("using e,v : v --e-> ");
 		ForwardVertexSet vset = graph.getFirstForwardVertexSet();
 		assertNotNull(vset);
 
@@ -1201,7 +1201,7 @@ public class ParserTest {
 
 	@Test
 	public void testErrorInTypeExpression() throws Exception {
-		String query = "from v:V{Greql2Expression, ^TypeExpression, ^Quantifier} report v end";
+		String query = "from v:V{GreqlExpression, ^TypeExpression, ^Quantifier} report v end";
 		parseQuery(query);
 	}
 
@@ -1222,7 +1222,7 @@ public class ParserTest {
 
 	@Test
 	public void testStringWithoutEscapes() {
-		Greql2Graph graph = parseQuery("\"my simple string\"");
+		GreqlGraph graph = parseQuery("\"my simple string\"");
 		assertNotNull(graph);
 		StringLiteral lit = graph.getFirstStringLiteral();
 		assertNotNull(lit);
@@ -1232,7 +1232,7 @@ public class ParserTest {
 	@Test
 	public void testStringWithEscape1() {
 		String queryString = "\"my simple \\\"string\"";
-		Greql2Graph graph = parseQuery(queryString);
+		GreqlGraph graph = parseQuery(queryString);
 		assertNotNull(graph);
 		StringLiteral lit = graph.getFirstStringLiteral();
 		assertNotNull(lit);
@@ -1242,14 +1242,14 @@ public class ParserTest {
 	@Test
 	public void testLexer() {
 		String queryString = "let a:= 7 in a";
-		Greql2Graph graph = parseQuery(queryString);
+		GreqlGraph graph = parseQuery(queryString);
 		assertNotNull(graph);
 	}
 
 	@Test
 	public void testStringWithEscape2() {
 		String queryString = "\"my simple \nstring\"";
-		Greql2Graph graph = parseQuery(queryString);
+		GreqlGraph graph = parseQuery(queryString);
 		assertNotNull(graph);
 		StringLiteral lit = graph.getFirstStringLiteral();
 		assertNotNull(lit);

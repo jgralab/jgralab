@@ -44,7 +44,7 @@ import org.riediger.plist.PListException;
 
 import de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout.GraphLayout;
 import de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout.reader.AbstractGraphLayoutReader;
-import de.uni_koblenz.jgralab.utilities.tg2dot.greql2.GreqlEvaluatorFacade;
+import de.uni_koblenz.jgralab.utilities.tg2dot.greql.GreqlEvaluatorFacade;
 
 /**
  * A GraphLayoutReader reading in graph layout from PList-files.

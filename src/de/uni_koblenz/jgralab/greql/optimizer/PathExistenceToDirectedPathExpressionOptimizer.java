@@ -56,7 +56,7 @@ import de.uni_koblenz.jgralab.greql.schema.Declaration;
 import de.uni_koblenz.jgralab.greql.schema.EdgePathDescription;
 import de.uni_koblenz.jgralab.greql.schema.Expression;
 import de.uni_koblenz.jgralab.greql.schema.FunctionApplication;
-import de.uni_koblenz.jgralab.greql.schema.Greql2Graph;
+import de.uni_koblenz.jgralab.greql.schema.GreqlGraph;
 import de.uni_koblenz.jgralab.greql.schema.IsBoundVarOf;
 import de.uni_koblenz.jgralab.greql.schema.IsDeclaredVarOf;
 import de.uni_koblenz.jgralab.greql.schema.IsPathDescriptionOf;
@@ -100,11 +100,11 @@ public class PathExistenceToDirectedPathExpressionOptimizer extends
 	 * @see
 	 * de.uni_koblenz.jgralab.greql2.optimizer.Optimizer#optimize(de.uni_koblenz
 	 * .jgralab.greql2.evaluator.GreqlEvaluator,
-	 * de.uni_koblenz.jgralab.greql2.schema.Greql2)
+	 * de.uni_koblenz.jgralab.greql2.schema.Greql)
 	 */
 	@Override
 	public boolean optimize(GreqlQuery query) throws OptimizerException {
-		Greql2Graph syntaxgraph = query.getQueryGraph();
+		GreqlGraph syntaxgraph = query.getQueryGraph();
 
 		if (syntaxgraph.getFirstVertex(PathExistence.VC) == null) {
 			return false;
@@ -141,7 +141,7 @@ public class PathExistenceToDirectedPathExpressionOptimizer extends
 		}
 
 		// System.out.println("PETDPEO: "
-		// + ((SerializableGreql2) syntaxgraph).serialize());
+		// + ((SerializableGreql) syntaxgraph).serialize());
 
 		OptimizerUtility.createMissingSourcePositions(syntaxgraph);
 		return !pes.isEmpty();
@@ -315,14 +315,14 @@ public class PathExistenceToDirectedPathExpressionOptimizer extends
 		}
 
 		// System.out.println("after splitting PETDPEO: "
-		// + ((SerializableGreql2) start.getGraph()).serialize());
+		// + ((SerializableGreql) start.getGraph()).serialize());
 
 		// Ok, so the type expression is something more complex, so create a set
 		// difference between the old type expression and a new forward/backward
 		// vertex set.
 
 		sd.getFirstIsTypeExprOfDeclarationIncidence(EdgeDirection.IN).delete();
-		Greql2Graph g = (Greql2Graph) typeExp.getGraph();
+		GreqlGraph g = (GreqlGraph) typeExp.getGraph();
 		FunctionApplication diff = g.createFunctionApplication();
 		g.createIsFunctionIdOf(OptimizerUtility.findOrCreateFunctionId(
 				Intersection.class.getSimpleName().toLowerCase(), g), diff);
@@ -379,7 +379,7 @@ public class PathExistenceToDirectedPathExpressionOptimizer extends
 	private PathExpression createForwardOrBackwardVertexSet(boolean forward,
 			Variable anchor, PathDescription path,
 			Iterable<? extends TypeId> restrictions) {
-		Greql2Graph g = (Greql2Graph) path.getGraph();
+		GreqlGraph g = (GreqlGraph) path.getGraph();
 
 		PathExpression newPE = null;
 		if (forward) {
@@ -411,7 +411,7 @@ public class PathExistenceToDirectedPathExpressionOptimizer extends
 			forward = false;
 		}
 
-		Greql2Graph g = (Greql2Graph) pe.getGraph();
+		GreqlGraph g = (GreqlGraph) pe.getGraph();
 
 		PathExpression newPE = createForwardOrBackwardVertexSet(forward,
 				otherVar, (PathDescription) pe.get_path(), vse.get_typeRestr());

@@ -49,7 +49,7 @@ import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.greql.GreqlQuery;
 import de.uni_koblenz.jgralab.greql.exception.OptimizerException;
 import de.uni_koblenz.jgralab.greql.schema.Declaration;
-import de.uni_koblenz.jgralab.greql.schema.Greql2Graph;
+import de.uni_koblenz.jgralab.greql.schema.GreqlGraph;
 import de.uni_koblenz.jgralab.greql.schema.IsDeclaredVarOf;
 import de.uni_koblenz.jgralab.greql.schema.IsSimpleDeclOf;
 import de.uni_koblenz.jgralab.greql.schema.SimpleDeclaration;
@@ -100,11 +100,11 @@ public class VariableDeclarationOrderOptimizer extends OptimizerBase {
 	 * @see
 	 * de.uni_koblenz.jgralab.greql2.optimizer.Optimizer#optimize(de.uni_koblenz
 	 * .jgralab.greql2.evaluator.GreqlEvaluator,
-	 * de.uni_koblenz.jgralab.greql2.schema.Greql2)
+	 * de.uni_koblenz.jgralab.greql2.schema.Greql)
 	 */
 	@Override
 	public boolean optimize(GreqlQuery query) throws OptimizerException {
-		Greql2Graph syntaxgraph = query.getQueryGraph();
+		GreqlGraph syntaxgraph = query.getQueryGraph();
 
 		ArrayList<List<VariableDeclarationOrderUnit>> unitsList = new ArrayList<List<VariableDeclarationOrderUnit>>();
 		for (Declaration decl : syntaxgraph.getDeclarationVertices()) {
@@ -170,7 +170,7 @@ public class VariableDeclarationOrderOptimizer extends OptimizerBase {
 
 		// Tg2Dot.printGraphAsDot(syntaxgraph, true, "/home/horn/vdoo.dot");
 		// System.out.println("Afted VDOO:");
-		// System.out.println(((SerializableGreql2) syntaxgraph).serialize());
+		// System.out.println(((SerializableGreql) syntaxgraph).serialize());
 
 		return varDeclOrderChanged;
 	}

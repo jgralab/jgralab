@@ -43,8 +43,8 @@ import java.util.Queue;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.greql.evaluator.GreqlQueryImpl;
 import de.uni_koblenz.jgralab.greql.schema.Expression;
-import de.uni_koblenz.jgralab.greql.schema.Greql2Aggregation;
-import de.uni_koblenz.jgralab.greql.schema.Greql2Vertex;
+import de.uni_koblenz.jgralab.greql.schema.GreqlAggregation;
+import de.uni_koblenz.jgralab.greql.schema.GreqlVertex;
 import de.uni_koblenz.jgralab.greql.schema.PathDescription;
 import de.uni_koblenz.jgralab.greql.schema.ThisVertex;
 
@@ -75,11 +75,11 @@ public class ThisVertexEvaluator extends VariableEvaluator<ThisVertex> {
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<VertexEvaluator<? extends Expression>> calculateDependingExpressions() {
-		Queue<Greql2Vertex> queue = new LinkedList<Greql2Vertex>();
+		Queue<GreqlVertex> queue = new LinkedList<GreqlVertex>();
 		List<VertexEvaluator<? extends Expression>> dependingEvaluators = new ArrayList<VertexEvaluator<? extends Expression>>();
 		queue.add(vertex);
 		while (!queue.isEmpty()) {
-			Greql2Vertex currentVertex = queue.poll();
+			GreqlVertex currentVertex = queue.poll();
 			VertexEvaluator<?> eval = query.getVertexEvaluator(currentVertex);
 
 			if ((eval != null) && (!dependingEvaluators.contains(eval))
@@ -89,15 +89,15 @@ public class ThisVertexEvaluator extends VariableEvaluator<ThisVertex> {
 				dependingEvaluators
 						.add((VertexEvaluator<? extends Expression>) eval);
 			}
-			Greql2Aggregation currentEdge = currentVertex
-					.getFirstGreql2AggregationIncidence(EdgeDirection.OUT);
+			GreqlAggregation currentEdge = currentVertex
+					.getFirstGreqlAggregationIncidence(EdgeDirection.OUT);
 			while (currentEdge != null) {
-				Greql2Vertex nextVertex = (Greql2Vertex) currentEdge.getThat();
+				GreqlVertex nextVertex = (GreqlVertex) currentEdge.getThat();
 				if (!(nextVertex instanceof PathDescription)) {
 					queue.add(nextVertex);
 				}
 				currentEdge = currentEdge
-						.getNextGreql2AggregationIncidence(EdgeDirection.OUT);
+						.getNextGreqlAggregationIncidence(EdgeDirection.OUT);
 			}
 		}
 		return dependingEvaluators;

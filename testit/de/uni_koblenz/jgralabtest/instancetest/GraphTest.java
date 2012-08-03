@@ -55,7 +55,7 @@ import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.ImplementationType;
 import de.uni_koblenz.jgralab.RandomIdGenerator;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.greql.schema.Greql2Schema;
+import de.uni_koblenz.jgralab.greql.schema.GreqlSchema;
 import de.uni_koblenz.jgralab.impl.InternalGraph;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.VertexClass;
@@ -119,7 +119,7 @@ public class GraphTest extends InstanceTest {
 	private ArrayList<String> graphIdsInUse = new ArrayList<String>();
 
 	/**
-	 *
+	 * 
 	 * @return
 	 */
 	private VertexTestGraph createNewGraph() {
@@ -3686,7 +3686,7 @@ public class GraphTest extends InstanceTest {
 	/**
 	 * Tests if null is returned if a vertex is requested from the graph whose
 	 * id is bigger than maxV
-	 *
+	 * 
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -3703,7 +3703,7 @@ public class GraphTest extends InstanceTest {
 	/**
 	 * Tests if null is returned if an edge is requested from the graph whose id
 	 * is bigger than maxE
-	 *
+	 * 
 	 * @throws CommitFailedException
 	 */
 	@Test
@@ -3726,6 +3726,6 @@ public class GraphTest extends InstanceTest {
 		InternalGraph g = (InternalGraph) createMinimalGraph();
 		assertTrue(g.isInstanceOf(g.getAttributedElementClass()));
 		assertTrue(g.isInstanceOf(MinimalSchema.instance().getGraphClass()));
-		assertFalse(g.isInstanceOf(Greql2Schema.instance().getGraphClass()));
+		assertFalse(g.isInstanceOf(GreqlSchema.instance().getGraphClass()));
 	}
 }

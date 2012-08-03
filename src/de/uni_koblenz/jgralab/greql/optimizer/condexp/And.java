@@ -42,7 +42,7 @@ import de.uni_koblenz.jgralab.greql.optimizer.OptimizerUtility;
 import de.uni_koblenz.jgralab.greql.schema.Expression;
 import de.uni_koblenz.jgralab.greql.schema.FunctionApplication;
 import de.uni_koblenz.jgralab.greql.schema.FunctionId;
-import de.uni_koblenz.jgralab.greql.schema.Greql2Graph;
+import de.uni_koblenz.jgralab.greql.schema.GreqlGraph;
 
 /**
  * TODO: (heimdall) Comment class!
@@ -63,7 +63,7 @@ public class And extends BinaryOperator {
 
 	@Override
 	public Expression toExpression() {
-		Greql2Graph syntaxgraph = query.getQueryGraph();
+		GreqlGraph syntaxgraph = query.getQueryGraph();
 		FunctionApplication funApp = syntaxgraph.createFunctionApplication();
 		FunctionId funId = OptimizerUtility.findOrCreateFunctionId("and",
 				syntaxgraph);

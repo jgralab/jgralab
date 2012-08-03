@@ -36,4 +36,4 @@
  * TODO [documentation] write documentation for this package.
  */
 
-package de.uni_koblenz.jgralab.utilities.tg2dot.greql2.funlib;
+package de.uni_koblenz.jgralab.utilities.tg2dot.greql.funlib;

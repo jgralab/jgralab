@@ -44,7 +44,7 @@ import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.greql.GreqlQuery;
 import de.uni_koblenz.jgralab.greql.schema.Declaration;
 import de.uni_koblenz.jgralab.greql.schema.Expression;
-import de.uni_koblenz.jgralab.greql.schema.Greql2Graph;
+import de.uni_koblenz.jgralab.greql.schema.GreqlGraph;
 import de.uni_koblenz.jgralab.greql.schema.IsDeclaredVarOf;
 import de.uni_koblenz.jgralab.greql.schema.IsSimpleDeclOf;
 import de.uni_koblenz.jgralab.greql.schema.IsTargetExprOf;
@@ -91,7 +91,7 @@ public class MergeSimpleDeclarationsOptimizer extends OptimizerBase {
 	 * @see
 	 * de.uni_koblenz.jgralab.greql2.optimizer.Optimizer#optimize(de.uni_koblenz
 	 * .jgralab.greql2.evaluator.GreqlEvaluator,
-	 * de.uni_koblenz.jgralab.greql2.schema.Greql2)
+	 * de.uni_koblenz.jgralab.greql2.schema.Greql)
 	 */
 	@Override
 	public boolean optimize(GreqlQuery query) {
@@ -110,9 +110,9 @@ public class MergeSimpleDeclarationsOptimizer extends OptimizerBase {
 	 * surviving {@link SimpleDeclaration}.
 	 * 
 	 * @param syntaxgraph
-	 *            a {@link Greql2} graph
+	 *            a {@link Greql} graph
 	 */
-	private void findAndMergeSimpleDeclarations(Greql2Graph syntaxgraph) {
+	private void findAndMergeSimpleDeclarations(GreqlGraph syntaxgraph) {
 		HashMap<String, ArrayList<SimpleDeclaration>> mergableSDMap = new HashMap<String, ArrayList<SimpleDeclaration>>();
 		Declaration decl = syntaxgraph.getFirstDeclaration();
 		while (decl != null) {

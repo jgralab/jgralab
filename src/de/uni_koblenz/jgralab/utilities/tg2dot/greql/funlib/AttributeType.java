@@ -32,32 +32,31 @@
  * non-source form of such a combination shall include the source code for
  * the parts of JGraLab used as well as that of the covered work.
  */
+package de.uni_koblenz.jgralab.utilities.tg2dot.greql.funlib;
 
-package de.uni_koblenz.jgralab.utilities.tg2dot.greql2.funlib;
-
-import de.uni_koblenz.jgralab.Edge;
+import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.greql.funlib.Description;
 import de.uni_koblenz.jgralab.greql.funlib.Function;
-import de.uni_koblenz.jgralab.schema.EdgeClass;
+import de.uni_koblenz.jgralab.schema.Attribute;
+import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 
-public class AlphaRolename extends Function {
-	
-	public AlphaRolename() {
+public class AttributeType extends Function {
+
+	public AttributeType() {
 		super();
 	}
 
-	@Description(params = "e", description = "Returns the omega rolename of the given edge or null otherwise.",
+	@Description(params = {"el", "name"}, description = "Returns the domain type name of a given attribute as String.",
 			categories = Category.SCHEMA_ACCESS)
-	public String evaluate(Edge e) {
-		return evaluate((EdgeClass) e.getAttributedElementClass());
+	public String evaluate(AttributedElement<?, ?> el, String name) {
+		return evaluate(el.getAttributedElementClass(), name);
 	}
 
-	@Description(params = "ec", description = "Returns the omega rolename of the given edge class or null otherwise.",
+	@Description(params = {"aec", "name"}, description = "Returns the domain type name of a given attribute as String.",
 			categories = Category.SCHEMA_ACCESS)
-	public String evaluate(EdgeClass ec) {
-		String rolename = ec.getFrom().getRolename();
-		rolename = rolename == null ? "" : rolename;
-		return rolename;
+	public String evaluate(AttributedElementClass<?, ?> aec, String name) {
+		Attribute attribute = aec.getAttribute(name);
+		return attribute != null ? attribute.getDomain().getQualifiedName()
+				: null;
 	}
-
 }

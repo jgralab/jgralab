@@ -73,9 +73,10 @@ public class SimplePathDescriptionEvaluator extends
 			typeCollection.addTypes(edgeRestEval.getTypeCollection(evaluator));
 			predicateEvaluator = edgeRestEval.getPredicateEvaluator();
 		}
-		createdNFA = NFA.createSimplePathDescriptionNFA(
+		NFA createdNFA = NFA.createSimplePathDescriptionNFA(
 				getEdgeDirection(vertex), typeCollection,
 				getEdgeRoles(edgeRestEval), predicateEvaluator, query);
+		evaluator.setLocalEvaluationResult(vertex, createdNFA);
 		return createdNFA;
 	}
 

@@ -8,11 +8,12 @@ import java.util.Set;
 
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.ProgressFunction;
+import de.uni_koblenz.jgralab.greql.evaluator.GreqlEnvironmentAdapter;
 import de.uni_koblenz.jgralab.greql.evaluator.GreqlQueryImpl;
 import de.uni_koblenz.jgralab.greql.optimizer.Optimizer;
 import de.uni_koblenz.jgralab.greql.optimizer.OptimizerUtility;
-import de.uni_koblenz.jgralab.greql.schema.Greql2Expression;
-import de.uni_koblenz.jgralab.greql.schema.Greql2Graph;
+import de.uni_koblenz.jgralab.greql.schema.GreqlExpression;
+import de.uni_koblenz.jgralab.greql.schema.GreqlGraph;
 
 public abstract class GreqlQuery {
 	public static GreqlQuery readQuery(File f) throws IOException {
@@ -75,36 +76,53 @@ public abstract class GreqlQuery {
 		return new GreqlQueryImpl(queryText, optimize, optimizerInfo, optimizer);
 	}
 
-	public abstract Greql2Graph getQueryGraph();
+	public GreqlGraph getQueryGraph() {
+		return null;
+	}
 
 	public abstract Set<String> getUsedVariables();
 
 	public abstract Set<String> getStoredVariables();
 
-	public abstract String getQueryText();
+	public String getQueryText() {
+		return null;
+	}
 
-	public abstract Greql2Expression getRootExpression();
+	public GreqlExpression getRootExpression() {
+		throw new UnsupportedOperationException();
+	}
 
 	/**
 	 * @return the time needed for optimizing the query or -1 if no optimization
 	 *         was done.
 	 */
-	public abstract long getOptimizationTime();
+	public long getOptimizationTime() {
+		throw new UnsupportedOperationException();
+	}
 
 	/**
 	 * @return the time needed for parsing the query.
 	 */
-	public abstract long getParseTime();
+	public long getParseTime() {
+		throw new UnsupportedOperationException();
+	}
 
-	public abstract Object evaluate();
+	public Object evaluate() {
+		return evaluate(null, new GreqlEnvironmentAdapter(), null);
+	}
 
-	public abstract Object evaluate(Graph datagraph);
+	public Object evaluate(Graph datagraph) {
+		return evaluate(datagraph, new GreqlEnvironmentAdapter(), null);
+	}
 
-	public abstract Object evaluate(Graph datagraph,
-			GreqlEnvironment environment);
+	public Object evaluate(Graph datagraph, GreqlEnvironment environment) {
+		return evaluate(datagraph, environment, null);
+	}
 
-	public abstract Object evaluate(Graph datagraph,
-			ProgressFunction progressFunction);
+	public Object evaluate(Graph datagraph, ProgressFunction progressFunction) {
+		return evaluate(datagraph, new GreqlEnvironmentAdapter(),
+				progressFunction);
+	}
 
 	public abstract Object evaluate(Graph datagraph,
 			GreqlEnvironment environment, ProgressFunction progressFunction);

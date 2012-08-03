@@ -40,7 +40,7 @@ import java.util.List;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql.exception.DuplicateVariableException;
-import de.uni_koblenz.jgralab.greql.schema.Greql2Aggregation;
+import de.uni_koblenz.jgralab.greql.schema.GreqlAggregation;
 import de.uni_koblenz.jgralab.greql.schema.IsBoundVarOf;
 import de.uni_koblenz.jgralab.greql.schema.IsDeclaredVarOf;
 import de.uni_koblenz.jgralab.greql.schema.IsVarOf;
@@ -71,7 +71,7 @@ public class SymbolTable extends SimpleSymbolTable {
 			}
 			List<SourcePosition> sourcePositions = null;
 			if (v.getFirstIncidence(EdgeDirection.IN) != null) {
-				sourcePositions = ((Greql2Aggregation) v.getFirstIncidence(EdgeDirection.IN))
+				sourcePositions = ((GreqlAggregation) v.getFirstIncidence(EdgeDirection.IN))
 						.get_sourcePositions();
 			}
 			

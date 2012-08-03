@@ -1,6 +1,8 @@
 package de.uni_koblenz.jgralab.greql.parallel;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -32,86 +34,118 @@ import de.uni_koblenz.jgralab.schema.impl.SchemaImpl;
 
 public class ParallelGreqlEvaluator {
 
+	private boolean isEvaluating;
+
 	/*
-	 * generic GreqlQueryDebendencySchema definition
+	 * generic GreqlQueryDependencySchema definition
 	 */
-
-	private static Schema schema;
-	static {
-		schema = new SchemaImpl("GreqlQueryDependencySchema",
-				"de.uni_koblenz.jgralab.greql.parallelgreql");
-	}
-
-	private static GraphClass graphClass;
-	static {
-		graphClass = schema.createGraphClass("GreqlQueryDependencyGraph");
-	}
-
-	private static VertexClass queryVertexClass;
-	static {
-		queryVertexClass = graphClass.createVertexClass("queries.Query");
-	}
-
-	private static EdgeClass dependsOnQueryEdgeClass;
-	static {
-		dependsOnQueryEdgeClass = graphClass.createEdgeClass(
-				"queries.DependsOn", queryVertexClass, 0, Integer.MAX_VALUE,
-				"successor", AggregationKind.SHARED, queryVertexClass, 0,
-				Integer.MAX_VALUE, "predecessor", AggregationKind.NONE);
-	}
+	private static Schema schema = new SchemaImpl("GreqlQueryDependencySchema",
+			"de.uni_koblenz.jgralab.greql.parallelgreql");
+	private static GraphClass graphClass = schema
+			.createGraphClass("GreqlQueryDependencyGraph");
+	private static VertexClass queryVertexClass = graphClass
+			.createVertexClass("queries.Query");
+	private static EdgeClass dependsOnQueryEdgeClass = graphClass
+			.createEdgeClass("queries.DependsOn", queryVertexClass, 0,
+					Integer.MAX_VALUE, "successor", AggregationKind.SHARED,
+					queryVertexClass, 0, Integer.MAX_VALUE, "predecessor",
+					AggregationKind.NONE);
 
 	/*
 	 * Methods to create a new GreqlQueryDependencyGraph
 	 */
+	private final Graph graph;
 
-	private Graph graph;
-
-	public Graph getGraph() {
+	public Graph getDependencyGraph() {
 		return graph;
-	}
-
-	public Graph createGraph(String id, int vMax, int eMax) {
-		graph = new GenericGraphFactoryImpl(schema).createGraph(graphClass, id,
-				vMax, eMax);
-		greqlQueriesMarker = new MapVertexMarker<GreqlQuery>(graph);
-		return graph;
-	}
-
-	public Graph createGraph() {
-		return createGraph(null, 1000, 1000);
 	}
 
 	public Vertex createQueryVertex(String queryText) {
-		return createQueryVertex(GreqlQuery.createQuery(queryText));
+		synchronized (graph) {
+			if (isEvaluating) {
+				throw new IllegalStateException(
+						"The dependency graph is currently evaluating.");
+			}
+			return createQueryVertex(GreqlQuery.createQuery(queryText));
+		}
 	}
 
 	public Vertex createQueryVertex(GreqlQuery query) {
-		Vertex v = graph.createVertex(queryVertexClass);
-		greqlQueriesMarker.mark(v, query);
-		return v;
+		synchronized (graph) {
+			if (isEvaluating) {
+				throw new IllegalStateException(
+						"The dependency graph is currently evaluating.");
+			}
+			Vertex v = graph.createVertex(queryVertexClass);
+			greqlQueriesMarker.mark(v, query);
+			return v;
+		}
 	}
 
 	public Edge createDependency(Vertex predecessor, Vertex successor) {
-		return graph
-				.createEdge(dependsOnQueryEdgeClass, successor, predecessor);
+		synchronized (graph) {
+			if (isEvaluating) {
+				throw new IllegalStateException(
+						"The dependency graph is currently evaluating.");
+			}
+			return graph.createEdge(dependsOnQueryEdgeClass, successor,
+					predecessor);
+		}
+	}
+
+	public void calculateDependencies() {
+		synchronized (graph) {
+			if (isEvaluating) {
+				throw new IllegalStateException(
+						"The dependency graph is currently evaluating.");
+			}
+			// add dependencies based on variable usage and definitions
+			HashMap<String, HashSet<Vertex>> defs = new HashMap<String, HashSet<Vertex>>();
+			for (Vertex v : graph.vertices()) {
+				GreqlQuery q = greqlQueriesMarker.get(v);
+				for (String var : q.getStoredVariables()) {
+					HashSet<Vertex> vs = defs.get(var);
+					if (vs == null) {
+						vs = new HashSet<Vertex>();
+						defs.put(var, vs);
+					}
+					vs.add(v);
+				}
+			}
+			for (Vertex v : graph.vertices()) {
+				GreqlQuery q = greqlQueriesMarker.get(v);
+				for (String var : q.getUsedVariables()) {
+					HashSet<Vertex> vs = defs.get(var);
+					if (vs != null) {
+						for (Vertex p : vs) {
+							createDependency(p, v);
+						}
+					}
+				}
+			}
+		}
 	}
 
 	/*
 	 * Methods to execute all queries of a GreqlQueryDependencyGraph parallel
 	 */
 
-	private MapVertexMarker<GreqlQuery> greqlQueriesMarker;
+	private final MapVertexMarker<GreqlQuery> greqlQueriesMarker;
 
 	private IntegerVertexMarker inDegree;
 
 	private ExecutorService executor;
 
-	private GraphMarker<GreqlEvaluatorTask> evaluators;
+	private GraphMarker<GreqlEvaluatorTask> evaluatorTasks;
+
+	private GraphMarker<GreqlEvaluatorCallable> evaluators;
 
 	private RuntimeException exception;
 
 	public ParallelGreqlEvaluator() {
-
+		graph = new GenericGraphFactoryImpl(schema).createGraph(graphClass,
+				null, 100, 100);
+		greqlQueriesMarker = new MapVertexMarker<GreqlQuery>(graph);
 	}
 
 	public GreqlEnvironmentAdapter evaluate() {
@@ -128,10 +162,12 @@ public class ParallelGreqlEvaluator {
 
 	public GreqlEnvironment evaluate(Graph datagraph,
 			GreqlEnvironment environment) {
-		if (graph == null) {
-			throw new GreqlException(
-					"There exists no graph which contains the queries and their dependencies.");
+		if (isEvaluating) {
+			throw new IllegalStateException(
+					"The dependency graph is currently evaluating.");
 		}
+		isEvaluating = true;
+
 		// check acyclicity
 		try {
 			if (!new TopologicalOrderWithDFS(graph,
@@ -143,24 +179,27 @@ public class ParallelGreqlEvaluator {
 			e1.printStackTrace();
 		}
 
-		long graphVersion = graph.getGraphVersion();// TODO check graphVersions
+		long graphVersion = graph.getGraphVersion();
 
 		// at least 2 threads, at most available processors + 1 (for the
 		// resultcollector)
 		int threads = Math.max(2,
 				Runtime.getRuntime().availableProcessors() + 1);
 		executor = Executors.newFixedThreadPool(threads);
-		evaluators = new GraphMarker<GreqlEvaluatorTask>(graph);
+		evaluatorTasks = new GraphMarker<GreqlEvaluatorTask>(graph);
+		evaluators = new GraphMarker<GreqlEvaluatorCallable>(graph);
 		inDegree = new IntegerVertexMarker(graph);
 
 		List<Vertex> initialNodes = new ArrayList<Vertex>();
 		List<GreqlEvaluatorTask> finalEvaluators = new ArrayList<GreqlEvaluatorTask>();
 
 		for (Vertex v : graph.vertices(queryVertexClass)) {
-			GreqlEvaluatorTask t = new GreqlEvaluatorTask(
+			GreqlEvaluatorCallable callable = new GreqlEvaluatorCallable(
 					greqlQueriesMarker.getMark(v), datagraph, environment, v,
 					graphVersion, this);
-			evaluators.mark(v, t);
+			evaluators.mark(v, callable);
+			GreqlEvaluatorTask t = new GreqlEvaluatorTask(callable);
+			evaluatorTasks.mark(v, t);
 			int i = v.getDegree(dependsOnQueryEdgeClass, EdgeDirection.OUT);
 			inDegree.mark(v, i);
 			if (i == 0) {
@@ -175,11 +214,12 @@ public class ParallelGreqlEvaluator {
 				new GreqlResultCollectorCallable(finalEvaluators));
 		executor.execute(rc);
 		for (Vertex v : initialNodes) {
-			executor.execute(evaluators.getMark(v));
+			executor.execute(evaluatorTasks.getMark(v));
 		}
 		try {
 			rc.get();
 			executor.shutdown();
+			isEvaluating = false;
 			return environment;
 		} catch (InterruptedException e) {
 			// e.printStackTrace();
@@ -187,6 +227,7 @@ public class ParallelGreqlEvaluator {
 			if (exception != null) {
 				throw exception;
 			}
+			isEvaluating = false;
 			return environment;
 		} catch (ExecutionException e) {
 			// e.printStackTrace();
@@ -194,6 +235,7 @@ public class ParallelGreqlEvaluator {
 			if (exception != null) {
 				throw exception;
 			}
+			isEvaluating = false;
 			return environment;
 		}
 	}
@@ -212,16 +254,16 @@ public class ParallelGreqlEvaluator {
 	}
 
 	public void scheduleNext(Vertex dependencyVertex) {
-		for (Edge isDependingOne : dependencyVertex.incidences(
-				dependsOnQueryEdgeClass, EdgeDirection.IN)) {
-			Vertex s = isDependingOne.getThat();
-			synchronized (dependencyVertex.getGraph()) {
+		synchronized (graph) {
+			for (Edge isDependingOne : dependencyVertex.incidences(
+					dependsOnQueryEdgeClass, EdgeDirection.IN)) {
+				Vertex s = isDependingOne.getThat();
 				int i = inDegree.getMark(s) - 1;
 				inDegree.mark(s, i);
 				if (i == 0) {
 					try {
 						if (exception == null) {
-							executor.execute(evaluators.getMark(s));
+							executor.execute(evaluatorTasks.getMark(s));
 						}
 					} catch (RejectedExecutionException e) {
 						break;
@@ -233,6 +275,19 @@ public class ParallelGreqlEvaluator {
 
 	public RuntimeException getException() {
 		return exception;
+	}
+
+	public Object getResult(Vertex dependencyVertex) {
+		if (dependencyVertex.getGraph() != graph) {
+			throw new IllegalArgumentException(
+					"The query vertex whose result is requested is not part of the current graph.");
+		}
+		GreqlEvaluatorCallable evaluator = evaluators.get(dependencyVertex);
+		if (!evaluator.isFinished()) {
+			throw new IllegalStateException("The evaluation of "
+					+ dependencyVertex + " has not been finished yet.");
+		}
+		return evaluator.getResult();
 	}
 
 }

@@ -40,6 +40,7 @@ import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql.evaluator.GreqlQueryImpl;
 import de.uni_koblenz.jgralab.greql.evaluator.InternalGreqlEvaluator;
 import de.uni_koblenz.jgralab.greql.evaluator.VertexCosts;
+import de.uni_koblenz.jgralab.greql.evaluator.fa.DFA;
 import de.uni_koblenz.jgralab.greql.funlib.FunLib;
 import de.uni_koblenz.jgralab.greql.funlib.FunLib.FunctionInfo;
 import de.uni_koblenz.jgralab.greql.schema.Expression;
@@ -68,8 +69,8 @@ public class PathExistenceEvaluator extends PathSearchEvaluator<PathExistence> {
 				EdgeDirection.IN).getAlpha();
 		PathDescriptionEvaluator<?> pathDescEval = (PathDescriptionEvaluator<?>) query
 				.getVertexEvaluator(p);
-		Expression startExpression = vertex
-				.getFirstIsStartExprOfIncidence(EdgeDirection.IN).getAlpha();
+		Expression startExpression = vertex.getFirstIsStartExprOfIncidence(
+				EdgeDirection.IN).getAlpha();
 		VertexEvaluator<? extends Expression> startEval = query
 				.getVertexEvaluator(startExpression);
 		Object res = startEval.getResult(evaluator);
@@ -82,8 +83,8 @@ public class PathExistenceEvaluator extends PathSearchEvaluator<PathExistence> {
 		}
 		Vertex startVertex = (Vertex) res;
 
-		Expression targetExpression = vertex
-				.getFirstIsTargetExprOfIncidence(EdgeDirection.IN).getAlpha();
+		Expression targetExpression = vertex.getFirstIsTargetExprOfIncidence(
+				EdgeDirection.IN).getAlpha();
 		VertexEvaluator<? extends Expression> targetEval = query
 				.getVertexEvaluator(targetExpression);
 		Vertex targetVertex = null;
@@ -93,9 +94,11 @@ public class PathExistenceEvaluator extends PathSearchEvaluator<PathExistence> {
 		}
 		targetVertex = (Vertex) res;
 
+		DFA searchAutomaton = (DFA) evaluator.getLocalAutomaton(vertex);
 		if (searchAutomaton == null) {
 			searchAutomaton = pathDescEval.getNFA(evaluator).getDFA();
 			// searchAutomaton.printAscii();
+			evaluator.setLocalAutomaton(vertex, searchAutomaton);
 		}
 		Object[] arguments = new Object[4];
 		arguments[0] = evaluator;
@@ -111,8 +114,8 @@ public class PathExistenceEvaluator extends PathSearchEvaluator<PathExistence> {
 	@Override
 	public VertexCosts calculateSubtreeEvaluationCosts() {
 		PathExistence existence = getVertex();
-		Expression startExpression = existence
-				.getFirstIsStartExprOfIncidence().getAlpha();
+		Expression startExpression = existence.getFirstIsStartExprOfIncidence()
+				.getAlpha();
 		VertexEvaluator<? extends Expression> vertexEval = query
 				.getVertexEvaluator(startExpression);
 		long startCosts = vertexEval.getCurrentSubtreeEvaluationCosts();

@@ -45,8 +45,8 @@ import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql.exception.OptimizerException;
 import de.uni_koblenz.jgralab.greql.schema.Declaration;
-import de.uni_koblenz.jgralab.greql.schema.Greql2Expression;
-import de.uni_koblenz.jgralab.greql.schema.Greql2Graph;
+import de.uni_koblenz.jgralab.greql.schema.GreqlExpression;
+import de.uni_koblenz.jgralab.greql.schema.GreqlGraph;
 import de.uni_koblenz.jgralab.greql.schema.IsBoundVarOf;
 import de.uni_koblenz.jgralab.greql.schema.IsDeclaredVarOf;
 import de.uni_koblenz.jgralab.greql.schema.IsSimpleDeclOf;
@@ -133,7 +133,7 @@ public abstract class OptimizerBase implements Optimizer {
 				// Externally bound vars are always before locally declared vars
 				return true;
 			}
-			Greql2Expression root = ibvo1.getOmega();
+			GreqlExpression root = ibvo1.getOmega();
 			for (IsBoundVarOf ibvo : root.getIsBoundVarOfIncidences()) {
 				ibvo = (IsBoundVarOf) ibvo.getNormalEdge();
 				if (ibvo == ibvo1) {
@@ -244,7 +244,7 @@ public abstract class OptimizerBase implements Optimizer {
 	 */
 	protected SimpleDeclaration splitSimpleDeclaration(SimpleDeclaration sd,
 			Set<Variable> varsToBeSplit) {
-		Greql2Graph syntaxgraph = (Greql2Graph) sd.getGraph();
+		GreqlGraph syntaxgraph = (GreqlGraph) sd.getGraph();
 		Set<Variable> varsDeclaredBySD = OptimizerUtility
 				.collectVariablesDeclaredBy(sd);
 

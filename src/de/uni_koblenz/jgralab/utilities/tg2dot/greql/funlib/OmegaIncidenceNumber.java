@@ -33,27 +33,28 @@
  * the parts of JGraLab used as well as that of the covered work.
  */
 
-package de.uni_koblenz.jgralab.utilities.tg2dot.greql2.funlib;
+package de.uni_koblenz.jgralab.utilities.tg2dot.greql.funlib;
 
-import org.pcollections.PCollection;
-
+import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.greql.funlib.Description;
 import de.uni_koblenz.jgralab.greql.funlib.Function;
 
-public class FormatString extends Function {
+public class OmegaIncidenceNumber extends Function {
 	
-	@Description(params = {"format","col"}, description = "Formats a given Java format String with all provided strings.",
-			categories = Category.STRINGS)
-	public FormatString() {
+	@Description(params = "edge", description = "Returns the omega incidence number of the given edge starting with 1.",
+			categories = Category.GRAPH)
+	public OmegaIncidenceNumber() {
 		super(2, 1, 1.0);
 	}
 
-	public String evaluate(String format, PCollection<?> col) {
-		Object[] args = new Object[col.size()];
-		int i = 0;
-		for (Object o : col) {
-			args[i++] = o.toString();
+	public Integer evaluate(Edge edge) {
+		int num = 1;
+		for (Edge incidence : edge.getOmega().incidences()) {
+			if (incidence.getReversedEdge() == edge) {
+				return num;
+			}
+			num++;
 		}
-		return String.format(format, args);
+		return null;
 	}
 }

@@ -38,8 +38,8 @@ package de.uni_koblenz.jgralab.greql.exception;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.uni_koblenz.jgralab.greql.schema.Greql2Graph;
-import de.uni_koblenz.jgralab.greql.schema.Greql2Vertex;
+import de.uni_koblenz.jgralab.greql.schema.GreqlGraph;
+import de.uni_koblenz.jgralab.greql.schema.GreqlVertex;
 import de.uni_koblenz.jgralab.greql.schema.SourcePosition;
 import de.uni_koblenz.jgralab.greql.serialising.GreqlSerializer;
 
@@ -61,7 +61,7 @@ public class QuerySourceException extends GreqlException {
 	/**
 	 * the element that causes the error
 	 */
-	private Greql2Vertex element;
+	private GreqlVertex element;
 
 	/**
 	 * 
@@ -70,7 +70,7 @@ public class QuerySourceException extends GreqlException {
 	 * @param sourcePositions
 	 *            a list of sourceposition where the error possible occurs
 	 */
-	public QuerySourceException(String errorMessage, Greql2Vertex element,
+	public QuerySourceException(String errorMessage, GreqlVertex element,
 			List<SourcePosition> sourcePositions, Throwable cause) {
 		super(errorMessage, cause);
 		this.element = element;
@@ -88,7 +88,7 @@ public class QuerySourceException extends GreqlException {
 	 * @param sourcePosition
 	 *            the sourceposition where the error occurs
 	 */
-	public QuerySourceException(String errorMessage, Greql2Vertex element,
+	public QuerySourceException(String errorMessage, GreqlVertex element,
 			SourcePosition sourcePosition, Exception cause) {
 		super(errorMessage, cause);
 		this.element = element;
@@ -103,7 +103,7 @@ public class QuerySourceException extends GreqlException {
 	 * @param sourcePositions
 	 *            a list of sourceposition where the error possible occurs
 	 */
-	public QuerySourceException(String errorMessage, Greql2Vertex element,
+	public QuerySourceException(String errorMessage, GreqlVertex element,
 			List<SourcePosition> sourcePositions) {
 		this(errorMessage, element, sourcePositions, null);
 	}
@@ -115,7 +115,7 @@ public class QuerySourceException extends GreqlException {
 	 * @param sourcePosition
 	 *            the sourceposition where the error occurs
 	 */
-	public QuerySourceException(String errorMessage, Greql2Vertex element,
+	public QuerySourceException(String errorMessage, GreqlVertex element,
 			SourcePosition sourcePosition) {
 		this(errorMessage, element, sourcePosition, null);
 	}
@@ -146,7 +146,7 @@ public class QuerySourceException extends GreqlException {
 
 		if (element != null) {
 			sb.append("\nComplete (optimized) Query: ");
-			sb.append(GreqlSerializer.serializeGraph((Greql2Graph) element
+			sb.append(GreqlSerializer.serializeGraph((GreqlGraph) element
 					.getGraph()));
 		}
 
@@ -183,7 +183,7 @@ public class QuerySourceException extends GreqlException {
 	/**
 	 * @return the broken element
 	 */
-	public Greql2Vertex getElement() {
+	public GreqlVertex getElement() {
 		return element;
 	}
 

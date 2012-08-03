@@ -243,7 +243,7 @@ public class GenericTest {
 
 	private static GreqlEnvironment environment = new GreqlEnvironmentAdapter();
 
-	public static GreqlQuery query = GreqlQuery.createQuery(null);
+	public static GreqlQuery query = GreqlQuery.createQuery("");
 
 	@Before
 	public void setUp() throws Exception {

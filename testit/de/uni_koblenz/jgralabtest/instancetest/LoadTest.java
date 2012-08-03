@@ -57,7 +57,7 @@ import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.ImplementationType;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql.parser.GreqlParser;
-import de.uni_koblenz.jgralab.greql.schema.Greql2Schema;
+import de.uni_koblenz.jgralab.greql.schema.GreqlSchema;
 import de.uni_koblenz.jgralab.impl.FreeIndexList;
 import de.uni_koblenz.jgralab.impl.GraphBaseImpl;
 import de.uni_koblenz.jgralab.impl.InternalGraph;
@@ -274,7 +274,7 @@ public class LoadTest extends InstanceTest {
 			commit(g1);
 			switch (implementationType) {
 			case STANDARD:
-				g2 = Greql2Schema.instance().loadGreql2Graph(
+				g2 = GreqlSchema.instance().loadGreqlGraph(
 						TESTGRAPH_PATH + TESTGRAPH_FILENAME,
 						ImplementationType.STANDARD);
 				break;

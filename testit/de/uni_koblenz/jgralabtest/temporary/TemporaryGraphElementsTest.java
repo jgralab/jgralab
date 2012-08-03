@@ -14,7 +14,6 @@ import org.junit.Test;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
-import de.uni_koblenz.jgralab.GraphException;
 import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.ImplementationType;
@@ -520,19 +519,16 @@ public class TemporaryGraphElementsTest {
 	}
 
 	@Test
-	public void testFailEdgeAtTempVertex(){
+	public void testCreateTempEdgeAtTempVertexAuto(){
 		Schema schema = CityMapSchema.instance();
 		Graph g = schema.createGraph(impl);
 		
 		Vertex v1 = g.createVertex(schema.getGraphClass().getVertexClass("Intersection"));
 		TemporaryVertex tempv2 = g.createTemporaryVertex();
 		
-		try{
-			g.createEdge(schema.getGraphClass().getEdgeClass("Street"), v1, tempv2);
-			fail();
-		}catch(GraphException ex){
-			assertFalse(g.edges().iterator().hasNext());	
-		}
+		
+		Edge e = g.createEdge(schema.getGraphClass().getEdgeClass("Street"), v1, tempv2);
+		assertTrue(e.isTemporary());
 	}
 	
 	@Test
@@ -552,6 +548,50 @@ public class TemporaryGraphElementsTest {
 			assertTrue(tempe.isValid());
 		}
 		
+	}
+	
+	@Test
+	public void testPreliminaryTypeForTemporaryVertex(){
+		Schema schema = CityMapSchema.instance();
+		Graph g = schema.createGraph(impl);
+		
+		TemporaryVertex tempV1 = g.createTemporaryVertex(
+				schema.getGraphClass().getVertexClass("Intersection"));
+		
+		assertTrue(tempV1.isTemporary());
+		
+		Vertex v1 = tempV1.bless();
+		
+		assertFalse(v1.isTemporary());
+		assertFalse(tempV1.isValid());
+		assertEquals(1, v1.getId());
+	}
+	
+	@Test
+	public void testBlessNonTemporaryElements(){
+		Schema schema = CityMapSchema.instance();
+		Graph g = schema.createGraph(impl);
+		
+		Vertex v1 = g.createVertex(schema.getGraphClass().getVertexClass("Intersection"));
+				
+		assertEquals(v1, v1.bless());
+		
+		Edge e1 = g.createEdge(schema.getGraphClass().getEdgeClass("Street"), v1, v1);
+		assertEquals(e1, e1.bless());
+		
+		try {
+			v1.bless(schema.getGraphClass().getVertexClass("ParkingGarage"));
+			fail();
+		}catch(TemporaryGraphElementBlessingException ex){
+			// No blessing to wrong type allowed
+		}
+		
+		try {
+			e1.bless(schema.getGraphClass().getEdgeClass("Bridge"));
+			fail();
+		}catch(TemporaryGraphElementBlessingException ex){
+			// No blessing to wrong type allowed
+		}
 	}
 	
 	private void writeTgToConsole(Graph g) throws GraphIOException {

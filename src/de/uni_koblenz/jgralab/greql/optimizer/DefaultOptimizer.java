@@ -45,9 +45,9 @@ import de.uni_koblenz.jgralab.greql.evaluator.GraphSize;
 import de.uni_koblenz.jgralab.greql.evaluator.GreqlQueryImpl;
 import de.uni_koblenz.jgralab.greql.evaluator.vertexeval.VertexEvaluator;
 import de.uni_koblenz.jgralab.greql.exception.OptimizerException;
-import de.uni_koblenz.jgralab.greql.schema.Greql2Expression;
-import de.uni_koblenz.jgralab.greql.schema.Greql2Graph;
-import de.uni_koblenz.jgralab.greql.schema.Greql2Vertex;
+import de.uni_koblenz.jgralab.greql.schema.GreqlExpression;
+import de.uni_koblenz.jgralab.greql.schema.GreqlGraph;
+import de.uni_koblenz.jgralab.greql.schema.GreqlVertex;
 import de.uni_koblenz.jgralab.greql.schema.Variable;
 
 /**
@@ -85,7 +85,7 @@ public class DefaultOptimizer extends OptimizerBase {
 	 * @see
 	 * de.uni_koblenz.jgralab.greql2.optimizer.Optimizer#optimize(de.uni_koblenz
 	 * .jgralab.greql2.evaluator.GreqlEvaluator,
-	 * de.uni_koblenz.jgralab.greql2.schema.Greql2)
+	 * de.uni_koblenz.jgralab.greql2.schema.Greql)
 	 */
 	public boolean optimize(GreqlQuery query) throws OptimizerException {
 
@@ -171,7 +171,7 @@ public class DefaultOptimizer extends OptimizerBase {
 		// "/home/horn/after-optimization.tg");
 
 		// System.out.println("DefaultOptimizer: "
-		// + ((SerializableGreql2) syntaxgraph).serialize());
+		// + ((SerializableGreql) syntaxgraph).serialize());
 
 		logger.fine(optimizerHeaderString() + " finished after " + noOfRuns
 				+ " iterations.");
@@ -180,24 +180,24 @@ public class DefaultOptimizer extends OptimizerBase {
 
 	@SuppressWarnings("unused")
 	private void printCosts(GreqlQuery query) {
-		Greql2Graph syntaxgraph = query.getQueryGraph();
+		GreqlGraph syntaxgraph = query.getQueryGraph();
 
 		logger.fine("Optimizer: Optimizing " + syntaxgraph.getId() + ".\n"
 				+ "This syntaxgraph has " + syntaxgraph.getECount()
 				+ " edges and " + syntaxgraph.getVCount() + " vertexes.");
-		VertexEvaluator<? extends Greql2Vertex> veval;
+		VertexEvaluator<? extends GreqlVertex> veval;
 		OptimizerInfo optimizerInfo = new GraphSize(syntaxgraph);
 
 		// Calculate the cost of the root vertex so that all initial costs of
 		// the vertices below are properly initialized.
-		Greql2Expression rootVertex = syntaxgraph.getFirstGreql2Expression();
-		VertexEvaluator<Greql2Expression> rootEval = ((GreqlQueryImpl) query)
+		GreqlExpression rootVertex = syntaxgraph.getFirstGreqlExpression();
+		VertexEvaluator<GreqlExpression> rootEval = ((GreqlQueryImpl) query)
 				.getVertexEvaluator(rootVertex);
 		rootEval.getInitialSubtreeEvaluationCosts();
 		rootEval.getEstimatedCardinality();
 		rootEval.calculateEstimatedSelectivity();
 
-		Greql2Vertex vertex = syntaxgraph.getFirstGreql2Vertex();
+		GreqlVertex vertex = syntaxgraph.getFirstGreqlVertex();
 		logger.fine("=========================================================");
 		while (vertex != null) {
 			logger.fine("Current Node: " + vertex);
@@ -217,10 +217,10 @@ public class DefaultOptimizer extends OptimizerBase {
 						+ "Variable Combinations: " + varCombs);
 			}
 			logger.fine("=========================================================");
-			vertex = vertex.getNextGreql2Vertex();
+			vertex = vertex.getNextGreqlVertex();
 		}
-		VertexEvaluator<Greql2Expression> greql2ExpEval = ((GreqlQueryImpl) query)
-				.getVertexEvaluator(syntaxgraph.getFirstGreql2Expression());
+		VertexEvaluator<GreqlExpression> greql2ExpEval = ((GreqlQueryImpl) query)
+				.getVertexEvaluator(syntaxgraph.getFirstGreqlExpression());
 		greql2ExpEval.resetSubtreeToInitialState(null);
 		long estimatedInterpretationSteps = greql2ExpEval
 				.getCurrentSubtreeEvaluationCosts();
