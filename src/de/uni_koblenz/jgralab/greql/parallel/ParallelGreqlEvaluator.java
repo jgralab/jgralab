@@ -88,8 +88,10 @@ public class ParallelGreqlEvaluator {
 			.getPackage().getName());
 
 	static {
+		// OFF: no logging
 		// FINE: Log task execution and termination
-		// FINER: Additionally, log task begin and dependency graph
+		// FINER: Additionally, log task begin, final waiting task, and
+		// dependency graph
 		log.setLevel(Level.OFF);
 	}
 
@@ -145,6 +147,7 @@ public class ParallelGreqlEvaluator {
 	private class EvaluationTask extends FutureTask<Object> {
 		TaskHandle handle;
 		EvaluationEnvironment environment;
+		long startTime, doneTime;
 
 		EvaluationTask(EvaluationEnvironment environment, TaskHandle handle,
 				Callable<Object> callable) {
@@ -156,13 +159,23 @@ public class ParallelGreqlEvaluator {
 		@Override
 		public void run() {
 			log.finer("Run " + handle);
+			startTime = System.currentTimeMillis();
 			super.run();
+		}
+
+		private long getEvaluationTime() {
+			if (!isDone()) {
+				throw new IllegalStateException(
+						"EvaluationTask is not yet done.");
+			}
+			return doneTime - startTime;
 		}
 
 		@Override
 		protected void done() {
-			log.fine("Done " + handle);
+			doneTime = System.currentTimeMillis();
 			super.done();
+			log.fine("Done " + handle + " (" + getEvaluationTime() + " ms)");
 			try {
 				// try to get the result in order to handle a possible exception
 				// exception is rapped into an ExecutionException
@@ -174,7 +187,7 @@ public class ParallelGreqlEvaluator {
 				// interrupted by shutdown
 				environment.executor.shutdownNow();
 			} catch (ExecutionException e) {
-				// remember exception an shuwdown executor
+				// remember exception and shuwdown executor
 				synchronized (environment) {
 					if (environment.exception == null) {
 						environment.exception = e;
@@ -205,7 +218,11 @@ public class ParallelGreqlEvaluator {
 		public int compareTo(TaskHandle other) {
 			// order w.r.t. descending priority
 			int r = other.priority - priority;
-			return r == 0 ? other.seq - seq : r;
+			if (r != 0) {
+				return r;
+			}
+			// same priority, order w.r.t. ascending sequence number
+			return seq - other.seq;
 		}
 
 		private TaskHandle() {
@@ -286,9 +303,10 @@ public class ParallelGreqlEvaluator {
 		env.greqlEnvironment = environment;
 
 		// at least 2 threads, at most available processors + 1 (for the
-		// resultcollector)
+		// termination task)
 		int threads = Math.max(2,
 				Runtime.getRuntime().availableProcessors() + 1);
+		log.fine("Create executor with " + threads + " threads");
 		env.executor = Executors.newFixedThreadPool(threads);
 
 		// determine initial tasks (tasks with 0 predecessors)
@@ -308,6 +326,7 @@ public class ParallelGreqlEvaluator {
 				new Callable<Object>() {
 					@Override
 					public Object call() throws Exception {
+						log.finer("Run waiting for final tasks");
 						try {
 							for (TaskHandle handle : dependencyGraph.getNodes()) {
 								env.tasks.get(handle).get();
@@ -317,7 +336,14 @@ public class ParallelGreqlEvaluator {
 						}
 						return null;
 					}
-				});
+				}) {
+			@Override
+			protected void done() {
+				super.done();
+				log.finer("Done waiting for final tasks");
+			}
+		};
+		log.finer("Execute waiting for final tasks");
 		env.executor.execute(waitForTerminationTask);
 
 		// execute initial tasks
