@@ -75,11 +75,21 @@ public class DirectedGraph<T> {
 		finished = true;
 	}
 
+	public boolean isFinished() {
+		return finished;
+	}
+
 	public void createEdge(T alpha, T omega) {
-		assert nodeValues.contains(alpha);
-		assert nodeValues.contains(omega);
 		if (finished) {
-			throw new SchemaException();
+			throw new IllegalStateException("Graph is already finished.");
+		}
+		if (!nodeValues.contains(alpha)) {
+			throw new IllegalArgumentException(
+					"alpha doesn't belong to this graph.");
+		}
+		if (!nodeValues.contains(omega)) {
+			throw new IllegalArgumentException(
+					"omega doesn't belong to this graph.");
 		}
 		if (alpha.equals(omega)) {
 			// don't allow loops
@@ -97,9 +107,9 @@ public class DirectedGraph<T> {
 		toNode.predecessors = toNode.predecessors.plus(alpha);
 	}
 
-	public void createNode(T data) {
+	public T createNode(T data) {
 		if (finished) {
-			throw new SchemaException();
+			throw new IllegalStateException("Graph is already finished.");
 		}
 		assert !nodeValues.contains(data);
 		assert entries.get(data) == null;
@@ -107,6 +117,7 @@ public class DirectedGraph<T> {
 		Node<T> n = new Node<T>(data);
 		nodes = nodes.plus(n);
 		entries.put(data, n);
+		return data;
 	}
 
 	public int getNodeCount() {
@@ -133,7 +144,7 @@ public class DirectedGraph<T> {
 
 	public void delete(T data) {
 		if (finished) {
-			throw new SchemaException();
+			throw new IllegalStateException("Graph is already finished.");
 		}
 		Node<T> node = entries.get(data);
 		entries.remove(data);

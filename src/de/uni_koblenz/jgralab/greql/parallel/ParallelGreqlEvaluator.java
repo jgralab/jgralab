@@ -1,293 +1,390 @@
+/*
+ * JGraLab - The Java Graph Laboratory
+ * 
+ * Copyright (C) 2006-2012 Institute for Software Technology
+ *                         University of Koblenz-Landau, Germany
+ *                         ist@uni-koblenz.de
+ * 
+ * For bug reports, documentation and further information, visit
+ * 
+ *                         https://github.com/jgralab/jgralab
+ * 
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the
+ * Free Software Foundation; either version 3 of the License, or (at your
+ * option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+ * Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, see <http://www.gnu.org/licenses>.
+ * 
+ * Additional permission under GNU GPL version 3 section 7
+ * 
+ * If you modify this Program, or any covered work, by linking or combining
+ * it with Eclipse (or a modified version of that program or an Eclipse
+ * plugin), containing parts covered by the terms of the Eclipse Public
+ * License (EPL), the licensors of this Program grant you additional
+ * permission to convey the resulting work.  Corresponding Source for a
+ * non-source form of such a combination shall include the source code for
+ * the parts of JGraLab used as well as that of the covered work.
+ */
 package de.uni_koblenz.jgralab.greql.parallel;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
+import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.FutureTask;
-import java.util.concurrent.RejectedExecutionException;
 
-import de.uni_koblenz.jgralab.Edge;
-import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Graph;
-import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.algolib.algorithms.AlgorithmTerminatedException;
-import de.uni_koblenz.jgralab.algolib.algorithms.search.RecursiveDepthFirstSearch;
-import de.uni_koblenz.jgralab.algolib.algorithms.topological_order.TopologicalOrderWithDFS;
-import de.uni_koblenz.jgralab.graphmarker.GraphMarker;
-import de.uni_koblenz.jgralab.graphmarker.IntegerVertexMarker;
-import de.uni_koblenz.jgralab.graphmarker.MapVertexMarker;
 import de.uni_koblenz.jgralab.greql.GreqlEnvironment;
 import de.uni_koblenz.jgralab.greql.GreqlQuery;
 import de.uni_koblenz.jgralab.greql.evaluator.GreqlEnvironmentAdapter;
-import de.uni_koblenz.jgralab.greql.exception.GreqlException;
-import de.uni_koblenz.jgralab.impl.generic.GenericGraphFactoryImpl;
-import de.uni_koblenz.jgralab.schema.AggregationKind;
-import de.uni_koblenz.jgralab.schema.EdgeClass;
-import de.uni_koblenz.jgralab.schema.GraphClass;
-import de.uni_koblenz.jgralab.schema.Schema;
-import de.uni_koblenz.jgralab.schema.VertexClass;
-import de.uni_koblenz.jgralab.schema.impl.SchemaImpl;
+import de.uni_koblenz.jgralab.schema.impl.DirectedAcyclicGraph;
 
+/**
+ */
 public class ParallelGreqlEvaluator {
 
-	private boolean isEvaluating;
+	private DirectedAcyclicGraph<TaskHandle> dependencyGraph;
 
-	/*
-	 * generic GreqlQueryDependencySchema definition
+	/**
 	 */
-	private static Schema schema = new SchemaImpl("GreqlQueryDependencySchema",
-			"de.uni_koblenz.jgralab.greql.parallelgreql");
-	private static GraphClass graphClass = schema
-			.createGraphClass("GreqlQueryDependencyGraph");
-	private static VertexClass queryVertexClass = graphClass
-			.createVertexClass("queries.Query");
-	private static EdgeClass dependsOnQueryEdgeClass = graphClass
-			.createEdgeClass("queries.DependsOn", queryVertexClass, 0,
-					Integer.MAX_VALUE, "successor", AggregationKind.SHARED,
-					queryVertexClass, 0, Integer.MAX_VALUE, "predecessor",
-					AggregationKind.NONE);
+	public class EvaluationEnvironment {
+		private Graph datagraph;
+		private GreqlEnvironment greqlEnvironment;
+		private HashMap<TaskHandle, Integer> indegree;
+		private HashMap<TaskHandle, EvaluationTask> tasks;
+		private ExecutorService executor;
+		private Exception exception;
 
-	/*
-	 * Methods to create a new GreqlQueryDependencyGraph
+		private EvaluationEnvironment() {
+			// no construction from outside
+		}
+
+		public GreqlEnvironment getGreqlEnvironment() {
+			return greqlEnvironment;
+		}
+
+		public Object getResult(TaskHandle handle) {
+			EvaluationTask t = tasks.get(handle);
+			if (!t.isDone()) {
+				throw new IllegalStateException("Task is not done");
+			}
+			try {
+				return tasks.get(handle).get();
+			} catch (InterruptedException e) {
+				// should not occur since task is done
+				e.printStackTrace();
+			} catch (ExecutionException e) {
+				// should not occur since task is done
+				e.printStackTrace();
+			}
+			return null;
+		}
+	}
+
+	/**
+	 *
 	 */
-	private final Graph graph;
+	private class EvaluationTask extends FutureTask<Object> {
+		TaskHandle handle;
+		EvaluationEnvironment environment;
 
-	public Graph getDependencyGraph() {
-		return graph;
-	}
-
-	public Vertex createQueryVertex(String queryText) {
-		synchronized (graph) {
-			if (isEvaluating) {
-				throw new IllegalStateException(
-						"The dependency graph is currently evaluating.");
-			}
-			return createQueryVertex(GreqlQuery.createQuery(queryText));
+		EvaluationTask(EvaluationEnvironment environment, TaskHandle handle,
+				Callable<Object> callable) {
+			super(callable);
+			this.environment = environment;
+			this.handle = handle;
 		}
-	}
 
-	public Vertex createQueryVertex(GreqlQuery query) {
-		synchronized (graph) {
-			if (isEvaluating) {
-				throw new IllegalStateException(
-						"The dependency graph is currently evaluating.");
-			}
-			Vertex v = graph.createVertex(queryVertexClass);
-			greqlQueriesMarker.mark(v, query);
-			return v;
-		}
-	}
+		@Override
+		protected void done() {
+			super.done();
+			try {
+				// try to get the result in order to handle a possible exception
+				// exception is rapped into an ExecutionException
+				get();
 
-	public Edge createDependency(Vertex predecessor, Vertex successor) {
-		synchronized (graph) {
-			if (isEvaluating) {
-				throw new IllegalStateException(
-						"The dependency graph is currently evaluating.");
-			}
-			return graph.createEdge(dependsOnQueryEdgeClass, successor,
-					predecessor);
-		}
-	}
-
-	public void calculateDependencies() {
-		synchronized (graph) {
-			if (isEvaluating) {
-				throw new IllegalStateException(
-						"The dependency graph is currently evaluating.");
-			}
-			// add dependencies based on variable usage and definitions
-			HashMap<String, HashSet<Vertex>> defs = new HashMap<String, HashSet<Vertex>>();
-			for (Vertex v : graph.vertices()) {
-				GreqlQuery q = greqlQueriesMarker.get(v);
-				for (String var : q.getStoredVariables()) {
-					HashSet<Vertex> vs = defs.get(var);
-					if (vs == null) {
-						vs = new HashSet<Vertex>();
-						defs.put(var, vs);
-					}
-					vs.add(v);
-				}
-			}
-			for (Vertex v : graph.vertices()) {
-				GreqlQuery q = greqlQueriesMarker.get(v);
-				for (String var : q.getUsedVariables()) {
-					HashSet<Vertex> vs = defs.get(var);
-					if (vs != null) {
-						for (Vertex p : vs) {
-							createDependency(p, v);
-						}
+				// no exception - schedule next task
+				scheduleNext(environment, handle);
+			} catch (InterruptedException e) {
+				// interrupted by shutdown
+				environment.executor.shutdownNow();
+			} catch (ExecutionException e) {
+				// remember exception an shuwdown executor
+				synchronized (environment) {
+					if (environment.exception == null) {
+						environment.exception = e;
 					}
 				}
+				environment.executor.shutdownNow();
 			}
 		}
 	}
 
-	/*
-	 * Methods to execute all queries of a GreqlQueryDependencyGraph parallel
+	/**
+	 * 
 	 */
+	public class TaskHandle implements Comparable<TaskHandle> {
+		private Callable<Object> callable;
+		private GreqlQuery query;
+		private int priority;
 
-	private final MapVertexMarker<GreqlQuery> greqlQueriesMarker;
+		@Override
+		public int compareTo(TaskHandle other) {
+			// order w.r.t. descending priority
+			return other.priority - priority;
+		}
 
-	private IntegerVertexMarker inDegree;
+		private TaskHandle(Callable<Object> callable, int priority) {
+			this.callable = callable;
+			this.priority = priority;
+		}
 
-	private ExecutorService executor;
+		private TaskHandle(GreqlQuery query, int priority) {
+			this.query = query;
+			this.priority = priority;
+		}
 
-	private GraphMarker<GreqlEvaluatorTask> evaluatorTasks;
+		private EvaluationTask createFutureTask(final EvaluationEnvironment env) {
+			if (callable != null) {
+				return new EvaluationTask(env, this, callable);
+			} else {
+				return new EvaluationTask(env, this, new Callable<Object>() {
+					@Override
+					public Object call() throws Exception {
+						return query.evaluate(env.datagraph,
+								env.greqlEnvironment);
+					}
+				});
+			}
+		}
+	}
 
-	private GraphMarker<GreqlEvaluatorCallable> evaluators;
-
-	private RuntimeException exception;
-
+	/**
+	 * 
+	 */
 	public ParallelGreqlEvaluator() {
-		graph = new GenericGraphFactoryImpl(schema).createGraph(graphClass,
-				null, 100, 100);
-		greqlQueriesMarker = new MapVertexMarker<GreqlQuery>(graph);
+		dependencyGraph = new DirectedAcyclicGraph<TaskHandle>();
 	}
 
-	public GreqlEnvironmentAdapter evaluate() {
-		GreqlEnvironmentAdapter environment = new GreqlEnvironmentAdapter();
-		evaluate(null, environment);
-		return environment;
+	/**
+	 * @return
+	 */
+	public EvaluationEnvironment evaluate() {
+		return evaluate(null, new GreqlEnvironmentAdapter());
 	}
 
-	public GreqlEnvironment evaluate(Graph datagraph) {
-		GreqlEnvironmentAdapter environment = new GreqlEnvironmentAdapter();
-		evaluate(datagraph, environment);
-		return environment;
+	/**
+	 * @param datagraph
+	 * @return
+	 */
+	public EvaluationEnvironment evaluate(Graph datagraph) {
+		return evaluate(datagraph, new GreqlEnvironmentAdapter());
 	}
 
-	public GreqlEnvironment evaluate(Graph datagraph,
+	/**
+	 * @param datagraph
+	 * @param environment
+	 * @return
+	 */
+	public EvaluationEnvironment evaluate(Graph datagraph,
 			GreqlEnvironment environment) {
-		if (isEvaluating) {
-			throw new IllegalStateException(
-					"The dependency graph is currently evaluating.");
-		}
-		isEvaluating = true;
-
-		// check acyclicity
-		try {
-			if (!new TopologicalOrderWithDFS(graph,
-					new RecursiveDepthFirstSearch(graph)).execute().isAcyclic()) {
-				throw new GreqlException(
-						"The dependency graph must be acyclic.");
-			}
-		} catch (AlgorithmTerminatedException e1) {
-			e1.printStackTrace();
+		if (!dependencyGraph.isFinished()) {
+			calculateVariableDependencies();
+			dependencyGraph.finish();
 		}
 
-		long graphVersion = graph.getGraphVersion();
+		final EvaluationEnvironment env = new EvaluationEnvironment();
+		env.datagraph = datagraph;
+		env.greqlEnvironment = environment;
+		env.indegree = new HashMap<TaskHandle, Integer>();
+		env.tasks = new HashMap<TaskHandle, EvaluationTask>();
 
 		// at least 2 threads, at most available processors + 1 (for the
 		// resultcollector)
 		int threads = Math.max(2,
 				Runtime.getRuntime().availableProcessors() + 1);
-		executor = Executors.newFixedThreadPool(threads);
-		evaluatorTasks = new GraphMarker<GreqlEvaluatorTask>(graph);
-		evaluators = new GraphMarker<GreqlEvaluatorCallable>(graph);
-		inDegree = new IntegerVertexMarker(graph);
+		env.executor = Executors.newFixedThreadPool(threads);
 
-		List<Vertex> initialNodes = new ArrayList<Vertex>();
-		List<GreqlEvaluatorTask> finalEvaluators = new ArrayList<GreqlEvaluatorTask>();
-
-		for (Vertex v : graph.vertices(queryVertexClass)) {
-			GreqlEvaluatorCallable callable = new GreqlEvaluatorCallable(
-					greqlQueriesMarker.getMark(v), datagraph, environment, v,
-					graphVersion, this);
-			evaluators.mark(v, callable);
-			GreqlEvaluatorTask t = new GreqlEvaluatorTask(callable);
-			evaluatorTasks.mark(v, t);
-			int i = v.getDegree(dependsOnQueryEdgeClass, EdgeDirection.OUT);
-			inDegree.mark(v, i);
+		Set<EvaluationTask> initialTasks = new TreeSet<EvaluationTask>();
+		for (TaskHandle handle : dependencyGraph.getNodes()) {
+			EvaluationTask t = handle.createFutureTask(env);
+			env.tasks.put(handle, t);
+			int i = dependencyGraph.getDirectPredecessors(handle).size();
+			env.indegree.put(handle, i);
 			if (i == 0) {
-				initialNodes.add(v);
-			}
-			if (v.getDegree(dependsOnQueryEdgeClass, EdgeDirection.IN) == 0) {
-				finalEvaluators.add(t);
+				initialTasks.add(t);
 			}
 		}
-
-		FutureTask<Void> rc = new FutureTask<Void>(
-				new GreqlResultCollectorCallable(finalEvaluators));
-		executor.execute(rc);
-		for (Vertex v : initialNodes) {
-			executor.execute(evaluatorTasks.getMark(v));
+		FutureTask<Object> waitForTerminationTask = new FutureTask<Object>(
+				new Callable<Object>() {
+					@Override
+					public Object call() throws Exception {
+						try {
+							for (TaskHandle handle : dependencyGraph.getNodes()) {
+								env.tasks.get(handle).get();
+							}
+						} catch (InterruptedException e) {
+							// do nothing, probably interrupted by exception
+						}
+						return null;
+					}
+				});
+		env.executor.execute(waitForTerminationTask);
+		for (EvaluationTask t : initialTasks) {
+			env.executor.execute(t);
 		}
 		try {
-			rc.get();
-			executor.shutdown();
-			isEvaluating = false;
-			return environment;
+			waitForTerminationTask.get();
 		} catch (InterruptedException e) {
-			// e.printStackTrace();
-			shutdownNow();
-			if (exception != null) {
-				throw exception;
-			}
-			isEvaluating = false;
-			return environment;
+			// do nothing, since exception is handled below
+			e.printStackTrace();
 		} catch (ExecutionException e) {
-			// e.printStackTrace();
-			shutdownNow();
-			if (exception != null) {
-				throw exception;
+			// do nothing, since exception is handled below
+			e.printStackTrace();
+		}
+		synchronized (env) {
+			if (env.exception != null) {
+				Throwable inner = env.exception;
+				while (inner != null && inner instanceof ExecutionException) {
+					inner = inner.getCause();
+				}
+				if (inner instanceof RuntimeException) {
+					throw (RuntimeException) inner;
+				} else {
+					throw new RuntimeException(inner);
+				}
 			}
-			isEvaluating = false;
-			return environment;
 		}
+		env.executor.shutdown();
+		return env;
 	}
 
-	public synchronized void shutdownNow() {
-		executor.shutdownNow();
+	/**
+	 * @param callable
+	 * @return
+	 */
+	public TaskHandle addCallable(Callable<Object> callable) {
+		return addCallable(callable, 0);
 	}
 
-	public synchronized void shutdownNow(Throwable t) {
-		shutdownNow();
-		if (t instanceof RuntimeException) {
-			assert exception == null : "previous:\n" + exception.toString()
-					+ "\ncurrent:\n" + t.toString();
-			exception = (RuntimeException) t;
+	/**
+	 * @param callable
+	 * @param priority
+	 * @return
+	 */
+	public TaskHandle addCallable(Callable<Object> callable, int priority) {
+		return dependencyGraph.createNode(new TaskHandle(callable, priority));
+	}
+
+	/**
+	 * @param queryText
+	 * @return
+	 */
+	public TaskHandle addGreqlQuery(String queryText) {
+		return addGreqlQuery(queryText, 0);
+	}
+
+	/**
+	 * @param queryText
+	 * @param priority
+	 * @return
+	 */
+	public TaskHandle addGreqlQuery(String queryText, int priority) {
+		return addGreqlQuery(GreqlQuery.createQuery(queryText), priority);
+	}
+
+	/**
+	 * @param query
+	 * @return
+	 */
+	public TaskHandle addGreqlQuery(GreqlQuery query) {
+		return addGreqlQuery(query, 0);
+	}
+
+	/**
+	 * @param query
+	 * @param priority
+	 * @return
+	 */
+	public TaskHandle addGreqlQuery(GreqlQuery query, int priority) {
+		return dependencyGraph.createNode(new TaskHandle(query, priority));
+	}
+
+	/**
+	 * @param successor
+	 * @param predecessor
+	 */
+	public void createDependency(TaskHandle successor, TaskHandle predecessor) {
+		dependencyGraph.createEdge(successor, predecessor);
+	}
+
+	private void calculateVariableDependencies() {
+		// add dependencies based on used/stored variables of GReQL queries
+		HashMap<String, HashSet<TaskHandle>> defs = new HashMap<String, HashSet<TaskHandle>>();
+		for (TaskHandle handle : dependencyGraph.getNodes()) {
+			if (handle.query == null) {
+				continue;
+			}
+			Set<String> sv = handle.query.getStoredVariables();
+			if (sv == null) {
+				continue;
+			}
+			for (String var : sv) {
+				HashSet<TaskHandle> vs = defs.get(var);
+				if (vs == null) {
+					vs = new HashSet<TaskHandle>();
+					defs.put(var, vs);
+				}
+				vs.add(handle);
+			}
 		}
-	}
-
-	public void scheduleNext(Vertex dependencyVertex) {
-		synchronized (graph) {
-			for (Edge isDependingOne : dependencyVertex.incidences(
-					dependsOnQueryEdgeClass, EdgeDirection.IN)) {
-				Vertex s = isDependingOne.getThat();
-				int i = inDegree.getMark(s) - 1;
-				inDegree.mark(s, i);
-				if (i == 0) {
-					try {
-						if (exception == null) {
-							executor.execute(evaluatorTasks.getMark(s));
-						}
-					} catch (RejectedExecutionException e) {
-						break;
+		for (TaskHandle handle : dependencyGraph.getNodes()) {
+			if (handle.query == null) {
+				continue;
+			}
+			Set<String> uv = handle.query.getUsedVariables();
+			if (uv == null) {
+				continue;
+			}
+			for (String var : uv) {
+				HashSet<TaskHandle> vs = defs.get(var);
+				if (vs != null) {
+					for (TaskHandle p : vs) {
+						createDependency(p, handle);
 					}
 				}
 			}
 		}
 	}
 
-	public RuntimeException getException() {
-		return exception;
-	}
-
-	public Object getResult(Vertex dependencyVertex) {
-		if (dependencyVertex.getGraph() != graph) {
-			throw new IllegalArgumentException(
-					"The query vertex whose result is requested is not part of the current graph.");
+	/**
+	 * @param env
+	 * @param handle
+	 */
+	private void scheduleNext(EvaluationEnvironment env, TaskHandle handle) {
+		synchronized (dependencyGraph) {
+			Set<TaskHandle> nextTasks = new TreeSet<TaskHandle>();
+			for (TaskHandle succ : dependencyGraph.getDirectSucccessors(handle)) {
+				int i = env.indegree.get(succ) - 1;
+				env.indegree.put(succ, i);
+				if (i == 0) {
+					nextTasks.add(succ);
+				}
+			}
+			for (TaskHandle succ : nextTasks) {
+				env.executor.execute(env.tasks.get(succ));
+			}
 		}
-		GreqlEvaluatorCallable evaluator = evaluators.get(dependencyVertex);
-		if (!evaluator.isFinished()) {
-			throw new IllegalStateException("The evaluation of "
-					+ dependencyVertex + " has not been finished yet.");
-		}
-		return evaluator.getResult();
 	}
-
 }

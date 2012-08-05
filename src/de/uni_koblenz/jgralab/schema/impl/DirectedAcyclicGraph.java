@@ -67,7 +67,7 @@ public class DirectedAcyclicGraph<T> extends DirectedGraph<T> {
 	/**
 	 * Constructs an empty {@link DirectedAcyclicGraph} with the specified
 	 * transitivity.
-	 *
+	 * 
 	 * @param transitive
 	 *            if set to <code>true</code>, redundant edges are removed,
 	 *            otherwise they are retained. E.g. when edges A-&gt;B, A-&gt;C,
@@ -110,13 +110,17 @@ public class DirectedAcyclicGraph<T> extends DirectedGraph<T> {
 	}
 
 	@Override
-	public void createNode(T data) {
+	public T createNode(T data) {
 		super.createNode(data);
 		computeTopologicalOrder();
+		return data;
 	}
 
 	@Override
 	public void finish() {
+		if (finished) {
+			return;
+		}
 		cachedPredecessors = new HashMap<T, PSet<T>>();
 		cachedSuccessors = new HashMap<T, PSet<T>>();
 		for (Node<T> n : nodes) {
