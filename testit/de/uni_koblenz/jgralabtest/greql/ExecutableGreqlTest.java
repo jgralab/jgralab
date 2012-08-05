@@ -140,11 +140,11 @@ public class ExecutableGreqlTest extends GenericTest {
 	public void testGeneratedComprehension() {
 		System.out.println("Testing generated comprehensin");
 		Map<String, Object> boundVars = new HashMap<String, Object>();
-		PSet x = JGraLab.set();
+		PSet<Integer> x = JGraLab.set();
 		for (int i = 1; i < 2000; i++) {
 			x = x.plus(i);
 		}
-		PSet y = JGraLab.set();
+		PSet<Integer> y = JGraLab.set();
 		for (int i = 1; i < 3000; i++) {
 			y = y.plus(i);
 		}

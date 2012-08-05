@@ -137,7 +137,7 @@ public class DirectedGraph<T> {
 		return entries.get(data).predecessors;
 	}
 
-	public PSet<T> getDirectSucccessors(T data) {
+	public PSet<T> getDirectSuccessors(T data) {
 		assert nodeValues.contains(data);
 		return entries.get(data).successors;
 	}

@@ -43,8 +43,11 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.FutureTask;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import de.uni_koblenz.jgralab.Graph;
+import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.greql.GreqlEnvironment;
 import de.uni_koblenz.jgralab.greql.GreqlQuery;
 import de.uni_koblenz.jgralab.greql.evaluator.GreqlEnvironmentAdapter;
@@ -55,6 +58,12 @@ import de.uni_koblenz.jgralab.schema.impl.DirectedAcyclicGraph;
 public class ParallelGreqlEvaluator {
 
 	private DirectedAcyclicGraph<TaskHandle> dependencyGraph;
+	private static Logger log = JGraLab.getLogger(ParallelGreqlEvaluator.class
+			.getPackage().getName());
+
+	static {
+		log.setLevel(Level.OFF);
+	}
 
 	/**
 	 */
@@ -68,6 +77,8 @@ public class ParallelGreqlEvaluator {
 
 		private EvaluationEnvironment() {
 			// no construction from outside
+			indegree = new HashMap<TaskHandle, Integer>();
+			tasks = new HashMap<TaskHandle, EvaluationTask>();
 		}
 
 		public GreqlEnvironment getGreqlEnvironment() {
@@ -107,7 +118,14 @@ public class ParallelGreqlEvaluator {
 		}
 
 		@Override
+		public void run() {
+			log.finer("Run " + handle);
+			super.run();
+		}
+
+		@Override
 		protected void done() {
+			log.fine("Done " + handle);
 			super.done();
 			try {
 				// try to get the result in order to handle a possible exception
@@ -134,23 +152,38 @@ public class ParallelGreqlEvaluator {
 	/**
 	 * 
 	 */
+	private static int sequence = 0;
+
 	public class TaskHandle implements Comparable<TaskHandle> {
 		private Callable<Object> callable;
 		private GreqlQuery query;
 		private int priority;
+		private int seq;
+
+		@Override
+		public String toString() {
+			return "TaskHandle " + seq + " (prio " + priority + ")";
+		}
 
 		@Override
 		public int compareTo(TaskHandle other) {
 			// order w.r.t. descending priority
-			return other.priority - priority;
+			int r = other.priority - priority;
+			return r == 0 ? other.seq - seq : r;
+		}
+
+		private TaskHandle() {
+			seq = sequence++;
 		}
 
 		private TaskHandle(Callable<Object> callable, int priority) {
+			this();
 			this.callable = callable;
 			this.priority = priority;
 		}
 
 		private TaskHandle(GreqlQuery query, int priority) {
+			this();
 			this.query = query;
 			this.priority = priority;
 		}
@@ -202,13 +235,12 @@ public class ParallelGreqlEvaluator {
 		if (!dependencyGraph.isFinished()) {
 			calculateVariableDependencies();
 			dependencyGraph.finish();
+			log.finer(dependencyGraph.toString());
 		}
 
 		final EvaluationEnvironment env = new EvaluationEnvironment();
 		env.datagraph = datagraph;
 		env.greqlEnvironment = environment;
-		env.indegree = new HashMap<TaskHandle, Integer>();
-		env.tasks = new HashMap<TaskHandle, EvaluationTask>();
 
 		// at least 2 threads, at most available processors + 1 (for the
 		// resultcollector)
@@ -216,14 +248,14 @@ public class ParallelGreqlEvaluator {
 				Runtime.getRuntime().availableProcessors() + 1);
 		env.executor = Executors.newFixedThreadPool(threads);
 
-		Set<EvaluationTask> initialTasks = new TreeSet<EvaluationTask>();
+		Set<TaskHandle> initialTasks = new TreeSet<TaskHandle>();
 		for (TaskHandle handle : dependencyGraph.getNodes()) {
 			EvaluationTask t = handle.createFutureTask(env);
 			env.tasks.put(handle, t);
 			int i = dependencyGraph.getDirectPredecessors(handle).size();
 			env.indegree.put(handle, i);
 			if (i == 0) {
-				initialTasks.add(t);
+				initialTasks.add(handle);
 			}
 		}
 		FutureTask<Object> waitForTerminationTask = new FutureTask<Object>(
@@ -241,8 +273,9 @@ public class ParallelGreqlEvaluator {
 					}
 				});
 		env.executor.execute(waitForTerminationTask);
-		for (EvaluationTask t : initialTasks) {
-			env.executor.execute(t);
+		for (TaskHandle handle : initialTasks) {
+			log.fine("Execute initial " + handle);
+			env.executor.execute(env.tasks.get(handle));
 		}
 		try {
 			waitForTerminationTask.get();
@@ -325,8 +358,8 @@ public class ParallelGreqlEvaluator {
 	 * @param successor
 	 * @param predecessor
 	 */
-	public void createDependency(TaskHandle successor, TaskHandle predecessor) {
-		dependencyGraph.createEdge(successor, predecessor);
+	public void createDependency(TaskHandle use, TaskHandle def) {
+		dependencyGraph.createEdge(def, use);
 	}
 
 	private void calculateVariableDependencies() {
@@ -349,19 +382,19 @@ public class ParallelGreqlEvaluator {
 				vs.add(handle);
 			}
 		}
-		for (TaskHandle handle : dependencyGraph.getNodes()) {
-			if (handle.query == null) {
+		for (TaskHandle use : dependencyGraph.getNodes()) {
+			if (use.query == null) {
 				continue;
 			}
-			Set<String> uv = handle.query.getUsedVariables();
+			Set<String> uv = use.query.getUsedVariables();
 			if (uv == null) {
 				continue;
 			}
 			for (String var : uv) {
-				HashSet<TaskHandle> vs = defs.get(var);
-				if (vs != null) {
-					for (TaskHandle p : vs) {
-						createDependency(p, handle);
+				HashSet<TaskHandle> defines = defs.get(var);
+				if (defines != null) {
+					for (TaskHandle def : defines) {
+						createDependency(use, def);
 					}
 				}
 			}
@@ -370,21 +403,23 @@ public class ParallelGreqlEvaluator {
 
 	/**
 	 * @param env
-	 * @param handle
+	 * @param finishedTask
 	 */
-	private void scheduleNext(EvaluationEnvironment env, TaskHandle handle) {
-		synchronized (dependencyGraph) {
-			Set<TaskHandle> nextTasks = new TreeSet<TaskHandle>();
-			for (TaskHandle succ : dependencyGraph.getDirectSucccessors(handle)) {
+	private void scheduleNext(EvaluationEnvironment env, TaskHandle finishedTask) {
+		Set<TaskHandle> nextTasks = new TreeSet<TaskHandle>();
+		synchronized (env) {
+			for (TaskHandle succ : dependencyGraph
+					.getDirectSuccessors(finishedTask)) {
 				int i = env.indegree.get(succ) - 1;
 				env.indegree.put(succ, i);
 				if (i == 0) {
 					nextTasks.add(succ);
 				}
 			}
-			for (TaskHandle succ : nextTasks) {
-				env.executor.execute(env.tasks.get(succ));
-			}
+		}
+		for (TaskHandle succ : nextTasks) {
+			log.fine("Execute " + succ);
+			env.executor.execute(env.tasks.get(succ));
 		}
 	}
 }

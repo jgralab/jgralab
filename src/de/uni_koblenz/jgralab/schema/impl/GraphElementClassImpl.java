@@ -157,7 +157,7 @@ public abstract class GraphElementClassImpl<SC extends GraphElementClass<SC, IC>
 	@SuppressWarnings("unchecked")
 	@Override
 	public PSet<SC> getDirectSubClasses() {
-		return (PSet<SC>) subclassDag.getDirectSucccessors(this);
+		return (PSet<SC>) subclassDag.getDirectSuccessors(this);
 	}
 
 	/**

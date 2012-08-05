@@ -28,6 +28,7 @@ public class ParallelTest {
 
 	@BeforeClass
 	public static void createQueries() {
+		System.out.println("Prepare queries...");
 		q1 = GreqlQuery.createQuery("using xo: xo + 20 store as hv");
 		q2 = GreqlQuery.createQuery("using vk: vk + 78 store as qf");
 		q3 = GreqlQuery.createQuery("96 store as vk");
@@ -87,7 +88,7 @@ public class ParallelTest {
 		GreqlQuery query = (GreqlQuery) generatedClass.newInstance();
 
 		TaskHandle gen = pge.addGreqlQuery(query);
-		pge.createDependency(h7, gen);
+		pge.createDependency(gen, h7);
 
 		GreqlEnvironment environment = pge.evaluate().getGreqlEnvironment();
 		assertEquals(((Integer) environment.getVariable("erg3")) * 2,
