@@ -36,11 +36,24 @@ package de.uni_koblenz.jgralab.greql;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
+import java.util.logging.Level;
+
+import org.pcollections.PCollection;
+import org.pcollections.PMap;
+import org.pcollections.POrderedSet;
+import org.pcollections.PVector;
 
 import de.uni_koblenz.jgralab.Graph;
+import de.uni_koblenz.jgralab.GraphIO;
+import de.uni_koblenz.jgralab.GraphIOException;
+import de.uni_koblenz.jgralab.ImplementationType;
+import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.ProgressFunction;
 import de.uni_koblenz.jgralab.greql.evaluator.GreqlEnvironmentAdapter;
 import de.uni_koblenz.jgralab.greql.evaluator.GreqlQueryImpl;
@@ -48,8 +61,17 @@ import de.uni_koblenz.jgralab.greql.optimizer.Optimizer;
 import de.uni_koblenz.jgralab.greql.optimizer.OptimizerUtility;
 import de.uni_koblenz.jgralab.greql.schema.GreqlExpression;
 import de.uni_koblenz.jgralab.greql.schema.GreqlGraph;
+import de.uni_koblenz.jgralab.impl.ConsoleProgressFunction;
 
 public abstract class GreqlQuery {
+
+	private String name;
+
+	protected GreqlQuery() {
+		// protected constructor, GreqlQueris can only be created by factory
+		// methods
+	}
+
 	public static GreqlQuery readQuery(File f) throws IOException {
 		return readQuery(f, true);
 	}
@@ -110,36 +132,34 @@ public abstract class GreqlQuery {
 		return new GreqlQueryImpl(queryText, optimize, optimizerInfo, optimizer);
 	}
 
-	public GreqlGraph getQueryGraph() {
-		return null;
+	/**
+	 * @return the name of this GreqlQuery
+	 */
+	public String getName() {
+		return name;
 	}
+
+	/**
+	 * Sets the name of this GreqlQuery to <code>name</code>. The name can be
+	 * used to store human-readable short identifiers. It is not used anywhere
+	 * in GReQL.
+	 * 
+	 * @param name
+	 *            the new name
+	 */
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public abstract GreqlGraph getQueryGraph();
 
 	public abstract Set<String> getUsedVariables();
 
 	public abstract Set<String> getStoredVariables();
 
-	public String getQueryText() {
-		return null;
-	}
+	public abstract String getQueryText();
 
-	public GreqlExpression getRootExpression() {
-		throw new UnsupportedOperationException();
-	}
-
-	/**
-	 * @return the time needed for optimizing the query or -1 if no optimization
-	 *         was done.
-	 */
-	public long getOptimizationTime() {
-		throw new UnsupportedOperationException();
-	}
-
-	/**
-	 * @return the time needed for parsing the query.
-	 */
-	public long getParseTime() {
-		throw new UnsupportedOperationException();
-	}
+	public abstract GreqlExpression getRootExpression();
 
 	public Object evaluate() {
 		return evaluate(null, new GreqlEnvironmentAdapter(), null);
@@ -161,4 +181,60 @@ public abstract class GreqlQuery {
 	public abstract Object evaluate(Graph datagraph,
 			GreqlEnvironment environment, ProgressFunction progressFunction);
 
+	@SuppressWarnings("unchecked")
+	public <T> T getSingleResult(Graph datagraph) {
+		return (T) evaluate(datagraph);
+	}
+
+	@SuppressWarnings("unchecked")
+	public <T> PVector<T> getResultList(Graph datagraph) {
+		return (PVector<T>) evaluate(datagraph);
+	}
+
+	@SuppressWarnings("unchecked")
+	public <K, V> PMap<K, V> getResultMap(Graph datagraph) {
+		return (PMap<K, V>) evaluate(datagraph);
+	}
+
+	@SuppressWarnings("unchecked")
+	public <T> POrderedSet<T> getResultSet(Graph datagraph) {
+		return (POrderedSet<T>) evaluate(datagraph);
+	}
+
+	/*
+	 * Simple main function to evaluate GReQL queries from the command line.
+	 */
+	public static void main(String[] args) throws FileNotFoundException,
+			IOException, GraphIOException {
+		if ((args.length < 1) || (args.length > 2)) {
+			System.err.println("Usage: java GreqlQuery <query> [<graphfile>]");
+			System.exit(1);
+		}
+		JGraLab.setLogLevel(Level.OFF);
+
+		String query = args[0];
+		Graph datagraph = null;
+		if (args.length == 2) {
+			datagraph = GraphIO.loadGraphFromFile(args[1],
+					ImplementationType.GENERIC, new ConsoleProgressFunction(
+							"Loading"));
+		}
+
+		Object result = GreqlQuery.createQuery(query).evaluate(datagraph);
+		System.out.println("Evaluation Result:");
+		System.out.println("==================");
+
+		if (result instanceof Map) {
+			for (Entry<?, ?> e : ((Map<?, ?>) result).entrySet()) {
+				System.out.println(e.getKey() + " --> " + e.getValue());
+			}
+		} else if (result instanceof PCollection) {
+			PCollection<?> coll = (PCollection<?>) result;
+			for (Object jv : coll) {
+				System.out.println(jv);
+			}
+		} else {
+			System.out.println(result);
+		}
+	}
 }

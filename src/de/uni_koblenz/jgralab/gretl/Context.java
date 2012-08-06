@@ -55,7 +55,6 @@ import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.ImplementationType;
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.greql.GreqlEnvironment;
-import de.uni_koblenz.jgralab.greql.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql.GreqlQuery;
 import de.uni_koblenz.jgralab.greql.evaluator.GreqlEnvironmentAdapter;
 import de.uni_koblenz.jgralab.greql.funlib.FunLib;
@@ -716,9 +715,6 @@ public class Context {
 		return result;
 	}
 
-	/**
-	 * Ensure that the {@link GreqlEvaluator} <code>eval</code> exists.
-	 */
 	private void ensureQuery() {
 		if (query == null) {
 			query = GreqlQuery.createQuery("");

@@ -88,11 +88,9 @@ import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.ImplementationType;
 import de.uni_koblenz.jgralab.ProgressFunction;
-import de.uni_koblenz.jgralab.greql.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql.GreqlQuery;
 import de.uni_koblenz.jgralab.greql.evaluator.GraphSize;
 import de.uni_koblenz.jgralab.greql.evaluator.GreqlEnvironmentAdapter;
-import de.uni_koblenz.jgralab.greql.evaluator.GreqlEvaluatorImpl;
 import de.uni_koblenz.jgralab.greql.evaluator.GreqlQueryImpl;
 import de.uni_koblenz.jgralab.greql.exception.GreqlException;
 import de.uni_koblenz.jgralab.greql.exception.ParsingException;
@@ -163,6 +161,7 @@ public class GreqlGui extends SwingApplication {
 	private boolean graphLoading;
 
 	private boolean evaluating;
+	private double parseTime;
 	private double evaluationTime;
 
 	private boolean resultFontSet;
@@ -378,6 +377,8 @@ public class GreqlGui extends SwingApplication {
 
 	class Evaluator extends Worker {
 		private final String queryString;
+		private GreqlQuery query;
+		private Object queryResult;
 
 		Evaluator(BoundedRangeModel brm, String query) {
 			super(brm);
@@ -386,19 +387,35 @@ public class GreqlGui extends SwingApplication {
 
 		@Override
 		public void run() {
-			progressBar.setIndeterminate(true);
+			invokeAndWait(new Runnable() {
+				@Override
+				public void run() {
+					progressBar.setIndeterminate(true);
+				}
+			});
+			queryResult = null;
 			try {
-				final GreqlQuery query = GreqlQuery.createQuery(queryString,
-						enableOptimizerCheckBoxItem.isSelected(),
-						new GraphSize(graph));
+				parseTime = System.currentTimeMillis();
 				GreqlQueryImpl.DEBUG_OPTIMIZATION = debugOptimizerCheckBoxItem
 						.isSelected();
-				final GreqlEvaluator eval = new GreqlEvaluatorImpl();
 				try {
-					eval.evaluate(query, graph, new GreqlEnvironmentAdapter(),
-							this);
+					query = GreqlQuery.createQuery(queryString,
+							enableOptimizerCheckBoxItem.isSelected(),
+							new GraphSize(graph));
 				} catch (Exception e1) {
 					ex = e1;
+				}
+				if (ex == null) {
+					evaluationTime = System.currentTimeMillis();
+					parseTime = (evaluationTime - parseTime) / 1000.0;
+					try {
+						queryResult = query.evaluate(graph,
+								new GreqlEnvironmentAdapter(), this);
+					} catch (Exception e1) {
+						ex = e1;
+					} finally {
+						evaluationTime = (System.currentTimeMillis() - evaluationTime) / 1000.0;
+					}
 				}
 				invokeAndWait(new Runnable() {
 
@@ -440,7 +457,6 @@ public class GreqlGui extends SwingApplication {
 							setResultFont(resultFont);
 							updateActions();
 						} else {
-							evaluationTime = eval.getOverallEvaluationTime() / 1000.0;
 							getStatusBar()
 									.setText(
 											MessageFormat
@@ -452,14 +468,13 @@ public class GreqlGui extends SwingApplication {
 					invokeLater(new Runnable() {
 						@Override
 						public void run() {
-							Object result = eval.getResult();
 							evaluating = false;
 							updateActions();
 							try {
 								File xmlResultFile = new File(
 										"greqlQueryResult.xml"); //$NON-NLS-1$
 								XMLOutputWriter xw = new XMLOutputWriter(graph);
-								xw.writeValue(result, xmlResultFile);
+								xw.writeValue(queryResult, xmlResultFile);
 							} catch (SerialisingException e) {
 								JOptionPane.showMessageDialog(GreqlGui.this,
 										"Exception during XML output of result: " //$NON-NLS-1$
@@ -477,7 +492,7 @@ public class GreqlGui extends SwingApplication {
 								// resultFile.deleteOnExit();
 								HTMLOutputWriter w = new HTMLOutputWriter(graph);
 								w.setUseCss(false);
-								w.writeValue(result, resultFile);
+								w.writeValue(queryResult, resultFile);
 								Document doc = resultPane.getDocument();
 								doc.putProperty(
 										Document.StreamDescriptionProperty,
@@ -833,6 +848,7 @@ public class GreqlGui extends SwingApplication {
 									.setText(
 											MessageFormat
 													.format(getMessage("GreqlGui.StatusMessage.ResultComplete"), //$NON-NLS-1$
+															parseTime,
 															evaluationTime));
 						}
 					}

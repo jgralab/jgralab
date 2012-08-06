@@ -2,7 +2,7 @@ package de.uni_koblenz.jgralabtest.greql.parallel;
 
 import static org.junit.Assert.assertEquals;
 
-import java.util.Set;
+import java.util.concurrent.Callable;
 
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -11,7 +11,6 @@ import org.junit.Test;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.GraphIOException;
-import de.uni_koblenz.jgralab.ProgressFunction;
 import de.uni_koblenz.jgralab.greql.GreqlEnvironment;
 import de.uni_koblenz.jgralab.greql.GreqlQuery;
 import de.uni_koblenz.jgralab.greql.exception.GreqlException;
@@ -28,7 +27,6 @@ public class ParallelTest {
 
 	@BeforeClass
 	public static void createQueries() {
-		System.out.println("Prepare queries...");
 		q1 = GreqlQuery.createQuery("using xo: xo + 20 store as hv");
 		q2 = GreqlQuery.createQuery("using vk: vk + 78 store as qf");
 		q3 = GreqlQuery.createQuery("96 store as vk");
@@ -88,7 +86,7 @@ public class ParallelTest {
 		GreqlQuery query = (GreqlQuery) generatedClass.newInstance();
 
 		TaskHandle gen = pge.addGreqlQuery(query);
-		pge.createDependency(gen, h7);
+		pge.defineDependency(gen, h7);
 
 		GreqlEnvironment environment = pge.evaluate().getGreqlEnvironment();
 		assertEquals(((Integer) environment.getVariable("erg3")) * 2,
@@ -97,29 +95,14 @@ public class ParallelTest {
 
 	@Test(expected = GreqlException.class)
 	public void executionTestWithException() {
-		GreqlQuery q = new GreqlQuery() {
+		Callable<Object> c = new Callable<Object>() {
 			@Override
-			public Set<String> getUsedVariables() {
-				// TODO Auto-generated method stub
-				return null;
-			}
-
-			@Override
-			public Set<String> getStoredVariables() {
-				// TODO Auto-generated method stub
-				return null;
-			}
-
-			@Override
-			public Object evaluate(Graph datagraph,
-					GreqlEnvironment environment,
-					ProgressFunction progressFunction) {
+			public Object call() throws Exception {
 				throw new GreqlException("Bah!");
-			}
-
+			};
 		};
-		TaskHandle ex = pge.addGreqlQuery(q);
-		pge.createDependency(ex, h3);
+		TaskHandle ex = pge.addCallable(c);
+		pge.defineDependency(ex, h3);
 		pge.evaluate();
 	}
 }

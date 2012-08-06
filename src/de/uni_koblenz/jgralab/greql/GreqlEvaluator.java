@@ -34,35 +34,12 @@
  */
 package de.uni_koblenz.jgralab.greql;
 
-import org.pcollections.PMap;
-import org.pcollections.POrderedSet;
-import org.pcollections.PVector;
-
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.ProgressFunction;
 
 public interface GreqlEvaluator {
 	public Object getResult();
 
-	public <T> T getSingleResult();
-
-	public <T> PVector<T> getResultList();
-
-	public <K, V> PMap<K, V> getResultMap();
-
-	public <T> POrderedSet<T> getResultSet();
-
 	public Object evaluate(GreqlQuery query, Graph datagraph,
 			GreqlEnvironment environment, ProgressFunction progressFunction);
-
-	/**
-	 * @return the time needed for plain evaluation.
-	 */
-	public long getEvaluationTime();
-
-	/**
-	 * @return the time the ovarall evaluation (parsing + optimization +
-	 *         evluation) took in milliseconds
-	 */
-	public long getOverallEvaluationTime();
 }

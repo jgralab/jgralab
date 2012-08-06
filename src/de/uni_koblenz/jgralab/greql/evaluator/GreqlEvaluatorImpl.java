@@ -35,24 +35,10 @@
 
 package de.uni_koblenz.jgralab.greql.evaluator;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Map.Entry;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
-import org.pcollections.PCollection;
-import org.pcollections.PMap;
-import org.pcollections.POrderedSet;
-import org.pcollections.PVector;
 
 import de.uni_koblenz.jgralab.Graph;
-import de.uni_koblenz.jgralab.GraphIO;
-import de.uni_koblenz.jgralab.GraphIOException;
-import de.uni_koblenz.jgralab.ImplementationType;
-import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.ProgressFunction;
 import de.uni_koblenz.jgralab.greql.GreqlEnvironment;
 import de.uni_koblenz.jgralab.greql.GreqlEvaluator;
@@ -62,7 +48,6 @@ import de.uni_koblenz.jgralab.greql.evaluator.vertexeval.VertexEvaluator;
 import de.uni_koblenz.jgralab.greql.schema.GreqlExpression;
 import de.uni_koblenz.jgralab.greql.schema.GreqlVertex;
 import de.uni_koblenz.jgralab.greql.types.Undefined;
-import de.uni_koblenz.jgralab.impl.ConsoleProgressFunction;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.Schema;
 
@@ -77,44 +62,6 @@ import de.uni_koblenz.jgralab.schema.Schema;
  */
 public class GreqlEvaluatorImpl implements InternalGreqlEvaluator,
 		GreqlEvaluator {
-
-	public static void main(String[] args) throws FileNotFoundException,
-			IOException, GraphIOException {
-		if ((args.length < 1) || (args.length > 2)) {
-			System.err
-					.println("Usage: java GreqlEvaluator <query> [<graphfile>]");
-			System.exit(1);
-		}
-		JGraLab.setLogLevel(Level.OFF);
-
-		String query = args[0];
-		Graph datagraph = null;
-		if (args.length == 2) {
-			datagraph = GraphIO.loadGraphFromFile(args[1],
-					ImplementationType.GENERIC, new ConsoleProgressFunction(
-							"Loading"));
-		}
-
-		GreqlEvaluatorImpl eval = new GreqlEvaluatorImpl(
-				GreqlQuery.createQuery(query), datagraph, null, null);
-		Object result = eval.getResult();
-		System.out.println("Evaluation Result:");
-		System.out.println("==================");
-
-		if (result instanceof PCollection) {
-			PCollection<?> coll = (PCollection<?>) result;
-			for (Object jv : coll) {
-				System.out.println(jv);
-			}
-		} else if (result instanceof Map) {
-			for (Entry<?, ?> e : ((Map<?, ?>) result).entrySet()) {
-				System.out.println(e.getKey() + " --> " + e.getValue());
-			}
-		} else {
-			System.out.println(result);
-		}
-	}
-
 	/**
 	 * Print the current value of each variable in a declaration layer during
 	 * evaluation.
@@ -130,9 +77,6 @@ public class GreqlEvaluatorImpl implements InternalGreqlEvaluator,
 	 */
 	public static final int VERTEX_INDEX_SIZE = 50;
 
-	private static Logger logger = Logger.getLogger(GreqlEvaluatorImpl.class
-			.getName());
-
 	/**
 	 * This attribute holds the datagraph
 	 */
@@ -147,11 +91,6 @@ public class GreqlEvaluatorImpl implements InternalGreqlEvaluator,
 	 * This attribute holds the result of the evaluation
 	 */
 	private Object result = null;
-
-	/**
-	 * The plain time needed for evaluation.
-	 */
-	private long evaluationTime;
 
 	/**
 	 * Stores the evaluation result of the query vertex <code>v</code> at
@@ -237,30 +176,6 @@ public class GreqlEvaluatorImpl implements InternalGreqlEvaluator,
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
-	public <T> T getSingleResult() {
-		return (T) evaluate();
-	}
-
-	@Override
-	@SuppressWarnings("unchecked")
-	public <T> PVector<T> getResultList() {
-		return (PVector<T>) evaluate();
-	}
-
-	@Override
-	@SuppressWarnings("unchecked")
-	public <K, V> PMap<K, V> getResultMap() {
-		return (PMap<K, V>) evaluate();
-	}
-
-	@Override
-	@SuppressWarnings("unchecked")
-	public <T> POrderedSet<T> getResultSet() {
-		return (POrderedSet<T>) evaluate();
-	}
-
-	@Override
 	public Graph getDataGraph() {
 		return datagraph;
 	}
@@ -340,8 +255,6 @@ public class GreqlEvaluatorImpl implements InternalGreqlEvaluator,
 	}
 
 	public Object evaluate() {
-		long startTime = System.currentTimeMillis();
-		evaluationTime = -1;
 		query.resetVertexEvaluators(this);
 
 		if (query.getQueryGraph().getVCount() <= 1) {
@@ -368,25 +281,7 @@ public class GreqlEvaluatorImpl implements InternalGreqlEvaluator,
 		if (progressFunction != null) {
 			progressFunction.finished();
 		}
-
-		evaluationTime = System.currentTimeMillis() - startTime;
 		return result;
-	}
-
-	/**
-	 * @return the time needed for plain evaluation.
-	 */
-	@Override
-	public long getEvaluationTime() {
-		return evaluationTime;
-	}
-
-	public void printEvaluationTimes() {
-		logger.info("Evaluation took "
-				+ evaluationTime
-				+ "ms."
-				+ (progressFunction != null ? " Estimated evaluation costs: "
-						+ estimatedInterpretationSteps : ""));
 	}
 
 	@Override
@@ -397,12 +292,6 @@ public class GreqlEvaluatorImpl implements InternalGreqlEvaluator,
 	@Override
 	public Object getVariable(String varName) {
 		return environment.getVariable(varName);
-	}
-
-	@Override
-	public long getOverallEvaluationTime() {
-		return query.getParseTime() + query.getOptimizationTime()
-				+ getEvaluationTime();
 	}
 
 	@Override

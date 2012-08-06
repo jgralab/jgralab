@@ -81,5 +81,4 @@ public class GreqlQueryCache {
 		cache.put(key, new SoftReference<GreqlQuery>(query));
 		return query;
 	}
-
 }

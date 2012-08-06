@@ -46,21 +46,6 @@ public abstract class AbstractExecutableQuery extends GreqlQuery implements
 	}
 
 	@Override
-	public long getOptimizationTime() {
-		throw new UnsupportedOperationException(
-				"This method is not available for generated queries.");
-	}
-
-	/**
-	 * @return the time needed for parsing the query.
-	 */
-	@Override
-	public long getParseTime() {
-		throw new UnsupportedOperationException(
-				"This method is not available for generated queries.");
-	}
-
-	@Override
 	public Object evaluate() {
 		return execute(null);
 	}

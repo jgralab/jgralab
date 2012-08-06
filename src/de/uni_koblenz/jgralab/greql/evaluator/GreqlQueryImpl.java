@@ -76,8 +76,6 @@ public class GreqlQueryImpl extends GreqlQuery implements
 	private PSet<String> usedVariables;
 	private PSet<String> storedVariables;
 	private final boolean optimize;
-	private long optimizationTime = -1;
-	private long parseTime = -1;
 	private final OptimizerInfo optimizerInfo;
 	private Optimizer optimizer;
 	// private final boolean useSavedOptimizedSyntaxGraph = true;
@@ -151,43 +149,41 @@ public class GreqlQueryImpl extends GreqlQuery implements
 
 	private void initializeQueryGraph() {
 		if (queryGraph == null) {
-			long t0 = System.currentTimeMillis();
-
 			queryGraph = GreqlParserWithVertexEvaluatorUpdates.parse(queryText,
 					this, new HashSet<String>());
-			long t1 = System.currentTimeMillis();
-			parseTime = t1 - t0;
 			if (optimize) {
-				(optimizer == null ? new DefaultOptimizer() : optimizer)
-						.optimize(this);
-				optimizationTime = System.currentTimeMillis() - t1;
 				if (DEBUG_OPTIMIZATION) {
-					System.out
-							.println("#########################################################");
-					System.out
-							.println("################## Unoptimized Query ####################");
-					System.out
-							.println("#########################################################");
 					String name = "__greql-query.";
 					try {
 						queryGraph.save(name + "tg",
 								new ConsoleProgressFunction(
-										"Saving broken GReQL graph:"));
+										"Saving GReQL graph:"));
 						printGraphAsDot(queryGraph, true, name + "dot");
 					} catch (GraphIOException e) {
 						e.printStackTrace();
 					}
 					System.out.println("Saved query graph to " + name
 							+ "tg/dot.");
-					System.out
-							.println("#########################################################");
+				}
+				(optimizer == null ? new DefaultOptimizer() : optimizer)
+						.optimize(this);
+				if (DEBUG_OPTIMIZATION) {
+					String name = "__optimized-greql-query.";
+					try {
+						queryGraph.save(name + "tg",
+								new ConsoleProgressFunction(
+										"Saving optimized GReQL graph:"));
+						printGraphAsDot(queryGraph, true, name + "dot");
+					} catch (GraphIOException e) {
+						e.printStackTrace();
+					}
+					System.out.println("Saved query graph to " + name
+							+ "tg/dot.");
 				}
 			}
 			((GraphBaseImpl) queryGraph).defragment();
 			rootExpression = queryGraph.getFirstGreqlExpression();
 			initializeVertexEvaluatorsMarker(queryGraph);
-			// queryGraphCache.put(queryText, optimize, queryGraph,
-			// vertexEvaluators, knownTypes, optimizationTime, parseTime);
 		}
 	}
 
@@ -282,23 +278,6 @@ public class GreqlQueryImpl extends GreqlQuery implements
 	}
 
 	/**
-	 * @return the time needed for optimizing the query or -1 if no optimization
-	 *         was done.
-	 */
-	@Override
-	public long getOptimizationTime() {
-		return optimizationTime;
-	}
-
-	/**
-	 * @return the time needed for parsing the query.
-	 */
-	@Override
-	public long getParseTime() {
-		return parseTime;
-	}
-
-	/**
 	 * @param typeSimpleName
 	 *            {@link String} the simple name of the needed
 	 *            {@link AttributedElementClass}
@@ -383,8 +362,8 @@ public class GreqlQueryImpl extends GreqlQuery implements
 			return parse(query, subQueryNames, gscl);
 		}
 
-		public static GreqlGraph parse(String query,
-				Set<String> subQueryNames, GreqlQueryImpl gscl) {
+		public static GreqlGraph parse(String query, Set<String> subQueryNames,
+				GreqlQueryImpl gscl) {
 			GreqlParser parser = new GreqlParserWithVertexEvaluatorUpdates(
 					query, subQueryNames, gscl);
 			parser.parse();
@@ -417,9 +396,8 @@ public class GreqlQueryImpl extends GreqlQuery implements
 	@Override
 	public Object evaluate(Graph datagraph, GreqlEnvironment environment,
 			ProgressFunction progressFunction) {
-		Object result = new GreqlEvaluatorImpl(this, datagraph, environment,
+		return new GreqlEvaluatorImpl(this, datagraph, environment,
 				progressFunction).getResult();
-		return result;
 	}
 
 	@Override
