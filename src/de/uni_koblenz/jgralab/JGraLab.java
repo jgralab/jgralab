@@ -221,24 +221,36 @@ public class JGraLab {
 	 * Gets the {@link Logger} for the specified package and create a logger
 	 * hierarchy down to the default package.
 	 * 
-	 * @param pkgName
+	 * @param packageName
 	 *            the name of the package.
 	 * @return the {@link Logger} for the package <code>pkgName</code>
 	 */
-	public static Logger getLogger(String pkgName) {
-		if (pkgName.equals("")) {
+	public static Logger getLogger(String packageName) {
+		if (packageName.equals("")) {
 			return getRootLogger();
 		}
-		Logger l = loggerMap.get(pkgName);
+		Logger l = loggerMap.get(packageName);
 		if (l != null) {
 			return l;
 		}
-		l = Logger.getLogger(pkgName, null);
-		l.setParent(getParentLogger(pkgName));
+		l = Logger.getLogger(packageName, null);
+		l.setParent(getParentLogger(packageName));
 		l.setLevel(null); // inherit level from parent
 		l.setUseParentHandlers(true);
-		loggerMap.put(pkgName, l);
+		loggerMap.put(packageName, l);
 		return l;
+	}
+
+	/**
+	 * Gets the {@link Logger} for the package of the class <code>cls</code> and
+	 * create a logger hierarchy down to the default package.
+	 * 
+	 * @param cls
+	 *            a {@link Class}
+	 * @return the {@link Logger} for the package of <code>cls</code>
+	 */
+	public static Logger getLogger(Class<?> cls) {
+		return getLogger(cls.getPackage().getName());
 	}
 
 	private static Logger getParentLogger(String childPkgName) {

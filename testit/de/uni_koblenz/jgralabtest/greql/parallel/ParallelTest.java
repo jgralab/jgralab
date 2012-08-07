@@ -2,8 +2,6 @@ package de.uni_koblenz.jgralabtest.greql.parallel;
 
 import static org.junit.Assert.assertEquals;
 
-import java.util.concurrent.Callable;
-
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -16,8 +14,10 @@ import de.uni_koblenz.jgralab.greql.GreqlQuery;
 import de.uni_koblenz.jgralab.greql.exception.GreqlException;
 import de.uni_koblenz.jgralab.greql.executable.ExecutableQuery;
 import de.uni_koblenz.jgralab.greql.executable.GreqlCodeGenerator;
+import de.uni_koblenz.jgralab.greql.parallel.EvaluationEnvironment;
 import de.uni_koblenz.jgralab.greql.parallel.ParallelGreqlEvaluator;
 import de.uni_koblenz.jgralab.greql.parallel.ParallelGreqlEvaluator.TaskHandle;
+import de.uni_koblenz.jgralab.greql.parallel.ParallelGreqlEvaluatorCallable;
 
 public class ParallelTest {
 	private static GreqlQuery q1, q2, q3, q4, q5, q6, q7, q8, q9, q10;
@@ -95,11 +95,11 @@ public class ParallelTest {
 
 	@Test(expected = GreqlException.class)
 	public void executionTestWithException() {
-		Callable<Object> c = new Callable<Object>() {
+		ParallelGreqlEvaluatorCallable c = new ParallelGreqlEvaluatorCallable() {
 			@Override
-			public Object call() throws Exception {
+			public Object call(EvaluationEnvironment environment) {
 				throw new GreqlException("Bah!");
-			};
+			}
 		};
 		TaskHandle ex = pge.addCallable(c);
 		pge.defineDependency(ex, h3);

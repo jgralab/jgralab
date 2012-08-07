@@ -118,8 +118,7 @@ import de.uni_koblenz.jgralabtest.schemas.gretl.varro.uml.Attribute;
 public class GretlTest {
 	static {
 		JGraLab.setLogLevel(Level.OFF);
-		Logger logger = JGraLab.getLogger(Transformation.class.getPackage()
-				.getName());
+		Logger logger = JGraLab.getLogger(Transformation.class);
 		logger.setLevel(Level.INFO);
 	}
 

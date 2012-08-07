@@ -63,7 +63,7 @@ import de.uni_koblenz.jgralab.greql.schema.IsConstraintOf;
 public class MergeConstraintsOptimizer extends OptimizerBase {
 
 	private static Logger logger = JGraLab
-			.getLogger(MergeConstraintsOptimizer.class.getPackage().getName());
+			.getLogger(MergeConstraintsOptimizer.class);
 
 	/*
 	 * (non-Javadoc)
@@ -143,8 +143,8 @@ public class MergeConstraintsOptimizer extends OptimizerBase {
 		FunctionId funId = OptimizerUtility.findOrCreateFunctionId("and",
 				syntaxgraph);
 		syntaxgraph.createIsFunctionIdOf(funId, funApp);
-		syntaxgraph.createIsArgumentOf(constraintEdges.get(0)
-				.getAlpha(), funApp);
+		syntaxgraph.createIsArgumentOf(constraintEdges.get(0).getAlpha(),
+				funApp);
 		syntaxgraph.createIsArgumentOf(
 				createConjunction(
 						constraintEdges.subList(1, constraintEdges.size()),

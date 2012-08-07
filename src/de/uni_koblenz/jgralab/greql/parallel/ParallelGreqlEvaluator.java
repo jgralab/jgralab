@@ -40,11 +40,9 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.FutureTask;
 import java.util.concurrent.ThreadPoolExecutor;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import de.uni_koblenz.jgralab.Graph;
@@ -57,7 +55,7 @@ import de.uni_koblenz.jgralab.schema.impl.DirectedAcyclicGraph;
 
 /**
  * {@link ParallelGreqlEvaluator} executes {@link GreqlQuery}s parallely.
- * Additionally, other {@link Callable}s can be added to a
+ * Additionally, other {@link ParallelGreqlEvaluatorCallable}s can be added to a
  * ParallelGreqlExecutor.
  * 
  * Adding a query or a callable returns a {@link TaskHandle}. This
@@ -71,11 +69,11 @@ import de.uni_koblenz.jgralab.schema.impl.DirectedAcyclicGraph;
  * to store dependencies. Tasks submitted to a {@link ThreadPoolExecutor} as
  * soon as all predecessors have completed.
  * 
- * When adding the same {@link Callable} task multiple times, the
- * {@link Callable} is responsible for maintaining separate internal states for
- * possibly parallel executions. For GReQL queries,
- * {@link ParallelGreqlEvaluator} and {@link GreqlEvaluator} take care of
- * separate environments.
+ * When adding the same {@link ParallelGreqlEvaluatorCallable} task multiple
+ * times, the {@link ParallelGreqlEvaluatorCallable} is responsible for
+ * maintaining separate internal states for possibly parallel executions. For
+ * GReQL queries, {@link ParallelGreqlEvaluator} and {@link GreqlEvaluator} take
+ * care of separate environments.
  * 
  * A call to one of the {@link #evaluate()} methods executes all tasks using a
  * {@link ThreadPoolExecutor}. The number of active threads is set automatically
@@ -89,9 +87,10 @@ import de.uni_koblenz.jgralab.schema.impl.DirectedAcyclicGraph;
  * , and to access the {@link GreqlEnvironment} used by all queries.
  * 
  * To somehow control execution order, a priority can be specified when adding a
- * {@link GreqlQuery} or a {@link Callable}. the add... methods. Tasks with
- * higher priority are submitted first to the {@link ThreadPoolExecutor}. Tasks
- * with the same priority value are sumbitted in the order of addition.
+ * {@link GreqlQuery} or a {@link ParallelGreqlEvaluatorCallable}. the add...
+ * methods. Tasks with higher priority are submitted first to the
+ * {@link ThreadPoolExecutor}. Tasks with the same priority value are sumbitted
+ * in the order of addition.
  * 
  * A good choice for priority values is the estimated execution time of the
  * tasks. The {@link ParallelGreqlEvaluator#evaluate(boolean)} methods provide a
@@ -99,100 +98,14 @@ import de.uni_koblenz.jgralab.schema.impl.DirectedAcyclicGraph;
  * time. This usually results in optimal schedules in subsequent evaluations.
  */
 public class ParallelGreqlEvaluator {
-	private static Logger log = JGraLab.getLogger(ParallelGreqlEvaluator.class
-			.getPackage().getName());
-
-	static {
-		// OFF: no logging
-		// FINE: Log task execution and termination
-		// FINER: Additionally, log task begin, final waiting task, and
-		// dependency graph
-		log.setLevel(Level.OFF);
-	}
+	// Log levels:
+	// OFF: no logging
+	// FINE: Log task execution and termination
+	// FINER: Additionally, log task begin, final waiting task, and
+	// dependency graph
+	private static Logger log = JGraLab.getLogger(ParallelGreqlEvaluator.class);
 
 	private DirectedAcyclicGraph<TaskHandle> dependencyGraph;
-
-	/**
-	 * {@link EvaluationEnvironment} contains data local to a single evaluation.
-	 * Additionally, the {@link GreqlEnvironment} used to evaluate the queries
-	 * and the result objects of each task are available.
-	 */
-	public class EvaluationEnvironment {
-		private Graph datagraph;
-		private GreqlEnvironment greqlEnvironment;
-		private ExecutorService executor;
-		private Exception exception;
-		private HashMap<TaskHandle, Integer> inDegree;
-		private HashMap<TaskHandle, EvaluationTask> tasks;
-		private long startTime, doneTime;
-
-		private EvaluationEnvironment() {
-			// private constructor, no construction from outside
-			inDegree = new HashMap<TaskHandle, Integer>();
-			tasks = new HashMap<TaskHandle, EvaluationTask>();
-		}
-
-		/**
-		 * @return the {@link GreqlEnvironment} used to evaluate all queries
-		 */
-		public GreqlEnvironment getGreqlEnvironment() {
-			return greqlEnvironment;
-		}
-
-		/**
-		 * Returns the result Object of the {@link GreqlQuery} or the
-		 * {@link Callable} associated with the {@link TaskHandle}
-		 * <code>handle</code>.
-		 * 
-		 * @param handle
-		 *            a {@link TaskHandle} that was returned by one of the
-		 *            {@link ParallelGreqlEvaluator}'s add... methods.
-		 * @return the result Object of the {@link GreqlQuery} or the
-		 *         {@link Callable}
-		 * @throws IllegalStateException
-		 *             when the task for the {@link TaskHandle} is not done
-		 * @throws IllegalArgumentException
-		 *             when the {@link TaskHandle} does not belong to this
-		 *             {@link EvaluationEnvironment}
-		 */
-		public Object getResult(TaskHandle handle) {
-			EvaluationTask t = tasks.get(handle);
-			if (!t.isDone()) {
-				throw new IllegalStateException(handle + " is not yet done.");
-			}
-			if (!tasks.containsKey(handle)) {
-				throw new IllegalArgumentException(handle
-						+ " does not belong to this EvaluationEnvironment.");
-			}
-			try {
-				return tasks.get(handle).get();
-			} catch (InterruptedException e) {
-				// should not occur since task is done
-				throw new RuntimeException(e);
-			} catch (ExecutionException e) {
-				// should not occur since task is done
-				throw new RuntimeException(e);
-			}
-		}
-
-		/**
-		 * @return the total evaluation time in ms
-		 */
-		public long getEvaluationTime() {
-			return doneTime - startTime;
-		}
-
-		/**
-		 * @param handle
-		 *            a TaskHandle returned by one of
-		 *            {@link ParallelGreqlEvaluator}'s add... methods
-		 * @return the evaluation time in ms for the task associated with
-		 *         {@link TaskHandle} <code>handle</code>
-		 */
-		public long getEvaluationTime(TaskHandle handle) {
-			return tasks.get(handle).getEvaluationTime();
-		}
-	}
 
 	/**
 	 * {@link EvaluationTask} is responsible to execute a {@link Callable}. In
@@ -202,7 +115,7 @@ public class ParallelGreqlEvaluator {
 	 * in the environment. Additionally, {@link EvaluationTask} records the
 	 * execution time and does some logging.
 	 */
-	private class EvaluationTask extends FutureTask<Object> {
+	class EvaluationTask extends FutureTask<Object> {
 		private TaskHandle handle;
 		private EvaluationEnvironment environment;
 		private long startTime, doneTime;
@@ -221,7 +134,7 @@ public class ParallelGreqlEvaluator {
 			super.run();
 		}
 
-		private long getEvaluationTime() {
+		long getEvaluationTime() {
 			if (!isDone()) {
 				throw new IllegalStateException(
 						"EvaluationTask is not yet done.");
@@ -269,7 +182,7 @@ public class ParallelGreqlEvaluator {
 	 * {@link EvaluationEnvironment}.
 	 */
 	public class TaskHandle implements Comparable<TaskHandle> {
-		private Callable<Object> callable;
+		private ParallelGreqlEvaluatorCallable callable;
 		private GreqlQuery query;
 		private int priority;
 		private int seq;
@@ -296,7 +209,7 @@ public class ParallelGreqlEvaluator {
 			}
 		}
 
-		private TaskHandle(Callable<Object> callable, int priority) {
+		private TaskHandle(ParallelGreqlEvaluatorCallable callable, int priority) {
 			this();
 			this.callable = callable;
 			this.priority = priority;
@@ -310,7 +223,12 @@ public class ParallelGreqlEvaluator {
 
 		private EvaluationTask createFutureTask(final EvaluationEnvironment env) {
 			if (callable != null) {
-				return new EvaluationTask(env, this, callable);
+				return new EvaluationTask(env, this, new Callable<Object>() {
+					@Override
+					public Object call() throws Exception {
+						return callable.call(env);
+					}
+				});
 			} else if (query != null) {
 				return new EvaluationTask(env, this, new Callable<Object>() {
 					@Override
@@ -334,9 +252,10 @@ public class ParallelGreqlEvaluator {
 	}
 
 	/**
-	 * Evaluates all {@link GreqlQuery} and {@link Callable} tasks in
-	 * topological order, according to their priority, without a data graph and
-	 * with an initially empty {@link GreqlEnvironment}.
+	 * Evaluates all {@link GreqlQuery} and
+	 * {@link ParallelGreqlEvaluatorCallable} tasks in topological order,
+	 * according to their priority, without a data graph and with an initially
+	 * empty {@link GreqlEnvironment}.
 	 * 
 	 * @return an {@link EvaluationEnvironment} containing the results
 	 */
@@ -345,9 +264,10 @@ public class ParallelGreqlEvaluator {
 	}
 
 	/**
-	 * Evaluates all {@link GreqlQuery} and {@link Callable} tasks in
-	 * topological order, according to their priority, without a data graph and
-	 * with an initially empty {@link GreqlEnvironment}.
+	 * Evaluates all {@link GreqlQuery} and
+	 * {@link ParallelGreqlEvaluatorCallable} tasks in topological order,
+	 * according to their priority, without a data graph and with an initially
+	 * empty {@link GreqlEnvironment}.
 	 * 
 	 * @param adjustPriorityValues
 	 *            when set to <code>true</code>, the priority values of all
@@ -362,10 +282,10 @@ public class ParallelGreqlEvaluator {
 	}
 
 	/**
-	 * Evaluates all {@link GreqlQuery} and {@link Callable} tasks in
-	 * topological order, according to their priority, on the specified
-	 * <code>datagraph</code> and with an initially empty
-	 * {@link GreqlEnvironment}.
+	 * Evaluates all {@link GreqlQuery} and
+	 * {@link ParallelGreqlEvaluatorCallable} tasks in topological order,
+	 * according to their priority, on the specified <code>datagraph</code> and
+	 * with an initially empty {@link GreqlEnvironment}.
 	 * 
 	 * @param datagraph
 	 *            a graph
@@ -376,10 +296,10 @@ public class ParallelGreqlEvaluator {
 	}
 
 	/**
-	 * Evaluates all {@link GreqlQuery} and {@link Callable} tasks in
-	 * topological order, according to their priority, on the specified
-	 * <code>datagraph</code> and with an initially empty
-	 * {@link GreqlEnvironment}.
+	 * Evaluates all {@link GreqlQuery} and
+	 * {@link ParallelGreqlEvaluatorCallable} tasks in topological order,
+	 * according to their priority, on the specified <code>datagraph</code> and
+	 * with an initially empty {@link GreqlEnvironment}.
 	 * 
 	 * @param datagraph
 	 *            a graph
@@ -397,10 +317,10 @@ public class ParallelGreqlEvaluator {
 	}
 
 	/**
-	 * Evaluates all {@link GreqlQuery} and {@link Callable} tasks in
-	 * topological order, according to their priority, on the specified
-	 * <code>datagraph</code> using and probably modifiying the provided
-	 * <code>greqlEnvironment</code>.
+	 * Evaluates all {@link GreqlQuery} and
+	 * {@link ParallelGreqlEvaluatorCallable} tasks in topological order,
+	 * according to their priority, on the specified <code>datagraph</code>
+	 * using and probably modifiying the provided <code>greqlEnvironment</code>.
 	 * 
 	 * @param datagraph
 	 *            a {@link Graph}
@@ -416,10 +336,10 @@ public class ParallelGreqlEvaluator {
 	}
 
 	/**
-	 * Evaluates all {@link GreqlQuery} and {@link Callable} tasks in
-	 * topological order, according to their priority, on the specified
-	 * <code>datagraph</code> using and probably modifiying the provided
-	 * <code>greqlEnvironment</code>.
+	 * Evaluates all {@link GreqlQuery} and
+	 * {@link ParallelGreqlEvaluatorCallable} tasks in topological order,
+	 * according to their priority, on the specified <code>datagraph</code>
+	 * using and probably modifiying the provided <code>greqlEnvironment</code>.
 	 * 
 	 * @param datagraph
 	 *            a {@link Graph}
@@ -554,12 +474,12 @@ public class ParallelGreqlEvaluator {
 	 * with priority 0.
 	 * 
 	 * @param callable
-	 *            a {@link Callable} to be called by this
+	 *            a {@link ParallelGreqlEvaluatorCallable} to be called by this
 	 *            {@link ParallelGreqlEvaluator}
 	 * @return a {@link TaskHandle} identifying the task associated with the
 	 *         <code>callable</code>
 	 */
-	public TaskHandle addCallable(Callable<Object> callable) {
+	public TaskHandle addCallable(ParallelGreqlEvaluatorCallable callable) {
 		return addCallable(callable, 0);
 	}
 
@@ -568,14 +488,15 @@ public class ParallelGreqlEvaluator {
 	 * with priority <code>priority</code>.
 	 * 
 	 * @param callable
-	 *            a {@link Callable} to be called by this
+	 *            a {@link ParallelGreqlEvaluatorCallable} to be called by this
 	 *            {@link ParallelGreqlEvaluator}
 	 * @param priority
 	 *            a priority value, higher values mean higher priority
 	 * @return a {@link TaskHandle} identifying the task associated with the
 	 *         <code>callable</code>
 	 */
-	public TaskHandle addCallable(Callable<Object> callable, int priority) {
+	public TaskHandle addCallable(ParallelGreqlEvaluatorCallable callable,
+			int priority) {
 		return dependencyGraph.createNode(new TaskHandle(callable, priority));
 	}
 

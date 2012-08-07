@@ -34,12 +34,13 @@
  */
 package de.uni_koblenz.jgralab.greql.evaluator;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
+import java.io.File;
+import java.lang.ref.SoftReference;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Logger;
 
 import org.pcollections.PSet;
 
@@ -64,8 +65,7 @@ import de.uni_koblenz.jgralab.greql.schema.GreqlGraph;
 import de.uni_koblenz.jgralab.greql.schema.GreqlVertex;
 import de.uni_koblenz.jgralab.greql.schema.Identifier;
 import de.uni_koblenz.jgralab.greql.schema.Variable;
-import de.uni_koblenz.jgralab.impl.ConsoleProgressFunction;
-import de.uni_koblenz.jgralab.impl.GraphBaseImpl;
+import de.uni_koblenz.jgralab.impl.std.GraphImpl;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.Schema;
 
@@ -81,6 +81,11 @@ public class GreqlQueryImpl extends GreqlQuery implements
 	// private final boolean useSavedOptimizedSyntaxGraph = true;
 	private GreqlExpression rootExpression;
 
+	// Log levels:
+	// INFO: log optimizer debugging
+	// FINE: log parse/optimization times
+	private static Logger logger = JGraLab.getLogger(GreqlQueryImpl.class);
+
 	/**
 	 * Print the text representation of the optimized query after optimization.
 	 */
@@ -91,7 +96,7 @@ public class GreqlQueryImpl extends GreqlQuery implements
 	 * The {@link Map} of SimpleName to Type of types that is known in the
 	 * evaluator by import statements in the greql query
 	 */
-	protected Map<Schema, Map<String, AttributedElementClass<?, ?>>> knownTypes = new HashMap<Schema, Map<String, AttributedElementClass<?, ?>>>();
+	protected Map<Schema, Map<String, AttributedElementClass<?, ?>>> importedTypes;
 
 	/**
 	 * The {@link GraphMarker} that stores all vertex evaluators
@@ -121,7 +126,7 @@ public class GreqlQueryImpl extends GreqlQuery implements
 		this.optimize = optimize;
 		this.optimizerInfo = optimizerInfo == null ? OptimizerUtility
 				.getDefaultOptimizerInfo() : optimizerInfo;
-		knownTypes = new HashMap<Schema, Map<String, AttributedElementClass<?, ?>>>();
+		importedTypes = new HashMap<Schema, Map<String, AttributedElementClass<?, ?>>>();
 		initializeQueryGraph();
 	}
 
@@ -131,7 +136,7 @@ public class GreqlQueryImpl extends GreqlQuery implements
 		this.optimize = optimize;
 		this.optimizerInfo = optimizerInfo == null ? OptimizerUtility
 				.getDefaultOptimizerInfo() : optimizerInfo;
-		knownTypes = new HashMap<Schema, Map<String, AttributedElementClass<?, ?>>>();
+		importedTypes = new HashMap<Schema, Map<String, AttributedElementClass<?, ?>>>();
 		this.optimizer = optimizer == null ? new DefaultOptimizer() : optimizer;
 		initializeQueryGraph();
 	}
@@ -149,65 +154,82 @@ public class GreqlQueryImpl extends GreqlQuery implements
 
 	private void initializeQueryGraph() {
 		if (queryGraph == null) {
+			long t0 = System.currentTimeMillis();
 			queryGraph = GreqlParserWithVertexEvaluatorUpdates.parse(queryText,
 					this, new HashSet<String>());
+			long t1 = System.currentTimeMillis();
+			logger.fine("GReQL parser: " + (t1 - t0) + " ms");
 			if (optimize) {
 				if (DEBUG_OPTIMIZATION) {
-					String name = "__greql-query.";
+					String dirName = System.getProperty("java.io.tmpdir");
+					if (!dirName.endsWith(File.separator)) {
+						dirName += File.separator;
+					}
 					try {
-						queryGraph.save(name + "tg",
-								new ConsoleProgressFunction(
-										"Saving GReQL graph:"));
-						printGraphAsDot(queryGraph, true, name + "dot");
+						queryGraph.save(dirName + "greql-query-unoptimized.tg");
 					} catch (GraphIOException e) {
 						e.printStackTrace();
 					}
-					System.out.println("Saved query graph to " + name
-							+ "tg/dot.");
+					printGraphAsDot(queryGraph, dirName
+							+ "greql-query-unoptimized.dot");
 				}
+				long t2 = System.currentTimeMillis();
 				(optimizer == null ? new DefaultOptimizer() : optimizer)
 						.optimize(this);
+				long t3 = System.currentTimeMillis();
 				if (DEBUG_OPTIMIZATION) {
-					String name = "__optimized-greql-query.";
+					String dirName = System.getProperty("java.io.tmpdir");
+					if (!dirName.endsWith(File.separator)) {
+						dirName += File.separator;
+					}
 					try {
-						queryGraph.save(name + "tg",
-								new ConsoleProgressFunction(
-										"Saving optimized GReQL graph:"));
-						printGraphAsDot(queryGraph, true, name + "dot");
+						queryGraph.save(dirName + "greql-query-optimized.tg");
 					} catch (GraphIOException e) {
 						e.printStackTrace();
 					}
-					System.out.println("Saved query graph to " + name
-							+ "tg/dot.");
+					printGraphAsDot(queryGraph, dirName
+							+ "greql-query-optimized.dot");
+					logger.info("Stored query graphs to " + dirName
+							+ "greql-query*");
 				}
+				logger.fine("GReQL optimizer: " + (t3 - t2) + " ms");
 			}
-			((GraphBaseImpl) queryGraph).defragment();
+			((GraphImpl) queryGraph).defragment();
 			rootExpression = queryGraph.getFirstGreqlExpression();
 			initializeVertexEvaluatorsMarker(queryGraph);
+			long t4 = System.currentTimeMillis();
+			logger.fine("GReQL total: " + (t4 - t0) + " ms");
 		}
 	}
 
-	private void printGraphAsDot(Graph graph, boolean reversedEdges,
-			String outputFilename) {
+	/*
+	 * Helper methods to print query graph as DOT file. To avoid compile-time
+	 * dependencies, these methods use reflection to get a Tg2Dot instance.
+	 */
+	private static SoftReference<Object> tg2DotReference;
+	private static Class<?> tg2DotClass;
 
+	private void printGraphAsDot(Graph graph, String outputFilename) {
+		Object t2d = null;
+		if (tg2DotReference != null) {
+			t2d = tg2DotReference.get();
+		}
 		try {
-			Class<?> tg2DotClass = Class
-					.forName("de.uni_koblenz.jgralab.utilities.tg2dot.Tg2Dot");
-			Method printMethod = tg2DotClass.getMethod("convertGraph",
-					Graph.class, String.class, boolean.class);
-			printMethod.invoke(tg2DotClass, new Object[] { graph,
-					outputFilename, reversedEdges });
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-		} catch (SecurityException e) {
-			e.printStackTrace();
-		} catch (NoSuchMethodException e) {
-			e.printStackTrace();
-		} catch (IllegalArgumentException e) {
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			e.printStackTrace();
-		} catch (InvocationTargetException e) {
+			if (t2d == null) {
+				if (tg2DotClass == null) {
+					tg2DotClass = Class
+							.forName("de.uni_koblenz.jgralab.utilities.tg2dot.Tg2Dot");
+				}
+				t2d = tg2DotClass.newInstance();
+				tg2DotReference = new SoftReference<Object>(t2d);
+			}
+			tg2DotClass.getMethod("setGraph", Graph.class).invoke(t2d, graph);
+			tg2DotClass.getMethod("setOutputFile", String.class).invoke(t2d,
+					outputFilename);
+			tg2DotClass.getMethod("setReversedEdges", boolean.class).invoke(
+					t2d, true);
+		} catch (Exception e) {
+			// intentional catch-all block
 			e.printStackTrace();
 		}
 	}
@@ -284,28 +306,28 @@ public class GreqlQueryImpl extends GreqlQuery implements
 	 * @return {@link AttributedElementClass} of the datagraph with the name
 	 *         <code>name</code>
 	 */
-	public synchronized AttributedElementClass<?, ?> getKnownType(
+	public synchronized AttributedElementClass<?, ?> getImportedType(
 			Schema schema, String typeSimpleName) {
-		Map<String, AttributedElementClass<?, ?>> kTypes = knownTypes
+		Map<String, AttributedElementClass<?, ?>> map = importedTypes
 				.get(schema);
-		return kTypes != null ? kTypes.get(typeSimpleName) : null;
+		return map != null ? map.get(typeSimpleName) : null;
 	}
 
 	/**
 	 * @param elem
 	 *            {@link AttributedElementClass} which will be added to the
-	 *            {@link #knownTypes} with its simple name as key.
+	 *            {@link #importedTypes} with its simple name as key.
 	 * @return @see {@link Map#put(Object, Object)}
 	 */
-	public synchronized AttributedElementClass<?, ?> addKnownType(
+	public synchronized AttributedElementClass<?, ?> addImportedType(
 			Schema schema, AttributedElementClass<?, ?> elem) {
-		Map<String, AttributedElementClass<?, ?>> kTypes = knownTypes
+		Map<String, AttributedElementClass<?, ?>> map = importedTypes
 				.get(schema);
-		if (kTypes == null) {
-			kTypes = new HashMap<String, AttributedElementClass<?, ?>>();
-			knownTypes.put(schema, kTypes);
+		if (map == null) {
+			map = new HashMap<String, AttributedElementClass<?, ?>>();
+			importedTypes.put(schema, map);
 		}
-		return kTypes.put(elem.getSimpleName(), elem);
+		return map.put(elem.getSimpleName(), elem);
 	}
 
 	@Override

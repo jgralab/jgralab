@@ -84,8 +84,7 @@ public class TGMerge {
 	 */
 	private Map<GraphElement<?, ?>, Integer> targetGraphPositions = new HashMap<GraphElement<?, ?>, Integer>();
 
-	private static Logger log = JGraLab.getLogger(TGMerge.class.getPackage()
-			.getName());
+	private static Logger logger = JGraLab.getLogger(TGMerge.class);
 
 	/**
 	 * @param graphs
@@ -154,9 +153,9 @@ public class TGMerge {
 	}
 
 	public Graph merge() {
-		log.fine("TargetGraph is '" + targetGraph.getId() + "'.");
+		logger.fine("TargetGraph is '" + targetGraph.getId() + "'.");
 		for (Graph g : additionalGraphs) {
-			log.fine("Merging graph '" + g.getId() + "'...");
+			logger.fine("Merging graph '" + g.getId() + "'...");
 			rememberTargetGraphPositions();
 			rememberCopiedGraphPositions(g);
 			for (Vertex v : g.vertices()) {
@@ -171,7 +170,7 @@ public class TGMerge {
 			resetMaps();
 		}
 		for (AbstractGraphMarker<?> marker : additionalGraphMarkers) {
-			log.fine("Merging GraphMarker '" + marker + "'...");
+			logger.fine("Merging GraphMarker '" + marker + "'...");
 			rememberTargetGraphPositions();
 			rememberCopiedGraphPositions(marker.getGraph());
 			for (AttributedElement<?, ?> ae : marker.getMarkedElements()) {
@@ -255,10 +254,10 @@ public class TGMerge {
 	}
 
 	private void sortVertices() {
-		log.fine("Sorting " + targetGraph.getVCount() + " vertices...");
+		logger.fine("Sorting " + targetGraph.getVCount() + " vertices...");
 		VertexComparator vc = new VertexComparator();
 		targetGraph.sortVertices(vc);
-		log.fine(vc.compareCount + " comparisons were needed to sort "
+		logger.fine(vc.compareCount + " comparisons were needed to sort "
 				+ targetGraph.getVCount() + " vertices.");
 	}
 
@@ -294,15 +293,15 @@ public class TGMerge {
 	}
 
 	private void sortEdges() {
-		log.fine("Sorting " + targetGraph.getECount() + " edges...");
+		logger.fine("Sorting " + targetGraph.getECount() + " edges...");
 		EdgeComparator ec = new EdgeComparator();
 		targetGraph.sortEdges(ec);
-		log.fine(ec.compareCount + " comparisons were needed to sort "
+		logger.fine(ec.compareCount + " comparisons were needed to sort "
 				+ targetGraph.getECount() + " edges.");
 	}
 
 	private void sortIncidences() {
-		log.fine("Sorting incidences...");
+		logger.fine("Sorting incidences...");
 		for (Vertex v : old2NewVertices.values()) {
 			v.sortIncidences(new Comparator<Edge>() {
 				@Override

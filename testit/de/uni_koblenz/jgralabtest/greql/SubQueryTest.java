@@ -44,12 +44,17 @@ import de.uni_koblenz.jgralab.greql.exception.GreqlException;
 import de.uni_koblenz.jgralab.greql.funlib.FunLib;
 
 public class SubQueryTest extends GenericTest {
+	private void registerGreqlFunction(String name, String queryText) {
+		GreqlQuery query = GreqlQuery.createQuery(queryText);
+		query.setName(name);
+		FunLib.registerGreqlFunction(query, true, 1, 1, 1.0);
+	}
 
 	@Test
 	public void testSimpleSubQuery() {
-		FunLib.registerSubQueryFunction("one", "1");
-		FunLib.registerSubQueryFunction("two", "2");
-		FunLib.registerSubQueryFunction("three", "3");
+		registerGreqlFunction("one", "1");
+		registerGreqlFunction("two", "2");
+		registerGreqlFunction("three", "3");
 		Object r = GreqlQuery.createQuery("one() + two() + three()").evaluate(
 				getTestTree());
 		Assert.assertEquals(6, ((Integer) r).intValue());
@@ -57,10 +62,9 @@ public class SubQueryTest extends GenericTest {
 
 	@Test
 	public void testSubQueryWithSQsUsingOtherSQs() {
-		FunLib.registerSubQueryFunction("one", "1");
-		FunLib.registerSubQueryFunction("two", "one() + one()");
-		FunLib.registerSubQueryFunction("three",
-				"one() + two() - two() + one() + one()");
+		registerGreqlFunction("one", "1");
+		registerGreqlFunction("two", "one() + one()");
+		registerGreqlFunction("three", "one() + two() - two() + one() + one()");
 		Object r = GreqlQuery.createQuery("one() + two() + three()").evaluate(
 				getTestTree());
 		Assert.assertEquals(6, ((Integer) r).intValue());
@@ -69,49 +73,47 @@ public class SubQueryTest extends GenericTest {
 	@Test(expected = GreqlException.class)
 	public void testRecursiveSubQueryError() {
 		// recursive defs are not allowed
-		FunLib.registerSubQueryFunction("x",
-				"using val: (val > 0 ? x(val - 1) : 0)");
+		registerGreqlFunction("x", "using val: (val > 0 ? x(val - 1) : 0)");
 	}
 
 	@Test(expected = GreqlException.class)
 	public void testShadowingSubQueryError() {
 		// A subquery def must error if it shadows a function from the funlib
-		FunLib.registerSubQueryFunction("and", "true");
+		registerGreqlFunction("and", "true");
 	}
 
 	@Test(expected = GreqlException.class)
 	public void testSubQueryArgCountMismatchError1() {
-		FunLib.registerSubQueryFunction("add3", "using a, b, c: a + b + c");
+		registerGreqlFunction("add3", "using a, b, c: a + b + c");
 		GreqlQuery.createQuery("add3()").evaluate(getTestTree());
 	}
 
 	@Test(expected = GreqlException.class)
 	public void testSubQueryArgCountMismatchError2() {
-		FunLib.registerSubQueryFunction("add3", "using a, b, c: a + b + c");
+		registerGreqlFunction("add3", "using a, b, c: a + b + c");
 		GreqlQuery.createQuery("add3(1)").evaluate(getTestTree());
 	}
 
 	@Test(expected = GreqlException.class)
 	public void testSubQueryArgCountMismatchError3() {
-		FunLib.registerSubQueryFunction("add3", "using a, b, c: a + b + c");
+		registerGreqlFunction("add3", "using a, b, c: a + b + c");
 		GreqlQuery.createQuery("add3(1, 2)").evaluate(getTestTree());
 	}
 
 	@Test(expected = GreqlException.class)
 	public void testSubQueryArgCountMismatchError4() {
-		FunLib.registerSubQueryFunction("add3", "using a, b, c: a + b + c");
+		registerGreqlFunction("add3", "using a, b, c: a + b + c");
 		GreqlQuery.createQuery("add3(1, 2, 3, 4)").evaluate(getTestTree());
 	}
 
 	@Test
 	public void testSubQueryAdd3() {
-		FunLib.registerSubQueryFunction("add3", "using a, b, c: a + b + c");
-		FunLib.registerSubQueryFunction("one", "1");
-		FunLib.registerSubQueryFunction("two", "one() + one()");
-		FunLib.registerSubQueryFunction("three",
-				"one() + two() - two() + one() + one()");
-		Object r = GreqlQuery.createQuery("add3(one(), two(), three())").evaluate(
-				getTestTree());
+		registerGreqlFunction("add3", "using a, b, c: a + b + c");
+		registerGreqlFunction("one", "1");
+		registerGreqlFunction("two", "one() + one()");
+		registerGreqlFunction("three", "one() + two() - two() + one() + one()");
+		Object r = GreqlQuery.createQuery("add3(one(), two(), three())")
+				.evaluate(getTestTree());
 		Assert.assertEquals(6, ((Integer) r).intValue());
 	}
 }

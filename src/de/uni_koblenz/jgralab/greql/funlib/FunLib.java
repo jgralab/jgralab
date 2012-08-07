@@ -64,15 +64,12 @@ import de.uni_koblenz.jgralab.greql.types.Undefined;
 
 public class FunLib {
 	private static final Map<String, FunctionInfo> functions;
-	private static final Logger logger;
+	private static final Logger logger = JGraLab.getLogger(FunLib.class);
 
 	static {
-		logger = JGraLab.getLogger(FunLib.class.getPackage().getName());
 		functions = new HashMap<String, FunctionInfo>();
 		// register builtin functions
-		if (logger != null) {
-			logger.fine("Registering builtin functions");
-		}
+		logger.fine("Registering builtin functions");
 		register(de.uni_koblenz.jgralab.greql.funlib.artithmetics.Abs.class);
 		register(de.uni_koblenz.jgralab.greql.funlib.artithmetics.Add.class);
 		register(de.uni_koblenz.jgralab.greql.funlib.artithmetics.Ceil.class);
@@ -342,9 +339,7 @@ public class FunLib {
 				if (Modifier.isPublic(m.getModifiers())
 						&& !Modifier.isAbstract(m.getModifiers())
 						&& m.getName().equals("evaluate")) {
-					if (logger != null) {
-						logger.finest("\t" + m);
-					}
+					logger.finest("\t" + m);
 					Signature sig = new Signature();
 					sig.evaluateMethod = m;
 					sig.parameterTypes = m.getParameterTypes();
@@ -500,89 +495,38 @@ public class FunLib {
 			}
 			throw new GreqlException("Duplicate function name '" + name + "'");
 		}
-		if (logger != null) {
-			logger.fine("Registering " + cls.getName() + " as '" + name + "'");
-		}
+		logger.fine("Registering " + cls.getName() + " as '" + name + "'");
 		functions.put(name, new FunctionInfo(name, cls));
 	}
 
-	public static final void registerSubQueryFunction(String name,
-			String queryText) {
-		registerSubQueryFunction(name, GreqlQuery.createQuery(queryText), true);
-	}
-
-	public static final void registerSubQueryFunction(String name,
-			String queryText, boolean needsGraphArgument) {
-		registerSubQueryFunction(name, GreqlQuery.createQuery(queryText),
-				needsGraphArgument);
-	}
-
-	public static final void registerSubQueryFunction(String name,
-			String queryText, boolean needsGraphArgument, long costs,
-			long cardinality, double selectivity) {
-		registerSubQueryFunction(name, GreqlQuery.createQuery(queryText),
-				needsGraphArgument, costs, cardinality, selectivity);
-	}
-
-	public static final void registerSubQueryFunction(String name,
-			GreqlQuery query, boolean needsGraphArgument) {
-		GreqlQueryFunction subquery = needsGraphArgument ? new GreqlQueryFunctionWithGraphArgument(
-				query) : new GreqlQueryFunction(query);
-		registerSubquery(name, subquery);
-	}
-
-	public static final void registerSubQueryFunction(String name,
-			GreqlQuery query, boolean needsGraphArgument, long costs,
-			long cardinality, double selectivity) {
-		GreqlQueryFunction subquery = needsGraphArgument ? new GreqlQueryFunctionWithGraphArgument(
-				query, costs, cardinality, selectivity)
-				: new GreqlQueryFunction(query, costs, cardinality, selectivity);
-		registerSubquery(name, subquery);
-	}
-
-	private static void registerSubquery(String name,
-			GreqlQueryFunction subquery) {
-		checkSubQueryConstraints(name);
-		FunctionInfo fn = functions.get(name);
+	public static final void registerGreqlFunction(GreqlQuery query,
+			boolean needsGraphArgument, long costs, long cardinality,
+			double selectivity) {
+		String name = query.getName();
+		if (name == null) {
+			throw new GreqlException(
+					"The name of a GReQL function must not be null!");
+		}
+		if (!name.matches("^\\w+$")) {
+			throw new GreqlException("Invalid GReQL function name '" + name
+					+ "'. Only word characters are allowed.");
+		}
+		FunctionInfo fn = getFunctionInfo(name);
 		if (fn != null) {
-			if (fn.getFunction().getClass() == subquery.getClass()) {
-				return;
-			}
 			throw new GreqlException("Duplicate function name '" + name + "'");
 		}
 
-		if (logger != null) {
-			logger.fine("Registering " + subquery.getClass().getName()
-					+ " as '" + name + "'");
-		}
-		functions.put(name, new FunctionInfo(name, subquery));
-	}
+		logger.fine("Registering GReQL function as '" + name + "'");
 
-	private static void checkSubQueryConstraints(String name) {
-		if (name == null) {
-			throw new GreqlException("The name of a subquery must not be null!");
-		}
-		if (!name.matches("^\\w+$")) {
-			throw new GreqlException("Invalid subquery name '" + name
-					+ "'. Only word chars are allowed.");
-		}
-		if (FunLib.contains(name)) {
-			Class<? extends de.uni_koblenz.jgralab.greql.funlib.Function> functionClass = FunLib
-					.getFunctionInfo(name).getFunction().getClass();
-			if ((functionClass != GreqlQueryFunction.class)
-					&& (functionClass != GreqlQueryFunctionWithGraphArgument.class)) {
-				throw new GreqlException("The subquery '" + name
-						+ "' would shadow a GReQL function!");
-			}
-		}
+		GreqlQueryFunction greqlFunction = needsGraphArgument ? new GreqlQueryFunctionWithGraphArgument(
+				query, costs, cardinality, selectivity)
+				: new GreqlQueryFunction(query, costs, cardinality, selectivity);
+
+		functions.put(name, new FunctionInfo(name, greqlFunction));
 	}
 
 	public static final FunctionInfo getFunctionInfo(String functionName) {
 		return functions.get(functionName);
-	}
-
-	public static final Logger getLogger() {
-		return logger;
 	}
 
 	public static void generateLaTeXFunctionDocs(String fileName)

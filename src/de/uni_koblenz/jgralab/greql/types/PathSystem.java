@@ -41,6 +41,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Queue;
+import java.util.logging.Logger;
 
 import org.pcollections.PSet;
 
@@ -50,7 +51,6 @@ import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.greql.funlib.FunLib;
 
 public class PathSystem {
 
@@ -90,6 +90,8 @@ public class PathSystem {
 	 * be done only once.
 	 */
 	private List<PathSystemKey> leafKeys = null;
+
+	private static Logger logger = JGraLab.getLogger(PathSystem.class);
 
 	/**
 	 * returns the rootVertex of this pathSystem
@@ -852,12 +854,9 @@ public class PathSystem {
 	 */
 	public void printAscii() {
 		assertFinished();
-		if (FunLib.getLogger() == null) {
-			return;
-		}
 		PSet<Path> pathSet = extractPaths();
 		for (Path path : pathSet) {
-			FunLib.getLogger().info(path.toString());
+			logger.info(path.toString());
 		}
 	}
 
@@ -880,16 +879,12 @@ public class PathSystem {
 	 */
 	public void printEntryMap() {
 		assertFinished();
-		if (FunLib.getLogger() == null) {
-			return;
-		}
-		FunLib.getLogger().info("<Key, Entry> Set of PathSystem is:");
+		logger.info("<Key, Entry> Set of PathSystem is:");
 		for (Map.Entry<PathSystemKey, PathSystemEntry> entry : keyToEntryMap
 				.entrySet()) {
 			PathSystemEntry thisEntry = entry.getValue();
 			PathSystemKey thisKey = entry.getKey();
-			FunLib.getLogger().info(
-					thisKey.toString() + " maps to " + thisEntry.toString());
+			logger.info(thisKey.toString() + " maps to " + thisEntry.toString());
 		}
 	}
 
@@ -898,15 +893,12 @@ public class PathSystem {
 	 */
 	public void printKeyMap() {
 		assertFinished();
-		if (FunLib.getLogger() == null) {
-			return;
-		}
-		FunLib.getLogger().info("<Vertex, FirstKey> Set of PathSystem is:");
+		logger.info("<Vertex, FirstKey> Set of PathSystem is:");
 		for (Map.Entry<Vertex, PathSystemKey> entry : vertexToFirstKeyMap
 				.entrySet()) {
 			PathSystemKey thisKey = entry.getValue();
 			Vertex vertex = entry.getKey();
-			FunLib.getLogger().info(vertex + " maps to " + thisKey.toString());
+			logger.info(vertex + " maps to " + thisKey.toString());
 		}
 	}
 

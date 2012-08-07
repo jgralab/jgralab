@@ -74,7 +74,7 @@ public class TypeIdEvaluator extends VertexEvaluator<TypeId> {
 				.getAttributedElementClass(vertex.get_name());
 		// if not found, try to find simple name in imported types
 		if (elemClass == null) {
-			elemClass = (GraphElementClass<?, ?>) query.getKnownType(
+			elemClass = (GraphElementClass<?, ?>) query.getImportedType(
 					evaluator.getSchemaOfDataGraph(), vertex.get_name());
 			if (elemClass == null) {
 				throw new UnknownTypeException(vertex.get_name(),

@@ -166,7 +166,7 @@ public class CreateSubgraph extends Transformation<Void> {
 				context.setGReQLVariable("$", jv);
 				Object arch = context.evaluateGReQLQuery(v.get_archetype());
 				if (context.getImg(vc).containsKey(arch)) {
-					log.finer("There's already an image for '"
+					logger.finer("There's already an image for '"
 							+ arch
 							+ "' in "
 							+ Context.toGReTLVarNotation(qName,
@@ -176,7 +176,7 @@ public class CreateSubgraph extends Transformation<Void> {
 					archSet = archSet.plus(arch);
 				}
 			}
-			log.finer("Instantiating " + archSet.size() + " '"
+			logger.finer("Instantiating " + archSet.size() + " '"
 					+ vc.getQualifiedName() + "' vertices.");
 			createdElements.addAll(new CreateVertices(context, vc, archSet)
 					.execute());
@@ -256,7 +256,7 @@ public class CreateSubgraph extends Transformation<Void> {
 						.get_archetype()));
 				archTripleSet = archTripleSet.plus(triple);
 			}
-			log.finer("Instantiating " + archTripleSet.size() + " '"
+			logger.finer("Instantiating " + archTripleSet.size() + " '"
 					+ ec.getQualifiedName() + "' edges.");
 			createdElements.addAll(new CreateEdges(context, ec, archTripleSet)
 					.execute());

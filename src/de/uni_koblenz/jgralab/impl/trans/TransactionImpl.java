@@ -64,8 +64,7 @@ import de.uni_koblenz.jgralab.trans.VertexPosition;
  * @author Jose Monte(monte@uni-koblenz.de)
  */
 public class TransactionImpl implements Transaction {
-	private static Logger logger = JGraLab
-			.getLogger("de.uni_koblenz.jgralab.impl.trans");
+	private static Logger logger = JGraLab.getLogger(TransactionImpl.class);
 	protected long temporaryVersionCounter;
 	protected long persistentVersionAtBot;
 	protected long persistentVersionAtCommit;

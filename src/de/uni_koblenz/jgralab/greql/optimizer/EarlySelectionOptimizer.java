@@ -85,7 +85,7 @@ import de.uni_koblenz.jgralab.schema.Attribute;
 public class EarlySelectionOptimizer extends OptimizerBase {
 
 	private static Logger logger = JGraLab
-			.getLogger(EarlySelectionOptimizer.class.getPackage().getName());
+			.getLogger(EarlySelectionOptimizer.class);
 
 	private GreqlGraph syntaxgraph;
 
@@ -199,8 +199,8 @@ public class EarlySelectionOptimizer extends OptimizerBase {
 				});
 
 		for (SimpleDeclaration sd : simpleDeclsWithMovableExpressions) {
-			Declaration parentDecl = sd
-					.getFirstIsSimpleDeclOfIncidence().getOmega();
+			Declaration parentDecl = sd.getFirstIsSimpleDeclOfIncidence()
+					.getOmega();
 			Set<Variable> varsDeclaredBySd = OptimizerUtility
 					.collectVariablesDeclaredBy(sd);
 			// Check if there's a predicate needing only part of the variables
@@ -569,9 +569,8 @@ public class EarlySelectionOptimizer extends OptimizerBase {
 			// Only collect those SimpleDeclarations whose parent Declaration
 			// has more than one SimpleDeclaration or which declare more than
 			// one variable.
-			Declaration parent = sd
-					.getFirstIsSimpleDeclOfIncidence(EdgeDirection.OUT)
-					.getOmega();
+			Declaration parent = sd.getFirstIsSimpleDeclOfIncidence(
+					EdgeDirection.OUT).getOmega();
 			if ((collectSimpleDeclarationsOf(parent).size() > 1)
 					|| (OptimizerUtility.collectVariablesDeclaredBy(sd).size() > 1)) {
 				if (movableExpressions.containsKey(sd)) {
@@ -605,8 +604,7 @@ public class EarlySelectionOptimizer extends OptimizerBase {
 
 		SimpleDeclaration sd = null, oldSd = null;
 		for (Variable var : neededVars) {
-			sd = var.getFirstIsDeclaredVarOfIncidence()
-					.getOmega();
+			sd = var.getFirstIsDeclaredVarOfIncidence().getOmega();
 			if ((oldSd != null) && (sd != oldSd)) {
 				// the last variable was declared in another
 				// SimpleDeclaration

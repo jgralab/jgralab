@@ -69,7 +69,7 @@ import de.uni_koblenz.jgralab.greql.schema.Variable;
 public class PathExistenceOptimizer extends OptimizerBase {
 
 	private static Logger logger = JGraLab
-			.getLogger(PathExistenceOptimizer.class.getPackage().getName());
+			.getLogger(PathExistenceOptimizer.class);
 
 	private GreqlGraph syntaxgraph;
 
@@ -261,8 +261,8 @@ public class PathExistenceOptimizer extends OptimizerBase {
 			syntaxgraph.createIsTargetExprOf(startOrTargetExp, vertexSet);
 		}
 		syntaxgraph.createIsPathOf(
-				pe.getFirstIsPathOfIncidence(EdgeDirection.IN)
-						.getAlpha(), vertexSet);
+				pe.getFirstIsPathOfIncidence(EdgeDirection.IN).getAlpha(),
+				vertexSet);
 
 		syntaxgraph.createIsArgumentOf(vertexSet, contains);
 		syntaxgraph.createIsArgumentOf(otherExp, contains);

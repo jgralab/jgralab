@@ -65,8 +65,7 @@ import de.uni_koblenz.jgralab.impl.InternalEdge;
 public class MergeSimpleDeclarationsOptimizer extends OptimizerBase {
 
 	private static Logger logger = JGraLab
-			.getLogger(MergeSimpleDeclarationsOptimizer.class.getPackage()
-					.getName());
+			.getLogger(MergeSimpleDeclarationsOptimizer.class);
 
 	private boolean anOptimizationWasDone = false;
 
@@ -119,8 +118,7 @@ public class MergeSimpleDeclarationsOptimizer extends OptimizerBase {
 			IsSimpleDeclOf isSimpleDeclOf = decl
 					.getFirstIsSimpleDeclOfIncidence(EdgeDirection.IN);
 			while (isSimpleDeclOf != null) {
-				SimpleDeclaration sDecl = isSimpleDeclOf
-						.getAlpha();
+				SimpleDeclaration sDecl = isSimpleDeclOf.getAlpha();
 				String key = decl.getId()
 						+ "-"
 						+ sDecl.getFirstIsTypeExprOfIncidence(EdgeDirection.IN)
@@ -156,8 +154,8 @@ public class MergeSimpleDeclarationsOptimizer extends OptimizerBase {
 		for (Entry<String, ArrayList<SimpleDeclaration>> e : mergableSDMap
 				.entrySet()) {
 			SimpleDeclaration survivor = e.getValue().get(0);
-			Declaration decl = survivor
-					.getFirstIsSimpleDeclOfIncidence().getOmega();
+			Declaration decl = survivor.getFirstIsSimpleDeclOfIncidence()
+					.getOmega();
 			IsSimpleDeclOf isSDOfSurvivor = survivor
 					.getFirstIsSimpleDeclOfIncidence(EdgeDirection.OUT);
 			IsTypeExprOfDeclaration isTEODSurvivor = survivor

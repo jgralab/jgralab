@@ -66,8 +66,7 @@ public abstract class Formula {
 	 */
 	private static final int MAX_NON_CONSTANT_TERM_NUMBER = 3;
 
-	protected static Logger logger = JGraLab.getLogger(Formula.class
-			.getPackage().getName());
+	protected static Logger logger = JGraLab.getLogger(Formula.class);
 
 	protected GreqlQuery query;
 
@@ -88,8 +87,8 @@ public abstract class Formula {
 		this.query = query;
 	}
 
-	private static Formula createFormulaFromExpressionInternal(GreqlQuery query,
-			Expression exp) {
+	private static Formula createFormulaFromExpressionInternal(
+			GreqlQuery query, Expression exp) {
 		assert exp.isValid() : exp + " is not valid!";
 		if (exp instanceof BoolLiteral) {
 			BoolLiteral bool = (BoolLiteral) exp;
@@ -106,9 +105,8 @@ public abstract class Formula {
 				IsArgumentOf inc = funApp
 						.getFirstIsArgumentOfIncidence(EdgeDirection.IN);
 				Expression leftArg = inc.getAlpha();
-				Expression rightArg = inc
-						.getNextIsArgumentOfIncidence(EdgeDirection.IN)
-						.getAlpha();
+				Expression rightArg = inc.getNextIsArgumentOfIncidence(
+						EdgeDirection.IN).getAlpha();
 				return new And(query, createFormulaFromExpressionInternal(
 						query, leftArg), createFormulaFromExpressionInternal(
 						query, rightArg));
@@ -117,9 +115,8 @@ public abstract class Formula {
 				IsArgumentOf inc = funApp
 						.getFirstIsArgumentOfIncidence(EdgeDirection.IN);
 				Expression leftArg = inc.getAlpha();
-				Expression rightArg = inc
-						.getNextIsArgumentOfIncidence(EdgeDirection.IN)
-						.getAlpha();
+				Expression rightArg = inc.getNextIsArgumentOfIncidence(
+						EdgeDirection.IN).getAlpha();
 				return new Or(query, createFormulaFromExpressionInternal(query,
 						leftArg), createFormulaFromExpressionInternal(query,
 						rightArg));
@@ -200,8 +197,8 @@ public abstract class Formula {
 	private boolean isFunApp(Vertex exp, String functionName) {
 		if (exp instanceof FunctionApplication) {
 			FunctionApplication funApp = (FunctionApplication) exp;
-			return (funApp.getFirstIsFunctionIdOfIncidence()
-					.getAlpha()).get_name().equals(functionName);
+			return (funApp.getFirstIsFunctionIdOfIncidence().getAlpha())
+					.get_name().equals(functionName);
 		}
 		return false;
 	}

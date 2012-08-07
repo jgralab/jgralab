@@ -66,8 +66,7 @@ import de.uni_koblenz.jgralab.schema.EdgeClass;
 public class ConditionalExpressionOptimizer extends OptimizerBase {
 
 	private static Logger logger = JGraLab
-			.getLogger(ConditionalExpressionOptimizer.class.getPackage()
-					.getName());
+			.getLogger(ConditionalExpressionOptimizer.class);
 
 	private static class VertexEdgeClassTuple {
 		public VertexEdgeClassTuple(GreqlVertex v, EdgeClass ec) {

@@ -45,6 +45,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Queue;
 import java.util.Set;
+import java.util.logging.Logger;
 
 import org.pcollections.PSet;
 
@@ -53,7 +54,6 @@ import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.greql.funlib.FunLib;
 
 public class Slice {
 
@@ -131,7 +131,9 @@ public class Slice {
 
 	private Queue<PathSystemEntry> entriesWithoutParentEdge = new LinkedList<PathSystemEntry>();
 
-	boolean isCleared = true;
+	private boolean isCleared = true;
+
+	private static Logger logger = JGraLab.getLogger(Slice.class);
 
 	public void clearPathSystem() {
 		if (!isCleared) {
@@ -401,16 +403,12 @@ public class Slice {
 	 */
 	public void printEntryMap() {
 		clearPathSystem();
-		if (FunLib.getLogger() == null) {
-			return;
-		}
-		FunLib.getLogger().info("<Key, Entry> set of slice is:");
+		logger.info("<Key, Entry> set of slice is:");
 		for (Map.Entry<PathSystemKey, List<PathSystemEntry>> mapEntry : keyToEntryMap
 				.entrySet()) {
 			for (PathSystemEntry entry : mapEntry.getValue()) {
-				FunLib.getLogger().info(
-						mapEntry.getKey().toString() + " maps to "
-								+ entry.toString());
+				logger.info(mapEntry.getKey().toString() + " maps to "
+						+ entry.toString());
 			}
 		}
 	}
@@ -420,17 +418,14 @@ public class Slice {
 	 */
 	public void printKeyMap() {
 		clearPathSystem();
-		if (FunLib.getLogger() == null) {
-			return;
-		}
 		Iterator<Map.Entry<Vertex, PathSystemKey>> iter = vertexToFirstKeyMap
 				.entrySet().iterator();
-		FunLib.getLogger().info("<Vertex, FirstKey> set of slice is:");
+		logger.info("<Vertex, FirstKey> set of slice is:");
 		while (iter.hasNext()) {
 			Map.Entry<Vertex, PathSystemKey> mapEntry = iter.next();
 			PathSystemKey thisKey = mapEntry.getValue();
 			Vertex vertex = mapEntry.getKey();
-			FunLib.getLogger().info(vertex + " maps to " + thisKey.toString());
+			logger.info(vertex + " maps to " + thisKey.toString());
 		}
 	}
 

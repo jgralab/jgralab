@@ -72,8 +72,8 @@ import de.uni_koblenz.jgralab.schema.impl.compilation.SchemaClassManager;
  */
 public class Context {
 
-	private static Logger logger = JGraLab.getLogger(Context.class.getPackage()
-			.getName());
+	private static Logger logger = JGraLab.getLogger(Context.class);
+
 	public static final String DEFAULT_SOURCE_GRAPH_ALIAS = "default";
 	public static final String DEFAULT_TARGET_GRAPH_ALIAS = "target";
 
@@ -140,8 +140,9 @@ public class Context {
 	}
 
 	final void setGReQLHelper(String name, String greqlExpression) {
-		ensureQuery();
-		FunLib.registerSubQueryFunction(name, greqlExpression);
+		GreqlQuery query = GreqlQuery.createQuery(greqlExpression);
+		query.setName(name);
+		FunLib.registerGreqlFunction(query, true, 1, 1, 1.0);
 	}
 
 	final void addGReQLImport(String qualifiedName) {
@@ -193,9 +194,6 @@ public class Context {
 		} catch (Exception e) {
 			// Failing is ok here.
 		}
-		// Do it here, cause that takes some time. We don't want to have that
-		// counted to the transformation time...
-		ensureQuery();
 	}
 
 	/**
@@ -204,9 +202,6 @@ public class Context {
 	public Context(Schema targetSchema) {
 		this.targetSchema = targetSchema;
 		targetSchemaName = targetSchema.getQualifiedName();
-		// Do it here, cause that takes some time. We don't want to have that
-		// counted to the transformation time...
-		ensureQuery();
 
 	}
 
@@ -217,9 +212,6 @@ public class Context {
 	public Context(Graph g) {
 		setTargetGraph(g);
 		setSourceGraph(g);
-		// Do it here, cause that takes some time. We don't want to have that
-		// counted to the transformation time...
-		ensureQuery();
 	}
 
 	/**
@@ -713,12 +705,6 @@ public class Context {
 
 		// log.fine("GReQL result: " + result);
 		return result;
-	}
-
-	private void ensureQuery() {
-		if (query == null) {
-			query = GreqlQuery.createQuery("");
-		}
 	}
 
 	private final PMap<String, Object> getGreqlVariablesNeededByQuery(

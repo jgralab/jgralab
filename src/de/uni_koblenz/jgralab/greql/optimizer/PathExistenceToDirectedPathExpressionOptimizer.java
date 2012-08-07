@@ -76,8 +76,7 @@ public class PathExistenceToDirectedPathExpressionOptimizer extends
 		OptimizerBase {
 
 	private static Logger logger = JGraLab
-			.getLogger(PathExistenceToDirectedPathExpressionOptimizer.class
-					.getPackage().getName());
+			.getLogger(PathExistenceToDirectedPathExpressionOptimizer.class);
 
 	/*
 	 * (non-Javadoc)
@@ -220,7 +219,7 @@ public class PathExistenceToDirectedPathExpressionOptimizer extends
 			// start is a bound var, target is declared
 			anchorVar = start;
 			sdsVar = target;
-			SimpleDeclaration targetSD = (SimpleDeclaration) target
+			SimpleDeclaration targetSD = target
 					.getFirstIsDeclaredVarOfIncidence().getOmega();
 			if (targetSD.getDegree(IsDeclaredVarOf.EC) > 1) {
 				sd = splitSimpleDecl(targetSD, target);
@@ -231,7 +230,7 @@ public class PathExistenceToDirectedPathExpressionOptimizer extends
 			// target is a bound var, start is declared
 			anchorVar = target;
 			sdsVar = start;
-			SimpleDeclaration startSD = (SimpleDeclaration) start
+			SimpleDeclaration startSD = start
 					.getFirstIsDeclaredVarOfIncidence().getOmega();
 			if (startSD.getDegree(IsDeclaredVarOf.EC) > 1) {
 				sd = splitSimpleDecl(startSD, target);
@@ -240,9 +239,9 @@ public class PathExistenceToDirectedPathExpressionOptimizer extends
 			}
 		} else {
 			// both are declared vars
-			SimpleDeclaration startSD = (SimpleDeclaration) start
+			SimpleDeclaration startSD = start
 					.getFirstIsDeclaredVarOfIncidence().getOmega();
-			SimpleDeclaration targetSD = (SimpleDeclaration) target
+			SimpleDeclaration targetSD = target
 					.getFirstIsDeclaredVarOfIncidence().getOmega();
 
 			if (targetSD == startSD) {
@@ -283,7 +282,7 @@ public class PathExistenceToDirectedPathExpressionOptimizer extends
 
 		// The path expression must be in a constraint and it must be in a
 		// top-level conjunction.
-		if (!isConstraintAndTopLevelConjunction(pe, (Declaration) sd
+		if (!isConstraintAndTopLevelConjunction(pe, sd
 				.getFirstIsSimpleDeclOfIncidence().getOmega())) {
 			logger.finer(optimizerHeaderString()
 					+ pe

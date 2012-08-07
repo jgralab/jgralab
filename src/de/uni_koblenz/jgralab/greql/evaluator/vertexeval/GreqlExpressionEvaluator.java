@@ -120,10 +120,10 @@ public class GreqlExpressionEvaluator extends VertexEvaluator<GreqlExpression> {
 					// greqlEvaluator.addKnownType(elem);
 					// }
 					for (VertexClass elem : p.getVertexClasses()) {
-						query.addKnownType(graphSchema, elem);
+						query.addImportedType(graphSchema, elem);
 					}
 					for (EdgeClass elem : p.getEdgeClasses()) {
-						query.addKnownType(graphSchema, elem);
+						query.addImportedType(graphSchema, elem);
 					}
 				} else {
 					GraphElementClass<?, ?> elemClass = graphSchema
@@ -132,7 +132,7 @@ public class GreqlExpressionEvaluator extends VertexEvaluator<GreqlExpression> {
 						throw new UnknownTypeException(importedType,
 								new ArrayList<SourcePosition>());
 					}
-					query.addKnownType(graphSchema, elemClass);
+					query.addImportedType(graphSchema, elemClass);
 				}
 			}
 		}

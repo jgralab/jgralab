@@ -67,17 +67,17 @@ import de.uni_koblenz.jgralab.utilities.tg2dot.dot.GraphVizOutputFormat;
  * use the {@code create}-Methods defined here, to build up a new {@link Schema}
  * , and provide semantic expressions (GReQL queries on the source graph) to
  * specify the transformation on instance level.
- *
+ * 
  * @author Tassilo Horn &lt;horn@uni-koblenz.de&gt;
- *
+ * 
  */
 public abstract class Transformation<T> {
 	/**
 	 * Use this annotation to annotate transformation methods that should be run
 	 * <b>after</b> the transformation finished.
-	 *
+	 * 
 	 * @author Tassilo Horn &lt;horn@uni-koblenz.de&gt;
-	 *
+	 * 
 	 */
 	@Retention(RetentionPolicy.RUNTIME)
 	@Target(ElementType.METHOD)
@@ -88,9 +88,9 @@ public abstract class Transformation<T> {
 	/**
 	 * Use this annotation to annotate transformation methods that should be run
 	 * <b>before</b> the transformation started.
-	 *
+	 * 
 	 * @author Tassilo Horn &lt;horn@uni-koblenz.de&gt;
-	 *
+	 * 
 	 */
 	@Retention(RetentionPolicy.RUNTIME)
 	@Target(ElementType.METHOD)
@@ -102,7 +102,7 @@ public abstract class Transformation<T> {
 	 * Run all methods annotated with <code>annotationClass</code> of this
 	 * transformation including annotated methods in superclasses up to the base
 	 * class {@link Transformation}.
-	 *
+	 * 
 	 * @param annotationClass
 	 */
 	private final void invokeHooks(Class<? extends Annotation> annotationClass) {
@@ -114,7 +114,7 @@ public abstract class Transformation<T> {
 						method.setAccessible(true);
 						method.invoke(this);
 					} catch (Exception e) {
-						log.severe("Couldn't run @"
+						logger.severe("Couldn't run @"
 								+ annotationClass.getSimpleName() + " method "
 								+ method.getName() + " of "
 								+ cls.getSimpleName() + ".");
@@ -134,8 +134,7 @@ public abstract class Transformation<T> {
 	private static int EXECUTION_STEP = 1;
 
 	protected Context context;
-	protected static Logger log = JGraLab.getLogger(Transformation.class
-			.getPackage().getName());
+	protected static Logger logger = JGraLab.getLogger(Transformation.class);
 
 	protected Transformation(Context context) {
 		this.context = context;
@@ -150,7 +149,7 @@ public abstract class Transformation<T> {
 
 	/**
 	 * Executes this transformation.
-	 *
+	 * 
 	 * When it finishes, the target graph be accessed via the {@link Context}
 	 * object.
 	 */
@@ -172,22 +171,22 @@ public abstract class Transformation<T> {
 			context.outermost = false;
 
 			if (context.getTargetSchema() == null) {
-				log.info("Starting Schema creation phase...");
+				logger.info("Starting Schema creation phase...");
 				context.createTargetSchema();
 				transform();
 			} else {
-				log.info("Target Schema exists. "
+				logger.info("Target Schema exists. "
 						+ "Skipping schema creation phase...");
 			}
 			context.ensureAllMappings();
 
 			// If a target graph was set externally, use that.
 			if (context.targetGraph == null) {
-				log.info("Creating a new target graph...");
+				logger.info("Creating a new target graph...");
 				context.createTargetGraph();
 			} else if (context.targetGraph.getSchema().getQualifiedName()
 					.equals(context.targetSchema.getQualifiedName())) {
-				log.info("Using a preset target graph...");
+				logger.info("Using a preset target graph...");
 			} else {
 				// This can only happen, if a user first sets a target graph and
 				// then a different target schema...
@@ -201,12 +200,12 @@ public abstract class Transformation<T> {
 			}
 
 			// Start the GRAPH phase
-			log.info("SCHEMA Phase took "
+			logger.info("SCHEMA Phase took "
 					+ ((System.currentTimeMillis() - startTime) + "ms."));
 			startTime = System.currentTimeMillis();
 
 			context.phase = TransformationPhase.GRAPH;
-			log.info("Starting instance creation phase...");
+			logger.info("Starting instance creation phase...");
 			result = transform();
 
 			if (DEBUG_EXECUTION) {
@@ -214,7 +213,7 @@ public abstract class Transformation<T> {
 				context.validateMappings();
 			}
 
-			log.info("GRAPH Phase took "
+			logger.info("GRAPH Phase took "
 					+ ((System.currentTimeMillis() - startTime) + "ms."));
 		} else {
 			// hey, I'm nested, so run the phase my parent is running.
@@ -248,7 +247,7 @@ public abstract class Transformation<T> {
 	/**
 	 * In this method the individual transformation operation calls are
 	 * specified. Concrete transformations must override this method.
-	 *
+	 * 
 	 * @return
 	 */
 	protected abstract T transform();

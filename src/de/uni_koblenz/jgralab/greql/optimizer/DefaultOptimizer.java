@@ -39,8 +39,8 @@ import java.util.Set;
 import java.util.logging.Logger;
 
 import de.uni_koblenz.jgralab.JGraLab;
-import de.uni_koblenz.jgralab.greql.OptimizerInfo;
 import de.uni_koblenz.jgralab.greql.GreqlQuery;
+import de.uni_koblenz.jgralab.greql.OptimizerInfo;
 import de.uni_koblenz.jgralab.greql.evaluator.GraphSize;
 import de.uni_koblenz.jgralab.greql.evaluator.GreqlQueryImpl;
 import de.uni_koblenz.jgralab.greql.evaluator.vertexeval.VertexEvaluator;
@@ -56,8 +56,7 @@ import de.uni_koblenz.jgralab.greql.schema.Variable;
  */
 public class DefaultOptimizer extends OptimizerBase {
 
-	private static Logger logger = JGraLab.getLogger(DefaultOptimizer.class
-			.getPackage().getName());
+	private static Logger logger = JGraLab.getLogger(DefaultOptimizer.class);
 
 	@Override
 	protected String optimizerHeaderString() {
@@ -71,6 +70,7 @@ public class DefaultOptimizer extends OptimizerBase {
 	 * de.uni_koblenz.jgralab.greql2.optimizer.Optimizer#isEquivalent(de.uni_koblenz
 	 * .jgralab.greql2.optimizer.Optimizer)
 	 */
+	@Override
 	public boolean isEquivalent(Optimizer optimizer) {
 		if (optimizer instanceof DefaultOptimizer) {
 			return true;
@@ -87,6 +87,7 @@ public class DefaultOptimizer extends OptimizerBase {
 	 * .jgralab.greql2.evaluator.GreqlEvaluator,
 	 * de.uni_koblenz.jgralab.greql2.schema.Greql)
 	 */
+	@Override
 	public boolean optimize(GreqlQuery query) throws OptimizerException {
 
 		if (query.getQueryGraph().getVCount() <= 1) {

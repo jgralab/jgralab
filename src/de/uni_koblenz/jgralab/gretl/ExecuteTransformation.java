@@ -68,7 +68,7 @@ public class ExecuteTransformation extends Transformation<Graph> {
 
 	private static final HashMap<String, Method> knownTransformationClasses = new HashMap<String, Method>();
 	private static Logger logger = JGraLab
-			.getLogger(ExecuteTransformation.class.getPackage().getName());
+			.getLogger(ExecuteTransformation.class);
 
 	private final HashMap<String, Transformation<?>> definedTransformations = new HashMap<String, Transformation<?>>();
 
@@ -455,7 +455,7 @@ public class ExecuteTransformation extends Transformation<Graph> {
 
 	/**
 	 * concrete syntax for string arrays: (val1, val2, ...)
-	 *
+	 * 
 	 * @return an array of identifiers
 	 */
 	public String[] matchIdentifierArray() {

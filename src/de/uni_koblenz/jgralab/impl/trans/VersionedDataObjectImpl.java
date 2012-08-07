@@ -68,8 +68,7 @@ import de.uni_koblenz.jgralab.trans.VersionedDataObject;
 public abstract class VersionedDataObjectImpl<E> implements
 		VersionedDataObject<E> {
 
-	private static Logger logger = JGraLab
-			.getLogger("de.uni_koblenz.jgralab.impl.trans");
+	private static Logger logger = JGraLab.getLogger(VersionedDataObject.class);
 
 	protected AttributedElement<?, ?> attributedElement;
 

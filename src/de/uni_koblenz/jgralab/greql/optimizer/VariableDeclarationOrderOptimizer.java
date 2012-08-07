@@ -76,8 +76,7 @@ import de.uni_koblenz.jgralab.greql.schema.Variable;
 public class VariableDeclarationOrderOptimizer extends OptimizerBase {
 
 	private static Logger logger = JGraLab
-			.getLogger(VariableDeclarationOrderOptimizer.class.getPackage()
-					.getName());
+			.getLogger(VariableDeclarationOrderOptimizer.class);
 
 	/*
 	 * (non-Javadoc)
@@ -208,9 +207,8 @@ public class VariableDeclarationOrderOptimizer extends OptimizerBase {
 		HashSet<Variable> vars = new HashSet<Variable>();
 		for (IsSimpleDeclOf inc : decl
 				.getIsSimpleDeclOfIncidences(EdgeDirection.IN)) {
-			vars.addAll(OptimizerUtility
-					.collectVariablesDeclaredBy(inc
-							.getAlpha()));
+			vars.addAll(OptimizerUtility.collectVariablesDeclaredBy(inc
+					.getAlpha()));
 		}
 		return vars;
 	}

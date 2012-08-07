@@ -75,13 +75,12 @@ import de.uni_koblenz.jgralab.trans.VersionedDataObject;
 
 /**
  * The implementation of a <code>Graph</edge> with versioning.
- *
+ * 
  * @author Jose Monte(monte@uni-koblenz.de)
  */
 public abstract class GraphImpl extends
 		de.uni_koblenz.jgralab.impl.GraphBaseImpl {
-	private static Logger logger = JGraLab
-			.getLogger("de.uni_koblenz.jgralab.impl.trans");
+	private static Logger logger = JGraLab.getLogger(GraphImpl.class);
 
 	// the transactions of this instance are managed by a transaction manager
 	private TransactionManager transactionManager;
@@ -119,7 +118,7 @@ public abstract class GraphImpl extends
 	protected List<Integer> vertexIndexesToBeFreed;
 
 	/**
-	 *
+	 * 
 	 * @return increases value of persistentVersionCounter (graphVersion) if
 	 *         allowed and returns it
 	 */
@@ -135,7 +134,7 @@ public abstract class GraphImpl extends
 	}
 
 	/**
-	 *
+	 * 
 	 * @param id
 	 * @param cls
 	 * @param max
@@ -157,7 +156,7 @@ public abstract class GraphImpl extends
 	// --- getter ---//
 
 	/**
-	 *
+	 * 
 	 * @return the current value of persistentVersionCounter (graphVersion)
 	 */
 	protected long getPersistentVersionCounter() {
@@ -330,7 +329,7 @@ public abstract class GraphImpl extends
 	}
 
 	/**
-	 *
+	 * 
 	 * @return the delete vertex list of the current transaction
 	 */
 	@Override
@@ -347,11 +346,11 @@ public abstract class GraphImpl extends
 	// --- setter ---//
 
 	/**
-	 *
+	 * 
 	 * @param graphVersion
 	 *            update value of graphVersion which is used as
 	 *            persistentVersionCounter
-	 *
+	 * 
 	 *            TODO rethink with -1 at the beginning. Maybe there is a more
 	 *            elegant way?!
 	 */
@@ -571,7 +570,7 @@ public abstract class GraphImpl extends
 	/**
 	 * Should be called from generated <code>Graph</code> implementation classes
 	 * whenever a versioned attribute is changed.
-	 *
+	 * 
 	 * @param versionedAttribute
 	 *            the changed attribute
 	 */
@@ -683,7 +682,7 @@ public abstract class GraphImpl extends
 	 * <code>Transaction</code>. If so the given <code>index</code> may not be
 	 * freed yet, but has to be marked as "to-be-freed" in the future by putting
 	 * it into <code>edgeIndexesToBeFreed</code>.
-	 *
+	 * 
 	 * @param index
 	 * @return
 	 */
@@ -743,7 +742,7 @@ public abstract class GraphImpl extends
 	 * <code>Transaction</code>. If so the given <code>index</code> may not be
 	 * freed yet, but has to be marked as "to-be-freed" in the future by putting
 	 * it into <code>vertexIndexesToBeFreed</code>.
-	 *
+	 * 
 	 * @param index
 	 * @return
 	 */
@@ -1550,7 +1549,7 @@ public abstract class GraphImpl extends
 	public TemporaryVertex createTemporaryVertex() {
 		throw new UnsupportedOperationException();
 	}
-	
+
 	@Override
 	public TemporaryVertex createTemporaryVertex(VertexClass preliminaryType) {
 		throw new UnsupportedOperationException();
@@ -1560,9 +1559,10 @@ public abstract class GraphImpl extends
 	public TemporaryEdge createTemporaryEdge(Vertex alpha, Vertex omega) {
 		throw new UnsupportedOperationException();
 	}
-	
+
 	@Override
-	public TemporaryEdge createTemporaryEdge(EdgeClass preliminaryType,Vertex alpha, Vertex omega) {
+	public TemporaryEdge createTemporaryEdge(EdgeClass preliminaryType,
+			Vertex alpha, Vertex omega) {
 		throw new UnsupportedOperationException();
 	}
 

@@ -52,16 +52,16 @@ import de.uni_koblenz.jgralab.greql.schema.Variable;
 import de.uni_koblenz.jgralab.schema.Attribute;
 
 /**
- * This {@link Optimizer} finds all subgraps in a {@link Greql} syntaxgraph
- * that are equal. Two subgraphs are considered equal, if and only if
+ * This {@link Optimizer} finds all subgraps in a {@link Greql} syntaxgraph that
+ * are equal. Two subgraphs are considered equal, if and only if
  * 
  * <ul>
  * <li>their root vertices have the same type,</li>
  * <li>the same {@link Attribute}s and {@link Attribute} values in the same
  * order,</li>
  * <li>the incoming {@link Edge}s have the same types and the same order and</li>
- * <li>the GreqlVertices (see {@link GreqlVertex}) that are the sources of
- * those {@link Edge}s are equal in the same respect.</li>
+ * <li>the GreqlVertices (see {@link GreqlVertex}) that are the sources of those
+ * {@link Edge}s are equal in the same respect.</li>
  * </ul>
  * 
  * When such equal subgraphs are found they are merged. This merging works in
@@ -83,7 +83,7 @@ import de.uni_koblenz.jgralab.schema.Attribute;
 public class CommonSubgraphOptimizer extends OptimizerBase {
 
 	private static Logger logger = JGraLab
-			.getLogger(CommonSubgraphOptimizer.class.getPackage().getName());
+			.getLogger(CommonSubgraphOptimizer.class);
 
 	private boolean anOptimizationWasDone = false;
 
@@ -235,10 +235,9 @@ public class CommonSubgraphOptimizer extends OptimizerBase {
 	 * {@link GreqlVertex}. This is done in three steps:
 	 * 
 	 * <nl>
-	 * <li>The sourcePosition {@link Attribute}s of the
-	 * {@link GreqlAggregation}s in the subgraph below the second
-	 * {@link GreqlVertex} are merged into the corresponding
-	 * {@link GreqlAggregation}s in the subgraph of the first
+	 * <li>The sourcePosition {@link Attribute}s of the {@link GreqlAggregation}
+	 * s in the subgraph below the second {@link GreqlVertex} are merged into
+	 * the corresponding {@link GreqlAggregation}s in the subgraph of the first
 	 * {@link GreqlVertex}.</li>
 	 * <li>The source of {@link Edge}s that start in the second
 	 * {@link GreqlVertex} is set to the first {@link GreqlVertex}.</li>
@@ -252,8 +251,7 @@ public class CommonSubgraphOptimizer extends OptimizerBase {
 	 * @param higherVertex
 	 *            another {@link GreqlVertex}
 	 */
-	private void mergeVertices(GreqlVertex lowerVertex,
-			GreqlVertex higherVertex) {
+	private void mergeVertices(GreqlVertex lowerVertex, GreqlVertex higherVertex) {
 		if (!(lowerVertex instanceof PathDescription)) {
 			anOptimizationWasDone = true;
 
@@ -272,10 +270,10 @@ public class CommonSubgraphOptimizer extends OptimizerBase {
 	}
 
 	/**
-	 * The sourcePosition {@link Attribute}s of the {@link GreqlAggregation}s
-	 * in the subgraph below the {@link GreqlVertex} <code>higherVertex</code>
-	 * are merged into the corresponding {@link GreqlAggregation}s in the
-	 * subgraph of <code>lowerVertex</code>.
+	 * The sourcePosition {@link Attribute}s of the {@link GreqlAggregation}s in
+	 * the subgraph below the {@link GreqlVertex} <code>higherVertex</code> are
+	 * merged into the corresponding {@link GreqlAggregation}s in the subgraph
+	 * of <code>lowerVertex</code>.
 	 * 
 	 * @param lowerVertex
 	 *            a {@link GreqlVertex}
@@ -290,8 +288,7 @@ public class CommonSubgraphOptimizer extends OptimizerBase {
 				.getFirstGreqlAggregationIncidence(EdgeDirection.IN);
 		while ((gal != null) && (gah != null)) {
 			OptimizerUtility.mergeSourcePositions(gah, gal);
-			mergeSourcePositionsBelow( gal.getAlpha(),
-					gah.getAlpha());
+			mergeSourcePositionsBelow(gal.getAlpha(), gah.getAlpha());
 			gal = gal.getNextGreqlAggregationIncidence(EdgeDirection.IN);
 			gah = gah.getNextGreqlAggregationIncidence(EdgeDirection.IN);
 		}
