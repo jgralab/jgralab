@@ -38,8 +38,8 @@ package de.uni_koblenz.jgralab.greql.evaluator.vertexeval;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.uni_koblenz.jgralab.greql.evaluator.InternalGreqlEvaluator;
 import de.uni_koblenz.jgralab.greql.evaluator.GreqlQueryImpl;
+import de.uni_koblenz.jgralab.greql.evaluator.InternalGreqlEvaluator;
 import de.uni_koblenz.jgralab.greql.evaluator.VertexCosts;
 import de.uni_koblenz.jgralab.greql.exception.UnknownTypeException;
 import de.uni_koblenz.jgralab.greql.schema.TypeId;
@@ -69,8 +69,10 @@ public class TypeIdEvaluator extends VertexEvaluator<TypeId> {
 			InternalGreqlEvaluator evaluator) {
 
 		ArrayList<GraphElementClass<?, ?>> returnTypes = new ArrayList<GraphElementClass<?, ?>>();
+		// try to find schema class using qualified name
 		GraphElementClass<?, ?> elemClass = (GraphElementClass<?, ?>) evaluator
 				.getAttributedElementClass(vertex.get_name());
+		// if not found, try to find simple name in imported types
 		if (elemClass == null) {
 			elemClass = (GraphElementClass<?, ?>) query.getKnownType(
 					evaluator.getSchemaOfDataGraph(), vertex.get_name());

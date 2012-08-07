@@ -286,7 +286,9 @@ public class GreqlQueryImpl extends GreqlQuery implements
 	 */
 	public synchronized AttributedElementClass<?, ?> getKnownType(
 			Schema schema, String typeSimpleName) {
-		return knownTypes.get(schema).get(typeSimpleName);
+		Map<String, AttributedElementClass<?, ?>> kTypes = knownTypes
+				.get(schema);
+		return kTypes != null ? kTypes.get(typeSimpleName) : null;
 	}
 
 	/**

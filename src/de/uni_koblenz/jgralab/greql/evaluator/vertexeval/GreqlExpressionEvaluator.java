@@ -65,8 +65,7 @@ import de.uni_koblenz.jgralab.schema.VertexClass;
  * @author ist@uni-koblenz.de
  * 
  */
-public class GreqlExpressionEvaluator extends
-		VertexEvaluator<GreqlExpression> {
+public class GreqlExpressionEvaluator extends VertexEvaluator<GreqlExpression> {
 
 	protected static final int greql2ExpressionCostsFactor = 3;
 
@@ -94,8 +93,7 @@ public class GreqlExpressionEvaluator extends
 	 * @param vertex
 	 *            the vertex which gets evaluated by this VertexEvaluator
 	 */
-	public GreqlExpressionEvaluator(GreqlExpression vertex,
-			GreqlQueryImpl query) {
+	public GreqlExpressionEvaluator(GreqlExpression vertex, GreqlQueryImpl query) {
 		super(vertex, query);
 	}
 
@@ -122,12 +120,10 @@ public class GreqlExpressionEvaluator extends
 					// greqlEvaluator.addKnownType(elem);
 					// }
 					for (VertexClass elem : p.getVertexClasses()) {
-						query.addKnownType(evaluator.getSchemaOfDataGraph(),
-								elem);
+						query.addKnownType(graphSchema, elem);
 					}
 					for (EdgeClass elem : p.getEdgeClasses()) {
-						query.addKnownType(evaluator.getSchemaOfDataGraph(),
-								elem);
+						query.addKnownType(graphSchema, elem);
 					}
 				} else {
 					GraphElementClass<?, ?> elemClass = graphSchema
@@ -136,14 +132,13 @@ public class GreqlExpressionEvaluator extends
 						throw new UnknownTypeException(importedType,
 								new ArrayList<SourcePosition>());
 					}
-					query.addKnownType(evaluator.getSchemaOfDataGraph(),
-							elemClass);
+					query.addKnownType(graphSchema, elemClass);
 				}
 			}
 		}
 
-		Expression boundExpression = vertex
-				.getFirstIsQueryExprOfIncidence(EdgeDirection.IN).getAlpha();
+		Expression boundExpression = vertex.getFirstIsQueryExprOfIncidence(
+				EdgeDirection.IN).getAlpha();
 		VertexEvaluator<? extends Expression> eval = query
 				.getVertexEvaluator(boundExpression);
 		Object result = eval.getResult(evaluator);
@@ -166,8 +161,8 @@ public class GreqlExpressionEvaluator extends
 	public VertexCosts calculateSubtreeEvaluationCosts() {
 		GreqlExpression greqlExp = getVertex();
 		VertexEvaluator<? extends Expression> queryExpEval = query
-				.getVertexEvaluator(greqlExp
-						.getFirstIsQueryExprOfIncidence().getAlpha());
+				.getVertexEvaluator(greqlExp.getFirstIsQueryExprOfIncidence()
+						.getAlpha());
 		long queryCosts = queryExpEval.getCurrentSubtreeEvaluationCosts();
 		// VertexEvaluator.logger.info("QueryCosts: " + queryCosts);
 		IsBoundVarOf boundVarInc = greqlExp.getFirstIsBoundVarOfIncidence();
