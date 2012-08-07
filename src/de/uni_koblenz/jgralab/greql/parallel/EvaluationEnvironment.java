@@ -61,7 +61,7 @@ public class EvaluationEnvironment {
 	long doneTime;
 
 	EvaluationEnvironment() {
-		// private constructor, no construction from outside
+		// package scoped constructor, no construction from outside
 		inDegree = new HashMap<TaskHandle, Integer>();
 		tasks = new HashMap<TaskHandle, EvaluationTask>();
 	}

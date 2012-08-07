@@ -34,6 +34,20 @@
  */
 package de.uni_koblenz.jgralab.greql.parallel;
 
+/**
+ * A Callable to be executed by a {@link ParallelGreqlEvaluator} with access to
+ * an {@link EvaluationEnvironment}.
+ */
 public interface ParallelGreqlEvaluatorCallable {
-	public Object call(EvaluationEnvironment environment);
+	/**
+	 * Returns the result object and can access the <code>environment</code>.
+	 * Exceptions thrown during the call result in a controlled termination of
+	 * the {@link ParallelGreqlEvaluator}.
+	 * 
+	 * @param environment
+	 *            an {@link EvaluationEnvironment} provided by a
+	 *            {@link ParallelGreqlEvaluator}
+	 * @return the evaluation result
+	 */
+	public Object call(EvaluationEnvironment environment) throws Exception;
 }

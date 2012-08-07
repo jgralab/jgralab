@@ -97,7 +97,8 @@ public class ParallelTest {
 	public void executionTestWithException() {
 		ParallelGreqlEvaluatorCallable c = new ParallelGreqlEvaluatorCallable() {
 			@Override
-			public Object call(EvaluationEnvironment environment) {
+			public Object call(EvaluationEnvironment environment)
+					throws Exception {
 				throw new GreqlException("Bah!");
 			}
 		};
