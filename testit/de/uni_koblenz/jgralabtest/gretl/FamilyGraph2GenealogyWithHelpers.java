@@ -116,7 +116,8 @@ public class FamilyGraph2GenealogyWithHelpers extends Transformation<Graph> {
 				"CHILD", "ADULT").execute();
 		new CreateAttribute(context, new AttributeSpec(person, "ageGroup",
 				ageGroup), "from m : keySet(img_Person) "
-				+ "reportMap m -> m.age >= 18 ? 'ADULT' : 'CHILD' end").execute();
+				+ "reportMap m -> m.age >= 18 ? 'ADULT' : 'CHILD' end")
+				.execute();
 
 		RecordDomain addressRecord = new CreateRecordDomain(context, "Address",
 				new RecordComponent("street", getStringDomain()),

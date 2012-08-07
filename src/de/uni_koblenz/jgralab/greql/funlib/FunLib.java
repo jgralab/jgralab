@@ -499,7 +499,7 @@ public class FunLib {
 		functions.put(name, new FunctionInfo(name, cls));
 	}
 
-	public static final void registerGreqlFunction(GreqlQuery query,
+	public static final void registerGreqlQueryFunction(GreqlQuery query,
 			boolean needsGraphArgument, long costs, long cardinality,
 			double selectivity) {
 		String name = query.getName();
@@ -523,6 +523,16 @@ public class FunLib {
 				: new GreqlQueryFunction(query, costs, cardinality, selectivity);
 
 		functions.put(name, new FunctionInfo(name, greqlFunction));
+	}
+
+	public static final void removeGreqlQueryFunction(String name) {
+		FunctionInfo fn = getFunctionInfo(name);
+		if (fn.getFunction() instanceof GreqlQueryFunction) {
+			functions.remove(name);
+		} else {
+			throw new IllegalArgumentException("Function " + name
+					+ " is not a GreqlQueryFunction.");
+		}
 	}
 
 	public static final FunctionInfo getFunctionInfo(String functionName) {

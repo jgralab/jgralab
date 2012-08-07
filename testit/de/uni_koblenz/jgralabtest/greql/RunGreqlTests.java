@@ -18,7 +18,7 @@ import de.uni_koblenz.jgralabtest.greql.parallel.ParallelTest;
 																				// test?
 		SpeedTest.class, // what does SpeedTest actually test?
 		SystemTest.class, // what does SystemTest actually test?
-		ThisLiteralTest.class, SubQueryTest.class, ParallelTest.class })
+		ThisLiteralTest.class, GreqlQueryFunctionTest.class, ParallelTest.class })
 public class RunGreqlTests {
 
 }

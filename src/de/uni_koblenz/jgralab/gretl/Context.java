@@ -140,9 +140,12 @@ public class Context {
 	}
 
 	final void setGReQLHelper(String name, String greqlExpression) {
+		if (FunLib.contains(name)) {
+			FunLib.removeGreqlQueryFunction(name);
+		}
 		GreqlQuery query = GreqlQuery.createQuery(greqlExpression);
 		query.setName(name);
-		FunLib.registerGreqlFunction(query, true, 1, 1, 1.0);
+		FunLib.registerGreqlQueryFunction(query, true, 1, 1, 1.0);
 	}
 
 	final void addGReQLImport(String qualifiedName) {

@@ -35,19 +35,39 @@
 
 package de.uni_koblenz.jgralabtest.greql;
 
+import java.util.HashSet;
+
 import junit.framework.Assert;
 
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
 import de.uni_koblenz.jgralab.greql.GreqlQuery;
 import de.uni_koblenz.jgralab.greql.exception.GreqlException;
 import de.uni_koblenz.jgralab.greql.funlib.FunLib;
 
-public class SubQueryTest extends GenericTest {
+public class GreqlQueryFunctionTest extends GenericTest {
+	HashSet<String> functions = new HashSet<String>();
+
 	private void registerGreqlFunction(String name, String queryText) {
 		GreqlQuery query = GreqlQuery.createQuery(queryText);
 		query.setName(name);
-		FunLib.registerGreqlFunction(query, true, 1, 1, 1.0);
+		FunLib.registerGreqlQueryFunction(query, true, 1, 1, 1.0);
+		functions.add(query.getName());
+	}
+
+	@Before
+	public void clearNames() {
+		functions.clear();
+	}
+
+	@After
+	public void unregister() {
+		for (String name : functions) {
+			FunLib.removeGreqlQueryFunction(name);
+		}
+		functions.clear();
 	}
 
 	@Test
