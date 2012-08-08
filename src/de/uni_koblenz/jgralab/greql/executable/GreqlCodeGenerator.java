@@ -443,14 +443,20 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 	private String createInitializerForTypeCollection(
 			TypeCollection typeCollection) {
 		String fieldName = "acceptedType_" + acceptedTypesNumber++;
-		int numberOfTypesInSchema = schema.getGraphClass().getVertexClasses()
-				.size()
-				+ schema.getGraphClass().getEdgeClasses().size();
+		int minTypeNumberInSchema = Integer.MAX_VALUE;
+		int maxTypeNumberInSchema = 0;
+		for (GraphElementClass<?, ?> gec : schema.getGraphClass()
+				.getGraphElementClasses()) {
+			minTypeNumberInSchema = Math.min(minTypeNumberInSchema,
+					gec.getGraphElementClassIdInSchema());
+			maxTypeNumberInSchema = Math.max(maxTypeNumberInSchema,
+					gec.getGraphElementClassIdInSchema());
+		}
 		addStaticField("java.util.BitSet", fieldName, "new java.util.BitSet()");
 		if (typeCollection.getAllowedTypes().isEmpty()) {
 			// all types but the forbidden ones are allowed
-			addStaticInitializer(fieldName + ".set(0, " + numberOfTypesInSchema
-					+ ", true);");
+			addStaticInitializer(fieldName + ".set(" + minTypeNumberInSchema
+					+ ", " + maxTypeNumberInSchema + 1 + ", true);");
 			for (GraphElementClass<?, ?> tc : typeCollection
 					.getForbiddenTypes()) {
 				addStaticInitializer(fieldName + ".set("
@@ -458,8 +464,8 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 			}
 		} else {
 			// only allowed type are allowed, others are forbidden
-			addStaticInitializer(fieldName + ".set(0, " + numberOfTypesInSchema
-					+ ", false);");
+			addStaticInitializer(fieldName + ".set(" + minTypeNumberInSchema
+					+ ", " + maxTypeNumberInSchema + 1 + ", false);");
 			for (GraphElementClass<?, ?> tc : typeCollection.getAllowedTypes()) {
 				addStaticInitializer(fieldName + ".set("
 						+ tc.getGraphElementClassIdInSchema() + ",  true);");
