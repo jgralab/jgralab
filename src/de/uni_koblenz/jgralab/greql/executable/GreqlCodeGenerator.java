@@ -82,6 +82,7 @@ import de.uni_koblenz.jgralab.greql.schema.LongLiteral;
 import de.uni_koblenz.jgralab.greql.schema.MapComprehension;
 import de.uni_koblenz.jgralab.greql.schema.MapConstruction;
 import de.uni_koblenz.jgralab.greql.schema.PathDescription;
+import de.uni_koblenz.jgralab.greql.schema.PathExistence;
 import de.uni_koblenz.jgralab.greql.schema.QuantifiedExpression;
 import de.uni_koblenz.jgralab.greql.schema.Quantifier;
 import de.uni_koblenz.jgralab.greql.schema.RecordConstruction;
@@ -430,9 +431,9 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 		if (queryExpr instanceof BackwardVertexSet) {
 			return createCodeForBackwardVertexSet((BackwardVertexSet) queryExpr);
 		}
-		// if (queryExpr instanceof PathExistence) {
-		// return createCodeForPathExistence((PathExistence) queryExpr);
-		// }
+		if (queryExpr instanceof PathExistence) {
+			return createCodeForPathExistence((PathExistence) queryExpr);
+		}
 		return "UnsupportedElement: " + queryExpr.getClass().getSimpleName();
 	}
 
@@ -1066,6 +1067,11 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 			if (m.getName() == "evaluate") {
 				Class<?>[] paramTypes = m.getParameterTypes();
 				// TODO subgraph parameter
+				if (paramTypes[0] == GreqlEvaluatorImpl.class) {
+					// TODO greqlEvaluator parameter
+					throw new RuntimeException(
+							"Functions with an evaluator parameter are not supported yet");
+				}
 				boolean needsGraphArgument = paramTypes.length > 1
 						&& paramTypes[0] == Graph.class;
 				if (needsGraphArgument) {
@@ -1148,15 +1154,41 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 				fws);
 	}
 
+	private String createCodeForPathExistence(PathExistence queryExpr) {
+		Expression startExpr = (Expression) queryExpr
+				.getFirstIsStartExprOfIncidence(EdgeDirection.IN).getThat();
+		Expression targetExpr = (Expression) queryExpr
+				.getFirstIsTargetExprOfIncidence(EdgeDirection.IN).getThat();
+		PathDescription pathDescr = (PathDescription) queryExpr
+				.getFirstIsPathOfIncidence(EdgeDirection.IN).getThat();
+		PathDescriptionEvaluator<? extends PathDescription> pathDescrEval = (PathDescriptionEvaluator<? extends PathDescription>) ((GreqlQueryImpl) query)
+				.getVertexEvaluator(pathDescr);
+		DFA dfa = ((NFA) pathDescrEval.getResult(evaluator)).getDFA();
+		return createCodeForForwarOrBackwardVertexSetOrPathExcistence(dfa,
+				startExpr, targetExpr, queryExpr);
+		// TODO Auto-generated method stub
+	}
+
 	private String createCodeForForwarOrBackwardVertexSet(DFA dfa,
 			Expression startElementExpr, GreqlVertex syntaxGraphVertex) {
+		return createCodeForForwarOrBackwardVertexSetOrPathExcistence(dfa,
+				startElementExpr, null, syntaxGraphVertex);
+	}
+
+	private String createCodeForForwarOrBackwardVertexSetOrPathExcistence(
+			DFA dfa, Expression startElementExpr, Expression targetElementExpr,
+			GreqlVertex syntaxGraphVertex) {
 		CodeList list = new CodeList();
-		addImports("org.pcollections.PSet");
+		if (targetElementExpr == null) {
+			addImports("org.pcollections.PSet");
+		}
 		addImports("de.uni_koblenz.jgralab.*");
 		addImports("de.uni_koblenz.jgralab.greql.executable.VertexStateNumberQueue");
 		CodeSnippet initSnippet = new CodeSnippet();
 		list.add(initSnippet);
-		initSnippet.add("PSet<Vertex> resultSet = JGraLab.set();");
+		if (targetElementExpr == null) {
+			initSnippet.add("PSet<Vertex> resultSet = JGraLab.set();");
+		}
 		initSnippet.add("//one BitSet for each state");
 		initSnippet
 				.add("@SuppressWarnings(\"unchecked\")",
@@ -1177,6 +1209,10 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 		initSnippet.add("int stateNumber;");
 		initSnippet.add("Vertex element = (Vertex)"
 				+ createCodeForExpression(startElementExpr) + ";");
+		if (targetElementExpr != null) {
+			initSnippet.add("Vertex target = (Vertex)"
+					+ createCodeForExpression(targetElementExpr) + ";");
+		}
 		initSnippet.add("Vertex nextElement;");
 		initSnippet
 				.add("VertexStateNumberQueue queue = new VertexStateNumberQueue();");
@@ -1187,8 +1223,15 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 		initSnippet.add("while (queue.hasNext()) {");
 		initSnippet.add("\telement = queue.currentVertex;");
 		initSnippet.add("\tstateNumber = queue.currentState;");
-		initSnippet.add("\tif (finalStates.get(stateNumber)) {");
-		initSnippet.add("\t\tresultSet = resultSet.plus(element);");
+		if (targetElementExpr == null) {
+			initSnippet.add("\tif (finalStates.get(stateNumber)) {");
+			initSnippet.add("\t\tresultSet = resultSet.plus(element);");
+		} else {
+			initSnippet
+					.add("\tif (finalStates.get(stateNumber) && element == target){");
+			initSnippet.add("\t\treturn true;");
+
+		}
 		initSnippet.add("\t}");
 		initSnippet.add("\tfor (Edge inc = element.getFirstIncidence();");
 		initSnippet
@@ -1229,7 +1272,11 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 		finalSnippet.add("\t\t} //end of switch");
 		finalSnippet.add("\t} //end of iterating incident edges ");
 		finalSnippet.add("} //end of processing queue");
-		finalSnippet.add("return resultSet;");
+		if (targetElementExpr == null) {
+			finalSnippet.add("return resultSet;");
+		} else {
+			finalSnippet.add("return false;");
+		}
 		list.add(finalSnippet);
 		return createMethod(list, syntaxGraphVertex);
 	}
@@ -1276,11 +1323,6 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 		DFA dfa = ((NFA) pathDescrEval.getResult(evaluator)).getDFA();
 		return createCodeForPathSystem(dfa, startExpr, funApp);
 	}
-
-	// private String createCodeForPathExistence(PathExistence queryExpr) {
-	// // TODO Auto-generated method stub
-	// return null;
-	// }
 
 	private String createCodeForPathSystem(DFA dfa,
 			Expression startElementExpr, GreqlVertex syntaxGraphVertex) {
