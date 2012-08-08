@@ -64,6 +64,7 @@ import de.uni_koblenz.jgralab.greql.schema.GreqlExpression;
 import de.uni_koblenz.jgralab.greql.schema.GreqlGraph;
 import de.uni_koblenz.jgralab.greql.schema.GreqlVertex;
 import de.uni_koblenz.jgralab.greql.schema.Identifier;
+import de.uni_koblenz.jgralab.greql.schema.UndefinedLiteral;
 import de.uni_koblenz.jgralab.greql.schema.Variable;
 import de.uni_koblenz.jgralab.impl.std.GraphImpl;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
@@ -157,6 +158,13 @@ public class GreqlQueryImpl extends GreqlQuery implements
 			long t0 = System.currentTimeMillis();
 			queryGraph = GreqlParserWithVertexEvaluatorUpdates.parse(queryText,
 					this, new HashSet<String>());
+			if (queryGraph.getVCount() == 0) {
+				// an empty query was parsed
+				GreqlExpression gexpr = queryGraph.createGreqlExpression();
+				UndefinedLiteral undefined = queryGraph
+						.createUndefinedLiteral();
+				gexpr.add_queryExpr(undefined);
+			}
 			long t1 = System.currentTimeMillis();
 			logger.fine("GReQL parser: " + (t1 - t0) + " ms");
 			if (optimize) {
