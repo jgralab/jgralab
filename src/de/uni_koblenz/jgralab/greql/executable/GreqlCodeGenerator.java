@@ -1462,14 +1462,19 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 		CodeList curr = new CodeList();
 		VertexEvaluator<?> allowedEdgeEvaluator = trans
 				.getAllowedEdgeEvaluator();
+		CodeBlock content = createCodeForSimpleOrEdgeTransition(trans,
+				pathSystem, curr);
 		if (allowedEdgeEvaluator != null) {
-			curr.add(new CodeSnippet("Object allowedEdge = "
+			curr.add(new CodeSnippet("Edge allowedEdge = (Edge) "
 					+ createCodeForExpression((Expression) allowedEdgeEvaluator
 							.getVertex()) + ";"));
 			curr.add(new CodeSnippet(
-					"if (edge.getNormalEdge() == allowedEdge.getNormalEdge())"));
+					"if (inc.getNormalEdge() == allowedEdge.getNormalEdge()){"));
+			curr.add(content, 1);
+			curr.add(new CodeSnippet("}"));
 		}
-		return createCodeForSimpleOrEdgeTransition(trans, pathSystem, curr);
+		return curr;
+		// TODO here I am;
 	}
 
 	private CodeBlock createCodeForSimpleOrEdgeTransition(
