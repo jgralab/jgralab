@@ -12,6 +12,7 @@ import javax.tools.StandardJavaFileManager;
 import javax.tools.ToolProvider;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
+import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.ImplementationType;
@@ -429,6 +430,9 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 		if (queryExpr instanceof BackwardVertexSet) {
 			return createCodeForBackwardVertexSet((BackwardVertexSet) queryExpr);
 		}
+		// if (queryExpr instanceof PathExistence) {
+		// return createCodeForPathExistence((PathExistence) queryExpr);
+		// }
 		return "UnsupportedElement: " + queryExpr.getClass().getSimpleName();
 	}
 
@@ -546,16 +550,20 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 				.add("org.pcollections.PCollection<Object> list = JGraLab.vector();");
 		Expression startExpr = (Expression) listConstr
 				.getFirstIsFirstValueOfIncidence(EdgeDirection.IN).getThat();
+		int startValue = (Integer) ((GreqlQueryImpl) query).getVertexEvaluator(
+				startExpr).getResult(evaluator);
 		Expression endExpr = (Expression) listConstr
 				.getFirstIsLastValueOfIncidence(EdgeDirection.IN).getThat();
+		int endValue = (Integer) ((GreqlQueryImpl) query).getVertexEvaluator(
+				endExpr).getResult(evaluator);
 		listSnippet.add("int startRange = "
 				+ createCodeForExpression(startExpr) + ";");
 		listSnippet.add("int endRange = " + createCodeForExpression(endExpr)
 				+ ";");
-		listSnippet
-				.add("for (int i = startRange; startRange < endRange ? i <= endRange : i >= endRange;) {");
+		listSnippet.add("for (int i = startRange; i "
+				+ (startValue <= endValue ? "<=" : ">=") + " endRange; "
+				+ (startValue <= endValue ? "i++" : "i--") + ") {");
 		listSnippet.add("\tlist = list.plus(i);");
-		listSnippet.add("\ti =  startRange < endRange ? i + 1 : i - 1;");
 		listSnippet.add("}");
 		listSnippet.add("return list;");
 		list.add(listSnippet);
@@ -1052,6 +1060,14 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 			if (m.getName() == "evaluate") {
 				Class<?>[] paramTypes = m.getParameterTypes();
 				// TODO subgraph parameter
+				boolean needsGraphArgument = paramTypes.length > 1
+						&& paramTypes[0] == Graph.class;
+				if (needsGraphArgument) {
+					Class<?>[] newParamTypes = new Class<?>[paramTypes.length - 1];
+					System.arraycopy(paramTypes, 1, newParamTypes, 0,
+							paramTypes.length - 1);
+					paramTypes = newParamTypes;
+				}
 				if (paramTypes.length == argNumber) {
 					CodeSnippet checkSnippet = new CodeSnippet();
 					checkSnippet.add("matches = true;");
@@ -1064,6 +1080,10 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 					StringBuilder argBuilder = new StringBuilder();
 					argBuilder.append("\treturn " + functionStaticFieldName
 							+ ".evaluate(");
+					if (needsGraphArgument) {
+						argBuilder.append("\tdatagraph");
+						delim = ",";
+					}
 					for (int i = 0; i < paramTypes.length; i++) {
 						String cast = "("
 								+ getCanonicalNameWithTypeParams(paramTypes[i])
@@ -1250,6 +1270,11 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 		DFA dfa = ((NFA) pathDescrEval.getResult(evaluator)).getDFA();
 		return createCodeForPathSystem(dfa, startExpr, funApp);
 	}
+
+	// private String createCodeForPathExistence(PathExistence queryExpr) {
+	// // TODO Auto-generated method stub
+	// return null;
+	// }
 
 	private String createCodeForPathSystem(DFA dfa,
 			Expression startElementExpr, GreqlVertex syntaxGraphVertex) {
