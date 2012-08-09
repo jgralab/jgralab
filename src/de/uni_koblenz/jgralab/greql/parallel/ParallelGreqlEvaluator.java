@@ -130,7 +130,7 @@ public class ParallelGreqlEvaluator {
 		@Override
 		public void run() {
 			log.finer("Run " + handle);
-			startTime = System.currentTimeMillis();
+			startTime = System.nanoTime();
 			super.run();
 		}
 
@@ -144,9 +144,9 @@ public class ParallelGreqlEvaluator {
 
 		@Override
 		protected void done() {
-			doneTime = System.currentTimeMillis();
+			doneTime = System.nanoTime();
 			super.done();
-			log.fine("Done " + handle + " (" + getEvaluationTime() + " ms)");
+			log.fine("Done " + handle + " (" + getEvaluationTime() + " ns)");
 			try {
 				// try to get the result in order to handle a possible exception
 				// exception is rapped into an ExecutionException
@@ -184,7 +184,7 @@ public class ParallelGreqlEvaluator {
 	public class TaskHandle implements Comparable<TaskHandle> {
 		private ParallelGreqlEvaluatorCallable callable;
 		private GreqlQuery query;
-		private int priority;
+		private long priority;
 		private int seq;
 
 		@Override
@@ -195,9 +195,9 @@ public class ParallelGreqlEvaluator {
 		@Override
 		public int compareTo(TaskHandle other) {
 			// order w.r.t. descending priority
-			int r = other.priority - priority;
+			long r = other.priority - priority;
 			if (r != 0) {
-				return r;
+				return r < 0 ? -1 : 1;
 			}
 			// same priority, order w.r.t. ascending sequence number
 			return seq - other.seq;
@@ -209,13 +209,14 @@ public class ParallelGreqlEvaluator {
 			}
 		}
 
-		private TaskHandle(ParallelGreqlEvaluatorCallable callable, int priority) {
+		private TaskHandle(ParallelGreqlEvaluatorCallable callable,
+				long priority) {
 			this();
 			this.callable = callable;
 			this.priority = priority;
 		}
 
-		private TaskHandle(GreqlQuery query, int priority) {
+		private TaskHandle(GreqlQuery query, long priority) {
 			this();
 			this.query = query;
 			this.priority = priority;
@@ -358,7 +359,7 @@ public class ParallelGreqlEvaluator {
 			GreqlEnvironment greqlEnvironment, boolean adjustPriorityValues) {
 
 		final EvaluationEnvironment evaluationEnvironment = new EvaluationEnvironment();
-		evaluationEnvironment.startTime = System.currentTimeMillis();
+		evaluationEnvironment.startTime = System.nanoTime();
 
 		synchronized (dependencyGraph) {
 			if (!dependencyGraph.isFinished()) {
@@ -458,14 +459,14 @@ public class ParallelGreqlEvaluator {
 			synchronized (this) {
 				log.fine("Adjust priority values");
 				for (TaskHandle handle : dependencyGraph.getNodes()) {
-					int p = handle.priority;
-					handle.priority = (int) evaluationEnvironment
+					long p = handle.priority;
+					handle.priority = evaluationEnvironment
 							.getEvaluationTime(handle);
 					log.finer(handle.toString() + " - old prio " + p);
 				}
 			}
 		}
-		evaluationEnvironment.doneTime = System.currentTimeMillis();
+		evaluationEnvironment.doneTime = System.nanoTime();
 		return evaluationEnvironment;
 	}
 
@@ -496,7 +497,7 @@ public class ParallelGreqlEvaluator {
 	 *         <code>callable</code>
 	 */
 	public TaskHandle addCallable(ParallelGreqlEvaluatorCallable callable,
-			int priority) {
+			long priority) {
 		return dependencyGraph.createNode(new TaskHandle(callable, priority));
 	}
 
@@ -525,7 +526,7 @@ public class ParallelGreqlEvaluator {
 	 * @return a {@link TaskHandle} identifying the task associated with the
 	 *         <code>greqlQuery</code>
 	 */
-	public TaskHandle addGreqlQuery(String queryText, int priority) {
+	public TaskHandle addGreqlQuery(String queryText, long priority) {
 		return addGreqlQuery(GreqlQuery.createQuery(queryText), priority);
 	}
 
@@ -555,7 +556,7 @@ public class ParallelGreqlEvaluator {
 	 * @return a {@link TaskHandle} identifying the task associated with the
 	 *         <code>greqlQuery</code>
 	 */
-	public TaskHandle addGreqlQuery(GreqlQuery greqlQuery, int priority) {
+	public TaskHandle addGreqlQuery(GreqlQuery greqlQuery, long priority) {
 		return dependencyGraph.createNode(new TaskHandle(greqlQuery, priority));
 	}
 

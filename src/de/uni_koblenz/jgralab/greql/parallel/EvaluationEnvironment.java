@@ -117,7 +117,7 @@ public class EvaluationEnvironment {
 	}
 
 	/**
-	 * @return the total evaluation time in ms
+	 * @return the total evaluation time in ns
 	 */
 	public long getEvaluationTime() {
 		return doneTime - startTime;

@@ -53,4 +53,6 @@ public interface GreqlEnvironment {
 	public void setVariables(Map<String, Object> varMap);
 
 	public Object setVariable(String varName, Object value);
+
+	public Object removeVariable(String varName);
 }

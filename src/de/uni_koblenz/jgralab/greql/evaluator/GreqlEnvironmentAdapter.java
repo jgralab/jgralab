@@ -47,4 +47,9 @@ public class GreqlEnvironmentAdapter implements GreqlEnvironment {
 		return variableMap.put(varName, value);
 	}
 
+	@Override
+	public synchronized Object removeVariable(String varName) {
+		return variableMap == null ? null : variableMap.remove(varName);
+	}
+
 }
