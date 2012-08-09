@@ -1,7 +1,6 @@
 package de.uni_koblenz.jgralabtest.greql.evaluator;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
@@ -13,28 +12,40 @@ import org.junit.Test;
 
 import de.uni_koblenz.jgralab.Record;
 import de.uni_koblenz.jgralab.greql.GreqlQuery;
+import de.uni_koblenz.jgralab.greql.executable.ExecutableQuery;
+import de.uni_koblenz.jgralab.greql.executable.GreqlCodeGenerator;
 import de.uni_koblenz.jgralab.greql.types.Tuple;
 
 public class CollectionEvaluatorTest {
 
-	private Object evaluateQuery(String query) {
-		return GreqlQuery.createQuery(query).evaluate();
-	}
-
 	/*
 	 * Tests of ListConstructionEvaluator
 	 */
+
+	public void checkList(Object erg, Object... content) {
+		assertNotNull(erg);
+		List<?> list = (List<?>) erg;
+		assertEquals(content.length, list.size());
+		for (int i = 0; i < content.length; i++) {
+			assertEquals(content[i], list.get(i));
+		}
+	}
 
 	/**
 	 * Test of query:<br>
 	 * list()
 	 */
 	@Test
-	public void testListConstructionEvaluator_EmptyList() {
-		Object erg = evaluateQuery("list()");
-		assertNotNull(erg);
-		List<?> list = (List<?>) erg;
-		assertTrue(list.isEmpty());
+	public void testListConstructionEvaluator_EmptyList()
+			throws InstantiationException, IllegalAccessException {
+		String query = "list()";
+		Object erg = GreqlQuery.createQuery(query).evaluate();
+		checkList(erg);
+		Class<ExecutableQuery> generatedQuery = GreqlCodeGenerator
+				.generateCode(query, null,
+						"testdata.TestListConstructionEvaluatorEmptyList");
+		erg = generatedQuery.newInstance().execute(null);
+		checkList(erg);
 	}
 
 	/**
@@ -42,13 +53,16 @@ public class CollectionEvaluatorTest {
 	 * list(3)
 	 */
 	@Test
-	public void testListConstructionEvaluator_WithOneElement() {
-		Object erg = evaluateQuery("list(3)");
-		assertNotNull(erg);
-		List<?> list = (List<?>) erg;
-		assertFalse(list.isEmpty());
-		assertEquals(1, list.size());
-		assertEquals(3, list.get(0));
+	public void testListConstructionEvaluator_WithOneElement()
+			throws InstantiationException, IllegalAccessException {
+		String query = "list(3)";
+		Object erg = GreqlQuery.createQuery(query).evaluate();
+		checkList(erg, 3);
+		Class<ExecutableQuery> generatedQuery = GreqlCodeGenerator
+				.generateCode(query, null,
+						"testdata.TestListConstructionEvaluatorWithOneElement");
+		erg = generatedQuery.newInstance().execute(null);
+		checkList(erg, 3);
 	}
 
 	/**
@@ -56,14 +70,16 @@ public class CollectionEvaluatorTest {
 	 * list(3,4)
 	 */
 	@Test
-	public void testListConstructionEvaluator_WithSeveralElements() {
-		Object erg = evaluateQuery("list(3,4)");
-		assertNotNull(erg);
-		List<?> list = (List<?>) erg;
-		assertFalse(list.isEmpty());
-		assertEquals(2, list.size());
-		assertEquals(3, list.get(0));
-		assertEquals(4, list.get(1));
+	public void testListConstructionEvaluator_WithSeveralElements()
+			throws InstantiationException, IllegalAccessException {
+		String query = "list(3,4)";
+		Object erg = GreqlQuery.createQuery(query).evaluate();
+		checkList(erg, 3, 4);
+		Class<ExecutableQuery> generatedQuery = GreqlCodeGenerator
+				.generateCode(query, null,
+						"testdata.TestListConstructionEvaluatorWithSeveralElements");
+		erg = generatedQuery.newInstance().execute(null);
+		checkList(erg, 3, 4);
 	}
 
 	/**
@@ -71,14 +87,16 @@ public class CollectionEvaluatorTest {
 	 * list(3,"a")
 	 */
 	@Test
-	public void testListConstructionEvaluator_WithSeveralElementsOfDifferentType() {
-		Object erg = evaluateQuery("list(3,\"a\")");
-		assertNotNull(erg);
-		List<?> list = (List<?>) erg;
-		assertFalse(list.isEmpty());
-		assertEquals(2, list.size());
-		assertEquals(3, list.get(0));
-		assertEquals("a", list.get(1));
+	public void testListConstructionEvaluator_WithSeveralElementsOfDifferentType()
+			throws InstantiationException, IllegalAccessException {
+		String query = "list(3,\"a\")";
+		Object erg = GreqlQuery.createQuery(query).evaluate();
+		checkList(erg, 3, "a");
+		Class<ExecutableQuery> generatedQuery = GreqlCodeGenerator
+				.generateCode(query, null,
+						"testdata.TestListConstructionEvaluatorWithSeveralElementsOfDifferentType");
+		erg = generatedQuery.newInstance().execute(null);
+		checkList(erg, 3, "a");
 	}
 
 	/*
@@ -90,13 +108,16 @@ public class CollectionEvaluatorTest {
 	 * list(2..2)
 	 */
 	@Test
-	public void testListConstructionEvaluator_WithRangeOfOneElem() {
-		Object erg = evaluateQuery("list(2..2)");
-		assertNotNull(erg);
-		List<?> list = (List<?>) erg;
-		assertFalse(list.isEmpty());
-		assertEquals(1, list.size());
-		assertEquals(2, list.get(0));
+	public void testListConstructionEvaluator_WithRangeOfOneElem()
+			throws InstantiationException, IllegalAccessException {
+		String query = "list(2..2)";
+		Object erg = GreqlQuery.createQuery(query).evaluate();
+		checkList(erg, 2);
+		Class<ExecutableQuery> generatedQuery = GreqlCodeGenerator
+				.generateCode(query, null,
+						"testdata.TestListConstructionEvaluatorWithRangeOfOneElem");
+		erg = generatedQuery.newInstance().execute(null);
+		checkList(erg, 2);
 	}
 
 	/**
@@ -104,15 +125,16 @@ public class CollectionEvaluatorTest {
 	 * list(2..4)
 	 */
 	@Test
-	public void testListConstructionEvaluator_WithIncreasingRange() {
-		Object erg = evaluateQuery("list(2..4)");
-		assertNotNull(erg);
-		List<?> list = (List<?>) erg;
-		assertFalse(list.isEmpty());
-		assertEquals(3, list.size());
-		assertEquals(2, list.get(0));
-		assertEquals(3, list.get(1));
-		assertEquals(4, list.get(2));
+	public void testListConstructionEvaluator_WithIncreasingRange()
+			throws InstantiationException, IllegalAccessException {
+		String query = "list(2..4)";
+		Object erg = GreqlQuery.createQuery(query).evaluate();
+		checkList(erg, 2, 3, 4);
+		Class<ExecutableQuery> generatedQuery = GreqlCodeGenerator
+				.generateCode(query, null,
+						"testdata.TestListConstructionEvaluatorWithIncreasingRange");
+		erg = generatedQuery.newInstance().execute(null);
+		checkList(erg, 2, 3, 4);
 	}
 
 	/**
@@ -120,30 +142,46 @@ public class CollectionEvaluatorTest {
 	 * list(2..1)
 	 */
 	@Test
-	public void testListConstructionEvaluator_WithDecreasingRange() {
-		Object erg = evaluateQuery("list(2..1)");
-		assertNotNull(erg);
-		List<?> list = (List<?>) erg;
-		assertFalse(list.isEmpty());
-		assertEquals(2, list.size());
-		assertEquals(2, list.get(0));
-		assertEquals(1, list.get(1));
+	public void testListConstructionEvaluator_WithDecreasingRange()
+			throws InstantiationException, IllegalAccessException {
+		String query = "list(2..1)";
+		Object erg = GreqlQuery.createQuery(query).evaluate();
+		checkList(erg, 2, 1);
+		Class<ExecutableQuery> generatedQuery = GreqlCodeGenerator
+				.generateCode(query, null,
+						"testdata.TestListConstructionEvaluatorWithDecreasingRange");
+		erg = generatedQuery.newInstance().execute(null);
+		checkList(erg, 2, 1);
 	}
 
 	/*
 	 * Tests of TupleConstructionEvaluator
 	 */
 
+	public void checkTuple(Object erg, Object... content) {
+		assertNotNull(erg);
+		Tuple tuple = (Tuple) erg;
+		assertEquals(content.length, tuple.size());
+		for (int i = 0; i < content.length; i++) {
+			assertEquals(content[i], tuple.get(i));
+		}
+	}
+
 	/**
 	 * Test of query:<br>
 	 * tup()
 	 */
 	@Test
-	public void testTupleConstructionEvaluator_EmptyTuple() {
-		Object erg = evaluateQuery("tup()");
-		assertNotNull(erg);
-		Tuple tuple = (Tuple) erg;
-		assertTrue(tuple.isEmpty());
+	public void testTupleConstructionEvaluator_EmptyTuple()
+			throws InstantiationException, IllegalAccessException {
+		String query = "tup()";
+		Object erg = GreqlQuery.createQuery(query).evaluate();
+		checkTuple(erg);
+		Class<ExecutableQuery> generatedQuery = GreqlCodeGenerator
+				.generateCode(query, null,
+						"testdata.TestTestTupleConstructionEvaluatorEmptyTuple");
+		erg = generatedQuery.newInstance().execute(null);
+		checkTuple(erg);
 	}
 
 	/**
@@ -151,13 +189,16 @@ public class CollectionEvaluatorTest {
 	 * tup("a")
 	 */
 	@Test
-	public void testTupleConstructionEvaluator_WithOneElem() {
-		Object erg = evaluateQuery("tup(\"a\")");
-		assertNotNull(erg);
-		Tuple tuple = (Tuple) erg;
-		assertFalse(tuple.isEmpty());
-		assertEquals(1, tuple.size());
-		assertEquals("a", tuple.get(0));
+	public void testTupleConstructionEvaluator_WithOneElem()
+			throws InstantiationException, IllegalAccessException {
+		String query = "tup(\"a\")";
+		Object erg = GreqlQuery.createQuery(query).evaluate();
+		checkTuple(erg, "a");
+		Class<ExecutableQuery> generatedQuery = GreqlCodeGenerator
+				.generateCode(query, null,
+						"testdata.TestTupleConstructionEvaluatorWithOneElem");
+		erg = generatedQuery.newInstance().execute(null);
+		checkTuple(erg, "a");
 	}
 
 	/**
@@ -165,30 +206,46 @@ public class CollectionEvaluatorTest {
 	 * tup("a",3)
 	 */
 	@Test
-	public void testTupleConstructionEvaluator_WithSeveralElems() {
-		Object erg = evaluateQuery("tup(\"a\",3)");
-		assertNotNull(erg);
-		Tuple tuple = (Tuple) erg;
-		assertFalse(tuple.isEmpty());
-		assertEquals(2, tuple.size());
-		assertEquals("a", tuple.get(0));
-		assertEquals(3, tuple.get(1));
+	public void testTupleConstructionEvaluator_WithSeveralElems()
+			throws InstantiationException, IllegalAccessException {
+		String query = "tup(\"a\",3)";
+		Object erg = GreqlQuery.createQuery(query).evaluate();
+		checkTuple(erg, "a", 3);
+		Class<ExecutableQuery> generatedQuery = GreqlCodeGenerator
+				.generateCode(query, null,
+						"testdata.TestTupleConstructionEvaluatorWithSeveralElems");
+		erg = generatedQuery.newInstance().execute(null);
+		checkTuple(erg, "a", 3);
 	}
 
 	/*
 	 * Tests of SetConstructionEvaluator
 	 */
 
+	public void checkSet(Object erg, Object... content) {
+		assertNotNull(erg);
+		Set<?> set = (Set<?>) erg;
+		assertEquals(content.length, set.size());
+		for (int i = 0; i < content.length; i++) {
+			assertTrue(set.contains(content[i]));
+		}
+	}
+
 	/**
 	 * Test of query:<br>
 	 * set()
 	 */
 	@Test
-	public void testSetConstructionEvaluator_EmptySet() {
-		Object erg = evaluateQuery("set()");
-		assertNotNull(erg);
-		Set<?> set = (Set<?>) erg;
-		assertTrue(set.isEmpty());
+	public void testSetConstructionEvaluator_EmptySet()
+			throws InstantiationException, IllegalAccessException {
+		String query = "set()";
+		Object erg = GreqlQuery.createQuery(query).evaluate();
+		checkSet(erg);
+		Class<ExecutableQuery> generatedQuery = GreqlCodeGenerator
+				.generateCode(query, null,
+						"testdata.TestSetConstructionEvaluatorEmptySet");
+		erg = generatedQuery.newInstance().execute(null);
+		checkSet(erg);
 	}
 
 	/**
@@ -196,13 +253,16 @@ public class CollectionEvaluatorTest {
 	 * set(1)
 	 */
 	@Test
-	public void testSetConstructionEvaluator_WithOneEleme() {
-		Object erg = evaluateQuery("set(1)");
-		assertNotNull(erg);
-		Set<?> set = (Set<?>) erg;
-		assertFalse(set.isEmpty());
-		assertEquals(1, set.size());
-		assertTrue(set.contains(1));
+	public void testSetConstructionEvaluator_WithOneElement()
+			throws InstantiationException, IllegalAccessException {
+		String query = "set(1)";
+		Object erg = GreqlQuery.createQuery(query).evaluate();
+		checkSet(erg, 1);
+		Class<ExecutableQuery> generatedQuery = GreqlCodeGenerator
+				.generateCode(query, null,
+						"testdata.TestSetConstructionEvaluatorWithOneElement");
+		erg = generatedQuery.newInstance().execute(null);
+		checkSet(erg, 1);
 	}
 
 	/**
@@ -210,13 +270,16 @@ public class CollectionEvaluatorTest {
 	 * set(1,1)
 	 */
 	@Test
-	public void testSetConstructionEvaluator_WithTwoEqualElems() {
-		Object erg = evaluateQuery("set(1,1)");
-		assertNotNull(erg);
-		Set<?> set = (Set<?>) erg;
-		assertFalse(set.isEmpty());
-		assertEquals(1, set.size());
-		assertTrue(set.contains(1));
+	public void testSetConstructionEvaluator_WithTwoEqualElems()
+			throws InstantiationException, IllegalAccessException {
+		String query = "set(1,1)";
+		Object erg = GreqlQuery.createQuery(query).evaluate();
+		checkSet(erg, 1);
+		Class<ExecutableQuery> generatedQuery = GreqlCodeGenerator
+				.generateCode(query, null,
+						"testdata.TestSetConstructionEvaluatorWithTwoEqualElems");
+		erg = generatedQuery.newInstance().execute(null);
+		checkSet(erg, 1);
 	}
 
 	/**
@@ -224,14 +287,17 @@ public class CollectionEvaluatorTest {
 	 * set(tup(1),tup(1))
 	 */
 	@Test
-	public void testSetConstructionEvaluator_WithTwoEqualObjects() {
-		Object erg = evaluateQuery("set(tup(1),tup(1))");
-		assertNotNull(erg);
-		Set<?> set = (Set<?>) erg;
-		assertFalse(set.isEmpty());
-		assertEquals(1, set.size());
-		Tuple tup = (Tuple) evaluateQuery("tup(1)");
-		assertTrue(set.contains(tup));
+	public void testSetConstructionEvaluator_WithTwoEqualObjects()
+			throws InstantiationException, IllegalAccessException {
+		String query = "set(tup(1),tup(1))";
+		Object erg = GreqlQuery.createQuery(query).evaluate();
+		Tuple tup = (Tuple) GreqlQuery.createQuery("tup(1)").evaluate();
+		checkSet(erg, tup);
+		Class<ExecutableQuery> generatedQuery = GreqlCodeGenerator
+				.generateCode(query, null,
+						"testdata.TestSetConstructionEvaluatorWithTwoEqualObjects");
+		erg = generatedQuery.newInstance().execute(null);
+		checkSet(erg, tup);
 	}
 
 	/**
@@ -239,30 +305,49 @@ public class CollectionEvaluatorTest {
 	 * set(1,2)
 	 */
 	@Test
-	public void testSetConstructionEvaluator_WithSeveralElems() {
-		Object erg = evaluateQuery("set(1,2)");
-		assertNotNull(erg);
-		Set<?> set = (Set<?>) erg;
-		assertFalse(set.isEmpty());
-		assertEquals(2, set.size());
-		assertTrue(set.contains(1));
-		assertTrue(set.contains(2));
+	public void testSetConstructionEvaluator_WithSeveralElems()
+			throws InstantiationException, IllegalAccessException {
+		String query = "set(1,2)";
+		Object erg = GreqlQuery.createQuery(query).evaluate();
+		checkSet(erg, 1, 2);
+		Class<ExecutableQuery> generatedQuery = GreqlCodeGenerator
+				.generateCode(query, null,
+						"testdata.TestSetConstructionEvaluatorWithSeveralElems");
+		erg = generatedQuery.newInstance().execute(null);
+		checkSet(erg, 1, 2);
 	}
 
 	/*
 	 * Tests of MapConstructionEvaluator
 	 */
 
+	public void checkMap(Object erg, Object[] keys, Object[] values) {
+		assertNotNull(erg);
+		Map<?, ?> map = (Map<?, ?>) erg;
+		assertEquals(keys.length, values.length);
+		assertEquals(keys.length, map.size());
+		for (int i = 0; i < keys.length; i++) {
+			assertTrue(map.containsKey(keys[i]));
+			assertTrue(map.containsValue(values[i]));
+			assertEquals(values[i], map.get(keys[i]));
+		}
+	}
+
 	/**
 	 * Test of query:<br>
 	 * map()
 	 */
 	@Test
-	public void testMapConstructionEvaluator_EmptyMap() {
-		Object erg = evaluateQuery("map()");
-		assertNotNull(erg);
-		Map<?, ?> map = (Map<?, ?>) erg;
-		assertTrue(map.isEmpty());
+	public void testMapConstructionEvaluator_EmptyMap()
+			throws InstantiationException, IllegalAccessException {
+		String query = "map()";
+		Object erg = GreqlQuery.createQuery(query).evaluate();
+		checkMap(erg, new Object[] {}, new Object[] {});
+		Class<ExecutableQuery> generatedQuery = GreqlCodeGenerator
+				.generateCode(query, null,
+						"testdata.TestMapConstructionEvaluatorEmptyMap");
+		erg = generatedQuery.newInstance().execute(null);
+		checkMap(erg, new Object[] {}, new Object[] {});
 	}
 
 	/**
@@ -270,16 +355,16 @@ public class CollectionEvaluatorTest {
 	 * map(1-&gt;2)
 	 */
 	@Test
-	public void testMapConstructionEvaluator_MapWithOneEntry() {
-		Object erg = evaluateQuery("map(1->2)");
-		assertNotNull(erg);
-		Map<?, ?> map = (Map<?, ?>) erg;
-		assertFalse(map.isEmpty());
-		assertEquals(1, map.size());
-
-		assertTrue(map.containsKey(1));
-		assertTrue(map.containsValue(2));
-		assertEquals(2, map.get(1));
+	public void testMapConstructionEvaluator_MapWithOneEntry()
+			throws InstantiationException, IllegalAccessException {
+		String query = "map(1->2)";
+		Object erg = GreqlQuery.createQuery(query).evaluate();
+		checkMap(erg, new Object[] { 1 }, new Object[] { 2 });
+		Class<ExecutableQuery> generatedQuery = GreqlCodeGenerator
+				.generateCode(query, null,
+						"testdata.TestMapConstructionEvaluatorMapWithOneEntry");
+		erg = generatedQuery.newInstance().execute(null);
+		checkMap(erg, new Object[] { 1 }, new Object[] { 2 });
 	}
 
 	/**
@@ -287,20 +372,16 @@ public class CollectionEvaluatorTest {
 	 * map(1-&gt;2,2-&gt;"a")
 	 */
 	@Test
-	public void testMapConstructionEvaluator_MapWithTwoEntries() {
-		Object erg = evaluateQuery("map(1->2,2->\"a\")");
-		assertNotNull(erg);
-		Map<?, ?> map = (Map<?, ?>) erg;
-		assertFalse(map.isEmpty());
-		assertEquals(2, map.size());
-
-		assertTrue(map.containsKey(1));
-		assertTrue(map.containsValue(2));
-		assertEquals(2, map.get(1));
-
-		assertTrue(map.containsKey(2));
-		assertTrue(map.containsValue("a"));
-		assertEquals("a", map.get(2));
+	public void testMapConstructionEvaluator_MapWithTwoEntries()
+			throws InstantiationException, IllegalAccessException {
+		String query = "map(1->2,2->\"a\")";
+		Object erg = GreqlQuery.createQuery(query).evaluate();
+		checkMap(erg, new Object[] { 1, 2 }, new Object[] { 2, "a" });
+		Class<ExecutableQuery> generatedQuery = GreqlCodeGenerator
+				.generateCode(query, null,
+						"testdata.TestMapConstructionEvaluatorMapWithTwoEntries");
+		erg = generatedQuery.newInstance().execute(null);
+		checkMap(erg, new Object[] { 1, 2 }, new Object[] { 2, "a" });
 	}
 
 	/**
@@ -308,33 +389,47 @@ public class CollectionEvaluatorTest {
 	 * map(1-&gt;2,1-&gt;"a")
 	 */
 	@Test
-	public void testMapConstructionEvaluator_MapWithTwoEntriesWithSameKey() {
-		Object erg = evaluateQuery("map(1->2,1->\"a\")");
-		assertNotNull(erg);
-		Map<?, ?> map = (Map<?, ?>) erg;
-		assertFalse(map.isEmpty());
-		assertEquals(1, map.size());
-
-		assertTrue(map.containsKey(1));
-		assertTrue(map.containsValue("a"));
-		assertEquals("a", map.get(1));
+	public void testMapConstructionEvaluator_MapWithTwoEntriesWithSameKey()
+			throws InstantiationException, IllegalAccessException {
+		String query = "map(1->2,1->\"a\")";
+		Object erg = GreqlQuery.createQuery(query).evaluate();
+		checkMap(erg, new Object[] { 1 }, new Object[] { "a" });
+		Class<ExecutableQuery> generatedQuery = GreqlCodeGenerator
+				.generateCode(query, null,
+						"testdata.TestMapConstructionEvaluatorMapWithTwoEntriesWithSameKey");
+		erg = generatedQuery.newInstance().execute(null);
+		checkMap(erg, new Object[] { 1 }, new Object[] { "a" });
 	}
 
 	/*
 	 * Tests of RecordConstructionEvaluator
 	 */
 
+	public void checkRecord(Object erg, String[] componentNames, Object[] values) {
+		assertNotNull(erg);
+		Record rec = (Record) erg;
+		assertEquals(componentNames.length, values.length);
+		assertEquals(componentNames.length, rec.size());
+		for (int i = 0; i < componentNames.length; i++) {
+			assertEquals(values[i], rec.getComponent(componentNames[i]));
+		}
+	}
+
 	/**
 	 * Test of query:<br>
 	 * rec(a:3)
 	 */
 	@Test
-	public void testRecordConstructionEvaluator_WithOneEntry() {
-		Object erg = evaluateQuery("rec(a:3)");
-		assertNotNull(erg);
-		Record rec = (Record) erg;
-		assertEquals(1, rec.size());
-		assertEquals(3, rec.getComponent("a"));
+	public void testRecordConstructionEvaluator_WithOneEntry()
+			throws InstantiationException, IllegalAccessException {
+		String query = "rec(a:3)";
+		Object erg = GreqlQuery.createQuery(query).evaluate();
+		checkRecord(erg, new String[] { "a" }, new Object[] { 3 });
+		Class<ExecutableQuery> generatedQuery = GreqlCodeGenerator
+				.generateCode(query, null,
+						"testdata.TestRecordConstructionEvaluatorWithOneEntry");
+		erg = generatedQuery.newInstance().execute(null);
+		checkRecord(erg, new String[] { "a" }, new Object[] { 3 });
 	}
 
 	/**
@@ -342,13 +437,16 @@ public class CollectionEvaluatorTest {
 	 * rec(a:3,b:"a")
 	 */
 	@Test
-	public void testRecordConstructionEvaluator_WithTwoEntries() {
-		Object erg = evaluateQuery("rec(a:3,b:\"a\")");
-		assertNotNull(erg);
-		Record rec = (Record) erg;
-		assertEquals(2, rec.size());
-		assertEquals(3, rec.getComponent("a"));
-		assertEquals("a", rec.getComponent("b"));
+	public void testRecordConstructionEvaluator_WithTwoEntries()
+			throws InstantiationException, IllegalAccessException {
+		String query = "rec(a:3,b:\"a\")";
+		Object erg = GreqlQuery.createQuery(query).evaluate();
+		checkRecord(erg, new String[] { "a", "b" }, new Object[] { 3, "a" });
+		Class<ExecutableQuery> generatedQuery = GreqlCodeGenerator
+				.generateCode(query, null,
+						"testdata.TestRecordConstructionEvaluatorWithTwoEntries");
+		erg = generatedQuery.newInstance().execute(null);
+		checkRecord(erg, new String[] { "a", "b" }, new Object[] { 3, "a" });
 	}
 
 	/**
@@ -356,11 +454,15 @@ public class CollectionEvaluatorTest {
 	 * rec(a:3,a:"a")
 	 */
 	@Test
-	public void testRecordConstructionEvaluator_WithTwoEntriesWithSameId() {
-		Object erg = evaluateQuery("rec(a:3,a:\"a\")");
-		assertNotNull(erg);
-		Record rec = (Record) erg;
-		assertEquals(1, rec.size());
-		assertEquals("a", rec.getComponent("a"));
+	public void testRecordConstructionEvaluator_WithTwoEntriesWithSameId()
+			throws InstantiationException, IllegalAccessException {
+		String query = "rec(a:3,a:\"a\")";
+		Object erg = GreqlQuery.createQuery(query).evaluate();
+		checkRecord(erg, new String[] { "a" }, new Object[] { "a" });
+		Class<ExecutableQuery> generatedQuery = GreqlCodeGenerator
+				.generateCode(query, null,
+						"testdata.TestRecordConstructionEvaluatorWithTwoEntriesWithSameId");
+		erg = generatedQuery.newInstance().execute(null);
+		checkRecord(erg, new String[] { "a" }, new Object[] { "a" });
 	}
 }

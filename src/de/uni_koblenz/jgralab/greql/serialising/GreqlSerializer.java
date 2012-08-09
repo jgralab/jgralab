@@ -40,6 +40,7 @@ package de.uni_koblenz.jgralab.greql.serialising;
 import java.util.Iterator;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
+import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.greql.exception.GreqlException;
 import de.uni_koblenz.jgralab.greql.schema.AggregationPathDescription;
 import de.uni_koblenz.jgralab.greql.schema.AlternativePathDescription;
@@ -80,6 +81,7 @@ import de.uni_koblenz.jgralab.greql.schema.ListComprehension;
 import de.uni_koblenz.jgralab.greql.schema.ListConstruction;
 import de.uni_koblenz.jgralab.greql.schema.ListRangeConstruction;
 import de.uni_koblenz.jgralab.greql.schema.Literal;
+import de.uni_koblenz.jgralab.greql.schema.LongLiteral;
 import de.uni_koblenz.jgralab.greql.schema.MapComprehension;
 import de.uni_koblenz.jgralab.greql.schema.MapConstruction;
 import de.uni_koblenz.jgralab.greql.schema.OptionalPathDescription;
@@ -765,14 +767,15 @@ public class GreqlSerializer {
 			sb.append(((BoolLiteral) exp).is_boolValue());
 		} else if (exp instanceof IntLiteral) {
 			sb.append(((IntLiteral) exp).get_intValue());
+		} else if (exp instanceof LongLiteral) {
+			sb.append(((LongLiteral) exp).get_longValue());
 		} else if (exp instanceof UndefinedLiteral) {
 			sb.append("undefined");
 		} else if (exp instanceof DoubleLiteral) {
 			sb.append(((DoubleLiteral) exp).get_doubleValue());
 		} else if (exp instanceof StringLiteral) {
-			sb.append("\"");
-			sb.append(((StringLiteral) exp).get_stringValue());
-			sb.append("\"");
+			sb.append(GraphIO.toUtfString(((StringLiteral) exp)
+					.get_stringValue()));
 		} else if (exp instanceof ThisEdge) {
 			sb.append("thisEdge");
 		} else if (exp instanceof ThisVertex) {
