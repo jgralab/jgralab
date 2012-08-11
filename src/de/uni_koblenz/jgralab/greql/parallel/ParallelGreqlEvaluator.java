@@ -103,7 +103,8 @@ public class ParallelGreqlEvaluator {
 	// FINE: Log task execution and termination
 	// FINER: Additionally, log task begin, final waiting task, and
 	// dependency graph
-	private static Logger log = JGraLab.getLogger(ParallelGreqlEvaluator.class);
+	private static Logger logger = JGraLab
+			.getLogger(ParallelGreqlEvaluator.class);
 
 	private DirectedAcyclicGraph<TaskHandle> dependencyGraph;
 
@@ -129,7 +130,7 @@ public class ParallelGreqlEvaluator {
 
 		@Override
 		public void run() {
-			log.finer("Run " + handle);
+			logger.finer("Run " + handle);
 			startTime = System.nanoTime();
 			super.run();
 		}
@@ -146,7 +147,7 @@ public class ParallelGreqlEvaluator {
 		protected void done() {
 			doneTime = System.nanoTime();
 			super.done();
-			log.fine("Done " + handle + " (" + getEvaluationTime() + " ns)");
+			logger.fine("Done " + handle + " (" + getEvaluationTime() + " ns)");
 			try {
 				// try to get the result in order to handle a possible exception
 				// exception is rapped into an ExecutionException
@@ -183,13 +184,22 @@ public class ParallelGreqlEvaluator {
 	 */
 	public class TaskHandle implements Comparable<TaskHandle> {
 		private ParallelGreqlEvaluatorCallable callable;
-		private GreqlQuery query;
 		private long priority;
 		private int seq;
 
 		@Override
 		public String toString() {
-			return "TaskHandle " + seq + " (prio " + priority + ")";
+			return "TaskHandle " + seq + " prio " + priority + "(use: "
+					+ getUsedVariables() + ", store:" + getStoredVariables()
+					+ ")";
+		}
+
+		public Set<String> getStoredVariables() {
+			return callable.getStoredVariables();
+		}
+
+		public Set<String> getUsedVariables() {
+			return callable.getUsedVariables();
 		}
 
 		@Override
@@ -203,45 +213,22 @@ public class ParallelGreqlEvaluator {
 			return seq - other.seq;
 		}
 
-		private TaskHandle() {
+		private TaskHandle(ParallelGreqlEvaluatorCallable callable,
+				long priority) {
+			this.callable = callable;
+			this.priority = priority;
 			synchronized (TaskHandle.class) {
 				seq = taskHandleSequence++;
 			}
 		}
 
-		private TaskHandle(ParallelGreqlEvaluatorCallable callable,
-				long priority) {
-			this();
-			this.callable = callable;
-			this.priority = priority;
-		}
-
-		private TaskHandle(GreqlQuery query, long priority) {
-			this();
-			this.query = query;
-			this.priority = priority;
-		}
-
 		private EvaluationTask createFutureTask(final EvaluationEnvironment env) {
-			if (callable != null) {
-				return new EvaluationTask(env, this, new Callable<Object>() {
-					@Override
-					public Object call() throws Exception {
-						return callable.call(env);
-					}
-				});
-			} else if (query != null) {
-				return new EvaluationTask(env, this, new Callable<Object>() {
-					@Override
-					public Object call() throws Exception {
-						return query.evaluate(env.datagraph,
-								env.greqlEnvironment);
-					}
-				});
-			} else {
-				throw new RuntimeException(
-						"FIXME! Either query or callable must not be null.");
-			}
+			return new EvaluationTask(env, this, new Callable<Object>() {
+				@Override
+				public Object call() throws Exception {
+					return callable.call(env);
+				}
+			});
 		}
 	}
 
@@ -357,26 +344,25 @@ public class ParallelGreqlEvaluator {
 	 */
 	public EvaluationEnvironment evaluate(Graph datagraph,
 			GreqlEnvironment greqlEnvironment, boolean adjustPriorityValues) {
-
 		final EvaluationEnvironment evaluationEnvironment = new EvaluationEnvironment();
 		evaluationEnvironment.startTime = System.nanoTime();
+
+		evaluationEnvironment.datagraph = datagraph;
+		evaluationEnvironment.greqlEnvironment = greqlEnvironment;
 
 		synchronized (dependencyGraph) {
 			if (!dependencyGraph.isFinished()) {
 				calculateVariableDependencies();
 				dependencyGraph.finish();
-				log.finer(dependencyGraph.toString());
+				logger.finer(dependencyGraph.toString());
 			}
 		}
-
-		evaluationEnvironment.datagraph = datagraph;
-		evaluationEnvironment.greqlEnvironment = greqlEnvironment;
 
 		// at least 2 threads, at most available processors + 1 (for the
 		// termination task)
 		int threads = Math.max(2,
 				Runtime.getRuntime().availableProcessors() + 1);
-		log.fine("Create executor with " + threads + " threads");
+		logger.fine("Create executor with " + threads + " threads");
 		evaluationEnvironment.executor = Executors.newFixedThreadPool(threads);
 
 		// determine initial tasks (tasks without predecessors)
@@ -396,7 +382,7 @@ public class ParallelGreqlEvaluator {
 				new Callable<Object>() {
 					@Override
 					public Object call() throws Exception {
-						log.finer("Run waiting for final tasks");
+						logger.finer("Run waiting for final tasks");
 						try {
 							for (TaskHandle handle : dependencyGraph.getNodes()) {
 								evaluationEnvironment.tasks.get(handle).get();
@@ -410,15 +396,15 @@ public class ParallelGreqlEvaluator {
 			@Override
 			protected void done() {
 				super.done();
-				log.finer("Done waiting for final tasks");
+				logger.finer("Done waiting for final tasks");
 			}
 		};
-		log.finer("Execute waiting for final tasks");
+		logger.finer("Execute waiting for final tasks");
 		evaluationEnvironment.executor.execute(waitForTerminationTask);
 
 		// execute initial tasks
 		for (TaskHandle handle : initialTasks) {
-			log.fine("Execute initial " + handle);
+			logger.fine("Execute initial " + handle);
 			evaluationEnvironment.executor.execute(evaluationEnvironment.tasks
 					.get(handle));
 		}
@@ -457,12 +443,12 @@ public class ParallelGreqlEvaluator {
 			// set priority values of all TaskHandles to the actual execution
 			// time of the task
 			synchronized (this) {
-				log.fine("Adjust priority values");
+				logger.fine("Adjust priority values");
 				for (TaskHandle handle : dependencyGraph.getNodes()) {
 					long p = handle.priority;
 					handle.priority = evaluationEnvironment
 							.getEvaluationTime(handle);
-					log.finer(handle.toString() + " - old prio " + p);
+					logger.finer(handle.toString() + " - old prio " + p);
 				}
 			}
 		}
@@ -527,37 +513,7 @@ public class ParallelGreqlEvaluator {
 	 *         <code>greqlQuery</code>
 	 */
 	public TaskHandle addGreqlQuery(String queryText, long priority) {
-		return addGreqlQuery(GreqlQuery.createQuery(queryText), priority);
-	}
-
-	/**
-	 * Adds the <code>greqlQuery</code> to this {@link ParallelGreqlEvaluator}
-	 * with priority 0.
-	 * 
-	 * @param greqlQuery
-	 *            a {@link GreqlQuery} to be evaluated by this
-	 *            {@link ParallelGreqlEvaluator}
-	 * @return a {@link TaskHandle} identifying the task associated with the
-	 *         <code>greqlQuery</code>
-	 */
-	public TaskHandle addGreqlQuery(GreqlQuery query) {
-		return addGreqlQuery(query, 0);
-	}
-
-	/**
-	 * Adds the <code>greqlQuery</code> to this {@link ParallelGreqlEvaluator}
-	 * with priority <code>priority</code>.
-	 * 
-	 * @param greqlQuery
-	 *            a {@link GreqlQuery} to be evaluated by this
-	 *            {@link ParallelGreqlEvaluator}
-	 * @param priority
-	 *            a priority value, higher values mean higher priority
-	 * @return a {@link TaskHandle} identifying the task associated with the
-	 *         <code>greqlQuery</code>
-	 */
-	public TaskHandle addGreqlQuery(GreqlQuery greqlQuery, long priority) {
-		return dependencyGraph.createNode(new TaskHandle(greqlQuery, priority));
+		return addCallable(GreqlQuery.createQuery(queryText), priority);
 	}
 
 	/**
@@ -584,10 +540,7 @@ public class ParallelGreqlEvaluator {
 
 		// determine TaskHandles that define (store) a variable
 		for (TaskHandle handle : dependencyGraph.getNodes()) {
-			if (handle.query == null) {
-				continue;
-			}
-			Set<String> sv = handle.query.getStoredVariables();
+			Set<String> sv = handle.getStoredVariables();
 			if (sv == null) {
 				continue;
 			}
@@ -603,10 +556,7 @@ public class ParallelGreqlEvaluator {
 
 		// create dependencies for the usages of variables
 		for (TaskHandle usingTask : dependencyGraph.getNodes()) {
-			if (usingTask.query == null) {
-				continue;
-			}
-			Set<String> uv = usingTask.query.getUsedVariables();
+			Set<String> uv = usingTask.getUsedVariables();
 			if (uv == null) {
 				continue;
 			}
@@ -648,7 +598,7 @@ public class ParallelGreqlEvaluator {
 		}
 		// submit successor tasks to the executor
 		for (TaskHandle succ : nextTasks) {
-			log.fine("Execute " + succ);
+			logger.fine("Execute " + succ);
 			environment.executor.execute(environment.tasks.get(succ));
 		}
 	}

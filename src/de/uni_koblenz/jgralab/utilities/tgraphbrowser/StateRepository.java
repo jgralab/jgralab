@@ -216,8 +216,7 @@ public class StateRepository {
 	 */
 	synchronized static Object evaluateGReQL(String query, Graph graph,
 			HashMap<String, Object> boundVars) {
-		GreqlEnvironment environment = new GreqlEnvironmentAdapter();
-		environment.setVariables(boundVars);
+		GreqlEnvironment environment = new GreqlEnvironmentAdapter(boundVars);
 		return GreqlQuery.createQuery(query).evaluate(graph, environment);
 	}
 

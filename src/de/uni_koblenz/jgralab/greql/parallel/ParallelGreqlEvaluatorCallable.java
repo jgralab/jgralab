@@ -34,6 +34,8 @@
  */
 package de.uni_koblenz.jgralab.greql.parallel;
 
+import java.util.Set;
+
 /**
  * A Callable to be executed by a {@link ParallelGreqlEvaluator} with access to
  * an {@link EvaluationEnvironment}.
@@ -50,4 +52,18 @@ public interface ParallelGreqlEvaluatorCallable {
 	 * @return the evaluation result
 	 */
 	public Object call(EvaluationEnvironment environment) throws Exception;
+
+	/**
+	 * @return the set of variable names used by this
+	 *         {@link ParallelGreqlEvaluatorCallable} (may be null to indicate
+	 *         that nothing is used)
+	 */
+	public Set<String> getUsedVariables();
+
+	/**
+	 * @return the set of variable names stored (i.e. defined) by this
+	 *         {@link ParallelGreqlEvaluatorCallable} (may be null to indicate
+	 *         that nothing is stored)
+	 */
+	public Set<String> getStoredVariables();
 }

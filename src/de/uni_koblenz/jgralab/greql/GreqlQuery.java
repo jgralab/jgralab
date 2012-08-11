@@ -59,11 +59,13 @@ import de.uni_koblenz.jgralab.greql.evaluator.GreqlEnvironmentAdapter;
 import de.uni_koblenz.jgralab.greql.evaluator.GreqlQueryImpl;
 import de.uni_koblenz.jgralab.greql.optimizer.Optimizer;
 import de.uni_koblenz.jgralab.greql.optimizer.OptimizerUtility;
+import de.uni_koblenz.jgralab.greql.parallel.EvaluationEnvironment;
+import de.uni_koblenz.jgralab.greql.parallel.ParallelGreqlEvaluatorCallable;
 import de.uni_koblenz.jgralab.greql.schema.GreqlExpression;
 import de.uni_koblenz.jgralab.greql.schema.GreqlGraph;
 import de.uni_koblenz.jgralab.impl.ConsoleProgressFunction;
 
-public abstract class GreqlQuery {
+public abstract class GreqlQuery implements ParallelGreqlEvaluatorCallable {
 
 	private String name;
 
@@ -153,8 +155,10 @@ public abstract class GreqlQuery {
 
 	public abstract GreqlGraph getQueryGraph();
 
+	@Override
 	public abstract Set<String> getUsedVariables();
 
+	@Override
 	public abstract Set<String> getStoredVariables();
 
 	public abstract String getQueryText();
@@ -236,5 +240,11 @@ public abstract class GreqlQuery {
 		} else {
 			System.out.println(result);
 		}
+	}
+
+	@Override
+	public Object call(EvaluationEnvironment environment) throws Exception {
+		return evaluate(environment.getDatagraph(),
+				environment.getGreqlEnvironment());
 	}
 }

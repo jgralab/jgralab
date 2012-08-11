@@ -34,7 +34,6 @@
  */
 package de.uni_koblenz.jgralab.utilities.tg2dot.greql;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -127,17 +126,6 @@ public class GreqlEvaluatorFacade {
 
 	private final GreqlEnvironment greqlEnvironment;
 
-	/**
-	 * Current known variable set used by the
-	 * {@link GreqlEvaluatorFacade#evaluator}.
-	 */
-	private int knownVariableHashCode;
-
-	/**
-	 * Currently used using-preamble.
-	 */
-	private String usingString = "";
-
 	private static GreqlQueryCache greqlQueryCache = new GreqlQueryCache();
 
 	/**
@@ -149,9 +137,7 @@ public class GreqlEvaluatorFacade {
 	 */
 	public GreqlEvaluatorFacade(Graph graph) {
 		dataGraph = graph;
-		knownVariableHashCode = 0;
 		greqlEnvironment = new GreqlEnvironmentAdapter();
-		greqlEnvironment.setVariables(new HashMap<String, Object>());
 	}
 
 	/**
@@ -276,29 +262,9 @@ public class GreqlEvaluatorFacade {
 	 * @return Using String.
 	 */
 	public String getUsingString() {
-		// Warning! This could be a source of errors.
-		int currentVariablesHashCode = greqlEnvironment.getVariables()
-				.hashCode();
-
-		boolean areEqual = currentVariablesHashCode == knownVariableHashCode;
-
-		if (!areEqual) {
-			generateUsingString();
-			knownVariableHashCode = currentVariablesHashCode;
-		}
-
-		return usingString;
-	}
-
-	/**
-	 * Generates a using-preamble from the variable names of the
-	 * {@link #evaluator}.
-	 */
-	private void generateUsingString() {
-
 		StringBuilder sb = new StringBuilder();
 		String delimiter = "using ";
-		for (String knownVariable : greqlEnvironment.getVariables().keySet()) {
+		for (String knownVariable : greqlEnvironment.getVariableNames()) {
 			sb.append(delimiter);
 			delimiter = ", ";
 			sb.append(knownVariable);
@@ -306,7 +272,7 @@ public class GreqlEvaluatorFacade {
 		if (sb.length() != 0) {
 			sb.append(':');
 		}
-		usingString = sb.toString();
+		return sb.toString();
 	}
 
 	/**

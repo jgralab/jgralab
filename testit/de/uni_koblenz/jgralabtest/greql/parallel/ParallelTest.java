@@ -2,6 +2,8 @@ package de.uni_koblenz.jgralabtest.greql.parallel;
 
 import static org.junit.Assert.assertEquals;
 
+import java.util.Set;
+
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -43,16 +45,16 @@ public class ParallelTest {
 	@Before
 	public void test() {
 		pge = new ParallelGreqlEvaluator();
-		pge.addGreqlQuery(q1);
-		pge.addGreqlQuery(q2);
-		h3 = pge.addGreqlQuery(q3);
-		pge.addGreqlQuery(q4);
-		pge.addGreqlQuery(q5);
-		pge.addGreqlQuery(q6);
-		h7 = pge.addGreqlQuery(q7);
-		pge.addGreqlQuery(q8);
-		pge.addGreqlQuery(q9);
-		pge.addGreqlQuery(q10);
+		pge.addCallable(q1);
+		pge.addCallable(q2);
+		h3 = pge.addCallable(q3);
+		pge.addCallable(q4);
+		pge.addCallable(q5);
+		pge.addCallable(q6);
+		h7 = pge.addCallable(q7);
+		pge.addCallable(q8);
+		pge.addCallable(q9);
+		pge.addCallable(q10);
 	}
 
 	@Test
@@ -85,7 +87,7 @@ public class ParallelTest {
 						testGraph.getSchema(), classname);
 		GreqlQuery query = (GreqlQuery) generatedClass.newInstance();
 
-		TaskHandle gen = pge.addGreqlQuery(query);
+		TaskHandle gen = pge.addCallable(query);
 		pge.defineDependency(gen, h7);
 
 		GreqlEnvironment environment = pge.evaluate().getGreqlEnvironment();
@@ -100,6 +102,16 @@ public class ParallelTest {
 			public Object call(EvaluationEnvironment environment)
 					throws Exception {
 				throw new GreqlException("Bah!");
+			}
+
+			@Override
+			public Set<String> getUsedVariables() {
+				return null;
+			}
+
+			@Override
+			public Set<String> getStoredVariables() {
+				return null;
 			}
 		};
 		TaskHandle ex = pge.addCallable(c);

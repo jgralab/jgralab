@@ -2,6 +2,7 @@ package de.uni_koblenz.jgralab.greql.evaluator;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import de.uni_koblenz.jgralab.greql.GreqlEnvironment;
 
@@ -21,22 +22,14 @@ public class GreqlEnvironmentAdapter implements GreqlEnvironment {
 		variableMap = greqlMapping;
 	}
 
-	/**
-	 * returns the changes variableMap
-	 */
 	@Override
-	public synchronized Map<String, Object> getVariables() {
-		return variableMap;
+	public synchronized Set<String> getVariableNames() {
+		return variableMap.keySet();
 	}
 
 	@Override
 	public synchronized Object getVariable(String name) {
 		return variableMap == null ? null : variableMap.get(name);
-	}
-
-	@Override
-	public synchronized void setVariables(Map<String, Object> varMap) {
-		variableMap = varMap;
 	}
 
 	@Override
@@ -51,5 +44,4 @@ public class GreqlEnvironmentAdapter implements GreqlEnvironment {
 	public synchronized Object removeVariable(String varName) {
 		return variableMap == null ? null : variableMap.remove(varName);
 	}
-
 }
