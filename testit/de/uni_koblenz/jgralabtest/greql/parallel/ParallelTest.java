@@ -13,6 +13,7 @@ import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.greql.GreqlEnvironment;
 import de.uni_koblenz.jgralab.greql.GreqlQuery;
+import de.uni_koblenz.jgralab.greql.evaluator.GreqlEnvironmentAdapter;
 import de.uni_koblenz.jgralab.greql.exception.GreqlException;
 import de.uni_koblenz.jgralab.greql.executable.ExecutableQuery;
 import de.uni_koblenz.jgralab.greql.executable.GreqlCodeGenerator;
@@ -45,21 +46,40 @@ public class ParallelTest {
 	@Before
 	public void test() {
 		pge = new ParallelGreqlEvaluator();
-		pge.addCallable(q1);
-		pge.addCallable(q2);
-		h3 = pge.addCallable(q3);
-		pge.addCallable(q4);
-		pge.addCallable(q5);
-		pge.addCallable(q6);
-		h7 = pge.addCallable(q7);
-		pge.addCallable(q8);
-		pge.addCallable(q9);
-		pge.addCallable(q10);
+		pge.addTask(q1);
+		pge.addTask(q2);
+		h3 = pge.addTask(q3);
+		pge.addTask(q4);
+		pge.addTask(q5);
+		pge.addTask(q6);
+		h7 = pge.addTask(q7);
+		pge.addTask(q8);
+		pge.addTask(q9);
+		pge.addTask(q10);
 	}
 
 	@Test
 	public void executionTest() {
 		GreqlEnvironment environment = pge.evaluate().getGreqlEnvironment();
+		assertEquals(96, environment.getVariable("vk"));
+		assertEquals(96 + 48, environment.getVariable("erg1"));
+		assertEquals(96 + 78, environment.getVariable("qf"));
+		assertEquals(96 + 63, environment.getVariable("xo"));
+		assertEquals(96 + 63 + 20, environment.getVariable("hv"));
+		assertEquals(96 + 63 + 76, environment.getVariable("ae"));
+		assertEquals(96 + 63 + 24, environment.getVariable("ya"));
+		assertEquals((96 + 63) + (96 + 63 + 20) + 38,
+				environment.getVariable("erg2"));
+		assertEquals((96 + 63 + 76) + (96 + 63) + 44,
+				environment.getVariable("vu"));
+		assertEquals(((96 + 63 + 76) + (96 + 63) + 44) + (96 + 63 + 76)
+				+ (96 + 63 + 24) + 4, environment.getVariable("erg3"));
+	}
+
+	@Test
+	public void sequentialExecutionTest() {
+		GreqlEnvironment environment = pge.evaluateSequentially(null,
+				new GreqlEnvironmentAdapter(), false).getGreqlEnvironment();
 		assertEquals(96, environment.getVariable("vk"));
 		assertEquals(96 + 48, environment.getVariable("erg1"));
 		assertEquals(96 + 78, environment.getVariable("qf"));
@@ -87,7 +107,7 @@ public class ParallelTest {
 						testGraph.getSchema(), classname);
 		GreqlQuery query = (GreqlQuery) generatedClass.newInstance();
 
-		TaskHandle gen = pge.addCallable(query);
+		TaskHandle gen = pge.addTask(query);
 		pge.defineDependency(gen, h7);
 
 		GreqlEnvironment environment = pge.evaluate().getGreqlEnvironment();
@@ -114,7 +134,7 @@ public class ParallelTest {
 				return null;
 			}
 		};
-		TaskHandle ex = pge.addCallable(c);
+		TaskHandle ex = pge.addTask(c);
 		pge.defineDependency(ex, h3);
 		pge.evaluate();
 	}

@@ -37,6 +37,7 @@ package de.uni_koblenz.jgralab.greql.parallel;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
@@ -51,12 +52,14 @@ import de.uni_koblenz.jgralab.greql.GreqlEnvironment;
 import de.uni_koblenz.jgralab.greql.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql.GreqlQuery;
 import de.uni_koblenz.jgralab.greql.evaluator.GreqlEnvironmentAdapter;
+import de.uni_koblenz.jgralab.schema.exception.CycleException;
+import de.uni_koblenz.jgralab.schema.exception.SchemaException;
 import de.uni_koblenz.jgralab.schema.impl.DirectedAcyclicGraph;
 
 /**
- * {@link ParallelGreqlEvaluator} executes {@link GreqlQuery}s parallely.
- * Additionally, other {@link ParallelGreqlEvaluatorCallable}s can be added to a
- * ParallelGreqlExecutor.
+ * {@link ParallelGreqlEvaluator} executes
+ * {@link ParallelGreqlEvaluatorCallable}s parallely. Particularly,
+ * {@link GreqlQuery} also implements {@link ParallelGreqlEvaluatorCallable}.
  * 
  * Adding a query or a callable returns a {@link TaskHandle}. This
  * {@link TaskHandle} can later be used to access the results.
@@ -148,24 +151,27 @@ public class ParallelGreqlEvaluator {
 			doneTime = System.nanoTime();
 			super.done();
 			logger.fine("Done " + handle + " (" + getEvaluationTime() + " ns)");
-			try {
-				// try to get the result in order to handle a possible exception
-				// exception is rapped into an ExecutionException
-				get();
+			if (environment.executor != null) {
+				try {
+					// try to get the result in order to handle a possible
+					// exception
+					// exception is rapped into an ExecutionException
+					get();
 
-				// no exception - schedule next task
-				scheduleNext(environment, handle);
-			} catch (InterruptedException e) {
-				// interrupted by shutdown
-				environment.executor.shutdownNow();
-			} catch (ExecutionException e) {
-				// remember exception and shuwdown executor
-				synchronized (environment) {
-					if (environment.exception == null) {
-						environment.exception = e;
+					// no exception - schedule next task
+					scheduleNext(environment, handle);
+				} catch (InterruptedException e) {
+					// interrupted by shutdown
+					environment.executor.shutdownNow();
+				} catch (ExecutionException e) {
+					// remember exception and shuwdown executor
+					synchronized (environment) {
+						if (environment.exception == null) {
+							environment.exception = e;
+						}
 					}
+					environment.executor.shutdownNow();
 				}
-				environment.executor.shutdownNow();
 			}
 		}
 	}
@@ -189,7 +195,7 @@ public class ParallelGreqlEvaluator {
 
 		@Override
 		public String toString() {
-			return "TaskHandle " + seq + " prio " + priority + "(use: "
+			return "TaskHandle " + seq + " prio " + priority + " (use: "
 					+ getUsedVariables() + ", store:" + getStoredVariables()
 					+ ")";
 		}
@@ -240,10 +246,9 @@ public class ParallelGreqlEvaluator {
 	}
 
 	/**
-	 * Evaluates all {@link GreqlQuery} and
-	 * {@link ParallelGreqlEvaluatorCallable} tasks in topological order,
-	 * according to their priority, without a data graph and with an initially
-	 * empty {@link GreqlEnvironment}.
+	 * Evaluates all tasks parallely in topological order, according to their
+	 * priority, without a data graph and with an initially empty
+	 * {@link GreqlEnvironment}.
 	 * 
 	 * @return an {@link EvaluationEnvironment} containing the results
 	 */
@@ -252,10 +257,9 @@ public class ParallelGreqlEvaluator {
 	}
 
 	/**
-	 * Evaluates all {@link GreqlQuery} and
-	 * {@link ParallelGreqlEvaluatorCallable} tasks in topological order,
-	 * according to their priority, without a data graph and with an initially
-	 * empty {@link GreqlEnvironment}.
+	 * Evaluates all tasks parallely in topological order, according to their
+	 * priority, without a data graph and with an initially empty
+	 * {@link GreqlEnvironment}.
 	 * 
 	 * @param adjustPriorityValues
 	 *            when set to <code>true</code>, the priority values of all
@@ -270,10 +274,9 @@ public class ParallelGreqlEvaluator {
 	}
 
 	/**
-	 * Evaluates all {@link GreqlQuery} and
-	 * {@link ParallelGreqlEvaluatorCallable} tasks in topological order,
-	 * according to their priority, on the specified <code>datagraph</code> and
-	 * with an initially empty {@link GreqlEnvironment}.
+	 * Evaluates all tasks parallely in topological order, according to their
+	 * priority, on the specified <code>datagraph</code> and with an initially
+	 * empty {@link GreqlEnvironment}.
 	 * 
 	 * @param datagraph
 	 *            a graph
@@ -284,10 +287,9 @@ public class ParallelGreqlEvaluator {
 	}
 
 	/**
-	 * Evaluates all {@link GreqlQuery} and
-	 * {@link ParallelGreqlEvaluatorCallable} tasks in topological order,
-	 * according to their priority, on the specified <code>datagraph</code> and
-	 * with an initially empty {@link GreqlEnvironment}.
+	 * Evaluates all tasks parallely in topological order, according to their
+	 * priority, on the specified <code>datagraph</code> and with an initially
+	 * empty {@link GreqlEnvironment}.
 	 * 
 	 * @param datagraph
 	 *            a graph
@@ -305,10 +307,9 @@ public class ParallelGreqlEvaluator {
 	}
 
 	/**
-	 * Evaluates all {@link GreqlQuery} and
-	 * {@link ParallelGreqlEvaluatorCallable} tasks in topological order,
-	 * according to their priority, on the specified <code>datagraph</code>
-	 * using and probably modifiying the provided <code>greqlEnvironment</code>.
+	 * Evaluates all tasks parallely in topological order, according to their
+	 * priority, on the specified <code>datagraph</code> using and probably
+	 * modifiying the provided <code>greqlEnvironment</code>.
 	 * 
 	 * @param datagraph
 	 *            a {@link Graph}
@@ -324,10 +325,9 @@ public class ParallelGreqlEvaluator {
 	}
 
 	/**
-	 * Evaluates all {@link GreqlQuery} and
-	 * {@link ParallelGreqlEvaluatorCallable} tasks in topological order,
-	 * according to their priority, on the specified <code>datagraph</code>
-	 * using and probably modifiying the provided <code>greqlEnvironment</code>.
+	 * Evaluates all tasks parallely in topological order, according to their
+	 * priority, on the specified <code>datagraph</code> using and probably
+	 * modifiying the provided <code>greqlEnvironment</code>.
 	 * 
 	 * @param datagraph
 	 *            a {@link Graph}
@@ -346,17 +346,10 @@ public class ParallelGreqlEvaluator {
 			GreqlEnvironment greqlEnvironment, boolean adjustPriorityValues) {
 		final EvaluationEnvironment evaluationEnvironment = new EvaluationEnvironment();
 		evaluationEnvironment.startTime = System.nanoTime();
-
 		evaluationEnvironment.datagraph = datagraph;
 		evaluationEnvironment.greqlEnvironment = greqlEnvironment;
 
-		synchronized (dependencyGraph) {
-			if (!dependencyGraph.isFinished()) {
-				calculateVariableDependencies();
-				dependencyGraph.finish();
-				logger.finer(dependencyGraph.toString());
-			}
-		}
+		Set<TaskHandle> initialTasks = createEvaluationTasks(evaluationEnvironment);
 
 		// at least 2 threads, at most available processors + 1 (for the
 		// termination task)
@@ -364,18 +357,6 @@ public class ParallelGreqlEvaluator {
 				Runtime.getRuntime().availableProcessors() + 1);
 		logger.fine("Create executor with " + threads + " threads");
 		evaluationEnvironment.executor = Executors.newFixedThreadPool(threads);
-
-		// determine initial tasks (tasks without predecessors)
-		Set<TaskHandle> initialTasks = new TreeSet<TaskHandle>();
-		for (TaskHandle handle : dependencyGraph.getNodes()) {
-			EvaluationTask t = handle.createFutureTask(evaluationEnvironment);
-			evaluationEnvironment.tasks.put(handle, t);
-			int i = dependencyGraph.getDirectPredecessors(handle).size();
-			evaluationEnvironment.inDegree.put(handle, i);
-			if (i == 0) {
-				initialTasks.add(handle);
-			}
-		}
 
 		// create a task that waits until all other tasks are terminated
 		FutureTask<Object> waitForTerminationTask = new FutureTask<Object>(
@@ -440,20 +421,103 @@ public class ParallelGreqlEvaluator {
 		}
 
 		if (adjustPriorityValues) {
-			// set priority values of all TaskHandles to the actual execution
-			// time of the task
-			synchronized (this) {
-				logger.fine("Adjust priority values");
-				for (TaskHandle handle : dependencyGraph.getNodes()) {
-					long p = handle.priority;
-					handle.priority = evaluationEnvironment
-							.getEvaluationTime(handle);
-					logger.finer(handle.toString() + " - old prio " + p);
-				}
-			}
+			adjustPriorities(evaluationEnvironment);
 		}
 		evaluationEnvironment.doneTime = System.nanoTime();
 		return evaluationEnvironment;
+	}
+
+	/**
+	 * Sets priorities of all tasks to their evaluation time stored in the
+	 * <code>evaluationEnvironment</code>.
+	 * 
+	 * @param evaluationEnvironment
+	 *            an {@link EvaluationEnvironment}
+	 */
+	private void adjustPriorities(
+			final EvaluationEnvironment evaluationEnvironment) {
+		// set priority values of all TaskHandles to the actual execution
+		// time of the task
+		synchronized (this) {
+			logger.fine("Adjust priority values");
+			for (TaskHandle handle : dependencyGraph.getNodes()) {
+				long p = handle.priority;
+				handle.priority = evaluationEnvironment
+						.getEvaluationTime(handle);
+				logger.finer(handle.toString() + " - old prio " + p);
+			}
+		}
+	}
+
+	/**
+	 * @return the SortedSet of tasks that can start immediately in order of
+	 *         descending priority
+	 */
+	private SortedSet<TaskHandle> createEvaluationTasks(
+			final EvaluationEnvironment evaluationEnvironment) {
+		// - create EvaluationTasks for all TaskHandles
+		// - initalize inDegree map with number of predecessors
+		// - determine initial tasks (tasks without predecessors)
+		calculateVariableDependencies();
+		SortedSet<TaskHandle> initialTasks = new TreeSet<TaskHandle>();
+		for (TaskHandle handle : dependencyGraph.getNodes()) {
+			EvaluationTask t = handle.createFutureTask(evaluationEnvironment);
+			evaluationEnvironment.tasks.put(handle, t);
+			int i = dependencyGraph.getDirectPredecessors(handle).size();
+			evaluationEnvironment.inDegree.put(handle, i);
+			if (i == 0) {
+				initialTasks.add(handle);
+			}
+		}
+		return initialTasks;
+	}
+
+	/**
+	 * Evaluates all tasks sequentially in topological order, according to their
+	 * priority, on the specified <code>datagraph</code> using and probably
+	 * modifiying the provided <code>greqlEnvironment</code>.
+	 * 
+	 * @param datagraph
+	 *            a {@link Graph}
+	 * @param greqlEnvironment
+	 *            a {@link GreqlEnvironment}, can be used to define external
+	 *            variables. STORE queries will put their results into this
+	 *            {@link GreqlEnvironment}.
+	 * @param adjustPriorityValues
+	 *            when set to <code>true</code>, the priority values of all
+	 *            {@link TaskHandle}s are set to the evaluation time of the
+	 *            associated tasks. This usually results in optimal schedules in
+	 *            subsequent evaluations.
+	 * @return an {@link EvaluationEnvironment} containing the results
+	 */
+	public EvaluationEnvironment evaluateSequentially(Graph datagraph,
+			GreqlEnvironment greqlEnvironment, boolean adjustPriorityValues) {
+		EvaluationEnvironment env = new EvaluationEnvironment();
+		env.startTime = System.nanoTime();
+		env.datagraph = datagraph;
+		env.greqlEnvironment = greqlEnvironment;
+		// create tasks and determine initial tasks
+		SortedSet<TaskHandle> tasks = createEvaluationTasks(env);
+		while (!tasks.isEmpty()) {
+			TaskHandle t = tasks.first();
+			tasks.remove(t);
+			// run the task
+			env.tasks.get(t).run();
+			// determine tasks that can be started after t has completed, i.e.
+			// tasks that have no more unfinished predecessors
+			for (TaskHandle succ : dependencyGraph.getDirectSuccessors(t)) {
+				int i = env.inDegree.get(succ) - 1;
+				env.inDegree.put(succ, i);
+				if (i == 0) {
+					tasks.add(succ);
+				}
+			}
+		}
+		if (adjustPriorityValues) {
+			adjustPriorities(env);
+		}
+		env.doneTime = System.nanoTime();
+		return env;
 	}
 
 	/**
@@ -466,8 +530,8 @@ public class ParallelGreqlEvaluator {
 	 * @return a {@link TaskHandle} identifying the task associated with the
 	 *         <code>callable</code>
 	 */
-	public TaskHandle addCallable(ParallelGreqlEvaluatorCallable callable) {
-		return addCallable(callable, 0);
+	public TaskHandle addTask(ParallelGreqlEvaluatorCallable callable) {
+		return addTask(callable, 0);
 	}
 
 	/**
@@ -482,7 +546,7 @@ public class ParallelGreqlEvaluator {
 	 * @return a {@link TaskHandle} identifying the task associated with the
 	 *         <code>callable</code>
 	 */
-	public TaskHandle addCallable(ParallelGreqlEvaluatorCallable callable,
+	public TaskHandle addTask(ParallelGreqlEvaluatorCallable callable,
 			long priority) {
 		return dependencyGraph.createNode(new TaskHandle(callable, priority));
 	}
@@ -513,7 +577,7 @@ public class ParallelGreqlEvaluator {
 	 *         <code>greqlQuery</code>
 	 */
 	public TaskHandle addGreqlQuery(String queryText, long priority) {
-		return addCallable(GreqlQuery.createQuery(queryText), priority);
+		return addTask(GreqlQuery.createQuery(queryText), priority);
 	}
 
 	/**
@@ -526,7 +590,16 @@ public class ParallelGreqlEvaluator {
 	 *            the TaskHandle of the predecessor task
 	 */
 	public void defineDependency(TaskHandle successor, TaskHandle predecessor) {
-		dependencyGraph.createEdge(predecessor, successor);
+		try {
+			dependencyGraph.createEdge(predecessor, successor);
+		} catch (CycleException e) {
+			throw new RuntimeException(
+					"Task dependencies are cyclic. Offending dependency: "
+							+ successor + " ---dependsOn--> " + predecessor);
+		} catch (SchemaException e) {
+			throw new RuntimeException("Task " + predecessor
+					+ " depends on itself");
+		}
 	}
 
 	/**
@@ -535,39 +608,46 @@ public class ParallelGreqlEvaluator {
 	 * defining this variable (<code>... store as v</code>).
 	 */
 	private void calculateVariableDependencies() {
-		// add dependencies based on used/stored variables of GReQL queries
-		HashMap<String, HashSet<TaskHandle>> definingTasks = new HashMap<String, HashSet<TaskHandle>>();
-
-		// determine TaskHandles that define (store) a variable
-		for (TaskHandle handle : dependencyGraph.getNodes()) {
-			Set<String> sv = handle.getStoredVariables();
-			if (sv == null) {
-				continue;
+		synchronized (dependencyGraph) {
+			if (dependencyGraph.isFinished()) {
+				return;
 			}
-			for (String var : sv) {
-				HashSet<TaskHandle> vs = definingTasks.get(var);
-				if (vs == null) {
-					vs = new HashSet<TaskHandle>();
-					definingTasks.put(var, vs);
+			// add dependencies based on used/stored variables of GReQL queries
+			HashMap<String, HashSet<TaskHandle>> definingTasks = new HashMap<String, HashSet<TaskHandle>>();
+
+			// determine TaskHandles that define (store) a variable
+			for (TaskHandle handle : dependencyGraph.getNodes()) {
+				Set<String> sv = handle.getStoredVariables();
+				if (sv == null) {
+					continue;
 				}
-				vs.add(handle);
+				for (String var : sv) {
+					HashSet<TaskHandle> vs = definingTasks.get(var);
+					if (vs == null) {
+						vs = new HashSet<TaskHandle>();
+						definingTasks.put(var, vs);
+					}
+					vs.add(handle);
+				}
 			}
-		}
 
-		// create dependencies for the usages of variables
-		for (TaskHandle usingTask : dependencyGraph.getNodes()) {
-			Set<String> uv = usingTask.getUsedVariables();
-			if (uv == null) {
-				continue;
-			}
-			for (String var : uv) {
-				HashSet<TaskHandle> defines = definingTasks.get(var);
-				if (defines != null) {
-					for (TaskHandle def : defines) {
-						defineDependency(usingTask, def);
+			// create dependencies for the usages of variables
+			for (TaskHandle usingTask : dependencyGraph.getNodes()) {
+				Set<String> uv = usingTask.getUsedVariables();
+				if (uv == null) {
+					continue;
+				}
+				for (String var : uv) {
+					HashSet<TaskHandle> defines = definingTasks.get(var);
+					if (defines != null) {
+						for (TaskHandle def : defines) {
+							defineDependency(usingTask, def);
+						}
 					}
 				}
 			}
+			dependencyGraph.finish();
+			logger.finer(dependencyGraph.toString());
 		}
 	}
 
