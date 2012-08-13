@@ -47,12 +47,17 @@ public class IndexOf extends Function {
 	}
 
 	@Description(params = { "v", "el" }, description = "Returns the index of the first occurence of el in v, or -1 if el is not in v.", categories = Category.COLLECTIONS_AND_MAPS)
-	public <T> Integer valuate(PVector<T> v, T el) {
+	public <T> Integer evaluate(PVector<T> v, T el) {
 		return v.indexOf(el);
 	}
 
 	@Description(params = { "s", "el" }, description = "Returns the index of the first occurence of el in s, or -1 if el is not in s.", categories = Category.COLLECTIONS_AND_MAPS)
-	public <T> Integer valuate(POrderedSet<T> s, T el) {
+	public <T> Integer evaluate(POrderedSet<T> s, T el) {
 		return s.indexOf(el);
+	}
+
+	@Description(params = { "s", "sub" }, description = "Returns the index of the first occurence of sub in s, or -1 if sub is not in s.", categories = Category.STRINGS)
+	public Integer evaluate(String s, String sub) {
+		return s.indexOf(sub);
 	}
 }
