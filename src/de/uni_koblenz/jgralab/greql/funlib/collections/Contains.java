@@ -48,24 +48,24 @@ public class Contains extends Function {
 		super(2, 1, 0.2);
 	}
 
-	@Description(params = {"s","el"}, description =
-		"Returns true, iff the given collection contains the element given as second parameter.",
-			categories = Category.COLLECTIONS_AND_MAPS)
+	@Description(params = { "string", "containedString" }, description = "Returns whether containedString is part of string", categories = Category.STRINGS)
+	public Boolean evaluate(String string, String containedString) {
+		return string.contains(containedString);
+	}
+
+	@Description(params = { "s", "el" }, description = "Returns true, iff the given collection contains the element given as second parameter.", categories = Category.COLLECTIONS_AND_MAPS)
 	public <T> Boolean evaluate(PCollection<T> s, T el) {
 		return s.contains(el);
 	}
 
-	@Description(params = {"p","el"}, description = 
-		"Returns true, iff the given path contains the element given as second parameter.",
-			categories = Category.PATHS_AND_PATHSYSTEMS_AND_SLICES)
+	@Description(params = { "p", "el" }, description = "Returns true, iff the given path contains the element given as second parameter.", categories = Category.PATHS_AND_PATHSYSTEMS_AND_SLICES)
 	public <T> Boolean evaluate(Path p, GraphElement<?, ?> el) {
 		return p.contains(el);
 	}
 
-	@Description(params = {"p","el"}, description = 
-		"Returns true, iff the given path system contains the element given as second parameter.",
-			categories = Category.PATHS_AND_PATHSYSTEMS_AND_SLICES)
+	@Description(params = { "p", "el" }, description = "Returns true, iff the given path system contains the element given as second parameter.", categories = Category.PATHS_AND_PATHSYSTEMS_AND_SLICES)
 	public <T> Boolean evaluate(PathSystem p, GraphElement<?, ?> el) {
 		return p.contains(el);
 	}
+
 }

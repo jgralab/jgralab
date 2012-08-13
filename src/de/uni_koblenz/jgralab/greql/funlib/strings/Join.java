@@ -40,12 +40,10 @@ import de.uni_koblenz.jgralab.greql.funlib.Description;
 import de.uni_koblenz.jgralab.greql.funlib.Function;
 
 public class Join extends Function {
-	
-	@Description(params = {"l", "delimiter"}, description = 
-		"Joins the strings in the given collection by interleaving with the given delimiter.",
-		categories = Category.STRINGS)
+
+	@Description(params = { "l", "delimiter" }, description = "Joins the strings in the given collection by interleaving with the given delimiter.", categories = Category.STRINGS)
 	public Join() {
-		super(10, 1, 0.1);
+		super(5, 1, 1.0);
 	}
 
 	public String evaluate(PCollection<String> l, String delimiter) {

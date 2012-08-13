@@ -39,7 +39,7 @@ import de.uni_koblenz.jgralab.greql.funlib.Function;
 
 public class StartsWith extends Function {
 	public StartsWith() {
-		super(3, 1, 0.05);
+		super(2, 1, 0.05);
 	}
 
 	@Description(params = { "prefix", "s" }, description = "Returns true, iff the String s starts with the given prefix.", categories = Category.STRINGS)

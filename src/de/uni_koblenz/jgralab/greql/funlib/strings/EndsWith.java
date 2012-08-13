@@ -41,7 +41,7 @@ public class EndsWith extends Function {
 
 	@Description(params = { "suffix", "s" }, description = "Returns true, iff the String s ends with the given suffix.", categories = Category.STRINGS)
 	public EndsWith() {
-		super(3, 1, 0.05);
+		super(2, 1, 0.05);
 	}
 
 	public Boolean evaluate(String suffix, String s) {

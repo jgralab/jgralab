@@ -43,7 +43,7 @@ public class LowerCase extends Function {
 		super();
 	}
 
-	@Description(params = "s", description = "Returns s in uppercase letters.", categories = Category.STRINGS)
+	@Description(params = "s", description = "Returns s in lowercase letters.", categories = Category.STRINGS)
 	public String evaluate(String s) {
 		return s.toLowerCase();
 	}
