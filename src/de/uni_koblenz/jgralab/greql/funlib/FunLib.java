@@ -565,7 +565,21 @@ public class FunLib {
 		private class SignatureInfo {
 			String description;
 			String[] params;
-			Signature signatue;
+			Signature signature;
+
+			@Override
+			public String toString() {
+				StringBuilder sb = new StringBuilder();
+				sb.append("### SignatureInfo ###\n");
+				sb.append(signature.toString());
+				sb.append('\n');
+				if (params != null) {
+					sb.append(Arrays.toString(params));
+				}
+				sb.append('\n');
+				sb.append(description);
+				return sb.toString();
+			}
 		}
 
 		private void fillCat2Funs(final Map<String, FunctionInfo> funs) {
@@ -611,8 +625,8 @@ public class FunLib {
 				Description consAnno,
 				HashMap<Category, ArrayList<SignatureInfo>> cat2sig, int i) {
 			SignatureInfo si = new SignatureInfo();
-			si.signatue = e.getValue().signatures[i];
-			Method m = si.signatue.evaluateMethod;
+			si.signature = e.getValue().signatures[i];
+			Method m = si.signature.evaluateMethod;
 
 			Description des = m.getAnnotation(Description.class);
 			if ((des == null) || (des.params() == null)) {
@@ -701,7 +715,7 @@ public class FunLib {
 				write(info.constructorDescription);
 			}
 			newLine();
-
+			System.out.println("Generating docs for function: " + info.name);
 			generateSignatures(info);
 
 			newLine();
@@ -710,21 +724,20 @@ public class FunLib {
 
 		private void generateSignatures(AnnotationInfo info) throws IOException {
 			write("\\begin{description}");
-
 			for (SignatureInfo sig : info.signatureInfos) {
 				write("\\item [$" + info.name + ":$ ] $");
-				for (int i = 0; i < sig.signatue.parameterTypes.length; i++) {
+				for (int i = 0; i < sig.signature.parameterTypes.length; i++) {
 					if (i != 0) {
 						write(" \\times ");
 					}
 
 					write(Types
-							.getGreqlTypeName(sig.signatue.parameterTypes[i]));
+							.getGreqlTypeName(sig.signature.parameterTypes[i]));
 					write("\\; ");
 					write(sig.params[i]);
 				}
 				write(" \\longrightarrow ");
-				write(Types.getGreqlTypeName(sig.signatue.evaluateMethod
+				write(Types.getGreqlTypeName(sig.signature.evaluateMethod
 						.getReturnType()));
 				write("$");
 				if (sig.description != null) {

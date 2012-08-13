@@ -56,7 +56,7 @@ public class IsReachable extends Function {
 
 	public static boolean PRINT_STOP_VERTICES = false;
 
-	@Description(params = { "u", "v", "dfa" }, description = "Returns true, iff there is a path from vertex given as first argument to vertex "
+	@Description(params = { "internal", "u", "v", "dfa" }, description = "Returns true, iff there is a path from vertex given as first argument to vertex "
 			+ "given as second argument that matches the path description given as second argument. "
 			+ "Usually invoked like so: myVertex (--> | <>--)+ myOtherVertex.", categories = {
 			Category.GRAPH, Category.PATHS_AND_PATHSYSTEMS_AND_SLICES })
