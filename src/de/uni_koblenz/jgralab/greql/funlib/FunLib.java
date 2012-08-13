@@ -62,6 +62,7 @@ import de.uni_koblenz.jgralab.greql.funlib.misc.GreqlQueryFunctionWithGraphArgum
 import de.uni_koblenz.jgralab.greql.types.Types;
 import de.uni_koblenz.jgralab.greql.types.Undefined;
 
+@SuppressWarnings("deprecation")
 public class FunLib {
 	private static final Map<String, FunctionInfo> functions;
 	private static final Logger logger = JGraLab.getLogger(FunLib.class);
@@ -102,6 +103,7 @@ public class FunLib {
 		register(de.uni_koblenz.jgralab.greql.funlib.collections.Difference.class);
 		register(de.uni_koblenz.jgralab.greql.funlib.collections.EntrySet.class);
 		register(de.uni_koblenz.jgralab.greql.funlib.collections.Get.class);
+		register(de.uni_koblenz.jgralab.greql.funlib.collections.IndexOf.class);
 		register(de.uni_koblenz.jgralab.greql.funlib.collections.Intersection.class);
 		register(de.uni_koblenz.jgralab.greql.funlib.collections.IsEmpty.class);
 		register(de.uni_koblenz.jgralab.greql.funlib.collections.IsSubSet.class);
@@ -117,7 +119,7 @@ public class FunLib {
 		register(de.uni_koblenz.jgralab.greql.funlib.collections.Values.class);
 		register(de.uni_koblenz.jgralab.greql.funlib.graph.Alpha.class);
 		register(de.uni_koblenz.jgralab.greql.funlib.graph.Degree.class);
-		register(de.uni_koblenz.jgralab.greql.funlib.graph.DegreeFunction.class);
+		register(de.uni_koblenz.jgralab.greql.funlib.graph.base.DegreeFunction.class);
 		register(de.uni_koblenz.jgralab.greql.funlib.graph.Depth.class);
 		register(de.uni_koblenz.jgralab.greql.funlib.graph.Describe.class);
 		register(de.uni_koblenz.jgralab.greql.funlib.graph.Distance.class);
@@ -131,19 +133,31 @@ public class FunLib {
 		register(de.uni_koblenz.jgralab.greql.funlib.graph.ElementSetSubgraph.class);
 		register(de.uni_koblenz.jgralab.greql.funlib.graph.EndVertex.class);
 		register(de.uni_koblenz.jgralab.greql.funlib.graph.ExtractPaths.class);
+		register(de.uni_koblenz.jgralab.greql.funlib.graph.First.class);
+		register(de.uni_koblenz.jgralab.greql.funlib.graph.FirstIn.class);
+		register(de.uni_koblenz.jgralab.greql.funlib.graph.FirstOut.class);
 		register(de.uni_koblenz.jgralab.greql.funlib.graph.GetEdge.class);
 		register(de.uni_koblenz.jgralab.greql.funlib.graph.GetValue.class);
 		register(de.uni_koblenz.jgralab.greql.funlib.graph.GetVertex.class);
 		register(de.uni_koblenz.jgralab.greql.funlib.graph.Id.class);
 		register(de.uni_koblenz.jgralab.greql.funlib.graph.InDegree.class);
+		register(de.uni_koblenz.jgralab.greql.funlib.graph.Incidences.class);
+		register(de.uni_koblenz.jgralab.greql.funlib.graph.InIncidences.class);
 		register(de.uni_koblenz.jgralab.greql.funlib.graph.IsAcyclic.class);
 		register(de.uni_koblenz.jgralab.greql.funlib.graph.IsIsolated.class);
 		register(de.uni_koblenz.jgralab.greql.funlib.graph.IsLoop.class);
 		register(de.uni_koblenz.jgralab.greql.funlib.graph.IsReachable.class);
+		register(de.uni_koblenz.jgralab.greql.funlib.graph.Last.class);
+		register(de.uni_koblenz.jgralab.greql.funlib.graph.LastIn.class);
+		register(de.uni_koblenz.jgralab.greql.funlib.graph.LastOut.class);
 		register(de.uni_koblenz.jgralab.greql.funlib.graph.Leaves.class);
 		register(de.uni_koblenz.jgralab.greql.funlib.graph.Next.class);
+		register(de.uni_koblenz.jgralab.greql.funlib.graph.NextGraphElement.class);
+		register(de.uni_koblenz.jgralab.greql.funlib.graph.NextIn.class);
+		register(de.uni_koblenz.jgralab.greql.funlib.graph.NextOut.class);
 		register(de.uni_koblenz.jgralab.greql.funlib.graph.Omega.class);
 		register(de.uni_koblenz.jgralab.greql.funlib.graph.OutDegree.class);
+		register(de.uni_koblenz.jgralab.greql.funlib.graph.OutIncidences.class);
 		register(de.uni_koblenz.jgralab.greql.funlib.graph.PathLength.class);
 		register(de.uni_koblenz.jgralab.greql.funlib.graph.PathSystem.class);
 		register(de.uni_koblenz.jgralab.greql.funlib.graph.ReachableVertices.class);
@@ -189,10 +203,13 @@ public class FunLib {
 		register(de.uni_koblenz.jgralab.greql.funlib.strings.EndsWith.class);
 		register(de.uni_koblenz.jgralab.greql.funlib.strings.Join.class);
 		register(de.uni_koblenz.jgralab.greql.funlib.strings.Length.class);
+		register(de.uni_koblenz.jgralab.greql.funlib.strings.LowerCase.class);
 		register(de.uni_koblenz.jgralab.greql.funlib.strings.ReMatch.class);
 		register(de.uni_koblenz.jgralab.greql.funlib.strings.Split.class);
 		register(de.uni_koblenz.jgralab.greql.funlib.strings.StartsWith.class);
+		register(de.uni_koblenz.jgralab.greql.funlib.strings.Substring.class);
 		register(de.uni_koblenz.jgralab.greql.funlib.strings.ToString.class);
+		register(de.uni_koblenz.jgralab.greql.funlib.strings.UpperCase.class);
 	}
 
 	private FunLib() {

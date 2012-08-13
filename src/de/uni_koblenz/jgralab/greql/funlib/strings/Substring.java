@@ -32,39 +32,32 @@
  * non-source form of such a combination shall include the source code for
  * the parts of JGraLab used as well as that of the covered work.
  */
-package de.uni_koblenz.jgralab.greql.funlib.graph;
+package de.uni_koblenz.jgralab.greql.funlib.strings;
 
-import de.uni_koblenz.jgralab.EdgeDirection;
-import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql.funlib.Description;
-import de.uni_koblenz.jgralab.greql.funlib.graph.base.DegreeFunction;
-import de.uni_koblenz.jgralab.greql.types.Path;
-import de.uni_koblenz.jgralab.greql.types.TypeCollection;
+import de.uni_koblenz.jgralab.greql.funlib.Function;
 
-public class Degree extends DegreeFunction {
+public class Substring extends Function {
 
-	public Degree() {
-		super(EdgeDirection.INOUT);
+	public Substring() {
+		super();
 	}
 
-	@Description(params = "v", description = "Returns the degree vertex v.", categories = Category.GRAPH)
-	@Override
-	public Integer evaluate(Vertex v) {
-		return super.evaluate(v);
+	@Description(params = { "s", "beginIndex" }, description = "Returns the substring of s starting at beginIndex.", categories = Category.STRINGS)
+	public String evaluate(String s, Integer beginIndex) {
+		try {
+			return s.substring(beginIndex);
+		} catch (IndexOutOfBoundsException e) {
+			return null;
+		}
 	}
 
-	@Description(params = { "v", "c" }, description = "Returns the degree of vertex v.\n"
-			+ "The scope is limited by a type collection.", categories = Category.GRAPH)
-	@Override
-	public Integer evaluate(Vertex v, TypeCollection c) {
-		return super.evaluate(v, c);
-	}
-
-	@Description(params = { "v", "p" }, description = "Returns the degree of vertex v.\n"
-			+ "The scope is limited by a path, a path system.", categories = {
-			Category.GRAPH, Category.PATHS_AND_PATHSYSTEMS_AND_SLICES })
-	@Override
-	public Integer evaluate(Vertex v, Path p) {
-		return super.evaluate(v, p);
+	@Description(params = { "s", "beginIndex", "endIndex" }, description = "Returns the substring of s from beginIndex (incl) to endIndex (excl).", categories = Category.STRINGS)
+	public String evaluate(String s, Integer beginIndex, Integer endIndex) {
+		try {
+			return s.substring(beginIndex, endIndex);
+		} catch (IndexOutOfBoundsException e) {
+			return null;
+		}
 	}
 }

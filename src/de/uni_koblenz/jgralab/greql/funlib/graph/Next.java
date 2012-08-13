@@ -35,77 +35,27 @@
 package de.uni_koblenz.jgralab.greql.funlib.graph;
 
 import de.uni_koblenz.jgralab.Edge;
-import de.uni_koblenz.jgralab.Vertex;
+import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.greql.funlib.Description;
-import de.uni_koblenz.jgralab.greql.funlib.Function;
+import de.uni_koblenz.jgralab.greql.funlib.graph.base.NextFunction;
 import de.uni_koblenz.jgralab.greql.types.TypeCollection;
 
-public class Next extends Function {
+public class Next extends NextFunction {
+
 	public Next() {
-		super(2, 1, 1.0);
+		super(EdgeDirection.INOUT);
 	}
 
-	@Description(params = "e", description = 
-			"Returns the next edge for a given element from the incidence sequence.",
-			categories = Category.GRAPH)
+	@Description(params = "e", description = "Returns the next edge following e in incidence order.", categories = Category.GRAPH)
+	@Override
 	public Edge evaluate(Edge e) {
-		return e.getNextIncidence();
+		return super.evaluate(e);
 	}
 
-	@Description(params = {"e","global"}, description = 
-			"Returns the next edge for a given element."
-			+ " The boolean parameter $global$ decides if successor is taken from the global edge sequence (true),"
-			+ " or from the incidence sequence (false).",
-			categories = Category.GRAPH)
-	public Edge evaluate(Edge e, Boolean global) {
-		return global ? e.getNextEdge() : e.getNextIncidence();
-	}
-
-	@Description(params = {"e","global","tc"}, description = 
-			"Returns the next edge for a given element, restricted by a type collection."
-			+ " The boolean parameter $global$ decides if successor is taken from the global edge sequence (true),"
-			+ " or from the incidence sequence (false).",
-			categories = Category.GRAPH)
-	public Edge evaluate(Edge e, Boolean global, TypeCollection tc) {
-		if (global) {
-			for (Edge n = e.getNextEdge(); n != null; n = n.getNextEdge()) {
-				if (tc.acceptsType(n.getAttributedElementClass())) {
-					return n;
-				}
-			}
-			return null;
-		} else {
-			return evaluate(e, tc);
-		}
-	}
-
-	@Description(params = {"e","tc"}, description = 
-			"Returns the next edge for a given element, restricted by a type collection.",
-			categories = Category.GRAPH)
-	public Edge evaluate(Edge e, TypeCollection tc) {
-		for (Edge n = e.getNextIncidence(); n != null; n = n.getNextIncidence()) {
-			if (tc.acceptsType(n.getAttributedElementClass())) {
-				return n;
-			}
-		}
-		return null;
-	}
-
-	@Description(params = "v", description = "Returns the next vertex for a given element.",
-			categories = Category.GRAPH)
-	public Vertex evaluate(Vertex v) {
-		return v.getNextVertex();
-	}
-
-	@Description(params = {"v","tc"}, description = 
-			"Returns the next vertex for a given element, restricted by a type collection.",
-			categories = Category.GRAPH)
-	public Vertex evaluate(Vertex v, TypeCollection tc) {
-		for (Vertex n = v.getNextVertex(); n != null; n = n.getNextVertex()) {
-			if (tc.acceptsType(n.getAttributedElementClass())) {
-				return n;
-			}
-		}
-		return null;
+	@Description(params = { "e", "c" }, description = "Returns the next edge following e in incidence order.\n"
+			+ "The scope is limited by a type collection.", categories = Category.GRAPH)
+	@Override
+	public Edge evaluate(Edge e, TypeCollection c) {
+		return super.evaluate(e, c);
 	}
 }

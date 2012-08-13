@@ -37,6 +37,7 @@ package de.uni_koblenz.jgralab.greql.funlib.graph;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql.funlib.Description;
+import de.uni_koblenz.jgralab.greql.funlib.graph.base.DegreeFunction;
 import de.uni_koblenz.jgralab.greql.types.Path;
 import de.uni_koblenz.jgralab.greql.types.TypeCollection;
 

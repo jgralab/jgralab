@@ -38,9 +38,8 @@ import de.uni_koblenz.jgralab.greql.funlib.Description;
 import de.uni_koblenz.jgralab.greql.funlib.Function;
 
 public class EndsWith extends Function {
-	
-	@Description(params = {"suffix", "s"}, description = "Returns true, iff the given string ends with the given suffix.",
-			categories = Category.STRINGS)
+
+	@Description(params = { "suffix", "s" }, description = "Returns true, iff the String s ends with the given suffix.", categories = Category.STRINGS)
 	public EndsWith() {
 		super(3, 1, 0.05);
 	}

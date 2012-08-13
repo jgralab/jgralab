@@ -32,39 +32,50 @@
  * non-source form of such a combination shall include the source code for
  * the parts of JGraLab used as well as that of the covered work.
  */
-package de.uni_koblenz.jgralab.greql.funlib.graph;
+package de.uni_koblenz.jgralab.greql.funlib.graph.base;
 
+import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.greql.funlib.Description;
-import de.uni_koblenz.jgralab.greql.funlib.graph.base.DegreeFunction;
 import de.uni_koblenz.jgralab.greql.types.Path;
 import de.uni_koblenz.jgralab.greql.types.TypeCollection;
 
-public class Degree extends DegreeFunction {
-
-	public Degree() {
-		super(EdgeDirection.INOUT);
+public abstract class DegreeFunction extends EdgeDirectionFunction {
+	protected DegreeFunction(EdgeDirection direction) {
+		super(direction, 10, 1, 1);
 	}
 
-	@Description(params = "v", description = "Returns the degree vertex v.", categories = Category.GRAPH)
-	@Override
-	public Integer evaluate(Vertex v) {
-		return super.evaluate(v);
+	protected Integer evaluate(Vertex v) {
+		return v.getDegree(direction);
 	}
 
-	@Description(params = { "v", "c" }, description = "Returns the degree of vertex v.\n"
-			+ "The scope is limited by a type collection.", categories = Category.GRAPH)
-	@Override
-	public Integer evaluate(Vertex v, TypeCollection c) {
-		return super.evaluate(v, c);
+	protected Integer evaluate(Vertex v, TypeCollection c) {
+		int degree = 0;
+		for (Edge e = v.getFirstIncidence(); e != null; e = e
+				.getNextIncidence()) {
+			if (c.acceptsType(e.getAttributedElementClass())) {
+				switch (direction) {
+				case INOUT:
+					++degree;
+					break;
+				case OUT:
+					if (e.isNormal()) {
+						++degree;
+					}
+					break;
+				case IN:
+					if (!e.isNormal()) {
+						++degree;
+					}
+					break;
+				}
+			}
+		}
+		return degree;
 	}
 
-	@Description(params = { "v", "p" }, description = "Returns the degree of vertex v.\n"
-			+ "The scope is limited by a path, a path system.", categories = {
-			Category.GRAPH, Category.PATHS_AND_PATHSYSTEMS_AND_SLICES })
-	@Override
 	public Integer evaluate(Vertex v, Path p) {
-		return super.evaluate(v, p);
+		return p.degree(v, direction);
 	}
+
 }

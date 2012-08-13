@@ -34,37 +34,29 @@
  */
 package de.uni_koblenz.jgralab.greql.funlib.graph;
 
+import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql.funlib.Description;
-import de.uni_koblenz.jgralab.greql.funlib.graph.base.DegreeFunction;
-import de.uni_koblenz.jgralab.greql.types.Path;
+import de.uni_koblenz.jgralab.greql.funlib.graph.base.LastFunction;
 import de.uni_koblenz.jgralab.greql.types.TypeCollection;
 
-public class Degree extends DegreeFunction {
+public class LastOut extends LastFunction {
 
-	public Degree() {
-		super(EdgeDirection.INOUT);
+	public LastOut() {
+		super(EdgeDirection.OUT);
 	}
 
-	@Description(params = "v", description = "Returns the degree vertex v.", categories = Category.GRAPH)
+	@Description(params = "v", description = "Returns the last outgoing edge of vertex v.", categories = Category.GRAPH)
 	@Override
-	public Integer evaluate(Vertex v) {
+	public Edge evaluate(Vertex v) {
 		return super.evaluate(v);
 	}
 
-	@Description(params = { "v", "c" }, description = "Returns the degree of vertex v.\n"
+	@Description(params = { "v", "c" }, description = "Returns the last outgoing edge of vertex v.\n"
 			+ "The scope is limited by a type collection.", categories = Category.GRAPH)
 	@Override
-	public Integer evaluate(Vertex v, TypeCollection c) {
+	public Edge evaluate(Vertex v, TypeCollection c) {
 		return super.evaluate(v, c);
-	}
-
-	@Description(params = { "v", "p" }, description = "Returns the degree of vertex v.\n"
-			+ "The scope is limited by a path, a path system.", categories = {
-			Category.GRAPH, Category.PATHS_AND_PATHSYSTEMS_AND_SLICES })
-	@Override
-	public Integer evaluate(Vertex v, Path p) {
-		return super.evaluate(v, p);
 	}
 }

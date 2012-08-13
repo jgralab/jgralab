@@ -44,21 +44,20 @@ import de.uni_koblenz.jgralab.greql.funlib.Description;
 import de.uni_koblenz.jgralab.greql.funlib.Function;
 import de.uni_koblenz.jgralab.greql.types.TypeCollection;
 
+@Deprecated
+// use inIncidences instead
 public class EdgesTo extends Function {
 
 	public EdgesTo() {
 		super(2, 5, 1.0);
 	}
 
-	@Description(params = "v", description = "Returns the list of incoming edges of the given vertex.", 
-			categories = Category.GRAPH)
+	@Description(params = "v", description = "(deprecated, use inIncidences) Returns the list of incoming edges of the given vertex.", categories = Category.GRAPH)
 	public PVector<Edge> evaluate(Vertex v) {
 		return evaluate(v, null);
 	}
 
-	@Description(params = {"v","tc"}, description = 
-		"Returns the list of incoming edges of the given vertex restricted by a type collection.",
-			categories = Category.GRAPH)
+	@Description(params = { "v", "tc" }, description = "(deprecated, use inIncidences) Returns the list of incoming edges of the given vertex restricted by a type collection.", categories = Category.GRAPH)
 	public PVector<Edge> evaluate(Vertex v, TypeCollection tc) {
 		PVector<Edge> result = JGraLab.vector();
 		for (Edge e : v.incidences(EdgeDirection.IN)) {

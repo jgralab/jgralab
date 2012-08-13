@@ -37,50 +37,26 @@ package de.uni_koblenz.jgralab.greql.funlib.graph;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.greql.funlib.Function;
-import de.uni_koblenz.jgralab.greql.types.Path;
+import de.uni_koblenz.jgralab.greql.funlib.Description;
+import de.uni_koblenz.jgralab.greql.funlib.graph.base.FirstFunction;
 import de.uni_koblenz.jgralab.greql.types.TypeCollection;
 
-public abstract class DegreeFunction extends Function {
+public class FirstIn extends FirstFunction {
 
-	private EdgeDirection direction;
-
-	public DegreeFunction(EdgeDirection direction) {
-		super(10, 1, 1);
-		this.direction = direction;
+	public FirstIn() {
+		super(EdgeDirection.IN);
 	}
 
-	public Integer evaluate(Vertex v) {
-		return v.getDegree(direction);
+	@Description(params = "v", description = "Returns the first incoming edge of vertex v.", categories = Category.GRAPH)
+	@Override
+	public Edge evaluate(Vertex v) {
+		return super.evaluate(v);
 	}
 
-	public Integer evaluate(Vertex v, TypeCollection c) {
-		int degree = 0;
-		for (Edge e = v.getFirstIncidence(); e != null; e = e
-				.getNextIncidence()) {
-			if (c.acceptsType(e.getAttributedElementClass())) {
-				switch (direction) {
-				case INOUT:
-					++degree;
-					break;
-				case OUT:
-					if (e.isNormal()) {
-						++degree;
-					}
-					break;
-				case IN:
-					if (!e.isNormal()) {
-						++degree;
-					}
-					break;
-				}
-			}
-		}
-		return degree;
+	@Description(params = { "v", "c" }, description = "Returns the first incoming edge of vertex v.\n"
+			+ "The scope is limited by a type collection.", categories = Category.GRAPH)
+	@Override
+	public Edge evaluate(Vertex v, TypeCollection c) {
+		return super.evaluate(v, c);
 	}
-
-	public Integer evaluate(Vertex v, Path p) {
-		return p.degree(v, direction);
-	}
-
 }

@@ -32,39 +32,52 @@
  * non-source form of such a combination shall include the source code for
  * the parts of JGraLab used as well as that of the covered work.
  */
-package de.uni_koblenz.jgralab.greql.funlib.graph;
+package de.uni_koblenz.jgralab.greql.funlib.graph.base;
 
+import org.pcollections.PVector;
+
+import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
+import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.greql.funlib.Description;
-import de.uni_koblenz.jgralab.greql.funlib.graph.base.DegreeFunction;
-import de.uni_koblenz.jgralab.greql.types.Path;
 import de.uni_koblenz.jgralab.greql.types.TypeCollection;
 
-public class Degree extends DegreeFunction {
+public abstract class IncidencesFunction extends EdgeDirectionFunction {
 
-	public Degree() {
-		super(EdgeDirection.INOUT);
+	protected IncidencesFunction(EdgeDirection direction) {
+		super(direction, 10, 10, 1);
 	}
 
-	@Description(params = "v", description = "Returns the degree vertex v.", categories = Category.GRAPH)
-	@Override
-	public Integer evaluate(Vertex v) {
-		return super.evaluate(v);
+	protected PVector<Edge> evaluate(Vertex v) {
+		PVector<Edge> incs = JGraLab.vector();
+		for (Edge e : v.incidences()) {
+			incs = incs.plus(e);
+		}
+		return incs;
 	}
 
-	@Description(params = { "v", "c" }, description = "Returns the degree of vertex v.\n"
-			+ "The scope is limited by a type collection.", categories = Category.GRAPH)
-	@Override
-	public Integer evaluate(Vertex v, TypeCollection c) {
-		return super.evaluate(v, c);
-	}
-
-	@Description(params = { "v", "p" }, description = "Returns the degree of vertex v.\n"
-			+ "The scope is limited by a path, a path system.", categories = {
-			Category.GRAPH, Category.PATHS_AND_PATHSYSTEMS_AND_SLICES })
-	@Override
-	public Integer evaluate(Vertex v, Path p) {
-		return super.evaluate(v, p);
+	protected PVector<Edge> evaluate(Vertex v, TypeCollection c) {
+		PVector<Edge> incs = JGraLab.vector();
+		for (Edge e = v.getFirstIncidence(); e != null; e = e
+				.getNextIncidence()) {
+			if (c.acceptsType(e.getAttributedElementClass())) {
+				switch (direction) {
+				case INOUT:
+					incs = incs.plus(e);
+					break;
+				case OUT:
+					if (e.isNormal()) {
+						incs = incs.plus(e);
+					}
+					break;
+				case IN:
+					if (!e.isNormal()) {
+						incs = incs.plus(e);
+					}
+					break;
+				}
+			}
+		}
+		return incs;
 	}
 }

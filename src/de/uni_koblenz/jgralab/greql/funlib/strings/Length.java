@@ -38,9 +38,8 @@ import de.uni_koblenz.jgralab.greql.funlib.Description;
 import de.uni_koblenz.jgralab.greql.funlib.Function;
 
 public class Length extends Function {
-	
-	@Description(params = "s", description = "Returns the length of the given String.",
-			categories = Category.STRINGS)
+
+	@Description(params = "s", description = "Returns the length of String s.", categories = Category.STRINGS)
 	public Length() {
 		super();
 	}

@@ -32,39 +32,27 @@
  * non-source form of such a combination shall include the source code for
  * the parts of JGraLab used as well as that of the covered work.
  */
-package de.uni_koblenz.jgralab.greql.funlib.graph;
+package de.uni_koblenz.jgralab.greql.funlib.collections;
 
-import de.uni_koblenz.jgralab.EdgeDirection;
-import de.uni_koblenz.jgralab.Vertex;
+import org.pcollections.POrderedSet;
+import org.pcollections.PVector;
+
 import de.uni_koblenz.jgralab.greql.funlib.Description;
-import de.uni_koblenz.jgralab.greql.funlib.graph.base.DegreeFunction;
-import de.uni_koblenz.jgralab.greql.types.Path;
-import de.uni_koblenz.jgralab.greql.types.TypeCollection;
+import de.uni_koblenz.jgralab.greql.funlib.Function;
 
-public class Degree extends DegreeFunction {
+public class IndexOf extends Function {
 
-	public Degree() {
-		super(EdgeDirection.INOUT);
+	public IndexOf() {
+		super(2, 1, 0.2);
 	}
 
-	@Description(params = "v", description = "Returns the degree vertex v.", categories = Category.GRAPH)
-	@Override
-	public Integer evaluate(Vertex v) {
-		return super.evaluate(v);
+	@Description(params = { "v", "el" }, description = "Returns the index of the first occurence of el in v, or -1 if el is not in v.", categories = Category.COLLECTIONS_AND_MAPS)
+	public <T> Integer valuate(PVector<T> v, T el) {
+		return v.indexOf(el);
 	}
 
-	@Description(params = { "v", "c" }, description = "Returns the degree of vertex v.\n"
-			+ "The scope is limited by a type collection.", categories = Category.GRAPH)
-	@Override
-	public Integer evaluate(Vertex v, TypeCollection c) {
-		return super.evaluate(v, c);
-	}
-
-	@Description(params = { "v", "p" }, description = "Returns the degree of vertex v.\n"
-			+ "The scope is limited by a path, a path system.", categories = {
-			Category.GRAPH, Category.PATHS_AND_PATHSYSTEMS_AND_SLICES })
-	@Override
-	public Integer evaluate(Vertex v, Path p) {
-		return super.evaluate(v, p);
+	@Description(params = { "s", "el" }, description = "Returns the index of the first occurence of el in s, or -1 if el is not in s.", categories = Category.COLLECTIONS_AND_MAPS)
+	public <T> Integer valuate(POrderedSet<T> s, T el) {
+		return s.indexOf(el);
 	}
 }

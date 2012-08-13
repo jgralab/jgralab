@@ -34,37 +34,32 @@
  */
 package de.uni_koblenz.jgralab.greql.funlib.graph;
 
+import org.pcollections.PVector;
+
+import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql.funlib.Description;
-import de.uni_koblenz.jgralab.greql.funlib.graph.base.DegreeFunction;
-import de.uni_koblenz.jgralab.greql.types.Path;
+import de.uni_koblenz.jgralab.greql.funlib.graph.base.IncidencesFunction;
 import de.uni_koblenz.jgralab.greql.types.TypeCollection;
 
-public class Degree extends DegreeFunction {
+public class OutIncidences extends IncidencesFunction {
 
-	public Degree() {
-		super(EdgeDirection.INOUT);
+	public OutIncidences() {
+		super(EdgeDirection.IN);
 	}
 
-	@Description(params = "v", description = "Returns the degree vertex v.", categories = Category.GRAPH)
+	@Description(params = "v", description = "Returns the outgoing edges of vertex v.", categories = Category.GRAPH)
 	@Override
-	public Integer evaluate(Vertex v) {
+	public PVector<Edge> evaluate(Vertex v) {
 		return super.evaluate(v);
 	}
 
-	@Description(params = { "v", "c" }, description = "Returns the degree of vertex v.\n"
+	@Description(params = { "v", "c" }, description = "Returns the outgoing edges of vertex v.\n"
 			+ "The scope is limited by a type collection.", categories = Category.GRAPH)
 	@Override
-	public Integer evaluate(Vertex v, TypeCollection c) {
+	public PVector<Edge> evaluate(Vertex v, TypeCollection c) {
 		return super.evaluate(v, c);
 	}
 
-	@Description(params = { "v", "p" }, description = "Returns the degree of vertex v.\n"
-			+ "The scope is limited by a path, a path system.", categories = {
-			Category.GRAPH, Category.PATHS_AND_PATHSYSTEMS_AND_SLICES })
-	@Override
-	public Integer evaluate(Vertex v, Path p) {
-		return super.evaluate(v, p);
-	}
 }
