@@ -63,6 +63,7 @@ import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.GraphIO;
+import de.uni_koblenz.jgralab.ImplementationType;
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.ProgressFunction;
 import de.uni_koblenz.jgralab.Vertex;
@@ -2011,8 +2012,8 @@ public class StateRepository {
 				synchronized (GraphIO.class) {
 					currentGraph.progress = 0;
 					currentGraph.graph = GraphIO.loadGraphFromFile(
-							currentGraph.graphPath, new MyProgressFunction(
-									currentGraph));
+							currentGraph.graphPath, ImplementationType.GENERIC,
+							new MyProgressFunction(currentGraph));
 					assert currentGraph.graph != null : "The graph wasn't loaded correctly.";
 					currentGraph = null;
 				}
