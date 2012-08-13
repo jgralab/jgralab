@@ -57,7 +57,7 @@ import de.uni_koblenz.jgralab.greql.types.pathsearch.PathSystemMarkerEntry;
 @NeedsEvaluatorArgument
 public class PathSystem extends Function {
 
-	@Description(params = {"startVertex","fa"}, description = 
+	@Description(params = {"internal", "startVertex","fa"}, description =
 			"Returns a path system with the given root vertex, which is structured according to the given path description.",
 			categories = Category.PATHS_AND_PATHSYSTEMS_AND_SLICES)
 	public PathSystem() {
@@ -88,7 +88,7 @@ public class PathSystem extends Function {
 
 	/**
 	 * marks the given vertex with the given PathSystemMarker
-	 * 
+	 *
 	 * @return the marker created
 	 */
 	protected PathSystemMarkerEntry markVertex(
@@ -105,7 +105,7 @@ public class PathSystem extends Function {
 
 	/**
 	 * Checks if the given vertex is marked with the given state
-	 * 
+	 *
 	 * @return true if the vertex is marked, false otherwise
 	 */
 	protected boolean isMarked(GraphMarker<PathSystemMarkerEntry>[] marker,
@@ -118,7 +118,7 @@ public class PathSystem extends Function {
 	 * Marks all vertices that are part of the PathSystem described by the given
 	 * rootVertex and the regular path expression which is acceptes by the given
 	 * dfa
-	 * 
+	 *
 	 * @param startVertex
 	 *            the rootVertex of the PathSystem
 	 * @param dfa
@@ -182,7 +182,7 @@ public class PathSystem extends Function {
 	/**
 	 * Creates a JValuePathSystem-object which contains all paths which start at
 	 * the given root vertex and end with one of the given leaves
-	 * 
+	 *
 	 * @param leaves
 	 * @return
 	 */
@@ -220,7 +220,7 @@ public class PathSystem extends Function {
 
 	/**
 	 * Returns the {@code PathSystemMarkerEntry} for a given vertex and state.
-	 * 
+	 *
 	 * @param v
 	 *            the vertex for which to return the
 	 *            {@code PathSystemMarkerEntry}

@@ -70,37 +70,33 @@ public class Slice extends Function {
 
 	private Graph graph;
 
-	@Description(params = {"v", "nfa"}, description = 
-			"Returns a slice, starting at the given root vertex and "
-			 + " being structured according to the given path description.",
-			 categories = {Category.GRAPH, Category.PATHS_AND_PATHSYSTEMS_AND_SLICES})
+	@Description(params = { "internal", "v", "nfa" }, description = "Returns a slice, starting at the given root vertex and "
+			+ " being structured according to the given path description.", categories = {
+			Category.GRAPH, Category.PATHS_AND_PATHSYSTEMS_AND_SLICES })
 	public de.uni_koblenz.jgralab.greql.types.Slice evaluate(
 			InternalGreqlEvaluator evaluator, Vertex v, NFA nfa) {
 		return evaluate(evaluator, v, nfa.getDFA());
 	}
 
-	@Description(params = {"v", "dfa"}, description = 
-			"Returns a slice, starting at the given root vertex and "
-			 + " being structured according to the given path description.",
-			 categories = {Category.GRAPH, Category.PATHS_AND_PATHSYSTEMS_AND_SLICES})
+	@Description(params = { "internal", "v", "dfa" }, description = "Returns a slice, starting at the given root vertex and "
+			+ " being structured according to the given path description.", categories = {
+			Category.GRAPH, Category.PATHS_AND_PATHSYSTEMS_AND_SLICES })
 	public de.uni_koblenz.jgralab.greql.types.Slice evaluate(
 			InternalGreqlEvaluator evaluator, Vertex v, DFA dfa) {
 		return evaluate(evaluator, JGraLab.<Vertex> set().plus(v), dfa);
 	}
 
-	@Description(params = {"roots", "nfa"}, description = 
-			"Returns a slice, starting at the given root vertices and "
-			 + " being structured according to the given path description.",
-			 categories = {Category.GRAPH, Category.PATHS_AND_PATHSYSTEMS_AND_SLICES})
+	@Description(params = { "internal", "roots", "nfa" }, description = "Returns a slice, starting at the given root vertices and "
+			+ " being structured according to the given path description.", categories = {
+			Category.GRAPH, Category.PATHS_AND_PATHSYSTEMS_AND_SLICES })
 	public de.uni_koblenz.jgralab.greql.types.Slice evaluate(
 			InternalGreqlEvaluator evaluator, PSet<Vertex> roots, NFA nfa) {
 		return evaluate(evaluator, roots, nfa.getDFA());
 	}
 
-	@Description(params = {"roots", "dfa"}, description = 
-			"Returns a slice, starting at the given root vertices and "
-			 + " being structured according to the given path description.",
-			 categories = {Category.GRAPH, Category.PATHS_AND_PATHSYSTEMS_AND_SLICES})
+	@Description(params = { "internal", "roots", "dfa" }, description = "Returns a slice, starting at the given root vertices and "
+			+ " being structured according to the given path description.", categories = {
+			Category.GRAPH, Category.PATHS_AND_PATHSYSTEMS_AND_SLICES })
 	public de.uni_koblenz.jgralab.greql.types.Slice evaluate(
 			InternalGreqlEvaluator evaluator, PSet<Vertex> roots, DFA dfa) {
 		Set<Vertex> sliCritVertices = new HashSet<Vertex>();
@@ -134,7 +130,7 @@ public class Slice extends Function {
 
 	/**
 	 * marks the given vertex with the given SliceMarker
-	 * 
+	 *
 	 * @return true if the vertex was marked successful, false if it is already
 	 *         marked with this parentEdge
 	 */
@@ -162,7 +158,7 @@ public class Slice extends Function {
 
 	/**
 	 * Checks if the given vertex is marked with the given state and parent edge
-	 * 
+	 *
 	 * @return true if the vertex is marked, false otherwise
 	 */
 	protected boolean isMarked(Vertex v, State s, Edge parentEdge) {
@@ -179,7 +175,7 @@ public class Slice extends Function {
 
 	/**
 	 * Checks if the given vertex is marked with the given state
-	 * 
+	 *
 	 * @return true if the vertex is marked, false otherwise
 	 */
 	protected boolean isMarked(Vertex v, State s) {
@@ -194,7 +190,7 @@ public class Slice extends Function {
 	 * Marks all vertices that are part of the slice described by the given
 	 * rootVertex and the regular path expression which is acceptes by the given
 	 * dfa
-	 * 
+	 *
 	 * @param sliCritVertices
 	 *            the start vertices of the slice
 	 * @param dfa
@@ -261,7 +257,7 @@ public class Slice extends Function {
 	/**
 	 * Creates a JValueSlice-object which contains all path which start at the
 	 * given start vertices and end with the given leaves
-	 * 
+	 *
 	 * @param leaves
 	 * @return
 	 */
@@ -355,7 +351,7 @@ public class Slice extends Function {
 	/**
 	 * Adds the given state to the set of states maintained for the given
 	 * vertex.
-	 * 
+	 *
 	 * @param v
 	 *            the vertex to be marked
 	 * @param s
@@ -370,7 +366,7 @@ public class Slice extends Function {
 
 	/**
 	 * Checks if the given vertex' state set contains the given state.
-	 * 
+	 *
 	 * @param v
 	 *            the vertex to be checked
 	 * @param s
@@ -386,7 +382,7 @@ public class Slice extends Function {
 
 	/**
 	 * Returns the {@code PathSystemMarkerEntry} for a given vertex and state.
-	 * 
+	 *
 	 * @param v
 	 *            the vertex for which to return the
 	 *            {@code PathSystemMarkerEntry}
