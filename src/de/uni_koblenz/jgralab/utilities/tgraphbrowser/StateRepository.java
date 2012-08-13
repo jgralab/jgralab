@@ -2012,8 +2012,8 @@ public class StateRepository {
 				synchronized (GraphIO.class) {
 					currentGraph.progress = 0;
 					currentGraph.graph = GraphIO.loadGraphFromFile(
-							currentGraph.graphPath, ImplementationType.GENERIC,
-							new MyProgressFunction(currentGraph));
+							currentGraph.graphPath, ImplementationType.GENERIC, new MyProgressFunction(
+									currentGraph));
 					assert currentGraph.graph != null : "The graph wasn't loaded correctly.";
 					currentGraph = null;
 				}
