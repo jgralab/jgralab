@@ -37,6 +37,7 @@ package de.uni_koblenz.jgralab.greql.evaluator;
 
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.greql.OptimizerInfo;
+import de.uni_koblenz.jgralab.greql.types.TypeCollection;
 import de.uni_koblenz.jgralab.schema.GraphClass;
 
 /**
@@ -190,6 +191,32 @@ public class GraphSize implements OptimizerInfo {
 	@Override
 	public double getAverageEdgeSubclasses() {
 		return averageEdgeSubclasses;
+	}
+
+	
+	@Override
+	public double getRelativeFrequencyOfVertexClass(String vcName) {
+		return 1.0d;
+	}
+	
+	@Override
+	public double getRelativeFrequencyOfEdgeClass(String ecName) {
+		return 1.0d;
+	}
+
+	@Override
+	public double getRelativeFrequencyOfGraphElementClass(String geName) {
+		return 1.0d;
+	}
+	
+	@Override
+	public double getRelativeFrequencyOfTypeCollection(TypeCollection tc) {
+		return 1.0d;
+	}
+
+	@Override
+	public double getEdgesPerVertex() {
+		return 3.0d;
 	}
 
 }
