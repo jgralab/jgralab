@@ -41,7 +41,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.logging.Logger;
 
-import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.Vertex;
@@ -162,7 +161,6 @@ public abstract class Formula {
 					nonConstantTermExpressions.get(0), this);
 		}
 		ConditionalExpressionUnit current, best = null;
-		boolean hasTypeFunAppFound = false;
 		for (Expression exp : nonConstantTermExpressions) {
 			current = new ConditionalExpressionUnit(exp, this);
 
@@ -171,54 +169,13 @@ public abstract class Formula {
 				best = current;
 			}
 
-			if (containsFunApp(exp, "hasType")) {
-				hasTypeFunAppFound = true;
-			}
 			if ((best == null)
 					|| (best.getInfluenceCostRatio() < current
 							.getInfluenceCostRatio())) {
-				// if there was a hasType() before, attribute accesses may not
-				// be pulled before! Example: hasType(v, "Foo") and v.fooAttr =
-				// 19 must stay in this order.
-				if (hasTypeFunAppFound && containsFunApp(exp, "getValue")) {
-					continue;
-				}
 				best = current;
 			}
 		}
 		return best;
-	}
-
-	/**
-	 * @param exp
-	 * @param functionName
-	 * @return true if exp is a {@link FunctionApplication} of functionName
-	 */
-	private boolean isFunApp(Vertex exp, String functionName) {
-		if (exp instanceof FunctionApplication) {
-			FunctionApplication funApp = (FunctionApplication) exp;
-			return (funApp.getFirstIsFunctionIdOfIncidence().getAlpha())
-					.get_name().equals(functionName);
-		}
-		return false;
-	}
-
-	/**
-	 * @param v
-	 * @param name
-	 * @return true if the subgraph below v contains a
-	 *         {@link FunctionApplication} of the function name
-	 */
-	private boolean containsFunApp(Vertex v, String name) {
-		if (isFunApp(v, name)) {
-			return true;
-		}
-		for (Edge e : v.incidences(EdgeDirection.IN)) {
-			if (containsFunApp(e.getAlpha(), name)) {
-				return true;
-			}
-		}
-		return false;
 	}
 
 	protected abstract ArrayList<Expression> getNonConstantTermExpressions();

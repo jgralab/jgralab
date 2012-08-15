@@ -35,6 +35,7 @@
 
 package de.uni_koblenz.jgralab.greql;
 
+import de.uni_koblenz.jgralab.greql.types.TypeCollection;
 
 /**
  * This class is needed to propagate the size of the currently used graph along
@@ -85,5 +86,64 @@ public interface OptimizerInfo {
 	 * @return the average number of subclasses of an edge class
 	 */
 	public double getAverageEdgeSubclasses();
+
+	/**
+	 * Returns the average percentage of vertices of the given
+	 * {@link VertexClass} in a {@link Graph} in relation to all
+	 * {@link VertexClass}es. The returned value lies in the interval [0,1].
+	 * 
+	 * @param vcName
+	 *            qualified {@link VertexClass} name
+	 * 
+	 * @return the average percentage of vertices of the given type in a
+	 *         {@link Graph}
+	 */
+	public double getRelativeFrequencyOfVertexClass(String vcName);
+
+	/**
+	 * Returns the average percentage of edges of the given {@link EdgeClass} in
+	 * a {@link Graph} in relation to all {@link EdgeClass}es. The returned
+	 * value lies in the interval [0,1].
+	 * 
+	 * @param ecName
+	 *            qualified {@link EdgeClass} name
+	 * 
+	 * @return the average percentage of edges of the given type in a
+	 *         {@link Graph}
+	 */
+	public double getRelativeFrequencyOfEdgeClass(String ecName);
+
+	/**
+	 * Returns the average percentage of graph elements of the given
+	 * {@link GraphElementClass} in a {@link Graph} in relation to all
+	 * {@link GraphElementClass}es. The returned value lies in the interval
+	 * [0,1]. Allows the comparison of values for {@link VertexClasses} and
+	 * {@link EdgeClasses}.
+	 * 
+	 * @param vcName
+	 *            qualified {@link GraphElementClass} name
+	 * 
+	 * @return the average percentage of graph elements of the given type in a
+	 *         {@link Graph}
+	 */
+	public double getRelativeFrequencyOfGraphElementClass(String geName);
+
+	/**
+	 * Returns the average percentage of vertices of the given
+	 * {@link VertexClass} in a {@link Graph}. The returned value lies in the
+	 * interval [0,1].
+	 * 
+	 * @param vcName
+	 *            qualified {@link VertexClass} name
+	 * 
+	 * @return the average percentage of vertices of the given type in a
+	 *         {@link Graph}
+	 */
+	public double getRelativeFrequencyOfTypeCollection(TypeCollection tc);
+
+	/**
+	 * @return the average ratio between edges and vertices in a graph
+	 */
+	public double getEdgesPerVertex();
 
 }

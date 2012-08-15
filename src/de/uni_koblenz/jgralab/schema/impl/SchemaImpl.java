@@ -86,6 +86,7 @@ import de.uni_koblenz.jgralab.schema.DoubleDomain;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.EnumDomain;
 import de.uni_koblenz.jgralab.schema.GraphClass;
+import de.uni_koblenz.jgralab.schema.GraphElementClass;
 import de.uni_koblenz.jgralab.schema.IntegerDomain;
 import de.uni_koblenz.jgralab.schema.ListDomain;
 import de.uni_koblenz.jgralab.schema.LongDomain;
@@ -205,7 +206,7 @@ public class SchemaImpl implements Schema, ManagableArtifact {
 
 	/**
 	 * Creates a new <code>Schema</code>.
-	 *
+	 * 
 	 * @param name
 	 *            Name of schema.
 	 * @param packagePrefix
@@ -681,7 +682,7 @@ public class SchemaImpl implements Schema, ManagableArtifact {
 	/**
 	 * Creates a {@link Package} with given qualified name, or returns an
 	 * existing package with this qualified name.
-	 *
+	 * 
 	 * @param qn
 	 *            the qualified name of the package
 	 * @return a new {@link Package} with the given qualified name, or an
@@ -738,7 +739,7 @@ public class SchemaImpl implements Schema, ManagableArtifact {
 	/**
 	 * Given a qualified name like foo.bar.baz returns a string array with two
 	 * components: the package prefix (foo.bar) and the simple name (baz).
-	 *
+	 * 
 	 * @param qualifiedName
 	 *            a qualified name
 	 * @return a string array with two components: the package prefix and the
@@ -980,7 +981,7 @@ public class SchemaImpl implements Schema, ManagableArtifact {
 	}
 
 	/**
-	 *
+	 * 
 	 * @param implementationType
 	 * @return
 	 */
@@ -1040,7 +1041,7 @@ public class SchemaImpl implements Schema, ManagableArtifact {
 
 	/**
 	 * only used internally
-	 *
+	 * 
 	 * @return number of graphelementclasses contained in graphclass
 	 */
 	private int getNumberOfElements() {
@@ -1260,18 +1261,34 @@ public class SchemaImpl implements Schema, ManagableArtifact {
 	/**
 	 * This field and the method getNextClassId() is used to allow a unique
 	 * mapping of GraphElementClasses to integer values, which is necessary for
-	 * the GReQL code generator
+	 * the GReQL code generator. Ids are assigned starting from 0.
 	 */
-	int nextGraphElementClassId = 0;
+	private int graphElementClassCount = 0;
 
+	/**
+	 * @return the next available id value for a {@link GraphElementClass}.
+	 */
 	protected int getNextGraphElementClassId() {
-		return nextGraphElementClassId++;
+		return graphElementClassCount++;
 	}
 
-	protected int nextIncidenceClassId = 0;
+	@Override
+	public int getGraphElementClassCount() {
+		return graphElementClassCount;
+	}
 
+	private int incidenceClassCount = 0;
+
+	/**
+	 * @return the next available id value for an {@link IncidenceClass}.
+	 */
 	public int getNextIncidenceClassId() {
-		return nextIncidenceClassId++;
+		return incidenceClassCount++;
+	}
+
+	@Override
+	public int getIncidenceClassCount() {
+		return incidenceClassCount;
 	}
 
 	@Override
