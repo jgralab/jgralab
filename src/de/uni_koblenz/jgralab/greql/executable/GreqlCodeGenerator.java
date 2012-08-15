@@ -1650,6 +1650,7 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 	private CodeBlock createCodeForIntermediateVertexTransition(
 			IntermediateVertexTransition trans, boolean pathSystem) {
 		CodeList curr = new CodeList();
+		CodeList resultList = curr;
 
 		VertexEvaluator<?> intermediateVertexEval = trans
 				.getIntermediateVertexEvaluator();
@@ -1661,8 +1662,27 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 					.add("Object tempRes = "
 							+ createCodeForExpression((Expression) intermediateVertexEval
 									.getVertex()) + ";");
+			// following produced a "unchecked" warning
+			// predicateSnippet
+			// .add("if ((tempRes == element)"
+			// +
+			// " || (tempRes instanceof org.pcollections.PCollection && ((org.pcollections.PCollection<Object>) tempRes).contains(element))"
+			// + ") { //test of intermediate vertex transition");
+			// code with supressed "unchecked" warning
 			predicateSnippet
-					.add("if ((tempRes == element) || (((org.pcollections.PCollection<Object>) tempRes).contains(element))) { //test of intermediate vertex transition");
+					.add("boolean transitionWorks = tempRes == element;");
+			predicateSnippet.add("if(!transitionWorks) {");
+			predicateSnippet
+					.add("\tif(tempRes instanceof org.pcollections.PCollection) {");
+			predicateSnippet.add("\t\t@SuppressWarnings(\"unchecked\")");
+			predicateSnippet
+					.add("\t\torg.pcollections.PCollection<Object> tmpList = (org.pcollections.PCollection<Object>) tempRes;");
+			predicateSnippet
+					.add("\t\ttransitionWorks = tmpList.contains(element);");
+			predicateSnippet.add("\t}");
+			predicateSnippet.add("}");
+			predicateSnippet
+					.add("if(transitionWorks) { //test of intermediate vertex transition");
 			curr.add(predicateSnippet);
 			CodeList body = new CodeList();
 			curr.add(body);
@@ -1672,11 +1692,11 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 		}
 		// add element to queue
 		if (pathSystem) {
-			curr.add(createAddToPathSearchQueueSnippet(trans.endState.number));
-		} else {
 			curr.add(createAddToPathSystemQueueSnippet(trans));
+		} else {
+			curr.add(createAddToPathSearchQueueSnippet(trans.endState.number));
 		}
-		return curr;
+		return resultList;
 	}
 
 	private CodeBlock createCodeForBooleanExpressionTransition(
