@@ -450,15 +450,8 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 			TypeCollection typeCollection) {
 		String fieldName = "acceptedType_" + acceptedTypesNumber++;
 		// TODO adapt
-		int minTypeNumberInSchema = Integer.MAX_VALUE;
-		int maxTypeNumberInSchema = 0;
-		for (GraphElementClass<?, ?> gec : schema.getGraphClass()
-				.getGraphElementClasses()) {
-			minTypeNumberInSchema = Math.min(minTypeNumberInSchema,
-					gec.getGraphElementClassIdInSchema());
-			maxTypeNumberInSchema = Math.max(maxTypeNumberInSchema,
-					gec.getGraphElementClassIdInSchema());
-		}
+		int minTypeNumberInSchema = 0;
+		int maxTypeNumberInSchema = schema.getGraphElementClassCount();
 		addStaticField("java.util.BitSet", fieldName, "new java.util.BitSet()");
 		if (typeCollection.getAllowedTypes().isEmpty()) {
 			// all types but the forbidden ones are allowed
