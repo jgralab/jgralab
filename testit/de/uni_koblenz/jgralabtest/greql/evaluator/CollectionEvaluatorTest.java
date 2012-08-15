@@ -6,9 +6,9 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.junit.Test;
+import org.pcollections.POrderedSet;
 
 import de.uni_koblenz.jgralab.Record;
 import de.uni_koblenz.jgralab.greql.GreqlQuery;
@@ -224,10 +224,10 @@ public class CollectionEvaluatorTest {
 
 	public void checkSet(Object erg, Object... content) {
 		assertNotNull(erg);
-		Set<?> set = (Set<?>) erg;
+		POrderedSet<?> set = (POrderedSet<?>) erg;
 		assertEquals(content.length, set.size());
 		for (int i = 0; i < content.length; i++) {
-			assertTrue(set.contains(content[i]));
+			assertEquals(content[i], set.get(i));
 		}
 	}
 

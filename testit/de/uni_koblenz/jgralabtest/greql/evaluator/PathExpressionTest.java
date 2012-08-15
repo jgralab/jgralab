@@ -5,12 +5,12 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import java.util.Collection;
 import java.util.Set;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.pcollections.POrderedSet;
 
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphIO;
@@ -43,7 +43,7 @@ public class PathExpressionTest {
 	private void compareResultsOfQuery(String query, String classname)
 			throws InstantiationException, IllegalAccessException {
 		@SuppressWarnings("unchecked")
-		Collection<Vertex> result1 = (Collection<Vertex>) GreqlQuery
+		POrderedSet<Vertex> result1 = (POrderedSet<Vertex>) GreqlQuery
 				.createQuery(query).evaluate(datagraph);
 		assertNotNull(result1);
 
@@ -52,13 +52,13 @@ public class PathExpressionTest {
 		Class<ExecutableQuery> generatedQuery = GreqlCodeGenerator
 				.generateCode(query, datagraph.getSchema(), classname);
 		@SuppressWarnings("unchecked")
-		Collection<Vertex> result2 = (Collection<Vertex>) generatedQuery
+		POrderedSet<Vertex> result2 = (POrderedSet<Vertex>) generatedQuery
 				.newInstance().execute(datagraph);
 		assertNotNull(result2);
 
 		assertEquals(result1.size(), result2.size());
-		for (Vertex v : result1) {
-			assertTrue(result2.contains(v));
+		for (int i = 0; i < result1.size(); i++) {
+			assertEquals(result1.get(i), result2.get(i));
 		}
 	}
 
