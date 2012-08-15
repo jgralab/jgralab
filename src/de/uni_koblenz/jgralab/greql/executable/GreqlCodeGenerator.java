@@ -134,7 +134,9 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 
 	private final Schema schema;
 
-	private boolean thisLiteralsCreated = false;
+	private boolean thisEdgeCreated = false;
+
+	private boolean thisVertexCreated = false;
 
 	private final GreqlQuery query;
 
@@ -982,11 +984,11 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 			return Boolean.toString(((BoolLiteral) literal).is_boolValue());
 		}
 		if (literal instanceof ThisEdge) {
-			createThisLiterals();
+			createThisEdge();
 			return "thisEdge";
 		}
 		if (literal instanceof ThisVertex) {
-			createThisLiterals();
+			createThisVertex();
 			return "thisVertex";
 		}
 		addImports("de.uni_koblenz.jgralab.greql.types.Undefined");
@@ -1655,7 +1657,7 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 		VertexEvaluator<?> intermediateVertexEval = trans
 				.getIntermediateVertexEvaluator();
 		if (intermediateVertexEval != null) {
-			createThisLiterals();
+			createThisVertex();
 			CodeSnippet predicateSnippet = new CodeSnippet();
 			predicateSnippet.add("setThisVertex(element);");
 			predicateSnippet
@@ -1706,7 +1708,7 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 		VertexEvaluator<? extends Expression> predicateEval = trans
 				.getBooleanExpressionEvaluator();
 		if (predicateEval != null) {
-			createThisLiterals();
+			createThisVertex();
 			curr.add(new CodeSnippet("setThisVertex(element);"));
 			curr.add(new CodeSnippet("if ("
 					+ createCodeForExpression(predicateEval.getVertex())
@@ -1795,10 +1797,21 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 	}
 
 	private void createThisLiterals() {
-		if (!thisLiteralsCreated) {
-			thisLiteralsCreated = true;
+		createThisEdge();
+		createThisVertex();
+	}
+
+	public void createThisEdge() {
+		if (!thisEdgeCreated) {
+			thisEdgeCreated = true;
 			addClassField("Edge", "thisEdge", "null");
 			createSetterForThisLiteral(graph.getFirstThisEdge(), "Edge");
+		}
+	}
+
+	public void createThisVertex() {
+		if (!thisVertexCreated) {
+			thisVertexCreated = true;
 			addClassField("Vertex", "thisVertex", "null");
 			createSetterForThisLiteral(graph.getFirstThisVertex(), "Vertex");
 		}
