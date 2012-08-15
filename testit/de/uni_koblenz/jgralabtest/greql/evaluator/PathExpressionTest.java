@@ -2,8 +2,10 @@ package de.uni_koblenz.jgralabtest.greql.evaluator;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import java.util.Collection;
 import java.util.Set;
 
 import org.junit.AfterClass;
@@ -38,6 +40,28 @@ public class PathExpressionTest {
 		datagraph = null;
 	}
 
+	private void compareResultsOfQuery(String query, String classname)
+			throws InstantiationException, IllegalAccessException {
+		@SuppressWarnings("unchecked")
+		Collection<Vertex> result1 = (Collection<Vertex>) GreqlQuery
+				.createQuery(query).evaluate(datagraph);
+		assertNotNull(result1);
+
+		GreqlCodeGenerator.generateCode(query, datagraph.getSchema(),
+				classname, "./testit/");
+		Class<ExecutableQuery> generatedQuery = GreqlCodeGenerator
+				.generateCode(query, datagraph.getSchema(), classname);
+		@SuppressWarnings("unchecked")
+		Collection<Vertex> result2 = (Collection<Vertex>) generatedQuery
+				.newInstance().execute(datagraph);
+		assertNotNull(result2);
+
+		assertEquals(result1.size(), result2.size());
+		for (Vertex v : result1) {
+			assertTrue(result2.contains(v));
+		}
+	}
+
 	/*
 	 * Tests for SimplePathDescription
 	 */
@@ -54,13 +78,15 @@ public class PathExpressionTest {
 		Object erg = GreqlQuery.createQuery(query).evaluate(datagraph);
 		assertTrue((Boolean) erg);
 
+		String classname = "testdata.TestSimplePathDescription";
 		GreqlCodeGenerator.generateCode(query, datagraph.getSchema(),
-				"testdata.TestSimplePathDescription", "./testit/");
+				classname, "./testit/");
 		Class<ExecutableQuery> generatedQuery = GreqlCodeGenerator
-				.generateCode(query, datagraph.getSchema(),
-						"testdata.TestSimplePathDescription");
+				.generateCode(query, datagraph.getSchema(), classname);
 		erg = generatedQuery.newInstance().execute(datagraph);
 		assertTrue((Boolean) erg);
+
+		compareResultsOfQuery("getVertex(19)-->", classname + "2");
 	}
 
 	/**
@@ -73,14 +99,15 @@ public class PathExpressionTest {
 		Object erg = GreqlQuery.createQuery(query).evaluate(datagraph);
 		assertFalse((Boolean) erg);
 
+		String classname = "testdata.TestSimplePathDescription_inverseDirection";
 		GreqlCodeGenerator.generateCode(query, datagraph.getSchema(),
-				"testdata.TestSimplePathDescription_inverseDirection",
-				"./testit/");
+				classname, "./testit/");
 		Class<ExecutableQuery> generatedQuery = GreqlCodeGenerator
-				.generateCode(query, datagraph.getSchema(),
-						"testdata.TestSimplePathDescription_inverseDirection");
+				.generateCode(query, datagraph.getSchema(), classname);
 		erg = generatedQuery.newInstance().execute(datagraph);
 		assertFalse((Boolean) erg);
+
+		compareResultsOfQuery("getVertex(19)<--", classname + "2");
 	}
 
 	/**
@@ -93,14 +120,15 @@ public class PathExpressionTest {
 		Object erg = GreqlQuery.createQuery(query).evaluate(datagraph);
 		assertTrue((Boolean) erg);
 
+		String classname = "testdata.TestSimplePathDescription_BothDirections";
 		GreqlCodeGenerator.generateCode(query, datagraph.getSchema(),
-				"testdata.TestSimplePathDescription_BothDirections",
-				"./testit/");
+				classname, "./testit/");
 		Class<ExecutableQuery> generatedQuery = GreqlCodeGenerator
-				.generateCode(query, datagraph.getSchema(),
-						"testdata.TestSimplePathDescription_BothDirections");
+				.generateCode(query, datagraph.getSchema(), classname);
 		erg = generatedQuery.newInstance().execute(datagraph);
 		assertTrue((Boolean) erg);
+
+		compareResultsOfQuery("getVertex(19)<->", classname + "2");
 	}
 
 	/**
@@ -114,17 +142,17 @@ public class PathExpressionTest {
 		Object erg = GreqlQuery.createQuery(query).evaluate(datagraph);
 		assertTrue((Boolean) erg);
 
-		GreqlCodeGenerator
-				.generateCode(
-						query,
-						datagraph.getSchema(),
-						"testdata.TestSimplePathDescription_BothDirectionsWithRestriction",
-						"./testit/");
+		String classname = "testdata.TestSimplePathDescription_BothDirectionsWithRestriction";
+		GreqlCodeGenerator.generateCode(query, datagraph.getSchema(),
+				classname, "./testit/");
 		Class<ExecutableQuery> generatedQuery = GreqlCodeGenerator
-				.generateCode(query, datagraph.getSchema(),
-						"testdata.TestSimplePathDescription_BothDirectionsWithRestriction");
+				.generateCode(query, datagraph.getSchema(), classname);
 		erg = generatedQuery.newInstance().execute(datagraph);
 		assertTrue((Boolean) erg);
+
+		compareResultsOfQuery(
+				"import connections.*;\ngetVertex(19)<->{Street}", classname
+						+ "2");
 	}
 
 	/**
@@ -138,17 +166,17 @@ public class PathExpressionTest {
 		Object erg = GreqlQuery.createQuery(query).evaluate(datagraph);
 		assertTrue((Boolean) erg);
 
-		GreqlCodeGenerator
-				.generateCode(
-						query,
-						datagraph.getSchema(),
-						"testdata.TestSimplePathDescription_BothDirectionsWithRestrictionAndPredicate",
-						"./testit/");
+		String classname = "testdata.TestSimplePathDescription_BothDirectionsWithRestrictionAndPredicate";
+		GreqlCodeGenerator.generateCode(query, datagraph.getSchema(),
+				classname, "./testit/");
 		Class<ExecutableQuery> generatedQuery = GreqlCodeGenerator
-				.generateCode(query, datagraph.getSchema(),
-						"testdata.TestSimplePathDescription_BothDirectionsWithRestrictionAndPredicate");
+				.generateCode(query, datagraph.getSchema(), classname);
 		erg = generatedQuery.newInstance().execute(datagraph);
 		assertTrue((Boolean) erg);
+
+		compareResultsOfQuery(
+				"import connections.*;\ngetVertex(19)<->{Street @thisEdge.name=\"A48\"}",
+				classname + "2");
 	}
 
 	/**
@@ -161,13 +189,15 @@ public class PathExpressionTest {
 		Object erg = GreqlQuery.createQuery(query).evaluate(datagraph);
 		assertTrue((Boolean) erg);
 
+		String classname = "testdata.TestSimplePathDescription_Aggregation";
 		GreqlCodeGenerator.generateCode(query, datagraph.getSchema(),
-				"testdata.TestSimplePathDescription_Aggregation", "./testit/");
+				classname, "./testit/");
 		Class<ExecutableQuery> generatedQuery = GreqlCodeGenerator
-				.generateCode(query, datagraph.getSchema(),
-						"testdata.TestSimplePathDescription_Aggregation");
+				.generateCode(query, datagraph.getSchema(), classname);
 		erg = generatedQuery.newInstance().execute(datagraph);
 		assertTrue((Boolean) erg);
+
+		compareResultsOfQuery("getVertex(143)<>--", classname + "2");
 	}
 
 	/**
@@ -181,17 +211,17 @@ public class PathExpressionTest {
 		Object erg = GreqlQuery.createQuery(query).evaluate(datagraph);
 		assertTrue((Boolean) erg);
 
-		GreqlCodeGenerator
-				.generateCode(
-						query,
-						datagraph.getSchema(),
-						"testdata.TestSimplePathDescription_AggregationWithTypeRestriction",
-						"./testit/");
+		String classname = "testdata.TestSimplePathDescription_AggregationWithTypeRestriction";
+		GreqlCodeGenerator.generateCode(query, datagraph.getSchema(),
+				classname, "./testit/");
 		Class<ExecutableQuery> generatedQuery = GreqlCodeGenerator
-				.generateCode(query, datagraph.getSchema(),
-						"testdata.TestSimplePathDescription_AggregationWithTypeRestriction");
+				.generateCode(query, datagraph.getSchema(), classname);
 		erg = generatedQuery.newInstance().execute(datagraph);
 		assertTrue((Boolean) erg);
+
+		compareResultsOfQuery(
+				"import localities.ContainsLocality;\ngetVertex(143)<>--{ContainsLocality}",
+				classname + "2");
 	}
 
 	/**
@@ -205,17 +235,17 @@ public class PathExpressionTest {
 		Object erg = GreqlQuery.createQuery(query).evaluate(datagraph);
 		assertTrue((Boolean) erg);
 
-		GreqlCodeGenerator
-				.generateCode(
-						query,
-						datagraph.getSchema(),
-						"testdata.TestSimplePathDescription_AggregationWithRoleRestriction",
-						"./testit/");
+		String classname = "testdata.TestSimplePathDescription_AggregationWithRoleRestriction";
+		GreqlCodeGenerator.generateCode(query, datagraph.getSchema(),
+				classname, "./testit/");
 		Class<ExecutableQuery> generatedQuery = GreqlCodeGenerator
-				.generateCode(query, datagraph.getSchema(),
-						"testdata.TestSimplePathDescription_AggregationWithRoleRestriction");
+				.generateCode(query, datagraph.getSchema(), classname);
 		erg = generatedQuery.newInstance().execute(datagraph);
 		assertTrue((Boolean) erg);
+
+		compareResultsOfQuery(
+				"import localities.*;\ngetVertex(143)<>--{localities}",
+				classname + "2");
 	}
 
 	/**
@@ -293,13 +323,15 @@ public class PathExpressionTest {
 		Object erg = GreqlQuery.createQuery(query).evaluate(datagraph);
 		assertTrue((Boolean) erg);
 
+		String classname = "testdata.TestEdgePathDescription";
 		GreqlCodeGenerator.generateCode(query, datagraph.getSchema(),
-				"testdata.TestEdgePathDescription", "./testit/");
+				classname, "./testit/");
 		Class<ExecutableQuery> generatedQuery = GreqlCodeGenerator
-				.generateCode(query, datagraph.getSchema(),
-						"testdata.TestEdgePathDescription");
+				.generateCode(query, datagraph.getSchema(), classname);
 		erg = generatedQuery.newInstance().execute(datagraph);
 		assertTrue((Boolean) erg);
+
+		compareResultsOfQuery("getVertex(19)--getEdge(325)->", classname + "2");
 	}
 
 	// TODO probably fix GReQL parser, the following query is correct but it can
@@ -311,15 +343,17 @@ public class PathExpressionTest {
 		Object erg = GreqlQuery.createQuery(query).evaluate(datagraph);
 		assertTrue((Boolean) erg);
 
-		GreqlCodeGenerator
-				.generateCode(query, datagraph.getSchema(),
-						"testdata.TestEdgePathDescription_withRestriction",
-						"./testit/");
+		String classname = "testdata.TestEdgePathDescription_withRestriction";
+		GreqlCodeGenerator.generateCode(query, datagraph.getSchema(),
+				classname, "./testit/");
 		Class<ExecutableQuery> generatedQuery = GreqlCodeGenerator
-				.generateCode(query, datagraph.getSchema(),
-						"testdata.TestEdgePathDescription_withRestriction");
+				.generateCode(query, datagraph.getSchema(), classname);
 		erg = generatedQuery.newInstance().execute(datagraph);
 		assertTrue((Boolean) erg);
+
+		compareResultsOfQuery(
+				"getVertex(19) --getEdge(325)->{@ thisEdge=getEdge(325)}",
+				classname + "2");
 	}
 
 	/**
@@ -332,13 +366,15 @@ public class PathExpressionTest {
 		Object erg = GreqlQuery.createQuery(query).evaluate(datagraph);
 		assertFalse((Boolean) erg);
 
+		String classname = "testdata.TestEdgePathDescription_false";
 		GreqlCodeGenerator.generateCode(query, datagraph.getSchema(),
-				"testdata.TestEdgePathDescription_false", "./testit/");
+				classname, "./testit/");
 		Class<ExecutableQuery> generatedQuery = GreqlCodeGenerator
-				.generateCode(query, datagraph.getSchema(),
-						"testdata.TestEdgePathDescription_false");
+				.generateCode(query, datagraph.getSchema(), classname);
 		erg = generatedQuery.newInstance().execute(datagraph);
 		assertFalse((Boolean) erg);
+
+		compareResultsOfQuery("getVertex(19)--getEdge(1)->", classname + "2");
 	}
 
 	// /**
@@ -365,14 +401,15 @@ public class PathExpressionTest {
 		Object erg = GreqlQuery.createQuery(query).evaluate(datagraph);
 		assertTrue((Boolean) erg);
 
+		String classname = "testdata.TestSequentialPathDescription_sequenceLength2";
 		GreqlCodeGenerator.generateCode(query, datagraph.getSchema(),
-				"testdata.TestSequentialPathDescription_sequenceLength2",
-				"./testit/");
+				classname, "./testit/");
 		Class<ExecutableQuery> generatedQuery = GreqlCodeGenerator
-				.generateCode(query, datagraph.getSchema(),
-						"testdata.TestSequentialPathDescription_sequenceLength2");
+				.generateCode(query, datagraph.getSchema(), classname);
 		erg = generatedQuery.newInstance().execute(datagraph);
 		assertTrue((Boolean) erg);
+
+		compareResultsOfQuery("getVertex(155)--><--", classname + "2");
 	}
 
 	/**
@@ -386,14 +423,16 @@ public class PathExpressionTest {
 		Object erg = GreqlQuery.createQuery(query).evaluate(datagraph);
 		assertTrue((Boolean) erg);
 
+		String classname = "testdata.TestSequentialPathDescription_withVertexInBetween";
 		GreqlCodeGenerator.generateCode(query, datagraph.getSchema(),
-				"testdata.TestSequentialPathDescription_withVertexInBetween",
-				"./testit/");
+				classname, "./testit/");
 		Class<ExecutableQuery> generatedQuery = GreqlCodeGenerator
-				.generateCode(query, datagraph.getSchema(),
-						"testdata.TestSequentialPathDescription_withVertexInBetween");
+				.generateCode(query, datagraph.getSchema(), classname);
 		erg = generatedQuery.newInstance().execute(datagraph);
 		assertTrue((Boolean) erg);
+
+		compareResultsOfQuery("getVertex(155)-->getVertex(17)<--", classname
+				+ "2");
 	}
 
 	/**
@@ -407,14 +446,15 @@ public class PathExpressionTest {
 		Object erg = GreqlQuery.createQuery(query).evaluate(datagraph);
 		assertFalse((Boolean) erg);
 
+		String classname = "testdata.TestSequentialPathDescription_bidirectional";
 		GreqlCodeGenerator.generateCode(query, datagraph.getSchema(),
-				"testdata.TestSequentialPathDescription_bidirectional",
-				"./testit/");
+				classname, "./testit/");
 		Class<ExecutableQuery> generatedQuery = GreqlCodeGenerator
-				.generateCode(query, datagraph.getSchema(),
-						"testdata.TestSequentialPathDescription_bidirectional");
+				.generateCode(query, datagraph.getSchema(), classname);
 		erg = generatedQuery.newInstance().execute(datagraph);
 		assertFalse((Boolean) erg);
+
+		compareResultsOfQuery("getVertex(155)<-><->", classname + "2");
 	}
 
 	/**
@@ -428,14 +468,15 @@ public class PathExpressionTest {
 		Object erg = GreqlQuery.createQuery(query).evaluate(datagraph);
 		assertTrue((Boolean) erg);
 
+		String classname = "testdata.TestSequentialPathDescription_sequenceLength3";
 		GreqlCodeGenerator.generateCode(query, datagraph.getSchema(),
-				"testdata.TestSequentialPathDescription_sequenceLength3",
-				"./testit/");
+				classname, "./testit/");
 		Class<ExecutableQuery> generatedQuery = GreqlCodeGenerator
-				.generateCode(query, datagraph.getSchema(),
-						"testdata.TestSequentialPathDescription_sequenceLength3");
+				.generateCode(query, datagraph.getSchema(), classname);
 		erg = generatedQuery.newInstance().execute(datagraph);
 		assertTrue((Boolean) erg);
+
+		compareResultsOfQuery("getVertex(155)<-><-><->", classname + "2");
 	}
 
 	/**
@@ -449,17 +490,15 @@ public class PathExpressionTest {
 		Object erg = GreqlQuery.createQuery(query).evaluate(datagraph);
 		assertTrue((Boolean) erg);
 
-		GreqlCodeGenerator
-				.generateCode(
-						query,
-						datagraph.getSchema(),
-						"testdata.TestSequentialPathDescription_sequenceWithAggregation",
-						"./testit/");
+		String classname = "testdata.TestSequentialPathDescription_sequenceWithAggregation";
+		GreqlCodeGenerator.generateCode(query, datagraph.getSchema(),
+				classname, "./testit/");
 		Class<ExecutableQuery> generatedQuery = GreqlCodeGenerator
-				.generateCode(query, datagraph.getSchema(),
-						"testdata.TestSequentialPathDescription_sequenceWithAggregation");
+				.generateCode(query, datagraph.getSchema(), classname);
 		erg = generatedQuery.newInstance().execute(datagraph);
 		assertTrue((Boolean) erg);
+
+		compareResultsOfQuery("getVertex(155)<>---->", classname + "2");
 	}
 
 	/*
@@ -477,13 +516,15 @@ public class PathExpressionTest {
 		Object erg = GreqlQuery.createQuery(query).evaluate(datagraph);
 		assertTrue((Boolean) erg);
 
+		String classname = "testdata.TestOptionalPathDescription_edgeNeeded";
 		GreqlCodeGenerator.generateCode(query, datagraph.getSchema(),
-				"testdata.TestOptionalPathDescription_edgeNeeded", "./testit/");
+				classname, "./testit/");
 		Class<ExecutableQuery> generatedQuery = GreqlCodeGenerator
-				.generateCode(query, datagraph.getSchema(),
-						"testdata.TestOptionalPathDescription_edgeNeeded");
+				.generateCode(query, datagraph.getSchema(), classname);
 		erg = generatedQuery.newInstance().execute(datagraph);
 		assertTrue((Boolean) erg);
+
+		compareResultsOfQuery("getVertex(153)[-->]", classname + "2");
 	}
 
 	/**
@@ -497,14 +538,15 @@ public class PathExpressionTest {
 		Object erg = GreqlQuery.createQuery(query).evaluate(datagraph);
 		assertTrue((Boolean) erg);
 
+		String classname = "testdata.TestOptionalPathDescription_edgeNotNeeded";
 		GreqlCodeGenerator.generateCode(query, datagraph.getSchema(),
-				"testdata.TestOptionalPathDescription_edgeNotNeeded",
-				"./testit/");
+				classname, "./testit/");
 		Class<ExecutableQuery> generatedQuery = GreqlCodeGenerator
-				.generateCode(query, datagraph.getSchema(),
-						"testdata.TestOptionalPathDescription_edgeNotNeeded");
+				.generateCode(query, datagraph.getSchema(), classname);
 		erg = generatedQuery.newInstance().execute(datagraph);
 		assertTrue((Boolean) erg);
+
+		compareResultsOfQuery("getVertex(153)[-->]", classname + "2");
 	}
 
 	/**
@@ -518,14 +560,15 @@ public class PathExpressionTest {
 		Object erg = GreqlQuery.createQuery(query).evaluate(datagraph);
 		assertTrue((Boolean) erg);
 
+		String classname = "testdata.TestOptionalPathDescription_optionalLoop";
 		GreqlCodeGenerator.generateCode(query, datagraph.getSchema(),
-				"testdata.TestOptionalPathDescription_optionalLoop",
-				"./testit/");
+				classname, "./testit/");
 		Class<ExecutableQuery> generatedQuery = GreqlCodeGenerator
-				.generateCode(query, datagraph.getSchema(),
-						"testdata.TestOptionalPathDescription_optionalLoop");
+				.generateCode(query, datagraph.getSchema(), classname);
 		erg = generatedQuery.newInstance().execute(datagraph);
 		assertTrue((Boolean) erg);
+
+		compareResultsOfQuery("getVertex(136)[-->]", classname + "2");
 	}
 
 	/**
@@ -539,14 +582,15 @@ public class PathExpressionTest {
 		Object erg = GreqlQuery.createQuery(query).evaluate(datagraph);
 		assertFalse((Boolean) erg);
 
+		String classname = "testdata.TestOptionalPathDescription_notReachable";
 		GreqlCodeGenerator.generateCode(query, datagraph.getSchema(),
-				"testdata.TestOptionalPathDescription_notReachable",
-				"./testit/");
+				classname, "./testit/");
 		Class<ExecutableQuery> generatedQuery = GreqlCodeGenerator
-				.generateCode(query, datagraph.getSchema(),
-						"testdata.TestOptionalPathDescription_notReachable");
+				.generateCode(query, datagraph.getSchema(), classname);
 		erg = generatedQuery.newInstance().execute(datagraph);
 		assertFalse((Boolean) erg);
+
+		compareResultsOfQuery("getVertex(155)[<->]", classname + "2");
 	}
 
 	/*
@@ -560,14 +604,15 @@ public class PathExpressionTest {
 		Object erg = GreqlQuery.createQuery(query).evaluate(datagraph);
 		assertTrue((Boolean) erg);
 
+		String classname = "testdata.TestIteratedPathDescription_Star_Reflexivity";
 		GreqlCodeGenerator.generateCode(query, datagraph.getSchema(),
-				"testdata.TestIteratedPathDescription_Star_Reflexivity",
-				"./testit/");
+				classname, "./testit/");
 		Class<ExecutableQuery> generatedQuery = GreqlCodeGenerator
-				.generateCode(query, datagraph.getSchema(),
-						"testdata.TestIteratedPathDescription_Star_Reflexivity");
+				.generateCode(query, datagraph.getSchema(), classname);
 		erg = generatedQuery.newInstance().execute(datagraph);
 		assertTrue((Boolean) erg);
+
+		compareResultsOfQuery("getVertex(153)-->*", classname + "2");
 	}
 
 	@Test
@@ -577,17 +622,15 @@ public class PathExpressionTest {
 		Object erg = GreqlQuery.createQuery(query).evaluate(datagraph);
 		assertFalse((Boolean) erg);
 
-		GreqlCodeGenerator
-				.generateCode(
-						query,
-						datagraph.getSchema(),
-						"testdata.TestIteratedPathDescription_Plus_ReflexivityWithoutLoop",
-						"./testit/");
+		String classname = "testdata.TestIteratedPathDescription_Plus_ReflexivityWithoutLoop";
+		GreqlCodeGenerator.generateCode(query, datagraph.getSchema(),
+				classname, "./testit/");
 		Class<ExecutableQuery> generatedQuery = GreqlCodeGenerator
-				.generateCode(query, datagraph.getSchema(),
-						"testdata.TestIteratedPathDescription_Plus_ReflexivityWithoutLoop");
+				.generateCode(query, datagraph.getSchema(), classname);
 		erg = generatedQuery.newInstance().execute(datagraph);
 		assertFalse((Boolean) erg);
+
+		compareResultsOfQuery("getVertex(153)-->+", classname + "2");
 	}
 
 	@Test
@@ -597,14 +640,15 @@ public class PathExpressionTest {
 		Object erg = GreqlQuery.createQuery(query).evaluate(datagraph);
 		assertTrue((Boolean) erg);
 
+		String classname = "testdata.TestIteratedPathDescription_Star_withLoop";
 		GreqlCodeGenerator.generateCode(query, datagraph.getSchema(),
-				"testdata.TestIteratedPathDescription_Star_withLoop",
-				"./testit/");
+				classname, "./testit/");
 		Class<ExecutableQuery> generatedQuery = GreqlCodeGenerator
-				.generateCode(query, datagraph.getSchema(),
-						"testdata.TestIteratedPathDescription_Star_withLoop");
+				.generateCode(query, datagraph.getSchema(), classname);
 		erg = generatedQuery.newInstance().execute(datagraph);
 		assertTrue((Boolean) erg);
+
+		compareResultsOfQuery("getVertex(136)-->*", classname + "2");
 	}
 
 	@Test
@@ -614,14 +658,15 @@ public class PathExpressionTest {
 		Object erg = GreqlQuery.createQuery(query).evaluate(datagraph);
 		assertTrue((Boolean) erg);
 
+		String classname = "testdata.TestIteratedPathDescription_Plus_withLoop";
 		GreqlCodeGenerator.generateCode(query, datagraph.getSchema(),
-				"testdata.TestIteratedPathDescription_Plus_withLoop",
-				"./testit/");
+				classname, "./testit/");
 		Class<ExecutableQuery> generatedQuery = GreqlCodeGenerator
-				.generateCode(query, datagraph.getSchema(),
-						"testdata.TestIteratedPathDescription_Plus_withLoop");
+				.generateCode(query, datagraph.getSchema(), classname);
 		erg = generatedQuery.newInstance().execute(datagraph);
 		assertTrue((Boolean) erg);
+
+		compareResultsOfQuery("getVertex(136)-->+", classname + "2");
 	}
 
 	@Test
@@ -631,14 +676,15 @@ public class PathExpressionTest {
 		Object erg = GreqlQuery.createQuery(query).evaluate(datagraph);
 		assertTrue((Boolean) erg);
 
+		String classname = "testdata.TestIteratedPathDescription_Plus_ReachableWithLoop";
 		GreqlCodeGenerator.generateCode(query, datagraph.getSchema(),
-				"testdata.TestIteratedPathDescription_Plus_ReachableWithLoop",
-				"./testit/");
+				classname, "./testit/");
 		Class<ExecutableQuery> generatedQuery = GreqlCodeGenerator
-				.generateCode(query, datagraph.getSchema(),
-						"testdata.TestIteratedPathDescription_Plus_ReachableWithLoop");
+				.generateCode(query, datagraph.getSchema(), classname);
 		erg = generatedQuery.newInstance().execute(datagraph);
 		assertTrue((Boolean) erg);
+
+		compareResultsOfQuery("getVertex(136)<->+", classname + "2");
 	}
 
 	@Test
@@ -648,13 +694,15 @@ public class PathExpressionTest {
 		Object erg = GreqlQuery.createQuery(query).evaluate(datagraph);
 		assertTrue((Boolean) erg);
 
+		String classname = "testdata.TestIteratedPathDescription_Star";
 		GreqlCodeGenerator.generateCode(query, datagraph.getSchema(),
-				"testdata.TestIteratedPathDescription_Star", "./testit/");
+				classname, "./testit/");
 		Class<ExecutableQuery> generatedQuery = GreqlCodeGenerator
-				.generateCode(query, datagraph.getSchema(),
-						"testdata.TestIteratedPathDescription_Star");
+				.generateCode(query, datagraph.getSchema(), classname);
 		erg = generatedQuery.newInstance().execute(datagraph);
 		assertTrue((Boolean) erg);
+
+		compareResultsOfQuery("getVertex(14)-->*", classname + "2");
 	}
 
 	@Test
@@ -664,13 +712,15 @@ public class PathExpressionTest {
 		Object erg = GreqlQuery.createQuery(query).evaluate(datagraph);
 		assertTrue((Boolean) erg);
 
+		String classname = "testdata.TestIteratedPathDescription_Plus";
 		GreqlCodeGenerator.generateCode(query, datagraph.getSchema(),
-				"testdata.TestIteratedPathDescription_Plus", "./testit/");
+				classname, "./testit/");
 		Class<ExecutableQuery> generatedQuery = GreqlCodeGenerator
-				.generateCode(query, datagraph.getSchema(),
-						"testdata.TestIteratedPathDescription_Plus");
+				.generateCode(query, datagraph.getSchema(), classname);
 		erg = generatedQuery.newInstance().execute(datagraph);
 		assertTrue((Boolean) erg);
+
+		compareResultsOfQuery("getVertex(14)-->+", classname + "2");
 	}
 
 	@Test
@@ -680,17 +730,15 @@ public class PathExpressionTest {
 		Object erg = GreqlQuery.createQuery(query).evaluate(datagraph);
 		assertFalse((Boolean) erg);
 
-		GreqlCodeGenerator
-				.generateCode(
-						query,
-						datagraph.getSchema(),
-						"testdata.TestIteratedPathDescription_Star_FailBecauseOfDirection",
-						"./testit/");
+		String classname = "testdata.TestIteratedPathDescription_Star_FailBecauseOfDirection";
+		GreqlCodeGenerator.generateCode(query, datagraph.getSchema(),
+				classname, "./testit/");
 		Class<ExecutableQuery> generatedQuery = GreqlCodeGenerator
-				.generateCode(query, datagraph.getSchema(),
-						"testdata.TestIteratedPathDescription_Star_FailBecauseOfDirection");
+				.generateCode(query, datagraph.getSchema(), classname);
 		erg = generatedQuery.newInstance().execute(datagraph);
 		assertFalse((Boolean) erg);
+
+		compareResultsOfQuery("getVertex(14)<--*", classname + "2");
 	}
 
 	@Test
@@ -700,17 +748,15 @@ public class PathExpressionTest {
 		Object erg = GreqlQuery.createQuery(query).evaluate(datagraph);
 		assertFalse((Boolean) erg);
 
-		GreqlCodeGenerator
-				.generateCode(
-						query,
-						datagraph.getSchema(),
-						"testdata.TestIteratedPathDescription_Plus_FailBecauseOfDirection",
-						"./testit/");
+		String classname = "testdata.TestIteratedPathDescription_Plus_FailBecauseOfDirection";
+		GreqlCodeGenerator.generateCode(query, datagraph.getSchema(),
+				classname, "./testit/");
 		Class<ExecutableQuery> generatedQuery = GreqlCodeGenerator
-				.generateCode(query, datagraph.getSchema(),
-						"testdata.TestIteratedPathDescription_Plus_FailBecauseOfDirection");
+				.generateCode(query, datagraph.getSchema(), classname);
 		erg = generatedQuery.newInstance().execute(datagraph);
 		assertFalse((Boolean) erg);
+
+		compareResultsOfQuery("getVertex(14)<--+", classname + "2");
 	}
 
 	@Test(expected = GreqlException.class)
@@ -723,15 +769,11 @@ public class PathExpressionTest {
 	public void testIteratedPathDescription_Exponent_Reflexivity_Generated()
 			throws InstantiationException, IllegalAccessException {
 		String query = "getVertex(21)-->^0 getVertex(21)";
-		GreqlCodeGenerator
-				.generateCode(
-						query,
-						datagraph.getSchema(),
-						"testdata.TestIteratedPathDescription_Exponent_Reflexivity_Generated",
-						"./testit/");
+		String classname = "testdata.TestIteratedPathDescription_Exponent_Reflexivity_Generated";
+		GreqlCodeGenerator.generateCode(query, datagraph.getSchema(),
+				classname, "./testit/");
 		Class<ExecutableQuery> generatedQuery = GreqlCodeGenerator
-				.generateCode(query, datagraph.getSchema(),
-						"testdata.TestIteratedPathDescription_Exponent_Reflexivity_Generated");
+				.generateCode(query, datagraph.getSchema(), classname);
 		generatedQuery.newInstance().execute(datagraph);
 	}
 
@@ -742,14 +784,15 @@ public class PathExpressionTest {
 		Object erg = GreqlQuery.createQuery(query).evaluate(datagraph);
 		assertFalse((Boolean) erg);
 
+		String classname = "testdata.TestIteratedPathDescription_Exponent_TooShort";
 		GreqlCodeGenerator.generateCode(query, datagraph.getSchema(),
-				"testdata.TestIteratedPathDescription_Exponent_TooShort",
-				"./testit/");
+				classname, "./testit/");
 		Class<ExecutableQuery> generatedQuery = GreqlCodeGenerator
-				.generateCode(query, datagraph.getSchema(),
-						"testdata.TestIteratedPathDescription_Exponent_TooShort");
+				.generateCode(query, datagraph.getSchema(), classname);
 		erg = generatedQuery.newInstance().execute(datagraph);
 		assertFalse((Boolean) erg);
+
+		compareResultsOfQuery("getVertex(21)-->^1", classname + "2");
 	}
 
 	@Test
@@ -759,13 +802,15 @@ public class PathExpressionTest {
 		Object erg = GreqlQuery.createQuery(query).evaluate(datagraph);
 		assertTrue((Boolean) erg);
 
+		String classname = "testdata.TestIteratedPathDescription_Exponent";
 		GreqlCodeGenerator.generateCode(query, datagraph.getSchema(),
-				"testdata.TestIteratedPathDescription_Exponent", "./testit/");
+				classname, "./testit/");
 		Class<ExecutableQuery> generatedQuery = GreqlCodeGenerator
-				.generateCode(query, datagraph.getSchema(),
-						"testdata.TestIteratedPathDescription_Exponent");
+				.generateCode(query, datagraph.getSchema(), classname);
 		erg = generatedQuery.newInstance().execute(datagraph);
 		assertTrue((Boolean) erg);
+
+		compareResultsOfQuery("getVertex(21)-->^2", classname + "2");
 	}
 
 	@Test
@@ -775,14 +820,15 @@ public class PathExpressionTest {
 		Object erg = GreqlQuery.createQuery(query).evaluate(datagraph);
 		assertFalse((Boolean) erg);
 
+		String classname = "testdata.TestIteratedPathDescription_Exponent_TooLong";
 		GreqlCodeGenerator.generateCode(query, datagraph.getSchema(),
-				"testdata.TestIteratedPathDescription_Exponent_TooLong",
-				"./testit/");
+				classname, "./testit/");
 		Class<ExecutableQuery> generatedQuery = GreqlCodeGenerator
-				.generateCode(query, datagraph.getSchema(),
-						"testdata.TestIteratedPathDescription_Exponent_TooLong");
+				.generateCode(query, datagraph.getSchema(), classname);
 		erg = generatedQuery.newInstance().execute(datagraph);
 		assertFalse((Boolean) erg);
+
+		compareResultsOfQuery("getVertex(21)-->^3", classname + "2");
 	}
 
 	@Test
@@ -792,14 +838,15 @@ public class PathExpressionTest {
 		Object erg = GreqlQuery.createQuery(query).evaluate(datagraph);
 		assertFalse((Boolean) erg);
 
+		String classname = "testdata.TestIteratedPathDescription_Exponent_WrongDirection";
 		GreqlCodeGenerator.generateCode(query, datagraph.getSchema(),
-				"testdata.TestIteratedPathDescription_Exponent_WrongDirection",
-				"./testit/");
+				classname, "./testit/");
 		Class<ExecutableQuery> generatedQuery = GreqlCodeGenerator
-				.generateCode(query, datagraph.getSchema(),
-						"testdata.TestIteratedPathDescription_Exponent_WrongDirection");
+				.generateCode(query, datagraph.getSchema(), classname);
 		erg = generatedQuery.newInstance().execute(datagraph);
 		assertFalse((Boolean) erg);
+
+		compareResultsOfQuery("getVertex(21)<--^2", classname + "2");
 	}
 
 	@Test
@@ -809,17 +856,15 @@ public class PathExpressionTest {
 		Object erg = GreqlQuery.createQuery(query).evaluate(datagraph);
 		assertFalse((Boolean) erg);
 
-		GreqlCodeGenerator
-				.generateCode(
-						query,
-						datagraph.getSchema(),
-						"testdata.TestIteratedPathDescription_Exponent_TwoPossibleWays_TooShort",
-						"./testit/");
+		String classname = "testdata.TestIteratedPathDescription_Exponent_TwoPossibleWays_TooShort";
+		GreqlCodeGenerator.generateCode(query, datagraph.getSchema(),
+				classname, "./testit/");
 		Class<ExecutableQuery> generatedQuery = GreqlCodeGenerator
-				.generateCode(query, datagraph.getSchema(),
-						"testdata.TestIteratedPathDescription_Exponent_TwoPossibleWays_TooShort");
+				.generateCode(query, datagraph.getSchema(), classname);
 		erg = generatedQuery.newInstance().execute(datagraph);
 		assertFalse((Boolean) erg);
+
+		compareResultsOfQuery("getVertex(144)-->^1", classname + "2");
 	}
 
 	@Test
@@ -829,17 +874,15 @@ public class PathExpressionTest {
 		Object erg = GreqlQuery.createQuery(query).evaluate(datagraph);
 		assertTrue((Boolean) erg);
 
-		GreqlCodeGenerator
-				.generateCode(
-						query,
-						datagraph.getSchema(),
-						"testdata.TestIteratedPathDescription_Exponent_TwoPossibleWays_ShortMatch",
-						"./testit/");
+		String classname = "testdata.TestIteratedPathDescription_Exponent_TwoPossibleWays_ShortMatch";
+		GreqlCodeGenerator.generateCode(query, datagraph.getSchema(),
+				classname, "./testit/");
 		Class<ExecutableQuery> generatedQuery = GreqlCodeGenerator
-				.generateCode(query, datagraph.getSchema(),
-						"testdata.TestIteratedPathDescription_Exponent_TwoPossibleWays_ShortMatch");
+				.generateCode(query, datagraph.getSchema(), classname);
 		erg = generatedQuery.newInstance().execute(datagraph);
 		assertTrue((Boolean) erg);
+
+		compareResultsOfQuery("getVertex(144)-->^2", classname + "2");
 	}
 
 	@Test
@@ -849,17 +892,15 @@ public class PathExpressionTest {
 		Object erg = GreqlQuery.createQuery(query).evaluate(datagraph);
 		assertFalse((Boolean) erg);
 
-		GreqlCodeGenerator
-				.generateCode(
-						query,
-						datagraph.getSchema(),
-						"testdata.TestIteratedPathDescription_Exponent_TwoPossibleWays_BetweenBoth",
-						"./testit/");
+		String classname = "testdata.TestIteratedPathDescription_Exponent_TwoPossibleWays_BetweenBoth";
+		GreqlCodeGenerator.generateCode(query, datagraph.getSchema(),
+				classname, "./testit/");
 		Class<ExecutableQuery> generatedQuery = GreqlCodeGenerator
-				.generateCode(query, datagraph.getSchema(),
-						"testdata.TestIteratedPathDescription_Exponent_TwoPossibleWays_BetweenBoth");
+				.generateCode(query, datagraph.getSchema(), classname);
 		erg = generatedQuery.newInstance().execute(datagraph);
 		assertFalse((Boolean) erg);
+
+		compareResultsOfQuery("getVertex(144)-->^3", classname + "2");
 	}
 
 	@Test
@@ -869,17 +910,15 @@ public class PathExpressionTest {
 		Object erg = GreqlQuery.createQuery(query).evaluate(datagraph);
 		assertTrue((Boolean) erg);
 
-		GreqlCodeGenerator
-				.generateCode(
-						query,
-						datagraph.getSchema(),
-						"testdata.TestIteratedPathDescription_Exponent_TwoPossibleWays_LongMatch",
-						"./testit/");
+		String classname = "testdata.TestIteratedPathDescription_Exponent_TwoPossibleWays_LongMatch";
+		GreqlCodeGenerator.generateCode(query, datagraph.getSchema(),
+				classname, "./testit/");
 		Class<ExecutableQuery> generatedQuery = GreqlCodeGenerator
-				.generateCode(query, datagraph.getSchema(),
-						"testdata.TestIteratedPathDescription_Exponent_TwoPossibleWays_LongMatch");
+				.generateCode(query, datagraph.getSchema(), classname);
 		erg = generatedQuery.newInstance().execute(datagraph);
 		assertTrue((Boolean) erg);
+
+		compareResultsOfQuery("getVertex(144)-->^4", classname + "2");
 	}
 
 	@Test
@@ -889,17 +928,15 @@ public class PathExpressionTest {
 		Object erg = GreqlQuery.createQuery(query).evaluate(datagraph);
 		assertFalse((Boolean) erg);
 
-		GreqlCodeGenerator
-				.generateCode(
-						query,
-						datagraph.getSchema(),
-						"testdata.TestIteratedPathDescription_Exponent_TwoPossibleWays_TooLong",
-						"./testit/");
+		String classname = "testdata.TestIteratedPathDescription_Exponent_TwoPossibleWays_TooLong";
+		GreqlCodeGenerator.generateCode(query, datagraph.getSchema(),
+				classname, "./testit/");
 		Class<ExecutableQuery> generatedQuery = GreqlCodeGenerator
-				.generateCode(query, datagraph.getSchema(),
-						"testdata.TestIteratedPathDescription_Exponent_TwoPossibleWays_TooLong");
+				.generateCode(query, datagraph.getSchema(), classname);
 		erg = generatedQuery.newInstance().execute(datagraph);
 		assertFalse((Boolean) erg);
+
+		compareResultsOfQuery("getVertex(144)-->^5", classname + "2");
 	}
 
 	@Test(expected = GreqlException.class)
@@ -912,15 +949,11 @@ public class PathExpressionTest {
 	public void testIteratedPathDescription_Exponent_withLoop0_Generated()
 			throws InstantiationException, IllegalAccessException {
 		String query = "getVertex(136)-->^0 getVertex(136)";
-		GreqlCodeGenerator
-				.generateCode(
-						query,
-						datagraph.getSchema(),
-						"testdata.TestIteratedPathDescription_Exponent_withLoop0_Generated",
-						"./testit/");
+		String classname = "testdata.TestIteratedPathDescription_Exponent_withLoop0_Generated";
+		GreqlCodeGenerator.generateCode(query, datagraph.getSchema(),
+				classname, "./testit/");
 		Class<ExecutableQuery> generatedQuery = GreqlCodeGenerator
-				.generateCode(query, datagraph.getSchema(),
-						"testdata.TestIteratedPathDescription_Exponent_withLoop0_Generated");
+				.generateCode(query, datagraph.getSchema(), classname);
 		generatedQuery.newInstance().execute(datagraph);
 	}
 
@@ -931,14 +964,15 @@ public class PathExpressionTest {
 		Object erg = GreqlQuery.createQuery(query).evaluate(datagraph);
 		assertTrue((Boolean) erg);
 
+		String classname = "testdata.TestIteratedPathDescription_Exponent_withLoop1";
 		GreqlCodeGenerator.generateCode(query, datagraph.getSchema(),
-				"testdata.TestIteratedPathDescription_Exponent_withLoop1",
-				"./testit/");
+				classname, "./testit/");
 		Class<ExecutableQuery> generatedQuery = GreqlCodeGenerator
-				.generateCode(query, datagraph.getSchema(),
-						"testdata.TestIteratedPathDescription_Exponent_withLoop1");
+				.generateCode(query, datagraph.getSchema(), classname);
 		erg = generatedQuery.newInstance().execute(datagraph);
 		assertTrue((Boolean) erg);
+
+		compareResultsOfQuery("getVertex(136)-->^1", classname + "2");
 	}
 
 	@Test
@@ -948,14 +982,15 @@ public class PathExpressionTest {
 		Object erg = GreqlQuery.createQuery(query).evaluate(datagraph);
 		assertTrue((Boolean) erg);
 
+		String classname = "testdata.TestIteratedPathDescription_Exponent_withLoop2";
 		GreqlCodeGenerator.generateCode(query, datagraph.getSchema(),
-				"testdata.TestIteratedPathDescription_Exponent_withLoop2",
-				"./testit/");
+				classname, "./testit/");
 		Class<ExecutableQuery> generatedQuery = GreqlCodeGenerator
-				.generateCode(query, datagraph.getSchema(),
-						"testdata.TestIteratedPathDescription_Exponent_withLoop2");
+				.generateCode(query, datagraph.getSchema(), classname);
 		erg = generatedQuery.newInstance().execute(datagraph);
 		assertTrue((Boolean) erg);
+
+		compareResultsOfQuery("getVertex(136)-->^2", classname + "2");
 	}
 
 	/*
@@ -969,15 +1004,15 @@ public class PathExpressionTest {
 		Object erg = GreqlQuery.createQuery(query).evaluate(datagraph);
 		assertFalse((Boolean) erg);
 
-		GreqlCodeGenerator
-				.generateCode(query, datagraph.getSchema(),
-						"testdata.TestAlternativePathDescription_BothFail",
-						"./testit/");
+		String classname = "testdata.TestAlternativePathDescription_BothFail";
+		GreqlCodeGenerator.generateCode(query, datagraph.getSchema(),
+				classname, "./testit/");
 		Class<ExecutableQuery> generatedQuery = GreqlCodeGenerator
-				.generateCode(query, datagraph.getSchema(),
-						"testdata.TestAlternativePathDescription_BothFail");
+				.generateCode(query, datagraph.getSchema(), classname);
 		erg = generatedQuery.newInstance().execute(datagraph);
 		assertFalse((Boolean) erg);
+
+		compareResultsOfQuery("getVertex(144)-->^5 |-->^3", classname + "2");
 	}
 
 	@Test
@@ -987,17 +1022,15 @@ public class PathExpressionTest {
 		Object erg = GreqlQuery.createQuery(query).evaluate(datagraph);
 		assertTrue((Boolean) erg);
 
-		GreqlCodeGenerator
-				.generateCode(
-						query,
-						datagraph.getSchema(),
-						"testdata.TestAlternativePathDescription_FirstSucceedsSecondFails",
-						"./testit/");
+		String classname = "testdata.TestAlternativePathDescription_FirstSucceedsSecondFails";
+		GreqlCodeGenerator.generateCode(query, datagraph.getSchema(),
+				classname, "./testit/");
 		Class<ExecutableQuery> generatedQuery = GreqlCodeGenerator
-				.generateCode(query, datagraph.getSchema(),
-						"testdata.TestAlternativePathDescription_FirstSucceedsSecondFails");
+				.generateCode(query, datagraph.getSchema(), classname);
 		erg = generatedQuery.newInstance().execute(datagraph);
 		assertTrue((Boolean) erg);
+
+		compareResultsOfQuery("getVertex(144)-->^4 |-->^3", classname + "2");
 	}
 
 	@Test
@@ -1007,17 +1040,15 @@ public class PathExpressionTest {
 		Object erg = GreqlQuery.createQuery(query).evaluate(datagraph);
 		assertTrue((Boolean) erg);
 
-		GreqlCodeGenerator
-				.generateCode(
-						query,
-						datagraph.getSchema(),
-						"testdata.TestAlternativePathDescription_FirstFailsSecondSucceeds",
-						"./testit/");
+		String classname = "testdata.TestAlternativePathDescription_FirstFailsSecondSucceeds";
+		GreqlCodeGenerator.generateCode(query, datagraph.getSchema(),
+				classname, "./testit/");
 		Class<ExecutableQuery> generatedQuery = GreqlCodeGenerator
-				.generateCode(query, datagraph.getSchema(),
-						"testdata.TestAlternativePathDescription_FirstFailsSecondSucceeds");
+				.generateCode(query, datagraph.getSchema(), classname);
 		erg = generatedQuery.newInstance().execute(datagraph);
 		assertTrue((Boolean) erg);
+
+		compareResultsOfQuery("getVertex(144)-->^5 |-->^2", classname + "2");
 	}
 
 	@Test
@@ -1027,14 +1058,15 @@ public class PathExpressionTest {
 		Object erg = GreqlQuery.createQuery(query).evaluate(datagraph);
 		assertTrue((Boolean) erg);
 
+		String classname = "testdata.TestAlternativePathDescription_BothSucceed";
 		GreqlCodeGenerator.generateCode(query, datagraph.getSchema(),
-				"testdata.TestAlternativePathDescription_BothSucceed",
-				"./testit/");
+				classname, "./testit/");
 		Class<ExecutableQuery> generatedQuery = GreqlCodeGenerator
-				.generateCode(query, datagraph.getSchema(),
-						"testdata.TestAlternativePathDescription_BothSucceed");
+				.generateCode(query, datagraph.getSchema(), classname);
 		erg = generatedQuery.newInstance().execute(datagraph);
 		assertTrue((Boolean) erg);
+
+		compareResultsOfQuery("getVertex(144)-->^4 |-->^2", classname + "2");
 	}
 
 	@Test
@@ -1044,14 +1076,16 @@ public class PathExpressionTest {
 		Object erg = GreqlQuery.createQuery(query).evaluate(datagraph);
 		assertTrue((Boolean) erg);
 
+		String classname = "testdata.TestAlternativePathDescription_OfLength3";
 		GreqlCodeGenerator.generateCode(query, datagraph.getSchema(),
-				"testdata.TestAlternativePathDescription_OfLength3",
-				"./testit/");
+				classname, "./testit/");
 		Class<ExecutableQuery> generatedQuery = GreqlCodeGenerator
-				.generateCode(query, datagraph.getSchema(),
-						"testdata.TestAlternativePathDescription_OfLength3");
+				.generateCode(query, datagraph.getSchema(), classname);
 		erg = generatedQuery.newInstance().execute(datagraph);
 		assertTrue((Boolean) erg);
+
+		compareResultsOfQuery("getVertex(144)-->^4 |-->^2 |<>--", classname
+				+ "2");
 	}
 
 	/*
@@ -1065,13 +1099,15 @@ public class PathExpressionTest {
 		Object erg = GreqlQuery.createQuery(query).evaluate(datagraph);
 		assertTrue((Boolean) erg);
 
+		String classname = "testdata.TestGroupPathDescription_OneElement";
 		GreqlCodeGenerator.generateCode(query, datagraph.getSchema(),
-				"testdata.TestGroupPathDescription_OneElement", "./testit/");
+				classname, "./testit/");
 		Class<ExecutableQuery> generatedQuery = GreqlCodeGenerator
-				.generateCode(query, datagraph.getSchema(),
-						"testdata.TestGroupPathDescription_OneElement");
+				.generateCode(query, datagraph.getSchema(), classname);
 		erg = generatedQuery.newInstance().execute(datagraph);
 		assertTrue((Boolean) erg);
+
+		compareResultsOfQuery("getVertex(144)(-->^2)", classname + "2");
 	}
 
 	@Test
@@ -1081,14 +1117,15 @@ public class PathExpressionTest {
 		Object erg = GreqlQuery.createQuery(query).evaluate(datagraph);
 		assertTrue((Boolean) erg);
 
+		String classname = "testdata.TestGroupPathDescription_SeveralElements";
 		GreqlCodeGenerator.generateCode(query, datagraph.getSchema(),
-				"testdata.TestGroupPathDescription_SeveralElements",
-				"./testit/");
+				classname, "./testit/");
 		Class<ExecutableQuery> generatedQuery = GreqlCodeGenerator
-				.generateCode(query, datagraph.getSchema(),
-						"testdata.TestGroupPathDescription_SeveralElements");
+				.generateCode(query, datagraph.getSchema(), classname);
 		erg = generatedQuery.newInstance().execute(datagraph);
 		assertTrue((Boolean) erg);
+
+		compareResultsOfQuery("getVertex(144)(-->-->)", classname + "2");
 	}
 
 	@Test
@@ -1098,17 +1135,15 @@ public class PathExpressionTest {
 		Object erg = GreqlQuery.createQuery(query).evaluate(datagraph);
 		assertTrue((Boolean) erg);
 
-		GreqlCodeGenerator
-				.generateCode(
-						query,
-						datagraph.getSchema(),
-						"testdata.TestGroupPathDescription_SeveralElements_OnlyOneInGroup",
-						"./testit/");
+		String classname = "testdata.TestGroupPathDescription_SeveralElements_OnlyOneInGroup";
+		GreqlCodeGenerator.generateCode(query, datagraph.getSchema(),
+				classname, "./testit/");
 		Class<ExecutableQuery> generatedQuery = GreqlCodeGenerator
-				.generateCode(query, datagraph.getSchema(),
-						"testdata.TestGroupPathDescription_SeveralElements_OnlyOneInGroup");
+				.generateCode(query, datagraph.getSchema(), classname);
 		erg = generatedQuery.newInstance().execute(datagraph);
 		assertTrue((Boolean) erg);
+
+		compareResultsOfQuery("getVertex(144)-->(-->)", classname + "2");
 	}
 
 	@Test
@@ -1118,14 +1153,15 @@ public class PathExpressionTest {
 		Object erg = GreqlQuery.createQuery(query).evaluate(datagraph);
 		assertTrue((Boolean) erg);
 
+		String classname = "testdata.TestGroupPathDescription_SeveralElements_TwoGroups";
 		GreqlCodeGenerator.generateCode(query, datagraph.getSchema(),
-				"testdata.TestGroupPathDescription_SeveralElements_TwoGroups",
-				"./testit/");
+				classname, "./testit/");
 		Class<ExecutableQuery> generatedQuery = GreqlCodeGenerator
-				.generateCode(query, datagraph.getSchema(),
-						"testdata.TestGroupPathDescription_SeveralElements_TwoGroups");
+				.generateCode(query, datagraph.getSchema(), classname);
 		erg = generatedQuery.newInstance().execute(datagraph);
 		assertTrue((Boolean) erg);
+
+		compareResultsOfQuery("getVertex(144)(-->)(-->)", classname + "2");
 	}
 
 	@Test
@@ -1135,14 +1171,15 @@ public class PathExpressionTest {
 		Object erg = GreqlQuery.createQuery(query).evaluate(datagraph);
 		assertTrue((Boolean) erg);
 
+		String classname = "testdata.TestGroupPathDescription_SeveralBrackets";
 		GreqlCodeGenerator.generateCode(query, datagraph.getSchema(),
-				"testdata.TestGroupPathDescription_SeveralBrackets",
-				"./testit/");
+				classname, "./testit/");
 		Class<ExecutableQuery> generatedQuery = GreqlCodeGenerator
-				.generateCode(query, datagraph.getSchema(),
-						"testdata.TestGroupPathDescription_SeveralBrackets");
+				.generateCode(query, datagraph.getSchema(), classname);
 		erg = generatedQuery.newInstance().execute(datagraph);
 		assertTrue((Boolean) erg);
+
+		compareResultsOfQuery("getVertex(144)(((-->^2)))", classname + "2");
 	}
 
 	/*
@@ -1156,14 +1193,15 @@ public class PathExpressionTest {
 		Object erg = GreqlQuery.createQuery(query).evaluate(datagraph);
 		assertFalse((Boolean) erg);
 
+		String classname = "testdata.TestTransposedPathDescription_OneEdge_false";
 		GreqlCodeGenerator.generateCode(query, datagraph.getSchema(),
-				"testdata.TestTransposedPathDescription_OneEdge_false",
-				"./testit/");
+				classname, "./testit/");
 		Class<ExecutableQuery> generatedQuery = GreqlCodeGenerator
-				.generateCode(query, datagraph.getSchema(),
-						"testdata.TestTransposedPathDescription_OneEdge_false");
+				.generateCode(query, datagraph.getSchema(), classname);
 		erg = generatedQuery.newInstance().execute(datagraph);
 		assertFalse((Boolean) erg);
+
+		compareResultsOfQuery("getVertex(144) -->^T", classname + "2");
 	}
 
 	@Test
@@ -1173,14 +1211,15 @@ public class PathExpressionTest {
 		Object erg = GreqlQuery.createQuery(query).evaluate(datagraph);
 		assertTrue((Boolean) erg);
 
+		String classname = "testdata.TestTransposedPathDescription_OneEdge_true";
 		GreqlCodeGenerator.generateCode(query, datagraph.getSchema(),
-				"testdata.TestTransposedPathDescription_OneEdge_true",
-				"./testit/");
+				classname, "./testit/");
 		Class<ExecutableQuery> generatedQuery = GreqlCodeGenerator
-				.generateCode(query, datagraph.getSchema(),
-						"testdata.TestTransposedPathDescription_OneEdge_true");
+				.generateCode(query, datagraph.getSchema(), classname);
 		erg = generatedQuery.newInstance().execute(datagraph);
 		assertTrue((Boolean) erg);
+
+		compareResultsOfQuery("getVertex(144) (<--)^T", classname + "2");
 	}
 
 	@Test
@@ -1190,14 +1229,15 @@ public class PathExpressionTest {
 		Object erg = GreqlQuery.createQuery(query).evaluate(datagraph);
 		assertTrue((Boolean) erg);
 
+		String classname = "testdata.TestTransposedPathDescription_SeveralEdges";
 		GreqlCodeGenerator.generateCode(query, datagraph.getSchema(),
-				"testdata.TestTransposedPathDescription_SeveralEdges",
-				"./testit/");
+				classname, "./testit/");
 		Class<ExecutableQuery> generatedQuery = GreqlCodeGenerator
-				.generateCode(query, datagraph.getSchema(),
-						"testdata.TestTransposedPathDescription_SeveralEdges");
+				.generateCode(query, datagraph.getSchema(), classname);
 		erg = generatedQuery.newInstance().execute(datagraph);
 		assertTrue((Boolean) erg);
+
+		compareResultsOfQuery("getVertex(144)(<--<--^3)^T", classname + "2");
 	}
 
 	/*

@@ -1166,7 +1166,6 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 		DFA dfa = ((NFA) pathDescrEval.getResult(evaluator)).getDFA();
 		return createCodeForForwarOrBackwardVertexSetOrPathExcistence(dfa,
 				startExpr, targetExpr, queryExpr);
-		// TODO Auto-generated method stub
 	}
 
 	private String createCodeForForwarOrBackwardVertexSet(DFA dfa,
@@ -1248,15 +1247,15 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 				// Generate code to get next vertex and state number
 				if (curTrans.consumesEdge()) {
 					transitionCodeList.add(new CodeSnippet(
-							"\t\t\tnextElement = inc.getThat();"));
+							"\t\tnextElement = inc.getThat();"));
 				} else {
 					transitionCodeList.add(new CodeSnippet(
-							"\t\t\tnextElement = element;"));
+							"\t\tnextElement = element;"));
 				}
 				// Generate code to check if next element is marked
 				transitionCodeList
 						.add(new CodeSnippet(
-								"\t\t\tif (!markedElements["
+								"\t\tif (!markedElements["
 										+ curTrans.endState.number
 										+ "].contains(nextElement)) {//checking all transitions of state "
 										+ curTrans.endState.number));
@@ -1309,6 +1308,7 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 			addSnippet.add("finalEntries.add(newEntry);");
 		}
 		addSnippet.add("queue.add(newEntry);");
+		// list.add(addSnippet);// TODO
 		return list;
 	}
 
@@ -1474,7 +1474,6 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 			curr.add(new CodeSnippet("}"));
 		}
 		return curr;
-		// TODO here I am;
 	}
 
 	private CodeBlock createCodeForSimpleOrEdgeTransition(
@@ -1518,10 +1517,10 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 		addImports("de.uni_koblenz.jgralab.schema.AggregationKind");
 		if (trans.isAggregateFrom()) {
 			curr.add(new CodeSnippet(
-					"AggregationKind aggrKind = inc.getThisAggregationKind();"));
+					"AggregationKind aggrKind = inc.getThatAggregationKind();"));
 		} else {
 			curr.add(new CodeSnippet(
-					"AggregationKind aggrKind = inc.getThatAggregationKind();"));
+					"AggregationKind aggrKind = inc.getThisAggregationKind();"));
 		}
 		curr.add(new CodeSnippet(
 				"if ((aggrKind == AggregationKind.SHARED) || (aggrKind == AggregationKind.COMPOSITE)) {"));
@@ -1535,9 +1534,9 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 		curr = createPredicateCheck(curr, trans.getPredicateEvaluator());
 		// add element to queue
 		if (pathSystem) {
-			curr.add(createAddToPathSearchQueueSnippet(trans.endState.number));
-		} else {
 			curr.add(createAddToPathSystemQueueSnippet(trans));
+		} else {
+			curr.add(createAddToPathSearchQueueSnippet(trans.endState.number));
 		}
 		return resultList;
 	}
