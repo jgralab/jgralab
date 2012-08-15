@@ -67,7 +67,7 @@ public abstract class GraphImpl extends
 	private InternalVertex lastVertex;
 	private InternalEdge firstEdge;
 	private InternalEdge lastEdge;
-	private TraversalContext tc;
+	private ThreadLocal<TraversalContext> tc = new ThreadLocal<TraversalContext>();
 
 	/**
 	 * Holds the version of the vertex sequence. For every modification (e.g.
@@ -341,13 +341,13 @@ public abstract class GraphImpl extends
 
 	@Override
 	public TraversalContext getTraversalContext() {
-		return tc;
+		return tc.get();
 	}
 
 	@Override
-	public TraversalContext setTraversalContext(TraversalContext tc) {
-		TraversalContext oldTc = this.tc;
-		this.tc = tc;
+	public TraversalContext setTraversalContext(TraversalContext tc) {	
+		TraversalContext oldTc = this.tc.get();
+		this.tc.set(tc);
 		return oldTc;
 	}
 	
