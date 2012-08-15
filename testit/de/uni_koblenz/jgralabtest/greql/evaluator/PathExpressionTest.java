@@ -266,6 +266,7 @@ public class PathExpressionTest {
 	public void testSimplePathDescription_WithUnknownPackage_Generated()
 			throws InstantiationException, IllegalAccessException {
 		String query = "import local.*;\ngetVertex(143)<>--{localities}getVertex(153)";
+
 		GreqlCodeGenerator
 				.generateCode(
 						query,

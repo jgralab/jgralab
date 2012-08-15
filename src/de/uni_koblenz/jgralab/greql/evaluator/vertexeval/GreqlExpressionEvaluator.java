@@ -106,6 +106,29 @@ public class GreqlExpressionEvaluator extends VertexEvaluator<GreqlExpression> {
 		initializeBoundVariables(evaluator);
 
 		Schema graphSchema = evaluator.getSchemaOfDataGraph();
+		handleImportedTypes(graphSchema);
+
+		Expression boundExpression = vertex.getFirstIsQueryExprOfIncidence(
+				EdgeDirection.IN).getAlpha();
+		VertexEvaluator<? extends Expression> eval = query
+				.getVertexEvaluator(boundExpression);
+		Object result = eval.getResult(evaluator);
+		// if the query contains a "store as " - clause, there is a
+		// "isIdOfInc"-Incidence connected with the GreqlExpression
+		IsIdOfStoreClause storeInc = vertex
+				.getFirstIsIdOfStoreClauseIncidence(EdgeDirection.IN);
+		if (storeInc != null) {
+			VertexEvaluator<Identifier> storeEval = query
+					.getVertexEvaluator(storeInc.getAlpha());
+			String varName = storeEval.getResult(evaluator).toString();
+			// TODO [greqlrenovation] VariableDeclaration has an own
+			// toString(InternalGreqlEvaluator)-method. check the use
+			evaluator.setVariable(varName, result);
+		}
+		return result;
+	}
+
+	public void handleImportedTypes(Schema graphSchema) {
 		if ((vertex.get_importedTypes() != null) && (graphSchema != null)) {
 			for (String importedType : vertex.get_importedTypes()) {
 				if (importedType.endsWith(".*")) {
@@ -136,25 +159,6 @@ public class GreqlExpressionEvaluator extends VertexEvaluator<GreqlExpression> {
 				}
 			}
 		}
-
-		Expression boundExpression = vertex.getFirstIsQueryExprOfIncidence(
-				EdgeDirection.IN).getAlpha();
-		VertexEvaluator<? extends Expression> eval = query
-				.getVertexEvaluator(boundExpression);
-		Object result = eval.getResult(evaluator);
-		// if the query contains a "store as " - clause, there is a
-		// "isIdOfInc"-Incidence connected with the GreqlExpression
-		IsIdOfStoreClause storeInc = vertex
-				.getFirstIsIdOfStoreClauseIncidence(EdgeDirection.IN);
-		if (storeInc != null) {
-			VertexEvaluator<Identifier> storeEval = query
-					.getVertexEvaluator(storeInc.getAlpha());
-			String varName = storeEval.getResult(evaluator).toString();
-			// TODO [greqlrenovation] VariableDeclaration has an own
-			// toString(InternalGreqlEvaluator)-method. check the use
-			evaluator.setVariable(varName, result);
-		}
-		return result;
 	}
 
 	@Override

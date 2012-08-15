@@ -38,6 +38,7 @@ import de.uni_koblenz.jgralab.greql.evaluator.fa.SimpleTransition;
 import de.uni_koblenz.jgralab.greql.evaluator.fa.State;
 import de.uni_koblenz.jgralab.greql.evaluator.fa.Transition;
 import de.uni_koblenz.jgralab.greql.evaluator.fa.VertexTypeRestrictionTransition;
+import de.uni_koblenz.jgralab.greql.evaluator.vertexeval.GreqlExpressionEvaluator;
 import de.uni_koblenz.jgralab.greql.evaluator.vertexeval.PathDescriptionEvaluator;
 import de.uni_koblenz.jgralab.greql.evaluator.vertexeval.VariableEvaluator;
 import de.uni_koblenz.jgralab.greql.evaluator.vertexeval.VertexEvaluator;
@@ -347,6 +348,8 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 	}
 
 	private String createCodeForGreqlExpression(GreqlExpression rootExpr) {
+		((GreqlExpressionEvaluator) ((GreqlQueryImpl) query)
+				.getVertexEvaluator(rootExpr)).handleImportedTypes(schema);
 		CodeList list = new CodeList();
 		scope.blockBegin();
 		// create code for bound variables
@@ -446,6 +449,7 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 	private String createInitializerForTypeCollection(
 			TypeCollection typeCollection) {
 		String fieldName = "acceptedType_" + acceptedTypesNumber++;
+		// TODO adapt
 		int minTypeNumberInSchema = Integer.MAX_VALUE;
 		int maxTypeNumberInSchema = 0;
 		for (GraphElementClass<?, ?> gec : schema.getGraphClass()
@@ -1612,7 +1616,7 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 			createThisLiterals();
 			curr.add(new CodeSnippet("setThisEdge(inc);"));
 			curr.add(new CodeSnippet("setThisVertex(element);"));
-			curr.add(new CodeSnippet("if ("
+			curr.add(new CodeSnippet("if ((Boolean) "
 					+ createCodeForExpression(predicateEval.getVertex())
 					+ ") { //begin check predicate"));
 			CodeList body = new CodeList();
