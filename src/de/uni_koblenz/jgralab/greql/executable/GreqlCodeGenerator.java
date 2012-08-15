@@ -1700,13 +1700,14 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 	private CodeBlock createCodeForBooleanExpressionTransition(
 			BoolExpressionTransition trans, boolean pathSystem) {
 		CodeList curr = new CodeList();
+		CodeList resultList = curr;
 
 		VertexEvaluator<? extends Expression> predicateEval = trans
 				.getBooleanExpressionEvaluator();
 		if (predicateEval != null) {
 			createThisVertex();
 			curr.add(new CodeSnippet("setThisVertex(element);"));
-			curr.add(new CodeSnippet("if ("
+			curr.add(new CodeSnippet("if ((Boolean) "
 					+ createCodeForExpression(predicateEval.getVertex())
 					+ ") {"));
 			CodeList body = new CodeList();
@@ -1715,13 +1716,12 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 			curr = body;
 		}
 		// add element to queue
-		// add element to queue
 		if (pathSystem) {
-			curr.add(createAddToPathSearchQueueSnippet(trans.endState.number));
-		} else {
 			curr.add(createAddToPathSystemQueueSnippet(trans));
+		} else {
+			curr.add(createAddToPathSearchQueueSnippet(trans.endState.number));
 		}
-		return curr;
+		return resultList;
 	}
 
 	// Helper methods
