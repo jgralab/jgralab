@@ -449,7 +449,6 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 	private String createInitializerForTypeCollection(
 			TypeCollection typeCollection) {
 		String fieldName = "acceptedType_" + acceptedTypesNumber++;
-		// TODO adapt
 		int minTypeNumberInSchema = 0;
 		int maxTypeNumberInSchema = schema.getGraphElementClassCount();
 		addStaticField("java.util.BitSet", fieldName, "new java.util.BitSet()");
