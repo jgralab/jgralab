@@ -122,8 +122,8 @@ public class TypeCollection {
 	 */
 	public TypeCollection(TypeCollection other) {
 		this();
-		forbiddenTypes = other.forbiddenTypes;
-		allowedTypes = other.allowedTypes;
+		forbiddenTypes.addAll(other.forbiddenTypes);
+		allowedTypes.addAll(other.allowedTypes);
 	}
 
 	/**

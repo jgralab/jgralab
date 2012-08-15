@@ -58,9 +58,9 @@ import de.uni_koblenz.jgralab.schema.impl.compilation.InMemoryJavaSourceFile;
 
 /**
  * The class Schema represents a grUML Schema.
- *
+ * 
  * @author ist@uni-koblenz.de
- *
+ * 
  */
 public interface Schema extends Comparable<Schema> {
 
@@ -83,7 +83,7 @@ public interface Schema extends Comparable<Schema> {
 	/**
 	 * Checks if this schema supports enumeration constants with lowercase
 	 * letters.
-	 *
+	 * 
 	 * @return true iff the schema allows lowercase enum constants
 	 */
 	public boolean allowsLowercaseEnumConstants();
@@ -91,7 +91,7 @@ public interface Schema extends Comparable<Schema> {
 	/**
 	 * After creating the schema, this command serves to generate code for the
 	 * schema classes, contained in {@code JavaSourceFromString} objects.
-	 *
+	 * 
 	 * @param config
 	 *            a {@link CodeGeneratorConfiguration} specifying the requested
 	 *            implementation variant
@@ -103,13 +103,13 @@ public interface Schema extends Comparable<Schema> {
 	 * after creating the schema, this command serves to make it permanent,
 	 * schema classes are generated to represent the object oriented access
 	 * layer
-	 *
+	 * 
 	 * @param path
 	 *            the path to the schema classes which are to be generated
 	 * @param config
 	 *            a {@link CodeGeneratorConfiguration} specifying the requested
 	 *            implementation variant
-	 *
+	 * 
 	 * @throws GraphIOException
 	 *             if an error occured during optional compilation
 	 */
@@ -120,7 +120,7 @@ public interface Schema extends Comparable<Schema> {
 	 * after creating the schema, this command serves to make it permanent,
 	 * schema classes are generated to represent the object oriented access
 	 * layer
-	 *
+	 * 
 	 * @param path
 	 *            the path to the schema classes which are to be generated
 	 * @param config
@@ -138,7 +138,7 @@ public interface Schema extends Comparable<Schema> {
 	 * After creating the schema, this command serves to generate and compile
 	 * code for the schema classes. The class files are not written to disk, but
 	 * only held in memory.
-	 *
+	 * 
 	 * @param config
 	 *            configures the CodeGenerator and which classes and methods to
 	 *            be created
@@ -148,7 +148,7 @@ public interface Schema extends Comparable<Schema> {
 	/**
 	 * Generates Java classes in a temp directory, compiles them, and packs them
 	 * in a JAR file.
-	 *
+	 * 
 	 * @param config
 	 *            the {@link CodeGeneratorConfiguration} to be used for class
 	 *            generation
@@ -162,7 +162,7 @@ public interface Schema extends Comparable<Schema> {
 
 	/**
 	 * Builds a new enumeration domain, multiple domains may exist in a schema.
-	 *
+	 * 
 	 * @param qualifiedName
 	 *            the qualified name of the {@link EnumDomain}
 	 * @return a new enumeration domain
@@ -171,7 +171,7 @@ public interface Schema extends Comparable<Schema> {
 
 	/**
 	 * Builds a new enumeration domain, multiple domains may exist in a schema
-	 *
+	 * 
 	 * @param qualifiedName
 	 *            the qualified name of the {@link EnumDomain}
 	 * @param enumComponents
@@ -183,7 +183,7 @@ public interface Schema extends Comparable<Schema> {
 
 	/**
 	 * Builds a new enumeration domain, multiple domains may exist in a schema
-	 *
+	 * 
 	 * @param qualifiedName
 	 *            the qualified name of the {@link EnumDomain}
 	 * @param enumComponents
@@ -196,7 +196,7 @@ public interface Schema extends Comparable<Schema> {
 
 	/**
 	 * Creates a new {@link GraphClass} and saves it to the schema object
-	 *
+	 * 
 	 * @param simpleName
 	 *            the simple name of the graphclass in the schema
 	 * @return the new graphclass
@@ -205,7 +205,7 @@ public interface Schema extends Comparable<Schema> {
 
 	/**
 	 * builds a new list domain, multiple domains may exist in a schema
-	 *
+	 * 
 	 * @param baseDomain
 	 *            the domain of which all elements in the list are built of
 	 * @return the new list domain
@@ -214,7 +214,7 @@ public interface Schema extends Comparable<Schema> {
 
 	/**
 	 * builds a new map domain, multiple domains may exist in a schema
-	 *
+	 * 
 	 * @param keyDomain
 	 *            the domain of which all keys in the set are built of
 	 * @param valueDomain
@@ -225,7 +225,7 @@ public interface Schema extends Comparable<Schema> {
 
 	/**
 	 * builds a new record domain, multiple domains may exist in a schema
-	 *
+	 * 
 	 * @param qualifiedName
 	 *            the qualified name of this RecordDomain
 	 * @return the new record domain
@@ -234,7 +234,7 @@ public interface Schema extends Comparable<Schema> {
 
 	/**
 	 * builds a new record domain, multiple domains may exist in a schema
-	 *
+	 * 
 	 * @param qualifiedName
 	 *            the qualified name of this RecordDomain
 	 * @param recordComponents
@@ -248,7 +248,7 @@ public interface Schema extends Comparable<Schema> {
 
 	/**
 	 * builds a new set domain, multiple domains may exist in a schema
-	 *
+	 * 
 	 * @param baseDomain
 	 *            the domain of which all elements in the set are built of
 	 * @return the new set domain
@@ -273,14 +273,14 @@ public interface Schema extends Comparable<Schema> {
 	 * First, the list contains the domains which only contain basic domains.
 	 * The next entries in the list represent those domains which exclusively
 	 * contain domains with only basic classes as components, etc.
-	 *
+	 * 
 	 * @return an topologically ordered list of all composite domains
 	 */
 	public List<CompositeDomain> getCompositeDomains();
 
 	/**
 	 * Returns the default package of this Schema.
-	 *
+	 * 
 	 * @return the default package, guaranteed to be != null
 	 */
 	public Package getDefaultPackage();
@@ -301,7 +301,7 @@ public interface Schema extends Comparable<Schema> {
 
 	/**
 	 * Gets the method to create a new edge with the given name
-	 *
+	 * 
 	 * @param edgeClassName
 	 *            the name of the edge to create
 	 * @return the Method-Object that represents the method to create such edges
@@ -311,7 +311,7 @@ public interface Schema extends Comparable<Schema> {
 
 	/**
 	 * Returns a list of all enum domains
-	 *
+	 * 
 	 * @return a list of all enum domains
 	 */
 	public List<EnumDomain> getEnumDomains();
@@ -344,7 +344,7 @@ public interface Schema extends Comparable<Schema> {
 
 	/**
 	 * Returns a list of all record domains
-	 *
+	 * 
 	 * @return a list of all record domains
 	 */
 	public List<RecordDomain> getRecordDomains();
@@ -353,7 +353,7 @@ public interface Schema extends Comparable<Schema> {
 
 	/**
 	 * Gets the method to create a new vertex with the given name
-	 *
+	 * 
 	 * @param vertexClassQName
 	 *            the qualified name of the vertex to create
 	 * @return the Method-Object that represents the method to create such
@@ -364,7 +364,7 @@ public interface Schema extends Comparable<Schema> {
 
 	/**
 	 * Checks if the given name is a valid enumeration constant in this Schema.
-	 *
+	 * 
 	 * @param name
 	 *            the constant name to check
 	 * @return true if <code>name</code> is a valid enum constant
@@ -376,7 +376,7 @@ public interface Schema extends Comparable<Schema> {
 	 * Schema. If this is the case, it's not allowed to use it for any other
 	 * element in this schema. Even it'S not allowed to use a domain name also
 	 * as name of a VertexClass.
-	 *
+	 * 
 	 * @param qualifiedName
 	 *            the qualified name to check for
 	 * @return true if the name is already known, false otherwise
@@ -385,7 +385,7 @@ public interface Schema extends Comparable<Schema> {
 
 	/**
 	 * Returns the NamedElement with the given <code>qualifiedName</code>.
-	 *
+	 * 
 	 * @param qualifiedName
 	 *            the qualified name of the desired element
 	 * @return the corresponding NamedElement, or null if no such element exists
@@ -394,7 +394,7 @@ public interface Schema extends Comparable<Schema> {
 
 	/**
 	 * Sets the schema to allow lowercase enum constants
-	 *
+	 * 
 	 * @param allowLowercaseEnumConstants
 	 *            set to true to make the schema to allow lowercase enum
 	 *            constants
@@ -405,7 +405,7 @@ public interface Schema extends Comparable<Schema> {
 	/**
 	 * Creates a string representation of this schema in the TG language. Do not
 	 * use in GraphIO.
-	 *
+	 * 
 	 * @return the TG String of this schema
 	 */
 	public String toTGString();
@@ -427,7 +427,7 @@ public interface Schema extends Comparable<Schema> {
 	 * Signals that the schema is finished. No more changes are allowed. To open
 	 * the change mode call reopen(). The schema has to be finished before
 	 * commit or compile.
-	 *
+	 * 
 	 * @return true, if the schema was finished by this call, false if it
 	 *         already was finished before
 	 */
@@ -436,12 +436,32 @@ public interface Schema extends Comparable<Schema> {
 	/**
 	 * Reopens the schema to allow changes. To finish the schema again, call
 	 * finish
-	 *
+	 * 
 	 * @return true, if the schema was reopened by this call, false if the
 	 *         schema was already open (i.e., not yet finished or reopened by a
 	 *         previous call).
 	 */
 	public boolean reopen();
+
+	/**
+	 * Returns the number of GraphElementClasses in this Schema, including
+	 * default and temporary classes. A Schema implementation assigns numeric
+	 * identities to its {@link GraphElementClass}es, starting with 0. This
+	 * method determines the total count of {@link GraphElementClass}es in this
+	 * schema such that
+	 * {@link GraphElementClass#getGraphElementClassIdInSchema()} is guaranteed
+	 * to be less than the total number.
+	 * 
+	 * @return the number of GraphElementClasses in this Schema, including
+	 *         default and temporary classes
+	 */
+	public int getGraphElementClassCount();
+
+	/**
+	 * @return the number of {@link IncidenceClass}es in this schema, including
+	 *         default and temporary classes
+	 */
+	public int getIncidenceClassCount();
 
 	public void save(String filename) throws GraphIOException;
 
