@@ -38,6 +38,7 @@ import de.uni_koblenz.jgralab.greql.evaluator.fa.SimpleTransition;
 import de.uni_koblenz.jgralab.greql.evaluator.fa.State;
 import de.uni_koblenz.jgralab.greql.evaluator.fa.Transition;
 import de.uni_koblenz.jgralab.greql.evaluator.fa.VertexTypeRestrictionTransition;
+import de.uni_koblenz.jgralab.greql.evaluator.vertexeval.GreqlExpressionEvaluator;
 import de.uni_koblenz.jgralab.greql.evaluator.vertexeval.PathDescriptionEvaluator;
 import de.uni_koblenz.jgralab.greql.evaluator.vertexeval.VariableEvaluator;
 import de.uni_koblenz.jgralab.greql.evaluator.vertexeval.VertexEvaluator;
@@ -134,7 +135,9 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 
 	private final Schema schema;
 
-	private boolean thisLiteralsCreated = false;
+	private boolean thisEdgeCreated = false;
+
+	private boolean thisVertexCreated = false;
 
 	private final GreqlQuery query;
 
@@ -345,6 +348,8 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 	}
 
 	private String createCodeForGreqlExpression(GreqlExpression rootExpr) {
+		((GreqlExpressionEvaluator) ((GreqlQueryImpl) query)
+				.getVertexEvaluator(rootExpr)).handleImportedTypes(schema);
 		CodeList list = new CodeList();
 		scope.blockBegin();
 		// create code for bound variables
@@ -444,15 +449,8 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 	private String createInitializerForTypeCollection(
 			TypeCollection typeCollection) {
 		String fieldName = "acceptedType_" + acceptedTypesNumber++;
-		int minTypeNumberInSchema = Integer.MAX_VALUE;
-		int maxTypeNumberInSchema = 0;
-		for (GraphElementClass<?, ?> gec : schema.getGraphClass()
-				.getGraphElementClasses()) {
-			minTypeNumberInSchema = Math.min(minTypeNumberInSchema,
-					gec.getGraphElementClassIdInSchema());
-			maxTypeNumberInSchema = Math.max(maxTypeNumberInSchema,
-					gec.getGraphElementClassIdInSchema());
-		}
+		int minTypeNumberInSchema = 0;
+		int maxTypeNumberInSchema = schema.getGraphElementClassCount();
 		addStaticField("java.util.BitSet", fieldName, "new java.util.BitSet()");
 		if (typeCollection.getAllowedTypes().isEmpty()) {
 			// all types but the forbidden ones are allowed
@@ -982,11 +980,11 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 			return Boolean.toString(((BoolLiteral) literal).is_boolValue());
 		}
 		if (literal instanceof ThisEdge) {
-			createThisLiterals();
+			createThisEdge();
 			return "thisEdge";
 		}
 		if (literal instanceof ThisVertex) {
-			createThisLiterals();
+			createThisVertex();
 			return "thisVertex";
 		}
 		addImports("de.uni_koblenz.jgralab.greql.types.Undefined");
@@ -1166,7 +1164,6 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 		DFA dfa = ((NFA) pathDescrEval.getResult(evaluator)).getDFA();
 		return createCodeForForwarOrBackwardVertexSetOrPathExcistence(dfa,
 				startExpr, targetExpr, queryExpr);
-		// TODO Auto-generated method stub
 	}
 
 	private String createCodeForForwarOrBackwardVertexSet(DFA dfa,
@@ -1248,15 +1245,15 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 				// Generate code to get next vertex and state number
 				if (curTrans.consumesEdge()) {
 					transitionCodeList.add(new CodeSnippet(
-							"\t\t\tnextElement = inc.getThat();"));
+							"\t\tnextElement = inc.getThat();"));
 				} else {
 					transitionCodeList.add(new CodeSnippet(
-							"\t\t\tnextElement = element;"));
+							"\t\tnextElement = element;"));
 				}
 				// Generate code to check if next element is marked
 				transitionCodeList
 						.add(new CodeSnippet(
-								"\t\t\tif (!markedElements["
+								"\t\tif (!markedElements["
 										+ curTrans.endState.number
 										+ "].contains(nextElement)) {//checking all transitions of state "
 										+ curTrans.endState.number));
@@ -1309,6 +1306,7 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 			addSnippet.add("finalEntries.add(newEntry);");
 		}
 		addSnippet.add("queue.add(newEntry);");
+		// list.add(addSnippet);// TODO
 		return list;
 	}
 
@@ -1474,7 +1472,6 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 			curr.add(new CodeSnippet("}"));
 		}
 		return curr;
-		// TODO here I am;
 	}
 
 	private CodeBlock createCodeForSimpleOrEdgeTransition(
@@ -1518,10 +1515,10 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 		addImports("de.uni_koblenz.jgralab.schema.AggregationKind");
 		if (trans.isAggregateFrom()) {
 			curr.add(new CodeSnippet(
-					"AggregationKind aggrKind = inc.getThisAggregationKind();"));
+					"AggregationKind aggrKind = inc.getThatAggregationKind();"));
 		} else {
 			curr.add(new CodeSnippet(
-					"AggregationKind aggrKind = inc.getThatAggregationKind();"));
+					"AggregationKind aggrKind = inc.getThisAggregationKind();"));
 		}
 		curr.add(new CodeSnippet(
 				"if ((aggrKind == AggregationKind.SHARED) || (aggrKind == AggregationKind.COMPOSITE)) {"));
@@ -1535,9 +1532,9 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 		curr = createPredicateCheck(curr, trans.getPredicateEvaluator());
 		// add element to queue
 		if (pathSystem) {
-			curr.add(createAddToPathSearchQueueSnippet(trans.endState.number));
-		} else {
 			curr.add(createAddToPathSystemQueueSnippet(trans));
+		} else {
+			curr.add(createAddToPathSearchQueueSnippet(trans.endState.number));
 		}
 		return resultList;
 	}
@@ -1611,7 +1608,7 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 			createThisLiterals();
 			curr.add(new CodeSnippet("setThisEdge(inc);"));
 			curr.add(new CodeSnippet("setThisVertex(element);"));
-			curr.add(new CodeSnippet("if ("
+			curr.add(new CodeSnippet("if ((Boolean) "
 					+ createCodeForExpression(predicateEval.getVertex())
 					+ ") { //begin check predicate"));
 			CodeList body = new CodeList();
@@ -1651,19 +1648,39 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 	private CodeBlock createCodeForIntermediateVertexTransition(
 			IntermediateVertexTransition trans, boolean pathSystem) {
 		CodeList curr = new CodeList();
+		CodeList resultList = curr;
 
 		VertexEvaluator<?> intermediateVertexEval = trans
 				.getIntermediateVertexEvaluator();
 		if (intermediateVertexEval != null) {
-			createThisLiterals();
+			createThisVertex();
 			CodeSnippet predicateSnippet = new CodeSnippet();
 			predicateSnippet.add("setThisVertex(element);");
 			predicateSnippet
 					.add("Object tempRes = "
 							+ createCodeForExpression((Expression) intermediateVertexEval
 									.getVertex()) + ";");
+			// following produced a "unchecked" warning
+			// predicateSnippet
+			// .add("if ((tempRes == element)"
+			// +
+			// " || (tempRes instanceof org.pcollections.PCollection && ((org.pcollections.PCollection<Object>) tempRes).contains(element))"
+			// + ") { //test of intermediate vertex transition");
+			// code with supressed "unchecked" warning
 			predicateSnippet
-					.add("if ((tempRes == element) || (((org.pcollections.PCollection<Object>) tempRes).contains(element))) { //test of intermediate vertex transition");
+					.add("boolean transitionWorks = tempRes == element;");
+			predicateSnippet.add("if(!transitionWorks) {");
+			predicateSnippet
+					.add("\tif(tempRes instanceof org.pcollections.PCollection) {");
+			predicateSnippet.add("\t\t@SuppressWarnings(\"unchecked\")");
+			predicateSnippet
+					.add("\t\torg.pcollections.PCollection<Object> tmpList = (org.pcollections.PCollection<Object>) tempRes;");
+			predicateSnippet
+					.add("\t\ttransitionWorks = tmpList.contains(element);");
+			predicateSnippet.add("\t}");
+			predicateSnippet.add("}");
+			predicateSnippet
+					.add("if(transitionWorks) { //test of intermediate vertex transition");
 			curr.add(predicateSnippet);
 			CodeList body = new CodeList();
 			curr.add(body);
@@ -1673,23 +1690,24 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 		}
 		// add element to queue
 		if (pathSystem) {
-			curr.add(createAddToPathSearchQueueSnippet(trans.endState.number));
-		} else {
 			curr.add(createAddToPathSystemQueueSnippet(trans));
+		} else {
+			curr.add(createAddToPathSearchQueueSnippet(trans.endState.number));
 		}
-		return curr;
+		return resultList;
 	}
 
 	private CodeBlock createCodeForBooleanExpressionTransition(
 			BoolExpressionTransition trans, boolean pathSystem) {
 		CodeList curr = new CodeList();
+		CodeList resultList = curr;
 
 		VertexEvaluator<? extends Expression> predicateEval = trans
 				.getBooleanExpressionEvaluator();
 		if (predicateEval != null) {
-			createThisLiterals();
+			createThisVertex();
 			curr.add(new CodeSnippet("setThisVertex(element);"));
-			curr.add(new CodeSnippet("if ("
+			curr.add(new CodeSnippet("if ((Boolean) "
 					+ createCodeForExpression(predicateEval.getVertex())
 					+ ") {"));
 			CodeList body = new CodeList();
@@ -1698,13 +1716,12 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 			curr = body;
 		}
 		// add element to queue
-		// add element to queue
 		if (pathSystem) {
-			curr.add(createAddToPathSearchQueueSnippet(trans.endState.number));
-		} else {
 			curr.add(createAddToPathSystemQueueSnippet(trans));
+		} else {
+			curr.add(createAddToPathSearchQueueSnippet(trans.endState.number));
 		}
-		return curr;
+		return resultList;
 	}
 
 	// Helper methods
@@ -1776,10 +1793,21 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 	}
 
 	private void createThisLiterals() {
-		if (!thisLiteralsCreated) {
-			thisLiteralsCreated = true;
+		createThisEdge();
+		createThisVertex();
+	}
+
+	public void createThisEdge() {
+		if (!thisEdgeCreated) {
+			thisEdgeCreated = true;
 			addClassField("Edge", "thisEdge", "null");
 			createSetterForThisLiteral(graph.getFirstThisEdge(), "Edge");
+		}
+	}
+
+	public void createThisVertex() {
+		if (!thisVertexCreated) {
+			thisVertexCreated = true;
 			addClassField("Vertex", "thisVertex", "null");
 			createSetterForThisLiteral(graph.getFirstThisVertex(), "Vertex");
 		}

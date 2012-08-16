@@ -67,7 +67,8 @@ import de.uni_koblenz.jgralabtest.instancetest.internal.RunInternalTests;
 		IncidenceListTest.class, LoadTest.class, VertexListTest.class,
 		VertexTest.class, EdgeTest.class, RoleNameTest.class, GraphTest.class,
 		GraphStructureChangedListenerTest.class, DefaultValueTest.class,
-		RunGraphMarkerTests.class, TraversalContextTest.class,
+		RunGraphMarkerTests.class, TraversalContextTest.class, 
+		TraversalContextMultipleThreadsTest.class,
 		RunInternalTests.class })
 public class RunInstanceTests {
 

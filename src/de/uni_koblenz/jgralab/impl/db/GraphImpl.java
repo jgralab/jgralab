@@ -95,7 +95,7 @@ public abstract class GraphImpl extends GraphBaseImpl implements
 	 */
 	private GraphDatabase containingDatabase;
 
-	private TraversalContext tc;
+	private ThreadLocal<TraversalContext> tc = new ThreadLocal<TraversalContext>();
 
 	/**
 	 * Creates a new <code>GraphImpl</code> persistent in database.
@@ -1394,13 +1394,13 @@ public abstract class GraphImpl extends GraphBaseImpl implements
 
 	@Override
 	public TraversalContext getTraversalContext() {
-		return tc;
+		return tc.get();
 	}
 
 	@Override
 	public TraversalContext setTraversalContext(TraversalContext tc) {
-		TraversalContext oldTc = this.tc;
-		this.tc = tc;
+		TraversalContext oldTc = this.tc.get();
+		this.tc.set(tc);
 		return oldTc;
 	}
 	
