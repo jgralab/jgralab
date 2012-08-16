@@ -47,8 +47,7 @@ import de.uni_koblenz.jgralab.greql.funlib.Function;
 
 public class EntrySet extends Function {
 
-	@Description(params = "map", description = "Returns the set of entries of the given map.",
-			categories = Category.COLLECTIONS_AND_MAPS)
+	@Description(params = "map", description = "Returns the set of entries of the map.", categories = Category.COLLECTIONS_AND_MAPS)
 	public EntrySet() {
 		super();
 	}

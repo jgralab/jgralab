@@ -51,42 +51,27 @@ public class Get extends Function {
 		super(2, 1, 1.0);
 	}
 
-	@Description(params = {"l", "i"}, description = 
-		"Returns the value associated with the given index in the given PVector.\n "
-						+ "Shorthand notation: myPVector[INDEX]",
-						categories = Category.COLLECTIONS_AND_MAPS)
-	public <T> T evaluate(PVector<T> l, Integer i) {
-		return (i < 0) || (i >= l.size()) ? null : l.get(i);
+	@Description(params = { "v", "i" }, description = "Returns the value stored in v at index i. Short notation: v[i]", categories = Category.COLLECTIONS_AND_MAPS)
+	public <T> T evaluate(PVector<T> v, Integer i) {
+		return (i < 0) || (i >= v.size()) ? null : v.get(i);
 	}
 
-	@Description(params = {"l", "i"}, description = 
-		"Returns the value associated with the given index in the given POrderedSet.\n "
-						+ "Shorthand notation: myPOrderedSet[INDEX]",
-						categories = Category.COLLECTIONS_AND_MAPS)
-	public <T> T evaluate(POrderedSet<T> l, Integer i) {
-		return (i < 0) || (i >= l.size()) ? null : l.get(i);
+	@Description(params = { "s", "i" }, description = "Returns the value stored in s at index i. Short notation: s[i].", categories = Category.COLLECTIONS_AND_MAPS)
+	public <T> T evaluate(POrderedSet<T> s, Integer i) {
+		return (i < 0) || (i >= s.size()) ? null : s.get(i);
 	}
 
-	@Description(params = {"l", "i"}, description = 
-		"Returns the value associated with the given index in the given Table.\n "
-						+ "Shorthand notation: myTable[INDEX]",
-						categories = Category.COLLECTIONS_AND_MAPS)
+	@Description(params = { "t", "i" }, description = "Returns the value stored in t at index i. Short notation: t[i]", categories = Category.COLLECTIONS_AND_MAPS)
 	public <T> T evaluate(Table<T> l, Integer i) {
 		return (i < 0) || (i >= l.size()) ? null : l.get(i);
 	}
 
-	@Description(params = {"l", "i"}, description = 
-		"Returns the value associated with the given index in the given Tuple.\n "
-						+ "Shorthand notation: myTuple[INDEX]",
-						categories = Category.COLLECTIONS_AND_MAPS)
+	@Description(params = { "t", "i" }, description = "Returns the i-th of tuple t. Short notation: t[i]", categories = Category.COLLECTIONS_AND_MAPS)
 	public Object evaluate(Tuple t, Integer i) {
 		return (i < 0) || (i >= t.size()) ? null : t.get(i);
 	}
 
-	@Description(params = {"map", "key"}, description = 
-		"Returns the value associated with the given kep in the given PMap.\n "
-						+ "Shorthand notation: myPMap[KEY]",
-						categories = Category.COLLECTIONS_AND_MAPS)
+	@Description(params = { "map", "key" }, description = "Returns the map value associated with key. Short notation: map[key]", categories = Category.COLLECTIONS_AND_MAPS)
 	public <K, V> V evaluate(PMap<K, V> m, K key) {
 		return m.get(key);
 	}

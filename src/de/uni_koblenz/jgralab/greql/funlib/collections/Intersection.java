@@ -44,8 +44,7 @@ import de.uni_koblenz.jgralab.greql.funlib.Function;
 
 public class Intersection extends Function {
 
-	@Description(params = {"a","b"}, description = "Returns the intersection of the given two sets.",
-			categories = Category.COLLECTIONS_AND_MAPS)
+	@Description(params = { "a", "b" }, description = "Returns the intersection of a and b.", categories = Category.COLLECTIONS_AND_MAPS)
 	public Intersection() {
 		super();
 	}

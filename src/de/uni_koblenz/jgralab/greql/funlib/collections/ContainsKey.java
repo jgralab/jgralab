@@ -41,8 +41,7 @@ import de.uni_koblenz.jgralab.greql.funlib.Function;
 
 public class ContainsKey extends Function {
 
-	@Description(params = {"map","key"}, description = "Returns true, iff the given map contains the given key.",
-			categories = Category.COLLECTIONS_AND_MAPS)
+	@Description(params = { "map", "key" }, description = "Returns true, iff the map contains the key.", categories = Category.COLLECTIONS_AND_MAPS)
 	public ContainsKey() {
 		super(2, 1, 0.2);
 	}

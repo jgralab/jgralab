@@ -47,21 +47,18 @@ public class IsEmpty extends Function {
 		super(2, 1, 0.01);
 	}
 
-	@Description(params = {"l"}, description = "Returns true, iff the given PVector is empty.",
-			categories = Category.STATISTICS)
-	public <T> Boolean evaluate(PVector<T> c) {
-		return c.isEmpty();
-	}
-	
-	@Description(params = {"s"}, description = "Returns true, iff the given PSet is empty.",
-			categories = Category.STATISTICS)
-	public <T> Boolean evaluate(PSet<T> c) {
-		return c.isEmpty();
+	@Description(params = { "v" }, description = "Returns true, iff v is empty.", categories = Category.STATISTICS)
+	public <T> Boolean evaluate(PVector<T> v) {
+		return v.isEmpty();
 	}
 
-	@Description(params = {"m"}, description = "Returns true, iff the given PMap is empty.",
-			categories = Category.STATISTICS)
-	public <K, V> Boolean evaluate(PMap<K, V> c) {
-		return c.isEmpty();
+	@Description(params = { "s" }, description = "Returns true, iff s is empty.", categories = Category.STATISTICS)
+	public <T> Boolean evaluate(PSet<T> s) {
+		return s.isEmpty();
+	}
+
+	@Description(params = { "m" }, description = "Returns true, iff m is empty.", categories = Category.STATISTICS)
+	public <K, V> Boolean evaluate(PMap<K, V> m) {
+		return m.isEmpty();
 	}
 }

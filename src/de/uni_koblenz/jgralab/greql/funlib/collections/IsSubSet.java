@@ -43,15 +43,13 @@ import de.uni_koblenz.jgralab.greql.funlib.Function;
 
 public class IsSubSet extends Function {
 
-	@Description(params = {"a","b"}, description = 
-		"Returns true, iff the set given as first parameter is subset of the set given as second parameter.",
-			categories = Category.COLLECTIONS_AND_MAPS)
+	@Description(params = { "sub", "s" }, description = "Returns true, iff the sub is subset of s.", categories = Category.COLLECTIONS_AND_MAPS)
 	public IsSubSet() {
 		super();
 	}
 
-	public <T> Boolean evaluate(PSet<T> a, PSet<T> b) {
-		return b.containsAll(a);
+	public <T> Boolean evaluate(PSet<T> sub, PSet<T> s) {
+		return s.containsAll(sub);
 	}
 
 	@Override

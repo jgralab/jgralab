@@ -311,14 +311,17 @@ public class GreqlGui extends SwingApplication {
 		public void run() {
 			try {
 				progressBar.setIndeterminate(true);
-				graph = GraphIO
-						.loadGraphFromFile(
-								file.getCanonicalPath(),
-								genericImplementationCheckBoxItem.isSelected() ? ImplementationType.GENERIC
-										: ImplementationType.STANDARD, this);
-				System.err.println(graph);
-				recentGraphList.rememberFile(file);
-				graphLoading = false;
+				synchronized (GreqlGui.this) {
+					graph = GraphIO
+							.loadGraphFromFile(
+									file.getCanonicalPath(),
+									genericImplementationCheckBoxItem
+											.isSelected() ? ImplementationType.GENERIC
+											: ImplementationType.STANDARD, this);
+					System.err.println(graph);
+					recentGraphList.rememberFile(file);
+					graphLoading = false;
+				}
 			} catch (Exception e1) {
 				brm.setValue(brm.getMinimum());
 				progressBar.setIndeterminate(false);
@@ -564,6 +567,14 @@ public class GreqlGui extends SwingApplication {
 		loadGreqlFunctions();
 	}
 
+	public boolean isGraphLoading() {
+		return graphLoading;
+	}
+
+	public boolean isEvaluating() {
+		return evaluating;
+	}
+
 	private void loadFontSettings() {
 		String fontName = prefs
 				.get(PREFS_KEY_QUERY_FONT, "Monospaced-plain-14"); //$NON-NLS-1$
@@ -639,7 +650,8 @@ public class GreqlGui extends SwingApplication {
 
 	@Override
 	protected void updateActions() {
-		setModified((getCurrentQuery() != null) && getCurrentQuery().isModified());
+		setModified((getCurrentQuery() != null)
+				&& getCurrentQuery().isModified());
 
 		fileCloseAction.setEnabled(getCurrentQuery() != null);
 		fileSaveAction.setEnabled((getCurrentQuery() != null) && isModified());
@@ -662,8 +674,8 @@ public class GreqlGui extends SwingApplication {
 		loadGraphAction.setEnabled(!evaluating && !graphLoading);
 		unloadGraphAction.setEnabled(!evaluating && !graphLoading
 				&& (graph != null));
-		evaluateQueryAction.setEnabled((getCurrentQuery() != null) && !evaluating
-				&& !graphLoading);
+		evaluateQueryAction.setEnabled((getCurrentQuery() != null)
+				&& !evaluating && !graphLoading);
 		stopEvaluationAction.setEnabled(evaluating);
 		enableOptimizerAction.setEnabled(!evaluating);
 		debugOptimizerAction.setEnabled(!evaluating);
@@ -1081,6 +1093,10 @@ public class GreqlGui extends SwingApplication {
 
 	}
 
+	public synchronized Graph getGraph() {
+		return graph;
+	}
+
 	private void loadGreqlFunctions() {
 		if (greqlFunctionList.size() == 0) {
 			return;
@@ -1100,7 +1116,7 @@ public class GreqlGui extends SwingApplication {
 		}
 	}
 
-	private void unloadGraph() {
+	private synchronized void unloadGraph() {
 		graph = null;
 		getStatusBar().setText(
 				getMessage("GreqlGui.StatusMessage.GraphUnloaded")); //$NON-NLS-1$

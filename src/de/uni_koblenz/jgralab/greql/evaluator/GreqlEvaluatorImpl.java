@@ -48,6 +48,7 @@ import de.uni_koblenz.jgralab.greql.evaluator.vertexeval.VertexEvaluator;
 import de.uni_koblenz.jgralab.greql.schema.GreqlExpression;
 import de.uni_koblenz.jgralab.greql.schema.GreqlVertex;
 import de.uni_koblenz.jgralab.greql.types.Undefined;
+import de.uni_koblenz.jgralab.impl.std.GraphImpl;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.Schema;
 
@@ -242,7 +243,8 @@ public class GreqlEvaluatorImpl implements InternalGreqlEvaluator,
 			datagraphSchema = datagraph.getSchema();
 		}
 		this.environment = environment;
-		localEvaluationResults = new Object[query.getQueryGraph().getVCount() + 1];
+		localEvaluationResults = new Object[((GraphImpl) query.getQueryGraph())
+				.getMaxVCount() + 1];
 		localAutomatons = new HashMap<GreqlVertex, FiniteAutomaton>();
 		this.progressFunction = progressFunction;
 	}

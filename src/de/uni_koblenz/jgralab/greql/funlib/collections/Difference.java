@@ -51,8 +51,7 @@ public class Difference extends Function {
 		super();
 	}
 
-	@Description(params = {"a","b"}, description = "Returns the set-difference of the given two sets.",
-				categories = Category.COLLECTIONS_AND_MAPS)
+	@Description(params = { "a", "b" }, description = "Returns the set-difference a-b.", categories = Category.COLLECTIONS_AND_MAPS)
 	public <T> PSet<T> evaluate(PSet<T> a, PSet<T> b) {
 		if (b.isEmpty()) {
 			if (a instanceof ArrayPSet) {
@@ -69,8 +68,7 @@ public class Difference extends Function {
 		}
 	}
 
-	@Description(params = {"a","b"}, description = "Returns the set-difference of the given two maps.",
-			categories = Category.COLLECTIONS_AND_MAPS)
+	@Description(params = { "a", "b" }, description = "Returns the map-difference a-b, w.r.t. the keyset of the maps.", categories = Category.COLLECTIONS_AND_MAPS)
 	public <K, V> PMap<K, V> evaluate(PMap<K, V> a, PMap<K, V> b) {
 		if (b.isEmpty()) {
 			if (a instanceof ArrayPMap) {

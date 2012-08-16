@@ -44,12 +44,15 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
+import java.util.TreeSet;
 import java.util.logging.Logger;
 
 import de.uni_koblenz.jgralab.Graph;
@@ -59,16 +62,19 @@ import de.uni_koblenz.jgralab.greql.exception.GreqlException;
 import de.uni_koblenz.jgralab.greql.funlib.Function.Category;
 import de.uni_koblenz.jgralab.greql.funlib.misc.GreqlQueryFunction;
 import de.uni_koblenz.jgralab.greql.funlib.misc.GreqlQueryFunctionWithGraphArgument;
+import de.uni_koblenz.jgralab.greql.types.TypeCollection;
 import de.uni_koblenz.jgralab.greql.types.Types;
 import de.uni_koblenz.jgralab.greql.types.Undefined;
 
 @SuppressWarnings("deprecation")
 public class FunLib {
 	private static final Map<String, FunctionInfo> functions;
+	private static final TreeSet<String> functionNames;
 	private static final Logger logger = JGraLab.getLogger(FunLib.class);
 
 	static {
 		functions = new HashMap<String, FunctionInfo>();
+		functionNames = new TreeSet<String>();
 		// register builtin functions
 		logger.fine("Registering builtin functions");
 		register(de.uni_koblenz.jgralab.greql.funlib.artithmetics.Abs.class);
@@ -380,6 +386,47 @@ public class FunLib {
 		public final boolean needsEvaluatorArgument() {
 			return needsEvaluatorArgument;
 		}
+
+		public final String getHtmlDescription() {
+			StringBuilder sb = new StringBuilder();
+			sb.append("<html><body>");
+			assert (functionClass.getConstructors().length == 1);
+			Constructor<?> cons = functionClass.getConstructors()[0];
+
+			Description consDesc = cons.getAnnotation(Description.class);
+
+			for (Signature sig : signatures) {
+				Description funDesc = sig.evaluateMethod
+						.getAnnotation(Description.class);
+				if (funDesc == null) {
+					funDesc = consDesc;
+				}
+				if (funDesc == null) {
+					continue;
+				}
+				boolean acceptsType = sig.parameterTypes[sig.parameterTypes.length - 1] == TypeCollection.class;
+				sb.append("<p><strong>").append(name);
+				if (acceptsType) {
+					sb.append("{...}");
+				}
+				sb.append("(");
+				String delim = "";
+				int i = 0;
+				for (String p : funDesc.params()) {
+					if (i == sig.parameterTypes.length - 1 && acceptsType) {
+						break;
+					}
+					Class<?> cls = sig.parameterTypes[i++];
+					String type = Types.getGreqlTypeName(cls);
+					sb.append(delim).append(type).append(" ").append(p);
+					delim = ", ";
+				}
+				sb.append(")</strong><br/>&nbsp;&nbsp;&nbsp;")
+						.append(funDesc.description()).append("</p");
+			}
+			sb.append("</body></html>");
+			return sb.toString();
+		}
 	}
 
 	public static final boolean contains(String name) {
@@ -514,6 +561,7 @@ public class FunLib {
 		}
 		logger.fine("Registering " + cls.getName() + " as '" + name + "'");
 		functions.put(name, new FunctionInfo(name, cls));
+		functionNames.add(name);
 	}
 
 	public static final void registerGreqlQueryFunction(GreqlQuery query,
@@ -540,16 +588,22 @@ public class FunLib {
 				: new GreqlQueryFunction(query, costs, cardinality, selectivity);
 
 		functions.put(name, new FunctionInfo(name, greqlFunction));
+		functionNames.add(name);
 	}
 
 	public static final void removeGreqlQueryFunction(String name) {
 		FunctionInfo fn = getFunctionInfo(name);
 		if (fn.getFunction() instanceof GreqlQueryFunction) {
 			functions.remove(name);
+			functionNames.remove(name);
 		} else {
 			throw new IllegalArgumentException("Function " + name
 					+ " is not a GreqlQueryFunction.");
 		}
+	}
+
+	public static final Set<String> getFunctionNames() {
+		return Collections.unmodifiableSet(functionNames);
 	}
 
 	public static final FunctionInfo getFunctionInfo(String functionName) {
@@ -609,9 +663,8 @@ public class FunLib {
 				String name = e.getKey();
 				String constructorDescription = null;
 
-				Description consAnno = null;
-				if (cons.getAnnotation(Description.class) != null) {
-					consAnno = cons.getAnnotation(Description.class);
+				Description consAnno = cons.getAnnotation(Description.class);
+				if (consAnno != null) {
 					constructorDescription = consAnno.description();
 				}
 

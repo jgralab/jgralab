@@ -166,7 +166,10 @@ public class GreqlQueryImpl extends GreqlQuery implements
 				gexpr.add_queryExpr(undefined);
 			}
 			long t1 = System.currentTimeMillis();
-			logger.fine("GReQL parser: " + (t1 - t0) + " ms");
+			logger.fine("GReQL parser: " + (t1 - t0) + " ms, v/eCount="
+					+ queryGraph.getVCount() + "/" + queryGraph.getECount()
+					+ ", v/eMax=" + ((GraphImpl) queryGraph).getMaxVCount()
+					+ "/" + ((GraphImpl) queryGraph).getMaxECount());
 			if (optimize) {
 				if (DEBUG_OPTIMIZATION) {
 					String dirName = System.getProperty("java.io.tmpdir");
@@ -202,7 +205,6 @@ public class GreqlQueryImpl extends GreqlQuery implements
 				}
 				logger.fine("GReQL optimizer: " + (t3 - t2) + " ms");
 			}
-			((GraphImpl) queryGraph).defragment();
 			rootExpression = queryGraph.getFirstGreqlExpression();
 			initializeVertexEvaluatorsMarker(queryGraph);
 			long t4 = System.currentTimeMillis();
