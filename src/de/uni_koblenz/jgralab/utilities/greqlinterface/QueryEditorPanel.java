@@ -84,6 +84,7 @@ import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.greql.funlib.FunLib;
 import de.uni_koblenz.jgralab.schema.Attribute;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
+import de.uni_koblenz.jgralab.schema.GraphElementClass;
 import de.uni_koblenz.jgralab.schema.Package;
 import de.uni_koblenz.jgralab.schema.Schema;
 import de.uni_koblenz.jgralab.schema.VertexClass;
@@ -160,22 +161,20 @@ public class QueryEditorPanel extends JPanel {
 		CompletionEntryType type;
 		String name;
 		String replacement;
-		String info;
 		String description;
 		int offset;
 
 		public CompletionEntry(CompletionEntryType type, String name,
-				String replacement, String info, String description) {
+				String replacement, String description) {
 			this.type = type;
 			this.name = name;
 			this.replacement = replacement;
-			this.info = info;
 			this.description = description;
 		}
 
 		public CompletionEntry(CompletionEntryType type, String name,
-				String replacement, String info, String description, int offset) {
-			this(type, name, replacement, info, description);
+				String replacement, String description, int offset) {
+			this(type, name, replacement, description);
 			this.offset = offset;
 		}
 
@@ -204,15 +203,7 @@ public class QueryEditorPanel extends JPanel {
 
 		@Override
 		public int getColumnCount() {
-			switch (lookupType) {
-			case GRAPHELEMENTCLASS:
-			case VERTEXCLASS:
-			case EDGECLASS:
-			case ATTRIBUTE:
-				return 3;
-			default:
-				return 2;
-			}
+			return 1;
 		}
 
 		@Override
@@ -221,15 +212,9 @@ public class QueryEditorPanel extends JPanel {
 			case 0:
 				return lookupType == CompletionEntryType.ATTRIBUTE ? "Attribute"
 						: "Name";
-			case 1:
-				return lookupType == CompletionEntryType.ATTRIBUTE ? "Type"
-						: lookupType == CompletionEntryType.GREQL_FUNCTION ? "Info"
-								: "V/E";
-			case 2:
-				return lookupType == CompletionEntryType.ATTRIBUTE ? "Vertex/EdgeClass"
-						: "Qualified Name";
+			default:
+				return null;
 			}
-			return null;
 		}
 
 		@Override
@@ -243,12 +228,9 @@ public class QueryEditorPanel extends JPanel {
 			switch (columnIndex) {
 			case 0:
 				return e.name;
-			case 1:
-				return e.info;
-			case 2:
-				return e.description;
+			default:
+				return null;
 			}
-			return null;
 		}
 
 		CompletionEntry getEntry(int row) {
@@ -289,24 +271,28 @@ public class QueryEditorPanel extends JPanel {
 				Package pkg = s.pop();
 				if (lookupType == CompletionEntryType.ATTRIBUTE) {
 					for (VertexClass vc : pkg.getVertexClasses()) {
-						for (Attribute attr : vc.getAttributeList()) {
+						for (Attribute attr : vc.getOwnAttributeList()) {
 							if (attr.getName().toLowerCase().startsWith(prefix)) {
 								completionEntries.add(new CompletionEntry(
 										CompletionEntryType.ATTRIBUTE, attr
-												.getName(), attr.getName(),
-										attr.getDomain().getSimpleName(), vc
-												.getQualifiedName()));
+												.getName()
+												+ " in "
+												+ vc.getSimpleName(), attr
+												.getName(), getDescription(vc,
+												attr)));
 							}
 						}
 					}
 					for (EdgeClass ec : pkg.getEdgeClasses()) {
-						for (Attribute attr : ec.getAttributeList()) {
+						for (Attribute attr : ec.getOwnAttributeList()) {
 							if (attr.getName().toLowerCase().startsWith(prefix)) {
 								completionEntries.add(new CompletionEntry(
 										CompletionEntryType.ATTRIBUTE, attr
-												.getName(), attr.getName(),
-										attr.getDomain().getSimpleName(), ec
-												.getQualifiedName()));
+												.getName()
+												+ " in "
+												+ ec.getSimpleName(), attr
+												.getName(), getDescription(ec,
+												attr)));
 							}
 						}
 					}
@@ -320,8 +306,8 @@ public class QueryEditorPanel extends JPanel {
 							completionEntries.add(new CompletionEntry(
 									CompletionEntryType.VERTEXCLASS, vc
 											.getSimpleName(), vc
-											.getQualifiedName() + "}", "V", vc
-											.getQualifiedName()));
+											.getQualifiedName() + "}",
+									getDescription(vc)));
 						}
 					}
 				}
@@ -334,8 +320,8 @@ public class QueryEditorPanel extends JPanel {
 							completionEntries.add(new CompletionEntry(
 									CompletionEntryType.EDGECLASS, ec
 											.getSimpleName(), ec
-											.getQualifiedName() + "}", "E", ec
-											.getQualifiedName()));
+											.getQualifiedName() + "}",
+									getDescription(ec)));
 						}
 					}
 				}
@@ -344,6 +330,75 @@ public class QueryEditorPanel extends JPanel {
 				}
 			}
 		}
+	}
+
+	private String getDescription(GraphElementClass<?, ?> gec) {
+		StringBuilder sb = new StringBuilder();
+		sb.append("<html><body>");
+		sb.append("<p>").append(gec instanceof VertexClass ? "Vertex" : "Edge")
+				.append("Class <strong>").append(gec.getQualifiedName())
+				.append("</strong></p><dl>");
+		if (gec instanceof EdgeClass) {
+			EdgeClass ec = (EdgeClass) gec;
+			sb.append("<dt>from</dt><dd>")
+					.append(ec.getFrom().getVertexClass().getQualifiedName())
+					.append(" (")
+					.append(ec.getFrom().getMin())
+					.append(", ")
+					.append(ec.getFrom().getMax() == Integer.MAX_VALUE ? "*"
+							: "" + ec.getFrom().getMax()).append(")");
+			String role = ec.getFrom().getRolename();
+			if (role != null && !role.isEmpty()) {
+				sb.append(" role ").append(role);
+			}
+			sb.append(" aggregation ")
+					.append(ec.getFrom().getAggregationKind());
+			sb.append("</dd><dt>to</dt><dd>")
+					.append(ec.getTo().getVertexClass().getQualifiedName())
+					.append(" (")
+					.append(ec.getTo().getMin())
+					.append(", ")
+					.append(ec.getTo().getMax() == Integer.MAX_VALUE ? "*" : ""
+							+ ec.getTo().getMax()).append(")");
+			role = ec.getTo().getRolename();
+			if (role != null && !role.isEmpty()) {
+				sb.append(" role ").append(role);
+			}
+			sb.append(" aggregation ").append(ec.getTo().getAggregationKind());
+			sb.append("</dd>");
+		}
+		if (!gec.getAllSuperClasses().isEmpty()) {
+			String delim = "<dt>Superclasses:</dt><dd>";
+			for (GraphElementClass<?, ?> sup : gec.getAllSuperClasses()) {
+				sb.append(delim).append(sup.getQualifiedName());
+				delim = ", ";
+			}
+			sb.append("</dd>");
+		}
+		if (gec.getAttributeCount() > 0) {
+			sb.append("<dt>Attributes:</dt>");
+			for (Attribute attr : gec.getAttributeList()) {
+				sb.append("<dd>").append(attr.getName()).append(": ")
+						.append(attr.getDomain().getQualifiedName())
+						.append("</dd>");
+			}
+			sb.append("</p>");
+		}
+		sb.append("</dl></body></html>");
+		return sb.toString();
+	}
+
+	private String getDescription(GraphElementClass<?, ?> gec, Attribute attr) {
+		StringBuilder sb = new StringBuilder();
+		sb.append("<html><body>");
+		sb.append("<p>Attribute <strong>").append(attr.getName())
+				.append("</strong>: ")
+				.append(attr.getDomain().getQualifiedName())
+				.append("</p><p>&nbsp;&nbsp;in ")
+				.append(gec instanceof VertexClass ? "Vertex" : "Edge")
+				.append("Class ").append(gec.getQualifiedName()).append("</p>");
+		sb.append("</body></html>");
+		return sb.toString();
 	}
 
 	private Set<CompletionEntry> greqlEntries;
@@ -362,37 +417,35 @@ public class QueryEditorPanel extends JPanel {
 		Set<String> funcs = FunLib.getFunctionNames();
 		for (String s : funcs) {
 			greqlEntries.add(new CompletionEntry(
-					CompletionEntryType.GREQL_FUNCTION, s, s + "()",
-					"GReQL function", FunLib.getFunctionInfo(s)
-							.getHtmlDescription(), -1));
+					CompletionEntryType.GREQL_FUNCTION, s, s + "()", FunLib
+							.getFunctionInfo(s).getHtmlDescription(), -1));
 		}
 		greqlEntries.add(new CompletionEntry(CompletionEntryType.GREQL_IDIOM,
-				"V", "V{}", "Vertex Set", "", -1));
+				"V", "V{}", "Vertex Set", -1));
 		greqlEntries.add(new CompletionEntry(CompletionEntryType.GREQL_IDIOM,
-				"E", "E{}", "Edge Set", "", -1));
+				"E", "E{}", "Edge Set", -1));
 		greqlEntries.add(new CompletionEntry(CompletionEntryType.GREQL_IDIOM,
-				"false", "false", "Constant", ""));
+				"false", "false", "Constant"));
 		greqlEntries.add(new CompletionEntry(CompletionEntryType.GREQL_IDIOM,
-				"true", "true", "Constant", ""));
+				"true", "true", "Constant"));
 		greqlEntries.add(new CompletionEntry(CompletionEntryType.GREQL_IDIOM,
-				"undefined", "undefined", "Constant", ""));
+				"undefined", "undefined", "Constant"));
 		greqlEntries.add(new CompletionEntry(CompletionEntryType.GREQL_IDIOM,
 				"fwr", "from\n\t\nwith\n\t\nreport\n\t\nend", "FWR-Expression",
-				"", -20));
+				-20));
 		greqlEntries.add(new CompletionEntry(CompletionEntryType.GREQL_IDIOM,
 				"exists", "exists @ ", "Existential quantifier (at least one)",
-				"", -2));
+				-2));
 		greqlEntries.add(new CompletionEntry(CompletionEntryType.GREQL_IDIOM,
 				"exists!", "exists!  @ ",
-				"Existential quantifier (excatly one)", "", -3));
+				"Existential quantifier (excatly one)", -3));
 		greqlEntries.add(new CompletionEntry(CompletionEntryType.GREQL_IDIOM,
-				"forall", "forall  @ ", "Universal quantifier (all)", "", -3));
+				"forall", "forall  @ ", "Universal quantifier (all)", -3));
 		greqlEntries
 				.add(new CompletionEntry(
 						CompletionEntryType.GREQL_IDIOM,
 						"let",
 						"let  in ",
-						"let expression",
 						"<html><body><strong>let</strong> expression<br>Syntax:<br>let<br>&nbsp;&nbsp;&lt;var&gt; := &lt;value expression&gt; [, &lt;var&gt; := &lt;value expression&gt; ...]<br>in<br>&nbsp;&nbsp;&lt;expression&gt;<br>Example:<br>let x := 25, y := 17 in x + y</body></html>",
 						-4));
 		greqlEntries
@@ -400,7 +453,6 @@ public class QueryEditorPanel extends JPanel {
 						CompletionEntryType.GREQL_IDIOM,
 						"where",
 						"\nwhere ",
-						"where expression",
 						"<html><body><strong>where</strong> expression<br>Syntax:<br>&lt;expression&gt;<br>where<br>&nbsp;&nbsp;&lt;var&gt; := &lt;value expression&gt; [, &lt;var&gt; := &lt;value expression&gt; ...]<br>Example:<br>x + y where x := 25, y := 17</body></html>",
 						-7));
 		return greqlEntries;
@@ -603,13 +655,13 @@ public class QueryEditorPanel extends JPanel {
 
 				selectWindow = new JDialog(gui, lookupType.toString());
 				JScrollPane scp = new JScrollPane(selectTable);
-				scp.setPreferredSize(new Dimension(300, 200));
+				scp.setPreferredSize(new Dimension(200, 300));
 				JPanel pnl = new JPanel();
 				pnl.setLayout(new BorderLayout());
 				pnl.setBackground(new Color(254, 254, 189));
 
 				pnl.add(descriptionLabel, BorderLayout.CENTER);
-				pnl.setPreferredSize(new Dimension(400, 200));
+				pnl.setPreferredSize(new Dimension(400, 300));
 				JSplitPane sp = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
 						scp, pnl);
 				sp.setContinuousLayout(true);
