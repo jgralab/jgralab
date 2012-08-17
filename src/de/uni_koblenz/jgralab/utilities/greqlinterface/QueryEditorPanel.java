@@ -35,8 +35,7 @@
 package de.uni_koblenz.jgralab.utilities.greqlinterface;
 
 import java.awt.BorderLayout;
-import java.awt.Component;
-import java.awt.Dialog.ModalityType;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Point;
@@ -56,23 +55,26 @@ import java.io.PrintWriter;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Enumeration;
 import java.util.Set;
 import java.util.Stack;
 import java.util.TreeSet;
 
+import javax.swing.BorderFactory;
 import javax.swing.JDialog;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.ListSelectionModel;
+import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.event.UndoableEditEvent;
 import javax.swing.event.UndoableEditListener;
 import javax.swing.table.AbstractTableModel;
-import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.table.TableColumn;
 import javax.swing.table.TableModel;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
@@ -346,6 +348,12 @@ public class QueryEditorPanel extends JPanel {
 
 	private Set<CompletionEntry> greqlEntries;
 
+	private JLabel descriptionLabel;
+
+	private JTable selectTable;
+
+	private JDialog selectWindow;
+
 	private Set<CompletionEntry> getGreqlEntries() {
 		if (greqlEntries != null) {
 			return greqlEntries;
@@ -355,7 +363,8 @@ public class QueryEditorPanel extends JPanel {
 		for (String s : funcs) {
 			greqlEntries.add(new CompletionEntry(
 					CompletionEntryType.GREQL_FUNCTION, s, s + "()",
-					"GReQL function", "", -1));
+					"GReQL function", FunLib.getFunctionInfo(s)
+							.getHtmlDescription(), -1));
 		}
 		greqlEntries.add(new CompletionEntry(CompletionEntryType.GREQL_IDIOM,
 				"V", "V{}", "Vertex Set", "", -1));
@@ -378,10 +387,22 @@ public class QueryEditorPanel extends JPanel {
 				"Existential quantifier (excatly one)", "", -3));
 		greqlEntries.add(new CompletionEntry(CompletionEntryType.GREQL_IDIOM,
 				"forall", "forall  @ ", "Universal quantifier (all)", "", -3));
-		greqlEntries.add(new CompletionEntry(CompletionEntryType.GREQL_IDIOM,
-				"let", "let  in ", "let expression", "", -4));
-		greqlEntries.add(new CompletionEntry(CompletionEntryType.GREQL_IDIOM,
-				"where", "\nwhere ", "where expression", "", -7));
+		greqlEntries
+				.add(new CompletionEntry(
+						CompletionEntryType.GREQL_IDIOM,
+						"let",
+						"let  in ",
+						"let expression",
+						"<html><body><strong>let</strong> expression<br>Syntax:<br>let<br>&nbsp;&nbsp;&lt;var&gt; := &lt;value expression&gt; [, &lt;var&gt; := &lt;value expression&gt; ...]<br>in<br>&nbsp;&nbsp;&lt;expression&gt;<br>Example:<br>let x := 25, y := 17 in x + y</body></html>",
+						-4));
+		greqlEntries
+				.add(new CompletionEntry(
+						CompletionEntryType.GREQL_IDIOM,
+						"where",
+						"\nwhere ",
+						"where expression",
+						"<html><body><strong>where</strong> expression<br>Syntax:<br>&lt;expression&gt;<br>where<br>&nbsp;&nbsp;&lt;var&gt; := &lt;value expression&gt; [, &lt;var&gt; := &lt;value expression&gt; ...]<br>Example:<br>x + y where x := 25, y := 17</body></html>",
+						-7));
 		return greqlEntries;
 	}
 
@@ -396,31 +417,6 @@ public class QueryEditorPanel extends JPanel {
 		}
 	}
 
-	private static class CompletionTableCellRenderer extends
-			DefaultTableCellRenderer {
-		private static final long serialVersionUID = 8947541205236635434L;
-		private int oldRow;
-		private String toolTip;
-
-		@Override
-		public Component getTableCellRendererComponent(JTable table,
-				Object value, boolean isSelected, boolean hasFocus, int row,
-				int column) {
-			super.getTableCellRendererComponent(table, value, isSelected,
-					hasFocus, row, column);
-			CompletionEntry e = ((CompletionTableModel) table.getModel())
-					.getEntry(row);
-			if (toolTip == null || oldRow != row) {
-				toolTip = e.type == CompletionEntryType.GREQL_FUNCTION ? FunLib
-						.getFunctionInfo(e.name).getHtmlDescription()
-						: e.description;
-				oldRow = row;
-			}
-			setToolTipText(toolTip);
-			return this;
-		}
-	}
-
 	private class CompletionTable extends JTable {
 		private static final long serialVersionUID = 8741021448180241310L;
 
@@ -431,22 +427,28 @@ public class QueryEditorPanel extends JPanel {
 			getSelectionModel().setSelectionMode(
 					ListSelectionModel.SINGLE_SELECTION);
 			changeSelection(0, 0, false, false);
-			installCellRenderer();
+			installSelectionListener();
 		}
 
-		private void installCellRenderer() {
-			CompletionTableCellRenderer cellRenderer = new CompletionTableCellRenderer();
-			Enumeration<TableColumn> cols = getColumnModel().getColumns();
-			while (cols.hasMoreElements()) {
-				TableColumn col = cols.nextElement();
-				col.setCellRenderer(cellRenderer);
-			}
+		private void installSelectionListener() {
+			getSelectionModel().addListSelectionListener(
+					new ListSelectionListener() {
+						@Override
+						public void valueChanged(ListSelectionEvent e) {
+							int row = getSelectedRow();
+							if (row >= 0 && row < tm.getRowCount()) {
+								descriptionLabel.setText(tm.getEntry(row).description);
+							} else {
+								descriptionLabel.setText("");
+							}
+						}
+					});
 		}
 
 		@Override
 		public void setModel(TableModel dataModel) {
 			super.setModel(dataModel);
-			installCellRenderer();
+			installSelectionListener();
 		}
 
 		@Override
@@ -515,7 +517,6 @@ public class QueryEditorPanel extends JPanel {
 		}
 		try {
 			prefix = queryArea.getText(insertPos, insertLength).toLowerCase();
-
 			tm = getCompletionTableModel(prefix, lookupType);
 			if (tm == null || tm.getRowCount() == 0) {
 				Toolkit.getDefaultToolkit().beep();
@@ -529,14 +530,12 @@ public class QueryEditorPanel extends JPanel {
 				// return;
 
 			} else {
-				Rectangle r = queryArea.modelToView(caretPosition);
-				Point caretCoordinates = SwingUtilities.convertPoint(queryArea,
-						new Point(r.x, r.y - 32), gui);
-				SwingUtilities.convertPointToScreen(caretCoordinates, gui);
+				descriptionLabel = new JLabel();
+				descriptionLabel.setVerticalAlignment(SwingConstants.TOP);
+				descriptionLabel.setBorder(BorderFactory.createEmptyBorder(4,
+						4, 4, 4));
 
-				final JDialog selectWindow = new JDialog(gui,
-						lookupType.toString());
-				final JTable selectTable = new CompletionTable(tm);
+				selectTable = new CompletionTable(tm);
 				selectTable.addFocusListener(new FocusAdapter() {
 					@Override
 					public void focusLost(FocusEvent e) {
@@ -601,13 +600,27 @@ public class QueryEditorPanel extends JPanel {
 						}
 					}
 				});
+
+				selectWindow = new JDialog(gui, lookupType.toString());
 				JScrollPane scp = new JScrollPane(selectTable);
 				scp.setPreferredSize(new Dimension(300, 200));
-				scp.setColumnHeaderView(new JPanel());
-				selectWindow.getContentPane().add(scp);
+				JPanel pnl = new JPanel();
+				pnl.setLayout(new BorderLayout());
+				pnl.setBackground(new Color(254, 254, 189));
+
+				pnl.add(descriptionLabel, BorderLayout.CENTER);
+				pnl.setPreferredSize(new Dimension(400, 200));
+				JSplitPane sp = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
+						scp, pnl);
+				sp.setContinuousLayout(true);
+				selectWindow.getContentPane().add(sp);
 				selectWindow.pack();
+				Rectangle r = queryArea.modelToView(caretPosition);
+				Point caretCoordinates = SwingUtilities.convertPoint(queryArea,
+						new Point(r.x, r.y - 32), gui);
+				SwingUtilities.convertPointToScreen(caretCoordinates, gui);
 				selectWindow.setLocation(caretCoordinates);
-				selectWindow.setModalityType(ModalityType.APPLICATION_MODAL);
+				selectWindow.setModal(true);
 				selectWindow.setVisible(true);
 				selectWindow.toFront();
 				selectTable.requestFocus();

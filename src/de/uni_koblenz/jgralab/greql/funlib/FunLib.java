@@ -389,7 +389,7 @@ public class FunLib {
 
 		public final String getHtmlDescription() {
 			StringBuilder sb = new StringBuilder();
-			sb.append("<html><body>");
+			sb.append("<html><body><dl>");
 			assert (functionClass.getConstructors().length == 1);
 			Constructor<?> cons = functionClass.getConstructors()[0];
 
@@ -404,27 +404,40 @@ public class FunLib {
 				if (funDesc == null) {
 					continue;
 				}
+				Class<?> ret = sig.evaluateMethod.getReturnType();
+				String returnType = Types.getGreqlTypeName(ret);
+
 				boolean acceptsType = sig.parameterTypes[sig.parameterTypes.length - 1] == TypeCollection.class;
-				sb.append("<p><strong>").append(name);
+				sb.append("<dt><strong><font color=\"purple\">")
+						.append(returnType).append(" <font color=\"blue\">")
+						.append(name).append("</font></strong>");
 				if (acceptsType) {
-					sb.append("{...}");
+					sb.append(" { <font color=\"#008000\">types...</font> } ");
 				}
 				sb.append("(");
 				String delim = "";
 				int i = 0;
 				for (String p : funDesc.params()) {
+					if (i == 0 && needsGraphArgument) {
+						// don't show Graph argument
+						++i;
+						continue;
+					}
 					if (i == sig.parameterTypes.length - 1 && acceptsType) {
-						break;
+						// don't show TypeCollection argument
+						++i;
+						continue;
 					}
 					Class<?> cls = sig.parameterTypes[i++];
 					String type = Types.getGreqlTypeName(cls);
-					sb.append(delim).append(type).append(" ").append(p);
+					sb.append(delim).append("<strong><font color=\"purple\">")
+							.append(type).append("</font></strong> ").append(p);
 					delim = ", ";
 				}
-				sb.append(")</strong><br/>&nbsp;&nbsp;&nbsp;")
-						.append(funDesc.description()).append("</p");
+				sb.append(")</dt><dd>").append(funDesc.description())
+						.append("</dd>");
 			}
-			sb.append("</body></html>");
+			sb.append("</dl></body></html>");
 			return sb.toString();
 		}
 	}
