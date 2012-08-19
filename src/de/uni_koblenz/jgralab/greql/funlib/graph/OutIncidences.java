@@ -46,7 +46,7 @@ import de.uni_koblenz.jgralab.greql.types.TypeCollection;
 public class OutIncidences extends IncidencesFunction {
 
 	public OutIncidences() {
-		super(EdgeDirection.IN);
+		super(EdgeDirection.OUT);
 	}
 
 	@Description(params = "v", description = "Returns the outgoing edges of vertex v.", categories = Category.GRAPH)

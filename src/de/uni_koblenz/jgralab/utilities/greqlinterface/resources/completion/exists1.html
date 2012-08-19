@@ -1,0 +1,27 @@
+<html>
+	<body>
+		<p>
+			<strong>Existential Quantifier (exactly one)</strong>
+		</p>
+		<p>
+			The result is true iff the boolean expression is true for <em>exactly one</em> variable binding of the declarations.
+		</p>
+		<dl>
+			<dt>
+				Syntax:
+			</dt>
+			<dd>
+				<font color="blue"><strong>exists!</strong></font><br>
+				&nbsp;&nbsp;&nbsp;<em>&lt;var&gt;</em> : <em>&lt;set expression&gt;</em> [, <em>&lt;var&gt;</em> : <em>&lt;set expression&gt;</em> ...]<br>
+				<font color="blue"><strong>@</strong></font><br>
+				&nbsp;&nbsp;&nbsp;<em>&lt;boolean expression&gt;</em>
+			</dd>
+			<dt>
+				Example:
+			</dt>
+			<dd>
+				exists! v: V{structure.Package} @ inDegree{structure.ContainsSubPackage}(v) = 0 and v.qualifiedName=""
+			</dd>
+		</dl>
+	</body>
+</html>

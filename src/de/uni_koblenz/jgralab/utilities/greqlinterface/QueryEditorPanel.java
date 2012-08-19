@@ -40,17 +40,17 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Point;
 import java.awt.Rectangle;
-import java.awt.Toolkit;
-import java.awt.event.FocusAdapter;
-import java.awt.event.FocusEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -67,19 +67,25 @@ import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
+import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.event.UndoableEditEvent;
 import javax.swing.event.UndoableEditListener;
 import javax.swing.table.AbstractTableModel;
+import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 import javax.swing.text.BadLocationException;
+import javax.swing.text.DefaultCaret;
 import javax.swing.text.Document;
 import javax.swing.undo.UndoManager;
 
+import de.uni_koblenz.ist.utilities.gui.SwingApplication;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.greql.funlib.FunLib;
 import de.uni_koblenz.jgralab.schema.Attribute;
@@ -116,7 +122,6 @@ public class QueryEditorPanel extends JPanel {
 			@Override
 			public void keyPressed(KeyEvent e) {
 				if (e.isControlDown() && e.getKeyCode() == KeyEvent.VK_SPACE) {
-					// System.out.println("pressed " + e);
 					if (!gui.isGraphLoading() && !gui.isEvaluating()) {
 						lookupWord();
 					}
@@ -147,17 +152,27 @@ public class QueryEditorPanel extends JPanel {
 		add(queryScrollPane, BorderLayout.CENTER);
 	}
 
-	// content assist
-	private String prefix;
+	// fields for content assist
 	CompletionEntryType lookupType;
 
-	private CompletionTableModel tm;
+	private CompletionTableModel completions;
 
-	enum CompletionEntryType {
+	private Set<CompletionEntry> greqlEntries;
+
+	private JLabel descriptionLabel;
+
+	private JTable selectTable;
+
+	private JDialog selectWindow;
+
+	private JTextField prefixField;
+
+	private enum CompletionEntryType {
 		GREQL_FUNCTION, GREQL_IDIOM, VERTEXCLASS, EDGECLASS, ATTRIBUTE, GRAPHELEMENTCLASS
 	};
 
 	private static class CompletionEntry implements Comparable<CompletionEntry> {
+		@SuppressWarnings("unused")
 		CompletionEntryType type;
 		String name;
 		String replacement;
@@ -401,14 +416,6 @@ public class QueryEditorPanel extends JPanel {
 		return sb.toString();
 	}
 
-	private Set<CompletionEntry> greqlEntries;
-
-	private JLabel descriptionLabel;
-
-	private JTable selectTable;
-
-	private JDialog selectWindow;
-
 	private Set<CompletionEntry> getGreqlEntries() {
 		if (greqlEntries != null) {
 			return greqlEntries;
@@ -425,37 +432,53 @@ public class QueryEditorPanel extends JPanel {
 		greqlEntries.add(new CompletionEntry(CompletionEntryType.GREQL_IDIOM,
 				"E", "E{}", "Edge Set", -1));
 		greqlEntries.add(new CompletionEntry(CompletionEntryType.GREQL_IDIOM,
-				"false", "false", "Constant"));
+				"false", "false", "Boolean constant"));
 		greqlEntries.add(new CompletionEntry(CompletionEntryType.GREQL_IDIOM,
-				"true", "true", "Constant"));
+				"true", "true", "Boolean constant"));
 		greqlEntries.add(new CompletionEntry(CompletionEntryType.GREQL_IDIOM,
-				"undefined", "undefined", "Constant"));
+				"undefined", "undefined", "Undefined constant"));
 		greqlEntries.add(new CompletionEntry(CompletionEntryType.GREQL_IDIOM,
-				"fwr", "from\n\t\nwith\n\t\nreport\n\t\nend", "FWR-Expression",
-				-20));
+				"fwr", "from\n\t\nwith\n\t\nreport\n\t\nend",
+				"List/Table Comprehension", -20));
 		greqlEntries.add(new CompletionEntry(CompletionEntryType.GREQL_IDIOM,
-				"exists", "exists @ ", "Existential quantifier (at least one)",
-				-2));
+				"fwr set", "from\n\t\nwith\n\t\nreportSet\n\t\nend",
+				"Set Comprehension", -20));
+		greqlEntries.add(new CompletionEntry(CompletionEntryType.GREQL_IDIOM,
+				"fwr map", "from\n\t\nwith\n\t\nreportMap\n\t\nend",
+				"Map Comprehension", -20));
+		greqlEntries.add(new CompletionEntry(CompletionEntryType.GREQL_IDIOM,
+				"exists", "exists @ ",
+				getDescriptionFromResources("exists.html"), -2));
 		greqlEntries.add(new CompletionEntry(CompletionEntryType.GREQL_IDIOM,
 				"exists!", "exists!  @ ",
-				"Existential quantifier (excatly one)", -3));
+				getDescriptionFromResources("exists1.html"), -3));
 		greqlEntries.add(new CompletionEntry(CompletionEntryType.GREQL_IDIOM,
-				"forall", "forall  @ ", "Universal quantifier (all)", -3));
+				"forall", "forall  @ ",
+				getDescriptionFromResources("forall.html"), -3));
 		greqlEntries
-				.add(new CompletionEntry(
-						CompletionEntryType.GREQL_IDIOM,
-						"let",
-						"let  in ",
-						"<html><body><strong>let</strong> expression<br>Syntax:<br>let<br>&nbsp;&nbsp;&lt;var&gt; := &lt;value expression&gt; [, &lt;var&gt; := &lt;value expression&gt; ...]<br>in<br>&nbsp;&nbsp;&lt;expression&gt;<br>Example:<br>let x := 25, y := 17 in x + y</body></html>",
-						-4));
-		greqlEntries
-				.add(new CompletionEntry(
-						CompletionEntryType.GREQL_IDIOM,
-						"where",
-						"\nwhere ",
-						"<html><body><strong>where</strong> expression<br>Syntax:<br>&lt;expression&gt;<br>where<br>&nbsp;&nbsp;&lt;var&gt; := &lt;value expression&gt; [, &lt;var&gt; := &lt;value expression&gt; ...]<br>Example:<br>x + y where x := 25, y := 17</body></html>",
-						-7));
+				.add(new CompletionEntry(CompletionEntryType.GREQL_IDIOM,
+						"let", "let  in ",
+						getDescriptionFromResources("let.html"), -4));
+		greqlEntries.add(new CompletionEntry(CompletionEntryType.GREQL_IDIOM,
+				"where", "\nwhere ", getDescriptionFromResources("where.html"),
+				-7));
 		return greqlEntries;
+	}
+
+	private String getDescriptionFromResources(String filename) {
+		InputStream is = getClass().getResourceAsStream(
+				"resources/completion/" + filename);
+		BufferedReader rdr = new BufferedReader(new InputStreamReader(is));
+		StringBuilder sb = new StringBuilder();
+		try {
+			for (String line = rdr.readLine(); line != null; line = rdr
+					.readLine()) {
+				sb.append(line);
+			}
+			rdr.close();
+		} catch (IOException e) {
+		}
+		return sb.toString();
 	}
 
 	private void addMatchingGreqlFunctions(String prefix,
@@ -473,23 +496,23 @@ public class QueryEditorPanel extends JPanel {
 		private static final long serialVersionUID = 8741021448180241310L;
 
 		public CompletionTable(TableModel model) {
-			super(model);
+			super();
 			setRowSelectionAllowed(true);
 			setColumnSelectionAllowed(false);
-			getSelectionModel().setSelectionMode(
-					ListSelectionModel.SINGLE_SELECTION);
-			changeSelection(0, 0, false, false);
-			installSelectionListener();
+			setModel(model);
 		}
 
 		private void installSelectionListener() {
+			getSelectionModel().setSelectionMode(
+					ListSelectionModel.SINGLE_SELECTION);
 			getSelectionModel().addListSelectionListener(
 					new ListSelectionListener() {
 						@Override
 						public void valueChanged(ListSelectionEvent e) {
 							int row = getSelectedRow();
-							if (row >= 0 && row < tm.getRowCount()) {
-								descriptionLabel.setText(tm.getEntry(row).description);
+							if (completions != null && row >= 0) {
+								descriptionLabel.setText(completions
+										.getEntry(row).description);
 							} else {
 								descriptionLabel.setText("");
 							}
@@ -499,7 +522,13 @@ public class QueryEditorPanel extends JPanel {
 
 		@Override
 		public void setModel(TableModel dataModel) {
+			if (dataModel == null) {
+				dataModel = new DefaultTableModel();
+			}
 			super.setModel(dataModel);
+			if (dataModel.getRowCount() > 0) {
+				changeSelection(0, 0, false, false);
+			}
 			installSelectionListener();
 		}
 
@@ -567,117 +596,129 @@ public class QueryEditorPanel extends JPanel {
 		if (lookupType == null) {
 			lookupType = CompletionEntryType.GREQL_FUNCTION;
 		}
+		String prefix = "";
 		try {
 			prefix = queryArea.getText(insertPos, insertLength).toLowerCase();
-			tm = getCompletionTableModel(prefix, lookupType);
-			if (tm == null || tm.getRowCount() == 0) {
-				Toolkit.getDefaultToolkit().beep();
-
-				// } else if (tm.getRowCount() == 1) {
-				// queryArea.getDocument().remove(insertPos, insertLength);
-				// queryArea.getDocument().insertString(insertPos,
-				// tm.getEntry(0).replacement, null);
-				// queryArea.setCaretPosition(queryArea.getCaretPosition()
-				// + tm.getEntry(0).offset);
-				// return;
-
-			} else {
-				descriptionLabel = new JLabel();
-				descriptionLabel.setVerticalAlignment(SwingConstants.TOP);
-				descriptionLabel.setBorder(BorderFactory.createEmptyBorder(4,
-						4, 4, 4));
-
-				selectTable = new CompletionTable(tm);
-				selectTable.addFocusListener(new FocusAdapter() {
-					@Override
-					public void focusLost(FocusEvent e) {
-						selectWindow.setVisible(false);
-						queryArea.requestFocus();
-					}
-				});
-				selectTable.addKeyListener(new KeyAdapter() {
-					@Override
-					public void keyPressed(KeyEvent e) {
-						if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
-							e.consume();
-							selectWindow.setVisible(false);
-							queryArea.requestFocus();
-						} else if (e.getKeyCode() == KeyEvent.VK_ENTER
-								|| e.getKeyCode() == KeyEvent.VK_SPACE) {
-							e.consume();
-							try {
-								queryArea.getDocument().remove(insertPos,
-										insertLength);
-								String completion = tm.getEntry(selectTable
-										.getSelectedRow()).replacement;
-								queryArea.getDocument().insertString(insertPos,
-										completion, null);
-								queryArea.setCaretPosition(queryArea
-										.getCaretPosition()
-										+ tm.getEntry(selectTable
-												.getSelectedRow()).offset);
-							} catch (BadLocationException e1) {
-							}
-							selectWindow.setVisible(false);
-							queryArea.requestFocus();
-						}
-					}
-
-					@Override
-					public void keyTyped(KeyEvent e) {
-						char c = e.getKeyChar();
-						String oldPrefix = prefix;
-						if (Character.isLetterOrDigit(c) || c == '_'
-								|| c == '$') {
-							prefix += Character.toLowerCase(c);
-							e.consume();
-						} else if (c == KeyEvent.VK_BACK_SPACE) {
-							if (prefix.length() > 0) {
-								prefix = prefix.substring(0,
-										prefix.length() - 1);
-							} else {
-								Toolkit.getDefaultToolkit().beep();
-							}
-							e.consume();
-						}
-						if (!prefix.equals(oldPrefix)) {
-							tm = getCompletionTableModel(prefix, lookupType);
-							if (tm == null || tm.getRowCount() == 0) {
-								Toolkit.getDefaultToolkit().beep();
-								prefix = oldPrefix;
-							} else {
-								selectTable.setModel(tm);
-								selectTable.changeSelection(0, 0, false, false);
-							}
-						}
-					}
-				});
-
-				selectWindow = new JDialog(gui, lookupType.toString());
-				JScrollPane scp = new JScrollPane(selectTable);
-				scp.setPreferredSize(new Dimension(200, 300));
-				JPanel pnl = new JPanel();
-				pnl.setLayout(new BorderLayout());
-				pnl.setBackground(new Color(254, 254, 189));
-
-				pnl.add(descriptionLabel, BorderLayout.CENTER);
-				pnl.setPreferredSize(new Dimension(400, 300));
-				JSplitPane sp = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
-						scp, pnl);
-				sp.setContinuousLayout(true);
-				selectWindow.getContentPane().add(sp);
-				selectWindow.pack();
-				Rectangle r = queryArea.modelToView(caretPosition);
-				Point caretCoordinates = SwingUtilities.convertPoint(queryArea,
-						new Point(r.x, r.y - 32), gui);
-				SwingUtilities.convertPointToScreen(caretCoordinates, gui);
-				selectWindow.setLocation(caretCoordinates);
-				selectWindow.setModal(true);
-				selectWindow.setVisible(true);
-				selectWindow.toFront();
-				selectTable.requestFocus();
-			}
 		} catch (BadLocationException e) {
+			return;
+		}
+		descriptionLabel = new JLabel();
+		descriptionLabel.setVerticalAlignment(SwingConstants.TOP);
+		descriptionLabel.setBorder(BorderFactory.createEmptyBorder(4, 4, 4, 4));
+
+		selectTable = new CompletionTable(null);
+
+		selectWindow = new JDialog(gui, lookupType.toString());
+
+		prefixField = new JTextField(prefix);
+		if (SwingApplication.RUNS_ON_MAC_OS_X) {
+			prefixField.setCaret(new DefaultCaret());
+			prefixField.putClientProperty("JTextField.variant", "search");
+		}
+		prefixField.getCaret().setDot(prefixField.getDocument().getLength());
+		prefixField.getDocument().addDocumentListener(new DocumentListener() {
+
+			@Override
+			public void removeUpdate(DocumentEvent e) {
+				updateCompletion();
+			}
+
+			@Override
+			public void insertUpdate(DocumentEvent e) {
+				updateCompletion();
+			}
+
+			@Override
+			public void changedUpdate(DocumentEvent e) {
+				updateCompletion();
+			}
+		});
+
+		KeyListener l = new KeyAdapter() {
+			@Override
+			public void keyPressed(KeyEvent e) {
+				if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+					e.consume();
+					selectWindow.setVisible(false);
+					queryArea.requestFocus();
+				} else if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+					e.consume();
+					if (selectTable.getSelectedRow() >= 0) {
+						try {
+							queryArea.getDocument().remove(insertPos,
+									insertLength);
+							String completion = completions
+									.getEntry(selectTable.getSelectedRow()).replacement;
+							queryArea.getDocument().insertString(insertPos,
+									completion, null);
+							queryArea.setCaretPosition(queryArea
+									.getCaretPosition()
+									+ completions.getEntry(selectTable
+											.getSelectedRow()).offset);
+						} catch (BadLocationException e1) {
+						}
+					}
+					selectWindow.setVisible(false);
+					queryArea.requestFocus();
+				} else if (e.getKeyCode() == KeyEvent.VK_UP) {
+					e.consume();
+					int r = selectTable.getSelectedRow() - 1;
+					if (r >= 0) {
+						selectTable.changeSelection(r, 0, false, false);
+					}
+				} else if (e.getKeyCode() == KeyEvent.VK_DOWN) {
+					e.consume();
+					int r = selectTable.getSelectedRow() + 1;
+					if (r < completions.getRowCount()) {
+						selectTable.changeSelection(r, 0, false, false);
+					}
+				}
+			}
+		};
+		prefixField.addKeyListener(l);
+		selectTable.addKeyListener(l);
+
+		JPanel leftPanel = new JPanel();
+		leftPanel.setLayout(new BorderLayout());
+		leftPanel.add(prefixField, BorderLayout.NORTH);
+		JScrollPane scp = new JScrollPane(selectTable);
+		scp.setPreferredSize(new Dimension(200, 300));
+		leftPanel.add(scp, BorderLayout.CENTER);
+
+		JPanel rightPanel = new JPanel();
+		rightPanel.setLayout(new BorderLayout());
+		rightPanel.setBackground(new Color(254, 254, 189));
+		rightPanel.add(descriptionLabel, BorderLayout.CENTER);
+		rightPanel.setPreferredSize(new Dimension(500, 300));
+		JSplitPane sp = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, leftPanel,
+				rightPanel);
+		sp.setContinuousLayout(true);
+
+		selectWindow.getContentPane().add(sp);
+
+		updateCompletion();
+		selectWindow.pack();
+		try {
+			Rectangle r = queryArea.modelToView(caretPosition);
+			Point caretCoordinates = SwingUtilities.convertPoint(queryArea,
+					new Point(r.x, r.y - 32), gui);
+			SwingUtilities.convertPointToScreen(caretCoordinates, gui);
+			selectWindow.setLocation(caretCoordinates);
+		} catch (BadLocationException e) {
+			// should not happen at all because caretPosition is valid
+			e.printStackTrace();
+		}
+		selectWindow.setVisible(true);
+		selectWindow.toFront();
+	}
+
+	private void updateCompletion() {
+		completions = getCompletionTableModel(prefixField.getText(), lookupType);
+		selectTable.setModel(completions);
+		if (completions.getRowCount() > 0) {
+			selectTable.changeSelection(0, 0, false, false);
+		} else {
+			descriptionLabel.setText("No matches :-(");
 		}
 	}
 
