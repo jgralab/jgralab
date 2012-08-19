@@ -140,8 +140,10 @@ public class FunLib {
 		register(de.uni_koblenz.jgralab.greql.funlib.graph.EndVertex.class);
 		register(de.uni_koblenz.jgralab.greql.funlib.graph.ExtractPaths.class);
 		register(de.uni_koblenz.jgralab.greql.funlib.graph.First.class);
+		register(de.uni_koblenz.jgralab.greql.funlib.graph.FirstEdge.class);
 		register(de.uni_koblenz.jgralab.greql.funlib.graph.FirstIn.class);
 		register(de.uni_koblenz.jgralab.greql.funlib.graph.FirstOut.class);
+		register(de.uni_koblenz.jgralab.greql.funlib.graph.FirstVertex.class);
 		register(de.uni_koblenz.jgralab.greql.funlib.graph.GetEdge.class);
 		register(de.uni_koblenz.jgralab.greql.funlib.graph.GetValue.class);
 		register(de.uni_koblenz.jgralab.greql.funlib.graph.GetVertex.class);
