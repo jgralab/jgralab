@@ -49,14 +49,11 @@ import de.uni_koblenz.jgralab.schema.GraphElementClass;
  */
 public class TypeCollection {
 	/**
-	 * The set of allowed types
+	 * The set of types
 	 */
-	private TreeSet<GraphElementClass<?, ?>> allowedTypes;
-
-	/**
-	 * The set of forbidden types
-	 */
-	private TreeSet<GraphElementClass<?, ?>> forbiddenTypes;
+	private TreeSet<GraphElementClass<?, ?>> types;
+	private boolean allowed; // types are allowed
+	private boolean forbidden; // types are forbidden
 
 	/**
 	 * returns the list of allowed types. Creates a copy of that list so the
@@ -64,7 +61,7 @@ public class TypeCollection {
 	 */
 	@Deprecated
 	public Set<GraphElementClass<?, ?>> getAllowedTypes() {
-		return allowedTypes;
+		return allowed ? types : new TreeSet<GraphElementClass<?, ?>>();
 	}
 
 	/**
@@ -73,11 +70,11 @@ public class TypeCollection {
 	 */
 	@Deprecated
 	public Set<GraphElementClass<?, ?>> getForbiddenTypes() {
-		return forbiddenTypes;
+		return forbidden ? types : new TreeSet<GraphElementClass<?, ?>>();
 	}
 
 	public boolean isEmpty() {
-		return allowedTypes == null;
+		return types == null;
 	}
 
 	private static TypeCollection empty = new TypeCollection();
@@ -96,19 +93,28 @@ public class TypeCollection {
 	 * <code>other</code> to this collection
 	 */
 	public TypeCollection join(TypeCollection other) {
-		if (other == null) {
+		if (other == null || other.isEmpty()) {
 			return this;
-		} else if (forbiddenTypes == null) {
+		} else if (isEmpty()) {
 			return other;
 		} else {
 			TypeCollection result = new TypeCollection();
-			result.forbiddenTypes = new TreeSet<GraphElementClass<?, ?>>(
-					forbiddenTypes);
-			result.allowedTypes = new TreeSet<GraphElementClass<?, ?>>(
-					allowedTypes);
-			result.forbiddenTypes.addAll(other.forbiddenTypes);
-			result.allowedTypes.addAll(other.allowedTypes);
-			result.allowedTypes.removeAll(forbiddenTypes);
+			if (allowed) {
+				result.allowed = true;
+				result.types = new TreeSet<GraphElementClass<?, ?>>(types);
+				if (other.allowed) {
+					result.types.addAll(other.types);
+				}
+			} else {
+				if (other.allowed) {
+					result.allowed = true;
+					result.types = other.types;
+				} else {
+					result.forbidden = true;
+					result.types = new TreeSet<GraphElementClass<?, ?>>(types);
+					result.types.addAll(other.types);
+				}
+			}
 			return result;
 		}
 	}
@@ -130,18 +136,16 @@ public class TypeCollection {
 	 */
 	private TypeCollection(GraphElementClass<?, ?> cls, boolean exactType,
 			boolean forbidden) {
-		forbiddenTypes = new TreeSet<GraphElementClass<?, ?>>();
-		allowedTypes = new TreeSet<GraphElementClass<?, ?>>();
 		if (forbidden) {
-			forbiddenTypes.add(cls);
-			if (!exactType) {
-				forbiddenTypes.addAll(cls.getAllSubClasses());
-			}
+			forbidden = true;
 		} else {
-			allowedTypes.add(cls);
-			if (!exactType) {
-				allowedTypes.addAll(cls.getAllSubClasses());
-			}
+			allowed = true;
+		}
+
+		types = new TreeSet<GraphElementClass<?, ?>>();
+		types.add(cls);
+		if (!exactType) {
+			types.addAll(cls.getAllSubClasses());
 		}
 	}
 
@@ -154,14 +158,14 @@ public class TypeCollection {
 		if (col == this) {
 			return true;
 		}
-		return forbiddenTypes.equals(col.forbiddenTypes)
-				&& allowedTypes.equals(col.allowedTypes);
+		return allowed == col.allowed && forbidden == col.forbidden
+				&& types.equals(col.types);
 	}
 
 	@Override
 	public int hashCode() {
-		return allowedTypes == null ? 0
-				: (forbiddenTypes.hashCode() + allowedTypes.hashCode());
+		return (types == null ? 0 : types.hashCode()) ^ (allowed ? 1 : 0)
+				^ (forbidden ? 2 : 0);
 	}
 
 	/**
@@ -173,32 +177,22 @@ public class TypeCollection {
 	 * @return true if the given type is allowed, false otherwise
 	 */
 	public final boolean acceptsType(GraphElementClass<?, ?> type) {
-		if (allowedTypes == null) {
+		if (types == null) {
 			return true;
 		}
-		if (allowedTypes.isEmpty()) {
-			return (!forbiddenTypes.contains(type));
-		} else {
-			return allowedTypes.contains(type);
-		}
+		return allowed ? types.contains(type) : !types.contains(type);
 	}
 
 	@Override
 	public String toString() {
-		if (allowedTypes == null) {
-			return "{}";
-		}
-		if (allowedTypes.isEmpty() && forbiddenTypes.isEmpty()) {
+		if (types == null || types.isEmpty()) {
 			return "{}";
 		} else {
 			StringBuffer sb = new StringBuffer();
 			String delim = "{";
-			for (AttributedElementClass<?, ?> aec : allowedTypes) {
-				sb.append(delim).append("+").append(aec.getQualifiedName());
-				delim = " ";
-			}
-			for (AttributedElementClass<?, ?> aec : forbiddenTypes) {
-				sb.append(delim).append("-").append(aec.getQualifiedName());
+			for (AttributedElementClass<?, ?> aec : types) {
+				sb.append(delim).append(allowed ? "+" : "-")
+						.append(aec.getQualifiedName());
 				delim = " ";
 			}
 			return sb.append("}").toString();
