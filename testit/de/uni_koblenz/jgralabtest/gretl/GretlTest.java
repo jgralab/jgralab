@@ -1041,8 +1041,7 @@ public class GretlTest {
 
 	@Test
 	public void copyTransformation2() {
-		JGraLab.getLogger("de.uni_koblenz.jgralab.gretl.transformations")
-				.setLevel(Level.ALL);
+		JGraLab.getLogger(Transformation.class).setLevel(Level.ALL);
 		targetFileName = "copyTransformation2";
 		context = new Context("de.uni_koblenz.copy2.CopySchema", "CopyGraph");
 		context.setSourceGraph(sourceCopyGraph);

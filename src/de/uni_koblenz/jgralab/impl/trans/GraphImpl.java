@@ -50,7 +50,6 @@ import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.GraphException;
 import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.GraphStructureChangedListener;
-import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.TemporaryEdge;
 import de.uni_koblenz.jgralab.TemporaryVertex;
 import de.uni_koblenz.jgralab.TraversalContext;
@@ -80,7 +79,7 @@ import de.uni_koblenz.jgralab.trans.VersionedDataObject;
  */
 public abstract class GraphImpl extends
 		de.uni_koblenz.jgralab.impl.GraphBaseImpl {
-	private static Logger logger = JGraLab.getLogger(GraphImpl.class);
+	private static Logger logger = null; // JGraLab.getLogger(GraphImpl.class);
 
 	// the transactions of this instance are managed by a transaction manager
 	private TransactionManager transactionManager;
