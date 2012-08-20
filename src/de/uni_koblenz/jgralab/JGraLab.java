@@ -225,7 +225,7 @@ public class JGraLab {
 	 *            the name of the package.
 	 * @return the {@link Logger} for the package <code>pkgName</code>
 	 */
-	private static Logger getLogger(String packageName) {
+	public static Logger getLogger(String packageName) {
 		if (packageName.equals("")) {
 			return getRootLogger();
 		}
