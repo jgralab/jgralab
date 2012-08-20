@@ -49,7 +49,6 @@ import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.GraphException;
-import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.impl.InternalGraph;
 import de.uni_koblenz.jgralab.trans.Transaction;
@@ -68,7 +67,7 @@ import de.uni_koblenz.jgralab.trans.VersionedDataObject;
 public abstract class VersionedDataObjectImpl<E> implements
 		VersionedDataObject<E> {
 
-	private static Logger logger = JGraLab.getLogger(VersionedDataObject.class);
+	private static Logger logger = null; // JGraLab.getLogger(VersionedDataObject.class);
 
 	protected AttributedElement<?, ?> attributedElement;
 
@@ -184,33 +183,20 @@ public abstract class VersionedDataObjectImpl<E> implements
 			copy = copyOf(getPersistentValueAtBot(transaction));
 		}
 
-		if (logger != null) {
-			logger.finest("  old value: " + copy);
-		}
-
 		// no save-point has been defined...
 		if (trans.latestDefinedSavepoint == null
 				&& (trans.temporaryVersionMap == null || !trans.temporaryVersionMap
 						.containsKey(this))) {
 			// as long as no save-points are defined, use
 			// temporaryValueMap...
-			if (logger != null) {
-				logger.finest("  case1");
-			}
 			if (trans.temporaryValueMap == null) {
 				trans.temporaryValueMap = new HashMap<VersionedDataObject<?>, Object>(
 						1, TransactionManagerImpl.LOAD_FACTOR);
 			}
 			synchronized (trans.temporaryValueMap) {
-				if (logger != null) {
-					logger.finest("temporaryValueMap.put(" + this + ", " + copy);
-				}
 				trans.temporaryValueMap.put(this, copy);
 			}
 		} else {
-			if (logger != null) {
-				logger.finest("  case2");
-			}
 			if (trans.temporaryVersionMap == null) {
 				trans.temporaryVersionMap = new HashMap<VersionedDataObject<?>, SortedMap<Long, Object>>(
 						1, TransactionManagerImpl.LOAD_FACTOR);
@@ -404,7 +390,6 @@ public abstract class VersionedDataObjectImpl<E> implements
 		}
 		// TODO could this cause errors?!
 		if (!hasTemporaryValue(transaction)) {
-			logger.finest("  case1");
 			return getPersistentValueAtBot(transaction);
 		}
 		TransactionImpl trans = (TransactionImpl) transaction;
@@ -414,7 +399,6 @@ public abstract class VersionedDataObjectImpl<E> implements
 			assert trans.temporaryVersionMap == null
 					|| !trans.temporaryVersionMap.containsKey(this);
 			synchronized (trans.temporaryValueMap) {
-				logger.finest("  case2");
 				return (E) trans.temporaryValueMap.get(this);
 			}
 		}
@@ -423,29 +407,23 @@ public abstract class VersionedDataObjectImpl<E> implements
 				.get(this);
 		assert trans.temporaryVersionMap != null;
 		if (trans.latestRestoredSavepoint != null) {
-			logger.finest("  case3");
 			Long fromKey = transactionMap.firstKey();
 			long toKey = trans.latestRestoredSavepoint.versionAtSavepoint + 1;
 			// make sure firstKey is always < toKey
 			if (fromKey > toKey) {
 				fromKey = 0L;
 			}
-			logger.finest("  fromKey=" + fromKey + ", toKey=" + toKey);
 			SortedMap<Long, Object> subMap = transactionMap.subMap(fromKey,
 					toKey);
-			logger.finest("  subMap=" + subMap);
-			// it may happen that subMap is empty, then return null!
+			// it may happen that subMap is empty, then return BOT value
 			if (subMap.isEmpty()) {
-				logger.finest("  case4");
-				return null;
+				return getPersistentValueAtBot(transaction);
 			}
 			// ...otherwise return the version with the highest version number
 			// which is
 			// valid for the current savepoint
-			logger.finest("  case5");
 			return (E) subMap.get(subMap.lastKey());
 		}
-		logger.finest("  case6");
 		return (E) transactionMap.get(transactionMap.lastKey());
 	}
 
