@@ -35,7 +35,6 @@
 
 package de.uni_koblenz.jgralab.greql.types;
 
-import java.util.Collection;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -92,13 +91,19 @@ public class TypeCollection {
 	 *            toggles wether the given types should be added to the allowed
 	 *            or forbidden types
 	 */
-	public TypeCollection(Collection<GraphElementClass<?, ?>> types,
+	public TypeCollection(GraphElementClass<?, ?> cls, boolean exactType,
 			boolean forbidden) {
 		this();
 		if (forbidden) {
-			forbiddenTypes.addAll(types);
+			forbiddenTypes.add(cls);
+			if (!exactType) {
+				forbiddenTypes.addAll(cls.getAllSubClasses());
+			}
 		} else {
-			allowedTypes.addAll(types);
+			allowedTypes.add(cls);
+			if (!exactType) {
+				allowedTypes.addAll(cls.getAllSubClasses());
+			}
 		}
 	}
 
