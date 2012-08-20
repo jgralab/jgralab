@@ -146,14 +146,13 @@ public class ResidualEvaluatorTest {
 	@Test
 	public void testVertexSetExpression_verticesOfOneTypeButNotASubtype() {
 		@SuppressWarnings("unchecked")
-		Set<Vertex> ergSet = (Set<Vertex>) evaluateQuery("import junctions.*;V{Crossroad,^Plaza}");
+		Set<Vertex> ergSet = (Set<Vertex>) evaluateQuery("import junctions.*;V{^Plaza}");
 		for (Vertex v : datagraph.vertices()) {
-			if (isInstanceOf(v, "junctions.Crossroad")
-					&& !isInstanceOf(v, "junctions.Plaza")) {
-				assertTrue(createContainmentMessage(v, true),
+			if (isInstanceOf(v, "junctions.Plaza")) {
+				assertFalse(createContainmentMessage(v, false),
 						ergSet.contains(v));
 			} else {
-				assertFalse(createContainmentMessage(v, false),
+				assertTrue(createContainmentMessage(v, true),
 						ergSet.contains(v));
 			}
 		}
@@ -288,14 +287,13 @@ public class ResidualEvaluatorTest {
 	@Test
 	public void testEdgeSetExpression_edgesOfOneTypeButNotASubtype() {
 		@SuppressWarnings("unchecked")
-		Set<Edge> ergSet = (Set<Edge>) evaluateQuery("import connections.*;E{Street,^Highway}");
+		Set<Edge> ergSet = (Set<Edge>) evaluateQuery("import connections.*;E{^Highway}");
 		for (Edge e : datagraph.edges()) {
-			if (isInstanceOf(e, "connections.Street")
-					&& !isInstanceOf(e, "connections.Highway")) {
-				assertTrue(createContainmentMessage(e, true),
+			if (isInstanceOf(e, "connections.Highway")) {
+				assertFalse(createContainmentMessage(e, false),
 						ergSet.contains(e));
 			} else {
-				assertFalse(createContainmentMessage(e, false),
+				assertTrue(createContainmentMessage(e, true),
 						ergSet.contains(e));
 			}
 		}

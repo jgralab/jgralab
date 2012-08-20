@@ -54,7 +54,8 @@ import de.uni_koblenz.jgralab.greql.types.TypeCollection;
 public abstract class AbstractGraphElementCollectionEvaluator<V extends Expression>
 		extends VertexEvaluator<V> {
 
-	public AbstractGraphElementCollectionEvaluator(V vertex, GreqlQueryImpl query) {
+	public AbstractGraphElementCollectionEvaluator(V vertex,
+			GreqlQueryImpl query) {
 		super(vertex, query);
 	}
 
@@ -62,15 +63,16 @@ public abstract class AbstractGraphElementCollectionEvaluator<V extends Expressi
 
 	protected TypeCollection getTypeCollection(InternalGreqlEvaluator evaluator) {
 		if (typeCollection == null) {
-			typeCollection = new TypeCollection();
+			typeCollection = TypeCollection.empty();
 			IsTypeRestrOfExpression inc = ((Expression) getVertex())
 					.getFirstIsTypeRestrOfExpressionIncidence(EdgeDirection.IN);
 			while (inc != null) {
-					TypeIdEvaluator typeEval = (TypeIdEvaluator) query
-							.getVertexEvaluator( inc.getAlpha());
-					typeCollection.addTypes((TypeCollection) typeEval
-							.getResult(evaluator));
-				
+				TypeIdEvaluator typeEval = (TypeIdEvaluator) query
+						.getVertexEvaluator(inc.getAlpha());
+				typeCollection = typeCollection
+						.join((TypeCollection) typeEval
+								.getResult(evaluator));
+
 				inc = inc
 						.getNextIsTypeRestrOfExpressionIncidence(EdgeDirection.IN);
 			}

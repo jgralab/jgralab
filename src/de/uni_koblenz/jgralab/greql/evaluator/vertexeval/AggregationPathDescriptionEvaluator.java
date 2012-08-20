@@ -64,7 +64,7 @@ public class AggregationPathDescriptionEvaluator extends
 	@Override
 	public NFA evaluate(InternalGreqlEvaluator evaluator) {
 		evaluator.progress(getOwnEvaluationCosts());
-		TypeCollection typeCollection = new TypeCollection();
+		TypeCollection typeCollection = TypeCollection.empty();
 		IsEdgeRestrOf inc = vertex
 				.getFirstIsEdgeRestrOfIncidence(EdgeDirection.IN);
 		EdgeRestrictionEvaluator edgeRestEval = null;
@@ -72,7 +72,8 @@ public class AggregationPathDescriptionEvaluator extends
 		if (inc != null) {
 			edgeRestEval = (EdgeRestrictionEvaluator) query
 					.getVertexEvaluator(inc.getAlpha());
-			typeCollection.addTypes(edgeRestEval.getTypeCollection(evaluator));
+			typeCollection = typeCollection.join(edgeRestEval
+					.getTypeCollection(evaluator));
 			predicateEvaluator = edgeRestEval.getPredicateEvaluator();
 		}
 

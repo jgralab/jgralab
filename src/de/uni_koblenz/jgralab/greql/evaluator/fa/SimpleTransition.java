@@ -39,23 +39,22 @@ import java.util.Set;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.greql.evaluator.InternalGreqlEvaluator;
 import de.uni_koblenz.jgralab.greql.evaluator.GreqlQueryImpl;
+import de.uni_koblenz.jgralab.greql.evaluator.InternalGreqlEvaluator;
 import de.uni_koblenz.jgralab.greql.evaluator.vertexeval.ThisEdgeEvaluator;
 import de.uni_koblenz.jgralab.greql.evaluator.vertexeval.VertexEvaluator;
 import de.uni_koblenz.jgralab.greql.schema.Expression;
 import de.uni_koblenz.jgralab.greql.schema.GReQLDirection;
 import de.uni_koblenz.jgralab.greql.schema.ThisEdge;
 import de.uni_koblenz.jgralab.greql.types.TypeCollection;
-import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 
 /**
  * This transition accepts a SimplePathDescription. A SimplePathDescription is
  * for instance something like v -->{isExprOf} w.
- *
+ * 
  * @author ist@uni-koblenz.de Summer 2006, Diploma Thesis
- *
+ * 
  */
 public class SimpleTransition extends Transition {
 
@@ -123,7 +122,7 @@ public class SimpleTransition extends Transition {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see
 	 * greql2.evaluator.fa.Transition#equalSymbol(greql2.evaluator.fa.EdgeTransition
 	 * )
@@ -187,7 +186,7 @@ public class SimpleTransition extends Transition {
 	protected SimpleTransition(SimpleTransition t, boolean addToStates) {
 		super(t, addToStates);
 		validDirection = t.validDirection;
-		typeCollection = new TypeCollection(t.typeCollection);
+		typeCollection = t.typeCollection;
 		predicateEvaluator = t.predicateEvaluator;
 		thisEdgeEvaluator = t.thisEdgeEvaluator;
 		validToEdgeRoles = t.validToEdgeRoles;
@@ -206,7 +205,7 @@ public class SimpleTransition extends Transition {
 	 * Creates a new transition from start state to end state. The Transition
 	 * accepts all edges that have the right direction, role, startVertexType,
 	 * endVertexType, edgeType and even it's possible to define a specific edge.
-	 *
+	 * 
 	 * @param start
 	 *            The state where this transition starts
 	 * @param end
@@ -218,7 +217,7 @@ public class SimpleTransition extends Transition {
 	public SimpleTransition(State start, State end, GReQLDirection dir) {
 		super(start, end);
 		validDirection = dir;
-		typeCollection = new TypeCollection();
+		typeCollection = TypeCollection.empty();
 	}
 
 	/**
@@ -226,7 +225,7 @@ public class SimpleTransition extends Transition {
 	 * accepts all edges that have the right direction, role, startVertexType,
 	 * endVertexType, edgeType and even it's possible to define a specific edge.
 	 * This constructor creates a transition to accept a simplePathDescription
-	 *
+	 * 
 	 * @param start
 	 *            The state where this transition starts
 	 * @param end
@@ -259,7 +258,7 @@ public class SimpleTransition extends Transition {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see greql2.evaluator.fa.Transition#reverse()
 	 */
 	@Override
@@ -277,7 +276,7 @@ public class SimpleTransition extends Transition {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see greql2.evaluator.fa.Transition#isEpsilon()
 	 */
 	@Override
@@ -287,7 +286,7 @@ public class SimpleTransition extends Transition {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see greql2.evaluator.fa.Transition#accepts(jgralab.Vertex, jgralab.Edge)
 	 */
 	@Override
@@ -312,9 +311,7 @@ public class SimpleTransition extends Transition {
 			checkToEdgeRoles = false;
 		}
 
-		boolean rolesOnly = (validEdgeRoles != null)
-				&& (typeCollection.getAllowedTypes().size() == 0)
-				&& (typeCollection.getForbiddenTypes().size() == 0);
+		boolean rolesOnly = validEdgeRoles != null && typeCollection.isEmpty();
 		boolean acceptedByRole = false;
 
 		// checks if a role restriction is set and if e has the right role
@@ -371,20 +368,13 @@ public class SimpleTransition extends Transition {
 
 	@Override
 	public String prettyPrint() {
-		StringBuilder b = new StringBuilder();
-		String delim = "";
-		for (AttributedElementClass<?, ?> c : typeCollection.getAllowedTypes()) {
-			b.append(delim);
-			b.append(c.getSimpleName());
-			delim = ",";
-		}
 		String symbol = "<->";
 		if (validDirection == GReQLDirection.IN) {
 			symbol = "<--";
 		} else if (validDirection == GReQLDirection.OUT) {
 			symbol = "-->";
 		}
-		return symbol + "{" + b + "}";
+		return symbol + typeCollection.toString();
 	}
 
 	@Override

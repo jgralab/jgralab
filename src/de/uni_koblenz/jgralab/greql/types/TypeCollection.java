@@ -62,6 +62,7 @@ public class TypeCollection {
 	 * returns the list of allowed types. Creates a copy of that list so the
 	 * internal list is not affected by changes of the returned list
 	 */
+	@Deprecated
 	public Set<GraphElementClass<?, ?>> getAllowedTypes() {
 		return allowedTypes;
 	}
@@ -70,16 +71,52 @@ public class TypeCollection {
 	 * returns the list of forbidden types. Creates a copy of that list so the
 	 * internal list is not affected by changes of the returned list
 	 */
+	@Deprecated
 	public Set<GraphElementClass<?, ?>> getForbiddenTypes() {
 		return forbiddenTypes;
+	}
+
+	public boolean isEmpty() {
+		return allowedTypes == null;
+	}
+
+	private static TypeCollection empty = new TypeCollection();
+
+	public static TypeCollection empty() {
+		return empty;
+	}
+
+	public TypeCollection with(GraphElementClass<?, ?> cls, boolean exactType,
+			boolean forbidden) {
+		return new TypeCollection(cls, exactType, forbidden);
+	}
+
+	/**
+	 * adds the allowed and forbidden types of the given collection
+	 * <code>other</code> to this collection
+	 */
+	public TypeCollection join(TypeCollection other) {
+		if (other == null) {
+			return this;
+		} else if (forbiddenTypes == null) {
+			return other;
+		} else {
+			TypeCollection result = new TypeCollection();
+			result.forbiddenTypes = new TreeSet<GraphElementClass<?, ?>>(
+					forbiddenTypes);
+			result.allowedTypes = new TreeSet<GraphElementClass<?, ?>>(
+					allowedTypes);
+			result.forbiddenTypes.addAll(other.forbiddenTypes);
+			result.allowedTypes.addAll(other.allowedTypes);
+			result.allowedTypes.removeAll(forbiddenTypes);
+			return result;
+		}
 	}
 
 	/**
 	 * creates a new typecollection which contains no types
 	 */
-	public TypeCollection() {
-		forbiddenTypes = new TreeSet<GraphElementClass<?, ?>>();
-		allowedTypes = new TreeSet<GraphElementClass<?, ?>>();
+	private TypeCollection() {
 	}
 
 	/**
@@ -91,9 +128,10 @@ public class TypeCollection {
 	 *            toggles wether the given types should be added to the allowed
 	 *            or forbidden types
 	 */
-	public TypeCollection(GraphElementClass<?, ?> cls, boolean exactType,
+	private TypeCollection(GraphElementClass<?, ?> cls, boolean exactType,
 			boolean forbidden) {
-		this();
+		forbiddenTypes = new TreeSet<GraphElementClass<?, ?>>();
+		allowedTypes = new TreeSet<GraphElementClass<?, ?>>();
 		if (forbidden) {
 			forbiddenTypes.add(cls);
 			if (!exactType) {
@@ -113,34 +151,17 @@ public class TypeCollection {
 			return false;
 		}
 		TypeCollection col = (TypeCollection) o;
+		if (col == this) {
+			return true;
+		}
 		return forbiddenTypes.equals(col.forbiddenTypes)
 				&& allowedTypes.equals(col.allowedTypes);
 	}
 
 	@Override
 	public int hashCode() {
-		return forbiddenTypes.hashCode() + allowedTypes.hashCode();
-	}
-
-	/**
-	 * creates a copy of the given type collection
-	 */
-	public TypeCollection(TypeCollection other) {
-		this();
-		forbiddenTypes.addAll(other.forbiddenTypes);
-		allowedTypes.addAll(other.allowedTypes);
-	}
-
-	/**
-	 * adds the allowed and forbidden types of the given collection
-	 * <code>other</code> to this collection
-	 */
-	public void addTypes(TypeCollection other) {
-		if (other != null) {
-			forbiddenTypes.addAll(other.forbiddenTypes);
-			allowedTypes.addAll(other.allowedTypes);
-			allowedTypes.removeAll(forbiddenTypes);
-		}
+		return allowedTypes == null ? 0
+				: (forbiddenTypes.hashCode() + allowedTypes.hashCode());
 	}
 
 	/**
@@ -152,6 +173,9 @@ public class TypeCollection {
 	 * @return true if the given type is allowed, false otherwise
 	 */
 	public final boolean acceptsType(GraphElementClass<?, ?> type) {
+		if (allowedTypes == null) {
+			return true;
+		}
 		if (allowedTypes.isEmpty()) {
 			return (!forbiddenTypes.contains(type));
 		} else {
@@ -161,6 +185,9 @@ public class TypeCollection {
 
 	@Override
 	public String toString() {
+		if (allowedTypes == null) {
+			return "{}";
+		}
 		if (allowedTypes.isEmpty() && forbiddenTypes.isEmpty()) {
 			return "{}";
 		} else {

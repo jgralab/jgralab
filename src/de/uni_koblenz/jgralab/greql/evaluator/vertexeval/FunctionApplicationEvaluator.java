@@ -82,9 +82,8 @@ public class FunctionApplicationEvaluator extends
 	 */
 	public String getFunctionName() {
 		if (functionName == null) {
-			FunctionId id = vertex
-					.getFirstIsFunctionIdOfIncidence(EdgeDirection.IN)
-					.getAlpha();
+			FunctionId id = vertex.getFirstIsFunctionIdOfIncidence(
+					EdgeDirection.IN).getAlpha();
 			functionName = id.get_name();
 		}
 		return functionName;
@@ -149,12 +148,12 @@ public class FunctionApplicationEvaluator extends
 				.getFirstIsTypeExprOfIncidence(EdgeDirection.IN);
 		TypeCollection typeCollection = null;
 		if (typeEdge != null) {
-			typeCollection = new TypeCollection();
+			typeCollection = TypeCollection.empty();
 			while (typeEdge != null) {
 				typeId = (TypeId) typeEdge.getAlpha();
 				TypeIdEvaluator typeEval = (TypeIdEvaluator) query
 						.getVertexEvaluator(typeId);
-				typeCollection.addTypes((TypeCollection) typeEval
+				typeCollection = typeCollection.join((TypeCollection) typeEval
 						.getResult(evaluator));
 				typeEdge = typeEdge
 						.getNextIsTypeExprOfIncidence(EdgeDirection.IN);

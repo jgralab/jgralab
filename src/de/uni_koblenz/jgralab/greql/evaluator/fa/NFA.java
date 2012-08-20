@@ -301,9 +301,9 @@ public class NFA extends FiniteAutomaton {
 	 * Constructs a NFA which accepts the given EdgePathDescription The
 	 * EdgeRestrictions (RoleId, TypeId) are modeled in the Transition.
 	 */
-	public static NFA createEdgePathDescriptionNFA(
-			GReQLDirection dir, TypeCollection typeCollection,
-			Set<String> roles, VertexEvaluator<?> edgeEval,
+	public static NFA createEdgePathDescriptionNFA(GReQLDirection dir,
+			TypeCollection typeCollection, Set<String> roles,
+			VertexEvaluator<?> edgeEval,
 			VertexEvaluator<? extends Expression> predicateEvaluator,
 			GreqlQueryImpl query) {
 		NFA nfa = new NFA();
@@ -322,9 +322,8 @@ public class NFA extends FiniteAutomaton {
 	 * Constructs a NFA which accepts the given SimplePathDescription. The
 	 * EdgeRestrictions (RoleId, TypeId) are modeled in the Transition.
 	 */
-	public static NFA createSimplePathDescriptionNFA(
-			GReQLDirection dir, TypeCollection typeCollection,
-			Set<String> roles,
+	public static NFA createSimplePathDescriptionNFA(GReQLDirection dir,
+			TypeCollection typeCollection, Set<String> roles,
 			VertexEvaluator<? extends Expression> predicateEvaluator,
 			GreqlQueryImpl query) {
 		NFA nfa = new NFA();

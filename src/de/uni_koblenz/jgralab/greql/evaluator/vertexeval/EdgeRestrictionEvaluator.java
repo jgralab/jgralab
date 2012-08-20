@@ -108,13 +108,13 @@ public class EdgeRestrictionEvaluator extends VertexEvaluator<EdgeRestriction> {
 	public Object evaluate(InternalGreqlEvaluator evaluator) {
 		evaluator.progress(getOwnEvaluationCosts());
 		if (typeCollection == null) {
-			typeCollection = new TypeCollection();
+			typeCollection = TypeCollection.empty();
 			IsTypeIdOf typeInc = vertex
 					.getFirstIsTypeIdOfIncidence(EdgeDirection.IN);
 			while (typeInc != null) {
 				TypeIdEvaluator typeEval = (TypeIdEvaluator) query
 						.getVertexEvaluator(typeInc.getAlpha());
-				typeCollection.addTypes((TypeCollection) typeEval
+				typeCollection = typeCollection.join((TypeCollection) typeEval
 						.getResult(evaluator));
 				typeInc = typeInc.getNextIsTypeIdOfIncidence(EdgeDirection.IN);
 			}
@@ -123,7 +123,7 @@ public class EdgeRestrictionEvaluator extends VertexEvaluator<EdgeRestriction> {
 		if (vertex.getFirstIsRoleIdOfIncidence() != null) {
 			validRoles = new HashSet<String>();
 			for (IsRoleIdOf e : vertex.getIsRoleIdOfIncidences()) {
-				RoleId role =  e.getAlpha();
+				RoleId role = e.getAlpha();
 				validRoles.add(role.get_name());
 			}
 		}
@@ -131,8 +131,7 @@ public class EdgeRestrictionEvaluator extends VertexEvaluator<EdgeRestriction> {
 				.getFirstIsBooleanPredicateOfEdgeRestrictionIncidence(EdgeDirection.IN);
 		if (predInc != null) {
 			// System.out.println("Found a BooleanPredicateOfEdge");
-			predicateEvaluator = query.getVertexEvaluator(predInc
-					.getAlpha());
+			predicateEvaluator = query.getVertexEvaluator(predInc.getAlpha());
 		}
 		return null;
 	}
@@ -144,9 +143,8 @@ public class EdgeRestrictionEvaluator extends VertexEvaluator<EdgeRestriction> {
 		long subtreeCosts = 0;
 		if (er.getFirstIsTypeIdOfIncidence(EdgeDirection.IN) != null) {
 			TypeIdEvaluator tEval = (TypeIdEvaluator) query
-					.getVertexEvaluator(er
-							.getFirstIsTypeIdOfIncidence(EdgeDirection.IN)
-							.getAlpha());
+					.getVertexEvaluator(er.getFirstIsTypeIdOfIncidence(
+							EdgeDirection.IN).getAlpha());
 			subtreeCosts += tEval.getCurrentSubtreeEvaluationCosts();
 		}
 		if (er.getFirstIsRoleIdOfIncidence(EdgeDirection.IN) != null) {

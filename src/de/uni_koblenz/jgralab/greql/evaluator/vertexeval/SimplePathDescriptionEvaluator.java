@@ -63,14 +63,15 @@ public class SimplePathDescriptionEvaluator extends
 	@Override
 	public NFA evaluate(InternalGreqlEvaluator evaluator) {
 		evaluator.progress(getOwnEvaluationCosts());
-		TypeCollection typeCollection = new TypeCollection();
+		TypeCollection typeCollection = TypeCollection.empty();
 		EdgeRestrictionEvaluator edgeRestEval = null;
 		VertexEvaluator<? extends Expression> predicateEvaluator = null;
 		for (IsEdgeRestrOf inc : vertex
 				.getIsEdgeRestrOfIncidences(EdgeDirection.IN)) {
 			edgeRestEval = (EdgeRestrictionEvaluator) query
 					.getVertexEvaluator(inc.getAlpha());
-			typeCollection.addTypes(edgeRestEval.getTypeCollection(evaluator));
+			typeCollection = typeCollection.join(edgeRestEval
+					.getTypeCollection(evaluator));
 			predicateEvaluator = edgeRestEval.getPredicateEvaluator();
 		}
 		NFA createdNFA = NFA.createSimplePathDescriptionNFA(

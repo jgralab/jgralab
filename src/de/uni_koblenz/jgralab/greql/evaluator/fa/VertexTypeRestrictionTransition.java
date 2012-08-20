@@ -39,7 +39,6 @@ import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql.evaluator.InternalGreqlEvaluator;
 import de.uni_koblenz.jgralab.greql.types.TypeCollection;
-import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.VertexClass;
 
 /**
@@ -56,7 +55,7 @@ public class VertexTypeRestrictionTransition extends Transition {
 	 * not
 	 */
 	private final TypeCollection typeCollection;
-	
+
 	public TypeCollection getAcceptedVertexTypes() {
 		return typeCollection;
 	}
@@ -100,7 +99,7 @@ public class VertexTypeRestrictionTransition extends Transition {
 	protected VertexTypeRestrictionTransition(
 			VertexTypeRestrictionTransition t, boolean addToStates) {
 		super(t, addToStates);
-		typeCollection = new TypeCollection(t.typeCollection);
+		typeCollection = t.typeCollection;
 	}
 
 	/**
@@ -160,14 +159,7 @@ public class VertexTypeRestrictionTransition extends Transition {
 
 	@Override
 	public String prettyPrint() {
-		StringBuilder b = new StringBuilder();
-		String delim = "";
-		for (AttributedElementClass<?, ?> c : typeCollection.getAllowedTypes()) {
-			b.append(delim);
-			b.append(c.getSimpleName());
-			delim = ",";
-		}
-		return "&{" + b + "}";
+		return "&" + typeCollection.toString();
 	}
 
 	@Override

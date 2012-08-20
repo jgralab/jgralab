@@ -452,7 +452,10 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 		int minTypeNumberInSchema = 0;
 		int maxTypeNumberInSchema = schema.getGraphElementClassCount();
 		addStaticField("java.util.BitSet", fieldName, "new java.util.BitSet()");
-		if (typeCollection.getAllowedTypes().isEmpty()) {
+		if (typeCollection.isEmpty()) {
+			addStaticInitializer(fieldName + ".set(" + minTypeNumberInSchema
+					+ ", " + maxTypeNumberInSchema + 1 + ", true);");
+		} else if (typeCollection.getAllowedTypes().isEmpty()) {
 			// all types but the forbidden ones are allowed
 			addStaticInitializer(fieldName + ".set(" + minTypeNumberInSchema
 					+ ", " + maxTypeNumberInSchema + 1 + ", true);");
@@ -494,11 +497,11 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 		addImports("de.uni_koblenz.jgralab.Edge");
 		addImports("de.uni_koblenz.jgralab.greql.types.TypeCollection");
 		CodeList list = new CodeList();
-		TypeCollection typeCol = new TypeCollection();
+		TypeCollection typeCol = TypeCollection.empty();
 		for (IsTypeRestrOfExpression inc : setExpr
 				.getIsTypeRestrOfExpressionIncidences(EdgeDirection.IN)) {
 			TypeId typeId = (TypeId) inc.getThat();
-			typeCol.addTypes((TypeCollection) ((GreqlQueryImpl) query)
+			typeCol = typeCol.join((TypeCollection) ((GreqlQueryImpl) query)
 					.getVertexEvaluator(typeId).getResult(evaluator));
 		}
 		String acceptedTypesField = createInitializerForTypeCollection(typeCol);
@@ -521,11 +524,11 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 	// VertexSetExpression
 	private String createCodeForVertexSetExpression(VertexSetExpression setExpr) {
 		CodeList list = new CodeList();
-		TypeCollection typeCol = new TypeCollection();
+		TypeCollection typeCol = TypeCollection.empty();
 		for (IsTypeRestrOfExpression inc : setExpr
 				.getIsTypeRestrOfExpressionIncidences(EdgeDirection.IN)) {
 			TypeId typeId = (TypeId) inc.getThat();
-			typeCol.addTypes((TypeCollection) ((GreqlQueryImpl) query)
+			typeCol = typeCol.join((TypeCollection) ((GreqlQueryImpl) query)
 					.getVertexEvaluator(typeId).getResult(evaluator));
 		}
 		String acceptedTypesField = createInitializerForTypeCollection(typeCol);

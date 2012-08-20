@@ -116,13 +116,13 @@ public abstract class PathDescriptionEvaluator<V extends PathDescription>
 		if (inc == null) {
 			return;
 		}
-		TypeCollection typeCollection = new TypeCollection();
+		TypeCollection typeCollection = TypeCollection.empty();
 		while (inc != null) {
 			VertexEvaluator<? extends Expression> vertexEval = query
 					.getVertexEvaluator(inc.getAlpha());
 			if (vertexEval instanceof TypeIdEvaluator) {
 				TypeIdEvaluator typeEval = (TypeIdEvaluator) vertexEval;
-				typeCollection.addTypes((TypeCollection) typeEval
+				typeCollection = typeCollection.join((TypeCollection) typeEval
 						.getResult(evaluator));
 			} else {
 				goalRestEval = vertexEval;
@@ -150,13 +150,13 @@ public abstract class PathDescriptionEvaluator<V extends PathDescription>
 		if (inc == null) {
 			return;
 		}
-		TypeCollection typeCollection = new TypeCollection();
+		TypeCollection typeCollection = TypeCollection.empty();
 		while (inc != null) {
 			VertexEvaluator<? extends Expression> vertexEval = query
 					.getVertexEvaluator(inc.getAlpha());
 			if (vertexEval instanceof TypeIdEvaluator) {
 				TypeIdEvaluator typeEval = (TypeIdEvaluator) vertexEval;
-				typeCollection.addTypes((TypeCollection) typeEval
+				typeCollection = typeCollection.join((TypeCollection) typeEval
 						.getResult(evaluator));
 			} else {
 				startRestEval = vertexEval;

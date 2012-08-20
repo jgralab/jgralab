@@ -39,21 +39,20 @@ import java.util.Set;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.greql.evaluator.InternalGreqlEvaluator;
 import de.uni_koblenz.jgralab.greql.evaluator.GreqlQueryImpl;
+import de.uni_koblenz.jgralab.greql.evaluator.InternalGreqlEvaluator;
 import de.uni_koblenz.jgralab.greql.evaluator.vertexeval.ThisEdgeEvaluator;
 import de.uni_koblenz.jgralab.greql.evaluator.vertexeval.VertexEvaluator;
 import de.uni_koblenz.jgralab.greql.schema.Expression;
 import de.uni_koblenz.jgralab.greql.schema.ThisEdge;
 import de.uni_koblenz.jgralab.greql.types.TypeCollection;
 import de.uni_koblenz.jgralab.schema.AggregationKind;
-import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 
 /**
  * This transition accepts an AggregationPathDescription. Am
  * AggregationPathDescription is for instance something like v --<>{isExprOf} w.
- *
+ * 
  * @author ist@uni-koblenz.de
  */
 public class AggregationTransition extends Transition {
@@ -113,7 +112,7 @@ public class AggregationTransition extends Transition {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see
 	 * greql2.evaluator.fa.Transition#equalSymbol(greql2.evaluator.fa.EdgeTransition
 	 * )
@@ -176,7 +175,7 @@ public class AggregationTransition extends Transition {
 	protected AggregationTransition(AggregationTransition t, boolean addToStates) {
 		super(t, addToStates);
 		aggregateFrom = t.aggregateFrom;
-		typeCollection = new TypeCollection(t.typeCollection);
+		typeCollection = t.typeCollection;
 		validToEdgeRoles = t.validToEdgeRoles;
 		predicateEvaluator = t.predicateEvaluator;
 		thisEdgeEvaluator = t.thisEdgeEvaluator;
@@ -198,7 +197,7 @@ public class AggregationTransition extends Transition {
 	 * startVertexType, endVertexType, edgeType and even it's possible to define
 	 * a specific edge. This constructor creates a transition to accept a
 	 * simplePathDescription
-	 *
+	 * 
 	 * @param start
 	 *            The state where this transition starts
 	 * @param end
@@ -232,7 +231,7 @@ public class AggregationTransition extends Transition {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see greql2.evaluator.fa.Transition#reverse()
 	 */
 	@Override
@@ -246,7 +245,7 @@ public class AggregationTransition extends Transition {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see greql2.evaluator.fa.Transition#isEpsilon()
 	 */
 	@Override
@@ -256,7 +255,7 @@ public class AggregationTransition extends Transition {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see greql2.evaluator.fa.Transition#accepts(jgralab.Vertex, jgralab.Edge)
 	 */
 	@Override
@@ -282,9 +281,7 @@ public class AggregationTransition extends Transition {
 			checkToEdgeRoles = false;
 		}
 
-		boolean rolesOnly = (validEdgeRoles != null)
-				&& (typeCollection.getAllowedTypes().size() == 0)
-				&& (typeCollection.getForbiddenTypes().size() == 0);
+		boolean rolesOnly = validEdgeRoles != null && typeCollection.isEmpty();
 		boolean acceptedByRole = false;
 
 		// checks if a role restriction is set and if e has the right role
@@ -341,19 +338,12 @@ public class AggregationTransition extends Transition {
 
 	@Override
 	public String prettyPrint() {
-		StringBuilder b = new StringBuilder();
-		String delim = "";
-		for (AttributedElementClass<?, ?> c : typeCollection.getAllowedTypes()) {
-			b.append(delim);
-			b.append(c.getSimpleName());
-			delim = ",";
-		}
 		String symbol = "--<>";
 		if (aggregateFrom) {
 			symbol = "<>--";
 		}
 
-		return symbol + "{" + b + "}";
+		return symbol + typeCollection.toString();
 	}
 
 	@Override

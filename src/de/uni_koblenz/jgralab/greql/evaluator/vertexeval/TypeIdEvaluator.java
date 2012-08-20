@@ -35,8 +35,6 @@
 
 package de.uni_koblenz.jgralab.greql.evaluator.vertexeval;
 
-import java.util.ArrayList;
-
 import de.uni_koblenz.jgralab.greql.evaluator.GreqlQueryImpl;
 import de.uni_koblenz.jgralab.greql.evaluator.InternalGreqlEvaluator;
 import de.uni_koblenz.jgralab.greql.evaluator.VertexCosts;
@@ -66,8 +64,6 @@ public class TypeIdEvaluator extends VertexEvaluator<TypeId> {
 	 */
 	private GraphElementClass<?, ?> getGraphElementClass(
 			InternalGreqlEvaluator evaluator) {
-
-		ArrayList<GraphElementClass<?, ?>> returnTypes = new ArrayList<GraphElementClass<?, ?>>();
 		// try to find schema class using qualified name
 		GraphElementClass<?, ?> elemClass = (GraphElementClass<?, ?>) evaluator
 				.getAttributedElementClass(vertex.get_name());
@@ -88,8 +84,9 @@ public class TypeIdEvaluator extends VertexEvaluator<TypeId> {
 	@Override
 	public TypeCollection evaluate(InternalGreqlEvaluator evaluator) {
 		evaluator.progress(getOwnEvaluationCosts());
-		GraphElementClass cls = getGraphElementClass(evaluator);
-		return new TypeCollection(cls, vertex.is_type(), vertex.is_excluded());
+		GraphElementClass<?, ?> cls = getGraphElementClass(evaluator);
+		return TypeCollection.empty().with(cls, vertex.is_type(),
+				vertex.is_excluded());
 	}
 
 	@Override

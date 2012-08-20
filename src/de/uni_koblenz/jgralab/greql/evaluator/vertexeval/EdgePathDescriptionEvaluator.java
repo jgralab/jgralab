@@ -69,7 +69,7 @@ public class EdgePathDescriptionEvaluator extends
 			edgeEval = query.getVertexEvaluator((Expression) evalEdge
 					.getAlpha());
 		}
-		TypeCollection typeCollection = new TypeCollection();
+		TypeCollection typeCollection = TypeCollection.empty();
 		// IsTypeRestrOfExpression inc = vertex
 		// .getFirstIsTypeRestrOfExpressionIncidence(EdgeDirection.IN);
 		IsEdgeRestrOf inc = vertex
@@ -79,7 +79,8 @@ public class EdgePathDescriptionEvaluator extends
 		if (inc != null) {
 			edgeRestEval = (EdgeRestrictionEvaluator) query
 					.getVertexEvaluator(inc.getAlpha());
-			typeCollection.addTypes(edgeRestEval.getTypeCollection(evaluator));
+			typeCollection = typeCollection.join(edgeRestEval
+					.getTypeCollection(evaluator));
 			predicateEvaluator = edgeRestEval.getPredicateEvaluator();
 		}
 		NFA createdNFA = NFA
