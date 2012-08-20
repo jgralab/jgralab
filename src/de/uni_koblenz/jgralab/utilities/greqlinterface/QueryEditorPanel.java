@@ -44,6 +44,8 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -61,16 +63,17 @@ import java.util.TreeSet;
 
 import javax.swing.BorderFactory;
 import javax.swing.JDialog;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.JTextPane;
 import javax.swing.ListSelectionModel;
-import javax.swing.SwingConstants;
+import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
@@ -83,6 +86,10 @@ import javax.swing.table.TableModel;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.DefaultCaret;
 import javax.swing.text.Document;
+import javax.swing.text.MutableAttributeSet;
+import javax.swing.text.StyleConstants;
+import javax.swing.text.StyledDocument;
+import javax.swing.text.html.HTMLDocument;
 import javax.swing.undo.UndoManager;
 
 import de.uni_koblenz.ist.utilities.gui.SwingApplication;
@@ -159,7 +166,9 @@ public class QueryEditorPanel extends JPanel {
 
 	private Set<CompletionEntry> greqlEntries;
 
-	private JLabel descriptionLabel;
+	private JTextPane descriptionTextPane;
+
+	private boolean fontSet;
 
 	private JTable selectTable;
 
@@ -428,9 +437,9 @@ public class QueryEditorPanel extends JPanel {
 							.getFunctionInfo(s).getHtmlDescription(), -1));
 		}
 		greqlEntries.add(new CompletionEntry(CompletionEntryType.GREQL_IDIOM,
-				"V", "V{}", "Vertex Set", -1));
+				"V", "V{}", getDescriptionFromResources("vertexset.html"), -1));
 		greqlEntries.add(new CompletionEntry(CompletionEntryType.GREQL_IDIOM,
-				"E", "E{}", "Edge Set", -1));
+				"E", "E{}", getDescriptionFromResources("edgeset.html"), -1));
 		greqlEntries.add(new CompletionEntry(CompletionEntryType.GREQL_IDIOM,
 				"false", "false", "Boolean constant"));
 		greqlEntries.add(new CompletionEntry(CompletionEntryType.GREQL_IDIOM,
@@ -439,13 +448,13 @@ public class QueryEditorPanel extends JPanel {
 				"undefined", "undefined", "Undefined constant"));
 		greqlEntries.add(new CompletionEntry(CompletionEntryType.GREQL_IDIOM,
 				"fwr", "from\n\t\nwith\n\t\nreport\n\t\nend",
-				"List/Table Comprehension", -20));
+				getDescriptionFromResources("listcomp.html"), -20));
 		greqlEntries.add(new CompletionEntry(CompletionEntryType.GREQL_IDIOM,
 				"fwr set", "from\n\t\nwith\n\t\nreportSet\n\t\nend",
-				"Set Comprehension", -20));
+				getDescriptionFromResources("setcomp.html"), -23));
 		greqlEntries.add(new CompletionEntry(CompletionEntryType.GREQL_IDIOM,
 				"fwr map", "from\n\t\nwith\n\t\nreportMap\n\t\nend",
-				"Map Comprehension", -20));
+				getDescriptionFromResources("mapcomp.html"), -23));
 		greqlEntries.add(new CompletionEntry(CompletionEntryType.GREQL_IDIOM,
 				"exists", "exists @ ",
 				getDescriptionFromResources("exists.html"), -2));
@@ -462,6 +471,16 @@ public class QueryEditorPanel extends JPanel {
 		greqlEntries.add(new CompletionEntry(CompletionEntryType.GREQL_IDIOM,
 				"where", "\nwhere ", getDescriptionFromResources("where.html"),
 				-7));
+		greqlEntries
+				.add(new CompletionEntry(CompletionEntryType.GREQL_IDIOM,
+						"list", "list()",
+						getDescriptionFromResources("list.html"), -1));
+		greqlEntries.add(new CompletionEntry(CompletionEntryType.GREQL_IDIOM,
+				"set", "set()", getDescriptionFromResources("set.html"), -1));
+		greqlEntries.add(new CompletionEntry(CompletionEntryType.GREQL_IDIOM,
+				"map", "map()", getDescriptionFromResources("map.html"), -1));
+		greqlEntries.add(new CompletionEntry(CompletionEntryType.GREQL_IDIOM,
+				"tup", "tup()", getDescriptionFromResources("tup.html"), -1));
 		return greqlEntries;
 	}
 
@@ -492,6 +511,17 @@ public class QueryEditorPanel extends JPanel {
 		}
 	}
 
+	private void setDescription(String text) {
+		descriptionTextPane.setContentType("text/html");
+		descriptionTextPane.setText(text);
+		Font font = UIManager.getFont("Label.font");
+		String bodyRule = "body { font-family: " + font.getFamily() + "; "
+				+ "font-size: " + font.getSize() + "pt; }";
+		((HTMLDocument) descriptionTextPane.getDocument()).getStyleSheet()
+				.addRule(bodyRule);
+		descriptionTextPane.setCaretPosition(0);
+	}
+
 	private class CompletionTable extends JTable {
 		private static final long serialVersionUID = 8741021448180241310L;
 
@@ -511,10 +541,9 @@ public class QueryEditorPanel extends JPanel {
 						public void valueChanged(ListSelectionEvent e) {
 							int row = getSelectedRow();
 							if (completions != null && row >= 0) {
-								descriptionLabel.setText(completions
-										.getEntry(row).description);
+								setDescription(completions.getEntry(row).description);
 							} else {
-								descriptionLabel.setText("");
+								setDescription("");
 							}
 						}
 					});
@@ -602,9 +631,30 @@ public class QueryEditorPanel extends JPanel {
 		} catch (BadLocationException e) {
 			return;
 		}
-		descriptionLabel = new JLabel();
-		descriptionLabel.setVerticalAlignment(SwingConstants.TOP);
-		descriptionLabel.setBorder(BorderFactory.createEmptyBorder(4, 4, 4, 4));
+		descriptionTextPane = new JTextPane();
+		descriptionTextPane.setContentType("text/html");
+		descriptionTextPane.setBorder(BorderFactory.createEmptyBorder(4, 4, 4,
+				4));
+		descriptionTextPane.setEditable(false);
+
+		descriptionTextPane.addPropertyChangeListener("page",
+				new PropertyChangeListener() {
+
+					@Override
+					public void propertyChange(PropertyChangeEvent pce) {
+						if (!fontSet) {
+							MutableAttributeSet attrs = descriptionTextPane
+									.getInputAttributes();
+							StyleConstants
+									.setFontFamily(attrs, Font.SANS_SERIF);
+							StyledDocument doc = descriptionTextPane
+									.getStyledDocument();
+							doc.setCharacterAttributes(0, doc.getLength() + 1,
+									attrs, false);
+							fontSet = true;
+						}
+					}
+				});
 
 		selectTable = new CompletionTable(null);
 
@@ -685,13 +735,17 @@ public class QueryEditorPanel extends JPanel {
 		scp.setPreferredSize(new Dimension(200, 300));
 		leftPanel.add(scp, BorderLayout.CENTER);
 
-		JPanel rightPanel = new JPanel();
-		rightPanel.setLayout(new BorderLayout());
-		rightPanel.setBackground(new Color(254, 254, 189));
-		rightPanel.add(descriptionLabel, BorderLayout.CENTER);
-		rightPanel.setPreferredSize(new Dimension(500, 300));
+		// JPanel rightPanel = new JPanel();
+		// rightPanel.setLayout(new BorderLayout());
+		// JScrollPane scp1 = new JScrollPane(rightPanel);
+		JScrollPane scp1 = new JScrollPane(descriptionTextPane);
+		scp1.setPreferredSize(new Dimension(500, 300));
+		descriptionTextPane.setBackground(new Color(254, 254, 189));
+		scp1.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+		// rightPanel.add(descriptionLabel, BorderLayout.CENTER);
+
 		JSplitPane sp = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, leftPanel,
-				rightPanel);
+				scp1);
 		sp.setContinuousLayout(true);
 
 		selectWindow.getContentPane().add(sp);
@@ -718,7 +772,7 @@ public class QueryEditorPanel extends JPanel {
 		if (completions.getRowCount() > 0) {
 			selectTable.changeSelection(0, 0, false, false);
 		} else {
-			descriptionLabel.setText("No matches :-(");
+			setDescription("No matches :-(");
 		}
 	}
 

@@ -1,0 +1,38 @@
+<html>
+	<body>
+		<p>
+			<strong>Map Comprehension Expression</strong>
+		</p>
+		<p>
+			A map comprehension expression evaluates to a <font color="purple">Map</font>
+			of key-value pairs. The map entries are defined by the
+			expressions in the <font color="blue">reportMap</font> part,
+			one entry for each variable combination of the <font color="blue">from</font> part
+			that fulfills the optional boolean  predicate in the <font color="blue">with</font>
+			part. When no with part is given, all combinations result in an entry.
+		</p><p>
+			The result map does not contain duplicate keys. When multiple variable combinations
+			result in the same key value, the resulting map will contain the last entry.
+		</p>
+		<dl>
+			<dt>
+				Syntax:
+			</dt>
+			<dd>
+				<font color="blue"><strong>from</strong></font><br>
+				&nbsp;&nbsp;&nbsp;<em>&lt;var&gt;</em> : <em>&lt;set expression&gt;</em> [, <em>&lt;var&gt;</em> : <em>&lt;set expression&gt;</em> ...]<br>
+				[ <font color="blue"><strong>with</strong></font><br>
+				&nbsp;&nbsp;&nbsp;<em>&lt;boolean expression&gt;</em> ]<br>
+				<font color="blue"><strong>reportMap</strong></font><br>
+				&nbsp;&nbsp;&nbsp;<em>&lt;key expression&gt;</em> -&gt; <em>&lt;value expression&gt;</em><br>
+				<font color="blue"><strong>end</strong></font><br>
+			</dd>
+			<dt>
+				Example:
+			</dt>
+			<dd>
+				from v:V{structure.NamedElement} with v.qualifiedName &lt;&gt; "" reportMap v.qualifiedName -&gt; v end			from v:V reportMap getId(v) -&gt; v end
+			</dd>
+		</dl>
+	</body>
+</html>

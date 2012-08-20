@@ -78,15 +78,12 @@ public class SettingsDialog extends JDialog implements ActionListener,
 	private JTextField resultFontLabel;
 	private JButton resultFontButton;
 
-	@SuppressWarnings("rawtypes")
 	private JList greqlFunctionList;
-	@SuppressWarnings("rawtypes")
 	private DefaultListModel greqlFunctionModel;
 	private Action removeAction;
 	private Action addAction;
 	private JTextField functionNameField;
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public SettingsDialog(GreqlGui app, Font qf, Font rf,
 			List<String> greqlFunctions) {
 		super(app, app.getApplicationName()

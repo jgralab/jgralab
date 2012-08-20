@@ -1,0 +1,48 @@
+<html>
+	<body>
+		<p>
+			<strong>Set Comprehension Expression</strong>
+		</p>
+		<p>
+			A set comprehension expression evaluates to a <font color="purple">Set</font>
+			of <font color="purple">Tuple</font>s. The tuple elements are defined by the
+			expressions in the <font color="blue">reportSet</font> part,
+			one tuple for each variable combination of the <font color="blue">from</font> part
+			that fulfills the optional boolean  predicate in the <font color="blue">with</font>
+			part. When no with part is given, all combinations result in a tuple.
+		</p><p>
+			The result set does not contain duplicate tuples.
+		</p><p>
+			When there is only one expression in the <font color="blue">report</font> part, the 
+			resulting <font color="purple">Set</font> will not contain unary
+			<font color="purple">Tuple</font>s, but simply the values. 
+		</p>
+		<dl>
+			<dt>
+				Syntax:
+			</dt>
+			<dd>
+				<font color="blue"><strong>from</strong></font><br>
+				&nbsp;&nbsp;&nbsp;<em>&lt;var&gt;</em> : <em>&lt;set expression&gt;</em> [, <em>&lt;var&gt;</em> : <em>&lt;set expression&gt;</em> ...]<br>
+				[ <font color="blue"><strong>with</strong></font><br>
+				&nbsp;&nbsp;&nbsp;<em>&lt;boolean expression&gt;</em> ]<br>
+				<font color="blue"><strong>reportSet</strong></font><br>
+				&nbsp;&nbsp;&nbsp;<em>&lt;expression&gt;</em> [<font color="blue"><strong>as</strong></font> <em>&lt;string expression&gt;</em>]
+				[, <em>&lt;expression&gt;</em> [<font color="blue"><strong>as</strong></font> <em>&lt;string expression&gt;</em>] ...]<br>
+				<font color="blue"><strong>end</strong></font><br>
+			</dd>
+			<dt>
+				Example:
+			</dt>
+			<dd>
+from
+	el: V{Element}
+with
+	contains(el.name, ":")
+reportSet
+	el.name
+end
+			</dd>
+		</dl>
+	</body>
+</html>

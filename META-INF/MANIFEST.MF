@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Ant-Version: Apache Ant 1.8.2
 Created-By: 1.6.0_29-b11-402-10M3527 (Apple Inc.)
 Main-Class: de.uni_koblenz.jgralab.JGraLab
-Bundle-Version: 6.4.2.Falkarius
+Bundle-Version: 6.4.3.Falkarius
 Bundle-ManifestVersion: 2
 Bundle-Name: JGraLab
 Bundle-SymbolicName: de.uni_koblenz.jgralab;singleton:=true
@@ -264,8 +264,8 @@ Bundle-ActivationPolicy: lazy
 
 Name: de/uni_koblenz/jgralab/
 Implementation-Title: JGraLab
-Implementation-Version: 6.4.2@Falkarius@36d0ff35ca6c5f0c1b4a95551f891a
- 5c9cf13927
+Implementation-Version: 6.4.3@Falkarius@f589cbb6460d61cfece4cb0f947c3b
+ df796b8c13
 Implementation-Vendor: University of Koblenz, Institute for Software T
  echnology
 

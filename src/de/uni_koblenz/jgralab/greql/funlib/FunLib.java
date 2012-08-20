@@ -391,7 +391,9 @@ public class FunLib {
 
 		public final String getHtmlDescription() {
 			StringBuilder sb = new StringBuilder();
-			sb.append("<html><body><dl>");
+			sb.append(
+					"<html><body><p>GReQL function <font color=\"blue\"><strong>")
+					.append(name).append("</strong></font></p><dl>");
 			assert (functionClass.getConstructors().length == 1);
 			Constructor<?> cons = functionClass.getConstructors()[0];
 

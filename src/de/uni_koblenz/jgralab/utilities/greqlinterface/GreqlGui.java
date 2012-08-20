@@ -75,9 +75,7 @@ import javax.swing.KeyStroke;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.text.Document;
-import javax.swing.text.MutableAttributeSet;
-import javax.swing.text.StyleConstants;
-import javax.swing.text.StyledDocument;
+import javax.swing.text.html.HTMLDocument;
 import javax.xml.stream.XMLStreamException;
 
 import de.uni_koblenz.ist.utilities.gui.FontSelectionDialog;
@@ -163,8 +161,6 @@ public class GreqlGui extends SwingApplication {
 	private boolean evaluating;
 	private double parseTime;
 	private double evaluationTime;
-
-	private boolean resultFontSet;
 
 	private final Preferences prefs;
 
@@ -453,7 +449,6 @@ public class GreqlGui extends SwingApplication {
 								getCurrentQuery().setSelection(pe.getOffset(),
 										pe.getLength());
 							}
-							resultFontSet = false;
 							resultPane.setText(ex.getClass().getSimpleName()
 									+ ": " //$NON-NLS-1$
 									+ msg);
@@ -502,7 +497,6 @@ public class GreqlGui extends SwingApplication {
 										null);
 								outputPane
 										.setSelectedComponent(resultScrollPane);
-								resultFontSet = false;
 								resultPane.setPage(new URL("file", "localhost", //$NON-NLS-1$ //$NON-NLS-2$
 										resultFile.getCanonicalPath()));
 							} catch (SerialisingException e) {
@@ -853,16 +847,13 @@ public class GreqlGui extends SwingApplication {
 				new PropertyChangeListener() {
 					@Override
 					public void propertyChange(PropertyChangeEvent pce) {
-						if (!resultFontSet) {
-							setResultFont(resultFont);
-							resultFontSet = true;
-							getStatusBar()
-									.setText(
-											MessageFormat
-													.format(getMessage("GreqlGui.StatusMessage.ResultComplete"), //$NON-NLS-1$
-															parseTime,
-															evaluationTime));
-						}
+						setResultFont(resultFont);
+						getStatusBar()
+								.setText(
+										MessageFormat
+												.format(getMessage("GreqlGui.StatusMessage.ResultComplete"), //$NON-NLS-1$
+														parseTime,
+														evaluationTime));
 					}
 				});
 
@@ -1146,7 +1137,6 @@ public class GreqlGui extends SwingApplication {
 		if (evaluating) {
 			evaluator.stop(); // this brutal brake is intended!
 			evaluating = false;
-			resultFontSet = false;
 			evaluator = null;
 			brm.setValue(brm.getMinimum());
 			resultPane
@@ -1181,11 +1171,12 @@ public class GreqlGui extends SwingApplication {
 
 	private void setResultFont(Font font) {
 		resultFont = font;
-		MutableAttributeSet attrs = resultPane.getInputAttributes();
-		StyleConstants.setFontSize(attrs, resultFont.getSize());
-		StyleConstants.setFontFamily(attrs, resultFont.getFamily());
-		StyledDocument doc = resultPane.getStyledDocument();
-		doc.setCharacterAttributes(0, doc.getLength() + 1, attrs, false);
+		resultPane.setContentType("text/html");
+		String bodyRule = "body { font-family: " + font.getFamily() + "; "
+				+ "font-size: " + font.getSize() + "pt; }";
+		((HTMLDocument) resultPane.getDocument()).getStyleSheet().addRule(
+				bodyRule);
+		resultPane.setCaretPosition(0);
 	}
 
 	public void saveSettings(SettingsDialog d) {
