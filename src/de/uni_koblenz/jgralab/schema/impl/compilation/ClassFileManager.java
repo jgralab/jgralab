@@ -98,8 +98,10 @@ public class ClassFileManager extends
 	@Override
 	public JavaFileObject getJavaFileForOutput(Location location,
 			String className, Kind kind, FileObject sibling) {
-		logger.fine("(" + location + ", " + className + ", " + kind + ", "
-				+ sibling + ")");
+		if (logger != null) {
+			logger.fine("(" + location + ", " + className + ", " + kind + ", "
+					+ sibling + ")");
+		}
 		// redirect compiler output to InMemoryClassFiles
 		InMemoryClassFile cfa = new InMemoryClassFile(className);
 		SchemaClassManager.instance(qualifiedSchemaName).putSchemaClass(
@@ -111,8 +113,10 @@ public class ClassFileManager extends
 	@Override
 	public Iterable<JavaFileObject> list(Location location, String packageName,
 			Set<Kind> kinds, boolean recurse) throws IOException {
-		logger.fine("(" + location + ", " + packageName + ", " + kinds + ", "
-				+ recurse + ")");
+		if (logger != null) {
+			logger.fine("(" + location + ", " + packageName + ", " + kinds
+					+ ", " + recurse + ")");
+		}
 
 		EclipseAdapter ea = JGraLab.getEclipseAdapter();
 		if ((ea == null)
