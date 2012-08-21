@@ -52,4 +52,10 @@ public class GreqlException extends RuntimeException {
 	public GreqlException(String message, Throwable cause) {
 		super(message, cause);
 	}
+
+	@Override
+	public synchronized Throwable fillInStackTrace() {
+		// don't fill stack trace, since this is way faster
+		return this;
+	}
 }

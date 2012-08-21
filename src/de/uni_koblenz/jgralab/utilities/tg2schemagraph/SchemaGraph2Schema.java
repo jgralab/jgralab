@@ -185,9 +185,6 @@ public class SchemaGraph2Schema {
 		gGraphElementClasses = null;
 		gDomains = null;
 		gSuperEdgeClasses = null;
-
-		System.gc();
-		System.runFinalization();
 	}
 
 	/**
@@ -440,8 +437,7 @@ public class SchemaGraph2Schema {
 					.getThat() instanceof Package)) : "FIXME! That should be an instance of Package.";
 
 			// Recursion
-			getAllGraphElementClassesAndDomains((Package) containsSubPackage
-					.getOmega());
+			getAllGraphElementClassesAndDomains(containsSubPackage.getOmega());
 		}
 	}
 
@@ -498,7 +494,7 @@ public class SchemaGraph2Schema {
 			assert (containsDomain.getThat() instanceof Domain) : "FIXME! That should be an instance of Domain.";
 
 			// Adds a Domain to the ArrayList
-			gDomains.add((Domain) containsDomain.getOmega());
+			gDomains.add(containsDomain.getOmega());
 		}
 	}
 
@@ -999,8 +995,7 @@ public class SchemaGraph2Schema {
 
 			// Gets the superclass
 			assert (specializesVertexClass.getOmega() instanceof VertexClass) : "That should be an instance of VertexClass.";
-			VertexClass gSuperClass = (VertexClass) specializesVertexClass
-					.getOmega();
+			VertexClass gSuperClass = specializesVertexClass.getOmega();
 
 			// Gets the corresponding superclass
 			de.uni_koblenz.jgralab.schema.AttributedElementClass<?, ?> superClass = schema

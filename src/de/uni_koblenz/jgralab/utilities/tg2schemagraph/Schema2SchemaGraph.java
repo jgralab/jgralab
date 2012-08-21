@@ -82,19 +82,19 @@ import de.uni_koblenz.jgralab.schema.RecordDomain.RecordComponent;
 /**
  * Converts a Schema to a SchemaGraph. This class is mend to be a reusable
  * converter class. This class is not thread safe!
- *
+ * 
  * Note for Developers:
- *
+ * 
  * All variables are written like their classes from the package
  * "de.uni_koblenz.jgralab.schema" normal with the exception of the variable for
  * packages. "package" is a keyword. In this case the variable is written with a
  * prefix "x". All variables from the package
  * "de.uni_koblenz.jgralab.grumlschema.structure" are written with an prefix
  * "g".
- *
+ * 
  * All types from "de.uni_koblenz.jgralab.schema" are fully qualified with their
  * package name.
- *
+ * 
  * @author ist@uni-koblenz.de, Eckhard Großmann
  */
 public class Schema2SchemaGraph {
@@ -199,16 +199,12 @@ public class Schema2SchemaGraph {
 
 		schemaGraph = null;
 
-		// Calls the garbage collector
-		System.gc();
-		System.runFinalization();
-
 		workInProgress = false;
 	}
 
 	/**
 	 * Converts a given Schema to a SchemaGraph and returns it.
-	 *
+	 * 
 	 * @param schema
 	 *            Schema, which should be convert to a SchemaGraph.
 	 * @return New SchemaGraph object.
@@ -339,7 +335,7 @@ public class Schema2SchemaGraph {
 	 * Creates for each comment of <code>namedElement</code> an
 	 * <code>Comment</code> object, which is connected to
 	 * <code>gNamedElement</code> via an ende of type <code>Annotates</code>.
-	 *
+	 * 
 	 * @param namedElement
 	 *            the <code>NamedElement</code> object of the schema
 	 * @param gNamedElement
@@ -414,7 +410,7 @@ public class Schema2SchemaGraph {
 	/**
 	 * Creates all subpackages of the given Package and links them to the
 	 * corresponding given Package of the SchemaGraph.
-	 *
+	 * 
 	 * @param xPackage
 	 *            Package of the given Schema, of which all subpackages should
 	 *            be created.
@@ -478,7 +474,7 @@ public class Schema2SchemaGraph {
 	/**
 	 * Creates to a given Domain a corresponding Domain in the SchemaGraph and
 	 * links it to its Package.
-	 *
+	 * 
 	 * @param domain
 	 *            Domain of which a a corresponding Domain is created.
 	 * @return New Domain.
@@ -561,7 +557,7 @@ public class Schema2SchemaGraph {
 
 	/**
 	 * Creates a new MapDomain, which corresponds to the given Domain.
-	 *
+	 * 
 	 * @param domain
 	 *            Given Domain.
 	 * @return New MapDomain.
@@ -589,7 +585,7 @@ public class Schema2SchemaGraph {
 
 	/**
 	 * Creates a new EnumDomain, which corresponds to the given Domain.
-	 *
+	 * 
 	 * @param domain
 	 *            Given Domain.
 	 * @return New EnumDomain.
@@ -612,7 +608,7 @@ public class Schema2SchemaGraph {
 	/**
 	 * Creates a new ListDomain or a new SetDomain, which corresponds to the
 	 * given Domain.
-	 *
+	 * 
 	 * @param domain
 	 * @return
 	 */
@@ -641,7 +637,7 @@ public class Schema2SchemaGraph {
 
 	/**
 	 * Creates a new RecordDomain, which corresponds to the given Domain.
-	 *
+	 * 
 	 * @param domain
 	 *            Given Domain of which a new Domain in the SchemaGraph is
 	 *            created.
@@ -692,7 +688,7 @@ public class Schema2SchemaGraph {
 	/**
 	 * Creates for all VertexClass objects in the given Package new VertexClass
 	 * objects and links them to the given new Package.
-	 *
+	 * 
 	 * @param xPackage
 	 *            Package of which all VertexClass objects are created.
 	 * @param gPackage
@@ -753,7 +749,7 @@ public class Schema2SchemaGraph {
 	 * Creates corresponding EdgeClass, AggregationClass and CompositionClass
 	 * objects of objects present in given Package and links them to the new
 	 * Package.
-	 *
+	 * 
 	 * @param xPackage
 	 *            Package, of which all new objects are created.
 	 * @param gPackage
@@ -792,7 +788,7 @@ public class Schema2SchemaGraph {
 
 	/**
 	 * Creates an EdgeClass object.
-	 *
+	 * 
 	 * @param edgeClass
 	 *            EdgeClass, of which a new corresponding object should be
 	 *            created.
@@ -866,7 +862,7 @@ public class Schema2SchemaGraph {
 	/**
 	 * Creates all corresponding Attribute of all Attribute object of the given
 	 * AttributedElementClass object.
-	 *
+	 * 
 	 * @param element
 	 *            AttributedElementClass, of which all attributes are created.
 	 * @param gElement
@@ -926,7 +922,7 @@ public class Schema2SchemaGraph {
 	 * Creates all Constraints corresponding to the Constraints contained in the
 	 * given AttributedElementClass and links the new objects with the new
 	 * AttributedElementClass object.
-	 *
+	 * 
 	 * @param element
 	 *            AttributedElementClass, of which all Constraints are created.
 	 * @param gElement
@@ -981,7 +977,7 @@ public class Schema2SchemaGraph {
 
 	/**
 	 * Creates the From and To edge of an given EdgeClass.
-	 *
+	 * 
 	 * @param edgeClass
 	 *            EdgeClass, of which all edges are created.
 	 * @param gEdgeClass
@@ -1022,7 +1018,7 @@ public class Schema2SchemaGraph {
 
 	/**
 	 * Creates an IncidenceClass object
-	 *
+	 * 
 	 * @param incidenceClass
 	 *            IncidenceClass, of which a new corresponding object should be
 	 *            created.
@@ -1106,7 +1102,7 @@ public class Schema2SchemaGraph {
 
 	/**
 	 * Query a new Domain or creates a new Domain in case of a failed query.
-	 *
+	 * 
 	 * @param domain
 	 *            Domain, to which a corresponding Domain should be found.
 	 * @return Found or created Domain.

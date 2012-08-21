@@ -1476,7 +1476,6 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 					InternalEdge[] newEdge = new InternalEdge[eMax + 1];
 					System.arraycopy(getEdge(), 0, newEdge, 0, newEdge.length);
 					setEdge(newEdge);
-					System.gc();
 				}
 				graphModified();
 			}
