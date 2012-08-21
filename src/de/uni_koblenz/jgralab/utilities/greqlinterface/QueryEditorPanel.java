@@ -330,7 +330,7 @@ public class QueryEditorPanel extends JPanel {
 							completionEntries.add(new CompletionEntry(
 									CompletionEntryType.VERTEXCLASS, vc
 											.getSimpleName(), vc
-											.getQualifiedName() + "}",
+											.getQualifiedName(),
 									getDescription(vc)));
 						}
 					}
@@ -344,7 +344,7 @@ public class QueryEditorPanel extends JPanel {
 							completionEntries.add(new CompletionEntry(
 									CompletionEntryType.EDGECLASS, ec
 											.getSimpleName(), ec
-											.getQualifiedName() + "}",
+											.getQualifiedName(),
 									getDescription(ec)));
 						}
 					}
@@ -359,7 +359,8 @@ public class QueryEditorPanel extends JPanel {
 	private String getDescription(GraphElementClass<?, ?> gec) {
 		StringBuilder sb = new StringBuilder();
 		sb.append("<html><body>");
-		sb.append("<p>").append(gec instanceof VertexClass ? "Vertex" : "Edge")
+		sb.append("<p>").append(gec.isAbstract() ? "abstract " : "")
+				.append(gec instanceof VertexClass ? "Vertex" : "Edge")
 				.append("Class <strong>").append(gec.getQualifiedName())
 				.append("</strong></p><dl>");
 		if (gec instanceof EdgeClass) {
@@ -399,12 +400,21 @@ public class QueryEditorPanel extends JPanel {
 			}
 			sb.append("</dd>");
 		}
+		if (!gec.getAllSubClasses().isEmpty()) {
+			String delim = "<dt>Subclasses:</dt><dd>";
+			for (GraphElementClass<?, ?> sub : gec.getAllSubClasses()) {
+				sb.append(delim).append(sub.getQualifiedName());
+				delim = ", ";
+			}
+			sb.append("</dd>");
+		}
 		if (gec.getAttributeCount() > 0) {
 			sb.append("<dt>Attributes:</dt>");
 			for (Attribute attr : gec.getAttributeList()) {
-				sb.append("<dd>").append(attr.getName()).append(": ")
+				sb.append("<dd><strong>").append(attr.getName())
+						.append("</strong>: <font color=\"purple\">")
 						.append(attr.getDomain().getQualifiedName())
-						.append("</dd>");
+						.append("</font></dd>");
 			}
 			sb.append("</p>");
 		}
@@ -416,9 +426,9 @@ public class QueryEditorPanel extends JPanel {
 		StringBuilder sb = new StringBuilder();
 		sb.append("<html><body>");
 		sb.append("<p>Attribute <strong>").append(attr.getName())
-				.append("</strong>: ")
+				.append("</strong>: <font color=\"purple\">")
 				.append(attr.getDomain().getQualifiedName())
-				.append("</p><p>&nbsp;&nbsp;in ")
+				.append("</font></p><p>&nbsp;&nbsp;in ")
 				.append(gec instanceof VertexClass ? "Vertex" : "Edge")
 				.append("Class ").append(gec.getQualifiedName()).append("</p>");
 		sb.append("</body></html>");
@@ -697,8 +707,9 @@ public class QueryEditorPanel extends JPanel {
 						try {
 							queryArea.getDocument().remove(insertPos,
 									insertLength);
-							String completion = completions
-									.getEntry(selectTable.getSelectedRow()).replacement;
+							CompletionEntry entry = completions
+									.getEntry(selectTable.getSelectedRow());
+							String completion = entry.replacement;
 							queryArea.getDocument().insertString(insertPos,
 									completion, null);
 							queryArea.setCaretPosition(queryArea
@@ -706,6 +717,7 @@ public class QueryEditorPanel extends JPanel {
 									+ completions.getEntry(selectTable
 											.getSelectedRow()).offset);
 						} catch (BadLocationException e1) {
+							e1.printStackTrace();
 						}
 					}
 					selectWindow.setVisible(false);

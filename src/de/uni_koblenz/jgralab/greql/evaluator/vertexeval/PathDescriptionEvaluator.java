@@ -122,7 +122,7 @@ public abstract class PathDescriptionEvaluator<V extends PathDescription>
 					.getVertexEvaluator(inc.getAlpha());
 			if (vertexEval instanceof TypeIdEvaluator) {
 				TypeIdEvaluator typeEval = (TypeIdEvaluator) vertexEval;
-				typeCollection = typeCollection.join((TypeCollection) typeEval
+				typeCollection = typeCollection.combine((TypeCollection) typeEval
 						.getResult(evaluator));
 			} else {
 				goalRestEval = vertexEval;
@@ -156,7 +156,7 @@ public abstract class PathDescriptionEvaluator<V extends PathDescription>
 					.getVertexEvaluator(inc.getAlpha());
 			if (vertexEval instanceof TypeIdEvaluator) {
 				TypeIdEvaluator typeEval = (TypeIdEvaluator) vertexEval;
-				typeCollection = typeCollection.join((TypeCollection) typeEval
+				typeCollection = typeCollection.combine((TypeCollection) typeEval
 						.getResult(evaluator));
 			} else {
 				startRestEval = vertexEval;

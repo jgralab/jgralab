@@ -153,7 +153,7 @@ public class FunctionApplicationEvaluator extends
 				typeId = (TypeId) typeEdge.getAlpha();
 				TypeIdEvaluator typeEval = (TypeIdEvaluator) query
 						.getVertexEvaluator(typeId);
-				typeCollection = typeCollection.join((TypeCollection) typeEval
+				typeCollection = typeCollection.combine((TypeCollection) typeEval
 						.getResult(evaluator));
 				typeEdge = typeEdge
 						.getNextIsTypeExprOfIncidence(EdgeDirection.IN);

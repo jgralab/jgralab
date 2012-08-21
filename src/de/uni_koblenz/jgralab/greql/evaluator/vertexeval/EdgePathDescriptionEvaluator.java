@@ -79,7 +79,7 @@ public class EdgePathDescriptionEvaluator extends
 		if (inc != null) {
 			edgeRestEval = (EdgeRestrictionEvaluator) query
 					.getVertexEvaluator(inc.getAlpha());
-			typeCollection = typeCollection.join(edgeRestEval
+			typeCollection = typeCollection.combine(edgeRestEval
 					.getTypeCollection(evaluator));
 			predicateEvaluator = edgeRestEval.getPredicateEvaluator();
 		}

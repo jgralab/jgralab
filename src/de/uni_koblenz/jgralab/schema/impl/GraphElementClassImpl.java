@@ -92,7 +92,7 @@ public abstract class GraphElementClassImpl<SC extends GraphElementClass<SC, IC>
 
 	/**
 	 * delegates its constructor to the generalized class
-	 *
+	 * 
 	 * @param qn
 	 *            the unique identifier of the element in the schema
 	 */
@@ -134,7 +134,7 @@ public abstract class GraphElementClassImpl<SC extends GraphElementClass<SC, IC>
 
 	/**
 	 * adds a superClass to this class
-	 *
+	 * 
 	 * @param superClass
 	 *            the class to add as superclass
 	 */

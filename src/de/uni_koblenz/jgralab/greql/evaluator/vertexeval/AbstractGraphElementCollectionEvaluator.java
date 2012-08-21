@@ -70,7 +70,7 @@ public abstract class AbstractGraphElementCollectionEvaluator<V extends Expressi
 				TypeIdEvaluator typeEval = (TypeIdEvaluator) query
 						.getVertexEvaluator(inc.getAlpha());
 				typeCollection = typeCollection
-						.join((TypeCollection) typeEval
+						.combine((TypeCollection) typeEval
 								.getResult(evaluator));
 
 				inc = inc

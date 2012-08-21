@@ -114,7 +114,7 @@ public class EdgeRestrictionEvaluator extends VertexEvaluator<EdgeRestriction> {
 			while (typeInc != null) {
 				TypeIdEvaluator typeEval = (TypeIdEvaluator) query
 						.getVertexEvaluator(typeInc.getAlpha());
-				typeCollection = typeCollection.join((TypeCollection) typeEval
+				typeCollection = typeCollection.combine((TypeCollection) typeEval
 						.getResult(evaluator));
 				typeInc = typeInc.getNextIsTypeIdOfIncidence(EdgeDirection.IN);
 			}

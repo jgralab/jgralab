@@ -102,7 +102,6 @@ import de.uni_koblenz.jgralab.greql.schema.VertexSetExpression;
 import de.uni_koblenz.jgralab.greql.serialising.GreqlSerializer;
 import de.uni_koblenz.jgralab.greql.types.TypeCollection;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
-import de.uni_koblenz.jgralab.schema.GraphElementClass;
 import de.uni_koblenz.jgralab.schema.IncidenceClass;
 import de.uni_koblenz.jgralab.schema.Schema;
 import de.uni_koblenz.jgralab.schema.exception.SchemaException;
@@ -449,29 +448,15 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 	private String createInitializerForTypeCollection(
 			TypeCollection typeCollection) {
 		String fieldName = "acceptedType_" + acceptedTypesNumber++;
-		int minTypeNumberInSchema = 0;
-		int maxTypeNumberInSchema = schema.getGraphElementClassCount();
-		addStaticField("java.util.BitSet", fieldName, "new java.util.BitSet()");
+		addStaticField("java.util.BitSet", fieldName, "new java.util.BitSet("
+				+ schema.getGraphElementClassCount() + ")");
 		if (typeCollection.isEmpty()) {
-			addStaticInitializer(fieldName + ".set(" + minTypeNumberInSchema
-					+ ", " + maxTypeNumberInSchema + 1 + ", true);");
-		} else if (typeCollection.getAllowedTypes().isEmpty()) {
-			// all types but the forbidden ones are allowed
-			addStaticInitializer(fieldName + ".set(" + minTypeNumberInSchema
-					+ ", " + maxTypeNumberInSchema + 1 + ", true);");
-			for (GraphElementClass<?, ?> tc : typeCollection
-					.getForbiddenTypes()) {
-				addStaticInitializer(fieldName + ".set("
-						+ tc.getGraphElementClassIdInSchema() + ", false);");
-			}
+			addStaticInitializer(fieldName + ".set(0, " + fieldName
+					+ ".size() - 1, true);");
 		} else {
-			// only allowed type are allowed, others are forbidden
-			addStaticInitializer(fieldName + ".set(" + minTypeNumberInSchema
-					+ ", " + maxTypeNumberInSchema + 1 + ", false);");
-			for (GraphElementClass<?, ?> tc : typeCollection.getAllowedTypes()) {
-				addStaticInitializer(fieldName + ".set("
-						+ tc.getGraphElementClassIdInSchema() + ",  true);");
-			}
+			addStaticInitializer("for (int b: new int[] "
+					+ typeCollection.getTypeIdSet() + ") { " + fieldName
+					+ ".set(b); }");
 		}
 		return fieldName;
 	}
@@ -501,7 +486,7 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 		for (IsTypeRestrOfExpression inc : setExpr
 				.getIsTypeRestrOfExpressionIncidences(EdgeDirection.IN)) {
 			TypeId typeId = (TypeId) inc.getThat();
-			typeCol = typeCol.join((TypeCollection) ((GreqlQueryImpl) query)
+			typeCol = typeCol.combine((TypeCollection) ((GreqlQueryImpl) query)
 					.getVertexEvaluator(typeId).getResult(evaluator));
 		}
 		String acceptedTypesField = createInitializerForTypeCollection(typeCol);
@@ -528,7 +513,7 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 		for (IsTypeRestrOfExpression inc : setExpr
 				.getIsTypeRestrOfExpressionIncidences(EdgeDirection.IN)) {
 			TypeId typeId = (TypeId) inc.getThat();
-			typeCol = typeCol.join((TypeCollection) ((GreqlQueryImpl) query)
+			typeCol = typeCol.combine((TypeCollection) ((GreqlQueryImpl) query)
 					.getVertexEvaluator(typeId).getResult(evaluator));
 		}
 		String acceptedTypesField = createInitializerForTypeCollection(typeCol);

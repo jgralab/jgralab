@@ -70,7 +70,7 @@ public class SimplePathDescriptionEvaluator extends
 				.getIsEdgeRestrOfIncidences(EdgeDirection.IN)) {
 			edgeRestEval = (EdgeRestrictionEvaluator) query
 					.getVertexEvaluator(inc.getAlpha());
-			typeCollection = typeCollection.join(edgeRestEval
+			typeCollection = typeCollection.combine(edgeRestEval
 					.getTypeCollection(evaluator));
 			predicateEvaluator = edgeRestEval.getPredicateEvaluator();
 		}
