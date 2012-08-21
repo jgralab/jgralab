@@ -148,7 +148,7 @@ public class GreqlQueryImpl extends GreqlQuery implements
 	}
 
 	@SuppressWarnings("unchecked")
-	public synchronized <V extends GreqlVertex> VertexEvaluator<V> getVertexEvaluator(
+	public <V extends GreqlVertex> VertexEvaluator<V> getVertexEvaluator(
 			V vertex) {
 		return (VertexEvaluator<V>) vertexEvaluators.get(vertex);
 	}
@@ -316,8 +316,8 @@ public class GreqlQueryImpl extends GreqlQuery implements
 	 * @return {@link AttributedElementClass} of the datagraph with the name
 	 *         <code>name</code>
 	 */
-	public synchronized AttributedElementClass<?, ?> getImportedType(
-			Schema schema, String typeSimpleName) {
+	public AttributedElementClass<?, ?> getImportedType(Schema schema,
+			String typeSimpleName) {
 		Map<String, AttributedElementClass<?, ?>> map = importedTypes
 				.get(schema);
 		return map != null ? map.get(typeSimpleName) : null;
@@ -329,8 +329,8 @@ public class GreqlQueryImpl extends GreqlQuery implements
 	 *            {@link #importedTypes} with its simple name as key.
 	 * @return @see {@link Map#put(Object, Object)}
 	 */
-	public synchronized AttributedElementClass<?, ?> addImportedType(
-			Schema schema, AttributedElementClass<?, ?> elem) {
+	public AttributedElementClass<?, ?> addImportedType(Schema schema,
+			AttributedElementClass<?, ?> elem) {
 		Map<String, AttributedElementClass<?, ?>> map = importedTypes
 				.get(schema);
 		if (map == null) {

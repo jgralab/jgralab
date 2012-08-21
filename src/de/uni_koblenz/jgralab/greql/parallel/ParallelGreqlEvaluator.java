@@ -36,6 +36,8 @@ package de.uni_koblenz.jgralab.greql.parallel;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.Queue;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -133,7 +135,7 @@ public class ParallelGreqlEvaluator {
 
 		@Override
 		public void run() {
-			logger.finer("Run " + handle);
+			logger.finer("Run " + this + " " + handle);
 			startTime = System.nanoTime();
 			super.run();
 		}
@@ -438,7 +440,7 @@ public class ParallelGreqlEvaluator {
 			final EvaluationEnvironment evaluationEnvironment) {
 		// set priority values of all TaskHandles to the actual execution
 		// time of the task
-		synchronized (this) {
+		synchronized (dependencyGraph) {
 			logger.fine("Adjust priority values");
 			for (TaskHandle handle : dependencyGraph.getNodes()) {
 				long p = handle.priority;
@@ -454,22 +456,25 @@ public class ParallelGreqlEvaluator {
 	 *         descending priority
 	 */
 	private SortedSet<TaskHandle> createEvaluationTasks(
-			final EvaluationEnvironment evaluationEnvironment) {
+			EvaluationEnvironment evaluationEnvironment) {
 		// - create EvaluationTasks for all TaskHandles
 		// - initalize inDegree map with number of predecessors
 		// - determine initial tasks (tasks without predecessors)
-		calculateVariableDependencies();
-		SortedSet<TaskHandle> initialTasks = new TreeSet<TaskHandle>();
-		for (TaskHandle handle : dependencyGraph.getNodes()) {
-			EvaluationTask t = handle.createFutureTask(evaluationEnvironment);
-			evaluationEnvironment.tasks.put(handle, t);
-			int i = dependencyGraph.getDirectPredecessors(handle).size();
-			evaluationEnvironment.inDegree.put(handle, i);
-			if (i == 0) {
-				initialTasks.add(handle);
+		synchronized (dependencyGraph) {
+			calculateVariableDependencies();
+			SortedSet<TaskHandle> initialTasks = new TreeSet<TaskHandle>();
+			for (TaskHandle handle : dependencyGraph.getNodes()) {
+				EvaluationTask t = handle
+						.createFutureTask(evaluationEnvironment);
+				evaluationEnvironment.tasks.put(handle, t);
+				int i = dependencyGraph.getDirectPredecessors(handle).size();
+				evaluationEnvironment.inDegree.put(handle, i);
+				if (i == 0) {
+					initialTasks.add(handle);
+				}
 			}
+			return initialTasks;
 		}
-		return initialTasks;
 	}
 
 	/**
@@ -498,18 +503,24 @@ public class ParallelGreqlEvaluator {
 		env.greqlEnvironment = greqlEnvironment;
 		// create tasks and determine initial tasks
 		SortedSet<TaskHandle> tasks = createEvaluationTasks(env);
-		while (!tasks.isEmpty()) {
-			TaskHandle t = tasks.first();
-			tasks.remove(t);
+		Queue<TaskHandle> q = new LinkedList<TaskHandle>(tasks);
+		while (!q.isEmpty()) {
+			TaskHandle t = q.poll();
 			// run the task
 			env.tasks.get(t).run();
 			// determine tasks that can be started after t has completed, i.e.
 			// tasks that have no more unfinished predecessors
-			for (TaskHandle succ : dependencyGraph.getDirectSuccessors(t)) {
-				int i = env.inDegree.get(succ) - 1;
-				env.inDegree.put(succ, i);
-				if (i == 0) {
-					tasks.add(succ);
+			synchronized (dependencyGraph) {
+				tasks.clear();
+				for (TaskHandle succ : dependencyGraph.getDirectSuccessors(t)) {
+					int i = env.inDegree.get(succ) - 1;
+					env.inDegree.put(succ, i);
+					if (i == 0) {
+						tasks.add(succ);
+					}
+				}
+				for (TaskHandle th : tasks) {
+					q.offer(th);
 				}
 			}
 		}
@@ -663,10 +674,10 @@ public class ParallelGreqlEvaluator {
 	 */
 	private void scheduleNext(EvaluationEnvironment environment,
 			TaskHandle finishedTask) {
-		Set<TaskHandle> nextTasks = new TreeSet<TaskHandle>();
 		// determine tasks that can be started after finishedTask has completed,
 		// i.e. tasks that have no more unfinished predecessors
-		synchronized (environment) {
+		synchronized (dependencyGraph) {
+			Set<TaskHandle> nextTasks = new TreeSet<TaskHandle>();
 			for (TaskHandle succ : dependencyGraph
 					.getDirectSuccessors(finishedTask)) {
 				int i = environment.inDegree.get(succ) - 1;
@@ -675,11 +686,11 @@ public class ParallelGreqlEvaluator {
 					nextTasks.add(succ);
 				}
 			}
-		}
-		// submit successor tasks to the executor
-		for (TaskHandle succ : nextTasks) {
-			logger.fine("Execute " + succ);
-			environment.executor.execute(environment.tasks.get(succ));
+			// submit successor tasks to the executor
+			for (TaskHandle succ : nextTasks) {
+				logger.fine("Execute " + succ);
+				environment.executor.execute(environment.tasks.get(succ));
+			}
 		}
 	}
 }

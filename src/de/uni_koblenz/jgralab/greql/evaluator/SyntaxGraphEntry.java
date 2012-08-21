@@ -62,29 +62,8 @@ public class SyntaxGraphEntry {
 		return syntaxGraph;
 	}
 
-	/**
-	 * is the graph in use by an evaluator object or not
-	 */
-	private boolean locked;
-
 	private static Logger logger = Logger.getLogger(SyntaxGraphEntry.class
 			.getName());
-
-	/**
-	 * @return is the graph is in use by an evaluator object or not
-	 */
-	public boolean isLocked() {
-		return locked;
-	}
-
-	/**
-	 * Locks this graph,
-	 * 
-	 * @return true on success, false otherwise
-	 */
-	public boolean lock() {
-		return lockGraph(this);
-	}
 
 	/**
 	 * the optimizer that ist used to optimize this syntaxgraph
@@ -104,43 +83,6 @@ public class SyntaxGraphEntry {
 	}
 
 	/**
-	 * Locks the given SyntaxGraphEntry
-	 * 
-	 * @param entry
-	 * @return
-	 */
-	private static synchronized boolean lockGraph(SyntaxGraphEntry entry) {
-		if (entry.locked) {
-			return false;
-		}
-		entry.locked = true;
-		return true;
-	}
-
-	/**
-	 * Releases the lock of this syntaxGraph
-	 * 
-	 * @return true on success, false otherwise
-	 */
-	public boolean release() {
-		return releaseGraph(this);
-	}
-
-	/**
-	 * Releases the given SyntaxGraphEntry
-	 * 
-	 * @param entry
-	 * @return
-	 */
-	private static synchronized boolean releaseGraph(SyntaxGraphEntry entry) {
-		if (!entry.locked) {
-			return false;
-		}
-		entry.locked = false;
-		return true;
-	}
-
-	/**
 	 * Creates a new SyntaxGraphEntry
 	 * 
 	 * @param graph
@@ -151,11 +93,10 @@ public class SyntaxGraphEntry {
 	 *            specifies, wether the graph should be locked or not
 	 */
 	public SyntaxGraphEntry(String queryText, GreqlGraph graph,
-			Optimizer optimizer, boolean locked) {
+			Optimizer optimizer) {
 		this.queryText = queryText;
 		syntaxGraph = graph;
 		this.optimizer = optimizer;
-		this.locked = locked;
 	}
 
 	/**
@@ -179,8 +120,7 @@ public class SyntaxGraphEntry {
 	 *             contain a constructor with zero parameters.
 	 */
 	public SyntaxGraphEntry(File fileName) throws GraphIOException {
-		syntaxGraph = GreqlSchema.instance().loadGreqlGraph(
-				fileName.getPath());
+		syntaxGraph = GreqlSchema.instance().loadGreqlGraph(fileName.getPath());
 		GreqlExpression g2e = syntaxGraph.getFirstGreqlExpression();
 		try {
 			queryText = (String) g2e.getAttribute("_queryText");
@@ -189,7 +129,6 @@ public class SyntaxGraphEntry {
 				optimizer = (Optimizer) Class.forName(optimizerClass)
 						.newInstance();
 			}
-			locked = false;
 			// Now delete the attribute values. They're not needed anymore.
 			g2e.setAttribute("_queryText", null);
 			g2e.setAttribute("_optimizer", null);
