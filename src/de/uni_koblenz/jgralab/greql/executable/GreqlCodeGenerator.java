@@ -1012,6 +1012,10 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 			throw new RuntimeException(
 					"Code generation for function isReachable is not yet implemented. Use the path expression notation v --> w instead of isReachable(v,w,-->)");
 		}
+		if (funId.get_name().equals("slice")) {
+			throw new RuntimeException(
+					"Code generation for function slice is not yet implemented.");
+		}
 		addImports("de.uni_koblenz.jgralab.greql.funlib.FunLib");
 		Function function = FunLib.getFunctionInfo(funId.get_name())
 				.getFunction();

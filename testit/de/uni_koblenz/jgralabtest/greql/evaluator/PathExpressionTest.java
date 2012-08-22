@@ -64,8 +64,6 @@ public class PathExpressionTest {
 	 * Tests for SimplePathDescription
 	 */
 
-	// TODO check with getVertex(19)--> and getVertex(19)-->getVertex(2)
-
 	/**
 	 * v19--&gt;v2
 	 */
@@ -249,12 +247,6 @@ public class PathExpressionTest {
 			throws InstantiationException, IllegalAccessException {
 		String query = "import local.*;\ngetVertex(143)<>--{localities}getVertex(153)";
 
-		GreqlCodeGenerator
-				.generateCode(
-						query,
-						datagraph.getSchema(),
-						"testdata.TestSimplePathDescription_WithUnknownPackage_Generated",
-						"./testit/");
 		Class<ExecutableQuery> generatedQuery = GreqlCodeGenerator
 				.generateCode(query, datagraph.getSchema(),
 						"testdata.TestSimplePathDescription_WithUnknownPackage_Generated");
@@ -280,12 +272,6 @@ public class PathExpressionTest {
 			throws InstantiationException, IllegalAccessException {
 		String query = "import localities.ContainsLo;\ngetVertex(143)<>--{ContainsLocality}getVertex(153)";
 
-		GreqlCodeGenerator
-				.generateCode(
-						query,
-						datagraph.getSchema(),
-						"testdata.TestSimplePathDescription_WithUnknownEdgeClass_Generated",
-						"./testit/");
 		Class<ExecutableQuery> generatedQuery = GreqlCodeGenerator
 				.generateCode(query, datagraph.getSchema(),
 						"testdata.TestSimplePathDescription_WithUnknownEdgeClass_Generated");
