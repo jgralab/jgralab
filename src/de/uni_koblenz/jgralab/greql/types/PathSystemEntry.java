@@ -147,4 +147,56 @@ public class PathSystemEntry {
 	public boolean getStateIsFinal() {
 		return stateIsFinal;
 	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + distanceToRoot;
+		result = prime * result
+				+ ((parentEdge == null) ? 0 : parentEdge.hashCode());
+		result = prime * result + parentStateNumber;
+		result = prime * result
+				+ ((parentVertex == null) ? 0 : parentVertex.hashCode());
+		result = prime * result + (stateIsFinal ? 1231 : 1237);
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null) {
+			return false;
+		}
+		if (getClass() != obj.getClass()) {
+			return false;
+		}
+		PathSystemEntry other = (PathSystemEntry) obj;
+		if (distanceToRoot != other.distanceToRoot) {
+			return false;
+		}
+		if (parentEdge == null) {
+			if (other.parentEdge != null) {
+				return false;
+			}
+		} else if (!parentEdge.equals(other.parentEdge)) {
+			return false;
+		}
+		if (parentStateNumber != other.parentStateNumber) {
+			return false;
+		}
+		if (parentVertex == null) {
+			if (other.parentVertex != null) {
+				return false;
+			}
+		} else if (!parentVertex.equals(other.parentVertex)) {
+			return false;
+		}
+		if (stateIsFinal != other.stateIsFinal) {
+			return false;
+		}
+		return true;
+	}
 }

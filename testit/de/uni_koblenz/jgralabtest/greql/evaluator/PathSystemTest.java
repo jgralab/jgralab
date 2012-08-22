@@ -1,7 +1,6 @@
 package de.uni_koblenz.jgralabtest.greql.evaluator;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 
 import org.junit.AfterClass;
@@ -108,7 +107,7 @@ public class PathSystemTest {
 			throws InstantiationException, IllegalAccessException {
 		compareResultsOfQuery(
 				"import connections.*;\npathSystem(getVertex(19),<->{Street @thisEdge.name=\"A48\"})",
-				"testdata.TestSimplePathDescription");
+				"testdata.TestSimplePathDescription_BothDirectionsWithRestrictionAndPredicate");
 	}
 
 	/**
@@ -225,17 +224,6 @@ public class PathSystemTest {
 	@Test
 	public void testEdgePathDescription_false() throws InstantiationException,
 			IllegalAccessException {
-		String query = "getVertex(19)--getEdge(1)->getVertex(2)";
-		Object erg = GreqlQuery.createQuery(query).evaluate(datagraph);
-		assertFalse((Boolean) erg);
-
-		String classname = "testdata.TestEdgePathDescription_false";
-		Class<ExecutableQuery> generatedQuery = GreqlCodeGenerator
-				.generateCode(query, datagraph.getSchema(), classname);
-		erg = generatedQuery.newInstance().execute(datagraph);
-		assertFalse((Boolean) erg);
-
-		compareResultsOfQuery("getVertex(19)--getEdge(1)->", classname + "2");
 		compareResultsOfQuery("pathSystem(getVertex(19),--getEdge(1)->)",
 				"testdata.TestEdgePathDescription_false");
 	}

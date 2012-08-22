@@ -1058,7 +1058,6 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 				Class<?>[] paramTypes = m.getParameterTypes();
 				// TODO subgraph parameter
 				if (paramTypes[0] == GreqlEvaluatorImpl.class) {
-					// TODO greqlEvaluator parameter
 					throw new RuntimeException(
 							"Functions with an evaluator parameter are not supported yet");
 				}
@@ -1289,7 +1288,8 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 		list.setVariable("endStateFinal", Boolean.toString(t.endState.isFinal));
 		list.setVariable("endStateNumber", Integer.toString(t.endState.number));
 		CodeSnippet addSnippet = new CodeSnippet();
-		addSnippet.add("PathSystemMarkerEntry newEntry = markVertex(marker,");
+		addSnippet
+				.add("PathSystemMarkerEntry newEntry = ExecutablePathSystemHelper.markVertex(marker,");
 		addSnippet.add("	nextElement, #endStateNumber#, #endStateFinal#,");
 		addSnippet
 				.add("    element, #traversedEdge#, currentEntry.stateNumber,");
@@ -1298,7 +1298,7 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 			addSnippet.add("finalEntries.add(newEntry);");
 		}
 		addSnippet.add("queue.add(newEntry);");
-		// list.add(addSnippet);// TODO
+		list.add(addSnippet);
 		return list;
 	}
 
@@ -1321,6 +1321,7 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 		addImports("de.uni_koblenz.jgralab.greql.executable.ExecutablePathSystemHelper");
 		addImports("de.uni_koblenz.jgralab.greql.executable.PathSystemMarkerEntry");
 		addImports("de.uni_koblenz.jgralab.graphmarker.GraphMarker");
+		addImports("java.util.HashSet");
 		list.setVariable("stateCount", Integer.toString(dfa.stateList.size()));
 		list.setVariable("initialStateNumber",
 				Integer.toString(dfa.initialState.number));
@@ -1328,8 +1329,9 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 				Boolean.toString(dfa.initialState.isFinal));
 		CodeSnippet initSnippet = new CodeSnippet();
 		list.add(initSnippet);
-		initSnippet.add("Vertex element = (Vertex)"
+		initSnippet.add("Vertex rootVertex = (Vertex)"
 				+ createCodeForExpression(startElementExpr) + ";");
+		initSnippet.add("Vertex element = rootVertex;");
 		initSnippet.add("Vertex nextElement;");
 		initSnippet
 				.add("java.util.Queue<PathSystemMarkerEntry> queue = new java.util.LinkedList<PathSystemMarkerEntry>();");
@@ -1368,14 +1370,14 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 				// Generate code to get next vertex and state number
 				if (curTrans.consumesEdge()) {
 					transitionCodeList.add(new CodeSnippet(
-							"\t\t\tnextElement = inc.getThat();"));
+							"\t\tnextElement = inc.getThat();"));
 				} else {
 					transitionCodeList.add(new CodeSnippet(
-							"\t\t\tnextElement = element;"));
+							"\t\tnextElement = element;"));
 				}
 				// Generate code to check if next element is marked
 				transitionCodeList.add(new CodeSnippet(
-						"\t\t\tif (!ExecutablePathSystemHelper.isMarked(marker, nextElement, "
+						"\t\tif (!ExecutablePathSystemHelper.isMarked(marker, nextElement, "
 								+ curTrans.endState.number
 								+ ")) {//checking all transitions of state "
 								+ curTrans.endState.number));
@@ -1393,7 +1395,7 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 		finalSnippet.add("\t} //end of iterating incident edges ");
 		finalSnippet.add("} //end of processing queue");
 		finalSnippet
-				.add("return ExecutablePathSystemHelper.createPathSystemFromMarkings(marker, (Vertex)v, finalEntries);");
+				.add("return ExecutablePathSystemHelper.createPathSystemFromMarkings(marker, (Vertex)rootVertex, finalEntries);");
 		list.add(finalSnippet);
 		return createMethod(list, syntaxGraphVertex);
 	}
