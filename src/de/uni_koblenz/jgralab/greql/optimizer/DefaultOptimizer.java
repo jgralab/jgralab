@@ -40,8 +40,6 @@ import java.util.logging.Logger;
 
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.greql.GreqlQuery;
-import de.uni_koblenz.jgralab.greql.OptimizerInfo;
-import de.uni_koblenz.jgralab.greql.evaluator.GraphSize;
 import de.uni_koblenz.jgralab.greql.evaluator.GreqlQueryImpl;
 import de.uni_koblenz.jgralab.greql.evaluator.vertexeval.VertexEvaluator;
 import de.uni_koblenz.jgralab.greql.exception.OptimizerException;
@@ -179,15 +177,13 @@ public class DefaultOptimizer extends OptimizerBase {
 		return aTransformationWasDone;
 	}
 
-	@SuppressWarnings("unused")
-	private void printCosts(GreqlQuery query) {
+	protected void printCosts(GreqlQuery query) {
 		GreqlGraph syntaxgraph = query.getQueryGraph();
 
 		logger.fine("Optimizer: Optimizing " + syntaxgraph.getId() + ".\n"
 				+ "This syntaxgraph has " + syntaxgraph.getECount()
 				+ " edges and " + syntaxgraph.getVCount() + " vertexes.");
 		VertexEvaluator<? extends GreqlVertex> veval;
-		OptimizerInfo optimizerInfo = new GraphSize(syntaxgraph);
 
 		// Calculate the cost of the root vertex so that all initial costs of
 		// the vertices below are properly initialized.

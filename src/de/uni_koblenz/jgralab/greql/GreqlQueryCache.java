@@ -37,9 +37,9 @@ package de.uni_koblenz.jgralab.greql;
 import java.lang.ref.SoftReference;
 import java.util.HashMap;
 
+import de.uni_koblenz.jgralab.greql.evaluator.DefaultOptimizerInfo;
 import de.uni_koblenz.jgralab.greql.optimizer.DefaultOptimizer;
 import de.uni_koblenz.jgralab.greql.optimizer.Optimizer;
-import de.uni_koblenz.jgralab.greql.optimizer.OptimizerUtility;
 
 public class GreqlQueryCache {
 
@@ -54,8 +54,7 @@ public class GreqlQueryCache {
 	}
 
 	public GreqlQueryCache(Optimizer optimizer) {
-		this(optimizer, optimizer == null ? null : OptimizerUtility
-				.getDefaultOptimizerInfo());
+		this(optimizer, optimizer == null ? null : new DefaultOptimizerInfo());
 	}
 
 	public GreqlQueryCache(Optimizer optimizer, OptimizerInfo optimizerInfo) {

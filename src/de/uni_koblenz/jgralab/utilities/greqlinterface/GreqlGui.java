@@ -87,7 +87,7 @@ import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.ImplementationType;
 import de.uni_koblenz.jgralab.ProgressFunction;
 import de.uni_koblenz.jgralab.greql.GreqlQuery;
-import de.uni_koblenz.jgralab.greql.evaluator.GraphSize;
+import de.uni_koblenz.jgralab.greql.evaluator.DefaultOptimizerInfo;
 import de.uni_koblenz.jgralab.greql.evaluator.GreqlEnvironmentAdapter;
 import de.uni_koblenz.jgralab.greql.evaluator.GreqlQueryImpl;
 import de.uni_koblenz.jgralab.greql.exception.GreqlException;
@@ -400,7 +400,7 @@ public class GreqlGui extends SwingApplication {
 				try {
 					query = GreqlQuery.createQuery(queryString,
 							enableOptimizerCheckBoxItem.isSelected(),
-							new GraphSize(graph));
+							new DefaultOptimizerInfo(graph.getSchema()));
 				} catch (Exception e1) {
 					ex = e1;
 				}

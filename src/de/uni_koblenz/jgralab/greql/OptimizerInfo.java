@@ -36,6 +36,7 @@
 package de.uni_koblenz.jgralab.greql;
 
 import de.uni_koblenz.jgralab.greql.types.TypeCollection;
+import de.uni_koblenz.jgralab.schema.GraphElementClass;
 
 /**
  * This class is needed to propagate the size of the currently used graph along
@@ -45,37 +46,13 @@ import de.uni_koblenz.jgralab.greql.types.TypeCollection;
  */
 public interface OptimizerInfo {
 
-	/**
-	 * 
-	 * @return the number of EdgeTypes this GraphSize object knows
-	 */
-	public int getKnownEdgeTypes();
+	public int getEdgeClassCount();
 
-	/**
-	 * 
-	 * @return the number of VertexTypes this GraphSize object knows
-	 */
-	public int getKnownVertexTypes();
+	public int getVertexClassCount();
 
-	/**
-	 * @return the number of vertices in this graphsize object
-	 */
-	public long getVertexCount();
+	public long getAverageVertexCount();
 
-	/**
-	 * sets the number of vertices in this GraphSize object
-	 */
-	public void setVertexCount(long count);
-
-	/**
-	 * @return the number of edge in this graphsize object
-	 */
-	public long getEdgeCount();
-
-	/**
-	 * sets the number of edges in this GraphSize object
-	 */
-	public void setEdgeCount(long count);
+	public long getAverageEdgeCount();
 
 	/**
 	 * @return the average number of subclasses of a vertex class
@@ -86,32 +63,6 @@ public interface OptimizerInfo {
 	 * @return the average number of subclasses of an edge class
 	 */
 	public double getAverageEdgeSubclasses();
-
-	/**
-	 * Returns the average percentage of vertices of the given
-	 * {@link VertexClass} in a {@link Graph} in relation to all
-	 * {@link VertexClass}es. The returned value lies in the interval [0,1].
-	 * 
-	 * @param vcName
-	 *            qualified {@link VertexClass} name
-	 * 
-	 * @return the average percentage of vertices of the given type in a
-	 *         {@link Graph}
-	 */
-	public double getRelativeFrequencyOfVertexClass(String vcName);
-
-	/**
-	 * Returns the average percentage of edges of the given {@link EdgeClass} in
-	 * a {@link Graph} in relation to all {@link EdgeClass}es. The returned
-	 * value lies in the interval [0,1].
-	 * 
-	 * @param ecName
-	 *            qualified {@link EdgeClass} name
-	 * 
-	 * @return the average percentage of edges of the given type in a
-	 *         {@link Graph}
-	 */
-	public double getRelativeFrequencyOfEdgeClass(String ecName);
 
 	/**
 	 * Returns the average percentage of graph elements of the given
@@ -126,7 +77,10 @@ public interface OptimizerInfo {
 	 * @return the average percentage of graph elements of the given type in a
 	 *         {@link Graph}
 	 */
-	public double getRelativeFrequencyOfGraphElementClass(String geName);
+	public double getFrequencyOfGraphElementClass(GraphElementClass<?, ?> gec);
+
+	public double getFrequencyOfGraphElementClassWithoutSubclasses(
+			GraphElementClass<?, ?> gec);
 
 	/**
 	 * Returns the average percentage of vertices of the given
@@ -139,7 +93,11 @@ public interface OptimizerInfo {
 	 * @return the average percentage of vertices of the given type in a
 	 *         {@link Graph}
 	 */
-	public double getRelativeFrequencyOfTypeCollection(TypeCollection tc);
+	public double getFrequencyOfTypeCollection(TypeCollection tc);
+
+	public long getEstimatedGraphElementCount(GraphElementClass<?, ?> gec);
+
+	public long getEstimatedGraphElementCount(TypeCollection tc);
 
 	/**
 	 * @return the average ratio between edges and vertices in a graph

@@ -47,8 +47,6 @@ import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.greql.OptimizerInfo;
-import de.uni_koblenz.jgralab.greql.evaluator.GraphSize;
 import de.uni_koblenz.jgralab.greql.schema.FunctionApplication;
 import de.uni_koblenz.jgralab.greql.schema.FunctionId;
 import de.uni_koblenz.jgralab.greql.schema.GreqlAggregation;
@@ -105,8 +103,8 @@ public class OptimizerUtility {
 	 *         {@link FunctionApplication} of {@link And}.
 	 */
 	public static boolean isAnd(FunctionApplication funApp) {
-		return funApp.getFirstIsFunctionIdOfIncidence()
-				.getAlpha().get_name().equals("and");
+		return funApp.getFirstIsFunctionIdOfIncidence().getAlpha().get_name()
+				.equals("and");
 	}
 
 	/**
@@ -118,8 +116,8 @@ public class OptimizerUtility {
 	 *         {@link FunctionApplication} of {@link And}.
 	 */
 	public static boolean isOr(FunctionApplication funApp) {
-		return funApp.getFirstIsFunctionIdOfIncidence()
-				.getAlpha().get_name().equals("or");
+		return funApp.getFirstIsFunctionIdOfIncidence().getAlpha().get_name()
+				.equals("or");
 	}
 
 	/**
@@ -131,8 +129,8 @@ public class OptimizerUtility {
 	 *         {@link FunctionApplication} of {@link And}.
 	 */
 	public static boolean isXor(FunctionApplication funApp) {
-		return funApp.getFirstIsFunctionIdOfIncidence()
-				.getAlpha().get_name().equals("xor");
+		return funApp.getFirstIsFunctionIdOfIncidence().getAlpha().get_name()
+				.equals("xor");
 	}
 
 	/**
@@ -144,8 +142,8 @@ public class OptimizerUtility {
 	 *         {@link FunctionApplication} of {@link And}.
 	 */
 	public static boolean isNot(FunctionApplication funApp) {
-		return funApp.getFirstIsFunctionIdOfIncidence()
-				.getAlpha().get_name().equals("not");
+		return funApp.getFirstIsFunctionIdOfIncidence().getAlpha().get_name()
+				.equals("not");
 	}
 
 	/**
@@ -318,15 +316,5 @@ public class OptimizerUtility {
 						alreadyDeletedVertices);
 			}
 		}
-	}
-
-	/**
-	 * Creates a new {@link GraphSize} object with default values for vertex,
-	 * edge, vertex type and edge type count.
-	 * 
-	 * @return the created {@link GraphSize} object
-	 */
-	public static OptimizerInfo getDefaultOptimizerInfo() {
-		return new GraphSize(100, 100, 20, 20);
 	}
 }

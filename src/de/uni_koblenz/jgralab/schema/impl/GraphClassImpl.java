@@ -35,7 +35,6 @@
 
 package de.uni_koblenz.jgralab.schema.impl;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -43,6 +42,7 @@ import java.util.Map;
 import org.pcollections.PVector;
 
 import de.uni_koblenz.jgralab.Graph;
+import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.schema.AggregationKind;
 import de.uni_koblenz.jgralab.schema.Attribute;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
@@ -62,6 +62,10 @@ public final class GraphClassImpl extends
 
 	DirectedAcyclicGraph<EdgeClass> edgeClassDag = new DirectedAcyclicGraph<EdgeClass>(
 			true);
+
+	PVector<VertexClass> userDefinedVertexClasses;
+	PVector<EdgeClass> userDefinedEdgeClasses;
+	PVector<GraphElementClass<?, ?>> userDefinedGraphElementClasses;
 
 	private VertexClassImpl defaultVertexClass;
 
@@ -84,7 +88,7 @@ public final class GraphClassImpl extends
 	 * visibility of this constructor cannot be changed without causing serious
 	 * issues in the program.
 	 * </p>
-	 *
+	 * 
 	 * @param qn
 	 *            a unique name in the <code>Schema</code>
 	 * @param aSchema
@@ -138,7 +142,7 @@ public final class GraphClassImpl extends
 	}
 
 	@Override
-	public final EdgeClass getTemporaryEdgeClass(){
+	public final EdgeClass getTemporaryEdgeClass() {
 		return tempEdgeClass;
 	}
 
@@ -153,8 +157,9 @@ public final class GraphClassImpl extends
 					+ ec.getQualifiedName() + "'");
 		}
 		// Don't track the default EC
-		if (!ec.getQualifiedName().equals(EdgeClass.DEFAULTEDGECLASS_NAME) &&
-				!ec.getQualifiedName().equals(EdgeClass.TEMPORARYEDGECLASS_NAME)) {
+		if (!ec.getQualifiedName().equals(EdgeClass.DEFAULTEDGECLASS_NAME)
+				&& !ec.getQualifiedName().equals(
+						EdgeClass.TEMPORARYEDGECLASS_NAME)) {
 			edgeClasses.put(ec.getQualifiedName(), ec);
 		}
 	}
@@ -165,8 +170,9 @@ public final class GraphClassImpl extends
 					+ vc.getQualifiedName() + "'");
 		}
 		// Don't track the default VC
-		if (!vc.getQualifiedName().equals(VertexClass.DEFAULTVERTEXCLASS_NAME) &&
-				!vc.getQualifiedName().equals(VertexClass.TEMPORARYVERTEXCLASS_NAME)) {
+		if (!vc.getQualifiedName().equals(VertexClass.DEFAULTVERTEXCLASS_NAME)
+				&& !vc.getQualifiedName().equals(
+						VertexClass.TEMPORARYVERTEXCLASS_NAME)) {
 			vertexClasses.put(vc.getQualifiedName(), vc);
 		}
 
@@ -226,14 +232,19 @@ public final class GraphClassImpl extends
 
 	@Override
 	public final List<GraphElementClass<?, ?>> getGraphElementClasses() {
-		List<GraphElementClass<?, ?>> l = new ArrayList<GraphElementClass<?, ?>>(
-				vertexClasses.values());
-		l.addAll(edgeClasses.values());
-		return l;
+		if (finished) {
+			return userDefinedGraphElementClasses;
+		}
+		PVector<GraphElementClass<?, ?>> vec = JGraLab.vector();
+		return vec.plusAll(getVertexClasses()).plusAll(getEdgeClasses());
 	}
 
 	@Override
 	public final List<EdgeClass> getEdgeClasses() {
+		if (finished) {
+			return userDefinedEdgeClasses;
+		}
+
 		PVector<EdgeClass> vec = edgeClassDag.getNodesInTopologicalOrder();
 		assert vec.get(0) == defaultEdgeClass;
 		assert vec.get(1) == tempEdgeClass;
@@ -242,6 +253,9 @@ public final class GraphClassImpl extends
 
 	@Override
 	public final List<VertexClass> getVertexClasses() {
+		if (finished) {
+			return userDefinedVertexClasses;
+		}
 		PVector<VertexClass> vec = vertexClassDag.getNodesInTopologicalOrder();
 		assert vec.get(0) == defaultVertexClass;
 		assert vec.get(1) == tempVertexClass;
@@ -279,6 +293,23 @@ public final class GraphClassImpl extends
 		for (EdgeClass ec : edgeClassDag.getNodesInTopologicalOrder()) {
 			((EdgeClassImpl) ec).finish();
 		}
+
+		userDefinedVertexClasses = vertexClassDag.getNodesInTopologicalOrder();
+		assert userDefinedVertexClasses.get(0) == defaultVertexClass;
+		assert userDefinedVertexClasses.get(1) == tempVertexClass;
+		userDefinedVertexClasses = userDefinedVertexClasses.subList(2,
+				userDefinedVertexClasses.size());
+
+		userDefinedEdgeClasses = edgeClassDag.getNodesInTopologicalOrder();
+		assert userDefinedEdgeClasses.get(0) == defaultEdgeClass;
+		assert userDefinedEdgeClasses.get(1) == tempEdgeClass;
+		userDefinedEdgeClasses = userDefinedEdgeClasses.subList(2,
+				userDefinedEdgeClasses.size());
+
+		userDefinedGraphElementClasses = JGraLab.vector();
+		userDefinedGraphElementClasses = userDefinedGraphElementClasses
+				.plusAll(userDefinedVertexClasses).plusAll(
+						userDefinedEdgeClasses);
 		super.finish();
 	}
 

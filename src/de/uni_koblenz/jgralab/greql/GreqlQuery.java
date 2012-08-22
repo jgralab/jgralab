@@ -55,10 +55,10 @@ import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.ImplementationType;
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.ProgressFunction;
+import de.uni_koblenz.jgralab.greql.evaluator.DefaultOptimizerInfo;
 import de.uni_koblenz.jgralab.greql.evaluator.GreqlEnvironmentAdapter;
 import de.uni_koblenz.jgralab.greql.evaluator.GreqlQueryImpl;
 import de.uni_koblenz.jgralab.greql.optimizer.Optimizer;
-import de.uni_koblenz.jgralab.greql.optimizer.OptimizerUtility;
 import de.uni_koblenz.jgralab.greql.parallel.EvaluationEnvironment;
 import de.uni_koblenz.jgralab.greql.parallel.ParallelGreqlEvaluatorCallable;
 import de.uni_koblenz.jgralab.greql.schema.GreqlExpression;
@@ -80,8 +80,7 @@ public abstract class GreqlQuery implements ParallelGreqlEvaluatorCallable {
 
 	public static GreqlQuery readQuery(File f, boolean optimize)
 			throws IOException {
-		return readQuery(f, optimize,
-				OptimizerUtility.getDefaultOptimizerInfo());
+		return readQuery(f, optimize, new DefaultOptimizerInfo());
 	}
 
 	public static GreqlQuery readQuery(File f, boolean optimize,

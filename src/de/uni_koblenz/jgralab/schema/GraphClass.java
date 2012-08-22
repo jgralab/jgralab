@@ -42,26 +42,26 @@ import de.uni_koblenz.jgralab.Graph;
 /**
  * Represents a <code>GraphClass</code> in the <code>Schema</code>, that holds
  * all <code>GraphElementClasses</code>.
- *
+ * 
  * <p>
  * <b>Note:</b> in the following, <code>graphClass</code>, and
  * <code>graphClass'</code>, will represent the states of the given
  * <code>GraphClass</code> before, respectively after, any operation.
  * </p>
- *
+ * 
  * <p>
  * <b>Note:</b> in the following it is understood that method arguments differ
  * from <code>null</code>. Therefore there will be no preconditions addressing
  * this matter.
  * </p>
- *
+ * 
  * @author ist@uni-koblenz.de
  */
 public interface GraphClass extends AttributedElementClass<GraphClass, Graph> {
 
 	/**
 	 * creates a vertex class with the vertexclassname name
-	 *
+	 * 
 	 * @param qualifiedName
 	 *            the qualified name of the vertex class to be created
 	 * @return the created vertex class
@@ -75,12 +75,12 @@ public interface GraphClass extends AttributedElementClass<GraphClass, Graph> {
 	public VertexClass getDefaultVertexClass();
 
 	public VertexClass getTemporaryVertexClass();
-	
+
 	/**
 	 * creates an edge class between vertex class from, multiplicity fromMin and
 	 * fromMax with the rolename fromRoleName, and vertex class to, multiplicity
 	 * toMin and toMax with the rolename toRoleName and the edgeclassname name
-	 *
+	 * 
 	 * @param qualifiedName
 	 *            a unique name in the schema
 	 * @param from
@@ -117,7 +117,7 @@ public interface GraphClass extends AttributedElementClass<GraphClass, Graph> {
 	public EdgeClass getDefaultEdgeClass();
 
 	public EdgeClass getTemporaryEdgeClass();
-	
+
 	/**
 	 * @param name
 	 *            the name to search for
@@ -126,31 +126,32 @@ public interface GraphClass extends AttributedElementClass<GraphClass, Graph> {
 	public GraphElementClass<?, ?> getGraphElementClass(String name);
 
 	/**
-	 * @return a list of all EdgeClasses this graphclass knows, including
-	 *         inherited EdgeClasses. This list is sorted topologically
-	 *         according to the inheritance hierarchy and only includes the
-	 *         classes of this schema, i.e, not the default edge class.
+	 * @return a list of all EdgeClasses of this GraphClass. This list is sorted
+	 *         topologically according to the inheritance hierarchy and only
+	 *         includes the classes of this schema, i.e, not the default and
+	 *         temporary edge classes
 	 */
 	public List<EdgeClass> getEdgeClasses();
 
 	/**
-	 * @return a list of all the edge/vertex classes of this graph class,
-	 *         including inherited classes
-	 */
-	public List<GraphElementClass<?, ?>> getGraphElementClasses();
-
-	/**
-	 * @return a list of all the vertex classes of this graph class, including
-	 *         inherited vertex classes. This list is sorted topologically
-	 *         according to the inheritance hierarchy and only includes the
-	 *         classes of this schema, i.e, not the default vertex class.
+	 * @return a list of all the vertex classes of this graph class. This list
+	 *         is sorted topologically according to the inheritance hierarchy
+	 *         and only includes the classes of this schema, i.e, not the
+	 *         default and temporary vertex classes.
 	 */
 	public List<VertexClass> getVertexClasses();
 
 	/**
+	 * @return a list of all vertex and edge classes of this graph class in
+	 *         topological order, i.e. the concatenation of
+	 *         {@link #getVertexClasses()} and {@link #getEdgeClasses()}.
+	 */
+	public List<GraphElementClass<?, ?>> getGraphElementClasses();
+
+	/**
 	 * Returns the VertexClass with the given name. This GraphClass and the
 	 * superclasses will be searched for a VertexClass with this name
-	 *
+	 * 
 	 * @param name
 	 *            the name of the VertexClass to search for
 	 * @return the VertexClass with the given name or null, if no such
@@ -161,7 +162,7 @@ public interface GraphClass extends AttributedElementClass<GraphClass, Graph> {
 	/**
 	 * Returns the number of VertexClasses defined in this GraphClass excluding
 	 * the default vertex class.
-	 *
+	 * 
 	 * @return the number of VertexClasses defined in this GraphClass.
 	 */
 	public int getVertexClassCount();
@@ -169,7 +170,7 @@ public interface GraphClass extends AttributedElementClass<GraphClass, Graph> {
 	/**
 	 * Returns the EdgeClass with the given name. This GraphClass and the
 	 * superclasses will be searched for a EdgeClass with this name
-	 *
+	 * 
 	 * @param name
 	 *            the name of the EdgeClass to search for
 	 * @return the EdgeClass with the given name or null, if no such EdgeClass
@@ -180,7 +181,7 @@ public interface GraphClass extends AttributedElementClass<GraphClass, Graph> {
 	/**
 	 * Returns the number of EdgeClasses defined in this GraphClass excluding
 	 * the default edge class.
-	 *
+	 * 
 	 * @return the number of EdgeClasses defined in this GraphClass.
 	 */
 	public int getEdgeClassCount();

@@ -129,7 +129,7 @@ public class PathExistenceEvaluator extends PathSearchEvaluator<PathExistence> {
 				.getVertexEvaluator(p);
 		long pathDescCosts = pathDescEval.getCurrentSubtreeEvaluationCosts();
 		long searchCosts = Math.round(((pathDescCosts * searchFactor) / 2.0)
-				* Math.sqrt(query.getOptimizerInfo().getEdgeCount()));
+				* Math.sqrt(query.getOptimizerInfo().getAverageEdgeCount()));
 		long ownCosts = searchCosts;
 		long iteratedCosts = ownCosts * getVariableCombinations();
 		long subtreeCosts = targetCosts + pathDescCosts + iteratedCosts

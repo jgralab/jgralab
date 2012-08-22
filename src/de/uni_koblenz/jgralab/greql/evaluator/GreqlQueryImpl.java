@@ -58,7 +58,6 @@ import de.uni_koblenz.jgralab.greql.OptimizerInfo;
 import de.uni_koblenz.jgralab.greql.evaluator.vertexeval.VertexEvaluator;
 import de.uni_koblenz.jgralab.greql.optimizer.DefaultOptimizer;
 import de.uni_koblenz.jgralab.greql.optimizer.Optimizer;
-import de.uni_koblenz.jgralab.greql.optimizer.OptimizerUtility;
 import de.uni_koblenz.jgralab.greql.parser.GreqlParser;
 import de.uni_koblenz.jgralab.greql.schema.GreqlExpression;
 import de.uni_koblenz.jgralab.greql.schema.GreqlGraph;
@@ -109,7 +108,7 @@ public class GreqlQueryImpl extends GreqlQuery implements
 	}
 
 	public GreqlQueryImpl(String queryText, boolean optimize) {
-		this(queryText, optimize, OptimizerUtility.getDefaultOptimizerInfo());
+		this(queryText, optimize, new DefaultOptimizerInfo());
 	}
 
 	public GreqlQueryImpl(String queryText, OptimizerInfo optimizerInfo) {
@@ -117,16 +116,16 @@ public class GreqlQueryImpl extends GreqlQuery implements
 	}
 
 	public GreqlQueryImpl(String queryText, Optimizer optimizer) {
-		this(queryText, optimizer != null, OptimizerUtility
-				.getDefaultOptimizerInfo(), optimizer);
+		this(queryText, optimizer != null, new DefaultOptimizerInfo(),
+				optimizer);
 	}
 
 	public GreqlQueryImpl(String queryText, boolean optimize,
 			OptimizerInfo optimizerInfo) {
 		this.queryText = queryText;
 		this.optimize = optimize;
-		this.optimizerInfo = optimizerInfo == null ? OptimizerUtility
-				.getDefaultOptimizerInfo() : optimizerInfo;
+		this.optimizerInfo = optimizerInfo == null ? new DefaultOptimizerInfo()
+				: optimizerInfo;
 		importedTypes = new HashMap<Schema, Map<String, AttributedElementClass<?, ?>>>();
 		initializeQueryGraph();
 	}
@@ -135,8 +134,8 @@ public class GreqlQueryImpl extends GreqlQuery implements
 			OptimizerInfo optimizerInfo, Optimizer optimizer) {
 		this.queryText = queryText;
 		this.optimize = optimize;
-		this.optimizerInfo = optimizerInfo == null ? OptimizerUtility
-				.getDefaultOptimizerInfo() : optimizerInfo;
+		this.optimizerInfo = optimizerInfo == null ? new DefaultOptimizerInfo()
+				: optimizerInfo;
 		importedTypes = new HashMap<Schema, Map<String, AttributedElementClass<?, ?>>>();
 		this.optimizer = optimizer == null ? new DefaultOptimizer() : optimizer;
 		initializeQueryGraph();

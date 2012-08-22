@@ -15,7 +15,6 @@ import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.GraphIOException;
-import de.uni_koblenz.jgralab.ImplementationType;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.codegenerator.CodeBlock;
 import de.uni_koblenz.jgralab.codegenerator.CodeGenerator;
@@ -23,7 +22,7 @@ import de.uni_koblenz.jgralab.codegenerator.CodeGeneratorConfiguration;
 import de.uni_koblenz.jgralab.codegenerator.CodeList;
 import de.uni_koblenz.jgralab.codegenerator.CodeSnippet;
 import de.uni_koblenz.jgralab.greql.GreqlQuery;
-import de.uni_koblenz.jgralab.greql.evaluator.GraphSize;
+import de.uni_koblenz.jgralab.greql.evaluator.DefaultOptimizerInfo;
 import de.uni_koblenz.jgralab.greql.evaluator.GreqlEnvironmentAdapter;
 import de.uni_koblenz.jgralab.greql.evaluator.GreqlEvaluatorImpl;
 import de.uni_koblenz.jgralab.greql.evaluator.GreqlQueryImpl;
@@ -44,7 +43,6 @@ import de.uni_koblenz.jgralab.greql.evaluator.vertexeval.VariableEvaluator;
 import de.uni_koblenz.jgralab.greql.evaluator.vertexeval.VertexEvaluator;
 import de.uni_koblenz.jgralab.greql.funlib.FunLib;
 import de.uni_koblenz.jgralab.greql.funlib.Function;
-import de.uni_koblenz.jgralab.greql.optimizer.OptimizerUtility;
 import de.uni_koblenz.jgralab.greql.schema.BackwardVertexSet;
 import de.uni_koblenz.jgralab.greql.schema.BoolLiteral;
 import de.uni_koblenz.jgralab.greql.schema.Comprehension;
@@ -178,14 +176,8 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 	 */
 	public static void generateCode(String queryString, Schema datagraphSchema,
 			String classname, String path) {
-		GreqlQuery query = GreqlQuery.createQuery(
-				queryString,
-				true,
-				datagraphSchema == null ? OptimizerUtility
-						.getDefaultOptimizerInfo()
-						: new GraphSize(datagraphSchema
-								.createGraph(ImplementationType.GENERIC)));
-
+		GreqlQuery query = GreqlQuery.createQuery(queryString, true,
+				new DefaultOptimizerInfo(datagraphSchema));
 		String simpleName = classname;
 		String packageName = "";
 		if (classname.contains(".")) {
@@ -220,13 +212,8 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 	 */
 	public static Class<ExecutableQuery> generateCode(String queryString,
 			Schema datagraphSchema, String classname) {
-		GreqlQuery query = GreqlQuery.createQuery(
-				queryString,
-				true,
-				datagraphSchema == null ? OptimizerUtility
-						.getDefaultOptimizerInfo()
-						: new GraphSize(datagraphSchema
-								.createGraph(ImplementationType.GENERIC)));
+		GreqlQuery query = GreqlQuery.createQuery(queryString, true,
+				new DefaultOptimizerInfo(datagraphSchema));
 
 		String simpleName = classname;
 		String packageName = "";

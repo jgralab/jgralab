@@ -63,28 +63,8 @@ public class GraphInfo extends GraphSize {
 	}
 
 	@Override
-	public double getRelativeFrequencyOfVertexClass(String vcName) {
-		if (this.relativeFrequencyOfVertexClasses.containsKey(vcName)) {
-			return this.relativeFrequencyOfVertexClasses.get(vcName);
-		} else {
-			throw new GreqlException(
-					"Error in GraphInfo: No relative frequency for VertexClass"
-							+ vcName + " available.");
-		}
-	}
-
-	@Override
-	public double getRelativeFrequencyOfEdgeClass(String ecName) {
-		if (this.relativeFrequencyOfEdgeClasses.containsKey(ecName))
-			return this.relativeFrequencyOfEdgeClasses.get(ecName);
-		else
-			throw new GreqlException(
-					"Error in GraphInfo: No relative frequency for EdgeClass "
-							+ ecName + " available.");
-	}
-
-	@Override
-	public double getRelativeFrequencyOfGraphElementClass(String geName) {
+	public double getFrequencyOfGraphElementClass(GraphElementClass<?, ?> gec) {
+		
 		if (this.relativeFrequencyOfVertexClasses.containsKey(geName)) {
 			return this.relativeFrequencyOfVertexClasses.get(geName)
 					/ (1.0 + this.getEdgesPerVertex());
@@ -99,9 +79,10 @@ public class GraphInfo extends GraphSize {
 	}
 
 	@Override
-	public double getRelativeFrequencyOfTypeCollection(TypeCollection tc) {
-		if (schema == null)
+	public double getFrequencyOfTypeCollection(TypeCollection tc) {
+		if (schema == null) {
 			return 1.0d;
+		}
 		double sum = 0.0d;
 		for (GraphElementClass<?, ?> gec : schema.getGraphClass()
 				.getGraphElementClasses()) {
@@ -109,10 +90,10 @@ public class GraphInfo extends GraphSize {
 				double diff = 0.0d;
 				for (GraphElementClass<?, ?> subClass : gec
 						.getDirectSubClasses()) {
-					diff += this.getRelativeFrequencyOfGraphElementClass(subClass
+					diff += this.getFrequencyOfGraphElementClass(subClass
 							.getQualifiedName());
 				}
-				sum += (this.getRelativeFrequencyOfGraphElementClass(gec
+				sum += (this.getFrequencyOfGraphElementClass(gec
 						.getQualifiedName()) - diff);
 			}
 		}
@@ -121,14 +102,14 @@ public class GraphInfo extends GraphSize {
 
 	@Override
 	public double getEdgesPerVertex() {
-		return this.getEdgeCount() / (double) this.getVertexCount();
+		return this.getAverageEdgeCount() / this.getAverageVertexCount();
 	}
 
 	@Override
 	public String toString() {
 		String text = "Schema: " + this.qualifiedSchemaName + "\n";
-		text += "vCount: " + this.getVertexCount() + "\n";
-		text += "eCount: " + this.getEdgeCount() + "\n";
+		text += "vCount: " + this.getAverageVertexCount() + "\n";
+		text += "eCount: " + this.getAverageEdgeCount() + "\n";
 		text += "VertexClasses:\n";
 		for (String vcname : this.relativeFrequencyOfVertexClasses.keySet()) {
 			text += vcname + ": "
@@ -151,8 +132,8 @@ public class GraphInfo extends GraphSize {
 	public void save(String filename) {
 		Properties properties = new Properties();
 		properties.put("QualifiedSchemaName", this.qualifiedSchemaName);
-		properties.put("AverageVCount", this.getVertexCount() + "");
-		properties.put("AverageECount", this.getEdgeCount() + "");
+		properties.put("AverageVCount", this.getAverageVertexCount() + "");
+		properties.put("AverageECount", this.getAverageEdgeCount() + "");
 		for (String vcName : this.relativeFrequencyOfVertexClasses.keySet()) {
 			properties.put("VC_" + vcName,
 					this.relativeFrequencyOfVertexClasses.get(vcName) + "");
