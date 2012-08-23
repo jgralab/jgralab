@@ -224,6 +224,15 @@ public final class TypeCollection {
 				typeIdSet = a;
 				typeIdSet.andNot(f);
 			}
+			if (tcType == TcType.VERTEX) {
+				for (EdgeClass ec : schema.getGraphClass().getEdgeClasses()) {
+					typeIdSet.clear(ec.getGraphElementClassIdInSchema());
+				}
+			} else if (tcType == TcType.EDGE) {
+				for (VertexClass vc : schema.getGraphClass().getVertexClasses()) {
+					typeIdSet.clear(vc.getGraphElementClassIdInSchema());
+				}
+			}
 		}
 		if (tcType == null) {
 			tcType = TcType.UNKNOWN;
@@ -247,19 +256,8 @@ public final class TypeCollection {
 	}
 
 	public boolean acceptsType(GraphElementClass<?, ?> type) {
-		if (typeEntries == null) {
-			return true;
-		}
-		switch (tcType) {
-		case VERTEX:
-			return typeIdSet.get(type.getGraphElementClassIdInSchema())
-					&& (type instanceof VertexClass);
-		case EDGE:
-			return typeIdSet.get(type.getGraphElementClassIdInSchema())
-					&& (type instanceof EdgeClass);
-		default:
-			return typeIdSet.get(type.getGraphElementClassIdInSchema());
-		}
+		return typeEntries == null
+				|| typeIdSet.get(type.getGraphElementClassIdInSchema());
 	}
 
 	@Override
