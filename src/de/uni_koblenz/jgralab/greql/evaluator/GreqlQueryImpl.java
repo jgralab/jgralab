@@ -56,6 +56,7 @@ import de.uni_koblenz.jgralab.greql.GreqlEnvironment;
 import de.uni_koblenz.jgralab.greql.GreqlQuery;
 import de.uni_koblenz.jgralab.greql.OptimizerInfo;
 import de.uni_koblenz.jgralab.greql.evaluator.vertexeval.VertexEvaluator;
+import de.uni_koblenz.jgralab.greql.exception.GreqlException;
 import de.uni_koblenz.jgralab.greql.optimizer.DefaultOptimizer;
 import de.uni_koblenz.jgralab.greql.optimizer.Optimizer;
 import de.uni_koblenz.jgralab.greql.parser.GreqlParser;
@@ -78,7 +79,6 @@ public class GreqlQueryImpl extends GreqlQuery implements
 	private final boolean optimize;
 	private final OptimizerInfo optimizerInfo;
 	private Optimizer optimizer;
-	// private final boolean useSavedOptimizedSyntaxGraph = true;
 	private GreqlExpression rootExpression;
 
 	// Log levels:
@@ -426,9 +426,23 @@ public class GreqlQueryImpl extends GreqlQuery implements
 				progressFunction);
 	}
 
+	// Once a query was evaluated with a non-null schema, it is bound to that
+	// schema since some of the vertex evaluators retain schema specific objects
+	// (such as TypeCollections). The schema field is checked upon evaluation, a
+	// GreqlException is thrown when a GreqlQuery is evaluated with different
+	// schemas.
+	private Schema schema;
+
 	@Override
 	public Object evaluate(Graph datagraph, GreqlEnvironment environment,
 			ProgressFunction progressFunction) {
+		if (datagraph != null) {
+			if (schema != null && schema != datagraph.getSchema()) {
+				throw new GreqlException(
+						"Can not evaluate the same GreqlQuery on graphs with different schemas");
+			}
+			schema = datagraph.getSchema();
+		}
 		return new GreqlEvaluatorImpl(this, datagraph, environment,
 				progressFunction).getResult();
 	}

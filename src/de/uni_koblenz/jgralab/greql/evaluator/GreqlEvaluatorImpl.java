@@ -41,7 +41,6 @@ import java.util.Map;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.ProgressFunction;
 import de.uni_koblenz.jgralab.greql.GreqlEnvironment;
-import de.uni_koblenz.jgralab.greql.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql.GreqlQuery;
 import de.uni_koblenz.jgralab.greql.evaluator.fa.FiniteAutomaton;
 import de.uni_koblenz.jgralab.greql.evaluator.vertexeval.VertexEvaluator;
@@ -61,8 +60,7 @@ import de.uni_koblenz.jgralab.schema.Schema;
  * @author ist@uni-koblenz.de
  * 
  */
-public class GreqlEvaluatorImpl implements InternalGreqlEvaluator,
-		GreqlEvaluator {
+public class GreqlEvaluatorImpl implements InternalGreqlEvaluator {
 	/**
 	 * Print the current value of each variable in a declaration layer during
 	 * evaluation.
@@ -171,7 +169,6 @@ public class GreqlEvaluatorImpl implements InternalGreqlEvaluator,
 		return setLocalEvaluationResult(vertex, null);
 	}
 
-	@Override
 	public Object getResult() {
 		return evaluate();
 	}
@@ -249,7 +246,6 @@ public class GreqlEvaluatorImpl implements InternalGreqlEvaluator,
 		this.progressFunction = progressFunction;
 	}
 
-	@Override
 	public Object evaluate(GreqlQuery query, Graph datagraph,
 			GreqlEnvironment environment, ProgressFunction progressFunction) {
 		initialize(query, datagraph, environment, progressFunction);

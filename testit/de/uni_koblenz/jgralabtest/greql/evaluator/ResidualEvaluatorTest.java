@@ -23,7 +23,6 @@ import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql.GreqlEnvironment;
 import de.uni_koblenz.jgralab.greql.GreqlQuery;
 import de.uni_koblenz.jgralab.greql.evaluator.GreqlEnvironmentAdapter;
-import de.uni_koblenz.jgralab.greql.evaluator.GreqlEvaluatorImpl;
 import de.uni_koblenz.jgralab.greql.exception.UnknownTypeException;
 import de.uni_koblenz.jgralab.greql.types.Slice;
 import de.uni_koblenz.jgralab.greql.types.Table;
@@ -47,8 +46,7 @@ public class ResidualEvaluatorTest {
 	}
 
 	private Object evaluateQuery(String query) {
-		return new GreqlEvaluatorImpl(GreqlQuery.createQuery(query), datagraph,
-				new GreqlEnvironmentAdapter()).getResult();
+		return GreqlQuery.createQuery(query).evaluate(datagraph);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -556,27 +554,25 @@ public class ResidualEvaluatorTest {
 	@Test
 	public void testValueChangeOfUsedVariable_usingGreqlEvaluator() {
 		GreqlQuery query = GreqlQuery.createQuery("using x: x+3");
-		GreqlEvaluatorImpl evaluator = new GreqlEvaluatorImpl();
 
 		GreqlEnvironment environment = new GreqlEnvironmentAdapter();
 		environment.setVariable("x", 3);
-		assertEquals(6, evaluator.evaluate(query, datagraph, environment, null));
+		assertEquals(6, query.evaluate(datagraph, environment));
 
 		environment.setVariable("x", 4);
-		assertEquals(7, evaluator.evaluate(query, datagraph, environment, null));
+		assertEquals(7, query.evaluate(datagraph, environment));
 	}
 
 	@Test
 	public void testValueChangeOfUsedVariable_usingGreqlEvaluator2() {
 		GreqlQuery query = GreqlQuery.createQuery("using x: x+3");
-		GreqlEvaluatorImpl evaluator = new GreqlEvaluatorImpl();
 
 		GreqlEnvironment environment = new GreqlEnvironmentAdapter();
 		environment.setVariable("x", 3);
-		assertEquals(6, evaluator.evaluate(query, datagraph, environment, null));
+		assertEquals(6, query.evaluate(null, environment));
 
 		environment.setVariable("x", 4);
-		assertEquals(7, evaluator.evaluate());
+		assertEquals(7, query.evaluate(null, environment));
 	}
 
 }

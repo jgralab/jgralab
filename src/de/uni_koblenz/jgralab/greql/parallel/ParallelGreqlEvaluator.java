@@ -51,7 +51,6 @@ import java.util.logging.Logger;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.greql.GreqlEnvironment;
-import de.uni_koblenz.jgralab.greql.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql.GreqlQuery;
 import de.uni_koblenz.jgralab.greql.evaluator.GreqlEnvironmentAdapter;
 import de.uni_koblenz.jgralab.schema.exception.CycleException;
@@ -77,8 +76,8 @@ import de.uni_koblenz.jgralab.schema.impl.DirectedAcyclicGraph;
  * When adding the same {@link ParallelGreqlEvaluatorCallable} task multiple
  * times, the {@link ParallelGreqlEvaluatorCallable} is responsible for
  * maintaining separate internal states for possibly parallel executions. For
- * GReQL queries, {@link ParallelGreqlEvaluator} and {@link GreqlEvaluator} take
- * care of separate environments.
+ * GReQL queries, {@link ParallelGreqlEvaluator} takes care of separate
+ * environments.
  * 
  * A call to one of the {@link #evaluate()} methods executes all tasks using a
  * {@link ThreadPoolExecutor}. The number of active threads is set automatically

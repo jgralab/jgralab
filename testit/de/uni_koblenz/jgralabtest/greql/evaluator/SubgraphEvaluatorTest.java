@@ -18,8 +18,6 @@ import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.ImplementationType;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql.GreqlQuery;
-import de.uni_koblenz.jgralab.greql.evaluator.GreqlEnvironmentAdapter;
-import de.uni_koblenz.jgralab.greql.evaluator.GreqlEvaluatorImpl;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.GraphElementClass;
 
@@ -40,8 +38,7 @@ public class SubgraphEvaluatorTest {
 	}
 
 	private Object evaluateQuery(String query) {
-		return new GreqlEvaluatorImpl(GreqlQuery.createQuery(query), datagraph,
-				new GreqlEnvironmentAdapter()).getResult();
+		return GreqlQuery.createQuery(query).evaluate(datagraph);
 	}
 
 	@SuppressWarnings("unchecked")

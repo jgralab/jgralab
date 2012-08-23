@@ -41,6 +41,7 @@ import org.pcollections.PSet;
 
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.greql.OptimizerInfo;
+import de.uni_koblenz.jgralab.greql.exception.GreqlException;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.GraphElementClass;
 import de.uni_koblenz.jgralab.schema.Schema;
@@ -148,6 +149,10 @@ public final class TypeCollection {
 	 */
 	public TypeCollection with(GraphElementClass<?, ?> cls, boolean exactType,
 			boolean forbidden) {
+		if (schema != null && schema != cls.getSchema()) {
+			throw new GreqlException(
+					"Can not add GraphElementClass of different schema");
+		}
 		TypeEntry n = new TypeEntry(cls, exactType, forbidden);
 		PSet<TypeEntry> t;
 		if (typeEntries != null) {
@@ -180,6 +185,10 @@ public final class TypeCollection {
 	public TypeCollection combine(TypeCollection other) {
 		if (other == null || other.typeEntries == null) {
 			return this;
+		}
+		if (schema != null && schema != other.schema) {
+			throw new GreqlException(
+					"Can not combine TypeCollections of different schemas");
 		}
 		if (typeEntries == null) {
 			return other;
