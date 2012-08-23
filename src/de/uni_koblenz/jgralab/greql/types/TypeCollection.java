@@ -279,22 +279,28 @@ public final class TypeCollection {
 		if (typeEntries == null) {
 			return 1.0;
 		}
-		// double f = 0.0;
-		// for (GraphElementClass<?, ?> fc : forbiddenTypes) {
-		// f += info.getFrequencyOfGraphElementClassWithoutSubclasses(fc);
-		// }
-		// f = Math.min(1.0, f);
-		// if (allowedTypes.isEmpty()) {
-		// return 1 - f;
-		// } else {
-		// double a = 0.0;
-		// for (GraphElementClass<?, ?> ac : allowedTypes) {
-		// a += info.getFrequencyOfGraphElementClass(ac);
-		// }
-		// a = Math.min(1.0, a);
-		// return Math.max(a - f, 0.0);
-		// }
-		return 1.0;
+		double f = 0.0;
+		double a = 0.0;
+		boolean hasAllowedTypes = false;
+		for (TypeEntry e : typeEntries) {
+			if (e.forbidden) {
+				f += e.exactType ? info
+						.getFrequencyOfGraphElementClassWithoutSubclasses(e.cls)
+						: info.getFrequencyOfGraphElementClass(e.cls);
+			} else {
+				a += e.exactType ? info
+						.getFrequencyOfGraphElementClassWithoutSubclasses(e.cls)
+						: info.getFrequencyOfGraphElementClass(e.cls);
+				hasAllowedTypes = true;
+			}
+		}
+		f = Math.min(1.0, f);
+		if (hasAllowedTypes) {
+			a = Math.min(1.0, a);
+			return Math.max(a - f, 0.0);
+		} else {
+			return 1 - f;
+		}
 	}
 
 	public long getEstimatedGraphElementCount(OptimizerInfo info) {
