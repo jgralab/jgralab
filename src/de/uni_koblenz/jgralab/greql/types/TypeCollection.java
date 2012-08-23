@@ -255,8 +255,8 @@ public final class TypeCollection {
 			return false;
 		}
 		TypeCollection o = (TypeCollection) obj;
-		return typeEntries == o.typeEntries
-				|| typeEntries.equals(o.typeEntries);
+		return typeEntries == o.typeEntries || typeEntries != null
+				&& typeEntries.equals(o.typeEntries);
 	}
 
 	@Override

@@ -436,12 +436,14 @@ public class GreqlQueryImpl extends GreqlQuery implements
 	@Override
 	public Object evaluate(Graph datagraph, GreqlEnvironment environment,
 			ProgressFunction progressFunction) {
-		if (datagraph != null) {
-			if (schema != null && schema != datagraph.getSchema()) {
-				throw new GreqlException(
-						"Can not evaluate the same GreqlQuery on graphs with different schemas");
+		synchronized (this) {
+			if (datagraph != null) {
+				if (schema != null && schema != datagraph.getSchema()) {
+					throw new GreqlException(
+							"Can not evaluate the same GreqlQuery on graphs with different schemas");
+				}
+				schema = datagraph.getSchema();
 			}
-			schema = datagraph.getSchema();
 		}
 		return new GreqlEvaluatorImpl(this, datagraph, environment,
 				progressFunction).getResult();
