@@ -55,13 +55,6 @@ public class TypeIdEvaluator extends VertexEvaluator<TypeId> {
 		super(vertex, query);
 	}
 
-	/**
-	 * Creates a list of types from this TypeId-Vertex
-	 * 
-	 * @param schema
-	 *            the schema of the datagraph
-	 * @return the generated list of types
-	 */
 	private GraphElementClass<?, ?> getGraphElementClass(
 			InternalGreqlEvaluator evaluator) {
 		// try to find schema class using qualified name
@@ -83,10 +76,16 @@ public class TypeIdEvaluator extends VertexEvaluator<TypeId> {
 
 	@Override
 	public TypeCollection evaluate(InternalGreqlEvaluator evaluator) {
-		evaluator.progress(getOwnEvaluationCosts());
-		GraphElementClass<?, ?> cls = getGraphElementClass(evaluator);
-		return TypeCollection.empty().with(cls, vertex.is_type(),
-				vertex.is_excluded());
+		TypeCollection tc = (TypeCollection) evaluator
+				.getLocalEvaluationResult(vertex);
+		if (tc == null) {
+			GraphElementClass<?, ?> cls = getGraphElementClass(evaluator);
+			tc = TypeCollection.empty().with(cls, vertex.is_type(),
+					vertex.is_excluded());
+		} else {
+			evaluator.progress(getOwnEvaluationCosts());
+		}
+		return tc;
 	}
 
 	@Override
