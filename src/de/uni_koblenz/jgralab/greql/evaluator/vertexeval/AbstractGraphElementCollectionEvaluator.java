@@ -59,9 +59,9 @@ public abstract class AbstractGraphElementCollectionEvaluator<V extends Expressi
 		super(vertex, query);
 	}
 
-	private TypeCollection typeCollection = null;
+	protected TypeCollection typeCollection = null;
 
-	protected TypeCollection getTypeCollection(InternalGreqlEvaluator evaluator) {
+	public TypeCollection getTypeCollection(InternalGreqlEvaluator evaluator) {
 		if (typeCollection == null) {
 			typeCollection = TypeCollection.empty();
 			IsTypeRestrOfExpression inc = ((Expression) getVertex())
@@ -70,8 +70,7 @@ public abstract class AbstractGraphElementCollectionEvaluator<V extends Expressi
 				TypeIdEvaluator typeEval = (TypeIdEvaluator) query
 						.getVertexEvaluator(inc.getAlpha());
 				typeCollection = typeCollection
-						.combine((TypeCollection) typeEval
-								.getResult(evaluator));
+						.combine((TypeCollection) typeEval.getResult(evaluator));
 
 				inc = inc
 						.getNextIsTypeRestrOfExpressionIncidence(EdgeDirection.IN);

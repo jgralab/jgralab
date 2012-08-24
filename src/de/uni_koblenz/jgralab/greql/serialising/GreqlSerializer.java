@@ -673,7 +673,13 @@ public class GreqlSerializer {
 		for (TypeId t : typeRestrictions) {
 			sb.append(sep);
 			sep = ", ";
+			if (t.is_excluded()) {
+				sb.append("^");
+			}
 			serializeIdentifier(t);
+			if (t.is_type()) {
+				sb.append("!");
+			}
 		}
 		sb.append("}");
 	}

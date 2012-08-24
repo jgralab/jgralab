@@ -59,12 +59,6 @@ public class VertexSetExpressionEvaluator extends
 		ElementSetExpressionEvaluator<VertexSetExpression> {
 
 	/**
-	 * A factor that will be multiplied with the number of vertices of the
-	 * datagraph to estimate the own costs of a {@link VertexSetExpression}.
-	 */
-	protected static final int vertexSetExpressionCostsFactor = 3;
-
-	/**
 	 * Creates a new ElementSetExpressionEvaluator for the given vertex
 	 * 
 	 * @param eval
@@ -110,24 +104,32 @@ public class VertexSetExpressionEvaluator extends
 			inc = inc.getNextIsTypeRestrOfExpressionIncidence();
 		}
 
-		long ownCosts = query.getOptimizerInfo().getAverageVertexCount()
-				* vertexSetExpressionCostsFactor;
+		long ownCosts = query.getOptimizerInfo().getAverageVertexCount();
 		return new VertexCosts(ownCosts, ownCosts, typeRestrCosts + ownCosts);
 	}
 
 	@Override
 	public long calculateEstimatedCardinality() {
-		VertexSetExpression exp = getVertex();
-		IsTypeRestrOfExpression inc = exp
-				.getFirstIsTypeRestrOfExpressionIncidence();
-		double selectivity = 1.0;
-		if (inc != null) {
-			TypeIdEvaluator typeIdEval = (TypeIdEvaluator) query
-					.getVertexEvaluator(inc.getAlpha());
-			selectivity = typeIdEval.getEstimatedSelectivity();
+		long card;
+		if (typeCollection != null) {
+			card = typeCollection.getEstimatedGraphElementCount(query
+					.getOptimizerInfo());
+		} else {
+			VertexSetExpression exp = getVertex();
+			IsTypeRestrOfExpression inc = exp
+					.getFirstIsTypeRestrOfExpressionIncidence();
+			double selectivity = 1.0;
+			if (inc != null) {
+				TypeIdEvaluator typeIdEval = (TypeIdEvaluator) query
+						.getVertexEvaluator(inc.getAlpha());
+				selectivity = typeIdEval.getEstimatedSelectivity();
+			}
+			card = Math.round(query.getOptimizerInfo().getAverageVertexCount()
+					* selectivity);
 		}
-		return Math.round(query.getOptimizerInfo().getAverageVertexCount()
-				* selectivity);
+		logger.fine("VertexSet estimated cardinality " + typeCollection + ": "
+				+ card);
+		return card;
 	}
 
 }

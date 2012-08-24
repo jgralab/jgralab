@@ -37,6 +37,7 @@ package de.uni_koblenz.jgralab.greql;
 
 import de.uni_koblenz.jgralab.greql.types.TypeCollection;
 import de.uni_koblenz.jgralab.schema.GraphElementClass;
+import de.uni_koblenz.jgralab.schema.Schema;
 
 /**
  * This class is needed to propagate the size of the currently used graph along
@@ -45,6 +46,8 @@ import de.uni_koblenz.jgralab.schema.GraphElementClass;
  * @author ist@uni-koblenz.de
  */
 public interface OptimizerInfo {
+
+	public Schema getSchema();
 
 	public int getEdgeClassCount();
 

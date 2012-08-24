@@ -57,12 +57,6 @@ public class EdgeSetExpressionEvaluator extends
 		ElementSetExpressionEvaluator<EdgeSetExpression> {
 
 	/**
-	 * A factor that will be multiplied with the number of edges of the
-	 * datagraph to estimate the own costs of a {@link EdgeSetExpression}.
-	 */
-	protected static final int edgeSetExpressionCostsFactor = 3;
-
-	/**
 	 * Creates a new ElementSetExpressionEvaluator for the given vertex
 	 * 
 	 * @param eval
@@ -70,7 +64,8 @@ public class EdgeSetExpressionEvaluator extends
 	 * @param vertex
 	 *            the vertex this VertexEvaluator evaluates
 	 */
-	public EdgeSetExpressionEvaluator(EdgeSetExpression vertex, GreqlQueryImpl query) {
+	public EdgeSetExpressionEvaluator(EdgeSetExpression vertex,
+			GreqlQueryImpl query) {
 		super(vertex, query);
 	}
 
@@ -105,24 +100,32 @@ public class EdgeSetExpressionEvaluator extends
 			inc = inc.getNextIsTypeRestrOfExpressionIncidence();
 		}
 
-		long ownCosts = query.getOptimizerInfo().getAverageEdgeCount()
-				* edgeSetExpressionCostsFactor;
+		long ownCosts = query.getOptimizerInfo().getAverageEdgeCount();
 		return new VertexCosts(ownCosts, ownCosts, typeRestrCosts + ownCosts);
 	}
 
 	@Override
 	public long calculateEstimatedCardinality() {
-		EdgeSetExpression exp = getVertex();
-		IsTypeRestrOfExpression inc = exp
-				.getFirstIsTypeRestrOfExpressionIncidence();
-		double selectivity = 1.0;
-		if (inc != null) {
-			TypeIdEvaluator typeIdEval = (TypeIdEvaluator) query
-					.getVertexEvaluator(inc.getAlpha());
-			selectivity = typeIdEval.getEstimatedSelectivity();
+		long card;
+		if (typeCollection != null) {
+			card = typeCollection.getEstimatedGraphElementCount(query
+					.getOptimizerInfo());
+		} else {
+			EdgeSetExpression exp = getVertex();
+			IsTypeRestrOfExpression inc = exp
+					.getFirstIsTypeRestrOfExpressionIncidence();
+			double selectivity = 1.0;
+			if (inc != null) {
+				TypeIdEvaluator typeIdEval = (TypeIdEvaluator) query
+						.getVertexEvaluator(inc.getAlpha());
+				selectivity = typeIdEval.getEstimatedSelectivity();
+			}
+			card = Math.round(query.getOptimizerInfo().getAverageEdgeCount()
+					* selectivity);
 		}
-		return Math
-				.round(query.getOptimizerInfo().getAverageEdgeCount() * selectivity);
+		logger.fine("EdgeSet estimated cardinality " + typeCollection + ": "
+				+ card);
+		return card;
 	}
 
 }

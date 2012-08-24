@@ -74,17 +74,16 @@ public class TypeIdEvaluator extends VertexEvaluator<TypeId> {
 		return elemClass;
 	}
 
+	TypeCollection tc;
+
 	@Override
 	public TypeCollection evaluate(InternalGreqlEvaluator evaluator) {
-		TypeCollection tc = (TypeCollection) evaluator
-				.getLocalEvaluationResult(vertex);
 		if (tc == null) {
 			GraphElementClass<?, ?> cls = getGraphElementClass(evaluator);
 			tc = TypeCollection.empty().with(cls, vertex.is_type(),
 					vertex.is_excluded());
-		} else {
-			evaluator.progress(getOwnEvaluationCosts());
 		}
+		evaluator.progress(getOwnEvaluationCosts());
 		return tc;
 	}
 
@@ -97,22 +96,28 @@ public class TypeIdEvaluator extends VertexEvaluator<TypeId> {
 
 	@Override
 	public double calculateEstimatedSelectivity() {
-		int typesInSchema = (int) Math.round((query.getOptimizerInfo()
-				.getEdgeClassCount() + query.getOptimizerInfo()
-				.getVertexClassCount()) / 2.0);
-		double selectivity = 1.0;
-		TypeId id = getVertex();
-		if (id.is_type()) {
-			selectivity = 1.0 / typesInSchema;
+		double selectivity;
+		if (tc != null) {
+			selectivity = tc.getFrequency(query.getOptimizerInfo());
 		} else {
-			double avgSubclasses = (query.getOptimizerInfo()
-					.getAverageEdgeSubclasses() + query.getOptimizerInfo()
-					.getAverageVertexSubclasses()) / 2.0;
-			selectivity = avgSubclasses / typesInSchema;
+			int typesInSchema = (int) Math.round((query.getOptimizerInfo()
+					.getEdgeClassCount() + query.getOptimizerInfo()
+					.getVertexClassCount()) / 2.0);
+			selectivity = 1.0;
+			TypeId id = getVertex();
+			if (id.is_type()) {
+				selectivity = 1.0 / typesInSchema;
+			} else {
+				double avgSubclasses = (query.getOptimizerInfo()
+						.getAverageEdgeSubclasses() + query.getOptimizerInfo()
+						.getAverageVertexSubclasses()) / 2.0;
+				selectivity = avgSubclasses / typesInSchema;
+			}
+			if (id.is_excluded()) {
+				selectivity = 1 - selectivity;
+			}
 		}
-		if (id.is_excluded()) {
-			selectivity = 1 - selectivity;
-		}
+		logger.fine("TypeId estimated selectivity " + tc + ": " + selectivity);
 		return selectivity;
 	}
 

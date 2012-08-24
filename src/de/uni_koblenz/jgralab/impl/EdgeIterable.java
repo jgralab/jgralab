@@ -50,9 +50,9 @@ import de.uni_koblenz.jgralab.schema.EdgeClass;
  * methods <code>edges(params)</code> of th graph. Every special graphclass
  * contains generated methods similar to <code>edges(params)</code> for every
  * EdgeClass that is part of the GraphClass.
- *
+ * 
  * @author ist@uni-koblenz.de
- *
+ * 
  * @param <E>
  *            The type of the Edges to iterate over. To mention it again,
  *            <b>don't</b> create instances of this class directly.
@@ -113,19 +113,21 @@ public class EdgeIterable<E extends Edge> implements Iterable<E> {
 
 	}
 
-	private EdgeIterator iter;
-
 	public EdgeIterable(Graph g) {
 		this(g, (EdgeClass) null);
 	}
 
+	private Graph g;
+	private EdgeClass ec;
+
 	public EdgeIterable(Graph g, EdgeClass ec) {
 		assert g != null;
-		iter = new EdgeIterator((InternalGraph) g, ec);
+		this.g = g;
+		this.ec = ec;
 	}
 
 	@Override
 	public Iterator<E> iterator() {
-		return iter;
+		return new EdgeIterator((InternalGraph) g, ec);
 	}
 }

@@ -83,6 +83,11 @@ public abstract class GreqlQuery implements ParallelGreqlEvaluatorCallable {
 		return readQuery(f, optimize, new DefaultOptimizerInfo());
 	}
 
+	public static GreqlQuery readQuery(File f, OptimizerInfo info)
+			throws IOException {
+		return readQuery(f, true, info);
+	}
+
 	public static GreqlQuery readQuery(File f, boolean optimize,
 			OptimizerInfo optimizerInfo) throws IOException {
 		BufferedReader reader = null;

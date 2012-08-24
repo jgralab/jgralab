@@ -46,13 +46,13 @@ import de.uni_koblenz.jgralab.schema.EdgeClass;
 
 /**
  * This class provides an Iterable for the Edges incident to a given vertex.
- *
+ * 
  * @author ist@uni-koblenz.de
  */
 public class IncidenceIterable<E extends Edge> implements Iterable<E> {
 	/**
 	 * Creates an Iterable for all incident edges of Vertex <code>v</code>.
-	 *
+	 * 
 	 * @param v
 	 *            a Vertex
 	 */
@@ -63,7 +63,7 @@ public class IncidenceIterable<E extends Edge> implements Iterable<E> {
 	/**
 	 * Creates an Iterable for all incident edges of Vertex <code>v</code> with
 	 * the specified <code>orientation</code>.
-	 *
+	 * 
 	 * @param v
 	 *            a Vertex
 	 * @param orientation
@@ -76,7 +76,7 @@ public class IncidenceIterable<E extends Edge> implements Iterable<E> {
 	/**
 	 * Creates an Iterable for all incident edges of Vertex <code>v</code> with
 	 * the specified edgeclass <code>ec</code>.
-	 *
+	 * 
 	 * @param v
 	 *            a Vertex
 	 * @param ec
@@ -89,7 +89,7 @@ public class IncidenceIterable<E extends Edge> implements Iterable<E> {
 	/**
 	 * Creates an Iterable for all incident edges of Vertex <code>v</code> with
 	 * the specified edgeclass <code>ec</code> and <code>orientation</code>.
-	 *
+	 * 
 	 * @param v
 	 *            a Vertex
 	 * @param ec
@@ -99,8 +99,14 @@ public class IncidenceIterable<E extends Edge> implements Iterable<E> {
 	 */
 	public IncidenceIterable(Vertex v, EdgeClass ec, EdgeDirection orientation) {
 		assert (v != null) && v.isValid();
-		iter = new IncidenceIterator((InternalVertex) v, ec, orientation);
+		this.v = v;
+		this.ec = ec;
+		this.orientation = orientation;
 	}
+
+	Vertex v;
+	EdgeClass ec;
+	EdgeDirection orientation;
 
 	class IncidenceIterator implements Iterator<E> {
 		protected E current = null;
@@ -163,10 +169,8 @@ public class IncidenceIterable<E extends Edge> implements Iterable<E> {
 
 	}
 
-	private IncidenceIterator iter = null;
-
 	@Override
 	public Iterator<E> iterator() {
-		return iter;
+		return new IncidenceIterator((InternalVertex) v, ec, orientation);
 	}
 }

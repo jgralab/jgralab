@@ -35,7 +35,11 @@
 
 package de.uni_koblenz.jgralab.greql.evaluator;
 
+import java.io.BufferedInputStream;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.HashMap;
+import java.util.Properties;
 
 import de.uni_koblenz.jgralab.greql.OptimizerInfo;
 import de.uni_koblenz.jgralab.greql.types.TypeCollection;
@@ -83,6 +87,10 @@ public class DefaultOptimizerInfo implements OptimizerInfo {
 	}
 
 	public DefaultOptimizerInfo(Schema schema) {
+		this(schema, null);
+	}
+
+	public DefaultOptimizerInfo(Schema schema, String propFileName) {
 		this.schema = schema;
 		avgVertexCount = DEFAULT_AVG_VERTEX_COUNT;
 		avgEdgeCount = DEFAULT_AVG_EDGE_COUNT;
@@ -160,6 +168,57 @@ public class DefaultOptimizerInfo implements OptimizerInfo {
 			}
 			frequencies.put(gec, f);
 		}
+
+		if (propFileName != null) {
+			loadFromProperties(propFileName);
+		}
+	}
+
+	private void loadFromProperties(String propFileName) {
+		BufferedInputStream stream = null;
+		try {
+			Properties properties = new Properties();
+			stream = new BufferedInputStream(new FileInputStream(propFileName));
+			properties.load(stream);
+			String qn = properties.getProperty("QualifiedSchemaName");
+			if (!schema.getQualifiedName().equals(qn)) {
+				throw new RuntimeException("Schema name mismatch, expected \""
+						+ schema.getQualifiedName() + "\", found \"" + qn
+						+ "\"");
+			}
+			for (String key : properties.stringPropertyNames()) {
+				System.out.println("key: " + key);
+				String val = properties.getProperty(key);
+				if (key.startsWith("VC_") || key.startsWith("EC_")) {
+					String name = key.substring(3);
+					GraphElementClass<?, ?> gec = schema.getGraphClass()
+							.getGraphElementClass(name);
+					if (gec == null) {
+						continue;
+					}
+					String[] f = val.split(";");
+					frequenciesWithoutSubclasses.put(gec,
+							Double.parseDouble(f[0]));
+					frequencies.put(gec, Double.parseDouble(f[1]));
+				} else if (key.equals("AverageVertexCount")) {
+					avgVertexCount = Long.parseLong(val);
+				} else if (key.equals("AverageEdgeCount")) {
+					avgEdgeCount = Long.parseLong(val);
+				} else {
+					if (!key.equals("QualifiedSchemaName")) {
+						throw new RuntimeException("Unknown key \"" + key
+								+ "\"");
+					}
+				}
+			}
+		} catch (IOException ex) {
+			ex.printStackTrace();
+		}
+	}
+
+	@Override
+	public Schema getSchema() {
+		return schema;
 	}
 
 	/**

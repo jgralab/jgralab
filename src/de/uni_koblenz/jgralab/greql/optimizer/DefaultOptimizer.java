@@ -112,6 +112,13 @@ public class DefaultOptimizer extends OptimizerBase {
 		boolean aTransformationWasDone = false;
 		int noOfRuns = 1;
 
+		// try to get more precise estimations when optimizer info is schema
+		// specific.
+		if (((GreqlQueryImpl) query).getOptimizerInfo().getSchema() != null) {
+			TypeCollectionEvaluator tce = new TypeCollectionEvaluator(
+					(GreqlQueryImpl) query);
+			tce.execute();
+		}
 		// do the optimization
 		while (
 		// First merge common subgraphs
