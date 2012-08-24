@@ -33,10 +33,12 @@
  * the parts of JGraLab used as well as that of the covered work.
  */
 
-package de.uni_koblenz.jgralab.greql.evaluator;
+package de.uni_koblenz.jgralab.greql.optimizer;
 
 import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Properties;
@@ -56,6 +58,16 @@ import de.uni_koblenz.jgralab.schema.VertexClass;
  * @author ist@uni-koblenz.de
  */
 public class DefaultOptimizerInfo implements OptimizerInfo {
+	private static final String AVERAGE_EDGE_COUNT_KEY = "AverageEdgeCount";
+
+	private static final String AVERAGE_VERTEX_COUNT_KEY = "AverageVertexCount";
+
+	private static final String QUALIFIED_SCHEMA_NAME_KEY = "QualifiedSchemaName";
+
+	private static final String OPTIMIZER_INFO_VERSION_KEY = "OptimizerInfoVersion";
+
+	public static final String PROPERTY_FILE_VERSION = "OptimizerInfo-1.0";
+
 	private static final double DEFAULT_AVG_EC_SUBCLASSES = 2.0;
 
 	private static final double DEFAULT_AVG_VC_SUBCLASSES = 2.0;
@@ -90,7 +102,7 @@ public class DefaultOptimizerInfo implements OptimizerInfo {
 		this(schema, null);
 	}
 
-	public DefaultOptimizerInfo(Schema schema, String propFileName) {
+	public DefaultOptimizerInfo(Schema schema, String propFilename) {
 		this.schema = schema;
 		avgVertexCount = DEFAULT_AVG_VERTEX_COUNT;
 		avgEdgeCount = DEFAULT_AVG_EDGE_COUNT;
@@ -169,50 +181,80 @@ public class DefaultOptimizerInfo implements OptimizerInfo {
 			frequencies.put(gec, f);
 		}
 
-		if (propFileName != null) {
-			loadFromProperties(propFileName);
+		if (propFilename != null) {
+			try {
+				loadFromPropertyFile(propFilename);
+			} catch (IOException ex) {
+				throw new RuntimeException(ex);
+			}
 		}
 	}
 
-	private void loadFromProperties(String propFileName) {
-		BufferedInputStream stream = null;
-		try {
-			Properties properties = new Properties();
-			stream = new BufferedInputStream(new FileInputStream(propFileName));
-			properties.load(stream);
-			String qn = properties.getProperty("QualifiedSchemaName");
-			if (!schema.getQualifiedName().equals(qn)) {
-				throw new RuntimeException("Schema name mismatch, expected \""
-						+ schema.getQualifiedName() + "\", found \"" + qn
-						+ "\"");
-			}
-			for (String key : properties.stringPropertyNames()) {
-				System.out.println("key: " + key);
-				String val = properties.getProperty(key);
-				if (key.startsWith("VC_") || key.startsWith("EC_")) {
-					String name = key.substring(3);
-					GraphElementClass<?, ?> gec = schema.getGraphClass()
-							.getGraphElementClass(name);
-					if (gec == null) {
-						continue;
-					}
-					String[] f = val.split(";");
-					frequenciesWithoutSubclasses.put(gec,
-							Double.parseDouble(f[0]));
-					frequencies.put(gec, Double.parseDouble(f[1]));
-				} else if (key.equals("AverageVertexCount")) {
-					avgVertexCount = Long.parseLong(val);
-				} else if (key.equals("AverageEdgeCount")) {
-					avgEdgeCount = Long.parseLong(val);
-				} else {
-					if (!key.equals("QualifiedSchemaName")) {
-						throw new RuntimeException("Unknown key \"" + key
-								+ "\"");
-					}
+	public void storePropertyFile(String propFilename) throws IOException {
+		Properties properties = new Properties();
+		properties.put(OPTIMIZER_INFO_VERSION_KEY, PROPERTY_FILE_VERSION);
+		properties.put(QUALIFIED_SCHEMA_NAME_KEY, schema.getQualifiedName());
+		properties.put(AVERAGE_VERTEX_COUNT_KEY, Long.toString(avgVertexCount));
+		properties.put(AVERAGE_EDGE_COUNT_KEY, Long.toString(avgEdgeCount));
+		for (GraphElementClass<?, ?> gec : frequencies.keySet()) {
+			properties.put(
+					(gec instanceof VertexClass ? "VC_" : "EC_")
+							+ gec.getQualifiedName(),
+					frequenciesWithoutSubclasses.get(gec) + ";"
+							+ frequencies.get(gec));
+		}
+		BufferedOutputStream stream = new BufferedOutputStream(
+				new FileOutputStream(propFilename));
+		properties.store(stream, null);
+		stream.close();
+	}
+
+	private void loadFromPropertyFile(String propFileame) throws IOException {
+		if (schema == null) {
+			throw new IllegalStateException(
+					"schema must not be null when loading a property file");
+		}
+		BufferedInputStream stream = new BufferedInputStream(
+				new FileInputStream(propFileame));
+		Properties properties = new Properties();
+		properties.load(stream);
+		String version = properties.getProperty(OPTIMIZER_INFO_VERSION_KEY);
+		if (!PROPERTY_FILE_VERSION.equals(version)) {
+			throw new RuntimeException(
+					"Wrong property file format, expected: \""
+							+ PROPERTY_FILE_VERSION + "\", found: \"" + version
+							+ "\"");
+		}
+		String qn = properties.getProperty(QUALIFIED_SCHEMA_NAME_KEY);
+		if (!schema.getQualifiedName().equals(qn)) {
+			throw new RuntimeException("Schema name mismatch, expected \""
+					+ schema.getQualifiedName() + "\", found \"" + qn + "\"");
+		}
+		for (String key : properties.stringPropertyNames()) {
+			String val = properties.getProperty(key);
+			if (key.startsWith("VC_") || key.startsWith("EC_")) {
+				String name = key.substring(3);
+				GraphElementClass<?, ?> gec = schema.getGraphClass()
+						.getGraphElementClass(name);
+				if (gec == null) {
+					throw new RuntimeException("GraphElementClass \"" + name
+							+ "\" does not exist in schema \""
+							+ schema.getQualifiedName() + "\"");
+				}
+				String[] f = val.split(";");
+				frequenciesWithoutSubclasses.put(gec, Double.parseDouble(f[0]));
+				frequencies.put(gec, Double.parseDouble(f[1]));
+			} else if (key.equals(AVERAGE_VERTEX_COUNT_KEY)) {
+				setAvgVertexCount(Long.parseLong(val));
+			} else if (key.equals(AVERAGE_EDGE_COUNT_KEY)) {
+				setAvgEdgeCount(Long.parseLong(val));
+			} else {
+				if (!key.equals(QUALIFIED_SCHEMA_NAME_KEY)
+						&& !key.equals(OPTIMIZER_INFO_VERSION_KEY)) {
+					throw new RuntimeException("Unknown property key \"" + key
+							+ "\"");
 				}
 			}
-		} catch (IOException ex) {
-			ex.printStackTrace();
 		}
 	}
 
@@ -261,6 +303,41 @@ public class DefaultOptimizerInfo implements OptimizerInfo {
 	@Override
 	public long getAverageEdgeCount() {
 		return avgEdgeCount;
+	}
+
+	public void setSchema(Schema schema) {
+		if (this.schema != null) {
+			throw new IllegalArgumentException("Schema can be set only once");
+		}
+		this.schema = schema;
+	}
+
+	public void setAvgVertexCount(long avgVertexCount) {
+		if (avgVertexCount <= 0) {
+			throw new IllegalArgumentException("avgVertexCount must be > 0");
+		}
+		this.avgVertexCount = avgVertexCount;
+	}
+
+	public void setAvgEdgeCount(long avgEdgeCount) {
+		if (avgEdgeCount <= 0) {
+			throw new IllegalArgumentException("avgEdgeCount must be > 0");
+		}
+		this.avgEdgeCount = avgEdgeCount;
+	}
+
+	public void setFrequencies(GraphElementClass<?, ?> gec,
+			double freqWithoutSubclasses, double freq) {
+		if (schema == null) {
+			throw new IllegalStateException(
+					"Schema must be set before defining frequencies");
+		}
+		if (gec.getSchema() != schema) {
+			throw new IllegalArgumentException(
+					"GraphElementClass does not belong to schema");
+		}
+		frequenciesWithoutSubclasses.put(gec, freqWithoutSubclasses);
+		frequencies.put(gec, freq);
 	}
 
 	/**
@@ -321,7 +398,7 @@ public class DefaultOptimizerInfo implements OptimizerInfo {
 
 	@Override
 	public double getEdgesPerVertex() {
-		return 1.5;
+		return (double) getAverageEdgeCount() / getAverageVertexCount();
 	}
 
 	@Override
