@@ -124,6 +124,8 @@ public class GreqlEvaluatorFacade {
 
 	private final Graph dataGraph;
 
+	private static Schema schema;
+
 	private final GreqlEnvironment greqlEnvironment;
 
 	private static GreqlQueryCache greqlQueryCache = new GreqlQueryCache();
@@ -137,6 +139,11 @@ public class GreqlEvaluatorFacade {
 	 */
 	public GreqlEvaluatorFacade(Graph graph) {
 		dataGraph = graph;
+		if (!graph.getSchema().equals(schema)) {
+			// clear the cache since optimized query instances are schema
+			// dependent
+			greqlQueryCache.clear();
+		}
 		greqlEnvironment = new GreqlEnvironmentAdapter();
 	}
 

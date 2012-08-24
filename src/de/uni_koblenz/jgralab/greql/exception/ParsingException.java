@@ -56,6 +56,12 @@ public class ParsingException extends GreqlException {
 		this.length = length;
 	}
 
+	@Override
+	public synchronized Throwable fillInStackTrace() {
+		// don't fill stack trace, since this is way faster
+		return this;
+	}
+
 	@SuppressWarnings("unused")
 	private static String surrounding(String query, int off, int len) {
 		if ((len < 0) || (off < 0)) {

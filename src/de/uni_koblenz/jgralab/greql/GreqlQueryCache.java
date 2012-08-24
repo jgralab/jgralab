@@ -64,7 +64,11 @@ public class GreqlQueryCache {
 		}
 	}
 
-	public GreqlQuery getQuery(String queryText) {
+	public synchronized void clear() {
+		cache.clear();
+	}
+
+	public synchronized GreqlQuery getQuery(String queryText) {
 		String key = queryText;
 		SoftReference<GreqlQuery> ref = cache.get(key);
 		if (ref != null) {

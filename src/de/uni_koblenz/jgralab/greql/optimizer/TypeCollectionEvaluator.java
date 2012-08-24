@@ -43,8 +43,10 @@ import de.uni_koblenz.jgralab.greql.evaluator.GreqlQueryImpl;
 import de.uni_koblenz.jgralab.greql.evaluator.InternalGreqlEvaluator;
 import de.uni_koblenz.jgralab.greql.evaluator.fa.FiniteAutomaton;
 import de.uni_koblenz.jgralab.greql.evaluator.vertexeval.ElementSetExpressionEvaluator;
+import de.uni_koblenz.jgralab.greql.evaluator.vertexeval.GreqlExpressionEvaluator;
 import de.uni_koblenz.jgralab.greql.evaluator.vertexeval.TypeIdEvaluator;
 import de.uni_koblenz.jgralab.greql.schema.ElementSetExpression;
+import de.uni_koblenz.jgralab.greql.schema.GreqlExpression;
 import de.uni_koblenz.jgralab.greql.schema.GreqlGraph;
 import de.uni_koblenz.jgralab.greql.schema.GreqlVertex;
 import de.uni_koblenz.jgralab.greql.schema.TypeId;
@@ -69,6 +71,14 @@ public class TypeCollectionEvaluator implements InternalGreqlEvaluator {
 		OptimizerInfo info = query.getOptimizerInfo();
 		schema = info.getSchema();
 		GreqlGraph graph = query.getQueryGraph();
+
+		// resolve imports
+		GreqlExpression root = graph.getFirstGreqlExpression();
+		if (root != null) {
+			GreqlExpressionEvaluator e = (GreqlExpressionEvaluator) query
+					.getVertexEvaluator(root);
+			e.handleImportedTypes(schema);
+		}
 
 		// create TypeCollections for TypeId
 		// System.out.println("evaluate TypeId");

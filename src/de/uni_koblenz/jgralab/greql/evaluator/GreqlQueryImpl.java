@@ -154,62 +154,62 @@ public class GreqlQueryImpl extends GreqlQuery implements
 	}
 
 	private void initializeQueryGraph() {
-		if (queryGraph == null) {
-			long t0 = System.currentTimeMillis();
-			queryGraph = GreqlParserWithVertexEvaluatorUpdates.parse(queryText,
-					this, new HashSet<String>());
-			if (queryGraph.getVCount() == 0) {
-				// an empty query was parsed
-				GreqlExpression gexpr = queryGraph.createGreqlExpression();
-				UndefinedLiteral undefined = queryGraph
-						.createUndefinedLiteral();
-				gexpr.add_queryExpr(undefined);
-			}
-			long t1 = System.currentTimeMillis();
-			logger.fine("GReQL parser: " + (t1 - t0) + " ms, v/eCount="
-					+ queryGraph.getVCount() + "/" + queryGraph.getECount()
-					+ ", v/eMax=" + ((GraphImpl) queryGraph).getMaxVCount()
-					+ "/" + ((GraphImpl) queryGraph).getMaxECount());
-			if (optimize) {
-				if (DEBUG_OPTIMIZATION) {
-					String dirName = System.getProperty("java.io.tmpdir");
-					if (!dirName.endsWith(File.separator)) {
-						dirName += File.separator;
-					}
-					try {
-						queryGraph.save(dirName + "greql-query-unoptimized.tg");
-					} catch (GraphIOException e) {
-						e.printStackTrace();
-					}
-					printGraphAsDot(queryGraph, dirName
-							+ "greql-query-unoptimized.dot");
-				}
-				long t2 = System.currentTimeMillis();
-				(optimizer == null ? new DefaultOptimizer() : optimizer)
-						.optimize(this);
-				long t3 = System.currentTimeMillis();
-				if (DEBUG_OPTIMIZATION) {
-					String dirName = System.getProperty("java.io.tmpdir");
-					if (!dirName.endsWith(File.separator)) {
-						dirName += File.separator;
-					}
-					try {
-						queryGraph.save(dirName + "greql-query-optimized.tg");
-					} catch (GraphIOException e) {
-						e.printStackTrace();
-					}
-					printGraphAsDot(queryGraph, dirName
-							+ "greql-query-optimized.dot");
-					logger.info("Stored query graphs to " + dirName
-							+ "greql-query*");
-				}
-				logger.fine("GReQL optimizer: " + (t3 - t2) + " ms");
-			}
-			rootExpression = queryGraph.getFirstGreqlExpression();
-			initializeVertexEvaluatorsMarker(queryGraph);
-			long t4 = System.currentTimeMillis();
-			logger.fine("GReQL total: " + (t4 - t0) + " ms");
+		if (queryGraph != null) {
+			return;
 		}
+		long t0 = System.currentTimeMillis();
+		queryGraph = GreqlParserWithVertexEvaluatorUpdates.parse(queryText,
+				this, new HashSet<String>());
+		if (queryGraph.getVCount() == 0) {
+			// an empty query was parsed
+			GreqlExpression gexpr = queryGraph.createGreqlExpression();
+			UndefinedLiteral undefined = queryGraph.createUndefinedLiteral();
+			gexpr.add_queryExpr(undefined);
+		}
+		long t1 = System.currentTimeMillis();
+		logger.fine("GReQL parser: " + (t1 - t0) + " ms, v/eCount="
+				+ queryGraph.getVCount() + "/" + queryGraph.getECount()
+				+ ", v/eMax=" + ((GraphImpl) queryGraph).getMaxVCount() + "/"
+				+ ((GraphImpl) queryGraph).getMaxECount());
+		if (optimize) {
+			if (DEBUG_OPTIMIZATION) {
+				String dirName = System.getProperty("java.io.tmpdir");
+				if (!dirName.endsWith(File.separator)) {
+					dirName += File.separator;
+				}
+				try {
+					queryGraph.save(dirName + "greql-query-unoptimized.tg");
+				} catch (GraphIOException e) {
+					e.printStackTrace();
+				}
+				printGraphAsDot(queryGraph, dirName
+						+ "greql-query-unoptimized.dot");
+			}
+			long t2 = System.currentTimeMillis();
+			(optimizer == null ? new DefaultOptimizer() : optimizer)
+					.optimize(this);
+			long t3 = System.currentTimeMillis();
+			if (DEBUG_OPTIMIZATION) {
+				String dirName = System.getProperty("java.io.tmpdir");
+				if (!dirName.endsWith(File.separator)) {
+					dirName += File.separator;
+				}
+				try {
+					queryGraph.save(dirName + "greql-query-optimized.tg");
+				} catch (GraphIOException e) {
+					e.printStackTrace();
+				}
+				printGraphAsDot(queryGraph, dirName
+						+ "greql-query-optimized.dot");
+				logger.info("Stored query graphs to " + dirName
+						+ "greql-query*");
+			}
+			logger.fine("GReQL optimizer: " + (t3 - t2) + " ms");
+		}
+		initializeVertexEvaluatorsMarker(queryGraph);
+		long t4 = System.currentTimeMillis();
+		logger.fine("GReQL total: " + (t4 - t0) + " ms");
+		rootExpression = queryGraph.getFirstGreqlExpression();
 	}
 
 	/*
@@ -305,7 +305,6 @@ public class GreqlQueryImpl extends GreqlQuery implements
 
 	@Override
 	public GreqlExpression getRootExpression() {
-		getQueryGraph();
 		return rootExpression;
 	}
 
@@ -439,7 +438,7 @@ public class GreqlQueryImpl extends GreqlQuery implements
 			ProgressFunction progressFunction) {
 		synchronized (this) {
 			if (datagraph != null) {
-				if (schema != null && schema != datagraph.getSchema()) {
+				if (schema != null && !schema.equals(datagraph.getSchema())) {
 					throw new GreqlException(
 							"Can not evaluate the same GreqlQuery on graphs with different schemas");
 				}
