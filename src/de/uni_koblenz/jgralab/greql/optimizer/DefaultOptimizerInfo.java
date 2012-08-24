@@ -43,6 +43,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Properties;
 
+import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.greql.OptimizerInfo;
 import de.uni_koblenz.jgralab.greql.types.TypeCollection;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
@@ -52,34 +53,26 @@ import de.uni_koblenz.jgralab.schema.Schema;
 import de.uni_koblenz.jgralab.schema.VertexClass;
 
 /**
- * This class is needed to propagate the size of the currently used graph along
- * different calculate methods
+ * Contains statistical information about the {@link Graph}s of a specific
+ * {@link Schema} to support optimizer decisions.
  * 
  * @author ist@uni-koblenz.de
  */
 public class DefaultOptimizerInfo implements OptimizerInfo {
-	private static final String AVERAGE_EDGE_COUNT_KEY = "AverageEdgeCount";
-
-	private static final String AVERAGE_VERTEX_COUNT_KEY = "AverageVertexCount";
-
-	private static final String QUALIFIED_SCHEMA_NAME_KEY = "QualifiedSchemaName";
-
-	private static final String OPTIMIZER_INFO_VERSION_KEY = "OptimizerInfoVersion";
-
 	public static final String PROPERTY_FILE_VERSION = "OptimizerInfo-1.0";
 
+	private static final String OPTIMIZER_INFO_VERSION_KEY = "OptimizerInfoVersion";
+	private static final String AVERAGE_VERTEX_COUNT_KEY = "AverageVertexCount";
+	private static final String AVERAGE_EDGE_COUNT_KEY = "AverageEdgeCount";
+	private static final String QUALIFIED_SCHEMA_NAME_KEY = "QualifiedSchemaName";
+
 	private static final double DEFAULT_AVG_EC_SUBCLASSES = 2.0;
-
 	private static final double DEFAULT_AVG_VC_SUBCLASSES = 2.0;
-
 	private static final int DEFAULT_ABSTRACT_EC_COUNT = 10;
 	private static final int DEFAULT_EC_COUNT = 50;
-
 	private static final int DEFAULT_ABSTRACT_VC_COUNT = 10;
 	private static final int DEFAULT_VC_COUNT = 50;
-
 	private static final int DEFAULT_AVG_EDGE_COUNT = 15000;
-
 	private static final long DEFAULT_AVG_VERTEX_COUNT = 10000;
 
 	private Schema schema;
@@ -94,14 +87,35 @@ public class DefaultOptimizerInfo implements OptimizerInfo {
 	private HashMap<GraphElementClass<?, ?>, Double> frequenciesWithoutSubclasses;
 	private HashMap<GraphElementClass<?, ?>, Double> frequencies;
 
+	/**
+	 * Creates a common OptimizerInfo without schema specific statistics.
+	 */
 	public DefaultOptimizerInfo() {
 		this(null);
 	}
 
+	/**
+	 * Creates an OptimizerInfo with some schema specific statistics for
+	 * {@link Schema} <code>schema</code>.
+	 * 
+	 * @param schema
+	 *            a {@link Schema}
+	 */
 	public DefaultOptimizerInfo(Schema schema) {
 		this(schema, null);
 	}
 
+	/**
+	 * Creates an OptimizerInfo for {@link Schema} <code>schema</code> with
+	 * schema specific statistics loaded from property file
+	 * <code>propFilename</code>. Such property files can be created with a
+	 * {@link OptimizerInfoGenerator}.
+	 * 
+	 * @param schema
+	 *            a {@link Schema}
+	 * @param propFilename
+	 *            the name of a property file containing optimizer info
+	 */
 	public DefaultOptimizerInfo(Schema schema, String propFilename) {
 		this.schema = schema;
 		avgVertexCount = DEFAULT_AVG_VERTEX_COUNT;
@@ -190,6 +204,15 @@ public class DefaultOptimizerInfo implements OptimizerInfo {
 		}
 	}
 
+	/**
+	 * Stores the statistics of this DefaultOptimizerInfo into property file
+	 * <code>propFilename</code>.
+	 * 
+	 * @param propFilename
+	 *            the name of the property file containing optimizer info
+	 * @throws IOException
+	 *             when the file can not be created
+	 */
 	public void storePropertyFile(String propFilename) throws IOException {
 		Properties properties = new Properties();
 		properties.put(OPTIMIZER_INFO_VERSION_KEY, PROPERTY_FILE_VERSION);
@@ -209,6 +232,15 @@ public class DefaultOptimizerInfo implements OptimizerInfo {
 		stream.close();
 	}
 
+	/**
+	 * Loads the statistics from property file <code>propFilename</code> into
+	 * this DefaultOptimizerInfo.
+	 * 
+	 * @param propFilename
+	 *            the name of the property file containing optimizer info
+	 * @throws IOException
+	 *             when the file can not be read
+	 */
 	private void loadFromPropertyFile(String propFileame) throws IOException {
 		if (schema == null) {
 			throw new IllegalStateException(
@@ -263,19 +295,11 @@ public class DefaultOptimizerInfo implements OptimizerInfo {
 		return schema;
 	}
 
-	/**
-	 * 
-	 * @return the number of EdgeTypes this GraphSize object knows
-	 */
 	@Override
 	public int getEdgeClassCount() {
 		return edgeClassCount;
 	}
 
-	/**
-	 * 
-	 * @return the number of VertexTypes this GraphSize object knows
-	 */
 	@Override
 	public int getVertexClassCount() {
 		return vertexClassCount;
@@ -289,17 +313,11 @@ public class DefaultOptimizerInfo implements OptimizerInfo {
 		return abstractEdgeClassCount;
 	}
 
-	/**
-	 * @return the number of vertices in this graphsize object
-	 */
 	@Override
 	public long getAverageVertexCount() {
 		return avgVertexCount;
 	}
 
-	/**
-	 * @return the number of edge in this graphsize object
-	 */
 	@Override
 	public long getAverageEdgeCount() {
 		return avgEdgeCount;
@@ -340,17 +358,11 @@ public class DefaultOptimizerInfo implements OptimizerInfo {
 		frequencies.put(gec, freq);
 	}
 
-	/**
-	 * @return the average number of subclasses of a vertex class
-	 */
 	@Override
 	public double getAverageVertexSubclasses() {
 		return avgVertexSubclasses;
 	}
 
-	/**
-	 * @return the average number of subclasses of an edge class
-	 */
 	@Override
 	public double getAverageEdgeSubclasses() {
 		return avgEdgeSubclasses;
