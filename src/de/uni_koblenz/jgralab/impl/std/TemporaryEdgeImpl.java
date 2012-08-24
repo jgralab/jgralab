@@ -124,6 +124,12 @@ public class TemporaryEdgeImpl extends EdgeImpl implements TemporaryEdge {
 		correctISeq(prevIncidence, nextIncidence, newEdge, newLastIncidence);
 
 		// iSeq reversed
+		if(prevIncidenceReversed == this){
+			prevIncidenceReversed = newEdge;
+		}
+		if(nextIncidenceReversed == this){
+			nextIncidenceReversed = newEdge;
+		}
 		correctISeq(prevIncidenceReversed, nextIncidenceReversed,
 				(InternalEdge) newEdge.getReversedEdge(),
 				newLastIncidenceReversed);
@@ -183,18 +189,18 @@ public class TemporaryEdgeImpl extends EdgeImpl implements TemporaryEdge {
 			nextIncidence.setPrevIncidenceInternal(newEdge);
 			newEdge.setNextIncidenceInternal(nextIncidence);
 			newEdge.setPrevIncidenceInternal(prevIncidence);
-
-			newLastIncidence.setNextIncidenceInternal(null);
-
-			if (prevIncidence != null) {
-				prevIncidence.setNextIncidenceInternal(newEdge);
-			} else {// Temporary Edge is first incidence
-				((InternalVertex) newEdge.getThis()).setFirstIncidence(newEdge);
-			}
-
-			((InternalVertex) newEdge.getThis())
-					.setLastIncidence(newLastIncidence);
 		}
+		newLastIncidence.setNextIncidenceInternal(null);
+	
+		if (prevIncidence != null) {
+			prevIncidence.setNextIncidenceInternal(newEdge);
+		} else {// Temporary Edge is first incidence
+			((InternalVertex) newEdge.getThis()).setFirstIncidence(newEdge);
+		}
+
+		((InternalVertex) newEdge.getThis())
+				.setLastIncidence(newLastIncidence);
+		
 	}
 
 	@Override

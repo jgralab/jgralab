@@ -171,7 +171,10 @@ public class TemporaryGraphElementsTest {
 		e = g.getEdge(1);
 		assertEquals(e, it.next());
 		assertEquals(e.getReversedEdge(), it.next());
-
+		assertFalse(it.hasNext());
+		assertEquals(e.getNextIncidence(), e.getReversedEdge());
+		assertEquals(null, e.getReversedEdge().getNextIncidence());
+		assertEquals(e, e.getReversedEdge().getPrevIncidence());
 	}
 
 	@Test
