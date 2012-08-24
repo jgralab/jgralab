@@ -80,15 +80,14 @@ public class TemporaryGraphElementsTest {
 
 		TemporaryVertex tempv = g.createTemporaryVertex();
 
-		TemporaryEdge e2 = g.createTemporaryEdge(
-				v1, tempv);
+		TemporaryEdge e2 = g.createTemporaryEdge(v1, tempv);
 		e2.setPreliminaryType(schema.getGraphClass().getEdgeClass("Street"));
 		int e2_id = e2.getId();
-		TemporaryEdge e3 = g.createTemporaryEdge(schema.getGraphClass().getEdgeClass("Bridge"),
-				v2, tempv);
+		TemporaryEdge e3 = g.createTemporaryEdge(schema.getGraphClass()
+				.getEdgeClass("Bridge"), v2, tempv);
 		int e3_id = e3.getId();
-		TemporaryEdge e4 = g.createTemporaryEdge(schema.getGraphClass().getEdgeClass("Street"),
-				tempv, v1);
+		TemporaryEdge e4 = g.createTemporaryEdge(schema.getGraphClass()
+				.getEdgeClass("Street"), tempv, v1);
 		int e4_id = e4.getId();
 		Edge tempe = g.createTemporaryEdge(tempv, v2);
 
@@ -140,9 +139,11 @@ public class TemporaryGraphElementsTest {
 
 		TemporaryVertex tempv = g.createTemporaryVertex();
 
-		g.createTemporaryEdge(schema.getGraphClass().getEdgeClass("Street"), v1, tempv);
+		g.createTemporaryEdge(schema.getGraphClass().getEdgeClass("Street"),
+				v1, tempv);
 
-		g.createTemporaryEdge(schema.getGraphClass().getEdgeClass("Street"), tempv, v1);
+		g.createTemporaryEdge(schema.getGraphClass().getEdgeClass("Street"),
+				tempv, v1);
 
 		writeTgToConsole(g);
 
@@ -153,8 +154,8 @@ public class TemporaryGraphElementsTest {
 		Schema schema = CityMapSchema.instance();
 		Graph g = schema.createGraph(impl);
 		TemporaryVertex tempv = g.createTemporaryVertex();
-		Edge e = g.createTemporaryEdge(schema.getGraphClass().getEdgeClass("Street"),
-				tempv, tempv);		
+		Edge e = g.createTemporaryEdge(
+				schema.getGraphClass().getEdgeClass("Street"), tempv, tempv);
 		Vertex v = g.createVertex(schema.getGraphClass().getVertexClass(
 				"Intersection"));
 
@@ -167,7 +168,8 @@ public class TemporaryGraphElementsTest {
 		assertEquals(2, v.getId());
 		assertEquals(v, transformed.getNextVertex());
 		Iterator<Edge> it = transformed.incidences().iterator();
-		assertEquals(g.getEdge(1), it.next());
+		e = g.getEdge(1);
+		assertEquals(e, it.next());
 		assertEquals(e.getReversedEdge(), it.next());
 
 	}
@@ -290,8 +292,8 @@ public class TemporaryGraphElementsTest {
 		Vertex v2 = g.createTemporaryVertex();
 		assertTrue(v2.isTemporary());
 
-		Edge e1 = g.createTemporaryEdge(schema.getGraphClass().getEdgeClass("Bridge"),
-				v1, v2);
+		Edge e1 = g.createTemporaryEdge(
+				schema.getGraphClass().getEdgeClass("Bridge"), v1, v2);
 		assertTrue(e1.isTemporary());
 
 		Edge e2 = g.createTemporaryEdge(v2, v1);
@@ -313,7 +315,8 @@ public class TemporaryGraphElementsTest {
 		Vertex v5_t = g.createTemporaryVertex();
 
 		g.createEdge(schema.getGraphClass().getEdgeClass("Bridge"), v1, v2);
-		Edge e2_t = g.createTemporaryEdge(schema.getGraphClass().getEdgeClass("Bridge"), v1, v3_t);
+		Edge e2_t = g.createTemporaryEdge(
+				schema.getGraphClass().getEdgeClass("Bridge"), v1, v3_t);
 		Edge e3_t = g.createTemporaryEdge(v3_t, v4);
 		Edge e4_t = g.createTemporaryEdge(v2, v4);
 		g.createEdge(schema.getGraphClass().getEdgeClass("Street"), v4, v1);
@@ -476,131 +479,132 @@ public class TemporaryGraphElementsTest {
 		assertEquals(v4, g.getEdge(id_e5_1_4).getOmega());
 
 	}
-	
+
 	@Test
-	public void testHasTemporaryGraphElements(){
+	public void testHasTemporaryGraphElements() {
 		Schema schema = CityMapSchema.instance();
 		Graph g = schema.createGraph(impl);
-		
+
 		assertFalse(g.hasTemporaryElements());
-		
+
 		Vertex v1 = g.createVertex(g.getGraphClass().getVertexClass(
 				"Intersection"));
-		
+
 		assertFalse(g.hasTemporaryElements());
-		
+
 		TemporaryVertex tempv = g.createTemporaryVertex();
-		
+
 		assertTrue(g.hasTemporaryElements());
-		
+
 		TemporaryEdge tempe = g.createTemporaryEdge(v1, tempv);
-		
+
 		assertTrue(g.hasTemporaryElements());
-		
+
 		tempv.bless(schema.getGraphClass().getVertexClass("Intersection"));
 
 		assertTrue(g.hasTemporaryElements());
-		
-		tempe.bless(schema.getGraphClass()
-				.getEdgeClass("Street"));
-		
-		
-		
+
+		tempe.bless(schema.getGraphClass().getEdgeClass("Street"));
+
 		assertFalse(g.hasTemporaryElements());
-		
+
 		TemporaryVertex tempv2 = g.createTemporaryVertex();
-		
+
 		assertTrue(g.hasTemporaryElements());
-		
+
 		tempv2.delete();
-		
+
 		assertFalse(g.hasTemporaryElements());
-		
+
 	}
 
 	@Test
-	public void testCreateTempEdgeAtTempVertexAuto(){
+	public void testCreateTempEdgeAtTempVertexAuto() {
 		Schema schema = CityMapSchema.instance();
 		Graph g = schema.createGraph(impl);
-		
-		Vertex v1 = g.createVertex(schema.getGraphClass().getVertexClass("Intersection"));
+
+		Vertex v1 = g.createVertex(schema.getGraphClass().getVertexClass(
+				"Intersection"));
 		TemporaryVertex tempv2 = g.createTemporaryVertex();
-		
-		
-		Edge e = g.createEdge(schema.getGraphClass().getEdgeClass("Street"), v1, tempv2);
+
+		Edge e = g.createEdge(schema.getGraphClass().getEdgeClass("Street"),
+				v1, tempv2);
 		assertTrue(e.isTemporary());
 	}
-	
+
 	@Test
-	public void testFailBlessEdge(){
+	public void testFailBlessEdge() {
 		Schema schema = CityMapSchema.instance();
 		Graph g = schema.createGraph(impl);
-		
-		Vertex v1 = g.createVertex(schema.getGraphClass().getVertexClass("Intersection"));
+
+		Vertex v1 = g.createVertex(schema.getGraphClass().getVertexClass(
+				"Intersection"));
 		TemporaryVertex tempv2 = g.createTemporaryVertex();
-		
-		TemporaryEdge tempe = g.createTemporaryEdge(schema.getGraphClass().getEdgeClass("Street"), v1, tempv2);
-		
-		try{
+
+		TemporaryEdge tempe = g.createTemporaryEdge(schema.getGraphClass()
+				.getEdgeClass("Street"), v1, tempv2);
+
+		try {
 			tempe.bless(tempe.getPreliminaryType());
 			fail();
-		}catch(TemporaryGraphElementBlessingException ex){
+		} catch (TemporaryGraphElementBlessingException ex) {
 			assertTrue(tempe.isValid());
 		}
-		
+
 	}
-	
+
 	@Test
-	public void testPreliminaryTypeForTemporaryVertex(){
+	public void testPreliminaryTypeForTemporaryVertex() {
 		Schema schema = CityMapSchema.instance();
 		Graph g = schema.createGraph(impl);
-		
-		TemporaryVertex tempV1 = g.createTemporaryVertex(
-				schema.getGraphClass().getVertexClass("Intersection"));
-		
+
+		TemporaryVertex tempV1 = g.createTemporaryVertex(schema.getGraphClass()
+				.getVertexClass("Intersection"));
+
 		assertTrue(tempV1.isTemporary());
-		
+
 		Vertex v1 = tempV1.bless();
-		
+
 		assertFalse(v1.isTemporary());
 		assertFalse(tempV1.isValid());
 		assertEquals(1, v1.getId());
 	}
-	
+
 	@Test
-	public void testBlessNonTemporaryElements(){
+	public void testBlessNonTemporaryElements() {
 		Schema schema = CityMapSchema.instance();
 		Graph g = schema.createGraph(impl);
-		
-		Vertex v1 = g.createVertex(schema.getGraphClass().getVertexClass("Intersection"));
-				
+
+		Vertex v1 = g.createVertex(schema.getGraphClass().getVertexClass(
+				"Intersection"));
+
 		assertEquals(v1, v1.bless());
-		
-		Edge e1 = g.createEdge(schema.getGraphClass().getEdgeClass("Street"), v1, v1);
+
+		Edge e1 = g.createEdge(schema.getGraphClass().getEdgeClass("Street"),
+				v1, v1);
 		assertEquals(e1, e1.bless());
-		
+
 		try {
 			v1.bless(schema.getGraphClass().getVertexClass("ParkingGarage"));
 			fail();
-		}catch(TemporaryGraphElementBlessingException ex){
+		} catch (TemporaryGraphElementBlessingException ex) {
 			// No blessing to wrong type allowed
 		}
-		
+
 		try {
 			e1.bless(schema.getGraphClass().getEdgeClass("Bridge"));
 			fail();
-		}catch(TemporaryGraphElementBlessingException ex){
+		} catch (TemporaryGraphElementBlessingException ex) {
 			// No blessing to wrong type allowed
 		}
 	}
-	
+
 	private void writeTgToConsole(Graph g) throws GraphIOException {
 		try {
 			ByteArrayOutputStream out = new ByteArrayOutputStream();
 			GraphIO.saveGraphToStream(g, new DataOutputStream(out), null);
 			out.flush();
-			System.out.println(out.toString());
-
+			// System.out.println(out.toString());
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
