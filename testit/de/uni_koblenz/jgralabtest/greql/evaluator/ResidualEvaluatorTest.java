@@ -461,7 +461,7 @@ public class ResidualEvaluatorTest {
 			throws InstantiationException, IllegalAccessException {
 		String query = "forall n:list(1..9)@n<0";
 		assertFalse((Boolean) evaluateQuery(query));
-		assertTrue((Boolean) createQueryClass(query,
+		assertFalse((Boolean) createQueryClass(query,
 				"testdata.TestQuantifiedExpressionEvaluator_forall_false")
 				.execute(datagraph));
 	}
@@ -471,7 +471,7 @@ public class ResidualEvaluatorTest {
 			throws InstantiationException, IllegalAccessException {
 		String query = "forall n:list(1..9)@n<9";
 		assertFalse((Boolean) evaluateQuery(query));
-		assertTrue((Boolean) createQueryClass(query,
+		assertFalse((Boolean) createQueryClass(query,
 				"testdata.TestQuantifiedExpressionEvaluator_forall_false_onlyone")
 				.execute(datagraph));
 	}
@@ -511,7 +511,7 @@ public class ResidualEvaluatorTest {
 			throws InstantiationException, IllegalAccessException {
 		String query = "exists n:list(1..9)@n<0";
 		assertFalse((Boolean) evaluateQuery(query));
-		assertTrue((Boolean) createQueryClass(query,
+		assertFalse((Boolean) createQueryClass(query,
 				"testdata.TestQuantifiedExpressionEvaluator_exists_false")
 				.execute(datagraph));
 	}
@@ -541,7 +541,7 @@ public class ResidualEvaluatorTest {
 			throws InstantiationException, IllegalAccessException {
 		String query = "exists! n:list(1..9)@n>0";
 		assertFalse((Boolean) evaluateQuery(query));
-		assertTrue((Boolean) createQueryClass(query,
+		assertFalse((Boolean) createQueryClass(query,
 				"testdata.TestQuantifiedExpressionEvaluator_existsExactly_false_severalExists")
 				.execute(datagraph));
 	}
@@ -551,7 +551,7 @@ public class ResidualEvaluatorTest {
 			throws InstantiationException, IllegalAccessException {
 		String query = "exists! n:list(1..9)@n<0";
 		assertFalse((Boolean) evaluateQuery(query));
-		assertTrue((Boolean) createQueryClass(query,
+		assertFalse((Boolean) createQueryClass(query,
 				"testdata.TestQuantifiedExpressionEvaluator_existsExactly_false_noneExists")
 				.execute(datagraph));
 	}
@@ -561,7 +561,7 @@ public class ResidualEvaluatorTest {
 			throws InstantiationException, IllegalAccessException {
 		String query = "exists! n:list(1..9)@V{}";
 		assertFalse((Boolean) evaluateQuery(query));
-		assertTrue((Boolean) createQueryClass(
+		assertFalse((Boolean) createQueryClass(
 				query,
 				"testdata.TestQuantifiedExpressionEvaluator_existsExactly_withNonBooleanPredicate")
 				.execute(datagraph));

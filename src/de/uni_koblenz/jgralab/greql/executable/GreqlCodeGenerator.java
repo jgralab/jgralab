@@ -1,6 +1,7 @@
 package de.uni_koblenz.jgralab.greql.executable;
 
 import java.lang.reflect.Method;
+import java.lang.reflect.TypeVariable;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -846,9 +847,10 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 			simpleDeclSnippet.setVariable("simpleDeclNum",
 					Integer.toString(simpleDecls));
 			simpleDeclSnippet
-					.add(tabs
-							+ "org.pcollections.PCollection<Object> domain_#simpleDeclNum# = (org.pcollections.PCollection<Object>) "
-							+ createCodeForExpression(domain) + ";");
+					.add("@SuppressWarnings(\"unchecked\")",
+							tabs
+									+ "org.pcollections.PCollection<Object> domain_#simpleDeclNum# = (org.pcollections.PCollection<Object>) "
+									+ createCodeForExpression(domain) + ";");
 			list.add(simpleDeclSnippet);
 			for (IsDeclaredVarOf declaredVarInc : simpleDecl
 					.getIsDeclaredVarOfIncidences(EdgeDirection.IN)) {
@@ -888,6 +890,9 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 				.getFirstIsBoundExprOfQuantifiedExpressionIncidence(
 						EdgeDirection.IN).getThat();
 		CodeSnippet iteratedExprSnip = new CodeSnippet();
+		iteratedExprSnip.add(tabs
+				+ getVariableName(Integer.toString(resultDefinition.getId()))
+				+ " = null;");
 		switch (quantifier.get_type()) {
 		case FORALL:
 			iteratedExprSnip.add(tabs + "if ( ! (Boolean) "
@@ -1062,24 +1067,36 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 						checkSnippet.add("matches &= arg_" + i + " instanceof "
 								+ paramTypes[i].getCanonicalName() + ";");
 					}
-					checkSnippet.add("if (matches)");
+					checkSnippet.add("if (matches) {");
 					String delim = "";
 					StringBuilder argBuilder = new StringBuilder();
-					argBuilder.append("\treturn " + functionStaticFieldName
-							+ ".evaluate(");
+					argBuilder.append("\tObject result = "
+							+ functionStaticFieldName + ".evaluate(");
 					if (needsGraphArgument) {
-						argBuilder.append("\tdatagraph");
-						delim = ",";
+						argBuilder.append("datagraph");
+						delim = ", ";
 					}
+					boolean needsRawTypesWarning = false;
+					boolean needsUncheckedWarning = false;
 					for (int i = 0; i < paramTypes.length; i++) {
-						String cast = "("
-								+ getCanonicalNameWithTypeParams(paramTypes[i])
-								+ ")";
-						argBuilder.append("\t" + delim + cast + "arg_" + i);
-						delim = ",";
+						String cast = "(" + paramTypes[i].getCanonicalName()
+								+ ") ";
+						TypeVariable<?>[] typeParameters = paramTypes[i]
+								.getTypeParameters();
+						needsRawTypesWarning |= typeParameters.length > 0;
+						needsUncheckedWarning |= (typeParameters.length > 0 && paramTypes[i] != java.lang.Enum.class);
+						argBuilder.append(delim + cast + "arg_" + i);
+						delim = ", ";
 					}
 					argBuilder.append(");");
+					if (needsRawTypesWarning) {
+						checkSnippet.add("\t@SuppressWarnings({ "
+								+ (needsUncheckedWarning ? "\"unchecked\", "
+										: "") + "\"rawtypes\" })");
+					}
 					checkSnippet.add(argBuilder.toString());
+					checkSnippet.add("\treturn result;");
+					checkSnippet.add("}");
 					list.add(checkSnippet);
 				}
 			}
@@ -1088,20 +1105,6 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 				"throw new RuntimeException(\"Given arguments don't match an available GReQL function."
 						+ " If you have added a function, you need to recompile the GReQL query for the function to be available.\");"));
 		return createMethod(list, funApp);
-	}
-
-	private String getCanonicalNameWithTypeParams(Class<?> cls) {
-		String cn = cls.getCanonicalName();
-		int n = cls.getTypeParameters().length;
-		if (n > 0) {
-			String delim = "<?";
-			for (int i = 0; i < n; ++i) {
-				cn = cn + delim;
-				delim = ",?";
-			}
-			cn = cn + ">";
-		}
-		return cn;
 	}
 
 	private String createCodeForForwardVertexSet(ForwardVertexSet fws) {
