@@ -92,6 +92,7 @@ import de.uni_koblenz.jgralab.greql.schema.SetComprehension;
 import de.uni_koblenz.jgralab.greql.schema.SetConstruction;
 import de.uni_koblenz.jgralab.greql.schema.SimpleDeclaration;
 import de.uni_koblenz.jgralab.greql.schema.StringLiteral;
+import de.uni_koblenz.jgralab.greql.schema.TableComprehension;
 import de.uni_koblenz.jgralab.greql.schema.ThisEdge;
 import de.uni_koblenz.jgralab.greql.schema.ThisLiteral;
 import de.uni_koblenz.jgralab.greql.schema.ThisVertex;
@@ -712,9 +713,22 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 					.add("org.pcollections.PCollection<Object> result = JGraLab.set();");
 		}
 		if (compr instanceof MapComprehension) {
-			addImports("org.pcollections.PMap");
-			initSnippet.add("PMap result = JGraLab.map();");
+			initSnippet
+					.add("org.pcollections.PMap<Object, Object> result = JGraLab.map();");
 		}
+		if (compr instanceof TableComprehension) {
+			initSnippet
+					.add("de.uni_koblenz.jgralab.greql.types.Table<Object> result = de.uni_koblenz.jgralab.greql.types.Table.empty();");
+		}
+
+		// check max count
+		Expression maxCount = compr.get_maxCount();
+		boolean hasMaxCount = maxCount != null;
+		if (hasMaxCount) {
+			initSnippet.add("int maxCount = (Integer) "
+					+ createCodeForExpression(maxCount) + ";");
+		}
+
 		methodBody.add(initSnippet);
 
 		Declaration decl = (Declaration) compr.getFirstIsCompDeclOfIncidence(
@@ -749,6 +763,9 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 				varIterationSnippet.setVariable("variableName", var.get_name());
 				varIterationSnippet
 						.add("for (Object #variableName# : #simpleDeclDomainName#) {");
+				if (hasMaxCount) {
+					varIterationSnippet.add("\tif(maxCount==0) break;");
+				}
 				VariableEvaluator<? extends Variable> vertexEval = (VariableEvaluator<? extends Variable>) ((GreqlQueryImpl) query)
 						.getVertexEvaluator(var);
 				List<VertexEvaluator<? extends Expression>> dependingExpressions = vertexEval
@@ -796,8 +813,8 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 			Expression valueExpr = (Expression) ((MapComprehension) compr)
 					.getFirstIsValueExprOfComprehensionIncidence(
 							EdgeDirection.IN).getThat();
-			iteratedExprSnip.add("result.put("
-					+ createCodeForExpression(keyExpr) + ","
+			iteratedExprSnip.add("result = result.plus("
+					+ createCodeForExpression(keyExpr) + ", "
 					+ createCodeForExpression(valueExpr) + ");");
 		} else {
 			Expression resultDefinition = (Expression) compr
@@ -805,6 +822,9 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 					.getThat();
 			iteratedExprSnip.add("result = result.plus("
 					+ createCodeForExpression(resultDefinition) + ");");
+		}
+		if (hasMaxCount) {
+			iteratedExprSnip.add("maxCount--;");
 		}
 		varIterationList.add(iteratedExprSnip);
 

@@ -728,13 +728,14 @@ public class GreqlSerializer {
 		sb.append("from ");
 		serializeDeclaration(exp.get_compDecl(), true);
 		if (exp instanceof SetComprehension) {
-			sb.append(" reportSet ");
+			sb.append(" reportSet");
 		} else if (exp instanceof ListComprehension) {
-			sb.append(" report ");
+			sb.append(" report");
 		} else if (exp instanceof TableComprehension) {
-			sb.append(" reportTable ");
+			sb.append(" reportTable");
 		} else if (exp instanceof MapComprehension) {
-			sb.append(" reportMap ");
+			sb.append(" reportMap");
+			serializeLimitedComprehension(exp);
 			MapComprehension mc = (MapComprehension) exp;
 			// MapComprehensions have no compResultDef, but key and valueExprs
 			serializeExpression(mc.get_keyExpr(), false);
@@ -746,6 +747,8 @@ public class GreqlSerializer {
 			throw new GreqlException("Unknown Comprehension " + exp + ".");
 		}
 
+		serializeLimitedComprehension(exp);
+
 		Expression result = exp.get_compResultDef();
 
 		if (result instanceof TupleConstruction) {
@@ -756,6 +759,16 @@ public class GreqlSerializer {
 			serializeExpression(result, true);
 		}
 		sb.append("end");
+	}
+
+	private void serializeLimitedComprehension(Comprehension exp) {
+		Expression maxCount = exp.get_maxCount();
+		if (maxCount != null) {
+			sb.append("N ");
+			serializeExpression(maxCount, false);
+			sb.append(":");
+		}
+		sb.append(" ");
 	}
 
 	private void serializeQuantifiedExpression(QuantifiedExpression exp) {
