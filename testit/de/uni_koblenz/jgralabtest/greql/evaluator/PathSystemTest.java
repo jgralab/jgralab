@@ -41,6 +41,8 @@ public class PathSystemTest {
 				.evaluate(datagraph);
 		assertNotNull(result1);
 
+		GreqlCodeGenerator.generateCode(query, datagraph.getSchema(), classname
+				+ "2", "./testit/");
 		Class<ExecutableQuery> generatedQuery = GreqlCodeGenerator
 				.generateCode(query, datagraph.getSchema(), classname);
 		PathSystem result2 = (PathSystem) generatedQuery.newInstance().execute(
