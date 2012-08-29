@@ -12,6 +12,7 @@ import javax.tools.JavaCompiler;
 import javax.tools.StandardJavaFileManager;
 import javax.tools.ToolProvider;
 
+import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphIO;
@@ -1084,7 +1085,8 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 						TypeVariable<?>[] typeParameters = paramTypes[i]
 								.getTypeParameters();
 						needsRawTypesWarning |= typeParameters.length > 0;
-						needsUncheckedWarning |= (typeParameters.length > 0 && paramTypes[i] != java.lang.Enum.class);
+						needsUncheckedWarning |= (typeParameters.length > 0
+								&& paramTypes[i] != java.lang.Enum.class && paramTypes[i] != AttributedElement.class);
 						argBuilder.append(delim + cast + "arg_" + i);
 						delim = ", ";
 					}
