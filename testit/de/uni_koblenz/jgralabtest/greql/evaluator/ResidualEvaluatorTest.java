@@ -12,6 +12,7 @@ import java.util.Set;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.pcollections.ArrayPSet;
 import org.pcollections.POrderedSet;
 import org.pcollections.PVector;
 
@@ -84,7 +85,7 @@ public class ResidualEvaluatorTest {
 	public ExecutableQuery createQueryClass(String query, String classname)
 			throws InstantiationException, IllegalAccessException {
 		GreqlCodeGenerator.generateCode(query, datagraph.getSchema(), classname
-				+ "2", "./testit/");
+				+ "_", "./testit/");
 		Class<ExecutableQuery> generatedQuery = GreqlCodeGenerator
 				.generateCode(query, datagraph.getSchema(), classname);
 		return generatedQuery.newInstance();
@@ -627,6 +628,27 @@ public class ResidualEvaluatorTest {
 	}
 
 	@Test
+	public void testFWRExpression_reportSet_2() throws InstantiationException,
+			IllegalAccessException {
+		String queryText = "from n, m:list(1..3) with true reportSet n, m end";
+		for (GreqlQuery query : new GreqlQuery[] {
+				GreqlQuery.createQuery(queryText),
+				(GreqlQuery) createQueryClass(queryText,
+						"testdata.TestFWRExpression_reportSet_2") }) {
+			ArrayPSet<?> ergList = (ArrayPSet<?>) query.evaluate(datagraph);
+			int numberOfErg = 0;
+			for (int n = 1; n <= 3; n++) {
+				for (int m = 1; m <= 3; m++) {
+					Tuple tuple = (Tuple) ergList.get(numberOfErg++);
+					assertEquals(2, tuple.size());
+					assertEquals(n, tuple.get(0));
+					assertEquals(m, tuple.get(1));
+				}
+			}
+		}
+	}
+
+	@Test
 	public void testFWRExpression_reportSetN() throws InstantiationException,
 			IllegalAccessException {
 		String queryText = "from n:list(10..100) with true reportSetN 10: n end";
@@ -659,6 +681,46 @@ public class ResidualEvaluatorTest {
 	}
 
 	@Test
+	public void testFWRExpression_reportList_2() throws InstantiationException,
+			IllegalAccessException {
+		String queryText = "from n, m:list(1..3) with true reportList n, m end";
+		for (GreqlQuery query : new GreqlQuery[] {
+				GreqlQuery.createQuery(queryText),
+				(GreqlQuery) createQueryClass(queryText,
+						"testdata.TestFWRExpression_reportList_2") }) {
+			PVector<?> ergList = (PVector<?>) query.evaluate(datagraph);
+			int numberOfErg = 0;
+			for (int n = 1; n <= 3; n++) {
+				for (int m = 1; m <= 3; m++) {
+					Tuple tuple = (Tuple) ergList.get(numberOfErg++);
+					assertEquals(2, tuple.size());
+					assertEquals(n, tuple.get(0));
+					assertEquals(m, tuple.get(1));
+				}
+			}
+		}
+	}
+
+	@Test
+	public void testFWRExpression_reportList_3() throws InstantiationException,
+			IllegalAccessException {
+		String queryText = "from n:list(1..3) with true reportList n, n end";
+		for (GreqlQuery query : new GreqlQuery[] {
+				GreqlQuery.createQuery(queryText),
+				(GreqlQuery) createQueryClass(queryText,
+						"testdata.TestFWRExpression_reportList_3") }) {
+			PVector<?> ergList = (PVector<?>) query.evaluate(datagraph);
+			int numberOfErg = 0;
+			for (int n = 1; n <= 3; n++) {
+				Tuple tuple = (Tuple) ergList.get(numberOfErg++);
+				assertEquals(2, tuple.size());
+				assertEquals(n, tuple.get(0));
+				assertEquals(n, tuple.get(1));
+			}
+		}
+	}
+
+	@Test
 	public void testFWRExpression_reportListN() throws InstantiationException,
 			IllegalAccessException {
 		String queryText = "from n:list(10..100) with true reportListN 10: n end";
@@ -686,6 +748,21 @@ public class ResidualEvaluatorTest {
 			assertEquals(2, ergMap.size());
 			assertEquals(datagraph.getVertex(1), ergMap.get(1));
 			assertEquals(datagraph.getVertex(2), ergMap.get(2));
+		}
+	}
+
+	@Test
+	public void testFWRExpression_reportMap_2() throws InstantiationException,
+			IllegalAccessException {
+		String queryText = "from n,m:list(1,2) with true reportMap n->m end";
+		for (GreqlQuery query : new GreqlQuery[] {
+				GreqlQuery.createQuery(queryText),
+				(GreqlQuery) createQueryClass(queryText,
+						"testdata.TestFWRExpression_reportMap_2") }) {
+			Map<?, ?> ergMap = (Map<?, ?>) query.evaluate(datagraph);
+			assertEquals(2, ergMap.size());
+			assertEquals(2, ergMap.get(1));
+			assertEquals(2, ergMap.get(2));
 		}
 	}
 
@@ -750,6 +827,9 @@ public class ResidualEvaluatorTest {
 	@Test
 	public void testFWRExpression_reportTable_twoVariablesAndThreeColumns()
 			throws InstantiationException, IllegalAccessException {
+		// TODO check "from n,m:list(1..3) with n*m>5 reportTable n,m,n*m end"
+		// TODO check "from n,m,o:list(1..3) reportTable n,m,n*m end"
+		// TODO check different endings n,m,o or n,m,n,n*m
 		String queryText = "from n,m:list(1..3) reportTable n,m,n*m end";
 		for (GreqlQuery query : new GreqlQuery[] {
 				GreqlQuery.createQuery(queryText),
@@ -773,6 +853,35 @@ public class ResidualEvaluatorTest {
 			assertEquals("1", titles.get(1));
 			assertEquals("2", titles.get(2));
 			assertEquals("3", titles.get(3));
+		}
+	}
+
+	@Test
+	public void testFWRExpression_reportTable_twoVariablesAndThreeColumns2()
+			throws InstantiationException, IllegalAccessException {
+		String queryText = "from n:list(4..6),m:list(1..3) reportTable n,m,n*m end";
+		for (GreqlQuery query : new GreqlQuery[] {
+				GreqlQuery.createQuery(queryText),
+				(GreqlQuery) createQueryClass(queryText,
+						"testdata.TestFWRExpression_reportTable_twoVariablesAndThreeColumns2") }) {
+			Table<?> ergTable = (Table<?>) query.evaluate(datagraph);
+			assertEquals(3, ergTable.size());
+			for (int i = 0; i < ergTable.size(); i++) {
+				int n = i + 1;
+				Tuple ergLine = (Tuple) ergTable.get(i);
+				assertEquals(n, ergLine.get(0));
+				for (int j = 1; j < ergLine.size(); j++) {
+					int m = j + 3;
+					assertEquals("check result for " + n + "*" + m, n * m,
+							ergLine.get(j));
+				}
+			}
+			PVector<String> titles = ergTable.getTitles();
+			assertEquals(4, titles.size());
+			assertEquals("", titles.get(0));
+			assertEquals("4", titles.get(1));
+			assertEquals("5", titles.get(2));
+			assertEquals("6", titles.get(3));
 		}
 	}
 

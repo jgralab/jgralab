@@ -73,6 +73,7 @@ import de.uni_koblenz.jgralab.greql.schema.IsPartOf;
 import de.uni_koblenz.jgralab.greql.schema.IsQueryExprOf;
 import de.uni_koblenz.jgralab.greql.schema.IsRecordElementOf;
 import de.uni_koblenz.jgralab.greql.schema.IsSimpleDeclOf;
+import de.uni_koblenz.jgralab.greql.schema.IsTableHeaderOf;
 import de.uni_koblenz.jgralab.greql.schema.IsTypeRestrOfExpression;
 import de.uni_koblenz.jgralab.greql.schema.IsValueExprOfConstruction;
 import de.uni_koblenz.jgralab.greql.schema.ListComprehension;
@@ -704,9 +705,20 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 		addImports("de.uni_koblenz.jgralab.JGraLab");
 		CodeList methodBody = new CodeList();
 		CodeSnippet initSnippet = new CodeSnippet();
-		if (compr instanceof ListComprehension) {
+		boolean isReportTable = false;
+		if (compr instanceof TableComprehension) {
+			isReportTable = true;
 			initSnippet
-					.add("org.pcollections.PCollection<Object> result = JGraLab.vector();");
+					.add("de.uni_koblenz.jgralab.greql.types.Table<Object> result = de.uni_koblenz.jgralab.greql.types.Table.empty();");
+		}
+		if (compr instanceof ListComprehension) {
+			if (compr.getFirstIsTableHeaderOfIncidence(EdgeDirection.IN) == null) {
+				initSnippet
+						.add("org.pcollections.PCollection<Object> result = JGraLab.vector();");
+			} else {
+				initSnippet
+						.add("de.uni_koblenz.jgralab.greql.types.Table<Object> result = de.uni_koblenz.jgralab.greql.types.Table.empty();");
+			}
 		}
 		if (compr instanceof SetComprehension) {
 			initSnippet
@@ -716,10 +728,6 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 			initSnippet
 					.add("org.pcollections.PMap<Object, Object> result = JGraLab.map();");
 		}
-		if (compr instanceof TableComprehension) {
-			initSnippet
-					.add("de.uni_koblenz.jgralab.greql.types.Table<Object> result = de.uni_koblenz.jgralab.greql.types.Table.empty();");
-		}
 
 		// check max count
 		Expression maxCount = compr.get_maxCount();
@@ -727,6 +735,22 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 		if (hasMaxCount) {
 			initSnippet.add("int maxCount = (Integer) "
 					+ createCodeForExpression(maxCount) + ";");
+		}
+
+		// set table header
+		IsTableHeaderOf isTableHeaderOf = compr
+				.getFirstIsTableHeaderOfIncidence(EdgeDirection.IN);
+		if (isTableHeaderOf != null) {
+			initSnippet
+					.add("org.pcollections.PVector<String> header = JGraLab.vector();");
+			while (isTableHeaderOf != null) {
+				initSnippet.add("header = header.plus("
+						+ createCodeForExpression(isTableHeaderOf.getAlpha())
+						+ ");");
+				isTableHeaderOf = isTableHeaderOf
+						.getNextIsTableHeaderOfIncidence(EdgeDirection.IN);
+			}
+			initSnippet.add("result = result.withTitles(header);");
 		}
 
 		methodBody.add(initSnippet);
@@ -800,8 +824,14 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 				constraintSnippet.add("constraint = constraint && (Boolean) "
 						+ createCodeForExpression(constrExpr) + ";");
 			}
-			constraintSnippet.add("if (constraint)");
-			varIterationList.add(constraintSnippet);
+			constraintSnippet.add("if (constraint){");
+			CodeList constraint = new CodeList();
+			constraint.add(constraintSnippet);
+			CodeList body = new CodeList();
+			constraint.add(body);
+			constraint.add(new CodeSnippet("}"));
+			varIterationList.add(constraint);
+			varIterationList = body;
 		}
 
 		// main expression

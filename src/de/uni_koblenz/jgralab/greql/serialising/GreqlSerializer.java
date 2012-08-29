@@ -74,6 +74,7 @@ import de.uni_koblenz.jgralab.greql.schema.IntermediateVertexPathDescription;
 import de.uni_koblenz.jgralab.greql.schema.IsExpressionOnSubgraph;
 import de.uni_koblenz.jgralab.greql.schema.IsSubgraphDefiningExpression;
 import de.uni_koblenz.jgralab.greql.schema.IsSubgraphDefinitionOf;
+import de.uni_koblenz.jgralab.greql.schema.IsTableHeaderOf;
 import de.uni_koblenz.jgralab.greql.schema.IteratedPathDescription;
 import de.uni_koblenz.jgralab.greql.schema.IterationType;
 import de.uni_koblenz.jgralab.greql.schema.LetExpression;
@@ -329,17 +330,14 @@ public class GreqlSerializer {
 		} else if (exp instanceof SetConstruction) {
 			serializeSetConstruction((SetConstruction) exp);
 		} else if (exp instanceof TupleConstruction) {
-			serializeTupleConstruction((TupleConstruction) exp, false);
+			serializeTupleConstruction((TupleConstruction) exp);
 		} else {
 			throw new GreqlException("Unknown ValueConstruction " + exp + ".");
 		}
 	}
 
-	private void serializeTupleConstruction(TupleConstruction exp,
-			boolean implicit) {
-		if (!implicit) {
-			sb.append("tup(");
-		}
+	private void serializeTupleConstruction(TupleConstruction exp) {
+		sb.append("tup(");
 		boolean first = true;
 		for (Expression val : exp.get_part()) {
 			if (first) {
@@ -349,9 +347,7 @@ public class GreqlSerializer {
 			}
 			serializeExpression(val, false);
 		}
-		if (!implicit) {
-			sb.append(")");
-		}
+		sb.append(")");
 	}
 
 	private void serializeSetConstruction(SetConstruction exp) {
@@ -751,12 +747,34 @@ public class GreqlSerializer {
 
 		Expression result = exp.get_compResultDef();
 
+		IsTableHeaderOf isTableHeaderOf = exp
+				.getFirstIsTableHeaderOfIncidence(EdgeDirection.IN);
+
 		if (result instanceof TupleConstruction) {
 			// here the tup() can be omitted
-			serializeTupleConstruction((TupleConstruction) result, true);
+			boolean first = true;
+			for (Expression val : ((TupleConstruction) result).get_part()) {
+				if (first) {
+					first = false;
+				} else {
+					sb.append(", ");
+				}
+				serializeExpression(val, false);
+				if (isTableHeaderOf != null) {
+					sb.append(" as ");
+					serializeExpression(isTableHeaderOf.getAlpha(), false);
+					isTableHeaderOf = isTableHeaderOf
+							.getNextIsTableHeaderOfIncidence(EdgeDirection.IN);
+				}
+			}
 			sb.append(' ');
 		} else {
 			serializeExpression(result, true);
+			if (isTableHeaderOf != null) {
+				sb.append(" as ");
+				serializeExpression(isTableHeaderOf.getAlpha(), false);
+				sb.append(" ");
+			}
 		}
 		sb.append("end");
 	}
