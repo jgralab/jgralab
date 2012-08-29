@@ -467,7 +467,6 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 	private String createCodeForEdgeSetExpression(EdgeSetExpression setExpr) {
 		addImports("de.uni_koblenz.jgralab.JGraLab");
 		addImports("de.uni_koblenz.jgralab.Edge");
-		addImports("de.uni_koblenz.jgralab.greql.types.TypeCollection");
 		CodeList list = new CodeList();
 		TypeCollection typeCol = TypeCollection.empty();
 		for (IsTypeRestrOfExpression inc : setExpr
