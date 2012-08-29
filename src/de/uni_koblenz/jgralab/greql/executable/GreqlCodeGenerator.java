@@ -894,20 +894,23 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 		iteratedExprSnip.add(tabs
 				+ getVariableName(Integer.toString(resultDefinition.getId()))
 				+ " = null;");
+		iteratedExprSnip.add(tabs + "Object currentResult = "
+				+ createCodeForExpression(resultDefinition) + ";");
 		switch (quantifier.get_type()) {
 		case FORALL:
-			iteratedExprSnip.add(tabs + "if ( ! (Boolean) "
-					+ createCodeForExpression(resultDefinition)
-					+ ") return false;");
+			iteratedExprSnip
+					.add(tabs
+							+ "if ((currentResult instanceof Boolean) && ! (Boolean) currentResult) return false;");
 			break;
 		case EXISTS:
-			iteratedExprSnip.add(tabs + "if ( (Boolean) "
-					+ createCodeForExpression(resultDefinition)
-					+ ") return true;");
+			iteratedExprSnip
+					.add(tabs
+							+ "if (!(currentResult instanceof Boolean) || (Boolean) currentResult) return true;");
 			break;
 		case EXISTSONE:
-			iteratedExprSnip.add(tabs + "if ( (Boolean) "
-					+ createCodeForExpression(resultDefinition) + ") {");
+			iteratedExprSnip
+					.add(tabs
+							+ "if (!(currentResult instanceof Boolean) || (Boolean) currentResult) {");
 			iteratedExprSnip.add(tabs + "\tif (result) {");
 			iteratedExprSnip.add(tabs
 					+ "\t\treturn false; //two elements exists");
