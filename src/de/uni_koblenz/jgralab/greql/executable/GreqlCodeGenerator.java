@@ -773,22 +773,19 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 					+ createCodeForExpression(columnHeader) + ".toString());");
 			varIterationForColumnHeader.add(bodyOfColumnHeader);
 			scope.blockEnd();
-			methodBody.add(new CodeSnippet(
-					"result = result.withTitles(columnHeader);"));
 
 			// create code for row header
 			scope.blockBegin();
 			Expression rowHeader = compr.getFirstIsRowHeaderExprOfIncidence(
 					EdgeDirection.IN).getAlpha();
+			initSnippet
+					.add("org.pcollections.PVector<Object> rowHeader = JGraLab.vector();");
 			CodeList varIterationForRowHeader = createCodeForVariableIterationOfComprehension(
 					methodBody, hasMaxCount, compr,
 					getNeededVariables(rowHeader));
 			CodeSnippet bodyOfRowHeader = new CodeSnippet();
-			bodyOfRowHeader
-					.add("org.pcollections.PCollection<Object> row = Tuple.empty();");
-			bodyOfRowHeader.add("row = row.plus("
+			bodyOfRowHeader.add("rowHeader = rowHeader.plus("
 					+ createCodeForExpression(rowHeader) + ");");
-			bodyOfRowHeader.add("result = result.plus(row);");
 			varIterationForRowHeader.add(bodyOfRowHeader);
 			scope.blockEnd();
 		}
@@ -844,9 +841,65 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 		}
 		varIterationList.add(iteratedExprSnip);
 
+		if (isReportTable) {
+			CodeSnippet result = new CodeSnippet();
+			result.add("de.uni_koblenz.jgralab.greql.types.Table<Object> resultTable = de.uni_koblenz.jgralab.greql.types.Table.empty();");
+			result.add("resultTable = resultTable.withTitles(columnHeader);");
+			if (isColumnDeclaredFirst(compr)) {
+				result.add("for (int r = 0; r < rowHeader.size(); r++) {");
+				result.add("\tTuple row = Tuple.empty();");
+				result.add("\trow = row.plus(rowHeader.get(r));");
+				result.add("\tfor (int c = 0; c < columnHeader.size() - 1; c++) {");
+				result.add("\t\trow = row.plus(result.get((columnHeader.size() - 1) * c + r));");
+				result.add("\t}");
+				result.add("\tresultTable = resultTable.plus(row);");
+				result.add("}");
+			} else {
+				result.add("int numberOfColumns = columnHeader.size() - 1;");
+				result.add("Tuple row = null;");
+				result.add("for (int i=0; i < result.size(); i++) {");
+				result.add("\tif (i % numberOfColumns == 0) {");
+				result.add("\t\trow = Tuple.empty();");
+				result.add("\t\trow = row.plus(rowHeader.get(i/numberOfColumns));");
+				result.add("\t}");
+				result.add("\trow = row.plus(result.get(i));");
+				result.add("\tif (i % numberOfColumns == numberOfColumns - 1) {");
+				result.add("\t\tresultTable = resultTable.plus(row);");
+				result.add("\t}");
+				result.add("}");
+			}
+			result.add("result = resultTable;");
+			methodBody.add(result);
+		}
+
 		methodBody.add(new CodeSnippet("return result;"));
 		scope.blockEnd();
 		return createMethod(methodBody, compr);
+	}
+
+	private boolean isColumnDeclaredFirst(Comprehension compr) {
+		Declaration decl = (Declaration) compr.getFirstIsCompDeclOfIncidence(
+				EdgeDirection.IN).getThat();
+		Expression columnHeader = compr.getFirstIsColumnHeaderExprOfIncidence(
+				EdgeDirection.IN).getAlpha();
+		Set<Variable> columnVariables = getNeededVariables(columnHeader);
+		Expression rowHeader = compr.getFirstIsRowHeaderExprOfIncidence(
+				EdgeDirection.IN).getAlpha();
+		Set<Variable> rowVariables = getNeededVariables(rowHeader);
+		for (IsSimpleDeclOf isdo : decl
+				.getIsSimpleDeclOfIncidences(EdgeDirection.IN)) {
+			SimpleDeclaration sDecl = isdo.getAlpha();
+			for (IsDeclaredVarOf idvo : sDecl
+					.getIsDeclaredVarOfIncidences(EdgeDirection.IN)) {
+				Variable declVar = idvo.getAlpha();
+				if (columnVariables.contains(declVar)) {
+					return true;
+				} else if (rowVariables.contains(declVar)) {
+					return false;
+				}
+			}
+		}
+		return false;
 	}
 
 	private Set<Variable> getNeededVariables(Expression expr) {

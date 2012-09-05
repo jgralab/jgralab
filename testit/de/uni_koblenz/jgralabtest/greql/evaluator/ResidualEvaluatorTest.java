@@ -827,9 +827,6 @@ public class ResidualEvaluatorTest {
 	@Test
 	public void testFWRExpression_reportTable_twoVariablesAndThreeColumns()
 			throws InstantiationException, IllegalAccessException {
-		// TODO check "from n,m:list(1..3) with n*m>5 reportTable n,m,n*m end"
-		// TODO check "from n,m,o:list(1..3) reportTable n,m,n*m end"
-		// TODO check different endings n,m,o or n,m,n,n*m
 		String queryText = "from n,m:list(1..3) reportTable n,m,n*m end";
 		for (GreqlQuery query : new GreqlQuery[] {
 				GreqlQuery.createQuery(queryText),
@@ -840,6 +837,7 @@ public class ResidualEvaluatorTest {
 			for (int i = 0; i < ergTable.size(); i++) {
 				int n = i + 1;
 				Tuple ergLine = (Tuple) ergTable.get(i);
+				assertEquals(ergTable.getTitles().size(), ergLine.size());
 				assertEquals(n, ergLine.get(0));
 				for (int j = 1; j < ergLine.size(); j++) {
 					int m = j;
@@ -869,6 +867,7 @@ public class ResidualEvaluatorTest {
 			for (int i = 0; i < ergTable.size(); i++) {
 				int n = i + 1;
 				Tuple ergLine = (Tuple) ergTable.get(i);
+				assertEquals(ergTable.getTitles().size(), ergLine.size());
 				assertEquals(n, ergLine.get(0));
 				for (int j = 1; j < ergLine.size(); j++) {
 					int m = j + 3;
