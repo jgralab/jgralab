@@ -708,6 +708,7 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 		boolean isReportTable = false;
 		if (compr instanceof TableComprehension) {
 			isReportTable = true;
+			addImports("de.uni_koblenz.jgralab.greql.types.Tuple");
 			initSnippet
 					.add("de.uni_koblenz.jgralab.greql.types.Table<Object> result = de.uni_koblenz.jgralab.greql.types.Table.empty();");
 		}
@@ -755,66 +756,51 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 
 		methodBody.add(initSnippet);
 
-		Declaration decl = (Declaration) compr.getFirstIsCompDeclOfIncidence(
-				EdgeDirection.IN).getThat();
+		if (isReportTable) {
+			// create code for column header
+			scope.blockBegin();
+			Expression columnHeader = compr
+					.getFirstIsColumnHeaderExprOfIncidence(EdgeDirection.IN)
+					.getAlpha();
+			initSnippet
+					.add("org.pcollections.PVector<String> columnHeader = JGraLab.vector();");
+			initSnippet.add("columnHeader = columnHeader.plus(\"\");");
+			CodeList varIterationForColumnHeader = createCodeForVariableIterationOfComprehension(
+					methodBody, hasMaxCount, compr,
+					getNeededVariables(columnHeader));
+			CodeSnippet bodyOfColumnHeader = new CodeSnippet();
+			bodyOfColumnHeader.add("columnHeader = columnHeader.plus("
+					+ createCodeForExpression(columnHeader) + ".toString());");
+			varIterationForColumnHeader.add(bodyOfColumnHeader);
+			scope.blockEnd();
+			methodBody.add(new CodeSnippet(
+					"result = result.withTitles(columnHeader);"));
 
-		// Declarations and variable iteration loops
-
-		CodeList varIterationList = new CodeList();
-		methodBody.add(varIterationList);
-		scope.blockBegin();
-		for (IsSimpleDeclOf simpleDeclInc : decl
-				.getIsSimpleDeclOfIncidences(EdgeDirection.IN)) {
-			SimpleDeclaration simpleDecl = (SimpleDeclaration) simpleDeclInc
-					.getThat();
-			Expression domain = (Expression) simpleDecl
-					.getFirstIsTypeExprOfDeclarationIncidence(EdgeDirection.IN)
-					.getThat();
-			CodeSnippet simpleDeclSnippet = new CodeSnippet();
-			varIterationList.setVariable(
-					"simpleDeclDomainName",
-					"domainOfSimpleDecl_"
-							+ Integer.toString(simpleDecl.getId()));
-			simpleDeclSnippet
-					.add("@SuppressWarnings(\"unchecked\")",
-							"org.pcollections.PCollection<Object> #simpleDeclDomainName# = (org.pcollections.PCollection<Object>) "
-									+ createCodeForExpression(domain) + ";");
-			varIterationList.add(simpleDeclSnippet);
-			for (IsDeclaredVarOf declaredVarInc : simpleDecl
-					.getIsDeclaredVarOfIncidences(EdgeDirection.IN)) {
-				Variable var = (Variable) declaredVarInc.getThat();
-				CodeSnippet varIterationSnippet = new CodeSnippet();
-				varIterationSnippet.setVariable("variableName", var.get_name());
-				varIterationSnippet
-						.add("for (Object #variableName# : #simpleDeclDomainName#) {");
-				if (hasMaxCount) {
-					varIterationSnippet.add("\tif(maxCount==0) break;");
-				}
-				VariableEvaluator<? extends Variable> vertexEval = (VariableEvaluator<? extends Variable>) ((GreqlQueryImpl) query)
-						.getVertexEvaluator(var);
-				List<VertexEvaluator<? extends Expression>> dependingExpressions = vertexEval
-						.calculateDependingExpressions();
-				for (VertexEvaluator<? extends Expression> ve : dependingExpressions) {
-					Vertex currentV = ve.getVertex();
-					if (currentV instanceof Variable) {
-						continue;
-					}
-					// reset stored evaluation values for expressions depending
-					// on variable var
-					String variableName = getVariableName(Integer
-							.toString(currentV.getId()));
-					varIterationSnippet.add("\t" + variableName + " = null;");
-				}
-				scope.addVariable(var.get_name());
-				varIterationList.add(varIterationSnippet);
-				CodeList body = new CodeList();
-				varIterationList.add(body);
-				varIterationList.add(new CodeSnippet("}"));
-				varIterationList = body;
-			}
+			// create code for row header
+			scope.blockBegin();
+			Expression rowHeader = compr.getFirstIsRowHeaderExprOfIncidence(
+					EdgeDirection.IN).getAlpha();
+			CodeList varIterationForRowHeader = createCodeForVariableIterationOfComprehension(
+					methodBody, hasMaxCount, compr,
+					getNeededVariables(rowHeader));
+			CodeSnippet bodyOfRowHeader = new CodeSnippet();
+			bodyOfRowHeader
+					.add("org.pcollections.PCollection<Object> row = Tuple.empty();");
+			bodyOfRowHeader.add("row = row.plus("
+					+ createCodeForExpression(rowHeader) + ");");
+			bodyOfRowHeader.add("result = result.plus(row);");
+			varIterationForRowHeader.add(bodyOfRowHeader);
+			scope.blockEnd();
 		}
 
+		// iterate variables
+		scope.blockBegin();
+		CodeList varIterationList = createCodeForVariableIterationOfComprehension(
+				methodBody, hasMaxCount, compr, null);
+
 		// condition
+		Declaration decl = (Declaration) compr.getFirstIsCompDeclOfIncidence(
+				EdgeDirection.IN).getThat();
 		if (decl.getFirstIsConstraintOfIncidence(EdgeDirection.IN) != null) {
 			CodeSnippet constraintSnippet = new CodeSnippet();
 			constraintSnippet.add("boolean constraint = true;");
@@ -861,6 +847,85 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 		methodBody.add(new CodeSnippet("return result;"));
 		scope.blockEnd();
 		return createMethod(methodBody, compr);
+	}
+
+	private Set<Variable> getNeededVariables(Expression expr) {
+		VertexEvaluator<? extends Expression> vertexEval = ((GreqlQueryImpl) query)
+				.getVertexEvaluator(expr);
+		return vertexEval.getNeededVariables();
+	}
+
+	public CodeList createCodeForVariableIterationOfComprehension(
+			CodeList methodBody, boolean hasMaxCount, Comprehension compr,
+			Set<Variable> neededVariables) {
+		Declaration decl = (Declaration) compr.getFirstIsCompDeclOfIncidence(
+				EdgeDirection.IN).getThat();
+
+		// Declarations and variable iteration loops
+
+		CodeList varIterationList = new CodeList();
+		methodBody.add(new CodeSnippet("{"));
+		methodBody.add(varIterationList);
+		methodBody.add(new CodeSnippet("}"));
+		for (IsSimpleDeclOf simpleDeclInc : decl
+				.getIsSimpleDeclOfIncidences(EdgeDirection.IN)) {
+			SimpleDeclaration simpleDecl = (SimpleDeclaration) simpleDeclInc
+					.getThat();
+			Expression domain = (Expression) simpleDecl
+					.getFirstIsTypeExprOfDeclarationIncidence(EdgeDirection.IN)
+					.getThat();
+			CodeSnippet simpleDeclSnippet = new CodeSnippet();
+			boolean isDomainCreated = false;
+			varIterationList.add(simpleDeclSnippet);
+			for (IsDeclaredVarOf declaredVarInc : simpleDecl
+					.getIsDeclaredVarOfIncidences(EdgeDirection.IN)) {
+				Variable var = (Variable) declaredVarInc.getThat();
+				if (neededVariables != null && !neededVariables.contains(var)) {
+					continue;
+				}
+				if (!isDomainCreated) {
+					isDomainCreated = true;
+					varIterationList.setVariable(
+							"simpleDeclDomainName",
+							"domainOfSimpleDecl_"
+									+ Integer.toString(simpleDecl.getId()));
+					simpleDeclSnippet
+							.add("@SuppressWarnings(\"unchecked\")",
+									"org.pcollections.PCollection<Object> #simpleDeclDomainName# = (org.pcollections.PCollection<Object>) "
+											+ createCodeForExpression(domain)
+											+ ";");
+				}
+				CodeSnippet varIterationSnippet = new CodeSnippet();
+				varIterationSnippet.setVariable("variableName", var.get_name());
+				varIterationSnippet
+						.add("for (Object #variableName# : #simpleDeclDomainName#) {");
+				if (hasMaxCount) {
+					varIterationSnippet.add("\tif(maxCount==0) break;");
+				}
+				VariableEvaluator<? extends Variable> vertexEval = (VariableEvaluator<? extends Variable>) ((GreqlQueryImpl) query)
+						.getVertexEvaluator(var);
+				List<VertexEvaluator<? extends Expression>> dependingExpressions = vertexEval
+						.calculateDependingExpressions();
+				for (VertexEvaluator<? extends Expression> ve : dependingExpressions) {
+					Vertex currentV = ve.getVertex();
+					if (currentV instanceof Variable) {
+						continue;
+					}
+					// reset stored evaluation values for expressions depending
+					// on variable var
+					String variableName = getVariableName(Integer
+							.toString(currentV.getId()));
+					varIterationSnippet.add("\t" + variableName + " = null;");
+				}
+				scope.addVariable(var.get_name());
+				varIterationList.add(varIterationSnippet);
+				CodeList body = new CodeList();
+				varIterationList.add(body);
+				varIterationList.add(new CodeSnippet("}"));
+				varIterationList = body;
+			}
+		}
+		return varIterationList;
 	}
 
 	private String createCodeForQuantifiedExpression(
@@ -1052,6 +1117,10 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 		if (funId.get_name().equals("backwardVertexSet")) {
 			throw new RuntimeException(
 					"Code generation for function backwardVertexSet is not yet implemented. Use the path expression notation v --> instead of backwardVertexSet(v,-->)");
+		}
+		if (funId.get_name().equals("reachableVertices")) {
+			throw new RuntimeException(
+					"Code generation for function reachableVertices is not yet implemented. Use the path expression notation v --> instead of reachableVertices(v,-->)");
 		}
 		if (funId.get_name().equals("isReachable")) {
 			throw new RuntimeException(
@@ -1772,7 +1841,7 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 		return "result_" + uniqueId;
 	}
 
-	Set<Integer> alreadyCreatedEvaluateFunctions = new HashSet<Integer>();
+	Set<String> alreadyCreatedEvaluateFunctions = new HashSet<String>();
 
 	/**
 	 * Creates a method encapsulating the codelist given and returns the call of
@@ -1787,26 +1856,33 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 	 */
 	private String createMethod(CodeList methodBody, GreqlVertex vertex) {
 		String comment = "// " + GreqlSerializer.serializeVertex(vertex);
-		String methodName = "evaluationMethod_" + vertex.getId();
 		String uniqueId = Integer.toString(vertex.getId());
 		StringBuilder formalParams = new StringBuilder();
 		StringBuilder actualParams = new StringBuilder();
 		String delim = "";
+		int numberOfParameters = 0;
 		for (String s : scope.getDefinedVariables()) {
+			numberOfParameters++;
 			formalParams.append(delim + "Object " + s);
 			actualParams.append(delim + s);
 			delim = ",";
 		}
-		if (!alreadyCreatedEvaluateFunctions.contains(vertex.getId())) {
-			alreadyCreatedEvaluateFunctions.add(vertex.getId());
+		String methodName = "evaluationMethod_" + vertex.getId() + "_"
+				+ numberOfParameters;
+		if (!alreadyCreatedEvaluateFunctions.contains(vertex.getId() + "_"
+				+ numberOfParameters)) {
+			alreadyCreatedEvaluateFunctions.add(vertex.getId() + "_"
+					+ numberOfParameters);
 			CodeList evaluateMethodBlock = new CodeList();
 			evaluateMethodBlock.setVariable("actualParams",
 					actualParams.toString());
 			evaluateMethodBlock.setVariable("formalParams",
 					formalParams.toString());
-			evaluateMethodBlock.add(new CodeSnippet("private Object "
-					+ getVariableName(uniqueId) + " = null;"));
-			resultVariables.add(getVariableName(uniqueId));
+			if (!resultVariables.contains(getVariableName(uniqueId))) {
+				evaluateMethodBlock.add(new CodeSnippet("private Object "
+						+ getVariableName(uniqueId) + " = null;"));
+				resultVariables.add(getVariableName(uniqueId));
+			}
 			CodeSnippet checkVariableMethod = new CodeSnippet();
 			checkVariableMethod.add("private Object " + methodName
 					+ "(#formalParams#) {");
