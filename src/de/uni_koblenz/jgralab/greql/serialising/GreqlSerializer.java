@@ -750,6 +750,17 @@ public class GreqlSerializer {
 		IsTableHeaderOf isTableHeaderOf = exp
 				.getFirstIsTableHeaderOfIncidence(EdgeDirection.IN);
 
+		if (exp.isInstanceOf(TableComprehension.VC)) {
+			Expression columnHeader = exp
+					.getFirstIsColumnHeaderExprOfIncidence(EdgeDirection.IN)
+					.getAlpha();
+			serializeExpression(columnHeader, false);
+			sb.append(", ");
+			Expression rowHeader = exp.getFirstIsRowHeaderExprOfIncidence(
+					EdgeDirection.IN).getAlpha();
+			serializeExpression(rowHeader, false);
+			sb.append(", ");
+		}
 		if (result instanceof TupleConstruction) {
 			// here the tup() can be omitted
 			boolean first = true;
