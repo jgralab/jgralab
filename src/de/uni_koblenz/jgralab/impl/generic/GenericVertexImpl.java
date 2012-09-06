@@ -136,7 +136,7 @@ public class GenericVertexImpl extends VertexImpl implements
 		if (getAttributedElementClass().getAttribute(name).getDomain()
 				.isConformValue(data)) {
 			if (graph.hasECARuleManager()) {
-				T oldValue = this.getAttribute(name);
+				T oldValue = this.<T> getAttribute(name);
 				graph.getECARuleManager().fireBeforeChangeAttributeEvents(this,
 						name, oldValue, data);
 				attributes[i] = data;

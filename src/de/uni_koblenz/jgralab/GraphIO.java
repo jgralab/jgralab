@@ -1071,7 +1071,7 @@ public class GraphIO {
 		}
 		GraphFactory factory = schema
 				.createDefaultGraphFactory(implementationType);
-		return loadGraphFromFile(filename, factory, pf);
+		return GraphIO.<G> loadGraphFromFile(filename, factory, pf);
 	}
 
 	public static <G extends Graph> G loadGraphFromFile(String filename,
@@ -1090,8 +1090,9 @@ public class GraphIO {
 					inputStream = new BufferedInputStream(fileStream,
 							BUFFER_SIZE);
 				}
-				return loadGraphFromStream(inputStream, factory.getSchema(),
-						factory, factory.getImplementationType(), pf);
+				return GraphIO.<G> loadGraphFromStream(inputStream,
+						factory.getSchema(), factory,
+						factory.getImplementationType(), pf);
 			} catch (IOException ex) {
 				throw new GraphIOException(
 						"Exception while loading graph from file " + filename,
@@ -1110,7 +1111,7 @@ public class GraphIO {
 	public static <G extends Graph> G loadGraphFromDatabase(String id,
 			GraphDatabase graphDatabase) throws GraphDatabaseException {
 		if (graphDatabase != null) {
-			return graphDatabase.getGraph(id);
+			return graphDatabase.<G> getGraph(id);
 		} else {
 			throw new GraphDatabaseException("No graph database given.");
 		}

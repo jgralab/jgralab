@@ -390,7 +390,7 @@ public abstract class GraphImpl extends GraphBaseImpl implements
 		assert alpha.getGraph() == this;
 		assert omega.isValid();
 		assert omega.getGraph() == this;
-		T edge = graphFactory.createEdge(ec, 0, this, alpha, omega);
+		T edge = graphFactory.<T> createEdge(ec, 0, this, alpha, omega);
 		edge.initializeAttributesWithDefaultValues();
 		graphCache.addEdge((DatabasePersistableEdge) edge);
 		return edge;
@@ -398,7 +398,7 @@ public abstract class GraphImpl extends GraphBaseImpl implements
 
 	@Override
 	public <T extends Vertex> T createVertex(VertexClass vc) {
-		T vertex = graphFactory.createVertex(vc, 0, this);
+		T vertex = graphFactory.<T> createVertex(vc, 0, this);
 		vertex.initializeAttributesWithDefaultValues();
 		graphCache.addVertex((DatabasePersistableVertex) vertex);
 		return vertex;
@@ -1403,30 +1403,30 @@ public abstract class GraphImpl extends GraphBaseImpl implements
 		this.tc.set(tc);
 		return oldTc;
 	}
-	
-	
+
 	@Override
-	public TemporaryVertex createTemporaryVertex(){
+	public TemporaryVertex createTemporaryVertex() {
 		throw new UnsupportedOperationException();
 	}
-	
+
 	@Override
-	public TemporaryVertex createTemporaryVertex(VertexClass preliminaryType){
+	public TemporaryVertex createTemporaryVertex(VertexClass preliminaryType) {
 		throw new UnsupportedOperationException();
 	}
-	
+
 	@Override
-	public TemporaryEdge createTemporaryEdge(Vertex alpha, Vertex omega){
+	public TemporaryEdge createTemporaryEdge(Vertex alpha, Vertex omega) {
 		throw new UnsupportedOperationException();
 	}
-	
+
 	@Override
-	public TemporaryEdge createTemporaryEdge(EdgeClass preliminaryType,Vertex alpha, Vertex omega){
+	public TemporaryEdge createTemporaryEdge(EdgeClass preliminaryType,
+			Vertex alpha, Vertex omega) {
 		throw new UnsupportedOperationException();
 	}
-	
+
 	@Override
-	public boolean hasTemporaryElements(){
+	public boolean hasTemporaryElements() {
 		return false;
 	}
 
