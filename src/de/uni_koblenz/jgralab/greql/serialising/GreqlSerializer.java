@@ -74,6 +74,7 @@ import de.uni_koblenz.jgralab.greql.schema.IntermediateVertexPathDescription;
 import de.uni_koblenz.jgralab.greql.schema.IsExpressionOnSubgraph;
 import de.uni_koblenz.jgralab.greql.schema.IsSubgraphDefiningExpression;
 import de.uni_koblenz.jgralab.greql.schema.IsSubgraphDefinitionOf;
+import de.uni_koblenz.jgralab.greql.schema.IsTableHeaderOf;
 import de.uni_koblenz.jgralab.greql.schema.IteratedPathDescription;
 import de.uni_koblenz.jgralab.greql.schema.IterationType;
 import de.uni_koblenz.jgralab.greql.schema.LetExpression;
@@ -329,17 +330,14 @@ public class GreqlSerializer {
 		} else if (exp instanceof SetConstruction) {
 			serializeSetConstruction((SetConstruction) exp);
 		} else if (exp instanceof TupleConstruction) {
-			serializeTupleConstruction((TupleConstruction) exp, false);
+			serializeTupleConstruction((TupleConstruction) exp);
 		} else {
 			throw new GreqlException("Unknown ValueConstruction " + exp + ".");
 		}
 	}
 
-	private void serializeTupleConstruction(TupleConstruction exp,
-			boolean implicit) {
-		if (!implicit) {
-			sb.append("tup(");
-		}
+	private void serializeTupleConstruction(TupleConstruction exp) {
+		sb.append("tup(");
 		boolean first = true;
 		for (Expression val : exp.get_part()) {
 			if (first) {
@@ -349,9 +347,7 @@ public class GreqlSerializer {
 			}
 			serializeExpression(val, false);
 		}
-		if (!implicit) {
-			sb.append(")");
-		}
+		sb.append(")");
 	}
 
 	private void serializeSetConstruction(SetConstruction exp) {
@@ -728,13 +724,14 @@ public class GreqlSerializer {
 		sb.append("from ");
 		serializeDeclaration(exp.get_compDecl(), true);
 		if (exp instanceof SetComprehension) {
-			sb.append(" reportSet ");
+			sb.append(" reportSet");
 		} else if (exp instanceof ListComprehension) {
-			sb.append(" report ");
+			sb.append(" report");
 		} else if (exp instanceof TableComprehension) {
-			sb.append(" reportTable ");
+			sb.append(" reportTable");
 		} else if (exp instanceof MapComprehension) {
-			sb.append(" reportMap ");
+			sb.append(" reportMap");
+			serializeLimitedComprehension(exp);
 			MapComprehension mc = (MapComprehension) exp;
 			// MapComprehensions have no compResultDef, but key and valueExprs
 			serializeExpression(mc.get_keyExpr(), false);
@@ -746,16 +743,61 @@ public class GreqlSerializer {
 			throw new GreqlException("Unknown Comprehension " + exp + ".");
 		}
 
+		serializeLimitedComprehension(exp);
+
 		Expression result = exp.get_compResultDef();
 
+		IsTableHeaderOf isTableHeaderOf = exp
+				.getFirstIsTableHeaderOfIncidence(EdgeDirection.IN);
+
+		if (exp.isInstanceOf(TableComprehension.VC)) {
+			Expression columnHeader = exp
+					.getFirstIsColumnHeaderExprOfIncidence(EdgeDirection.IN)
+					.getAlpha();
+			serializeExpression(columnHeader, false);
+			sb.append(", ");
+			Expression rowHeader = exp.getFirstIsRowHeaderExprOfIncidence(
+					EdgeDirection.IN).getAlpha();
+			serializeExpression(rowHeader, false);
+			sb.append(", ");
+		}
 		if (result instanceof TupleConstruction) {
 			// here the tup() can be omitted
-			serializeTupleConstruction((TupleConstruction) result, true);
+			boolean first = true;
+			for (Expression val : ((TupleConstruction) result).get_part()) {
+				if (first) {
+					first = false;
+				} else {
+					sb.append(", ");
+				}
+				serializeExpression(val, false);
+				if (isTableHeaderOf != null) {
+					sb.append(" as ");
+					serializeExpression(isTableHeaderOf.getAlpha(), false);
+					isTableHeaderOf = isTableHeaderOf
+							.getNextIsTableHeaderOfIncidence(EdgeDirection.IN);
+				}
+			}
 			sb.append(' ');
 		} else {
 			serializeExpression(result, true);
+			if (isTableHeaderOf != null) {
+				sb.append(" as ");
+				serializeExpression(isTableHeaderOf.getAlpha(), false);
+				sb.append(" ");
+			}
 		}
 		sb.append("end");
+	}
+
+	private void serializeLimitedComprehension(Comprehension exp) {
+		Expression maxCount = exp.get_maxCount();
+		if (maxCount != null) {
+			sb.append("N ");
+			serializeExpression(maxCount, false);
+			sb.append(":");
+		}
+		sb.append(" ");
 	}
 
 	private void serializeQuantifiedExpression(QuantifiedExpression exp) {

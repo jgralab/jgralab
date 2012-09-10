@@ -24,7 +24,7 @@ public class Scope {
 
 	public void addVariable(String ident) {
 		list.getFirst().add(ident);
-	}	
+	}
 
 	public TreeSet<String> getDefinedVariables() {
 		TreeSet<String> r = new TreeSet<String>();
@@ -34,5 +34,4 @@ public class Scope {
 		return r;
 	}
 
-	
 }

@@ -41,10 +41,9 @@ public class PathSystemTest {
 				.evaluate(datagraph);
 		assertNotNull(result1);
 
-		GreqlCodeGenerator.generateCode(query, datagraph.getSchema(), classname
-				+ "2", "./testit/");
 		Class<ExecutableQuery> generatedQuery = GreqlCodeGenerator
-				.generateCode(query, datagraph.getSchema(), classname);
+				.generateCode(query, datagraph.getSchema(), classname
+						+ "_PathSystem");
 		PathSystem result2 = (PathSystem) generatedQuery.newInstance().execute(
 				datagraph);
 		assertNotNull(result2);
@@ -636,7 +635,7 @@ public class PathSystemTest {
 
 		Class<ExecutableQuery> generatedQuery = GreqlCodeGenerator
 				.generateCode(query, datagraph.getSchema(),
-						"testdata.TestVertexRestriction_StartVertex");
+						"testdata.TestVertexRestriction");
 		Object erg2 = generatedQuery.newInstance().execute(datagraph);
 		assertEquals(erg1, erg2);
 	}
@@ -650,7 +649,7 @@ public class PathSystemTest {
 
 		Class<ExecutableQuery> generatedQuery = GreqlCodeGenerator
 				.generateCode(query, datagraph.getSchema(),
-						"testdata.TestVertexRestriction_StartVertex_SeveralVertexClasses");
+						"testdata.TestVertexRestriction_SeveralVertexClasses");
 		Object erg2 = generatedQuery.newInstance().execute(datagraph);
 		assertEquals(erg1, erg2);
 	}

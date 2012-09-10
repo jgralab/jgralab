@@ -92,7 +92,7 @@ public class GenericGraphImpl extends GraphImpl implements
 	 */
 	@Override
 	public <T extends Vertex> T createVertex(VertexClass vc) {
-		return graphFactory.createVertex(vc, 0, this);
+		return graphFactory.<T> createVertex(vc, 0, this);
 	}
 
 	/**
@@ -102,7 +102,7 @@ public class GenericGraphImpl extends GraphImpl implements
 	@Override
 	public <T extends Edge> T createEdge(EdgeClass ec, Vertex alpha,
 			Vertex omega) {
-		return graphFactory.createEdge(ec, 0, this, alpha, omega);
+		return graphFactory.<T> createEdge(ec, 0, this, alpha, omega);
 	}
 
 	@Override
@@ -159,7 +159,7 @@ public class GenericGraphImpl extends GraphImpl implements
 		int i = getAttributedElementClass().getAttributeIndex(name);
 		if (type.getAttribute(name).getDomain().isConformValue(data)) {
 			if (hasECARuleManager()) {
-				T oldValue = getAttribute(name);
+				T oldValue = this.<T> getAttribute(name);
 				getECARuleManager().fireBeforeChangeAttributeEvents(this, name,
 						oldValue, data);
 				attributes[i] = data;
@@ -227,7 +227,7 @@ public class GenericGraphImpl extends GraphImpl implements
 	 * Returns the default value for attributes in the generic implementation if
 	 * there is no explicitly defined default value, according to the
 	 * attribute's domain.
-	 *
+	 * 
 	 * @param domain
 	 *            The attribute's domain.
 	 * @return The default value for attributes of the domain.

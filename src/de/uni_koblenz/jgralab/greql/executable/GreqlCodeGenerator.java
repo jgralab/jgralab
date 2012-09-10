@@ -12,6 +12,7 @@ import javax.tools.JavaCompiler;
 import javax.tools.StandardJavaFileManager;
 import javax.tools.ToolProvider;
 
+import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphIO;
@@ -72,6 +73,7 @@ import de.uni_koblenz.jgralab.greql.schema.IsPartOf;
 import de.uni_koblenz.jgralab.greql.schema.IsQueryExprOf;
 import de.uni_koblenz.jgralab.greql.schema.IsRecordElementOf;
 import de.uni_koblenz.jgralab.greql.schema.IsSimpleDeclOf;
+import de.uni_koblenz.jgralab.greql.schema.IsTableHeaderOf;
 import de.uni_koblenz.jgralab.greql.schema.IsTypeRestrOfExpression;
 import de.uni_koblenz.jgralab.greql.schema.IsValueExprOfConstruction;
 import de.uni_koblenz.jgralab.greql.schema.ListComprehension;
@@ -91,6 +93,7 @@ import de.uni_koblenz.jgralab.greql.schema.SetComprehension;
 import de.uni_koblenz.jgralab.greql.schema.SetConstruction;
 import de.uni_koblenz.jgralab.greql.schema.SimpleDeclaration;
 import de.uni_koblenz.jgralab.greql.schema.StringLiteral;
+import de.uni_koblenz.jgralab.greql.schema.TableComprehension;
 import de.uni_koblenz.jgralab.greql.schema.ThisEdge;
 import de.uni_koblenz.jgralab.greql.schema.ThisLiteral;
 import de.uni_koblenz.jgralab.greql.schema.ThisVertex;
@@ -702,28 +705,221 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 		addImports("de.uni_koblenz.jgralab.JGraLab");
 		CodeList methodBody = new CodeList();
 		CodeSnippet initSnippet = new CodeSnippet();
-		if (compr instanceof ListComprehension) {
+		boolean isReportTable = false;
+		if (compr instanceof TableComprehension) {
+			isReportTable = true;
+			addImports("de.uni_koblenz.jgralab.greql.types.Tuple");
 			initSnippet
-					.add("org.pcollections.PCollection<Object> result = JGraLab.vector();");
+					.add("de.uni_koblenz.jgralab.greql.types.Table<Object> result = de.uni_koblenz.jgralab.greql.types.Table.empty();");
+		}
+		if (compr instanceof ListComprehension) {
+			if (compr.getFirstIsTableHeaderOfIncidence(EdgeDirection.IN) == null) {
+				initSnippet
+						.add("org.pcollections.PCollection<Object> result = JGraLab.vector();");
+			} else {
+				initSnippet
+						.add("de.uni_koblenz.jgralab.greql.types.Table<Object> result = de.uni_koblenz.jgralab.greql.types.Table.empty();");
+			}
 		}
 		if (compr instanceof SetComprehension) {
 			initSnippet
 					.add("org.pcollections.PCollection<Object> result = JGraLab.set();");
 		}
 		if (compr instanceof MapComprehension) {
-			addImports("org.pcollections.PMap");
-			initSnippet.add("PMap result = JGraLab.map();");
+			initSnippet
+					.add("org.pcollections.PMap<Object, Object> result = JGraLab.map();");
 		}
+
+		// check max count
+		Expression maxCount = compr.get_maxCount();
+		boolean hasMaxCount = maxCount != null;
+		if (hasMaxCount) {
+			initSnippet.add("int maxCount = (Integer) "
+					+ createCodeForExpression(maxCount) + ";");
+		}
+
+		// set table header
+		IsTableHeaderOf isTableHeaderOf = compr
+				.getFirstIsTableHeaderOfIncidence(EdgeDirection.IN);
+		if (isTableHeaderOf != null) {
+			initSnippet
+					.add("org.pcollections.PVector<String> header = JGraLab.vector();");
+			while (isTableHeaderOf != null) {
+				initSnippet.add("header = header.plus("
+						+ createCodeForExpression(isTableHeaderOf.getAlpha())
+						+ ");");
+				isTableHeaderOf = isTableHeaderOf
+						.getNextIsTableHeaderOfIncidence(EdgeDirection.IN);
+			}
+			initSnippet.add("result = result.withTitles(header);");
+		}
+
 		methodBody.add(initSnippet);
 
+		if (isReportTable) {
+			// create code for column header
+			scope.blockBegin();
+			Expression columnHeader = compr
+					.getFirstIsColumnHeaderExprOfIncidence(EdgeDirection.IN)
+					.getAlpha();
+			initSnippet
+					.add("org.pcollections.PVector<String> columnHeader = JGraLab.vector();");
+			initSnippet.add("columnHeader = columnHeader.plus(\"\");");
+			CodeList varIterationForColumnHeader = createCodeForVariableIterationOfComprehension(
+					methodBody, hasMaxCount, compr,
+					getNeededVariables(columnHeader));
+			CodeSnippet bodyOfColumnHeader = new CodeSnippet();
+			bodyOfColumnHeader.add("columnHeader = columnHeader.plus("
+					+ createCodeForExpression(columnHeader) + ".toString());");
+			varIterationForColumnHeader.add(bodyOfColumnHeader);
+			scope.blockEnd();
+
+			// create code for row header
+			scope.blockBegin();
+			Expression rowHeader = compr.getFirstIsRowHeaderExprOfIncidence(
+					EdgeDirection.IN).getAlpha();
+			initSnippet
+					.add("org.pcollections.PVector<Object> rowHeader = JGraLab.vector();");
+			CodeList varIterationForRowHeader = createCodeForVariableIterationOfComprehension(
+					methodBody, hasMaxCount, compr,
+					getNeededVariables(rowHeader));
+			CodeSnippet bodyOfRowHeader = new CodeSnippet();
+			bodyOfRowHeader.add("rowHeader = rowHeader.plus("
+					+ createCodeForExpression(rowHeader) + ");");
+			varIterationForRowHeader.add(bodyOfRowHeader);
+			scope.blockEnd();
+		}
+
+		// iterate variables
+		scope.blockBegin();
+		CodeList varIterationList = createCodeForVariableIterationOfComprehension(
+				methodBody, hasMaxCount, compr, null);
+
+		// condition
+		Declaration decl = (Declaration) compr.getFirstIsCompDeclOfIncidence(
+				EdgeDirection.IN).getThat();
+		if (decl.getFirstIsConstraintOfIncidence(EdgeDirection.IN) != null) {
+			CodeSnippet constraintSnippet = new CodeSnippet();
+			constraintSnippet.add("boolean constraint = true;");
+			for (IsConstraintOf constraintInc : decl
+					.getIsConstraintOfIncidences(EdgeDirection.IN)) {
+				Expression constrExpr = (Expression) constraintInc.getThat();
+				constraintSnippet.add("constraint = constraint && (Boolean) "
+						+ createCodeForExpression(constrExpr) + ";");
+			}
+			constraintSnippet.add("if (constraint){");
+			CodeList constraint = new CodeList();
+			constraint.add(constraintSnippet);
+			CodeList body = new CodeList();
+			constraint.add(body);
+			constraint.add(new CodeSnippet("}"));
+			varIterationList.add(constraint);
+			varIterationList = body;
+		}
+
+		// main expression
+		CodeSnippet iteratedExprSnip = new CodeSnippet();
+		if (compr instanceof MapComprehension) {
+			Expression keyExpr = (Expression) ((MapComprehension) compr)
+					.getFirstIsKeyExprOfComprehensionIncidence(EdgeDirection.IN)
+					.getThat();
+			Expression valueExpr = (Expression) ((MapComprehension) compr)
+					.getFirstIsValueExprOfComprehensionIncidence(
+							EdgeDirection.IN).getThat();
+			iteratedExprSnip.add("result = result.plus("
+					+ createCodeForExpression(keyExpr) + ", "
+					+ createCodeForExpression(valueExpr) + ");");
+		} else {
+			Expression resultDefinition = (Expression) compr
+					.getFirstIsCompResultDefOfIncidence(EdgeDirection.IN)
+					.getThat();
+			iteratedExprSnip.add("result = result.plus("
+					+ createCodeForExpression(resultDefinition) + ");");
+		}
+		if (hasMaxCount) {
+			iteratedExprSnip.add("maxCount--;");
+		}
+		varIterationList.add(iteratedExprSnip);
+
+		if (isReportTable) {
+			CodeSnippet result = new CodeSnippet();
+			result.add("de.uni_koblenz.jgralab.greql.types.Table<Object> resultTable = de.uni_koblenz.jgralab.greql.types.Table.empty();");
+			result.add("resultTable = resultTable.withTitles(columnHeader);");
+			if (isColumnDeclaredFirst(compr)) {
+				result.add("for (int r = 0; r < rowHeader.size(); r++) {");
+				result.add("\tTuple row = Tuple.empty();");
+				result.add("\trow = row.plus(rowHeader.get(r));");
+				result.add("\tfor (int c = 0; c < columnHeader.size() - 1; c++) {");
+				result.add("\t\trow = row.plus(result.get((columnHeader.size() - 1) * c + r));");
+				result.add("\t}");
+				result.add("\tresultTable = resultTable.plus(row);");
+				result.add("}");
+			} else {
+				result.add("int numberOfColumns = columnHeader.size() - 1;");
+				result.add("Tuple row = null;");
+				result.add("for (int i=0; i < result.size(); i++) {");
+				result.add("\tif (i % numberOfColumns == 0) {");
+				result.add("\t\trow = Tuple.empty();");
+				result.add("\t\trow = row.plus(rowHeader.get(i/numberOfColumns));");
+				result.add("\t}");
+				result.add("\trow = row.plus(result.get(i));");
+				result.add("\tif (i % numberOfColumns == numberOfColumns - 1) {");
+				result.add("\t\tresultTable = resultTable.plus(row);");
+				result.add("\t}");
+				result.add("}");
+			}
+			result.add("result = resultTable;");
+			methodBody.add(result);
+		}
+
+		methodBody.add(new CodeSnippet("return result;"));
+		scope.blockEnd();
+		return createMethod(methodBody, compr);
+	}
+
+	private boolean isColumnDeclaredFirst(Comprehension compr) {
+		Declaration decl = (Declaration) compr.getFirstIsCompDeclOfIncidence(
+				EdgeDirection.IN).getThat();
+		Expression columnHeader = compr.getFirstIsColumnHeaderExprOfIncidence(
+				EdgeDirection.IN).getAlpha();
+		Set<Variable> columnVariables = getNeededVariables(columnHeader);
+		Expression rowHeader = compr.getFirstIsRowHeaderExprOfIncidence(
+				EdgeDirection.IN).getAlpha();
+		Set<Variable> rowVariables = getNeededVariables(rowHeader);
+		for (IsSimpleDeclOf isdo : decl
+				.getIsSimpleDeclOfIncidences(EdgeDirection.IN)) {
+			SimpleDeclaration sDecl = isdo.getAlpha();
+			for (IsDeclaredVarOf idvo : sDecl
+					.getIsDeclaredVarOfIncidences(EdgeDirection.IN)) {
+				Variable declVar = idvo.getAlpha();
+				if (columnVariables.contains(declVar)) {
+					return true;
+				} else if (rowVariables.contains(declVar)) {
+					return false;
+				}
+			}
+		}
+		return false;
+	}
+
+	private Set<Variable> getNeededVariables(Expression expr) {
+		VertexEvaluator<? extends Expression> vertexEval = ((GreqlQueryImpl) query)
+				.getVertexEvaluator(expr);
+		return vertexEval.getNeededVariables();
+	}
+
+	public CodeList createCodeForVariableIterationOfComprehension(
+			CodeList methodBody, boolean hasMaxCount, Comprehension compr,
+			Set<Variable> neededVariables) {
 		Declaration decl = (Declaration) compr.getFirstIsCompDeclOfIncidence(
 				EdgeDirection.IN).getThat();
 
 		// Declarations and variable iteration loops
 
 		CodeList varIterationList = new CodeList();
+		methodBody.add(new CodeSnippet("{"));
 		methodBody.add(varIterationList);
-		scope.blockBegin();
+		methodBody.add(new CodeSnippet("}"));
 		for (IsSimpleDeclOf simpleDeclInc : decl
 				.getIsSimpleDeclOfIncidences(EdgeDirection.IN)) {
 			SimpleDeclaration simpleDecl = (SimpleDeclaration) simpleDeclInc
@@ -732,22 +928,33 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 					.getFirstIsTypeExprOfDeclarationIncidence(EdgeDirection.IN)
 					.getThat();
 			CodeSnippet simpleDeclSnippet = new CodeSnippet();
-			varIterationList.setVariable(
-					"simpleDeclDomainName",
-					"domainOfSimpleDecl_"
-							+ Integer.toString(simpleDecl.getId()));
-			simpleDeclSnippet
-					.add("@SuppressWarnings(\"unchecked\")",
-							"org.pcollections.PCollection<Object> #simpleDeclDomainName# = (org.pcollections.PCollection<Object>) "
-									+ createCodeForExpression(domain) + ";");
+			boolean isDomainCreated = false;
 			varIterationList.add(simpleDeclSnippet);
 			for (IsDeclaredVarOf declaredVarInc : simpleDecl
 					.getIsDeclaredVarOfIncidences(EdgeDirection.IN)) {
 				Variable var = (Variable) declaredVarInc.getThat();
+				if (neededVariables != null && !neededVariables.contains(var)) {
+					continue;
+				}
+				if (!isDomainCreated) {
+					isDomainCreated = true;
+					varIterationList.setVariable(
+							"simpleDeclDomainName",
+							"domainOfSimpleDecl_"
+									+ Integer.toString(simpleDecl.getId()));
+					simpleDeclSnippet
+							.add("@SuppressWarnings(\"unchecked\")",
+									"org.pcollections.PCollection<Object> #simpleDeclDomainName# = (org.pcollections.PCollection<Object>) "
+											+ createCodeForExpression(domain)
+											+ ";");
+				}
 				CodeSnippet varIterationSnippet = new CodeSnippet();
 				varIterationSnippet.setVariable("variableName", var.get_name());
 				varIterationSnippet
 						.add("for (Object #variableName# : #simpleDeclDomainName#) {");
+				if (hasMaxCount) {
+					varIterationSnippet.add("\tif(maxCount==0) break;");
+				}
 				VariableEvaluator<? extends Variable> vertexEval = (VariableEvaluator<? extends Variable>) ((GreqlQueryImpl) query)
 						.getVertexEvaluator(var);
 				List<VertexEvaluator<? extends Expression>> dependingExpressions = vertexEval
@@ -771,45 +978,7 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 				varIterationList = body;
 			}
 		}
-
-		// condition
-		if (decl.getFirstIsConstraintOfIncidence(EdgeDirection.IN) != null) {
-			CodeSnippet constraintSnippet = new CodeSnippet();
-			constraintSnippet.add("boolean constraint = true;");
-			for (IsConstraintOf constraintInc : decl
-					.getIsConstraintOfIncidences(EdgeDirection.IN)) {
-				Expression constrExpr = (Expression) constraintInc.getThat();
-				constraintSnippet.add("constraint = constraint && (Boolean) "
-						+ createCodeForExpression(constrExpr) + ";");
-			}
-			constraintSnippet.add("if (constraint)");
-			varIterationList.add(constraintSnippet);
-		}
-
-		// main expression
-		CodeSnippet iteratedExprSnip = new CodeSnippet();
-		if (compr instanceof MapComprehension) {
-			Expression keyExpr = (Expression) ((MapComprehension) compr)
-					.getFirstIsKeyExprOfComprehensionIncidence(EdgeDirection.IN)
-					.getThat();
-			Expression valueExpr = (Expression) ((MapComprehension) compr)
-					.getFirstIsValueExprOfComprehensionIncidence(
-							EdgeDirection.IN).getThat();
-			iteratedExprSnip.add("result.put("
-					+ createCodeForExpression(keyExpr) + ","
-					+ createCodeForExpression(valueExpr) + ");");
-		} else {
-			Expression resultDefinition = (Expression) compr
-					.getFirstIsCompResultDefOfIncidence(EdgeDirection.IN)
-					.getThat();
-			iteratedExprSnip.add("result = result.plus("
-					+ createCodeForExpression(resultDefinition) + ");");
-		}
-		varIterationList.add(iteratedExprSnip);
-
-		methodBody.add(new CodeSnippet("return result;"));
-		scope.blockEnd();
-		return createMethod(methodBody, compr);
+		return varIterationList;
 	}
 
 	private String createCodeForQuantifiedExpression(
@@ -893,20 +1062,23 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 		iteratedExprSnip.add(tabs
 				+ getVariableName(Integer.toString(resultDefinition.getId()))
 				+ " = null;");
+		iteratedExprSnip.add(tabs + "Object currentResult = "
+				+ createCodeForExpression(resultDefinition) + ";");
 		switch (quantifier.get_type()) {
 		case FORALL:
-			iteratedExprSnip.add(tabs + "if ( ! (Boolean) "
-					+ createCodeForExpression(resultDefinition)
-					+ ") return false;");
+			iteratedExprSnip
+					.add(tabs
+							+ "if ((currentResult instanceof Boolean) && ! (Boolean) currentResult) return false;");
 			break;
 		case EXISTS:
-			iteratedExprSnip.add(tabs + "if ( (Boolean) "
-					+ createCodeForExpression(resultDefinition)
-					+ ") return true;");
+			iteratedExprSnip
+					.add(tabs
+							+ "if (!(currentResult instanceof Boolean) || (Boolean) currentResult) return true;");
 			break;
 		case EXISTSONE:
-			iteratedExprSnip.add(tabs + "if ( (Boolean) "
-					+ createCodeForExpression(resultDefinition) + ") {");
+			iteratedExprSnip
+					.add(tabs
+							+ "if (!(currentResult instanceof Boolean) || (Boolean) currentResult) {");
 			iteratedExprSnip.add(tabs + "\tif (result) {");
 			iteratedExprSnip.add(tabs
 					+ "\t\treturn false; //two elements exists");
@@ -999,6 +1171,10 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 			throw new RuntimeException(
 					"Code generation for function backwardVertexSet is not yet implemented. Use the path expression notation v --> instead of backwardVertexSet(v,-->)");
 		}
+		if (funId.get_name().equals("reachableVertices")) {
+			throw new RuntimeException(
+					"Code generation for function reachableVertices is not yet implemented. Use the path expression notation v --> instead of reachableVertices(v,-->)");
+		}
 		if (funId.get_name().equals("isReachable")) {
 			throw new RuntimeException(
 					"Code generation for function isReachable is not yet implemented. Use the path expression notation v --> w instead of isReachable(v,w,-->)");
@@ -1084,7 +1260,8 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 						TypeVariable<?>[] typeParameters = paramTypes[i]
 								.getTypeParameters();
 						needsRawTypesWarning |= typeParameters.length > 0;
-						needsUncheckedWarning |= (typeParameters.length > 0 && paramTypes[i] != java.lang.Enum.class);
+						needsUncheckedWarning |= (typeParameters.length > 0
+								&& paramTypes[i] != java.lang.Enum.class && paramTypes[i] != AttributedElement.class);
 						argBuilder.append(delim + cast + "arg_" + i);
 						delim = ", ";
 					}
@@ -1717,7 +1894,7 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 		return "result_" + uniqueId;
 	}
 
-	Set<Integer> alreadyCreatedEvaluateFunctions = new HashSet<Integer>();
+	Set<String> alreadyCreatedEvaluateFunctions = new HashSet<String>();
 
 	/**
 	 * Creates a method encapsulating the codelist given and returns the call of
@@ -1732,26 +1909,33 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 	 */
 	private String createMethod(CodeList methodBody, GreqlVertex vertex) {
 		String comment = "// " + GreqlSerializer.serializeVertex(vertex);
-		String methodName = "evaluationMethod_" + vertex.getId();
 		String uniqueId = Integer.toString(vertex.getId());
 		StringBuilder formalParams = new StringBuilder();
 		StringBuilder actualParams = new StringBuilder();
 		String delim = "";
+		int numberOfParameters = 0;
 		for (String s : scope.getDefinedVariables()) {
+			numberOfParameters++;
 			formalParams.append(delim + "Object " + s);
 			actualParams.append(delim + s);
 			delim = ",";
 		}
-		if (!alreadyCreatedEvaluateFunctions.contains(vertex.getId())) {
-			alreadyCreatedEvaluateFunctions.add(vertex.getId());
+		String methodName = "evaluationMethod_" + vertex.getId() + "_"
+				+ numberOfParameters;
+		if (!alreadyCreatedEvaluateFunctions.contains(vertex.getId() + "_"
+				+ numberOfParameters)) {
+			alreadyCreatedEvaluateFunctions.add(vertex.getId() + "_"
+					+ numberOfParameters);
 			CodeList evaluateMethodBlock = new CodeList();
 			evaluateMethodBlock.setVariable("actualParams",
 					actualParams.toString());
 			evaluateMethodBlock.setVariable("formalParams",
 					formalParams.toString());
-			evaluateMethodBlock.add(new CodeSnippet("private Object "
-					+ getVariableName(uniqueId) + " = null;"));
-			resultVariables.add(getVariableName(uniqueId));
+			if (!resultVariables.contains(getVariableName(uniqueId))) {
+				evaluateMethodBlock.add(new CodeSnippet("private Object "
+						+ getVariableName(uniqueId) + " = null;"));
+				resultVariables.add(getVariableName(uniqueId));
+			}
 			CodeSnippet checkVariableMethod = new CodeSnippet();
 			checkVariableMethod.add("private Object " + methodName
 					+ "(#formalParams#) {");
