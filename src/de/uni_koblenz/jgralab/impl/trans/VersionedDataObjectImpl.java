@@ -42,7 +42,6 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import de.uni_koblenz.jgralab.AttributedElement;
@@ -50,7 +49,6 @@ import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.GraphException;
-import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.impl.InternalGraph;
 import de.uni_koblenz.jgralab.trans.Transaction;
@@ -69,10 +67,10 @@ import de.uni_koblenz.jgralab.trans.VersionedDataObject;
 public abstract class VersionedDataObjectImpl<E> implements
 		VersionedDataObject<E> {
 
-	private static Logger logger = JGraLab.getLogger(VersionedDataObject.class);
-	static {
-		logger.setLevel(Level.FINEST);
-	}
+	private static Logger logger = null; // JGraLab.getLogger(VersionedDataObject.class);
+	// static {
+	// logger.setLevel(Level.FINEST);
+	// }
 
 	protected AttributedElement<?, ?> attributedElement;
 

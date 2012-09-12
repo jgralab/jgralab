@@ -457,6 +457,12 @@ public class QueryEditorPanel extends JPanel {
 		greqlEntries.add(new CompletionEntry(CompletionEntryType.GREQL_IDIOM,
 				"undefined", "undefined", "Undefined constant"));
 		greqlEntries.add(new CompletionEntry(CompletionEntryType.GREQL_IDIOM,
+				"tv", "thisVertex",
+				getDescriptionFromResources("thisliteral.html")));
+		greqlEntries.add(new CompletionEntry(CompletionEntryType.GREQL_IDIOM,
+				"te", "thisEdge",
+				getDescriptionFromResources("thisliteral.html")));
+		greqlEntries.add(new CompletionEntry(CompletionEntryType.GREQL_IDIOM,
 				"fwr", "from\n\t\nwith\n\t\nreport\n\t\nend",
 				getDescriptionFromResources("listcomp.html"), -20));
 		greqlEntries.add(new CompletionEntry(CompletionEntryType.GREQL_IDIOM,
@@ -899,7 +905,7 @@ public class QueryEditorPanel extends JPanel {
 
 	public void loadFromFile(File f) throws IOException {
 		BufferedReader rdr = new BufferedReader(new FileReader(f));
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		for (String line = rdr.readLine(); line != null; line = rdr.readLine()) {
 			sb.append(line).append("\n"); //$NON-NLS-1$
 		}

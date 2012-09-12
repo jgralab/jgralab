@@ -140,7 +140,7 @@ EdgeClass IsExprOf:GreqlAggregation from Expression (1,1) role expr aggregation 
 EdgeClass IsFalseExprOf: GreqlAggregation from Expression (1,1) role falseExpr aggregation shared to ConditionalExpression (0,*);
 EdgeClass IsFirstValueOf: GreqlAggregation from Expression (1,1) role firstValue aggregation shared to ListRangeConstruction (0,*);
 EdgeClass IsFunctionIdOf: GreqlAggregation from FunctionId (1,1) role functionId  aggregation shared to FunctionApplication (1,*);
-EdgeClass IsGoalRestrOf: GreqlAggregation from Expression (0,1) role goalRestr aggregation shared to PathDescription (0,*);
+EdgeClass IsGoalRestrOf: GreqlAggregation from Expression (0,*) role goalRestr aggregation shared to PathDescription (0,*);
 EdgeClass IsIdOfStoreClause: GreqlAggregation from Identifier (0,1) role identifier aggregation shared to GreqlExpression (0,*);
 EdgeClass IsIntermediateVertexOf: GreqlAggregation from Expression (1,1) role intermediateVertex aggregation shared to IntermediateVertexPathDescription (0,*);
 EdgeClass IsIteratedPathOf: IsPathDescriptionOf from PathDescription (1,1) role iteratedPath aggregation shared to IteratedPathDescription (0,*);

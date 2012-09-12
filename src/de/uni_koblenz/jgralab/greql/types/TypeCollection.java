@@ -274,7 +274,7 @@ public final class TypeCollection {
 		if (typeIdSet == null) {
 			return "{}";
 		} else {
-			StringBuffer sb = new StringBuffer();
+			StringBuilder sb = new StringBuilder();
 			String delim = "{";
 			for (TypeEntry e : typeEntries) {
 				sb.append(delim).append(e.toString());

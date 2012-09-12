@@ -444,7 +444,7 @@ public class Slice {
 			}
 		}
 
-		StringBuffer returnString = new StringBuffer("Slice: ");
+		StringBuilder returnString = new StringBuilder("Slice: ");
 		returnString.append("Vertices: ");
 		boolean first = true;
 		for (Vertex v : vset) {

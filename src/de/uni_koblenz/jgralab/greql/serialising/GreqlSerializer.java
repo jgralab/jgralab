@@ -122,7 +122,7 @@ import de.uni_koblenz.jgralab.greql.schema.WhereExpression;
  */
 public class GreqlSerializer {
 
-	private StringBuffer sb = null;
+	private StringBuilder sb = null;
 
 	public static String serializeGraph(GreqlGraph greqlGraph) {
 		GreqlSerializer s = new GreqlSerializer();
@@ -135,7 +135,7 @@ public class GreqlSerializer {
 	}
 
 	public String serializeGreqlVertex(GreqlVertex v) {
-		sb = new StringBuffer();
+		sb = new StringBuilder();
 		serializeGreqlVertex(v, false);
 		return sb.toString();
 	}
@@ -515,11 +515,28 @@ public class GreqlSerializer {
 			throw new GreqlException("Unknown PathDescription " + exp + ".");
 		}
 
-		if (exp.get_goalRestr() != null) {
-			sb.append(" & {");
-			serializeExpression(exp.get_goalRestr(), false);
+		boolean hasGoalRestr = false;
+		for (Expression e : exp.get_goalRestr()) {
+			if (!hasGoalRestr) {
+				sb.append(" & {");
+			}
+			if (!(e instanceof TypeId)) {
+				if (hasGoalRestr) {
+					sb.append(" ");
+				}
+				sb.append("@ ");
+			} else {
+				if (hasGoalRestr) {
+					sb.append(", ");
+				}
+			}
+			serializeExpression(e, false);
+			hasGoalRestr = true;
+		}
+		if (hasGoalRestr) {
 			sb.append("}");
 		}
+
 		if (!((exp instanceof PrimaryPathDescription) || (exp instanceof OptionalPathDescription))) {
 			sb.append(')');
 		}

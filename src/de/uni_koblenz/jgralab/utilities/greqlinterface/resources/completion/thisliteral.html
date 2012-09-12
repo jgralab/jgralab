@@ -1,0 +1,25 @@
+<html>
+	<body>
+		<p>
+			<strong>thisVertex/thisEdge literals</strong>
+		</p>
+		<dl>
+			<dt>
+				Syntax:
+			</dt>
+			<dd>
+				<font color="blue"><strong>thisVertex</strong></font> or <font color="blue"><strong>thisEdge</strong></font><br>
+				These special literals can be used in goal restrictions to reference a vertex or an edge on the path.
+				This can save an extra variable and consequently improve query performance.
+			</dd>
+			<dt>
+				Example:
+			</dt>
+			<dd>Instead of<br>
+				&nbsp;&nbsp;from u: V{Alpha}, v: V{Beta}, w: V{Gamma} with u --> v and degree(v)>10 and v --> w report ... end<br>
+				you can write a path expression with an intermediate goal restriction:<br>
+				&nbsp;&nbsp;from u: V{Alpha}, w: V{Gamma} with u --> &{Beta @ degree(thisVertex)>10} --> w report ... end
+			</dd>
+		</dl>
+	</body>
+</html>

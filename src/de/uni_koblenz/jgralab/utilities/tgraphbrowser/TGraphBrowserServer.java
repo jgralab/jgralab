@@ -338,7 +338,7 @@ public class TGraphBrowserServer extends Thread {
 	}
 
 	private static String getInfoString(String[] lines) {
-		StringBuffer output = new StringBuffer(1024);
+		StringBuilder output = new StringBuilder();
 		for (String line : lines) {
 			output.append(' ');
 			output.append(line);

@@ -90,17 +90,14 @@ public abstract class GreqlQuery implements ParallelGreqlEvaluatorCallable {
 
 	public static GreqlQuery readQuery(File f, boolean optimize,
 			OptimizerInfo optimizerInfo) throws IOException {
-		BufferedReader reader = null;
+		BufferedReader reader = new BufferedReader(new FileReader(f));
 		try {
-			reader = new BufferedReader(new FileReader(f));
-
-			String line = null;
-			StringBuffer sb = new StringBuffer();
-			while ((line = reader.readLine()) != null) {
-				sb.append(line);
-				sb.append('\n');
+			StringBuilder queryText = new StringBuilder();
+			for (String line = reader.readLine(); line != null; line = reader
+					.readLine()) {
+				queryText.append(line).append('\n');
 			}
-			return createQuery(sb.toString(), optimize, optimizerInfo);
+			return createQuery(queryText.toString(), optimize, optimizerInfo);
 		} finally {
 			try {
 				reader.close();

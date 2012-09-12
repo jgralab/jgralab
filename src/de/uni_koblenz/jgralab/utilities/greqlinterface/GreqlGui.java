@@ -96,6 +96,7 @@ import de.uni_koblenz.jgralab.greql.exception.SerialisingException;
 import de.uni_koblenz.jgralab.greql.funlib.FunLib;
 import de.uni_koblenz.jgralab.greql.optimizer.DefaultOptimizerInfo;
 import de.uni_koblenz.jgralab.greql.schema.SourcePosition;
+import de.uni_koblenz.jgralab.greql.serialising.GreqlSerializer;
 import de.uni_koblenz.jgralab.greql.serialising.HTMLOutputWriter;
 import de.uni_koblenz.jgralab.greql.serialising.XMLOutputWriter;
 
@@ -148,6 +149,7 @@ public class GreqlGui extends SwingApplication {
 	private Action genericImplementaionAction;
 	private Action clearRecentGraphsAction;
 	private Action evaluateQueryAction;
+	private Action showQueryGraphAction;
 	private Action stopEvaluationAction;
 	private Action enableOptimizerAction;
 	private Action debugOptimizerAction;
@@ -398,9 +400,11 @@ public class GreqlGui extends SwingApplication {
 				GreqlQueryImpl.DEBUG_OPTIMIZATION = debugOptimizerCheckBoxItem
 						.isSelected();
 				try {
-					query = GreqlQuery.createQuery(queryString,
+					query = GreqlQuery.createQuery(
+							queryString,
 							enableOptimizerCheckBoxItem.isSelected(),
-							new DefaultOptimizerInfo(graph.getSchema()));
+							new DefaultOptimizerInfo(graph != null ? graph
+									.getSchema() : null));
 				} catch (Exception e1) {
 					ex = e1;
 				}
@@ -670,6 +674,8 @@ public class GreqlGui extends SwingApplication {
 				&& (graph != null));
 		evaluateQueryAction.setEnabled((getCurrentQuery() != null)
 				&& !evaluating && !graphLoading);
+		showQueryGraphAction.setEnabled((getCurrentQuery() != null)
+				&& !evaluating && !graphLoading);
 		stopEvaluationAction.setEnabled(evaluating);
 		enableOptimizerAction.setEnabled(!evaluating);
 		debugOptimizerAction.setEnabled(!evaluating);
@@ -737,6 +743,19 @@ public class GreqlGui extends SwingApplication {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				evaluateQuery();
+			}
+		};
+
+		showQueryGraphAction = new AbstractAction(
+				getMessage("GreqlGui.Action.ShowQueryGraph")) { //$NON-NLS-1$
+			{
+				putValue(AbstractAction.ACCELERATOR_KEY,
+						KeyStroke.getKeyStroke(KeyEvent.VK_G, menuEventMask));
+			}
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				showQueryGraph();
 			}
 		};
 
@@ -813,6 +832,8 @@ public class GreqlGui extends SwingApplication {
 
 		debugOptimizerCheckBoxItem = new JCheckBoxMenuItem(debugOptimizerAction);
 		queryMenu.add(debugOptimizerCheckBoxItem);
+
+		queryMenu.add(showQueryGraphAction);
 
 		mb.add(queryMenu, mb.getComponentIndex(graphMenu));
 		return mb;
@@ -1105,6 +1126,17 @@ public class GreqlGui extends SwingApplication {
 		if (graphFile != null) {
 			loadGraph(graphFile);
 		}
+	}
+
+	private void showQueryGraph() {
+		String queryString = getCurrentQuery().getText();
+		GreqlQuery query = GreqlQuery.createQuery(queryString,
+				enableOptimizerCheckBoxItem.isSelected(),
+				new DefaultOptimizerInfo(graph != null ? graph.getSchema()
+						: null));
+		new GraphViewer(this, query.getQueryGraph(),
+				GreqlSerializer.serializeGraph(query.getQueryGraph()))
+				.setVisible(true);
 	}
 
 	private synchronized void unloadGraph() {

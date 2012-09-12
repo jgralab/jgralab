@@ -301,7 +301,7 @@ public class JGraLab {
 	}
 
 	private static String getInfoString(String[] lines, boolean asTGComment) {
-		StringBuffer output = new StringBuffer(1024);
+		StringBuilder output = new StringBuilder();
 		for (String line : lines) {
 			if (asTGComment) {
 				output.append("// ");

@@ -107,7 +107,7 @@ public class Tg2SiDiff extends Tg2Whatever {
 
 	@Override
 	protected String stringQuote(String s) {
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		for (char ch : s.toCharArray()) {
 			switch (ch) {
 			case '\\':

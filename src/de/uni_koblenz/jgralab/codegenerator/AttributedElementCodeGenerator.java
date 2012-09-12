@@ -47,9 +47,9 @@ import de.uni_koblenz.jgralab.schema.RecordDomain;
 
 /**
  * TODO add comment
- *
+ * 
  * @author ist@uni-koblenz.de
- *
+ * 
  */
 public abstract class AttributedElementCodeGenerator<SC extends AttributedElementClass<SC, IC>, IC extends AttributedElement<SC, IC>>
 		extends CodeGenerator {
@@ -96,7 +96,7 @@ public abstract class AttributedElementCodeGenerator<SC extends AttributedElemen
 	 * Returns the absolute name of the given AttributdelementClass. The name is
 	 * composed of the package-prefix of the schema the class belongs to and the
 	 * qualified name of the class
-	 *
+	 * 
 	 * @param aec
 	 * @return
 	 */
@@ -147,7 +147,7 @@ public abstract class AttributedElementCodeGenerator<SC extends AttributedElemen
 				currentCycle.isStdOrDbImplOrTransImpl() ? " extends #baseClassName#"
 						: "");
 
-		StringBuffer buf = new StringBuffer();
+		StringBuilder buf = new StringBuilder();
 		if (interfaces.size() > 0) {
 			String delim = currentCycle.isStdOrDbImplOrTransImpl() ? " implements "
 					: " extends ";
@@ -500,7 +500,7 @@ public abstract class AttributedElementCodeGenerator<SC extends AttributedElemen
 	}
 
 	/**
-	 *
+	 * 
 	 * @param attributes
 	 * @return
 	 */
@@ -602,7 +602,7 @@ public abstract class AttributedElementCodeGenerator<SC extends AttributedElemen
 	/**
 	 * Generates method attributes() which returns a set of all versioned
 	 * attributes for an <code>AttributedElement</code>.
-	 *
+	 * 
 	 * @param attributes
 	 * @return
 	 */

@@ -534,7 +534,7 @@ public class RequestThread extends Thread {
 	 * @throws IOException
 	 */
 	private String readLine(DataInputStream input) throws IOException {
-		StringBuffer line = new StringBuffer();
+		StringBuilder line = new StringBuilder();
 		String currentByte;
 		do {
 			byte[] aByte = new byte[1];
@@ -744,7 +744,7 @@ public class RequestThread extends Thread {
 			throws IOException {
 		sendHeader(out, 200, "image/svg+xml", -1, System.currentTimeMillis());
 		if (_socket.isConnected()) {
-			StringBuffer contentOfCreatedSVG = getContentOfCreatedSVG(fileName);
+			StringBuilder contentOfCreatedSVG = getContentOfCreatedSVG(fileName);
 
 			BufferedReader br = new BufferedReader(new InputStreamReader(
 					getClass().getResourceAsStream(
@@ -786,12 +786,12 @@ public class RequestThread extends Thread {
 	 * @param out
 	 * @param fileName
 	 *            the name of the generated svg file
-	 * @return {@link StringBuffer} the read svg file
+	 * @return {@link StringBuilder} the read svg file
 	 * @throws IOException
 	 */
-	private StringBuffer getContentOfCreatedSVG(String fileName)
+	private StringBuilder getContentOfCreatedSVG(String fileName)
 			throws IOException {
-		StringBuffer out = new StringBuffer();
+		StringBuilder out = new StringBuilder();
 		BufferedReader br = new BufferedReader(new FileReader(fileName));
 		String line;
 		// skip everything until the first <g

@@ -247,15 +247,15 @@ public class SchemaGraph2XMITest {
 	 * @return
 	 */
 	private String sortAttributes(String line) {
-		StringBuffer startOfLine = new StringBuffer();
+		StringBuilder startOfLine = new StringBuilder();
 		TreeSet<String> attributes = new TreeSet<String>();
-		StringBuffer endOfLine = new StringBuffer();
+		StringBuilder endOfLine = new StringBuilder();
 
 		boolean isInAttributeDefinition = false;
 		boolean isInDefaultValueDefinition = false;
 		boolean areAttributesAlreadyFinished = false;
 
-		StringBuffer currentAttribute = null;
+		StringBuilder currentAttribute = null;
 		/*
 		 * The default values of attributes are put into " ". If the first "
 		 * occurs we know, that we now reach the definition of a default value.
@@ -278,7 +278,7 @@ public class SchemaGraph2XMITest {
 					if (c == '{') {
 						// beginning of attribute definition is reached
 						isInAttributeDefinition = true;
-						currentAttribute = new StringBuffer();
+						currentAttribute = new StringBuilder();
 					}
 				} else {
 					// the first attribute is or was reached
@@ -287,7 +287,7 @@ public class SchemaGraph2XMITest {
 						if (c == ',') {
 							// end of an attribute is reached
 							attributes.add(currentAttribute.toString().trim());
-							currentAttribute = new StringBuffer();
+							currentAttribute = new StringBuilder();
 						} else if (c == '\"') {
 							// the default value part is reached
 							currentAttribute.append(c);
