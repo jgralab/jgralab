@@ -38,7 +38,7 @@ import java.util.Iterator;
 
 import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Graph;
-import de.uni_koblenz.jgralab.GraphException;
+import de.uni_koblenz.jgralab.exception.GraphException;
 import de.uni_koblenz.jgralab.trans.Transaction;
 
 /**

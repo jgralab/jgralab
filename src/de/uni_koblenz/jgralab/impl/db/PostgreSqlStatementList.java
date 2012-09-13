@@ -40,7 +40,7 @@ import java.sql.SQLException;
 import java.sql.Types;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
-import de.uni_koblenz.jgralab.GraphIOException;
+import de.uni_koblenz.jgralab.exception.GraphIOException;
 import de.uni_koblenz.jgralab.schema.Attribute;
 
 /**

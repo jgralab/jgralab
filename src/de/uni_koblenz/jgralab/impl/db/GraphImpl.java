@@ -37,11 +37,11 @@ package de.uni_koblenz.jgralab.impl.db;
 import java.util.List;
 
 import de.uni_koblenz.jgralab.Edge;
-import de.uni_koblenz.jgralab.GraphException;
 import de.uni_koblenz.jgralab.TemporaryEdge;
 import de.uni_koblenz.jgralab.TemporaryVertex;
 import de.uni_koblenz.jgralab.TraversalContext;
 import de.uni_koblenz.jgralab.Vertex;
+import de.uni_koblenz.jgralab.exception.GraphException;
 import de.uni_koblenz.jgralab.impl.FreeIndexList;
 import de.uni_koblenz.jgralab.impl.GraphBaseImpl;
 import de.uni_koblenz.jgralab.impl.IncidenceImpl;

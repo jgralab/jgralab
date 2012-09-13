@@ -42,9 +42,9 @@ import java.util.Map;
 import org.pcollections.PMap;
 
 import de.uni_koblenz.jgralab.Graph;
-import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.ImplementationType;
 import de.uni_koblenz.jgralab.JGraLab;
+import de.uni_koblenz.jgralab.exception.GraphIOException;
 import de.uni_koblenz.jgralab.gretl.template.CreateEdge;
 import de.uni_koblenz.jgralab.gretl.template.CreateVertex;
 import de.uni_koblenz.jgralab.gretl.template.TemplateGraph;

@@ -37,7 +37,7 @@ package de.uni_koblenz.jgralab.impl.db;
 import java.util.BitSet;
 import java.util.TreeMap;
 
-import de.uni_koblenz.jgralab.GraphException;
+import de.uni_koblenz.jgralab.exception.GraphException;
 
 /* TODO refactor this class:
  * - move tree set from specializations to this class

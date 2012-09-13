@@ -33,7 +33,7 @@
  * the parts of JGraLab used as well as that of the covered work.
  */
 
-package de.uni_koblenz.jgralab.codegenerator;
+package de.uni_koblenz.jgralab.schema.codegenerator;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -45,7 +45,7 @@ import java.util.Vector;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 
-import de.uni_koblenz.jgralab.GraphIOException;
+import de.uni_koblenz.jgralab.exception.GraphIOException;
 import de.uni_koblenz.jgralab.schema.impl.compilation.InMemoryJavaSourceFile;
 
 /**

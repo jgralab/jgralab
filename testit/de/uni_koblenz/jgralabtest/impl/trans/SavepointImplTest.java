@@ -44,8 +44,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import de.uni_koblenz.jgralab.GraphException;
 import de.uni_koblenz.jgralab.ImplementationType;
+import de.uni_koblenz.jgralab.exception.GraphException;
 import de.uni_koblenz.jgralab.trans.CommitFailedException;
 import de.uni_koblenz.jgralab.trans.InvalidSavepointException;
 import de.uni_koblenz.jgralab.trans.Savepoint;

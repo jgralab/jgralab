@@ -35,8 +35,8 @@
 
 package de.uni_koblenz.jgralabtest;
 
-import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.ImplementationType;
+import de.uni_koblenz.jgralab.exception.GraphIOException;
 import de.uni_koblenz.jgralabtest.schemas.citymap.Bridge;
 import de.uni_koblenz.jgralabtest.schemas.citymap.CarPark;
 import de.uni_koblenz.jgralabtest.schemas.citymap.CityMap;

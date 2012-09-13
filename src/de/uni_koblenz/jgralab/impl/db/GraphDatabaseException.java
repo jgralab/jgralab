@@ -34,7 +34,7 @@
  */
 package de.uni_koblenz.jgralab.impl.db;
 
-import de.uni_koblenz.jgralab.GraphIOException;
+import de.uni_koblenz.jgralab.exception.GraphIOException;
 
 public class GraphDatabaseException extends GraphIOException {
 

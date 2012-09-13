@@ -33,7 +33,7 @@
  * the parts of JGraLab used as well as that of the covered work.
  */
 
-package de.uni_koblenz.jgralab.codegenerator;
+package de.uni_koblenz.jgralab.schema.codegenerator;
 
 import java.util.HashSet;
 import java.util.Set;

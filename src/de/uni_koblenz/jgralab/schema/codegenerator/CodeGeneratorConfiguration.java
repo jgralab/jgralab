@@ -32,7 +32,7 @@
  * non-source form of such a combination shall include the source code for
  * the parts of JGraLab used as well as that of the covered work.
  */
-package de.uni_koblenz.jgralab.codegenerator;
+package de.uni_koblenz.jgralab.schema.codegenerator;
 
 /**
  * This class keeps the configurations of the code generator and is passed to

@@ -33,7 +33,7 @@
  * the parts of JGraLab used as well as that of the covered work.
  */
 
-package de.uni_koblenz.jgralab.codegenerator;
+package de.uni_koblenz.jgralab.schema.codegenerator;
 
 import de.uni_koblenz.jgralab.schema.Domain;
 import de.uni_koblenz.jgralab.schema.RecordDomain;
@@ -85,7 +85,8 @@ public class RecordCodeGenerator extends CodeGenerator {
 	}
 
 	private CodeBlock createGraphIOConstructor() {
-		addImports("#jgPackage#.GraphIO", "#jgPackage#.GraphIOException");
+		addImports("#jgPackage#.GraphIO",
+				"#jgPackage#.exception.GraphIOException");
 		CodeList code = new CodeList();
 		code.addNoIndent(new CodeSnippet(true,
 				"public #simpleClassName#(GraphIO io) throws GraphIOException {"));
@@ -141,7 +142,7 @@ public class RecordCodeGenerator extends CodeGenerator {
 
 	private CodeBlock createMapConstructor() {
 		CodeList code = new CodeList();
-		addImports("de.uni_koblenz.jgralab.NoSuchAttributeException");
+		addImports("#jgPackage#.exception.NoSuchAttributeException");
 		code.setVariable("rcname", recordDomain.getQualifiedName());
 
 		CodeSnippet suppressUnchecked = new CodeSnippet("");
@@ -306,7 +307,7 @@ public class RecordCodeGenerator extends CodeGenerator {
 
 	private CodeBlock createGenericGetter() {
 		CodeList code = new CodeList();
-		addImports("de.uni_koblenz.jgralab.NoSuchAttributeException");
+		addImports("#jgPackage#.exception.NoSuchAttributeException");
 		code.addNoIndent(new CodeSnippet(true, "@Override",
 				"public Object getComponent(String name) {"));
 
@@ -336,8 +337,8 @@ public class RecordCodeGenerator extends CodeGenerator {
 
 	private CodeBlock createWriteComponentsMethod() {
 		CodeList code = new CodeList();
-		addImports("#jgPackage#.GraphIO", "#jgPackage#.GraphIOException",
-				"java.io.IOException");
+		addImports("#jgPackage#.GraphIO",
+				"#jgPackage#.exception.GraphIOException", "java.io.IOException");
 		code.addNoIndent(new CodeSnippet(
 				true,
 				"@Override",

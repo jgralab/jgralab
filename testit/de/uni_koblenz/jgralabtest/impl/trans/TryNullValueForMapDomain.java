@@ -36,8 +36,8 @@ package de.uni_koblenz.jgralabtest.impl.trans;
 
 import java.util.Map;
 
-import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.ImplementationType;
+import de.uni_koblenz.jgralab.exception.GraphIOException;
 import de.uni_koblenz.jgralab.trans.CommitFailedException;
 import de.uni_koblenz.jgralabtest.schemas.record.Node;
 import de.uni_koblenz.jgralabtest.schemas.record.RecordTestGraph;

@@ -37,9 +37,9 @@ package de.uni_koblenz.jgralabtest.impl.trans;
 import org.pcollections.PMap;
 
 import de.uni_koblenz.jgralab.GraphIO;
-import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.ImplementationType;
 import de.uni_koblenz.jgralab.JGraLab;
+import de.uni_koblenz.jgralab.exception.GraphIOException;
 import de.uni_koblenz.jgralab.impl.ConsoleProgressFunction;
 import de.uni_koblenz.jgralabtest.schemas.record.BooleanType;
 import de.uni_koblenz.jgralabtest.schemas.record.Node;

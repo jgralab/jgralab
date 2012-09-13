@@ -37,7 +37,7 @@ package de.uni_koblenz.jgralab.impl.db;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import de.uni_koblenz.jgralab.GraphException;
+import de.uni_koblenz.jgralab.exception.GraphException;
 
 /**
  * Incidence list LamdaSeq of a vertex.

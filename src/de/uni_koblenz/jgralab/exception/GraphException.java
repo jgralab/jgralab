@@ -33,7 +33,7 @@
  * the parts of JGraLab used as well as that of the covered work.
  */
 
-package de.uni_koblenz.jgralab;
+package de.uni_koblenz.jgralab.exception;
 
 /**
  * exceptions of this class are thrown if an error occurs while creating or

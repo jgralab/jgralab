@@ -41,7 +41,7 @@ import java.util.Map;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
-import de.uni_koblenz.jgralab.GraphException;
+import de.uni_koblenz.jgralab.exception.GraphException;
 import de.uni_koblenz.jgralab.trans.Transaction;
 import de.uni_koblenz.jgralab.trans.TransactionManager;
 

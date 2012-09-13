@@ -7,8 +7,8 @@ import org.pcollections.ArrayPVector;
 import org.pcollections.PSet;
 
 import de.uni_koblenz.jgralab.Edge;
-import de.uni_koblenz.jgralab.NoSuchAttributeException;
 import de.uni_koblenz.jgralab.TemporaryEdge;
+import de.uni_koblenz.jgralab.exception.NoSuchAttributeException;
 import de.uni_koblenz.jgralab.schema.AggregationKind;
 import de.uni_koblenz.jgralab.schema.Attribute;
 import de.uni_koblenz.jgralab.schema.Constraint;

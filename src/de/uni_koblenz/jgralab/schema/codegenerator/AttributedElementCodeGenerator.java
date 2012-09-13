@@ -33,7 +33,7 @@
  * the parts of JGraLab used as well as that of the covered work.
  */
 
-package de.uni_koblenz.jgralab.codegenerator;
+package de.uni_koblenz.jgralab.schema.codegenerator;
 
 import java.util.List;
 import java.util.SortedSet;
@@ -225,7 +225,7 @@ public abstract class AttributedElementCodeGenerator<SC extends AttributedElemen
 
 	protected CodeBlock createGenericGetter(List<Attribute> attributes) {
 		CodeList code = new CodeList();
-		addImports("#jgPackage#.NoSuchAttributeException");
+		addImports("#jgPackage#.exception.NoSuchAttributeException");
 		CodeSnippet snip = new CodeSnippet(true);
 		code.addNoIndent(snip);
 		if (!attributes.isEmpty()) {
@@ -259,7 +259,7 @@ public abstract class AttributedElementCodeGenerator<SC extends AttributedElemen
 
 	protected CodeBlock createGenericSetter(List<Attribute> attrSet) {
 		CodeList code = new CodeList();
-		addImports("#jgPackage#.NoSuchAttributeException");
+		addImports("#jgPackage#.exception.NoSuchAttributeException");
 		CodeSnippet snip = new CodeSnippet(true);
 		boolean suppressWarningsNeeded = false;
 		for (Attribute attr : attrSet) {
@@ -376,7 +376,7 @@ public abstract class AttributedElementCodeGenerator<SC extends AttributedElemen
 	protected void addCheckValidityCode(CodeSnippet code) {
 		code.add(
 				"\tif (!isValid())",
-				"\t\tthrow new #jgPackage#.GraphException(\"Cannot access attribute '#name#', because \" + this + \" isn't valid in current transaction.\");");
+				"\t\tthrow new #jgPackage#.exception.GraphException(\"Cannot access attribute '#name#', because \" + this + \" isn't valid in current transaction.\");");
 	}
 
 	protected CodeBlock createSetter(Attribute attr) {
@@ -457,8 +457,9 @@ public abstract class AttributedElementCodeGenerator<SC extends AttributedElemen
 	protected CodeBlock createReadAttributesFromStringMethod(
 			List<Attribute> attributes) {
 		CodeList code = new CodeList();
-		addImports("#jgPackage#.GraphIO", "#jgPackage#.GraphIOException",
-				"#jgPackage#.NoSuchAttributeException");
+		addImports("#jgPackage#.GraphIO",
+				"#jgPackage#.exception.GraphIOException",
+				"#jgPackage#.exception.NoSuchAttributeException");
 		code.addNoIndent(new CodeSnippet(
 				true,
 				"public void readAttributeValueFromString(String attributeName, String value) throws GraphIOException {"));
@@ -507,8 +508,9 @@ public abstract class AttributedElementCodeGenerator<SC extends AttributedElemen
 	protected CodeBlock createWriteAttributeToStringMethod(
 			List<Attribute> attributes) {
 		CodeList code = new CodeList();
-		addImports("#jgPackage#.GraphIO", "#jgPackage#.GraphIOException",
-				"#jgPackage#.NoSuchAttributeException");
+		addImports("#jgPackage#.GraphIO",
+				"#jgPackage#.exception.GraphIOException",
+				"#jgPackage#.exception.NoSuchAttributeException");
 		code.addNoIndent(new CodeSnippet(
 				true,
 				"public String writeAttributeValueToString(String attributeName) throws IOException, GraphIOException {"));
@@ -544,7 +546,8 @@ public abstract class AttributedElementCodeGenerator<SC extends AttributedElemen
 	protected CodeBlock createReadAttributesMethod(List<Attribute> attributes) {
 		CodeList code = new CodeList();
 
-		addImports("#jgPackage#.GraphIO", "#jgPackage#.GraphIOException");
+		addImports("#jgPackage#.GraphIO",
+				"#jgPackage#.exception.GraphIOException");
 
 		code.addNoIndent(new CodeSnippet(true,
 				"public void readAttributeValues(GraphIO io) throws GraphIOException {"));
@@ -574,8 +577,8 @@ public abstract class AttributedElementCodeGenerator<SC extends AttributedElemen
 	protected CodeBlock createWriteAttributesMethod(List<Attribute> attributes) {
 		CodeList code = new CodeList();
 
-		addImports("#jgPackage#.GraphIO", "#jgPackage#.GraphIOException",
-				"java.io.IOException");
+		addImports("#jgPackage#.GraphIO",
+				"#jgPackage#.exception.GraphIOException", "java.io.IOException");
 
 		code.addNoIndent(new CodeSnippet(
 				true,

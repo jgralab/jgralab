@@ -37,7 +37,7 @@ package de.uni_koblenz.jgralab.impl.trans;
 import java.lang.reflect.Method;
 
 import de.uni_koblenz.jgralab.AttributedElement;
-import de.uni_koblenz.jgralab.GraphException;
+import de.uni_koblenz.jgralab.exception.GraphException;
 
 /**
  * This class is responsible for the versioning of references. References are

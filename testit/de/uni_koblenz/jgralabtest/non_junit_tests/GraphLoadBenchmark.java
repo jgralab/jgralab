@@ -35,8 +35,8 @@
 package de.uni_koblenz.jgralabtest.non_junit_tests;
 
 import de.uni_koblenz.jgralab.GraphIO;
-import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.ImplementationType;
+import de.uni_koblenz.jgralab.exception.GraphIOException;
 
 public class GraphLoadBenchmark {
 	public static void main(String[] args) {

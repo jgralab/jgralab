@@ -32,8 +32,30 @@
  * non-source form of such a combination shall include the source code for
  * the parts of JGraLab used as well as that of the covered work.
  */
-/**
- * TODO [documentation] write documentation for this package.
- */
 
-package de.uni_koblenz.jgralab.jniserver;
+package de.uni_koblenz.jgralab.exception;
+
+/**
+ * exceptions of this class are thrown if an error occurs while loading or
+ * storing of schema and graph in tg file format
+ * 
+ * @author ist@uni-koblenz.de
+ */
+public class GraphIOException extends Exception {
+	private static final long serialVersionUID = 4569564712278582929L;
+
+	public GraphIOException() {
+	}
+
+	public GraphIOException(String msg) {
+		super(msg);
+	}
+
+	public GraphIOException(Throwable t) {
+		super(t);
+	}
+
+	public GraphIOException(String msg, Throwable t) {
+		super(msg, t);
+	}
+}

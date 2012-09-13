@@ -36,9 +36,9 @@ package de.uni_koblenz.jgralab.impl.generic;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
-import de.uni_koblenz.jgralab.GraphException;
 import de.uni_koblenz.jgralab.ImplementationType;
 import de.uni_koblenz.jgralab.Vertex;
+import de.uni_koblenz.jgralab.exception.GraphException;
 import de.uni_koblenz.jgralab.impl.GraphFactoryImpl;
 import de.uni_koblenz.jgralab.impl.InternalGraph;
 import de.uni_koblenz.jgralab.schema.EdgeClass;

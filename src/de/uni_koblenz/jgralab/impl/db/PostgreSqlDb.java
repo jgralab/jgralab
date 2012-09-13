@@ -37,7 +37,7 @@ package de.uni_koblenz.jgralab.impl.db;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
-import de.uni_koblenz.jgralab.GraphIOException;
+import de.uni_koblenz.jgralab.exception.GraphIOException;
 
 // TODO Check what is faster: multidimensional index or several single indices on fks
 // TODO Test with nvarchar instead of text

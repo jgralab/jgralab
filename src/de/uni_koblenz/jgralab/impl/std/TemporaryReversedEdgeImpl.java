@@ -5,9 +5,9 @@ import java.io.IOException;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphIO;
-import de.uni_koblenz.jgralab.GraphIOException;
-import de.uni_koblenz.jgralab.NoSuchAttributeException;
 import de.uni_koblenz.jgralab.TemporaryEdge;
+import de.uni_koblenz.jgralab.exception.GraphIOException;
+import de.uni_koblenz.jgralab.exception.NoSuchAttributeException;
 import de.uni_koblenz.jgralab.impl.EdgeBaseImpl;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 

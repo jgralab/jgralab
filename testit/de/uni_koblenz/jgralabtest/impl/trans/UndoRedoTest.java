@@ -12,8 +12,8 @@ import org.junit.Before;
 import org.junit.Test;
 
 import de.uni_koblenz.jgralab.GraphIO;
-import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.ImplementationType;
+import de.uni_koblenz.jgralab.exception.GraphIOException;
 import de.uni_koblenz.jgralab.trans.InvalidSavepointException;
 import de.uni_koblenz.jgralab.trans.Savepoint;
 import de.uni_koblenz.jgralab.trans.Transaction;
@@ -142,7 +142,7 @@ public class UndoRedoTest {
 		Street v1_s1_cr1_cr2 = this.newGraph.createStreet(v1_cr1, v1_cr2);
 		
 		savepoints.push(this.newGraph.defineSavepoint());
-		v1_s1_cr1_cr2.set_name("Neustra§e");
+		v1_s1_cr1_cr2.set_name("Neustraï¿½e");
 		
 		savepoints.push(this.newGraph.defineSavepoint());
 		v1_s1_cr1_cr2.set_length(0.67);

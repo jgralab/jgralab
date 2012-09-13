@@ -44,9 +44,9 @@ import org.junit.Before;
 import org.junit.Test;
 
 import de.uni_koblenz.jgralab.Edge;
-import de.uni_koblenz.jgralab.GraphException;
 import de.uni_koblenz.jgralab.ImplementationType;
 import de.uni_koblenz.jgralab.Vertex;
+import de.uni_koblenz.jgralab.exception.GraphException;
 import de.uni_koblenz.jgralab.impl.trans.AttributedElementIterable;
 import de.uni_koblenz.jgralab.trans.CommitFailedException;
 import de.uni_koblenz.jgralab.trans.Transaction;

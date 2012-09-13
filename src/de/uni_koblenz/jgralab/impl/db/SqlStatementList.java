@@ -42,7 +42,7 @@ import java.sql.Statement;
 import java.util.HashMap;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
-import de.uni_koblenz.jgralab.GraphException;
+import de.uni_koblenz.jgralab.exception.GraphException;
 import de.uni_koblenz.jgralab.schema.Schema;
 
 public abstract class SqlStatementList {

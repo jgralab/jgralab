@@ -32,7 +32,7 @@
  * non-source form of such a combination shall include the source code for
  * the parts of JGraLab used as well as that of the covered work.
  */
-package de.uni_koblenz.jgralab.codegenerator;
+package de.uni_koblenz.jgralab.schema.codegenerator;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -45,9 +45,9 @@ import de.uni_koblenz.jgralab.schema.VertexClass;
 
 /**
  * TODO add comment
- *
+ * 
  * @author ist@uni-koblenz.de
- *
+ * 
  */
 public class RolenameCodeGenerator {
 
@@ -132,8 +132,8 @@ public class RolenameCodeGenerator {
 	}
 
 	private CodeBlock createGetAdjacencesSnippet(IncidenceClass incClass,
-			VertexClass allowedVertexClass, VertexClass definingVertexClass, EdgeDirection dir,
-			boolean createClass) {
+			VertexClass allowedVertexClass, VertexClass definingVertexClass,
+			EdgeDirection dir, boolean createClass) {
 		CodeSnippet code = new CodeSnippet();
 		code.setVariable("rolename", incClass.getRolename());
 		code.setVariable("edgeClassName", schemaRootPackageName
@@ -238,7 +238,7 @@ public class RolenameCodeGenerator {
 			if (definingVertexClass != allowedVertexClass) {
 				code.add(
 						"\tif (!(vertex instanceof #allowedVertexClassName#)) {",
-						"\t\tthrow new de.uni_koblenz.jgralab.GraphException(\"The rolename #rolename# was redefined at the vertex class #thisVertexClassName#. Only vertices of #allowedVertexClassName# are allowed.\"); ",
+						"\t\tthrow new #jgPackage#.exception.GraphException(\"The rolename #rolename# was redefined at the vertex class #thisVertexClassName#. Only vertices of #allowedVertexClassName# are allowed.\"); ",
 						"\t}");
 			}
 			code.add(

@@ -44,16 +44,16 @@ import java.util.Set;
 import org.pcollections.PVector;
 
 import de.uni_koblenz.jgralab.GraphIO;
-import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.JGraLab;
-import de.uni_koblenz.jgralab.codegenerator.CodeBlock;
-import de.uni_koblenz.jgralab.codegenerator.CodeGenerator;
-import de.uni_koblenz.jgralab.codegenerator.CodeList;
-import de.uni_koblenz.jgralab.codegenerator.CodeSnippet;
+import de.uni_koblenz.jgralab.exception.GraphIOException;
 import de.uni_koblenz.jgralab.schema.Domain;
 import de.uni_koblenz.jgralab.schema.ListDomain;
 import de.uni_koblenz.jgralab.schema.Package;
 import de.uni_koblenz.jgralab.schema.Schema;
+import de.uni_koblenz.jgralab.schema.codegenerator.CodeBlock;
+import de.uni_koblenz.jgralab.schema.codegenerator.CodeGenerator;
+import de.uni_koblenz.jgralab.schema.codegenerator.CodeList;
+import de.uni_koblenz.jgralab.schema.codegenerator.CodeSnippet;
 
 public final class ListDomainImpl extends CollectionDomainImpl implements
 		ListDomain {

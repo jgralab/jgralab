@@ -34,6 +34,8 @@
  */
 package de.uni_koblenz.jgralab;
 
+import de.uni_koblenz.jgralab.exception.GraphException;
+
 public class TemporaryGraphElementBlessingException extends GraphException {
 
 	private static final long serialVersionUID = 4207982437756832480L;

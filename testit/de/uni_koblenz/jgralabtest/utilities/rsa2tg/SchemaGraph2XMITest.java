@@ -53,8 +53,8 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.JGraLab;
+import de.uni_koblenz.jgralab.exception.GraphIOException;
 import de.uni_koblenz.jgralab.utilities.rsa2tg.Rsa2Tg;
 import de.uni_koblenz.jgralab.utilities.rsa2tg.SchemaGraph2XMI;
 

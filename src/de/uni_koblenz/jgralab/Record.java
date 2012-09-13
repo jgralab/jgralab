@@ -39,6 +39,8 @@ import java.util.List;
 
 import org.pcollections.PMap;
 
+import de.uni_koblenz.jgralab.exception.GraphIOException;
+
 public interface Record {
 
 	public boolean hasComponent(String name);

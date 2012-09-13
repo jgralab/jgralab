@@ -33,7 +33,7 @@
  * the parts of JGraLab used as well as that of the covered work.
  */
 
-package de.uni_koblenz.jgralab.codegenerator;
+package de.uni_koblenz.jgralab.schema.codegenerator;
 
 import java.util.List;
 import java.util.TreeSet;
@@ -46,9 +46,9 @@ import de.uni_koblenz.jgralab.schema.VertexClass;
 
 /**
  * TODO add comment
- *
+ * 
  * @author ist@uni-koblenz.de
- *
+ * 
  */
 public class ReversedEdgeCodeGenerator extends
 		AttributedElementCodeGenerator<EdgeClass, Edge> {
@@ -100,7 +100,7 @@ public class ReversedEdgeCodeGenerator extends
 		}
 		return code;
 	}
-	
+
 	private CodeBlock createGetAlphaOmegaOverrides() {
 		CodeSnippet b = new CodeSnippet();
 		EdgeClass ec = aec;
@@ -269,7 +269,8 @@ public class ReversedEdgeCodeGenerator extends
 	protected CodeBlock createReadAttributesFromStringMethod(
 			List<Attribute> attributes) {
 		CodeList code = new CodeList();
-		addImports("#jgPackage#.GraphIO", "#jgPackage#.GraphIOException");
+		addImports("#jgPackage#.GraphIO",
+				"#jgPackage#.exception.GraphIOException");
 		code.addNoIndent(new CodeSnippet(
 				true,
 				"public void readAttributeValueFromString(String attributeName, String value) throws GraphIOException {"));
@@ -283,7 +284,8 @@ public class ReversedEdgeCodeGenerator extends
 	protected CodeBlock createWriteAttributeToStringMethod(
 			List<Attribute> attributes) {
 		CodeList code = new CodeList();
-		addImports("#jgPackage#.GraphIO", "#jgPackage#.GraphIOException");
+		addImports("#jgPackage#.GraphIO",
+				"#jgPackage#.exception.GraphIOException");
 		code.addNoIndent(new CodeSnippet(
 				true,
 				"public String writeAttributeValueToString(String _attributeName) throws IOException, GraphIOException {"));
@@ -296,7 +298,8 @@ public class ReversedEdgeCodeGenerator extends
 	@Override
 	protected CodeBlock createReadAttributesMethod(List<Attribute> attributes) {
 		CodeList code = new CodeList();
-		addImports("#jgPackage#.GraphIO", "#jgPackage#.GraphIOException");
+		addImports("#jgPackage#.GraphIO",
+				"#jgPackage#.exception.GraphIOException");
 		code.addNoIndent(new CodeSnippet(true,
 				"public void readAttributeValues(GraphIO io) throws GraphIOException {"));
 		code.add(new CodeSnippet(
@@ -308,8 +311,8 @@ public class ReversedEdgeCodeGenerator extends
 	@Override
 	protected CodeBlock createWriteAttributesMethod(List<Attribute> attributes) {
 		CodeList code = new CodeList();
-		addImports("#jgPackage#.GraphIO", "#jgPackage#.GraphIOException",
-				"java.io.IOException");
+		addImports("#jgPackage#.GraphIO",
+				"#jgPackage#.exception.GraphIOException", "java.io.IOException");
 		code.addNoIndent(new CodeSnippet(
 				true,
 				"public void writeAttributeValues(GraphIO io) throws GraphIOException, IOException {"));

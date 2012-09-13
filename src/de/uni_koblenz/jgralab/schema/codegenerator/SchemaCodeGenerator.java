@@ -33,7 +33,7 @@
  * the parts of JGraLab used as well as that of the covered work.
  */
 
-package de.uni_koblenz.jgralab.codegenerator;
+package de.uni_koblenz.jgralab.schema.codegenerator;
 
 import java.util.List;
 import java.util.Stack;
@@ -60,9 +60,9 @@ import de.uni_koblenz.jgralab.schema.VertexClass;
 
 /**
  * TODO add comment
- *
+ * 
  * @author ist@uni-koblenz.de
- *
+ * 
  */
 public class SchemaCodeGenerator extends CodeGenerator {
 
@@ -70,7 +70,7 @@ public class SchemaCodeGenerator extends CodeGenerator {
 
 	/**
 	 * Creates a new SchemaCodeGenerator which creates code for the given schema
-	 *
+	 * 
 	 * @param schema
 	 *            the schema to create the code for
 	 * @param schemaPackageName
@@ -154,9 +154,9 @@ public class SchemaCodeGenerator extends CodeGenerator {
 		addImports("#jgPackage#.GraphIO",
 				"#jgImplDbPackage#.GraphDatabaseException",
 				"#jgImplDbPackage#.GraphDatabase",
-				"#jgPackage#.GraphIOException");
+				"#jgPackage#.exception.GraphIOException");
 		if (config.hasDatabaseSupport()) {
-			addImports("#jgPackage#.GraphException");
+			addImports("#jgPackage#.exception.GraphException");
 		}
 		CodeList code = new CodeList();
 		code.addNoIndent(new CodeSnippet(

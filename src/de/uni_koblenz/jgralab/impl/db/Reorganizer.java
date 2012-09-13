@@ -37,7 +37,7 @@ package de.uni_koblenz.jgralab.impl.db;
 import java.util.TreeMap;
 import java.util.Map.Entry;
 
-import de.uni_koblenz.jgralab.GraphException;
+import de.uni_koblenz.jgralab.exception.GraphException;
 
 /**
  * Client-sided reorganizer of sorted collections with <code>long</code> keys

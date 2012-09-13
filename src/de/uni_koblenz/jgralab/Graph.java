@@ -40,6 +40,7 @@ import java.util.Comparator;
 import java.util.Map;
 
 import de.uni_koblenz.jgralab.eca.ECARuleManagerInterface;
+import de.uni_koblenz.jgralab.exception.GraphIOException;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.EnumDomain;
 import de.uni_koblenz.jgralab.schema.GraphClass;

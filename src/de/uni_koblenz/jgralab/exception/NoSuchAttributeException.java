@@ -32,11 +32,25 @@
  * non-source form of such a combination shall include the source code for
  * the parts of JGraLab used as well as that of the covered work.
  */
+package de.uni_koblenz.jgralab.exception;
 
-/**
- * This package contains all classes needed by JGraLab to generate code from TG-schema-files.
- * @author ist@uni-koblenz.de
- */
 
-package de.uni_koblenz.jgralab.codegenerator;
+public class NoSuchAttributeException extends GraphException {
 
+	private static final long serialVersionUID = -8868532586308330345L;
+
+	public NoSuchAttributeException() {
+	}
+
+	public NoSuchAttributeException(String msg) {
+		super(msg);
+	}
+
+	public NoSuchAttributeException(Throwable t) {
+		super(t);
+	}
+
+	public NoSuchAttributeException(String msg, Throwable t) {
+		super(msg, t);
+	}
+}

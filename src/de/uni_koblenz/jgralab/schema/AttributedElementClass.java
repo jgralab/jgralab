@@ -41,7 +41,7 @@ import java.util.Set;
 import org.pcollections.PVector;
 
 import de.uni_koblenz.jgralab.AttributedElement;
-import de.uni_koblenz.jgralab.NoSuchAttributeException;
+import de.uni_koblenz.jgralab.exception.NoSuchAttributeException;
 import de.uni_koblenz.jgralab.schema.exception.SchemaClassAccessException;
 
 /**

@@ -40,7 +40,7 @@ import org.junit.Test;
 
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphIO;
-import de.uni_koblenz.jgralab.GraphIOException;
+import de.uni_koblenz.jgralab.exception.GraphIOException;
 import de.uni_koblenz.jgralab.schema.Schema;
 import de.uni_koblenz.jgralab.utilities.tg2dot.Tg2Dot;
 import de.uni_koblenz.jgralab.utilities.tg2dot.dot.GraphVizLayouter;
