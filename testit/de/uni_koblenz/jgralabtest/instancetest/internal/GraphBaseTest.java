@@ -41,8 +41,8 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 
 import org.junit.After;
 import org.junit.Before;
@@ -113,10 +113,10 @@ public class GraphBaseTest extends InstanceTest {
 		commit(g1);
 	}
 
-	private ArrayList<String> graphIdsInUse = new ArrayList<String>();
+	private HashSet<String> graphIdsInUse = new HashSet<String>();
 
 	/**
-	 *
+	 * 
 	 * @return
 	 */
 	private VertexTestGraph createNewGraph() {
@@ -167,7 +167,7 @@ public class GraphBaseTest extends InstanceTest {
 	/**
 	 * Asserts true if the edgeListVersion has changed. Returns the new
 	 * edgeListVersion.
-	 *
+	 * 
 	 * @param elv1
 	 *            the edgeListVersion before the transaction.
 	 * @return the edgeListVersion after the transaction.
@@ -186,7 +186,7 @@ public class GraphBaseTest extends InstanceTest {
 
 	/**
 	 * Asserts true if the edgeListVersion has not changed.
-	 *
+	 * 
 	 * @param elv1
 	 *            the edgeListVersion before the transaction.
 	 * @throws CommitFailedException
@@ -1279,7 +1279,7 @@ public class GraphBaseTest extends InstanceTest {
 		/*
 		 * try{ // graph =VertexTestSchema.instance().loadVertexTestGraph(
 		 * "de.uni_koblenz.VertexTestSchema.tg");
-		 *
+		 * 
 		 * VertexTestGraph graph3 =
 		 * VertexTestSchema.instance().loadVertexTestGraph
 		 * ("VertexTestSchema.tg"); }catch (GraphIOException e){
