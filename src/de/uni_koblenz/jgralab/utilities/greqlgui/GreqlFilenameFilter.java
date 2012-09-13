@@ -32,24 +32,18 @@
  * non-source form of such a combination shall include the source code for
  * the parts of JGraLab used as well as that of the covered work.
  */
-package de.uni_koblenz.jgralabtest.utilities;
+package de.uni_koblenz.jgralab.utilities.greqlgui;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-
-import de.uni_koblenz.jgralabtest.non_junit_tests.SchemaGraph2SchemaTest;
-import de.uni_koblenz.jgralabtest.utilities.rsa2tg.Rsa2TgTest;
-import de.uni_koblenz.jgralabtest.utilities.rsa2tg.SchemaGraph2XMITest;
-import de.uni_koblenz.jgralabtest.utilities.tg2schemagraph.TG2SchemaGraphTest;
+import java.io.File;
+import java.io.FilenameFilter;
 
 /**
- * 
- * @author ist@uni-koblenz.de
+ * @author Tassilo Horn <horn@uni-koblenz.de>
  * 
  */
-@RunWith(Suite.class)
-@Suite.SuiteClasses( { Rsa2TgTest.class, SchemaGraph2XMITest.class,
-		TG2SchemaGraphTest.class, SchemaGraph2SchemaTest.class })
-public class RunUtilitiesTests {
-
+public class GreqlFilenameFilter implements FilenameFilter {
+	@Override
+	public boolean accept(File dir, String name) {
+		return name.endsWith(".greql") || name.endsWith(".greqlquery");
+	}
 }

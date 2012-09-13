@@ -32,7 +32,7 @@
  * non-source form of such a combination shall include the source code for
  * the parts of JGraLab used as well as that of the covered work.
  */
-package de.uni_koblenz.jgralabtest.non_junit_tests;
+package de.uni_koblenz.jgralabtest.utilities.rsa2tg;
 
 import java.io.IOException;
 import java.util.logging.Level;
@@ -44,14 +44,14 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.xml.sax.SAXException;
 
+import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.schema.Schema;
 import de.uni_koblenz.jgralab.utilities.rsa2tg.Rsa2Tg;
-import de.uni_koblenz.jgralab.utilities.tg2schemagraph.SchemaGraph2Schema;
 import de.uni_koblenz.jgralabtest.utilities.tg2schemagraph.CompareSchemaWithSchemaGraph;
 
-public class SchemaGraph2SchemaTest {
+public class Rsa2TgTest {
 
 	private static String folder = "testit/testschemas/rsa-xmi/";
 
@@ -63,7 +63,6 @@ public class SchemaGraph2SchemaTest {
 		r.setUseFromRole(true);
 		r.setRemoveUnusedDomains(true);
 		r.setUseNavigability(true);
-		r.setSuppressOutput(true);
 	}
 
 	@BeforeClass
@@ -71,18 +70,20 @@ public class SchemaGraph2SchemaTest {
 		JGraLab.setLogLevel(Level.OFF);
 	}
 
-	public void test(String filename) throws GraphIOException, IOException,
-			SAXException, ParserConfigurationException, XMLStreamException {
-		r.process(filename);
-
+	public void testASchema(String filename) throws GraphIOException,
+			IOException, SAXException, ParserConfigurationException,
+			XMLStreamException {
 		// Loads the SchemaGraph
+		java.io.File file = new java.io.File(folder + filename);
+		String tgFilename = file.getPath() + ".rsa.tg";
 		r.setFilenameDot(null);
 		r.setFilenameValidation(null);
-		r.setFilenameSchema(null);
+		r.setFilenameSchema(tgFilename);
 		r.setFilenameSchemaGraph(null);
+		r.process(file.getPath());
 
 		// Converts the SchemaGraph to a Schema
-		Schema schema = new SchemaGraph2Schema().convert(r.getSchemaGraph());
+		Schema schema = GraphIO.loadSchemaFromFile(tgFilename);
 
 		// Compares the SchemaGraph with the created Schema
 		new CompareSchemaWithSchemaGraph().compare(schema, r.getSchemaGraph());
@@ -91,12 +92,18 @@ public class SchemaGraph2SchemaTest {
 	@Test
 	public void testgrUML_M3() throws GraphIOException, IOException,
 			SAXException, ParserConfigurationException, XMLStreamException {
-		test(folder + "grUML-M3.xmi");
+		testASchema("grUML-M3.xmi");
 	}
 
 	@Test
 	public void testOsmSchema() throws GraphIOException, IOException,
 			SAXException, ParserConfigurationException, XMLStreamException {
-		test(folder + "OsmSchema.xmi");
+		testASchema("OsmSchema.xmi");
 	}
+
+	// @Test
+	// public void testSoamig() throws GraphIOException, IOException,
+	// SAXException, ParserConfigurationException, XMLStreamException {
+	// testASchema("soamig.xmi");
+	// }
 }

@@ -32,24 +32,8 @@
  * non-source form of such a combination shall include the source code for
  * the parts of JGraLab used as well as that of the covered work.
  */
-package de.uni_koblenz.jgralabtest.utilities;
-
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-
-import de.uni_koblenz.jgralabtest.non_junit_tests.SchemaGraph2SchemaTest;
-import de.uni_koblenz.jgralabtest.utilities.rsa2tg.Rsa2TgTest;
-import de.uni_koblenz.jgralabtest.utilities.rsa2tg.SchemaGraph2XMITest;
-import de.uni_koblenz.jgralabtest.utilities.tg2schemagraph.TG2SchemaGraphTest;
-
 /**
- * 
- * @author ist@uni-koblenz.de
- * 
+ * TODO [documentation] write documentation for this package.
  */
-@RunWith(Suite.class)
-@Suite.SuiteClasses( { Rsa2TgTest.class, SchemaGraph2XMITest.class,
-		TG2SchemaGraphTest.class, SchemaGraph2SchemaTest.class })
-public class RunUtilitiesTests {
 
-}
+package de.uni_koblenz.jgralab.utilities.rsa2tg;
