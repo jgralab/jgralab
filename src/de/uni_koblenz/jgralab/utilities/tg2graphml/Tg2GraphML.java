@@ -1,7 +1,7 @@
 /**
  * 
  */
-package de.uni_koblenz.jgralab.utilities.tg2graphML;
+package de.uni_koblenz.jgralab.utilities.tg2graphml;
 
 import java.io.File;
 import java.io.IOException;

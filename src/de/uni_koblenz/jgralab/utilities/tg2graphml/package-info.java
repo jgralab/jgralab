@@ -4,4 +4,4 @@
  * @author ist@uni-koblenz.de
  *
  */
-package de.uni_koblenz.jgralab.utilities.tg2graphML;
+package de.uni_koblenz.jgralab.utilities.tg2graphml;
