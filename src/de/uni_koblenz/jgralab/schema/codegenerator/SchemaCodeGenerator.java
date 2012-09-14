@@ -131,18 +131,8 @@ public class SchemaCodeGenerator extends CodeGenerator {
 		code.add(new CodeSnippet("switch(implementationType) {"));
 		code.add(new CodeSnippet("\tcase GENERIC:",
 				"\t\treturn new #jgImplPackage#.generic.GenericGraphFactoryImpl(this);"));
-		if (config.hasStandardSupport()) {
-			code.add(new CodeSnippet("\tcase STANDARD:",
-					"\t\treturn new #schemaImplStdPackage#.#gcCamelName#FactoryImpl();"));
-		}
-		if (config.hasTransactionSupport()) {
-			code.add(new CodeSnippet("\tcase TRANSACTION:",
-					"\t\treturn new #schemaImplTransPackage#.#gcCamelName#FactoryImpl();"));
-		}
-		if (config.hasDatabaseSupport()) {
-			code.add(new CodeSnippet("\tcase DATABASE:",
-					"\t\treturn new #schemaImplDbPackage#.#gcCamelName#FactoryImpl();"));
-		}
+		code.add(new CodeSnippet("\tcase STANDARD:",
+				"\t\treturn new #schemaImplStdPackage#.#gcCamelName#FactoryImpl();"));
 		code.add(new CodeSnippet(
 				"}",
 				"throw new UnsupportedOperationException(\"No \" + implementationType + \" support compiled.\");"));
@@ -152,12 +142,7 @@ public class SchemaCodeGenerator extends CodeGenerator {
 
 	private CodeBlock createGraphFactoryMethods() {
 		addImports("#jgPackage#.GraphIO",
-				"#jgImplDbPackage#.GraphDatabaseException",
-				"#jgImplDbPackage#.GraphDatabase",
 				"#jgPackage#.exception.GraphIOException");
-		if (config.hasDatabaseSupport()) {
-			addImports("#jgPackage#.exception.GraphException");
-		}
 		CodeList code = new CodeList();
 		code.addNoIndent(new CodeSnippet(
 				true,
@@ -198,62 +183,18 @@ public class SchemaCodeGenerator extends CodeGenerator {
 				"\treturn factory.createGraph(getGraphClass(), id, vMax, eMax);",
 				"}"));
 
-		// ---- database support ----
-		code.addNoIndent(new CodeSnippet(
-				true,
-				"/**",
-				" * Creates a new #gcName# graph in a database with given <code>id</code>.",
-				" *",
-				" * @param id Identifier of new graph",
-				" * @param graphDatabase Database which should contain graph",
-				" */",
-				"public #gcName# create#gcCamelName#(String id, GraphDatabase graphDatabase) throws GraphDatabaseException{",
-				"\treturn create#gcCamelName#(id, 100, 100, graphDatabase);",
-				"}"));
-
-		code.addNoIndent(new CodeSnippet(
-				true,
-				"/**",
-				" * Creates a new #gcName# graph in a database with given <code>id</code>.",
-				" *",
-				" * @param id Identifier of new graph",
-				" * @param vMax Maximum initial count of vertices that can be held in graph.",
-				" * @param eMax Maximum initial count of edges that can be held in graph.",
-				" * @param graphDatabase Database which should contain graph",
-				" */",
-				"public #gcName# create#gcCamelName#(String id, int vMax, int eMax, GraphDatabase graphDatabase) throws GraphDatabaseException{"));
-
-		if (config.hasDatabaseSupport()) {
-			code.add(new CodeSnippet(
-					"#jgImplPackage#.GraphFactoryImpl graphFactory = (#jgImplPackage#.GraphFactoryImpl) createDefaultGraphFactory(#jgPackage#.ImplementationType.DATABASE);",
-					"graphFactory.setGraphDatabase(graphDatabase);",
-					"#gcCamelName# graph = graphFactory.createGraph(getGraphClass(), id, vMax, eMax);",
-					"if (!graphDatabase.containsGraph(id)) {",
-					"\tgraphDatabase.insert((#jgImplDbPackage#.GraphImpl)graph);",
-					"\treturn graph;",
-					"} else {",
-					"\tthrow new GraphException(\"Graph with identifier \" + id + \" already exists in database.\");",
-					"}"));
-		} else {
-			code.add(new CodeSnippet(
-					"throw new UnsupportedOperationException(\"No DATABASE support compiled.\");"));
-		}
-		code.addNoIndent(new CodeSnippet("}"));
-
 		// ---- file handling methods ----
-		if (config.hasStandardSupport()) {
-			code.addNoIndent(new CodeSnippet(
-					true,
-					"public #gcName# load#gcCamelName#(String filename) throws GraphIOException {",
-					"\t#jgPackage#.GraphFactory factory = createDefaultGraphFactory(#jgPackage#.ImplementationType.STANDARD);",
-					"\treturn load#gcCamelName#(filename, factory, null);", "}"));
+		code.addNoIndent(new CodeSnippet(
+				true,
+				"public #gcName# load#gcCamelName#(String filename) throws GraphIOException {",
+				"\t#jgPackage#.GraphFactory factory = createDefaultGraphFactory(#jgPackage#.ImplementationType.STANDARD);",
+				"\treturn load#gcCamelName#(filename, factory, null);", "}"));
 
-			code.addNoIndent(new CodeSnippet(
-					true,
-					"public #gcName# load#gcCamelName#(String filename, #jgPackage#.ProgressFunction pf) throws GraphIOException {",
-					"\t#jgPackage#.GraphFactory factory = createDefaultGraphFactory(#jgPackage#.ImplementationType.STANDARD);",
-					"\treturn load#gcCamelName#(filename, factory, pf);", "}"));
-		}
+		code.addNoIndent(new CodeSnippet(
+				true,
+				"public #gcName# load#gcCamelName#(String filename, #jgPackage#.ProgressFunction pf) throws GraphIOException {",
+				"\t#jgPackage#.GraphFactory factory = createDefaultGraphFactory(#jgPackage#.ImplementationType.STANDARD);",
+				"\treturn load#gcCamelName#(filename, factory, pf);", "}"));
 
 		code.addNoIndent(new CodeSnippet(
 				true,

@@ -49,7 +49,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Random;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -66,7 +65,6 @@ import de.uni_koblenz.jgralab.exception.NoSuchAttributeException;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.GraphClass;
 import de.uni_koblenz.jgralab.schema.Schema;
-import de.uni_koblenz.jgralab.trans.CommitFailedException;
 import de.uni_koblenz.jgralabtest.schemas.vertextest.AbstractSuperNode;
 import de.uni_koblenz.jgralabtest.schemas.vertextest.DoubleSubNode;
 import de.uni_koblenz.jgralabtest.schemas.vertextest.E;
@@ -85,8 +83,6 @@ public class EdgeTest extends InstanceTest {
 	private static final int RANDOM_EDGE_COUNT = 30;
 	private static final int RANDOM_GRAPH_COUNT = 10;
 	private static final int RANDOM_VERTEX_COUNT = 10;
-
-	private final String ID = "EdgeTest";
 
 	public EdgeTest(ImplementationType implementationType, String dbURL) {
 		super(implementationType, dbURL);
@@ -110,44 +106,12 @@ public class EdgeTest extends InstanceTest {
 			g = VertexTestSchema.instance().createVertexTestGraph(
 					ImplementationType.STANDARD);
 			break;
-		case TRANSACTION:
-			g = VertexTestSchema.instance().createVertexTestGraph(
-					ImplementationType.TRANSACTION);
-			break;
-		case DATABASE:
-			g = createVertexTestGraphWithDatabaseSupport();
-			break;
 		default:
 			fail("Implementation " + implementationType
 					+ " not yet supported by this test.");
 		}
 
 		rand = new Random(System.currentTimeMillis());
-	}
-
-	private VertexTestGraph createVertexTestGraphWithDatabaseSupport() {
-		dbHandler.connectToDatabase();
-		dbHandler.loadVertexTestSchemaIntoGraphDatabase();
-		return dbHandler.createVertexTestGraphWithDatabaseSupport(ID);
-	}
-
-	@After
-	public void tearDown() {
-		if (implementationType == ImplementationType.DATABASE) {
-			cleanAndCloseGraphDatabase();
-		}
-	}
-
-	private void cleanAndCloseGraphDatabase() {
-		// dbHandler.cleanDatabaseOfTestGraph(ID);
-		// for (int i = 0; i < RANDOM_GRAPH_COUNT; i++) {
-		// dbHandler.cleanDatabaseOfTestGraph(ID + i);
-		// }
-		// dbHandler.cleanDatabaseOfTestGraph("anotherGraph");
-		// // this.cleanDatabaseOfTestSchema(VertexTestSchema.instance());
-		// dbHandler.closeGraphdatabase();
-		dbHandler.clearAllTables();
-		dbHandler.closeGraphdatabase();
 	}
 
 	/*
@@ -164,43 +128,25 @@ public class EdgeTest extends InstanceTest {
 	 */
 	@Test
 	public void getIdTest0() throws Exception {
-		createTransaction(g);
 		DoubleSubNode v0 = g.createDoubleSubNode();
 		DoubleSubNode v1 = g.createDoubleSubNode();
 		Edge e0 = g.createLink(v0, v1);
-		commit(g);
 
-		createReadOnlyTransaction(g);
 		assertEquals(1, e0.getId());
-		commit(g);
 
-		createTransaction(g);
 		Edge e1 = g.createLink(v0, v1);
-		commit(g);
 
-		createReadOnlyTransaction(g);
 		assertEquals(2, e1.getId());
-		commit(g);
 
-		createTransaction(g);
 		g.deleteEdge(e0);
-		commit(g);
 
-		createTransaction(g);
 		e0 = g.createLink(v1, v0);
-		commit(g);
 
-		createReadOnlyTransaction(g);
 		assertEquals(1, e0.getId());
-		commit(g);
 
-		createTransaction(g);
 		e0 = g.createLink(v1, v0);
-		commit(g);
 
-		createReadOnlyTransaction(g);
 		assertEquals(3, e0.getId());
-		commit(g);
 	}
 
 	// tests of the method Edge getNextEdge();
@@ -213,17 +159,14 @@ public class EdgeTest extends InstanceTest {
 	/**
 	 * There exists only one edge in the graph
 	 * 
-	 * @throws CommitFailedException
+	 * @
 	 */
 	@Test
-	public void getNextEdgeTestEdgeDirection0() throws CommitFailedException {
-		createTransaction(g);
+	public void getNextEdgeTestEdgeDirection0() {
 		DoubleSubNode v0 = g.createDoubleSubNode();
 		DoubleSubNode v1 = g.createDoubleSubNode();
 		Edge e0 = g.createLink(v0, v1);
-		commit(g);
 
-		createReadOnlyTransaction(g);
 		// edges of vertex v0
 		assertNull(e0.getNextIncidence(EdgeDirection.INOUT));
 		assertNull(e0.getNextIncidence(EdgeDirection.OUT));
@@ -232,17 +175,15 @@ public class EdgeTest extends InstanceTest {
 		assertNull(e0.getReversedEdge().getNextIncidence(EdgeDirection.INOUT));
 		assertNull(e0.getReversedEdge().getNextIncidence(EdgeDirection.OUT));
 		assertNull(e0.getReversedEdge().getNextIncidence(EdgeDirection.IN));
-		commit(g);
 	}
 
 	/**
 	 * Test in a manually built graph.
 	 * 
-	 * @throws CommitFailedException
+	 * @
 	 */
 	@Test
-	public void getNextEdgeTestEdgeDirection1() throws CommitFailedException {
-		createTransaction(g);
+	public void getNextEdgeTestEdgeDirection1() {
 		DoubleSubNode v1 = g.createDoubleSubNode();
 		DoubleSubNode v2 = g.createDoubleSubNode();
 		Edge e1 = g.createLink(v1, v2);
@@ -250,9 +191,7 @@ public class EdgeTest extends InstanceTest {
 		Edge e3 = g.createLink(v2, v1);
 		Edge e4 = g.createSubLink(v1, v2);
 		Edge e5 = g.createLinkBack(v2, v1);
-		commit(g);
 
-		createReadOnlyTransaction(g);
 		// edges of vertex v0
 		assertEquals(e2, e1.getNextIncidence(EdgeDirection.INOUT));
 		assertEquals(e2, e1.getNextIncidence(EdgeDirection.OUT));
@@ -303,7 +242,6 @@ public class EdgeTest extends InstanceTest {
 		assertNull(e5.getReversedEdge().getNextIncidence(EdgeDirection.INOUT));
 		assertNull(e5.getReversedEdge().getNextIncidence(EdgeDirection.OUT));
 		assertNull(e5.getReversedEdge().getNextIncidence(EdgeDirection.IN));
-		commit(g);
 	}
 
 	/**
@@ -319,18 +257,10 @@ public class EdgeTest extends InstanceTest {
 				g = VertexTestSchema.instance().createVertexTestGraph(
 						ImplementationType.STANDARD);
 				break;
-			case TRANSACTION:
-				g = VertexTestSchema.instance().createVertexTestGraph(
-						ImplementationType.TRANSACTION);
-				break;
-			case DATABASE:
-				g = dbHandler.createVertexTestGraphWithDatabaseSupport(ID + i);
-				break;
 			default:
 				fail("Implementation " + implementationType
 						+ " not yet supported by this test.");
 			}
-			createTransaction(g);
 			DoubleSubNode v0 = g.createDoubleSubNode();
 			DoubleSubNode v1 = g.createDoubleSubNode();
 			Edge[] edges = new Edge[RANDOM_EDGE_COUNT];
@@ -381,9 +311,7 @@ public class EdgeTest extends InstanceTest {
 				}
 				first = false;
 			}
-			commit(g);
 
-			createReadOnlyTransaction(g);
 			for (int k = 0; k < edges.length; k++) {
 				Edge e = edges[k];
 				if (e.getAlpha() == v0) {
@@ -416,7 +344,6 @@ public class EdgeTest extends InstanceTest {
 					assertEquals(v1in[k], e.getNextIncidence(EdgeDirection.IN));
 				}
 			}
-			commit(g);
 		}
 	}
 
@@ -425,14 +352,11 @@ public class EdgeTest extends InstanceTest {
 	/**
 	 * Creates an array of the EdgeClasses.
 	 * 
-	 * @return {Link, SubLink, LinkBack}
-	 * @throws CommitFailedException
+	 * @return {Link, SubLink, LinkBack} @
 	 */
-	private EdgeClass[] getEdgeClasses() throws CommitFailedException {
+	private EdgeClass[] getEdgeClasses() {
 		EdgeClass[] ecs = new EdgeClass[3];
-		createReadOnlyTransaction(g);
 		List<EdgeClass> a = g.getGraphClass().getEdgeClasses();
-		commit(g);
 		// TODO WTF?
 		for (EdgeClass ec : a) {
 			if (ec.getSimpleName().equals("Link")) {
@@ -450,35 +374,30 @@ public class EdgeTest extends InstanceTest {
 	/**
 	 * An edge which has no following edges.
 	 * 
-	 * @throws CommitFailedException
+	 * @
 	 */
 	@Test
-	public void getNextEdgeOfClassTestEdgeClass0() throws CommitFailedException {
+	public void getNextEdgeOfClassTestEdgeClass0() {
 		EdgeClass[] ecs = getEdgeClasses();
 
-		createTransaction(g);
 		DoubleSubNode v1 = g.createDoubleSubNode();
 		DoubleSubNode v2 = g.createDoubleSubNode();
 		Edge e1 = g.createLink(v1, v2);
-		commit(g);
 
-		createReadOnlyTransaction(g);
 		assertNull(e1.getNextIncidence(ecs[0]));
 		assertNull(e1.getNextIncidence(ecs[1]));
 		assertNull(e1.getNextIncidence(ecs[2]));
-		commit(g);
 	}
 
 	/**
 	 * Test in a manually built graph.
 	 * 
-	 * @throws CommitFailedException
+	 * @
 	 */
 	@Test
-	public void getNextEdgeOfClassTestEdgeClass1() throws CommitFailedException {
+	public void getNextEdgeOfClassTestEdgeClass1() {
 		EdgeClass[] ecs = getEdgeClasses();
 
-		createTransaction(g);
 		DoubleSubNode v1 = g.createDoubleSubNode();
 		DoubleSubNode v2 = g.createDoubleSubNode();
 		Edge e1 = g.createLink(v1, v2);
@@ -486,9 +405,7 @@ public class EdgeTest extends InstanceTest {
 		Edge e3 = g.createSubLink(v2, v1);
 		Edge e4 = g.createLink(v1, v1);
 		Edge e5 = g.createLinkBack(v1, v2);
-		commit(g);
 
-		createReadOnlyTransaction(g);
 		// test of edge e1
 		assertEquals(e3.getReversedEdge(), e1.getNextIncidence(ecs[0]));
 		assertEquals(e3.getReversedEdge(), e1.getNextIncidence(ecs[1]));
@@ -513,16 +430,15 @@ public class EdgeTest extends InstanceTest {
 		assertNull(e5.getNextIncidence(ecs[0]));
 		assertNull(e5.getNextIncidence(ecs[1]));
 		assertNull(e5.getNextIncidence(ecs[2]));
-		commit(g);
 	}
 
 	/**
 	 * Test in a randomly built graph
 	 * 
-	 * @throws CommitFailedException
+	 * @
 	 */
 	@Test
-	public void getNextEdgeOfClassTestEdgeClass2() throws CommitFailedException {
+	public void getNextEdgeOfClassTestEdgeClass2() {
 		EdgeClass[] ecs = getEdgeClasses();
 		for (int i = 0; i < RANDOM_GRAPH_COUNT; i++) {
 			switch (implementationType) {
@@ -530,18 +446,10 @@ public class EdgeTest extends InstanceTest {
 				g = VertexTestSchema.instance().createVertexTestGraph(
 						ImplementationType.STANDARD);
 				break;
-			case TRANSACTION:
-				g = VertexTestSchema.instance().createVertexTestGraph(
-						ImplementationType.TRANSACTION);
-				break;
-			case DATABASE:
-				g = dbHandler.createVertexTestGraphWithDatabaseSupport(ID + i);
-				break;
 			default:
 				fail("Implementation " + implementationType
 						+ " not yet supported by this test.");
 			}
-			createTransaction(g);
 			DoubleSubNode v0 = g.createDoubleSubNode();
 			DoubleSubNode v1 = g.createDoubleSubNode();
 			Edge[] edges = new Edge[RANDOM_EDGE_COUNT];
@@ -590,16 +498,13 @@ public class EdgeTest extends InstanceTest {
 				}
 				first = false;
 			}
-			commit(g);
 
-			createReadOnlyTransaction(g);
 			for (int k = 0; k < edges.length; k++) {
 				Edge e = edges[k];
 				assertEquals(link[k], e.getNextIncidence(ecs[0]));
 				assertEquals(sublink[k], e.getNextIncidence(ecs[1]));
 				assertEquals(linkback[k], e.getNextIncidence(ecs[2]));
 			}
-			commit(g);
 		}
 	}
 
@@ -609,31 +514,26 @@ public class EdgeTest extends InstanceTest {
 	/**
 	 * An edge which has no following edges.
 	 * 
-	 * @throws CommitFailedException
+	 * @
 	 */
 	@Test
-	public void getNextEdgeOfClassTestClass0() throws CommitFailedException {
-		createTransaction(g);
+	public void getNextEdgeOfClassTestClass0() {
 		DoubleSubNode v1 = g.createDoubleSubNode();
 		DoubleSubNode v2 = g.createDoubleSubNode();
 		Edge e1 = g.createLink(v1, v2);
-		commit(g);
 
-		createReadOnlyTransaction(g);
 		assertNull(e1.getNextIncidence(Link.EC));
 		assertNull(e1.getNextIncidence(SubLink.EC));
 		assertNull(e1.getNextIncidence(LinkBack.EC));
-		commit(g);
 	}
 
 	/**
 	 * Test in a manually built graph.
 	 * 
-	 * @throws CommitFailedException
+	 * @
 	 */
 	@Test
-	public void getNextEdgeOfClassTestClass1() throws CommitFailedException {
-		createTransaction(g);
+	public void getNextEdgeOfClassTestClass1() {
 		DoubleSubNode v1 = g.createDoubleSubNode();
 		DoubleSubNode v2 = g.createDoubleSubNode();
 		Edge e1 = g.createLink(v1, v2);
@@ -641,9 +541,7 @@ public class EdgeTest extends InstanceTest {
 		Edge e3 = g.createSubLink(v2, v1);
 		Edge e4 = g.createLink(v1, v1);
 		Edge e5 = g.createLinkBack(v1, v2);
-		commit(g);
 
-		createReadOnlyTransaction(g);
 		// test of edge e1
 		assertEquals(e3.getReversedEdge(), e1.getNextIncidence(Link.EC));
 		assertEquals(e3.getReversedEdge(), e1.getNextIncidence(SubLink.EC));
@@ -668,34 +566,25 @@ public class EdgeTest extends InstanceTest {
 		assertNull(e5.getNextIncidence(Link.EC));
 		assertNull(e5.getNextIncidence(SubLink.EC));
 		assertNull(e5.getNextIncidence(LinkBack.EC));
-		commit(g);
 	}
 
 	/**
 	 * Test in a randomly built graph
 	 * 
-	 * @throws CommitFailedException
+	 * @
 	 */
 	@Test
-	public void getNextEdgeOfClassTestClass2() throws CommitFailedException {
+	public void getNextEdgeOfClassTestClass2() {
 		for (int i = 0; i < RANDOM_GRAPH_COUNT; i++) {
 			switch (implementationType) {
 			case STANDARD:
 				g = VertexTestSchema.instance().createVertexTestGraph(
 						ImplementationType.STANDARD);
 				break;
-			case TRANSACTION:
-				g = VertexTestSchema.instance().createVertexTestGraph(
-						ImplementationType.TRANSACTION);
-				break;
-			case DATABASE:
-				g = dbHandler.createVertexTestGraphWithDatabaseSupport(ID + i);
-				break;
 			default:
 				fail("Implementation " + implementationType
 						+ " not yet supported by this test.");
 			}
-			createTransaction(g);
 			DoubleSubNode v0 = g.createDoubleSubNode();
 			DoubleSubNode v1 = g.createDoubleSubNode();
 			Edge[] edges = new Edge[RANDOM_EDGE_COUNT];
@@ -744,16 +633,13 @@ public class EdgeTest extends InstanceTest {
 				}
 				first = false;
 			}
-			commit(g);
 
-			createReadOnlyTransaction(g);
 			for (int k = 0; k < edges.length; k++) {
 				Edge e = edges[k];
 				assertEquals(link[k], e.getNextIncidence(Link.EC));
 				assertEquals(sublink[k], e.getNextIncidence(SubLink.EC));
 				assertEquals(linkback[k], e.getNextIncidence(LinkBack.EC));
 			}
-			commit(g);
 		}
 	}
 
@@ -763,20 +649,16 @@ public class EdgeTest extends InstanceTest {
 	/**
 	 * An edge which has no following edges.
 	 * 
-	 * @throws CommitFailedException
+	 * @
 	 */
 	@Test
-	public void getNextEdgeOfClassTestEdgeClassEdgeDirection0()
-			throws CommitFailedException {
+	public void getNextEdgeOfClassTestEdgeClassEdgeDirection0() {
 		EdgeClass[] ecs = getEdgeClasses();
 
-		createTransaction(g);
 		DoubleSubNode v1 = g.createDoubleSubNode();
 		DoubleSubNode v2 = g.createDoubleSubNode();
 		Edge e1 = g.createLink(v1, v2);
-		commit(g);
 
-		createReadOnlyTransaction(g);
 		assertNull(e1.getNextIncidence(ecs[0], EdgeDirection.INOUT));
 		assertNull(e1.getNextIncidence(ecs[1], EdgeDirection.INOUT));
 		assertNull(e1.getNextIncidence(ecs[2], EdgeDirection.INOUT));
@@ -786,20 +668,17 @@ public class EdgeTest extends InstanceTest {
 		assertNull(e1.getNextIncidence(ecs[0], EdgeDirection.IN));
 		assertNull(e1.getNextIncidence(ecs[1], EdgeDirection.IN));
 		assertNull(e1.getNextIncidence(ecs[2], EdgeDirection.IN));
-		commit(g);
 	}
 
 	/**
 	 * Test in a manually built graph.
 	 * 
-	 * @throws CommitFailedException
+	 * @
 	 */
 	@Test
-	public void getNextEdgeOfClassTestEdgeClassEdgeDirection1()
-			throws CommitFailedException {
+	public void getNextEdgeOfClassTestEdgeClassEdgeDirection1() {
 		EdgeClass[] ecs = getEdgeClasses();
 
-		createTransaction(g);
 		DoubleSubNode v1 = g.createDoubleSubNode();
 		DoubleSubNode v2 = g.createDoubleSubNode();
 		Edge e1 = g.createLink(v1, v2);
@@ -807,9 +686,7 @@ public class EdgeTest extends InstanceTest {
 		Edge e3 = g.createSubLink(v2, v1);
 		Edge e4 = g.createLink(v1, v1);
 		Edge e5 = g.createLinkBack(v1, v2);
-		commit(g);
 
-		createReadOnlyTransaction(g);
 		// test of edge e1
 		assertEquals(e3.getReversedEdge(),
 				e1.getNextIncidence(ecs[0], EdgeDirection.INOUT));
@@ -907,17 +784,15 @@ public class EdgeTest extends InstanceTest {
 		assertNull(e5.getNextIncidence(ecs[0], EdgeDirection.IN));
 		assertNull(e5.getNextIncidence(ecs[1], EdgeDirection.IN));
 		assertNull(e5.getNextIncidence(ecs[2], EdgeDirection.IN));
-		commit(g);
 	}
 
 	/**
 	 * Test in a randomly built graph
 	 * 
-	 * @throws CommitFailedException
+	 * @
 	 */
 	@Test
-	public void getNextEdgeOfClassTestEdgeClassEdgeDirection2()
-			throws CommitFailedException {
+	public void getNextEdgeOfClassTestEdgeClassEdgeDirection2() {
 		EdgeClass[] ecs = getEdgeClasses();
 		for (int i = 0; i < RANDOM_GRAPH_COUNT; i++) {
 			switch (implementationType) {
@@ -925,18 +800,10 @@ public class EdgeTest extends InstanceTest {
 				g = VertexTestSchema.instance().createVertexTestGraph(
 						ImplementationType.STANDARD);
 				break;
-			case TRANSACTION:
-				g = VertexTestSchema.instance().createVertexTestGraph(
-						ImplementationType.TRANSACTION);
-				break;
-			case DATABASE:
-				g = dbHandler.createVertexTestGraphWithDatabaseSupport(ID + i);
-				break;
 			default:
 				fail("Implementation " + implementationType
 						+ " not yet supported by this test.");
 			}
-			createTransaction(g);
 			DoubleSubNode v0 = g.createDoubleSubNode();
 			DoubleSubNode v1 = g.createDoubleSubNode();
 			Edge[] edges = new Edge[RANDOM_EDGE_COUNT];
@@ -1071,8 +938,6 @@ public class EdgeTest extends InstanceTest {
 				}
 				first = false;
 			}
-			commit(g);
-			createReadOnlyTransaction(g);
 			for (int k = 0; k < edges.length; k++) {
 				Edge e = edges[k];
 				assertEquals(linkinout[k],
@@ -1094,7 +959,6 @@ public class EdgeTest extends InstanceTest {
 				assertEquals(linkbackin[k],
 						e.getNextIncidence(ecs[2], EdgeDirection.IN));
 			}
-			commit(g);
 		}
 	}
 
@@ -1104,18 +968,14 @@ public class EdgeTest extends InstanceTest {
 	/**
 	 * An edge which has no following edges.
 	 * 
-	 * @throws CommitFailedException
+	 * @
 	 */
 	@Test
-	public void getNextEdgeOfClassTestClassEdgeDirection0()
-			throws CommitFailedException {
-		createTransaction(g);
+	public void getNextEdgeOfClassTestClassEdgeDirection0() {
 		DoubleSubNode v1 = g.createDoubleSubNode();
 		DoubleSubNode v2 = g.createDoubleSubNode();
 		Edge e1 = g.createLink(v1, v2);
-		commit(g);
 
-		createReadOnlyTransaction(g);
 		assertNull(e1.getNextIncidence(Link.EC, EdgeDirection.INOUT));
 		assertNull(e1.getNextIncidence(SubLink.EC, EdgeDirection.INOUT));
 		assertNull(e1.getNextIncidence(LinkBack.EC, EdgeDirection.INOUT));
@@ -1125,18 +985,15 @@ public class EdgeTest extends InstanceTest {
 		assertNull(e1.getNextIncidence(Link.EC, EdgeDirection.IN));
 		assertNull(e1.getNextIncidence(SubLink.EC, EdgeDirection.IN));
 		assertNull(e1.getNextIncidence(LinkBack.EC, EdgeDirection.IN));
-		commit(g);
 	}
 
 	/**
 	 * Test in a manually built graph.
 	 * 
-	 * @throws CommitFailedException
+	 * @
 	 */
 	@Test
-	public void getNextEdgeOfClassTestClassEdgeDirection1()
-			throws CommitFailedException {
-		createTransaction(g);
+	public void getNextEdgeOfClassTestClassEdgeDirection1() {
 		DoubleSubNode v1 = g.createDoubleSubNode();
 		DoubleSubNode v2 = g.createDoubleSubNode();
 		Edge e1 = g.createLink(v1, v2);
@@ -1144,9 +1001,7 @@ public class EdgeTest extends InstanceTest {
 		Edge e3 = g.createSubLink(v2, v1);
 		Edge e4 = g.createLink(v1, v1);
 		Edge e5 = g.createLinkBack(v1, v2);
-		commit(g);
 
-		createReadOnlyTransaction(g);
 		// test of edge e1
 		assertEquals(e3.getReversedEdge(),
 				e1.getNextIncidence(Link.EC, EdgeDirection.INOUT));
@@ -1247,35 +1102,25 @@ public class EdgeTest extends InstanceTest {
 		assertNull(e5.getNextIncidence(Link.EC, EdgeDirection.IN));
 		assertNull(e5.getNextIncidence(SubLink.EC, EdgeDirection.IN));
 		assertNull(e5.getNextIncidence(LinkBack.EC, EdgeDirection.IN));
-		commit(g);
 	}
 
 	/**
 	 * Test in a randomly built graph
 	 * 
-	 * @throws CommitFailedException
+	 * @
 	 */
 	@Test
-	public void getNextEdgeOfClassTestClassEdgeDirection2()
-			throws CommitFailedException {
+	public void getNextEdgeOfClassTestClassEdgeDirection2() {
 		for (int i = 0; i < RANDOM_GRAPH_COUNT; i++) {
 			switch (implementationType) {
 			case STANDARD:
 				g = VertexTestSchema.instance().createVertexTestGraph(
 						ImplementationType.STANDARD);
 				break;
-			case TRANSACTION:
-				g = VertexTestSchema.instance().createVertexTestGraph(
-						ImplementationType.TRANSACTION);
-				break;
-			case DATABASE:
-				g = dbHandler.createVertexTestGraphWithDatabaseSupport(ID + i);
-				break;
 			default:
 				fail("Implementation " + implementationType
 						+ " not yet supported by this test.");
 			}
-			createTransaction(g);
 			DoubleSubNode v0 = g.createDoubleSubNode();
 			DoubleSubNode v1 = g.createDoubleSubNode();
 			Edge[] edges = new Edge[RANDOM_EDGE_COUNT];
@@ -1410,9 +1255,7 @@ public class EdgeTest extends InstanceTest {
 				}
 				first = false;
 			}
-			commit(g);
 
-			createReadOnlyTransaction(g);
 			for (int k = 0; k < edges.length; k++) {
 				Edge e = edges[k];
 				assertEquals(linkinout[k],
@@ -1434,7 +1277,6 @@ public class EdgeTest extends InstanceTest {
 				assertEquals(linkbackin[k],
 						e.getNextIncidence(LinkBack.EC, EdgeDirection.IN));
 			}
-			commit(g);
 		}
 	}
 
@@ -1444,36 +1286,29 @@ public class EdgeTest extends InstanceTest {
 	/**
 	 * An edge which has no following edges.
 	 * 
-	 * @throws CommitFailedException
+	 * @
 	 */
 	@Test
-	public void getNextEdgeOfClassTestEdgeClassBoolean0()
-			throws CommitFailedException {
+	public void getNextEdgeOfClassTestEdgeClassBoolean0() {
 		EdgeClass[] ecs = getEdgeClasses();
 
-		createTransaction(g);
 		DoubleSubNode v1 = g.createDoubleSubNode();
 		DoubleSubNode v2 = g.createDoubleSubNode();
 		Edge e1 = g.createLink(v1, v2);
-		commit(g);
 
-		createReadOnlyTransaction(g);
 		assertNull(e1.getNextIncidence(ecs[0]));
 		assertNull(e1.getNextIncidence(ecs[1]));
 		assertNull(e1.getNextIncidence(ecs[2]));
-		commit(g);
 	}
 
 	/**
 	 * Test in a manually built graph.
 	 * 
-	 * @throws CommitFailedException
+	 * @
 	 */
 	@Test
-	public void getNextEdgeOfClassTestEdgeClassBoolean1()
-			throws CommitFailedException {
+	public void getNextEdgeOfClassTestEdgeClassBoolean1() {
 		EdgeClass[] ecs = getEdgeClasses();
-		createTransaction(g);
 		DoubleSubNode v1 = g.createDoubleSubNode();
 		DoubleSubNode v2 = g.createDoubleSubNode();
 		Edge e1 = g.createLink(v1, v2);
@@ -1481,9 +1316,7 @@ public class EdgeTest extends InstanceTest {
 		Edge e3 = g.createSubLink(v2, v1);
 		Edge e4 = g.createLink(v1, v1);
 		Edge e5 = g.createLinkBack(v1, v2);
-		commit(g);
 
-		createReadOnlyTransaction(g);
 		// test of edge e1
 		assertEquals(e3.getReversedEdge(), e1.getNextIncidence(ecs[0]));
 		assertEquals(e3.getReversedEdge(), e1.getNextIncidence(ecs[1]));
@@ -1512,17 +1345,15 @@ public class EdgeTest extends InstanceTest {
 		assertNull(e5.getNextIncidence(ecs[0]));
 		assertNull(e5.getNextIncidence(ecs[1]));
 		assertNull(e5.getNextIncidence(ecs[2]));
-		commit(g);
 	}
 
 	/**
 	 * Test in a randomly built graph
 	 * 
-	 * @throws CommitFailedException
+	 * @
 	 */
 	@Test
-	public void getNextEdgeOfClassTestEdgeClassBoolean2()
-			throws CommitFailedException {
+	public void getNextEdgeOfClassTestEdgeClassBoolean2() {
 		EdgeClass[] ecs = getEdgeClasses();
 		for (int i = 0; i < RANDOM_GRAPH_COUNT; i++) {
 			switch (implementationType) {
@@ -1530,18 +1361,10 @@ public class EdgeTest extends InstanceTest {
 				g = VertexTestSchema.instance().createVertexTestGraph(
 						ImplementationType.STANDARD);
 				break;
-			case TRANSACTION:
-				g = VertexTestSchema.instance().createVertexTestGraph(
-						ImplementationType.TRANSACTION);
-				break;
-			case DATABASE:
-				g = dbHandler.createVertexTestGraphWithDatabaseSupport(ID + i);
-				break;
 			default:
 				fail("Implementation " + implementationType
 						+ " not yet supported by this test.");
 			}
-			createTransaction(g);
 			DoubleSubNode v0 = g.createDoubleSubNode();
 			DoubleSubNode v1 = g.createDoubleSubNode();
 			Edge[] edges = new Edge[RANDOM_EDGE_COUNT];
@@ -1613,16 +1436,13 @@ public class EdgeTest extends InstanceTest {
 				}
 				first = false;
 			}
-			commit(g);
 
-			createReadOnlyTransaction(g);
 			for (int k = 0; k < edges.length; k++) {
 				Edge e = edges[k];
 				assertEquals(linkfalse[k], e.getNextIncidence(ecs[0]));
 				assertEquals(sublinkfalse[k], e.getNextIncidence(ecs[1]));
 				assertEquals(linkbackfalse[k], e.getNextIncidence(ecs[2]));
 			}
-			commit(g);
 		}
 	}
 
@@ -1632,33 +1452,26 @@ public class EdgeTest extends InstanceTest {
 	/**
 	 * An edge which has no following edges.
 	 * 
-	 * @throws CommitFailedException
+	 * @
 	 */
 	@Test
-	public void getNextEdgeOfClassTestClassBoolean0()
-			throws CommitFailedException {
-		createTransaction(g);
+	public void getNextEdgeOfClassTestClassBoolean0() {
 		DoubleSubNode v1 = g.createDoubleSubNode();
 		DoubleSubNode v2 = g.createDoubleSubNode();
 		Edge e1 = g.createLink(v1, v2);
-		commit(g);
 
-		createReadOnlyTransaction(g);
 		assertNull(e1.getNextIncidence(Link.EC));
 		assertNull(e1.getNextIncidence(SubLink.EC));
 		assertNull(e1.getNextIncidence(LinkBack.EC));
-		commit(g);
 	}
 
 	/**
 	 * Test in a manually built graph.
 	 * 
-	 * @throws CommitFailedException
+	 * @
 	 */
 	@Test
-	public void getNextEdgeOfClassTestClassBoolean1()
-			throws CommitFailedException {
-		createTransaction(g);
+	public void getNextEdgeOfClassTestClassBoolean1() {
 		DoubleSubNode v1 = g.createDoubleSubNode();
 		DoubleSubNode v2 = g.createDoubleSubNode();
 		Edge e1 = g.createLink(v1, v2);
@@ -1666,9 +1479,7 @@ public class EdgeTest extends InstanceTest {
 		Edge e3 = g.createSubLink(v2, v1);
 		Edge e4 = g.createLink(v1, v1);
 		Edge e5 = g.createLinkBack(v1, v2);
-		commit(g);
 
-		createReadOnlyTransaction(g);
 		// test of edge e1
 		assertEquals(e3.getReversedEdge(), e1.getNextIncidence(Link.EC));
 		assertEquals(e3.getReversedEdge(), e1.getNextIncidence(SubLink.EC));
@@ -1697,35 +1508,25 @@ public class EdgeTest extends InstanceTest {
 		assertNull(e5.getNextIncidence(Link.EC));
 		assertNull(e5.getNextIncidence(SubLink.EC));
 		assertNull(e5.getNextIncidence(LinkBack.EC));
-		commit(g);
 	}
 
 	/**
 	 * Test in a randomly built graph
 	 * 
-	 * @throws CommitFailedException
+	 * @
 	 */
 	@Test
-	public void getNextEdgeOfClassTestClassBoolean2()
-			throws CommitFailedException {
+	public void getNextEdgeOfClassTestClassBoolean2() {
 		for (int i = 0; i < RANDOM_GRAPH_COUNT; i++) {
 			switch (implementationType) {
 			case STANDARD:
 				g = VertexTestSchema.instance().createVertexTestGraph(
 						ImplementationType.STANDARD);
 				break;
-			case TRANSACTION:
-				g = VertexTestSchema.instance().createVertexTestGraph(
-						ImplementationType.TRANSACTION);
-				break;
-			case DATABASE:
-				g = dbHandler.createVertexTestGraphWithDatabaseSupport(ID + i);
-				break;
 			default:
 				fail("Implementation " + implementationType
 						+ " not yet supported by this test.");
 			}
-			createTransaction(g);
 			DoubleSubNode v0 = g.createDoubleSubNode();
 			DoubleSubNode v1 = g.createDoubleSubNode();
 			Edge[] edges = new Edge[RANDOM_EDGE_COUNT];
@@ -1797,15 +1598,12 @@ public class EdgeTest extends InstanceTest {
 				}
 				first = false;
 			}
-			commit(g);
-			createReadOnlyTransaction(g);
 			for (int k = 0; k < edges.length; k++) {
 				Edge e = edges[k];
 				assertEquals(linkfalse[k], e.getNextIncidence(Link.EC));
 				assertEquals(sublinkfalse[k], e.getNextIncidence(SubLink.EC));
 				assertEquals(linkbackfalse[k], e.getNextIncidence(LinkBack.EC));
 			}
-			commit(g);
 		}
 	}
 
@@ -1815,20 +1613,16 @@ public class EdgeTest extends InstanceTest {
 	/**
 	 * An edge which has no following edges.
 	 * 
-	 * @throws CommitFailedException
+	 * @
 	 */
 	@Test
-	public void getNextEdgeOfClassTestEdgeClassEdgeDirectionBoolean0()
-			throws CommitFailedException {
+	public void getNextEdgeOfClassTestEdgeClassEdgeDirectionBoolean0() {
 		EdgeClass[] ecs = getEdgeClasses();
 
-		createTransaction(g);
 		DoubleSubNode v1 = g.createDoubleSubNode();
 		DoubleSubNode v2 = g.createDoubleSubNode();
 		Edge e1 = g.createLink(v1, v2);
-		commit(g);
 
-		createReadOnlyTransaction(g);
 		assertNull(e1.getNextIncidence(ecs[0], EdgeDirection.INOUT));
 		assertNull(e1.getNextIncidence(ecs[1], EdgeDirection.INOUT));
 		assertNull(e1.getNextIncidence(ecs[2], EdgeDirection.INOUT));
@@ -1838,20 +1632,17 @@ public class EdgeTest extends InstanceTest {
 		assertNull(e1.getNextIncidence(ecs[0], EdgeDirection.IN));
 		assertNull(e1.getNextIncidence(ecs[1], EdgeDirection.IN));
 		assertNull(e1.getNextIncidence(ecs[2], EdgeDirection.IN));
-		commit(g);
 	}
 
 	/**
 	 * Test in a manually built graph.
 	 * 
-	 * @throws CommitFailedException
+	 * @
 	 */
 	@Test
-	public void getNextEdgeOfClassTestEdgeClassEdgeDirectionBoolean1()
-			throws CommitFailedException {
+	public void getNextEdgeOfClassTestEdgeClassEdgeDirectionBoolean1() {
 		EdgeClass[] ecs = getEdgeClasses();
 
-		createTransaction(g);
 		DoubleSubNode v1 = g.createDoubleSubNode();
 		DoubleSubNode v2 = g.createDoubleSubNode();
 		Edge e1 = g.createLink(v1, v2);
@@ -1859,9 +1650,7 @@ public class EdgeTest extends InstanceTest {
 		Edge e3 = g.createSubLink(v2, v1);
 		Edge e4 = g.createLink(v1, v1);
 		Edge e5 = g.createLinkBack(v1, v2);
-		commit(g);
 
-		createReadOnlyTransaction(g);
 		// test of edge e1
 		assertEquals(e3.getReversedEdge(),
 				e1.getNextIncidence(ecs[0], EdgeDirection.INOUT));
@@ -1965,17 +1754,15 @@ public class EdgeTest extends InstanceTest {
 		assertNull(e5.getNextIncidence(ecs[1], EdgeDirection.IN));
 		assertNull(e5.getNextIncidence(ecs[2], EdgeDirection.IN));
 
-		commit(g);
 	}
 
 	/**
 	 * Test in a randomly built graph
 	 * 
-	 * @throws CommitFailedException
+	 * @
 	 */
 	@Test
-	public void getNextEdgeOfClassTestEdgeClassEdgeDirectionBoolean2()
-			throws CommitFailedException {
+	public void getNextEdgeOfClassTestEdgeClassEdgeDirectionBoolean2() {
 		EdgeClass[] ecs = getEdgeClasses();
 		for (int i = 0; i < RANDOM_GRAPH_COUNT; i++) {
 			switch (implementationType) {
@@ -1983,18 +1770,10 @@ public class EdgeTest extends InstanceTest {
 				g = VertexTestSchema.instance().createVertexTestGraph(
 						ImplementationType.STANDARD);
 				break;
-			case TRANSACTION:
-				g = VertexTestSchema.instance().createVertexTestGraph(
-						ImplementationType.TRANSACTION);
-				break;
-			case DATABASE:
-				g = dbHandler.createVertexTestGraphWithDatabaseSupport(ID + i);
-				break;
 			default:
 				fail("Implementation " + implementationType
 						+ " not yet supported by this test.");
 			}
-			createTransaction(g);
 			DoubleSubNode v0 = g.createDoubleSubNode();
 			DoubleSubNode v1 = g.createDoubleSubNode();
 			Edge[] edges = new Edge[RANDOM_EDGE_COUNT];
@@ -2157,8 +1936,6 @@ public class EdgeTest extends InstanceTest {
 				}
 				first = false;
 			}
-			commit(g);
-			createReadOnlyTransaction(g);
 			for (int k = 0; k < edges.length; k++) {
 				Edge e = edges[k];
 				assertEquals(linkinoutfalse[k],
@@ -2180,7 +1957,6 @@ public class EdgeTest extends InstanceTest {
 				assertEquals(linkbackin[k],
 						e.getNextIncidence(ecs[2], EdgeDirection.IN));
 			}
-			commit(g);
 		}
 	}
 
@@ -2190,18 +1966,14 @@ public class EdgeTest extends InstanceTest {
 	/**
 	 * An edge which has no following edges.
 	 * 
-	 * @throws CommitFailedException
+	 * @
 	 */
 	@Test
-	public void getNextEdgeOfClassTestClassEdgeDirectionBoolean0()
-			throws CommitFailedException {
-		createTransaction(g);
+	public void getNextEdgeOfClassTestClassEdgeDirectionBoolean0() {
 		DoubleSubNode v1 = g.createDoubleSubNode();
 		DoubleSubNode v2 = g.createDoubleSubNode();
 		Edge e1 = g.createLink(v1, v2);
-		commit(g);
 
-		createReadOnlyTransaction(g);
 		assertNull(e1.getNextIncidence(Link.EC, EdgeDirection.INOUT));
 		assertNull(e1.getNextIncidence(SubLink.EC, EdgeDirection.INOUT));
 		assertNull(e1.getNextIncidence(LinkBack.EC, EdgeDirection.INOUT));
@@ -2211,18 +1983,15 @@ public class EdgeTest extends InstanceTest {
 		assertNull(e1.getNextIncidence(Link.EC, EdgeDirection.IN));
 		assertNull(e1.getNextIncidence(SubLink.EC, EdgeDirection.IN));
 		assertNull(e1.getNextIncidence(LinkBack.EC, EdgeDirection.IN));
-		commit(g);
 	}
 
 	/**
 	 * Test in a manually built graph.
 	 * 
-	 * @throws CommitFailedException
+	 * @
 	 */
 	@Test
-	public void getNextEdgeOfClassTestClassEdgeDirectionBoolean1()
-			throws CommitFailedException {
-		createTransaction(g);
+	public void getNextEdgeOfClassTestClassEdgeDirectionBoolean1() {
 		DoubleSubNode v1 = g.createDoubleSubNode();
 		DoubleSubNode v2 = g.createDoubleSubNode();
 		Edge e1 = g.createLink(v1, v2);
@@ -2230,9 +1999,7 @@ public class EdgeTest extends InstanceTest {
 		Edge e3 = g.createSubLink(v2, v1);
 		Edge e4 = g.createLink(v1, v1);
 		Edge e5 = g.createLinkBack(v1, v2);
-		commit(g);
 
-		createReadOnlyTransaction(g);
 		// test of edge e1
 		assertEquals(e3.getReversedEdge(),
 				e1.getNextIncidence(Link.EC, EdgeDirection.INOUT));
@@ -2338,35 +2105,25 @@ public class EdgeTest extends InstanceTest {
 		assertNull(e5.getNextIncidence(Link.EC, EdgeDirection.IN));
 		assertNull(e5.getNextIncidence(SubLink.EC, EdgeDirection.IN));
 		assertNull(e5.getNextIncidence(LinkBack.EC, EdgeDirection.IN));
-		commit(g);
 	}
 
 	/**
 	 * Test in a randomly built graph
 	 * 
-	 * @throws CommitFailedException
+	 * @
 	 */
 	@Test
-	public void getNextEdgeOfClassTestClassEdgeDirectionBoolean2()
-			throws CommitFailedException {
+	public void getNextEdgeOfClassTestClassEdgeDirectionBoolean2() {
 		for (int i = 0; i < RANDOM_GRAPH_COUNT; i++) {
 			switch (implementationType) {
 			case STANDARD:
 				g = VertexTestSchema.instance().createVertexTestGraph(
 						ImplementationType.STANDARD);
 				break;
-			case TRANSACTION:
-				g = VertexTestSchema.instance().createVertexTestGraph(
-						ImplementationType.TRANSACTION);
-				break;
-			case DATABASE:
-				g = dbHandler.createVertexTestGraphWithDatabaseSupport(ID + i);
-				break;
 			default:
 				fail("Implementation " + implementationType
 						+ " not yet supported by this test.");
 			}
-			createTransaction(g);
 			DoubleSubNode v0 = g.createDoubleSubNode();
 			DoubleSubNode v1 = g.createDoubleSubNode();
 			Edge[] edges = new Edge[RANDOM_EDGE_COUNT];
@@ -2529,8 +2286,6 @@ public class EdgeTest extends InstanceTest {
 				}
 				first = false;
 			}
-			commit(g);
-			createReadOnlyTransaction(g);
 			for (int k = 0; k < edges.length; k++) {
 				Edge e = edges[k];
 				assertEquals(linkinoutfalse[k],
@@ -2552,16 +2307,13 @@ public class EdgeTest extends InstanceTest {
 				assertEquals(linkbackin[k],
 						e.getNextIncidence(LinkBack.EC, EdgeDirection.IN));
 			}
-			commit(g);
 		}
 	}
 
 	// tests for the method Vertex getThis();
 
-	private Vertex[] createRandomGraph(boolean retThis)
-			throws CommitFailedException {
+	private Vertex[] createRandomGraph(boolean retThis) {
 		// TODO write comments for this method and think about method name.
-		createTransaction(g);
 		Vertex[] nodes = new Vertex[] { g.createSubNode(),
 				g.createDoubleSubNode(), g.createSuperNode() };
 		Vertex[] ret = new Vertex[RANDOM_VERTEX_COUNT];
@@ -2589,50 +2341,43 @@ public class EdgeTest extends InstanceTest {
 			}
 		}
 
-		commit(g);
 		return ret;
 	}
 
 	/**
 	 * Test in a manually built graph.
 	 * 
-	 * @throws CommitFailedException
+	 * @
 	 */
 	@Test
-	public void getThisTest0() throws CommitFailedException {
-		createTransaction(g);
+	public void getThisTest0() {
 		DoubleSubNode v1 = g.createDoubleSubNode();
 		DoubleSubNode v2 = g.createDoubleSubNode();
 		DoubleSubNode v3 = g.createDoubleSubNode();
 		Edge e1 = g.createLink(v1, v2);
 		Edge e2 = g.createLinkBack(v2, v3);
 		Edge e3 = g.createSubLink(v1, v3);
-		commit(g);
 
-		createReadOnlyTransaction(g);
 		assertEquals(v1, e1.getThis());
 		assertEquals(v2, e1.getReversedEdge().getThis());
 		assertEquals(v2, e2.getThis());
 		assertEquals(v3, e2.getReversedEdge().getThis());
 		assertEquals(v1, e3.getThis());
 		assertEquals(v3, e3.getReversedEdge().getThis());
-		commit(g);
 	}
 
 	/**
 	 * Test in a randomly built graph.
 	 * 
-	 * @throws CommitFailedException
+	 * @
 	 */
 	@Test
-	public void getThisTest1() throws CommitFailedException {
+	public void getThisTest1() {
 		Vertex[] thisVertices = createRandomGraph(true);
 
-		createReadOnlyTransaction(g);
 		for (int i = 0; i < g.getECount(); i++) {
 			assertEquals(thisVertices[i], g.getEdge(i + 1).getThis());
 		}
-		commit(g);
 	}
 
 	// tests for the method Vertex getThat();
@@ -2640,43 +2385,37 @@ public class EdgeTest extends InstanceTest {
 	/**
 	 * Test in a manually built graph.
 	 * 
-	 * @throws CommitFailedException
+	 * @
 	 */
 	@Test
-	public void getThatTest0() throws CommitFailedException {
-		createTransaction(g);
+	public void getThatTest0() {
 		DoubleSubNode v1 = g.createDoubleSubNode();
 		DoubleSubNode v2 = g.createDoubleSubNode();
 		DoubleSubNode v3 = g.createDoubleSubNode();
 		Edge e1 = g.createLink(v1, v2);
 		Edge e2 = g.createLinkBack(v2, v3);
 		Edge e3 = g.createSubLink(v1, v3);
-		commit(g);
 
-		createReadOnlyTransaction(g);
 		assertEquals(v2, e1.getThat());
 		assertEquals(v1, e1.getReversedEdge().getThat());
 		assertEquals(v3, e2.getThat());
 		assertEquals(v2, e2.getReversedEdge().getThat());
 		assertEquals(v3, e3.getThat());
 		assertEquals(v1, e3.getReversedEdge().getThat());
-		commit(g);
 	}
 
 	/**
 	 * Test in a randomly built graph.
 	 * 
-	 * @throws CommitFailedException
+	 * @
 	 */
 	@Test
-	public void getThatTest1() throws CommitFailedException {
+	public void getThatTest1() {
 		Vertex[] thisVertices = createRandomGraph(false);
 
-		createReadOnlyTransaction(g);
 		for (int i = 0; i < g.getECount(); i++) {
 			assertEquals(thisVertices[i], g.getEdge(i + 1).getThat());
 		}
-		commit(g);
 	}
 
 	// tests for the method String getThisRole();
@@ -2684,26 +2423,22 @@ public class EdgeTest extends InstanceTest {
 	/**
 	 * Test in a manually built graph.
 	 * 
-	 * @throws CommitFailedException
+	 * @
 	 */
 	@Test
-	public void getThisRoleTest() throws CommitFailedException {
-		createTransaction(g);
+	public void getThisRoleTest() {
 		DoubleSubNode v1 = g.createDoubleSubNode();
 		DoubleSubNode v2 = g.createDoubleSubNode();
 		Edge e1 = g.createLink(v1, v2);
 		Edge e2 = g.createSubLink(v1, v2);
 		Edge e3 = g.createLinkBack(v1, v2);
-		commit(g);
 
-		createReadOnlyTransaction(g);
 		assertEquals("source", e1.getThisRole());
 		assertEquals("target", e1.getReversedEdge().getThisRole());
 		assertEquals("sourcec", e2.getThisRole());
 		assertEquals("targetc", e2.getReversedEdge().getThisRole());
 		assertEquals("sourceb", e3.getThisRole());
 		assertEquals("targetb", e3.getReversedEdge().getThisRole());
-		commit(g);
 	}
 
 	// tests for the method String getThisRole();
@@ -2711,26 +2446,22 @@ public class EdgeTest extends InstanceTest {
 	/**
 	 * Test in a manually built graph.
 	 * 
-	 * @throws CommitFailedException
+	 * @
 	 */
 	@Test
-	public void getThatRoleTest() throws CommitFailedException {
-		createTransaction(g);
+	public void getThatRoleTest() {
 		DoubleSubNode v1 = g.createDoubleSubNode();
 		DoubleSubNode v2 = g.createDoubleSubNode();
 		Edge e1 = g.createLink(v1, v2);
 		Edge e2 = g.createSubLink(v1, v2);
 		Edge e3 = g.createLinkBack(v1, v2);
-		commit(g);
 
-		createReadOnlyTransaction(g);
 		assertEquals("target", e1.getThatRole());
 		assertEquals("source", e1.getReversedEdge().getThatRole());
 		assertEquals("targetc", e2.getThatRole());
 		assertEquals("sourcec", e2.getReversedEdge().getThatRole());
 		assertEquals("targetb", e3.getThatRole());
 		assertEquals("sourceb", e3.getReversedEdge().getThatRole());
-		commit(g);
 	}
 
 	// tests for the method Edge getNextEdgeInGraph();
@@ -2739,11 +2470,10 @@ public class EdgeTest extends InstanceTest {
 	/**
 	 * Test for reversedEdge.
 	 * 
-	 * @throws CommitFailedException
+	 * @
 	 */
 	@Test
-	public void getNextEdgeInGraphTestR0() throws CommitFailedException {
-		createTransaction(g);
+	public void getNextEdgeInGraphTestR0() {
 		DoubleSubNode v1 = g.createDoubleSubNode();
 		DoubleSubNode v2 = g.createDoubleSubNode();
 		Edge e1 = g.createLink(v1, v2);
@@ -2752,13 +2482,10 @@ public class EdgeTest extends InstanceTest {
 		Edge e1R = e1.getReversedEdge();
 		Edge e2R = e2.getReversedEdge();
 		Edge e3R = e3.getReversedEdge();
-		commit(g);
 
-		createReadOnlyTransaction(g);
 		assertEquals(e2, e1R.getNextEdge());
 		assertEquals(e3, e2R.getNextEdge());
 		assertNull(e3R.getNextEdge());
-		commit(g);
 	}
 
 	// tests for the method Edge getPrevEdgeInGraph();
@@ -2769,12 +2496,10 @@ public class EdgeTest extends InstanceTest {
 	 * 
 	 * @param classedge
 	 * @param nosubclasses
-	 * @return
-	 * @throws CommitFailedException
+	 * @return @
 	 */
 	private ArrayList<ArrayList<Edge>> createRandomGraph(boolean edgeClass,
-			boolean nosubclasses) throws CommitFailedException {
-		createTransaction(g);
+			boolean nosubclasses) {
 		Vertex[] nodes = new Vertex[] { g.createSubNode(),
 				g.createDoubleSubNode(), g.createSuperNode() };
 		ArrayList<ArrayList<Edge>> ret = new ArrayList<ArrayList<Edge>>();
@@ -2853,18 +2578,16 @@ public class EdgeTest extends InstanceTest {
 				break;
 			}
 		}
-		commit(g);
 		return ret;
 	}
 
 	/**
 	 * Test for reversedEdge.
 	 * 
-	 * @throws CommitFailedException
+	 * @
 	 */
 	@Test
-	public void getPrevEdgeInGraphTestR0() throws CommitFailedException {
-		createTransaction(g);
+	public void getPrevEdgeInGraphTestR0() {
 		DoubleSubNode v1 = g.createDoubleSubNode();
 		DoubleSubNode v2 = g.createDoubleSubNode();
 		Edge e1 = g.createLink(v1, v2);
@@ -2873,70 +2596,57 @@ public class EdgeTest extends InstanceTest {
 		Edge e1R = e1.getReversedEdge();
 		Edge e2R = e2.getReversedEdge();
 		Edge e3R = e3.getReversedEdge();
-		commit(g);
 
-		createReadOnlyTransaction(g);
 		assertEquals(e2, e3R.getPrevEdge());
 		assertEquals(e1, e2R.getPrevEdge());
 		assertNull(e1R.getPrevEdge());
-		commit(g);
 	}
 
 	/**
 	 * Tests if an edge has no previous edge in graph.
 	 * 
-	 * @throws CommitFailedException
+	 * @
 	 */
 	@Test
-	public void getPrevEdgeInGraphTest0() throws CommitFailedException {
-		createTransaction(g);
+	public void getPrevEdgeInGraphTest0() {
 		DoubleSubNode v1 = g.createDoubleSubNode();
 		Edge e1 = g.createLink(v1, v1);
-		commit(g);
 
-		createReadOnlyTransaction(g);
 		assertNull(e1.getPrevEdge());
-		commit(g);
 	}
 
 	/**
 	 * Test in a manually built graph.
 	 * 
-	 * @throws CommitFailedException
+	 * @
 	 */
 	@Test
-	public void getPrevEdgeInGraphTest1() throws CommitFailedException {
-		createTransaction(g);
+	public void getPrevEdgeInGraphTest1() {
 		DoubleSubNode v1 = g.createDoubleSubNode();
 		DoubleSubNode v2 = g.createDoubleSubNode();
 		Edge e1 = g.createLink(v1, v1);
 		Edge e2 = g.createLink(v2, v2);
 		Edge e3 = g.createLink(v1, v2);
-		commit(g);
 
-		createReadOnlyTransaction(g);
 		assertEquals(e2, e3.getPrevEdge());
 		assertEquals(e1, e2.getPrevEdge());
 		assertNull(e1.getPrevEdge());
-		commit(g);
 	}
 
 	/**
 	 * Test in a randomly built graph.
 	 * 
-	 * @throws CommitFailedException
+	 * @
 	 */
 	@Test
-	public void getPrevEdgeInGraphTest2() throws CommitFailedException {
+	public void getPrevEdgeInGraphTest2() {
 		ArrayList<ArrayList<Edge>> result = createRandomGraph(false, false);
 
-		createReadOnlyTransaction(g);
 		Edge current = g.getLastEdge();
 		for (int i = g.getECount() - 1; i >= 0; i--) {
 			assertEquals(result.get(0).get(i), current);
 			current = current.getPrevEdge();
 		}
-		commit(g);
 	}
 
 	// tests for the method Edge getNextEdgeOfClassInGraph(EdgeClass
@@ -2945,37 +2655,30 @@ public class EdgeTest extends InstanceTest {
 	/**
 	 * An edge which has no following edges.
 	 * 
-	 * @throws CommitFailedException
+	 * @
 	 */
 	@Test
-	public void getNextEdgeOfClassInGraphTestEdgeClass0()
-			throws CommitFailedException {
+	public void getNextEdgeOfClassInGraphTestEdgeClass0() {
 		EdgeClass[] ecs = getEdgeClasses();
 
-		createTransaction(g);
 		DoubleSubNode v1 = g.createDoubleSubNode();
 		DoubleSubNode v2 = g.createDoubleSubNode();
 		Edge e1 = g.createLink(v1, v2);
-		commit(g);
 
-		createReadOnlyTransaction(g);
 		assertNull(e1.getNextEdge(ecs[0]));
 		assertNull(e1.getNextEdge(ecs[1]));
 		assertNull(e1.getNextEdge(ecs[2]));
-		commit(g);
 	}
 
 	/**
 	 * Test in a manually built graph.
 	 * 
-	 * @throws CommitFailedException
+	 * @
 	 */
 	@Test
-	public void getNextEdgeOfClassInGraphTestEdgeClass1()
-			throws CommitFailedException {
+	public void getNextEdgeOfClassInGraphTestEdgeClass1() {
 		EdgeClass[] ecs = getEdgeClasses();
 
-		createTransaction(g);
 		DoubleSubNode v1 = g.createDoubleSubNode();
 		DoubleSubNode v2 = g.createDoubleSubNode();
 		Edge e1 = g.createLink(v1, v2);
@@ -2983,9 +2686,7 @@ public class EdgeTest extends InstanceTest {
 		Edge e3 = g.createSubLink(v2, v1);
 		Edge e4 = g.createLink(v1, v1);
 		Edge e5 = g.createLinkBack(v1, v2);
-		commit(g);
 
-		createReadOnlyTransaction(g);
 		// test of edge e1
 		assertEquals(e3, e1.getNextEdge(ecs[0]));
 		assertEquals(e3, e1.getNextEdge(ecs[1]));
@@ -3032,21 +2733,18 @@ public class EdgeTest extends InstanceTest {
 		assertNull(e5R.getNextEdge(ecs[0]));
 		assertNull(e5R.getNextEdge(ecs[1]));
 		assertNull(e5R.getNextEdge(ecs[2]));
-		commit(g);
 	}
 
 	/**
 	 * Test in a randomly built graph.
 	 * 
-	 * @throws CommitFailedException
+	 * @
 	 */
 	@Test
-	public void getNextEdgeOfClassInGraphTestEdgeClass2()
-			throws CommitFailedException {
+	public void getNextEdgeOfClassInGraphTestEdgeClass2() {
 		EdgeClass[] ecs = getEdgeClasses();
 		ArrayList<ArrayList<Edge>> result = createRandomGraph(true, false);
 
-		createReadOnlyTransaction(g);
 		Edge counter = g.getFirstEdge(ecs[0]);
 		for (Edge e : result.get(0)) {
 			assertEquals(e, counter);
@@ -3062,7 +2760,6 @@ public class EdgeTest extends InstanceTest {
 			assertEquals(e, counter);
 			counter = counter.getNextEdge(ecs[2]);
 		}
-		commit(g);
 	}
 
 	// tests for the method Edge getNextEdgeOfClassInGraph(Class<? extends Edge>
@@ -3071,33 +2768,26 @@ public class EdgeTest extends InstanceTest {
 	/**
 	 * An edge which has no following edges.
 	 * 
-	 * @throws CommitFailedException
+	 * @
 	 */
 	@Test
-	public void getNextEdgeOfClassInGraphTestClass0()
-			throws CommitFailedException {
-		createTransaction(g);
+	public void getNextEdgeOfClassInGraphTestClass0() {
 		DoubleSubNode v1 = g.createDoubleSubNode();
 		DoubleSubNode v2 = g.createDoubleSubNode();
 		Edge e1 = g.createLink(v1, v2);
-		commit(g);
 
-		createReadOnlyTransaction(g);
 		assertNull(e1.getNextEdge(Link.EC));
 		assertNull(e1.getNextEdge(SubLink.EC));
 		assertNull(e1.getNextEdge(LinkBack.EC));
-		commit(g);
 	}
 
 	/**
 	 * Test in a manually built graph.
 	 * 
-	 * @throws CommitFailedException
+	 * @
 	 */
 	@Test
-	public void getNextEdgeOfClassInGraphTestClass1()
-			throws CommitFailedException {
-		createTransaction(g);
+	public void getNextEdgeOfClassInGraphTestClass1() {
 		DoubleSubNode v1 = g.createDoubleSubNode();
 		DoubleSubNode v2 = g.createDoubleSubNode();
 		Edge e1 = g.createLink(v1, v2);
@@ -3105,9 +2795,7 @@ public class EdgeTest extends InstanceTest {
 		Edge e3 = g.createSubLink(v2, v1);
 		Edge e4 = g.createLink(v1, v1);
 		Edge e5 = g.createLinkBack(v1, v2);
-		commit(g);
 
-		createReadOnlyTransaction(g);
 		// test of edge e1
 		assertEquals(e3, e1.getNextEdge(Link.EC));
 		assertEquals(e3, e1.getNextEdge(SubLink.EC));
@@ -3154,20 +2842,17 @@ public class EdgeTest extends InstanceTest {
 		assertNull(e5.getNextEdge(Link.EC));
 		assertNull(e5.getNextEdge(SubLink.EC));
 		assertNull(e5.getNextEdge(LinkBack.EC));
-		commit(g);
 	}
 
 	/**
 	 * Test in a randomly built graph.
 	 * 
-	 * @throws CommitFailedException
+	 * @
 	 */
 	@Test
-	public void getNextEdgeOfClassInGraphTestClass2()
-			throws CommitFailedException {
+	public void getNextEdgeOfClassInGraphTestClass2() {
 		ArrayList<ArrayList<Edge>> result = createRandomGraph(true, false);
 
-		createReadOnlyTransaction(g);
 		Edge counter = g.getFirstEdge(Link.EC);
 		for (Edge e : result.get(0)) {
 			assertEquals(e, counter);
@@ -3183,28 +2868,22 @@ public class EdgeTest extends InstanceTest {
 			assertEquals(e, counter);
 			counter = counter.getNextEdge(LinkBack.EC);
 		}
-		commit(g);
 	}
 
 	/**
 	 * An edge which has no following edges.
 	 * 
-	 * @throws CommitFailedException
+	 * @
 	 */
 	@Test
-	public void getNextEdgeOfClassInGraphTestClassBoolean0()
-			throws CommitFailedException {
-		createTransaction(g);
+	public void getNextEdgeOfClassInGraphTestClassBoolean0() {
 		DoubleSubNode v1 = g.createDoubleSubNode();
 		DoubleSubNode v2 = g.createDoubleSubNode();
 		Edge e1 = g.createLink(v1, v2);
-		commit(g);
 
-		createReadOnlyTransaction(g);
 		assertNull(e1.getNextEdge(Link.EC));
 		assertNull(e1.getNextEdge(SubLink.EC));
 		assertNull(e1.getNextEdge(LinkBack.EC));
-		commit(g);
 	}
 
 	// tests of the method Vertex getAlpha();
@@ -3218,58 +2897,46 @@ public class EdgeTest extends InstanceTest {
 	/**
 	 * Tests if an edge is before itself.
 	 * 
-	 * @throws CommitFailedException
+	 * @
 	 */
 	@Test
-	public void isBeforeTest0() throws CommitFailedException {
-		createTransaction(g);
+	public void isBeforeTest0() {
 		DoubleSubNode v1 = g.createDoubleSubNode();
 		Edge e1 = g.createLink(v1, v1);
-		commit(g);
 
-		createReadOnlyTransaction(g);
 		assertFalse(e1.isBeforeIncidence(e1));
-		commit(g);
 	}
 
 	/**
 	 * Tests if an edge is direct before another.
 	 * 
-	 * @throws CommitFailedException
+	 * @
 	 */
 	@Test
-	public void isBeforeTest2() throws CommitFailedException {
-		createTransaction(g);
+	public void isBeforeTest2() {
 		DoubleSubNode v1 = g.createDoubleSubNode();
 		DoubleSubNode v2 = g.createDoubleSubNode();
 		Edge e1 = g.createLink(v1, v2);
 		Edge e2 = g.createLink(v1, v2);
-		commit(g);
 
-		createReadOnlyTransaction(g);
 		assertTrue(e1.isBeforeIncidence(e2));
-		commit(g);
 	}
 
 	/**
 	 * Tests if an edge is before another.
 	 * 
-	 * @throws CommitFailedException
+	 * @
 	 */
 	@Test
-	public void isBeforeTest3() throws CommitFailedException {
-		createTransaction(g);
+	public void isBeforeTest3() {
 		DoubleSubNode v1 = g.createDoubleSubNode();
 		DoubleSubNode v2 = g.createDoubleSubNode();
 		Edge e1 = g.createLink(v1, v2);
 		g.createLink(v1, v2);
 		Edge e2 = g.createLink(v1, v2);
-		commit(g);
 
-		createReadOnlyTransaction(g);
 		assertTrue(e1.isBeforeIncidence(e2));
 		assertFalse(e2.isBeforeIncidence(e1));
-		commit(g);
 	}
 
 	// tests of the method boolean isAfter(Edge e);
@@ -3277,60 +2944,48 @@ public class EdgeTest extends InstanceTest {
 	/**
 	 * Tests if an edge is after itself.
 	 * 
-	 * @throws CommitFailedException
+	 * @
 	 */
 	@Test
-	public void isAfterTest0() throws CommitFailedException {
-		createTransaction(g);
+	public void isAfterTest0() {
 		DoubleSubNode v1 = g.createDoubleSubNode();
 		Edge e1 = g.createLink(v1, v1);
-		commit(g);
 
-		createReadOnlyTransaction(g);
 		assertFalse(e1.isAfterIncidence(e1));
-		commit(g);
 	}
 
 	/**
 	 * Tests if an edge is direct after another.
 	 * 
-	 * @throws CommitFailedException
+	 * @
 	 */
 	@Test
-	public void isAfterTest2() throws CommitFailedException {
-		createTransaction(g);
+	public void isAfterTest2() {
 		DoubleSubNode v1 = g.createDoubleSubNode();
 		DoubleSubNode v2 = g.createDoubleSubNode();
 		Edge e1 = g.createLink(v1, v2);
 		Edge e2 = g.createLink(v1, v2);
-		commit(g);
 
-		createReadOnlyTransaction(g);
 		assertTrue(e2.isAfterIncidence(e1));
-		commit(g);
 	}
 
 	/**
 	 * Tests if an edge is after another.
 	 * 
-	 * @throws CommitFailedException
+	 * @
 	 */
 	@Test
-	public void isAfterTest3() throws CommitFailedException {
+	public void isAfterTest3() {
 		Edge e1;
 		Edge e2;
-		createTransaction(g);
 		DoubleSubNode v1 = g.createDoubleSubNode();
 		DoubleSubNode v2 = g.createDoubleSubNode();
 		e1 = g.createLink(v1, v2);
 		g.createLink(v1, v2);
 		e2 = g.createLink(v1, v2);
-		commit(g);
 
-		createReadOnlyTransaction(g);
 		assertTrue(e2.isAfterIncidence(e1));
 		assertFalse(e1.isAfterIncidence(e2));
-		commit(g);
 
 	}
 
@@ -3340,18 +2995,14 @@ public class EdgeTest extends InstanceTest {
 	/**
 	 * Tests if an edge is before itself.
 	 * 
-	 * @throws CommitFailedException
+	 * @
 	 */
 	@Test
-	public void isBeforeInGraphTest0() throws CommitFailedException {
-		createTransaction(g);
+	public void isBeforeInGraphTest0() {
 		DoubleSubNode v1 = g.createDoubleSubNode();
 		Edge e1 = g.createLink(v1, v1);
-		commit(g);
 
-		createReadOnlyTransaction(g);
 		assertFalse(e1.isBeforeEdge(e1));
-		commit(g);
 
 	}
 
@@ -3361,19 +3012,15 @@ public class EdgeTest extends InstanceTest {
 	/**
 	 * Tests if an edge is before itself.
 	 * 
-	 * @throws CommitFailedException
+	 * @
 	 */
 	@Test
-	public void isAfterInGraphTest0() throws CommitFailedException {
+	public void isAfterInGraphTest0() {
 		Edge e1;
-		createTransaction(g);
 		DoubleSubNode v1 = g.createDoubleSubNode();
 		e1 = g.createLink(v1, v1);
-		commit(g);
 
-		createReadOnlyTransaction(g);
 		assertFalse(e1.isAfterEdge(e1));
-		commit(g);
 	}
 
 	// tests of the method void putBeforeInGraph(Edge e);
@@ -3393,12 +3040,10 @@ public class EdgeTest extends InstanceTest {
 	 * 
 	 * @param v
 	 * @param incidentEdges
-	 * @throws CommitFailedException
+	 *            @
 	 */
-	private void testIncidenceList(Vertex v, Edge... incidentEdges)
-			throws CommitFailedException {
+	private void testIncidenceList(Vertex v, Edge... incidentEdges) {
 		Iterable<Edge> incidences;
-		createTransaction(g);
 		assertEquals(incidentEdges.length, v.getDegree());
 		incidences = v.incidences();
 
@@ -3407,16 +3052,15 @@ public class EdgeTest extends InstanceTest {
 			assertEquals(incidentEdges[i], e);
 			i++;
 		}
-		commit(g);
 	}
 
 	/**
 	 * Alpha of an edge is changed to another vertex.
 	 * 
-	 * @throws CommitFailedException
+	 * @
 	 */
 	@Test
-	public void setAlphaTest0() throws CommitFailedException {
+	public void setAlphaTest0() {
 		DoubleSubNode v1;
 		DoubleSubNode v2;
 		DoubleSubNode v3;
@@ -3424,7 +3068,6 @@ public class EdgeTest extends InstanceTest {
 		long v1vers;
 		long v2vers;
 		long v3vers;
-		createTransaction(g);
 		v1 = g.createDoubleSubNode();
 		v2 = g.createDoubleSubNode();
 		v3 = g.createDoubleSubNode();
@@ -3433,15 +3076,12 @@ public class EdgeTest extends InstanceTest {
 		v2vers = v2.getIncidenceListVersion();
 		v3vers = v3.getIncidenceListVersion();
 		e1.setAlpha(v3);
-		commit(g);
 
-		createReadOnlyTransaction(g);
 		assertEquals(v3, e1.getAlpha());
 		assertTrue(v1.isIncidenceListModified(v1vers));
 		assertFalse(v2.isIncidenceListModified(v2vers));
 		assertTrue(v3.isIncidenceListModified(v3vers));
 		Edge reversedEdge = e1.getReversedEdge();
-		commit(g);
 
 		testIncidenceList(v1);
 		testIncidenceList(v2, reversedEdge);
@@ -3452,10 +3092,10 @@ public class EdgeTest extends InstanceTest {
 	/**
 	 * Alpha of an reversedEdge is changed to another vertex.
 	 * 
-	 * @throws CommitFailedException
+	 * @
 	 */
 	@Test
-	public void setAlphaTestR0() throws CommitFailedException {
+	public void setAlphaTestR0() {
 		DoubleSubNode v1;
 		DoubleSubNode v2;
 		DoubleSubNode v3;
@@ -3463,7 +3103,6 @@ public class EdgeTest extends InstanceTest {
 		long v1vers;
 		long v2vers;
 		long v3vers;
-		createTransaction(g);
 		v1 = g.createDoubleSubNode();
 		v2 = g.createDoubleSubNode();
 		v3 = g.createDoubleSubNode();
@@ -3472,15 +3111,12 @@ public class EdgeTest extends InstanceTest {
 		v2vers = v2.getIncidenceListVersion();
 		v3vers = v3.getIncidenceListVersion();
 		e1.setAlpha(v3);
-		commit(g);
 
-		createReadOnlyTransaction(g);
 		assertEquals(v3, e1.getAlpha());
 		assertTrue(v1.isIncidenceListModified(v1vers));
 		assertFalse(v2.isIncidenceListModified(v2vers));
 		assertTrue(v3.isIncidenceListModified(v3vers));
 		Edge reversedEdge = e1.getReversedEdge();
-		commit(g);
 
 		testIncidenceList(v1);
 		testIncidenceList(v2, e1);
@@ -3491,30 +3127,26 @@ public class EdgeTest extends InstanceTest {
 	/**
 	 * Alpha of an edge is set to the previous alpha vertex.
 	 * 
-	 * @throws CommitFailedException
+	 * @
 	 */
 	@Test
-	public void setAlphaTest1() throws CommitFailedException {
+	public void setAlphaTest1() {
 		DoubleSubNode v1;
 		DoubleSubNode v2;
 		Edge e1;
 		long v1vers;
 		long v2vers;
-		createTransaction(g);
 		v1 = g.createDoubleSubNode();
 		v2 = g.createDoubleSubNode();
 		e1 = g.createLink(v1, v2);
 		v1vers = v1.getIncidenceListVersion();
 		v2vers = v2.getIncidenceListVersion();
 		e1.setAlpha(v1);
-		commit(g);
 
-		createReadOnlyTransaction(g);
 		assertEquals(v1, e1.getAlpha());
 		assertFalse(v1.isIncidenceListModified(v1vers));
 		assertFalse(v2.isIncidenceListModified(v2vers));
 		Edge reversedEdge = e1.getReversedEdge();
-		commit(g);
 
 		testIncidenceList(v1, e1);
 		testIncidenceList(v2, reversedEdge);
@@ -3524,37 +3156,29 @@ public class EdgeTest extends InstanceTest {
 	/**
 	 * Alpha of an edge is changed to the omega vertex.
 	 * 
-	 * @throws CommitFailedException
+	 * @
 	 */
 	@Test
-	public void setAlphaTest2() throws CommitFailedException {
+	public void setAlphaTest2() {
 		DoubleSubNode v1;
 		DoubleSubNode v2;
 		Edge e1;
 		long v1vers;
 		long v2vers;
 
-		createTransaction(g);
 		v1 = g.createDoubleSubNode();
 		v2 = g.createDoubleSubNode();
 		e1 = g.createLink(v1, v2);
-		commit(g);
 
-		createReadOnlyTransaction(g);
 		v1vers = v1.getIncidenceListVersion();
 		v2vers = v2.getIncidenceListVersion();
-		commit(g);
 
-		createTransaction(g);
 		e1.setAlpha(v2);
-		commit(g);
 
-		createReadOnlyTransaction(g);
 		assertEquals(v2, e1.getAlpha());
 		assertTrue(v1.isIncidenceListModified(v1vers));
 		assertTrue(v2.isIncidenceListModified(v2vers));
 		Edge reversedEdge = e1.getReversedEdge();
-		commit(g);
 
 		testIncidenceList(v1);
 		testIncidenceList(v2, reversedEdge, e1);
@@ -3564,10 +3188,10 @@ public class EdgeTest extends InstanceTest {
 	 * Alpha of an edge is changed to another vertex. And there exists further
 	 * edges.
 	 * 
-	 * @throws CommitFailedException
+	 * @
 	 */
 	@Test
-	public void setAlphaTest3() throws CommitFailedException {
+	public void setAlphaTest3() {
 		DoubleSubNode v1;
 		DoubleSubNode v2;
 		DoubleSubNode v3;
@@ -3578,26 +3202,19 @@ public class EdgeTest extends InstanceTest {
 		long v2vers;
 		long v3vers;
 
-		createTransaction(g);
 		v1 = g.createDoubleSubNode();
 		v2 = g.createDoubleSubNode();
 		v3 = g.createDoubleSubNode();
 		e1 = g.createLink(v3, v1);
 		e2 = g.createLink(v1, v2);
 		e3 = g.createLink(v2, v3);
-		commit(g);
 
-		createReadOnlyTransaction(g);
 		v1vers = v1.getIncidenceListVersion();
 		v2vers = v2.getIncidenceListVersion();
 		v3vers = v3.getIncidenceListVersion();
-		commit(g);
 
-		createTransaction(g);
 		e2.setAlpha(v3);
-		commit(g);
 
-		createReadOnlyTransaction(g);
 		assertEquals(v3, e2.getAlpha());
 		assertTrue(v1.isIncidenceListModified(v1vers));
 		assertFalse(v2.isIncidenceListModified(v2vers));
@@ -3605,7 +3222,6 @@ public class EdgeTest extends InstanceTest {
 		Edge reversedEdge = e1.getReversedEdge();
 		Edge reversedEdge2 = e2.getReversedEdge();
 		Edge reversedEdge3 = e3.getReversedEdge();
-		commit(g);
 
 		testIncidenceList(v1, reversedEdge);
 		testIncidenceList(v2, reversedEdge2, e3);
@@ -3617,16 +3233,14 @@ public class EdgeTest extends InstanceTest {
 	 * An exception should occur if you try to set alpha to a vertex which type
 	 * isn't allowed as an alpha vertex for that edge.
 	 * 
-	 * @throws CommitFailedException
+	 * @
 	 */
 	@Test(expected = GraphException.class)
-	public void setAlphaTest4() throws CommitFailedException {
-		createTransaction(g);
+	public void setAlphaTest4() {
 		DoubleSubNode v1 = g.createDoubleSubNode();
 		SuperNode v2 = g.createSuperNode();
 		Edge e1 = g.createLink(v1, v2);
 		e1.setAlpha(v2);
-		commit(g);
 	}
 
 	/**
@@ -3634,17 +3248,14 @@ public class EdgeTest extends InstanceTest {
 	 * incident edges of v1 ret.get(1) = incident edges of v2 ret.get(2) =
 	 * incident edges of v3
 	 * 
-	 * @return ret
-	 * @throws CommitFailedException
+	 * @return ret @
 	 */
-	private ArrayList<ArrayList<Edge>> createRandomGraph()
-			throws CommitFailedException {
+	private ArrayList<ArrayList<Edge>> createRandomGraph() {
 		ArrayList<ArrayList<Edge>> ret = new ArrayList<ArrayList<Edge>>(6);
 		ret.add(new ArrayList<Edge>());
 		ret.add(new ArrayList<Edge>());
 		ret.add(new ArrayList<Edge>());
 
-		createTransaction(g);
 		Vertex[] nodes = new Vertex[] { g.createSubNode(),
 				g.createDoubleSubNode(), g.createSuperNode() };
 		for (int i = 0; i < RANDOM_VERTEX_COUNT; i++) {
@@ -3676,29 +3287,25 @@ public class EdgeTest extends InstanceTest {
 				break;
 			}
 		}
-		commit(g);
 		return ret;
 	}
 
 	/**
 	 * Random Test
 	 * 
-	 * @throws CommitFailedException
+	 * @
 	 */
 	@Test
-	public void setAlphaTest5() throws CommitFailedException {
+	public void setAlphaTest5() {
 		ArrayList<ArrayList<Edge>> incidences = createRandomGraph();
 		for (int i = 0; i < RANDOM_VERTEX_COUNT; i++) {
 
-			createReadOnlyTransaction(g);
 			int edgeId = rand.nextInt(g.getECount()) + 1;
 			Edge e = g.getEdge(edgeId);
 			int oldAlphaId = e.getAlpha().getId();
 			int newAlphaId = rand.nextInt(3) + 1;
 			Vertex newAlpha = g.getVertex(newAlphaId);
-			commit(g);
 
-			createTransaction(g);
 			try {
 				e.setAlpha(newAlpha);
 				if (oldAlphaId != newAlphaId) {
@@ -3721,17 +3328,14 @@ public class EdgeTest extends InstanceTest {
 							+ newAlpha.getClass().getName());
 				}
 			}
-			commit(g);
 		}
 
-		createReadOnlyTransaction(g);
 		Vertex vertex = g.getVertex(1);
 		Edge[] array = incidences.get(0).toArray(new Edge[0]);
 		Vertex vertex2 = g.getVertex(2);
 		Edge[] array2 = incidences.get(1).toArray(new Edge[0]);
 		Vertex vertex3 = g.getVertex(3);
 		Edge[] array3 = incidences.get(2).toArray(new Edge[0]);
-		commit(g);
 
 		testIncidenceList(vertex, array);
 		testIncidenceList(vertex2, array2);
@@ -3744,10 +3348,10 @@ public class EdgeTest extends InstanceTest {
 	/**
 	 * Omega of an edge is changed to another vertex.
 	 * 
-	 * @throws CommitFailedException
+	 * @
 	 */
 	@Test
-	public void setOmegaTest0() throws CommitFailedException {
+	public void setOmegaTest0() {
 		DoubleSubNode v1;
 		DoubleSubNode v2;
 		DoubleSubNode v3;
@@ -3755,7 +3359,6 @@ public class EdgeTest extends InstanceTest {
 		long v1vers;
 		long v2vers;
 		long v3vers;
-		createTransaction(g);
 		v1 = g.createDoubleSubNode();
 		v2 = g.createDoubleSubNode();
 		v3 = g.createDoubleSubNode();
@@ -3764,15 +3367,12 @@ public class EdgeTest extends InstanceTest {
 		v2vers = v2.getIncidenceListVersion();
 		v3vers = v3.getIncidenceListVersion();
 		e1.setOmega(v3);
-		commit(g);
 
-		createReadOnlyTransaction(g);
 		assertEquals(v3, e1.getOmega());
 		assertFalse(v1.isIncidenceListModified(v1vers));
 		assertTrue(v2.isIncidenceListModified(v2vers));
 		assertTrue(v3.isIncidenceListModified(v3vers));
 		Edge reversedEdge = e1.getReversedEdge();
-		commit(g);
 
 		testIncidenceList(v1, e1);
 		testIncidenceList(v2);
@@ -3783,10 +3383,10 @@ public class EdgeTest extends InstanceTest {
 	/**
 	 * Omega of an reversedEdge is changed to another vertex.
 	 * 
-	 * @throws CommitFailedException
+	 * @
 	 */
 	@Test
-	public void setOmegaTestR0() throws CommitFailedException {
+	public void setOmegaTestR0() {
 		DoubleSubNode v1;
 		DoubleSubNode v2;
 		DoubleSubNode v3;
@@ -3794,7 +3394,6 @@ public class EdgeTest extends InstanceTest {
 		long v1vers;
 		long v2vers;
 		long v3vers;
-		createTransaction(g);
 		v1 = g.createDoubleSubNode();
 		v2 = g.createDoubleSubNode();
 		v3 = g.createDoubleSubNode();
@@ -3803,15 +3402,12 @@ public class EdgeTest extends InstanceTest {
 		v2vers = v2.getIncidenceListVersion();
 		v3vers = v3.getIncidenceListVersion();
 		e1.setOmega(v3);
-		commit(g);
 
-		createReadOnlyTransaction(g);
 		assertEquals(v3, e1.getOmega());
 		assertFalse(v1.isIncidenceListModified(v1vers));
 		assertTrue(v2.isIncidenceListModified(v2vers));
 		assertTrue(v3.isIncidenceListModified(v3vers));
 		Edge reversedEdge = e1.getReversedEdge();
-		commit(g);
 
 		testIncidenceList(v1, reversedEdge);
 		testIncidenceList(v2);
@@ -3822,30 +3418,26 @@ public class EdgeTest extends InstanceTest {
 	/**
 	 * Omega of an edge is set to the previous omega vertex.
 	 * 
-	 * @throws CommitFailedException
+	 * @
 	 */
 	@Test
-	public void setOmegaTest1() throws CommitFailedException {
+	public void setOmegaTest1() {
 		DoubleSubNode v1;
 		DoubleSubNode v2;
 		Edge e1;
 		long v1vers;
 		long v2vers;
-		createTransaction(g);
 		v1 = g.createDoubleSubNode();
 		v2 = g.createDoubleSubNode();
 		e1 = g.createLink(v1, v2);
 		v1vers = v1.getIncidenceListVersion();
 		v2vers = v2.getIncidenceListVersion();
 		e1.setOmega(v2);
-		commit(g);
 
-		createReadOnlyTransaction(g);
 		assertEquals(v2, e1.getOmega());
 		assertFalse(v1.isIncidenceListModified(v1vers));
 		assertFalse(v2.isIncidenceListModified(v2vers));
 		Edge reversedEdge = e1.getReversedEdge();
-		commit(g);
 
 		testIncidenceList(v1, e1);
 		testIncidenceList(v2, reversedEdge);
@@ -3855,30 +3447,26 @@ public class EdgeTest extends InstanceTest {
 	/**
 	 * Omega of an edge is changed to the alpha vertex.
 	 * 
-	 * @throws CommitFailedException
+	 * @
 	 */
 	@Test
-	public void setOmegaTest2() throws CommitFailedException {
+	public void setOmegaTest2() {
 		DoubleSubNode v1;
 		DoubleSubNode v2;
 		Edge e1;
 		long v1vers;
 		long v2vers;
-		createTransaction(g);
 		v1 = g.createDoubleSubNode();
 		v2 = g.createDoubleSubNode();
 		e1 = g.createLink(v1, v2);
 		v1vers = v1.getIncidenceListVersion();
 		v2vers = v2.getIncidenceListVersion();
 		e1.setOmega(v1);
-		commit(g);
 
-		createReadOnlyTransaction(g);
 		assertEquals(v1, e1.getOmega());
 		assertTrue(v1.isIncidenceListModified(v1vers));
 		assertTrue(v2.isIncidenceListModified(v2vers));
 		Edge reversedEdge = e1.getReversedEdge();
-		commit(g);
 
 		testIncidenceList(v1, e1, reversedEdge);
 		testIncidenceList(v2);
@@ -3889,10 +3477,10 @@ public class EdgeTest extends InstanceTest {
 	 * Omega of an edge is changed to another vertex. And there exists further
 	 * edges.
 	 * 
-	 * @throws CommitFailedException
+	 * @
 	 */
 	@Test
-	public void setOmegaTest3() throws CommitFailedException {
+	public void setOmegaTest3() {
 		DoubleSubNode v1;
 		DoubleSubNode v2;
 		DoubleSubNode v3;
@@ -3903,25 +3491,18 @@ public class EdgeTest extends InstanceTest {
 		long v2vers;
 		long v3vers;
 
-		createTransaction(g);
 		v1 = g.createDoubleSubNode();
 		v2 = g.createDoubleSubNode();
 		v3 = g.createDoubleSubNode();
 		e1 = g.createLink(v3, v1);
 		e2 = g.createLink(v1, v2);
 		e3 = g.createLink(v2, v3);
-		commit(g);
-		createReadOnlyTransaction(g);
 		v1vers = v1.getIncidenceListVersion();
 		v2vers = v2.getIncidenceListVersion();
 		v3vers = v3.getIncidenceListVersion();
-		commit(g);
 
-		createTransaction(g);
 		e2.setOmega(v3);
-		commit(g);
 
-		createReadOnlyTransaction(g);
 		assertEquals(v3, e2.getOmega());
 		assertFalse(v1.isIncidenceListModified(v1vers));
 		assertTrue(v2.isIncidenceListModified(v2vers));
@@ -3929,7 +3510,6 @@ public class EdgeTest extends InstanceTest {
 		Edge reversedEdge = e1.getReversedEdge();
 		Edge reversedEdge2 = e2.getReversedEdge();
 		Edge reversedEdge3 = e3.getReversedEdge();
-		commit(g);
 
 		testIncidenceList(v1, reversedEdge, e2);
 		testIncidenceList(v2, e3);
@@ -3941,47 +3521,39 @@ public class EdgeTest extends InstanceTest {
 	 * An exception should occur if you try to set omega to a vertex which type
 	 * isn't allowed as an omega vertex for that edge.
 	 * 
-	 * @throws CommitFailedException
+	 * @
 	 */
 	@Test(expected = GraphException.class)
-	public void setOmegaTest4() throws CommitFailedException {
-		createTransaction(g);
+	public void setOmegaTest4() {
 		SubNode v1 = g.createSubNode();
 		SuperNode v2 = g.createSuperNode();
 		Edge e1 = g.createLink(v1, v2);
 		e1.setOmega(v1);
-		commit(g);
 	}
 
 	/**
 	 * Random Test
 	 * 
-	 * @throws CommitFailedException
+	 * @
 	 */
 	@Test
-	public void setOmegaTest5() throws CommitFailedException {
+	public void setOmegaTest5() {
 		ArrayList<ArrayList<Edge>> incidences = createRandomGraph();
 		for (int i = 0; i < RANDOM_VERTEX_COUNT; i++) {
-			createReadOnlyTransaction(g);
 			int edgeId = rand.nextInt(g.getECount()) + 1;
 			Edge e = g.getEdge(edgeId);
 			int oldOmegaId = e.getOmega().getId();
 			int newOmegaId = rand.nextInt(3) + 1;
 			Vertex newOmega = g.getVertex(newOmegaId);
-			commit(g);
 
 			try {
 
-				createTransaction(g);
 				e.setOmega(newOmega);
-				commit(g);
 
-				createReadOnlyTransaction(g);
 				if (oldOmegaId != newOmegaId) {
 					incidences.get(oldOmegaId - 1).remove(e.getReversedEdge());
 					incidences.get(newOmegaId - 1).add(e.getReversedEdge());
 				}
-				commit(g);
 
 			} catch (GraphException ge) {
 				if ((e instanceof Link) && (newOmega instanceof SuperNode)) {
@@ -3995,14 +3567,12 @@ public class EdgeTest extends InstanceTest {
 			}
 		}
 
-		createReadOnlyTransaction(g);
 		Vertex vertex = g.getVertex(1);
 		Edge[] array = incidences.get(0).toArray(new Edge[0]);
 		Vertex vertex2 = g.getVertex(2);
 		Edge[] array2 = incidences.get(1).toArray(new Edge[0]);
 		Edge[] array3 = incidences.get(2).toArray(new Edge[0]);
 		Vertex vertex3 = g.getVertex(3);
-		commit(g);
 
 		testIncidenceList(vertex, array);
 		testIncidenceList(vertex2, array2);
@@ -4016,10 +3586,10 @@ public class EdgeTest extends InstanceTest {
 	 * This of an edge is changed to another vertex. And there exists further
 	 * edges.
 	 * 
-	 * @throws CommitFailedException
+	 * @
 	 */
 	@Test
-	public void setThisTest3() throws CommitFailedException {
+	public void setThisTest3() {
 		DoubleSubNode v1;
 		DoubleSubNode v2;
 		DoubleSubNode v3;
@@ -4029,26 +3599,19 @@ public class EdgeTest extends InstanceTest {
 		long v1vers;
 		long v2vers;
 		long v3vers;
-		createTransaction(g);
 		v1 = g.createDoubleSubNode();
 		v2 = g.createDoubleSubNode();
 		v3 = g.createDoubleSubNode();
 		e1 = g.createLink(v3, v1);
 		e2 = g.createLink(v1, v2);
 		e3 = g.createLink(v2, v3);
-		commit(g);
 
-		createReadOnlyTransaction(g);
 		v1vers = v1.getIncidenceListVersion();
 		v2vers = v2.getIncidenceListVersion();
 		v3vers = v3.getIncidenceListVersion();
-		commit(g);
 
-		createTransaction(g);
 		e2.setThis(v3);
-		commit(g);
 
-		createReadOnlyTransaction(g);
 		assertEquals(v3, e2.getThis());
 		assertTrue(v1.isIncidenceListModified(v1vers));
 		assertFalse(v2.isIncidenceListModified(v2vers));
@@ -4056,29 +3619,22 @@ public class EdgeTest extends InstanceTest {
 		Edge reversedEdge = e1.getReversedEdge();
 		Edge reversedEdge2 = e2.getReversedEdge();
 		Edge reversedEdge3 = e3.getReversedEdge();
-		commit(g);
 
 		testIncidenceList(v1, reversedEdge);
 		testIncidenceList(v2, reversedEdge2, e3);
 		testIncidenceList(v3, e1, reversedEdge3, e2);
 
-		createReadOnlyTransaction(g);
 		// test ReversedEdge
 		v1vers = v1.getIncidenceListVersion();
 		v2vers = v2.getIncidenceListVersion();
 		v3vers = v3.getIncidenceListVersion();
-		commit(g);
 
-		createTransaction(g);
 		reversedEdge2.setThis(v3);
-		commit(g);
 
-		createReadOnlyTransaction(g);
 		assertEquals(v3, e2.getOmega());
 		assertFalse(v1.isIncidenceListModified(v1vers));
 		assertTrue(v2.isIncidenceListModified(v2vers));
 		assertTrue(v3.isIncidenceListModified(v3vers));
-		commit(g);
 
 		testIncidenceList(v1, reversedEdge);
 		testIncidenceList(v2, e3);
@@ -4092,10 +3648,10 @@ public class EdgeTest extends InstanceTest {
 	 * That of an edge is changed to another vertex. And there exists further
 	 * edges.
 	 * 
-	 * @throws CommitFailedException
+	 * @
 	 */
 	@Test
-	public void setThatTest3() throws CommitFailedException {
+	public void setThatTest3() {
 		DoubleSubNode v1;
 		DoubleSubNode v2;
 		DoubleSubNode v3;
@@ -4105,56 +3661,42 @@ public class EdgeTest extends InstanceTest {
 		long v1vers;
 		long v2vers;
 		long v3vers;
-		createTransaction(g);
 		v1 = g.createDoubleSubNode();
 		v2 = g.createDoubleSubNode();
 		v3 = g.createDoubleSubNode();
 		e1 = g.createLink(v3, v1);
 		e2 = g.createLink(v1, v2);
 		e3 = g.createLink(v2, v3);
-		commit(g);
 
-		createReadOnlyTransaction(g);
 		v1vers = v1.getIncidenceListVersion();
 		v2vers = v2.getIncidenceListVersion();
 		v3vers = v3.getIncidenceListVersion();
 		Edge reversedEdge2 = e2.getReversedEdge();
-		commit(g);
 
-		createTransaction(g);
 		reversedEdge2.setThat(v3);
-		commit(g);
 
-		createReadOnlyTransaction(g);
 		assertEquals(v3, e2.getAlpha());
 		assertTrue(v1.isIncidenceListModified(v1vers));
 		assertFalse(v2.isIncidenceListModified(v2vers));
 		assertTrue(v3.isIncidenceListModified(v3vers));
 		Edge reversedEdge = e1.getReversedEdge();
 		Edge reversedEdge3 = e3.getReversedEdge();
-		commit(g);
 
 		testIncidenceList(v1, reversedEdge);
 		testIncidenceList(v2, reversedEdge2, e3);
 		testIncidenceList(v3, e1, reversedEdge3, e2);
 
-		createReadOnlyTransaction(g);
 		// test ReversedEdge
 		v1vers = v1.getIncidenceListVersion();
 		v2vers = v2.getIncidenceListVersion();
 		v3vers = v3.getIncidenceListVersion();
-		commit(g);
 
-		createTransaction(g);
 		e2.setThat(v3);
-		commit(g);
 
-		createReadOnlyTransaction(g);
 		assertEquals(v3, e2.getOmega());
 		assertFalse(v1.isIncidenceListModified(v1vers));
 		assertTrue(v2.isIncidenceListModified(v2vers));
 		assertTrue(v3.isIncidenceListModified(v3vers));
-		commit(g);
 
 		testIncidenceList(v1, reversedEdge);
 		testIncidenceList(v2, e3);
@@ -4173,30 +3715,26 @@ public class EdgeTest extends InstanceTest {
 	/**
 	 * Tests on edges and reversedEdges.
 	 * 
-	 * @throws CommitFailedException
+	 * @
 	 */
 	@Test
-	public void getNormalEdgeTest0() throws CommitFailedException {
+	public void getNormalEdgeTest0() {
 		Edge e1;
 		Edge e2;
 		Edge e3;
-		createTransaction(g);
 		DoubleSubNode v1 = g.createDoubleSubNode();
 		SuperNode v2 = g.createSuperNode();
 		SubNode v3 = g.createSubNode();
 		e1 = g.createLink(v3, v2);
 		e2 = g.createSubLink(v1, v2);
 		e3 = g.createLinkBack(v2, v3);
-		commit(g);
 
-		createReadOnlyTransaction(g);
 		assertEquals(e1, e1.getNormalEdge());
 		assertEquals(e1, e1.getReversedEdge().getNormalEdge());
 		assertEquals(e2, e2.getNormalEdge());
 		assertEquals(e2, e2.getReversedEdge().getNormalEdge());
 		assertEquals(e3, e3.getNormalEdge());
 		assertEquals(e3, e3.getReversedEdge().getNormalEdge());
-		commit(g);
 	}
 
 	// tests of the method Edge getReversedEdge();
@@ -4204,30 +3742,26 @@ public class EdgeTest extends InstanceTest {
 	/**
 	 * Tests on edges and reversedEdges.
 	 * 
-	 * @throws CommitFailedException
+	 * @
 	 */
 	@Test
-	public void getReversedEdgeTest0() throws CommitFailedException {
+	public void getReversedEdgeTest0() {
 		Edge e1;
 		Edge e2;
 		Edge e3;
-		createTransaction(g);
 		DoubleSubNode v1 = g.createDoubleSubNode();
 		SuperNode v2 = g.createSuperNode();
 		SubNode v3 = g.createSubNode();
 		e1 = g.createLink(v3, v2);
 		e2 = g.createSubLink(v1, v2);
 		e3 = g.createLinkBack(v2, v3);
-		commit(g);
 
-		createReadOnlyTransaction(g);
 		assertEquals(e1.getReversedEdge(), e1.getReversedEdge());
 		assertEquals(e1, e1.getReversedEdge().getReversedEdge());
 		assertEquals(e2.getReversedEdge(), e2.getReversedEdge());
 		assertEquals(e2, e2.getReversedEdge().getReversedEdge());
 		assertEquals(e3.getReversedEdge(), e3.getReversedEdge());
 		assertEquals(e3, e3.getReversedEdge().getReversedEdge());
-		commit(g);
 	}
 
 	// tests of the method boolean isNormal();
@@ -4235,30 +3769,26 @@ public class EdgeTest extends InstanceTest {
 	/**
 	 * Tests on edges and reversedEdges.
 	 * 
-	 * @throws CommitFailedException
+	 * @
 	 */
 	@Test
-	public void isNormalTest0() throws CommitFailedException {
+	public void isNormalTest0() {
 		Edge e1;
 		Edge e2;
 		Edge e3;
-		createTransaction(g);
 		DoubleSubNode v1 = g.createDoubleSubNode();
 		SuperNode v2 = g.createSuperNode();
 		SubNode v3 = g.createSubNode();
 		e1 = g.createLink(v3, v2);
 		e2 = g.createSubLink(v1, v2);
 		e3 = g.createLinkBack(v2, v3);
-		commit(g);
 
-		createReadOnlyTransaction(g);
 		assertFalse(e1.getReversedEdge().isNormal());
 		assertTrue(e1.isNormal());
 		assertFalse(e2.getReversedEdge().isNormal());
 		assertTrue(e2.isNormal());
 		assertFalse(e3.getReversedEdge().isNormal());
 		assertTrue(e3.isNormal());
-		commit(g);
 	}
 
 	// tests of the method boolean isValid();
@@ -4266,14 +3796,13 @@ public class EdgeTest extends InstanceTest {
 	/**
 	 * Tests on edges and reversedEdges.
 	 * 
-	 * @throws CommitFailedException
+	 * @
 	 */
 	@Test
-	public void isValidTest0() throws CommitFailedException {
+	public void isValidTest0() {
 		Edge e1;
 		Edge e2;
 		Edge e3;
-		createTransaction(g);
 		DoubleSubNode v1 = g.createDoubleSubNode();
 		SuperNode v2 = g.createSuperNode();
 		SubNode v3 = g.createSubNode();
@@ -4282,13 +3811,10 @@ public class EdgeTest extends InstanceTest {
 		e3 = g.createLinkBack(v2, v3);
 		e3.delete();
 		g.deleteEdge(e2);
-		commit(g);
 
-		createReadOnlyTransaction(g);
 		assertTrue(e1.isValid());
 		assertFalse(e2.isValid());
 		assertFalse(e3.isValid());
-		commit(g);
 	}
 
 	/*
@@ -4299,31 +3825,23 @@ public class EdgeTest extends InstanceTest {
 	/**
 	 * Test with edges of two graphs.
 	 * 
-	 * @throws CommitFailedException
+	 * @
 	 */
 	@Test
-	public void getGraphTest() throws CommitFailedException {
+	public void getGraphTest() {
 		VertexTestGraph anotherGraph = createAnotherGraph();
 
-		createTransaction(g);
-		createTransaction(anotherGraph);
 		DoubleSubNode v1 = g.createDoubleSubNode();
 		DoubleSubNode v2 = g.createDoubleSubNode();
 		DoubleSubNode v1a = anotherGraph.createDoubleSubNode();
 		DoubleSubNode v2a = anotherGraph.createDoubleSubNode();
 		Edge e1 = g.createLink(v1, v2);
 		Edge e1a = anotherGraph.createLink(v1a, v2a);
-		commit(g);
-		commit(anotherGraph);
 
-		createReadOnlyTransaction(g);
-		createReadOnlyTransaction(anotherGraph);
 		assertEquals(g, e1.getGraph());
 		assertEquals(anotherGraph, e1a.getGraph());
 		assertEquals(g, e1.getReversedEdge().getGraph());
 		assertEquals(anotherGraph, e1a.getReversedEdge().getGraph());
-		commit(g);
-		commit(anotherGraph);
 	}
 
 	private VertexTestGraph createAnotherGraph() {
@@ -4332,14 +3850,6 @@ public class EdgeTest extends InstanceTest {
 		case STANDARD:
 			anotherGraph = VertexTestSchema.instance().createVertexTestGraph(
 					ImplementationType.STANDARD);
-			break;
-		case TRANSACTION:
-			anotherGraph = VertexTestSchema.instance().createVertexTestGraph(
-					ImplementationType.TRANSACTION);
-			break;
-		case DATABASE:
-			anotherGraph = dbHandler
-					.createVertexTestGraphWithDatabaseSupport("anotherGraph");
 			break;
 		default:
 			fail("Implementation " + implementationType
@@ -4352,78 +3862,54 @@ public class EdgeTest extends InstanceTest {
 	/**
 	 * Tests if the graphversion is increased by creating a new edge.
 	 * 
-	 * @throws CommitFailedException
+	 * @
 	 */
 	@Test
-	public void graphModifiedTest1() throws CommitFailedException {
-		createTransaction(g);
+	public void graphModifiedTest1() {
 		DoubleSubNode v1 = g.createDoubleSubNode();
-		commit(g);
 
-		createReadOnlyTransaction(g);
 		long graphversion = g.getGraphVersion();
-		commit(g);
 
-		createTransaction(g);
 		g.createLink(v1, v1);
-		commit(g);
 
-		createReadOnlyTransaction(g);
 		// assertEquals(graphversion + 1, g.getGraphVersion());
 		assertTrue(graphversion < g.getGraphVersion());
-		commit(g);
 	}
 
 	/**
 	 * Tests if the graphversion is increased by deleting an edge.
 	 * 
-	 * @throws CommitFailedException
+	 * @
 	 */
 	@Test
-	public void graphModifiedTest2() throws CommitFailedException {
-		createTransaction(g);
+	public void graphModifiedTest2() {
 		DoubleSubNode v1 = g.createDoubleSubNode();
 		Edge e1 = g.createLink(v1, v1);
-		commit(g);
 
-		createReadOnlyTransaction(g);
 		long graphversion = g.getGraphVersion();
-		commit(g);
 
-		createTransaction(g);
 		e1.delete();
-		commit(g);
 
-		createReadOnlyTransaction(g);
 		// assertEquals(graphversion + 1, g.getGraphVersion());
 		assertTrue(graphversion < g.getGraphVersion());
-		commit(g);
 	}
 
 	/**
 	 * Tests if the graphversion is increased by changing the attributes of an
 	 * edge.
 	 * 
-	 * @throws CommitFailedException
+	 * @
 	 */
 	@Test
-	public void graphModifiedTest3() throws CommitFailedException {
-		createTransaction(g);
+	public void graphModifiedTest3() {
 		DoubleSubNode v1 = g.createDoubleSubNode();
 		Edge e1 = g.createLink(v1, v1);
-		commit(g);
 
-		createReadOnlyTransaction(g);
 		long graphversion = g.getGraphVersion();
-		commit(g);
 
-		createTransaction(g);
 		((Link) e1).set_aString("Test");
-		commit(g);
 
-		createReadOnlyTransaction(g);
 		assertTrue(graphversion < g.getGraphVersion());
-		commit(g);
 	}
 
 	/*
@@ -4434,29 +3920,25 @@ public class EdgeTest extends InstanceTest {
 	/**
 	 * Some test cases for getAttributedElementClass
 	 * 
-	 * @throws CommitFailedException
+	 * @
 	 */
 	@Test
-	public void getAttributedElementClassTest() throws CommitFailedException {
+	public void getAttributedElementClassTest() {
 		EdgeClass[] edges = getEdgeClasses();
 
 		Edge e1;
 		Edge e2;
 		Edge e3;
-		createTransaction(g);
 		DoubleSubNode v1 = g.createDoubleSubNode();
 		SubNode v2 = g.createSubNode();
 		SuperNode v3 = g.createSuperNode();
 		e1 = g.createLink(v2, v3);
 		e2 = g.createSubLink(v1, v3);
 		e3 = g.createLinkBack(v3, v2);
-		commit(g);
 
-		createReadOnlyTransaction(g);
 		assertEquals(edges[0], e1.getAttributedElementClass());
 		assertEquals(edges[1], e2.getAttributedElementClass());
 		assertEquals(edges[2], e3.getAttributedElementClass());
-		commit(g);
 	}
 
 	// tests of the method Class<? extends AttributedElement> getSchemaClass();
@@ -4464,27 +3946,23 @@ public class EdgeTest extends InstanceTest {
 	/**
 	 * Some test cases for getSchemaClass
 	 * 
-	 * @throws CommitFailedException
+	 * @
 	 */
 	@Test
-	public void getSchemaClassTest() throws CommitFailedException {
+	public void getSchemaClassTest() {
 		Edge e1;
 		Edge e2;
 		Edge e3;
-		createTransaction(g);
 		DoubleSubNode v1 = g.createDoubleSubNode();
 		SubNode v2 = g.createSubNode();
 		SuperNode v3 = g.createSuperNode();
 		e1 = g.createLink(v2, v3);
 		e2 = g.createSubLink(v1, v3);
 		e3 = g.createLinkBack(v3, v2);
-		commit(g);
 
-		createReadOnlyTransaction(g);
 		assertEquals(Link.class, e1.getSchemaClass());
 		assertEquals(SubLink.class, e2.getSchemaClass());
 		assertEquals(LinkBack.class, e3.getSchemaClass());
-		commit(g);
 	}
 
 	// tests of the method GraphClass getGraphClass();
@@ -4492,30 +3970,22 @@ public class EdgeTest extends InstanceTest {
 	/**
 	 * Some test cases for getGraphClass
 	 * 
-	 * @throws CommitFailedException
+	 * @
 	 */
 	@Test
-	public void getGraphClassTest() throws CommitFailedException {
+	public void getGraphClassTest() {
 		VertexTestGraph anotherGraph = createAnotherGraph();
 		GraphClass gc = g.getSchema().getGraphClass();
 
-		createTransaction(g);
-		createTransaction(anotherGraph);
 		DoubleSubNode v1 = g.createDoubleSubNode();
 		DoubleSubNode v1a = anotherGraph.createDoubleSubNode();
 		Edge e1 = g.createLink(v1, v1);
 		Edge e1a = anotherGraph.createLink(v1a, v1a);
-		commit(g);
-		commit(anotherGraph);
 
-		createReadOnlyTransaction(g);
-		createReadOnlyTransaction(anotherGraph);
 		assertEquals(gc, e1.getGraphClass());
 		assertEquals(gc, e1a.getGraphClass());
 		assertEquals(gc, e1.getReversedEdge().getGraphClass());
 		assertEquals(gc, e1a.getReversedEdge().getGraphClass());
-		commit(g);
-		commit(anotherGraph);
 	}
 
 	// tests of the methods
@@ -4527,25 +3997,18 @@ public class EdgeTest extends InstanceTest {
 	/**
 	 * Test with null values.
 	 * 
-	 * @throws CommitFailedException
+	 * @
 	 */
 	@Test
 	public void writeReadAttributeValues0() throws GraphIOException,
-			IOException, CommitFailedException {
-		if (implementationType == ImplementationType.DATABASE) {
-			return;
-		}
-		createTransaction(g);
+			IOException {
 		DoubleSubNode v1 = g.createDoubleSubNode();
 		DoubleSubNode v2 = g.createDoubleSubNode();
 		SubLink e1 = g.createSubLink(v1, v2);
-		commit(g);
 
-		createReadOnlyTransaction(g);
 		// test of writeAttributeValues
 		// TODO check if save command has to be wrapped inside a transaction...
 		g.save("test.tg");
-		commit(g);
 
 		LineNumberReader reader = new LineNumberReader(
 				new FileReader("test.tg"));
@@ -4556,26 +4019,19 @@ public class EdgeTest extends InstanceTest {
 				line = line.substring(0, line.length() - 1);
 			}
 			parts = line.split(" ");
-			createReadOnlyTransaction(g);
 			if (parts[0].equals(((Integer) e1.getId()).toString())
 					&& parts[1].equals(e1.getClass().getName())) {
-				commit(g);
 				break;
 			}
-			commit(g);
 		}
 		assertEquals("n", parts[2]);
 		assertEquals("0", parts[3]);
 		// test of readAttributeValues
 		VertexTestGraph loadedgraph = loadTestGraph();
 
-		createReadOnlyTransaction(g);
-		createReadOnlyTransaction(loadedgraph);
 		SubLink loadede1 = loadedgraph.getFirstSubLink();
 		assertEquals(e1.get_aString(), loadede1.get_aString());
 		assertEquals(e1.get_anInt(), loadede1.get_anInt());
-		commit(loadedgraph);
-		commit(g);
 
 		// delete created file
 		reader.close();
@@ -4586,10 +4042,7 @@ public class EdgeTest extends InstanceTest {
 	private VertexTestGraph loadTestGraph() throws GraphIOException {
 		VertexTestGraph loadedgraph = null;
 		switch (implementationType) {
-		case DATABASE:
-			break;
 		case STANDARD:
-		case TRANSACTION:
 			loadedgraph = VertexTestSchema.instance().loadVertexTestGraph(
 					"test.tg", implementationType);
 
@@ -4604,26 +4057,19 @@ public class EdgeTest extends InstanceTest {
 	/**
 	 * Test with values.
 	 * 
-	 * @throws CommitFailedException
+	 * @
 	 */
 	@Test
 	public void writeReadAttributeValues1() throws GraphIOException,
-			IOException, CommitFailedException {
-		if (implementationType == ImplementationType.DATABASE) {
-			return;
-		}
-		createTransaction(g);
+			IOException {
 		DoubleSubNode v1 = g.createDoubleSubNode();
 		DoubleSubNode v2 = g.createDoubleSubNode();
 		SubLink e1 = g.createSubLink(v1, v2);
 		e1.set_anInt(3);
 		e1.set_aString("HelloWorld!");
-		commit(g);
 
-		createReadOnlyTransaction(g);
 		// test of writeAttributeValues
 		g.save("test.tg");
-		commit(g);
 
 		LineNumberReader reader = new LineNumberReader(
 				new FileReader("test.tg"));
@@ -4634,25 +4080,18 @@ public class EdgeTest extends InstanceTest {
 				line = line.substring(0, line.length() - 1);
 			}
 			parts = line.split(" ");
-			createReadOnlyTransaction(g);
 			if (parts[0].equals(((Integer) e1.getId()).toString())
 					&& parts[1].equals(e1.getClass().getName())) {
-				commit(g);
 				break;
 			}
-			commit(g);
 		}
 		assertEquals("\"HelloWorld!\"", parts[2]);
 		assertEquals("3", parts[3]);
 		VertexTestGraph loadedgraph = loadTestGraph();
 
-		createReadOnlyTransaction(g);
-		createReadOnlyTransaction(loadedgraph);
 		SubLink loadede1 = loadedgraph.getFirstSubLink();
 		assertEquals(e1.get_aString(), loadede1.get_aString());
 		assertEquals(e1.get_anInt(), loadede1.get_anInt());
-		commit(g);
-		commit(loadedgraph);
 
 		// delete created file
 		reader.close();
@@ -4666,80 +4105,64 @@ public class EdgeTest extends InstanceTest {
 	/**
 	 * Tests if the value of the correct attribute is returned.
 	 * 
-	 * @throws CommitFailedException
+	 * @
 	 */
 	@Test
-	public void getAttributeTest0() throws CommitFailedException {
-		createTransaction(g);
+	public void getAttributeTest0() {
 		DoubleSubNode v = g.createDoubleSubNode();
 		SubLink e = g.createSubLink(v, v);
 		e.set_aString("test");
 		e.set_anInt(4);
-		commit(g);
 
-		createReadOnlyTransaction(g);
 		assertEquals("test", e.getAttribute("aString"));
 		assertEquals(4, e.getAttribute("anInt"));
-		commit(g);
 	}
 
 	/**
 	 * Tests if the value of the correct attribute is returned. reversedEdge
 	 * 
-	 * @throws CommitFailedException
+	 * @
 	 */
 	@Test
-	public void getAttributeTestR0() throws CommitFailedException {
+	public void getAttributeTestR0() {
 		SubLink e;
-		createTransaction(g);
 		DoubleSubNode v = g.createDoubleSubNode();
 		e = (SubLink) g.createSubLink(v, v).getReversedEdge();
 		e.set_aString("test");
 		e.set_anInt(4);
-		commit(g);
 
-		createReadOnlyTransaction(g);
 		assertEquals("test", e.getAttribute("aString"));
 		assertEquals(4, e.getAttribute("anInt"));
-		commit(g);
 	}
 
 	/**
 	 * Tests if an exception is thrown if you want to get an attribute which
 	 * doesn't exist.
 	 * 
-	 * @throws CommitFailedException
+	 * @
 	 */
 	@Test(expected = NoSuchAttributeException.class)
-	public void getAttributeTest1() throws CommitFailedException {
+	public void getAttributeTest1() {
 		SubLink e;
-		createTransaction(g);
 		DoubleSubNode v = g.createDoubleSubNode();
 		e = g.createSubLink(v, v);
-		commit(g);
 
-		createReadOnlyTransaction(g);
 		e.getAttribute("cd");
-		commit(g);
 	}
 
 	/**
 	 * Tests if an exception is thrown if you want to get an attribute with an
 	 * empty name.
 	 * 
-	 * @throws CommitFailedException
+	 * @
 	 */
 	@Test(expected = NoSuchAttributeException.class)
-	public void getAttributeTest2() throws CommitFailedException {
+	public void getAttributeTest2() {
 		SubLink e;
-		createTransaction(g);
 		DoubleSubNode v = g.createDoubleSubNode();
 		e = g.createSubLink(v, v);
-		commit(g);
 
-		createReadOnlyTransaction(g);
 		e.getAttribute("");
-		commit(g);
 	}
 
 	// tests of the method void setAttribute(String name, Object data) throws
@@ -4748,92 +4171,76 @@ public class EdgeTest extends InstanceTest {
 	/**
 	 * Tests if an existing attribute is correct set.
 	 * 
-	 * @throws CommitFailedException
+	 * @
 	 */
 	@Test
-	public void setAttributeTest0() throws CommitFailedException {
+	public void setAttributeTest0() {
 		SubLink e;
-		createTransaction(g);
 		DoubleSubNode v = g.createDoubleSubNode();
 		e = g.createSubLink(v, v);
 		e.setAttribute("aString", "test");
 		e.setAttribute("anInt", 4);
-		commit(g);
 
-		createReadOnlyTransaction(g);
 		assertEquals("test", e.getAttribute("aString"));
 		assertEquals(4, e.getAttribute("anInt"));
-		commit(g);
 	}
 
 	/**
 	 * Tests if an existing attribute is correct set. reversedEdge
 	 * 
-	 * @throws CommitFailedException
+	 * @
 	 */
 	@Test
-	public void setAttributeTestR0() throws CommitFailedException {
+	public void setAttributeTestR0() {
 		SubLink e;
-		createTransaction(g);
 		DoubleSubNode v = g.createDoubleSubNode();
 		e = (SubLink) g.createSubLink(v, v).getReversedEdge();
 		e.setAttribute("aString", "test");
 		e.setAttribute("anInt", 4);
-		commit(g);
 
-		createReadOnlyTransaction(g);
 		assertEquals("test", e.getAttribute("aString"));
 		assertEquals(4, e.getAttribute("anInt"));
-		commit(g);
 	}
 
 	/**
 	 * Tests if an existing attribute is set to null.
 	 * 
-	 * @throws CommitFailedException
+	 * @
 	 */
 	@Test
-	public void setAttributeTest1() throws CommitFailedException {
+	public void setAttributeTest1() {
 		SubLink e;
-		createTransaction(g);
 		DoubleSubNode v = g.createDoubleSubNode();
 		e = g.createSubLink(v, v);
 		e.setAttribute("aString", null);
-		commit(g);
 
-		createReadOnlyTransaction(g);
 		assertNull(e.getAttribute("aString"));
-		commit(g);
 	}
 
 	/**
 	 * Tests if an exception is thrown if you want to get an attribute which
 	 * doesn't exist.
 	 * 
-	 * @throws CommitFailedException
+	 * @
 	 */
 	@Test(expected = NoSuchAttributeException.class)
-	public void setAttributeTest2() throws CommitFailedException {
-		createTransaction(g);
+	public void setAttributeTest2() {
 		DoubleSubNode v = g.createDoubleSubNode();
 		SubLink e = g.createSubLink(v, v);
 		e.setAttribute("cd", "a");
-		commit(g);
 	}
 
 	/**
 	 * Tests if an exception is thrown if you want to get an attribute with an
 	 * empty name.
 	 * 
-	 * @throws CommitFailedException
+	 * @
 	 */
 	@Test(expected = NoSuchAttributeException.class)
-	public void setAttributeTest3() throws CommitFailedException {
-		createTransaction(g);
+	public void setAttributeTest3() {
 		DoubleSubNode v = g.createDoubleSubNode();
 		SubLink e = g.createSubLink(v, v);
 		e.setAttribute("", "a");
-		commit(g);
 	}
 
 	// tests of the method Schema getSchema();
@@ -4841,15 +4248,14 @@ public class EdgeTest extends InstanceTest {
 	/**
 	 * Some tests.
 	 * 
-	 * @throws CommitFailedException
+	 * @
 	 */
 	@Test
-	public void getSchemaTest() throws CommitFailedException {
+	public void getSchemaTest() {
 		Edge e1;
 		Edge e2;
 		Edge e3;
 		Schema schema;
-		createTransaction(g);
 		DoubleSubNode v1 = g.createDoubleSubNode();
 		SubNode v2 = g.createSubNode();
 		SuperNode v3 = g.createSuperNode();
@@ -4857,16 +4263,13 @@ public class EdgeTest extends InstanceTest {
 		e2 = g.createSubLink(v1, v3);
 		e3 = g.createLinkBack(v3, v2);
 		schema = g.getSchema();
-		commit(g);
 
-		createReadOnlyTransaction(g);
 		assertEquals(schema, e1.getSchema());
 		assertEquals(schema, e2.getSchema());
 		assertEquals(schema, e3.getSchema());
 		assertEquals(schema, e1.getReversedEdge().getSchema());
 		assertEquals(schema, e2.getReversedEdge().getSchema());
 		assertEquals(schema, e3.getReversedEdge().getSchema());
-		commit(g);
 	}
 
 	/*
@@ -4877,59 +4280,47 @@ public class EdgeTest extends InstanceTest {
 	/**
 	 * Test if a vertex is equal to itself.
 	 * 
-	 * @throws CommitFailedException
+	 * @
 	 */
 	@Test
-	public void compareToTest0() throws CommitFailedException {
+	public void compareToTest0() {
 		Edge e1;
-		createTransaction(g);
 		DoubleSubNode v1 = g.createDoubleSubNode();
 		e1 = g.createLink(v1, v1);
-		commit(g);
 
-		createReadOnlyTransaction(g);
 		assertEquals(0, e1.compareTo(e1));
-		commit(g);
 	}
 
 	/**
 	 * Test if a vertex is smaller than another.
 	 * 
-	 * @throws CommitFailedException
+	 * @
 	 */
 	@Test
-	public void compareToTest1() throws CommitFailedException {
+	public void compareToTest1() {
 		Edge e1;
 		Edge e2;
-		createTransaction(g);
 		DoubleSubNode v1 = g.createDoubleSubNode();
 		e1 = g.createLink(v1, v1);
 		e2 = g.createLink(v1, v1);
-		commit(g);
 
-		createReadOnlyTransaction(g);
 		assertTrue(e1.compareTo(e2) < 0);
-		commit(g);
 	}
 
 	/**
 	 * Test if a vertex is greater than another.
 	 * 
-	 * @throws CommitFailedException
+	 * @
 	 */
 	@Test
-	public void compareToTest2() throws CommitFailedException {
+	public void compareToTest2() {
 		Edge e1;
 		Edge e2;
-		createTransaction(g);
 		DoubleSubNode v1 = g.createDoubleSubNode();
 		e1 = g.createLink(v1, v1);
 		e2 = g.createLink(v1, v1);
-		commit(g);
 
-		createReadOnlyTransaction(g);
 		assertTrue(e2.compareTo(e1) > 0);
-		commit(g);
 	}
 
 	// tests of the method int compareTo(AttributedElement a); reversedEdge
@@ -4937,59 +4328,47 @@ public class EdgeTest extends InstanceTest {
 	/**
 	 * Test if a vertex is equal to itself.
 	 * 
-	 * @throws CommitFailedException
+	 * @
 	 */
 	@Test
-	public void compareToTestR0() throws CommitFailedException {
+	public void compareToTestR0() {
 		Edge e1;
-		createTransaction(g);
 		DoubleSubNode v1 = g.createDoubleSubNode();
 		e1 = g.createLink(v1, v1).getReversedEdge();
-		commit(g);
 
-		createReadOnlyTransaction(g);
 		assertEquals(0, e1.compareTo(e1));
-		commit(g);
 	}
 
 	/**
 	 * Test if a vertex is smaller than another.
 	 * 
-	 * @throws CommitFailedException
+	 * @
 	 */
 	@Test
-	public void compareToTestR1() throws CommitFailedException {
+	public void compareToTestR1() {
 		Edge e1;
 		Edge e2;
-		createTransaction(g);
 		DoubleSubNode v1 = g.createDoubleSubNode();
 		e1 = g.createLink(v1, v1).getReversedEdge();
 		e2 = g.createLink(v1, v1).getReversedEdge();
-		commit(g);
 
-		createReadOnlyTransaction(g);
 		assertTrue(e1.compareTo(e2) < 0);
-		commit(g);
 	}
 
 	/**
 	 * Test if a vertex is greater than another.
 	 * 
-	 * @throws CommitFailedException
+	 * @
 	 */
 	@Test
-	public void compareToTestR2() throws CommitFailedException {
+	public void compareToTestR2() {
 		Edge e1;
 		Edge e2;
-		createTransaction(g);
 		DoubleSubNode v1 = g.createDoubleSubNode();
 		e1 = g.createLink(v1, v1).getReversedEdge();
 		e2 = g.createLink(v1, v1).getReversedEdge();
-		commit(g);
 
-		createReadOnlyTransaction(g);
 		assertTrue(e2.compareTo(e1) > 0);
-		commit(g);
 	}
 
 	// tests of the method int compareTo(AttributedElement a); reversedEdge and
@@ -4997,37 +4376,29 @@ public class EdgeTest extends InstanceTest {
 	/**
 	 * Test if a vertex is equal to itself.
 	 * 
-	 * @throws CommitFailedException
+	 * @
 	 */
 	@Test
-	public void compareToTestM0() throws CommitFailedException {
+	public void compareToTestM0() {
 		Edge e1;
-		createTransaction(g);
 		DoubleSubNode v1 = g.createDoubleSubNode();
 		e1 = g.createLink(v1, v1);
-		commit(g);
 
-		createReadOnlyTransaction(g);
 		assertTrue(e1.compareTo(e1.getReversedEdge()) < 0);
-		commit(g);
 	}
 
 	/**
 	 * Test if a vertex is equal to itself.
 	 * 
-	 * @throws CommitFailedException
+	 * @
 	 */
 	@Test
-	public void compareToTest() throws CommitFailedException {
+	public void compareToTest() {
 		Edge e1;
-		createTransaction(g);
 		DoubleSubNode v1 = g.createDoubleSubNode();
 		e1 = g.createLink(v1, v1);
-		commit(g);
 
-		createReadOnlyTransaction(g);
 		assertTrue(e1.getReversedEdge().compareTo(e1) > 0);
-		commit(g);
 	}
 
 	/*
@@ -5036,74 +4407,49 @@ public class EdgeTest extends InstanceTest {
 
 	// test of the methods getAnInt and setAnInt
 	@Test
-	public void getAnIntTest() throws CommitFailedException {
+	public void getAnIntTest() {
 		SubLink e1;
-		createTransaction(g);
 		DoubleSubNode v1 = g.createDoubleSubNode();
 		e1 = g.createSubLink(v1, v1);
 		e1.set_anInt(1);
-		commit(g);
 
-		createReadOnlyTransaction(g);
 		assertEquals(1, e1.get_anInt());
-		commit(g);
 
-		createTransaction(g);
 		e1.set_anInt(2);
-		commit(g);
 
-		createReadOnlyTransaction(g);
 		assertEquals(2, e1.get_anInt());
-		commit(g);
 
-		createTransaction(g);
 		e1.set_anInt(3);
-		commit(g);
 
-		createReadOnlyTransaction(g);
 		assertEquals(3, e1.get_anInt());
-		commit(g);
 	}
 
 	// test of the methods getAString and setAString
 	@Test
-	public void getAStringTest() throws CommitFailedException {
+	public void getAStringTest() {
 		SubLink e1;
-		createTransaction(g);
 		DoubleSubNode v1 = g.createDoubleSubNode();
 		e1 = g.createSubLink(v1, v1);
 		e1.set_aString("Test1");
-		commit(g);
 
-		createReadOnlyTransaction(g);
 		assertEquals("Test1", e1.get_aString());
-		commit(g);
 
-		createTransaction(g);
 		e1.set_aString("Test2");
-		commit(g);
 
-		createReadOnlyTransaction(g);
 		assertEquals("Test2", e1.get_aString());
-		commit(g);
 
-		createTransaction(g);
 		e1.set_aString("");
-		commit(g);
 
-		createReadOnlyTransaction(g);
 		assertEquals("", e1.get_aString());
-		commit(g);
 	}
 
 	// test of the method getNextLinkInGraph
 	@Test
-	public void getNextLinkInGraphTest() throws CommitFailedException {
+	public void getNextLinkInGraphTest() {
 
 		SubLink e1;
 		SubLink e3;
 		Link e4;
-		createTransaction(g);
 		DoubleSubNode v1 = g.createDoubleSubNode();
 		SubNode v2 = g.createSubNode();
 		SuperNode v3 = g.createSuperNode();
@@ -5111,22 +4457,18 @@ public class EdgeTest extends InstanceTest {
 		g.createLinkBack(v3, v2);
 		e3 = g.createSubLink(v1, v3);
 		e4 = g.createLink(v2, v1);
-		commit(g);
 
-		createReadOnlyTransaction(g);
 		assertEquals(e3, e1.getNextLinkInGraph());
 		assertEquals(e4, e3.getNextLinkInGraph());
 		assertNull(e4.getNextLinkInGraph());
 
-		commit(g);
 	}
 
 	// test of the method getNextSubLinkInGraph
 	@Test
-	public void getNextSubLinkInGraphTest() throws CommitFailedException {
+	public void getNextSubLinkInGraphTest() {
 		SubLink e1;
 		SubLink e4;
-		createTransaction(g);
 		DoubleSubNode v1 = g.createDoubleSubNode();
 		SubNode v2 = g.createSubNode();
 		SuperNode v3 = g.createSuperNode();
@@ -5134,64 +4476,52 @@ public class EdgeTest extends InstanceTest {
 		g.createLinkBack(v3, v2);
 		g.createLink(v2, v1);
 		e4 = g.createSubLink(v1, v3);
-		commit(g);
 
-		createReadOnlyTransaction(g);
 		assertEquals(e4, e1.getNextSubLinkInGraph());
 		assertNull(e4.getNextSubLinkInGraph());
-		commit(g);
 	}
 
 	// test of the method getNextLink
 	@Test
-	public void getNextLinkTest() throws CommitFailedException {
+	public void getNextLinkTest() {
 		SubLink e1;
 		Link e3;
-		createTransaction(g);
 		DoubleSubNode v1 = g.createDoubleSubNode();
 		DoubleSubNode v2 = g.createDoubleSubNode();
 		e1 = g.createSubLink(v1, v1);
 		g.createLinkBack(v1, v2);
 		e3 = g.createLink(v2, v1);
 		SubLink e4 = g.createSubLink(v2, v2);
-		commit(g);
 
-		createReadOnlyTransaction(g);
 		assertEquals(e3, e1.getNextLinkInGraph());
 		assertEquals(e3, ((SubLink) e1.getReversedEdge()).getNextLinkInGraph());
 		assertEquals(e4, ((Link) e3.getReversedEdge()).getNextLinkInGraph());
-		commit(g);
 	}
 
 	// test of the method getNextSubLink
 	@Test
-	public void getNextSubLinkTest() throws CommitFailedException {
+	public void getNextSubLinkTest() {
 		SubLink e1;
 		SubLink e4;
-		createTransaction(g);
 		DoubleSubNode v1 = g.createDoubleSubNode();
 		DoubleSubNode v2 = g.createDoubleSubNode();
 		e1 = g.createSubLink(v1, v1);
 		g.createLinkBack(v1, v2);
 		g.createLink(v2, v1);
 		e4 = g.createSubLink(v1, v2);
-		commit(g);
 
-		createReadOnlyTransaction(g);
 		assertEquals(e4, e1.getNextSubLinkInGraph());
 		assertEquals(e4,
 				((SubLink) e1.getReversedEdge()).getNextSubLinkInGraph());
 		assertNull(e4.getNextSubLinkInGraph());
-		commit(g);
 	}
 
 	// test of the method getNextLink(EdgeDirection orientation)
 	@Test
-	public void getNextLinkTestEdgeDirection() throws CommitFailedException {
+	public void getNextLinkTestEdgeDirection() {
 		SubLink e1;
 		Link e3;
 		Link e5;
-		createTransaction(g);
 		DoubleSubNode v1 = g.createDoubleSubNode();
 		DoubleSubNode v2 = g.createDoubleSubNode();
 		e1 = g.createSubLink(v1, v1);
@@ -5199,9 +4529,7 @@ public class EdgeTest extends InstanceTest {
 		e3 = g.createLink(v2, v1);
 		g.createSubLink(v2, v2);
 		e5 = g.createLink(v1, v2);
-		commit(g);
 
-		createReadOnlyTransaction(g);
 		assertEquals(e1.getReversedEdge(),
 				e1.getNextLinkIncidence(EdgeDirection.INOUT));
 		assertEquals(e1.getReversedEdge(),
@@ -5227,16 +4555,14 @@ public class EdgeTest extends InstanceTest {
 		assertNull(e5.getNextLinkIncidence(EdgeDirection.INOUT));
 		assertNull(e5.getNextLinkIncidence(EdgeDirection.IN));
 		assertNull(e5.getNextLinkIncidence(EdgeDirection.OUT));
-		commit(g);
 	}
 
 	// test of the method getNextSubLink(EdgeDirection orientation)
 	@Test
-	public void getNextSubLinkTestEdgeDirection() throws CommitFailedException {
+	public void getNextSubLinkTestEdgeDirection() {
 		SubLink e1;
 		SubLink e5;
 		SubLink e6;
-		createTransaction(g);
 		DoubleSubNode v1 = g.createDoubleSubNode();
 		DoubleSubNode v2 = g.createDoubleSubNode();
 		e1 = g.createSubLink(v1, v1);
@@ -5245,9 +4571,7 @@ public class EdgeTest extends InstanceTest {
 		g.createSubLink(v2, v2);
 		e5 = g.createSubLink(v1, v2);
 		e6 = g.createSubLink(v2, v1);
-		commit(g);
 
-		createReadOnlyTransaction(g);
 		assertEquals(e1.getReversedEdge(),
 				e1.getNextSubLinkIncidence(EdgeDirection.INOUT));
 		assertEquals(e1.getReversedEdge(),
@@ -5273,17 +4597,15 @@ public class EdgeTest extends InstanceTest {
 				.getNextSubLinkIncidence(EdgeDirection.IN));
 		assertNull(((SubLink) e6.getReversedEdge())
 				.getNextSubLinkIncidence(EdgeDirection.OUT));
-		commit(g);
 	}
 
 	@Test
-	public void isInstanceOfTest() throws CommitFailedException {
+	public void isInstanceOfTest() {
 		EdgeClass e = g.getSchema().getGraphClass().getEdgeClass("E");
 		EdgeClass h = g.getSchema().getGraphClass().getEdgeClass("H");
 		EdgeClass k = g.getSchema().getGraphClass().getEdgeClass("K");
 		EdgeClass i = g.getSchema().getGraphClass().getEdgeClass("I");
 
-		createTransaction(g);
 		for (K x : g.getKEdges()) {
 			assertTrue(x.isInstanceOf(k));
 			assertTrue(x.isInstanceOf(h));
@@ -5297,6 +4619,5 @@ public class EdgeTest extends InstanceTest {
 			assertFalse(x.isInstanceOf(h));
 			assertFalse(x.isInstanceOf(i));
 		}
-		commit(g);
 	}
 }

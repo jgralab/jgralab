@@ -50,7 +50,6 @@ import java.io.InputStream;
 import java.lang.reflect.Method;
 import java.nio.CharBuffer;
 import java.nio.charset.Charset;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -71,8 +70,6 @@ import de.uni_koblenz.jgralab.exception.GraphIOException;
 import de.uni_koblenz.jgralab.graphmarker.BooleanGraphMarker;
 import de.uni_koblenz.jgralab.impl.GraphBaseImpl;
 import de.uni_koblenz.jgralab.impl.InternalGraph;
-import de.uni_koblenz.jgralab.impl.db.GraphDatabase;
-import de.uni_koblenz.jgralab.impl.db.GraphDatabaseException;
 import de.uni_koblenz.jgralab.schema.AggregationKind;
 import de.uni_koblenz.jgralab.schema.Attribute;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
@@ -293,21 +290,6 @@ public class GraphIO {
 		} catch (Exception e) {
 			throw new GraphIOException("Exception while loading schema.", e);
 		}
-	}
-
-	public static Schema loadSchemaFromDatabase(GraphDatabase graphDatabase,
-			String packagePrefix, String schemaName) throws GraphIOException {
-		String definition = graphDatabase.getSchemaDefinition(packagePrefix,
-				schemaName);
-		InputStream input = new ByteArrayInputStream(definition.getBytes());
-		return loadSchemaFromStream(input);
-	}
-
-	public static void loadSchemaIntoGraphDatabase(String filePath,
-			GraphDatabase graphDatabase) throws IOException, GraphIOException,
-			SQLException {
-		Schema schema = loadSchemaFromFile(filePath);
-		graphDatabase.insertSchema(schema);
 	}
 
 	/**
@@ -700,7 +682,7 @@ public class GraphIO {
 			DataOutputStream out, ProgressFunction pf) throws GraphIOException {
 		try {
 			if (hasTemporaryElements(subGraph, subGraph.getGraph())) {
-				throw new GraphIOException("Savin sub graph " + subGraph
+				throw new GraphIOException("Saving subgraph " + subGraph
 						+ " of " + subGraph.getGraph() + " is not possible. "
 						+ "It contains temporary graph elements.");
 			}
@@ -1027,10 +1009,9 @@ public class GraphIO {
 	public static Graph loadGraphFromFile(String filename,
 			ImplementationType implementationType, ProgressFunction pf)
 			throws GraphIOException {
-		if ((implementationType == null)
-				|| (implementationType == ImplementationType.DATABASE)) {
+		if (implementationType == null) {
 			throw new IllegalArgumentException(
-					"ImplementationType must be != null and != DATABASE");
+					"ImplementationType must be != null");
 		}
 		FileInputStream fileStream = null;
 		try {
@@ -1066,10 +1047,9 @@ public class GraphIO {
 		if (schema == null) {
 			throw new IllegalArgumentException("Schema must be != null");
 		}
-		if ((implementationType == null)
-				|| (implementationType == ImplementationType.DATABASE)) {
+		if (implementationType == null) {
 			throw new IllegalArgumentException(
-					"ImplementationType must be != null and != DATABASE");
+					"ImplementationType must be != null");
 		}
 		GraphFactory factory = schema
 				.createDefaultGraphFactory(implementationType);
@@ -1107,15 +1087,6 @@ public class GraphIO {
 					"Exception while loading graph from file " + filename, ex);
 		} finally {
 			close(fileStream);
-		}
-	}
-
-	public static <G extends Graph> G loadGraphFromDatabase(String id,
-			GraphDatabase graphDatabase) throws GraphDatabaseException {
-		if (graphDatabase != null) {
-			return graphDatabase.<G> getGraph(id);
-		} else {
-			throw new GraphDatabaseException("No graph database given.");
 		}
 	}
 

@@ -46,9 +46,9 @@ import de.uni_koblenz.jgralab.schema.VertexClass;
 
 /**
  * TODO add comment
- *
+ * 
  * @author ist@uni-koblenz.de
- *
+ * 
  */
 public class EdgeCodeGenerator extends
 		AttributedElementCodeGenerator<EdgeClass, Edge> {
@@ -121,16 +121,10 @@ public class EdgeCodeGenerator extends
 	@Override
 	protected CodeBlock createBody() {
 		CodeList code = (CodeList) super.createBody();
-		if (currentCycle.isStdOrDbImplOrTransImpl()) {
+		if (currentCycle.isStdImpl()) {
 			rootBlock.setVariable("baseClassName", "EdgeImpl");
 			if (currentCycle.isStdImpl()) {
 				addImports("#jgImplStdPackage#.#baseClassName#");
-			}
-			if (currentCycle.isTransImpl()) {
-				addImports("#jgImplTransPackage#.#baseClassName#");
-			}
-			if (currentCycle.isDbImpl()) {
-				addImports("#jgImplDbPackage#.#baseClassName#");
 			}
 		}
 		if (config.hasTypeSpecificMethodsSupport()
@@ -138,19 +132,19 @@ public class EdgeCodeGenerator extends
 			code.add(createNextEdgeMethods());
 			code.add(createNextIncidenceMethods());
 		}
-		if (currentCycle.isStdOrDbImplOrTransImpl()) {
+		if (currentCycle.isStdImpl()) {
 			code.add(createGetAggregationKindMethod());
 			code.add(createGetAlphaAggregationKindMethod());
 			code.add(createGetOmegaAggregationKindMethod());
 			code.add(createReversedEdgeMethod());
 		}
 		code.add(createGetAlphaOmegaOverrides());
-		
+
 		return code;
 	}
 
 	/**
-	 *
+	 * 
 	 * @return
 	 */
 	private CodeBlock createReversedEdgeMethod() {
@@ -159,17 +153,11 @@ public class EdgeCodeGenerator extends
 		if (currentCycle.isStdImpl()) {
 			addImports("#schemaImplStdPackage#.Reversed#simpleClassName#Impl");
 		}
-		if (currentCycle.isTransImpl()) {
-			addImports("#schemaImplTransPackage#.Reversed#simpleClassName#Impl");
-		}
-		if (currentCycle.isDbImpl()) {
-			addImports("#schemaImplDbPackage#.Reversed#simpleClassName#Impl");
-		}
 		code.add("\treturn new Reversed#simpleClassName#Impl(this, graph);");
 		code.add("}");
 		return code;
 	}
-	
+
 	private CodeBlock createGetAlphaOmegaOverrides() {
 
 		CodeSnippet b = new CodeSnippet();
@@ -202,7 +190,7 @@ public class EdgeCodeGenerator extends
 				b.add("\treturn (#toVertexClass#) super.getOmega();");
 				b.add("}");
 			}
-		 }
+		}
 
 		return b;
 
@@ -237,7 +225,7 @@ public class EdgeCodeGenerator extends
 			code.add(" */",
 					"public #ecQualifiedName# getNext#ecCamelName#InGraph(#formalParams#);");
 		}
-		if (currentCycle.isStdOrDbImplOrTransImpl()) {
+		if (currentCycle.isStdImpl()) {
 			code.add(
 					"public #ecQualifiedName# getNext#ecCamelName#InGraph(#formalParams#) {",
 					"\treturn (#ecQualifiedName#)getNextEdge(#ecQualifiedName#.EC#actualParams#);",
@@ -286,7 +274,7 @@ public class EdgeCodeGenerator extends
 			code.add(" */",
 					"public #ecQualifiedName# getNext#ecCamelName#Incidence(#formalParams#);");
 		}
-		if (currentCycle.isStdOrDbImplOrTransImpl()) {
+		if (currentCycle.isStdImpl()) {
 			code.add(
 					"public #ecQualifiedName# getNext#ecCamelName#Incidence(#formalParams#) {",
 					"\treturn (#ecQualifiedName#)getNextIncidence(#ecQualifiedName#.EC#actualParams#);",

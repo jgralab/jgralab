@@ -50,7 +50,6 @@ import java.util.Random;
 
 import junit.framework.Assert;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -63,7 +62,6 @@ import de.uni_koblenz.jgralab.ImplementationType;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.graphmarker.GraphMarker;
 import de.uni_koblenz.jgralab.impl.InternalVertex;
-import de.uni_koblenz.jgralab.trans.CommitFailedException;
 import de.uni_koblenz.jgralabtest.schemas.minimal.Link;
 import de.uni_koblenz.jgralabtest.schemas.minimal.MinimalGraph;
 import de.uni_koblenz.jgralabtest.schemas.minimal.MinimalSchema;
@@ -95,19 +93,12 @@ public class IncidenceListTest extends InstanceTest {
 	private Random rnd;
 
 	@Before
-	public void setup() throws CommitFailedException {
+	public void setup() {
 		rnd = new Random(System.currentTimeMillis());
 		switch (implementationType) {
 		case STANDARD:
 			g = MinimalSchema.instance().createMinimalGraph(
 					ImplementationType.STANDARD, null, V, E);
-			break;
-		case TRANSACTION:
-			g = MinimalSchema.instance().createMinimalGraph(
-					ImplementationType.TRANSACTION, null, V, E);
-			break;
-		case DATABASE:
-			g = createMinimalGraphWithDatabaseSupport();
 			break;
 		default:
 			fail("Implementation " + implementationType
@@ -116,43 +107,21 @@ public class IncidenceListTest extends InstanceTest {
 
 		nodes = new Node[N];
 
-		createTransaction(g);
 		for (int i = 0; i < N; ++i) {
 			nodes[i] = g.createNode();
-		}
-		commit(g);
-	}
-
-	private MinimalGraph createMinimalGraphWithDatabaseSupport() {
-		dbHandler.connectToDatabase();
-		dbHandler.clearAllTables();
-		dbHandler.loadMinimalSchemaIntoGraphDatabase();
-		return dbHandler.createMinimalGraphWithDatabaseSupport(
-				"IncidenceListTest", V, E);
-	}
-
-	@After
-	public void tearDown() {
-		if (implementationType == ImplementationType.DATABASE) {
-			dbHandler.closeGraphdatabase();
 		}
 	}
 
 	@Test
 	public void addEdgeTest() throws Exception {
 		// incidence lists must initially be empty
-		createReadOnlyTransaction(g);
 		for (int i = 0; i < N; ++i) {
 			assertEquals(0, nodes[i].getDegree());
 			Assert.assertNull(nodes[i].getFirstIncidence());
 		}
-		commit(g);
 
-		createTransaction(g);
 		Edge e1 = g.createLink(nodes[0], nodes[1]);
-		commit(g);
 
-		createReadOnlyTransaction(g);
 		assertEquals(e1, nodes[0].getFirstIncidence());
 		assertEquals(e1, nodes[0].getLastIncidence());
 		assertEquals(e1.getReversedEdge(), nodes[1].getFirstIncidence());
@@ -167,14 +136,10 @@ public class IncidenceListTest extends InstanceTest {
 		assertEquals(1, nodes[1].getDegree(EdgeDirection.IN));
 		assertEquals("e1", getISeq(nodes[0]));
 		assertEquals("e-1", getISeq(nodes[1]));
-		commit(g);
 
 		// loop
-		createTransaction(g);
 		Edge e2 = g.createLink(nodes[0], nodes[0]);
-		commit(g);
 
-		createReadOnlyTransaction(g);
 		assertEquals(e1, nodes[0].getFirstIncidence());
 		assertEquals(e2.getReversedEdge(), nodes[0].getLastIncidence());
 		assertEquals(e1.getReversedEdge(), nodes[1].getFirstIncidence());
@@ -185,13 +150,9 @@ public class IncidenceListTest extends InstanceTest {
 		assertEquals(1, nodes[0].getDegree(EdgeDirection.IN));
 		assertEquals("e1 e2 e-2", getISeq(nodes[0]));
 		assertEquals("e-1", getISeq(nodes[1]));
-		commit(g);
 
-		createTransaction(g);
 		Edge e3 = g.createLink(nodes[2], nodes[0]);
-		commit(g);
 
-		createReadOnlyTransaction(g);
 		assertEquals(e3, nodes[2].getFirstIncidence());
 		assertEquals(e3.getReversedEdge(), nodes[0].getLastIncidence());
 		assertEquals(4, nodes[0].getDegree());
@@ -205,13 +166,9 @@ public class IncidenceListTest extends InstanceTest {
 		assertEquals("e1 e2 e-2 e-3", getISeq(nodes[0]));
 		assertEquals("e-1", getISeq(nodes[1]));
 		assertEquals("e3", getISeq(nodes[2]));
-		commit(g);
 
-		createTransaction(g);
 		Edge e4 = g.createLink(nodes[0], nodes[N - 1]);
-		commit(g);
 
-		createReadOnlyTransaction(g);
 		assertEquals(e4.getReversedEdge(), nodes[N - 1].getFirstIncidence());
 		assertEquals(e4.getReversedEdge(), nodes[N - 1].getLastIncidence());
 		assertEquals(e4, nodes[0].getLastIncidence());
@@ -227,7 +184,6 @@ public class IncidenceListTest extends InstanceTest {
 		assertEquals("e-1", getISeq(nodes[1]));
 		assertEquals("e3", getISeq(nodes[2]));
 		assertEquals("e-4", getISeq(nodes[N - 1]));
-		commit(g);
 	}
 
 	private String getISeq(Vertex v) {
@@ -240,20 +196,14 @@ public class IncidenceListTest extends InstanceTest {
 
 	@Test
 	public void putEdgeBeforeTest() throws Exception {
-		createTransaction(g);
 		createRandomEdges();
-		commit(g);
 
 		// at each vertex, shuffle edges
 
-		createReadOnlyTransaction(g);
 		List<Vertex> vertexList = getVertexList();
-		commit(g);
 
 		for (Vertex v : vertexList) {
-			createReadOnlyTransaction(g);
 			List<Edge> il = getIncidenceList(v);
-			commit(g);
 			if (il.size() < 2) {
 				continue;
 			}
@@ -268,16 +218,12 @@ public class IncidenceListTest extends InstanceTest {
 				Edge eb = il.get(b);
 				// System.out.print(getISeq(v) + " " + ea.getId() + "
 				// before " + eb.getId());
-				createTransaction(g);
 				ea.putIncidenceBefore(eb);
-				commit(g);
 				// System.out.println(" => " + getISeq(v));
 				// System.out.println(il);
 				il.remove(a);
 				il.add(a < b ? b - 1 : b, ea);
-				createReadOnlyTransaction(g);
 				checkIncidenceList(v, il);
-				commit(g);
 			}
 		}
 	}
@@ -292,17 +238,11 @@ public class IncidenceListTest extends InstanceTest {
 
 	@Test
 	public void putEdgeAfterTest() throws Exception {
-		createTransaction(g);
 		createRandomEdges();
-		commit(g);
 		// at each vertex, shuffle edges 1000 times
-		createReadOnlyTransaction(g);
 		List<Vertex> vertexList = getVertexList();
-		commit(g);
 		for (Vertex v : vertexList) {
-			createReadOnlyTransaction(g);
 			List<Edge> il = getIncidenceList(v);
-			commit(g);
 			if (il.size() < 2) {
 				continue;
 			}
@@ -317,16 +257,12 @@ public class IncidenceListTest extends InstanceTest {
 				// System.out.print(getISeq(v) + " " + ea.getId() + "
 				// after "
 				// + eb.getId());
-				createTransaction(g);
 				ea.putIncidenceAfter(eb);
-				commit(g);
 				// System.out.println(" => " + getISeq(v));
 				// System.out.println(il);
 				il.remove(a);
 				il.add(a < b ? b : b + 1, ea);
-				createReadOnlyTransaction(g);
 				checkIncidenceList(v, il);
-				commit(g);
 			}
 		}
 	}
@@ -376,17 +312,11 @@ public class IncidenceListTest extends InstanceTest {
 	public void deleteEdgeTest() throws Exception {
 		// onlyTestWithoutTransactionSupport();
 		// TODO find out why this test takes so long
-		createTransaction(g);
 		createRandomEdges();
-		commit(g);
-		createReadOnlyTransaction(g);
 		int eCount = g.getECount();
-		commit(g);
 
 		for (Vertex v : nodes) {
-			createReadOnlyTransaction(g);
 			List<Edge> incidenceList = getIncidenceList(v);
-			commit(g);
 
 			// calculate the in/out degree of that node
 			// TODO why not use internal degree method?
@@ -404,7 +334,6 @@ public class IncidenceListTest extends InstanceTest {
 				// incidences
 				Edge edgeToDelete = incidenceList.remove(rnd
 						.nextInt(incidenceList.size()));
-				createTransaction(g);
 				// if the edge is a loop, we have to remove the other end, too.
 				if (edgeToDelete.isNormal()) {
 					outDegree--;
@@ -419,14 +348,10 @@ public class IncidenceListTest extends InstanceTest {
 						outDegree--;
 					}
 				}
-				commit(g);
 				// now delete it
-				createTransaction(g);
 				edgeToDelete.delete();
-				commit(g);
 				eCount--;
 
-				createReadOnlyTransaction(g);
 				// The graph must not contain that edge anymore
 				assertFalse(g.containsEdge(edgeToDelete));
 				// The edge count must be adjusted
@@ -440,18 +365,15 @@ public class IncidenceListTest extends InstanceTest {
 				assertEquals(outDegree, v.getDegree(EdgeDirection.OUT));
 				// The incidences should have the same order
 				assertEquals(incidenceList, getIncidenceList(v));
-				commit(g);
 			}
 		}
 	}
 
 	@Test
-	public void testSortIncidences() throws CommitFailedException {
+	public void testSortIncidences() {
 		Node[] nodes = new Node[NODE_COUNT];
 
-		createTransaction(g);
 		Node isolated = g.createNode();
-		commit(g);
 
 		final GraphMarker<Integer> marker = new GraphMarker<Integer>(g);
 		Comparator<Edge> comp = new Comparator<Edge>() {
@@ -473,90 +395,53 @@ public class IncidenceListTest extends InstanceTest {
 			}
 		};
 
-		if (implementationType == ImplementationType.TRANSACTION) {
-			try {
-				isolated.sortIncidences(comp);
-				fail();
-			} catch (UnsupportedOperationException e) {
-				// as expected
-			}
-		} else if (implementationType == ImplementationType.DATABASE) {
-			try {
-				isolated.sortIncidences(comp);
-				fail();
-			} catch (UnsupportedOperationException e) {
-				// as expected
-			}
-		} else {
-			createTransaction(g);
-			for (int i = 0; i < nodes.length; i++) {
-				nodes[i] = g.createNode();
-			}
-			commit(g);
-			// create edges from node 0 to all others
-			List<Link> links = new ArrayList<Link>();
-			createTransaction(g);
-			for (int i = 1; i < nodes.length; i++) {
-				links.add(g.createLink(nodes[0], nodes[i]));
-			}
-			commit(g);
-
-			// test if list is not modified if sorting is called when they are
-			// already sorted
-			markInOrder(links, marker);
-
-			createTransaction(g);
-			long version = ((InternalVertex) nodes[0])
-					.getIncidenceListVersion();
-			nodes[0].sortIncidences(comp);
-			commit(g);
-
-			createReadOnlyTransaction(g);
-			assertEquals(version,
-					((InternalVertex) nodes[0]).getIncidenceListVersion());
-			checkInOrder(nodes, links);
-			commit(g);
-
-			// test if sorting works if order is reversed
-			markInverse(links, marker);
-			createTransaction(g);
-			nodes[0].sortIncidences(comp);
-			commit(g);
-
-			createReadOnlyTransaction(g);
-			// assertTrue(version < nodes[0].getIncidenceListVersion());
-			checkInverse(nodes, links);
-			commit(g);
-
-			// reset state and check if it is correct
-			markInOrder(links, marker);
-			createTransaction(g);
-			version = ((InternalVertex) nodes[0]).getIncidenceListVersion();
-			nodes[0].sortIncidences(comp);
-			commit(g);
-
-			createReadOnlyTransaction(g);
-			assertTrue(version < ((InternalVertex) nodes[0])
-					.getIncidenceListVersion());
-			checkInOrder(nodes, links);
-			commit(g);
-
-			// random tests
-			for (int i = 0; i < RANDOM_TEST_AMOUNT; i++) {
-				List<Link> randomOrder = copyAndMix(links);
-				markInOrder(randomOrder, marker);
-				createTransaction(g);
-				nodes[0].sortIncidences(comp);
-				commit(g);
-
-				createReadOnlyTransaction(g);
-				checkInOrder(nodes, randomOrder);
-				commit(g);
-			}
-
-			// check if the sorting succeeds if the vertex is isolated
-			isolated.sortIncidences(comp);
+		for (int i = 0; i < nodes.length; i++) {
+			nodes[i] = g.createNode();
 		}
+		// create edges from node 0 to all others
+		List<Link> links = new ArrayList<Link>();
+		for (int i = 1; i < nodes.length; i++) {
+			links.add(g.createLink(nodes[0], nodes[i]));
+		}
+
+		// test if list is not modified if sorting is called when they are
+		// already sorted
+		markInOrder(links, marker);
+
+		long version = ((InternalVertex) nodes[0]).getIncidenceListVersion();
+		nodes[0].sortIncidences(comp);
+
+		assertEquals(version,
+				((InternalVertex) nodes[0]).getIncidenceListVersion());
+		checkInOrder(nodes, links);
+
+		// test if sorting works if order is reversed
+		markInverse(links, marker);
+		nodes[0].sortIncidences(comp);
+
+		// assertTrue(version < nodes[0].getIncidenceListVersion());
+		checkInverse(nodes, links);
+
+		// reset state and check if it is correct
+		markInOrder(links, marker);
+		version = ((InternalVertex) nodes[0]).getIncidenceListVersion();
+		nodes[0].sortIncidences(comp);
+
+		assertTrue(version < ((InternalVertex) nodes[0])
+				.getIncidenceListVersion());
+		checkInOrder(nodes, links);
+
+		// random tests
+		for (int i = 0; i < RANDOM_TEST_AMOUNT; i++) {
+			List<Link> randomOrder = copyAndMix(links);
+			markInOrder(randomOrder, marker);
+			nodes[0].sortIncidences(comp);
+
+			checkInOrder(nodes, randomOrder);
+		}
+
+		// check if the sorting succeeds if the vertex is isolated
+		isolated.sortIncidences(comp);
 	}
 
 	private List<Link> copyAndMix(List<Link> original) {

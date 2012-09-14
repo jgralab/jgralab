@@ -44,7 +44,6 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -77,8 +76,6 @@ public class TraversalContextTest extends InstanceTest {
 		super(implementationType, dbURL);
 	}
 
-	private static final String ID = "TraversalContext";
-
 	@Parameters
 	public static Collection<Object[]> configure() {
 		return getParameters();
@@ -97,13 +94,6 @@ public class TraversalContextTest extends InstanceTest {
 			graph = MinimalSchema.instance().createMinimalGraph(
 					ImplementationType.STANDARD);
 			break;
-		case TRANSACTION:
-			graph = MinimalSchema.instance().createMinimalGraph(
-					ImplementationType.TRANSACTION);
-			break;
-		case DATABASE:
-			graph = createMinimalGraphWithDatabaseSupport();
-			break;
 		}
 
 		createGraphAndSubgraph();
@@ -111,7 +101,6 @@ public class TraversalContextTest extends InstanceTest {
 		iGraph = (InternalGraph) graph;
 
 		createDefaultTCs();
-		createReadOnlyTransaction(graph);
 	}
 
 	private Node[] v;
@@ -119,7 +108,6 @@ public class TraversalContextTest extends InstanceTest {
 	private Link[] re;
 
 	private void createGraphAndSubgraph() throws Exception {
-		createTransaction(graph);
 		// vertices
 		v = new Node[10];
 		v[1] = graph.createNode();
@@ -158,9 +146,7 @@ public class TraversalContextTest extends InstanceTest {
 		for (int i = 1; i < e.length; i++) {
 			re[i] = (Link) e[i].getReversedEdge();
 		}
-		commit(graph);
 
-		createReadOnlyTransaction(graph);
 		SubGraphMarker subgraph1 = new SubGraphMarker(graph);
 		SubGraphMarker subgraph2 = new SubGraphMarker(graph);
 
@@ -178,7 +164,6 @@ public class TraversalContextTest extends InstanceTest {
 
 		this.subgraph1 = subgraph1;
 		this.subgraph2 = subgraph2;
-		commit(graph);
 	}
 
 	private void createDefaultTCs() {
@@ -208,20 +193,6 @@ public class TraversalContextTest extends InstanceTest {
 				return false;
 			}
 		};
-	}
-
-	private MinimalGraph createMinimalGraphWithDatabaseSupport() {
-		dbHandler.connectToDatabase();
-		dbHandler.loadMinimalSchemaIntoGraphDatabase();
-		return dbHandler.createMinimalGraphWithDatabaseSupport(ID);
-	}
-
-	@After
-	public void tearDown() throws Exception {
-		commit(graph);
-		if (implementationType == ImplementationType.DATABASE) {
-			cleanAndCloseGraphDatabase();
-		}
 	}
 
 	/*
@@ -1082,10 +1053,5 @@ public class TraversalContextTest extends InstanceTest {
 		}
 		assertFalse("Second list is longer: should be " + list1.size()
 				+ " but was " + list2.size(), iter2.hasNext());
-	}
-
-	private void cleanAndCloseGraphDatabase() {
-		dbHandler.clearAllTables();
-		dbHandler.closeGraphdatabase();
 	}
 }

@@ -47,8 +47,6 @@ import de.uni_koblenz.jgralab.impl.InternalVertex;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.GraphClass;
 import de.uni_koblenz.jgralab.schema.VertexClass;
-import de.uni_koblenz.jgralab.trans.Savepoint;
-import de.uni_koblenz.jgralab.trans.Transaction;
 
 /**
  * The implementation of a <code>Graph</code> accessing attributes without
@@ -235,60 +233,6 @@ public abstract class GraphImpl extends
 	}
 
 	@Override
-	public void abort() {
-		throw new UnsupportedOperationException(
-				"Abort is not supported for this graph.");
-	}
-
-	@Override
-	public void commit() {
-		throw new UnsupportedOperationException(
-				"Commit is not supported for this graph.");
-	}
-
-	@Override
-	public Transaction newReadOnlyTransaction() {
-		throw new UnsupportedOperationException(
-				"Creation of read-only-transactions is not supported for this graph.");
-	}
-
-	@Override
-	public Transaction newTransaction() {
-		throw new UnsupportedOperationException(
-				"Creation of read-write-transactions is not supported for this graph.");
-	}
-
-	@Override
-	public Savepoint defineSavepoint() {
-		throw new UnsupportedOperationException(
-				"Definition of save-points is not supported for this graph.");
-	}
-
-	@Override
-	public Transaction getCurrentTransaction() {
-		throw new UnsupportedOperationException(
-				"Transactions are not supported for this graph.");
-	}
-
-	@Override
-	public void restoreSavepoint(Savepoint savepoint) {
-		throw new UnsupportedOperationException(
-				"Definition of save-points is not supported for this graph.");
-	}
-
-	@Override
-	public void setCurrentTransaction(Transaction transaction) {
-		throw new UnsupportedOperationException(
-				"Transactions are not supported for this graph.");
-	}
-
-	@Override
-	public boolean isInConflict() {
-		throw new UnsupportedOperationException(
-				"Transactions are not supported for this graph.");
-	}
-
-	@Override
 	public int allocateVertexIndex(int currentId) {
 		int vId = freeVertexList.allocateIndex();
 		if (vId == 0) {
@@ -335,46 +279,44 @@ public abstract class GraphImpl extends
 	}
 
 	@Override
-	public final boolean hasTransactionSupport() {
-		return false;
-	}
-
-	@Override
 	public TraversalContext getTraversalContext() {
 		return tc.get();
 	}
 
 	@Override
-	public TraversalContext setTraversalContext(TraversalContext tc) {	
+	public TraversalContext setTraversalContext(TraversalContext tc) {
 		TraversalContext oldTc = this.tc.get();
 		this.tc.set(tc);
 		return oldTc;
 	}
-	
+
 	@Override
-	public TemporaryVertex createTemporaryVertex(){
+	public TemporaryVertex createTemporaryVertex() {
 		return new TemporaryVertexImpl(0, this);
 	}
-	
+
 	@Override
-	public TemporaryVertex createTemporaryVertex(VertexClass preliminaryType){
+	public TemporaryVertex createTemporaryVertex(VertexClass preliminaryType) {
 		return new TemporaryVertexImpl(0, this, preliminaryType);
 	}
-	
+
 	@Override
-	public TemporaryEdge createTemporaryEdge(Vertex alpha, Vertex omega){
+	public TemporaryEdge createTemporaryEdge(Vertex alpha, Vertex omega) {
 		return new TemporaryEdgeImpl(0, this, alpha, omega);
 	}
-	
+
 	@Override
-	public TemporaryEdge createTemporaryEdge(EdgeClass preliminaryType, Vertex alpha, Vertex omega){
+	public TemporaryEdge createTemporaryEdge(EdgeClass preliminaryType,
+			Vertex alpha, Vertex omega) {
 		return new TemporaryEdgeImpl(0, this, preliminaryType, alpha, omega);
 	}
-	
+
 	@Override
-	public boolean hasTemporaryElements(){
-		return this.getFirstVertex(this.getGraphClass().getTemporaryVertexClass()) != null || 
-				this.getFirstEdge(this.getGraphClass().getTemporaryEdgeClass()) != null;
+	public boolean hasTemporaryElements() {
+		return this.getFirstVertex(this.getGraphClass()
+				.getTemporaryVertexClass()) != null
+				|| this.getFirstEdge(this.getGraphClass()
+						.getTemporaryEdgeClass()) != null;
 	}
 
 }

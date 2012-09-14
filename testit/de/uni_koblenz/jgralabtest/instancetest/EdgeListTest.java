@@ -43,7 +43,6 @@ import static org.junit.Assert.fail;
 import java.util.Collection;
 import java.util.Comparator;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -54,7 +53,6 @@ import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.ImplementationType;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.trans.CommitFailedException;
 import de.uni_koblenz.jgralabtest.schemas.minimal.Link;
 import de.uni_koblenz.jgralabtest.schemas.minimal.MinimalGraph;
 import de.uni_koblenz.jgralabtest.schemas.minimal.MinimalSchema;
@@ -78,24 +76,16 @@ public class EdgeListTest extends InstanceTest {
 	}
 
 	@Before
-	public void setup() throws CommitFailedException {
+	public void setup() {
 		switch (implementationType) {
 		case STANDARD:
 			g = MinimalSchema.instance().createMinimalGraph(
 					ImplementationType.STANDARD, null, V, E);
 			break;
-		case TRANSACTION:
-			g = MinimalSchema.instance().createMinimalGraph(
-					ImplementationType.TRANSACTION, null, V, E);
-			break;
-		case DATABASE:
-			g = createMinimalGraphWithDatabaseSupport();
-			break;
 		default:
 			fail("Implementation " + implementationType
 					+ " not yet supported by this test.");
 		}
-		createTransaction(g);
 		for (int i = 0; i < N; ++i) {
 			g.createNode();
 		}
@@ -103,27 +93,10 @@ public class EdgeListTest extends InstanceTest {
 			g.createLink((Node) g.getVertex(i + 1),
 					(Node) g.getVertex((i + 1) % N + 1));
 		}
-		commit(g);
-	}
-
-	private MinimalGraph createMinimalGraphWithDatabaseSupport() {
-		dbHandler.connectToDatabase();
-		dbHandler.clearAllTables();
-		dbHandler.loadMinimalSchemaIntoGraphDatabase();
-		return dbHandler.createMinimalGraphWithDatabaseSupport("EdgeListTest",
-				V, E);
-	}
-
-	@After
-	public void tearDown() {
-		if (implementationType == ImplementationType.DATABASE) {
-			dbHandler.closeGraphdatabase();
-		}
 	}
 
 	@Test
 	public void addEdgeTest() throws Exception {
-		createReadOnlyTransaction(g);
 		assertEquals(10, g.getECount());
 		assertEquals("e1 e2 e3 e4 e5 e6 e7 e8 e9 e10", getESeq());
 		for (Vertex v : g.vertices()) {
@@ -131,7 +104,6 @@ public class EdgeListTest extends InstanceTest {
 			assertEquals(1, v.getDegree(EdgeDirection.IN));
 			assertEquals(1, v.getDegree(EdgeDirection.OUT));
 		}
-		commit(g);
 	}
 
 	private String getESeq() {
@@ -144,107 +116,66 @@ public class EdgeListTest extends InstanceTest {
 
 	@Test
 	public void putBeforeTest() throws Exception {
-		createReadOnlyTransaction(g);
 		Edge e5 = g.getEdge(5).getReversedEdge();
-		commit(g);
 
-		createTransaction(g);
 		e5.putBeforeEdge(g.getEdge(6));
-		commit(g);
 
-		createReadOnlyTransaction(g);
 		assertTrue(e5.isBeforeEdge(g.getEdge(6)));
 		assertEquals("e1 e2 e3 e4 e5 e6 e7 e8 e9 e10", getESeq());
 		assertTrue(e5.isAfterEdge(g.getEdge(4)));
 		assertFalse(e5.isBeforeEdge(g.getEdge(4)));
-		commit(g);
 
-		createTransaction(g);
 		e5.putBeforeEdge(g.getEdge(4));
-		commit(g);
 
-		createReadOnlyTransaction(g);
 		assertEquals("e1 e2 e3 e5 e4 e6 e7 e8 e9 e10", getESeq());
 		assertFalse(e5.isAfterEdge(g.getEdge(4)));
 		assertTrue(e5.isBeforeEdge(g.getEdge(4)));
-		commit(g);
 
-		createTransaction(g);
 		e5.putBeforeEdge(g.getEdge(10).getReversedEdge());
 		// e5.putBeforeInGraph(g.getEdge(10));
-		commit(g);
 
-		createReadOnlyTransaction(g);
 		assertEquals("e1 e2 e3 e4 e6 e7 e8 e9 e5 e10", getESeq());
 		assertFalse(e5.isAfterEdge(g.getEdge(10)));
 		assertTrue(e5.isBeforeEdge(g.getEdge(10)));
 		assertFalse(e5.isBeforeEdge(g.getEdge(1)));
 		assertTrue(g.getEdge(1).isBeforeEdge(e5));
-		commit(g);
 
-		createTransaction(g);
 		e5.putBeforeEdge(g.getEdge(1));
-		commit(g);
 
-		createReadOnlyTransaction(g);
 		assertEquals("e5 e1 e2 e3 e4 e6 e7 e8 e9 e10", getESeq());
 		assertTrue(e5.isBeforeEdge(g.getEdge(1)));
 		assertFalse(e5.isAfterEdge(g.getEdge(1)));
 		assertTrue(g.getEdge(1).isAfterEdge(e5));
-		commit(g);
 
 	}
 
 	@Test
 	public void putAfterTest() throws Exception {
-		createReadOnlyTransaction(g);
 		Edge e5 = g.getEdge(5).getReversedEdge();
-		commit(g);
 
-		createTransaction(g);
 		e5.putAfterEdge(g.getEdge(4));
-		commit(g);
 
-		createReadOnlyTransaction(g);
 		assertEquals("e1 e2 e3 e4 e5 e6 e7 e8 e9 e10", getESeq());
-		commit(g);
 
-		createTransaction(g);
 		e5.putAfterEdge(g.getEdge(6).getReversedEdge());
-		commit(g);
 
-		createReadOnlyTransaction(g);
 		assertEquals("e1 e2 e3 e4 e6 e5 e7 e8 e9 e10", getESeq());
-		commit(g);
 
-		createTransaction(g);
 		e5.putAfterEdge(g.getEdge(10));
-		commit(g);
 
-		createReadOnlyTransaction(g);
 		assertEquals("e1 e2 e3 e4 e6 e7 e8 e9 e10 e5", getESeq());
-		commit(g);
 
-		createTransaction(g);
 		e5.putAfterEdge(g.getEdge(1));
-		commit(g);
 
-		createReadOnlyTransaction(g);
 		assertEquals("e1 e5 e2 e3 e4 e6 e7 e8 e9 e10", getESeq());
-		commit(g);
 	}
 
 	@Test
 	public void deleteEdgeTest() throws Exception {
-		createReadOnlyTransaction(g);
 		Edge e = g.getEdge(5);
-		commit(g);
 
-		createTransaction(g);
 		e.delete();
-		commit(g);
 
-		createReadOnlyTransaction(g);
 		assertFalse(e.isValid());
 		assertNull(g.getEdge(5));
 		assertEquals(9, g.getECount());
@@ -255,74 +186,43 @@ public class EdgeListTest extends InstanceTest {
 		assertEquals(0, g.getVertex(6).getDegree(EdgeDirection.IN));
 		assertEquals(1, g.getVertex(6).getDegree(EdgeDirection.OUT));
 		assertEquals("e1 e2 e3 e4 e6 e7 e8 e9 e10", getESeq());
-		commit(g);
 
-		createReadOnlyTransaction(g);
 		e = g.getFirstEdge().getReversedEdge();
-		commit(g);
 
-		createTransaction(g);
 		e.delete();
-		commit(g);
 
-		createReadOnlyTransaction(g);
 		assertFalse(e.isValid());
 		assertNull(g.getEdge(1));
 		assertEquals(8, g.getECount());
 		assertEquals("e2 e3 e4 e6 e7 e8 e9 e10", getESeq());
-		commit(g);
 
-		createReadOnlyTransaction(g);
 		e = g.getEdge(10);
-		commit(g);
 
-		createTransaction(g);
 		e.delete();
-		commit(g);
 
-		createReadOnlyTransaction(g);
 		assertFalse(e.isValid());
 		assertNull(g.getEdge(1));
 		assertEquals(7, g.getECount());
 		assertEquals("e2 e3 e4 e6 e7 e8 e9", getESeq());
-		commit(g);
 
-		createReadOnlyTransaction(g);
 		Node v1 = (Node) g.getVertex(1);
 		Node v2 = (Node) g.getVertex(2);
-		commit(g);
 
-		createTransaction(g);
 		g.createLink(v1, v2);
-		commit(g);
 
-		createReadOnlyTransaction(g);
 		assertEquals("e2 e3 e4 e6 e7 e8 e9 e1", getESeq());
-		commit(g);
 
-		createTransaction(g);
 		g.createLink(v1, v2);
-		commit(g);
 
-		createReadOnlyTransaction(g);
 		assertEquals("e2 e3 e4 e6 e7 e8 e9 e1 e5", getESeq());
-		commit(g);
 
-		createTransaction(g);
 		g.createLink(v1, v2);
-		commit(g);
 
-		createReadOnlyTransaction(g);
 		assertEquals("e2 e3 e4 e6 e7 e8 e9 e1 e5 e10", getESeq());
-		commit(g);
 
-		createTransaction(g);
 		g.createLink(v1, v2);
-		commit(g);
 
-		createReadOnlyTransaction(g);
 		assertEquals("e2 e3 e4 e6 e7 e8 e9 e1 e5 e10 e11", getESeq());
-		commit(g);
 	}
 
 	/**
@@ -330,31 +230,20 @@ public class EdgeListTest extends InstanceTest {
 	 * the id and back. For transaction support it has to be tested in the same
 	 * transaction, because otherwise the IDs would be changed.
 	 * 
-	 * @throws CommitFailedException
+	 * @
 	 */
 	@Test
-	public void testSortEdgeList() throws CommitFailedException {
+	public void testSortEdgeList() {
 		switch (implementationType) {
 		case STANDARD:
 			g = MinimalSchema.instance().createMinimalGraph(
 					ImplementationType.STANDARD, null, V, E);
 			break;
-		case TRANSACTION:
-			g = MinimalSchema.instance().createMinimalGraph(
-					ImplementationType.TRANSACTION, null, V, E);
-			break;
-		case DATABASE:
-			return; // because edge list sorting is not implemented for db
-			// support
-			// g = dbHandler.createMinimalGraphWithDatabaseSupport(
-			// "IncidenceListTest.testSortIncidences", V, E);
-			// break;
 		default:
 			fail("Implementation " + implementationType
 					+ " not yet supported by this test.");
 		}
 
-		createTransaction(g);
 		Node n1 = g.createNode();
 		Node n2 = g.createNode();
 		Link[] links = new Link[EDGE_COUNT + 1];
@@ -398,7 +287,6 @@ public class EdgeListTest extends InstanceTest {
 		for (Edge currentEdge : g.edges()) {
 			assertEquals(currentEdge.getId(), links[i++].getId());
 		}
-		commit(g);
 
 	}
 }

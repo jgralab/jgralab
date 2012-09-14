@@ -41,7 +41,6 @@ import static org.junit.Assert.fail;
 
 import java.util.Collection;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -56,7 +55,6 @@ import de.uni_koblenz.jgralab.GraphStructureChangedListenerWithAutoRemove;
 import de.uni_koblenz.jgralab.ImplementationType;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.impl.InternalGraph;
-import de.uni_koblenz.jgralab.trans.CommitFailedException;
 import de.uni_koblenz.jgralabtest.schemas.minimal.Link;
 import de.uni_koblenz.jgralabtest.schemas.minimal.MinimalGraph;
 import de.uni_koblenz.jgralabtest.schemas.minimal.MinimalSchema;
@@ -143,21 +141,11 @@ public class GraphStructureChangedListenerTest extends InstanceTest {
 	private MinimalGraph g;
 
 	@Before
-	public void setup() throws CommitFailedException {
+	public void setup() {
 		switch (implementationType) {
 		case STANDARD:
 			g = MinimalSchema.instance().createMinimalGraph(
 					ImplementationType.STANDARD, null, V, E);
-			break;
-		case TRANSACTION:
-			g = MinimalSchema.instance().createMinimalGraph(
-					ImplementationType.TRANSACTION, null, V, E);
-			break;
-		case DATABASE:
-			dbHandler.connectToDatabase();
-			dbHandler.loadMinimalSchemaIntoGraphDatabase();
-			g = dbHandler.createMinimalGraphWithDatabaseSupport(
-					"GraphStructureChangedListenerTest", V, E);
 			break;
 		default:
 			fail("Implementation " + implementationType
@@ -167,19 +155,11 @@ public class GraphStructureChangedListenerTest extends InstanceTest {
 		trigger2 = false;
 	}
 
-	@After
-	public void tearDown() {
-		if (implementationType == ImplementationType.DATABASE) {
-			dbHandler.clearAllTables();
-			dbHandler.closeGraphdatabase();
-		}
-	}
-
 	private boolean trigger1;
 	private boolean trigger2;
 
 	@Test
-	public void testVertexAdded() throws CommitFailedException {
+	public void testVertexAdded() {
 
 		GraphStructureChangedListener listener1 = new TestListenerWithAutoRemove();
 		GraphStructureChangedListener listener2 = new TestListener();
@@ -187,9 +167,7 @@ public class GraphStructureChangedListenerTest extends InstanceTest {
 		g.addGraphStructureChangedListener(listener1);
 		g.addGraphStructureChangedListener(listener2);
 
-		createTransaction(g);
 		g.createNode();
-		commit(g);
 
 		assertTrue("The method \"vertexAdded\" has not been called.", trigger1);
 		assertTrue("The method  \"vertexAdded\" has not been called.", trigger2);
@@ -197,23 +175,19 @@ public class GraphStructureChangedListenerTest extends InstanceTest {
 	}
 
 	@Test
-	public void testVertexDeleted() throws CommitFailedException {
+	public void testVertexDeleted() {
 		GraphStructureChangedListener listener1 = new TestListenerWithAutoRemove();
 		GraphStructureChangedListener listener2 = new TestListener();
 
 		assertFalse("The trigger has not been resetted", trigger1);
 		assertFalse("The trigger has not been resetted", trigger2);
 
-		createTransaction(g);
 		Node n = g.createNode();
-		commit(g);
 
 		g.addGraphStructureChangedListener(listener1);
 		g.addGraphStructureChangedListener(listener2);
 
-		createTransaction(g);
 		g.deleteVertex(n);
-		commit(g);
 
 		assertTrue("The method \"vertexDeleted\" has not been called.",
 				trigger1);
@@ -222,14 +196,12 @@ public class GraphStructureChangedListenerTest extends InstanceTest {
 	}
 
 	@Test
-	public void testEdgeAdded() throws CommitFailedException {
+	public void testEdgeAdded() {
 		GraphStructureChangedListener listener1 = new TestListenerWithAutoRemove();
 		GraphStructureChangedListener listener2 = new TestListener();
 
-		createTransaction(g);
 		Node n1 = g.createNode();
 		Node n2 = g.createNode();
-		commit(g);
 
 		g.addGraphStructureChangedListener(listener1);
 		g.addGraphStructureChangedListener(listener2);
@@ -237,49 +209,41 @@ public class GraphStructureChangedListenerTest extends InstanceTest {
 		assertFalse("The trigger has not been resetted", trigger1);
 		assertFalse("The trigger has not been resetted", trigger2);
 
-		createTransaction(g);
 		g.createLink(n1, n2);
-		commit(g);
 
 		assertTrue("The method \"edgeAdded\" has not been called.", trigger1);
 		assertTrue("The method \"edgeAdded\" has not been called.", trigger2);
 	}
 
 	@Test
-	public void testEdgeDeleted() throws CommitFailedException {
+	public void testEdgeDeleted() {
 		GraphStructureChangedListener listener1 = new TestListenerWithAutoRemove();
 		GraphStructureChangedListener listener2 = new TestListener();
 
 		assertFalse("The trigger has not been resetted", trigger1);
 		assertFalse("The trigger has not been resetted", trigger2);
 
-		createTransaction(g);
 		Node n1 = g.createNode();
 		Node n2 = g.createNode();
 		Link l1 = g.createLink(n1, n2);
-		commit(g);
 
 		g.addGraphStructureChangedListener(listener1);
 		g.addGraphStructureChangedListener(listener2);
 
-		createTransaction(g);
 		g.deleteEdge(l1);
-		commit(g);
 
 		assertTrue("The method \"edgeDeleted\" has not been called.", trigger1);
 		assertTrue("The method \"edgeDeleted\" has not been called.", trigger2);
 	}
 
 	@Test
-	public void testMaxVertexCountIncreased() throws CommitFailedException {
+	public void testMaxVertexCountIncreased() {
 		GraphStructureChangedListener listener1 = new TestListenerWithAutoRemove();
 		GraphStructureChangedListener listener2 = new TestListener();
 
-		createTransaction(g);
 		for (int i = 0; i < V; i++) {
 			g.createNode();
 		}
-		commit(g);
 
 		g.addGraphStructureChangedListener(listener1);
 		g.addGraphStructureChangedListener(listener2);
@@ -287,9 +251,7 @@ public class GraphStructureChangedListenerTest extends InstanceTest {
 		assertFalse("The trigger has not been resetted", trigger1);
 		assertFalse("The trigger has not been resetted", trigger2);
 
-		createTransaction(g);
 		g.createNode();
-		commit(g);
 
 		assertTrue(
 				"The method \"maxVertexCountIncreased\" has not been called.",
@@ -297,26 +259,22 @@ public class GraphStructureChangedListenerTest extends InstanceTest {
 	}
 
 	@Test
-	public void testMaxEdgeCountIncreased() throws CommitFailedException {
+	public void testMaxEdgeCountIncreased() {
 		GraphStructureChangedListener listener1 = new TestListenerWithAutoRemove();
 		GraphStructureChangedListener listener2 = new TestListener();
 
-		createTransaction(g);
 		Node n1 = g.createNode();
 		Node n2 = g.createNode();
 		for (int i = 0; i < E; i++) {
 			g.createLink(n1, n2);
 		}
-		commit(g);
 
 		g.addGraphStructureChangedListener(listener1);
 		g.addGraphStructureChangedListener(listener2);
 
 		assertFalse("The trigger has not been resetted", trigger1);
 
-		createTransaction(g);
 		g.createLink(n1, n2);
-		commit(g);
 
 		assertTrue("The method \"maxEdgeCountIncreased\" has not been called.",
 				trigger1);
@@ -324,8 +282,7 @@ public class GraphStructureChangedListenerTest extends InstanceTest {
 	}
 
 	@Test
-	public void testAutomaticRemovalOfWeakReferences()
-			throws CommitFailedException {
+	public void testAutomaticRemovalOfWeakReferences() {
 		GraphStructureChangedListener[] listenersWithAutoRemove = new GraphStructureChangedListener[LISTENERS];
 		GraphStructureChangedListener[] normalListeners = new GraphStructureChangedListener[LISTENERS];
 		for (int i = 0; i < listenersWithAutoRemove.length; i++) {
@@ -338,18 +295,14 @@ public class GraphStructureChangedListenerTest extends InstanceTest {
 		}
 
 		// test explicit unregister
-		createReadOnlyTransaction(g);
 		assertTrue("The wrong amount of listeners was created.",
 				g.getGraphStructureChangedListenerCount() == LISTENERS * 2);
-		commit(g);
 
 		g.removeGraphStructureChangedListener(listenersWithAutoRemove[1]);
 		g.removeGraphStructureChangedListener(normalListeners[1]);
 
-		createReadOnlyTransaction(g);
 		assertEquals(LISTENERS * 2 - 2,
 				g.getGraphStructureChangedListenerCount());
-		commit(g);
 
 		// test implicit unregister
 		listenersWithAutoRemove[0] = null;
@@ -363,15 +316,11 @@ public class GraphStructureChangedListenerTest extends InstanceTest {
 		}
 
 		// invoke implicit notification
-		createTransaction(g);
 		g.createNode();
-		commit(g);
 
-		createReadOnlyTransaction(g);
 		// only the auto removal one is expected to be deleted
 		assertEquals(LISTENERS * 2 - 3,
 				g.getGraphStructureChangedListenerCount());
-		commit(g);
 
 		for (int i = 0; i < LISTENERS; i++) {
 			listenersWithAutoRemove[i] = null;
@@ -385,12 +334,8 @@ public class GraphStructureChangedListenerTest extends InstanceTest {
 		}
 
 		// invoke implicit notification
-		createTransaction(g);
 		g.createNode();
-		commit(g);
 
-		createReadOnlyTransaction(g);
 		assertEquals(LISTENERS - 1, g.getGraphStructureChangedListenerCount());
-		commit(g);
 	}
 }

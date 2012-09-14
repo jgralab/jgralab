@@ -510,9 +510,6 @@ public class SchemaImpl implements Schema, ManagableArtifact {
 		long schemaElements = 0, currentCount = 0, interval = 1;
 		if (progressFunction != null) {
 			int elements = getNumberOfElements();
-			if (config.hasTransactionSupport()) {
-				elements *= 2;
-			}
 			progressFunction.init(elements);
 			interval = progressFunction.getUpdateInterval();
 		}
@@ -994,11 +991,6 @@ public class SchemaImpl implements Schema, ManagableArtifact {
 		case STANDARD:
 			implClassName += IMPLSTDPACKAGENAME;
 			break;
-		case TRANSACTION:
-			implClassName += IMPLTRANSPACKAGENAME;
-			break;
-		case DATABASE:
-			implClassName += IMPLDATABASEPACKAGENAME;
 		case GENERIC:
 			implClassName = "de.uni_koblenz.jgralab.impl.generic";
 			break;

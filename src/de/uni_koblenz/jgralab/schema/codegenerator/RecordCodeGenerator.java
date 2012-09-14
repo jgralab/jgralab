@@ -93,23 +93,8 @@ public class RecordCodeGenerator extends CodeGenerator {
 
 		code.add(new CodeSnippet("io.match(\"(\");"));
 		for (RecordComponent rc : recordDomain.getComponents()) {
-			if (currentCycle.isTransImpl()) {
-				code.add(rc.getDomain().getTransactionReadMethod(
-						schemaRootPackageName, "tmp_" + rc.getName(), "io"));
-				CodeSnippet cs = new CodeSnippet(
-						"set_#key#((#typeName#) tmp_#key#);");
-
-				cs.setVariable("key", rc.getName());
-				cs.setVariable(
-						"typeName",
-						rc.getDomain()
-								.getTransactionJavaAttributeImplementationTypeName(
-										schemaRootPackageName));
-				code.add(cs);
-			} else {
-				code.add(rc.getDomain().getReadMethod(schemaRootPackageName,
-						"_" + rc.getName(), "io"));
-			}
+			code.add(rc.getDomain().getReadMethod(schemaRootPackageName,
+					"_" + rc.getName(), "io"));
 		}
 		code.add(new CodeSnippet("io.match(\")\");"));
 		code.addNoIndent(new CodeSnippet("}"));
@@ -313,14 +298,8 @@ public class RecordCodeGenerator extends CodeGenerator {
 
 		for (RecordComponent rc : recordDomain.getComponents()) {
 			CodeBlock assign = null;
-			if (currentCycle.isTransImpl()) {
-				assign = new CodeSnippet("if (name.equals(\"#name#\")) {",
-						"\treturn #isOrGet#_#name#();", "}");
-			} else {
-				assign = new CodeSnippet("if (name.equals(\"#name#\")) {",
-						"\treturn _#name#;", "}");
-			}
-
+			assign = new CodeSnippet("if (name.equals(\"#name#\")) {",
+					"\treturn _#name#;", "}");
 			assign.setVariable("name", rc.getName());
 			assign.setVariable("cname",
 					rc.getDomain().getJavaClassName(schemaRootPackageName));

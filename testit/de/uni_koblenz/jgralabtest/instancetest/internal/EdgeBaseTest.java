@@ -43,7 +43,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Random;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -55,7 +54,6 @@ import de.uni_koblenz.jgralab.ImplementationType;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.exception.GraphException;
 import de.uni_koblenz.jgralab.impl.InternalVertex;
-import de.uni_koblenz.jgralab.trans.CommitFailedException;
 import de.uni_koblenz.jgralabtest.instancetest.InstanceTest;
 import de.uni_koblenz.jgralabtest.schemas.vertextest.AbstractSuperNode;
 import de.uni_koblenz.jgralabtest.schemas.vertextest.DoubleSubNode;
@@ -71,8 +69,6 @@ import de.uni_koblenz.jgralabtest.schemas.vertextest.VertexTestSchema;
 public class EdgeBaseTest extends InstanceTest {
 
 	private static final int RANDOM_VERTEX_COUNT = 10;
-
-	private final String ID = "EdgeTest";
 
 	public EdgeBaseTest(ImplementationType implementationType, String dbURL) {
 		super(implementationType, dbURL);
@@ -93,14 +89,8 @@ public class EdgeBaseTest extends InstanceTest {
 	public void setUp() {
 		switch (implementationType) {
 		case STANDARD:
-			g = VertexTestSchema.instance().createVertexTestGraph(ImplementationType.STANDARD);
-			break;
-		case TRANSACTION:
-			g = VertexTestSchema.instance()
-					.createVertexTestGraph(ImplementationType.TRANSACTION);
-			break;
-		case DATABASE:
-			g = createVertexTestGraphWithDatabaseSupport();
+			g = VertexTestSchema.instance().createVertexTestGraph(
+					ImplementationType.STANDARD);
 			break;
 		default:
 			fail("Implementation " + implementationType
@@ -108,31 +98,6 @@ public class EdgeBaseTest extends InstanceTest {
 		}
 
 		rand = new Random(System.currentTimeMillis());
-	}
-
-	private VertexTestGraph createVertexTestGraphWithDatabaseSupport() {
-		dbHandler.connectToDatabase();
-		dbHandler.loadVertexTestSchemaIntoGraphDatabase();
-		return dbHandler.createVertexTestGraphWithDatabaseSupport(ID);
-	}
-
-	@After
-	public void tearDown() {
-		if (implementationType == ImplementationType.DATABASE) {
-			cleanAndCloseGraphDatabase();
-		}
-	}
-
-	private void cleanAndCloseGraphDatabase() {
-		// dbHandler.cleanDatabaseOfTestGraph(ID);
-		// for (int i = 0; i < RANDOM_GRAPH_COUNT; i++) {
-		// dbHandler.cleanDatabaseOfTestGraph(ID + i);
-		// }
-		// dbHandler.cleanDatabaseOfTestGraph("anotherGraph");
-		// // this.cleanDatabaseOfTestSchema(VertexTestSchema.instance());
-		// dbHandler.closeGraphdatabase();
-		dbHandler.clearAllTables();
-		dbHandler.closeGraphdatabase();
 	}
 
 	/*
@@ -145,12 +110,10 @@ public class EdgeBaseTest extends InstanceTest {
 	 * 
 	 * @param v
 	 * @param incidentEdges
-	 * @throws CommitFailedException
+	 *            @
 	 */
-	private void testIncidenceList(Vertex v, Edge... incidentEdges)
-			throws CommitFailedException {
+	private void testIncidenceList(Vertex v, Edge... incidentEdges) {
 		Iterable<Edge> incidences;
-		createTransaction(g);
 		assertEquals(incidentEdges.length, v.getDegree());
 		incidences = v.incidences();
 
@@ -159,7 +122,6 @@ public class EdgeBaseTest extends InstanceTest {
 			assertEquals(incidentEdges[i], e);
 			i++;
 		}
-		commit(g);
 	}
 
 	/**
@@ -167,17 +129,14 @@ public class EdgeBaseTest extends InstanceTest {
 	 * incident edges of v1 ret.get(1) = incident edges of v2 ret.get(2) =
 	 * incident edges of v3
 	 * 
-	 * @return ret
-	 * @throws CommitFailedException
+	 * @return ret @
 	 */
-	private ArrayList<ArrayList<Edge>> createRandomGraph()
-			throws CommitFailedException {
+	private ArrayList<ArrayList<Edge>> createRandomGraph() {
 		ArrayList<ArrayList<Edge>> ret = new ArrayList<ArrayList<Edge>>(6);
 		ret.add(new ArrayList<Edge>());
 		ret.add(new ArrayList<Edge>());
 		ret.add(new ArrayList<Edge>());
 
-		createTransaction(g);
 		Vertex[] nodes = new Vertex[] { g.createSubNode(),
 				g.createDoubleSubNode(), g.createSuperNode() };
 		for (int i = 0; i < RANDOM_VERTEX_COUNT; i++) {
@@ -209,17 +168,16 @@ public class EdgeBaseTest extends InstanceTest {
 				break;
 			}
 		}
-		commit(g);
 		return ret;
 	}
 
 	/**
 	 * Alpha of an edge is changed to another vertex.
 	 * 
-	 * @throws CommitFailedException
+	 * @
 	 */
 	@Test
-	public void setAlphaTest0() throws CommitFailedException {
+	public void setAlphaTest0() {
 		DoubleSubNode v1;
 		DoubleSubNode v2;
 		DoubleSubNode v3;
@@ -227,7 +185,6 @@ public class EdgeBaseTest extends InstanceTest {
 		long v1vers;
 		long v2vers;
 		long v3vers;
-		createTransaction(g);
 		v1 = g.createDoubleSubNode();
 		v2 = g.createDoubleSubNode();
 		v3 = g.createDoubleSubNode();
@@ -236,89 +193,73 @@ public class EdgeBaseTest extends InstanceTest {
 		v2vers = ((InternalVertex) v2).getIncidenceListVersion();
 		v3vers = ((InternalVertex) v3).getIncidenceListVersion();
 		e1.setAlpha(v3);
-		commit(g);
 
-		createReadOnlyTransaction(g);
 		assertEquals(v3, e1.getAlpha());
 		assertTrue(((InternalVertex) v1).isIncidenceListModified(v1vers));
 		assertFalse(((InternalVertex) v2).isIncidenceListModified(v2vers));
 		assertTrue(((InternalVertex) v3).isIncidenceListModified(v3vers));
 		Edge reversedEdge = e1.getReversedEdge();
-		commit(g);
 
 		testIncidenceList(v1);
 		testIncidenceList(v2, reversedEdge);
 		testIncidenceList(v3, e1);
-
 	}
 
 	/**
 	 * Alpha of an edge is set to the previous alpha vertex.
 	 * 
-	 * @throws CommitFailedException
+	 * @
 	 */
 	@Test
-	public void setAlphaTest1() throws CommitFailedException {
+	public void setAlphaTest1() {
 		DoubleSubNode v1;
 		DoubleSubNode v2;
 		Edge e1;
 		long v1vers;
 		long v2vers;
-		createTransaction(g);
+
 		v1 = g.createDoubleSubNode();
 		v2 = g.createDoubleSubNode();
 		e1 = g.createLink(v1, v2);
 		v1vers = ((InternalVertex) v1).getIncidenceListVersion();
 		v2vers = ((InternalVertex) v2).getIncidenceListVersion();
 		e1.setAlpha(v1);
-		commit(g);
 
-		createReadOnlyTransaction(g);
 		assertEquals(v1, e1.getAlpha());
 		assertFalse(((InternalVertex) v1).isIncidenceListModified(v1vers));
 		assertFalse(((InternalVertex) v2).isIncidenceListModified(v2vers));
 		Edge reversedEdge = e1.getReversedEdge();
-		commit(g);
 
 		testIncidenceList(v1, e1);
 		testIncidenceList(v2, reversedEdge);
-
 	}
 
 	/**
 	 * Alpha of an edge is changed to the omega vertex.
 	 * 
-	 * @throws CommitFailedException
+	 * @
 	 */
 	@Test
-	public void setAlphaTest2() throws CommitFailedException {
+	public void setAlphaTest2() {
 		DoubleSubNode v1;
 		DoubleSubNode v2;
 		Edge e1;
 		long v1vers;
 		long v2vers;
 
-		createTransaction(g);
 		v1 = g.createDoubleSubNode();
 		v2 = g.createDoubleSubNode();
 		e1 = g.createLink(v1, v2);
-		commit(g);
 
-		createReadOnlyTransaction(g);
 		v1vers = ((InternalVertex) v1).getIncidenceListVersion();
 		v2vers = ((InternalVertex) v2).getIncidenceListVersion();
-		commit(g);
 
-		createTransaction(g);
 		e1.setAlpha(v2);
-		commit(g);
 
-		createReadOnlyTransaction(g);
 		assertEquals(v2, e1.getAlpha());
 		assertTrue(((InternalVertex) v1).isIncidenceListModified(v1vers));
 		assertTrue(((InternalVertex) v2).isIncidenceListModified(v2vers));
 		Edge reversedEdge = e1.getReversedEdge();
-		commit(g);
 
 		testIncidenceList(v1);
 		testIncidenceList(v2, reversedEdge, e1);
@@ -328,10 +269,10 @@ public class EdgeBaseTest extends InstanceTest {
 	 * Alpha of an edge is changed to another vertex. And there exists further
 	 * edges.
 	 * 
-	 * @throws CommitFailedException
+	 * @
 	 */
 	@Test
-	public void setAlphaTest3() throws CommitFailedException {
+	public void setAlphaTest3() {
 		DoubleSubNode v1;
 		DoubleSubNode v2;
 		DoubleSubNode v3;
@@ -342,26 +283,19 @@ public class EdgeBaseTest extends InstanceTest {
 		long v2vers;
 		long v3vers;
 
-		createTransaction(g);
 		v1 = g.createDoubleSubNode();
 		v2 = g.createDoubleSubNode();
 		v3 = g.createDoubleSubNode();
 		e1 = g.createLink(v3, v1);
 		e2 = g.createLink(v1, v2);
 		e3 = g.createLink(v2, v3);
-		commit(g);
 
-		createReadOnlyTransaction(g);
 		v1vers = ((InternalVertex) v1).getIncidenceListVersion();
 		v2vers = ((InternalVertex) v2).getIncidenceListVersion();
 		v3vers = ((InternalVertex) v3).getIncidenceListVersion();
-		commit(g);
 
-		createTransaction(g);
 		e2.setAlpha(v3);
-		commit(g);
 
-		createReadOnlyTransaction(g);
 		assertEquals(v3, e2.getAlpha());
 		assertTrue(((InternalVertex) v1).isIncidenceListModified(v1vers));
 		assertFalse(((InternalVertex) v2).isIncidenceListModified(v2vers));
@@ -369,49 +303,41 @@ public class EdgeBaseTest extends InstanceTest {
 		Edge reversedEdge = e1.getReversedEdge();
 		Edge reversedEdge2 = e2.getReversedEdge();
 		Edge reversedEdge3 = e3.getReversedEdge();
-		commit(g);
 
 		testIncidenceList(v1, reversedEdge);
 		testIncidenceList(v2, reversedEdge2, e3);
 		testIncidenceList(v3, e1, reversedEdge3, e2);
-
 	}
 
 	/**
 	 * An exception should occur if you try to set alpha to a vertex which type
 	 * isn't allowed as an alpha vertex for that edge.
 	 * 
-	 * @throws CommitFailedException
+	 * @
 	 */
 	@Test(expected = GraphException.class)
-	public void setAlphaTest4() throws CommitFailedException {
-		createTransaction(g);
+	public void setAlphaTest4() {
 		DoubleSubNode v1 = g.createDoubleSubNode();
 		SuperNode v2 = g.createSuperNode();
 		Edge e1 = g.createLink(v1, v2);
 		e1.setAlpha(v2);
-		commit(g);
 	}
 
 	/**
 	 * Random Test
 	 * 
-	 * @throws CommitFailedException
+	 * @
 	 */
 	@Test
-	public void setAlphaTest5() throws CommitFailedException {
+	public void setAlphaTest5() {
 		ArrayList<ArrayList<Edge>> incidences = createRandomGraph();
 		for (int i = 0; i < RANDOM_VERTEX_COUNT; i++) {
-
-			createReadOnlyTransaction(g);
 			int edgeId = rand.nextInt(g.getECount()) + 1;
 			Edge e = g.getEdge(edgeId);
 			int oldAlphaId = e.getAlpha().getId();
 			int newAlphaId = rand.nextInt(3) + 1;
 			Vertex newAlpha = g.getVertex(newAlphaId);
-			commit(g);
 
-			createTransaction(g);
 			try {
 				e.setAlpha(newAlpha);
 				if (oldAlphaId != newAlphaId) {
@@ -434,31 +360,27 @@ public class EdgeBaseTest extends InstanceTest {
 							+ newAlpha.getClass().getName());
 				}
 			}
-			commit(g);
 		}
 
-		createReadOnlyTransaction(g);
 		Vertex vertex = g.getVertex(1);
 		Edge[] array = incidences.get(0).toArray(new Edge[0]);
 		Vertex vertex2 = g.getVertex(2);
 		Edge[] array2 = incidences.get(1).toArray(new Edge[0]);
 		Vertex vertex3 = g.getVertex(3);
 		Edge[] array3 = incidences.get(2).toArray(new Edge[0]);
-		commit(g);
 
 		testIncidenceList(vertex, array);
 		testIncidenceList(vertex2, array2);
 		testIncidenceList(vertex3, array3);
-
 	}
 
 	/**
 	 * Alpha of an reversedEdge is changed to another vertex.
 	 * 
-	 * @throws CommitFailedException
+	 * @
 	 */
 	@Test
-	public void setAlphaTestR0() throws CommitFailedException {
+	public void setAlphaTestR0() {
 		DoubleSubNode v1;
 		DoubleSubNode v2;
 		DoubleSubNode v3;
@@ -466,7 +388,7 @@ public class EdgeBaseTest extends InstanceTest {
 		long v1vers;
 		long v2vers;
 		long v3vers;
-		createTransaction(g);
+
 		v1 = g.createDoubleSubNode();
 		v2 = g.createDoubleSubNode();
 		v3 = g.createDoubleSubNode();
@@ -475,15 +397,12 @@ public class EdgeBaseTest extends InstanceTest {
 		v2vers = ((InternalVertex) v2).getIncidenceListVersion();
 		v3vers = ((InternalVertex) v3).getIncidenceListVersion();
 		e1.setAlpha(v3);
-		commit(g);
 
-		createReadOnlyTransaction(g);
 		assertEquals(v3, e1.getAlpha());
 		assertTrue(((InternalVertex) v1).isIncidenceListModified(v1vers));
 		assertFalse(((InternalVertex) v2).isIncidenceListModified(v2vers));
 		assertTrue(((InternalVertex) v3).isIncidenceListModified(v3vers));
 		Edge reversedEdge = e1.getReversedEdge();
-		commit(g);
 
 		testIncidenceList(v1);
 		testIncidenceList(v2, e1);
@@ -496,10 +415,10 @@ public class EdgeBaseTest extends InstanceTest {
 	/**
 	 * Omega of an edge is changed to another vertex.
 	 * 
-	 * @throws CommitFailedException
+	 * @
 	 */
 	@Test
-	public void setOmegaTest0() throws CommitFailedException {
+	public void setOmegaTest0() {
 		DoubleSubNode v1;
 		DoubleSubNode v2;
 		DoubleSubNode v3;
@@ -507,7 +426,7 @@ public class EdgeBaseTest extends InstanceTest {
 		long v1vers;
 		long v2vers;
 		long v3vers;
-		createTransaction(g);
+
 		v1 = g.createDoubleSubNode();
 		v2 = g.createDoubleSubNode();
 		v3 = g.createDoubleSubNode();
@@ -516,96 +435,84 @@ public class EdgeBaseTest extends InstanceTest {
 		v2vers = ((InternalVertex) v2).getIncidenceListVersion();
 		v3vers = ((InternalVertex) v3).getIncidenceListVersion();
 		e1.setOmega(v3);
-		commit(g);
 
-		createReadOnlyTransaction(g);
 		assertEquals(v3, e1.getOmega());
 		assertFalse(((InternalVertex) v1).isIncidenceListModified(v1vers));
 		assertTrue(((InternalVertex) v2).isIncidenceListModified(v2vers));
 		assertTrue(((InternalVertex) v3).isIncidenceListModified(v3vers));
 		Edge reversedEdge = e1.getReversedEdge();
-		commit(g);
 
 		testIncidenceList(v1, e1);
 		testIncidenceList(v2);
 		testIncidenceList(v3, reversedEdge);
-
 	}
 
 	/**
 	 * Omega of an edge is set to the previous omega vertex.
 	 * 
-	 * @throws CommitFailedException
+	 * @
 	 */
 	@Test
-	public void setOmegaTest1() throws CommitFailedException {
+	public void setOmegaTest1() {
 		DoubleSubNode v1;
 		DoubleSubNode v2;
 		Edge e1;
 		long v1vers;
 		long v2vers;
-		createTransaction(g);
+
 		v1 = g.createDoubleSubNode();
 		v2 = g.createDoubleSubNode();
 		e1 = g.createLink(v1, v2);
 		v1vers = ((InternalVertex) v1).getIncidenceListVersion();
 		v2vers = ((InternalVertex) v2).getIncidenceListVersion();
 		e1.setOmega(v2);
-		commit(g);
 
-		createReadOnlyTransaction(g);
 		assertEquals(v2, e1.getOmega());
 		assertFalse(((InternalVertex) v1).isIncidenceListModified(v1vers));
 		assertFalse(((InternalVertex) v2).isIncidenceListModified(v2vers));
 		Edge reversedEdge = e1.getReversedEdge();
-		commit(g);
 
 		testIncidenceList(v1, e1);
 		testIncidenceList(v2, reversedEdge);
-
 	}
 
 	/**
 	 * Omega of an edge is changed to the alpha vertex.
 	 * 
-	 * @throws CommitFailedException
+	 * @
 	 */
 	@Test
-	public void setOmegaTest2() throws CommitFailedException {
+	public void setOmegaTest2() {
 		DoubleSubNode v1;
 		DoubleSubNode v2;
 		Edge e1;
 		long v1vers;
 		long v2vers;
-		createTransaction(g);
+
 		v1 = g.createDoubleSubNode();
 		v2 = g.createDoubleSubNode();
 		e1 = g.createLink(v1, v2);
 		v1vers = ((InternalVertex) v1).getIncidenceListVersion();
 		v2vers = ((InternalVertex) v2).getIncidenceListVersion();
 		e1.setOmega(v1);
-		commit(g);
 
-		createReadOnlyTransaction(g);
 		assertEquals(v1, e1.getOmega());
 		assertTrue(((InternalVertex) v1).isIncidenceListModified(v1vers));
 		assertTrue(((InternalVertex) v2).isIncidenceListModified(v2vers));
 		Edge reversedEdge = e1.getReversedEdge();
-		commit(g);
 
 		testIncidenceList(v1, e1, reversedEdge);
 		testIncidenceList(v2);
-
 	}
 
 	/**
 	 * Omega of an edge is changed to another vertex. And there exists further
 	 * edges.
 	 * 
-	 * @throws CommitFailedException
+	 * @
 	 */
 	@Test
-	public void setOmegaTest3() throws CommitFailedException {
+	public void setOmegaTest3() {
 		DoubleSubNode v1;
 		DoubleSubNode v2;
 		DoubleSubNode v3;
@@ -616,25 +523,19 @@ public class EdgeBaseTest extends InstanceTest {
 		long v2vers;
 		long v3vers;
 
-		createTransaction(g);
 		v1 = g.createDoubleSubNode();
 		v2 = g.createDoubleSubNode();
 		v3 = g.createDoubleSubNode();
 		e1 = g.createLink(v3, v1);
 		e2 = g.createLink(v1, v2);
 		e3 = g.createLink(v2, v3);
-		commit(g);
-		createReadOnlyTransaction(g);
+
 		v1vers = ((InternalVertex) v1).getIncidenceListVersion();
 		v2vers = ((InternalVertex) v2).getIncidenceListVersion();
 		v3vers = ((InternalVertex) v3).getIncidenceListVersion();
-		commit(g);
 
-		createTransaction(g);
 		e2.setOmega(v3);
-		commit(g);
 
-		createReadOnlyTransaction(g);
 		assertEquals(v3, e2.getOmega());
 		assertFalse(((InternalVertex) v1).isIncidenceListModified(v1vers));
 		assertTrue(((InternalVertex) v2).isIncidenceListModified(v2vers));
@@ -642,60 +543,47 @@ public class EdgeBaseTest extends InstanceTest {
 		Edge reversedEdge = e1.getReversedEdge();
 		Edge reversedEdge2 = e2.getReversedEdge();
 		Edge reversedEdge3 = e3.getReversedEdge();
-		commit(g);
 
 		testIncidenceList(v1, reversedEdge, e2);
 		testIncidenceList(v2, e3);
 		testIncidenceList(v3, e1, reversedEdge3, reversedEdge2);
-
 	}
 
 	/**
 	 * An exception should occur if you try to set omega to a vertex which type
 	 * isn't allowed as an omega vertex for that edge.
 	 * 
-	 * @throws CommitFailedException
+	 * @
 	 */
 	@Test(expected = GraphException.class)
-	public void setOmegaTest4() throws CommitFailedException {
-		createTransaction(g);
+	public void setOmegaTest4() {
 		SubNode v1 = g.createSubNode();
 		SuperNode v2 = g.createSuperNode();
 		Edge e1 = g.createLink(v1, v2);
 		e1.setOmega(v1);
-		commit(g);
 	}
 
 	/**
 	 * Random Test
 	 * 
-	 * @throws CommitFailedException
+	 * @
 	 */
 	@Test
-	public void setOmegaTest5() throws CommitFailedException {
+	public void setOmegaTest5() {
 		ArrayList<ArrayList<Edge>> incidences = createRandomGraph();
 		for (int i = 0; i < RANDOM_VERTEX_COUNT; i++) {
-			createReadOnlyTransaction(g);
 			int edgeId = rand.nextInt(g.getECount()) + 1;
 			Edge e = g.getEdge(edgeId);
 			int oldOmegaId = e.getOmega().getId();
 			int newOmegaId = rand.nextInt(3) + 1;
 			Vertex newOmega = g.getVertex(newOmegaId);
-			commit(g);
 
 			try {
-
-				createTransaction(g);
 				e.setOmega(newOmega);
-				commit(g);
-
-				createReadOnlyTransaction(g);
 				if (oldOmegaId != newOmegaId) {
 					incidences.get(oldOmegaId - 1).remove(e.getReversedEdge());
 					incidences.get(newOmegaId - 1).add(e.getReversedEdge());
 				}
-				commit(g);
-
 			} catch (GraphException ge) {
 				if ((e instanceof Link) && (newOmega instanceof SuperNode)) {
 					fail("Link can have an alpha of type "
@@ -708,28 +596,25 @@ public class EdgeBaseTest extends InstanceTest {
 			}
 		}
 
-		createReadOnlyTransaction(g);
 		Vertex vertex = g.getVertex(1);
 		Edge[] array = incidences.get(0).toArray(new Edge[0]);
 		Vertex vertex2 = g.getVertex(2);
 		Edge[] array2 = incidences.get(1).toArray(new Edge[0]);
 		Edge[] array3 = incidences.get(2).toArray(new Edge[0]);
 		Vertex vertex3 = g.getVertex(3);
-		commit(g);
 
 		testIncidenceList(vertex, array);
 		testIncidenceList(vertex2, array2);
 		testIncidenceList(vertex3, array3);
-
 	}
 
 	/**
 	 * Omega of an reversedEdge is changed to another vertex.
 	 * 
-	 * @throws CommitFailedException
+	 * @
 	 */
 	@Test
-	public void setOmegaTestR0() throws CommitFailedException {
+	public void setOmegaTestR0() {
 		DoubleSubNode v1;
 		DoubleSubNode v2;
 		DoubleSubNode v3;
@@ -737,7 +622,7 @@ public class EdgeBaseTest extends InstanceTest {
 		long v1vers;
 		long v2vers;
 		long v3vers;
-		createTransaction(g);
+
 		v1 = g.createDoubleSubNode();
 		v2 = g.createDoubleSubNode();
 		v3 = g.createDoubleSubNode();
@@ -746,20 +631,16 @@ public class EdgeBaseTest extends InstanceTest {
 		v2vers = ((InternalVertex) v2).getIncidenceListVersion();
 		v3vers = ((InternalVertex) v3).getIncidenceListVersion();
 		e1.setOmega(v3);
-		commit(g);
 
-		createReadOnlyTransaction(g);
 		assertEquals(v3, e1.getOmega());
 		assertFalse(((InternalVertex) v1).isIncidenceListModified(v1vers));
 		assertTrue(((InternalVertex) v2).isIncidenceListModified(v2vers));
 		assertTrue(((InternalVertex) v3).isIncidenceListModified(v3vers));
 		Edge reversedEdge = e1.getReversedEdge();
-		commit(g);
 
 		testIncidenceList(v1, reversedEdge);
 		testIncidenceList(v2);
 		testIncidenceList(v3, e1);
-
 	}
 
 	// tests of the method void setThat(Vertex v);
@@ -768,10 +649,10 @@ public class EdgeBaseTest extends InstanceTest {
 	 * That of an edge is changed to another vertex. And there exists further
 	 * edges.
 	 * 
-	 * @throws CommitFailedException
+	 * @
 	 */
 	@Test
-	public void setThatTest3() throws CommitFailedException {
+	public void setThatTest3() {
 		DoubleSubNode v1;
 		DoubleSubNode v2;
 		DoubleSubNode v3;
@@ -781,61 +662,44 @@ public class EdgeBaseTest extends InstanceTest {
 		long v1vers;
 		long v2vers;
 		long v3vers;
-		createTransaction(g);
+
 		v1 = g.createDoubleSubNode();
 		v2 = g.createDoubleSubNode();
 		v3 = g.createDoubleSubNode();
 		e1 = g.createLink(v3, v1);
 		e2 = g.createLink(v1, v2);
 		e3 = g.createLink(v2, v3);
-		commit(g);
 
-		createReadOnlyTransaction(g);
 		v1vers = ((InternalVertex) v1).getIncidenceListVersion();
 		v2vers = ((InternalVertex) v2).getIncidenceListVersion();
 		v3vers = ((InternalVertex) v3).getIncidenceListVersion();
 		Edge reversedEdge2 = e2.getReversedEdge();
-		commit(g);
 
-		createTransaction(g);
 		reversedEdge2.setThat(v3);
-		commit(g);
 
-		createReadOnlyTransaction(g);
 		assertEquals(v3, e2.getAlpha());
 		assertTrue(((InternalVertex) v1).isIncidenceListModified(v1vers));
 		assertFalse(((InternalVertex) v2).isIncidenceListModified(v2vers));
 		assertTrue(((InternalVertex) v3).isIncidenceListModified(v3vers));
 		Edge reversedEdge = e1.getReversedEdge();
 		Edge reversedEdge3 = e3.getReversedEdge();
-		commit(g);
 
 		testIncidenceList(v1, reversedEdge);
 		testIncidenceList(v2, reversedEdge2, e3);
 		testIncidenceList(v3, e1, reversedEdge3, e2);
 
-		createReadOnlyTransaction(g);
 		// test ReversedEdge
 		v1vers = ((InternalVertex) v1).getIncidenceListVersion();
 		v2vers = ((InternalVertex) v2).getIncidenceListVersion();
 		v3vers = ((InternalVertex) v3).getIncidenceListVersion();
-		commit(g);
-
-		createTransaction(g);
 		e2.setThat(v3);
-		commit(g);
-
-		createReadOnlyTransaction(g);
 		assertEquals(v3, e2.getOmega());
 		assertFalse(((InternalVertex) v1).isIncidenceListModified(v1vers));
 		assertTrue(((InternalVertex) v2).isIncidenceListModified(v2vers));
 		assertTrue(((InternalVertex) v3).isIncidenceListModified(v3vers));
-		commit(g);
-
 		testIncidenceList(v1, reversedEdge);
 		testIncidenceList(v2, e3);
 		testIncidenceList(v3, e1, reversedEdge3, e2, reversedEdge2);
-
 	}
 
 	// tests of the method void setThis(Vertex v);
@@ -844,10 +708,10 @@ public class EdgeBaseTest extends InstanceTest {
 	 * This of an edge is changed to another vertex. And there exists further
 	 * edges.
 	 * 
-	 * @throws CommitFailedException
+	 * @
 	 */
 	@Test
-	public void setThisTest3() throws CommitFailedException {
+	public void setThisTest3() {
 		DoubleSubNode v1;
 		DoubleSubNode v2;
 		DoubleSubNode v3;
@@ -857,26 +721,18 @@ public class EdgeBaseTest extends InstanceTest {
 		long v1vers;
 		long v2vers;
 		long v3vers;
-		createTransaction(g);
 		v1 = g.createDoubleSubNode();
 		v2 = g.createDoubleSubNode();
 		v3 = g.createDoubleSubNode();
 		e1 = g.createLink(v3, v1);
 		e2 = g.createLink(v1, v2);
 		e3 = g.createLink(v2, v3);
-		commit(g);
-
-		createReadOnlyTransaction(g);
 		v1vers = ((InternalVertex) v1).getIncidenceListVersion();
 		v2vers = ((InternalVertex) v2).getIncidenceListVersion();
 		v3vers = ((InternalVertex) v3).getIncidenceListVersion();
-		commit(g);
 
-		createTransaction(g);
 		e2.setThis(v3);
-		commit(g);
 
-		createReadOnlyTransaction(g);
 		assertEquals(v3, e2.getThis());
 		assertTrue(((InternalVertex) v1).isIncidenceListModified(v1vers));
 		assertFalse(((InternalVertex) v2).isIncidenceListModified(v2vers));
@@ -884,29 +740,22 @@ public class EdgeBaseTest extends InstanceTest {
 		Edge reversedEdge = e1.getReversedEdge();
 		Edge reversedEdge2 = e2.getReversedEdge();
 		Edge reversedEdge3 = e3.getReversedEdge();
-		commit(g);
 
 		testIncidenceList(v1, reversedEdge);
 		testIncidenceList(v2, reversedEdge2, e3);
 		testIncidenceList(v3, e1, reversedEdge3, e2);
 
-		createReadOnlyTransaction(g);
 		// test ReversedEdge
 		v1vers = ((InternalVertex) v1).getIncidenceListVersion();
 		v2vers = ((InternalVertex) v2).getIncidenceListVersion();
 		v3vers = ((InternalVertex) v3).getIncidenceListVersion();
-		commit(g);
 
-		createTransaction(g);
 		reversedEdge2.setThis(v3);
-		commit(g);
 
-		createReadOnlyTransaction(g);
 		assertEquals(v3, e2.getOmega());
 		assertFalse(((InternalVertex) v1).isIncidenceListModified(v1vers));
 		assertTrue(((InternalVertex) v2).isIncidenceListModified(v2vers));
 		assertTrue(((InternalVertex) v3).isIncidenceListModified(v3vers));
-		commit(g);
 
 		testIncidenceList(v1, reversedEdge);
 		testIncidenceList(v2, e3);

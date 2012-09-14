@@ -58,32 +58,9 @@ package de.uni_koblenz.jgralab.schema.codegenerator;
  * 
  */
 public class CodeGeneratorConfiguration {
-
-	public static final CodeGeneratorConfiguration WITH_TRANSACTION_SUPPORT = new CodeGeneratorConfiguration()
-			.withTransactionSupport();
-
-	public static final CodeGeneratorConfiguration WITH_DATABASE_SUPPORT = new CodeGeneratorConfiguration()
-			.withDatabaseSupport();
-
-	public static final CodeGeneratorConfiguration FULL = new CodeGeneratorConfiguration()
-			.withTransactionSupport().withDatabaseSupport();
-
-	public static final CodeGeneratorConfiguration WITHOUT_TYPESPECIFIC_METHODS = new CodeGeneratorConfiguration()
-			.withTransactionSupport().withoutTypeSpecificMethodSupport()
-			.withDatabaseSupport();
-
 	public static final CodeGeneratorConfiguration MINIMAL = new CodeGeneratorConfiguration()
 			.withoutTypeSpecificMethodSupport();
 	public static final CodeGeneratorConfiguration NORMAL = new CodeGeneratorConfiguration();
-
-	/** toggles, if the classes for standard support should be created */
-	private boolean standardSupport = true;
-
-	/** toggles, if the classes for transaction support should be created */
-	private boolean transactionSupport = false;
-
-	/** toggles, if classes for database support should be created */
-	private boolean databaseSupport = false;
 
 	/**
 	 * toggles, if the type-specific methods such as "getNextXYVertex" should be
@@ -100,25 +77,7 @@ public class CodeGeneratorConfiguration {
 	 * this.methodsForSubclassesSupport = false <br>
 	 */
 	public CodeGeneratorConfiguration() {
-		standardSupport = true;
-		transactionSupport = false;
 		typespecificMethodSupport = true;
-		databaseSupport = false;
-	}
-
-	public CodeGeneratorConfiguration withoutStandardSupport() {
-		standardSupport = false;
-		return this;
-	}
-
-	public CodeGeneratorConfiguration withTransactionSupport() {
-		transactionSupport = true;
-		return this;
-	}
-
-	public CodeGeneratorConfiguration withDatabaseSupport() {
-		databaseSupport = true;
-		return this;
 	}
 
 	public CodeGeneratorConfiguration withTypeSpecificMethodSupport() {
@@ -139,34 +98,7 @@ public class CodeGeneratorConfiguration {
 	 *            values from.
 	 */
 	public CodeGeneratorConfiguration(CodeGeneratorConfiguration other) {
-		this.standardSupport = other.standardSupport;
-		this.transactionSupport = other.transactionSupport;
 		this.typespecificMethodSupport = other.typespecificMethodSupport;
-		this.databaseSupport = other.databaseSupport;
-	}
-
-	public void setStandardSupport(boolean standardSupport) {
-		this.standardSupport = standardSupport;
-	}
-
-	public boolean hasStandardSupport() {
-		return standardSupport;
-	}
-
-	public void setTransactionSupport(boolean transactionSupport) {
-		this.transactionSupport = transactionSupport;
-	}
-
-	public boolean hasTransactionSupport() {
-		return transactionSupport;
-	}
-
-	public void setDatabaseSupport(boolean databaseSupport) {
-		this.databaseSupport = databaseSupport;
-	}
-
-	public boolean hasDatabaseSupport() {
-		return this.databaseSupport;
 	}
 
 	public void setTypeSpecificMethodsSupport(boolean typespecificMethodSupport) {

@@ -43,7 +43,6 @@ import static org.junit.Assert.fail;
 import java.util.Collection;
 import java.util.Comparator;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -52,7 +51,6 @@ import org.junit.runners.Parameterized.Parameters;
 
 import de.uni_koblenz.jgralab.ImplementationType;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.trans.CommitFailedException;
 import de.uni_koblenz.jgralabtest.schemas.minimal.MinimalGraph;
 import de.uni_koblenz.jgralabtest.schemas.minimal.MinimalSchema;
 import de.uni_koblenz.jgralabtest.schemas.minimal.Node;
@@ -76,57 +74,25 @@ public class VertexListTest extends InstanceTest {
 	MinimalGraph g;
 
 	@Before
-	public void setup() throws CommitFailedException {
+	public void setup() {
 		switch (implementationType) {
 		case STANDARD:
 			g = MinimalSchema.instance().createMinimalGraph(
 					ImplementationType.STANDARD, null, V, E);
 			break;
-		case TRANSACTION:
-			g = MinimalSchema.instance().createMinimalGraph(
-					ImplementationType.TRANSACTION, null, V, E);
-			break;
-		case DATABASE:
-			g = createMinimalGraphInDatabase();
-			break;
 		default:
 			fail("Implementation " + implementationType
 					+ " not yet supported by this test.");
 		}
-		createTransaction(g);
 		for (int i = 0; i < N; ++i) {
 			g.createNode();
 		}
-		commit(g);
-	}
-
-	private MinimalGraph createMinimalGraphInDatabase() {
-		dbHandler.connectToDatabase();
-		dbHandler.loadMinimalSchemaIntoGraphDatabase();
-		return dbHandler
-				.createMinimalGraphWithDatabaseSupport("VertexListTest");
-	}
-
-	@After
-	public void tearDown() {
-		if (implementationType == ImplementationType.DATABASE) {
-			cleanAndCloseGraphDatabase();
-		}
-	}
-
-	private void cleanAndCloseGraphDatabase() {
-		// dbHandler.cleanDatabaseOfTestGraph(g);
-		// super.cleanDatabaseOfTestSchema(MinimalSchema.instance());
-		dbHandler.clearAllTables();
-		dbHandler.closeGraphdatabase();
 	}
 
 	@Test
 	public void addVertexTest() throws Exception {
-		createReadOnlyTransaction(g);
 		assertEquals(10, g.getVCount());
 		assertEquals("v1 v2 v3 v4 v5 v6 v7 v8 v9 v10", getVSeq());
-		commit(g);
 	}
 
 	private String getVSeq() {
@@ -139,160 +105,100 @@ public class VertexListTest extends InstanceTest {
 
 	@Test
 	public void putBeforeTest() throws Exception {
-		createTransaction(g);
 		Vertex v5 = g.getVertex(5);
 		v5.putBefore(g.getVertex(6));
-		commit(g);
 
-		createReadOnlyTransaction(g);
 		assertTrue(v5.isBefore(g.getVertex(6)));
 		assertEquals("v1 v2 v3 v4 v5 v6 v7 v8 v9 v10", getVSeq());
 
 		assertTrue(v5.isAfter(g.getVertex(4)));
 		assertFalse(v5.isBefore(g.getVertex(4)));
-		commit(g);
 
-		createTransaction(g);
 		v5.putBefore(g.getVertex(4));
-		commit(g);
 
-		createReadOnlyTransaction(g);
 		assertEquals("v1 v2 v3 v5 v4 v6 v7 v8 v9 v10", getVSeq());
 		assertFalse(v5.isAfter(g.getVertex(4)));
 		assertTrue(v5.isBefore(g.getVertex(4)));
-		commit(g);
 
-		createTransaction(g);
 		v5.putBefore(g.getVertex(10));
-		commit(g);
 
-		createReadOnlyTransaction(g);
 		assertEquals("v1 v2 v3 v4 v6 v7 v8 v9 v5 v10", getVSeq());
 		assertFalse(v5.isAfter(g.getVertex(10)));
 		assertTrue(v5.isBefore(g.getVertex(10)));
 
 		assertFalse(v5.isBefore(g.getVertex(1)));
 		assertTrue(g.getVertex(1).isBefore(v5));
-		commit(g);
 
-		createTransaction(g);
 		v5.putBefore(g.getVertex(1));
-		commit(g);
 
-		createReadOnlyTransaction(g);
 		assertEquals("v5 v1 v2 v3 v4 v6 v7 v8 v9 v10", getVSeq());
 		assertTrue(v5.isBefore(g.getVertex(1)));
 		assertFalse(v5.isAfter(g.getVertex(1)));
 		assertTrue(g.getVertex(1).isAfter(v5));
-		commit(g);
 	}
 
 	@Test
 	public void putAfterTest() throws Exception {
-		createTransaction(g);
 		Vertex v5 = g.getVertex(5);
 
 		v5.putAfter(g.getVertex(4));
-		commit(g);
 
-		createReadOnlyTransaction(g);
 		assertEquals("v1 v2 v3 v4 v5 v6 v7 v8 v9 v10", getVSeq());
-		commit(g);
 
-		createTransaction(g);
 		v5.putAfter(g.getVertex(6));
-		commit(g);
 
-		createReadOnlyTransaction(g);
 		assertEquals("v1 v2 v3 v4 v6 v5 v7 v8 v9 v10", getVSeq());
-		commit(g);
 
-		createTransaction(g);
 		v5.putAfter(g.getVertex(10));
-		commit(g);
 
-		createReadOnlyTransaction(g);
 		assertEquals("v1 v2 v3 v4 v6 v7 v8 v9 v10 v5", getVSeq());
-		commit(g);
 
-		createTransaction(g);
 		v5.putAfter(g.getVertex(1));
-		commit(g);
 
-		createReadOnlyTransaction(g);
 		assertEquals("v1 v5 v2 v3 v4 v6 v7 v8 v9 v10", getVSeq());
-		commit(g);
 	}
 
 	@Test
 	public void deleteVertexTest() throws Exception {
-		createTransaction(g);
 		Vertex v = g.getVertex(5);
 		v.delete();
-		commit(g);
 
-		createReadOnlyTransaction(g);
 		assertFalse(v.isValid());
 		assertNull(g.getVertex(5));
 		assertEquals(9, g.getVCount());
 		assertEquals("v1 v2 v3 v4 v6 v7 v8 v9 v10", getVSeq());
-		commit(g);
 
-		createTransaction(g);
 		v = g.getFirstVertex();
 		v.delete();
-		commit(g);
 
-		createReadOnlyTransaction(g);
 		assertFalse(v.isValid());
 		assertNull(g.getVertex(1));
 		assertEquals(8, g.getVCount());
 		assertEquals("v2 v3 v4 v6 v7 v8 v9 v10", getVSeq());
-		commit(g);
 
-		createTransaction(g);
 		v = g.getVertex(10);
 		v.delete();
-		commit(g);
 
-		createReadOnlyTransaction(g);
 		assertFalse(v.isValid());
 		assertNull(g.getVertex(1));
 		assertEquals(7, g.getVCount());
 		assertEquals("v2 v3 v4 v6 v7 v8 v9", getVSeq());
-		commit(g);
 
-		createTransaction(g);
 		g.createNode();
-		commit(g);
 
-		createReadOnlyTransaction(g);
 		assertEquals("v2 v3 v4 v6 v7 v8 v9 v1", getVSeq());
-		commit(g);
 
-		createTransaction(g);
 		g.createNode();
-		commit(g);
 
-		createReadOnlyTransaction(g);
 		assertEquals("v2 v3 v4 v6 v7 v8 v9 v1 v5", getVSeq());
-		commit(g);
 
-		createTransaction(g);
 		g.createNode();
-		commit(g);
 
-		createReadOnlyTransaction(g);
 		assertEquals("v2 v3 v4 v6 v7 v8 v9 v1 v5 v10", getVSeq());
-		commit(g);
 
-		createTransaction(g);
 		g.createNode();
-		commit(g);
 
-		createReadOnlyTransaction(g);
 		assertEquals("v2 v3 v4 v6 v7 v8 v9 v1 v5 v10 v11", getVSeq());
-		commit(g);
 	}
 
 	/**
@@ -300,32 +206,21 @@ public class VertexListTest extends InstanceTest {
 	 * order to the id and back. For transaction support it has to be tested in
 	 * the same transaction, because otherwise the IDs would be changed.
 	 * 
-	 * @throws CommitFailedException
+	 * @
 	 */
 	@Test
-	public void testSortVertexList() throws CommitFailedException {
+	public void testSortVertexList() {
 		MinimalGraph g = null;
 		switch (implementationType) {
 		case STANDARD:
 			g = MinimalSchema.instance().createMinimalGraph(
 					ImplementationType.STANDARD, null, V, E);
 			break;
-		case TRANSACTION:
-			g = MinimalSchema.instance().createMinimalGraph(
-					ImplementationType.TRANSACTION, null, V, E);
-			break;
-		case DATABASE:
-			return; // because vertex list sorting is not implemented for db
-			// support
-			// g = dbHandler.createMinimalGraphWithDatabaseSupport(
-			// "IncidenceListTest.testSortIncidences", V, E);
-			// break;
 		default:
 			fail("Implementation " + implementationType
 					+ " not yet supported by this test.");
 		}
 
-		createTransaction(g);
 		Node[] nodes = new Node[VERTEX_COUNT + 1];
 		for (int i = 1; i < nodes.length; i++) {
 			nodes[i] = g.createNode();
@@ -367,7 +262,6 @@ public class VertexListTest extends InstanceTest {
 		for (Vertex currentNode : g.vertices()) {
 			assertEquals(currentNode.getId(), nodes[i++].getId());
 		}
-		commit(g);
 
 	}
 }

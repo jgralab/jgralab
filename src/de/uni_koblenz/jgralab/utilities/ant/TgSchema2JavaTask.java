@@ -104,14 +104,6 @@ public class TgSchema2JavaTask extends Task {
 		}
 	}
 
-	public void setImplementationMode(String value) {
-		try {
-			executeObject.setImplementationMode(value);
-		} catch (Exception e) {
-			throw new BuildException(e);
-		}
-	}
-
 	public void addConfiguredFileset(FileSet files) {
 		Iterator<?> fileIterator = files.iterator();
 		while (fileIterator.hasNext()) {

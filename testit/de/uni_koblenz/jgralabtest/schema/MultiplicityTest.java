@@ -86,7 +86,7 @@ public class MultiplicityTest {
 		Schema s = null;
 		s = GraphIO.loadSchemaFromStream(input);
 		try {
-			s.compile(CodeGeneratorConfiguration.FULL);
+			s.compile(CodeGeneratorConfiguration.NORMAL);
 		} catch (Exception e) {
 			throw new GraphIOException("", e);
 		}

@@ -148,8 +148,7 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 
 	public GreqlCodeGenerator(GreqlQuery query, Schema datagraphSchema,
 			String packageName, String classname) {
-		super(packageName, "",
-				CodeGeneratorConfiguration.WITHOUT_TYPESPECIFIC_METHODS);
+		super(packageName, "", CodeGeneratorConfiguration.MINIMAL);
 		graph = query.getQueryGraph();
 		this.query = query;
 		this.classname = classname;

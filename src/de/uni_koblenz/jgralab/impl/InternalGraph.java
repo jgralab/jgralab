@@ -211,14 +211,6 @@ public interface InternalGraph extends Graph {
 	public void defragment();
 
 	/**
-	 * Delegates to {@link Graph#getCurrentTransaction()
-	 * getCurrentTransaction()}.
-	 * 
-	 * @return if there have been conflicts
-	 */
-	public boolean isInConflict();
-
-	/**
 	 * Returns the first Vertex in the vertex sequence of this Graph.
 	 * 
 	 * @return the first Vertex, or null if this graph contains no vertices.

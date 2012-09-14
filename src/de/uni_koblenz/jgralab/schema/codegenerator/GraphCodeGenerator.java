@@ -47,9 +47,9 @@ import de.uni_koblenz.jgralab.schema.VertexClass;
 
 /**
  * TODO add comment
- *
+ * 
  * @author ist@uni-koblenz.de
- *
+ * 
  */
 public class GraphCodeGenerator extends
 		AttributedElementCodeGenerator<GraphClass, Graph> {
@@ -77,18 +77,10 @@ public class GraphCodeGenerator extends
 	@Override
 	protected CodeBlock createBody() {
 		CodeList code = (CodeList) super.createBody();
-		if (currentCycle.isStdOrDbImplOrTransImpl()) {
+		if (currentCycle.isStdImpl()) {
 			if (currentCycle.isStdImpl()) {
 				addImports("#jgImplStdPackage#.#baseClassName#");
 			}
-			if (currentCycle.isTransImpl()) {
-				addImports("#jgImplTransPackage#.#baseClassName#");
-			}
-			if (currentCycle.isDbImpl()) {
-				addImports("#jgImplDbPackage#.#baseClassName#",
-						"#jgImplDbPackage#.GraphDatabase");
-			}
-
 			rootBlock.setVariable("baseClassName", "GraphImpl");
 		}
 		code.add(createGraphElementClassMethods());
@@ -100,70 +92,41 @@ public class GraphCodeGenerator extends
 	@Override
 	protected CodeBlock createConstructor() {
 		CodeSnippet code = new CodeSnippet(true);
-		if (currentCycle.isTransImpl()) {
-			code.setVariable("createSuffix", "TRANSACTION");
-		}
 		if (currentCycle.isStdImpl()) {
 			code.setVariable("createSuffix", "STANDARD");
 		}
-		if (currentCycle.isDbImpl()) {
-			code.setVariable("createSuffix", "DATABASE");
-		}
-		// TODO if(currentCycle.isDbImpl()) only write ctors and create with
-		// GraphDatabase as param.
-		if (!currentCycle.isDbImpl()) {
-			code.add(
-					"/**",
-					" * DON'T USE THE CONSTRUCTOR",
-					" * For instantiating a Graph, use the Schema and a GraphFactory",
-					"**/",
-					"public #simpleImplClassName#() {",
-					"\tthis(null);",
-					"}",
-					"",
-					"/**",
-					" * DON'T USE THE CONSTRUCTOR",
-					" * For instantiating a Graph, use the Schema and a GraphFactory",
-					"**/",
-					"public #simpleImplClassName#(int vMax, int eMax) {",
-					"\tthis(null, vMax, eMax);",
-					"}",
-					"",
-					"/**",
-					" * DON'T USE THE CONSTRUCTOR",
-					" * For instantiating a Graph, use the Schema and a GraphFactory",
-					"**/",
-					"public #simpleImplClassName#(java.lang.String id, int vMax, int eMax) {",
-					"\tsuper(id, #javaClassName#.GC, vMax, eMax);",
-					"\tinitializeAttributesWithDefaultValues();",
-					"}",
-					"",
-					"/**",
-					" * DON'T USE THE CONSTRUCTOR",
-					" * For instantiating a Graph, use the Schema and a GraphFactory",
-					"**/",
-					"public #simpleImplClassName#(java.lang.String id) {",
-					"\tsuper(id, #javaClassName#.GC);",
-					"\tinitializeAttributesWithDefaultValues();", "}");
-		} else {
-			code.add(
-					"/**",
-					" * DON'T USE THE CONSTRUCTOR",
-					" * For instantiating a Graph, use a GraphFactory",
-					"**/",
-					"public #simpleImplClassName#(java.lang.String id, GraphDatabase graphDatabase) {",
-					"\tsuper(id, #javaClassName#.GC, graphDatabase);",
-					"\tinitializeAttributesWithDefaultValues();",
-					"}",
-					"",
-					"/**",
-					" * DON'T USE THE CONSTRUCTOR",
-					" * For instantiating a Graph, use a GraphFactory",
-					"**/",
-					"public #simpleImplClassName#(java.lang.String id, int vMax, int eMax, GraphDatabase graphDatabase) {",
-					"\tsuper(id, vMax, eMax, #javaClassName#.GC, graphDatabase);",
-					"\tinitializeAttributesWithDefaultValues();", "}");
-		}
+		code.add(
+				"/**",
+				" * DON'T USE THE CONSTRUCTOR",
+				" * For instantiating a Graph, use the Schema and a GraphFactory",
+				"**/",
+				"public #simpleImplClassName#() {",
+				"\tthis(null);",
+				"}",
+				"",
+				"/**",
+				" * DON'T USE THE CONSTRUCTOR",
+				" * For instantiating a Graph, use the Schema and a GraphFactory",
+				"**/",
+				"public #simpleImplClassName#(int vMax, int eMax) {",
+				"\tthis(null, vMax, eMax);",
+				"}",
+				"",
+				"/**",
+				" * DON'T USE THE CONSTRUCTOR",
+				" * For instantiating a Graph, use the Schema and a GraphFactory",
+				"**/",
+				"public #simpleImplClassName#(java.lang.String id, int vMax, int eMax) {",
+				"\tsuper(id, #javaClassName#.GC, vMax, eMax);",
+				"\tinitializeAttributesWithDefaultValues();",
+				"}",
+				"",
+				"/**",
+				" * DON'T USE THE CONSTRUCTOR",
+				" * For instantiating a Graph, use the Schema and a GraphFactory",
+				"**/", "public #simpleImplClassName#(java.lang.String id) {",
+				"\tsuper(id, #javaClassName#.GC);",
+				"\tinitializeAttributesWithDefaultValues();", "}");
 		return code;
 	}
 
@@ -218,7 +181,7 @@ public class GraphCodeGenerator extends
 					" * @return the first #ecSimpleName# #ecTypeInComment# in this graph");
 			code.add(" */", "public #ecJavaClassName# getFirst#ecCamelName#();");
 		}
-		if (currentCycle.isStdOrDbImplOrTransImpl()) {
+		if (currentCycle.isStdImpl()) {
 			code.add(
 					"public #ecJavaClassName# getFirst#ecCamelName#() {",
 					"\treturn (#ecJavaClassName#)getFirst#ecType#(#ecJavaClassName#.#ecTypeAecConstant#);",
@@ -234,7 +197,7 @@ public class GraphCodeGenerator extends
 		}
 		CodeList code = new CodeList();
 		code.addNoIndent(createFactoryMethod(gec, false));
-		if (currentCycle.isStdOrDbImplOrTransImpl()) {
+		if (currentCycle.isStdImpl()) {
 			code.addNoIndent(createFactoryMethod(gec, true));
 		}
 		return code;
@@ -259,7 +222,7 @@ public class GraphCodeGenerator extends
 			code.add("*/",
 					"public #ecJavaClassName# create#ecCamelName#(#formalParams#);");
 		}
-		if (currentCycle.isStdOrDbImplOrTransImpl()) {
+		if (currentCycle.isStdImpl()) {
 			code.add(
 					"public #ecJavaClassName# create#ecCamelName#(#formalParams#) {",
 					"\treturn graphFactory.<#ecJavaClassName#> create#ecType#(#ecJavaClassName#.#ecTypeAecConstant#, #newActualParams#, this#additionalParams#);",
@@ -303,7 +266,7 @@ public class GraphCodeGenerator extends
 		}
 
 		for (EdgeClass edge : gc.getEdgeClasses()) {
-			if (currentCycle.isStdOrDbImplOrTransImpl()) {
+			if (currentCycle.isStdImpl()) {
 				addImports("#jgImplPackage#.EdgeIterable");
 			}
 			CodeSnippet s = new CodeSnippet(true);
@@ -320,7 +283,7 @@ public class GraphCodeGenerator extends
 				s.add(" */");
 				s.add("public Iterable<#edgeJavaClassName#> get#edgeUniqueName#Edges();");
 			}
-			if (currentCycle.isStdOrDbImplOrTransImpl()) {
+			if (currentCycle.isStdImpl()) {
 				s.add("public Iterable<#edgeJavaClassName#> get#edgeUniqueName#Edges() {");
 				s.add("\treturn new EdgeIterable<#edgeJavaClassName#>(this, #edgeJavaClassName#.EC);");
 				s.add("}");
@@ -342,7 +305,7 @@ public class GraphCodeGenerator extends
 		vertexClassSet.addAll(gc.getVertexClasses());
 
 		for (VertexClass vertex : vertexClassSet) {
-			if (currentCycle.isStdOrDbImplOrTransImpl()) {
+			if (currentCycle.isStdImpl()) {
 				addImports("#jgImplPackage#.VertexIterable");
 			}
 
@@ -360,7 +323,7 @@ public class GraphCodeGenerator extends
 				s.add("",
 						"public Iterable<#vertexJavaClassName#> get#vertexCamelName#Vertices(#jgPackage#.VertexFilter<#vertexJavaClassName#> filter);");
 			}
-			if (currentCycle.isStdOrDbImplOrTransImpl()) {
+			if (currentCycle.isStdImpl()) {
 				s.add("public Iterable<#vertexJavaClassName#> get#vertexCamelName#Vertices() {");
 				s.add("\treturn new VertexIterable<#vertexJavaClassName#>(this, #vertexJavaClassName#.VC, null);");
 				s.add("}");

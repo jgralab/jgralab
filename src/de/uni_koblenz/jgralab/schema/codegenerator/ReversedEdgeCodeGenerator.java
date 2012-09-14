@@ -81,15 +81,11 @@ public class ReversedEdgeCodeGenerator extends
 	@Override
 	protected CodeBlock createBody() {
 		CodeList code = (CodeList) super.createBody();
-		if (currentCycle.isStdOrDbImplOrTransImpl()) {
+		if (currentCycle.isStdImpl()) {
 			rootBlock.setVariable("baseClassName", "ReversedEdgeImpl");
 
 			if (currentCycle.isStdImpl()) {
 				addImports("#jgImplStdPackage#.#baseClassName#");
-			} else if (currentCycle.isTransImpl()) {
-				addImports("#jgImplTransPackage#.#baseClassName#");
-			} else if (currentCycle.isDbImpl()) {
-				addImports("#jgImplDbPackage#.#baseClassName#");
 			}
 
 			if (config.hasTypeSpecificMethodsSupport()) {
@@ -127,13 +123,6 @@ public class ReversedEdgeCodeGenerator extends
 		if (currentCycle.isStdImpl()) {
 			addImports("#jgImplStdPackage#.EdgeImpl", "#jgPackage#.Graph");
 		}
-		if (currentCycle.isTransImpl()) {
-			addImports("#jgImplTransPackage#.EdgeImpl", "#jgPackage#.Graph");
-		}
-		if (currentCycle.isDbImpl()) {
-			addImports("#jgImplDbPackage#.EdgeImpl", "#jgPackage#.Graph");
-		}
-
 		return new CodeSnippet(true, "#className#Impl(EdgeImpl e, Graph g) {",
 				"\tsuper(e, g);", "}");
 	}
@@ -146,7 +135,7 @@ public class ReversedEdgeCodeGenerator extends
 				.getJavaAttributeImplementationTypeName(schemaRootPackageName));
 		code.setVariable("isOrGet", a.getDomain().isBoolean() ? "is" : "get");
 
-		if (currentCycle.isStdOrDbImplOrTransImpl()) {
+		if (currentCycle.isStdImpl()) {
 			code.add(
 					"public #type# #isOrGet#_#name#() {",
 					"\treturn ((#normalQualifiedClassName#)normalEdge).#isOrGet#_#name#();",
@@ -165,7 +154,7 @@ public class ReversedEdgeCodeGenerator extends
 		code.setVariable("type", a.getDomain()
 				.getJavaAttributeImplementationTypeName(schemaRootPackageName));
 
-		if (currentCycle.isStdOrDbImplOrTransImpl()) {
+		if (currentCycle.isStdImpl()) {
 			code.add(
 					"public void set_#name#(#type# _#name#) {",
 					"\t((#normalQualifiedClassName#)normalEdge).set_#name#(_#name#);",
@@ -320,20 +309,6 @@ public class ReversedEdgeCodeGenerator extends
 				"throw new GraphIOException(\"Can not call writeAttributeValues for reversed Edges.\");"));
 		code.addNoIndent(new CodeSnippet("}"));
 		return code;
-	}
-
-	@Override
-	protected CodeBlock createGetVersionedAttributesMethod(
-			List<Attribute> attributes) {
-		if (currentCycle.isTransImpl()) {
-			// delegate to attributes()-method in corresponding normalEdge
-			CodeSnippet code = new CodeSnippet();
-			code.add("protected java.util.Set<de.uni_koblenz.jgralab.trans.VersionedDataObject<?>> attributes() {");
-			code.add("\treturn ((EdgeImpl) normalEdge).attributes();");
-			code.add("}");
-			return code;
-		}
-		return null;
 	}
 
 	@Override

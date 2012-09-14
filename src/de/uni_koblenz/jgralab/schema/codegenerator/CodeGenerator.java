@@ -63,21 +63,13 @@ public abstract class CodeGenerator {
 	 */
 	protected enum GenerationCycle {
 		// FIXME The order here matters! CLASSONLY must be last!
-		ABSTRACT, STDIMPL, DBIMPL, TRANSIMPL, CLASSONLY;
+		ABSTRACT, STDIMPL, CLASSONLY;
 
 		protected static List<GenerationCycle> filter(
 				CodeGeneratorConfiguration config) {
 			List<GenerationCycle> out = new ArrayList<GenerationCycle>();
 			out.add(ABSTRACT);
-			if (config.hasStandardSupport()) {
-				out.add(STDIMPL);
-			}
-			if (config.hasTransactionSupport()) {
-				out.add(TRANSIMPL);
-			}
-			if (config.hasDatabaseSupport()) {
-				out.add(DBIMPL);
-			}
+			out.add(STDIMPL);
 			out.add(CLASSONLY);
 			return out;
 		}
@@ -88,23 +80,6 @@ public abstract class CodeGenerator {
 		 */
 		protected boolean isStdImpl() {
 			return this == STDIMPL;
-		}
-
-		/**
-		 * 
-		 * @return Returns true if support for database impl classes is enabled,
-		 *         otherwise false.
-		 */
-		protected boolean isDbImpl() {
-			return this == DBIMPL;
-		}
-
-		/**
-		 * 
-		 * @return
-		 */
-		protected boolean isTransImpl() {
-			return this == TRANSIMPL;
 		}
 
 		/**
@@ -121,14 +96,6 @@ public abstract class CodeGenerator {
 		 */
 		protected boolean isClassOnly() {
 			return this == CLASSONLY;
-		}
-
-		/**
-		 * 
-		 * @return
-		 */
-		protected boolean isStdOrDbImplOrTransImpl() {
-			return (this == STDIMPL) || (this == TRANSIMPL) || (this == DBIMPL);
 		}
 	}
 
@@ -296,22 +263,11 @@ public abstract class CodeGenerator {
 				logger.finer("Writing file to: " + pathPrefix + "/"
 						+ schemaPackage);
 			}
-			if (currentCycle.isStdOrDbImplOrTransImpl()) {
+			if (currentCycle.isStdImpl()) {
 				if (currentCycle.isStdImpl()) {
 					schemaImplPackage = rootBlock
 							.getVariable("schemaImplStdPackage");
 					logger.finer(" - schemaImplStdPackage=" + schemaImplPackage);
-				}
-				if (currentCycle.isTransImpl()) {
-					schemaImplPackage = rootBlock
-							.getVariable("schemaImplTransPackage");
-					logger.finer(" - schemaImplTransPackage="
-							+ schemaImplPackage);
-				}
-				if (currentCycle.isDbImpl()) {
-					schemaImplPackage = rootBlock
-							.getVariable("schemaImplDbPackage");
-					logger.finer(" - schemaImplDbPackage=" + schemaImplPackage);
 				}
 				writeCodeToFile(pathPrefix, simpleImplClassName + ".java",
 						schemaImplPackage);
@@ -352,12 +308,6 @@ public abstract class CodeGenerator {
 				break;
 			case STDIMPL:
 				code.add("package #schemaImplStdPackage#;");
-				break;
-			case TRANSIMPL:
-				code.add("package #schemaImplTransPackage#;");
-				break;
-			case DBIMPL:
-				code.add("package #schemaImplDbPackage#;");
 				break;
 			case CLASSONLY:
 				code.add("package #schemaPackage#;");
@@ -407,7 +357,7 @@ public abstract class CodeGenerator {
 		currentCycle = getNextCycle();
 		while (currentCycle != null) {
 			createCode();
-			if (currentCycle.isStdOrDbImplOrTransImpl()) {
+			if (currentCycle.isStdImpl()) {
 				javaSources.add(new InMemoryJavaSourceFile(implClassName,
 						rootBlock.getCode()));
 			} else {

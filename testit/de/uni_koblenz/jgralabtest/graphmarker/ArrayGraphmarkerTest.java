@@ -52,7 +52,6 @@ import org.junit.runners.Parameterized.Parameters;
 
 import de.uni_koblenz.jgralab.ImplementationType;
 import de.uni_koblenz.jgralab.graphmarker.ArrayVertexMarker;
-import de.uni_koblenz.jgralab.trans.CommitFailedException;
 import de.uni_koblenz.jgralabtest.instancetest.InstanceTest;
 import de.uni_koblenz.jgralabtest.schemas.minimal.MinimalGraph;
 import de.uni_koblenz.jgralabtest.schemas.minimal.MinimalSchema;
@@ -134,43 +133,24 @@ public class ArrayGraphmarkerTest extends InstanceTest {
 	private Node v2;
 
 	@Before
-	public void setup() throws CommitFailedException {
+	public void setup() {
 		switch (implementationType) {
 		case STANDARD:
 			g = MinimalSchema.instance().createMinimalGraph(
 					ImplementationType.STANDARD, null, V, E);
 			break;
-		case TRANSACTION:
-			g = MinimalSchema.instance().createMinimalGraph(
-					ImplementationType.TRANSACTION, null, V, E);
-			break;
-		case DATABASE:
-			dbHandler.connectToDatabase();
-			dbHandler.loadMinimalSchemaIntoGraphDatabase();
-			g = dbHandler.createMinimalGraphWithDatabaseSupport(
-					"GraphMarkerTest", V, E);
-			break;
 		default:
 			fail("Implementation " + implementationType
 					+ " not yet supported by this test.");
 		}
-		createTransaction(g);
 		v1 = g.createNode();
 		v2 = g.createNode();
 		g.createLink(v1, v2);
-		commit(g);
-
 		marker = new ArrayVertexMarker<TestMarkerObject>(g);
-		createTransaction(g);
 	}
 
 	@After
-	public void tearDown() throws CommitFailedException, InterruptedException {
-		commit(g);
-		if (implementationType == ImplementationType.DATABASE) {
-			dbHandler.clearAllTables();
-			dbHandler.closeGraphdatabase();
-		}
+	public void tearDown() throws InterruptedException {
 		g = null;
 		marker = null;
 		System.gc();
@@ -250,7 +230,7 @@ public class ArrayGraphmarkerTest extends InstanceTest {
 	}
 
 	@Test
-	public void testGetMark() throws CommitFailedException {
+	public void testGetMark() {
 		TestMarkerObject mark = new TestMarkerObject();
 		mark.arrayValue = new int[] { 1, 8, 90 };
 		mark.doubleValue = 23.988;

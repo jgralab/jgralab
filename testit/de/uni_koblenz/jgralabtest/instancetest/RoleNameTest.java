@@ -47,7 +47,6 @@ import java.util.List;
 import java.util.PriorityQueue;
 import java.util.Random;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -62,7 +61,6 @@ import de.uni_koblenz.jgralab.exception.GraphException;
 import de.uni_koblenz.jgralab.exception.GraphIOException;
 import de.uni_koblenz.jgralab.schema.Schema;
 import de.uni_koblenz.jgralab.schema.codegenerator.CodeGeneratorConfiguration;
-import de.uni_koblenz.jgralab.trans.CommitFailedException;
 import de.uni_koblenz.jgralabtest.schemas.vertextest.A;
 import de.uni_koblenz.jgralabtest.schemas.vertextest.B;
 import de.uni_koblenz.jgralabtest.schemas.vertextest.C;
@@ -103,39 +101,11 @@ public class RoleNameTest extends InstanceTest {
 			graph = VertexTestSchema.instance().createVertexTestGraph(
 					ImplementationType.STANDARD);
 			break;
-		case TRANSACTION:
-			graph = VertexTestSchema.instance().createVertexTestGraph(
-					ImplementationType.TRANSACTION);
-			break;
-		case DATABASE:
-			graph = createVertexTestGraphWithDatabaseSupport();
-			break;
 		default:
 			fail("Implementation " + implementationType
 					+ " not yet supported by this test.");
 		}
 		rand = new Random(System.currentTimeMillis());
-	}
-
-	private VertexTestGraph createVertexTestGraphWithDatabaseSupport() {
-		dbHandler.connectToDatabase();
-		dbHandler.loadVertexTestSchemaIntoGraphDatabase();
-		return dbHandler.createVertexTestGraphWithDatabaseSupport(
-				"RoleNameTest", 100, 100);
-	}
-
-	@After
-	public void tearDown() {
-		if (implementationType == ImplementationType.DATABASE) {
-			cleanAndCloseGraphDatabase();
-		}
-	}
-
-	private void cleanAndCloseGraphDatabase() {
-		// dbHandler.cleanDatabaseOfTestGraph("RoleNameTest");
-		// super.cleanDatabaseOfTestSchema(VertexTestSchema.instance());
-		dbHandler.clearAllTables();
-		dbHandler.closeGraphdatabase();
 	}
 
 	/**
@@ -1067,7 +1037,7 @@ public class RoleNameTest extends InstanceTest {
 				schemaString.getBytes());
 		Schema s = null;
 		s = GraphIO.loadSchemaFromStream(input);
-		s.compile(CodeGeneratorConfiguration.FULL);
+		s.compile(CodeGeneratorConfiguration.NORMAL);
 		return s;
 	}
 
@@ -1082,11 +1052,10 @@ public class RoleNameTest extends InstanceTest {
 	/**
 	 * Test if only edges of one type are created via addX.
 	 * 
-	 * @throws CommitFailedException
+	 * @
 	 */
 	@Test
-	public void eAddTargetrolenameTest0() throws CommitFailedException {
-		createTransaction(graph);
+	public void eAddTargetrolenameTest0() {
 		A v1 = graph.createA();
 		B v2 = graph.createB();
 		D v3 = graph.createD();
@@ -1094,45 +1063,37 @@ public class RoleNameTest extends InstanceTest {
 		E e2 = v1.add_x(v2);
 		E e3 = v1.add_x(v3);
 		E e4 = v1.add_x(v2);
-		commit(graph);
-		createReadOnlyTransaction(graph);
 		testIncidenceList(v1, e1, e2, e3, e4);
 		testIncidenceList(v2, e1.getReversedEdge(), e2.getReversedEdge(),
 				e4.getReversedEdge());
 		testIncidenceList(v3, e3.getReversedEdge());
-		commit(graph);
 	}
 
 	/**
 	 * Test if only edges of one type are created via addX and manually.
 	 * 
-	 * @throws CommitFailedException
+	 * @
 	 */
 	@Test
-	public void eAddTargetrolenameTest1() throws CommitFailedException {
-		createTransaction(graph);
+	public void eAddTargetrolenameTest1() {
 		A v1 = graph.createA();
 		B v2 = graph.createB();
 		E e1 = v1.add_x(v2);
 		E e2 = graph.createE(v1, v2);
 		E e3 = v1.add_x(v2);
 		E e4 = v1.add_x(v2);
-		commit(graph);
-		createReadOnlyTransaction(graph);
 		testIncidenceList(v1, e1, e2, e3, e4);
 		testIncidenceList(v2, e1.getReversedEdge(), e2.getReversedEdge(),
 				e3.getReversedEdge(), e4.getReversedEdge());
-		commit(graph);
 	}
 
 	/**
 	 * Test with cyclic edges.
 	 * 
-	 * @throws CommitFailedException
+	 * @
 	 */
 	@Test
-	public void eAddTargetrolenameTest2() throws CommitFailedException {
-		createTransaction(graph);
+	public void eAddTargetrolenameTest2() {
 		A v1 = graph.createA();
 		A v2 = graph.createA();
 		C v3 = graph.createC();
@@ -1140,169 +1101,141 @@ public class RoleNameTest extends InstanceTest {
 		I e2 = v1.add_v(v2);
 		I e3 = v2.add_v(v2);
 		I e4 = graph.createI(v2, v3);
-		commit(graph);
-		createReadOnlyTransaction(graph);
 		testIncidenceList(v1, e1, e1.getReversedEdge(), e2);
 		testIncidenceList(v2, e2.getReversedEdge(), e3, e3.getReversedEdge(),
 				e4);
 		testIncidenceList(v3, e4.getReversedEdge());
-		commit(graph);
 	}
 
 	/**
 	 * Test if an error occurs if an E-edge is created via addX starting at a
 	 * C-vertex.
 	 * 
-	 * @throws CommitFailedException
+	 * @
 	 */
 	@Test(expected = GraphException.class)
-	public void eAddTargetrolenameTestException0() throws CommitFailedException {
-		createTransaction(graph);
+	public void eAddTargetrolenameTestException0() {
 		C v1 = graph.createC();
 		B v2 = graph.createB();
 		v1.add_x(v2);
-		commit(graph);
 	}
 
 	/**
 	 * Test if an error occurs if an E-edge is created via createE starting at a
 	 * C-vertex.
 	 * 
-	 * @throws CommitFailedException
+	 * @
 	 */
 	@Test(expected = GraphException.class)
-	public void eAddTargetrolenameTestException1() throws CommitFailedException {
-		createTransaction(graph);
+	public void eAddTargetrolenameTestException1() {
 		C v1 = graph.createC();
 		B v2 = graph.createB();
 		graph.createE(v1, v2);
-		commit(graph);
 	}
 
 	/**
 	 * Test if an error occurs if an E-edge is created via createE starting at a
 	 * C2-vertex.
 	 * 
-	 * @throws CommitFailedException
+	 * @
 	 */
 	@Test(expected = GraphException.class)
-	public void eAddTargetrolenameTestException2() throws CommitFailedException {
-		createTransaction(graph);
+	public void eAddTargetrolenameTestException2() {
 		C2 v1 = graph.createC2();
 		B v2 = graph.createB();
 		graph.createE(v1, v2);
-		commit(graph);
 	}
 
 	/**
 	 * Test if an error occurs if you try to build an edge with null as omega.
 	 * 
-	 * @throws CommitFailedException
+	 * @
 	 */
 	@Test(expected = GraphException.class)
-	public void eAddTargetrolenameTestException3() throws CommitFailedException {
-		createTransaction(graph);
+	public void eAddTargetrolenameTestException3() {
 		A v1 = graph.createA();
 		v1.add_x(null);
-		commit(graph);
 	}
 
 	/**
 	 * Test if only edges of one type are created via addX.
 	 * 
-	 * @throws CommitFailedException
+	 * @
 	 */
 	@Test
-	public void fAddTargetrolenameTest0() throws CommitFailedException {
-		createTransaction(graph);
+	public void fAddTargetrolenameTest0() {
 		C v1 = graph.createC();
 		D v2 = graph.createD();
 		F e1 = v1.add_y(v2);
 		F e2 = v1.add_y(v2);
 		F e3 = v1.add_y(v2);
 		F e4 = v1.add_y(v2);
-		commit(graph);
-		createReadOnlyTransaction(graph);
 		testIncidenceList(v1, e1, e2, e3, e4);
 		testIncidenceList(v2, e1.getReversedEdge(), e2.getReversedEdge(),
 				e3.getReversedEdge(), e4.getReversedEdge());
-		commit(graph);
 	}
 
 	/**
 	 * Test if only edges of one type are created via addX and manually.
 	 * 
-	 * @throws CommitFailedException
+	 * @
 	 */
 	@Test
-	public void fAddTargetrolenameTest1() throws CommitFailedException {
-		createTransaction(graph);
+	public void fAddTargetrolenameTest1() {
 		C v1 = graph.createC();
 		D v2 = graph.createD();
 		F e1 = v1.add_y(v2);
 		F e2 = graph.createF(v1, v2);
 		F e3 = v1.add_y(v2);
 		F e4 = v1.add_y(v2);
-		commit(graph);
-		createReadOnlyTransaction(graph);
 		testIncidenceList(v1, e1, e2, e3, e4);
 		testIncidenceList(v2, e1.getReversedEdge(), e2.getReversedEdge(),
 				e3.getReversedEdge(), e4.getReversedEdge());
-		commit(graph);
 	}
 
 	/**
 	 * Test if only edges of one type are created via addX.
 	 * 
-	 * @throws CommitFailedException
+	 * @
 	 */
 	@Test
-	public void gAddTargetrolenameTest0() throws CommitFailedException {
-		createTransaction(graph);
+	public void gAddTargetrolenameTest0() {
 		C v1 = graph.createC();
 		D v2 = graph.createD();
 		G e1 = v1.add_z(v2);
 		G e2 = v1.add_z(v2);
 		G e3 = v1.add_z(v2);
 		G e4 = v1.add_z(v2);
-		commit(graph);
-		createReadOnlyTransaction(graph);
 		testIncidenceList(v1, e1, e2, e3, e4);
 		testIncidenceList(v2, e1.getReversedEdge(), e2.getReversedEdge(),
 				e3.getReversedEdge(), e4.getReversedEdge());
-		commit(graph);
 	}
 
 	/**
 	 * Test if only edges of one type are created via addX and manually.
 	 * 
-	 * @throws CommitFailedException
+	 * @
 	 */
 	@Test
-	public void gAddTargetrolenameTest1() throws CommitFailedException {
-		createTransaction(graph);
+	public void gAddTargetrolenameTest1() {
 		C v1 = graph.createC();
 		D v2 = graph.createD();
 		G e1 = v1.add_z(v2);
 		G e2 = graph.createG(v1, v2);
 		G e3 = v1.add_z(v2);
 		G e4 = v1.add_z(v2);
-		commit(graph);
-		createReadOnlyTransaction(graph);
 		testIncidenceList(v1, e1, e2, e3, e4);
 		testIncidenceList(v2, e1.getReversedEdge(), e2.getReversedEdge(),
 				e3.getReversedEdge(), e4.getReversedEdge());
-		commit(graph);
 	}
 
 	/**
 	 * Test if edges of different types are created via addX and manually.
 	 * 
-	 * @throws CommitFailedException
+	 * @
 	 */
 	@Test
-	public void mixedAddTargetrolenameTest0() throws CommitFailedException {
-		createTransaction(graph);
+	public void mixedAddTargetrolenameTest0() {
 		A v1 = graph.createA();
 		B v2 = graph.createB();
 		C v3 = graph.createC();
@@ -1321,8 +1254,6 @@ public class RoleNameTest extends InstanceTest {
 		E e10 = v1.add_x(v6);
 		F e11 = v3.add_y(v6);
 		G e12 = v3.add_z(v6);
-		commit(graph);
-		createReadOnlyTransaction(graph);
 		testIncidenceList(v1, e1, e2, e6, e8, e9, e10);
 		testIncidenceList(v2, e1.getReversedEdge(), e8.getReversedEdge());
 		testIncidenceList(v3, e3, e4, e5, e7, e11, e12);
@@ -1332,17 +1263,15 @@ public class RoleNameTest extends InstanceTest {
 		testIncidenceList(v5, e9.getReversedEdge());
 		testIncidenceList(v6, e10.getReversedEdge(), e11.getReversedEdge(),
 				e12.getReversedEdge());
-		commit(graph);
 	}
 
 	/**
 	 * Random test
 	 * 
-	 * @throws CommitFailedException
+	 * @
 	 */
 	@Test
-	public void addTargetrolenameRandomTest0() throws CommitFailedException {
-		createTransaction(graph);
+	public void addTargetrolenameRandomTest0() {
 		A v1 = graph.createA();
 		C v2 = graph.createC();
 		B v3 = graph.createB();
@@ -1361,27 +1290,16 @@ public class RoleNameTest extends InstanceTest {
 		LinkedList<Edge> v8Inci = new LinkedList<Edge>();
 		createRandomGraph(true, v1, v2, v3, v4, v5, v6, v7, v8, v1Inci, v2Inci,
 				v3Inci, v4Inci, v5Inci, v6Inci, v7Inci, v8Inci);
-		commit(graph);
-		createReadOnlyTransaction(graph);
 		testIncidences(v1, v2, v3, v4, v5, v6, v7, v8, v1Inci, v2Inci, v3Inci,
 				v4Inci, v5Inci, v6Inci, v7Inci, v8Inci);
-		commit(graph);
-		createTransaction(graph);
 		deleteRandomEdges(v1Inci, v2Inci, v3Inci, v4Inci, v5Inci, v6Inci,
 				v7Inci, v8Inci);
-		commit(graph);
-		createReadOnlyTransaction(graph);
 		testIncidences(v1, v2, v3, v4, v5, v6, v7, v8, v1Inci, v2Inci, v3Inci,
 				v4Inci, v5Inci, v6Inci, v7Inci, v8Inci);
-		commit(graph);
-		createTransaction(graph);
 		createRandomGraph(true, v1, v2, v3, v4, v5, v6, v7, v8, v1Inci, v2Inci,
 				v3Inci, v4Inci, v5Inci, v6Inci, v7Inci, v8Inci);
-		commit(graph);
-		createReadOnlyTransaction(graph);
 		testIncidences(v1, v2, v3, v4, v5, v6, v7, v8, v1Inci, v2Inci, v3Inci,
 				v4Inci, v5Inci, v6Inci, v7Inci, v8Inci);
-		commit(graph);
 	}
 
 	/*
@@ -1391,32 +1309,27 @@ public class RoleNameTest extends InstanceTest {
 	/**
 	 * call removeX when no x exists.
 	 * 
-	 * @throws CommitFailedException
+	 * @
 	 */
 	@Test
-	public void removeTargetRoleNameTest0() throws CommitFailedException {
-		createTransaction(graph);
+	public void removeTargetRoleNameTest0() {
 		A v1 = graph.createA();
 		C v2 = graph.createC();
 		D v3 = graph.createD();
 		F e1 = v2.add_y(v3);
 		v1.remove_x(v3);
-		commit(graph);
-		createReadOnlyTransaction(graph);
 		testIncidenceList(v1);
 		testIncidenceList(v2, e1);
 		testIncidenceList(v3, e1.getReversedEdge());
-		commit(graph);
 	}
 
 	/**
 	 * Remove all x of one vertex.
 	 * 
-	 * @throws CommitFailedException
+	 * @
 	 */
 	@Test
-	public void removeTargetRoleNameTest1() throws CommitFailedException {
-		createTransaction(graph);
+	public void removeTargetRoleNameTest1() {
 		A v1 = graph.createA();
 		C v2 = graph.createC();
 		D v3 = graph.createD();
@@ -1428,23 +1341,19 @@ public class RoleNameTest extends InstanceTest {
 		graph.createE(v1, v3);
 		H e6 = v1.add_w(v4);
 		v1.remove_x(v3);
-		commit(graph);
-		createReadOnlyTransaction(graph);
 		testIncidenceList(v1, e3, e6);
 		testIncidenceList(v2, e4);
 		testIncidenceList(v3, e4.getReversedEdge());
 		testIncidenceList(v4, e3.getReversedEdge(), e6.getReversedEdge());
-		commit(graph);
 	}
 
 	/**
 	 * Test with cyclic edges.
 	 * 
-	 * @throws CommitFailedException
+	 * @
 	 */
 	@Test
-	public void removeTargetrolenameTest2() throws CommitFailedException {
-		createTransaction(graph);
+	public void removeTargetrolenameTest2() {
 		A v1 = graph.createA();
 		A v2 = graph.createA();
 		C v3 = graph.createC();
@@ -1453,12 +1362,9 @@ public class RoleNameTest extends InstanceTest {
 		v2.add_v(v2);
 		I e4 = graph.createI(v2, v3);
 		v2.remove_v(v2);
-		commit(graph);
-		createReadOnlyTransaction(graph);
 		testIncidenceList(v1, e1, e1.getReversedEdge(), e2);
 		testIncidenceList(v2, e2.getReversedEdge(), e4);
 		testIncidenceList(v3, e4.getReversedEdge());
-		commit(graph);
 	}
 
 	/**
@@ -1467,19 +1373,16 @@ public class RoleNameTest extends InstanceTest {
 	 * 
 	 * There should occur no exception and removeX should return 'false'.
 	 * 
-	 * @throws CommitFailedException
+	 * @
 	 */
 	@Test
-	public void removeTargetRolenameTest0() throws CommitFailedException {
-
-		createTransaction(graph);
+	public void removeTargetRolenameTest0() {
 
 		C v1 = graph.createC();
 		B v2 = graph.createB();
 
 		assertFalse(v1.remove_x(v2));
 
-		commit(graph);
 	}
 
 	/**
@@ -1488,28 +1391,24 @@ public class RoleNameTest extends InstanceTest {
 	 * 
 	 * There should occur no exception and removeX should return 'false'.
 	 * 
-	 * @throws CommitFailedException
+	 * @
 	 */
 	@Test
-	public void removeTargetRolenameTest3() throws CommitFailedException {
-
-		createTransaction(graph);
+	public void removeTargetRolenameTest3() {
 
 		C2 v1 = graph.createC2();
 		B v2 = graph.createB();
 		assertFalse(v1.remove_x(v2));
 
-		commit(graph);
 	}
 
 	/**
 	 * Random test
 	 * 
-	 * @throws CommitFailedException
+	 * @
 	 */
 	@Test
-	public void removeTargetrolenameRandomTest0() throws CommitFailedException {
-		createTransaction(graph);
+	public void removeTargetrolenameRandomTest0() {
 		A v1 = graph.createA();
 		C v2 = graph.createC();
 		B v3 = graph.createB();
@@ -1530,27 +1429,16 @@ public class RoleNameTest extends InstanceTest {
 				v3Inci, v4Inci, v5Inci, v6Inci, v7Inci, v8Inci);
 		deleteAll(true, v1, v3, v1Inci, v3Inci, "x", "w");
 		v1.remove_x(v3);
-		commit(graph);
-		createReadOnlyTransaction(graph);
 		testIncidences(v1, v2, v3, v4, v5, v6, v7, v8, v1Inci, v2Inci, v3Inci,
 				v4Inci, v5Inci, v6Inci, v7Inci, v8Inci);
 		deleteAll(true, v1, v4, v1Inci, v4Inci, "x", "w");
-		commit(graph);
-		createTransaction(graph);
 		v1.remove_x(v4);
-		commit(graph);
-		createReadOnlyTransaction(graph);
 		testIncidences(v1, v2, v3, v4, v5, v6, v7, v8, v1Inci, v2Inci, v3Inci,
 				v4Inci, v5Inci, v6Inci, v7Inci, v8Inci);
-		commit(graph);
-		createTransaction(graph);
 		deleteAll(true, v7, v6, v7Inci, v6Inci, "w");
 		v7.remove_w(v6);
-		commit(graph);
-		createReadOnlyTransaction(graph);
 		testIncidences(v1, v2, v3, v4, v5, v6, v7, v8, v1Inci, v2Inci, v3Inci,
 				v4Inci, v5Inci, v6Inci, v7Inci, v8Inci);
-		commit(graph);
 	}
 
 	/*
@@ -1560,26 +1448,21 @@ public class RoleNameTest extends InstanceTest {
 	/**
 	 * Test a vertex which has no adjacent x-vertices.
 	 * 
-	 * @throws CommitFailedException
+	 * @
 	 */
 	@Test
-	public void getRoleNameListTest0() throws CommitFailedException {
-		createTransaction(graph);
+	public void getRoleNameListTest0() {
 		A v1 = graph.createA();
-		commit(graph);
-		createReadOnlyTransaction(graph);
 		compareLists(new LinkedList<Vertex>(), v1.get_x());
-		commit(graph);
 	}
 
 	/**
 	 * Test a vertex which has adjacent w-vertices.
 	 * 
-	 * @throws CommitFailedException
+	 * @
 	 */
 	@Test
-	public void getRoleNameListTest1() throws CommitFailedException {
-		createTransaction(graph);
+	public void getRoleNameListTest1() {
 		C v1 = graph.createC();
 		D v2 = graph.createD();
 		v1.add_w(v2);
@@ -1587,9 +1470,7 @@ public class RoleNameTest extends InstanceTest {
 		v1.add_w(v2);
 		v1.add_z(v2);
 		v1.add_w(v2);
-		commit(graph);
 
-		createReadOnlyTransaction(graph);
 		LinkedList<Vertex> expected = new LinkedList<Vertex>();
 		expected.add(v2);
 		expected.add(v2);
@@ -1599,37 +1480,31 @@ public class RoleNameTest extends InstanceTest {
 		expected.add(v2);
 		compareLists(expected, v1.get_y());
 		compareLists(expected, v1.get_z());
-		commit(graph);
 	}
 
 	/**
 	 * Test with cyclic edges.
 	 * 
-	 * @throws CommitFailedException
+	 * @
 	 */
 	@Test
-	public void getRoleNameListTest2() throws CommitFailedException {
-		createTransaction(graph);
+	public void getRoleNameListTest2() {
 		A v1 = graph.createA();
 		v1.add_v(v1);
 		graph.createI(v1, v1);
-		commit(graph);
-		createReadOnlyTransaction(graph);
 		LinkedList<Vertex> expected = new LinkedList<Vertex>();
 		expected.add(v1);
 		expected.add(v1);
 		compareLists(expected, v1.get_v());
-		commit(graph);
 	}
 
 	/**
 	 * Random test
 	 * 
-	 * @throws CommitFailedException
+	 * @
 	 */
 	@Test
-	public void getRoleNameListRandomTest0() throws CommitFailedException {
-		createTransaction(graph);
+	public void getRoleNameListRandomTest0() {
 		A v1 = graph.createA();
 		C v2 = graph.createC();
 		B v3 = graph.createB();
@@ -1648,8 +1523,6 @@ public class RoleNameTest extends InstanceTest {
 		LinkedList<Edge> v8Inci = new LinkedList<Edge>();
 		createRandomGraph(true, v1, v2, v3, v4, v5, v6, v7, v8, v1Inci, v2Inci,
 				v3Inci, v4Inci, v5Inci, v6Inci, v7Inci, v8Inci);
-		commit(graph);
-		createReadOnlyTransaction(graph);
 		LinkedList<Vertex> expected = getAllVerticesWithRolename(v1Inci, "x",
 				"w");
 		compareLists(expected, v1.get_x());
@@ -1682,7 +1555,6 @@ public class RoleNameTest extends InstanceTest {
 		compareLists(expected, v8.get_y());
 		expected = getAllVerticesWithRolename(v8Inci, "z");
 		compareLists(expected, v8.get_z());
-		commit(graph);
 	}
 
 	/*
@@ -1696,11 +1568,10 @@ public class RoleNameTest extends InstanceTest {
 	/**
 	 * Test if only edges of one type are created via addSourceE.
 	 * 
-	 * @throws CommitFailedException
+	 * @
 	 */
 	@Test
-	public void addSourcerolenameTest0() throws CommitFailedException {
-		createTransaction(graph);
+	public void addSourcerolenameTest0() {
 		A v1 = graph.createA();
 		B v2 = graph.createB();
 		D v3 = graph.createD();
@@ -1708,45 +1579,37 @@ public class RoleNameTest extends InstanceTest {
 		E e2 = v2.add_sourceE(v1);
 		E e3 = v3.add_sourceE(v1);
 		E e4 = v2.add_sourceE(v1);
-		commit(graph);
-		createReadOnlyTransaction(graph);
 		testIncidenceList(v1, e1, e2, e3, e4);
 		testIncidenceList(v2, e1.getReversedEdge(), e2.getReversedEdge(),
 				e4.getReversedEdge());
 		testIncidenceList(v3, e3.getReversedEdge());
-		commit(graph);
 	}
 
 	/**
 	 * Test if only edges of one type are created via addSourceE and manually.
 	 * 
-	 * @throws CommitFailedException
+	 * @
 	 */
 	@Test
-	public void addSourcerolenameTest1() throws CommitFailedException {
-		createTransaction(graph);
+	public void addSourcerolenameTest1() {
 		A v1 = graph.createA();
 		B v2 = graph.createB();
 		E e1 = v2.add_sourceE(v1);
 		E e2 = graph.createE(v1, v2);
 		E e3 = v2.add_sourceE(v1);
 		E e4 = v2.add_sourceE(v1);
-		commit(graph);
-		createReadOnlyTransaction(graph);
 		testIncidenceList(v1, e1, e2, e3, e4);
 		testIncidenceList(v2, e1.getReversedEdge(), e2.getReversedEdge(),
 				e3.getReversedEdge(), e4.getReversedEdge());
-		commit(graph);
 	}
 
 	/**
 	 * Test with cyclic edges.
 	 * 
-	 * @throws CommitFailedException
+	 * @
 	 */
 	@Test
-	public void addSourcerolenameTest2() throws CommitFailedException {
-		createTransaction(graph);
+	public void addSourcerolenameTest2() {
 		A v1 = graph.createA();
 		A v2 = graph.createA();
 		C v3 = graph.createC();
@@ -1754,66 +1617,56 @@ public class RoleNameTest extends InstanceTest {
 		I e2 = v2.add_sourceI(v1);
 		I e3 = v2.add_sourceI(v2);
 		I e4 = graph.createI(v2, v3);
-		commit(graph);
-		createReadOnlyTransaction(graph);
 		testIncidenceList(v1, e1, e1.getReversedEdge(), e2);
 		testIncidenceList(v2, e2.getReversedEdge(), e3, e3.getReversedEdge(),
 				e4);
 		testIncidenceList(v3, e4.getReversedEdge());
-		commit(graph);
 	}
 
 	/**
 	 * Test if an error occurs if an E-edge is created via addSourceE starting
 	 * at a D2-vertex.
 	 * 
-	 * @throws CommitFailedException
+	 * @
 	 */
 	@Test(expected = GraphException.class)
-	public void addSourcerolenameTestException0() throws CommitFailedException {
-		createTransaction(graph);
+	public void addSourcerolenameTestException0() {
 		D2 v1 = graph.createD2();
 		A v2 = graph.createA();
 		v1.add_sourceE(v2);
-		commit(graph);
 	}
 
 	/**
 	 * Test if an error occurs if an E-edge is created via createE starting at a
 	 * D2-vertex.
 	 * 
-	 * @throws CommitFailedException
+	 * @
 	 */
 	@Test(expected = GraphException.class)
-	public void addSourcerolenameTestException1() throws CommitFailedException {
-		createTransaction(graph);
+	public void addSourcerolenameTestException1() {
 		D2 v1 = graph.createD2();
 		A v2 = graph.createA();
 		graph.createE(v2, v1);
-		commit(graph);
 	}
 
 	/**
 	 * Test if an error occurs if you try to build an edge with null as alpha.
 	 * 
-	 * @throws CommitFailedException
+	 * @
 	 */
 	@Test(expected = GraphException.class)
-	public void addSourcerolenameTestException2() throws CommitFailedException {
-		createTransaction(graph);
+	public void addSourcerolenameTestException2() {
 		B v1 = graph.createB();
 		v1.add_sourceE(null);
-		commit(graph);
 	}
 
 	/**
 	 * Test if edges of different types are created via addSourceE and manually.
 	 * 
-	 * @throws CommitFailedException
+	 * @
 	 */
 	@Test
-	public void mixedAddSourcerolenameTest0() throws CommitFailedException {
-		createTransaction(graph);
+	public void mixedAddSourcerolenameTest0() {
 		A v1 = graph.createA();
 		B v2 = graph.createB();
 		C v3 = graph.createC();
@@ -1832,8 +1685,6 @@ public class RoleNameTest extends InstanceTest {
 		E e10 = v6.add_sourceE(v1);
 		F e11 = v6.add_sourceF(v3);
 		G e12 = v6.add_sourceG(v3);
-		commit(graph);
-		createReadOnlyTransaction(graph);
 		testIncidenceList(v1, e1, e2, e6, e8, e9, e10);
 		testIncidenceList(v2, e1.getReversedEdge(), e8.getReversedEdge());
 		testIncidenceList(v3, e3, e4, e5, e7, e11, e12);
@@ -1843,17 +1694,15 @@ public class RoleNameTest extends InstanceTest {
 		testIncidenceList(v5, e9.getReversedEdge());
 		testIncidenceList(v6, e10.getReversedEdge(), e11.getReversedEdge(),
 				e12.getReversedEdge());
-		commit(graph);
 	}
 
 	/**
 	 * Random test
 	 * 
-	 * @throws CommitFailedException
+	 * @
 	 */
 	@Test
-	public void addSourcerolenameRandomTest0() throws CommitFailedException {
-		createTransaction(graph);
+	public void addSourcerolenameRandomTest0() {
 		A v1 = graph.createA();
 		C v2 = graph.createC();
 		B v3 = graph.createB();
@@ -1881,28 +1730,17 @@ public class RoleNameTest extends InstanceTest {
 		createRandomGraph(false, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11,
 				v12, v1Inci, v2Inci, v3Inci, v4Inci, v5Inci, v6Inci, v7Inci,
 				v8Inci, v9Inci, v10Inci, v11Inci, v12Inci);
-		commit(graph);
-		createReadOnlyTransaction(graph);
 		testIncidences(v1, v2, v3, v4, v5, v6, v7, v8, v1Inci, v2Inci, v3Inci,
 				v4Inci, v5Inci, v6Inci, v7Inci, v8Inci);
-		commit(graph);
-		createTransaction(graph);
 		deleteRandomEdges(v1Inci, v2Inci, v3Inci, v4Inci, v5Inci, v6Inci,
 				v7Inci, v8Inci, v9Inci, v10Inci, v11Inci, v12Inci);
-		commit(graph);
-		createReadOnlyTransaction(graph);
 		testIncidences(v1, v2, v3, v4, v5, v6, v7, v8, v1Inci, v2Inci, v3Inci,
 				v4Inci, v5Inci, v6Inci, v7Inci, v8Inci);
-		commit(graph);
-		createTransaction(graph);
 		createRandomGraph(false, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11,
 				v12, v1Inci, v2Inci, v3Inci, v4Inci, v5Inci, v6Inci, v7Inci,
 				v8Inci, v9Inci, v10Inci, v11Inci, v12Inci);
-		commit(graph);
-		createReadOnlyTransaction(graph);
 		testIncidences(v1, v2, v3, v4, v5, v6, v7, v8, v1Inci, v2Inci, v3Inci,
 				v4Inci, v5Inci, v6Inci, v7Inci, v8Inci);
-		commit(graph);
 	}
 
 	/*
@@ -1912,32 +1750,27 @@ public class RoleNameTest extends InstanceTest {
 	/**
 	 * call removeSourceE when no sourceE exists.
 	 * 
-	 * @throws CommitFailedException
+	 * @
 	 */
 	@Test
-	public void removeSourceRoleNameTest0() throws CommitFailedException {
-		createTransaction(graph);
+	public void removeSourceRoleNameTest0() {
 		A v1 = graph.createA();
 		C v2 = graph.createC();
 		D v3 = graph.createD();
 		F e1 = v2.add_y(v3);
 		v3.remove_sourceE(v1);
-		commit(graph);
-		createReadOnlyTransaction(graph);
 		testIncidenceList(v1);
 		testIncidenceList(v2, e1);
 		testIncidenceList(v3, e1.getReversedEdge());
-		commit(graph);
 	}
 
 	/**
 	 * Remove all sourceE of one vertex.
 	 * 
-	 * @throws CommitFailedException
+	 * @
 	 */
 	@Test
-	public void removeSourceRoleNameTest1() throws CommitFailedException {
-		createTransaction(graph);
+	public void removeSourceRoleNameTest1() {
 		A v1 = graph.createA();
 		C v2 = graph.createC();
 		D v3 = graph.createD();
@@ -1949,23 +1782,19 @@ public class RoleNameTest extends InstanceTest {
 		graph.createE(v1, v3);
 		H e6 = v1.add_w(v4);
 		v3.remove_sourceE(v1);
-		commit(graph);
-		createReadOnlyTransaction(graph);
 		testIncidenceList(v1, e3, e6);
 		testIncidenceList(v2, e4);
 		testIncidenceList(v3, e4.getReversedEdge());
 		testIncidenceList(v4, e3.getReversedEdge(), e6.getReversedEdge());
-		commit(graph);
 	}
 
 	/**
 	 * Test with cyclic edges.
 	 * 
-	 * @throws CommitFailedException
+	 * @
 	 */
 	@Test
-	public void removeSourcerolenameTest2() throws CommitFailedException {
-		createTransaction(graph);
+	public void removeSourcerolenameTest2() {
 		A v1 = graph.createA();
 		A v2 = graph.createA();
 		C v3 = graph.createC();
@@ -1974,22 +1803,18 @@ public class RoleNameTest extends InstanceTest {
 		v2.add_v(v2);
 		I e4 = graph.createI(v2, v3);
 		v2.remove_sourceI(v2);
-		commit(graph);
-		createReadOnlyTransaction(graph);
 		testIncidenceList(v1, e1, e1.getReversedEdge(), e2);
 		testIncidenceList(v2, e2.getReversedEdge(), e4);
 		testIncidenceList(v3, e4.getReversedEdge());
-		commit(graph);
 	}
 
 	/**
 	 * Random test
 	 * 
-	 * @throws CommitFailedException
+	 * @
 	 */
 	@Test
-	public void removeSourcerolenameRandomTest0() throws CommitFailedException {
-		createTransaction(graph);
+	public void removeSourcerolenameRandomTest0() {
 		A v1 = graph.createA();
 		C v2 = graph.createC();
 		B v3 = graph.createB();
@@ -2019,37 +1844,24 @@ public class RoleNameTest extends InstanceTest {
 				v8Inci, v9Inci, v10Inci, v11Inci, v12Inci);
 		deleteAll(false, v1, v3, v1Inci, v3Inci, "sourceE", "sourceH");
 		v3.remove_sourceE(v1);
-		commit(graph);
-		createReadOnlyTransaction(graph);
 		testIncidences(v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12,
 				v1Inci, v2Inci, v3Inci, v4Inci, v5Inci, v6Inci, v7Inci, v8Inci,
 				v9Inci, v10Inci, v11Inci, v12Inci);
-		commit(graph);
-		createTransaction(graph);
 		deleteAll(false, v1, v4, v1Inci, v4Inci, "sourceE", "sourceH");
 		v4.remove_sourceE(v1);
-		commit(graph);
-		createReadOnlyTransaction(graph);
 		testIncidences(v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12,
 				v1Inci, v2Inci, v3Inci, v4Inci, v5Inci, v6Inci, v7Inci, v8Inci,
 				v9Inci, v10Inci, v11Inci, v12Inci);
-		commit(graph);
-		createTransaction(graph);
 		deleteAll(false, v7, v6, v7Inci, v6Inci, "sourceH");
 		v6.remove_sourceH(v7);
-		commit(graph);
-		createTransaction(graph);
 		testIncidences(v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12,
 				v1Inci, v2Inci, v3Inci, v4Inci, v5Inci, v6Inci, v7Inci, v8Inci,
 				v9Inci, v10Inci, v11Inci, v12Inci);
 		deleteAll(false, v9, v11, v9Inci, v11Inci, "sourceJ");
 		v11.remove_sourceJ(v9);
-		commit(graph);
-		createReadOnlyTransaction(graph);
 		testIncidences(v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12,
 				v1Inci, v2Inci, v3Inci, v4Inci, v5Inci, v6Inci, v7Inci, v8Inci,
 				v9Inci, v10Inci, v11Inci, v12Inci);
-		commit(graph);
 	}
 
 	/*
@@ -2059,26 +1871,21 @@ public class RoleNameTest extends InstanceTest {
 	/**
 	 * Test a vertex which has no adjacent sourceE-vertices.
 	 * 
-	 * @throws CommitFailedException
+	 * @
 	 */
 	@Test
-	public void getSourceRoleNameListTest0() throws CommitFailedException {
-		createTransaction(graph);
+	public void getSourceRoleNameListTest0() {
 		B v1 = graph.createB();
-		commit(graph);
-		createReadOnlyTransaction(graph);
 		compareLists(new LinkedList<Vertex>(), v1.get_sourceE());
-		commit(graph);
 	}
 
 	/**
 	 * Test a vertex which has adjacent sourceH-vertices.
 	 * 
-	 * @throws CommitFailedException
+	 * @
 	 */
 	@Test
-	public void getSourceRoleNameListTest1() throws CommitFailedException {
-		createTransaction(graph);
+	public void getSourceRoleNameListTest1() {
 		C v1 = graph.createC();
 		D v2 = graph.createD();
 		v2.add_sourceH(v1);
@@ -2090,44 +1897,36 @@ public class RoleNameTest extends InstanceTest {
 		expected.add(v1);
 		expected.add(v1);
 		expected.add(v1);
-		commit(graph);
-		createReadOnlyTransaction(graph);
 		compareLists(expected, v2.get_sourceH());
 		expected = new LinkedList<Vertex>();
 		expected.add(v1);
 		compareLists(expected, v2.get_sourceF());
 		compareLists(expected, v2.get_sourceG());
-		commit(graph);
 	}
 
 	/**
 	 * Test with cyclic edges.
 	 * 
-	 * @throws CommitFailedException
+	 * @
 	 */
 	@Test
-	public void getSourceRoleNameListTest2() throws CommitFailedException {
-		createTransaction(graph);
+	public void getSourceRoleNameListTest2() {
 		A v1 = graph.createA();
 		v1.add_sourceI(v1);
 		graph.createI(v1, v1);
-		commit(graph);
-		createReadOnlyTransaction(graph);
 		LinkedList<Vertex> expected = new LinkedList<Vertex>();
 		expected.add(v1);
 		expected.add(v1);
 		compareLists(expected, v1.get_sourceI());
-		commit(graph);
 	}
 
 	/**
 	 * Random test
 	 * 
-	 * @throws CommitFailedException
+	 * @
 	 */
 	@Test
-	public void getSourceRoleNameListRandomTest0() throws CommitFailedException {
-		createTransaction(graph);
+	public void getSourceRoleNameListRandomTest0() {
 		A v1 = graph.createA();
 		C v2 = graph.createC();
 		B v3 = graph.createB();
@@ -2155,9 +1954,7 @@ public class RoleNameTest extends InstanceTest {
 		createRandomGraph(false, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11,
 				v12, v1Inci, v2Inci, v3Inci, v4Inci, v5Inci, v6Inci, v7Inci,
 				v8Inci, v9Inci, v10Inci, v11Inci, v12Inci);
-		commit(graph);
 
-		createReadOnlyTransaction(graph);
 		LinkedList<Vertex> expected = getAllVerticesWithRolename(v1, "sourceI");
 		compareLists(expected, v1.get_sourceI());
 
@@ -2199,7 +1996,6 @@ public class RoleNameTest extends InstanceTest {
 
 		expected = getAllVerticesWithRolename(v12, "sourceJ");
 		compareLists(expected, v12.get_sourceJ());
-		commit(graph);
 	}
 
 	/*
