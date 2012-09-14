@@ -482,9 +482,6 @@
 		<mkdir dir="${testresults.dir}" />
 		<echo>Starting the test...</echo>
 		<junit fork="yes" forkmode="perTest" maxmemory="${maxmemsize}" printsummary="on" showoutput="true" outputtoformatters="true">
-			<sysproperty key="jgralabtest_derby_dbconnection" value="${jgralabtest_derby_dbconnection}" />
-			<sysproperty key="jgralabtest_mysql_dbconnection" value="${jgralabtest_mysql_dbconnection}" />
-			<sysproperty key="jgralabtest_postgres_dbconnection" value="${jgralabtest_postgres_dbconnection}" />
 			<jvmarg value="-enableassertions" />
 			<classpath>
 				<path refid="testclasspath" />
@@ -498,9 +495,6 @@
 		<mkdir dir="${testresults.dir}" />
 		<echo>Starting the test...</echo>
 		<junit fork="yes" forkmode="perTest" maxmemory="${maxmemsize}" printsummary="on" showoutput="true" outputtoformatters="true">
-			<sysproperty key="jgralabtest_derby_dbconnection" value="${jgralabtest_derby_dbconnection}" />
-			<sysproperty key="jgralabtest_mysql_dbconnection" value="${jgralabtest_mysql_dbconnection}" />
-			<sysproperty key="jgralabtest_postgres_dbconnection" value="${jgralabtest_postgres_dbconnection}" />
 			<jvmarg value="-enableassertions" />
 			<classpath>
 				<path refid="testclasspath" />
