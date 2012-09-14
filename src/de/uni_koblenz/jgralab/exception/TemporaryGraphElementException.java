@@ -32,30 +32,20 @@
  * non-source form of such a combination shall include the source code for
  * the parts of JGraLab used as well as that of the covered work.
  */
+package de.uni_koblenz.jgralab.exception;
 
-package de.uni_koblenz.jgralab;
+import de.uni_koblenz.jgralab.exception.GraphException;
 
-import java.util.Random;
+public class TemporaryGraphElementException extends GraphException {
 
-/**
- * RandonIdGenerator creates 128-bit random IDs as string consisting of 4
- * hexadecimal numbers.
- * 
- * @author ist@uni-koblenz.de
- */
-public class RandomIdGenerator {
-	private static Random rand = new Random();
+	private static final long serialVersionUID = 4207982437756832480L;
 
-	/**
-	 * Creates a 128-bit random id, encoded in hexadecimal string
-	 * representation.
-	 * 
-	 * @return a random id
-	 */
-	public static String generateId() {
-		return Integer.toHexString(rand.nextInt()) + "-"
-				+ Integer.toHexString(rand.nextInt()) + "-"
-				+ Integer.toHexString(rand.nextInt()) + "-"
-				+ Integer.toHexString(rand.nextInt());
+	public TemporaryGraphElementException() {
+		super();
 	}
+
+	public TemporaryGraphElementException(String msg) {
+		super(msg);
+	}
+
 }

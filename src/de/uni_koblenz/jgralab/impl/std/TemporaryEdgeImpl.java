@@ -7,10 +7,10 @@ import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.TemporaryEdge;
-import de.uni_koblenz.jgralab.TemporaryGraphElementBlessingException;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.exception.GraphIOException;
 import de.uni_koblenz.jgralab.exception.NoSuchAttributeException;
+import de.uni_koblenz.jgralab.exception.TemporaryGraphElementException;
 import de.uni_koblenz.jgralab.impl.GraphBaseImpl;
 import de.uni_koblenz.jgralab.impl.InternalEdge;
 import de.uni_koblenz.jgralab.impl.InternalGraph;
@@ -30,9 +30,9 @@ public class TemporaryEdgeImpl extends EdgeImpl implements TemporaryEdge {
 		this.attributes = new HashMap<String, Object>();
 		((GraphBaseImpl) graph).addEdge(this, alpha, omega);
 	}
-	
-	protected TemporaryEdgeImpl(int anId, Graph graph, EdgeClass preliminaryType, Vertex alpha,
-			Vertex omega) {
+
+	protected TemporaryEdgeImpl(int anId, Graph graph,
+			EdgeClass preliminaryType, Vertex alpha, Vertex omega) {
 		super(anId, graph, alpha, omega);
 		this.preliminaryType = preliminaryType;
 		this.attributes = new HashMap<String, Object>();
@@ -67,15 +67,15 @@ public class TemporaryEdgeImpl extends EdgeImpl implements TemporaryEdge {
 	}
 
 	@Override
-	public Edge bless(){
-		if(this.preliminaryType==null){
-			throw new TemporaryGraphElementBlessingException(
-					"Transformation of temporary edge " + this + " failed. " 
-					+ "There is no preliminary EdgeClass set.");
+	public Edge bless() {
+		if (this.preliminaryType == null) {
+			throw new TemporaryGraphElementException(
+					"Transformation of temporary edge " + this + " failed. "
+							+ "There is no preliminary EdgeClass set.");
 		}
 		return bless(this.preliminaryType);
 	}
-	
+
 	@Override
 	public Edge bless(EdgeClass edgeClass) {
 
@@ -124,10 +124,10 @@ public class TemporaryEdgeImpl extends EdgeImpl implements TemporaryEdge {
 		correctISeq(prevIncidence, nextIncidence, newEdge, newLastIncidence);
 
 		// iSeq reversed
-		if(prevIncidenceReversed == this){
+		if (prevIncidenceReversed == this) {
 			prevIncidenceReversed = newEdge;
 		}
-		if(nextIncidenceReversed == this){
+		if (nextIncidenceReversed == this) {
 			nextIncidenceReversed = newEdge;
 		}
 		correctISeq(prevIncidenceReversed, nextIncidenceReversed,
@@ -154,14 +154,14 @@ public class TemporaryEdgeImpl extends EdgeImpl implements TemporaryEdge {
 	private void validateConversion(EdgeClass edgeClass) {
 		if (!this.getAlpha().getAttributedElementClass()
 				.isValidFromFor(edgeClass)) {
-			throw new TemporaryGraphElementBlessingException(
+			throw new TemporaryGraphElementException(
 					"Transformation of temporary edge " + this + " failed. "
 							+ this.getAlpha() + " is not a valid source for "
 							+ edgeClass);
 		}
 		if (!this.getOmega().getAttributedElementClass()
 				.isValidToFor(edgeClass)) {
-			throw new TemporaryGraphElementBlessingException(
+			throw new TemporaryGraphElementException(
 					"Transformation of temporary edge " + this + " failed. "
 							+ this.getOmega() + " is not a valid target for "
 							+ edgeClass);
@@ -171,7 +171,7 @@ public class TemporaryEdgeImpl extends EdgeImpl implements TemporaryEdge {
 			if (edgeClass.containsAttribute(atname)) {
 				if (!edgeClass.getAttribute(atname).getDomain()
 						.isConformValue(this.attributes.get(atname))) {
-					throw new TemporaryGraphElementBlessingException(
+					throw new TemporaryGraphElementException(
 							"Transformation of temporary vertex " + this
 									+ " failed. " + edgeClass
 									+ " has an attribute " + atname + " but "
@@ -191,16 +191,15 @@ public class TemporaryEdgeImpl extends EdgeImpl implements TemporaryEdge {
 			newEdge.setPrevIncidenceInternal(prevIncidence);
 		}
 		newLastIncidence.setNextIncidenceInternal(null);
-	
+
 		if (prevIncidence != null) {
 			prevIncidence.setNextIncidenceInternal(newEdge);
 		} else {// Temporary Edge is first incidence
 			((InternalVertex) newEdge.getThis()).setFirstIncidence(newEdge);
 		}
 
-		((InternalVertex) newEdge.getThis())
-				.setLastIncidence(newLastIncidence);
-		
+		((InternalVertex) newEdge.getThis()).setLastIncidence(newLastIncidence);
+
 	}
 
 	@Override

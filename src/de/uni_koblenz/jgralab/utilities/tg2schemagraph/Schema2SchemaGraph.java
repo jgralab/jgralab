@@ -34,7 +34,6 @@
  */
 package de.uni_koblenz.jgralab.utilities.tg2schemagraph;
 
-import java.util.ConcurrentModificationException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -115,11 +114,6 @@ public class Schema2SchemaGraph {
 	private de.uni_koblenz.jgralab.schema.Package defaultPackage;
 
 	/**
-	 * Semaphore to prevent any additional conversion process.
-	 */
-	private boolean workInProgress;
-
-	/**
 	 * Map to reference a Package of a Schema to a Package of a SchemaGraph.
 	 */
 	private Map<de.uni_koblenz.jgralab.schema.Package, Package> packageMap;
@@ -166,9 +160,6 @@ public class Schema2SchemaGraph {
 	 * SetUp method, which instantiates all necessary resources.
 	 */
 	private void setUp() {
-
-		workInProgress = true;
-
 		packageMap = new HashMap<de.uni_koblenz.jgralab.schema.Package, Package>();
 		attributedElementClassMap = new HashMap<de.uni_koblenz.jgralab.schema.AttributedElementClass<?, ?>, AttributedElementClass>();
 		domainMap = new HashMap<de.uni_koblenz.jgralab.schema.Domain, Domain>();
@@ -198,8 +189,6 @@ public class Schema2SchemaGraph {
 		gDefaultPackage = null;
 
 		schemaGraph = null;
-
-		workInProgress = false;
 	}
 
 	/**
@@ -209,13 +198,8 @@ public class Schema2SchemaGraph {
 	 *            Schema, which should be convert to a SchemaGraph.
 	 * @return New SchemaGraph object.
 	 */
-	public SchemaGraph convert2SchemaGraph(
+	public synchronized SchemaGraph convert2SchemaGraph(
 			de.uni_koblenz.jgralab.schema.Schema schema) {
-
-		// Guards the access of this object
-		if (workInProgress) {
-			throw new ConcurrentModificationException("WorkInProgress");
-		}
 
 		// Sets all resources up.
 		setUp();

@@ -9,11 +9,11 @@ import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.TemporaryEdge;
-import de.uni_koblenz.jgralab.TemporaryGraphElementBlessingException;
 import de.uni_koblenz.jgralab.TemporaryVertex;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.exception.GraphIOException;
 import de.uni_koblenz.jgralab.exception.NoSuchAttributeException;
+import de.uni_koblenz.jgralab.exception.TemporaryGraphElementException;
 import de.uni_koblenz.jgralab.impl.InternalGraph;
 import de.uni_koblenz.jgralab.impl.InternalVertex;
 import de.uni_koblenz.jgralab.schema.VertexClass;
@@ -23,18 +23,19 @@ public class TemporaryVertexImpl extends VertexImpl implements TemporaryVertex {
 	private HashMap<String, Object> attributes;
 
 	private VertexClass preliminaryType;
-	
+
 	protected TemporaryVertexImpl(int id, Graph graph) {
 		super(id, graph);
 		this.attributes = new HashMap<String, Object>();
 	}
 
-	protected TemporaryVertexImpl(int id, Graph graph, VertexClass preliminaryType) {
+	protected TemporaryVertexImpl(int id, Graph graph,
+			VertexClass preliminaryType) {
 		super(id, graph);
 		this.attributes = new HashMap<String, Object>();
 		this.preliminaryType = preliminaryType;
 	}
-	
+
 	@Override
 	public VertexClass getAttributedElementClass() {
 		return this.graph.getGraphClass().getTemporaryVertexClass();
@@ -94,14 +95,14 @@ public class TemporaryVertexImpl extends VertexImpl implements TemporaryVertex {
 
 	@Override
 	public Vertex bless() {
-		if(this.preliminaryType==null){
-			throw new TemporaryGraphElementBlessingException(
-					"Transformation of temporary vertex " + this + " failed. " 
-					+ "There is no preliminary VertexClass set.");
+		if (this.preliminaryType == null) {
+			throw new TemporaryGraphElementException(
+					"Transformation of temporary vertex " + this + " failed. "
+							+ "There is no preliminary VertexClass set.");
 		}
 		return this.bless(this.preliminaryType);
 	}
-	
+
 	@Override
 	public Vertex bless(VertexClass vc) {
 
@@ -150,18 +151,20 @@ public class TemporaryVertexImpl extends VertexImpl implements TemporaryVertex {
 		InternalVertex[] vertex = g.getVertex();
 		vertex[id] = newVertex;
 		vertex[idToFree] = null;
-		
-		//Transform TemporaryEdges with type
+
+		// Transform TemporaryEdges with type
 		HashSet<TemporaryEdge> tempEdgeList = new HashSet<TemporaryEdge>();
-		for(Edge te : newVertex.incidences(this.getGraphClass().getTemporaryEdgeClass())){
-			if(((TemporaryEdge)te).getPreliminaryType() != null && te.isValid()){
+		for (Edge te : newVertex.incidences(this.getGraphClass()
+				.getTemporaryEdgeClass())) {
+			if (((TemporaryEdge) te).getPreliminaryType() != null
+					&& te.isValid()) {
 				tempEdgeList.add((TemporaryEdge) te.getNormalEdge());
 			}
 		}
-		for(TemporaryEdge tempEdge : tempEdgeList){
-			try{
+		for (TemporaryEdge tempEdge : tempEdgeList) {
+			try {
 				tempEdge.bless(tempEdge.getPreliminaryType());
-			}catch(TemporaryGraphElementBlessingException ex){
+			} catch (TemporaryGraphElementException ex) {
 				// Edge stays temporary
 			}
 		}
@@ -173,7 +176,7 @@ public class TemporaryVertexImpl extends VertexImpl implements TemporaryVertex {
 		// direction every time
 		for (Edge e : this.incidences(EdgeDirection.OUT)) {
 			if (!vc.isValidFromFor(e.getAttributedElementClass())) {
-				throw new TemporaryGraphElementBlessingException(
+				throw new TemporaryGraphElementException(
 						"Transformation of temporary vertex " + this
 								+ " failed. " + vc
 								+ " is not a valid source for edge " + e + ".");
@@ -182,7 +185,7 @@ public class TemporaryVertexImpl extends VertexImpl implements TemporaryVertex {
 
 		for (Edge e : this.incidences(EdgeDirection.IN)) {
 			if (!vc.isValidToFor(e.getAttributedElementClass())) {
-				throw new TemporaryGraphElementBlessingException(
+				throw new TemporaryGraphElementException(
 						"Transformation of temporary vertex " + this
 								+ " failed. " + vc
 								+ " is not a valid target for edge " + e + ".");
@@ -192,14 +195,14 @@ public class TemporaryVertexImpl extends VertexImpl implements TemporaryVertex {
 		for (String atname : this.attributes.keySet()) {
 			if (vc.containsAttribute(atname)) {
 				boolean valid = true;
-				try{
+				try {
 					valid = vc.getAttribute(atname).getDomain()
 							.isConformValue(this.attributes.get(atname));
-				}catch(NoSuchAttributeException ex){
+				} catch (NoSuchAttributeException ex) {
 					valid = false;
 				}
 				if (!valid) {
-					throw new TemporaryGraphElementBlessingException(
+					throw new TemporaryGraphElementException(
 							"Transformation of temporary vertex " + this
 									+ " failed. " + vc + " has an attribute "
 									+ atname + " but "
@@ -219,8 +222,6 @@ public class TemporaryVertexImpl extends VertexImpl implements TemporaryVertex {
 	public boolean isTemporary() {
 		return true;
 	}
-
-	
 
 	@Override
 	public VertexClass getPreliminaryType() {

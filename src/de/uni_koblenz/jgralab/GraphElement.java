@@ -35,6 +35,7 @@
 
 package de.uni_koblenz.jgralab;
 
+import de.uni_koblenz.jgralab.exception.TemporaryGraphElementException;
 import de.uni_koblenz.jgralab.schema.GraphElementClass;
 
 /**
@@ -83,7 +84,7 @@ public interface GraphElement<SC extends GraphElementClass<SC, IC>, IC extends G
 	 * preliminary type is not set.
 	 * For non-temporary elements: returns itself
 	 *         
-	 * @throws TemporaryGraphElementBlessingException 
+	 * @throws TemporaryGraphElementException 
 	 * 			if it is not possible to bless the element to schemaClass
 	 */
 	public IC bless();
@@ -98,7 +99,7 @@ public interface GraphElement<SC extends GraphElementClass<SC, IC>, IC extends G
 	 * @return a new graph element of <code>schemaClass</code> that takes the
 	 *         place of this temporary element.
 	 *         
-	 * @throws TemporaryGraphElementBlessingException 
+	 * @throws TemporaryGraphElementException 
 	 * 			if it is not possible to bless the element to schemaClass
 	 */
 	public IC bless(SC schemaClass);

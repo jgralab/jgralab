@@ -20,11 +20,11 @@ import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.ImplementationType;
 import de.uni_koblenz.jgralab.Record;
 import de.uni_koblenz.jgralab.TemporaryEdge;
-import de.uni_koblenz.jgralab.TemporaryGraphElementBlessingException;
 import de.uni_koblenz.jgralab.TemporaryVertex;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.exception.GraphException;
 import de.uni_koblenz.jgralab.exception.GraphIOException;
+import de.uni_koblenz.jgralab.exception.TemporaryGraphElementException;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.RecordDomain;
 import de.uni_koblenz.jgralab.schema.RecordDomain.RecordComponent;
@@ -213,7 +213,7 @@ public class GenericTemporaryGraphElementsTest {
 		try {
 			e1_temp.bless(ec_Street);
 			fail();
-		} catch (TemporaryGraphElementBlessingException e) {
+		} catch (TemporaryGraphElementException e) {
 			assertTrue(e1_temp.isValid());
 		}
 	}
@@ -239,7 +239,7 @@ public class GenericTemporaryGraphElementsTest {
 		try {
 			v_temp.bless(vc_Plaza);
 			fail();
-		} catch (TemporaryGraphElementBlessingException ex) {
+		} catch (TemporaryGraphElementException ex) {
 			assertTrue(v_temp.isValid());
 		}
 
@@ -305,7 +305,7 @@ public class GenericTemporaryGraphElementsTest {
 		try {
 			v1_temp.bless(vc_Town);
 			fail();
-		} catch (TemporaryGraphElementBlessingException ex) {
+		} catch (TemporaryGraphElementException ex) {
 			assertTrue(v1_temp.isValid());
 		}
 	}
@@ -369,7 +369,7 @@ public class GenericTemporaryGraphElementsTest {
 		try{
 			tempe.bless(tempe.getPreliminaryType());
 			fail();
-		}catch(TemporaryGraphElementBlessingException ex){
+		}catch(TemporaryGraphElementException ex){
 			assertTrue(tempe.isValid());
 		}
 		

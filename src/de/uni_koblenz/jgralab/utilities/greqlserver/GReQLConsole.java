@@ -32,7 +32,7 @@
  * non-source form of such a combination shall include the source code for
  * the parts of JGraLab used as well as that of the covered work.
  */
-package de.uni_koblenz.jgralab.utilities.greqlgui;
+package de.uni_koblenz.jgralab.utilities.greqlserver;
 
 import java.io.BufferedReader;
 import java.io.File;
