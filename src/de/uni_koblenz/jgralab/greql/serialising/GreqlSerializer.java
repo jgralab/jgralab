@@ -103,7 +103,6 @@ import de.uni_koblenz.jgralab.greql.schema.SimplePathDescription;
 import de.uni_koblenz.jgralab.greql.schema.StringLiteral;
 import de.uni_koblenz.jgralab.greql.schema.SubgraphDefinition;
 import de.uni_koblenz.jgralab.greql.schema.SubgraphRestrictedExpression;
-import de.uni_koblenz.jgralab.greql.schema.TableComprehension;
 import de.uni_koblenz.jgralab.greql.schema.ThisEdge;
 import de.uni_koblenz.jgralab.greql.schema.ThisVertex;
 import de.uni_koblenz.jgralab.greql.schema.TransposedPathDescription;
@@ -744,8 +743,6 @@ public class GreqlSerializer {
 			sb.append(" reportSet");
 		} else if (exp instanceof ListComprehension) {
 			sb.append(" report");
-		} else if (exp instanceof TableComprehension) {
-			sb.append(" reportTable");
 		} else if (exp instanceof MapComprehension) {
 			sb.append(" reportMap");
 			serializeLimitedComprehension(exp);
@@ -767,17 +764,6 @@ public class GreqlSerializer {
 		IsTableHeaderOf isTableHeaderOf = exp
 				.getFirstIsTableHeaderOfIncidence(EdgeDirection.IN);
 
-		if (exp.isInstanceOf(TableComprehension.VC)) {
-			Expression columnHeader = exp
-					.getFirstIsColumnHeaderExprOfIncidence(EdgeDirection.IN)
-					.getAlpha();
-			serializeExpression(columnHeader, false);
-			sb.append(", ");
-			Expression rowHeader = exp.getFirstIsRowHeaderExprOfIncidence(
-					EdgeDirection.IN).getAlpha();
-			serializeExpression(rowHeader, false);
-			sb.append(", ");
-		}
 		if (result instanceof TupleConstruction) {
 			// here the tup() can be omitted
 			boolean first = true;

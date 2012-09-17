@@ -67,7 +67,6 @@ import de.uni_koblenz.jgralab.greql.schema.IsArgumentOf;
 import de.uni_koblenz.jgralab.greql.schema.IsBooleanPredicateOfEdgeRestriction;
 import de.uni_koblenz.jgralab.greql.schema.IsBoundExprOfQuantifiedExpression;
 import de.uni_koblenz.jgralab.greql.schema.IsBoundVarOf;
-import de.uni_koblenz.jgralab.greql.schema.IsColumnHeaderExprOf;
 import de.uni_koblenz.jgralab.greql.schema.IsConstraintOf;
 import de.uni_koblenz.jgralab.greql.schema.IsDeclaredVarOf;
 import de.uni_koblenz.jgralab.greql.schema.IsDefinitionOf;
@@ -77,7 +76,6 @@ import de.uni_koblenz.jgralab.greql.schema.IsGoalRestrOf;
 import de.uni_koblenz.jgralab.greql.schema.IsKeyExprOfComprehension;
 import de.uni_koblenz.jgralab.greql.schema.IsQuantifiedDeclOf;
 import de.uni_koblenz.jgralab.greql.schema.IsQueryExprOf;
-import de.uni_koblenz.jgralab.greql.schema.IsRowHeaderExprOf;
 import de.uni_koblenz.jgralab.greql.schema.IsSimpleDeclOf;
 import de.uni_koblenz.jgralab.greql.schema.IsStartRestrOf;
 import de.uni_koblenz.jgralab.greql.schema.IsTableHeaderOf;
@@ -89,7 +87,6 @@ import de.uni_koblenz.jgralab.greql.schema.PathDescription;
 import de.uni_koblenz.jgralab.greql.schema.QuantifiedExpression;
 import de.uni_koblenz.jgralab.greql.schema.SimpleDeclaration;
 import de.uni_koblenz.jgralab.greql.schema.SourcePosition;
-import de.uni_koblenz.jgralab.greql.schema.TableComprehension;
 import de.uni_koblenz.jgralab.greql.schema.ThisEdge;
 import de.uni_koblenz.jgralab.greql.schema.ThisLiteral;
 import de.uni_koblenz.jgralab.greql.schema.ThisVertex;
@@ -463,20 +460,6 @@ public abstract class ParserHelper {
 					mergeVariables(isTableHeaderOf.getAlpha(), true);
 					isTableHeaderOf = isTableHeaderOf
 							.getNextIsTableHeaderOfIncidence(EdgeDirection.IN);
-				}
-			}
-			if (v instanceof TableComprehension) {
-				TableComprehension tc = (TableComprehension) v;
-				IsColumnHeaderExprOf ch = tc
-						.getFirstIsColumnHeaderExprOfIncidence(EdgeDirection.IN);
-				mergeVariables(ch.getAlpha(), true);
-				IsRowHeaderExprOf rh = tc
-						.getFirstIsRowHeaderExprOfIncidence(EdgeDirection.IN);
-				mergeVariables(rh.getAlpha(), true);
-				IsTableHeaderOf th = tc
-						.getFirstIsTableHeaderOfIncidence(EdgeDirection.IN);
-				if (th != null) {
-					mergeVariables(th.getAlpha(), true);
 				}
 			}
 		}

@@ -824,66 +824,6 @@ public class ResidualEvaluatorTest {
 		}
 	}
 
-	@Test
-	public void testFWRExpression_reportTable_twoVariablesAndThreeColumns()
-			throws InstantiationException, IllegalAccessException {
-		String queryText = "from n,m:list(1..3) reportTable n,m,n*m end";
-		for (GreqlQuery query : new GreqlQuery[] {
-				GreqlQuery.createQuery(queryText),
-				(GreqlQuery) createQueryClass(queryText,
-						"testdata.TestFWRExpression_reportTable_twoVariablesAndThreeColumns") }) {
-			Table<?> ergTable = (Table<?>) query.evaluate(datagraph);
-			assertEquals(3, ergTable.size());
-			for (int i = 0; i < ergTable.size(); i++) {
-				int n = i + 1;
-				Tuple ergLine = (Tuple) ergTable.get(i);
-				assertEquals(ergTable.getTitles().size(), ergLine.size());
-				assertEquals(n, ergLine.get(0));
-				for (int j = 1; j < ergLine.size(); j++) {
-					int m = j;
-					assertEquals("check result for " + n + "*" + m, n * m,
-							ergLine.get(j));
-				}
-			}
-			PVector<String> titles = ergTable.getTitles();
-			assertEquals(4, titles.size());
-			assertEquals("", titles.get(0));
-			assertEquals("1", titles.get(1));
-			assertEquals("2", titles.get(2));
-			assertEquals("3", titles.get(3));
-		}
-	}
-
-	@Test
-	public void testFWRExpression_reportTable_twoVariablesAndThreeColumns2()
-			throws InstantiationException, IllegalAccessException {
-		String queryText = "from n:list(4..6),m:list(1..3) reportTable n,m,n*m end";
-		for (GreqlQuery query : new GreqlQuery[] {
-				GreqlQuery.createQuery(queryText),
-				(GreqlQuery) createQueryClass(queryText,
-						"testdata.TestFWRExpression_reportTable_twoVariablesAndThreeColumns2") }) {
-			Table<?> ergTable = (Table<?>) query.evaluate(datagraph);
-			assertEquals(3, ergTable.size());
-			for (int i = 0; i < ergTable.size(); i++) {
-				int n = i + 1;
-				Tuple ergLine = (Tuple) ergTable.get(i);
-				assertEquals(ergTable.getTitles().size(), ergLine.size());
-				assertEquals(n, ergLine.get(0));
-				for (int j = 1; j < ergLine.size(); j++) {
-					int m = j + 3;
-					assertEquals("check result for " + n + "*" + m, n * m,
-							ergLine.get(j));
-				}
-			}
-			PVector<String> titles = ergTable.getTitles();
-			assertEquals(4, titles.size());
-			assertEquals("", titles.get(0));
-			assertEquals("4", titles.get(1));
-			assertEquals("5", titles.get(2));
-			assertEquals("6", titles.get(3));
-		}
-	}
-
 	/*
 	 * Missing FunctionApplication tests
 	 */

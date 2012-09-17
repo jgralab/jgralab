@@ -47,7 +47,7 @@ import java.util.regex.Pattern;
 import de.uni_koblenz.jgralab.greql.exception.ParsingException;
 
 public class GreqlLexer {
-	
+
 	@SuppressWarnings("serial")
 	protected static final Map<TokenTypes, String> fixedTokens = Collections
 			.unmodifiableMap(new EnumMap<TokenTypes, String>(TokenTypes.class) {
@@ -78,7 +78,6 @@ public class GreqlLexer {
 					put(TokenTypes.REPORTSETN, "reportSetN");
 					put(TokenTypes.REPORTLIST, "reportList");
 					put(TokenTypes.REPORTLISTN, "reportListN");
-					put(TokenTypes.REPORTTABLE, "reportTable");
 					put(TokenTypes.REPORTMAP, "reportMap");
 					put(TokenTypes.REPORTMAPN, "reportMapN");
 					put(TokenTypes.STORE, "store");
@@ -242,33 +241,43 @@ public class GreqlLexer {
 			} else {
 				char c = query.charAt(position);
 				if (isNumber(c)) {
-					//match double or long value 
-					Matcher m = Pattern.compile("(0[xX][0-9A-Fa-f]+)|([0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?)").matcher(query.substring(position));
+					// match double or long value
+					Matcher m = Pattern
+							.compile(
+									"(0[xX][0-9A-Fa-f]+)|([0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?)")
+							.matcher(query.substring(position));
 					m.lookingAt();
 					int end = m.end() + position;
-					position+=m.end();
+					position += m.end();
 					String matchedString = m.group();
-					if (matchedString.startsWith("0x") || matchedString.startsWith("0X")) {
-						Long hexValue = Long.parseLong(matchedString.substring(2), 16);
-						return new LongToken(TokenTypes.LONGLITERAL, position, end, matchedString, hexValue);
-					} 
+					if (matchedString.startsWith("0x")
+							|| matchedString.startsWith("0X")) {
+						Long hexValue = Long.parseLong(
+								matchedString.substring(2), 16);
+						return new LongToken(TokenTypes.LONGLITERAL, position,
+								end, matchedString, hexValue);
+					}
 					if (matchedString.startsWith("0")) {
-						//might be an octal value
+						// might be an octal value
 						try {
-							Long octValue = Long.parseLong(matchedString.substring(1), 8);
-							return new LongToken(TokenTypes.LONGLITERAL, position, end, matchedString, octValue);
+							Long octValue = Long.parseLong(
+									matchedString.substring(1), 8);
+							return new LongToken(TokenTypes.LONGLITERAL,
+									position, end, matchedString, octValue);
 						} catch (Exception ex) {
-							//no octal value
+							// no octal value
 						}
 					}
 					try {
 						Long decValue = Long.parseLong(matchedString);
-						return new LongToken(TokenTypes.LONGLITERAL, position, end, matchedString, decValue);
+						return new LongToken(TokenTypes.LONGLITERAL, position,
+								end, matchedString, decValue);
 					} catch (Exception ex) {
-						//no decimal long value
+						// no decimal long value
 					}
 					Double doubleValue = Double.parseDouble(matchedString);
-					return new DoubleToken(TokenTypes.DOUBLELITERAL, position, end, matchedString, doubleValue);
+					return new DoubleToken(TokenTypes.DOUBLELITERAL, position,
+							end, matchedString, doubleValue);
 				} else {
 					// identifier and literals
 					StringBuilder nextPossibleToken = new StringBuilder();
@@ -282,8 +291,9 @@ public class GreqlLexer {
 					}
 					String tokenText = nextPossibleToken.toString();
 					if (tokenText.equals("thisVertex")) {
-						recognizedToken = new ComplexToken(TokenTypes.THISVERTEX,
-								start, position - start, tokenText);
+						recognizedToken = new ComplexToken(
+								TokenTypes.THISVERTEX, start, position - start,
+								tokenText);
 					} else if (tokenText.equals("thisEdge")) {
 						recognizedToken = new ComplexToken(TokenTypes.THISEDGE,
 								start, position - start, tokenText);
@@ -293,11 +303,12 @@ public class GreqlLexer {
 									.get(TokenTypes.NEG_INFINITY))
 							|| tokenText.equals(fixedTokens
 									.get(TokenTypes.NOT_A_NUMBER))) {
-						recognizedToken = matchDoubleConstantToken(start, position
-								- start, tokenText);
-					}  else {
-						recognizedToken = new ComplexToken(TokenTypes.IDENTIFIER,
-								start, position - start, tokenText);
+						recognizedToken = matchDoubleConstantToken(start,
+								position - start, tokenText);
+					} else {
+						recognizedToken = new ComplexToken(
+								TokenTypes.IDENTIFIER, start, position - start,
+								tokenText);
 					}
 				}
 			}
@@ -314,7 +325,6 @@ public class GreqlLexer {
 		return recognizedToken;
 	}
 
-	
 	private final Token matchDoubleConstantToken(int start, int i,
 			String tokenText) {
 		Double value = Double.parseDouble(tokenText);
@@ -325,7 +335,6 @@ public class GreqlLexer {
 	private final boolean isNumber(char c) {
 		return (c >= Character.valueOf('0')) && (c <= Character.valueOf('9'));
 	}
-
 
 	public boolean hasNextToken() {
 		skipWs();
