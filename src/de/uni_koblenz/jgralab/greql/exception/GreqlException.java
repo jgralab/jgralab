@@ -45,6 +45,10 @@ package de.uni_koblenz.jgralab.greql.exception;
 public class GreqlException extends RuntimeException {
 	private static final long serialVersionUID = -2914800888476896758L;
 
+	public GreqlException() {
+		super();
+	}
+
 	public GreqlException(String message) {
 		super(message);
 	}

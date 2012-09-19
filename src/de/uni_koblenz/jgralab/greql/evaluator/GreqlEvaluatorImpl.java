@@ -44,6 +44,7 @@ import de.uni_koblenz.jgralab.greql.GreqlEnvironment;
 import de.uni_koblenz.jgralab.greql.GreqlQuery;
 import de.uni_koblenz.jgralab.greql.evaluator.fa.FiniteAutomaton;
 import de.uni_koblenz.jgralab.greql.evaluator.vertexeval.VertexEvaluator;
+import de.uni_koblenz.jgralab.greql.exception.EvaluationInterruptedException;
 import de.uni_koblenz.jgralab.greql.schema.GreqlExpression;
 import de.uni_koblenz.jgralab.greql.schema.GreqlVertex;
 import de.uni_koblenz.jgralab.greql.types.Undefined;
@@ -115,14 +116,11 @@ public class GreqlEvaluatorImpl implements InternalGreqlEvaluator {
 	 */
 	private long estimatedInterpretationSteps;
 
-	/**
-	 * Holds the already passed time in abstract time units
-	 */
-	// private long passedInterpretationSteps;
-
 	private GreqlQueryImpl query;
 
 	private GreqlEnvironment environment;
+
+	private int cnt = 0;
 
 	/**
 	 * should be called by every vertex evaluator to indicate a progress. The
@@ -131,6 +129,13 @@ public class GreqlEvaluatorImpl implements InternalGreqlEvaluator {
 	 */
 	@Override
 	public final void progress(long value) {
+		// check for interruption every now and then...
+		if (++cnt == 4096) {
+			if (Thread.interrupted()) {
+				throw new EvaluationInterruptedException();
+			}
+			cnt = 0;
+		}
 		progressStepsPassed += value;
 		if (progressFunction != null) {
 			while (progressStepsPassed > progressFunction.getUpdateInterval()) {
@@ -138,7 +143,6 @@ public class GreqlEvaluatorImpl implements InternalGreqlEvaluator {
 				progressStepsPassed -= progressFunction.getUpdateInterval();
 			}
 		}
-		// passedInterpretationSteps += value;
 	}
 
 	@Override
@@ -220,10 +224,6 @@ public class GreqlEvaluatorImpl implements InternalGreqlEvaluator {
 	public GreqlEvaluatorImpl(GreqlQuery query, Graph datagraph,
 			GreqlEnvironment environment) {
 		initialize(query, datagraph, environment, null);
-	}
-
-	public GreqlEvaluatorImpl() {
-
 	}
 
 	/**
