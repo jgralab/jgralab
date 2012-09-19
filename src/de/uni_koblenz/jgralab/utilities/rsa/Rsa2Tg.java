@@ -1389,8 +1389,9 @@ public class Rsa2Tg extends XmlProcessor {
 			throw new ProcessingException(getFileName(),
 					"Subclass has higher upper bound (" + subInc.get_max()
 							+ ") than superclass (" + superInc.get_max()
-							+ ") in specialisation " + subClass + " --> "
-							+ superClass);
+							+ ") in specialisation "
+							+ subClass.get_qualifiedName() + " --> "
+							+ superClass.get_qualifiedName());
 		}
 
 		// COMPOSITE end may specialize any other end
@@ -1403,8 +1404,9 @@ public class Rsa2Tg extends XmlProcessor {
 			throw new ProcessingException(getFileName(),
 					"Incompatible aggregation kinds (" + subAgg
 							+ " specialises " + superAgg
-							+ ") in generalisation " + subClass + " --> "
-							+ superClass);
+							+ ") in generalisation "
+							+ subClass.get_qualifiedName() + " --> "
+							+ superClass.get_qualifiedName());
 
 		}
 
