@@ -59,11 +59,13 @@ public class EvaluationEnvironment {
 	HashMap<TaskHandle, EvaluationTask> tasks;
 	long startTime;
 	long doneTime;
+	boolean sequentially;
 
-	EvaluationEnvironment() {
+	EvaluationEnvironment(boolean sequentially) {
 		// package scoped constructor, no construction from outside
 		inDegree = new HashMap<TaskHandle, Integer>();
 		tasks = new HashMap<TaskHandle, EvaluationTask>();
+		this.sequentially = sequentially;
 	}
 
 	/**

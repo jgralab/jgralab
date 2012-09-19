@@ -89,6 +89,7 @@ import de.uni_koblenz.jgralab.ProgressFunction;
 import de.uni_koblenz.jgralab.greql.GreqlQuery;
 import de.uni_koblenz.jgralab.greql.evaluator.GreqlEnvironmentAdapter;
 import de.uni_koblenz.jgralab.greql.evaluator.GreqlQueryImpl;
+import de.uni_koblenz.jgralab.greql.exception.EvaluationInterruptedException;
 import de.uni_koblenz.jgralab.greql.exception.GreqlException;
 import de.uni_koblenz.jgralab.greql.exception.ParsingException;
 import de.uni_koblenz.jgralab.greql.exception.QuerySourceException;
@@ -179,8 +180,15 @@ public class GreqlGui extends SwingApplication {
 		private long totalElements;
 		Exception ex;
 
-		Worker(BoundedRangeModel brm) {
+		Worker(String threadName, BoundedRangeModel brm) {
+			super(threadName);
 			this.brm = brm;
+		}
+
+		protected void finish() {
+			progressBar.setIndeterminate(false);
+			progressBar.setStringPainted(false);
+			brm.setValue(brm.getMinimum());
 		}
 
 		@Override
@@ -188,9 +196,7 @@ public class GreqlGui extends SwingApplication {
 			invokeAndWait(new Runnable() {
 				@Override
 				public void run() {
-					progressBar.setIndeterminate(false);
-					progressBar.setStringPainted(false);
-					brm.setValue(brm.getMinimum());
+					finish();
 				}
 			});
 		}
@@ -214,7 +220,7 @@ public class GreqlGui extends SwingApplication {
 
 		@Override
 		public void progress(long processedElements) {
-			invokeAndWait(new Runnable() {
+			invokeLater(new Runnable() {
 				@Override
 				public void run() {
 					progressBar.setIndeterminate(false);
@@ -229,16 +235,12 @@ public class GreqlGui extends SwingApplication {
 		boolean errors;
 
 		GreqlFunctionLoader(BoundedRangeModel brm) {
-			super(brm);
+			super("GreqlFunctionLoaderThread", brm);
 		}
 
 		@Override
 		public void run() {
 			init(greqlFunctionList.size());
-			try {
-				Thread.sleep(1000);
-			} catch (InterruptedException e) {
-			}
 			try {
 				errors = false;
 				for (String className : greqlFunctionList.getEntries()) {
@@ -301,7 +303,7 @@ public class GreqlGui extends SwingApplication {
 		private final File file;
 
 		GraphLoader(BoundedRangeModel brm, File file) {
-			super(brm);
+			super("GraphLoaderThread", brm);
 			this.file = file;
 		}
 
@@ -316,7 +318,6 @@ public class GreqlGui extends SwingApplication {
 									genericImplementationCheckBoxItem
 											.isSelected() ? ImplementationType.GENERIC
 											: ImplementationType.STANDARD, this);
-					System.err.println(graph);
 					recentGraphList.rememberFile(file);
 					graphLoading = false;
 				}
@@ -382,7 +383,7 @@ public class GreqlGui extends SwingApplication {
 		private Object queryResult;
 
 		Evaluator(BoundedRangeModel brm, String query) {
-			super(brm);
+			super("EvaluatorThread", brm);
 			this.queryString = query;
 		}
 
@@ -420,11 +421,12 @@ public class GreqlGui extends SwingApplication {
 						evaluationTime = (System.currentTimeMillis() - evaluationTime) / 1000.0;
 					}
 				}
-				invokeAndWait(new Runnable() {
-
-					@Override
-					public void run() {
-						if (ex != null) {
+				if (ex != null
+						&& !(ex instanceof EvaluationInterruptedException)) {
+					invokeAndWait(new Runnable() {
+						// update statusbar and handle exceptions
+						@Override
+						public void run() {
 							evaluating = false;
 							brm.setValue(brm.getMinimum());
 							getStatusBar()
@@ -458,18 +460,18 @@ public class GreqlGui extends SwingApplication {
 									+ msg);
 							setResultFont(resultFont);
 							updateActions();
-						} else {
+						}
+					});
+				}
+				if (ex == null) {
+					invokeAndWait(new Runnable() {
+						// save and display result
+						@Override
+						public void run() {
 							getStatusBar()
 									.setText(
 											MessageFormat
 													.format(getMessage("GreqlGui.StatusMessage.EvaluationFinished"), evaluationTime)); //$NON-NLS-1$
-						}
-					}
-				});
-				if (ex == null) {
-					invokeLater(new Runnable() {
-						@Override
-						public void run() {
 							evaluating = false;
 							updateActions();
 							try {
@@ -532,6 +534,21 @@ public class GreqlGui extends SwingApplication {
 							getMessage("GreqlGui.StatusMessage.Evaluating")); //$NON-NLS-1$
 				}
 			});
+		}
+
+		@Override
+		public void finish() {
+			super.finish();
+			evaluator = null;
+			evaluating = false;
+			if (ex != null && ex instanceof EvaluationInterruptedException) {
+				resultPane
+						.setText(getMessage("GreqlGui.StatusMessage.QueryAborted")); //$NON-NLS-1$
+				setResultFont(resultFont);
+				getStatusBar().setText(
+						getMessage("GreqlGui.StatusMessage.QueryAborted")); //$NON-NLS-1$
+			}
+			updateActions();
 		}
 	}
 
@@ -607,7 +624,7 @@ public class GreqlGui extends SwingApplication {
 		@Override
 		public void write(byte[] buf, int off, int len) {
 			final String aString = new String(buf, off, len);
-			invokeAndWait(new Runnable() {
+			invokeLater(new Runnable() {
 				@Override
 				public void run() {
 					consoleOutputArea.append(aString);
@@ -1164,19 +1181,9 @@ public class GreqlGui extends SwingApplication {
 		evaluator.start();
 	}
 
-	@SuppressWarnings("deprecation")
 	private void stopEvaluation() {
 		if (evaluating) {
-			evaluator.stop(); // this brutal brake is intended!
-			evaluating = false;
-			evaluator = null;
-			brm.setValue(brm.getMinimum());
-			resultPane
-					.setText(getMessage("GreqlGui.StatusMessage.QueryAborted")); //$NON-NLS-1$
-			setResultFont(resultFont);
-			getStatusBar().setText(
-					getMessage("GreqlGui.StatusMessage.QueryAborted")); //$NON-NLS-1$
-			updateActions();
+			evaluator.interrupt();
 		}
 	}
 

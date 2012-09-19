@@ -514,11 +514,23 @@ public class FunLib {
 					assert Types.isValidGreqlValue(result);
 					return result == null ? Undefined.UNDEFINED : result;
 				} catch (IllegalArgumentException e) {
-					throw new GreqlException(e.getMessage(), e.getCause());
+					if (e.getCause() instanceof GreqlException) {
+						throw (GreqlException) e.getCause();
+					} else {
+						throw new GreqlException(e.getMessage(), e.getCause());
+					}
 				} catch (IllegalAccessException e) {
-					throw new GreqlException(e.getMessage(), e.getCause());
+					if (e.getCause() instanceof GreqlException) {
+						throw (GreqlException) e.getCause();
+					} else {
+						throw new GreqlException(e.getMessage(), e.getCause());
+					}
 				} catch (InvocationTargetException e) {
-					throw new GreqlException(e.getMessage(), e.getCause());
+					if (e.getCause() instanceof GreqlException) {
+						throw (GreqlException) e.getCause();
+					} else {
+						throw new GreqlException(e.getMessage(), e.getCause());
+					}
 				}
 			}
 		}

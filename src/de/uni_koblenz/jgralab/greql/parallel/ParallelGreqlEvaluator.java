@@ -36,8 +36,6 @@ package de.uni_koblenz.jgralab.greql.parallel;
 
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.Queue;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -109,6 +107,9 @@ public class ParallelGreqlEvaluator {
 	// dependency graph
 	private static Logger logger = JGraLab
 			.getLogger(ParallelGreqlEvaluator.class);
+	// static {
+	// logger.setLevel(Level.FINE);
+	// }
 
 	private DirectedAcyclicGraph<TaskHandle> dependencyGraph;
 
@@ -284,7 +285,7 @@ public class ParallelGreqlEvaluator {
 	 * @return an {@link EvaluationEnvironment} containing the results
 	 */
 	public EvaluationEnvironment evaluate(Graph datagraph) {
-		return evaluate(datagraph, new GreqlEnvironmentAdapter(), false);
+		return evaluate(datagraph, new GreqlEnvironmentAdapter(), false, false);
 	}
 
 	/**
@@ -304,7 +305,7 @@ public class ParallelGreqlEvaluator {
 	public EvaluationEnvironment evaluate(Graph datagraph,
 			boolean adjustPriorityValues) {
 		return evaluate(datagraph, new GreqlEnvironmentAdapter(),
-				adjustPriorityValues);
+				adjustPriorityValues, false);
 	}
 
 	/**
@@ -322,7 +323,7 @@ public class ParallelGreqlEvaluator {
 	 */
 	public EvaluationEnvironment evaluate(Graph datagraph,
 			GreqlEnvironment greqlEnvironment) {
-		return evaluate(datagraph, greqlEnvironment, false);
+		return evaluate(datagraph, greqlEnvironment, false, false);
 	}
 
 	/**
@@ -345,79 +346,121 @@ public class ParallelGreqlEvaluator {
 	 */
 	public EvaluationEnvironment evaluate(Graph datagraph,
 			GreqlEnvironment greqlEnvironment, boolean adjustPriorityValues) {
-		final EvaluationEnvironment evaluationEnvironment = new EvaluationEnvironment();
+		return evaluate(datagraph, greqlEnvironment, adjustPriorityValues,
+				false);
+	}
+
+	/**
+	 * Evaluates all tasks in topological order, according to their priority, on
+	 * the specified <code>datagraph</code> using and probably modifiying the
+	 * provided <code>greqlEnvironment</code>.
+	 * 
+	 * @param datagraph
+	 *            a {@link Graph}
+	 * @param greqlEnvironment
+	 *            a {@link GreqlEnvironment}, can be used to define external
+	 *            variables. STORE queries will put their results into this
+	 *            {@link GreqlEnvironment}.
+	 * @param adjustPriorityValues
+	 *            when set to <code>true</code>, the priority values of all
+	 *            {@link TaskHandle}s are set to the evaluation time of the
+	 *            associated tasks. This usually results in optimal schedules in
+	 *            subsequent evaluations.
+	 * @param sequentially
+	 *            when set to <code>true</code>, all tasks are executed
+	 *            sequentially by a {@link ThreadPoolExecutor} with a single
+	 *            thread, otherwise, the tasks are executed parallely with
+	 *            number of threads equal to the number of processors
+	 * @return an {@link EvaluationEnvironment} containing the results
+	 */
+	private EvaluationEnvironment evaluate(Graph datagraph,
+			GreqlEnvironment greqlEnvironment, boolean adjustPriorityValues,
+			boolean sequentially) {
+		final EvaluationEnvironment evaluationEnvironment = new EvaluationEnvironment(
+				sequentially);
 		evaluationEnvironment.startTime = System.nanoTime();
 		evaluationEnvironment.datagraph = datagraph;
 		evaluationEnvironment.greqlEnvironment = greqlEnvironment;
 
 		Set<TaskHandle> initialTasks = createEvaluationTasks(evaluationEnvironment);
 
-		// at least 2 threads, at most available processors + 1 (for the
-		// termination task)
-		int threads = Math.max(2,
-				Runtime.getRuntime().availableProcessors() + 1);
+		// when executing parallely, allocate at least 2 threads, at most
+		// available processors + 1 (for the termination task), otherwise only
+		// use 1 thread
+		int threads = sequentially ? 1 : Math.max(2, Runtime.getRuntime()
+				.availableProcessors() + 1);
 		logger.fine("Create executor with " + threads + " threads");
 		evaluationEnvironment.executor = Executors.newFixedThreadPool(threads);
 
-		// create a task that waits until all other tasks are terminated
-		FutureTask<Object> waitForTerminationTask = new FutureTask<Object>(
-				new Callable<Object>() {
-					@Override
-					public Object call() throws Exception {
-						logger.finer("Run waiting for final tasks");
-						try {
-							for (TaskHandle handle : dependencyGraph.getNodes()) {
-								evaluationEnvironment.tasks.get(handle).get();
+		FutureTask<Object> waitForTerminationTask = null;
+
+		if (!sequentially) {
+			waitForTerminationTask = new FutureTask<Object>(
+					new Callable<Object>() {
+						@Override
+						public Object call() throws Exception {
+							logger.finer("Run waiting for final tasks");
+							try {
+								for (TaskHandle handle : dependencyGraph
+										.getNodes()) {
+									try {
+										evaluationEnvironment.tasks.get(handle)
+												.get();
+									} catch (ExecutionException e) {
+										// this exception is handled via the
+										// exception variable in
+										// EvaluationEnvironment
+										break;
+									}
+								}
+							} catch (InterruptedException e) {
+								// do nothing, probably interrupted by exception
 							}
-						} catch (InterruptedException e) {
-							// do nothing, probably interrupted by exception
+							return null;
 						}
-						return null;
-					}
-				}) {
-			@Override
-			protected void done() {
-				super.done();
-				logger.finer("Done waiting for final tasks");
-			}
-		};
-		logger.finer("Execute waiting for final tasks");
-		evaluationEnvironment.executor.execute(waitForTerminationTask);
+					}) {
+				@Override
+				protected void done() {
+					super.done();
+					logger.finer("Done waiting for final tasks");
+				}
+			};
+			logger.finer("Execute waiting for final tasks");
+			evaluationEnvironment.executor.execute(waitForTerminationTask);
+		}
 
 		// execute initial tasks
 		for (TaskHandle handle : initialTasks) {
 			logger.fine("Execute initial " + handle);
 			evaluationEnvironment.executor.execute(evaluationEnvironment.tasks
 					.get(handle));
+			if (sequentially) {
+				try {
+					evaluationEnvironment.tasks.get(handle).get();
+				} catch (Exception e) {
+					throw unwrapException(e);
+				}
+			}
 		}
 
-		// wait for termination
-		try {
-			waitForTerminationTask.get();
-		} catch (InterruptedException e) {
-			// do nothing, since exception is handled below
-			e.printStackTrace();
-		} catch (ExecutionException e) {
-			// do nothing, since exception is handled below
-			e.printStackTrace();
+		if (!sequentially) {
+			// wait for termination
+			try {
+				waitForTerminationTask.get();
+			} catch (InterruptedException e) {
+				// do nothing, since exception is handled below
+				e.printStackTrace();
+			} catch (ExecutionException e) {
+				// do nothing, since exception is handled below
+				e.printStackTrace();
+			}
 		}
-
 		evaluationEnvironment.executor.shutdown();
 
 		// propagate a possible exception thrown by a task execution
 		synchronized (evaluationEnvironment) {
 			if (evaluationEnvironment.exception != null) {
-				// unwrap ExecutionExceptions
-				Throwable inner = evaluationEnvironment.exception;
-				while (inner != null && inner instanceof ExecutionException) {
-					inner = inner.getCause();
-				}
-				// throw the causing exception
-				if (inner instanceof RuntimeException) {
-					throw (RuntimeException) inner;
-				} else {
-					throw new RuntimeException(inner);
-				}
+				throw unwrapException(evaluationEnvironment.exception);
 			}
 		}
 
@@ -426,6 +469,21 @@ public class ParallelGreqlEvaluator {
 		}
 		evaluationEnvironment.doneTime = System.nanoTime();
 		return evaluationEnvironment;
+	}
+
+	private RuntimeException unwrapException(Exception ex) {
+		// unwrap ExecutionExceptions
+		Throwable inner = ex;
+		while (inner != null && inner instanceof ExecutionException) {
+			inner = inner.getCause();
+		}
+		// throw the causing exception
+		if (inner instanceof RuntimeException) {
+			return (RuntimeException) inner;
+		} else {
+			return new RuntimeException(inner);
+		}
+
 	}
 
 	/**
@@ -496,38 +554,7 @@ public class ParallelGreqlEvaluator {
 	 */
 	public EvaluationEnvironment evaluateSequentially(Graph datagraph,
 			GreqlEnvironment greqlEnvironment, boolean adjustPriorityValues) {
-		EvaluationEnvironment env = new EvaluationEnvironment();
-		env.startTime = System.nanoTime();
-		env.datagraph = datagraph;
-		env.greqlEnvironment = greqlEnvironment;
-		// create tasks and determine initial tasks
-		SortedSet<TaskHandle> tasks = createEvaluationTasks(env);
-		Queue<TaskHandle> q = new LinkedList<TaskHandle>(tasks);
-		while (!q.isEmpty()) {
-			TaskHandle t = q.poll();
-			// run the task
-			env.tasks.get(t).run();
-			// determine tasks that can be started after t has completed, i.e.
-			// tasks that have no more unfinished predecessors
-			synchronized (dependencyGraph) {
-				tasks.clear();
-				for (TaskHandle succ : dependencyGraph.getDirectSuccessors(t)) {
-					int i = env.inDegree.get(succ) - 1;
-					env.inDegree.put(succ, i);
-					if (i == 0) {
-						tasks.add(succ);
-					}
-				}
-				for (TaskHandle th : tasks) {
-					q.offer(th);
-				}
-			}
-		}
-		if (adjustPriorityValues) {
-			adjustPriorities(env);
-		}
-		env.doneTime = System.nanoTime();
-		return env;
+		return evaluate(datagraph, greqlEnvironment, adjustPriorityValues, true);
 	}
 
 	/**
@@ -689,6 +716,13 @@ public class ParallelGreqlEvaluator {
 			for (TaskHandle succ : nextTasks) {
 				logger.fine("Execute " + succ);
 				environment.executor.execute(environment.tasks.get(succ));
+				if (environment.sequentially) {
+					try {
+						environment.tasks.get(succ).get();
+					} catch (Exception e) {
+						throw unwrapException(e);
+					}
+				}
 			}
 		}
 	}
