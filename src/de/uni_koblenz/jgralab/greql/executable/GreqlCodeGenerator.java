@@ -49,6 +49,7 @@ import de.uni_koblenz.jgralab.greql.schema.DoubleLiteral;
 import de.uni_koblenz.jgralab.greql.schema.EdgeRestriction;
 import de.uni_koblenz.jgralab.greql.schema.EdgeSetExpression;
 import de.uni_koblenz.jgralab.greql.schema.Expression;
+import de.uni_koblenz.jgralab.greql.schema.ExpressionDefinedSubgraph;
 import de.uni_koblenz.jgralab.greql.schema.ForwardVertexSet;
 import de.uni_koblenz.jgralab.greql.schema.FunctionApplication;
 import de.uni_koblenz.jgralab.greql.schema.FunctionId;
@@ -88,6 +89,8 @@ import de.uni_koblenz.jgralab.greql.schema.SetComprehension;
 import de.uni_koblenz.jgralab.greql.schema.SetConstruction;
 import de.uni_koblenz.jgralab.greql.schema.SimpleDeclaration;
 import de.uni_koblenz.jgralab.greql.schema.StringLiteral;
+import de.uni_koblenz.jgralab.greql.schema.SubgraphDefinition;
+import de.uni_koblenz.jgralab.greql.schema.SubgraphRestrictedExpression;
 import de.uni_koblenz.jgralab.greql.schema.ThisEdge;
 import de.uni_koblenz.jgralab.greql.schema.ThisLiteral;
 import de.uni_koblenz.jgralab.greql.schema.ThisVertex;
@@ -433,7 +436,51 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 		if (queryExpr instanceof PathExistence) {
 			return createCodeForPathExistence((PathExistence) queryExpr);
 		}
+		if (queryExpr instanceof SubgraphRestrictedExpression) {
+			return createCodeForSubgraphRestrictedExpression((SubgraphRestrictedExpression) queryExpr);
+		}
 		return "UnsupportedElement: " + queryExpr.getClass().getSimpleName();
+	}
+
+	private String createCodeForSubgraphRestrictedExpression(
+			SubgraphRestrictedExpression subgraphExpr) {
+		SubgraphDefinition subgraphDefinition = subgraphExpr
+				.get_subgraphDefinition();
+		Expression expression = (Expression) subgraphExpr
+				.getFirstIsExpressionOnSubgraphIncidence(EdgeDirection.IN)
+				.getThat();
+		CodeList result = null;
+		if (subgraphDefinition.isInstanceOf(ExpressionDefinedSubgraph.VC)) {
+			result = new CodeList();
+			result.add(new CodeSnippet(
+					createCodeForExpressionDefinedSubraph((ExpressionDefinedSubgraph) subgraphDefinition)));
+		}
+		if (result != null) {
+			result.add(new CodeSnippet("Object result = "
+					+ createCodeForExpression(expression) + ";"));
+			result.add(new CodeSnippet("datagraph.setTraversalContext(null);"));
+			result.add(new CodeSnippet("return result;"));
+			return createMethod(result, subgraphExpr);
+		} else {
+			return "UnsupportedElement: "
+					+ subgraphExpr.getClass().getSimpleName();
+		}
+	}
+
+	private String createCodeForExpressionDefinedSubraph(
+			ExpressionDefinedSubgraph subgraphDefinition) {
+		Expression subgraphDefiningExpression = subgraphDefinition
+				.get_definingExpression();
+
+		addImports("de.uni_koblenz.jgralab.graphmarker.SubGraphMarker");
+		CodeSnippet subgraphSnippet = new CodeSnippet();
+		subgraphSnippet.add("SubGraphMarker subGraphMarker = (SubGraphMarker) "
+				+ createCodeForExpression(subgraphDefiningExpression) + ";");
+		subgraphSnippet
+				.add("\t\tdatagraph.setTraversalContext(subGraphMarker);");
+
+		// TODO Auto-generated method stub
+		return subgraphSnippet.getCode();
 	}
 
 	private String createCodeForIdentifier(Identifier ident) {

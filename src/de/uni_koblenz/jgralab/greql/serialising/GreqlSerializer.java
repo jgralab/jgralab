@@ -415,13 +415,13 @@ public class GreqlSerializer {
 
 	private void serializeSubgraphRestrictedExpression(
 			SubgraphRestrictedExpression exp) {
-		sb.append("on");
+		sb.append("on ");
 		// serialize left
 		IsSubgraphDefinitionOf isSubgraphDefOf = exp
 				.getFirstIsSubgraphDefinitionOfIncidence(EdgeDirection.IN);
 		serializeSubgraphDefinition((SubgraphDefinition) isSubgraphDefOf
 				.getThat());
-		sb.append(":");
+		sb.append(": ");
 		// serialize right
 		IsExpressionOnSubgraph isExprOnSubgraph = exp
 				.getFirstIsExpressionOnSubgraphIncidence(EdgeDirection.IN);
