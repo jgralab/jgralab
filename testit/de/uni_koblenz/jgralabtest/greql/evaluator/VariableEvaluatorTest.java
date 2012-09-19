@@ -10,15 +10,16 @@ import de.uni_koblenz.jgralab.greql.GreqlEnvironment;
 import de.uni_koblenz.jgralab.greql.GreqlQuery;
 import de.uni_koblenz.jgralab.greql.evaluator.GreqlEnvironmentAdapter;
 import de.uni_koblenz.jgralab.greql.exception.UndefinedVariableException;
+import de.uni_koblenz.jgralab.greql.executable.ExecutableQuery;
+import de.uni_koblenz.jgralab.greql.executable.GreqlCodeGenerator;
 
 public class VariableEvaluatorTest {
 
-	private Object evaluateQuery(String query) {
-		return evaluateQuery(query, new GreqlEnvironmentAdapter());
-	}
-
-	private Object evaluateQuery(String query, GreqlEnvironment environment) {
-		return GreqlQuery.createQuery(query).evaluate(null, environment);
+	public GreqlQuery createQueryClass(String query, String classname)
+			throws InstantiationException, IllegalAccessException {
+		Class<ExecutableQuery> generatedQuery = GreqlCodeGenerator
+				.generateCode(query, null, classname);
+		return (GreqlQuery) generatedQuery.newInstance();
 	}
 
 	/**
@@ -26,20 +27,34 @@ public class VariableEvaluatorTest {
 	 * 1 store as varX<br>
 	 * can be used in the query<br>
 	 * using varX: varX
+	 * 
+	 * @throws IllegalAccessException
+	 * @throws InstantiationException
 	 */
 	@Test
-	public void testStoreAsAndUsing() {
+	public void testStoreAsAndUsing() throws InstantiationException,
+			IllegalAccessException {
 		GreqlEnvironment environment = new GreqlEnvironmentAdapter();
 
-		Object erg = evaluateQuery("1 store as varX", environment);
-		assertNotNull(erg);
-		assertEquals(1, erg);
+		String queryText1 = "1 store as varX";
+		for (GreqlQuery query : new GreqlQuery[] {
+				GreqlQuery.createQuery(queryText1),
+				createQueryClass(queryText1, "testdata.TestStoreAsAndUsing1") }) {
+			Object erg = query.evaluate(null, environment);
+			assertNotNull(erg);
+			assertEquals(1, erg);
 
-		assertEquals(1, environment.getVariable("varX"));
+			assertEquals(1, environment.getVariable("varX"));
+		}
 
-		erg = evaluateQuery("using varX: varX", environment);
-		assertNotNull(erg);
-		assertEquals(1, erg);
+		String queryText2 = "using varX: varX";
+		for (GreqlQuery query : new GreqlQuery[] {
+				GreqlQuery.createQuery(queryText2),
+				createQueryClass(queryText2, "testdata.TestStoreAsAndUsing2") }) {
+			Object erg = query.evaluate(null, environment);
+			assertNotNull(erg);
+			assertEquals(1, erg);
+		}
 	}
 
 	/**
@@ -48,33 +63,71 @@ public class VariableEvaluatorTest {
 	 */
 	@Test(expected = UndefinedVariableException.class)
 	public void testUndefinedVariable() {
-		evaluateQuery("using varX: varX");
+		GreqlQuery.createQuery("using varX: varX").evaluate();
+	}
+
+	/**
+	 * Tests whether an {@link UndefinedVariableException} is thrown if an
+	 * undefined variable is used.
+	 * 
+	 * @throws IllegalAccessException
+	 * @throws InstantiationException
+	 */
+	@Test(expected = UndefinedVariableException.class)
+	public void testUndefinedVariableGenerated() throws InstantiationException,
+			IllegalAccessException {
+		createQueryClass("using varX: varX",
+				"testdata.TestUndefinedVariableGenerated").evaluate();
 	}
 
 	/**
 	 * Tests the query:<br>
 	 * let x:=10, y:=12 in x+y
+	 * 
+	 * @throws IllegalAccessException
+	 * @throws InstantiationException
 	 */
 	@Test
-	public void testLet() throws GraphIOException {
-		Object erg = evaluateQuery("let x:=10, y:=12 in x+y");
-		assertEquals(22, erg);
+	public void testLet() throws GraphIOException, InstantiationException,
+			IllegalAccessException {
+		String queryText = "let x:=10, y:=12 in x+y";
+		for (GreqlQuery query : new GreqlQuery[] {
+				GreqlQuery.createQuery(queryText),
+				createQueryClass(queryText, "testdata.Let") }) {
+			Object erg = query.evaluate();
+			assertEquals(22, erg);
+		}
 	}
 
 	@Test
-	public void testSeveralLet() throws GraphIOException {
-		Object erg = evaluateQuery("let x:=10 in let y:=x+2 in x+y");
-		assertEquals(22, erg);
+	public void testSeveralLet() throws GraphIOException,
+			InstantiationException, IllegalAccessException {
+		String queryText = "let x:=10 in let y:=x+2 in x+y";
+		for (GreqlQuery query : new GreqlQuery[] {
+				GreqlQuery.createQuery(queryText),
+				createQueryClass(queryText, "testdata.TestSeveralLet") }) {
+			Object erg = query.evaluate();
+			assertEquals(22, erg);
+		}
 	}
 
 	/**
 	 * Tests the query:<br>
 	 * x+y where x:=10, y:=12
+	 * 
+	 * @throws IllegalAccessException
+	 * @throws InstantiationException
 	 */
 	@Test
-	public void testWhere() {
-		Object erg = evaluateQuery("x+y where x:=10, y:=12");
-		assertEquals(22, erg);
+	public void testWhere() throws InstantiationException,
+			IllegalAccessException {
+		String queryText = "x+y where x:=10, y:=12";
+		for (GreqlQuery query : new GreqlQuery[] {
+				GreqlQuery.createQuery(queryText),
+				createQueryClass(queryText, "testdata.TestWhere") }) {
+			Object erg = query.evaluate();
+			assertEquals(22, erg);
+		}
 	}
 
 }

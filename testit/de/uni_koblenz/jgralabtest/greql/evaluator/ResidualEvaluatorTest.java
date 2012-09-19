@@ -849,6 +849,7 @@ public class ResidualEvaluatorTest {
 	@Test
 	public void testUseQuerySeveralTimes() throws InstantiationException,
 			IllegalAccessException {
+		// TODO check
 		String query = "slice(getVertex(1),-->)";
 		Slice slice1 = (Slice) evaluateQuery(query);
 		Slice slice2 = (Slice) evaluateQuery(query);
@@ -860,41 +861,53 @@ public class ResidualEvaluatorTest {
 	public void testValueChangeOfUsedVariable_usingQuery()
 			throws InstantiationException, IllegalAccessException {
 		String queryText = "using x: x+3";
-		GreqlQuery query = GreqlQuery.createQuery(queryText);
-		GreqlEnvironment environment = new GreqlEnvironmentAdapter();
-		environment.setVariable("x", 3);
-		assertEquals(6, query.evaluate(null, environment));
+		for (GreqlQuery query : new GreqlQuery[] {
+				GreqlQuery.createQuery(queryText),
+				(GreqlQuery) createQueryClass(queryText,
+						"testdata.TestValueChangeOfUsedVariable_usingQuery") }) {
+			GreqlEnvironment environment = new GreqlEnvironmentAdapter();
+			environment.setVariable("x", 3);
+			assertEquals(6, query.evaluate(null, environment));
 
-		environment.setVariable("x", 4);
-		assertEquals(7, query.evaluate(null, environment));
+			environment.setVariable("x", 4);
+			assertEquals(7, query.evaluate(null, environment));
+		}
 	}
 
 	@Test
 	public void testValueChangeOfUsedVariable_usingGreqlEvaluator()
 			throws InstantiationException, IllegalAccessException {
 		String queryText = "using x: x+3";
-		GreqlQuery query = GreqlQuery.createQuery(queryText);
+		for (GreqlQuery query : new GreqlQuery[] {
+				GreqlQuery.createQuery(queryText),
+				(GreqlQuery) createQueryClass(queryText,
+						"testdata.TestValueChangeOfUsedVariable_usingGreqlEvaluator") }) {
 
-		GreqlEnvironment environment = new GreqlEnvironmentAdapter();
-		environment.setVariable("x", 3);
-		assertEquals(6, query.evaluate(datagraph, environment));
+			GreqlEnvironment environment = new GreqlEnvironmentAdapter();
+			environment.setVariable("x", 3);
+			assertEquals(6, query.evaluate(datagraph, environment));
 
-		environment.setVariable("x", 4);
-		assertEquals(7, query.evaluate(datagraph, environment));
+			environment.setVariable("x", 4);
+			assertEquals(7, query.evaluate(datagraph, environment));
+		}
 	}
 
 	@Test
 	public void testValueChangeOfUsedVariable_usingGreqlEvaluator2()
 			throws InstantiationException, IllegalAccessException {
 		String queryText = "using x: x+3";
-		GreqlQuery query = GreqlQuery.createQuery(queryText);
+		for (GreqlQuery query : new GreqlQuery[] {
+				GreqlQuery.createQuery(queryText),
+				(GreqlQuery) createQueryClass(queryText,
+						"testdata.TestValueChangeOfUsedVariable_usingGreqlEvaluator2") }) {
 
-		GreqlEnvironment environment = new GreqlEnvironmentAdapter();
-		environment.setVariable("x", 3);
-		assertEquals(6, query.evaluate(null, environment));
+			GreqlEnvironment environment = new GreqlEnvironmentAdapter();
+			environment.setVariable("x", 3);
+			assertEquals(6, query.evaluate(null, environment));
 
-		environment.setVariable("x", 4);
-		assertEquals(7, query.evaluate(null, environment));
+			environment.setVariable("x", 4);
+			assertEquals(7, query.evaluate(null, environment));
+		}
 	}
 
 }

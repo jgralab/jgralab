@@ -343,11 +343,17 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 		// create code for bound variables
 		for (IsBoundVarOf inc : rootExpr
 				.getIsBoundVarOfIncidences(EdgeDirection.IN)) {
+			addImports("de.uni_koblenz.jgralab.greql.exception.UndefinedVariableException");
 			Variable var = (Variable) inc.getThat();
 			scope.addVariable(var.get_name());
 			list.add(new CodeSnippet("Object " + var.get_name()
 					+ " = boundVariables.getVariable(\"" + var.get_name()
 					+ "\");"));
+			list.add(new CodeSnippet("if (" + var.get_name() + " == null) {"));
+			list.add(new CodeSnippet(
+					"\tthrow new UndefinedVariableException(\""
+							+ var.get_name() + "\");"));
+			list.add(new CodeSnippet("}"));
 		}
 
 		// create code for main query expression
@@ -1789,7 +1795,9 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 		return "result_" + uniqueId;
 	}
 
-	Set<String> alreadyCreatedEvaluateFunctions = new HashSet<String>();
+	// Set<String> alreadyCreatedEvaluateFunctions = new HashSet<String>();
+
+	private int uniqueMethodId = 0;
 
 	/**
 	 * Creates a method encapsulating the codelist given and returns the call of
@@ -1808,48 +1816,46 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 		StringBuilder formalParams = new StringBuilder();
 		StringBuilder actualParams = new StringBuilder();
 		String delim = "";
-		int numberOfParameters = 0;
 		for (String s : scope.getDefinedVariables()) {
-			numberOfParameters++;
 			formalParams.append(delim + "Object " + s);
 			actualParams.append(delim + s);
 			delim = ",";
 		}
 		String methodName = "evaluationMethod_" + vertex.getId() + "_"
-				+ numberOfParameters;
-		if (!alreadyCreatedEvaluateFunctions.contains(vertex.getId() + "_"
-				+ numberOfParameters)) {
-			alreadyCreatedEvaluateFunctions.add(vertex.getId() + "_"
-					+ numberOfParameters);
-			CodeList evaluateMethodBlock = new CodeList();
-			evaluateMethodBlock.setVariable("actualParams",
-					actualParams.toString());
-			evaluateMethodBlock.setVariable("formalParams",
-					formalParams.toString());
-			if (!resultVariables.contains(getVariableName(uniqueId))) {
-				evaluateMethodBlock.add(new CodeSnippet("private Object "
-						+ getVariableName(uniqueId) + " = null;"));
-				resultVariables.add(getVariableName(uniqueId));
-			}
-			CodeSnippet checkVariableMethod = new CodeSnippet();
-			checkVariableMethod.add("private Object " + methodName
-					+ "(#formalParams#) {");
-			checkVariableMethod.add("\tif (result_" + uniqueId + " == null) {");
-			checkVariableMethod.add("\t\tresult_" + uniqueId + " = internal_"
-					+ methodName + "(#actualParams#);");
-			checkVariableMethod.add("\t}");
-			checkVariableMethod.add("\treturn result_" + uniqueId + ";");
-			checkVariableMethod.add("}\n");
-			evaluateMethodBlock.add(checkVariableMethod);
-
-			evaluateMethodBlock.add(new CodeSnippet(comment));
-			evaluateMethodBlock.add(new CodeSnippet("private Object internal_"
-					+ methodName + "(#formalParams#) {"));
-			evaluateMethodBlock.add(methodBody);
-			evaluateMethodBlock.add(new CodeSnippet("}\n"));
-
-			createdMethods.add(evaluateMethodBlock);
+				+ uniqueMethodId++;
+		// if (!alreadyCreatedEvaluateFunctions.contains(vertex.getId() + "_"
+		// + numberOfParameters)) {
+		// alreadyCreatedEvaluateFunctions.add(vertex.getId() + "_"
+		// + numberOfParameters);
+		CodeList evaluateMethodBlock = new CodeList();
+		evaluateMethodBlock
+				.setVariable("actualParams", actualParams.toString());
+		evaluateMethodBlock
+				.setVariable("formalParams", formalParams.toString());
+		if (!resultVariables.contains(getVariableName(uniqueId))) {
+			evaluateMethodBlock.add(new CodeSnippet("private Object "
+					+ getVariableName(uniqueId) + " = null;"));
+			resultVariables.add(getVariableName(uniqueId));
 		}
+		CodeSnippet checkVariableMethod = new CodeSnippet();
+		checkVariableMethod.add("private Object " + methodName
+				+ "(#formalParams#) {");
+		checkVariableMethod.add("\tif (result_" + uniqueId + " == null) {");
+		checkVariableMethod.add("\t\tresult_" + uniqueId + " = internal_"
+				+ methodName + "(#actualParams#);");
+		checkVariableMethod.add("\t}");
+		checkVariableMethod.add("\treturn result_" + uniqueId + ";");
+		checkVariableMethod.add("}\n");
+		evaluateMethodBlock.add(checkVariableMethod);
+
+		evaluateMethodBlock.add(new CodeSnippet(comment));
+		evaluateMethodBlock.add(new CodeSnippet("private Object internal_"
+				+ methodName + "(#formalParams#) {"));
+		evaluateMethodBlock.add(methodBody);
+		evaluateMethodBlock.add(new CodeSnippet("}\n"));
+
+		createdMethods.add(evaluateMethodBlock);
+		// }
 
 		return methodName + "(" + actualParams.toString() + ")";
 	}
