@@ -65,10 +65,11 @@ import de.uni_koblenz.ist.utilities.option_handler.OptionHandler;
 import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
-import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.Vertex;
+import de.uni_koblenz.jgralab.exception.GraphIOException;
 import de.uni_koblenz.jgralab.graphmarker.BooleanGraphMarker;
+import de.uni_koblenz.jgralab.greql.evaluator.GreqlEvaluatorImpl;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.Schema;
@@ -611,8 +612,8 @@ public class Tg2Dot extends Tg2Whatever {
 
 		for (String attributeName : spec.getAttributeNames()) {
 			String query = spec.getAttributeValue(attributeName);
-			String result = evaluator.evaluateToString(query);
-			evaluatedList.put(attributeName, result);
+			Object result = evaluator.evaluate(query);
+			evaluatedList.put(attributeName, result.toString());
 		}
 		return evaluatedList;
 	}

@@ -51,10 +51,10 @@ import org.pcollections.PVector;
 
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphIO;
-import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.ImplementationType;
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.ProgressFunction;
+import de.uni_koblenz.jgralab.exception.GraphIOException;
 import de.uni_koblenz.jgralab.greql.evaluator.GreqlEnvironmentAdapter;
 import de.uni_koblenz.jgralab.greql.evaluator.GreqlQueryImpl;
 import de.uni_koblenz.jgralab.greql.optimizer.DefaultOptimizerInfo;
@@ -90,17 +90,14 @@ public abstract class GreqlQuery implements ParallelGreqlEvaluatorCallable {
 
 	public static GreqlQuery readQuery(File f, boolean optimize,
 			OptimizerInfo optimizerInfo) throws IOException {
-		BufferedReader reader = null;
+		BufferedReader reader = new BufferedReader(new FileReader(f));
 		try {
-			reader = new BufferedReader(new FileReader(f));
-
-			String line = null;
-			StringBuffer sb = new StringBuffer();
-			while ((line = reader.readLine()) != null) {
-				sb.append(line);
-				sb.append('\n');
+			StringBuilder queryText = new StringBuilder();
+			for (String line = reader.readLine(); line != null; line = reader
+					.readLine()) {
+				queryText.append(line).append('\n');
 			}
-			return createQuery(sb.toString(), optimize, optimizerInfo);
+			return createQuery(queryText.toString(), optimize, optimizerInfo);
 		} finally {
 			try {
 				reader.close();

@@ -44,7 +44,7 @@ import org.apache.tools.ant.Task;
 import org.apache.tools.ant.types.FileSet;
 import org.apache.tools.ant.types.resources.FileResource;
 
-import de.uni_koblenz.jgralab.GraphIOException;
+import de.uni_koblenz.jgralab.exception.GraphIOException;
 import de.uni_koblenz.jgralab.utilities.tgschema2java.TgSchema2Java;
 
 /**
@@ -101,14 +101,6 @@ public class TgSchema2JavaTask extends Task {
 		} else if (!(v.equals("false") || v.equals("no"))) {
 			throw new BuildException("Invalid value for boolean field: "
 					+ value);
-		}
-	}
-
-	public void setImplementationMode(String value) {
-		try {
-			executeObject.setImplementationMode(value);
-		} catch (Exception e) {
-			throw new BuildException(e);
 		}
 	}
 

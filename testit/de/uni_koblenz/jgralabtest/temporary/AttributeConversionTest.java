@@ -11,8 +11,8 @@ import org.pcollections.PMap;
 
 import de.uni_koblenz.jgralab.ImplementationType;
 import de.uni_koblenz.jgralab.TemporaryEdge;
-import de.uni_koblenz.jgralab.TemporaryGraphElementBlessingException;
 import de.uni_koblenz.jgralab.TemporaryVertex;
+import de.uni_koblenz.jgralab.exception.TemporaryGraphElementException;
 import de.uni_koblenz.jgralab.impl.RecordImpl;
 import de.uni_koblenz.jgralab.schema.RecordDomain;
 import de.uni_koblenz.jgralab.schema.RecordDomain.RecordComponent;
@@ -47,7 +47,7 @@ public class AttributeConversionTest {
 		assertFalse(v.isValid());
 	}
 
-	@Test(expected = TemporaryGraphElementBlessingException.class)
+	@Test(expected = TemporaryGraphElementException.class)
 	public void testConvertStringFail() {
 		TemporaryVertex v = graph.createTemporaryVertex();
 		v.setAttribute("name", 123);
@@ -64,7 +64,7 @@ public class AttributeConversionTest {
 		assertFalse(v.isValid());
 	}
 
-	@Test(expected = TemporaryGraphElementBlessingException.class)
+	@Test(expected = TemporaryGraphElementException.class)
 	public void testConvertIntegerFail() {
 		TemporaryVertex v = graph.createTemporaryVertex();
 		v.setAttribute("inhabitants", "1234");
@@ -84,7 +84,7 @@ public class AttributeConversionTest {
 		assertFalse(tempe.isValid());
 	}
 
-	@Test(expected = TemporaryGraphElementBlessingException.class)
+	@Test(expected = TemporaryGraphElementException.class)
 	public void testConvertDoubleFail() {
 		Crossroad v1 = graph.createCrossroad();
 		Crossroad v2 = graph.createCrossroad();
@@ -107,7 +107,7 @@ public class AttributeConversionTest {
 		assertTrue(street.is_oneway());
 	}
 
-	@Test(expected = TemporaryGraphElementBlessingException.class)
+	@Test(expected = TemporaryGraphElementException.class)
 	public void testConvertBooleanFail() {
 		Crossroad v1 = graph.createCrossroad();
 		Crossroad v2 = graph.createCrossroad();
@@ -129,14 +129,14 @@ public class AttributeConversionTest {
 		assertFalse(tempV.isValid());
 	}
 
-	@Test(expected = TemporaryGraphElementBlessingException.class)
+	@Test(expected = TemporaryGraphElementException.class)
 	public void testConvertMapFail1() {
 		TemporaryVertex tempV = graph.createTemporaryVertex();
 		tempV.setAttribute("tags", "Hugo");
 		tempV.bless(County.VC);
 	}
 
-	@Test(expected = TemporaryGraphElementBlessingException.class)
+	@Test(expected = TemporaryGraphElementException.class)
 	public void testConvertMapFail2() {
 		TemporaryVertex tempV = graph.createTemporaryVertex();
 		PMap<CountyTags, String> map = ArrayPMap.empty();
@@ -145,7 +145,7 @@ public class AttributeConversionTest {
 		tempV.bless(County.VC);
 	}
 
-	@Test(expected = TemporaryGraphElementBlessingException.class)
+	@Test(expected = TemporaryGraphElementException.class)
 	public void testConvertMapFail3() {
 		TemporaryVertex tempV = graph.createTemporaryVertex();
 		PMap<String, Double> map = ArrayPMap.empty();
@@ -154,7 +154,7 @@ public class AttributeConversionTest {
 		tempV.bless(County.VC);
 	}
 
-	@Test(expected = TemporaryGraphElementBlessingException.class)
+	@Test(expected = TemporaryGraphElementException.class)
 	public void testConvertMapFail4() {
 		TemporaryVertex tempV = graph.createTemporaryVertex();
 		PMap<Month, Double> map = ArrayPMap.empty();
@@ -189,14 +189,14 @@ public class AttributeConversionTest {
 		assertFalse(v.isValid());
 	}
 
-	@Test(expected = TemporaryGraphElementBlessingException.class)
+	@Test(expected = TemporaryGraphElementException.class)
 	public void testConvertRecordFail1() {
 		TemporaryVertex v = graph.createTemporaryVertex();
 		v.setAttribute("foundingDate", "date");
 		v.bless(Town.VC);
 	}
 
-	@Test(expected = TemporaryGraphElementBlessingException.class)
+	@Test(expected = TemporaryGraphElementException.class)
 	public void testConvertRecordFail2() {
 		TemporaryVertex v = graph.createTemporaryVertex();
 		PMap<String, Object> componentValues = ArrayPMap.empty();

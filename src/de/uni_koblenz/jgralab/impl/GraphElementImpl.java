@@ -37,8 +37,8 @@ package de.uni_koblenz.jgralab.impl;
 
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphElement;
-import de.uni_koblenz.jgralab.GraphIOException;
-import de.uni_koblenz.jgralab.TemporaryGraphElementBlessingException;
+import de.uni_koblenz.jgralab.exception.GraphIOException;
+import de.uni_koblenz.jgralab.exception.TemporaryGraphElementException;
 import de.uni_koblenz.jgralab.schema.Attribute;
 import de.uni_koblenz.jgralab.schema.GraphClass;
 import de.uni_koblenz.jgralab.schema.GraphElementClass;
@@ -46,9 +46,9 @@ import de.uni_koblenz.jgralab.schema.Schema;
 
 /**
  * TODO add comment
- *
+ * 
  * @author ist@uni-koblenz.de
- *
+ * 
  */
 public abstract class GraphElementImpl<SC extends GraphElementClass<SC, IC>, IC extends GraphElement<SC, IC>>
 		implements InternalGraphElement<SC, IC> {
@@ -68,7 +68,7 @@ public abstract class GraphElementImpl<SC extends GraphElementClass<SC, IC>, IC 
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see de.uni_koblenz.jgralab.AttributedElement#getGraphClass()
 	 */
 	@Override
@@ -78,7 +78,7 @@ public abstract class GraphElementImpl<SC extends GraphElementClass<SC, IC>, IC 
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see jgralab.AttributedElement#getSchema()
 	 */
 	@Override
@@ -93,7 +93,7 @@ public abstract class GraphElementImpl<SC extends GraphElementClass<SC, IC>, IC 
 
 	/**
 	 * Triggers ECA-rules before an Attribute is changed
-	 *
+	 * 
 	 * @param name
 	 *            of the changing Attribute
 	 */
@@ -107,7 +107,7 @@ public abstract class GraphElementImpl<SC extends GraphElementClass<SC, IC>, IC 
 
 	/**
 	 * Triggers ECA-rule after an Attribute is changed
-	 *
+	 * 
 	 * @param name
 	 *            of the changed Attribute
 	 */
@@ -121,7 +121,7 @@ public abstract class GraphElementImpl<SC extends GraphElementClass<SC, IC>, IC 
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see de.uni_koblenz.jgralab.GraphElement#getId()
 	 */
 	@Override
@@ -155,29 +155,29 @@ public abstract class GraphElementImpl<SC extends GraphElementClass<SC, IC>, IC 
 		// needs to implement this with a schema lookup.
 		return cls.getSchemaClass().isInstance(this);
 	}
-	
+
 	@Override
-	public boolean isTemporary(){
+	public boolean isTemporary() {
 		return false;
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public IC bless(){
+	public IC bless() {
 		return (IC) this;
 	}
-	
-	
+
 	@SuppressWarnings("unchecked")
 	@Override
-	public IC bless(SC schemaClass){
-		if(this.getAttributedElementClass().equals(schemaClass)){
+	public IC bless(SC schemaClass) {
+		if (this.getAttributedElementClass().equals(schemaClass)) {
 			return (IC) this;
-		}else{
-			throw new TemporaryGraphElementBlessingException(
-					"The graph element "+this+
-					" is not a TemporaryElement and can not be blessed to "+
-					schemaClass+".");
+		} else {
+			throw new TemporaryGraphElementException(
+					"The graph element "
+							+ this
+							+ " is not a TemporaryElement and can not be blessed to "
+							+ schemaClass + ".");
 		}
 	}
 }

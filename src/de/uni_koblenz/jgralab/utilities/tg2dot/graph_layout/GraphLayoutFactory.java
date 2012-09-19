@@ -161,9 +161,8 @@ public class GraphLayoutFactory {
 								+ PRINT_DOMAIN_NAMES
 								+ " ? ': ' ++ attributeType("
 								+ ELEMENT
-								+ ", attr) : ''))) end where attrVal := isDefined(getValue("
-								+ ELEMENT + ", attr)) ? getValue(" + ELEMENT
-								+ ", attr) : 'null') ++ '}'");
+								+ ", attr) : ''))) end where attrVal := getValue("
+								+ ELEMENT + ", attr)) ++ '}'");
 		definition.setAttribute("shape", "'record'");
 		definition.setAttribute("color", "'#999999'");
 		definition.setAttribute("fontsize", "14");
@@ -202,9 +201,8 @@ public class GraphLayoutFactory {
 								+ PRINT_DOMAIN_NAMES
 								+ " ? ': ' ++ attributeType("
 								+ ELEMENT
-								+ ", attr) : ''))) end where attrVal := isDefined(getValue("
-								+ ELEMENT + ", attr)) ? getValue(" + ELEMENT
-								+ ", attr) : 'null') : '')");
+								+ ", attr) : ''))) end where attrVal := getValue("
+								+ ELEMENT + ", attr)) : '')");
 		definition.setAttribute("arrowhead", "((" + SHARED_THIS
 				+ ")? 'odiamond' :" + "(" + COMPOSITE_THIS
 				+ ")? 'diamond': '') ++ 'normal'");

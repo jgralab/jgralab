@@ -40,8 +40,8 @@ import java.io.IOException;
 import org.pcollections.PSet;
 
 import de.uni_koblenz.jgralab.GraphIO;
-import de.uni_koblenz.jgralab.GraphIOException;
-import de.uni_koblenz.jgralab.codegenerator.CodeBlock;
+import de.uni_koblenz.jgralab.exception.GraphIOException;
+import de.uni_koblenz.jgralab.schema.codegenerator.CodeBlock;
 
 /**
  * Base class of all JGraLab Domains.

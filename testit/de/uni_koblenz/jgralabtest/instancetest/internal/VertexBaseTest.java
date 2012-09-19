@@ -40,11 +40,9 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Random;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -52,10 +50,8 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
 import de.uni_koblenz.jgralab.ImplementationType;
-import de.uni_koblenz.jgralab.RandomIdGenerator;
 import de.uni_koblenz.jgralab.impl.InternalGraph;
 import de.uni_koblenz.jgralab.impl.InternalVertex;
-import de.uni_koblenz.jgralab.trans.CommitFailedException;
 import de.uni_koblenz.jgralabtest.instancetest.InstanceTest;
 import de.uni_koblenz.jgralabtest.schemas.vertextest.AbstractSuperNode;
 import de.uni_koblenz.jgralabtest.schemas.vertextest.Link;
@@ -86,34 +82,9 @@ public class VertexBaseTest extends InstanceTest {
 	 */
 	@Before
 	public void setUp() {
-		if (implementationType == ImplementationType.DATABASE) {
-			dbHandler.connectToDatabase();
-			dbHandler.loadVertexTestSchemaIntoGraphDatabase();
-		}
 		vtg = createNewGraph();
 		g = (InternalGraph) vtg;
 		rand = new Random(System.currentTimeMillis());
-	}
-
-	@After
-	public void tearDown() {
-		if (implementationType == ImplementationType.DATABASE) {
-			cleanAndCloseGraphDatabase();
-		}
-	}
-
-	private void cleanAndCloseGraphDatabase() {
-		// dbHandler.cleanDatabaseOfTestGraph("VertexTest");
-		// dbHandler.cleanDatabaseOfTestGraph("anotherGraph");
-		// for (int i = 0; i < ITERATIONS; i++) {
-		// dbHandler.cleanDatabaseOfTestGraph("VertexTest" + i);
-		// }
-		// for (String id : graphIdsInUse) {
-		// dbHandler.cleanDatabaseOfTestGraph(id);
-		// }
-		// // this.cleanDatabaseOfTestSchema(g.getSchema());
-		dbHandler.clearAllTables();
-		dbHandler.closeGraphdatabase();
 	}
 
 	/*
@@ -127,30 +98,10 @@ public class VertexBaseTest extends InstanceTest {
 			graph = VertexTestSchema.instance().createVertexTestGraph(
 					ImplementationType.STANDARD);
 			break;
-		case TRANSACTION:
-			graph = VertexTestSchema.instance().createVertexTestGraph(
-					ImplementationType.TRANSACTION);
-			break;
-		case DATABASE:
-			graph = createVertexTestGraphWithDatabaseSupport();
-			break;
 		default:
 			fail("Implementation " + implementationType
 					+ " not yet supported by this test.");
 		}
-		return graph;
-	}
-
-	private ArrayList<String> graphIdsInUse = new ArrayList<String>();
-
-	private VertexTestGraph createVertexTestGraphWithDatabaseSupport() {
-		String id = RandomIdGenerator.generateId();
-		while (graphIdsInUse.contains(id)) {
-			id = RandomIdGenerator.generateId();
-		}
-		graphIdsInUse.add(id);
-		VertexTestGraph graph = dbHandler
-				.createVertexTestGraphWithDatabaseSupport(id, 100, 100);
 		return graph;
 	}
 
@@ -161,50 +112,40 @@ public class VertexBaseTest extends InstanceTest {
 	/**
 	 * If you create and delete edges, only the incidenceListVersions of the
 	 * involved nodes may have been increased.
-	 *
+	 * 
 	 * @throws CommitFailedException
 	 */
 	@Test
-	public void getIncidenceListVersionTest0() throws CommitFailedException {
-		createTransaction(g);
+	public void getIncidenceListVersionTest0() {
 		InternalVertex[] nodes = new InternalVertex[3];
 		nodes[0] = (InternalVertex) vtg.createSubNode();
 		nodes[1] = (InternalVertex) vtg.createDoubleSubNode();
 		nodes[2] = (InternalVertex) vtg.createSuperNode();
-		commit(g);
 		long[] expectedVersions = new long[] { 0, 0, 0 };
 		for (int i = 0; i < ITERATIONS; i++) {
 			int start = rand.nextInt(2);
 			int end = rand.nextInt(2) + 1;
 			// create a new edge
-			createTransaction(g);
 			Link sl = vtg.createLink((AbstractSuperNode) nodes[start],
 					(SuperNode) nodes[end]);
 			expectedVersions[start]++;
 			expectedVersions[end]++;
-			commit(g);
-			createReadOnlyTransaction(g);
 			assertEquals(expectedVersions[0],
 					nodes[0].getIncidenceListVersion());
 			assertEquals(expectedVersions[1],
 					nodes[1].getIncidenceListVersion());
 			assertEquals(expectedVersions[2],
 					nodes[2].getIncidenceListVersion());
-			commit(g);
 			// delete an edge
-			createTransaction(g);
 			g.deleteEdge(sl);
 			expectedVersions[start]++;
 			expectedVersions[end]++;
-			commit(g);
-			createReadOnlyTransaction(g);
 			assertEquals(expectedVersions[0],
 					nodes[0].getIncidenceListVersion());
 			assertEquals(expectedVersions[1],
 					nodes[1].getIncidenceListVersion());
 			assertEquals(expectedVersions[2],
 					nodes[2].getIncidenceListVersion());
-			commit(g);
 		}
 	}
 
@@ -215,24 +156,20 @@ public class VertexBaseTest extends InstanceTest {
 	// tests of the method isIncidenceListModified(long incidenceListVersion);
 	/**
 	 * Tests if the incidenceList wasn't modified.
-	 *
+	 * 
 	 * @throws CommitFailedException
 	 */
 	@Test
-	public void isIncidenceListModifiedTest0() throws CommitFailedException {
-		createTransaction(g);
+	public void isIncidenceListModifiedTest0() {
 		InternalVertex asn = (InternalVertex) vtg.createSubNode();
 		InternalVertex sn = (InternalVertex) vtg.createSuperNode();
 		InternalVertex dsn = (InternalVertex) vtg.createDoubleSubNode();
-		commit(g);
-		createReadOnlyTransaction(g);
 		long asnIncidenceListVersion = asn.getIncidenceListVersion();
 		long snIncidenceListVersion = sn.getIncidenceListVersion();
 		long dsnIncidenceListVersion = dsn.getIncidenceListVersion();
 		assertFalse(asn.isIncidenceListModified(asnIncidenceListVersion));
 		assertFalse(sn.isIncidenceListModified(snIncidenceListVersion));
 		assertFalse(dsn.isIncidenceListModified(dsnIncidenceListVersion));
-		commit(g);
 	}
 
 	/*
@@ -242,12 +179,11 @@ public class VertexBaseTest extends InstanceTest {
 	/**
 	 * If you create and delete edges, only the incidenceLists of the involved
 	 * nodes may have been modified.
-	 *
+	 * 
 	 * @throws CommitFailedException
 	 */
 	@Test
-	public void isIncidenceListModifiedTest1() throws CommitFailedException {
-		createTransaction(g);
+	public void isIncidenceListModifiedTest1() {
 		InternalVertex[] nodes = new InternalVertex[3];
 		long[] versions = new long[3];
 		nodes[0] = (InternalVertex) vtg.createSubNode();
@@ -256,16 +192,12 @@ public class VertexBaseTest extends InstanceTest {
 		versions[1] = nodes[1].getIncidenceListVersion();
 		nodes[2] = (InternalVertex) vtg.createSuperNode();
 		versions[2] = nodes[2].getIncidenceListVersion();
-		commit(g);
 		for (int i = 0; i < ITERATIONS; i++) {
 			int start = rand.nextInt(2);
 			int end = rand.nextInt(2) + 1;
 			// create a new edge
-			createTransaction(g);
 			Link sl = vtg.createLink((AbstractSuperNode) nodes[start],
 					(SuperNode) nodes[end]);
-			commit(g);
-			createReadOnlyTransaction(g);
 			assertTrue(nodes[start].isIncidenceListModified(versions[start]));
 			assertTrue(nodes[end].isIncidenceListModified(versions[end]));
 			if (start != end) {
@@ -284,14 +216,10 @@ public class VertexBaseTest extends InstanceTest {
 			versions[0] = nodes[0].getIncidenceListVersion();
 			versions[1] = nodes[1].getIncidenceListVersion();
 			versions[2] = nodes[2].getIncidenceListVersion();
-			commit(g);
 
 			// delete an edge
-			createTransaction(g);
 			g.deleteEdge(sl);
-			commit(g);
 
-			createReadOnlyTransaction(g);
 			assertTrue(nodes[start].isIncidenceListModified(versions[start]));
 			assertTrue(nodes[end].isIncidenceListModified(versions[end]));
 			if (start != end) {
@@ -310,7 +238,6 @@ public class VertexBaseTest extends InstanceTest {
 			versions[0] = nodes[0].getIncidenceListVersion();
 			versions[1] = nodes[1].getIncidenceListVersion();
 			versions[2] = nodes[2].getIncidenceListVersion();
-			commit(g);
 		}
 	}
 

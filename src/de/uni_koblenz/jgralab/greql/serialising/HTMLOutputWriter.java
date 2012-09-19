@@ -138,7 +138,7 @@ public class HTMLOutputWriter extends DefaultWriter {
 	}
 
 	private String htmlQuote(String string) {
-		StringBuffer result = new StringBuffer();
+		StringBuilder result = new StringBuilder();
 		for (int i = 0; i < string.length(); ++i) {
 			char c = string.charAt(i);
 			if (c == '<') {

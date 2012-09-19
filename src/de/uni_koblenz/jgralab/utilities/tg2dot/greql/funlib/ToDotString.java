@@ -34,18 +34,24 @@
  */
 package de.uni_koblenz.jgralab.utilities.tg2dot.greql.funlib;
 
+import de.uni_koblenz.jgralab.greql.funlib.AcceptsUndefinedArguments;
 import de.uni_koblenz.jgralab.greql.funlib.Description;
 import de.uni_koblenz.jgralab.greql.funlib.Function;
+import de.uni_koblenz.jgralab.greql.types.Undefined;
 
+
+@AcceptsUndefinedArguments
 public class ToDotString extends Function {
 
-	@Description(params = "arg", description = "Returns a converted DOT string representation of the given string.",
-			categories = Category.STRINGS)
+	@Description(params = "arg", description = "Returns a converted DOT string representation of the given string.", categories = Category.STRINGS)
 	public ToDotString() {
 		super(2, 1, 1.0);
 	}
 
 	public String evaluate(Object arg) {
+		if (arg == Undefined.UNDEFINED) {
+			return "null";
+		}
 		String string = arg.toString();
 		if (arg instanceof String) {
 			string = "\"" + string + "\"";

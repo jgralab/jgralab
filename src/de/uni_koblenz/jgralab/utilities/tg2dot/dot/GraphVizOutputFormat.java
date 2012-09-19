@@ -39,7 +39,7 @@ import java.util.Arrays;
 public enum GraphVizOutputFormat {
 
 	POSTSCRIPT("ps"), SVG("svg"), SVG_ZIPPED("svgz"), PNG("png"), GIF("gif"), PDF(
-			"pdf"), XDOT("xdot"), DOT("canon");
+			"pdf"), XDOT("xdot"), DOT("canon"), GTK("gtk");
 
 	public String name;
 

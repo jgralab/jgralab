@@ -42,7 +42,6 @@ import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -53,7 +52,6 @@ import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.ImplementationType;
 import de.uni_koblenz.jgralab.graphmarker.SubGraphMarker;
-import de.uni_koblenz.jgralab.trans.CommitFailedException;
 import de.uni_koblenz.jgralabtest.instancetest.InstanceTest;
 import de.uni_koblenz.jgralabtest.schemas.minimal.Link;
 import de.uni_koblenz.jgralabtest.schemas.minimal.MinimalGraph;
@@ -84,27 +82,16 @@ public class SubGraphMarkerTest extends InstanceTest {
 	}
 
 	@Before
-	public void setUp() throws CommitFailedException {
+	public void setUp() {
 		switch (implementationType) {
 		case STANDARD:
 			g = MinimalSchema.instance().createMinimalGraph(
 					ImplementationType.STANDARD, null, V, E);
 			break;
-		case TRANSACTION:
-			g = MinimalSchema.instance().createMinimalGraph(
-					ImplementationType.TRANSACTION, null, V, E);
-			break;
-		case DATABASE:
-			dbHandler.connectToDatabase();
-			dbHandler.loadMinimalSchemaIntoGraphDatabase();
-			g = dbHandler.createMinimalGraphWithDatabaseSupport(
-					"SubGraphMarkerTest", V, E);
-			break;
 		default:
 			fail("Implementation " + implementationType
 					+ " not yet supported by this test.");
 		}
-		createTransaction(g);
 
 		Random rng = new Random(16L);
 		oldMarker = new SubGraphMarker(g);
@@ -123,9 +110,6 @@ public class SubGraphMarkerTest extends InstanceTest {
 					(Node) g.getVertex(omegaID));
 		}
 
-		commit(g);
-
-		createReadOnlyTransaction(g);
 		for (int i = 0; i < VERTEX_COUNT; i++) {
 			if (rng.nextBoolean()) {
 				oldMarker.mark(nodes[i]);
@@ -139,19 +123,9 @@ public class SubGraphMarkerTest extends InstanceTest {
 				newMarker.mark(links[i]);
 			}
 		}
-		commit(g);
 	}
 
-	@After
-	public void tearDown() {
-		if (implementationType == ImplementationType.DATABASE) {
-			dbHandler.clearAllTables();
-			dbHandler.closeGraphdatabase();
-		}
-	}
-
-	public void assertAllMarkedCorrectly() throws CommitFailedException {
-		createReadOnlyTransaction(g);
+	public void assertAllMarkedCorrectly() {
 		Set<AttributedElement<?, ?>> oldSet = new HashSet<AttributedElement<?, ?>>();
 		Set<AttributedElement<?, ?>> newSet = new HashSet<AttributedElement<?, ?>>();
 		for (AttributedElement<?, ?> currentElement : oldMarker
@@ -163,23 +137,18 @@ public class SubGraphMarkerTest extends InstanceTest {
 		}
 		assertEquals(oldSet, newSet);
 		assertEquals(newSet, oldSet);
-
-		commit(g);
 	}
 
 	@Test
-	public void testGetMarkedElements() throws CommitFailedException {
+	public void testGetMarkedElements() {
 		assertAllMarkedCorrectly();
-		createReadOnlyTransaction(g);
 		for (int i = 0; i < VERTEX_COUNT; i++) {
 			assertEquals(oldMarker.mark(nodes[i]), newMarker.mark(nodes[i]));
 		}
 		for (int i = 0; i < EDGE_COUNT; i++) {
 			assertEquals(oldMarker.mark(links[i]), newMarker.mark(links[i]));
 		}
-		commit(g);
 		assertAllMarkedCorrectly();
-		createReadOnlyTransaction(g);
 		for (int i = 0; i < VERTEX_COUNT; i++) {
 			assertEquals(oldMarker.removeMark(nodes[i]),
 					newMarker.removeMark(nodes[i]));
@@ -188,7 +157,6 @@ public class SubGraphMarkerTest extends InstanceTest {
 			assertEquals(oldMarker.removeMark(links[i]),
 					newMarker.removeMark(links[i]));
 		}
-		commit(g);
 		assertAllMarkedCorrectly();
 	}
 

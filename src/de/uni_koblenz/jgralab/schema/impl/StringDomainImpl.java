@@ -38,13 +38,13 @@ package de.uni_koblenz.jgralab.schema.impl;
 import java.io.IOException;
 
 import de.uni_koblenz.jgralab.GraphIO;
-import de.uni_koblenz.jgralab.GraphIOException;
-import de.uni_koblenz.jgralab.codegenerator.CodeBlock;
-import de.uni_koblenz.jgralab.codegenerator.CodeGenerator;
-import de.uni_koblenz.jgralab.codegenerator.CodeSnippet;
+import de.uni_koblenz.jgralab.exception.GraphIOException;
 import de.uni_koblenz.jgralab.schema.Package;
 import de.uni_koblenz.jgralab.schema.Schema;
 import de.uni_koblenz.jgralab.schema.StringDomain;
+import de.uni_koblenz.jgralab.schema.codegenerator.CodeBlock;
+import de.uni_koblenz.jgralab.schema.codegenerator.CodeGenerator;
+import de.uni_koblenz.jgralab.schema.codegenerator.CodeSnippet;
 
 public final class StringDomainImpl extends BasicDomainImpl implements
 		StringDomain {

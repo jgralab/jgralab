@@ -34,8 +34,6 @@
  */
 package de.uni_koblenz.jgralabtest.instancetest;
 
-import static junit.framework.Assert.assertFalse;
-import static junit.framework.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.io.File;
@@ -48,9 +46,8 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
-import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.ImplementationType;
-import de.uni_koblenz.jgralab.trans.CommitFailedException;
+import de.uni_koblenz.jgralab.exception.GraphIOException;
 import de.uni_koblenz.jgralabtest.schemas.minimal.MinimalGraph;
 import de.uni_koblenz.jgralabtest.schemas.minimal.MinimalSchema;
 import de.uni_koblenz.jgralabtest.schemas.minimal.Node;
@@ -74,34 +71,23 @@ public class ImplementationModeTest extends InstanceTest {
 	MinimalGraph g;
 
 	@Before
-	public void setup() throws CommitFailedException, GraphIOException {
+	public void setup() throws GraphIOException {
 		switch (implementationType) {
 		case STANDARD:
 			g = MinimalSchema.instance().createMinimalGraph(
 					ImplementationType.STANDARD, null, V, E);
 			break;
-		case TRANSACTION:
-			g = MinimalSchema.instance().createMinimalGraph(
-					ImplementationType.TRANSACTION, null, V, E);
-			break;
-		case DATABASE:
-			// load graph from file not (yet) implemented in DATABASE
-			return;
 		default:
 			fail("Implementation " + implementationType
 					+ " not yet supported by this test.");
 		}
-		createTransaction(g);
 		for (int i = 0; i < N; ++i) {
 			g.createNode();
 		}
 		for (int i = 0; i < N; ++i) {
 			g.createLink(g.getFirstNode(), (Node) g.getVertex(i + 1));
 		}
-		commit(g);
-		createTransaction(g);
 		g.save(filename);
-		commit(g);
 	}
 
 	@AfterClass
@@ -110,26 +96,12 @@ public class ImplementationModeTest extends InstanceTest {
 	}
 
 	@Test
-	public void testLoadGraphFromFile() throws GraphIOException,
-			CommitFailedException {
-		MinimalGraph g2;
+	public void testLoadGraphFromFile() throws GraphIOException {
 		switch (implementationType) {
 		case STANDARD:
-			g2 = MinimalSchema.instance().loadMinimalGraph(filename,
+			MinimalSchema.instance().loadMinimalGraph(filename,
 					ImplementationType.STANDARD);
-			assertFalse(g2.hasTransactionSupport());
 			break;
-		case TRANSACTION:
-			g2 = MinimalSchema.instance().loadMinimalGraph(filename,
-					ImplementationType.TRANSACTION);
-			createReadOnlyTransaction(g2);
-			assertTrue(g2.hasTransactionSupport());
-			commit(g2);
-			break;
-		case DATABASE:
-			// load graph from file not (yet) implemented in DATABASE
-			return;
-
 		default:
 			fail("Implementation " + implementationType
 					+ " not yet supported by this test.");

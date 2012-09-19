@@ -36,9 +36,13 @@ package de.uni_koblenz.jgralab.greql.evaluator;
 
 import java.io.File;
 import java.lang.ref.SoftReference;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
+import java.util.Queue;
 import java.util.Set;
 import java.util.logging.Logger;
 
@@ -46,11 +50,12 @@ import org.pcollections.PSet;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
-import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.GraphStructureChangedListener;
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.ProgressFunction;
 import de.uni_koblenz.jgralab.Vertex;
+import de.uni_koblenz.jgralab.exception.GraphIOException;
+import de.uni_koblenz.jgralab.graphmarker.BooleanGraphMarker;
 import de.uni_koblenz.jgralab.graphmarker.GraphMarker;
 import de.uni_koblenz.jgralab.greql.GreqlEnvironment;
 import de.uni_koblenz.jgralab.greql.GreqlQuery;
@@ -188,6 +193,37 @@ public class GreqlQueryImpl extends GreqlQuery implements
 			long t2 = System.currentTimeMillis();
 			(optimizer == null ? new DefaultOptimizer() : optimizer)
 					.optimize(this);
+			if (!DEBUG_OPTIMIZATION) {
+				// remove orphaned nodes
+				BooleanGraphMarker reachables = new BooleanGraphMarker(
+						queryGraph);
+				// dertermine all nodes reachable from the root
+				// GreqlExpression vertex
+				Queue<Vertex> q = new LinkedList<Vertex>();
+				q.offer(queryGraph.getFirstGreqlExpression());
+				while (!q.isEmpty()) {
+					Vertex v = q.poll();
+					reachables.mark(v);
+					for (Edge e : v.incidences()) {
+						Vertex u = e.getThat();
+						if (!reachables.isMarked(u)) {
+							q.offer(u);
+						}
+					}
+				}
+				// collect unconnected nodes
+				List<Vertex> orphans = new ArrayList<Vertex>();
+				for (Vertex v : queryGraph.vertices()) {
+					if (!reachables.isMarked(v)) {
+						orphans.add(v);
+					}
+				}
+				// remove unconnected nodes
+				for (Vertex v : orphans) {
+					v.delete();
+				}
+			}
+
 			long t3 = System.currentTimeMillis();
 			if (DEBUG_OPTIMIZATION) {
 				String dirName = System.getProperty("java.io.tmpdir");

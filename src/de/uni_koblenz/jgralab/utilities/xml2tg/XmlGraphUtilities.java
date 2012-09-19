@@ -38,8 +38,8 @@ package de.uni_koblenz.jgralab.utilities.xml2tg;
 import java.util.Iterator;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
-import de.uni_koblenz.jgralab.NoSuchAttributeException;
 import de.uni_koblenz.jgralab.VertexFilter;
+import de.uni_koblenz.jgralab.exception.NoSuchAttributeException;
 import de.uni_koblenz.jgralab.utilities.xml2tg.schema.Attribute;
 import de.uni_koblenz.jgralab.utilities.xml2tg.schema.Element;
 import de.uni_koblenz.jgralab.utilities.xml2tg.schema.References;

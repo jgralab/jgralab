@@ -36,7 +36,7 @@
 package de.uni_koblenz.jgralab.schema;
 
 import de.uni_koblenz.jgralab.AttributedElement;
-import de.uni_koblenz.jgralab.GraphIOException;
+import de.uni_koblenz.jgralab.exception.GraphIOException;
 import de.uni_koblenz.jgralab.schema.exception.SchemaException;
 
 /**

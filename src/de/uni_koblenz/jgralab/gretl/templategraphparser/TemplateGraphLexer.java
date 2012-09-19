@@ -130,7 +130,7 @@ public class TemplateGraphLexer {
 			return tok;
 		} else {
 			// this must me an identifier
-			StringBuffer sb = new StringBuffer();
+			StringBuilder sb = new StringBuilder();
 			int start = position;
 			while ((text.length() > position)
 					&& (!isSeparator(text.charAt(position)))) {

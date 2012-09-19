@@ -33,7 +33,8 @@
  * the parts of JGraLab used as well as that of the covered work.
  */
 /**
- * TODO [documentation] write documentation for this package.
+ * A simple utility visualizing a TGraph in a Swing JTree.
  */
 
 package de.uni_koblenz.jgralab.utilities.tgtree;
+

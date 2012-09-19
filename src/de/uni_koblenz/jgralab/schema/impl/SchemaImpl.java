@@ -62,20 +62,10 @@ import org.pcollections.PSet;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphFactory;
 import de.uni_koblenz.jgralab.GraphIO;
-import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.ImplementationType;
 import de.uni_koblenz.jgralab.ProgressFunction;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.codegenerator.CodeGenerator;
-import de.uni_koblenz.jgralab.codegenerator.CodeGeneratorConfiguration;
-import de.uni_koblenz.jgralab.codegenerator.EdgeCodeGenerator;
-import de.uni_koblenz.jgralab.codegenerator.EnumCodeGenerator;
-import de.uni_koblenz.jgralab.codegenerator.GraphCodeGenerator;
-import de.uni_koblenz.jgralab.codegenerator.GraphFactoryGenerator;
-import de.uni_koblenz.jgralab.codegenerator.RecordCodeGenerator;
-import de.uni_koblenz.jgralab.codegenerator.ReversedEdgeCodeGenerator;
-import de.uni_koblenz.jgralab.codegenerator.SchemaCodeGenerator;
-import de.uni_koblenz.jgralab.codegenerator.VertexCodeGenerator;
+import de.uni_koblenz.jgralab.exception.GraphIOException;
 import de.uni_koblenz.jgralab.impl.ConsoleProgressFunction;
 import de.uni_koblenz.jgralab.impl.generic.GenericGraphFactoryImpl;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
@@ -99,6 +89,16 @@ import de.uni_koblenz.jgralab.schema.Schema;
 import de.uni_koblenz.jgralab.schema.SetDomain;
 import de.uni_koblenz.jgralab.schema.StringDomain;
 import de.uni_koblenz.jgralab.schema.VertexClass;
+import de.uni_koblenz.jgralab.schema.codegenerator.CodeGenerator;
+import de.uni_koblenz.jgralab.schema.codegenerator.CodeGeneratorConfiguration;
+import de.uni_koblenz.jgralab.schema.codegenerator.EdgeCodeGenerator;
+import de.uni_koblenz.jgralab.schema.codegenerator.EnumCodeGenerator;
+import de.uni_koblenz.jgralab.schema.codegenerator.GraphCodeGenerator;
+import de.uni_koblenz.jgralab.schema.codegenerator.GraphFactoryGenerator;
+import de.uni_koblenz.jgralab.schema.codegenerator.RecordCodeGenerator;
+import de.uni_koblenz.jgralab.schema.codegenerator.ReversedEdgeCodeGenerator;
+import de.uni_koblenz.jgralab.schema.codegenerator.SchemaCodeGenerator;
+import de.uni_koblenz.jgralab.schema.codegenerator.VertexCodeGenerator;
 import de.uni_koblenz.jgralab.schema.exception.SchemaClassAccessException;
 import de.uni_koblenz.jgralab.schema.exception.SchemaException;
 import de.uni_koblenz.jgralab.schema.impl.compilation.ClassFileManager;
@@ -510,9 +510,6 @@ public class SchemaImpl implements Schema, ManagableArtifact {
 		long schemaElements = 0, currentCount = 0, interval = 1;
 		if (progressFunction != null) {
 			int elements = getNumberOfElements();
-			if (config.hasTransactionSupport()) {
-				elements *= 2;
-			}
 			progressFunction.init(elements);
 			interval = progressFunction.getUpdateInterval();
 		}
@@ -994,11 +991,6 @@ public class SchemaImpl implements Schema, ManagableArtifact {
 		case STANDARD:
 			implClassName += IMPLSTDPACKAGENAME;
 			break;
-		case TRANSACTION:
-			implClassName += IMPLTRANSPACKAGENAME;
-			break;
-		case DATABASE:
-			implClassName += IMPLDATABASEPACKAGENAME;
 		case GENERIC:
 			implClassName = "de.uni_koblenz.jgralab.impl.generic";
 			break;

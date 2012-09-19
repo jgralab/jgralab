@@ -103,7 +103,6 @@ import de.uni_koblenz.jgralab.greql.schema.SimplePathDescription;
 import de.uni_koblenz.jgralab.greql.schema.StringLiteral;
 import de.uni_koblenz.jgralab.greql.schema.SubgraphDefinition;
 import de.uni_koblenz.jgralab.greql.schema.SubgraphRestrictedExpression;
-import de.uni_koblenz.jgralab.greql.schema.TableComprehension;
 import de.uni_koblenz.jgralab.greql.schema.ThisEdge;
 import de.uni_koblenz.jgralab.greql.schema.ThisVertex;
 import de.uni_koblenz.jgralab.greql.schema.TransposedPathDescription;
@@ -122,7 +121,7 @@ import de.uni_koblenz.jgralab.greql.schema.WhereExpression;
  */
 public class GreqlSerializer {
 
-	private StringBuffer sb = null;
+	private StringBuilder sb = null;
 
 	public static String serializeGraph(GreqlGraph greqlGraph) {
 		GreqlSerializer s = new GreqlSerializer();
@@ -135,7 +134,7 @@ public class GreqlSerializer {
 	}
 
 	public String serializeGreqlVertex(GreqlVertex v) {
-		sb = new StringBuffer();
+		sb = new StringBuilder();
 		serializeGreqlVertex(v, false);
 		return sb.toString();
 	}
@@ -515,11 +514,28 @@ public class GreqlSerializer {
 			throw new GreqlException("Unknown PathDescription " + exp + ".");
 		}
 
-		if (exp.get_goalRestr() != null) {
-			sb.append(" & {");
-			serializeExpression(exp.get_goalRestr(), false);
+		boolean hasGoalRestr = false;
+		for (Expression e : exp.get_goalRestr()) {
+			if (!hasGoalRestr) {
+				sb.append(" & {");
+			}
+			if (!(e instanceof TypeId)) {
+				if (hasGoalRestr) {
+					sb.append(" ");
+				}
+				sb.append("@ ");
+			} else {
+				if (hasGoalRestr) {
+					sb.append(", ");
+				}
+			}
+			serializeExpression(e, false);
+			hasGoalRestr = true;
+		}
+		if (hasGoalRestr) {
 			sb.append("}");
 		}
+
 		if (!((exp instanceof PrimaryPathDescription) || (exp instanceof OptionalPathDescription))) {
 			sb.append(')');
 		}
@@ -727,8 +743,6 @@ public class GreqlSerializer {
 			sb.append(" reportSet");
 		} else if (exp instanceof ListComprehension) {
 			sb.append(" report");
-		} else if (exp instanceof TableComprehension) {
-			sb.append(" reportTable");
 		} else if (exp instanceof MapComprehension) {
 			sb.append(" reportMap");
 			serializeLimitedComprehension(exp);
@@ -750,17 +764,6 @@ public class GreqlSerializer {
 		IsTableHeaderOf isTableHeaderOf = exp
 				.getFirstIsTableHeaderOfIncidence(EdgeDirection.IN);
 
-		if (exp.isInstanceOf(TableComprehension.VC)) {
-			Expression columnHeader = exp
-					.getFirstIsColumnHeaderExprOfIncidence(EdgeDirection.IN)
-					.getAlpha();
-			serializeExpression(columnHeader, false);
-			sb.append(", ");
-			Expression rowHeader = exp.getFirstIsRowHeaderExprOfIncidence(
-					EdgeDirection.IN).getAlpha();
-			serializeExpression(rowHeader, false);
-			sb.append(", ");
-		}
 		if (result instanceof TupleConstruction) {
 			// here the tup() can be omitted
 			boolean first = true;

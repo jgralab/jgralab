@@ -25,7 +25,7 @@
 //
 // If you modify this Program, or any covered work, by linking or combining
 // it with Eclipse (or a modified version of that program or an Eclipse
-// plugin), containing parts covered by the terms of the Eclipse Public
+// plugin), containing partsts covered by the terms of the Eclipse Public
 // License (EPL), the licensors of this Program grant you additional
 // permission to convey the resulting work.  Corresponding Source for a
 // non-source form of such a combination shall include the source code for
@@ -88,7 +88,6 @@ VertexClass SimpleDeclaration: GreqlVertex;
 VertexClass SimplePathDescription: PrimaryPathDescription;
 VertexClass AggregationPathDescription: PrimaryPathDescription {outAggregation: Boolean};
 VertexClass StringLiteral: Literal { stringValue: String };
-VertexClass TableComprehension: ComprehensionWithTableHeader;
 abstract VertexClass ThisLiteral: Literal,Variable;
 VertexClass ThisVertex: ThisLiteral;
 VertexClass ThisEdge: ThisLiteral;
@@ -123,7 +122,6 @@ EdgeClass IsArgumentOf: GreqlAggregation from Expression (0,*) role argument agg
 EdgeClass IsBoundExprOfDefinition: IsBoundExprOf from Expression (1,1) role boundExprOfDefinition aggregation shared to DefinitionExpression (0,1);
 EdgeClass IsBoundExprOfQuantifiedExpression: IsBoundExprOf from Expression (1,1) role boundExprOfQuantifier aggregation shared to QuantifiedExpression (0,*);
 EdgeClass IsBoundVarOf: GreqlAggregation from Variable (0,*) role boundVar aggregation shared to GreqlExpression (0,1);
-EdgeClass IsColumnHeaderExprOf: GreqlAggregation from Expression (0,*) role columnHeader  aggregation shared to TableComprehension (0,*);
 EdgeClass IsCompDeclOf: GreqlAggregation from Declaration (1,1) role compDecl aggregation shared to Comprehension (0,1);
 // zero or one, cause MapComprehensions don't have a compResultDef but keyExpr, and valueExpr.
 EdgeClass IsCompResultDefOf: GreqlAggregation from Expression (0,1) role compResultDef aggregation shared to Comprehension (0,*);
@@ -140,7 +138,7 @@ EdgeClass IsExprOf:GreqlAggregation from Expression (1,1) role expr aggregation 
 EdgeClass IsFalseExprOf: GreqlAggregation from Expression (1,1) role falseExpr aggregation shared to ConditionalExpression (0,*);
 EdgeClass IsFirstValueOf: GreqlAggregation from Expression (1,1) role firstValue aggregation shared to ListRangeConstruction (0,*);
 EdgeClass IsFunctionIdOf: GreqlAggregation from FunctionId (1,1) role functionId  aggregation shared to FunctionApplication (1,*);
-EdgeClass IsGoalRestrOf: GreqlAggregation from Expression (0,1) role goalRestr aggregation shared to PathDescription (0,*);
+EdgeClass IsGoalRestrOf: GreqlAggregation from Expression (0,*) role goalRestr aggregation shared to PathDescription (0,*);
 EdgeClass IsIdOfStoreClause: GreqlAggregation from Identifier (0,1) role identifier aggregation shared to GreqlExpression (0,*);
 EdgeClass IsIntermediateVertexOf: GreqlAggregation from Expression (1,1) role intermediateVertex aggregation shared to IntermediateVertexPathDescription (0,*);
 EdgeClass IsIteratedPathOf: IsPathDescriptionOf from PathDescription (1,1) role iteratedPath aggregation shared to IteratedPathDescription (0,*);
@@ -157,7 +155,6 @@ EdgeClass IsRecordExprOf: GreqlAggregation from Expression (1,1) role recordExpr
 EdgeClass IsRecordIdOf: GreqlAggregation from RecordId (1,1) role recordId aggregation shared to RecordElement (1,*);
 EdgeClass IsRoleIdOf: GreqlAggregation from RoleId (0,*) role roleId aggregation shared to EdgeRestriction (1,*);
 EdgeClass IsBooleanPredicateOfEdgeRestriction: GreqlAggregation from Expression (0,1) role booleanPredicate aggregation shared to EdgeRestriction (0,1);
-EdgeClass IsRowHeaderExprOf: GreqlAggregation from Expression (0,*) role rowHeaderExpr aggregation shared to TableComprehension (0,*);
 EdgeClass IsSequenceElementOf: IsPathDescriptionOf from PathDescription (2,*) role sequenceElement aggregation shared to SequentialPathDescription (0,*);
 EdgeClass IsSimpleDeclOf: GreqlAggregation from SimpleDeclaration (1,*) role simpleDecl aggregation shared to Declaration (1,1);
 EdgeClass IsStartExprOf: GreqlAggregation from Expression (0,1) role startExpr aggregation shared to PathExpression (0,*);

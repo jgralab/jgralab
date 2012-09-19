@@ -34,21 +34,14 @@
  */
 package de.uni_koblenz.jgralabtest.instancetest;
 
-import static org.junit.Assert.fail;
-
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Properties;
 
-import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.ImplementationType;
-import de.uni_koblenz.jgralab.impl.db.GraphDatabase;
-import de.uni_koblenz.jgralab.impl.db.GraphDatabaseException;
-import de.uni_koblenz.jgralab.trans.CommitFailedException;
 
 public abstract class InstanceTest {
 
@@ -70,76 +63,11 @@ public abstract class InstanceTest {
 		printIndex();
 		parameters.add(new Object[] { ImplementationType.STANDARD, null });
 		System.out.println("standard implementation");
-
-		printIndex();
-		parameters.add(new Object[] { ImplementationType.TRANSACTION, null });
-		System.out.println("transaction implementation");
-
-		String dbURL = props.getProperty("jgralabtest_dbconnection");
-		dbURL = dbURL != null && dbURL.startsWith("jdbc") ? dbURL : null;
-
-		String derbyURL = props.getProperty("jgralabtest_derby_dbconnection");
-		derbyURL = derbyURL != null && derbyURL.startsWith("jdbc") ? derbyURL
-				: null;
-		String postgresURL = props
-				.getProperty("jgralabtest_postgres_dbconnection");
-		postgresURL = postgresURL != null && postgresURL.startsWith("jdbc") ? postgresURL
-				: null;
-
-		String mysqlURL = props.getProperty("jgralabtest_mysql_dbconnection");
-		mysqlURL = mysqlURL != null && mysqlURL.startsWith("jdbc") ? mysqlURL
-				: null;
-
-		boolean dbConnectionEnabled = dbURL != null || derbyURL != null
-				|| postgresURL != null || mysqlURL != null;
-		if (dbConnectionEnabled) {
-			if (dbURL != null) {
-				// only one db impl is tested
-				addDBTest(dbURL);
-			} else {
-				addDBTest(derbyURL);
-				addDBTest(postgresURL);
-				addDBTest(mysqlURL);
-			}
-		} else {
-			System.out
-					.println("No database access data provided, disabling database support testing.");
-			System.out
-					.println("To enable database support test, set the property 'jgralabtest_dbconnection' to a valid JDBC database URL.");
-		}
 	}
 
 	private static void printIndex() {
 		System.out.print("[" + parameters.size() + "] ");
 	}
-
-	private static void addDBTest(String url) {
-		if (url != null) {
-			printIndex();
-			parameters.add(new Object[] { ImplementationType.DATABASE, url });
-			System.out.println("database implementation using " + url);
-			GraphDatabase gdb;
-			try {
-				// install graph database tables if not already existent
-				gdb = GraphDatabase.openGraphDatabase(url);
-				gdb.setAutoCommit(false);
-				try {
-					System.out.println("Clearing graph database at " + url);
-					gdb.clearAllTables();
-					gdb.commitTransaction();
-				} catch (SQLException e) {
-					// in this case, the tables did not exist, so install them
-					gdb.rollback();
-					gdb.applyDbSchema();
-				}
-			} catch (GraphDatabaseException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
-		}
-	}
-
-	protected GraphDatabaseHandler dbHandler;
 
 	public static Collection<Object[]> getParameters() {
 		return parameters;
@@ -153,69 +81,6 @@ public abstract class InstanceTest {
 
 	protected InstanceTest(ImplementationType implementationType, String dbURL) {
 		this.implementationType = implementationType;
-		dbHandler = dbURL == null ? null : new GraphDatabaseHandler(dbURL);
-		// this.transactionsEnabled = implementationType ==
-		// ImplementationType.TRANSACTION;
 	}
 
-	/**
-	 * Creates a new read only transaction for the given graph iff transactions
-	 * are enabled. Otherwise it does nothing.
-	 * 
-	 * @param g
-	 */
-	protected void createReadOnlyTransaction(Graph g) {
-		if (implementationType == ImplementationType.TRANSACTION) {
-			g.newReadOnlyTransaction();
-		}
-	}
-
-	/**
-	 * Creates a new transaction for the given graph iff transactions are
-	 * enabled. Otherwise it does nothing.
-	 * 
-	 * @param g
-	 */
-	protected void createTransaction(Graph g) {
-		if (implementationType == ImplementationType.TRANSACTION) {
-			g.newTransaction();
-		}
-	}
-
-	/**
-	 * Commits the last created transaction for the given graph.
-	 * 
-	 * @param g
-	 * @throws CommitFailedException
-	 *             if the commit yields an error
-	 */
-	protected void commit(Graph g) throws CommitFailedException {
-		switch (implementationType) {
-		case TRANSACTION:
-			g.commit();
-			break;
-		case DATABASE:
-			try {
-				dbHandler.graphDatabase.commitTransaction();
-			} catch (GraphDatabaseException e) {
-				throw new RuntimeException(e);
-			}
-			break;
-		}
-
-	}
-
-	/**
-	 * Prints a warning that the method with the given methodName has not been
-	 * tested with transaction support. This method is subject to be removed
-	 * when all instance tests have been changed to support transactions.
-	 * 
-	 * @param methodName
-	 *            the name of the method that cannot be tested yet.
-	 */
-	protected void onlyTestWithoutTransactionSupport() {
-		if (implementationType == ImplementationType.TRANSACTION) {
-			fail("Current test does not support transactions yet");
-		}
-	}
 }

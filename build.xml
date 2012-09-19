@@ -87,7 +87,6 @@
 		<fileset dir="${comlib.dir}/apache/commons/cli/" includes="**/*.jar" />
 		<fileset dir="${comlib.dir}/apache/ant" includes="**/*.jar" />
 		<fileset dir="${comlib.dir}/junit/" includes="**/*.jar" />
-		<fileset dir="${comlib.dir}/jdbc/" includes="**/*.jar" />
 		<pathelement path="${clover.jar}" />
 	</path>
 
@@ -103,7 +102,7 @@
 	<!-- compile src.dir and include statements for the targets
 	     it is always "targetname.src" and "targetname.includes" -->
 	<property name="core.src" value="${src.dir}/de/uni_koblenz/jgralab" />
-	<property name="core.includes" value="*.java graphmarker/** schema/** codegenerator/** impl/** jniserver/** trans/** algolib/functions/** eca/ECARuleManagerInterface.java" />
+	<property name="core.includes" value="*.java exception/** graphmarker/** schema/** impl/** algolib/functions/** eca/ECARuleManagerInterface.java" />
 
 	<property name="pcollections.src" value="${src.dir}/org/pcollections" />
 
@@ -123,7 +122,7 @@
 	<property name="graphvalidator.includes" value="graphvalidator/**" />
 
 	<property name="rsa.src" value="${src.dir}/de/uni_koblenz/jgralab/utilities" />
-	<property name="rsa.includes" value="ant/Rsa2TgTask.java rsa/** tg2schemagraph/**" />
+	<property name="rsa.includes" value="ant/Rsa2TgTask.java rsa2tg/** tg2schemagraph/**" />
 
 	<property name="tg2dot.src" value="${src.dir}/de/uni_koblenz/jgralab/utilities" />
 	<property name="tg2dot.includes" value="tg2dot/** tg2image/**" />
@@ -237,7 +236,7 @@
 
 	<!-- compiles greql sources -->
 	<target name="greql" depends="tgtools,algolib">
-		<tgschema2java schemaFile="${greql.schemafile}" sourcePath="${src.dir}" implementationMode="standard" />
+		<tgschema2java schemaFile="${greql.schemafile}" sourcePath="${src.dir}" />
 		<javac fork="true" 
 			srcdir="${greql.src}" 
 			excludes="${no_package_info}"
@@ -366,12 +365,12 @@
 
 	<!-- generates the xml graph schema -->
 	<target name="xmlschema" depends="tgtools,greql">
-		<tgschema2java schemaFile="${src.dir}/de/uni_koblenz/jgralab/utilities/xml2tg/XMLSchema.tg" sourcePath="${src.dir}" implementationMode="standard" />
+		<tgschema2java schemaFile="${src.dir}/de/uni_koblenz/jgralab/utilities/xml2tg/XMLSchema.tg" sourcePath="${src.dir}" />
 	</target>
 
 	<!-- generates the gruml schema and compiles it -->
 	<target name="gruml" depends="tgtools,greql">
-		<tgschema2java schemaFile="${gruml.schemafile}" sourcePath="${src.dir}" implementationMode="standard" />
+		<tgschema2java schemaFile="${gruml.schemafile}" sourcePath="${src.dir}" />
 		<javac fork="true" 
 			srcdir="${gruml.src}"
 			excludes="${no_package_info}"
@@ -396,22 +395,22 @@
 -->
 		<rsa2tg xmifile="${testschemas.dir}/rsa-xmi/greqltestschema.xmi" schemafile="${testschemas.dir}/greqltestschema.tg" />
 		<!-- The jgralab & greql test schemas -->
-		<tgschema2java sourcePath="${testcases.dir}" implementationMode="standard,transaction,database">
+		<tgschema2java sourcePath="${testcases.dir}">
 			<fileset dir="${testschemas.dir}" includes="*.tg" />
 		</tgschema2java>
 		<!-- The GReTL test schemas -->
-		<tgschema2java sourcePath="${testcases.dir}" implementationMode="standard">
+		<tgschema2java sourcePath="${testcases.dir}">
 			<fileset dir="${testschemas.dir}/gretl" includes="*.tg" />
 		</tgschema2java>
 		<!-- The ECA test schemas -->
-		<tgschema2java sourcePath="${testcases.dir}" implementationMode="standard">
+		<tgschema2java sourcePath="${testcases.dir}">
 			<fileset dir="${testschemas.dir}/eca" includes="*.tg" />
 		</tgschema2java>
 	</target>
 
 	<!-- GReTL and ECA -->
 	<target name="gretl_and_eca" depends="greql">
-		<tgschema2java schemaFile="${gretl.templategraphschemafile}" sourcePath="${src.dir}" implementationMode="standard" />
+		<tgschema2java schemaFile="${gretl.templategraphschemafile}" sourcePath="${src.dir}"/>
 		<javac fork="true" 
 			srcdir="${gretl_eca.src}"
 			includes="${gretl_eca.includes}"
@@ -482,9 +481,6 @@
 		<mkdir dir="${testresults.dir}" />
 		<echo>Starting the test...</echo>
 		<junit fork="yes" forkmode="perTest" maxmemory="${maxmemsize}" printsummary="on" showoutput="true" outputtoformatters="true">
-			<sysproperty key="jgralabtest_derby_dbconnection" value="${jgralabtest_derby_dbconnection}" />
-			<sysproperty key="jgralabtest_mysql_dbconnection" value="${jgralabtest_mysql_dbconnection}" />
-			<sysproperty key="jgralabtest_postgres_dbconnection" value="${jgralabtest_postgres_dbconnection}" />
 			<jvmarg value="-enableassertions" />
 			<classpath>
 				<path refid="testclasspath" />
@@ -498,9 +494,6 @@
 		<mkdir dir="${testresults.dir}" />
 		<echo>Starting the test...</echo>
 		<junit fork="yes" forkmode="perTest" maxmemory="${maxmemsize}" printsummary="on" showoutput="true" outputtoformatters="true">
-			<sysproperty key="jgralabtest_derby_dbconnection" value="${jgralabtest_derby_dbconnection}" />
-			<sysproperty key="jgralabtest_mysql_dbconnection" value="${jgralabtest_mysql_dbconnection}" />
-			<sysproperty key="jgralabtest_postgres_dbconnection" value="${jgralabtest_postgres_dbconnection}" />
 			<jvmarg value="-enableassertions" />
 			<classpath>
 				<path refid="testclasspath" />

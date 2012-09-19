@@ -45,7 +45,6 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -57,10 +56,8 @@ import org.pcollections.PSet;
 import org.pcollections.PVector;
 
 import de.uni_koblenz.jgralab.GraphIO;
-import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.ImplementationType;
-import de.uni_koblenz.jgralab.codegenerator.CodeGeneratorConfiguration;
-import de.uni_koblenz.jgralab.impl.db.GraphDatabaseException;
+import de.uni_koblenz.jgralab.exception.GraphIOException;
 import de.uni_koblenz.jgralab.schema.AggregationKind;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.EnumDomain;
@@ -71,8 +68,8 @@ import de.uni_koblenz.jgralab.schema.RecordDomain;
 import de.uni_koblenz.jgralab.schema.Schema;
 import de.uni_koblenz.jgralab.schema.SetDomain;
 import de.uni_koblenz.jgralab.schema.VertexClass;
+import de.uni_koblenz.jgralab.schema.codegenerator.CodeGeneratorConfiguration;
 import de.uni_koblenz.jgralab.schema.impl.SchemaImpl;
-import de.uni_koblenz.jgralab.trans.CommitFailedException;
 import de.uni_koblenz.jgralabtest.schemas.defaultvaluetestschema.DefaultValueTestGraph;
 import de.uni_koblenz.jgralabtest.schemas.defaultvaluetestschema.DefaultValueTestSchema;
 import de.uni_koblenz.jgralabtest.schemas.defaultvaluetestschema.TestEdge;
@@ -95,38 +92,6 @@ public class DefaultValueTest extends InstanceTest {
 
 	private DefaultValueTestGraph graph;
 
-	private DefaultValueTestGraph createDefaultValueTestGraphWithDatabaseSupport() {
-		dbHandler.connectToDatabase();
-		loadDefaultValueTestSchemaIntoGraphDatabase();
-		return this
-				.createDefaultValueTestGraphWithDatabaseSupport("DefaultValueTest");
-	}
-
-	private void loadDefaultValueTestSchemaIntoGraphDatabase() {
-		try {
-			if (!dbHandler.getGraphDatabase().contains(
-					DefaultValueTestSchema.instance())) {
-				dbHandler
-						.loadTestSchemaIntoGraphDatabase(DefaultValueTestSchema
-								.instance());
-			}
-		} catch (GraphDatabaseException e) {
-			e.printStackTrace();
-		}
-	}
-
-	private DefaultValueTestGraph createDefaultValueTestGraphWithDatabaseSupport(
-			String id) {
-		try {
-			return DefaultValueTestSchema.instance()
-					.createDefaultValueTestGraph(id,
-							dbHandler.getGraphDatabase());
-		} catch (Exception exception) {
-			fail("Could not create test graph");
-			return null;
-		}
-	}
-
 	@Before
 	public void setUp() {
 		switch (implementationType) {
@@ -134,43 +99,19 @@ public class DefaultValueTest extends InstanceTest {
 			graph = DefaultValueTestSchema.instance()
 					.createDefaultValueTestGraph(ImplementationType.STANDARD);
 			break;
-		case TRANSACTION:
-			graph = DefaultValueTestSchema.instance()
-					.createDefaultValueTestGraph(ImplementationType.TRANSACTION);
-			break;
-		case DATABASE:
-			graph = createDefaultValueTestGraphWithDatabaseSupport();
-			break;
 		default:
 			fail("Implementation " + implementationType
 					+ " not yet supported by this test.");
 		}
 	}
 
-	@After
-	public void tearDown() {
-		if (implementationType == ImplementationType.DATABASE) {
-			cleanAndCloseDatabase();
-		}
-	}
-
-	private void cleanAndCloseDatabase() {
-		dbHandler.clearAllTables();
-		// dbHandler.cleanDatabaseOfTestGraph(graph);
-		// dbHandler.cleanDatabaseOfTestGraph("secondGraph");
-		// TODO
-		// dbHandler.cleanDatabaseOfTestSchema(DefaultValueTestSchema.instance());
-		dbHandler.closeGraphdatabase();
-	}
-
 	/**
 	 * Test if the defaultValues of the graph attributes are set.
 	 * 
-	 * @throws CommitFailedException
+	 * @
 	 */
 	@Test
-	public void testGraphAttributes() throws CommitFailedException {
-		createReadOnlyTransaction(graph);
+	public void testGraphAttributes() {
 		checkAttributes(graph.is_boolGraph(), graph.get_intGraph(),
 				graph.get_longGraph(), graph.get_doubleGraph(),
 				graph.get_stringGraph(), graph.get_enumGraph(),
@@ -178,99 +119,59 @@ public class DefaultValueTest extends InstanceTest {
 				graph.get_setGraph(), graph.get_complexSetGraph(),
 				graph.get_mapGraph(), graph.get_complexMapGraph(),
 				graph.get_recordGraph());
-		commit(graph);
 	}
 
 	/**
 	 * Test if the defaultValues of the vertex attributes are set and differ
 	 * from graph.
 	 * 
-	 * @throws CommitFailedException
+	 * @
 	 */
 	@Test
-	public void testVertexAttributes() throws CommitFailedException {
-		createTransaction(graph);
+	public void testVertexAttributes() {
 		TestVertex v = graph.createTestVertex();
-		commit(graph);
 
-		createReadOnlyTransaction(graph);
 		checkAttributes(v.is_boolVertex(), v.get_intVertex(),
 				v.get_longVertex(), v.get_doubleVertex(), v.get_stringVertex(),
 				v.get_enumVertex(), v.get_listVertex(),
 				v.get_complexListVertex(), v.get_setVertex(),
 				v.get_complexSetVertex(), v.get_mapVertex(),
 				v.get_complexMapVertex(), v.get_recordVertex());
-		commit(graph);
 	}
 
 	/**
 	 * Test if the defaultValues of the attributes for an vertex of an inherited
 	 * VertexClass are set and differ from graph.
 	 * 
-	 * @throws CommitFailedException
+	 * @
 	 */
 	@Test
-	public void testInheritedAttributes() throws CommitFailedException {
-		createTransaction(graph);
+	public void testInheritedAttributes() {
 		TestSubVertex v = graph.createTestSubVertex();
-		commit(graph);
 
-		createReadOnlyTransaction(graph);
 		checkAttributes(v.is_boolVertex(), v.get_intVertex(),
 				v.get_longVertex(), v.get_doubleVertex(), v.get_stringVertex(),
 				v.get_enumVertex(), v.get_listVertex(),
 				v.get_complexListVertex(), v.get_setVertex(),
 				v.get_complexSetVertex(), v.get_mapVertex(),
 				v.get_complexMapVertex(), v.get_recordVertex());
-		commit(graph);
 	}
 
 	/**
 	 * Test if the defaultValues of the edge attributes are set and differ from
 	 * graph and vertex.
 	 * 
-	 * @throws CommitFailedException
+	 * @
 	 */
 	@Test
-	public void testEdgeAttributes() throws CommitFailedException {
-		createTransaction(graph);
+	public void testEdgeAttributes() {
 		TestVertex v = graph.createTestVertex();
 		TestEdge e = graph.createTestEdge(v, v);
-		commit(graph);
-		createReadOnlyTransaction(graph);
 		checkAttributes(e.is_boolEdge(), e.get_intEdge(), e.get_longEdge(),
 				e.get_doubleEdge(), e.get_stringEdge(), e.get_enumEdge(),
 				e.get_listEdge(), e.get_complexListEdge(), e.get_setEdge(),
 				e.get_complexSetEdge(), e.get_mapEdge(),
 				e.get_complexMapEdge(), e.get_recordEdge());
-		commit(graph);
-	}
-
-	/**
-	 * Test if the defaultValues of the attributes of two graphs are cloned.
-	 * 
-	 * @throws CommitFailedException
-	 */
-	@Test
-	public void testGraphAttributesAreCloned() throws CommitFailedException {
-		DefaultValueTestGraph secondGraph = null;
-		switch (implementationType) {
-		case TRANSACTION:
-			secondGraph = DefaultValueTestSchema.instance()
-					.createDefaultValueTestGraph(ImplementationType.TRANSACTION);
-			break;
-		case STANDARD:
-		case DATABASE:
-			// cloning not supported except in TRANSACTION implementation
-			return;
-		default:
-			fail("Implementation " + implementationType
-					+ " not yet supported by this test.");
-		}
-		createReadOnlyTransaction(graph);
-		createReadOnlyTransaction(secondGraph);
-		commit(secondGraph);
-		commit(graph);
 	}
 
 	/**
@@ -408,7 +309,8 @@ public class DefaultValueTest extends InstanceTest {
 				.createGraphClass("DefaultValueTestGraph");
 		graphClass.createAttribute("boolGraph", schema.getBooleanDomain(), "t");
 		graphClass.createAttribute("intGraph", schema.getIntegerDomain(), "1");
-		graphClass.createAttribute("doubleGraph", schema.getDoubleDomain(), "1.1");
+		graphClass.createAttribute("doubleGraph", schema.getDoubleDomain(),
+				"1.1");
 		graphClass.createAttribute("longGraph", schema.getLongDomain(), "1");
 		graphClass.createAttribute("stringGraph", schema.getStringDomain(),
 				"\"test\"");
@@ -427,8 +329,10 @@ public class DefaultValueTest extends InstanceTest {
 				"(t 1.1 FIRST 1 [t f t] 1 {1 - t 2 - f 3 - t} {t f} \"test\")");
 
 		VertexClass vertexClass = graphClass.createVertexClass("TestVertex");
-		vertexClass.createAttribute("boolVertex", schema.getBooleanDomain(), "t");
-		vertexClass.createAttribute("intVertex", schema.getIntegerDomain(), "1");
+		vertexClass.createAttribute("boolVertex", schema.getBooleanDomain(),
+				"t");
+		vertexClass
+				.createAttribute("intVertex", schema.getIntegerDomain(), "1");
 		vertexClass.createAttribute("doubleVertex", schema.getDoubleDomain(),
 				"1.1");
 		vertexClass.createAttribute("longVertex", schema.getLongDomain(), "1");
@@ -458,7 +362,8 @@ public class DefaultValueTest extends InstanceTest {
 				AggregationKind.NONE);
 		edgeClass.createAttribute("boolEdge", schema.getBooleanDomain(), "t");
 		edgeClass.createAttribute("intEdge", schema.getIntegerDomain(), "1");
-		edgeClass.createAttribute("doubleEdge", schema.getDoubleDomain(), "1.1");
+		edgeClass
+				.createAttribute("doubleEdge", schema.getDoubleDomain(), "1.1");
 		edgeClass.createAttribute("longEdge", schema.getLongDomain(), "1");
 		edgeClass.createAttribute("stringEdge", schema.getStringDomain(),
 				"\"test\"");
@@ -467,7 +372,8 @@ public class DefaultValueTest extends InstanceTest {
 		edgeClass.createAttribute("complexListEdge", complexListDomain,
 				"[[t] [f] [t]]");
 		edgeClass.createAttribute("setEdge", simpleSetDomain, "{t f}");
-		edgeClass.createAttribute("complexSetEdge", complexSetDomain, "{{t} {f}}");
+		edgeClass.createAttribute("complexSetEdge", complexSetDomain,
+				"{{t} {f}}");
 		edgeClass.createAttribute("mapEdge", simpleMapDomain,
 				"{1 - t 2 - f 3 - t}");
 		edgeClass.createAttribute("complexMapEdge", complexMapDomain,

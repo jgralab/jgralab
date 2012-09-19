@@ -40,11 +40,10 @@ import java.util.HashMap;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
-import de.uni_koblenz.jgralab.GraphException;
 import de.uni_koblenz.jgralab.GraphFactory;
 import de.uni_koblenz.jgralab.ImplementationType;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.impl.db.GraphDatabase;
+import de.uni_koblenz.jgralab.exception.GraphException;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.GraphClass;
 import de.uni_koblenz.jgralab.schema.Schema;
@@ -69,7 +68,6 @@ public abstract class GraphFactoryImpl implements GraphFactory {
 
 	protected Schema schema;
 	protected ImplementationType implementationType;
-	protected GraphDatabase graphDatabase;
 
 	protected boolean graphCreated;
 
@@ -79,10 +77,6 @@ public abstract class GraphFactoryImpl implements GraphFactory {
 	protected GraphFactoryImpl(Schema s, ImplementationType i) {
 		schema = s;
 		implementationType = i;
-	}
-
-	public void setGraphDatabase(GraphDatabase graphDatabase) {
-		this.graphDatabase = graphDatabase;
 	}
 
 	protected void createMaps() {
@@ -111,16 +105,8 @@ public abstract class GraphFactoryImpl implements GraphFactory {
 		Class<? extends Graph> originalClass = gc.getSchemaClass();
 		if (isSuperclassOrEqual(originalClass, implementationClass)) {
 			try {
-				if (implementationType.equals(ImplementationType.DATABASE)) {
-					Class<?>[] params = { String.class, int.class, int.class,
-							GraphDatabase.class };
-					graphConstructor = implementationClass
-							.getConstructor(params);
-				} else {
-					Class<?>[] params = { String.class, int.class, int.class };
-					graphConstructor = implementationClass
-							.getConstructor(params);
-				}
+				Class<?>[] params = { String.class, int.class, int.class };
+				graphConstructor = implementationClass.getConstructor(params);
 			} catch (NoSuchMethodException ex) {
 				throw new SchemaClassAccessException(
 						"Unable to locate constructor for graphclass "
@@ -136,20 +122,11 @@ public abstract class GraphFactoryImpl implements GraphFactory {
 	public <G extends Graph> G createGraph(GraphClass gc, String id, int vMax,
 			int eMax) {
 		try {
-			if (implementationType.equals(ImplementationType.DATABASE)) {
-				@SuppressWarnings("unchecked")
-				G dbGraph = (G) graphConstructor.newInstance(id, vMax, eMax,
-						graphDatabase);
-				dbGraph.setGraphFactory(this);
-				graphCreated = true;
-				return dbGraph;
-			} else {
-				@SuppressWarnings("unchecked")
-				G graph = (G) graphConstructor.newInstance(id, vMax, eMax);
-				graph.setGraphFactory(this);
-				graphCreated = true;
-				return graph;
-			}
+			@SuppressWarnings("unchecked")
+			G graph = (G) graphConstructor.newInstance(id, vMax, eMax);
+			graph.setGraphFactory(this);
+			graphCreated = true;
+			return graph;
 		} catch (Exception ex) {
 			throw new SchemaClassAccessException(
 					"Cannot create graph of class "
@@ -167,15 +144,13 @@ public abstract class GraphFactoryImpl implements GraphFactory {
 				g.getECARuleManager().fireBeforeCreateEdgeEvents(ec);
 			}
 			E newInstance;
-			if(ec.equals(g.getGraphClass().getTemporaryEdgeClass())){
+			if (ec.equals(g.getGraphClass().getTemporaryEdgeClass())) {
 				newInstance = (E) g.createTemporaryEdge(alpha, omega);
-			}
-			else if(alpha.isTemporary() || omega.isTemporary()){
+			} else if (alpha.isTemporary() || omega.isTemporary()) {
 				newInstance = (E) g.createTemporaryEdge(ec, alpha, omega);
-			}
-			else{
-				newInstance = (E) edgeMap.get(ec)
-					.newInstance(id, g, alpha, omega);
+			} else {
+				newInstance = (E) edgeMap.get(ec).newInstance(id, g, alpha,
+						omega);
 			}
 			if (!((InternalGraph) g).isLoading() && (g.hasECARuleManager())) {
 				g.getECARuleManager().fireAfterCreateEdgeEvents(newInstance);
@@ -199,9 +174,9 @@ public abstract class GraphFactoryImpl implements GraphFactory {
 				g.getECARuleManager().fireBeforeCreateVertexEvents(vc);
 			}
 			V newInstance;
-			if(vc.equals(g.getGraphClass().getTemporaryVertexClass())){
+			if (vc.equals(g.getGraphClass().getTemporaryVertexClass())) {
 				newInstance = (V) g.createTemporaryVertex();
-			}else{
+			} else {
 				newInstance = (V) vertexMap.get(vc).newInstance(id, g);
 			}
 			if (!((InternalGraph) g).isLoading() && (g.hasECARuleManager())) {

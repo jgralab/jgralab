@@ -42,8 +42,8 @@ import java.util.Map;
 
 import org.junit.Test;
 
-import de.uni_koblenz.jgralab.codegenerator.CodeList;
-import de.uni_koblenz.jgralab.codegenerator.CodeSnippet;
+import de.uni_koblenz.jgralab.schema.codegenerator.CodeList;
+import de.uni_koblenz.jgralab.schema.codegenerator.CodeSnippet;
 
 public class CodeSnippetTest {
 

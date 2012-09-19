@@ -34,8 +34,8 @@
  */
 package de.uni_koblenz.jgralab.schema.impl;
 
-import de.uni_koblenz.jgralab.codegenerator.CodeGenerator;
 import de.uni_koblenz.jgralab.schema.Constraint;
+import de.uni_koblenz.jgralab.schema.codegenerator.CodeGenerator;
 
 /**
  * @author Tassilo Horn <horn@uni-koblenz.de>

@@ -676,7 +676,7 @@ public class TwoDVisualizer {
 		}
 
 		protected String stringQuote(String s) {
-			StringBuffer sb = new StringBuffer();
+			StringBuilder sb = new StringBuilder();
 			for (char ch : s.toCharArray()) {
 				switch (ch) {
 				case '\\':

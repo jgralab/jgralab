@@ -312,17 +312,6 @@ public class GreqlEvaluatorFacade {
 	}
 
 	/**
-	 * Evaluates a given GReQL-query to a JValue and returns it.
-	 * 
-	 * @param query
-	 *            A GReQL-query as String.
-	 * @return The String from a query result.
-	 */
-	public String evaluateToString(String query) {
-		return evaluate(query).toString();
-	}
-
-	/**
 	 * Sets the given value as variable of the {@link #evaluator}.
 	 * 
 	 * @param name

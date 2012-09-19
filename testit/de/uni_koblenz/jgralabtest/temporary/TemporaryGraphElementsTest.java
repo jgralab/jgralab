@@ -15,12 +15,12 @@ import org.junit.Test;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphIO;
-import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.ImplementationType;
 import de.uni_koblenz.jgralab.TemporaryEdge;
-import de.uni_koblenz.jgralab.TemporaryGraphElementBlessingException;
 import de.uni_koblenz.jgralab.TemporaryVertex;
 import de.uni_koblenz.jgralab.Vertex;
+import de.uni_koblenz.jgralab.exception.GraphIOException;
+import de.uni_koblenz.jgralab.exception.TemporaryGraphElementException;
 import de.uni_koblenz.jgralab.schema.Schema;
 import de.uni_koblenz.jgralabtest.schemas.citymap.CityMapSchema;
 
@@ -249,7 +249,7 @@ public class TemporaryGraphElementsTest {
 		writeTgToConsole(g);
 	}
 
-	@Test(expected = TemporaryGraphElementBlessingException.class)
+	@Test(expected = TemporaryGraphElementException.class)
 	public void testWrongAttributeValue() {
 		Schema schema = CityMapSchema.instance();
 		Graph g = schema.createGraph(impl);
@@ -550,7 +550,7 @@ public class TemporaryGraphElementsTest {
 		try {
 			tempe.bless(tempe.getPreliminaryType());
 			fail();
-		} catch (TemporaryGraphElementBlessingException ex) {
+		} catch (TemporaryGraphElementException ex) {
 			assertTrue(tempe.isValid());
 		}
 
@@ -590,14 +590,14 @@ public class TemporaryGraphElementsTest {
 		try {
 			v1.bless(schema.getGraphClass().getVertexClass("ParkingGarage"));
 			fail();
-		} catch (TemporaryGraphElementBlessingException ex) {
+		} catch (TemporaryGraphElementException ex) {
 			// No blessing to wrong type allowed
 		}
 
 		try {
 			e1.bless(schema.getGraphClass().getEdgeClass("Bridge"));
 			fail();
-		} catch (TemporaryGraphElementBlessingException ex) {
+		} catch (TemporaryGraphElementException ex) {
 			// No blessing to wrong type allowed
 		}
 	}

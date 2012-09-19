@@ -50,18 +50,17 @@ import javax.tools.ToolProvider;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
-import org.apache.commons.cli.OptionGroup;
 
 import de.uni_koblenz.ist.utilities.option_handler.OptionHandler;
 import de.uni_koblenz.jgralab.GraphIO;
-import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.JGraLab;
-import de.uni_koblenz.jgralab.codegenerator.CodeGeneratorConfiguration;
+import de.uni_koblenz.jgralab.exception.GraphIOException;
 import de.uni_koblenz.jgralab.schema.Domain;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.GraphClass;
 import de.uni_koblenz.jgralab.schema.Schema;
 import de.uni_koblenz.jgralab.schema.VertexClass;
+import de.uni_koblenz.jgralab.schema.codegenerator.CodeGeneratorConfiguration;
 
 public class TgSchema2Java {
 
@@ -130,21 +129,11 @@ public class TgSchema2Java {
 				t.setCreateJar(true);
 				t.setJarFileName(comLine.getOptionValue("j"));
 			}
-			if (comLine.hasOption("so")) {
-				t.setStandardSupportOnly();
-			} else if (comLine.hasOption("to")) {
-				t.setTransactionSupportOnly();
-			}
 
 			if (comLine.hasOption('w')) {
 				t.setTypeSpecificMethodSupport(false);
 			} else {
 				t.setTypeSpecificMethodSupport(true);
-			}
-			if (comLine.hasOption('i')) {
-				t.setImplementationMode(comLine.getOptionValue('i'));
-			} else {
-				t.setImplementationMode("standard");
 			}
 
 			// loading .tg-file and creating schema-object
@@ -168,34 +157,6 @@ public class TgSchema2Java {
 
 	public void setTypeSpecificMethodSupport(boolean enabled) {
 		config.setTypeSpecificMethodsSupport(enabled);
-	}
-
-	@Deprecated
-	public void setTransactionSupportOnly() {
-		System.err
-				.println("Warning: this call is deprecated, use option \"-i\" instead.");
-		config.setStandardSupport(false);
-		config.setTransactionSupport(true);
-	}
-
-	@Deprecated
-	public void setStandardSupportOnly() {
-		System.err
-				.println("Warning: this call is deprecated, use option \"-i\" instead.");
-		config.setStandardSupport(true);
-		config.setTransactionSupport(false);
-	}
-
-	public void setStandardSupport(boolean value) {
-		config.setStandardSupport(value);
-	}
-
-	public void setTransactionSupport(boolean value) {
-		config.setTransactionSupport(value);
-	}
-
-	public void setDatabaseSupport(boolean value) {
-		config.setDatabaseSupport(value);
 	}
 
 	/**
@@ -253,7 +214,7 @@ public class TgSchema2Java {
 	/**
 	 * Checks if all .java-files belonging to the specified Schema already exist
 	 * in the commit path. There also must not exist any surplus .java-files.
-	 *
+	 * 
 	 * @param schema
 	 *            the Schema whose files shall be checked for existence
 	 * @return true if all .java-files already exist; false otherwise
@@ -307,10 +268,9 @@ public class TgSchema2Java {
 				if (pathName != "") {
 					pathName = pathName.concat(File.separator);
 				}
-				requiredFilePaths.add(commitPath + File.separator
-						+ schemaPath + File.separator + "impl"
-						+ File.separator + pathName + vc.getSimpleName()
-						+ "Impl.java");
+				requiredFilePaths.add(commitPath + File.separator + schemaPath
+						+ File.separator + "impl" + File.separator + pathName
+						+ vc.getSimpleName() + "Impl.java");
 			}
 		}
 
@@ -323,14 +283,12 @@ public class TgSchema2Java {
 				if (pathName != "") {
 					pathName = pathName.concat(File.separator);
 				}
-				requiredFilePaths.add(commitPath + File.separator
-						+ schemaPath + File.separator + "impl"
-						+ File.separator + pathName + ec.getSimpleName()
-						+ "Impl.java");
-				requiredFilePaths.add(commitPath + File.separator
-						+ schemaPath + File.separator + "impl"
-						+ File.separator + pathName + "Reversed"
+				requiredFilePaths.add(commitPath + File.separator + schemaPath
+						+ File.separator + "impl" + File.separator + pathName
 						+ ec.getSimpleName() + "Impl.java");
+				requiredFilePaths.add(commitPath + File.separator + schemaPath
+						+ File.separator + "impl" + File.separator + pathName
+						+ "Reversed" + ec.getSimpleName() + "Impl.java");
 			}
 		}
 
@@ -457,22 +415,6 @@ public class TgSchema2Java {
 		jar.setArgName("file");
 		oh.addOption(jar);
 
-		OptionGroup group = new OptionGroup();
-		group.setRequired(false);
-		Option standard = new Option("so", "standard-support-only", false,
-				"(optional): Create standard support code only");
-		standard.setRequired(false);
-		oh.addOption(standard);
-
-		Option transactions = new Option("to", "transaction-support-only",
-				false, "(optional): Create transaction support code only");
-		transactions.setRequired(false);
-		oh.addOption(transactions);
-
-		group.addOption(standard);
-		group.addOption(transactions);
-		oh.addOptionGroup(group);
-
 		Option without_types = new Option("w", "without-types", false,
 				"(optional): Don't create typespecific methods in classes");
 		without_types.setRequired(false);
@@ -486,15 +428,6 @@ public class TgSchema2Java {
 		path.setRequired(true);
 		path.setArgName("path");
 		oh.addOption(path);
-
-		Option implementation = new Option(
-				"i",
-				"implementationMode",
-				true,
-				"(optional): explicitly specify the implementation modes that should be generated. By default only the standard support will be activated.");
-		implementation.setRequired(false);
-		implementation.setArgName("list");
-		oh.addOption(implementation);
 
 		return oh.parse(args);
 	}
@@ -558,34 +491,5 @@ public class TgSchema2Java {
 
 	public Schema getSchema() {
 		return schema;
-	}
-
-	public void setImplementationMode(String value) {
-
-		String[] values = value.toLowerCase().split(",");
-		if (values.length > 0) {
-			// paranoid ;-) ensure nothing is activated to minimize surprises
-			setTransactionSupport(false);
-			setStandardSupport(false);
-			setDatabaseSupport(false);
-		} else {
-			throw new IllegalArgumentException(
-					"No implementation mode specified.");
-		}
-		for (String v : values) {
-			v = v.trim();
-			if (v.equals("transaction")) {
-				setTransactionSupport(true);
-			} else if (v.equals("standard")) {
-				setStandardSupport(true);
-			} else if (v.equals("database")) {
-				setDatabaseSupport(true);
-			} else {
-				throw new IllegalArgumentException(
-						"Illegal value for implementation mode: "
-								+ v
-								+ "\nOnly \"transaction\",\"standard\" and \"database\" are supported.");
-			}
-		}
 	}
 }

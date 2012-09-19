@@ -2147,7 +2147,6 @@ public class GreqlParser extends ParserHelper {
 
 	private final Comprehension parseReportClause() {
 		Comprehension comprehension = null;
-		boolean vartable = false;
 		boolean map = false;
 		TokenTypes separator = TokenTypes.COMMA;
 		TokenTypes comprehensionType = lookAhead(0);
@@ -2181,13 +2180,6 @@ public class GreqlParser extends ParserHelper {
 				}
 				match(TokenTypes.COLON);
 			}
-			break;
-		case REPORTTABLE:
-			if (!inPredicateMode()) {
-				comprehension = graph.createTableComprehension();
-			}
-			vartable = true;
-			match();
 			break;
 		case REPORTMAP:
 		case REPORTMAPN:
@@ -2229,33 +2221,6 @@ public class GreqlParser extends ParserHelper {
 						reportList.get(0).length, reportList.get(0).offset));
 				valueEdge.set_sourcePositions(createSourcePositionList(
 						reportList.get(1).length, reportList.get(1).offset));
-			}
-		} else if (vartable) {
-			if (!inPredicateMode()) {
-				if ((reportList.size() != 3) && (reportList.size() != 4)) {
-					fail("reportTable columHeaderExpr, rowHeaderExpr, cellContent [,tableHeader] must be followed by three or for arguments");
-				}
-				IsColumnHeaderExprOf cHeaderE = graph
-						.createIsColumnHeaderExprOf(reportList.get(0).node,
-								(TableComprehension) comprehension);
-				cHeaderE.set_sourcePositions(createSourcePositionList(
-						reportList.get(0).length, reportList.get(0).offset));
-				IsRowHeaderExprOf rHeaderE = graph.createIsRowHeaderExprOf(
-						reportList.get(1).node,
-						(TableComprehension) comprehension);
-				rHeaderE.set_sourcePositions(createSourcePositionList(
-						reportList.get(1).length, reportList.get(1).offset));
-				e = graph.createIsCompResultDefOf(reportList.get(2).node,
-						comprehension);
-				e.set_sourcePositions(createSourcePositionList(
-						reportList.get(2).length, reportList.get(2).offset));
-				if (reportList.size() == 4) {
-					IsTableHeaderOf tHeaderE = graph.createIsTableHeaderOf(
-							reportList.get(3).node,
-							(ComprehensionWithTableHeader) comprehension);
-					tHeaderE.set_sourcePositions(createSourcePositionList(
-							reportList.get(3).length, reportList.get(3).offset));
-				}
 			}
 		} else {
 			if (!inPredicateMode()) {
