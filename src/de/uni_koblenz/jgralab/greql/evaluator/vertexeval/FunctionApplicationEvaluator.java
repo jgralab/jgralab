@@ -142,7 +142,7 @@ public class FunctionApplicationEvaluator extends
 	/**
 	 * creates the type-argument
 	 */
-	private TypeCollection createTypeArgument(InternalGreqlEvaluator evaluator) {
+	public TypeCollection createTypeArgument(InternalGreqlEvaluator evaluator) {
 		TypeId typeId;
 		IsTypeExprOf typeEdge = vertex
 				.getFirstIsTypeExprOfIncidence(EdgeDirection.IN);
@@ -153,8 +153,8 @@ public class FunctionApplicationEvaluator extends
 				typeId = (TypeId) typeEdge.getAlpha();
 				TypeIdEvaluator typeEval = (TypeIdEvaluator) query
 						.getVertexEvaluator(typeId);
-				typeCollection = typeCollection.combine((TypeCollection) typeEval
-						.getResult(evaluator));
+				typeCollection = typeCollection
+						.combine((TypeCollection) typeEval.getResult(evaluator));
 				typeEdge = typeEdge
 						.getNextIsTypeExprOfIncidence(EdgeDirection.IN);
 			}

@@ -33,6 +33,7 @@ import de.uni_koblenz.jgralab.greql.evaluator.fa.SimpleTransition;
 import de.uni_koblenz.jgralab.greql.evaluator.fa.State;
 import de.uni_koblenz.jgralab.greql.evaluator.fa.Transition;
 import de.uni_koblenz.jgralab.greql.evaluator.fa.VertexTypeRestrictionTransition;
+import de.uni_koblenz.jgralab.greql.evaluator.vertexeval.FunctionApplicationEvaluator;
 import de.uni_koblenz.jgralab.greql.evaluator.vertexeval.GreqlExpressionEvaluator;
 import de.uni_koblenz.jgralab.greql.evaluator.vertexeval.PathDescriptionEvaluator;
 import de.uni_koblenz.jgralab.greql.evaluator.vertexeval.VariableEvaluator;
@@ -479,7 +480,6 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 		subgraphSnippet
 				.add("\t\tdatagraph.setTraversalContext(subGraphMarker);");
 
-		// TODO Auto-generated method stub
 		return subgraphSnippet.getCode();
 	}
 
@@ -1163,8 +1163,16 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 			Expression typeExpr = (Expression) funApp
 					.getFirstIsTypeExprOfFunctionIncidence(EdgeDirection.IN)
 					.getThat();
-			list.add(new CodeSnippet("Object arg_" + argNumber++ + " = "
-					+ createCodeForExpression(typeExpr) + ";"));
+			FunctionApplicationEvaluator funappeval = (FunctionApplicationEvaluator) ((GreqlQueryImpl) query)
+					.getVertexEvaluator(funApp);
+			TypeCollection typeCollection = funappeval
+					.createTypeArgument(evaluator);
+
+			addImports("de.uni_koblenz.jgralab.greql.types.TypeCollection");
+			list.add(new CodeSnippet("TypeCollection arg_" + argNumber++
+					+ " = TypeCollection.empty();"));
+			// TODO create TypeCollection
+
 		}
 		list.add(new CodeSnippet("boolean matches;"));
 		Method[] methods = function.getClass().getMethods();

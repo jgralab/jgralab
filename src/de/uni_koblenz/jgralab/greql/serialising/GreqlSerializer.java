@@ -75,6 +75,7 @@ import de.uni_koblenz.jgralab.greql.schema.IsExpressionOnSubgraph;
 import de.uni_koblenz.jgralab.greql.schema.IsSubgraphDefiningExpression;
 import de.uni_koblenz.jgralab.greql.schema.IsSubgraphDefinitionOf;
 import de.uni_koblenz.jgralab.greql.schema.IsTableHeaderOf;
+import de.uni_koblenz.jgralab.greql.schema.IsTypeExprOfFunction;
 import de.uni_koblenz.jgralab.greql.schema.IteratedPathDescription;
 import de.uni_koblenz.jgralab.greql.schema.IterationType;
 import de.uni_koblenz.jgralab.greql.schema.LetExpression;
@@ -898,6 +899,17 @@ public class GreqlSerializer {
 		}
 
 		serializeIdentifier(fid);
+		String delim = "{";
+		for (IsTypeExprOfFunction iteof : exp
+				.getIsTypeExprOfFunctionIncidences(EdgeDirection.IN)) {
+			Expression arg = (Expression) iteof.getThat();
+			sb.append(delim);
+			delim = ", ";
+			serializeExpression(arg, false);
+		}
+		if (!delim.equals("{")) {
+			sb.append("}");
+		}
 		sb.append('(');
 		boolean first = true;
 		for (Expression arg : exp.get_argument()) {

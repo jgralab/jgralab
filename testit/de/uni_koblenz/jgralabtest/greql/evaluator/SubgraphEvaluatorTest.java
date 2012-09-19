@@ -22,6 +22,7 @@ import de.uni_koblenz.jgralab.greql.executable.ExecutableQuery;
 import de.uni_koblenz.jgralab.greql.executable.GreqlCodeGenerator;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.GraphElementClass;
+import de.uni_koblenz.jgralab.utilities.tg2dot.Tg2Dot;
 
 public class SubgraphEvaluatorTest {
 
@@ -55,16 +56,16 @@ public class SubgraphEvaluatorTest {
 
 	public ExecutableQuery createQueryClass(String query, String classname)
 			throws InstantiationException, IllegalAccessException {
-		// try {
-		// String filePrefix = "./testit/" + classname.replace('.', '/');
-		// GreqlQuery.createQuery(query).getQueryGraph()
-		// .save(filePrefix + ".tg");
-		// Tg2Dot.main(new String[] { "-g", filePrefix + ".tg", "-o",
-		// filePrefix + ".png", "-i", "-e", "-r", "-t", "png" });
-		// } catch (GraphIOException e) {
-		// // TODO Auto-generated catch block
-		// e.printStackTrace();
-		// }
+		try {
+			String filePrefix = "./testit/" + classname.replace('.', '/');
+			GreqlQuery.createQuery(query).getQueryGraph()
+					.save(filePrefix + ".tg");
+			Tg2Dot.main(new String[] { "-g", filePrefix + ".tg", "-o",
+					filePrefix + ".png", "-i", "-e", "-r", "-t", "png" });
+		} catch (GraphIOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		GreqlCodeGenerator.generateCode(query, datagraph.getSchema(), classname
 				+ "_", "./testit/");
 		Class<ExecutableQuery> generatedQuery = GreqlCodeGenerator
@@ -100,7 +101,6 @@ public class SubgraphEvaluatorTest {
 						"testdata.VertexSetSubgraph_oneVertex") }) {
 			@SuppressWarnings("unchecked")
 			Set<Vertex> ergSet = (Set<Vertex>) query.evaluate(datagraph);
-			;
 			assertEquals(1, ergSet.size());
 			assertTrue(ergSet.contains(datagraph.getVertex(1)));
 		}
@@ -116,7 +116,6 @@ public class SubgraphEvaluatorTest {
 						"testdata.TestVertexSetSubgraph_twoVertices") }) {
 			@SuppressWarnings("unchecked")
 			Set<Vertex> ergSet = (Set<Vertex>) query.evaluate(datagraph);
-			;
 			assertEquals(2, ergSet.size());
 			assertTrue(ergSet.contains(datagraph.getVertex(1)));
 			assertTrue(ergSet.contains(datagraph.getVertex(23)));
@@ -133,7 +132,6 @@ public class SubgraphEvaluatorTest {
 						"testdata.VertexSetSubgraph_empty_noEdge") }) {
 			@SuppressWarnings("unchecked")
 			Set<Edge> ergSet = (Set<Edge>) query.evaluate(datagraph);
-			;
 			assertTrue(ergSet.isEmpty());
 		}
 	}
@@ -148,7 +146,6 @@ public class SubgraphEvaluatorTest {
 						"testdata.TestVertexSetSubgraph_oneVertex_noEdge") }) {
 			@SuppressWarnings("unchecked")
 			Set<Edge> ergSet = (Set<Edge>) query.evaluate(datagraph);
-			;
 			assertTrue(ergSet.isEmpty());
 		}
 	}
@@ -182,7 +179,6 @@ public class SubgraphEvaluatorTest {
 						"testdata.TestEdgeSetSubgraph_empty") }) {
 			@SuppressWarnings("unchecked")
 			Set<Edge> ergSet = (Set<Edge>) query.evaluate(datagraph);
-			;
 			assertTrue(ergSet.isEmpty());
 		}
 	}
@@ -197,7 +193,6 @@ public class SubgraphEvaluatorTest {
 						"testdata.TestEdgeSetSubgraph_oneEdge") }) {
 			@SuppressWarnings("unchecked")
 			Set<Edge> ergSet = (Set<Edge>) query.evaluate(datagraph);
-			;
 			assertEquals(1, ergSet.size());
 			assertTrue(ergSet.contains(datagraph.getEdge(333)));
 		}
@@ -213,7 +208,6 @@ public class SubgraphEvaluatorTest {
 						"testdata.TestEdgeSetSubgraph_twoEdges") }) {
 			@SuppressWarnings("unchecked")
 			Set<Edge> ergSet = (Set<Edge>) query.evaluate(datagraph);
-			;
 			assertEquals(2, ergSet.size());
 			assertTrue(ergSet.contains(datagraph.getEdge(333)));
 			assertTrue(ergSet.contains(datagraph.getEdge(334)));
@@ -230,7 +224,6 @@ public class SubgraphEvaluatorTest {
 						"testdata.TestEdgeSetSubgraph_empty_twoVertices") }) {
 			@SuppressWarnings("unchecked")
 			Set<Vertex> ergSet = (Set<Vertex>) query.evaluate(datagraph);
-			;
 			assertTrue(ergSet.isEmpty());
 		}
 	}
@@ -245,7 +238,6 @@ public class SubgraphEvaluatorTest {
 						"testdata.TestEdgeSetSubgraph_oneEdge_twoVertices") }) {
 			@SuppressWarnings("unchecked")
 			Set<Vertex> ergSet = (Set<Vertex>) query.evaluate(datagraph);
-			;
 			assertEquals(2, ergSet.size());
 			assertTrue(ergSet.contains(datagraph.getVertex(4)));
 			assertTrue(ergSet.contains(datagraph.getVertex(5)));
@@ -262,7 +254,6 @@ public class SubgraphEvaluatorTest {
 						"testdata.TestEdgeSetSubgraph_twoEdges_threeVertices") }) {
 			@SuppressWarnings("unchecked")
 			Set<Vertex> ergSet = (Set<Vertex>) query.evaluate(datagraph);
-			;
 			assertEquals(3, ergSet.size());
 			assertTrue(ergSet.contains(datagraph.getVertex(4)));
 			assertTrue(ergSet.contains(datagraph.getVertex(5)));
@@ -284,9 +275,53 @@ public class SubgraphEvaluatorTest {
 						"testdata.TestVertexTypeSubgraph_vertices") }) {
 			@SuppressWarnings("unchecked")
 			Set<Vertex> ergSet = (Set<Vertex>) query.evaluate(datagraph);
-			;
 			for (Vertex v : datagraph.vertices()) {
 				if (isInstanceOf(v, "junctions.Plaza")) {
+					assertTrue(createContainmentMessage(v, true),
+							ergSet.contains(v));
+				} else {
+					assertFalse(createContainmentMessage(v, false),
+							ergSet.contains(v));
+				}
+			}
+		}
+	}
+
+	@Test
+	public void testVertexTypeSubgraph_vertices_wrongTypes()
+			throws InstantiationException, IllegalAccessException {
+		String queryText = "import junctions.*; on vertexTypeSubgraph{^Plaza}(): V{}";
+		for (GreqlQuery query : new GreqlQuery[] {
+				GreqlQuery.createQuery(queryText),
+				(GreqlQuery) createQueryClass(queryText,
+						"testdata.TestVertexTypeSubgraph_vertices_wrongTypes") }) {
+			@SuppressWarnings("unchecked")
+			Set<Vertex> ergSet = (Set<Vertex>) query.evaluate(datagraph);
+			for (Vertex v : datagraph.vertices()) {
+				if (!isInstanceOf(v, "junctions.Plaza")) {
+					assertTrue(createContainmentMessage(v, true),
+							ergSet.contains(v));
+				} else {
+					assertFalse(createContainmentMessage(v, false),
+							ergSet.contains(v));
+				}
+			}
+		}
+	}
+
+	@Test
+	public void testVertexTypeSubgraph_vertices_differentTypes()
+			throws InstantiationException, IllegalAccessException {
+		String queryText = "import junctions.*;import localities.*; on vertexTypeSubgraph{Plaza,City}(): V{}";
+		for (GreqlQuery query : new GreqlQuery[] {
+				GreqlQuery.createQuery(queryText),
+				(GreqlQuery) createQueryClass(queryText,
+						"testdata.TestVertexTypeSubgraph_vertices_differentTypes") }) {
+			@SuppressWarnings("unchecked")
+			Set<Vertex> ergSet = (Set<Vertex>) query.evaluate(datagraph);
+			for (Vertex v : datagraph.vertices()) {
+				if (isInstanceOf(v, "junctions.Plaza")
+						|| isInstanceOf(v, "localities.City")) {
 					assertTrue(createContainmentMessage(v, true),
 							ergSet.contains(v));
 				} else {
@@ -307,7 +342,6 @@ public class SubgraphEvaluatorTest {
 						"testdata.TestVertexTypeSubgraph_edges") }) {
 			@SuppressWarnings("unchecked")
 			Set<Edge> ergSet = (Set<Edge>) query.evaluate(datagraph);
-			;
 			for (Edge e : datagraph.edges()) {
 				if (isInstanceOf(e.getAlpha(), "junctions.Plaza")
 						&& isInstanceOf(e.getOmega(), "junctions.Plaza")) {
@@ -335,7 +369,6 @@ public class SubgraphEvaluatorTest {
 						"testdata.TestEdgeTypeSubgraph_edges") }) {
 			@SuppressWarnings("unchecked")
 			Set<Edge> ergSet = (Set<Edge>) query.evaluate(datagraph);
-			;
 			for (Edge e : datagraph.edges()) {
 				if (isInstanceOf(e, "connections.Connection")) {
 					assertTrue(createContainmentMessage(e, true),
@@ -358,7 +391,6 @@ public class SubgraphEvaluatorTest {
 						"testdata.TestEdgeTypeSubgraph_vertices") }) {
 			@SuppressWarnings("unchecked")
 			Set<Vertex> ergSet = (Set<Vertex>) query.evaluate(datagraph);
-			;
 			for (Vertex v : datagraph.vertices()) {
 				if (v.getDegree((EdgeClass) datagraph.getSchema()
 						.getAttributedElementClass("connections.Connection")) > 0) {
