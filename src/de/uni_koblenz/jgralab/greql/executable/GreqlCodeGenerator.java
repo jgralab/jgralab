@@ -33,6 +33,7 @@ import de.uni_koblenz.jgralab.greql.evaluator.fa.SimpleTransition;
 import de.uni_koblenz.jgralab.greql.evaluator.fa.State;
 import de.uni_koblenz.jgralab.greql.evaluator.fa.Transition;
 import de.uni_koblenz.jgralab.greql.evaluator.fa.VertexTypeRestrictionTransition;
+import de.uni_koblenz.jgralab.greql.evaluator.vertexeval.FunctionApplicationEvaluator;
 import de.uni_koblenz.jgralab.greql.evaluator.vertexeval.GreqlExpressionEvaluator;
 import de.uni_koblenz.jgralab.greql.evaluator.vertexeval.PathDescriptionEvaluator;
 import de.uni_koblenz.jgralab.greql.evaluator.vertexeval.VariableEvaluator;
@@ -49,6 +50,7 @@ import de.uni_koblenz.jgralab.greql.schema.DoubleLiteral;
 import de.uni_koblenz.jgralab.greql.schema.EdgeRestriction;
 import de.uni_koblenz.jgralab.greql.schema.EdgeSetExpression;
 import de.uni_koblenz.jgralab.greql.schema.Expression;
+import de.uni_koblenz.jgralab.greql.schema.ExpressionDefinedSubgraph;
 import de.uni_koblenz.jgralab.greql.schema.ForwardVertexSet;
 import de.uni_koblenz.jgralab.greql.schema.FunctionApplication;
 import de.uni_koblenz.jgralab.greql.schema.FunctionId;
@@ -88,6 +90,8 @@ import de.uni_koblenz.jgralab.greql.schema.SetComprehension;
 import de.uni_koblenz.jgralab.greql.schema.SetConstruction;
 import de.uni_koblenz.jgralab.greql.schema.SimpleDeclaration;
 import de.uni_koblenz.jgralab.greql.schema.StringLiteral;
+import de.uni_koblenz.jgralab.greql.schema.SubgraphDefinition;
+import de.uni_koblenz.jgralab.greql.schema.SubgraphRestrictedExpression;
 import de.uni_koblenz.jgralab.greql.schema.ThisEdge;
 import de.uni_koblenz.jgralab.greql.schema.ThisLiteral;
 import de.uni_koblenz.jgralab.greql.schema.ThisVertex;
@@ -343,11 +347,17 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 		// create code for bound variables
 		for (IsBoundVarOf inc : rootExpr
 				.getIsBoundVarOfIncidences(EdgeDirection.IN)) {
+			addImports("de.uni_koblenz.jgralab.greql.exception.UndefinedVariableException");
 			Variable var = (Variable) inc.getThat();
 			scope.addVariable(var.get_name());
 			list.add(new CodeSnippet("Object " + var.get_name()
 					+ " = boundVariables.getVariable(\"" + var.get_name()
 					+ "\");"));
+			list.add(new CodeSnippet("if (" + var.get_name() + " == null) {"));
+			list.add(new CodeSnippet(
+					"\tthrow new UndefinedVariableException(\""
+							+ var.get_name() + "\");"));
+			list.add(new CodeSnippet("}"));
 		}
 
 		// create code for main query expression
@@ -427,7 +437,50 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 		if (queryExpr instanceof PathExistence) {
 			return createCodeForPathExistence((PathExistence) queryExpr);
 		}
+		if (queryExpr instanceof SubgraphRestrictedExpression) {
+			return createCodeForSubgraphRestrictedExpression((SubgraphRestrictedExpression) queryExpr);
+		}
 		return "UnsupportedElement: " + queryExpr.getClass().getSimpleName();
+	}
+
+	private String createCodeForSubgraphRestrictedExpression(
+			SubgraphRestrictedExpression subgraphExpr) {
+		SubgraphDefinition subgraphDefinition = subgraphExpr
+				.get_subgraphDefinition();
+		Expression expression = (Expression) subgraphExpr
+				.getFirstIsExpressionOnSubgraphIncidence(EdgeDirection.IN)
+				.getThat();
+		CodeList result = null;
+		if (subgraphDefinition.isInstanceOf(ExpressionDefinedSubgraph.VC)) {
+			result = new CodeList();
+			result.add(new CodeSnippet(
+					createCodeForExpressionDefinedSubraph((ExpressionDefinedSubgraph) subgraphDefinition)));
+		}
+		if (result != null) {
+			result.add(new CodeSnippet("Object result = "
+					+ createCodeForExpression(expression) + ";"));
+			result.add(new CodeSnippet("datagraph.setTraversalContext(null);"));
+			result.add(new CodeSnippet("return result;"));
+			return createMethod(result, subgraphExpr);
+		} else {
+			return "UnsupportedElement: "
+					+ subgraphExpr.getClass().getSimpleName();
+		}
+	}
+
+	private String createCodeForExpressionDefinedSubraph(
+			ExpressionDefinedSubgraph subgraphDefinition) {
+		Expression subgraphDefiningExpression = subgraphDefinition
+				.get_definingExpression();
+
+		addImports("de.uni_koblenz.jgralab.graphmarker.SubGraphMarker");
+		CodeSnippet subgraphSnippet = new CodeSnippet();
+		subgraphSnippet.add("SubGraphMarker subGraphMarker = (SubGraphMarker) "
+				+ createCodeForExpression(subgraphDefiningExpression) + ";");
+		subgraphSnippet
+				.add("\t\tdatagraph.setTraversalContext(subGraphMarker);");
+
+		return subgraphSnippet.getCode();
 	}
 
 	private String createCodeForIdentifier(Identifier ident) {
@@ -1110,8 +1163,16 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 			Expression typeExpr = (Expression) funApp
 					.getFirstIsTypeExprOfFunctionIncidence(EdgeDirection.IN)
 					.getThat();
-			list.add(new CodeSnippet("Object arg_" + argNumber++ + " = "
-					+ createCodeForExpression(typeExpr) + ";"));
+			FunctionApplicationEvaluator funappeval = (FunctionApplicationEvaluator) ((GreqlQueryImpl) query)
+					.getVertexEvaluator(funApp);
+			TypeCollection typeCollection = funappeval
+					.createTypeArgument(evaluator);
+
+			addImports("de.uni_koblenz.jgralab.greql.types.TypeCollection");
+			list.add(new CodeSnippet("TypeCollection arg_" + argNumber++
+					+ " = TypeCollection.empty();"));
+			// TODO create TypeCollection
+
 		}
 		list.add(new CodeSnippet("boolean matches;"));
 		Method[] methods = function.getClass().getMethods();
@@ -1789,7 +1850,9 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 		return "result_" + uniqueId;
 	}
 
-	Set<String> alreadyCreatedEvaluateFunctions = new HashSet<String>();
+	// Set<String> alreadyCreatedEvaluateFunctions = new HashSet<String>();
+
+	private int uniqueMethodId = 0;
 
 	/**
 	 * Creates a method encapsulating the codelist given and returns the call of
@@ -1808,48 +1871,46 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 		StringBuilder formalParams = new StringBuilder();
 		StringBuilder actualParams = new StringBuilder();
 		String delim = "";
-		int numberOfParameters = 0;
 		for (String s : scope.getDefinedVariables()) {
-			numberOfParameters++;
 			formalParams.append(delim + "Object " + s);
 			actualParams.append(delim + s);
 			delim = ",";
 		}
 		String methodName = "evaluationMethod_" + vertex.getId() + "_"
-				+ numberOfParameters;
-		if (!alreadyCreatedEvaluateFunctions.contains(vertex.getId() + "_"
-				+ numberOfParameters)) {
-			alreadyCreatedEvaluateFunctions.add(vertex.getId() + "_"
-					+ numberOfParameters);
-			CodeList evaluateMethodBlock = new CodeList();
-			evaluateMethodBlock.setVariable("actualParams",
-					actualParams.toString());
-			evaluateMethodBlock.setVariable("formalParams",
-					formalParams.toString());
-			if (!resultVariables.contains(getVariableName(uniqueId))) {
-				evaluateMethodBlock.add(new CodeSnippet("private Object "
-						+ getVariableName(uniqueId) + " = null;"));
-				resultVariables.add(getVariableName(uniqueId));
-			}
-			CodeSnippet checkVariableMethod = new CodeSnippet();
-			checkVariableMethod.add("private Object " + methodName
-					+ "(#formalParams#) {");
-			checkVariableMethod.add("\tif (result_" + uniqueId + " == null) {");
-			checkVariableMethod.add("\t\tresult_" + uniqueId + " = internal_"
-					+ methodName + "(#actualParams#);");
-			checkVariableMethod.add("\t}");
-			checkVariableMethod.add("\treturn result_" + uniqueId + ";");
-			checkVariableMethod.add("}\n");
-			evaluateMethodBlock.add(checkVariableMethod);
-
-			evaluateMethodBlock.add(new CodeSnippet(comment));
-			evaluateMethodBlock.add(new CodeSnippet("private Object internal_"
-					+ methodName + "(#formalParams#) {"));
-			evaluateMethodBlock.add(methodBody);
-			evaluateMethodBlock.add(new CodeSnippet("}\n"));
-
-			createdMethods.add(evaluateMethodBlock);
+				+ uniqueMethodId++;
+		// if (!alreadyCreatedEvaluateFunctions.contains(vertex.getId() + "_"
+		// + numberOfParameters)) {
+		// alreadyCreatedEvaluateFunctions.add(vertex.getId() + "_"
+		// + numberOfParameters);
+		CodeList evaluateMethodBlock = new CodeList();
+		evaluateMethodBlock
+				.setVariable("actualParams", actualParams.toString());
+		evaluateMethodBlock
+				.setVariable("formalParams", formalParams.toString());
+		if (!resultVariables.contains(getVariableName(uniqueId))) {
+			evaluateMethodBlock.add(new CodeSnippet("private Object "
+					+ getVariableName(uniqueId) + " = null;"));
+			resultVariables.add(getVariableName(uniqueId));
 		}
+		CodeSnippet checkVariableMethod = new CodeSnippet();
+		checkVariableMethod.add("private Object " + methodName
+				+ "(#formalParams#) {");
+		checkVariableMethod.add("\tif (result_" + uniqueId + " == null) {");
+		checkVariableMethod.add("\t\tresult_" + uniqueId + " = internal_"
+				+ methodName + "(#actualParams#);");
+		checkVariableMethod.add("\t}");
+		checkVariableMethod.add("\treturn result_" + uniqueId + ";");
+		checkVariableMethod.add("}\n");
+		evaluateMethodBlock.add(checkVariableMethod);
+
+		evaluateMethodBlock.add(new CodeSnippet(comment));
+		evaluateMethodBlock.add(new CodeSnippet("private Object internal_"
+				+ methodName + "(#formalParams#) {"));
+		evaluateMethodBlock.add(methodBody);
+		evaluateMethodBlock.add(new CodeSnippet("}\n"));
+
+		createdMethods.add(evaluateMethodBlock);
+		// }
 
 		return methodName + "(" + actualParams.toString() + ")";
 	}

@@ -42,9 +42,9 @@ import de.uni_koblenz.jgralab.greql.schema.Variable;
 
 /**
  * Should be thrown if a undefined Variable is used
- *
+ * 
  * @author ist@uni-koblenz.de
- *
+ * 
  */
 public class UndefinedVariableException extends QuerySourceException {
 
@@ -54,6 +54,11 @@ public class UndefinedVariableException extends QuerySourceException {
 			List<SourcePosition> sourcePositions) {
 		super("Undefined variable " + variable.get_name(), variable,
 				sourcePositions);
+	}
+
+	public UndefinedVariableException(String variableName) {
+		super("Undefined variable " + variableName, (Variable) null,
+				(List<SourcePosition>) null);
 	}
 
 }
