@@ -88,7 +88,8 @@ public class TypeCollectionTest {
 	@Test
 	public void testWith() {
 		// {A}
-		TypeCollection tc = TypeCollection.empty().with(va, false, false);
+		TypeCollection tc = TypeCollection.empty()
+				.with(va.getQualifiedName(), false, false).bindToSchema(schema);
 		assertTrue(tc.acceptsType(va));
 		assertTrue(tc.acceptsType(vb));
 		assertTrue(tc.acceptsType(vc));
@@ -96,7 +97,8 @@ public class TypeCollectionTest {
 		assertFalse(tc.acceptsType(ee));
 
 		// {A!}
-		tc = TypeCollection.empty().with(va, true, false);
+		tc = TypeCollection.empty().with(va.getQualifiedName(), true, false)
+				.bindToSchema(schema);
 		assertTrue(tc.acceptsType(va));
 		assertFalse(tc.acceptsType(vb));
 		assertFalse(tc.acceptsType(vc));
@@ -104,7 +106,8 @@ public class TypeCollectionTest {
 		assertFalse(tc.acceptsType(ee));
 
 		// {^A}
-		tc = TypeCollection.empty().with(va, false, true);
+		tc = TypeCollection.empty().with(va.getQualifiedName(), false, true)
+				.bindToSchema(schema);
 		assertFalse(tc.acceptsType(va));
 		assertFalse(tc.acceptsType(vb));
 		assertFalse(tc.acceptsType(vc));
@@ -112,7 +115,8 @@ public class TypeCollectionTest {
 		assertFalse(tc.acceptsType(ee));
 
 		// {^A!}
-		tc = TypeCollection.empty().with(va, true, true);
+		tc = TypeCollection.empty().with(va.getQualifiedName(), true, true)
+				.bindToSchema(schema);
 		assertFalse(tc.acceptsType(va));
 		assertTrue(tc.acceptsType(vb));
 		assertTrue(tc.acceptsType(vc));
@@ -120,7 +124,8 @@ public class TypeCollectionTest {
 		assertFalse(tc.acceptsType(ee));
 
 		// {E}
-		tc = TypeCollection.empty().with(ee, false, false);
+		tc = TypeCollection.empty().with(ee.getQualifiedName(), false, false)
+				.bindToSchema(schema);
 		assertFalse(tc.acceptsType(va));
 		assertFalse(tc.acceptsType(vb));
 		assertFalse(tc.acceptsType(vc));
@@ -128,8 +133,8 @@ public class TypeCollectionTest {
 		assertTrue(tc.acceptsType(ee));
 
 		// {A,E}
-		tc = TypeCollection.empty().with(va, false, false)
-				.with(ee, false, false);
+		tc = TypeCollection.empty().with(va.getQualifiedName(), false, false)
+				.with(ee.getQualifiedName(), false, false).bindToSchema(schema);
 		assertTrue(tc.acceptsType(va));
 		assertTrue(tc.acceptsType(vb));
 		assertTrue(tc.acceptsType(vc));
@@ -137,8 +142,8 @@ public class TypeCollectionTest {
 		assertTrue(tc.acceptsType(ee));
 
 		// {A,B}
-		tc = TypeCollection.empty().with(va, false, false)
-				.with(vb, false, false);
+		tc = TypeCollection.empty().with(va.getQualifiedName(), false, false)
+				.with(vb.getQualifiedName(), false, false).bindToSchema(schema);
 		assertTrue(tc.acceptsType(va));
 		assertTrue(tc.acceptsType(vb));
 		assertTrue(tc.acceptsType(vc));
@@ -146,8 +151,8 @@ public class TypeCollectionTest {
 		assertFalse(tc.acceptsType(ee));
 
 		// {A,B!}
-		tc = TypeCollection.empty().with(va, false, false)
-				.with(vb, true, false);
+		tc = TypeCollection.empty().with(va.getQualifiedName(), false, false)
+				.with(vb.getQualifiedName(), true, false).bindToSchema(schema);
 		assertTrue(tc.acceptsType(va));
 		assertTrue(tc.acceptsType(vb));
 		assertTrue(tc.acceptsType(vc));
@@ -155,8 +160,8 @@ public class TypeCollectionTest {
 		assertFalse(tc.acceptsType(ee));
 
 		// {A,^B}
-		tc = TypeCollection.empty().with(va, false, false)
-				.with(vb, false, true);
+		tc = TypeCollection.empty().with(va.getQualifiedName(), false, false)
+				.with(vb.getQualifiedName(), false, true).bindToSchema(schema);
 		assertTrue(tc.acceptsType(va));
 		assertFalse(tc.acceptsType(vb));
 		assertTrue(tc.acceptsType(vc));
@@ -164,7 +169,8 @@ public class TypeCollectionTest {
 		assertFalse(tc.acceptsType(ee));
 
 		// {A,^B!}
-		tc = TypeCollection.empty().with(va, false, false).with(vb, true, true);
+		tc = TypeCollection.empty().with(va.getQualifiedName(), false, false)
+				.with(vb.getQualifiedName(), true, true).bindToSchema(schema);
 		assertTrue(tc.acceptsType(va));
 		assertFalse(tc.acceptsType(vb));
 		assertTrue(tc.acceptsType(vc));
@@ -172,8 +178,8 @@ public class TypeCollectionTest {
 		assertFalse(tc.acceptsType(ee));
 
 		// {A!,B}
-		tc = TypeCollection.empty().with(va, true, false)
-				.with(vb, false, false);
+		tc = TypeCollection.empty().with(va.getQualifiedName(), true, false)
+				.with(vb.getQualifiedName(), false, false).bindToSchema(schema);
 		assertTrue(tc.acceptsType(va));
 		assertTrue(tc.acceptsType(vb));
 		assertFalse(tc.acceptsType(vc));
@@ -181,7 +187,8 @@ public class TypeCollectionTest {
 		assertFalse(tc.acceptsType(ee));
 
 		// {A!,B!}
-		tc = TypeCollection.empty().with(va, true, false).with(vb, true, false);
+		tc = TypeCollection.empty().with(va.getQualifiedName(), true, false)
+				.with(vb.getQualifiedName(), true, false).bindToSchema(schema);
 		assertTrue(tc.acceptsType(va));
 		assertTrue(tc.acceptsType(vb));
 		assertFalse(tc.acceptsType(vc));
@@ -189,7 +196,8 @@ public class TypeCollectionTest {
 		assertFalse(tc.acceptsType(ee));
 
 		// {A!,^B}
-		tc = TypeCollection.empty().with(va, true, false).with(vb, false, true);
+		tc = TypeCollection.empty().with(va.getQualifiedName(), true, false)
+				.with(vb.getQualifiedName(), false, true).bindToSchema(schema);
 		assertTrue(tc.acceptsType(va));
 		assertFalse(tc.acceptsType(vb));
 		assertFalse(tc.acceptsType(vc));
@@ -197,7 +205,8 @@ public class TypeCollectionTest {
 		assertFalse(tc.acceptsType(ee));
 
 		// {A!,^B!}
-		tc = TypeCollection.empty().with(va, true, false).with(vb, true, true);
+		tc = TypeCollection.empty().with(va.getQualifiedName(), true, false)
+				.with(vb.getQualifiedName(), true, true).bindToSchema(schema);
 		assertTrue(tc.acceptsType(va));
 		assertFalse(tc.acceptsType(vb));
 		assertFalse(tc.acceptsType(vc));
@@ -205,8 +214,8 @@ public class TypeCollectionTest {
 		assertFalse(tc.acceptsType(ee));
 
 		// {^A,B}
-		tc = TypeCollection.empty().with(va, false, true)
-				.with(vb, false, false);
+		tc = TypeCollection.empty().with(va.getQualifiedName(), false, true)
+				.with(vb.getQualifiedName(), false, false).bindToSchema(schema);
 		assertFalse(tc.acceptsType(va));
 		assertFalse(tc.acceptsType(vb));
 		assertFalse(tc.acceptsType(vc));
@@ -214,7 +223,8 @@ public class TypeCollectionTest {
 		assertFalse(tc.acceptsType(ee));
 
 		// {^A,B!}
-		tc = TypeCollection.empty().with(va, false, true).with(vb, true, false);
+		tc = TypeCollection.empty().with(va.getQualifiedName(), false, true)
+				.with(vb.getQualifiedName(), true, false).bindToSchema(schema);
 		assertFalse(tc.acceptsType(va));
 		assertFalse(tc.acceptsType(vb));
 		assertFalse(tc.acceptsType(vc));
@@ -222,7 +232,8 @@ public class TypeCollectionTest {
 		assertFalse(tc.acceptsType(ee));
 
 		// {^A,^B}
-		tc = TypeCollection.empty().with(va, false, true).with(vb, false, true);
+		tc = TypeCollection.empty().with(va.getQualifiedName(), false, true)
+				.with(vb.getQualifiedName(), false, true).bindToSchema(schema);
 		assertFalse(tc.acceptsType(va));
 		assertFalse(tc.acceptsType(vb));
 		assertFalse(tc.acceptsType(vc));
@@ -230,7 +241,8 @@ public class TypeCollectionTest {
 		assertFalse(tc.acceptsType(ee));
 
 		// {^A,^B!}
-		tc = TypeCollection.empty().with(va, false, true).with(vb, true, true);
+		tc = TypeCollection.empty().with(va.getQualifiedName(), false, true)
+				.with(vb.getQualifiedName(), true, true).bindToSchema(schema);
 		assertFalse(tc.acceptsType(va));
 		assertFalse(tc.acceptsType(vb));
 		assertFalse(tc.acceptsType(vc));
@@ -238,7 +250,8 @@ public class TypeCollectionTest {
 		assertFalse(tc.acceptsType(ee));
 
 		// {^A!,B}
-		tc = TypeCollection.empty().with(va, true, true).with(vb, false, false);
+		tc = TypeCollection.empty().with(va.getQualifiedName(), true, true)
+				.with(vb.getQualifiedName(), false, false).bindToSchema(schema);
 		assertFalse(tc.acceptsType(va));
 		assertTrue(tc.acceptsType(vb));
 		assertFalse(tc.acceptsType(vc));
@@ -246,7 +259,8 @@ public class TypeCollectionTest {
 		assertFalse(tc.acceptsType(ee));
 
 		// {^A!,B!}
-		tc = TypeCollection.empty().with(va, true, true).with(vb, true, false);
+		tc = TypeCollection.empty().with(va.getQualifiedName(), true, true)
+				.with(vb.getQualifiedName(), true, false).bindToSchema(schema);
 		assertFalse(tc.acceptsType(va));
 		assertTrue(tc.acceptsType(vb));
 		assertFalse(tc.acceptsType(vc));
@@ -254,7 +268,8 @@ public class TypeCollectionTest {
 		assertFalse(tc.acceptsType(ee));
 
 		// {^A!,^B}
-		tc = TypeCollection.empty().with(va, true, true).with(vb, false, true);
+		tc = TypeCollection.empty().with(va.getQualifiedName(), true, true)
+				.with(vb.getQualifiedName(), false, true).bindToSchema(schema);
 		assertFalse(tc.acceptsType(va));
 		assertFalse(tc.acceptsType(vb));
 		assertTrue(tc.acceptsType(vc));
@@ -262,7 +277,8 @@ public class TypeCollectionTest {
 		assertFalse(tc.acceptsType(ee));
 
 		// {^A!,^B!}
-		tc = TypeCollection.empty().with(va, true, true).with(vb, true, true);
+		tc = TypeCollection.empty().with(va.getQualifiedName(), true, true)
+				.with(vb.getQualifiedName(), true, true).bindToSchema(schema);
 		assertFalse(tc.acceptsType(va));
 		assertFalse(tc.acceptsType(vb));
 		assertTrue(tc.acceptsType(vc));

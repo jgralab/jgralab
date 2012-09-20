@@ -37,11 +37,9 @@ package de.uni_koblenz.jgralab.greql.evaluator;
 import java.io.File;
 import java.lang.ref.SoftReference;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
 import java.util.logging.Logger;
@@ -59,11 +57,10 @@ import de.uni_koblenz.jgralab.graphmarker.BooleanGraphMarker;
 import de.uni_koblenz.jgralab.graphmarker.GraphMarker;
 import de.uni_koblenz.jgralab.greql.GreqlEnvironment;
 import de.uni_koblenz.jgralab.greql.GreqlQuery;
-import de.uni_koblenz.jgralab.greql.OptimizerInfo;
 import de.uni_koblenz.jgralab.greql.evaluator.vertexeval.VertexEvaluator;
-import de.uni_koblenz.jgralab.greql.exception.GreqlException;
 import de.uni_koblenz.jgralab.greql.optimizer.DefaultOptimizer;
 import de.uni_koblenz.jgralab.greql.optimizer.DefaultOptimizerInfo;
+import de.uni_koblenz.jgralab.greql.optimizer.NullOptimizer;
 import de.uni_koblenz.jgralab.greql.optimizer.Optimizer;
 import de.uni_koblenz.jgralab.greql.parser.GreqlParser;
 import de.uni_koblenz.jgralab.greql.schema.GreqlExpression;
@@ -73,8 +70,6 @@ import de.uni_koblenz.jgralab.greql.schema.Identifier;
 import de.uni_koblenz.jgralab.greql.schema.UndefinedLiteral;
 import de.uni_koblenz.jgralab.greql.schema.Variable;
 import de.uni_koblenz.jgralab.impl.std.GraphImpl;
-import de.uni_koblenz.jgralab.schema.AttributedElementClass;
-import de.uni_koblenz.jgralab.schema.Schema;
 
 public class GreqlQueryImpl extends GreqlQuery implements
 		GraphStructureChangedListener {
@@ -82,9 +77,7 @@ public class GreqlQueryImpl extends GreqlQuery implements
 	private GreqlGraph queryGraph;
 	private PSet<String> usedVariables;
 	private PSet<String> storedVariables;
-	private final boolean optimize;
-	private final OptimizerInfo optimizerInfo;
-	private Optimizer optimizer;
+	private final Optimizer optimizer;
 	private GreqlExpression rootExpression;
 
 	// Log levels:
@@ -99,52 +92,23 @@ public class GreqlQueryImpl extends GreqlQuery implements
 			.getProperty("greqlDebugOptimization", "false"));
 
 	/**
-	 * The {@link Map} of SimpleName to Type of types that is known in the
-	 * evaluator by import statements in the greql query
-	 */
-	protected Map<Schema, Map<String, AttributedElementClass<?, ?>>> importedTypes;
-
-	/**
 	 * The {@link GraphMarker} that stores all vertex evaluators
 	 */
 	private GraphMarker<VertexEvaluator<? extends GreqlVertex>> vertexEvaluators;
 
 	public GreqlQueryImpl(String queryText) {
-		this(queryText, true);
-	}
-
-	public GreqlQueryImpl(String queryText, boolean optimize) {
-		this(queryText, optimize, new DefaultOptimizerInfo());
-	}
-
-	public GreqlQueryImpl(String queryText, OptimizerInfo optimizerInfo) {
-		this(queryText, true, optimizerInfo);
+		this(queryText, new DefaultOptimizer(new DefaultOptimizerInfo()));
 	}
 
 	public GreqlQueryImpl(String queryText, Optimizer optimizer) {
-		this(queryText, optimizer != null, new DefaultOptimizerInfo(),
-				optimizer);
-	}
-
-	public GreqlQueryImpl(String queryText, boolean optimize,
-			OptimizerInfo optimizerInfo) {
 		this.queryText = queryText;
-		this.optimize = optimize;
-		this.optimizerInfo = optimizerInfo == null ? new DefaultOptimizerInfo()
-				: optimizerInfo;
-		importedTypes = new HashMap<Schema, Map<String, AttributedElementClass<?, ?>>>();
+		this.optimizer = optimizer == null ? NullOptimizer.instance()
+				: optimizer;
 		initializeQueryGraph();
 	}
 
-	public GreqlQueryImpl(String queryText, boolean optimize,
-			OptimizerInfo optimizerInfo, Optimizer optimizer) {
-		this.queryText = queryText;
-		this.optimize = optimize;
-		this.optimizerInfo = optimizerInfo == null ? new DefaultOptimizerInfo()
-				: optimizerInfo;
-		importedTypes = new HashMap<Schema, Map<String, AttributedElementClass<?, ?>>>();
-		this.optimizer = optimizer == null ? new DefaultOptimizer() : optimizer;
-		initializeQueryGraph();
+	public Optimizer getOptimizer() {
+		return optimizer;
 	}
 
 	@Override
@@ -176,7 +140,7 @@ public class GreqlQueryImpl extends GreqlQuery implements
 				+ queryGraph.getVCount() + "/" + queryGraph.getECount()
 				+ ", v/eMax=" + ((GraphImpl) queryGraph).getMaxVCount() + "/"
 				+ ((GraphImpl) queryGraph).getMaxECount());
-		if (optimize) {
+		if (optimizer != null && !(optimizer instanceof NullOptimizer)) {
 			if (DEBUG_OPTIMIZATION) {
 				String dirName = System.getProperty("java.io.tmpdir");
 				if (!dirName.endsWith(File.separator)) {
@@ -191,8 +155,7 @@ public class GreqlQueryImpl extends GreqlQuery implements
 						+ "greql-query-unoptimized.dot");
 			}
 			long t2 = System.currentTimeMillis();
-			(optimizer == null ? new DefaultOptimizer() : optimizer)
-					.optimize(this);
+			optimizer.optimize(this);
 			if (!DEBUG_OPTIMIZATION) {
 				// remove orphaned nodes
 				BooleanGraphMarker reachables = new BooleanGraphMarker(
@@ -344,37 +307,6 @@ public class GreqlQueryImpl extends GreqlQuery implements
 		return rootExpression;
 	}
 
-	/**
-	 * @param typeSimpleName
-	 *            {@link String} the simple name of the needed
-	 *            {@link AttributedElementClass}
-	 * @return {@link AttributedElementClass} of the datagraph with the name
-	 *         <code>name</code>
-	 */
-	public AttributedElementClass<?, ?> getImportedType(Schema schema,
-			String typeSimpleName) {
-		Map<String, AttributedElementClass<?, ?>> map = importedTypes
-				.get(schema);
-		return map != null ? map.get(typeSimpleName) : null;
-	}
-
-	/**
-	 * @param elem
-	 *            {@link AttributedElementClass} which will be added to the
-	 *            {@link #importedTypes} with its simple name as key.
-	 * @return @see {@link Map#put(Object, Object)}
-	 */
-	public AttributedElementClass<?, ?> addImportedType(Schema schema,
-			AttributedElementClass<?, ?> elem) {
-		Map<String, AttributedElementClass<?, ?>> map = importedTypes
-				.get(schema);
-		if (map == null) {
-			map = new HashMap<String, AttributedElementClass<?, ?>>();
-			importedTypes.put(schema, map);
-		}
-		return map.put(elem.getSimpleName(), elem);
-	}
-
 	@Override
 	public void vertexAdded(Vertex v) {
 		try {
@@ -408,10 +340,6 @@ public class GreqlQueryImpl extends GreqlQuery implements
 
 	@Override
 	public void maxVertexCountIncreased(int newValue) {
-	}
-
-	public OptimizerInfo getOptimizerInfo() {
-		return optimizerInfo;
 	}
 
 	private static class GreqlParserWithVertexEvaluatorUpdates extends
@@ -462,25 +390,9 @@ public class GreqlQueryImpl extends GreqlQuery implements
 				progressFunction);
 	}
 
-	// Once a query was evaluated with a non-null schema, it is bound to that
-	// schema since some of the vertex evaluators retain schema specific objects
-	// (such as TypeCollections). The schema field is checked upon evaluation, a
-	// GreqlException is thrown when a GreqlQuery is evaluated with different
-	// schemas.
-	private Schema schema;
-
 	@Override
 	public Object evaluate(Graph datagraph, GreqlEnvironment environment,
 			ProgressFunction progressFunction) {
-		synchronized (this) {
-			if (datagraph != null) {
-				if (schema != null && !schema.equals(datagraph.getSchema())) {
-					throw new GreqlException(
-							"Can not evaluate the same GreqlQuery on graphs with different schemas");
-				}
-				schema = datagraph.getSchema();
-			}
-		}
 		return new GreqlEvaluatorImpl(this, datagraph, environment,
 				progressFunction).getResult();
 	}

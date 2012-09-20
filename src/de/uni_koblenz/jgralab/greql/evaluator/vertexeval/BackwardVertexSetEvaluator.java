@@ -112,8 +112,10 @@ public class BackwardVertexSetEvaluator extends
 		PathDescriptionEvaluator<? extends PathDescription> pathDescEval = (PathDescriptionEvaluator<? extends PathDescription>) query
 				.getVertexEvaluator(p);
 		long pathDescCosts = pathDescEval.getCurrentSubtreeEvaluationCosts();
-		long searchCosts = Math.round(pathDescCosts * searchFactor
-				* Math.sqrt(query.getOptimizerInfo().getAverageEdgeCount()));
+		long searchCosts = Math.round(pathDescCosts
+				* searchFactor
+				* Math.sqrt(query.getOptimizer().getOptimizerInfo()
+						.getAverageEdgeCount()));
 		long ownCosts = searchCosts;
 		long iteratedCosts = ownCosts * getVariableCombinations();
 		long subtreeCosts = targetCosts + pathDescCosts + iteratedCosts;

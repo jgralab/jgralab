@@ -47,21 +47,12 @@ public class GreqlQueryCache {
 
 	private Optimizer optimizer;
 
-	private OptimizerInfo optimizerInfo;
-
 	public GreqlQueryCache() {
-		this(new DefaultOptimizer());
+		this(new DefaultOptimizer(new DefaultOptimizerInfo()));
 	}
 
 	public GreqlQueryCache(Optimizer optimizer) {
-		this(optimizer, optimizer == null ? null : new DefaultOptimizerInfo());
-	}
-
-	public GreqlQueryCache(Optimizer optimizer, OptimizerInfo optimizerInfo) {
-		if (optimizer != null && optimizerInfo != null) {
-			this.optimizer = optimizer;
-			this.optimizerInfo = optimizerInfo;
-		}
+		this.optimizer = optimizer;
 	}
 
 	public synchronized void clear() {
@@ -79,8 +70,7 @@ public class GreqlQueryCache {
 				cache.remove(key);
 			}
 		}
-		GreqlQuery query = GreqlQuery.createQuery(queryText, optimizer != null,
-				optimizerInfo, optimizer);
+		GreqlQuery query = GreqlQuery.createQuery(queryText, optimizer);
 		cache.put(key, new SoftReference<GreqlQuery>(query));
 		return query;
 	}

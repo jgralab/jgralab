@@ -39,6 +39,7 @@ import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.greql.evaluator.GreqlQueryImpl;
 import de.uni_koblenz.jgralab.greql.evaluator.InternalGreqlEvaluator;
 import de.uni_koblenz.jgralab.greql.evaluator.fa.NFA;
+import de.uni_koblenz.jgralab.greql.exception.UnknownTypeException;
 import de.uni_koblenz.jgralab.greql.schema.Expression;
 import de.uni_koblenz.jgralab.greql.schema.IsGoalRestrOf;
 import de.uni_koblenz.jgralab.greql.schema.IsStartRestrOf;
@@ -122,12 +123,18 @@ public abstract class PathDescriptionEvaluator<V extends PathDescription>
 					.getVertexEvaluator(inc.getAlpha());
 			if (vertexEval instanceof TypeIdEvaluator) {
 				TypeIdEvaluator typeEval = (TypeIdEvaluator) vertexEval;
-				typeCollection = typeCollection.combine((TypeCollection) typeEval
-						.getResult(evaluator));
+				typeCollection = typeCollection
+						.combine((TypeCollection) typeEval.getResult(evaluator));
 			} else {
 				goalRestEval = vertexEval;
 			}
 			inc = inc.getNextIsGoalRestrOfIncidence(EdgeDirection.IN);
+		}
+		try {
+			typeCollection = typeCollection.bindToSchema(evaluator);
+		} catch (UnknownTypeException e) {
+			throw new UnknownTypeException(e.getTypeName(),
+					createPossibleSourcePositions());
 		}
 		NFA.addGoalTypeRestriction(getNFA(evaluator), typeCollection);
 		if (goalRestEval != null) {
@@ -156,12 +163,18 @@ public abstract class PathDescriptionEvaluator<V extends PathDescription>
 					.getVertexEvaluator(inc.getAlpha());
 			if (vertexEval instanceof TypeIdEvaluator) {
 				TypeIdEvaluator typeEval = (TypeIdEvaluator) vertexEval;
-				typeCollection = typeCollection.combine((TypeCollection) typeEval
-						.getResult(evaluator));
+				typeCollection = typeCollection
+						.combine((TypeCollection) typeEval.getResult(evaluator));
 			} else {
 				startRestEval = vertexEval;
 			}
 			inc = inc.getNextIsStartRestrOfIncidence(EdgeDirection.IN);
+		}
+		try {
+			typeCollection = typeCollection.bindToSchema(evaluator);
+		} catch (UnknownTypeException e) {
+			throw new UnknownTypeException(e.getTypeName(),
+					createPossibleSourcePositions());
 		}
 		NFA.addStartTypeRestriction(getNFA(evaluator), typeCollection);
 		if (startRestEval != null) {

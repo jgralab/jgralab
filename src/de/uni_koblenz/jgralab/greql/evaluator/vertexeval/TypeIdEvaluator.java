@@ -35,13 +35,13 @@
 
 package de.uni_koblenz.jgralab.greql.evaluator.vertexeval;
 
+import de.uni_koblenz.jgralab.greql.OptimizerInfo;
 import de.uni_koblenz.jgralab.greql.evaluator.GreqlQueryImpl;
 import de.uni_koblenz.jgralab.greql.evaluator.InternalGreqlEvaluator;
 import de.uni_koblenz.jgralab.greql.evaluator.VertexCosts;
 import de.uni_koblenz.jgralab.greql.exception.UnknownTypeException;
 import de.uni_koblenz.jgralab.greql.schema.TypeId;
 import de.uni_koblenz.jgralab.greql.types.TypeCollection;
-import de.uni_koblenz.jgralab.schema.GraphElementClass;
 
 /**
  * Creates a List of types out of the TypeId-Vertex.
@@ -50,38 +50,23 @@ import de.uni_koblenz.jgralab.schema.GraphElementClass;
  * 
  */
 public class TypeIdEvaluator extends VertexEvaluator<TypeId> {
+	private TypeCollection tc;
 
 	public TypeIdEvaluator(TypeId vertex, GreqlQueryImpl query) {
 		super(vertex, query);
 	}
 
-	private GraphElementClass<?, ?> getGraphElementClass(
-			InternalGreqlEvaluator evaluator) {
-		// try to find schema class using qualified name
-		GraphElementClass<?, ?> elemClass = (GraphElementClass<?, ?>) evaluator
-				.getAttributedElementClass(vertex.get_name());
-		// if not found, try to find simple name in imported types
-		if (elemClass == null) {
-			elemClass = (GraphElementClass<?, ?>) query.getImportedType(
-					evaluator.getSchemaOfDataGraph(), vertex.get_name());
-			if (elemClass == null) {
-				throw new UnknownTypeException(vertex.get_name(),
-						createPossibleSourcePositions());
-			} else {
-				vertex.set_name(elemClass.getQualifiedName());
-			}
-		}
-		return elemClass;
-	}
-
-	TypeCollection tc;
-
 	@Override
 	public TypeCollection evaluate(InternalGreqlEvaluator evaluator) {
 		if (tc == null) {
-			GraphElementClass<?, ?> cls = getGraphElementClass(evaluator);
-			tc = TypeCollection.empty().with(cls, vertex.is_type(),
-					vertex.is_excluded());
+			tc = TypeCollection.empty().with(vertex.get_name(),
+					vertex.is_type(), vertex.is_excluded());
+		}
+		try {
+			tc = tc.bindToSchema(evaluator);
+		} catch (UnknownTypeException e) {
+			throw new UnknownTypeException(e.getTypeName(),
+					createPossibleSourcePositions());
 		}
 		evaluator.progress(getOwnEvaluationCosts());
 		return tc;
@@ -89,27 +74,29 @@ public class TypeIdEvaluator extends VertexEvaluator<TypeId> {
 
 	@Override
 	public VertexCosts calculateSubtreeEvaluationCosts() {
-		long costs = query.getOptimizerInfo().getEdgeClassCount()
-				+ query.getOptimizerInfo().getVertexClassCount();
+		OptimizerInfo optimizerInfo = query.getOptimizer().getOptimizerInfo();
+		long costs = optimizerInfo.getEdgeClassCount()
+				+ optimizerInfo.getVertexClassCount();
 		return new VertexCosts(costs, costs, costs);
 	}
 
 	@Override
 	public double calculateEstimatedSelectivity() {
 		double selectivity;
+		OptimizerInfo optimizerInfo = query.getOptimizer().getOptimizerInfo();
 		if (tc != null) {
-			selectivity = tc.getFrequency(query.getOptimizerInfo());
+			selectivity = tc.getFrequency(optimizerInfo);
 		} else {
-			int typesInSchema = (int) Math.round((query.getOptimizerInfo()
-					.getEdgeClassCount() + query.getOptimizerInfo()
-					.getVertexClassCount()) / 2.0);
+			int typesInSchema = (int) Math
+					.round((optimizerInfo.getEdgeClassCount() + optimizerInfo
+							.getVertexClassCount()) / 2.0);
 			selectivity = 1.0;
 			TypeId id = getVertex();
 			if (id.is_type()) {
 				selectivity = 1.0 / typesInSchema;
 			} else {
-				double avgSubclasses = (query.getOptimizerInfo()
-						.getAverageEdgeSubclasses() + query.getOptimizerInfo()
+				double avgSubclasses = (optimizerInfo
+						.getAverageEdgeSubclasses() + optimizerInfo
 						.getAverageVertexSubclasses()) / 2.0;
 				selectivity = avgSubclasses / typesInSchema;
 			}

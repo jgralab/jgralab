@@ -39,18 +39,18 @@ import java.util.HashMap;
 
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.greql.OptimizerInfo;
+import de.uni_koblenz.jgralab.greql.evaluator.EvaluatorUtilities;
 import de.uni_koblenz.jgralab.greql.evaluator.GreqlQueryImpl;
 import de.uni_koblenz.jgralab.greql.evaluator.InternalGreqlEvaluator;
 import de.uni_koblenz.jgralab.greql.evaluator.fa.FiniteAutomaton;
 import de.uni_koblenz.jgralab.greql.evaluator.vertexeval.ElementSetExpressionEvaluator;
-import de.uni_koblenz.jgralab.greql.evaluator.vertexeval.GreqlExpressionEvaluator;
 import de.uni_koblenz.jgralab.greql.evaluator.vertexeval.TypeIdEvaluator;
 import de.uni_koblenz.jgralab.greql.schema.ElementSetExpression;
 import de.uni_koblenz.jgralab.greql.schema.GreqlExpression;
 import de.uni_koblenz.jgralab.greql.schema.GreqlGraph;
 import de.uni_koblenz.jgralab.greql.schema.GreqlVertex;
 import de.uni_koblenz.jgralab.greql.schema.TypeId;
-import de.uni_koblenz.jgralab.schema.AttributedElementClass;
+import de.uni_koblenz.jgralab.schema.GraphElementClass;
 import de.uni_koblenz.jgralab.schema.Schema;
 
 public class TypeCollectionEvaluator implements InternalGreqlEvaluator {
@@ -61,25 +61,22 @@ public class TypeCollectionEvaluator implements InternalGreqlEvaluator {
 
 	private GreqlQueryImpl query;
 
+	private GreqlExpression rootExpression;
+
 	public TypeCollectionEvaluator(GreqlQueryImpl query) {
 		this.query = query;
+		rootExpression = query.getQueryGraph().getFirstGreqlExpression();
 		results = new HashMap<GreqlVertex, Object>();
 	}
 
 	public void execute() {
 		// System.out.println("TypeCollectionEvaluator.execute()");
-		OptimizerInfo info = query.getOptimizerInfo();
+		OptimizerInfo info = query.getOptimizer().getOptimizerInfo();
 		schema = info.getSchema();
+
+		EvaluatorUtilities.checkImports(rootExpression, schema);
+
 		GreqlGraph graph = query.getQueryGraph();
-
-		// resolve imports
-		GreqlExpression root = graph.getFirstGreqlExpression();
-		if (root != null) {
-			GreqlExpressionEvaluator e = (GreqlExpressionEvaluator) query
-					.getVertexEvaluator(root);
-			e.handleImportedTypes(schema);
-		}
-
 		// create TypeCollections for TypeId
 		// System.out.println("evaluate TypeId");
 		for (TypeId tid : graph.getTypeIdVertices()) {
@@ -127,20 +124,19 @@ public class TypeCollectionEvaluator implements InternalGreqlEvaluator {
 	}
 
 	@Override
-	public Graph getDataGraph() {
+	public Graph getGraph() {
 		return null;
 	}
 
 	@Override
-	public Schema getSchemaOfDataGraph() {
+	public Schema getSchema() {
 		return schema;
 	}
 
 	@Override
-	public AttributedElementClass<?, ?> getAttributedElementClass(
-			String qualifiedName) {
-		return schema != null ? schema.getAttributedElementClass(qualifiedName)
-				: null;
+	public GraphElementClass<?, ?> getGraphElementClass(String typeName) {
+		return EvaluatorUtilities.getGraphElementClass(rootExpression, schema,
+				typeName);
 	}
 
 	@Override
@@ -148,8 +144,8 @@ public class TypeCollectionEvaluator implements InternalGreqlEvaluator {
 	}
 
 	@Override
-	public void setDatagraphSchema(Schema datagraphSchema) {
-		schema = datagraphSchema;
+	public void setSchema(Schema schema) {
+		this.schema = schema;
 	}
 
 	@Override

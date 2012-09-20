@@ -32,49 +32,41 @@
  * non-source form of such a combination shall include the source code for
  * the parts of JGraLab used as well as that of the covered work.
  */
+package de.uni_koblenz.jgralab.greql.optimizer;
 
-package de.uni_koblenz.jgralab.greql.exception;
+import de.uni_koblenz.jgralab.greql.GreqlQuery;
+import de.uni_koblenz.jgralab.greql.OptimizerInfo;
+import de.uni_koblenz.jgralab.greql.exception.OptimizerException;
 
-import java.util.ArrayList;
-import java.util.List;
+public final class NullOptimizer implements Optimizer {
+	private OptimizerInfo optimizerInfo;
+	private static NullOptimizer instance;
 
-import de.uni_koblenz.jgralab.greql.schema.SourcePosition;
-
-/**
- * This exception should be thrown if a query accesses a type that doesn't exist
- * in the datagraph schema
- * 
- * @author ist@uni-koblenz.de
- * 
- */
-public class UnknownTypeException extends QuerySourceException {
-
-	static final long serialVersionUID = -1234560;
-	private String typeName;
-
-	public UnknownTypeException(String typeName,
-			List<SourcePosition> sourcePositions, Exception cause) {
-		super("Schema doesn't contain a type '" + typeName + "'", null,
-				sourcePositions, cause);
-		this.typeName = typeName;
+	private NullOptimizer() {
+		optimizerInfo = new DefaultOptimizerInfo();
 	}
 
-	public UnknownTypeException(String typeName,
-			List<SourcePosition> sourcePositions) {
-		super("Schema doesn't contain a type '" + typeName + "'", null,
-				sourcePositions);
-		this.typeName = typeName;
+	public static NullOptimizer instance() {
+		synchronized (NullOptimizer.class) {
+			if (instance == null) {
+				instance = new NullOptimizer();
+			}
+			return instance;
+		}
 	}
 
-	public UnknownTypeException(String typeName) {
-		this(typeName, new ArrayList<SourcePosition>(0));
+	@Override
+	public boolean optimize(GreqlQuery query) throws OptimizerException {
+		return false;
 	}
 
-	public UnknownTypeException(String typeName, Exception cause) {
-		this(typeName, new ArrayList<SourcePosition>(0), cause);
+	@Override
+	public boolean isEquivalent(Optimizer optimizer) {
+		return optimizer instanceof NullOptimizer;
 	}
 
-	public String getTypeName() {
-		return typeName;
+	@Override
+	public OptimizerInfo getOptimizerInfo() {
+		return optimizerInfo;
 	}
 }

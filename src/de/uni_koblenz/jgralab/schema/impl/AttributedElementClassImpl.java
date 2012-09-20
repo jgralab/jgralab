@@ -60,7 +60,7 @@ public abstract class AttributedElementClassImpl<SC extends AttributedElementCla
 
 	/**
 	 * the list of all attributes. Own attributes and inherited attributes are
-	 * stored here - but only if the schema is finish
+	 * stored here - but only if the schema is finished
 	 */
 	protected PVector<Attribute> allAttributes;
 
@@ -288,7 +288,6 @@ public abstract class AttributedElementClassImpl<SC extends AttributedElementCla
 
 	protected void reopen() {
 		attributeIndex = null;
-
 		finished = false;
 	}
 

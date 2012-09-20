@@ -42,6 +42,7 @@ import de.uni_koblenz.jgralab.greql.evaluator.GreqlQueryImpl;
 import de.uni_koblenz.jgralab.greql.evaluator.InternalGreqlEvaluator;
 import de.uni_koblenz.jgralab.greql.evaluator.VertexCosts;
 import de.uni_koblenz.jgralab.greql.exception.GreqlException;
+import de.uni_koblenz.jgralab.greql.exception.UnknownTypeException;
 import de.uni_koblenz.jgralab.greql.funlib.FunLib;
 import de.uni_koblenz.jgralab.greql.funlib.FunLib.FunctionInfo;
 import de.uni_koblenz.jgralab.greql.funlib.Function;
@@ -143,21 +144,25 @@ public class FunctionApplicationEvaluator extends
 	 * creates the type-argument
 	 */
 	public TypeCollection createTypeArgument(InternalGreqlEvaluator evaluator) {
-		TypeId typeId;
 		IsTypeExprOf typeEdge = vertex
 				.getFirstIsTypeExprOfIncidence(EdgeDirection.IN);
-		TypeCollection typeCollection = null;
-		if (typeEdge != null) {
-			typeCollection = TypeCollection.empty();
-			while (typeEdge != null) {
-				typeId = (TypeId) typeEdge.getAlpha();
-				TypeIdEvaluator typeEval = (TypeIdEvaluator) query
-						.getVertexEvaluator(typeId);
-				typeCollection = typeCollection
-						.combine((TypeCollection) typeEval.getResult(evaluator));
-				typeEdge = typeEdge
-						.getNextIsTypeExprOfIncidence(EdgeDirection.IN);
-			}
+		if (typeEdge == null) {
+			return null;
+		}
+		TypeCollection typeCollection = TypeCollection.empty();
+		while (typeEdge != null) {
+			TypeId typeId = (TypeId) typeEdge.getAlpha();
+			TypeIdEvaluator typeEval = (TypeIdEvaluator) query
+					.getVertexEvaluator(typeId);
+			typeCollection = typeCollection.combine((TypeCollection) typeEval
+					.getResult(evaluator));
+			typeEdge = typeEdge.getNextIsTypeExprOfIncidence(EdgeDirection.IN);
+		}
+		try {
+			typeCollection = typeCollection.bindToSchema(evaluator);
+		} catch (UnknownTypeException e) {
+			throw new UnknownTypeException(e.getTypeName(),
+					createPossibleSourcePositions());
 		}
 		return typeCollection;
 	}
@@ -175,6 +180,10 @@ public class FunctionApplicationEvaluator extends
 			parameterEvaluators = createVertexEvaluatorList();
 			paramEvalCount = parameterEvaluators.size();
 			listCreated = true;
+		}
+
+		if (typeArgument != null) {
+			typeArgument = typeArgument.bindToSchema(evaluator);
 		}
 
 		int parameterCount = parameterEvaluators.size();
@@ -196,7 +205,7 @@ public class FunctionApplicationEvaluator extends
 		}
 
 		if (fi.needsGraphArgument()) {
-			parameters[p++] = evaluator.getDataGraph();
+			parameters[p++] = evaluator.getGraph();
 		}
 
 		for (int i = 0; i < paramEvalCount; i++) {

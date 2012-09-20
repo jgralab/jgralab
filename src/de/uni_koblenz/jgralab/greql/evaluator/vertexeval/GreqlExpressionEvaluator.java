@@ -35,26 +35,18 @@
 
 package de.uni_koblenz.jgralab.greql.evaluator.vertexeval;
 
-import java.util.ArrayList;
-
 import de.uni_koblenz.jgralab.EdgeDirection;
+import de.uni_koblenz.jgralab.greql.evaluator.EvaluatorUtilities;
 import de.uni_koblenz.jgralab.greql.evaluator.GreqlQueryImpl;
 import de.uni_koblenz.jgralab.greql.evaluator.InternalGreqlEvaluator;
 import de.uni_koblenz.jgralab.greql.evaluator.VertexCosts;
 import de.uni_koblenz.jgralab.greql.exception.UndefinedVariableException;
-import de.uni_koblenz.jgralab.greql.exception.UnknownTypeException;
 import de.uni_koblenz.jgralab.greql.schema.Expression;
 import de.uni_koblenz.jgralab.greql.schema.GreqlExpression;
 import de.uni_koblenz.jgralab.greql.schema.Identifier;
 import de.uni_koblenz.jgralab.greql.schema.IsBoundVarOf;
 import de.uni_koblenz.jgralab.greql.schema.IsIdOfStoreClause;
-import de.uni_koblenz.jgralab.greql.schema.SourcePosition;
 import de.uni_koblenz.jgralab.greql.schema.Variable;
-import de.uni_koblenz.jgralab.schema.EdgeClass;
-import de.uni_koblenz.jgralab.schema.GraphElementClass;
-import de.uni_koblenz.jgralab.schema.Package;
-import de.uni_koblenz.jgralab.schema.Schema;
-import de.uni_koblenz.jgralab.schema.VertexClass;
 
 /**
  * Evaluates a GreqlExpression vertex in the GReQL-2 Syntaxgraph. A
@@ -102,12 +94,9 @@ public class GreqlExpressionEvaluator extends VertexEvaluator<GreqlExpression> {
 	 */
 	@Override
 	public Object evaluate(InternalGreqlEvaluator evaluator) {
-		evaluator.progress(getOwnEvaluationCosts());
+		EvaluatorUtilities.checkImports(vertex,
+				evaluator.getSchema());
 		initializeBoundVariables(evaluator);
-
-		Schema graphSchema = evaluator.getSchemaOfDataGraph();
-		handleImportedTypes(graphSchema);
-
 		Expression boundExpression = vertex.getFirstIsQueryExprOfIncidence(
 				EdgeDirection.IN).getAlpha();
 		VertexEvaluator<? extends Expression> eval = query
@@ -125,40 +114,8 @@ public class GreqlExpressionEvaluator extends VertexEvaluator<GreqlExpression> {
 			// toString(InternalGreqlEvaluator)-method. check the use
 			evaluator.setVariable(varName, result);
 		}
+		evaluator.progress(getOwnEvaluationCosts());
 		return result;
-	}
-
-	public void handleImportedTypes(Schema graphSchema) {
-		if ((vertex.get_importedTypes() != null) && (graphSchema != null)) {
-			for (String importedType : vertex.get_importedTypes()) {
-				if (importedType.endsWith(".*")) {
-					String packageName = importedType.substring(0,
-							importedType.length() - 2);
-					Package p = graphSchema.getPackage(packageName);
-					if (p == null) {
-						throw new UnknownTypeException(packageName,
-								new ArrayList<SourcePosition>());
-					}
-					// for (Domain elem : p.getDomains().values()) {
-					// greqlEvaluator.addKnownType(elem);
-					// }
-					for (VertexClass elem : p.getVertexClasses()) {
-						query.addImportedType(graphSchema, elem);
-					}
-					for (EdgeClass elem : p.getEdgeClasses()) {
-						query.addImportedType(graphSchema, elem);
-					}
-				} else {
-					GraphElementClass<?, ?> elemClass = graphSchema
-							.getGraphClass().getGraphElementClass(importedType);
-					if (elemClass == null) {
-						throw new UnknownTypeException(importedType,
-								new ArrayList<SourcePosition>());
-					}
-					query.addImportedType(graphSchema, elemClass);
-				}
-			}
-		}
 	}
 
 	@Override

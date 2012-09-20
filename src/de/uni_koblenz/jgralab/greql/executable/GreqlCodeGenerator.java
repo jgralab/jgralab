@@ -34,12 +34,12 @@ import de.uni_koblenz.jgralab.greql.evaluator.fa.State;
 import de.uni_koblenz.jgralab.greql.evaluator.fa.Transition;
 import de.uni_koblenz.jgralab.greql.evaluator.fa.VertexTypeRestrictionTransition;
 import de.uni_koblenz.jgralab.greql.evaluator.vertexeval.FunctionApplicationEvaluator;
-import de.uni_koblenz.jgralab.greql.evaluator.vertexeval.GreqlExpressionEvaluator;
 import de.uni_koblenz.jgralab.greql.evaluator.vertexeval.PathDescriptionEvaluator;
 import de.uni_koblenz.jgralab.greql.evaluator.vertexeval.VariableEvaluator;
 import de.uni_koblenz.jgralab.greql.evaluator.vertexeval.VertexEvaluator;
 import de.uni_koblenz.jgralab.greql.funlib.FunLib;
 import de.uni_koblenz.jgralab.greql.funlib.Function;
+import de.uni_koblenz.jgralab.greql.optimizer.DefaultOptimizer;
 import de.uni_koblenz.jgralab.greql.optimizer.DefaultOptimizerInfo;
 import de.uni_koblenz.jgralab.greql.schema.BackwardVertexSet;
 import de.uni_koblenz.jgralab.greql.schema.BoolLiteral;
@@ -160,7 +160,7 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 		scope = new Scope();
 		evaluator = new GreqlEvaluatorImpl(query, null,
 				new GreqlEnvironmentAdapter());
-		evaluator.setDatagraphSchema(datagraphSchema);
+		evaluator.setSchema(datagraphSchema);
 	}
 
 	/**
@@ -182,8 +182,9 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 	 */
 	public static void generateCode(String queryString, Schema datagraphSchema,
 			String classname, String path) {
-		GreqlQuery query = GreqlQuery.createQuery(queryString, true,
-				new DefaultOptimizerInfo(datagraphSchema));
+		GreqlQuery query = GreqlQuery
+				.createQuery(queryString, new DefaultOptimizer(
+						new DefaultOptimizerInfo(datagraphSchema)));
 		String simpleName = classname;
 		String packageName = "";
 		if (classname.contains(".")) {
@@ -218,8 +219,9 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 	 */
 	public static Class<ExecutableQuery> generateCode(String queryString,
 			Schema datagraphSchema, String classname) {
-		GreqlQuery query = GreqlQuery.createQuery(queryString, true,
-				new DefaultOptimizerInfo(datagraphSchema));
+		GreqlQuery query = GreqlQuery
+				.createQuery(queryString, new DefaultOptimizer(
+						new DefaultOptimizerInfo(datagraphSchema)));
 
 		String simpleName = classname;
 		String packageName = "";
@@ -340,8 +342,6 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 	}
 
 	private String createCodeForGreqlExpression(GreqlExpression rootExpr) {
-		((GreqlExpressionEvaluator) ((GreqlQueryImpl) query)
-				.getVertexEvaluator(rootExpr)).handleImportedTypes(schema);
 		CodeList list = new CodeList();
 		scope.blockBegin();
 		// create code for bound variables

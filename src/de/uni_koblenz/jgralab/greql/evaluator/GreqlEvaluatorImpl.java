@@ -49,7 +49,7 @@ import de.uni_koblenz.jgralab.greql.schema.GreqlExpression;
 import de.uni_koblenz.jgralab.greql.schema.GreqlVertex;
 import de.uni_koblenz.jgralab.greql.types.Undefined;
 import de.uni_koblenz.jgralab.impl.std.GraphImpl;
-import de.uni_koblenz.jgralab.schema.AttributedElementClass;
+import de.uni_koblenz.jgralab.schema.GraphElementClass;
 import de.uni_koblenz.jgralab.schema.Schema;
 
 /**
@@ -77,15 +77,9 @@ public class GreqlEvaluatorImpl implements InternalGreqlEvaluator {
 	 */
 	public static final int VERTEX_INDEX_SIZE = 50;
 
-	/**
-	 * This attribute holds the datagraph
-	 */
-	private Graph datagraph = null;
+	private Graph graph = null;
 
-	/**
-	 * This attribute holds the schema of the datagraph
-	 */
-	private Schema datagraphSchema = null;
+	private Schema schema = null;
 
 	/**
 	 * This attribute holds the result of the evaluation
@@ -178,19 +172,19 @@ public class GreqlEvaluatorImpl implements InternalGreqlEvaluator {
 	}
 
 	@Override
-	public Graph getDataGraph() {
-		return datagraph;
+	public Graph getGraph() {
+		return graph;
 	}
 
 	@Override
-	public Schema getSchemaOfDataGraph() {
-		return datagraphSchema;
+	public Schema getSchema() {
+		return schema;
 	}
 
 	@Override
-	public AttributedElementClass<?, ?> getAttributedElementClass(
-			String qualifiedName) {
-		return datagraphSchema.getAttributedElementClass(qualifiedName);
+	public GraphElementClass<?, ?> getGraphElementClass(String typeName) {
+		return EvaluatorUtilities.getGraphElementClass(
+				query.getRootExpression(), schema, typeName);
 	}
 
 	/**
@@ -235,9 +229,9 @@ public class GreqlEvaluatorImpl implements InternalGreqlEvaluator {
 	private void initialize(GreqlQuery query, Graph datagraph,
 			GreqlEnvironment environment, ProgressFunction progressFunction) {
 		this.query = (GreqlQueryImpl) query;
-		this.datagraph = datagraph;
+		this.graph = datagraph;
 		if (datagraph != null) {
-			datagraphSchema = datagraph.getSchema();
+			schema = datagraph.getSchema();
 		}
 		this.environment = environment;
 		localEvaluationResults = new Object[((GraphImpl) query.getQueryGraph())
@@ -293,8 +287,7 @@ public class GreqlEvaluatorImpl implements InternalGreqlEvaluator {
 	}
 
 	@Override
-	public void setDatagraphSchema(Schema datagraphSchema) {
-		this.datagraphSchema = datagraphSchema;
+	public void setSchema(Schema schema) {
+		this.schema = schema;
 	}
-
 }

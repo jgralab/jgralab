@@ -40,6 +40,7 @@ import de.uni_koblenz.jgralab.greql.evaluator.GreqlQueryImpl;
 import de.uni_koblenz.jgralab.greql.evaluator.InternalGreqlEvaluator;
 import de.uni_koblenz.jgralab.greql.evaluator.VertexCosts;
 import de.uni_koblenz.jgralab.greql.evaluator.fa.NFA;
+import de.uni_koblenz.jgralab.greql.exception.UnknownTypeException;
 import de.uni_koblenz.jgralab.greql.schema.Expression;
 import de.uni_koblenz.jgralab.greql.schema.IsEdgeRestrOf;
 import de.uni_koblenz.jgralab.greql.schema.SimplePathDescription;
@@ -73,6 +74,12 @@ public class SimplePathDescriptionEvaluator extends
 			typeCollection = typeCollection.combine(edgeRestEval
 					.getTypeCollection(evaluator));
 			predicateEvaluator = edgeRestEval.getPredicateEvaluator();
+		}
+		try {
+			typeCollection = typeCollection.bindToSchema(evaluator);
+		} catch (UnknownTypeException e) {
+			throw new UnknownTypeException(e.getTypeName(),
+					createPossibleSourcePositions());
 		}
 		NFA createdNFA = NFA.createSimplePathDescriptionNFA(
 				getEdgeDirection(vertex), typeCollection,

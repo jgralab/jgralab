@@ -44,6 +44,7 @@ import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.greql.GreqlQuery;
+import de.uni_koblenz.jgralab.greql.OptimizerInfo;
 import de.uni_koblenz.jgralab.greql.exception.OptimizerException;
 import de.uni_koblenz.jgralab.greql.schema.GreqlAggregation;
 import de.uni_koblenz.jgralab.greql.schema.GreqlVertex;
@@ -99,7 +100,8 @@ public class CommonSubgraphOptimizer extends OptimizerBase {
 	 */
 	private final HashMap<GreqlVertex, String> reverseSubgraphMap;
 
-	public CommonSubgraphOptimizer() {
+	public CommonSubgraphOptimizer(OptimizerInfo optimizerInfo) {
+		super(optimizerInfo);
 		subgraphMap = new HashMap<String, GreqlVertex>();
 		reverseSubgraphMap = new HashMap<GreqlVertex, String>();
 	}

@@ -90,6 +90,7 @@ public class VertexTypeRestrictionTransition extends Transition {
 	public VertexTypeRestrictionTransition(State start, State end,
 			TypeCollection typeCollection) {
 		super(start, end);
+		assert typeCollection.isBound();
 		this.typeCollection = typeCollection;
 	}
 

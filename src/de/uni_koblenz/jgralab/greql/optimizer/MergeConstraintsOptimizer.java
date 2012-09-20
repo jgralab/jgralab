@@ -44,6 +44,7 @@ import java.util.logging.Logger;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.greql.GreqlQuery;
+import de.uni_koblenz.jgralab.greql.OptimizerInfo;
 import de.uni_koblenz.jgralab.greql.exception.OptimizerException;
 import de.uni_koblenz.jgralab.greql.schema.Declaration;
 import de.uni_koblenz.jgralab.greql.schema.Expression;
@@ -64,6 +65,10 @@ public class MergeConstraintsOptimizer extends OptimizerBase {
 
 	private static Logger logger = JGraLab
 			.getLogger(MergeConstraintsOptimizer.class);
+
+	MergeConstraintsOptimizer(OptimizerInfo optimizerInfo) {
+		super(optimizerInfo);
+	}
 
 	/*
 	 * (non-Javadoc)

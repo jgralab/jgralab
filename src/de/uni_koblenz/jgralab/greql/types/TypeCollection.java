@@ -36,12 +36,14 @@
 package de.uni_koblenz.jgralab.greql.types;
 
 import java.util.BitSet;
+import java.util.Iterator;
 
 import org.pcollections.PSet;
 
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.greql.OptimizerInfo;
-import de.uni_koblenz.jgralab.greql.exception.GreqlException;
+import de.uni_koblenz.jgralab.greql.evaluator.InternalGreqlEvaluator;
+import de.uni_koblenz.jgralab.greql.exception.UnknownTypeException;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.GraphElementClass;
 import de.uni_koblenz.jgralab.schema.Schema;
@@ -56,8 +58,12 @@ import de.uni_koblenz.jgralab.schema.VertexClass;
 public final class TypeCollection {
 
 	private PSet<TypeEntry> typeEntries;
+
+	// schema specific values, only valid when bound to a Schema
+	private PSet<GraphElementClass<?, ?>> classEntries;
 	private BitSet typeIdSet;
 	private Schema schema;
+	private int schemaVersion;
 	private TcType tcType;
 
 	private enum TcType {
@@ -65,13 +71,12 @@ public final class TypeCollection {
 	}
 
 	private static final class TypeEntry {
-		GraphElementClass<?, ?> cls;
+		String typeName;
 		boolean exactType;
 		boolean forbidden;
 
-		public TypeEntry(GraphElementClass<?, ?> cls, boolean exactType,
-				boolean forbidden) {
-			this.cls = cls;
+		public TypeEntry(String typeName, boolean exactType, boolean forbidden) {
+			this.typeName = typeName;
 			this.exactType = exactType;
 			this.forbidden = forbidden;
 		}
@@ -83,38 +88,38 @@ public final class TypeCollection {
 			}
 			TypeEntry o = (TypeEntry) obj;
 			return (exactType == o.exactType) && (forbidden == o.forbidden)
-					&& cls.equals(o.cls);
+					&& typeName.equals(o.typeName);
 		}
 
 		@Override
 		public int hashCode() {
-			return cls.hashCode();
+			return typeName.hashCode();
 		}
 
 		@Override
 		public String toString() {
-			return (forbidden ? "^" : "") + cls.getQualifiedName()
-					+ (exactType ? "!" : "");
+			return (forbidden ? "^" : "") + typeName + (exactType ? "!" : "");
 		}
 
-		private boolean subsumes(TypeEntry o) {
-			if (equals(o)) {
-				return true;
-			}
-			if (exactType) {
-				return false;
-			}
-			if (forbidden) {
-				return cls.getAllSubClasses().contains(o.cls);
-			}
-			if (forbidden != o.forbidden) {
-				return false;
-			}
-			return cls.getAllSubClasses().contains(o.cls);
-		}
+		// private boolean subsumes(TypeEntry o) {
+		// if (equals(o)) {
+		// return true;
+		// }
+		// if (exactType) {
+		// return false;
+		// }
+		// if (forbidden) {
+		// return cls.getAllSubClasses().contains(o.cls);
+		// }
+		// if (forbidden != o.forbidden) {
+		// return false;
+		// }
+		// return cls.getAllSubClasses().contains(o.cls);
+		// }
 	}
 
-	private static TypeCollection empty = new TypeCollection(null);
+	private static TypeCollection empty = new TypeCollection(
+			JGraLab.<TypeEntry> set());
 
 	/**
 	 * @return an empty TypeCollection that accepts all types
@@ -127,7 +132,7 @@ public final class TypeCollection {
 	 * @return true if this TypeCollection is empty
 	 */
 	public boolean isEmpty() {
-		return typeEntries == null;
+		return typeEntries.isEmpty();
 	}
 
 	/**
@@ -137,40 +142,40 @@ public final class TypeCollection {
 	 * subclasses. When <code>forbidden</code> is true, the new TypeCollection
 	 * will not accept <code>cls</code>.
 	 * 
-	 * @param cls
-	 *            a {@link GraphElementClass}
+	 * @param typeName
+	 *            the name of the type
 	 * @param exactType
-	 *            when true, only <code>cls</code> is added, otherwise
-	 *            <code>cls</code> and its subclasses
+	 *            when true, only <code>typeName</code> is added, otherwise
+	 *            <code>typeName</code> and its subclasses
 	 * @param forbidden
 	 *            when true, the resulting TypeCollection does not accept
-	 *            <code>cls</code>
+	 *            <code>typeName</code>
 	 * @return a new TypeCollection
 	 */
-	public TypeCollection with(GraphElementClass<?, ?> cls, boolean exactType,
+	public TypeCollection with(String typeName, boolean exactType,
 			boolean forbidden) {
-		if (schema != null && schema != cls.getSchema()) {
-			throw new GreqlException(
-					"Can not add GraphElementClass of different schema");
+		TypeEntry n = new TypeEntry(typeName, exactType, forbidden);
+		if (typeEntries.contains(n)) {
+			return this;
 		}
-		TypeEntry n = new TypeEntry(cls, exactType, forbidden);
-		PSet<TypeEntry> t;
-		if (typeEntries != null) {
-			t = typeEntries;
-			for (TypeEntry e : typeEntries) {
-				if (e.subsumes(n)) {
-					return this;
-				} else if (n.subsumes(e)) {
-					t = t.minus(e).plus(n);
-				}
-			}
-			if (!t.contains(n)) {
-				t = t.plus(n);
-			}
-		} else {
-			t = JGraLab.<TypeEntry> set().plus(n);
-		}
-		return new TypeCollection(t);
+		return new TypeCollection(typeEntries.plus(n));
+		// PSet<TypeEntry> t;
+		// if (typeEntries != null) {
+		// t = typeEntries;
+		// for (TypeEntry e : typeEntries) {
+		// if (e.subsumes(n)) {
+		// return this;
+		// } else if (n.subsumes(e)) {
+		// t = t.minus(e).plus(n);
+		// }
+		// }
+		// if (!t.contains(n)) {
+		// t = t.plus(n);
+		// }
+		// } else {
+		// t = JGraLab.<TypeEntry> set().plus(n);
+		// }
+		// return new TypeCollection(t);
 	}
 
 	/**
@@ -183,70 +188,17 @@ public final class TypeCollection {
 	 *         <code>other</code>
 	 */
 	public TypeCollection combine(TypeCollection other) {
-		if (other == null || other.typeEntries == null) {
+		if (other.isEmpty()) {
 			return this;
 		}
-		if (schema != null && schema != other.schema) {
-			throw new GreqlException(
-					"Can not combine TypeCollections of different schemas");
-		}
-		if (typeEntries == null) {
+		if (isEmpty()) {
 			return other;
 		}
-		TypeCollection r = this;
-		for (TypeEntry e : other.typeEntries) {
-			r = r.with(e.cls, e.exactType, e.forbidden);
-		}
-		return r;
+		return new TypeCollection(typeEntries.plusAll(other.typeEntries));
 	}
 
 	private TypeCollection(PSet<TypeEntry> types) {
 		this.typeEntries = types;
-		if (types != null) {
-			BitSet a = null;
-			BitSet f = null;
-			boolean hasAllowedTypes = false;
-			for (TypeEntry e : types) {
-				if (schema == null) {
-					schema = e.cls.getSchema();
-					a = new BitSet(schema.getGraphElementClassCount());
-					f = new BitSet(schema.getGraphElementClassCount());
-				}
-				if (!e.forbidden) {
-					hasAllowedTypes = true;
-				}
-				TcType t = (e.cls instanceof VertexClass) ? TcType.VERTEX
-						: TcType.EDGE;
-				tcType = tcType == null ? t : t == tcType ? t : TcType.UNKNOWN;
-				BitSet b = e.forbidden ? f : a;
-				b.set(e.cls.getGraphElementClassIdInSchema());
-				if (!e.exactType) {
-					for (GraphElementClass<?, ?> sub : e.cls.getAllSubClasses()) {
-						b.set(sub.getGraphElementClassIdInSchema());
-					}
-				}
-			}
-			if (!hasAllowedTypes) {
-				typeIdSet = f;
-				typeIdSet.flip(0, schema.getGraphElementClassCount());
-			} else {
-				typeIdSet = a;
-				typeIdSet.andNot(f);
-			}
-			if (tcType == TcType.VERTEX) {
-				for (EdgeClass ec : schema.getGraphClass().getEdgeClasses()) {
-					typeIdSet.clear(ec.getGraphElementClassIdInSchema());
-				}
-			} else if (tcType == TcType.EDGE) {
-				for (VertexClass vc : schema.getGraphClass().getVertexClasses()) {
-					typeIdSet.clear(vc.getGraphElementClassIdInSchema());
-				}
-			}
-		}
-		if (tcType == null) {
-			tcType = TcType.UNKNOWN;
-		}
-		// System.out.println(toString() + " " + tcType + " " + typeIdSet);
 	}
 
 	@Override
@@ -255,8 +207,7 @@ public final class TypeCollection {
 			return false;
 		}
 		TypeCollection o = (TypeCollection) obj;
-		return typeEntries == o.typeEntries || typeEntries != null
-				&& typeEntries.equals(o.typeEntries);
+		return typeEntries.equals(o.typeEntries);
 	}
 
 	@Override
@@ -265,41 +216,48 @@ public final class TypeCollection {
 	}
 
 	public boolean acceptsType(GraphElementClass<?, ?> type) {
-		return typeEntries == null
+		assert isBound();
+		return isEmpty()
 				|| typeIdSet.get(type.getGraphElementClassIdInSchema());
+	}
+
+	public boolean isBound() {
+		return isEmpty() || schema != null;
 	}
 
 	@Override
 	public String toString() {
-		if (typeIdSet == null) {
-			return "{}";
-		} else {
-			StringBuilder sb = new StringBuilder();
-			String delim = "{";
-			for (TypeEntry e : typeEntries) {
-				sb.append(delim).append(e.toString());
-				delim = ", ";
-			}
-			return sb.append("}").toString();
+		StringBuilder sb = new StringBuilder();
+		String delim = "{";
+		for (TypeEntry e : typeEntries) {
+			sb.append(delim).append(e.toString());
+			delim = ", ";
 		}
+		return sb.append("}").toString();
 	}
 
 	public double getFrequency(OptimizerInfo info) {
-		if (typeEntries == null) {
+		if (isEmpty()) {
 			return 1.0;
+		}
+		if (schema == null) {
+			throw new IllegalStateException(
+					"TypeCollection isn't bound to a Schema");
 		}
 		double f = 0.0;
 		double a = 0.0;
 		boolean hasAllowedTypes = false;
+		Iterator<GraphElementClass<?, ?>> it = classEntries.iterator();
 		for (TypeEntry e : typeEntries) {
+			GraphElementClass<?, ?> cls = it.next();
 			if (e.forbidden) {
 				f += e.exactType ? info
-						.getFrequencyOfGraphElementClassWithoutSubclasses(e.cls)
-						: info.getFrequencyOfGraphElementClass(e.cls);
+						.getFrequencyOfGraphElementClassWithoutSubclasses(cls)
+						: info.getFrequencyOfGraphElementClass(cls);
 			} else {
 				a += e.exactType ? info
-						.getFrequencyOfGraphElementClassWithoutSubclasses(e.cls)
-						: info.getFrequencyOfGraphElementClass(e.cls);
+						.getFrequencyOfGraphElementClassWithoutSubclasses(cls)
+						: info.getFrequencyOfGraphElementClass(cls);
 				hasAllowedTypes = true;
 			}
 		}
@@ -313,6 +271,10 @@ public final class TypeCollection {
 	}
 
 	public long getEstimatedGraphElementCount(OptimizerInfo info) {
+		if (schema == null) {
+			throw new IllegalStateException(
+					"TypeCollection isn't bound to a Schema");
+		}
 		switch (tcType) {
 		case VERTEX:
 			return (long) (getFrequency(info) * info.getAverageVertexCount());
@@ -324,11 +286,110 @@ public final class TypeCollection {
 		}
 	}
 
+	public TypeCollection bindToSchema(InternalGreqlEvaluator evaluator) {
+		Schema s = evaluator.getSchema();
+		if (s == null) {
+			throw new IllegalArgumentException(
+					"Evaluator doesn't contain a Schema");
+		}
+		if (!s.isFinished()) {
+			throw new IllegalStateException("Schema is not finished");
+		}
+		if (isEmpty()) {
+			return this;
+		}
+		if (s == schema && s.getVersion() == schemaVersion) {
+			// already bound and schema is unchanged
+			return this;
+		}
+		return new TypeCollection(typeEntries, evaluator, evaluator.getSchema());
+	}
+
+	public TypeCollection bindToSchema(Schema s) {
+		if (!s.isFinished()) {
+			throw new IllegalStateException("Schema is not finished");
+		}
+		if (isEmpty()) {
+			return this;
+		}
+		if (s == schema && s.getVersion() == schemaVersion) {
+			// already bound and schema is unchanged
+			return this;
+		}
+		return new TypeCollection(typeEntries, null, s);
+	}
+
+	private TypeCollection(PSet<TypeEntry> types,
+			InternalGreqlEvaluator evaluator, Schema s) {
+		this(types);
+		schema = s;
+		schemaVersion = s.getVersion();
+
+		BitSet a = new BitSet(s.getGraphElementClassCount());
+		BitSet f = new BitSet(s.getGraphElementClassCount());
+		classEntries = JGraLab.set();
+		boolean hasAllowedTypes = false;
+		for (TypeEntry e : typeEntries) {
+			if (!e.forbidden) {
+				hasAllowedTypes = true;
+			}
+			GraphElementClass<?, ?> gec;
+			if (evaluator != null) {
+				gec = evaluator.getGraphElementClass(e.typeName);
+			} else {
+				gec = schema.getAttributedElementClass(e.typeName);
+				if (gec == null) {
+					throw new UnknownTypeException(e.typeName);
+				}
+			}
+			classEntries = classEntries.plus(gec);
+			TcType t = (gec instanceof VertexClass) ? TcType.VERTEX
+					: TcType.EDGE;
+			tcType = tcType == null ? t : t == tcType ? t : TcType.UNKNOWN;
+			BitSet b = e.forbidden ? f : a;
+			b.set(gec.getGraphElementClassIdInSchema());
+			if (!e.exactType) {
+				for (GraphElementClass<?, ?> sub : gec.getAllSubClasses()) {
+					b.set(sub.getGraphElementClassIdInSchema());
+				}
+			}
+		}
+		if (!hasAllowedTypes) {
+			typeIdSet = f;
+			typeIdSet.flip(0, schema.getGraphElementClassCount());
+		} else {
+			typeIdSet = a;
+			typeIdSet.andNot(f);
+		}
+		if (tcType == TcType.VERTEX) {
+			for (EdgeClass ec : schema.getGraphClass().getEdgeClasses()) {
+				typeIdSet.clear(ec.getGraphElementClassIdInSchema());
+			}
+		} else if (tcType == TcType.EDGE) {
+			for (VertexClass vc : schema.getGraphClass().getVertexClasses()) {
+				typeIdSet.clear(vc.getGraphElementClassIdInSchema());
+			}
+		}
+		if (tcType == null) {
+			tcType = TcType.UNKNOWN;
+		}
+		// System.out.println(toString() + " " + tcType + " " + typeIdSet);
+	}
+
 	public TcType getTcType() {
+		if (schema == null) {
+			throw new IllegalStateException(
+					"TypeCollection isn't bound to a Schema");
+		}
 		return tcType;
 	}
 
 	public BitSet getTypeIdSet() {
+		if (schema == null) {
+			throw new IllegalStateException(
+					"TypeCollection isn't bound to a Schema");
+		}
 		return typeIdSet;
 	}
+
 }

@@ -44,6 +44,7 @@ import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.greql.GreqlQuery;
+import de.uni_koblenz.jgralab.greql.OptimizerInfo;
 import de.uni_koblenz.jgralab.greql.exception.OptimizerException;
 import de.uni_koblenz.jgralab.greql.schema.Expression;
 import de.uni_koblenz.jgralab.greql.schema.FunctionApplication;
@@ -63,6 +64,10 @@ public class TransformXorFunctionApplicationOptimizer extends OptimizerBase {
 
 	private static Logger logger = JGraLab
 			.getLogger(TransformXorFunctionApplicationOptimizer.class);
+
+	TransformXorFunctionApplicationOptimizer(OptimizerInfo optimizerInfo) {
+		super(optimizerInfo);
+	}
 
 	/*
 	 * (non-Javadoc)

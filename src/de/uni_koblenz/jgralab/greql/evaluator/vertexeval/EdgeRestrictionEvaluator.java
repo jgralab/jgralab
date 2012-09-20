@@ -42,6 +42,7 @@ import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.greql.evaluator.GreqlQueryImpl;
 import de.uni_koblenz.jgralab.greql.evaluator.InternalGreqlEvaluator;
 import de.uni_koblenz.jgralab.greql.evaluator.VertexCosts;
+import de.uni_koblenz.jgralab.greql.exception.UnknownTypeException;
 import de.uni_koblenz.jgralab.greql.schema.EdgeRestriction;
 import de.uni_koblenz.jgralab.greql.schema.Expression;
 import de.uni_koblenz.jgralab.greql.schema.IsBooleanPredicateOfEdgeRestriction;
@@ -114,10 +115,17 @@ public class EdgeRestrictionEvaluator extends VertexEvaluator<EdgeRestriction> {
 			while (typeInc != null) {
 				TypeIdEvaluator typeEval = (TypeIdEvaluator) query
 						.getVertexEvaluator(typeInc.getAlpha());
-				typeCollection = typeCollection.combine((TypeCollection) typeEval
-						.getResult(evaluator));
+				typeCollection = typeCollection
+						.combine((TypeCollection) typeEval.getResult(evaluator));
 				typeInc = typeInc.getNextIsTypeIdOfIncidence(EdgeDirection.IN);
 			}
+		}
+
+		try {
+			typeCollection = typeCollection.bindToSchema(evaluator);
+		} catch (UnknownTypeException e) {
+			throw new UnknownTypeException(e.getTypeName(),
+					createPossibleSourcePositions());
 		}
 
 		if (vertex.getFirstIsRoleIdOfIncidence() != null) {

@@ -54,6 +54,7 @@ import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql.GreqlQuery;
+import de.uni_koblenz.jgralab.greql.OptimizerInfo;
 import de.uni_koblenz.jgralab.greql.exception.OptimizerException;
 import de.uni_koblenz.jgralab.greql.schema.Declaration;
 import de.uni_koblenz.jgralab.greql.schema.Expression;
@@ -83,6 +84,10 @@ import de.uni_koblenz.jgralab.schema.Attribute;
  * 
  */
 public class EarlySelectionOptimizer extends OptimizerBase {
+
+	public EarlySelectionOptimizer(OptimizerInfo optimizerInfo) {
+		super(optimizerInfo);
+	}
 
 	private static Logger logger = JGraLab
 			.getLogger(EarlySelectionOptimizer.class);

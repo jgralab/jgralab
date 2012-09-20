@@ -42,6 +42,7 @@ import java.util.List;
 import org.junit.Test;
 
 import de.uni_koblenz.jgralab.greql.optimizer.DefaultOptimizer;
+import de.uni_koblenz.jgralab.greql.optimizer.DefaultOptimizerInfo;
 
 public class ThisLiteralTest extends GenericTest {
 
@@ -53,7 +54,8 @@ public class ThisLiteralTest extends GenericTest {
 		Object result = evalTestQuery("ThisVertex1", queryString,
 				TestVersion.ROUTE_MAP_GRAPH);
 		Object resultOpt = evalTestQuery("ThisVertex1 (wo)", queryString,
-				new DefaultOptimizer(), TestVersion.ROUTE_MAP_GRAPH);
+				new DefaultOptimizer(new DefaultOptimizerInfo()),
+				TestVersion.ROUTE_MAP_GRAPH);
 		assertEquals(0, ((List<?>) result).size());
 		assertEquals(result, resultOpt);
 	}
@@ -66,7 +68,8 @@ public class ThisLiteralTest extends GenericTest {
 		Object result = evalTestQuery("ThisVertex2", queryString,
 				TestVersion.ROUTE_MAP_GRAPH);
 		Object resultOpt = evalTestQuery("ThisVertex2 (wo)", queryString,
-				new DefaultOptimizer(), TestVersion.ROUTE_MAP_GRAPH);
+				new DefaultOptimizer(new DefaultOptimizerInfo()),
+				TestVersion.ROUTE_MAP_GRAPH);
 		assertEquals(3, ((List<?>) result).size());
 		assertEquals(result, resultOpt);
 	}
@@ -79,7 +82,8 @@ public class ThisLiteralTest extends GenericTest {
 		Object result = evalTestQuery("ThisVertex3", queryString,
 				TestVersion.ROUTE_MAP_GRAPH);
 		Object resultOpt = evalTestQuery("ThisVertex3 (wo)", queryString,
-				new DefaultOptimizer(), TestVersion.ROUTE_MAP_GRAPH);
+				new DefaultOptimizer(new DefaultOptimizerInfo()),
+				TestVersion.ROUTE_MAP_GRAPH);
 		assertEquals(airportCount * 2 - 1, ((List<?>) result).size());
 		assertEquals(result, resultOpt);
 	}
@@ -89,7 +93,8 @@ public class ThisLiteralTest extends GenericTest {
 		String queryString = "from c1,c2:V{junctions.Crossroad}  with c1 -->{@isLoop(thisEdge)} c2 report c1,c2 end";
 		Object result = evalTestQuery(queryString);
 		Object resultOpt = evalTestQuery("ThisEdge1 (wo)", queryString,
-				new DefaultOptimizer(), TestVersion.ROUTE_MAP_GRAPH);
+				new DefaultOptimizer(new DefaultOptimizerInfo()),
+				TestVersion.ROUTE_MAP_GRAPH);
 		assertEquals(1, ((List<?>) result).size());
 		assertEquals(result, resultOpt);
 	}

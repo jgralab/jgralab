@@ -38,6 +38,7 @@ package de.uni_koblenz.jgralab.greql.evaluator.vertexeval;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.greql.evaluator.GreqlQueryImpl;
 import de.uni_koblenz.jgralab.greql.evaluator.InternalGreqlEvaluator;
+import de.uni_koblenz.jgralab.greql.exception.UnknownTypeException;
 import de.uni_koblenz.jgralab.greql.schema.Expression;
 import de.uni_koblenz.jgralab.greql.schema.IsTypeRestrOfExpression;
 import de.uni_koblenz.jgralab.greql.types.TypeCollection;
@@ -76,7 +77,12 @@ public abstract class AbstractGraphElementCollectionEvaluator<V extends Expressi
 						.getNextIsTypeRestrOfExpressionIncidence(EdgeDirection.IN);
 			}
 		}
+		try {
+			typeCollection = typeCollection.bindToSchema(evaluator);
+		} catch (UnknownTypeException e) {
+			throw new UnknownTypeException(e.getTypeName(),
+					createPossibleSourcePositions());
+		}
 		return typeCollection;
 	}
-
 }

@@ -48,6 +48,7 @@ import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql.GreqlQuery;
+import de.uni_koblenz.jgralab.greql.OptimizerInfo;
 import de.uni_koblenz.jgralab.greql.exception.OptimizerException;
 import de.uni_koblenz.jgralab.greql.optimizer.condexp.Formula;
 import de.uni_koblenz.jgralab.greql.schema.BoolLiteral;
@@ -64,6 +65,10 @@ import de.uni_koblenz.jgralab.schema.EdgeClass;
  * 
  */
 public class ConditionalExpressionOptimizer extends OptimizerBase {
+
+	public ConditionalExpressionOptimizer(OptimizerInfo optimizerInfo) {
+		super(optimizerInfo);
+	}
 
 	private static Logger logger = JGraLab
 			.getLogger(ConditionalExpressionOptimizer.class);

@@ -43,6 +43,7 @@ import java.util.Set;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Vertex;
+import de.uni_koblenz.jgralab.greql.OptimizerInfo;
 import de.uni_koblenz.jgralab.greql.exception.OptimizerException;
 import de.uni_koblenz.jgralab.greql.schema.Declaration;
 import de.uni_koblenz.jgralab.greql.schema.GreqlExpression;
@@ -61,6 +62,17 @@ import de.uni_koblenz.jgralab.greql.schema.Variable;
  * 
  */
 public abstract class OptimizerBase implements Optimizer {
+
+	protected OptimizerInfo optimizerInfo;
+
+	protected OptimizerBase(OptimizerInfo optimizerInfo) {
+		this.optimizerInfo = optimizerInfo;
+	}
+
+	@Override
+	public OptimizerInfo getOptimizerInfo() {
+		return optimizerInfo;
+	}
 
 	protected String optimizerHeaderString() {
 		return "*** " + this.getClass().getSimpleName() + ": ";
@@ -148,12 +160,12 @@ public abstract class OptimizerBase implements Optimizer {
 			return false;
 		}
 
-		SimpleDeclaration sd1 = var1
-				.getFirstIsDeclaredVarOfIncidence(EdgeDirection.OUT).getOmega();
+		SimpleDeclaration sd1 = var1.getFirstIsDeclaredVarOfIncidence(
+				EdgeDirection.OUT).getOmega();
 		Declaration decl1 = sd1.getFirstIsSimpleDeclOfIncidence(
 				EdgeDirection.OUT).getOmega();
-		SimpleDeclaration sd2 = var2
-				.getFirstIsDeclaredVarOfIncidence(EdgeDirection.OUT).getOmega();
+		SimpleDeclaration sd2 = var2.getFirstIsDeclaredVarOfIncidence(
+				EdgeDirection.OUT).getOmega();
 		Declaration decl2 = sd2.getFirstIsSimpleDeclOfIncidence(
 				EdgeDirection.OUT).getOmega();
 
@@ -252,8 +264,8 @@ public abstract class OptimizerBase implements Optimizer {
 			// there's nothing to split out anymore
 			return sd;
 		}
-		Declaration parentDecl = sd
-				.getFirstIsSimpleDeclOfIncidence(EdgeDirection.OUT).getOmega();
+		Declaration parentDecl = sd.getFirstIsSimpleDeclOfIncidence(
+				EdgeDirection.OUT).getOmega();
 		IsSimpleDeclOf oldEdge = sd.getFirstIsSimpleDeclOfIncidence();
 		SimpleDeclaration newSD = syntaxgraph.createSimpleDeclaration();
 		IsSimpleDeclOf newEdge = syntaxgraph.createIsSimpleDeclOf(newSD,

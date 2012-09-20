@@ -838,7 +838,18 @@ public class GreqlSerializer {
 	}
 
 	private void serializeIdentifier(Identifier exp) {
-		sb.append(exp.get_name());
+		if (exp instanceof TypeId) {
+			TypeId ti = (TypeId) exp;
+			if (ti.is_excluded()) {
+				sb.append("^");
+			}
+			sb.append(ti.get_name());
+			if (ti.is_type()) {
+				sb.append("!");
+			}
+		} else {
+			sb.append(exp.get_name());
+		}
 	}
 
 	private void serializeFunctionApplication(FunctionApplication exp) {

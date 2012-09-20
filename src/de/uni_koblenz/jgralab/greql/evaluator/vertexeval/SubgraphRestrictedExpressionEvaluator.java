@@ -81,7 +81,7 @@ public class SubgraphRestrictedExpressionEvaluator extends
 			exprEval = query.getVertexEvaluator(expr);
 		}
 
-		Graph graph = evaluator.getDataGraph();
+		Graph graph = evaluator.getGraph();
 
 		// set traversal context
 		TraversalContext oldTraversalContext = graph.getTraversalContext();

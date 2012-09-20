@@ -71,18 +71,18 @@ public class EdgeSetExpressionEvaluator extends
 
 	@Override
 	public PSet<Edge> evaluate(InternalGreqlEvaluator evaluator) {
-		evaluator.progress(getOwnEvaluationCosts());
+		TypeCollection tc = getTypeCollection(evaluator);
 		// create the resulting set
 		PSet<Edge> resultSet = JGraLab.set();
-		Edge currentEdge = evaluator.getDataGraph().getFirstEdge();
-		TypeCollection typeCollection = getTypeCollection(evaluator);
+		Edge currentEdge = evaluator.getGraph().getFirstEdge();
 		while (currentEdge != null) {
 			EdgeClass edgeClass = currentEdge.getAttributedElementClass();
-			if (typeCollection.acceptsType(edgeClass)) {
+			if (tc.acceptsType(edgeClass)) {
 				resultSet = resultSet.plus(currentEdge);
 			}
 			currentEdge = currentEdge.getNextEdge();
 		}
+		evaluator.progress(getOwnEvaluationCosts());
 		return resultSet;
 	}
 
@@ -100,7 +100,8 @@ public class EdgeSetExpressionEvaluator extends
 			inc = inc.getNextIsTypeRestrOfExpressionIncidence();
 		}
 
-		long ownCosts = query.getOptimizerInfo().getAverageEdgeCount();
+		long ownCosts = query.getOptimizer().getOptimizerInfo()
+				.getAverageEdgeCount();
 		return new VertexCosts(ownCosts, ownCosts, typeRestrCosts + ownCosts);
 	}
 
@@ -109,7 +110,7 @@ public class EdgeSetExpressionEvaluator extends
 		long card;
 		if (typeCollection != null) {
 			card = typeCollection.getEstimatedGraphElementCount(query
-					.getOptimizerInfo());
+					.getOptimizer().getOptimizerInfo());
 		} else {
 			EdgeSetExpression exp = getVertex();
 			IsTypeRestrOfExpression inc = exp
@@ -120,12 +121,12 @@ public class EdgeSetExpressionEvaluator extends
 						.getVertexEvaluator(inc.getAlpha());
 				selectivity = typeIdEval.getEstimatedSelectivity();
 			}
-			card = Math.round(query.getOptimizerInfo().getAverageEdgeCount()
+			card = Math.round(query.getOptimizer().getOptimizerInfo()
+					.getAverageEdgeCount()
 					* selectivity);
 		}
 		logger.fine("EdgeSet estimated cardinality " + typeCollection + ": "
 				+ card);
 		return card;
 	}
-
 }

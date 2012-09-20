@@ -131,7 +131,8 @@
 	<property name="common-tools.includes" value="common/**" />
 
 	<property name="utilities.src" value="${src.dir}/de/uni_koblenz/jgralab/utilities" />
-	<property name="utilities.includes" value="ant/** common/** converter/** csv2tg/** greqlinterface/** jgralab2owl/** schemacompare/** tg2gdl/** tg2gxl/** tg2sidiff/** tgraphbrowser/** tgtree/** xmi2tgschema/** xml2tg/** soamig_xml/** gui/**" />
+	<property name="utilities.includes" value="*/**" />
+	<property name="utilities.excludes" value="tgschema2java/**" />
 
 	<!-- The targets -->
 	<target name="build" depends="ist_utilities,clean,compile,modify_manifest,jar" />
@@ -349,7 +350,7 @@
 		<javac fork="true"
 			srcdir="${utilities.src}" 
 			includes="${utilities.includes}"
-			excludes="${no_package_info}"
+			excludes="${utilities.excludes} ${no_package_info}"
 			destdir="${classes.dir}" 
 			memoryinitialsize="${minmemsize}" 
 			memorymaximumsize="${maxmemsize}" 

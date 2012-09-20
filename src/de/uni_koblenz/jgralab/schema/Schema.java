@@ -434,6 +434,15 @@ public interface Schema extends Comparable<Schema> {
 	public boolean finish();
 
 	/**
+	 * Returns an internal version number of this schema. This version number is
+	 * equal to the number of calls to {@link #finish()} and can be used to
+	 * detect whether a schema was modified.
+	 * 
+	 * @return an internal version number of this Schema
+	 */
+	public int getVersion();
+
+	/**
 	 * Reopens the schema to allow changes. To finish the schema again, call
 	 * finish
 	 * 

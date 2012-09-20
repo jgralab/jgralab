@@ -40,11 +40,13 @@ import org.junit.Test;
 
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.greql.GreqlQuery;
+import de.uni_koblenz.jgralab.greql.OptimizerInfo;
 import de.uni_koblenz.jgralab.greql.exception.OptimizerException;
 import de.uni_koblenz.jgralab.greql.funlib.FunLib;
 import de.uni_koblenz.jgralab.greql.optimizer.CommonSubgraphOptimizer;
 import de.uni_koblenz.jgralab.greql.optimizer.ConditionalExpressionOptimizer;
 import de.uni_koblenz.jgralab.greql.optimizer.DefaultOptimizer;
+import de.uni_koblenz.jgralab.greql.optimizer.DefaultOptimizerInfo;
 import de.uni_koblenz.jgralab.greql.optimizer.EarlySelectionOptimizer;
 import de.uni_koblenz.jgralab.greql.optimizer.MergeSimpleDeclarationsOptimizer;
 import de.uni_koblenz.jgralab.greql.optimizer.Optimizer;
@@ -62,17 +64,26 @@ public class OptimizerTest extends GenericTest {
 		FunLib.register(IsPrime.class);
 	}
 
-	private final Optimizer cso = new CommonSubgraphOptimizer();
-	private final Optimizer eso = new EarlySelectionOptimizer();
-	private final Optimizer peo = new PathExistenceOptimizer();
-	private final Optimizer petdpeo = new PathExistenceToDirectedPathExpressionOptimizer();
-	private final Optimizer defo = new DefaultOptimizer();
-	private final Optimizer vdoo = new VariableDeclarationOrderOptimizer();
-	private final Optimizer csoAndMsdo = new CommonSubgraphAndMergeSDOptimizer();
-	private final Optimizer ceoAndCso = new CommonSubgraphAndConditionalExpressionOptimizer();
+	private final OptimizerInfo info = new DefaultOptimizerInfo();
+	private final Optimizer cso = new CommonSubgraphOptimizer(info);
+	private final Optimizer eso = new EarlySelectionOptimizer(info);
+	private final Optimizer peo = new PathExistenceOptimizer(info);
+	private final Optimizer petdpeo = new PathExistenceToDirectedPathExpressionOptimizer(
+			info);
+	private final Optimizer defo = new DefaultOptimizer(info);
+	private final Optimizer vdoo = new VariableDeclarationOrderOptimizer(info);
+	private final Optimizer csoAndMsdo = new CommonSubgraphAndMergeSDOptimizer(
+			info);
+	private final Optimizer ceoAndCso = new CommonSubgraphAndConditionalExpressionOptimizer(
+			info);
 
 	private class CommonSubgraphAndMergeSDOptimizer extends OptimizerBase {
-		private final Optimizer msdo = new MergeSimpleDeclarationsOptimizer();
+		private final Optimizer msdo = new MergeSimpleDeclarationsOptimizer(
+				info);
+
+		public CommonSubgraphAndMergeSDOptimizer(OptimizerInfo info) {
+			super(info);
+		}
 
 		@Override
 		public boolean isEquivalent(Optimizer optimizer) {
@@ -88,7 +99,13 @@ public class OptimizerTest extends GenericTest {
 
 	private class CommonSubgraphAndConditionalExpressionOptimizer extends
 			OptimizerBase {
-		private final Optimizer ceo = new ConditionalExpressionOptimizer();
+		private final Optimizer ceo;
+
+		public CommonSubgraphAndConditionalExpressionOptimizer(
+				OptimizerInfo info) {
+			super(info);
+			ceo = new ConditionalExpressionOptimizer(info);
+		}
 
 		@Override
 		public boolean isEquivalent(Optimizer optimizer) {

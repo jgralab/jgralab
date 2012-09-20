@@ -73,20 +73,20 @@ public class VertexSetExpressionEvaluator extends
 
 	@Override
 	public Object evaluate(InternalGreqlEvaluator evaluator) {
-		evaluator.progress(getOwnEvaluationCosts());
-		TypeCollection typeCollection = getTypeCollection(evaluator);
+		TypeCollection tc = getTypeCollection(evaluator);
 		PSet<Vertex> resultSet = null;
 		if (resultSet == null) {
 			resultSet = JGraLab.set();
-			Vertex currentVertex = evaluator.getDataGraph().getFirstVertex();
+			Vertex currentVertex = evaluator.getGraph().getFirstVertex();
 			while (currentVertex != null) {
-				if (typeCollection.acceptsType(currentVertex
+				if (tc.acceptsType(currentVertex
 						.getAttributedElementClass())) {
 					resultSet = resultSet.plus(currentVertex);
 				}
 				currentVertex = currentVertex.getNextVertex();
 			}
 		}
+		evaluator.progress(getOwnEvaluationCosts());
 		return resultSet;
 	}
 
@@ -104,7 +104,8 @@ public class VertexSetExpressionEvaluator extends
 			inc = inc.getNextIsTypeRestrOfExpressionIncidence();
 		}
 
-		long ownCosts = query.getOptimizerInfo().getAverageVertexCount();
+		long ownCosts = query.getOptimizer().getOptimizerInfo()
+				.getAverageVertexCount();
 		return new VertexCosts(ownCosts, ownCosts, typeRestrCosts + ownCosts);
 	}
 
@@ -113,7 +114,7 @@ public class VertexSetExpressionEvaluator extends
 		long card;
 		if (typeCollection != null) {
 			card = typeCollection.getEstimatedGraphElementCount(query
-					.getOptimizerInfo());
+					.getOptimizer().getOptimizerInfo());
 		} else {
 			VertexSetExpression exp = getVertex();
 			IsTypeRestrOfExpression inc = exp
@@ -124,7 +125,8 @@ public class VertexSetExpressionEvaluator extends
 						.getVertexEvaluator(inc.getAlpha());
 				selectivity = typeIdEval.getEstimatedSelectivity();
 			}
-			card = Math.round(query.getOptimizerInfo().getAverageVertexCount()
+			card = Math.round(query.getOptimizer().getOptimizerInfo()
+					.getAverageVertexCount()
 					* selectivity);
 		}
 		logger.fine("VertexSet estimated cardinality " + typeCollection + ": "

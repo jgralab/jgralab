@@ -40,6 +40,7 @@ import de.uni_koblenz.jgralab.greql.evaluator.GreqlQueryImpl;
 import de.uni_koblenz.jgralab.greql.evaluator.InternalGreqlEvaluator;
 import de.uni_koblenz.jgralab.greql.evaluator.VertexCosts;
 import de.uni_koblenz.jgralab.greql.evaluator.fa.NFA;
+import de.uni_koblenz.jgralab.greql.exception.UnknownTypeException;
 import de.uni_koblenz.jgralab.greql.schema.AggregationPathDescription;
 import de.uni_koblenz.jgralab.greql.schema.Expression;
 import de.uni_koblenz.jgralab.greql.schema.IsEdgeRestrOf;
@@ -75,6 +76,12 @@ public class AggregationPathDescriptionEvaluator extends
 			typeCollection = typeCollection.combine(edgeRestEval
 					.getTypeCollection(evaluator));
 			predicateEvaluator = edgeRestEval.getPredicateEvaluator();
+		}
+		try {
+			typeCollection = typeCollection.bindToSchema(evaluator);
+		} catch (UnknownTypeException e) {
+			throw new UnknownTypeException(e.getTypeName(),
+					createPossibleSourcePositions());
 		}
 
 		NFA createdNFA = NFA.createAggregationPathDescriptionNFA(

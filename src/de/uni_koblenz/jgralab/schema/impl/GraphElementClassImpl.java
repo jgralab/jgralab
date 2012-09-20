@@ -236,14 +236,18 @@ public abstract class GraphElementClassImpl<SC extends GraphElementClass<SC, IC>
 					true);
 		}
 
+		// System.err.println("Finish " + getClass().getSimpleName() + " "
+		// + getQualifiedName());
 		TreeSet<Attribute> s = new TreeSet<Attribute>(ownAttributes);
 		for (AttributedElementClass<SC, IC> superClass : subclassDag
 				.getDirectPredecessors(this)) {
+			// System.err.println("\t" + superClass.getQualifiedName() + " "
+			// + superClass.getAttributeList());
 			s.addAll(superClass.getAttributeList());
 		}
 
 		allAttributes = ArrayPVector.<Attribute> empty().plusAll(s);
-
+		// System.err.println("\tall attributes: " + allAttributes);
 		super.finish();
 	}
 

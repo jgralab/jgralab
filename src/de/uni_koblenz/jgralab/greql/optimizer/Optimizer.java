@@ -36,6 +36,7 @@
 package de.uni_koblenz.jgralab.greql.optimizer;
 
 import de.uni_koblenz.jgralab.greql.GreqlQuery;
+import de.uni_koblenz.jgralab.greql.OptimizerInfo;
 import de.uni_koblenz.jgralab.greql.exception.OptimizerException;
 
 /**
@@ -67,4 +68,8 @@ public interface Optimizer {
 	 */
 	public boolean isEquivalent(Optimizer optimizer);
 
+	/**
+	 * @return the {@link OptimizerInfo} of this Optimizer.
+	 */
+	public OptimizerInfo getOptimizerInfo();
 }

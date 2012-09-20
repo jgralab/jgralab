@@ -49,6 +49,7 @@ import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql.GreqlQuery;
+import de.uni_koblenz.jgralab.greql.OptimizerInfo;
 import de.uni_koblenz.jgralab.greql.exception.OptimizerException;
 import de.uni_koblenz.jgralab.greql.funlib.collections.Intersection;
 import de.uni_koblenz.jgralab.greql.schema.BoolLiteral;
@@ -77,6 +78,11 @@ public class PathExistenceToDirectedPathExpressionOptimizer extends
 
 	private static Logger logger = JGraLab
 			.getLogger(PathExistenceToDirectedPathExpressionOptimizer.class);
+
+	public PathExistenceToDirectedPathExpressionOptimizer(
+			OptimizerInfo optimizerInfo) {
+		super(optimizerInfo);
+	}
 
 	/*
 	 * (non-Javadoc)

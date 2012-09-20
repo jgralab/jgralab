@@ -40,6 +40,7 @@ import java.util.logging.Logger;
 
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.greql.GreqlQuery;
+import de.uni_koblenz.jgralab.greql.OptimizerInfo;
 import de.uni_koblenz.jgralab.greql.evaluator.GreqlQueryImpl;
 import de.uni_koblenz.jgralab.greql.evaluator.vertexeval.VertexEvaluator;
 import de.uni_koblenz.jgralab.greql.exception.OptimizerException;
@@ -55,6 +56,10 @@ import de.uni_koblenz.jgralab.greql.schema.Variable;
 public class DefaultOptimizer extends OptimizerBase {
 
 	private static Logger logger = JGraLab.getLogger(DefaultOptimizer.class);
+
+	public DefaultOptimizer(OptimizerInfo optimizerInfo) {
+		super(optimizerInfo);
+	}
 
 	@Override
 	protected String optimizerHeaderString() {
@@ -99,26 +104,29 @@ public class DefaultOptimizer extends OptimizerBase {
 		// "/home/horn/before-optimization.tg");
 
 		// optimizers
-		Optimizer cso = new CommonSubgraphOptimizer();
-		Optimizer pe2dpeo = new PathExistenceToDirectedPathExpressionOptimizer();
-		Optimizer eso = new EarlySelectionOptimizer();
-		Optimizer peo = new PathExistenceOptimizer();
-		Optimizer vdoo = new VariableDeclarationOrderOptimizer();
-		Optimizer ceo = new ConditionalExpressionOptimizer();
-		Optimizer txfao = new TransformXorFunctionApplicationOptimizer();
-		Optimizer mco = new MergeConstraintsOptimizer();
-		Optimizer msdo = new MergeSimpleDeclarationsOptimizer();
+		Optimizer cso = new CommonSubgraphOptimizer(optimizerInfo);
+		Optimizer pe2dpeo = new PathExistenceToDirectedPathExpressionOptimizer(
+				optimizerInfo);
+		Optimizer eso = new EarlySelectionOptimizer(optimizerInfo);
+		Optimizer peo = new PathExistenceOptimizer(optimizerInfo);
+		Optimizer vdoo = new VariableDeclarationOrderOptimizer(optimizerInfo);
+		Optimizer ceo = new ConditionalExpressionOptimizer(optimizerInfo);
+		Optimizer txfao = new TransformXorFunctionApplicationOptimizer(
+				optimizerInfo);
+		Optimizer mco = new MergeConstraintsOptimizer(optimizerInfo);
+		Optimizer msdo = new MergeSimpleDeclarationsOptimizer(optimizerInfo);
 
 		boolean aTransformationWasDone = false;
 		int noOfRuns = 1;
 
 		// try to get more precise estimations when optimizer info is schema
 		// specific.
-		if (((GreqlQueryImpl) query).getOptimizerInfo().getSchema() != null) {
+		if (optimizerInfo.getSchema() != null) {
 			TypeCollectionEvaluator tce = new TypeCollectionEvaluator(
 					(GreqlQueryImpl) query);
 			tce.execute();
 		}
+
 		// do the optimization
 		while (
 		// First merge common subgraphs
@@ -133,7 +141,7 @@ public class DefaultOptimizer extends OptimizerBase {
 				| mco.optimize(query)
 				// Then try to pull up path existences as forward/backward
 				// vertex sets into the type expressions of the start or target
-				// expression variabse.
+				// expression variable.
 				| pe2dpeo.optimize(query)
 				// Now move predicates that are part of a conjunction and thus
 				// movable into the type expression of the simple declaration

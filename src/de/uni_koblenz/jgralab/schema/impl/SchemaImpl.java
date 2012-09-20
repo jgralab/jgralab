@@ -154,6 +154,8 @@ public class SchemaImpl implements Schema, ManagableArtifact {
 
 	private DirectedAcyclicGraph<Domain> domainsDag = new DirectedAcyclicGraph<Domain>();
 
+	private int version;
+
 	private boolean finished = false;
 
 	/**
@@ -1220,7 +1222,13 @@ public class SchemaImpl implements Schema, ManagableArtifact {
 		domainsDag.finish();
 		graphClass.finish();
 		finished = true;
+		++version;
 		return true;
+	}
+
+	@Override
+	public int getVersion() {
+		return version;
 	}
 
 	/**

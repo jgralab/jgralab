@@ -37,7 +37,7 @@ package de.uni_koblenz.jgralab.greql.evaluator;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.greql.evaluator.fa.FiniteAutomaton;
 import de.uni_koblenz.jgralab.greql.schema.GreqlVertex;
-import de.uni_koblenz.jgralab.schema.AttributedElementClass;
+import de.uni_koblenz.jgralab.schema.GraphElementClass;
 import de.uni_koblenz.jgralab.schema.Schema;
 
 public interface InternalGreqlEvaluator {
@@ -52,12 +52,11 @@ public interface InternalGreqlEvaluator {
 
 	public Object removeLocalEvaluationResult(GreqlVertex vertex);
 
-	public Graph getDataGraph();
+	public Graph getGraph();
 
-	public Schema getSchemaOfDataGraph();
+	public Schema getSchema();
 
-	public AttributedElementClass<?, ?> getAttributedElementClass(
-			String qualifiedName);
+	public GraphElementClass<?, ?> getGraphElementClass(String typeName);
 
 	/**
 	 * should be called by every vertex evaluator to indicate a progress. The
@@ -66,7 +65,7 @@ public interface InternalGreqlEvaluator {
 	 */
 	public void progress(long value);
 
-	public void setDatagraphSchema(Schema datagraphSchema);
+	public void setSchema(Schema schema);
 
 	public FiniteAutomaton setLocalAutomaton(GreqlVertex vertex,
 			FiniteAutomaton value);
