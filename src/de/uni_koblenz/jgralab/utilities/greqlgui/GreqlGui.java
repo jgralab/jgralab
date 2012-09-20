@@ -95,6 +95,7 @@ import de.uni_koblenz.jgralab.greql.exception.ParsingException;
 import de.uni_koblenz.jgralab.greql.exception.QuerySourceException;
 import de.uni_koblenz.jgralab.greql.exception.SerialisingException;
 import de.uni_koblenz.jgralab.greql.funlib.FunLib;
+import de.uni_koblenz.jgralab.greql.optimizer.DefaultOptimizer;
 import de.uni_koblenz.jgralab.greql.optimizer.DefaultOptimizerInfo;
 import de.uni_koblenz.jgralab.greql.schema.SourcePosition;
 import de.uni_koblenz.jgralab.greql.serialising.GreqlSerializer;
@@ -311,16 +312,12 @@ public class GreqlGui extends SwingApplication {
 		public void run() {
 			try {
 				progressBar.setIndeterminate(true);
-				synchronized (GreqlGui.this) {
-					graph = GraphIO
-							.loadGraphFromFile(
-									file.getCanonicalPath(),
-									genericImplementationCheckBoxItem
-											.isSelected() ? ImplementationType.GENERIC
-											: ImplementationType.STANDARD, this);
-					recentGraphList.rememberFile(file);
-					graphLoading = false;
-				}
+				graph = GraphIO
+						.loadGraphFromFile(
+								file.getCanonicalPath(),
+								genericImplementationCheckBoxItem.isSelected() ? ImplementationType.GENERIC
+										: ImplementationType.STANDARD, this);
+				recentGraphList.rememberFile(file);
 			} catch (Exception e1) {
 				brm.setValue(brm.getMinimum());
 				progressBar.setIndeterminate(false);
@@ -401,11 +398,14 @@ public class GreqlGui extends SwingApplication {
 				GreqlQueryImpl.DEBUG_OPTIMIZATION = debugOptimizerCheckBoxItem
 						.isSelected();
 				try {
-					query = GreqlQuery.createQuery(
-							queryString,
-							enableOptimizerCheckBoxItem.isSelected(),
-							new DefaultOptimizerInfo(graph != null ? graph
-									.getSchema() : null));
+					query = GreqlQuery
+							.createQuery(
+									queryString,
+									enableOptimizerCheckBoxItem.isSelected() ? new DefaultOptimizer(
+											new DefaultOptimizerInfo(
+													graph != null ? graph
+															.getSchema() : null))
+											: null);
 				} catch (Exception e1) {
 					ex = e1;
 				}
@@ -1119,7 +1119,6 @@ public class GreqlGui extends SwingApplication {
 		graphLoading = true;
 		updateActions();
 		new GraphLoader(brm, f).start();
-
 	}
 
 	public synchronized Graph getGraph() {
@@ -1147,10 +1146,12 @@ public class GreqlGui extends SwingApplication {
 
 	private void showQueryGraph() {
 		String queryString = getCurrentQuery().getText();
-		GreqlQuery query = GreqlQuery.createQuery(queryString,
-				enableOptimizerCheckBoxItem.isSelected(),
-				new DefaultOptimizerInfo(graph != null ? graph.getSchema()
-						: null));
+		GreqlQuery query = GreqlQuery
+				.createQuery(
+						queryString,
+						enableOptimizerCheckBoxItem.isSelected() ? new DefaultOptimizer(
+								new DefaultOptimizerInfo(graph != null ? graph
+										.getSchema() : null)) : null);
 		new GraphViewer(this, query.getQueryGraph(),
 				GreqlSerializer.serializeGraph(query.getQueryGraph()))
 				.setVisible(true);
