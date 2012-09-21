@@ -36,7 +36,6 @@
 package de.uni_koblenz.jgralab.greql.types;
 
 import java.util.BitSet;
-import java.util.Iterator;
 
 import org.pcollections.PSet;
 
@@ -59,8 +58,10 @@ public final class TypeCollection {
 
 	private PSet<TypeEntry> typeEntries;
 
-	// schema specific values, only valid when bound to a Schema
-	private PSet<GraphElementClass<?, ?>> classEntries;
+	// starting from here, all variables contain
+	// schema specific values, only valid when
+	// bound to a Schema
+	private PSet<TypeEntry> boundTypeEntries;
 	private BitSet typeIdSet;
 	private Schema schema;
 	private int schemaVersion;
@@ -74,6 +75,8 @@ public final class TypeCollection {
 		String typeName;
 		boolean exactType;
 		boolean forbidden;
+		// gec is only set in boundTypeEntries
+		GraphElementClass<?, ?> gec;
 
 		public TypeEntry(String typeName, boolean exactType, boolean forbidden) {
 			this.typeName = typeName;
@@ -101,21 +104,22 @@ public final class TypeCollection {
 			return (forbidden ? "^" : "") + typeName + (exactType ? "!" : "");
 		}
 
-		// private boolean subsumes(TypeEntry o) {
-		// if (equals(o)) {
-		// return true;
-		// }
-		// if (exactType) {
-		// return false;
-		// }
-		// if (forbidden) {
-		// return cls.getAllSubClasses().contains(o.cls);
-		// }
-		// if (forbidden != o.forbidden) {
-		// return false;
-		// }
-		// return cls.getAllSubClasses().contains(o.cls);
-		// }
+		private boolean subsumes(TypeEntry o) {
+			assert gec != null : "TypeEntry is not bound to a schema";
+			if (equals(o)) {
+				return true;
+			}
+			if (exactType) {
+				return false;
+			}
+			if (forbidden) {
+				return gec.getAllSubClasses().contains(o.gec);
+			}
+			if (forbidden != o.forbidden) {
+				return false;
+			}
+			return gec.getAllSubClasses().contains(o.gec);
+		}
 	}
 
 	private static TypeCollection empty = new TypeCollection(
@@ -159,23 +163,6 @@ public final class TypeCollection {
 			return this;
 		}
 		return new TypeCollection(typeEntries.plus(n));
-		// PSet<TypeEntry> t;
-		// if (typeEntries != null) {
-		// t = typeEntries;
-		// for (TypeEntry e : typeEntries) {
-		// if (e.subsumes(n)) {
-		// return this;
-		// } else if (n.subsumes(e)) {
-		// t = t.minus(e).plus(n);
-		// }
-		// }
-		// if (!t.contains(n)) {
-		// t = t.plus(n);
-		// }
-		// } else {
-		// t = JGraLab.<TypeEntry> set().plus(n);
-		// }
-		// return new TypeCollection(t);
 	}
 
 	/**
@@ -247,17 +234,15 @@ public final class TypeCollection {
 		double f = 0.0;
 		double a = 0.0;
 		boolean hasAllowedTypes = false;
-		Iterator<GraphElementClass<?, ?>> it = classEntries.iterator();
-		for (TypeEntry e : typeEntries) {
-			GraphElementClass<?, ?> cls = it.next();
+		for (TypeEntry e : boundTypeEntries) {
 			if (e.forbidden) {
 				f += e.exactType ? info
-						.getFrequencyOfGraphElementClassWithoutSubclasses(cls)
-						: info.getFrequencyOfGraphElementClass(cls);
+						.getFrequencyOfGraphElementClassWithoutSubclasses(e.gec)
+						: info.getFrequencyOfGraphElementClass(e.gec);
 			} else {
 				a += e.exactType ? info
-						.getFrequencyOfGraphElementClassWithoutSubclasses(cls)
-						: info.getFrequencyOfGraphElementClass(cls);
+						.getFrequencyOfGraphElementClassWithoutSubclasses(e.gec)
+						: info.getFrequencyOfGraphElementClass(e.gec);
 				hasAllowedTypes = true;
 			}
 		}
@@ -325,31 +310,59 @@ public final class TypeCollection {
 		schema = s;
 		schemaVersion = s.getVersion();
 
+		// compute minimal set of TypeEntries w.r.t. subsumption in the
+		// generalisation hierarchy of the schema
+		boundTypeEntries = JGraLab.set();
+		for (TypeEntry unboundEntry : typeEntries) {
+			TypeEntry boundEntry = new TypeEntry(unboundEntry.typeName,
+					unboundEntry.exactType, unboundEntry.forbidden);
+			if (evaluator != null) {
+				boundEntry.gec = evaluator
+						.getGraphElementClass(boundEntry.typeName);
+			} else {
+				boundEntry.gec = schema
+						.getAttributedElementClass(boundEntry.typeName);
+				if (boundEntry.gec == null) {
+					throw new UnknownTypeException(boundEntry.typeName);
+				}
+			}
+			if (boundTypeEntries.isEmpty()) {
+				boundTypeEntries = boundTypeEntries.plus(boundEntry);
+			} else {
+				PSet<TypeEntry> t = boundTypeEntries;
+				boolean subsumed = false;
+				for (TypeEntry e : boundTypeEntries) {
+					if (e.subsumes(boundEntry)) {
+						// don't add boundEntry since it is covered by e
+						subsumed = true;
+					} else if (boundEntry.subsumes(e)) {
+						// remove e since it is subsumbed by boundEntry
+						t = t.minus(e);
+					}
+				}
+				if (!subsumed) {
+					t = t.plus(boundEntry);
+				}
+				boundTypeEntries = t;
+			}
+		}
+		// Build typeIdSet, a BitSet representing all types accepted by this
+		// TypeCollection. In typeIdSet, the bit positions correspond to the
+		// schema specific IDs of GraphElementClasses.
 		BitSet a = new BitSet(s.getGraphElementClassCount());
 		BitSet f = new BitSet(s.getGraphElementClassCount());
-		classEntries = JGraLab.set();
 		boolean hasAllowedTypes = false;
-		for (TypeEntry e : typeEntries) {
+		for (TypeEntry e : boundTypeEntries) {
 			if (!e.forbidden) {
 				hasAllowedTypes = true;
 			}
-			GraphElementClass<?, ?> gec;
-			if (evaluator != null) {
-				gec = evaluator.getGraphElementClass(e.typeName);
-			} else {
-				gec = schema.getAttributedElementClass(e.typeName);
-				if (gec == null) {
-					throw new UnknownTypeException(e.typeName);
-				}
-			}
-			classEntries = classEntries.plus(gec);
-			TcType t = (gec instanceof VertexClass) ? TcType.VERTEX
+			TcType t = (e.gec instanceof VertexClass) ? TcType.VERTEX
 					: TcType.EDGE;
 			tcType = tcType == null ? t : t == tcType ? t : TcType.UNKNOWN;
 			BitSet b = e.forbidden ? f : a;
-			b.set(gec.getGraphElementClassIdInSchema());
+			b.set(e.gec.getGraphElementClassIdInSchema());
 			if (!e.exactType) {
-				for (GraphElementClass<?, ?> sub : gec.getAllSubClasses()) {
+				for (GraphElementClass<?, ?> sub : e.gec.getAllSubClasses()) {
 					b.set(sub.getGraphElementClassIdInSchema());
 				}
 			}
@@ -373,7 +386,8 @@ public final class TypeCollection {
 		if (tcType == null) {
 			tcType = TcType.UNKNOWN;
 		}
-		// System.out.println(toString() + " " + tcType + " " + typeIdSet);
+		// System.out.println(toString() + " " + tcType + " " + typeIdSet + " "
+		// + boundTypeEntries);
 	}
 
 	public TcType getTcType() {
