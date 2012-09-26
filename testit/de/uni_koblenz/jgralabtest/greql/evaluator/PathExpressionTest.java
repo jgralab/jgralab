@@ -218,6 +218,9 @@ public class PathExpressionTest {
 		assertTrue((Boolean) erg);
 
 		String classname = "testdata.TestSimplePathDescription_AggregationWithRoleRestriction";
+		// TODO delete
+		GreqlCodeGenerator.generateCode(query, datagraph.getSchema(), classname
+				+ "_", "./testit/");
 		Class<ExecutableQuery> generatedQuery = GreqlCodeGenerator
 				.generateCode(query, datagraph.getSchema(), classname);
 		erg = generatedQuery.newInstance().execute(datagraph);

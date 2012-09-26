@@ -56,7 +56,7 @@ import de.uni_koblenz.jgralab.schema.VertexClass;
  */
 public final class TypeCollection {
 
-	private PSet<TypeEntry> typeEntries;
+	private final PSet<TypeEntry> typeEntries;
 
 	// starting from here, all variables contain
 	// schema specific values, only valid when
@@ -280,6 +280,10 @@ public final class TypeCollection {
 		if (!s.isFinished()) {
 			throw new IllegalStateException("Schema is not finished");
 		}
+		if (schema == null && s != null) {
+			return new TypeCollection(typeEntries, evaluator,
+					evaluator.getSchema());
+		}
 		if (isEmpty()) {
 			return this;
 		}
@@ -293,6 +297,9 @@ public final class TypeCollection {
 	public TypeCollection bindToSchema(Schema s) {
 		if (!s.isFinished()) {
 			throw new IllegalStateException("Schema is not finished");
+		}
+		if (schema == null && s != null) {
+			return new TypeCollection(typeEntries, null, s);
 		}
 		if (isEmpty()) {
 			return this;

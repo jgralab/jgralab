@@ -102,6 +102,7 @@ import de.uni_koblenz.jgralab.greql.schema.VertexSetExpression;
 import de.uni_koblenz.jgralab.greql.serialising.GreqlSerializer;
 import de.uni_koblenz.jgralab.greql.types.TypeCollection;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
+import de.uni_koblenz.jgralab.schema.GraphElementClass;
 import de.uni_koblenz.jgralab.schema.IncidenceClass;
 import de.uni_koblenz.jgralab.schema.Schema;
 import de.uni_koblenz.jgralab.schema.codegenerator.CodeBlock;
@@ -263,6 +264,13 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 				+ ";");
 		for (String var : resultVariables) {
 			clearVars.add(var + " = null;");
+		}
+		for (int i = 0; i < acceptedTypesNumber; i++) {
+			clearVars.add("acceptedTypeCollection_" + i + " = "
+					+ "acceptedTypeCollection_" + i
+					+ ".bindToSchema(graph.getSchema());");
+			clearVars.add("acceptedType_" + i + " = acceptedTypeCollection_"
+					+ i + ".getTypeIdSet();");
 		}
 		methodExecute.add("}");
 		mExec.addNoIndent(methodExecute);
@@ -488,34 +496,80 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 	}
 
 	private String createInitializerForTypeCollection(
-			TypeCollection typeCollection) {
-		String fieldName = "acceptedType_" + acceptedTypesNumber++;
-		addStaticField("java.util.BitSet", fieldName, "new java.util.BitSet("
-				+ schema.getGraphElementClassCount() + ")");
-		if (typeCollection.isEmpty()) {
-			addStaticInitializer(fieldName + ".set(0, " + fieldName
-					+ ".size() - 1, true);");
-		} else {
-			addStaticInitializer("for (int b: new int[] "
-					+ typeCollection.getTypeIdSet() + ") { " + fieldName
-					+ ".set(b); }");
+			Iterable<IsTypeRestrOfExpression> iterable) {
+		String fieldNameBS = "acceptedType_" + acceptedTypesNumber;
+		addStaticField("java.util.BitSet", fieldNameBS, "null");
+		String fieldNameTC = "acceptedTypeCollection_" + acceptedTypesNumber++;
+		addStaticField("de.uni_koblenz.jgralab.greql.types.TypeCollection",
+				fieldNameTC,
+				"de.uni_koblenz.jgralab.greql.types.TypeCollection.empty()");
+		if (iterable.iterator().hasNext()) {
+			StringBuilder sb = new StringBuilder(fieldNameTC).append(" = ")
+					.append(fieldNameTC);
+			for (IsTypeRestrOfExpression itroe : iterable) {
+				TypeId typeId = itroe.getAlpha();
+				GraphElementClass<?, ?> gec = evaluator
+						.getGraphElementClass(typeId.get_name());
+				if (gec == null) {
+					((GreqlQueryImpl) query).getVertexEvaluator(
+							itroe.getOmega()).evaluate(evaluator);
+					gec = evaluator.getGraphElementClass(typeId.get_name());
+				}
+				sb.append(".with(\"").append(gec.getQualifiedName())
+						.append("\", ").append(typeId.is_type()).append(", ")
+						.append(typeId.is_excluded()).append(")");
+			}
+			sb.append(";");
+			addStaticInitializer(sb.toString());
 		}
-		return fieldName;
+		return fieldNameBS;
+	}
+
+	private String createInitializerForTypeCollection(
+			TypeCollection typeCollection) {
+		String fieldNameBS = "acceptedType_" + acceptedTypesNumber;
+		addStaticField("java.util.BitSet", fieldNameBS, "null");
+		String fieldNameTC = "acceptedTypeCollection_" + acceptedTypesNumber++;
+		addStaticField("de.uni_koblenz.jgralab.greql.types.TypeCollection",
+				fieldNameTC,
+				"de.uni_koblenz.jgralab.greql.types.TypeCollection.empty()");
+		if (!typeCollection.isEmpty()) {
+			StringBuilder sb = new StringBuilder(fieldNameTC).append(" = ")
+					.append(fieldNameTC);
+			for (GraphElementClass<?, ?> gec : schema.getGraphClass()
+					.getGraphElementClasses()) {
+				sb.append(".with(\"").append(gec.getQualifiedName())
+						.append("\", true, ")
+						.append(!typeCollection.acceptsType(gec)).append(")");
+			}
+			sb.append(";");
+			addStaticInitializer(sb.toString());
+		}
+		return fieldNameBS;
 	}
 
 	private String createInitializerForIncidenceTypeCollection(
 			Set<IncidenceClass> incidenceClasses) {
-		String fieldName = "acceptedType_" + acceptedTypesNumber++;
-		int numberOfTypesInSchema = schema.getGraphClass().getEdgeClasses()
-				.size() * 2;
-		addStaticField("java.util.BitSet", fieldName, "new java.util.BitSet();");
-		addStaticInitializer(fieldName + ".set(0," + numberOfTypesInSchema
-				+ ", false);");
-		for (IncidenceClass tc : incidenceClasses) {
-			addStaticInitializer(fieldName + ".set("
-					+ tc.getIncidenceClassIdInSchema() + ",  true);");
+		// FIXME bug with typecollections PathExpressionTest
+		// testSimplePathDescription_AggregationWithRoleRestrictions
+		String fieldNameBS = "acceptedType_" + acceptedTypesNumber;
+		addStaticField("java.util.BitSet", fieldNameBS, "null");
+		String fieldNameTC = "acceptedTypeCollection_" + acceptedTypesNumber++;
+		addStaticField("de.uni_koblenz.jgralab.greql.types.TypeCollection",
+				fieldNameTC,
+				"de.uni_koblenz.jgralab.greql.types.TypeCollection.empty()");
+		if (!incidenceClasses.isEmpty()) {
+			StringBuilder sb = new StringBuilder(fieldNameTC).append(" = ")
+					.append(fieldNameTC);
+			for (IncidenceClass ic : incidenceClasses) {
+				sb.append(".with(\"")
+						.append(ic.getEdgeClass().getQualifiedName())
+						.append("\", true, false)");
+			}
+			sb.append(";");
+			addStaticInitializer(sb.toString());
 		}
-		return fieldName;
+		return fieldNameBS;
 	}
 
 	// EdgeSetExpression
@@ -523,14 +577,8 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 		addImports("de.uni_koblenz.jgralab.JGraLab");
 		addImports("de.uni_koblenz.jgralab.Edge");
 		CodeList list = new CodeList();
-		TypeCollection typeCol = TypeCollection.empty();
-		for (IsTypeRestrOfExpression inc : setExpr
-				.getIsTypeRestrOfExpressionIncidences(EdgeDirection.IN)) {
-			TypeId typeId = (TypeId) inc.getThat();
-			typeCol = typeCol.combine((TypeCollection) ((GreqlQueryImpl) query)
-					.getVertexEvaluator(typeId).getResult(evaluator));
-		}
-		String acceptedTypesField = createInitializerForTypeCollection(typeCol);
+		String acceptedTypesField = createInitializerForTypeCollection(setExpr
+				.getIsTypeRestrOfExpressionIncidences(EdgeDirection.IN));
 		CodeSnippet createEdgeSetSnippet = new CodeSnippet();
 		createEdgeSetSnippet
 				.add("org.pcollections.PCollection<Edge> edgeSet = JGraLab.set();");
@@ -550,14 +598,8 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 	// VertexSetExpression
 	private String createCodeForVertexSetExpression(VertexSetExpression setExpr) {
 		CodeList list = new CodeList();
-		TypeCollection typeCol = TypeCollection.empty();
-		for (IsTypeRestrOfExpression inc : setExpr
-				.getIsTypeRestrOfExpressionIncidences(EdgeDirection.IN)) {
-			TypeId typeId = (TypeId) inc.getThat();
-			typeCol = typeCol.combine((TypeCollection) ((GreqlQueryImpl) query)
-					.getVertexEvaluator(typeId).getResult(evaluator));
-		}
-		String acceptedTypesField = createInitializerForTypeCollection(typeCol);
+		String acceptedTypesField = createInitializerForTypeCollection(setExpr
+				.getIsTypeRestrOfExpressionIncidences(EdgeDirection.IN));
 		CodeSnippet createVertexSetSnippet = new CodeSnippet();
 		createVertexSetSnippet
 				.add("org.pcollections.PCollection<de.uni_koblenz.jgralab.Vertex> vertexSet = de.uni_koblenz.jgralab.JGraLab.set();");
