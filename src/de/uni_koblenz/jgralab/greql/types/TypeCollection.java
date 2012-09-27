@@ -122,8 +122,12 @@ public final class TypeCollection {
 		}
 	}
 
-	private static TypeCollection empty = new TypeCollection(
-			JGraLab.<TypeEntry> set());
+	private static TypeCollection empty;
+
+	static {
+		empty = new TypeCollection(JGraLab.<TypeEntry> set());
+		empty.tcType = TcType.UNKNOWN;
+	}
 
 	/**
 	 * @return an empty TypeCollection that accepts all types
@@ -256,7 +260,7 @@ public final class TypeCollection {
 	}
 
 	public long getEstimatedGraphElementCount(OptimizerInfo info) {
-		if (schema == null) {
+		if (!isEmpty() && schema == null) {
 			throw new IllegalStateException(
 					"TypeCollection isn't bound to a Schema");
 		}
