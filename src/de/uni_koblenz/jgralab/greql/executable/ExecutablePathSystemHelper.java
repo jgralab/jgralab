@@ -7,18 +7,17 @@ import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.graphmarker.GraphMarker;
 
 /**
- * This class provides helper methods necessary for the efficient claculation
- * of PathSystems in executable GReQL. Since the final automatons that have been
+ * This class provides helper methods necessary for the efficient calculation of
+ * PathSystems in executable GReQL. Since the final automatons that have been
  * created out of the path descriptions are not available in executable GReQL,
  * the methods provides by the GReQL function lib may not be used for pathsystem
  * calculation in executable GReQL.
  * 
  * @author dbildh
- *
+ * 
  */
 public class ExecutablePathSystemHelper {
 
-	
 	public static de.uni_koblenz.jgralab.greql.types.PathSystem createPathSystemFromMarkings(
 			GraphMarker<PathSystemMarkerEntry>[] marker, Vertex rootVertex,
 			Set<PathSystemMarkerEntry> leafEntries) {
@@ -33,7 +32,8 @@ public class ExecutablePathSystemHelper {
 			while (currentVertex != null) {
 				pathSystem.addVertex(currentVertex, currentMarker.stateNumber,
 						currentMarker.edgeToParentVertex,
-						currentMarker.parentVertex, currentMarker.parentStateNumber,
+						currentMarker.parentVertex,
+						currentMarker.parentStateNumber,
 						currentMarker.distanceToRoot,
 						currentMarker.stateIsFinal);
 				currentVertex = currentMarker.parentVertex;
@@ -45,7 +45,6 @@ public class ExecutablePathSystemHelper {
 		return pathSystem;
 	}
 
-	
 	/**
 	 * Returns the {@code PathSystemMarkerEntry} for a given vertex and state.
 	 * 
@@ -58,7 +57,8 @@ public class ExecutablePathSystemHelper {
 	 * @return the {@code PathSystemMarkerEntry} for {@code v} and {@code s}
 	 */
 	private static PathSystemMarkerEntry getMarkerWithState(
-			GraphMarker<PathSystemMarkerEntry>[] marker, Vertex v, int stateNumber) {
+			GraphMarker<PathSystemMarkerEntry>[] marker, Vertex v,
+			int stateNumber) {
 		if (v == null) {
 			return null;
 		}
@@ -66,15 +66,16 @@ public class ExecutablePathSystemHelper {
 		PathSystemMarkerEntry entry = currentMarker.getMark(v);
 		return entry;
 	}
-	
-	
+
 	/**
-	 * marks the given vertex with the given PathSystemMarker 
+	 * marks the given vertex with the given PathSystemMarker
+	 * 
 	 * @return the marker created
 	 */
 	public static PathSystemMarkerEntry markVertex(
-			GraphMarker<PathSystemMarkerEntry>[] marker, Vertex v, int stateNumber,
-			boolean stateIsFinal, Vertex parentVertex, Edge e, int parentStateNumber, int d) {
+			GraphMarker<PathSystemMarkerEntry>[] marker, Vertex v,
+			int stateNumber, boolean stateIsFinal, Vertex parentVertex, Edge e,
+			int parentStateNumber, int d) {
 		PathSystemMarkerEntry m = new PathSystemMarkerEntry(v, parentVertex, e,
 				stateNumber, stateIsFinal, parentStateNumber, d);
 
@@ -84,7 +85,8 @@ public class ExecutablePathSystemHelper {
 	}
 
 	/**
-	 * Checks if the given vertex is marked with the given state 
+	 * Checks if the given vertex is marked with the given state
+	 * 
 	 * @return true if the vertex is marked, false otherwise
 	 */
 	public static boolean isMarked(GraphMarker<PathSystemMarkerEntry>[] marker,
@@ -92,6 +94,5 @@ public class ExecutablePathSystemHelper {
 		GraphMarker<PathSystemMarkerEntry> currentMarker = marker[stateNumber];
 		return currentMarker.isMarked(v);
 	}
-	
 
 }
