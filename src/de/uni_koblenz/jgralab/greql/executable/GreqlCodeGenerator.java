@@ -33,7 +33,6 @@ import de.uni_koblenz.jgralab.greql.evaluator.fa.SimpleTransition;
 import de.uni_koblenz.jgralab.greql.evaluator.fa.State;
 import de.uni_koblenz.jgralab.greql.evaluator.fa.Transition;
 import de.uni_koblenz.jgralab.greql.evaluator.fa.VertexTypeRestrictionTransition;
-import de.uni_koblenz.jgralab.greql.evaluator.vertexeval.FunctionApplicationEvaluator;
 import de.uni_koblenz.jgralab.greql.evaluator.vertexeval.PathDescriptionEvaluator;
 import de.uni_koblenz.jgralab.greql.evaluator.vertexeval.VariableEvaluator;
 import de.uni_koblenz.jgralab.greql.evaluator.vertexeval.VertexEvaluator;
@@ -71,6 +70,7 @@ import de.uni_koblenz.jgralab.greql.schema.IsQueryExprOf;
 import de.uni_koblenz.jgralab.greql.schema.IsRecordElementOf;
 import de.uni_koblenz.jgralab.greql.schema.IsSimpleDeclOf;
 import de.uni_koblenz.jgralab.greql.schema.IsTableHeaderOf;
+import de.uni_koblenz.jgralab.greql.schema.IsTypeExprOfFunction;
 import de.uni_koblenz.jgralab.greql.schema.IsTypeRestrOfExpression;
 import de.uni_koblenz.jgralab.greql.schema.IsValueExprOfConstruction;
 import de.uni_koblenz.jgralab.greql.schema.ListComprehension;
@@ -1220,19 +1220,31 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 					+ createCodeForExpression(expr) + ";"));
 		}
 		if (funApp.getFirstIsTypeExprOfFunctionIncidence(EdgeDirection.IN) != null) {
-			Expression typeExpr = (Expression) funApp
-					.getFirstIsTypeExprOfFunctionIncidence(EdgeDirection.IN)
-					.getThat();
-			FunctionApplicationEvaluator funappeval = (FunctionApplicationEvaluator) ((GreqlQueryImpl) query)
-					.getVertexEvaluator(funApp);
-			TypeCollection typeCollection = funappeval
-					.createTypeArgument(evaluator);
-
 			addImports("de.uni_koblenz.jgralab.greql.types.TypeCollection");
-			list.add(new CodeSnippet("TypeCollection arg_" + argNumber++
-					+ " = TypeCollection.empty();"));
-			// TODO create TypeCollection
-
+			StringBuilder sb = new StringBuilder();
+			sb.append("TypeCollection arg_").append(argNumber)
+					.append(" = TypeCollection.empty()");
+			for (IsTypeExprOfFunction itroe : funApp
+					.getIsTypeExprOfFunctionIncidences(EdgeDirection.IN)) {
+				TypeId typeId = (TypeId) itroe.getAlpha();
+				GraphElementClass<?, ?> gec = evaluator
+						.getGraphElementClass(typeId.get_name());
+				if (gec == null) {
+					((GreqlQueryImpl) query).getVertexEvaluator(
+							itroe.getOmega()).evaluate(evaluator);
+					gec = evaluator.getGraphElementClass(typeId.get_name());
+				}
+				sb.append(".with(\"").append(gec.getQualifiedName())
+						.append("\", ").append(typeId.is_type()).append(", ")
+						.append(typeId.is_excluded()).append(")");
+			}
+			sb.append(";");
+			list.add(new CodeSnippet(sb.toString()));
+			sb = new StringBuilder();
+			sb.append("arg_").append(argNumber).append(" = arg_")
+					.append(argNumber++)
+					.append(".bindToSchema(datagraph.getSchema());");
+			list.add(new CodeSnippet(sb.toString()));
 		}
 		list.add(new CodeSnippet("boolean matches;"));
 		Method[] methods = function.getClass().getMethods();

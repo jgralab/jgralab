@@ -850,11 +850,16 @@ public class ResidualEvaluatorTest {
 	public void testUseQuerySeveralTimes() throws InstantiationException,
 			IllegalAccessException {
 		// TODO check
-		String query = "slice(getVertex(1),-->)";
-		Slice slice1 = (Slice) evaluateQuery(query);
-		Slice slice2 = (Slice) evaluateQuery(query);
-		assertEquals(slice1.getEdges(), slice2.getEdges());
-		assertEquals(slice1.getVertices(), slice2.getVertices());
+		String queryText = "slice(getVertex(1),-->)";
+		for (GreqlQuery query : new GreqlQuery[] {
+				GreqlQuery.createQuery(queryText),
+				(GreqlQuery) createQueryClass(queryText,
+						"testUseQuerySeveralTimes") }) {
+			Slice slice1 = (Slice) query.evaluate(datagraph);
+			Slice slice2 = (Slice) query.evaluate(datagraph);
+			assertEquals(slice1.getEdges(), slice2.getEdges());
+			assertEquals(slice1.getVertices(), slice2.getVertices());
+		}
 	}
 
 	@Test

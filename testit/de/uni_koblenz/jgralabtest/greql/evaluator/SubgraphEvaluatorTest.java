@@ -22,7 +22,6 @@ import de.uni_koblenz.jgralab.greql.executable.ExecutableQuery;
 import de.uni_koblenz.jgralab.greql.executable.GreqlCodeGenerator;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.GraphElementClass;
-import de.uni_koblenz.jgralab.utilities.tg2dot.Tg2Dot;
 
 public class SubgraphEvaluatorTest {
 
@@ -56,18 +55,6 @@ public class SubgraphEvaluatorTest {
 
 	public ExecutableQuery createQueryClass(String query, String classname)
 			throws InstantiationException, IllegalAccessException {
-		try {
-			String filePrefix = "./testit/" + classname.replace('.', '/');
-			GreqlQuery.createQuery(query).getQueryGraph()
-					.save(filePrefix + ".tg");
-			Tg2Dot.main(new String[] { "-g", filePrefix + ".tg", "-o",
-					filePrefix + ".png", "-i", "-e", "-r", "-t", "png" });
-		} catch (GraphIOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		GreqlCodeGenerator.generateCode(query, datagraph.getSchema(), classname
-				+ "_", "./testit/");
 		Class<ExecutableQuery> generatedQuery = GreqlCodeGenerator
 				.generateCode(query, datagraph.getSchema(), classname);
 		return generatedQuery.newInstance();
