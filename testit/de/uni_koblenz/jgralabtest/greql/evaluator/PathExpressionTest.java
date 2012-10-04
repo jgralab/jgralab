@@ -232,6 +232,28 @@ public class PathExpressionTest {
 	}
 
 	/**
+	 * import localities.*;<br>
+	 * v143&lt;&gt;--{ContainsLocality}v2
+	 */
+	@Test
+	public void testSimplePathDescription_AggregationWithRoleRestriction_fails()
+			throws InstantiationException, IllegalAccessException {
+		String query = "import localities.*;\ngetVertex(143)<>--{locality}getVertex(153)";
+		Object erg = GreqlQuery.createQuery(query).evaluate(datagraph);
+		assertFalse((Boolean) erg);
+
+		String classname = "testdata.TestSimplePathDescription_AggregationWithRoleRestriction_fails";
+		Class<ExecutableQuery> generatedQuery = GreqlCodeGenerator
+				.generateCode(query, datagraph.getSchema(), classname);
+		erg = generatedQuery.newInstance().execute(datagraph);
+		assertFalse((Boolean) erg);
+
+		compareResultsOfQuery(
+				"import localities.*;\ngetVertex(143)<>--{locality}", classname
+						+ "2");
+	}
+
+	/**
 	 * import local.*;<br>
 	 * v143&lt;&gt;--{ContainsLocality}v2
 	 */

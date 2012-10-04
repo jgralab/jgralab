@@ -272,6 +272,15 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 			clearVars.add("acceptedType_" + i + " = acceptedTypeCollection_"
 					+ i + ".getTypeIdSet();");
 		}
+		for (int i = 0; i < acceptedIncidenceClassesNumber; i++) {
+			clearVars
+					.add("acceptedIncidenceClasses_"
+							+ i
+							+ " = "
+							+ "bindIncidenceClassesToSchema(graph.getSchema(), acceptedIncideceClassesEC_"
+							+ i + ", acceptedIncideceClassesIncidenceClass_"
+							+ i + ");");
+		}
 		methodExecute.add("}");
 		mExec.addNoIndent(methodExecute);
 		code.add(mExec);
@@ -548,26 +557,35 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 		return fieldNameBS;
 	}
 
+	private int acceptedIncidenceClassesNumber = 0;
+
 	private String createInitializerForIncidenceTypeCollection(
 			Set<IncidenceClass> incidenceClasses) {
-		// FIXME bug with typecollections PathExpressionTest
-		// testSimplePathDescription_AggregationWithRoleRestrictions
-		String fieldNameBS = "acceptedType_" + acceptedTypesNumber;
+		String fieldNameBS = "acceptedIncidenceClasses_"
+				+ acceptedIncidenceClassesNumber;
 		addStaticField("java.util.BitSet", fieldNameBS, "null");
-		String fieldNameTC = "acceptedTypeCollection_" + acceptedTypesNumber++;
-		addStaticField("de.uni_koblenz.jgralab.greql.types.TypeCollection",
-				fieldNameTC,
-				"de.uni_koblenz.jgralab.greql.types.TypeCollection.empty()");
+		// stores qualified names of EdgeClasses
+		String edgeClasses = "acceptedIncideceClassesEC_"
+				+ acceptedIncidenceClassesNumber;
+		addStaticField("String[]", edgeClasses, "new String["
+				+ incidenceClasses.size() + "]");
+		// if true then from IncidenceClass else the to IncidenceClass
+		String fromOrTo = "acceptedIncideceClassesIncidenceClass_"
+				+ acceptedIncidenceClassesNumber++;
+		addStaticField("boolean[]", fromOrTo,
+				"new boolean[" + incidenceClasses.size() + "]");
 		if (!incidenceClasses.isEmpty()) {
-			StringBuilder sb = new StringBuilder(fieldNameTC).append(" = ")
-					.append(fieldNameTC);
+			int index = 0;
 			for (IncidenceClass ic : incidenceClasses) {
-				sb.append(".with(\"")
-						.append(ic.getEdgeClass().getQualifiedName())
-						.append("\", true, false)");
+				addStaticInitializer(edgeClasses + "[" + index + "] = \""
+						+ ic.getEdgeClass().getQualifiedName() + "\";");
+				addStaticInitializer(fromOrTo
+						+ "["
+						+ index
+						+ "] = "
+						+ (ic.getEdgeClass().getFrom() == ic ? "true" : "false")
+						+ ";");
 			}
-			sb.append(";");
-			addStaticInitializer(sb.toString());
 		}
 		return fieldNameBS;
 	}
