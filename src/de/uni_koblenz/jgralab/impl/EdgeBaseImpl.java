@@ -46,7 +46,7 @@ import de.uni_koblenz.jgralab.schema.EdgeClass;
 
 /**
  * TODO add comment
- *
+ * 
  * @author ist@uni-koblenz.de
  */
 public abstract class EdgeBaseImpl extends IncidenceImpl implements Edge,
@@ -66,13 +66,16 @@ public abstract class EdgeBaseImpl extends IncidenceImpl implements Edge,
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see java.lang.Comparable#compareTo(java.lang.Object)
 	 */
 	@Override
-	public int compareTo(AttributedElement<EdgeClass, Edge> a) {
+	public final int compareTo(AttributedElement<EdgeClass, Edge> a) {
 		assert a != null;
 		assert a instanceof Edge;
+		if (this == a) {
+			return 0;
+		}
 		Edge e = (Edge) a;
 		assert isValid();
 		assert e.isValid();
@@ -81,24 +84,28 @@ public abstract class EdgeBaseImpl extends IncidenceImpl implements Edge,
 		if (e == getReversedEdge()) {
 			return -1;
 		} else {
-			return Math.abs(getId()) - Math.abs(e.getId());
+			int x = Math.abs(getId()) - Math.abs(e.getId());
+			if (x != 0) {
+				return x;
+			}
+			return getGraph().compareTo(e.getGraph());
 		}
 	}
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see de.uni_koblenz.jgralab.Edge#delete()
 	 */
 	@Override
-	public void delete() {
+	public final void delete() {
 		assert isValid();
 		graph.deleteEdge(this);
 	}
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see de.uni_koblenz.jgralab.Edge#getAlpha()
 	 */
 	@Override
@@ -108,7 +115,7 @@ public abstract class EdgeBaseImpl extends IncidenceImpl implements Edge,
 	}
 
 	@Override
-	public Edge getNextEdge() {
+	public final Edge getNextEdge() {
 		TraversalContext tc = graph.getTraversalContext();
 		InternalEdge nextEdge = getNextEdgeInESeq();
 		if (!((tc == null) || (nextEdge == null) || tc.containsEdge(nextEdge))) {
@@ -120,7 +127,7 @@ public abstract class EdgeBaseImpl extends IncidenceImpl implements Edge,
 	}
 
 	@Override
-	public Edge getPrevEdge() {
+	public final Edge getPrevEdge() {
 		TraversalContext tc = graph.getTraversalContext();
 		InternalEdge prevEdge = getPrevEdgeInESeq();
 		if (!((tc == null) || (prevEdge == null) || tc.containsEdge(prevEdge))) {
@@ -133,13 +140,13 @@ public abstract class EdgeBaseImpl extends IncidenceImpl implements Edge,
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see
 	 * de.uni_koblenz.jgralab.Edge#getNextEdgeOfClassInGraph(de.uni_koblenz.
 	 * jgralab.schema.EdgeClass)
 	 */
 	@Override
-	public Edge getNextEdge(EdgeClass anEdgeClass) {
+	public final Edge getNextEdge(EdgeClass anEdgeClass) {
 		assert anEdgeClass != null;
 		assert isValid();
 		Edge currentEdge = getNextEdge();
@@ -155,17 +162,17 @@ public abstract class EdgeBaseImpl extends IncidenceImpl implements Edge,
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see de.uni_koblenz.jgralab.Edge#getNormalEdge()
 	 */
 	@Override
-	public Edge getNormalEdge() {
+	public final Edge getNormalEdge() {
 		return this;
 	}
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see de.uni_koblenz.jgralab.Edge#getOmega()
 	 */
 	@Override
@@ -176,66 +183,66 @@ public abstract class EdgeBaseImpl extends IncidenceImpl implements Edge,
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see de.uni_koblenz.jgralab.Edge#getReversedEdge()
 	 */
 	@Override
-	public Edge getReversedEdge() {
+	public final Edge getReversedEdge() {
 		return reversedEdge;
 	}
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see de.uni_koblenz.jgralab.Edge#getThat()
 	 */
 	@Override
-	public Vertex getThat() {
+	public final Vertex getThat() {
 		assert isValid();
 		return getOmega();
 	}
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see de.uni_koblenz.jgralab.Edge#getThatRole()
 	 */
 	@Override
-	public String getThatRole() {
+	public final String getThatRole() {
 		assert isValid();
 		return getAttributedElementClass().getTo().getRolename();
 	}
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see de.uni_koblenz.jgralab.Edge#getThis()
 	 */
 	@Override
-	public Vertex getThis() {
+	public final Vertex getThis() {
 		assert isValid();
 		return getAlpha();
 	}
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see de.uni_koblenz.jgralab.Edge#getThisRole()
 	 */
 	@Override
-	public String getThisRole() {
+	public final String getThisRole() {
 		assert isValid();
 		return getAttributedElementClass().getFrom().getRolename();
 	}
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see
 	 * de.uni_koblenz.jgralab.Edge#isAfterInGraph(de.uni_koblenz.jgralab.Edge)
 	 */
 	@Override
-	public boolean isAfterEdge(Edge e) {
+	public final boolean isAfterEdge(Edge e) {
 		assert e != null;
 		assert isValid();
 		assert e.isValid();
@@ -253,12 +260,12 @@ public abstract class EdgeBaseImpl extends IncidenceImpl implements Edge,
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see
 	 * de.uni_koblenz.jgralab.Edge#isBeforeInGraph(de.uni_koblenz.jgralab.Edge)
 	 */
 	@Override
-	public boolean isBeforeEdge(Edge e) {
+	public final boolean isBeforeEdge(Edge e) {
 		assert e != null;
 		assert isValid();
 		assert e.isValid();
@@ -277,22 +284,22 @@ public abstract class EdgeBaseImpl extends IncidenceImpl implements Edge,
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see de.uni_koblenz.jgralab.Edge#isNormal()
 	 */
 	@Override
-	public boolean isNormal() {
+	public final boolean isNormal() {
 		return true;
 	}
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see
 	 * de.uni_koblenz.jgralab.Edge#putAfterInGraph(de.uni_koblenz.jgralab.Edge)
 	 */
 	@Override
-	public void putAfterEdge(Edge e) {
+	public final void putAfterEdge(Edge e) {
 		assert e != null;
 		assert isValid();
 		assert e.isValid();
@@ -305,12 +312,12 @@ public abstract class EdgeBaseImpl extends IncidenceImpl implements Edge,
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see
 	 * de.uni_koblenz.jgralab.Edge#putBeforeInGraph(de.uni_koblenz.jgralab.Edge)
 	 */
 	@Override
-	public void putBeforeEdge(Edge e) {
+	public final void putBeforeEdge(Edge e) {
 		assert e != null;
 		assert isValid();
 		assert e.isValid();
@@ -323,11 +330,11 @@ public abstract class EdgeBaseImpl extends IncidenceImpl implements Edge,
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see de.uni_koblenz.jgralab.Edge#setAlpha(de.uni_koblenz.jgralab.Vertex)
 	 */
 	@Override
-	public void setAlpha(Vertex alpha) {
+	public final void setAlpha(Vertex alpha) {
 		InternalVertex alphaBase = (InternalVertex) alpha;
 		assert isValid();
 		assert alphaBase != null;
@@ -368,11 +375,11 @@ public abstract class EdgeBaseImpl extends IncidenceImpl implements Edge,
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see de.uni_koblenz.jgralab.Edge#setOmega(de.uni_koblenz.jgralab.Vertex)
 	 */
 	@Override
-	public void setOmega(Vertex omega) {
+	public final void setOmega(Vertex omega) {
 		InternalVertex omegaBase = (InternalVertex) omega;
 		assert isValid();
 		assert omegaBase != null;
@@ -416,11 +423,11 @@ public abstract class EdgeBaseImpl extends IncidenceImpl implements Edge,
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see de.uni_koblenz.jgralab.Edge#setThat(de.uni_koblenz.jgralab.Vertex)
 	 */
 	@Override
-	public void setThat(Vertex v) {
+	public final void setThat(Vertex v) {
 		assert isValid();
 		assert v != null;
 		assert v.isValid();
@@ -431,11 +438,11 @@ public abstract class EdgeBaseImpl extends IncidenceImpl implements Edge,
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see de.uni_koblenz.jgralab.Edge#setThis(de.uni_koblenz.jgralab.Vertex)
 	 */
 	@Override
-	public void setThis(Vertex v) {
+	public final void setThis(Vertex v) {
 		assert isValid();
 		assert v != null;
 		assert v.isValid();
@@ -446,33 +453,33 @@ public abstract class EdgeBaseImpl extends IncidenceImpl implements Edge,
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
-	public String toString() {
+	public final String toString() {
 		return "+e" + id + ": "
 				+ getAttributedElementClass().getQualifiedName();
 	}
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see de.uni_koblenz.jgralab.Edge#isValid()
 	 */
 	@Override
-	public boolean isValid() {
+	public final boolean isValid() {
 		return graph.eSeqContainsEdge(this);
 	}
 
 	@Override
-	public AggregationKind getThisAggregationKind() {
+	public final AggregationKind getThisAggregationKind() {
 		assert isValid();
 		return getAlphaAggregationKind();
 	}
 
 	@Override
-	public AggregationKind getThatAggregationKind() {
+	public final AggregationKind getThatAggregationKind() {
 		assert isValid();
 		return getOmegaAggregationKind();
 	}

@@ -43,13 +43,10 @@ import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.Record;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.VertexFilter;
 import de.uni_koblenz.jgralab.exception.GraphException;
 import de.uni_koblenz.jgralab.exception.GraphIOException;
 import de.uni_koblenz.jgralab.exception.NoSuchAttributeException;
-import de.uni_koblenz.jgralab.impl.EdgeIterable;
 import de.uni_koblenz.jgralab.impl.RecordImpl;
-import de.uni_koblenz.jgralab.impl.VertexIterable;
 import de.uni_koblenz.jgralab.impl.std.GraphImpl;
 import de.uni_koblenz.jgralab.schema.Attribute;
 import de.uni_koblenz.jgralab.schema.BasicDomain;
@@ -178,44 +175,6 @@ public class GenericGraphImpl extends GraphImpl implements
 					.getClass().getName() + " object instead") : data
 					+ " instead");
 		}
-	}
-
-	@Override
-	public Vertex getFirstVertex(VertexClass vertexClass) {
-		Vertex v = getFirstVertex();
-		if (v == null) {
-			return null;
-		}
-		if (v.getAttributedElementClass().equals(vertexClass)
-				|| v.getAttributedElementClass().getAllSuperClasses()
-						.contains(vertexClass)) {
-			return v;
-		}
-		return v.getNextVertex(vertexClass);
-	}
-
-	@Override
-	public Edge getFirstEdge(EdgeClass edgeClass) {
-		Edge e = getFirstEdge();
-		if (e == null) {
-			return null;
-		}
-		if (e.getAttributedElementClass().equals(edgeClass)
-				|| e.getAttributedElementClass().getAllSuperClasses()
-						.contains(edgeClass)) {
-			return e;
-		}
-		return e.getNextEdge(edgeClass);
-	}
-
-	@Override
-	public Iterable<Vertex> vertices(VertexClass vc, VertexFilter<Vertex> filter) {
-		return new VertexIterable<Vertex>(this, vc, filter);
-	}
-
-	@Override
-	public Iterable<Edge> edges(EdgeClass ec) {
-		return new EdgeIterable<Edge>(this, ec);
 	}
 
 	@Override

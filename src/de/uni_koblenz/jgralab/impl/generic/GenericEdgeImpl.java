@@ -183,20 +183,6 @@ public class GenericEdgeImpl extends EdgeImpl implements
 	}
 
 	@Override
-	public Edge getNextEdge(EdgeClass anEdgeClass) {
-		Edge currentEdge = getNextEdge();
-		while (currentEdge != null) {
-			if (currentEdge.getAttributedElementClass().equals(anEdgeClass)
-					|| currentEdge.getAttributedElementClass()
-							.getAllSuperClasses().contains(anEdgeClass)) {
-				return currentEdge;
-			}
-			currentEdge = currentEdge.getNextEdge();
-		}
-		return currentEdge;
-	}
-
-	@Override
 	public Edge getNextIncidence(EdgeClass anEdgeClass) {
 		return getNextIncidence(anEdgeClass, EdgeDirection.INOUT, false);
 	}
@@ -258,7 +244,7 @@ public class GenericEdgeImpl extends EdgeImpl implements
 	public boolean isInstanceOf(EdgeClass cls) {
 		// Needs to be overridden from the base variant, because that relies on
 		// code generation.
-		return type.equals(cls) || type.isSubClassOf(cls);
+		return (type == cls) || type.isSubClassOf(cls);
 	}
 
 	@Override

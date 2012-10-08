@@ -36,7 +36,6 @@ package de.uni_koblenz.jgralab.impl.std;
 
 import java.util.List;
 
-import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.TemporaryEdge;
 import de.uni_koblenz.jgralab.TemporaryVertex;
 import de.uni_koblenz.jgralab.Vertex;
@@ -64,7 +63,7 @@ public abstract class GraphImpl extends
 	private InternalVertex lastVertex;
 	private InternalEdge firstEdge;
 	private InternalEdge lastEdge;
-	
+
 	/**
 	 * Holds the version of the vertex sequence. For every modification (e.g.
 	 * adding/deleting a vertex or changing the vertex sequence) this version
@@ -263,17 +262,6 @@ public abstract class GraphImpl extends
 	@Override
 	public void freeVertexIndex(int index) {
 		freeVertexList.freeIndex(index);
-	}
-
-	@Override
-	public void vertexAfterDeleted(Vertex vertexToBeDeleted) {
-
-	}
-
-	@Override
-	public void edgeAfterDeleted(Edge edgeToBeDeleted, Vertex oldAlpha,
-			Vertex oldOmega) {
-
 	}
 
 	@Override

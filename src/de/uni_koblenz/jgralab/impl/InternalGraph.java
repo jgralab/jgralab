@@ -106,13 +106,6 @@ public interface InternalGraph extends Graph {
 	public boolean isLoading();
 
 	/**
-	 * Callback method: Called immediately after loading of this graph is
-	 * completed. Overwrite this method to perform user defined operations after
-	 * loading a graph.
-	 */
-	public void loadingCompleted();
-
-	/**
 	 * Checks if the vertex sequence of this has changed with respect to the
 	 * given <code>previousVersion</code>. Changes in the vertex sequence are
 	 * creation and deletion as well as reordering of vertices, but not changes
@@ -315,35 +308,6 @@ public interface InternalGraph extends Graph {
 	 *            needed for transaction support
 	 */
 	public int allocateEdgeIndex(int currentId);
-
-	/**
-	 * 
-	 * @param freeVertexList
-	 */
-	public void setFreeVertexList(FreeIndexList freeVertexList);
-
-	/**
-	 * 
-	 * @param freeEdgeList
-	 */
-	public void setFreeEdgeList(FreeIndexList freeEdgeList);
-
-	/**
-	 * Callback function for triggered actions just after the edge
-	 * <code>e</code> was deleted from this Graph. Override this method to
-	 * implement user-defined behaviour upon deletion of edges. Note that any
-	 * changes to this graph are forbidden.
-	 * 
-	 * Needed for transaction support.
-	 * 
-	 * @param e
-	 *            the deleted Edge
-	 * @param oldAlpha
-	 *            the alpha-vertex before deletion
-	 * @param oldOmega
-	 *            the omega-vertex before deletion
-	 */
-	public void edgeAfterDeleted(Edge e, Vertex oldAlpha, Vertex oldOmega);
 
 	/**
 	 * Changes the graph structure version, should be called whenever the
@@ -582,17 +546,6 @@ public interface InternalGraph extends Graph {
 	 *            an edge
 	 */
 	public void removeEdgeFromESeq(InternalEdge e);
-
-	/**
-	 * Callback function for triggered actions just after the vertex
-	 * <code>v</code> was deleted from this Graph. Override this method to
-	 * implement user-defined behaviour upon deletion of vertices. Note that any
-	 * changes to this graph are forbidden.
-	 * 
-	 * @param v
-	 *            the deleted vertex
-	 */
-	public void vertexAfterDeleted(Vertex v);
 
 	/**
 	 * Appends the edge e to the global edge sequence of this graph.
