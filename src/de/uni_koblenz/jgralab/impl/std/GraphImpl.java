@@ -39,7 +39,6 @@ import java.util.List;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.TemporaryEdge;
 import de.uni_koblenz.jgralab.TemporaryVertex;
-import de.uni_koblenz.jgralab.TraversalContext;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.impl.FreeIndexList;
 import de.uni_koblenz.jgralab.impl.InternalEdge;
@@ -65,8 +64,7 @@ public abstract class GraphImpl extends
 	private InternalVertex lastVertex;
 	private InternalEdge firstEdge;
 	private InternalEdge lastEdge;
-	private ThreadLocal<TraversalContext> tc = new ThreadLocal<TraversalContext>();
-
+	
 	/**
 	 * Holds the version of the vertex sequence. For every modification (e.g.
 	 * adding/deleting a vertex or changing the vertex sequence) this version
@@ -279,18 +277,6 @@ public abstract class GraphImpl extends
 	}
 
 	@Override
-	public TraversalContext getTraversalContext() {
-		return tc.get();
-	}
-
-	@Override
-	public TraversalContext setTraversalContext(TraversalContext tc) {
-		TraversalContext oldTc = this.tc.get();
-		this.tc.set(tc);
-		return oldTc;
-	}
-
-	@Override
 	public TemporaryVertex createTemporaryVertex() {
 		return new TemporaryVertexImpl(0, this);
 	}
@@ -313,10 +299,10 @@ public abstract class GraphImpl extends
 
 	@Override
 	public boolean hasTemporaryElements() {
-		return this.getFirstVertex(this.getGraphClass()
-				.getTemporaryVertexClass()) != null
-				|| this.getFirstEdge(this.getGraphClass()
-						.getTemporaryEdgeClass()) != null;
+		return (this.getFirstVertex(this.getGraphClass()
+				.getTemporaryVertexClass()) != null)
+				|| (this.getFirstEdge(this.getGraphClass()
+						.getTemporaryEdgeClass()) != null);
 	}
 
 }

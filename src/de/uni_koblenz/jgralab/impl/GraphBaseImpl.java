@@ -134,6 +134,9 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 	 */
 	protected FreeIndexList freeEdgeList;
 
+	// ------------- TRAVERSAL CONTEXT -------------
+	private ThreadLocal<TraversalContext> tc = new ThreadLocal<TraversalContext>();
+
 	/**
 	 * Creates a graph of the given GraphClass with the given id
 	 * 
@@ -2087,5 +2090,17 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 		// This is specific to all impl variants with code generation. Generic
 		// needs to implement this with a schema lookup.
 		return cls.getSchemaClass().isInstance(this);
+	}
+
+	@Override
+	public final TraversalContext getTraversalContext() {
+		return tc.get();
+	}
+
+	@Override
+	public final TraversalContext setTraversalContext(TraversalContext tc) {
+		TraversalContext oldTc = this.tc.get();
+		this.tc.set(tc);
+		return oldTc;
 	}
 }
