@@ -562,4 +562,11 @@ public interface InternalGraph extends Graph {
 	 *            a vertex
 	 */
 	public void appendVertexToVSeq(InternalVertex v);
+
+	/**
+	 * Callback method: Called immediately after loading of this graph is
+	 * completed. Overwrite this method to perform user defined operations after
+	 * loading a graph.
+	 */
+	public void loadingCompleted();
 }

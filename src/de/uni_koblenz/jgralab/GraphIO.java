@@ -2508,6 +2508,7 @@ public class GraphIO {
 		firstIncidence = null;
 		nextIncidence = null;
 		graph.setLoading(false);
+		graph.loadingCompleted();
 		return graph;
 	}
 

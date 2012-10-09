@@ -2082,4 +2082,8 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 		this.tc.set(tc);
 		return oldTc;
 	}
+
+	@Override
+	public void loadingCompleted() {
+	}
 }
