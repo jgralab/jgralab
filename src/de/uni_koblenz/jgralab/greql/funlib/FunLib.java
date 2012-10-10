@@ -428,6 +428,11 @@ public class FunLib {
 						++i;
 						continue;
 					}
+					if (i == 0 && needsEvaluatorArgument) {
+						// don't show evaluator argument
+						++i;
+						continue;
+					}
 					if (i == sig.parameterTypes.length - 1 && acceptsType) {
 						// don't show TypeCollection argument
 						++i;
