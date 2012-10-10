@@ -58,6 +58,7 @@ import java.util.logging.Logger;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.greql.GreqlQuery;
+import de.uni_koblenz.jgralab.greql.evaluator.InternalGreqlEvaluator;
 import de.uni_koblenz.jgralab.greql.exception.GreqlException;
 import de.uni_koblenz.jgralab.greql.funlib.Function.Category;
 import de.uni_koblenz.jgralab.greql.funlib.misc.GreqlQueryFunction;
@@ -734,6 +735,12 @@ public class FunLib {
 				si.description = des.description();
 				si.params = des.params();
 			}
+			if (e.getValue().needsEvaluatorArgument()) {
+				// the first parameter is the InternalGreqlEvaluator
+				assert si.params[0].equals("internal");
+				si.params = Arrays.copyOfRange(si.params, 1, si.params.length);
+			}
+
 			if ((des != null) && (des.categories() != null)) {
 				for (Category cat : des.categories()) {
 					if (!cat2sig.containsKey(cat)) {
@@ -824,27 +831,32 @@ public class FunLib {
 		private void generateSignatures(AnnotationInfo info) throws IOException {
 			write("\\begin{description}");
 			for (SignatureInfo sig : info.signatureInfos) {
-				write("\\item [$" + info.name + ":$ ] $");
+				write("\n\\item [$" + info.name + ":$ ] $");
+				String delim = "";
+				int correction = 0;
 				for (int i = 0; i < sig.signature.parameterTypes.length; i++) {
-					if (i != 0) {
-						write(" \\times ");
+					if (sig.signature.parameterTypes[i] == InternalGreqlEvaluator.class) {
+						correction++;
+						continue;
 					}
+					write(delim);
 
 					write(Types
 							.getGreqlTypeName(sig.signature.parameterTypes[i]));
 					write("\\; ");
-					write(sig.params[i]);
+					write(sig.params[i - correction]);
+					delim = " \\times ";
 				}
 				write(" \\longrightarrow ");
 				write(Types.getGreqlTypeName(sig.signature.evaluateMethod
 						.getReturnType()));
 				write("$");
 				if (sig.description != null) {
-					write("\\\\");
+					write("\\\\\n\t");
 					write(sig.description);
 				}
 			}
-			write("\\end{description}");
+			write("\n\\end{description}");
 		}
 	}
 
