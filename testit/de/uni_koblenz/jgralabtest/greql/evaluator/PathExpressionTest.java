@@ -40,7 +40,7 @@ public class PathExpressionTest {
 		datagraph = null;
 	}
 
-	private void compareResultsOfQuery(String query, String classname)
+	private void compareReachableVerticesResults(String query, String classname)
 			throws InstantiationException, IllegalAccessException {
 		@SuppressWarnings("unchecked")
 		POrderedSet<Vertex> result1 = (POrderedSet<Vertex>) GreqlQuery
@@ -60,9 +60,9 @@ public class PathExpressionTest {
 		}
 	}
 
-	private void compareBooleanResults(String query, boolean expectedResult,
-			String classname) throws InstantiationException,
-			IllegalAccessException {
+	private void compareReachabilityResults(String query,
+			boolean expectedResult, String classname)
+			throws InstantiationException, IllegalAccessException {
 		Object erg = GreqlQuery.createQuery(query).evaluate(datagraph);
 		if (expectedResult) {
 			assertTrue((Boolean) erg);
@@ -91,10 +91,14 @@ public class PathExpressionTest {
 	public void testSimplePathDescription() throws InstantiationException,
 			IllegalAccessException {
 		String classname = "testdata.TestSimplePathDescription";
-
-		compareBooleanResults("getVertex(19)-->getVertex(2)", true, classname);
-
-		compareResultsOfQuery("getVertex(19)-->", classname + "2");
+		compareReachabilityResults("getVertex(19)-->getVertex(2)", true,
+				classname);
+		compareReachableVerticesResults("getVertex(19)-->", classname + "_2");
+		compareReachabilityResults(
+				"isReachable(getVertex(19),getVertex(2),-->)", true, classname
+						+ "_3");
+		compareReachableVerticesResults("reachableVertices(getVertex(19),-->)",
+				classname + "_4");
 	}
 
 	/**
@@ -103,17 +107,15 @@ public class PathExpressionTest {
 	@Test
 	public void testSimplePathDescription_inverseDirection()
 			throws InstantiationException, IllegalAccessException {
-		String query = "getVertex(19)<--getVertex(2)";
-		Object erg = GreqlQuery.createQuery(query).evaluate(datagraph);
-		assertFalse((Boolean) erg);
-
 		String classname = "testdata.TestSimplePathDescription_inverseDirection";
-		Class<ExecutableQuery> generatedQuery = GreqlCodeGenerator
-				.generateCode(query, datagraph.getSchema(), classname);
-		erg = generatedQuery.newInstance().execute(datagraph);
-		assertFalse((Boolean) erg);
-
-		compareResultsOfQuery("getVertex(19)<--", classname + "2");
+		compareReachabilityResults("getVertex(19)<--getVertex(2)", false,
+				classname);
+		compareReachableVerticesResults("getVertex(19)<--", classname + "_2");
+		compareReachabilityResults(
+				"isReachable(getVertex(19),getVertex(2),<--)", false, classname
+						+ "_3");
+		compareReachableVerticesResults("reachableVertices(getVertex(19),<--)",
+				classname + "_4");
 	}
 
 	/**
@@ -122,17 +124,15 @@ public class PathExpressionTest {
 	@Test
 	public void testSimplePathDescription_BothDirections()
 			throws InstantiationException, IllegalAccessException {
-		String query = "getVertex(19)<->getVertex(2)";
-		Object erg = GreqlQuery.createQuery(query).evaluate(datagraph);
-		assertTrue((Boolean) erg);
-
 		String classname = "testdata.TestSimplePathDescription_BothDirections";
-		Class<ExecutableQuery> generatedQuery = GreqlCodeGenerator
-				.generateCode(query, datagraph.getSchema(), classname);
-		erg = generatedQuery.newInstance().execute(datagraph);
-		assertTrue((Boolean) erg);
-
-		compareResultsOfQuery("getVertex(19)<->", classname + "2");
+		compareReachabilityResults("getVertex(19)<->getVertex(2)", true,
+				classname);
+		compareReachableVerticesResults("getVertex(19)<->", classname + "_2");
+		compareReachabilityResults(
+				"isReachable(getVertex(19),getVertex(2),<->)", true, classname
+						+ "_3");
+		compareReachableVerticesResults("reachableVertices(getVertex(19),<->)",
+				classname + "_4");
 	}
 
 	/**
@@ -142,19 +142,19 @@ public class PathExpressionTest {
 	@Test
 	public void testSimplePathDescription_BothDirectionsWithRestriction()
 			throws InstantiationException, IllegalAccessException {
-		String query = "import connections.*;\ngetVertex(19)<->{Street}getVertex(2)";
-		Object erg = GreqlQuery.createQuery(query).evaluate(datagraph);
-		assertTrue((Boolean) erg);
-
 		String classname = "testdata.TestSimplePathDescription_BothDirectionsWithRestriction";
-		Class<ExecutableQuery> generatedQuery = GreqlCodeGenerator
-				.generateCode(query, datagraph.getSchema(), classname);
-		erg = generatedQuery.newInstance().execute(datagraph);
-		assertTrue((Boolean) erg);
-
-		compareResultsOfQuery(
+		compareReachabilityResults(
+				"import connections.*;\ngetVertex(19)<->{Street}getVertex(2)",
+				true, classname);
+		compareReachableVerticesResults(
 				"import connections.*;\ngetVertex(19)<->{Street}", classname
-						+ "2");
+						+ "_2");
+		compareReachabilityResults(
+				"import connections.*;\nisReachable(getVertex(19),getVertex(2),<->{Street})",
+				true, classname + "_3");
+		compareReachableVerticesResults(
+				"import connections.*;\nreachableVertices(getVertex(19),<->{Street})",
+				classname + "_4");
 	}
 
 	/**
@@ -164,19 +164,19 @@ public class PathExpressionTest {
 	@Test
 	public void testSimplePathDescription_BothDirectionsWithRestrictionAndPredicate()
 			throws InstantiationException, IllegalAccessException {
-		String query = "import connections.*;\ngetVertex(19)<->{Street @thisEdge.name=\"A48\"}getVertex(2)";
-		Object erg = GreqlQuery.createQuery(query).evaluate(datagraph);
-		assertTrue((Boolean) erg);
-
 		String classname = "testdata.TestSimplePathDescription_BothDirectionsWithRestrictionAndPredicate";
-		Class<ExecutableQuery> generatedQuery = GreqlCodeGenerator
-				.generateCode(query, datagraph.getSchema(), classname);
-		erg = generatedQuery.newInstance().execute(datagraph);
-		assertTrue((Boolean) erg);
-
-		compareResultsOfQuery(
+		compareReachabilityResults(
+				"import connections.*;\ngetVertex(19)<->{Street @thisEdge.name=\"A48\"}getVertex(2)",
+				true, classname);
+		compareReachableVerticesResults(
 				"import connections.*;\ngetVertex(19)<->{Street @thisEdge.name=\"A48\"}",
-				classname + "2");
+				classname + "_2");
+		compareReachabilityResults(
+				"import connections.*;\nisReachable(getVertex(19),getVertex(2),<->{Street @thisEdge.name=\"A48\"})",
+				true, classname + "_3");
+		compareReachableVerticesResults(
+				"import connections.*;\nreachableVertices(getVertex(19),<->{Street @thisEdge.name=\"A48\"})",
+				classname + "_4");
 	}
 
 	/**
@@ -185,17 +185,15 @@ public class PathExpressionTest {
 	@Test
 	public void testSimplePathDescription_Aggregation()
 			throws InstantiationException, IllegalAccessException {
-		String query = "getVertex(143)<>--getVertex(153)";
-		Object erg = GreqlQuery.createQuery(query).evaluate(datagraph);
-		assertTrue((Boolean) erg);
-
 		String classname = "testdata.TestSimplePathDescription_Aggregation";
-		Class<ExecutableQuery> generatedQuery = GreqlCodeGenerator
-				.generateCode(query, datagraph.getSchema(), classname);
-		erg = generatedQuery.newInstance().execute(datagraph);
-		assertTrue((Boolean) erg);
-
-		compareResultsOfQuery("getVertex(143)<>--", classname + "2");
+		compareReachabilityResults("getVertex(143)<>--getVertex(153)", true,
+				classname);
+		compareReachableVerticesResults("getVertex(143)<>--", classname + "_2");
+		compareReachabilityResults(
+				"isReachable(getVertex(143),getVertex(153),<>--)", true,
+				classname + "_3");
+		compareReachableVerticesResults(
+				"reachableVertices(getVertex(143),<>--)", classname + "_4");
 	}
 
 	/**
@@ -205,19 +203,19 @@ public class PathExpressionTest {
 	@Test
 	public void testSimplePathDescription_AggregationWithTypeRestriction()
 			throws InstantiationException, IllegalAccessException {
-		String query = "import localities.ContainsLocality;\ngetVertex(143)<>--{ContainsLocality}getVertex(153)";
-		Object erg = GreqlQuery.createQuery(query).evaluate(datagraph);
-		assertTrue((Boolean) erg);
-
 		String classname = "testdata.TestSimplePathDescription_AggregationWithTypeRestriction";
-		Class<ExecutableQuery> generatedQuery = GreqlCodeGenerator
-				.generateCode(query, datagraph.getSchema(), classname);
-		erg = generatedQuery.newInstance().execute(datagraph);
-		assertTrue((Boolean) erg);
-
-		compareResultsOfQuery(
+		compareReachabilityResults(
+				"import localities.ContainsLocality;\ngetVertex(143)<>--{ContainsLocality}getVertex(153)",
+				true, classname);
+		compareReachableVerticesResults(
 				"import localities.ContainsLocality;\ngetVertex(143)<>--{ContainsLocality}",
-				classname + "2");
+				classname + "_2");
+		compareReachabilityResults(
+				"import localities.ContainsLocality;\nisReachable(getVertex(143),getVertex(153),<>--{ContainsLocality})",
+				true, classname + "_3");
+		compareReachableVerticesResults(
+				"import localities.ContainsLocality;\nreachableVertices(getVertex(143),<>--{ContainsLocality})",
+				classname + "_4");
 	}
 
 	/**
@@ -227,19 +225,19 @@ public class PathExpressionTest {
 	@Test
 	public void testSimplePathDescription_AggregationWithRoleRestriction()
 			throws InstantiationException, IllegalAccessException {
-		String query = "import localities.*;\ngetVertex(143)<>--{localities}getVertex(153)";
-		Object erg = GreqlQuery.createQuery(query).evaluate(datagraph);
-		assertTrue((Boolean) erg);
-
 		String classname = "testdata.TestSimplePathDescription_AggregationWithRoleRestriction";
-		Class<ExecutableQuery> generatedQuery = GreqlCodeGenerator
-				.generateCode(query, datagraph.getSchema(), classname);
-		erg = generatedQuery.newInstance().execute(datagraph);
-		assertTrue((Boolean) erg);
-
-		compareResultsOfQuery(
+		compareReachabilityResults(
+				"import localities.*;\ngetVertex(143)<>--{localities}getVertex(153)",
+				true, classname);
+		compareReachableVerticesResults(
 				"import localities.*;\ngetVertex(143)<>--{localities}",
-				classname + "2");
+				classname + "_2");
+		compareReachabilityResults(
+				"import localities.*;\nisReachable(getVertex(143),getVertex(153),<>--{localities})",
+				true, classname + "_3");
+		compareReachableVerticesResults(
+				"import localities.*;\nreachableVertices(getVertex(143),<>--{localities})",
+				classname + "_4");
 	}
 
 	/**
@@ -249,19 +247,19 @@ public class PathExpressionTest {
 	@Test
 	public void testSimplePathDescription_AggregationWithRoleRestriction_fails()
 			throws InstantiationException, IllegalAccessException {
-		String query = "import localities.*;\ngetVertex(143)<>--{locality}getVertex(153)";
-		Object erg = GreqlQuery.createQuery(query).evaluate(datagraph);
-		assertFalse((Boolean) erg);
-
 		String classname = "testdata.TestSimplePathDescription_AggregationWithRoleRestriction_fails";
-		Class<ExecutableQuery> generatedQuery = GreqlCodeGenerator
-				.generateCode(query, datagraph.getSchema(), classname);
-		erg = generatedQuery.newInstance().execute(datagraph);
-		assertFalse((Boolean) erg);
-
-		compareResultsOfQuery(
+		compareReachabilityResults(
+				"import localities.*;\ngetVertex(143)<>--{locality}getVertex(153)",
+				false, classname);
+		compareReachableVerticesResults(
 				"import localities.*;\ngetVertex(143)<>--{locality}", classname
-						+ "2");
+						+ "_2");
+		compareReachabilityResults(
+				"import localities.*;\nisReachable(getVertex(143),getVertex(153),<>--{locality})",
+				false, classname + "_3");
+		compareReachableVerticesResults(
+				"import localities.*;\nreachableVertices(getVertex(143),<>--{locality})",
+				classname + "_4");
 	}
 
 	/**
@@ -324,17 +322,17 @@ public class PathExpressionTest {
 	@Test
 	public void testEdgePathDescription() throws InstantiationException,
 			IllegalAccessException {
-		String query = "getVertex(19)--getEdge(325)->getVertex(2)";
-		Object erg = GreqlQuery.createQuery(query).evaluate(datagraph);
-		assertTrue((Boolean) erg);
-
 		String classname = "testdata.TestEdgePathDescription";
-		Class<ExecutableQuery> generatedQuery = GreqlCodeGenerator
-				.generateCode(query, datagraph.getSchema(), classname);
-		erg = generatedQuery.newInstance().execute(datagraph);
-		assertTrue((Boolean) erg);
-
-		compareResultsOfQuery("getVertex(19)--getEdge(325)->", classname + "2");
+		compareReachabilityResults("getVertex(19)--getEdge(325)->getVertex(2)",
+				true, classname);
+		compareReachableVerticesResults("getVertex(19)--getEdge(325)->",
+				classname + "_2");
+		compareReachabilityResults(
+				"isReachable(getVertex(19),getVertex(2),--getEdge(325)->)",
+				true, classname + "_3");
+		compareReachableVerticesResults(
+				"reachableVertices(getVertex(19),--getEdge(325)->)", classname
+						+ "_4");
 	}
 
 	// TODO probably fix GReQL parser, the following query is correct but it can
@@ -342,19 +340,19 @@ public class PathExpressionTest {
 	@Test(expected = ParsingException.class)
 	public void testEdgePathDescription_withRestriction()
 			throws InstantiationException, IllegalAccessException {
-		String query = "getVertex(19) --getEdge(325)->{@ thisEdge=getEdge(325)} getVertex(2)";
-		Object erg = GreqlQuery.createQuery(query).evaluate(datagraph);
-		assertTrue((Boolean) erg);
-
 		String classname = "testdata.TestEdgePathDescription_withRestriction";
-		Class<ExecutableQuery> generatedQuery = GreqlCodeGenerator
-				.generateCode(query, datagraph.getSchema(), classname);
-		erg = generatedQuery.newInstance().execute(datagraph);
-		assertTrue((Boolean) erg);
-
-		compareResultsOfQuery(
+		compareReachabilityResults(
+				"getVertex(19) --getEdge(325)->{@ thisEdge=getEdge(325)} getVertex(2)",
+				true, classname);
+		compareReachableVerticesResults(
 				"getVertex(19) --getEdge(325)->{@ thisEdge=getEdge(325)}",
-				classname + "2");
+				classname + "_2");
+		compareReachabilityResults(
+				"isReachable(getVertex(19), getVertex(2),  --getEdge(325)->{@ thisEdge=getEdge(325)})",
+				true, classname + "_3");
+		compareReachableVerticesResults(
+				"reachableVertices(getVertex(19), --getEdge(325)->{@ thisEdge=getEdge(325)})",
+				classname + "_4");
 	}
 
 	/**
@@ -363,17 +361,17 @@ public class PathExpressionTest {
 	@Test
 	public void testEdgePathDescription_false() throws InstantiationException,
 			IllegalAccessException {
-		String query = "getVertex(19)--getEdge(1)->getVertex(2)";
-		Object erg = GreqlQuery.createQuery(query).evaluate(datagraph);
-		assertFalse((Boolean) erg);
-
 		String classname = "testdata.TestEdgePathDescription_false";
-		Class<ExecutableQuery> generatedQuery = GreqlCodeGenerator
-				.generateCode(query, datagraph.getSchema(), classname);
-		erg = generatedQuery.newInstance().execute(datagraph);
-		assertFalse((Boolean) erg);
-
-		compareResultsOfQuery("getVertex(19)--getEdge(1)->", classname + "2");
+		compareReachabilityResults("getVertex(19)--getEdge(1)->getVertex(2)",
+				false, classname);
+		compareReachableVerticesResults("getVertex(19)--getEdge(1)->",
+				classname + "_2");
+		compareReachabilityResults(
+				"isReachable(getVertex(19),getVertex(2),--getEdge(1)->)",
+				false, classname + "_3");
+		compareReachableVerticesResults(
+				"reachableVertices(getVertex(19),--getEdge(1)->)", classname
+						+ "_4");
 	}
 
 	// /**
@@ -396,17 +394,16 @@ public class PathExpressionTest {
 	@Test
 	public void testSequentialPathDescription_sequenceLength2()
 			throws InstantiationException, IllegalAccessException {
-		String query = "getVertex(155)--><--getVertex(14)";
-		Object erg = GreqlQuery.createQuery(query).evaluate(datagraph);
-		assertTrue((Boolean) erg);
-
 		String classname = "testdata.TestSequentialPathDescription_sequenceLength2";
-		Class<ExecutableQuery> generatedQuery = GreqlCodeGenerator
-				.generateCode(query, datagraph.getSchema(), classname);
-		erg = generatedQuery.newInstance().execute(datagraph);
-		assertTrue((Boolean) erg);
-
-		compareResultsOfQuery("getVertex(155)--><--", classname + "2");
+		compareReachabilityResults("getVertex(155)--><--getVertex(14)", true,
+				classname);
+		compareReachableVerticesResults("getVertex(155)--><--", classname
+				+ "_2");
+		compareReachabilityResults(
+				"isReachable(getVertex(155),getVertex(14),--><--)", true,
+				classname + "_3");
+		compareReachableVerticesResults(
+				"reachableVertices(getVertex(155),--><--)", classname + "_4");
 	}
 
 	/**
@@ -416,18 +413,18 @@ public class PathExpressionTest {
 	@Test
 	public void testSequentialPathDescription_withVertexInBetween()
 			throws InstantiationException, IllegalAccessException {
-		String query = "getVertex(155)-->getVertex(17)<--getVertex(14)";
-		Object erg = GreqlQuery.createQuery(query).evaluate(datagraph);
-		assertTrue((Boolean) erg);
-
 		String classname = "testdata.TestSequentialPathDescription_withVertexInBetween";
-		Class<ExecutableQuery> generatedQuery = GreqlCodeGenerator
-				.generateCode(query, datagraph.getSchema(), classname);
-		erg = generatedQuery.newInstance().execute(datagraph);
-		assertTrue((Boolean) erg);
-
-		compareResultsOfQuery("getVertex(155)-->getVertex(17)<--", classname
-				+ "2");
+		compareReachabilityResults(
+				"getVertex(155)-->getVertex(17)<--getVertex(14)", true,
+				classname);
+		compareReachableVerticesResults("getVertex(155)-->getVertex(17)<--",
+				classname + "_2");
+		compareReachabilityResults(
+				"isReachable(getVertex(155),getVertex(14),-->getVertex(17)<--)",
+				true, classname + "_3");
+		compareReachableVerticesResults(
+				"reachableVertices(getVertex(155),-->getVertex(17)<--)",
+				classname + "_4");
 	}
 
 	/**
@@ -437,17 +434,16 @@ public class PathExpressionTest {
 	@Test
 	public void testSequentialPathDescription_bidirectional()
 			throws InstantiationException, IllegalAccessException {
-		String query = "getVertex(155)<-><->getVertex(13)";
-		Object erg = GreqlQuery.createQuery(query).evaluate(datagraph);
-		assertFalse((Boolean) erg);
-
 		String classname = "testdata.TestSequentialPathDescription_bidirectional";
-		Class<ExecutableQuery> generatedQuery = GreqlCodeGenerator
-				.generateCode(query, datagraph.getSchema(), classname);
-		erg = generatedQuery.newInstance().execute(datagraph);
-		assertFalse((Boolean) erg);
-
-		compareResultsOfQuery("getVertex(155)<-><->", classname + "2");
+		compareReachabilityResults("getVertex(155)<-><->getVertex(13)", false,
+				classname);
+		compareReachableVerticesResults("getVertex(155)<-><->", classname
+				+ "_2");
+		compareReachabilityResults(
+				"isReachable(getVertex(155),getVertex(13),<-><->)", false,
+				classname + "_3");
+		compareReachableVerticesResults(
+				"reachableVertices(getVertex(155),<-><->)", classname + "_4");
 	}
 
 	/**
@@ -457,17 +453,16 @@ public class PathExpressionTest {
 	@Test
 	public void testSequentialPathDescription_sequenceLength3()
 			throws InstantiationException, IllegalAccessException {
-		String query = "getVertex(155)<-><-><->getVertex(13)";
-		Object erg = GreqlQuery.createQuery(query).evaluate(datagraph);
-		assertTrue((Boolean) erg);
-
 		String classname = "testdata.TestSequentialPathDescription_sequenceLength3";
-		Class<ExecutableQuery> generatedQuery = GreqlCodeGenerator
-				.generateCode(query, datagraph.getSchema(), classname);
-		erg = generatedQuery.newInstance().execute(datagraph);
-		assertTrue((Boolean) erg);
-
-		compareResultsOfQuery("getVertex(155)<-><-><->", classname + "2");
+		compareReachabilityResults("getVertex(155)<-><-><->getVertex(13)",
+				true, classname);
+		compareReachableVerticesResults("getVertex(155)<-><-><->", classname
+				+ "_2");
+		compareReachabilityResults(
+				"isReachable(getVertex(155),getVertex(13),<-><-><->)", true,
+				classname + "_3");
+		compareReachableVerticesResults(
+				"reachableVertices(getVertex(155),<-><-><->)", classname + "_4");
 	}
 
 	/**
@@ -477,17 +472,16 @@ public class PathExpressionTest {
 	@Test
 	public void testSequentialPathDescription_sequenceWithAggregation()
 			throws InstantiationException, IllegalAccessException {
-		String query = "getVertex(155)<>---->getVertex(6)";
-		Object erg = GreqlQuery.createQuery(query).evaluate(datagraph);
-		assertTrue((Boolean) erg);
-
 		String classname = "testdata.TestSequentialPathDescription_sequenceWithAggregation";
-		Class<ExecutableQuery> generatedQuery = GreqlCodeGenerator
-				.generateCode(query, datagraph.getSchema(), classname);
-		erg = generatedQuery.newInstance().execute(datagraph);
-		assertTrue((Boolean) erg);
-
-		compareResultsOfQuery("getVertex(155)<>---->", classname + "2");
+		compareReachabilityResults("getVertex(155)<>---->getVertex(6)", true,
+				classname);
+		compareReachableVerticesResults("getVertex(155)<>---->", classname
+				+ "_2");
+		compareReachabilityResults(
+				"isReachable(getVertex(155),getVertex(6),<>---->)", true,
+				classname + "_3");
+		compareReachableVerticesResults(
+				"reachableVertices(getVertex(155),<>---->)", classname + "_4");
 	}
 
 	/*
@@ -501,17 +495,15 @@ public class PathExpressionTest {
 	@Test
 	public void testOptionalPathDescription_edgeNeeded()
 			throws InstantiationException, IllegalAccessException {
-		String query = "getVertex(153)[-->]getVertex(136)";
-		Object erg = GreqlQuery.createQuery(query).evaluate(datagraph);
-		assertTrue((Boolean) erg);
-
 		String classname = "testdata.TestOptionalPathDescription_edgeNeeded";
-		Class<ExecutableQuery> generatedQuery = GreqlCodeGenerator
-				.generateCode(query, datagraph.getSchema(), classname);
-		erg = generatedQuery.newInstance().execute(datagraph);
-		assertTrue((Boolean) erg);
-
-		compareResultsOfQuery("getVertex(153)[-->]", classname + "2");
+		compareReachabilityResults("getVertex(153)[-->]getVertex(136)", true,
+				classname);
+		compareReachableVerticesResults("getVertex(153)[-->]", classname + "_2");
+		compareReachabilityResults(
+				"isReachable(getVertex(153),getVertex(136),[-->])", true,
+				classname + "_3");
+		compareReachableVerticesResults(
+				"reachableVertices(getVertex(153),[-->])", classname + "_4");
 	}
 
 	/**
@@ -521,17 +513,15 @@ public class PathExpressionTest {
 	@Test
 	public void testOptionalPathDescription_edgeNotNeeded()
 			throws InstantiationException, IllegalAccessException {
-		String query = "getVertex(153)[-->]getVertex(153)";
-		Object erg = GreqlQuery.createQuery(query).evaluate(datagraph);
-		assertTrue((Boolean) erg);
-
 		String classname = "testdata.TestOptionalPathDescription_edgeNotNeeded";
-		Class<ExecutableQuery> generatedQuery = GreqlCodeGenerator
-				.generateCode(query, datagraph.getSchema(), classname);
-		erg = generatedQuery.newInstance().execute(datagraph);
-		assertTrue((Boolean) erg);
-
-		compareResultsOfQuery("getVertex(153)[-->]", classname + "2");
+		compareReachabilityResults("getVertex(153)[-->]getVertex(153)", true,
+				classname);
+		compareReachableVerticesResults("getVertex(153)[-->]", classname + "_2");
+		compareReachabilityResults(
+				"isReachable(getVertex(153),getVertex(153),[-->])", true,
+				classname + "_3");
+		compareReachableVerticesResults(
+				"reachableVertices(getVertex(153),[-->])", classname + "_4");
 	}
 
 	/**
@@ -541,17 +531,15 @@ public class PathExpressionTest {
 	@Test
 	public void testOptionalPathDescription_optionalLoop()
 			throws InstantiationException, IllegalAccessException {
-		String query = "getVertex(136)[-->]getVertex(136)";
-		Object erg = GreqlQuery.createQuery(query).evaluate(datagraph);
-		assertTrue((Boolean) erg);
-
 		String classname = "testdata.TestOptionalPathDescription_optionalLoop";
-		Class<ExecutableQuery> generatedQuery = GreqlCodeGenerator
-				.generateCode(query, datagraph.getSchema(), classname);
-		erg = generatedQuery.newInstance().execute(datagraph);
-		assertTrue((Boolean) erg);
-
-		compareResultsOfQuery("getVertex(136)[-->]", classname + "2");
+		compareReachabilityResults("getVertex(136)[-->]getVertex(136)", true,
+				classname);
+		compareReachableVerticesResults("getVertex(136)[-->]", classname + "_2");
+		compareReachabilityResults(
+				"isReachable(getVertex(136),getVertex(136),[-->])", true,
+				classname + "_3");
+		compareReachableVerticesResults(
+				"reachableVertices(getVertex(136),[-->])", classname + "_4");
 	}
 
 	/**
@@ -561,17 +549,15 @@ public class PathExpressionTest {
 	@Test
 	public void testOptionalPathDescription_notReachable()
 			throws InstantiationException, IllegalAccessException {
-		String query = "getVertex(155)[<->]getVertex(13)";
-		Object erg = GreqlQuery.createQuery(query).evaluate(datagraph);
-		assertFalse((Boolean) erg);
-
 		String classname = "testdata.TestOptionalPathDescription_notReachable";
-		Class<ExecutableQuery> generatedQuery = GreqlCodeGenerator
-				.generateCode(query, datagraph.getSchema(), classname);
-		erg = generatedQuery.newInstance().execute(datagraph);
-		assertFalse((Boolean) erg);
-
-		compareResultsOfQuery("getVertex(155)[<->]", classname + "2");
+		compareReachabilityResults("getVertex(155)[<->]getVertex(13)", false,
+				classname);
+		compareReachableVerticesResults("getVertex(155)[<->]", classname + "_2");
+		compareReachabilityResults(
+				"isReachable(getVertex(155),getVertex(13),[<->])", false,
+				classname + "_3");
+		compareReachableVerticesResults(
+				"reachableVertices(getVertex(155),[<->])", classname + "_4");
 	}
 
 	/*
@@ -581,145 +567,127 @@ public class PathExpressionTest {
 	@Test
 	public void testIteratedPathDescription_Star_Reflexivity()
 			throws InstantiationException, IllegalAccessException {
-		String query = "getVertex(153)-->*getVertex(153)";
-		Object erg = GreqlQuery.createQuery(query).evaluate(datagraph);
-		assertTrue((Boolean) erg);
-
 		String classname = "testdata.TestIteratedPathDescription_Star_Reflexivity";
-		Class<ExecutableQuery> generatedQuery = GreqlCodeGenerator
-				.generateCode(query, datagraph.getSchema(), classname);
-		erg = generatedQuery.newInstance().execute(datagraph);
-		assertTrue((Boolean) erg);
-
-		compareResultsOfQuery("getVertex(153)-->*", classname + "2");
+		compareReachabilityResults("getVertex(153)-->*getVertex(153)", true,
+				classname);
+		compareReachableVerticesResults("getVertex(153)-->*", classname + "_2");
+		compareReachabilityResults(
+				"isReachable(getVertex(153),getVertex(153),-->*)", true,
+				classname + "_3");
+		compareReachableVerticesResults(
+				"reachableVertices(getVertex(153),-->*)", classname + "_4");
 	}
 
 	@Test
 	public void testIteratedPathDescription_Plus_ReflexivityWithoutLoop()
 			throws InstantiationException, IllegalAccessException {
-		String query = "getVertex(153)-->+getVertex(153)";
-		Object erg = GreqlQuery.createQuery(query).evaluate(datagraph);
-		assertFalse((Boolean) erg);
-
 		String classname = "testdata.TestIteratedPathDescription_Plus_ReflexivityWithoutLoop";
-		Class<ExecutableQuery> generatedQuery = GreqlCodeGenerator
-				.generateCode(query, datagraph.getSchema(), classname);
-		erg = generatedQuery.newInstance().execute(datagraph);
-		assertFalse((Boolean) erg);
-
-		compareResultsOfQuery("getVertex(153)-->+", classname + "2");
+		compareReachabilityResults("getVertex(153)-->+getVertex(153)", false,
+				classname);
+		compareReachableVerticesResults("getVertex(153)-->+", classname + "_2");
+		compareReachabilityResults(
+				"isReachable(getVertex(153),getVertex(153),-->+)", false,
+				classname + "_3");
+		compareReachableVerticesResults(
+				"reachableVertices(getVertex(153),-->+)", classname + "_4");
 	}
 
 	@Test
 	public void testIteratedPathDescription_Star_withLoop()
 			throws InstantiationException, IllegalAccessException {
-		String query = "getVertex(136)-->*getVertex(136)";
-		Object erg = GreqlQuery.createQuery(query).evaluate(datagraph);
-		assertTrue((Boolean) erg);
-
 		String classname = "testdata.TestIteratedPathDescription_Star_withLoop";
-		Class<ExecutableQuery> generatedQuery = GreqlCodeGenerator
-				.generateCode(query, datagraph.getSchema(), classname);
-		erg = generatedQuery.newInstance().execute(datagraph);
-		assertTrue((Boolean) erg);
-
-		compareResultsOfQuery("getVertex(136)-->*", classname + "2");
+		compareReachabilityResults("getVertex(136)-->*getVertex(136)", true,
+				classname);
+		compareReachableVerticesResults("getVertex(136)-->*", classname + "_2");
+		compareReachabilityResults(
+				"isReachable(getVertex(136),getVertex(136),-->*)", true,
+				classname + "_3");
+		compareReachableVerticesResults(
+				"reachableVertices(getVertex(136),-->*)", classname + "_4");
 	}
 
 	@Test
 	public void testIteratedPathDescription_Plus_withLoop()
 			throws InstantiationException, IllegalAccessException {
-		String query = "getVertex(136)-->+getVertex(136)";
-		Object erg = GreqlQuery.createQuery(query).evaluate(datagraph);
-		assertTrue((Boolean) erg);
-
 		String classname = "testdata.TestIteratedPathDescription_Plus_withLoop";
-		Class<ExecutableQuery> generatedQuery = GreqlCodeGenerator
-				.generateCode(query, datagraph.getSchema(), classname);
-		erg = generatedQuery.newInstance().execute(datagraph);
-		assertTrue((Boolean) erg);
-
-		compareResultsOfQuery("getVertex(136)-->+", classname + "2");
+		compareReachabilityResults("getVertex(136)-->+getVertex(136)", true,
+				classname);
+		compareReachableVerticesResults("getVertex(136)-->+", classname + "_2");
+		compareReachabilityResults(
+				"isReachable(getVertex(136),getVertex(136),-->+)", true,
+				classname + "_3");
+		compareReachableVerticesResults(
+				"reachableVertices(getVertex(136),-->+)", classname + "_4");
 	}
 
 	@Test
 	public void testIteratedPathDescription_Plus_ReachableWithLoop()
 			throws InstantiationException, IllegalAccessException {
-		String query = "getVertex(136)<->+getVertex(153)";
-		Object erg = GreqlQuery.createQuery(query).evaluate(datagraph);
-		assertTrue((Boolean) erg);
-
 		String classname = "testdata.TestIteratedPathDescription_Plus_ReachableWithLoop";
-		Class<ExecutableQuery> generatedQuery = GreqlCodeGenerator
-				.generateCode(query, datagraph.getSchema(), classname);
-		erg = generatedQuery.newInstance().execute(datagraph);
-		assertTrue((Boolean) erg);
-
-		compareResultsOfQuery("getVertex(136)<->+", classname + "2");
+		compareReachabilityResults("getVertex(136)<->+getVertex(153)", true,
+				classname);
+		compareReachableVerticesResults("getVertex(136)<->+", classname + "_2");
+		compareReachabilityResults(
+				"isReachable(getVertex(136),getVertex(153),<->+)", true,
+				classname + "_3");
+		compareReachableVerticesResults(
+				"reachableVertices(getVertex(136),<->+)", classname + "_4");
 	}
 
 	@Test
 	public void testIteratedPathDescription_Star()
 			throws InstantiationException, IllegalAccessException {
-		String query = "getVertex(14)-->*getVertex(16)";
-		Object erg = GreqlQuery.createQuery(query).evaluate(datagraph);
-		assertTrue((Boolean) erg);
-
 		String classname = "testdata.TestIteratedPathDescription_Star";
-		Class<ExecutableQuery> generatedQuery = GreqlCodeGenerator
-				.generateCode(query, datagraph.getSchema(), classname);
-		erg = generatedQuery.newInstance().execute(datagraph);
-		assertTrue((Boolean) erg);
-
-		compareResultsOfQuery("getVertex(14)-->*", classname + "2");
+		compareReachabilityResults("getVertex(14)-->*getVertex(16)", true,
+				classname);
+		compareReachableVerticesResults("getVertex(14)-->*", classname + "_2");
+		compareReachabilityResults(
+				"isReachable(getVertex(14),getVertex(16),-->*)", true,
+				classname + "_3");
+		compareReachableVerticesResults(
+				"reachableVertices(getVertex(14),-->*)", classname + "_4");
 	}
 
 	@Test
 	public void testIteratedPathDescription_Plus()
 			throws InstantiationException, IllegalAccessException {
-		String query = "getVertex(14)-->+getVertex(16)";
-		Object erg = GreqlQuery.createQuery(query).evaluate(datagraph);
-		assertTrue((Boolean) erg);
-
 		String classname = "testdata.TestIteratedPathDescription_Plus";
-		Class<ExecutableQuery> generatedQuery = GreqlCodeGenerator
-				.generateCode(query, datagraph.getSchema(), classname);
-		erg = generatedQuery.newInstance().execute(datagraph);
-		assertTrue((Boolean) erg);
-
-		compareResultsOfQuery("getVertex(14)-->+", classname + "2");
+		compareReachabilityResults("getVertex(14)-->+getVertex(16)", true,
+				classname);
+		compareReachableVerticesResults("getVertex(14)-->+", classname + "_2");
+		compareReachabilityResults(
+				"isReachable(getVertex(14),getVertex(16),-->+)", true,
+				classname + "_3");
+		compareReachableVerticesResults(
+				"reachableVertices(getVertex(14),-->+)", classname + "_4");
 	}
 
 	@Test
 	public void testIteratedPathDescription_Star_FailBecauseOfDirection()
 			throws InstantiationException, IllegalAccessException {
-		String query = "getVertex(14)<--*getVertex(16)";
-		Object erg = GreqlQuery.createQuery(query).evaluate(datagraph);
-		assertFalse((Boolean) erg);
-
 		String classname = "testdata.TestIteratedPathDescription_Star_FailBecauseOfDirection";
-		Class<ExecutableQuery> generatedQuery = GreqlCodeGenerator
-				.generateCode(query, datagraph.getSchema(), classname);
-		erg = generatedQuery.newInstance().execute(datagraph);
-		assertFalse((Boolean) erg);
-
-		compareResultsOfQuery("getVertex(14)<--*", classname + "2");
+		compareReachabilityResults("getVertex(14)<--*getVertex(16)", false,
+				classname);
+		compareReachableVerticesResults("getVertex(14)<--*", classname + "_2");
+		compareReachabilityResults(
+				"isReachable(getVertex(14),getVertex(16),<--*)", false,
+				classname + "_3");
+		compareReachableVerticesResults(
+				"reachableVertices(getVertex(14),<--*)", classname + "_4");
 	}
 
 	@Test
 	public void testIteratedPathDescription_Plus_FailBecauseOfDirection()
 			throws InstantiationException, IllegalAccessException {
-		String query = "getVertex(14)<--+getVertex(16)";
-		Object erg = GreqlQuery.createQuery(query).evaluate(datagraph);
-		assertFalse((Boolean) erg);
-
 		String classname = "testdata.TestIteratedPathDescription_Plus_FailBecauseOfDirection";
-		Class<ExecutableQuery> generatedQuery = GreqlCodeGenerator
-				.generateCode(query, datagraph.getSchema(), classname);
-		erg = generatedQuery.newInstance().execute(datagraph);
-		assertFalse((Boolean) erg);
-
-		compareResultsOfQuery("getVertex(14)<--+", classname + "2");
+		compareReachabilityResults("getVertex(14)<--+getVertex(16)", false,
+				classname);
+		compareReachableVerticesResults("getVertex(14)<--+", classname + "_2");
+		compareReachabilityResults(
+				"isReachable(getVertex(14),getVertex(16),<--+)", false,
+				classname + "_3");
+		compareReachableVerticesResults(
+				"reachableVertices(getVertex(14),<--+)", classname + "_4");
 	}
 
 	@Test(expected = GreqlException.class)
@@ -741,145 +709,127 @@ public class PathExpressionTest {
 	@Test
 	public void testIteratedPathDescription_Exponent_TooShort()
 			throws InstantiationException, IllegalAccessException {
-		String query = "getVertex(21)-->^1 getVertex(13)";
-		Object erg = GreqlQuery.createQuery(query).evaluate(datagraph);
-		assertFalse((Boolean) erg);
-
 		String classname = "testdata.TestIteratedPathDescription_Exponent_TooShort";
-		Class<ExecutableQuery> generatedQuery = GreqlCodeGenerator
-				.generateCode(query, datagraph.getSchema(), classname);
-		erg = generatedQuery.newInstance().execute(datagraph);
-		assertFalse((Boolean) erg);
-
-		compareResultsOfQuery("getVertex(21)-->^1", classname + "2");
+		compareReachabilityResults("getVertex(21)-->^1 getVertex(13)", false,
+				classname);
+		compareReachableVerticesResults("getVertex(21)-->^1", classname + "_2");
+		compareReachabilityResults(
+				"isReachable(getVertex(21),getVertex(13),-->^1 )", false,
+				classname + "_3");
+		compareReachableVerticesResults(
+				"reachableVertices(getVertex(21),-->^1)", classname + "_4");
 	}
 
 	@Test
 	public void testIteratedPathDescription_Exponent()
 			throws InstantiationException, IllegalAccessException {
-		String query = "getVertex(21)-->^2 getVertex(13)";
-		Object erg = GreqlQuery.createQuery(query).evaluate(datagraph);
-		assertTrue((Boolean) erg);
-
 		String classname = "testdata.TestIteratedPathDescription_Exponent";
-		Class<ExecutableQuery> generatedQuery = GreqlCodeGenerator
-				.generateCode(query, datagraph.getSchema(), classname);
-		erg = generatedQuery.newInstance().execute(datagraph);
-		assertTrue((Boolean) erg);
-
-		compareResultsOfQuery("getVertex(21)-->^2", classname + "2");
+		compareReachabilityResults("getVertex(21)-->^2 getVertex(13)", true,
+				classname);
+		compareReachableVerticesResults("getVertex(21)-->^2", classname + "_2");
+		compareReachabilityResults(
+				"isReachable(getVertex(21),getVertex(13),-->^2 )", true,
+				classname + "_3");
+		compareReachableVerticesResults(
+				"reachableVertices(getVertex(21),-->^2)", classname + "_4");
 	}
 
 	@Test
 	public void testIteratedPathDescription_Exponent_TooLong()
 			throws InstantiationException, IllegalAccessException {
-		String query = "getVertex(21)-->^3 getVertex(13)";
-		Object erg = GreqlQuery.createQuery(query).evaluate(datagraph);
-		assertFalse((Boolean) erg);
-
 		String classname = "testdata.TestIteratedPathDescription_Exponent_TooLong";
-		Class<ExecutableQuery> generatedQuery = GreqlCodeGenerator
-				.generateCode(query, datagraph.getSchema(), classname);
-		erg = generatedQuery.newInstance().execute(datagraph);
-		assertFalse((Boolean) erg);
-
-		compareResultsOfQuery("getVertex(21)-->^3", classname + "2");
+		compareReachabilityResults("getVertex(21)-->^3 getVertex(13)", false,
+				classname);
+		compareReachableVerticesResults("getVertex(21)-->^3", classname + "_2");
+		compareReachabilityResults(
+				"isReachable(getVertex(21),getVertex(13),-->^3 )", false,
+				classname + "_3");
+		compareReachableVerticesResults(
+				"reachableVertices(getVertex(21),-->^3)", classname + "_4");
 	}
 
 	@Test
 	public void testIteratedPathDescription_Exponent_WrongDirection()
 			throws InstantiationException, IllegalAccessException {
-		String query = "getVertex(21)<--^2 getVertex(13)";
-		Object erg = GreqlQuery.createQuery(query).evaluate(datagraph);
-		assertFalse((Boolean) erg);
-
 		String classname = "testdata.TestIteratedPathDescription_Exponent_WrongDirection";
-		Class<ExecutableQuery> generatedQuery = GreqlCodeGenerator
-				.generateCode(query, datagraph.getSchema(), classname);
-		erg = generatedQuery.newInstance().execute(datagraph);
-		assertFalse((Boolean) erg);
-
-		compareResultsOfQuery("getVertex(21)<--^2", classname + "2");
+		compareReachabilityResults("getVertex(21)<--^2 getVertex(13)", false,
+				classname);
+		compareReachableVerticesResults("getVertex(21)<--^2", classname + "_2");
+		compareReachabilityResults(
+				"isReachable(getVertex(21),getVertex(13),<--^2 )", false,
+				classname + "_3");
+		compareReachableVerticesResults(
+				"reachableVertices(getVertex(21),<--^2)", classname + "_4");
 	}
 
 	@Test
 	public void testIteratedPathDescription_Exponent_TwoPossibleWays_TooShort()
 			throws InstantiationException, IllegalAccessException {
-		String query = "getVertex(144)-->^1 getVertex(16)";
-		Object erg = GreqlQuery.createQuery(query).evaluate(datagraph);
-		assertFalse((Boolean) erg);
-
 		String classname = "testdata.TestIteratedPathDescription_Exponent_TwoPossibleWays_TooShort";
-		Class<ExecutableQuery> generatedQuery = GreqlCodeGenerator
-				.generateCode(query, datagraph.getSchema(), classname);
-		erg = generatedQuery.newInstance().execute(datagraph);
-		assertFalse((Boolean) erg);
-
-		compareResultsOfQuery("getVertex(144)-->^1", classname + "2");
+		compareReachabilityResults("getVertex(144)-->^1 getVertex(16)", false,
+				classname);
+		compareReachableVerticesResults("getVertex(144)-->^1", classname + "_2");
+		compareReachabilityResults(
+				"isReachable(getVertex(144),getVertex(16),-->^1 )", false,
+				classname + "_3");
+		compareReachableVerticesResults(
+				"reachableVertices(getVertex(144),-->^1)", classname + "_4");
 	}
 
 	@Test
 	public void testIteratedPathDescription_Exponent_TwoPossibleWays_ShortMatch()
 			throws InstantiationException, IllegalAccessException {
-		String query = "getVertex(144)-->^2 getVertex(16)";
-		Object erg = GreqlQuery.createQuery(query).evaluate(datagraph);
-		assertTrue((Boolean) erg);
-
 		String classname = "testdata.TestIteratedPathDescription_Exponent_TwoPossibleWays_ShortMatch";
-		Class<ExecutableQuery> generatedQuery = GreqlCodeGenerator
-				.generateCode(query, datagraph.getSchema(), classname);
-		erg = generatedQuery.newInstance().execute(datagraph);
-		assertTrue((Boolean) erg);
-
-		compareResultsOfQuery("getVertex(144)-->^2", classname + "2");
+		compareReachabilityResults("getVertex(144)-->^2 getVertex(16)", true,
+				classname);
+		compareReachableVerticesResults("getVertex(144)-->^2", classname + "_2");
+		compareReachabilityResults(
+				"isReachable(getVertex(144),getVertex(16),-->^2 )", true,
+				classname + "_3");
+		compareReachableVerticesResults(
+				"reachableVertices(getVertex(144),-->^2)", classname + "_4");
 	}
 
 	@Test
 	public void testIteratedPathDescription_Exponent_TwoPossibleWays_BetweenBoth()
 			throws InstantiationException, IllegalAccessException {
-		String query = "getVertex(144)-->^3 getVertex(16)";
-		Object erg = GreqlQuery.createQuery(query).evaluate(datagraph);
-		assertFalse((Boolean) erg);
-
 		String classname = "testdata.TestIteratedPathDescription_Exponent_TwoPossibleWays_BetweenBoth";
-		Class<ExecutableQuery> generatedQuery = GreqlCodeGenerator
-				.generateCode(query, datagraph.getSchema(), classname);
-		erg = generatedQuery.newInstance().execute(datagraph);
-		assertFalse((Boolean) erg);
-
-		compareResultsOfQuery("getVertex(144)-->^3", classname + "2");
+		compareReachabilityResults("getVertex(144)-->^3 getVertex(16)", false,
+				classname);
+		compareReachableVerticesResults("getVertex(144)-->^3", classname + "_2");
+		compareReachabilityResults(
+				"isReachable(getVertex(144),getVertex(16),-->^3 )", false,
+				classname + "_3");
+		compareReachableVerticesResults(
+				"reachableVertices(getVertex(144),-->^3)", classname + "_4");
 	}
 
 	@Test
 	public void testIteratedPathDescription_Exponent_TwoPossibleWays_LongMatch()
 			throws InstantiationException, IllegalAccessException {
-		String query = "getVertex(144)-->^4 getVertex(16)";
-		Object erg = GreqlQuery.createQuery(query).evaluate(datagraph);
-		assertTrue((Boolean) erg);
-
 		String classname = "testdata.TestIteratedPathDescription_Exponent_TwoPossibleWays_LongMatch";
-		Class<ExecutableQuery> generatedQuery = GreqlCodeGenerator
-				.generateCode(query, datagraph.getSchema(), classname);
-		erg = generatedQuery.newInstance().execute(datagraph);
-		assertTrue((Boolean) erg);
-
-		compareResultsOfQuery("getVertex(144)-->^4", classname + "2");
+		compareReachabilityResults("getVertex(144)-->^4 getVertex(16)", true,
+				classname);
+		compareReachableVerticesResults("getVertex(144)-->^4", classname + "_2");
+		compareReachabilityResults(
+				"isReachable(getVertex(144),getVertex(16),-->^4 )", true,
+				classname + "_3");
+		compareReachableVerticesResults(
+				"reachableVertices(getVertex(144),-->^4)", classname + "_4");
 	}
 
 	@Test
 	public void testIteratedPathDescription_Exponent_TwoPossibleWays_TooLong()
 			throws InstantiationException, IllegalAccessException {
-		String query = "getVertex(144)-->^5 getVertex(16)";
-		Object erg = GreqlQuery.createQuery(query).evaluate(datagraph);
-		assertFalse((Boolean) erg);
-
 		String classname = "testdata.TestIteratedPathDescription_Exponent_TwoPossibleWays_TooLong";
-		Class<ExecutableQuery> generatedQuery = GreqlCodeGenerator
-				.generateCode(query, datagraph.getSchema(), classname);
-		erg = generatedQuery.newInstance().execute(datagraph);
-		assertFalse((Boolean) erg);
-
-		compareResultsOfQuery("getVertex(144)-->^5", classname + "2");
+		compareReachabilityResults("getVertex(144)-->^5 getVertex(16)", false,
+				classname);
+		compareReachableVerticesResults("getVertex(144)-->^5", classname + "_2");
+		compareReachabilityResults(
+				"isReachable(getVertex(144),getVertex(16),-->^5 )", false,
+				classname + "_3");
+		compareReachableVerticesResults(
+				"reachableVertices(getVertex(144),-->^5)", classname + "_4");
 	}
 
 	@Test(expected = GreqlException.class)
@@ -901,33 +851,29 @@ public class PathExpressionTest {
 	@Test
 	public void testIteratedPathDescription_Exponent_withLoop1()
 			throws InstantiationException, IllegalAccessException {
-		String query = "getVertex(136)-->^1 getVertex(136)";
-		Object erg = GreqlQuery.createQuery(query).evaluate(datagraph);
-		assertTrue((Boolean) erg);
-
 		String classname = "testdata.TestIteratedPathDescription_Exponent_withLoop1";
-		Class<ExecutableQuery> generatedQuery = GreqlCodeGenerator
-				.generateCode(query, datagraph.getSchema(), classname);
-		erg = generatedQuery.newInstance().execute(datagraph);
-		assertTrue((Boolean) erg);
-
-		compareResultsOfQuery("getVertex(136)-->^1", classname + "2");
+		compareReachabilityResults("getVertex(136)-->^1 getVertex(136)", true,
+				classname);
+		compareReachableVerticesResults("getVertex(136)-->^1", classname + "_2");
+		compareReachabilityResults(
+				"isReachable(getVertex(136),getVertex(136),-->^1 )", true,
+				classname + "_3");
+		compareReachableVerticesResults(
+				"reachableVertices(getVertex(136),-->^1)", classname + "_4");
 	}
 
 	@Test
 	public void testIteratedPathDescription_Exponent_withLoop2()
 			throws InstantiationException, IllegalAccessException {
-		String query = "getVertex(136)-->^2 getVertex(136)";
-		Object erg = GreqlQuery.createQuery(query).evaluate(datagraph);
-		assertTrue((Boolean) erg);
-
 		String classname = "testdata.TestIteratedPathDescription_Exponent_withLoop2";
-		Class<ExecutableQuery> generatedQuery = GreqlCodeGenerator
-				.generateCode(query, datagraph.getSchema(), classname);
-		erg = generatedQuery.newInstance().execute(datagraph);
-		assertTrue((Boolean) erg);
-
-		compareResultsOfQuery("getVertex(136)-->^2", classname + "2");
+		compareReachabilityResults("getVertex(136)-->^2 getVertex(136)", true,
+				classname);
+		compareReachableVerticesResults("getVertex(136)-->^2", classname + "_2");
+		compareReachabilityResults(
+				"isReachable(getVertex(136),getVertex(136),-->^2 )", true,
+				classname + "_3");
+		compareReachableVerticesResults(
+				"reachableVertices(getVertex(136),-->^2)", classname + "_4");
 	}
 
 	/*
@@ -937,82 +883,82 @@ public class PathExpressionTest {
 	@Test
 	public void testAlternativePathDescription_BothFail()
 			throws InstantiationException, IllegalAccessException {
-		String query = "getVertex(144)-->^5 |-->^3 getVertex(16)";
-		Object erg = GreqlQuery.createQuery(query).evaluate(datagraph);
-		assertFalse((Boolean) erg);
-
 		String classname = "testdata.TestAlternativePathDescription_BothFail";
-		Class<ExecutableQuery> generatedQuery = GreqlCodeGenerator
-				.generateCode(query, datagraph.getSchema(), classname);
-		erg = generatedQuery.newInstance().execute(datagraph);
-		assertFalse((Boolean) erg);
-
-		compareResultsOfQuery("getVertex(144)-->^5 |-->^3", classname + "2");
+		compareReachabilityResults("getVertex(144)-->^5 |-->^3 getVertex(16)",
+				false, classname);
+		compareReachableVerticesResults("getVertex(144)-->^5 |-->^3", classname
+				+ "_2");
+		compareReachabilityResults(
+				"isReachable(getVertex(144),getVertex(16),-->^5 |-->^3 )",
+				false, classname + "_3");
+		compareReachableVerticesResults(
+				"reachableVertices(getVertex(144),-->^5 |-->^3)", classname
+						+ "_4");
 	}
 
 	@Test
 	public void testAlternativePathDescription_FirstSucceedsSecondFails()
 			throws InstantiationException, IllegalAccessException {
-		String query = "getVertex(144)-->^4 |-->^3 getVertex(16)";
-		Object erg = GreqlQuery.createQuery(query).evaluate(datagraph);
-		assertTrue((Boolean) erg);
-
 		String classname = "testdata.TestAlternativePathDescription_FirstSucceedsSecondFails";
-		Class<ExecutableQuery> generatedQuery = GreqlCodeGenerator
-				.generateCode(query, datagraph.getSchema(), classname);
-		erg = generatedQuery.newInstance().execute(datagraph);
-		assertTrue((Boolean) erg);
-
-		compareResultsOfQuery("getVertex(144)-->^4 |-->^3", classname + "2");
+		compareReachabilityResults("getVertex(144)-->^4 |-->^3 getVertex(16)",
+				true, classname);
+		compareReachableVerticesResults("getVertex(144)-->^4 |-->^3", classname
+				+ "_2");
+		compareReachabilityResults(
+				"isReachable(getVertex(144),getVertex(16),-->^4 |-->^3 )",
+				true, classname + "_3");
+		compareReachableVerticesResults(
+				"reachableVertices(getVertex(144),-->^4 |-->^3)", classname
+						+ "_4");
 	}
 
 	@Test
 	public void testAlternativePathDescription_FirstFailsSecondSucceeds()
 			throws InstantiationException, IllegalAccessException {
-		String query = "getVertex(144)-->^5 |-->^2 getVertex(16)";
-		Object erg = GreqlQuery.createQuery(query).evaluate(datagraph);
-		assertTrue((Boolean) erg);
-
 		String classname = "testdata.TestAlternativePathDescription_FirstFailsSecondSucceeds";
-		Class<ExecutableQuery> generatedQuery = GreqlCodeGenerator
-				.generateCode(query, datagraph.getSchema(), classname);
-		erg = generatedQuery.newInstance().execute(datagraph);
-		assertTrue((Boolean) erg);
-
-		compareResultsOfQuery("getVertex(144)-->^5 |-->^2", classname + "2");
+		compareReachabilityResults("getVertex(144)-->^5 |-->^2 getVertex(16)",
+				true, classname);
+		compareReachableVerticesResults("getVertex(144)-->^5 |-->^2", classname
+				+ "_2");
+		compareReachabilityResults(
+				"isReachable(getVertex(144),getVertex(16),-->^5 |-->^2 )",
+				true, classname + "_3");
+		compareReachableVerticesResults(
+				"reachableVertices(getVertex(144),-->^5 |-->^2)", classname
+						+ "_4");
 	}
 
 	@Test
 	public void testAlternativePathDescription_BothSucceed()
 			throws InstantiationException, IllegalAccessException {
-		String query = "getVertex(144)-->^4 |-->^2 getVertex(16)";
-		Object erg = GreqlQuery.createQuery(query).evaluate(datagraph);
-		assertTrue((Boolean) erg);
-
 		String classname = "testdata.TestAlternativePathDescription_BothSucceed";
-		Class<ExecutableQuery> generatedQuery = GreqlCodeGenerator
-				.generateCode(query, datagraph.getSchema(), classname);
-		erg = generatedQuery.newInstance().execute(datagraph);
-		assertTrue((Boolean) erg);
-
-		compareResultsOfQuery("getVertex(144)-->^4 |-->^2", classname + "2");
+		compareReachabilityResults("getVertex(144)-->^4 |-->^2 getVertex(16)",
+				true, classname);
+		compareReachableVerticesResults("getVertex(144)-->^4 |-->^2", classname
+				+ "_2");
+		compareReachabilityResults(
+				"isReachable(getVertex(144),getVertex(16),-->^4 |-->^2 )",
+				true, classname + "_3");
+		compareReachableVerticesResults(
+				"reachableVertices(getVertex(144),-->^4 |-->^2)", classname
+						+ "_4");
 	}
 
 	@Test
 	public void testAlternativePathDescription_OfLength3()
 			throws InstantiationException, IllegalAccessException {
-		String query = "getVertex(144)-->^4 |-->^2 |<>-- getVertex(16)";
-		Object erg = GreqlQuery.createQuery(query).evaluate(datagraph);
-		assertTrue((Boolean) erg);
-
 		String classname = "testdata.TestAlternativePathDescription_OfLength3";
-		Class<ExecutableQuery> generatedQuery = GreqlCodeGenerator
-				.generateCode(query, datagraph.getSchema(), classname);
-		erg = generatedQuery.newInstance().execute(datagraph);
-		assertTrue((Boolean) erg);
-
-		compareResultsOfQuery("getVertex(144)-->^4 |-->^2 |<>--", classname
-				+ "2");
+		compareReachabilityResults(
+				"getVertex(144)-->^4 |-->^2 |<>-- getVertex(16)", true,
+				classname);
+		compareReachableVerticesResults("getVertex(144)-->^4 |-->^2 |<>--",
+				classname + "_2");
+		compareReachabilityResults(
+				"isReachable(getVertex(144),getVertex(16),-->^4 |-->^2 |<>-- )",
+				true, classname + "_3");
+		compareReachableVerticesResults(
+				"reachableVertices(getVertex(144),-->^4 |-->^2 |<>--)",
+				classname + "_4");
 	}
 
 	/*
@@ -1022,81 +968,78 @@ public class PathExpressionTest {
 	@Test
 	public void testGroupPathDescription_OneElement()
 			throws InstantiationException, IllegalAccessException {
-		String query = "getVertex(144)(-->^2) getVertex(16)";
-		Object erg = GreqlQuery.createQuery(query).evaluate(datagraph);
-		assertTrue((Boolean) erg);
-
 		String classname = "testdata.TestGroupPathDescription_OneElement";
-		Class<ExecutableQuery> generatedQuery = GreqlCodeGenerator
-				.generateCode(query, datagraph.getSchema(), classname);
-		erg = generatedQuery.newInstance().execute(datagraph);
-		assertTrue((Boolean) erg);
-
-		compareResultsOfQuery("getVertex(144)(-->^2)", classname + "2");
+		compareReachabilityResults("getVertex(144)(-->^2) getVertex(16)", true,
+				classname);
+		compareReachableVerticesResults("getVertex(144)(-->^2)", classname
+				+ "_2");
+		compareReachabilityResults(
+				"isReachable(getVertex(144),getVertex(16),(-->^2) )", true,
+				classname + "_3");
+		compareReachableVerticesResults(
+				"reachableVertices(getVertex(144),(-->^2))", classname + "_4");
 	}
 
 	@Test
 	public void testGroupPathDescription_SeveralElements()
 			throws InstantiationException, IllegalAccessException {
-		String query = "getVertex(144)(-->-->) getVertex(16)";
-		Object erg = GreqlQuery.createQuery(query).evaluate(datagraph);
-		assertTrue((Boolean) erg);
-
 		String classname = "testdata.TestGroupPathDescription_SeveralElements";
-		Class<ExecutableQuery> generatedQuery = GreqlCodeGenerator
-				.generateCode(query, datagraph.getSchema(), classname);
-		erg = generatedQuery.newInstance().execute(datagraph);
-		assertTrue((Boolean) erg);
-
-		compareResultsOfQuery("getVertex(144)(-->-->)", classname + "2");
+		compareReachabilityResults("getVertex(144)(-->-->) getVertex(16)",
+				true, classname);
+		compareReachableVerticesResults("getVertex(144)(-->-->)", classname
+				+ "_2");
+		compareReachabilityResults(
+				"isReachable(getVertex(144),getVertex(16),(-->-->) )", true,
+				classname + "_3");
+		compareReachableVerticesResults(
+				"reachableVertices(getVertex(144),(-->-->))", classname + "_4");
 	}
 
 	@Test
 	public void testGroupPathDescription_SeveralElements_OnlyOneInGroup()
 			throws InstantiationException, IllegalAccessException {
-		String query = "getVertex(144)-->(-->) getVertex(16)";
-		Object erg = GreqlQuery.createQuery(query).evaluate(datagraph);
-		assertTrue((Boolean) erg);
-
 		String classname = "testdata.TestGroupPathDescription_SeveralElements_OnlyOneInGroup";
-		Class<ExecutableQuery> generatedQuery = GreqlCodeGenerator
-				.generateCode(query, datagraph.getSchema(), classname);
-		erg = generatedQuery.newInstance().execute(datagraph);
-		assertTrue((Boolean) erg);
-
-		compareResultsOfQuery("getVertex(144)-->(-->)", classname + "2");
+		compareReachabilityResults("getVertex(144)-->(-->) getVertex(16)",
+				true, classname);
+		compareReachableVerticesResults("getVertex(144)-->(-->)", classname
+				+ "_2");
+		compareReachabilityResults(
+				"isReachable(getVertex(144),getVertex(16),-->(-->) )", true,
+				classname + "_3");
+		compareReachableVerticesResults(
+				"reachableVertices(getVertex(144),-->(-->))", classname + "_4");
 	}
 
 	@Test
 	public void testGroupPathDescription_SeveralElements_TwoGroups()
 			throws InstantiationException, IllegalAccessException {
-		String query = "getVertex(144)(-->)(-->) getVertex(16)";
-		Object erg = GreqlQuery.createQuery(query).evaluate(datagraph);
-		assertTrue((Boolean) erg);
-
 		String classname = "testdata.TestGroupPathDescription_SeveralElements_TwoGroups";
-		Class<ExecutableQuery> generatedQuery = GreqlCodeGenerator
-				.generateCode(query, datagraph.getSchema(), classname);
-		erg = generatedQuery.newInstance().execute(datagraph);
-		assertTrue((Boolean) erg);
-
-		compareResultsOfQuery("getVertex(144)(-->)(-->)", classname + "2");
+		compareReachabilityResults("getVertex(144)(-->)(-->) getVertex(16)",
+				true, classname);
+		compareReachableVerticesResults("getVertex(144)(-->)(-->)", classname
+				+ "_2");
+		compareReachabilityResults(
+				"isReachable(getVertex(144),getVertex(16),(-->)(-->) )", true,
+				classname + "_3");
+		compareReachableVerticesResults(
+				"reachableVertices(getVertex(144),(-->)(-->))", classname
+						+ "_4");
 	}
 
 	@Test
 	public void testGroupPathDescription_SeveralBrackets()
 			throws InstantiationException, IllegalAccessException {
-		String query = "getVertex(144)(((-->^2))) getVertex(16)";
-		Object erg = GreqlQuery.createQuery(query).evaluate(datagraph);
-		assertTrue((Boolean) erg);
-
 		String classname = "testdata.TestGroupPathDescription_SeveralBrackets";
-		Class<ExecutableQuery> generatedQuery = GreqlCodeGenerator
-				.generateCode(query, datagraph.getSchema(), classname);
-		erg = generatedQuery.newInstance().execute(datagraph);
-		assertTrue((Boolean) erg);
-
-		compareResultsOfQuery("getVertex(144)(((-->^2)))", classname + "2");
+		compareReachabilityResults("getVertex(144)(((-->^2))) getVertex(16)",
+				true, classname);
+		compareReachableVerticesResults("getVertex(144)(((-->^2)))", classname
+				+ "_2");
+		compareReachabilityResults(
+				"isReachable(getVertex(144),getVertex(16),(((-->^2))) )", true,
+				classname + "_3");
+		compareReachableVerticesResults(
+				"reachableVertices(getVertex(144),(((-->^2))))", classname
+						+ "_4");
 	}
 
 	/*
@@ -1106,49 +1049,47 @@ public class PathExpressionTest {
 	@Test
 	public void testTransposedPathDescription_OneEdge_false()
 			throws InstantiationException, IllegalAccessException {
-		String query = "getVertex(144) -->^T getVertex(154)";
-		Object erg = GreqlQuery.createQuery(query).evaluate(datagraph);
-		assertFalse((Boolean) erg);
-
 		String classname = "testdata.TestTransposedPathDescription_OneEdge_false";
-		Class<ExecutableQuery> generatedQuery = GreqlCodeGenerator
-				.generateCode(query, datagraph.getSchema(), classname);
-		erg = generatedQuery.newInstance().execute(datagraph);
-		assertFalse((Boolean) erg);
-
-		compareResultsOfQuery("getVertex(144) -->^T", classname + "2");
+		compareReachabilityResults("getVertex(144) -->^T getVertex(154)",
+				false, classname);
+		compareReachableVerticesResults("getVertex(144) -->^T", classname
+				+ "_2");
+		compareReachabilityResults(
+				"isReachable(getVertex(144),getVertex(154), -->^T )", false,
+				classname + "_3");
+		compareReachableVerticesResults(
+				"reachableVertices(getVertex(144), -->^T)", classname + "_4");
 	}
 
 	@Test
 	public void testTransposedPathDescription_OneEdge_true()
 			throws InstantiationException, IllegalAccessException {
-		String query = "getVertex(144) (<--)^T getVertex(154)";
-		Object erg = GreqlQuery.createQuery(query).evaluate(datagraph);
-		assertTrue((Boolean) erg);
-
 		String classname = "testdata.TestTransposedPathDescription_OneEdge_true";
-		Class<ExecutableQuery> generatedQuery = GreqlCodeGenerator
-				.generateCode(query, datagraph.getSchema(), classname);
-		erg = generatedQuery.newInstance().execute(datagraph);
-		assertTrue((Boolean) erg);
-
-		compareResultsOfQuery("getVertex(144) (<--)^T", classname + "2");
+		compareReachabilityResults("getVertex(144) (<--)^T getVertex(154)",
+				true, classname);
+		compareReachableVerticesResults("getVertex(144) (<--)^T", classname
+				+ "_2");
+		compareReachabilityResults(
+				"isReachable(getVertex(144),getVertex(154), (<--)^T )", true,
+				classname + "_3");
+		compareReachableVerticesResults(
+				"reachableVertices(getVertex(144), (<--)^T)", classname + "_4");
 	}
 
 	@Test
 	public void testTransposedPathDescription_SeveralEdges()
 			throws InstantiationException, IllegalAccessException {
-		String query = "getVertex(144)(<--<--^3)^T getVertex(16)";
-		Object erg = GreqlQuery.createQuery(query).evaluate(datagraph);
-		assertTrue((Boolean) erg);
-
 		String classname = "testdata.TestTransposedPathDescription_SeveralEdges";
-		Class<ExecutableQuery> generatedQuery = GreqlCodeGenerator
-				.generateCode(query, datagraph.getSchema(), classname);
-		erg = generatedQuery.newInstance().execute(datagraph);
-		assertTrue((Boolean) erg);
-
-		compareResultsOfQuery("getVertex(144)(<--<--^3)^T", classname + "2");
+		compareReachabilityResults("getVertex(144)(<--<--^3)^T getVertex(16)",
+				true, classname);
+		compareReachableVerticesResults("getVertex(144)(<--<--^3)^T", classname
+				+ "_2");
+		compareReachabilityResults(
+				"isReachable(getVertex(144),getVertex(16),(<--<--^3)^T )",
+				true, classname + "_3");
+		compareReachableVerticesResults(
+				"reachableVertices(getVertex(144),(<--<--^3)^T)", classname
+						+ "_4");
 	}
 
 	/*

@@ -1172,16 +1172,13 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 			return createCodeForPathSystemFunction(funApp);
 		}
 		if (funId.get_name().equals("forwardVertexSet")) {
-			throw new RuntimeException(
-					"Code generation for function forwardVertexSet is not yet implemented. Use the path expression notation v --> instead of forwardVertexSet(v,-->)");
+			return createCodeForReachableVertices(funApp);
 		}
 		if (funId.get_name().equals("backwardVertexSet")) {
-			throw new RuntimeException(
-					"Code generation for function backwardVertexSet is not yet implemented. Use the path expression notation v --> instead of backwardVertexSet(v,-->)");
+			return createCodeForReachableVertices(funApp);
 		}
 		if (funId.get_name().equals("reachableVertices")) {
-			throw new RuntimeException(
-					"Code generation for function reachableVertices is not yet implemented. Use the path expression notation v --> instead of reachableVertices(v,-->)");
+			return createCodeForReachableVertices(funApp);
 		}
 		if (funId.get_name().equals("isReachable")) {
 			return createCodeForIsReachable(funApp);
@@ -1334,6 +1331,28 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 				fws);
 	}
 
+	private String createCodeForReachableVertices(FunctionApplication funApp) {
+		PathDescription pathDescr = null;
+		Expression startElementExpr = null;
+		for (IsArgumentOf iao : funApp
+				.getIsArgumentOfIncidences(EdgeDirection.IN)) {
+			if (startElementExpr == null) {
+				startElementExpr = (Expression) iao.getThat();
+			} else if (iao.getThat() instanceof PathDescription) {
+				assert pathDescr == null;
+				pathDescr = (PathDescription) iao.getThat();
+			} else {
+				assert false;
+			}
+		}
+		assert pathDescr != null;
+		PathDescriptionEvaluator<? extends PathDescription> pathDescrEval = (PathDescriptionEvaluator<? extends PathDescription>) ((GreqlQueryImpl) query)
+				.getVertexEvaluator(pathDescr);
+		DFA dfa = ((NFA) pathDescrEval.getResult(evaluator)).getDFA();
+		return createCodeForForwarOrBackwardVertexSet(dfa, startElementExpr,
+				funApp);
+	}
+
 	private String createCodeForPathExistence(PathExistence queryExpr) {
 		Expression startExpr = (Expression) queryExpr
 				.getFirstIsStartExprOfIncidence(EdgeDirection.IN).getThat();
@@ -1367,7 +1386,6 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 		PathDescriptionEvaluator<? extends PathDescription> pathDescrEval = (PathDescriptionEvaluator<? extends PathDescription>) ((GreqlQueryImpl) query)
 				.getVertexEvaluator(pathDescr);
 		DFA dfa = ((NFA) pathDescrEval.getResult(evaluator)).getDFA();
-		// TODO
 		return createCodeForForwarOrBackwardVertexSetOrPathExcistence(dfa,
 				startExpr, targetExpr, funApp);
 	}
