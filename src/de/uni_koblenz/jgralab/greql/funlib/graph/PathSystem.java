@@ -46,7 +46,6 @@ import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.graphmarker.GraphMarker;
 import de.uni_koblenz.jgralab.greql.evaluator.InternalGreqlEvaluator;
 import de.uni_koblenz.jgralab.greql.evaluator.fa.DFA;
-import de.uni_koblenz.jgralab.greql.evaluator.fa.NFA;
 import de.uni_koblenz.jgralab.greql.evaluator.fa.State;
 import de.uni_koblenz.jgralab.greql.evaluator.fa.Transition;
 import de.uni_koblenz.jgralab.greql.funlib.Description;
@@ -57,21 +56,13 @@ import de.uni_koblenz.jgralab.greql.types.pathsearch.PathSystemMarkerEntry;
 @NeedsEvaluatorArgument
 public class PathSystem extends Function {
 
-	@Description(params = {"internal", "startVertex","fa"}, description =
-			"Returns a path system with the given root vertex, which is structured according to the given path description.",
-			categories = Category.PATHS_AND_PATHSYSTEMS_AND_SLICES)
+	@Description(params = { "internal", "startVertex", "fa" }, description = "Returns a path system with the given root vertex, which is structured according to the given path description.", categories = Category.PATHS_AND_PATHSYSTEMS_AND_SLICES)
 	public PathSystem() {
 		super(1000, 1, 1.0);
 	}
 
 	public de.uni_koblenz.jgralab.greql.types.PathSystem evaluate(
-			InternalGreqlEvaluator evaluator, Vertex startVertex, NFA nfa) {
-		return evaluate(evaluator, startVertex, nfa.getDFA());
-	}
-
-	public de.uni_koblenz.jgralab.greql.types.PathSystem evaluate(
 			InternalGreqlEvaluator evaluator, Vertex startVertex, DFA dfa) {
-
 		@SuppressWarnings("unchecked")
 		GraphMarker<PathSystemMarkerEntry>[] marker = new GraphMarker[dfa.stateList
 				.size()];
@@ -88,7 +79,7 @@ public class PathSystem extends Function {
 
 	/**
 	 * marks the given vertex with the given PathSystemMarker
-	 *
+	 * 
 	 * @return the marker created
 	 */
 	protected PathSystemMarkerEntry markVertex(
@@ -105,7 +96,7 @@ public class PathSystem extends Function {
 
 	/**
 	 * Checks if the given vertex is marked with the given state
-	 *
+	 * 
 	 * @return true if the vertex is marked, false otherwise
 	 */
 	protected boolean isMarked(GraphMarker<PathSystemMarkerEntry>[] marker,
@@ -118,7 +109,7 @@ public class PathSystem extends Function {
 	 * Marks all vertices that are part of the PathSystem described by the given
 	 * rootVertex and the regular path expression which is acceptes by the given
 	 * dfa
-	 *
+	 * 
 	 * @param startVertex
 	 *            the rootVertex of the PathSystem
 	 * @param dfa
@@ -182,7 +173,7 @@ public class PathSystem extends Function {
 	/**
 	 * Creates a JValuePathSystem-object which contains all paths which start at
 	 * the given root vertex and end with one of the given leaves
-	 *
+	 * 
 	 * @param leaves
 	 * @return
 	 */
@@ -220,7 +211,7 @@ public class PathSystem extends Function {
 
 	/**
 	 * Returns the {@code PathSystemMarkerEntry} for a given vertex and state.
-	 *
+	 * 
 	 * @param v
 	 *            the vertex for which to return the
 	 *            {@code PathSystemMarkerEntry}

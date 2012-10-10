@@ -1184,8 +1184,7 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 					"Code generation for function reachableVertices is not yet implemented. Use the path expression notation v --> instead of reachableVertices(v,-->)");
 		}
 		if (funId.get_name().equals("isReachable")) {
-			throw new RuntimeException(
-					"Code generation for function isReachable is not yet implemented. Use the path expression notation v --> w instead of isReachable(v,w,-->)");
+			return createCodeForIsReachable(funApp);
 		}
 		if (funId.get_name().equals("slice")) {
 			return createCodeForSliceFunction(funApp);
@@ -1347,6 +1346,30 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 		DFA dfa = ((NFA) pathDescrEval.getResult(evaluator)).getDFA();
 		return createCodeForForwarOrBackwardVertexSetOrPathExcistence(dfa,
 				startExpr, targetExpr, queryExpr);
+	}
+
+	private String createCodeForIsReachable(FunctionApplication funApp) {
+		Expression startExpr = null;
+		Expression targetExpr = null;
+		PathDescription pathDescr = null;
+		for (IsArgumentOf iao : funApp
+				.getIsArgumentOfIncidences(EdgeDirection.IN)) {
+			if (startExpr == null) {
+				startExpr = (Expression) iao.getThat();
+			} else if (targetExpr == null) {
+				targetExpr = (Expression) iao.getThat();
+			} else {
+				assert pathDescr == null;
+				pathDescr = (PathDescription) iao.getThat();
+			}
+		}
+		assert pathDescr != null;
+		PathDescriptionEvaluator<? extends PathDescription> pathDescrEval = (PathDescriptionEvaluator<? extends PathDescription>) ((GreqlQueryImpl) query)
+				.getVertexEvaluator(pathDescr);
+		DFA dfa = ((NFA) pathDescrEval.getResult(evaluator)).getDFA();
+		// TODO
+		return createCodeForForwarOrBackwardVertexSetOrPathExcistence(dfa,
+				startExpr, targetExpr, funApp);
 	}
 
 	private String createCodeForForwarOrBackwardVertexSet(DFA dfa,

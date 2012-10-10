@@ -60,6 +60,26 @@ public class PathExpressionTest {
 		}
 	}
 
+	private void compareBooleanResults(String query, boolean expectedResult,
+			String classname) throws InstantiationException,
+			IllegalAccessException {
+		Object erg = GreqlQuery.createQuery(query).evaluate(datagraph);
+		if (expectedResult) {
+			assertTrue((Boolean) erg);
+		} else {
+			assertFalse((Boolean) erg);
+		}
+
+		Class<ExecutableQuery> generatedQuery = GreqlCodeGenerator
+				.generateCode(query, datagraph.getSchema(), classname);
+		erg = generatedQuery.newInstance().execute(datagraph);
+		if (expectedResult) {
+			assertTrue((Boolean) erg);
+		} else {
+			assertFalse((Boolean) erg);
+		}
+	}
+
 	/*
 	 * Tests for SimplePathDescription
 	 */
@@ -70,15 +90,9 @@ public class PathExpressionTest {
 	@Test
 	public void testSimplePathDescription() throws InstantiationException,
 			IllegalAccessException {
-		String query = "getVertex(19)-->getVertex(2)";
-		Object erg = GreqlQuery.createQuery(query).evaluate(datagraph);
-		assertTrue((Boolean) erg);
-
 		String classname = "testdata.TestSimplePathDescription";
-		Class<ExecutableQuery> generatedQuery = GreqlCodeGenerator
-				.generateCode(query, datagraph.getSchema(), classname);
-		erg = generatedQuery.newInstance().execute(datagraph);
-		assertTrue((Boolean) erg);
+
+		compareBooleanResults("getVertex(19)-->getVertex(2)", true, classname);
 
 		compareResultsOfQuery("getVertex(19)-->", classname + "2");
 	}

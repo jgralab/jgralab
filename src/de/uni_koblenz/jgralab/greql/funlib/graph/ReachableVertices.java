@@ -44,7 +44,6 @@ import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql.evaluator.InternalGreqlEvaluator;
 import de.uni_koblenz.jgralab.greql.evaluator.fa.DFA;
-import de.uni_koblenz.jgralab.greql.evaluator.fa.NFA;
 import de.uni_koblenz.jgralab.greql.evaluator.fa.State;
 import de.uni_koblenz.jgralab.greql.evaluator.fa.Transition;
 import de.uni_koblenz.jgralab.greql.funlib.Description;
@@ -62,8 +61,8 @@ public class ReachableVertices extends Function {
 	}
 
 	public PSet<Vertex> evaluate(InternalGreqlEvaluator evaluator, Vertex v,
-			NFA nfa) {
-		return search(evaluator, v, nfa.getDFA());
+			DFA dfa) {
+		return search(evaluator, v, dfa);
 	}
 
 	public static PSet<Vertex> search(InternalGreqlEvaluator evaluator,

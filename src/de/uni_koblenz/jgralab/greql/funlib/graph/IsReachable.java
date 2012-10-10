@@ -43,7 +43,6 @@ import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.graphmarker.BooleanGraphMarker;
 import de.uni_koblenz.jgralab.greql.evaluator.InternalGreqlEvaluator;
 import de.uni_koblenz.jgralab.greql.evaluator.fa.DFA;
-import de.uni_koblenz.jgralab.greql.evaluator.fa.NFA;
 import de.uni_koblenz.jgralab.greql.evaluator.fa.State;
 import de.uni_koblenz.jgralab.greql.evaluator.fa.Transition;
 import de.uni_koblenz.jgralab.greql.funlib.Description;
@@ -62,11 +61,6 @@ public class IsReachable extends Function {
 			Category.GRAPH, Category.PATHS_AND_PATHSYSTEMS_AND_SLICES })
 	public IsReachable() {
 		super(50, 1, 0.01);
-	}
-
-	public Boolean evaluate(InternalGreqlEvaluator evaluator, Vertex u,
-			Vertex v, NFA nfa) {
-		return evaluate(evaluator, u, v, nfa.getDFA());
 	}
 
 	public Boolean evaluate(InternalGreqlEvaluator evaluator, Vertex u,

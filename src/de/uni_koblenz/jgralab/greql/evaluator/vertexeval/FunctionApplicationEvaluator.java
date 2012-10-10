@@ -41,6 +41,7 @@ import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.greql.evaluator.GreqlQueryImpl;
 import de.uni_koblenz.jgralab.greql.evaluator.InternalGreqlEvaluator;
 import de.uni_koblenz.jgralab.greql.evaluator.VertexCosts;
+import de.uni_koblenz.jgralab.greql.evaluator.fa.NFA;
 import de.uni_koblenz.jgralab.greql.exception.GreqlException;
 import de.uni_koblenz.jgralab.greql.exception.UnknownTypeException;
 import de.uni_koblenz.jgralab.greql.funlib.FunLib;
@@ -209,7 +210,11 @@ public class FunctionApplicationEvaluator extends
 		}
 
 		for (int i = 0; i < paramEvalCount; i++) {
-			parameters[p++] = parameterEvaluators.get(i).getResult(evaluator);
+			parameters[p] = parameterEvaluators.get(i).getResult(evaluator);
+			if (parameters[p] instanceof NFA) {
+				parameters[p] = ((NFA) parameters[p]).getDFA();
+			}
+			p++;
 		}
 
 		if (typeArgument != null) {
