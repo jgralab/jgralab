@@ -29,6 +29,14 @@ Build `common` first and then `jgralab`.
 Both projects contain Eclipse `.project` and `.classpath` files, so that you
 can import them in Eclipse as existing projects.
 
+### Getting Releases via Maven or Leiningen
+
+The current and past JGraLab releases are pushed to
+[the JGraLab Clojars site](https://clojars.org/de.uni-koblenz.ist/jgralab) so
+that you can fetch them easily as project dependency via the
+[Maven](http://maven.apache.org/) or [Leiningen](http://leiningen.org/) build
+and project management systems.
+
 ### Downloading a Pre-Compiled Jar
 
 You can download nightly builds from our
