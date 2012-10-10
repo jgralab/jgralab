@@ -1,5 +1,6 @@
 package de.uni_koblenz.jgralab.greql.executable;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -24,6 +25,70 @@ import de.uni_koblenz.jgralab.greql.types.Slice;
  * 
  */
 public class ExecutableSliceHelper {
+
+	/**
+	 * Checks if the given vertex is marked with the given state
+	 * 
+	 * @return true if the vertex is marked, false otherwise
+	 */
+	public static boolean isMarked(
+			List<GraphMarker<Map<Edge, PathSystemMarkerEntry>>> marker,
+			Vertex v, int state) {
+		GraphMarker<Map<Edge, PathSystemMarkerEntry>> currentMarker = marker
+				.get(state);
+
+		Map<Edge, PathSystemMarkerEntry> map = currentMarker.getMark(v);
+		return map != null;
+	}
+
+	/**
+	 * Checks if the given vertex is marked with the given state and parent edge
+	 * 
+	 * @return true if the vertex is marked, false otherwise
+	 */
+	public static boolean isMarked(
+			List<GraphMarker<Map<Edge, PathSystemMarkerEntry>>> marker,
+			Vertex v, int state, Edge parentEdge) {
+		GraphMarker<Map<Edge, PathSystemMarkerEntry>> currentMarker = marker
+				.get(state);
+
+		Map<Edge, PathSystemMarkerEntry> map = currentMarker.getMark(v);
+		if (map != null) {
+			return map.containsKey(parentEdge);
+		} else {
+			return false;
+		}
+	}
+
+	/**
+	 * marks the given vertex with the given SliceMarker
+	 * 
+	 * @return true if the vertex was marked successful, false if it is already
+	 *         marked with this parentEdge
+	 */
+	public static boolean markVertex(
+			List<GraphMarker<Map<Edge, PathSystemMarkerEntry>>> marker,
+			Vertex v, int state, boolean isFinal, Vertex parentVertex, Edge e,
+			int parentState, int d) {
+		PathSystemMarkerEntry m = new PathSystemMarkerEntry(v, parentVertex, e,
+				state, isFinal, parentState, d);
+		GraphMarker<Map<Edge, PathSystemMarkerEntry>> currentMarker = marker
+				.get(state);
+
+		Map<Edge, PathSystemMarkerEntry> map = currentMarker.getMark(v);
+		if (map == null) {
+			map = new HashMap<Edge, PathSystemMarkerEntry>();
+			currentMarker.mark(v, map);
+		}
+
+		PathSystemMarkerEntry entry = map.get(e);
+		if (entry == null) {
+			map.put(e, m);
+			return true;
+		} else {
+			return false;
+		}
+	}
 
 	/**
 	 * Creates a Slice-object which contains all path which start at the given

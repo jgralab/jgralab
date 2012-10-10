@@ -84,10 +84,6 @@ public class ResidualEvaluatorTest {
 
 	public ExecutableQuery createQueryClass(String query, String classname)
 			throws InstantiationException, IllegalAccessException {
-		if (classname.endsWith("TestUseQuerySeveralTimes")) {
-			GreqlCodeGenerator.generateCode(query, datagraph.getSchema(),
-					classname + "_", "./testit/");
-		}
 		Class<ExecutableQuery> generatedQuery = GreqlCodeGenerator
 				.generateCode(query, datagraph.getSchema(), classname);
 		return generatedQuery.newInstance();
@@ -851,7 +847,7 @@ public class ResidualEvaluatorTest {
 	@Test
 	public void testUseQuerySeveralTimes() throws InstantiationException,
 			IllegalAccessException {
-		// TODO check
+		Slice oldResult = null;
 		String queryText = "slice(getVertex(1),-->)";
 		for (GreqlQuery query : new GreqlQuery[] {
 				GreqlQuery.createQuery(queryText),
@@ -861,6 +857,11 @@ public class ResidualEvaluatorTest {
 			Slice slice2 = (Slice) query.evaluate(datagraph);
 			assertEquals(slice1.getEdges(), slice2.getEdges());
 			assertEquals(slice1.getVertices(), slice2.getVertices());
+			if (oldResult != null) {
+				assertEquals(oldResult.getEdges(), slice1.getEdges());
+				assertEquals(oldResult.getVertices(), slice1.getVertices());
+			}
+			oldResult = slice1;
 		}
 	}
 

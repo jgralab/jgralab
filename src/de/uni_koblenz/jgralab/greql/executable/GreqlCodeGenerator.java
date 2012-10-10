@@ -1188,8 +1188,7 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 					"Code generation for function isReachable is not yet implemented. Use the path expression notation v --> w instead of isReachable(v,w,-->)");
 		}
 		if (funId.get_name().equals("slice")) {
-			throw new RuntimeException(
-					"Code generation for function slice is not yet implemented.");
+			return createCodeForSliceFunction(funApp);
 		}
 		addImports("de.uni_koblenz.jgralab.greql.funlib.FunLib");
 		Function function = FunLib.getFunctionInfo(funId.get_name())
@@ -1251,7 +1250,6 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 		for (Method m : methods) {
 			if (m.getName() == "evaluate") {
 				Class<?>[] paramTypes = m.getParameterTypes();
-				// TODO subgraph parameter
 				if (paramTypes[0] == GreqlEvaluatorImpl.class) {
 					throw new RuntimeException(
 							"Functions with an evaluator parameter are not supported yet");
@@ -1443,7 +1441,8 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 										+ "].contains(nextElement)) {//checking all transitions of state "
 										+ curTrans.endState.number));
 				transitionCodeList.add(
-						createCodeForTransition(curTrans, false), 2);
+						createCodeForTransition(curTrans, FunctionType.OTHER),
+						2);
 				transitionCodeList.add(new CodeSnippet(
 						"\t\t} //finished checking transitions of state "
 								+ curTrans.endState.number));
@@ -1480,7 +1479,6 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 		}
 		list.setVariable("endStateNumber", Integer.toString(t.endState.number));
 		list.setVariable("endStateFinal", Boolean.toString(t.endState.isFinal));
-		list.setVariable("endStateNumber", Integer.toString(t.endState.number));
 		CodeSnippet addSnippet = new CodeSnippet();
 		addSnippet
 				.add("PathSystemMarkerEntry newEntry = ExecutablePathSystemHelper.markVertex(marker,");
@@ -1575,8 +1573,9 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 								+ curTrans.endState.number
 								+ ")) {//checking all transitions of state "
 								+ curTrans.endState.number));
-				transitionCodeList.add(createCodeForTransition(curTrans, true),
-						2);
+				transitionCodeList.add(
+						createCodeForTransition(curTrans,
+								FunctionType.PATH_SYSTEM), 2);
 				transitionCodeList.add(new CodeSnippet(
 						"\t\t} //finished checking transitions of state "
 								+ curTrans.endState.number));
@@ -1594,6 +1593,146 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 		return createMethod(list, syntaxGraphVertex);
 	}
 
+	private CodeBlock createAddToSliceQueueSnippet(Transition t) {
+		CodeList list = new CodeList();
+		if (t.consumesEdge()) {
+			list.setVariable("traversedEdge", "inc");
+		} else {
+			list.setVariable("traversedEdge", "null");
+		}
+		list.setVariable("endStateNumber", Integer.toString(t.endState.number));
+		list.setVariable("endStateFinal", Boolean.toString(t.endState.isFinal));
+		CodeSnippet addSnippet = new CodeSnippet();
+		addSnippet
+				.add("if (!ExecutableSliceHelper.isMarked(marker, nextElement, #endStateNumber#)) {");
+		addSnippet
+				.add("\tqueue.add(new PathSystemMarkerEntry(nextElement, element, #traversedEdge#, #endStateNumber#, #endStateFinal#, currentEntry.stateNumber, 0));");
+		addSnippet.add("}");
+		addSnippet
+				.add("ExecutableSliceHelper.markVertex(marker, nextElement, #endStateNumber#, #endStateFinal#, element, #traversedEdge#, currentEntry.stateNumber, 0);");
+		list.add(addSnippet);
+		return list;
+	}
+
+	private String createCodeForSliceFunction(FunctionApplication funApp) {
+		IsArgumentOf inc = funApp
+				.getFirstIsArgumentOfIncidence(EdgeDirection.IN);
+		Expression rootExpr = (Expression) inc.getThat();
+		inc = inc.getNextIsArgumentOfIncidence(EdgeDirection.IN);
+		PathDescription pathDescr = (PathDescription) inc.getThat();
+		PathDescriptionEvaluator<? extends PathDescription> pathDescrEval = (PathDescriptionEvaluator<? extends PathDescription>) ((GreqlQueryImpl) query)
+				.getVertexEvaluator(pathDescr);
+		DFA dfa = ((NFA) pathDescrEval.getResult(evaluator)).getDFA();
+		return createCodeForSlice(dfa, rootExpr, funApp);
+	}
+
+	private String createCodeForSlice(DFA dfa, Expression rootExpr,
+			FunctionApplication funApp) {
+		CodeList list = new CodeList();
+		addImports("de.uni_koblenz.jgralab.*");
+		addImports("de.uni_koblenz.jgralab.greql.executable.ExecutableSliceHelper");
+		addImports("de.uni_koblenz.jgralab.greql.executable.PathSystemMarkerEntry");
+		addImports("de.uni_koblenz.jgralab.graphmarker.GraphMarker");
+		addImports("java.util.HashSet");
+		addImports("java.util.ArrayList");
+		addImports("java.util.Map");
+		list.setVariable("stateCount", Integer.toString(dfa.stateList.size()));
+		list.setVariable("initialStateNumber",
+				Integer.toString(dfa.initialState.number));
+		list.setVariable("initialStateFinal",
+				Boolean.toString(dfa.initialState.isFinal));
+		CodeSnippet initSnippet = new CodeSnippet();
+		list.add(initSnippet);
+		initSnippet.add("Object rootResult = "
+				+ createCodeForExpression(rootExpr) + ";");
+		initSnippet.add("@SuppressWarnings(\"unchecked\")");
+		initSnippet
+				.add("org.pcollections.PSet<Vertex> rootVertices = (org.pcollections.PSet<Vertex>) (rootResult instanceof Vertex ? JGraLab.set().plus(rootResult) : rootResult);");
+		initSnippet.add("Set<Vertex> sliCritVertices = new HashSet<Vertex>();");
+		initSnippet.add("sliCritVertices.addAll(rootVertices);");
+		initSnippet
+				.add("java.util.List<GraphMarker<Map<Edge, PathSystemMarkerEntry>>> marker = new ArrayList<GraphMarker<Map<Edge, PathSystemMarkerEntry>>>("
+						+ dfa.stateList.size() + ");");
+		initSnippet.add("for (int i = 0; i < " + dfa.stateList.size()
+				+ "; i++) {");
+		initSnippet
+				.add("\tmarker.add(new GraphMarker<Map<Edge, PathSystemMarkerEntry>>(datagraph));");
+		initSnippet.add("}");
+		initSnippet
+				.add("java.util.List<Vertex> finalVertices = new ArrayList<Vertex>();");
+		initSnippet.add("Vertex element;");
+		initSnippet.add("Vertex nextElement;");
+		initSnippet
+				.add("java.util.Queue<PathSystemMarkerEntry> queue = new java.util.LinkedList<PathSystemMarkerEntry>();");
+		initSnippet.add("PathSystemMarkerEntry currentEntry;");
+		initSnippet.add("for (Vertex v: sliCritVertices) {");
+		initSnippet
+				.add("\tcurrentEntry = new PathSystemMarkerEntry(v, null, null, "
+						+ dfa.initialState.number
+						+ ", "
+						+ dfa.initialState.isFinal + ", 0, 0);");
+		initSnippet.add("\tqueue.offer(currentEntry);");
+		initSnippet
+				.add("\tExecutableSliceHelper.markVertex(marker, v, #initialStateNumber#, #initialStateFinal#, null, null, 0, 0);");
+		initSnippet.add("}");
+		initSnippet.add("while (!queue.isEmpty()) {");
+		initSnippet.add("\tcurrentEntry = queue.poll();");
+		initSnippet.add("\telement = currentEntry.vertex;");
+		initSnippet.add("\tif (currentEntry.stateIsFinal) {");
+		initSnippet.add("\t\tfinalVertices.add(element);");
+		initSnippet.add("\t}");
+		initSnippet.add("\tfor (Edge inc = element.getFirstIncidence();");
+		initSnippet
+				.add("\t\tinc != null; inc = inc.getNextIncidence() ) { //iterating incident edges");
+		initSnippet.add("\t\tswitch (currentEntry.stateNumber) {");
+
+		for (State curState : dfa.stateList) {
+			CodeList stateCodeList = new CodeList();
+			list.add(stateCodeList);
+			stateCodeList.add(new CodeSnippet("\t\tcase " + curState.number
+					+ ":"));
+			for (Transition curTrans : curState.outTransitions) {
+				CodeList transitionCodeList = new CodeList();
+				stateCodeList.add(transitionCodeList);
+				// Generate code to get next vertex and state number
+				if (curTrans.consumesEdge()) {
+					transitionCodeList.add(new CodeSnippet(
+							"\t\tnextElement = inc.getThat();"));
+				} else {
+					transitionCodeList.add(new CodeSnippet(
+							"\t\tnextElement = element;"));
+				}
+				// Generate code to check if next element is marked
+				transitionCodeList
+						.add(new CodeSnippet(
+								"\t\tif (!ExecutableSliceHelper.isMarked(marker, nextElement, "
+										+ curTrans.endState.number
+										+ ", inc)) {//checking all transitions of state "
+										+ curTrans.endState.number));
+				transitionCodeList.add(
+						createCodeForTransition(curTrans, FunctionType.SLICE),
+						2);
+				transitionCodeList.add(new CodeSnippet(
+						"\t\t} //finished checking transitions of state "
+								+ curTrans.endState.number));
+			}
+			stateCodeList.add(new CodeSnippet("\t\tbreak;//break case block"));
+		}
+
+		CodeSnippet finalSnippet = new CodeSnippet();
+		finalSnippet.add("\t\t} //end of switch");
+		finalSnippet.add("\t} //end of iterating incident edges ");
+		finalSnippet.add("} //end of processing queue");
+		finalSnippet
+				.add("return ExecutableSliceHelper.createSliceFromMarkings(datagraph, sliCritVertices, finalVertices, marker);");
+		list.add(finalSnippet);
+		return createMethod(list, funApp);
+	}
+
+	private enum FunctionType {
+		SLICE, PATH_SYSTEM, OTHER;
+	}
+
 	private int acceptedTypesNumber = 0;
 
 	/**
@@ -1608,30 +1747,30 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 	 * @return a CodeBlock implementing the transition with all its checks
 	 */
 	private CodeBlock createCodeForTransition(Transition trans,
-			boolean pathSystem) {
+			FunctionType functionType) {
 		if (trans instanceof EdgeTransition) {
 			return createCodeForEdgeTransition((EdgeTransition) trans,
-					pathSystem);
+					functionType);
 		}
 		if (trans instanceof SimpleTransition) {
 			return createCodeForSimpleTransition((SimpleTransition) trans,
-					pathSystem);
+					functionType);
 		}
 		if (trans instanceof AggregationTransition) {
 			return createCodeForAggregationTransition(
-					(AggregationTransition) trans, pathSystem);
+					(AggregationTransition) trans, functionType);
 		}
 		if (trans instanceof BoolExpressionTransition) {
 			return createCodeForBooleanExpressionTransition(
-					(BoolExpressionTransition) trans, pathSystem);
+					(BoolExpressionTransition) trans, functionType);
 		}
 		if (trans instanceof IntermediateVertexTransition) {
 			return createCodeForIntermediateVertexTransition(
-					(IntermediateVertexTransition) trans, pathSystem);
+					(IntermediateVertexTransition) trans, functionType);
 		}
 		if (trans instanceof VertexTypeRestrictionTransition) {
 			return createCodeForVertexTypeRestrictionTransition(
-					(VertexTypeRestrictionTransition) trans, pathSystem);
+					(VertexTypeRestrictionTransition) trans, functionType);
 		}
 		return new CodeSnippet(
 				"FAILURE: TRANSITION TYPE IS UNKNOWN TO GREQL CODE GENERATOR "
@@ -1639,17 +1778,17 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 	}
 
 	private CodeBlock createCodeForSimpleTransition(SimpleTransition trans,
-			boolean pathSystem) {
-		return createCodeForSimpleOrEdgeTransition(trans, pathSystem, null);
+			FunctionType functionType) {
+		return createCodeForSimpleOrEdgeTransition(trans, functionType, null);
 	}
 
 	private CodeBlock createCodeForEdgeTransition(EdgeTransition trans,
-			boolean pathSystem) {
+			FunctionType functionType) {
 		CodeList curr = new CodeList();
 		VertexEvaluator<?> allowedEdgeEvaluator = trans
 				.getAllowedEdgeEvaluator();
 		CodeBlock content = createCodeForSimpleOrEdgeTransition(trans,
-				pathSystem, curr);
+				functionType, curr);
 		if (allowedEdgeEvaluator != null) {
 			curr.add(new CodeSnippet("Edge allowedEdge = (Edge) "
 					+ createCodeForExpression((Expression) allowedEdgeEvaluator
@@ -1663,7 +1802,8 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 	}
 
 	private CodeBlock createCodeForSimpleOrEdgeTransition(
-			SimpleTransition trans, boolean pathSystem, CodeBlock edgeTest) {
+			SimpleTransition trans, FunctionType functionType,
+			CodeBlock edgeTest) {
 		CodeList resultList = new CodeList();
 		CodeList curr = resultList;
 		if (trans.getAllowedDirection() != GReQLDirection.INOUT) {
@@ -1688,8 +1828,10 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 		curr = createPredicateCheck(curr, trans.getPredicateEvaluator());
 		curr.add(edgeTest);
 		// add element to queue
-		if (pathSystem) {
+		if (functionType == FunctionType.PATH_SYSTEM) {
 			curr.add(createAddToPathSystemQueueSnippet(trans));
+		} else if (functionType == FunctionType.SLICE) {
+			curr.add(createAddToSliceQueueSnippet(trans));
 		} else {
 			curr.add(createAddToPathSearchQueueSnippet(trans.endState.number));
 		}
@@ -1697,7 +1839,7 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 	}
 
 	private CodeBlock createCodeForAggregationTransition(
-			AggregationTransition trans, boolean pathSystem) {
+			AggregationTransition trans, FunctionType functionType) {
 		CodeList resultList = new CodeList();
 		CodeList curr = resultList;
 		addImports("de.uni_koblenz.jgralab.schema.AggregationKind");
@@ -1719,8 +1861,10 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 				trans.getValidFromRoles());
 		curr = createPredicateCheck(curr, trans.getPredicateEvaluator());
 		// add element to queue
-		if (pathSystem) {
+		if (functionType == FunctionType.PATH_SYSTEM) {
 			curr.add(createAddToPathSystemQueueSnippet(trans));
+		} else if (functionType == FunctionType.SLICE) {
+			curr.add(createAddToSliceQueueSnippet(trans));
 		} else {
 			curr.add(createAddToPathSearchQueueSnippet(trans.endState.number));
 		}
@@ -1808,7 +1952,7 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 	}
 
 	private CodeBlock createCodeForVertexTypeRestrictionTransition(
-			VertexTypeRestrictionTransition trans, boolean pathSystem) {
+			VertexTypeRestrictionTransition trans, FunctionType functionType) {
 		CodeList resultList = new CodeList();
 		CodeList curr = resultList;
 		TypeCollection typeCollection = trans.getAcceptedVertexTypes();
@@ -1825,8 +1969,10 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 		}
 
 		// add element to queue
-		if (pathSystem) {
+		if (functionType == FunctionType.PATH_SYSTEM) {
 			curr.add(createAddToPathSystemQueueSnippet(trans));
+		} else if (functionType == FunctionType.SLICE) {
+			curr.add(createAddToSliceQueueSnippet(trans));
 		} else {
 			curr.add(createAddToPathSearchQueueSnippet(trans.endState.number));
 		}
@@ -1834,7 +1980,7 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 	}
 
 	private CodeBlock createCodeForIntermediateVertexTransition(
-			IntermediateVertexTransition trans, boolean pathSystem) {
+			IntermediateVertexTransition trans, FunctionType functionType) {
 		CodeList curr = new CodeList();
 		CodeList resultList = curr;
 
@@ -1848,13 +1994,6 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 					.add("Object tempRes = "
 							+ createCodeForExpression((Expression) intermediateVertexEval
 									.getVertex()) + ";");
-			// following produced a "unchecked" warning
-			// predicateSnippet
-			// .add("if ((tempRes == element)"
-			// +
-			// " || (tempRes instanceof org.pcollections.PCollection && ((org.pcollections.PCollection<Object>) tempRes).contains(element))"
-			// + ") { //test of intermediate vertex transition");
-			// code with supressed "unchecked" warning
 			predicateSnippet
 					.add("boolean transitionWorks = tempRes == element;");
 			predicateSnippet.add("if(!transitionWorks) {");
@@ -1877,8 +2016,10 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 			curr = body;
 		}
 		// add element to queue
-		if (pathSystem) {
+		if (functionType == FunctionType.PATH_SYSTEM) {
 			curr.add(createAddToPathSystemQueueSnippet(trans));
+		} else if (functionType == FunctionType.SLICE) {
+			curr.add(createAddToSliceQueueSnippet(trans));
 		} else {
 			curr.add(createAddToPathSearchQueueSnippet(trans.endState.number));
 		}
@@ -1886,7 +2027,7 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 	}
 
 	private CodeBlock createCodeForBooleanExpressionTransition(
-			BoolExpressionTransition trans, boolean pathSystem) {
+			BoolExpressionTransition trans, FunctionType functionType) {
 		CodeList curr = new CodeList();
 		CodeList resultList = curr;
 
@@ -1904,8 +2045,10 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 			curr = body;
 		}
 		// add element to queue
-		if (pathSystem) {
+		if (functionType == FunctionType.PATH_SYSTEM) {
 			curr.add(createAddToPathSystemQueueSnippet(trans));
+		} else if (functionType == FunctionType.SLICE) {
+			curr.add(createAddToSliceQueueSnippet(trans));
 		} else {
 			curr.add(createAddToPathSearchQueueSnippet(trans.endState.number));
 		}
