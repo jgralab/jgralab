@@ -220,6 +220,10 @@ public class TemporaryGraphElementsTest {
 		assertEquals(v1, transEdge1.getAlpha());
 		assertEquals(v2, transEdge1.getOmega());
 		assertFalse(tempEdge1.isValid());
+		assertEquals(v1.getFirstIncidence(), transEdge1);
+		assertEquals(v1.getLastIncidence(), transEdge1);
+		assertEquals(v2.getFirstIncidence(), transEdge1.getReversedEdge());
+		assertEquals(v2.getLastIncidence(), transEdge1.getReversedEdge());
 
 	}
 
