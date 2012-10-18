@@ -1,5 +1,6 @@
 package de.uni_koblenz.jgralab.utilities.argouml2tg;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.HashMap;
@@ -10,7 +11,6 @@ import javax.xml.stream.XMLStreamException;
 
 import org.pcollections.PVector;
 
-import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.ImplementationType;
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.Vertex;
@@ -89,7 +89,6 @@ public class ArgoUml2Tg extends Xml2Tg {
 			a2tg.getXmlGraph().save(folder + "xmlgraph.tg",
 					new ConsoleProgressFunction());
 			a2tg.convertToTg(folder + "testschema.tg");
-			GraphIO.loadGraphFromFile(folder + "xmlgraph.tg", null);
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (XMLStreamException e) {
@@ -159,7 +158,8 @@ public class ArgoUml2Tg extends Xml2Tg {
 		createGeneralizations();
 
 		try {
-			sg.save("tgschemagraph.tg", new ConsoleProgressFunction());
+			sg.save(new File(filename).getParent().toString() + File.separator
+					+ "tgschemagraph.tg", new ConsoleProgressFunction());
 		} catch (GraphIOException e) {
 			e.printStackTrace();
 		}
