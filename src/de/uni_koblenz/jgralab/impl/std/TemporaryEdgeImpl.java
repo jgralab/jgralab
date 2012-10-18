@@ -78,7 +78,7 @@ public class TemporaryEdgeImpl extends EdgeImpl implements TemporaryEdge {
 
 	@Override
 	public Edge bless(EdgeClass edgeClass) {
-
+		
 		// test if valid
 		validateConversion(edgeClass);
 
@@ -121,6 +121,9 @@ public class TemporaryEdgeImpl extends EdgeImpl implements TemporaryEdge {
 		}
 
 		// iSeq edge
+		if (newLastIncidence == this) {
+			newLastIncidence = newEdge;
+		}
 		correctISeq(prevIncidence, nextIncidence, newEdge, newLastIncidence);
 
 		// iSeq reversed
