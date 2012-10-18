@@ -10,6 +10,7 @@ import javax.xml.stream.XMLStreamException;
 
 import org.pcollections.PVector;
 
+import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.ImplementationType;
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.Vertex;
@@ -35,6 +36,7 @@ import de.uni_koblenz.jgralab.grumlschema.structure.Package;
 import de.uni_koblenz.jgralab.grumlschema.structure.Schema;
 import de.uni_koblenz.jgralab.grumlschema.structure.VertexClass;
 import de.uni_koblenz.jgralab.impl.ConsoleProgressFunction;
+import de.uni_koblenz.jgralab.utilities.rsa2tg.ProcessingException;
 import de.uni_koblenz.jgralab.utilities.tg2schemagraph.SchemaGraph2Schema;
 import de.uni_koblenz.jgralab.utilities.xml2tg.Xml2Tg;
 import de.uni_koblenz.jgralab.utilities.xml2tg.XmlGraphUtilities;
@@ -74,29 +76,27 @@ public class ArgoUml2Tg extends Xml2Tg {
 	 * @param args
 	 */
 	public static void main(String[] args) {
+		String folder = "../argoumltestschemas/";
 		try {
 			ArgoUml2Tg a2tg = new ArgoUml2Tg();
-			a2tg.process("argo-test/testschema.xmi");
+			a2tg.process(folder + "testVertexClass.xmi");
 			if (VALIDATE_XML_GRAPH) {
 				System.out.println("Validate XML graph...");
 				GraphValidator gv = new GraphValidator(a2tg.getXmlGraph());
 				gv.validate();
-				gv.createValidationReport("xmlgraph.validation.html");
+				gv.createValidationReport(folder + "xmlgraph.validation.html");
 			}
-			a2tg.getXmlGraph().save("xmlgraph.tg",
+			a2tg.getXmlGraph().save(folder + "xmlgraph.tg",
 					new ConsoleProgressFunction());
-			a2tg.convertToTg("argo-test/testschema.tg");
+			a2tg.convertToTg(folder + "testschema.tg");
+			GraphIO.loadGraphFromFile(folder + "xmlgraph.tg", null);
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (XMLStreamException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (GraphIOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} finally {
 			System.out.println("Fini.");
@@ -137,6 +137,11 @@ public class ArgoUml2Tg extends Xml2Tg {
 
 		schema = sg.createSchema();
 		int p = schemaName.lastIndexOf('.');
+		if (p == -1) {
+			throw new ProcessingException(getParser(), getFileName(),
+					"A Schema must have a package prefix!\nProcessed qualified name: "
+							+ schemaName);
+		}
 		schema.set_name(schemaName.substring(p + 1));
 		schema.set_packagePrefix(schemaName.substring(0, p));
 
@@ -156,7 +161,6 @@ public class ArgoUml2Tg extends Xml2Tg {
 		try {
 			sg.save("tgschemagraph.tg", new ConsoleProgressFunction());
 		} catch (GraphIOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		System.out.println("Validate schema graph...");
@@ -168,7 +172,6 @@ public class ArgoUml2Tg extends Xml2Tg {
 						.println("Schema graph is invalid. Please look at tgschemagraph-validation.html");
 				gv.createValidationReport("tgschemagraph-validation.html");
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		} else {
@@ -178,17 +181,21 @@ public class ArgoUml2Tg extends Xml2Tg {
 				de.uni_koblenz.jgralab.schema.Schema s = s2s.convert(sg);
 				s.save(filename);
 			} catch (GraphIOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
 	}
 
 	private void createGeneralizations() {
+		System.out.println("Creating generalization:");
 		for (Element el : xu.elementsWithName("UML:Generalization")) {
 			if (!xu.hasAttribute(el, "xmi.id")) {
+				// TODO delete
+				// System.err.println(el);
 				continue;
 			}
+			// TODO delete
+			// System.out.println(el);
 			Element child = xu.firstChildWithName(el,
 					"UML:Generalization.child");
 			Element e = xu.firstChildWithName(child, "UML:Class");
@@ -225,7 +232,12 @@ public class ArgoUml2Tg extends Xml2Tg {
 			if (pv.isInstanceOf(VertexClass.VC)) {
 				sg.createSpecializesVertexClass((VertexClass) cv,
 						(VertexClass) pv);
+				System.out.println("\t"
+						+ ((VertexClass) cv).get_qualifiedName() + ": "
+						+ ((VertexClass) pv).get_qualifiedName());
 			} else if (pv.isInstanceOf(EdgeClass.VC)) {
+				System.out.println("\t" + ((EdgeClass) cv).get_qualifiedName()
+						+ ": " + ((EdgeClass) pv).get_qualifiedName());
 				EdgeClass sub = (EdgeClass) cv;
 				EdgeClass sup = (EdgeClass) pv;
 				sg.createSpecializesEdgeClass(sub, sup);
@@ -671,7 +683,7 @@ public class ArgoUml2Tg extends Xml2Tg {
 
 	private void createPrimitiveDomain(Domain d, String qn,
 			String... profileIds) {
-		System.out.println("PrinitiveDomain " + qn);
+		System.out.println("PrimitiveDomain " + qn);
 		d.set_qualifiedName(qn);
 		sg.createContainsDomain(packageMap.get(""), d);
 		for (String id : profileIds) {

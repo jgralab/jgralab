@@ -2,6 +2,7 @@ package de.uni_koblenz.jgralabtest.temporary;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -22,6 +23,10 @@ import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.exception.GraphIOException;
 import de.uni_koblenz.jgralab.exception.TemporaryGraphElementException;
 import de.uni_koblenz.jgralab.schema.Schema;
+import de.uni_koblenz.jgralab.utilities.xml2tg.schema.Element;
+import de.uni_koblenz.jgralab.utilities.xml2tg.schema.HasChild;
+import de.uni_koblenz.jgralab.utilities.xml2tg.schema.XMLGraph;
+import de.uni_koblenz.jgralab.utilities.xml2tg.schema.XMLSchema;
 import de.uni_koblenz.jgralabtest.schemas.citymap.CityMapSchema;
 
 public class TemporaryGraphElementsTest {
@@ -65,6 +70,24 @@ public class TemporaryGraphElementsTest {
 			assertEquals(tempv, vv);
 		}
 
+	}
+
+	@Test
+	public void testBlessTemporaryVertices() {
+		XMLSchema schema = XMLSchema.instance();
+		XMLGraph graph = schema.createXMLGraph(ImplementationType.STANDARD);
+
+		TemporaryVertex element = graph.createTemporaryVertex();
+		graph.createEdge(HasChild.EC, element, element);
+
+		Vertex childElement = element.bless(Element.VC);
+		assertEquals(2, element.getDegree());
+		Edge alphaIncidence = childElement.getFirstIncidence();
+		Edge omegaIncidence = childElement.getLastIncidence();
+		assertNotNull(alphaIncidence);
+		assertNotNull(omegaIncidence);
+		assertEquals(alphaIncidence.getNormalEdge(),
+				omegaIncidence.getNormalEdge());
 	}
 
 	@Test
