@@ -133,6 +133,9 @@ public class TemporaryEdgeImpl extends EdgeImpl implements TemporaryEdge {
 		if (nextIncidenceReversed == this) {
 			nextIncidenceReversed = newEdge;
 		}
+		if(newLastIncidenceReversed == this.getReversedEdge()){
+			newLastIncidenceReversed = (InternalEdge) newEdge.getReversedEdge();
+		}
 		correctISeq(prevIncidenceReversed, nextIncidenceReversed,
 				(InternalEdge) newEdge.getReversedEdge(),
 				newLastIncidenceReversed);
