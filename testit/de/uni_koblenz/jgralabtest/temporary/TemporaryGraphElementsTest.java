@@ -81,7 +81,7 @@ public class TemporaryGraphElementsTest {
 		graph.createEdge(HasChild.EC, element, element);
 
 		Vertex childElement = element.bless(Element.VC);
-		assertEquals(2, element.getDegree());
+		assertEquals(2, childElement.getDegree());
 		Edge alphaIncidence = childElement.getFirstIncidence();
 		Edge omegaIncidence = childElement.getLastIncidence();
 		assertNotNull(alphaIncidence);
