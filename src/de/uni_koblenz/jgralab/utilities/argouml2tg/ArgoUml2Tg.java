@@ -79,16 +79,17 @@ public class ArgoUml2Tg extends Xml2Tg {
 		String folder = "../argoumltestschemas/";
 		try {
 			ArgoUml2Tg a2tg = new ArgoUml2Tg();
-			a2tg.process(folder + "testVertexClass.xmi");
+			a2tg.process(folder + "testAttributes.xmi");
 			if (VALIDATE_XML_GRAPH) {
 				System.out.println("Validate XML graph...");
 				GraphValidator gv = new GraphValidator(a2tg.getXmlGraph());
 				gv.validate();
-				gv.createValidationReport(folder + "xmlgraph.validation.html");
+				gv.createValidationReport(folder
+						+ "/output/xmlgraph.validation.html");
 			}
-			a2tg.getXmlGraph().save(folder + "xmlgraph.tg",
+			a2tg.getXmlGraph().save(folder + "/output/xmlgraph.tg",
 					new ConsoleProgressFunction());
-			a2tg.convertToTg(folder + "testschema.tg");
+			a2tg.convertToTg(folder + "/output/testschema.tg");
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (XMLStreamException e) {
@@ -200,6 +201,9 @@ public class ArgoUml2Tg extends Xml2Tg {
 					"UML:Generalization.child");
 			Element e = xu.firstChildWithName(child, "UML:Class");
 			if (e == null) {
+				e = xu.firstChildWithName(child, "UML:Association");
+			}
+			if (e == null) {
 				e = xu.firstChildWithName(child, "UML:AssociationClass");
 			}
 			if (e == null) {
@@ -214,6 +218,9 @@ public class ArgoUml2Tg extends Xml2Tg {
 			Element parent = xu.firstChildWithName(el,
 					"UML:Generalization.parent");
 			e = xu.firstChildWithName(parent, "UML:Class");
+			if (e == null) {
+				e = xu.firstChildWithName(parent, "UML:Association");
+			}
 			if (e == null) {
 				e = xu.firstChildWithName(parent, "UML:AssociationClass");
 			}
@@ -297,6 +304,8 @@ public class ArgoUml2Tg extends Xml2Tg {
 	private void createEdgeClass(Element el) {
 		Package pkg = getPackage(getPackageName(el));
 		String qn = getQualifiedName(el, true);
+		assert qn != null && !qn.isEmpty() : "The EdgeClass "
+				+ xu.getAttributeValue(el, "xmi.id") + " must have a name.";
 		String name = xu.getAttributeValue(el, "name", true);
 		if (name.length() == 0) {
 			name = null;
@@ -406,7 +415,8 @@ public class ArgoUml2Tg extends Xml2Tg {
 			qn = pkg.get_qualifiedName() + "." + name;
 		}
 		ec.set_qualifiedName(qn);
-		assert qnMap.get(qn) == null;
+		assert qnMap.get(qn) == null : "There already exists an EdgeClass with name: "
+				+ qn;
 		qnMap.put(qn, ec);
 		xmiIdMap.put(xu.getAttributeValue(el, "xmi.id"), ec);
 	}
@@ -464,7 +474,26 @@ public class ArgoUml2Tg extends Xml2Tg {
 		VertexClass vc = (VertexClass) xmiIdMap.get(xu.getAttributeValue(
 				xu.firstChildWithName(participant, "UML:Class"), "xmi.idref"));
 		ic.add_targetclass(vc);
+		checkMultiplicities(ic);
 		return ic;
+	}
+
+	private void checkMultiplicities(IncidenceClass inc) {
+		int min = inc.get_min();
+		int max = inc.get_max();
+		assert min >= 0;
+		assert max > 0;
+		if (min == Integer.MAX_VALUE) {
+			throw new ProcessingException(getFileName(),
+					"Error in multiplicities: lower bound must not be *"
+							+ " at association end " + inc);
+		}
+		if (min > max) {
+			throw new ProcessingException(getFileName(),
+					"Error in multiplicities: lower bound (" + min
+							+ ") must be <= upper bound (" + max
+							+ ") at association end " + inc);
+		}
 	}
 
 	private void createVertexClasses() {
@@ -479,6 +508,9 @@ public class ArgoUml2Tg extends Xml2Tg {
 
 				Package pkg = getPackage(getPackageName(el));
 				String qn = getQualifiedName(el, true);
+				assert qn != null && !qn.isEmpty() : "The VertexClass "
+						+ xu.getAttributeValue(el, "xmi.id")
+						+ " must have a name.";
 
 				assert qnMap.get(qn) == null;
 
@@ -520,6 +552,9 @@ public class ArgoUml2Tg extends Xml2Tg {
 
 				Package pkg = getPackage(getPackageName(el));
 				String qn = getQualifiedName(el, true);
+				assert qn != null && !qn.isEmpty() : "The RecordDomain "
+						+ xu.getAttributeValue(el, "xmi.id")
+						+ " must have a name.";
 
 				// check whether a prelminiary vertex for this record domain was
 				// already created, create it if not
@@ -595,6 +630,8 @@ public class ArgoUml2Tg extends Xml2Tg {
 					&& !hasStereotype(el, ST_GRAPHCLASS);
 			Package pkg = getPackage(getPackageName(el));
 			String qn = getQualifiedName(el, true);
+			assert qn != null && !qn.isEmpty() : "The domain of attribute "
+					+ xu.getAttributeValue(el, "xmi.id") + " must have a name.";
 
 			RecordDomain rd = sg.createRecordDomain();
 			rd.set_qualifiedName(qn);
@@ -699,6 +736,8 @@ public class ArgoUml2Tg extends Xml2Tg {
 				continue;
 			}
 			String qn = getQualifiedName(el, true);
+			assert qn != null && !qn.isEmpty() : "The EnumDomain "
+					+ xu.getAttributeValue(el, "xmi.id") + " must have a name.";
 			assert qnMap.get(qn) == null;
 
 			System.out.println("EnumDomain " + qn);
