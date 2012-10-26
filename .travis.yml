@@ -1,0 +1,12 @@
+language: java
+before_install:
+  - cd ..
+  - git clone git://github.com/jgralab/common.git
+  - cd common
+  - ant
+install: ant
+jdk:
+  - oraclejdk7
+#  - openjdk7
+#  - oraclejdk6
+#  - openjdk6
