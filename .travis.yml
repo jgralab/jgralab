@@ -8,7 +8,7 @@ before_install:
 install: ant
 script: ant test
 jdk:
+  - openjdk7
+  - openjdk6
+  - oraclejdk6
   - oraclejdk7
-#  - openjdk7
-#  - oraclejdk6
-#  - openjdk6
