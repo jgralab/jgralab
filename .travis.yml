@@ -6,6 +6,7 @@ before_install:
   - ant
   - cd ../jgralab
 install: ant
+script: ant test
 jdk:
   - oraclejdk7
 #  - openjdk7
