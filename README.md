@@ -5,6 +5,8 @@ attributed, ordered, and directed graphs.  Beyond the plain data structure, the
 library contains an extensive algorithm library, the graph query language
 GReQL, the transformation API GReTL, and tons of utilities.
 
+Current build status: [![Build Status](https://secure.travis-ci.org/jgralab/jgralab.png)](http://travis-ci.org/jgralab/jgralab)
+
 ## Installation and Building
 
 ### Building from Sources
