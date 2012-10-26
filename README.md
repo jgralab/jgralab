@@ -66,8 +66,9 @@ results are accessible at our
 
 ### Tutorials and Getting Started
 
-Eventually, we are going to create appropriate documentation in the Wiki, so
-stay tuned...
+We've started writing a tutorial in the
+[JGraLab Wiki](https://github.com/jgralab/jgralab/wiki).  It's not yet
+complete, but we'll keep working on extending it.
 
 ### Getting Help
 
