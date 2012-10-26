@@ -1,4 +1,12 @@
 language: java
+notifications:
+  email:
+    recipients:
+      - re-group@list.uni-koblenz.de
+  irc:
+    channels:
+      - "irc.freenode.org#jgralab"
+    use_notice: true
 before_install:
   - cd ..
   - git clone git://github.com/jgralab/common.git
