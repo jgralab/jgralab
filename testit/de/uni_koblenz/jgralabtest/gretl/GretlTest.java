@@ -53,7 +53,6 @@ import org.junit.Test;
 import org.junit.runner.JUnitCore;
 
 import de.uni_koblenz.jgralab.AttributedElement;
-import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.ImplementationType;
@@ -71,8 +70,6 @@ import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.VertexClass;
 import de.uni_koblenz.jgralab.utilities.schemacompare.SchemaCompare;
-import de.uni_koblenz.jgralab.utilities.tg2dot.Tg2Dot;
-import de.uni_koblenz.jgralab.utilities.tg2dot.dot.GraphVizOutputFormat;
 import de.uni_koblenz.jgralabtest.schemas.gretl.addressbook.AddressBook;
 import de.uni_koblenz.jgralabtest.schemas.gretl.addressbook.AddressBookGraph;
 import de.uni_koblenz.jgralabtest.schemas.gretl.addressbook.AddressBookSchema;
@@ -90,8 +87,6 @@ import de.uni_koblenz.jgralabtest.schemas.gretl.copy.WholePart;
 import de.uni_koblenz.jgralabtest.schemas.gretl.families.Family;
 import de.uni_koblenz.jgralabtest.schemas.gretl.families.FamilyGraph;
 import de.uni_koblenz.jgralabtest.schemas.gretl.families.FamilySchema;
-import de.uni_koblenz.jgralabtest.schemas.gretl.families.HasFather;
-import de.uni_koblenz.jgralabtest.schemas.gretl.families.HasMother;
 import de.uni_koblenz.jgralabtest.schemas.gretl.families.Member;
 import de.uni_koblenz.jgralabtest.schemas.gretl.pddsl.Card;
 import de.uni_koblenz.jgralabtest.schemas.gretl.pddsl.Chassis;
@@ -138,7 +133,6 @@ public class GretlTest {
 	private String targetFileName;
 	private Context context = null;
 
-	@SuppressWarnings("unchecked")
 	@BeforeClass
 	public static void setUpClass() throws GraphIOException, IOException {
 		tmpDir = null;
@@ -162,15 +156,6 @@ public class GretlTest {
 
 		GraphIO.saveGraphToFile(sourceFamilyGraph, tmpDir
 				+ "sourceFamilyGraph.tg", null);
-
-		dotty(sourceAddressBookGraph, tmpDir + "sourceAddressBookGraph.pdf");
-		dotty(sourceFamilyGraph, tmpDir + "sourceFamilyGraph.pdf",
-				HasMother.class, HasFather.class);
-		dotty(sourceVarroUMLGraph, tmpDir + "sourceVarroUMLGraph.pdf");
-		dotty(sourceBEDSLGraph, tmpDir + "sourceBEDSLGraph.pdf");
-		dotty(sourcePDDSLGraph, tmpDir + "sourcePDDSLGraph.pdf");
-		dotty(sourceServiceGraph, tmpDir + "sourceServiceGraph.pdf");
-		dotty(sourceCopyGraph, tmpDir + "sourceCopyGraph.pdf");
 	}
 
 	@Before
@@ -575,13 +560,6 @@ public class GretlTest {
 		} catch (GraphIOException e) {
 			e.printStackTrace();
 		}
-		System.out.println("Dotting target graph to " + graphFile + ".pdf...");
-		if (context.getTargetSchema() == FamilySchema.instance()) {
-			dotty(context.getTargetGraph(), graphFile + ".pdf",
-					HasFather.class, HasMother.class);
-		} else {
-			dotty(context.getTargetGraph(), graphFile + ".pdf");
-		}
 
 		String traceFile = tmpDir + targetFileName + ".gretltrace";
 		context.storeTrace(traceFile);
@@ -615,12 +593,7 @@ public class GretlTest {
 		context = null;
 	}
 
-	private static void dotty(Graph g, String file,
-			java.lang.Class<? extends Edge>... reversedEdgeTypes)
-			throws IOException {
-		Tg2Dot.convertGraph(g, file, false, GraphVizOutputFormat.PDF,
-				reversedEdgeTypes);
-	}
+	
 
 	@Test
 	public void createSubgraph1() {
