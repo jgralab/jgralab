@@ -80,7 +80,7 @@ public class ArgoUml2Tg extends Xml2Tg {
 	public static void main(String[] args) {
 		try {
 			ArgoUml2Tg a2tg = new ArgoUml2Tg();
-			a2tg.process("./testit/testschemas/argoUML-xmi/testAttributesDefaultValues.xmi");
+			a2tg.process("./testit/testschemas/argoUML-xmi/testPackages.xmi");
 			if (VALIDATE_XML_GRAPH) {
 				System.out.println("Validate XML graph...");
 				GraphValidator gv = new GraphValidator(a2tg.getXmlGraph());

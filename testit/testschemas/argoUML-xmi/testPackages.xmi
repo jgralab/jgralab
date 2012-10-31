@@ -1,0 +1,154 @@
+<?xml version = '1.0' encoding = 'UTF-8' ?>
+<XMI xmi.version = '1.2' xmlns:UML = 'org.omg.xmi.namespace.UML' timestamp = 'Wed Oct 31 16:50:15 CET 2012'>
+  <XMI.header>    <XMI.documentation>
+      <XMI.exporter>ArgoUML (using Netbeans XMI Writer version 1.0)</XMI.exporter>
+      <XMI.exporterVersion>0.34(6) revised on $Date: 2010-01-11 22:20:14 +0100 (Mon, 11 Jan 2010) $ </XMI.exporterVersion>
+    </XMI.documentation>
+    <XMI.metamodel xmi.name="UML" xmi.version="1.4"/></XMI.header>
+  <XMI.content>
+    <UML:Model xmi.id = '-115-26-71--35--602393e1:13a6eec91eb:-8000:000000000000096D'
+      name = 'test.Packages' isSpecification = 'false' isRoot = 'false' isLeaf = 'false'
+      isAbstract = 'false'>
+      <UML:Namespace.ownedElement>
+        <UML:Class xmi.id = '-115-26-71--35--602393e1:13a6eec91eb:-8000:000000000000096F'
+          name = 'MyGraphClass' visibility = 'public' isSpecification = 'false' isRoot = 'false'
+          isLeaf = 'false' isAbstract = 'false' isActive = 'false'>
+          <UML:ModelElement.stereotype>
+            <UML:Stereotype href = 'http://argouml.org/user-profiles/gruml-1.0.1.xmi#-64--88-111--125-2048530b:13717182953:-8000:0000000000000D6A'/>
+          </UML:ModelElement.stereotype>
+        </UML:Class>
+        <UML:Package xmi.id = '-115-26-71--114--22995a25:13ab7759bae:-8000:0000000000000A6A'
+          name = 'super_a' isSpecification = 'false' isRoot = 'false' isLeaf = 'false'
+          isAbstract = 'false'>
+          <UML:Namespace.ownedElement>
+            <UML:Package xmi.id = '-115-26-71--114--22995a25:13ab7759bae:-8000:0000000000000A6C'
+              name = 'sub_a' isSpecification = 'false' isRoot = 'false' isLeaf = 'false'
+              isAbstract = 'false'>
+              <UML:Namespace.ownedElement>
+                <UML:Class xmi.id = '-115-26-71--114--22995a25:13ab7759bae:-8000:0000000000000A72'
+                  name = 'In_a_a' visibility = 'public' isSpecification = 'false' isRoot = 'false'
+                  isLeaf = 'false' isAbstract = 'false' isActive = 'false'/>
+                <UML:Class xmi.id = '-115-26-71--114--22995a25:13ab7759bae:-8000:0000000000000A74'
+                  name = 'In_a' visibility = 'public' isSpecification = 'false' isRoot = 'false'
+                  isLeaf = 'false' isAbstract = 'false' isActive = 'false'/>
+              </UML:Namespace.ownedElement>
+            </UML:Package>
+            <UML:Package xmi.id = '-115-26-71--114--22995a25:13ab7759bae:-8000:0000000000000A6D'
+              name = 'sub_b' isSpecification = 'false' isRoot = 'false' isLeaf = 'false'
+              isAbstract = 'false'>
+              <UML:Namespace.ownedElement>
+                <UML:Class xmi.id = '-115-26-71--114--22995a25:13ab7759bae:-8000:0000000000000A73'
+                  name = 'In_a_b' visibility = 'public' isSpecification = 'false' isRoot = 'false'
+                  isLeaf = 'false' isAbstract = 'false' isActive = 'false'/>
+              </UML:Namespace.ownedElement>
+            </UML:Package>
+            <UML:Class xmi.id = '-115-26-71--114--22995a25:13ab7759bae:-8000:0000000000000A71'
+              name = 'In_a' visibility = 'public' isSpecification = 'false' isRoot = 'false'
+              isLeaf = 'false' isAbstract = 'false' isActive = 'false'/>
+            <UML:Association xmi.id = '-115-26-71--114--22995a25:13ab7759bae:-8000:0000000000000A79'
+              name = 'In_a2In_a' isSpecification = 'false' isRoot = 'false' isLeaf = 'false'
+              isAbstract = 'false'>
+              <UML:Association.connection>
+                <UML:AssociationEnd xmi.id = '-115-26-71--114--22995a25:13ab7759bae:-8000:0000000000000A7A'
+                  visibility = 'public' isSpecification = 'false' isNavigable = 'true' ordering = 'unordered'
+                  aggregation = 'none' targetScope = 'instance' changeability = 'changeable'>
+                  <UML:AssociationEnd.participant>
+                    <UML:Class xmi.idref = '-115-26-71--114--22995a25:13ab7759bae:-8000:0000000000000A71'/>
+                  </UML:AssociationEnd.participant>
+                </UML:AssociationEnd>
+                <UML:AssociationEnd xmi.id = '-115-26-71--114--22995a25:13ab7759bae:-8000:0000000000000A7B'
+                  visibility = 'public' isSpecification = 'false' isNavigable = 'true' ordering = 'unordered'
+                  aggregation = 'none' targetScope = 'instance' changeability = 'changeable'>
+                  <UML:AssociationEnd.participant>
+                    <UML:Class xmi.idref = '-115-26-71--114--22995a25:13ab7759bae:-8000:0000000000000A74'/>
+                  </UML:AssociationEnd.participant>
+                </UML:AssociationEnd>
+              </UML:Association.connection>
+            </UML:Association>
+          </UML:Namespace.ownedElement>
+        </UML:Package>
+        <UML:Package xmi.id = '-115-26-71--114--22995a25:13ab7759bae:-8000:0000000000000A6B'
+          name = 'super_b' isSpecification = 'false' isRoot = 'false' isLeaf = 'false'
+          isAbstract = 'false'>
+          <UML:Namespace.ownedElement>
+            <UML:Package xmi.id = '-115-26-71--114--22995a25:13ab7759bae:-8000:0000000000000A6E'
+              name = 'sub_a' isSpecification = 'false' isRoot = 'false' isLeaf = 'false'
+              isAbstract = 'false'>
+              <UML:Namespace.ownedElement>
+                <UML:Class xmi.id = '-115-26-71--114--22995a25:13ab7759bae:-8000:0000000000000A6F'
+                  name = 'In_b_a' visibility = 'public' isSpecification = 'false' isRoot = 'false'
+                  isLeaf = 'false' isAbstract = 'false' isActive = 'false'/>
+                <UML:AssociationClass xmi.id = '-115-26-71--114--22995a25:13ab7759bae:-8000:0000000000000A7C'
+                  name = 'In_b_a2In_a_b' visibility = 'public' isSpecification = 'false' isRoot = 'false'
+                  isLeaf = 'false' isAbstract = 'false' isActive = 'false'>
+                  <UML:Association.connection>
+                    <UML:AssociationEnd xmi.id = '-115-26-71--114--22995a25:13ab7759bae:-8000:0000000000000A7D'
+                      visibility = 'public' isSpecification = 'false' isNavigable = 'true' ordering = 'unordered'
+                      aggregation = 'none' targetScope = 'instance' changeability = 'changeable'>
+                      <UML:AssociationEnd.participant>
+                        <UML:Class xmi.idref = '-115-26-71--114--22995a25:13ab7759bae:-8000:0000000000000A6F'/>
+                      </UML:AssociationEnd.participant>
+                    </UML:AssociationEnd>
+                    <UML:AssociationEnd xmi.id = '-115-26-71--114--22995a25:13ab7759bae:-8000:0000000000000A7E'
+                      visibility = 'public' isSpecification = 'false' isNavigable = 'true' ordering = 'unordered'
+                      aggregation = 'none' targetScope = 'instance' changeability = 'changeable'>
+                      <UML:AssociationEnd.participant>
+                        <UML:Class xmi.idref = '-115-26-71--114--22995a25:13ab7759bae:-8000:0000000000000A73'/>
+                      </UML:AssociationEnd.participant>
+                    </UML:AssociationEnd>
+                  </UML:Association.connection>
+                </UML:AssociationClass>
+                <UML:Association xmi.id = '-115-26-71--114--22995a25:13ab7759bae:-8000:0000000000000A7F'
+                  name = 'In_b_a2In_b' isSpecification = 'false' isRoot = 'false' isLeaf = 'false'
+                  isAbstract = 'false'>
+                  <UML:Association.connection>
+                    <UML:AssociationEnd xmi.id = '-115-26-71--114--22995a25:13ab7759bae:-8000:0000000000000A80'
+                      visibility = 'public' isSpecification = 'false' isNavigable = 'true' ordering = 'unordered'
+                      aggregation = 'none' targetScope = 'instance' changeability = 'changeable'>
+                      <UML:AssociationEnd.participant>
+                        <UML:Class xmi.idref = '-115-26-71--114--22995a25:13ab7759bae:-8000:0000000000000A6F'/>
+                      </UML:AssociationEnd.participant>
+                    </UML:AssociationEnd>
+                    <UML:AssociationEnd xmi.id = '-115-26-71--114--22995a25:13ab7759bae:-8000:0000000000000A81'
+                      visibility = 'public' isSpecification = 'false' isNavigable = 'true' ordering = 'unordered'
+                      aggregation = 'none' targetScope = 'instance' changeability = 'changeable'>
+                      <UML:AssociationEnd.participant>
+                        <UML:Class xmi.idref = '-115-26-71--114--22995a25:13ab7759bae:-8000:0000000000000A70'/>
+                      </UML:AssociationEnd.participant>
+                    </UML:AssociationEnd>
+                  </UML:Association.connection>
+                </UML:Association>
+              </UML:Namespace.ownedElement>
+            </UML:Package>
+            <UML:Class xmi.id = '-115-26-71--114--22995a25:13ab7759bae:-8000:0000000000000A70'
+              name = 'In_b' visibility = 'public' isSpecification = 'false' isRoot = 'false'
+              isLeaf = 'false' isAbstract = 'false' isActive = 'false'/>
+          </UML:Namespace.ownedElement>
+        </UML:Package>
+        <UML:Association xmi.id = '-115-26-71--114--22995a25:13ab7759bae:-8000:0000000000000A76'
+          name = 'In2In_a' isSpecification = 'false' isRoot = 'false' isLeaf = 'false'
+          isAbstract = 'false'>
+          <UML:Association.connection>
+            <UML:AssociationEnd xmi.id = '-115-26-71--114--22995a25:13ab7759bae:-8000:0000000000000A77'
+              visibility = 'public' isSpecification = 'false' isNavigable = 'true' ordering = 'unordered'
+              aggregation = 'none' targetScope = 'instance' changeability = 'changeable'>
+              <UML:AssociationEnd.participant>
+                <UML:Class xmi.idref = '-115-26-71--114--22995a25:13ab7759bae:-8000:0000000000000A75'/>
+              </UML:AssociationEnd.participant>
+            </UML:AssociationEnd>
+            <UML:AssociationEnd xmi.id = '-115-26-71--114--22995a25:13ab7759bae:-8000:0000000000000A78'
+              visibility = 'public' isSpecification = 'false' isNavigable = 'true' ordering = 'unordered'
+              aggregation = 'none' targetScope = 'instance' changeability = 'changeable'>
+              <UML:AssociationEnd.participant>
+                <UML:Class xmi.idref = '-115-26-71--114--22995a25:13ab7759bae:-8000:0000000000000A74'/>
+              </UML:AssociationEnd.participant>
+            </UML:AssociationEnd>
+          </UML:Association.connection>
+        </UML:Association>
+        <UML:Class xmi.id = '-115-26-71--114--22995a25:13ab7759bae:-8000:0000000000000A75'
+          name = 'In' visibility = 'public' isSpecification = 'false' isRoot = 'false'
+          isLeaf = 'false' isAbstract = 'false' isActive = 'false'/>
+      </UML:Namespace.ownedElement>
+    </UML:Model>
+  </XMI.content>
+</XMI>
