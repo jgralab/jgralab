@@ -1,0 +1,126 @@
+<?xml version = '1.0' encoding = 'UTF-8' ?>
+<XMI xmi.version = '1.2' xmlns:UML = 'org.omg.xmi.namespace.UML' timestamp = 'Wed Oct 17 16:03:27 CEST 2012'>
+  <XMI.header>    <XMI.documentation>
+      <XMI.exporter>ArgoUML (using Netbeans XMI Writer version 1.0)</XMI.exporter>
+      <XMI.exporterVersion>0.34(6) revised on $Date: 2010-01-11 22:20:14 +0100 (Mon, 11 Jan 2010) $ </XMI.exporterVersion>
+    </XMI.documentation>
+    <XMI.metamodel xmi.name="UML" xmi.version="1.4"/></XMI.header>
+  <XMI.content>
+    <UML:Model xmi.id = '-115-26-71--35--602393e1:13a6eec91eb:-8000:000000000000096D'
+      name = 'test.VertexClass' isSpecification = 'false' isRoot = 'false' isLeaf = 'false'
+      isAbstract = 'false'>
+      <UML:Namespace.ownedElement>
+        <UML:Class xmi.id = '-115-26-71--35--602393e1:13a6eec91eb:-8000:000000000000096F'
+          name = 'MyGraphClass' visibility = 'public' isSpecification = 'false' isRoot = 'false'
+          isLeaf = 'false' isAbstract = 'false' isActive = 'false'>
+          <UML:ModelElement.stereotype>
+            <UML:Stereotype href = 'http://argouml.org/user-profiles/gruml-1.0.1.xmi#-64--88-111--125-2048530b:13717182953:-8000:0000000000000D6A'/>
+          </UML:ModelElement.stereotype>
+        </UML:Class>
+        <UML:Class xmi.id = '-115-26-71--35-47579129:13a6efdc5cd:-8000:0000000000000A6D'
+          name = 'ASimpleVertexClass' visibility = 'public' isSpecification = 'false'
+          isRoot = 'false' isLeaf = 'false' isAbstract = 'false' isActive = 'false'/>
+        <UML:Class xmi.id = '-115-26-71--35-47579129:13a6efdc5cd:-8000:0000000000000A6E'
+          name = 'AnAbstractVertexClassByAttr' visibility = 'public' isSpecification = 'false'
+          isRoot = 'false' isLeaf = 'false' isAbstract = 'true' isActive = 'false'/>
+        <UML:Class xmi.id = '-115-26-71--35-47579129:13a6efdc5cd:-8000:0000000000000A6F'
+          name = 'AnAbstractVertexClassByStereotype' visibility = 'public' isSpecification = 'false'
+          isRoot = 'false' isLeaf = 'false' isAbstract = 'false' isActive = 'false'>
+          <UML:ModelElement.stereotype>
+            <UML:Stereotype href = 'http://argouml.org/user-profiles/gruml-1.0.1.xmi#-64--88-111--125-2048530b:13717182953:-8000:0000000000000D6C'/>
+          </UML:ModelElement.stereotype>
+        </UML:Class>
+        <UML:Class xmi.id = '-115-26-71--35-47579129:13a6efdc5cd:-8000:0000000000000A70'
+          name = 'AnAbstractVertexClassByAttrAndStereotype' visibility = 'public'
+          isSpecification = 'false' isRoot = 'false' isLeaf = 'false' isAbstract = 'true'
+          isActive = 'false'>
+          <UML:ModelElement.stereotype>
+            <UML:Stereotype href = 'http://argouml.org/user-profiles/gruml-1.0.1.xmi#-64--88-111--125-2048530b:13717182953:-8000:0000000000000D6C'/>
+          </UML:ModelElement.stereotype>
+        </UML:Class>
+        <UML:Class xmi.id = '-115-26-71--35-47579129:13a6efdc5cd:-8000:0000000000000A71'
+          name = 'VertexClassWithAttribute' visibility = 'public' isSpecification = 'false'
+          isRoot = 'false' isLeaf = 'false' isAbstract = 'false' isActive = 'false'>
+          <UML:Classifier.feature>
+            <UML:Attribute xmi.id = '-115-26-71--35-47579129:13a6efdc5cd:-8000:0000000000000A72'
+              name = 'size' visibility = 'public' isSpecification = 'false' ownerScope = 'instance'
+              changeability = 'changeable' targetScope = 'instance'>
+              <UML:StructuralFeature.multiplicity>
+                <UML:Multiplicity xmi.id = '-115-26-71--35-47579129:13a6efdc5cd:-8000:0000000000000A73'>
+                  <UML:Multiplicity.range>
+                    <UML:MultiplicityRange xmi.id = '-115-26-71--35-47579129:13a6efdc5cd:-8000:0000000000000A74'
+                      lower = '1' upper = '1'/>
+                  </UML:Multiplicity.range>
+                </UML:Multiplicity>
+              </UML:StructuralFeature.multiplicity>
+              <UML:StructuralFeature.type>
+                <UML:DataType href = 'http://argouml.org/profiles/uml14/default-uml14.xmi#-84-17--56-5-43645a83:11466542d86:-8000:000000000000087E'/>
+              </UML:StructuralFeature.type>
+            </UML:Attribute>
+          </UML:Classifier.feature>
+        </UML:Class>
+        <UML:Class xmi.id = '-115-26-71--35-47579129:13a6efdc5cd:-8000:0000000000000A75'
+          name = 'Graph' visibility = 'public' isSpecification = 'false' isRoot = 'false'
+          isLeaf = 'false' isAbstract = 'false' isActive = 'false'/>
+        <UML:Class xmi.id = '-115-26-71--35-47579129:13a6efdc5cd:-8000:0000000000000A76'
+          name = 'DirectedGraph' visibility = 'public' isSpecification = 'false' isRoot = 'false'
+          isLeaf = 'false' isAbstract = 'false' isActive = 'false'>
+          <UML:GeneralizableElement.generalization>
+            <UML:Generalization xmi.idref = '-115-26-71--35-47579129:13a6efdc5cd:-8000:0000000000000A79'/>
+          </UML:GeneralizableElement.generalization>
+        </UML:Class>
+        <UML:Class xmi.id = '-115-26-71--35-47579129:13a6efdc5cd:-8000:0000000000000A77'
+          name = 'UndirectedGraph' visibility = 'public' isSpecification = 'false'
+          isRoot = 'false' isLeaf = 'false' isAbstract = 'false' isActive = 'false'>
+          <UML:GeneralizableElement.generalization>
+            <UML:Generalization xmi.idref = '-115-26-71--35-47579129:13a6efdc5cd:-8000:0000000000000A7A'/>
+          </UML:GeneralizableElement.generalization>
+        </UML:Class>
+        <UML:Class xmi.id = '-115-26-71--35-47579129:13a6efdc5cd:-8000:0000000000000A78'
+          name = 'TGraph' visibility = 'public' isSpecification = 'false' isRoot = 'false'
+          isLeaf = 'false' isAbstract = 'false' isActive = 'false'>
+          <UML:GeneralizableElement.generalization>
+            <UML:Generalization xmi.idref = '-115-26-71--35-47579129:13a6efdc5cd:-8000:0000000000000A7B'/>
+            <UML:Generalization xmi.idref = '-115-26-71--35-47579129:13a6efdc5cd:-8000:0000000000000A7C'/>
+          </UML:GeneralizableElement.generalization>
+        </UML:Class>
+        <UML:Generalization xmi.id = '-115-26-71--35-47579129:13a6efdc5cd:-8000:0000000000000A79'
+          isSpecification = 'false'>
+          <UML:Generalization.child>
+            <UML:Class xmi.idref = '-115-26-71--35-47579129:13a6efdc5cd:-8000:0000000000000A76'/>
+          </UML:Generalization.child>
+          <UML:Generalization.parent>
+            <UML:Class xmi.idref = '-115-26-71--35-47579129:13a6efdc5cd:-8000:0000000000000A75'/>
+          </UML:Generalization.parent>
+        </UML:Generalization>
+        <UML:Generalization xmi.id = '-115-26-71--35-47579129:13a6efdc5cd:-8000:0000000000000A7A'
+          isSpecification = 'false'>
+          <UML:Generalization.child>
+            <UML:Class xmi.idref = '-115-26-71--35-47579129:13a6efdc5cd:-8000:0000000000000A77'/>
+          </UML:Generalization.child>
+          <UML:Generalization.parent>
+            <UML:Class xmi.idref = '-115-26-71--35-47579129:13a6efdc5cd:-8000:0000000000000A75'/>
+          </UML:Generalization.parent>
+        </UML:Generalization>
+        <UML:Generalization xmi.id = '-115-26-71--35-47579129:13a6efdc5cd:-8000:0000000000000A7B'
+          isSpecification = 'false'>
+          <UML:Generalization.child>
+            <UML:Class xmi.idref = '-115-26-71--35-47579129:13a6efdc5cd:-8000:0000000000000A78'/>
+          </UML:Generalization.child>
+          <UML:Generalization.parent>
+            <UML:Class xmi.idref = '-115-26-71--35-47579129:13a6efdc5cd:-8000:0000000000000A76'/>
+          </UML:Generalization.parent>
+        </UML:Generalization>
+        <UML:Generalization xmi.id = '-115-26-71--35-47579129:13a6efdc5cd:-8000:0000000000000A7C'
+          isSpecification = 'false'>
+          <UML:Generalization.child>
+            <UML:Class xmi.idref = '-115-26-71--35-47579129:13a6efdc5cd:-8000:0000000000000A78'/>
+          </UML:Generalization.child>
+          <UML:Generalization.parent>
+            <UML:Class xmi.idref = '-115-26-71--35-47579129:13a6efdc5cd:-8000:0000000000000A77'/>
+          </UML:Generalization.parent>
+        </UML:Generalization>
+      </UML:Namespace.ownedElement>
+    </UML:Model>
+  </XMI.content>
+</XMI>
