@@ -19,6 +19,7 @@ import de.uni_koblenz.jgralab.graphvalidator.ConstraintViolation;
 import de.uni_koblenz.jgralab.graphvalidator.GraphValidator;
 import de.uni_koblenz.jgralab.grumlschema.GrumlSchema;
 import de.uni_koblenz.jgralab.grumlschema.SchemaGraph;
+import de.uni_koblenz.jgralab.grumlschema.domains.BooleanDomain;
 import de.uni_koblenz.jgralab.grumlschema.domains.Domain;
 import de.uni_koblenz.jgralab.grumlschema.domains.EnumDomain;
 import de.uni_koblenz.jgralab.grumlschema.domains.HasRecordDomainComponent;
@@ -26,6 +27,7 @@ import de.uni_koblenz.jgralab.grumlschema.domains.ListDomain;
 import de.uni_koblenz.jgralab.grumlschema.domains.MapDomain;
 import de.uni_koblenz.jgralab.grumlschema.domains.RecordDomain;
 import de.uni_koblenz.jgralab.grumlschema.domains.SetDomain;
+import de.uni_koblenz.jgralab.grumlschema.domains.StringDomain;
 import de.uni_koblenz.jgralab.grumlschema.structure.AggregationKind;
 import de.uni_koblenz.jgralab.grumlschema.structure.Attribute;
 import de.uni_koblenz.jgralab.grumlschema.structure.AttributedElementClass;
@@ -76,20 +78,18 @@ public class ArgoUml2Tg extends Xml2Tg {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		String folder = "../argoumltestschemas/";
 		try {
 			ArgoUml2Tg a2tg = new ArgoUml2Tg();
-			a2tg.process(folder + "testAttributes.xmi");
+			a2tg.process("./testit/testschemas/argoUML-xmi/testAttributesDefaultValues.xmi");
 			if (VALIDATE_XML_GRAPH) {
 				System.out.println("Validate XML graph...");
 				GraphValidator gv = new GraphValidator(a2tg.getXmlGraph());
 				gv.validate();
-				gv.createValidationReport(folder
-						+ "/output/xmlgraph.validation.html");
+				gv.createValidationReport("./testit/testdata/xmlgraph.validation.html");
 			}
-			a2tg.getXmlGraph().save(folder + "/output/xmlgraph.tg",
+			a2tg.getXmlGraph().save("./testit/testdata/xmlgraph.tg",
 					new ConsoleProgressFunction());
-			a2tg.convertToTg(folder + "/output/testschema.tg");
+			a2tg.convertToTg("./testit/testdata/testschema.tg");
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (XMLStreamException e) {
@@ -538,10 +538,33 @@ public class ArgoUml2Tg extends Xml2Tg {
 						+ ": " + dom.get_qualifiedName());
 				Attribute attr = sg.createAttribute();
 				attr.set_name(xu.getAttributeValue(at, "name"));
+				attr.set_defaultValue(getDefaultValue(at, dom));
 				attr.add_domain(dom);
 				aec.add_attribute(attr);
 			}
 		}
+	}
+
+	private String getDefaultValue(Element attribute, Domain domain) {
+		Element defaultValue = xu.firstChildWithName(attribute,
+				"UML:Attribute.initialValue");
+		if (defaultValue == null) {
+			return null;
+		}
+		Element defaultValueExpression = xu.firstChildWithName(defaultValue,
+				"UML:Expression");
+		assert defaultValueExpression != null;
+		String value = xu.getAttributeValue(defaultValueExpression, "body");
+		if (domain.isInstanceOf(BooleanDomain.VC)) {
+			assert value.equals("true") || value.equals("false");
+			// true/false => t/f
+			value = value.substring(0, 1);
+		} else if (domain.isInstanceOf(StringDomain.VC)) {
+			if (!value.startsWith("\"")) {
+				value = "\"" + value + "\"";
+			}
+		}
+		return value;
 	}
 
 	private void createRecordDomains() {
@@ -627,7 +650,7 @@ public class ArgoUml2Tg extends Xml2Tg {
 			assert el.get_name().equals("UML:Class")
 					&& hasStereotype(el, ST_RECORD)
 					&& !hasStereotype(el, ST_ABSTRACT)
-					&& !hasStereotype(el, ST_GRAPHCLASS);
+					&& !hasStereotype(el, ST_GRAPHCLASS) : dt;
 			Package pkg = getPackage(getPackageName(el));
 			String qn = getQualifiedName(el, true);
 			assert qn != null && !qn.isEmpty() : "The domain of attribute "
