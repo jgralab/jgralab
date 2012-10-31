@@ -555,13 +555,18 @@ public class ArgoUml2Tg extends Xml2Tg {
 				"UML:Expression");
 		assert defaultValueExpression != null;
 		String value = xu.getAttributeValue(defaultValueExpression, "body");
-		if (domain.isInstanceOf(BooleanDomain.VC)) {
-			assert value.equals("true") || value.equals("false");
-			// true/false => t/f
-			value = value.substring(0, 1);
-		} else if (domain.isInstanceOf(StringDomain.VC)) {
-			if (!value.startsWith("\"")) {
-				value = "\"" + value + "\"";
+		if (value != null) {
+			if (domain.isInstanceOf(BooleanDomain.VC)) {
+				assert value.equals("true") || value.equals("false");
+				// true/false => t/f
+				value = value.substring(0, 1);
+			} else if (domain.isInstanceOf(StringDomain.VC)) {
+				if (!value.startsWith("\"")) {
+					value = "\"" + value + "\"";
+				}
+			}
+			if (value.equals("null")) {
+				value = "n";
 			}
 		}
 		return value;
