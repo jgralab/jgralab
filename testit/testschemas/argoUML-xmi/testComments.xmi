@@ -1,5 +1,5 @@
 <?xml version = '1.0' encoding = 'UTF-8' ?>
-<XMI xmi.version = '1.2' xmlns:UML = 'org.omg.xmi.namespace.UML' timestamp = 'Wed Oct 31 17:05:39 CET 2012'>
+<XMI xmi.version = '1.2' xmlns:UML = 'org.omg.xmi.namespace.UML' timestamp = 'Sat Nov 03 13:43:39 CET 2012'>
   <XMI.header>    <XMI.documentation>
       <XMI.exporter>ArgoUML (using Netbeans XMI Writer version 1.0)</XMI.exporter>
       <XMI.exporterVersion>0.34(6) revised on $Date: 2010-01-11 22:20:14 +0100 (Mon, 11 Jan 2010) $ </XMI.exporterVersion>
@@ -23,10 +23,16 @@
         <UML:Package xmi.id = '-115-26-71--114--10cf7dfa:13ab78cb86a:-8000:0000000000000AD9'
           name = 'aPackage' isSpecification = 'false' isRoot = 'false' isLeaf = 'false'
           isAbstract = 'false'>
+          <UML:ModelElement.comment>
+            <UML:Comment xmi.idref = '127-0-0-1-4765830f:13ac6313cbe:-8000:0000000000000A7E'/>
+          </UML:ModelElement.comment>
           <UML:Namespace.ownedElement>
             <UML:Class xmi.id = '-115-26-71--45-4209f943:13a932f7114:-8000:0000000000000A75'
               name = 'MyRecord' visibility = 'public' isSpecification = 'false' isRoot = 'false'
               isLeaf = 'false' isAbstract = 'false' isActive = 'false'>
+              <UML:ModelElement.comment>
+                <UML:Comment xmi.idref = '127-0-0-1-4765830f:13ac6313cbe:-8000:0000000000000A80'/>
+              </UML:ModelElement.comment>
               <UML:ModelElement.stereotype>
                 <UML:Stereotype href = 'http://argouml.org/user-profiles/gruml-1.0.1.xmi#-64--88-111--125-2048530b:13717182953:-8000:0000000000000D6B'/>
               </UML:ModelElement.stereotype>
@@ -51,6 +57,9 @@
             <UML:Enumeration xmi.id = '-115-26-71--45-4209f943:13a932f7114:-8000:0000000000000A72'
               name = 'MyEnum' isSpecification = 'false' isRoot = 'false' isLeaf = 'false'
               isAbstract = 'false'>
+              <UML:ModelElement.comment>
+                <UML:Comment xmi.idref = '127-0-0-1-4765830f:13ac6313cbe:-8000:0000000000000A7F'/>
+              </UML:ModelElement.comment>
               <UML:Enumeration.literal>
                 <UML:EnumerationLiteral xmi.id = '-115-26-71--45-4209f943:13a932f7114:-8000:0000000000000A73'
                   name = 'ENUM_CONS_1' isSpecification = 'false'/>
@@ -60,10 +69,17 @@
             </UML:Enumeration>
             <UML:Class xmi.id = '-115-26-71--45-4209f943:13a932f7114:-8000:0000000000000A6A'
               name = 'VC' visibility = 'public' isSpecification = 'false' isRoot = 'false'
-              isLeaf = 'false' isAbstract = 'false' isActive = 'false'/>
+              isLeaf = 'false' isAbstract = 'false' isActive = 'false'>
+              <UML:ModelElement.comment>
+                <UML:Comment xmi.idref = '127-0-0-1-4765830f:13ac6313cbe:-8000:0000000000000A7C'/>
+              </UML:ModelElement.comment>
+            </UML:Class>
             <UML:AssociationClass xmi.id = '-115-26-71--45-4209f943:13a932f7114:-8000:0000000000000A6E'
               name = 'EC' visibility = 'public' isSpecification = 'false' isRoot = 'false'
               isLeaf = 'false' isAbstract = 'false' isActive = 'false'>
+              <UML:ModelElement.comment>
+                <UML:Comment xmi.idref = '127-0-0-1-4765830f:13ac6313cbe:-8000:0000000000000A7A'/>
+              </UML:ModelElement.comment>
               <UML:Association.connection>
                 <UML:AssociationEnd xmi.id = '-115-26-71--45-4209f943:13a932f7114:-8000:0000000000000A6F'
                   visibility = 'public' isSpecification = 'false' isNavigable = 'true' ordering = 'unordered'
@@ -84,6 +100,9 @@
             <UML:Association xmi.id = '-115-26-71--114--10cf7dfa:13ab78cb86a:-8000:0000000000000ADA'
               name = 'anAssociation' isSpecification = 'false' isRoot = 'false' isLeaf = 'false'
               isAbstract = 'false'>
+              <UML:ModelElement.comment>
+                <UML:Comment xmi.idref = '127-0-0-1-4765830f:13ac6313cbe:-8000:0000000000000A7D'/>
+              </UML:ModelElement.comment>
               <UML:Association.connection>
                 <UML:AssociationEnd xmi.id = '-115-26-71--114--10cf7dfa:13ab78cb86a:-8000:0000000000000ADB'
                   visibility = 'public' isSpecification = 'false' isNavigable = 'true' ordering = 'unordered'
@@ -109,6 +128,44 @@
             <UML:Class xmi.idref = '-115-26-71--35--602393e1:13a6eec91eb:-8000:000000000000096F'/>
           </UML:Comment.annotatedElement>
         </UML:Comment>
+        <UML:Comment xmi.id = '127-0-0-1-4765830f:13ac6313cbe:-8000:0000000000000A7A'
+          isSpecification = 'false' body = 'comment at EC'>
+          <UML:Comment.annotatedElement>
+            <UML:AssociationClass xmi.idref = '-115-26-71--45-4209f943:13a932f7114:-8000:0000000000000A6E'/>
+          </UML:Comment.annotatedElement>
+        </UML:Comment>
+        <UML:Comment xmi.id = '127-0-0-1-4765830f:13ac6313cbe:-8000:0000000000000A7C'
+          isSpecification = 'false' body = 'Comment at VC'>
+          <UML:Comment.annotatedElement>
+            <UML:Class xmi.idref = '-115-26-71--45-4209f943:13a932f7114:-8000:0000000000000A6A'/>
+          </UML:Comment.annotatedElement>
+        </UML:Comment>
+        <UML:Comment xmi.id = '127-0-0-1-4765830f:13ac6313cbe:-8000:0000000000000A7D'
+          isSpecification = 'false' body = 'Comment at anAssociation'>
+          <UML:Comment.annotatedElement>
+            <UML:Association xmi.idref = '-115-26-71--114--10cf7dfa:13ab78cb86a:-8000:0000000000000ADA'/>
+          </UML:Comment.annotatedElement>
+        </UML:Comment>
+        <UML:Comment xmi.id = '127-0-0-1-4765830f:13ac6313cbe:-8000:0000000000000A7E'
+          isSpecification = 'false' body = 'Comment at aPackage'>
+          <UML:Comment.annotatedElement>
+            <UML:Package xmi.idref = '-115-26-71--114--10cf7dfa:13ab78cb86a:-8000:0000000000000AD9'/>
+          </UML:Comment.annotatedElement>
+        </UML:Comment>
+        <UML:Comment xmi.id = '127-0-0-1-4765830f:13ac6313cbe:-8000:0000000000000A7F'
+          isSpecification = 'false' body = 'Comment at MyEnum'>
+          <UML:Comment.annotatedElement>
+            <UML:Enumeration xmi.idref = '-115-26-71--45-4209f943:13a932f7114:-8000:0000000000000A72'/>
+          </UML:Comment.annotatedElement>
+        </UML:Comment>
+        <UML:Comment xmi.id = '127-0-0-1-4765830f:13ac6313cbe:-8000:0000000000000A80'
+          isSpecification = 'false' body = 'Comment at MyRecord'>
+          <UML:Comment.annotatedElement>
+            <UML:Class xmi.idref = '-115-26-71--45-4209f943:13a932f7114:-8000:0000000000000A75'/>
+          </UML:Comment.annotatedElement>
+        </UML:Comment>
+        <UML:Comment xmi.id = '127-0-0-1-4765830f:13ac6313cbe:-8000:0000000000000A81'
+          isSpecification = 'false' body = 'Comment nowhere'/>
       </UML:Namespace.ownedElement>
     </UML:Model>
   </XMI.content>

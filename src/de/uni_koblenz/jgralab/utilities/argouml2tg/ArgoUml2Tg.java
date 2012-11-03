@@ -11,6 +11,7 @@ import javax.xml.stream.XMLStreamException;
 
 import org.pcollections.PVector;
 
+import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.ImplementationType;
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.Vertex;
@@ -31,6 +32,7 @@ import de.uni_koblenz.jgralab.grumlschema.domains.StringDomain;
 import de.uni_koblenz.jgralab.grumlschema.structure.AggregationKind;
 import de.uni_koblenz.jgralab.grumlschema.structure.Attribute;
 import de.uni_koblenz.jgralab.grumlschema.structure.AttributedElementClass;
+import de.uni_koblenz.jgralab.grumlschema.structure.Comment;
 import de.uni_koblenz.jgralab.grumlschema.structure.EdgeClass;
 import de.uni_koblenz.jgralab.grumlschema.structure.GraphClass;
 import de.uni_koblenz.jgralab.grumlschema.structure.IncidenceClass;
@@ -44,6 +46,7 @@ import de.uni_koblenz.jgralab.utilities.tg2schemagraph.SchemaGraph2Schema;
 import de.uni_koblenz.jgralab.utilities.xml2tg.Xml2Tg;
 import de.uni_koblenz.jgralab.utilities.xml2tg.XmlGraphUtilities;
 import de.uni_koblenz.jgralab.utilities.xml2tg.schema.Element;
+import de.uni_koblenz.jgralab.utilities.xml2tg.schema.HasChild;
 
 public class ArgoUml2Tg extends Xml2Tg {
 	private static boolean VALIDATE_XML_GRAPH = false;
@@ -158,8 +161,7 @@ public class ArgoUml2Tg extends Xml2Tg {
 		createVertexClasses();
 		createEdgeClasses();
 		createGeneralizations();
-
-		// TODO handle comments at packages!!
+		createComments();
 
 		try {
 			sg.save(new File(filename).getParent().toString() + File.separator
@@ -187,6 +189,48 @@ public class ArgoUml2Tg extends Xml2Tg {
 			} catch (GraphIOException e) {
 				e.printStackTrace();
 			}
+		}
+	}
+
+	private void createComments() {
+		for (Element el : xu.elementsWithName("UML:Comment")) {
+			if (!xu.hasAttribute(el, "body")) {
+				continue;
+			}
+			String commentContent = xu.getAttributeValue(el, "body");
+			Comment comment = sg.createComment();
+			comment.set_text(commentContent);
+
+			NamedElement annotatedNamedElement = null;
+			Element annotatedElement = xu.firstChildWithName(el,
+					"UML:Comment.annotatedElement");
+			if (annotatedElement == null) {
+				annotatedNamedElement = graphClass;
+			} else {
+				assert annotatedElement.getDegree(HasChild.EC,
+						EdgeDirection.OUT) == 1;
+				annotatedElement = (Element) annotatedElement
+						.getFirstHasChildIncidence(EdgeDirection.OUT).getThat();
+				assert annotatedElement.get_name().equals("UML:Class")
+						|| annotatedElement.get_name().equals(
+								"UML:AssociationClass")
+						|| annotatedElement.get_name()
+								.equals("UML:Association")
+						|| annotatedElement.get_name()
+								.equals("UML:Enumeration")
+						|| annotatedElement.get_name().equals("UML:Package");
+				annotatedElement = xu.getReferencedElement(annotatedElement,
+						"xmi.idref");
+				assert annotatedElement != null;
+
+				String qn = getQualifiedName(annotatedElement,
+						!annotatedElement.get_name().equals("UML:Package"));
+				annotatedNamedElement = (NamedElement) qnMap.get(qn);
+				if (annotatedNamedElement == null) {
+					annotatedNamedElement = graphClass;
+				}
+			}
+			sg.createAnnotates(comment, annotatedNamedElement);
 		}
 	}
 
@@ -283,7 +327,6 @@ public class ArgoUml2Tg extends Xml2Tg {
 				System.out.println("GraphClass "
 						+ graphClass.get_qualifiedName());
 				createAttributes(el, graphClass);
-				createComments(el, graphClass);
 			}
 		}
 	}
@@ -419,7 +462,6 @@ public class ArgoUml2Tg extends Xml2Tg {
 				+ qn;
 		qnMap.put(qn, ec);
 		xmiIdMap.put(xu.getAttributeValue(el, "xmi.id"), ec);
-		createComments(el, ec);
 	}
 
 	private IncidenceClass createIncidenceClass(Element associationEnd) {
@@ -525,7 +567,6 @@ public class ArgoUml2Tg extends Xml2Tg {
 				qnMap.put(qn, vc);
 				xmiIdMap.put(xu.getAttributeValue(el, "xmi.id"), vc);
 				createAttributes(el, vc);
-				createComments(el, vc);
 			}
 		}
 	}
@@ -614,7 +655,6 @@ public class ArgoUml2Tg extends Xml2Tg {
 						c.set_name(xu.getAttributeValue(at, "name"));
 					}
 				}
-				createComments(el, rd);
 			}
 		}
 	}
@@ -790,13 +830,7 @@ public class ArgoUml2Tg extends Xml2Tg {
 				constants = constants.plus(cn);
 			}
 			ed.set_enumConstants(constants);
-			createComments(el, ed);
 		}
-	}
-
-	private void createComments(Element el, NamedElement namedElement) {
-		// TODO Auto-generated method stub
-
 	}
 
 	private String getQualifiedName(Element el, boolean upperCaseFirstLetter) {
