@@ -162,7 +162,7 @@ public class ArgoUml2Tg extends Xml2Tg {
 		createVertexClasses();
 		createEdgeClasses();
 		createGeneralizations();
-		createComments();
+		createCommentsAndConstraints();
 
 		try {
 			sg.save(new File(filename).getParent().toString() + File.separator
@@ -193,7 +193,7 @@ public class ArgoUml2Tg extends Xml2Tg {
 		}
 	}
 
-	private void createComments() {
+	private void createCommentsAndConstraints() {
 		for (Element el : xu.elementsWithName("UML:Comment")) {
 			if (!xu.hasAttribute(el, "body")) {
 				continue;
@@ -384,7 +384,7 @@ public class ArgoUml2Tg extends Xml2Tg {
 				ip = sup.get_to();
 				sg.createSubsets(ic, ip);
 			} else {
-				throw new RuntimeException("Unexpected generalization bewteen "
+				throw new RuntimeException("Unexpected generalization between "
 						+ pv.getSchemaClass().getName() + " vertices.");
 			}
 
