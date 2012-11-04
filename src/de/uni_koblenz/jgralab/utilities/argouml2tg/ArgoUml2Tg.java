@@ -33,6 +33,7 @@ import de.uni_koblenz.jgralab.grumlschema.structure.AggregationKind;
 import de.uni_koblenz.jgralab.grumlschema.structure.Attribute;
 import de.uni_koblenz.jgralab.grumlschema.structure.AttributedElementClass;
 import de.uni_koblenz.jgralab.grumlschema.structure.Comment;
+import de.uni_koblenz.jgralab.grumlschema.structure.Constraint;
 import de.uni_koblenz.jgralab.grumlschema.structure.EdgeClass;
 import de.uni_koblenz.jgralab.grumlschema.structure.GraphClass;
 import de.uni_koblenz.jgralab.grumlschema.structure.IncidenceClass;
@@ -84,7 +85,7 @@ public class ArgoUml2Tg extends Xml2Tg {
 	public static void main(String[] args) {
 		try {
 			ArgoUml2Tg a2tg = new ArgoUml2Tg();
-			a2tg.process("./testit/testschemas/argoUML-xmi/testComments.xmi");
+			a2tg.process("./testit/testschemas/argoUML-xmi/testConstraints.xmi");
 			if (VALIDATE_XML_GRAPH) {
 				System.out.println("Validate XML graph...");
 				GraphValidator gv = new GraphValidator(a2tg.getXmlGraph());
@@ -197,10 +198,6 @@ public class ArgoUml2Tg extends Xml2Tg {
 			if (!xu.hasAttribute(el, "body")) {
 				continue;
 			}
-			String commentContent = xu.getAttributeValue(el, "body");
-			Comment comment = sg.createComment();
-			comment.set_text(commentContent);
-
 			NamedElement annotatedNamedElement = null;
 			Element annotatedElement = xu.firstChildWithName(el,
 					"UML:Comment.annotatedElement");
@@ -230,8 +227,97 @@ public class ArgoUml2Tg extends Xml2Tg {
 					annotatedNamedElement = graphClass;
 				}
 			}
-			sg.createAnnotates(comment, annotatedNamedElement);
+
+			String commentContent = xu.getAttributeValue(el, "body");
+			if (!annotatedNamedElement.isInstanceOf(AttributedElementClass.VC)
+					|| !addGreqlConstraint(
+							(AttributedElementClass) annotatedNamedElement,
+							commentContent)) {
+				Comment comment = sg.createComment();
+				comment.set_text(commentContent);
+				sg.createAnnotates(comment, annotatedNamedElement);
+			}
 		}
+	}
+
+	/**
+	 * Adds a Greql constraint to a {@link AttributedElementClass} object.
+	 * 
+	 * @param constrainedClass
+	 *            {@link AttributedElementClass}, which should be constraint.
+	 * @param text
+	 *            Constraint as String.
+	 */
+	private boolean addGreqlConstraint(AttributedElementClass constrainedClass,
+			String text) {
+		text = text.trim();
+		if (!(text.startsWith("{") && text.endsWith("}"))) {
+			return false;
+		}
+		text = text.substring(1, text.length() - 1).trim();
+
+		assert constrainedClass != null;
+		Constraint constraint = sg.createConstraint();
+
+		// the "text" must contain 2 or 3 space-separated quoted ("...") strings
+		int stringCount = 0;
+		char[] ch = text.toCharArray();
+		boolean inString = false;
+		boolean escape = false;
+		int beginIndex = 0;
+		for (int i = 0; i < ch.length; ++i) {
+			char c = ch[i];
+			if (inString) {
+				if (c == '\\') {
+					escape = true;
+				} else if (!escape && (c == '"')) {
+					++stringCount;
+					String constraintText = text.substring(beginIndex + 1, i)
+							.trim().replaceAll("\\\\(.)", "$1");
+					if (constraintText.isEmpty()) {
+						constraintText = null;
+					}
+					switch (stringCount) {
+					case 1:
+						constraint.set_message(constraintText);
+						break;
+					case 2:
+						constraint.set_predicateQuery(constraintText);
+						break;
+					case 3:
+						constraint.set_offendingElementsQuery(constraintText);
+						break;
+					default:
+						// this was no constraint
+						constraint.delete();
+						return false;
+					}
+					inString = false;
+				} else if (escape && (c == '"')) {
+					escape = false;
+				}
+			} else {
+				if (Character.isWhitespace(c)) {
+					// ignore
+				} else {
+					if (c == '"') {
+						inString = true;
+						beginIndex = i;
+					} else {
+						// this was no constraint
+						constraint.delete();
+						return false;
+					}
+				}
+			}
+		}
+		if (inString || escape || (stringCount < 2) || (stringCount > 3)) {
+			// this was no constraint
+			constraint.delete();
+			return false;
+		}
+		sg.createHasConstraint(constrainedClass, constraint);
+		return true;
 	}
 
 	private void createGeneralizations() {
