@@ -39,7 +39,9 @@ import de.uni_koblenz.jgralab.grumlschema.structure.GraphClass;
 import de.uni_koblenz.jgralab.grumlschema.structure.IncidenceClass;
 import de.uni_koblenz.jgralab.grumlschema.structure.NamedElement;
 import de.uni_koblenz.jgralab.grumlschema.structure.Package;
+import de.uni_koblenz.jgralab.grumlschema.structure.Redefines;
 import de.uni_koblenz.jgralab.grumlschema.structure.Schema;
+import de.uni_koblenz.jgralab.grumlschema.structure.Subsets;
 import de.uni_koblenz.jgralab.grumlschema.structure.VertexClass;
 import de.uni_koblenz.jgralab.impl.ConsoleProgressFunction;
 import de.uni_koblenz.jgralab.utilities.rsa2tg.ProcessingException;
@@ -85,7 +87,7 @@ public class ArgoUml2Tg extends Xml2Tg {
 	public static void main(String[] args) {
 		try {
 			ArgoUml2Tg a2tg = new ArgoUml2Tg();
-			a2tg.process("./testit/testschemas/argoUML-xmi/testConstraints.xmi");
+			a2tg.process("./testit/testschemas/argoUML-xmi/testRoleNames.xmi");
 			if (VALIDATE_XML_GRAPH) {
 				System.out.println("Validate XML graph...");
 				GraphValidator gv = new GraphValidator(a2tg.getXmlGraph());
@@ -109,7 +111,7 @@ public class ArgoUml2Tg extends Xml2Tg {
 	}
 
 	public ArgoUml2Tg() {
-		setIgnoreCharacters(true);
+		setIgnoreCharacters(false);
 		addIgnoredElements("XMI.header");
 		addIdAttributes("*/xmi.id");
 		addIdRefAttributes("*/xmi.idref");
@@ -162,6 +164,7 @@ public class ArgoUml2Tg extends Xml2Tg {
 		createVertexClasses();
 		createEdgeClasses();
 		createGeneralizations();
+		createRedefines();
 		createCommentsAndConstraints();
 
 		try {
@@ -186,6 +189,10 @@ public class ArgoUml2Tg extends Xml2Tg {
 			try {
 				SchemaGraph2Schema s2s = new SchemaGraph2Schema();
 				de.uni_koblenz.jgralab.schema.Schema s = s2s.convert(sg);
+				de.uni_koblenz.jgralab.schema.EdgeClass ec = s.getGraphClass()
+						.getEdgeClass("Child1");
+				// TODO delete
+				System.out.println(ec.getFrom().getRedefinedRoles());
 				s.save(filename);
 			} catch (GraphIOException e) {
 				e.printStackTrace();
@@ -377,9 +384,11 @@ public class ArgoUml2Tg extends Xml2Tg {
 				EdgeClass sub = (EdgeClass) cv;
 				EdgeClass sup = (EdgeClass) pv;
 				sg.createSpecializesEdgeClass(sub, sup);
+
 				IncidenceClass ic = sub.get_from();
 				IncidenceClass ip = sup.get_from();
 				sg.createSubsets(ic, ip);
+
 				ic = sub.get_to();
 				ip = sup.get_to();
 				sg.createSubsets(ic, ip);
@@ -389,6 +398,97 @@ public class ArgoUml2Tg extends Xml2Tg {
 			}
 
 		}
+	}
+
+	private void createRedefines() {
+		for (Element taggedValue : xu.elementsWithName("UML:TaggedValue")) {
+			Element taggedValueType = xu.firstChildWithName(taggedValue,
+					"UML:TaggedValue.type");
+			taggedValueType = xu.firstChildWithName(taggedValueType,
+					"UML:TagDefinition");
+			String href = xu.getAttributeValue(taggedValueType, "href");
+			if (!href.endsWith("#" + TV_REDEFINES)) {
+				continue;
+			}
+			Element taggedValueDataValue = xu.firstChildWithName(taggedValue,
+					"UML:TaggedValue.dataValue");
+			String[] redefinedRoleNames = xu.getText(taggedValueDataValue)
+					.split("\\s*,\\s*");
+
+			Element associationEnd = taggedValue.get_parent().get_parent();
+			if (!associationEnd.get_name().equals("UML:AssociationEnd")) {
+				throw new RuntimeException(
+						"Redefined role names may only be defined at association ends.");
+			}
+			Element association = associationEnd.get_parent().get_parent();
+			EdgeClass subEdgeClass = (EdgeClass) xmiIdMap.get(xu
+					.getAttributeValue(association, "xmi.id"));
+			assert subEdgeClass != null;
+
+			boolean isFromRedefined = isFromRoleRedefined(associationEnd,
+					subEdgeClass);
+
+			for (String role : redefinedRoleNames) {
+				// A role String must not be empty.
+				if (role.isEmpty()) {
+					throw new RuntimeException(
+							"Empty role name in redefines constraint");
+				}
+				IncidenceClass redefinedIncidenceClass = findRedefinedRole(
+						subEdgeClass, role, isFromRedefined);
+				if (redefinedIncidenceClass == null) {
+					throw new RuntimeException("No incidence with role name \""
+							+ role + "\" could be found.");
+				}
+				IncidenceClass redefiningIncidenceClass = isFromRedefined ? subEdgeClass
+						.get_from() : subEdgeClass.get_to();
+				sg.createRedefines(redefiningIncidenceClass,
+						redefinedIncidenceClass);
+
+				Subsets subsets = redefiningIncidenceClass
+						.getFirstSubsetsIncidence(EdgeDirection.OUT);
+				while (subsets != null) {
+					Subsets next = subsets
+							.getNextSubsetsIncidence(EdgeDirection.OUT);
+					if (!subsets.isInstanceOf(Redefines.EC)
+							&& subsets.getThat() == redefinedIncidenceClass) {
+						subsets.delete();
+					}
+					subsets = next;
+				}
+				// TODO delete
+				System.out.println(redefinedIncidenceClass.get_roleName());
+			}
+		}
+	}
+
+	private IncidenceClass findRedefinedRole(EdgeClass subEdgeClass,
+			String role, boolean isFromRedefined) {
+		IncidenceClass result = null;
+		for (EdgeClass superClass : subEdgeClass.get_superclass()) {
+			IncidenceClass ic = isFromRedefined ? superClass.get_from()
+					: superClass.get_to();
+			if (ic.get_roleName().equals(role)) {
+				assert result == null;
+				result = ic;
+			} else {
+				IncidenceClass res = findRedefinedRole(superClass, role,
+						isFromRedefined);
+				assert res == null || (res != null && result == null);
+			}
+		}
+		return result;
+	}
+
+	private boolean isFromRoleRedefined(Element assocEnd, EdgeClass sub) {
+		Element el = xu.firstChildWithName(assocEnd,
+				"UML:AssociationEnd.participant");
+		el = xu.firstChildWithName(el, "UML:Class");
+		assert el != null;
+		String incidentVC = xu.getAttributeValue(el, "xmi.idref");
+		VertexClass vc = (VertexClass) xmiIdMap.get(incidentVC);
+		assert vc != null;
+		return sub.get_from().get_targetclass() == vc;
 	}
 
 	private void createGraphClass() {

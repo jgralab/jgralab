@@ -46,11 +46,11 @@ import de.uni_koblenz.jgralab.schema.exception.SchemaException;
 public class EdgeClassImpl extends GraphElementClassImpl<EdgeClass, Edge>
 		implements EdgeClass {
 
-	private IncidenceClass from, to;
+	private final IncidenceClass from, to;
 
 	/**
 	 * builds a new edge class
-	 *
+	 * 
 	 * @param qn
 	 *            the unique identifier of the edge class in the schema
 	 * @param from
@@ -88,9 +88,10 @@ public class EdgeClassImpl extends GraphElementClassImpl<EdgeClass, Edge>
 
 		if (pkg.isDefaultPackage() && simpleName.equals(DEFAULTEDGECLASS_NAME)) {
 			// the default EC is just created
-		} else if (pkg.isDefaultPackage() && simpleName.equals(TEMPORARYEDGECLASS_NAME)){
+		} else if (pkg.isDefaultPackage()
+				&& simpleName.equals(TEMPORARYEDGECLASS_NAME)) {
 			// the temporary EC is just created
-		}else {
+		} else {
 			if ((from == graphClass.getDefaultVertexClass())
 					|| (to == graphClass.getDefaultVertexClass())) {
 				throw new SchemaException(
@@ -144,7 +145,7 @@ public class EdgeClassImpl extends GraphElementClassImpl<EdgeClass, Edge>
 	 * checks if the incidence classes own and inherited are compatible, i.e. if
 	 * the upper multiplicity of own is lower or equal than the one of inherited
 	 * and so on
-	 *
+	 * 
 	 * @param special
 	 * @param general
 	 * @throws SchemaException
@@ -163,7 +164,12 @@ public class EdgeClassImpl extends GraphElementClassImpl<EdgeClass, Edge>
 							+ special.getEdgeClass().getQualifiedName()
 							+ " which wants to specialize "
 							+ general.getEdgeClass().getQualifiedName()
-							+ " at end " + dir);
+							+ " at end "
+							+ dir
+							+ ". Connected VertexClass of special IncidenceClass ist "
+							+ special.getVertexClass().getQualifiedName()
+							+ " and of general VertexClass is "
+							+ general.getVertexClass().getQualifiedName() + ".");
 		}
 		// Multiplicities
 		if (special.getMax() > general.getMax()) {
