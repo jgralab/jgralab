@@ -319,7 +319,7 @@ public class SchemaGraph2Schema {
 
 		// call recursively all subclasses of EdgeClass
 		for (SpecializesEdgeClass sec : gEdgeClass
-				.getSpecializesEdgeClassIncidences(EdgeDirection.OUT)) {
+				.getSpecializesEdgeClassIncidences(EdgeDirection.IN)) {
 			assert (sec.getThat() != null) : "FIXME! No superClass available";
 			createSubsetsAndRedefinesOfOneEdgeClass((EdgeClass) sec.getThat());
 		}
@@ -520,7 +520,7 @@ public class SchemaGraph2Schema {
 	 *            Domain, which is converted into a Domain of the Schema.
 	 * @return Created Domain.
 	 */
-	private HashSet<String> rdNames = new HashSet<String>();
+	private final HashSet<String> rdNames = new HashSet<String>();
 
 	private de.uni_koblenz.jgralab.schema.Domain createDomain(Domain gDomain) {
 
