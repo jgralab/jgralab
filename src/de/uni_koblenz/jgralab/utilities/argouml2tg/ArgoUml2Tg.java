@@ -5,12 +5,18 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.xml.stream.XMLStreamException;
 
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.Option;
 import org.pcollections.PVector;
 
+import de.uni_koblenz.ist.utilities.option_handler.OptionHandler;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.ImplementationType;
 import de.uni_koblenz.jgralab.JGraLab;
@@ -30,31 +36,89 @@ import de.uni_koblenz.jgralab.grumlschema.domains.RecordDomain;
 import de.uni_koblenz.jgralab.grumlschema.domains.SetDomain;
 import de.uni_koblenz.jgralab.grumlschema.domains.StringDomain;
 import de.uni_koblenz.jgralab.grumlschema.structure.AggregationKind;
+import de.uni_koblenz.jgralab.grumlschema.structure.Annotates;
 import de.uni_koblenz.jgralab.grumlschema.structure.Attribute;
 import de.uni_koblenz.jgralab.grumlschema.structure.AttributedElementClass;
 import de.uni_koblenz.jgralab.grumlschema.structure.Comment;
 import de.uni_koblenz.jgralab.grumlschema.structure.Constraint;
 import de.uni_koblenz.jgralab.grumlschema.structure.EdgeClass;
 import de.uni_koblenz.jgralab.grumlschema.structure.GraphClass;
+import de.uni_koblenz.jgralab.grumlschema.structure.GraphElementClass;
 import de.uni_koblenz.jgralab.grumlschema.structure.IncidenceClass;
 import de.uni_koblenz.jgralab.grumlschema.structure.NamedElement;
 import de.uni_koblenz.jgralab.grumlschema.structure.Package;
-import de.uni_koblenz.jgralab.grumlschema.structure.Redefines;
 import de.uni_koblenz.jgralab.grumlschema.structure.Schema;
-import de.uni_koblenz.jgralab.grumlschema.structure.Subsets;
 import de.uni_koblenz.jgralab.grumlschema.structure.VertexClass;
-import de.uni_koblenz.jgralab.impl.ConsoleProgressFunction;
 import de.uni_koblenz.jgralab.utilities.rsa2tg.ProcessingException;
-import de.uni_koblenz.jgralab.utilities.tg2schemagraph.SchemaGraph2Schema;
+import de.uni_koblenz.jgralab.utilities.rsa2tg.Rsa2Tg;
+import de.uni_koblenz.jgralab.utilities.rsa2tg.SchemaGraph2Tg;
+import de.uni_koblenz.jgralab.utilities.tg2dot.Tg2Dot;
 import de.uni_koblenz.jgralab.utilities.xml2tg.Xml2Tg;
 import de.uni_koblenz.jgralab.utilities.xml2tg.XmlGraphUtilities;
 import de.uni_koblenz.jgralab.utilities.xml2tg.schema.Element;
 import de.uni_koblenz.jgralab.utilities.xml2tg.schema.HasChild;
 
 public class ArgoUml2Tg extends Xml2Tg {
-	private static boolean VALIDATE_XML_GRAPH = false;
-	private static boolean USE_UML_NAVIGABILITY_AS_EDGE_DIRECTION = true;
-	private static boolean USE_FROM_ROLE = true;
+
+	private final Logger logger = JGraLab.getLogger(ArgoUml2Tg.class);
+
+	private static final String OPTION_FILENAME_VALIDATION = "r";
+	private static final String OPTION_FILENAME_SCHEMA_GRAPH = "s";
+	private static final String OPTION_FILENAME_DOT = "e";
+	private static final String OPTION_FILENAME_SCHEMA = "o";
+	private static final String OPTION_USE_NAVIGABILITY = "n";
+	private static final String OPTION_REMOVE_UNUSED_DOMAINS = "u";
+	private static final String OPTION_KEEP_EMPTY_PACKAGES = "k";
+	private static final String OPTION_USE_ROLE_NAME = "f";
+
+	/**
+	 * When creating {@link EdgeClass} names, also use the role name of the
+	 * 'from' end.
+	 */
+	private boolean useFromRole;
+
+	/**
+	 * After processing is complete, remove {@link Domain} vertices which are
+	 * not used by an attribute or by a record domain component.
+	 */
+	private boolean removeUnusedDomains;
+
+	/**
+	 * After processing is complete, also keep {@link Package} vertices which
+	 * contain no {@link Domains} and no {@link GraphElementClass}es.
+	 */
+	private boolean keepEmptyPackages;
+
+	/**
+	 * When determining the edge direction, also take navigability of
+	 * associations into account (rather than the drawing direction only).
+	 */
+	private boolean useNavigability;
+
+	/**
+	 * Suppresses the direct output into a dot- and tg-file.
+	 */
+	private boolean suppressOutput;
+
+	/**
+	 * Filename for the {@link Schema}.
+	 */
+	private String filenameSchema;
+
+	/**
+	 * Filename for the {@link SchemaGraph};
+	 */
+	private String filenameSchemaGraph;
+
+	/**
+	 * Filename for dot.
+	 */
+	private String filenameDot;
+
+	/**
+	 * Filename for validation
+	 */
+	private String filenameValidation;
 
 	private static final String ST_GRAPHCLASS = "-64--88-111--125-2048530b:13717182953:-8000:0000000000000D6A";
 	private static final String ST_RECORD = "-64--88-111--125-2048530b:13717182953:-8000:0000000000000D6B";
@@ -68,8 +132,6 @@ public class ArgoUml2Tg extends Xml2Tg {
 	private static final String DT_STRING = "-115-26-95--20--17a78cb8:13718617229:-8000:00000000000019DC";
 	private static final String DT_UML_STRING = "-84-17--56-5-43645a83:11466542d86:-8000:000000000000087E";
 
-	private static final String TV_REDEFINES = "127-0-0-1-219dc0bd:1387ff70ce2:-8000:0000000000000E2D";
-
 	private XmlGraphUtilities xu;
 	private HashMap<String, Vertex> qnMap;
 	private HashMap<String, Package> packageMap;
@@ -82,32 +144,193 @@ public class ArgoUml2Tg extends Xml2Tg {
 	private GraphClass graphClass;
 
 	/**
+	 * Processes an XMI-file to a TG-file as schema or a schema in a grUML
+	 * graph. For all command line options see
+	 * {@link ArgoUML2Tg#processCommandLineOptions(String[])}.
+	 * 
 	 * @param args
+	 *            {@link String} array of command line options.
+	 * @throws IOException
 	 */
-	public static void main(String[] args) {
-		try {
-			ArgoUml2Tg a2tg = new ArgoUml2Tg();
-			a2tg.process("./testit/testschemas/argoUML-xmi/testRoleNames.xmi");
-			if (VALIDATE_XML_GRAPH) {
-				System.out.println("Validate XML graph...");
-				GraphValidator gv = new GraphValidator(a2tg.getXmlGraph());
-				gv.validate();
-				gv.createValidationReport("./testit/testdata/xmlgraph.validation.html");
-			}
-			a2tg.getXmlGraph().save("./testit/testdata/xmlgraph.tg",
-					new ConsoleProgressFunction());
-			a2tg.convertToTg("./testit/testdata/testschema.tg");
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (XMLStreamException e) {
-			e.printStackTrace();
-		} catch (GraphIOException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} finally {
-			System.out.println("Fini.");
+	public static void main(String[] args) throws IOException {
+
+		System.out.println("ArgoUML to TG");
+		System.out.println("=========");
+		JGraLab.setLogLevel(Level.OFF);
+
+		// Retrieving all command line options
+		CommandLine cli = processCommandLineOptions(args);
+
+		assert cli != null : "No CommandLine object has been generated!";
+		// All XMI input files
+		File input = new File(cli.getOptionValue('i'));
+
+		ArgoUml2Tg a2tg = new ArgoUml2Tg();
+
+		a2tg.setUseFromRole(cli.hasOption(OPTION_USE_ROLE_NAME));
+		a2tg.setRemoveUnusedDomains(cli.hasOption(OPTION_REMOVE_UNUSED_DOMAINS));
+		a2tg.setKeepEmptyPackages(cli.hasOption(OPTION_KEEP_EMPTY_PACKAGES));
+		a2tg.setUseNavigability(cli.hasOption(OPTION_USE_NAVIGABILITY));
+
+		// apply options
+		a2tg.setFilenameSchema(cli.getOptionValue(OPTION_FILENAME_SCHEMA));
+		a2tg.setFilenameSchemaGraph(cli
+				.getOptionValue(OPTION_FILENAME_SCHEMA_GRAPH));
+		a2tg.setFilenameDot(cli.getOptionValue(OPTION_FILENAME_DOT));
+		a2tg.setFilenameValidation(cli
+				.getOptionValue(OPTION_FILENAME_VALIDATION));
+
+		// If no output option is selected, Rsa2Tg will write at least the
+		// schema file.
+		boolean noOutputOptionSelected = !cli.hasOption(OPTION_FILENAME_SCHEMA)
+				&& !cli.hasOption(OPTION_FILENAME_SCHEMA_GRAPH)
+				&& !cli.hasOption(OPTION_FILENAME_DOT)
+				&& !cli.hasOption(OPTION_FILENAME_VALIDATION);
+		if (noOutputOptionSelected) {
+			System.out.println("No output option has been selected. "
+					+ "A TG-file for the Schema will be written.");
+
+			// filename have to be set
+			a2tg.setFilenameSchema(createFilename(input));
 		}
+
+		try {
+			a2tg.process(input.getPath());
+		} catch (Exception e) {
+			System.err.println("An Exception occured while processing " + input
+					+ ".");
+			System.err.println(e.getMessage());
+			e.printStackTrace();
+		}
+		a2tg.convertToTg(a2tg.getFilenameSchema());
+
+		System.out.println("Fini.");
+	}
+
+	/**
+	 * Processes all command line parameters and returns a {@link CommandLine}
+	 * object, which holds all values included in the given {@link String}
+	 * array.
+	 * 
+	 * @param args
+	 *            {@link CommandLine} parameters.
+	 * @return {@link CommandLine} object, which holds all necessary values.
+	 */
+	public static CommandLine processCommandLineOptions(String[] args) {
+
+		// Creates a OptionHandler.
+		String toolString = "java " + ArgoUml2Tg.class.getName();
+		String versionString = JGraLab.getInfo(false);
+
+		OptionHandler oh = new OptionHandler(toolString, versionString);
+
+		// Several Options are declared.
+		Option validate = new Option(
+				OPTION_FILENAME_VALIDATION,
+				"report",
+				true,
+				"(optional): writes a validation report to the given filename. "
+						+ "Free naming, but should look like this: '<filename>.html'");
+		validate.setRequired(false);
+		validate.setArgName("filename");
+		oh.addOption(validate);
+
+		Option export = new Option(
+				OPTION_FILENAME_DOT,
+				"export",
+				true,
+				"(optional): writes a GraphViz DOT file to the given filename. "
+						+ "Free naming, but should look like this: '<filename>.dot'");
+		export.setRequired(false);
+		export.setArgName("filename");
+		oh.addOption(export);
+
+		Option schemaGraph = new Option(
+				OPTION_FILENAME_SCHEMA_GRAPH,
+				"schemaGraph",
+				true,
+				"(optional): writes a TG-file of the Schema as graph instance to the given filename. "
+						+ "Free naming, but should look like this:  '<filename>.tg'");
+		schemaGraph.setRequired(false);
+		schemaGraph.setArgName("filename");
+		oh.addOption(schemaGraph);
+
+		Option input = new Option("i", "input", true,
+				"(required): UML 1.2-XMI exchange model file of the Schema.");
+		input.setRequired(true);
+		input.setArgName("filename");
+		oh.addOption(input);
+
+		Option output = new Option(
+				OPTION_FILENAME_SCHEMA,
+				"output",
+				true,
+				"(optional): writes a TG-file of the Schema to the given filename. "
+						+ "Free naming, but should look like this: '<filename>.argouml.tg.'");
+		output.setRequired(false);
+		output.setArgName("filename");
+		oh.addOption(output);
+
+		Option fromRole = new Option(
+				OPTION_USE_ROLE_NAME,
+				"useFromRole",
+				false,
+				"(optional): if this flag is set, the name of from roles will be used for creating undefined EdgeClass names.");
+		fromRole.setRequired(false);
+		oh.addOption(fromRole);
+
+		Option unusedDomains = new Option(OPTION_REMOVE_UNUSED_DOMAINS,
+				"removeUnusedDomains", false,
+				"(optional): if this flag is set, all unused domains be deleted.");
+		unusedDomains.setRequired(false);
+		oh.addOption(unusedDomains);
+
+		Option emptyPackages = new Option(OPTION_KEEP_EMPTY_PACKAGES,
+				"keepEmptyPackages", false,
+				"(optional): if this flag is set, empty packages will be retained.");
+		unusedDomains.setRequired(false);
+		oh.addOption(emptyPackages);
+
+		Option navigability = new Option(
+				OPTION_USE_NAVIGABILITY,
+				"useNavigability",
+				false,
+				"(optional): if this flag is set, navigability information will be interpreted as reading direction.");
+		navigability.setRequired(false);
+		oh.addOption(navigability);
+
+		// Parses the given command line parameters with all created Option.
+		return oh.parse(args);
+	}
+
+	/**
+	 * Creates a file path similar to the of <code>inputFile</code>, but with
+	 * the file extension '.rsa.tg'.
+	 * 
+	 * @param file
+	 *            Is a File object, which is path used to created the new Path.
+	 * @return New generated Path with the extension '.rsa.tg'.
+	 */
+	public static String createFilename(File file) {
+		StringBuilder filenameBuilder = new StringBuilder();
+
+		// The path of the input XMI-file is used.
+		filenameBuilder.append(file.getParent());
+		filenameBuilder.append(File.separatorChar);
+
+		String filename = file.getName();
+		int periodePosition = filename.lastIndexOf('.');
+		if (periodePosition != -1) {
+			filename = filename.substring(0, periodePosition);
+		}
+
+		// The simple name of the Schema will be the filename.
+		// filenameBuilder.append(r.getSchemaGraph().getFirstSchema()
+		// .get_name());
+		filenameBuilder.append(filename);
+		// The extension is ....
+		filenameBuilder.append(".argouml.tg");
+		return filenameBuilder.toString();
 	}
 
 	public ArgoUml2Tg() {
@@ -164,38 +387,221 @@ public class ArgoUml2Tg extends Xml2Tg {
 		createVertexClasses();
 		createEdgeClasses();
 		createGeneralizations();
-		createRedefines();
 		createCommentsAndConstraints();
 
+		if (isRemoveUnusedDomains()) {
+			removeUnusedDomains();
+		}
+
+		handlesEmptyPackages();
+
+		if (!suppressOutput) {
+			try {
+				writeOutput();
+			} catch (GraphIOException e) {
+				throw new RuntimeException(e);
+			}
+		}
+	}
+
+	/**
+	 * Removes unused {@link Domain} objects, which are included in the current
+	 * {@link SchemaGraph}.
+	 */
+	private void removeUnusedDomains() {
+		System.out.println("Removing unused domains...");
+		Domain d = sg.getFirstDomain();
+		while (d != null) {
+			Domain n = d.getNextDomain();
+			// unused if in-degree of all but Annotates edges is <=1 (one
+			// incoming edge is the ContainsDomain edge from a Package)
+			if ((d.getDegree(EdgeDirection.IN) - d.getDegree(Annotates.EC,
+					EdgeDirection.IN)) <= 1) {
+				logger.fine("...remove unused domain '" + d.get_qualifiedName()
+						+ "'");
+
+				// remove possible comments
+				List<? extends Comment> comments = d.remove_comment();
+				for (Comment c : comments) {
+					c.delete();
+				}
+				d.delete();
+				d = sg.getFirstDomain();
+			} else {
+				d = n;
+			}
+		}
+	}
+
+	/**
+	 * Writes a DOT file and a TG file out.
+	 * 
+	 * @throws XMLStreamException
+	 * @throws GraphIOException
+	 */
+	public void writeOutput() throws GraphIOException {
+
+		boolean fileCreated = false;
+
+		if (filenameDot != null) {
+			try {
+				printTypeAndFilename("GraphvViz DOT file", filenameDot);
+				writeDotFile(filenameDot);
+				fileCreated = true;
+			} catch (IOException e) {
+				System.out.println("Could not create DOT file.");
+				System.out.println("Exception was " + e);
+			}
+		}
+
+		if (filenameSchemaGraph != null) {
+			printTypeAndFilename("schemagraph", filenameSchemaGraph);
+			writeSchemaGraph(filenameSchemaGraph);
+			fileCreated = true;
+		}
+
+		// The Graph is always validated, but not always written to a hard
+		// drive.
+		validateGraph(filenameValidation);
+		if (filenameValidation != null) {
+			fileCreated = true;
+		}
+
+		if (filenameSchema != null) {
+			printTypeAndFilename("schema", filenameSchema);
+			writeSchema(filenameSchema);
+			fileCreated = true;
+		}
+
+		if (!fileCreated) {
+			System.out.println("No files have been created.");
+		}
+	}
+
+	/**
+	 * Writes the {@link SchemaGraph} as Dotty-Graph to a DOT file with the name
+	 * of 'dotName'.
+	 * 
+	 * @param dotName
+	 *            File name of the DOT output file.
+	 * @throws IOException
+	 */
+	private void writeDotFile(String dotName) throws IOException {
+		Tg2Dot tg2Dot = new Tg2Dot();
+		tg2Dot.setGraph(sg);
+		tg2Dot.setPrintEdgeAttributes(true);
+		tg2Dot.setOutputFile(dotName);
+		tg2Dot.convert();
+	}
+
+	/**
+	 * Writes the {@link SchemaGraph} as a Graph to a TG file with the specified
+	 * file name <code>schemaGraphName</code>.
+	 * 
+	 * @param schemaGraphName
+	 *            File name of the TG output file.
+	 * @throws GraphIOException
+	 */
+	private void writeSchemaGraph(String schemaGraphName)
+			throws GraphIOException {
+		sg.save(schemaGraphName);
+	}
+
+	/**
+	 * Writes the current processed {@link Schema} as a Schema to a TG file.
+	 * 
+	 * @param schemaName
+	 *            Name of the Schema.
+	 */
+	private void writeSchema(String schemaName) {
 		try {
-			sg.save(new File(filename).getParent().toString() + File.separator
-					+ "tgschemagraph.tg", new ConsoleProgressFunction());
-		} catch (GraphIOException e) {
-			e.printStackTrace();
+			SchemaGraph2Tg sg2tg = new SchemaGraph2Tg(sg, schemaName);
+			sg2tg.process();
+		} catch (IOException e) {
+			throw new RuntimeException(
+					"SchemaGraph2Tg failed with an IOException!", e);
+		}
+	}
+
+	private void printTypeAndFilename(String type, String filename) {
+		System.out.println("Writing " + type + " to: " + filename);
+	}
+
+	/**
+	 * Performs a graph validation and writes a report in a file.
+	 * 
+	 * @param schemaName
+	 *            Name of the Schema.
+	 * @param relativePathPrefix
+	 *            Relative path to a folder.
+	 */
+	private boolean validateGraph(String filePath) {
+		if (filePath != null) {
+			printTypeAndFilename("validation report", filePath);
 		}
 		System.out.println("Validate schema graph...");
 		GraphValidator gv = new GraphValidator(sg);
 		Set<ConstraintViolation> violations = gv.validate();
 		if (violations.size() > 0) {
 			try {
-				System.out
-						.println("Schema graph is invalid. Please look at tgschemagraph-validation.html");
-				gv.createValidationReport("tgschemagraph-validation.html");
+				System.out.println("Schema graph is invalid. Please look at "
+						+ filePath);
+				gv.createValidationReport(filePath);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
+			return false;
 		} else {
-			System.out.println("Convert schema graph to schema...");
-			try {
-				SchemaGraph2Schema s2s = new SchemaGraph2Schema();
-				de.uni_koblenz.jgralab.schema.Schema s = s2s.convert(sg);
-				de.uni_koblenz.jgralab.schema.EdgeClass ec = s.getGraphClass()
-						.getEdgeClass("Child1");
-				// TODO delete
-				System.out.println(ec.getFrom().getRedefinedRoles());
-				s.save(filename);
-			} catch (GraphIOException e) {
-				e.printStackTrace();
+			return true;
+		}
+	}
+
+	/**
+	 * Creates empty {@link Package} objects from the {@link SchemaGraph}.
+	 */
+	private void handlesEmptyPackages() {
+		// create empty packages except the default package
+		if (!isKeepEmptyPackages()) {
+			System.out.println("Remove empty packages...");
+			Package p = sg.getFirstPackage();
+			int removed = 0;
+			while (p != null) {
+				Package n = p.getNextPackage();
+				int commentCount = p.getDegree(Annotates.EC);
+				if (((p.getDegree() - commentCount) == 1)
+						&& (p.get_qualifiedName().length() > 0)) {
+					logger.fine("\t- empty package '"
+							+ p.get_qualifiedName()
+							+ "' removed"
+							+ (commentCount > 0 ? commentCount == 1 ? " including 1 comment"
+									: " including " + commentCount
+											+ " comments"
+									: ""));
+					if (commentCount > 0) {
+						for (Annotates a = p.getFirstAnnotatesIncidence(); a != null; a = p
+								.getFirstAnnotatesIncidence()) {
+							a.getThat().delete();
+						}
+					}
+					p.delete();
+					++removed;
+					// start over to capture packages that become empty after
+					// deletion of p
+					p = sg.getFirstPackage();
+				} else {
+					p = n;
+				}
+			}
+			logger.fine("Removed " + removed + " package"
+					+ (removed == 1 ? "" : "s") + ".");
+		} else {
+			System.out.println("Create empty packages...");
+			for (Element el : xu.elementsWithName("UML:Package")) {
+				String qn = getQualifiedName(el, false);
+				if (!packageMap.containsKey(qn)) {
+					logger.fine("Created empty package " + qn + ".");
+				}
+				getPackage(qn);
 			}
 		}
 	}
@@ -328,7 +734,7 @@ public class ArgoUml2Tg extends Xml2Tg {
 	}
 
 	private void createGeneralizations() {
-		System.out.println("Creating generalization:");
+		logger.fine("Creating generalization:");
 		for (Element el : xu.elementsWithName("UML:Generalization")) {
 			if (!xu.hasAttribute(el, "xmi.id")) {
 				continue;
@@ -375,120 +781,20 @@ public class ArgoUml2Tg extends Xml2Tg {
 			if (pv.isInstanceOf(VertexClass.VC)) {
 				sg.createSpecializesVertexClass((VertexClass) cv,
 						(VertexClass) pv);
-				System.out.println("\t"
-						+ ((VertexClass) cv).get_qualifiedName() + ": "
-						+ ((VertexClass) pv).get_qualifiedName());
+				logger.fine("\t" + ((VertexClass) cv).get_qualifiedName()
+						+ ": " + ((VertexClass) pv).get_qualifiedName());
 			} else if (pv.isInstanceOf(EdgeClass.VC)) {
-				System.out.println("\t" + ((EdgeClass) cv).get_qualifiedName()
-						+ ": " + ((EdgeClass) pv).get_qualifiedName());
+				logger.fine("\t" + ((EdgeClass) cv).get_qualifiedName() + ": "
+						+ ((EdgeClass) pv).get_qualifiedName());
 				EdgeClass sub = (EdgeClass) cv;
 				EdgeClass sup = (EdgeClass) pv;
 				sg.createSpecializesEdgeClass(sub, sup);
-
-				IncidenceClass ic = sub.get_from();
-				IncidenceClass ip = sup.get_from();
-				sg.createSubsets(ic, ip);
-
-				ic = sub.get_to();
-				ip = sup.get_to();
-				sg.createSubsets(ic, ip);
 			} else {
 				throw new RuntimeException("Unexpected generalization between "
 						+ pv.getSchemaClass().getName() + " vertices.");
 			}
 
 		}
-	}
-
-	private void createRedefines() {
-		for (Element taggedValue : xu.elementsWithName("UML:TaggedValue")) {
-			Element taggedValueType = xu.firstChildWithName(taggedValue,
-					"UML:TaggedValue.type");
-			taggedValueType = xu.firstChildWithName(taggedValueType,
-					"UML:TagDefinition");
-			String href = xu.getAttributeValue(taggedValueType, "href");
-			if (!href.endsWith("#" + TV_REDEFINES)) {
-				continue;
-			}
-			Element taggedValueDataValue = xu.firstChildWithName(taggedValue,
-					"UML:TaggedValue.dataValue");
-			String[] redefinedRoleNames = xu.getText(taggedValueDataValue)
-					.split("\\s*,\\s*");
-
-			Element associationEnd = taggedValue.get_parent().get_parent();
-			if (!associationEnd.get_name().equals("UML:AssociationEnd")) {
-				throw new RuntimeException(
-						"Redefined role names may only be defined at association ends.");
-			}
-			Element association = associationEnd.get_parent().get_parent();
-			EdgeClass subEdgeClass = (EdgeClass) xmiIdMap.get(xu
-					.getAttributeValue(association, "xmi.id"));
-			assert subEdgeClass != null;
-
-			boolean isFromRedefined = isFromRoleRedefined(associationEnd,
-					subEdgeClass);
-
-			for (String role : redefinedRoleNames) {
-				// A role String must not be empty.
-				if (role.isEmpty()) {
-					throw new RuntimeException(
-							"Empty role name in redefines constraint");
-				}
-				IncidenceClass redefinedIncidenceClass = findRedefinedRole(
-						subEdgeClass, role, isFromRedefined);
-				if (redefinedIncidenceClass == null) {
-					throw new RuntimeException("No incidence with role name \""
-							+ role + "\" could be found.");
-				}
-				IncidenceClass redefiningIncidenceClass = isFromRedefined ? subEdgeClass
-						.get_from() : subEdgeClass.get_to();
-				sg.createRedefines(redefiningIncidenceClass,
-						redefinedIncidenceClass);
-
-				Subsets subsets = redefiningIncidenceClass
-						.getFirstSubsetsIncidence(EdgeDirection.OUT);
-				while (subsets != null) {
-					Subsets next = subsets
-							.getNextSubsetsIncidence(EdgeDirection.OUT);
-					if (!subsets.isInstanceOf(Redefines.EC)
-							&& subsets.getThat() == redefinedIncidenceClass) {
-						subsets.delete();
-					}
-					subsets = next;
-				}
-				// TODO delete
-				System.out.println(redefinedIncidenceClass.get_roleName());
-			}
-		}
-	}
-
-	private IncidenceClass findRedefinedRole(EdgeClass subEdgeClass,
-			String role, boolean isFromRedefined) {
-		IncidenceClass result = null;
-		for (EdgeClass superClass : subEdgeClass.get_superclass()) {
-			IncidenceClass ic = isFromRedefined ? superClass.get_from()
-					: superClass.get_to();
-			if (ic.get_roleName().equals(role)) {
-				assert result == null;
-				result = ic;
-			} else {
-				IncidenceClass res = findRedefinedRole(superClass, role,
-						isFromRedefined);
-				assert res == null || (res != null && result == null);
-			}
-		}
-		return result;
-	}
-
-	private boolean isFromRoleRedefined(Element assocEnd, EdgeClass sub) {
-		Element el = xu.firstChildWithName(assocEnd,
-				"UML:AssociationEnd.participant");
-		el = xu.firstChildWithName(el, "UML:Class");
-		assert el != null;
-		String incidentVC = xu.getAttributeValue(el, "xmi.idref");
-		VertexClass vc = (VertexClass) xmiIdMap.get(incidentVC);
-		assert vc != null;
-		return sub.get_from().get_targetclass() == vc;
 	}
 
 	private void createGraphClass() {
@@ -510,8 +816,7 @@ public class ArgoUml2Tg extends Xml2Tg {
 				qnMap.put(graphClass.get_qualifiedName(), graphClass);
 				xmiIdMap.put(xu.getAttributeValue(el, "xmi.id"), graphClass);
 
-				System.out.println("GraphClass "
-						+ graphClass.get_qualifiedName());
+				logger.fine("GraphClass " + graphClass.get_qualifiedName());
 				createAttributes(el, graphClass);
 			}
 		}
@@ -544,7 +849,7 @@ public class ArgoUml2Tg extends Xml2Tg {
 				|| (xu.hasAttribute(el, "isAbstract") && xu.getAttributeValue(
 						el, "isAbstract").equals("true"));
 
-		System.out.println((isAbstract ? "abstract " : "") + "EdgeClass "
+		logger.fine((isAbstract ? "abstract " : "") + "EdgeClass "
 				+ (name != null ? qn : "<<name will be generated>>"));
 
 		EdgeClass ec = sg.createEdgeClass();
@@ -563,7 +868,7 @@ public class ArgoUml2Tg extends Xml2Tg {
 		Element to = it.next();
 		IncidenceClass icTo = createIncidenceClass(to);
 
-		if (USE_UML_NAVIGABILITY_AS_EDGE_DIRECTION) {
+		if (useNavigability) {
 			boolean fn = xu.hasAttribute(from, "isNavigable")
 					&& xu.getAttributeValue(from, "isNavigable").equals("true");
 
@@ -619,7 +924,7 @@ public class ArgoUml2Tg extends Xml2Tg {
 				name = "LinksTo" + toRole;
 			}
 
-			if (USE_FROM_ROLE) {
+			if (useFromRole) {
 				String fromRole = icFrom.get_roleName();
 				if ((fromRole == null) || fromRole.equals("")) {
 					fromRole = ((VertexClass) icFrom.getFirstEndsAtIncidence()
@@ -743,8 +1048,8 @@ public class ArgoUml2Tg extends Xml2Tg {
 
 				assert qnMap.get(qn) == null;
 
-				System.out.println((isAbstract ? "abstract " : "")
-						+ "VertexClass " + qn);
+				logger.fine((isAbstract ? "abstract " : "") + "VertexClass "
+						+ qn);
 
 				VertexClass vc = sg.createVertexClass();
 				vc.set_qualifiedName(qn);
@@ -763,8 +1068,8 @@ public class ArgoUml2Tg extends Xml2Tg {
 			for (Element at : xu.childrenWithName(sf, "UML:Attribute")) {
 				Domain dom = getAttributeDomain(at);
 				assert dom != null;
-				System.out.println("\t" + xu.getAttributeValue(at, "name")
-						+ ": " + dom.get_qualifiedName());
+				logger.fine("\t" + xu.getAttributeValue(at, "name") + ": "
+						+ dom.get_qualifiedName());
 				Attribute attr = sg.createAttribute();
 				attr.set_name(xu.getAttributeValue(at, "name"));
 				attr.set_defaultValue(getDefaultValue(at, dom));
@@ -826,14 +1131,13 @@ public class ArgoUml2Tg extends Xml2Tg {
 					xmiIdMap.put(xu.getAttributeValue(el, "xmi.id"), rd);
 				}
 
-				System.out.println("RecordDomain " + qn);
+				logger.fine("RecordDomain " + qn);
 
 				Element sf = xu
 						.firstChildWithName(el, "UML:Classifier.feature");
 				if (sf != null) {
 					for (Element at : xu.childrenWithName(sf, "UML:Attribute")) {
-						System.out.println("\t"
-								+ xu.getAttributeValue(at, "name"));
+						logger.fine("\t" + xu.getAttributeValue(at, "name"));
 						Domain dom = getAttributeDomain(at);
 						assert dom != null;
 						HasRecordDomainComponent c = sg
@@ -907,7 +1211,7 @@ public class ArgoUml2Tg extends Xml2Tg {
 		if (dom != null) {
 			return dom;
 		}
-		System.out.println("CompositeDomain " + name);
+		logger.fine("CompositeDomain " + name);
 		if (name.startsWith("Map<")) {
 			MapDomain md = sg.createMapDomain();
 			dom = md;
@@ -977,7 +1281,7 @@ public class ArgoUml2Tg extends Xml2Tg {
 
 	private void createPrimitiveDomain(Domain d, String qn,
 			String... profileIds) {
-		System.out.println("PrimitiveDomain " + qn);
+		logger.fine("PrimitiveDomain " + qn);
 		d.set_qualifiedName(qn);
 		sg.createContainsDomain(packageMap.get(""), d);
 		for (String id : profileIds) {
@@ -997,7 +1301,7 @@ public class ArgoUml2Tg extends Xml2Tg {
 					+ xu.getAttributeValue(el, "xmi.id") + " must have a name.";
 			assert qnMap.get(qn) == null;
 
-			System.out.println("EnumDomain " + qn);
+			logger.fine("EnumDomain " + qn);
 			EnumDomain ed = sg.createEnumDomain();
 			ed.set_qualifiedName(qn);
 			domainMap.put(qn, ed);
@@ -1012,7 +1316,7 @@ public class ArgoUml2Tg extends Xml2Tg {
 			for (Element enumLiteral : xu.childrenWithName(literals,
 					"UML:EnumerationLiteral")) {
 				String cn = xu.getAttributeValue(enumLiteral, "name");
-				System.out.println("\t" + cn);
+				logger.fine("\t" + cn);
 				constants = constants.plus(cn);
 			}
 			ed.set_enumConstants(constants);
@@ -1062,4 +1366,171 @@ public class ArgoUml2Tg extends Xml2Tg {
 		}
 		return result;
 	}
+
+	/**
+	 * <code>true</code> indicates, that the roles from edges should be used.
+	 * 
+	 * @param useFromRole
+	 *            Value for the <code>useFromRole</code> flag.
+	 */
+	public void setUseFromRole(boolean useFromRole) {
+		this.useFromRole = useFromRole;
+	}
+
+	/**
+	 * Will return <code>true</code>, if the roles from the from edge should be
+	 * used.
+	 * 
+	 * @return Value of the <code>useFromRole</code> flag.
+	 */
+	public boolean isUseFromRole() {
+		return useFromRole;
+	}
+
+	/**
+	 * <code>true</code> forces the removal of all unlinked {@link Domain}
+	 * objects.
+	 * 
+	 * @param removeUnusedDomains
+	 *            Value of the <code>removeUnusedDomain</code> flag.
+	 */
+	public void setRemoveUnusedDomains(boolean removeUnusedDomains) {
+		this.removeUnusedDomains = removeUnusedDomains;
+	}
+
+	/**
+	 * Will return <code>true</code>, if unlinked {@link Domain} objects should
+	 * be removed in the last processing step.
+	 * 
+	 * @return Value of the <code>removeUnusedDoimain</code> flag.
+	 */
+	public boolean isRemoveUnusedDomains() {
+		return removeUnusedDomains;
+	}
+
+	/**
+	 * <code>true</code> indicates, that the navigability of edges should be
+	 * used.
+	 * 
+	 * @param useNavigability
+	 *            Value for the <code>useNavigability</code> flag.
+	 */
+	public void setUseNavigability(boolean useNavigability) {
+		this.useNavigability = useNavigability;
+	}
+
+	/**
+	 * Will return <code>true</code>, if the navigability of edges should be
+	 * used.
+	 * 
+	 * @return Value of the <code>useNavigability</code> flag.
+	 */
+	public boolean isUseNavigability() {
+		return useNavigability;
+	}
+
+	/**
+	 * Returns the {@link SchemaGraph}, which has been created after executing
+	 * {@link Rsa2Tg#process(String)}.
+	 * 
+	 * @return Created SchemaGraph.
+	 */
+	public SchemaGraph getSchemaGraph() {
+		return sg;
+	}
+
+	/**
+	 * Determines whether or not all output will be suppressed.
+	 * 
+	 * @param suppressOutput
+	 *            Value for the <code>suppressOutput</code> flag.
+	 */
+	public void setSuppressOutput(boolean suppressOutput) {
+		this.suppressOutput = suppressOutput;
+	}
+
+	/**
+	 * Returns the file name of the TG Schema file.
+	 * 
+	 * @return File name as {@link String}.
+	 */
+	public String getFilenameSchema() {
+		return filenameSchema;
+	}
+
+	/**
+	 * Sets the file name of the TG Schema file.
+	 * 
+	 * @param filenameSchema
+	 *            File name as {@link String}.
+	 */
+	public void setFilenameSchema(String filenameSchema) {
+		this.filenameSchema = filenameSchema;
+	}
+
+	/**
+	 * Returns the file name of the TG grUML SchemaGraph file.
+	 * 
+	 * @return File name as {@link String}.
+	 */
+	public String getFilenameSchemaGraph() {
+		return filenameSchemaGraph;
+	}
+
+	/**
+	 * Sets the file name of the TG grUML SchemaGraph file.
+	 * 
+	 * @param filenameSchemaGraph
+	 *            file name as {@link String}.
+	 */
+	public void setFilenameSchemaGraph(String filenameSchemaGraph) {
+		this.filenameSchemaGraph = filenameSchemaGraph;
+	}
+
+	/**
+	 * Returns the file name of the DOT file.
+	 * 
+	 * @return File name as {@link String}.
+	 */
+	public String getFilenameDot() {
+		return filenameDot;
+	}
+
+	/**
+	 * Sets the file name of the DOT file.
+	 * 
+	 * @param filenameDot
+	 *            File name as {@link String}.
+	 */
+	public void setFilenameDot(String filenameDot) {
+		this.filenameDot = filenameDot;
+	}
+
+	/**
+	 * Returns the file name of the HTML validation file.
+	 * 
+	 * @return File name as {@link String}.
+	 */
+	public String getFilenameValidation() {
+		return filenameValidation;
+	}
+
+	/**
+	 * Sets the file name of the HTML validation file.
+	 * 
+	 * @param filenameValidation
+	 *            File name as {@link String}.
+	 */
+	public void setFilenameValidation(String filenameValidation) {
+		this.filenameValidation = filenameValidation;
+	}
+
+	public boolean isKeepEmptyPackages() {
+		return keepEmptyPackages;
+	}
+
+	public void setKeepEmptyPackages(boolean removeEmptyPackages) {
+		keepEmptyPackages = removeEmptyPackages;
+	}
+
 }

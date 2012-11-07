@@ -299,7 +299,6 @@ public class SchemaGraph2Schema {
 		}
 
 		// set redefined IncidenceClasses of from
-		System.out.println(gFrom);
 		for (Redefines sub : gFrom.getRedefinesIncidences(EdgeDirection.OUT)) {
 			de.uni_koblenz.jgralab.schema.IncidenceClass superIncidenceClass = incidenceMap
 					.get(sub.getThat());
