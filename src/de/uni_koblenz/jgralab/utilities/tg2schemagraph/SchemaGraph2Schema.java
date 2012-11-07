@@ -303,7 +303,7 @@ public class SchemaGraph2Schema {
 			de.uni_koblenz.jgralab.schema.IncidenceClass superIncidenceClass = incidenceMap
 					.get(sub.getThat());
 			assert (superIncidenceClass != null) : "FIXME! No subsetted \"IncidenceClass\" d yet.";
-			from.addSubsettedIncidenceClass(superIncidenceClass);
+			to.addSubsettedIncidenceClass(superIncidenceClass);
 		}
 
 		// set redefined IncidenceClasses of to
@@ -313,7 +313,7 @@ public class SchemaGraph2Schema {
 			assert (superIncidenceClass != null) : "FIXME! No redefined \"IncidenceClass\" d yet.";
 			if ((superIncidenceClass.getRolename() != null)
 					&& !superIncidenceClass.getRolename().isEmpty()) {
-				from.addRedefinedRole(superIncidenceClass.getRolename());
+				to.addRedefinedRole(superIncidenceClass.getRolename());
 			}
 		}
 
