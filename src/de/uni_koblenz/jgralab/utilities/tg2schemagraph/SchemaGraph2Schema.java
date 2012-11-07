@@ -41,6 +41,7 @@ import java.util.List;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.exception.GraphException;
+import de.uni_koblenz.jgralab.graphmarker.BooleanGraphMarker;
 import de.uni_koblenz.jgralab.grumlschema.SchemaGraph;
 import de.uni_koblenz.jgralab.grumlschema.domains.CollectionDomain;
 import de.uni_koblenz.jgralab.grumlschema.domains.Domain;
@@ -150,6 +151,11 @@ public class SchemaGraph2Schema {
 	private boolean workInProgress = false;
 
 	/**
+	 * Marks EdgeClasses wich subsets and redefined relations are already set.
+	 */
+	private BooleanGraphMarker alreadyHandeledEdgeClasses;
+
+	/**
 	 * Empty standard constructor.
 	 */
 	public SchemaGraph2Schema() {
@@ -204,6 +210,8 @@ public class SchemaGraph2Schema {
 			workInProgress = true;
 
 			setUp();
+
+			alreadyHandeledEdgeClasses = new BooleanGraphMarker(schemaGraph);
 
 			createSchema(schemaGraph);
 
@@ -263,6 +271,9 @@ public class SchemaGraph2Schema {
 	 * @param gEdgeClass
 	 */
 	private void createSubsetsAndRedefinesOfOneEdgeClass(EdgeClass gEdgeClass) {
+		if (alreadyHandeledEdgeClasses.isMarked(gEdgeClass)) {
+			return;
+		}
 		IncidenceClass gFrom, gTo;
 		de.uni_koblenz.jgralab.schema.impl.IncidenceClassImpl from, to;
 
@@ -288,6 +299,7 @@ public class SchemaGraph2Schema {
 		}
 
 		// set redefined IncidenceClasses of from
+		System.out.println(gFrom);
 		for (Redefines sub : gFrom.getRedefinesIncidences(EdgeDirection.OUT)) {
 			de.uni_koblenz.jgralab.schema.IncidenceClass superIncidenceClass = incidenceMap
 					.get(sub.getThat());
@@ -316,6 +328,8 @@ public class SchemaGraph2Schema {
 				to.addRedefinedRole(superIncidenceClass.getRolename());
 			}
 		}
+
+		alreadyHandeledEdgeClasses.mark(gEdgeClass);
 
 		// call recursively all subclasses of EdgeClass
 		for (SpecializesEdgeClass sec : gEdgeClass
