@@ -39,9 +39,7 @@ GraphClass SchemaGraph;
 
 Package ;
 Package structure;
-Comment structure.IncidenceDirection "Direction viewed from vertex class.";
-EnumDomain structure.IncidenceDirection (IN, OUT);
-EnumDomain structure.AggregationKind (NONE, SHARED, COMPOSITE);
+EnumDomain AggregationKind (NONE, SHARED, COMPOSITE);
 abstract VertexClass NamedElement {qualifiedName: String};
 VertexClass Comment {text: String};
 EdgeClass Annotates from Comment (0,*) role comment to NamedElement (1,1) role annotatedElement;
@@ -70,8 +68,8 @@ EdgeClass DefinesGraphClass from Schema (1,1) to GraphClass (1,1) role graphClas
 EdgeClass SpecializesVertexClass from VertexClass (0,*) role subclass to VertexClass (0,*) role superclass;
 EdgeClass ComesFrom from EdgeClass (0,1) to IncidenceClass (1,1) role from aggregation composite;
 EdgeClass GoesTo from EdgeClass (0,1) to IncidenceClass (1,1) role to aggregation composite;
-EdgeClass Subsets from IncidenceClass (0,*) to IncidenceClass (0,*);
-EdgeClass Redefines: Subsets from IncidenceClass (0,*) to IncidenceClass (0,*);
+
+
 Package domains;
 abstract VertexClass BasicDomain: Domain;
 VertexClass SetDomain: CollectionDomain;
