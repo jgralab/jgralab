@@ -286,11 +286,6 @@ public class GraphIO {
 			io.TGIn = in;
 			io.tgfile();
 			io.schema.finish();
-			// TODO delete
-			EdgeClass ec = io.schema.getGraphClass()
-					.getEdgeClass("SuperA2SubO");
-			System.out.println(ec.getQualifiedName()
-					+ ec.getDirectSuperClasses());
 			return io.schema;
 		} catch (Exception e) {
 			throw new GraphIOException("Exception while loading schema.", e);

@@ -286,12 +286,6 @@ public final class GraphClassImpl extends
 	protected final void finish() {
 		assertNotFinished();
 		vertexClassDag.finish();
-		// TODO delete
-		EdgeClass ec2 = getEdgeClass("SuperA2SubO");
-		if (ec2 != null) {
-			System.out.println(ec2.getQualifiedName()
-					+ ec2.getDirectSuperClasses());
-		}
 		edgeClassDag.finish();
 		for (VertexClass vc : vertexClassDag.getNodesInTopologicalOrder()) {
 			((VertexClassImpl) vc).finish();
