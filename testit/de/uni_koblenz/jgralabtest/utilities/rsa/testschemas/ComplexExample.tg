@@ -50,10 +50,10 @@ Package package1;
 VertexClass VertexClassA;
 VertexClass VertexClassB;
 Comment package1.EdgClassE "Comment to the Edge";
-EdgeClass EdgClassE: EdgeClassSuper from VertexClassA (1,1) role roleNameVCA to VertexClassB (1,1) role roleNameVCB redefines vertexClassB ["Nachricht" "-->{VertexClassB}" "off"];
+EdgeClass EdgClassE: EdgeClassSuper from VertexClassA (1,1) role roleNameVCA to VertexClassB (1,1) role roleNameVCB ["Nachricht" "-->{VertexClassB}" "off"];
 abstract EdgeClass EdgeClassSuper from VertexClassA (0,*) role vertexClassA to VertexClassB (1,*) role vertexClassB;
 EdgeClass Aggregation from VertexClassB (1,1) role vertexClassB2 to VertexClassA (0,*) role vertexClassA2 aggregation shared;
 EdgeClass Composition from VertexClassB (0,*) role vertexclassb to VertexClassA (0,*) role vertexClassA3 aggregation composite;
-EdgeClass AssociationClass: EdgeClassSuper from VertexClassA (0,1) role roleA redefines vertexClassA to VertexClassB (1,1) role vertexclassbX {anInteger: Integer};
+EdgeClass AssociationClass: EdgeClassSuper from VertexClassA (0,1) role roleA to VertexClassB (1,1) role vertexclassbX {anInteger: Integer};
 EdgeClass Navigable from VertexClassA (1,1) role vertexClassA4 to VertexClassB (1,1) role vertexClassB3;
 

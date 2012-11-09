@@ -63,7 +63,6 @@ import de.uni_koblenz.jgralab.grumlschema.structure.HasConstraint;
 import de.uni_koblenz.jgralab.grumlschema.structure.IncidenceClass;
 import de.uni_koblenz.jgralab.grumlschema.structure.NamedElement;
 import de.uni_koblenz.jgralab.grumlschema.structure.Package;
-import de.uni_koblenz.jgralab.grumlschema.structure.Redefines;
 import de.uni_koblenz.jgralab.grumlschema.structure.Schema;
 import de.uni_koblenz.jgralab.grumlschema.structure.SpecializesEdgeClass;
 import de.uni_koblenz.jgralab.grumlschema.structure.SpecializesVertexClass;
@@ -106,7 +105,6 @@ public class SchemaGraph2Tg {
 	private final static String FROM = "from";
 	private final static String TO = "to";
 	private final static String ROLE = "role";
-	private final static String REDEFINES = "redefines";
 
 	private final static String SCHEMA = "Schema";
 	private final static String PACKAGE = "Package";
@@ -221,17 +219,19 @@ public class SchemaGraph2Tg {
 				schema.get_name(), DELIMITER, NEWLINE);
 
 		Package defaultPackage = (Package) schema
-				.getFirstContainsDefaultPackageIncidence(EdgeDirection.OUT).getThat();
+				.getFirstContainsDefaultPackageIncidence(EdgeDirection.OUT)
+				.getThat();
 		setCurrentPackageName(defaultPackage);
 
 		// graphclass
-		GraphClass gc = (GraphClass) schema.getFirstDefinesGraphClassIncidence(
+		GraphClass gc = schema.getFirstDefinesGraphClassIncidence(
 				EdgeDirection.OUT).getOmega();
 		printGraphClass(gc);
 		printComments(gc);
 
 		printPackageWithElements((Package) schema
-				.getFirstContainsDefaultPackageIncidence(EdgeDirection.OUT).getThat());
+				.getFirstContainsDefaultPackageIncidence(EdgeDirection.OUT)
+				.getThat());
 	}
 
 	private void printPackageWithElements(Package gPackage) {
@@ -333,8 +333,8 @@ public class SchemaGraph2Tg {
 				EdgeDirection.OUT).getThat();
 		VertexClass fromVC = (VertexClass) fromIC.getFirstEndsAtIncidence(
 				EdgeDirection.OUT).getThat();
-		VertexClass toVC = (VertexClass) toIC.getFirstEndsAtIncidence(EdgeDirection.OUT)
-				.getThat();
+		VertexClass toVC = (VertexClass) toIC.getFirstEndsAtIncidence(
+				EdgeDirection.OUT).getThat();
 
 		print(SPACE, FROM, SPACE, shortName(fromVC.get_qualifiedName()));
 		printMultiplicitiesAndRoles(fromIC);
@@ -400,20 +400,6 @@ public class SchemaGraph2Tg {
 
 		if ((ic.get_roleName() != null) && !ic.get_roleName().isEmpty()) {
 			print(SPACE, ROLE, SPACE, ic.get_roleName());
-		}
-
-		if (ic.getFirstRedefinesIncidence(EdgeDirection.OUT) != null) {
-			print(SPACE, REDEFINES, SPACE);
-			boolean first = true;
-			for (Redefines r : ic.getRedefinesIncidences(EdgeDirection.OUT)) {
-				if (first) {
-					first = false;
-				} else {
-					print(COMMA, SPACE);
-				}
-				IncidenceClass redefined = (IncidenceClass) r.getThat();
-				print(redefined.get_roleName());
-			}
 		}
 
 		printAggregation(ic);
@@ -503,8 +489,8 @@ public class SchemaGraph2Tg {
 				print(COMMA, SPACE);
 			}
 			Attribute attr = (Attribute) ha.getThat();
-			Domain dom = (Domain) attr.getFirstHasDomainIncidence(EdgeDirection.OUT)
-					.getThat();
+			Domain dom = (Domain) attr.getFirstHasDomainIncidence(
+					EdgeDirection.OUT).getThat();
 			print(attr.get_name(), COLON, SPACE,
 					shortName(dom.get_qualifiedName()));
 			String defaultValue = attr.get_defaultValue();

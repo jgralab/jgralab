@@ -36,6 +36,8 @@ package de.uni_koblenz.jgralab.schema;
 
 import java.util.Set;
 
+import de.uni_koblenz.jgralab.EdgeDirection;
+
 public interface IncidenceClass {
 
 	/**
@@ -51,10 +53,11 @@ public interface IncidenceClass {
 	public int getMin();
 
 	/**
-	 * @return the direction of this incidenceclass - either Vertex (from edge
-	 *         to vertex) or edge (from vertex to edge)
+	 * @return {@link EdgeDirection#OUT} if this {@link IncidenceClass} is the
+	 *         alpha incidence of the {@link EdgeClass}. Otherwise
+	 *         {@link EdgeDirection#IN} is returned.
 	 */
-	public IncidenceDirection getDirection();
+	public EdgeDirection getDirection();
 
 	/**
 	 * @return the name of this incidence class, i.e. the rolename of the edge
@@ -88,18 +91,6 @@ public interface IncidenceClass {
 	public Set<IncidenceClass> getOwnSubsettedIncidenceClasses();
 
 	/**
-	 * @return the set of IncidenceClasses which are redefined (i.e. specialized
-	 *         and overwritten) by this IncidenceClass
-	 */
-	public Set<IncidenceClass> getRedefinedIncidenceClasses();
-
-	/**
-	 * @return the set of IncidenceClasses which are directly redefined (i.e.
-	 *         specialized and overwritten) by this IncidenceClass
-	 */
-	public Set<IncidenceClass> getOwnRedefinedIncidenceClasses();
-
-	/**
 	 * @return the VertexClass this IncidenceClass is connected to
 	 */
 	public VertexClass getVertexClass();
@@ -113,23 +104,6 @@ public interface IncidenceClass {
 	 * @return the set of all role names valid for this IncidenceClass
 	 */
 	public Set<String> getAllRoles();
-
-	/**
-	 * @return the set of roles which are redefined by this IncidenceClass
-	 */
-	public Set<String> getRedefinedRoles();
-
-	/**
-	 * Marks a role which is already subsetted by this IncidenceClass as
-	 * redefined.
-	 */
-	public void addRedefinedRole(String rolename);
-
-	/**
-	 * Marks a set of roles which are already subsetted by this IncidenceClass
-	 * as redefined.
-	 */
-	public void addRedefinedRoles(Set<String> rolenames);
 
 	/**
 	 * @return the IncidenceClass at the other end of the EdgeClass this

@@ -38,10 +38,10 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
+import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.schema.AggregationKind;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.IncidenceClass;
-import de.uni_koblenz.jgralab.schema.IncidenceDirection;
 import de.uni_koblenz.jgralab.schema.VertexClass;
 import de.uni_koblenz.jgralab.schema.exception.SchemaException;
 
@@ -49,14 +49,13 @@ public class IncidenceClassImpl implements IncidenceClass {
 
 	protected IncidenceClassImpl(EdgeClass edgeClass, VertexClass vertexClass,
 			String rolename, int minEdgesAtVertex, int maxEdgesAtVertex,
-			IncidenceDirection direction, AggregationKind aggregationKind) {
+			AggregationKind aggregationKind) {
 		super();
 		if (aggregationKind == null) {
 			this.aggregationKind = AggregationKind.NONE;
 		} else {
 			this.aggregationKind = aggregationKind;
 		}
-		this.direction = direction;
 		this.edgeClass = edgeClass;
 		this.maxEdgesAtVertex = maxEdgesAtVertex;
 		this.minEdgesAtVertex = minEdgesAtVertex;
@@ -67,30 +66,23 @@ public class IncidenceClassImpl implements IncidenceClass {
 		}
 		this.vertexClass = vertexClass;
 		this.subsettedIncidenceClasses = new HashSet<IncidenceClass>();
-		this.redefinedIncidenceClasses = new HashSet<IncidenceClass>();
 		this.incidenceClassIdInSchema = ((SchemaImpl) edgeClass.getSchema())
 				.getNextIncidenceClassId();
 	}
 
 	private AggregationKind aggregationKind;
 
-	private IncidenceDirection direction;
+	private final EdgeClass edgeClass;
 
-	private EdgeClass edgeClass;
+	private final VertexClass vertexClass;
 
-	private VertexClass vertexClass;
+	private final int maxEdgesAtVertex;
 
-	private int maxEdgesAtVertex;
-
-	private int minEdgesAtVertex;
+	private final int minEdgesAtVertex;
 
 	private String rolename;
 
-	private Set<IncidenceClass> redefinedIncidenceClasses;
-
-	private Set<IncidenceClass> allRedefinedIncidenceClasses;
-
-	private Set<IncidenceClass> subsettedIncidenceClasses;
+	private final Set<IncidenceClass> subsettedIncidenceClasses;
 
 	private Set<IncidenceClass> allSubsettedIncidenceClasses;
 
@@ -122,8 +114,9 @@ public class IncidenceClassImpl implements IncidenceClass {
 	}
 
 	@Override
-	public IncidenceDirection getDirection() {
-		return direction;
+	public EdgeDirection getDirection() {
+		return getEdgeClass().getFrom() == this ? EdgeDirection.OUT
+				: EdgeDirection.IN;
 	}
 
 	@Override
@@ -139,24 +132,6 @@ public class IncidenceClassImpl implements IncidenceClass {
 	@Override
 	public int getMin() {
 		return minEdgesAtVertex;
-	}
-
-	@Override
-	public Set<IncidenceClass> getRedefinedIncidenceClasses() {
-		Set<IncidenceClass> result = new HashSet<IncidenceClass>();
-		result.addAll(redefinedIncidenceClasses);
-		for (IncidenceClass ic : subsettedIncidenceClasses) {
-			result.addAll(ic.getRedefinedIncidenceClasses());
-		}
-		for (IncidenceClass ic : redefinedIncidenceClasses) {
-			result.addAll(ic.getRedefinedIncidenceClasses());
-		}
-		return result;
-	}
-
-	@Override
-	public Set<IncidenceClass> getOwnRedefinedIncidenceClasses() {
-		return redefinedIncidenceClasses;
 	}
 
 	@Override
@@ -187,64 +162,6 @@ public class IncidenceClassImpl implements IncidenceClass {
 		return vertexClass;
 	}
 
-	@Override
-	public void addRedefinedRole(String rolename) {
-		if (((VertexClassImpl) vertexClass).isFinished()) {
-			throw new SchemaException("No changes to finished schema!");
-		}
-
-		boolean foundRole = false;
-
-		for (IncidenceClass ic : getSubsettedIncidenceClasses()) {
-			if (ic.getRolename().equals(rolename)) {
-				// found a base incidence class whose rolename matches
-
-				// TODO This check does not cover all illegal cases
-				// TODO Daniel's job: give a specification of illegal
-				// redefinitions
-
-				// Check if this rolename is redefined by another EdgeClass
-				// originating from the same VertexClass
-				for (EdgeClass ec : getOpposite().getVertexClass()
-						.getOwnConnectedEdgeClasses()) {
-					if (ec == edgeClass) {
-						// skip the EdgeClass of this IncidenceClass
-						continue;
-					}
-					// determine proper end
-					IncidenceClass other = direction == IncidenceDirection.IN ? ec
-							.getTo() : ec.getFrom();
-					if (other.getRedefinedIncidenceClasses().contains(ic)) {
-						throw new SchemaException("The role '" + rolename
-								+ "' of EdgeClass '"
-								+ edgeClass.getQualifiedName()
-								+ "' is already redefined in EdgeClass '"
-								+ ec.getQualifiedName() + "'");
-					}
-				}
-				redefinedIncidenceClasses.add(ic);
-				foundRole = true;
-				break;
-			}
-		}
-		if (!foundRole) {
-			throw new SchemaException(
-					"The role '"
-							+ rolename
-							+ "' is not defined in any subsetted IncidenceClass, so it cannot be redefined.");
-		}
-	}
-
-	@Override
-	public void addRedefinedRoles(Set<String> rolenames) {
-		if (rolenames == null) {
-			return;
-		}
-		for (String role : rolenames) {
-			addRedefinedRole(role);
-		}
-	}
-
 	public void addSubsettedIncidenceClass(IncidenceClass other) {
 		if (((VertexClassImpl) vertexClass).isFinished()) {
 			throw new SchemaException("No changes to finished schema!");
@@ -252,7 +169,7 @@ public class IncidenceClassImpl implements IncidenceClass {
 		EdgeClassImpl.checkIncidenceClassSpecialization(this, other);
 		if (other.getSubsettedIncidenceClasses().contains(this)) {
 			throw new SchemaException(
-					"Subsetting/Redefinition of IncidenceClasses need to be acyclic");
+					"Subsetting of IncidenceClasses need to be acyclic");
 		}
 		subsettedIncidenceClasses.add(other);
 	}
@@ -267,15 +184,6 @@ public class IncidenceClassImpl implements IncidenceClass {
 		return result;
 	}
 
-	@Override
-	public Set<String> getRedefinedRoles() {
-		Set<String> result = new HashSet<String>();
-		for (IncidenceClass ic : getRedefinedIncidenceClasses()) {
-			result.add(ic.getRolename());
-		}
-		return result;
-	}
-
 	void finish() {
 		this.allSubsettedIncidenceClasses = new HashSet<IncidenceClass>();
 		this.allSubsettedIncidenceClasses.addAll(subsettedIncidenceClasses);
@@ -284,20 +192,8 @@ public class IncidenceClassImpl implements IncidenceClass {
 					.getSubsettedIncidenceClasses());
 		}
 
-		this.allRedefinedIncidenceClasses = new HashSet<IncidenceClass>();
-		this.allRedefinedIncidenceClasses.addAll(redefinedIncidenceClasses);
-		for (IncidenceClass ic : subsettedIncidenceClasses) {
-			this.allRedefinedIncidenceClasses.addAll(ic
-					.getRedefinedIncidenceClasses());
-		}
-		for (IncidenceClass ic : redefinedIncidenceClasses) {
-			this.allRedefinedIncidenceClasses.addAll(ic
-					.getRedefinedIncidenceClasses());
-		}
 		this.allSubsettedIncidenceClasses = Collections
 				.unmodifiableSet(this.allSubsettedIncidenceClasses);
-		this.allRedefinedIncidenceClasses = Collections
-				.unmodifiableSet(this.allRedefinedIncidenceClasses);
 	}
 
 	@Override
@@ -307,6 +203,5 @@ public class IncidenceClassImpl implements IncidenceClass {
 
 	void reopen() {
 		allSubsettedIncidenceClasses = null;
-		allRedefinedIncidenceClasses = null;
 	}
 }

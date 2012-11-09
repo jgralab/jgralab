@@ -56,6 +56,9 @@ import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.exception.GraphIOException;
+import de.uni_koblenz.jgralab.greql.GreqlEnvironment;
+import de.uni_koblenz.jgralab.greql.GreqlQuery;
+import de.uni_koblenz.jgralab.greql.evaluator.GreqlEnvironmentAdapter;
 import de.uni_koblenz.jgralab.grumlschema.GrumlSchema;
 import de.uni_koblenz.jgralab.grumlschema.SchemaGraph;
 import de.uni_koblenz.jgralab.grumlschema.domains.BooleanDomain;
@@ -87,7 +90,6 @@ import de.uni_koblenz.jgralab.grumlschema.structure.HasConstraint;
 import de.uni_koblenz.jgralab.grumlschema.structure.IncidenceClass;
 import de.uni_koblenz.jgralab.grumlschema.structure.NamedElement;
 import de.uni_koblenz.jgralab.grumlschema.structure.Package;
-import de.uni_koblenz.jgralab.grumlschema.structure.Redefines;
 import de.uni_koblenz.jgralab.grumlschema.structure.SpecializesEdgeClass;
 import de.uni_koblenz.jgralab.grumlschema.structure.SpecializesVertexClass;
 import de.uni_koblenz.jgralab.grumlschema.structure.VertexClass;
@@ -969,10 +971,9 @@ public class SchemaGraph2XMI {
 	 * Creates the representation of the {@link IncidenceClass} which contains
 	 * the information for the {@link VertexClass} which is specified by
 	 * <code>qualifiedNameOfVertexClass</code> e.g. <code>otherIncidence</code>.<br/>
-	 * The relevant information are: <ui> <li>the rolename,</li> <li>the
-	 * redefines information,</li> <li>the min value,</li> <li>the max value and
-	 * </li> <li>composition or shared information.</li> </ui> The default
-	 * rolename for associations is
+	 * The relevant information are: <ui> <li>the rolename,</li> <li>the min
+	 * value,</li> <li>the max value and</li> <li>composition or shared
+	 * information.</li> </ui> The default rolename for associations is
 	 * <code>qualifiedNameOfVertexClass_edgeClass.getQualifiedName()</code> and
 	 * <code>""</code> for associationClasses.
 	 * 
@@ -1011,18 +1012,6 @@ public class SchemaGraph2XMI {
 				+ edgeClass.get_qualifiedName()
 				+ (incidence.getFirstComesFromIncidence() != null ? "_from"
 						: "_to");
-
-		// redefines
-		int i = 0;
-		for (Redefines red : otherIncidence
-				.getRedefinesIncidences(EdgeDirection.OUT)) {
-			createConstraint(
-					writer,
-					"redefines "
-							+ ((IncidenceClass) red.getThat()).get_roleName(),
-					qualifiedNameOfVertexClass + "_redefines" + i + "_"
-							+ edgeClass.get_qualifiedName(), incidenceId);
-		}
 
 		// start ownedattribute
 		writer.writeStartElement(createOwnedEnd ? XMIConstants4SchemaGraph2XMI.TAG_OWNEDEND
@@ -1117,19 +1106,19 @@ public class SchemaGraph2XMI {
 		HashMap<String, Object> boundVars = new HashMap<String, Object>();
 		boundVars.put("start", connectedVertexClass);
 		int counter = 0;
-		// TODO [greqlevaluator]
-		// Object result;
-		// do {
-		// counter++;
-		// GreqlEvaluator eval = new GreqlEvaluator(
-		// "using start:"
-		// +
-		// "exists ic:start<->{structure.SpecializesVertexClass}*<->{structure.EndsAt}<->{structure.ComesFrom,structure.GoesTo}^2@ic.roleName=\""
-		// + baseRolename + (counter == 1 ? "" : counter)
-		// + "\"", schemaGraph, boundVars);
-		// eval.startEvaluation();
-		// result = eval.getResult();
-		// } while (result instanceof Boolean ? (Boolean) result : false);
+		Object result;
+		do {
+			counter++;
+			GreqlQuery query = GreqlQuery
+					.createQuery("using start:"
+							+ "exists ic:start<->{structure.SpecializesVertexClass}*<->{structure.EndsAt}<->{structure.ComesFrom,structure.GoesTo}^2@ic.roleName=\""
+							+ baseRolename + (counter == 1 ? "" : counter)
+							+ "\"");
+			GreqlEnvironment environment = new GreqlEnvironmentAdapter(
+					boundVars);
+			result = query.evaluate(connectedVertexClass.getGraph(),
+					environment);
+		} while (result instanceof Boolean ? (Boolean) result : false);
 
 		return baseRolename + (counter == 1 ? "" : counter);
 	}

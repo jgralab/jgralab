@@ -90,7 +90,7 @@ public class GenericGraphImplTest {
 	 * {@link AttributedElementClass} in the <code>Graph</code>'s
 	 * <code>Schema</code>. However, this does not guarantee that there are no
 	 * other, additional attributes.
-	 *
+	 * 
 	 * @param testObject
 	 *            A {@link GenericGraphImpl}, {@link GenericVertexImpl} or
 	 *            {@link GenericEdgeImpl} <code>Object</code>.
@@ -111,7 +111,7 @@ public class GenericGraphImplTest {
 	 * has the default value as defined in the schema. If no explicit default
 	 * value was defined, it tests, if the attribute's value corresponds to the
 	 * general default value of its Domain.
-	 *
+	 * 
 	 * @param value
 	 * @param attribute
 	 */
@@ -307,14 +307,16 @@ public class GenericGraphImplTest {
 	}
 
 	// Try to create a Vertex of a VertexClass from a different schema
-	@Test(expected=GraphException.class)
+	@Test(expected = GraphException.class)
 	public void testCreateVertexFailure2() {
 		try {
 			Schema s1 = GraphIO.loadSchemaFromFile(SCHEMAFOLDER
 					+ "citymapschema.tg");
-			Schema s2 = GraphIO.loadSchemaFromFile(SCHEMAFOLDER + "greqltestschema.tg");
+			Schema s2 = GraphIO.loadSchemaFromFile(SCHEMAFOLDER
+					+ "greqltestschema.tg");
 			Graph g = s1.createGraph(ImplementationType.GENERIC);
-			g.createVertex(s2.getGraphClass().getVertexClass("junctions.Crossroad"));
+			g.createVertex(s2.getGraphClass().getVertexClass(
+					"junctions.Crossroad"));
 		} catch (GraphIOException e) {
 			e.printStackTrace();
 			fail();
@@ -524,27 +526,6 @@ public class GenericGraphImplTest {
 			g.createEdge(
 					schema.getGraphClass().getEdgeClass("connections.Street"),
 					v1, v2);
-		} catch (GraphIOException e) {
-			e.printStackTrace();
-			fail();
-		}
-	}
-
-	// The IncidenceClass is redefined and therefore not allowed
-	// (VertexTestSChema.tg)
-	@Test(expected = GraphException.class)
-	public void testCreateEdgeFailure3() {
-		try {
-			Schema schema = GraphIO.loadSchemaFromFile(SCHEMAFOLDER
-					+ "VertexTestSchema.tg");
-			Graph g = schema.createGraph(ImplementationType.GENERIC);
-			Vertex v1 = g.createVertex(schema.getGraphClass().getVertexClass(
-					"C2"));
-			Vertex v2 = g.createVertex(schema.getGraphClass().getVertexClass(
-					"D2"));
-
-			// this Edge should not be allowed => GraphException
-			g.createEdge(schema.getGraphClass().getEdgeClass("E"), v1, v2);
 		} catch (GraphIOException e) {
 			e.printStackTrace();
 			fail();
@@ -922,20 +903,20 @@ public class GenericGraphImplTest {
 			for (Attribute a : g.getAttributedElementClass().getAttributeList()) {
 				testDefaultValue(g.getAttribute(a.getName()), a);
 			}
-			g.readAttributeValues(GraphIO.createStringReader(
-					"f " +
-					"[[f]] " +
-					"{[t t] - {f} [f f] - {t f}} " +
-					"{{f}} " +
-					"12.34 " +
-					"SECOND " +
-					"42" +
-					"[t t] " +
-					"987654321 " +
-					"{1 - f 2 - t} " +
-					"(f 2.2 THIRD 42 [f t] 987654321 {1 - f 2 - t} {t} \"some String\") " +
-					"{f} " +
-					"\"some String\"", g.getSchema()));
+			g.readAttributeValues(GraphIO
+					.createStringReader(
+							"f "
+									+ "[[f]] "
+									+ "{[t t] - {f} [f f] - {t f}} "
+									+ "{{f}} "
+									+ "12.34 "
+									+ "SECOND "
+									+ "42"
+									+ "[t t] "
+									+ "987654321 "
+									+ "{1 - f 2 - t} "
+									+ "(f 2.2 THIRD 42 [f t] 987654321 {1 - f 2 - t} {t} \"some String\") "
+									+ "{f} " + "\"some String\"", g.getSchema()));
 
 			// parse values different from the default ones
 			assertEquals(false, g.getAttribute("boolGraph"));
@@ -992,21 +973,29 @@ public class GenericGraphImplTest {
 			}
 
 			assertEquals("t", g.writeAttributeValueToString("boolGraph"));
-			assertEquals("[[t] [f] [t]]", g.writeAttributeValueToString("complexListGraph"));
-			assertEquals("{[t] - {t} [f] - {f}}", g.writeAttributeValueToString("complexMapGraph"));
-			assertEquals("{{t} {f}}", g.writeAttributeValueToString("complexSetGraph"));
+			assertEquals("[[t] [f] [t]]",
+					g.writeAttributeValueToString("complexListGraph"));
+			assertEquals("{[t] - {t} [f] - {f}}",
+					g.writeAttributeValueToString("complexMapGraph"));
+			assertEquals("{{t} {f}}",
+					g.writeAttributeValueToString("complexSetGraph"));
 			assertEquals("1.1", g.writeAttributeValueToString("doubleGraph"));
 			assertEquals("FIRST", g.writeAttributeValueToString("enumGraph"));
 			assertEquals("1", g.writeAttributeValueToString("intGraph"));
 			assertEquals("[t f t]", g.writeAttributeValueToString("listGraph"));
 			assertEquals("1", g.writeAttributeValueToString("longGraph"));
-			assertEquals("{1 - t 2 - f 3 - t}", g.writeAttributeValueToString("mapGraph"));
-			assertEquals("(t 1.1 FIRST 1 [t f t] 1 {1 - t 2 - f 3 - t} {t f} \"test\")", g.writeAttributeValueToString("recordGraph"));
+			assertEquals("{1 - t 2 - f 3 - t}",
+					g.writeAttributeValueToString("mapGraph"));
+			assertEquals(
+					"(t 1.1 FIRST 1 [t f t] 1 {1 - t 2 - f 3 - t} {t f} \"test\")",
+					g.writeAttributeValueToString("recordGraph"));
 			assertEquals("{t f}", g.writeAttributeValueToString("setGraph"));
-			assertEquals("\"test\"", g.writeAttributeValueToString("stringGraph"));
+			assertEquals("\"test\"",
+					g.writeAttributeValueToString("stringGraph"));
 
 			g.setAttribute("mapGraph", null);
-			assertEquals(GraphIO.NULL_LITERAL, g.writeAttributeValueToString("mapGraph"));
+			assertEquals(GraphIO.NULL_LITERAL,
+					g.writeAttributeValueToString("mapGraph"));
 		} catch (GraphIOException e) {
 			e.printStackTrace();
 			fail();
@@ -1032,20 +1021,18 @@ public class GenericGraphImplTest {
 			GraphIO io = GraphIO.createStringWriter(g.getSchema());
 			g.writeAttributeValues(io);
 			assertEquals(
-						"t " +
-						"[[t] [f] [t]] " +
-						"{[t] - {t} [f] - {f}} " +
-						"{{t} {f}} " +
-						"1.1 " +
-						"FIRST " +
-						"1 " +
-						"[t f t] " +
-						"1 " +
-						"{1 - t 2 - f 3 - t} " +
-						"(t 1.1 FIRST 1 [t f t] 1 {1 - t 2 - f 3 - t} {t f} \"test\") " +
-						"{t f} " +
-						"\"test\"",
-					io.getStringWriterResult());
+					"t "
+							+ "[[t] [f] [t]] "
+							+ "{[t] - {t} [f] - {f}} "
+							+ "{{t} {f}} "
+							+ "1.1 "
+							+ "FIRST "
+							+ "1 "
+							+ "[t f t] "
+							+ "1 "
+							+ "{1 - t 2 - f 3 - t} "
+							+ "(t 1.1 FIRST 1 [t f t] 1 {1 - t 2 - f 3 - t} {t f} \"test\") "
+							+ "{t f} " + "\"test\"", io.getStringWriterResult());
 		} catch (GraphIOException e) {
 			e.printStackTrace();
 			fail();

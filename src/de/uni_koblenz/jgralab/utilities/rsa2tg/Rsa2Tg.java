@@ -100,7 +100,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Queue;
 import java.util.Set;
 import java.util.Stack;
 import java.util.TreeSet;
@@ -124,7 +123,6 @@ import de.uni_koblenz.jgralab.ImplementationType;
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.exception.GraphIOException;
-import de.uni_koblenz.jgralab.graphmarker.BooleanGraphMarker;
 import de.uni_koblenz.jgralab.graphmarker.GraphMarker;
 import de.uni_koblenz.jgralab.graphvalidator.ConstraintViolation;
 import de.uni_koblenz.jgralab.graphvalidator.GraphValidator;
@@ -154,13 +152,10 @@ import de.uni_koblenz.jgralab.grumlschema.structure.GraphElementClass;
 import de.uni_koblenz.jgralab.grumlschema.structure.HasAttribute;
 import de.uni_koblenz.jgralab.grumlschema.structure.HasDomain;
 import de.uni_koblenz.jgralab.grumlschema.structure.IncidenceClass;
-import de.uni_koblenz.jgralab.grumlschema.structure.IncidenceDirection;
 import de.uni_koblenz.jgralab.grumlschema.structure.NamedElement;
 import de.uni_koblenz.jgralab.grumlschema.structure.Package;
-import de.uni_koblenz.jgralab.grumlschema.structure.Redefines;
 import de.uni_koblenz.jgralab.grumlschema.structure.Schema;
 import de.uni_koblenz.jgralab.grumlschema.structure.SpecializesEdgeClass;
-import de.uni_koblenz.jgralab.grumlschema.structure.Subsets;
 import de.uni_koblenz.jgralab.grumlschema.structure.VertexClass;
 import de.uni_koblenz.jgralab.utilities.tg2dot.Tg2Dot;
 
@@ -326,11 +321,6 @@ public class Rsa2Tg extends XmlProcessor {
 	 * Maps the XMI Id of commented elements to the list of comments.
 	 */
 	private Map<String, List<String>> comments;
-
-	/**
-	 * marks incidence classes with the set of redefined rolenames
-	 */
-	private GraphMarker<Set<String>> redefines;
 
 	/**
 	 * When creating {@link EdgeClass} names, also use the role name of the
@@ -629,7 +619,6 @@ public class Rsa2Tg extends XmlProcessor {
 		ownedEnds = new HashSet<IncidenceClass>();
 		constraints = new HashMap<String, List<String>>();
 		comments = new HashMap<String, List<String>>();
-		redefines = new GraphMarker<Set<String>>(sg);
 		ignoredPackages = new HashSet<Package>();
 		modelRootElementNestingDepth = 1;
 	}
@@ -1098,7 +1087,7 @@ public class Rsa2Tg extends XmlProcessor {
 
 		// the following depends on correct edge directions and edgeclass
 		// generalizations
-		createSubsetsAndRedefinesRelations();
+		checkSubsettingOfAllIncidenceClasses();
 
 		createEdgeClassNames();
 
@@ -1291,8 +1280,8 @@ public class Rsa2Tg extends XmlProcessor {
 		}
 	}
 
-	private void createSubsetsAndRedefinesRelations() {
-		System.out.println("Creating subsets and redefines relationships...");
+	private void checkSubsettingOfAllIncidenceClasses() {
+		System.out.println("Checking subsets relationships...");
 		// for each specialisation between edge classes, add a subsets edge
 		// between their incidence classes
 		SpecializesEdgeClass spec = sg.getFirstSpecializesEdgeClass();
@@ -1302,76 +1291,24 @@ public class Rsa2Tg extends XmlProcessor {
 
 			assert subClass.getFirstComesFromIncidence() != null;
 			assert superClass.getFirstComesFromIncidence() != null;
-			createSubsetsForIncidences(subClass, superClass,
+			checkSubsettingOfIncidences(subClass, superClass,
 					(IncidenceClass) subClass.getFirstComesFromIncidence()
 							.getThat(), (IncidenceClass) superClass
 							.getFirstComesFromIncidence().getThat());
 
 			assert subClass.getFirstGoesToIncidence() != null;
 			assert superClass.getFirstGoesToIncidence() != null;
-			createSubsetsForIncidences(subClass, superClass,
+			checkSubsettingOfIncidences(subClass, superClass,
 					(IncidenceClass) subClass.getFirstGoesToIncidence()
 							.getThat(), (IncidenceClass) superClass
 							.getFirstGoesToIncidence().getThat());
 			spec = spec.getNextSpecializesEdgeClassInGraph();
 		}
 
-		// Generalisation hierarchy is complete, now process redefinitions.
-
-		// When a rolename of a direct superclass is redefined, the subsets
-		// edge is replaced by a redefines edge. When a rolename of an
-		// indirect superclass is redefined, this results in a redefines edge to
-		// that incidence class, without replacing a subsets edge.
-
-		for (AttributedElement<?, ?> ae : redefines.getMarkedElements()) {
-			IncidenceClass inc = (IncidenceClass) ae;
-			Set<String> redefinedRolenames = redefines.getMark(inc);
-			for (String rolename : redefinedRolenames) {
-				// breadth first search over subsets edges for closest
-				// superclass with correct rolename
-				IncidenceClass sup = null;
-				Queue<IncidenceClass> q = new LinkedList<IncidenceClass>();
-				BooleanGraphMarker m = new BooleanGraphMarker(sg);
-				m.mark(inc);
-				q.offer(inc);
-				while (!q.isEmpty()) {
-					IncidenceClass curr = q.poll();
-					m.mark(curr);
-					if ((curr != inc) && rolename.equals(curr.get_roleName())) {
-						sup = curr;
-						break;
-					}
-					for (Subsets si : curr
-							.getSubsetsIncidences(EdgeDirection.OUT)) {
-						IncidenceClass i = si.getOmega();
-						if (!m.isMarked(i)) {
-							m.mark(i);
-							q.offer(i);
-						}
-					}
-
-				}
-				if (sup == null) {
-					throw new ProcessingException(getFileName(),
-							"Redefined rolename '" + rolename + "' not found");
-				} else {
-					// delete direct subsets edge from inc to sup
-					for (Subsets si : inc
-							.getSubsetsIncidences(EdgeDirection.OUT)) {
-						IncidenceClass i = si.getOmega();
-						if (i == sup) {
-							assert !(si instanceof Redefines);
-							si.delete();
-							break;
-						}
-					}
-					sg.createRedefines(inc, sup);
-				}
-			}
-		}
+		// Generalisation hierarchy is complete
 	}
 
-	private void createSubsetsForIncidences(EdgeClass subClass,
+	private void checkSubsettingOfIncidences(EdgeClass subClass,
 			EdgeClass superClass, IncidenceClass subInc, IncidenceClass superInc) {
 		assert getDirection(subInc) != null;
 		assert getDirection(superInc) != null;
@@ -1409,17 +1346,15 @@ public class Rsa2Tg extends XmlProcessor {
 							+ superClass.get_qualifiedName());
 
 		}
-
-		sg.createSubsets(subInc, superInc);
 	}
 
-	private IncidenceDirection getDirection(IncidenceClass inc) {
+	private EdgeDirection getDirection(IncidenceClass inc) {
 		assert (inc.getFirstComesFromIncidence() == null)
 				|| (inc.getFirstGoesToIncidence() == null);
 		if (inc.getFirstComesFromIncidence() != null) {
-			return IncidenceDirection.OUT;
+			return EdgeDirection.OUT;
 		} else if (inc.getFirstGoesToIncidence() != null) {
-			return IncidenceDirection.IN;
+			return EdgeDirection.IN;
 		} else {
 			return null;
 		}
@@ -1650,7 +1585,7 @@ public class Rsa2Tg extends XmlProcessor {
 		inc = (IncidenceClass) idMap.get(targetEnd);
 		if (inc != null) {
 			assert inc.isValid();
-			assert getDirection(inc) == IncidenceDirection.OUT;
+			assert getDirection(inc) == EdgeDirection.OUT;
 
 			IncidenceClass to = sg.createIncidenceClass();
 
@@ -1889,8 +1824,8 @@ public class Rsa2Tg extends XmlProcessor {
 			}
 
 			// "from" end is marked navigable, swap edge direction
-			assert getDirection(to) == IncidenceDirection.IN;
-			assert getDirection(from) == IncidenceDirection.OUT;
+			assert getDirection(to) == EdgeDirection.IN;
+			assert getDirection(from) == EdgeDirection.OUT;
 
 			IncidenceClass inc = (IncidenceClass) cf.getThat();
 			cf.setThat(gt.getThat());
@@ -1937,20 +1872,6 @@ public class Rsa2Tg extends XmlProcessor {
 				if (((AttributedElementClass) ae).isValid()) {
 					for (String text : l) {
 						addGreqlConstraint((AttributedElementClass) ae, text);
-					}
-				}
-			} else if (ae instanceof IncidenceClass) {
-				if (((IncidenceClass) ae).isValid()) {
-					for (String text : l) {
-						if (!text.startsWith("redefines")) {
-							throw new ProcessingException(
-									getFileName(),
-									"Only 'redefines' constraints are allowed at association ends. Offending element: "
-											+ ae
-											+ " (XMI id "
-											+ constrainedElementId + ")");
-						}
-						addRedefinesConstraint((IncidenceClass) ae, text);
 					}
 				}
 			} else {
@@ -2366,7 +2287,7 @@ public class Rsa2Tg extends XmlProcessor {
 	 * @throws XMLStreamException
 	 */
 	private void handleConstraint(String text) throws XMLStreamException {
-		if (text.startsWith("redefines") || text.startsWith("\"")) {
+		if (text.startsWith("\"")) {
 			List<String> l = constraints.get(constrainedElementId);
 			if (l == null) {
 				l = new LinkedList<String>();
@@ -2391,58 +2312,6 @@ public class Rsa2Tg extends XmlProcessor {
 			throw new ProcessingException(getFileName(), getParser()
 					.getLocation().getLineNumber(),
 					"Illegal constraint format: " + text);
-		}
-	}
-
-	/**
-	 * Adds redefinesConstraint {@link String} objects to a specific
-	 * {@link Edge}.
-	 * 
-	 * @param constrainedEnd
-	 *            Edge, to which all redefinesConstraint String objects will be
-	 *            added.
-	 * @param text
-	 *            RedefinedConstraint String, which can contain multiple
-	 *            constraints.
-	 * @throws XMLStreamException
-	 */
-	private void addRedefinesConstraint(IncidenceClass constrainedEnd,
-			String text) throws XMLStreamException {
-		text = text.trim().replaceAll("\\s+", " ");
-		if (!text.startsWith("redefines ")) {
-			throw new ProcessingException(getFileName(),
-					"Wrong redefines constraint format.");
-		}
-		String[] roles = text.substring(10).split("\\s*,\\s*");
-
-		// String array of 'roles' must not be empty.
-		if (roles.length < 1) {
-			throw new ProcessingException(getFileName(),
-					"Redefines constraint without rolenames");
-		}
-		Set<String> redefinedRoles = new TreeSet<String>();
-		for (String role : roles) {
-
-			// A role String must not be empty.
-			if (role.length() < 1) {
-				throw new ProcessingException(getFileName(),
-						"Empty role name in redefines constraint");
-			}
-			redefinedRoles.add(role);
-		}
-
-		// At least one redefined role must have been added.
-		if (redefinedRoles.size() < 1) {
-			throw new ProcessingException(getFileName(),
-					"Redefines constraint without rolenames");
-		}
-
-		// remember the set of redefined role names
-		Set<String> oldRedefinesRoles = redefines.getMark(constrainedEnd);
-		if (oldRedefinesRoles == null) {
-			redefines.mark(constrainedEnd, redefinedRoles);
-		} else {
-			oldRedefinesRoles.addAll(redefinedRoles);
 		}
 	}
 

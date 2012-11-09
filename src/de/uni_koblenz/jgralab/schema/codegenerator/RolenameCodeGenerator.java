@@ -40,7 +40,6 @@ import java.util.Set;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.IncidenceClass;
-import de.uni_koblenz.jgralab.schema.IncidenceDirection;
 import de.uni_koblenz.jgralab.schema.VertexClass;
 
 /**
@@ -51,9 +50,9 @@ import de.uni_koblenz.jgralab.schema.VertexClass;
  */
 public class RolenameCodeGenerator {
 
-	private VertexClass vertexClass;
+	private final VertexClass vertexClass;
 
-	private String schemaRootPackageName;
+	private final String schemaRootPackageName;
 
 	RolenameCodeGenerator(VertexClass vertexClass) {
 		this.vertexClass = vertexClass;
@@ -235,12 +234,12 @@ public class RolenameCodeGenerator {
 		} else {
 			code.add("@Override",
 					"public #edgeClassName# add_#rolename#(#definingVertexClassName# vertex) {");
-			if (definingVertexClass != allowedVertexClass) {
-				code.add(
-						"\tif (!(vertex instanceof #allowedVertexClassName#)) {",
-						"\t\tthrow new #jgPackage#.exception.GraphException(\"The rolename #rolename# was redefined at the vertex class #thisVertexClassName#. Only vertices of #allowedVertexClassName# are allowed.\"); ",
-						"\t}");
-			}
+			// if (definingVertexClass != allowedVertexClass) {
+			// code.add(
+			// "\tif (!(vertex instanceof #allowedVertexClassName#)) {",
+			// "\t\tthrow new #jgPackage#.exception.GraphException(\"The rolename #rolename# was redefined at the vertex class #thisVertexClassName#. Only vertices of #allowedVertexClassName# are allowed.\"); ",
+			// "\t}");
+			// }
 			code.add(
 					"\treturn ((#graphClassName#)getGraph()).createEdge(#edgeClass#, (#alphaVertexClassName#) #alpha#, (#omegaVertexClassName#) #omega#);",
 					"}");
@@ -255,10 +254,6 @@ public class RolenameCodeGenerator {
 		validFarICs.addAll(vertexClass.getValidToFarIncidenceClasses());
 		for (IncidenceClass ic : validFarICs) {
 			list.add(createMethodsForOneIncidenceClass(ic, ic, createClass));
-			for (IncidenceClass redefinedIC : ic.getRedefinedIncidenceClasses()) {
-				list.add(createMethodsForOneIncidenceClass(ic, redefinedIC,
-						createClass));
-			}
 		}
 		return list;
 	}
@@ -272,7 +267,7 @@ public class RolenameCodeGenerator {
 			EdgeClass ec = allowedIncidenceClass.getEdgeClass();
 			VertexClass vc = definingIncidenceClass.getVertexClass();
 			VertexClass allowedVC = allowedIncidenceClass.getVertexClass();
-			EdgeDirection dir = allowedIncidenceClass.getDirection() == IncidenceDirection.OUT ? EdgeDirection.IN
+			EdgeDirection dir = allowedIncidenceClass.getDirection() == EdgeDirection.OUT ? EdgeDirection.IN
 					: EdgeDirection.OUT;
 			list.addNoIndent(createAddRolenameSnippet(rolename, ec, vc,
 					allowedVC, dir, createClass));

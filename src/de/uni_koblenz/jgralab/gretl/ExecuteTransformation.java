@@ -126,10 +126,6 @@ public class ExecuteTransformation extends Transformation<Graph> {
 		registerTransformation(MergeVertices.class);
 		registerTransformation(NTimes.class);
 		registerTransformation(PrintGraph.class);
-		registerTransformation(RedefineFromRole.class);
-		registerTransformation(RedefineFromRoles.class);
-		registerTransformation(RedefineToRole.class);
-		registerTransformation(RedefineToRoles.class);
 		registerTransformation(SetAttributes.class);
 		registerTransformation(SetMultipleAttributes.class);
 		registerTransformation(SysErr.class);
@@ -138,7 +134,7 @@ public class ExecuteTransformation extends Transformation<Graph> {
 
 	private File file = null;
 	private String name = null;
-	private List<Token> tokens;
+	private final List<Token> tokens;
 	private int current;
 
 	public ExecuteTransformation(Context c, File file) {

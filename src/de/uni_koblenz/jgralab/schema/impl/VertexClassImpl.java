@@ -45,7 +45,6 @@ import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.IncidenceClass;
-import de.uni_koblenz.jgralab.schema.IncidenceDirection;
 import de.uni_koblenz.jgralab.schema.VertexClass;
 import de.uni_koblenz.jgralab.schema.exception.SchemaException;
 
@@ -207,11 +206,8 @@ public class VertexClassImpl extends GraphElementClassImpl<VertexClass, Vertex>
 
 	/**
 	 * For a vertexclass A are all edgeclasses valid froms, which (1) run from A
-	 * to a B or (2) run from a superclass of A to a B and whose end b at B is
-	 * not redefined by A or a superclass of A
-	 * 
+	 * to a B or (2) run from a superclass of A to a B.
 	 */
-
 	@Override
 	public Set<IncidenceClass> getValidFromFarIncidenceClasses() {
 		if (isFinished()) {
@@ -228,10 +224,6 @@ public class VertexClassImpl extends GraphElementClassImpl<VertexClass, Vertex>
 				IncidenceClass farInc = ic.getEdgeClass().getTo();
 				validFromInc.add(farInc);
 			}
-		}
-		Set<IncidenceClass> temp = new HashSet<IncidenceClass>(validFromInc);
-		for (IncidenceClass ic : temp) {
-			validFromInc.removeAll(ic.getRedefinedIncidenceClasses());
 		}
 
 		return validFromInc;
@@ -252,10 +244,6 @@ public class VertexClassImpl extends GraphElementClassImpl<VertexClass, Vertex>
 				IncidenceClass farInc = ic.getEdgeClass().getFrom();
 				validToInc.add(farInc);
 			}
-		}
-		Set<IncidenceClass> temp = new HashSet<IncidenceClass>(validToInc);
-		for (IncidenceClass ic : temp) {
-			validToInc.removeAll(ic.getRedefinedIncidenceClasses());
 		}
 
 		return validToInc;
@@ -446,7 +434,7 @@ public class VertexClassImpl extends GraphElementClassImpl<VertexClass, Vertex>
 				EdgeClass ec = ic.getEdgeClass();
 				return new DirectedSchemaEdgeClass(
 						ec,
-						(ic.getDirection() == IncidenceDirection.IN ? EdgeDirection.OUT
+						(ic.getDirection() == EdgeDirection.IN ? EdgeDirection.OUT
 								: EdgeDirection.IN));
 			}
 		}

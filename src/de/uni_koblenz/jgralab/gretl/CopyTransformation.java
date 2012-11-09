@@ -96,9 +96,9 @@ import de.uni_koblenz.jgralab.schema.VertexClass;
  */
 public class CopyTransformation extends Transformation<Graph> {
 	protected Pattern excludePattern, includePattern;
-	private HashSet<String> vcsCreated = new HashSet<String>();
-	private HashSet<String> ecsCreated = new HashSet<String>();
-	private HashSet<String> attrsCreated = new HashSet<String>();
+	private final HashSet<String> vcsCreated = new HashSet<String>();
+	private final HashSet<String> ecsCreated = new HashSet<String>();
+	private final HashSet<String> attrsCreated = new HashSet<String>();
 
 	private static Logger logger = JGraLab.getLogger(CopyTransformation.class);
 
@@ -381,24 +381,8 @@ public class CopyTransformation extends Transformation<Graph> {
 					EdgeClass newSuperEC = ec(supEC.getQualifiedName());
 					new AddSuperClass(context, newEC, newSuperEC).execute();
 				}
-				// Handle role redefinitions
-				for (String fromRole : oldFromIC.getRedefinedRoles()) {
-					try {
-						new RedefineFromRole(context, newEC, fromRole)
-								.execute();
-					} catch (GReTLException ex) {
-						ex.printStackTrace();
-					}
-				}
-
-				for (String toRole : oldToIC.getRedefinedRoles()) {
-					try {
-						new RedefineToRole(context, newEC, toRole).execute();
-					} catch (GReTLException ex) {
-						ex.printStackTrace();
-					}
-				}
-				logger.info("Copied EdgeClass '" + oldEC.getQualifiedName() + "'.");
+				logger.info("Copied EdgeClass '" + oldEC.getQualifiedName()
+						+ "'.");
 			}
 		}
 	}

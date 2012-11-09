@@ -37,7 +37,6 @@ package de.uni_koblenz.jgralab.utilities.tg2schemagraph;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
 
 import de.uni_koblenz.jgralab.ImplementationType;
 import de.uni_koblenz.jgralab.grumlschema.GrumlSchema;
@@ -70,11 +69,9 @@ import de.uni_koblenz.jgralab.grumlschema.structure.HasDomain;
 import de.uni_koblenz.jgralab.grumlschema.structure.IncidenceClass;
 import de.uni_koblenz.jgralab.grumlschema.structure.NamedElement;
 import de.uni_koblenz.jgralab.grumlschema.structure.Package;
-import de.uni_koblenz.jgralab.grumlschema.structure.Redefines;
 import de.uni_koblenz.jgralab.grumlschema.structure.Schema;
 import de.uni_koblenz.jgralab.grumlschema.structure.SpecializesEdgeClass;
 import de.uni_koblenz.jgralab.grumlschema.structure.SpecializesVertexClass;
-import de.uni_koblenz.jgralab.grumlschema.structure.Subsets;
 import de.uni_koblenz.jgralab.grumlschema.structure.VertexClass;
 import de.uni_koblenz.jgralab.schema.RecordDomain.RecordComponent;
 
@@ -240,9 +237,6 @@ public class Schema2SchemaGraph {
 
 		// Creates all IncidenceClasses
 		createIncidenceClasses();
-
-		// Creates all Redefines and Subsetts
-		createRedefinesAndSubsetts();
 
 		// Stores the schemaGraph object, so that it will not be lost after
 		// calling the tearDown Method.
@@ -1037,51 +1031,6 @@ public class Schema2SchemaGraph {
 		assert (endsAt != null) : "FIXME! No link EndsAt has been created!";
 
 		return gIncidenceClass;
-	}
-
-	/**
-	 * Creates all Subsetts and Redefines links.
-	 */
-	private void createRedefinesAndSubsetts() {
-
-		for (Entry<de.uni_koblenz.jgralab.schema.IncidenceClass, IncidenceClass> entry : incidenceClassMap
-				.entrySet()) {
-
-			// Set all redefined Incidences
-			Set<de.uni_koblenz.jgralab.schema.IncidenceClass> redefinedIncidences = entry
-					.getKey().getOwnRedefinedIncidenceClasses();
-			if (redefinedIncidences != null) {
-				for (de.uni_koblenz.jgralab.schema.IncidenceClass redefinedIncidence : redefinedIncidences) {
-					assert redefinedIncidence != null : "FIXME! No redefined IncidenceClass defined!";
-					IncidenceClass gRedefinedIncidence = incidenceClassMap
-							.get(redefinedIncidence);
-					assert gRedefinedIncidence != null : "FIXME! No redefined IncidenceClass created yet!";
-					Redefines link = schemaGraph.createRedefines(
-							entry.getValue(), gRedefinedIncidence);
-					assert (link != null) : "FIXME! No link RedefinesIncidenceClass has been created!";
-				}
-			}
-
-			// Set all subsetted Incidences
-			Set<de.uni_koblenz.jgralab.schema.IncidenceClass> subsettedIncidences = entry
-					.getKey().getOwnSubsettedIncidenceClasses();
-			if (subsettedIncidences != null) {
-				for (de.uni_koblenz.jgralab.schema.IncidenceClass subsettedIncidence : subsettedIncidences) {
-					assert subsettedIncidence != null : "FIXME! No subsetted IncidenceClass defined!";
-					if (!subsettedIncidence.getEdgeClass()
-							.isDefaultGraphElementClass()) {
-						IncidenceClass gSubsettedIncidence = incidenceClassMap
-								.get(subsettedIncidence);
-						assert gSubsettedIncidence != null : "FIXME! No subsetted IncidenceClass created yet!";
-						Subsets link = schemaGraph.createSubsets(
-								entry.getValue(), gSubsettedIncidence);
-						assert (link != null) : "FIXME! No link SubsetsIncidenceClass has been created!";
-					}
-				}
-			}
-
-		}
-
 	}
 
 	/**

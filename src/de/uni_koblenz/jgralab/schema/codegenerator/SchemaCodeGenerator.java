@@ -364,20 +364,6 @@ public class SchemaCodeGenerator extends CodeGenerator {
 			code.add(s);
 		}
 
-		for (String redefinedFromRole : ec.getFrom().getRedefinedRoles()) {
-			CodeSnippet s = new CodeSnippet(
-					"#aecVariable#.getFrom().addRedefinedRole(\"#redefinedFromRole#\");");
-			s.setVariable("redefinedFromRole", redefinedFromRole);
-			code.add(s);
-		}
-
-		for (String redefinedToRole : ec.getTo().getRedefinedRoles()) {
-			CodeSnippet s = new CodeSnippet(
-					"#aecVariable#.getTo().addRedefinedRole(\"#redefinedToRole#\");");
-			s.setVariable("redefinedToRole", redefinedToRole);
-			code.add(s);
-		}
-
 		code.add(createAttributes(ec));
 		code.add(createConstraints(ec));
 		code.add(createComments(gecVarName(ec), ec));

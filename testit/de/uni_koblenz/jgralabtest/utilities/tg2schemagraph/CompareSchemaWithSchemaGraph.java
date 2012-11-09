@@ -41,12 +41,10 @@ import static junit.framework.Assert.assertTrue;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.grumlschema.SchemaGraph;
@@ -79,24 +77,22 @@ import de.uni_koblenz.jgralab.grumlschema.structure.HasAttribute;
 import de.uni_koblenz.jgralab.grumlschema.structure.HasConstraint;
 import de.uni_koblenz.jgralab.grumlschema.structure.HasDomain;
 import de.uni_koblenz.jgralab.grumlschema.structure.IncidenceClass;
-import de.uni_koblenz.jgralab.grumlschema.structure.IncidenceDirection;
 import de.uni_koblenz.jgralab.grumlschema.structure.NamedElement;
 import de.uni_koblenz.jgralab.grumlschema.structure.Package;
 import de.uni_koblenz.jgralab.grumlschema.structure.Schema;
 import de.uni_koblenz.jgralab.grumlschema.structure.SpecializesEdgeClass;
 import de.uni_koblenz.jgralab.grumlschema.structure.SpecializesVertexClass;
-import de.uni_koblenz.jgralab.grumlschema.structure.Subsets;
 import de.uni_koblenz.jgralab.grumlschema.structure.VertexClass;
 import de.uni_koblenz.jgralab.schema.RecordDomain.RecordComponent;
 
 /**
  * Compares a given Schema and SchemaGraph with each other.
- *
+ * 
  * Note:
- *
+ * 
  * This class exists only for test purposes. Because of the use of a lot of
  * Assert of JUnit, it will crash without catching these exceptions.
- *
+ * 
  * @author mmce, Eckhard Großmann
  */
 public class CompareSchemaWithSchemaGraph {
@@ -121,7 +117,7 @@ public class CompareSchemaWithSchemaGraph {
 
 	/**
 	 * Compares the given Schema with the given SchemaGraph.
-	 *
+	 * 
 	 * @param schema
 	 *            Schema, which should be compared.
 	 * @param schemaGraph
@@ -137,7 +133,7 @@ public class CompareSchemaWithSchemaGraph {
 
 	/**
 	 * Compares a Schema and a Schema from a SchemaGraph with each other.
-	 *
+	 * 
 	 * @param schema
 	 *            Schema, which is compared.
 	 * @param gSchema
@@ -249,9 +245,9 @@ public class CompareSchemaWithSchemaGraph {
 	/**
 	 * Compares a Package of a Schema and a Package of a SchemaGraph with each
 	 * other.
-	 *
+	 * 
 	 * It also compares all subpackages.
-	 *
+	 * 
 	 * @param xPackage
 	 *            Package, which should be compared.
 	 * @param gPackage
@@ -320,7 +316,7 @@ public class CompareSchemaWithSchemaGraph {
 
 	/**
 	 * Compares all Domain objects of two Package objects.
-	 *
+	 * 
 	 * @param xPackage
 	 *            Package from the Schema, of which all Domain objects are
 	 *            compared.
@@ -354,13 +350,13 @@ public class CompareSchemaWithSchemaGraph {
 	private Domain retrieveDomain(ContainsDomain containsDomain) {
 		assertTrue("ContainsDomain is not an instance of type Domain.",
 				containsDomain.getOmega() instanceof Domain);
-		Domain gDomain = (Domain) containsDomain.getOmega();
+		Domain gDomain = containsDomain.getOmega();
 		return gDomain;
 	}
 
 	/**
 	 * Compares all GraphElementClass objects in two Packages.
-	 *
+	 * 
 	 * @param xPackage
 	 *            Package from the Schema, of which all GraphElementClass
 	 *            objects should be compared.
@@ -416,7 +412,7 @@ public class CompareSchemaWithSchemaGraph {
 
 	/**
 	 * Compares all SubPackage objects of two Package objects.
-	 *
+	 * 
 	 * @param xPackage
 	 *            Package from the Schema, of which all Packages should be
 	 *            compared.
@@ -437,7 +433,7 @@ public class CompareSchemaWithSchemaGraph {
 
 			assertTrue("Omega should be an instance of \"Package\".",
 					containsSubPackage.getOmega() instanceof Package);
-			Package gSubPackage = (Package) containsSubPackage.getOmega();
+			Package gSubPackage = containsSubPackage.getOmega();
 			de.uni_koblenz.jgralab.schema.Package subpackage = schema
 					.getPackage(gSubPackage.get_qualifiedName());
 
@@ -455,7 +451,7 @@ public class CompareSchemaWithSchemaGraph {
 
 	/**
 	 * Compares two Domains with each other.
-	 *
+	 * 
 	 * @param domain
 	 *            Domain from the Schema, which should be compared.
 	 * @param gDomain
@@ -496,7 +492,7 @@ public class CompareSchemaWithSchemaGraph {
 
 	/**
 	 * Compares two RecordDomain objects with each other.
-	 *
+	 * 
 	 * @param domain
 	 *            RecordDomain from Schema, which should be compared.
 	 * @param gDomain
@@ -520,7 +516,7 @@ public class CompareSchemaWithSchemaGraph {
 			assertTrue("Omega should be an instance of Domain.",
 					hasRecordDomainComponent.getOmega() instanceof Domain);
 			// Gets the Domain
-			Domain domainComponent = (Domain) hasRecordDomainComponent.getOmega();
+			Domain domainComponent = hasRecordDomainComponent.getOmega();
 
 			// Get and removes the Domain and compares.
 			// The comparison of the Component name is missed out, because
@@ -545,7 +541,7 @@ public class CompareSchemaWithSchemaGraph {
 
 	/**
 	 * Compares tow MapDomain objects with each other.
-	 *
+	 * 
 	 * @param domain
 	 *            MapDomain from the Schema, which should be compared.
 	 * @param gDomain
@@ -591,7 +587,7 @@ public class CompareSchemaWithSchemaGraph {
 
 	/**
 	 * Compares two CollectionDomain objects with each other.
-	 *
+	 * 
 	 * @param domain
 	 *            CollectionDomain from the Schema, which should be compared.
 	 * @param gDomain
@@ -622,7 +618,7 @@ public class CompareSchemaWithSchemaGraph {
 
 	/**
 	 * Compares two EnumDomain objects with each other.
-	 *
+	 * 
 	 * @param domain
 	 *            EnumDomain from the Schema, which should be compared.
 	 * @param gDomain
@@ -645,7 +641,7 @@ public class CompareSchemaWithSchemaGraph {
 
 	/**
 	 * Compares two AttributedElementClass with each other.
-	 *
+	 * 
 	 * @param element
 	 *            An AttributedElementClass from the Schema, which should be
 	 *            compared.
@@ -681,7 +677,7 @@ public class CompareSchemaWithSchemaGraph {
 
 	/**
 	 * Compares two VertexClass objects with each other.
-	 *
+	 * 
 	 * @param vertexClass
 	 *            VertexClass from the Schema, which should be compared.
 	 * @param gVertexClass
@@ -701,7 +697,7 @@ public class CompareSchemaWithSchemaGraph {
 		// Loop over all SpecializesVertexClass edges
 		for (SpecializesVertexClass specializesVertexClass : gVertexClass
 				.getSpecializesVertexClassIncidences(OUTGOING)) {
-			AttributedElementClass element = (AttributedElementClass) specializesVertexClass.getOmega();
+			AttributedElementClass element = specializesVertexClass.getOmega();
 			// It gets, removes and compare the QualifiedNames
 			assertEquals(
 					"SuperClasses of these AttributeElementClass objects are different.",
@@ -717,7 +713,7 @@ public class CompareSchemaWithSchemaGraph {
 
 	/**
 	 * Compares two EdgeClass objects with each other.
-	 *
+	 * 
 	 * @param edgeClass
 	 *            EdgeClass from the Schema, which should be compared.
 	 * @param gEdgeClass
@@ -737,7 +733,7 @@ public class CompareSchemaWithSchemaGraph {
 		// Loop over all SpecializesEdgeClass edges
 		for (SpecializesEdgeClass specializesEdgeClass : gEdgeClass
 				.getSpecializesEdgeClassIncidences(OUTGOING)) {
-			AttributedElementClass gElement = (AttributedElementClass) specializesEdgeClass.getOmega();
+			AttributedElementClass gElement = specializesEdgeClass.getOmega();
 
 			// Gets, removes and compares the QualifiedNames
 			de.uni_koblenz.jgralab.schema.EdgeClass element = superClasses
@@ -756,18 +752,18 @@ public class CompareSchemaWithSchemaGraph {
 		// "To" and "From" edges are compared
 		ComesFrom comesFrom = gEdgeClass.getFirstComesFromIncidence();
 		compareIncidenceClass(edgeClass.getFrom(),
-				(IncidenceClass) comesFrom.getThat(), IncidenceDirection.OUT);
+				(IncidenceClass) comesFrom.getThat(), EdgeDirection.OUT);
 		// TODO TEST ob es weitere Kanten gibt, die es nicht geben sollte!
 
 		GoesTo goesTo = gEdgeClass.getFirstGoesToIncidence();
 		compareIncidenceClass(edgeClass.getTo(),
-				(IncidenceClass) goesTo.getThat(), IncidenceDirection.IN);
+				(IncidenceClass) goesTo.getThat(), EdgeDirection.IN);
 		// TODO TEST ob es weitere Kanten gibt, die es nicht geben sollte!
 	}
 
 	/**
 	 * Compares two IncidenceClasses objects.
-	 *
+	 * 
 	 * @param incidence
 	 *            IncidenceClasses from the Schema.
 	 * @param gIncidence
@@ -775,7 +771,7 @@ public class CompareSchemaWithSchemaGraph {
 	 */
 	final private void compareIncidenceClass(
 			de.uni_koblenz.jgralab.schema.IncidenceClass incidence,
-			IncidenceClass gIncidence, IncidenceDirection gDirection) {
+			IncidenceClass gIncidence, EdgeDirection gDirection) {
 
 		currentName = "IncidenceClass";
 
@@ -793,12 +789,11 @@ public class CompareSchemaWithSchemaGraph {
 		compareMinValue(incidence, gIncidence);
 		compareRoleNames(incidence, gIncidence);
 		compareDirection(incidence, gDirection);
-		compareSubsettedIncidenceClasses(incidence, gIncidence);
 	}
 
 	private void compareDirection(
 			de.uni_koblenz.jgralab.schema.IncidenceClass incidence,
-			IncidenceDirection gDirection) {
+			EdgeDirection gDirection) {
 		assertEquals(
 				"The directions are not equal: " + incidence.getDirection()
 						+ " != " + gDirection, incidence.getDirection()
@@ -846,8 +841,6 @@ public class CompareSchemaWithSchemaGraph {
 		assertEquals(currentName
 				+ ": Both \"IncidenceClasses\" should have the same Rolename.",
 				incidence.getRolename(), gIncidence.get_roleName());
-
-		// Gets the redefined roles
 	}
 
 	private void compareMaxValue(
@@ -881,92 +874,9 @@ public class CompareSchemaWithSchemaGraph {
 	}
 
 	/**
-	 * Compares two sets of RedefinedRoles with each other.
-	 *
-	 * @param redefinedRoles
-	 *            Set of RedefinedRoles of an edge from the Schema.
-	 * @param gRedefinedRoles
-	 *            Set of RedefinedRoles of an edge from the SchemaGraph.
-	 */
-	final private void compareSubsettedIncidenceClasses(
-			de.uni_koblenz.jgralab.schema.IncidenceClass incidence,
-			IncidenceClass gIncidence) {
-
-		Set<String> subsettedIncidenceClasses = getherAllSubsettedEdgeClassQualifiedNames(incidence);
-
-		Set<String> gSubsettedIncidenceClasses = getherAllSubsettedEdgeClassQualifiedNames(gIncidence);
-
-		String contents = subsettedIncidenceClasses + " != "
-				+ gSubsettedIncidenceClasses + ".";
-
-		assertTrue("Not all subsets-links are included on the Schema side: "
-				+ contents,
-				subsettedIncidenceClasses
-						.containsAll(gSubsettedIncidenceClasses));
-
-		assertTrue(
-				"Not all subsets-links are included on the Schema graph side: "
-						+ contents,
-				gSubsettedIncidenceClasses
-						.containsAll(subsettedIncidenceClasses));
-
-	}
-
-	private Set<String> getherAllSubsettedEdgeClassQualifiedNames(
-			de.uni_koblenz.jgralab.schema.IncidenceClass incidence) {
-		Set<String> subsettedIncidenceClasses = new HashSet<String>(incidence
-				.getSubsettedIncidenceClasses().size());
-
-		for (de.uni_koblenz.jgralab.schema.IncidenceClass subsettedIncidenceClass : incidence
-				.getSubsettedIncidenceClasses()) {
-			de.uni_koblenz.jgralab.schema.EdgeClass edgeClass = subsettedIncidenceClass
-					.getEdgeClass();
-			if (edgeClass.isDefaultGraphElementClass()) {
-				continue;
-			}
-			subsettedIncidenceClasses.add(edgeClass.getQualifiedName());
-		}
-		return subsettedIncidenceClasses;
-	}
-
-	private Set<String> getherAllSubsettedEdgeClassQualifiedNames(
-			IncidenceClass gIncidence) {
-		Set<String> gSubsettedIncidenceClasses = new HashSet<String>();
-
-		for (Subsets subsets : gIncidence.getSubsetsIncidences(OUTGOING)) {
-			getherAllSubsettedEdgeClassQaulifiedNames(
-					gSubsettedIncidenceClasses, subsets);
-		}
-		return gSubsettedIncidenceClasses;
-	}
-
-	private void getherAllSubsettedEdgeClassQaulifiedNames(
-			Set<String> gSubsettedIncidenceClasses, Subsets subsets) {
-		IncidenceClass subsettedIncidenceClass = (IncidenceClass) subsets
-				.getThat();
-		Edge edgeToEdgeClass = subsettedIncidenceClass
-				.getFirstGoesToIncidence();
-		if (edgeToEdgeClass == null) {
-			edgeToEdgeClass = subsettedIncidenceClass
-					.getFirstComesFromIncidence();
-		}
-		assertFalse(
-				"There is no edge defined to connected this IncidenceClass to its EdgeClass.",
-				edgeToEdgeClass == null);
-		EdgeClass edgeClass = (EdgeClass) edgeToEdgeClass.getThat();
-		gSubsettedIncidenceClasses.add(edgeClass.get_qualifiedName());
-
-		for (Subsets subSubsets : subsettedIncidenceClass
-				.getSubsetsIncidences(OUTGOING)) {
-			getherAllSubsettedEdgeClassQaulifiedNames(
-					gSubsettedIncidenceClasses, subSubsets);
-		}
-	}
-
-	/**
 	 * Compares all Attribute objects of two AttributedElementClass objects with
 	 * each other.
-	 *
+	 * 
 	 * @param element
 	 *            AttributedElementClass from the Schema, of which all Attribute
 	 *            objects should be compared.
@@ -1019,7 +929,7 @@ public class CompareSchemaWithSchemaGraph {
 	/**
 	 * Compares all Constraint objects of two AttributedElementClass objects
 	 * with each other.
-	 *
+	 * 
 	 * @param element
 	 *            AttributedElementClass from the Schema, of which all
 	 *            Constraint objects should be compared.
@@ -1042,7 +952,7 @@ public class CompareSchemaWithSchemaGraph {
 			// Gets the Constraint
 			assertTrue("Omega should be an instance of \"Constraint\".",
 					hasConstraint.getOmega() instanceof Constraint);
-			Constraint gConstraint = (Constraint) hasConstraint.getOmega();
+			Constraint gConstraint = hasConstraint.getOmega();
 
 			boolean foundMatch = false;
 			boolean equal = false;
@@ -1078,7 +988,7 @@ public class CompareSchemaWithSchemaGraph {
 
 	/**
 	 * Creates an Attribute map out of an Attribute set.
-	 *
+	 * 
 	 * @param attributeList
 	 *            Set of Attribute object, of which a map of Attributes should
 	 *            be created.
@@ -1098,7 +1008,7 @@ public class CompareSchemaWithSchemaGraph {
 
 	/**
 	 * Makes out of an element set an element map.
-	 *
+	 * 
 	 * @param elementSet
 	 *            Set of AttributedElementClass objects.
 	 * @return The new map of AttributedElementClass objects with their

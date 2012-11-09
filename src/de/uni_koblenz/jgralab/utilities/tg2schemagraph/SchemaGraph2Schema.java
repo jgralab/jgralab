@@ -41,7 +41,6 @@ import java.util.List;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.exception.GraphException;
-import de.uni_koblenz.jgralab.graphmarker.BooleanGraphMarker;
 import de.uni_koblenz.jgralab.grumlschema.SchemaGraph;
 import de.uni_koblenz.jgralab.grumlschema.domains.CollectionDomain;
 import de.uni_koblenz.jgralab.grumlschema.domains.Domain;
@@ -74,11 +73,9 @@ import de.uni_koblenz.jgralab.grumlschema.structure.HasDomain;
 import de.uni_koblenz.jgralab.grumlschema.structure.IncidenceClass;
 import de.uni_koblenz.jgralab.grumlschema.structure.NamedElement;
 import de.uni_koblenz.jgralab.grumlschema.structure.Package;
-import de.uni_koblenz.jgralab.grumlschema.structure.Redefines;
 import de.uni_koblenz.jgralab.grumlschema.structure.Schema;
 import de.uni_koblenz.jgralab.grumlschema.structure.SpecializesEdgeClass;
 import de.uni_koblenz.jgralab.grumlschema.structure.SpecializesVertexClass;
-import de.uni_koblenz.jgralab.grumlschema.structure.Subsets;
 import de.uni_koblenz.jgralab.grumlschema.structure.VertexClass;
 import de.uni_koblenz.jgralab.schema.RecordDomain.RecordComponent;
 import de.uni_koblenz.jgralab.schema.impl.ConstraintImpl;
@@ -151,11 +148,6 @@ public class SchemaGraph2Schema {
 	private boolean workInProgress = false;
 
 	/**
-	 * Marks EdgeClasses wich subsets and redefined relations are already set.
-	 */
-	private BooleanGraphMarker alreadyHandeledEdgeClasses;
-
-	/**
 	 * Empty standard constructor.
 	 */
 	public SchemaGraph2Schema() {
@@ -211,8 +203,6 @@ public class SchemaGraph2Schema {
 
 			setUp();
 
-			alreadyHandeledEdgeClasses = new BooleanGraphMarker(schemaGraph);
-
 			createSchema(schemaGraph);
 
 			createGraphClass();
@@ -224,8 +214,6 @@ public class SchemaGraph2Schema {
 			createAllGraphElementClasses();
 
 			linkSuperClasses();
-
-			createSubsetsAndRedefinesOfAllEdgeClasses();
 
 			addAllPackageComments(schemaGraph);
 
@@ -250,91 +238,6 @@ public class SchemaGraph2Schema {
 			for (Comment comment : pkg.get_comment()) {
 				sp.addComment(comment.get_text());
 			}
-		}
-	}
-
-	/**
-	 * Creates the subsetted and redefined values of all EdgeClasses who have no
-	 * superclass in the schemaGraph.
-	 * 
-	 */
-	private void createSubsetsAndRedefinesOfAllEdgeClasses() {
-		for (EdgeClass ec : gSuperEdgeClasses) {
-			createSubsetsAndRedefinesOfOneEdgeClass(ec);
-		}
-	}
-
-	/**
-	 * Creates the subsetted and redefined values of one EdgeClasses and its
-	 * direct and indirect subclasses.
-	 * 
-	 * @param gEdgeClass
-	 */
-	private void createSubsetsAndRedefinesOfOneEdgeClass(EdgeClass gEdgeClass) {
-		if (alreadyHandeledEdgeClasses.isMarked(gEdgeClass)) {
-			return;
-		}
-		IncidenceClass gFrom, gTo;
-		de.uni_koblenz.jgralab.schema.impl.IncidenceClassImpl from, to;
-
-		gFrom = (IncidenceClass) gEdgeClass.getFirstComesFromIncidence()
-				.getThat();
-		gTo = (IncidenceClass) gEdgeClass.getFirstGoesToIncidence().getThat();
-
-		assert (gFrom != null) : "FIXME! No from \"IncidenceClass\" defined.";
-		assert (gTo != null) : "FIXME! No to \"IncidenceClass\" defined.";
-
-		from = (IncidenceClassImpl) incidenceMap.get(gFrom);
-		to = (IncidenceClassImpl) incidenceMap.get(gTo);
-
-		assert (from != null) : "FIXME! No from \"IncidenceClass\" d yet.";
-		assert (to != null) : "FIXME! No to \"IncidenceClass\" d yet.";
-
-		// set subsetted IncidenceClasses of from
-		for (Subsets sub : gFrom.getSubsetsIncidences(EdgeDirection.OUT)) {
-			de.uni_koblenz.jgralab.schema.IncidenceClass superIncidenceClass = incidenceMap
-					.get(sub.getThat());
-			assert (superIncidenceClass != null) : "FIXME! No subsetted \"IncidenceClass\" d yet.";
-			from.addSubsettedIncidenceClass(superIncidenceClass);
-		}
-
-		// set redefined IncidenceClasses of from
-		for (Redefines sub : gFrom.getRedefinesIncidences(EdgeDirection.OUT)) {
-			de.uni_koblenz.jgralab.schema.IncidenceClass superIncidenceClass = incidenceMap
-					.get(sub.getThat());
-			assert (superIncidenceClass != null) : "FIXME! No redefined \"IncidenceClass\" d yet.";
-			if ((superIncidenceClass.getRolename() != null)
-					&& !superIncidenceClass.getRolename().isEmpty()) {
-				from.addRedefinedRole(superIncidenceClass.getRolename());
-			}
-		}
-
-		// set subsetted IncidenceClasses of to
-		for (Subsets sub : gTo.getSubsetsIncidences(EdgeDirection.OUT)) {
-			de.uni_koblenz.jgralab.schema.IncidenceClass superIncidenceClass = incidenceMap
-					.get(sub.getThat());
-			assert (superIncidenceClass != null) : "FIXME! No subsetted \"IncidenceClass\" d yet.";
-			to.addSubsettedIncidenceClass(superIncidenceClass);
-		}
-
-		// set redefined IncidenceClasses of to
-		for (Redefines sub : gTo.getRedefinesIncidences(EdgeDirection.OUT)) {
-			de.uni_koblenz.jgralab.schema.IncidenceClass superIncidenceClass = incidenceMap
-					.get(sub.getThat());
-			assert (superIncidenceClass != null) : "FIXME! No redefined \"IncidenceClass\" d yet.";
-			if ((superIncidenceClass.getRolename() != null)
-					&& !superIncidenceClass.getRolename().isEmpty()) {
-				to.addRedefinedRole(superIncidenceClass.getRolename());
-			}
-		}
-
-		alreadyHandeledEdgeClasses.mark(gEdgeClass);
-
-		// call recursively all subclasses of EdgeClass
-		for (SpecializesEdgeClass sec : gEdgeClass
-				.getSpecializesEdgeClassIncidences(EdgeDirection.IN)) {
-			assert (sec.getThat() != null) : "FIXME! No superClass available";
-			createSubsetsAndRedefinesOfOneEdgeClass((EdgeClass) sec.getThat());
 		}
 	}
 
@@ -983,6 +886,10 @@ public class SchemaGraph2Schema {
 		for (de.uni_koblenz.jgralab.schema.EdgeClass superClass : superClasses) {
 			// Adds the superclass
 			edgeClass.addSuperClass(superClass);
+			((IncidenceClassImpl) edgeClass.getFrom())
+					.addSubsettedIncidenceClass(superClass.getFrom());
+			((IncidenceClassImpl) edgeClass.getTo())
+					.addSubsettedIncidenceClass(superClass.getTo());
 		}
 	}
 

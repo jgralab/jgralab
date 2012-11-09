@@ -458,14 +458,6 @@ public class GraphIO {
 					write(" role");
 					space();
 					writeIdentifier(ec.getFrom().getRolename());
-					String delim = " redefines";
-					for (String redefinedRolename : ec.getFrom()
-							.getRedefinedRoles()) {
-						write(delim);
-						delim = ",";
-						space();
-						writeIdentifier(redefinedRolename);
-					}
 				}
 
 				switch (ec.getFrom().getAggregationKind()) {
@@ -497,14 +489,6 @@ public class GraphIO {
 					write(" role");
 					space();
 					writeIdentifier(ec.getTo().getRolename());
-					String delim = " redefines";
-					for (String redefinedRolename : ec.getTo()
-							.getRedefinedRoles()) {
-						write(delim);
-						delim = ",";
-						space();
-						writeIdentifier(redefinedRolename);
-					}
 				}
 
 				switch (ec.getTo().getAggregationKind()) {
@@ -1737,7 +1721,6 @@ public class GraphIO {
 			graphElementClassData.fromVertexClassName = toQNameString(fqn);
 			graphElementClassData.fromMultiplicity = parseMultiplicity();
 			graphElementClassData.fromRoleName = parseRoleName();
-			graphElementClassData.redefinedFromRoles = parseRolenameRedefinitions();
 			graphElementClassData.fromAggregation = parseAggregation();
 
 			match("to");
@@ -1745,7 +1728,6 @@ public class GraphIO {
 			graphElementClassData.toVertexClassName = toQNameString(tqn);
 			graphElementClassData.toMultiplicity = parseMultiplicity();
 			graphElementClassData.toRoleName = parseRoleName();
-			graphElementClassData.redefinedToRoles = parseRolenameRedefinitions();
 			graphElementClassData.toAggregation = parseAggregation();
 			edgeClassBuffer.get(gcName).add(graphElementClassData);
 		} else {
@@ -1867,29 +1849,6 @@ public class GraphIO {
 			return result;
 		}
 		return "";
-	}
-
-	/**
-	 * Reads the redefinition of a rolename of an EdgeClass
-	 * 
-	 * @return A Set<String> of redefined rolenames or <code>null</code> if no
-	 *         rolenames were redefined
-	 * @throw GraphIOException
-	 */
-	private Set<String> parseRolenameRedefinitions() throws GraphIOException {
-		if (!lookAhead.equals("redefines")) {
-			return null;
-		}
-		match();
-		Set<String> result = new HashSet<String>();
-		String redefinedName = matchSimpleName(false);
-		result.add(redefinedName);
-		while (lookAhead.equals(",")) {
-			match();
-			redefinedName = matchSimpleName(false);
-			result.add(redefinedName);
-		}
-		return result;
 	}
 
 	private AggregationKind parseAggregation() throws GraphIOException {
@@ -2048,8 +2007,6 @@ public class GraphIO {
 					}
 					ec.addSuperClass(superClass);
 				}
-				ec.getFrom().addRedefinedRoles(eData.redefinedFromRoles);
-				ec.getTo().addRedefinedRoles(eData.redefinedToRoles);
 			}
 		}
 	}
@@ -2972,8 +2929,6 @@ public class GraphIO {
 
 		String fromRoleName = "";
 
-		Set<String> redefinedFromRoles = null;
-
 		AggregationKind fromAggregation;
 
 		String toVertexClassName;
@@ -2981,8 +2936,6 @@ public class GraphIO {
 		int[] toMultiplicity = { 1, Integer.MAX_VALUE };
 
 		String toRoleName = "";
-
-		Set<String> redefinedToRoles = null;
 
 		AggregationKind toAggregation;
 
