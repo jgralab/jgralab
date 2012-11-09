@@ -729,6 +729,8 @@ public class CompareSchemaWithSchemaGraph {
 		// Creates a map out of an set of AttributedElementClass objects.
 		Map<String, de.uni_koblenz.jgralab.schema.EdgeClass> superClasses = getAttributedElementClassMap(edgeClass
 				.getDirectSuperClasses());
+		assertEquals(superClasses.size(),
+				gEdgeClass.getDegree(SpecializesEdgeClass.EC, OUTGOING));
 
 		// Loop over all SpecializesEdgeClass edges
 		for (SpecializesEdgeClass specializesEdgeClass : gEdgeClass

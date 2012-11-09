@@ -202,7 +202,6 @@ public class ArgoUml2Tg extends Xml2Tg {
 			System.err.println(e.getMessage());
 			e.printStackTrace();
 		}
-		a2tg.convertToTg(a2tg.getFilenameSchema());
 
 		System.out.println("Fini.");
 	}
@@ -345,6 +344,7 @@ public class ArgoUml2Tg extends Xml2Tg {
 			XMLStreamException {
 		System.out.println("Process " + fileName + "...");
 		super.process(fileName);
+		convertToTg(getFilenameSchema());
 	}
 
 	private void convertToTg(String filename) {
