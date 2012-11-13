@@ -37,7 +37,6 @@ Schema a.Test;
 
 GraphClass AGraphClass;
 
-Package ;
 EnumDomain Enumeration1 (FIRST, SECOND);
 RecordDomain Record1 (anAttribute: Boolean, anotherAttribute: Integer);
 VertexClass VertexClassA;

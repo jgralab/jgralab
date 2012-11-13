@@ -160,6 +160,12 @@ public class ArgoUML2TgTest {
 	}
 
 	@Test
+	public void testInheritance() throws FileNotFoundException,
+			GraphIOException, XMLStreamException {
+		testASchema("testInheritance.xmi");
+	}
+
+	@Test
 	public void testGraphClass() throws FileNotFoundException,
 			GraphIOException, XMLStreamException {
 		testASchema("testGraphClass.xmi");

@@ -38,6 +38,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
 import de.uni_koblenz.jgralabtest.non_junit_tests.SchemaGraph2SchemaTest;
+import de.uni_koblenz.jgralabtest.utilities.argoumo2tg.ArgoUML2TgTest;
 import de.uni_koblenz.jgralabtest.utilities.rsa2tg.Rsa2TgTest;
 import de.uni_koblenz.jgralabtest.utilities.rsa2tg.SchemaGraph2XMITest;
 import de.uni_koblenz.jgralabtest.utilities.tg2schemagraph.TG2SchemaGraphTest;
@@ -48,8 +49,9 @@ import de.uni_koblenz.jgralabtest.utilities.tg2schemagraph.TG2SchemaGraphTest;
  * 
  */
 @RunWith(Suite.class)
-@Suite.SuiteClasses( { Rsa2TgTest.class, SchemaGraph2XMITest.class,
-		TG2SchemaGraphTest.class, SchemaGraph2SchemaTest.class })
+@Suite.SuiteClasses({ Rsa2TgTest.class, SchemaGraph2XMITest.class,
+		TG2SchemaGraphTest.class, SchemaGraph2SchemaTest.class,
+		ArgoUML2TgTest.class })
 public class RunUtilitiesTests {
 
 }

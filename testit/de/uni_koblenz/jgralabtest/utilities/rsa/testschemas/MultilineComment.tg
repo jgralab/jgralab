@@ -38,4 +38,3 @@ Schema a.Test;
 GraphClass AGraphClass;
 
 Comment AGraphClass "First line\nSecond line\nThird line\nLast line";
-Package ;

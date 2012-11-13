@@ -38,4 +38,3 @@ Schema a.Test;
 GraphClass AGraphClass;
 
 Comment AGraphClass "A Comment";
-Package ;

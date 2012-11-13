@@ -37,7 +37,6 @@ Schema a.Test;
 
 GraphClass AGraphClass {aRecord: Record1};
 
-Package ;
 Comment Record1 "first comment";
 Comment Record1 "second comment";
 RecordDomain Record1 (anAttribute: Boolean, anotherAttribute: Integer);

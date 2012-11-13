@@ -37,7 +37,6 @@ Schema a.Test;
 
 GraphClass AGraphClass {anEnum: Enumeration1};
 
-Package ;
 Comment Enumeration1 "first comment";
 Comment Enumeration1 "second comment";
 EnumDomain Enumeration1 (FIRST, SECOND);

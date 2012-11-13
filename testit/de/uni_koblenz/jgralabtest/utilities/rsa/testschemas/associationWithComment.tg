@@ -37,7 +37,6 @@ Schema a.Test;
 
 GraphClass AGraphClass;
 
-Package ;
 VertexClass VertexClassA;
 VertexClass VertexClassB;
 Comment EdgeClassA "First Comment";

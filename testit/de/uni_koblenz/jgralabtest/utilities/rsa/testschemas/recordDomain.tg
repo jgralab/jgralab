@@ -37,5 +37,4 @@ Schema a.Test;
 
 GraphClass AGraphClass {aRecord: Record1};
 
-Package ;
 RecordDomain Record1 (anAttribute: Boolean, anotherAttribute: Integer);

@@ -37,7 +37,6 @@ Schema a.Test;
 
 GraphClass AGraphClass;
 
-Package ;
 VertexClass VertexClassA;
 VertexClass VertexClassB;
 EdgeClass EdgeClassA from VertexClassA (1,1) role roleAB to VertexClassB (0,1) role roleAA;
