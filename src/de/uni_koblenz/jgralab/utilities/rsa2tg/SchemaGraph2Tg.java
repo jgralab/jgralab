@@ -237,7 +237,11 @@ public class SchemaGraph2Tg {
 	private void printPackageWithElements(Package gPackage) {
 		setCurrentPackageName(gPackage);
 		printComments(gPackage);
-		println(PACKAGE, SPACE, currentPackageName, DELIMITER);
+		if (!(gPackage.get_qualifiedName() == null || gPackage
+				.get_qualifiedName().isEmpty())
+				|| gPackage.getDegree(Annotates.EC) > 0) {
+			println(PACKAGE, SPACE, currentPackageName, DELIMITER);
+		}
 
 		for (ContainsDomain cd : gPackage
 				.getContainsDomainIncidences(EdgeDirection.OUT)) {

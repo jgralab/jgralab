@@ -4,8 +4,11 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -17,11 +20,16 @@ import org.apache.commons.cli.Option;
 import org.pcollections.PVector;
 
 import de.uni_koblenz.ist.utilities.option_handler.OptionHandler;
+import de.uni_koblenz.jgralab.AttributedElement;
+import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.ImplementationType;
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.Vertex;
+import de.uni_koblenz.jgralab.algolib.functions.entries.FunctionEntry;
 import de.uni_koblenz.jgralab.exception.GraphIOException;
+import de.uni_koblenz.jgralab.graphmarker.GraphMarker;
+import de.uni_koblenz.jgralab.graphmarker.IntegerVertexMarker;
 import de.uni_koblenz.jgralab.graphvalidator.ConstraintViolation;
 import de.uni_koblenz.jgralab.graphvalidator.GraphValidator;
 import de.uni_koblenz.jgralab.grumlschema.GrumlSchema;
@@ -48,6 +56,8 @@ import de.uni_koblenz.jgralab.grumlschema.structure.IncidenceClass;
 import de.uni_koblenz.jgralab.grumlschema.structure.NamedElement;
 import de.uni_koblenz.jgralab.grumlschema.structure.Package;
 import de.uni_koblenz.jgralab.grumlschema.structure.Schema;
+import de.uni_koblenz.jgralab.grumlschema.structure.SpecializesEdgeClass;
+import de.uni_koblenz.jgralab.grumlschema.structure.SpecializesVertexClass;
 import de.uni_koblenz.jgralab.grumlschema.structure.VertexClass;
 import de.uni_koblenz.jgralab.utilities.rsa2tg.ProcessingException;
 import de.uni_koblenz.jgralab.utilities.rsa2tg.Rsa2Tg;
@@ -391,6 +401,8 @@ public class ArgoUml2Tg extends Xml2Tg {
 		createGeneralizations();
 		createCommentsAndConstraints();
 
+		removeRedundantGeneralization();
+
 		if (isRemoveUnusedDomains()) {
 			removeUnusedDomains();
 		}
@@ -403,6 +415,105 @@ public class ArgoUml2Tg extends Xml2Tg {
 			} catch (GraphIOException e) {
 				throw new RuntimeException(e);
 			}
+		}
+	}
+
+	private void removeRedundantGeneralization() {
+		for (GraphElementClass gec : sg.getGraphElementClassVertices()) {
+			boolean isVertexClass = gec.isInstanceOf(VertexClass.VC);
+			if (gec.getDegree(isVertexClass ? SpecializesVertexClass.EC
+					: SpecializesEdgeClass.EC, EdgeDirection.OUT) <= 1) {
+				continue;
+			}
+			// perform a breadth first search towards the superclasses in the
+			// generalization hierarchy.
+			Queue<GraphElementClass> queue = new LinkedList<GraphElementClass>();
+			IntegerVertexMarker longestDistance = new IntegerVertexMarker(sg);
+			GraphMarker<Edge> startGeneralization = new GraphMarker<Edge>(sg);
+
+			longestDistance.mark(gec, 0);
+			// initialize marker
+			Edge spezializesEdgeClass = gec.getFirstIncidence(
+					isVertexClass ? SpecializesVertexClass.EC
+							: SpecializesEdgeClass.EC, EdgeDirection.OUT);
+			while (spezializesEdgeClass != null) {
+				Edge next = spezializesEdgeClass.getNextIncidence(
+						isVertexClass ? SpecializesVertexClass.EC
+								: SpecializesEdgeClass.EC, EdgeDirection.OUT);
+				GraphElementClass directSuperClass = (GraphElementClass) spezializesEdgeClass
+						.getThat();
+				if (directSuperClass == this) {
+					spezializesEdgeClass.delete();
+				} else if (longestDistance.isMarked(directSuperClass)) {
+					// there exists two generalizations to the same direct
+					// superclass
+					spezializesEdgeClass.delete();
+				} else {
+					queue.add(directSuperClass);
+					longestDistance.mark(directSuperClass, 1);
+					startGeneralization.mark(directSuperClass,
+							spezializesEdgeClass);
+				}
+				spezializesEdgeClass = next;
+			}
+
+			// perform a breadth first search
+			while (!queue.isEmpty()) {
+				GraphElementClass current = queue.poll();
+				Edge toSuperClass = current.getFirstIncidence(
+						isVertexClass ? SpecializesVertexClass.EC
+								: SpecializesEdgeClass.EC, EdgeDirection.OUT);
+				int distance = longestDistance.get(current) + 1;
+				Edge startGen = startGeneralization.get(current);
+				while (toSuperClass != null) {
+					Edge next = toSuperClass.getNextIncidence(
+							isVertexClass ? SpecializesVertexClass.EC
+									: SpecializesEdgeClass.EC,
+							EdgeDirection.OUT);
+					GraphElementClass superClass = (GraphElementClass) toSuperClass
+							.getThat();
+					if (longestDistance.isMarked(superClass)) {
+						int prevDistance = longestDistance.getMark(superClass);
+						if (distance > prevDistance) {
+							// a longer specialization from gec to superClass is
+							// found
+							queue.add(superClass);
+							longestDistance.mark(superClass, distance);
+							startGeneralization.mark(superClass, startGen);
+						}
+					} else {
+						queue.add(superClass);
+						longestDistance.mark(superClass, distance);
+						startGeneralization.mark(superClass, startGen);
+					}
+					toSuperClass = next;
+				}
+			}
+
+			// if a specializes edge (e) of gec is not used as a
+			// startGeneralization, then it is a redundant generalization
+			// because there exist already a generalization of a subclass of
+			// e.getOmega();
+			Set<Edge> importantSpecializations = new HashSet<Edge>();
+			Iterator<FunctionEntry<AttributedElement<?, ?>, Edge>> it = startGeneralization
+					.iterator();
+			while (it.hasNext()) {
+				FunctionEntry<AttributedElement<?, ?>, Edge> entry = it.next();
+				importantSpecializations.add(entry.getSecond());
+			}
+			spezializesEdgeClass = gec.getFirstIncidence(
+					isVertexClass ? SpecializesVertexClass.EC
+							: SpecializesEdgeClass.EC, EdgeDirection.OUT);
+			while (spezializesEdgeClass != null) {
+				Edge next = spezializesEdgeClass.getNextIncidence(
+						isVertexClass ? SpecializesVertexClass.EC
+								: SpecializesEdgeClass.EC, EdgeDirection.OUT);
+				if (!importantSpecializations.contains(spezializesEdgeClass)) {
+					spezializesEdgeClass.delete();
+				}
+				spezializesEdgeClass = next;
+			}
+
 		}
 	}
 
