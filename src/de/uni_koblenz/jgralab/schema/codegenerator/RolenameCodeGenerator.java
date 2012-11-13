@@ -40,6 +40,7 @@ import java.util.Set;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.IncidenceClass;
+import de.uni_koblenz.jgralab.schema.IncidenceDirection;
 import de.uni_koblenz.jgralab.schema.VertexClass;
 
 /**
@@ -267,7 +268,7 @@ public class RolenameCodeGenerator {
 			EdgeClass ec = allowedIncidenceClass.getEdgeClass();
 			VertexClass vc = definingIncidenceClass.getVertexClass();
 			VertexClass allowedVC = allowedIncidenceClass.getVertexClass();
-			EdgeDirection dir = allowedIncidenceClass.getDirection() == EdgeDirection.OUT ? EdgeDirection.IN
+			EdgeDirection dir = allowedIncidenceClass.getDirection() == IncidenceDirection.OUT ? EdgeDirection.IN
 					: EdgeDirection.OUT;
 			list.addNoIndent(createAddRolenameSnippet(rolename, ec, vc,
 					allowedVC, dir, createClass));

@@ -36,8 +36,6 @@ package de.uni_koblenz.jgralab.schema;
 
 import java.util.Set;
 
-import de.uni_koblenz.jgralab.EdgeDirection;
-
 public interface IncidenceClass {
 
 	/**
@@ -53,11 +51,11 @@ public interface IncidenceClass {
 	public int getMin();
 
 	/**
-	 * @return {@link EdgeDirection#OUT} if this {@link IncidenceClass} is the
-	 *         alpha incidence of the {@link EdgeClass}. Otherwise
-	 *         {@link EdgeDirection#IN} is returned.
+	 * @return {@link IncidenceDirection#OUT} if this {@link IncidenceClass} is
+	 *         the alpha incidence of the {@link EdgeClass}. Otherwise
+	 *         {@link IncidenceDirection#IN} is returned.
 	 */
-	public EdgeDirection getDirection();
+	public IncidenceDirection getDirection();
 
 	/**
 	 * @return the name of this incidence class, i.e. the rolename of the edge

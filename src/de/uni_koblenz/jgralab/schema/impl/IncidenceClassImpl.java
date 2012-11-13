@@ -38,10 +38,10 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.schema.AggregationKind;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.IncidenceClass;
+import de.uni_koblenz.jgralab.schema.IncidenceDirection;
 import de.uni_koblenz.jgralab.schema.VertexClass;
 import de.uni_koblenz.jgralab.schema.exception.SchemaException;
 
@@ -64,6 +64,8 @@ public class IncidenceClassImpl implements IncidenceClass {
 		} else {
 			this.rolename = rolename;
 		}
+		direction = getEdgeClass().getFrom() == this ? IncidenceDirection.OUT
+				: IncidenceDirection.IN;
 		this.vertexClass = vertexClass;
 		this.subsettedIncidenceClasses = new HashSet<IncidenceClass>();
 		this.incidenceClassIdInSchema = ((SchemaImpl) edgeClass.getSchema())
@@ -81,6 +83,8 @@ public class IncidenceClassImpl implements IncidenceClass {
 	private final int minEdgesAtVertex;
 
 	private String rolename;
+
+	private final IncidenceDirection direction;
 
 	private final Set<IncidenceClass> subsettedIncidenceClasses;
 
@@ -114,9 +118,8 @@ public class IncidenceClassImpl implements IncidenceClass {
 	}
 
 	@Override
-	public EdgeDirection getDirection() {
-		return getEdgeClass().getFrom() == this ? EdgeDirection.OUT
-				: EdgeDirection.IN;
+	public IncidenceDirection getDirection() {
+		return direction;
 	}
 
 	@Override

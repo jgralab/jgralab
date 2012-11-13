@@ -36,10 +36,10 @@
 package de.uni_koblenz.jgralab.schema.impl;
 
 import de.uni_koblenz.jgralab.Edge;
-import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.schema.AggregationKind;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.IncidenceClass;
+import de.uni_koblenz.jgralab.schema.IncidenceDirection;
 import de.uni_koblenz.jgralab.schema.VertexClass;
 import de.uni_koblenz.jgralab.schema.exception.SchemaException;
 
@@ -155,7 +155,7 @@ public class EdgeClassImpl extends GraphElementClassImpl<EdgeClass, Edge>
 		// Vertex same
 		if (!(general.getVertexClass().equals(special.getVertexClass()) || general
 				.getVertexClass().isSuperClassOf(special.getVertexClass()))) {
-			String dir = special.getDirection() == EdgeDirection.OUT ? "Alpha"
+			String dir = special.getDirection() == IncidenceDirection.OUT ? "Alpha"
 					: "Omega";
 			throw new SchemaException(
 					"An IncidenceClass may specialize only IncidenceClasses whose connected vertex class "
@@ -172,7 +172,7 @@ public class EdgeClassImpl extends GraphElementClassImpl<EdgeClass, Edge>
 		}
 		// Multiplicities
 		if (special.getMax() > general.getMax()) {
-			String dir = special.getDirection() == EdgeDirection.OUT ? "Alpha"
+			String dir = special.getDirection() == IncidenceDirection.OUT ? "Alpha"
 					: "Omega";
 			throw new SchemaException(
 					"The multiplicity of an edge class may not be larger than "
@@ -187,7 +187,7 @@ public class EdgeClassImpl extends GraphElementClassImpl<EdgeClass, Edge>
 		if (general.getRolename().equals(special.getRolename())
 				&& !general.getRolename().isEmpty()
 				&& !special.getRolename().isEmpty()) {
-			String dir = special.getDirection() == EdgeDirection.OUT ? "Alpha"
+			String dir = special.getDirection() == IncidenceDirection.OUT ? "Alpha"
 					: "Omega";
 			throw new SchemaException(
 					"An IncidenceClass may only subset an IncidenceClass with a different name. Offending"
@@ -201,7 +201,7 @@ public class EdgeClassImpl extends GraphElementClassImpl<EdgeClass, Edge>
 			if (ic.getRolename().equals(special.getRolename())
 					&& !general.getRolename().isEmpty()
 					&& !ic.getRolename().isEmpty()) {
-				String dir = ic.getDirection() == EdgeDirection.OUT ? "Alpha"
+				String dir = ic.getDirection() == IncidenceDirection.OUT ? "Alpha"
 						: "Omega";
 				throw new SchemaException(
 						"An IncidenceClass may only subset an IncidenceClass with a different name. Offending"

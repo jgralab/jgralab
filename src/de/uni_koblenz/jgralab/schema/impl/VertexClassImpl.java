@@ -45,6 +45,7 @@ import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.IncidenceClass;
+import de.uni_koblenz.jgralab.schema.IncidenceDirection;
 import de.uni_koblenz.jgralab.schema.VertexClass;
 import de.uni_koblenz.jgralab.schema.exception.SchemaException;
 
@@ -434,7 +435,7 @@ public class VertexClassImpl extends GraphElementClassImpl<VertexClass, Vertex>
 				EdgeClass ec = ic.getEdgeClass();
 				return new DirectedSchemaEdgeClass(
 						ec,
-						(ic.getDirection() == EdgeDirection.IN ? EdgeDirection.OUT
+						(ic.getDirection() == IncidenceDirection.IN ? EdgeDirection.OUT
 								: EdgeDirection.IN));
 			}
 		}
