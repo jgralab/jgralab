@@ -132,6 +132,8 @@ public class ArgoUml2Tg extends Xml2Tg {
 	private static final String DT_STRING = "-115-26-95--20--17a78cb8:13718617229:-8000:00000000000019DC";
 	private static final String DT_UML_STRING = "-84-17--56-5-43645a83:11466542d86:-8000:000000000000087E";
 
+	private static final String TV_UML_DERIVED = "-64--88-0-101--2259be85:11dd526880c:-8000:000000000000E4A7";
+
 	private XmlGraphUtilities xu;
 	private HashMap<String, Vertex> qnMap;
 	private HashMap<String, Package> packageMap;
@@ -824,12 +826,12 @@ public class ArgoUml2Tg extends Xml2Tg {
 
 	private void createEdgeClasses() {
 		for (Element el : xu.elementsWithName("UML:Association")) {
-			if (xu.hasAttribute(el, "xmi.id")) {
+			if (xu.hasAttribute(el, "xmi.id") && !isDerived(el)) {
 				createEdgeClass(el);
 			}
 		}
 		for (Element el : xu.elementsWithName("UML:AssociationClass")) {
-			if (xu.hasAttribute(el, "xmi.id")) {
+			if (xu.hasAttribute(el, "xmi.id") && !isDerived(el)) {
 				createEdgeClass(el);
 			}
 		}
@@ -1033,7 +1035,7 @@ public class ArgoUml2Tg extends Xml2Tg {
 	private void createVertexClasses() {
 		for (Element el : xu.elementsWithName("UML:Class")) {
 			if (xu.hasAttribute(el, "name") && !hasStereotype(el, ST_RECORD)
-					&& !hasStereotype(el, ST_GRAPHCLASS)) {
+					&& !hasStereotype(el, ST_GRAPHCLASS) && !isDerived(el)) {
 
 				boolean isAbstract = hasStereotype(el, ST_ABSTRACT)
 						|| (xu.hasAttribute(el, "isAbstract") && xu
@@ -1066,6 +1068,9 @@ public class ArgoUml2Tg extends Xml2Tg {
 		Element sf = xu.firstChildWithName(el, "UML:Classifier.feature");
 		if (sf != null) {
 			for (Element at : xu.childrenWithName(sf, "UML:Attribute")) {
+				if (isDerived(at)) {
+					continue;
+				}
 				Domain dom = getAttributeDomain(at);
 				assert dom != null;
 				logger.fine("\t" + xu.getAttributeValue(at, "name") + ": "
@@ -1077,6 +1082,29 @@ public class ArgoUml2Tg extends Xml2Tg {
 				aec.add_attribute(attr);
 			}
 		}
+	}
+
+	private boolean isDerived(Element element) {
+		Element modelElementTaggedValue = xu.firstChildWithName(element,
+				"UML:ModelElement.taggedValue");
+		if (modelElementTaggedValue == null) {
+			return false;
+		}
+		for (Element taggedValue : xu.childrenWithName(modelElementTaggedValue,
+				"UML:TaggedValue")) {
+			Element taggedValueType = xu.firstChildWithName(taggedValue,
+					"UML:TaggedValue.type");
+			Element tagDefinition = xu.firstChildWithName(taggedValueType,
+					"UML:TagDefinition");
+			if (!xu.getAttributeValue(tagDefinition, "href").endsWith(
+					"#" + TV_UML_DERIVED)) {
+				continue;
+			}
+			Element taggedValueDataValue = xu.firstChildWithName(taggedValue,
+					"UML:TaggedValue.dataValue");
+			return !xu.getText(taggedValueDataValue).equals("false");
+		}
+		return false;
 	}
 
 	private String getDefaultValue(Element attribute, Domain domain) {
