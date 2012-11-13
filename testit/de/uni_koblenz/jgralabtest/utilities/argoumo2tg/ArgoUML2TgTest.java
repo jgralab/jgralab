@@ -182,4 +182,10 @@ public class ArgoUML2TgTest {
 			GraphIOException, XMLStreamException {
 		testASchema("testVertexClass.xmi");
 	}
+
+	@Test(expected = RuntimeException.class)
+	public void testAttributeTest() throws FileNotFoundException,
+			GraphIOException, XMLStreamException {
+		testASchema("attributeTest.xmi");
+	}
 }

@@ -1,0 +1,118 @@
+<?xml version = '1.0' encoding = 'UTF-8' ?>
+<XMI xmi.version = '1.2' xmlns:UML = 'org.omg.xmi.namespace.UML' timestamp = 'Tue Nov 13 16:36:09 CET 2012'>
+  <XMI.header>    <XMI.documentation>
+      <XMI.exporter>ArgoUML (using Netbeans XMI Writer version 1.0)</XMI.exporter>
+      <XMI.exporterVersion>0.34(6) revised on $Date: 2010-01-11 22:20:14 +0100 (Mon, 11 Jan 2010) $ </XMI.exporterVersion>
+    </XMI.documentation>
+    <XMI.metamodel xmi.name="UML" xmi.version="1.4"/></XMI.header>
+  <XMI.content>
+    <UML:Model xmi.id = '-115-26-71--77--2e2bea7f:13af9bf6e79:-8000:000000000000096D'
+      name = 'de.Schema' isSpecification = 'false' isRoot = 'false' isLeaf = 'false'
+      isAbstract = 'false'>
+      <UML:Namespace.ownedElement>
+        <UML:Class xmi.id = '-115-26-71--77--2e2bea7f:13af9bf6e79:-8000:000000000000096E'
+          name = 'MyGraphClass' visibility = 'public' isSpecification = 'false' isRoot = 'false'
+          isLeaf = 'false' isAbstract = 'false' isActive = 'false'>
+          <UML:ModelElement.stereotype>
+            <UML:Stereotype href = 'http://argouml.org/user-profiles/gruml-1.0.1.xmi#-64--88-111--125-2048530b:13717182953:-8000:0000000000000D6A'/>
+          </UML:ModelElement.stereotype>
+        </UML:Class>
+        <UML:Class xmi.id = '-115-26-71--77--2e2bea7f:13af9bf6e79:-8000:000000000000096F'
+          name = 'ParentVC' visibility = 'public' isSpecification = 'false' isRoot = 'false'
+          isLeaf = 'false' isAbstract = 'false' isActive = 'false'/>
+        <UML:Class xmi.id = '-115-26-71--77--2e2bea7f:13af9bf6e79:-8000:0000000000000976'
+          name = 'ChildVC1' visibility = 'public' isSpecification = 'false' isRoot = 'false'
+          isLeaf = 'false' isAbstract = 'false' isActive = 'false'>
+          <UML:GeneralizableElement.generalization>
+            <UML:Generalization xmi.idref = '-115-26-71--77--2e2bea7f:13af9bf6e79:-8000:000000000000097A'/>
+          </UML:GeneralizableElement.generalization>
+          <UML:Classifier.feature>
+            <UML:Attribute xmi.id = '-115-26-71--77--2e2bea7f:13af9bf6e79:-8000:0000000000000970'
+              name = 'anAttribute' visibility = 'public' isSpecification = 'false' ownerScope = 'instance'
+              changeability = 'changeable' targetScope = 'instance'>
+              <UML:StructuralFeature.multiplicity>
+                <UML:Multiplicity xmi.id = '-115-26-71--77--2e2bea7f:13af9bf6e79:-8000:0000000000000971'>
+                  <UML:Multiplicity.range>
+                    <UML:MultiplicityRange xmi.id = '-115-26-71--77--2e2bea7f:13af9bf6e79:-8000:0000000000000972'
+                      lower = '1' upper = '1'/>
+                  </UML:Multiplicity.range>
+                </UML:Multiplicity>
+              </UML:StructuralFeature.multiplicity>
+              <UML:StructuralFeature.type>
+                <UML:DataType href = 'http://argouml.org/user-profiles/gruml-1.0.1.xmi#-115-26-95--20--17a78cb8:13718617229:-8000:00000000000019DA'/>
+              </UML:StructuralFeature.type>
+            </UML:Attribute>
+          </UML:Classifier.feature>
+        </UML:Class>
+        <UML:Generalization xmi.id = '-115-26-71--77--2e2bea7f:13af9bf6e79:-8000:000000000000097A'
+          isSpecification = 'false'>
+          <UML:Generalization.child>
+            <UML:Class xmi.idref = '-115-26-71--77--2e2bea7f:13af9bf6e79:-8000:0000000000000976'/>
+          </UML:Generalization.child>
+          <UML:Generalization.parent>
+            <UML:Class xmi.idref = '-115-26-71--77--2e2bea7f:13af9bf6e79:-8000:000000000000096F'/>
+          </UML:Generalization.parent>
+        </UML:Generalization>
+        <UML:Class xmi.id = '-115-26-71--77--2e2bea7f:13af9bf6e79:-8000:000000000000097B'
+          name = 'ChildVC2' visibility = 'public' isSpecification = 'false' isRoot = 'false'
+          isLeaf = 'false' isAbstract = 'false' isActive = 'false'>
+          <UML:GeneralizableElement.generalization>
+            <UML:Generalization xmi.idref = '-115-26-71--77--2e2bea7f:13af9bf6e79:-8000:000000000000097C'/>
+          </UML:GeneralizableElement.generalization>
+          <UML:Classifier.feature>
+            <UML:Attribute xmi.id = '-115-26-71--77--2e2bea7f:13af9bf6e79:-8000:0000000000000980'
+              name = 'anAttribute' visibility = 'public' isSpecification = 'false' ownerScope = 'instance'
+              changeability = 'changeable' targetScope = 'instance'>
+              <UML:StructuralFeature.multiplicity>
+                <UML:Multiplicity xmi.id = '-115-26-71--77--2e2bea7f:13af9bf6e79:-8000:0000000000000981'>
+                  <UML:Multiplicity.range>
+                    <UML:MultiplicityRange xmi.id = '-115-26-71--77--2e2bea7f:13af9bf6e79:-8000:0000000000000982'
+                      lower = '1' upper = '1'/>
+                  </UML:Multiplicity.range>
+                </UML:Multiplicity>
+              </UML:StructuralFeature.multiplicity>
+              <UML:StructuralFeature.type>
+                <UML:DataType href = 'http://argouml.org/user-profiles/gruml-1.0.1.xmi#-115-26-95--20--17a78cb8:13718617229:-8000:00000000000019DA'/>
+              </UML:StructuralFeature.type>
+            </UML:Attribute>
+          </UML:Classifier.feature>
+        </UML:Class>
+        <UML:Generalization xmi.id = '-115-26-71--77--2e2bea7f:13af9bf6e79:-8000:000000000000097C'
+          isSpecification = 'false'>
+          <UML:Generalization.child>
+            <UML:Class xmi.idref = '-115-26-71--77--2e2bea7f:13af9bf6e79:-8000:000000000000097B'/>
+          </UML:Generalization.child>
+          <UML:Generalization.parent>
+            <UML:Class xmi.idref = '-115-26-71--77--2e2bea7f:13af9bf6e79:-8000:000000000000096F'/>
+          </UML:Generalization.parent>
+        </UML:Generalization>
+        <UML:Class xmi.id = '-115-26-71--77--2e2bea7f:13af9bf6e79:-8000:000000000000097D'
+          name = 'GrandChildVC' visibility = 'public' isSpecification = 'false' isRoot = 'false'
+          isLeaf = 'false' isAbstract = 'false' isActive = 'false'>
+          <UML:GeneralizableElement.generalization>
+            <UML:Generalization xmi.idref = '-115-26-71--77--2e2bea7f:13af9bf6e79:-8000:000000000000097E'/>
+            <UML:Generalization xmi.idref = '-115-26-71--77--2e2bea7f:13af9bf6e79:-8000:000000000000097F'/>
+          </UML:GeneralizableElement.generalization>
+        </UML:Class>
+        <UML:Generalization xmi.id = '-115-26-71--77--2e2bea7f:13af9bf6e79:-8000:000000000000097E'
+          isSpecification = 'false'>
+          <UML:Generalization.child>
+            <UML:Class xmi.idref = '-115-26-71--77--2e2bea7f:13af9bf6e79:-8000:000000000000097D'/>
+          </UML:Generalization.child>
+          <UML:Generalization.parent>
+            <UML:Class xmi.idref = '-115-26-71--77--2e2bea7f:13af9bf6e79:-8000:0000000000000976'/>
+          </UML:Generalization.parent>
+        </UML:Generalization>
+        <UML:Generalization xmi.id = '-115-26-71--77--2e2bea7f:13af9bf6e79:-8000:000000000000097F'
+          isSpecification = 'false'>
+          <UML:Generalization.child>
+            <UML:Class xmi.idref = '-115-26-71--77--2e2bea7f:13af9bf6e79:-8000:000000000000097D'/>
+          </UML:Generalization.child>
+          <UML:Generalization.parent>
+            <UML:Class xmi.idref = '-115-26-71--77--2e2bea7f:13af9bf6e79:-8000:000000000000097B'/>
+          </UML:Generalization.parent>
+        </UML:Generalization>
+      </UML:Namespace.ownedElement>
+    </UML:Model>
+  </XMI.content>
+</XMI>

@@ -8,6 +8,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
 import java.util.logging.Level;
@@ -28,6 +29,7 @@ import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.algolib.functions.entries.FunctionEntry;
 import de.uni_koblenz.jgralab.exception.GraphIOException;
+import de.uni_koblenz.jgralab.graphmarker.BooleanGraphMarker;
 import de.uni_koblenz.jgralab.graphmarker.GraphMarker;
 import de.uni_koblenz.jgralab.graphmarker.IntegerVertexMarker;
 import de.uni_koblenz.jgralab.graphvalidator.ConstraintViolation;
@@ -402,6 +404,7 @@ public class ArgoUml2Tg extends Xml2Tg {
 		createCommentsAndConstraints();
 
 		removeRedundantGeneralization();
+		checkAttributes();
 
 		if (isRemoveUnusedDomains()) {
 			removeUnusedDomains();
@@ -414,6 +417,68 @@ public class ArgoUml2Tg extends Xml2Tg {
 				writeOutput();
 			} catch (GraphIOException e) {
 				throw new RuntimeException(e);
+			}
+		}
+	}
+
+	private void checkAttributes() {
+		GraphClass graphClass = sg.getFirstGraphClass();
+		Map<String, AttributedElementClass> definedAttributes = new HashMap<String, AttributedElementClass>();
+		for (Attribute a : graphClass.get_attribute()) {
+			if (definedAttributes.containsKey(a)) {
+				throw new RuntimeException("Attribute " + a.get_name() + " at "
+						+ graphClass.get_qualifiedName() + " is duplicate.");
+			}
+			definedAttributes.put(a.get_name(), graphClass);
+		}
+
+		for (GraphElementClass gec : sg.getGraphElementClassVertices()) {
+			boolean isVertexClass = gec.isInstanceOf(VertexClass.VC);
+			definedAttributes = new HashMap<String, AttributedElementClass>();
+			BooleanGraphMarker alreadyChecked = new BooleanGraphMarker(sg);
+			Queue<GraphElementClass> queue = new LinkedList<GraphElementClass>();
+			queue.add(gec);
+			while (!queue.isEmpty()) {
+				GraphElementClass current = queue.poll();
+				if (alreadyChecked.isMarked(current)) {
+					continue;
+				}
+				for (Attribute att : current.get_attribute()) {
+					if (definedAttributes.containsKey(att.get_name())) {
+						AttributedElementClass childClass = definedAttributes
+								.get(att.get_name());
+						throw new RuntimeException(
+								"The name of the "
+										+ (childClass == gec && current != gec ? ""
+												: "inherited ")
+										+ "attribute "
+										+ att.get_name()
+										+ " of "
+										+ (isVertexClass ? "VertexClass"
+												: "EdgeClass")
+										+ " "
+										+ childClass.get_qualifiedName()
+										+ (current == gec ? " is duplicate"
+												: (" is the same name as the inherited attribute of "
+														+ (isVertexClass ? "VertexClass"
+																: "EdgeClass")
+														+ " " + current
+														.get_qualifiedName()))
+										+ ".");
+					} else {
+						definedAttributes.put(att.get_name(), current);
+					}
+				}
+				alreadyChecked.mark(current);
+				for (Edge toSuperClass : current.incidences(
+						isVertexClass ? SpecializesVertexClass.EC
+								: SpecializesEdgeClass.EC, EdgeDirection.OUT)) {
+					GraphElementClass superClass = (GraphElementClass) toSuperClass
+							.getThat();
+					if (!alreadyChecked.isMarked(superClass)) {
+						queue.add(superClass);
+					}
+				}
 			}
 		}
 	}
