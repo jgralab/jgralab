@@ -41,7 +41,13 @@ import java.util.Vector;
 import org.junit.Assert;
 import org.junit.Test;
 
+import de.uni_koblenz.jgralab.schema.BooleanDomain;
+import de.uni_koblenz.jgralab.schema.GraphClass;
 import de.uni_koblenz.jgralab.schema.GraphElementClass;
+import de.uni_koblenz.jgralab.schema.Schema;
+import de.uni_koblenz.jgralab.schema.VertexClass;
+import de.uni_koblenz.jgralab.schema.exception.SchemaException;
+import de.uni_koblenz.jgralab.schema.impl.SchemaImpl;
 
 public abstract class GraphElementClassImplTest<GEC extends GraphElementClass<?, ?>>
 		extends AttributedElementClassImplTest<GEC> {
@@ -53,17 +59,17 @@ public abstract class GraphElementClassImplTest<GEC extends GraphElementClass<?,
 	 */
 	/**
 	 * getAllSubClasses()
-	 *
+	 * 
 	 * TEST CASE: Getting all subclasses of an element with one direct subclass
-	 *
+	 * 
 	 * TEST CASE: Getting all subclasses of an element with multiple direct
 	 * subclasses
-	 *
+	 * 
 	 * TEST CASE: Getting all subclasses of an element with multiple direct and
 	 * indirect subclasses
-	 *
+	 * 
 	 * TEST CASE: Getting all subclasses of an element that has no subclasses
-	 *
+	 * 
 	 * NOTE: This method is called upon in all of this classes´ subclasses.
 	 */
 	public final void testGetAllSubClasses(Vector<GEC> expectedSubClasses) {
@@ -96,19 +102,19 @@ public abstract class GraphElementClassImplTest<GEC extends GraphElementClass<?,
 	 */
 	/**
 	 * getAllSuperClasses()
-	 *
+	 * 
 	 * TEST CASE: Getting all superclasses of an element with one direct
 	 * superclass
-	 *
+	 * 
 	 * TEST CASE: Getting all superclasses of an element with multiple direct
 	 * superclasses
-	 *
+	 * 
 	 * TEST CASE: Getting all superclasses of an element with multiple direct
 	 * and indirect superclasses
-	 *
+	 * 
 	 * TEST CASE: Getting all superclasses of an element that has no
 	 * superclasses
-	 *
+	 * 
 	 * NOTE: This method is called upon in all of this classes´ subclasses.
 	 */
 	public final void testGetAllSuperClasses(Vector<GEC> expectedSuperClasses) {
@@ -142,20 +148,20 @@ public abstract class GraphElementClassImplTest<GEC extends GraphElementClass<?,
 	 */
 	/**
 	 * getDirectSubClasses()
-	 *
-	 *
+	 * 
+	 * 
 	 * TEST CASE: Getting all direct subclasses of an element that has one
 	 * direct subclass.
-	 *
+	 * 
 	 * TEST CASE: Getting all direct subclasses of an element that has multiple
 	 * direct subclasses.
-	 *
+	 * 
 	 * TEST CASE: Getting all direct subclasses of an element that has multiple
 	 * direct and indirect subclasses.
-	 *
+	 * 
 	 * TEST CASE: Getting all direct subclasses of an element that has no direct
 	 * subclasses.
-	 *
+	 * 
 	 * NOTE: This method is called upon in all of this classes´ subclasses.
 	 */
 	public final void testGetDirectSubClasses(Vector<GEC> expectedSubClasses) {
@@ -187,19 +193,19 @@ public abstract class GraphElementClassImplTest<GEC extends GraphElementClass<?,
 	 */
 	/**
 	 * getDirectSuperClasses()
-	 *
+	 * 
 	 * TEST CASE: Getting all direct superclasses of an element that has one
 	 * direct superclass.
-	 *
+	 * 
 	 * TEST CASE: Getting all direct superclasses of an element that has
 	 * multiple direct superclasses.
-	 *
+	 * 
 	 * TEST CASE: Getting all direct superclasses of an element that has
 	 * multiple direct and indirect superclasses.
-	 *
+	 * 
 	 * TEST CASE: Getting all direct superclasses of an element that has no
 	 * direct superclasses.
-	 *
+	 * 
 	 * NOTE: This method is called upon in all of this classes´ subclasses.
 	 */
 	public final void testGetDirectSuperClasses(Vector<GEC> expectedSuperClasses) {
@@ -230,6 +236,49 @@ public abstract class GraphElementClassImplTest<GEC extends GraphElementClass<?,
 			Assert.assertTrue("The following superclass is unexpected: "
 					+ superClass.getQualifiedName(), superClassFound);
 		}
+	}
+
+	@Test
+	public void testAttributeInheritance() {
+		Schema schema = new SchemaImpl("TestSchema",
+				"de.uni_koblenz.jgralabtest.schematest");
+		GraphClass graphClass = schema.createGraphClass("GraphClass1");
+		BooleanDomain booleanDomain = schema.getBooleanDomain();
+
+		VertexClass parentVC = graphClass.createVertexClass("ParentVC");
+		parentVC.createAttribute("attr", booleanDomain);
+
+		VertexClass childVC1 = graphClass.createVertexClass("ChildVC1");
+		childVC1.addSuperClass(parentVC);
+
+		VertexClass childVC2 = graphClass.createVertexClass("ChildVC2");
+		childVC2.addSuperClass(parentVC);
+
+		VertexClass grandChildVC = graphClass.createVertexClass("GrandChildVC");
+		grandChildVC.addSuperClass(childVC1);
+		grandChildVC.addSuperClass(childVC2);
+	}
+
+	@Test(expected = SchemaException.class)
+	public void testDuplicateInheritedAttribute() {
+		Schema schema = new SchemaImpl("TestSchema",
+				"de.uni_koblenz.jgralabtest.schematest");
+		GraphClass graphClass = schema.createGraphClass("GraphClass1");
+		BooleanDomain booleanDomain = schema.getBooleanDomain();
+
+		VertexClass parentVC = graphClass.createVertexClass("ParentVC");
+
+		VertexClass childVC1 = graphClass.createVertexClass("ChildVC1");
+		childVC1.createAttribute("attr", booleanDomain);
+		childVC1.addSuperClass(parentVC);
+
+		VertexClass childVC2 = graphClass.createVertexClass("ChildVC2");
+		childVC2.createAttribute("attr", booleanDomain);
+		childVC2.addSuperClass(parentVC);
+
+		VertexClass grandChildVC = graphClass.createVertexClass("GrandChildVC");
+		grandChildVC.addSuperClass(childVC1);
+		grandChildVC.addSuperClass(childVC2);
 	}
 
 	@Test

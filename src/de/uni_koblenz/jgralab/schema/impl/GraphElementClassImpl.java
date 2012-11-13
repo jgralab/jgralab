@@ -143,15 +143,16 @@ public abstract class GraphElementClassImpl<SC extends GraphElementClass<SC, IC>
 		if (superClass == this) {
 			return;
 		}
-		subclassDag.createEdge(superClass, this);
 		for (Attribute a : superClass.getAttributeList()) {
-			if (getOwnAttribute(a.getName()) != null) {
+			if (getAttribute(a.getName()) != null
+					&& getAttribute(a.getName()) != a) {
 				throw new SchemaException("Cannot add "
 						+ superClass.getQualifiedName() + " as superclass of "
 						+ getQualifiedName() + ". Cause: Attribute "
 						+ a.getName() + " is declared in both classes");
 			}
 		}
+		subclassDag.createEdge(superClass, this);
 	}
 
 	@SuppressWarnings("unchecked")
