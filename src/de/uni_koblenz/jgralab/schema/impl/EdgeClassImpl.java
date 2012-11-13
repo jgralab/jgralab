@@ -103,9 +103,10 @@ public class EdgeClassImpl extends GraphElementClassImpl<EdgeClass, Edge>
 		}
 
 		IncidenceClass fromInc = new IncidenceClassImpl(this, from,
-				fromRoleName, fromMin, fromMax, aggrFrom);
+				fromRoleName, fromMin, fromMax, IncidenceDirection.OUT,
+				aggrFrom);
 		IncidenceClass toInc = new IncidenceClassImpl(this, to, toRoleName,
-				toMin, toMax, aggrTo);
+				toMin, toMax, IncidenceDirection.IN, aggrTo);
 		this.from = fromInc;
 		this.to = toInc;
 		((VertexClassImpl) from).addOutIncidenceClass(fromInc);

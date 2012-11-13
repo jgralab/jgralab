@@ -83,6 +83,7 @@ import de.uni_koblenz.jgralab.grumlschema.structure.Schema;
 import de.uni_koblenz.jgralab.grumlschema.structure.SpecializesEdgeClass;
 import de.uni_koblenz.jgralab.grumlschema.structure.SpecializesVertexClass;
 import de.uni_koblenz.jgralab.grumlschema.structure.VertexClass;
+import de.uni_koblenz.jgralab.schema.IncidenceDirection;
 import de.uni_koblenz.jgralab.schema.RecordDomain.RecordComponent;
 
 /**
@@ -754,12 +755,12 @@ public class CompareSchemaWithSchemaGraph {
 		// "To" and "From" edges are compared
 		ComesFrom comesFrom = gEdgeClass.getFirstComesFromIncidence();
 		compareIncidenceClass(edgeClass.getFrom(),
-				(IncidenceClass) comesFrom.getThat(), EdgeDirection.OUT);
+				(IncidenceClass) comesFrom.getThat(), IncidenceDirection.OUT);
 		// TODO TEST ob es weitere Kanten gibt, die es nicht geben sollte!
 
 		GoesTo goesTo = gEdgeClass.getFirstGoesToIncidence();
 		compareIncidenceClass(edgeClass.getTo(),
-				(IncidenceClass) goesTo.getThat(), EdgeDirection.IN);
+				(IncidenceClass) goesTo.getThat(), IncidenceDirection.IN);
 		// TODO TEST ob es weitere Kanten gibt, die es nicht geben sollte!
 	}
 
@@ -773,7 +774,7 @@ public class CompareSchemaWithSchemaGraph {
 	 */
 	final private void compareIncidenceClass(
 			de.uni_koblenz.jgralab.schema.IncidenceClass incidence,
-			IncidenceClass gIncidence, EdgeDirection gDirection) {
+			IncidenceClass gIncidence, IncidenceDirection gDirection) {
 
 		currentName = "IncidenceClass";
 
@@ -795,7 +796,7 @@ public class CompareSchemaWithSchemaGraph {
 
 	private void compareDirection(
 			de.uni_koblenz.jgralab.schema.IncidenceClass incidence,
-			EdgeDirection gDirection) {
+			IncidenceDirection gDirection) {
 		assertEquals(
 				"The directions are not equal: " + incidence.getDirection()
 						+ " != " + gDirection, incidence.getDirection()

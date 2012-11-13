@@ -70,6 +70,14 @@
         <type xmi:type="uml:PrimitiveType" href="http://schema.omg.org/spec/UML/2.1.1/uml.xml#String"/>
       </ownedAttribute>
       <ownedAttribute xmi:type="uml:Property" xmi:id="_6Y9yAAvmEd-dRt_tJhHmug" name="direction" visibility="private" type="_zo-r8AvmEd-dRt_tJhHmug" isDerived="true"/>
+      <ownedAttribute xmi:type="uml:Property" xmi:id="_W33JkC11EeKeZ6KfQJd2AA" name="subsetted" visibility="private" type="_-ApJADsREd6WspxV8TCndQ" association="_W3adoC11EeKeZ6KfQJd2AA">
+        <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_W4A6kS11EeKeZ6KfQJd2AA" value="*"/>
+        <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_W4A6kC11EeKeZ6KfQJd2AA"/>
+      </ownedAttribute>
+      <ownedAttribute xmi:type="uml:Property" xmi:id="_W4KEgC11EeKeZ6KfQJd2AA" name="subsetting" visibility="private" type="_-ApJADsREd6WspxV8TCndQ" association="_W3adoC11EeKeZ6KfQJd2AA">
+        <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_W4KEgi11EeKeZ6KfQJd2AA" value="*"/>
+        <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_W4KEgS11EeKeZ6KfQJd2AA"/>
+      </ownedAttribute>
     </packagedElement>
     <packagedElement xmi:type="uml:Association" xmi:id="_PaRR0DsTEd6WspxV8TCndQ" name="EndsAt" memberEnd="_PaRR0TsTEd6WspxV8TCndQ _PaXYcDsTEd6WspxV8TCndQ">
       <ownedEnd xmi:type="uml:Property" xmi:id="_PaXYcDsTEd6WspxV8TCndQ" name="incidence" visibility="private" type="_-ApJADsREd6WspxV8TCndQ" association="_PaRR0DsTEd6WspxV8TCndQ">
@@ -275,6 +283,7 @@
         <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_3QYrQTsTEd6WspxV8TCndQ" value="1"/>
       </ownedEnd>
     </packagedElement>
+    <packagedElement xmi:type="uml:Association" xmi:id="_W3adoC11EeKeZ6KfQJd2AA" name="Subsets" memberEnd="_W33JkC11EeKeZ6KfQJd2AA _W4KEgC11EeKeZ6KfQJd2AA" isDerived="true"/>
   </packagedElement>
   <packagedElement xmi:type="uml:Package" xmi:id="_yhGk0AmTEd6zGIen0iP_BQ" name="domains">
     <packagedElement xmi:type="uml:Class" xmi:id="_RyW4cDrwEd6WspxV8TCndQ" name="BasicDomain" isAbstract="true">

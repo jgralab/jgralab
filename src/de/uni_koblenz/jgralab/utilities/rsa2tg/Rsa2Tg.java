@@ -388,6 +388,8 @@ public class Rsa2Tg extends XmlProcessor {
 
 	private boolean inSpecification;
 
+	private Set<GraphElementClass> derivedGraphElementClasses;
+
 	/**
 	 * Processes an XMI-file to a TG-file as schema or a schema in a grUML
 	 * graph. For all command line options see
@@ -621,6 +623,7 @@ public class Rsa2Tg extends XmlProcessor {
 		comments = new HashMap<String, List<String>>();
 		ignoredPackages = new HashSet<Package>();
 		modelRootElementNestingDepth = 1;
+		derivedGraphElementClasses = new HashSet<GraphElementClass>();
 	}
 
 	/**
@@ -1089,6 +1092,23 @@ public class Rsa2Tg extends XmlProcessor {
 		// generalizations
 		checkSubsettingOfAllIncidenceClasses();
 
+		// delete derived GraphElementClasses
+		for (GraphElementClass gec : derivedGraphElementClasses) {
+			assert gec.isValid();
+			Edge current = gec.getFirstIncidence();
+			while (current != null) {
+				Edge next = current.getNextIncidence();
+				if (current.isInstanceOf(Annotates.EC)) {
+					Vertex comment = next.getThat();
+					if (comment.getDegree() == 1) {
+						comment.delete();
+					}
+				}
+				current = next;
+			}
+			gec.delete();
+		}
+
 		createEdgeClassNames();
 
 		if (isRemoveUnusedDomains()) {
@@ -1508,6 +1528,13 @@ public class Rsa2Tg extends XmlProcessor {
 		vc.set_qualifiedName(getQualifiedName(getAttribute(UML_ATTRIBUTE_NAME)));
 		sg.createContainsGraphElementClass(packageStack.peek(), vc);
 
+		String isDerived = getAttribute(UML_ATTRIBUTE_ISDERIVED);
+		boolean derived = (isDerived != null) && isDerived.equals(UML_TRUE);
+
+		if (derived) {
+			derivedGraphElementClasses.add(vc);
+		}
+
 		// System.out.println("currentClass = " + currentClass + " "
 		// + currentClass.getQualifiedName());
 		return vc;
@@ -1616,6 +1643,13 @@ public class Rsa2Tg extends XmlProcessor {
 			sg.createGoesTo(ec, inc);
 			sg.createEndsAt(inc, vc);
 			idMap.put(targetEnd, inc);
+		}
+
+		String isDerived = getAttribute(UML_ATTRIBUTE_ISDERIVED);
+		boolean derived = (isDerived != null) && isDerived.equals(UML_TRUE);
+
+		if (derived) {
+			derivedGraphElementClasses.add(ec);
 		}
 		return ec;
 	}

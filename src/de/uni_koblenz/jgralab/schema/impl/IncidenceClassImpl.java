@@ -49,7 +49,7 @@ public class IncidenceClassImpl implements IncidenceClass {
 
 	protected IncidenceClassImpl(EdgeClass edgeClass, VertexClass vertexClass,
 			String rolename, int minEdgesAtVertex, int maxEdgesAtVertex,
-			AggregationKind aggregationKind) {
+			IncidenceDirection direction, AggregationKind aggregationKind) {
 		super();
 		if (aggregationKind == null) {
 			this.aggregationKind = AggregationKind.NONE;
@@ -64,8 +64,7 @@ public class IncidenceClassImpl implements IncidenceClass {
 		} else {
 			this.rolename = rolename;
 		}
-		direction = getEdgeClass().getFrom() == this ? IncidenceDirection.OUT
-				: IncidenceDirection.IN;
+		this.direction = direction;
 		this.vertexClass = vertexClass;
 		this.subsettedIncidenceClasses = new HashSet<IncidenceClass>();
 		this.incidenceClassIdInSchema = ((SchemaImpl) edgeClass.getSchema())
