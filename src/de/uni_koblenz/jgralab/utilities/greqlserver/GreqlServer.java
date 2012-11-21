@@ -35,7 +35,7 @@
 package de.uni_koblenz.jgralab.utilities.greqlserver;
 
 import java.io.BufferedReader;
-import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
@@ -56,8 +56,7 @@ import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.graphmarker.BooleanGraphMarker;
 import de.uni_koblenz.jgralab.greql.GreqlQuery;
-import de.uni_koblenz.jgralab.greql.evaluator.GreqlEnvironmentAdapter;
-import de.uni_koblenz.jgralab.greql.evaluator.GreqlQueryImpl;
+import de.uni_koblenz.jgralab.greql.GreqlQueryCache;
 import de.uni_koblenz.jgralab.greql.types.Path;
 import de.uni_koblenz.jgralab.greql.types.PathSystem;
 import de.uni_koblenz.jgralab.greql.types.Slice;
@@ -215,13 +214,26 @@ public class GreqlServer extends Thread {
 		}
 	}
 
+	private GreqlQueryCache cache = new GreqlQueryCache();
+
 	private Object evalQuery(String queryFile) throws IOException {
 		println("Evaling query file " + queryFile + ".", PrintTarget.BOTH, true);
-		GreqlQuery query = GreqlQueryImpl.readQuery(new File(queryFile));
+		BufferedReader in = new BufferedReader(new FileReader(queryFile));
+		StringBuilder sb = new StringBuilder();
+		String line;
+		try {
+			while ((line = in.readLine()) != null) {
+				sb.append(line);
+				sb.append('\n');
+			}
+		} finally {
+			in.close();
+		}
+		GreqlQuery query = cache.getQuery(sb.toString());
 		Object result = null;
 		try {
 			long startTime = System.currentTimeMillis();
-			result = query.evaluate(graph, new GreqlEnvironmentAdapter(), null);
+			result = query.evaluate(graph);
 			long evalTime = System.currentTimeMillis() - startTime;
 			println("<result not printed>", PrintTarget.SERVER, false);
 			out.println();
