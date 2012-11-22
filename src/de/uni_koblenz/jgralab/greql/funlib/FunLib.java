@@ -168,6 +168,7 @@ public class FunLib {
 		register(de.uni_koblenz.jgralab.greql.funlib.graph.OutDegree.class);
 		register(de.uni_koblenz.jgralab.greql.funlib.graph.OutIncidences.class);
 		register(de.uni_koblenz.jgralab.greql.funlib.graph.PathLength.class);
+		register(de.uni_koblenz.jgralab.greql.funlib.graph.Path.class);
 		register(de.uni_koblenz.jgralab.greql.funlib.graph.PathSystem.class);
 		register(de.uni_koblenz.jgralab.greql.funlib.graph.ReachableVertices.class);
 		register(de.uni_koblenz.jgralab.greql.funlib.graph.Slice.class);
@@ -423,17 +424,17 @@ public class FunLib {
 				String delim = "";
 				int i = 0;
 				for (String p : funDesc.params()) {
-					if (i == 0 && needsGraphArgument) {
+					if ((i == 0) && needsGraphArgument) {
 						// don't show Graph argument
 						++i;
 						continue;
 					}
-					if (i == 0 && needsEvaluatorArgument) {
+					if ((i == 0) && needsEvaluatorArgument) {
 						// don't show evaluator argument
 						++i;
 						continue;
 					}
-					if (i == sig.parameterTypes.length - 1 && acceptsType) {
+					if ((i == (sig.parameterTypes.length - 1)) && acceptsType) {
 						// don't show TypeCollection argument
 						++i;
 						continue;

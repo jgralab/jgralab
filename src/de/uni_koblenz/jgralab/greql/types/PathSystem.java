@@ -124,7 +124,7 @@ public class PathSystem {
 	@Override
 	public boolean equals(Object o) {
 		assertFinished();
-		if (o == null || !(o instanceof PathSystem)) {
+		if ((o == null) || !(o instanceof PathSystem)) {
 			return false;
 		}
 		return keyToEntryMap.equals(((PathSystem) o).keyToEntryMap);
@@ -256,7 +256,7 @@ public class PathSystem {
 					vertexToFirstKeyMap.put(vertex, key);
 				}
 			} else {
-				if (!(vertex == rootVertex && distance == 0)) {
+				if (!((vertex == rootVertex) && (distance == 0))) {
 					entriesWithoutParentEdge.add(entry);
 				}
 			}
@@ -393,10 +393,10 @@ public class PathSystem {
 			return -1;
 		}
 		int degree = 0;
-		boolean countIncomingEdges = direction == EdgeDirection.IN
-				|| direction == EdgeDirection.INOUT;
-		boolean countOutgoingEdges = direction == EdgeDirection.OUT
-				|| direction == EdgeDirection.INOUT;
+		boolean countIncomingEdges = (direction == EdgeDirection.IN)
+				|| (direction == EdgeDirection.INOUT);
+		boolean countOutgoingEdges = (direction == EdgeDirection.OUT)
+				|| (direction == EdgeDirection.INOUT);
 
 		for (Entry<PathSystemKey, PathSystemEntry> entry : keyToEntryMap
 				.entrySet()) {
@@ -414,7 +414,7 @@ public class PathSystem {
 
 	public boolean isAcceptedByTypeCollection(TypeCollection typeCollection,
 			Entry<PathSystemKey, PathSystemEntry> entry) {
-		return typeCollection == null
+		return (typeCollection == null)
 				|| typeCollection.acceptsType(entry.getValue().getParentEdge()
 						.getAttributedElementClass());
 	}
@@ -626,6 +626,9 @@ public class PathSystem {
 	public Path extractPath(Vertex vertex) {
 		assertFinished();
 		PathSystemKey key = leafVertexToLeafKeyMap.get(vertex);
+		if (key == null) {
+			return null;
+		}
 		return extractPath(key);
 	}
 
@@ -637,7 +640,7 @@ public class PathSystem {
 	 *            the pair (Vertex, Statenumber) which is the target of the path
 	 * @return a Path from rootVertex to given vertex
 	 */
-	public Path extractPath(PathSystemKey key) {
+	private Path extractPath(PathSystemKey key) {
 		assertFinished();
 		Path path = Path.start(key.getVertex());
 		while (key != null) {
