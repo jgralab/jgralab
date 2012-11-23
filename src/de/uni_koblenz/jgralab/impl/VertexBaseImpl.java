@@ -514,7 +514,7 @@ public abstract class VertexBaseImpl extends
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
-	public final String toString() {
+	public String toString() {
 		return "v" + id + ": " + getAttributedElementClass().getQualifiedName();
 	}
 

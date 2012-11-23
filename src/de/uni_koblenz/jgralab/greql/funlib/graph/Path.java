@@ -13,8 +13,11 @@ import de.uni_koblenz.jgralab.greql.funlib.NeedsEvaluatorArgument;
 
 @NeedsEvaluatorArgument
 public class Path extends Function {
+	@Description(params = { "internal", "v1", "pd", "v2" }, description = "Returns the shortest path between v1 and v2 matching the path description pd.", categories = Category.GRAPH)
+	public Path() {
+		super(1000, 1, 1.0);
+	}
 
-	@Description(params = { "v1", "pd", "v2" }, description = "Returns the shortest path between v1 and v2 matching the path description pd.", categories = Category.GRAPH)
 	public de.uni_koblenz.jgralab.greql.types.Path evaluate(
 			InternalGreqlEvaluator evaluator, Vertex v1, DFA dfa, Vertex v2) {
 		de.uni_koblenz.jgralab.greql.types.PathSystem ps = (de.uni_koblenz.jgralab.greql.types.PathSystem) FunLib

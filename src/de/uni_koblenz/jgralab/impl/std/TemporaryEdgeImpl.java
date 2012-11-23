@@ -2,6 +2,7 @@ package de.uni_koblenz.jgralab.impl.std;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Map.Entry;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
@@ -78,7 +79,7 @@ public class TemporaryEdgeImpl extends EdgeImpl implements TemporaryEdge {
 
 	@Override
 	public Edge bless(EdgeClass edgeClass) {
-		
+
 		// test if valid
 		validateConversion(edgeClass);
 
@@ -133,7 +134,7 @@ public class TemporaryEdgeImpl extends EdgeImpl implements TemporaryEdge {
 		if (nextIncidenceReversed == this) {
 			nextIncidenceReversed = newEdge;
 		}
-		if(newLastIncidenceReversed == this.getReversedEdge()){
+		if (newLastIncidenceReversed == this.getReversedEdge()) {
 			newLastIncidenceReversed = (InternalEdge) newEdge.getReversedEdge();
 		}
 		correctISeq(prevIncidenceReversed, nextIncidenceReversed,
@@ -158,6 +159,10 @@ public class TemporaryEdgeImpl extends EdgeImpl implements TemporaryEdge {
 	}
 
 	private void validateConversion(EdgeClass edgeClass) {
+		if (!isValid()) {
+			throw new TemporaryGraphElementException(
+					"This temporary edge isn't valid anymore! " + this);
+		}
 		if (!this.getAlpha().getAttributedElementClass()
 				.isValidFromFor(edgeClass)) {
 			throw new TemporaryGraphElementException(
@@ -282,5 +287,28 @@ public class TemporaryEdgeImpl extends EdgeImpl implements TemporaryEdge {
 	@Override
 	public void setPreliminaryType(EdgeClass ec) {
 		this.preliminaryType = ec;
+	}
+
+	@Override
+	public final String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("te: ");
+		if (preliminaryType != null) {
+			sb.append(preliminaryType.getQualifiedName());
+		}
+		sb.append("{");
+		boolean first = true;
+		for (Entry<String, Object> e : attributes.entrySet()) {
+			if (first) {
+				first = false;
+			} else {
+				sb.append(", ");
+			}
+			sb.append(e.getKey());
+			sb.append(" -> ");
+			sb.append(e.getValue());
+		}
+		sb.append("}");
+		return sb.toString();
 	}
 }
