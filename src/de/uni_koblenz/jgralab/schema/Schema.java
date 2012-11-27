@@ -476,4 +476,6 @@ public interface Schema extends Comparable<Schema> {
 
 	public void save(DataOutputStream out) throws GraphIOException;
 
+	public GraphElementClass<?, ?> getGraphElementClassById(int id);
+	
 }

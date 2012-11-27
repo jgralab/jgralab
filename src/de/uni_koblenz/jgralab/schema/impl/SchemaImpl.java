@@ -206,6 +206,8 @@ public class SchemaImpl implements Schema, ManagableArtifact {
 	private static final Pattern PACKAGE_PREFIX_PATTERN = Pattern
 			.compile("^\\p{Lower}\\w*(\\.\\p{Lower}\\w*)*$");
 
+	private GraphElementClass<?,?>[] graphElementClasses;
+	
 	/**
 	 * Creates a new <code>Schema</code>.
 	 * 
@@ -1221,6 +1223,10 @@ public class SchemaImpl implements Schema, ManagableArtifact {
 		}
 		domainsDag.finish();
 		graphClass.finish();
+		this.graphElementClasses = new GraphElementClass [this.graphElementClassCount];
+		for(GraphElementClass<?,?> ge : this.graphClass.getGraphElementClasses()){
+			this.graphElementClasses[ge.getGraphElementClassIdInSchema()] = ge;
+		}
 		finished = true;
 		++version;
 		return true;
@@ -1294,6 +1300,15 @@ public class SchemaImpl implements Schema, ManagableArtifact {
 	@Override
 	public String getManagedName() {
 		return qualifiedName;
+	}
+
+	//TODO make it better
+	@Override
+	public GraphElementClass<?, ?> getGraphElementClassById(int id) {
+		if(this.finished)
+			return this.graphElementClasses[id];
+		else
+			throw new SchemaException("schema not finished");
 	}
 
 }
