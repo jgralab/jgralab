@@ -48,9 +48,7 @@ import de.uni_koblenz.jgralab.greql.funlib.NeedsGraphArgument;
 @NeedsGraphArgument
 public class VertexSetSubgraph extends Function {
 
-	@Description(params = {"graph","vertexSet"}, description = 
-			"Returns the subgraph induced by the vertex type given.",
-			categories = Category.GRAPH)
+	@Description(params = { "graph", "vertexSet" }, description = "Returns the subgraph induced by the vertex set, i.e. the vertices in vertexSet together with all edges between vertices in vertexSet.", categories = Category.GRAPH)
 	public VertexSetSubgraph() {
 		super(7, 1, 1.0);
 	}
@@ -62,7 +60,8 @@ public class VertexSetSubgraph extends Function {
 		}
 		// add all edges
 		for (Vertex currentVertex : vertexSet) {
-			Edge currentEdge = currentVertex.getFirstIncidence(EdgeDirection.OUT);
+			Edge currentEdge = currentVertex
+					.getFirstIncidence(EdgeDirection.OUT);
 			while (currentEdge != null) {
 				if (subgraphMarker.isMarked(currentEdge.getThat())) {
 					subgraphMarker.mark(currentEdge);
@@ -70,8 +69,8 @@ public class VertexSetSubgraph extends Function {
 				currentEdge = currentEdge.getNextIncidence(EdgeDirection.OUT);
 			}
 		}
-		
+
 		return subgraphMarker;
 	}
-	
+
 }

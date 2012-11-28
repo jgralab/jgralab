@@ -45,8 +45,7 @@ import de.uni_koblenz.jgralab.greql.types.TypeCollection;
 @NeedsGraphArgument
 public class EdgeTypeSubgraph extends Function {
 
-	@Description(params = {"graph", "typeCollection"}, description = "Returns the subgraph induced by the edge type given.",
-			categories = Category.GRAPH)
+	@Description(params = { "graph", "typeCollection" }, description = "Returns the subgraph induced by the edge types in typeCollection, i.e. all edges specified by typeCollection together with their alpha and omega vertices.", categories = Category.GRAPH)
 	public EdgeTypeSubgraph() {
 		super(7, 1, 1.0);
 	}
@@ -65,5 +64,5 @@ public class EdgeTypeSubgraph extends Function {
 		}
 		return subgraphMarker;
 	}
-	
+
 }

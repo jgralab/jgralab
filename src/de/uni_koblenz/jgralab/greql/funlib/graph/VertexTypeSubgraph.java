@@ -46,9 +46,7 @@ import de.uni_koblenz.jgralab.greql.types.TypeCollection;
 @NeedsGraphArgument
 public class VertexTypeSubgraph extends Function {
 
-	@Description(params = {"graph","typeCollection"}, description = 
-			"Returns the subgraph induced by the vertex type given.",
-			categories = Category.GRAPH) 
+	@Description(params = { "graph", "typeCollection" }, description = "Returns the subgraph induced by the vertex types in typeCollection, i.e. all vertices specified by typeCollection together with all edges between those vertices.", categories = Category.GRAPH)
 	public VertexTypeSubgraph() {
 		super(7, 1, 1.0);
 	}
@@ -74,5 +72,5 @@ public class VertexTypeSubgraph extends Function {
 		}
 		return subgraphMarker;
 	}
-	
+
 }
