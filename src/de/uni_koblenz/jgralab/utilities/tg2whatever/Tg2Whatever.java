@@ -50,7 +50,7 @@ import de.uni_koblenz.jgralab.ImplementationType;
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.exception.GraphIOException;
-import de.uni_koblenz.jgralab.graphmarker.BooleanGraphMarker;
+import de.uni_koblenz.jgralab.graphmarker.AbstractBooleanGraphMarker;
 import de.uni_koblenz.jgralab.impl.ConsoleProgressFunction;
 import de.uni_koblenz.jgralab.schema.Schema;
 import de.uni_koblenz.jgralab.schema.codegenerator.CodeGeneratorConfiguration;
@@ -94,7 +94,7 @@ public abstract class Tg2Whatever {
 
 	protected boolean shortenStrings = false;
 
-	protected BooleanGraphMarker marker = null;
+	protected AbstractBooleanGraphMarker marker = null;
 
 	public Tg2Whatever() {
 		// System.err.println("outputName = '" + outputName + "'");
@@ -109,7 +109,7 @@ public abstract class Tg2Whatever {
 	 * sets the graph marker. If this is not null, only vertices and edges that
 	 * are marked with the marker will be printed to the dot-file
 	 */
-	public void setGraphMarker(BooleanGraphMarker m) {
+	public void setGraphMarker(AbstractBooleanGraphMarker m) {
 		marker = m;
 	}
 

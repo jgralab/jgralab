@@ -68,7 +68,7 @@ import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.exception.GraphIOException;
-import de.uni_koblenz.jgralab.graphmarker.BooleanGraphMarker;
+import de.uni_koblenz.jgralab.graphmarker.AbstractBooleanGraphMarker;
 import de.uni_koblenz.jgralab.greql.evaluator.GreqlEvaluatorImpl;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
@@ -230,12 +230,12 @@ public class Tg2Dot extends Tg2Whatever {
 		converter.convert();
 	}
 
-	public static void convertGraph(BooleanGraphMarker marker,
+	public static void convertGraph(AbstractBooleanGraphMarker marker,
 			String outputFileName) throws IOException {
 		convertGraph(marker, outputFileName, false, (EdgeClass[]) null);
 	}
 
-	public static void convertGraph(BooleanGraphMarker marker,
+	public static void convertGraph(AbstractBooleanGraphMarker marker,
 			String outputFileName, boolean reversedEdges,
 			Class<? extends Edge>... reversedEdgeTypes) throws IOException {
 		convertGraph(
@@ -247,14 +247,14 @@ public class Tg2Dot extends Tg2Whatever {
 						reversedEdgeTypes));
 	}
 
-	public static void convertGraph(BooleanGraphMarker marker,
+	public static void convertGraph(AbstractBooleanGraphMarker marker,
 			String outputFileName, boolean reversedEdges,
 			EdgeClass... reversedEdgeTypes) throws IOException {
 		convertGraph(marker, outputFileName, GraphVizOutputFormat.PDF,
 				reversedEdges, reversedEdgeTypes);
 	}
 
-	public static void convertGraph(BooleanGraphMarker marker,
+	public static void convertGraph(AbstractBooleanGraphMarker marker,
 			String outputFileName, GraphVizOutputFormat format,
 			boolean reversedEdges, Class<? extends Edge>... reversedEdgeTypes)
 			throws IOException {
@@ -285,7 +285,7 @@ public class Tg2Dot extends Tg2Whatever {
 		return aecs;
 	}
 
-	public static void convertGraph(BooleanGraphMarker marker,
+	public static void convertGraph(AbstractBooleanGraphMarker marker,
 			String outputFileName, GraphVizOutputFormat format,
 			boolean reversedEdges, EdgeClass... reversedEdgeTypes)
 			throws IOException {
@@ -724,59 +724,6 @@ public class Tg2Dot extends Tg2Whatever {
 		writer = null;
 		JGraLab.setLogLevel(jGraLabLogLevel);
 	}
-
-	/**
-	 * Executes the Dot program of GraphViz.
-	 */
-	// @Deprecated
-	// private void executeDot() {
-	//
-	// // TODO if dotBuildOutputType is set, the outputName is mangled.
-	//
-	// // If the outputname was set by the user, e.g. "foo.svg" for output type
-	// // "svg", this file is used twice (at first as output file for tg2dot
-	// // and then as output file of the dot program). This results into a call
-	// // to "dot" with same input and output filenames.
-	//
-	// if (graphVizOutputFormat == null) {
-	// return;
-	// }
-	//
-	// if (graphVizLayouter == null) {
-	// graphVizLayouter = GraphVizLayouter.DOT;
-	// }
-	//
-	// System.out.print("Creating " + graphVizOutputFormat + " with "
-	// + graphVizLayouter + "...");
-	//
-	// try {
-	// File outputFile = new File(outputName);
-	// String dotFile = outputFile.getAbsolutePath();
-	// String formatedFile = dotFile + "." + dotBuildOutputType;
-	// int lastIntPosition = dotFile.lastIndexOf('.');
-	//
-	// if (lastIntPosition != -1) {
-	// formatedFile = dotFile.substring(0, lastIntPosition) + "."
-	// + dotBuildOutputType;
-	// }
-	//
-	// String executionString = "dot -T" + dotBuildOutputType + " "
-	// + dotFile + " -o" + formatedFile;
-	// Process p = Runtime.getRuntime().exec(executionString);
-	// p.waitFor();
-	// if (p.exitValue() == EXIT_ALL_FINE) {
-	// System.out.println(" done.");
-	// } else {
-	// System.out.println(" error " + p.exitValue()
-	// + " ocurred while executing DOT!");
-	// }
-	//
-	// } catch (IOException e) {
-	// e.printStackTrace();
-	// } catch (InterruptedException e) {
-	// e.printStackTrace();
-	// }
-	// }
 
 	@Override
 	protected String stringQuote(String s) {
