@@ -67,7 +67,7 @@ import java.util.zip.GZIPOutputStream;
 
 import de.uni_koblenz.jgralab.exception.GraphException;
 import de.uni_koblenz.jgralab.exception.GraphIOException;
-import de.uni_koblenz.jgralab.graphmarker.BooleanGraphMarker;
+import de.uni_koblenz.jgralab.graphmarker.AbstractBooleanGraphMarker;
 import de.uni_koblenz.jgralab.impl.GraphBaseImpl;
 import de.uni_koblenz.jgralab.impl.InternalGraph;
 import de.uni_koblenz.jgralab.schema.AggregationKind;
@@ -596,7 +596,7 @@ public class GraphIO {
 	 * @throws GraphIOException
 	 *             if an IOException occurs
 	 */
-	public static void saveGraphToFile(BooleanGraphMarker subGraph,
+	public static void saveGraphToFile(AbstractBooleanGraphMarker subGraph,
 			String filename, ProgressFunction pf) throws GraphIOException {
 		DataOutputStream out = null;
 		try {
@@ -662,7 +662,7 @@ public class GraphIO {
 	 * @throws GraphIOException
 	 *             if an IOException occurs
 	 */
-	public static void saveGraphToStream(BooleanGraphMarker subGraph,
+	public static void saveGraphToStream(AbstractBooleanGraphMarker subGraph,
 			DataOutputStream out, ProgressFunction pf) throws GraphIOException {
 		try {
 			if (hasTemporaryElements(subGraph, subGraph.getGraph())) {
@@ -692,8 +692,8 @@ public class GraphIO {
 		return false;
 	}
 
-	private static boolean hasTemporaryElements(BooleanGraphMarker marker,
-			Graph g) {
+	private static boolean hasTemporaryElements(
+			AbstractBooleanGraphMarker marker, Graph g) {
 		for (Vertex v : g.vertices(g.getGraphClass().getTemporaryVertexClass())) {
 			if (marker.isMarked(v)) {
 				return true;
@@ -708,7 +708,8 @@ public class GraphIO {
 	}
 
 	private void saveGraph(InternalGraph graph, ProgressFunction pf,
-			BooleanGraphMarker subGraph) throws IOException, GraphIOException {
+			AbstractBooleanGraphMarker subGraph) throws IOException,
+			GraphIOException {
 		TraversalContext tc = graph.setTraversalContext(null);
 		try {
 			// Write the jgralab version and license in a comment

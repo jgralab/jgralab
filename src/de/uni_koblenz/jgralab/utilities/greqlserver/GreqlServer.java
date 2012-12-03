@@ -49,9 +49,9 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
+import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.graphmarker.BooleanGraphMarker;
@@ -205,8 +205,8 @@ public class GreqlServer extends Thread {
 			for (Edge e : path.getEdgeTrace()) {
 				marker.mark(e);
 			}
-		} else if (val instanceof AttributedElement) {
-			marker.mark((AttributedElement<?, ?>) val);
+		} else if (val instanceof GraphElement) {
+			marker.mark((GraphElement<?, ?>) val);
 		} else {
 			println("'" + val + "' is no AttributedElement, "
 					+ "so it won't be considered for DOT output.",

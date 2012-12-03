@@ -43,8 +43,6 @@ import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.TraversalContext;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.algolib.functions.BooleanFunction;
-import de.uni_koblenz.jgralab.algolib.functions.entries.BooleanFunctionEntry;
 
 /**
  * This class serves as a special <code>BitSetGraphmarker</code>, although it
@@ -56,8 +54,8 @@ import de.uni_koblenz.jgralab.algolib.functions.entries.BooleanFunctionEntry;
  * @author ist@uni-koblenz.de
  * 
  */
-public class SubGraphMarker extends AbstractGraphMarker<GraphElement<?, ?>>
-		implements BooleanFunction<GraphElement<?, ?>>, TraversalContext {
+public class SubGraphMarker extends AbstractBooleanGraphMarker implements
+		TraversalContext {
 
 	private final BitSetEdgeMarker edgeGraphMarker;
 	private final BitSetVertexMarker vertexGraphMarker;
@@ -163,6 +161,7 @@ public class SubGraphMarker extends AbstractGraphMarker<GraphElement<?, ?>>
 	 * @return false if the given <code>graphElement</code> has already been
 	 *         marked.
 	 */
+	@Override
 	public boolean mark(GraphElement<?, ?> graphElement) {
 		return graphElement instanceof Edge ? mark((Edge) graphElement)
 				: mark((Vertex) graphElement);
@@ -216,16 +215,6 @@ public class SubGraphMarker extends AbstractGraphMarker<GraphElement<?, ?>>
 	}
 
 	@Override
-	public void maxEdgeCountIncreased(int newValue) {
-		// do nothing
-	}
-
-	@Override
-	public void maxVertexCountIncreased(int newValue) {
-		// do nothing
-	}
-
-	@Override
 	public Iterable<GraphElement<?, ?>> getMarkedElements() {
 		return new Iterable<GraphElement<?, ?>>() {
 
@@ -274,56 +263,6 @@ public class SubGraphMarker extends AbstractGraphMarker<GraphElement<?, ?>>
 			}
 
 		};
-	}
-
-	@Override
-	public boolean get(GraphElement<?, ?> parameter) {
-		return isMarked(parameter);
-	}
-
-	@Override
-	public boolean isDefined(GraphElement<?, ?> parameter) {
-		return true;
-	}
-
-	@Override
-	public void set(GraphElement<?, ?> parameter, boolean value) {
-		if (value) {
-			mark(parameter);
-		} else {
-			removeMark(parameter);
-		}
-	}
-
-	@Override
-	public Iterator<BooleanFunctionEntry<GraphElement<?, ?>>> iterator() {
-		final Iterator<GraphElement<?, ?>> markedElements = getMarkedElements()
-				.iterator();
-		return new Iterator<BooleanFunctionEntry<GraphElement<?, ?>>>() {
-
-			@Override
-			public boolean hasNext() {
-				return markedElements.hasNext();
-			}
-
-			@Override
-			public BooleanFunctionEntry<GraphElement<?, ?>> next() {
-				GraphElement<?, ?> currentElement = markedElements.next();
-				return new BooleanFunctionEntry<GraphElement<?, ?>>(
-						currentElement, get(currentElement));
-			}
-
-			@Override
-			public void remove() {
-				markedElements.remove();
-			}
-
-		};
-	}
-
-	@Override
-	public Iterable<GraphElement<?, ?>> getDomainElements() {
-		return getMarkedElements();
 	}
 
 	@Override

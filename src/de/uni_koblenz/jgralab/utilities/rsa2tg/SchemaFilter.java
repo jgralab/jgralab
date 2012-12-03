@@ -37,8 +37,8 @@ package de.uni_koblenz.jgralab.utilities.rsa2tg;
 import java.io.PrintStream;
 import java.util.regex.Pattern;
 
-import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.EdgeDirection;
+import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.graphmarker.BooleanGraphMarker;
 import de.uni_koblenz.jgralab.grumlschema.SchemaGraph;
 import de.uni_koblenz.jgralab.grumlschema.domains.CollectionDomain;
@@ -75,12 +75,10 @@ public class SchemaFilter {
 	public BooleanGraphMarker processPatterns() {
 		includes = new BooleanGraphMarker(schemaGraph);
 		if (patterns != null) {
-			// always include the GraphClass
-			includes.mark(schemaGraph);
 			// accept everything by default
 			Pattern matchesAll = Pattern.compile(".*");
 
-			if (patterns.length <= 0 || patterns[0].trim().startsWith("-")) {
+			if ((patterns.length <= 0) || patterns[0].trim().startsWith("-")) {
 				includeOrExcludeAllGraphElements(true, matchesAll);
 			}
 
@@ -180,7 +178,7 @@ public class SchemaFilter {
 	 * @param ae
 	 *            the element to decide whether to write "IN: " or "OUT: "
 	 */
-	private void writeIncludeOrExcludeInformation(AttributedElement<?, ?> ae) {
+	private void writeIncludeOrExcludeInformation(GraphElement<?, ?> ae) {
 		if (includes.isMarked(ae)) {
 			debugOutputStream.print("IN: ");
 		} else {
@@ -337,13 +335,14 @@ public class SchemaFilter {
 		for (EdgeClass currentEdgeClass : schemaGraph.getEdgeClassVertices()) {
 			if (includes.isMarked(currentEdgeClass)) {
 				// only look at included EdgeClasses
-				IncidenceClass fromIC = (IncidenceClass) currentEdgeClass
+				IncidenceClass fromIC = currentEdgeClass
 						.getFirstComesFromIncidence().getOmega();
-				VertexClass fromVC = (VertexClass) fromIC.getFirstEndsAtIncidence()
-						.getOmega();
-				IncidenceClass toIC = (IncidenceClass) currentEdgeClass
+				VertexClass fromVC = fromIC
+						.getFirstEndsAtIncidence().getOmega();
+				IncidenceClass toIC = currentEdgeClass
 						.getFirstGoesToIncidence().getOmega();
-				VertexClass toVC = (VertexClass) toIC.getFirstEndsAtIncidence().getOmega();
+				VertexClass toVC = toIC.getFirstEndsAtIncidence()
+						.getOmega();
 				if (!includes.isMarked(fromVC) || !includes.isMarked(toVC)) {
 					// exclude all EdgeClasses whose to or from VertexClasses
 					// are already excluded
