@@ -43,6 +43,7 @@ import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.TraversalContext;
 import de.uni_koblenz.jgralab.Vertex;
+import de.uni_koblenz.jgralab.greql.types.Slice;
 
 /**
  * This class serves as a special <code>BitSetGraphmarker</code>, although it
@@ -274,5 +275,16 @@ public class SubGraphMarker extends AbstractBooleanGraphMarker implements
 	public boolean containsEdge(Edge e) {
 		boolean result = edgeGraphMarker.isMarked(e);
 		return result;
+	}
+
+	public static SubGraphMarker fromSlice(Slice s) {
+		SubGraphMarker r = new SubGraphMarker(s.getDataGraph());
+		for (Vertex v : s.getVertices()) {
+			r.mark(v);
+		}
+		for (Edge e : s.getEdges()) {
+			r.mark(e);
+		}
+		return r;
 	}
 }
