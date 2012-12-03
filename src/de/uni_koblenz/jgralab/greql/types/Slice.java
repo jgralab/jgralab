@@ -54,6 +54,7 @@ import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.Vertex;
+import de.uni_koblenz.jgralab.graphmarker.SubGraphMarker;
 
 public class Slice {
 
@@ -111,7 +112,7 @@ public class Slice {
 
 	@Override
 	public boolean equals(Object o) {
-		if (o == null || !(o instanceof Slice)) {
+		if ((o == null) || !(o instanceof Slice)) {
 			return false;
 		}
 		return keyToEntryMap.equals(((Slice) o).keyToEntryMap);
@@ -468,5 +469,16 @@ public class Slice {
 			}
 		}
 		return returnString.toString();
+	}
+
+	public SubGraphMarker toSubGraphMarker() {
+		SubGraphMarker r = new SubGraphMarker(getDataGraph());
+		for (Vertex v : getVertices()) {
+			r.mark(v);
+		}
+		for (Edge e : getEdges()) {
+			r.mark(e);
+		}
+		return r;
 	}
 }
