@@ -163,11 +163,7 @@ public class TemporaryVertexImpl extends VertexImpl implements TemporaryVertex {
 			}
 		}
 		for (TemporaryEdge tempEdge : tempEdgeList) {
-			try {
-				tempEdge.bless(tempEdge.getPreliminaryType());
-			} catch (TemporaryGraphElementException ex) {
-				// Edge stays temporary
-			}
+			tempEdge.bless();
 		}
 		return newVertex;
 	}
