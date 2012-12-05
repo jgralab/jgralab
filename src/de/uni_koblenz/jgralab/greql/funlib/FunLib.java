@@ -220,6 +220,7 @@ public class FunLib {
 		register(de.uni_koblenz.jgralab.greql.funlib.strings.Length.class);
 		register(de.uni_koblenz.jgralab.greql.funlib.strings.LowerCase.class);
 		register(de.uni_koblenz.jgralab.greql.funlib.strings.ReMatch.class);
+		register(de.uni_koblenz.jgralab.greql.funlib.strings.Replace.class);
 		register(de.uni_koblenz.jgralab.greql.funlib.strings.Split.class);
 		register(de.uni_koblenz.jgralab.greql.funlib.strings.StartsWith.class);
 		register(de.uni_koblenz.jgralab.greql.funlib.strings.Substring.class);
