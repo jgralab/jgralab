@@ -70,7 +70,7 @@ public class ArgoUML2TgTest {
 		JGraLab.setLogLevel(Level.OFF);
 	}
 
-	public void testASchema(String filename) throws GraphIOException,
+	private void testASchema(String filename) throws GraphIOException,
 			FileNotFoundException, XMLStreamException {
 		// Loads the SchemaGraph
 		java.io.File file = new java.io.File(folder + filename);
@@ -87,7 +87,6 @@ public class ArgoUML2TgTest {
 
 		// Converts the SchemaGraph to a Schema
 		Schema schema = GraphIO.loadSchemaFromFile(tgFilename);
-		schema.save("D:\\test.tg");
 
 		// Compares the SchemaGraph with the created Schema
 		new CompareSchemaWithSchemaGraph().compare(schema, r.getSchemaGraph());
