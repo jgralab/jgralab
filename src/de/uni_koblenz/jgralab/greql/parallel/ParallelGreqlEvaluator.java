@@ -124,7 +124,8 @@ public class ParallelGreqlEvaluator {
 	class EvaluationTask extends FutureTask<Object> {
 		private TaskHandle handle;
 		private EvaluationEnvironment environment;
-		private long startTime, doneTime;
+		private long startTime;
+		private long doneTime;
 
 		private EvaluationTask(EvaluationEnvironment environment,
 				TaskHandle handle, Callable<Object> callable) {
@@ -474,7 +475,7 @@ public class ParallelGreqlEvaluator {
 	private RuntimeException unwrapException(Exception ex) {
 		// unwrap ExecutionExceptions
 		Throwable inner = ex;
-		while (inner != null && inner instanceof ExecutionException) {
+		while ((inner != null) && (inner instanceof ExecutionException)) {
 			inner = inner.getCause();
 		}
 		// throw the causing exception

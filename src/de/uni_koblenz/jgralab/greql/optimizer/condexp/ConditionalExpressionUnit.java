@@ -53,7 +53,8 @@ public class ConditionalExpressionUnit {
 	private final GreqlQuery query;
 
 	private final Expression condition;
-	private final Formula trueFormula, falseFormula;
+	private final Formula trueFormula;
+	private final Formula falseFormula;
 	private double influenceCostRatio = -1;
 
 	public ConditionalExpressionUnit(Expression exp, Formula origFormula) {
