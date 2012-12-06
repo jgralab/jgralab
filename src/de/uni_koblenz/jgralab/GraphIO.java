@@ -189,13 +189,15 @@ public class GraphIO {
 
 	private String gcName; // GraphClass name of the currently loaded graph
 
-	private final byte buffer[];
+	private final byte[] buffer;
 
 	private int bufferPos;
 
 	private int bufferSize;
 
-	private Vertex edgeIn[], edgeOut[];
+	private Vertex[] edgeIn;
+	private Vertex[] edgeOut;
+
 	private int[] firstIncidence;
 	private int[] nextIncidence;
 
