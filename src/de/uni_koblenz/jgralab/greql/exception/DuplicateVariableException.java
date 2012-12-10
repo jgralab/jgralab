@@ -55,4 +55,16 @@ public class DuplicateVariableException extends QuerySourceException {
 				+ previousPosition.get_offset(), variable, sourcePositions);
 	}
 
+	/**
+	 * @param variable
+	 * @param sourcePositions
+	 */
+	public DuplicateVariableException(String nameOfVariable,
+			List<SourcePosition> sourcePositions,
+			SourcePosition previousPosition) {
+		super("Duplicate variable " + nameOfVariable
+				+ " previously defined at position "
+				+ previousPosition.get_offset(), null, sourcePositions);
+	}
+
 }
