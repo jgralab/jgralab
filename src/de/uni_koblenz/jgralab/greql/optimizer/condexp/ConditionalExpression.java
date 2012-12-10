@@ -51,7 +51,8 @@ import de.uni_koblenz.jgralab.greql.schema.GreqlGraph;
  */
 public class ConditionalExpression extends Formula {
 	protected Expression condition;
-	protected Formula trueFormula, falseFormula;
+	protected Formula trueFormula;
+	protected Formula falseFormula;
 
 	public ConditionalExpression(GreqlQuery query, Expression condition,
 			Formula trueExp, Formula falseExp) {

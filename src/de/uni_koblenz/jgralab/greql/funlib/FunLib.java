@@ -125,6 +125,7 @@ public class FunLib {
 		register(de.uni_koblenz.jgralab.greql.funlib.collections.Union.class);
 		register(de.uni_koblenz.jgralab.greql.funlib.collections.Values.class);
 		register(de.uni_koblenz.jgralab.greql.funlib.graph.Alpha.class);
+		register(de.uni_koblenz.jgralab.greql.funlib.graph.AlphaIncidenceIndex.class);
 		register(de.uni_koblenz.jgralab.greql.funlib.graph.Degree.class);
 		register(de.uni_koblenz.jgralab.greql.funlib.graph.base.DegreeFunction.class);
 		register(de.uni_koblenz.jgralab.greql.funlib.graph.Depth.class);
@@ -151,6 +152,7 @@ public class FunLib {
 		register(de.uni_koblenz.jgralab.greql.funlib.graph.Id.class);
 		register(de.uni_koblenz.jgralab.greql.funlib.graph.InDegree.class);
 		register(de.uni_koblenz.jgralab.greql.funlib.graph.Incidences.class);
+		register(de.uni_koblenz.jgralab.greql.funlib.graph.IncidenceIndex.class);
 		register(de.uni_koblenz.jgralab.greql.funlib.graph.InIncidences.class);
 		register(de.uni_koblenz.jgralab.greql.funlib.graph.IsAcyclic.class);
 		register(de.uni_koblenz.jgralab.greql.funlib.graph.IsIsolated.class);
@@ -165,6 +167,7 @@ public class FunLib {
 		register(de.uni_koblenz.jgralab.greql.funlib.graph.NextIn.class);
 		register(de.uni_koblenz.jgralab.greql.funlib.graph.NextOut.class);
 		register(de.uni_koblenz.jgralab.greql.funlib.graph.Omega.class);
+		register(de.uni_koblenz.jgralab.greql.funlib.graph.OmegaIncidenceIndex.class);
 		register(de.uni_koblenz.jgralab.greql.funlib.graph.OutDegree.class);
 		register(de.uni_koblenz.jgralab.greql.funlib.graph.OutIncidences.class);
 		register(de.uni_koblenz.jgralab.greql.funlib.graph.PathLength.class);
@@ -174,7 +177,9 @@ public class FunLib {
 		register(de.uni_koblenz.jgralab.greql.funlib.graph.Slice.class);
 		register(de.uni_koblenz.jgralab.greql.funlib.graph.StartVertex.class);
 		register(de.uni_koblenz.jgralab.greql.funlib.graph.This.class);
+		register(de.uni_koblenz.jgralab.greql.funlib.graph.ThisIncidenceIndex.class);
 		register(de.uni_koblenz.jgralab.greql.funlib.graph.That.class);
+		register(de.uni_koblenz.jgralab.greql.funlib.graph.ThatIncidenceIndex.class);
 		register(de.uni_koblenz.jgralab.greql.funlib.graph.TopologicalSort.class);
 		register(de.uni_koblenz.jgralab.greql.funlib.graph.VertexTrace.class);
 		register(de.uni_koblenz.jgralab.greql.funlib.graph.Vertices.class);
@@ -215,6 +220,7 @@ public class FunLib {
 		register(de.uni_koblenz.jgralab.greql.funlib.strings.Length.class);
 		register(de.uni_koblenz.jgralab.greql.funlib.strings.LowerCase.class);
 		register(de.uni_koblenz.jgralab.greql.funlib.strings.ReMatch.class);
+		register(de.uni_koblenz.jgralab.greql.funlib.strings.Replace.class);
 		register(de.uni_koblenz.jgralab.greql.funlib.strings.Split.class);
 		register(de.uni_koblenz.jgralab.greql.funlib.strings.StartsWith.class);
 		register(de.uni_koblenz.jgralab.greql.funlib.strings.Substring.class);

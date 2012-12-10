@@ -295,8 +295,10 @@ public class TemporaryEdgeImpl extends EdgeImpl implements TemporaryEdge {
 		sb.append("te: ");
 		if (preliminaryType != null) {
 			sb.append(preliminaryType.getQualifiedName());
+		} else {
+			sb.append("-MissingPreliminaryType-");
 		}
-		sb.append("{");
+		sb.append(" {");
 		boolean first = true;
 		for (Entry<String, Object> e : attributes.entrySet()) {
 			if (first) {

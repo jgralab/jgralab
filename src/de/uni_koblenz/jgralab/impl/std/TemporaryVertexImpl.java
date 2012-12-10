@@ -240,8 +240,10 @@ public class TemporaryVertexImpl extends VertexImpl implements TemporaryVertex {
 		sb.append("tv: ");
 		if (preliminaryType != null) {
 			sb.append(preliminaryType.getQualifiedName());
+		} else {
+			sb.append("-MissingPreliminaryType-");
 		}
-		sb.append("{");
+		sb.append(" {");
 		boolean first = true;
 		for (Entry<String, Object> e : attributes.entrySet()) {
 			if (first) {

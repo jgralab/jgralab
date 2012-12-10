@@ -79,12 +79,15 @@ public abstract class AbstractGraphLayoutReader implements GraphLayoutReader {
 	 *            Name of the definition.
 	 */
 	protected void definitionStarted(String definitionName) {
-		TypeDefinition definition = graphLayout
-				.getTypeDefinition(definitionName);
+
+		TypeDefinition definition = null;
+
+		definition = graphLayout.getTypeDefinition(definitionName);
+
 		currentDefinition = definition;
 		if (definition == null && isElementDefinition(definitionName)) {
 			currentDefinition = new ElementDefinition(definitionName);
-			graphLayout.add(definition);
+			graphLayout.add(currentDefinition);
 		}
 	}
 

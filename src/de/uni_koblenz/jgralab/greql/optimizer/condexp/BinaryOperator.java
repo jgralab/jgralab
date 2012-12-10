@@ -49,7 +49,8 @@ import de.uni_koblenz.jgralab.greql.schema.Expression;
  * 
  */
 public abstract class BinaryOperator extends Formula {
-	protected Formula leftHandSide, rightHandSide;
+	protected Formula leftHandSide;
+	protected Formula rightHandSide;
 
 	public BinaryOperator(GreqlQuery query, Formula lhs, Formula rhs) {
 		super(query);
@@ -67,8 +68,8 @@ public abstract class BinaryOperator extends Formula {
 
 	protected int hashCode(int startVal) {
 		int multiplier = 59;
-		startVal = startVal * multiplier + leftHandSide.hashCode();
-		startVal = startVal * multiplier + rightHandSide.hashCode();
+		startVal = (startVal * multiplier) + leftHandSide.hashCode();
+		startVal = (startVal * multiplier) + rightHandSide.hashCode();
 		return startVal;
 	}
 
