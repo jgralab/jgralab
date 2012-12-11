@@ -47,6 +47,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -395,6 +396,14 @@ public class FunLib {
 
 		public final boolean needsEvaluatorArgument() {
 			return needsEvaluatorArgument;
+		}
+
+		public final Set<Class<?>> getReturnTypes() {
+			Set<Class<?>> returnTypes = new HashSet<Class<?>>();
+			for (Signature signatur : signatures) {
+				returnTypes.add(signatur.evaluateMethod.getReturnType());
+			}
+			return returnTypes;
 		}
 
 		public final String getHtmlDescription() {
