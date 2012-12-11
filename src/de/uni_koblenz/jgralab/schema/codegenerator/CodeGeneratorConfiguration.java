@@ -61,6 +61,7 @@ public class CodeGeneratorConfiguration {
 	public static final CodeGeneratorConfiguration MINIMAL = new CodeGeneratorConfiguration()
 			.withoutTypeSpecificMethodSupport();
 	public static final CodeGeneratorConfiguration NORMAL = new CodeGeneratorConfiguration();
+	public static final CodeGeneratorConfiguration WITH_DISKV2_SUPPORT = new CodeGeneratorConfiguration().withDiskV2Support();
 
 	/**
 	 * toggles, if the type-specific methods such as "getNextXYVertex" should be
@@ -68,6 +69,8 @@ public class CodeGeneratorConfiguration {
 	 */
 	private boolean typespecificMethodSupport = true;
 
+	private boolean withDiskV2 = false;
+	
 	/**
 	 * This constructor creates a default configuration:<br>
 	 * <br>
@@ -80,6 +83,11 @@ public class CodeGeneratorConfiguration {
 		typespecificMethodSupport = true;
 	}
 
+	public CodeGeneratorConfiguration withDiskV2Support(){
+		this.withDiskV2 = true;
+		return this;
+	}
+	
 	public CodeGeneratorConfiguration withTypeSpecificMethodSupport() {
 		typespecificMethodSupport = true;
 		return this;
@@ -107,5 +115,9 @@ public class CodeGeneratorConfiguration {
 
 	public boolean hasTypeSpecificMethodsSupport() {
 		return typespecificMethodSupport;
+	}
+	
+	public boolean hasDiskV2Support(){
+		return withDiskV2;
 	}
 }

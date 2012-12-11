@@ -107,7 +107,7 @@ public abstract class AttributedElementCodeGenerator<SC extends AttributedElemen
 	@Override
 	protected CodeBlock createBody() {
 		CodeList code = new CodeList();
-		if (currentCycle.isStdImpl()) {
+		if (currentCycle.isStdOrDiskv2Impl()){//currentCycle.isStdImpl()) {
 			code.add(createFields(aec.getAttributeList()));
 			code.add(createConstructor());
 			code.add(createGetAttributedElementClassMethod());
@@ -135,21 +135,27 @@ public abstract class AttributedElementCodeGenerator<SC extends AttributedElemen
 		CodeSnippet code = new CodeSnippet(true);
 
 		code.setVariable("classOrInterface",
-				currentCycle.isStdImpl() ? " class" : " interface");
+				currentCycle.isStdOrDiskv2Impl() ? " class" : " interface");
+				//currentCycle.isStdImpl() ? " class" : " interface");
 		code.setVariable("abstract",
-				currentCycle.isStdImpl() && aec.isAbstract() ? " abstract" : "");
+				currentCycle.isStdOrDiskv2Impl() && aec.isAbstract() ? " abstract" : "");
+				//currentCycle.isStdImpl() && aec.isAbstract() ? " abstract" : "");
 		code.setVariable("impl",
-				currentCycle.isStdImpl() && !aec.isAbstract() ? "Impl" : "");
+				currentCycle.isStdOrDiskv2Impl() && !aec.isAbstract() ? "Impl" : "");
+				//currentCycle.isStdImpl() && !aec.isAbstract() ? "Impl" : "");
 		code.add("public#abstract##classOrInterface# #simpleClassName##impl##extends##implements# {");
 		code.setVariable("extends",
-				currentCycle.isStdImpl() ? " extends #baseClassName#" : "");
+				currentCycle.isStdOrDiskv2Impl() ? " extends #baseClassName#" : "");
+				//currentCycle.isStdImpl() ? " extends #baseClassName#" : "");
+
 
 		StringBuilder buf = new StringBuilder();
 		if (interfaces.size() > 0) {
-			String delim = currentCycle.isStdImpl() ? " implements "
+			//String delim = currentCycle.isStdImpl() ? " implements "
+			String delim = currentCycle.isStdOrDiskv2Impl() ? " implements "		
 					: " extends ";
 			for (String interfaceName : interfaces) {
-				if (currentCycle.isStdImpl()
+				if (currentCycle.isStdOrDiskv2Impl()//.isStdImpl()
 						|| !interfaceName.equals(aec.getQualifiedName())) {
 					if (interfaceName.equals("Vertex")
 							|| interfaceName.equals("Edge")
@@ -353,6 +359,10 @@ public abstract class AttributedElementCodeGenerator<SC extends AttributedElemen
 			break;
 		case CLASSONLY:
 			break;
+		case DISKV2IMPL:
+			code.add("public #type# #isOrGet#_#name#() {", "\treturn _#name#;",
+					"}");
+			break;
 		}
 		return code;
 	}
@@ -388,6 +398,16 @@ public abstract class AttributedElementCodeGenerator<SC extends AttributedElemen
 			break;
 		case CLASSONLY:
 			break;
+		case DISKV2IMPL:
+			code.add(
+					"public void set_#name#(#type# _#name#) {",
+					"\t#graphRef#fireBeforeChangeAttribute(this, \"#name#\", this._#name#, _#name#);",
+					"\tObject oldValue = this._#name#;",
+					"\tthis._#name# = _#name#;", "\tgraphModified();",
+					"\t#graphRef#fireAfterChangeAttribute(this, \"#name#\", oldValue, _#name#);",
+					"\tattributeChanged();",
+					"}");
+			break;
 		}
 		return code;
 	}
@@ -395,7 +415,7 @@ public abstract class AttributedElementCodeGenerator<SC extends AttributedElemen
 	protected CodeBlock createField(Attribute attr) {
 		CodeSnippet code = new CodeSnippet(true, "protected #type# _#name#;");
 		code.setVariable("name", attr.getName());
-		if (currentCycle.isStdImpl()) {
+		if (currentCycle.isStdOrDiskv2Impl()){//.isStdImpl()) {
 			code.setVariable(
 					"type",
 					attr.getDomain().getJavaAttributeImplementationTypeName(
@@ -422,7 +442,7 @@ public abstract class AttributedElementCodeGenerator<SC extends AttributedElemen
 				a.addNoIndent(new CodeSnippet(
 						"if (attributeName.equals(\"#variableName#\")) {",
 						"\tGraphIO io = GraphIO.createStringReader(value, getSchema());"));
-				if (currentCycle.isStdImpl()) {
+				if (currentCycle.isStdOrDiskv2Impl()){//.isStdImpl()) {
 					a.add(attribute.getDomain().getReadMethod(
 							schemaRootPackageName, "_" + attribute.getName(),
 							"io"));
@@ -461,7 +481,7 @@ public abstract class AttributedElementCodeGenerator<SC extends AttributedElemen
 				a.addNoIndent(new CodeSnippet(
 						"if (attributeName.equals(\"#variableName#\")) {",
 						"\tGraphIO io = GraphIO.createStringWriter(getSchema());"));
-				if (currentCycle.isStdImpl()) {
+				if (currentCycle.isStdOrDiskv2Impl()){//.isStdImpl()) {
 					a.add(attribute.getDomain().getWriteMethod(
 							schemaRootPackageName, "_" + attribute.getName(),
 							"io"));
@@ -490,7 +510,7 @@ public abstract class AttributedElementCodeGenerator<SC extends AttributedElemen
 				CodeSnippet snippet = new CodeSnippet();
 				snippet.setVariable("setterName", "set_" + attribute.getName());
 				snippet.setVariable("variableName", attribute.getName());
-				if (currentCycle.isStdImpl()) {
+				if (currentCycle.isStdOrDiskv2Impl()){//.isStdImpl()) {
 					code.add(attribute.getDomain().getReadMethod(
 							schemaRootPackageName, "_" + attribute.getName(),
 							"io"));
@@ -515,7 +535,7 @@ public abstract class AttributedElementCodeGenerator<SC extends AttributedElemen
 		if ((attributes != null) && !attributes.isEmpty()) {
 			code.add(new CodeSnippet("io.space();"));
 			for (Attribute attribute : attributes) {
-				if (currentCycle.isStdImpl()) {
+				if (currentCycle.isStdOrDiskv2Impl()){//.isStdImpl()) {
 					code.add(attribute.getDomain().getWriteMethod(
 							schemaRootPackageName, "_" + attribute.getName(),
 							"io"));

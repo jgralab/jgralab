@@ -111,7 +111,7 @@ public class EdgeCodeGenerator extends
 
 	@Override
 	protected CodeBlock createSpecialConstructorCode() {
-		if (currentCycle.isStdImpl()) {
+		if (currentCycle.isStdOrDiskv2Impl()){//.isStdImpl()) {
 			return new CodeSnippet(
 					"((#jgImplPackage#.InternalGraph) graph).addEdge(this, alpha, omega);");
 		}
@@ -121,10 +121,12 @@ public class EdgeCodeGenerator extends
 	@Override
 	protected CodeBlock createBody() {
 		CodeList code = (CodeList) super.createBody();
-		if (currentCycle.isStdImpl()) {
+		if (currentCycle.isStdOrDiskv2Impl()){//.isStdImpl()) {
 			rootBlock.setVariable("baseClassName", "EdgeImpl");
 			if (currentCycle.isStdImpl()) {
 				addImports("#jgImplStdPackage#.#baseClassName#");
+			}else if(currentCycle.isDiskv2Impl()){
+				addImports("#jgImplDiskv2Package#.#baseClassName#");
 			}
 		}
 		if (config.hasTypeSpecificMethodsSupport()
@@ -132,7 +134,7 @@ public class EdgeCodeGenerator extends
 			code.add(createNextEdgeMethods());
 			code.add(createNextIncidenceMethods());
 		}
-		if (currentCycle.isStdImpl()) {
+		if (currentCycle.isStdOrDiskv2Impl()){//.isStdImpl()) {
 			code.add(createGetAggregationKindMethod());
 			code.add(createGetAlphaAggregationKindMethod());
 			code.add(createGetOmegaAggregationKindMethod());
@@ -152,6 +154,8 @@ public class EdgeCodeGenerator extends
 				"protected #jgImplPackage#.ReversedEdgeBaseImpl createReversedEdge() {");
 		if (currentCycle.isStdImpl()) {
 			addImports("#schemaImplStdPackage#.Reversed#simpleClassName#Impl");
+		}else if(currentCycle.isDiskv2Impl()){
+			addImports("#schemaImplDiskv2Package#.Reversed#simpleClassName#Impl");			
 		}
 		code.add("\treturn new Reversed#simpleClassName#Impl(this, graph);");
 		code.add("}");
@@ -225,7 +229,7 @@ public class EdgeCodeGenerator extends
 			code.add(" */",
 					"public #ecQualifiedName# getNext#ecCamelName#InGraph(#formalParams#);");
 		}
-		if (currentCycle.isStdImpl()) {
+		if (currentCycle.isStdOrDiskv2Impl()){//.isStdImpl()) {
 			code.add(
 					"public #ecQualifiedName# getNext#ecCamelName#InGraph(#formalParams#) {",
 					"\treturn (#ecQualifiedName#)getNextEdge(#ecQualifiedName#.EC#actualParams#);",
@@ -274,7 +278,7 @@ public class EdgeCodeGenerator extends
 			code.add(" */",
 					"public #ecQualifiedName# getNext#ecCamelName#Incidence(#formalParams#);");
 		}
-		if (currentCycle.isStdImpl()) {
+		if (currentCycle.isStdOrDiskv2Impl()){//.isStdImpl()) {
 			code.add(
 					"public #ecQualifiedName# getNext#ecCamelName#Incidence(#formalParams#) {",
 					"\treturn (#ecQualifiedName#)getNextIncidence(#ecQualifiedName#.EC#actualParams#);",

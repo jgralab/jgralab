@@ -77,9 +77,11 @@ public class GraphCodeGenerator extends
 	@Override
 	protected CodeBlock createBody() {
 		CodeList code = (CodeList) super.createBody();
-		if (currentCycle.isStdImpl()) {
+		if (currentCycle.isStdOrDiskv2Impl()){//.isStdImpl()) {
 			if (currentCycle.isStdImpl()) {
 				addImports("#jgImplStdPackage#.#baseClassName#");
+			}else if (currentCycle.isDiskv2Impl()){
+				addImports("#jgImplDiskv2Package#.#baseClassName#");				
 			}
 			rootBlock.setVariable("baseClassName", "GraphImpl");
 		}
@@ -94,6 +96,8 @@ public class GraphCodeGenerator extends
 		CodeSnippet code = new CodeSnippet(true);
 		if (currentCycle.isStdImpl()) {
 			code.setVariable("createSuffix", "STANDARD");
+		}else if (currentCycle.isDiskv2Impl()) {
+			code.setVariable("createSuffix", "DISKV2");
 		}
 		code.add(
 				"/**",
@@ -181,7 +185,7 @@ public class GraphCodeGenerator extends
 					" * @return the first #ecSimpleName# #ecTypeInComment# in this graph");
 			code.add(" */", "public #ecJavaClassName# getFirst#ecCamelName#();");
 		}
-		if (currentCycle.isStdImpl()) {
+		if (currentCycle.isStdOrDiskv2Impl()){//.isStdImpl()) {
 			code.add(
 					"public #ecJavaClassName# getFirst#ecCamelName#() {",
 					"\treturn (#ecJavaClassName#)getFirst#ecType#(#ecJavaClassName#.#ecTypeAecConstant#);",
@@ -197,7 +201,7 @@ public class GraphCodeGenerator extends
 		}
 		CodeList code = new CodeList();
 		code.addNoIndent(createFactoryMethod(gec, false));
-		if (currentCycle.isStdImpl()) {
+		if (currentCycle.isStdOrDiskv2Impl()){//.isStdImpl()) {
 			code.addNoIndent(createFactoryMethod(gec, true));
 		}
 		return code;
@@ -222,7 +226,7 @@ public class GraphCodeGenerator extends
 			code.add("*/",
 					"public #ecJavaClassName# create#ecCamelName#(#formalParams#);");
 		}
-		if (currentCycle.isStdImpl()) {
+		if (currentCycle.isStdOrDiskv2Impl()){//.isStdImpl()) {
 			code.add(
 					"public #ecJavaClassName# create#ecCamelName#(#formalParams#) {",
 					"\treturn graphFactory.<#ecJavaClassName#> create#ecType#(#ecJavaClassName#.#ecTypeAecConstant#, #newActualParams#, this#additionalParams#);",
@@ -266,7 +270,7 @@ public class GraphCodeGenerator extends
 		}
 
 		for (EdgeClass edge : gc.getEdgeClasses()) {
-			if (currentCycle.isStdImpl()) {
+			if (currentCycle.isStdOrDiskv2Impl()){//.isStdImpl()) {
 				addImports("#jgImplPackage#.EdgeIterable");
 			}
 			CodeSnippet s = new CodeSnippet(true);
@@ -283,7 +287,7 @@ public class GraphCodeGenerator extends
 				s.add(" */");
 				s.add("public Iterable<#edgeJavaClassName#> get#edgeUniqueName#Edges();");
 			}
-			if (currentCycle.isStdImpl()) {
+			if (currentCycle.isStdOrDiskv2Impl()){//.isStdImpl()) {
 				s.add("public Iterable<#edgeJavaClassName#> get#edgeUniqueName#Edges() {");
 				s.add("\treturn new EdgeIterable<#edgeJavaClassName#>(this, #edgeJavaClassName#.EC);");
 				s.add("}");
@@ -305,7 +309,7 @@ public class GraphCodeGenerator extends
 		vertexClassSet.addAll(gc.getVertexClasses());
 
 		for (VertexClass vertex : vertexClassSet) {
-			if (currentCycle.isStdImpl()) {
+			if (currentCycle.isStdOrDiskv2Impl()){//.isStdImpl()) {
 				addImports("#jgImplPackage#.VertexIterable");
 			}
 
@@ -323,7 +327,7 @@ public class GraphCodeGenerator extends
 				s.add("",
 						"public Iterable<#vertexJavaClassName#> get#vertexCamelName#Vertices(#jgPackage#.VertexFilter<#vertexJavaClassName#> filter);");
 			}
-			if (currentCycle.isStdImpl()) {
+			if (currentCycle.isStdOrDiskv2Impl()){//.isStdImpl()) {
 				s.add("public Iterable<#vertexJavaClassName#> get#vertexCamelName#Vertices() {");
 				s.add("\treturn new VertexIterable<#vertexJavaClassName#>(this, #vertexJavaClassName#.VC, null);");
 				s.add("}");

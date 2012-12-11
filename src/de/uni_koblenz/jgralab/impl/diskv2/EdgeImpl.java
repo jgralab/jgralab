@@ -60,16 +60,19 @@ public abstract class EdgeImpl extends de.uni_koblenz.jgralab.impl.EdgeBaseImpl 
 	@Override
 	public void setNextEdgeInGraph(Edge nextEdge) {
 		this.nextEdgeId = nextEdge.getId();
+		getTracker().putVariable(4, this.nextEdgeId);
 	}
 
 	@Override
 	public void setPrevEdgeInGraph(Edge prevEdge) {
 		this.prevEdgeId = prevEdge.getId();
+		getTracker().putVariable(12, this.prevEdgeId);
 	}
 
 	@Override
 	public void setIncidentVertex(Vertex v) {
 		incidentVertexId = v.getId();
+		getTracker().putVariable(36, this.incidentVertexId);
 	}
 
 	@Override
@@ -78,6 +81,7 @@ public abstract class EdgeImpl extends de.uni_koblenz.jgralab.impl.EdgeBaseImpl 
 			this.nextIncidenceId = - nextIncidence.getId();
 		else
 			this.nextIncidenceId = nextIncidence.getId();
+		getTracker().putVariable(20, this.nextIncidenceId);
 	}
 
 	@Override
@@ -86,6 +90,7 @@ public abstract class EdgeImpl extends de.uni_koblenz.jgralab.impl.EdgeBaseImpl 
 			this.prevIncidenceId = - prevIncidence.getId();
 		else
 			this.prevIncidenceId = prevIncidence.getId();
+		getTracker().putVariable(28, this.prevIncidenceId);
 	}
 
 	protected EdgeImpl(int anId, Graph graph, Vertex alpha, Vertex omega) {
@@ -132,5 +137,45 @@ public abstract class EdgeImpl extends de.uni_koblenz.jgralab.impl.EdgeBaseImpl 
 	
 	public void restorePrevIncidenceId(int id){
 		this.prevIncidenceId = id;
+	}
+	
+	
+	/**
+	 * Get the Tracker for this GraphElement
+	 * 
+	 * @return The Tracker that tracks this GraphElement
+	 */
+	public EdgeTracker getTracker(){
+		return ((GraphImpl)graph).getStorage().getEdgeTracker(this.id);
+	}
+	
+	/**
+	 * Called whenever a primitive attribute of this GraphElement changed so the
+	 * new attribute value is stored in the Tracker.
+	 */
+	public void attributeChanged() {
+		EdgeTracker tracker = getTracker();
+		if (tracker != null)
+			tracker.storeAttributes(this);
+	}
+	
+	/**
+	 * Called whenever a String of this GraphElement changed so the
+	 * new String is stored in the Tracker.
+	 */
+	public void stringChanged() {
+		EdgeTracker tracker = getTracker();
+		if (tracker != null)
+			tracker.storeStrings(this);
+	}
+	
+	/**
+	 * Called whenever a List of this GraphElement changed so the
+	 * new list value is stored in the Tracker.
+	 */
+	public void listChanged() {
+		EdgeTracker tracker = getTracker();
+		if (tracker != null)
+			tracker.storeLists(this);
 	}
 }
