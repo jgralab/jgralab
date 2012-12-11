@@ -19,6 +19,16 @@ public abstract class VertexImpl extends
 	private int lastIncidenceId;
 
 	/**
+	 * Get the Tracker for this GraphElement
+	 * 
+	 * @return The Tracker that tracks this GraphElement
+	 */
+	public VertexTracker getTracker(){
+		return ((GraphImpl)this.graph).getStorage().getVertexTracker(this.id);
+	}
+	
+	
+	/**
 	 * holds the version of the vertex structure, for every modification of the
 	 * structure (e.g. adding or deleting an incident edge or changing the
 	 * incidence sequence) this version number is increased by one. It is set to
@@ -60,11 +70,13 @@ public abstract class VertexImpl extends
 	@Override
 	public void setNextVertex(Vertex nextVertex) {
 		this.nextVertexId = nextVertex.getId();
+		getTracker().putVariable(4, this.nextVertexId);
 	}
 
 	@Override
 	public void setPrevVertex(Vertex prevVertex) {
 		this.prevVertexId = prevVertex.getId();
+		getTracker().putVariable(12, this.prevVertexId);
 	}
 
 	@Override
@@ -74,6 +86,7 @@ public abstract class VertexImpl extends
 		}else{
 			this.firstIncidenceId = firstIncidence.getId();
 		}
+		getTracker().putVariable(20, this.firstIncidenceId);
 	}
 
 	@Override
@@ -83,11 +96,13 @@ public abstract class VertexImpl extends
 		}else{
 			this.lastIncidenceId = lastIncidence.getId();
 		}
+		getTracker().putVariable(28, this.lastIncidenceId);
 	}
-
+	
 	@Override
 	public void setIncidenceListVersion(long incidenceListVersion) {
 		this.incidenceListVersion = incidenceListVersion;
+		getTracker().putVariable(36, this.incidenceListVersion);
 	}
 
 	@Override
@@ -147,5 +162,36 @@ public abstract class VertexImpl extends
 	public void restoreIncidenceListVersion(long version){
 		this.incidenceListVersion = version;
 	}
+	
+	/**
+	 * Called whenever a primitive attribute of this GraphElement changed so the
+	 * new attribute value is stored in the Tracker.
+	 */
+	public void attributeChanged() {
+		VertexTracker tracker = getTracker();
+		if (tracker != null)
+			tracker.storeAttributes(this);
+	}
+	
+	/**
+	 * Called whenever a String of this GraphElement changed so the
+	 * new String is stored in the Tracker.
+	 */
+	public void stringChanged() {
+		VertexTracker tracker = getTracker();
+		if (tracker != null)
+			tracker.storeStrings(this);
+	}
+	
+	/**
+	 * Called whenever a List of this GraphElement changed so the
+	 * new list value is stored in the Tracker.
+	 */
+	public void listChanged() {
+		VertexTracker tracker = getTracker();
+		if (tracker != null)
+			tracker.storeLists(this);
+	}
+	
 }
 

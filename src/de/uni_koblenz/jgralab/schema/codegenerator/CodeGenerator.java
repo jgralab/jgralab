@@ -42,6 +42,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 
@@ -63,13 +64,17 @@ public abstract class CodeGenerator {
 	 */
 	protected enum GenerationCycle {
 		// FIXME The order here matters! CLASSONLY must be last!
-		ABSTRACT, STDIMPL, CLASSONLY;
+		ABSTRACT, STDIMPL, DISKV2IMPL, CLASSONLY;
 
 		protected static List<GenerationCycle> filter(
 				CodeGeneratorConfiguration config) {
 			List<GenerationCycle> out = new ArrayList<GenerationCycle>();
 			out.add(ABSTRACT);
-			out.add(STDIMPL);
+			
+			
+				out.add(STDIMPL);
+				if(config.hasDiskV2Support())
+					out.add(DISKV2IMPL);
 			out.add(CLASSONLY);
 			return out;
 		}
@@ -82,6 +87,14 @@ public abstract class CodeGenerator {
 			return this == STDIMPL;
 		}
 
+		protected boolean isDiskv2Impl(){
+			return this == DISKV2IMPL;
+		}
+		
+		protected boolean isStdOrDiskv2Impl(){
+			return this == STDIMPL || this == DISKV2IMPL;
+		}
+		
 		/**
 		 * 
 		 * @return
@@ -140,19 +153,21 @@ public abstract class CodeGenerator {
 	 */
 	public CodeGenerator(String schemaRootPackageName, String packageName,
 			CodeGeneratorConfiguration config) {
+		logger.setLevel(Level.ALL);
 		this.schemaRootPackageName = schemaRootPackageName;
 		this.config = config;
 
 		rootBlock = new CodeList(null);
 		rootBlock.setVariable("jgPackage", "de.uni_koblenz.jgralab");
-		rootBlock.setVariable("jgTransPackage", "de.uni_koblenz.jgralab.trans");
+		//rootBlock.setVariable("jgTransPackage", "de.uni_koblenz.jgralab.trans");
 		rootBlock.setVariable("jgImplPackage", "de.uni_koblenz.jgralab.impl");
 		rootBlock.setVariable("jgImplStdPackage",
 				"de.uni_koblenz.jgralab.impl.std");
-		rootBlock.setVariable("jgImplTransPackage",
-				"de.uni_koblenz.jgralab.impl.trans");
-		rootBlock.setVariable("jgImplDbPackage",
-				"de.uni_koblenz.jgralab.impl.db");
+		//rootBlock.setVariable("jgImplTransPackage",
+			//	"de.uni_koblenz.jgralab.impl.trans");
+		rootBlock.setVariable("jgImplDiskv2Package", "de.uni_koblenz.jgralab.impl.diskv2");
+		//rootBlock.setVariable("jgImplDbPackage",
+			//	"de.uni_koblenz.jgralab.impl.db");
 		rootBlock.setVariable("jgSchemaPackage",
 				"de.uni_koblenz.jgralab.schema");
 		rootBlock.setVariable("jgSchemaImplPackage",
@@ -165,18 +180,22 @@ public abstract class CodeGenerator {
 			// transaction)
 			rootBlock.setVariable("schemaImplStdPackage", schemaRootPackageName
 					+ ".impl.std." + packageName);
-			rootBlock.setVariable("schemaImplTransPackage",
-					schemaRootPackageName + ".impl.trans." + packageName);
-			rootBlock.setVariable("schemaImplDbPackage", schemaRootPackageName
-					+ ".impl.db." + packageName);
+			rootBlock.setVariable("schemaImplDiskv2Package", schemaRootPackageName 
+					+ ".impl.diskv2."+packageName);
+			//rootBlock.setVariable("schemaImplTransPackage",
+			//		schemaRootPackageName + ".impl.trans." + packageName);
+			//rootBlock.setVariable("schemaImplDbPackage", schemaRootPackageName
+			//		+ ".impl.db." + packageName);
 		} else {
 			rootBlock.setVariable("schemaPackage", schemaRootPackageName);
 			rootBlock.setVariable("schemaImplStdPackage", schemaRootPackageName
 					+ ".impl.std");
-			rootBlock.setVariable("schemaImplTransPackage",
-					schemaRootPackageName + ".impl.trans");
-			rootBlock.setVariable("schemaImplDbPackage", schemaRootPackageName
-					+ ".impl.db");
+			rootBlock.setVariable("schemaImplDiskv2Package", schemaRootPackageName
+					+ ".impl.diskv2");
+			//rootBlock.setVariable("schemaImplTransPackage",
+			//		schemaRootPackageName + ".impl.trans");
+			//rootBlock.setVariable("schemaImplDbPackage", schemaRootPackageName
+			//		+ ".impl.db");
 		}
 		rootBlock.setVariable("isClassOnly", "false");
 		rootBlock.setVariable("isImplementationClassOnly", "false");
@@ -263,11 +282,16 @@ public abstract class CodeGenerator {
 				logger.finer("Writing file to: " + pathPrefix + "/"
 						+ schemaPackage);
 			}
-			if (currentCycle.isStdImpl()) {
+			if (currentCycle.isStdOrDiskv2Impl()){//.isStdImpl()) {
 				if (currentCycle.isStdImpl()) {
 					schemaImplPackage = rootBlock
 							.getVariable("schemaImplStdPackage");
 					logger.finer(" - schemaImplStdPackage=" + schemaImplPackage);
+				}
+				if (currentCycle.isDiskv2Impl()) {
+					schemaImplPackage = rootBlock
+							.getVariable("schemaImplDiskv2Package");
+					logger.finer(" - schemaImplDiskv2Package=" + schemaImplPackage);
 				}
 				writeCodeToFile(pathPrefix, simpleImplClassName + ".java",
 						schemaImplPackage);
@@ -308,6 +332,9 @@ public abstract class CodeGenerator {
 				break;
 			case STDIMPL:
 				code.add("package #schemaImplStdPackage#;");
+				break;
+			case DISKV2IMPL:
+				code.add("package #schemaImplDiskv2Package#;");
 				break;
 			case CLASSONLY:
 				code.add("package #schemaPackage#;");
@@ -357,7 +384,7 @@ public abstract class CodeGenerator {
 		currentCycle = getNextCycle();
 		while (currentCycle != null) {
 			createCode();
-			if (currentCycle.isStdImpl()) {
+			if (currentCycle.isStdOrDiskv2Impl()){//.isStdImpl()) {
 				javaSources.add(new InMemoryJavaSourceFile(implClassName,
 						rootBlock.getCode()));
 			} else {

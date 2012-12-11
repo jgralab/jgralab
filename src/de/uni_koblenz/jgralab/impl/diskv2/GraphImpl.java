@@ -2,12 +2,17 @@ package de.uni_koblenz.jgralab.impl.diskv2;
 
 import java.util.List;
 
+import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.TemporaryEdge;
 import de.uni_koblenz.jgralab.TemporaryVertex;
 import de.uni_koblenz.jgralab.Vertex;
+import de.uni_koblenz.jgralab.exception.GraphException;
+import de.uni_koblenz.jgralab.impl.EdgeBaseImpl;
 import de.uni_koblenz.jgralab.impl.FreeIndexList;
 import de.uni_koblenz.jgralab.impl.InternalEdge;
 import de.uni_koblenz.jgralab.impl.InternalVertex;
+import de.uni_koblenz.jgralab.impl.ReversedEdgeBaseImpl;
+import de.uni_koblenz.jgralab.impl.VertexBaseImpl;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.GraphClass;
 import de.uni_koblenz.jgralab.schema.VertexClass;
@@ -261,5 +266,178 @@ import de.uni_koblenz.jgralab.schema.VertexClass;
 		@Override
 		public boolean hasTemporaryElements() {
 			return false;
+		}
+		
+		// ---- Overrides
+		
+		@Override
+		public void appendVertexToVSeq(InternalVertex v) {
+			this.storage.putVertex((VertexImpl)v);
+			setVCount(getVCountInVSeq() + 1);
+			if (getFirstVertexInVSeq() == null) {
+				setFirstVertex(v);
+			}
+			if (getLastVertexInVSeq() != null) {
+				(getLastVertexInVSeq()).setNextVertex(v);
+				v.setPrevVertex(getLastVertexInVSeq());
+			}
+			setLastVertex(v);
+		}
+		
+		@Override
+		public final void removeVertexFromVSeq(InternalVertex v) {
+			assert v != null;
+			if (v == getFirstVertexInVSeq()) {
+				// delete at head of vertex list
+				setFirstVertex(v.getNextVertexInVSeq());
+				if (getFirstVertexInVSeq() != null) {
+					(getFirstVertexInVSeq()).setPrevVertex(null);
+				}
+				if (v == getLastVertexInVSeq()) {
+					// this vertex was the only one...
+					setLastVertex(null);
+				}
+			} else if (v == getLastVertexInVSeq()) {
+				// delete at tail of vertex list
+				setLastVertex(v.getPrevVertexInVSeq());
+				if (getLastVertexInVSeq() != null) {
+					(getLastVertexInVSeq()).setNextVertex(null);
+				}
+			} else {
+				// delete somewhere in the middle
+				(v.getPrevVertexInVSeq()).setNextVertex(v.getNextVertexInVSeq());
+				(v.getNextVertexInVSeq()).setPrevVertex(v.getPrevVertexInVSeq());
+			}
+			// freeIndex(getFreeVertexList(), v.getId());
+			freeVertexIndex(v.getId());
+			//getVertex()[v.getId()] = null;
+			this.storage.removeVertex(v.getId());
+			v.setPrevVertex(null);
+			v.setNextVertex(null);
+			v.setId(0);
+			setVCount(getVCountInVSeq() - 1);
+		}
+		
+		@Override
+		public void appendEdgeToESeq(InternalEdge e) {
+			//getEdge()[((EdgeBaseImpl) e).id] = e;
+			this.storage.putEdge((EdgeImpl) e);
+			//getRevEdge()[((EdgeBaseImpl) e).id] = ((EdgeBaseImpl) e).reversedEdge;
+			setECount(getECountInESeq() + 1);
+			if (getFirstEdgeInESeq() == null) {
+				setFirstEdgeInGraph(e);
+			}
+			if (getLastEdgeInESeq() != null) {
+				(getLastEdgeInESeq()).setNextEdgeInGraph(e);
+
+				e.setPrevEdgeInGraph(getLastEdgeInESeq());
+
+			}
+			setLastEdgeInGraph(e);
+		}
+		
+		@Override
+		public void removeEdgeFromESeq(InternalEdge e) {
+			assert e != null;
+			removeEdgeFromESeqWithoutDeletingIt(e);
+
+			// freeIndex(getFreeEdgeList(), e.getId());
+			freeEdgeIndex(e.getId());
+			//getEdge()[e.getId()] = null;
+			//getRevEdge()[e.getId()] = null;
+			this.storage.removeEdge(e.getId());
+			e.setPrevEdgeInGraph(null);
+			e.setNextEdgeInGraph(null);
+			e.setId(0);
+			setECount(getECountInESeq() - 1);
+		}
+		
+		@Override
+		public Vertex getVertex(int vId) {
+			assert (vId > 0) : "The vertex id must be > 0, given was " + vId;
+			try {
+				return this.storage.getVertexObject(vId);
+			} catch (ArrayIndexOutOfBoundsException e) {
+				return null;
+			}
+		}
+		
+		@Override
+		public Edge getEdge(int eId) {
+			assert eId != 0 : "The edge id must be != 0, given was " + eId;
+			try {
+				return this.storage.getEdgeObject(eId);// eId < 0 ? getRevEdge()[-eId] : getEdge()[eId];
+			} catch (ArrayIndexOutOfBoundsException e) {
+				return null;
+			}
+		}
+		
+		@Override
+		public  void defragment(){
+			throw new UnsupportedOperationException();
+		}
+		
+		/**
+		 * Changes the size of the edge array of this graph to newSize.
+		 * 
+		 * @param newSize
+		 *            the new size of the edge array
+		 */
+		@Override
+		public void expandEdgeArray(int newSize) {
+			if (newSize <= eMax) {
+				throw new GraphException("newSize must be > eSize: eSize=" + eMax
+						+ ", newSize=" + newSize);
+			}
+			if (getFreeEdgeList() == null) {
+				this.freeEdgeList = new FreeIndexList(newSize);
+			} else {
+				getFreeEdgeList().expandBy(newSize - eMax);
+			}
+
+			eMax = newSize;
+			notifyMaxEdgeCountIncreased(newSize);
+		}
+
+		/**
+		 * Changes the size of the vertex array of this graph to newSize.
+		 * 
+		 * @param newSize
+		 *            the new size of the vertex array
+		 */
+		@Override
+		public void expandVertexArray(int newSize) {
+			if (newSize <= vMax) {
+				throw new GraphException("newSize must > vSize: vSize=" + vMax
+						+ ", newSize=" + newSize);
+			}		
+			if (getFreeVertexList() == null) {
+				this.freeVertexList = new FreeIndexList(newSize);
+			} else {
+				getFreeVertexList().expandBy(newSize - vMax);
+			}
+			vMax = newSize;
+			notifyMaxVertexCountIncreased(newSize);
+		}
+		
+		//TODO load more efficient 
+		@Override
+		public void internalLoadingCompleted(int[] firstIncidence,
+				int[] nextIncidence) {
+			//getFreeVertexList().reinitialize(getVertex());
+			//getFreeEdgeList().reinitialize(getEdge());
+			//for (int vId = 1; vId < getVertex().length; ++vId) {
+			for(int vId = 1; vId < this.vCount; ++vId){	
+				InternalVertex v = (InternalVertex) getVertex(vId);
+				if (v != null) {
+					int eId = firstIncidence[vId];
+					while (eId != 0) {
+						v.appendIncidenceToISeq((InternalEdge) this.getEdge(eId));
+								//eId < 0 ? getRevEdge()[-eId]
+								//: getEdge()[eId]);
+						eId = nextIncidence[eMax + eId];
+					}
+				}
+			}
 		}
 }

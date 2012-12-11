@@ -43,6 +43,7 @@ public abstract class ReversedEdgeImpl extends
 	@Override
 	public void setIncidentVertex(Vertex v) {
 		 this.incidentVertexId = v.getId();
+		 ((EdgeImpl)this.getReversedEdge()).getTracker().putVariable(44, this.incidentVertexId);
 	}
 
 	@Override
@@ -51,6 +52,7 @@ public abstract class ReversedEdgeImpl extends
 			this.nextIncidenceId = - nextIncidence.getId();
 		else 
 			this.nextIncidenceId = nextIncidence.getId();
+		 ((EdgeImpl)this.getReversedEdge()).getTracker().putVariable(52, this.nextIncidenceId);
 	}
 
 	@Override
@@ -59,6 +61,7 @@ public abstract class ReversedEdgeImpl extends
 			this.prevIncidenceId = - prevIncidence.getId();
 		else
 			this.prevIncidenceId = prevIncidence.getId();
+		((EdgeImpl)this.getReversedEdge()).getTracker().putVariable(60, this.prevIncidenceId);
 	}
 
 	/**

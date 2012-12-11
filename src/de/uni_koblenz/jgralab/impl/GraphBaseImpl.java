@@ -320,7 +320,7 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 	}
 
 	@Override
-	public final void appendEdgeToESeq(InternalEdge e) {
+	public void appendEdgeToESeq(InternalEdge e) {
 		getEdge()[((EdgeBaseImpl) e).id] = e;
 		getRevEdge()[((EdgeBaseImpl) e).id] = ((EdgeBaseImpl) e).reversedEdge;
 		setECount(getECountInESeq() + 1);
@@ -337,7 +337,7 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 	}
 
 	@Override
-	public final void appendVertexToVSeq(InternalVertex v) {
+	public void appendVertexToVSeq(InternalVertex v) {
 		getVertex()[((VertexBaseImpl) v).id] = v;
 		setVCount(getVCountInVSeq() + 1);
 		if (getFirstVertexInVSeq() == null) {
@@ -438,7 +438,7 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 		if (eId < 0) {
 			eId = -eId;
 		}
-		return (eId > 0) && (eId <= eMax) && (getEdge()[eId] != null)
+		return (eId > 0) && (eId <= eMax) && (getEdge(eId) != null)
 				&& (getRevEdge()[eId] != null);
 	}
 
@@ -459,7 +459,7 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 	public final boolean vSeqContainsVertex(Vertex v) {
 		return (v != null) && (v.getGraph() == this)
 				&& containsVertexId(((VertexBaseImpl) v).id)
-				&& (getVertex()[((VertexBaseImpl) v).id] == v);
+				&& (getVertex(((VertexBaseImpl) v).id)== v);
 	}
 
 	/**
@@ -471,7 +471,7 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 	 * @return true if this graph contains a vertex with id vId
 	 */
 	private final boolean containsVertexId(int vId) {
-		return (vId > 0) && (vId <= vMax) && (getVertex()[vId] != null);
+		return (vId > 0) && (vId <= vMax) && (getVertex(vId) != null);
 	}
 
 	/**
@@ -572,7 +572,7 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 	 *            the new size of the edge array
 	 */
 	@Override
-	public final void expandEdgeArray(int newSize) {
+	public void expandEdgeArray(int newSize) {
 		if (newSize <= eMax) {
 			throw new GraphException("newSize must be > eSize: eSize=" + eMax
 					+ ", newSize=" + newSize);
@@ -608,7 +608,7 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 	 *            the new size of the vertex array
 	 */
 	@Override
-	public final void expandVertexArray(int newSize) {
+	public void expandVertexArray(int newSize) {
 		if (newSize <= vMax) {
 			throw new GraphException("newSize must > vSize: vSize=" + vMax
 					+ ", newSize=" + newSize);
@@ -660,7 +660,7 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 	 * @see de.uni_koblenz.jgralab.Graph#getEdge(int)
 	 */
 	@Override
-	public final Edge getEdge(int eId) {
+	public Edge getEdge(int eId) {
 		assert eId != 0 : "The edge id must be != 0, given was " + eId;
 		try {
 			return eId < 0 ? getRevEdge()[-eId] : getEdge()[eId];
@@ -866,7 +866,7 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 	public Vertex getVertex(int vId) {
 		assert (vId > 0) : "The vertex id must be > 0, given was " + vId;
 		try {
-			return getVertex()[vId];
+			return this.getVertex()[vId];
 		} catch (ArrayIndexOutOfBoundsException e) {
 			return null;
 		}
@@ -1004,7 +1004,7 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 	}
 
 	@Override
-	public final void removeVertexFromVSeq(InternalVertex v) {
+	public void removeVertexFromVSeq(InternalVertex v) {
 		assert v != null;
 		if (v == getFirstVertexInVSeq()) {
 			// delete at head of vertex list
@@ -1037,7 +1037,7 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 	}
 
 	@Override
-	public final void removeEdgeFromESeq(InternalEdge e) {
+	public void removeEdgeFromESeq(InternalEdge e) {
 		assert e != null;
 		removeEdgeFromESeqWithoutDeletingIt(e);
 
@@ -1051,7 +1051,7 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 		setECount(getECountInESeq() - 1);
 	}
 
-	private final void removeEdgeFromESeqWithoutDeletingIt(InternalEdge e) {
+	protected final void removeEdgeFromESeqWithoutDeletingIt(InternalEdge e) {
 		if (e == getFirstEdgeInESeq()) {
 			// delete at head of edge list
 			setFirstEdgeInGraph(e.getNextEdgeInESeq());
@@ -1124,12 +1124,12 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 	 * int[])
 	 */
 	@Override
-	public final void internalLoadingCompleted(int[] firstIncidence,
+	public void internalLoadingCompleted(int[] firstIncidence,
 			int[] nextIncidence) {
 		getFreeVertexList().reinitialize(getVertex());
 		getFreeEdgeList().reinitialize(getEdge());
 		for (int vId = 1; vId < getVertex().length; ++vId) {
-			InternalVertex v = getVertex()[vId];
+			InternalVertex v = (InternalVertex) getVertex(vId);
 			if (v != null) {
 				int eId = firstIncidence[vId];
 				while (eId != 0) {
@@ -1414,7 +1414,7 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 	 * @see de.uni_koblenz.jgralab.Graph#defragment()
 	 */
 	@Override
-	public final void defragment() {
+	public void defragment() {
 		// TODO is tc really required to be removed for defragmentation?
 		TraversalContext tc = setTraversalContext(null);
 		try {

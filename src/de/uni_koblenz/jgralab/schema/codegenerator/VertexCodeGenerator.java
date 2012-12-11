@@ -87,9 +87,11 @@ public class VertexCodeGenerator extends
 	@Override
 	protected CodeBlock createBody() {
 		CodeList code = (CodeList) super.createBody();
-		if (currentCycle.isStdImpl()) {
+		if (currentCycle.isStdOrDiskv2Impl()){//.isStdImpl()) {
 			if (currentCycle.isStdImpl()) {
 				addImports("#jgImplStdPackage#.#baseClassName#");
+			}else if (currentCycle.isDiskv2Impl()){
+				addImports("#jgImplDiskv2Package#.#baseClassName#");
 			}
 			rootBlock.setVariable("baseClassName", "VertexImpl");
 		}
@@ -99,7 +101,8 @@ public class VertexCodeGenerator extends
 			code.add(createNextVertexMethods());
 			code.add(createFirstIncidenceMethods());
 			code.add(rolenameGenerator.createRolenameMethods(currentCycle
-					.isStdImpl()));
+					.isStdOrDiskv2Impl()));
+					//.isStdImpl()));
 			code.add(createIncidenceIteratorMethods());
 		}
 
@@ -117,7 +120,7 @@ public class VertexCodeGenerator extends
 		CodeList code = new CodeList();
 		VertexClass vc = aec;
 		Set<EdgeClass> edgeClassSet = new HashSet<EdgeClass>();
-		if (currentCycle.isStdImpl()) {
+		if (currentCycle.isStdOrDiskv2Impl()){//.isStdImpl()) {
 			edgeClassSet.addAll(vc.getConnectedEdgeClasses());
 		}
 		if (currentCycle.isAbstract()) {
@@ -175,7 +178,7 @@ public class VertexCodeGenerator extends
 			code.add(" */",
 					"public #ecQualifiedName# getFirst#ecCamelName#Incidence(#formalParams#);");
 		}
-		if (currentCycle.isStdImpl()) {
+		if (currentCycle.isStdOrDiskv2Impl()){//.isStdImpl()) {
 			code.add(
 					"@Override",
 					"public #ecQualifiedName# getFirst#ecCamelName#Incidence(#formalParams#) {",
@@ -229,7 +232,7 @@ public class VertexCodeGenerator extends
 			code.add(" */",
 					"public #vcQualifiedName# getNext#vcCamelName#(#formalParams#);");
 		}
-		if (currentCycle.isStdImpl()) {
+		if (currentCycle.isStdOrDiskv2Impl()){//.isStdImpl()) {
 			code.add(
 					"@Override",
 					"public #vcQualifiedName# getNext#vcCamelName#(#formalParams#) {",
@@ -251,7 +254,7 @@ public class VertexCodeGenerator extends
 		VertexClass vc = aec;
 		CodeList code = new CodeList();
 		Set<EdgeClass> edgeClassSet = new HashSet<EdgeClass>();
-		if (currentCycle.isStdImpl()) {
+		if (currentCycle.isStdOrDiskv2Impl()){//.isStdImpl()) {
 			edgeClassSet.addAll(vc.getConnectedEdgeClasses());
 		}
 		if (currentCycle.isAbstract()) {
@@ -272,7 +275,7 @@ public class VertexCodeGenerator extends
 		}
 
 		for (EdgeClass ec : edgeClassSet) {
-			if (currentCycle.isStdImpl()) {
+			if (currentCycle.isStdOrDiskv2Impl()){//.isStdImpl()) {
 				addImports("#jgImplPackage#.IncidenceIterable");
 			}
 
@@ -292,7 +295,7 @@ public class VertexCodeGenerator extends
 				s.add(" */");
 				s.add("public Iterable<#edgeClassQualifiedName#> get#edgeClassUniqueName#Incidences();");
 			}
-			if (currentCycle.isStdImpl()) {
+			if (currentCycle.isStdOrDiskv2Impl()){//.isStdImpl()) {
 				s.add("@Override");
 				s.add("public Iterable<#edgeClassQualifiedName#> get#edgeClassUniqueName#Incidences() {");
 				s.add("\treturn new IncidenceIterable<#edgeClassQualifiedName#>(this, #edgeClassQualifiedName#.EC);");
@@ -307,7 +310,7 @@ public class VertexCodeGenerator extends
 				s.add(" */");
 				s.add("public Iterable<#edgeClassQualifiedName#> get#edgeClassUniqueName#Incidences(EdgeDirection direction);");
 			}
-			if (currentCycle.isStdImpl()) {
+			if (currentCycle.isStdOrDiskv2Impl()){//.isStdImpl()) {
 				s.add("@Override");
 				s.add("public Iterable<#edgeClassQualifiedName#> get#edgeClassUniqueName#Incidences(EdgeDirection direction) {");
 				s.add("\treturn new IncidenceIterable<#edgeClassQualifiedName#>(this, #edgeClassQualifiedName#.EC, direction);");

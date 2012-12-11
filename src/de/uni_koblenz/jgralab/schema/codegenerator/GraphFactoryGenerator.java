@@ -80,7 +80,7 @@ public class GraphFactoryGenerator extends CodeGenerator {
 	@Override
 	protected CodeBlock createBody() {
 		CodeList code = new CodeList();
-		if (currentCycle.isStdImpl()) {
+		if (currentCycle.isStdOrDiskv2Impl()){//.isStdImpl()) {
 			code.add(createConstructor());
 		}
 		return code;
@@ -90,6 +90,8 @@ public class GraphFactoryGenerator extends CodeGenerator {
 		CodeList code = new CodeList();
 		if (currentCycle.isStdImpl()) {
 			code.setVariable("implTypeInfix", "STANDARD");
+		}else if(currentCycle.isDiskv2Impl()){
+			code.setVariable("implTypeInfix", "DISKV2");
 		}
 		CodeSnippet s = new CodeSnippet(true);
 		s.add("public #simpleImplClassName#() {",
@@ -127,15 +129,19 @@ public class GraphFactoryGenerator extends CodeGenerator {
 		code.setVariable("graphName", graphClass.getQualifiedName() + ".GC");
 		code.setVariable("graphImplName", "#schemaImplStdPackage#."
 				+ graphClass.getQualifiedName() + "Impl");
-		code.setVariable("graphTransactionImplName",
-				"#schemaImplTransPackage#." + graphClass.getQualifiedName()
-						+ "Impl");
-		code.setVariable("graphDatabaseImplName", "#schemaImplDbPackage#."
+		code.setVariable("graphDiskv2ImplName", "#schemaImplDiskv2Package#."
 				+ graphClass.getQualifiedName() + "Impl");
+		//code.setVariable("graphTransactionImplName",
+		//		"#schemaImplTransPackage#." + graphClass.getQualifiedName()
+		//				+ "Impl");
+		//code.setVariable("graphDatabaseImplName", "#schemaImplDbPackage#."
+		//		+ graphClass.getQualifiedName() + "Impl");
 
 		if (!graphClass.isAbstract()) {
 			if (currentCycle.isStdImpl()) {
 				code.add("setGraphImplementationClass(#schemaPackage#.#graphName#, #graphImplName#.class);");
+			}else if (currentCycle.isDiskv2Impl()){
+				code.add("setGraphImplementationClass(#schemaPackage#.#graphName#, #graphDiskv2ImplName#.class);");				
 			}
 		}
 		return code;
@@ -151,15 +157,19 @@ public class GraphFactoryGenerator extends CodeGenerator {
 
 		code.setVariable("vertexImplName", "#schemaImplStdPackage#."
 				+ vertexClass.getQualifiedName() + "Impl");
-		code.setVariable("vertexTransactionImplName",
-				"#schemaImplTransPackage#." + vertexClass.getQualifiedName()
-						+ "Impl");
-		code.setVariable("vertexDatabaseImplName", "#schemaImplDbPackage#."
+		code.setVariable("vertexDiskv2ImplName", "#schemaImplDiskv2Package#."
 				+ vertexClass.getQualifiedName() + "Impl");
+		//code.setVariable("vertexTransactionImplName",
+		//		"#schemaImplTransPackage#." + vertexClass.getQualifiedName()
+		//				+ "Impl");
+		//code.setVariable("vertexDatabaseImplName", "#schemaImplDbPackage#."
+		//		+ vertexClass.getQualifiedName() + "Impl");
 
 		if (!vertexClass.isAbstract()) {
 			if (currentCycle.isStdImpl()) {
 				code.add("setVertexImplementationClass(#schemaPackage#.#vertexName#, #vertexImplName#.class);");
+			}else if (currentCycle.isDiskv2Impl()){
+				code.add("setVertexImplementationClass(#schemaPackage#.#vertexName#, #vertexDiskv2ImplName#.class);");
 			}
 		}
 		return code;
@@ -171,14 +181,19 @@ public class GraphFactoryGenerator extends CodeGenerator {
 		code.setVariable("edgeImplName",
 				"#schemaImplStdPackage#." + edgeClass.getQualifiedName()
 						+ "Impl");
-		code.setVariable("edgeTransactionImplName", "#schemaImplTransPackage#."
-				+ edgeClass.getQualifiedName() + "Impl");
-		code.setVariable("edgeDatabaseImplName", "#schemaImplDbPackage#."
-				+ edgeClass.getQualifiedName() + "Impl");
+		code.setVariable("edgeDiskv2ImplName",
+				"#schemaImplDiskv2Package#." + edgeClass.getQualifiedName()
+						+ "Impl");
+		//code.setVariable("edgeTransactionImplName", "#schemaImplTransPackage#."
+		//		+ edgeClass.getQualifiedName() + "Impl");
+		//code.setVariable("edgeDatabaseImplName", "#schemaImplDbPackage#."
+		//		+ edgeClass.getQualifiedName() + "Impl");
 
 		if (!edgeClass.isAbstract()) {
 			if (currentCycle.isStdImpl()) {
 				code.add("setEdgeImplementationClass(#schemaPackage#.#edgeName#, #edgeImplName#.class);");
+			}else if (currentCycle.isDiskv2Impl()){
+				code.add("setEdgeImplementationClass(#schemaPackage#.#edgeName#, #edgeDiskv2ImplName#.class);");
 			}
 		}
 		return code;

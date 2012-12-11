@@ -81,11 +81,13 @@ public class ReversedEdgeCodeGenerator extends
 	@Override
 	protected CodeBlock createBody() {
 		CodeList code = (CodeList) super.createBody();
-		if (currentCycle.isStdImpl()) {
+		if (currentCycle.isStdOrDiskv2Impl()){//.isStdImpl()) {
 			rootBlock.setVariable("baseClassName", "ReversedEdgeImpl");
 
 			if (currentCycle.isStdImpl()) {
 				addImports("#jgImplStdPackage#.#baseClassName#");
+			}else if(currentCycle.isDiskv2Impl()){
+				addImports("#jgImplDiskv2Package#.#baseClassName#");
 			}
 
 			if (config.hasTypeSpecificMethodsSupport()) {
@@ -122,6 +124,8 @@ public class ReversedEdgeCodeGenerator extends
 		// TODO Introduce constants for jgImplStdPackage etc. (refactor)
 		if (currentCycle.isStdImpl()) {
 			addImports("#jgImplStdPackage#.EdgeImpl", "#jgPackage#.Graph");
+		}else if(currentCycle.isDiskv2Impl()){
+			addImports("#jgImplDiskv2Package#.EdgeImpl", "#jgPackage#.Graph");
 		}
 		return new CodeSnippet(true, "#className#Impl(EdgeImpl e, Graph g) {",
 				"\tsuper(e, g);", "}");
@@ -135,7 +139,7 @@ public class ReversedEdgeCodeGenerator extends
 				.getJavaAttributeImplementationTypeName(schemaRootPackageName));
 		code.setVariable("isOrGet", a.getDomain().isBoolean() ? "is" : "get");
 
-		if (currentCycle.isStdImpl()) {
+		if (currentCycle.isStdOrDiskv2Impl()){//.isStdImpl()) {
 			code.add(
 					"public #type# #isOrGet#_#name#() {",
 					"\treturn ((#normalQualifiedClassName#)normalEdge).#isOrGet#_#name#();",
@@ -154,7 +158,7 @@ public class ReversedEdgeCodeGenerator extends
 		code.setVariable("type", a.getDomain()
 				.getJavaAttributeImplementationTypeName(schemaRootPackageName));
 
-		if (currentCycle.isStdImpl()) {
+		if (currentCycle.isStdOrDiskv2Impl()){//.isStdImpl()) {
 			code.add(
 					"public void set_#name#(#type# _#name#) {",
 					"\t((#normalQualifiedClassName#)normalEdge).set_#name#(_#name#);",
