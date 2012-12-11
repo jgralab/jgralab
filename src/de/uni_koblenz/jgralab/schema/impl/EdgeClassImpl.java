@@ -46,7 +46,8 @@ import de.uni_koblenz.jgralab.schema.exception.SchemaException;
 public class EdgeClassImpl extends GraphElementClassImpl<EdgeClass, Edge>
 		implements EdgeClass {
 
-	private final IncidenceClass from, to;
+	private final IncidenceClass from;
+	private final IncidenceClass to;
 
 	/**
 	 * builds a new edge class
