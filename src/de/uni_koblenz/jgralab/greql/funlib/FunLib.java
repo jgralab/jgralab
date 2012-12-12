@@ -154,6 +154,7 @@ public class FunLib {
 		register(de.uni_koblenz.jgralab.greql.funlib.graph.InDegree.class);
 		register(de.uni_koblenz.jgralab.greql.funlib.graph.Incidences.class);
 		register(de.uni_koblenz.jgralab.greql.funlib.graph.IncidenceIndex.class);
+		register(de.uni_koblenz.jgralab.greql.funlib.graph.InverseEdge.class);
 		register(de.uni_koblenz.jgralab.greql.funlib.graph.InIncidences.class);
 		register(de.uni_koblenz.jgralab.greql.funlib.graph.IsAcyclic.class);
 		register(de.uni_koblenz.jgralab.greql.funlib.graph.IsIsolated.class);
@@ -167,6 +168,7 @@ public class FunLib {
 		register(de.uni_koblenz.jgralab.greql.funlib.graph.NextGraphElement.class);
 		register(de.uni_koblenz.jgralab.greql.funlib.graph.NextIn.class);
 		register(de.uni_koblenz.jgralab.greql.funlib.graph.NextOut.class);
+		register(de.uni_koblenz.jgralab.greql.funlib.graph.NormalEdge.class);
 		register(de.uni_koblenz.jgralab.greql.funlib.graph.Omega.class);
 		register(de.uni_koblenz.jgralab.greql.funlib.graph.OmegaIncidenceIndex.class);
 		register(de.uni_koblenz.jgralab.greql.funlib.graph.OutDegree.class);
@@ -175,6 +177,7 @@ public class FunLib {
 		register(de.uni_koblenz.jgralab.greql.funlib.graph.Path.class);
 		register(de.uni_koblenz.jgralab.greql.funlib.graph.PathSystem.class);
 		register(de.uni_koblenz.jgralab.greql.funlib.graph.ReachableVertices.class);
+		register(de.uni_koblenz.jgralab.greql.funlib.graph.ReversedEdge.class);
 		register(de.uni_koblenz.jgralab.greql.funlib.graph.Slice.class);
 		register(de.uni_koblenz.jgralab.greql.funlib.graph.StartVertex.class);
 		register(de.uni_koblenz.jgralab.greql.funlib.graph.This.class);
