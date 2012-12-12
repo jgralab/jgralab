@@ -66,7 +66,7 @@ public class GreqlConstructions extends GenericTest {
 		for (PathSystem v : list) {
 			PathSystem sys = v;
 			assertEquals(2, sys.getDepth());
-			assertEquals(3, sys.getWeight());
+			assertEquals(3, sys.getVertices().size());
 		}
 	}
 
