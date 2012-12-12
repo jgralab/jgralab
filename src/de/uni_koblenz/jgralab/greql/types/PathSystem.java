@@ -45,7 +45,6 @@ import java.util.logging.Logger;
 import org.pcollections.PSet;
 
 import de.uni_koblenz.jgralab.Edge;
-import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.Vertex;
@@ -99,18 +98,6 @@ public class PathSystem {
 	}
 
 	/**
-	 * This is a reference to the datagraph this pathsystem is part of
-	 */
-	private final Graph datagraph;
-
-	/**
-	 * returns the datagraph this PathSystem is part of
-	 */
-	public Graph getDataGraph() {
-		return datagraph;
-	}
-
-	/**
 	 * returns the hashcode of this PathSystem
 	 */
 	@Override
@@ -128,57 +115,20 @@ public class PathSystem {
 		return keyToEntryMap.equals(((PathSystem) o).keyToEntryMap);
 	}
 
-	/**
-	 * finished the path system, after a call of this method, further changes
-	 * are not possible
+	/*
+	 * The following methods are used for the creation of a PathSystem
 	 */
-	public void finish() {
-		completePathSystem();
-		createLeafKeys();
-		finished = true;
-	}
 
 	/**
-	 * creates a new JValuePathSystem with the given rootVertex in the given
-	 * datagraph
+	 * creates a new PathSystem with the given rootVertex in the given datagraph
 	 */
-	public PathSystem(Graph graph) {
-		datagraph = graph;
+	public PathSystem() {
 		keyToEntryMap = new HashMap<PathSystemKey, PathSystemEntry>();
 		leafVertexToLeafKeyMap = new HashMap<Vertex, PathSystemKey>();
 		vertexToFirstKeyMap = new HashMap<Vertex, PathSystemKey>();
 	}
 
 	private final Queue<PathSystemEntry> entriesWithoutParentEdge = new LinkedList<PathSystemEntry>();
-
-	/**
-	 * to some vertices there is a path with an vertex restriction on the end
-	 * and thus the last transition in the dfa does not accept an edge - hence,
-	 * the parent edge is not set. This method finds those vertices and set the
-	 * edge information
-	 */
-	private void completePathSystem() {
-		assertUnfinished();
-		while (!entriesWithoutParentEdge.isEmpty()) {
-			PathSystemEntry te = entriesWithoutParentEdge.poll();
-			PathSystemEntry pe = null;
-			if (te.getParentVertex() != null) {
-				pe = keyToEntryMap.get(new PathSystemKey(te.getParentVertex(),
-						te.getParentStateNumber()));
-			} else {
-				PathSystemKey key = new PathSystemKey(rootVertex,
-						te.getParentStateNumber());
-				pe = keyToEntryMap.get(key);
-			}
-			// if pe is null, te is the entry of the root vertex
-			if (pe != null) {
-				te.setParentEdge(pe.getParentEdge());
-				te.setDistanceToRoot(pe.getDistanceToRoot());
-				te.setParentStateNumber(pe.getParentStateNumber());
-				te.setParentVertex(pe.getParentVertex());
-			}
-		}
-	}
 
 	/**
 	 * adds a vertex of the PathSystem which is described by the parameters to
@@ -262,6 +212,67 @@ public class PathSystem {
 	}
 
 	/**
+	 * finished the path system, after a call of this method, further changes
+	 * are not possible
+	 */
+	public void finish() {
+		completePathSystem();
+		createLeafKeys();
+		finished = true;
+	}
+
+	/**
+	 * create the set of leave keys
+	 */
+	private void createLeafKeys() {
+		assertUnfinished();
+
+		if (leafKeys != null) {
+			return;
+		}
+		leafKeys = new LinkedList<PathSystemKey>();
+		for (Map.Entry<PathSystemKey, PathSystemEntry> entry : keyToEntryMap
+				.entrySet()) {
+			if (entry.getValue().getStateIsFinal()) {
+				leafKeys.add(entry.getKey());
+			}
+		}
+	}
+
+	/**
+	 * to some vertices there is a path with an vertex restriction on the end
+	 * and thus the last transition in the dfa does not accept an edge - hence,
+	 * the parent edge is not set. This method finds those vertices and set the
+	 * edge information
+	 */
+	private void completePathSystem() {
+		assertUnfinished();
+		while (!entriesWithoutParentEdge.isEmpty()) {
+			PathSystemEntry te = entriesWithoutParentEdge.poll();
+			PathSystemEntry pe = null;
+			if (te.getParentVertex() != null) {
+				pe = keyToEntryMap.get(new PathSystemKey(te.getParentVertex(),
+						te.getParentStateNumber()));
+			} else {
+				PathSystemKey key = new PathSystemKey(rootVertex,
+						te.getParentStateNumber());
+				pe = keyToEntryMap.get(key);
+			}
+			// if pe is null, te is the entry of the root vertex
+			if (pe != null) {
+				te.setParentEdge(pe.getParentEdge());
+				te.setDistanceToRoot(pe.getDistanceToRoot());
+				te.setParentStateNumber(pe.getParentStateNumber());
+				te.setParentVertex(pe.getParentVertex());
+			}
+		}
+	}
+
+	/*
+	 * The following methods are used to work with path systems
+	 */
+
+	/**
 	 * Checks, wether the given element (vertex or edge) is part of this
 	 * pathsystem
 	 * 
@@ -296,24 +307,6 @@ public class PathSystem {
 			leaves = leaves.plus(key.getVertex());
 		}
 		return leaves;
-	}
-
-	/**
-	 * create the set of leave keys
-	 */
-	private void createLeafKeys() {
-		assertUnfinished();
-
-		if (leafKeys != null) {
-			return;
-		}
-		leafKeys = new LinkedList<PathSystemKey>();
-		for (Map.Entry<PathSystemKey, PathSystemEntry> entry : keyToEntryMap
-				.entrySet()) {
-			if (entry.getValue().getStateIsFinal()) {
-				leafKeys.add(entry.getKey());
-			}
-		}
 	}
 
 	/**
@@ -398,19 +391,8 @@ public class PathSystem {
 	 *         system
 	 */
 	public int distance(Vertex vertex) {
-		PathSystemKey key = vertexToFirstKeyMap.get(vertex);
-		return distance(key);
-	}
-
-	/**
-	 * Calculates the distance between the root vertex of this path system and
-	 * the given key
-	 * 
-	 * @return the distance or -1 if the given vertex is not part of this path
-	 *         system.
-	 */
-	private int distance(PathSystemKey key) {
 		assertFinished();
+		PathSystemKey key = vertexToFirstKeyMap.get(vertex);
 
 		if (key == null) {
 			return -1;

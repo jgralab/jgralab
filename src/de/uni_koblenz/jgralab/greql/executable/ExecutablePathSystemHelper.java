@@ -21,8 +21,7 @@ public class ExecutablePathSystemHelper {
 	public static de.uni_koblenz.jgralab.greql.types.PathSystem createPathSystemFromMarkings(
 			GraphMarker<PathSystemMarkerEntry>[] marker, Vertex rootVertex,
 			Set<PathSystemMarkerEntry> leafEntries) {
-		de.uni_koblenz.jgralab.greql.types.PathSystem pathSystem = new de.uni_koblenz.jgralab.greql.types.PathSystem(
-				rootVertex.getGraph());
+		de.uni_koblenz.jgralab.greql.types.PathSystem pathSystem = new de.uni_koblenz.jgralab.greql.types.PathSystem();
 		PathSystemMarkerEntry rootMarker = marker[0].getMark(rootVertex);
 		pathSystem.setRootVertex(rootVertex, rootMarker.stateNumber,
 				rootMarker.stateIsFinal);
