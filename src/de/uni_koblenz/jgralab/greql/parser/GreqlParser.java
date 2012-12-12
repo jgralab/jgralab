@@ -689,7 +689,7 @@ public class GreqlParser extends ParserHelper {
 			Quantifier quantifier = parseQuantifier();
 			lengthQuantifier = getLength(offsetQuantifier);
 			offsetQuantifiedDecl = getCurrentOffset();
-			duringParsingvariableSymbolTable.blockBegin();
+			// duringParsingvariableSymbolTable.blockBegin();
 			Declaration decl = parseQuantifiedDeclaration();
 			lengthQuantifiedDecl = getLength(offsetQuantifiedDecl);
 			match(TokenTypes.AT);
@@ -715,7 +715,7 @@ public class GreqlParser extends ParserHelper {
 				boundExprOf.set_sourcePositions(createSourcePositionList(
 						lengthQuantifiedExpr, offsetQuantifiedExpr));
 			}
-			duringParsingvariableSymbolTable.blockEnd();
+			// duringParsingvariableSymbolTable.blockEnd();
 			return quantifiedExpr;
 		} else {
 			return parseConditionalExpression();
@@ -725,7 +725,7 @@ public class GreqlParser extends ParserHelper {
 	private final Expression parseLetExpression() {
 		if (lookAhead(0) == TokenTypes.LET) {
 			match();
-			duringParsingvariableSymbolTable.blockBegin();
+			// duringParsingvariableSymbolTable.blockBegin();
 			List<VertexPosition<Definition>> defList = parseDefinitionList();
 			match(TokenTypes.IN);
 			int offset = getCurrentOffset();
@@ -745,7 +745,7 @@ public class GreqlParser extends ParserHelper {
 							def.length, def.offset));
 				}
 			}
-			duringParsingvariableSymbolTable.blockEnd();
+			// duringParsingvariableSymbolTable.blockEnd();
 			return result;
 		} else {
 			return parseWhereExpression();
@@ -2244,7 +2244,7 @@ public class GreqlParser extends ParserHelper {
 		int offsetDecl = getCurrentOffset();
 		List<VertexPosition<SimpleDeclaration>> declarations = parseDeclarationList();
 		int lengthDecl = getLength(offsetDecl);
-		duringParsingvariableSymbolTable.blockBegin();
+		// duringParsingvariableSymbolTable.blockBegin();
 		Declaration declaration = null;
 		if (!inPredicateMode()) {
 			declaration = graph.createDeclaration();
@@ -2271,7 +2271,7 @@ public class GreqlParser extends ParserHelper {
 					lengthDecl, offsetDecl));
 		}
 		match(TokenTypes.END);
-		duringParsingvariableSymbolTable.blockEnd();
+		// duringParsingvariableSymbolTable.blockEnd();
 		return comprehension;
 	}
 

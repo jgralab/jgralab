@@ -38,10 +38,15 @@ package de.uni_koblenz.jgralab.greql.parser;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
 
+import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql.exception.DuplicateVariableException;
+import de.uni_koblenz.jgralab.greql.schema.GreqlAggregation;
+import de.uni_koblenz.jgralab.greql.schema.SourcePosition;
+import de.uni_koblenz.jgralab.greql.schema.Variable;
 
 public class SimpleSymbolTable {
 
@@ -65,8 +70,15 @@ public class SimpleSymbolTable {
 
 	public void insert(String ident, Vertex v)
 			throws DuplicateVariableException {
-		if (list.getFirst().get(ident) == null) {
+		Vertex existingVariable = list.getFirst().get(ident);
+		if (existingVariable == null) {
 			list.getFirst().put(ident, v);
+		} else {
+			throw new DuplicateVariableException((Variable) existingVariable,
+					(List<SourcePosition>) null,
+					((GreqlAggregation) existingVariable
+							.getFirstIncidence(EdgeDirection.OUT))
+							.get_sourcePositions().get(0));
 		}
 	}
 
