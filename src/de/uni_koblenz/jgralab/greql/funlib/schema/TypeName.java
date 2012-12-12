@@ -49,11 +49,15 @@ public class TypeName extends Function {
 		return el.getAttributedElementClass().getQualifiedName();
 	}
 
-	@Description(params = "el, uniqueName", description = "Returns the qualified name of the given element's type. "
-			+ "If uniqueName is true, return the unique name instead.", categories = Category.SCHEMA_ACCESS)
-	public String evaluate(AttributedElement<?, ?> el, boolean uniqueName) {
-		if (uniqueName) {
+	@Description(params = "el, kind", description = "Returns the name of the given element's type. "
+			+ "If kind is \"simple\", return the simple name. "
+			+ "If kind is \"unique\", return the unique name. "
+			+ "Else, return the qualified name.", categories = Category.SCHEMA_ACCESS)
+	public String evaluate(AttributedElement<?, ?> el, String kind) {
+		if ("unique".equals(kind)) {
 			return el.getAttributedElementClass().getUniqueName();
+		} else if ("simple".equals(kind)) {
+			return el.getAttributedElementClass().getSimpleName();
 		}
 		return el.getAttributedElementClass().getQualifiedName();
 	}
