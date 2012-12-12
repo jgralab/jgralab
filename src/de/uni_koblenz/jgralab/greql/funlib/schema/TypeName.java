@@ -40,13 +40,21 @@ import de.uni_koblenz.jgralab.greql.funlib.Function;
 
 public class TypeName extends Function {
 
-	@Description(params = "el", description = "Returns the qualified name of the given element's type.",
-			categories = Category.SCHEMA_ACCESS)
 	public TypeName() {
 		super();
 	}
 
+	@Description(params = "el", description = "Returns the qualified name of the given element's type.", categories = Category.SCHEMA_ACCESS)
 	public String evaluate(AttributedElement<?, ?> el) {
+		return el.getAttributedElementClass().getQualifiedName();
+	}
+
+	@Description(params = "el, uniqueName", description = "Returns the qualified name of the given element's type. "
+			+ "If uniqueName is true, return the unique name instead.", categories = Category.SCHEMA_ACCESS)
+	public String evaluate(AttributedElement<?, ?> el, boolean uniqueName) {
+		if (uniqueName) {
+			return el.getAttributedElementClass().getUniqueName();
+		}
 		return el.getAttributedElementClass().getQualifiedName();
 	}
 }
