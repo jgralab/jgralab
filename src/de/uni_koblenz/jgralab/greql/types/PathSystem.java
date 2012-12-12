@@ -103,7 +103,7 @@ public class PathSystem {
 	@Override
 	public int hashCode() {
 		assertFinished();
-		return keyToEntryMap.hashCode();
+		return extractPaths().hashCode();
 	}
 
 	@Override
@@ -112,7 +112,7 @@ public class PathSystem {
 		if ((o == null) || !(o instanceof PathSystem)) {
 			return false;
 		}
-		return keyToEntryMap.equals(((PathSystem) o).keyToEntryMap);
+		return extractPaths().equals(((PathSystem) o).extractPaths());
 	}
 
 	/*
