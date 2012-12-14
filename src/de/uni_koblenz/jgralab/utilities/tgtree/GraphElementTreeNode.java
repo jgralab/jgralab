@@ -100,7 +100,11 @@ abstract class GraphElementTreeNode implements TreeNode {
 
 	public abstract String getClipboardText();
 
-	private static String escapeHTML(String s) {
+	private static String escapeHTML(Object o) {
+		if (o == null) {
+			return "null";
+		}
+		String s = o.toString();
 		s = s.replace("<", "&lt;");
 		s = s.replace(">", "&gt;");
 		return s;
@@ -115,7 +119,7 @@ abstract class GraphElementTreeNode implements TreeNode {
 				.getAttributeList()) {
 			sb.append(attr.getName());
 			sb.append(" = ");
-			sb.append(escapeHTML(get().getAttribute(attr.getName()).toString()));
+			sb.append(escapeHTML(get().getAttribute(attr.getName())));
 			sb.append("<br>");
 		}
 		return sb.toString();
