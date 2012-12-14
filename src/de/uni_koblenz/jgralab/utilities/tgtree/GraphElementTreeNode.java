@@ -63,7 +63,6 @@ abstract class GraphElementTreeNode implements TreeNode {
 
 	@Override
 	public boolean getAllowsChildren() {
-		// TODO Auto-generated method stub
 		init();
 		return false;
 	}
@@ -101,6 +100,16 @@ abstract class GraphElementTreeNode implements TreeNode {
 
 	public abstract String getClipboardText();
 
+	private static String escapeHTML(Object o) {
+		if (o == null) {
+			return "null";
+		}
+		String s = o.toString();
+		s = s.replace("<", "&lt;");
+		s = s.replace(">", "&gt;");
+		return s;
+	}
+
 	public String getAttributeString() {
 		if (get().getAttributedElementClass().getAttributeList().isEmpty()) {
 			return "$noAttrs$";
@@ -110,7 +119,7 @@ abstract class GraphElementTreeNode implements TreeNode {
 				.getAttributeList()) {
 			sb.append(attr.getName());
 			sb.append(" = ");
-			sb.append(get().getAttribute(attr.getName()));
+			sb.append(escapeHTML(get().getAttribute(attr.getName())));
 			sb.append("<br>");
 		}
 		return sb.toString();
