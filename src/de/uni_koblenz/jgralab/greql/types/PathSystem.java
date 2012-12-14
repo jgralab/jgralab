@@ -36,10 +36,11 @@
 package de.uni_koblenz.jgralab.greql.types;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 import java.util.Queue;
+import java.util.Set;
 import java.util.logging.Logger;
 
 import org.pcollections.PSet;
@@ -48,33 +49,62 @@ import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.Vertex;
+import de.uni_koblenz.jgralab.schema.impl.DirectedAcyclicGraph;
 
 public class PathSystem {
 
-	/**
-	 * This HashMap stores references from a tuple (Vertex,StateNumber) to a
-	 * tuple(ParentVertex, ParentEdge, ParentStateNumber, DistanceToRoot)
-	 */
-	private final HashMap<PathSystemKey, PathSystemEntry> keyToEntryMap;
+	public class PathSystemNode {
+		public Vertex currentVertex;
+		public Edge edge2parent;
+		public int state = -1;
 
-	/**
-	 * This HashMap stores references from a vertex which is a leaf is the path
-	 * system to the first occurence of this vertex as a leaf in the above
-	 * HashMap<PathSystemKey, PathSystemEntry> keyToEntryMap
-	 */
-	private final HashMap<Vertex, PathSystemKey> leafVertexToLeafKeyMap;
+		PathSystemNode(Vertex currentVertex, Edge edge2parent, int state) {
+			this.currentVertex = currentVertex;
+			this.edge2parent = edge2parent;
+			this.state = state;
+		}
 
-	/**
-	 * This HashMap stores references from a vertex in the path system to the
-	 * first occurence of this vertex in the above HashMap<PathSystemKey,
-	 * PathSystemEntry> keyToEntryMap
-	 */
-	private final HashMap<Vertex, PathSystemKey> vertexToFirstKeyMap;
+		PathSystemNode(Vertex currentVertex, int state) {
+			this.currentVertex = currentVertex;
+			this.state = state;
+		}
+
+		@Override
+		public String toString() {
+			return "(" + currentVertex + ", " + state + ") " + edge2parent;
+		}
+
+	}
+
+	private final DirectedAcyclicGraph<PathSystemNode> dag;
+
+	// /**
+	// * This HashMap stores references from a tuple (Vertex,StateNumber) to a
+	// * tuple(ParentVertex, ParentEdge, ParentStateNumber, DistanceToRoot)
+	// */
+	// private final HashMap<PathSystemKey, PathSystemEntry> keyToEntryMap;
+	//
+	// /**
+	// * This HashMap stores references from a vertex which is a leaf is the
+	// path
+	// * system to the first occurence of this vertex as a leaf in the above
+	// * HashMap<PathSystemKey, PathSystemEntry> keyToEntryMap
+	// */
+	// private final HashMap<Vertex, PathSystemKey> leafVertexToLeafKeyMap;
+	//
+	// /**
+	// * This HashMap stores references from a vertex in the path system to the
+	// * first occurence of this vertex in the above HashMap<PathSystemKey,
+	// * PathSystemEntry> keyToEntryMap
+	// */
+	// private final HashMap<Vertex, PathSystemKey> vertexToFirstKeyMap;
+
+	private final Map<Vertex, PathSystemNode> vertex2node;
 
 	/**
 	 * This is the rootvertex of the pathsystem
 	 */
-	private Vertex rootVertex;
+	private PathSystemNode root;
 
 	/**
 	 * stores if the pathsystem is finished
@@ -86,7 +116,7 @@ public class PathSystem {
 	 * the first time it is needed. So the creation (which is in O(n²) ) has to
 	 * be done only once.
 	 */
-	private List<PathSystemKey> leafKeys = null;
+	private Set<PathSystemNode> leafNodes = null;
 
 	private static Logger logger = JGraLab.getLogger(PathSystem.class);
 
@@ -94,7 +124,11 @@ public class PathSystem {
 	 * returns the rootVertex of this pathSystem
 	 */
 	public Vertex getRootVertex() {
-		return rootVertex;
+		return root.currentVertex;
+	}
+
+	public PathSystemNode getRoot() {
+		return root;
 	}
 
 	/**
@@ -123,12 +157,14 @@ public class PathSystem {
 	 * creates a new PathSystem with the given rootVertex in the given datagraph
 	 */
 	public PathSystem() {
-		keyToEntryMap = new HashMap<PathSystemKey, PathSystemEntry>();
-		leafVertexToLeafKeyMap = new HashMap<Vertex, PathSystemKey>();
-		vertexToFirstKeyMap = new HashMap<Vertex, PathSystemKey>();
-	}
+		// keyToEntryMap = new HashMap<PathSystemKey, PathSystemEntry>();
+		// leafVertexToLeafKeyMap = new HashMap<Vertex, PathSystemKey>();
+		// vertexToFirstKeyMap = new HashMap<Vertex, PathSystemKey>();
 
-	private final Queue<PathSystemEntry> entriesWithoutParentEdge = new LinkedList<PathSystemEntry>();
+		dag = new DirectedAcyclicGraph<PathSystemNode>();
+		leafNodes = new HashSet<PathSystemNode>();
+		vertex2node = new HashMap<Vertex, PathSystemNode>();
+	}
 
 	/**
 	 * adds a vertex of the PathSystem which is described by the parameters to
@@ -142,18 +178,28 @@ public class PathSystem {
 	 * @param finalState
 	 *            true if the rootvertex is visited by the dfa in a final state
 	 */
-	public void setRootVertex(Vertex vertex, int stateNumber, boolean finalState) {
+	public PathSystemNode setRootVertex(Vertex vertex, int stateNumber,
+			boolean finalState) {
 		assertUnfinished();
-		PathSystemKey key = new PathSystemKey(vertex, stateNumber);
-		PathSystemEntry entry = new PathSystemEntry(null, null, -1, 0,
-				finalState);
-		keyToEntryMap.put(key, entry);
-		if (finalState && !leafVertexToLeafKeyMap.containsKey(vertex)) {
-			leafVertexToLeafKeyMap.put(vertex, key);
+		root = new PathSystemNode(vertex, null, stateNumber);
+		dag.createNode(root);
+		if (finalState) {
+			assert root != null;
+			leafNodes.add(root);
 		}
-		vertexToFirstKeyMap.put(vertex, key);
-		leafKeys = null;
-		rootVertex = vertex;
+		vertex2node.put(vertex, root);
+		return root;
+
+		// PathSystemKey key = new PathSystemKey(vertex, stateNumber);
+		// PathSystemEntry entry = new PathSystemEntry(null, null, -1, 0,
+		// finalState);
+		// keyToEntryMap.put(key, entry);
+		// if (finalState && !leafVertexToLeafKeyMap.containsKey(vertex)) {
+		// leafVertexToLeafKeyMap.put(vertex, key);
+		// }
+		// vertexToFirstKeyMap.put(vertex, key);
+		// leafNodes = null;
+		// root = vertex;
 	}
 
 	/**
@@ -175,39 +221,67 @@ public class PathSystem {
 	 * @param distance
 	 *            the distance to the rootvertex of the PathSystem
 	 */
-	public void addVertex(Vertex vertex, int stateNumber, Edge parentEdge,
-			Vertex parentVertex, int parentStateNumber, int distance,
+	public PathSystemNode addVertex(Vertex vertex, int stateNumber,
 			boolean finalState) {
 		assertUnfinished();
-		PathSystemKey key = new PathSystemKey(vertex, stateNumber);
-		PathSystemEntry entry = keyToEntryMap.get(key);
-		if ((entry == null)
-				|| ((entry.getDistanceToRoot() > distance) && (!entry
-						.getStateIsFinal() || finalState))) {
-			entry = new PathSystemEntry(parentVertex, parentEdge,
-					parentStateNumber, distance, finalState);
-			keyToEntryMap.put(key, entry);
-			// add vertex to leaves
-			if (finalState) {
-				PathSystemKey existingLeafkey = leafVertexToLeafKeyMap
-						.get(vertex);
-				if ((existingLeafkey == null)
-						|| (keyToEntryMap.get(existingLeafkey)
-								.getDistanceToRoot() > distance)) {
-					leafVertexToLeafKeyMap.put(vertex, key);
-				}
-			}
-			if (parentEdge != null) {
-				PathSystemKey firstKey = vertexToFirstKeyMap.get(vertex);
-				if ((firstKey == null)
-						|| (keyToEntryMap.get(firstKey).getDistanceToRoot() > distance)) {
-					vertexToFirstKeyMap.put(vertex, key);
-				}
-			} else {
-				if (!((vertex == rootVertex) && (distance == 0))) {
-					entriesWithoutParentEdge.add(entry);
-				}
-			}
+		PathSystemNode currentNode = new PathSystemNode(vertex, stateNumber);
+		dag.createNode(currentNode);
+		if (finalState) {
+			assert currentNode != null;
+			leafNodes.add(currentNode);
+		}
+		if (!vertex2node.containsKey(vertex)) {
+			vertex2node.put(vertex, currentNode);
+		}
+		return currentNode;
+
+		// PathSystemKey key = new PathSystemKey(vertex, stateNumber);
+		// PathSystemEntry entry = keyToEntryMap.get(key);
+		// if ((entry == null)
+		// || ((entry.getDistanceToRoot() > distance) && (!entry
+		// .getStateIsFinal() || finalState))) {
+		// entry = new PathSystemEntry(parentVertex, parentEdge,
+		// parentStateNumber, distance, finalState);
+		// keyToEntryMap.put(key, entry);
+		// // add vertex to leaves
+		// if (finalState) {
+		// PathSystemKey existingLeafkey = leafVertexToLeafKeyMap
+		// .get(vertex);
+		// if ((existingLeafkey == null)
+		// || (keyToEntryMap.get(existingLeafkey)
+		// .getDistanceToRoot() > distance)) {
+		// leafVertexToLeafKeyMap.put(vertex, key);
+		// }
+		// }
+		// if (parentEdge != null) {
+		// PathSystemKey firstKey = vertexToFirstKeyMap.get(vertex);
+		// if ((firstKey == null)
+		// || (keyToEntryMap.get(firstKey).getDistanceToRoot() > distance)) {
+		// vertexToFirstKeyMap.put(vertex, key);
+		// }
+		// } else {
+		// if (!((vertex == root) && (distance == 0))) {
+		// entriesWithoutParentEdge.add(entry);
+		// }
+		// }
+		// }
+	}
+
+	public void addEdge(PathSystemNode child, PathSystemNode parent,
+			Edge edge2Parent) {
+		assertUnfinished();
+		assert child.edge2parent == null || child.edge2parent == edge2Parent;
+		child.edge2parent = edge2Parent;
+		if (!dag.getDirectSuccessors(parent).contains(child)) {
+			dag.createEdge(parent, child);
+		}
+	}
+
+	public void addLeaf(PathSystemNode newLeaf) {
+		assertUnfinished();
+		assert newLeaf != null;
+		if (!leafNodes.contains(newLeaf)) {
+			leafNodes.add(newLeaf);
 		}
 	}
 
@@ -216,57 +290,27 @@ public class PathSystem {
 	 * are not possible
 	 */
 	public void finish() {
-		completePathSystem();
-		createLeafKeys();
+		dag.finish();
 		finished = true;
 	}
 
-	/**
-	 * create the set of leave keys
-	 */
-	private void createLeafKeys() {
-		assertUnfinished();
-
-		if (leafKeys != null) {
-			return;
-		}
-		leafKeys = new LinkedList<PathSystemKey>();
-		for (Map.Entry<PathSystemKey, PathSystemEntry> entry : keyToEntryMap
-				.entrySet()) {
-			if (entry.getValue().getStateIsFinal()) {
-				leafKeys.add(entry.getKey());
-			}
-		}
-	}
-
-	/**
-	 * to some vertices there is a path with an vertex restriction on the end
-	 * and thus the last transition in the dfa does not accept an edge - hence,
-	 * the parent edge is not set. This method finds those vertices and set the
-	 * edge information
-	 */
-	private void completePathSystem() {
-		assertUnfinished();
-		while (!entriesWithoutParentEdge.isEmpty()) {
-			PathSystemEntry te = entriesWithoutParentEdge.poll();
-			PathSystemEntry pe = null;
-			if (te.getParentVertex() != null) {
-				pe = keyToEntryMap.get(new PathSystemKey(te.getParentVertex(),
-						te.getParentStateNumber()));
-			} else {
-				PathSystemKey key = new PathSystemKey(rootVertex,
-						te.getParentStateNumber());
-				pe = keyToEntryMap.get(key);
-			}
-			// if pe is null, te is the entry of the root vertex
-			if (pe != null) {
-				te.setParentEdge(pe.getParentEdge());
-				te.setDistanceToRoot(pe.getDistanceToRoot());
-				te.setParentStateNumber(pe.getParentStateNumber());
-				te.setParentVertex(pe.getParentVertex());
-			}
-		}
-	}
+	// /**
+	// * create the set of leave keys
+	// */
+	// private void createLeafKeys() {
+	// assertUnfinished();
+	//
+	// if (leafNodes != null) {
+	// return;
+	// }
+	// leafNodes = new LinkedList<PathSystemKey>();
+	// for (Map.Entry<PathSystemKey, PathSystemEntry> entry : keyToEntryMap
+	// .entrySet()) {
+	// if (entry.getValue().getStateIsFinal()) {
+	// leafNodes.add(entry.getKey());
+	// }
+	// }
+	// }
 
 	/*
 	 * The following methods are used to work with path systems
@@ -280,12 +324,11 @@ public class PathSystem {
 	 */
 	public boolean contains(GraphElement<?, ?> elem) {
 		assertFinished();
-		for (Map.Entry<PathSystemKey, PathSystemEntry> entry : keyToEntryMap
-				.entrySet()) {
-			if (entry.getValue().getParentEdge() == elem) {
+		for (PathSystemNode node : vertex2node.values()) {
+			if (node.edge2parent == elem) {
 				return true;
 			}
-			if (entry.getKey().getVertex() == elem) {
+			if (node.currentVertex == elem) {
 				return true;
 			}
 		}
@@ -303,8 +346,8 @@ public class PathSystem {
 
 		PSet<Vertex> leaves = JGraLab.set();
 		// create the set of leaves out of the key set
-		for (PathSystemKey key : leafKeys) {
-			leaves = leaves.plus(key.getVertex());
+		for (PathSystemNode leafNode : leafNodes) {
+			leaves = leaves.plus(leafNode.currentVertex);
 		}
 		return leaves;
 	}
@@ -312,7 +355,7 @@ public class PathSystem {
 	/**
 	 * Extract the path which starts with the root vertex and ends with the
 	 * given vertex from the PathSystem. If the given vertex exists more than
-	 * one times in this pathsystem, the first occurrence if used. If the given
+	 * one times in this pathsystem, the first occurrence is used. If the given
 	 * vertex is not part of this pathsystem, null will be returned
 	 * 
 	 * @param vertex
@@ -320,32 +363,35 @@ public class PathSystem {
 	 */
 	public Path extractPath(Vertex vertex) {
 		assertFinished();
-		PathSystemKey key = leafVertexToLeafKeyMap.get(vertex);
-		if (key == null) {
+		PathSystemNode currentNode = vertex2node.get(vertex);
+		if (currentNode == null || leafNodes.contains(vertex)) {
 			return null;
 		}
-		return extractPath(key);
+		return extractPath(currentNode);
 	}
 
 	/**
 	 * Extract the path which starts with the root vertex and ends with the
 	 * given vertex from the PathSystem.
 	 * 
-	 * @param key
+	 * @param currentNode
 	 *            the pair (Vertex, Statenumber) which is the target of the path
 	 * @return a Path from rootVertex to given vertex
 	 */
-	private Path extractPath(PathSystemKey key) {
+	private Path extractPath(PathSystemNode currentNode) {
 		assertFinished();
-		Path path = Path.start(key.getVertex());
-		while (key != null) {
-			PathSystemEntry entry = keyToEntryMap.get(key);
-			if (entry.getParentEdge() != null) {
-				path = path.append(entry.getParentEdge().getReversedEdge());
-				key = new PathSystemKey(entry.getParentVertex(),
-						entry.getParentStateNumber());
+		Path path = Path.start(currentNode.currentVertex);
+		while (currentNode != null) {
+			if (currentNode.edge2parent != null) {
+				PSet<PathSystemNode> predecessors = dag
+						.getDirectPredecessors(currentNode);
+				assert predecessors.size() == 1 : currentNode
+						+ " has precessors: " + predecessors;
+				path = path.append(currentNode.edge2parent.getReversedEdge());
+				currentNode = predecessors.toArray(new PathSystemNode[1])[0];
 			} else {
-				key = null;
+				// the root was found
+				currentNode = null;
 			}
 		}
 		return path.reverse();
@@ -360,7 +406,7 @@ public class PathSystem {
 	public PSet<Path> extractPaths() {
 		assertFinished();
 		PSet<Path> pathSet = JGraLab.set();
-		for (PathSystemKey leaf : leafKeys) {
+		for (PathSystemNode leaf : leafNodes) {
 			pathSet = pathSet.plus(extractPath(leaf));
 		}
 		return pathSet;
@@ -372,11 +418,19 @@ public class PathSystem {
 	public int getDepth() {
 		assertFinished();
 		int maxdepth = 0;
-		for (Map.Entry<PathSystemKey, PathSystemEntry> entry : keyToEntryMap
-				.entrySet()) {
-			PathSystemEntry thisEntry = entry.getValue();
-			if (thisEntry.getDistanceToRoot() > maxdepth) {
-				maxdepth = thisEntry.getDistanceToRoot();
+		Map<PathSystemNode, Integer> depth = new HashMap<PathSystemNode, Integer>();
+		Queue<PathSystemNode> workingQueue = new LinkedList<PathSystemNode>();
+		workingQueue.add(root);
+		depth.put(root, 0);
+		while (!workingQueue.isEmpty()) {
+			PathSystemNode currentNode = workingQueue.poll();
+			int currentDepth = depth.get(currentNode);
+			if (currentDepth > maxdepth) {
+				maxdepth = currentDepth;
+			}
+			for (PathSystemNode child : dag.getDirectSuccessors(currentNode)) {
+				depth.put(child, currentDepth + 1);
+				workingQueue.add(child);
 			}
 		}
 		return maxdepth;
@@ -392,13 +446,22 @@ public class PathSystem {
 	 */
 	public int distance(Vertex vertex) {
 		assertFinished();
-		PathSystemKey key = vertexToFirstKeyMap.get(vertex);
-
-		if (key == null) {
+		PathSystemNode node = vertex2node.get(vertex);
+		if (node == null) {
 			return -1;
 		}
-		PathSystemEntry entry = keyToEntryMap.get(key);
-		return entry.getDistanceToRoot();
+		int distance = 0;
+		while (node != null) {
+			if (node.edge2parent == null) {
+				// the root is reached
+				break;
+			}
+			PSet<PathSystemNode> parents = dag.getDirectPredecessors(node);
+			assert parents.size() == 1;
+			node = parents.toArray(new PathSystemNode[1])[0];
+			distance++;
+		}
+		return distance;
 	}
 
 	/**
@@ -426,34 +489,6 @@ public class PathSystem {
 		return returnString.toString();
 	}
 
-	/**
-	 * prints the <key, entry> map
-	 */
-	public void printEntryMap() {
-		assertFinished();
-		logger.info("<Key, Entry> Set of PathSystem is:");
-		for (Map.Entry<PathSystemKey, PathSystemEntry> entry : keyToEntryMap
-				.entrySet()) {
-			PathSystemEntry thisEntry = entry.getValue();
-			PathSystemKey thisKey = entry.getKey();
-			logger.info(thisKey.toString() + " maps to " + thisEntry.toString());
-		}
-	}
-
-	/**
-	 * prints the <vertex, key map
-	 */
-	public void printKeyMap() {
-		assertFinished();
-		logger.info("<Vertex, FirstKey> Set of PathSystem is:");
-		for (Map.Entry<Vertex, PathSystemKey> entry : vertexToFirstKeyMap
-				.entrySet()) {
-			PathSystemKey thisKey = entry.getValue();
-			Vertex vertex = entry.getKey();
-			logger.info(vertex + " maps to " + thisKey.toString());
-		}
-	}
-
 	private void assertUnfinished() {
 		if (finished) {
 			throw new IllegalStateException(
@@ -471,20 +506,15 @@ public class PathSystem {
 	public PSet<Vertex> getVertices() {
 		assertFinished();
 		PSet<Vertex> returnSet = JGraLab.set();
-		for (PathSystemKey key : keyToEntryMap.keySet()) {
-			returnSet = returnSet.plus(key.getVertex());
-		}
-		return returnSet;
+		return returnSet.plusAll(vertex2node.keySet());
 	}
 
 	public PSet<Edge> getEdges() {
 		assertFinished();
 		PSet<Edge> resultSet = JGraLab.set();
-		for (Map.Entry<PathSystemKey, PathSystemEntry> mapEntry : keyToEntryMap
-				.entrySet()) {
-			PathSystemEntry thisEntry = mapEntry.getValue();
-			if (thisEntry.getParentEdge() != null) {
-				resultSet = resultSet.plus(thisEntry.getParentEdge());
+		for (PathSystemNode node : dag.getNodesInTopologicalOrder()) {
+			if (node.edge2parent != null) {
+				resultSet = resultSet.plus(node.edge2parent);
 			}
 		}
 		return resultSet;

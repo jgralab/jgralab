@@ -1,10 +1,15 @@
 package de.uni_koblenz.jgralab.greql.executable;
 
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.Map;
+import java.util.Queue;
 import java.util.Set;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.graphmarker.GraphMarker;
+import de.uni_koblenz.jgralab.greql.types.PathSystem.PathSystemNode;
 
 /**
  * This class provides helper methods necessary for the efficient calculation of
@@ -18,30 +23,163 @@ import de.uni_koblenz.jgralab.graphmarker.GraphMarker;
  */
 public class ExecutablePathSystemHelper {
 
+	// public static de.uni_koblenz.jgralab.greql.types.PathSystem
+	// createPathSystemFromMarkings(
+	// GraphMarker<PathSystemMarkerEntry>[] marker, Vertex rootVertex,
+	// Set<PathSystemMarkerEntry> leafEntries) {
+	// de.uni_koblenz.jgralab.greql.types.PathSystem pathSystem = new
+	// de.uni_koblenz.jgralab.greql.types.PathSystem();
+	// PathSystemMarkerEntry rootMarker = marker[0].getMark(rootVertex);
+	// pathSystem.setRootVertex(rootVertex, rootMarker.stateNumber,
+	// rootMarker.stateIsFinal);
+	//
+	// for (PathSystemMarkerEntry currentMarker : leafEntries) {
+	// Vertex currentVertex = currentMarker.vertex;
+	// while (currentVertex != null) {
+	// pathSystem.addVertex(currentVertex, currentMarker.stateNumber,
+	// currentMarker.edgeToParentVertex,
+	// currentMarker.parentVertex,
+	// currentMarker.parentStateNumber,
+	// currentMarker.distanceToRoot,
+	// currentMarker.stateIsFinal);
+	// currentVertex = currentMarker.parentVertex;
+	// currentMarker = getMarkerWithState(marker, currentVertex,
+	// currentMarker.parentStateNumber);
+	// }
+	// }
+	// pathSystem.finish();
+	// return pathSystem;
+	// }
+
+	/**
+	 * Creates a JValuePathSystem-object which contains all paths which start at
+	 * the given root vertex and end with one of the given leaves
+	 * 
+	 * @param leaves
+	 * @return
+	 */
 	public static de.uni_koblenz.jgralab.greql.types.PathSystem createPathSystemFromMarkings(
 			GraphMarker<PathSystemMarkerEntry>[] marker, Vertex rootVertex,
 			Set<PathSystemMarkerEntry> leafEntries) {
 		de.uni_koblenz.jgralab.greql.types.PathSystem pathSystem = new de.uni_koblenz.jgralab.greql.types.PathSystem();
+		Map<Vertex, PathSystemNode[]> vertex2state2node = new HashMap<Vertex, PathSystemNode[]>();
+		Map<Vertex, PathSystemMarkerEntry[]> vertex2state2marker = new HashMap<Vertex, PathSystemMarkerEntry[]>();
+		Queue<PathSystemNode> nodesWithoutParentEdge = new LinkedList<PathSystemNode>();
 		PathSystemMarkerEntry rootMarker = marker[0].getMark(rootVertex);
-		pathSystem.setRootVertex(rootVertex, rootMarker.stateNumber,
-				rootMarker.stateIsFinal);
+		PathSystemNode root = pathSystem.setRootVertex(rootVertex,
+				rootMarker.stateNumber, rootMarker.stateIsFinal);
+
+		PathSystemNode[] currentState2node = new PathSystemNode[marker.length];
+		currentState2node[rootMarker.stateNumber] = root;
+		vertex2state2node.put(rootVertex, currentState2node);
 
 		for (PathSystemMarkerEntry currentMarker : leafEntries) {
 			Vertex currentVertex = currentMarker.vertex;
 			while (currentVertex != null) {
-				pathSystem.addVertex(currentVertex, currentMarker.stateNumber,
-						currentMarker.edgeToParentVertex,
-						currentMarker.parentVertex,
-						currentMarker.parentStateNumber,
-						currentMarker.distanceToRoot,
-						currentMarker.stateIsFinal);
+				// && !isVertexMarkedWithState(currentVertex,
+				// currentMarker.state)
+
+				PathSystemNode childNode = addVertexToPathSystem(pathSystem,
+						vertex2state2node, marker.length, currentVertex,
+						currentMarker.stateNumber, currentMarker.stateIsFinal);
+				if (currentMarker.edgeToParentVertex != null) {
+					PathSystemNode parentNode = addVertexToPathSystem(
+							pathSystem, vertex2state2node, marker.length,
+							currentMarker.parentVertex,
+							currentMarker.parentStateNumber, false);
+					pathSystem.addEdge(childNode, parentNode,
+							currentMarker.edgeToParentVertex);
+				} else if (currentVertex != pathSystem.getRootVertex()
+						|| currentMarker.distanceToRoot != 0) {
+					nodesWithoutParentEdge.add(childNode);
+					PathSystemMarkerEntry[] currentMarkerEntry = vertex2state2marker
+							.get(currentVertex);
+					if (currentMarkerEntry == null) {
+						currentMarkerEntry = new PathSystemMarkerEntry[marker.length];
+						vertex2state2marker.put(currentVertex,
+								currentMarkerEntry);
+					}
+
+					if (currentMarkerEntry[currentMarker.stateNumber] != currentMarker) {
+						assert currentMarkerEntry[currentMarker.stateNumber] == null : "already exiting:"
+								+ currentMarkerEntry[currentMarker.stateNumber]
+								+ " new: " + currentMarker;
+						currentMarkerEntry[currentMarker.stateNumber] = currentMarker;
+					}
+				}
+
+				// int parentStateNumber = 0;
+				// if (currentMarker.parentState != null) {
+				// parentStateNumber = currentMarker.parentState.number;
+				// }
+				// pathSystem.addVertex(currentVertex,
+				// currentMarker.state.number,
+				// currentMarker.edgeToParentVertex,
+				// currentMarker.parentVertex, parentStateNumber,
+				// currentMarker.distanceToRoot,
+				// currentMarker.state.isFinal);
 				currentVertex = currentMarker.parentVertex;
 				currentMarker = getMarkerWithState(marker, currentVertex,
 						currentMarker.parentStateNumber);
 			}
 		}
+		completePathSystem(pathSystem, nodesWithoutParentEdge,
+				vertex2state2marker, vertex2state2node);
 		pathSystem.finish();
 		return pathSystem;
+	}
+
+	private static PathSystemNode addVertexToPathSystem(
+			de.uni_koblenz.jgralab.greql.types.PathSystem pathSystem,
+			Map<Vertex, PathSystemNode[]> vertex2state2node,
+			int numberOfStates, Vertex currentVertex, int state, boolean isFinal) {
+		PathSystemNode[] currentState2node = vertex2state2node
+				.get(currentVertex);
+		if (currentState2node == null) {
+			currentState2node = new PathSystemNode[numberOfStates];
+			vertex2state2node.put(currentVertex, currentState2node);
+		} else {
+			PathSystemNode currentNode = currentState2node[state];
+			if (currentNode != null) {
+				if (isFinal) {
+					pathSystem.addLeaf(currentNode);
+				}
+				return currentNode;
+			}
+		}
+		PathSystemNode currentNode = pathSystem.addVertex(currentVertex, state,
+				isFinal);
+		currentState2node[state] = currentNode;
+		return currentNode;
+	}
+
+	/**
+	 * to some vertices there is a path with an vertex restriction on the end
+	 * and thus the last transition in the dfa does not accept an edge - hence,
+	 * the parent edge is not set. This method finds those vertices and set the
+	 * edge information
+	 */
+	private static void completePathSystem(
+			de.uni_koblenz.jgralab.greql.types.PathSystem pathSystem,
+			Queue<PathSystemNode> nodesWithoutParentEdge,
+			Map<Vertex, PathSystemMarkerEntry[]> vertex2state2marker,
+			Map<Vertex, PathSystemNode[]> vertex2state2node) {
+		while (!nodesWithoutParentEdge.isEmpty()) {
+			PathSystemNode te = nodesWithoutParentEdge.poll();
+			PathSystemNode pe = null;
+			PathSystemMarkerEntry[] teMarker = vertex2state2marker
+					.get(te.currentVertex);
+			assert teMarker != null;
+			if (teMarker[te.state] != null) {
+				pe = vertex2state2node.get(teMarker[te.state].parentVertex)[teMarker[te.state].parentStateNumber];
+			} else {
+				pe = pathSystem.getRoot();
+			}
+			// if pe is null, te is the entry of the root vertex
+			if (pe != null) {
+				te.edge2parent = pe.edge2parent;
+			}
+		}
 	}
 
 	/**

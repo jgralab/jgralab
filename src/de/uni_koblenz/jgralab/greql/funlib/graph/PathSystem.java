@@ -36,8 +36,10 @@
 package de.uni_koblenz.jgralab.greql.funlib.graph;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
 
@@ -51,6 +53,7 @@ import de.uni_koblenz.jgralab.greql.evaluator.fa.Transition;
 import de.uni_koblenz.jgralab.greql.funlib.Description;
 import de.uni_koblenz.jgralab.greql.funlib.Function;
 import de.uni_koblenz.jgralab.greql.funlib.NeedsEvaluatorArgument;
+import de.uni_koblenz.jgralab.greql.types.PathSystem.PathSystemNode;
 import de.uni_koblenz.jgralab.greql.types.pathsearch.PathSystemMarkerEntry;
 
 @NeedsEvaluatorArgument
@@ -181,31 +184,129 @@ public class PathSystem extends Function {
 			GraphMarker<PathSystemMarkerEntry>[] marker, Vertex rootVertex,
 			Set<PathSystemMarkerEntry> leafEntries) {
 		de.uni_koblenz.jgralab.greql.types.PathSystem pathSystem = new de.uni_koblenz.jgralab.greql.types.PathSystem();
+		Map<Vertex, PathSystemNode[]> vertex2state2node = new HashMap<Vertex, PathSystemNode[]>();
+		Map<Vertex, PathSystemMarkerEntry[]> vertex2state2marker = new HashMap<Vertex, PathSystemMarkerEntry[]>();
+		Queue<PathSystemNode> nodesWithoutParentEdge = new LinkedList<PathSystemNode>();
 		PathSystemMarkerEntry rootMarker = marker[0].getMark(rootVertex);
-		pathSystem.setRootVertex(rootVertex, rootMarker.state.number,
-				rootMarker.state.isFinal);
+		PathSystemNode root = pathSystem.setRootVertex(rootVertex,
+				rootMarker.state.number, rootMarker.state.isFinal);
+
+		PathSystemNode[] currentState2node = new PathSystemNode[marker.length];
+		currentState2node[rootMarker.state.number] = root;
+		vertex2state2node.put(rootVertex, currentState2node);
 
 		for (PathSystemMarkerEntry currentMarker : leafEntries) {
 			Vertex currentVertex = currentMarker.vertex;
-			while (currentVertex != null) { // &&
-											// !isVertexMarkedWithState(currentVertex,
-											// currentMarker.state)
-				int parentStateNumber = 0;
-				if (currentMarker.parentState != null) {
-					parentStateNumber = currentMarker.parentState.number;
+			while (currentVertex != null) {
+				// && !isVertexMarkedWithState(currentVertex,
+				// currentMarker.state)
+
+				PathSystemNode childNode = addVertexToPathSystem(pathSystem,
+						vertex2state2node, marker.length, currentVertex,
+						currentMarker.state.number, currentMarker.state.isFinal);
+				if (currentMarker.edgeToParentVertex != null) {
+					PathSystemNode parentNode = addVertexToPathSystem(
+							pathSystem,
+							vertex2state2node,
+							marker.length,
+							currentMarker.parentVertex,
+							currentMarker.parentState != null ? currentMarker.parentState.number
+									: 0,
+							currentMarker.parentState != null ? currentMarker.parentState.isFinal
+									: false);
+					pathSystem.addEdge(childNode, parentNode,
+							currentMarker.edgeToParentVertex);
+				} else if (currentVertex != pathSystem.getRootVertex()
+						|| currentMarker.distanceToRoot != 0) {
+					nodesWithoutParentEdge.add(childNode);
+					PathSystemMarkerEntry[] currentMarkerEntry = vertex2state2marker
+							.get(currentVertex);
+					if (currentMarkerEntry == null) {
+						currentMarkerEntry = new PathSystemMarkerEntry[marker.length];
+						vertex2state2marker.put(currentVertex,
+								currentMarkerEntry);
+					}
+					if (currentMarkerEntry[currentMarker.state.number] != currentMarker) {
+						assert currentMarkerEntry[currentMarker.state.number] == null : "already exiting:"
+								+ currentMarkerEntry[currentMarker.state.number]
+								+ " new: " + currentMarker;
+						currentMarkerEntry[currentMarker.state.number] = currentMarker;
+					}
 				}
-				pathSystem.addVertex(currentVertex, currentMarker.state.number,
-						currentMarker.edgeToParentVertex,
-						currentMarker.parentVertex, parentStateNumber,
-						currentMarker.distanceToRoot,
-						currentMarker.state.isFinal);
+
+				// int parentStateNumber = 0;
+				// if (currentMarker.parentState != null) {
+				// parentStateNumber = currentMarker.parentState.number;
+				// }
+				// pathSystem.addVertex(currentVertex,
+				// currentMarker.state.number,
+				// currentMarker.edgeToParentVertex,
+				// currentMarker.parentVertex, parentStateNumber,
+				// currentMarker.distanceToRoot,
+				// currentMarker.state.isFinal);
 				currentVertex = currentMarker.parentVertex;
 				currentMarker = getMarkerWithState(marker, currentVertex,
 						currentMarker.parentState);
 			}
 		}
+		completePathSystem(pathSystem, nodesWithoutParentEdge,
+				vertex2state2marker, vertex2state2node);
 		pathSystem.finish();
 		return pathSystem;
+	}
+
+	private PathSystemNode addVertexToPathSystem(
+			de.uni_koblenz.jgralab.greql.types.PathSystem pathSystem,
+			Map<Vertex, PathSystemNode[]> vertex2state2node,
+			int numberOfStates, Vertex currentVertex, int state, boolean isFinal) {
+		assert currentVertex != null;
+		PathSystemNode[] currentState2node = vertex2state2node
+				.get(currentVertex);
+		if (currentState2node == null) {
+			currentState2node = new PathSystemNode[numberOfStates];
+			vertex2state2node.put(currentVertex, currentState2node);
+		} else {
+			PathSystemNode currentNode = currentState2node[state];
+			if (currentNode != null) {
+				if (isFinal) {
+					pathSystem.addLeaf(currentNode);
+				}
+				return currentNode;
+			}
+		}
+		PathSystemNode currentNode = pathSystem.addVertex(currentVertex, state,
+				isFinal);
+		currentState2node[state] = currentNode;
+		return currentNode;
+	}
+
+	/**
+	 * to some vertices there is a path with an vertex restriction on the end
+	 * and thus the last transition in the dfa does not accept an edge - hence,
+	 * the parent edge is not set. This method finds those vertices and set the
+	 * edge information
+	 */
+	private void completePathSystem(
+			de.uni_koblenz.jgralab.greql.types.PathSystem pathSystem,
+			Queue<PathSystemNode> nodesWithoutParentEdge,
+			Map<Vertex, PathSystemMarkerEntry[]> vertex2state2marker,
+			Map<Vertex, PathSystemNode[]> vertex2state2node) {
+		while (!nodesWithoutParentEdge.isEmpty()) {
+			PathSystemNode te = nodesWithoutParentEdge.poll();
+			PathSystemNode pe = null;
+			PathSystemMarkerEntry[] teMarker = vertex2state2marker
+					.get(te.currentVertex);
+			assert teMarker != null;
+			if (teMarker[te.state] != null) {
+				pe = vertex2state2node.get(teMarker[te.state].parentVertex)[teMarker[te.state].parentState.number];
+			} else {
+				pe = pathSystem.getRoot();
+			}
+			// if pe is null, te is the entry of the root vertex
+			if (pe != null) {
+				te.edge2parent = pe.edge2parent;
+			}
+		}
 	}
 
 	/**
