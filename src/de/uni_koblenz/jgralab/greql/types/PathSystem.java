@@ -285,6 +285,10 @@ public class PathSystem {
 		}
 	}
 
+	public Set<PathSystemNode> getParents(PathSystemNode pe) {
+		return dag.getDirectPredecessors(pe);
+	}
+
 	/**
 	 * finished the path system, after a call of this method, further changes
 	 * are not possible

@@ -89,8 +89,8 @@ public class ExecutablePathSystemHelper {
 							currentMarker.parentStateNumber, false);
 					pathSystem.addEdge(childNode, parentNode,
 							currentMarker.edgeToParentVertex);
-				} else if (currentVertex != pathSystem.getRootVertex()
-						|| currentMarker.distanceToRoot != 0) {
+				} else if ((currentVertex != pathSystem.getRootVertex() || currentMarker.distanceToRoot != 0)
+						&& !nodesWithoutParentEdge.contains(childNode)) {
 					nodesWithoutParentEdge.add(childNode);
 					PathSystemMarkerEntry[] currentMarkerEntry = vertex2state2marker
 							.get(currentVertex);
@@ -99,13 +99,10 @@ public class ExecutablePathSystemHelper {
 						vertex2state2marker.put(currentVertex,
 								currentMarkerEntry);
 					}
-
-					if (currentMarkerEntry[currentMarker.stateNumber] != currentMarker) {
-						assert currentMarkerEntry[currentMarker.stateNumber] == null : "already exiting:"
-								+ currentMarkerEntry[currentMarker.stateNumber]
-								+ " new: " + currentMarker;
-						currentMarkerEntry[currentMarker.stateNumber] = currentMarker;
-					}
+					assert currentMarkerEntry[currentMarker.stateNumber] == null : "already exiting:"
+							+ currentMarkerEntry[currentMarker.stateNumber]
+							+ " new: " + currentMarker;
+					currentMarkerEntry[currentMarker.stateNumber] = currentMarker;
 				}
 
 				// int parentStateNumber = 0;
@@ -177,7 +174,11 @@ public class ExecutablePathSystemHelper {
 			}
 			// if pe is null, te is the entry of the root vertex
 			if (pe != null) {
-				te.edge2parent = pe.edge2parent;
+				Set<PathSystemNode> parents = pathSystem.getParents(pe);
+				assert parents.size() <= 1;
+				for (PathSystemNode parent : parents) {
+					pathSystem.addEdge(te, parent, pe.edge2parent);
+				}
 			}
 		}
 	}
