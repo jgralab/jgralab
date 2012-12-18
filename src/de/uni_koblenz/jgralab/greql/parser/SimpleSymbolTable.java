@@ -39,6 +39,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
@@ -47,6 +48,7 @@ import de.uni_koblenz.jgralab.greql.exception.DuplicateVariableException;
 import de.uni_koblenz.jgralab.greql.schema.GreqlAggregation;
 import de.uni_koblenz.jgralab.greql.schema.SourcePosition;
 import de.uni_koblenz.jgralab.greql.schema.Variable;
+import de.uni_koblenz.jgralab.schema.RecordDomain;
 
 public class SimpleSymbolTable {
 
@@ -74,11 +76,27 @@ public class SimpleSymbolTable {
 		if (existingVariable == null) {
 			list.getFirst().put(ident, v);
 		} else {
-			throw new DuplicateVariableException((Variable) existingVariable,
-					(List<SourcePosition>) null,
-					((GreqlAggregation) existingVariable
-							.getFirstIncidence(EdgeDirection.OUT))
-							.get_sourcePositions().get(0));
+			GreqlAggregation firstIncidence = (GreqlAggregation) existingVariable
+					.getFirstIncidence(EdgeDirection.OUT);
+			SourcePosition previousPosition = null;
+			if (firstIncidence != null) {
+				previousPosition = firstIncidence.get_sourcePositions().get(0);
+			} else {
+				List<RecordDomain> recordDomains = v.getSchema()
+						.getRecordDomains();
+				Map<String, Object> map = new HashMap<String, Object>();
+				map.put("length", -1);
+				map.put("offset", -1);
+				for (RecordDomain dom : recordDomains) {
+					if (dom.getQualifiedName().equals("SourcePosition")) {
+						previousPosition = (SourcePosition) v.getGraph()
+								.createRecord(dom, map);
+					}
+				}
+			}
+			throw new DuplicateVariableException(
+					((Variable) existingVariable).get_name(),
+					(List<SourcePosition>) null, previousPosition);
 		}
 	}
 

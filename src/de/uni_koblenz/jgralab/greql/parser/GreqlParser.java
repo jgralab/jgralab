@@ -49,6 +49,7 @@ import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.ImplementationType;
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.Vertex;
+import de.uni_koblenz.jgralab.greql.exception.DuplicateVariableException;
 import de.uni_koblenz.jgralab.greql.exception.ParsingException;
 import de.uni_koblenz.jgralab.greql.funlib.FunLib;
 import de.uni_koblenz.jgralab.greql.schema.*;
@@ -573,7 +574,13 @@ public class GreqlParser extends ParserHelper {
 			var.set_name(varName);
 		}
 		if (inDeclaration) {
-			duringParsingvariableSymbolTable.insert(varName, var);
+			try {
+				duringParsingvariableSymbolTable.insert(varName, var);
+			} catch (DuplicateVariableException e) {
+				if (!inPredicateMode()) {
+					throw e;
+				}
+			}
 		}
 		return var;
 	}

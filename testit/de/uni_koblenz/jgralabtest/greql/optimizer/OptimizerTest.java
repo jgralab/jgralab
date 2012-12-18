@@ -197,8 +197,8 @@ public class OptimizerTest extends GenericTest {
 	@Test
 	public void testCommonSubgraphOptimizer2() throws Exception {
 		String query = "from a : from x : list(1..10) with isPrime(x) reportSet x end, "
-				+ "          b : from x : list(1..10) with isPrime(x) reportSet x end, "
-				+ "          c : from x : list(1..10) with isPrime(x) reportSet x end "
+				+ "          b : from y : list(1..10) with isPrime(y) reportSet y end, "
+				+ "          c : from z : list(1..10) with isPrime(z) reportSet z end "
 				+ "     with forall i : a @ isPrime(i)          "
 				+ "     reportSet a, b, c end";
 		execTimedTest(query, "CommonSubgraphOptimizer2()", cso);
@@ -252,17 +252,17 @@ public class OptimizerTest extends GenericTest {
 				+ "          y : list(21..100)   "
 				+ "     with isPrime(x) and isPrime(y)       "
 				+ "          and isPrime(theElement(  "
-				+ "                        from x : list(12..13),"
-				+ "                             y : list(10..11)"
-				+ "                        with isPrime(y) and isPrime(x+y)"
-				+ "                        reportSet x+y end))"
-				+ "     report x, y, from y : list(21..100),"
+				+ "                        from x1 : list(12..13),"
+				+ "                             y1 : list(10..11)"
+				+ "                        with isPrime(y1) and isPrime(x1+y1)"
+				+ "                        reportSet x1+y1 end))"
+				+ "     report x, y, from y2 : list(21..100),"
 				+ "                       z : from a : list(10..20),"
 				+ "                                b : list(30..60)"
 				+ "                           with a * 3 = b and isPrime(a)"
 				+ "                           reportSet a + b end"
-				+ "                  with isPrime(y+x) and isPrime(z+x)"
-				+ "                  reportSet y, z end                "
+				+ "                  with isPrime(y2+x) and isPrime(z+x)"
+				+ "                  reportSet y2, z end                "
 				+ "     end";
 		execTimedTest(query, "EarlySelectionOptimizer4()", eso);
 	}
