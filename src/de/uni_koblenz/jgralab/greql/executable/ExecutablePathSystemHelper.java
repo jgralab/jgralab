@@ -23,34 +23,6 @@ import de.uni_koblenz.jgralab.greql.types.PathSystem.PathSystemNode;
  */
 public class ExecutablePathSystemHelper {
 
-	// public static de.uni_koblenz.jgralab.greql.types.PathSystem
-	// createPathSystemFromMarkings(
-	// GraphMarker<PathSystemMarkerEntry>[] marker, Vertex rootVertex,
-	// Set<PathSystemMarkerEntry> leafEntries) {
-	// de.uni_koblenz.jgralab.greql.types.PathSystem pathSystem = new
-	// de.uni_koblenz.jgralab.greql.types.PathSystem();
-	// PathSystemMarkerEntry rootMarker = marker[0].getMark(rootVertex);
-	// pathSystem.setRootVertex(rootVertex, rootMarker.stateNumber,
-	// rootMarker.stateIsFinal);
-	//
-	// for (PathSystemMarkerEntry currentMarker : leafEntries) {
-	// Vertex currentVertex = currentMarker.vertex;
-	// while (currentVertex != null) {
-	// pathSystem.addVertex(currentVertex, currentMarker.stateNumber,
-	// currentMarker.edgeToParentVertex,
-	// currentMarker.parentVertex,
-	// currentMarker.parentStateNumber,
-	// currentMarker.distanceToRoot,
-	// currentMarker.stateIsFinal);
-	// currentVertex = currentMarker.parentVertex;
-	// currentMarker = getMarkerWithState(marker, currentVertex,
-	// currentMarker.parentStateNumber);
-	// }
-	// }
-	// pathSystem.finish();
-	// return pathSystem;
-	// }
-
 	/**
 	 * Creates a JValuePathSystem-object which contains all paths which start at
 	 * the given root vertex and end with one of the given leaves
@@ -105,16 +77,6 @@ public class ExecutablePathSystemHelper {
 					currentMarkerEntry[currentMarker.stateNumber] = currentMarker;
 				}
 
-				// int parentStateNumber = 0;
-				// if (currentMarker.parentState != null) {
-				// parentStateNumber = currentMarker.parentState.number;
-				// }
-				// pathSystem.addVertex(currentVertex,
-				// currentMarker.state.number,
-				// currentMarker.edgeToParentVertex,
-				// currentMarker.parentVertex, parentStateNumber,
-				// currentMarker.distanceToRoot,
-				// currentMarker.state.isFinal);
 				currentVertex = currentMarker.parentVertex;
 				currentMarker = getMarkerWithState(marker, currentVertex,
 						currentMarker.parentStateNumber);

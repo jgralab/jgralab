@@ -231,17 +231,6 @@ public class PathSystem extends Function {
 							+ " new: " + currentMarker;
 					currentMarkerEntry[currentMarker.state.number] = currentMarker;
 				}
-
-				// int parentStateNumber = 0;
-				// if (currentMarker.parentState != null) {
-				// parentStateNumber = currentMarker.parentState.number;
-				// }
-				// pathSystem.addVertex(currentVertex,
-				// currentMarker.state.number,
-				// currentMarker.edgeToParentVertex,
-				// currentMarker.parentVertex, parentStateNumber,
-				// currentMarker.distanceToRoot,
-				// currentMarker.state.isFinal);
 				currentVertex = currentMarker.parentVertex;
 				currentMarker = getMarkerWithState(marker, currentVertex,
 						currentMarker.parentState);

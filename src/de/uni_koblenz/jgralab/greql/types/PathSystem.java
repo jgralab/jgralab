@@ -78,27 +78,6 @@ public class PathSystem {
 
 	private final DirectedAcyclicGraph<PathSystemNode> dag;
 
-	// /**
-	// * This HashMap stores references from a tuple (Vertex,StateNumber) to a
-	// * tuple(ParentVertex, ParentEdge, ParentStateNumber, DistanceToRoot)
-	// */
-	// private final HashMap<PathSystemKey, PathSystemEntry> keyToEntryMap;
-	//
-	// /**
-	// * This HashMap stores references from a vertex which is a leaf is the
-	// path
-	// * system to the first occurence of this vertex as a leaf in the above
-	// * HashMap<PathSystemKey, PathSystemEntry> keyToEntryMap
-	// */
-	// private final HashMap<Vertex, PathSystemKey> leafVertexToLeafKeyMap;
-	//
-	// /**
-	// * This HashMap stores references from a vertex in the path system to the
-	// * first occurence of this vertex in the above HashMap<PathSystemKey,
-	// * PathSystemEntry> keyToEntryMap
-	// */
-	// private final HashMap<Vertex, PathSystemKey> vertexToFirstKeyMap;
-
 	private final Map<Vertex, PathSystemNode> vertex2node;
 
 	/**
@@ -157,10 +136,6 @@ public class PathSystem {
 	 * creates a new PathSystem with the given rootVertex in the given datagraph
 	 */
 	public PathSystem() {
-		// keyToEntryMap = new HashMap<PathSystemKey, PathSystemEntry>();
-		// leafVertexToLeafKeyMap = new HashMap<Vertex, PathSystemKey>();
-		// vertexToFirstKeyMap = new HashMap<Vertex, PathSystemKey>();
-
 		dag = new DirectedAcyclicGraph<PathSystemNode>();
 		leafNodes = new HashSet<PathSystemNode>();
 		vertex2node = new HashMap<Vertex, PathSystemNode>();
@@ -189,17 +164,6 @@ public class PathSystem {
 		}
 		vertex2node.put(vertex, root);
 		return root;
-
-		// PathSystemKey key = new PathSystemKey(vertex, stateNumber);
-		// PathSystemEntry entry = new PathSystemEntry(null, null, -1, 0,
-		// finalState);
-		// keyToEntryMap.put(key, entry);
-		// if (finalState && !leafVertexToLeafKeyMap.containsKey(vertex)) {
-		// leafVertexToLeafKeyMap.put(vertex, key);
-		// }
-		// vertexToFirstKeyMap.put(vertex, key);
-		// leafNodes = null;
-		// root = vertex;
 	}
 
 	/**
@@ -234,37 +198,6 @@ public class PathSystem {
 			vertex2node.put(vertex, currentNode);
 		}
 		return currentNode;
-
-		// PathSystemKey key = new PathSystemKey(vertex, stateNumber);
-		// PathSystemEntry entry = keyToEntryMap.get(key);
-		// if ((entry == null)
-		// || ((entry.getDistanceToRoot() > distance) && (!entry
-		// .getStateIsFinal() || finalState))) {
-		// entry = new PathSystemEntry(parentVertex, parentEdge,
-		// parentStateNumber, distance, finalState);
-		// keyToEntryMap.put(key, entry);
-		// // add vertex to leaves
-		// if (finalState) {
-		// PathSystemKey existingLeafkey = leafVertexToLeafKeyMap
-		// .get(vertex);
-		// if ((existingLeafkey == null)
-		// || (keyToEntryMap.get(existingLeafkey)
-		// .getDistanceToRoot() > distance)) {
-		// leafVertexToLeafKeyMap.put(vertex, key);
-		// }
-		// }
-		// if (parentEdge != null) {
-		// PathSystemKey firstKey = vertexToFirstKeyMap.get(vertex);
-		// if ((firstKey == null)
-		// || (keyToEntryMap.get(firstKey).getDistanceToRoot() > distance)) {
-		// vertexToFirstKeyMap.put(vertex, key);
-		// }
-		// } else {
-		// if (!((vertex == root) && (distance == 0))) {
-		// entriesWithoutParentEdge.add(entry);
-		// }
-		// }
-		// }
 	}
 
 	public void addEdge(PathSystemNode child, PathSystemNode parent,
@@ -297,24 +230,6 @@ public class PathSystem {
 		dag.finish();
 		finished = true;
 	}
-
-	// /**
-	// * create the set of leave keys
-	// */
-	// private void createLeafKeys() {
-	// assertUnfinished();
-	//
-	// if (leafNodes != null) {
-	// return;
-	// }
-	// leafNodes = new LinkedList<PathSystemKey>();
-	// for (Map.Entry<PathSystemKey, PathSystemEntry> entry : keyToEntryMap
-	// .entrySet()) {
-	// if (entry.getValue().getStateIsFinal()) {
-	// leafNodes.add(entry.getKey());
-	// }
-	// }
-	// }
 
 	/*
 	 * The following methods are used to work with path systems
@@ -354,6 +269,11 @@ public class PathSystem {
 			leaves = leaves.plus(leafNode.currentVertex);
 		}
 		return leaves;
+	}
+
+	public PSet<PathSystemNode> getChildren(PathSystemNode currentNode) {
+		assertFinished();
+		return dag.getDirectSuccessors(currentNode);
 	}
 
 	/**
