@@ -69,7 +69,7 @@ public class Slice extends Function {
 
 	private Graph graph;
 
-	@Description(params = { "internal", "v", "dfa" }, description = "Returns a slice, starting at the given root vertex and "
+	@Description(params = { "internal", "v", "dfa" }, description = "Returns a SubGraphMarker, starting at the given root vertex and "
 			+ " being structured according to the given path description.", categories = {
 			Category.GRAPH, Category.PATHS_AND_PATHSYSTEMS_AND_SLICES })
 	public de.uni_koblenz.jgralab.greql.types.Slice evaluate(
@@ -77,7 +77,7 @@ public class Slice extends Function {
 		return evaluate(evaluator, JGraLab.<Vertex> set().plus(v), dfa);
 	}
 
-	@Description(params = { "internal", "roots", "dfa" }, description = "Returns a slice, starting at the given root vertices and "
+	@Description(params = { "internal", "roots", "dfa" }, description = "Returns a SubGraphMarker, starting at the given root vertices and "
 			+ " being structured according to the given path description.", categories = {
 			Category.GRAPH, Category.PATHS_AND_PATHSYSTEMS_AND_SLICES })
 	public de.uni_koblenz.jgralab.greql.types.Slice evaluate(

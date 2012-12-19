@@ -38,20 +38,16 @@ package de.uni_koblenz.jgralab.greql.types;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Queue;
 import java.util.Set;
-import java.util.logging.Logger;
 
 import org.pcollections.PSet;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
-import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.graphmarker.SubGraphMarker;
@@ -62,14 +58,14 @@ public class Slice {
 	 * This HashMap stores references from a tuple (Vertex,State) to a list of
 	 * tuples(ParentVertex, ParentEdge, ParentState, DistanceToRoot)
 	 */
-	private HashMap<PathSystemKey, List<PathSystemEntry>> keyToEntryMap;
+	private final HashMap<PathSystemKey, List<PathSystemEntry>> keyToEntryMap;
 
 	/**
 	 * This HashMap stores references from a vertex to the first occurence of
 	 * this vertex in the above HashMap<PathSystemKey, PathSystemEntry>
 	 * keyToEntryMap
 	 */
-	private HashMap<Vertex, PathSystemKey> vertexToFirstKeyMap;
+	private final HashMap<Vertex, PathSystemKey> vertexToFirstKeyMap;
 
 	/**
 	 * This is the rootvertex of the slice
@@ -93,7 +89,7 @@ public class Slice {
 	/**
 	 * This is a reference to the datagraph this slice is part of
 	 */
-	private Graph datagraph;
+	private final Graph datagraph;
 
 	/**
 	 * returns the datagraph this slice is part of
@@ -130,11 +126,9 @@ public class Slice {
 
 	}
 
-	private Queue<PathSystemEntry> entriesWithoutParentEdge = new LinkedList<PathSystemEntry>();
+	private final Queue<PathSystemEntry> entriesWithoutParentEdge = new LinkedList<PathSystemEntry>();
 
 	private boolean isCleared = true;
-
-	private static Logger logger = JGraLab.getLogger(Slice.class);
 
 	public void clearPathSystem() {
 		if (!isCleared) {
@@ -230,33 +224,7 @@ public class Slice {
 	}
 
 	/**
-	 * Calculates the parent vertices of the given vertex in this slice. If the
-	 * given vertex exists more than one times in this slice, the first
-	 * occurrence is used. If the given vertex is not part of this slice, an
-	 * invalid JValue will be returned
-	 */
-	public PSet<Vertex> parents(Vertex vertex) {
-		clearPathSystem();
-		PathSystemKey key = vertexToFirstKeyMap.get(vertex);
-		return parents(key);
-	}
-
-	/**
-	 * Calculates the parent vertices of the given key in this slice.
-	 */
-	public PSet<Vertex> parents(PathSystemKey key) {
-		clearPathSystem();
-		PSet<Vertex> resultSet = JGraLab.set();
-
-		for (PathSystemEntry entry : keyToEntryMap.get(key)) {
-			resultSet = resultSet.plus(entry.getParentVertex());
-		}
-
-		return resultSet;
-	}
-
-	/**
-	 * Calculates the set of edges nodes in this slice.
+	 * Calculates the set of edges in this slice.
 	 */
 	public PSet<Edge> getEdges() {
 		clearPathSystem();
@@ -270,27 +238,6 @@ public class Slice {
 			}
 		}
 		return resultSet;
-	}
-
-	public boolean contains(GraphElement<?, ?> elem) {
-		for (Entry<PathSystemKey, List<PathSystemEntry>> e : keyToEntryMap
-				.entrySet()) {
-
-			if (e.getKey().getVertex() == elem) {
-				return true;
-			}
-			if (!(elem instanceof Edge)) {
-				continue;
-			}
-			for (PathSystemEntry pse : e.getValue()) {
-				if (pse.getParentEdge() == elem) {
-					return true;
-				}
-				// TODO: Don't we need to check parentVertex, too?? Or is that
-				// the key?
-			}
-		}
-		return false;
 	}
 
 	/**
@@ -344,89 +291,6 @@ public class Slice {
 			if (isFinal) {
 				leafKeys.add(mapEntry.getKey());
 			}
-		}
-	}
-
-	/**
-	 * calculate the number of vertices this slice has. If a vertex is part of
-	 * this slice n times, it is counted n times
-	 */
-	public int weight() {
-		clearPathSystem();
-		return keyToEntryMap.size();
-	}
-
-	/**
-	 * @return true if the given first vertex is a neighbour of the given second
-	 *         vertex, that means, if there is a edge from v1 to v2. If one or
-	 *         both of the given vertices are part of the slice more than once,
-	 *         the first occurence is used. If one of the vertices is not part
-	 *         of this slice, false is returned
-	 */
-	public boolean isNeighbour(Vertex v1, Vertex v2) {
-		clearPathSystem();
-		PathSystemKey key1 = vertexToFirstKeyMap.get(v1);
-		PathSystemKey key2 = vertexToFirstKeyMap.get(v2);
-		return isNeighbour(key1, key2);
-	}
-
-	/**
-	 * @return true if the given first key is a neighbour of the given second
-	 *         key, that means, if there is a edge from key1.vertex to
-	 *         key2.vertex and the states matches. If one of the keys is not
-	 *         part of this slice, false is returned
-	 */
-	public boolean isNeighbour(PathSystemKey key1, PathSystemKey key2) {
-		clearPathSystem();
-		if ((key1 == null) || (key2 == null)) {
-			return false;
-		}
-		for (PathSystemEntry entry1 : keyToEntryMap.get(key1)) {
-			for (PathSystemEntry entry2 : keyToEntryMap.get(key2)) {
-				if ((entry1.getParentVertex() == key2.getVertex())
-						&& (entry1.getParentStateNumber() == key2
-								.getStateNumber())) {
-					return true;
-				}
-				if ((entry2.getParentVertex() == key1.getVertex())
-						&& (entry2.getParentStateNumber() == key1
-								.getStateNumber())) {
-					return true;
-				}
-			}
-		}
-		return false;
-	}
-
-	/**
-	 * Prints the <key, List<entry>> map as single <key, entry> entries, i.e. a
-	 * key may occur multiple times.
-	 */
-	public void printEntryMap() {
-		clearPathSystem();
-		logger.info("<Key, Entry> set of slice is:");
-		for (Map.Entry<PathSystemKey, List<PathSystemEntry>> mapEntry : keyToEntryMap
-				.entrySet()) {
-			for (PathSystemEntry entry : mapEntry.getValue()) {
-				logger.info(mapEntry.getKey().toString() + " maps to "
-						+ entry.toString());
-			}
-		}
-	}
-
-	/**
-	 * Prints the <vertex, key map>.
-	 */
-	public void printKeyMap() {
-		clearPathSystem();
-		Iterator<Map.Entry<Vertex, PathSystemKey>> iter = vertexToFirstKeyMap
-				.entrySet().iterator();
-		logger.info("<Vertex, FirstKey> set of slice is:");
-		while (iter.hasNext()) {
-			Map.Entry<Vertex, PathSystemKey> mapEntry = iter.next();
-			PathSystemKey thisKey = mapEntry.getValue();
-			Vertex vertex = mapEntry.getKey();
-			logger.info(vertex + " maps to " + thisKey.toString());
 		}
 	}
 
