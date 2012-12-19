@@ -42,7 +42,6 @@ import de.uni_koblenz.jgralab.greql.funlib.Description;
 import de.uni_koblenz.jgralab.greql.funlib.Function;
 import de.uni_koblenz.jgralab.greql.types.Path;
 import de.uni_koblenz.jgralab.greql.types.PathSystem;
-import de.uni_koblenz.jgralab.greql.types.Slice;
 
 public class Vertices extends Function {
 
@@ -53,11 +52,6 @@ public class Vertices extends Function {
 	@Description(params = "p", description = "Returns the set of vertices in the given path system.", categories = Category.PATHS_AND_PATHSYSTEMS_AND_SLICES)
 	public PSet<Vertex> evaluate(PathSystem p) {
 		return p.getVertices();
-	}
-
-	@Description(params = "s", description = "Returns the set of vertices in the given slice.", categories = Category.PATHS_AND_PATHSYSTEMS_AND_SLICES)
-	public PSet<Vertex> evaluate(Slice s) {
-		return s.getVertices();
 	}
 
 	@Description(params = "p", description = "Returns the list of vertices in the Path p.", categories = Category.PATHS_AND_PATHSYSTEMS_AND_SLICES)

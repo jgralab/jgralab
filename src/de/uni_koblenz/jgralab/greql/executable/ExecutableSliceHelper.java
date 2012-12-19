@@ -12,7 +12,7 @@ import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.graphmarker.GraphMarker;
-import de.uni_koblenz.jgralab.greql.types.Slice;
+import de.uni_koblenz.jgralab.graphmarker.SubGraphMarker;
 
 /**
  * This class provides helper methods necessary for the efficient calculation of
@@ -97,22 +97,13 @@ public class ExecutableSliceHelper {
 	 * @param leaves
 	 * @return
 	 */
-	public static Slice createSliceFromMarkings(Graph graph,
+	public static SubGraphMarker createSliceFromMarkings(Graph graph,
 			Set<Vertex> sliCritVertices, List<Vertex> leaves,
 			List<GraphMarker<Map<Edge, PathSystemMarkerEntry>>> marker) {
-		Slice slice = new Slice(graph);
+		SubGraphMarker sliceSubGraph = new SubGraphMarker(graph);
 
-		Map<Edge, PathSystemMarkerEntry> sliCritVertexMarkerMap;
-		PathSystemMarkerEntry sliCritVertexMarker;
-		GraphMarker<Map<Edge, PathSystemMarkerEntry>> startStateMarker = marker
-				.get(0);
-
-		// add slicing criterion vertices to slice
 		for (Vertex v : sliCritVertices) {
-			sliCritVertexMarkerMap = startStateMarker.getMark(v);
-			sliCritVertexMarker = sliCritVertexMarkerMap.get(null);
-			slice.addSlicingCriterionVertex(v, sliCritVertexMarker.stateNumber,
-					sliCritVertexMarker.stateIsFinal);
+			sliceSubGraph.mark(v);
 		}
 
 		Queue<Vertex> queue = new LinkedList<Vertex>();
@@ -152,16 +143,11 @@ public class ExecutableSliceHelper {
 									currentVertex,
 									currentStateMarker.getMark(currentVertex),
 									marker).values()) {
-								int parentStateNumber = 0;
 								parentState = mark.parentStateNumber;
-								if (parentState >= 0) {
-									parentStateNumber = parentState;
+								sliceSubGraph.mark(currentVertex);
+								if (mark.edgeToParentVertex != null) {
+									sliceSubGraph.mark(mark.edgeToParentVertex);
 								}
-								slice.addVertex(currentVertex,
-										mark.stateNumber,
-										mark.edgeToParentVertex,
-										mark.parentVertex, parentStateNumber,
-										mark.stateIsFinal);
 								parentVertex = mark.parentVertex;
 								if ((parentVertex != null)
 										&& !isVertexMarkedWithState(
@@ -185,7 +171,7 @@ public class ExecutableSliceHelper {
 			}
 		}
 
-		return slice;
+		return sliceSubGraph;
 	}
 
 	/**

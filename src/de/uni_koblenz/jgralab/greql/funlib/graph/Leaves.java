@@ -40,7 +40,6 @@ import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql.funlib.Description;
 import de.uni_koblenz.jgralab.greql.funlib.Function;
 import de.uni_koblenz.jgralab.greql.types.PathSystem;
-import de.uni_koblenz.jgralab.greql.types.Slice;
 
 public class Leaves extends Function {
 
@@ -48,17 +47,9 @@ public class Leaves extends Function {
 		super();
 	}
 
-	@Description(params = "p", description = 
-			"Returns the set of leaf vertices in the given path system.",
-			categories = {Category.GRAPH, Category.PATHS_AND_PATHSYSTEMS_AND_SLICES})
+	@Description(params = "p", description = "Returns the set of leaf vertices in the given path system.", categories = {
+			Category.GRAPH, Category.PATHS_AND_PATHSYSTEMS_AND_SLICES })
 	public PSet<Vertex> evaluate(PathSystem p) {
 		return p.getLeaves();
-	}
-
-	@Description(params = "p", description = 
-			"Returns the set of leaf vertices in the given slice.",
-			categories = {Category.GRAPH, Category.PATHS_AND_PATHSYSTEMS_AND_SLICES})
-	public PSet<Vertex> evaluate(Slice s) {
-		return s.getLeaves();
 	}
 }

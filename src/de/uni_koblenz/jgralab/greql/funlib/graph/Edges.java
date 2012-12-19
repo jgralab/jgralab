@@ -42,7 +42,6 @@ import de.uni_koblenz.jgralab.greql.funlib.Description;
 import de.uni_koblenz.jgralab.greql.funlib.Function;
 import de.uni_koblenz.jgralab.greql.types.Path;
 import de.uni_koblenz.jgralab.greql.types.PathSystem;
-import de.uni_koblenz.jgralab.greql.types.Slice;
 
 public class Edges extends Function {
 
@@ -53,11 +52,6 @@ public class Edges extends Function {
 	@Description(params = "p", description = "Returns the set of edges in the given path system.", categories = Category.GRAPH)
 	public PSet<Edge> evaluate(PathSystem p) {
 		return p.getEdges();
-	}
-
-	@Description(params = "s", description = "Returns the set of edges in the given slice.", categories = Category.GRAPH)
-	public PSet<Edge> evaluate(Slice s) {
-		return s.getEdges();
 	}
 
 	@Description(params = "p", description = "Returns the list of edges in the Path p.", categories = Category.PATHS_AND_PATHSYSTEMS_AND_SLICES)

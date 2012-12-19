@@ -55,11 +55,11 @@ import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.graphmarker.BooleanGraphMarker;
+import de.uni_koblenz.jgralab.graphmarker.SubGraphMarker;
 import de.uni_koblenz.jgralab.greql.GreqlQuery;
 import de.uni_koblenz.jgralab.greql.GreqlQueryCache;
 import de.uni_koblenz.jgralab.greql.types.Path;
 import de.uni_koblenz.jgralab.greql.types.PathSystem;
-import de.uni_koblenz.jgralab.greql.types.Slice;
 import de.uni_koblenz.jgralab.greql.types.Types;
 import de.uni_koblenz.jgralab.impl.ConsoleProgressFunction;
 import de.uni_koblenz.jgralab.utilities.tg2dot.Tg2Dot;
@@ -181,13 +181,10 @@ public class GreqlServer extends Thread {
 				markResultElements(e.getKey(), marker);
 				markResultElements(e.getValue(), marker);
 			}
-		} else if (val instanceof Slice) {
-			Slice slice = (Slice) val;
-			for (Vertex v : slice.getVertices()) {
-				marker.mark(v);
-			}
-			for (Edge e : slice.getEdges()) {
-				marker.mark(e);
+		} else if (val instanceof SubGraphMarker) {
+			SubGraphMarker slice = (SubGraphMarker) val;
+			for (GraphElement<?, ?> elem : slice.getMarkedElements()) {
+				marker.mark(elem);
 			}
 		} else if (val instanceof PathSystem) {
 			PathSystem pathSystem = (PathSystem) val;
@@ -214,7 +211,7 @@ public class GreqlServer extends Thread {
 		}
 	}
 
-	private GreqlQueryCache cache = new GreqlQueryCache();
+	private final GreqlQueryCache cache = new GreqlQueryCache();
 
 	private Object evalQuery(String queryFile) throws IOException {
 		println("Evaling query file " + queryFile + ".", PrintTarget.BOTH, true);
