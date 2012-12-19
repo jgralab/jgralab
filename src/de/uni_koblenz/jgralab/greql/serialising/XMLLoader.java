@@ -53,6 +53,7 @@ import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql.exception.SerialisingException;
+import de.uni_koblenz.jgralab.greql.types.Path;
 import de.uni_koblenz.jgralab.greql.types.PathSystem;
 import de.uni_koblenz.jgralab.greql.types.PathSystem.PathSystemNode;
 import de.uni_koblenz.jgralab.greql.types.Table;
@@ -65,6 +66,10 @@ import de.uni_koblenz.jgralab.schema.Schema;
 public class XMLLoader extends XmlProcessor implements XMLConstants {
 
 	private Graph defaultGraph;
+
+	private PathSystem pathSystem;
+
+	private Path path;
 
 	/**
 	 * Synthetic class to ease XML parsing
@@ -200,6 +205,22 @@ public class XMLLoader extends XmlProcessor implements XMLConstants {
 			}
 			stack.pop();
 			stack.push(parentElement);
+		} else if (parentElement == Path.class) {
+			assert endedElement instanceof List;
+			if (path == null) {
+				@SuppressWarnings("unchecked")
+				List<Vertex> vertices = (List<Vertex>) endedElement;
+				path = Path.start(vertices.get(0));
+			} else {
+				@SuppressWarnings("unchecked")
+				List<Edge> edges = (List<Edge>) endedElement;
+				for (Edge e : edges) {
+					path = path.append(e);
+				}
+				stack.pop();
+				stack.push(path);
+				path = null;
+			}
 		} else if (parentElement instanceof PathSystem) {
 			PathSystemNodeEntry nodeEntry = (PathSystemNodeEntry) endedElement;
 			PathSystemNode node = pathSystem.setRootVertex(
@@ -364,6 +385,8 @@ public class XMLLoader extends XmlProcessor implements XMLConstants {
 			}
 			val = v;
 			// ---------------------------------------------------------------
+		} else if (elem.equals(PATH)) {
+			val = Path.class;
 		} else if (elem.equals(PATH_SYTEM)) {
 			pathSystem = new PathSystem();
 			val = pathSystem;
@@ -387,8 +410,6 @@ public class XMLLoader extends XmlProcessor implements XMLConstants {
 
 		stack.push(val);
 	}
-
-	private PathSystem pathSystem;
 
 	@SuppressWarnings("unchecked")
 	private Object createEnum(String litName, String enumTypeName) {
