@@ -397,6 +397,8 @@ public class XMLOutputWriter extends DefaultWriter implements XMLConstants {
 		writer.writeStartElement(PATH_SYTEM_NODE);
 		writer.writeAttribute(ATTR_PATH_SYTEM_NODE_STATE, new Integer(
 				currentNode.state).toString());
+		writer.writeAttribute(ATTR_PATH_SYTEM_NODE_IS_LEAF,
+				new Boolean(p.isLeaf(currentNode)).toString());
 		writeVertex(currentNode.currentVertex);
 		if (currentNode.edge2parent != null) {
 			writeEdge(currentNode.edge2parent);

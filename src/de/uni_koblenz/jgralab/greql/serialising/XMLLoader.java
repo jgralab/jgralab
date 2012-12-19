@@ -92,6 +92,13 @@ public class XMLLoader extends XmlProcessor implements XMLConstants {
 		Edge edge2Parent;
 		boolean isLeaf = true;
 		List<PathSystemNode> children = new ArrayList<PathSystemNode>();
+
+		@Override
+		public String toString() {
+			return "(currentVertex: " + currentVertex + " state: " + state
+					+ " edge2Parent: " + edge2Parent + " isLeaf: " + isLeaf
+					+ ")" + " children: " + children;
+		}
 	}
 
 	private Map<String, Graph> id2GraphMap = null;
@@ -197,25 +204,21 @@ public class XMLLoader extends XmlProcessor implements XMLConstants {
 			PathSystemNodeEntry nodeEntry = (PathSystemNodeEntry) endedElement;
 			PathSystemNode node = pathSystem.setRootVertex(
 					nodeEntry.currentVertex, nodeEntry.state, nodeEntry.isLeaf);
-			System.out.println("created: " + node);
 			for (PathSystemNode child : nodeEntry.children) {
 				pathSystem.addEdge(child, node, child.edge2parent);
-				System.out.println(node + "<--" + child);
 			}
 			pathSystem.finish();
 			pathSystem = null;
 		} else if (parentElement instanceof PathSystemNodeEntry) {
-			// TODO
 			PathSystemNodeEntry parentNode = (PathSystemNodeEntry) parentElement;
 			if (endedElement instanceof PathSystemNodeEntry) {
 				PathSystemNodeEntry nodeEntry = (PathSystemNodeEntry) endedElement;
 				PathSystemNode node = pathSystem.addVertex(
 						nodeEntry.currentVertex, nodeEntry.state,
 						nodeEntry.isLeaf);
-				System.out.println("created: " + node);
+				node.edge2parent = nodeEntry.edge2Parent;
 				for (PathSystemNode child : nodeEntry.children) {
-					pathSystem.addEdge(child, node, nodeEntry.edge2Parent);
-					System.out.println(node + "<--" + child);
+					pathSystem.addEdge(child, node, child.edge2parent);
 				}
 				parentNode.children.add(node);
 			} else if (endedElement instanceof Vertex) {
@@ -362,18 +365,15 @@ public class XMLLoader extends XmlProcessor implements XMLConstants {
 			val = v;
 			// ---------------------------------------------------------------
 		} else if (elem.equals(PATH_SYTEM)) {
-			// TODO
 			pathSystem = new PathSystem();
 			val = pathSystem;
 		} else if (elem.equals(PATH_SYTEM_NODE)) {
-			// TODO
 			PathSystemNodeEntry nodeEntry = new PathSystemNodeEntry();
 			nodeEntry.state = Integer
 					.parseInt(getAttribute(ATTR_PATH_SYTEM_NODE_STATE));
+			nodeEntry.isLeaf = getAttribute(ATTR_PATH_SYTEM_NODE_IS_LEAF)
+					.equals("true");
 			val = nodeEntry;
-			if (stack.peek() instanceof PathSystemNodeEntry) {
-				((PathSystemNodeEntry) stack.peek()).isLeaf = false;
-			}
 		} else {
 			throw new SerialisingException("Unrecognized XML element '" + elem
 					+ "'.", null);

@@ -77,5 +77,6 @@ public interface XMLConstants {
 	public static final String ATTR_VERTEX_LINK = "vertexLink";
 	public static final String ATTR_EDGE_LINK = "edgeLink";
 	public static final String ATTR_PATH_SYTEM_NODE_STATE = "state";
+	public static final String ATTR_PATH_SYTEM_NODE_IS_LEAF = "isLeaf";
 
 }

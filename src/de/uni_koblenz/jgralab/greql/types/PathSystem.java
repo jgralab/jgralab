@@ -218,6 +218,10 @@ public class PathSystem {
 		}
 	}
 
+	public boolean isLeaf(PathSystemNode leaf) {
+		return leafNodes.contains(leaf);
+	}
+
 	public Set<PathSystemNode> getParents(PathSystemNode pe) {
 		return dag.getDirectPredecessors(pe);
 	}

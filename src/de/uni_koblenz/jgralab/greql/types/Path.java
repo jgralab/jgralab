@@ -45,8 +45,8 @@ import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.Vertex;
 
 public class Path {
-	private PVector<Vertex> vertices;
-	private PVector<Edge> edges;
+	private final PVector<Vertex> vertices;
+	private final PVector<Edge> edges;
 
 	private Path(PVector<Vertex> vs, PVector<Edge> es) {
 		vertices = vs;
@@ -78,7 +78,8 @@ public class Path {
 	public Path append(Edge e) {
 		if (e.getThis() != getEndVertex()) {
 			throw new IllegalArgumentException("Can't append " + e
-					+ " to this Path (e.getThis() !=" + getEndVertex() + ")");
+					+ " to this Path (e.getThis() (" + e.getThis() + ") !="
+					+ getEndVertex() + ")");
 		}
 		return new Path(vertices.plus(e.getThat()), edges.plus(e));
 	}
