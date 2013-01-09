@@ -69,33 +69,39 @@ public abstract class VertexImpl extends
 
 	@Override
 	public void setNextVertex(Vertex nextVertex) {
-		this.nextVertexId = nextVertex.getId();
+		if(nextVertex == null)
+			this.nextVertexId = 0;
+		else
+			this.nextVertexId = nextVertex.getId();
 		getTracker().putVariable(4, this.nextVertexId);
 	}
 
 	@Override
 	public void setPrevVertex(Vertex prevVertex) {
-		this.prevVertexId = prevVertex.getId();
+		if(prevVertex == null)
+			this.prevVertexId = 0;
+		else
+			this.prevVertexId = prevVertex.getId();
 		getTracker().putVariable(12, this.prevVertexId);
 	}
 
 	@Override
 	public void setFirstIncidence(InternalEdge firstIncidence) {
-		if(firstIncidence instanceof ReversedEdgeImpl){
-			this.firstIncidenceId = - firstIncidence.getId();
-		}else{
+		if(firstIncidence == null)
+			this.firstIncidenceId = 0;
+		else
 			this.firstIncidenceId = firstIncidence.getId();
-		}
+		
 		getTracker().putVariable(20, this.firstIncidenceId);
 	}
 
 	@Override
 	public void setLastIncidence(InternalEdge lastIncidence) {
-		if(lastIncidence instanceof ReversedEdgeImpl){
-			this.lastIncidenceId = - lastIncidence.getId();
-		}else{
+		if(lastIncidence == null)
+			this.lastIncidenceId = 0;
+		else
 			this.lastIncidenceId = lastIncidence.getId();
-		}
+		
 		getTracker().putVariable(28, this.lastIncidenceId);
 	}
 	
@@ -118,7 +124,7 @@ public abstract class VertexImpl extends
 	 */
 	protected VertexImpl(int id, Graph graph) {
 		super(id, graph);
-		((GraphImpl) graph).addVertex(this);
+		//((GraphImpl) graph).addVertex(this);
 	}
 
 	@Override
@@ -191,6 +197,11 @@ public abstract class VertexImpl extends
 		VertexTracker tracker = getTracker();
 		if (tracker != null)
 			tracker.storeLists(this);
+	}
+	
+	@Override
+	public int hashCode(){
+		return this.id;
 	}
 	
 }

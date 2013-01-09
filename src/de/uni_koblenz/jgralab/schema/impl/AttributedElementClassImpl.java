@@ -46,6 +46,7 @@ import org.pcollections.PSet;
 import org.pcollections.PVector;
 
 import de.uni_koblenz.jgralab.AttributedElement;
+import de.uni_koblenz.jgralab.ImplementationType;
 import de.uni_koblenz.jgralab.exception.NoSuchAttributeException;
 import de.uni_koblenz.jgralab.schema.Attribute;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
@@ -210,6 +211,8 @@ public abstract class AttributedElementClassImpl<SC extends AttributedElementCla
 			try {
 				Field f = getSchemaClass().getField("IMPLEMENTATION_CLASS");
 				schemaImplementationClass = (Class<IC>) f.get(schemaClass);
+				
+				
 			} catch (SecurityException e) {
 				throw new SchemaClassAccessException(e);
 			} catch (NoSuchFieldException e) {
@@ -218,6 +221,41 @@ public abstract class AttributedElementClassImpl<SC extends AttributedElementCla
 				throw new SchemaClassAccessException(e);
 			} catch (IllegalAccessException e) {
 				throw new SchemaClassAccessException(e);
+			}
+		}
+		return schemaImplementationClass;
+	}
+	
+	@SuppressWarnings("unchecked")
+	//@Override
+	public Class<IC> getSchemaImplementationClass(ImplementationType implType) {
+		if (isAbstract()) {
+			throw new SchemaClassAccessException(
+					"Can't get (generated) schema implementation class. AttributedElementClass '"
+							+ getQualifiedName() + "' is abstract!");
+		}
+		if (schemaImplementationClass == null) {
+			try {
+				String sc = getSchemaClass().getName();
+				String packString = sc.substring(0,sc.lastIndexOf("."));
+				String nameString = sc.substring(sc.lastIndexOf("."));
+				String impltype = (implType == ImplementationType.STANDARD) ?  "std" : "diskv2";
+				String newname = packString + ".impl."+impltype + nameString + "Impl";
+				schemaImplementationClass = (Class<IC>)Class.forName(newname);
+				//Field f = getSchemaClass().getField("IMPLEMENTATION_CLASS");
+				//schemaImplementationClass = (Class<IC>) f.get(schemaClass);
+				
+				
+			} catch (SecurityException e) {
+				throw new SchemaClassAccessException(e);
+			} catch (ClassNotFoundException e){
+				throw new SchemaClassAccessException(e);
+			//} catch (NoSuchFieldException e) {
+			//	throw new SchemaClassAccessException(e);
+			} catch (IllegalArgumentException e) {
+				throw new SchemaClassAccessException(e);
+			//} catch (IllegalAccessException e) {
+			//	throw new SchemaClassAccessException(e);
 			}
 		}
 		return schemaImplementationClass;

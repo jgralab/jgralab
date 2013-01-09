@@ -7,12 +7,9 @@ import de.uni_koblenz.jgralab.TemporaryEdge;
 import de.uni_koblenz.jgralab.TemporaryVertex;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.exception.GraphException;
-import de.uni_koblenz.jgralab.impl.EdgeBaseImpl;
 import de.uni_koblenz.jgralab.impl.FreeIndexList;
 import de.uni_koblenz.jgralab.impl.InternalEdge;
 import de.uni_koblenz.jgralab.impl.InternalVertex;
-import de.uni_koblenz.jgralab.impl.ReversedEdgeBaseImpl;
-import de.uni_koblenz.jgralab.impl.VertexBaseImpl;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.GraphClass;
 import de.uni_koblenz.jgralab.schema.VertexClass;
@@ -87,21 +84,29 @@ import de.uni_koblenz.jgralab.schema.VertexClass;
 
 		@Override
 		public InternalVertex getFirstVertexInVSeq() {
+			if(this.firstVertexId == 0)
+				return null;
 			return (InternalVertex) this.storage.getVertexObject(firstVertexId);
 		}
 
 		@Override
 		public InternalVertex getLastVertexInVSeq() {
+			if (this.lastVertexId == 0)
+				return null;
 			return (InternalVertex) this.storage.getVertexObject(lastVertexId);
 		}
 
 		@Override
 		public InternalEdge getFirstEdgeInESeq() {
+			if(this.firstEdgeId == 0)
+				return null;
 			return (InternalEdge) this.storage.getEdgeObject(firstEdgeId);
 		}
 
 		@Override
 		public InternalEdge getLastEdgeInESeq() {
+			if(this.lastEdgeId == 0)
+				return null;
 			return (InternalEdge) this.storage.getEdgeObject(lastEdgeId);
 		}
 
@@ -142,22 +147,26 @@ import de.uni_koblenz.jgralab.schema.VertexClass;
 
 		@Override
 		public void setFirstVertex(InternalVertex firstVertex) {
-			this.firstVertexId = firstVertex.getId();
+			if(firstVertex != null)
+				this.firstVertexId = firstVertex.getId();
 		}
 
 		@Override
 		public void setLastVertex(InternalVertex lastVertex) {
-			this.lastVertexId = lastVertex.getId();
+			if (lastVertex != null)
+				this.lastVertexId = lastVertex.getId();
 		}
 
 		@Override
 		public void setFirstEdgeInGraph(InternalEdge firstEdge) {
-			this.firstEdgeId = firstEdge.getId();
+			if (firstEdge != null)
+				this.firstEdgeId = firstEdge.getId();
 		}
 
 		@Override
 		public void setLastEdgeInGraph(InternalEdge lastEdge) {
-			this.lastEdgeId = lastEdge.getId();
+			if (lastEdge != null)
+				this.lastEdgeId = lastEdge.getId();
 		}
 
 		@Override
@@ -199,13 +208,21 @@ import de.uni_koblenz.jgralab.schema.VertexClass;
 		 */
 		protected GraphImpl(String id, GraphClass cls, int max, int max2) {
 			super(id, cls, max, max2);
-			this.storage = new MemStorageManager(this);
+			//this.storage = new MemStorageManager(this);
 		}
 
 		protected GraphImpl(String id, GraphClass cls) {
 			super(id, cls);
+			//this.storage = new MemStorageManager(this);
+		}
+
+		public void initializeStorage(){
+			if(this.storage != null){
+				throw new RuntimeException("Initialize storage has already been called.");
+			}
 			this.storage = new MemStorageManager(this);
 		}
+		
 
 		@Override
 		public int allocateVertexIndex(int currentId) {
@@ -311,9 +328,10 @@ import de.uni_koblenz.jgralab.schema.VertexClass;
 			// freeIndex(getFreeVertexList(), v.getId());
 			freeVertexIndex(v.getId());
 			//getVertex()[v.getId()] = null;
-			this.storage.removeVertex(v.getId());
+			
 			v.setPrevVertex(null);
 			v.setNextVertex(null);
+			this.storage.removeVertex(v.getId());
 			v.setId(0);
 			setVCount(getVCountInVSeq() - 1);
 		}
@@ -345,11 +363,13 @@ import de.uni_koblenz.jgralab.schema.VertexClass;
 			freeEdgeIndex(e.getId());
 			//getEdge()[e.getId()] = null;
 			//getRevEdge()[e.getId()] = null;
-			this.storage.removeEdge(e.getId());
+			
 			e.setPrevEdgeInGraph(null);
 			e.setNextEdgeInGraph(null);
+			this.storage.removeEdge(e.getId());
 			e.setId(0);
 			setECount(getECountInESeq() - 1);
+			
 		}
 		
 		@Override
@@ -438,6 +458,47 @@ import de.uni_koblenz.jgralab.schema.VertexClass;
 						eId = nextIncidence[eMax + eId];
 					}
 				}
+			}
+		}
+		
+		/**
+		 * Creates an edge of the given {@link EdgeClass} and adds it to the graph.
+		 */
+		@Override
+		@SuppressWarnings("unchecked")
+		public <T extends Edge> T createEdge(EdgeClass ec, Vertex alpha,
+				Vertex omega) {
+			try {
+				T e =  (T) graphFactory.createEdge(ec, 0, this, alpha, omega);
+				//this.addEdge(e, alpha, omega);
+				return e;
+			} catch (Exception exception) {
+				if (exception instanceof GraphException) {
+					throw (GraphException) exception;
+				} else {
+					throw new GraphException("Error creating edge of class "
+							+ ec.getQualifiedName(), exception);
+				}
+			}
+		}
+
+		/**
+		 * Creates a vertex of the given {@link VertexClass} and adds it to the
+		 * graph.
+		 */
+		@SuppressWarnings("unchecked")
+		@Override
+		public <T extends Vertex> T createVertex(VertexClass vc) {
+			try {
+				T v = (T) graphFactory.createVertex(vc, 0, this);
+				this.addVertex(v);
+				return v;
+			} catch (Exception ex) {
+				if (ex instanceof GraphException) {
+					throw (GraphException) ex;
+				}
+				throw new GraphException("Error creating vertex of class "
+						+ vc.getQualifiedName(), ex);
 			}
 		}
 }

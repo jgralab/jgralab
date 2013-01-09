@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Stack;
 
 import de.uni_koblenz.jgralab.GraphElement;
+import de.uni_koblenz.jgralab.GraphFactory;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.VertexClass;
 
@@ -115,9 +116,11 @@ public class GraphElementProfile {
 	 * @param graphdb
 	 * 		The GraphDatabase that we work with
 	 */
-	//TODO: Find a better way to implement this
-	public static int createProfile(VertexClass cls, int typeId){
-		GraphElementProfile profile = new GraphElementProfile(cls.getSchemaImplementationClass(), typeId);
+	public static int createProfile(VertexClass cls, int typeId, GraphFactory f){
+		GraphElementProfile profile = new GraphElementProfile(f.getVertexImplementationClass(cls),
+				//((AttributedElementClassImpl)cls).getSchemaImplementationClass(ImplementationType.DISKV2), 
+				typeId);
+		System.err.println("DEBUG: profile created "+cls);
 		profiles[typeId] = profile;
 		return profile.getSize();
 	}
@@ -132,9 +135,11 @@ public class GraphElementProfile {
 	 * @param graphdb
 	 * 		The GraphDatabase that we work with
 	 */
-	//TODO: Find a better way to implement this
-	public static int createProfile(EdgeClass cls, int typeId){
-		GraphElementProfile profile = new GraphElementProfile(cls.getSchemaImplementationClass(), typeId);
+	public static int createProfile(EdgeClass cls, int typeId, GraphFactory f){
+		GraphElementProfile profile = new GraphElementProfile(
+				f.getEdgeImplementationClass(cls),
+				//((AttributedElementClassImpl)cls).getSchemaImplementationClass(ImplementationType.DISKV2), 
+				typeId);
 		profiles[typeId] = profile;
 		return profile.getSize();
 	}
@@ -201,7 +206,6 @@ public class GraphElementProfile {
 	public ByteBuffer getAttributesForElement(GraphElement<?,?> ge){
 		//make enough room to store all attributes
 		ByteBuffer buf = ByteBuffer.allocate(startOfStrings - 64);
-		
 		//iterate over every attribute
 		for (int i = 0; i < attrTypeIDs.length; i++){
 			switch (attrTypeIDs[i]){
@@ -358,9 +362,9 @@ public class GraphElementProfile {
 		
 		detectAttrTypes(primitives);
 		
-		detectGetters(cls, primitives, attrGetters);
-		detectGetters(cls, strings, stringGetters);
-		detectGetters(cls, lists, listGetters);
+		detectGetters(cls, primitives, attrGetters, attrTypeIDs);
+		detectGetters(cls, strings, stringGetters, null);
+		detectGetters(cls, lists, listGetters, null);
 		
 		detectSetters(cls, primitives, attrSetters);
 		detectSetters(cls, strings, stringSetters);
@@ -419,13 +423,13 @@ public class GraphElementProfile {
 	 * @param getters
 	 * 	   The Array in which the get methods are stored
 	 */
-	private void detectGetters(Class<?> cls, Stack<Field> attributes, Method[] getters){
+	private void detectGetters(Class<?> cls, Stack<Field> attributes, Method[] getters,byte[] attrTypeIDs){
 		String methodName;
 		Method m;
 		int index = 0;
 		
 		for(Field f: attributes){
-			if (attrTypeIDs[index] == 0){
+			if (attrTypeIDs != null && attrTypeIDs[index] == 0){
 				methodName = "is" + f.getName();
 			}
 			else {

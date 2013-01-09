@@ -24,13 +24,14 @@ public class EdgeTracker extends Tracker{
 		int typeId = ed.getAttributedElementClass().getGraphElementClassIdInSchema();
 		variables.putInt(0, (typeId + 1));
 				
-		putVariable(4, ed.getNextEdgeId());
-		putVariable(12, ed.getPrevEdgeId());
-		putVariable(20, ed.getNextIncidenceId());
-		putVariable(28, ed.getPrevIncidenceId());
-		putVariable(36, ed.getIncidentVertexId());
-		putVariable(44, ((ReversedEdgeImpl)ed.getReversedEdge()).getNextIncidenceId());
-		putVariable(52, ((ReversedEdgeImpl)ed.getReversedEdge()).getPrevIncidenceId());
-		putVariable(60, ((ReversedEdgeImpl)ed.getReversedEdge()).getIncidentVertexId());
+		putVariable(4, (long)ed.getNextEdgeId());
+		putVariable(12, (long)ed.getPrevEdgeId());
+		putVariable(20, (long)ed.getNextIncidenceId());
+		putVariable(28, (long)ed.getPrevIncidenceId());
+		putVariable(36, (long)ed.getIncidentVertexId());
+		putVariable(44, (long)((ReversedEdgeImpl)ed.getReversedEdge()).getNextIncidenceId());
+		putVariable(52, (long)((ReversedEdgeImpl)ed.getReversedEdge()).getPrevIncidenceId());
+		//System.out.println("** store " + (long)((ReversedEdgeImpl)ed.getReversedEdge()).getIncidentVertexId());
+		putVariable(60, (long)((ReversedEdgeImpl)ed.getReversedEdge()).getIncidentVertexId());
 	}
 }

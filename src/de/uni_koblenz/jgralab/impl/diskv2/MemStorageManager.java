@@ -140,10 +140,13 @@ public final class MemStorageManager {
 	 * 		The vertex that was reconstructed with data from the disk
 	 */
 	private Vertex getVertexObjectFromDisk(int id){
+		System.err.println("READ VERTEX FROM DISK: " + id);
 		cleanupVertexCache();
 		VertexImpl v = diskStorage.readVertexFromDisk(id);
 		CacheEntry<VertexImpl> vRef = new CacheEntry<VertexImpl>(v, vertexQueue);
 		putElement(vRef, vertexCache, hash(id, vertexMask));
+		//System.err.println(" -- next vertex ID" + v.getNextVertexId());
+		//System.err.println(" -- prev vertex ID" + v.getPrevVertexId());
 		return vRef.get();
 	}
 
@@ -156,10 +159,13 @@ public final class MemStorageManager {
 	public synchronized final Edge getEdgeObject(int id) {
 		cleanupEdgeCache();
 		
-		CacheEntry<EdgeImpl> entry = getElement(edgeCache, id, hash(id, edgeMask));
+		
+		int eId = id > 0 ? id : - id;
+		CacheEntry<EdgeImpl> entry = getElement(edgeCache, eId, hash(eId, edgeMask));
 		
 		if (entry == null){
-			return getEdgeObjectFromDisk(id);
+			Edge e = getEdgeObjectFromDisk(eId);
+			return id > 0 ? e : e.getReversedEdge();
 		}
 		
 		EdgeImpl e = entry.get();
@@ -169,7 +175,10 @@ public final class MemStorageManager {
 			removeEdge(entry.getKey());
 			e = (EdgeImpl) diskStorage.readEdgeFromDisk(entry.getKey());
 			CacheEntry<EdgeImpl> eRef = new CacheEntry<EdgeImpl>(e, edgeQueue);
-			putElement(eRef, edgeCache, hash(id, edgeMask));
+			putElement(eRef, edgeCache, hash(eId, edgeMask));
+		}else{
+			if(id<0)
+				return e.getReversedEdge();
 		}
 		
 		return e;
@@ -185,6 +194,8 @@ public final class MemStorageManager {
 	 * 		The edge that was reconstructed with data from the disk
 	 */
 	private Edge getEdgeObjectFromDisk(int id){
+		//System.err.println("READ EDGE FROM DISK: " + id);
+
 		EdgeImpl e = diskStorage.readEdgeFromDisk(id);
 		CacheEntry<EdgeImpl> eRef = new CacheEntry<EdgeImpl>(e, edgeQueue);
 		putElement(eRef, edgeCache, hash(id, edgeMask));
@@ -218,7 +229,7 @@ public final class MemStorageManager {
 	 */
 	public synchronized void putVertex(VertexImpl v) {
 		CacheEntry<VertexImpl> vEntry = new CacheEntry<VertexImpl>(v, vertexQueue);
-		putElement(vEntry, vertexCache, hash(v.hashCode(), vertexMask));
+		putElement(vEntry, vertexCache, hash(v.getId(), vertexMask));
 		
 		vEntry.getOrCreateTracker(v).fill(v);
 		
@@ -233,7 +244,7 @@ public final class MemStorageManager {
 	 */
 	public synchronized void putEdge(EdgeImpl e) {
 		CacheEntry<EdgeImpl> eEntry = new CacheEntry<EdgeImpl>(e, edgeQueue);
-		putElement(eEntry, edgeCache, hash(e.hashCode(), edgeMask));
+		putElement(eEntry, edgeCache, hash(e.getId(), edgeMask));
 		
 		eEntry.getOrCreateTracker(e).fill(e);
 		

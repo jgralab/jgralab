@@ -86,6 +86,8 @@ public interface GraphFactory {
 	 *            the {@link Graph} that contains the new {@link Vertex}
 	 */
 	public <V extends Vertex> V createVertex(VertexClass vc, int id, Graph g);
+	
+	public <V extends Vertex> V restoreVertex(VertexClass vc, int id, Graph g);
 
 	/**
 	 * Creates an {@link Edge} for the specified {@link EdgeClass}.
@@ -104,6 +106,9 @@ public interface GraphFactory {
 	public <E extends Edge> E createEdge(EdgeClass ec, int id, Graph g,
 			Vertex alpha, Vertex omega);
 
+	public <E extends Edge> E restoreEdge(EdgeClass ec, int id, Graph g,
+			Vertex alpha, Vertex omega);
+	
 	/**
 	 * Sets the implementation class of the specified {@link GraphClass}
 	 * 
@@ -136,5 +141,9 @@ public interface GraphFactory {
 	 */
 	public void setEdgeImplementationClass(EdgeClass ec,
 			Class<? extends Edge> edgeImplementationClass);
+	
+	public Class<? extends VertexClass> getVertexImplementationClass(VertexClass vc);
+	public Class<? extends EdgeClass> getEdgeImplementationClass(EdgeClass ec);
+	
 
 }

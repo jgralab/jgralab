@@ -111,7 +111,7 @@ public class EdgeCodeGenerator extends
 
 	@Override
 	protected CodeBlock createSpecialConstructorCode() {
-		if (currentCycle.isStdOrDiskv2Impl()){//.isStdImpl()) {
+		if (currentCycle.isStdImpl()) {
 			return new CodeSnippet(
 					"((#jgImplPackage#.InternalGraph) graph).addEdge(this, alpha, omega);");
 		}
