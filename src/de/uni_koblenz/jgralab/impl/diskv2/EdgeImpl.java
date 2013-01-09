@@ -43,42 +43,51 @@ public abstract class EdgeImpl extends de.uni_koblenz.jgralab.impl.EdgeBaseImpl 
 
 	@Override
 	public InternalEdge getNextIncidenceInISeq() {
-		if(nextIncidenceId < 0)
-			return (InternalEdge) this.getGraph().getEdge(- nextIncidenceId);
-		else
+		//if(nextIncidenceId < 0)
+		//	return (InternalEdge) this.getGraph().getEdge(- nextIncidenceId);
+		//else
 			return (InternalEdge) this.getGraph().getEdge(nextIncidenceId);
 	}
 
 	@Override
 	public InternalEdge getPrevIncidenceInISeq() {
-		if(prevIncidenceId < 0)
-			return (InternalEdge) this.getGraph().getEdge(- prevIncidenceId);
-		else
+		//if(prevIncidenceId < 0)
+		//	return (InternalEdge) this.getGraph().getEdge(- prevIncidenceId);
+	//	else
 			return (InternalEdge) this.getGraph().getEdge(prevIncidenceId);
 	}
 
 	@Override
 	public void setNextEdgeInGraph(Edge nextEdge) {
-		this.nextEdgeId = nextEdge.getId();
+		if(nextEdge == null)
+			this.nextEdgeId = 0;
+		else
+			this.nextEdgeId = nextEdge.getId();
 		getTracker().putVariable(4, this.nextEdgeId);
 	}
 
 	@Override
 	public void setPrevEdgeInGraph(Edge prevEdge) {
-		this.prevEdgeId = prevEdge.getId();
+		if(prevEdge == null)
+			this.prevEdgeId = 0;
+		else				
+			this.prevEdgeId = prevEdge.getId();
 		getTracker().putVariable(12, this.prevEdgeId);
 	}
 
 	@Override
 	public void setIncidentVertex(Vertex v) {
-		incidentVertexId = v.getId();
+		if(v == null)
+			this.incidentVertexId = 0;
+		else
+			incidentVertexId = v.getId();
 		getTracker().putVariable(36, this.incidentVertexId);
 	}
 
 	@Override
 	public void setNextIncidenceInternal(InternalEdge nextIncidence) {
-		if(nextIncidence instanceof ReversedEdgeImpl)	
-			this.nextIncidenceId = - nextIncidence.getId();
+		if(nextIncidence == null)
+			this.nextIncidenceId = 0;
 		else
 			this.nextIncidenceId = nextIncidence.getId();
 		getTracker().putVariable(20, this.nextIncidenceId);
@@ -86,8 +95,8 @@ public abstract class EdgeImpl extends de.uni_koblenz.jgralab.impl.EdgeBaseImpl 
 
 	@Override
 	public void setPrevIncidenceInternal(InternalEdge prevIncidence) {
-		if(prevIncidence instanceof ReversedEdgeImpl)
-			this.prevIncidenceId = - prevIncidence.getId();
+		if(prevIncidence == null)
+			this.prevIncidenceId = 0;
 		else
 			this.prevIncidenceId = prevIncidence.getId();
 		getTracker().putVariable(28, this.prevIncidenceId);
@@ -177,5 +186,10 @@ public abstract class EdgeImpl extends de.uni_koblenz.jgralab.impl.EdgeBaseImpl 
 		EdgeTracker tracker = getTracker();
 		if (tracker != null)
 			tracker.storeLists(this);
+	}
+	
+	@Override
+	public int hashCode(){
+		return this.id;
 	}
 }

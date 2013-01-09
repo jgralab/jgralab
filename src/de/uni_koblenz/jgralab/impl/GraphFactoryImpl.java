@@ -193,7 +193,18 @@ public abstract class GraphFactoryImpl implements GraphFactory {
 					ex);
 		}
 	}
+	@Override
+	public <V extends Vertex> V restoreVertex(VertexClass vc, int id, Graph g) {
+		throw new UnsupportedOperationException("Restore only available for diskv2 impl.");
+	}
 
+
+	@Override
+	public <E extends Edge> E restoreEdge(EdgeClass ec, int id, Graph g,
+			Vertex alpha, Vertex omega) {
+		throw new UnsupportedOperationException("Restore only available for diskv2 impl.");
+	}
+	
 	@Override
 	public void setVertexImplementationClass(VertexClass vc,
 			Class<? extends Vertex> implementationClass) {
@@ -215,6 +226,15 @@ public abstract class GraphFactoryImpl implements GraphFactory {
 			throw new SchemaException(implementationClass.getCanonicalName()
 					+ " does not implement " + originalClass.getCanonicalName());
 		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	public Class<? extends VertexClass> getVertexImplementationClass(VertexClass vc){
+		return (Class<? extends VertexClass>) vertexMap.get(vc).getDeclaringClass();
+	}
+	@SuppressWarnings("unchecked")
+	public Class<? extends EdgeClass> getEdgeImplementationClass(EdgeClass ec){
+		return (Class<? extends EdgeClass>) edgeMap.get(ec).getDeclaringClass();
 	}
 
 	@Override

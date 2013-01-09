@@ -89,7 +89,7 @@ public class DiskStorageManager {
 		for (VertexClass vClass: vClasses){
 			if (!vClass.isAbstract()){
 				typeId = vClass.getGraphElementClassIdInSchema();
-				vSize = GraphElementProfile.createProfile(vClass, typeId);
+				vSize = GraphElementProfile.createProfile(vClass, typeId, graphdb.getGraphFactory());
 				if (vSize > maxVSize) maxVSize = vSize;
 			}
 		}
@@ -99,7 +99,7 @@ public class DiskStorageManager {
 		for (EdgeClass eClass: eClasses){
 			if (!eClass.isAbstract()){
 				typeId = eClass.getGraphElementClassIdInSchema();
-				eSize = GraphElementProfile.createProfile(eClass, typeId);
+				eSize = GraphElementProfile.createProfile(eClass, typeId, graphdb.getGraphFactory());
 				if (eSize > maxESize) maxESize = eSize;
 			}
 		}
@@ -366,18 +366,28 @@ public class DiskStorageManager {
 		GraphFactory factory = graphdb.getGraphFactory();
 		
 		//create a new Vertex of the given vertex class with the given ID
-		VertexImpl ver = (VertexImpl) factory
-				.createVertex(verClass, key, graphdb);
+		//VertexImpl ver = (VertexImpl) factory
+		//		.createVertex(verClass, key, graphdb);
+		VertexImpl ver;
+		try {
+			ver = (VertexImpl)factory.restoreVertex(verClass, key, graphdb);//.getVertexConstructor(verClass).newInstance(key, graphdb);
 		
-		ver.restoreNextVertexId((int)buf.getLong(4));
-		ver.restorePrevVertexId((int)buf.getLong(12));
+			ver.restoreNextVertexId((int)buf.getLong(4));
+			ver.restorePrevVertexId((int)buf.getLong(12));
 		
-		ver.restoreFirstIncidenceId((int)buf.getLong(20));
-		ver.restoreLastIncidenceId((int)buf.getLong(28));
-		ver.restoreIncidenceListVersion(buf.getLong(36));
+			ver.restoreFirstIncidenceId((int)buf.getLong(20));
+			ver.restoreLastIncidenceId((int)buf.getLong(28));
+			ver.restoreIncidenceListVersion(buf.getLong(36));
 		
-		//restore the vertex' variables and restore it
-		return (VertexImpl) restoreGraphElement(ver, buf, typeId);
+			//restore the vertex' variables and restore it
+			return (VertexImpl) restoreGraphElement(ver, buf, typeId);
+		
+		} catch (IllegalArgumentException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} 
+		throw new RuntimeException();
+		
 	}
 	
 	/**
@@ -391,6 +401,8 @@ public class DiskStorageManager {
 	 *        The restored Vertex
 	 */
 	private EdgeImpl restoreEdge(ByteBuffer buf, int key){
+		if(key != 0)
+		System.err.println("restore edge " + key);
 		int typeId = buf.getInt(0) - 1;
 		
 		Schema schema = graphdb.getSchema();
@@ -405,18 +417,26 @@ public class DiskStorageManager {
 		
 		//create a new Edge of the given edge class with the given ID
 		GraphFactory factory = graphdb.getGraphFactory();
-		EdgeImpl edge = (EdgeImpl) factory
-				.createEdge(edgeClass, key, graphdb, alpha, omega);
+		//EdgeImpl edge = (EdgeImpl) factory
+		//		.createEdge(edgeClass, key, graphdb, alpha, omega);
+		EdgeImpl edge;
+		try {
+			edge = (EdgeImpl) factory.restoreEdge(edgeClass, key, graphdb, alpha, omega);//.getEdgeConstructor(edgeClass).newInstance(key, graphdb, alpha, omega);
 		
-		edge.restoreNextEdgeId((int)buf.getLong(4));
-		edge.restorePrevEdgeId((int)buf.getLong(12));
-		edge.restoreNextIncidenceId((int)buf.getLong(20));
-		edge.restorePrevIncidenceId((int)buf.getLong(28));
-		((ReversedEdgeImpl)edge.getReversedEdge()).restoreNextIncidenceId((int)buf.getLong(44));
-		((ReversedEdgeImpl)edge.getReversedEdge()).restorePrevIncidenceId((int)buf.getLong(52));
+			edge.restoreNextEdgeId((int)buf.getLong(4));
+			edge.restorePrevEdgeId((int)buf.getLong(12));
+			edge.restoreNextIncidenceId((int)buf.getLong(20));
+			edge.restorePrevIncidenceId((int)buf.getLong(28));
+			((ReversedEdgeImpl)edge.getReversedEdge()).restoreNextIncidenceId((int)buf.getLong(44));
+			((ReversedEdgeImpl)edge.getReversedEdge()).restorePrevIncidenceId((int)buf.getLong(52));
 		
-		//restore the edge's variables and restore it
-		return (EdgeImpl) restoreGraphElement(edge, buf, typeId);
+			//restore the edge's variables and restore it
+			return (EdgeImpl) restoreGraphElement(edge, buf, typeId);
+		} catch (IllegalArgumentException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} 
+		throw new RuntimeException();
 	}
 	
 	/**

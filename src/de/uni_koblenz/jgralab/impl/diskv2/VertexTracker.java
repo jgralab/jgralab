@@ -26,11 +26,11 @@ public class VertexTracker extends Tracker{
 		int typeId = ve.getAttributedElementClass().getGraphElementClassIdInSchema();
 		variables.putInt(0, (typeId + 1));
 				
-		putVariable(4, ve.getNextVertexId());
-		putVariable(12, ve.getPrevVertexId());
-		putVariable(20, ve.getFirstIncidenceId());
-		putVariable(28, ve.getLastIncidenceId());
-		putVariable(36, ve.getIncidenceListVersion());	
+		putVariable(4, (long)ve.getNextVertexId());
+		putVariable(12, (long)ve.getPrevVertexId());
+		putVariable(20, (long)ve.getFirstIncidenceId());
+		putVariable(28, (long)ve.getLastIncidenceId());
+		putVariable(36, (long)ve.getIncidenceListVersion());	
 	}
 	
 }

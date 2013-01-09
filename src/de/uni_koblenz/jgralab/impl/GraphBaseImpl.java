@@ -250,17 +250,19 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 			} else {
 				throw new GraphException("can not load an edge with id <= 0");
 			}
+			appendEdgeToESeq(e);
 		} else {
 			if (!canAddGraphElement(eId)) {
-				throw new GraphException("can not add an edge with id != 0");
+				throw new GraphException("can not add an edge with id != 0 - wa s" + eId );
 			}
 			eId = allocateEdgeIndex(eId);
 			assert eId != 0;
 			e.setId(eId);
+			appendEdgeToESeq(e);
 			a.appendIncidenceToISeq(e);
 			o.appendIncidenceToISeq(e.reversedEdge);
 		}
-		appendEdgeToESeq(e);
+		//appendEdgeToESeq(e);
 		if (!isLoading()) {
 			a.incidenceListModified();
 			o.incidenceListModified();

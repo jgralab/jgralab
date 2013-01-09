@@ -42,26 +42,29 @@ public abstract class ReversedEdgeImpl extends
 
 	@Override
 	public void setIncidentVertex(Vertex v) {
-		 this.incidentVertexId = v.getId();
-		 ((EdgeImpl)this.getReversedEdge()).getTracker().putVariable(44, this.incidentVertexId);
+		if(v==null)
+			this.incidentVertexId = 0;
+		else
+			this.incidentVertexId = v.getId();
+		 ((EdgeImpl)this.getReversedEdge()).getTracker().putVariable(60, this.incidentVertexId);
 	}
 
 	@Override
 	public void setNextIncidenceInternal(InternalEdge nextIncidence) {
-		if(nextIncidence instanceof ReversedEdgeImpl)
-			this.nextIncidenceId = - nextIncidence.getId();
+		if(nextIncidence == null)
+			this.nextIncidenceId = 0;
 		else 
 			this.nextIncidenceId = nextIncidence.getId();
-		 ((EdgeImpl)this.getReversedEdge()).getTracker().putVariable(52, this.nextIncidenceId);
+		 ((EdgeImpl)this.getReversedEdge()).getTracker().putVariable(44, this.nextIncidenceId);
 	}
 
 	@Override
 	public void setPrevIncidenceInternal(InternalEdge prevIncidence) {
-		if(prevIncidence instanceof ReversedEdgeImpl)
-			this.prevIncidenceId = - prevIncidence.getId();
+		if(prevIncidence ==null)
+			this.prevIncidenceId = 0;
 		else
 			this.prevIncidenceId = prevIncidence.getId();
-		((EdgeImpl)this.getReversedEdge()).getTracker().putVariable(60, this.prevIncidenceId);
+		((EdgeImpl)this.getReversedEdge()).getTracker().putVariable(52, this.prevIncidenceId);
 	}
 
 	/**
@@ -91,6 +94,11 @@ public abstract class ReversedEdgeImpl extends
 	
 	public void restorePrevIncidenceId(int id){
 		this.prevIncidenceId = id;
+	}
+	
+	@Override
+	public int hashCode(){
+		return - this.id;
 	}
 	
 	
