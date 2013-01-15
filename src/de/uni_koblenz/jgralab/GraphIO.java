@@ -1752,7 +1752,7 @@ public class GraphIO {
 	private Set<Constraint> parseConstraints() throws GraphIOException {
 		// constraints have the form: ["msg" "pred" "optGreql"] or ["msg"
 		// "pred"] and there may be as many as one wants...
-		HashSet<Constraint> constraints = new HashSet<Constraint>(1);
+		Set<Constraint> constraints = new TreeSet<Constraint>();
 		do {
 			match("[");
 			String msg = matchUtfString();
