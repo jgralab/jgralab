@@ -158,7 +158,7 @@ EdgeClass IsBooleanPredicateOfEdgeRestriction: GreqlAggregation from Expression 
 EdgeClass IsSequenceElementOf: IsPathDescriptionOf from PathDescription (2,*) role sequenceElement aggregation shared to SequentialPathDescription (0,*);
 EdgeClass IsSimpleDeclOf: GreqlAggregation from SimpleDeclaration (1,*) role simpleDecl aggregation shared to Declaration (1,1);
 EdgeClass IsStartExprOf: GreqlAggregation from Expression (0,1) role startExpr aggregation shared to PathExpression (0,*);
-EdgeClass IsStartRestrOf: GreqlAggregation from Expression (0,1) role startRestr aggregation shared to PathDescription (0,*);
+EdgeClass IsStartRestrOf: GreqlAggregation from Expression (0,*) role startRestr aggregation shared to PathDescription (0,*);
 EdgeClass IsSubPathOf: IsPathDescriptionOf from PathDescription (2,2) role subPath aggregation shared to IntermediateVertexPathDescription (0,*);
 EdgeClass IsSubgraphDefinitionOf: GreqlAggregation from SubgraphDefinition (0,1) role subgraphDefinition aggregation shared to SubgraphRestrictedExpression (0,*);
 EdgeClass IsSubgraphDefiningExpression : GreqlAggregation from Expression (0,1) role definingExpression aggregation shared to ExpressionDefinedSubgraph (0,*);
