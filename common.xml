@@ -125,7 +125,7 @@
 		<path refid="classpath" />
 		<pathelement path="${testclasses.dir}" />
 		<pathelement path="${testcases.dir}" />
-		<fileset dir="${comlib.dir}/junit" includes="*.jar" />
+		<fileset dir="${lib.dir}/junit" includes="*.jar" />
 	</path>
 
 	<!-- properties for the target "compile" -->
