@@ -2124,7 +2124,8 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 	 * @return
 	 */
 	private String createMethod(CodeList methodBody, GreqlVertex vertex) {
-		String comment = "// " + GreqlSerializer.serializeVertex(vertex);
+		String comment = "// "
+				+ GreqlSerializer.serializeVertex(vertex).replace("\n", " ");
 		String uniqueId = Integer.toString(vertex.getId());
 		StringBuilder formalParams = new StringBuilder();
 		StringBuilder actualParams = new StringBuilder();

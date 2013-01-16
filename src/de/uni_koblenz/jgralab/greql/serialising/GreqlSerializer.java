@@ -268,8 +268,10 @@ public class GreqlSerializer {
 		Iterable<? extends Variable> boundVars = greql2Expression
 				.get_boundVar();
 		PSet<String> importedTypes = greql2Expression.get_importedTypes();
-		for (String impType : importedTypes) {
-			sb.append("import ").append(impType).append(";\n");
+		if (importedTypes != null) {
+			for (String impType : importedTypes) {
+				sb.append("import ").append(impType).append(";\n");
+			}
 		}
 		if (boundVars.iterator().hasNext()) {
 			sb.append("using ");
