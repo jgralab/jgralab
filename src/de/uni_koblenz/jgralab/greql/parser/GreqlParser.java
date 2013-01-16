@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2012 Institute for Software Technology
+ * Copyright (C) 2006-2013 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -1705,6 +1705,8 @@ public class GreqlParser extends ParserHelper {
 				} else {
 					return null;
 				}
+			default:
+				break;
 			}
 		}
 		fail("Expected value construction, but found");
@@ -2648,6 +2650,8 @@ public class GreqlParser extends ParserHelper {
 				}
 				return fl;
 			}
+			default:
+				break;
 			}
 		}
 		fail("Unrecognized literal");

@@ -2,270 +2,133 @@ Manifest-Version: 1.0
 Ant-Version: Apache Ant 1.8.2
 Created-By: 1.6.0_29-b11-402-10M3527 (Apple Inc.)
 Main-Class: de.uni_koblenz.jgralab.JGraLab
-Bundle-Version: 7.2.1.Giraffatitan
+Bundle-Version: 7.3.0.Giraffatitan
 Bundle-ManifestVersion: 2
 Bundle-Name: JGraLab
 Bundle-SymbolicName: de.uni_koblenz.jgralab;singleton:=true
 Bundle-Activator: de.uni_koblenz.jgralab.plugin.Activator
 Bundle-Vendor: Institute for Software Technology
 Require-Bundle: org.eclipse.core.runtime
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
-Bundle-ClassPath: .,lib/ist_utilities.jar,lib/commons-cli-1.2.jar,lib/
- org.riediger.plist.jar
-Export-Package: de.uni_koblenz.ist.utilities.ant;uses:="org.apache.too
- ls.ant.types,org.apache.tools.ant",de.uni_koblenz.ist.utilities.csvre
- ader,de.uni_koblenz.ist.utilities.gui; uses:="javax.swing.border,  ja
- vax.swing,  javax.swing.filechooser,  javax.swing.event",de.uni_koble
- nz.ist.utilities.license_header,de.uni_koblenz.ist.utilities.option_h
- andler;uses:="org.apache.commons.cli",de.uni_koblenz.ist.utilities.xm
- l;uses:="javax.xml.stream,javax.xml.namespace",de.uni_koblenz.jgralab
- ; uses:="de.uni_koblenz.jgralab.eca,  javax.swing.filechooser,  de.un
- i_koblenz.jgralab.graphmarker,  de.uni_koblenz.jgralab.schema,  org.p
- collections",de.uni_koblenz.jgralab.algolib.algorithms; uses:="de.uni
- _koblenz.jgralab.algolib.problems,  de.uni_koblenz.jgralab.algolib.vi
- sitors,  de.uni_koblenz.jgralab,  de.uni_koblenz.jgralab.algolib.func
- tions",de.uni_koblenz.jgralab.algolib.algorithms.reachability; uses:=
- "de.uni_koblenz.jgralab.algolib.problems,  de.uni_koblenz.jgralab.alg
- olib.visitors,  de.uni_koblenz.jgralab.algolib.algorithms,  de.uni_ko
- blenz.jgralab.algolib.algorithms.search,  de.uni_koblenz.jgralab,  de
- .uni_koblenz.jgralab.algolib.functions",de.uni_koblenz.jgralab.algoli
- b.algorithms.search; uses:="de.uni_koblenz.jgralab.algolib.problems, 
-  de.uni_koblenz.jgralab.algolib.visitors,  de.uni_koblenz.jgralab.alg
- olib.algorithms,  de.uni_koblenz.jgralab.algolib.algorithms.search.vi
- sitors,  de.uni_koblenz.jgralab,  de.uni_koblenz.jgralab.algolib.func
- tions",de.uni_koblenz.jgralab.algolib.algorithms.search.visitors; use
- s:="de.uni_koblenz.jgralab.algolib.visitors,  de.uni_koblenz.jgralab.
- algolib.algorithms,  de.uni_koblenz.jgralab.algolib.algorithms.search
- ,  de.uni_koblenz.jgralab",de.uni_koblenz.jgralab.algolib.algorithms.
- shortest_paths; uses:="de.uni_koblenz.jgralab.algolib.problems,  de.u
- ni_koblenz.jgralab.algolib.visitors,  de.uni_koblenz.jgralab.algolib.
- algorithms,  de.uni_koblenz.jgralab.algolib.util,  de.uni_koblenz.jgr
- alab.algolib.algorithms.search,  de.uni_koblenz.jgralab,  de.uni_kobl
- enz.jgralab.algolib.functions",de.uni_koblenz.jgralab.algolib.algorit
- hms.strong_components; uses:="de.uni_koblenz.jgralab.algolib.problems
- ,  de.uni_koblenz.jgralab.algolib.visitors,  de.uni_koblenz.jgralab.a
- lgolib.algorithms,  de.uni_koblenz.jgralab.algolib.algorithms.search,
-   de.uni_koblenz.jgralab,  de.uni_koblenz.jgralab.algolib.functions",
- de.uni_koblenz.jgralab.algolib.algorithms.strong_components.visitors;
-  uses:="de.uni_koblenz.jgralab.algolib.visitors,  de.uni_koblenz.jgra
- lab.algolib.algorithms,  de.uni_koblenz.jgralab,  de.uni_koblenz.jgra
- lab.algolib.algorithms.weak_components.visitors",de.uni_koblenz.jgral
- ab.algolib.algorithms.topological_order; uses:="de.uni_koblenz.jgrala
- b.algolib.problems,  de.uni_koblenz.jgralab.algolib.visitors,  de.uni
- _koblenz.jgralab.algolib.algorithms,  de.uni_koblenz.jgralab.algolib.
- algorithms.search,  de.uni_koblenz.jgralab,  de.uni_koblenz.jgralab.a
- lgolib.functions",de.uni_koblenz.jgralab.algolib.algorithms.topologic
- al_order.visitors;uses:="de.uni_koblenz.jgralab.algolib.visitors,de.u
- ni_koblenz.jgralab.algolib.algorithms,de.uni_koblenz.jgralab",de.uni_
- koblenz.jgralab.algolib.algorithms.weak_components; uses:="de.uni_kob
- lenz.jgralab.algolib.problems,  de.uni_koblenz.jgralab.algolib.visito
- rs,  de.uni_koblenz.jgralab.algolib.algorithms,  de.uni_koblenz.jgral
- ab.algolib.algorithms.search,  de.uni_koblenz.jgralab,  de.uni_koblen
- z.jgralab.algolib.functions",de.uni_koblenz.jgralab.algolib.algorithm
- s.weak_components.visitors;uses:="de.uni_koblenz.jgralab.algolib.visi
- tors,de.uni_koblenz.jgralab.algolib.algorithms,de.uni_koblenz.jgralab
- ",de.uni_koblenz.jgralab.algolib.functions,de.uni_koblenz.jgralab.alg
- olib.functions.adapters;uses:="de.uni_koblenz.jgralab.algolib.functio
- ns",de.uni_koblenz.jgralab.algolib.functions.entries,de.uni_koblenz.j
- gralab.algolib.problems;uses:="de.uni_koblenz.jgralab.algolib.visitor
- s,de.uni_koblenz.jgralab,de.uni_koblenz.jgralab.algolib.functions",de
- .uni_koblenz.jgralab.algolib.util,de.uni_koblenz.jgralab.algolib.visi
- tors;uses:="de.uni_koblenz.jgralab.algolib.algorithms,de.uni_koblenz.
- jgralab",de.uni_koblenz.jgralab.eca;uses:="de.uni_koblenz.jgralab.sch
- ema,de.uni_koblenz.jgralab.eca.events,de.uni_koblenz.jgralab",de.uni_
- koblenz.jgralab.eca.events;uses:="de.uni_koblenz.jgralab.eca,de.uni_k
- oblenz.jgralab.schema,de.uni_koblenz.jgralab",de.uni_koblenz.jgralab.
- exception,de.uni_koblenz.jgralab.graphmarker;uses:="de.uni_koblenz.jg
- ralab.impl,de.uni_koblenz.jgralab,de.uni_koblenz.jgralab.algolib.func
- tions",de.uni_koblenz.jgralab.graphvalidator;uses:="de.uni_koblenz.jg
- ralab.schema,de.uni_koblenz.jgralab",de.uni_koblenz.jgralab.greql; us
- es:="de.uni_koblenz.jgralab.greql.schema,  de.uni_koblenz.jgralab.gre
- ql.types,  de.uni_koblenz.jgralab.schema,  de.uni_koblenz.jgralab.gre
- ql.optimizer,  org.pcollections,  de.uni_koblenz.jgralab.greql.parall
- el,  de.uni_koblenz.jgralab",de.uni_koblenz.jgralab.greql.evaluator; 
- uses:="de.uni_koblenz.jgralab.greql.schema,  de.uni_koblenz.jgralab.g
- reql.evaluator.vertexeval,  de.uni_koblenz.jgralab.greql.optimizer,  
- de.uni_koblenz.jgralab.schema,  org.pcollections,  de.uni_koblenz.jgr
- alab.greql,  de.uni_koblenz.jgralab,  de.uni_koblenz.jgralab.greql.ev
- aluator.fa",de.uni_koblenz.jgralab.greql.evaluator.fa; uses:="de.uni_
- koblenz.jgralab.greql.schema,  de.uni_koblenz.jgralab.greql.evaluator
- ,  de.uni_koblenz.jgralab.greql.evaluator.vertexeval,  de.uni_koblenz
- .jgralab.greql.types,  de.uni_koblenz.jgralab",de.uni_koblenz.jgralab
- .greql.evaluator.vertexeval; uses:="de.uni_koblenz.jgralab.greql.sche
- ma,  de.uni_koblenz.jgralab.greql.funlib,  de.uni_koblenz.jgralab.gre
- ql.evaluator,  de.uni_koblenz.jgralab.greql.types,  org.pcollections,
-   de.uni_koblenz.jgralab,  de.uni_koblenz.jgralab.greql.evaluator.fa"
- ,de.uni_koblenz.jgralab.greql.exception;uses:="de.uni_koblenz.jgralab
- .greql.schema",de.uni_koblenz.jgralab.greql.executable; uses:="de.uni
- _koblenz.jgralab.greql.schema,  de.uni_koblenz.jgralab.greql.types,  
- de.uni_koblenz.jgralab.graphmarker,  de.uni_koblenz.jgralab.schema,  
- de.uni_koblenz.jgralab.greql,  de.uni_koblenz.jgralab.schema.codegene
- rator,  de.uni_koblenz.jgralab.schema.impl.compilation,  de.uni_koble
- nz.jgralab",de.uni_koblenz.jgralab.greql.funlib;uses:="de.uni_koblenz
- .jgralab.greql",de.uni_koblenz.jgralab.greql.funlib.artithmetics;uses
- :="de.uni_koblenz.jgralab.greql.funlib",de.uni_koblenz.jgralab.greql.
- funlib.bitops;uses:="de.uni_koblenz.jgralab.greql.funlib",de.uni_kobl
- enz.jgralab.greql.funlib.collections; uses:="de.uni_koblenz.jgralab.g
- reql.funlib,  de.uni_koblenz.jgralab.greql.types,  org.pcollections, 
-  de.uni_koblenz.jgralab",de.uni_koblenz.jgralab.greql.funlib.graph; u
- ses:="de.uni_koblenz.jgralab.greql.evaluator,  de.uni_koblenz.jgralab
- .greql.funlib,  de.uni_koblenz.jgralab.greql.types,  de.uni_koblenz.j
- gralab.graphmarker,  de.uni_koblenz.jgralab.greql.funlib.graph.base, 
-  org.pcollections,  de.uni_koblenz.jgralab.greql.types.pathsearch,  d
- e.uni_koblenz.jgralab,  de.uni_koblenz.jgralab.greql.evaluator.fa",de
- .uni_koblenz.jgralab.greql.funlib.graph.base; uses:="de.uni_koblenz.j
- gralab.greql.funlib,  de.uni_koblenz.jgralab.greql.types,  org.pcolle
- ctions,  de.uni_koblenz.jgralab",de.uni_koblenz.jgralab.greql.funlib.
- logics;uses:="de.uni_koblenz.jgralab.greql.funlib",de.uni_koblenz.jgr
- alab.greql.funlib.misc;uses:="de.uni_koblenz.jgralab.greql.funlib,de.
- uni_koblenz.jgralab.greql",de.uni_koblenz.jgralab.greql.funlib.relati
- ons;uses:="de.uni_koblenz.jgralab.greql.funlib",de.uni_koblenz.jgrala
- b.greql.funlib.schema; uses:="de.uni_koblenz.jgralab.greql.funlib,  d
- e.uni_koblenz.jgralab.greql.types,  de.uni_koblenz.jgralab.schema,  o
- rg.pcollections,  de.uni_koblenz.jgralab",de.uni_koblenz.jgralab.greq
- l.funlib.statistics;uses:="de.uni_koblenz.jgralab.greql.funlib",de.un
- i_koblenz.jgralab.greql.funlib.strings;uses:="de.uni_koblenz.jgralab.
- greql.funlib,org.pcollections",de.uni_koblenz.jgralab.greql.optimizer
- ; uses:="de.uni_koblenz.jgralab.greql.schema,  de.uni_koblenz.jgralab
- .greql.evaluator,  de.uni_koblenz.jgralab.greql.types,  de.uni_koblen
- z.jgralab.schema,  de.uni_koblenz.jgralab.greql,  de.uni_koblenz.jgra
- lab,  de.uni_koblenz.jgralab.greql.evaluator.fa",de.uni_koblenz.jgral
- ab.greql.optimizer.condexp;uses:="de.uni_koblenz.jgralab.greql.schema
- ,de.uni_koblenz.jgralab.greql",de.uni_koblenz.jgralab.greql.parallel;
- uses:="de.uni_koblenz.jgralab.greql,de.uni_koblenz.jgralab",de.uni_ko
- blenz.jgralab.greql.parser; uses:="de.uni_koblenz.jgralab.greql.schem
- a,  de.uni_koblenz.jgralab.schema,  org.pcollections,  de.uni_koblenz
- .jgralab",de.uni_koblenz.jgralab.greql.schema; uses:="de.uni_koblenz.
- jgralab.schema.impl,  de.uni_koblenz.jgralab.schema,  org.pcollection
- s,  de.uni_koblenz.jgralab",de.uni_koblenz.jgralab.greql.schema.impl.
- std; uses:="de.uni_koblenz.jgralab.greql.schema,  de.uni_koblenz.jgra
- lab.impl,  de.uni_koblenz.jgralab.impl.std,  de.uni_koblenz.jgralab.s
- chema,  org.pcollections,  de.uni_koblenz.jgralab",de.uni_koblenz.jgr
- alab.greql.serialising; uses:="de.uni_koblenz.jgralab.greql.schema,  
- de.uni_koblenz.jgralab.greql.types,  de.uni_koblenz.jgralab.graphmark
- er,  de.uni_koblenz.ist.utilities.xml,  de.uni_koblenz.jgralab.schema
- ,  org.pcollections,  de.uni_koblenz.jgralab,  de.uni_koblenz.jgralab
- .greql.evaluator.fa",de.uni_koblenz.jgralab.greql.types; uses:="de.un
- i_koblenz.jgralab.greql.evaluator,  de.uni_koblenz.jgralab.schema,  d
- e.uni_koblenz.jgralab.greql,  org.pcollections,  de.uni_koblenz.jgral
- ab",de.uni_koblenz.jgralab.greql.types.pathsearch;uses:="de.uni_koble
- nz.jgralab,de.uni_koblenz.jgralab.greql.evaluator.fa",de.uni_koblenz.
- jgralab.gretl; uses:="de.uni_koblenz.jgralab.gretl.template,  de.uni_
- koblenz.jgralab.gretl.parser,  de.uni_koblenz.jgralab.schema,  org.pc
- ollections,  de.uni_koblenz.jgralab",de.uni_koblenz.jgralab.gretl.eca
- ;uses:="de.uni_koblenz.jgralab.eca,de.uni_koblenz.jgralab.eca.events"
- ,de.uni_koblenz.jgralab.gretl.parser;uses:="de.uni_koblenz.jgralab.gr
- etl",de.uni_koblenz.jgralab.gretl.template; uses:="de.uni_koblenz.jgr
- alab.schema.impl,  de.uni_koblenz.jgralab.schema,  org.pcollections, 
-  de.uni_koblenz.jgralab",de.uni_koblenz.jgralab.gretl.template.impl.s
- td; uses:="de.uni_koblenz.jgralab.gretl.template,  de.uni_koblenz.jgr
- alab.impl,  de.uni_koblenz.jgralab.impl.std,  de.uni_koblenz.jgralab.
- schema,  org.pcollections,  de.uni_koblenz.jgralab",de.uni_koblenz.jg
- ralab.gretl.templategraphparser;uses:="de.uni_koblenz.jgralab.gretl.t
- emplate",de.uni_koblenz.jgralab.grumlschema; uses:="de.uni_koblenz.jg
- ralab.schema.impl,  de.uni_koblenz.jgralab.grumlschema.structure,  de
- .uni_koblenz.jgralab.schema,  de.uni_koblenz.jgralab,  de.uni_koblenz
- .jgralab.grumlschema.domains",de.uni_koblenz.jgralab.grumlschema.doma
- ins; uses:="de.uni_koblenz.jgralab.grumlschema.structure,  de.uni_kob
- lenz.jgralab.schema,  org.pcollections,  de.uni_koblenz.jgralab",de.u
- ni_koblenz.jgralab.grumlschema.impl.std; uses:="de.uni_koblenz.jgrala
- b.grumlschema.structure,  de.uni_koblenz.jgralab.impl.std,  de.uni_ko
- blenz.jgralab.impl,  de.uni_koblenz.jgralab.schema,  de.uni_koblenz.j
- gralab.grumlschema,  de.uni_koblenz.jgralab,  de.uni_koblenz.jgralab.
- grumlschema.domains",de.uni_koblenz.jgralab.grumlschema.impl.std.doma
- ins; uses:="de.uni_koblenz.jgralab.grumlschema.structure,  de.uni_kob
- lenz.jgralab.impl,  de.uni_koblenz.jgralab.impl.std,  de.uni_koblenz.
- jgralab.schema,  org.pcollections,  de.uni_koblenz.jgralab,  de.uni_k
- oblenz.jgralab.grumlschema.domains",de.uni_koblenz.jgralab.grumlschem
- a.impl.std.structure; uses:="de.uni_koblenz.jgralab.grumlschema.struc
- ture,  de.uni_koblenz.jgralab.impl.std,  de.uni_koblenz.jgralab.impl,
-   de.uni_koblenz.jgralab.schema,  de.uni_koblenz.jgralab,  de.uni_kob
- lenz.jgralab.grumlschema.domains",de.uni_koblenz.jgralab.grumlschema.
- structure;uses:="de.uni_koblenz.jgralab.schema,de.uni_koblenz.jgralab
- ,de.uni_koblenz.jgralab.grumlschema.domains",de.uni_koblenz.jgralab.i
- mpl; uses:="de.uni_koblenz.jgralab.schema.impl,  de.uni_koblenz.jgral
- ab.eca,  de.uni_koblenz.jgralab.schema,  org.pcollections,  de.uni_ko
- blenz.jgralab",de.uni_koblenz.jgralab.impl.generic; uses:="de.uni_kob
- lenz.jgralab.impl,  de.uni_koblenz.jgralab.impl.std,  de.uni_koblenz.
- jgralab.schema,  de.uni_koblenz.jgralab",de.uni_koblenz.jgralab.impl.
- std;uses:="de.uni_koblenz.jgralab.impl,de.uni_koblenz.jgralab.schema,
- de.uni_koblenz.jgralab",de.uni_koblenz.jgralab.plugin;uses:="org.osgi
- .framework,de.uni_koblenz.jgralab",de.uni_koblenz.jgralab.schema; use
- s:="de.uni_koblenz.jgralab.schema.impl,  org.pcollections,  de.uni_ko
- blenz.jgralab.schema.codegenerator,  de.uni_koblenz.jgralab",de.uni_k
- oblenz.jgralab.schema.codegenerator;uses:="de.uni_koblenz.jgralab.sch
- ema",de.uni_koblenz.jgralab.schema.exception,de.uni_koblenz.jgralab.s
- chema.impl; uses:="de.uni_koblenz.jgralab.schema,  org.pcollections, 
-  de.uni_koblenz.jgralab.schema.codegenerator,  de.uni_koblenz.jgralab
- .schema.impl.compilation,  de.uni_koblenz.jgralab",de.uni_koblenz.jgr
- alab.schema.impl.compilation;uses:="javax.tools",de.uni_koblenz.jgral
- ab.utilities,de.uni_koblenz.jgralab.utilities.ant;uses:="de.uni_koble
- nz.jgralab.schema,org.apache.tools.ant.types,org.apache.tools.ant",de
- .uni_koblenz.jgralab.utilities.argouml2tg;uses:="org.apache.commons.c
- li,de.uni_koblenz.jgralab.utilities.xml2tg,de.uni_koblenz.jgralab.gru
- mlschema",de.uni_koblenz.jgralab.utilities.csv2tg;uses:="org.apache.c
- ommons.cli,de.uni_koblenz.jgralab.schema,de.uni_koblenz.ist.utilities
- .option_handler",de.uni_koblenz.jgralab.utilities.greqlgui; uses:="de
- .uni_koblenz.ist.utilities.gui,  javax.swing,  javax.swing.event,  de
- .uni_koblenz.jgralab",de.uni_koblenz.jgralab.utilities.greqlgui.resou
- rces,de.uni_koblenz.jgralab.utilities.greqlgui.resources.completion,d
- e.uni_koblenz.jgralab.utilities.greqlserver,de.uni_koblenz.jgralab.ut
- ilities.gui.xdot;uses:="de.uni_koblenz.ist.utilities.gui,de.uni_koble
- nz.jgralab.graphmarker,de.uni_koblenz.jgralab",de.uni_koblenz.jgralab
- .utilities.rsa2tg; uses:="de.uni_koblenz.jgralab.grumlschema.structur
- e,  javax.xml.stream,  org.apache.commons.cli,  de.uni_koblenz.ist.ut
- ilities.xml,  de.uni_koblenz.jgralab.grumlschema",de.uni_koblenz.jgra
- lab.utilities.schemacompare;uses:="de.uni_koblenz.jgralab.schema",de.
- uni_koblenz.jgralab.utilities.tg2dot; uses:="de.uni_koblenz.jgralab.u
- tilities.tg2dot.graph_layout,  javax.swing,  org.apache.commons.cli, 
-  de.uni_koblenz.jgralab.graphmarker,  de.uni_koblenz.jgralab.utilitie
- s.tg2dot.dot,  de.uni_koblenz.jgralab,  de.uni_koblenz.jgralab.utilit
- ies.tg2whatever,  de.uni_koblenz.ist.utilities.option_handler",de.uni
- _koblenz.jgralab.utilities.tg2dot.dot,de.uni_koblenz.jgralab.utilitie
- s.tg2dot.graph_layout; uses:="de.uni_koblenz.jgralab.utilities.tg2dot
- .graph_layout.definition,  de.uni_koblenz.jgralab.schema,  de.uni_kob
- lenz.jgralab.utilities.tg2dot.greql,  de.uni_koblenz.jgralab",de.uni_
- koblenz.jgralab.utilities.tg2dot.graph_layout.definition;uses:="de.un
- i_koblenz.jgralab.schema,de.uni_koblenz.jgralab",de.uni_koblenz.jgral
- ab.utilities.tg2dot.graph_layout.reader;uses:="de.uni_koblenz.jgralab
- .utilities.tg2dot.graph_layout,de.uni_koblenz.jgralab.utilities.tg2do
- t.graph_layout.definition,de.uni_koblenz.jgralab.utilities.tg2dot.gre
- ql",de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout.reader.plist
- ;uses:="de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout,de.uni_k
- oblenz.jgralab.utilities.tg2dot.graph_layout.reader,de.uni_koblenz.jg
- ralab.utilities.tg2dot.greql",de.uni_koblenz.jgralab.utilities.tg2dot
- .greql;uses:="de.uni_koblenz.jgralab.schema,de.uni_koblenz.jgralab",d
- e.uni_koblenz.jgralab.utilities.tg2dot.greql.funlib; uses:="de.uni_ko
- blenz.jgralab.greql.funlib,  de.uni_koblenz.jgralab.schema,  org.pcol
- lections,  de.uni_koblenz.jgralab",de.uni_koblenz.jgralab.utilities.t
- g2graphml;uses:="de.uni_koblenz.jgralab,de.uni_koblenz.jgralab.utilit
- ies.tg2whatever",de.uni_koblenz.jgralab.utilities.tg2schemagraph;uses
- :="de.uni_koblenz.jgralab.schema,de.uni_koblenz.jgralab.grumlschema",
- de.uni_koblenz.jgralab.utilities.tg2whatever; uses:="org.apache.commo
- ns.cli,  de.uni_koblenz.jgralab.schema,  de.uni_koblenz.jgralab.graph
- marker,  de.uni_koblenz.jgralab,  de.uni_koblenz.ist.utilities.option
- _handler",de.uni_koblenz.jgralab.utilities.tgmerge;uses:="de.uni_kobl
- enz.jgralab",de.uni_koblenz.jgralab.utilities.tgraphbrowser;uses:="or
- g.pcollections,de.uni_koblenz.jgralab",de.uni_koblenz.jgralab.utiliti
- es.tgraphbrowser.resources,de.uni_koblenz.jgralab.utilities.tgschema2
- java;uses:="de.uni_koblenz.jgralab.schema",de.uni_koblenz.jgralab.uti
- lities.tgtree;uses:="javax.swing.tree,javax.swing,de.uni_koblenz.jgra
- lab",de.uni_koblenz.jgralab.utilities.tgtree.icons,de.uni_koblenz.jgr
- alab.utilities.xml2tg;uses:="de.uni_koblenz.jgralab.utilities.xml2tg.
- schema,de.uni_koblenz.ist.utilities.xml",de.uni_koblenz.jgralab.utili
- ties.xml2tg.schema;uses:="de.uni_koblenz.jgralab.schema.impl,de.uni_k
- oblenz.jgralab.schema,de.uni_koblenz.jgralab",de.uni_koblenz.jgralab.
- utilities.xml2tg.schema.impl.std; uses:="de.uni_koblenz.jgralab.utili
- ties.xml2tg.schema,  de.uni_koblenz.jgralab.impl,  de.uni_koblenz.jgr
- alab.impl.std,  de.uni_koblenz.jgralab.schema,  de.uni_koblenz.jgrala
- b",org.apache.commons.cli,org.pcollections,org.riediger.plist;uses:="
- org.xml.sax.helpers,org.xml.sax"
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Export-Package: de.uni_koblenz.ist.utilities.ant,
+ de.uni_koblenz.ist.utilities.csvreader,
+ de.uni_koblenz.ist.utilities.gui,
+ de.uni_koblenz.ist.utilities.license_header,
+ de.uni_koblenz.ist.utilities.option_handler,
+ de.uni_koblenz.ist.utilities.xml,
+ de.uni_koblenz.jgralab,
+ de.uni_koblenz.jgralab.algolib.algorithms,
+ de.uni_koblenz.jgralab.algolib.algorithms.reachability,
+ de.uni_koblenz.jgralab.algolib.algorithms.search,
+ de.uni_koblenz.jgralab.algolib.algorithms.search.visitors,
+ de.uni_koblenz.jgralab.algolib.algorithms.shortest_paths,
+ de.uni_koblenz.jgralab.algolib.algorithms.strong_components,
+ de.uni_koblenz.jgralab.algolib.algorithms.strong_components.visitors,
+ de.uni_koblenz.jgralab.algolib.algorithms.topological_order,
+ de.uni_koblenz.jgralab.algolib.algorithms.topological_order.visitors,
+ de.uni_koblenz.jgralab.algolib.algorithms.weak_components,
+ de.uni_koblenz.jgralab.algolib.algorithms.weak_components.visitors,
+ de.uni_koblenz.jgralab.algolib.functions,
+ de.uni_koblenz.jgralab.algolib.functions.adapters,
+ de.uni_koblenz.jgralab.algolib.functions.entries,
+ de.uni_koblenz.jgralab.algolib.problems,
+ de.uni_koblenz.jgralab.algolib.util,
+ de.uni_koblenz.jgralab.algolib.visitors,
+ de.uni_koblenz.jgralab.eca,
+ de.uni_koblenz.jgralab.eca.events,
+ de.uni_koblenz.jgralab.exception,
+ de.uni_koblenz.jgralab.graphmarker,
+ de.uni_koblenz.jgralab.graphvalidator,
+ de.uni_koblenz.jgralab.greql,
+ de.uni_koblenz.jgralab.greql.evaluator,
+ de.uni_koblenz.jgralab.greql.evaluator.fa,
+ de.uni_koblenz.jgralab.greql.evaluator.vertexeval,
+ de.uni_koblenz.jgralab.greql.exception,
+ de.uni_koblenz.jgralab.greql.executable,
+ de.uni_koblenz.jgralab.greql.funlib,
+ de.uni_koblenz.jgralab.greql.funlib.artithmetics,
+ de.uni_koblenz.jgralab.greql.funlib.bitops,
+ de.uni_koblenz.jgralab.greql.funlib.collections,
+ de.uni_koblenz.jgralab.greql.funlib.graph,
+ de.uni_koblenz.jgralab.greql.funlib.graph.base,
+ de.uni_koblenz.jgralab.greql.funlib.logics,
+ de.uni_koblenz.jgralab.greql.funlib.misc,
+ de.uni_koblenz.jgralab.greql.funlib.relations,
+ de.uni_koblenz.jgralab.greql.funlib.schema,
+ de.uni_koblenz.jgralab.greql.funlib.statistics,
+ de.uni_koblenz.jgralab.greql.funlib.strings,
+ de.uni_koblenz.jgralab.greql.optimizer,
+ de.uni_koblenz.jgralab.greql.optimizer.condexp,
+ de.uni_koblenz.jgralab.greql.parallel,
+ de.uni_koblenz.jgralab.greql.parser,
+ de.uni_koblenz.jgralab.greql.schema,
+ de.uni_koblenz.jgralab.greql.schema.impl.std,
+ de.uni_koblenz.jgralab.greql.serialising,
+ de.uni_koblenz.jgralab.greql.types,
+ de.uni_koblenz.jgralab.greql.types.pathsearch,
+ de.uni_koblenz.jgralab.gretl,
+ de.uni_koblenz.jgralab.gretl.eca,
+ de.uni_koblenz.jgralab.gretl.parser,
+ de.uni_koblenz.jgralab.gretl.template,
+ de.uni_koblenz.jgralab.gretl.template.impl.std,
+ de.uni_koblenz.jgralab.gretl.templategraphparser,
+ de.uni_koblenz.jgralab.grumlschema,
+ de.uni_koblenz.jgralab.grumlschema.domains,
+ de.uni_koblenz.jgralab.grumlschema.impl.std,
+ de.uni_koblenz.jgralab.grumlschema.impl.std.domains,
+ de.uni_koblenz.jgralab.grumlschema.impl.std.structure,
+ de.uni_koblenz.jgralab.grumlschema.structure,
+ de.uni_koblenz.jgralab.impl,
+ de.uni_koblenz.jgralab.impl.generic,
+ de.uni_koblenz.jgralab.impl.std,
+ de.uni_koblenz.jgralab.plugin,
+ de.uni_koblenz.jgralab.schema,
+ de.uni_koblenz.jgralab.schema.codegenerator,
+ de.uni_koblenz.jgralab.schema.exception,
+ de.uni_koblenz.jgralab.schema.impl,
+ de.uni_koblenz.jgralab.schema.impl.compilation,
+ de.uni_koblenz.jgralab.utilities,
+ de.uni_koblenz.jgralab.utilities.ant,
+ de.uni_koblenz.jgralab.utilities.argouml2tg,
+ de.uni_koblenz.jgralab.utilities.csv2tg,
+ de.uni_koblenz.jgralab.utilities.greqlgui,
+ de.uni_koblenz.jgralab.utilities.greqlgui.resources,
+ de.uni_koblenz.jgralab.utilities.greqlgui.resources.completion,
+ de.uni_koblenz.jgralab.utilities.greqlserver,
+ de.uni_koblenz.jgralab.utilities.gui.xdot,
+ de.uni_koblenz.jgralab.utilities.rsa2tg,
+ de.uni_koblenz.jgralab.utilities.schemacompare,
+ de.uni_koblenz.jgralab.utilities.tg2dot,
+ de.uni_koblenz.jgralab.utilities.tg2dot.dot,
+ de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout,
+ de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout.definition,
+ de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout.reader,
+ de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout.reader.plist,
+ de.uni_koblenz.jgralab.utilities.tg2dot.greql,
+ de.uni_koblenz.jgralab.utilities.tg2dot.greql.funlib,
+ de.uni_koblenz.jgralab.utilities.tg2graphml,
+ de.uni_koblenz.jgralab.utilities.tg2schemagraph,
+ de.uni_koblenz.jgralab.utilities.tg2whatever,
+ de.uni_koblenz.jgralab.utilities.tgmerge,
+ de.uni_koblenz.jgralab.utilities.tgraphbrowser,
+ de.uni_koblenz.jgralab.utilities.tgraphbrowser.resources,
+ de.uni_koblenz.jgralab.utilities.tgschema2java,
+ de.uni_koblenz.jgralab.utilities.tgtree,
+ de.uni_koblenz.jgralab.utilities.tgtree.icons,
+ de.uni_koblenz.jgralab.utilities.xml2tg,
+ de.uni_koblenz.jgralab.utilities.xml2tg.schema,
+ de.uni_koblenz.jgralab.utilities.xml2tg.schema.impl.std,
+ org.pcollections
+Bundle-ClassPath: .,
+ lib/apache/ant/ant.jar,
+ lib/apache/commons/cli/commons-cli-1.2.jar,
+ lib/plist/org.riediger.plist.jar
 Bundle-ActivationPolicy: lazy
 
 Name: de/uni_koblenz/jgralab/
 Implementation-Title: JGraLab
-Implementation-Version: 7.2.1@Giraffatitan@5129c086385bda265c39acdd2ad
- 728844c5aea08
+Implementation-Version: 7.3.0@Giraffatitan@f1ead5604604a12ba9480b49fad
+ 48eac28d725b9
 Implementation-Vendor: University of Koblenz, Institute for Software T
  echnology
 

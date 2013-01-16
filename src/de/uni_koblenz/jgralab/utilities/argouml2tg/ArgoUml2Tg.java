@@ -424,7 +424,7 @@ public class ArgoUml2Tg extends Xml2Tg {
 	private void checkAttributes() {
 		GraphClass graphClass = sg.getFirstGraphClass();
 		Map<String, AttributedElementClass> definedAttributes = new HashMap<String, AttributedElementClass>();
-		for (Attribute a : graphClass.get_attribute()) {
+		for (Attribute a : graphClass.get_attributes()) {
 			if (definedAttributes.containsKey(a)) {
 				throw new RuntimeException("Attribute " + a.get_name() + " at "
 						+ graphClass.get_qualifiedName() + " is duplicate.");
@@ -443,7 +443,7 @@ public class ArgoUml2Tg extends Xml2Tg {
 				if (alreadyChecked.isMarked(current)) {
 					continue;
 				}
-				for (Attribute att : current.get_attribute()) {
+				for (Attribute att : current.get_attributes()) {
 					if (definedAttributes.containsKey(att.get_name())) {
 						AttributedElementClass childClass = definedAttributes
 								.get(att.get_name());
@@ -599,7 +599,7 @@ public class ArgoUml2Tg extends Xml2Tg {
 						+ "'");
 
 				// remove possible comments
-				List<? extends Comment> comments = d.remove_comment();
+				List<? extends Comment> comments = d.remove_comments();
 				for (Comment c : comments) {
 					c.delete();
 				}
@@ -1255,7 +1255,7 @@ public class ArgoUml2Tg extends Xml2Tg {
 				attr.set_name(xu.getAttributeValue(at, "name"));
 				attr.set_defaultValue(getDefaultValue(at, dom));
 				attr.add_domain(dom);
-				aec.add_attribute(attr);
+				aec.add_attributes(attr);
 			}
 		}
 	}
@@ -1547,7 +1547,7 @@ public class ArgoUml2Tg extends Xml2Tg {
 				int p = qn.lastIndexOf('.');
 				Package parentPackage = getPackage(p < 0 ? "" : qn.substring(0,
 						p));
-				parentPackage.add_subpackage(pkg);
+				parentPackage.add_subpackages(pkg);
 				packageMap.put(qn, pkg);
 				qnMap.put(qn, pkg);
 			}

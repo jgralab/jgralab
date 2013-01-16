@@ -17,19 +17,16 @@ projects into some base folder `jgsrc` so that the filesystem structure is like
 so.
 
     jgsrc/               # your jgralab workspace
-    +-> common/          # the common project
     +-> jgralab/         # this project, i.e., jgralab itself
 
 To build `jgralab` you need to have [Apache Ant](http://ant.apache.org/).
-Build `common` first and then `jgralab`.
+Build `jgralab`.
 
-    $ cd jgsrc/common/
-    $ ant
-    $ cd ../jgralab/
+    $ cd jgsrc/jgralab/
     $ ant
 
-Both projects contain Eclipse `.project` and `.classpath` files, so that you
-can import them in Eclipse as existing projects.
+The `jgralab` project contains an Eclipse `.project` and `.classpath` file, so that you
+can import it in Eclipse as existing project.
 
 ### Getting Releases via Maven or Leiningen
 
@@ -79,7 +76,7 @@ install an IRC client, you can also
 
 ## License
 
-Copyright (C) 2007-2012 The JGraLab Team <ist@uni-koblenz.de>
+Copyright (C) 2006-2013 The JGraLab Team <ist@uni-koblenz.de>
 
 Distributed under the General Public License (Version 3), with the following
 additional grant:

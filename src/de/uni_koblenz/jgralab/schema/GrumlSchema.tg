@@ -1,6 +1,6 @@
 // JGraLab - The Java Graph Laboratory
 //
-// Copyright (C) 2006-2012 Institute for Software Technology
+// Copyright (C) 2006-2013 Institute for Software Technology
 //                         University of Koblenz-Landau, Germany
 //                         ist@uni-koblenz.de
 //
@@ -42,10 +42,10 @@ Package structure;
 EnumDomain AggregationKind (NONE, SHARED, COMPOSITE);
 abstract VertexClass NamedElement {qualifiedName: String};
 VertexClass Comment {text: String};
-EdgeClass Annotates from Comment (0,*) role comment to NamedElement (1,1) role annotatedElement;
+EdgeClass Annotates from Comment (0,*) role comments to NamedElement (1,1) role annotatedelement;
 Comment structure.IncidenceClass "The implementation in jgralab.schema.impl gets an \"edgeclass\" attribute to ensure two-way navigability of ComesFrom/GoesTo associations.";
 VertexClass IncidenceClass {aggregation: AggregationKind, min: Integer, max: Integer, roleName: String} ["Each IncidenceClass must either have a ComesFrom or a GoesTo Edge." "import structure.*; forall ic : V{IncidenceClass} @ count(ic --<>{ComesFrom, GoesTo}) = 1" "import structure.*; from ic : V{IncidenceClass} with count(ic --<>{ComesFrom, GoesTo}) <> 1 reportSet ic end"];
-EdgeClass EndsAt from IncidenceClass (0,*) role incidence to VertexClass (1,1) role targetclass;
+EdgeClass EndsAt from IncidenceClass (0,*) role incidences to VertexClass (1,1) role targetclass;
 VertexClass VertexClass: GraphElementClass;
 VertexClass Schema {name: String, packagePrefix: String};
 VertexClass Package: NamedElement ["A Package must either be default or subpackage, but not both" "import structure.*; forall p: V{Package} @ (inDegree{ContainsDefaultPackage}(p) + inDegree{ContainsSubPackage}(p)) = 1" "import structure.*; from p: V{Package} with (inDegree{ContainsDefaultPackage}(p) + inDegree{ContainsSubPackage}(p)) <> 1 reportSet p end"];
@@ -57,18 +57,17 @@ abstract VertexClass AttributedElementClass: NamedElement;
 Comment structure.Attribute "The defaultValue is a string constant in TG syntax, compatible to the Domain of the Attribute.\ndefaultValue may be null (which means no default value is specified).";
 VertexClass Attribute {name: String, defaultValue: String};
 EdgeClass HasDomain from Attribute (0,*) to domains.Domain (1,1) role domain;
-EdgeClass HasConstraint from AttributedElementClass (1,1) role constrainedElement to Constraint (0,*) role constraint aggregation composite;
-EdgeClass HasAttribute from AttributedElementClass (1,1) to Attribute (0,*) role attribute aggregation composite;
-EdgeClass SpecializesEdgeClass from EdgeClass (0,*) role subclass to EdgeClass (0,*) role superclass;
-EdgeClass ContainsSubPackage from Package (0,1) to Package (0,*) role subpackage aggregation composite;
-EdgeClass ContainsDomain from Package (1,1) to domains.Domain (0,*) aggregation composite;
-EdgeClass ContainsGraphElementClass from Package (1,1) to GraphElementClass (0,*) aggregation composite;
-EdgeClass ContainsDefaultPackage from Schema (0,1) to Package (1,1) aggregation composite;
-EdgeClass DefinesGraphClass from Schema (1,1) to GraphClass (1,1) role graphClass aggregation composite;
-EdgeClass SpecializesVertexClass from VertexClass (0,*) role subclass to VertexClass (0,*) role superclass;
+EdgeClass HasConstraint from AttributedElementClass (1,1) role constrainedelement to Constraint (0,*) role constraints aggregation composite;
+EdgeClass HasAttribute from AttributedElementClass (1,1) role element to Attribute (0,*) role attributes aggregation composite;
+EdgeClass SpecializesEdgeClass from EdgeClass (0,*) role subclasses to EdgeClass (0,*) role superclasses;
+EdgeClass ContainsSubPackage from Package (0,1) to Package (0,*) role subpackages aggregation composite;
+EdgeClass ContainsDomain from Package (1,1) role package to domains.Domain (0,*) role domains aggregation composite;
+EdgeClass ContainsGraphElementClass from Package (1,1) role package to GraphElementClass (0,*) role graphelementclasses aggregation composite;
+EdgeClass ContainsDefaultPackage from Schema (0,1) to Package (1,1) role defaultpackage aggregation composite;
+EdgeClass DefinesGraphClass from Schema (1,1) to GraphClass (1,1) role graphclass aggregation composite;
+EdgeClass SpecializesVertexClass from VertexClass (0,*) role subclasses to VertexClass (0,*) role superclasses;
 EdgeClass ComesFrom from EdgeClass (0,1) to IncidenceClass (1,1) role from aggregation composite;
 EdgeClass GoesTo from EdgeClass (0,1) to IncidenceClass (1,1) role to aggregation composite;
-
 
 Package domains;
 abstract VertexClass BasicDomain: Domain;
@@ -87,5 +86,4 @@ abstract VertexClass CollectionDomain: Domain;
 EdgeClass HasBaseDomain from CollectionDomain (0,*) to Domain (1,1) role basedomain;
 EdgeClass HasValueDomain from MapDomain (0,*) to Domain (1,1) role valuedomain;
 EdgeClass HasKeyDomain from MapDomain (0,*) to Domain (1,1) role keydomain;
-EdgeClass HasRecordDomainComponent from RecordDomain (0,*) to Domain (1,*) role componentdomain aggregation shared {name: String};
-
+EdgeClass HasRecordDomainComponent from RecordDomain (0,*) to Domain (1,*) role componentdomains aggregation shared {name: String};

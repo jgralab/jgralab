@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- JGraLab - The Java Graph Laboratory                                      -->
 <!--                                                                          -->
-<!-- Copyright (C) 2006-2012 Institute for Software Technology                -->
+<!-- Copyright (C) 2006-2013 Institute for Software Technology                -->
 <!--                         University of Koblenz-Landau, Germany            -->
 <!--                         ist@uni-koblenz.de                               -->
 <!--                                                                          -->
@@ -38,7 +38,7 @@
 	<property name="projectname" value="jgralab" />
 	<property name="main" value="JGraLab" />
 	<property name="documentexcludes" value="de.uni_koblenz.jgralab.greql.schema.*,de.uni_koblenz.jgralab.grumlschema.*,de.uni_koblenz.jgralab.plugin.*" />
-	<property name="unjarexcludes" value="clover/**" />
+	<property name="unjarexcludes" value="clover/** apache/ant/** junit/**" />
 	<property name="test.suite" value="de.uni_koblenz.jgralabtest.RunTests" />
 	<property name="manifest.static" value="true" />
 
@@ -46,7 +46,7 @@
 	<property name="testcompileexcludes" value="de/uni_koblenz/jgralabtest/greql/**" />
 
 	<!-- import the common build file -->
-	<import file="../common/common.xml" />
+	<import file="common.xml" />
 
 	<property name="license.file" value="../jgralab/license-header/gpl-3.0-header.txt" />
 
@@ -82,11 +82,11 @@
 
 
 	<!-- classpath additions -->
-	<!-- here all needed common libs are included, except ist_utilities -->
+	<!-- here all needed common libs are included -->
 	<path id="classpathExtension">
-		<fileset dir="${comlib.dir}/apache/commons/cli/" includes="**/*.jar" />
-		<fileset dir="${comlib.dir}/apache/ant" includes="**/*.jar" />
-		<fileset dir="${comlib.dir}/junit/" includes="**/*.jar" />
+		<fileset dir="${lib.dir}/apache/commons/cli/" includes="**/*.jar" />
+		<fileset dir="${lib.dir}/apache/ant" includes="**/*.jar" />
+		<fileset dir="${lib.dir}/junit/" includes="**/*.jar" />
 		<pathelement path="${clover.jar}" />
 	</path>
 
@@ -135,7 +135,7 @@
 	<property name="utilities.excludes" value="tgschema2java/**" />
 
 	<!-- The targets -->
-	<target name="build" depends="ist_utilities,clean,compile,modify_manifest,jar" />
+	<target name="build" depends="clean,createClassesDir,ist_utilities,compile,modify_manifest,jar" />
 
 	<target name="clean">
 		<delete dir="${classes.dir}" />
@@ -151,6 +151,22 @@
 		<delete dir="testit/testdata" />
 	</target>
 
+	<!-- ist_utilities -->
+	<target name="ist_utilities">
+		<javac fork="true" srcdir="${src.dir}"
+			includes="de/uni_koblenz/ist/utilities/**"
+			destdir="${classes.dir}"
+			memoryinitialsize="512m"
+			memorymaximumsize="512m"
+			classpathref="classpath"
+			debug="${debug}"
+			source="${javac.targetVM}"
+			target="${javac.targetVM}" 
+			includeantruntime="false"
+			encoding="${javac.encoding}" >
+		</javac>
+	</target>
+	
 	<!-- compile -->
 	<target name="compile" depends="pcollections,core,tgtools,greql,algolib,graphvalidator,rsa,utilities,gretl_and_eca,generatetestschemas">
 		<mkdir dir="testit/testdata" />
@@ -432,15 +448,11 @@
 	<!-- unjar -->
 	<!-- prepares additional common libraries to be added to the jar file -->
 	<target name="unjar" depends="common.unjar">
-		<!--unjar dest="${tmp.dir}">
-			<fileset dir="${comlib.dir}/apache/commons/cli/" includes="**/*.jar" />
-			<patternset>
-				<exclude name="META-INF/**" />
-			</patternset>
-		</unjar-->
+<!--
 		<unjar_mp dest="${tmp.dir}">
-			<fileset dir="${comlib.dir}/apache/commons/cli/" includes="**/*.jar" />
+			<fileset dir="${lib.dir}/apache/commons/cli/" includes="**/*.jar" />
 		</unjar_mp>
+-->
 		<copy todir="${tmp.dir}/META-INF" file="${project.dir}/LICENSE" />
 	</target>
 

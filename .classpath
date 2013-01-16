@@ -3,11 +3,10 @@
 	<classpathentry excluding="de/uni_koblenz/jgralab/plugin/|de/uni_koblenz/jgralab/greql/optimizer/GraphInfo.java|de/uni_koblenz/jgralab/greql/optimizer/GraphInfoCreator.java" kind="src" path="src"/>
 	<classpathentry excluding="de/uni_koblenz/jgralabtest/greql/funlib/GraphFunctionTest.java|de/uni_koblenz/jgralabtest/greql/funlib/PathSystemFunctionTest.java|de/uni_koblenz/jgralabtest/greql/funlib/SchemaFunctionTest.java|de/uni_koblenz/jgralabtest/greql/funlib/SliceFunctionTest.java|de/uni_koblenz/jgralabtest/greql/FunctionTest.java|de/uni_koblenz/jgralabtest/greql/optimizer/GraphInfoCreatorTest.java|de/uni_koblenz/jgralabtest/greql/optimizer/GraphInfoTest.java" kind="src" path="testit"/>
 	<classpathentry kind="src" path="META-INF"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
-	<classpathentry kind="lib" path="/common/lib/apache/commons/cli/commons-cli-1.2.jar"/>
-	<classpathentry kind="lib" path="/common/lib/apache/ant/ant.jar"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/common"/>
 	<classpathentry kind="lib" path="lib/plist/org.riediger.plist.jar"/>
+	<classpathentry kind="lib" path="lib/apache/commons/cli/commons-cli-1.2.jar"/>
+	<classpathentry kind="lib" path="lib/apache/ant/ant.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

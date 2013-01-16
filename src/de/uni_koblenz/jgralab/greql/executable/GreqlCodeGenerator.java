@@ -1857,6 +1857,8 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 				curr.add(new CodeSnippet(
 						"if (inc.isNormal()) { //begin of simple transition"));
 				break;
+			default:
+				break;
 			}
 			CodeList body = new CodeList();
 			curr.add(body);

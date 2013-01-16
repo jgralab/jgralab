@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2012 Institute for Software Technology
+ * Copyright (C) 2006-2013 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -1150,7 +1150,7 @@ public class Rsa2Tg extends XmlProcessor {
 	private void checkAttributes() {
 		GraphClass graphClass = sg.getFirstGraphClass();
 		Map<String, AttributedElementClass> definedAttributes = new HashMap<String, AttributedElementClass>();
-		for (Attribute a : graphClass.get_attribute()) {
+		for (Attribute a : graphClass.get_attributes()) {
 			if (definedAttributes.containsKey(a)) {
 				throw new RuntimeException("Attribute " + a.get_name() + " at "
 						+ graphClass.get_qualifiedName() + " is duplicate.");
@@ -1169,7 +1169,7 @@ public class Rsa2Tg extends XmlProcessor {
 				if (alreadyChecked.isMarked(current)) {
 					continue;
 				}
-				for (Attribute att : current.get_attribute()) {
+				for (Attribute att : current.get_attributes()) {
 					if (definedAttributes.containsKey(att.get_name())) {
 						AttributedElementClass childClass = definedAttributes
 								.get(att.get_name());
@@ -1238,7 +1238,7 @@ public class Rsa2Tg extends XmlProcessor {
 		int n = 0;
 		// recursively descend into subpackages
 		List<Package> subPackages = new ArrayList<Package>();
-		for (Package sub : pkg.get_subpackage()) {
+		for (Package sub : pkg.get_subpackages()) {
 			subPackages.add(sub);
 		}
 		for (Package sub : subPackages) {
@@ -2101,7 +2101,7 @@ public class Rsa2Tg extends XmlProcessor {
 				// + d.getQualifiedName() + "'");
 
 				// remove possible comments
-				List<? extends Comment> comments = d.remove_comment();
+				List<? extends Comment> comments = d.remove_comments();
 				for (Comment c : comments) {
 					c.delete();
 				}

@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2012 Institute for Software Technology
+ * Copyright (C) 2006-2013 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -350,6 +350,8 @@ public abstract class AttributedElementCodeGenerator<SC extends AttributedElemen
 			code.add("public #type# #isOrGet#_#name#() {", "\treturn _#name#;",
 					"}");
 			break;
+		case CLASSONLY:
+			break;
 		}
 		return code;
 	}
@@ -379,6 +381,8 @@ public abstract class AttributedElementCodeGenerator<SC extends AttributedElemen
 					"\tthis._#name# = _#name#;", "\tgraphModified();",
 					"\tecaAttributeChanged(\"#name#\", oldValue, _#name#);",
 					"}");
+			break;
+		case CLASSONLY:
 			break;
 		}
 		return code;
