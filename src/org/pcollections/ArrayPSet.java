@@ -44,11 +44,11 @@ import java.util.Set;
  * preserves the insertion order upon iteration. When the size gets above
  * SIZELIMIT elements, a plus() operation automatically promotes to an
  * OrderedPSet.
- *
+ * 
  * This implementation is not thread safe.
- *
+ * 
  * @author ist@uni-koblenz.de
- *
+ * 
  * @param <E>
  */
 public final class ArrayPSet<E> implements POrderedSet<E>, Serializable {

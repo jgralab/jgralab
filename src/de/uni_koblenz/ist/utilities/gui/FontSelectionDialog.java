@@ -98,19 +98,23 @@ public class FontSelectionDialog extends JDialog {
 
 	private static final long serialVersionUID = 8838643052145525312L;
 
+	@SuppressWarnings("rawtypes")
 	private final JList familyList;
 	private final JLabel previewLabel;
+	@SuppressWarnings("rawtypes")
 	private final JList styleList;
 
 	private String family;
 	private int style;
 	private Font selectedFont;
+	@SuppressWarnings("rawtypes")
 	private final JList sizeList;
 	private final BoundedRangeModel fontSize;
 	private final JLabel fontNameLabel;
 	private final JTextField sizeField;
 	private SwingApplication app;
 
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	private FontSelectionDialog(SwingApplication parent, String title,
 			Font oldFont, boolean monospacedOnly) {
 		super(parent, title != null ? title : parent

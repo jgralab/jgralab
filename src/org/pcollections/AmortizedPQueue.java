@@ -49,7 +49,6 @@ import java.util.Iterator;
  * 
  * @param <E>
  */
-@SuppressWarnings("deprecation")
 public class AmortizedPQueue<E> extends AbstractQueue<E> implements PQueue<E> {
 
 	private static final AmortizedPQueue<Object> EMPTY = new AmortizedPQueue<Object>();
@@ -92,16 +91,19 @@ public class AmortizedPQueue<E> extends AbstractQueue<E> implements PQueue<E> {
 		return new Iterator<E>() {
 			private PQueue<E> queue = AmortizedPQueue.this;
 
+			@Override
 			public boolean hasNext() {
 				return queue.size() > 0;
 			}
 
+			@Override
 			public E next() {
 				E e = queue.peek();
 				queue = queue.minus();
 				return e;
 			}
 
+			@Override
 			public void remove() {
 				throw new UnsupportedOperationException();
 			}
@@ -115,6 +117,7 @@ public class AmortizedPQueue<E> extends AbstractQueue<E> implements PQueue<E> {
 	}
 
 	/* Worst-case O(1) */
+	@Override
 	public E peek() {
 		if (size() == 0) {
 			return null;
@@ -123,6 +126,7 @@ public class AmortizedPQueue<E> extends AbstractQueue<E> implements PQueue<E> {
 	}
 
 	/* Amortized O(1), worst-case O(n) */
+	@Override
 	public AmortizedPQueue<E> minus() {
 		if (size() == 0) {
 			return this;
@@ -148,11 +152,13 @@ public class AmortizedPQueue<E> extends AbstractQueue<E> implements PQueue<E> {
 	}
 
 	/* Worst-case O(1) */
+	@Override
 	public AmortizedPQueue<E> plus(E e) {
 		return new AmortizedPQueue<E>(this, e);
 	}
 
 	/* Worst-case O(k) */
+	@Override
 	public AmortizedPQueue<E> plusAll(Collection<? extends E> list) {
 		AmortizedPQueue<E> result = this;
 		for (E e : list) {
@@ -162,23 +168,29 @@ public class AmortizedPQueue<E> extends AbstractQueue<E> implements PQueue<E> {
 	}
 
 	/* These 2 methods not guaranteed to be fast. */
+	@Override
 	public PCollection<E> minus(Object e) {
 		return Empty.<E> vector().plusAll(this).minus(e);
 	}
 
+	@Override
 	public PCollection<E> minusAll(Collection<?> list) {
 		return Empty.<E> vector().plusAll(this).minusAll(list);
 	}
 
 	/* These 2 methods are not applicable to a persistent collection. */
+	@SuppressWarnings("deprecation")
 	@Override
+	@Deprecated
 	public boolean offer(E o) {
 		// Not possible to modify a persistent queue, interface
 		// says return false if it's not added.
 		throw new UnsupportedOperationException();
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
+	@Deprecated
 	public E poll() {
 		// Poll is meant to destructively remove and return the front of the
 		// queue.
@@ -203,12 +215,16 @@ public class AmortizedPQueue<E> extends AbstractQueue<E> implements PQueue<E> {
 		System.out.println(original);
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
+	@Deprecated
 	public boolean add(E e) {
 		throw new UnsupportedOperationException();
 	};
 
+	@SuppressWarnings("deprecation")
 	@Override
+	@Deprecated
 	public boolean addAll(Collection<? extends E> c) {
 		throw new UnsupportedOperationException();
 	}

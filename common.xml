@@ -36,7 +36,7 @@
 
 	<!-- global project specific properties; if empty, they have to be overridden by specializations -->
 	<!-- the name of the project - MUST BE CHANGED, THIS VALUE "common" IS ONLY THERE TO AVOID WARNINGS! -->
-	<property name="projectname" value="common" />
+	<property name="projectname" value="jgralab" />
 
 	<!-- project's base package; if it is a project from the University of Koblenz, this property should remain as it is,
 	     it should be changed for 3rd party projects -->
@@ -101,12 +101,6 @@
 		<!-- the compiled classes -->
 		<pathelement location="${classes.dir}" />
 
-		<!-- the project's jar file -->
-		<!-- Tassilo: this leads to strange errors. Why the heck would you add
-             a jar to the classpath which you are currently creating in
-             addition to the classes dir? -->
-		<!--<pathelement location="${jar.dir}/${projectname}.jar" />-->
-
 		<!-- all project specific libraries -->
 		<fileset dir="${lib.dir}" includes="**/*.jar" />
 
@@ -146,7 +140,7 @@
 	<property name="testcompileexcludes" value="" />
 
 	<!-- Settings for javac -->
-	<property name="javac.targetVM" value="1.6" />
+	<property name="javac.targetVM" value="1.7" />
 
 	<property name="javac.encoding" value="UTF8" />
 
@@ -254,7 +248,6 @@
 		<delete dir="${jar.dir}" />
 		<delete dir="${doc.dir}" />
 		<delete dir="${testresults.dir}" />
-		<ant dir="${common.dir}" antfile="build.xml" inheritAll="false" target="cleanall" />
 	</target>
 
 	<target name="deleteGeneratedSchemaFiles" if="schema.file">
