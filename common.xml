@@ -140,8 +140,6 @@
 	<property name="testcompileexcludes" value="" />
 
 	<!-- Settings for javac -->
-	<property name="javac.targetVM" value="1.7" />
-
 	<property name="javac.encoding" value="UTF8" />
 
 	<!-- debug infos in compiled sources -->
@@ -276,8 +274,6 @@
 			includeantruntime="false"
 			debug="${debug}"
 			debuglevel="${debuglevel}"
-			source="${javac.targetVM}"
-			target="${javac.targetVM}"
 			encoding="${javac.encoding}">
 			<compilerarg line="-Xlint:unchecked" />
 		</javac>
@@ -331,8 +327,6 @@
 			memoryinitialsize="512m"
 			memorymaximumsize="${maxmemsize}"
 			classpathref="testclasspath"
-			source="${javac.targetVM}"
-			target="${javac.targetVM}"
 			encoding="${javac.encoding}"
 		/>
 	</target>

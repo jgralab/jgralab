@@ -160,8 +160,6 @@
 			memorymaximumsize="512m"
 			classpathref="classpath"
 			debug="${debug}"
-			source="${javac.targetVM}"
-			target="${javac.targetVM}" 
 			includeantruntime="false"
 			encoding="${javac.encoding}" >
 		</javac>
@@ -181,8 +179,6 @@
 			memorymaximumsize="${maxmemsize}"
 			classpathref="classpath"
 			debug="${debug}" 
-			source="${javac.targetVM}"
-			target="${javac.targetVM}"
 			encoding="${javac.encoding}"
 			includeantruntime="false">
 			<compilerarg line="-Xlint:unchecked" />
@@ -201,8 +197,6 @@
 			memorymaximumsize="${maxmemsize}"
 			classpathref="classpath"
 			debug="${debug}"
-			source="${javac.targetVM}"
-			target="${javac.targetVM}"
 			encoding="${javac.encoding}"
 			includeantruntime="false">
 			<compilerarg line="-Xlint:unchecked" />
@@ -220,8 +214,6 @@
 			memorymaximumsize="${maxmemsize}"
 			classpathref="classpath" 
 			debug="${debug}" 
-			source="${javac.targetVM}" 
-			target="${javac.targetVM}" 
 			encoding="${javac.encoding}"
 			includeantruntime="false" />
 		<taskdef name="bump_micro" classname="de.uni_koblenz.jgralab.utilities.ant.BumpMicroVersion" classpath="${classes.dir}" />
@@ -241,8 +233,6 @@
 			memorymaximumsize="${maxmemsize}" 
 			classpathref="classpath" 
 			debug="${debug}" 
-			source="${javac.targetVM}"
-			target="${javac.targetVM}" 
 			encoding="${javac.encoding}"
 			includeantruntime="false">
 			<compilerarg line="-Xlint:unchecked" />
@@ -262,8 +252,6 @@
 			memorymaximumsize="${maxmemsize}" 
 			classpathref="classpath" 
 			debug="${debug}" 
-			source="${javac.targetVM}"
-			target="${javac.targetVM}" 
 			encoding="${javac.encoding}"
 			includeantruntime="false">
 			<compilerarg line="-Xlint:unchecked" />
@@ -279,8 +267,6 @@
 			memorymaximumsize="${maxmemsize}" 
 			classpathref="classpath" 
 			debug="${debug}"
-			source="${javac.targetVM}"
-			target="${javac.targetVM}"
 			encoding="${javac.encoding}"
 			includeantruntime="false">
 			<compilerarg line="-Xlint:unchecked" />
@@ -298,8 +284,6 @@
 			memorymaximumsize="${maxmemsize}"
 			classpathref="classpath" 
 			debug="${debug}" 
-			source="${javac.targetVM}" 
-			target="${javac.targetVM}" 
 			encoding="${javac.encoding}"
 			includeantruntime="false">
 			<compilerarg line="-Xlint:unchecked" />
@@ -316,8 +300,6 @@
 			memorymaximumsize="${maxmemsize}" 
 			classpathref="classpath" 
 			debug="${debug}"
-			source="${javac.targetVM}" 
-			target="${javac.targetVM}" 
 			encoding="${javac.encoding}"
 			includeantruntime="false">
 			<compilerarg line="-Xlint:unchecked" />
@@ -335,8 +317,6 @@
 			memorymaximumsize="${maxmemsize}" 
 			classpathref="classpath" 
 			debug="${debug}" 
-			source="${javac.targetVM}" 
-			target="${javac.targetVM}" 
 			encoding="${javac.encoding}"
 			includeantruntime="false">
 			<compilerarg line="-Xlint:unchecked" />
@@ -353,8 +333,6 @@
 			memorymaximumsize="${maxmemsize}"
 			classpathref="classpath" 
 			debug="${debug}" 
-			source="${javac.targetVM}"
-			target="${javac.targetVM}"
 			encoding="${javac.encoding}"
 			includeantruntime="false">
 			<compilerarg line="-Xlint:unchecked" />
@@ -372,8 +350,6 @@
 			memorymaximumsize="${maxmemsize}" 
 			classpathref="classpath"
 			debug="${debug}" 
-			source="${javac.targetVM}" 
-			target="${javac.targetVM}" 
 			encoding="${javac.encoding}"
 			includeantruntime="false">
 			<compilerarg line="-Xlint:unchecked" />
@@ -396,8 +372,6 @@
 			memorymaximumsize="${maxmemsize}" 
 			classpathref="classpath"
 			debug="${debug}"
-			source="${javac.targetVM}" 
-			target="${javac.targetVM}" 
 			encoding="${javac.encoding}"
 			includeantruntime="false">
 			<compilerarg line="-Xlint:unchecked" />
@@ -437,8 +411,6 @@
 			memorymaximumsize="${maxmemsize}" 
 			classpathref="classpath" 
 			debug="${debug}"
-			source="${javac.targetVM}"
-			target="${javac.targetVM}" 
 			encoding="${javac.encoding}"
 			includeantruntime="false">
 			<compilerarg line="-Xlint:unchecked" />
