@@ -62,12 +62,6 @@ public class QuantifiedExpressionEvaluator extends
 
 	private VertexEvaluator<? extends Expression> predicateEvaluator = null;
 
-	/**
-	 * @param eval
-	 *            the GreqlEvaluator this VertexEvaluator belongs to
-	 * @param vertex
-	 *            the vertex which gets evaluated by this VertexEvaluator
-	 */
 	public QuantifiedExpressionEvaluator(QuantifiedExpression vertex,
 			GreqlQueryImpl query) {
 		super(vertex, query);

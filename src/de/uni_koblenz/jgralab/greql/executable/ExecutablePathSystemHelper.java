@@ -26,9 +26,6 @@ public class ExecutablePathSystemHelper {
 	/**
 	 * Creates a JValuePathSystem-object which contains all paths which start at
 	 * the given root vertex and end with one of the given leaves
-	 * 
-	 * @param leaves
-	 * @return
 	 */
 	public static de.uni_koblenz.jgralab.greql.types.PathSystem createPathSystemFromMarkings(
 			GraphMarker<PathSystemMarkerEntry>[] marker, Vertex rootVertex,

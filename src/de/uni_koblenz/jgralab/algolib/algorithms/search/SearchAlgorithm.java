@@ -121,8 +121,6 @@ public abstract class SearchAlgorithm extends StructureOrientedAlgorithm
 	 * 
 	 * @param graph
 	 *            the graph this search algorithm works on.
-	 * @param subgraph
-	 *            the subgraph function for this search algorithm.
 	 * @param navigable
 	 *            the navigable function for this search algorithm.
 	 */

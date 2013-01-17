@@ -47,17 +47,7 @@ import de.uni_koblenz.jgralab.greql.schema.ElementSetExpression;
  */
 public abstract class ElementSetExpressionEvaluator<V extends ElementSetExpression>
 		extends AbstractGraphElementCollectionEvaluator<V> {
-
-	/**
-	 * Creates a new ElementSetExpressionEvaluator for the given vertex
-	 * 
-	 * @param eval
-	 *            the GreqlEvaluator instance this VertexEvaluator belong to
-	 * @param vertex
-	 *            the vertex this VertexEvaluator evaluates
-	 */
 	public ElementSetExpressionEvaluator(V vertex, GreqlQueryImpl query) {
 		super(vertex, query);
 	}
-
 }

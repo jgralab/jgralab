@@ -49,14 +49,6 @@ import de.uni_koblenz.jgralab.greql.schema.SequentialPathDescription;
 public class SequentialPathDescriptionEvaluator extends
 		PathDescriptionEvaluator<SequentialPathDescription> {
 
-	/**
-	 * Creates a new IteratedPathDescriptionEvaluator for the given vertex
-	 * 
-	 * @param eval
-	 *            the GreqlEvaluator instance this VertexEvaluator belong to
-	 * @param vertex
-	 *            the vertex this VertexEvaluator evaluates
-	 */
 	public SequentialPathDescriptionEvaluator(SequentialPathDescription vertex,
 			GreqlQueryImpl query) {
 		super(vertex, query);

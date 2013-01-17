@@ -99,10 +99,6 @@ public class VariableEvaluator<V extends Variable> extends VertexEvaluator<V> {
 		return evaluator.getLocalEvaluationResult(vertex);
 	}
 
-	/**
-	 * @param vertex
-	 *            the vertex which gets evaluated by this VertexEvaluator
-	 */
 	public VariableEvaluator(V vertex, GreqlQueryImpl query) {
 		super(vertex, query);
 	}
@@ -216,8 +212,8 @@ public class VariableEvaluator<V extends Variable> extends VertexEvaluator<V> {
 		if (inc != null) {
 			SimpleDeclaration decl = inc.getOmega();
 			VertexEvaluator<? extends Expression> typeExpEval = query
-					.getVertexEvaluator(decl
-							.getFirstIsTypeExprOfIncidence().getAlpha());
+					.getVertexEvaluator(decl.getFirstIsTypeExprOfIncidence()
+							.getAlpha());
 			return typeExpEval.getEstimatedCardinality();
 		} else {
 			// if there exists no "isDeclaredVarOf"-Edge the variable is not

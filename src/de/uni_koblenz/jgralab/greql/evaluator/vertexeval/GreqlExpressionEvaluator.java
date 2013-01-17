@@ -79,12 +79,6 @@ public class GreqlExpressionEvaluator extends VertexEvaluator<GreqlExpression> {
 		}
 	}
 
-	/**
-	 * @param eval
-	 *            the GreqlEvaluator this VertexEvaluator belongs to
-	 * @param vertex
-	 *            the vertex which gets evaluated by this VertexEvaluator
-	 */
 	public GreqlExpressionEvaluator(GreqlExpression vertex, GreqlQueryImpl query) {
 		super(vertex, query);
 	}
@@ -94,8 +88,7 @@ public class GreqlExpressionEvaluator extends VertexEvaluator<GreqlExpression> {
 	 */
 	@Override
 	public Object evaluate(InternalGreqlEvaluator evaluator) {
-		EvaluatorUtilities.checkImports(vertex,
-				evaluator.getSchema());
+		EvaluatorUtilities.checkImports(vertex, evaluator.getSchema());
 		initializeBoundVariables(evaluator);
 		Expression boundExpression = vertex.getFirstIsQueryExprOfIncidence(
 				EdgeDirection.IN).getAlpha();

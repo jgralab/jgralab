@@ -54,15 +54,8 @@ import de.uni_koblenz.jgralab.greql.schema.SetComprehension;
 public class SetComprehensionEvaluator extends
 		ComprehensionEvaluator<SetComprehension> {
 
-	/**
-	 * Creates a new SetComprehensionEvaluator for the given vertex
-	 * 
-	 * @param eval
-	 *            the GreqlEvaluator instance this VertexEvaluator belong to
-	 * @param vertex
-	 *            the vertex this VertexEvaluator evaluates
-	 */
-	public SetComprehensionEvaluator(SetComprehension vertex, GreqlQueryImpl query) {
+	public SetComprehensionEvaluator(SetComprehension vertex,
+			GreqlQueryImpl query) {
 		super(vertex, query);
 	}
 
@@ -75,14 +68,13 @@ public class SetComprehensionEvaluator extends
 	@Override
 	public VertexCosts calculateSubtreeEvaluationCosts() {
 		SetComprehension setComp = getVertex();
-		Declaration decl = setComp
-				.getFirstIsCompDeclOfIncidence().getAlpha();
+		Declaration decl = setComp.getFirstIsCompDeclOfIncidence().getAlpha();
 		DeclarationEvaluator declEval = (DeclarationEvaluator) query
 				.getVertexEvaluator(decl);
 		long declCosts = declEval.getCurrentSubtreeEvaluationCosts();
 
-		Expression resultDef = setComp
-				.getFirstIsCompResultDefOfIncidence().getAlpha();
+		Expression resultDef = setComp.getFirstIsCompResultDefOfIncidence()
+				.getAlpha();
 		VertexEvaluator<? extends Expression> resultDefEval = query
 				.getVertexEvaluator(resultDef);
 		long resultCosts = resultDefEval.getCurrentSubtreeEvaluationCosts();
@@ -96,8 +88,7 @@ public class SetComprehensionEvaluator extends
 	@Override
 	public long calculateEstimatedCardinality() {
 		SetComprehension setComp = getVertex();
-		Declaration decl = setComp
-				.getFirstIsCompDeclOfIncidence().getAlpha();
+		Declaration decl = setComp.getFirstIsCompDeclOfIncidence().getAlpha();
 		DeclarationEvaluator declEval = (DeclarationEvaluator) query
 				.getVertexEvaluator(decl);
 		return declEval.getEstimatedCardinality();

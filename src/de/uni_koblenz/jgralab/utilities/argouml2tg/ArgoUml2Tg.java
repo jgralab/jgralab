@@ -160,7 +160,7 @@ public class ArgoUml2Tg extends Xml2Tg {
 	/**
 	 * Processes an XMI-file to a TG-file as schema or a schema in a grUML
 	 * graph. For all command line options see
-	 * {@link ArgoUML2Tg#processCommandLineOptions(String[])}.
+	 * {@link ArgoUml2Tg#processCommandLineOptions(String[])}.
 	 * 
 	 * @param args
 	 *            {@link String} array of command line options.

@@ -54,15 +54,6 @@ import de.uni_koblenz.jgralab.greql.schema.PathDescription;
 public class IntermediateVertexPathDescriptionEvaluator extends
 		PathDescriptionEvaluator<IntermediateVertexPathDescription> {
 
-	/**
-	 * Creates a new IntermediateVertexPathDescriptionEvaluator for the given
-	 * vertex
-	 * 
-	 * @param eval
-	 *            the GreqlEvaluator instance this VertexEvaluator belong to
-	 * @param vertex
-	 *            the vertex this VertexEvaluator evaluates
-	 */
 	public IntermediateVertexPathDescriptionEvaluator(
 			IntermediateVertexPathDescription vertex, GreqlQueryImpl query) {
 		super(vertex, query);

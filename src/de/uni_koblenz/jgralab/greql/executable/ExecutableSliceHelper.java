@@ -93,9 +93,6 @@ public class ExecutableSliceHelper {
 	/**
 	 * Creates a Slice-object which contains all path which start at the given
 	 * start vertices and end with the given leaves
-	 * 
-	 * @param leaves
-	 * @return
 	 */
 	public static SubGraphMarker createSliceFromMarkings(Graph graph,
 			Set<Vertex> sliCritVertices, List<Vertex> leaves,

@@ -62,14 +62,6 @@ public class ListRangeConstructionEvaluator extends
 	 */
 	protected static final int defaultListRangeSize = 50;
 
-	/**
-	 * Creates a new ListRangeConstructionEvaluator for the given vertex
-	 * 
-	 * @param eval
-	 *            the GreqlEvaluator instance this VertexEvaluator belong to
-	 * @param vertex
-	 *            the vertex this VertexEvaluator evaluates
-	 */
 	public ListRangeConstructionEvaluator(ListRangeConstruction vertex,
 			GreqlQueryImpl query) {
 		super(vertex, query);
@@ -123,11 +115,11 @@ public class ListRangeConstructionEvaluator extends
 	public VertexCosts calculateSubtreeEvaluationCosts() {
 		ListRangeConstruction exp = getVertex();
 		VertexEvaluator<? extends Expression> startExpEval = query
-				.getVertexEvaluator(exp
-						.getFirstIsFirstValueOfIncidence().getAlpha());
+				.getVertexEvaluator(exp.getFirstIsFirstValueOfIncidence()
+						.getAlpha());
 		VertexEvaluator<? extends Expression> targetExpEval = query
-				.getVertexEvaluator(exp
-						.getFirstIsLastValueOfIncidence().getAlpha());
+				.getVertexEvaluator(exp.getFirstIsLastValueOfIncidence()
+						.getAlpha());
 		long startCosts = startExpEval.getCurrentSubtreeEvaluationCosts();
 		long targetCosts = targetExpEval.getCurrentSubtreeEvaluationCosts();
 		long range = 0;
@@ -156,13 +148,11 @@ public class ListRangeConstructionEvaluator extends
 	public long calculateEstimatedCardinality() {
 		ListRangeConstruction exp = getVertex();
 		VertexEvaluator<? extends Expression> startExpEval = query
-				.getVertexEvaluator(exp
-						.getFirstIsFirstValueOfIncidence(EdgeDirection.IN)
-						.getAlpha());
+				.getVertexEvaluator(exp.getFirstIsFirstValueOfIncidence(
+						EdgeDirection.IN).getAlpha());
 		VertexEvaluator<? extends Expression> targetExpEval = query
-				.getVertexEvaluator(exp
-						.getFirstIsLastValueOfIncidence(EdgeDirection.IN)
-						.getAlpha());
+				.getVertexEvaluator(exp.getFirstIsLastValueOfIncidence(
+						EdgeDirection.IN).getAlpha());
 		long range = 0;
 		if (startExpEval instanceof IntLiteralEvaluator) {
 			if (targetExpEval instanceof IntLiteralEvaluator) {

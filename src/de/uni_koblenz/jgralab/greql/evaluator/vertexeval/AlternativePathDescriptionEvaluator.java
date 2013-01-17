@@ -38,8 +38,8 @@ package de.uni_koblenz.jgralab.greql.evaluator.vertexeval;
 import java.util.ArrayList;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
-import de.uni_koblenz.jgralab.greql.evaluator.InternalGreqlEvaluator;
 import de.uni_koblenz.jgralab.greql.evaluator.GreqlQueryImpl;
+import de.uni_koblenz.jgralab.greql.evaluator.InternalGreqlEvaluator;
 import de.uni_koblenz.jgralab.greql.evaluator.VertexCosts;
 import de.uni_koblenz.jgralab.greql.evaluator.fa.NFA;
 import de.uni_koblenz.jgralab.greql.schema.AlternativePathDescription;
@@ -56,14 +56,6 @@ import de.uni_koblenz.jgralab.greql.schema.PathDescription;
 public class AlternativePathDescriptionEvaluator extends
 		PathDescriptionEvaluator<AlternativePathDescription> {
 
-	/**
-	 * Creates a new IteratedPathDescriptionEvaluator for the given vertex
-	 * 
-	 * @param eval
-	 *            the GreqlEvaluator instance this VertexEvaluator belong to
-	 * @param vertex
-	 *            the vertex this VertexEvaluator evaluates
-	 */
 	public AlternativePathDescriptionEvaluator(
 			AlternativePathDescription vertex, GreqlQueryImpl query) {
 		super(vertex, query);

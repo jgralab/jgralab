@@ -153,8 +153,6 @@ public class OptimizerInfoGenerator {
 	 * 
 	 * @param dirName
 	 *            a directory name
-	 * @param recursive
-	 *            when <code>true</code>, also scan subdirectories
 	 * @throws GraphIOException
 	 *             when a graph can not be loaded
 	 */

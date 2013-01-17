@@ -36,4 +36,4 @@
  * TODO [documentation] write documentation for this package.
  */
 
-package org.pcollections;
+package de.uni_koblenz.jgralab.algolib;

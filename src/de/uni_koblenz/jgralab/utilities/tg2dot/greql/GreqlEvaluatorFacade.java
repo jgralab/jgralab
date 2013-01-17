@@ -131,8 +131,7 @@ public class GreqlEvaluatorFacade {
 	private static GreqlQueryCache greqlQueryCache = new GreqlQueryCache();
 
 	/**
-	 * Constructs a GreqlEvaluatorFacade for a given {@link Graph} and creates
-	 * its own {@link GreqlEvaluatorImpl}.
+	 * Constructs a GreqlEvaluatorFacade for a given {@link Graph}.
 	 * 
 	 * @param graph
 	 *            Graph for which this GreqlEvaluatorFacade is used for.
@@ -149,7 +148,7 @@ public class GreqlEvaluatorFacade {
 
 	/**
 	 * Set for a provided {@link AttributedElementClass} the statically known
-	 * variables in the {@link GreqlEvaluatorImpl}.
+	 * variables in the {@link GreqlQuery}.
 	 * 
 	 * @param typeClass
 	 *            A AttributedElementClass.
@@ -226,7 +225,7 @@ public class GreqlEvaluatorFacade {
 
 	/**
 	 * Sets the commonly known attributes for a {@link AttributedElement} as
-	 * variables in the {@link #evaluator}.
+	 * variables in the {@link GreqlEnvironment}.
 	 * 
 	 * @param attributedElement
 	 *            A {@link AttributedElement}.
@@ -312,7 +311,7 @@ public class GreqlEvaluatorFacade {
 	}
 
 	/**
-	 * Sets the given value as variable of the {@link #evaluator}.
+	 * Sets the given value as variable of the {@link GreqlEnvironment}.
 	 * 
 	 * @param name
 	 *            Name of the variable.
@@ -324,7 +323,7 @@ public class GreqlEvaluatorFacade {
 	}
 
 	/**
-	 * Sets the given value as variable of the {@link #evaluator}.
+	 * Sets the given value as variable of the {@link GreqlEnvironment}.
 	 * 
 	 * @param variables
 	 *            Map with variable names and GReQL-queries as values.

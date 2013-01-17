@@ -110,7 +110,7 @@ public interface Graph extends AttributedElement<GraphClass, Graph> {
 	 * {@link EdgeClass} that connects <code>alpha</code> and <code>omega</code>
 	 * vertices and adds the new edge to this {@link Graph}
 	 * 
-	 * @param peliminaryType
+	 * @param preliminaryType
 	 *            the preliminary {@link EdgeClass} of this
 	 *            {@link TemporaryEdge}
 	 * 

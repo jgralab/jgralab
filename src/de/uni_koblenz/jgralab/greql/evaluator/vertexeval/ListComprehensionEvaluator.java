@@ -61,15 +61,8 @@ import de.uni_koblenz.jgralab.greql.types.Table;
 public class ListComprehensionEvaluator extends
 		ComprehensionEvaluator<ListComprehension> {
 
-	/**
-	 * Creates a new ListComprehensionEvaluator for the given vertex
-	 * 
-	 * @param eval
-	 *            the GreqlEvaluator instance this VertexEvaluator belong to
-	 * @param vertex
-	 *            the vertex this VertexEvaluator evaluates
-	 */
-	public ListComprehensionEvaluator(ListComprehension vertex, GreqlQueryImpl query) {
+	public ListComprehensionEvaluator(ListComprehension vertex,
+			GreqlQueryImpl query) {
 		super(vertex, query);
 	}
 
@@ -87,8 +80,7 @@ public class ListComprehensionEvaluator extends
 				for (IsTableHeaderOf tableInc : vertex
 						.getIsTableHeaderOfIncidences(EdgeDirection.IN)) {
 					VertexEvaluator<? extends Expression> headerEval = query
-							.getVertexEvaluator(tableInc
-									.getAlpha());
+							.getVertexEvaluator(tableInc.getAlpha());
 					headerEvaluators.add(headerEval);
 				}
 			} else {
@@ -110,14 +102,13 @@ public class ListComprehensionEvaluator extends
 	@Override
 	public VertexCosts calculateSubtreeEvaluationCosts() {
 		ListComprehension listComp = getVertex();
-		Declaration decl = listComp
-				.getFirstIsCompDeclOfIncidence().getAlpha();
+		Declaration decl = listComp.getFirstIsCompDeclOfIncidence().getAlpha();
 		DeclarationEvaluator declEval = (DeclarationEvaluator) query
 				.getVertexEvaluator(decl);
 		long declCosts = declEval.getCurrentSubtreeEvaluationCosts();
 
-		Expression resultDef = listComp
-				.getFirstIsCompResultDefOfIncidence().getAlpha();
+		Expression resultDef = listComp.getFirstIsCompResultDefOfIncidence()
+				.getAlpha();
 		VertexEvaluator<? extends Expression> resultDefEval = query
 				.getVertexEvaluator(resultDef);
 		long resultCosts = resultDefEval.getCurrentSubtreeEvaluationCosts();
@@ -131,8 +122,7 @@ public class ListComprehensionEvaluator extends
 	@Override
 	public long calculateEstimatedCardinality() {
 		ListComprehension listComp = getVertex();
-		Declaration decl = listComp
-				.getFirstIsCompDeclOfIncidence().getAlpha();
+		Declaration decl = listComp.getFirstIsCompDeclOfIncidence().getAlpha();
 		DeclarationEvaluator declEval = (DeclarationEvaluator) query
 				.getVertexEvaluator(decl);
 		return declEval.getEstimatedCardinality();

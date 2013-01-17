@@ -85,8 +85,9 @@ import de.uni_koblenz.jgralab.schema.impl.DirectedAcyclicGraph;
  * {@link #evaluate()} methods are thread-safe, i.e. many evaluations can be
  * started in parallel. Local data of each evaluation is stored in an
  * {@link EvaluationEnvironment}. The {@link EvaluationEnvironment} is also used
- * to access the results via {@link EvaluationEnvironment#getResult(TaskHandle)}
- * , and to access the {@link GreqlEnvironment} used by all queries.
+ * to access the results via
+ * {@link EvaluationEnvironment#getResult(ParallelGreqlEvaluator.TaskHandle)} ,
+ * and to access the {@link GreqlEnvironment} used by all queries.
  * 
  * To somehow control execution order, a priority can be specified when adding a
  * {@link GreqlQuery} or a {@link ParallelGreqlEvaluatorCallable}. the add...

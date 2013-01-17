@@ -175,15 +175,8 @@ public class PathSystem {
 	 * @param stateNumber
 	 *            the number of the DFAState the DFA was in when this vertex was
 	 *            visited
-	 * @param parentEdge
-	 *            the edge which leads from vertex to parentVertex
-	 * @param parentVertex
-	 *            the parentVertex of the vertex in the PathSystem
-	 * @param parentStateNumber
-	 *            the number of the DFAState the DFA was in when the
-	 *            parentVertex was visited
-	 * @param distance
-	 *            the distance to the rootvertex of the PathSystem
+	 * @param finalState
+	 *            true iff the state is a final state
 	 */
 	public PathSystemNode addVertex(Vertex vertex, int stateNumber,
 			boolean finalState) {

@@ -154,8 +154,8 @@ public abstract class VertexEvaluator<V extends GreqlVertex> {
 	protected double estimatedSelectivity = Double.NaN;
 
 	/**
-	 * @param eval
-	 *            the GreqlEvaluator this VertexEvaluator belongs to
+	 * @param vertex
+	 *            the {@link GreqlVertex} this VertexEvaluator belongs to
 	 * @param query
 	 *            the {@link GreqlQueryImpl} this {@link VertexEvaluator}
 	 *            belongs to

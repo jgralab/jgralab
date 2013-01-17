@@ -39,9 +39,9 @@ import de.uni_koblenz.jgralab.schema.EdgeClass;
 /**
  * Represents a path element in a path description given to
  * {@link Vertex#reachableVertices(Class, PathElement...)}.
- *
- * @author Tassilo Horn &lt;horn@uni-koblenz.de&gt;
- *
+ * 
+ * @author ist@uni-koblenz.de
+ * 
  */
 public class PathElement {
 	public EdgeClass edgeClass;
@@ -49,7 +49,7 @@ public class PathElement {
 	public boolean strictType = false;
 
 	/**
-	 * see {@link #PathElement(Class, EdgeDirection, boolean)}.
+	 * see {@link #PathElement(EdgeClass, EdgeDirection, boolean)}.
 	 * <code>stricts</code> defaults to false.
 	 */
 	public PathElement(EdgeClass ec, EdgeDirection ed) {

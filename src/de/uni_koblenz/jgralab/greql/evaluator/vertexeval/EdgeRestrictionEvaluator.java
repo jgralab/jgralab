@@ -92,12 +92,6 @@ public class EdgeRestrictionEvaluator extends VertexEvaluator<EdgeRestriction> {
 		return validRoles;
 	}
 
-	/**
-	 * creates a new EdgeRestriction evaluator
-	 * 
-	 * @param vertex
-	 * @param eval
-	 */
 	public EdgeRestrictionEvaluator(EdgeRestriction vertex, GreqlQueryImpl query) {
 		super(vertex, query);
 	}

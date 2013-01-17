@@ -111,12 +111,6 @@ public class FunctionApplicationEvaluator extends
 		return getFunctionName();
 	}
 
-	/**
-	 * @param eval
-	 *            the GreqlEvaluator this VertexEvaluator belongs to
-	 * @param vertex
-	 *            the vertex which gets evaluated by this VertexEvaluator
-	 */
 	public FunctionApplicationEvaluator(FunctionApplication vertex,
 			GreqlQueryImpl query) {
 		super(vertex, query);

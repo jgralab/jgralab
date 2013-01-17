@@ -58,14 +58,6 @@ import de.uni_koblenz.jgralab.greql.types.TypeCollection;
 public class VertexSetExpressionEvaluator extends
 		ElementSetExpressionEvaluator<VertexSetExpression> {
 
-	/**
-	 * Creates a new ElementSetExpressionEvaluator for the given vertex
-	 * 
-	 * @param eval
-	 *            the GreqlEvaluator instance this VertexEvaluator belong to
-	 * @param vertex
-	 *            the vertex this VertexEvaluator evaluates
-	 */
 	public VertexSetExpressionEvaluator(VertexSetExpression vertex,
 			GreqlQueryImpl query) {
 		super(vertex, query);
@@ -79,8 +71,7 @@ public class VertexSetExpressionEvaluator extends
 			resultSet = JGraLab.set();
 			Vertex currentVertex = evaluator.getGraph().getFirstVertex();
 			while (currentVertex != null) {
-				if (tc.acceptsType(currentVertex
-						.getAttributedElementClass())) {
+				if (tc.acceptsType(currentVertex.getAttributedElementClass())) {
 					resultSet = resultSet.plus(currentVertex);
 				}
 				currentVertex = currentVertex.getNextVertex();

@@ -59,12 +59,6 @@ import de.uni_koblenz.jgralab.greql.schema.ThisVertex;
  */
 public class ThisVertexEvaluator extends VariableEvaluator<ThisVertex> {
 
-	/**
-	 * @param eval
-	 *            the GreqlEvaluator this VertexEvaluator belongs to
-	 * @param vertex
-	 *            the vertex which gets evaluated by this VertexEvaluator
-	 */
 	public ThisVertexEvaluator(ThisVertex vertex, GreqlQueryImpl query) {
 		super(vertex, query);
 	}

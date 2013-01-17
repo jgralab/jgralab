@@ -39,6 +39,7 @@ import java.io.File;
 import java.util.logging.Logger;
 
 import de.uni_koblenz.jgralab.exception.GraphIOException;
+import de.uni_koblenz.jgralab.greql.OptimizerInfo;
 import de.uni_koblenz.jgralab.greql.optimizer.Optimizer;
 import de.uni_koblenz.jgralab.greql.schema.GreqlExpression;
 import de.uni_koblenz.jgralab.greql.schema.GreqlGraph;
@@ -85,12 +86,12 @@ public class SyntaxGraphEntry {
 	/**
 	 * Creates a new SyntaxGraphEntry
 	 * 
+	 * @param queryText
+	 *            the GReQL query
 	 * @param graph
-	 *            the Greql Syntaxgraph to store in this entry
+	 *            the GReQL Syntaxgraph to store in this entry
 	 * @param optimizer
 	 *            the Optimizer that was used to optimize this syntaxgraph
-	 * @param locked
-	 *            specifies, wether the graph should be locked or not
 	 */
 	public SyntaxGraphEntry(String queryText, GreqlGraph graph,
 			Optimizer optimizer) {
@@ -110,10 +111,11 @@ public class SyntaxGraphEntry {
 	 *             from the given file
 	 * @throws ClassNotFoundException
 	 *             if the {@link SyntaxGraphEntry} saved in the file uses an
-	 *             unknown {@link Optimizer} or {@link CostModel}
+	 *             unknown {@link Optimizer} or {@link OptimizerInfo}
 	 * @throws IllegalAccessException
-	 *             if the {@link Optimizer} or {@link CostModel} of the saved
-	 *             {@link SyntaxGraphEntry} is not accessible for some reason
+	 *             if the {@link Optimizer} or {@link OptimizerInfo} of the
+	 *             saved {@link SyntaxGraphEntry} is not accessible for some
+	 *             reason
 	 * @throws InstantiationException
 	 *             if instantiation of the file's {@link SyntaxGraphEntry}
 	 *             fails. If that's the case check if their class definition

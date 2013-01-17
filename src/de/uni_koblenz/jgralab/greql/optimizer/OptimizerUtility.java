@@ -47,6 +47,7 @@ import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.Vertex;
+import de.uni_koblenz.jgralab.greql.funlib.logics.And;
 import de.uni_koblenz.jgralab.greql.schema.FunctionApplication;
 import de.uni_koblenz.jgralab.greql.schema.FunctionId;
 import de.uni_koblenz.jgralab.greql.schema.GreqlAggregation;
@@ -66,9 +67,9 @@ import de.uni_koblenz.jgralab.greql.schema.Variable;
  */
 public class OptimizerUtility {
 	/**
-	 * Checks if <code>v1</code> is above <code>v2</code> in the {@link Greql}
-	 * syntaxgraph. The {@link GreqlExpression} is considered to be above all
-	 * other vertices, meaning the root is the top, too. The
+	 * Checks if <code>v1</code> is above <code>v2</code> in the
+	 * {@link GreqlGraph}. The {@link GreqlExpression} is considered to be above
+	 * all other vertices, meaning the root is the top, too. The
 	 * {@link GreqlAggregation}s in the syntaxgraph point in up-direction.
 	 * 
 	 * The <code>isAbove</code> relation is reflexive, e.g.
@@ -172,7 +173,7 @@ public class OptimizerUtility {
 	}
 
 	/**
-	 * Find the {@link FunctionId} in the {@link Greql} graph that has
+	 * Find the {@link FunctionId} in the {@link GreqlGraph} that has
 	 * <code>name</code> as its name attribute. If no such {@link FunctionId}
 	 * exists it will be created.
 	 * 
@@ -180,9 +181,9 @@ public class OptimizerUtility {
 	 *            the value of the name attribute of the {@link FunctionId} 
 	 *            we're looking for
 	 * @param graph
-	 *            the {@link GreqlGraph} graph where we look for the
+	 *            the {@link GreqlGraph} where we look for the
 	 *            {@link FunctionId}
-	 * @return the {@link FunctionId} in the {@link Greql} graph that has
+	 * @return the {@link FunctionId} in the {@link GreqlGraph} that has
 	 *         <code>name</code> as its name attribute. If no such
 	 *         {@link FunctionId} exists it will be created.
 	 */
@@ -204,7 +205,7 @@ public class OptimizerUtility {
 	 * <code>null</code> with an empty {@link ArrayList}.
 	 * 
 	 * @param graph
-	 *            the {@link GreqlGraph} syntaxgraph
+	 *            the {@link GreqlGraph}
 	 */
 	public static void createMissingSourcePositions(GreqlGraph graph) {
 		for (GreqlAggregation aggr : graph.getGreqlAggregationEdges()) {

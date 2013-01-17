@@ -60,11 +60,6 @@ import de.uni_koblenz.jgralab.greql.types.TypeCollection;
 public abstract class PathDescriptionEvaluator<V extends PathDescription>
 		extends VertexEvaluator<V> {
 
-	/**
-	 * Creates a new PathDescriptionEvaluator
-	 * 
-	 * @param eval
-	 */
 	public PathDescriptionEvaluator(V vertex, GreqlQueryImpl query) {
 		super(vertex, query);
 	}

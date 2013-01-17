@@ -61,14 +61,6 @@ public class RecordConstructionEvaluator extends
 	 */
 	protected static final int addToRecordCosts = 10;
 
-	/**
-	 * Creates a new RecordConstructionEvaluator for the given vertex
-	 * 
-	 * @param eval
-	 *            the GreqlEvaluator instance this VertexEvaluator belong to
-	 * @param vertex
-	 *            the vertex this VertexEvaluator evaluates
-	 */
 	public RecordConstructionEvaluator(RecordConstruction vertex,
 			GreqlQueryImpl query) {
 		super(vertex, query);
