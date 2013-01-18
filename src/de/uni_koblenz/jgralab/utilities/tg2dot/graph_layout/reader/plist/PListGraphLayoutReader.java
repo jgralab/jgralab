@@ -38,10 +38,9 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Map.Entry;
 
-import org.riediger.plist.PList;
-import org.riediger.plist.PListDict;
-import org.riediger.plist.PListException;
-
+import de.uni_koblenz.ist.utilities.plist.PList;
+import de.uni_koblenz.ist.utilities.plist.PListDict;
+import de.uni_koblenz.ist.utilities.plist.PListException;
 import de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout.GraphLayout;
 import de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout.reader.AbstractGraphLayoutReader;
 import de.uni_koblenz.jgralab.utilities.tg2dot.greql.GreqlEvaluatorFacade;
@@ -52,8 +51,7 @@ import de.uni_koblenz.jgralab.utilities.tg2dot.greql.GreqlEvaluatorFacade;
  * 
  * @author ist@uni-koblenz.de
  */
-public class PListGraphLayoutReader extends
-		AbstractGraphLayoutReader {
+public class PListGraphLayoutReader extends AbstractGraphLayoutReader {
 
 	/**
 	 * Constructs a PListGraphLayoutReader.
