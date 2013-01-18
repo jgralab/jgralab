@@ -70,7 +70,7 @@ public class PList {
 		this.filename = filename;
 		try {
 			dict = loadFrom(filename);
-		} catch (Exception e) {
+		} catch (PListException e) {
 			if (e.getCause() instanceof FileNotFoundException) {
 				dict = new PListDict();
 			} else {
