@@ -158,7 +158,7 @@ public class TemporaryVertexImpl extends VertexImpl implements TemporaryVertex {
 		for (Edge te : newVertex.incidences(this.getGraphClass()
 				.getTemporaryEdgeClass())) {
 			if ((((TemporaryEdge) te).getPreliminaryType() != null)
-					&& te.isValid()) {
+					&& te.isValid() && !te.getThat().isTemporary()) {
 				tempEdgeList.add((TemporaryEdge) te.getNormalEdge());
 			}
 		}
