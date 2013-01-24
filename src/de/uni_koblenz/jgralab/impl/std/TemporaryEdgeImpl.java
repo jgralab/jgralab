@@ -2,6 +2,7 @@ package de.uni_koblenz.jgralab.impl.std;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Map.Entry;
 
 import de.uni_koblenz.jgralab.Edge;
@@ -292,7 +293,9 @@ public class TemporaryEdgeImpl extends EdgeImpl implements TemporaryEdge {
 	@Override
 	public final String toString() {
 		StringBuilder sb = new StringBuilder();
-		sb.append("te: ");
+		sb.append("+te");
+		sb.append(id);
+		sb.append(": ");
 		if (preliminaryType != null) {
 			sb.append(preliminaryType.getQualifiedName());
 		} else {
@@ -312,5 +315,10 @@ public class TemporaryEdgeImpl extends EdgeImpl implements TemporaryEdge {
 		}
 		sb.append("}");
 		return sb.toString();
+	}
+
+	@Override
+	public Map<String, Object> getAttributes() {
+		return attributes;
 	}
 }
