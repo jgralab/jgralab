@@ -3,12 +3,16 @@ package de.uni_koblenz.jgralab.utilities.argouml2tg;
 import java.io.BufferedWriter;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Locale;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import javax.xml.stream.XMLOutputFactory;
@@ -24,12 +28,27 @@ import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.JGraLab;
+import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.exception.GraphIOException;
 import de.uni_koblenz.jgralab.grumlschema.GrumlSchema;
 import de.uni_koblenz.jgralab.grumlschema.SchemaGraph;
+import de.uni_koblenz.jgralab.grumlschema.domains.BasicDomain;
+import de.uni_koblenz.jgralab.grumlschema.domains.BooleanDomain;
+import de.uni_koblenz.jgralab.grumlschema.domains.CollectionDomain;
 import de.uni_koblenz.jgralab.grumlschema.domains.Domain;
+import de.uni_koblenz.jgralab.grumlschema.domains.DoubleDomain;
+import de.uni_koblenz.jgralab.grumlschema.domains.EnumDomain;
+import de.uni_koblenz.jgralab.grumlschema.domains.HasRecordDomainComponent;
+import de.uni_koblenz.jgralab.grumlschema.domains.IntegerDomain;
+import de.uni_koblenz.jgralab.grumlschema.domains.LongDomain;
+import de.uni_koblenz.jgralab.grumlschema.domains.MapDomain;
+import de.uni_koblenz.jgralab.grumlschema.domains.RecordDomain;
+import de.uni_koblenz.jgralab.grumlschema.domains.StringDomain;
 import de.uni_koblenz.jgralab.grumlschema.structure.Annotates;
+import de.uni_koblenz.jgralab.grumlschema.structure.Attribute;
 import de.uni_koblenz.jgralab.grumlschema.structure.AttributedElementClass;
+import de.uni_koblenz.jgralab.grumlschema.structure.Comment;
+import de.uni_koblenz.jgralab.grumlschema.structure.Constraint;
 import de.uni_koblenz.jgralab.grumlschema.structure.EdgeClass;
 import de.uni_koblenz.jgralab.grumlschema.structure.GraphClass;
 import de.uni_koblenz.jgralab.grumlschema.structure.GraphElementClass;
@@ -49,12 +68,46 @@ import de.uni_koblenz.jgralab.utilities.tg2schemagraph.Schema2SchemaGraph;
 
 public class Tg2ArgoUml {
 
+	private class ReplacementOutputStream extends OutputStream {
+
+		private final OutputStream output;
+
+		public ReplacementOutputStream(OutputStream out) {
+			output = out;
+		}
+
+		@Override
+		public void write(int b) throws IOException {
+			if (b == '\n') {
+				output.write('&');
+				output.write('#');
+				output.write('x');
+				output.write('0');
+				output.write('a');
+				output.write(';');
+			} else if (b == '\r') {
+				output.write('&');
+				output.write('#');
+				output.write('x');
+				output.write('0');
+				output.write('d');
+				output.write(';');
+			} else {
+				output.write(b);
+			}
+		}
+
+	}
+
+	private static final String UML_PROFILE_PREFIX = "http://argouml.org/user-profiles/gruml-1.0.1.xmi#";
 	private static final String UML_NAMESPACE_URI = "org.omg.xmi.namespace.UML";
 	/**
 	 * If set to <code>true</code>, the EdgeClasses are created as associations
 	 * which are bidirectional navigable.
 	 */
 	private boolean isBidirectional = false;
+
+	private final Map<Domain, String> domain2id = new HashMap<Domain, String>();
 
 	/**
 	 * Processes an TG-file as schema or a schema in a grUML graph to a XMI
@@ -192,7 +245,8 @@ public class Tg2ArgoUml {
 		try {
 			// create the XMLStreamWriter which creates the current xmi-file.
 			out = new BufferedWriter(new OutputStreamWriter(
-					new FileOutputStream(xmiName), "UTF-8"));
+					new ReplacementOutputStream(new FileOutputStream(xmiName)),
+					"UTF-8"));
 			XMLOutputFactory factory = XMLOutputFactory.newInstance();
 			factory.setProperty("javax.xml.stream.isRepairingNamespaces",
 					Boolean.TRUE);
@@ -270,6 +324,8 @@ public class Tg2ArgoUml {
 
 	private void createSchema(XMLStreamWriter writer, Schema schema)
 			throws XMLStreamException {
+		Map<Vertex, String> comment2id = new HashMap<Vertex, String>();
+
 		writer.writeStartElement(UML_NAMESPACE_URI, "Model");
 		writer.writeAttribute("xmi.id", schema.get_packagePrefix() + "."
 				+ schema.get_name());
@@ -282,20 +338,24 @@ public class Tg2ArgoUml {
 
 		writer.writeStartElement(UML_NAMESPACE_URI, "Namespace.ownedElement");
 
-		createGraphClass(writer, schema.get_graphclass());
+		createGraphClass(writer, schema.get_graphclass(), comment2id);
 
-		createPackage(writer, schema.get_defaultpackage());
+		createPackage(writer, schema.get_defaultpackage(), comment2id);
+
+		createCommentsAndConstraints(writer, comment2id);
 
 		writer.writeEndElement();
 
 		writer.writeEndElement();
 	}
 
-	private void createGraphClass(XMLStreamWriter writer, GraphClass graphClass)
+	private void createGraphClass(XMLStreamWriter writer,
+			GraphClass graphClass, Map<Vertex, String> comment2id)
 			throws XMLStreamException {
 		writer.writeStartElement(UML_NAMESPACE_URI, "Class");
 		writer.writeAttribute("xmi.id", graphClass.get_qualifiedName());
-		writer.writeAttribute("name", graphClass.get_qualifiedName());
+		writer.writeAttribute("name",
+				getSimpleName(graphClass.get_qualifiedName()));
 		writer.writeAttribute("visibility", "public");
 		writer.writeAttribute("isSpecification", "false");
 		writer.writeAttribute("isRoot", "false");
@@ -303,100 +363,213 @@ public class Tg2ArgoUml {
 		writer.writeAttribute("isAbstract", "false");
 		writer.writeAttribute("isActive", "false");
 
+		attachCommentsAndConstraints(writer, graphClass, comment2id);
+
 		attachStereotype(writer, ArgoUml2Tg.ST_GRAPHCLASS);
 
 		createAttributes(writer, graphClass);
 
-		createComments(writer, graphClass);
-
-		createConstraints(writer, graphClass);
-
 		writer.writeEndElement();
 	}
 
-	private void createPackage(XMLStreamWriter writer, Package pack)
-			throws XMLStreamException {
+	private void createPackage(XMLStreamWriter writer, Package pack,
+			Map<Vertex, String> comment2id) throws XMLStreamException {
 		if (pack.get_qualifiedName() != null
 				&& !pack.get_qualifiedName().isEmpty()) {
 			writer.writeStartElement(UML_NAMESPACE_URI, "Package");
 			writer.writeAttribute("xmi.id", pack.get_qualifiedName());
-			writer.writeAttribute("name", pack.get_qualifiedName());
+			writer.writeAttribute("name",
+					getSimpleName(pack.get_qualifiedName()));
 			writer.writeAttribute("isSpecification", "false");
 			writer.writeAttribute("isRoot", "false");
 			writer.writeAttribute("isLeaf", "false");
 			writer.writeAttribute("isAbstract", "false");
 
+			attachCommentsAndConstraints(writer, pack, comment2id);
+
+			comment2id = new HashMap<Vertex, String>();
+
 			writer.writeStartElement(UML_NAMESPACE_URI,
 					"Namespace.ownedElement");
 		}
 
-		createComments(writer, pack);
-
 		for (Domain dom : pack.get_domains()) {
-			createDomain(writer, dom);
+			createDomain(writer, dom, comment2id);
 		}
 
 		Set<Edge> specializations = new HashSet<Edge>();
 
 		for (GraphElementClass gec : pack.get_graphelementclasses()) {
 			if (gec.isInstanceOf(VertexClass.VC)) {
-				createVertexClass(writer, (VertexClass) gec, specializations);
+				createVertexClass(writer, (VertexClass) gec, specializations,
+						comment2id);
 			} else {
-				createEdgeClass(writer, (EdgeClass) gec, specializations);
+				createEdgeClass(writer, (EdgeClass) gec, specializations,
+						comment2id);
 			}
 		}
 
+		createGeneralization(writer, specializations);
+
+		for (Package subpackage : pack.get_subpackages()) {
+			createPackage(writer, subpackage, comment2id);
+		}
+
+		if (pack.get_qualifiedName() != null
+				&& !pack.get_qualifiedName().isEmpty()) {
+			createCommentsAndConstraints(writer, comment2id);
+
+			writer.writeEndElement();
+
+			writer.writeEndElement();
+		}
+	}
+
+	private void createGeneralization(XMLStreamWriter writer,
+			Set<Edge> specializations) throws XMLStreamException {
 		for (Edge edge : specializations) {
 			GraphElementClass subClass = (GraphElementClass) edge.getAlpha();
 			GraphElementClass superClass = (GraphElementClass) edge.getOmega();
-			// TODO check Class/Association/AssociationClass
-			String generalizationType = "Class";
+			boolean isAssociation = subClass.isInstanceOf(VertexClass.VC);
+			String generalizationType = isAssociation ? "Class" : "Association";
 
 			writer.writeStartElement(UML_NAMESPACE_URI, "Generalization");
 			writer.writeAttribute("xmi.id", subClass.get_qualifiedName()
 					+ "_specializes_" + superClass.get_qualifiedName());
 
 			writer.writeStartElement(UML_NAMESPACE_URI, "Generalization.child");
-			writer.writeEmptyElement(UML_NAMESPACE_URI, generalizationType);
-			writer.writeAttribute("xmi.id", subClass.get_qualifiedName());
+			writer.writeEmptyElement(
+					UML_NAMESPACE_URI,
+					generalizationType
+							+ (isAssociation
+									&& subClass.getDegree(HasAttribute.EC) > 0 ? "Class"
+									: ""));
+			writer.writeAttribute("xmi.idref", subClass.get_qualifiedName());
 			writer.writeEndElement();
 
 			writer.writeStartElement(UML_NAMESPACE_URI, "Generalization.parent");
-			writer.writeEmptyElement(UML_NAMESPACE_URI, generalizationType);
-			writer.writeAttribute("xmi.id", superClass.get_qualifiedName());
-			writer.writeEndElement();
-
-			writer.writeEndElement();
-		}
-
-		for (Package subpackage : pack.get_subpackages()) {
-			createPackage(writer, subpackage);
-		}
-
-		if (pack.get_qualifiedName() != null
-				&& !pack.get_qualifiedName().isEmpty()) {
+			writer.writeEmptyElement(
+					UML_NAMESPACE_URI,
+					generalizationType
+							+ (isAssociation
+									&& superClass.getDegree(HasAttribute.EC) > 0 ? "Class"
+									: ""));
+			writer.writeAttribute("xmi.idref", superClass.get_qualifiedName());
 			writer.writeEndElement();
 
 			writer.writeEndElement();
 		}
 	}
 
-	private void createDomain(XMLStreamWriter writer, Domain dom)
-			throws XMLStreamException {
-		// TODO Auto-generated method stub
+	private void createDomain(XMLStreamWriter writer, Domain dom,
+			Map<Vertex, String> comment2id) throws XMLStreamException {
+		if (dom.isInstanceOf(BasicDomain.VC)) {
+			return;
+		} else if (dom.isInstanceOf(RecordDomain.VC)) {
+			createRecordDomain(writer, (RecordDomain) dom, comment2id);
+		} else if (dom.isInstanceOf(EnumDomain.VC)) {
+			createEnumDomain(writer, (EnumDomain) dom, comment2id);
+		} else {
+			// collection or map
+			String qualifiedDomainName = getDomainId(dom);
 
+			if (dom.getDegree(Annotates.EC) > 0) {
+				writer.writeStartElement(UML_NAMESPACE_URI, "DataType");
+			} else {
+				writer.writeEmptyElement(UML_NAMESPACE_URI, "DataType");
+			}
+			writer.writeAttribute("xmi.id", qualifiedDomainName);
+			writer.writeAttribute("name", qualifiedDomainName);
+			writer.writeAttribute("isSpecification", "false");
+			writer.writeAttribute("isRoot", "false");
+			writer.writeAttribute("isLeaf", "false");
+			writer.writeAttribute("isAbstract", "false");
+
+			if (dom.getDegree(Annotates.EC) > 0) {
+				attachCommentsAndConstraints(writer, dom, comment2id);
+				writer.writeEndElement();
+			}
+		}
+	}
+
+	private void createRecordDomain(XMLStreamWriter writer,
+			RecordDomain recordDomain, Map<Vertex, String> comment2id)
+			throws XMLStreamException {
+		// record domains must have at least one attribute
+		writer.writeStartElement(UML_NAMESPACE_URI, "Class");
+		writer.writeAttribute("xmi.id", recordDomain.get_qualifiedName());
+		writer.writeAttribute("name",
+				getSimpleName(recordDomain.get_qualifiedName()));
+		writer.writeAttribute("visibility", "public");
+		writer.writeAttribute("isSpecification", "false");
+		writer.writeAttribute("isRoot", "false");
+		writer.writeAttribute("isLeaf", "false");
+		writer.writeAttribute("isAbstract", "false");
+		writer.writeAttribute("isActive", "false");
+
+		attachCommentsAndConstraints(writer, recordDomain, comment2id);
+
+		attachStereotype(writer, ArgoUml2Tg.ST_RECORD);
+
+		writer.writeStartElement(UML_NAMESPACE_URI, "Classifier.feature");
+
+		for (HasRecordDomainComponent hrdc : recordDomain
+				.getHasRecordDomainComponentIncidences(EdgeDirection.OUT)) {
+			Domain dom = (Domain) hrdc.getThat();
+			String attributeName = hrdc.get_name();
+			String attributeId = recordDomain.get_qualifiedName()
+					+ "_attribute_" + attributeName + ":"
+					+ dom.get_qualifiedName();
+
+			attacheAttribute(writer, dom, attributeName, attributeId, null);
+		}
+
+		writer.writeEndElement();
+
+		writer.writeEndElement();
+	}
+
+	private void createEnumDomain(XMLStreamWriter writer,
+			EnumDomain enumDomain, Map<Vertex, String> comment2id)
+			throws XMLStreamException {
+		String enumId = getDomainId(enumDomain);
+
+		writer.writeStartElement(UML_NAMESPACE_URI, "Enumeration");
+		writer.writeAttribute("xmi.id", enumId);
+		writer.writeAttribute("name", getSimpleName(enumId));
+		writer.writeAttribute("isSpecification", "false");
+		writer.writeAttribute("isRoot", "false");
+		writer.writeAttribute("isLeaf", "false");
+		writer.writeAttribute("isAbstract", "false");
+
+		attachCommentsAndConstraints(writer, enumDomain, comment2id);
+
+		writer.writeStartElement(UML_NAMESPACE_URI, "Enumeration.literal");
+
+		for (String enumConstant : enumDomain.get_enumConstants()) {
+			writer.writeEmptyElement(UML_NAMESPACE_URI, "EnumerationLiteral");
+			writer.writeAttribute("xmi.id", enumId + "_constant_"
+					+ enumConstant);
+			writer.writeAttribute("name", enumConstant);
+			writer.writeAttribute("isSpecification", "false");
+		}
+
+		writer.writeEndElement();
+
+		writer.writeEndElement();
 	}
 
 	private void createVertexClass(XMLStreamWriter writer,
-			VertexClass vertexClass, Set<Edge> specializations)
-			throws XMLStreamException {
+			VertexClass vertexClass, Set<Edge> specializations,
+			Map<Vertex, String> comment2id) throws XMLStreamException {
 		if (hasVertexClassRepresentationChildren(vertexClass)) {
 			writer.writeStartElement(UML_NAMESPACE_URI, "Class");
 		} else {
 			writer.writeEmptyElement(UML_NAMESPACE_URI, "Class");
 		}
 		writer.writeAttribute("xmi.id", vertexClass.get_qualifiedName());
-		writer.writeAttribute("name", vertexClass.get_qualifiedName());
+		writer.writeAttribute("name",
+				getSimpleName(vertexClass.get_qualifiedName()));
 		writer.writeAttribute("visibility", "public");
 		writer.writeAttribute("isSpecification", "false");
 		writer.writeAttribute("isRoot", "false");
@@ -405,16 +578,15 @@ public class Tg2ArgoUml {
 				: "false");
 		writer.writeAttribute("isActive", "false");
 
+		attachCommentsAndConstraints(writer, vertexClass, comment2id);
+
 		if (vertexClass.is_abstract()) {
 			attachStereotype(writer, ArgoUml2Tg.ST_ABSTRACT);
 		}
 
 		createAttributes(writer, vertexClass);
-		createComments(writer, vertexClass);
-		createConstraints(writer, vertexClass);
 
-		createGeneralization(writer, vertexClass, specializations);
-		// TODO
+		attachGeneralization(writer, vertexClass, specializations);
 
 		if (hasVertexClassRepresentationChildren(vertexClass)) {
 			writer.writeEndElement();
@@ -431,13 +603,15 @@ public class Tg2ArgoUml {
 	}
 
 	private void createEdgeClass(XMLStreamWriter writer, EdgeClass edgeClass,
-			Set<Edge> specializations) throws XMLStreamException {
+			Set<Edge> specializations, Map<Vertex, String> comment2id)
+			throws XMLStreamException {
 		boolean isAssociation = edgeClass.getDegree(HasAttribute.EC) == 0;
 
 		writer.writeStartElement(UML_NAMESPACE_URI,
 				isAssociation ? "Association" : "AssociationClass");
 		writer.writeAttribute("xmi.id", edgeClass.get_qualifiedName());
-		writer.writeAttribute("name", edgeClass.get_qualifiedName());
+		writer.writeAttribute("name",
+				getSimpleName(edgeClass.get_qualifiedName()));
 		if (!isAssociation) {
 			writer.writeAttribute("visibility", "public");
 		}
@@ -450,6 +624,8 @@ public class Tg2ArgoUml {
 			writer.writeAttribute("isActive", "false");
 		}
 
+		attachCommentsAndConstraints(writer, edgeClass, comment2id);
+
 		if (edgeClass.is_abstract()) {
 			attachStereotype(writer, ArgoUml2Tg.ST_ABSTRACT);
 		}
@@ -460,11 +636,8 @@ public class Tg2ArgoUml {
 		writer.writeEndElement();
 
 		createAttributes(writer, edgeClass);
-		createComments(writer, edgeClass);
-		createConstraints(writer, edgeClass);
 
-		createGeneralization(writer, edgeClass, specializations);
-		// TODO Auto-generated method stub
+		attachGeneralization(writer, edgeClass, specializations);
 
 		writer.writeEndElement();
 	}
@@ -483,11 +656,16 @@ public class Tg2ArgoUml {
 			aggregation = "aggregate";
 			break;
 		}
+		String associationEndId = (isAlpha ? "alpha" : "omega") + "_incidence_"
+				+ edgeClass.get_qualifiedName() + "_"
+				+ incidenceClass.get_targetclass().get_qualifiedName();
 
 		writer.writeStartElement(UML_NAMESPACE_URI, "AssociationEnd");
-		writer.writeAttribute("xmi.id", (isAlpha ? "alpha" : "omega")
-				+ "_incidence_" + edgeClass.get_qualifiedName() + "_"
-				+ incidenceClass.get_targetclass().get_qualifiedName());
+		writer.writeAttribute("xmi.id", associationEndId);
+		if (incidenceClass.get_roleName() != null
+				&& !incidenceClass.get_roleName().isEmpty()) {
+			writer.writeAttribute("name", incidenceClass.get_roleName());
+		}
 		writer.writeAttribute("visibility", "public");
 		writer.writeAttribute("isSpecification", "false");
 		writer.writeAttribute("isNavigable",
@@ -498,17 +676,22 @@ public class Tg2ArgoUml {
 		writer.writeAttribute("changeability", "changeable");
 
 		writer.writeStartElement(UML_NAMESPACE_URI,
+				"AssociationEnd.multiplicity");
+		createMultiplicity(writer, associationEndId, incidenceClass.get_min(),
+				incidenceClass.get_max());
+		writer.writeEndElement();
+
+		writer.writeStartElement(UML_NAMESPACE_URI,
 				"AssociationEnd.participant");
 		writer.writeEmptyElement(UML_NAMESPACE_URI, "Class");
 		writer.writeAttribute("xmi.idref", incidenceClass.get_targetclass()
 				.get_qualifiedName());
 		writer.writeEndElement();
-		// TODO Auto-generated method stub
 
 		writer.writeEndElement();
 	}
 
-	private void createGeneralization(XMLStreamWriter writer,
+	private void attachGeneralization(XMLStreamWriter writer,
 			GraphElementClass graphElementClass, Set<Edge> specializations)
 			throws XMLStreamException {
 		boolean hasSpecializations = false;
@@ -536,29 +719,227 @@ public class Tg2ArgoUml {
 
 	private void createAttributes(XMLStreamWriter writer,
 			AttributedElementClass attrElementClass) throws XMLStreamException {
-		// TODO Auto-generated method stub
+		boolean hasAttributes = false;
+		for (Attribute attr : attrElementClass.get_attributes()) {
+			if (!hasAttributes) {
+				writer.writeStartElement(UML_NAMESPACE_URI,
+						"Classifier.feature");
+				hasAttributes = true;
+			}
+			Domain dom = attr.get_domain();
+			String attributeName = attr.get_name();
+			String attributeId = attrElementClass.get_qualifiedName()
+					+ "_attribute_" + attributeName + ":"
+					+ dom.get_qualifiedName();
 
+			System.out.println(attr.get_defaultValue());
+			attacheAttribute(writer, dom, attributeName, attributeId,
+					attr.get_defaultValue());
+		}
+		if (hasAttributes) {
+			writer.writeEndElement();
+		}
 	}
 
-	private void createComments(XMLStreamWriter writer,
-			NamedElement namedElement) throws XMLStreamException {
-		// TODO Auto-generated method stub
+	private void attacheAttribute(XMLStreamWriter writer, Domain dom,
+			String attributeName, String attributeId, String defaultValue)
+			throws XMLStreamException {
+		String type = "";
+		String nameOfAttributeOfDomainRef = "";
+		String referencedDomainId = getDomainId(dom);
+		if (dom.isInstanceOf(BasicDomain.VC)) {
+			type = "DataType";
+			nameOfAttributeOfDomainRef = "href";
+		} else if (dom.isInstanceOf(EnumDomain.VC)) {
+			type = "Enumeration";
+			nameOfAttributeOfDomainRef = "xmi.idref";
+		} else if (dom.isInstanceOf(RecordDomain.VC)) {
+			type = "Class";
+			nameOfAttributeOfDomainRef = "xmi.idref";
+		} else {
+			// collection or map
+			type = "DataType";
+			nameOfAttributeOfDomainRef = "xmi.idref";
+		}
 
+		writer.writeStartElement(UML_NAMESPACE_URI, "Attribute");
+		writer.writeAttribute("xmi.id", attributeId);
+		writer.writeAttribute("name", attributeName);
+		writer.writeAttribute("visibility", "public");
+		writer.writeAttribute("isSpecification", "false");
+		writer.writeAttribute("ownerScope", "instance");
+		writer.writeAttribute("changeability", "changeable");
+		writer.writeAttribute("targetScope", "instance");
+
+		writer.writeStartElement(UML_NAMESPACE_URI,
+				"StructuralFeature.multiplicity");
+		createMultiplicity(writer, attributeId, 1, 1);
+		writer.writeEndElement();
+
+		// default value
+		if (defaultValue != null) {
+			writer.writeStartElement(UML_NAMESPACE_URI,
+					"Attribute.initialValue");
+
+			writer.writeEmptyElement(UML_NAMESPACE_URI, "Expression");
+			writer.writeAttribute("xmi.id", attributeId + "_defaultValue");
+			writer.writeAttribute("language", "");
+			writer.writeAttribute("body", defaultValue);
+
+			writer.writeEndElement();
+		}
+
+		// attribute type
+		writer.writeStartElement(UML_NAMESPACE_URI, "StructuralFeature.type");
+
+		writer.writeEmptyElement(UML_NAMESPACE_URI, type);
+		writer.writeAttribute(nameOfAttributeOfDomainRef, referencedDomainId);
+
+		writer.writeEndElement();
+
+		writer.writeEndElement();
 	}
 
-	private void createConstraints(XMLStreamWriter writer,
-			AttributedElementClass attrElementClass) throws XMLStreamException {
-		// TODO Auto-generated method stub
+	private String getDomainId(Domain dom) {
+		String id = domain2id.get(dom);
+		if (id == null) {
+			if (dom.isInstanceOf(BooleanDomain.VC)) {
+				id = UML_PROFILE_PREFIX + ArgoUml2Tg.DT_BOOLEAN;
+			} else if (dom.isInstanceOf(IntegerDomain.VC)) {
+				id = UML_PROFILE_PREFIX + ArgoUml2Tg.DT_INTEGER;
+			} else if (dom.isInstanceOf(LongDomain.VC)) {
+				id = UML_PROFILE_PREFIX + ArgoUml2Tg.DT_LONG;
+			} else if (dom.isInstanceOf(DoubleDomain.VC)) {
+				id = UML_PROFILE_PREFIX + ArgoUml2Tg.DT_DOUBLE;
+			} else if (dom.isInstanceOf(StringDomain.VC)) {
+				id = UML_PROFILE_PREFIX + ArgoUml2Tg.DT_STRING;
+			} else {
+				id = dom.get_qualifiedName();
+			}
+			domain2id.put(dom, id);
+		}
+		return id;
+	}
 
+	private void createMultiplicity(XMLStreamWriter writer, String baseId,
+			int min, int max) throws XMLStreamException {
+		writer.writeStartElement(UML_NAMESPACE_URI, "Multiplicity");
+		writer.writeAttribute("xmi.id", baseId + "_multiplicity");
+
+		writer.writeStartElement(UML_NAMESPACE_URI, "Multiplicity.range");
+
+		writer.writeEmptyElement(UML_NAMESPACE_URI, "MultiplicityRange");
+		writer.writeAttribute("xmi.id", baseId + "_multiplicityRange");
+		writer.writeAttribute("lower", Integer.toString(min));
+		writer.writeAttribute("upper",
+				Integer.toString(max == Integer.MAX_VALUE ? -1 : max));
+
+		writer.writeEndElement();
+
+		writer.writeEndElement();
+	}
+
+	private void attachCommentsAndConstraints(XMLStreamWriter writer,
+			NamedElement namedElement, Map<Vertex, String> comment2id)
+			throws XMLStreamException {
+		if (namedElement.getDegree(Annotates.EC) == 0
+				&& namedElement.getDegree(HasConstraint.EC) == 0) {
+			return;
+		}
+		int i = 0;
+		writer.writeStartElement(UML_NAMESPACE_URI, "ModelElement.comment");
+		for (Comment comment : namedElement.get_comments()) {
+			String commentId = comment2id.get(comment);
+			if (commentId == null) {
+				commentId = namedElement.get_qualifiedName() + "_comment_"
+						+ i++;
+				comment2id.put(comment, commentId);
+			}
+			writer.writeEmptyElement(UML_NAMESPACE_URI, "Comment");
+			writer.writeAttribute("xmi.idref", commentId);
+		}
+		if (namedElement.isInstanceOf(AttributedElementClass.VC)) {
+			for (Constraint constraint : ((AttributedElementClass) namedElement)
+					.get_constraints()) {
+				String commentId = comment2id.get(constraint);
+				if (commentId == null) {
+					commentId = namedElement.get_qualifiedName()
+							+ "_constraint_" + i++;
+					comment2id.put(constraint, commentId);
+				}
+				writer.writeEmptyElement(UML_NAMESPACE_URI, "Comment");
+				writer.writeAttribute("xmi.idref", commentId);
+			}
+		}
+		writer.writeEndElement();
+	}
+
+	private void createCommentsAndConstraints(XMLStreamWriter writer,
+			Map<Vertex, String> comment2id) throws XMLStreamException {
+		for (Entry<Vertex, String> entry : comment2id.entrySet()) {
+			boolean isComment = entry.getKey().isInstanceOf(Comment.VC);
+			NamedElement annotatedElement = isComment ? ((Comment) entry
+					.getKey()).get_annotatedelement() : ((Constraint) entry
+					.getKey()).get_constrainedelement();
+			String annotatedElementType = "";
+			if (annotatedElement.isInstanceOf(Package.VC)) {
+				annotatedElementType = "Package";
+			} else if (annotatedElement.isInstanceOf(EdgeClass.VC)) {
+				if (annotatedElement.getDegree(HasAttribute.EC) == 0) {
+					annotatedElementType = "Association";
+				} else {
+					annotatedElementType = "AssociationClass";
+				}
+			} else if (annotatedElement.isInstanceOf(EnumDomain.VC)) {
+				annotatedElementType = "Enumeration";
+			} else if (annotatedElement.isInstanceOf(CollectionDomain.VC)
+					|| annotatedElement.isInstanceOf(MapDomain.VC)) {
+				annotatedElementType = "DataType";
+			} else {
+				annotatedElementType = "Class";
+			}
+			String commentBody = "";
+			if (isComment) {
+				commentBody = ((Comment) entry.getKey()).get_text();
+			} else {
+				Constraint constraint = (Constraint) entry.getKey();
+				commentBody = "{\"" + constraint.get_message() + "\" \""
+						+ constraint.get_predicateQuery() + "\" \""
+						+ constraint.get_offendingElementsQuery() + "\"}";
+			}
+
+			writer.writeStartElement(UML_NAMESPACE_URI, "Comment");
+			writer.writeAttribute("xmi.id", entry.getValue());
+			writer.writeAttribute("isSpecification", "false");
+			writer.writeAttribute("body", commentBody);
+
+			writer.writeStartElement(UML_NAMESPACE_URI,
+					"Comment.annotatedElement");
+
+			writer.writeEmptyElement(UML_NAMESPACE_URI, annotatedElementType);
+			writer.writeAttribute("xmi.idref",
+					annotatedElement.get_qualifiedName());
+
+			writer.writeEndElement();
+
+			writer.writeEndElement();
+		}
 	}
 
 	private void attachStereotype(XMLStreamWriter writer, String stereotype)
 			throws XMLStreamException {
 		writer.writeStartElement(UML_NAMESPACE_URI, "ModelElement.stereotype");
 		writer.writeEmptyElement(UML_NAMESPACE_URI, "Stereotype");
-		writer.writeAttribute("href",
-				"http://argouml.org/user-profiles/gruml-1.0.1.xmi#"
-						+ stereotype);
+		writer.writeAttribute("href", UML_PROFILE_PREFIX + stereotype);
 		writer.writeEndElement();
+	}
+
+	private String getSimpleName(String qualifiedName) {
+		String simpleName = qualifiedName;
+		int lastIndex = qualifiedName.lastIndexOf('.');
+		if (lastIndex >= 0) {
+			simpleName = simpleName.substring(lastIndex + 1);
+		}
+		return simpleName;
 	}
 }

@@ -44,7 +44,6 @@ import de.uni_koblenz.jgralab.grumlschema.domains.ListDomain;
 import de.uni_koblenz.jgralab.grumlschema.domains.MapDomain;
 import de.uni_koblenz.jgralab.grumlschema.domains.RecordDomain;
 import de.uni_koblenz.jgralab.grumlschema.domains.SetDomain;
-import de.uni_koblenz.jgralab.grumlschema.domains.StringDomain;
 import de.uni_koblenz.jgralab.grumlschema.structure.AggregationKind;
 import de.uni_koblenz.jgralab.grumlschema.structure.Annotates;
 import de.uni_koblenz.jgralab.grumlschema.structure.Attribute;
@@ -356,6 +355,15 @@ public class ArgoUml2Tg extends Xml2Tg {
 	@Override
 	public void process(String fileName) throws FileNotFoundException,
 			XMLStreamException {
+		defaultPackage = null;
+		graphClass = null;
+		domainMap = new HashMap<String, Domain>();
+		packageMap = new HashMap<String, Package>();
+		profileIdMap = new HashMap<String, Domain>();
+		qnMap = new HashMap<String, Vertex>();
+		xmiIdMap = new HashMap<String, Vertex>();
+		schema = null;
+		sg = null;
 		System.out.println("Process " + fileName + "...");
 		super.process(fileName);
 		convertToTg(getFilenameSchema());
@@ -1295,12 +1303,9 @@ public class ArgoUml2Tg extends Xml2Tg {
 		String value = xu.getAttributeValue(defaultValueExpression, "body");
 		if (value != null) {
 			if (domain.isInstanceOf(BooleanDomain.VC)) {
-				assert value.equals("true") || value.equals("false");
-				// true/false => t/f
-				value = value.substring(0, 1);
-			} else if (domain.isInstanceOf(StringDomain.VC)) {
-				if (!value.startsWith("\"")) {
-					value = "\"" + value + "\"";
+				if (value.equals("true") || value.equals("false")) {
+					// true/false => t/f
+					value = value.substring(0, 1);
 				}
 			}
 			if (value.equals("null")) {
