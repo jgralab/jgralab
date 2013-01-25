@@ -34,6 +34,8 @@
  */
 package de.uni_koblenz.jgralab;
 
+import java.util.Map;
+
 import de.uni_koblenz.jgralab.schema.GraphElementClass;
 
 public interface TemporaryGraphElement<SC extends GraphElementClass<SC, IC>, IC extends GraphElement<SC, IC>>
@@ -55,4 +57,5 @@ public interface TemporaryGraphElement<SC extends GraphElementClass<SC, IC>, IC 
 
 	public void deleteAttribute(String name);
 
+	public Map<String, Object> getAttributes();
 }

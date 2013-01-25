@@ -1,6 +1,8 @@
 package de.uni_koblenz.jgralab.impl.std;
 
 import java.io.IOException;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
@@ -49,14 +51,12 @@ public class TemporaryReversedEdgeImpl extends ReversedEdgeImpl implements
 
 	@Override
 	public Edge bless(EdgeClass edgeClass) {
-		return ((TemporaryEdge) this.getNormalEdge())
-				.bless(edgeClass);
+		return ((TemporaryEdge) this.getNormalEdge()).bless(edgeClass);
 	}
-	
+
 	@Override
 	public Edge bless() {
-		return ((TemporaryEdge) this.getNormalEdge())
-				.bless();
+		return ((TemporaryEdge) this.getNormalEdge()).bless();
 	}
 
 	@Override
@@ -72,13 +72,44 @@ public class TemporaryReversedEdgeImpl extends ReversedEdgeImpl implements
 
 	@Override
 	public EdgeClass getPreliminaryType() {
-		return ((TemporaryEdge)this.getNormalEdge()).getPreliminaryType();
+		return ((TemporaryEdge) this.getNormalEdge()).getPreliminaryType();
 	}
 
 	@Override
 	public void setPreliminaryType(EdgeClass ec) {
-		((TemporaryEdge)this.getNormalEdge()).setPreliminaryType(ec);		
+		((TemporaryEdge) this.getNormalEdge()).setPreliminaryType(ec);
 	}
 
-	
+	@Override
+	public final String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("-te");
+		sb.append(Math.abs(getId()));
+		sb.append(": ");
+		if (getPreliminaryType() != null) {
+			sb.append(getPreliminaryType().getQualifiedName());
+		} else {
+			sb.append("-MissingPreliminaryType-");
+		}
+		sb.append(" {");
+		boolean first = true;
+		for (Entry<String, Object> e : getAttributes().entrySet()) {
+			if (first) {
+				first = false;
+			} else {
+				sb.append(", ");
+			}
+			sb.append(e.getKey());
+			sb.append(" -> ");
+			sb.append(e.getValue());
+		}
+		sb.append("}");
+		return sb.toString();
+	}
+
+	@Override
+	public Map<String, Object> getAttributes() {
+		return ((TemporaryEdge) normalEdge).getAttributes();
+	}
+
 }

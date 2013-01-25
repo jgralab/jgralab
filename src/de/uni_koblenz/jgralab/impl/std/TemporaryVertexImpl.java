@@ -3,6 +3,7 @@ package de.uni_koblenz.jgralab.impl.std;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Map.Entry;
 
 import de.uni_koblenz.jgralab.Edge;
@@ -158,7 +159,7 @@ public class TemporaryVertexImpl extends VertexImpl implements TemporaryVertex {
 		for (Edge te : newVertex.incidences(this.getGraphClass()
 				.getTemporaryEdgeClass())) {
 			if ((((TemporaryEdge) te).getPreliminaryType() != null)
-					&& te.isValid()) {
+					&& te.isValid() && !te.getThat().isTemporary()) {
 				tempEdgeList.add((TemporaryEdge) te.getNormalEdge());
 			}
 		}
@@ -237,7 +238,9 @@ public class TemporaryVertexImpl extends VertexImpl implements TemporaryVertex {
 	@Override
 	public final String toString() {
 		StringBuilder sb = new StringBuilder();
-		sb.append("tv: ");
+		sb.append("tv");
+		sb.append(id);
+		sb.append(": ");
 		if (preliminaryType != null) {
 			sb.append(preliminaryType.getQualifiedName());
 		} else {
@@ -257,6 +260,11 @@ public class TemporaryVertexImpl extends VertexImpl implements TemporaryVertex {
 		}
 		sb.append("}");
 		return sb.toString();
+	}
+
+	@Override
+	public Map<String, Object> getAttributes() {
+		return attributes;
 	}
 
 }
