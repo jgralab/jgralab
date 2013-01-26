@@ -732,7 +732,6 @@ public class Tg2ArgoUml {
 					+ "_attribute_" + attributeName + ":"
 					+ dom.get_qualifiedName();
 
-			System.out.println(attr.get_defaultValue());
 			attacheAttribute(writer, dom, attributeName, attributeId,
 					attr.get_defaultValue());
 		}
