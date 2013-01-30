@@ -1,5 +1,9 @@
 package de.uni_koblenz.jgralabtest.diskv2impltest;
 
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.PrintStream;
+
 import org.junit.Test;
 
 import de.uni_koblenz.jgralab.Edge;
@@ -7,6 +11,8 @@ import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.ImplementationType;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.exception.GraphIOException;
+import de.uni_koblenz.jgralab.impl.diskv2.EdgeImpl;
+import de.uni_koblenz.jgralab.impl.diskv2.VertexImpl;
 import de.uni_koblenz.jgralab.schema.Schema;
 import de.uni_koblenz.jgralab.schema.VertexClass;
 import de.uni_koblenz.jgralab.schema.codegenerator.CodeGenerator;
@@ -29,9 +35,14 @@ public class Diskv2ImplTest {
 		
 	}
 	@Test
-	public void test2(){
-		System.out.println(Integer.MAX_VALUE);
-		System.out.println(Long.MAX_VALUE);
+	public void test2() throws FileNotFoundException{
+		System.setOut(new PrintStream(new FileOutputStream("out.log")));
+		for(int i = 0; i < 50 ; i ++){
+			t(i);
+		}
+	}
+	void t(int n){
+		System.out.println("New Turn "+n);
 		CityMap graph= CityMapSchema.instance().createCityMap(ImplementationType.DISKV2);
 		
 		CarPark cp1 = graph.createCarPark();
@@ -41,8 +52,9 @@ public class Diskv2ImplTest {
 		Street s1 = graph.createStreet(cp1, cp2);
 		Street s2 = graph.createStreet(cp2, cp3);
 		
-		System.out.println(s1.getId());
+		System.out.println(s1.getId() + " a : "+s1.getAlpha() + " o " + s1.getOmega());
 		System.out.println(s1.getReversedEdge().getId());
+		
 		
 		for (Vertex v : graph.vertices()){
 			System.out.println("vertex: " + v );
@@ -79,11 +91,23 @@ public class Diskv2ImplTest {
 			cp.set_capacity((int)(Math.random()*1000.0));
 			cp.set_name("Hugo");
 		}
-		for (int i = 0 ; i < 200000; i++){
+		for (int i = 0 ; i < 400000; i++){
 			Junction alpha = (Junction) graph.getVertex((int)((Math.random()*99999.0) +1));
+			
 			Junction omega = (Junction) graph.getVertex((int)((Math.random()*99999.0) +1));
-			graph.createStreet(alpha, omega);
+			if(alpha == null || omega == null) throw new RuntimeException("broken");
+			System.err.println("create edge from " + alpha + " tr: "+ ((VertexImpl) alpha).getTracker() + " to " + omega + " tr: "+ ((VertexImpl)omega).getTracker());
+			try{
+				graph.createStreet(alpha, omega);
+			}
+			catch (Exception ex){
+				System.err.println("Error");
+				ex.printStackTrace();
+				throw new RuntimeException();
+			}
 		}
+		
+	
 		
 		for(Vertex v : graph.vertices()){
 			if(((Integer) v.getAttribute("capacity")) > 0 && ((Integer) v.getAttribute("capacity")) <100)

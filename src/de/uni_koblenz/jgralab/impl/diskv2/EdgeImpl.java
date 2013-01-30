@@ -104,6 +104,7 @@ public abstract class EdgeImpl extends de.uni_koblenz.jgralab.impl.EdgeBaseImpl 
 
 	protected EdgeImpl(int anId, Graph graph, Vertex alpha, Vertex omega) {
 		super(anId, graph, alpha, omega);
+		this.incidentVertexId = alpha.getId();
 	}
 
 	@Override
@@ -114,6 +115,10 @@ public abstract class EdgeImpl extends de.uni_koblenz.jgralab.impl.EdgeBaseImpl 
 
 	public int getNextEdgeId() {
 		return nextEdgeId;
+	}
+	
+	public void restoreIncidentVertexId(int id){
+		this.incidentVertexId = id;
 	}
 	
 	public void restoreNextEdgeId(int id){

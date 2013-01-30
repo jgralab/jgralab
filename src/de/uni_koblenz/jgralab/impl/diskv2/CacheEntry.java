@@ -3,6 +3,7 @@ package de.uni_koblenz.jgralab.impl.diskv2;
 import java.lang.ref.ReferenceQueue;
 import java.lang.ref.SoftReference;
 
+import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.impl.GraphElementImpl;
 
 /**
@@ -53,8 +54,12 @@ public class CacheEntry<V> extends SoftReference<V>{
 	 * @param inc - The Incidence for which this tracker is created
 	 * @return @link{tracker}
 	 */
-	public Tracker getOrCreateTracker(GraphElementImpl<?,?> ge){
+	public Tracker getOrCreateTracker(){
 		if (tracker == null){
+			GraphElementImpl<?,?> ge = (GraphElementImpl<?, ?>) get();
+			
+			if (ge == null) return null;
+			
 			if(ge instanceof VertexImpl){
 				VertexTracker geTracker = new VertexTracker();
 				geTracker.storeAttributes(ge);
@@ -67,17 +72,10 @@ public class CacheEntry<V> extends SoftReference<V>{
 			}
 		}
 		
-		return (Tracker) tracker;
+		return  tracker;
 	}
 	
-	/**
-	 * Returns the tracker.
-	 * 
-	 * @return @link{tracker}, or null if no tracker is present.
-	 */
-	public Tracker getTracker(){
-		return tracker;
-	}
+
 	
 	/**
 	 * Get the key.

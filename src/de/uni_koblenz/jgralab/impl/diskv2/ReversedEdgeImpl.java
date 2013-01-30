@@ -80,6 +80,10 @@ public abstract class ReversedEdgeImpl extends
 		return incidentVertexId;
 	}
 
+	public void restoreIncidentVertexId(int id){
+		this.incidentVertexId = id;
+	}
+	
 	public int getNextIncidenceId() {
 		return nextIncidenceId;
 	}

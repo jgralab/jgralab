@@ -39,12 +39,14 @@ public abstract class VertexImpl extends
 	@Override
 	public InternalVertex getNextVertexInVSeq() {
 		assert isValid() : this + " is not valid.";
+		if(this.nextVertexId == 0) return null;
 		return (InternalVertex) this.getGraph().getVertex(nextVertexId);
 	}
 
 	@Override
 	public InternalVertex getPrevVertexInVSeq() {
 		assert isValid() : this + " is not valid.";
+		if(this.prevVertexId == 0) return null;
 		return (InternalVertex) this.getGraph().getVertex(prevVertexId);
 	}
 
@@ -52,7 +54,10 @@ public abstract class VertexImpl extends
 	public InternalEdge getFirstIncidenceInISeq() {
 		if(firstIncidenceId < 0){
 			return (InternalEdge) this.getGraph().getEdge(-1*firstIncidenceId).getReversedEdge();
-		}else{
+		}else if (firstIncidenceId == 0){
+			return null;
+		}
+		else{
 			return (InternalEdge) this.getGraph().getEdge(firstIncidenceId);
 		}
 		
@@ -62,7 +67,10 @@ public abstract class VertexImpl extends
 	public InternalEdge getLastIncidenceInISeq() {
 		if(lastIncidenceId < 0){
 			return (InternalEdge) this.getGraph().getEdge(- lastIncidenceId).getReversedEdge();
-		}else{
+		}else if (lastIncidenceId == 0){
+			return null;
+		}
+		else{
 			return (InternalEdge) this.getGraph().getEdge(lastIncidenceId);
 		}
 	}
@@ -91,7 +99,8 @@ public abstract class VertexImpl extends
 			this.firstIncidenceId = 0;
 		else
 			this.firstIncidenceId = firstIncidence.getId();
-		
+		//System.out.println("set first inc for " + this + " with " + this.getTracker());
+
 		getTracker().putVariable(20, this.firstIncidenceId);
 	}
 
@@ -101,7 +110,7 @@ public abstract class VertexImpl extends
 			this.lastIncidenceId = 0;
 		else
 			this.lastIncidenceId = lastIncidence.getId();
-		
+		//System.out.println("set last inc for " + this + " with " + this.getTracker());
 		getTracker().putVariable(28, this.lastIncidenceId);
 	}
 	

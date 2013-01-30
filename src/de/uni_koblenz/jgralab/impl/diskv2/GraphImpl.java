@@ -375,9 +375,10 @@ import de.uni_koblenz.jgralab.schema.VertexClass;
 		@Override
 		public Vertex getVertex(int vId) {
 			assert (vId > 0) : "The vertex id must be > 0, given was " + vId;
-			try {
+			try {			
 				return this.storage.getVertexObject(vId);
 			} catch (ArrayIndexOutOfBoundsException e) {
+				System.out.println("array index out "+ vId);
 				return null;
 			}
 		}
@@ -386,6 +387,7 @@ import de.uni_koblenz.jgralab.schema.VertexClass;
 		public Edge getEdge(int eId) {
 			assert eId != 0 : "The edge id must be != 0, given was " + eId;
 			try {
+				//System.out.println("get edge "+eId);
 				return this.storage.getEdgeObject(eId);// eId < 0 ? getRevEdge()[-eId] : getEdge()[eId];
 			} catch (ArrayIndexOutOfBoundsException e) {
 				return null;
@@ -500,5 +502,11 @@ import de.uni_koblenz.jgralab.schema.VertexClass;
 				throw new GraphException("Error creating vertex of class "
 						+ vc.getQualifiedName(), ex);
 			}
+		}
+		
+		@Override
+		public void addEdge(Edge newEdge, Vertex alpha, Vertex omega) {
+			super.addEdge(newEdge, alpha, omega);
+			((EdgeImpl)newEdge).attributeChanged();
 		}
 }

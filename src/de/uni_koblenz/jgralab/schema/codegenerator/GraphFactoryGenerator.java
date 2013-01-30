@@ -35,6 +35,7 @@
 
 package de.uni_koblenz.jgralab.schema.codegenerator;
 
+import de.uni_koblenz.jgralab.impl.diskv2.ReversedEdgeImpl;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.GraphClass;
 import de.uni_koblenz.jgralab.schema.Schema;
@@ -243,6 +244,7 @@ public class GraphFactoryGenerator extends CodeGenerator {
 		s.add("public <E extends #jgPackage#.Edge> E restoreEdge(#jgSchemaPackage#.EdgeClass ec, int id, #jgPackage#.Graph g, ");
 		s.add("\t\t#jgPackage#.Vertex alpha, #jgPackage#.Vertex omega) {");
 		s.add("\tE e = super.createEdge(ec, id, g, alpha, omega);");
+		s.add("\t((#jgImplPackage#.InternalEdge)e.getReversedEdge()).setIncidentVertex(omega);");
 		s.add("\treturn e;");
 		s.add("}");
 		return s;

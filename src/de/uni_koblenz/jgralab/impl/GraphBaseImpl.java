@@ -211,7 +211,7 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 	}
 
 	@Override
-	public final void addEdge(Edge newEdge, Vertex alpha, Vertex omega) {
+	public void addEdge(Edge newEdge, Vertex alpha, Vertex omega) {
 		assert newEdge != null;
 		assert (alpha != null) && alpha.isValid() && vSeqContainsVertex(alpha) : "Alpha vertex is invalid";
 		assert (omega != null) && omega.isValid() && vSeqContainsVertex(omega) : "Omega vertex is invalid";
@@ -267,6 +267,7 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 			a.appendIncidenceToISeq(e);
 			o.appendIncidenceToISeq(e.reversedEdge);
 		}
+		System.out.println("Create edge with id: "+ eId);
 		//appendEdgeToESeq(e);
 		if (!isLoading()) {
 			a.incidenceListModified();

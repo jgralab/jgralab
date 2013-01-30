@@ -3,6 +3,8 @@ package de.uni_koblenz.jgralab.impl.diskv2;
 import java.lang.ref.ReferenceQueue;
 import java.util.Stack;
 
+import javax.management.RuntimeErrorException;
+
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Vertex;
 
@@ -126,7 +128,7 @@ public final class MemStorageManager {
 			CacheEntry<VertexImpl> vRef = new CacheEntry<VertexImpl>(v, vertexQueue);
 			putElement(vRef, vertexCache, hash(id, vertexMask));
 		}
-		
+		if(v == null) throw new RuntimeException();
 		return v;
 	}
 	
@@ -140,13 +142,10 @@ public final class MemStorageManager {
 	 * 		The vertex that was reconstructed with data from the disk
 	 */
 	private Vertex getVertexObjectFromDisk(int id){
-		System.err.println("READ VERTEX FROM DISK: " + id);
 		cleanupVertexCache();
 		VertexImpl v = diskStorage.readVertexFromDisk(id);
 		CacheEntry<VertexImpl> vRef = new CacheEntry<VertexImpl>(v, vertexQueue);
 		putElement(vRef, vertexCache, hash(id, vertexMask));
-		//System.err.println(" -- next vertex ID" + v.getNextVertexId());
-		//System.err.println(" -- prev vertex ID" + v.getPrevVertexId());
 		return vRef.get();
 	}
 
@@ -228,10 +227,11 @@ public final class MemStorageManager {
 	 * @param v the Vertex to be cached
 	 */
 	public synchronized void putVertex(VertexImpl v) {
+		System.out.println("put vertex " + v);
 		CacheEntry<VertexImpl> vEntry = new CacheEntry<VertexImpl>(v, vertexQueue);
 		putElement(vEntry, vertexCache, hash(v.getId(), vertexMask));
 		
-		vEntry.getOrCreateTracker(v).fill(v);
+		vEntry.getOrCreateTracker().fill(v);
 		
 		vertexCacheEntries++;
 		testVertexLoadFactor();
@@ -243,10 +243,11 @@ public final class MemStorageManager {
 	 * @param e the Edge to be cached
 	 */
 	public synchronized void putEdge(EdgeImpl e) {
+		System.out.println("put edge " + e);
 		CacheEntry<EdgeImpl> eEntry = new CacheEntry<EdgeImpl>(e, edgeQueue);
 		putElement(eEntry, edgeCache, hash(e.getId(), edgeMask));
 		
-		eEntry.getOrCreateTracker(e).fill(e);
+		eEntry.getOrCreateTracker().fill(e);
 		
 		edgeCacheEntries++;
 		testEdgeLoadFactor();
@@ -261,12 +262,13 @@ public final class MemStorageManager {
 	 * @param bucket - the bucket in which to store the entry
 	 */
 	private <V> void putElement(CacheEntry<V> entry, CacheEntry<V>[] cache, int bucket){
+		System.out.println("Put into cache " + entry.getKey() + " to bucket " + bucket);
 		//case 1: no collision - put entry in bucket and return
 		if (cache[bucket] == null) {
 			cache[bucket] = entry;
 			return;
 		}
-					
+		System.out.println("put element collision " + cache[bucket]);
 		//case 2: collision detected
 		//put new element at the start of the list
 		entry.setNext(cache[bucket]);
@@ -278,7 +280,8 @@ public final class MemStorageManager {
 	 * 
 	 * @param vertexId the id of the vertex to be deleted
 	 */
-	public void removeVertex(int vertexId) {		
+	public void removeVertex(int vertexId) {	
+		System.out.println("Remove from vertex cache " + vertexId);
 		removeElement(vertexCache, vertexId, hash(vertexId, vertexMask));
 		
 		vertexCacheEntries--;
@@ -350,7 +353,7 @@ public final class MemStorageManager {
 		CacheEntry<VertexImpl> vEntry = getElement
 				(vertexCache, vertexId, hash(vertexId, vertexMask));
 		if (vEntry == null) return null;
-		return (VertexTracker) vEntry.getOrCreateTracker(vEntry.get());
+		return (VertexTracker) vEntry.getOrCreateTracker();
 	}
 	
 	/**
@@ -366,7 +369,7 @@ public final class MemStorageManager {
 		CacheEntry<EdgeImpl> eEntry = getElement
 				(edgeCache, edgeId, hash(edgeId, edgeMask));
 		if (eEntry == null) return null;
-		return (EdgeTracker) eEntry.getOrCreateTracker(eEntry.get());
+		return (EdgeTracker) eEntry.getOrCreateTracker();
 	}
 	
 	
@@ -380,9 +383,11 @@ public final class MemStorageManager {
 	 * the CacheEntry that referenced the deleted object is removed from the cache.
 	 */
 	private void cleanupVertexCache(){
+		System.out.println("clean vertex queue");
 		CacheEntry<VertexImpl> current = (CacheEntry<VertexImpl>) vertexQueue.poll();
 		
 		while(current != null){
+			System.out.println("clean vertex "+current.get());
 			diskStorage.writeVertexToDisk(current);
 			removeVertex(current.getKey());
 			current = (CacheEntry<VertexImpl>) vertexQueue.poll();
@@ -447,7 +452,7 @@ public final class MemStorageManager {
 		vertexMask *= 2;
 		
 	    CacheEntry<VertexImpl>[] newCache = new CacheEntry[vertexCacheSize];
-	    
+	    System.out.println("DEBUG: Rehash vertex cache");
 	    vertexCache = moveCachedObjects(vertexCache, newCache, vertexMask);
 	}
 	
