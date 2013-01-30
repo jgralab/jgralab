@@ -142,8 +142,8 @@ public interface GraphFactory {
 	public void setEdgeImplementationClass(EdgeClass ec,
 			Class<? extends Edge> edgeImplementationClass);
 	
-	public Class<? extends VertexClass> getVertexImplementationClass(VertexClass vc);
-	public Class<? extends EdgeClass> getEdgeImplementationClass(EdgeClass ec);
+	public Class<? extends Vertex> getVertexImplementationClass(VertexClass vc);
+	public Class<? extends Edge> getEdgeImplementationClass(EdgeClass ec);
 	
 
 }
