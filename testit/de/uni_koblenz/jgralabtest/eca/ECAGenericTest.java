@@ -65,6 +65,7 @@ import de.uni_koblenz.jgralab.eca.events.DeleteEdgeEventDescription;
 import de.uni_koblenz.jgralab.eca.events.DeleteVertexEventDescription;
 import de.uni_koblenz.jgralab.eca.events.EventDescription;
 import de.uni_koblenz.jgralab.exception.GraphIOException;
+import de.uni_koblenz.jgralab.impl.std.EdgeImpl;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.EnumDomain;
 import de.uni_koblenz.jgralab.schema.RecordDomain;
@@ -238,7 +239,7 @@ public class ECAGenericTest {
 				"ECA Test Message: Loans Edge is changed.");
 		ECARule<EdgeClass> aft_rule = new ECARule<EdgeClass>(aft_ev, aft_act);
 		ecaRuleManager.addECARule(aft_rule);
-
+		
 		loans_u1_b1.setAlpha(user2);
 
 		ecaRuleManager.deleteECARule(bef_rule);
