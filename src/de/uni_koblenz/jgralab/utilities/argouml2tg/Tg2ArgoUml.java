@@ -107,6 +107,8 @@ public class Tg2ArgoUml {
 	 */
 	private boolean isBidirectional = false;
 
+	private boolean addEdgeClassGeneralizationAsComment = false;
+
 	private final Map<Domain, String> domain2id = new HashMap<Domain, String>();
 
 	/**
@@ -131,6 +133,8 @@ public class Tg2ArgoUml {
 		assert cli != null : "No CommandLine object has been generated!";
 
 		s.isBidirectional = cli.hasOption("b");
+
+		s.addEdgeClassGeneralizationAsComment = cli.hasOption("c");
 
 		String outputName = cli.getOptionValue("o");
 		try {
@@ -206,6 +210,12 @@ public class Tg2ArgoUml {
 				"(optional): If set the EdgeClasses are created as bidirectional associations.");
 		bidirectional.setRequired(false);
 		oh.addOption(bidirectional);
+
+		Option genAsComment = new Option("c",
+				"commentsForEdgeClassGeneralization", false,
+				"(optional): Creates comments which show the generalization of EdgeClasses.");
+		genAsComment.setRequired(false);
+		oh.addOption(genAsComment);
 
 		return oh.parse(args);
 	}
@@ -625,6 +635,15 @@ public class Tg2ArgoUml {
 		}
 
 		attachCommentsAndConstraints(writer, edgeClass, comment2id);
+		if (addEdgeClassGeneralizationAsComment
+				&& edgeClass.getDegree(SpecializesEdgeClass.EC,
+						EdgeDirection.OUT) > 0) {
+			writer.writeStartElement(UML_NAMESPACE_URI, "ModelElement.comment");
+			attachCommentAndConstraints(writer, edgeClass,
+					"generalizationComment_" + edgeClass.get_qualifiedName(),
+					"_comment_", 0, comment2id);
+			writer.writeEndElement();
+		}
 
 		if (edgeClass.is_abstract()) {
 			attachStereotype(writer, ArgoUml2Tg.ST_ABSTRACT);
@@ -847,64 +866,89 @@ public class Tg2ArgoUml {
 		}
 		int i = 0;
 		writer.writeStartElement(UML_NAMESPACE_URI, "ModelElement.comment");
+		String idInfix = "_comment_";
 		for (Comment comment : namedElement.get_comments()) {
-			String commentId = comment2id.get(comment);
-			if (commentId == null) {
-				commentId = namedElement.get_qualifiedName() + "_comment_"
-						+ i++;
-				comment2id.put(comment, commentId);
-			}
-			writer.writeEmptyElement(UML_NAMESPACE_URI, "Comment");
-			writer.writeAttribute("xmi.idref", commentId);
+			i = attachCommentAndConstraints(writer, comment,
+					namedElement.get_qualifiedName(), idInfix, i, comment2id);
 		}
+		idInfix = "_constraint_";
 		if (namedElement.isInstanceOf(AttributedElementClass.VC)) {
 			for (Constraint constraint : ((AttributedElementClass) namedElement)
 					.get_constraints()) {
-				String commentId = comment2id.get(constraint);
-				if (commentId == null) {
-					commentId = namedElement.get_qualifiedName()
-							+ "_constraint_" + i++;
-					comment2id.put(constraint, commentId);
-				}
-				writer.writeEmptyElement(UML_NAMESPACE_URI, "Comment");
-				writer.writeAttribute("xmi.idref", commentId);
+				i = attachCommentAndConstraints(writer, constraint,
+						namedElement.get_qualifiedName(), idInfix, i,
+						comment2id);
 			}
 		}
 		writer.writeEndElement();
+	}
+
+	private int attachCommentAndConstraints(XMLStreamWriter writer,
+			Vertex vertex, String idPrefix, String idInfix, int idUnifier,
+			Map<Vertex, String> comment2id) throws XMLStreamException {
+		String commentId = comment2id.get(vertex);
+		if (commentId == null) {
+			commentId = idPrefix + idInfix + idUnifier++;
+			comment2id.put(vertex, commentId);
+		}
+		writer.writeEmptyElement(UML_NAMESPACE_URI, "Comment");
+		writer.writeAttribute("xmi.idref", commentId);
+		return idUnifier;
 	}
 
 	private void createCommentsAndConstraints(XMLStreamWriter writer,
 			Map<Vertex, String> comment2id) throws XMLStreamException {
 		for (Entry<Vertex, String> entry : comment2id.entrySet()) {
 			boolean isComment = entry.getKey().isInstanceOf(Comment.VC);
-			NamedElement annotatedElement = isComment ? ((Comment) entry
-					.getKey()).get_annotatedelement() : ((Constraint) entry
-					.getKey()).get_constrainedelement();
 			String annotatedElementType = "";
-			if (annotatedElement.isInstanceOf(Package.VC)) {
-				annotatedElementType = "Package";
-			} else if (annotatedElement.isInstanceOf(EdgeClass.VC)) {
-				if (annotatedElement.getDegree(HasAttribute.EC) == 0) {
+			String qualifiedName = "";
+			String commentBody = "";
+			if (entry.getKey() instanceof EdgeClass) {
+				// create comment which describes superclasses
+				if (entry.getKey().getDegree(HasAttribute.EC) == 0) {
 					annotatedElementType = "Association";
 				} else {
 					annotatedElementType = "AssociationClass";
 				}
-			} else if (annotatedElement.isInstanceOf(EnumDomain.VC)) {
-				annotatedElementType = "Enumeration";
-			} else if (annotatedElement.isInstanceOf(CollectionDomain.VC)
-					|| annotatedElement.isInstanceOf(MapDomain.VC)) {
-				annotatedElementType = "DataType";
+				qualifiedName = ((EdgeClass) entry.getKey())
+						.get_qualifiedName();
+				String delim = ": ";
+				StringBuilder sb = new StringBuilder(qualifiedName);
+				for (EdgeClass superclass : ((EdgeClass) entry.getKey())
+						.get_superclasses()) {
+					sb.append(delim).append(superclass.get_qualifiedName());
+					delim = ", ";
+				}
+				commentBody = sb.toString();
 			} else {
-				annotatedElementType = "Class";
-			}
-			String commentBody = "";
-			if (isComment) {
-				commentBody = ((Comment) entry.getKey()).get_text();
-			} else {
-				Constraint constraint = (Constraint) entry.getKey();
-				commentBody = "{\"" + constraint.get_message() + "\" \""
-						+ constraint.get_predicateQuery() + "\" \""
-						+ constraint.get_offendingElementsQuery() + "\"}";
+				NamedElement annotatedElement = isComment ? ((Comment) entry
+						.getKey()).get_annotatedelement() : ((Constraint) entry
+						.getKey()).get_constrainedelement();
+				qualifiedName = annotatedElement.get_qualifiedName();
+				if (annotatedElement.isInstanceOf(Package.VC)) {
+					annotatedElementType = "Package";
+				} else if (annotatedElement.isInstanceOf(EdgeClass.VC)) {
+					if (annotatedElement.getDegree(HasAttribute.EC) == 0) {
+						annotatedElementType = "Association";
+					} else {
+						annotatedElementType = "AssociationClass";
+					}
+				} else if (annotatedElement.isInstanceOf(EnumDomain.VC)) {
+					annotatedElementType = "Enumeration";
+				} else if (annotatedElement.isInstanceOf(CollectionDomain.VC)
+						|| annotatedElement.isInstanceOf(MapDomain.VC)) {
+					annotatedElementType = "DataType";
+				} else {
+					annotatedElementType = "Class";
+				}
+				if (isComment) {
+					commentBody = ((Comment) entry.getKey()).get_text();
+				} else {
+					Constraint constraint = (Constraint) entry.getKey();
+					commentBody = "{\"" + constraint.get_message() + "\" \""
+							+ constraint.get_predicateQuery() + "\" \""
+							+ constraint.get_offendingElementsQuery() + "\"}";
+				}
 			}
 
 			writer.writeStartElement(UML_NAMESPACE_URI, "Comment");
@@ -916,8 +960,7 @@ public class Tg2ArgoUml {
 					"Comment.annotatedElement");
 
 			writer.writeEmptyElement(UML_NAMESPACE_URI, annotatedElementType);
-			writer.writeAttribute("xmi.idref",
-					annotatedElement.get_qualifiedName());
+			writer.writeAttribute("xmi.idref", qualifiedName);
 
 			writer.writeEndElement();
 
