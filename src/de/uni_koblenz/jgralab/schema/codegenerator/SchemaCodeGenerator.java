@@ -133,8 +133,10 @@ public class SchemaCodeGenerator extends CodeGenerator {
 				"\t\treturn new #jgImplPackage#.generic.GenericGraphFactoryImpl(this);"));
 		code.add(new CodeSnippet("\tcase STANDARD:",
 				"\t\treturn new #schemaImplStdPackage#.#gcCamelName#FactoryImpl();"));
-		code.add(new CodeSnippet("\tcase DISKV2:",
-				"\t\treturn new #schemaImplDiskv2Package#.#gcCamelName#FactoryImpl();"));
+		if(this.config.hasDiskV2Support()){
+			code.add(new CodeSnippet("\tcase DISKV2:",
+					"\t\treturn new #schemaImplDiskv2Package#.#gcCamelName#FactoryImpl();"));
+		}
 		code.add(new CodeSnippet(
 				"}",
 				"throw new UnsupportedOperationException(\"No \" + implementationType + \" support compiled.\");"));

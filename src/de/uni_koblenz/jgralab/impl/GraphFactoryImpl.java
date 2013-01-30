@@ -229,12 +229,12 @@ public abstract class GraphFactoryImpl implements GraphFactory {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public Class<? extends VertexClass> getVertexImplementationClass(VertexClass vc){
-		return (Class<? extends VertexClass>) vertexMap.get(vc).getDeclaringClass();
+	public Class<? extends Vertex> getVertexImplementationClass(VertexClass vc){
+		return (Class<? extends Vertex>) vertexMap.get(vc).getDeclaringClass();
 	}
 	@SuppressWarnings("unchecked")
-	public Class<? extends EdgeClass> getEdgeImplementationClass(EdgeClass ec){
-		return (Class<? extends EdgeClass>) edgeMap.get(ec).getDeclaringClass();
+	public Class<? extends Edge> getEdgeImplementationClass(EdgeClass ec){
+		return (Class<? extends Edge>) edgeMap.get(ec).getDeclaringClass();
 	}
 
 	@Override
