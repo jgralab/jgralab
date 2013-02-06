@@ -265,6 +265,14 @@ public class SubGraphMarker extends AbstractBooleanGraphMarker implements
 		};
 	}
 
+	public Iterable<Vertex> getMarkedVertices() {
+		return vertexGraphMarker.getMarkedElements();
+	}
+
+	public Iterable<Edge> getMarkedEdges() {
+		return edgeGraphMarker.getMarkedElements();
+	}
+
 	@Override
 	public boolean containsVertex(Vertex v) {
 		return vertexGraphMarker.isMarked(v);

@@ -37,7 +37,9 @@ package de.uni_koblenz.jgralab.greql.funlib.graph;
 import org.pcollections.PSet;
 import org.pcollections.PVector;
 
+import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.Vertex;
+import de.uni_koblenz.jgralab.graphmarker.SubGraphMarker;
 import de.uni_koblenz.jgralab.greql.funlib.Description;
 import de.uni_koblenz.jgralab.greql.funlib.Function;
 import de.uni_koblenz.jgralab.greql.types.Path;
@@ -52,6 +54,15 @@ public class Vertices extends Function {
 	@Description(params = "p", description = "Returns the set of vertices in the given path system.", categories = Category.PATHS_AND_PATHSYSTEMS_AND_SLICES)
 	public PSet<Vertex> evaluate(PathSystem p) {
 		return p.getVertices();
+	}
+
+	@Description(params = "s", description = "Returns the set of vertices in the given slice.", categories = Category.PATHS_AND_PATHSYSTEMS_AND_SLICES)
+	public PSet<Vertex> evaluate(SubGraphMarker slice) {
+		PSet<Vertex> s = JGraLab.set();
+		for (Vertex v : slice.getMarkedVertices()) {
+			s = s.plus(v);
+		}
+		return s;
 	}
 
 	@Description(params = "p", description = "Returns the list of vertices in the Path p.", categories = Category.PATHS_AND_PATHSYSTEMS_AND_SLICES)
