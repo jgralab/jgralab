@@ -60,6 +60,9 @@ public class Vertices extends Function {
 	public PSet<Vertex> evaluate(SubGraphMarker slice) {
 		PSet<Vertex> s = JGraLab.set();
 		for (Vertex v : slice.getMarkedVertices()) {
+			if (v == null) {
+				System.out.println(v);
+			}
 			s = s.plus(v);
 		}
 		return s;

@@ -542,19 +542,22 @@ public class FunLib {
 					if (e.getCause() instanceof GreqlException) {
 						throw (GreqlException) e.getCause();
 					} else {
-						throw new GreqlException(e.getMessage(), e.getCause());
+						throw new GreqlException("When applying function "
+								+ fi.name + ": " + e.getMessage(), e.getCause());
 					}
 				} catch (IllegalAccessException e) {
 					if (e.getCause() instanceof GreqlException) {
 						throw (GreqlException) e.getCause();
 					} else {
-						throw new GreqlException(e.getMessage(), e.getCause());
+						throw new GreqlException("When applying function "
+								+ fi.name + ": " + e.getMessage(), e.getCause());
 					}
 				} catch (InvocationTargetException e) {
 					if (e.getCause() instanceof GreqlException) {
 						throw (GreqlException) e.getCause();
 					} else {
-						throw new GreqlException(e.getMessage(), e.getCause());
+						throw new GreqlException("When applying function "
+								+ fi.name + ": " + e.getMessage(), e.getCause());
 					}
 				}
 			}

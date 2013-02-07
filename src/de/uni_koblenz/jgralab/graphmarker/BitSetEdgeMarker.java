@@ -81,15 +81,18 @@ public class BitSetEdgeMarker extends BitSetGraphMarker<Edge> {
 			public Iterator<Edge> iterator() {
 				return new ArrayGraphMarkerIterator<Edge>(version) {
 
+					private final int lastSetBit = marks.previousSetBit(marks
+							.length());
+
 					@Override
 					public boolean hasNext() {
-						return index < marks.size();
+						return index < lastSetBit;
 					}
 
 					@Override
 					protected void moveIndex() {
 						int length = marks.size();
-						while (index < length && !marks.get(index)) {
+						while ((index < length) && !marks.get(index)) {
 							index++;
 						}
 					}
