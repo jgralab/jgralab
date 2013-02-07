@@ -84,13 +84,16 @@ public class Slice extends Function {
 	public SubGraphMarker evaluate(InternalGreqlEvaluator evaluator,
 			PSet<Vertex> roots, DFA dfa) {
 		Set<Vertex> sliCritVertices = new HashSet<Vertex>();
-
+		graph = null;
+		
 		for (Vertex v : roots) {
 			if (graph == null) {
 				graph = v.getGraph();
 			}
+			assert v.getGraph() == graph : "Roots from different graphs?!?";
 			sliCritVertices.add(v);
 		}
+		assert evaluator.getGraph() == graph : "Roots from different graph than we're querying!?!";
 
 		marker = new ArrayList<GraphMarker<Map<Edge, PathSystemMarkerEntry>>>(
 				dfa.stateList.size());
