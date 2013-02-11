@@ -70,11 +70,10 @@ public abstract class CodeGenerator {
 				CodeGeneratorConfiguration config) {
 			List<GenerationCycle> out = new ArrayList<GenerationCycle>();
 			out.add(ABSTRACT);
-			
-			
-				out.add(STDIMPL);
-				if(config.hasDiskV2Support())
-					out.add(DISKV2IMPL);
+			out.add(STDIMPL);
+			if(config.hasDiskV2Support()){
+				out.add(DISKV2IMPL);
+			}
 			out.add(CLASSONLY);
 			return out;
 		}
