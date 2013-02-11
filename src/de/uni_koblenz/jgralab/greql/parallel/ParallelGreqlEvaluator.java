@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  * 
- * Copyright (C) 2006-2012 Institute for Software Technology
+ * Copyright (C) 2006-2013 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  * 
@@ -85,8 +85,9 @@ import de.uni_koblenz.jgralab.schema.impl.DirectedAcyclicGraph;
  * {@link #evaluate()} methods are thread-safe, i.e. many evaluations can be
  * started in parallel. Local data of each evaluation is stored in an
  * {@link EvaluationEnvironment}. The {@link EvaluationEnvironment} is also used
- * to access the results via {@link EvaluationEnvironment#getResult(TaskHandle)}
- * , and to access the {@link GreqlEnvironment} used by all queries.
+ * to access the results via
+ * {@link EvaluationEnvironment#getResult(ParallelGreqlEvaluator.TaskHandle)} ,
+ * and to access the {@link GreqlEnvironment} used by all queries.
  * 
  * To somehow control execution order, a priority can be specified when adding a
  * {@link GreqlQuery} or a {@link ParallelGreqlEvaluatorCallable}. the add...
@@ -124,7 +125,8 @@ public class ParallelGreqlEvaluator {
 	class EvaluationTask extends FutureTask<Object> {
 		private TaskHandle handle;
 		private EvaluationEnvironment environment;
-		private long startTime, doneTime;
+		private long startTime;
+		private long doneTime;
 
 		private EvaluationTask(EvaluationEnvironment environment,
 				TaskHandle handle, Callable<Object> callable) {
@@ -474,7 +476,7 @@ public class ParallelGreqlEvaluator {
 	private RuntimeException unwrapException(Exception ex) {
 		// unwrap ExecutionExceptions
 		Throwable inner = ex;
-		while (inner != null && inner instanceof ExecutionException) {
+		while ((inner != null) && (inner instanceof ExecutionException)) {
 			inner = inner.getCause();
 		}
 		// throw the causing exception

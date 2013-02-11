@@ -1857,6 +1857,8 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 				curr.add(new CodeSnippet(
 						"if (inc.isNormal()) { //begin of simple transition"));
 				break;
+			default:
+				break;
 			}
 			CodeList body = new CodeList();
 			curr.add(body);
@@ -2122,7 +2124,8 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 	 * @return
 	 */
 	private String createMethod(CodeList methodBody, GreqlVertex vertex) {
-		String comment = "// " + GreqlSerializer.serializeVertex(vertex);
+		String comment = "// "
+				+ GreqlSerializer.serializeVertex(vertex).replace("\n", " ");
 		String uniqueId = Integer.toString(vertex.getId());
 		StringBuilder formalParams = new StringBuilder();
 		StringBuilder actualParams = new StringBuilder();

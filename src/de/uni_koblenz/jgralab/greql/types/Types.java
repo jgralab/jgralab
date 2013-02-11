@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2012 Institute for Software Technology
+ * Copyright (C) 2006-2013 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -63,7 +63,7 @@ public class Types {
 	private static final Class<?>[] GREQL_TYPES = { Integer.class, Long.class,
 			Boolean.class, Double.class, Number.class, String.class,
 			Vertex.class, Edge.class, Graph.class, AttributedElement.class,
-			GraphElement.class, Path.class, PathSystem.class, Slice.class,
+			GraphElement.class, Path.class, PathSystem.class,
 			TypeCollection.class, Enum.class, Record.class, Table.class,
 			Tuple.class, PVector.class, PSet.class, POrderedSet.class,
 			PCollection.class, PMap.class, AttributedElementClass.class,

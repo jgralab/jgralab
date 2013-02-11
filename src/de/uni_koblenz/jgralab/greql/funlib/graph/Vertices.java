@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2012 Institute for Software Technology
+ * Copyright (C) 2006-2013 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -37,12 +37,13 @@ package de.uni_koblenz.jgralab.greql.funlib.graph;
 import org.pcollections.PSet;
 import org.pcollections.PVector;
 
+import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.Vertex;
+import de.uni_koblenz.jgralab.graphmarker.SubGraphMarker;
 import de.uni_koblenz.jgralab.greql.funlib.Description;
 import de.uni_koblenz.jgralab.greql.funlib.Function;
 import de.uni_koblenz.jgralab.greql.types.Path;
 import de.uni_koblenz.jgralab.greql.types.PathSystem;
-import de.uni_koblenz.jgralab.greql.types.Slice;
 
 public class Vertices extends Function {
 
@@ -56,8 +57,15 @@ public class Vertices extends Function {
 	}
 
 	@Description(params = "s", description = "Returns the set of vertices in the given slice.", categories = Category.PATHS_AND_PATHSYSTEMS_AND_SLICES)
-	public PSet<Vertex> evaluate(Slice s) {
-		return s.getVertices();
+	public PSet<Vertex> evaluate(SubGraphMarker slice) {
+		PSet<Vertex> s = JGraLab.set();
+		for (Vertex v : slice.getMarkedVertices()) {
+			if (v == null) {
+				System.out.println(v);
+			}
+			s = s.plus(v);
+		}
+		return s;
 	}
 
 	@Description(params = "p", description = "Returns the list of vertices in the Path p.", categories = Category.PATHS_AND_PATHSYSTEMS_AND_SLICES)

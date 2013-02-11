@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2012 Institute for Software Technology
+ * Copyright (C) 2006-2013 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -61,7 +61,7 @@ public class QuerySourceException extends GreqlException {
 	/**
 	 * the element that causes the error
 	 */
-	private GreqlVertex element;
+	private final GreqlVertex element;
 
 	/**
 	 * 
@@ -145,9 +145,14 @@ public class QuerySourceException extends GreqlException {
 		}
 
 		if (element != null) {
-			sb.append("\nComplete (optimized) Query: ");
-			sb.append(GreqlSerializer.serializeGraph((GreqlGraph) element
-					.getGraph()));
+			try {
+				String serializedGraph = GreqlSerializer
+						.serializeGraph((GreqlGraph) element.getGraph());
+				sb.append("\nComplete (optimized) Query: ");
+				sb.append(serializedGraph);
+			} catch (GreqlException e) {
+
+			}
 		}
 
 		return sb.toString();

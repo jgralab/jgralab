@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2012 Institute for Software Technology
+ * Copyright (C) 2006-2013 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -38,6 +38,8 @@
 package de.uni_koblenz.jgralab.greql.serialising;
 
 import java.util.Iterator;
+
+import org.pcollections.PSet;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.GraphIO;
@@ -265,6 +267,12 @@ public class GreqlSerializer {
 	private void serializeGreqlExpression(GreqlExpression greql2Expression) {
 		Iterable<? extends Variable> boundVars = greql2Expression
 				.get_boundVar();
+		PSet<String> importedTypes = greql2Expression.get_importedTypes();
+		if (importedTypes != null) {
+			for (String impType : importedTypes) {
+				sb.append("import ").append(impType).append(";\n");
+			}
+		}
 		if (boundVars.iterator().hasNext()) {
 			sb.append("using ");
 			boolean first = true;
@@ -489,9 +497,25 @@ public class GreqlSerializer {
 		if (!((exp instanceof PrimaryPathDescription) || (exp instanceof OptionalPathDescription))) {
 			sb.append('(');
 		}
-		if (exp.get_startRestr() != null) {
-			sb.append("{");
-			serializeExpression(exp.get_startRestr(), false);
+		boolean hasStartRestr = false;
+		for (Expression e : exp.get_startRestr()) {
+			if (!hasStartRestr) {
+				sb.append(" {");
+			}
+			if (!(e instanceof TypeId)) {
+				if (hasStartRestr) {
+					sb.append(" ");
+				}
+				sb.append("@ ");
+			} else {
+				if (hasStartRestr) {
+					sb.append(", ");
+				}
+			}
+			serializeExpression(e, false);
+			hasStartRestr = true;
+		}
+		if (hasStartRestr) {
 			sb.append("} & ");
 		}
 

@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2012 Institute for Software Technology
+ * Copyright (C) 2006-2013 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -43,16 +43,20 @@ import de.uni_koblenz.jgralab.greql.schema.Variable;
 public class DuplicateVariableException extends QuerySourceException {
 	private static final long serialVersionUID = 5730584909369802057L;
 
-	/**
-	 * @param variable
-	 * @param sourcePositions
-	 */
 	public DuplicateVariableException(Variable variable,
 			List<SourcePosition> sourcePositions,
 			SourcePosition previousPosition) {
 		super("Duplicate variable " + variable
 				+ " previously defined at position "
 				+ previousPosition.get_offset(), variable, sourcePositions);
+	}
+
+	public DuplicateVariableException(String nameOfVariable,
+			List<SourcePosition> sourcePositions,
+			SourcePosition previousPosition) {
+		super("Duplicate variable " + nameOfVariable
+				+ " previously defined at position "
+				+ previousPosition.get_offset(), null, sourcePositions);
 	}
 
 }

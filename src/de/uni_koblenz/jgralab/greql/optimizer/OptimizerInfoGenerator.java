@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2012 Institute for Software Technology
+ * Copyright (C) 2006-2013 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -153,8 +153,6 @@ public class OptimizerInfoGenerator {
 	 * 
 	 * @param dirName
 	 *            a directory name
-	 * @param recursive
-	 *            when <code>true</code>, also scan subdirectories
 	 * @throws GraphIOException
 	 *             when a graph can not be loaded
 	 */

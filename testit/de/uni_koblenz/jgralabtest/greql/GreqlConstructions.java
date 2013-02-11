@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2012 Institute for Software Technology
+ * Copyright (C) 2006-2013 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -66,7 +66,7 @@ public class GreqlConstructions extends GenericTest {
 		for (PathSystem v : list) {
 			PathSystem sys = v;
 			assertEquals(2, sys.getDepth());
-			assertEquals(3, sys.getWeight());
+			assertEquals(3, sys.getVertices().size());
 		}
 	}
 

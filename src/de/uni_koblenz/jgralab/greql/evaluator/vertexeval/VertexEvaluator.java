@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2012 Institute for Software Technology
+ * Copyright (C) 2006-2013 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -154,8 +154,8 @@ public abstract class VertexEvaluator<V extends GreqlVertex> {
 	protected double estimatedSelectivity = Double.NaN;
 
 	/**
-	 * @param eval
-	 *            the GreqlEvaluator this VertexEvaluator belongs to
+	 * @param vertex
+	 *            the {@link GreqlVertex} this VertexEvaluator belongs to
 	 * @param query
 	 *            the {@link GreqlQueryImpl} this {@link VertexEvaluator}
 	 *            belongs to

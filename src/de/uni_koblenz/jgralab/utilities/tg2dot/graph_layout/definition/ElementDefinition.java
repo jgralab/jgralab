@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2012 Institute for Software Technology
+ * Copyright (C) 2006-2013 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -34,6 +34,7 @@
  */
 package de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout.definition;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import de.uni_koblenz.jgralab.AttributedElement;
@@ -106,6 +107,11 @@ public class ElementDefinition extends AbstractDefinition {
 	 *            {@link AttributedElement} to be added.
 	 */
 	public void add(AttributedElement<?, ?> element) {
+
+		if (containedElements == null) {
+			containedElements = new ArrayList<AttributedElement<?, ?>>();
+		}
+
 		containedElements.add(element);
 	}
 

@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2012 Institute for Software Technology
+ * Copyright (C) 2006-2013 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -56,14 +56,6 @@ import de.uni_koblenz.jgralab.schema.EdgeClass;
 public class EdgeSetExpressionEvaluator extends
 		ElementSetExpressionEvaluator<EdgeSetExpression> {
 
-	/**
-	 * Creates a new ElementSetExpressionEvaluator for the given vertex
-	 * 
-	 * @param eval
-	 *            the GreqlEvaluator instance this VertexEvaluator belong to
-	 * @param vertex
-	 *            the vertex this VertexEvaluator evaluates
-	 */
 	public EdgeSetExpressionEvaluator(EdgeSetExpression vertex,
 			GreqlQueryImpl query) {
 		super(vertex, query);

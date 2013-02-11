@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2012 Institute for Software Technology
+ * Copyright (C) 2006-2013 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -47,6 +47,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -125,6 +126,7 @@ public class FunLib {
 		register(de.uni_koblenz.jgralab.greql.funlib.collections.Union.class);
 		register(de.uni_koblenz.jgralab.greql.funlib.collections.Values.class);
 		register(de.uni_koblenz.jgralab.greql.funlib.graph.Alpha.class);
+		register(de.uni_koblenz.jgralab.greql.funlib.graph.AlphaIncidenceIndex.class);
 		register(de.uni_koblenz.jgralab.greql.funlib.graph.Degree.class);
 		register(de.uni_koblenz.jgralab.greql.funlib.graph.base.DegreeFunction.class);
 		register(de.uni_koblenz.jgralab.greql.funlib.graph.Depth.class);
@@ -151,6 +153,8 @@ public class FunLib {
 		register(de.uni_koblenz.jgralab.greql.funlib.graph.Id.class);
 		register(de.uni_koblenz.jgralab.greql.funlib.graph.InDegree.class);
 		register(de.uni_koblenz.jgralab.greql.funlib.graph.Incidences.class);
+		register(de.uni_koblenz.jgralab.greql.funlib.graph.IncidenceIndex.class);
+		register(de.uni_koblenz.jgralab.greql.funlib.graph.InverseEdge.class);
 		register(de.uni_koblenz.jgralab.greql.funlib.graph.InIncidences.class);
 		register(de.uni_koblenz.jgralab.greql.funlib.graph.IsAcyclic.class);
 		register(de.uni_koblenz.jgralab.greql.funlib.graph.IsIsolated.class);
@@ -164,16 +168,22 @@ public class FunLib {
 		register(de.uni_koblenz.jgralab.greql.funlib.graph.NextGraphElement.class);
 		register(de.uni_koblenz.jgralab.greql.funlib.graph.NextIn.class);
 		register(de.uni_koblenz.jgralab.greql.funlib.graph.NextOut.class);
+		register(de.uni_koblenz.jgralab.greql.funlib.graph.NormalEdge.class);
 		register(de.uni_koblenz.jgralab.greql.funlib.graph.Omega.class);
+		register(de.uni_koblenz.jgralab.greql.funlib.graph.OmegaIncidenceIndex.class);
 		register(de.uni_koblenz.jgralab.greql.funlib.graph.OutDegree.class);
 		register(de.uni_koblenz.jgralab.greql.funlib.graph.OutIncidences.class);
 		register(de.uni_koblenz.jgralab.greql.funlib.graph.PathLength.class);
+		register(de.uni_koblenz.jgralab.greql.funlib.graph.Path.class);
 		register(de.uni_koblenz.jgralab.greql.funlib.graph.PathSystem.class);
 		register(de.uni_koblenz.jgralab.greql.funlib.graph.ReachableVertices.class);
+		register(de.uni_koblenz.jgralab.greql.funlib.graph.ReversedEdge.class);
 		register(de.uni_koblenz.jgralab.greql.funlib.graph.Slice.class);
 		register(de.uni_koblenz.jgralab.greql.funlib.graph.StartVertex.class);
 		register(de.uni_koblenz.jgralab.greql.funlib.graph.This.class);
+		register(de.uni_koblenz.jgralab.greql.funlib.graph.ThisIncidenceIndex.class);
 		register(de.uni_koblenz.jgralab.greql.funlib.graph.That.class);
+		register(de.uni_koblenz.jgralab.greql.funlib.graph.ThatIncidenceIndex.class);
 		register(de.uni_koblenz.jgralab.greql.funlib.graph.TopologicalSort.class);
 		register(de.uni_koblenz.jgralab.greql.funlib.graph.VertexTrace.class);
 		register(de.uni_koblenz.jgralab.greql.funlib.graph.Vertices.class);
@@ -214,6 +224,7 @@ public class FunLib {
 		register(de.uni_koblenz.jgralab.greql.funlib.strings.Length.class);
 		register(de.uni_koblenz.jgralab.greql.funlib.strings.LowerCase.class);
 		register(de.uni_koblenz.jgralab.greql.funlib.strings.ReMatch.class);
+		register(de.uni_koblenz.jgralab.greql.funlib.strings.Replace.class);
 		register(de.uni_koblenz.jgralab.greql.funlib.strings.Split.class);
 		register(de.uni_koblenz.jgralab.greql.funlib.strings.StartsWith.class);
 		register(de.uni_koblenz.jgralab.greql.funlib.strings.Substring.class);
@@ -390,6 +401,14 @@ public class FunLib {
 			return needsEvaluatorArgument;
 		}
 
+		public final Set<Class<?>> getReturnTypes() {
+			Set<Class<?>> returnTypes = new HashSet<Class<?>>();
+			for (Signature signatur : signatures) {
+				returnTypes.add(signatur.evaluateMethod.getReturnType());
+			}
+			return returnTypes;
+		}
+
 		public final String getHtmlDescription() {
 			StringBuilder sb = new StringBuilder();
 			sb.append(
@@ -423,17 +442,17 @@ public class FunLib {
 				String delim = "";
 				int i = 0;
 				for (String p : funDesc.params()) {
-					if (i == 0 && needsGraphArgument) {
+					if ((i == 0) && needsGraphArgument) {
 						// don't show Graph argument
 						++i;
 						continue;
 					}
-					if (i == 0 && needsEvaluatorArgument) {
+					if ((i == 0) && needsEvaluatorArgument) {
 						// don't show evaluator argument
 						++i;
 						continue;
 					}
-					if (i == sig.parameterTypes.length - 1 && acceptsType) {
+					if ((i == (sig.parameterTypes.length - 1)) && acceptsType) {
 						// don't show TypeCollection argument
 						++i;
 						continue;
@@ -523,19 +542,22 @@ public class FunLib {
 					if (e.getCause() instanceof GreqlException) {
 						throw (GreqlException) e.getCause();
 					} else {
-						throw new GreqlException(e.getMessage(), e.getCause());
+						throw new GreqlException("When applying function "
+								+ fi.name + ": " + e.getMessage(), e.getCause());
 					}
 				} catch (IllegalAccessException e) {
 					if (e.getCause() instanceof GreqlException) {
 						throw (GreqlException) e.getCause();
 					} else {
-						throw new GreqlException(e.getMessage(), e.getCause());
+						throw new GreqlException("When applying function "
+								+ fi.name + ": " + e.getMessage(), e.getCause());
 					}
 				} catch (InvocationTargetException e) {
 					if (e.getCause() instanceof GreqlException) {
 						throw (GreqlException) e.getCause();
 					} else {
-						throw new GreqlException(e.getMessage(), e.getCause());
+						throw new GreqlException("When applying function "
+								+ fi.name + ": " + e.getMessage(), e.getCause());
 					}
 				}
 			}

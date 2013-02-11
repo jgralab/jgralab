@@ -1,0 +1,454 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- JGraLab - The Java Graph Laboratory                                      -->
+<!--                                                                          -->
+<!-- Copyright (C) 2006-2013 Institute for Software Technology                -->
+<!--                         University of Koblenz-Landau, Germany            -->
+<!--                         ist@uni-koblenz.de                               -->
+<!--                                                                          -->
+<!-- For bug reports, documentation and further information, visit            -->
+<!--                                                                          -->
+<!--                         https://github.com/jgralab/jgralab               -->
+<!--                                                                          -->
+<!-- This program is free software; you can redistribute it and/or modify it  -->
+<!-- under the terms of the GNU General Public License as published by the    -->
+<!-- Free Software Foundation; either version 3 of the License, or (at your   -->
+<!-- option) any later version.                                               -->
+<!--                                                                          -->
+<!-- This program is distributed in the hope that it will be useful, but      -->
+<!-- WITHOUT ANY WARRANTY; without even the implied warranty of               -->
+<!-- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General -->
+<!-- Public License for more details.                                         -->
+<!--                                                                          -->
+<!-- You should have received a copy of the GNU General Public License along  -->
+<!-- with this program; if not, see <http://www.gnu.org/licenses>.            -->
+<!--                                                                          -->
+<!-- Additional permission under GNU GPL version 3 section 7                  -->
+<!--                                                                          -->
+<!-- If you modify this Program, or any covered work, by linking or combining -->
+<!-- it with Eclipse (or a modified version of that program or an Eclipse     -->
+<!-- plugin), containing parts covered by the terms of the Eclipse Public     -->
+<!-- License (EPL), the licensors of this Program grant you additional        -->
+<!-- permission to convey the resulting work.  Corresponding Source for a     -->
+<!-- non-source form of such a combination shall include the source code for  -->
+<!-- the parts of JGraLab used as well as that of the covered work.           -->
+
+<project name="common" basedir="." default="warning">
+
+	<!-- global project specific properties; if empty, they have to be overridden by specializations -->
+	<!-- the name of the project - MUST BE CHANGED, THIS VALUE "common" IS ONLY THERE TO AVOID WARNINGS! -->
+	<property name="projectname" value="jgralab" />
+
+	<!-- project's base package; if it is a project from the University of Koblenz, this property should remain as it is,
+	     it should be changed for 3rd party projects -->
+	<property name="basePackage" value="de.uni_koblenz.${projectname}" />
+
+	<!-- path of the project's base package; if it is a project from the University of Koblenz, this property should remain as it is,
+		     it should be changed for 3rd party projects (TODO is this required?)-->
+	<property name="basePackagePath" value="de/uni_koblenz/${projectname}" />
+
+	<!-- the name of the project's main class -->
+	<property name="main" value="" />
+
+	<!-- the fully qualified name of the project's main class -->
+	<property name="main.fq" value="${basePackage}.${main}" />
+
+	<!-- the location of the jgralab.jar; only change if the sourcecode of jgralab is not available (3rd party project) -->
+	<property name="jgralab.location" value="../jgralab/build/jar/jgralab.jar" />
+
+	<!-- maximum memory for forked java tasks (java, javadoc, test); override in specialization if "OutOfMemoryError"s occur -->
+	<property name="maxmemsize" value="512M" />
+
+	<!-- minimum memory for forked java tasks (java, javadoc, test) -->
+	<property name="minmemsize" value="256M" />
+
+	<!-- global project specific directories; they should remain as they are to ensure analogy among the projects -->
+	<!-- project directory; the base directory of the project -->
+	<property name="project.dir" value="../${projectname}" />
+
+	<!-- source directory; all source code is expected to be here -->
+	<property name="src.dir" value="${project.dir}/src" />
+
+	<!-- build directory; all generated permanent output is placed here -->
+	<property name="build.dir" value="${project.dir}/build" />
+
+	<!-- classes directory; all compiled classes will be placed here -->
+	<property name="classes.dir" value="${build.dir}/classes" />
+
+	<!-- project specific library directory; all additional libraries of the project should be placed here -->
+	<property name="lib.dir" value="${project.dir}/lib" />
+
+	<!-- jar directory; tjar.he project's jar file will be placed here -->
+	<property name="jar.dir" value="${build.dir}/jar" />
+
+	<!-- documentation directory; the project's javadoc will be placed here -->
+	<property name="doc.dir" value="${build.dir}/doc" />
+
+	<!-- temporary directory; the temporary files for creating the project's jar file will be copied here (and automatically deleted) -->
+	<property name="tmp.dir" value="${build.dir}/tmp" />
+
+	<!-- test source directory; the source directory of the test cases -->
+	<property name="testcases.dir" value="${project.dir}/testit" />
+
+	<!-- the directory of the test classes (should be different from non-test classes -->
+	<property name="testclasses.dir" value="${build.dir}/testclasses" />
+
+	<!-- test result directory; the test results will be placed here -->
+	<property name="testresults.dir" value="${build.dir}/testresults" />
+
+	<!-- the global classpath -->
+	<!-- classpath; the classpath that is used for all java-tasks -->
+	<path id="classpath">
+		<!-- the compiled classes -->
+		<pathelement location="${classes.dir}" />
+
+		<!-- all project specific libraries -->
+		<fileset dir="${lib.dir}" includes="**/*.jar" />
+
+		<!-- the jgralab jar file -->
+		<pathelement location="${jgralab.location}" />
+
+		<!-- a custom extension to the classpath; this can be defined in any specialization in the same way as here, 
+		     but with id "classpathExtension". This can be useful to refer to jar files of other projects that should 
+		     not be placed in the project specific library directory -->
+		<path refid="classpathExtension" />
+	</path>
+
+	<path id="classpathExtension" />
+
+	<path id="testclasspath">
+		<path refid="classpath" />
+		<pathelement path="${testclasses.dir}" />
+		<pathelement path="${testcases.dir}" />
+		<fileset dir="${lib.dir}/junit" includes="*.jar" />
+	</path>
+
+	<!-- properties for the target "compile" -->
+	<!-- includes for compiling sources -->
+	<property name="compileincludes" value="" />
+
+	<!-- excludes for compiling sources -->
+	<property name="compileexcludes" value="" />
+	
+	<!-- excludes package-info.java -->
+	<property name="no_package_info" value="**/package-info.java" />
+
+	<!-- properties for the target "testcompile" -->
+	<!-- includes for compiling sources -->
+	<property name="testcompileincludes" value="" />
+
+	<!-- excludes for compiling sources -->
+	<property name="testcompileexcludes" value="" />
+
+	<!-- Settings for javac -->
+	<property name="javac.encoding" value="UTF8" />
+
+	<!-- debug infos in compiled sources -->
+	<property name="debug" value="false" />
+
+	<!-- which debug infos shall be included -->
+	<property name="debuglevel" value="lines" />
+
+	<!-- properties for the target "modify" -->
+	<!-- the location of the main package's source file -->
+	<property name="main.src" value="${src.dir}/${basePackagePath}/${main}.java" />
+
+
+	<!-- properties for the target "generateschema" -->
+	<!-- schema file; the absolute path to the schema file -->
+	<!--property name="schema.file" value="" /-->
+
+	<!-- the generated schema classes will be placed here -->
+	<property name="schema.location" value="${src.dir}" />
+
+	<!-- TODO comment this option -->
+	<property name="schema.withoutTypes" value="false" />
+
+
+	<!-- properties for the target "convertschema" -->
+	<!-- the absolute path to the xmi schema (if any) -->
+	<!--property name="xmi.schema.file" value="$" /-->
+
+	<!-- use from role -->
+	<property name="rsa2tg.f" value="false" />
+
+	<!-- remove unused domains -->
+	<property name="rsa2tg.u" value="false" />
+
+	<!-- use navigability -->
+	<property name="rsa2tg.n" value="false" />
+
+	<!-- properties for the target "test" -->
+	<!-- the fully qualified name of the class containing the test suite that executes all test for the project -->
+	<!-- property name="test.suite" value="" /-->
+
+	<property name="test.formattertype" value="brief" />
+
+	<!-- properties for the target "unjar" -->
+	<!-- unjar excludes -->
+	<property name="unjarexcludes" value="" />
+	<!--property name="unjar.disabled" value="false" /-->
+
+	<!-- TODO add unjar includes -->
+
+	<!-- properties for the target "jar" -->
+	<!-- exclude patterns for files in ${src.dir} that, besides *.java, should not be added to the normal jar file -->
+	<property name="resource.excludes" value="" />
+
+	<!-- location of the generated manifest file -->
+	<!--property name="manifest_static" value="false" /-->
+	<property name="manifest.dir" value="${project.dir}/META-INF/" />
+	<property name="manifest.file" value="${manifest.dir}/MANIFEST.MF" />
+	<property name="manifest.tmp.file" value="${build.dir}/MANIFEST.MF" />
+
+	<!-- properties for the target "run" -->
+	<!-- run arguments; the arguments passed to the java program -->
+	<property name="run.args" value="" />
+
+	<!-- jvm arguments; the arguments passed to the jvm when running the java program (e.g. "-ea") -->
+	<property name="run.jvmargs" value="" />
+
+	<!-- the run directory (defaults to project.dir) -->
+	<property name="run.dir" value="${project.dir}" />
+
+
+	<!-- properties for the target "document" -->
+	<!-- excludeded package names for documenting sources -->
+	<property name="documentexcludes" value="" />
+
+	<!-- defines the visibility level of the javadoc -->
+	<property name="document.access" value="public" />
+
+
+	<!-- properties for the target "addLicenseHeaders" -->
+	<!-- property name="license.file" value="" /-->
+
+	<!-- the targets -->
+
+	<target name="warning">
+		<echo>This is a generic build file and is meant to be imported into other build files.</echo>
+	</target>
+
+	<!-- build -->
+	<target name="build" depends="jgralab,clean,compile,jar" />
+
+	<!-- clean -->
+	<!-- deletes all classes, the jar and the temporary files -->
+	<!-- TODO add cleaning of generated schema files -->
+	<target name="clean" depends="customAntTasks">
+		<delete dir="${classes.dir}" />
+		<delete dir="${tmp.dir}" />
+		<delete dir="${testclasses.dir}" />
+		<antcall target="deleteGeneratedSchemaFiles" />
+	</target>
+
+	<!-- deletes all classes, the jar, the temporary files, the documentation, the testresults and all generated schema files -->
+	<target name="cleanall" depends="clean,deleteConvertedSchemaFile">
+		<delete dir="${jar.dir}" />
+		<delete dir="${doc.dir}" />
+		<delete dir="${testresults.dir}" />
+	</target>
+
+	<target name="deleteGeneratedSchemaFiles" if="schema.file">
+		<deletegeneratedschema schemaFile="${schema.file}" sourcePath="${schema.location}" />
+	</target>
+
+	<target name="deleteConvertedSchemaFile" if="xmi.schema.file">
+		<delete file="${schema.file}" />
+	</target>
+
+	<target name="createClassesDir">
+		<mkdir dir="${classes.dir}" />
+	</target>
+
+	<!-- compile -->
+	<!-- compiles all Java sources in $src.dir and puts teh generated classes into $classes.dir-->
+	<target name="compile" depends="createClassesDir,generateschema">
+		<javac fork="true"
+			srcdir="${src.dir}" 
+			includes="${compileincludes}"
+			excludes="${compileexcludes}"
+			destdir="${classes.dir}"
+			memoryinitialsize="${minmemsize}"
+			memorymaximumsize="${maxmemsize}"
+			classpathref="classpath" 
+			includeantruntime="false"
+			debug="${debug}"
+			debuglevel="${debuglevel}"
+			encoding="${javac.encoding}">
+			<compilerarg line="-Xlint:unchecked" />
+		</javac>
+	</target>
+
+	<!-- builds jgralab -->
+	<target name="jgralab">
+		<ant dir="../jgralab" antfile="build.xml" inheritAll="false" target="ensureJarExists" />
+	</target>
+
+	<!-- sets the property "jar exists" to true if the project's jar is present -->
+	<target name="jarcheck">
+		<condition property="jar exists">
+			<available file="${jar.dir}/${projectname}.jar" />
+		</condition>
+	</target>
+
+	<!-- calls the build target iff the jar file does not exist yet -->
+	<target name="ensureJarExists" depends="jarcheck" unless="jar exists">
+		<antcall target="build" />
+	</target>
+
+	<!-- activates the custom ant tasks defined in the jgralab.jar all targets (including those in specializations) using custom tasks have
+	     to depend on this target -->
+	<target name="customAntTasks" depends="jgralab">
+		<taskdef name="tgschema2java" classname="de.uni_koblenz.jgralab.utilities.ant.TgSchema2JavaTask" classpath="${jgralab.location}" />
+		<taskdef name="deletegeneratedschema" classname="de.uni_koblenz.jgralab.utilities.ant.DeleteGeneratedSchemaTask" classpath="${jgralab.location}" />
+		<taskdef name="rsa2tg" classname="de.uni_koblenz.jgralab.utilities.ant.Rsa2TgTask" classpath="${jgralab.location}" />
+	</target>
+
+	<!-- Converts an xmi schema to tg if an xmi schema file has been specified -->
+	<target name="convertschema" depends="customAntTasks" if="xmi.schema.file">
+		<rsa2tg xmifile="${xmi.schema.file}" schemafile="${schema.file}" useFromRole="${rsa2tg.f}" removeUnusedDomains="${rsa2tg.u}" useNavigability="${rsa2tg.n}" />
+	</target>
+
+	<!-- generateschema -->
+	<!-- generates schmema sources out of schema ${schemafile} -->
+	<target name="generateschema" depends="customAntTasks,convertschema" if="schema.file">
+		<tgschema2java schemaFile="${schema.file}" sourcePath="${schema.location}" withoutTypes="${schema.withoutTypes}" />
+	</target>
+
+	<target name="testcompile">
+		<mkdir dir="${testclasses.dir}" />
+		<echo>Compiling test case classes...</echo>
+		<javac 
+			fork="true"
+			srcdir="${testcases.dir}"
+			destdir="${testclasses.dir}"
+			includes="${testcompileincludes}"
+			excludes="${testcompileexcludes}"
+			memoryinitialsize="512m"
+			memorymaximumsize="${maxmemsize}"
+			classpathref="testclasspath"
+			encoding="${javac.encoding}"
+		/>
+	</target>
+
+	<!-- test -->
+	<!-- run the test suite specified by test.suite -->
+	<target name="test" if="test.suite" depends="testcompile">
+		<mkdir dir="${testresults.dir}" />
+		<echo>Starting the test...</echo>
+		<junit fork="yes" forkmode="perTest" maxmemory="${maxmemsize}" printsummary="on" showoutput="true" outputtoformatters="true">
+			<jvmarg value="-enableassertions" />
+			<classpath>
+				<path refid="testclasspath" />
+			</classpath>
+			<formatter type="${test.formattertype}" />
+			<test name="${test.suite}" todir="${testresults.dir}" />
+		</junit>
+	</target>
+
+
+	<!-- unjar -->
+	<!-- unpacks the libs in $lib.dir and the ist_utilities -->
+	<target name="unjar" unless="unjar.disabled">
+		<mkdir dir="${tmp.dir}" />
+		<taskdef name="unjar_mp" classname="de.uni_koblenz.ist.utilities.ant.MetaDataPreservingUnjar" classpathref="classpath" />
+		<unjar_mp dest="${tmp.dir}/">
+			<fileset dir="${lib.dir}" includes="**/*.jar" excludes="${unjarexcludes}" />
+		</unjar_mp>
+	</target>
+
+	<target name="create_manifest" unless="manifest.static">
+		<mkdir dir="${manifest.dir}" />
+		<manifest file="${manifest.file}">
+			<attribute name="Main-Class" value="${main.fq}" />
+		</manifest>
+	</target>
+	
+	<target name="merge_manifest" >
+		<copy file="${manifest.file}" tofile="${manifest.tmp.file}" />
+		<taskdef name="merge_manifest" classname="de.uni_koblenz.ist.utilities.ant.MergeManifest" classpathref="classpath" />
+		<merge_manifest dest="${tmp.dir}" manifest="${manifest.tmp.file}" />
+	</target>
+	
+	<!-- TODO create target merge_manifest -->
+
+	<!-- jar -->
+	<!-- makes executable jar file out of all classes in ${classes.dir} and puts jar file into ${jar.dir}-->
+	<target name="jar" depends="unjar,create_manifest,merge_manifest">
+		<mkdir dir="${jar.dir}" />
+		<mkdir dir="${classes.dir}" />
+		<mkdir dir="${tmp.dir}" />
+
+		<!-- include classes -->
+		<jar destfile="${jar.dir}/${projectname}.jar" basedir="${classes.dir}" compress="true" manifest="${manifest.tmp.file}" />
+
+		<!-- include ressources (all non-java files in ${src.dir})-->
+		<jar destfile="${jar.dir}/${projectname}.jar" basedir="${src.dir}" update="true" compress="true" filesetmanifest="skip" excludes="**/*.java ${resource.excludes}" />
+
+		<!-- include temporary files, e.g. from unjar -->
+		<jar destfile="${jar.dir}/${projectname}.jar" basedir="${tmp.dir}" update="true" compress="true" filesetmanifest="skip" />
+		<delete file="${manifest.tmp.file}"/>
+		<delete dir="${tmp.dir}" />
+		<antcall target="delete_manifest" />
+	</target>
+
+	<target name="delete_manifest" unless="manifest.static">
+		<delete dir="${manifest.dir}" />
+	</target>
+
+	<!-- sourcejar -->
+	<!-- in addition to the normal executable jar file, the target creates a second executable jar file that also includes the project's soucre files -->
+	<target name="sourcejar" depends="ensureJarExists">
+		<copy file="${jar.dir}/${projectname}.jar" tofile="${jar.dir}/${projectname}.src.jar" />
+
+		<!-- include source files-->
+		<jar destfile="${jar.dir}/${projectname}.src.jar" basedir="${src.dir}" update="true" compress="true" filesetmanifest="skip" />
+
+	</target>
+
+	<!-- run -->
+	<!-- runs project with given arguments ${run.args} in the
+       $project.dir}-->
+	<target name="run" depends="ensureJarExists">
+		<java classname="${main.fq}" classpathref="classpath" fork="true" dir="${run.dir}">
+			<jvmarg line="${run.jvmargs}" />
+			<arg line="${run.args}" />
+		</java>
+	</target>
+
+	<!-- document -->
+	<!-- document all sources out of ${src.dir} and puts documentation into ${doc.dir}-->
+	<target name="document">
+		<delete dir="${doc.dir}/html" />
+		<mkdir dir="${doc.dir}/html" />
+		<javadoc sourcepath="${src.dir}"
+			destdir="${doc.dir}/html"
+			packagenames="${basePackage}.*"
+			excludepackagenames="${documentexcludes}"
+			access="${document.access}"
+			maxmemory="${maxmemsize}"
+			classpathref="classpath"
+			encoding="${javac.encoding}" />
+		<zip destfile="${doc.dir}/${projectname}_api.zip" basedir="${doc.dir}/html" compress="true" />
+	</target>
+
+	<!-- Adds the license header to all java source files -->
+	<target name="addLicenseHeaders" depends="jgralab, clean, createMissingPackageDocumentation" if="license.file">
+		<java classname="de.uni_koblenz.ist.utilities.license_header.LicenseHeader" classpathref="classpath" fork="true" dir="${run.dir}">
+			<arg line="-i ${src.dir} -l ${license.file} -r" />
+		</java>
+		<java classname="de.uni_koblenz.ist.utilities.license_header.LicenseHeader" classpathref="classpath" fork="true" dir="${run.dir}">
+			<arg line="-i ${testcases.dir} -l ${license.file} -r" />
+		</java>
+		<java classname="de.uni_koblenz.ist.utilities.license_header.LicenseHeader" classpathref="classpath" fork="true" dir="${run.dir}">
+			<arg line="-i ${project.dir} -l ${license.file}" />
+		</java>
+	</target>
+	
+	<target name="createMissingPackageDocumentation">
+		<taskdef name="create-pi" classname="de.uni_koblenz.ist.utilities.ant.CreateMissingPackageDocumentation" classpathref="classpath" />
+		<create-pi srcDir="${src.dir}" />
+	</target>
+
+	<!-- TODO add an improved "newproject"-target -->
+</project>

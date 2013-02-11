@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2012 Institute for Software Technology
+ * Copyright (C) 2006-2013 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -53,7 +53,8 @@ public class ConditionalExpressionUnit {
 	private final GreqlQuery query;
 
 	private final Expression condition;
-	private final Formula trueFormula, falseFormula;
+	private final Formula trueFormula;
+	private final Formula falseFormula;
 	private double influenceCostRatio = -1;
 
 	public ConditionalExpressionUnit(Expression exp, Formula origFormula) {

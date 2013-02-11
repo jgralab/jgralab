@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2012 Institute for Software Technology
+ * Copyright (C) 2006-2013 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -34,6 +34,8 @@
  */
 package de.uni_koblenz.jgralab;
 
+import java.util.Map;
+
 import de.uni_koblenz.jgralab.schema.GraphElementClass;
 
 public interface TemporaryGraphElement<SC extends GraphElementClass<SC, IC>, IC extends GraphElement<SC, IC>>
@@ -55,4 +57,5 @@ public interface TemporaryGraphElement<SC extends GraphElementClass<SC, IC>, IC 
 
 	public void deleteAttribute(String name);
 
+	public Map<String, Object> getAttributes();
 }

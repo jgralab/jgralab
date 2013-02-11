@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2012 Institute for Software Technology
+ * Copyright (C) 2006-2013 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -32,8 +32,28 @@
  * non-source form of such a combination shall include the source code for
  * the parts of JGraLab used as well as that of the covered work.
  */
-/**
- * TODO [documentation] write documentation for this package.
- */
+package de.uni_koblenz.ist.utilities.gui;
 
-package org.pcollections;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+
+public abstract class ContextMenuListener extends MouseAdapter implements
+		MouseListener {
+
+	@Override
+	public void mousePressed(MouseEvent e) {
+		if (!SwingApplication.RUNS_ON_WINDOWS && e.isPopupTrigger()) {
+			handleContextMenuClick(e);
+		}
+	}
+
+	@Override
+	public void mouseReleased(MouseEvent e) {
+		if (SwingApplication.RUNS_ON_WINDOWS && e.isPopupTrigger()) {
+			handleContextMenuClick(e);
+		}
+	}
+
+	public abstract void handleContextMenuClick(MouseEvent e);
+}

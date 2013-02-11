@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2012 Institute for Software Technology
+ * Copyright (C) 2006-2013 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -38,11 +38,12 @@ import org.pcollections.PSet;
 import org.pcollections.PVector;
 
 import de.uni_koblenz.jgralab.Edge;
+import de.uni_koblenz.jgralab.JGraLab;
+import de.uni_koblenz.jgralab.graphmarker.SubGraphMarker;
 import de.uni_koblenz.jgralab.greql.funlib.Description;
 import de.uni_koblenz.jgralab.greql.funlib.Function;
 import de.uni_koblenz.jgralab.greql.types.Path;
 import de.uni_koblenz.jgralab.greql.types.PathSystem;
-import de.uni_koblenz.jgralab.greql.types.Slice;
 
 public class Edges extends Function {
 
@@ -55,9 +56,13 @@ public class Edges extends Function {
 		return p.getEdges();
 	}
 
-	@Description(params = "s", description = "Returns the set of edges in the given slice.", categories = Category.GRAPH)
-	public PSet<Edge> evaluate(Slice s) {
-		return s.getEdges();
+	@Description(params = "s", description = "Returns the set of edges in the given slice.", categories = Category.PATHS_AND_PATHSYSTEMS_AND_SLICES)
+	public PSet<Edge> evaluate(SubGraphMarker slice) {
+		PSet<Edge> s = JGraLab.set();
+		for (Edge e : slice.getMarkedEdges()) {
+			s = s.plus(e);
+		}
+		return s;
 	}
 
 	@Description(params = "p", description = "Returns the list of edges in the Path p.", categories = Category.PATHS_AND_PATHSYSTEMS_AND_SLICES)

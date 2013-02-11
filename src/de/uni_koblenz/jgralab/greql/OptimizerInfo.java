@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2012 Institute for Software Technology
+ * Copyright (C) 2006-2013 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -35,9 +35,12 @@
 
 package de.uni_koblenz.jgralab.greql;
 
+import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.greql.types.TypeCollection;
+import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.GraphElementClass;
 import de.uni_koblenz.jgralab.schema.Schema;
+import de.uni_koblenz.jgralab.schema.VertexClass;
 
 /**
  * This class is needed to propagate the size of the currently used graph along
@@ -71,11 +74,11 @@ public interface OptimizerInfo {
 	 * Returns the average percentage of graph elements of the given
 	 * {@link GraphElementClass} in a {@link Graph} in relation to all
 	 * {@link GraphElementClass}es. The returned value lies in the interval
-	 * [0,1]. Allows the comparison of values for {@link VertexClasses} and
-	 * {@link EdgeClasses}.
+	 * [0,1]. Allows the comparison of values for {@link VertexClass}es and
+	 * {@link EdgeClass}es.
 	 * 
-	 * @param vcName
-	 *            qualified {@link GraphElementClass} name
+	 * @param gec
+	 *            the {@link GraphElementClass}
 	 * 
 	 * @return the average percentage of graph elements of the given type in a
 	 *         {@link Graph}
@@ -90,8 +93,8 @@ public interface OptimizerInfo {
 	 * {@link VertexClass} in a {@link Graph}. The returned value lies in the
 	 * interval [0,1].
 	 * 
-	 * @param vcName
-	 *            qualified {@link VertexClass} name
+	 * @param tc
+	 *            a {@link TypeCollection}
 	 * 
 	 * @return the average percentage of vertices of the given type in a
 	 *         {@link Graph}

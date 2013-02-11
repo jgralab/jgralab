@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2012 Institute for Software Technology
+ * Copyright (C) 2006-2013 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -46,6 +46,7 @@ import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.greql.GreqlQuery;
 import de.uni_koblenz.jgralab.greql.OptimizerInfo;
 import de.uni_koblenz.jgralab.greql.exception.OptimizerException;
+import de.uni_koblenz.jgralab.greql.funlib.logics.Xor;
 import de.uni_koblenz.jgralab.greql.schema.Expression;
 import de.uni_koblenz.jgralab.greql.schema.FunctionApplication;
 import de.uni_koblenz.jgralab.greql.schema.FunctionId;
@@ -53,8 +54,8 @@ import de.uni_koblenz.jgralab.greql.schema.GreqlGraph;
 import de.uni_koblenz.jgralab.greql.schema.IsArgumentOf;
 
 /**
- * Replaces all {@link Xor} {@link FunctionApplication}s in the {@link Greql}
- * graph according the rule
+ * Replaces all {@link Xor} {@link FunctionApplication}s in the
+ * {@link GreqlGraph} according the rule
  * <code>a xor b = (a and not b) or (not a and b)</code>.
  * 
  * @author ist@uni-koblenz.de

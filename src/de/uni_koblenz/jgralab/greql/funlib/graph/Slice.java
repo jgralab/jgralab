@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2012 Institute for Software Technology
+ * Copyright (C) 2006-2013 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -51,6 +51,7 @@ import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.graphmarker.GraphMarker;
+import de.uni_koblenz.jgralab.graphmarker.SubGraphMarker;
 import de.uni_koblenz.jgralab.greql.evaluator.InternalGreqlEvaluator;
 import de.uni_koblenz.jgralab.greql.evaluator.fa.DFA;
 import de.uni_koblenz.jgralab.greql.evaluator.fa.State;
@@ -69,27 +70,30 @@ public class Slice extends Function {
 
 	private Graph graph;
 
-	@Description(params = { "internal", "v", "dfa" }, description = "Returns a slice, starting at the given root vertex and "
+	@Description(params = { "internal", "v", "dfa" }, description = "Returns a SubGraphMarker, starting at the given root vertex and "
 			+ " being structured according to the given path description.", categories = {
 			Category.GRAPH, Category.PATHS_AND_PATHSYSTEMS_AND_SLICES })
-	public de.uni_koblenz.jgralab.greql.types.Slice evaluate(
-			InternalGreqlEvaluator evaluator, Vertex v, DFA dfa) {
+	public SubGraphMarker evaluate(InternalGreqlEvaluator evaluator, Vertex v,
+			DFA dfa) {
 		return evaluate(evaluator, JGraLab.<Vertex> set().plus(v), dfa);
 	}
 
-	@Description(params = { "internal", "roots", "dfa" }, description = "Returns a slice, starting at the given root vertices and "
+	@Description(params = { "internal", "roots", "dfa" }, description = "Returns a SubGraphMarker, starting at the given root vertices and "
 			+ " being structured according to the given path description.", categories = {
 			Category.GRAPH, Category.PATHS_AND_PATHSYSTEMS_AND_SLICES })
-	public de.uni_koblenz.jgralab.greql.types.Slice evaluate(
-			InternalGreqlEvaluator evaluator, PSet<Vertex> roots, DFA dfa) {
+	public SubGraphMarker evaluate(InternalGreqlEvaluator evaluator,
+			PSet<Vertex> roots, DFA dfa) {
 		Set<Vertex> sliCritVertices = new HashSet<Vertex>();
-
+		graph = null;
+		
 		for (Vertex v : roots) {
 			if (graph == null) {
 				graph = v.getGraph();
 			}
+			assert v.getGraph() == graph : "Roots from different graphs?!?";
 			sliCritVertices.add(v);
 		}
+		assert evaluator.getGraph() == graph : "Roots from different graph than we're querying!?!";
 
 		marker = new ArrayList<GraphMarker<Map<Edge, PathSystemMarkerEntry>>>(
 				dfa.stateList.size());
@@ -244,23 +248,12 @@ public class Slice extends Function {
 	 * @param leaves
 	 * @return
 	 */
-	private de.uni_koblenz.jgralab.greql.types.Slice createSliceFromMarkings(
-			Graph graph, Set<Vertex> sliCritVertices, List<Vertex> leaves) {
-		de.uni_koblenz.jgralab.greql.types.Slice slice = new de.uni_koblenz.jgralab.greql.types.Slice(
-				graph);
+	private SubGraphMarker createSliceFromMarkings(Graph graph,
+			Set<Vertex> sliCritVertices, List<Vertex> leaves) {
+		SubGraphMarker sliceSubGraph = new SubGraphMarker(graph);
 
-		Map<Edge, PathSystemMarkerEntry> sliCritVertexMarkerMap;
-		PathSystemMarkerEntry sliCritVertexMarker;
-		GraphMarker<Map<Edge, PathSystemMarkerEntry>> startStateMarker = marker
-				.get(0);
-
-		// add slicing criterion vertices to slice
 		for (Vertex v : sliCritVertices) {
-			sliCritVertexMarkerMap = startStateMarker.getMark(v);
-			sliCritVertexMarker = sliCritVertexMarkerMap.get(null);
-			slice.addSlicingCriterionVertex(v,
-					sliCritVertexMarker.state.number,
-					sliCritVertexMarker.state.isFinal);
+			sliceSubGraph.mark(v);
 		}
 
 		Queue<Vertex> queue = new LinkedList<Vertex>();
@@ -296,16 +289,12 @@ public class Slice extends Function {
 									currentVertex,
 									currentStateMarker.getMark(currentVertex))
 									.values()) {
-								int parentStateNumber = 0;
 								parentState = marker.parentState;
-								if (parentState != null) {
-									parentStateNumber = parentState.number;
+								sliceSubGraph.mark(currentVertex);
+								if (marker.edgeToParentVertex != null) {
+									sliceSubGraph
+											.mark(marker.edgeToParentVertex);
 								}
-								slice.addVertex(currentVertex,
-										marker.state.number,
-										marker.edgeToParentVertex,
-										marker.parentVertex, parentStateNumber,
-										marker.state.isFinal);
 								parentVertex = marker.parentVertex;
 								if ((parentVertex != null)
 										&& !isVertexMarkedWithState(
@@ -328,7 +317,7 @@ public class Slice extends Function {
 			}
 		}
 
-		return slice;
+		return sliceSubGraph;
 	}
 
 	/**

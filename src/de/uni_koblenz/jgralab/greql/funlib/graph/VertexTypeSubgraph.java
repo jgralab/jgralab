@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2012 Institute for Software Technology
+ * Copyright (C) 2006-2013 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -46,9 +46,7 @@ import de.uni_koblenz.jgralab.greql.types.TypeCollection;
 @NeedsGraphArgument
 public class VertexTypeSubgraph extends Function {
 
-	@Description(params = {"graph","typeCollection"}, description = 
-			"Returns the subgraph induced by the vertex type given.",
-			categories = Category.GRAPH) 
+	@Description(params = { "graph", "typeCollection" }, description = "Returns the subgraph induced by the vertex types in typeCollection, i.e. all vertices specified by typeCollection together with all edges between those vertices.", categories = Category.GRAPH)
 	public VertexTypeSubgraph() {
 		super(7, 1, 1.0);
 	}
@@ -74,5 +72,5 @@ public class VertexTypeSubgraph extends Function {
 		}
 		return subgraphMarker;
 	}
-	
+
 }

@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2012 Institute for Software Technology
+ * Copyright (C) 2006-2013 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -53,14 +53,6 @@ import de.uni_koblenz.jgralab.greql.schema.TransposedPathDescription;
 public class TransposedPathDescriptionEvaluator extends
 		PathDescriptionEvaluator<TransposedPathDescription> {
 
-	/**
-	 * Creates a new TransposedPathDescriptionEvaluator for the given vertex
-	 * 
-	 * @param eval
-	 *            the GreqlEvaluator instance this VertexEvaluator belong to
-	 * @param vertex
-	 *            the vertex this VertexEvaluator evaluates
-	 */
 	public TransposedPathDescriptionEvaluator(TransposedPathDescription vertex,
 			GreqlQueryImpl query) {
 		super(vertex, query);
@@ -69,9 +61,8 @@ public class TransposedPathDescriptionEvaluator extends
 	@Override
 	public NFA evaluate(InternalGreqlEvaluator evaluator) {
 		evaluator.progress(getOwnEvaluationCosts());
-		PathDescription p = vertex
-				.getFirstIsTransposedPathOfIncidence(EdgeDirection.IN)
-				.getAlpha();
+		PathDescription p = vertex.getFirstIsTransposedPathOfIncidence(
+				EdgeDirection.IN).getAlpha();
 		PathDescriptionEvaluator<?> pathEval = (PathDescriptionEvaluator<?>) query
 				.getVertexEvaluator(p);
 		return NFA.createTransposedPathDescriptionNFA(pathEval

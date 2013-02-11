@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2012 Institute for Software Technology
+ * Copyright (C) 2006-2013 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -62,12 +62,6 @@ public class QuantifiedExpressionEvaluator extends
 
 	private VertexEvaluator<? extends Expression> predicateEvaluator = null;
 
-	/**
-	 * @param eval
-	 *            the GreqlEvaluator this VertexEvaluator belongs to
-	 * @param vertex
-	 *            the vertex which gets evaluated by this VertexEvaluator
-	 */
 	public QuantifiedExpressionEvaluator(QuantifiedExpression vertex,
 			GreqlQueryImpl query) {
 		super(vertex, query);

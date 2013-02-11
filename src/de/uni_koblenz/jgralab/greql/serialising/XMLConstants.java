@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2012 Institute for Software Technology
+ * Copyright (C) 2006-2013 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -63,6 +63,8 @@ public interface XMLConstants {
 	public static final String MAP_ENTRY = "entry";
 	public static final String TABLE = "table";
 	public static final String PATH = "path";
+	public static final String PATH_SYTEM = "pathSystem";
+	public static final String PATH_SYTEM_NODE = "node";
 	public static final String UNDEFINED = "undefined";
 
 	public static final String ATTR_ID = "id";
@@ -74,5 +76,7 @@ public interface XMLConstants {
 	public static final String ATTR_GRAPH_LINK = "graphLink";
 	public static final String ATTR_VERTEX_LINK = "vertexLink";
 	public static final String ATTR_EDGE_LINK = "edgeLink";
+	public static final String ATTR_PATH_SYTEM_NODE_STATE = "state";
+	public static final String ATTR_PATH_SYTEM_NODE_IS_LEAF = "isLeaf";
 
 }

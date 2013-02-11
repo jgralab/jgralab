@@ -44,7 +44,6 @@ import de.uni_koblenz.jgralab.grumlschema.domains.ListDomain;
 import de.uni_koblenz.jgralab.grumlschema.domains.MapDomain;
 import de.uni_koblenz.jgralab.grumlschema.domains.RecordDomain;
 import de.uni_koblenz.jgralab.grumlschema.domains.SetDomain;
-import de.uni_koblenz.jgralab.grumlschema.domains.StringDomain;
 import de.uni_koblenz.jgralab.grumlschema.structure.AggregationKind;
 import de.uni_koblenz.jgralab.grumlschema.structure.Annotates;
 import de.uni_koblenz.jgralab.grumlschema.structure.Attribute;
@@ -132,19 +131,19 @@ public class ArgoUml2Tg extends Xml2Tg {
 	 */
 	private String filenameValidation;
 
-	private static final String ST_GRAPHCLASS = "-64--88-111--125-2048530b:13717182953:-8000:0000000000000D6A";
-	private static final String ST_RECORD = "-64--88-111--125-2048530b:13717182953:-8000:0000000000000D6B";
-	private static final String ST_ABSTRACT = "-64--88-111--125-2048530b:13717182953:-8000:0000000000000D6C";
+	static final String ST_GRAPHCLASS = "-64--88-111--125-2048530b:13717182953:-8000:0000000000000D6A";
+	static final String ST_RECORD = "-64--88-111--125-2048530b:13717182953:-8000:0000000000000D6B";
+	static final String ST_ABSTRACT = "-64--88-111--125-2048530b:13717182953:-8000:0000000000000D6C";
 
-	private static final String DT_DOUBLE = "-115-26-95--20--17a78cb8:13718617229:-8000:0000000000000D76";
-	private static final String DT_INTEGER = "-115-26-95--20--17a78cb8:13718617229:-8000:00000000000019DA";
-	private static final String DT_UML_INTEGER = "-84-17--56-5-43645a83:11466542d86:-8000:000000000000087C";
-	private static final String DT_LONG = "-115-26-95--20--17a78cb8:13718617229:-8000:0000000000000D77";
-	private static final String DT_BOOLEAN = "-115-26-95--20--17a78cb8:13718617229:-8000:00000000000019DB";
-	private static final String DT_STRING = "-115-26-95--20--17a78cb8:13718617229:-8000:00000000000019DC";
-	private static final String DT_UML_STRING = "-84-17--56-5-43645a83:11466542d86:-8000:000000000000087E";
+	static final String DT_DOUBLE = "-115-26-95--20--17a78cb8:13718617229:-8000:0000000000000D76";
+	static final String DT_INTEGER = "-115-26-95--20--17a78cb8:13718617229:-8000:00000000000019DA";
+	static final String DT_UML_INTEGER = "-84-17--56-5-43645a83:11466542d86:-8000:000000000000087C";
+	static final String DT_LONG = "-115-26-95--20--17a78cb8:13718617229:-8000:0000000000000D77";
+	static final String DT_BOOLEAN = "-115-26-95--20--17a78cb8:13718617229:-8000:00000000000019DB";
+	static final String DT_STRING = "-115-26-95--20--17a78cb8:13718617229:-8000:00000000000019DC";
+	static final String DT_UML_STRING = "-84-17--56-5-43645a83:11466542d86:-8000:000000000000087E";
 
-	private static final String TV_UML_DERIVED = "-64--88-0-101--2259be85:11dd526880c:-8000:000000000000E4A7";
+	static final String TV_UML_DERIVED = "-64--88-0-101--2259be85:11dd526880c:-8000:000000000000E4A7";
 
 	private XmlGraphUtilities xu;
 	private HashMap<String, Vertex> qnMap;
@@ -160,7 +159,7 @@ public class ArgoUml2Tg extends Xml2Tg {
 	/**
 	 * Processes an XMI-file to a TG-file as schema or a schema in a grUML
 	 * graph. For all command line options see
-	 * {@link ArgoUML2Tg#processCommandLineOptions(String[])}.
+	 * {@link ArgoUml2Tg#processCommandLineOptions(String[])}.
 	 * 
 	 * @param args
 	 *            {@link String} array of command line options.
@@ -356,6 +355,15 @@ public class ArgoUml2Tg extends Xml2Tg {
 	@Override
 	public void process(String fileName) throws FileNotFoundException,
 			XMLStreamException {
+		defaultPackage = null;
+		graphClass = null;
+		domainMap = new HashMap<String, Domain>();
+		packageMap = new HashMap<String, Package>();
+		profileIdMap = new HashMap<String, Domain>();
+		qnMap = new HashMap<String, Vertex>();
+		xmiIdMap = new HashMap<String, Vertex>();
+		schema = null;
+		sg = null;
 		System.out.println("Process " + fileName + "...");
 		super.process(fileName);
 		convertToTg(getFilenameSchema());
@@ -424,7 +432,7 @@ public class ArgoUml2Tg extends Xml2Tg {
 	private void checkAttributes() {
 		GraphClass graphClass = sg.getFirstGraphClass();
 		Map<String, AttributedElementClass> definedAttributes = new HashMap<String, AttributedElementClass>();
-		for (Attribute a : graphClass.get_attribute()) {
+		for (Attribute a : graphClass.get_attributes()) {
 			if (definedAttributes.containsKey(a)) {
 				throw new RuntimeException("Attribute " + a.get_name() + " at "
 						+ graphClass.get_qualifiedName() + " is duplicate.");
@@ -443,7 +451,7 @@ public class ArgoUml2Tg extends Xml2Tg {
 				if (alreadyChecked.isMarked(current)) {
 					continue;
 				}
-				for (Attribute att : current.get_attribute()) {
+				for (Attribute att : current.get_attributes()) {
 					if (definedAttributes.containsKey(att.get_name())) {
 						AttributedElementClass childClass = definedAttributes
 								.get(att.get_name());
@@ -599,7 +607,7 @@ public class ArgoUml2Tg extends Xml2Tg {
 						+ "'");
 
 				// remove possible comments
-				List<? extends Comment> comments = d.remove_comment();
+				List<? extends Comment> comments = d.remove_comments();
 				for (Comment c : comments) {
 					c.delete();
 				}
@@ -1255,7 +1263,7 @@ public class ArgoUml2Tg extends Xml2Tg {
 				attr.set_name(xu.getAttributeValue(at, "name"));
 				attr.set_defaultValue(getDefaultValue(at, dom));
 				attr.add_domain(dom);
-				aec.add_attribute(attr);
+				aec.add_attributes(attr);
 			}
 		}
 	}
@@ -1295,12 +1303,9 @@ public class ArgoUml2Tg extends Xml2Tg {
 		String value = xu.getAttributeValue(defaultValueExpression, "body");
 		if (value != null) {
 			if (domain.isInstanceOf(BooleanDomain.VC)) {
-				assert value.equals("true") || value.equals("false");
-				// true/false => t/f
-				value = value.substring(0, 1);
-			} else if (domain.isInstanceOf(StringDomain.VC)) {
-				if (!value.startsWith("\"")) {
-					value = "\"" + value + "\"";
+				if (value.equals("true") || value.equals("false")) {
+					// true/false => t/f
+					value = value.substring(0, 1);
 				}
 			}
 			if (value.equals("null")) {
@@ -1547,7 +1552,7 @@ public class ArgoUml2Tg extends Xml2Tg {
 				int p = qn.lastIndexOf('.');
 				Package parentPackage = getPackage(p < 0 ? "" : qn.substring(0,
 						p));
-				parentPackage.add_subpackage(pkg);
+				parentPackage.add_subpackages(pkg);
 				packageMap.put(qn, pkg);
 				qnMap.put(qn, pkg);
 			}

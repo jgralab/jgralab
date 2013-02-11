@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2012 Institute for Software Technology
+ * Copyright (C) 2006-2013 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -46,8 +46,7 @@ import de.uni_koblenz.jgralab.greql.funlib.NeedsGraphArgument;
 @NeedsGraphArgument
 public class EdgeSetSubgraph extends Function {
 
-	@Description(params = {"graph","edgeSet"}, description = "Returns the subgraph induced by the edge set given.",
-			categories = Category.GRAPH)
+	@Description(params = { "graph", "edgeSet" }, description = "Returns the subgraph induced by the edge set, i.e. the egdes in edgeSet together with their alpha and omega vertices.", categories = Category.GRAPH)
 	public EdgeSetSubgraph() {
 		super(7, 1, 1.0);
 	}
@@ -65,5 +64,5 @@ public class EdgeSetSubgraph extends Function {
 		}
 		return subgraphMarker;
 	}
-	
+
 }

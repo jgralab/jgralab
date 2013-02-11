@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2012 Institute for Software Technology
+ * Copyright (C) 2006-2013 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -60,6 +60,7 @@ import de.uni_koblenz.jgralab.schema.IntegerDomain;
 import de.uni_koblenz.jgralab.schema.LongDomain;
 import de.uni_koblenz.jgralab.schema.RecordDomain;
 import de.uni_koblenz.jgralab.schema.RecordDomain.RecordComponent;
+import de.uni_koblenz.jgralab.schema.Schema;
 import de.uni_koblenz.jgralab.schema.VertexClass;
 
 /**
@@ -85,7 +86,7 @@ public class GenericGraphImpl extends GraphImpl implements
 
 	/**
 	 * Creates a new {@link GenericVertexImpl} in the graph that conforms to a
-	 * given {@Link VertexClass} from the Schema.
+	 * given {@link VertexClass} from the Schema.
 	 */
 	@Override
 	public <T extends Vertex> T createVertex(VertexClass vc) {
@@ -93,8 +94,8 @@ public class GenericGraphImpl extends GraphImpl implements
 	}
 
 	/**
-	 * Creates a new {@Link GenericEdgeImpl} in the Graph that conforms
-	 * to a given {@link EdgeClass} from the Schema.
+	 * Creates a new {@link GenericEdgeImpl} in the Graph that conforms to a
+	 * given {@link EdgeClass} from the Schema.
 	 */
 	@Override
 	public <T extends Edge> T createEdge(EdgeClass ec, Vertex alpha,

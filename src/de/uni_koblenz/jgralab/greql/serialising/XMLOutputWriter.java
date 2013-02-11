@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2012 Institute for Software Technology
+ * Copyright (C) 2006-2013 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -55,6 +55,8 @@ import de.uni_koblenz.jgralab.Record;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql.exception.SerialisingException;
 import de.uni_koblenz.jgralab.greql.types.Path;
+import de.uni_koblenz.jgralab.greql.types.PathSystem;
+import de.uni_koblenz.jgralab.greql.types.PathSystem.PathSystemNode;
 import de.uni_koblenz.jgralab.greql.types.Table;
 import de.uni_koblenz.jgralab.greql.types.Tuple;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
@@ -380,6 +382,30 @@ public class XMLOutputWriter extends DefaultWriter implements XMLConstants {
 		writer.writeStartElement(PATH);
 		write(p.getVertexTrace());
 		write(p.getEdgeTrace());
+		writer.writeEndElement();
+	}
+
+	@Override
+	protected void writePathSystem(PathSystem p) throws XMLStreamException {
+		writer.writeStartElement(PATH_SYTEM);
+		writeNode(p, p.getRoot());
+		writer.writeEndElement();
+	}
+
+	private void writeNode(PathSystem p, PathSystemNode currentNode)
+			throws XMLStreamException {
+		writer.writeStartElement(PATH_SYTEM_NODE);
+		writer.writeAttribute(ATTR_PATH_SYTEM_NODE_STATE, new Integer(
+				currentNode.state).toString());
+		writer.writeAttribute(ATTR_PATH_SYTEM_NODE_IS_LEAF,
+				new Boolean(p.isLeaf(currentNode)).toString());
+		writeVertex(currentNode.currentVertex);
+		if (currentNode.edge2parent != null) {
+			writeEdge(currentNode.edge2parent);
+		}
+		for (PathSystemNode child : p.getChildren(currentNode)) {
+			writeNode(p, child);
+		}
 		writer.writeEndElement();
 	}
 

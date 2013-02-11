@@ -3,6 +3,8 @@ package de.uni_koblenz.jgralab.impl.std;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
@@ -156,39 +158,39 @@ public class TemporaryVertexImpl extends VertexImpl implements TemporaryVertex {
 		HashSet<TemporaryEdge> tempEdgeList = new HashSet<TemporaryEdge>();
 		for (Edge te : newVertex.incidences(this.getGraphClass()
 				.getTemporaryEdgeClass())) {
-			if (((TemporaryEdge) te).getPreliminaryType() != null
-					&& te.isValid()) {
+			if ((((TemporaryEdge) te).getPreliminaryType() != null)
+					&& te.isValid() && !te.getThat().isTemporary()) {
 				tempEdgeList.add((TemporaryEdge) te.getNormalEdge());
 			}
 		}
 		for (TemporaryEdge tempEdge : tempEdgeList) {
-			try {
-				tempEdge.bless(tempEdge.getPreliminaryType());
-			} catch (TemporaryGraphElementException ex) {
-				// Edge stays temporary
-			}
+			tempEdge.bless();
 		}
 		return newVertex;
 	}
 
 	private void validateConversion(VertexClass vc) {
-		// TODO maybe faster if iterate over all incidences at once and checking
-		// direction every time
-		for (Edge e : this.incidences(EdgeDirection.OUT)) {
-			if (!vc.isValidFromFor(e.getAttributedElementClass())) {
-				throw new TemporaryGraphElementException(
-						"Transformation of temporary vertex " + this
-								+ " failed. " + vc
-								+ " is not a valid source for edge " + e + ".");
-			}
+		if (!isValid()) {
+			throw new TemporaryGraphElementException(
+					"This temporary vertex isn't valid anymore! " + this);
 		}
-
-		for (Edge e : this.incidences(EdgeDirection.IN)) {
-			if (!vc.isValidToFor(e.getAttributedElementClass())) {
-				throw new TemporaryGraphElementException(
-						"Transformation of temporary vertex " + this
-								+ " failed. " + vc
-								+ " is not a valid target for edge " + e + ".");
+		for (Edge e : this.incidences(EdgeDirection.OUT)) {
+			if (e.isNormal()) {
+				if (!vc.isValidFromFor(e.getAttributedElementClass())) {
+					throw new TemporaryGraphElementException(
+							"Transformation of temporary vertex " + this
+									+ " failed. " + vc
+									+ " is not a valid source for edge " + e
+									+ ".");
+				}
+			} else {
+				if (!vc.isValidToFor(e.getAttributedElementClass())) {
+					throw new TemporaryGraphElementException(
+							"Transformation of temporary vertex " + this
+									+ " failed. " + vc
+									+ " is not a valid target for edge " + e
+									+ ".");
+				}
 			}
 		}
 
@@ -231,6 +233,38 @@ public class TemporaryVertexImpl extends VertexImpl implements TemporaryVertex {
 	@Override
 	public void setPreliminaryType(VertexClass ec) {
 		this.preliminaryType = ec;
+	}
+
+	@Override
+	public final String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("tv");
+		sb.append(id);
+		sb.append(": ");
+		if (preliminaryType != null) {
+			sb.append(preliminaryType.getQualifiedName());
+		} else {
+			sb.append("-MissingPreliminaryType-");
+		}
+		sb.append(" {");
+		boolean first = true;
+		for (Entry<String, Object> e : attributes.entrySet()) {
+			if (first) {
+				first = false;
+			} else {
+				sb.append(", ");
+			}
+			sb.append(e.getKey());
+			sb.append(" -> ");
+			sb.append(e.getValue());
+		}
+		sb.append("}");
+		return sb.toString();
+	}
+
+	@Override
+	public Map<String, Object> getAttributes() {
+		return attributes;
 	}
 
 }

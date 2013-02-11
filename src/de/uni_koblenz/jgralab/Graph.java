@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2012 Institute for Software Technology
+ * Copyright (C) 2006-2013 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -110,7 +110,7 @@ public interface Graph extends AttributedElement<GraphClass, Graph> {
 	 * {@link EdgeClass} that connects <code>alpha</code> and <code>omega</code>
 	 * vertices and adds the new edge to this {@link Graph}
 	 * 
-	 * @param peliminaryType
+	 * @param preliminaryType
 	 *            the preliminary {@link EdgeClass} of this
 	 *            {@link TemporaryEdge}
 	 * 

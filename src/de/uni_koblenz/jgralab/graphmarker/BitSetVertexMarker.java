@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2012 Institute for Software Technology
+ * Copyright (C) 2006-2013 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -68,15 +68,12 @@ public class BitSetVertexMarker extends BitSetGraphMarker<Vertex> {
 
 					@Override
 					public boolean hasNext() {
-						return index < marks.size();
+						return index != -1;
 					}
 
 					@Override
 					protected void moveIndex() {
-						int length = marks.size();
-						while (index < length && !marks.get(index)) {
-							index++;
-						}
+						index = marks.nextSetBit(++index);
 					}
 
 					@Override
@@ -89,7 +86,7 @@ public class BitSetVertexMarker extends BitSetGraphMarker<Vertex> {
 							throw new ConcurrentModificationException(
 									MODIFIED_ERROR_MESSAGE);
 						}
-						Vertex next = graph.getVertex(index++);
+						Vertex next = graph.getVertex(index);
 						moveIndex();
 						return next;
 					}

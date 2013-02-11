@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2012 Institute for Software Technology
+ * Copyright (C) 2006-2013 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -34,7 +34,6 @@
  */
 package de.uni_koblenz.jgralab.greql.funlib.graph;
 
-
 import org.pcollections.PCollection;
 
 import de.uni_koblenz.jgralab.Edge;
@@ -48,26 +47,26 @@ import de.uni_koblenz.jgralab.greql.funlib.NeedsGraphArgument;
 @NeedsGraphArgument
 public class ElementSetSubgraph extends Function {
 
-	@Description(params = {"g","vs","es"}, 
-			description = "Returns the subgraph induced by the vertex type given.",
-			categories = Category.GRAPH)
+	@Description(params = { "g", "vset", "eset" }, description = "Returns the subgraph consisting of all vertices in vset and all edges in eset that connect vertices in vset.", categories = Category.GRAPH)
 	public ElementSetSubgraph() {
 		super(7, 1, 1.0);
 	}
 
-	public SubGraphMarker evaluate(Graph graph, PCollection<Vertex> vertexSet, PCollection<Edge> edgeSet) {
+	public SubGraphMarker evaluate(Graph graph, PCollection<Vertex> vertexSet,
+			PCollection<Edge> edgeSet) {
 		SubGraphMarker subgraphMarker = new SubGraphMarker(graph);
 		for (Vertex currentVertex : vertexSet) {
 			subgraphMarker.mark(currentVertex);
 		}
 		// add all edges
 		for (Edge currentEdge : edgeSet) {
-			if ((subgraphMarker.isMarked(currentEdge.getAlpha()) && (subgraphMarker.isMarked(currentEdge.getOmega())))) {
+			if ((subgraphMarker.isMarked(currentEdge.getAlpha()) && (subgraphMarker
+					.isMarked(currentEdge.getOmega())))) {
 				subgraphMarker.mark(currentEdge);
 			}
 		}
-		
+
 		return subgraphMarker;
 	}
-	
+
 }

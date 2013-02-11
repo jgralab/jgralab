@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2012 Institute for Software Technology
+ * Copyright (C) 2006-2013 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -35,7 +35,7 @@
 package de.uni_koblenz.jgralab.utilities.greqlserver;
 
 import java.io.BufferedReader;
-import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
@@ -49,18 +49,17 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
+import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.graphmarker.BooleanGraphMarker;
+import de.uni_koblenz.jgralab.graphmarker.SubGraphMarker;
 import de.uni_koblenz.jgralab.greql.GreqlQuery;
-import de.uni_koblenz.jgralab.greql.evaluator.GreqlEnvironmentAdapter;
-import de.uni_koblenz.jgralab.greql.evaluator.GreqlQueryImpl;
+import de.uni_koblenz.jgralab.greql.GreqlQueryCache;
 import de.uni_koblenz.jgralab.greql.types.Path;
 import de.uni_koblenz.jgralab.greql.types.PathSystem;
-import de.uni_koblenz.jgralab.greql.types.Slice;
 import de.uni_koblenz.jgralab.greql.types.Types;
 import de.uni_koblenz.jgralab.impl.ConsoleProgressFunction;
 import de.uni_koblenz.jgralab.utilities.tg2dot.Tg2Dot;
@@ -182,13 +181,10 @@ public class GreqlServer extends Thread {
 				markResultElements(e.getKey(), marker);
 				markResultElements(e.getValue(), marker);
 			}
-		} else if (val instanceof Slice) {
-			Slice slice = (Slice) val;
-			for (Vertex v : slice.getVertices()) {
-				marker.mark(v);
-			}
-			for (Edge e : slice.getEdges()) {
-				marker.mark(e);
+		} else if (val instanceof SubGraphMarker) {
+			SubGraphMarker slice = (SubGraphMarker) val;
+			for (GraphElement<?, ?> elem : slice.getMarkedElements()) {
+				marker.mark(elem);
 			}
 		} else if (val instanceof PathSystem) {
 			PathSystem pathSystem = (PathSystem) val;
@@ -206,8 +202,8 @@ public class GreqlServer extends Thread {
 			for (Edge e : path.getEdgeTrace()) {
 				marker.mark(e);
 			}
-		} else if (val instanceof AttributedElement) {
-			marker.mark((AttributedElement<?, ?>) val);
+		} else if (val instanceof GraphElement) {
+			marker.mark((GraphElement<?, ?>) val);
 		} else {
 			println("'" + val + "' is no AttributedElement, "
 					+ "so it won't be considered for DOT output.",
@@ -215,13 +211,26 @@ public class GreqlServer extends Thread {
 		}
 	}
 
+	private final GreqlQueryCache cache = new GreqlQueryCache();
+
 	private Object evalQuery(String queryFile) throws IOException {
 		println("Evaling query file " + queryFile + ".", PrintTarget.BOTH, true);
-		GreqlQuery query = GreqlQueryImpl.readQuery(new File(queryFile));
+		BufferedReader in = new BufferedReader(new FileReader(queryFile));
+		StringBuilder sb = new StringBuilder();
+		String line;
+		try {
+			while ((line = in.readLine()) != null) {
+				sb.append(line);
+				sb.append('\n');
+			}
+		} finally {
+			in.close();
+		}
+		GreqlQuery query = cache.getQuery(sb.toString());
 		Object result = null;
 		try {
 			long startTime = System.currentTimeMillis();
-			result = query.evaluate(graph, new GreqlEnvironmentAdapter(), null);
+			result = query.evaluate(graph);
 			long evalTime = System.currentTimeMillis() - startTime;
 			println("<result not printed>", PrintTarget.SERVER, false);
 			out.println();

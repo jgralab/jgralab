@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  * 
- * Copyright (C) 2006-2012 Institute for Software Technology
+ * Copyright (C) 2006-2013 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  * 
@@ -140,7 +140,7 @@ public class GreqlQueryImpl extends GreqlQuery implements
 				+ queryGraph.getVCount() + "/" + queryGraph.getECount()
 				+ ", v/eMax=" + ((GraphImpl) queryGraph).getMaxVCount() + "/"
 				+ ((GraphImpl) queryGraph).getMaxECount());
-		if (optimizer != null && !(optimizer instanceof NullOptimizer)) {
+		if ((optimizer != null) && !(optimizer instanceof NullOptimizer)) {
 			if (DEBUG_OPTIMIZATION) {
 				String dirName = System.getProperty("java.io.tmpdir");
 				if (!dirName.endsWith(File.separator)) {
@@ -367,27 +367,6 @@ public class GreqlQueryImpl extends GreqlQuery implements
 			return parser.getGraph();
 		}
 
-	}
-
-	@Override
-	public Object evaluate() {
-		return evaluate(null, new GreqlEnvironmentAdapter(), null);
-	}
-
-	@Override
-	public Object evaluate(Graph datagraph) {
-		return evaluate(datagraph, new GreqlEnvironmentAdapter(), null);
-	}
-
-	@Override
-	public Object evaluate(Graph datagraph, GreqlEnvironment environment) {
-		return evaluate(datagraph, environment, null);
-	}
-
-	@Override
-	public Object evaluate(Graph datagraph, ProgressFunction progressFunction) {
-		return evaluate(datagraph, new GreqlEnvironmentAdapter(),
-				progressFunction);
 	}
 
 	@Override

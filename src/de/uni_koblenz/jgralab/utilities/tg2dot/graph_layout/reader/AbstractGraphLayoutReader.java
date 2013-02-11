@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2012 Institute for Software Technology
+ * Copyright (C) 2006-2013 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -79,12 +79,15 @@ public abstract class AbstractGraphLayoutReader implements GraphLayoutReader {
 	 *            Name of the definition.
 	 */
 	protected void definitionStarted(String definitionName) {
-		TypeDefinition definition = graphLayout
-				.getTypeDefinition(definitionName);
+
+		TypeDefinition definition = null;
+
+		definition = graphLayout.getTypeDefinition(definitionName);
+
 		currentDefinition = definition;
 		if (definition == null && isElementDefinition(definitionName)) {
 			currentDefinition = new ElementDefinition(definitionName);
-			graphLayout.add(definition);
+			graphLayout.add(currentDefinition);
 		}
 	}
 

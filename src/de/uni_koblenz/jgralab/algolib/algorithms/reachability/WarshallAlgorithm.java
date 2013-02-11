@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2012 Institute for Software Technology
+ * Copyright (C) 2006-2013 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -60,7 +60,7 @@ public class WarshallAlgorithm extends StructureOrientedAlgorithm implements
 	private IntFunction<Vertex> indexMapping;
 	private Permutation<Vertex> vertexOrder;
 	private int vertexCount;
-	private boolean reachable[][];
+	private boolean[][] reachable;
 	private Edge[][] successor;
 
 	public WarshallAlgorithm(Graph graph) {
@@ -154,7 +154,7 @@ public class WarshallAlgorithm extends StructureOrientedAlgorithm implements
 			reachable[vId][vId] = true;
 		}
 		for (Edge e : graph.edges()) {
-			if (navigable != null && !navigable.get(e)) {
+			if ((navigable != null) && !navigable.get(e)) {
 				continue;
 			}
 			int vId = indexMapping.get(e.getAlpha());

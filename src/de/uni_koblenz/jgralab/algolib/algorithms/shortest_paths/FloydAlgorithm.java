@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2012 Institute for Software Technology
+ * Copyright (C) 2006-2013 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -64,7 +64,7 @@ public class FloydAlgorithm extends StructureOrientedAlgorithm implements
 	private IntFunction<Vertex> indexMapping;
 	private Permutation<Vertex> vertexOrder;
 	private int vertexCount;
-	private double weightedDistance[][];
+	private double[][] weightedDistance;
 	private Edge[][] successor;
 	private DoubleFunction<Edge> edgeWeight;
 	private boolean negativeCycles;
@@ -172,7 +172,7 @@ public class FloydAlgorithm extends StructureOrientedAlgorithm implements
 			weightedDistance[vId][vId] = 0;
 		}
 		for (Edge e : graph.edges()) {
-			if (navigable != null && !navigable.get(e)) {
+			if ((navigable != null) && !navigable.get(e)) {
 				continue;
 			}
 			int vId = indexMapping.get(e.getAlpha());
@@ -212,7 +212,7 @@ public class FloydAlgorithm extends StructureOrientedAlgorithm implements
 						weightedDistance[uId][wId] = newDistance;
 						successor[uId][wId] = successor[uId][vId];
 					}
-					if (uId == wId && weightedDistance[uId][wId] < 0) {
+					if ((uId == wId) && (weightedDistance[uId][wId] < 0)) {
 						negativeCycles = true;
 						terminate();
 					}

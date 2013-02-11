@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2012 Institute for Software Technology
+ * Copyright (C) 2006-2013 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -56,7 +56,6 @@ import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql.exception.SerialisingException;
 import de.uni_koblenz.jgralab.greql.types.Path;
 import de.uni_koblenz.jgralab.greql.types.PathSystem;
-import de.uni_koblenz.jgralab.greql.types.Slice;
 import de.uni_koblenz.jgralab.greql.types.Table;
 import de.uni_koblenz.jgralab.greql.types.Tuple;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
@@ -125,11 +124,6 @@ public class HTMLOutputWriter extends DefaultWriter {
 		} catch (Exception e) {
 			throw new RuntimeException("Unexpected Exception", e);
 		}
-	}
-
-	@Override
-	protected void writeSlice(Slice s) throws Exception {
-		writeDefaultObject(s);
 	}
 
 	@Override

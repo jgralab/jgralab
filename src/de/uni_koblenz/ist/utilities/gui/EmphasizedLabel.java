@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2012 Institute for Software Technology
+ * Copyright (C) 2006-2013 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -32,58 +32,63 @@
  * non-source form of such a combination shall include the source code for
  * the parts of JGraLab used as well as that of the covered work.
  */
+package de.uni_koblenz.ist.utilities.gui;
 
-package de.uni_koblenz.jgralab.greql.types;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Window;
 
-import de.uni_koblenz.jgralab.Vertex;
+import javax.swing.JLabel;
+import javax.swing.SwingUtilities;
 
-/**
- * This is the key of the hashmap which stores the references to the parent
- * vertices. This class is _not_ a JValue
- */
-public class PathSystemKey {
-	private Vertex vertex;
-	private int stateNumber;
+public class EmphasizedLabel extends JLabel {
+	private static final long serialVersionUID = 881191039458402594L;
 
-	@Override
-	public int hashCode() {
-		return vertex.hashCode() + stateNumber;
+	private boolean fUseEmphasisColor;
+
+	public static final Color OS_X_EMPHASIZED_FONT_COLOR = new Color(255, 255,
+			255, 110);
+	public static final Color OS_X_EMPHASIZED_FOCUSED_FONT_COLOR = new Color(
+			0x000000);
+	public static final Color OS_X_EMPHASIZED_UNFOCUSED_FONT_COLOR = new Color(
+			0x3f3f3f);
+
+	public EmphasizedLabel(String text) {
+		super(text);
 	}
 
 	@Override
-	public boolean equals(Object o) {
-		if (o == null || !(o instanceof PathSystemKey)) {
-			return false;
+	public Dimension getPreferredSize() {
+		Dimension d = super.getPreferredSize();
+		d.height += 1;
+		return d;
+	}
+
+	@Override
+	public Color getForeground() {
+		Color retVal;
+		Window window = SwingUtilities.getWindowAncestor(this);
+		boolean hasFoucs = window != null && window.isFocused();
+
+		if (fUseEmphasisColor) {
+			retVal = OS_X_EMPHASIZED_FONT_COLOR;
+		} else if (hasFoucs) {
+			retVal = OS_X_EMPHASIZED_FOCUSED_FONT_COLOR;
+		} else {
+			retVal = OS_X_EMPHASIZED_UNFOCUSED_FONT_COLOR;
 		}
-		PathSystemKey foreignKey = (PathSystemKey) o;
-		return foreignKey.vertex == vertex
-				&& foreignKey.stateNumber == stateNumber;
+
+		return retVal;
 	}
 
-	/**
-	 * creates a new PathSystemKey
-	 * 
-	 * @param v
-	 * @param s
-	 */
-	public PathSystemKey(Vertex v, int s) {
-		vertex = v;
-		stateNumber = s;
-	}
-
-	/**
-	 * returns the string representation of this key
-	 */
 	@Override
-	public String toString() {
-		return "(V: " + vertex.getId() + ", S: " + stateNumber + ")";
-	}
-
-	public Vertex getVertex() {
-		return vertex;
-	}
-
-	public int getStateNumber() {
-		return stateNumber;
+	protected void paintComponent(Graphics g) {
+		fUseEmphasisColor = true;
+		g.translate(0, 1);
+		super.paintComponent(g);
+		g.translate(0, -1);
+		fUseEmphasisColor = false;
+		super.paintComponent(g);
 	}
 }

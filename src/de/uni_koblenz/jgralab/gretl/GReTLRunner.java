@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2012 Institute for Software Technology
+ * Copyright (C) 2006-2013 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -52,7 +52,6 @@ import de.uni_koblenz.jgralab.greql.GreqlQuery;
 import de.uni_koblenz.jgralab.greql.schema.GreqlSchema;
 import de.uni_koblenz.jgralab.gretl.template.TemplateSchema;
 import de.uni_koblenz.jgralab.impl.ConsoleProgressFunction;
-import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.Schema;
 import de.uni_koblenz.jgralab.utilities.tg2dot.Tg2Dot;
 import de.uni_koblenz.jgralab.utilities.tg2dot.dot.GraphVizOutputFormat;
@@ -262,7 +261,7 @@ public class GReTLRunner {
 			} else {
 				String pdf = outFileName.replaceFirst("\\.tg(\\.gz)?$", ".pdf");
 				Tg2Dot.convertGraph(outGraph, pdf, cli.hasOption('r'),
-						GraphVizOutputFormat.PDF, (EdgeClass[]) null);
+						GraphVizOutputFormat.PDF);
 			}
 		}
 	}

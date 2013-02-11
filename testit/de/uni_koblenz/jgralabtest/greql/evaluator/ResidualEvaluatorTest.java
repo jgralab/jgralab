@@ -23,13 +23,13 @@ import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.ImplementationType;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.exception.GraphIOException;
+import de.uni_koblenz.jgralab.graphmarker.SubGraphMarker;
 import de.uni_koblenz.jgralab.greql.GreqlEnvironment;
 import de.uni_koblenz.jgralab.greql.GreqlQuery;
 import de.uni_koblenz.jgralab.greql.evaluator.GreqlEnvironmentAdapter;
 import de.uni_koblenz.jgralab.greql.exception.UnknownTypeException;
 import de.uni_koblenz.jgralab.greql.executable.ExecutableQuery;
 import de.uni_koblenz.jgralab.greql.executable.GreqlCodeGenerator;
-import de.uni_koblenz.jgralab.greql.types.Slice;
 import de.uni_koblenz.jgralab.greql.types.Table;
 import de.uni_koblenz.jgralab.greql.types.Tuple;
 import de.uni_koblenz.jgralab.schema.GraphElementClass;
@@ -847,21 +847,30 @@ public class ResidualEvaluatorTest {
 	@Test
 	public void testUseQuerySeveralTimes() throws InstantiationException,
 			IllegalAccessException {
-		Slice oldResult = null;
+		SubGraphMarker oldResult = null;
 		String queryText = "slice(getVertex(1),-->)";
 		for (GreqlQuery query : new GreqlQuery[] {
 				GreqlQuery.createQuery(queryText),
 				(GreqlQuery) createQueryClass(queryText,
 						"testdata.TestUseQuerySeveralTimes") }) {
-			Slice slice1 = (Slice) query.evaluate(datagraph);
-			Slice slice2 = (Slice) query.evaluate(datagraph);
-			assertEquals(slice1.getEdges(), slice2.getEdges());
-			assertEquals(slice1.getVertices(), slice2.getVertices());
+			SubGraphMarker slice1 = (SubGraphMarker) query.evaluate(datagraph);
+			SubGraphMarker slice2 = (SubGraphMarker) query.evaluate(datagraph);
+			compareSubGraphs(slice1, slice2);
 			if (oldResult != null) {
-				assertEquals(oldResult.getEdges(), slice1.getEdges());
-				assertEquals(oldResult.getVertices(), slice1.getVertices());
+				compareSubGraphs(oldResult, slice1);
 			}
 			oldResult = slice1;
+		}
+	}
+
+	private void compareSubGraphs(SubGraphMarker slice1, SubGraphMarker slice2) {
+		assertEquals(slice1.getVCount(), slice2.getVCount());
+		assertEquals(slice1.getECount(), slice2.getECount());
+		for (GraphElement<?, ?> markedElement : slice1.getMarkedElements()) {
+			assertTrue(slice2.isMarked(markedElement));
+		}
+		for (GraphElement<?, ?> markedElement : slice2.getMarkedElements()) {
+			assertTrue(slice1.isMarked(markedElement));
 		}
 	}
 

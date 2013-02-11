@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2012 Institute for Software Technology
+ * Copyright (C) 2006-2013 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -36,15 +36,11 @@
 package de.uni_koblenz.jgralab.graphmarker;
 
 import java.util.HashSet;
-import java.util.Iterator;
 
-import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.algolib.functions.BooleanFunction;
-import de.uni_koblenz.jgralab.algolib.functions.entries.BooleanFunctionEntry;
 import de.uni_koblenz.jgralab.impl.ReversedEdgeBaseImpl;
 
 /**
@@ -55,11 +51,9 @@ import de.uni_koblenz.jgralab.impl.ReversedEdgeBaseImpl;
  * 
  * @author ist@uni-koblenz.de
  */
-public class BooleanGraphMarker extends
-		AbstractGraphMarker<AttributedElement<?, ?>> implements
-		BooleanFunction<AttributedElement<?, ?>> {
+public class BooleanGraphMarker extends AbstractBooleanGraphMarker {
 
-	private final HashSet<AttributedElement<?, ?>> markedElements;
+	private final HashSet<GraphElement<?, ?>> markedElements;
 
 	/**
 	 * creates a new boolean graph marker
@@ -67,21 +61,19 @@ public class BooleanGraphMarker extends
 	 */
 	public BooleanGraphMarker(Graph g) {
 		super(g);
-		markedElements = new HashSet<AttributedElement<?, ?>>();
+		markedElements = new HashSet<GraphElement<?, ?>>();
 	}
 
 	/**
-	 * Checks whether this marker is a marking of the given Graph or
-	 * GraphElement
+	 * Checks whether this marker is a marking of the given GraphElement
 	 * 
 	 * @param elem
-	 *            the Graph, Vertex or Edge to check for a marking
+	 *            the Vertex or Edge to check for a marking
 	 * @return true if this GraphMarker marks the given element, false otherwise
 	 */
 	@Override
-	public final boolean isMarked(AttributedElement<?, ?> elem) {
-		assert ((elem instanceof GraphElement && ((GraphElement<?, ?>) elem)
-				.getGraph() == graph) || elem == graph);
+	public final boolean isMarked(GraphElement<?, ?> elem) {
+		assert elem.getGraph() == graph;
 		if (elem instanceof ReversedEdgeBaseImpl) {
 			elem = ((ReversedEdgeBaseImpl) elem).getNormalEdge();
 		}
@@ -89,16 +81,16 @@ public class BooleanGraphMarker extends
 	}
 
 	/**
-	 * Adds a marking to the given Graph or GraphElement.
+	 * Adds a marking to the given GraphElement.
 	 * 
 	 * @param elem
-	 *            the Graph, Vertex or Edge to mark
-	 * @return true if the element has been marked successfull, false if this
+	 *            the Vertex or Edge to mark
+	 * @return true if the element has been marked successful, false if this
 	 *         element is already marked by this GraphMarker
 	 */
-	public final boolean mark(AttributedElement<?, ?> elem) {
-		assert ((elem instanceof GraphElement && ((GraphElement<?, ?>) elem)
-				.getGraph() == graph) || elem == graph);
+	@Override
+	public final boolean mark(GraphElement<?, ?> elem) {
+		assert elem.getGraph() == graph;
 		if (elem instanceof ReversedEdgeBaseImpl) {
 			elem = ((ReversedEdgeBaseImpl) elem).getNormalEdge();
 		}
@@ -111,14 +103,13 @@ public class BooleanGraphMarker extends
 	 * Remove the mark from the given element.
 	 * 
 	 * @param elem
-	 *            an {@link AttributedElement}
+	 *            an {@link GraphElement}
 	 * @return <code>true</code> it the given element was marked,
 	 *         <code>false</code> otherwise
 	 */
 	@Override
-	public final boolean removeMark(AttributedElement<?, ?> elem) {
-		assert ((elem instanceof GraphElement && ((GraphElement<?, ?>) elem)
-				.getGraph() == graph) || elem == graph);
+	public final boolean removeMark(GraphElement<?, ?> elem) {
+		assert elem.getGraph() == graph;
 		if (elem instanceof ReversedEdgeBaseImpl) {
 			elem = ((ReversedEdgeBaseImpl) elem).getNormalEdge();
 		}
@@ -126,12 +117,12 @@ public class BooleanGraphMarker extends
 	}
 
 	/**
-	 * Return a set of all marked {@link AttributedElement}s.
+	 * Return a set of all marked {@link GraphElement}s.
 	 * 
 	 * @return the markedElements
 	 */
 	@Override
-	public Iterable<AttributedElement<?, ?>> getMarkedElements() {
+	public Iterable<GraphElement<?, ?>> getMarkedElements() {
 		return markedElements;
 	}
 
@@ -164,84 +155,14 @@ public class BooleanGraphMarker extends
 		markedElements.clear();
 	}
 
-	/**
-	 * Returns the Graph of this GraphMarker.
-	 * 
-	 * @return the Graph of this GraphMarker.
-	 */
-	@Override
-	public Graph getGraph() {
-		return graph;
-	}
-
 	@Override
 	public void edgeDeleted(Edge e) {
 		markedElements.remove(e);
 	}
 
 	@Override
-	public void maxEdgeCountIncreased(int newValue) {
-		// do nothing
-	}
-
-	@Override
-	public void maxVertexCountIncreased(int newValue) {
-		// do nothing
-	}
-
-	@Override
 	public void vertexDeleted(Vertex v) {
 		markedElements.remove(v);
-	}
-
-	@Override
-	public boolean get(AttributedElement<?, ?> parameter) {
-		return isMarked(parameter);
-	}
-
-	@Override
-	public boolean isDefined(AttributedElement<?, ?> parameter) {
-		return true;
-	}
-
-	@Override
-	public void set(AttributedElement<?, ?> parameter, boolean value) {
-		if (value) {
-			mark(parameter);
-		} else {
-			removeMark(parameter);
-		}
-	}
-
-	@Override
-	public Iterator<BooleanFunctionEntry<AttributedElement<?, ?>>> iterator() {
-		final Iterator<AttributedElement<?, ?>> markedElements = getMarkedElements()
-				.iterator();
-		return new Iterator<BooleanFunctionEntry<AttributedElement<?, ?>>>() {
-
-			@Override
-			public boolean hasNext() {
-				return markedElements.hasNext();
-			}
-
-			@Override
-			public BooleanFunctionEntry<AttributedElement<?, ?>> next() {
-				AttributedElement<?, ?> currentElement = markedElements.next();
-				return new BooleanFunctionEntry<AttributedElement<?, ?>>(
-						currentElement, get(currentElement));
-			}
-
-			@Override
-			public void remove() {
-				markedElements.remove();
-			}
-
-		};
-	}
-
-	@Override
-	public Iterable<AttributedElement<?, ?>> getDomainElements() {
-		return getMarkedElements();
 	}
 
 }

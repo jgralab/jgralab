@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2012 Institute for Software Technology
+ * Copyright (C) 2006-2013 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -92,12 +92,6 @@ public class EdgeRestrictionEvaluator extends VertexEvaluator<EdgeRestriction> {
 		return validRoles;
 	}
 
-	/**
-	 * creates a new EdgeRestriction evaluator
-	 * 
-	 * @param vertex
-	 * @param eval
-	 */
 	public EdgeRestrictionEvaluator(EdgeRestriction vertex, GreqlQueryImpl query) {
 		super(vertex, query);
 	}

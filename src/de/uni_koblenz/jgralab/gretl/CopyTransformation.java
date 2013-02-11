@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2012 Institute for Software Technology
+ * Copyright (C) 2006-2013 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -95,7 +95,8 @@ import de.uni_koblenz.jgralab.schema.VertexClass;
  * @author Tassilo Horn &lt;horn@uni-koblenz.de&gt;
  */
 public class CopyTransformation extends Transformation<Graph> {
-	protected Pattern excludePattern, includePattern;
+	protected Pattern excludePattern;
+	protected Pattern includePattern;
 	private final HashSet<String> vcsCreated = new HashSet<String>();
 	private final HashSet<String> ecsCreated = new HashSet<String>();
 	private final HashSet<String> attrsCreated = new HashSet<String>();

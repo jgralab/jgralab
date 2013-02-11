@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2012 Institute for Software Technology
+ * Copyright (C) 2006-2013 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -54,7 +54,6 @@ import de.uni_koblenz.jgralab.greql.exception.SerialisingException;
 import de.uni_koblenz.jgralab.greql.schema.Declaration;
 import de.uni_koblenz.jgralab.greql.types.Path;
 import de.uni_koblenz.jgralab.greql.types.PathSystem;
-import de.uni_koblenz.jgralab.greql.types.Slice;
 import de.uni_koblenz.jgralab.greql.types.Table;
 import de.uni_koblenz.jgralab.greql.types.Tuple;
 import de.uni_koblenz.jgralab.greql.types.TypeCollection;
@@ -225,16 +224,6 @@ public abstract class DefaultWriter {
 	 */
 	protected void writePathSystem(PathSystem p) throws Exception {
 		cantWrite(p);
-	}
-
-	/**
-	 * DefaultWriter has no support for writing a Slice
-	 * 
-	 * @param s
-	 *            the Slice to write
-	 */
-	protected void writeSlice(Slice s) throws Exception {
-		cantWrite(s);
 	}
 
 	/**
@@ -449,8 +438,6 @@ public abstract class DefaultWriter {
 			writePath((Path) o);
 		} else if (o instanceof PathSystem) {
 			writePathSystem((PathSystem) o);
-		} else if (o instanceof Slice) {
-			writeSlice((Slice) o);
 		} else if (o instanceof Vertex) {
 			writeVertex((Vertex) o);
 		} else if (o instanceof Edge) {

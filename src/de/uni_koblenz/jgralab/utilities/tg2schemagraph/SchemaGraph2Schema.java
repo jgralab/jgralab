@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2012 Institute for Software Technology
+ * Copyright (C) 2006-2013 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -235,7 +235,7 @@ public class SchemaGraph2Schema {
 			}
 			de.uni_koblenz.jgralab.schema.Package sp = schema.getPackage(pkg
 					.get_qualifiedName());
-			for (Comment comment : pkg.get_comment()) {
+			for (Comment comment : pkg.get_comments()) {
 				sp.addComment(comment.get_text());
 			}
 		}

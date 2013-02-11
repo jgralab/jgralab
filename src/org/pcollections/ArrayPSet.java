@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2012 Institute for Software Technology
+ * Copyright (C) 2006-2013 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -44,11 +44,11 @@ import java.util.Set;
  * preserves the insertion order upon iteration. When the size gets above
  * SIZELIMIT elements, a plus() operation automatically promotes to an
  * OrderedPSet.
- *
+ * 
  * This implementation is not thread safe.
- *
+ * 
  * @author ist@uni-koblenz.de
- *
+ * 
  * @param <E>
  */
 public final class ArrayPSet<E> implements POrderedSet<E>, Serializable {

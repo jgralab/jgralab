@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2012 Institute for Software Technology
+ * Copyright (C) 2006-2013 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -35,7 +35,9 @@
 package de.uni_koblenz.jgralab.greql.serialising;
 
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 
@@ -51,6 +53,9 @@ import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql.exception.SerialisingException;
+import de.uni_koblenz.jgralab.greql.types.Path;
+import de.uni_koblenz.jgralab.greql.types.PathSystem;
+import de.uni_koblenz.jgralab.greql.types.PathSystem.PathSystemNode;
 import de.uni_koblenz.jgralab.greql.types.Table;
 import de.uni_koblenz.jgralab.greql.types.Tuple;
 import de.uni_koblenz.jgralab.greql.types.Undefined;
@@ -61,6 +66,10 @@ import de.uni_koblenz.jgralab.schema.Schema;
 public class XMLLoader extends XmlProcessor implements XMLConstants {
 
 	private Graph defaultGraph;
+
+	private PathSystem pathSystem;
+
+	private Path path;
 
 	/**
 	 * Synthetic class to ease XML parsing
@@ -82,9 +91,24 @@ public class XMLLoader extends XmlProcessor implements XMLConstants {
 		Object value = null;
 	}
 
+	private static class PathSystemNodeEntry {
+		Vertex currentVertex;
+		int state;
+		Edge edge2Parent;
+		boolean isLeaf = true;
+		List<PathSystemNode> children = new ArrayList<PathSystemNode>();
+
+		@Override
+		public String toString() {
+			return "(currentVertex: " + currentVertex + " state: " + state
+					+ " edge2Parent: " + edge2Parent + " isLeaf: " + isLeaf
+					+ ")" + " children: " + children;
+		}
+	}
+
 	private Map<String, Graph> id2GraphMap = null;
 	private Map<String, Schema> schemaName2Schema = null;
-	private Stack<Object> stack = new Stack<Object>();
+	private final Stack<Object> stack = new Stack<Object>();
 
 	public XMLLoader(Graph... graphs) {
 		id2GraphMap = new HashMap<String, Graph>(graphs.length);
@@ -181,6 +205,48 @@ public class XMLLoader extends XmlProcessor implements XMLConstants {
 			}
 			stack.pop();
 			stack.push(parentElement);
+		} else if (parentElement == Path.class) {
+			assert endedElement instanceof List;
+			if (path == null) {
+				@SuppressWarnings("unchecked")
+				List<Vertex> vertices = (List<Vertex>) endedElement;
+				path = Path.start(vertices.get(0));
+			} else {
+				@SuppressWarnings("unchecked")
+				List<Edge> edges = (List<Edge>) endedElement;
+				for (Edge e : edges) {
+					path = path.append(e);
+				}
+				stack.pop();
+				stack.push(path);
+				path = null;
+			}
+		} else if (parentElement instanceof PathSystem) {
+			PathSystemNodeEntry nodeEntry = (PathSystemNodeEntry) endedElement;
+			PathSystemNode node = pathSystem.setRootVertex(
+					nodeEntry.currentVertex, nodeEntry.state, nodeEntry.isLeaf);
+			for (PathSystemNode child : nodeEntry.children) {
+				pathSystem.addEdge(child, node, child.edge2parent);
+			}
+			pathSystem.finish();
+			pathSystem = null;
+		} else if (parentElement instanceof PathSystemNodeEntry) {
+			PathSystemNodeEntry parentNode = (PathSystemNodeEntry) parentElement;
+			if (endedElement instanceof PathSystemNodeEntry) {
+				PathSystemNodeEntry nodeEntry = (PathSystemNodeEntry) endedElement;
+				PathSystemNode node = pathSystem.addVertex(
+						nodeEntry.currentVertex, nodeEntry.state,
+						nodeEntry.isLeaf);
+				node.edge2parent = nodeEntry.edge2Parent;
+				for (PathSystemNode child : nodeEntry.children) {
+					pathSystem.addEdge(child, node, child.edge2parent);
+				}
+				parentNode.children.add(node);
+			} else if (endedElement instanceof Vertex) {
+				parentNode.currentVertex = (Vertex) endedElement;
+			} else if (endedElement instanceof Edge) {
+				parentNode.edge2Parent = (Edge) endedElement;
+			}
 		} else {
 			throw new SerialisingException("The element '" + endedElement
 					+ "' couldn't be added to its parent.", null);
@@ -197,7 +263,7 @@ public class XMLLoader extends XmlProcessor implements XMLConstants {
 		Object val = null;
 		if (elem.equals(UNDEFINED)) {
 			val = Undefined.UNDEFINED;
-		} else if (elem.equals(GRAPH)) {
+		} else if (elem.equals(GRAPH) || elem.equals(OBJECT)) {
 			String gid = getAttribute(ATTR_GRAPH_ID);
 			if (gid != null) {
 				defaultGraph = id2GraphMap.get(gid);
@@ -319,6 +385,18 @@ public class XMLLoader extends XmlProcessor implements XMLConstants {
 			}
 			val = v;
 			// ---------------------------------------------------------------
+		} else if (elem.equals(PATH)) {
+			val = Path.class;
+		} else if (elem.equals(PATH_SYTEM)) {
+			pathSystem = new PathSystem();
+			val = pathSystem;
+		} else if (elem.equals(PATH_SYTEM_NODE)) {
+			PathSystemNodeEntry nodeEntry = new PathSystemNodeEntry();
+			nodeEntry.state = Integer
+					.parseInt(getAttribute(ATTR_PATH_SYTEM_NODE_STATE));
+			nodeEntry.isLeaf = getAttribute(ATTR_PATH_SYTEM_NODE_IS_LEAF)
+					.equals("true");
+			val = nodeEntry;
 		} else {
 			throw new SerialisingException("Unrecognized XML element '" + elem
 					+ "'.", null);

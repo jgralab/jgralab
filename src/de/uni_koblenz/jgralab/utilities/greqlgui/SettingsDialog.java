@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2012 Institute for Software Technology
+ * Copyright (C) 2006-2013 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -78,12 +78,15 @@ public class SettingsDialog extends JDialog implements ActionListener,
 	private JTextField resultFontLabel;
 	private JButton resultFontButton;
 
+	@SuppressWarnings("rawtypes")
 	private JList greqlFunctionList;
+	@SuppressWarnings("rawtypes")
 	private DefaultListModel greqlFunctionModel;
 	private Action removeAction;
 	private Action addAction;
 	private JTextField functionNameField;
 
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public SettingsDialog(GreqlGui app, Font qf, Font rf,
 			List<String> greqlFunctions) {
 		super(app, app.getApplicationName()
