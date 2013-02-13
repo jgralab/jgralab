@@ -243,7 +243,7 @@ public class GraphFactoryGenerator extends CodeGenerator {
 		s.add("public <E extends #jgPackage#.Edge> E restoreEdge(#jgSchemaPackage#.EdgeClass ec, int id, #jgPackage#.Graph g, ");
 		s.add("\t\t#jgPackage#.Vertex alpha, #jgPackage#.Vertex omega) {");
 		s.add("\tE e = super.createEdge(ec, id, g, alpha, omega);");
-		s.add("\t((#jgImplPackage#.InternalEdge)e.getReversedEdge()).setIncidentVertex(omega);");
+		s.add("\t((#jgImplDiskv2Package#.ReversedEdgeImpl)((#jgImplPackage#.InternalEdge)e.getReversedEdge())).restoreIncidentVertexId(omega.getId());");
 		s.add("\treturn e;");
 		s.add("}");
 		return s;
