@@ -95,28 +95,41 @@ public abstract class VertexImpl extends
 
 	@Override
 	public void setFirstIncidence(InternalEdge firstIncidence) {
-		if(firstIncidence == null)
+		if (firstIncidence == null)
 			this.firstIncidenceId = 0;
 		else
 			this.firstIncidenceId = firstIncidence.getId();
-		//System.out.println("set first inc for " + this + " with " + this.getTracker());
+		System.err.println("VertexImpl.setFirstIncidence: looking "
+				+ this
+				+ " up in the graph: "
+				+ ((GraphImpl) this.graph).getStorage().getVertexFromArray(
+						this.id));
 
 		getTracker().putVariable(20, this.firstIncidenceId);
 	}
 
 	@Override
 	public void setLastIncidence(InternalEdge lastIncidence) {
-		if(lastIncidence == null)
+		if (lastIncidence == null)
 			this.lastIncidenceId = 0;
 		else
 			this.lastIncidenceId = lastIncidence.getId();
-		//System.out.println("set last inc for " + this + " with " + this.getTracker());
+		System.err.println("VertexImpl.setLastIncidence: looking "
+				+ this
+				+ " up in the graph: "
+				+ ((GraphImpl) this.graph).getStorage().getVertexFromArray(
+						this.id));
 		getTracker().putVariable(28, this.lastIncidenceId);
 	}
 	
 	@Override
 	public void setIncidenceListVersion(long incidenceListVersion) {
 		this.incidenceListVersion = incidenceListVersion;
+		System.err.println("VertexImpl.setIncidenceListVersion: looking "
+				+ this
+				+ " up in the graph: "
+				+ ((GraphImpl) this.graph).getStorage().getVertexFromArray(
+						this.id));
 		getTracker().putVariable(36, this.incidenceListVersion);
 	}
 

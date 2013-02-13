@@ -201,6 +201,15 @@ public final class MemStorageManager {
 		return eRef.get();
 	}
 	
+	//TODO delete debug method if bug is found
+	public Vertex getVertexFromArray(int i){
+		CacheEntry<?> current =  this.getElement(this.vertexCache, i, i);
+		if(current != null)
+			return (Vertex) current.get();
+		else
+			return null;
+	}
+	
 	/**
 	 * Fetches an CacheEntry specified by the given id from a cache.
 	 * 
