@@ -8,7 +8,7 @@ notifications:
       - "irc.freenode.org#jgralab"
     use_notice: true
 install: ant
-script: ant test
+#script: ant test
 jdk:
   - openjdk7
   - openjdk6
