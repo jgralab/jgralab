@@ -7,12 +7,6 @@ notifications:
     channels:
       - "irc.freenode.org#jgralab"
     use_notice: true
-before_install:
-  - cd ..
-  - git clone git://github.com/jgralab/common.git
-  - cd common
-  - ant
-  - cd ../jgralab
 install: ant
 #script: ant test
 jdk:
