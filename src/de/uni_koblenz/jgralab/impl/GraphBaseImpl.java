@@ -253,7 +253,8 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 			appendEdgeToESeq(e);
 		} else {
 			if (!canAddGraphElement(eId)) {
-				throw new GraphException("can not add an edge with id != 0 - wa s" + eId );
+				throw new GraphException(
+						"can not add an edge with id != 0 - wa s" + eId);
 			}
 			eId = allocateEdgeIndex(eId);
 			assert eId != 0;
@@ -262,8 +263,8 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 			a.appendIncidenceToISeq(e);
 			o.appendIncidenceToISeq(e.reversedEdge);
 		}
-		System.out.println("Create edge with id: "+ eId);
-		//appendEdgeToESeq(e);
+		// System.out.println("Create edge with id: "+ eId);
+		// appendEdgeToESeq(e);
 		if (!isLoading()) {
 			a.incidenceListModified();
 			o.incidenceListModified();
@@ -462,7 +463,7 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 	public final boolean vSeqContainsVertex(Vertex v) {
 		return (v != null) && (v.getGraph() == this)
 				&& containsVertexId(((VertexBaseImpl) v).id)
-				&& (getVertex(((VertexBaseImpl) v).id)== v);
+				&& (getVertex(((VertexBaseImpl) v).id) == v);
 	}
 
 	/**

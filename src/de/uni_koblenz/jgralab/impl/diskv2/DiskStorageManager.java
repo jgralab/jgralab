@@ -18,18 +18,17 @@ import de.uni_koblenz.jgralab.schema.VertexClass;
 public class DiskStorageManager {
 
 	/**
-	 * The GraphDatabase that this DiskStorageManager works for
+	 * The Graph that this DiskStorageManager works for
 	 */
-	private GraphImpl graphdb;
+	private GraphImpl graph;
 
 	/**
 	 * FileAccess objects to all the files used by this manager
 	 */
-	private FileAccess vertices;
-	private FileAccess edges;
-
-	private FileAccess strings;
-	private FileAccess lists;
+	private FileAccess vertexFile;
+	private FileAccess edgeFile;
+	private FileAccess stringFile;
+	private FileAccess listFile;
 
 	/**
 	 * Pointers to the first free byte in strings.dst and lists.dst
@@ -50,7 +49,7 @@ public class DiskStorageManager {
 	 *            The Graph Database whose data this DiskStorageManager manages.
 	 */
 	public DiskStorageManager(GraphImpl graphdb) {
-		this.graphdb = graphdb;
+		this.graph = graphdb;
 
 		setupFilesAndProfiles();
 	}
@@ -61,7 +60,7 @@ public class DiskStorageManager {
 	 * created here.
 	 */
 	private void setupFilesAndProfiles() {
-		Schema s = graphdb.getSchema();
+		Schema s = graph.getSchema();
 
 		// get the amount of classes
 		int amountOfClasses = s.getGraphElementClassCount();
@@ -74,10 +73,10 @@ public class DiskStorageManager {
 		List<EdgeClass> eClasses = s.getGraphClass().getEdgeClasses();
 
 		// make FileAccess objects for graph building blocks, strings and lists
-		vertices = FileAccess.createFileAccess("vertices");
-		edges = FileAccess.createFileAccess("edges");
-		strings = FileAccess.createFileAccess("strings");
-		lists = FileAccess.createFileAccess("lists");
+		vertexFile = FileAccess.createFileAccess("vertices");
+		edgeFile = FileAccess.createFileAccess("edges");
+		stringFile = FileAccess.createFileAccess("strings");
+		listFile = FileAccess.createFileAccess("lists");
 
 		maxVSize = 0;
 		maxESize = 0;
@@ -91,9 +90,10 @@ public class DiskStorageManager {
 			if (!vClass.isAbstract()) {
 				typeId = vClass.getGraphElementClassIdInSchema();
 				vSize = GraphElementProfile.createProfile(vClass, typeId,
-						graphdb.getGraphFactory());
-				if (vSize > maxVSize)
+						graph.getGraphFactory());
+				if (vSize > maxVSize) {
 					maxVSize = vSize;
+				}
 			}
 		}
 
@@ -103,9 +103,10 @@ public class DiskStorageManager {
 			if (!eClass.isAbstract()) {
 				typeId = eClass.getGraphElementClassIdInSchema();
 				eSize = GraphElementProfile.createProfile(eClass, typeId,
-						graphdb.getGraphFactory());
-				if (eSize > maxESize)
+						graph.getGraphFactory());
+				if (eSize > maxESize) {
 					maxESize = eSize;
+				}
 			}
 		}
 	}
@@ -117,9 +118,11 @@ public class DiskStorageManager {
 	 * @param vRef
 	 *            The Reference to the Vertex that is written out.
 	 */
-	public void writeVertexToDisk(CacheEntry<VertexImpl> vRef) {
-		System.out.println("write vertex to disk: " + vRef.getKey());
-		writeGraphElementToDisk(vRef, vertices, maxVSize);
+	public void writeVertexToDisk(int id, Tracker<VertexImpl> tracker) {
+		assert id > 0;
+		assert tracker != null;
+		// System.out.println("write vertex to disk: " + vRef.getKey());
+		writeGraphElementToDisk(id, tracker, vertexFile, maxVSize);
 	}
 
 	/**
@@ -129,9 +132,11 @@ public class DiskStorageManager {
 	 * @param eRef
 	 *            The Reference to the Vertex that is written out.
 	 */
-	public void writeEdgeToDisk(CacheEntry<EdgeImpl> eRef) {
-		System.out.println("write edge " + eRef.getKey() + " to disk");
-		writeGraphElementToDisk(eRef, edges, maxESize);
+	public void writeEdgeToDisk(int id, Tracker<EdgeImpl> tracker) {
+		assert id > 0;
+		assert tracker != null;
+		// System.out.println("write edge " + eRef.getKey() + " to disk");
+		writeGraphElementToDisk(id, tracker, edgeFile, maxESize);
 	}
 
 	/**
@@ -144,16 +149,8 @@ public class DiskStorageManager {
 	 * @param file
 	 *            The access to the file in which the GraphElement is stored.
 	 */
-	private void writeGraphElementToDisk(
-			CacheEntry<? extends GraphElementImpl<?, ?>> geRef,
-			FileAccess file, int byteSize) {
-		Tracker tracker = geRef.getOrCreateTracker();
-
-		if (tracker == null) {
-			// element is neither new nor has it been changed since its last
-			// reload
-			return;
-		}
+	private void writeGraphElementToDisk(int id, Tracker<?> tracker,
+			FileAccess file, int maxSize) {
 		ByteBuffer attributes = tracker.getVariables();
 		String[] strings = tracker.getStrings();
 		List<?>[] lists = tracker.getLists();
@@ -164,8 +161,8 @@ public class DiskStorageManager {
 		// fetch the profile of this type
 		GraphElementProfile profile = GraphElementProfile.getProfile(typeId);
 
-		// determine the size of the element we want to store
-		long baseLocation = byteSize * geRef.getKey();
+		// determine the location of the element we want to store
+		long baseLocation = maxSize * id;
 
 		// write the primitive attributes to a file
 		file.write(attributes, baseLocation);
@@ -206,7 +203,7 @@ public class DiskStorageManager {
 	 */
 	public VertexImpl readVertexFromDisk(int key) {
 		// read the data from the disk
-		ByteBuffer buf = readGraphElementFromDisk(key, vertices, maxVSize);
+		ByteBuffer buf = readGraphElementFromDisk(key, vertexFile, maxVSize);
 
 		// create a vertex that is identical to the vertex we deleted earlier
 		VertexImpl ver = restoreVertex(buf, key);
@@ -225,7 +222,7 @@ public class DiskStorageManager {
 	 */
 	public EdgeImpl readEdgeFromDisk(int key) {
 		// read the data from the disk
-		ByteBuffer buf = readGraphElementFromDisk(key, edges, maxESize);
+		ByteBuffer buf = readGraphElementFromDisk(key, edgeFile, maxESize);
 
 		// create a vertex that is identical to the vertex we deleted earlier
 		EdgeImpl edge = restoreEdge(buf, key);
@@ -258,8 +255,9 @@ public class DiskStorageManager {
 	 *         if the String was null.
 	 */
 	public long writeStringToDisk(String s) {
-		if (s == null)
+		if (s == null) {
 			return -1;
+		}
 
 		// start write operation at the first free byte in strings.dst
 		long currentPosition = stringsPointer;
@@ -275,7 +273,7 @@ public class DiskStorageManager {
 		buf.put(bytes);
 
 		// write the contents of the buffer to strings.dst
-		strings.write(buf, stringsPointer);
+		stringFile.write(buf, stringsPointer);
 
 		// advance the pointer to first free byte in strings.dst
 		stringsPointer += (4 + length);
@@ -292,15 +290,16 @@ public class DiskStorageManager {
 	 * @return The String, or a nullpointer if position was less than zero
 	 */
 	public String readStringFromDisk(long position) {
-		if (position < 0)
+		if (position < 0) {
 			return null;
+		}
 
 		// read the length of the string from the file
-		ByteBuffer buf = strings.read(4, position);
+		ByteBuffer buf = stringFile.read(4, position);
 		int length = buf.getInt(0);
 
 		// read 'length' bytes
-		String res = new String(strings.read(length, position + 4).array());
+		String res = new String(stringFile.read(length, position + 4).array());
 
 		return res;
 	}
@@ -315,8 +314,9 @@ public class DiskStorageManager {
 	 *         the List was null.
 	 */
 	public long writeListToDisk(List<?> l) {
-		if (l == null)
+		if (l == null) {
 			return -1;
+		}
 
 		long currentPosition = listsPointer;
 
@@ -327,7 +327,7 @@ public class DiskStorageManager {
 		buf.putInt(length);
 		buf.put(bytes);
 
-		lists.write(buf, listsPointer);
+		listFile.write(buf, listsPointer);
 
 		listsPointer += (4 + length);
 
@@ -343,13 +343,14 @@ public class DiskStorageManager {
 	 * @return The List, or a nullpointer if position was less than zero
 	 */
 	public List<?> readListFromDisk(long position) {
-		if (position == -1)
+		if (position == -1) {
 			return null;
+		}
 
-		ByteBuffer buf = lists.read(4, position);
+		ByteBuffer buf = listFile.read(4, position);
 		int length = buf.getInt(0);
 
-		byte[] readBytes = lists.read(length, position + 4).array();
+		byte[] readBytes = listFile.read(length, position + 4).array();
 
 		return restoreList(readBytes);
 	}
@@ -364,19 +365,19 @@ public class DiskStorageManager {
 	 * @return The restored Vertex
 	 */
 	private VertexImpl restoreVertex(ByteBuffer buf, int key) {
-		System.out.println("restore vertex: " + key);
+		// System.out.println("restore vertex: " + key);
 		int typeId = buf.getInt(0) - 1;
 
-		Schema schema = graphdb.getSchema();
+		Schema schema = graph.getSchema();
 
 		// get the vertex class for the typeId we read from the disk
 		VertexClass verClass = (VertexClass) schema
 				.getGraphElementClassById(typeId);
 
-		GraphFactory factory = graphdb.getGraphFactory();
+		GraphFactory factory = graph.getGraphFactory();
 
 		VertexImpl ver = (VertexImpl) factory.restoreVertex(verClass, key,
-				graphdb);
+				graph);
 		ver.restoreNextVertexId((int) buf.getLong(4));
 		ver.restorePrevVertexId((int) buf.getLong(12));
 
@@ -399,27 +400,31 @@ public class DiskStorageManager {
 	 * @return The restored Vertex
 	 */
 	private EdgeImpl restoreEdge(ByteBuffer buf, int key) {
-		System.out.println("restore edge: "+key);
+		// System.out.println("restore edge: " + key);
 		int typeId = buf.getInt(0) - 1;
 
-		Schema schema = graphdb.getSchema();
+		Schema schema = graph.getSchema();
 
 		// get the edge class for the typeId we read from the disk
 		EdgeClass edgeClass = (EdgeClass) schema
 				.getGraphElementClassById(typeId);
 
 		// get alpha and omega
-		Vertex alpha = graphdb.getVertex((int) buf.getLong(36));
-		Vertex omega = graphdb.getVertex((int) buf.getLong(60));
+		Vertex alpha = graph.getVertex((int) buf.getLong(36));
+		Vertex omega = graph.getVertex((int) buf.getLong(60));
 
 		// create a new Edge of the given edge class with the given ID
-		GraphFactory factory = graphdb.getGraphFactory();
+		GraphFactory factory = graph.getGraphFactory();
 
-		if(alpha == null || omega == null)
-		//System.out.println("restore "+key + " from " + (int) buf.getLong(36) + " to " +(int) buf.getLong(60) );
-		if(alpha == null || omega == null) throw new RuntimeException();
-		
-		EdgeImpl edge = (EdgeImpl) factory.restoreEdge(edgeClass, key, graphdb,
+		if (alpha == null || omega == null) {
+			// System.out.println("restore "+key + " from " + (int)
+			// buf.getLong(36) + " to " +(int) buf.getLong(60) );
+			if (alpha == null || omega == null) {
+				throw new RuntimeException();
+			}
+		}
+
+		EdgeImpl edge = (EdgeImpl) factory.restoreEdge(edgeClass, key, graph,
 				alpha, omega);
 		edge.restoreIncidentVertexId(alpha.getId());
 		edge.restoreNextEdgeId((int) buf.getLong(4));
