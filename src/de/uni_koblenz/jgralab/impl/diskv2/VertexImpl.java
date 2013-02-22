@@ -8,7 +8,7 @@ import de.uni_koblenz.jgralab.impl.InternalVertex;
 /**
  * The implementation of a <code>Vertex</code> accessing attributes without
  * versioning.
- *
+ * 
  * @author Jose Monte(monte@uni-koblenz.de)
  */
 public abstract class VertexImpl extends
@@ -23,11 +23,10 @@ public abstract class VertexImpl extends
 	 * 
 	 * @return The Tracker that tracks this GraphElement
 	 */
-	public VertexTracker getTracker(){
-		return ((GraphImpl)this.graph).getStorage().getVertexTracker(this.id);
+	public VertexTracker getTracker() {
+		return ((GraphImpl) this.graph).getStorage().getVertexTracker(this.id);
 	}
-	
-	
+
 	/**
 	 * holds the version of the vertex structure, for every modification of the
 	 * structure (e.g. adding or deleting an incident edge or changing the
@@ -39,97 +38,105 @@ public abstract class VertexImpl extends
 	@Override
 	public InternalVertex getNextVertexInVSeq() {
 		assert isValid() : this + " is not valid.";
-		if(this.nextVertexId == 0) return null;
+		if (this.nextVertexId == 0) {
+			return null;
+		}
 		return (InternalVertex) this.getGraph().getVertex(nextVertexId);
 	}
 
 	@Override
 	public InternalVertex getPrevVertexInVSeq() {
 		assert isValid() : this + " is not valid.";
-		if(this.prevVertexId == 0) return null;
+		if (this.prevVertexId == 0) {
+			return null;
+		}
 		return (InternalVertex) this.getGraph().getVertex(prevVertexId);
 	}
 
 	@Override
 	public InternalEdge getFirstIncidenceInISeq() {
-		if(firstIncidenceId < 0){
-			return (InternalEdge) this.getGraph().getEdge(-1*firstIncidenceId).getReversedEdge();
-		}else if (firstIncidenceId == 0){
+		if (firstIncidenceId < 0) {
+			return (InternalEdge) this.getGraph()
+					.getEdge(-1 * firstIncidenceId).getReversedEdge();
+		} else if (firstIncidenceId == 0) {
 			return null;
-		}
-		else{
+		} else {
 			return (InternalEdge) this.getGraph().getEdge(firstIncidenceId);
 		}
-		
+
 	}
 
 	@Override
 	public InternalEdge getLastIncidenceInISeq() {
-		if(lastIncidenceId < 0){
-			return (InternalEdge) this.getGraph().getEdge(- lastIncidenceId).getReversedEdge();
-		}else if (lastIncidenceId == 0){
+		if (lastIncidenceId < 0) {
+			return (InternalEdge) this.getGraph().getEdge(-lastIncidenceId)
+					.getReversedEdge();
+		} else if (lastIncidenceId == 0) {
 			return null;
-		}
-		else{
+		} else {
 			return (InternalEdge) this.getGraph().getEdge(lastIncidenceId);
 		}
 	}
 
 	@Override
 	public void setNextVertex(Vertex nextVertex) {
-		if(nextVertex == null)
+		if (nextVertex == null) {
 			this.nextVertexId = 0;
-		else
+		} else {
 			this.nextVertexId = nextVertex.getId();
+		}
 		getTracker().putVariable(4, this.nextVertexId);
 	}
 
 	@Override
 	public void setPrevVertex(Vertex prevVertex) {
-		if(prevVertex == null)
+		if (prevVertex == null) {
 			this.prevVertexId = 0;
-		else
+		} else {
 			this.prevVertexId = prevVertex.getId();
+		}
 		getTracker().putVariable(12, this.prevVertexId);
 	}
 
 	@Override
 	public void setFirstIncidence(InternalEdge firstIncidence) {
-		if (firstIncidence == null)
+		if (firstIncidence == null) {
 			this.firstIncidenceId = 0;
-		else
+		} else {
 			this.firstIncidenceId = firstIncidence.getId();
-		System.err.println("VertexImpl.setFirstIncidence: looking "
-				+ this
-				+ " up in the graph: "
-				+ ((GraphImpl) this.graph).getStorage().getVertexFromArray(
-						this.id));
+			// System.err.println("VertexImpl.setFirstIncidence: looking "
+			// + this
+			// + " up in the graph: "
+			// + ((GraphImpl) this.graph).getStorage().getVertexFromArray(
+			// this.id));
+		}
 
 		getTracker().putVariable(20, this.firstIncidenceId);
 	}
 
 	@Override
 	public void setLastIncidence(InternalEdge lastIncidence) {
-		if (lastIncidence == null)
+		if (lastIncidence == null) {
 			this.lastIncidenceId = 0;
-		else
+		} else {
 			this.lastIncidenceId = lastIncidence.getId();
-		System.err.println("VertexImpl.setLastIncidence: looking "
-				+ this
-				+ " up in the graph: "
-				+ ((GraphImpl) this.graph).getStorage().getVertexFromArray(
-						this.id));
+		}
+		// System.err.println("VertexImpl.setLastIncidence: looking "
+		// + this
+		// + " up in the graph: "
+		// + ((GraphImpl) this.graph).getStorage().getVertexFromArray(
+		// this.id));
 		getTracker().putVariable(28, this.lastIncidenceId);
 	}
-	
+
 	@Override
 	public void setIncidenceListVersion(long incidenceListVersion) {
 		this.incidenceListVersion = incidenceListVersion;
-		System.err.println("VertexImpl.setIncidenceListVersion: looking "
-				+ this
-				+ " up in the graph: "
-				+ ((GraphImpl) this.graph).getStorage().getVertexFromArray(
-						this.id));
+		// System.err.println("VertexImpl.setIncidenceListVersion: looking "
+		// + this
+		// + " up in the graph: "
+		// + ((GraphImpl) this.graph).getStorage().getVertexFromArray(
+		// this.id));
 		getTracker().putVariable(36, this.incidenceListVersion);
 	}
 
@@ -140,13 +147,13 @@ public abstract class VertexImpl extends
 	}
 
 	/**
-	 *
+	 * 
 	 * @param id
 	 * @param graph
 	 */
 	protected VertexImpl(int id, Graph graph) {
 		super(id, graph);
-		//((GraphImpl) graph).addVertex(this);
+		// ((GraphImpl) graph).addVertex(this);
 	}
 
 	@Override
@@ -158,73 +165,75 @@ public abstract class VertexImpl extends
 	public int getNextVertexId() {
 		return nextVertexId;
 	}
-	
-	public void restoreNextVertexId(int id){
+
+	public void restoreNextVertexId(int id) {
 		this.nextVertexId = id;
 	}
 
 	public int getPrevVertexId() {
 		return prevVertexId;
 	}
-	
-	public void restorePrevVertexId(int id){
+
+	public void restorePrevVertexId(int id) {
 		this.prevVertexId = id;
 	}
 
 	public int getFirstIncidenceId() {
 		return firstIncidenceId;
 	}
-	
-	public void restoreFirstIncidenceId(int id){
+
+	public void restoreFirstIncidenceId(int id) {
 		this.firstIncidenceId = id;
 	}
 
 	public int getLastIncidenceId() {
 		return lastIncidenceId;
 	}
-	
-	public void restoreLastIncidenceId(int id){
+
+	public void restoreLastIncidenceId(int id) {
 		this.lastIncidenceId = id;
 	}
-	
-	public void restoreIncidenceListVersion(long version){
+
+	public void restoreIncidenceListVersion(long version) {
 		this.incidenceListVersion = version;
 	}
-	
+
 	/**
 	 * Called whenever a primitive attribute of this GraphElement changed so the
 	 * new attribute value is stored in the Tracker.
 	 */
 	public void attributeChanged() {
 		VertexTracker tracker = getTracker();
-		if (tracker != null)
+		if (tracker != null) {
 			tracker.storeAttributes(this);
+		}
 	}
-	
+
 	/**
-	 * Called whenever a String of this GraphElement changed so the
-	 * new String is stored in the Tracker.
+	 * Called whenever a String of this GraphElement changed so the new String
+	 * is stored in the Tracker.
 	 */
 	public void stringChanged() {
 		VertexTracker tracker = getTracker();
-		if (tracker != null)
+		if (tracker != null) {
 			tracker.storeStrings(this);
+		}
 	}
-	
+
 	/**
-	 * Called whenever a List of this GraphElement changed so the
-	 * new list value is stored in the Tracker.
+	 * Called whenever a List of this GraphElement changed so the new list value
+	 * is stored in the Tracker.
 	 */
 	public void listChanged() {
 		VertexTracker tracker = getTracker();
-		if (tracker != null)
+		if (tracker != null) {
 			tracker.storeLists(this);
+		}
 	}
-	
+
 	@Override
-	public int hashCode(){
+	public int hashCode() {
 		return this.id;
 	}
-	
-}
 
+}

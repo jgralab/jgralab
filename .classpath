@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry excluding="de/uni_koblenz/jgralab/plugin/|de/uni_koblenz/jgralab/greql/optimizer/GraphInfo.java|de/uni_koblenz/jgralab/greql/optimizer/GraphInfoCreator.java" kind="src" path="src"/>
+	<classpathentry excluding="de/uni_koblenz/jgralab/plugin/|de/uni_koblenz/jgralab/greql/optimizer/GraphInfo.java|de/uni_koblenz/jgralab/greql/optimizer/GraphInfoCreator.java|de/uni_koblenz/jgralab/impl/diskv2/cache/CopyOfElementCache.java" kind="src" path="src"/>
 	<classpathentry excluding="de/uni_koblenz/jgralabtest/greql/funlib/GraphFunctionTest.java|de/uni_koblenz/jgralabtest/greql/funlib/PathSystemFunctionTest.java|de/uni_koblenz/jgralabtest/greql/funlib/SchemaFunctionTest.java|de/uni_koblenz/jgralabtest/greql/funlib/SliceFunctionTest.java|de/uni_koblenz/jgralabtest/greql/FunctionTest.java|de/uni_koblenz/jgralabtest/greql/optimizer/GraphInfoCreatorTest.java|de/uni_koblenz/jgralabtest/greql/optimizer/GraphInfoTest.java" kind="src" path="testit"/>
 	<classpathentry kind="src" path="META-INF"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
