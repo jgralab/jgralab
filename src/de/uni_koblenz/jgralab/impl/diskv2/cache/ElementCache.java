@@ -33,7 +33,7 @@ public abstract class ElementCache<T extends GraphElementImpl<?, ?>> {
 		this.entryCount = initialEntries;
 		this.loadFactor = loadFactor;
 		this.maxLoad = (int) (initialEntries * loadFactor);
-		refQueue = new ReferenceQueue<>();
+		refQueue = new ReferenceQueue<T>();
 		@SuppressWarnings("unchecked")
 		CacheEntry<T>[] cacheEntries = new CacheEntry[entryCount];
 		entries = cacheEntries;
