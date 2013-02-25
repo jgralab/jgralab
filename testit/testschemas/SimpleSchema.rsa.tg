@@ -35,9 +35,9 @@ TGraph 2;
 
 Schema de.uni_koblenz.jgralabtest.schemas.algolib.simple.SimpleSchema;
 
-GraphClass SimpleGraph;
+GraphClass SimpleGraph { name: String };
 
 Package ;
-VertexClass SimpleVertex;
-EdgeClass SimpleEdge from SimpleVertex (0,*) role alphaVertex to SimpleVertex (0,*) role omegaVertex;
+VertexClass SimpleVertex { name: String };
+EdgeClass SimpleEdge from SimpleVertex (0,*) role alphaVertex to SimpleVertex (0,*) role omegaVertex { name: String };
 

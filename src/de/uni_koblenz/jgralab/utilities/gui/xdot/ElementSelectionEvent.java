@@ -38,11 +38,13 @@ import java.awt.Component;
 import java.awt.event.MouseEvent;
 
 import de.uni_koblenz.jgralab.AttributedElement;
+import de.uni_koblenz.jgralab.Vertex;
 
 public class ElementSelectionEvent extends MouseEvent {
 	private static final long serialVersionUID = 7192584515095001000L;
 
 	private final AttributedElement<?, ?> element;
+	private final boolean vertex;
 
 	public ElementSelectionEvent(AttributedElement<?, ?> element, MouseEvent e) {
 		super((Component) e.getSource(), e.getID(), e.getWhen(), e
@@ -50,6 +52,11 @@ public class ElementSelectionEvent extends MouseEvent {
 				.getYOnScreen(), e.getClickCount(), e.isPopupTrigger(), e
 				.getButton());
 		this.element = element;
+		vertex = element instanceof Vertex;
+	}
+
+	public boolean isVertex() {
+		return vertex;
 	}
 
 	public AttributedElement<?, ?> getElement() {
