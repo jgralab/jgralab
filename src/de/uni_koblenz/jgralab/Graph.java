@@ -433,6 +433,8 @@ public interface Graph extends AttributedElement<GraphClass, Graph> {
 	 */
 	public ECARuleManagerInterface getECARuleManager();
 
+	public void setECARuleManager(ECARuleManagerInterface manager);
+
 	/**
 	 * @return whether the {@link de.uni_koblenz.jgralab.eca.ECARuleManager} of
 	 *         this {@link Graph} is instantiated

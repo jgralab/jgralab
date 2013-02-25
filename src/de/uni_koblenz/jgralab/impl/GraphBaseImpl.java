@@ -921,13 +921,9 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 	private final void internalDeleteEdge(Edge edge) {
 		assert (edge != null) && edge.isValid() && eSeqContainsEdge(edge);
 
-		if (hasECARuleManager()) {
-			getECARuleManager().fireBeforeDeleteEdgeEvents(edge);
-		}
-
 		InternalEdge e = (InternalEdge) edge.getNormalEdge();
 		if (hasECARuleManager()) {
-			getECARuleManager().fireBeforeDeleteEdgeEvents(edge);
+			getECARuleManager().fireBeforeDeleteEdgeEvents(e);
 		}
 
 		e = (InternalEdge) edge.getNormalEdge();
@@ -1805,6 +1801,11 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 			assert ecaRuleManager != null;
 		}
 		return ecaRuleManager;
+	}
+
+	@Override
+	public void setECARuleManager(ECARuleManagerInterface manager) {
+		ecaRuleManager = manager;
 	}
 
 	@Override
