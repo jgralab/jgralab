@@ -37,6 +37,7 @@ package de.uni_koblenz.jgralab.impl;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map.Entry;
 
 import org.pcollections.ArrayPSet;
 import org.pcollections.PMap;
@@ -47,12 +48,12 @@ import de.uni_koblenz.jgralab.exception.GraphIOException;
 import de.uni_koblenz.jgralab.exception.NoSuchAttributeException;
 
 public class RecordImpl implements de.uni_koblenz.jgralab.Record {
-	
+
 	// placeholder for null-valued components
 	private static enum NullValue {
 		NULL;
 	}
-	
+
 	private PMap<String, Object> entries;
 
 	private RecordImpl() {
@@ -70,13 +71,15 @@ public class RecordImpl implements de.uni_koblenz.jgralab.Record {
 	}
 
 	public RecordImpl plus(String name, Object value) {
-		return new RecordImpl(entries.plus(name, value != null ? value : NullValue.NULL));
+		return new RecordImpl(entries.plus(name, value != null ? value
+				: NullValue.NULL));
 	}
 
 	@Override
 	public Object getComponent(String name) {
 		if (entries.containsKey(name)) {
-			return entries.get(name).equals(NullValue.NULL)? null : entries.get(name);
+			return entries.get(name).equals(NullValue.NULL) ? null : entries
+					.get(name);
 		}
 		throw new NoSuchAttributeException(
 				"Record doesn't contain a component '" + name + "'");
@@ -143,5 +146,24 @@ public class RecordImpl implements de.uni_koblenz.jgralab.Record {
 	@Override
 	public PMap<String, Object> toPMap() {
 		return entries;
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("[");
+		boolean first = true;
+		for (Entry<String, Object> e : entries.entrySet()) {
+			if (first) {
+				first = false;
+			} else {
+				sb.append(", ");
+			}
+			sb.append(e.getKey());
+			sb.append(": ");
+			sb.append(e.getValue());
+		}
+		sb.append("]");
+		return sb.toString();
 	}
 }
