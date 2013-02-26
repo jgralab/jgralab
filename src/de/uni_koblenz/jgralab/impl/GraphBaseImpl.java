@@ -1772,22 +1772,6 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 		}
 	}
 
-	// if (ecaRuleManager == null) {
-	// Constructor<?> ruleManagerConstructor;
-	// try {
-	// ruleManagerConstructor = Class.forName(
-	// "de.uni_koblenz.jgralab.eca.ECARuleManager")
-	// .getConstructor(Graph.class);
-	// ecaRuleManager = (GraphChangeListener) ruleManagerConstructor
-	// .newInstance(this);
-	// } catch (Exception e) {
-	// e.printStackTrace();
-	// }
-	// assert ecaRuleManager != null;
-	// }
-	// return ecaRuleManager;
-	// }
-
 	// handle GraphStructureChangedListener
 
 	/**

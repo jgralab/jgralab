@@ -508,8 +508,8 @@ public class GraphUndoManager extends UndoManager implements
 	}
 
 	@Override
-	public void beforeCreateEdge(EdgeClass elementClass,
-			Vertex alpha, Vertex omega) {
+	public void beforeCreateEdge(EdgeClass elementClass, Vertex alpha,
+			Vertex omega) {
 	}
 
 	@Override
@@ -527,18 +527,18 @@ public class GraphUndoManager extends UndoManager implements
 	}
 
 	@Override
-	public void afterDeleteEdge(EdgeClass elementClass,
-			Vertex oldAlpha, Vertex oldOmega) {
+	public void afterDeleteEdge(EdgeClass elementClass, Vertex oldAlpha,
+			Vertex oldOmega) {
 	}
 
 	@Override
-	public void beforeChangeAlpha(Edge element,
-			Vertex oldVertex, Vertex newVertex) {
+	public void beforeChangeAlpha(Edge element, Vertex oldVertex,
+			Vertex newVertex) {
 	}
 
 	@Override
-	public void afterChangeAlpha(Edge element,
-			Vertex oldVertex, Vertex newVertex) {
+	public void afterChangeAlpha(Edge element, Vertex oldVertex,
+			Vertex newVertex) {
 		if (!isWorking()) {
 			addEdit(new ChangeIncidenceEdit(Event.CHANGE_ALPHA, element,
 					oldVertex, newVertex));
@@ -546,13 +546,13 @@ public class GraphUndoManager extends UndoManager implements
 	}
 
 	@Override
-	public void beforeChangeOmega(Edge element,
-			Vertex oldVertex, Vertex newVertex) {
+	public void beforeChangeOmega(Edge element, Vertex oldVertex,
+			Vertex newVertex) {
 	}
 
 	@Override
-	public void afterChangeOmega(Edge element,
-			Vertex oldVertex, Vertex newVertex) {
+	public void afterChangeOmega(Edge element, Vertex oldVertex,
+			Vertex newVertex) {
 		if (!isWorking()) {
 			addEdit(new ChangeIncidenceEdit(Event.CHANGE_OMEGA, element,
 					oldVertex, newVertex));
