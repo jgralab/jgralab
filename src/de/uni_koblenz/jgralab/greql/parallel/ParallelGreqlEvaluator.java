@@ -36,8 +36,8 @@ package de.uni_koblenz.jgralab.greql.parallel;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
-import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
@@ -160,16 +160,20 @@ public class ParallelGreqlEvaluator {
 				try {
 					// try to get the result in order to handle a possible
 					// exception
-					// exception is rapped into an ExecutionException
+					// exception is wrapped into an ExecutionException
 					get();
 
 					// no exception - schedule next task
-					scheduleNext(environment, handle);
+					if (!environment.sequentially) {
+						scheduleNext(environment, handle);
+					}
 				} catch (InterruptedException e) {
 					// interrupted by shutdown
+					logger.fine("Interrupted by shutdown");
 					environment.executor.shutdownNow();
 				} catch (ExecutionException e) {
 					// remember exception and shuwdown executor
+					logger.fine("Interrupted by exception");
 					synchronized (environment) {
 						if (environment.exception == null) {
 							environment.exception = e;
@@ -528,25 +532,41 @@ public class ParallelGreqlEvaluator {
 	}
 
 	/**
-	 * @return the SortedSet of tasks that can start immediately in order of
-	 *         descending priority
+	 * @return the Set of tasks that can start immediately in order of
+	 *         descending priority (parallel evaluation), or set set of all
+	 *         tasks in topological order (sequential evaluation)
 	 */
-	private SortedSet<TaskHandle> createEvaluationTasks(
+	private Set<TaskHandle> createEvaluationTasks(
 			EvaluationEnvironment evaluationEnvironment) {
-		// - create EvaluationTasks for all TaskHandles
-		// - initalize inDegree map with number of predecessors
-		// - determine initial tasks (tasks without predecessors)
 		synchronized (dependencyGraph) {
 			calculateVariableDependencies();
-			SortedSet<TaskHandle> initialTasks = new TreeSet<TaskHandle>();
-			for (TaskHandle handle : dependencyGraph.getNodes()) {
-				EvaluationTask t = handle
-						.createFutureTask(evaluationEnvironment);
-				evaluationEnvironment.tasks.put(handle, t);
-				int i = dependencyGraph.getDirectPredecessors(handle).size();
-				evaluationEnvironment.inDegree.put(handle, i);
-				if (i == 0) {
+			Set<TaskHandle> initialTasks;
+			if (evaluationEnvironment.sequentially) {
+				// sequential case, simply order all tasks topologically
+				initialTasks = new LinkedHashSet<TaskHandle>();
+				for (TaskHandle handle : dependencyGraph
+						.getNodesInTopologicalOrder()) {
+					EvaluationTask t = handle
+							.createFutureTask(evaluationEnvironment);
+					evaluationEnvironment.tasks.put(handle, t);
 					initialTasks.add(handle);
+				}
+			} else {
+				// - create EvaluationTasks for all TaskHandles
+				// - initalize inDegree map with number of predecessors
+				// - determine initial tasks (tasks without predecessors)
+				initialTasks = new TreeSet<TaskHandle>();
+				// dependencyGraph.getNodesInTopologicalOrder();
+				for (TaskHandle handle : dependencyGraph.getNodes()) {
+					EvaluationTask t = handle
+							.createFutureTask(evaluationEnvironment);
+					evaluationEnvironment.tasks.put(handle, t);
+					int i = dependencyGraph.getDirectPredecessors(handle)
+							.size();
+					evaluationEnvironment.inDegree.put(handle, i);
+					if (i == 0) {
+						initialTasks.add(handle);
+					}
 				}
 			}
 			return initialTasks;
@@ -735,13 +755,6 @@ public class ParallelGreqlEvaluator {
 			for (TaskHandle succ : nextTasks) {
 				logger.fine("Execute " + succ);
 				environment.executor.execute(environment.tasks.get(succ));
-				if (environment.sequentially) {
-					try {
-						environment.tasks.get(succ).get();
-					} catch (Exception e) {
-						throw unwrapException(e);
-					}
-				}
 			}
 		}
 	}

@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Ant-Version: Apache Ant 1.8.2
 Created-By: 1.6.0_29-b11-402-10M3527 (Apple Inc.)
 Main-Class: de.uni_koblenz.jgralab.JGraLab
-Bundle-Version: 7.4.3.Giraffatitan
+Bundle-Version: 7.4.4.Giraffatitan
 Bundle-ManifestVersion: 2
 Bundle-Name: JGraLab
 Bundle-SymbolicName: de.uni_koblenz.jgralab;singleton:=true
@@ -87,8 +87,8 @@ Bundle-ActivationPolicy: lazy
 
 Name: de/uni_koblenz/jgralab/
 Implementation-Title: JGraLab
-Implementation-Version: 7.4.3@Giraffatitan@eaa6c61d6ede83e8876edfec405
- f3b43218221f8
+Implementation-Version: 7.4.4@Giraffatitan@7f66c87fb3c51557287d9e20636
+ 1813884ce9fa0
 Implementation-Vendor: University of Koblenz, Institute for Software T
  echnology
 
