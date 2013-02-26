@@ -91,34 +91,6 @@ public abstract class GraphElementImpl<SC extends GraphElementClass<SC, IC>, IC 
 		graph.graphModified();
 	}
 
-	/**
-	 * Triggers ECA-rules before an Attribute is changed
-	 * 
-	 * @param name
-	 *            of the changing Attribute
-	 */
-	public void ecaAttributeChanging(String name, Object oldValue,
-			Object newValue) {
-		if (!graph.isLoading() && (graph.hasECARuleManager())) {
-			graph.getECARuleManager().fireBeforeChangeAttributeEvents(this,
-					name, oldValue, newValue);
-		}
-	}
-
-	/**
-	 * Triggers ECA-rule after an Attribute is changed
-	 * 
-	 * @param name
-	 *            of the changed Attribute
-	 */
-	public void ecaAttributeChanged(String name, Object oldValue,
-			Object newValue) {
-		if (!graph.isLoading() && (graph.hasECARuleManager())) {
-			graph.getECARuleManager().fireAfterChangeAttributeEvents(this,
-					name, oldValue, newValue);
-		}
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -173,11 +145,10 @@ public abstract class GraphElementImpl<SC extends GraphElementClass<SC, IC>, IC 
 		if (this.getAttributedElementClass().equals(schemaClass)) {
 			return (IC) this;
 		} else {
-			throw new TemporaryGraphElementException(
-					"The graph element "
-							+ this
-							+ " is not a TemporaryElement and can not be blessed to "
-							+ schemaClass + ".");
+			throw new TemporaryGraphElementException("The graph element "
+					+ this
+					+ " is not a TemporaryElement and can not be blessed to "
+					+ schemaClass + ".");
 		}
 	}
 }

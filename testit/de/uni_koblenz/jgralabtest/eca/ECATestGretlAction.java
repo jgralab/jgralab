@@ -119,17 +119,22 @@ public class ECATestGretlAction {
 		ECARule<VertexClass> bef_rule = new ECARule<VertexClass>(bef_ev,
 				bef_act);
 
-		((ECARuleManager) testGraph.getECARuleManager()).addECARule(bef_rule);
+		ECARuleManager mgr = new ECARuleManager(testGraph);
+		testGraph.addGraphChangeListener(mgr);
+		try {
+			mgr.addECARule(bef_rule);
 
-		int oldVCount = testGraph.getVCount();
+			int oldVCount = testGraph.getVCount();
 
-		testGraph.deleteVertex(testGraph.getVertex(5));
+			testGraph.deleteVertex(testGraph.getVertex(5));
 
-		// Duplicate all Vertices and then take the deleted one away
-		assertEquals(testGraph.getVCount(), (oldVCount * 2) - 1);
+			// Duplicate all Vertices and then take the deleted one away
+			assertEquals(testGraph.getVCount(), (oldVCount * 2) - 1);
 
-		((ECARuleManager) testGraph.getECARuleManager())
-				.deleteECARule(bef_rule);
+			mgr.deleteECARule(bef_rule);
+		} finally {
+			testGraph.removeGraphChangeListener(mgr);
+		}
 
 	}
 
@@ -161,24 +166,29 @@ public class ECATestGretlAction {
 		System.out.println("Load rule with GretlTransformAction.");
 		// Contact c5 = testGraph.createContact();
 
+		ECARuleManager ecaRuleManager = new ECARuleManager(testGraph);
+		testGraph.addGraphChangeListener(ecaRuleManager);
 		try {
-			List<ECARule<?>> rules = ECAIO.loadECArules(testGraph.getSchema(),
-					ECATestIO.FOLDER_FOR_RULE_FILES + "testSaveRules2.eca");
-			ECARuleManager ecaRuleManager = (ECARuleManager) testGraph
-					.getECARuleManager();
-			for (ECARule<?> rule : rules) {
-				ecaRuleManager.addECARule(rule);
+			try {
+				List<ECARule<?>> rules = ECAIO.loadECArules(
+						testGraph.getSchema(), ECATestIO.FOLDER_FOR_RULE_FILES
+								+ "testSaveRules2.eca");
+				for (ECARule<?> rule : rules) {
+					ecaRuleManager.addECARule(rule);
+				}
+			} catch (ECAIOException e) {
+				e.printStackTrace();
+				assert false;
 			}
-		} catch (ECAIOException e) {
-			e.printStackTrace();
-			assert false;
+
+			int oldVCount = testGraph.getVCount();
+
+			testGraph.deleteVertex(testGraph.getVertex(2));
+
+			// Duplicate all Vertices and then take the deleted one away
+			assertEquals(testGraph.getVCount(), (oldVCount * 2) - 1);
+		} finally {
+			testGraph.removeGraphChangeListener(ecaRuleManager);
 		}
-
-		int oldVCount = testGraph.getVCount();
-
-		testGraph.deleteVertex(testGraph.getVertex(2));
-
-		// Duplicate all Vertices and then take the deleted one away
-		assertEquals(testGraph.getVCount(), (oldVCount * 2) - 1);
 	}
 }

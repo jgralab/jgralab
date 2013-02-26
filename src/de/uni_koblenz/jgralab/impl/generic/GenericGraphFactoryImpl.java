@@ -72,7 +72,7 @@ public class GenericGraphFactoryImpl extends GraphFactoryImpl {
 	@Override
 	public <G extends Graph> G createGraph(GraphClass gc, String id, int vMax,
 			int eMax) {
-		if(schema != gc.getSchema()) {
+		if (schema != gc.getSchema()) {
 			throw new GraphException(gc + " is not in schema " + schema);
 		}
 		@SuppressWarnings("unchecked")
@@ -83,34 +83,29 @@ public class GenericGraphFactoryImpl extends GraphFactoryImpl {
 
 	@Override
 	public <V extends Vertex> V createVertex(VertexClass vc, int id, Graph g) {
-		if(schema != vc.getSchema()) {
+		if (schema != vc.getSchema()) {
 			throw new GraphException(vc + " is not in schema " + schema);
 		}
-		if (!((InternalGraph) g).isLoading() && (g.hasECARuleManager())) {
-			g.getECARuleManager().fireBeforeCreateVertexEvents(vc);
-		}
+		InternalGraph ig = (InternalGraph) g;
+		ig.fireBeforeCreateVertex(vc);
+
 		@SuppressWarnings("unchecked")
 		V vertex = (V) new GenericVertexImpl(vc, id, g);
-		if (!((InternalGraph) g).isLoading() && (g.hasECARuleManager())) {
-			g.getECARuleManager().fireAfterCreateVertexEvents(vertex);
-		}
+		ig.fireAfterCreateVertex(vertex);
 		return vertex;
 	}
 
 	@Override
 	public <E extends Edge> E createEdge(EdgeClass ec, int id, Graph g,
 			Vertex alpha, Vertex omega) {
-		if(schema != ec.getSchema()) {
+		if (schema != ec.getSchema()) {
 			throw new GraphException(ec + " is not in schema " + schema);
 		}
-		if (!((InternalGraph) g).isLoading() && (g.hasECARuleManager())) {
-			g.getECARuleManager().fireBeforeCreateEdgeEvents(ec);
-		}
+		InternalGraph ig = (InternalGraph) g;
+		ig.fireBeforeCreateEdge(ec, alpha, omega);
 		@SuppressWarnings("unchecked")
 		E edge = (E) new GenericEdgeImpl(ec, id, g, alpha, omega);
-		if (!((InternalGraph) g).isLoading() && (g.hasECARuleManager())) {
-			g.getECARuleManager().fireAfterCreateEdgeEvents(edge);
-		}
+		ig.fireAfterCreateEdge(edge);
 		return edge;
 	}
 }

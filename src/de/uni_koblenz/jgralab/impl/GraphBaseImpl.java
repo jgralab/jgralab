@@ -49,6 +49,7 @@ import java.util.NoSuchElementException;
 import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
+import de.uni_koblenz.jgralab.GraphChangeListener;
 import de.uni_koblenz.jgralab.GraphFactory;
 import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.GraphStructureChangedListener;
@@ -58,7 +59,6 @@ import de.uni_koblenz.jgralab.Record;
 import de.uni_koblenz.jgralab.TraversalContext;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.VertexFilter;
-import de.uni_koblenz.jgralab.eca.ECARuleManagerInterface;
 import de.uni_koblenz.jgralab.exception.GraphException;
 import de.uni_koblenz.jgralab.exception.GraphIOException;
 import de.uni_koblenz.jgralab.graphmarker.SubGraphMarker;
@@ -883,36 +883,6 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 	}
 
 	/**
-	 * Triggers ECA-rules before an Attribute is changed
-	 * 
-	 * @param name
-	 *            of the changing Attribute
-	 */
-	@Override
-	public final void ecaAttributeChanging(String name, Object oldValue,
-			Object newValue) {
-		if (!isLoading()) {
-			getECARuleManager().fireBeforeChangeAttributeEvents(this, name,
-					oldValue, newValue);
-		}
-	}
-
-	/**
-	 * Triggers ECA-rule after an Attribute is changed
-	 * 
-	 * @param name
-	 *            of the changed Attribute
-	 */
-	@Override
-	public final void ecaAttributeChanged(String name, Object oldValue,
-			Object newValue) {
-		if (!isLoading()) {
-			getECARuleManager().fireAfterChangeAttributeEvents(this, name,
-					oldValue, newValue);
-		}
-	}
-
-	/**
 	 * Deletes the edge from the internal structures of this graph.
 	 * 
 	 * @param edge
@@ -922,9 +892,7 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 		assert (edge != null) && edge.isValid() && eSeqContainsEdge(edge);
 
 		InternalEdge e = (InternalEdge) edge.getNormalEdge();
-		if (hasECARuleManager()) {
-			getECARuleManager().fireBeforeDeleteEdgeEvents(e);
-		}
+		fireBeforeDeleteEdge(e);
 
 		e = (InternalEdge) edge.getNormalEdge();
 		internalEdgeDeleted(e);
@@ -941,10 +909,7 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 		removeEdgeFromESeq(e);
 		edgeListModified();
 
-		if (hasECARuleManager()) {
-			getECARuleManager().fireAfterDeleteEdgeEvents(
-					e.getAttributedElementClass(), alpha, omega);
-		}
+		fireAfterDeleteEdge(e.getAttributedElementClass(), alpha, omega);
 	}
 
 	@Override
@@ -963,9 +928,7 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 			InternalVertex v = getDeleteVertexList().remove(0);
 			assert (v != null) && v.isValid() && vSeqContainsVertex(v);
 
-			if (hasECARuleManager()) {
-				getECARuleManager().fireBeforeDeleteVertexEvents(v);
-			}
+			fireBeforeDeleteVertex(v);
 			internalVertexDeleted(v);
 			// delete all incident edges including incidence objects
 			Edge e = v.getFirstIncidence();
@@ -986,10 +949,7 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 			removeVertexFromVSeq(v);
 			vertexListModified();
 
-			if (hasECARuleManager()) {
-				getECARuleManager().fireAfterDeleteVertexEvents(
-						v.getAttributedElementClass());
-			}
+			fireAfterDeleteVertex(v.getAttributedElementClass());
 		}
 	}
 
@@ -1782,36 +1742,51 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 
 	}
 
-	// ECA Rules
-	private ECARuleManagerInterface ecaRuleManager;
+	private ArrayList<GraphChangeListener> graphChangeListeners;
 
 	@Override
-	public final ECARuleManagerInterface getECARuleManager() {
-		if (ecaRuleManager == null) {
-			Constructor<?> ruleManagerConstructor;
-			try {
-				ruleManagerConstructor = Class.forName(
-						"de.uni_koblenz.jgralab.eca.ECARuleManager")
-						.getConstructor(Graph.class);
-				ecaRuleManager = (ECARuleManagerInterface) ruleManagerConstructor
-						.newInstance(this);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-			assert ecaRuleManager != null;
+	public void addGraphChangeListener(GraphChangeListener l) {
+		if (l == null) {
+			throw new IllegalArgumentException("Listener must not be null");
 		}
-		return ecaRuleManager;
+		if (graphChangeListeners == null) {
+			graphChangeListeners = new ArrayList<GraphChangeListener>();
+		}
+		if (graphChangeListeners.contains(l)) {
+			throw new IllegalStateException("Listener is already registered");
+		}
+		graphChangeListeners.add(l);
 	}
 
 	@Override
-	public void setECARuleManager(ECARuleManagerInterface manager) {
-		ecaRuleManager = manager;
+	public void removeGraphChangeListener(GraphChangeListener l) {
+		if (l == null) {
+			throw new IllegalArgumentException("Listener must not be null");
+		}
+		if (graphChangeListeners == null || !graphChangeListeners.contains(l)) {
+			throw new IllegalStateException("Listener is not registered");
+		}
+		graphChangeListeners.remove(l);
+		if (graphChangeListeners.size() == 0) {
+			graphChangeListeners = null;
+		}
 	}
 
-	@Override
-	public final boolean hasECARuleManager() {
-		return ecaRuleManager != null;
-	}
+	// if (ecaRuleManager == null) {
+	// Constructor<?> ruleManagerConstructor;
+	// try {
+	// ruleManagerConstructor = Class.forName(
+	// "de.uni_koblenz.jgralab.eca.ECARuleManager")
+	// .getConstructor(Graph.class);
+	// ecaRuleManager = (GraphChangeListener) ruleManagerConstructor
+	// .newInstance(this);
+	// } catch (Exception e) {
+	// e.printStackTrace();
+	// }
+	// assert ecaRuleManager != null;
+	// }
+	// return ecaRuleManager;
+	// }
 
 	// handle GraphStructureChangedListener
 
@@ -2086,5 +2061,171 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 
 	@Override
 	public void loadingCompleted() {
+	}
+
+	@Override
+	public void fireBeforeCreateVertex(VertexClass vc) {
+		if (graphChangeListeners == null || loading) {
+			return;
+		}
+		int n = graphChangeListeners.size();
+		for (int i = 0; i < n; ++i) {
+			graphChangeListeners.get(i).beforeCreateVertex(vc);
+		}
+	}
+
+	@Override
+	public void fireAfterCreateVertex(Vertex v) {
+		if (graphChangeListeners == null || loading) {
+			return;
+		}
+		int n = graphChangeListeners.size();
+		for (int i = 0; i < n; ++i) {
+			graphChangeListeners.get(i).afterCreateVertex(v);
+		}
+	}
+
+	@Override
+	public void fireBeforeDeleteVertex(Vertex v) {
+		if (graphChangeListeners == null || loading) {
+			return;
+		}
+		int n = graphChangeListeners.size();
+		for (int i = 0; i < n; ++i) {
+			graphChangeListeners.get(i).beforeDeleteVertex(v);
+		}
+	}
+
+	@Override
+	public void fireAfterDeleteVertex(VertexClass vc) {
+		if (graphChangeListeners == null || loading) {
+			return;
+		}
+		int n = graphChangeListeners.size();
+		for (int i = 0; i < n; ++i) {
+			graphChangeListeners.get(i).afterDeleteVertex(vc);
+		}
+	}
+
+	@Override
+	public void fireBeforeCreateEdge(EdgeClass ec, Vertex alpha, Vertex omega) {
+		if (graphChangeListeners == null || loading) {
+			return;
+		}
+		int n = graphChangeListeners.size();
+		for (int i = 0; i < n; ++i) {
+			graphChangeListeners.get(i).beforeCreateEdge(ec, alpha, omega);
+		}
+	}
+
+	@Override
+	public void fireAfterCreateEdge(Edge e) {
+		if (graphChangeListeners == null || loading) {
+			return;
+		}
+		int n = graphChangeListeners.size();
+		for (int i = 0; i < n; ++i) {
+			graphChangeListeners.get(i).afterCreateEdge(e);
+		}
+	}
+
+	@Override
+	public void fireBeforeDeleteEdge(Edge e) {
+		if (graphChangeListeners == null || loading) {
+			return;
+		}
+		int n = graphChangeListeners.size();
+		for (int i = 0; i < n; ++i) {
+			graphChangeListeners.get(i).beforeDeleteEdge(e);
+		}
+	}
+
+	@Override
+	public void fireAfterDeleteEdge(EdgeClass ec, Vertex alpha, Vertex omega) {
+		if (graphChangeListeners == null || loading) {
+			return;
+		}
+		int n = graphChangeListeners.size();
+		for (int i = 0; i < n; ++i) {
+			graphChangeListeners.get(i).afterDeleteEdge(ec, alpha, omega);
+		}
+	}
+
+	@Override
+	public void fireBeforeChangeAttribute(AttributedElement<?, ?> element,
+			String attributeName, Object oldValue, Object newValue) {
+		if (graphChangeListeners == null || loading) {
+			return;
+		}
+		int n = graphChangeListeners.size();
+		for (int i = 0; i < n; ++i) {
+			graphChangeListeners.get(i).beforeChangeAttribute(element,
+					attributeName, oldValue, newValue);
+		}
+	}
+
+	@Override
+	public void fireAfterChangeAttribute(AttributedElement<?, ?> element,
+			String attributeName, Object oldValue, Object newValue) {
+		if (graphChangeListeners == null || loading) {
+			return;
+		}
+		int n = graphChangeListeners.size();
+		for (int i = 0; i < n; ++i) {
+			graphChangeListeners.get(i).afterChangeAttribute(element,
+					attributeName, oldValue, newValue);
+		}
+	}
+
+	@Override
+	public void fireBeforeChangeAlpha(Edge edge, Vertex oldVertex,
+			Vertex newVertex) {
+		if (graphChangeListeners == null || loading) {
+			return;
+		}
+		int n = graphChangeListeners.size();
+		for (int i = 0; i < n; ++i) {
+			graphChangeListeners.get(i).beforeChangeAlpha(edge, oldVertex,
+					newVertex);
+		}
+	}
+
+	@Override
+	public void fireAfterChangeAlpha(Edge edge, Vertex oldVertex,
+			Vertex newVertex) {
+		if (graphChangeListeners == null || loading) {
+			return;
+		}
+		int n = graphChangeListeners.size();
+		for (int i = 0; i < n; ++i) {
+			graphChangeListeners.get(i).afterChangeAlpha(edge, oldVertex,
+					newVertex);
+		}
+	}
+
+	@Override
+	public void fireBeforeChangeOmega(Edge edge, Vertex oldVertex,
+			Vertex newVertex) {
+		if (graphChangeListeners == null || loading) {
+			return;
+		}
+		int n = graphChangeListeners.size();
+		for (int i = 0; i < n; ++i) {
+			graphChangeListeners.get(i).beforeChangeOmega(edge, oldVertex,
+					newVertex);
+		}
+	}
+
+	@Override
+	public void fireAfterChangeOmega(Edge edge, Vertex oldVertex,
+			Vertex newVertex) {
+		if (graphChangeListeners == null || loading) {
+			return;
+		}
+		int n = graphChangeListeners.size();
+		for (int i = 0; i < n; ++i) {
+			graphChangeListeners.get(i).afterChangeOmega(edge, oldVertex,
+					newVertex);
+		}
 	}
 }

@@ -2,6 +2,7 @@ package de.uni_koblenz.jgralab.utilities.gui.undo;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Stack;
 
 import javax.swing.undo.AbstractUndoableEdit;
 import javax.swing.undo.CannotRedoException;
@@ -12,16 +13,16 @@ import javax.swing.undo.UndoManager;
 import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
+import de.uni_koblenz.jgralab.GraphChangeListener;
 import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.eca.ECARuleManagerInterface;
 import de.uni_koblenz.jgralab.schema.Attribute;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.VertexClass;
 
 public class GraphUndoManager extends UndoManager implements
-		ECARuleManagerInterface {
+		GraphChangeListener {
 	private static final long serialVersionUID = -1959515066823695788L;
 	private boolean working;
 	private Graph graph;
@@ -33,7 +34,7 @@ public class GraphUndoManager extends UndoManager implements
 	private GraphEdit first;
 	private GraphEdit last;
 	private int version;
-
+	private Stack<CompoundGraphEdit> compoundEditStack = new Stack<>();
 	private HashMap<AttributedElement<?, ?>, Integer> versions = new HashMap<>();
 
 	protected enum Event {
@@ -334,6 +335,58 @@ public class GraphUndoManager extends UndoManager implements
 		}
 	}
 
+	protected class ChangeIncidenceEdit extends GraphEdit {
+		private static final long serialVersionUID = 350404556440935178L;
+		private int oldVertexId, newVertexId, oldVertexVersion,
+				newVertexVersion;
+
+		ChangeIncidenceEdit(Event event, Edge e, Vertex oldVertex,
+				Vertex newVertex) {
+			super(event, e);
+			oldVertexId = oldVertex.getId();
+			oldVertexVersion = ev(oldVertex);
+			newVertexId = newVertex.getId();
+			newVertexVersion = ev(newVertex);
+		}
+
+		@Override
+		public void undo() throws CannotUndoException {
+			super.undo();
+			Vertex v = graph.getVertex(oldVertexId);
+			Edge e = graph.getEdge(elementId);
+			if (event == Event.CHANGE_ALPHA) {
+				e.setAlpha(v);
+			} else {
+				e.setOmega(v);
+			}
+		}
+
+		@Override
+		public void redo() throws CannotRedoException {
+			super.redo();
+			Vertex v = graph.getVertex(newVertexId);
+			Edge e = graph.getEdge(elementId);
+			if (event == Event.CHANGE_ALPHA) {
+				e.setAlpha(v);
+			} else {
+				e.setOmega(v);
+			}
+		}
+
+		@Override
+		public void changeVertexId(int from, int fromVersion, int to,
+				int toVersion) {
+			if (oldVertexId == from && oldVertexVersion == fromVersion) {
+				oldVertexId = to;
+				oldVertexVersion = toVersion;
+			}
+			if (newVertexId == from && newVertexVersion == fromVersion) {
+				newVertexId = to;
+				newVertexVersion = toVersion;
+			}
+		}
+	}
+
 	protected class ChangeAttributeEdit extends GraphEdit {
 		private static final long serialVersionUID = 9147856388307821832L;
 		private String attributeName;
@@ -383,7 +436,6 @@ public class GraphUndoManager extends UndoManager implements
 
 	public GraphUndoManager(Graph g) {
 		this.graph = g;
-		setLimit(1000);
 	}
 
 	@Override
@@ -406,6 +458,17 @@ public class GraphUndoManager extends UndoManager implements
 		}
 	}
 
+	public void beginEdit(String name) {
+		CompoundGraphEdit cge = new CompoundGraphEdit(name);
+		addEdit(cge);
+		compoundEditStack.push(cge);
+	}
+
+	public void endEdit() {
+		CompoundGraphEdit cge = compoundEditStack.pop();
+		cge.end();
+	}
+
 	@Override
 	public synchronized void discardAllEdits() {
 		super.discardAllEdits();
@@ -413,18 +476,18 @@ public class GraphUndoManager extends UndoManager implements
 	}
 
 	@Override
-	public void fireBeforeCreateVertexEvents(VertexClass elementClass) {
+	public void beforeCreateVertex(VertexClass elementClass) {
 	}
 
 	@Override
-	public void fireAfterCreateVertexEvents(Vertex element) {
+	public void afterCreateVertex(Vertex element) {
 		if (!isWorking()) {
 			addEdit(new CreateVertexEdit(element));
 		}
 	}
 
 	@Override
-	public void fireBeforeDeleteVertexEvents(Vertex element) {
+	public void beforeDeleteVertex(Vertex element) {
 		if (!isWorking()) {
 			assert deleteVertexCompound == null;
 			deleteVertexCompound = new CompoundEdit();
@@ -434,7 +497,7 @@ public class GraphUndoManager extends UndoManager implements
 	}
 
 	@Override
-	public void fireAfterDeleteVertexEvents(VertexClass elementClass) {
+	public void afterDeleteVertex(VertexClass elementClass) {
 		if (!isWorking()) {
 			assert deleteVertexCompound != null && deleteVertexEdit != null;
 			deleteVertexCompound.addEdit(deleteVertexEdit);
@@ -445,70 +508,65 @@ public class GraphUndoManager extends UndoManager implements
 	}
 
 	@Override
-	public void fireBeforeCreateEdgeEvents(EdgeClass elementClass) {
-		// TODO Auto-generated method stub
-
+	public void beforeCreateEdge(EdgeClass elementClass,
+			Vertex alpha, Vertex omega) {
 	}
 
 	@Override
-	public void fireAfterCreateEdgeEvents(Edge element) {
+	public void afterCreateEdge(Edge element) {
 		if (!isWorking()) {
 			addEdit(new CreateEdgeEdit(element));
 		}
 	}
 
 	@Override
-	public void fireBeforeDeleteEdgeEvents(Edge element) {
+	public void beforeDeleteEdge(Edge element) {
 		if (!isWorking()) {
 			addEdit(new DeleteEdgeEdit(element));
 		}
 	}
 
 	@Override
-	public void fireAfterDeleteEdgeEvents(EdgeClass elementClass,
+	public void afterDeleteEdge(EdgeClass elementClass,
 			Vertex oldAlpha, Vertex oldOmega) {
 	}
 
 	@Override
-	public void fireBeforeChangeAlphaOfEdgeEvents(Edge element,
+	public void beforeChangeAlpha(Edge element,
 			Vertex oldVertex, Vertex newVertex) {
 	}
 
 	@Override
-	public void fireAfterChangeAlphaOfEdgeEvents(Edge element,
+	public void afterChangeAlpha(Edge element,
 			Vertex oldVertex, Vertex newVertex) {
 		if (!isWorking()) {
-			// TODO
-			// addEdit(new GraphEdit(Event.CHANGE_ALPHA, element, null,
-			// oldVertex,
-			// newVertex));
+			addEdit(new ChangeIncidenceEdit(Event.CHANGE_ALPHA, element,
+					oldVertex, newVertex));
 		}
 	}
 
 	@Override
-	public void fireBeforeChangeOmegaOfEdgeEvents(Edge element,
+	public void beforeChangeOmega(Edge element,
 			Vertex oldVertex, Vertex newVertex) {
 	}
 
 	@Override
-	public void fireAfterChangeOmegaOfEdgeEvents(Edge element,
+	public void afterChangeOmega(Edge element,
 			Vertex oldVertex, Vertex newVertex) {
 		if (!isWorking()) {
-			// TODO
-			// addEdit(new GraphEdit(Event.CHANGE_OMEGA, element, null,
-			// oldVertex,
-			// newVertex));
+			addEdit(new ChangeIncidenceEdit(Event.CHANGE_OMEGA, element,
+					oldVertex, newVertex));
 		}
 	}
 
 	@Override
-	public <AEC extends AttributedElementClass<AEC, ?>> void fireBeforeChangeAttributeEvents(
+	public <AEC extends AttributedElementClass<AEC, ?>> void beforeChangeAttribute(
 			AttributedElement<AEC, ?> element, String attributeName,
 			Object oldValue, Object newValue) {
 	}
 
 	@Override
-	public <AEC extends AttributedElementClass<AEC, ?>> void fireAfterChangeAttributeEvents(
+	public <AEC extends AttributedElementClass<AEC, ?>> void afterChangeAttribute(
 			AttributedElement<AEC, ?> element, String attributeName,
 			Object oldValue, Object newValue) {
 		if (!isWorking()) {

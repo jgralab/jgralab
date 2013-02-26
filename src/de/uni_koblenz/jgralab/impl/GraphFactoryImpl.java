@@ -140,9 +140,8 @@ public abstract class GraphFactoryImpl implements GraphFactory {
 	public <E extends Edge> E createEdge(EdgeClass ec, int id, Graph g,
 			Vertex alpha, Vertex omega) {
 		try {
-			if (!((InternalGraph) g).isLoading() && (g.hasECARuleManager())) {
-				g.getECARuleManager().fireBeforeCreateEdgeEvents(ec);
-			}
+			InternalGraph ig = (InternalGraph) g;
+			ig.fireBeforeCreateEdge(ec, alpha, omega);
 			E newInstance;
 			if (ec.equals(g.getGraphClass().getTemporaryEdgeClass())) {
 				newInstance = (E) g.createTemporaryEdge(alpha, omega);
@@ -152,9 +151,7 @@ public abstract class GraphFactoryImpl implements GraphFactory {
 				newInstance = (E) edgeMap.get(ec).newInstance(id, g, alpha,
 						omega);
 			}
-			if (!((InternalGraph) g).isLoading() && (g.hasECARuleManager())) {
-				g.getECARuleManager().fireAfterCreateEdgeEvents(newInstance);
-			}
+			ig.fireAfterCreateEdge(newInstance);
 			return newInstance;
 		} catch (Exception ex) {
 			if (ex.getCause() instanceof GraphException) {
@@ -170,18 +167,15 @@ public abstract class GraphFactoryImpl implements GraphFactory {
 	@Override
 	public <V extends Vertex> V createVertex(VertexClass vc, int id, Graph g) {
 		try {
-			if (!((InternalGraph) g).isLoading() && (g.hasECARuleManager())) {
-				g.getECARuleManager().fireBeforeCreateVertexEvents(vc);
-			}
+			InternalGraph ig = (InternalGraph) g;
+			ig.fireBeforeCreateVertex(vc);
 			V newInstance;
 			if (vc.equals(g.getGraphClass().getTemporaryVertexClass())) {
 				newInstance = (V) g.createTemporaryVertex();
 			} else {
 				newInstance = (V) vertexMap.get(vc).newInstance(id, g);
 			}
-			if (!((InternalGraph) g).isLoading() && (g.hasECARuleManager())) {
-				g.getECARuleManager().fireAfterCreateVertexEvents(newInstance);
-			}
+			ig.fireAfterCreateVertex(newInstance);
 			return newInstance;
 		} catch (Exception ex) {
 			if (ex.getCause() instanceof GraphException) {

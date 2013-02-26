@@ -343,10 +343,7 @@ public abstract class EdgeBaseImpl extends IncidenceImpl implements Edge,
 
 		InternalVertex oldAlpha = getIncidentVertex();
 
-		if (!graph.isLoading() && graph.hasECARuleManager()) {
-			graph.getECARuleManager().fireBeforeChangeAlphaOfEdgeEvents(this,
-					oldAlpha, alphaBase);
-		}
+		graph.fireBeforeChangeAlpha(this, oldAlpha, alphaBase);
 
 		if (alphaBase == oldAlpha) {
 			return; // nothing to change
@@ -367,10 +364,7 @@ public abstract class EdgeBaseImpl extends IncidenceImpl implements Edge,
 		newAlpha.incidenceListModified();
 		setIncidentVertex(newAlpha);
 
-		if (!graph.isLoading() && graph.hasECARuleManager()) {
-			graph.getECARuleManager().fireAfterChangeAlphaOfEdgeEvents(this,
-					oldAlpha, alphaBase);
-		}
+		graph.fireAfterChangeAlpha(this, oldAlpha, alphaBase);
 	}
 
 	/*
@@ -387,11 +381,7 @@ public abstract class EdgeBaseImpl extends IncidenceImpl implements Edge,
 		assert getGraph() == omegaBase.getGraph();
 
 		InternalVertex oldOmgea = reversedEdge.getIncidentVertex();
-
-		if (!graph.isLoading() && graph.hasECARuleManager()) {
-			graph.getECARuleManager().fireBeforeChangeOmegaOfEdgeEvents(this,
-					oldOmgea, omegaBase);
-		}
+		graph.fireBeforeChangeOmega(this, oldOmgea, omegaBase);
 
 		if (omegaBase == oldOmgea) {
 			return; // nothing to change
@@ -415,10 +405,7 @@ public abstract class EdgeBaseImpl extends IncidenceImpl implements Edge,
 		// appenIncidenceToLambdaSeq called it before.
 		reversedEdge.setIncidentVertex(newOmega);
 
-		if (!graph.isLoading()) {
-			graph.getECARuleManager().fireAfterChangeOmegaOfEdgeEvents(this,
-					oldOmgea, omegaBase);
-		}
+		graph.fireAfterChangeOmega(this, oldOmgea, omegaBase);
 	}
 
 	/*

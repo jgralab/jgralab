@@ -39,7 +39,6 @@ import java.io.DataOutputStream;
 import java.util.Comparator;
 import java.util.Map;
 
-import de.uni_koblenz.jgralab.eca.ECARuleManagerInterface;
 import de.uni_koblenz.jgralab.exception.GraphIOException;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.EnumDomain;
@@ -415,31 +414,17 @@ public interface Graph extends AttributedElement<GraphClass, Graph> {
 	public void removeAllGraphStructureChangedListeners();
 
 	/**
-	 * Returns the amount of registered
+	 * Returns the number of registered
 	 * <code>GraphStructureChangedListener</code>s.
 	 * 
-	 * @return the amount of registered
+	 * @return the number of registered
 	 *         <code>GraphStructureChangedListener</code>s
 	 */
 	public int getGraphStructureChangedListenerCount();
 
-	/**
-	 * Returns the {@link de.uni_koblenz.jgralab.eca.ECARuleManager} of this
-	 * {@link Graph}, if the {@link de.uni_koblenz.jgralab.eca.ECARuleManager}
-	 * is not instantiated, an instance is created
-	 * 
-	 * @return the {@link de.uni_koblenz.jgralab.eca.ECARuleManager} of this
-	 *         {@link Graph}
-	 */
-	public ECARuleManagerInterface getECARuleManager();
+	public void addGraphChangeListener(GraphChangeListener l);
 
-	public void setECARuleManager(ECARuleManagerInterface manager);
-
-	/**
-	 * @return whether the {@link de.uni_koblenz.jgralab.eca.ECARuleManager} of
-	 *         this {@link Graph} is instantiated
-	 */
-	public boolean hasECARuleManager();
+	public void removeGraphChangeListener(GraphChangeListener l);
 
 	public TraversalContext setTraversalContext(TraversalContext tc);
 

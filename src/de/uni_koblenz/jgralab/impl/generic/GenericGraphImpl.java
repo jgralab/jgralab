@@ -156,16 +156,10 @@ public class GenericGraphImpl extends GraphImpl implements
 	public <T> void setAttribute(String name, T data) {
 		int i = getAttributedElementClass().getAttributeIndex(name);
 		if (type.getAttribute(name).getDomain().isConformValue(data)) {
-			if (hasECARuleManager()) {
-				T oldValue = this.<T> getAttribute(name);
-				getECARuleManager().fireBeforeChangeAttributeEvents(this, name,
-						oldValue, data);
-				attributes[i] = data;
-				getECARuleManager().fireAfterChangeAttributeEvents(this, name,
-						oldValue, data);
-			} else {
-				attributes[i] = data;
-			}
+			T oldValue = this.<T> getAttribute(name);
+			fireBeforeChangeAttribute(this, name, oldValue, data);
+			attributes[i] = data;
+			fireAfterChangeAttribute(this, name, oldValue, data);
 		} else {
 			Domain d = type.getAttribute(name).getDomain();
 			throw new ClassCastException(("Expected "

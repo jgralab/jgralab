@@ -44,6 +44,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.FutureTask;
 import java.util.concurrent.ThreadPoolExecutor;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import de.uni_koblenz.jgralab.Graph;
@@ -108,9 +109,9 @@ public class ParallelGreqlEvaluator {
 	// dependency graph
 	private static Logger logger = JGraLab
 			.getLogger(ParallelGreqlEvaluator.class);
-	// static {
-	// logger.setLevel(Level.FINE);
-	// }
+	static {
+		logger.setLevel(Level.FINE);
+	}
 
 	private DirectedAcyclicGraph<TaskHandle> dependencyGraph;
 
@@ -456,6 +457,22 @@ public class ParallelGreqlEvaluator {
 				// do nothing, since exception is handled below
 				e.printStackTrace();
 			}
+		} else {
+			logger.finer("Sequential evaluation waiting to finish");
+			// try {
+			// for (TaskHandle handle : dependencyGraph.getNodes()) {
+			// try {
+			// evaluationEnvironment.tasks.get(handle).get();
+			// } catch (ExecutionException e) {
+			// // this exception is handled via the
+			// // exception variable in
+			// // EvaluationEnvironment
+			// break;
+			// }
+			// }
+			// } catch (InterruptedException e) {
+			// // do nothing, probably interrupted by exception
+			// }
 		}
 		evaluationEnvironment.executor.shutdown();
 

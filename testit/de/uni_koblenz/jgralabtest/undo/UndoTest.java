@@ -22,7 +22,7 @@ public class UndoTest {
 		g = SimpleSchema.instance().createSimpleGraph(
 				ImplementationType.STANDARD);
 		mgr = new GraphUndoManager(g);
-		g.setECARuleManager(mgr);
+		g.addGraphChangeListener(mgr);
 		g.set_name("world");
 		// create gap in vertex ids
 		SimpleVertex v1 = g.createSimpleVertex();
@@ -30,8 +30,13 @@ public class UndoTest {
 		SimpleVertex v3 = g.createSimpleVertex();
 		v1.set_name("o1");
 		v2.set_name("o2");
-		g.createSimpleEdge(v1, v3);
+		SimpleEdge e = g.createSimpleEdge(v1, v3);
+		e.set_name("1->3");
 		v3.set_name("o3");
+		e.setAlpha(v2);
+		e.set_name("2->3");
+		e.setOmega(v2);
+		e.set_name("2->2");
 		v2.delete();
 	}
 

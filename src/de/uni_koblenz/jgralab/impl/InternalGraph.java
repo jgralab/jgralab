@@ -36,12 +36,15 @@ package de.uni_koblenz.jgralab.impl;
 
 import java.util.List;
 
+import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.exception.GraphException;
 import de.uni_koblenz.jgralab.exception.GraphIOException;
 import de.uni_koblenz.jgralab.schema.Attribute;
+import de.uni_koblenz.jgralab.schema.EdgeClass;
+import de.uni_koblenz.jgralab.schema.VertexClass;
 
 public interface InternalGraph extends Graph {
 
@@ -51,25 +54,7 @@ public interface InternalGraph extends Graph {
 	 * edges and vertices or changes of attributes of the graph, an edge or a
 	 * vertex are treated as a change.
 	 */
-	public abstract void graphModified();
-
-	/**
-	 * Triggers ECA-rules before an Attribute is changed
-	 * 
-	 * @param name
-	 *            of the changing Attribute
-	 */
-	public abstract void ecaAttributeChanging(String name, Object oldValue,
-			Object newValue);
-
-	/**
-	 * Triggers ECA-rule after an Attribute is changed
-	 * 
-	 * @param name
-	 *            of the changed Attribute
-	 */
-	public abstract void ecaAttributeChanged(String name, Object oldValue,
-			Object newValue);
+	public void graphModified();
 
 	/**
 	 * Constructs incidence lists for all vertices after loading this graph.
@@ -79,7 +64,7 @@ public interface InternalGraph extends Graph {
 	 * @param nextIncidence
 	 *            array of edge ids of subsequent edges
 	 */
-	public abstract void internalLoadingCompleted(int[] firstIncidence,
+	public void internalLoadingCompleted(int[] firstIncidence,
 			int[] nextIncidence);
 
 	/**
@@ -89,14 +74,14 @@ public interface InternalGraph extends Graph {
 	 * @param graphVersion
 	 *            new version value
 	 */
-	public abstract void setGraphVersion(long graphVersion);
+	public void setGraphVersion(long graphVersion);
 
 	/**
 	 * Sets the loading flag.
 	 * 
 	 * @param isLoading
 	 */
-	public abstract void setLoading(boolean isLoading);
+	public void setLoading(boolean isLoading);
 
 	/**
 	 * Checks whether this graph is currently being loaded.
@@ -569,4 +554,35 @@ public interface InternalGraph extends Graph {
 	 * loading a graph.
 	 */
 	public void loadingCompleted();
+
+	public void fireBeforeCreateVertex(VertexClass vc);
+
+	public void fireAfterCreateVertex(Vertex v);
+
+	public void fireBeforeDeleteVertex(Vertex v);
+
+	public void fireAfterDeleteVertex(VertexClass vc);
+
+	public void fireBeforeCreateEdge(EdgeClass ec, Vertex alpha, Vertex omega);
+
+	public void fireAfterCreateEdge(Edge e);
+
+	public void fireBeforeDeleteEdge(Edge e);
+
+	public void fireAfterDeleteEdge(EdgeClass ec, Vertex alpha, Vertex omega);
+
+	public void fireBeforeChangeAlpha(Edge e, Vertex oldVertex, Vertex newVertex);
+
+	public void fireAfterChangeAlpha(Edge e, Vertex oldVertex, Vertex newVertex);
+
+	public void fireBeforeChangeOmega(Edge e, Vertex oldVertex, Vertex newVertex);
+
+	public void fireAfterChangeOmega(Edge e, Vertex oldVertex, Vertex newVertex);
+
+	public void fireBeforeChangeAttribute(AttributedElement<?, ?> element,
+			String name, Object oldValue, Object newValue);
+
+	public void fireAfterChangeAttribute(AttributedElement<?, ?> element,
+			String name, Object oldValue, Object newValue);
+
 }

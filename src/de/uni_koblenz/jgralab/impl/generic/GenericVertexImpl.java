@@ -131,16 +131,10 @@ public class GenericVertexImpl extends VertexImpl implements
 		int i = type.getAttributeIndex(name);
 		if (getAttributedElementClass().getAttribute(name).getDomain()
 				.isConformValue(data)) {
-			if (graph.hasECARuleManager()) {
-				T oldValue = this.<T> getAttribute(name);
-				graph.getECARuleManager().fireBeforeChangeAttributeEvents(this,
-						name, oldValue, data);
-				attributes[i] = data;
-				graph.getECARuleManager().fireAfterChangeAttributeEvents(this,
-						name, oldValue, data);
-			} else {
-				attributes[i] = data;
-			}
+			T oldValue = this.<T> getAttribute(name);
+			graph.fireBeforeChangeAttribute(this, name, oldValue, data);
+			attributes[i] = data;
+			graph.fireAfterChangeAttribute(this, name, oldValue, data);
 		} else {
 			Domain d = type.getAttribute(name).getDomain();
 			throw new ClassCastException(("Expected "

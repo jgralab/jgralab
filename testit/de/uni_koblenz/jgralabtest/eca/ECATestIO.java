@@ -40,7 +40,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 
+import org.junit.After;
 import org.junit.AfterClass;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -96,6 +98,20 @@ public class ECATestIO {
 		System.out.println("Finish ECA IO Test.\n");
 	}
 
+	private ECARuleManager ecaRuleManager;
+
+	@Before
+	public void createECARuleManager() {
+		ecaRuleManager = new ECARuleManager(simlibgraph);
+		simlibgraph.addGraphChangeListener(ecaRuleManager);
+	}
+
+	@After
+	public void removeECARuleManager() {
+		simlibgraph.removeGraphChangeListener(ecaRuleManager);
+		ecaRuleManager = null;
+	}
+
 	@Test
 	public void testSimpleSaveRule() {
 		System.out.println("Saving an ECA Rule.");
@@ -146,8 +162,6 @@ public class ECATestIO {
 			assert false;
 		}
 
-		ECARuleManager ecaRuleManager = (ECARuleManager) simlibgraph
-				.getECARuleManager();
 		for (ECARule<?> rule : rules) {
 			ecaRuleManager.addECARule(rule);
 		}
@@ -197,8 +211,6 @@ public class ECATestIO {
 			assert false;
 		}
 
-		ECARuleManager ecaRuleManager = (ECARuleManager) simlibgraph
-				.getECARuleManager();
 		ecaRuleManager.addECARule(rules.get(0));
 
 		Book book = simlibgraph.createBook();
@@ -242,8 +254,6 @@ public class ECATestIO {
 			e.printStackTrace();
 			assert false;
 		}
-		ECARuleManager ecaRuleManager = (ECARuleManager) simlibgraph
-				.getECARuleManager();
 		ecaRuleManager.addECARule(rules.get(0));
 
 		simlibgraph.createBook();
@@ -289,8 +299,6 @@ public class ECATestIO {
 			e.printStackTrace();
 			assert false;
 		}
-		ECARuleManager ecaRuleManager = (ECARuleManager) simlibgraph
-				.getECARuleManager();
 		ecaRuleManager.addECARule(rules.get(0));
 
 		loans_u1_b1.setAlpha(user2);
@@ -338,8 +346,6 @@ public class ECATestIO {
 			e.printStackTrace();
 			assert false;
 		}
-		ECARuleManager ecaRuleManager = (ECARuleManager) simlibgraph
-				.getECARuleManager();
 		ecaRuleManager.addECARule(rules.get(0));
 
 		simlibgraph.getFirstMagazin().set_year(2013);
