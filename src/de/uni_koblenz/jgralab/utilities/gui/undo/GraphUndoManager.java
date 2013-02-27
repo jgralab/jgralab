@@ -26,16 +26,15 @@ public class GraphUndoManager extends UndoManager implements
 	private static final long serialVersionUID = -1959515066823695788L;
 	private boolean working;
 	private Graph graph;
-	private CompoundEdit deleteVertexCompound;
-	private GraphEdit deleteVertexEdit;
+	private Stack<GraphEdit> deleteVertexEditStack;
 	protected Map<Integer, AttributedElement<?, ?>> referencedElements;
 	protected Map<AttributedElement<?, ?>, Integer> elementRefs;
 
 	private GraphEdit first;
 	private GraphEdit last;
 	private int version;
-	private Stack<CompoundGraphEdit> compoundEditStack = new Stack<>();
-	private HashMap<AttributedElement<?, ?>, Integer> versions = new HashMap<>();
+	private Stack<CompoundGraphEdit> compoundEditStack = new Stack<CompoundGraphEdit>();
+	private HashMap<AttributedElement<?, ?>, Integer> versions = new HashMap<AttributedElement<?, ?>, Integer>();
 
 	protected enum Event {
 		CREATE_VERTEX, CREATE_EDGE, DELETE_VERTEX, DELETE_EDGE, CHANGE_OMEGA, CHANGE_ALPHA, CHANGE_ATTRIBUTE
@@ -489,21 +488,23 @@ public class GraphUndoManager extends UndoManager implements
 	@Override
 	public void beforeDeleteVertex(Vertex element) {
 		if (!isWorking()) {
-			assert deleteVertexCompound == null;
-			deleteVertexCompound = new CompoundEdit();
-			addEdit(deleteVertexCompound);
-			deleteVertexEdit = new DeleteVertexEdit(element);
+			assert deleteVertexEditStack == null;
+			deleteVertexEditStack = new Stack<GraphEdit>();
+			deleteVertexEditStack.push(new DeleteVertexEdit(element));
 		}
 	}
 
 	@Override
 	public void afterDeleteVertex(VertexClass elementClass) {
 		if (!isWorking()) {
-			assert deleteVertexCompound != null && deleteVertexEdit != null;
-			deleteVertexCompound.addEdit(deleteVertexEdit);
+			assert deleteVertexEditStack != null;
+			CompoundEdit deleteVertexCompound = new CompoundEdit();
+			while (!deleteVertexEditStack.isEmpty()) {
+				deleteVertexCompound.addEdit(deleteVertexEditStack.pop());
+			}
 			deleteVertexCompound.end();
-			deleteVertexEdit = null;
-			deleteVertexCompound = null;
+			addEdit(deleteVertexCompound);
+			deleteVertexEditStack = null;
 		}
 	}
 
