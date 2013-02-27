@@ -91,9 +91,8 @@ public class UndoTest {
 
 		Map<String, String> afterModification = storeState();
 
-		while (mgr.canUndo()) {
-			mgr.undo();
-		}
+		mgr.undo();
+
 		Map<String, String> afterUndo = storeState();
 		assertEquals(initial, afterUndo);
 

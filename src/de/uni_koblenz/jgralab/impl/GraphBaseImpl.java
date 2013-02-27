@@ -954,7 +954,8 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 			removeVertexFromVSeq(v);
 			vertexListModified();
 
-			fireAfterDeleteVertex(v.getAttributedElementClass());
+			fireAfterDeleteVertex(v.getAttributedElementClass(),
+					getDeleteVertexList().isEmpty());
 		}
 	}
 
@@ -2086,13 +2087,13 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 	}
 
 	@Override
-	public void fireAfterDeleteVertex(VertexClass vc) {
+	public void fireAfterDeleteVertex(VertexClass vc, boolean finalDelete) {
 		if (graphChangeListeners == null || loading) {
 			return;
 		}
 		int n = graphChangeListeners.size();
 		for (int i = 0; i < n; ++i) {
-			graphChangeListeners.get(i).afterDeleteVertex(vc);
+			graphChangeListeners.get(i).afterDeleteVertex(vc, finalDelete);
 		}
 	}
 

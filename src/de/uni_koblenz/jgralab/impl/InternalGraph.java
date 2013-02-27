@@ -561,7 +561,7 @@ public interface InternalGraph extends Graph {
 
 	public void fireBeforeDeleteVertex(Vertex v);
 
-	public void fireAfterDeleteVertex(VertexClass vc);
+	public void fireAfterDeleteVertex(VertexClass vc, boolean finalDelete);
 
 	public void fireBeforeCreateEdge(EdgeClass ec, Vertex alpha, Vertex omega);
 

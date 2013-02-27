@@ -209,12 +209,6 @@ public class ECARuleManager implements GraphChangeListener {
 
 	// +++++ Fire Events ++++++++++++++++++++++++++++++++++++++++++++++
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @seede.uni_koblenz.jgralab.eca.ECARuleManagerInterface#
-	 * fireBeforeCreateVertexEvents(java.lang.Class)
-	 */
 	@Override
 	public void beforeCreateVertex(VertexClass vc) {
 		if (beforeCreateVertexEvents == null) {
@@ -231,12 +225,6 @@ public class ECARuleManager implements GraphChangeListener {
 
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @seede.uni_koblenz.jgralab.eca.ECARuleManagerInterface#
-	 * fireAfterCreateVertexEvents(de.uni_koblenz.jgralab.GraphElement)
-	 */
 	@Override
 	public void afterCreateVertex(Vertex element) {
 		if (afterCreateVertexEvents == null) {
@@ -253,12 +241,6 @@ public class ECARuleManager implements GraphChangeListener {
 
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @seede.uni_koblenz.jgralab.eca.ECARuleManagerInterface#
-	 * fireBeforeDeleteVertexEvents(de.uni_koblenz.jgralab.GraphElement)
-	 */
 	@Override
 	public void beforeDeleteVertex(Vertex element) {
 		if (beforeDeleteVertexEvents == null) {
@@ -275,14 +257,8 @@ public class ECARuleManager implements GraphChangeListener {
 
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @seede.uni_koblenz.jgralab.eca.ECARuleManagerInterface#
-	 * fireAfterDeleteVertexEvents(java.lang.Class)
-	 */
 	@Override
-	public void afterDeleteVertex(VertexClass vc) {
+	public void afterDeleteVertex(VertexClass vc, boolean finalDelete) {
 		if (afterDeleteVertexEvents == null) {
 			return;
 		}
@@ -297,16 +273,9 @@ public class ECARuleManager implements GraphChangeListener {
 
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * de.uni_koblenz.jgralab.eca.ECARuleManagerInterface#fireBeforeCreateEdgeEvents
-	 * (java.lang.Class)
-	 */
 	@Override
-	public void beforeCreateEdge(EdgeClass elementClass,
-			Vertex alpha, Vertex omega) {
+	public void beforeCreateEdge(EdgeClass elementClass, Vertex alpha,
+			Vertex omega) {
 		if (beforeCreateEdgeEvents == null) {
 			return;
 		}
@@ -321,13 +290,6 @@ public class ECARuleManager implements GraphChangeListener {
 
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * de.uni_koblenz.jgralab.eca.ECARuleManagerInterface#fireAfterCreateEdgeEvents
-	 * (de.uni_koblenz.jgralab.GraphElement)
-	 */
 	@Override
 	public void afterCreateEdge(Edge element) {
 		if (afterCreateEdgeEvents == null) {
@@ -344,13 +306,6 @@ public class ECARuleManager implements GraphChangeListener {
 
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * de.uni_koblenz.jgralab.eca.ECARuleManagerInterface#fireBeforeDeleteEdgeEvents
-	 * (de.uni_koblenz.jgralab.GraphElement)
-	 */
 	@Override
 	public void beforeDeleteEdge(Edge element) {
 		if (beforeDeleteEdgeEvents == null) {
@@ -367,16 +322,8 @@ public class ECARuleManager implements GraphChangeListener {
 
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * de.uni_koblenz.jgralab.eca.ECARuleManagerInterface#fireAfterDeleteEdgeEvents
-	 * (java.lang.Class)
-	 */
 	@Override
-	public void afterDeleteEdge(EdgeClass ec, Vertex oldAlpha,
-			Vertex oldOmega) {
+	public void afterDeleteEdge(EdgeClass ec, Vertex oldAlpha, Vertex oldOmega) {
 		if (afterDeleteEdgeEvents == null) {
 			return;
 		}
@@ -391,16 +338,9 @@ public class ECARuleManager implements GraphChangeListener {
 
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see de.uni_koblenz.jgralab.eca.ECARuleManagerInterface#
-	 * fireBeforeChangeAlphaOfEdgeEvents(de.uni_koblenz.jgralab.GraphElement,
-	 * de.uni_koblenz.jgralab.Vertex, de.uni_koblenz.jgralab.Vertex)
-	 */
 	@Override
-	public void beforeChangeAlpha(Edge element,
-			Vertex oldVertex, Vertex newVertex) {
+	public void beforeChangeAlpha(Edge element, Vertex oldVertex,
+			Vertex newVertex) {
 		if (beforeChangeAlphaOfEdgeEvents == null) {
 			return;
 		}
@@ -416,16 +356,9 @@ public class ECARuleManager implements GraphChangeListener {
 
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see de.uni_koblenz.jgralab.eca.ECARuleManagerInterface#
-	 * fireAfterChangeAlphaOfEdgeEvents(de.uni_koblenz.jgralab.GraphElement,
-	 * de.uni_koblenz.jgralab.Vertex, de.uni_koblenz.jgralab.Vertex)
-	 */
 	@Override
-	public void afterChangeAlpha(Edge element,
-			Vertex oldVertex, Vertex newVertex) {
+	public void afterChangeAlpha(Edge element, Vertex oldVertex,
+			Vertex newVertex) {
 		if (afterChangeAlphaOfEdgeEvents == null) {
 			return;
 		}
@@ -449,8 +382,8 @@ public class ECARuleManager implements GraphChangeListener {
 	 * de.uni_koblenz.jgralab.Vertex, de.uni_koblenz.jgralab.Vertex)
 	 */
 	@Override
-	public void beforeChangeOmega(Edge element,
-			Vertex oldVertex, Vertex newVertex) {
+	public void beforeChangeOmega(Edge element, Vertex oldVertex,
+			Vertex newVertex) {
 		if (beforeChangeOmegaOfEdgeEvents == null) {
 			return;
 		}
@@ -466,16 +399,9 @@ public class ECARuleManager implements GraphChangeListener {
 
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see de.uni_koblenz.jgralab.eca.ECARuleManagerInterface#
-	 * fireAfterChangeOmegaOfEdgeEvents(de.uni_koblenz.jgralab.GraphElement,
-	 * de.uni_koblenz.jgralab.Vertex, de.uni_koblenz.jgralab.Vertex)
-	 */
 	@Override
-	public void afterChangeOmega(Edge element,
-			Vertex oldVertex, Vertex newVertex) {
+	public void afterChangeOmega(Edge element, Vertex oldVertex,
+			Vertex newVertex) {
 		if (afterChangeOmegaOfEdgeEvents == null) {
 			return;
 		}
@@ -491,13 +417,6 @@ public class ECARuleManager implements GraphChangeListener {
 
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @seede.uni_koblenz.jgralab.eca.ECARuleManagerInterface#
-	 * fireBeforeChangeAttributeEvents(de.uni_koblenz.jgralab.AttributedElement,
-	 * java.lang.String, java.lang.Object, java.lang.Object)
-	 */
 	@Override
 	public <AEC extends AttributedElementClass<AEC, ?>> void beforeChangeAttribute(
 			AttributedElement<AEC, ?> element, String attributeName,
@@ -519,13 +438,6 @@ public class ECARuleManager implements GraphChangeListener {
 
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @seede.uni_koblenz.jgralab.eca.ECARuleManagerInterface#
-	 * fireAfterChangeAttributeEvents(de.uni_koblenz.jgralab.AttributedElement,
-	 * java.lang.String, java.lang.Object, java.lang.Object)
-	 */
 	@Override
 	public <AEC extends AttributedElementClass<AEC, ?>> void afterChangeAttribute(
 			AttributedElement<AEC, ?> element, String attributeName,
@@ -566,11 +478,6 @@ public class ECARuleManager implements GraphChangeListener {
 
 	// +++++ Getter and Setter ++++++++++++++++++++++++++++++++++++++
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see de.uni_koblenz.jgralab.eca.ECARuleManagerInterface#getGraph()
-	 */
 	@Override
 	public Graph getGraph() {
 		return graph;
@@ -585,38 +492,14 @@ public class ECARuleManager implements GraphChangeListener {
 		return Collections.unmodifiableList(rules);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * de.uni_koblenz.jgralab.eca.ECARuleManagerInterface#getMaxNestedTriggerCalls
-	 * ()
-	 */
-	@Override
 	public int getMaxNestedTriggerCalls() {
 		return maxNestedTriggerCalls;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * de.uni_koblenz.jgralab.eca.ECARuleManagerInterface#setMaxNestedTriggerCalls
-	 * (int)
-	 */
-	@Override
 	public void setMaxNestedTriggerCalls(int maxNestedTriggerCalls) {
 		this.maxNestedTriggerCalls = maxNestedTriggerCalls;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * de.uni_koblenz.jgralab.eca.ECARuleManagerInterface#getNestedTriggerCalls
-	 * ()
-	 */
-	@Override
 	public int getNestedTriggerCalls() {
 		return nestedTriggerCalls;
 	}

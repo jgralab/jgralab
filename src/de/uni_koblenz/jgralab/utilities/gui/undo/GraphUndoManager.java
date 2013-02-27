@@ -460,6 +460,8 @@ public class GraphUndoManager extends UndoManager implements
 		private int oldVertexId, newVertexId, oldVertexVersion,
 				newVertexVersion;
 
+		// TODO record/restore incidence position at old vertex
+
 		ChangeIncidenceEdit(GraphEditEvent event, Edge e, Vertex oldVertex,
 				Vertex newVertex) {
 			super(event, e);
@@ -609,33 +611,38 @@ public class GraphUndoManager extends UndoManager implements
 	@Override
 	public void beforeDeleteVertex(Vertex v) {
 		if (!isWorking()) {
-			assert deleteVertexCompound == null;
-			deleteVertexEdit = new DeleteVertexEdit(v);
-			deleteVertexCompound = new CompoundEdit() {
-				private static final long serialVersionUID = -2775885260931823100L;
+			assert deleteVertexEdit == null;
+			if (deleteVertexCompound == null) {
+				deleteVertexCompound = new CompoundEdit() {
+					private static final long serialVersionUID = -2775885260931823100L;
 
-				@Override
-				public void undo() throws CannotUndoException {
-					undoDeleteVertex = true;
-					try {
-						super.undo();
-						restoreIncidencePositions();
-					} finally {
-						undoDeleteVertex = false;
+					@Override
+					public void undo() throws CannotUndoException {
+						undoDeleteVertex = true;
+						try {
+							super.undo();
+							restoreIncidencePositions();
+						} finally {
+							undoDeleteVertex = false;
+						}
 					}
-				}
-			};
-			addEdit(deleteVertexCompound);
+				};
+				addEdit(deleteVertexCompound);
+			}
+			deleteVertexEdit = new DeleteVertexEdit(v);
 		}
 	}
 
 	@Override
-	public void afterDeleteVertex(VertexClass vc) {
+	public void afterDeleteVertex(VertexClass vc, boolean finalDelete) {
 		if (!isWorking()) {
 			assert deleteVertexCompound != null;
+			assert deleteVertexEdit != null;
 			deleteVertexCompound.addEdit(deleteVertexEdit);
-			deleteVertexCompound.end();
-			deleteVertexCompound = null;
+			if (finalDelete) {
+				deleteVertexCompound.end();
+				deleteVertexCompound = null;
+			}
 			deleteVertexEdit = null;
 		}
 	}
@@ -758,20 +765,6 @@ public class GraphUndoManager extends UndoManager implements
 	@Override
 	public Graph getGraph() {
 		return graph;
-	}
-
-	@Override
-	public int getMaxNestedTriggerCalls() {
-		return 0;
-	}
-
-	@Override
-	public void setMaxNestedTriggerCalls(int maxNestedTriggerCalls) {
-	}
-
-	@Override
-	public int getNestedTriggerCalls() {
-		return 0;
 	}
 
 	protected boolean isWorking() {

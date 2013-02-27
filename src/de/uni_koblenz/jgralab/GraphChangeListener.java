@@ -69,8 +69,12 @@ public interface GraphChangeListener {
 	 * 
 	 * @param vc
 	 *            the Class of the deleted Vertex
+	 * @param finalDelete
+	 *            <code>true</code> if no more vertices are deleted,
+	 *            <code>false</code> if more vertices are queued to be deleted
+	 *            during a cascading delete of composite child vertices
 	 */
-	public void afterDeleteVertex(VertexClass vc);
+	public void afterDeleteVertex(VertexClass vc, boolean finalDelete);
 
 	/**
 	 * Called before an Edge of class <code>ec</code> is created.
@@ -176,10 +180,4 @@ public interface GraphChangeListener {
 	 * @return the Graph that owns this GraphChangeListener.
 	 */
 	public Graph getGraph();
-
-	public abstract int getMaxNestedTriggerCalls();
-
-	public abstract void setMaxNestedTriggerCalls(int maxNestedTriggerCalls);
-
-	public abstract int getNestedTriggerCalls();
 }
