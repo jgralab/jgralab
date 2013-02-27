@@ -307,7 +307,9 @@ public abstract class EdgeBaseImpl extends IncidenceImpl implements Edge,
 		assert e != this;
 		assert e != reversedEdge;
 
+		graph.fireBeforePutIncidenceAfter(this, e);
 		graph.putEdgeAfterInGraph((InternalEdge) e.getNormalEdge(), this);
+		graph.fireAfterPutIncidenceAfter(this, e);
 	}
 
 	/*
@@ -325,7 +327,9 @@ public abstract class EdgeBaseImpl extends IncidenceImpl implements Edge,
 		assert e != this;
 		assert e != reversedEdge;
 
+		graph.fireBeforePutIncidenceBefore(this, e);
 		graph.putEdgeBeforeInGraph((InternalEdge) e.getNormalEdge(), this);
+		graph.fireAfterPutIncidenceBefore(this, e);
 	}
 
 	/*

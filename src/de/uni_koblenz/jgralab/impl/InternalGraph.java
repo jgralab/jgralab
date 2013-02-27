@@ -579,6 +579,14 @@ public interface InternalGraph extends Graph {
 
 	public void fireAfterChangeOmega(Edge e, Vertex oldVertex, Vertex newVertex);
 
+	public void fireBeforePutIncidenceBefore(Edge inc, Edge other);
+
+	public void fireAfterPutIncidenceBefore(Edge inc, Edge other);
+
+	public void fireBeforePutIncidenceAfter(Edge inc, Edge other);
+
+	public void fireAfterPutIncidenceAfter(Edge inc, Edge other);
+
 	public void fireBeforeChangeAttribute(AttributedElement<?, ?> element,
 			String name, Object oldValue, Object newValue);
 

@@ -2218,4 +2218,48 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 					newVertex);
 		}
 	}
+
+	@Override
+	public void fireBeforePutIncidenceBefore(Edge inc, Edge other) {
+		if (graphChangeListeners == null || loading) {
+			return;
+		}
+		int n = graphChangeListeners.size();
+		for (int i = 0; i < n; ++i) {
+			graphChangeListeners.get(i).beforePutIncidenceBefore(inc, other);
+		}
+	}
+
+	@Override
+	public void fireAfterPutIncidenceBefore(Edge inc, Edge other) {
+		if (graphChangeListeners == null || loading) {
+			return;
+		}
+		int n = graphChangeListeners.size();
+		for (int i = 0; i < n; ++i) {
+			graphChangeListeners.get(i).afterPutIncidenceBefore(inc, other);
+		}
+	}
+
+	@Override
+	public void fireBeforePutIncidenceAfter(Edge inc, Edge other) {
+		if (graphChangeListeners == null || loading) {
+			return;
+		}
+		int n = graphChangeListeners.size();
+		for (int i = 0; i < n; ++i) {
+			graphChangeListeners.get(i).beforePutIncidenceAfter(inc, other);
+		}
+	}
+
+	@Override
+	public void fireAfterPutIncidenceAfter(Edge inc, Edge other) {
+		if (graphChangeListeners == null || loading) {
+			return;
+		}
+		int n = graphChangeListeners.size();
+		for (int i = 0; i < n; ++i) {
+			graphChangeListeners.get(i).afterPutIncidenceAfter(inc, other);
+		}
+	}
 }

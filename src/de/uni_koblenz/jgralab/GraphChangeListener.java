@@ -113,6 +113,17 @@ public interface GraphChangeListener {
 	public void afterDeleteEdge(EdgeClass ec, Vertex oldAlpha, Vertex oldOmega);
 
 	/**
+	 * Called before an Edge is moved.
+	 */
+	public void beforePutIncidenceBefore(Edge inc, Edge other);
+
+	public void afterPutIncidenceBefore(Edge inc, Edge other);
+
+	public void beforePutIncidenceAfter(Edge inc, Edge other);
+
+	public void afterPutIncidenceAfter(Edge inc, Edge other);
+
+	/**
 	 * Called before start vertex of Edge <code>e</code> is changed.
 	 * 
 	 * @param e

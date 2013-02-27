@@ -879,4 +879,24 @@ public class ECARuleManager implements GraphChangeListener {
 		}
 	}
 
+	@Override
+	public void beforePutIncidenceAfter(Edge inc, Edge other) {
+		// not handled in ECA
+	}
+
+	@Override
+	public void afterPutIncidenceAfter(Edge inc, Edge other) {
+		// not handled in ECA
+	}
+
+	@Override
+	public void beforePutIncidenceBefore(Edge inc, Edge other) {
+		// not handled in ECA
+	}
+
+	@Override
+	public void afterPutIncidenceBefore(Edge inc, Edge other) {
+		// not handled in ECA
+	}
+
 }
