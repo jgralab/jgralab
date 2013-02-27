@@ -43,8 +43,8 @@ import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.schema.Attribute;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.EnumDomain;
-import de.uni_koblenz.jgralab.schema.GraphClass;
 import de.uni_koblenz.jgralab.schema.RecordDomain;
+import de.uni_koblenz.jgralab.schema.impl.GraphClassImpl;
 
 /**
  * TODO add comment
@@ -369,7 +369,8 @@ public abstract class AttributedElementCodeGenerator<SC extends AttributedElemen
 		code.setVariable("type", attr.getDomain()
 				.getJavaAttributeImplementationTypeName(schemaRootPackageName));
 		code.setVariable("dname", attr.getDomain().getSimpleName());
-		code.setVariable("theGraph", aec instanceof GraphClass ? "" : "graph.");
+		code.setVariable("graphRef",
+				aec.getClass() == GraphClassImpl.class ? "" : "graph.");
 
 		switch (currentCycle) {
 		case ABSTRACT:
@@ -378,11 +379,11 @@ public abstract class AttributedElementCodeGenerator<SC extends AttributedElemen
 		case STDIMPL:
 			code.add(
 					"public void set_#name#(#type# _#name#) {",
-					"\t#theGraph#fireBeforeChangeAttribute(this, \"#name#\", this._#name#, _#name#);",
+					"\t#graphRef#fireBeforeChangeAttribute(this, \"#name#\", this._#name#, _#name#);",
 					"\tObject oldValue = this._#name#;",
 					"\tthis._#name# = _#name#;",
 					"\tgraphModified();",
-					"\t#theGraph#fireAfterChangeAttribute(this, \"#name#\", oldValue, _#name#);",
+					"\t#graphRef#fireAfterChangeAttribute(this, \"#name#\", oldValue, _#name#);",
 					"}");
 			break;
 		case CLASSONLY:
