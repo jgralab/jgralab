@@ -36,7 +36,6 @@ package de.uni_koblenz.jgralab.eca;
 
 import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Graph;
-import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.eca.events.Event;
 import de.uni_koblenz.jgralab.greql.GreqlEnvironment;
 import de.uni_koblenz.jgralab.greql.GreqlQuery;
@@ -74,8 +73,7 @@ public class GreqlCondition<AEC extends AttributedElementClass<AEC, ?>>
 	@Override
 	public boolean evaluate(Event<AEC> event) {
 		AttributedElement<AEC, ?> element = event.getElement();
-		Graph datagraph = element instanceof Graph ? (Graph) element
-				: ((GraphElement<?, ?>) element).getGraph();
+		Graph datagraph = element.getGraph();
 		GreqlQuery query = null;
 		GreqlEnvironment environment = new GreqlEnvironmentAdapter();
 		if (conditionExpression.contains("context")) {

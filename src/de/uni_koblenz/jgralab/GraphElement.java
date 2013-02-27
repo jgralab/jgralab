@@ -55,13 +55,6 @@ public interface GraphElement<SC extends GraphElementClass<SC, IC>, IC extends G
 	public int getId();
 
 	/**
-	 * returns the graph containing this graph element
-	 * 
-	 * @return the graph containing this graph element
-	 */
-	public Graph getGraph();
-
-	/**
 	 * returns true if this GraphElement is still present in the Graph (i.e. not
 	 * deleted). This check is equivalent to getGraph().containsVertex(this) or
 	 * getGraph().containsEdge(this).
@@ -72,37 +65,36 @@ public interface GraphElement<SC extends GraphElementClass<SC, IC>, IC extends G
 	 * removes this graph element
 	 */
 	public void delete();
-	
+
 	/**
 	 * @return true if this GraphElement is temporary
 	 */
 	public boolean isTemporary();
-	
+
 	/**
-	 * For temporary elements: returns a new graph element of the set preliminary type
-	 * that takes the place of this temporary element, throws an exception, if the
-	 * preliminary type is not set.
-	 * For non-temporary elements: returns itself
-	 *         
-	 * @throws TemporaryGraphElementException 
-	 * 			if it is not possible to bless the element to schemaClass
+	 * For temporary elements: returns a new graph element of the set
+	 * preliminary type that takes the place of this temporary element, throws
+	 * an exception, if the preliminary type is not set. For non-temporary
+	 * elements: returns itself
+	 * 
+	 * @throws TemporaryGraphElementException
+	 *             if it is not possible to bless the element to schemaClass
 	 */
 	public IC bless();
-	
+
 	/**
-	 * For temporary elements: returns a new graph element of <code>schemaClass</code> 
-	 * that takes the place of this temporary element.
-	 * For non-temporary elements: returns itself if schemaClass equals the schema 
-	 * class of the element, otherwise it throws an exception
-	 *
+	 * For temporary elements: returns a new graph element of
+	 * <code>schemaClass</code> that takes the place of this temporary element.
+	 * For non-temporary elements: returns itself if schemaClass equals the
+	 * schema class of the element, otherwise it throws an exception
+	 * 
 	 * @param schemaClass
 	 * @return a new graph element of <code>schemaClass</code> that takes the
 	 *         place of this temporary element.
-	 *         
-	 * @throws TemporaryGraphElementException 
-	 * 			if it is not possible to bless the element to schemaClass
+	 * 
+	 * @throws TemporaryGraphElementException
+	 *             if it is not possible to bless the element to schemaClass
 	 */
 	public IC bless(SC schemaClass);
 
-	
 }

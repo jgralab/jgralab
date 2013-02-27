@@ -150,6 +150,11 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 	}
 
 	@Override
+	public Graph getGraph() {
+		return this;
+	}
+
+	@Override
 	public void initializeAttributesWithDefaultValues() {
 		for (Attribute attr : getAttributedElementClass().getAttributeList()) {
 			try {

@@ -63,52 +63,62 @@ public interface AttributedElement<SC extends AttributedElementClass<SC, IC>, IC
 	public Class<? extends IC> getSchemaClass();
 
 	/**
+	 * returns the graph containing this element
+	 * 
+	 * @return the graph containing this element
+	 */
+	public Graph getGraph();
+
+	/**
 	 * @return the {@link GraphClass} of this {@link AttributedElement}
 	 */
 	public GraphClass getGraphClass();
 
 	/**
-	 * Reads a new value for an {@link de.uni_koblenz.jgralab.schema.Attribute} from a 
-	 * {@code String} value and sets it
+	 * Reads a new value for an {@link de.uni_koblenz.jgralab.schema.Attribute}
+	 * from a {@code String} value and sets it
 	 * 
-	 * @param attributeName 
-	 * 				name of the {@link  de.uni_koblenz.jgralab.schema.Attribute} to set
+	 * @param attributeName
+	 *            name of the {@link de.uni_koblenz.jgralab.schema.Attribute} to
+	 *            set
 	 * @param value
-	 * 				the {@code String} value to read
+	 *            the {@code String} value to read
 	 * 
 	 * @throws GraphIOException
-	 * 				if the {@code value} can not become parsed correctly
-	 * @throws NoSuchAttributeException 
-	 * 				if the {@code attributeName} is not the name of a valid 
-	 * 				{@link  de.uni_koblenz.jgralab.schema.Attribute}
+	 *             if the {@code value} can not become parsed correctly
+	 * @throws NoSuchAttributeException
+	 *             if the {@code attributeName} is not the name of a valid
+	 *             {@link de.uni_koblenz.jgralab.schema.Attribute}
 	 */
 	public void readAttributeValueFromString(String attributeName, String value)
 			throws GraphIOException, NoSuchAttributeException;
 
 	/**
-	 * Creates a new {@code String} value from the current value of the given 
+	 * Creates a new {@code String} value from the current value of the given
 	 * {@link de.uni_koblenz.jgralab.schema.Attribute}
 	 * 
-	 * @param attributeName 
-	 * 				name of the {@link  de.uni_koblenz.jgralab.schema.Attribute} 
-	 * 				to create a {@link java.lang.String} value of
-	 * @return the String representation of the given 
-	 * 			{@link  de.uni_koblenz.jgralab.schema.Attribute} value
+	 * @param attributeName
+	 *            name of the {@link de.uni_koblenz.jgralab.schema.Attribute} to
+	 *            create a {@link java.lang.String} value of
+	 * @return the String representation of the given
+	 *         {@link de.uni_koblenz.jgralab.schema.Attribute} value
 	 * 
 	 * @throws IOException
 	 * @throws GraphIOException
 	 * @throws NoSuchAttributeException
-	 * 				if the {@code attributeName} is not the name of a valid 
-	 * 				{@link  de.uni_koblenz.jgralab.schema.Attribute}
+	 *             if the {@code attributeName} is not the name of a valid
+	 *             {@link de.uni_koblenz.jgralab.schema.Attribute}
 	 */
 	public String writeAttributeValueToString(String attributeName)
 			throws IOException, GraphIOException, NoSuchAttributeException;
 
-	/**Creates a new {@code String} value from the current value of the given 
-	 * {@link de.uni_koblenz.jgralab.schema.Attribute} with the given {@link GraphIO}
+	/**
+	 * Creates a new {@code String} value from the current value of the given
+	 * {@link de.uni_koblenz.jgralab.schema.Attribute} with the given
+	 * {@link GraphIO}
 	 * 
-	 * @param io 
-	 * 				the {@link GraphIO} to create the {@code String} value with
+	 * @param io
+	 *            the {@link GraphIO} to create the {@code String} value with
 	 * @throws IOException
 	 * @throws GraphIOException
 	 */
@@ -116,13 +126,13 @@ public interface AttributedElement<SC extends AttributedElementClass<SC, IC>, IC
 			GraphIOException;
 
 	/**
-	 * Reads a new value for an {@link de.uni_koblenz.jgralab.schema.Attribute} from a 
-	 * {@link GraphIO} value and sets it
+	 * Reads a new value for an {@link de.uni_koblenz.jgralab.schema.Attribute}
+	 * from a {@link GraphIO} value and sets it
 	 * 
 	 * @param io
-	 * 				the {@link GraphIO} object to read from
+	 *            the {@link GraphIO} object to read from
 	 * @throws GraphIOException
-	 * 				if the {@link GraphIO} can not become read correctly
+	 *             if the {@link GraphIO} can not become read correctly
 	 */
 	public void readAttributeValues(GraphIO io) throws GraphIOException;
 
@@ -131,47 +141,50 @@ public interface AttributedElement<SC extends AttributedElementClass<SC, IC>, IC
 	 * specified by its {@code name}.
 	 * 
 	 * @param name
-	 * 				the name of the {@link de.uni_koblenz.jgralab.schema.Attribute} 
-	 * 				to get the value for
+	 *            the name of the
+	 *            {@link de.uni_koblenz.jgralab.schema.Attribute} to get the
+	 *            value for
 	 * @return the found {@link de.uni_koblenz.jgralab.schema.Attribute} value
-	 *  
+	 * 
 	 * @throws NoSuchAttributeException
-	 * 				if the {@code attributeName} is not the name of a valid 
-	 * 				{@link  de.uni_koblenz.jgralab.schema.Attribute}
+	 *             if the {@code attributeName} is not the name of a valid
+	 *             {@link de.uni_koblenz.jgralab.schema.Attribute}
 	 */
 	public <T> T getAttribute(String name) throws NoSuchAttributeException;
 
 	/**
 	 * Sets the {@link de.uni_koblenz.jgralab.schema.Attribute} specified by the
 	 * given {@code name} to the given value.
-	 *  
+	 * 
 	 * @param name
-	 * 				the name of the {@link de.uni_koblenz.jgralab.schema.Attribute}
-	 * 				to set
-	 * @param data 
-	 * 				the new value of {@link de.uni_koblenz.jgralab.schema.Attribute}
+	 *            the name of the
+	 *            {@link de.uni_koblenz.jgralab.schema.Attribute} to set
+	 * @param data
+	 *            the new value of
+	 *            {@link de.uni_koblenz.jgralab.schema.Attribute}
 	 * @throws NoSuchAttributeException
 	 */
 	public <T> void setAttribute(String name, T data)
 			throws NoSuchAttributeException;
 
 	/**
-	 * @return the {@link de.uni_koblenz.jgralab.schema.Schema} this 
-	 * 			{@link AttributedElement} belongs to
+	 * @return the {@link de.uni_koblenz.jgralab.schema.Schema} this
+	 *         {@link AttributedElement} belongs to
 	 */
 	public Schema getSchema();
 
 	/**
-	 * Initializes all values for all {@link de.uni_koblenz.jgralab.schema.Attribute}s 
-	 * with their {@code default} values.
+	 * Initializes all values for all
+	 * {@link de.uni_koblenz.jgralab.schema.Attribute}s with their
+	 * {@code default} values.
 	 */
 	void initializeAttributesWithDefaultValues();
 
 	/**
 	 * @param cls
-	 * 				schema class to test
-	 * @return true, iff this {@link AttributedElement} is an instance of the 
-	 * 			given schema class {@code cls}.
+	 *            schema class to test
+	 * @return true, iff this {@link AttributedElement} is an instance of the
+	 *         given schema class {@code cls}.
 	 */
 	public boolean isInstanceOf(SC cls);
 }
