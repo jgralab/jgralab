@@ -34,6 +34,7 @@
  */
 package de.uni_koblenz.jgralab.utilities.gui.undo;
 
+import javax.swing.UIManager;
 import javax.swing.undo.CompoundEdit;
 
 /**
@@ -61,4 +62,29 @@ public class CompoundGraphEdit extends CompoundEdit {
 		return name;
 	}
 
+	@Override
+	public String getUndoPresentationName() {
+		String name = getPresentationName();
+		if (!"".equals(name)) {
+			name = UIManager.getString("AbstractUndoableEdit.undoText") + " "
+					+ name;
+		} else {
+			name = UIManager.getString("AbstractUndoableEdit.undoText");
+		}
+
+		return name;
+	}
+
+	@Override
+	public String getRedoPresentationName() {
+		String name = getPresentationName();
+		if (!"".equals(name)) {
+			name = UIManager.getString("AbstractUndoableEdit.redoText") + " "
+					+ name;
+		} else {
+			name = UIManager.getString("AbstractUndoableEdit.redoText");
+		}
+
+		return name;
+	}
 }
