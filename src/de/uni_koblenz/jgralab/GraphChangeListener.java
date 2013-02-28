@@ -44,7 +44,7 @@ public interface GraphChangeListener {
 	 * Called before a Vertex of class <code>vc</code> is created.
 	 * 
 	 * @param vc
-	 *            the Class of the new Vertex
+	 *            the {@link VertexClass} of the new Vertex
 	 */
 	public void beforeCreateVertex(VertexClass vc);
 
@@ -52,7 +52,7 @@ public interface GraphChangeListener {
 	 * Called after Vertex <code>v</code> was created.
 	 * 
 	 * @param v
-	 *            the new created Vertex
+	 *            the new {@link Vertex}
 	 */
 	public void afterCreateVertex(Vertex v);
 
@@ -60,7 +60,7 @@ public interface GraphChangeListener {
 	 * Called before Vertex <code>v</code> is deleted.
 	 * 
 	 * @param v
-	 *            the Vertex to delete
+	 *            the {@link Vertex} to delete
 	 */
 	public void beforeDeleteVertex(Vertex v);
 
@@ -68,7 +68,7 @@ public interface GraphChangeListener {
 	 * Called after a Vertex of class <code>vc</code> was deleted.
 	 * 
 	 * @param vc
-	 *            the Class of the deleted Vertex
+	 *            the {@link VertexClass} of the deleted {@link Vertex}
 	 * @param finalDelete
 	 *            <code>true</code> if no more vertices are deleted,
 	 *            <code>false</code> if more vertices are queued to be deleted
@@ -80,9 +80,9 @@ public interface GraphChangeListener {
 	 * Called before an Edge of class <code>ec</code> is created.
 	 * 
 	 * @param ec
-	 *            the Class of the new Edge
+	 *            the {@link EdgeClass} of the new {@link Edge}
 	 * @param alpha
-	 *            start Vertex for new Edge
+	 *            start {@link Vertex} for new Edge
 	 * @param omega
 	 *            end Vertex for new Edge
 	 */
@@ -92,7 +92,7 @@ public interface GraphChangeListener {
 	 * Called after the Edge <code>e</code> was created.
 	 * 
 	 * @param e
-	 *            the new created Edge
+	 *            the new {@link Edge}
 	 */
 	public void afterCreateEdge(Edge e);
 
@@ -100,7 +100,7 @@ public interface GraphChangeListener {
 	 * Called before the Edge <code>e</code> is deleted.
 	 * 
 	 * @param e
-	 *            the Edge to delete
+	 *            the {@link Edge} to delete
 	 */
 	public void beforeDeleteEdge(Edge e);
 
@@ -108,19 +108,40 @@ public interface GraphChangeListener {
 	 * Called after an Edge of class <code>ec</code> was deleted.
 	 * 
 	 * @param ec
-	 *            the Class of the deleted Edge
+	 *            the {@link EdgeClass} of the deleted Edge
 	 */
 	public void afterDeleteEdge(EdgeClass ec, Vertex oldAlpha, Vertex oldOmega);
 
 	/**
-	 * Called before an Edge is moved.
+	 * Called before Edge <code>inc</code> is put before <code>other</code>.
+	 * 
+	 * @param inc
+	 * @param other
 	 */
 	public void beforePutIncidenceBefore(Edge inc, Edge other);
 
+	/**
+	 * Called after Edge <code>inc</code> is put before <code>other</code>.
+	 * 
+	 * @param inc
+	 * @param other
+	 */
 	public void afterPutIncidenceBefore(Edge inc, Edge other);
 
+	/**
+	 * Called before Edge <code>inc</code> is put after <code>other</code>.
+	 * 
+	 * @param inc
+	 * @param other
+	 */
 	public void beforePutIncidenceAfter(Edge inc, Edge other);
 
+	/**
+	 * Called after Edge <code>inc</code> is put after <code>other</code>.
+	 * 
+	 * @param inc
+	 * @param other
+	 */
 	public void afterPutIncidenceAfter(Edge inc, Edge other);
 
 	/**
@@ -174,6 +195,11 @@ public interface GraphChangeListener {
 	/**
 	 * Called before attribute <code>attributeName</code> of
 	 * <code>element</code> is changed.
+	 * 
+	 * @param element
+	 * @param attributeName
+	 * @param oldValue
+	 * @param newValue
 	 */
 	public <AEC extends AttributedElementClass<AEC, ?>> void beforeChangeAttribute(
 			AttributedElement<AEC, ?> element, String attributeName,
@@ -182,6 +208,11 @@ public interface GraphChangeListener {
 	/**
 	 * Called after attribute <code>attributeName</code> of <code>element</code>
 	 * was changed.
+	 * 
+	 * @param element
+	 * @param attributeName
+	 * @param oldValue
+	 * @param newValue
 	 */
 	public <AEC extends AttributedElementClass<AEC, ?>> void afterChangeAttribute(
 			AttributedElement<AEC, ?> element, String attributeName,

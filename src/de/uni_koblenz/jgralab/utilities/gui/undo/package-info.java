@@ -32,33 +32,10 @@
  * non-source form of such a combination shall include the source code for
  * the parts of JGraLab used as well as that of the covered work.
  */
+/**
+ * This package contains a {@link de.uni_koblenz.jgralab.utilities.gui.undo.GraphUndoManager} which 
+ * provides undo/redo functionality for graph changes.
+ */
+
 package de.uni_koblenz.jgralab.utilities.gui.undo;
 
-import javax.swing.undo.CompoundEdit;
-
-/**
- * {@link CompoundGraphEdit} basically is named {@link CompoundEdit}. It can be
- * used to group many simple graph edits into application specific edit units.
- * 
- * @author ist@uni-koblenz.de
- */
-public class CompoundGraphEdit extends CompoundEdit {
-	private static final long serialVersionUID = 1061803791604107837L;
-	private String name;
-
-	/**
-	 * Creates a {@link CompoundGraphEdit} named <code>name</code>.
-	 * 
-	 * @param name
-	 *            the name of the new {@link CompoundGraphEdit}
-	 */
-	public CompoundGraphEdit(String name) {
-		this.name = name;
-	}
-
-	@Override
-	public String getPresentationName() {
-		return name;
-	}
-
-}
