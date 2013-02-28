@@ -46,7 +46,7 @@ public class UndoTest {
 	}
 
 	@Test
-	public void testUndoToEmptyGraph() {
+	public void testCreateElements() {
 		Map<String, String> before = storeState();
 		createRandomGraph();
 		mgr.undo();
@@ -166,6 +166,180 @@ public class UndoTest {
 		assertEquals(afterModification, afterRedo);
 	}
 
+	@Test
+	public void testPutBefore() {
+		g.set_name("graph");
+		Node a = cv();
+		Node b = cv();
+		Node c = cv();
+		Node d = cv();
+
+		@SuppressWarnings("unused")
+		Link ab = ce(a, b);
+		Link ac = ce(a, c);
+		@SuppressWarnings("unused")
+		Link ad = ce(a, c);
+		@SuppressWarnings("unused")
+		Link cd = ce(c, d);
+		@SuppressWarnings("unused")
+		Link bb = ce(b, b);
+		Link ca = ce(c, a);
+
+		Map<String, String> initial = storeState();
+
+		ca.getReversedEdge().putIncidenceBefore(ac);
+
+		Map<String, String> afterMod = storeState();
+
+		mgr.undo();
+
+		Map<String, String> afterUndo = storeState();
+		assertEquals(initial, afterUndo);
+
+		mgr.redo();
+		Map<String, String> afterRedo = storeState();
+		assertEquals(afterMod, afterRedo);
+	}
+
+	@Test
+	public void testPutAfter() {
+		Node a = cv();
+		Node b = cv();
+		Node c = cv();
+		Node d = cv();
+
+		Link ab = ce(a, b);
+		@SuppressWarnings("unused")
+		Link ac = ce(a, c);
+		@SuppressWarnings("unused")
+		Link ad = ce(a, c);
+		@SuppressWarnings("unused")
+		Link cd = ce(c, d);
+		@SuppressWarnings("unused")
+		Link bb = ce(b, b);
+		Link ca = ce(c, a);
+
+		Map<String, String> initial = storeState();
+
+		ca.getReversedEdge().putIncidenceBefore(ab);
+
+		Map<String, String> afterMod = storeState();
+
+		mgr.undo();
+
+		Map<String, String> afterUndo = storeState();
+		assertEquals(initial, afterUndo);
+
+		mgr.redo();
+		Map<String, String> afterRedo = storeState();
+		assertEquals(afterMod, afterRedo);
+	}
+
+	@Test
+	public void testSetAlpha() {
+		Node a = cv();
+		Node b = cv();
+		Node c = cv();
+		Node d = cv();
+
+		@SuppressWarnings("unused")
+		Link ab = ce(a, b);
+		@SuppressWarnings("unused")
+		Link ac = ce(a, c);
+		@SuppressWarnings("unused")
+		Link ad = ce(a, c);
+		@SuppressWarnings("unused")
+		Link cd = ce(c, d);
+		@SuppressWarnings("unused")
+		Link bb = ce(b, b);
+		Link ca = ce(c, a);
+
+		Map<String, String> initial = storeState();
+
+		ca.setAlpha(b);
+
+		Map<String, String> afterMod = storeState();
+
+		mgr.undo();
+
+		Map<String, String> afterUndo = storeState();
+		assertEquals(initial, afterUndo);
+
+		mgr.redo();
+		Map<String, String> afterRedo = storeState();
+		assertEquals(afterMod, afterRedo);
+	}
+
+	@Test
+	public void testSetOmega() {
+		Node a = cv();
+		Node b = cv();
+		Node c = cv();
+		Node d = cv();
+
+		@SuppressWarnings("unused")
+		Link ab = ce(a, b);
+		@SuppressWarnings("unused")
+		Link ac = ce(a, c);
+		@SuppressWarnings("unused")
+		Link ad = ce(a, c);
+		@SuppressWarnings("unused")
+		Link cd = ce(c, d);
+		@SuppressWarnings("unused")
+		Link bb = ce(b, b);
+		Link ca = ce(c, a);
+
+		Map<String, String> initial = storeState();
+
+		ca.setOmega(b);
+
+		Map<String, String> afterMod = storeState();
+
+		mgr.undo();
+
+		Map<String, String> afterUndo = storeState();
+		assertEquals(initial, afterUndo);
+
+		mgr.redo();
+		Map<String, String> afterRedo = storeState();
+		assertEquals(afterMod, afterRedo);
+	}
+
+	@Test
+	public void testChangeAttribute() {
+		Node a = cv();
+		Link l = ce(a, a);
+		{
+			// change graph attribute
+			String oldName = g.get_name();
+			g.set_name("hugo");
+			mgr.undo();
+			assertEquals(oldName, g.get_name());
+			mgr.redo();
+			assertEquals("hugo", g.get_name());
+		}
+		{
+			// change vertex attribute
+			String oldName = a.get_name();
+			a.set_name("hugo");
+			mgr.undo();
+			assertEquals(oldName, a.get_name());
+			mgr.redo();
+			assertEquals("hugo", a.get_name());
+		}
+		{
+			// change edge attribute
+			String oldName = l.get_name();
+			l.set_name("hugo");
+			mgr.undo();
+			assertEquals(oldName, l.get_name());
+			mgr.redo();
+			assertEquals("hugo", l.get_name());
+		}
+	}
+
+	// internal stuff
+
 	private char vn = 'a';
 
 	private Node cv() {
@@ -202,8 +376,8 @@ public class UndoTest {
 	}
 
 	private Map<String, String> storeState() {
-		System.out
-				.println("-------------------------------------------------------------");
+		// System.out
+		// .println("-------------------------------------------------------------");
 		Map<String, String> state = new TreeMap<String, String>();
 		@SuppressWarnings("unused")
 		int i = 0;
@@ -219,7 +393,7 @@ public class UndoTest {
 			}
 			String val = sb.toString();
 			state.put(key, val);
-			System.out.println(v + "\t" + val);
+			// System.out.println(v + "\t" + val);
 		}
 		i = 0;
 		for (Edge e : g.edges()) {
@@ -230,11 +404,8 @@ public class UndoTest {
 					+ e.getAlpha().getAttribute("name") + "->"
 					+ e.getOmega().getAttribute("name");
 			state.put(key, val);
-			System.out.println(e + "\t" + val);
+			// System.out.println(e + "\t" + val);
 		}
-		// for (String key : state.keySet()) {
-		// System.out.println(key + "\t" + state.get(key));
-		// }
 		return state;
 	}
 }

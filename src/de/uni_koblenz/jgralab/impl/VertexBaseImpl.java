@@ -367,7 +367,10 @@ public abstract class VertexBaseImpl extends
 		assert target.getThis() == moved.getThis();
 		assert target != moved;
 
+		graph.fireBeforePutIncidenceAfter(moved, target);
+
 		if ((target == moved) || (target.getNextIncidenceInISeq() == moved)) {
+			graph.fireAfterPutIncidenceAfter(moved, target);
 			return;
 		}
 
@@ -402,6 +405,7 @@ public abstract class VertexBaseImpl extends
 
 		target.setNextIncidenceInternal(moved);
 		incidenceListModified();
+		graph.fireAfterPutIncidenceAfter(moved, target);
 	}
 
 	@Override
@@ -413,7 +417,10 @@ public abstract class VertexBaseImpl extends
 		assert target.getThis() == moved.getThis();
 		assert target != moved;
 
+		graph.fireBeforePutIncidenceBefore(moved, target);
+
 		if ((target == moved) || (target.getPrevIncidenceInISeq() == moved)) {
+			graph.fireAfterPutIncidenceBefore(moved, target);
 			return;
 		}
 
@@ -447,6 +454,7 @@ public abstract class VertexBaseImpl extends
 		moved.setNextIncidenceInternal(target);
 		target.setPrevIncidenceInternal(moved);
 		incidenceListModified();
+		graph.fireAfterPutIncidenceBefore(moved, target);
 	}
 
 	/*

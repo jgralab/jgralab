@@ -120,7 +120,7 @@ public class GraphUndoManager extends UndoManager implements
 			this.event = event;
 			aec = el.getAttributedElementClass();
 			elementId = (el instanceof Vertex) ? ((Vertex) el).getId()
-					: (el instanceof Edge) ? -((Edge) el).getId() : 0;
+					: (el instanceof Edge) ? -Math.abs(((Edge) el).getId()) : 0;
 
 			elementVersion = elementVersion(elementId);
 			if (first == null) {
@@ -204,17 +204,17 @@ public class GraphUndoManager extends UndoManager implements
 
 		// remove comments below to print undo/redo operations to System.out
 
-		@Override
-		public void undo() throws CannotUndoException {
-			System.out.println("UNDO " + this);
-			super.undo();
-		}
-
-		@Override
-		public void redo() throws CannotRedoException {
-			System.out.println("REDO " + this);
-			super.redo();
-		}
+		// @Override
+		// public void undo() throws CannotUndoException {
+		// System.out.println("UNDO " + this);
+		// super.undo();
+		// }
+		//
+		// @Override
+		// public void redo() throws CannotRedoException {
+		// System.out.println("REDO " + this);
+		// super.redo();
+		// }
 	}
 
 	/**
@@ -395,8 +395,8 @@ public class GraphUndoManager extends UndoManager implements
 			omegaId = e.getOmega().getId();
 			omegaVersion = elementVersion(omegaId);
 			TraversalContext tc = graph.setTraversalContext(null);
-			alphaInc = incidenceNumber(e.getAlpha(), e);
-			omegaInc = incidenceNumber(e.getOmega(), e.getReversedEdge());
+			alphaInc = incidencePosition(e.getAlpha(), e);
+			omegaInc = incidencePosition(e.getOmega(), e.getReversedEdge());
 			graph.setTraversalContext(tc);
 		}
 
@@ -456,12 +456,55 @@ public class GraphUndoManager extends UndoManager implements
 	}
 
 	protected class ChangeIncidenceOrderEdit extends GraphEdit {
+		private static final long serialVersionUID = 1553029429775858722L;
 		private int otherId, otherVersion, oldIncidencePos;
+		private boolean thisOutgoing, otherOutgoing;
 
 		public ChangeIncidenceOrderEdit(GraphEditEvent event, Edge inc,
 				Edge other) {
 			super(event, inc);
-			// TODO
+			otherId = -Math.abs(other.getId());
+			otherVersion = elementVersion(otherId);
+			thisOutgoing = inc.isNormal();
+			otherOutgoing = other.isNormal();
+			TraversalContext tc = graph.setTraversalContext(null);
+			oldIncidencePos = incidencePosition(inc.getThis(), inc);
+			graph.setTraversalContext(tc);
+		}
+
+		@Override
+		public String toString() {
+			return super.toString() + ", old position=" + oldIncidencePos;
+		}
+
+		@Override
+		public void undo() throws CannotUndoException {
+			super.undo();
+			Edge inc = graph.getEdge(thisOutgoing ? -elementId : elementId);
+			TraversalContext tc = graph.setTraversalContext(null);
+			putIncidenceAt(inc.getThis(), inc, oldIncidencePos);
+			graph.setTraversalContext(tc);
+		}
+
+		@Override
+		public void redo() throws CannotRedoException {
+			super.redo();
+			Edge inc = graph.getEdge(thisOutgoing ? -elementId : elementId);
+			Edge other = graph.getEdge(otherOutgoing ? -otherId : otherId);
+			if (event == GraphEditEvent.PUT_INCIDENCE_AFTER) {
+				inc.putIncidenceAfter(other);
+			} else {
+				inc.putIncidenceBefore(other);
+			}
+		}
+
+		@Override
+		void changeEdgeId(int from, int fromVersion, int to, int toVersion) {
+			super.changeEdgeId(from, fromVersion, to, toVersion);
+			if (otherId == from && otherVersion == fromVersion) {
+				otherId = to;
+				otherVersion = toVersion;
+			}
 		}
 	}
 
@@ -482,9 +525,9 @@ public class GraphUndoManager extends UndoManager implements
 			newVertexVersion = elementVersion(newVertexId);
 			TraversalContext tc = graph.setTraversalContext(null);
 			if (event == GraphEditEvent.CHANGE_ALPHA) {
-				oldIncidencePosition = incidenceNumber(e.getAlpha(), e);
+				oldIncidencePosition = incidencePosition(e.getAlpha(), e);
 			} else {
-				oldIncidencePosition = incidenceNumber(e.getOmega(),
+				oldIncidencePosition = incidencePosition(e.getOmega(),
 						e.getReversedEdge());
 			}
 			graph.setTraversalContext(tc);
@@ -747,11 +790,6 @@ public class GraphUndoManager extends UndoManager implements
 
 	@Override
 	public void beforePutIncidenceAfter(Edge inc, Edge other) {
-		// do nothing
-	}
-
-	@Override
-	public void afterPutIncidenceAfter(Edge inc, Edge other) {
 		if (!isWorking()) {
 			addEdit(new ChangeIncidenceOrderEdit(
 					GraphEditEvent.PUT_INCIDENCE_AFTER, inc, other));
@@ -759,21 +797,25 @@ public class GraphUndoManager extends UndoManager implements
 	}
 
 	@Override
-	public void beforePutIncidenceBefore(Edge inc, Edge other) {
+	public void afterPutIncidenceAfter(Edge inc, Edge other) {
 		// do nothing
 	}
 
 	@Override
-	public void afterPutIncidenceBefore(Edge inc, Edge other) {
+	public void beforePutIncidenceBefore(Edge inc, Edge other) {
 		if (!isWorking()) {
 			addEdit(new ChangeIncidenceOrderEdit(
 					GraphEditEvent.PUT_INCIDENCE_BEFORE, inc, other));
 		}
 	}
 
+	@Override
+	public void afterPutIncidenceBefore(Edge inc, Edge other) {
+	}
+
 	// internal stuff
 
-	private int incidenceNumber(Vertex v, Edge e) {
+	private int incidencePosition(Vertex v, Edge e) {
 		assert v != null && v.isValid();
 		assert e != null && e.isValid();
 		int n = 0;
@@ -832,5 +874,4 @@ public class GraphUndoManager extends UndoManager implements
 	protected void setWorking(boolean working) {
 		this.working = working;
 	}
-
 }
