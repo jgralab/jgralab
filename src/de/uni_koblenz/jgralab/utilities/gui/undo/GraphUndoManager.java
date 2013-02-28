@@ -121,8 +121,9 @@ public class GraphUndoManager extends UndoManager implements
 			aec = el.getAttributedElementClass();
 			elementId = (el instanceof Vertex) ? ((Vertex) el).getId()
 					: (el instanceof Edge) ? -Math.abs(((Edge) el).getId()) : 0;
-
 			elementVersion = elementVersion(elementId);
+
+			// append this GraphEdit to the doubly linked list of live edits
 			if (first == null) {
 				first = last = this;
 			} else {
@@ -148,6 +149,59 @@ public class GraphUndoManager extends UndoManager implements
 				return version;
 			}
 			return v;
+		}
+
+		/**
+		 * Recreate a {@link Vertex} of class <code>vc</code> and correct the
+		 * vertex references of all live {@link GraphEdit}s to the new id and
+		 * version values.
+		 * 
+		 * @param vc
+		 *            {@link VertexClass} of the Vertex to be created.
+		 * @return
+		 */
+		Vertex resurrectVertex(VertexClass vc) {
+			Vertex v = graph.createVertex(vc);
+			int oldId = elementId;
+			int oldVersion = elementVersion;
+			elementId = v.getId();
+			elementVersion = ++version;
+			versions.put(elementId, elementVersion);
+			// System.out.println("\tWAS v" + oldId + "-" + oldVersion +
+			// ", is v"
+			// + elementId + "-" + elementVersion);
+			for (GraphEdit g = first; g != null; g = g.next) {
+				g.changeVertexId(oldId, oldVersion, elementId, elementVersion);
+			}
+			return v;
+		}
+
+		/**
+		 * Recreate an {@link Edge} of class <code>ec</code> from
+		 * <code>alpha</code> to <code>omega</code> and correct the edge
+		 * references of all live {@link GraphEdit}s to the new id and version.
+		 * 
+		 * @param ec
+		 *            {@link EdgeClass} of the Edge to be created.
+		 * @param alpha
+		 *            start Vertex
+		 * @param omega
+		 *            end Vertex
+		 * @return
+		 */
+		Edge resurrectEdge(EdgeClass ec, Vertex alpha, Vertex omega) {
+			Edge e = graph.createEdge((EdgeClass) aec, alpha, omega);
+			int oldId = elementId;
+			int oldVersion = elementVersion;
+			elementId = -e.getId();
+			elementVersion = ++version;
+			versions.put(elementId, elementVersion);
+			// System.out.println("\tWAS e" + (-oldId) + "-" + oldVersion
+			// + ", is e" + (-elementId) + "-" + elementVersion);
+			for (GraphEdit g = first; g != null; g = g.next) {
+				g.changeEdgeId(oldId, oldVersion, elementId, elementVersion);
+			}
+			return e;
 		}
 
 		@Override
@@ -236,18 +290,7 @@ public class GraphUndoManager extends UndoManager implements
 		@Override
 		public void redo() throws CannotRedoException {
 			super.redo();
-			Vertex v = graph.createVertex((VertexClass) aec);
-			int oldId = elementId;
-			int oldVersion = elementVersion;
-			elementId = v.getId();
-			elementVersion = ++version;
-			versions.put(elementId, elementVersion);
-			// System.out.println("\tWAS v" + oldId + "-" + oldVersion +
-			// ", is v"
-			// + elementId + "-" + elementVersion);
-			for (GraphEdit g = first; g != null; g = g.next) {
-				g.changeVertexId(oldId, oldVersion, elementId, elementVersion);
-			}
+			resurrectVertex((VertexClass) aec);
 		}
 	}
 
@@ -278,22 +321,15 @@ public class GraphUndoManager extends UndoManager implements
 			super.redo();
 			Vertex alpha = graph.getVertex(alphaId);
 			Vertex omega = graph.getVertex(omegaId);
-			Edge e = graph.createEdge((EdgeClass) aec, alpha, omega);
-			int oldId = elementId;
-			int oldVersion = elementVersion;
-			elementId = -e.getId();
-			elementVersion = ++version;
-			versions.put(elementId, elementVersion);
-			// System.out.println("\tWAS e" + (-oldId) + "-" + oldVersion
-			// + ", is e" + (-elementId) + "-" + elementVersion);
-			for (GraphEdit g = first; g != null; g = g.next) {
-				g.changeEdgeId(oldId, oldVersion, elementId, elementVersion);
-			}
+			resurrectEdge((EdgeClass) aec, alpha, omega);
 		}
 
 		@Override
 		public void changeVertexId(int from, int fromVersion, int to,
 				int toVersion) {
+			// no super call since this edit is an edge edit
+
+			// update references of alpha and omega vertices
 			if (alphaId == from && alphaVersion == fromVersion) {
 				alphaId = to;
 				alphaVersion = toVersion;
@@ -338,8 +374,11 @@ public class GraphUndoManager extends UndoManager implements
 	}
 
 	/**
-	 * Records deletion of a {@link Vertex}. This edit does not represent
-	 * automatic deletions of incident edges, those are recorded in a special
+	 * Records deletion of a {@link Vertex}.
+	 * 
+	 * This edit does not represent automatic deletions of incident edges, those
+	 * are recorded in a special {@link CompoundEdit}. When cascading deletes of
+	 * composite children happen, those are also recorded in that
 	 * {@link CompoundEdit}.
 	 */
 	protected class DeleteVertexEdit extends DeleteElementEdit {
@@ -352,18 +391,7 @@ public class GraphUndoManager extends UndoManager implements
 		@Override
 		public void undo() throws CannotUndoException {
 			super.undo();
-			Vertex v = graph.createVertex((VertexClass) aec);
-			int oldId = elementId;
-			int oldVersion = elementVersion;
-			elementId = v.getId();
-			elementVersion = ++version;
-			versions.put(elementId, elementVersion);
-			// System.out.println("\tWAS v" + oldId + "-" + oldVersion +
-			// ", is v"
-			// + elementId + "-" + elementVersion);
-			for (GraphEdit g = first; g != null; g = g.next) {
-				g.changeVertexId(oldId, oldVersion, elementId, elementVersion);
-			}
+			Vertex v = resurrectVertex((VertexClass) aec);
 			restoreAttributes(v);
 		}
 
@@ -376,11 +404,6 @@ public class GraphUndoManager extends UndoManager implements
 
 	/**
 	 * Records deletion of an {@link Edge}.
-	 * 
-	 * Upon undo, the resurrected edge is put into the correct places in the
-	 * incidence sequences. If this {@link DeleteEdgeEdit} is part of a
-	 * {@link Vertex} deletion, incidence numbers are corrected only after all
-	 * incident edges are resurrected.
 	 */
 	protected class DeleteEdgeEdit extends DeleteElementEdit {
 		private static final long serialVersionUID = 6430961207052596036L;
@@ -395,37 +418,35 @@ public class GraphUndoManager extends UndoManager implements
 			omegaId = e.getOmega().getId();
 			omegaVersion = elementVersion(omegaId);
 			TraversalContext tc = graph.setTraversalContext(null);
-			alphaInc = incidencePosition(e.getAlpha(), e);
-			omegaInc = incidencePosition(e.getOmega(), e.getReversedEdge());
+			alphaInc = incidencePosition(e);
+			omegaInc = incidencePosition(e.getReversedEdge());
 			graph.setTraversalContext(tc);
 		}
 
 		@Override
 		public void undo() throws CannotUndoException {
+			// Upon undo, the resurrected edge is put into the correct places in
+			// the incidence sequences. If this {@link DeleteEdgeEdit} is part
+			// of a {@link Vertex} deletion, incidence numbers are corrected
+			// only after all incident edges are resurrected.
 			super.undo();
 			Vertex alpha = graph.getVertex(alphaId);
 			Vertex omega = graph.getVertex(omegaId);
-			Edge e = graph.createEdge((EdgeClass) aec, alpha, omega);
-			int oldId = elementId;
-			int oldVersion = elementVersion;
-			elementId = -e.getId();
-			elementVersion = ++version;
-			versions.put(elementId, elementVersion);
-			// System.out.println("\tWAS e" + (-oldId) + "-" + oldVersion
-			// + ", is e" + (-elementId) + "-" + elementVersion);
-			for (GraphEdit g = first; g != null; g = g.next) {
-				g.changeEdgeId(oldId, oldVersion, elementId, elementVersion);
-			}
+			Edge e = resurrectEdge((EdgeClass) aec, alpha, omega);
 			restoreAttributes(e);
-			if (!undoDeleteVertex) {
-				TraversalContext tc = graph.setTraversalContext(null);
-				putIncidenceAt(e.getAlpha(), e, alphaInc);
-				putIncidenceAt(e.getOmega(), e.getReversedEdge(), omegaInc);
-				graph.setTraversalContext(tc);
-			} else {
+			if (undoDeleteVertex) {
+				// undo is part of undoDeleteVertex
+				// record required changes
 				correctIncidences.add(e);
 				correctPositions.add(alphaInc);
 				correctPositions.add(omegaInc);
+			} else {
+				// undo is not part of undoDeleteVertex
+				// correct incidence positions
+				TraversalContext tc = graph.setTraversalContext(null);
+				putIncidenceAt(e, alphaInc);
+				putIncidenceAt(e.getReversedEdge(), omegaInc);
+				graph.setTraversalContext(tc);
 			}
 		}
 
@@ -438,6 +459,9 @@ public class GraphUndoManager extends UndoManager implements
 		@Override
 		public void changeVertexId(int from, int fromVersion, int to,
 				int toVersion) {
+			// no super call since this is an edge edit
+
+			// adjust alpha and omega references
 			if (alphaId == from && alphaVersion == fromVersion) {
 				alphaId = to;
 				alphaVersion = toVersion;
@@ -455,6 +479,9 @@ public class GraphUndoManager extends UndoManager implements
 		}
 	}
 
+	/**
+	 * Records intentional changes in incidence order (putIncidenceBefor/After).
+	 */
 	protected class ChangeIncidenceOrderEdit extends GraphEdit {
 		private static final long serialVersionUID = 1553029429775858722L;
 		private int otherId, otherVersion, oldIncidencePos;
@@ -468,13 +495,8 @@ public class GraphUndoManager extends UndoManager implements
 			thisOutgoing = inc.isNormal();
 			otherOutgoing = other.isNormal();
 			TraversalContext tc = graph.setTraversalContext(null);
-			oldIncidencePos = incidencePosition(inc.getThis(), inc);
+			oldIncidencePos = incidencePosition(inc);
 			graph.setTraversalContext(tc);
-		}
-
-		@Override
-		public String toString() {
-			return super.toString() + ", old position=" + oldIncidencePos;
 		}
 
 		@Override
@@ -482,7 +504,7 @@ public class GraphUndoManager extends UndoManager implements
 			super.undo();
 			Edge inc = graph.getEdge(thisOutgoing ? -elementId : elementId);
 			TraversalContext tc = graph.setTraversalContext(null);
-			putIncidenceAt(inc.getThis(), inc, oldIncidencePos);
+			putIncidenceAt(inc, oldIncidencePos);
 			graph.setTraversalContext(tc);
 		}
 
@@ -506,15 +528,21 @@ public class GraphUndoManager extends UndoManager implements
 				otherVersion = toVersion;
 			}
 		}
+
+		@Override
+		public String toString() {
+			return super.toString() + ", old position=" + oldIncidencePos;
+		}
 	}
 
+	/**
+	 * Records changes of alpha/omega {@link Vertex} of an {@link Edge}.
+	 */
 	protected class ChangeIncidenceEdit extends GraphEdit {
 		private static final long serialVersionUID = 350404556440935178L;
 		private int oldVertexId, newVertexId, oldVertexVersion,
 				newVertexVersion;
 		private int oldIncidencePosition;
-
-		// TODO record/restore incidence position at old vertex
 
 		ChangeIncidenceEdit(GraphEditEvent event, Edge e, Vertex oldVertex,
 				Vertex newVertex) {
@@ -525,10 +553,9 @@ public class GraphUndoManager extends UndoManager implements
 			newVertexVersion = elementVersion(newVertexId);
 			TraversalContext tc = graph.setTraversalContext(null);
 			if (event == GraphEditEvent.CHANGE_ALPHA) {
-				oldIncidencePosition = incidencePosition(e.getAlpha(), e);
+				oldIncidencePosition = incidencePosition(e);
 			} else {
-				oldIncidencePosition = incidencePosition(e.getOmega(),
-						e.getReversedEdge());
+				oldIncidencePosition = incidencePosition(e.getReversedEdge());
 			}
 			graph.setTraversalContext(tc);
 		}
@@ -541,10 +568,10 @@ public class GraphUndoManager extends UndoManager implements
 			TraversalContext tc = graph.setTraversalContext(null);
 			if (event == GraphEditEvent.CHANGE_ALPHA) {
 				e.setAlpha(v);
-				putIncidenceAt(v, e, oldIncidencePosition);
+				putIncidenceAt(e, oldIncidencePosition);
 			} else {
 				e.setOmega(v);
-				putIncidenceAt(v, e.getReversedEdge(), oldIncidencePosition);
+				putIncidenceAt(e.getReversedEdge(), oldIncidencePosition);
 			}
 			graph.setTraversalContext(tc);
 		}
@@ -564,6 +591,8 @@ public class GraphUndoManager extends UndoManager implements
 		@Override
 		public void changeVertexId(int from, int fromVersion, int to,
 				int toVersion) {
+			// no super call since this is an edge edit
+
 			if (oldVertexId == from && oldVertexVersion == fromVersion) {
 				oldVertexId = to;
 				oldVertexVersion = toVersion;
@@ -575,6 +604,9 @@ public class GraphUndoManager extends UndoManager implements
 		}
 	}
 
+	/**
+	 * Record change of an attribute value.
+	 */
 	protected class ChangeAttributeEdit extends GraphEdit {
 		private static final long serialVersionUID = 9147856388307821832L;
 		private String attributeName;
@@ -622,6 +654,14 @@ public class GraphUndoManager extends UndoManager implements
 		}
 	}
 
+	/**
+	 * Creates a {@link GraphUndoManager} for {@link Graph} <code>g</code>. This
+	 * does not automatically add the UndoManager to the
+	 * {@link GraphChangeListener}s of <code>g</code>.
+	 * 
+	 * @param g
+	 *            a {@link Graph}
+	 */
 	public GraphUndoManager(Graph g) {
 		this.graph = g;
 	}
@@ -646,12 +686,25 @@ public class GraphUndoManager extends UndoManager implements
 		}
 	}
 
+	/**
+	 * Creates a new {@link CompoundGraphEdit} with named <code>name</code>.
+	 * Subsequent graph changes are combined into that {@link CompoundGraphEdit}
+	 * . Edits may be nested, {@link GraphUndoManager} keeps an internal stack
+	 * of {@link CompoundGraphEdit}s.
+	 * 
+	 * @param name
+	 *            human readable name for the edit
+	 */
 	public void beginEdit(String name) {
 		CompoundGraphEdit cge = new CompoundGraphEdit(name);
 		addEdit(cge);
 		compoundEditStack.push(cge);
 	}
 
+	/**
+	 * Ends the most recent {@link CompoundGraphEdit} and removes it from the
+	 * stack.
+	 */
 	public void endEdit() {
 		CompoundGraphEdit cge = compoundEditStack.pop();
 		cge.end();
@@ -663,7 +716,10 @@ public class GraphUndoManager extends UndoManager implements
 		versions.clear();
 	}
 
-	// GraphChangeListener implementation
+	// GraphChangeListener implementation. Basically, the operations add a
+	// specific GraphEdit to this GraphUndoManager. The deletion of Vertex
+	// elements is a more complex matter since incident edges and composition
+	// children are deleted automatically.
 
 	@Override
 	public void beforeCreateVertex(VertexClass elementClass) {
@@ -681,6 +737,8 @@ public class GraphUndoManager extends UndoManager implements
 	public void beforeDeleteVertex(Vertex v) {
 		if (!isWorking()) {
 			assert deleteVertexEdit == null;
+			// create a CompoundEdit to store deletion of incident edges and
+			// cascading deletes of composition children
 			if (deleteVertexCompound == null) {
 				deleteVertexCompound = new CompoundEdit() {
 					private static final long serialVersionUID = -2775885260931823100L;
@@ -698,6 +756,8 @@ public class GraphUndoManager extends UndoManager implements
 				};
 				addEdit(deleteVertexCompound);
 			}
+			// this DeleteVertexEdit is added after deletion of the vertex to
+			// guarantee that the vertex is created first upon undo
 			deleteVertexEdit = new DeleteVertexEdit(v);
 		}
 	}
@@ -707,12 +767,15 @@ public class GraphUndoManager extends UndoManager implements
 		if (!isWorking()) {
 			assert deleteVertexCompound != null;
 			assert deleteVertexEdit != null;
+			// add the DeleteVertexEdit
 			deleteVertexCompound.addEdit(deleteVertexEdit);
+			deleteVertexEdit = null;
 			if (finalDelete) {
+				// and end the CompoundEdit if this was the last delete
+				// operation of a cascading deletion
 				deleteVertexCompound.end();
 				deleteVertexCompound = null;
 			}
-			deleteVertexEdit = null;
 		}
 	}
 
@@ -815,36 +878,65 @@ public class GraphUndoManager extends UndoManager implements
 
 	// internal stuff
 
-	private int incidencePosition(Vertex v, Edge e) {
-		assert v != null && v.isValid();
+	/**
+	 * Determines the position of {@link Edge} <code>e</code> in the incidence
+	 * list of its 'this' {@link Vertex}. To determine the correct position, the
+	 * {@link TraversalContext} of the graph must be <code>null</code>.
+	 * 
+	 * @param e
+	 *            an {@link Edge}
+	 * @return the position of <code>e</code>, starting at 0.
+	 */
+	private int incidencePosition(Edge e) {
 		assert e != null && e.isValid();
+		assert graph.getTraversalContext() == null;
+		Vertex v = e.getThis();
 		int n = 0;
-		for (Edge i : v.incidences()) {
-			if (i.equals(e)) {
+		for (Edge inc : v.incidences()) {
+			if (inc.equals(e)) {
 				return n;
 			}
 			++n;
 		}
-		return -1;
+		throw new RuntimeException("Something is wrong, should never get here!");
 	}
 
-	private void restoreIncidencePositions() {
+	/**
+	 * Restores all incidence positions after all edges caused by undo of a
+	 * vertex deletion are resurrected. This assumes that for each {@link Edge}
+	 * in the <code>correctIncidences</code> list, there are two entries in the
+	 * <code>correctPositions</code> list. The first number ist the position at
+	 * the start vertex, the second number the position at the end vertex of the
+	 * edge.
+	 */
+	protected void restoreIncidencePositions() {
 		TraversalContext tc = graph.setTraversalContext(null);
 		int i = 0;
 		for (Edge e : correctIncidences) {
-			putIncidenceAt(e.getAlpha(), e, correctPositions.get(i++));
-			putIncidenceAt(e.getOmega(), e.getReversedEdge(),
-					correctPositions.get(i++));
+			assert e.isValid();
+			putIncidenceAt(e, correctPositions.get(i++));
+			putIncidenceAt(e.getReversedEdge(), correctPositions.get(i++));
 		}
 		correctIncidences.clear();
 		correctPositions.clear();
 		graph.setTraversalContext(tc);
 	}
 
-	private void putIncidenceAt(Vertex v, Edge e, int p) {
-		assert v != null && v.isValid();
+	/**
+	 * Put the Edge <code>e</code> at position <code>p</code> in the incidence
+	 * list of its 'this' {@link Vertex}. To do this correctly, the
+	 * {@link TraversalContext} of the graph must be <code>null</code>.
+	 * 
+	 * @param e
+	 *            an Edge
+	 * @param p
+	 *            a position, starting at 0
+	 */
+	protected void putIncidenceAt(Edge e, int p) {
 		assert e != null && e.isValid();
-		assert e.getThis().equals(v);
+		assert graph.getTraversalContext() == null;
+		assert p >= 0 && p < e.getThis().getDegree();
+		Vertex v = e.getThis();
 		Edge i = v.getFirstIncidence();
 		int n = 0;
 		while (i != null && n != p) {
@@ -867,10 +959,23 @@ public class GraphUndoManager extends UndoManager implements
 		return graph;
 	}
 
+	/**
+	 * Returns wheter this {@link GraphUndoManager} is performing an undo/redo
+	 * operation.
+	 * 
+	 * @return true when an undo/redo operation is in progress
+	 */
 	protected boolean isWorking() {
 		return working;
 	}
 
+	/**
+	 * Set working state of this {@link GraphUndoManager}.
+	 * 
+	 * @param working
+	 *            <code>true</code>: {@link GraphUndoManager} is performing an
+	 *            undo/redo, <code>false</code>: finished undo/redo
+	 */
 	protected void setWorking(boolean working) {
 		this.working = working;
 	}
