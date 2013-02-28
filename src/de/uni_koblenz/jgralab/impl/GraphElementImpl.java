@@ -103,16 +103,23 @@ public abstract class GraphElementImpl<SC extends GraphElementClass<SC, IC>, IC 
 
 	@Override
 	public void initializeAttributesWithDefaultValues() {
-		for (Attribute attr : getAttributedElementClass().getAttributeList()) {
-			if (attr.getDefaultValueAsString() == null) {
-				continue;
+		// disable GraphChangeListener notifications
+		boolean b = graph.setLoading(true);
+		try {
+			for (Attribute attr : getAttributedElementClass()
+					.getAttributeList()) {
+				if (attr.getDefaultValueAsString() == null) {
+					continue;
+				}
+				try {
+					internalSetDefaultValue(attr);
+				} catch (GraphIOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
-			try {
-				internalSetDefaultValue(attr);
-			} catch (GraphIOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+		} finally {
+			graph.setLoading(b);
 		}
 	}
 

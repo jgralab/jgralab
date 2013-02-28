@@ -177,6 +177,20 @@ public class GraphUndoManager extends UndoManager implements
 			}
 		}
 
+		// remove comments below to print undo/redo operations to System.out
+
+		// @Override
+		// public void undo() throws CannotUndoException {
+		// System.out.println("UNDO " + this);
+		// super.undo();
+		// }
+		//
+		// @Override
+		// public void redo() throws CannotRedoException {
+		// System.out.println("REDO " + this);
+		// super.redo();
+		// }
+
 		/**
 		 * Returns the most recent version for the specified
 		 * <code>elementId</code> or creates a new version when the element was
@@ -299,20 +313,6 @@ public class GraphUndoManager extends UndoManager implements
 				elementVersion = fromVersion;
 			}
 		}
-
-		// remove comments below to print undo/redo operations to System.out
-
-		// @Override
-		// public void undo() throws CannotUndoException {
-		// System.out.println("UNDO " + this);
-		// super.undo();
-		// }
-		//
-		// @Override
-		// public void redo() throws CannotRedoException {
-		// System.out.println("REDO " + this);
-		// super.redo();
-		// }
 	}
 
 	/**

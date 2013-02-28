@@ -80,8 +80,9 @@ public interface InternalGraph extends Graph {
 	 * Sets the loading flag.
 	 * 
 	 * @param isLoading
+	 * @return old value of the flag
 	 */
-	public void setLoading(boolean isLoading);
+	public boolean setLoading(boolean isLoading);
 
 	/**
 	 * Checks whether this graph is currently being loaded.

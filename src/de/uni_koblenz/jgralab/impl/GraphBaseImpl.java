@@ -1315,8 +1315,10 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 	 * @see de.uni_koblenz.jgralab.impl.InternalGraph#setLoading(boolean)
 	 */
 	@Override
-	public final void setLoading(boolean isLoading) {
+	public final boolean setLoading(boolean isLoading) {
+		boolean result = loading;
 		loading = isLoading;
+		return result;
 	}
 
 	@Override
