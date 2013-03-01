@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Ant-Version: Apache Ant 1.8.2
 Created-By: 1.6.0_29-b11-402-10M3527 (Apple Inc.)
 Main-Class: de.uni_koblenz.jgralab.JGraLab
-Bundle-Version: 7.5.0.Giraffatitan
+Bundle-Version: 7.5.1.Giraffatitan
 Bundle-ManifestVersion: 2
 Bundle-Name: JGraLab
 Bundle-SymbolicName: de.uni_koblenz.jgralab;singleton:=true
@@ -64,31 +64,32 @@ Export-Package: de.uni_koblenz.ist.utilities.ant,de.uni_koblenz.ist.ut
  lenz.jgralab.utilities.greqlgui,de.uni_koblenz.jgralab.utilities.greq
  lgui.resources,de.uni_koblenz.jgralab.utilities.greqlgui.resources.co
  mpletion,de.uni_koblenz.jgralab.utilities.greqlserver,de.uni_koblenz.
- jgralab.utilities.gui.xdot,de.uni_koblenz.jgralab.utilities.rsa2tg,de
- .uni_koblenz.jgralab.utilities.schemacompare,de.uni_koblenz.jgralab.u
- tilities.tg2dot,de.uni_koblenz.jgralab.utilities.tg2dot.dot,de.uni_ko
- blenz.jgralab.utilities.tg2dot.graph_layout,de.uni_koblenz.jgralab.ut
- ilities.tg2dot.graph_layout.definition,de.uni_koblenz.jgralab.utiliti
- es.tg2dot.graph_layout.reader,de.uni_koblenz.jgralab.utilities.tg2dot
- .graph_layout.reader.plist,de.uni_koblenz.jgralab.utilities.tg2dot.gr
- eql,de.uni_koblenz.jgralab.utilities.tg2dot.greql.funlib,de.uni_koble
- nz.jgralab.utilities.tg2graphml,de.uni_koblenz.jgralab.utilities.tg2s
- chemagraph,de.uni_koblenz.jgralab.utilities.tg2whatever,de.uni_koblen
- z.jgralab.utilities.tgmerge,de.uni_koblenz.jgralab.utilities.tgraphbr
- owser,de.uni_koblenz.jgralab.utilities.tgraphbrowser.resources,de.uni
- _koblenz.jgralab.utilities.tgschema2java,de.uni_koblenz.jgralab.utili
- ties.tgtree,de.uni_koblenz.jgralab.utilities.tgtree.icons,de.uni_kobl
- enz.jgralab.utilities.xml2tg,de.uni_koblenz.jgralab.utilities.xml2tg.
- schema,de.uni_koblenz.jgralab.utilities.xml2tg.schema.impl.std,org.ap
- ache.commons.cli,org.pcollections
+ jgralab.utilities.gui.undo,de.uni_koblenz.jgralab.utilities.gui.xdot,
+ de.uni_koblenz.jgralab.utilities.rsa2tg,de.uni_koblenz.jgralab.utilit
+ ies.schemacompare,de.uni_koblenz.jgralab.utilities.tg2dot,de.uni_kobl
+ enz.jgralab.utilities.tg2dot.dot,de.uni_koblenz.jgralab.utilities.tg2
+ dot.graph_layout,de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout
+ .definition,de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout.read
+ er,de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout.reader.plist,
+ de.uni_koblenz.jgralab.utilities.tg2dot.greql,de.uni_koblenz.jgralab.
+ utilities.tg2dot.greql.funlib,de.uni_koblenz.jgralab.utilities.tg2gra
+ phml,de.uni_koblenz.jgralab.utilities.tg2schemagraph,de.uni_koblenz.j
+ gralab.utilities.tg2whatever,de.uni_koblenz.jgralab.utilities.tgmerge
+ ,de.uni_koblenz.jgralab.utilities.tgraphbrowser,de.uni_koblenz.jgrala
+ b.utilities.tgraphbrowser.resources,de.uni_koblenz.jgralab.utilities.
+ tgschema2java,de.uni_koblenz.jgralab.utilities.tgtree,de.uni_koblenz.
+ jgralab.utilities.tgtree.icons,de.uni_koblenz.jgralab.utilities.xml2t
+ g,de.uni_koblenz.jgralab.utilities.xml2tg.schema,de.uni_koblenz.jgral
+ ab.utilities.xml2tg.schema.impl.std,org.apache.commons.cli,org.pcolle
+ ctions
 Bundle-ClassPath: .,lib/apache/ant/ant.jar,lib/apache/commons/cli/comm
  ons-cli-1.2.jar
 Bundle-ActivationPolicy: lazy
 
 Name: de/uni_koblenz/jgralab/
 Implementation-Title: JGraLab
-Implementation-Version: 7.5.0@Giraffatitan@d55e805975a1111a2f971408ddd
- 445c90d1895ed
+Implementation-Version: 7.5.1@Giraffatitan@eba720f31168dbbd6b3bff7272d
+ b3779ba3727bb
 Implementation-Vendor: University of Koblenz, Institute for Software T
  echnology
 
