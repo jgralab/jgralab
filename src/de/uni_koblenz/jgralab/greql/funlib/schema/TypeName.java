@@ -49,7 +49,7 @@ public class TypeName extends Function {
 		return el.getAttributedElementClass().getQualifiedName();
 	}
 
-	@Description(params = "el, kind", description = "Returns the name of the given element's type. "
+	@Description(params = { "el", "kind" }, description = "Returns the name of the given element's type. "
 			+ "If kind is \"simple\", return the simple name. "
 			+ "If kind is \"unique\", return the unique name. "
 			+ "Else, return the qualified name.", categories = Category.SCHEMA_ACCESS)
