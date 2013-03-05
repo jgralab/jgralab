@@ -43,6 +43,7 @@ import org.pcollections.PVector;
 
 import de.uni_koblenz.jgralab.JGraLab;
 
+@SuppressWarnings("deprecation")
 public class Tuple implements PSequence<Object> {
 	private PVector<Object> entries;
 
@@ -121,23 +122,17 @@ public class Tuple implements PSequence<Object> {
 		return entries.containsAll(c);
 	}
 
-	@SuppressWarnings("deprecation")
 	@Override
-	@Deprecated
 	public boolean add(Object arg0) {
 		throw new UnsupportedOperationException();
 	}
 
-	@SuppressWarnings("deprecation")
 	@Override
-	@Deprecated
 	public boolean addAll(Collection<? extends Object> arg0) {
 		throw new UnsupportedOperationException();
 	}
 
-	@SuppressWarnings("deprecation")
 	@Override
-	@Deprecated
 	public void clear() {
 		throw new UnsupportedOperationException();
 	}
@@ -162,23 +157,17 @@ public class Tuple implements PSequence<Object> {
 		return new Tuple(entries.plusAll(arg0));
 	}
 
-	@SuppressWarnings("deprecation")
 	@Override
-	@Deprecated
 	public boolean remove(Object arg0) {
 		throw new UnsupportedOperationException();
 	}
 
-	@SuppressWarnings("deprecation")
 	@Override
-	@Deprecated
 	public boolean removeAll(Collection<?> arg0) {
 		throw new UnsupportedOperationException();
 	}
 
-	@SuppressWarnings("deprecation")
 	@Override
-	@Deprecated
 	public boolean retainAll(Collection<?> arg0) {
 		throw new UnsupportedOperationException();
 	}
@@ -242,29 +231,21 @@ public class Tuple implements PSequence<Object> {
 		throw new UnsupportedOperationException();
 	}
 
-	@SuppressWarnings("deprecation")
-	@Deprecated
 	@Override
 	public boolean addAll(int index, Collection<? extends Object> c) {
 		throw new UnsupportedOperationException();
 	}
 
-	@SuppressWarnings("deprecation")
-	@Deprecated
 	@Override
 	public Object set(int index, Object element) {
 		throw new UnsupportedOperationException();
 	}
 
-	@SuppressWarnings("deprecation")
-	@Deprecated
 	@Override
 	public void add(int index, Object element) {
 		throw new UnsupportedOperationException();
 	}
 
-	@SuppressWarnings("deprecation")
-	@Deprecated
 	@Override
 	public Object remove(int index) {
 		throw new UnsupportedOperationException();

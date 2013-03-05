@@ -58,6 +58,7 @@ import java.util.NoSuchElementException;
  * @param <E>
  *            the element type
  */
+@SuppressWarnings("deprecation")
 public final class ArrayPVector<E> implements PVector<E>, Serializable {
 	private static final long serialVersionUID = -3381080251584514162L;
 
@@ -136,71 +137,51 @@ public final class ArrayPVector<E> implements PVector<E>, Serializable {
 		return (ArrayPVector<T>) empty;
 	}
 
-	@SuppressWarnings("deprecation")
-	@Deprecated
 	@Override
 	public void add(int arg0, E arg1) {
 		throw new UnsupportedOperationException();
 	}
 
-	@SuppressWarnings("deprecation")
-	@Deprecated
 	@Override
 	public boolean addAll(int arg0, Collection<? extends E> arg1) {
 		throw new UnsupportedOperationException();
 	}
 
-	@SuppressWarnings("deprecation")
-	@Deprecated
 	@Override
 	public E remove(int arg0) {
 		throw new UnsupportedOperationException();
 	}
 
-	@SuppressWarnings("deprecation")
-	@Deprecated
 	@Override
 	public E set(int arg0, E arg1) {
 		throw new UnsupportedOperationException();
 	}
 
-	@SuppressWarnings("deprecation")
-	@Deprecated
 	@Override
 	public boolean add(E arg0) {
 		throw new UnsupportedOperationException();
 	}
 
-	@SuppressWarnings("deprecation")
-	@Deprecated
 	@Override
 	public boolean addAll(Collection<? extends E> arg0) {
 		throw new UnsupportedOperationException();
 	}
 
-	@SuppressWarnings("deprecation")
-	@Deprecated
 	@Override
 	public void clear() {
 		throw new UnsupportedOperationException();
 	}
 
-	@SuppressWarnings("deprecation")
-	@Deprecated
 	@Override
 	public boolean remove(Object arg0) {
 		throw new UnsupportedOperationException();
 	}
 
-	@SuppressWarnings("deprecation")
-	@Deprecated
 	@Override
 	public boolean removeAll(Collection<?> arg0) {
 		throw new UnsupportedOperationException();
 	}
 
-	@SuppressWarnings("deprecation")
-	@Deprecated
 	@Override
 	public boolean retainAll(Collection<?> arg0) {
 		throw new UnsupportedOperationException();

@@ -49,6 +49,7 @@ import java.util.Iterator;
  * 
  * @param <E>
  */
+@SuppressWarnings("deprecation")
 public class AmortizedPQueue<E> extends AbstractQueue<E> implements PQueue<E> {
 
 	private static final AmortizedPQueue<Object> EMPTY = new AmortizedPQueue<Object>();
@@ -179,18 +180,14 @@ public class AmortizedPQueue<E> extends AbstractQueue<E> implements PQueue<E> {
 	}
 
 	/* These 2 methods are not applicable to a persistent collection. */
-	@SuppressWarnings("deprecation")
 	@Override
-	@Deprecated
 	public boolean offer(E o) {
 		// Not possible to modify a persistent queue, interface
 		// says return false if it's not added.
 		throw new UnsupportedOperationException();
 	}
 
-	@SuppressWarnings("deprecation")
 	@Override
-	@Deprecated
 	public E poll() {
 		// Poll is meant to destructively remove and return the front of the
 		// queue.
@@ -215,16 +212,12 @@ public class AmortizedPQueue<E> extends AbstractQueue<E> implements PQueue<E> {
 		System.out.println(original);
 	}
 
-	@SuppressWarnings("deprecation")
 	@Override
-	@Deprecated
 	public boolean add(E e) {
 		throw new UnsupportedOperationException();
 	};
 
-	@SuppressWarnings("deprecation")
 	@Override
-	@Deprecated
 	public boolean addAll(Collection<? extends E> c) {
 		throw new UnsupportedOperationException();
 	}

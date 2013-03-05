@@ -8,14 +8,15 @@ import java.util.Set;
 /**
  * Wraps a {@link LinkedHashSet} and converts to some other {@link POrderedSet}
  * on "modification".
- *
+ * 
  * CAUTION: Don't ever modify a {@link LinkedHashSet} which backs a
  * LinkedHashPSet! This will change the LinkedHashPSet as well. (Such
  * modifications will be detected and you'll get an exception at the next access
  * to the LinkedHashPSet that's backed by the LinkedHashSet in question).
- *
+ * 
  * @param <E>
  */
+@SuppressWarnings("deprecation")
 public class LinkedHashPSet<E> implements POrderedSet<E> {
 
 	private final LinkedHashSet<E> lhs;
@@ -213,43 +214,31 @@ public class LinkedHashPSet<E> implements POrderedSet<E> {
 		return sb.append("}").toString();
 	}
 
-	@SuppressWarnings("deprecation")
-	@Deprecated
 	@Override
 	public boolean add(E o) {
 		throw new UnsupportedOperationException();
 	}
 
-	@SuppressWarnings("deprecation")
-	@Deprecated
 	@Override
 	public boolean remove(Object o) {
 		throw new UnsupportedOperationException();
 	}
 
-	@SuppressWarnings("deprecation")
-	@Deprecated
 	@Override
 	public boolean addAll(Collection<? extends E> c) {
 		throw new UnsupportedOperationException();
 	}
 
-	@SuppressWarnings("deprecation")
-	@Deprecated
 	@Override
 	public boolean removeAll(Collection<?> c) {
 		throw new UnsupportedOperationException();
 	}
 
-	@SuppressWarnings("deprecation")
-	@Deprecated
 	@Override
 	public boolean retainAll(Collection<?> c) {
 		throw new UnsupportedOperationException();
 	}
 
-	@SuppressWarnings("deprecation")
-	@Deprecated
 	@Override
 	public void clear() {
 		throw new UnsupportedOperationException();

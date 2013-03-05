@@ -55,6 +55,7 @@ import java.util.Set;
  * @param <K>
  * @param <V>
  */
+@SuppressWarnings("deprecation")
 public final class ArrayPMap<K, V> implements POrderedMap<K, V>,
 		Iterable<SimpleImmutableEntry<K, V>>, Serializable {
 	private static final long serialVersionUID = -7101801297307300984L;
@@ -137,29 +138,21 @@ public final class ArrayPMap<K, V> implements POrderedMap<K, V>,
 		return (i >= 0) ? values.get(i) : null;
 	}
 
-	@SuppressWarnings("deprecation")
-	@Deprecated
 	@Override
 	public V put(K key, V value) {
 		throw new UnsupportedOperationException();
 	}
 
-	@SuppressWarnings("deprecation")
-	@Deprecated
 	@Override
 	public V remove(Object key) {
 		throw new UnsupportedOperationException();
 	}
 
-	@SuppressWarnings("deprecation")
-	@Deprecated
 	@Override
 	public void putAll(Map<? extends K, ? extends V> m) {
 		throw new UnsupportedOperationException();
 	}
 
-	@SuppressWarnings("deprecation")
-	@Deprecated
 	@Override
 	public void clear() {
 		throw new UnsupportedOperationException();

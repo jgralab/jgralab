@@ -665,7 +665,7 @@ public class Tg2ArgoUml {
 			EdgeClass edgeClass, IncidenceClass incidenceClass)
 			throws XMLStreamException {
 		boolean isAlpha = edgeClass.get_from() == incidenceClass;
-		String aggregation = "none";
+		String aggregation;
 		switch ((isAlpha ? edgeClass.get_to() : edgeClass.get_from())
 				.get_aggregation()) {
 		case COMPOSITE:
@@ -674,6 +674,8 @@ public class Tg2ArgoUml {
 		case SHARED:
 			aggregation = "aggregate";
 			break;
+		default:
+			aggregation = "none";
 		}
 		String associationEndId = (isAlpha ? "alpha" : "omega") + "_incidence_"
 				+ edgeClass.get_qualifiedName() + "_"

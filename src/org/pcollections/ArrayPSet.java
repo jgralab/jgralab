@@ -51,6 +51,7 @@ import java.util.Set;
  * 
  * @param <E>
  */
+@SuppressWarnings("deprecation")
 public final class ArrayPSet<E> implements POrderedSet<E>, Serializable {
 	private static final long serialVersionUID = 5643294766821496614L;
 	// When to promote to OrderedPSet
@@ -138,43 +139,31 @@ public final class ArrayPSet<E> implements POrderedSet<E>, Serializable {
 		return contains(e) ? new ArrayPSet<E>(entries.minus(e)) : this;
 	}
 
-	@SuppressWarnings("deprecation")
-	@Deprecated
 	@Override
 	public boolean add(E o) {
 		throw new UnsupportedOperationException();
 	}
 
-	@SuppressWarnings("deprecation")
-	@Deprecated
 	@Override
 	public boolean remove(Object o) {
 		throw new UnsupportedOperationException();
 	}
 
-	@SuppressWarnings("deprecation")
-	@Deprecated
 	@Override
 	public boolean addAll(Collection<? extends E> c) {
 		throw new UnsupportedOperationException();
 	}
 
-	@SuppressWarnings("deprecation")
-	@Deprecated
 	@Override
 	public boolean removeAll(Collection<?> c) {
 		throw new UnsupportedOperationException();
 	}
 
-	@SuppressWarnings("deprecation")
-	@Deprecated
 	@Override
 	public boolean retainAll(Collection<?> c) {
 		throw new UnsupportedOperationException();
 	}
 
-	@SuppressWarnings("deprecation")
-	@Deprecated
 	@Override
 	public void clear() {
 		throw new UnsupportedOperationException();
