@@ -357,6 +357,9 @@ public abstract class AttributedElementCodeGenerator<SC extends AttributedElemen
 			code.add("public #type# #isOrGet#_#name#() {", "\treturn _#name#;",
 					"}");
 			break;
+		case DISKV2IMPL:
+			code.add("public #type# #isOrGet#_#name#() {", "\treturn _#name#;",
+					"}");
 		case CLASSONLY:
 			break;
 		case DISKV2IMPL:
@@ -396,6 +399,15 @@ public abstract class AttributedElementCodeGenerator<SC extends AttributedElemen
 					"\t#graphRef#fireAfterChangeAttribute(this, \"#name#\", oldValue, _#name#);",
 					"}");
 			break;
+		case DISKV2IMPL:
+			code.add(
+					"public void set_#name#(#type# _#name#) {",
+					"\tecaAttributeChanging(\"#name#\", this._#name#, _#name#);",
+					"\tObject oldValue = this._#name#;",
+					"\tthis._#name# = _#name#;", "\tgraphModified();",
+					"\tecaAttributeChanged(\"#name#\", oldValue, _#name#);",
+					"\tattributeChanged();",
+					"}");
 		case CLASSONLY:
 			break;
 		case DISKV2IMPL:
