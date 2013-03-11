@@ -58,11 +58,11 @@ public class Union extends Function {
 			if (a instanceof POrderedSet) {
 				return a;
 			} else {
-				return (PSet<T>) JGraLab.set().plusAll(a);
+				return JGraLab.<T> set().plusAll(a);
 			}
 		} else {
 			if (a instanceof POrderedSet) {
-				return ((POrderedSet<T>) a).plusAll(b);
+				return a.plusAll(b);
 			} else {
 				return JGraLab.<T> set().plusAll(a).plusAll(b);
 			}
