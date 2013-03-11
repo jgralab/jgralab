@@ -36,9 +36,9 @@ package de.uni_koblenz.jgralab.greql.funlib.collections;
 
 import java.util.ArrayList;
 
-import org.pcollections.ArrayPMap;
-import org.pcollections.ArrayPSet;
 import org.pcollections.PMap;
+import org.pcollections.POrderedMap;
+import org.pcollections.POrderedSet;
 import org.pcollections.PSet;
 
 import de.uni_koblenz.jgralab.JGraLab;
@@ -54,13 +54,13 @@ public class Difference extends Function {
 	@Description(params = { "a", "b" }, description = "Returns the set-difference a-b.", categories = Category.COLLECTIONS_AND_MAPS)
 	public <T> PSet<T> evaluate(PSet<T> a, PSet<T> b) {
 		if (b.isEmpty()) {
-			if (a instanceof ArrayPSet) {
+			if (a instanceof POrderedSet) {
 				return a;
 			} else {
 				return JGraLab.<T> set().plusAll(a);
 			}
 		} else {
-			if (a instanceof ArrayPSet) {
+			if (a instanceof POrderedSet) {
 				return a.minusAll(b);
 			} else {
 				return JGraLab.<T> set().plusAll(a).minusAll(b);
@@ -71,14 +71,14 @@ public class Difference extends Function {
 	@Description(params = { "a", "b" }, description = "Returns the map-difference a-b, w.r.t. the keyset of the maps.", categories = Category.COLLECTIONS_AND_MAPS)
 	public <K, V> PMap<K, V> evaluate(PMap<K, V> a, PMap<K, V> b) {
 		if (b.isEmpty()) {
-			if (a instanceof ArrayPMap) {
+			if (a instanceof POrderedMap) {
 				return a;
 			} else {
 				PMap<K, V> result = JGraLab.map();
 				return result.plusAll(a);
 			}
 		} else {
-			if (a instanceof ArrayPMap) {
+			if (a instanceof POrderedMap) {
 				return a.minusAll(b.keySet());
 			} else {
 				PMap<K, V> result = JGraLab.map();

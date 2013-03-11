@@ -36,9 +36,9 @@ package de.uni_koblenz.jgralab.greql.funlib.collections;
 
 import java.util.ArrayList;
 
-import org.pcollections.ArrayPMap;
-import org.pcollections.ArrayPSet;
 import org.pcollections.PMap;
+import org.pcollections.POrderedMap;
+import org.pcollections.POrderedSet;
 import org.pcollections.PSet;
 
 import de.uni_koblenz.jgralab.JGraLab;
@@ -51,37 +51,37 @@ public class Union extends Function {
 		super();
 	}
 
-	@Description(params = {"a","b"}, description = "Computes the union of the given two sets.",
-				categories = Category.COLLECTIONS_AND_MAPS)
+	@SuppressWarnings("unchecked")
+	@Description(params = { "a", "b" }, description = "Computes the union of the given two sets.", categories = Category.COLLECTIONS_AND_MAPS)
 	public <T> PSet<T> evaluate(PSet<T> a, PSet<T> b) {
 		if (b.isEmpty()) {
-			if (a instanceof ArrayPSet) {
+			if (a instanceof POrderedSet) {
 				return a;
 			} else {
-				return JGraLab.set();
+				return (PSet<T>) JGraLab.set().plusAll(a);
 			}
 		} else {
-			if (a instanceof ArrayPSet) {
-				return ((ArrayPSet<T>) a).plusAll(b);
+			if (a instanceof POrderedSet) {
+				return ((POrderedSet<T>) a).plusAll(b);
 			} else {
 				return JGraLab.<T> set().plusAll(a).plusAll(b);
 			}
 		}
 	}
 
-	@Description(params = {"a","b"}, description = "Computes the union of the given maps.\n"
-				+ "In case of common keys in maps, the entries of the second one override the first one's entries.",
-				categories = Category.COLLECTIONS_AND_MAPS)
+	@SuppressWarnings("unchecked")
+	@Description(params = { "a", "b" }, description = "Computes the union of the given maps.\n"
+			+ "In case of common keys in maps, the entries of the second one override the first one's entries.", categories = Category.COLLECTIONS_AND_MAPS)
 	public <K, V> PMap<K, V> evaluate(PMap<K, V> a, PMap<K, V> b) {
 		if (b.isEmpty()) {
-			if (a instanceof ArrayPMap) {
+			if (a instanceof POrderedMap) {
 				return a;
 			} else {
-				return JGraLab.map();
+				return (PMap<K, V>) JGraLab.map().plusAll(a);
 			}
 		} else {
-			if (a instanceof ArrayPMap) {
-				return ((ArrayPMap<K, V>) a).plusAll(b);
+			if (a instanceof POrderedMap) {
+				return ((POrderedMap<K, V>) a).plusAll(b);
 			} else {
 				return JGraLab.<K, V> map().plusAll(a).plusAll(b);
 			}
