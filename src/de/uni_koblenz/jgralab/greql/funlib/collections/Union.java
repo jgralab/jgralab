@@ -51,7 +51,6 @@ public class Union extends Function {
 		super();
 	}
 
-	@SuppressWarnings("unchecked")
 	@Description(params = { "a", "b" }, description = "Computes the union of the given two sets.", categories = Category.COLLECTIONS_AND_MAPS)
 	public <T> PSet<T> evaluate(PSet<T> a, PSet<T> b) {
 		if (b.isEmpty()) {
