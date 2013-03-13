@@ -154,14 +154,15 @@
 	<!-- ist_utilities -->
 	<target name="ist_utilities">
 		<javac fork="true" srcdir="${src.dir}"
-			includes="de/uni_koblenz/ist/utilities/**"
-			destdir="${classes.dir}"
-			memoryinitialsize="512m"
-			memorymaximumsize="512m"
-			classpathref="classpath"
-			debug="${debug}"
-			includeantruntime="false"
-			encoding="${javac.encoding}" >
+		       source="1.6" target="1.6"
+		       includes="de/uni_koblenz/ist/utilities/**"
+		       destdir="${classes.dir}"
+		       memoryinitialsize="512m"
+		       memorymaximumsize="512m"
+		       classpathref="classpath"
+		       debug="${debug}"
+		       includeantruntime="false"
+		       encoding="${javac.encoding}" >
 		</javac>
 	</target>
 	
@@ -172,16 +173,17 @@
 
 	<target name="pcollections" depends="createClassesDir">
 		<javac fork="true"
-			srcdir="${pcollections.src}"
-			excludes="${no_package_info}"
-			destdir="${classes.dir}"
-			memoryinitialsize="${minmemsize}"
-			memorymaximumsize="${maxmemsize}"
-			classpathref="classpath"
-			debug="${debug}" 
-			encoding="${javac.encoding}"
-			includeantruntime="false">
-			<compilerarg line="-Xlint:unchecked" />
+		       source="1.6" target="1.6"
+		       srcdir="${pcollections.src}"
+		       excludes="${no_package_info}"
+		       destdir="${classes.dir}"
+		       memoryinitialsize="${minmemsize}"
+		       memorymaximumsize="${maxmemsize}"
+		       classpathref="classpath"
+		       debug="${debug}" 
+		       encoding="${javac.encoding}"
+		       includeantruntime="false">
+		  <compilerarg line="-Xlint:unchecked" />
 		</javac>
 	</target>
 
@@ -189,33 +191,35 @@
 	<!-- compiles jgralab basic sources -->
 	<target name="core" depends="createClassesDir">
 		<javac fork="true"
-			srcdir="${core.src}"
-			includes="${core.includes}"
-			excludes="${no_package_info}"
-			destdir="${classes.dir}" 
-			memoryinitialsize="${minmemsize}"
-			memorymaximumsize="${maxmemsize}"
-			classpathref="classpath"
-			debug="${debug}"
-			encoding="${javac.encoding}"
-			includeantruntime="false">
-			<compilerarg line="-Xlint:unchecked" />
+		       source="1.6" target="1.6"
+		       srcdir="${core.src}"
+		       includes="${core.includes}"
+		       excludes="${no_package_info}"
+		       destdir="${classes.dir}" 
+		       memoryinitialsize="${minmemsize}"
+		       memorymaximumsize="${maxmemsize}"
+		       classpathref="classpath"
+		       debug="${debug}"
+		       encoding="${javac.encoding}"
+		       includeantruntime="false">
+		  <compilerarg line="-Xlint:unchecked" />
 		</javac>
 	</target>
 
 	<!-- ant tasks for versioning -->
 	<target name="versiontasks" depends="ist_utilities,createClassesDir">
 		<javac fork="true"
-			srcdir="${tgtools.src}"
-			includes="ant/RetrieveVersion.java ant/BumpMicroVersion.java ant/BumpMinorVersion.java"
-			excludes="${no_package_info}"
-			destdir="${classes.dir}" 
-			memoryinitialsize="${minmemsize}" 
-			memorymaximumsize="${maxmemsize}"
-			classpathref="classpath" 
-			debug="${debug}" 
-			encoding="${javac.encoding}"
-			includeantruntime="false" />
+		       source="1.6" target="1.6"
+		       srcdir="${tgtools.src}"
+		       includes="ant/RetrieveVersion.java ant/BumpMicroVersion.java ant/BumpMinorVersion.java"
+		       excludes="${no_package_info}"
+		       destdir="${classes.dir}" 
+		       memoryinitialsize="${minmemsize}" 
+		       memorymaximumsize="${maxmemsize}"
+		       classpathref="classpath" 
+		       debug="${debug}" 
+		       encoding="${javac.encoding}"
+		       includeantruntime="false" />
 		<taskdef name="bump_micro" classname="de.uni_koblenz.jgralab.utilities.ant.BumpMicroVersion" classpath="${classes.dir}" />
 		<taskdef name="bump_minor" classname="de.uni_koblenz.jgralab.utilities.ant.BumpMinorVersion" classpath="${classes.dir}" />
 		<taskdef name="retrieve_version" classname="de.uni_koblenz.jgralab.utilities.ant.RetrieveVersion" classpath="${classes.dir}" />
@@ -225,17 +229,18 @@
 	         and that don't depend on schemas themselves) -->
 	<target name="tgtools" depends="core">
 		<javac fork="true"
-			srcdir="${tgtools.src}" 
-			includes="${tgtools.includes}"
-			excludes="${no_package_info}"
-			destdir="${classes.dir}"
-			memoryinitialsize="${minmemsize}" 
-			memorymaximumsize="${maxmemsize}" 
-			classpathref="classpath" 
-			debug="${debug}" 
-			encoding="${javac.encoding}"
-			includeantruntime="false">
-			<compilerarg line="-Xlint:unchecked" />
+		       source="1.6" target="1.6"
+		       srcdir="${tgtools.src}" 
+		       includes="${tgtools.includes}"
+		       excludes="${no_package_info}"
+		       destdir="${classes.dir}"
+		       memoryinitialsize="${minmemsize}" 
+		       memorymaximumsize="${maxmemsize}" 
+		       classpathref="classpath" 
+		       debug="${debug}" 
+		       encoding="${javac.encoding}"
+		       includeantruntime="false">
+		  <compilerarg line="-Xlint:unchecked" />
 		</javac>
 		<taskdef name="tgschema2java" classname="de.uni_koblenz.jgralab.utilities.ant.TgSchema2JavaTask" classpathref="classpath" />
 		<taskdef name="deletegeneratedschema" classname="de.uni_koblenz.jgralab.utilities.ant.DeleteGeneratedSchemaTask" classpath="${classes.dir}" />
@@ -245,114 +250,121 @@
 	<target name="greql" depends="tgtools,algolib">
 		<tgschema2java schemaFile="${greql.schemafile}" sourcePath="${src.dir}" />
 		<javac fork="true" 
-			srcdir="${greql.src}" 
-			excludes="${no_package_info}"
-			destdir="${classes.dir}"
-			memoryinitialsize="${minmemsize}" 
-			memorymaximumsize="${maxmemsize}" 
-			classpathref="classpath" 
-			debug="${debug}" 
-			encoding="${javac.encoding}"
-			includeantruntime="false">
-			<compilerarg line="-Xlint:unchecked" />
+		       source="1.6" target="1.6"
+		       srcdir="${greql.src}" 
+		       excludes="${no_package_info}"
+		       destdir="${classes.dir}"
+		       memoryinitialsize="${minmemsize}" 
+		       memorymaximumsize="${maxmemsize}" 
+		       classpathref="classpath" 
+		       debug="${debug}" 
+		       encoding="${javac.encoding}"
+		       includeantruntime="false">
+		  <compilerarg line="-Xlint:unchecked" />
 		</javac>
 	</target>
 
 	<target name="algolib" depends="core">
 		<javac fork="true"
-			srcdir="${algolib.src}" 
-			excludes="${no_package_info}"
-			destdir="${classes.dir}" 
-			memoryinitialsize="${minmemsize}"
-			memorymaximumsize="${maxmemsize}" 
-			classpathref="classpath" 
-			debug="${debug}"
-			encoding="${javac.encoding}"
-			includeantruntime="false">
-			<compilerarg line="-Xlint:unchecked" />
+		       source="1.6" target="1.6"
+		       srcdir="${algolib.src}" 
+		       excludes="${no_package_info}"
+		       destdir="${classes.dir}" 
+		       memoryinitialsize="${minmemsize}"
+		       memorymaximumsize="${maxmemsize}" 
+		       classpathref="classpath" 
+		       debug="${debug}"
+		       encoding="${javac.encoding}"
+		       includeantruntime="false">
+		  <compilerarg line="-Xlint:unchecked" />
 		</javac>
 	</target>
 
 	<!-- graphvalidator -->
 	<target name="graphvalidator" depends="greql">
 		<javac fork="true"
-			srcdir="${graphvalidator.src}" 
-			includes="${graphvalidator.includes}"
-			excludes="${no_package_info}"
-			destdir="${classes.dir}"
-			memoryinitialsize="${minmemsize}" 
-			memorymaximumsize="${maxmemsize}"
-			classpathref="classpath" 
-			debug="${debug}" 
-			encoding="${javac.encoding}"
-			includeantruntime="false">
-			<compilerarg line="-Xlint:unchecked" />
+		       source="1.6" target="1.6"
+		       srcdir="${graphvalidator.src}" 
+		       includes="${graphvalidator.includes}"
+		       excludes="${no_package_info}"
+		       destdir="${classes.dir}"
+		       memoryinitialsize="${minmemsize}" 
+		       memorymaximumsize="${maxmemsize}"
+		       classpathref="classpath" 
+		       debug="${debug}" 
+		       encoding="${javac.encoding}"
+		       includeantruntime="false">
+		  <compilerarg line="-Xlint:unchecked" />
 		</javac>
 	</target>
 
 	<target name="rsa" depends="tg2dot,gruml,graphvalidator">
 		<javac fork="true" 
-			srcdir="${rsa.src}" 
-			includes="${rsa.includes}" 
-			excludes="${no_package_info}"
-			destdir="${classes.dir}"
-			memoryinitialsize="${minmemsize}" 
-			memorymaximumsize="${maxmemsize}" 
-			classpathref="classpath" 
-			debug="${debug}"
-			encoding="${javac.encoding}"
-			includeantruntime="false">
-			<compilerarg line="-Xlint:unchecked" />
+		       source="1.6" target="1.6"
+		       srcdir="${rsa.src}" 
+		       includes="${rsa.includes}" 
+		       excludes="${no_package_info}"
+		       destdir="${classes.dir}"
+		       memoryinitialsize="${minmemsize}" 
+		       memorymaximumsize="${maxmemsize}" 
+		       classpathref="classpath" 
+		       debug="${debug}"
+		       encoding="${javac.encoding}"
+		       includeantruntime="false">
+		  <compilerarg line="-Xlint:unchecked" />
 		</javac>
 		<taskdef classpathref="classpath" name="rsa2tg" classname="de.uni_koblenz.jgralab.utilities.ant.Rsa2TgTask" />
 	</target>
 
 	<target name="tg2dot" depends="gruml,graphvalidator,greql,common-tools">
 		<javac fork="true" 
-			srcdir="${tg2dot.src}" 
-			includes="${tg2dot.includes}"
-			excludes="${no_package_info}"
-			destdir="${classes.dir}"
-			memoryinitialsize="${minmemsize}" 
-			memorymaximumsize="${maxmemsize}" 
-			classpathref="classpath" 
-			debug="${debug}" 
-			encoding="${javac.encoding}"
-			includeantruntime="false">
-			<compilerarg line="-Xlint:unchecked" />
+		       source="1.6" target="1.6"
+		       srcdir="${tg2dot.src}" 
+		       includes="${tg2dot.includes}"
+		       excludes="${no_package_info}"
+		       destdir="${classes.dir}"
+		       memoryinitialsize="${minmemsize}" 
+		       memorymaximumsize="${maxmemsize}" 
+		       classpathref="classpath" 
+		       debug="${debug}" 
+		       encoding="${javac.encoding}"
+		       includeantruntime="false">
+		  <compilerarg line="-Xlint:unchecked" />
 		</javac>
 	</target>
 
 	<target name="common-tools">
 		<javac fork="true"
-			srcdir="${common-tools.src}"
-			includes="${common-tools.includes}" 
-			excludes="${no_package_info}"
-			destdir="${classes.dir}" 
-			memoryinitialsize="${minmemsize}" 
-			memorymaximumsize="${maxmemsize}"
-			classpathref="classpath" 
-			debug="${debug}" 
-			encoding="${javac.encoding}"
-			includeantruntime="false">
-			<compilerarg line="-Xlint:unchecked" />
+		       source="1.6" target="1.6"
+		       srcdir="${common-tools.src}"
+		       includes="${common-tools.includes}" 
+		       excludes="${no_package_info}"
+		       destdir="${classes.dir}" 
+		       memoryinitialsize="${minmemsize}" 
+		       memorymaximumsize="${maxmemsize}"
+		       classpathref="classpath" 
+		       debug="${debug}" 
+		       encoding="${javac.encoding}"
+		       includeantruntime="false">
+		  <compilerarg line="-Xlint:unchecked" />
 		</javac>
 	</target>
 
 	<!-- compiles utility sources -->
 	<target name="utilities" depends="rsa,gruml,xmlschema">
 		<javac fork="true"
-			srcdir="${utilities.src}" 
-			includes="${utilities.includes}"
-			excludes="${utilities.excludes} ${no_package_info}"
-			destdir="${classes.dir}" 
-			memoryinitialsize="${minmemsize}" 
-			memorymaximumsize="${maxmemsize}" 
-			classpathref="classpath"
-			debug="${debug}" 
-			encoding="${javac.encoding}"
-			includeantruntime="false">
-			<compilerarg line="-Xlint:unchecked" />
+		       source="1.6" target="1.6"
+		       srcdir="${utilities.src}" 
+		       includes="${utilities.includes}"
+		       excludes="${utilities.excludes} ${no_package_info}"
+		       destdir="${classes.dir}" 
+		       memoryinitialsize="${minmemsize}" 
+		       memorymaximumsize="${maxmemsize}" 
+		       classpathref="classpath"
+		       debug="${debug}" 
+		       encoding="${javac.encoding}"
+		       includeantruntime="false">
+		  <compilerarg line="-Xlint:unchecked" />
 		</javac>
 	</target>
 
@@ -365,16 +377,17 @@
 	<target name="gruml" depends="tgtools,greql">
 		<tgschema2java schemaFile="${gruml.schemafile}" sourcePath="${src.dir}" />
 		<javac fork="true" 
-			srcdir="${gruml.src}"
-			excludes="${no_package_info}"
-			destdir="${classes.dir}" 
-			memoryinitialsize="${minmemsize}" 
-			memorymaximumsize="${maxmemsize}" 
-			classpathref="classpath"
-			debug="${debug}"
-			encoding="${javac.encoding}"
-			includeantruntime="false">
-			<compilerarg line="-Xlint:unchecked" />
+		       source="1.6" target="1.6"
+		       srcdir="${gruml.src}"
+		       excludes="${no_package_info}"
+		       destdir="${classes.dir}" 
+		       memoryinitialsize="${minmemsize}" 
+		       memorymaximumsize="${maxmemsize}" 
+		       classpathref="classpath"
+		       debug="${debug}"
+		       encoding="${javac.encoding}"
+		       includeantruntime="false">
+		  <compilerarg line="-Xlint:unchecked" />
 		</javac>
 	</target>
 
@@ -403,17 +416,18 @@
 	<target name="gretl_and_eca" depends="greql">
 		<tgschema2java schemaFile="${gretl.templategraphschemafile}" sourcePath="${src.dir}"/>
 		<javac fork="true" 
-			srcdir="${gretl_eca.src}"
-			includes="${gretl_eca.includes}"
-			excludes="${no_package_info}"
-			destdir="${classes.dir}"
-			memoryinitialsize="${minmemsize}"
-			memorymaximumsize="${maxmemsize}" 
-			classpathref="classpath" 
-			debug="${debug}"
-			encoding="${javac.encoding}"
-			includeantruntime="false">
-			<compilerarg line="-Xlint:unchecked" />
+		       source="1.6" target="1.6"
+		       srcdir="${gretl_eca.src}"
+		       includes="${gretl_eca.includes}"
+		       excludes="${no_package_info}"
+		       destdir="${classes.dir}"
+		       memoryinitialsize="${minmemsize}"
+		       memorymaximumsize="${maxmemsize}" 
+		       classpathref="classpath" 
+		       debug="${debug}"
+		       encoding="${javac.encoding}"
+		       includeantruntime="false">
+		  <compilerarg line="-Xlint:unchecked" />
 		</javac>
 	</target>
 
