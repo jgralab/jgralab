@@ -59,6 +59,8 @@ import de.uni_koblenz.jgralab.utilities.rsa2tg.Rsa2Tg;
  * set, role names will be used to create names for unnamed edge classes.</li>
  * <li><code>removeUnusedDomains</code> corresponds to the cli option -u . If it
  * is set, the output schema is pruned of all usused domains.</li>
+ * <li><code>removeComments</code> corresponds to the cli option -c . If it is
+ * set, all comments are removed.</li>
  * <li><code>useNavigability</code> corresponds to the cli option -n . If this
  * is set, the navigability information will be interpreted as reading
  * direction, overriding the actual reading direction.</li>
@@ -80,7 +82,7 @@ import de.uni_koblenz.jgralab.utilities.rsa2tg.Rsa2Tg;
  */
 public class Rsa2TgTask extends Task {
 
-	private Rsa2Tg executeObject;
+	private final Rsa2Tg executeObject;
 	private String xmiFilename;
 	private String schemaFilename;
 
@@ -130,6 +132,16 @@ public class Rsa2TgTask extends Task {
 		String v = value.toLowerCase();
 		if (v.equals("true") || v.equals("yes")) {
 			executeObject.setKeepEmptyPackages(true);
+		} else if (!(v.equals("false") || v.equals("no"))) {
+			throw new BuildException("Invalid value for boolean field: "
+					+ value);
+		}
+	}
+
+	public void setRemoveComments(String value) {
+		String v = value.toLowerCase();
+		if (v.equals("true") || v.equals("yes")) {
+			executeObject.setRemoveComments(true);
 		} else if (!(v.equals("false") || v.equals("no"))) {
 			throw new BuildException("Invalid value for boolean field: "
 					+ value);

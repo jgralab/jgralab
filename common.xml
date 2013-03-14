@@ -177,6 +177,9 @@
 	<!-- use navigability -->
 	<property name="rsa2tg.n" value="false" />
 
+	<!-- remove comments -->
+	<property name="rsa2tg.c" value="false" />
+
 	<!-- properties for the target "test" -->
 	<!-- the fully qualified name of the class containing the test suite that executes all test for the project -->
 	<!-- property name="test.suite" value="" /-->
@@ -306,7 +309,7 @@
 
 	<!-- Converts an xmi schema to tg if an xmi schema file has been specified -->
 	<target name="convertschema" depends="customAntTasks" if="xmi.schema.file">
-		<rsa2tg xmifile="${xmi.schema.file}" schemafile="${schema.file}" useFromRole="${rsa2tg.f}" removeUnusedDomains="${rsa2tg.u}" useNavigability="${rsa2tg.n}" />
+		<rsa2tg xmifile="${xmi.schema.file}" schemafile="${schema.file}" useFromRole="${rsa2tg.f}" removeUnusedDomains="${rsa2tg.u}" useNavigability="${rsa2tg.n}" removeComments="${rsa2tg.c}" />
 	</target>
 
 	<!-- generateschema -->

@@ -189,6 +189,8 @@ public class Rsa2Tg extends XmlProcessor {
 
 	private static final String OPTION_USE_ROLE_NAME = "f";
 
+	private static final String OPTION_REMOVE_COMMENTS = "c";
+
 	/**
 	 * Contains XML element names in the format "name>xmiId"
 	 */
@@ -337,6 +339,8 @@ public class Rsa2Tg extends XmlProcessor {
 	 */
 	private boolean removeUnusedDomains;
 
+	private boolean removeComments;
+
 	/**
 	 * After processing is complete, also keep {@link Package} vertices which
 	 * contain no {@link Domains} and no {@link GraphElementClass}es.
@@ -421,6 +425,7 @@ public class Rsa2Tg extends XmlProcessor {
 		r.setRemoveUnusedDomains(cli.hasOption(OPTION_REMOVE_UNUSED_DOMAINS));
 		r.setKeepEmptyPackages(cli.hasOption(OPTION_KEEP_EMPTY_PACKAGES));
 		r.setUseNavigability(cli.hasOption(OPTION_USE_NAVIGABILITY));
+		r.setRemoveComments(cli.hasOption(OPTION_REMOVE_COMMENTS));
 
 		// apply options
 		r.setFilenameSchema(cli.getOptionValue(OPTION_FILENAME_SCHEMA));
@@ -454,6 +459,10 @@ public class Rsa2Tg extends XmlProcessor {
 		}
 
 		System.out.println("Fini.");
+	}
+
+	public void setRemoveComments(boolean removeComments) {
+		this.removeComments = removeComments;
 	}
 
 	/**
@@ -544,10 +553,16 @@ public class Rsa2Tg extends XmlProcessor {
 		unusedDomains.setRequired(false);
 		oh.addOption(unusedDomains);
 
+		Option removeComments = new Option(OPTION_REMOVE_COMMENTS,
+				"removeComments", false,
+				"(optional): if this flag is set, all comments are removed.");
+		removeComments.setRequired(false);
+		oh.addOption(removeComments);
+
 		Option emptyPackages = new Option(OPTION_KEEP_EMPTY_PACKAGES,
 				"keepEmptyPackages", false,
 				"(optional): if this flag is set, empty packages will be retained.");
-		unusedDomains.setRequired(false);
+		emptyPackages.setRequired(false);
 		oh.addOption(emptyPackages);
 
 		Option navigability = new Option(
@@ -1120,7 +1135,9 @@ public class Rsa2Tg extends XmlProcessor {
 			removeUnusedDomains();
 		}
 
-		attachComments();
+		if (!isRemoveComments()) {
+			attachComments();
+		}
 
 		if (!isKeepEmptyPackages()) {
 			removeEmptyPackages();
@@ -1145,6 +1162,10 @@ public class Rsa2Tg extends XmlProcessor {
 				throw new XMLStreamException(e);
 			}
 		}
+	}
+
+	private boolean isRemoveComments() {
+		return removeComments;
 	}
 
 	private void checkAttributes() {
