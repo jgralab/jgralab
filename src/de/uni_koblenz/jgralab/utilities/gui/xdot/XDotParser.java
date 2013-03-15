@@ -41,20 +41,20 @@ import java.awt.geom.Ellipse2D;
 import java.awt.geom.Line2D;
 import java.awt.geom.Path2D;
 import java.awt.geom.Rectangle2D;
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.TreeMap;
 
 import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.graphmarker.GraphMarker;
+import de.uni_koblenz.jgralab.utilities.gui.xdot.XDotLexer.Token;
+import de.uni_koblenz.jgralab.utilities.gui.xdot.XDotLexer.Type;
 
 public class XDotParser {
 
@@ -67,6 +67,9 @@ public class XDotParser {
 	private List<XDotShape> shapes;
 	private GraphMarker<List<XDotShape>> elementShapes;
 	private Rectangle2D bounds;
+	private XDotLexer xdl;
+	private Token la;
+	private int nestingDepth;
 
 	public XDotParser(Graph g, GraphMarker<List<XDotShape>> es) {
 		graph = g;
@@ -83,12 +86,12 @@ public class XDotParser {
 		colorMap.put("gray", Color.GRAY);
 	}
 
-	final class Lexer {
+	final class DrawActionLexer {
 		final String s;
 		final char[] c;
 		int p;
 
-		Lexer(String s) {
+		DrawActionLexer(String s) {
 			this.s = s;
 			c = s.toCharArray();
 			p = 0;
@@ -157,7 +160,7 @@ public class XDotParser {
 	}
 
 	private void parseDrawActions(String s) {
-		Lexer l = new Lexer(s);
+		DrawActionLexer l = new DrawActionLexer(s);
 		for (char action = l.nextChar(); action != 0; action = l.nextChar()) {
 			switch (action) {
 			case 'c':
@@ -275,8 +278,8 @@ public class XDotParser {
 				break;
 
 			default:
-				throw new RuntimeException("FIXME: Unknown action '" + action
-						+ "'");
+				throw new RuntimeException(xdl.getLine()
+						+ ": FIXME Unknown action '" + action + "'");
 			}
 		}
 	}
@@ -294,71 +297,175 @@ public class XDotParser {
 		l.add(xs);
 	}
 
+	private String match() throws IOException {
+		if (la.type == Type.EOF) {
+			throw new IOException(xdl.getLine() + ": Unexpected EOF");
+		}
+		String s = la.text;
+		la = xdl.nextToken();
+		return s;
+	}
+
+	private String matchID() throws IOException {
+		if (la.type == Type.EOF) {
+			throw new IOException("Unexpected EOF");
+		}
+		if (la.type == Type.SEPARATOR) {
+			throw new IOException(xdl.getLine() + ": Expected ID, found "
+					+ la.text);
+		}
+		String s = la.text;
+		la = xdl.nextToken();
+		return s;
+	}
+
+	private String match(String s) throws IOException {
+		if (la.type == Type.EOF) {
+			throw new IOException(xdl.getLine() + ": Expected " + s
+					+ " found EOF");
+		}
+		if (!s.equals(la.text)) {
+			throw new IOException(xdl.getLine() + ": Expected " + s + " found "
+					+ la.text);
+		}
+		la = xdl.nextToken();
+		return s;
+	}
+
+	private String matchOpt(String s) throws IOException {
+		if (s.equals(la.text)) {
+			return match();
+		}
+		return null;
+	}
+
+	private String matchOr(String... alternatives) throws IOException {
+		for (String s : alternatives) {
+			if (la.text.equals(s)) {
+				return match();
+			}
+		}
+		throw new IOException(xdl.getLine() + ": Expected " + alternatives
+				+ " found " + la.text);
+	}
+
+	private void parseDot() throws IOException {
+		matchOpt("strict");
+		matchOr("digraph", "graph");
+		if (!la.text.equals("{")) {
+			matchID();
+		}
+		match("{");
+		while (!la.text.equals("}")) {
+			parseStatement();
+		}
+		match("}");
+	}
+
+	private void parseSubgraph() throws IOException {
+		matchOpt("subgraph");
+		if (!la.text.equals("{")) {
+			String id = matchID();
+			if (id.startsWith("cluster_")) {
+				setCurrentElement(id.substring(8));
+			}
+		}
+		++nestingDepth;
+		match("{");
+		while (!la.text.equals("}")) {
+			parseStatement();
+		}
+		match("}");
+		--nestingDepth;
+	}
+
+	private void parseStatement() throws IOException {
+		if (la.text.equals("{") || la.text.equals("subgraph")) {
+			// stmt ::= subgraph
+			parseSubgraph();
+		} else {
+			String id = matchID();
+			Map<String, String> attrs = new TreeMap<String, String>();
+			if (la.text.equals("=")) {
+				// here, we have an assignment
+				// stmt ::= ID = ID
+				match(); // =
+				matchID(); // ID
+			} else {
+				// here, we have a node or an edge
+				while (la.text.equals("--") || la.text.equals("->")) {
+					// egdeRHS ::= edgeop (node_id|subgraph) [ edgeRHS ]
+					match(); // edgeop
+					if (la.text.equals("{") || la.text.equals("subgraph")) {
+						// target is subgraph
+						parseSubgraph();
+					} else {
+						// target is node
+						matchID();
+					}
+				}
+				// attr_list
+				while (la.text.equals("[")) {
+					match();
+					while (!la.text.equals("]")) {
+						String name = matchID();
+						match("=");
+						String value = matchID();
+						attrs.put(name, value);
+						matchOpt(",");
+					}
+					match("]");
+				}
+				if (nestingDepth == 0 && id.equals("graph")) {
+					String bb = attrs.get("bb");
+					if (bb != null) {
+						String[] s = bb.split(",");
+						double x0 = Double.parseDouble(s[0]);
+						double y0 = Double.parseDouble(s[1]);
+						double x1 = Double.parseDouble(s[2]);
+						double y1 = Double.parseDouble(s[3]);
+						bounds = new Rectangle2D.Double(x0, y0, x1, y1);
+					}
+				}
+				setCurrentElement(attrs.get("id"));
+				for (String name : attrs.keySet()) {
+					if (name.matches("_(l|h|t|hl|tl)?draw_")) {
+						parseDrawActions(attrs.get(name));
+					}
+				}
+			}
+		}
+		matchOpt(";");
+	}
+
 	public List<XDotShape> parseXDotFile(InputStream is) throws IOException {
-		// System.out.println("----- XDOT FILE " + xdotfilename + " -----");
+
+		// System.out.println("----- XDOT FILE -----");
 		shapes = new ArrayList<XDotShape>();
 		elementShapes.clear();
 		bounds = null;
-		BufferedReader rdr = new BufferedReader(new InputStreamReader(is,
-				"UTF-8"));
-		Pattern pd = Pattern
-				.compile("(_(l|h|t|hl|tl)?draw_)\\s*=\\s*\"([^\"]*)\"");
-		Pattern pi = Pattern.compile("(id\\s*=\\s*|cluster_)(\\w+)");
-		Pattern pb = Pattern
-				.compile("bb\\s*=\\s*\"(-?\\d+\\.?\\d*),(-?\\d+\\.?\\d*),(-?\\d+\\.?\\d*),(-?\\d+\\.?\\d*)\"");
-		setCurrentElement(graph);
-		for (String l = rdr.readLine(); l != null; l = rdr.readLine()) {
-			StringBuilder sb = new StringBuilder();
-			while (l != null && l.endsWith("\\")) {
-				sb.append(l.substring(0, l.length() - 1));
-				l = rdr.readLine();
-			}
-			if (l != null) {
-				sb.append(l);
-			}
-			l = sb.toString().replace("\\\"", "\u0001");
-
-			if (bounds == null) {
-				Matcher mb = pb.matcher(l);
-				if (mb.find()) {
-					double x0 = Double.parseDouble(mb.group(1));
-					double y0 = Double.parseDouble(mb.group(2));
-					double x1 = Double.parseDouble(mb.group(3));
-					double y1 = Double.parseDouble(mb.group(4));
-					bounds = new Rectangle2D.Double(x0, y0, x1, y1);
-				}
-			}
-
-			Matcher mi = pi.matcher(l);
-			if (mi.find()) {
-				String id = mi.group(2);
-				if (id.charAt(0) == 'v') {
-					setCurrentElement(graph.getVertex(Integer.parseInt(id
-							.substring(1))));
-				} else if (id.charAt(0) == 'e') {
-					setCurrentElement(graph.getEdge(Integer.parseInt(id
-							.substring(1))));
-				} else {
-					throw new RuntimeException("FIXME: unexpected id format '"
-							+ id + "'");
-				}
-			}
-
-			Matcher md = pd.matcher(l);
-			while (md.find()) {
-				String drawActions = md.group(3).replace("\u0001", "\"");
-				// System.out.println("\t" + md.group(1) + ": " + drawActions);
-				parseDrawActions(drawActions);
-			}
+		try {
+			xdl = new XDotLexer(is);
+			la = xdl.nextToken();
+			parseDot();
+		} finally {
+			is.close();
 		}
-		rdr.close();
 		// System.out.println("----- END -----");
 		return shapes;
 	}
 
-	private void setCurrentElement(AttributedElement<?, ?> el) {
-		if (currentElement != el) {
-			currentElement = el;
+	private void setCurrentElement(String id) throws IOException {
+		if (id == null) {
+			return;
+		}
+		if (id.charAt(0) == 'v') {
+			currentElement = graph.getVertex(Integer.parseInt(id.substring(1)));
+		} else if (id.charAt(0) == 'e') {
+			currentElement = graph.getEdge(Integer.parseInt(id.substring(1)));
+		} else {
+			throw new IOException(xdl.getLine() + ": Unexpected element id "
+					+ id);
 		}
 	}
 

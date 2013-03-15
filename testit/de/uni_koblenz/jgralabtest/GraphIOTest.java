@@ -46,7 +46,6 @@ import org.junit.Test;
 import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.exception.GraphIOException;
 import de.uni_koblenz.jgralab.grumlschema.GrumlSchema;
-import de.uni_koblenz.jgralab.schema.Schema;
 
 public class GraphIOTest {
 
@@ -75,13 +74,6 @@ public class GraphIOTest {
 				"\"Umlaute: \\u00e4\\u00f6\\u00fc\\u00c4\\u00d6\\u00dc\\u00df\"",
 				io.getStringWriterResult());
 
-	}
-
-	public static void main(String[] args) throws GraphIOException {
-		Schema ioTest = GraphIO.loadSchemaFromFile("GraphIOTestInput.tg");
-
-		GraphIO.saveSchemaToFile(ioTest, "GraphIOTestOutput.tg");
-		System.out.println("Fini.");
 	}
 
 	@Test

@@ -171,16 +171,7 @@ public class GraphIO {
 	 */
 	private final Map<String, Domain> domains;
 
-	/**
-	 * Maps GraphElementClasses to their containing GraphClasses
-	 */
-	private final Map<GraphElementClass<?, ?>, GraphClass> GECsearch;
-
-	private int line; // line number
-
-	private int la; // lookahead character
-
-	private String lookAhead; // lookahead token
+	private String lookAhead; // parser lookahead token
 
 	private boolean isUtfString; // lookahead is UTF string
 
@@ -189,18 +180,20 @@ public class GraphIO {
 
 	private String gcName; // GraphClass name of the currently loaded graph
 
-	private final byte[] buffer;
+	private int line; // line number
+	private final byte[] buffer; // buffer for reading
+	private int bufferPos; // read position in buffer
+	private int bufferSize; // size of buffer
+	private int la; // lexer lookahead character
+	private int putBackChar; // lexer putback character
 
-	private int bufferPos;
-
-	private int bufferSize;
-
-	private Vertex[] edgeIn;
-	private Vertex[] edgeOut;
-
-	private int[] firstIncidence;
+	// arrays to keep incidence information
+	private Vertex[] edgeIn; // omega vertices, index = edge id
+	private Vertex[] edgeOut; // alpha vertices, index = edge id
+	private int[] firstIncidence; // first incidence, index = vertex id
+	// next incidence, index = edgeOffset+incidence id
 	private int[] nextIncidence;
-
+	// middle of nextIncidence array to care or negative incidence ids
 	private int edgeOffset;
 
 	/**
@@ -235,8 +228,6 @@ public class GraphIO {
 
 	private final Map<String, List<String>> commentData;
 
-	private int putBackChar;
-
 	private String currentPackageName;
 
 	private ByteArrayOutputStream BAOut;
@@ -244,11 +235,11 @@ public class GraphIO {
 	// stringPool allows re-use string values, saves memory if
 	// multiple identical strings are used as attribute values
 	private final HashMap<String, String> stringPool;
+
 	private GraphFactory graphFactory;
 
 	private GraphIO() {
 		domains = new TreeMap<String, Domain>();
-		GECsearch = new HashMap<GraphElementClass<?, ?>, GraphClass>();
 		buffer = new byte[BUFFER_SIZE];
 		bufferPos = 0;
 		enumDomainBuffer = new HashSet<EnumDomainData>();
@@ -1246,7 +1237,7 @@ public class GraphIO {
 		sortVertexClasses();
 		sortEdgeClasses();
 
-		domDef(); // create Domains
+		createDomains(); // create Domains
 		completeGraphClass(); // create GraphClasses with contained elements
 		buildHierarchy(); // build inheritance relationships
 		processComments();
@@ -1282,11 +1273,11 @@ public class GraphIO {
 	 * @return A Map of the Domain names to the concrete Domain objects.
 	 * @throws GraphIOException
 	 */
-	private Map<String, Domain> domDef() throws GraphIOException,
+	private Map<String, Domain> createDomains() throws GraphIOException,
 			SchemaException {
-		// basic domains are created automatically
-		enumDomains(); // create EnumDomains
-		recordDomains(); // create RecordDomains
+		// no need to create basic domains, they're created automatically
+		createEnumDomains();
+		createRecordDomains();
 		return domains;
 	}
 
@@ -1306,13 +1297,11 @@ public class GraphIO {
 	/**
 	 * Creates all EnumDomains whose data is stored in {@link enumDomainBuffer}
 	 */
-	private void enumDomains() {
-		Domain domain;
-
+	private void createEnumDomains() {
 		for (EnumDomainData enumDomainData : enumDomainBuffer) {
 			String qName = toQNameString(enumDomainData.packageName,
 					enumDomainData.simpleName);
-			domain = schema.createEnumDomain(qName,
+			Domain domain = schema.createEnumDomain(qName,
 					enumDomainData.enumConstants);
 			domains.put(qName, domain);
 		}
@@ -1335,13 +1324,11 @@ public class GraphIO {
 	 * Creates all RecordDomains whose data is stored in
 	 * {@link recordDomainBuffer} @
 	 */
-	private void recordDomains() throws GraphIOException, SchemaException {
-		Domain domain;
-
+	private void createRecordDomains() throws GraphIOException, SchemaException {
 		for (RecordDomainData recordDomainData : recordDomainBuffer) {
 			String qName = toQNameString(recordDomainData.packageName,
 					recordDomainData.simpleName);
-			domain = schema.createRecordDomain(qName,
+			Domain domain = schema.createRecordDomain(qName,
 					getComponents(recordDomainData.components));
 			domains.put(qName, domain);
 		}
@@ -1777,8 +1764,6 @@ public class GraphIO {
 		for (Constraint constraint : vcd.constraints) {
 			vc.addConstraint(constraint);
 		}
-
-		GECsearch.put(vc, gc);
 		return vc;
 	}
 
@@ -1799,8 +1784,6 @@ public class GraphIO {
 		}
 
 		ec.setAbstract(ecd.isAbstract);
-
-		GECsearch.put(ec, gc);
 		return ec;
 	}
 
@@ -1951,13 +1934,10 @@ public class GraphIO {
 
 	private void buildVertexClassHierarchy() throws GraphIOException,
 			SchemaException {
-		AttributedElementClass<?, ?> aec;
-		VertexClass superClass;
-
 		for (Entry<String, List<GraphElementClassData>> gcElements : vertexClassBuffer
 				.entrySet()) {
 			for (GraphElementClassData vData : gcElements.getValue()) {
-				aec = schema
+				AttributedElementClass<?, ?> aec = schema
 						.getAttributedElementClass(vData.getQualifiedName());
 				if (aec == null) {
 					throw new GraphIOException(
@@ -1965,15 +1945,16 @@ public class GraphIO {
 									+ vData.getQualifiedName() + "'");
 				}
 				if (aec instanceof VertexClass) {
+					VertexClass vc = (VertexClass) aec;
 					for (String superClassName : vData.directSuperClasses) {
-						superClass = GECsearch.get(aec).getVertexClass(
-								superClassName);
+						VertexClass superClass = vc.getGraphClass()
+								.getVertexClass(superClassName);
 						if (superClass == null) {
 							throw new GraphIOException(
 									"Undefined VertexClass '" + superClassName
 											+ "'");
 						}
-						((VertexClass) aec).addSuperClass(superClass);
+						vc.addSuperClass(superClass);
 					}
 				}
 			}
@@ -1982,13 +1963,10 @@ public class GraphIO {
 
 	private void buildEdgeClassHierarchy() throws GraphIOException,
 			SchemaException {
-		AttributedElementClass<?, ?> aec;
-		EdgeClass superClass;
-
 		for (Entry<String, List<GraphElementClassData>> gcElements : edgeClassBuffer
 				.entrySet()) {
 			for (GraphElementClassData eData : gcElements.getValue()) {
-				aec = schema
+				AttributedElementClass<?, ?> aec = schema
 						.getAttributedElementClass(eData.getQualifiedName());
 				if (aec == null) {
 					throw new GraphIOException(
@@ -2002,8 +1980,8 @@ public class GraphIO {
 				}
 				EdgeClass ec = (EdgeClass) aec;
 				for (String superClassName : eData.directSuperClasses) {
-					superClass = GECsearch.get(aec)
-							.getEdgeClass(superClassName);
+					EdgeClass superClass = ec.getGraphClass().getEdgeClass(
+							superClassName);
 					if (superClass == null) {
 						throw new GraphIOException("Undefined EdgeClass '"
 								+ superClassName + "'");
@@ -2030,11 +2008,11 @@ public class GraphIO {
 			out.append((char) la);
 			la = read();
 		} else {
-			if (la != -1) {
+			if (la >= 0) {
 				do {
 					out.append((char) la);
 					la = read();
-				} while (!isWs(la) && !isSeparator(la) && (la != -1));
+				} while (!isWs(la) && !isSeparator(la) && (la >= 0));
 			}
 		}
 		return out.toString();
@@ -2042,42 +2020,43 @@ public class GraphIO {
 
 	private final int read() throws GraphIOException {
 		try {
+			int ch = -1;
 			if (putBackChar >= 0) {
-				int result = putBackChar;
+				ch = putBackChar;
 				putBackChar = -1;
-				return result;
 			}
 			if (bufferPos < bufferSize) {
-				return buffer[bufferPos++];
+				ch = buffer[bufferPos++];
 			} else {
 				bufferSize = TGIn.read(buffer);
-				if (bufferSize != -1) {
-					bufferPos = 0;
-					return buffer[bufferPos++];
-				} else {
-					return -1;
+				if (bufferSize > 0) {
+					bufferPos = 1;
+					ch = buffer[0];
 				}
 			}
+			if (ch == '\n') {
+				++line;
+			}
+			return ch;
 		} catch (IOException e) {
 			throw new GraphIOException(
 					"Error on reading bytes from file, line " + line
 							+ ", last char read was "
-							+ (la >= 0 ? "'" + (char) la + "'" : "end of file"),
-					e);
+							+ (la >= 0 ? "'" + (char) la + "'" : "EOF"), e);
 		}
 	}
 
 	private final void readUtfString(StringBuilder out) throws GraphIOException {
 		int startLine = line;
 		la = read();
-		LOOP: while ((la != -1) && (la != '"')) {
+		LOOP: while ((la >= 0) && (la != '"')) {
 			if ((la < 32) || (la > 127)) {
 				throw new GraphIOException("Invalid character '" + (char) la
 						+ "' in string in line " + line);
 			}
 			if (la == '\\') {
 				la = read();
-				if (la == -1) {
+				if (la < 0) {
 					break LOOP;
 				}
 				switch (la) {
@@ -2098,22 +2077,22 @@ public class GraphIO {
 					break;
 				case 'u':
 					la = read();
-					if (la == -1) {
+					if (la < 0) {
 						break LOOP;
 					}
 					String unicode = "" + (char) la;
 					la = read();
-					if (la == -1) {
+					if (la < 0) {
 						break LOOP;
 					}
 					unicode += (char) la;
 					la = read();
-					if (la == -1) {
+					if (la < 0) {
 						break LOOP;
 					}
 					unicode += (char) la;
 					la = read();
-					if (la == -1) {
+					if (la < 0) {
 						break LOOP;
 					}
 					unicode += (char) la;
@@ -2133,7 +2112,7 @@ public class GraphIO {
 			out.append((char) la);
 			la = read();
 		}
-		if (la == -1) {
+		if (la < 0) {
 			throw new GraphIOException("Unterminated string starting in line "
 					+ startLine + ".  lookAhead = '" + lookAhead + "'");
 		}
@@ -2155,9 +2134,6 @@ public class GraphIO {
 		do {
 			// skip whitespace
 			while (isWs(la)) {
-				if (la == '\n') {
-					++line;
-				}
 				la = read();
 			}
 			// skip single line comments
@@ -2170,6 +2146,7 @@ public class GraphIO {
 					}
 				} else {
 					putback(la);
+					la = '/';
 				}
 			}
 		} while (isWs(la));
@@ -2177,6 +2154,9 @@ public class GraphIO {
 
 	private final void putback(int ch) {
 		putBackChar = ch;
+		if (ch == '\n') {
+			--line;
+		}
 	}
 
 	private final String matchAndNext() throws GraphIOException {
@@ -2197,11 +2177,9 @@ public class GraphIO {
 		if (lookAhead.equals(s)) {
 			lookAhead = nextToken();
 		} else {
-			throw new GraphIOException("Expected '"
-					+ s
-					+ "' but found "
-					+ (lookAhead.equals("") ? "end of file" : "'" + lookAhead
-							+ "'") + " in line " + line, null);
+			throw new GraphIOException("Expected '" + s + "' but found "
+					+ (lookAhead.equals("") ? "EOF" : "'" + lookAhead + "'")
+					+ " in line " + line, null);
 		}
 	}
 
@@ -2212,8 +2190,8 @@ public class GraphIO {
 			return result;
 		} catch (NumberFormatException e) {
 			throw new GraphIOException("Expected int number but found "
-					+ (lookAhead.equals("") ? "end of file" : "'" + lookAhead
-							+ "'") + " in line " + line, e);
+					+ (lookAhead.equals("") ? "EOF" : "'" + lookAhead + "'")
+					+ " in line " + line, e);
 		}
 	}
 
@@ -2224,8 +2202,8 @@ public class GraphIO {
 			return result;
 		} catch (NumberFormatException e) {
 			throw new GraphIOException("Expected long number but found "
-					+ (lookAhead.equals("") ? "end of file" : "'" + lookAhead
-							+ "'") + " in line " + line, e);
+					+ (lookAhead.equals("") ? "EOF" : "'" + lookAhead + "'")
+					+ " in line " + line, e);
 		}
 	}
 
@@ -2355,18 +2333,17 @@ public class GraphIO {
 			}
 			return result;
 		}
-		throw new GraphIOException(
-				"Expected a string constant but found "
-						+ (lookAhead.equals("") ? "end of file" : "'"
-								+ lookAhead + "'") + " in line " + line);
+		throw new GraphIOException("Expected a string constant but found "
+				+ (lookAhead.equals("") ? "EOF" : "'" + lookAhead + "'")
+				+ " in line " + line);
 	}
 
 	public final boolean matchBoolean() throws GraphIOException {
 		if (!lookAhead.equals("t") && !lookAhead.equals("f")) {
 			throw new GraphIOException(
 					"Expected a boolean constant ('f' or 't') but found "
-							+ (lookAhead.equals("") ? "end of file" : "'"
-									+ lookAhead + "'") + " in line " + line);
+							+ (lookAhead.equals("") ? "EOF" : "'" + lookAhead
+									+ "'") + " in line " + line);
 		}
 		boolean result = lookAhead.equals("t");
 		match();

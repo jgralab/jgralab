@@ -641,7 +641,6 @@ public abstract class SwingApplication extends JFrame {
 						return f.canRead() && name.endsWith(extension);
 					}
 				});
-				fd.setModal(true);
 				if (RUNS_ON_MAC_OS_X) {
 					menuBar.setEnabled(false);
 				}
@@ -695,10 +694,12 @@ public abstract class SwingApplication extends JFrame {
 			fd.setModal(true);
 			if (RUNS_ON_MAC_OS_X) {
 				menuBar.setEnabled(false);
+				SwingApplication.this.validate();
 			}
 			fd.setVisible(true);
 			if (RUNS_ON_MAC_OS_X) {
 				menuBar.setEnabled(true);
+				SwingApplication.this.validate();
 			}
 			if (fd.getFile() != null) {
 				String name = fd.getDirectory() + fd.getFile();
