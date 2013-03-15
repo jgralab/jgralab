@@ -1089,6 +1089,9 @@ public class SchemaImpl implements Schema, ManagableArtifact {
 		if (name.isEmpty()) {
 			return false;
 		}
+		if (name.equals(GraphIO.NULL_LITERAL)) {
+			return false;
+		}
 		if (!allowLowercaseEnumConstants && !name.equals(name.toUpperCase())) {
 			return false;
 		}
@@ -1135,11 +1138,10 @@ public class SchemaImpl implements Schema, ManagableArtifact {
 	@Override
 	public String toTGString() {
 		String schemaDefinition = null;
-		ByteArrayOutputStream byteOut = new ByteArrayOutputStream();
-		DataOutputStream out = new DataOutputStream(byteOut);
 		try {
+			ByteArrayOutputStream byteOut = new ByteArrayOutputStream();
+			DataOutputStream out = new DataOutputStream(byteOut);
 			GraphIO.saveSchemaToStream(this, out);
-			out.close();
 			byteOut.close();
 			schemaDefinition = new String(byteOut.toByteArray());
 		} catch (GraphIOException e) {

@@ -45,6 +45,7 @@ import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.Record;
 import de.uni_koblenz.jgralab.exception.GraphIOException;
 import de.uni_koblenz.jgralab.impl.RecordImpl;
+import de.uni_koblenz.jgralab.impl.TgLexer.Token;
 import de.uni_koblenz.jgralab.schema.Attribute;
 import de.uni_koblenz.jgralab.schema.Domain;
 import de.uni_koblenz.jgralab.schema.Package;
@@ -196,11 +197,11 @@ public final class RecordDomainImpl extends CompositeDomainImpl implements
 	private void internalGetReadMethod(CodeSnippet code, String schemaPrefix,
 			String variableName, String graphIoVariableName) {
 		code.add("#init#");
-		code.add("if (" + graphIoVariableName + ".isNextToken(\"(\")) {");
+		code.add("if (" + graphIoVariableName + ".isNextToken(#token#.LBR)) {");
 		code.add("\t" + "#name# = new " + getSchema().getPackagePrefix() + "."
 				+ getQualifiedName() + "(io);");
 		code.add("} else if (" + graphIoVariableName
-				+ ".isNextToken(GraphIO.NULL_LITERAL)) {");
+				+ ".isNextToken(#token#.NULL_LITERAL)) {");
 		code.add("\t" + graphIoVariableName + ".match();");
 		code.add("\t" + variableName + " = null;");
 		code.add("} else {");
@@ -274,10 +275,10 @@ public final class RecordDomainImpl extends CompositeDomainImpl implements
 
 	@Override
 	public Object parseGenericAttribute(GraphIO io) throws GraphIOException {
-		if (io.isNextToken("(")) {
+		if (io.isNextToken(Token.LBR)) {
 			de.uni_koblenz.jgralab.impl.RecordImpl result = de.uni_koblenz.jgralab.impl.RecordImpl
 					.empty();
-			io.match("(");
+			io.match();
 
 			// Component values are expected in lexicographic order ->
 			// RecordDomainImpl uses a TreeMap for Components and provides
@@ -287,7 +288,7 @@ public final class RecordDomainImpl extends CompositeDomainImpl implements
 			Iterator<RecordDomain.RecordComponent> componentIterator = getComponents()
 					.iterator();
 			RecordComponent component = componentIterator.next();
-			while (!io.isNextToken(")")) {
+			while (!io.isNextToken(Token.RBR)) {
 				Object componentValue = null;
 				componentValue = component.getDomain()
 						.parseGenericAttribute(io);
@@ -296,9 +297,9 @@ public final class RecordDomainImpl extends CompositeDomainImpl implements
 						.next() : null;
 			}
 			assert (!componentIterator.hasNext());
-			io.match(")");
+			io.match();
 			return result;
-		} else if (io.isNextToken(GraphIO.NULL_LITERAL)) {
+		} else if (io.isNextToken(Token.NULL_LITERAL)) {
 			io.match();
 			return null;
 		} else {
@@ -310,10 +311,7 @@ public final class RecordDomainImpl extends CompositeDomainImpl implements
 	public void serializeGenericAttribute(GraphIO io, Object data)
 			throws IOException {
 		if (data != null) {
-			io.writeSpace();
 			io.write("(");
-			io.noSpace();
-
 			// RecordDomainImpl uses a TreeMap to store its components =>
 			// Collection of components is backed by the TreeMap and
 			// components are

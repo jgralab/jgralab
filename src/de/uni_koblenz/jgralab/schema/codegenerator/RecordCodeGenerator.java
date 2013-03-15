@@ -91,12 +91,12 @@ public class RecordCodeGenerator extends CodeGenerator {
 		code.addNoIndent(new CodeSnippet(true,
 				"public #simpleClassName#(GraphIO io) throws GraphIOException {"));
 
-		code.add(new CodeSnippet("io.match(\"(\");"));
+		code.add(new CodeSnippet("io.match(#token#.LBR);"));
 		for (RecordComponent rc : recordDomain.getComponents()) {
 			code.add(rc.getDomain().getReadMethod(schemaRootPackageName,
 					"_" + rc.getName(), "io"));
 		}
-		code.add(new CodeSnippet("io.match(\")\");"));
+		code.add(new CodeSnippet("io.match(#token#.RBR);"));
 		code.addNoIndent(new CodeSnippet("}"));
 		return code;
 	}
@@ -322,7 +322,7 @@ public class RecordCodeGenerator extends CodeGenerator {
 				true,
 				"@Override",
 				"public void writeComponentValues(GraphIO io) throws IOException, GraphIOException {",
-				"\tio.writeSpace();", "\tio.write(\"(\");", "\tio.noSpace();"));
+				"\tio.write(\"(\");"));
 		for (RecordComponent rc : recordDomain.getComponents()) {
 			code.add(rc.getDomain().getWriteMethod(schemaRootPackageName,
 					"_" + rc.getName(), "io"));

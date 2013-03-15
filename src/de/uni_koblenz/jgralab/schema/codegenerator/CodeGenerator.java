@@ -157,6 +157,8 @@ public abstract class CodeGenerator {
 				"de.uni_koblenz.jgralab.schema");
 		rootBlock.setVariable("jgSchemaImplPackage",
 				"de.uni_koblenz.jgralab.schema.impl");
+		rootBlock.setVariable("token",
+				"de.uni_koblenz.jgralab.impl.TgLexer.Token");
 
 		if ((packageName != null) && !packageName.equals("")) {
 			rootBlock.setVariable("schemaPackage", schemaRootPackageName + "."

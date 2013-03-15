@@ -311,7 +311,6 @@ public class JGraLab {
 			output.append(addInfo(line));
 			output.append('\n');
 		}
-		output.append('\n');
 		return output.toString();
 	}
 

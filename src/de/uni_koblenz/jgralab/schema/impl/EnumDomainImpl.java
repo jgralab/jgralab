@@ -284,8 +284,8 @@ public final class EnumDomainImpl extends DomainImpl implements EnumDomain {
 		if (value == null) {
 			return result;
 		}
-		if(value instanceof Enum){
-			if(this.getSchemaClass().isInstance(value)){
+		if (value instanceof Enum) {
+			if (this.getSchemaClass().isInstance(value)) {
 				return true;
 			}
 			return false;

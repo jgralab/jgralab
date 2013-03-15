@@ -35,21 +35,18 @@
 
 package de.uni_koblenz.jgralab;
 
-import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.Closeable;
-import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.lang.reflect.Method;
 import java.nio.CharBuffer;
-import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -70,6 +67,8 @@ import de.uni_koblenz.jgralab.exception.GraphIOException;
 import de.uni_koblenz.jgralab.graphmarker.AbstractBooleanGraphMarker;
 import de.uni_koblenz.jgralab.impl.GraphBaseImpl;
 import de.uni_koblenz.jgralab.impl.InternalGraph;
+import de.uni_koblenz.jgralab.impl.TgLexer;
+import de.uni_koblenz.jgralab.impl.TgLexer.Token;
 import de.uni_koblenz.jgralab.schema.AggregationKind;
 import de.uni_koblenz.jgralab.schema.Attribute;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
@@ -98,16 +97,20 @@ import de.uni_koblenz.jgralab.schema.impl.compilation.SchemaClassManager;
  * 
  * @author ist@uni-koblenz.de
  */
-public class GraphIO {
+public final class GraphIO {
 	/**
 	 * TG File Version this GraphIO recognizes.
 	 */
 	public static final int TGFILE_VERSION = 2;
-	public static final String NULL_LITERAL = "n";
-	public static final String TRUE_LITERAL = "t";
-	public static final String FALSE_LITERAL = "f";
+	public static final String NULL_LITERAL = TgLexer.Token.NULL_LITERAL
+			.toString();
+	public static final String TRUE_LITERAL = TgLexer.Token.TRUE_LITERAL
+			.toString();
+	public static final String FALSE_LITERAL = TgLexer.Token.FALSE_LITERAL
+			.toString();
 	public static final String TGRAPH_FILE_EXTENSION = ".tg";
 	public static final String TGRAPH_COMPRESSED_FILE_EXTENSION = ".tg.gz";
+	private static final int WRITE_BUFFER_SIZE = 65536;
 
 	/**
 	 * A {@link FilenameFilter} that accepts TG files.
@@ -158,11 +161,7 @@ public class GraphIO {
 		}
 	}
 
-	private static final int BUFFER_SIZE = 65536;
-
-	private InputStream TGIn;
-
-	private DataOutputStream TGOut;
+	private OutputStream TGOut;
 
 	private Schema schema;
 
@@ -171,21 +170,10 @@ public class GraphIO {
 	 */
 	private final Map<String, Domain> domains;
 
-	private String lookAhead; // parser lookahead token
-
-	private boolean isUtfString; // lookahead is UTF string
-
-	private boolean writeSpace; // if true, a space is written in the next
-	// writeXXX()
-
 	private String gcName; // GraphClass name of the currently loaded graph
 
-	private int line; // line number
-	private final byte[] buffer; // buffer for reading
-	private int bufferPos; // read position in buffer
-	private int bufferSize; // size of buffer
-	private int la; // lexer lookahead character
-	private int putBackChar; // lexer putback character
+	private TgLexer lexer;
+	private Token lookAhead; // parser lookAhead token
 
 	// arrays to keep incidence information
 	private Vertex[] edgeIn; // omega vertices, index = edge id
@@ -240,8 +228,6 @@ public class GraphIO {
 
 	private GraphIO() {
 		domains = new TreeMap<String, Domain>();
-		buffer = new byte[BUFFER_SIZE];
-		bufferPos = 0;
 		enumDomainBuffer = new HashSet<EnumDomainData>();
 		recordDomainBuffer = new ArrayList<RecordDomainData>();
 		graphClass = null;
@@ -249,20 +235,13 @@ public class GraphIO {
 		edgeClassBuffer = new TreeMap<String, List<GraphElementClassData>>();
 		commentData = new HashMap<String, List<String>>();
 		stringPool = new HashMap<String, String>();
-		putBackChar = -1;
 	}
 
 	public static Schema loadSchemaFromFile(String filename)
 			throws GraphIOException {
 		InputStream in = null;
 		try {
-			if (filename.toLowerCase().endsWith(".gz")) {
-				in = new GZIPInputStream(new FileInputStream(filename),
-						BUFFER_SIZE);
-			} else {
-				in = new BufferedInputStream(new FileInputStream(filename),
-						BUFFER_SIZE);
-			}
+			in = inputStreamForFilename(filename);
 			return loadSchemaFromStream(in);
 		} catch (IOException ex) {
 			throw new GraphIOException("Exception while loading schema from "
@@ -276,7 +255,7 @@ public class GraphIO {
 			throws GraphIOException {
 		try {
 			GraphIO io = new GraphIO();
-			io.TGIn = in;
+			io.lexer = new TgLexer(in);
 			io.tgfile();
 			io.schema.finish();
 			return io.schema;
@@ -300,10 +279,9 @@ public class GraphIO {
 	 */
 	public static void saveSchemaToFile(Schema schema, String filename)
 			throws GraphIOException {
-		DataOutputStream out = null;
+		OutputStream out = null;
 		try {
-			out = new DataOutputStream(new BufferedOutputStream(
-					new FileOutputStream(new File(filename))));
+			out = outputStreamForFilename(filename);
 			saveSchemaToStream(schema, out);
 		} catch (IOException ex) {
 			throw new GraphIOException("Exception while saving schema to "
@@ -320,18 +298,17 @@ public class GraphIO {
 	 * @param schema
 	 *            a schema
 	 * @param out
-	 *            a DataOutputStream
+	 *            an OutputStream
 	 * @throws GraphIOException
 	 *             if an IOException occurs
 	 */
-	public static void saveSchemaToStream(Schema schema, DataOutputStream out)
+	public static void saveSchemaToStream(Schema schema, OutputStream out)
 			throws GraphIOException {
-		GraphIO io = new GraphIO();
-		io.TGOut = out;
 		try {
+			GraphIO io = new GraphIO();
+			io.TGOut = out;
 			io.saveHeader();
 			io.saveSchema(schema);
-			out.flush();
 		} catch (IOException e) {
 			throw new GraphException("Exception while saving schema", e);
 		}
@@ -340,14 +317,12 @@ public class GraphIO {
 	private void saveSchema(Schema s) throws IOException {
 		schema = s;
 		write("Schema");
-		space();
 		writeIdentifier(schema.getQualifiedName());
 		write(";\n");
 
 		// write graphclass
 		GraphClass gc = schema.getGraphClass();
 		write("GraphClass");
-		space();
 		writeIdentifier(gc.getSimpleName());
 		writeAttributes(null, gc);
 		writeConstraints(gc);
@@ -363,7 +338,6 @@ public class GraphIO {
 			// write package declaration
 			if (!pkg.isDefaultPackage()) {
 				write("Package");
-				space();
 				writeIdentifier(pkg.getQualifiedName());
 				write(";\n");
 			}
@@ -373,15 +347,13 @@ public class GraphIO {
 				if (dom instanceof EnumDomain) {
 					EnumDomain ed = (EnumDomain) dom;
 					write("EnumDomain");
-					space();
 					writeIdentifier(ed.getSimpleName());
-					write(" (");
+					write("(");
 					for (Iterator<String> eit = ed.getConsts().iterator(); eit
 							.hasNext();) {
-						noSpace();
 						writeIdentifier(eit.next());
 						if (eit.hasNext()) {
-							write(", ");
+							write(",");
 						}
 					}
 					write(");\n");
@@ -389,19 +361,17 @@ public class GraphIO {
 				} else if (dom instanceof RecordDomain) {
 					RecordDomain rd = (RecordDomain) dom;
 					write("RecordDomain");
-					space();
 					writeIdentifier(rd.getSimpleName());
-					write(" (");
+					write("(");
 					String delim = "";
 					for (RecordComponent rdc : rd.getComponents()) {
 						write(delim);
-						noSpace();
 						writeIdentifier(rdc.getName());
-						write(": ");
+						write(":");
 						write(rdc.getDomain().getTGTypeName(pkg));
-						delim = ", ";
+						delim = ",";
 					}
-					write(");\n");
+					write(");");
 					writeComments(rd, rd.getSimpleName());
 				}
 			}
@@ -409,10 +379,9 @@ public class GraphIO {
 			// write vertex classes
 			for (VertexClass vc : pkg.getVertexClasses()) {
 				if (vc.isAbstract()) {
-					write("abstract ");
+					write("abstract");
 				}
 				write("VertexClass");
-				space();
 				writeIdentifier(vc.getSimpleName());
 				writeHierarchy(pkg, vc);
 				writeAttributes(pkg, vc);
@@ -427,19 +396,17 @@ public class GraphIO {
 					continue;
 				}
 				if (ec.isAbstract()) {
-					write("abstract ");
+					write("abstract");
 				}
 				write("EdgeClass");
-				space();
 				writeIdentifier(ec.getSimpleName());
 				writeHierarchy(pkg, ec);
 
 				// from (min,max) rolename
-				write(" from");
-				space();
+				write("from");
 				writeIdentifier(ec.getFrom().getVertexClass()
 						.getQualifiedName(pkg));
-				write(" (");
+				write("(");
 				write(ec.getFrom().getMin() + ",");
 				if (ec.getFrom().getMax() == Integer.MAX_VALUE) {
 					write("*)");
@@ -448,8 +415,7 @@ public class GraphIO {
 				}
 
 				if (!ec.getFrom().getRolename().equals("")) {
-					write(" role");
-					space();
+					write("role");
 					writeIdentifier(ec.getFrom().getRolename());
 				}
 
@@ -458,19 +424,18 @@ public class GraphIO {
 					// do nothing
 					break;
 				case SHARED:
-					write(" aggregation shared");
+					write("aggregation shared");
 					break;
 				case COMPOSITE:
-					write(" aggregation composite");
+					write("aggregation composite");
 					break;
 				}
 
 				// to (min,max) rolename
-				write(" to");
-				space();
+				write("to");
 				writeIdentifier(ec.getTo().getVertexClass()
 						.getQualifiedName(pkg));
-				write(" (");
+				write("(");
 				write(ec.getTo().getMin() + ",");
 				if (ec.getTo().getMax() == Integer.MAX_VALUE) {
 					write("*)");
@@ -479,8 +444,7 @@ public class GraphIO {
 				}
 
 				if (!ec.getTo().getRolename().equals("")) {
-					write(" role");
-					space();
+					write("role");
 					writeIdentifier(ec.getTo().getRolename());
 				}
 
@@ -489,10 +453,10 @@ public class GraphIO {
 					// do nothing
 					break;
 				case SHARED:
-					write(" aggregation shared");
+					write("aggregation shared");
 					break;
 				case COMPOSITE:
-					write(" aggregation composite");
+					write("aggregation composite");
 					break;
 				}
 
@@ -511,9 +475,7 @@ public class GraphIO {
 			throws IOException {
 		if (!elem.getComments().isEmpty()) {
 			write("Comment");
-			space();
 			writeIdentifier(name);
-			space();
 			for (String c : elem.getComments()) {
 				writeUtfString(c);
 			}
@@ -524,17 +486,13 @@ public class GraphIO {
 	private void writeConstraints(AttributedElementClass<?, ?> aec)
 			throws IOException {
 		for (Constraint c : aec.getConstraints()) {
-			writeSpace();
 			write("[");
-			noSpace();
 			writeUtfString(c.getMessage());
 			writeUtfString(c.getPredicate());
 			if (c.getOffendingElementsQuery() != null) {
 				writeUtfString(c.getOffendingElementsQuery());
 			}
-			noSpace();
 			write("]");
-			space();
 		}
 	}
 
@@ -556,15 +514,9 @@ public class GraphIO {
 	 */
 	public static void saveGraphToFile(Graph graph, String filename,
 			ProgressFunction pf) throws GraphIOException {
-		DataOutputStream out = null;
+		OutputStream out = null;
 		try {
-			if (filename.toLowerCase().endsWith(".gz")) {
-				out = new DataOutputStream(new GZIPOutputStream(
-						new FileOutputStream(filename), BUFFER_SIZE));
-			} else {
-				out = new DataOutputStream(new BufferedOutputStream(
-						new FileOutputStream(filename), BUFFER_SIZE));
-			}
+			out = outputStreamForFilename(filename);
 			saveGraphToStream(graph, out, pf);
 		} catch (IOException ex) {
 			throw new GraphIOException("Exception while saving graph to "
@@ -591,15 +543,9 @@ public class GraphIO {
 	 */
 	public static void saveGraphToFile(AbstractBooleanGraphMarker subGraph,
 			String filename, ProgressFunction pf) throws GraphIOException {
-		DataOutputStream out = null;
+		OutputStream out = null;
 		try {
-			if (filename.toLowerCase().endsWith(".gz")) {
-				out = new DataOutputStream(new GZIPOutputStream(
-						new FileOutputStream(filename), BUFFER_SIZE));
-			} else {
-				out = new DataOutputStream(new BufferedOutputStream(
-						new FileOutputStream(filename), BUFFER_SIZE));
-			}
+			out = outputStreamForFilename(filename);
 			saveGraphToStream(subGraph, out, pf);
 		} catch (IOException e) {
 			throw new GraphIOException("Exception while saving graph to "
@@ -617,13 +563,13 @@ public class GraphIO {
 	 * @param graph
 	 *            a graph
 	 * @param out
-	 *            a DataOutputStream
+	 *            an OutputStream
 	 * @param pf
 	 *            a {@link ProgressFunction}, may be <code>null</code>
 	 * @throws GraphIOException
 	 *             if an IOException occurs
 	 */
-	public static void saveGraphToStream(Graph graph, DataOutputStream out,
+	public static void saveGraphToStream(Graph graph, OutputStream out,
 			ProgressFunction pf) throws GraphIOException {
 		try {
 			if (hasTemporaryElements(graph)) {
@@ -647,7 +593,7 @@ public class GraphIO {
 	 * the subgraph marker is complete.
 	 * 
 	 * @param out
-	 *            a DataOutputStream
+	 *            an OutputStream
 	 * @param subGraph
 	 *            a BooleanGraphMarker denoting the subgraph to be saved
 	 * @param pf
@@ -656,7 +602,7 @@ public class GraphIO {
 	 *             if an IOException occurs
 	 */
 	public static void saveGraphToStream(AbstractBooleanGraphMarker subGraph,
-			DataOutputStream out, ProgressFunction pf) throws GraphIOException {
+			OutputStream out, ProgressFunction pf) throws GraphIOException {
 		try {
 			if (hasTemporaryElements(subGraph, subGraph.getGraph())) {
 				throw new GraphIOException("Saving subgraph " + subGraph
@@ -725,9 +671,9 @@ public class GraphIO {
 				interval = pf.getUpdateInterval();
 			}
 
-			space();
-			write("Graph " + toUtfString(graph.getId()) + " "
-					+ graph.getGraphVersion());
+			write("Graph");
+			write(toUtfString(graph.getId()));
+			writeLong(graph.getGraphVersion());
 			writeIdentifier(graph.getAttributedElementClass()
 					.getQualifiedName());
 			int vCount = graph.getVCount();
@@ -745,9 +691,12 @@ public class GraphIO {
 					}
 				}
 			}
-			write(" (" + graph.getMaxVCount() + " " + graph.getMaxECount()
-					+ " " + vCount + " " + eCount + ")");
-			space();
+			write("(");
+			writeInteger(graph.getMaxVCount());
+			writeInteger(graph.getMaxECount());
+			writeInteger(vCount);
+			writeInteger(eCount);
+			write(")");
 			graph.writeAttributeValues(this);
 			write(";\n");
 
@@ -766,18 +715,15 @@ public class GraphIO {
 				Package currentPackage = aec.getPackage();
 				if (currentPackage != oldPackage) {
 					write("Package");
-					space();
 					writeIdentifier(currentPackage.getQualifiedName());
 					write(";\n");
 					oldPackage = currentPackage;
 				}
 				write(Long.toString(vId));
-				space();
 				writeIdentifier(aec.getSimpleName());
 				// write incident edges
 				Edge nextI = nextV.getFirstIncidence();
-				write(" <");
-				noSpace();
+				write("<");
 				// System.out.print("  Writing incidences of vertex.");
 				while (nextI != null) {
 					if ((subGraph != null) && !subGraph.isMarked(nextI)) {
@@ -788,7 +734,6 @@ public class GraphIO {
 					nextI = nextI.getNextIncidence();
 				}
 				write(">");
-				space();
 				nextV.writeAttributeValues(this);
 				write(";\n");
 				nextV = nextV.getNextVertex();
@@ -818,15 +763,12 @@ public class GraphIO {
 				Package currentPackage = aec.getPackage();
 				if (currentPackage != oldPackage) {
 					write("Package");
-					space();
 					writeIdentifier(currentPackage.getQualifiedName());
 					write(";\n");
 					oldPackage = currentPackage;
 				}
 				write(Long.toString(eId));
-				space();
 				writeIdentifier(aec.getSimpleName());
-				space();
 				nextE.writeAttributeValues(this);
 				write(";\n");
 				nextE = nextE.getNextEdge();
@@ -854,7 +796,9 @@ public class GraphIO {
 
 	private void saveHeader() throws IOException {
 		write(JGraLab.getVersionInfo(true));
-		write("TGraph " + TGFILE_VERSION + ";\n");
+		write("TGraph");
+		writeInteger(TGFILE_VERSION);
+		write(";\n");
 	}
 
 	private void writeHierarchy(Package pkg, GraphElementClass<?, ?> aec)
@@ -862,7 +806,6 @@ public class GraphIO {
 		String delim = ":";
 		for (GraphElementClass<?, ?> superClass : aec.getDirectSuperClasses()) {
 			write(delim);
-			space();
 			writeIdentifier(superClass.getQualifiedName(pkg));
 			delim = ",";
 		}
@@ -874,81 +817,76 @@ public class GraphIO {
 		if (attributes.isEmpty()) {
 			return;
 		}
-		String delim = " {";
+		String delim = "{";
 		for (Attribute a : attributes) {
 			write(delim);
 			delim = ",";
-			space();
 			writeIdentifier(a.getName());
-			write(": ");
+			write(":");
 			String domain = a.getDomain().getTGTypeName(pkg);
 			write(domain);
 			if ((a.getDefaultValueAsString() != null)
 					&& !a.getDefaultValueAsString().equals("n")) {
-				write(" = ");
+				write("=");
 				writeUtfString(a.getDefaultValueAsString());
 			}
 		}
-		write(" }");
+		write("}");
 	}
+
+	private int lastCh = 32;
 
 	public final void write(String s) throws IOException {
-		TGOut.writeBytes(s);
-	}
-
-	public final void noSpace() {
-		writeSpace = false;
-	}
-
-	public final void space() {
-		writeSpace = true;
-	}
-
-	public final void writeSpace() throws IOException {
-		if (writeSpace) {
-			TGOut.writeBytes(" ");
+		int len = s.length();
+		if (len > 0) {
+			int c = s.charAt(0);
+			if (!TgLexer.isWs(lastCh) && !TgLexer.isSeparator(lastCh)
+					&& !TgLexer.isSeparator(c)) {
+				TGOut.write(32);
+			}
+			TGOut.write(c);
+			lastCh = c;
+			for (int i = 1; i < len; ++i) {
+				c = s.charAt(i);
+				TGOut.write((byte) c);
+				lastCh = c;
+			}
 		}
-		writeSpace = true;
 	}
 
 	public final void writeBoolean(boolean b) throws IOException {
-		writeSpace();
-		TGOut.writeBytes(b ? TRUE_LITERAL : FALSE_LITERAL);
+		write(b ? TRUE_LITERAL : FALSE_LITERAL);
 	}
 
 	public final void writeInteger(int i) throws IOException {
-		writeSpace();
-		TGOut.writeBytes(Integer.toString(i));
+		write(Integer.toString(i));
 	}
 
 	public final void writeLong(long l) throws IOException {
-		writeSpace();
-		TGOut.writeBytes(Long.toString(l));
+		write(Long.toString(l));
 	}
 
 	public final void writeDouble(double d) throws IOException {
-		writeSpace();
-		TGOut.writeBytes(Double.toString(d));
+		write(Double.toString(d));
 	}
 
 	public final void writeUtfString(String s) throws IOException {
-		writeSpace();
-		TGOut.writeBytes(s == null ? NULL_LITERAL : toUtfString(s));
+		write(s == null ? NULL_LITERAL : toUtfString(s));
 	}
 
 	public final void writeIdentifier(String s) throws IOException {
-		writeSpace();
-		TGOut.writeBytes(s);
+		write(s);
 	}
 
 	public static GraphIO createStringReader(String input, Schema schema)
 			throws GraphIOException {
 		GraphIO io = new GraphIO();
-		io.TGIn = new ByteArrayInputStream(input.getBytes(Charset
-				.forName("US-ASCII")));
-		io.line = 1;
+		try {
+			io.lexer = new TgLexer(input);
+		} catch (IOException e) {
+			throw new GraphIOException(e);
+		}
 		io.schema = schema;
-		io.la = io.read();
 		io.match();
 		return io;
 	}
@@ -956,7 +894,7 @@ public class GraphIO {
 	public static GraphIO createStringWriter(Schema schema) {
 		GraphIO io = new GraphIO();
 		io.BAOut = new ByteArrayOutputStream();
-		io.TGOut = new DataOutputStream(io.BAOut);
+		io.TGOut = io.BAOut;
 		io.schema = schema;
 		return io;
 	}
@@ -966,14 +904,9 @@ public class GraphIO {
 			throw new GraphIOException("GraphIO did not write to a String.");
 		}
 		try {
-			try {
-				TGOut.flush();
-				BAOut.flush();
-				String result = BAOut.toString("US-ASCII");
-				return result;
-			} finally {
-				close(TGOut);
-			}
+			BAOut.flush();
+			String result = BAOut.toString("US-ASCII");
+			return result;
 		} finally {
 			close(BAOut);
 		}
@@ -991,31 +924,15 @@ public class GraphIO {
 			throw new IllegalArgumentException(
 					"ImplementationType must be != null");
 		}
-		FileInputStream fileStream = null;
+		InputStream in = null;
 		try {
-			fileStream = new FileInputStream(filename);
-			InputStream inputStream = null;
-			try {
-				if (filename.toLowerCase().endsWith(".gz")) {
-					inputStream = new GZIPInputStream(fileStream, BUFFER_SIZE);
-				} else {
-					inputStream = new BufferedInputStream(fileStream,
-							BUFFER_SIZE);
-				}
-				return loadGraphFromStream(inputStream, null, null,
-						implementationType, pf);
-			} catch (IOException ex) {
-				throw new GraphIOException(
-						"Exception while loading graph from file " + filename,
-						ex);
-			} finally {
-				close(inputStream);
-			}
+			in = inputStreamForFilename(filename);
+			return loadGraphFromStream(in, null, null, implementationType, pf);
 		} catch (IOException ex) {
 			throw new GraphIOException(
 					"Exception while loading graph from file " + filename, ex);
 		} finally {
-			close(fileStream);
+			close(in);
 		}
 	}
 
@@ -1039,33 +956,37 @@ public class GraphIO {
 		if (factory == null) {
 			throw new IllegalArgumentException("GraphFactory must be != null");
 		}
-		FileInputStream fileStream = null;
+		InputStream in = null;
 		try {
-			fileStream = new FileInputStream(filename);
-			InputStream inputStream = null;
-			try {
-				if (filename.toLowerCase().endsWith(".gz")) {
-					inputStream = new GZIPInputStream(fileStream, BUFFER_SIZE);
-				} else {
-					inputStream = new BufferedInputStream(fileStream,
-							BUFFER_SIZE);
-				}
-				return GraphIO.<G> loadGraphFromStream(inputStream,
-						factory.getSchema(), factory,
-						factory.getImplementationType(), pf);
-			} catch (IOException ex) {
-				throw new GraphIOException(
-						"Exception while loading graph from file " + filename,
-						ex);
-			} finally {
-				close(inputStream);
-			}
+			in = inputStreamForFilename(filename);
+			return GraphIO.<G> loadGraphFromStream(in, factory.getSchema(),
+					factory, factory.getImplementationType(), pf);
 		} catch (IOException ex) {
 			throw new GraphIOException(
 					"Exception while loading graph from file " + filename, ex);
 		} finally {
-			close(fileStream);
+			close(in);
 		}
+	}
+
+	private static InputStream inputStreamForFilename(String filename)
+			throws IOException {
+		InputStream in = new FileInputStream(filename);
+		if (filename.toLowerCase().endsWith(".gz")) {
+			in = new GZIPInputStream(in);
+		}
+		return in;
+	}
+
+	private static OutputStream outputStreamForFilename(String filename)
+			throws IOException {
+		OutputStream out = new FileOutputStream(filename);
+		if (filename.toLowerCase().endsWith(".gz")) {
+			out = new GZIPOutputStream(out, WRITE_BUFFER_SIZE);
+		} else {
+			out = new BufferedOutputStream(out, WRITE_BUFFER_SIZE);
+		}
+		return out;
 	}
 
 	private static void close(Closeable stream) throws GraphIOException {
@@ -1084,7 +1005,7 @@ public class GraphIO {
 			throws GraphIOException {
 		try {
 			GraphIO io = new GraphIO();
-			io.TGIn = in;
+			io.lexer = new TgLexer(in);
 			io.schema = schema;
 			io.tgfile();
 			if (implementationType != ImplementationType.GENERIC) {
@@ -1145,16 +1066,14 @@ public class GraphIO {
 	}
 
 	private void tgfile() throws GraphIOException, SchemaException, IOException {
-		line = 1;
-		la = read();
 		match();
 		header();
 		schema();
-		if (lookAhead.equals("") || lookAhead.equals("Graph")) {
+		if (lookAhead == Token.EOF || lookAhead == Token.GRAPH) {
 			return;
 		}
 		throw new GraphIOException("Symbol '" + lookAhead
-				+ "' not recognized in line " + line, null);
+				+ "' not recognized in line " + lexer.getLine(), null);
 	}
 
 	/**
@@ -1164,13 +1083,13 @@ public class GraphIO {
 	 *             if version number in file can not be processed
 	 */
 	private void header() throws GraphIOException {
-		match("TGraph");
+		match(Token.TGRAPH);
 		int version = matchInteger();
 		if (version != TGFILE_VERSION) {
 			throw new GraphIOException("Can't read TGFile version " + version
 					+ ". Expected version " + TGFILE_VERSION);
 		}
-		match(";");
+		match(Token.SEMICOLON);
 	}
 
 	/**
@@ -1181,13 +1100,14 @@ public class GraphIO {
 	 */
 	private void schema() throws GraphIOException, SchemaException {
 		currentPackageName = "";
-		match("Schema");
+		match(Token.SCHEMA);
 		String[] qn = matchQualifiedName(true);
 		if (qn[0].equals("")) {
 			throw new GraphIOException("Invalid schema name '" + lookAhead
-					+ "', package prefix must not be empty in line " + line);
+					+ "', package prefix must not be empty in line "
+					+ lexer.getLine());
 		}
-		match(";");
+		match(Token.SEMICOLON);
 
 		if (schema != null) {
 			// We already have a schema, so we don't want to load the schema
@@ -1201,9 +1121,9 @@ public class GraphIO {
 				// Beware: it's totally ok to have a VertexClass Graph, so
 				// lookAhead = Graph is a too weak check. So we test that before
 				// the Graph, the last token is a ;, too.
-				String prev = "";
-				while ((lookAhead.length() > 0)
-						&& !(prev.equals(";") && lookAhead.equals("Graph"))) {
+				Token prev = null;
+				while (lookAhead != Token.EOF
+						&& !(prev == Token.SEMICOLON && lookAhead == Token.GRAPH)) {
 					prev = lookAhead;
 					match();
 				}
@@ -1223,9 +1143,9 @@ public class GraphIO {
 
 		// test for correct syntax, because otherwise, the following
 		// sorting/creation methods probably can't work.
-		if (!(lookAhead.equals("") || lookAhead.equals("Graph"))) {
+		if (!(lookAhead == Token.EOF || lookAhead == Token.GRAPH)) {
 			throw new GraphIOException("Symbol '" + lookAhead
-					+ "' not recognized in line " + line, null);
+					+ "' not recognized in line " + lexer.getLine(), null);
 		}
 
 		// sort data of RecordDomains, GraphClasses and GraphElementClasses in
@@ -1287,11 +1207,11 @@ public class GraphIO {
 	 * @throws GraphIOException
 	 */
 	private void parseEnumDomain() throws GraphIOException {
-		match("EnumDomain");
+		match(Token.ENUMDOMAIN);
 		String[] qn = matchQualifiedName(true);
 		enumDomainBuffer.add(new EnumDomainData(qn[0], qn[1],
 				parseEnumConstants()));
-		match(";");
+		match(Token.SEMICOLON);
 	}
 
 	/**
@@ -1313,11 +1233,11 @@ public class GraphIO {
 	 * @throws GraphIOException
 	 */
 	private void parseRecordDomain() throws GraphIOException {
-		match("RecordDomain");
+		match(Token.RECORDDOMAIN);
 		String[] qn = matchQualifiedName(true);
 		recordDomainBuffer.add(new RecordDomainData(qn[0], qn[1],
 				parseRecordComponents()));
-		match(";");
+		match(Token.SEMICOLON);
 	}
 
 	/**
@@ -1354,23 +1274,22 @@ public class GraphIO {
 	 * @throws GraphIOException
 	 */
 	private void parseSchema() throws GraphIOException, SchemaException {
-		while (lookAhead.equals("Comment")) {
+		while (lookAhead == Token.COMMENT) {
 			parseComment();
 		}
 		String currentGraphClassName = parseGraphClass();
 
-		while (lookAhead.equals("Package") || lookAhead.equals("RecordDomain")
-				|| lookAhead.equals("EnumDomain")
-				|| lookAhead.equals("abstract")
-				|| lookAhead.equals("VertexClass")
-				|| lookAhead.equals("EdgeClass") || lookAhead.equals("Comment")) {
-			if (lookAhead.equals("Package")) {
+		while (lookAhead == Token.PACKAGE || lookAhead == Token.RECORDDOMAIN
+				|| lookAhead == Token.ENUMDOMAIN || lookAhead == Token.ABSTRACT
+				|| lookAhead == Token.VERTEXCLASS
+				|| lookAhead == Token.EDGECLASS || lookAhead == Token.COMMENT) {
+			if (lookAhead == Token.PACKAGE) {
 				parsePackage();
-			} else if (lookAhead.equals("RecordDomain")) {
+			} else if (lookAhead == Token.RECORDDOMAIN) {
 				parseRecordDomain();
-			} else if (lookAhead.equals("EnumDomain")) {
+			} else if (lookAhead == Token.ENUMDOMAIN) {
 				parseEnumDomain();
-			} else if (lookAhead.equals("Comment")) {
+			} else if (lookAhead == Token.COMMENT) {
 				parseComment();
 			} else {
 				parseGraphElementClass(currentGraphClassName);
@@ -1379,14 +1298,14 @@ public class GraphIO {
 	}
 
 	private void parseComment() throws GraphIOException {
-		match("Comment");
+		match(Token.COMMENT);
 		String qName = toQNameString(matchQualifiedName());
 		List<String> comments = new ArrayList<String>();
 		comments.add(matchUtfString());
-		while (!lookAhead.equals(";")) {
+		while (lookAhead != Token.SEMICOLON) {
 			comments.add(matchUtfString());
 		}
-		match(";");
+		match(Token.SEMICOLON);
 		if (commentData.containsKey(qName)) {
 			commentData.get(qName).addAll(comments);
 		} else {
@@ -1395,20 +1314,20 @@ public class GraphIO {
 	}
 
 	private void parsePackage() throws GraphIOException {
-		match("Package");
+		match(Token.PACKAGE);
 		currentPackageName = "";
-		if (lookAhead.equals(";")) {
+		if (lookAhead == Token.SEMICOLON) {
 			currentPackageName = "";
 		} else {
 			String[] qn = matchQualifiedName(false);
 			String qualifiedName = toQNameString(qn);
 			if (!isValidPackageName(qn[1])) {
 				throw new GraphIOException("Invalid package name '"
-						+ qualifiedName + "' in line " + line);
+						+ qualifiedName + "' in line " + lexer.getLine());
 			}
 			currentPackageName = qualifiedName;
 		}
-		match(";");
+		match(Token.SEMICOLON);
 	}
 
 	/**
@@ -1438,20 +1357,20 @@ public class GraphIO {
 	 * @throws SchemaException
 	 */
 	private String parseGraphClass() throws GraphIOException, SchemaException {
-		match("GraphClass");
+		match(Token.GRAPHCLASS);
 		graphClass = new GraphClassData();
 
 		graphClass.name = matchSimpleName(true);
-		if (lookAhead.equals("{")) {
+		if (lookAhead == Token.LCRL) {
 			graphClass.attributes = parseAttributes();
 		}
 
-		if (lookAhead.equals("[")) {
+		if (lookAhead == Token.LSQ) {
 			// There are constraints
 			graphClass.constraints = parseConstraints();
 		}
 
-		match(";");
+		match(Token.SEMICOLON);
 
 		vertexClassBuffer.put(graphClass.name,
 				new ArrayList<GraphElementClassData>());
@@ -1494,10 +1413,10 @@ public class GraphIO {
 	 */
 	private List<String> parseHierarchy() throws GraphIOException {
 		List<String> hierarchy = new LinkedList<String>();
-		match(":");
+		match(Token.COLON);
 		String[] qn = matchQualifiedName(true);
 		hierarchy.add(toQNameString(qn));
-		while (lookAhead.equals(",")) {
+		while (lookAhead == Token.COMMA) {
 			match();
 			qn = matchQualifiedName(true);
 			hierarchy.add(toQNameString(qn));
@@ -1509,36 +1428,36 @@ public class GraphIO {
 		List<AttributeData> attributesData = new ArrayList<AttributeData>();
 		Set<String> names = new TreeSet<String>();
 
-		match("{");
+		match(Token.LCRL);
 		AttributeData ad = new AttributeData();
 		ad.name = matchSimpleName(false);
-		match(":");
+		match(Token.COLON);
 		ad.domainDescription = parseAttrDomain();
-		if (lookAhead.equals("=")) {
+		if (lookAhead == Token.EQ) {
 			match();
 			ad.defaultValue = matchUtfString();
 		}
 		attributesData.add(ad);
 		names.add(ad.name);
 
-		while (lookAhead.equals(",")) {
-			match(",");
+		while (lookAhead == Token.COMMA) {
+			match();
 			ad = new AttributeData();
 			ad.name = matchSimpleName(false);
-			match(":");
+			match(Token.COLON);
 			ad.domainDescription = parseAttrDomain();
-			if (lookAhead.equals("=")) {
+			if (lookAhead == Token.EQ) {
 				match();
 				ad.defaultValue = matchUtfString();
 			}
 			if (names.contains(ad.name)) {
 				throw new GraphIOException("Duplicate attribute name '"
-						+ ad.name + "' in line " + line);
+						+ ad.name + "' in line " + lexer.getLine());
 			}
 			attributesData.add(ad);
 			names.add(ad.name);
 		}
-		match("}");
+		match(Token.RCRL);
 		return attributesData;
 	}
 
@@ -1566,29 +1485,30 @@ public class GraphIO {
 	 */
 	private void parseAttrDomain(List<String> attrDomain)
 			throws GraphIOException {
-		if (lookAhead.matches("[.]?List")) {
+		if (lookAhead == Token.LIST || lookAhead == Token.LIST2) {
 			match();
-			match("<");
+			match(Token.LT);
 			attrDomain.add("List<");
 			parseAttrDomain(attrDomain);
-			match(">");
-		} else if (lookAhead.matches("[.]?Set")) {
+			match(Token.GT);
+		} else if (lookAhead == Token.SET || lookAhead == Token.SET2) {
 			match();
-			match("<");
+			match(Token.LT);
 			attrDomain.add("Set<");
 			parseAttrDomain(attrDomain);
-			match(">");
-		} else if (lookAhead.matches("[.]?Map")) {
+			match(Token.GT);
+		} else if (lookAhead == Token.MAP || lookAhead == Token.MAP2) {
 			match();
-			match("<");
+			match(Token.LT);
 			attrDomain.add("Map<");
 			parseAttrDomain(attrDomain);
-			match(",");
+			match(Token.COMMA);
 			parseAttrDomain(attrDomain);
-			match(">");
+			match(Token.GT);
 		} else {
-			if (isBasicDomainName(lookAhead)) {
-				attrDomain.add(lookAhead);
+			String dom = lexer.getLexem();
+			if (isBasicDomainName(dom)) {
+				attrDomain.add(dom);
 				match();
 			} else {
 				String[] qn = matchQualifiedName(true);
@@ -1624,14 +1544,16 @@ public class GraphIO {
 					return schema.createListDomain(attrDomain(domainNames));
 				} catch (SchemaException e) {
 					throw new GraphIOException(
-							"Can't create list domain in line " + line, e);
+							"Can't create list domain in line "
+									+ lexer.getLine(), e);
 				}
 			} else if (domainName.equals("Set<")) {
 				try {
 					return schema.createSetDomain(attrDomain(domainNames));
 				} catch (SchemaException e) {
 					throw new GraphIOException(
-							"Can't create set domain in line " + line, e);
+							"Can't create set domain in line "
+									+ lexer.getLine(), e);
 				}
 			} else if (domainName.equals("Map<")) {
 				try {
@@ -1640,7 +1562,7 @@ public class GraphIO {
 					if (keyDomain == null) {
 						throw new GraphIOException(
 								"Can't create map domain, because no key domain was given in line "
-										+ line);
+										+ lexer.getLine());
 					}
 					MapDomain result = schema.createMapDomain(keyDomain,
 							valueDomain);
@@ -1650,28 +1572,34 @@ public class GraphIO {
 					return result;
 				} catch (SchemaException e) {
 					throw new GraphIOException(
-							"Can't create map domain in line " + line, e);
+							"Can't create map domain in line "
+									+ lexer.getLine(), e);
 				}
 			} else {
 				Domain result = schema.getDomain(domainName);
 				if (result == null) {
 					throw new GraphIOException("Undefined domain '"
-							+ domainName + "' in line " + line);
+							+ domainName + "' in line " + lexer.getLine());
 				}
 				return result;
 			}
 		}
 		throw new GraphIOException("Couldn't create domain for '" + domainNames
-				+ "' in line " + line);
+				+ "' in line " + lexer.getLine());
 	}
 
 	public final String matchEnumConstant() throws GraphIOException {
-		if (schema.isValidEnumConstant(lookAhead)
-				|| lookAhead.equals(NULL_LITERAL)) {
-			return matchAndNext();
+		if (lookAhead == Token.NULL_LITERAL) {
+			match();
+			return null;
+		}
+		String c = lexer.getLexem();
+		if (schema.isValidEnumConstant(c)) {
+			match();
+			return c;
 		}
 		throw new GraphIOException("Invalid enumeration constant '" + lookAhead
-				+ "' in line " + line);
+				+ "' in line " + lexer.getLine());
 	}
 
 	/**
@@ -1684,36 +1612,36 @@ public class GraphIO {
 			SchemaException {
 		GraphElementClassData graphElementClassData = new GraphElementClassData();
 
-		if (lookAhead.equals("abstract")) {
+		if (lookAhead == Token.ABSTRACT) {
 			match();
 			graphElementClassData.isAbstract = true;
 		}
 
-		if (lookAhead.equals("VertexClass")) {
-			match("VertexClass");
-			String[] qn = matchQualifiedName(true);
-			graphElementClassData.packageName = qn[0];
-			graphElementClassData.simpleName = qn[1];
-			if (lookAhead.equals(":")) {
-				graphElementClassData.directSuperClasses = parseHierarchy();
-			}
-			vertexClassBuffer.get(gcName).add(graphElementClassData);
-		} else if (lookAhead.equals("EdgeClass")) {
+		if (lookAhead == Token.VERTEXCLASS) {
 			match();
 			String[] qn = matchQualifiedName(true);
 			graphElementClassData.packageName = qn[0];
 			graphElementClassData.simpleName = qn[1];
-			if (lookAhead.equals(":")) {
+			if (lookAhead == Token.COLON) {
 				graphElementClassData.directSuperClasses = parseHierarchy();
 			}
-			match("from");
+			vertexClassBuffer.get(gcName).add(graphElementClassData);
+		} else if (lookAhead == Token.EDGECLASS) {
+			match();
+			String[] qn = matchQualifiedName(true);
+			graphElementClassData.packageName = qn[0];
+			graphElementClassData.simpleName = qn[1];
+			if (lookAhead == Token.COLON) {
+				graphElementClassData.directSuperClasses = parseHierarchy();
+			}
+			match(Token.FROM);
 			String[] fqn = matchQualifiedName(true);
 			graphElementClassData.fromVertexClassName = toQNameString(fqn);
 			graphElementClassData.fromMultiplicity = parseMultiplicity();
 			graphElementClassData.fromRoleName = parseRoleName();
 			graphElementClassData.fromAggregation = parseAggregation();
 
-			match("to");
+			match(Token.TO);
 			String[] tqn = matchQualifiedName(true);
 			graphElementClassData.toVertexClassName = toQNameString(tqn);
 			graphElementClassData.toMultiplicity = parseMultiplicity();
@@ -1725,15 +1653,15 @@ public class GraphIO {
 					+ " at position ");
 		}
 
-		if (lookAhead.equals("{")) {
+		if (lookAhead == Token.LCRL) {
 			graphElementClassData.attributes = parseAttributes();
 		}
 
-		if (lookAhead.equals("[")) {
+		if (lookAhead == Token.LSQ) {
 			// There are constraints
 			graphElementClassData.constraints = parseConstraints();
 		}
-		match(";");
+		match(Token.SEMICOLON);
 	}
 
 	private Set<Constraint> parseConstraints() throws GraphIOException {
@@ -1741,16 +1669,16 @@ public class GraphIO {
 		// "pred"] and there may be as many as one wants...
 		Set<Constraint> constraints = new TreeSet<Constraint>();
 		do {
-			match("[");
+			match(Token.LSQ);
 			String msg = matchUtfString();
 			String pred = matchUtfString();
 			String greql = null;
-			if (!lookAhead.equals("]")) {
+			if (lookAhead != Token.RSQ) {
 				greql = matchUtfString();
 			}
 			constraints.add(new ConstraintImpl(msg, pred, greql));
-			match("]");
-		} while (lookAhead.equals("["));
+			match(Token.RSQ);
+		} while (lookAhead == Token.LSQ);
 		return constraints;
 	}
 
@@ -1798,25 +1726,26 @@ public class GraphIO {
 	private int[] parseMultiplicity() throws GraphIOException {
 		int[] multis = new int[2];
 
-		match("(");
+		match(Token.LBR);
 		int min = matchInteger();
 		if (min < 0) {
 			throw new GraphIOException("Minimum multiplicity '" + min
-					+ "' must be >=0 in line " + line);
+					+ "' must be >=0 in line " + lexer.getLine());
 		}
-		match(",");
+		match(Token.COMMA);
 		int max;
-		if (lookAhead.equals("*")) {
+		if (lookAhead == Token.ASTERISK) {
 			max = Integer.MAX_VALUE;
 			match();
 		} else {
 			max = matchInteger();
 			if (max < min) {
 				throw new GraphIOException("Maximum multiplicity '" + max
-						+ "' must be * or >=" + min + " in line " + line);
+						+ "' must be * or >=" + min + " in line "
+						+ lexer.getLine());
 			}
 		}
-		match(")");
+		match(Token.RBR);
 		multis[0] = min;
 		multis[1] = max;
 		return multis;
@@ -1829,7 +1758,7 @@ public class GraphIO {
 	 * @throws GraphIOException
 	 */
 	private String parseRoleName() throws GraphIOException {
-		if (lookAhead.equals("role")) {
+		if (lookAhead == Token.ROLE) {
 			match();
 			String result = matchSimpleName(false);
 			return result;
@@ -1838,23 +1767,23 @@ public class GraphIO {
 	}
 
 	private AggregationKind parseAggregation() throws GraphIOException {
-		if (!lookAhead.equals("aggregation")) {
+		if (lookAhead != Token.AGGREGATION) {
 			return AggregationKind.NONE;
 		}
 		match();
-		if (lookAhead.equals("none")) {
+		if (lookAhead == Token.NONE) {
 			match();
 			return AggregationKind.NONE;
-		} else if (lookAhead.equals("shared")) {
+		} else if (lookAhead == Token.SHARED) {
 			match();
 			return AggregationKind.SHARED;
-		} else if (lookAhead.equals("composite")) {
+		} else if (lookAhead == Token.COMPOSITE) {
 			match();
 			return AggregationKind.COMPOSITE;
 		} else {
 			throw new GraphIOException(
 					"Invalid aggregation: expected 'none', 'shared', or 'composite', but found '"
-							+ lookAhead + "' in line " + line);
+							+ lookAhead + "' in line " + lexer.getLine());
 		}
 	}
 
@@ -1881,28 +1810,28 @@ public class GraphIO {
 		List<ComponentData> componentsData = new ArrayList<ComponentData>();
 		Set<String> names = new TreeSet<String>();
 
-		match("(");
+		match(Token.LBR);
 		ComponentData cd = new ComponentData();
 		cd.name = matchSimpleName(false);
-		match(":");
+		match(Token.COLON);
 		cd.domainDescription = parseAttrDomain();
 		componentsData.add(cd);
 		names.add(cd.name);
 
-		while (lookAhead.equals(",")) {
-			match(",");
+		while (lookAhead == Token.COMMA) {
+			match();
 			cd = new ComponentData();
 			cd.name = matchSimpleName(false);
-			match(":");
+			match(Token.COLON);
 			cd.domainDescription = parseAttrDomain();
 			if (names.contains(cd.name)) {
 				throw new GraphIOException("Duplicate record component name '"
-						+ cd.name + "' in line " + line);
+						+ cd.name + "' in line " + lexer.getLine());
 			}
 			componentsData.add(cd);
 			names.add(cd.name);
 		}
-		match(")");
+		match(Token.RBR);
 		return componentsData;
 	}
 
@@ -1915,20 +1844,25 @@ public class GraphIO {
 	 *             if duplicate constant names are read.
 	 */
 	private List<String> parseEnumConstants() throws GraphIOException {
-		match("(");
+		match(Token.LBR);
 		List<String> enums = new ArrayList<String>();
-		enums.add(matchEnumConstant());
-		while (lookAhead.equals(",")) {
+		String c = matchEnumConstant();
+		if (c == null) {
+			throw new GraphIOException("'" + NULL_LITERAL
+					+ "' can not be used as enumeration constant");
+		}
+		enums.add(c);
+		while (lookAhead == Token.COMMA) {
 			match();
 			String s = matchEnumConstant();
 			if (enums.contains(s)) {
 				throw new GraphIOException(
 						"Duplicate enumeration constant name '" + lookAhead
-								+ "' in line " + line);
+								+ "' in line " + lexer.getLine());
 			}
 			enums.add(s);
 		}
-		match(")");
+		match(Token.RBR);
 		return enums;
 	}
 
@@ -1997,214 +1931,39 @@ public class GraphIO {
 		buildEdgeClassHierarchy();
 	}
 
-	private final String nextToken() throws GraphIOException {
-		StringBuilder out = new StringBuilder();
-		isUtfString = false;
-		skipWs();
-		if (la == '"') {
-			readUtfString(out);
-			isUtfString = true;
-		} else if (isSeparator(la)) {
-			out.append((char) la);
-			la = read();
-		} else {
-			if (la >= 0) {
-				do {
-					out.append((char) la);
-					la = read();
-				} while (!isWs(la) && !isSeparator(la) && (la >= 0));
-			}
-		}
-		return out.toString();
-	}
-
-	private final int read() throws GraphIOException {
-		try {
-			int ch = -1;
-			if (putBackChar >= 0) {
-				ch = putBackChar;
-				putBackChar = -1;
-			}
-			if (bufferPos < bufferSize) {
-				ch = buffer[bufferPos++];
-			} else {
-				bufferSize = TGIn.read(buffer);
-				if (bufferSize > 0) {
-					bufferPos = 1;
-					ch = buffer[0];
-				}
-			}
-			if (ch == '\n') {
-				++line;
-			}
-			return ch;
-		} catch (IOException e) {
-			throw new GraphIOException(
-					"Error on reading bytes from file, line " + line
-							+ ", last char read was "
-							+ (la >= 0 ? "'" + (char) la + "'" : "EOF"), e);
-		}
-	}
-
-	private final void readUtfString(StringBuilder out) throws GraphIOException {
-		int startLine = line;
-		la = read();
-		LOOP: while ((la >= 0) && (la != '"')) {
-			if ((la < 32) || (la > 127)) {
-				throw new GraphIOException("Invalid character '" + (char) la
-						+ "' in string in line " + line);
-			}
-			if (la == '\\') {
-				la = read();
-				if (la < 0) {
-					break LOOP;
-				}
-				switch (la) {
-				case '\\':
-					la = '\\';
-					break;
-				case '"':
-					la = '"';
-					break;
-				case 'n':
-					la = '\n';
-					break;
-				case 'r':
-					la = '\r';
-					break;
-				case 't':
-					la = '\t';
-					break;
-				case 'u':
-					la = read();
-					if (la < 0) {
-						break LOOP;
-					}
-					String unicode = "" + (char) la;
-					la = read();
-					if (la < 0) {
-						break LOOP;
-					}
-					unicode += (char) la;
-					la = read();
-					if (la < 0) {
-						break LOOP;
-					}
-					unicode += (char) la;
-					la = read();
-					if (la < 0) {
-						break LOOP;
-					}
-					unicode += (char) la;
-					try {
-						la = Integer.parseInt(unicode, 16);
-					} catch (NumberFormatException e) {
-						throw new GraphIOException(
-								"Invalid unicode escape sequence '\\u"
-										+ unicode + "' in line " + line);
-					}
-					break;
-				default:
-					throw new GraphIOException(
-							"Invalid escape sequence in string in line " + line);
-				}
-			}
-			out.append((char) la);
-			la = read();
-		}
-		if (la < 0) {
-			throw new GraphIOException("Unterminated string starting in line "
-					+ startLine + ".  lookAhead = '" + lookAhead + "'");
-		}
-		la = read();
-	}
-
-	private final static boolean isWs(int c) {
-		return (c == ' ') || (c == '\n') || (c == '\t') || (c == '\r');
-	}
-
-	private final static boolean isSeparator(int c) {
-		return (c == ';') || (c == '<') || (c == '>') || (c == '(')
-				|| (c == ')') || (c == '{') || (c == '}') || (c == ':')
-				|| (c == '[') || (c == ']') || (c == ',') || (c == '=');
-	}
-
-	private final void skipWs() throws GraphIOException {
-		// skip whitespace and consecutive single line comments
-		do {
-			// skip whitespace
-			while (isWs(la)) {
-				la = read();
-			}
-			// skip single line comments
-			if (la == '/') {
-				la = read();
-				if ((la >= 0) && (la == '/')) {
-					// single line comment, skip to the end of the current line
-					while ((la >= 0) && (la != '\n')) {
-						la = read();
-					}
-				} else {
-					putback(la);
-					la = '/';
-				}
-			}
-		} while (isWs(la));
-	}
-
-	private final void putback(int ch) {
-		putBackChar = ch;
-		if (ch == '\n') {
-			--line;
-		}
-	}
-
 	private final String matchAndNext() throws GraphIOException {
-		String result = lookAhead;
+		String result = lexer.getLexem();
 		match();
 		return result;
 	}
 
-	public final boolean isNextToken(String token) {
-		return lookAhead.equals(token);
+	public final boolean isNextToken(Token token) {
+		return lookAhead == token;
 	}
 
 	public final void match() throws GraphIOException {
-		lookAhead = nextToken();
+		lookAhead = lexer.nextToken();
 	}
 
-	public final void match(String s) throws GraphIOException {
-		if (lookAhead.equals(s)) {
-			lookAhead = nextToken();
+	public final void match(Token t) throws GraphIOException {
+		if (lookAhead == t) {
+			lookAhead = lexer.nextToken();
 		} else {
-			throw new GraphIOException("Expected '" + s + "' but found "
-					+ (lookAhead.equals("") ? "EOF" : "'" + lookAhead + "'")
-					+ " in line " + line, null);
+			throw new GraphIOException("Expected " + t + " but found "
+					+ lookAhead + " in line " + lexer.getLine(), null);
 		}
 	}
 
 	public final int matchInteger() throws GraphIOException {
-		try {
-			int result = Integer.parseInt(lookAhead);
-			match();
-			return result;
-		} catch (NumberFormatException e) {
-			throw new GraphIOException("Expected int number but found "
-					+ (lookAhead.equals("") ? "EOF" : "'" + lookAhead + "'")
-					+ " in line " + line, e);
-		}
+		int result = lookAhead == Token.INT ? lexer.getInt() : 0;
+		match(Token.INT);
+		return result;
 	}
 
 	public final long matchLong() throws GraphIOException {
-		try {
-			long result = Long.parseLong(lookAhead);
-			match();
-			return result;
-		} catch (NumberFormatException e) {
-			throw new GraphIOException("Expected long number but found "
-					+ (lookAhead.equals("") ? "EOF" : "'" + lookAhead + "'")
-					+ " in line " + line, e);
-		}
+		long result = lookAhead == Token.INT ? lexer.getLong() : 0;
+		match(Token.INT);
+		return result;
 	}
 
 	/**
@@ -2217,14 +1976,14 @@ public class GraphIO {
 	 */
 	public final String matchSimpleName(boolean isUpperCase)
 			throws GraphIOException {
-		String s = lookAhead;
+		String s = lexer.getLexem();
 		boolean ok = isValidIdentifier(s)
 				&& ((isUpperCase && Character.isUpperCase(s.charAt(0))) || (!isUpperCase && Character
 						.isLowerCase(s.charAt(0))));
 
 		if (!ok) {
 			throw new GraphIOException("Invalid simple name '" + lookAhead
-					+ "' in line " + line);
+					+ "' in line " + lexer.getLine());
 		}
 		match();
 		return s;
@@ -2241,8 +2000,9 @@ public class GraphIO {
 	public final String[] matchQualifiedName(boolean isUpperCase)
 			throws GraphIOException {
 
-		String c = lookAhead.indexOf('.') >= 0 ? lookAhead : toQNameString(
-				currentPackageName, lookAhead);
+		String s = lexer.getLexem();
+		String c = s.indexOf('.') >= 0 ? s : toQNameString(currentPackageName,
+				s);
 		String[] result = SchemaImpl.splitQualifiedName(c);
 
 		boolean ok = true;
@@ -2262,15 +2022,16 @@ public class GraphIO {
 
 		if (!ok) {
 			throw new GraphIOException("Invalid qualified name '" + lookAhead
-					+ "' in line " + line);
+					+ "' in line " + lexer.getLine());
 		}
 		match();
 		return result;
 	}
 
 	public final String[] matchQualifiedName() throws GraphIOException {
-		String c = lookAhead.indexOf('.') >= 0 ? lookAhead : toQNameString(
-				currentPackageName, lookAhead);
+		String s = lexer.getLexem();
+		String c = s.indexOf('.') >= 0 ? s : toQNameString(currentPackageName,
+				s);
 		String[] result = SchemaImpl.splitQualifiedName(c);
 
 		boolean ok = true;
@@ -2287,7 +2048,7 @@ public class GraphIO {
 
 		if (!ok) {
 			throw new GraphIOException("Invalid qualified name '" + lookAhead
-					+ "' in line " + line);
+					+ "' in line " + lexer.getLine());
 		}
 		match();
 		return result;
@@ -2318,41 +2079,35 @@ public class GraphIO {
 	}
 
 	public final String matchUtfString() throws GraphIOException {
-		if (!isUtfString && lookAhead.equals(NULL_LITERAL)) {
+		if (lookAhead == Token.NULL_LITERAL) {
 			match();
 			return null;
 		}
-		if (isUtfString) {
-			String result = lookAhead;
-			match();
-			String s = stringPool.get(result);
-			if (s == null) {
-				stringPool.put(result, result);
-			} else {
-				result = s;
-			}
-			return result;
+		String result = (lookAhead == Token.STRING) ? lexer.getLexem() : null;
+		match(Token.STRING);
+		String s = stringPool.get(result);
+		if (s == null) {
+			stringPool.put(result, result);
+		} else {
+			result = s;
 		}
-		throw new GraphIOException("Expected a string constant but found "
-				+ (lookAhead.equals("") ? "EOF" : "'" + lookAhead + "'")
-				+ " in line " + line);
+		return result;
 	}
 
 	public final boolean matchBoolean() throws GraphIOException {
-		if (!lookAhead.equals("t") && !lookAhead.equals("f")) {
+		if (lookAhead != Token.TRUE_LITERAL && lookAhead != Token.FALSE_LITERAL) {
 			throw new GraphIOException(
 					"Expected a boolean constant ('f' or 't') but found "
-							+ (lookAhead.equals("") ? "EOF" : "'" + lookAhead
-									+ "'") + " in line " + line);
+							+ lookAhead + " in line " + lexer.getLine());
 		}
-		boolean result = lookAhead.equals("t");
+		boolean result = lookAhead == Token.TRUE_LITERAL;
 		match();
 		return result;
 	}
 
 	private GraphBaseImpl graph(ProgressFunction pf) throws GraphIOException {
 		currentPackageName = "";
-		match("Graph");
+		match(Token.GRAPH);
 		String graphId = matchUtfString();
 		long graphVersion = matchLong();
 
@@ -2364,12 +2119,12 @@ public class GraphIO {
 			throw new GraphIOException("Graph Class " + gcName
 					+ "does not exist in " + schema.getQualifiedName());
 		}
-		match("(");
+		match(Token.LBR);
 		int maxV = matchInteger();
 		int maxE = matchInteger();
 		int vCount = matchInteger();
 		int eCount = matchInteger();
-		match(")");
+		match(Token.RBR);
 
 		// verify vCount <= maxV && eCount <= maxE
 		if (vCount > maxV) {
@@ -2397,11 +2152,11 @@ public class GraphIO {
 				graphId, maxV, maxE);
 		graph.setLoading(true);
 		graph.readAttributeValues(this);
-		match(";");
+		match(Token.SEMICOLON);
 
 		int vNo = 1;
 		while (vNo <= vCount) {
-			if (lookAhead.equals("Package")) {
+			if (lookAhead == Token.PACKAGE) {
 				parsePackage();
 			} else {
 				vertexDesc(graph);
@@ -2420,7 +2175,7 @@ public class GraphIO {
 
 		int eNo = 1;
 		while (eNo <= eCount) {
-			if (lookAhead.equals("Package")) {
+			if (lookAhead == Token.PACKAGE) {
 				parsePackage();
 			} else {
 				edgeDesc(graph);
@@ -2438,25 +2193,25 @@ public class GraphIO {
 		}
 
 		graph.setGraphVersion(graphVersion);
-		if (pf != null) {
-			pf.finished();
-		}
 		graph.internalLoadingCompleted(firstIncidence, nextIncidence);
 		firstIncidence = null;
 		nextIncidence = null;
 		graph.setLoading(false);
+		if (pf != null) {
+			pf.finished();
+		}
 		graph.loadingCompleted();
 		return graph;
 	}
 
 	public final double matchDouble() throws GraphIOException {
 		try {
-			double result = Double.parseDouble(lookAhead);
+			double result = Double.parseDouble(lexer.getLexem());
 			match();
 			return result;
 		} catch (NumberFormatException e) {
 			throw new GraphIOException("expected a double value but found '"
-					+ lookAhead + "' in line " + line, e);
+					+ lookAhead + "' in line " + lexer.getLine(), e);
 		}
 	}
 
@@ -2467,7 +2222,7 @@ public class GraphIO {
 		Vertex vertex = graphFactory.createVertex(vc, vId, graph);
 		parseIncidentEdges(vertex);
 		vertex.readAttributeValues(this);
-		match(";");
+		match(Token.SEMICOLON);
 	}
 
 	private void edgeDesc(Graph graph) throws GraphIOException {
@@ -2477,7 +2232,7 @@ public class GraphIO {
 		Edge edge = graphFactory.createEdge(ec, eId, graph, edgeOut[eId],
 				edgeIn[eId]);
 		edge.readAttributeValues(this);
-		match(";");
+		match(Token.SEMICOLON);
 	}
 
 	private int eId() throws GraphIOException {
@@ -2506,8 +2261,8 @@ public class GraphIO {
 		int eId = 0;
 		int prevId = 0;
 		int vId = v.getId();
-		match("<");
-		if (!lookAhead.equals(">")) {
+		match(Token.LT);
+		if (lookAhead != Token.GT) {
 			eId = eId();
 			firstIncidence[vId] = eId;
 			if (eId < 0) {
@@ -2516,7 +2271,7 @@ public class GraphIO {
 				edgeOut[eId] = v;
 			}
 		}
-		while (!lookAhead.equals(">")) {
+		while (lookAhead != Token.GT) {
 			prevId = eId;
 			eId = eId();
 			nextIncidence[edgeOffset + prevId] = eId;
@@ -2923,5 +2678,4 @@ public class GraphIO {
 
 		Set<Constraint> constraints = new HashSet<Constraint>(1);
 	}
-
 }

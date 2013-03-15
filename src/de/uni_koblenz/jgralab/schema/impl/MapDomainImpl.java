@@ -45,6 +45,7 @@ import org.pcollections.PMap;
 import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.exception.GraphIOException;
+import de.uni_koblenz.jgralab.impl.TgLexer.Token;
 import de.uni_koblenz.jgralab.schema.Attribute;
 import de.uni_koblenz.jgralab.schema.Domain;
 import de.uni_koblenz.jgralab.schema.MapDomain;
@@ -58,7 +59,7 @@ import de.uni_koblenz.jgralab.schema.exception.SchemaException;
 
 /**
  * @author Tassilo Horn <horn@uni-koblenz.de>
- *
+ * 
  */
 public final class MapDomainImpl extends CompositeDomainImpl implements
 		MapDomain {
@@ -177,11 +178,12 @@ public final class MapDomainImpl extends CompositeDomainImpl implements
 		code.setVariable("io", graphIoVariableName);
 
 		code.addNoIndent(new CodeSnippet("#init#"));
-		code.addNoIndent(new CodeSnippet("if (#io#.isNextToken(\"{\")) {"));
+		code.addNoIndent(new CodeSnippet(
+				"if (#io#.isNextToken(#token#.LCRL)) {"));
 		code.add(new CodeSnippet(MAPDOMAIN_TYPE
 				+ "<#keydom#, #valuedom#> $#name# = #empty#;"));
-		code.add(new CodeSnippet("#io#.match(\"{\");",
-				"while (!#io#.isNextToken(\"}\")) {"));
+		code.add(new CodeSnippet("#io#.match();",
+				"while (!#io#.isNextToken(#token#.RCRL)) {"));
 
 		if (getKeyDomain().isComposite()) {
 			code.add(new CodeSnippet("\t#keytype# #name#Key = null;"));
@@ -197,15 +199,15 @@ public final class MapDomainImpl extends CompositeDomainImpl implements
 		code.add(
 				getKeyDomain().getReadMethod(schemaRootPackagePrefix,
 						variableName + "Key", graphIoVariableName), 1);
-		code.add(new CodeSnippet("\t#io#.match(\"-\");"));
+		code.add(new CodeSnippet("\t#io#.match(#token#.HYPHEN);"));
 		code.add(
 				getValueDomain().getReadMethod(schemaRootPackagePrefix,
 						variableName + "Value", graphIoVariableName), 1);
 		code.add(new CodeSnippet(
 				"\t$#name# = $#name#.plus(#name#Key, #name#Value);", "}",
-				"#io#.match(\"}\");", "#name# = $#name#;"));
+				"#io#.match();", "#name# = $#name#;"));
 		code.addNoIndent(new CodeSnippet(
-				"} else if (#io#.isNextToken(GraphIO.NULL_LITERAL)) {"));
+				"} else if (#io#.isNextToken(#token#.NULL_LITERAL)) {"));
 		code.add(new CodeSnippet("#io#.match();", "#name# = null;"));
 		code.addNoIndent(new CodeSnippet("} else {", "\t#name# = null;", "}"));
 	}
@@ -229,8 +231,7 @@ public final class MapDomainImpl extends CompositeDomainImpl implements
 		code.setVariable("io", graphIoVariableName);
 
 		code.addNoIndent(new CodeSnippet("if (#name# != null) {"));
-		code.add(new CodeSnippet("#io#.writeSpace();", "#io#.write(\"{\");",
-				"#io#.noSpace();"));
+		code.add(new CodeSnippet("#io#.write(\"{\");"));
 		code.add(new CodeSnippet("for (#keytype# #nameKey#: #name#.keySet()) {"));
 
 		code.add(new CodeSnippet(
@@ -245,7 +246,7 @@ public final class MapDomainImpl extends CompositeDomainImpl implements
 				getValueDomain().getWriteMethod(schemaRootPackagePrefix,
 						code.getVariable("nameValue"), graphIoVariableName), 1);
 
-		code.add(new CodeSnippet("}", "#io#.write(\"}\");", "#io#.space();"));
+		code.add(new CodeSnippet("}", "#io#.write(\"}\");"));
 		code.addNoIndent(new CodeSnippet("} else {"));
 		code.add(new CodeSnippet(graphIoVariableName
 				+ ".writeIdentifier(GraphIO.NULL_LITERAL);"));
@@ -301,20 +302,20 @@ public final class MapDomainImpl extends CompositeDomainImpl implements
 
 	@Override
 	public Object parseGenericAttribute(GraphIO io) throws GraphIOException {
-		if (io.isNextToken("{")) {
+		if (io.isNextToken(Token.LCRL)) {
 			PMap<Object, Object> result = JGraLab.map();
-			io.match("{");
-			while (!io.isNextToken("}")) {
+			io.match();
+			while (!io.isNextToken(Token.RCRL)) {
 				Object mapKey = null;
 				Object mapValue = null;
 				mapKey = getKeyDomain().parseGenericAttribute(io);
-				io.match("-");
+				io.match(Token.HYPHEN);
 				mapValue = getValueDomain().parseGenericAttribute(io);
 				result = result.plus(mapKey, mapValue);
 			}
-			io.match("}");
+			io.match();
 			return result;
-		} else if (io.isNextToken(GraphIO.NULL_LITERAL)) {
+		} else if (io.isNextToken(Token.NULL_LITERAL)) {
 			io.match();
 			return null;
 		} else {
@@ -327,17 +328,14 @@ public final class MapDomainImpl extends CompositeDomainImpl implements
 	public void serializeGenericAttribute(GraphIO io, Object data)
 			throws IOException {
 		if (data != null) {
-			io.writeSpace();
 			io.write("{");
-			io.noSpace();
 			for (Object key : ((PMap<Object, Object>) data).keySet()) {
 				getKeyDomain().serializeGenericAttribute(io, key);
-				io.write(" -");
+				io.write("-");
 				getValueDomain().serializeGenericAttribute(io,
 						((PMap<Object, Object>) data).get(key));
 			}
 			io.write("}");
-			io.space();
 		} else {
 			io.writeIdentifier(GraphIO.NULL_LITERAL);
 		}

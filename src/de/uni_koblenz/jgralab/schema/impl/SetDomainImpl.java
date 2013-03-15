@@ -43,6 +43,7 @@ import org.pcollections.PSet;
 import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.exception.GraphIOException;
+import de.uni_koblenz.jgralab.impl.TgLexer.Token;
 import de.uni_koblenz.jgralab.schema.Domain;
 import de.uni_koblenz.jgralab.schema.Package;
 import de.uni_koblenz.jgralab.schema.Schema;
@@ -123,11 +124,12 @@ public final class SetDomainImpl extends CollectionDomainImpl implements
 		code.setVariable("io", graphIoVariableName);
 
 		code.addNoIndent(new CodeSnippet("#init#"));
-		code.addNoIndent(new CodeSnippet("if (#io#.isNextToken(\"{\")) {"));
+		code.addNoIndent(new CodeSnippet(
+				"if (#io#.isNextToken(#token#.LCRL)) {"));
 		code.add(new CodeSnippet(SETDOMAIN_TYPE
 				+ "<#basedom#> $#name# = #empty#;"));
-		code.add(new CodeSnippet("#io#.match(\"{\");",
-				"while (!#io#.isNextToken(\"}\")) {"));
+		code.add(new CodeSnippet("#io#.match();",
+				"while (!#io#.isNextToken(#token#.RCRL)) {"));
 		if (getBaseDomain().isComposite()) {
 			code.add(new CodeSnippet("\t#basetype# $#name#Element = null;"));
 		} else {
@@ -137,9 +139,9 @@ public final class SetDomainImpl extends CollectionDomainImpl implements
 				getBaseDomain().getReadMethod(schemaRootPackagePrefix,
 						"$" + variableName + "Element", graphIoVariableName), 1);
 		code.add(new CodeSnippet("\t$#name# = $#name#.plus($#name#Element);",
-				"}", "#io#.match(\"}\");", "#name# = $#name#;"));
+				"}", "#io#.match();", "#name# = $#name#;"));
 		code.addNoIndent(new CodeSnippet(
-				"} else if (#io#.isNextToken(GraphIO.NULL_LITERAL)) {"));
+				"} else if (#io#.isNextToken(#token#.NULL_LITERAL)) {"));
 		code.add(new CodeSnippet("#io#.match();", "#name# = null;"));
 		code.addNoIndent(new CodeSnippet("} else {", "\t#name# = null;", "}"));
 	}
@@ -161,12 +163,12 @@ public final class SetDomainImpl extends CollectionDomainImpl implements
 		code.setVariable("element", element);
 
 		code.addNoIndent(new CodeSnippet("if (#name# != null) {"));
-		code.add(new CodeSnippet("#io#.writeSpace();", "#io#.write(\"{\");",
-				"#io#.noSpace();", "for (#basetype# #element# : #name#) {"));
+		code.add(new CodeSnippet("#io#.write(\"{\");",
+				"for (#basetype# #element# : #name#) {"));
 		code.add(
 				getBaseDomain().getWriteMethod(schemaRootPackagePrefix,
 						code.getVariable("element"), graphIoVariableName), 1);
-		code.add(new CodeSnippet("}", "#io#.write(\"}\");", "#io#.space();"));
+		code.add(new CodeSnippet("}", "#io#.write(\"}\");"));
 		code.addNoIndent(new CodeSnippet("} else {"));
 		code.add(new CodeSnippet(graphIoVariableName
 				+ ".writeIdentifier(GraphIO.NULL_LITERAL);"));
@@ -223,17 +225,17 @@ public final class SetDomainImpl extends CollectionDomainImpl implements
 
 	@Override
 	public Object parseGenericAttribute(GraphIO io) throws GraphIOException {
-		if (io.isNextToken("{")) {
+		if (io.isNextToken(Token.LCRL)) {
 			PSet<Object> result = JGraLab.set();
-			io.match("{");
-			while (!io.isNextToken("}")) {
+			io.match();
+			while (!io.isNextToken(Token.RCRL)) {
 				Object setElement = null;
 				setElement = getBaseDomain().parseGenericAttribute(io);
 				result = result.plus(setElement);
 			}
-			io.match("}");
+			io.match();
 			return result;
-		} else if (io.isNextToken(GraphIO.NULL_LITERAL)) {
+		} else if (io.isNextToken(Token.NULL_LITERAL)) {
 			io.match();
 			return null;
 		} else {
@@ -246,14 +248,11 @@ public final class SetDomainImpl extends CollectionDomainImpl implements
 	public void serializeGenericAttribute(GraphIO io, Object data)
 			throws IOException {
 		if (data != null) {
-			io.writeSpace();
 			io.write("{");
-			io.noSpace();
 			for (Object value : (PSet<Object>) data) {
 				getBaseDomain().serializeGenericAttribute(io, value);
 			}
 			io.write("}");
-			io.space();
 		} else {
 			io.writeIdentifier(GraphIO.NULL_LITERAL);
 		}

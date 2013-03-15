@@ -46,6 +46,7 @@ import org.junit.Test;
 import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.exception.GraphIOException;
 import de.uni_koblenz.jgralab.grumlschema.GrumlSchema;
+import de.uni_koblenz.jgralab.impl.TgLexer.Token;
 
 public class GraphIOTest {
 
@@ -54,15 +55,16 @@ public class GraphIOTest {
 		GraphIO io = GraphIO.createStringReader(
 				"this \"utf string\\nwith newline\" is f n a string",
 				GrumlSchema.instance());
-		io.match("this");
+		io.match(Token.TEXT);
 		String s = io.matchUtfString();
 		assertEquals("utf string\nwith newline", s);
-		io.match("is");
+		io.match(Token.TEXT);
 		Assert.assertFalse(io.matchBoolean());
 		s = io.matchEnumConstant();
-		assertEquals("n", s);
-		io.match("a");
-		io.match("string");
+		assertEquals(null, s);
+		io.match(Token.TEXT);
+		io.match(Token.TEXT);
+		io.match(Token.EOF);
 	}
 
 	@Test

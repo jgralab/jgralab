@@ -513,7 +513,6 @@ public abstract class AttributedElementCodeGenerator<SC extends AttributedElemen
 				true,
 				"public void writeAttributeValues(GraphIO io) throws GraphIOException, IOException {"));
 		if ((attributes != null) && !attributes.isEmpty()) {
-			code.add(new CodeSnippet("io.space();"));
 			for (Attribute attribute : attributes) {
 				if (currentCycle.isStdImpl()) {
 					code.add(attribute.getDomain().getWriteMethod(

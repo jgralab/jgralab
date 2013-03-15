@@ -77,8 +77,7 @@ public class EnumCodeGenerator extends CodeGenerator {
 			CodeSnippet valueOfCode = new CodeSnippet(true);
 			valueOfCode
 					.add("public static #simpleClassName# valueOfPermitNull(String val) {",
-							"\tif (val.equals(de.uni_koblenz.jgralab.GraphIO.NULL_LITERAL)) {",
-							"\t\treturn null;", "\t}",
+							"\tif (val == null) {", "\t\treturn null;", "\t}",
 							"\treturn valueOf(val);", "}");
 			result.add(constCode);
 			result.add(valueOfCode);
