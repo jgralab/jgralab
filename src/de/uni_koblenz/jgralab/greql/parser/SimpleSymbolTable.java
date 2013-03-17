@@ -59,13 +59,11 @@ public class SimpleSymbolTable {
 	}
 
 	public void blockBegin() {
-		System.err.println("begin");
 		HashMap<String, Vertex> map = new HashMap<String, Vertex>();
 		list.addFirst(map);
 	}
 
 	public void blockEnd() {
-		System.err.println("end");
 		if (!list.isEmpty()) {
 			list.removeFirst();
 		}
@@ -74,7 +72,6 @@ public class SimpleSymbolTable {
 
 	public void insert(String ident, Vertex v)
 			throws DuplicateVariableException {
-		System.err.println("insert " + ident);
 		Vertex existingVariable = lookup(ident);
 		if (existingVariable == null) {
 			list.getFirst().put(ident, v);
