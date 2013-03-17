@@ -2251,9 +2251,9 @@ public class GreqlParser extends ParserHelper {
 	private final Comprehension parseFWRExpression() {
 		match(TokenTypes.FROM);
 		int offsetDecl = getCurrentOffset();
+		duringParsingvariableSymbolTable.blockBegin();
 		List<VertexPosition<SimpleDeclaration>> declarations = parseDeclarationList();
 		int lengthDecl = getLength(offsetDecl);
-		duringParsingvariableSymbolTable.blockBegin();
 		Declaration declaration = null;
 		if (!inPredicateMode()) {
 			declaration = graph.createDeclaration();

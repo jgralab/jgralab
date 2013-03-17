@@ -38,10 +38,17 @@ package de.uni_koblenz.jgralab.greql.parser;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
+import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql.exception.DuplicateVariableException;
+import de.uni_koblenz.jgralab.greql.schema.GreqlAggregation;
+import de.uni_koblenz.jgralab.greql.schema.SourcePosition;
+import de.uni_koblenz.jgralab.greql.schema.Variable;
+import de.uni_koblenz.jgralab.schema.RecordDomain;
 
 public class SimpleSymbolTable {
 
@@ -52,11 +59,13 @@ public class SimpleSymbolTable {
 	}
 
 	public void blockBegin() {
+		System.err.println("begin");
 		HashMap<String, Vertex> map = new HashMap<String, Vertex>();
 		list.addFirst(map);
 	}
 
 	public void blockEnd() {
+		System.err.println("end");
 		if (!list.isEmpty()) {
 			list.removeFirst();
 		}
@@ -65,34 +74,45 @@ public class SimpleSymbolTable {
 
 	public void insert(String ident, Vertex v)
 			throws DuplicateVariableException {
-		// Vertex existingVariable = list.getFirst().get(ident);
-		// if (existingVariable == null) {
-		if (list.getFirst().get(ident) == null) {
+		System.err.println("insert " + ident);
+		Vertex existingVariable = lookup(ident);// list.getFirst().get(ident);
+		if (existingVariable == null) {
+			// System.out.println(ident + ": " +
+			// isVariableAlreadyDefined(ident));
+			// if (!isVariableAlreadyDefined(ident)) {
 			list.getFirst().put(ident, v);
-			// } else {
-			// GreqlAggregation firstIncidence = (GreqlAggregation)
-			// existingVariable
-			// .getFirstIncidence(EdgeDirection.OUT);
-			// SourcePosition previousPosition = null;
-			// if (firstIncidence != null) {
-			// previousPosition = firstIncidence.get_sourcePositions().get(0);
-			// } else {
-			// List<RecordDomain> recordDomains = v.getSchema()
-			// .getRecordDomains();
-			// Map<String, Object> map = new HashMap<String, Object>();
-			// map.put("length", -1);
-			// map.put("offset", -1);
-			// for (RecordDomain dom : recordDomains) {
-			// if (dom.getQualifiedName().equals("SourcePosition")) {
-			// previousPosition = (SourcePosition) v.getGraph()
-			// .createRecord(dom, map);
-			// }
-			// }
-			// }
-			// throw new DuplicateVariableException(
-			// ((Variable) existingVariable).get_name(),
-			// (List<SourcePosition>) null, previousPosition);
+		} else {
+			GreqlAggregation firstIncidence = (GreqlAggregation) existingVariable
+					.getFirstIncidence(EdgeDirection.OUT);
+			SourcePosition previousPosition = null;
+			if (firstIncidence != null) {
+				previousPosition = firstIncidence.get_sourcePositions().get(0);
+			} else {
+				List<RecordDomain> recordDomains = existingVariable.getSchema()
+						.getRecordDomains();
+				Map<String, Object> map = new HashMap<String, Object>();
+				map.put("length", -1);
+				map.put("offset", -1);
+				for (RecordDomain dom : recordDomains) {
+					if (dom.getQualifiedName().equals("SourcePosition")) {
+						previousPosition = (SourcePosition) existingVariable
+								.getGraph().createRecord(dom, map);
+					}
+				}
+			}
+			throw new DuplicateVariableException(
+					((Variable) existingVariable).get_name(),
+					(List<SourcePosition>) null, previousPosition);
 		}
+	}
+
+	private boolean isVariableAlreadyDefined(String ident) {
+		for (HashMap<String, Vertex> map : list) {
+			if (map.containsKey(ident)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	public Vertex lookup(String ident) {
