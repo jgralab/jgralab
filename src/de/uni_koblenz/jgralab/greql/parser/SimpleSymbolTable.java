@@ -75,11 +75,8 @@ public class SimpleSymbolTable {
 	public void insert(String ident, Vertex v)
 			throws DuplicateVariableException {
 		System.err.println("insert " + ident);
-		Vertex existingVariable = lookup(ident);// list.getFirst().get(ident);
+		Vertex existingVariable = lookup(ident);
 		if (existingVariable == null) {
-			// System.out.println(ident + ": " +
-			// isVariableAlreadyDefined(ident));
-			// if (!isVariableAlreadyDefined(ident)) {
 			list.getFirst().put(ident, v);
 		} else {
 			GreqlAggregation firstIncidence = (GreqlAggregation) existingVariable
@@ -104,15 +101,6 @@ public class SimpleSymbolTable {
 					((Variable) existingVariable).get_name(),
 					(List<SourcePosition>) null, previousPosition);
 		}
-	}
-
-	private boolean isVariableAlreadyDefined(String ident) {
-		for (HashMap<String, Vertex> map : list) {
-			if (map.containsKey(ident)) {
-				return true;
-			}
-		}
-		return false;
 	}
 
 	public Vertex lookup(String ident) {
