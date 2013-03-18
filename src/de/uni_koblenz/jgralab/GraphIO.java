@@ -314,6 +314,9 @@ public final class GraphIO {
 		try {
 			GraphIO io = new GraphIO();
 			io.TGOut = out;
+			// don't save spaces in schema files since they're likely to be read
+			// by humans
+			io.compact = false;
 			io.saveHeader();
 			io.saveSchema(schema);
 		} catch (IOException e) {
@@ -586,6 +589,7 @@ public final class GraphIO {
 			}
 			GraphIO io = new GraphIO();
 			io.TGOut = out;
+			io.compact = true; // save spaces in graph files
 			io.saveGraph((InternalGraph) graph, pf, null);
 			out.flush();
 		} catch (IOException e) {
@@ -841,14 +845,28 @@ public final class GraphIO {
 		write("}");
 	}
 
-	private int lastCh = 32;
+	private int lastCh = 32; // last character written
+	// compact controls output behaviour:
+	// true => smaller file size and better performance (save spaces)
+	// false => improve readability by adding more spaces
+	private boolean compact = true;
 
 	public final void write(String s) throws IOException {
 		int len = s.length();
 		if (len > 0) {
 			int ch = s.charAt(0);
-			if (!TgLexer.isDelimiter(lastCh) && !TgLexer.isDelimiter(ch)) {
-				TGOut.write(32);
+			if (compact) {
+				if (!TgLexer.isDelimiter(lastCh) && !TgLexer.isDelimiter(ch)) {
+					TGOut.write(32);
+				}
+			} else {
+				if (!TgLexer.isWs(lastCh)) {
+					if (!(lastCh == '(' || lastCh == '[' || lastCh == '{'
+							|| lastCh == '<' || ch == ')' || ch == ']'
+							|| ch == '}' || ch == '>' || ch == ':' || ch == ',' || ch == ';')) {
+						TGOut.write(32);
+					}
+				}
 			}
 			TGOut.write(ch);
 			lastCh = ch;
