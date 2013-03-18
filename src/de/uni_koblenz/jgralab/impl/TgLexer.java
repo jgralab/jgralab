@@ -129,7 +129,7 @@ public class TgLexer {
 	}
 
 	public final static boolean isWs(int c) {
-		return (c == ' ') || (c == '\n') || (c == '\t') || (c == '\r');
+		return (c == ' ') || (c == '\n') || (c == '\r') || (c == '\t');
 	}
 
 	public final static boolean isSeparator(int c) {
@@ -138,15 +138,26 @@ public class TgLexer {
 				|| (c == '[') || (c == ']') || (c == ',') || (c == '=');
 	}
 
-	private final void skipWs() throws IOException {
-		// skip whitespace and consecutive single line comments
-		do {
-			// skip whitespace
-			while (isWs(la)) {
-				la = read();
-			}
-			// skip single line comments
-			if (la == '/') {
+	public final static boolean isDelimiter(int c) {
+		return (c == ' ') || (c == ';') || (c == '\n') || (c == '\r')
+				|| (c == '<') || (c == '>') || (c == '(') || (c == ')')
+				|| (c == '{') || (c == '}') || (c == ':') || (c == '[')
+				|| (c == ']') || (c == ',') || (c == '=') || (c == '\t')
+				|| (c == -1);
+	}
+
+	public final Token nextToken() throws GraphIOException {
+		try {
+			// skip whitespace and consecutive single line comments
+			while (true) {
+				// skip whitespace
+				while (isWs(la)) {
+					la = read();
+				}
+				if (la != '/') {
+					break;
+				}
+				// skip single line comments
 				la = read();
 				if ((la >= 0) && (la == '/')) {
 					// single line comment, skip to the end of the current line
@@ -154,39 +165,31 @@ public class TgLexer {
 						la = read();
 					}
 				} else {
-					putback(la);
+					putBackChar = la;
+					if (la == '\n') {
+						--line;
+					}
 					la = '/';
+					break;
 				}
 			}
-		} while (isWs(la));
-	}
-
-	private final void putback(int ch) {
-		putBackChar = ch;
-		if (ch == '\n') {
-			--line;
-		}
-	}
-
-	public final Token nextToken() throws GraphIOException {
-		try {
+			// build token
 			lexem = new StringBuilder();
-			skipWs();
 			rec.reset();
-			if (la == '"') {
-				readUtfString();
-				return Token.STRING;
-			} else if (isSeparator(la)) {
+			if (isSeparator(la)) {
 				rec.next(la);
 				lexem.append((char) la);
 				la = read();
+			} else if (la == '"') {
+				readUtfString();
+				return Token.STRING;
 			} else {
 				if (la >= 0) {
-					do {
+					while (!isDelimiter(la)) {
 						rec.next(la);
 						lexem.append((char) la);
 						la = read();
-					} while (!isWs(la) && !isSeparator(la) && (la >= 0));
+					}
 				} else {
 					return Token.EOF;
 				}

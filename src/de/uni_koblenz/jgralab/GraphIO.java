@@ -839,17 +839,15 @@ public final class GraphIO {
 	public final void write(String s) throws IOException {
 		int len = s.length();
 		if (len > 0) {
-			int c = s.charAt(0);
-			if (!TgLexer.isWs(lastCh) && !TgLexer.isSeparator(lastCh)
-					&& !TgLexer.isSeparator(c)) {
+			int ch = s.charAt(0);
+			if (!TgLexer.isDelimiter(lastCh) && !TgLexer.isDelimiter(ch)) {
 				TGOut.write(32);
 			}
-			TGOut.write(c);
-			lastCh = c;
+			TGOut.write(ch);
+			lastCh = ch;
 			for (int i = 1; i < len; ++i) {
-				c = s.charAt(i);
-				TGOut.write((byte) c);
-				lastCh = c;
+				lastCh = s.charAt(i);
+				TGOut.write((byte) lastCh);
 			}
 		}
 	}
@@ -1101,8 +1099,8 @@ public final class GraphIO {
 	private void schema() throws GraphIOException, SchemaException {
 		currentPackageName = "";
 		match(Token.SCHEMA);
-		String[] qn = matchQualifiedName(true);
-		if (qn[0].equals("")) {
+		String[] qn = matchAndSplitQualifiedName();
+		if (qn[0].isEmpty()) {
 			throw new GraphIOException("Invalid schema name '" + lookAhead
 					+ "', package prefix must not be empty in line "
 					+ lexer.getLine());
@@ -1208,7 +1206,7 @@ public final class GraphIO {
 	 */
 	private void parseEnumDomain() throws GraphIOException {
 		match(Token.ENUMDOMAIN);
-		String[] qn = matchQualifiedName(true);
+		String[] qn = matchAndSplitQualifiedName();
 		enumDomainBuffer.add(new EnumDomainData(qn[0], qn[1],
 				parseEnumConstants()));
 		match(Token.SEMICOLON);
@@ -1234,7 +1232,7 @@ public final class GraphIO {
 	 */
 	private void parseRecordDomain() throws GraphIOException {
 		match(Token.RECORDDOMAIN);
-		String[] qn = matchQualifiedName(true);
+		String[] qn = matchAndSplitQualifiedName();
 		recordDomainBuffer.add(new RecordDomainData(qn[0], qn[1],
 				parseRecordComponents()));
 		match(Token.SEMICOLON);
@@ -1299,7 +1297,7 @@ public final class GraphIO {
 
 	private void parseComment() throws GraphIOException {
 		match(Token.COMMENT);
-		String qName = toQNameString(matchQualifiedName());
+		String qName = matchQualifiedName();
 		List<String> comments = new ArrayList<String>();
 		comments.add(matchUtfString());
 		while (lookAhead != Token.SEMICOLON) {
@@ -1319,13 +1317,7 @@ public final class GraphIO {
 		if (lookAhead == Token.SEMICOLON) {
 			currentPackageName = "";
 		} else {
-			String[] qn = matchQualifiedName(false);
-			String qualifiedName = toQNameString(qn);
-			if (!isValidPackageName(qn[1])) {
-				throw new GraphIOException("Invalid package name '"
-						+ qualifiedName + "' in line " + lexer.getLine());
-			}
-			currentPackageName = qualifiedName;
+			currentPackageName = matchPackageName() + ".";
 		}
 		match(Token.SEMICOLON);
 	}
@@ -1414,12 +1406,12 @@ public final class GraphIO {
 	private List<String> parseHierarchy() throws GraphIOException {
 		List<String> hierarchy = new LinkedList<String>();
 		match(Token.COLON);
-		String[] qn = matchQualifiedName(true);
-		hierarchy.add(toQNameString(qn));
+		String qn = matchQualifiedName();
+		hierarchy.add(qn);
 		while (lookAhead == Token.COMMA) {
 			match();
-			qn = matchQualifiedName(true);
-			hierarchy.add(toQNameString(qn));
+			qn = matchQualifiedName();
+			hierarchy.add(qn);
 		}
 		return hierarchy;
 	}
@@ -1511,8 +1503,8 @@ public final class GraphIO {
 				attrDomain.add(dom);
 				match();
 			} else {
-				String[] qn = matchQualifiedName(true);
-				attrDomain.add(toQNameString(qn));
+				String qn = matchQualifiedName();
+				attrDomain.add(qn);
 			}
 		}
 	}
@@ -1619,7 +1611,7 @@ public final class GraphIO {
 
 		if (lookAhead == Token.VERTEXCLASS) {
 			match();
-			String[] qn = matchQualifiedName(true);
+			String[] qn = matchAndSplitQualifiedName();
 			graphElementClassData.packageName = qn[0];
 			graphElementClassData.simpleName = qn[1];
 			if (lookAhead == Token.COLON) {
@@ -1628,22 +1620,20 @@ public final class GraphIO {
 			vertexClassBuffer.get(gcName).add(graphElementClassData);
 		} else if (lookAhead == Token.EDGECLASS) {
 			match();
-			String[] qn = matchQualifiedName(true);
+			String[] qn = matchAndSplitQualifiedName();
 			graphElementClassData.packageName = qn[0];
 			graphElementClassData.simpleName = qn[1];
 			if (lookAhead == Token.COLON) {
 				graphElementClassData.directSuperClasses = parseHierarchy();
 			}
 			match(Token.FROM);
-			String[] fqn = matchQualifiedName(true);
-			graphElementClassData.fromVertexClassName = toQNameString(fqn);
+			graphElementClassData.fromVertexClassName = matchQualifiedName();
 			graphElementClassData.fromMultiplicity = parseMultiplicity();
 			graphElementClassData.fromRoleName = parseRoleName();
 			graphElementClassData.fromAggregation = parseAggregation();
 
 			match(Token.TO);
-			String[] tqn = matchQualifiedName(true);
-			graphElementClassData.toVertexClassName = toQNameString(tqn);
+			graphElementClassData.toVertexClassName = matchQualifiedName();
 			graphElementClassData.toMultiplicity = parseMultiplicity();
 			graphElementClassData.toRoleName = parseRoleName();
 			graphElementClassData.toAggregation = parseAggregation();
@@ -1787,19 +1777,29 @@ public final class GraphIO {
 		}
 	}
 
-	private static boolean isValidPackageName(String s) {
-		if ((s == null) || (s.length() == 0)) {
+	private static boolean isValidIdentifier(String s,
+			boolean startsWithUppercase) {
+		if (s == null) {
 			return false;
 		}
-		char[] chars = s.toCharArray();
-		if (!Character.isLetter(chars[0]) || !Character.isLowerCase(chars[0])
-				|| (chars[0] > 127)) {
+		int l = s.length();
+		if (l == 0) {
 			return false;
 		}
-		for (int i = 1; i < chars.length; i++) {
-			if (!(Character.isLowerCase(chars[i])
-					|| Character.isDigit(chars[i]) || (chars[i] == '_'))
-					|| (chars[i] > 127)) {
+		char c = s.charAt(0);
+		if (startsWithUppercase) {
+			if (c < 'A' || c > 'Z') {
+				return false;
+			}
+		} else {
+			if (c < 'a' || c > 'z') {
+				return false;
+			}
+		}
+		for (int i = 1; i < l; ++i) {
+			c = s.charAt(i);
+			if (!(c >= 'A' && c <= 'Z' || c >= 'a' && c <= 'z' || c >= '0'
+					&& c <= '9' || c == '_')) {
 				return false;
 			}
 		}
@@ -1931,12 +1931,6 @@ public final class GraphIO {
 		buildEdgeClassHierarchy();
 	}
 
-	private final String matchAndNext() throws GraphIOException {
-		String result = lexer.getLexem();
-		match();
-		return result;
-	}
-
 	public final boolean isNextToken(Token token) {
 		return lookAhead == token;
 	}
@@ -1969,19 +1963,15 @@ public final class GraphIO {
 	/**
 	 * Parses an identifier, checks it for validity and returns it.
 	 * 
-	 * @param isUpperCase
+	 * @param startsWithUppercase
 	 *            If true, the identifier must begin with an uppercase character
 	 * @return the parsed identifier
 	 * @throws GraphIOException
 	 */
-	public final String matchSimpleName(boolean isUpperCase)
+	public final String matchSimpleName(boolean startsWithUppercase)
 			throws GraphIOException {
 		String s = lexer.getLexem();
-		boolean ok = isValidIdentifier(s)
-				&& ((isUpperCase && Character.isUpperCase(s.charAt(0))) || (!isUpperCase && Character
-						.isLowerCase(s.charAt(0))));
-
-		if (!ok) {
+		if (!isValidIdentifier(s, startsWithUppercase)) {
 			throw new GraphIOException("Invalid simple name '" + lookAhead
 					+ "' in line " + lexer.getLine());
 		}
@@ -1992,75 +1982,81 @@ public final class GraphIO {
 	/**
 	 * Parses an identifier, checks it for validity and returns it.
 	 * 
-	 * @param isUpperCase
-	 *            If true, the identifier must begin with an uppercase character
 	 * @return An array of the form {parentPackage, simpleName}
 	 * @throws GraphIOException
 	 */
-	public final String[] matchQualifiedName(boolean isUpperCase)
-			throws GraphIOException {
-
-		String s = lexer.getLexem();
-		String c = s.indexOf('.') >= 0 ? s : toQNameString(currentPackageName,
-				s);
-		String[] result = SchemaImpl.splitQualifiedName(c);
-
-		boolean ok = true;
-		if (result[0].length() > 0) {
-			String[] parts = result[0].split("\\.");
-			ok = ((parts.length == 1) && (parts[0].length() == 0))
-					|| isValidPackageName(parts[0]);
-			for (int i = 1; (i < parts.length) && ok; i++) {
-				ok = ok && isValidPackageName(parts[i]);
+	public final String matchQualifiedName() throws GraphIOException {
+		String qn = lexer.getLexem();
+		int l = qn.length();
+		String result = null;
+		if (l > 0 && qn.charAt(l - 1) != '.') {
+			int e = qn.indexOf('.');
+			if (e < 0) {
+				// unqualified simple name, prepend current package name
+				if (isValidIdentifier(qn, true)) {
+					result = currentPackageName + qn;
+				}
+			} else if (e == 0) {
+				// simple name in default package (.SimpleName)
+				String sn = qn.substring(1);
+				if (isValidIdentifier(sn, true)) {
+					result = sn;
+				}
+			} else {
+				// qualified, not default package (packagename.SimpleName)
+				int s = 0;
+				boolean ok = true;
+				// check package name parts
+				while (ok && e >= 0) {
+					String pn = qn.substring(s, e);
+					ok = ok && isValidIdentifier(pn, false);
+					if (ok) {
+						s = e + 1;
+						e = qn.indexOf('.', s);
+					}
+				}
+				// simple name starts at position s
+				ok = ok && isValidIdentifier(qn.substring(s), true);
+				if (ok) {
+					result = qn;
+				}
 			}
 		}
-
-		ok = ok
-				&& isValidIdentifier(result[1])
-				&& ((isUpperCase && Character.isUpperCase(result[1].charAt(0))) || (!isUpperCase && Character
-						.isLowerCase(result[1].charAt(0))));
-
-		if (!ok) {
-			throw new GraphIOException("Invalid qualified name '" + lookAhead
+		if (result == null) {
+			throw new GraphIOException("Invalid qualified name '" + qn
 					+ "' in line " + lexer.getLine());
 		}
 		match();
 		return result;
 	}
 
-	public final String[] matchQualifiedName() throws GraphIOException {
-		String s = lexer.getLexem();
-		String c = s.indexOf('.') >= 0 ? s : toQNameString(currentPackageName,
-				s);
-		String[] result = SchemaImpl.splitQualifiedName(c);
+	public final String[] matchAndSplitQualifiedName() throws GraphIOException {
+		String qn = matchQualifiedName();
+		int p = qn.lastIndexOf('.');
+		return new String[] { p <= 0 ? "" : qn.substring(0, p),
+				qn.substring(p + 1) };
+	}
 
-		boolean ok = true;
-		if (result[0].length() > 0) {
-			String[] parts = result[0].split("\\.");
-			ok = ((parts.length == 1) && (parts[0].length() == 0))
-					|| isValidPackageName(parts[0]);
-			for (int i = 1; (i < parts.length) && ok; i++) {
-				ok = ok && isValidPackageName(parts[i]);
+	public final String matchPackageName() throws GraphIOException {
+		String pn = lexer.getLexem();
+		int l = pn.length();
+		boolean ok = l > 0 && pn.charAt(0) != '.' && pn.charAt(l - 1) != '.';
+		if (ok) {
+			int s = 0;
+			int e = pn.indexOf('.');
+			while (ok && e >= 0) {
+				ok = ok && isValidIdentifier(pn.substring(s, e), false);
+				s = e + 1;
+				e = pn.indexOf('.', s);
 			}
+			ok = ok && isValidIdentifier(pn.substring(s), false);
 		}
-
-		ok = ok && isValidIdentifier(result[1]);
-
 		if (!ok) {
-			throw new GraphIOException("Invalid qualified name '" + lookAhead
+			throw new GraphIOException("Invalid package name '" + pn
 					+ "' in line " + lexer.getLine());
 		}
 		match();
-		return result;
-	}
-
-	/**
-	 * @param qn
-	 * @return a string representation of a qualified name specified as array
-	 *         (like returned by @{#matchQualifiedName}).
-	 */
-	private final String toQNameString(String[] qn) {
-		return toQNameString(qn[0], qn[1]);
+		return pn;
 	}
 
 	/**
@@ -2111,9 +2107,7 @@ public final class GraphIO {
 		String graphId = matchUtfString();
 		long graphVersion = matchLong();
 
-		gcName = matchAndNext();
-		assert !gcName.contains(".") && isValidIdentifier(gcName) : "illegal characters in graph class '"
-				+ gcName + "'";
+		gcName = matchSimpleName(true);
 		// check if classname is known in the schema
 		if (!schema.getGraphClass().getQualifiedName().equals(gcName)) {
 			throw new GraphIOException("Graph Class " + gcName
@@ -2217,7 +2211,7 @@ public final class GraphIO {
 
 	private void vertexDesc(Graph graph) throws GraphIOException {
 		int vId = vId();
-		String vcName = className();
+		String vcName = matchQualifiedName();
 		VertexClass vc = (VertexClass) schema.getAttributedElementClass(vcName);
 		Vertex vertex = graphFactory.createVertex(vc, vId, graph);
 		parseIncidentEdges(vertex);
@@ -2227,7 +2221,7 @@ public final class GraphIO {
 
 	private void edgeDesc(Graph graph) throws GraphIOException {
 		int eId = eId();
-		String ecName = className();
+		String ecName = matchQualifiedName();
 		EdgeClass ec = (EdgeClass) schema.getAttributedElementClass(ecName);
 		Edge edge = graphFactory.createEdge(ec, eId, graph, edgeOut[eId],
 				edgeIn[eId]);
@@ -2241,11 +2235,6 @@ public final class GraphIO {
 			throw new GraphIOException("Invalid edge id " + eId + ".");
 		}
 		return eId;
-	}
-
-	private String className() throws GraphIOException {
-		String[] qn = matchQualifiedName(true);
-		return toQNameString(qn);
 	}
 
 	private int vId() throws GraphIOException {
@@ -2341,23 +2330,6 @@ public final class GraphIO {
 		}
 		out.append("\"");
 		return out.toString();
-	}
-
-	private static boolean isValidIdentifier(String s) {
-		if ((s == null) || (s.length() == 0)) {
-			return false;
-		}
-		char[] chars = s.toCharArray();
-		if (!Character.isLetter(chars[0]) || (chars[0] > 127)) {
-			return false;
-		}
-		for (int i = 1; i < chars.length; i++) {
-			if (!(Character.isLetter(chars[i]) || Character.isDigit(chars[i]) || (chars[i] == '_'))
-					|| (chars[i] > 127)) {
-				return false;
-			}
-		}
-		return true;
 	}
 
 	private void sortRecordDomains() throws GraphIOException {
