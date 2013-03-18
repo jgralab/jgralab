@@ -631,11 +631,11 @@ public class GenericEdgeImplTest {
 			}
 
 			assertEquals("t", e.writeAttributeValueToString("boolEdge"));
-			assertEquals("[[t] [f] [t]]",
+			assertEquals("[[t][f][t]]",
 					e.writeAttributeValueToString("complexListEdge"));
-			assertEquals("{[t] - {t} [f] - {f}}",
+			assertEquals("{[t]-{t}[f]-{f}}",
 					e.writeAttributeValueToString("complexMapEdge"));
-			assertEquals("{{t} {f}}",
+			assertEquals("{{t}{f}}",
 					e.writeAttributeValueToString("complexSetEdge"));
 			assertEquals("1.1", e.writeAttributeValueToString("doubleEdge"));
 			assertEquals("FIRST", e.writeAttributeValueToString("enumEdge"));
@@ -645,7 +645,7 @@ public class GenericEdgeImplTest {
 			assertEquals("{1 - t 2 - f 3 - t}",
 					e.writeAttributeValueToString("mapEdge"));
 			assertEquals(
-					"(t 1.1 FIRST 1 [t f t] 1 {1 - t 2 - f 3 - t} {t f} \"test\")",
+					"(t 1.1 FIRST 1[t f t]1{1 - t 2 - f 3 - t}{t f}\"test\")",
 					e.writeAttributeValueToString("recordEdge"));
 			assertEquals("{t f}", e.writeAttributeValueToString("setEdge"));
 			assertEquals("\"test\"",
@@ -686,19 +686,11 @@ public class GenericEdgeImplTest {
 
 			GraphIO io = GraphIO.createStringWriter(e.getSchema());
 			e.writeAttributeValues(io);
-			assertEquals(
-					"t "
-							+ "[[t] [f] [t]] "
-							+ "{[t] - {t} [f] - {f}} "
-							+ "{{t} {f}} "
-							+ "1.1 "
-							+ "FIRST "
-							+ "1 "
-							+ "[t f t] "
-							+ "1 "
-							+ "{1 - t 2 - f 3 - t} "
-							+ "(t 1.1 FIRST 1 [t f t] 1 {1 - t 2 - f 3 - t} {t f} \"test\") "
-							+ "{t f} " + "\"test\"", io.getStringWriterResult());
+			assertEquals("t" + "[[t][f][t]]" + "{[t]-{t}[f]-{f}}" + "{{t}{f}}"
+					+ "1.1 " + "FIRST " + "1" + "[t f t]" + "1"
+					+ "{1 - t 2 - f 3 - t}"
+					+ "(t 1.1 FIRST 1[t f t]1{1 - t 2 - f 3 - t}{t f}\"test\")"
+					+ "{t f}\"test\"", io.getStringWriterResult());
 		} catch (GraphIOException e) {
 			e.printStackTrace();
 			fail();

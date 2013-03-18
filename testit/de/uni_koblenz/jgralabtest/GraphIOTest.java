@@ -36,10 +36,11 @@
 package de.uni_koblenz.jgralabtest;
 
 import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertFalse;
+import static junit.framework.Assert.assertTrue;
+import static org.junit.Assert.assertNull;
 
 import java.io.File;
-
-import junit.framework.Assert;
 
 import org.junit.Test;
 
@@ -52,30 +53,54 @@ public class GraphIOTest {
 
 	@Test
 	public void testStringRead() throws Exception {
-		GraphIO io = GraphIO.createStringReader(
-				"this \"utf string\\nwith newline\" is f n a string",
-				GrumlSchema.instance());
-		io.match(Token.TEXT);
-		String s = io.matchUtfString();
-		assertEquals("utf string\nwith newline", s);
-		io.match(Token.TEXT);
-		Assert.assertFalse(io.matchBoolean());
-		s = io.matchEnumConstant();
-		assertEquals(null, s);
-		io.match(Token.TEXT);
-		io.match(Token.TEXT);
+		GraphIO io;
+
+		// test some tokens
+		io = GraphIO
+				.createStringReader(
+						"Schema 123 -456 this \"utf string\\nwith newline\" is f t n ENUM a string",
+						GrumlSchema.instance());
+		assertEquals("Schema", io.matchGetText(Token.SCHEMA));
+		assertEquals(123, io.matchInteger());
+		assertEquals(-456, io.matchInteger());
+		assertEquals("this", io.matchGetText(Token.TEXT));
+		assertEquals("utf string\nwith newline", io.matchUtfString());
+		assertEquals("is", io.matchGetText(Token.TEXT));
+		assertFalse(io.matchBoolean());
+		assertTrue(io.matchBoolean());
+		assertNull(io.matchEnumConstant());
+		assertEquals("ENUM", io.matchEnumConstant());
+		assertEquals("a", io.matchGetText(Token.TEXT));
+		assertEquals("string", io.matchGetText(Token.TEXT));
+		io.match(Token.EOF);
+
+		// test some escaped unicodes
+		io = GraphIO
+				.createStringReader(
+						"\"Umlaute: \\u00e4\\u00f6\\u00fc\\u00c4\\u00d6\\u00dc\\u00df\"",
+						GrumlSchema.instance());
+		assertEquals("Umlaute: äöüÄÖÜß", io.matchUtfString());
+		io.match(Token.EOF);
+
+		// create a long string to test TgLexer
+		StringBuilder sb = new StringBuilder();
+		for (int i = 0; i < 512; ++i) {
+			sb.append(i);
+		}
+		String s = sb.toString();
+		io = GraphIO
+				.createStringReader("\"" + s + "\"", GrumlSchema.instance());
+		assertEquals(s, io.matchUtfString());
 		io.match(Token.EOF);
 	}
 
 	@Test
 	public void testStringWrite() throws Exception {
 		GraphIO io = GraphIO.createStringWriter(GrumlSchema.instance());
-
 		io.writeUtfString("Umlaute: äöüÄÖÜß");
 		assertEquals(
 				"\"Umlaute: \\u00e4\\u00f6\\u00fc\\u00c4\\u00d6\\u00dc\\u00df\"",
 				io.getStringWriterResult());
-
 	}
 
 	@Test
@@ -83,7 +108,6 @@ public class GraphIOTest {
 		try {
 			File dir = new File(".");
 			dir.getAbsolutePath();
-			System.out.println(dir.getAbsolutePath());
 			GraphIO.loadGraphFromFile(dir.getAbsolutePath()
 					+ "/testit/testgraphs/citymapgraph.tg", null);
 		} catch (GraphIOException e) {

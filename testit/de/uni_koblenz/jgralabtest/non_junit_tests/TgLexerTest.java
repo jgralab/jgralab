@@ -35,7 +35,7 @@ public class TgLexerTest {
 					++i;
 				}
 				if (t == Token.TEXT) {
-					System.out.println(t + " '" + lexer.getLexem() + "'");
+					System.out.println(t + " '" + lexer.getText() + "'");
 				} else if (t == Token.INT) {
 					System.out.println(t + " " + lexer.getLong());
 				} else {

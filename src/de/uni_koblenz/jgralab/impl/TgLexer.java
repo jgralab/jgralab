@@ -55,55 +55,78 @@ public class TgLexer {
 				"Map"), MAP2(".Map"), TEXT(null), INT(null), STRING(null), EOF(
 				null);
 
-		String text;
+		String lexeme;
 
 		private Token(String text) {
-			this.text = text;
+			this.lexeme = text;
 		}
 
 		@Override
 		public String toString() {
-			return text == null ? super.toString() : text;
+			return lexeme == null ? super.toString() : lexeme;
 		}
 	}
 
-	private static final int BUFFER_SIZE = 65536;
-	private static final int LEXEM_SIZE = 1024;
-
-	private InputStream in;
-	private int line;
-	private int la;
+	private InputStream in; // inputstream, read in chunks of BUFFER_SIZE bytes
+	private String filename; // filename of input stream, if any
+	private int line; // current line number
+	private int la; // look-ahead character
 	private int putBackChar;
-	private char[] lexem;
-	private int lexemPos;
-	private StringBuilder lexemBuilder;
+
 	private static TgTokenRecognizer rec = new TgTokenRecognizer();
 
-	private byte[] buffer;
-	private int bufferSize;
-	private int bufferPos;
-	private String filename;
+	private static final int TEXT_SIZE = 1024;
+	private char[] text; // buffer for short tokens (length <= TEXT_SIZE)
+	private int textPos; // write position in text buffer
+	private StringBuilder textBuilder; // builder for long tokens
+										// (length>TEXT_SIZE)
 
+	private static final int BUFFER_SIZE = 65536;
+	private byte[] buffer; // read buffer
+	private int bufferSize; // number of bytes in read buffer
+	private int bufferPos; // read position
+
+	/**
+	 * Creates a TgLexer for input stream <code>is</code>, optionally specifying
+	 * a <code>filename</code>.
+	 * 
+	 * @param is
+	 *            an input stream
+	 * @param filename
+	 *            optional filename for exception messages (can be null)
+	 * @throws GraphIOException
+	 *             when the <code>is</code> could not be read
+	 */
 	public TgLexer(InputStream is, String filename) throws GraphIOException {
 		this.filename = filename;
 		in = is;
 		buffer = new byte[BUFFER_SIZE];
-		lexem = new char[LEXEM_SIZE];
-		init();
-	}
-
-	public TgLexer(String s) throws GraphIOException {
-		buffer = s.getBytes(Charset.forName("US-ASCII"));
-		bufferSize = buffer.length;
-		init();
-	}
-
-	private final void init() throws GraphIOException {
+		text = new char[TEXT_SIZE];
 		putBackChar = -1;
 		line = 1;
 		la = read();
 	}
 
+	/**
+	 * Creates a TgLexer for {@link String} <code>s</code>.
+	 * 
+	 * @param s
+	 *            input string, must not be null
+	 * @throws GraphIOException
+	 *             (actually, this constructor won't throw a GraphIOException)
+	 */
+	public TgLexer(String s) throws GraphIOException {
+		buffer = s.getBytes(Charset.forName("US-ASCII"));
+		bufferSize = buffer.length;
+		text = new char[TEXT_SIZE];
+		putBackChar = -1;
+		line = 1;
+		la = read();
+	}
+
+	/**
+	 * @return a human readable input position
+	 */
 	public String getLocation() {
 		if (filename == null) {
 			return "line " + getLine() + ": ";
@@ -112,14 +135,26 @@ public class TgLexer {
 		}
 	}
 
+	/**
+	 * @return the current line in the input stream
+	 */
 	public int getLine() {
 		return line;
 	}
 
+	/**
+	 * @return the filename processed, can be <code>null</code>
+	 */
 	public String getFilename() {
 		return filename;
 	}
 
+	/**
+	 * Read the next character.
+	 * 
+	 * @return next character as <code>int</code> value, or -1 on EOF
+	 * @throws GraphIOException
+	 */
 	private final int read() throws GraphIOException {
 		int ch;
 		if (putBackChar >= 0) {
@@ -151,16 +186,32 @@ public class TgLexer {
 		return ch;
 	}
 
+	/**
+	 * @param c
+	 *            character code
+	 * @return true iff the <code>c</code> is whitespace in TG format
+	 */
 	public final static boolean isWs(int c) {
 		return (c == ' ') || (c == '\n') || (c == '\r') || (c == '\t');
 	}
 
+	/**
+	 * @param c
+	 *            character code
+	 * @return true iff the <code>c</code> is a separator in TG format
+	 */
 	public final static boolean isSeparator(int c) {
 		return (c == ';') || (c == '<') || (c == '>') || (c == '(')
 				|| (c == ')') || (c == '{') || (c == '}') || (c == ':')
 				|| (c == '[') || (c == ']') || (c == ',') || (c == '=');
 	}
 
+	/**
+	 * @param c
+	 *            character code
+	 * @return true iff the <code>c</code> is a delimiter (whitepsace or
+	 *         separator) in TG format
+	 */
 	public final static boolean isDelimiter(int c) {
 		return (c == ' ') || (c == ';') || (c == '\n') || (c == '\r')
 				|| (c == '<') || (c == '>') || (c == '(') || (c == ')')
@@ -169,6 +220,13 @@ public class TgLexer {
 				|| (c == -1);
 	}
 
+	/**
+	 * Reads the next token from the input.
+	 * 
+	 * @return a {@link Token}, or {@link Token#EOF} when input is exhausted
+	 * @throws GraphIOException
+	 *             when input can't be read
+	 */
 	public final Token nextToken() throws GraphIOException {
 		// skip whitespace and consecutive single line comments
 		while (true) {
@@ -196,8 +254,8 @@ public class TgLexer {
 			}
 		}
 		// build token
-		lexemPos = 0;
-		lexemBuilder = null;
+		textPos = 0;
+		textBuilder = null;
 		rec.reset();
 		if (isSeparator(la)) {
 			rec.next(la);
@@ -220,38 +278,66 @@ public class TgLexer {
 		return rec.getToken();
 	}
 
+	/**
+	 * Appends character <code>c</code> to the {@link #text} buffer, lazily
+	 * using {@link #textBuilder} when the token length exceeds
+	 * {@link #TEXT_SIZE}.
+	 * 
+	 * @param c
+	 *            a character code
+	 * 
+	 */
 	private final void append(int c) {
-		if (lexemPos < LEXEM_SIZE) {
-			lexem[lexemPos++] = (char) c;
+		if (textPos < TEXT_SIZE) {
+			text[textPos++] = (char) c;
 		} else {
-			if (lexemBuilder == null) {
-				lexemBuilder = new StringBuilder();
+			if (textBuilder == null) {
+				textBuilder = new StringBuilder();
 			}
-			lexemBuilder.append(new String(lexem, 0, lexemPos));
-			lexem[0] = (char) c;
-			lexemPos = 1;
+			textBuilder.append(new String(text, 0, textPos));
+			text[0] = (char) c;
+			textPos = 1;
 		}
 	}
 
-	public final String getLexem() {
-		if (lexemBuilder != null) {
-			if (lexemPos > 0) {
-				lexemBuilder.append(new String(lexem, 0, lexemPos));
-				lexemPos = 0;
+	/**
+	 * @return the text of the current token
+	 */
+	public final String getText() {
+		if (textBuilder != null) {
+			if (textPos > 0) {
+				textBuilder.append(new String(text, 0, textPos));
+				textPos = 0;
 			}
-			return lexemBuilder.toString();
+			return textBuilder.toString();
 		}
-		return new String(lexem, 0, lexemPos);
+		return new String(text, 0, textPos);
 	}
 
+	/**
+	 * @return Value of current token as <code>long</code> value (only valid
+	 *         when last token was {@link Token#INT})
+	 */
 	public final long getLong() {
+		assert rec.getToken() == Token.INT;
 		return rec.getValue();
 	}
 
+	/**
+	 * @return Value of current token as <code>int</code> value (only valid when
+	 *         last token was {@link Token#INT})
+	 */
 	public final int getInt() {
+		assert rec.getToken() == Token.INT;
 		return (int) (rec.getValue());
 	}
 
+	/**
+	 * Reads a TG string and appends its contents to the {@link #text} buffer.
+	 * 
+	 * @throws GraphIOException
+	 *             when input can't be read
+	 */
 	private final void readUtfString() throws GraphIOException {
 		int startLine = line;
 		la = read();

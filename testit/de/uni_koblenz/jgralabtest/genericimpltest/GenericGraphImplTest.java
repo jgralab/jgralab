@@ -905,7 +905,7 @@ public class GenericGraphImplTest {
 			}
 			g.readAttributeValues(GraphIO
 					.createStringReader(
-							"f "
+							"f"
 									+ "[[f]] "
 									+ "{[t t] - {f} [f f] - {t f}} "
 									+ "{{f}} "
@@ -973,11 +973,11 @@ public class GenericGraphImplTest {
 			}
 
 			assertEquals("t", g.writeAttributeValueToString("boolGraph"));
-			assertEquals("[[t] [f] [t]]",
+			assertEquals("[[t][f][t]]",
 					g.writeAttributeValueToString("complexListGraph"));
-			assertEquals("{[t] - {t} [f] - {f}}",
+			assertEquals("{[t]-{t}[f]-{f}}",
 					g.writeAttributeValueToString("complexMapGraph"));
-			assertEquals("{{t} {f}}",
+			assertEquals("{{t}{f}}",
 					g.writeAttributeValueToString("complexSetGraph"));
 			assertEquals("1.1", g.writeAttributeValueToString("doubleGraph"));
 			assertEquals("FIRST", g.writeAttributeValueToString("enumGraph"));
@@ -987,7 +987,7 @@ public class GenericGraphImplTest {
 			assertEquals("{1 - t 2 - f 3 - t}",
 					g.writeAttributeValueToString("mapGraph"));
 			assertEquals(
-					"(t 1.1 FIRST 1 [t f t] 1 {1 - t 2 - f 3 - t} {t f} \"test\")",
+					"(t 1.1 FIRST 1[t f t]1{1 - t 2 - f 3 - t}{t f}\"test\")",
 					g.writeAttributeValueToString("recordGraph"));
 			assertEquals("{t f}", g.writeAttributeValueToString("setGraph"));
 			assertEquals("\"test\"",
@@ -1020,19 +1020,10 @@ public class GenericGraphImplTest {
 
 			GraphIO io = GraphIO.createStringWriter(g.getSchema());
 			g.writeAttributeValues(io);
-			assertEquals(
-					"t "
-							+ "[[t] [f] [t]] "
-							+ "{[t] - {t} [f] - {f}} "
-							+ "{{t} {f}} "
-							+ "1.1 "
-							+ "FIRST "
-							+ "1 "
-							+ "[t f t] "
-							+ "1 "
-							+ "{1 - t 2 - f 3 - t} "
-							+ "(t 1.1 FIRST 1 [t f t] 1 {1 - t 2 - f 3 - t} {t f} \"test\") "
-							+ "{t f} " + "\"test\"", io.getStringWriterResult());
+			assertEquals("t" + "[[t][f][t]]" + "{[t]-{t}[f]-{f}}" + "{{t}{f}}"
+					+ "1.1 FIRST 1[t f t]1" + "{1 - t 2 - f 3 - t}"
+					+ "(t 1.1 FIRST 1[t f t]1{1 - t 2 - f 3 - t}{t f}\"test\")"
+					+ "{t f}\"test\"", io.getStringWriterResult());
 		} catch (GraphIOException e) {
 			e.printStackTrace();
 			fail();

@@ -784,11 +784,11 @@ public class GenericVertexImplTest {
 			}
 
 			assertEquals("t", v.writeAttributeValueToString("boolVertex"));
-			assertEquals("[[t] [f] [t]]",
+			assertEquals("[[t][f][t]]",
 					v.writeAttributeValueToString("complexListVertex"));
-			assertEquals("{[t] - {t} [f] - {f}}",
+			assertEquals("{[t]-{t}[f]-{f}}",
 					v.writeAttributeValueToString("complexMapVertex"));
-			assertEquals("{{t} {f}}",
+			assertEquals("{{t}{f}}",
 					v.writeAttributeValueToString("complexSetVertex"));
 			assertEquals("1.1", v.writeAttributeValueToString("doubleVertex"));
 			assertEquals("FIRST", v.writeAttributeValueToString("enumVertex"));
@@ -798,7 +798,7 @@ public class GenericVertexImplTest {
 			assertEquals("{1 - t 2 - f 3 - t}",
 					v.writeAttributeValueToString("mapVertex"));
 			assertEquals(
-					"(t 1.1 FIRST 1 [t f t] 1 {1 - t 2 - f 3 - t} {t f} \"test\")",
+					"(t 1.1 FIRST 1[t f t]1{1 - t 2 - f 3 - t}{t f}\"test\")",
 					v.writeAttributeValueToString("recordVertex"));
 			assertEquals("{t f}", v.writeAttributeValueToString("setVertex"));
 			assertEquals("\"test\"",
@@ -835,19 +835,11 @@ public class GenericVertexImplTest {
 
 			GraphIO io = GraphIO.createStringWriter(v.getSchema());
 			v.writeAttributeValues(io);
-			assertEquals(
-					"t "
-							+ "[[t] [f] [t]] "
-							+ "{[t] - {t} [f] - {f}} "
-							+ "{{t} {f}} "
-							+ "1.1 "
-							+ "FIRST "
-							+ "1 "
-							+ "[t f t] "
-							+ "1 "
-							+ "{1 - t 2 - f 3 - t} "
-							+ "(t 1.1 FIRST 1 [t f t] 1 {1 - t 2 - f 3 - t} {t f} \"test\") "
-							+ "{t f} " + "\"test\"", io.getStringWriterResult());
+			assertEquals("t" + "[[t][f][t]]" + "{[t]-{t}[f]-{f}}" + "{{t}{f}}"
+					+ "1.1 " + "FIRST " + "1" + "[t f t]" + "1"
+					+ "{1 - t 2 - f 3 - t}"
+					+ "(t 1.1 FIRST 1[t f t]1{1 - t 2 - f 3 - t}{t f}\"test\")"
+					+ "{t f}\"test\"", io.getStringWriterResult());
 		} catch (GraphIOException e) {
 			e.printStackTrace();
 			fail();
