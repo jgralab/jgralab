@@ -67,11 +67,16 @@ public class TgLexer {
 		}
 	}
 
+	private static final int BUFFER_SIZE = 65536;
+	private static final int LEXEM_SIZE = 1024;
+
 	private InputStream in;
 	private int line;
 	private int la;
 	private int putBackChar;
-	private StringBuilder lexem;
+	private char[] lexem;
+	private int lexemPos;
+	private StringBuilder lexemBuilder;
 	private static TgTokenRecognizer rec = new TgTokenRecognizer();
 
 	private byte[] buffer;
@@ -82,7 +87,8 @@ public class TgLexer {
 	public TgLexer(InputStream is, String filename) throws GraphIOException {
 		this.filename = filename;
 		in = is;
-		buffer = new byte[65536];
+		buffer = new byte[BUFFER_SIZE];
+		lexem = new char[LEXEM_SIZE];
 		init();
 	}
 
@@ -95,7 +101,6 @@ public class TgLexer {
 	private final void init() throws GraphIOException {
 		putBackChar = -1;
 		line = 1;
-		bufferPos = 0;
 		la = read();
 	}
 
@@ -191,11 +196,12 @@ public class TgLexer {
 			}
 		}
 		// build token
-		lexem = new StringBuilder();
+		lexemPos = 0;
+		lexemBuilder = null;
 		rec.reset();
 		if (isSeparator(la)) {
 			rec.next(la);
-			lexem.append((char) la);
+			append(la);
 			la = read();
 		} else if (la == '"') {
 			readUtfString();
@@ -204,7 +210,7 @@ public class TgLexer {
 			if (la >= 0) {
 				while (!isDelimiter(la)) {
 					rec.next(la);
-					lexem.append((char) la);
+					append(la);
 					la = read();
 				}
 			} else {
@@ -214,8 +220,28 @@ public class TgLexer {
 		return rec.getToken();
 	}
 
+	private final void append(int c) {
+		if (lexemPos < LEXEM_SIZE) {
+			lexem[lexemPos++] = (char) c;
+		} else {
+			if (lexemBuilder == null) {
+				lexemBuilder = new StringBuilder();
+			}
+			lexemBuilder.append(new String(lexem, 0, lexemPos));
+			lexem[0] = (char) c;
+			lexemPos = 1;
+		}
+	}
+
 	public final String getLexem() {
-		return lexem.toString();
+		if (lexemBuilder != null) {
+			if (lexemPos > 0) {
+				lexemBuilder.append(new String(lexem, 0, lexemPos));
+				lexemPos = 0;
+			}
+			return lexemBuilder.toString();
+		}
+		return new String(lexem, 0, lexemPos);
 	}
 
 	public final long getLong() {
@@ -291,7 +317,7 @@ public class TgLexer {
 							+ line);
 				}
 			}
-			lexem.append((char) la);
+			append(la);
 			la = read();
 		}
 		if (la < 0) {
