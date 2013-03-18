@@ -38,7 +38,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
 
-import de.uni_koblenz.jgralab.exception.GraphException;
 import de.uni_koblenz.jgralab.exception.GraphIOException;
 
 public class TgLexer {
@@ -78,31 +77,45 @@ public class TgLexer {
 	private byte[] buffer;
 	private int bufferSize;
 	private int bufferPos;
+	private String filename;
 
-	public TgLexer(InputStream is) throws IOException {
+	public TgLexer(InputStream is, String filename) throws GraphIOException {
+		this.filename = filename;
 		in = is;
 		buffer = new byte[65536];
 		init();
 	}
 
-	public TgLexer(String s) throws IOException {
+	public TgLexer(String s) throws GraphIOException {
 		buffer = s.getBytes(Charset.forName("US-ASCII"));
 		bufferSize = buffer.length;
 		init();
 	}
 
-	private final void init() throws IOException {
+	private final void init() throws GraphIOException {
 		putBackChar = -1;
 		line = 1;
 		bufferPos = 0;
 		la = read();
 	}
 
+	public String getLocation() {
+		if (filename == null) {
+			return "line " + getLine() + ": ";
+		} else {
+			return getFilename() + " line " + getLine() + ": ";
+		}
+	}
+
 	public int getLine() {
 		return line;
 	}
 
-	private final int read() throws IOException {
+	public String getFilename() {
+		return filename;
+	}
+
+	private final int read() throws GraphIOException {
 		int ch;
 		if (putBackChar >= 0) {
 			ch = putBackChar;
@@ -112,7 +125,12 @@ public class TgLexer {
 				ch = buffer[bufferPos++];
 			} else {
 				if (in != null) {
-					bufferSize = in.read(buffer);
+					try {
+						bufferSize = in.read(buffer);
+					} catch (IOException e) {
+						throw new GraphIOException(getLocation()
+								+ "Caught IOException", e);
+					}
 					bufferPos = 0;
 				}
 				if (bufferPos < bufferSize) {
@@ -147,57 +165,53 @@ public class TgLexer {
 	}
 
 	public final Token nextToken() throws GraphIOException {
-		try {
-			// skip whitespace and consecutive single line comments
-			while (true) {
-				// skip whitespace
-				while (isWs(la)) {
+		// skip whitespace and consecutive single line comments
+		while (true) {
+			// skip whitespace
+			while (isWs(la)) {
+				la = read();
+			}
+			if (la != '/') {
+				break;
+			}
+			// skip single line comments
+			la = read();
+			if ((la >= 0) && (la == '/')) {
+				// single line comment, skip to the end of the current line
+				while ((la >= 0) && (la != '\n')) {
 					la = read();
 				}
-				if (la != '/') {
-					break;
-				}
-				// skip single line comments
-				la = read();
-				if ((la >= 0) && (la == '/')) {
-					// single line comment, skip to the end of the current line
-					while ((la >= 0) && (la != '\n')) {
-						la = read();
-					}
-				} else {
-					putBackChar = la;
-					if (la == '\n') {
-						--line;
-					}
-					la = '/';
-					break;
-				}
-			}
-			// build token
-			lexem = new StringBuilder();
-			rec.reset();
-			if (isSeparator(la)) {
-				rec.next(la);
-				lexem.append((char) la);
-				la = read();
-			} else if (la == '"') {
-				readUtfString();
-				return Token.STRING;
 			} else {
-				if (la >= 0) {
-					while (!isDelimiter(la)) {
-						rec.next(la);
-						lexem.append((char) la);
-						la = read();
-					}
-				} else {
-					return Token.EOF;
+				putBackChar = la;
+				if (la == '\n') {
+					--line;
 				}
+				la = '/';
+				break;
 			}
-			return rec.getToken();
-		} catch (IOException e) {
-			throw new GraphException(e);
 		}
+		// build token
+		lexem = new StringBuilder();
+		rec.reset();
+		if (isSeparator(la)) {
+			rec.next(la);
+			lexem.append((char) la);
+			la = read();
+		} else if (la == '"') {
+			readUtfString();
+			return Token.STRING;
+		} else {
+			if (la >= 0) {
+				while (!isDelimiter(la)) {
+					rec.next(la);
+					lexem.append((char) la);
+					la = read();
+				}
+			} else {
+				return Token.EOF;
+			}
+		}
+		return rec.getToken();
 	}
 
 	public final String getLexem() {
@@ -212,12 +226,13 @@ public class TgLexer {
 		return (int) (rec.getValue());
 	}
 
-	private final void readUtfString() throws IOException {
+	private final void readUtfString() throws GraphIOException {
 		int startLine = line;
 		la = read();
 		LOOP: while ((la >= 0) && (la != '"')) {
 			if ((la < 32) || (la > 127)) {
-				throw new IOException("Invalid character '" + (char) la
+				throw new GraphIOException(getLocation()
+						+ "Invalid character '" + (char) la
 						+ "' in string in line " + line);
 			}
 			if (la == '\\') {
@@ -265,22 +280,23 @@ public class TgLexer {
 					try {
 						la = Integer.parseInt(unicode, 16);
 					} catch (NumberFormatException e) {
-						throw new IOException(
-								"Invalid unicode escape sequence '\\u"
-										+ unicode + "' in line " + line);
+						throw new GraphIOException(getLocation()
+								+ "Invalid unicode escape sequence '\\u"
+								+ unicode + "' in line " + line);
 					}
 					break;
 				default:
-					throw new IOException(
-							"Invalid escape sequence in string in line " + line);
+					throw new GraphIOException(getLocation()
+							+ "Invalid escape sequence in string in line "
+							+ line);
 				}
 			}
 			lexem.append((char) la);
 			la = read();
 		}
 		if (la < 0) {
-			throw new IOException("Unterminated string starting in line "
-					+ startLine);
+			throw new GraphIOException(getLocation()
+					+ "Unterminated string starting in line " + startLine);
 		}
 		la = read();
 	}

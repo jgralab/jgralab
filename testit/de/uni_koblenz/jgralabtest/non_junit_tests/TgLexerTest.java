@@ -1,8 +1,5 @@
 package de.uni_koblenz.jgralabtest.non_junit_tests;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-
 import de.uni_koblenz.jgralab.exception.GraphIOException;
 import de.uni_koblenz.jgralab.impl.TgLexer;
 import de.uni_koblenz.jgralab.impl.TgLexer.Token;
@@ -48,12 +45,6 @@ public class TgLexerTest {
 			long stop = System.currentTimeMillis();
 			System.out.println("Time: " + (stop - start) + "ms");
 			System.out.println("n=" + n + ", s=" + s + ", i=" + i);
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		} catch (GraphIOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
