@@ -623,6 +623,7 @@ public final class GraphIO {
 
 			GraphIO io = new GraphIO();
 			io.TGOut = out;
+			io.compact = true; // save spaces in graph files
 			io.saveGraph((InternalGraph) subGraph.getGraph(), pf, subGraph);
 			out.flush();
 		} catch (IOException e) {
@@ -1003,7 +1004,8 @@ public final class GraphIO {
 			throws IOException {
 		OutputStream out = new FileOutputStream(filename);
 		if (filename.toLowerCase().endsWith(".gz")) {
-			out = new GZIPOutputStream(out, WRITE_BUFFER_SIZE);
+			out = new BufferedOutputStream(new GZIPOutputStream(out),
+					WRITE_BUFFER_SIZE);
 		} else {
 			out = new BufferedOutputStream(out, WRITE_BUFFER_SIZE);
 		}

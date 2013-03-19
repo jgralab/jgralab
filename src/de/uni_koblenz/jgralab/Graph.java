@@ -35,7 +35,7 @@
 
 package de.uni_koblenz.jgralab;
 
-import java.io.DataOutputStream;
+import java.io.OutputStream;
 import java.util.Comparator;
 import java.util.Map;
 
@@ -479,12 +479,12 @@ public interface Graph extends AttributedElement<GraphClass, Graph> {
 	 * <em>not</em> closed.
 	 * 
 	 * @param out
-	 *            a DataOutputStream
+	 *            an OutputStream
 	 * 
 	 * @throws GraphIOException
 	 *             if an IOException occurs
 	 */
-	public void save(DataOutputStream out) throws GraphIOException;
+	public void save(OutputStream out) throws GraphIOException;
 
 	/**
 	 * Saves this {@link Graph} to the stream <code>out</code>. A
@@ -492,14 +492,14 @@ public interface Graph extends AttributedElement<GraphClass, Graph> {
 	 * The stream is <em>not</em> closed.
 	 * 
 	 * @param out
-	 *            a DataOutputStream
+	 *            an OutputStream
 	 * @param pf
 	 *            a {@link ProgressFunction}, may be <code>null</code>
 	 * 
 	 * @throws GraphIOException
 	 *             if an IOException occurs
 	 */
-	public void save(DataOutputStream out, ProgressFunction pf)
+	public void save(OutputStream out, ProgressFunction pf)
 			throws GraphIOException;
 
 	/**
