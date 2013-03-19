@@ -35,7 +35,7 @@
 
 package de.uni_koblenz.jgralab.impl;
 
-import java.io.DataOutputStream;
+import java.io.OutputStream;
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
@@ -2012,12 +2012,12 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 	}
 
 	@Override
-	public final void save(DataOutputStream out) throws GraphIOException {
+	public final void save(OutputStream out) throws GraphIOException {
 		save(out, null);
 	}
 
 	@Override
-	public final void save(DataOutputStream out, ProgressFunction pf)
+	public final void save(OutputStream out, ProgressFunction pf)
 			throws GraphIOException {
 		GraphIO.saveGraphToStream(this, out, pf);
 	}
