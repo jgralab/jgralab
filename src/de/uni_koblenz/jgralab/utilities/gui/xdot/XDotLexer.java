@@ -126,7 +126,18 @@ public class XDotLexer {
 		// check for (possible repeated) escaped line ends
 		while (ch == '\\') {
 			ch = in.read();
-			if (ch == '\n') {
+			if (ch == '\r') {
+				// check for windows line end (CR-LF)
+				ch = in.read();
+				if (ch == '\n') {
+					++line;
+					ch = in.read();
+				} else if (ch != -1) {
+					throw new IOException(
+							"Expected line end CR/LF but found CR/ASCII " + ch);
+				}
+			} else if (ch == '\n') {
+				// unix line end
 				++line;
 				ch = in.read();
 			} else {
