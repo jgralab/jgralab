@@ -39,6 +39,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -1257,7 +1258,7 @@ public class SchemaImpl implements Schema, ManagableArtifact {
 	}
 
 	@Override
-	public void save(DataOutputStream out) throws GraphIOException {
+	public void save(OutputStream out) throws GraphIOException {
 		GraphIO.saveSchemaToStream(this, out);
 	}
 

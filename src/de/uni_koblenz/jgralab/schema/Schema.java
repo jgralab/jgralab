@@ -35,8 +35,8 @@
 
 package de.uni_koblenz.jgralab.schema;
 
-import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Collection;
@@ -474,6 +474,6 @@ public interface Schema extends Comparable<Schema> {
 
 	public void save(String filename) throws GraphIOException;
 
-	public void save(DataOutputStream out) throws GraphIOException;
+	public void save(OutputStream out) throws GraphIOException;
 
 }
