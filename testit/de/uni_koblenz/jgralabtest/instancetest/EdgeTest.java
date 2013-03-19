@@ -4054,51 +4054,6 @@ public class EdgeTest extends InstanceTest {
 		return loadedgraph;
 	}
 
-	/**
-	 * Test with values.
-	 * 
-	 * @
-	 */
-	@Test
-	public void writeReadAttributeValues1() throws GraphIOException,
-			IOException {
-		DoubleSubNode v1 = g.createDoubleSubNode();
-		DoubleSubNode v2 = g.createDoubleSubNode();
-		SubLink e1 = g.createSubLink(v1, v2);
-		e1.set_anInt(3);
-		e1.set_aString("HelloWorld!");
-
-		// test of writeAttributeValues
-		g.save("test.tg");
-
-		LineNumberReader reader = new LineNumberReader(
-				new FileReader("test.tg"));
-		String line = "";
-		String[] parts = null;
-		while ((line = reader.readLine()) != null) {
-			if (line.length() > 0) {
-				line = line.substring(0, line.length() - 1);
-			}
-			parts = line.split(" ");
-			if (parts[0].equals(((Integer) e1.getId()).toString())
-					&& parts[1].equals(e1.getClass().getName())) {
-				break;
-			}
-		}
-		assertEquals("\"HelloWorld!\"", parts[2]);
-		assertEquals("3", parts[3]);
-		VertexTestGraph loadedgraph = loadTestGraph();
-
-		SubLink loadede1 = loadedgraph.getFirstSubLink();
-		assertEquals(e1.get_aString(), loadede1.get_aString());
-		assertEquals(e1.get_anInt(), loadede1.get_anInt());
-
-		// delete created file
-		reader.close();
-		File f = new File("test.tg");
-		f.delete();
-	}
-
 	// tests of the method Object getAttribute(String name) throws
 	// NoSuchFieldException;
 

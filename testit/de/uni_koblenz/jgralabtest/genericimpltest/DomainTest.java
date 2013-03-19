@@ -163,19 +163,19 @@ public class DomainTest {
 	private static String serializedSetDomainValue1 = "{t f}"; // simpleSetDomain
 	private static String serializedSetDomainValue2 = "{{123 - 4561 321 - 6541}{243 - 4151 312 - 6451}}"; // complexSetDomain
 	private static String serializedSetDomainEmptyValue = "{}";
-	private static String serializedListDomainValue1 = "[\"some string\" \"another one\"]"; // simpleListDomain
+	private static String serializedListDomainValue1 = "[\"some string\"\"another one\"]"; // simpleListDomain
 	private static String serializedListDomainValue2 = "[{}{123 - 4561 321 - 6541}{243 - 4151 312 - 6451}]"; // complexListDomain
 	private static String serializedListDomainEmptyValue = "[]";
 	private static String serializedMapDomainValue1 = "{24 - 0 -1000 - 9876543210 14 - 1234567890}"; // simpleMapDomain
-	private static String serializedMapDomainValue2 = "{[\"a\" \"b\" \"c\"]-{1 - 123456 42 - 435782}[\"d\" \"e\" \"f\"]-{}[]-{}[\"abc\"]-{73 - 192837 84 - 46565}}"; // complexMapDomain:
-																																										// Map<List<String>,
-																																										// Map<Integer,
-																																										// Long>>
+	private static String serializedMapDomainValue2 = "{[\"a\"\"b\"\"c\"]-{1 - 123456 42 - 435782}[\"d\"\"e\"\"f\"]-{}[]-{}[\"abc\"]-{73 - 192837 84 - 46565}}"; // complexMapDomain:
+																																									// Map<List<String>,
+																																									// Map<Integer,
+																																									// Long>>
 	private static String serializedMapDomainEmptyValue = "{}";
-	private static String serializedRecordDomainValue1 = "(t 3.1 SECOND 42[\"some string\" \"another one\"]1016{42 - 1016 1 - 39215 7 - 1234567890}{t f}\"somestring\")"; // simpleRecordDomain
-	private static String serializedRecordDomainValue3 = "(f 1.3 FIRST 24[\"some other string\" \"yet another one\"]123456789{1 - 987654321 2 - 39215 3 - 1234567890}{t f}\"secondString\")";
-	private static String serializedMapDomainValue3 = "{\"key one\" -"
-			+ serializedRecordDomainValue1 + "\"key two\" -"
+	private static String serializedRecordDomainValue1 = "(t 3.1 SECOND 42[\"some string\"\"another one\"]1016{42 - 1016 1 - 39215 7 - 1234567890}{t f}\"somestring\")"; // simpleRecordDomain
+	private static String serializedRecordDomainValue3 = "(f 1.3 FIRST 24[\"some other string\"\"yet another one\"]123456789{1 - 987654321 2 - 39215 3 - 1234567890}{t f}\"secondString\")";
+	private static String serializedMapDomainValue3 = "{\"key one\"-"
+			+ serializedRecordDomainValue1 + "\"key two\"-"
 			+ serializedRecordDomainValue3 + "}"; // complexMapDomain2:
 													// Map<String,
 													// SimpleRecordDomain>
@@ -183,7 +183,7 @@ public class DomainTest {
 			+ // complexRecordDomain
 			"[{}{123 - 4561 321 - 6541}{243 - 4151 312 - 6451}]"
 			+ // ListComponent: List<Map<Integer, Long>>
-			"{[\"a\" \"b\" \"c\"]-{1 - 123456 42 - 435782 7 - 832 8 - 112345}[\"d\" \"e\" \"f\"]-{}[]-{73 - 192837 84 - 46565}}"
+			"{[\"a\"\"b\"\"c\"]-{1 - 123456 42 - 435782 7 - 832 8 - 112345}[\"d\"\"e\"\"f\"]-{}[]-{73 - 192837 84 - 46565}}"
 			+ // MapComponent: Map<List<String>, Map<Integer, Long>>
 			serializedRecordDomainValue1 + // RecordComponent:
 											// *SimpleRecordDomain*
