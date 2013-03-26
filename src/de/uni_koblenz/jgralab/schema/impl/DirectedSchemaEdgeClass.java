@@ -58,6 +58,9 @@ public class DirectedSchemaEdgeClass {
 
 	@Override
 	public boolean equals(Object o) {
+		if (o == null) {
+			return false;
+		}
 		return ((DirectedSchemaEdgeClass) o).getEdgeClass().equals(edgeClass)
 				&& ((DirectedSchemaEdgeClass) o).getDirection().equals(dir);
 	}

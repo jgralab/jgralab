@@ -3,20 +3,14 @@
  */
 package de.uni_koblenz.jgralab.utilities.tg2graphml;
 
-import java.io.File;
-import java.io.IOException;
 import java.io.PrintStream;
 import java.util.Map;
 import java.util.Map.Entry;
 
 import de.uni_koblenz.jgralab.Edge;
-import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphElement;
-import de.uni_koblenz.jgralab.GraphIO;
-import de.uni_koblenz.jgralab.ImplementationType;
 import de.uni_koblenz.jgralab.Record;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.exception.GraphIOException;
 import de.uni_koblenz.jgralab.schema.Attribute;
 import de.uni_koblenz.jgralab.utilities.tg2whatever.Tg2Whatever;
 
@@ -161,22 +155,4 @@ public class Tg2GraphML extends Tg2Whatever {
 	protected String stringQuote(String s) {
 		return s;
 	}
-
-	/**
-	 * @param args
-	 * @throws GraphIOException
-	 * @throws IOException
-	 */
-	public static void main(String[] args) throws GraphIOException, IOException {
-		Graph g = GraphIO.loadGraphFromFile(
-				"testit/testgraphs/greqltestgraph.tg",
-				ImplementationType.GENERIC, null);
-		Tg2GraphML converter = new Tg2GraphML();
-		converter.setGraph(g);
-		File f = new File("/home/horn/greqltestgraph.graphml");
-		f.createNewFile();
-		converter.setOutputFile(f.getPath());
-		converter.convert();
-	}
-
 }

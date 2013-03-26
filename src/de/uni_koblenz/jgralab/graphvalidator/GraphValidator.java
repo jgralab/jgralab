@@ -325,11 +325,14 @@ public class GraphValidator {
 			bw.append("</body></html>");
 			bw.flush();
 		} finally {
-			try {
-				bw.close();
-			} catch (IOException ex) {
-				throw new RuntimeException(
-						"An Exception occurred while closing the stream.", ex);
+			if (bw != null) {
+				try {
+					bw.close();
+				} catch (IOException ex) {
+					throw new RuntimeException(
+							"An Exception occurred while closing the stream.",
+							ex);
+				}
 			}
 		}
 

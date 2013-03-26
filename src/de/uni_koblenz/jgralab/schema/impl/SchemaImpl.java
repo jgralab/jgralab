@@ -869,12 +869,18 @@ public class SchemaImpl implements Schema, ManagableArtifact {
 			}
 		} catch (SecurityException e) {
 			throw new SchemaClassAccessException(
-					"can't find create method in '" + schemaClass.getName()
-							+ "' for '" + aec.getUniqueName() + "'", e);
+					"can't find create method in "
+							+ (schemaClass == null ? "unknown schemaClass"
+									: "'" + schemaClass.getName() + "'")
+							+ (aec == null ? "" : " for '"
+									+ aec.getUniqueName() + "'"), e);
 		} catch (NoSuchMethodException e) {
 			throw new SchemaClassAccessException(
-					"can't find create method in '" + schemaClass.getName()
-							+ "' for '" + aec.getUniqueName() + "'", e);
+					"can't find create method in "
+							+ (schemaClass == null ? "unknown schemaClass"
+									: "'" + schemaClass.getName() + "'")
+							+ (aec == null ? "" : " for '"
+									+ aec.getUniqueName() + "'"), e);
 		}
 	}
 

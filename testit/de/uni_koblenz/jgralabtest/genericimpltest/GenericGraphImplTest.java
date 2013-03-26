@@ -299,7 +299,9 @@ public class GenericGraphImplTest {
 			g.createVertex(g.getGraphClass()
 					.getVertexClass("AbstractSuperNode"));
 		} catch (GraphException e) {
-			assertEquals(vCountBefore, g.getVCount());
+			if (g != null) {
+				assertEquals(vCountBefore, g.getVCount());
+			}
 		} catch (GraphIOException e) {
 			e.printStackTrace();
 			fail();
@@ -340,7 +342,9 @@ public class GenericGraphImplTest {
 			eCountBefore = g.getECount();
 			g.createEdge(g.getGraphClass().getEdgeClass("Way"), v1, v2);
 		} catch (GraphException e) {
-			assertEquals(eCountBefore, g.getECount());
+			if (g != null) {
+				assertEquals(eCountBefore, g.getECount());
+			}
 		} catch (GraphIOException e) {
 			e.printStackTrace();
 			fail();
@@ -505,7 +509,7 @@ public class GenericGraphImplTest {
 			fail();
 		} catch (GraphException e) {
 			// Test if there has no edge been added to the graph
-			if (0 == g1.getECount()) {
+			if (g1 != null && 0 == g1.getECount()) {
 				throw e;
 			}
 		}

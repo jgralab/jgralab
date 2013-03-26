@@ -339,19 +339,14 @@ public class XDotParser {
 		return null;
 	}
 
-	private String matchOr(String... alternatives) throws IOException {
-		for (String s : alternatives) {
-			if (la.text.equals(s)) {
-				return match();
-			}
-		}
-		throw new IOException(xdl.getLine() + ": Expected " + alternatives
-				+ " found " + la.text);
-	}
-
 	private void parseDot() throws IOException {
 		matchOpt("strict");
-		matchOr("digraph", "graph");
+		if (la.text.equals("graph") || la.text.equals("digraph")) {
+			match();
+		} else {
+			throw new IOException(xdl.getLine()
+					+ ": Expected 'graph' or 'digraph', found " + la.text);
+		}
 		if (!la.text.equals("{")) {
 			matchID();
 		}

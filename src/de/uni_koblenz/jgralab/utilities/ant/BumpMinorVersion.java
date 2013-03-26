@@ -41,7 +41,7 @@ public class BumpMinorVersion extends RetrieveVersion {
 		readProperties();
 		minor = Integer.toString(Integer.parseInt(minor) + 1);
 		micro = "0";
-		setHEAD();
+		getHeadRevision();
 		saveProperties();
 		writePomFile();
 	}

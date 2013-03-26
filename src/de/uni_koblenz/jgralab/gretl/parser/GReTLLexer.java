@@ -34,10 +34,6 @@
  */
 package de.uni_koblenz.jgralab.gretl.parser;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -143,7 +139,7 @@ public class GReTLLexer {
 
 	/**
 	 * Skip
-	 *
+	 * 
 	 * @param separator
 	 * @return
 	 */
@@ -323,29 +319,4 @@ public class GReTLLexer {
 		}
 		return start;
 	}
-
-	/**
-	 * @param args
-	 * @throws IOException
-	 */
-	public static void main(String[] args) throws IOException {
-		BufferedReader r = new BufferedReader(
-				new FileReader(
-						new File(
-								"/home/horn/Repos/uni/jgralab/testit/de/uni_koblenz/jgralabtest/gretl/transforms/AddressBookRefactoring.gretl")));
-		StringBuilder sb = new StringBuilder();
-		String line = null;
-		while ((line = r.readLine()) != null) {
-			sb.append(line);
-			sb.append('\n');
-		}
-		r.close();
-		List<Token> tokens = GReTLLexer
-				.scan("makeAddressBook ::= CreateVertexClass AddressBook <== set(1);\n"
-						+ "Call makeAddressBook;\n");
-		for (Token t : tokens) {
-			System.out.println(t);
-		}
-	}
-
 }

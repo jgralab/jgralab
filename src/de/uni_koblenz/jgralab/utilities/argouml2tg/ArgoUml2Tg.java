@@ -433,7 +433,7 @@ public class ArgoUml2Tg extends Xml2Tg {
 		GraphClass graphClass = sg.getFirstGraphClass();
 		Map<String, AttributedElementClass> definedAttributes = new HashMap<String, AttributedElementClass>();
 		for (Attribute a : graphClass.get_attributes()) {
-			if (definedAttributes.containsKey(a)) {
+			if (definedAttributes.containsKey(a.get_name())) {
 				throw new RuntimeException("Attribute " + a.get_name() + " at "
 						+ graphClass.get_qualifiedName() + " is duplicate.");
 			}
@@ -515,7 +515,7 @@ public class ArgoUml2Tg extends Xml2Tg {
 								: SpecializesEdgeClass.EC, EdgeDirection.OUT);
 				GraphElementClass directSuperClass = (GraphElementClass) spezializesEdgeClass
 						.getThat();
-				if (directSuperClass == this) {
+				if (directSuperClass == gec) {
 					spezializesEdgeClass.delete();
 				} else if (longestDistance.isMarked(directSuperClass)) {
 					// there exists two generalizations to the same direct

@@ -234,7 +234,7 @@ public class TgSchema2Java {
 		for (Domain d : schema.getDomains()) {
 			pathName = d.getPathName();
 
-			if (pathName != "") {
+			if (!pathName.isEmpty()) {
 				pathName = pathName.concat(File.separator);
 			}
 			if (d.toString().startsWith("Enum")
@@ -251,7 +251,7 @@ public class TgSchema2Java {
 		if (!gc.isAbstract()) {
 			pathName = gc.getPathName();
 
-			if (pathName != "") {
+			if (!pathName.isEmpty()) {
 				pathName = pathName.concat(File.separator);
 			}
 			requiredFilePaths.add(commitPath + File.separator + schemaPath
@@ -265,7 +265,7 @@ public class TgSchema2Java {
 			if (!vc.isAbstract()) {
 				pathName = vc.getPathName();
 
-				if (pathName != "") {
+				if (!pathName.isEmpty()) {
 					pathName = pathName.concat(File.separator);
 				}
 				requiredFilePaths.add(commitPath + File.separator + schemaPath
@@ -280,7 +280,7 @@ public class TgSchema2Java {
 			if (!ec.isAbstract()) {
 				pathName = ec.getPathName();
 
-				if (pathName != "") {
+				if (!pathName.isEmpty()) {
 					pathName = pathName.concat(File.separator);
 				}
 				requiredFilePaths.add(commitPath + File.separator + schemaPath

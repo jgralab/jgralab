@@ -11,7 +11,7 @@ public class RoundTest extends ArithmeticTest {
 	@Test
 	public void testInt() {
 		for (int i = 0; i < intValues.length; i++) {
-			long expected = Math.round(intValues[i]);
+			long expected = intValues[i];
 			Object result = FunLib.apply("round", intValues[i]);
 			assertEquals(expected, result);
 		}
@@ -20,7 +20,7 @@ public class RoundTest extends ArithmeticTest {
 	@Test
 	public void testLong() {
 		for (int i = 0; i < longValues.length; i++) {
-			long expected = Math.round((double) longValues[i]);
+			long expected = longValues[i];
 			Object result = FunLib.apply("round", longValues[i]);
 			assertEquals(expected, result);
 		}

@@ -58,10 +58,16 @@ public class RecordTest {
 	public void testEquals() throws Exception {
 		SourcePosition sp = new SourcePosition(17, 4);
 		RecordImpl r = RecordImpl.empty().plus("offset", 4);
+
+		assertFalse(sp.equals(null));
 		assertFalse(sp.equals(r));
+
+		assertFalse(r.equals(null));
 		assertFalse(r.equals(sp));
+
 		r = r.plus("length", 17);
-		assertTrue(r.equals(sp));
+
 		assertTrue(sp.equals(r));
+		assertTrue(r.equals(sp));
 	}
 }

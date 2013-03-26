@@ -64,10 +64,8 @@ import java.util.regex.Pattern;
 public class RequestThread extends Thread {
 
 	static final String SVG_WITH_ZOOM_AND_MOVE_SUPPORT = "resources/svgNavigation.svg";
-	private static File workspace;
+	private File workspace;
 	private final StateRepository rep;
-	public static Long MAXIMUM_FILE_SIZE;
-	public static long MAXIMUM_WORKSPACE_SIZE;
 
 	private final Socket _socket;
 
@@ -196,6 +194,10 @@ public class RequestThread extends Thread {
 		String[] parts = path.split(Pattern.quote("?"));
 		// split method parts into name and args
 		String methodname = parts.length > 0 ? parts[0] : null;
+		if (methodname == null) {
+			throw new IllegalArgumentException(
+					"Couldn't determine method name from path '" + path + "'");
+		}
 		String[] args = null;
 		if (parts.length > 1) {
 			String[] methodArgs = parts[1].split("&");
@@ -422,7 +424,7 @@ public class RequestThread extends Thread {
 			// it is not a tg or gz file.
 			sendFile(out, "TGraphBrowser_GraphChoice_AfterError.html",
 					"You can only upload .tg or .gz files!");
-		} else if (!isSizeOk(contentLength)) {
+		} else if (!StateRepository.isSizeOk(workspace, contentLength)) {
 			// the file is too large
 			sendFile(out, "TGraphBrowser_GraphChoice_AfterError.html",
 					"The .tg file is too big!");
@@ -431,8 +433,8 @@ public class RequestThread extends Thread {
 			File receivedFile = receiveFile(in, contentLength, line,
 					shouldOverwrite, sizeOfLinesAlreadyRead, filename);
 			// send the answer page
-			int sessionId = StateRepository.createNewSession(receivedFile
-					.getAbsolutePath());
+			int sessionId = rep
+					.createNewSession(receivedFile.getAbsolutePath());
 			sendFile(
 					out,
 					"TGraphBrowser_GraphLoaded.html",
@@ -629,24 +631,6 @@ public class RequestThread extends Thread {
 	}
 
 	/**
-	 * Checks if the size of the file is ok. And if there is enough free space
-	 * in the workspace.
-	 * 
-	 * @param size
-	 *            the size of the file in Byte
-	 * @return true iff the file is not too large
-	 */
-	public static synchronized boolean isSizeOk(long size) {
-		if (MAXIMUM_FILE_SIZE == null) {
-			return true;
-		}
-		if (size > MAXIMUM_FILE_SIZE) {
-			return false;
-		}
-		return workspace.getTotalSpace() + size <= MAXIMUM_WORKSPACE_SIZE;
-	}
-
-	/**
 	 * Sends the file <code>file</code> to the client.
 	 * 
 	 * @param out
@@ -678,7 +662,9 @@ public class RequestThread extends Thread {
 				}
 			}
 		} finally {
-			reader.close();
+			if (reader != null) {
+				reader.close();
+			}
 		}
 	}
 
@@ -726,7 +712,9 @@ public class RequestThread extends Thread {
 					}
 				}
 			} finally {
-				br.close();
+				if (br != null) {
+					br.close();
+				}
 			}
 		}
 	}

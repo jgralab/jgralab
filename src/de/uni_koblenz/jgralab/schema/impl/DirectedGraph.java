@@ -96,11 +96,11 @@ public class DirectedGraph<T> {
 			throw new SchemaException("Loops are not supported.");
 		}
 		Node<T> fromNode = entries.get(alpha);
+		assert fromNode != null;
 		if (fromNode.successors.contains(omega)) {
 			// don't create parallel edges
 			return;
 		}
-		assert fromNode != null;
 		Node<T> toNode = entries.get(omega);
 		assert toNode != null;
 		fromNode.successors = fromNode.successors.plus(omega);

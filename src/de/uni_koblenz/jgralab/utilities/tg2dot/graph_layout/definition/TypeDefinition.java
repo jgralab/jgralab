@@ -42,7 +42,7 @@ import de.uni_koblenz.jgralab.schema.AttributedElementClass;
  * 
  * @author ist@uni-koblenz.de
  */
-public class TypeDefinition extends AbstractDefinition {
+public class TypeDefinition extends AbstractDefinition implements Cloneable {
 
 	/**
 	 * The {@link AttributedElementClass} this definition describes.

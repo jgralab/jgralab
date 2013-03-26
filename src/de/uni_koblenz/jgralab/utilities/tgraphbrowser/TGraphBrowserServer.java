@@ -141,15 +141,18 @@ public class TGraphBrowserServer extends Thread {
 
 	public TGraphBrowserServer(int port, String path, String maximumFileSize,
 			String maximumWorkspaceSize) throws IOException {
+		if (path == null) {
+			throw new IllegalArgumentException("path must not be null");
+		}
 		workspace = path;
 		if ((path != null)
 				&& (workspace.startsWith("\"") || workspace.startsWith("'"))) {
 			workspace = workspace.substring(1, workspace.length() - 1);
 		}
-		RequestThread.MAXIMUM_FILE_SIZE = maximumFileSize == null ? null : Long
-				.parseLong(maximumFileSize) * 1024 * 1024;
+		StateRepository.MAXIMUM_FILE_SIZE = maximumFileSize == null ? null
+				: Long.parseLong(maximumFileSize) * 1024 * 1024;
 		File ws = new File(workspace);
-		RequestThread.MAXIMUM_WORKSPACE_SIZE = maximumWorkspaceSize == null ? ws
+		StateRepository.MAXIMUM_WORKSPACE_SIZE = maximumWorkspaceSize == null ? ws
 				.getFreeSpace() + ws.getTotalSpace()
 				: Long.parseLong(maximumWorkspaceSize) * 1024 * 1024;
 		_serverSocket = new ServerSocket(port);

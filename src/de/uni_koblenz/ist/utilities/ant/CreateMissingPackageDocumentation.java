@@ -37,6 +37,7 @@ package de.uni_koblenz.ist.utilities.ant;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.regex.Pattern;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
@@ -102,8 +103,9 @@ public class CreateMissingPackageDocumentation extends Task {
 	}
 
 	private String computePackage(File dir) {
-		String[] prefix = srcDir.getAbsolutePath().split(File.separator);
-		String[] currentPath = dir.getAbsolutePath().split(File.separator);
+		String filesep = Pattern.quote(File.separator);
+		String[] prefix = srcDir.getAbsolutePath().split(filesep);
+		String[] currentPath = dir.getAbsolutePath().split(filesep);
 		String packageString = null;
 		StringBuilder builder = new StringBuilder();
 		for (int i = prefix.length; i < currentPath.length; i++) {

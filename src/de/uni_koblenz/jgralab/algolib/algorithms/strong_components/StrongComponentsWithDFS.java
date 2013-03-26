@@ -176,7 +176,7 @@ public class StrongComponentsWithDFS extends StructureOrientedAlgorithm
 			@Override
 			public void setAlgorithm(GraphAlgorithm algorithm) {
 				super.setAlgorithm(algorithm);
-				number = this.algorithm.getInternalNumber();
+				number = this.dfsAlgorithm.getInternalNumber();
 			}
 
 			@Override

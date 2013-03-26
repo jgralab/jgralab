@@ -56,7 +56,7 @@ public class DFSVisitorAdapter extends SearchVisitorAdapter implements
 	/**
 	 * The DFS this visitor is used by.
 	 */
-	protected DepthFirstSearch algorithm;
+	protected DepthFirstSearch dfsAlgorithm;
 
 	@Override
 	public void leaveTreeEdge(Edge e) throws AlgorithmTerminatedException {
@@ -86,7 +86,7 @@ public class DFSVisitorAdapter extends SearchVisitorAdapter implements
 	@Override
 	public void setAlgorithm(GraphAlgorithm algorithm) {
 		if (algorithm instanceof SearchAlgorithm) {
-			this.algorithm = (DepthFirstSearch) algorithm;
+			this.dfsAlgorithm = (DepthFirstSearch) algorithm;
 			reset();
 		} else {
 			throw new IllegalArgumentException(
@@ -99,7 +99,7 @@ public class DFSVisitorAdapter extends SearchVisitorAdapter implements
 
 	@Override
 	public DepthFirstSearch getAlgorithm() {
-		return algorithm;
+		return dfsAlgorithm;
 	}
 
 }

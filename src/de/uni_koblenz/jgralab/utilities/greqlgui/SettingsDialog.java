@@ -149,7 +149,6 @@ public class SettingsDialog extends JDialog implements ActionListener,
 
 		c.gridx = 0;
 		c.gridy = 0;
-		c.gridwidth = 1;
 		c.gridwidth = 4;
 		c.weightx = c.weighty = 1;
 		c.fill = GridBagConstraints.BOTH;

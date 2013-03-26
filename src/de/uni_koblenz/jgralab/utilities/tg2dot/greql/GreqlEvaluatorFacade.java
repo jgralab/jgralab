@@ -117,18 +117,11 @@ public class GreqlEvaluatorFacade {
 		FunLib.register(AttributeType.class);
 	}
 
-	// /**
-	// * The actual GreqlEvaluator used for evaluations.
-	// */
-	// private final GreqlEvaluatorImpl evaluator;
-
 	private final Graph dataGraph;
-
-	private static Schema schema;
 
 	private final GreqlEnvironment greqlEnvironment;
 
-	private static GreqlQueryCache greqlQueryCache = new GreqlQueryCache();
+	private final GreqlQueryCache greqlQueryCache;
 
 	/**
 	 * Constructs a GreqlEvaluatorFacade for a given {@link Graph}.
@@ -138,11 +131,7 @@ public class GreqlEvaluatorFacade {
 	 */
 	public GreqlEvaluatorFacade(Graph graph) {
 		dataGraph = graph;
-		if (!graph.getSchema().equals(schema)) {
-			// clear the cache since optimized query instances are schema
-			// dependent
-			greqlQueryCache.clear();
-		}
+		greqlQueryCache = new GreqlQueryCache();
 		greqlEnvironment = new GreqlEnvironmentAdapter();
 	}
 

@@ -116,8 +116,7 @@ public class DefaultOptimizer extends OptimizerBase {
 		Optimizer mco = new MergeConstraintsOptimizer(optimizerInfo);
 		Optimizer msdo = new MergeSimpleDeclarationsOptimizer(optimizerInfo);
 
-		boolean aTransformationWasDone = false;
-		int noOfRuns = 1;
+		int noOfRuns = 0;
 
 		// try to get more precise estimations when optimizer info is schema
 		// specific.
@@ -128,57 +127,100 @@ public class DefaultOptimizer extends OptimizerBase {
 		}
 
 		// do the optimization
-		while (
-		// First merge common subgraphs
-		cso.optimize(query)
-		// then transform all Xors to (x & ~y) | (~x & y).
-				| txfao.optimize(query)
-				// Again, merge common subgraphs that may be the result of the
-				// previous step.
-				| cso.optimize(query)
-				// For each declaration merge its constraints into a single
-				// conjunction.
-				| mco.optimize(query)
-				// Then try to pull up path existences as forward/backward
-				// vertex sets into the type expressions of the start or target
-				// expression variable.
-				| pe2dpeo.optimize(query)
-				// Now move predicates that are part of a conjunction and thus
-				// movable into the type expression of the simple declaration
-				// that declares all needed local variables of it.
-				| eso.optimize(query)
-				// Merge common subgraphs again.
-				| cso.optimize(query)
-				// Reorder the variable declarations in all declaration vertices
-				// so that these assertions hold: 1. Variables which cause high
-				// recalculation costs on value changes are declared first. 2.
-				// If two variables cause the same recalculation costs the
-				// variable with lower cardinality is declared before the other
-				// one.
-				| vdoo.optimize(query)
-				// Now merge the common subgraphs again.
-				| cso.optimize(query)
-				// Transform path existence predicates to function applications
-				// of the "contains" function.
-				| peo.optimize(query)
-				// Transform complex constraint expressions to conditional
-				// expressions to simulate short circuit evaluation.
-				| ceo.optimize(query)
-				// At last, merge common subgraphs and
-				| cso.optimize(query)
-				// merge simple declarations which have the same type
-				// expression.
-				| msdo.optimize(query)) {
-			aTransformationWasDone = true;
-			noOfRuns++;
+		boolean opt;
+		do {
+			// First merge common subgraphs
+			opt = cso.optimize(query);
 
-			if (noOfRuns > 10) {
-				logger.warning("Optimizer didn't finish after 10 runs. Stopping here.");
-				break;
+			// then transform all Xors to (x & ~y) | (~x & y).
+			// if anything was changed, merge common subgraphs that may be the
+			// result of the previous step.
+			if (txfao.optimize(query)) {
+				opt = true;
+				cso.optimize(query);
 			}
 
+			// For each declaration merge its constraints into a single
+			// conjunction.
+			boolean runCso = false;
+			if (mco.optimize(query)) {
+				runCso = true;
+				opt = true;
+			}
+
+			if (mco.optimize(query)) {
+				runCso = true;
+				opt = true;
+			}
+
+			// Then try to pull up path existences as forward/backward
+			// vertex sets into the type expressions of the start or target
+			// expression variable.
+			if (pe2dpeo.optimize(query)) {
+				runCso = true;
+				opt = true;
+			}
+
+			// Now move predicates that are part of a conjunction and thus
+			// movable into the type expression of the simple declaration
+			// that declares all needed local variables of it.
+			if (eso.optimize(query)) {
+				runCso = true;
+				opt = true;
+			}
+
+			if (runCso) {
+				// Merge common subgraphs again.
+				cso.optimize(query);
+			}
+
+			// Reorder the variable declarations in all declaration vertices
+			// so that these assertions hold: 1. Variables which cause high
+			// recalculation costs on value changes are declared first. 2.
+			// If two variables cause the same recalculation costs the
+			// variable with lower cardinality is declared before the other
+			// one.
+			if (vdoo.optimize(query)) {
+				opt = true;
+				// Now merge the common subgraphs again.
+				cso.optimize(query);
+			}
+
+			runCso = false;
+			// Transform path existence predicates to function applications
+			// of the "contains" function.
+			if (peo.optimize(query)) {
+				runCso = true;
+				opt = true;
+			}
+
+			// Transform complex constraint expressions to conditional
+			// expressions to simulate short circuit evaluation.
+			if (ceo.optimize(query)) {
+				runCso = true;
+				opt = true;
+			}
+
+			if (runCso) {
+				// At last, merge common subgraphs and
+				cso.optimize(query);
+			}
+
+			// merge simple declarations which have the same type
+			// expression.
+			opt |= msdo.optimize(query);
+
+			if (opt) {
+				noOfRuns++;
+			}
 			logger.fine(optimizerHeaderString() + "starts a new iteration ("
 					+ noOfRuns + ")...");
+		} while (opt && noOfRuns < 10);
+		if (noOfRuns >= 10) {
+			logger.warning("Optimizer didn't finish after 10 runs. Stopping here.");
+		} else {
+			logger.fine(optimizerHeaderString() + " finished after " + noOfRuns
+					+ " iterations.");
 		}
 
 		// Tg2Dot.printGraphAsDot(syntaxgraph, true,
@@ -187,9 +229,7 @@ public class DefaultOptimizer extends OptimizerBase {
 		// System.out.println("DefaultOptimizer: "
 		// + ((SerializableGreql) syntaxgraph).serialize());
 
-		logger.fine(optimizerHeaderString() + " finished after " + noOfRuns
-				+ " iterations.");
-		return aTransformationWasDone;
+		return noOfRuns > 0;
 	}
 
 	protected void printCosts(GreqlQuery query) {

@@ -1172,7 +1172,7 @@ public class Rsa2Tg extends XmlProcessor {
 		GraphClass graphClass = sg.getFirstGraphClass();
 		Map<String, AttributedElementClass> definedAttributes = new HashMap<String, AttributedElementClass>();
 		for (Attribute a : graphClass.get_attributes()) {
-			if (definedAttributes.containsKey(a)) {
+			if (definedAttributes.containsKey(a.get_name())) {
 				throw new RuntimeException("Attribute " + a.get_name() + " at "
 						+ graphClass.get_qualifiedName() + " is duplicate.");
 			}

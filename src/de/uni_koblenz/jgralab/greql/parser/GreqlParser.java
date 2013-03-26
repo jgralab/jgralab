@@ -1261,7 +1261,11 @@ public class GreqlParser extends ParserHelper {
 		int lengthPart1 = getLength(offsetPart1);
 		predicateStart();
 		try {
-			parseSequentialPathDescription();
+			if (lookAhead(0) != TokenTypes.EOF) {
+				parseSequentialPathDescription();
+			} else {
+				fail("Found EOF");
+			}
 		} catch (ParsingException ex) {
 		}
 		if (predicateEnd()) {

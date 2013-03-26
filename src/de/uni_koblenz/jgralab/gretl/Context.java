@@ -331,7 +331,6 @@ public class Context {
 		}
 
 		// everything is fine
-		archMap.remove(map);
 		map = map.plus(image, archetype);
 		archMap.put(attrElemClass, map);
 	}
@@ -352,7 +351,6 @@ public class Context {
 		}
 
 		// everything is fine
-		imgMap.remove(map);
 		map = map.plus(archetype, image);
 		imgMap.put(attrElemClass, map);
 	}

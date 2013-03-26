@@ -37,7 +37,6 @@ package de.uni_koblenz.jgralab.schema.impl;
 
 import java.io.IOException;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -260,18 +259,18 @@ public final class ListDomainImpl extends CollectionDomainImpl implements
 
 	@Override
 	public boolean isConformValue(Object value) {
-		boolean result = true;
 		if (value == null) {
-			return result;
+			return true;
 		}
-		result &= (value instanceof PVector);
-		if (!result) {
+		if (value instanceof PVector) {
+			for (Object element : (PVector<?>) value) {
+				if (!getBaseDomain().isConformValue(element)) {
+					return false;
+				}
+			}
+			return true;
+		} else {
 			return false;
 		}
-		Iterator<?> iterator = ((PVector<?>) value).iterator();
-		while (iterator.hasNext() && result) {
-			result &= getBaseDomain().isConformValue(iterator.next());
-		}
-		return result;
 	}
 }

@@ -69,24 +69,48 @@ public class RetrieveVersion extends Task {
 		}
 	}
 
-	protected void setHEAD() {
-		File headFile = new File(getProject().getBaseDir() + File.separator
-				+ ".git" + File.separator + "HEAD");
-		checkExisting(headFile);
-		BufferedReader rb = null;
+	protected void getHeadRevision() {
 		try {
-			rb = new BufferedReader(new FileReader(headFile));
-			String ref = rb.readLine();
-			int idx = ref.indexOf(' ');
-			ref = ref.substring(idx + 1).replace('/', File.separatorChar);
-			rb.close();
+			File headFile = new File(getProject().getBaseDir() + File.separator
+					+ ".git" + File.separator + "HEAD");
+			checkExisting(headFile);
+			BufferedReader rb = null;
+			String ref = null;
+			try {
+				rb = new BufferedReader(new FileReader(headFile));
+				ref = rb.readLine();
+				if (ref == null) {
+					throw new RuntimeException("Unexpected EOF in " + headFile);
+				}
+				int idx = ref.indexOf(' ');
+				ref = ref.substring(idx + 1).replace('/', File.separatorChar);
+			} catch (IOException e) {
+				throw new RuntimeException(e);
+			} finally {
+				if (rb != null) {
+					rb.close();
+				}
+			}
+			assert ref != null;
+
 			File headRefFile = new File(getProject().getBaseDir()
 					+ File.separator + ".git" + File.separator + ref);
 			checkExisting(headRefFile);
-			rb = new BufferedReader(new FileReader(headRefFile));
-			head = rb.readLine();
-			rb.close();
-		} catch (Exception e) {
+			try {
+				rb = new BufferedReader(new FileReader(headRefFile));
+				head = rb.readLine();
+			} catch (IOException e) {
+				throw new RuntimeException(e);
+			} finally {
+				if (rb != null) {
+					rb.close();
+				}
+			}
+			if (head == null) {
+				throw new RuntimeException(
+						"Couldn't retrieve HEAD revision from " + headRefFile);
+			}
+		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
 	}

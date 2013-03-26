@@ -302,7 +302,7 @@ public final class TypeCollection {
 		if (!s.isFinished()) {
 			throw new IllegalStateException("Schema is not finished");
 		}
-		if (schema == null && s != null) {
+		if (schema == null) {
 			return new TypeCollection(typeEntries, null, s);
 		}
 		if (isEmpty()) {

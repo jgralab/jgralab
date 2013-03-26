@@ -189,28 +189,22 @@ public abstract class VertexEvaluator<V extends GreqlVertex> {
 	 * @return the evaluation result
 	 */
 	public Object getResult(InternalGreqlEvaluator evaluator) {
-		Object result = evaluator.getLocalEvaluationResult(vertex);
-		if (result != null) {
-			return result;
+		if (evaluator != null) {
+			Object result = evaluator.getLocalEvaluationResult(vertex);
+			if (result != null) {
+				return result;
+			}
 		}
-
-		// System.out.println("Evaluating : " + this);
 		try {
-			result = evaluate(evaluator);
-			evaluator.setLocalEvaluationResult(vertex, result);
-			// System.out.println("VertexEvaluator.getResult(graph) " + result
-			// + " of vertex " + getVertex());
+			Object result = evaluate(evaluator);
+			if (evaluator != null) {
+				evaluator.setLocalEvaluationResult(vertex, result);
+			}
+			return result;
 		} catch (QuerySourceException ex) {
 			removeInvalidSourcePosition(ex);
 			throw ex;
 		}
-
-		// System.out.println("Evaluating : " + this + " finished");
-		// System.out.println("Result is: " + result);
-
-		// greqlEvaluator.progress(ownEvaluationCosts);
-
-		return result;
 	}
 
 	/**

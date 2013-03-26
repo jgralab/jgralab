@@ -225,26 +225,24 @@ public class LoadTest extends InstanceTest {
 	}
 
 	@Test
-	public void testFreeElementList() {
-		Graph g1 = null;
+	public void testFreeElementList() throws Exception {
+		// g1 is always without transaction support
+		Graph g1 = createTestGraph();
 		Graph g2 = null;
-		try {
-			// g1 is always without transaction support
-			g1 = createTestGraph();
-			GraphIO.saveGraphToFile(g1, TESTGRAPH_PATH + TESTGRAPH_FILENAME,
-					null);
-			switch (implementationType) {
-			case STANDARD:
-				g2 = GreqlSchema.instance().loadGreqlGraph(
-						TESTGRAPH_PATH + TESTGRAPH_FILENAME,
-						ImplementationType.STANDARD);
-				break;
-			default:
-				fail("Implementation " + implementationType
-						+ " not yet supported by this test.");
-			}
-		} catch (Exception ex) {
-			ex.printStackTrace();
+		GraphIO.saveGraphToFile(g1, TESTGRAPH_PATH + TESTGRAPH_FILENAME, null);
+		switch (implementationType) {
+		case STANDARD:
+			g2 = GreqlSchema.instance().loadGreqlGraph(
+					TESTGRAPH_PATH + TESTGRAPH_FILENAME,
+					ImplementationType.STANDARD);
+			break;
+		default:
+			fail("Implementation " + implementationType
+					+ " not yet supported by this test.");
+		}
+
+		if (g2 == null) {
+			fail("Couldn't load graph " + TESTGRAPH_PATH + TESTGRAPH_FILENAME);
 		}
 		checkEqualVertexList(g1, g2);
 		checkEqualEdgeList(g1, g2);

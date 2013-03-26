@@ -50,7 +50,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.concurrent.Callable;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.FutureTask;
 import java.util.regex.Matcher;
@@ -77,6 +76,9 @@ import de.uni_koblenz.jgralab.schema.GraphElementClass;
 import de.uni_koblenz.jgralab.schema.VertexClass;
 
 public class StateRepository {
+
+	public static Long MAXIMUM_FILE_SIZE;
+	public static long MAXIMUM_WORKSPACE_SIZE;
 
 	/**
 	 * the maximum of elements which are shown in the breadcrumb bar
@@ -114,7 +116,7 @@ public class StateRepository {
 		}
 	}
 
-	public static ConcurrentHashMap<String, GraphWrapper> usedGraphs = new ConcurrentHashMap<String, GraphWrapper>();
+	public static HashMap<String, GraphWrapper> usedGraphs = new HashMap<String, GraphWrapper>();
 
 	/**
 	 * the workspace
@@ -122,6 +124,24 @@ public class StateRepository {
 	private final File workspace;
 
 	private final RequestThread currentThread;
+
+	/**
+	 * Checks if the size of the file is ok. And if there is enough free space
+	 * in the workspace.
+	 * 
+	 * @param size
+	 *            the size of the file in Byte
+	 * @return true iff the file is not too large
+	 */
+	public static synchronized boolean isSizeOk(File ws, long size) {
+		if (MAXIMUM_FILE_SIZE == null) {
+			return true;
+		}
+		if (size > MAXIMUM_FILE_SIZE) {
+			return false;
+		}
+		return ws.getTotalSpace() + size <= MAXIMUM_WORKSPACE_SIZE;
+	}
 
 	/**
 	 * Creates a new StateRepository. It initializes sessions and freeSessionId
@@ -1495,7 +1515,7 @@ public class StateRepository {
 			URLConnection conn = url.openConnection();
 			conn.connect();
 			long lengthOfFile = conn.getContentLength();
-			if (isSizeOk = RequestThread.isSizeOk(lengthOfFile)) {
+			if (isSizeOk = isSizeOk(workspace, lengthOfFile)) {
 				Object o = conn.getContent();
 				if (!(o instanceof InputStream)) {
 					if (conn instanceof HttpURLConnection) {
@@ -1666,7 +1686,7 @@ public class StateRepository {
 	 *            the graph
 	 * @return the id of the new State
 	 */
-	public static int createNewSession(String graph) {
+	public int createNewSession(String graph) {
 		State ret = new State(graph);
 		synchronized (sessions) {
 			while (sessions.size() < nextSessionId) {
@@ -1767,7 +1787,7 @@ public class StateRepository {
 	/**
 	 * This class represents the state of a session.
 	 */
-	static class State {
+	class State {
 
 		// the last time this session was accessed
 		public long lastAccess;
@@ -1832,14 +1852,18 @@ public class StateRepository {
 		 * @return {@link Graph} the graph used by this state
 		 */
 		public Graph getGraph() {
-			return usedGraphs.get(graphIdentifier).graph;
+			synchronized (StateRepository.this) {
+				return usedGraphs.get(graphIdentifier).graph;
+			}
 		}
 
 		/**
 		 * @return {@link GraphWrapper} used by this state
 		 */
 		public GraphWrapper getGraphWrapper() {
-			return usedGraphs.get(graphIdentifier);
+			synchronized (StateRepository.this) {
+				return usedGraphs.get(graphIdentifier);
+			}
 		}
 
 		/**
@@ -1851,12 +1875,14 @@ public class StateRepository {
 		 * @param long the time the tg-file of the current graph was modified
 		 */
 		public void setGraph(String graphFile, long lastModified) {
-			setGraphIdentifier(graphFile, lastModified);
-			if (!usedGraphs.containsKey(graphIdentifier)) {
-				usedGraphs.put(graphIdentifier, new GraphWrapper(
-						graphIdentifier, graphFile, lastModified));
-			} else {
-				usedGraphs.get(graphIdentifier).numberOfUsers++;
+			synchronized (StateRepository.this) {
+				setGraphIdentifier(graphFile, lastModified);
+				if (!usedGraphs.containsKey(graphIdentifier)) {
+					usedGraphs.put(graphIdentifier, new GraphWrapper(
+							graphIdentifier, graphFile, lastModified));
+				} else {
+					usedGraphs.get(graphIdentifier).numberOfUsers++;
+				}
 			}
 		}
 
@@ -1928,7 +1954,7 @@ public class StateRepository {
 	/**
 	 * Wraps the graph and all information about the loading of the graph.
 	 */
-	public static class GraphWrapper {
+	public class GraphWrapper {
 
 		// the current graph
 		public Graph graph;
@@ -1969,18 +1995,20 @@ public class StateRepository {
 		 * set to null. And the current {@link GraphWrapper} is removed from
 		 * {@link StateRepository#usedGraphs}.
 		 */
-		public synchronized void delete() {
-			numberOfUsers--;
-			if (numberOfUsers == 0) {
-				if ((workingCallable != null) && !workingCallable.isDone()
-						&& !workingCallable.isCancelled()) {
-					// stop running thread
-					workingCallable.cancel(true);
+		public void delete() {
+			synchronized (StateRepository.this) {
+				numberOfUsers--;
+				if (numberOfUsers == 0) {
+					if ((workingCallable != null) && !workingCallable.isDone()
+							&& !workingCallable.isCancelled()) {
+						// stop running thread
+						workingCallable.cancel(true);
+					}
+					graph = null;
+					workingCallable = null;
+					excOfWorkingCallable = null;
+					usedGraphs.remove(graphIdentifier);
 				}
-				graph = null;
-				workingCallable = null;
-				excOfWorkingCallable = null;
-				usedGraphs.remove(graphIdentifier);
 			}
 		}
 	}
@@ -2012,8 +2040,8 @@ public class StateRepository {
 				synchronized (GraphIO.class) {
 					currentGraph.progress = 0;
 					currentGraph.graph = GraphIO.loadGraphFromFile(
-							currentGraph.graphPath, ImplementationType.GENERIC, new MyProgressFunction(
-									currentGraph));
+							currentGraph.graphPath, ImplementationType.GENERIC,
+							new MyProgressFunction(currentGraph));
 					assert currentGraph.graph != null : "The graph wasn't loaded correctly.";
 					currentGraph = null;
 				}

@@ -285,7 +285,7 @@ public class PathSystem {
 	public Path extractPath(Vertex vertex) {
 		assertFinished();
 		PathSystemNode currentNode = vertex2node.get(vertex);
-		if (currentNode == null || leafNodes.contains(vertex)) {
+		if (currentNode == null || leafNodes.contains(currentNode)) {
 			return null;
 		}
 		return extractPath(currentNode);

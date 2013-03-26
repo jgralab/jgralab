@@ -109,7 +109,9 @@ public class SchemaJarGenerator {
 					ifacePackageDir + "/impl/");
 			zipStream.closeEntry();
 		} finally {
-			zipStream.close();
+			if (zipStream != null) {
+				zipStream.close();
+			}
 		}
 	}
 
@@ -139,7 +141,9 @@ public class SchemaJarGenerator {
 						zipStream.write(buf, 0, len);
 					}
 				} finally {
-					in.close();
+					if (in != null) {
+						in.close();
+					}
 				}
 			}
 		}

@@ -280,9 +280,8 @@ public final class EnumDomainImpl extends DomainImpl implements EnumDomain {
 
 	@Override
 	public boolean isConformValue(Object value) {
-		boolean result = true;
 		if (value == null) {
-			return result;
+			return true;
 		}
 		if (value instanceof Enum) {
 			if (this.getSchemaClass().isInstance(value)) {
@@ -290,7 +289,6 @@ public final class EnumDomainImpl extends DomainImpl implements EnumDomain {
 			}
 			return false;
 		}
-		return result &= (value instanceof String)
-				&& this.getConsts().contains(value);
+		return (value instanceof String) && this.getConsts().contains(value);
 	}
 }

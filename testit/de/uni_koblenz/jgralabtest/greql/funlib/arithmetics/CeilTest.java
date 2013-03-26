@@ -12,7 +12,7 @@ public class CeilTest extends ArithmeticTest {
 	@Test
 	public void testInt() {
 		for (int i = 0; i < intValues.length; i++) {
-			double expected = Math.ceil(intValues[i]);
+			double expected = intValues[i];
 			Object result = FunLib.apply("ceil", intValues[i]);
 			assertEquals(expected, result);
 		}
@@ -21,7 +21,7 @@ public class CeilTest extends ArithmeticTest {
 	@Test
 	public void testLong() {
 		for (int i = 0; i < longValues.length; i++) {
-			double expected = Math.ceil(longValues[i]);
+			double expected = longValues[i];
 			Object result = FunLib.apply("ceil", longValues[i]);
 			assertEquals(expected, result);
 		}

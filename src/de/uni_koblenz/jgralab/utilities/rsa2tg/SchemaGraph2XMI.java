@@ -279,12 +279,11 @@ public class SchemaGraph2XMI {
 		} finally {
 			// no handling of exceptions, because they are throw as mentioned in
 			// the declaration.
-			try {
+			if (writer != null) {
 				writer.close();
-			} finally {
-				if (out != null) {
-					out.close();
-				}
+			}
+			if (out != null) {
+				out.close();
 			}
 		}
 	}

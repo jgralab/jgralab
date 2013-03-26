@@ -9,6 +9,7 @@ import de.uni_koblenz.jgralab.greql.GreqlEnvironment;
 import de.uni_koblenz.jgralab.greql.GreqlQuery;
 import de.uni_koblenz.jgralab.greql.evaluator.GreqlEnvironmentAdapter;
 import de.uni_koblenz.jgralab.greql.schema.Direction;
+import de.uni_koblenz.jgralab.greql.schema.GReQLDirection;
 import de.uni_koblenz.jgralab.greql.schema.GreqlExpression;
 import de.uni_koblenz.jgralab.greql.schema.GreqlGraph;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
@@ -26,7 +27,7 @@ public abstract class AbstractExecutableQuery extends GreqlQuery implements
 		ExecutableQuery {
 
 	protected static boolean checkDirection(Edge edge, Direction dir) {
-		if (dir.get_dirValue().equals("IN")) {
+		if (dir.get_dirValue().equals(GReQLDirection.IN)) {
 			return edge.isNormal();
 		} else {
 			return !edge.isNormal();

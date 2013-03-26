@@ -40,7 +40,7 @@ public class BumpMicroVersion extends RetrieveVersion {
 	public void execute() {
 		readProperties();
 		micro = Integer.toString(Integer.parseInt(micro) + 1);
-		setHEAD();
+		getHeadRevision();
 		saveProperties();
 		writePomFile();
 	}
