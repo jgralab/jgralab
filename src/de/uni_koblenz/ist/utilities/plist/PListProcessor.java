@@ -57,6 +57,10 @@ class PListProcessor extends XmlProcessor {
 
 	@Override
 	protected void startElement(String name) throws XMLStreamException {
+		if (objectStack == null) {
+			throw new IllegalStateException(
+					"startElement called before startDocument");
+		}
 		StackEntry e = new StackEntry();
 		e.tag = name;
 		if (e.tag.equals("dict")) {
@@ -70,6 +74,10 @@ class PListProcessor extends XmlProcessor {
 	@Override
 	protected void endElement(String name, StringBuilder content)
 			throws XMLStreamException {
+		if (objectStack == null) {
+			throw new IllegalStateException(
+					"endElement called before startDocument");
+		}
 		StackEntry e = objectStack.pop();
 		StackEntry top = null;
 		if (objectStack.size() > 0) {
@@ -117,11 +125,19 @@ class PListProcessor extends XmlProcessor {
 
 	@Override
 	protected void startDocument() throws XMLStreamException {
+		if (objectStack != null) {
+			throw new IllegalStateException(
+					"startDocument called multiple times");
+		}
 		objectStack = new Stack<StackEntry>();
 	}
 
 	@Override
 	protected void endDocument() throws XMLStreamException {
+		if (objectStack == null) {
+			throw new IllegalStateException(
+					"endDocument called before startDocument");
+		}
 		objectStack = null;
 	}
 

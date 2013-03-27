@@ -16,16 +16,16 @@ import de.uni_koblenz.jgralab.schema.Domain;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.exception.SchemaException;
 
-public class TemporaryEdgeClassImpl extends EdgeClassImpl implements EdgeClass {
+public class TemporaryEdgeClassImpl extends EdgeClassImpl {
 
-	protected TemporaryEdgeClassImpl(
-			GraphClassImpl graphClass) {
-		//super(simpleName, pkg, gc, from, fromMin, fromMax, fromRoleName, aggrFrom, to, toMin, toMax, toRoleName, aggrTo)
-		super("TemporaryEdgeClass",
-				(PackageImpl)graphClass.getSchema().getDefaultPackage(),
-				graphClass,
-				graphClass.getDefaultVertexClass(), 0, Integer.MAX_VALUE,"",AggregationKind.NONE,
-				graphClass.getDefaultVertexClass(),0, Integer.MAX_VALUE, "", AggregationKind.NONE);
+	protected TemporaryEdgeClassImpl(GraphClassImpl graphClass) {
+		// super(simpleName, pkg, gc, from, fromMin, fromMax, fromRoleName,
+		// aggrFrom, to, toMin, toMax, toRoleName, aggrTo)
+		super("TemporaryEdgeClass", (PackageImpl) graphClass.getSchema()
+				.getDefaultPackage(), graphClass, graphClass
+				.getDefaultVertexClass(), 0, Integer.MAX_VALUE, "",
+				AggregationKind.NONE, graphClass.getDefaultVertexClass(), 0,
+				Integer.MAX_VALUE, "", AggregationKind.NONE);
 	}
 
 	@Override
@@ -103,7 +103,7 @@ public class TemporaryEdgeClassImpl extends EdgeClassImpl implements EdgeClass {
 	@SuppressWarnings("unchecked")
 	@Override
 	public Class<Edge> getSchemaClass() {
-		return (Class<Edge>)(Class<?>) TemporaryEdge.class;
+		return (Class<Edge>) (Class<?>) TemporaryEdge.class;
 	}
 
 	@Override

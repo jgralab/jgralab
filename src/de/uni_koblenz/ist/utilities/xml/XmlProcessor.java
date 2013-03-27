@@ -110,6 +110,8 @@ public abstract class XmlProcessor {
 					elementContentStack.peek().append(t);
 				}
 				break;
+			default:
+				// do nothing
 			}
 		}
 		endDocumentEvent();
@@ -267,7 +269,7 @@ public abstract class XmlProcessor {
 		return elementNameStack.size();
 	}
 
-	public String getFileName() {
+	public String getFilename() {
 		return fileName;
 	}
 

@@ -333,11 +333,6 @@ public final class RecordDomainImpl extends CompositeDomainImpl implements
 			return result;
 		}
 		if (value instanceof RecordImpl) {
-			// generic
-			result &= value instanceof Record;
-			if (!result) {
-				return false;
-			}
 			// RecordDomainImpl uses a TreeMap for storing the components.
 			// The iterator is backed by the TreeMap and iterates over its
 			// elements in the order of the TreeMap's keys.

@@ -131,7 +131,7 @@ public abstract class Transformation<T> {
 	public static boolean DEBUG_EXECUTION = Boolean.parseBoolean(System
 			.getProperty("debugGReTLExecution", "false"));
 	public static boolean DEBUG_REVERSE_EDGES = false;
-	private static int EXECUTION_STEP = 1;
+	private int executionStep = 1;
 
 	protected Context context;
 	protected static Logger logger = JGraLab.getLogger(Transformation.class);
@@ -166,7 +166,7 @@ public abstract class Transformation<T> {
 		T result = null;
 
 		if (context.outermost) {
-			EXECUTION_STEP = 1;
+			executionStep = 1;
 			context.phase = TransformationPhase.SCHEMA;
 			context.outermost = false;
 
@@ -229,7 +229,7 @@ public abstract class Transformation<T> {
 						name = "$anonymous$";
 					}
 					Tg2Dot.convertGraph(context.getTargetGraph(), "__debug_"
-							+ (EXECUTION_STEP++) + "_" + name + ".pdf",
+							+ (executionStep++) + "_" + name + ".pdf",
 							DEBUG_REVERSE_EDGES, GraphVizOutputFormat.PDF);
 				} catch (IOException e) {
 					e.printStackTrace();

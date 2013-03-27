@@ -53,7 +53,7 @@ import javax.swing.event.ChangeListener;
 public class DrawingPanel extends JComponent {
 	private static final long serialVersionUID = 1L;
 
-	private RenderingHints antialiasOn;
+	private transient RenderingHints antialiasOn;
 	private BoundedRangeModel zoomLevelModel;
 	private Rectangle2D boundingBox;
 	private Dimension preferredSize;

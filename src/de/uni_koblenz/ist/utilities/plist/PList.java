@@ -38,6 +38,7 @@ import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -129,7 +130,10 @@ public class PList {
 					"UTF-8");
 			print(writer);
 			writer.close();
-		} catch (Exception e) {
+		} catch (IOException e) {
+			throw new PListException("Error writing property list '" + filename
+					+ "'", e);
+		} catch (XMLStreamException e) {
 			throw new PListException("Error writing property list '" + filename
 					+ "'", e);
 		} finally {
@@ -165,7 +169,7 @@ public class PList {
 				writer.writeStartElement("dict");
 				for (Map.Entry<String, Object> entry : entries) {
 					writer.writeStartElement("key");
-					writer.writeCharacters(entry.getKey().toString());
+					writer.writeCharacters(entry.getKey());
 					writer.writeEndElement();
 					print(writer, entry.getValue());
 				}

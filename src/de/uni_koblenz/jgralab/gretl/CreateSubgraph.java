@@ -103,7 +103,7 @@ public class CreateSubgraph extends Transformation<Void> {
 	private String getUniqueArchetype() {
 		StringBuilder sb = new StringBuilder();
 		sb.append("'");
-		sb.append(context.getUniqueString().toString());
+		sb.append(context.getUniqueString());
 		sb.append("'");
 		return sb.toString();
 	}

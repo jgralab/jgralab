@@ -390,7 +390,7 @@ public class ArgoUml2Tg extends Xml2Tg {
 		schema = sg.createSchema();
 		int p = schemaName.lastIndexOf('.');
 		if (p == -1) {
-			throw new ProcessingException(getParser(), getFileName(),
+			throw new ProcessingException(getParser(), getFilename(),
 					"A Schema must have a package prefix!\nProcessed qualified name: "
 							+ schemaName);
 		}
@@ -1204,12 +1204,12 @@ public class ArgoUml2Tg extends Xml2Tg {
 		assert min >= 0;
 		assert max > 0;
 		if (min == Integer.MAX_VALUE) {
-			throw new ProcessingException(getFileName(),
+			throw new ProcessingException(getFilename(),
 					"Error in multiplicities: lower bound must not be *"
 							+ " at association end " + inc);
 		}
 		if (min > max) {
-			throw new ProcessingException(getFileName(),
+			throw new ProcessingException(getFilename(),
 					"Error in multiplicities: lower bound (" + min
 							+ ") must be <= upper bound (" + max
 							+ ") at association end " + inc);

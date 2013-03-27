@@ -37,6 +37,7 @@ package de.uni_koblenz.ist.utilities.ant;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.LinkedList;
@@ -93,26 +94,24 @@ public class MergeManifest extends Task {
 				PrintWriter targetManifest = new PrintWriter(manifestString);
 				BufferedReader reader = new BufferedReader(new FileReader(
 						manifestFile));
-
-				while (true) {
-					String currentLine = reader.readLine();
-					if (currentLine != null) {
-						targetManifest.println(currentLine);
-					} else {
-						reader.close();
-						break;
+				try {
+					for (String l = reader.readLine(); l != null; l = reader
+							.readLine()) {
+						targetManifest.println(l);
 					}
+				} finally {
+					reader.close();
 				}
 
 				// search for name part and copy the remainder of the file,
 				// assuming that only name parts are following
 				for (File currentManifest : manifests) {
 					reader = new BufferedReader(new FileReader(currentManifest));
-					boolean copy = false;
-					while (true) {
-						String currentLine = reader.readLine();
-						if (currentLine != null) {
-							if (!copy && currentLine.startsWith("Name: ")) {
+					try {
+						boolean copy = false;
+						for (String l = reader.readLine(); l != null; l = reader
+								.readLine()) {
+							if (!copy && l.startsWith("Name: ")) {
 								System.out.println("Found name section in "
 										+ currentManifest.getAbsolutePath());
 								copy = true;
@@ -121,22 +120,20 @@ public class MergeManifest extends Task {
 							if (copy) {
 								// System.out.println("Copying: " +
 								// currentLine);
-								targetManifest.println(currentLine);
+								targetManifest.println(l);
 							}
-						} else {
-							reader.close();
-							break;
+
 						}
+					} finally {
+						reader.close();
 					}
 				}
-
-				PrintWriter out = new PrintWriter(manifestFile);
 				targetManifest.close();
+				PrintWriter out = new PrintWriter(manifestFile);
 				out.println(manifestString.toString());
 				out.close();
-
 			}
-		} catch (Exception e) {
+		} catch (IOException e) {
 			throw new BuildException(e);
 		}
 	}

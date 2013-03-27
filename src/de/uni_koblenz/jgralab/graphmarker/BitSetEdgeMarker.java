@@ -88,7 +88,7 @@ public class BitSetEdgeMarker extends BitSetGraphMarker<Edge> {
 
 					@Override
 					protected void moveIndex() {
-						index = marks.nextSetBit(++index);
+						index = marks.nextSetBit(index + 1);
 					}
 
 					@Override

@@ -684,7 +684,7 @@ public class Rsa2Tg extends XmlProcessor {
 			createDefaultPackage();
 		} else {
 			// Unexpected root element
-			throw new ProcessingException(getParser(), getFileName(),
+			throw new ProcessingException(getParser(), getFilename(),
 					"Root element must be " + UML_MODEL + " or " + UML_PACKAGE
 							+ ", buf was " + name);
 		}
@@ -701,7 +701,7 @@ public class Rsa2Tg extends XmlProcessor {
 		// In case nm (:= Schema-name) contains only a name and not a
 		// package prefix
 		if (p == -1) {
-			throw new ProcessingException(getParser(), getFileName(),
+			throw new ProcessingException(getParser(), getFilename(),
 					"A Schema must have a package prefix!\nProcessed qualified name: "
 							+ nm);
 		}
@@ -748,7 +748,7 @@ public class Rsa2Tg extends XmlProcessor {
 			} else if (type.equals(UML_REALIZATION)) {
 				handleRealization();
 			} else {
-				throw new ProcessingException(getParser(), getFileName(),
+				throw new ProcessingException(getParser(), getFilename(),
 						createUnexpectedElementMessage(name, type));
 			}
 
@@ -772,7 +772,7 @@ public class Rsa2Tg extends XmlProcessor {
 					&& !inSpecification) {
 				// Throw an error for body elements, which aren't
 				// contained in a constraint or comment
-				throw new ProcessingException(getParser(), getFileName(),
+				throw new ProcessingException(getParser(), getFilename(),
 						createUnexpectedElementMessage(name, null));
 			}
 		} else if (name.equals(UML_SPECIFICATION)) {
@@ -782,7 +782,7 @@ public class Rsa2Tg extends XmlProcessor {
 			if (!inConstraint) {
 				// Throw an error for specification elements, which aren't
 				// contained in a constraint.
-				throw new ProcessingException(getParser(), getFileName(),
+				throw new ProcessingException(getParser(), getFilename(),
 						createUnexpectedElementMessage(name, null));
 			}
 		} else if (name.equals(UML_OWNEDEND)) {
@@ -792,7 +792,7 @@ public class Rsa2Tg extends XmlProcessor {
 					&& (currentClass instanceof EdgeClass)) {
 				handleAssociationEnd(xmiId);
 			} else {
-				throw new ProcessingException(getParser(), getFileName(),
+				throw new ProcessingException(getParser(), getFilename(),
 						createUnexpectedElementMessage(name, type));
 			}
 
@@ -802,7 +802,7 @@ public class Rsa2Tg extends XmlProcessor {
 			if (type.equals(UML_PROPERTY)) {
 				handleOwnedAttribute(xmiId);
 			} else {
-				throw new ProcessingException(getParser(), getFileName(),
+				throw new ProcessingException(getParser(), getFilename(),
 						createUnexpectedElementMessage(name, type));
 			}
 
@@ -813,7 +813,7 @@ public class Rsa2Tg extends XmlProcessor {
 				if (type.equals(UML_PRIMITIVE_TYPE)) {
 					handleNestedTypeElement(xmiId);
 				} else {
-					throw new ProcessingException(getParser(), getFileName(),
+					throw new ProcessingException(getParser(), getFilename(),
 							createUnexpectedElementMessage(name, type));
 				}
 			}
@@ -822,7 +822,7 @@ public class Rsa2Tg extends XmlProcessor {
 			if (type.equals(UML_ENUMERATION_LITERAL)) {
 				handleEnumerationLiteral();
 			} else {
-				throw new ProcessingException(getParser(), getFileName(),
+				throw new ProcessingException(getParser(), getFilename(),
 						createUnexpectedElementMessage(name, type));
 			}
 		} else if (name.equals(XMI_EXTENSION)) {
@@ -851,7 +851,7 @@ public class Rsa2Tg extends XmlProcessor {
 						+ currentAttribute.get_name() + "' of "
 						+ currentClass.getSchemaClass().getSimpleName() + " '"
 						+ currentClass.get_qualifiedName() + "' in file '"
-						+ getFileName() + "' at line "
+						+ getFilename() + "' at line "
 						+ getParser().getLocation().getLineNumber());
 				// throw new ProcessingException(getParser(), getFileName(),
 				// "Unexpected default value type " + xmiType
@@ -863,7 +863,7 @@ public class Rsa2Tg extends XmlProcessor {
 			inDefaultValue = true;
 		} else {
 			// for unexpected XMI tags
-			throw new ProcessingException(getParser(), getFileName(),
+			throw new ProcessingException(getParser(), getFilename(),
 					createUnexpectedElementMessage(name, type));
 		}
 		return vertexId;
@@ -909,7 +909,7 @@ public class Rsa2Tg extends XmlProcessor {
 							+ currentAttribute.get_name() + "' of "
 							+ currentClass.getSchemaClass().getSimpleName()
 							+ " '" + currentClass.get_qualifiedName()
-							+ "' in file '" + getFileName() + "' at line "
+							+ "' in file '" + getFilename() + "' at line "
 							+ getParser().getLocation().getLineNumber());
 			return;
 		}
@@ -923,7 +923,7 @@ public class Rsa2Tg extends XmlProcessor {
 					+ currentAttribute.get_name() + "' of "
 					+ currentClass.getSchemaClass().getSimpleName() + " '"
 					+ currentClass.get_qualifiedName() + "' in file '"
-					+ getFileName() + "' at line "
+					+ getFilename() + "' at line "
 					+ getParser().getLocation().getLineNumber());
 		}
 	}
@@ -931,7 +931,7 @@ public class Rsa2Tg extends XmlProcessor {
 	private void handleDefaultValue(String xmiId, String value) {
 		if (currentAttribute == null) {
 			throw new ProcessingException(
-					getFileName(),
+					getFilename(),
 					"Found a <defaultValue> tag (XMI id "
 							+ xmiId
 							+ ") outside an attribute definition (e.g. in a <<record>> class)");
@@ -977,7 +977,7 @@ public class Rsa2Tg extends XmlProcessor {
 				// There should be at least one package element in the
 				// stack.
 				if (packageStack.size() <= 1) {
-					throw new ProcessingException(getParser(), getFileName(),
+					throw new ProcessingException(getParser(), getFilename(),
 							"XMI file is malformed. There is probably one end element to much.");
 				}
 				packageStack.pop();
@@ -997,7 +997,7 @@ public class Rsa2Tg extends XmlProcessor {
 
 			// There should be no packages left over.
 			if (packageStack.size() != 0) {
-				throw new ProcessingException(getParser(), getFileName(),
+				throw new ProcessingException(getParser(), getFilename(),
 						"XMI file is malformed. There is probably one end element to much.");
 			}
 		} else if (name.equals(UML_OWNED_ATTRIBUTE)) {
@@ -1029,12 +1029,12 @@ public class Rsa2Tg extends XmlProcessor {
 		assert min >= 0;
 		assert max > 0;
 		if (min == Integer.MAX_VALUE) {
-			throw new ProcessingException(getFileName(),
+			throw new ProcessingException(getFilename(),
 					"Error in multiplicities: lower bound must not be *"
 							+ " at association end " + inc);
 		}
 		if (min > max) {
-			throw new ProcessingException(getFileName(),
+			throw new ProcessingException(getFilename(),
 					"Error in multiplicities: lower bound (" + min
 							+ ") must be <= upper bound (" + max
 							+ ") at association end " + inc);
@@ -1082,7 +1082,7 @@ public class Rsa2Tg extends XmlProcessor {
 		assert graphClass != null;
 		// The qualified name of the GraphClass should be set.
 		if (graphClass.get_qualifiedName() == null) {
-			throw new ProcessingException(getFileName(),
+			throw new ProcessingException(getFilename(),
 					"No <<graphclass>> defined in schema '"
 							+ schema.get_packagePrefix() + "."
 							+ schema.get_name() + "'");
@@ -1151,7 +1151,7 @@ public class Rsa2Tg extends XmlProcessor {
 			for (Vertex v : preliminaryVertices) {
 				System.err.println(attributedElement2String(v));
 			}
-			throw new ProcessingException(getFileName(),
+			throw new ProcessingException(getFilename(),
 					"There are still vertices left over. ");
 		}
 
@@ -1354,7 +1354,7 @@ public class Rsa2Tg extends XmlProcessor {
 				sb.append(delim).append(name);
 				delim = ", ";
 			}
-			throw new ProcessingException(getFileName(), sb.toString());
+			throw new ProcessingException(getFilename(), sb.toString());
 		}
 	}
 
@@ -1423,7 +1423,7 @@ public class Rsa2Tg extends XmlProcessor {
 
 		// Check incidence directions
 		if (getDirection(subInc) != getDirection(superInc)) {
-			throw new ProcessingException(getFileName(),
+			throw new ProcessingException(getFilename(),
 					"Incompatible incidence direction in specialisation "
 							+ subClass + " --> " + superClass);
 		}
@@ -1431,7 +1431,7 @@ public class Rsa2Tg extends XmlProcessor {
 		// Check multiplicities: Subclass must not have greater upper bound than
 		// superclass
 		if (subInc.get_max() > superInc.get_max()) {
-			throw new ProcessingException(getFileName(),
+			throw new ProcessingException(getFilename(),
 					"Subclass has higher upper bound (" + subInc.get_max()
 							+ ") than superclass (" + superInc.get_max()
 							+ ") in specialisation "
@@ -1446,7 +1446,7 @@ public class Rsa2Tg extends XmlProcessor {
 		AggregationKind superAgg = superInc.get_aggregation();
 		if (((subAgg == AggregationKind.SHARED) && (superAgg == AggregationKind.COMPOSITE))
 				|| ((subAgg == AggregationKind.NONE) && (superAgg != AggregationKind.NONE))) {
-			throw new ProcessingException(getFileName(),
+			throw new ProcessingException(getFilename(),
 					"Incompatible aggregation kinds (" + subAgg
 							+ " specialises " + superAgg
 							+ ") in generalisation "
@@ -1598,7 +1598,7 @@ public class Rsa2Tg extends XmlProcessor {
 
 			// Element with ID xmiID must be a VertexClass
 			if (!(ae instanceof VertexClass)) {
-				throw new ProcessingException(getParser(), getFileName(),
+				throw new ProcessingException(getParser(), getFilename(),
 						"The element with ID '" + xmiId
 								+ "' is not a class. (VertexClass)");
 			}
@@ -1645,7 +1645,7 @@ public class Rsa2Tg extends XmlProcessor {
 		EdgeClass ec = null;
 		if (ae != null) {
 			if (!(ae instanceof EdgeClass)) {
-				throw new ProcessingException(getParser(), getFileName(),
+				throw new ProcessingException(getParser(), getFilename(),
 						"The XMI id "
 								+ xmiId
 								+ " must denonte an EdgeClass, but is "
@@ -1674,7 +1674,7 @@ public class Rsa2Tg extends XmlProcessor {
 		String memberEnd = getAttribute(UML_MEMBER_END);
 		// An association have to have a end member.
 		if (memberEnd == null) {
-			throw new ProcessingException(getParser(), getFileName(),
+			throw new ProcessingException(getParser(), getFilename(),
 					"The association with ID '" + xmiId
 							+ "' has no end member. (EdgeClass)");
 		}
@@ -1782,13 +1782,13 @@ public class Rsa2Tg extends XmlProcessor {
 		String typeName = getAttribute(UML_ATTRIBUTE_NAME);
 
 		if (typeName == null) {
-			throw new ProcessingException(getParser(), getFileName(),
+			throw new ProcessingException(getParser(), getFilename(),
 					"No type name in primitive type. XMI ID: " + xmiId);
 		}
 		typeName = typeName.replaceAll("\\s", "");
 
 		if (typeName.length() == 0) {
-			throw new ProcessingException(getParser(), getFileName(),
+			throw new ProcessingException(getParser(), getFilename(),
 					"Type name in primitive type is empty. XMI ID: " + xmiId);
 		}
 		Domain dom = createDomain(typeName);
@@ -1861,14 +1861,14 @@ public class Rsa2Tg extends XmlProcessor {
 
 		// A Literal must be declared.
 		if (s == null) {
-			throw new ProcessingException(getParser(), getFileName(),
+			throw new ProcessingException(getParser(), getFilename(),
 					"No Literal declared.");
 		}
 		s = s.trim();
 
 		// Literal must not be empty.
 		if (s.length() <= 0) {
-			throw new ProcessingException(getParser(), getFileName(),
+			throw new ProcessingException(getParser(), getFilename(),
 					"Literal is empty.");
 		}
 
@@ -1876,7 +1876,7 @@ public class Rsa2Tg extends XmlProcessor {
 
 		// Exception "No Enum found for Literal " ... " found.
 		if (classifier == null) {
-			throw new ProcessingException(getParser(), getFileName(),
+			throw new ProcessingException(getParser(), getFilename(),
 					"No Enumeration found for Literal '" + s + "'.");
 		}
 		EnumDomain ed = (EnumDomain) idMap.get(classifier);
@@ -1919,12 +1919,12 @@ public class Rsa2Tg extends XmlProcessor {
 		for (EdgeClass e : sg.getEdgeClassVertices()) {
 			ComesFrom cf = e.getFirstComesFromIncidence();
 			if (cf == null) {
-				throw new ProcessingException(getFileName(), "EdgeClass "
+				throw new ProcessingException(getFilename(), "EdgeClass "
 						+ e.get_qualifiedName() + " has no ComesFrom incidence");
 			}
 			GoesTo gt = e.getFirstGoesToIncidence();
 			if (gt == null) {
-				throw new ProcessingException(getFileName(), "EdgeClass "
+				throw new ProcessingException(getFilename(), "EdgeClass "
 						+ e.get_qualifiedName() + " has no GoesTo incidence");
 			}
 
@@ -1984,7 +1984,7 @@ public class Rsa2Tg extends XmlProcessor {
 			if (!(ae instanceof AttributedElementClass)
 					&& !(ae instanceof IncidenceClass)) {
 				throw new ProcessingException(
-						getFileName(),
+						getFilename(),
 						"Constraint can only be attached to GraphClass, "
 								+ "VertexClass, EdgeClass or association ends. Offending element is "
 								+ ae + " (XMI id " + constrainedElementId + ")");
@@ -1997,7 +1997,7 @@ public class Rsa2Tg extends XmlProcessor {
 					}
 				}
 			} else {
-				throw new ProcessingException(getFileName(),
+				throw new ProcessingException(getFilename(),
 						"Don't know what to do with constraint(s) at element "
 								+ ae + " (XMI id " + constrainedElementId + ")");
 			}
@@ -2056,7 +2056,7 @@ public class Rsa2Tg extends XmlProcessor {
 			// There must be a 'to' role name, which is different than null and
 			// not empty.
 			if ((toRole == null) || (toRole.length() <= 0)) {
-				throw new ProcessingException(getFileName(),
+				throw new ProcessingException(getFilename(),
 						"There is no role name 'to' for the edge '" + name
 								+ "' defined.");
 			}
@@ -2093,7 +2093,7 @@ public class Rsa2Tg extends XmlProcessor {
 				// There must be a 'from' role name, which is different than
 				// null and not empty.
 				if ((fromRole == null) || (fromRole.length() <= 0)) {
-					throw new ProcessingException(getFileName(),
+					throw new ProcessingException(getFilename(),
 							"There is no role name of 'from' for the edge '"
 									+ name + "' defined.");
 				}
@@ -2164,13 +2164,13 @@ public class Rsa2Tg extends XmlProcessor {
 				preliminaryVertices.remove(d);
 				recordComponentType.removeMark(comp);
 			} else {
-				throw new ProcessingException(getFileName(),
+				throw new ProcessingException(getFilename(),
 						"Undefined Domain with ID '" + domainId + "' found.");
 			}
 		}
 
 		if (!recordComponentType.isEmpty()) {
-			throw new ProcessingException(getFileName(),
+			throw new ProcessingException(getFilename(),
 					"Some RecordDomains have unresolved component types.");
 		}
 	}
@@ -2204,7 +2204,7 @@ public class Rsa2Tg extends XmlProcessor {
 				attributeType.removeMark(att);
 			} else {
 				// Every Attribute must have a Domain.
-				throw new ProcessingException(getFileName(),
+				throw new ProcessingException(getFilename(),
 						"Undefined Domain with ID '" + domainId + "' found.");
 			}
 
@@ -2214,7 +2214,7 @@ public class Rsa2Tg extends XmlProcessor {
 		// If 'attributeType' is not empty, there will be a Domain objects
 		// left over.
 		if (!attributeType.isEmpty()) {
-			throw new ProcessingException(getFileName(),
+			throw new ProcessingException(getFilename(),
 					"There are some Attribute objects, whos domains are not resolved.");
 		}
 	}
@@ -2277,14 +2277,14 @@ public class Rsa2Tg extends XmlProcessor {
 
 				if (sup == null) {
 					// No superclass with the specified ID has been found.
-					throw new ProcessingException(getFileName(),
+					throw new ProcessingException(getFilename(),
 							"The superclass with XMI id '" + id
 									+ "' could not be found.");
 				}
 				if (sup instanceof VertexClass) {
 					// VertexClass can only specialize a VertexClass
 					if (!(sub instanceof VertexClass)) {
-						throw new ProcessingException(getFileName(),
+						throw new ProcessingException(getFilename(),
 								"Different types in generalization: "
 										+ sub.getSchemaClass().getSimpleName()
 										+ " '" + sub.get_qualifiedName()
@@ -2296,7 +2296,7 @@ public class Rsa2Tg extends XmlProcessor {
 					sg.createSpecializesVertexClass((VertexClass) ae,
 							(VertexClass) sup);
 					if (!vertexClassHierarchyIsAcyclic()) {
-						throw new ProcessingException(getFileName(),
+						throw new ProcessingException(getFilename(),
 								"Cycle in vertex class hierarchy. Involved classes are '"
 										+ sub.get_qualifiedName() + "' and '"
 										+ sup.get_qualifiedName() + "'");
@@ -2304,7 +2304,7 @@ public class Rsa2Tg extends XmlProcessor {
 				} else if (sup instanceof EdgeClass) {
 					// EdgeClass can only specialize an EdgeClass
 					if (!(sub instanceof EdgeClass)) {
-						throw new ProcessingException(getFileName(),
+						throw new ProcessingException(getFilename(),
 								"Different types in generalization: "
 										+ sub.getSchemaClass().getSimpleName()
 										+ " '" + sub.get_qualifiedName()
@@ -2316,7 +2316,7 @@ public class Rsa2Tg extends XmlProcessor {
 					sg.createSpecializesEdgeClass((EdgeClass) ae,
 							(EdgeClass) sup);
 					if (!edgeClassHierarchyIsAcyclic()) {
-						throw new ProcessingException(getFileName(),
+						throw new ProcessingException(getFilename(),
 								"Cycle in edge class hierarchy. Involved classes are '"
 										+ sub.get_qualifiedName() + "' and '"
 										+ sup.get_qualifiedName() + "'");
@@ -2431,7 +2431,7 @@ public class Rsa2Tg extends XmlProcessor {
 					+ constrainedElementId
 					+ " ignored (TGraphs are ordered by default)");
 		} else {
-			throw new ProcessingException(getFileName(), getParser()
+			throw new ProcessingException(getFilename(), getParser()
 					.getLocation().getLineNumber(),
 					"Illegal constraint format: " + text);
 		}
@@ -2482,7 +2482,7 @@ public class Rsa2Tg extends XmlProcessor {
 						constraint.set_offendingElementsQuery(constraintText);
 						break;
 					default:
-						throw new ProcessingException(getFileName(),
+						throw new ProcessingException(getFilename(),
 								"Illegal constraint format. The constraint text was '"
 										+ text + "'.");
 					}
@@ -2498,7 +2498,7 @@ public class Rsa2Tg extends XmlProcessor {
 						inString = true;
 						beginIndex = i;
 					} else {
-						throw new ProcessingException(getFileName(),
+						throw new ProcessingException(getFilename(),
 								"Illegal constraint format. The constraint text was '"
 										+ text + "'.  Expected '\"' but got '"
 										+ c + "'.  (position = " + i + ").");
@@ -2507,7 +2507,7 @@ public class Rsa2Tg extends XmlProcessor {
 			}
 		}
 		if (inString || escape || (stringCount < 2) || (stringCount > 3)) {
-			throw new ProcessingException(getFileName(),
+			throw new ProcessingException(getFilename(),
 					"Illegal constraint format.  The constraint text was '"
 							+ text + "'.");
 		}
@@ -2524,7 +2524,7 @@ public class Rsa2Tg extends XmlProcessor {
 		int n = getValue();
 		if ((currentAssociationEnd == null) && inOwnedAttribute) {
 			if (n != 1) {
-				throw new ProcessingException(getFileName(),
+				throw new ProcessingException(getFilename(),
 						"grUML does not support attribute multiplicities other than 1..1");
 			}
 		} else {
@@ -2558,7 +2558,7 @@ public class Rsa2Tg extends XmlProcessor {
 		int n = getValue();
 		if ((currentAssociationEnd == null) && inOwnedAttribute) {
 			if (n != 1) {
-				throw new ProcessingException(getFileName(),
+				throw new ProcessingException(getFilename(),
 						"grUML does not support attribute multiplicities other than 1..1");
 			}
 		} else {
@@ -2594,13 +2594,13 @@ public class Rsa2Tg extends XmlProcessor {
 				ignoredPackages.add(packageStack.peek());
 				return;
 			} else {
-				throw new ProcessingException(getParser(), getFileName(),
+				throw new ProcessingException(getParser(), getFilename(),
 						"Unexpected stereotype <<" + key + ">>");
 			}
 		}
 
 		if (currentClass == null) {
-			throw new ProcessingException(getParser(), getFileName(),
+			throw new ProcessingException(getParser(), getFilename(),
 					"Unexpected stereotype <<" + key + ">>");
 		}
 
@@ -2610,7 +2610,7 @@ public class Rsa2Tg extends XmlProcessor {
 			// The stereotype '<<graphclass>>' can only be attached to UML
 			// classes.
 			if (!(currentClass instanceof VertexClass)) {
-				throw new ProcessingException(getParser(), getFileName(),
+				throw new ProcessingException(getParser(), getFilename(),
 						"The stereotype '<<graphclass>>' is only valid for a UML class.");
 			}
 
@@ -2637,7 +2637,7 @@ public class Rsa2Tg extends XmlProcessor {
 
 			// The stereotype '<<record>>' can only be attached to UML classes.
 			if (!(currentClass instanceof VertexClass)) {
-				throw new ProcessingException(getParser(), getFileName(),
+				throw new ProcessingException(getParser(), getFilename(),
 						"The stereotype '<<record>>' is only allow for UML-classes.");
 			}
 
@@ -2663,7 +2663,7 @@ public class Rsa2Tg extends XmlProcessor {
 						// There have to be a typeId.
 						if (typeId == null) {
 							throw new ProcessingException(getParser(),
-									getFileName(),
+									getFilename(),
 									"No type id has been defined.");
 						}
 						Domain dom = sg.createStringDomain();
@@ -2679,7 +2679,7 @@ public class Rsa2Tg extends XmlProcessor {
 				e = n;
 			}
 			if (currentClass.getDegree() != 0) {
-				throw new ProcessingException(getParser(), getFileName(),
+				throw new ProcessingException(getParser(), getFilename(),
 						"The <<record>> class '"
 								+ currentClass.get_qualifiedName()
 								+ "' must not have any association.");
@@ -2697,12 +2697,12 @@ public class Rsa2Tg extends XmlProcessor {
 			} else {
 				throw new ProcessingException(
 						getParser(),
-						getFileName(),
+						getFilename(),
 						"The stereotype <<abstract>> can only be specified for vertex and edge classes, but not for class '"
 								+ currentClass.get_qualifiedName() + "'");
 			}
 		} else {
-			throw new ProcessingException(getParser(), getFileName(),
+			throw new ProcessingException(getParser(), getFilename(),
 					"Unexpected stereotype '<<" + key + ">>'.");
 		}
 	}
@@ -2735,13 +2735,13 @@ public class Rsa2Tg extends XmlProcessor {
 	private void handleNestedTypeElement(String xmiId)
 			throws XMLStreamException {
 		if ((currentAttribute == null) && (currentRecordDomain == null)) {
-			throw new ProcessingException(getParser(), getFileName(),
+			throw new ProcessingException(getParser(), getFilename(),
 					"unexpected primitive type in element (XMI id " + xmiId
 							+ ")");
 		}
 		String href = getAttribute(UML_ATTRIBUTE_HREF);
 		if (href == null) {
-			throw new ProcessingException(getParser(), getFileName(),
+			throw new ProcessingException(getParser(), getFilename(),
 					"No type name specified in primitive type href of attribute (XMI id "
 							+ xmiId + ")");
 		}
@@ -2755,7 +2755,7 @@ public class Rsa2Tg extends XmlProcessor {
 		} else if (href.endsWith("#double")) {
 			dom = createDomain("Double");
 		} else {
-			throw new ProcessingException(getParser(), getFileName(),
+			throw new ProcessingException(getParser(), getFilename(),
 					"Unknown primitive type with href '" + href
 							+ "' in attribute (XMI id " + xmiId + ")");
 		}
@@ -2797,20 +2797,20 @@ public class Rsa2Tg extends XmlProcessor {
 			String attrName = getAttribute(UML_ATTRIBUTE_NAME);
 
 			if ((currentClass == null) && (currentRecordDomain == null)) {
-				throw new ProcessingException(getParser(), getFileName(),
+				throw new ProcessingException(getParser(), getFilename(),
 						"Found an attribute '" + attrName + "' (XMI id "
 								+ xmiId + ") outside a class!");
 			}
 
 			if (attrName == null) {
-				throw new ProcessingException(getParser(), getFileName(),
+				throw new ProcessingException(getParser(), getFilename(),
 						"No attribute name in ownedAttribute (XMI id " + xmiId
 								+ ")");
 			}
 			attrName = attrName.trim();
 
 			if (attrName.length() == 0) {
-				throw new ProcessingException(getParser(), getFileName(),
+				throw new ProcessingException(getParser(), getFilename(),
 						"Empty attribute name in ownedAttribute (XMI id "
 								+ xmiId + ")");
 			}
@@ -2881,7 +2881,7 @@ public class Rsa2Tg extends XmlProcessor {
 	private void handleAssociationEnd(String xmiId) throws XMLStreamException {
 		String endName = getAttribute(UML_ATTRIBUTE_NAME);
 		if ((currentClass == null) || (currentRecordDomain != null)) {
-			throw new ProcessingException(getParser(), getFileName(),
+			throw new ProcessingException(getParser(), getFilename(),
 					"Found an association end '" + endName + "' (XMI id "
 							+ xmiId + ") outside a class or in a record domain");
 		}
@@ -2893,7 +2893,7 @@ public class Rsa2Tg extends XmlProcessor {
 		String typeId = getAttribute(UML_ATTRIBUTE_TYPE);
 
 		if (typeId == null) {
-			throw new ProcessingException(getParser(), getFileName(),
+			throw new ProcessingException(getParser(), getFilename(),
 					"No type attribute in association end (XMI id" + xmiId
 							+ ")");
 		}
@@ -2909,7 +2909,7 @@ public class Rsa2Tg extends XmlProcessor {
 			AttributedElement<?, ?> ae = idMap.get(typeId);
 			if (ae != null) {
 				if (!(ae instanceof VertexClass)) {
-					throw new ProcessingException(getParser(), getFileName(),
+					throw new ProcessingException(getParser(), getFilename(),
 							"Type attribute of association end (XMI id "
 									+ xmiId
 									+ ") must denote a VertexClass, but is "
@@ -2939,7 +2939,7 @@ public class Rsa2Tg extends XmlProcessor {
 				String associationId = getAttribute(UML_ATTRIBUTE_ASSOCIATION);
 
 				if (associationId == null) {
-					throw new ProcessingException(getParser(), getFileName(),
+					throw new ProcessingException(getParser(), getFilename(),
 							"No assiocation attribute in association end (XMI id "
 									+ xmiId + ")");
 				}
@@ -2948,7 +2948,7 @@ public class Rsa2Tg extends XmlProcessor {
 				if (ae != null) {
 					if (!(ae instanceof EdgeClass)) {
 						throw new ProcessingException(getParser(),
-								getFileName(),
+								getFilename(),
 								"Assiocation attribute of association end (XMI id "
 										+ xmiId
 										+ ") must denote an EdgeClass, but is "
@@ -2999,7 +2999,7 @@ public class Rsa2Tg extends XmlProcessor {
 					if (!(ae instanceof VertexClass)) {
 						throw new ProcessingException(
 								getParser(),
-								getFileName(),
+								getFilename(),
 								"Type attribute of association end (XMI id "
 										+ xmiId
 										+ ") must denote a VertexClass, but is "
@@ -3101,13 +3101,13 @@ public class Rsa2Tg extends XmlProcessor {
 					--p;
 				}
 				if (p < 0) {
-					throw new ProcessingException(getFileName(),
+					throw new ProcessingException(getFilename(),
 							"Error in primitive type name: '" + typeName + "'");
 				}
 			}
 
 			if ((p <= 0) || (p >= (c.length - 1))) {
-				throw new ProcessingException(getFileName(),
+				throw new ProcessingException(getFilename(),
 						"Error in primitive type name: '" + typeName + "'");
 			}
 			String keyDomainName = keyValueDomains.substring(0, p);

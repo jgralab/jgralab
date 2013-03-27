@@ -75,6 +75,9 @@ public class MetaDataPreservingUnjar extends Task {
 
 	@Override
 	public void execute() {
+		if (dest == null) {
+			throw new IllegalStateException("dest was not set");
+		}
 		// set exclude pattern
 		PatternSet exclude = new PatternSet();
 		exclude.setExcludes(metaDir + "/**");

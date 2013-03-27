@@ -49,7 +49,7 @@ import de.uni_koblenz.jgralab.schema.EdgeClass;
  * 
  * @author ist@uni-koblenz.de
  */
-public abstract class EdgeBaseImpl extends IncidenceImpl implements Edge,
+public abstract class EdgeBaseImpl extends IncidenceImpl implements
 		InternalEdge {
 
 	protected final ReversedEdgeBaseImpl reversedEdge;

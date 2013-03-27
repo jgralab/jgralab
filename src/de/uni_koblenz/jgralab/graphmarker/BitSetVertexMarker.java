@@ -73,7 +73,7 @@ public class BitSetVertexMarker extends BitSetGraphMarker<Vertex> {
 
 					@Override
 					protected void moveIndex() {
-						index = marks.nextSetBit(++index);
+						index = marks.nextSetBit(index + 1);
 					}
 
 					@Override

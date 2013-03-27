@@ -111,12 +111,12 @@ public abstract class NamedElementImpl implements NamedElement {
 	/**
 	 * Creates a new named element with the specified name in the given parent
 	 * package and schema.
-	 *
+	 * 
 	 * <p>
 	 * <b>Pattern:</b>
 	 * <code>namedElement = new NamedElementImpl(sn, pkg, schema);</code>
 	 * </p>
-	 *
+	 * 
 	 * <p>
 	 * <b>Preconditions:</b>
 	 * <ul>
@@ -156,7 +156,7 @@ public abstract class NamedElementImpl implements NamedElement {
 	 * </li>
 	 * </ul>
 	 * </p>
-	 *
+	 * 
 	 * <p>
 	 * <b>Postconditions:</b>
 	 * <ul>
@@ -199,7 +199,7 @@ public abstract class NamedElementImpl implements NamedElement {
 	 * In either case, all '.' characters are replaced by '$' characters.</li>
 	 * </ul>
 	 * </p>
-	 *
+	 * 
 	 * @param simpleName
 	 *            this named element's simple name
 	 * @param pkg
@@ -251,7 +251,7 @@ public abstract class NamedElementImpl implements NamedElement {
 		 */
 		if (pkg == null) {
 			/*
-			 * The DefaultPackage must have the predefined standart simple name,
+			 * The DefaultPackage must have the predefined standard simple name,
 			 * and the schema in which it is created must not already contain a
 			 * DefaultPackage.
 			 */
@@ -278,7 +278,7 @@ public abstract class NamedElementImpl implements NamedElement {
 		 * following character must be alphanumeric and/or a '_' character
 		 * (Composite-/EnumDomain simple names may also have '.<>,' characters).
 		 * The simple name must end with an alphanumeric character.
-		 *
+		 * 
 		 * Simple names of Domains & AttributedElements start with a capital
 		 * letter, whereas the simple name for a Package starts with a small
 		 * letter.
@@ -329,8 +329,8 @@ public abstract class NamedElementImpl implements NamedElement {
 		 * event that this element is directly contained in the DefaultPackage,
 		 * the qualifiedName equals the simpleName.
 		 */
-		qualifiedName = (((pkg == null) || pkg.getQualifiedName().equals(
-				Package.DEFAULTPACKAGE_NAME)) ? "" : pkg.getQualifiedName()
+		qualifiedName = (pkg.getQualifiedName().equals(
+				Package.DEFAULTPACKAGE_NAME) ? "" : pkg.getQualifiedName()
 				+ ".")
 				+ simpleName;
 
@@ -450,25 +450,25 @@ public abstract class NamedElementImpl implements NamedElement {
 	 * Transforms a qualified name into unique name notation. This is achieved
 	 * by replacing every occurrence of a <code>'.'</code> characters in the
 	 * given qualified name by a <code>'$'</code> character.
-	 *
+	 * 
 	 * <p>
 	 * <b>Pattern:</b> <code>un = NamedElementImpl.toUniqueName(qn);</code>
 	 * </p>
-	 *
+	 * 
 	 * <p>
 	 * <b>Preconditions:</b> none
 	 * </p>
-	 *
+	 * 
 	 * <p>
 	 * <b>Postconditions:</b> <code>un</code> equals <code>qn</code>, except
 	 * that every occurrence of a '.' character has been replaced by a '$'
 	 * character. As no named element allows for '$' characters in it's
 	 * qualified name, there is no problem here.
 	 * </p>
-	 *
+	 * 
 	 * @param qualifiedName
 	 *            the qualified name to convert to unique name notation
-	 *
+	 * 
 	 * @return the unique name derived from a given qualified name
 	 */
 	public static String toUniqueNameNotation(String qualifiedName) {

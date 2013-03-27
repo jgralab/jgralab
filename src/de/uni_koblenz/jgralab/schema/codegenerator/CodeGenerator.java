@@ -236,8 +236,11 @@ public abstract class CodeGenerator {
 			outputFile = new File(dir.getAbsolutePath() + File.separator
 					+ fileName);
 			BufferedWriter bw = new BufferedWriter(new FileWriter(outputFile));
-			bw.write(rootBlock.getCode());
-			bw.close();
+			try {
+				bw.write(rootBlock.getCode());
+			} finally {
+				bw.close();
+			}
 		} catch (IOException e) {
 			throw new GraphIOException("Unable to create file "
 					+ outputFile.getAbsolutePath(), e);

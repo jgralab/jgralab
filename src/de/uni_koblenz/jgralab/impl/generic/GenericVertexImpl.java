@@ -137,13 +137,13 @@ public class GenericVertexImpl extends VertexImpl implements
 			graph.fireAfterChangeAttribute(this, name, oldValue, data);
 		} else {
 			Domain d = type.getAttribute(name).getDomain();
-			throw new ClassCastException(("Expected "
+			throw new ClassCastException("Expected "
 					+ ((d instanceof RecordDomain) ? RecordImpl.class.getName()
 							: d.getJavaAttributeImplementationTypeName(d
 									.getPackageName()))
-					+ " object, but received " + data) == null ? (data
-					.getClass().getName() + " object instead") : data
-					+ " instead");
+					+ " object, but received "
+					+ (data != null ? data.getClass().getName()
+							+ " object instead" : "null") + " instead");
 		}
 	}
 

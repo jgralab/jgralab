@@ -850,7 +850,9 @@ public class ECAIO {
 			} else {
 				if (la != -1) {
 					do {
-						out.append((char) la);
+						if (la != 0) {
+							out.append((char) la);
+						}
 						la = inStream.read();
 					} while (!isWs(la) && !isUnitSymbol(la) && (la != -1));
 				}
@@ -860,7 +862,7 @@ public class ECAIO {
 					"Error while reading next token from stream.");
 		}
 
-		return myTrim0(out.toString());
+		return out.toString();
 	}
 
 	/**
@@ -876,18 +878,6 @@ public class ECAIO {
 				throw new ECAIOException("Error while reading from stream.");
 			}
 		}
-	}
-
-	private String myTrim0(String x) {
-		char[] ar = x.toCharArray();
-		String ex = "";
-		for (int i = 0; i < ar.length; i++) {
-			if (ar[i] != 0) {
-				ex += ar[i];
-			}
-		}
-		return ex;
-
 	}
 
 	/**

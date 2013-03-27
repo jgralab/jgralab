@@ -563,18 +563,20 @@ public class LicenseHeader {
 
 		// add header to outputLines
 		BufferedReader reader = new BufferedReader(new FileReader(licence));
-		javaHeaderLines.add(firstLine);
-		String currentLine = null;
-		do {
-			currentLine = reader.readLine();
-			if (currentLine != null) {
-				javaHeaderLines.add(currentLine.isEmpty() ? JAVA_EMPTY_LINE
-						: JAVA_PREFIX + currentLine);
-			}
-		} while (currentLine != null);
-		javaHeaderLines.add(lastLine);
-
-		reader.close();
+		try {
+			javaHeaderLines.add(firstLine);
+			String currentLine = null;
+			do {
+				currentLine = reader.readLine();
+				if (currentLine != null) {
+					javaHeaderLines.add(currentLine.isEmpty() ? JAVA_EMPTY_LINE
+							: JAVA_PREFIX + currentLine);
+				}
+			} while (currentLine != null);
+			javaHeaderLines.add(lastLine);
+		} finally {
+			reader.close();
+		}
 	}
 
 	private void cacheXMLHeader(int length) throws FileNotFoundException,

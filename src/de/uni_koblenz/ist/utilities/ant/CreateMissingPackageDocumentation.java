@@ -103,6 +103,9 @@ public class CreateMissingPackageDocumentation extends Task {
 	}
 
 	private String computePackage(File dir) {
+		if (srcDir == null) {
+			throw new IllegalStateException("srcDir was not set");
+		}
 		String filesep = Pattern.quote(File.separator);
 		String[] prefix = srcDir.getAbsolutePath().split(filesep);
 		String[] currentPath = dir.getAbsolutePath().split(filesep);
@@ -123,7 +126,6 @@ public class CreateMissingPackageDocumentation extends Task {
 		o.setSrcDir(new File("../jgralab/src"));
 		o.execute();
 		System.out.println("Fini.");
-
 	}
 
 }

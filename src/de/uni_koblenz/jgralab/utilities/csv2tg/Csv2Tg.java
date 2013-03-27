@@ -416,7 +416,8 @@ public class Csv2Tg implements FilenameFilter {
 			throw new RuntimeException("No csv-files to convert to a tg-file.");
 		}
 
-		return fileList.toArray(new String[0]);
+		String[] result = new String[fileList.size()];
+		return fileList.toArray(result);
 	}
 
 	public String getOutputFile() {

@@ -203,6 +203,8 @@ public class FontSelectionDialog extends JDialog {
 					case 3:
 						setStyle(Font.BOLD + Font.ITALIC);
 						break;
+					default:
+						setStyle(Font.PLAIN);
 					}
 				}
 			}
@@ -385,6 +387,9 @@ public class FontSelectionDialog extends JDialog {
 			break;
 		case Font.BOLD + Font.ITALIC:
 			styleList.setSelectedIndex(3);
+			break;
+		default:
+			styleList.setSelectedIndex(0);
 			break;
 		}
 		fontSize.setValue(oldFont.getSize());

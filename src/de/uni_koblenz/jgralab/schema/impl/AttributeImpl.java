@@ -46,7 +46,7 @@ import de.uni_koblenz.jgralab.schema.exception.SchemaException;
 
 /**
  * AttributeImpl represents a grUML attribute on the schema level.
- *
+ * 
  * @author ist@uni-koblenz.de
  */
 public class AttributeImpl implements Attribute, Comparable<Attribute> {
@@ -78,15 +78,11 @@ public class AttributeImpl implements Attribute, Comparable<Attribute> {
 
 	private Object defaultValue;
 
-	private Object defaultTransactionValue;
-
-	private boolean defaultTransactionValueComputed;
-
 	private boolean defaultValueComputed;
 
 	/**
 	 * builds a new attribute
-	 *
+	 * 
 	 * @param name
 	 *            the name of the attribute
 	 * @param domain
@@ -114,7 +110,7 @@ public class AttributeImpl implements Attribute, Comparable<Attribute> {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
@@ -124,7 +120,7 @@ public class AttributeImpl implements Attribute, Comparable<Attribute> {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see jgralab.Attribute#getDomain()
 	 */
 	@Override
@@ -134,7 +130,7 @@ public class AttributeImpl implements Attribute, Comparable<Attribute> {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see jgralab.Attribute#getName()
 	 */
 	@Override
@@ -189,23 +185,6 @@ public class AttributeImpl implements Attribute, Comparable<Attribute> {
 	}
 
 	@Override
-	public void setDefaultTransactionValue(AttributedElement<?, ?> element)
-			throws GraphIOException {
-		if (defaultValueAsString != null) {
-			if (defaultTransactionValueComputed) {
-				element.setAttribute(name, defaultTransactionValue);
-			} else {
-				if (defaultValueAsString != null) {
-					element.readAttributeValueFromString(name,
-							defaultValueAsString);
-				}
-				defaultTransactionValue = element.getAttribute(name);
-				defaultTransactionValueComputed = true;
-			}
-		}
-	}
-
-	@Override
 	public void setDefaultValue(AttributedElement<?, ?> element)
 			throws GraphIOException {
 		if (defaultValueComputed) {
@@ -231,7 +210,8 @@ public class AttributeImpl implements Attribute, Comparable<Attribute> {
 	public void setName(String newName) {
 		((SchemaImpl) aec.getSchema()).assertNotFinished();
 		if (!ATTRIBUTE_NAME_PATTERN.matcher(newName).matches()) {
-			throw new SchemaException("Invalid attribute name '" + newName + "'.");
+			throw new SchemaException("Invalid attribute name '" + newName
+					+ "'.");
 		}
 		name = newName;
 	}

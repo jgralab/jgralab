@@ -17,13 +17,11 @@ import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.IncidenceClass;
 import de.uni_koblenz.jgralab.schema.VertexClass;
 
-public class TemporaryVertexClassImpl extends
-		VertexClassImpl implements VertexClass {
+public class TemporaryVertexClassImpl extends VertexClassImpl {
 
-	protected TemporaryVertexClassImpl(
-			GraphClassImpl gc) {
-		super("TemporaryVertexClass", (PackageImpl) gc.getSchema().getDefaultPackage(),
-				gc);
+	protected TemporaryVertexClassImpl(GraphClassImpl gc) {
+		super("TemporaryVertexClass", (PackageImpl) gc.getSchema()
+				.getDefaultPackage(), gc);
 	}
 
 	@Override
@@ -105,7 +103,7 @@ public class TemporaryVertexClassImpl extends
 	@SuppressWarnings("unchecked")
 	@Override
 	public Class<Vertex> getSchemaClass() {
-		return (Class<Vertex>) (Class<?>)TemporaryVertex.class;
+		return (Class<Vertex>) (Class<?>) TemporaryVertex.class;
 	}
 
 	@Override
@@ -145,7 +143,8 @@ public class TemporaryVertexClassImpl extends
 
 	@Override
 	public void setAbstract(boolean isAbstract) {
-		throw new UnsupportedOperationException("TemporaryVertexClass can not be abstract.");
+		throw new UnsupportedOperationException(
+				"TemporaryVertexClass can not be abstract.");
 	}
 
 	@Override
@@ -155,7 +154,8 @@ public class TemporaryVertexClassImpl extends
 
 	@Override
 	public void setQualifiedName(String newQName) {
-		throw new UnsupportedOperationException("Name of TemporaryVertexClass can not be changed.");
+		throw new UnsupportedOperationException(
+				"Name of TemporaryVertexClass can not be changed.");
 	}
 
 	@Override
@@ -196,7 +196,7 @@ public class TemporaryVertexClassImpl extends
 
 	@Override
 	public boolean isValidFromFor(EdgeClass ec) {
-		return ec ==  this.graphClass.getTemporaryEdgeClass();
+		return ec == this.graphClass.getTemporaryEdgeClass();
 	}
 
 	@Override
