@@ -34,6 +34,7 @@
  */
 package de.uni_koblenz.jgralab.greql.serialising;
 
+import java.io.File;
 import java.util.Iterator;
 import java.util.Map.Entry;
 
@@ -71,6 +72,8 @@ public abstract class DefaultWriter {
 	public DefaultWriter(Graph g) {
 		graph = g;
 	}
+
+	public abstract void writeValue(Object value, File file) throws Exception;
 
 	protected void writeValue(Object value) throws Exception {
 		rootValue = value;

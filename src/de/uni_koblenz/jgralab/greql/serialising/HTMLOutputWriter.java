@@ -76,6 +76,7 @@ public class HTMLOutputWriter extends DefaultWriter {
 		createElementLinks = false;
 	}
 
+	@Override
 	public void writeValue(Object value, File file) throws IOException,
 			SerialisingException {
 		out = null;
@@ -237,7 +238,7 @@ public class HTMLOutputWriter extends DefaultWriter {
 		pre();
 		PVector<Edge> edges = p.getEdgeTrace();
 		PVector<Vertex> vertices = p.getVertexTrace();
-		for (int i = 0; i < vertices.size() - 1; i++) {
+		for (int i = 0; i < (vertices.size() - 1); i++) {
 			if (first) {
 				first = false;
 				write(vertices.get(i));
@@ -336,7 +337,7 @@ public class HTMLOutputWriter extends DefaultWriter {
 
 	@Override
 	protected void writePVector(PVector<?> b) throws Exception {
-		if (b.size() > 0 && b.get(0) instanceof Tuple) {
+		if ((b.size() > 0) && (b.get(0) instanceof Tuple)) {
 			writeTableOfTuples(b);
 		} else {
 			super.writePVector(b);

@@ -56,7 +56,9 @@ import de.uni_koblenz.jgralab.exception.GraphIOException;
 import de.uni_koblenz.jgralab.greql.GreqlQuery;
 import de.uni_koblenz.jgralab.greql.evaluator.GreqlEnvironmentAdapter;
 import de.uni_koblenz.jgralab.greql.exception.GreqlException;
+import de.uni_koblenz.jgralab.greql.serialising.DefaultWriter;
 import de.uni_koblenz.jgralab.greql.serialising.HTMLOutputWriter;
+import de.uni_koblenz.jgralab.greql.serialising.XMLOutputWriter;
 import de.uni_koblenz.jgralab.impl.ConsoleProgressFunction;
 import de.uni_koblenz.jgralab.schema.Schema;
 import de.uni_koblenz.jgralab.schema.codegenerator.CodeGeneratorConfiguration;
@@ -151,7 +153,7 @@ public class GReQLConsole {
 				result = GreqlQuery.createQuery(query).evaluate(graph,
 						new GreqlEnvironmentAdapter(),
 						(verbose ? new ConsoleProgressFunction() : null));
-				if (verbose && result instanceof Collection) {
+				if (verbose && (result instanceof Collection)) {
 					System.out.println("Result size is: "
 							+ ((Collection<?>) result).size());
 				}
@@ -174,9 +176,18 @@ public class GReQLConsole {
 	 * 
 	 * @throws IOException
 	 */
-	private void resultToHTML(Object result, String outputFile)
-			throws IOException {
-		HTMLOutputWriter w = new HTMLOutputWriter(graph);
+	private void saveResultToFile(Object result, String outputFile)
+			throws Exception {
+		DefaultWriter w;
+		if (outputFile.endsWith(".html")) {
+			w = new HTMLOutputWriter(graph);
+		} else if (outputFile.endsWith(".xml")) {
+			w = new XMLOutputWriter(graph);
+		} else {
+			throw new RuntimeException(
+					"Can only print result to a XML or HTML file!");
+		}
+
 		w.writeValue(result, new File(outputFile));
 	}
 
@@ -200,8 +211,8 @@ public class GReQLConsole {
 
 		if (comLine.hasOption("o")) {
 			try {
-				console.resultToHTML(result, comLine.getOptionValue("o"));
-			} catch (IOException e) {
+				console.saveResultToFile(result, comLine.getOptionValue("o"));
+			} catch (Exception e) {
 				System.err.println("Exception while creating HTML output:");
 				e.printStackTrace();
 			}
@@ -229,7 +240,7 @@ public class GReQLConsole {
 		oh.addOption(inputFile);
 
 		Option output = new Option("o", "output", true,
-				"(optional): HTML-file to be generated");
+				"(optional): result file to be generated (either *.xml or *.html)");
 		output.setArgName("file");
 		oh.addOption(output);
 

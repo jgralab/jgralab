@@ -73,6 +73,7 @@ public class XMLOutputWriter extends DefaultWriter implements XMLConstants {
 		super(g);
 	}
 
+	@Override
 	public void writeValue(Object value, File file) throws XMLStreamException {
 		try {
 			writer = new IndentingXMLStreamWriter(
