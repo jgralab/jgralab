@@ -38,6 +38,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -88,8 +89,11 @@ public class GReQLConsole {
 				Schema schema = GraphIO.loadSchemaFromFile(filename);
 				schema.compile(CodeGeneratorConfiguration.MINIMAL);
 			}
-			graph = GraphIO.loadGraphFromFile(filename,
-					(verbose ? new ConsoleProgressFunction("Loading") : null));
+			if (filename != null) {
+				graph = GraphIO.loadGraphFromFile(filename,
+						(verbose ? new ConsoleProgressFunction("Loading")
+								: null));
+			}
 		} catch (GraphIOException e) {
 			e.printStackTrace();
 		}
@@ -176,19 +180,26 @@ public class GReQLConsole {
 	 * 
 	 * @throws IOException
 	 */
-	private void saveResultToFile(Object result, String outputFile)
-			throws Exception {
-		DefaultWriter w;
-		if (outputFile.endsWith(".html")) {
-			w = new HTMLOutputWriter(graph);
-		} else if (outputFile.endsWith(".xml")) {
-			w = new XMLOutputWriter(graph);
-		} else {
-			throw new RuntimeException(
-					"Can only print result to a XML or HTML file!");
+	private void saveResultToFile(Object result, String outputFile,
+			String outputType) throws Exception {
+		if ((outputType == null) || outputType.isEmpty()) {
+			outputType = "html";
 		}
-
-		w.writeValue(result, new File(outputFile));
+		if (outputType.equalsIgnoreCase("html")) {
+			DefaultWriter w = new HTMLOutputWriter(graph);
+			w.writeValue(result, new File(outputFile));
+		} else if (outputType.equalsIgnoreCase("xml")) {
+			DefaultWriter w = new XMLOutputWriter(graph);
+			w.writeValue(result, new File(outputFile));
+		} else if (outputType.equalsIgnoreCase("txt")) {
+			FileWriter w = new FileWriter(new File(outputFile));
+			w.append(result.toString());
+			w.flush();
+			w.close();
+		} else {
+			throw new RuntimeException("Unsupported output type " + outputFile
+					+ "!");
+		}
 	}
 
 	/**
@@ -211,7 +222,8 @@ public class GReQLConsole {
 
 		if (comLine.hasOption("o")) {
 			try {
-				console.saveResultToFile(result, comLine.getOptionValue("o"));
+				console.saveResultToFile(result, comLine.getOptionValue("o"),
+						comLine.getOptionValue('t'));
 			} catch (Exception e) {
 				System.err.println("Exception while creating HTML output:");
 				e.printStackTrace();
@@ -239,10 +251,18 @@ public class GReQLConsole {
 		inputFile.setArgName("file");
 		oh.addOption(inputFile);
 
-		Option output = new Option("o", "output", true,
-				"(optional): result file to be generated (either *.xml or *.html)");
+		Option output = new Option(
+				"o",
+				"output",
+				true,
+				"(optional): result file to be generated (see option --output-type, defaults to html)");
 		output.setArgName("file");
 		oh.addOption(output);
+
+		Option outputType = new Option("t", "output-type", true,
+				"(optional): if -o is given, the output type to use (txt, html, or xml)");
+		outputType.setArgName("type");
+		oh.addOption(outputType);
 
 		Option loadschema = new Option("s", "loadschema", false,
 				"(optional): Loads also the schema from the file");
