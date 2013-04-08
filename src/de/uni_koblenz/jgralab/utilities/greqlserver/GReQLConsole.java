@@ -208,28 +208,28 @@ public class GReQLConsole {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		CommandLine comLine = processCommandLineOptions(args);
-		assert comLine != null;
+		try {
+			CommandLine comLine = processCommandLineOptions(args);
+			assert comLine != null;
 
-		String queryFile = comLine.getOptionValue("q");
-		String graphFile = comLine.getOptionValue("g");
-		boolean loadSchema = comLine.hasOption("s");
+			String queryFile = comLine.getOptionValue("q");
+			String graphFile = comLine.getOptionValue("g");
+			boolean loadSchema = comLine.hasOption("s");
 
-		JGraLab.setLogLevel(Level.SEVERE);
-		GReQLConsole console = new GReQLConsole(graphFile, loadSchema,
-				comLine.hasOption('v'));
-		Object result = console.performQuery(new File(queryFile));
+			JGraLab.setLogLevel(Level.SEVERE);
+			GReQLConsole console = new GReQLConsole(graphFile, loadSchema,
+					comLine.hasOption('v'));
+			Object result = console.performQuery(new File(queryFile));
 
-		if (comLine.hasOption("o")) {
-			try {
+			if (comLine.hasOption("o")) {
 				console.saveResultToFile(result, comLine.getOptionValue("o"),
 						comLine.getOptionValue('t'));
-			} catch (Exception e) {
-				System.err.println("Exception while creating HTML output:");
-				e.printStackTrace();
+			} else {
+				System.out.println("Result: " + result);
 			}
-		} else {
-			System.out.println("Result: " + result);
+		} catch (Exception e) {
+			e.printStackTrace();
+			System.exit(1); // exit with non-zero exit code
 		}
 	}
 
