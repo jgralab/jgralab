@@ -36,7 +36,6 @@ package de.uni_koblenz.jgralab.utilities.greqlserver;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -52,11 +51,12 @@ import de.uni_koblenz.ist.utilities.option_handler.OptionHandler;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.JGraLab;
-import de.uni_koblenz.jgralab.WorkInProgress;
 import de.uni_koblenz.jgralab.exception.GraphIOException;
 import de.uni_koblenz.jgralab.greql.GreqlQuery;
 import de.uni_koblenz.jgralab.greql.evaluator.GreqlEnvironmentAdapter;
 import de.uni_koblenz.jgralab.greql.exception.GreqlException;
+import de.uni_koblenz.jgralab.greql.exception.ParsingException;
+import de.uni_koblenz.jgralab.greql.exception.QuerySourceException;
 import de.uni_koblenz.jgralab.greql.serialising.DefaultWriter;
 import de.uni_koblenz.jgralab.greql.serialising.HTMLOutputWriter;
 import de.uni_koblenz.jgralab.greql.serialising.XMLOutputWriter;
@@ -64,7 +64,6 @@ import de.uni_koblenz.jgralab.impl.ConsoleProgressFunction;
 import de.uni_koblenz.jgralab.schema.Schema;
 import de.uni_koblenz.jgralab.schema.codegenerator.CodeGeneratorConfiguration;
 
-@WorkInProgress(responsibleDevelopers = "dbildh")
 public class GReQLConsole {
 
 	private Graph graph = null;
@@ -146,8 +145,9 @@ public class GReQLConsole {
 	 *            the GReQL representation of the query to perform
 	 * @return the calculated query result
 	 */
-	private Object performQuery(File queryFile) {
+	private Object performQuery(File queryFile) throws GreqlException {
 		Object result = null;
+
 		try {
 			for (String query : loadQueries(queryFile)) {
 				if (verbose) {
@@ -162,15 +162,10 @@ public class GReQLConsole {
 							+ ((Collection<?>) result).size());
 				}
 			}
-		} catch (GreqlException e) {
-			e.printStackTrace();
-		} catch (RuntimeException e) {
-			e.printStackTrace();
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
 		} catch (IOException e) {
-			e.printStackTrace();
+			throw new RuntimeException(e);
 		}
+
 		return result;
 	}
 
@@ -228,6 +223,18 @@ public class GReQLConsole {
 				System.out.println("Result: " + result);
 			}
 		} catch (Exception e) {
+			if (e instanceof ParsingException) {
+				ParsingException ex = (ParsingException) e;
+				System.err.println("##exception=ParsingException");
+				System.err.println("##offset=" + ex.getOffset());
+				System.err.println("##length=" + ex.getLength());
+			} else if (e instanceof QuerySourceException) {
+				QuerySourceException ex = (QuerySourceException) e;
+				System.err.println("##exception="
+						+ ex.getClass().getSimpleName());
+				System.err.println("##offset=" + ex.getOffset());
+				System.err.println("##length=" + ex.getLength());
+			}
 			e.printStackTrace();
 			System.exit(1); // exit with non-zero exit code
 		}
