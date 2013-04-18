@@ -103,7 +103,7 @@
                         schema-alist))))
          ;; End of schema (part)
          ((or (= (point) (point-max))
-              (looking-at "^Graph[[:space:]]+"))
+              (looking-at "^Graph[^a-zA-Z]+"))
           (setq finished t)))
         (forward-line 1))
       schema-alist)))
@@ -294,7 +294,7 @@ The optional TYPE specifies that the returned name has to be the
   "Return the buffer position of the incidence INC in some incidence list."
   (save-excursion
     (goto-char (point-min))
-    (re-search-forward "^Graph[[:space:]]+")
+    (re-search-forward "^Graph[^a-zA-Z]+")
     (let (found)
       (while (not found)
         (re-search-forward (concat "[< ]" inc "[ >]") nil t 1)
