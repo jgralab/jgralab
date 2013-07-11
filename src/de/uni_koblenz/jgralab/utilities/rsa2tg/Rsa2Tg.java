@@ -191,6 +191,8 @@ public class Rsa2Tg extends XmlProcessor {
 
 	private static final String OPTION_REMOVE_COMMENTS = "c";
 
+	private static final String OPTION_IGNORE_UNKNOWN_STEREOTYPES = "c";
+
 	/**
 	 * Contains XML element names in the format "name>xmiId"
 	 */
@@ -373,6 +375,8 @@ public class Rsa2Tg extends XmlProcessor {
 	 */
 	private String filenameDot;
 
+	private boolean ignoreUnknownStereotypes;
+
 	/**
 	 * Filename for validation
 	 */
@@ -426,6 +430,8 @@ public class Rsa2Tg extends XmlProcessor {
 		r.setKeepEmptyPackages(cli.hasOption(OPTION_KEEP_EMPTY_PACKAGES));
 		r.setUseNavigability(cli.hasOption(OPTION_USE_NAVIGABILITY));
 		r.setRemoveComments(cli.hasOption(OPTION_REMOVE_COMMENTS));
+		r.setIgnoreUnknownStereotypes(cli
+				.hasOption(OPTION_IGNORE_UNKNOWN_STEREOTYPES));
 
 		// apply options
 		r.setFilenameSchema(cli.getOptionValue(OPTION_FILENAME_SCHEMA));
@@ -572,6 +578,13 @@ public class Rsa2Tg extends XmlProcessor {
 				"(optional): if this flag is set, navigability information will be interpreted as reading direction.");
 		navigability.setRequired(false);
 		oh.addOption(navigability);
+
+		Option ignoreStereotypes = new Option(
+				OPTION_IGNORE_UNKNOWN_STEREOTYPES, "ignoreUnknownStereotypes",
+				false,
+				"(optional): if this flag is set, unknown stereotypes are ignored.");
+		ignoreStereotypes.setRequired(false);
+		oh.addOption(ignoreStereotypes);
 
 		// Parses the given command line parameters with all created Option.
 		return oh.parse(args);
@@ -2702,8 +2715,13 @@ public class Rsa2Tg extends XmlProcessor {
 								+ currentClass.get_qualifiedName() + "'");
 			}
 		} else {
-			throw new ProcessingException(getParser(), getFilename(),
-					"Unexpected stereotype '<<" + key + ">>'.");
+			if (ignoreUnknownStereotypes()) {
+				System.out.println("Ignored stereotype <<" + key + ">> of "
+						+ currentClass);
+			} else {
+				throw new ProcessingException(getParser(), getFilename(),
+						"Unexpected stereotype '<<" + key + ">>'.");
+			}
 		}
 	}
 
@@ -3200,6 +3218,14 @@ public class Rsa2Tg extends XmlProcessor {
 	 */
 	public boolean isUseFromRole() {
 		return useFromRole;
+	}
+
+	public boolean ignoreUnknownStereotypes() {
+		return ignoreUnknownStereotypes;
+	}
+
+	public void setIgnoreUnknownStereotypes(boolean ignore) {
+		ignoreUnknownStereotypes = ignore;
 	}
 
 	/**
