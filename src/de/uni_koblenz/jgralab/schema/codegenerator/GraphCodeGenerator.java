@@ -78,9 +78,7 @@ public class GraphCodeGenerator extends
 	protected CodeBlock createBody() {
 		CodeList code = (CodeList) super.createBody();
 		if (currentCycle.isStdImpl()) {
-			if (currentCycle.isStdImpl()) {
-				addImports("#jgImplStdPackage#.#baseClassName#");
-			}
+			addImports("#jgImplStdPackage#.#baseClassName#");
 			rootBlock.setVariable("baseClassName", "GraphImpl");
 		}
 		code.add(createGraphElementClassMethods());

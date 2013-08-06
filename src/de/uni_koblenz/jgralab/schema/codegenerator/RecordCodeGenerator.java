@@ -94,7 +94,7 @@ public class RecordCodeGenerator extends CodeGenerator {
 		code.add(new CodeSnippet("io.match(#token#.LBR);"));
 		for (RecordComponent rc : recordDomain.getComponents()) {
 			code.add(rc.getDomain().getReadMethod(schemaRootPackageName,
-					"_" + rc.getName(), "io"));
+					"_" + rc.getName(), "io", false));
 		}
 		code.add(new CodeSnippet("io.match(#token#.RBR);"));
 		code.addNoIndent(new CodeSnippet("}"));

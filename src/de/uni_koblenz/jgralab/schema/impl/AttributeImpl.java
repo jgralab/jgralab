@@ -65,7 +65,7 @@ public class AttributeImpl implements Attribute, Comparable<Attribute> {
 	private final Domain domain;
 
 	/**
-	 * the owning AttributedElementClass of the atribute
+	 * the owning AttributedElementClass of the attribute
 	 */
 	private final AttributedElementClass<?, ?> aec;
 

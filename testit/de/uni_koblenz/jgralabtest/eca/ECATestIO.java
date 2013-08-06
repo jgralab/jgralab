@@ -42,6 +42,7 @@ import java.util.logging.Level;
 
 import org.junit.After;
 import org.junit.AfterClass;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -297,7 +298,7 @@ public class ECATestIO {
 					FOLDER_FOR_RULE_FILES + "testSaveRules4.eca");
 		} catch (ECAIOException e) {
 			e.printStackTrace();
-			assert false;
+			Assert.assertTrue(false);
 		}
 		ecaRuleManager.addECARule(rules.get(0));
 

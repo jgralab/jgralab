@@ -43,10 +43,10 @@ import org.pcollections.PVector;
 import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.exception.GraphIOException;
+import de.uni_koblenz.jgralab.impl.TgLexer.Token;
 import de.uni_koblenz.jgralab.schema.EnumDomain;
 import de.uni_koblenz.jgralab.schema.Package;
 import de.uni_koblenz.jgralab.schema.codegenerator.CodeBlock;
-import de.uni_koblenz.jgralab.schema.codegenerator.CodeGenerator;
 import de.uni_koblenz.jgralab.schema.codegenerator.CodeSnippet;
 import de.uni_koblenz.jgralab.schema.exception.SchemaClassAccessException;
 import de.uni_koblenz.jgralab.schema.exception.SchemaException;
@@ -110,11 +110,12 @@ public final class EnumDomainImpl extends DomainImpl implements EnumDomain {
 
 	@Override
 	public CodeBlock getReadMethod(String schemaPrefix, String variableName,
-			String graphIoVariableName) {
-		return new CodeSnippet(variableName + " = "
-				+ getJavaAttributeImplementationTypeName(schemaPrefix)
-				+ ".valueOfPermitNull(" + graphIoVariableName
-				+ ".matchEnumConstant());");
+			String graphIoVariableName, boolean withUnsetCheck) {
+		return maybeWrapInUnsetCheck(graphIoVariableName, withUnsetCheck,
+				variableName + " = "
+						+ getJavaAttributeImplementationTypeName(schemaPrefix)
+						+ ".valueOfPermitNull(" + graphIoVariableName
+						+ ".matchEnumConstant());");
 	}
 
 	@Override
@@ -158,43 +159,6 @@ public final class EnumDomainImpl extends DomainImpl implements EnumDomain {
 	}
 
 	@Override
-	public CodeBlock getTransactionReadMethod(String schemaPrefix,
-			String variableName, String graphIoVariableName) {
-		return new CodeSnippet(
-				getJavaAttributeImplementationTypeName(schemaPrefix) + " "
-						+ variableName + " = "
-						+ getJavaAttributeImplementationTypeName(schemaPrefix)
-						+ ".valueOfPermitNull(" + graphIoVariableName
-						+ ".matchEnumConstant());");
-	}
-
-	@Override
-	public CodeBlock getTransactionWriteMethod(String schemaRootPackagePrefix,
-			String variableName, String graphIoVariableName) {
-		return getWriteMethod(schemaRootPackagePrefix,
-				"get" + CodeGenerator.camelCase(variableName) + "()",
-				graphIoVariableName);
-	}
-
-	@Override
-	public String getTransactionJavaAttributeImplementationTypeName(
-			String schemaRootPackagePrefix) {
-		return getJavaAttributeImplementationTypeName(schemaRootPackagePrefix);
-	}
-
-	@Override
-	public String getTransactionJavaClassName(String schemaRootPackagePrefix) {
-		return getJavaClassName(schemaRootPackagePrefix);
-	}
-
-	@Override
-	public String getVersionedClass(String schemaRootPackagePrefix) {
-		return "de.uni_koblenz.jgralab.impl.trans.VersionedReferenceImpl<"
-				+ getTransactionJavaAttributeImplementationTypeName(schemaRootPackagePrefix)
-				+ ">";
-	}
-
-	@Override
 	public String getInitialValue() {
 		return "null";
 	}
@@ -224,15 +188,18 @@ public final class EnumDomainImpl extends DomainImpl implements EnumDomain {
 
 	@Override
 	public Object parseGenericAttribute(GraphIO io) throws GraphIOException {
-		String result = io.matchEnumConstant();
-		return result;
+		if (io.isNextToken(Token.UNSET)) {
+			io.match();
+			return GraphIO.Unset.UNSET;
+		}
+		return io.matchEnumConstant();
 	}
 
 	@Override
 	public void serializeGenericAttribute(GraphIO io, Object data)
 			throws IOException {
 		if (data != null) {
-			io.writeIdentifier((String) data);
+			io.writeIdentifier(data.toString());
 		} else {
 			io.writeIdentifier(GraphIO.NULL_LITERAL);
 		}

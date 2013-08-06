@@ -42,8 +42,8 @@ import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.exception.GraphException;
 import de.uni_koblenz.jgralab.exception.GraphIOException;
 import de.uni_koblenz.jgralab.exception.NoSuchAttributeException;
-import de.uni_koblenz.jgralab.impl.InternalGraph;
 import de.uni_koblenz.jgralab.impl.RecordImpl;
+import de.uni_koblenz.jgralab.impl.TgLexer.Token;
 import de.uni_koblenz.jgralab.impl.std.VertexImpl;
 import de.uni_koblenz.jgralab.schema.Attribute;
 import de.uni_koblenz.jgralab.schema.Domain;
@@ -71,9 +71,7 @@ public class GenericVertexImpl extends VertexImpl implements
 		this.type = type;
 		if (type.hasAttributes()) {
 			attributes = new Object[type.getAttributeCount()];
-			if (!((InternalGraph) graph).isLoading()) {
-				GenericGraphImpl.initializeGenericAttributeValues(this);
-			}
+			GenericGraphImpl.initializeGenericAttributeValues(this);
 		}
 	}
 
@@ -86,18 +84,19 @@ public class GenericVertexImpl extends VertexImpl implements
 	public void readAttributeValueFromString(String attributeName, String value)
 			throws GraphIOException, NoSuchAttributeException {
 		int i = type.getAttributeIndex(attributeName);
-		attributes[i] = type
-				.getAttribute(attributeName)
-				.getDomain()
-				.parseGenericAttribute(
-						GraphIO.createStringReader(value, getSchema()));
+		Domain dom = type.getAttribute(attributeName).getDomain();
+		GenericGraphImpl.setAttributeValueHandlingUnset(attributes, i, dom, dom
+				.parseGenericAttribute(GraphIO.createStringReader(value,
+						getSchema())));
 	}
 
 	@Override
 	public void readAttributeValues(GraphIO io) throws GraphIOException {
 		for (Attribute a : type.getAttributeList()) {
-			attributes[type.getAttributeIndex(a.getName())] = a.getDomain()
-					.parseGenericAttribute(io);
+			Domain dom = a.getDomain();
+			GenericGraphImpl.setAttributeValueHandlingUnset(attributes,
+					type.getAttributeIndex(a.getName()), dom,
+					dom.parseGenericAttribute(io));
 		}
 	}
 
@@ -105,8 +104,12 @@ public class GenericVertexImpl extends VertexImpl implements
 	public String writeAttributeValueToString(String attributeName)
 			throws IOException, GraphIOException, NoSuchAttributeException {
 		GraphIO io = GraphIO.createStringWriter(getSchema());
-		type.getAttribute(attributeName).getDomain()
-				.serializeGenericAttribute(io, getAttribute(attributeName));
+		if (isUnsetAttribute(attributeName)) {
+			io.writeIdentifier(Token.UNSET.toString());
+		} else {
+			type.getAttribute(attributeName).getDomain()
+					.serializeGenericAttribute(io, getAttribute(attributeName));
+		}
 		return io.getStringWriterResult();
 	}
 
@@ -114,8 +117,12 @@ public class GenericVertexImpl extends VertexImpl implements
 	public void writeAttributeValues(GraphIO io) throws IOException,
 			GraphIOException {
 		for (Attribute a : type.getAttributeList()) {
-			a.getDomain().serializeGenericAttribute(io,
-					getAttribute(a.getName()));
+			if (isUnsetAttribute(a.getName())) {
+				io.writeIdentifier(Token.UNSET.toString());
+			} else {
+				a.getDomain().serializeGenericAttribute(io,
+						getAttribute(a.getName()));
+			}
 		}
 	}
 
@@ -145,6 +152,8 @@ public class GenericVertexImpl extends VertexImpl implements
 					+ (data != null ? data.getClass().getName()
 							+ " object instead" : "null") + " instead");
 		}
+
+		internalMarkAttributeAsSet(i, true);
 	}
 
 	@Override

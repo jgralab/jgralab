@@ -40,9 +40,24 @@ import org.pcollections.PSet;
 
 import de.uni_koblenz.jgralab.schema.Attribute;
 import de.uni_koblenz.jgralab.schema.Domain;
+import de.uni_koblenz.jgralab.schema.codegenerator.CodeSnippet;
 import de.uni_koblenz.jgralab.schema.exception.SchemaException;
 
 public abstract class DomainImpl extends NamedElementImpl implements Domain {
+
+	protected CodeSnippet maybeWrapInUnsetCheck(String graphIo,
+			boolean withUnsetCheck, String code) {
+		if (withUnsetCheck) {
+			return new CodeSnippet(
+					"boolean attrIsSet = true;",
+					"if (!"
+							+ graphIo
+							+ ".isNextToken(de.uni_koblenz.jgralab.impl.TgLexer.Token.UNSET)) {",
+					"\t" + code, "} else {", "\t" + graphIo + ".match();",
+					"\tattrIsSet = false;", "}");
+		}
+		return new CodeSnippet(code);
+	}
 
 	/**
 	 * All Attributes that have this domain.

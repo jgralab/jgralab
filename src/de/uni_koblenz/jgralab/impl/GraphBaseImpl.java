@@ -39,6 +39,7 @@ import java.io.OutputStream;
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
+import java.util.BitSet;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -61,6 +62,7 @@ import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.VertexFilter;
 import de.uni_koblenz.jgralab.exception.GraphException;
 import de.uni_koblenz.jgralab.exception.GraphIOException;
+import de.uni_koblenz.jgralab.exception.NoSuchAttributeException;
 import de.uni_koblenz.jgralab.graphmarker.SubGraphMarker;
 import de.uni_koblenz.jgralab.schema.AggregationKind;
 import de.uni_koblenz.jgralab.schema.Attribute;
@@ -137,6 +139,30 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 	// ------------- TRAVERSAL CONTEXT -------------
 	private ThreadLocal<TraversalContext> tc = new ThreadLocal<TraversalContext>();
 
+	// ------------- UNSET ATTRIBUTES --------------
+	protected BitSet setAttributes;
+
+	@Override
+	public void internalInitializeSetAttributesBitSet() {
+		setAttributes = new BitSet(getAttributedElementClass()
+				.getAttributeCount());
+	}
+
+	@Override
+	public boolean isUnsetAttribute(String name)
+			throws NoSuchAttributeException {
+		return !setAttributes.get(getAttributedElementClass()
+				.getAttributeIndex(name));
+	}
+
+	@Override
+	public void internalMarkAttributeAsSet(int attrIdx, boolean value) {
+		if (setAttributes != null) {
+			// setAttributes is still null during the setting of default values
+			setAttributes.set(attrIdx, value);
+		}
+	}
+
 	/**
 	 * Creates a graph of the given GraphClass with the given id
 	 * 
@@ -147,6 +173,11 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 	 */
 	protected GraphBaseImpl(String id, GraphClass cls) {
 		this(id, cls, 1000, 1000);
+	}
+
+	@Override
+	public BitSet internalGetSetAttributesBitSet() {
+		return setAttributes;
 	}
 
 	@Override
@@ -164,6 +195,7 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 				}
 			} catch (GraphIOException e) {
 				e.printStackTrace();
+				throw new RuntimeException(e);
 			}
 		}
 	}
@@ -1771,7 +1803,7 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 		if (l == null) {
 			throw new IllegalArgumentException("Listener must not be null");
 		}
-		if (graphChangeListeners == null || !graphChangeListeners.contains(l)) {
+		if ((graphChangeListeners == null) || !graphChangeListeners.contains(l)) {
 			throw new IllegalStateException("Listener is not registered");
 		}
 		graphChangeListeners.remove(l);
@@ -2057,7 +2089,7 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 
 	@Override
 	public void fireBeforeCreateVertex(VertexClass vc) {
-		if (graphChangeListeners == null || loading) {
+		if ((graphChangeListeners == null) || loading) {
 			return;
 		}
 		int n = graphChangeListeners.size();
@@ -2068,7 +2100,7 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 
 	@Override
 	public void fireAfterCreateVertex(Vertex v) {
-		if (graphChangeListeners == null || loading) {
+		if ((graphChangeListeners == null) || loading) {
 			return;
 		}
 		int n = graphChangeListeners.size();
@@ -2079,7 +2111,7 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 
 	@Override
 	public void fireBeforeDeleteVertex(Vertex v) {
-		if (graphChangeListeners == null || loading) {
+		if ((graphChangeListeners == null) || loading) {
 			return;
 		}
 		int n = graphChangeListeners.size();
@@ -2090,7 +2122,7 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 
 	@Override
 	public void fireAfterDeleteVertex(VertexClass vc, boolean finalDelete) {
-		if (graphChangeListeners == null || loading) {
+		if ((graphChangeListeners == null) || loading) {
 			return;
 		}
 		int n = graphChangeListeners.size();
@@ -2101,7 +2133,7 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 
 	@Override
 	public void fireBeforeCreateEdge(EdgeClass ec, Vertex alpha, Vertex omega) {
-		if (graphChangeListeners == null || loading) {
+		if ((graphChangeListeners == null) || loading) {
 			return;
 		}
 		int n = graphChangeListeners.size();
@@ -2112,7 +2144,7 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 
 	@Override
 	public void fireAfterCreateEdge(Edge e) {
-		if (graphChangeListeners == null || loading) {
+		if ((graphChangeListeners == null) || loading) {
 			return;
 		}
 		int n = graphChangeListeners.size();
@@ -2123,7 +2155,7 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 
 	@Override
 	public void fireBeforeDeleteEdge(Edge e) {
-		if (graphChangeListeners == null || loading) {
+		if ((graphChangeListeners == null) || loading) {
 			return;
 		}
 		int n = graphChangeListeners.size();
@@ -2134,7 +2166,7 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 
 	@Override
 	public void fireAfterDeleteEdge(EdgeClass ec, Vertex alpha, Vertex omega) {
-		if (graphChangeListeners == null || loading) {
+		if ((graphChangeListeners == null) || loading) {
 			return;
 		}
 		int n = graphChangeListeners.size();
@@ -2146,7 +2178,7 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 	@Override
 	public void fireBeforeChangeAttribute(AttributedElement<?, ?> element,
 			String attributeName, Object oldValue, Object newValue) {
-		if (graphChangeListeners == null || loading) {
+		if ((graphChangeListeners == null) || loading) {
 			return;
 		}
 		int n = graphChangeListeners.size();
@@ -2159,7 +2191,7 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 	@Override
 	public void fireAfterChangeAttribute(AttributedElement<?, ?> element,
 			String attributeName, Object oldValue, Object newValue) {
-		if (graphChangeListeners == null || loading) {
+		if ((graphChangeListeners == null) || loading) {
 			return;
 		}
 		int n = graphChangeListeners.size();
@@ -2172,7 +2204,7 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 	@Override
 	public void fireBeforeChangeAlpha(Edge edge, Vertex oldVertex,
 			Vertex newVertex) {
-		if (graphChangeListeners == null || loading) {
+		if ((graphChangeListeners == null) || loading) {
 			return;
 		}
 		int n = graphChangeListeners.size();
@@ -2185,7 +2217,7 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 	@Override
 	public void fireAfterChangeAlpha(Edge edge, Vertex oldVertex,
 			Vertex newVertex) {
-		if (graphChangeListeners == null || loading) {
+		if ((graphChangeListeners == null) || loading) {
 			return;
 		}
 		int n = graphChangeListeners.size();
@@ -2198,7 +2230,7 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 	@Override
 	public void fireBeforeChangeOmega(Edge edge, Vertex oldVertex,
 			Vertex newVertex) {
-		if (graphChangeListeners == null || loading) {
+		if ((graphChangeListeners == null) || loading) {
 			return;
 		}
 		int n = graphChangeListeners.size();
@@ -2211,7 +2243,7 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 	@Override
 	public void fireAfterChangeOmega(Edge edge, Vertex oldVertex,
 			Vertex newVertex) {
-		if (graphChangeListeners == null || loading) {
+		if ((graphChangeListeners == null) || loading) {
 			return;
 		}
 		int n = graphChangeListeners.size();
@@ -2223,7 +2255,7 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 
 	@Override
 	public void fireBeforePutIncidenceBefore(Edge inc, Edge other) {
-		if (graphChangeListeners == null || loading) {
+		if ((graphChangeListeners == null) || loading) {
 			return;
 		}
 		int n = graphChangeListeners.size();
@@ -2234,7 +2266,7 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 
 	@Override
 	public void fireAfterPutIncidenceBefore(Edge inc, Edge other) {
-		if (graphChangeListeners == null || loading) {
+		if ((graphChangeListeners == null) || loading) {
 			return;
 		}
 		int n = graphChangeListeners.size();
@@ -2245,7 +2277,7 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 
 	@Override
 	public void fireBeforePutIncidenceAfter(Edge inc, Edge other) {
-		if (graphChangeListeners == null || loading) {
+		if ((graphChangeListeners == null) || loading) {
 			return;
 		}
 		int n = graphChangeListeners.size();
@@ -2256,7 +2288,7 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 
 	@Override
 	public void fireAfterPutIncidenceAfter(Edge inc, Edge other) {
-		if (graphChangeListeners == null || loading) {
+		if ((graphChangeListeners == null) || loading) {
 			return;
 		}
 		int n = graphChangeListeners.size();

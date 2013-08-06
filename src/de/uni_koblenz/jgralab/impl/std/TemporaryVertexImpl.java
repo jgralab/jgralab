@@ -81,12 +81,23 @@ public class TemporaryVertexImpl extends VertexImpl implements TemporaryVertex {
 	public <T> void setAttribute(String name, T data)
 			throws NoSuchAttributeException {
 		this.attributes.put(name, data);
+	}
 
+	@Override
+	public boolean isUnsetAttribute(String name)
+			throws NoSuchAttributeException {
+		throw new UnsupportedOperationException(
+				"The isUnsetAttribute() method is not available for temporary elements.");
+	}
+
+	@Override
+	public void internalInitializeSetAttributesBitSet() {
+		throw new UnsupportedOperationException(
+				"The internalInitializeSetAttributesBitSet() method is not available for temporary elements.");
 	}
 
 	@Override
 	public void initializeAttributesWithDefaultValues() {
-		// TODO Auto-generated method stub
 		// do nothing
 	}
 

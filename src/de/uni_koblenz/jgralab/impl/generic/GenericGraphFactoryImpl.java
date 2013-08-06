@@ -40,6 +40,7 @@ import de.uni_koblenz.jgralab.ImplementationType;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.exception.GraphException;
 import de.uni_koblenz.jgralab.impl.GraphFactoryImpl;
+import de.uni_koblenz.jgralab.impl.InternalAttributedElement;
 import de.uni_koblenz.jgralab.impl.InternalGraph;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.GraphClass;
@@ -78,6 +79,8 @@ public class GenericGraphFactoryImpl extends GraphFactoryImpl {
 		@SuppressWarnings("unchecked")
 		G graph = (G) new GenericGraphImpl(gc, id, vMax, eMax);
 		graph.setGraphFactory(this);
+		((InternalAttributedElement) graph)
+				.internalInitializeSetAttributesBitSet();
 		return graph;
 	}
 
@@ -91,6 +94,8 @@ public class GenericGraphFactoryImpl extends GraphFactoryImpl {
 
 		@SuppressWarnings("unchecked")
 		V vertex = (V) new GenericVertexImpl(vc, id, g);
+		((InternalAttributedElement) vertex)
+				.internalInitializeSetAttributesBitSet();
 		ig.fireAfterCreateVertex(vertex);
 		return vertex;
 	}
@@ -105,6 +110,8 @@ public class GenericGraphFactoryImpl extends GraphFactoryImpl {
 		ig.fireBeforeCreateEdge(ec, alpha, omega);
 		@SuppressWarnings("unchecked")
 		E edge = (E) new GenericEdgeImpl(ec, id, g, alpha, omega);
+		((InternalAttributedElement) edge)
+				.internalInitializeSetAttributesBitSet();
 		ig.fireAfterCreateEdge(edge);
 		return edge;
 	}

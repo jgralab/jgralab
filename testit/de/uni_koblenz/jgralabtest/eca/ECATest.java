@@ -469,8 +469,11 @@ public class ECATest {
 		System.out.println(loans_u1_b1.getSchemaClass());
 		System.out.println(Loans.EC);
 
+		// That will work
+		loans_u1_b1.setAlpha(user2);
+		assertEquals(loans_u1_b1.getAlpha(), user2);
+		// But resetting to user1 (Martin King) does not cause of the eca rule
 		loans_u1_b1.setAlpha(user1);
-
 		assertEquals(loans_u1_b1.getAlpha(), user2);
 
 		ecaRuleManager.deleteECARule(aft_rule);

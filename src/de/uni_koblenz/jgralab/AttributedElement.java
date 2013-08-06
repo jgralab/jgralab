@@ -147,7 +147,7 @@ public interface AttributedElement<SC extends AttributedElementClass<SC, IC>, IC
 	 * @return the found {@link de.uni_koblenz.jgralab.schema.Attribute} value
 	 * 
 	 * @throws NoSuchAttributeException
-	 *             if the {@code attributeName} is not the name of a valid
+	 *             if the Attribute {@code name} is not the name of a valid
 	 *             {@link de.uni_koblenz.jgralab.schema.Attribute}
 	 */
 	public <T> T getAttribute(String name) throws NoSuchAttributeException;
@@ -165,6 +165,21 @@ public interface AttributedElement<SC extends AttributedElementClass<SC, IC>, IC
 	 * @throws NoSuchAttributeException
 	 */
 	public <T> void setAttribute(String name, T data)
+			throws NoSuchAttributeException;
+
+	/**
+	 * Checks if the given attribute is unset, i.e., it has not aquired a value
+	 * in terms of setAttribute().  Default values are considered unset.
+	 * 
+	 * @param name
+	 *            the name of the attribute
+	 * @return true, if the attribute value hasn't been set explicitly, false
+	 *         otherwise
+	 * @throws NoSuchAttributeException
+	 *             if the Attribute {@code name} is not the name of a valid
+	 *             {@link de.uni_koblenz.jgralab.schema.Attribute}
+	 */
+	public boolean isUnsetAttribute(String name)
 			throws NoSuchAttributeException;
 
 	/**

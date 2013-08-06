@@ -371,6 +371,8 @@ public abstract class AttributedElementCodeGenerator<SC extends AttributedElemen
 		code.setVariable("dname", attr.getDomain().getSimpleName());
 		code.setVariable("graphRef",
 				aec.getClass() == GraphClassImpl.class ? "" : "graph.");
+		code.setVariable("attrIndex", String.valueOf(attr
+				.getAttributedElementClass().getAttributeIndex(attr.getName())));
 
 		switch (currentCycle) {
 		case ABSTRACT:
@@ -382,6 +384,7 @@ public abstract class AttributedElementCodeGenerator<SC extends AttributedElemen
 					"\t#graphRef#fireBeforeChangeAttribute(this, \"#name#\", this._#name#, _#name#);",
 					"\tObject oldValue = this._#name#;",
 					"\tthis._#name# = _#name#;",
+					"\tinternalMarkAttributeAsSet(#attrIndex#, true);",
 					"\tgraphModified();",
 					"\t#graphRef#fireAfterChangeAttribute(this, \"#name#\", oldValue, _#name#);",
 					"}");
@@ -395,12 +398,8 @@ public abstract class AttributedElementCodeGenerator<SC extends AttributedElemen
 	protected CodeBlock createField(Attribute attr) {
 		CodeSnippet code = new CodeSnippet(true, "protected #type# _#name#;");
 		code.setVariable("name", attr.getName());
-		if (currentCycle.isStdImpl()) {
-			code.setVariable(
-					"type",
-					attr.getDomain().getJavaAttributeImplementationTypeName(
-							schemaRootPackageName));
-		}
+		code.setVariable("type", attr.getDomain()
+				.getJavaAttributeImplementationTypeName(schemaRootPackageName));
 		return code;
 	}
 
@@ -422,14 +421,13 @@ public abstract class AttributedElementCodeGenerator<SC extends AttributedElemen
 				a.addNoIndent(new CodeSnippet(
 						"if (attributeName.equals(\"#variableName#\")) {",
 						"\tGraphIO io = GraphIO.createStringReader(value, getSchema());"));
-				if (currentCycle.isStdImpl()) {
-					a.add(attribute.getDomain().getReadMethod(
-							schemaRootPackageName, "_" + attribute.getName(),
-							"io"));
-					a.addNoIndent(new CodeSnippet(
-							"\t#setterName#(_#variableName#);", "\treturn;",
-							"}"));
-				}
+
+				a.add(attribute.getDomain().getReadMethod(
+						schemaRootPackageName, "_" + attribute.getName(), "io",
+						true));
+				a.addNoIndent(new CodeSnippet(
+						"\tif (attrIsSet) {#setterName#(_#variableName#);}",
+						"\treturn;", "}"));
 				code.add(a);
 			}
 		}
@@ -461,11 +459,15 @@ public abstract class AttributedElementCodeGenerator<SC extends AttributedElemen
 				a.addNoIndent(new CodeSnippet(
 						"if (attributeName.equals(\"#variableName#\")) {",
 						"\tGraphIO io = GraphIO.createStringWriter(getSchema());"));
-				if (currentCycle.isStdImpl()) {
-					a.add(attribute.getDomain().getWriteMethod(
-							schemaRootPackageName, "_" + attribute.getName(),
-							"io"));
-				}
+				a.add(new CodeSnippet(
+						"if (isUnsetAttribute(\"" + attribute.getName()
+								+ "\")) {",
+						"\tio.writeIdentifier(de.uni_koblenz.jgralab.impl.TgLexer.Token.UNSET.toString());",
+						"} else {"));
+				a.add(attribute.getDomain().getWriteMethod(
+						schemaRootPackageName, "_" + attribute.getName(), "io"),
+						1);
+				a.add(new CodeSnippet("}"));
 				a.addNoIndent(new CodeSnippet(
 						"\treturn io.getStringWriterResult();", "}"));
 				code.add(a);
@@ -490,13 +492,14 @@ public abstract class AttributedElementCodeGenerator<SC extends AttributedElemen
 				CodeSnippet snippet = new CodeSnippet();
 				snippet.setVariable("setterName", "set_" + attribute.getName());
 				snippet.setVariable("variableName", attribute.getName());
-				if (currentCycle.isStdImpl()) {
-					code.add(attribute.getDomain().getReadMethod(
-							schemaRootPackageName, "_" + attribute.getName(),
-							"io"));
-				}
-				snippet.add("#setterName#(_#variableName#);");
+				code.add(new CodeSnippet("{"));
+				code.add(
+						attribute.getDomain().getReadMethod(
+								schemaRootPackageName,
+								"_" + attribute.getName(), "io", true), 1);
+				snippet.add("\tif (attrIsSet) {#setterName#(_#variableName#);}");
 				code.add(snippet);
+				code.add(new CodeSnippet("}"));
 			}
 		}
 		code.addNoIndent(new CodeSnippet("}"));
@@ -514,11 +517,16 @@ public abstract class AttributedElementCodeGenerator<SC extends AttributedElemen
 				"public void writeAttributeValues(GraphIO io) throws GraphIOException, IOException {"));
 		if ((attributes != null) && !attributes.isEmpty()) {
 			for (Attribute attribute : attributes) {
-				if (currentCycle.isStdImpl()) {
-					code.add(attribute.getDomain().getWriteMethod(
-							schemaRootPackageName, "_" + attribute.getName(),
-							"io"));
-				}
+				code.add(new CodeSnippet(
+						"if (isUnsetAttribute(\"" + attribute.getName()
+								+ "\")) {",
+						"\tio.writeIdentifier(de.uni_koblenz.jgralab.impl.TgLexer.Token.UNSET.toString());",
+						"} else {"));
+				code.add(
+						attribute.getDomain().getWriteMethod(
+								schemaRootPackageName,
+								"_" + attribute.getName(), "io"), 1);
+				code.add(new CodeSnippet("}"));
 			}
 		}
 		code.addNoIndent(new CodeSnippet("}"));

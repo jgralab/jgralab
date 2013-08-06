@@ -38,6 +38,7 @@ package de.uni_koblenz.jgralab.impl;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.exception.GraphIOException;
+import de.uni_koblenz.jgralab.exception.NoSuchAttributeException;
 import de.uni_koblenz.jgralab.exception.TemporaryGraphElementException;
 import de.uni_koblenz.jgralab.schema.Attribute;
 import de.uni_koblenz.jgralab.schema.GraphClass;
@@ -53,6 +54,21 @@ import de.uni_koblenz.jgralab.schema.Schema;
 public abstract class GraphElementImpl<SC extends GraphElementClass<SC, IC>, IC extends GraphElement<SC, IC>>
 		implements InternalGraphElement<SC, IC> {
 	protected int id;
+
+	@Override
+	public boolean isUnsetAttribute(String name)
+			throws NoSuchAttributeException {
+		return !internalGetSetAttributesBitSet().get(
+				getAttributedElementClass().getAttributeIndex(name));
+	}
+
+	@Override
+	public void internalMarkAttributeAsSet(int attrIdx, boolean value) {
+		if (internalGetSetAttributesBitSet() != null) {
+			// setAttributes is still null during the setting of default values
+			internalGetSetAttributesBitSet().set(attrIdx, value);
+		}
+	}
 
 	protected GraphElementImpl(Graph graph) {
 		assert graph != null;

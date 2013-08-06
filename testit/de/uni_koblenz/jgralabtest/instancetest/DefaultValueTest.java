@@ -39,6 +39,8 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.AbstractMap.SimpleImmutableEntry;
 import java.util.Collection;
 import java.util.List;
@@ -121,6 +123,22 @@ public class DefaultValueTest extends InstanceTest {
 				graph.get_recordGraph());
 	}
 
+	@Test
+	public void testGraphAttributesAfterSaveAndLoad() throws IOException,
+			GraphIOException {
+		File tmp = File.createTempFile("graph", "tg");
+		graph.save(tmp.getPath());
+		DefaultValueTestGraph graph = DefaultValueTestSchema.instance()
+				.loadDefaultValueTestGraph(tmp.getPath());
+		checkAttributes(graph.is_boolGraph(), graph.get_intGraph(),
+				graph.get_longGraph(), graph.get_doubleGraph(),
+				graph.get_stringGraph(), graph.get_enumGraph(),
+				graph.get_listGraph(), graph.get_complexListGraph(),
+				graph.get_setGraph(), graph.get_complexSetGraph(),
+				graph.get_mapGraph(), graph.get_complexMapGraph(),
+				graph.get_recordGraph());
+	}
+
 	/**
 	 * Test if the defaultValues of the vertex attributes are set and differ
 	 * from graph.
@@ -131,6 +149,23 @@ public class DefaultValueTest extends InstanceTest {
 	public void testVertexAttributes() {
 		TestVertex v = graph.createTestVertex();
 
+		checkAttributes(v.is_boolVertex(), v.get_intVertex(),
+				v.get_longVertex(), v.get_doubleVertex(), v.get_stringVertex(),
+				v.get_enumVertex(), v.get_listVertex(),
+				v.get_complexListVertex(), v.get_setVertex(),
+				v.get_complexSetVertex(), v.get_mapVertex(),
+				v.get_complexMapVertex(), v.get_recordVertex());
+	}
+
+	@Test
+	public void testVertexAttributesAfterSaveAndLoad() throws IOException,
+			GraphIOException {
+		TestVertex v = graph.createTestVertex();
+		File tmp = File.createTempFile("graph", "tg");
+		graph.save(tmp.getPath());
+		DefaultValueTestGraph g = DefaultValueTestSchema.instance()
+				.loadDefaultValueTestGraph(tmp.getPath());
+		v = g.getFirstTestVertex();
 		checkAttributes(v.is_boolVertex(), v.get_intVertex(),
 				v.get_longVertex(), v.get_doubleVertex(), v.get_stringVertex(),
 				v.get_enumVertex(), v.get_listVertex(),
@@ -167,6 +202,24 @@ public class DefaultValueTest extends InstanceTest {
 	public void testEdgeAttributes() {
 		TestVertex v = graph.createTestVertex();
 		TestEdge e = graph.createTestEdge(v, v);
+		checkAttributes(e.is_boolEdge(), e.get_intEdge(), e.get_longEdge(),
+				e.get_doubleEdge(), e.get_stringEdge(), e.get_enumEdge(),
+				e.get_listEdge(), e.get_complexListEdge(), e.get_setEdge(),
+				e.get_complexSetEdge(), e.get_mapEdge(),
+				e.get_complexMapEdge(), e.get_recordEdge());
+	}
+
+	@Test
+	public void testEdgeAttributesAfterSaveAndLoad() throws IOException,
+			GraphIOException {
+		TestVertex v = graph.createTestVertex();
+		TestEdge e = graph.createTestEdge(v, v);
+		File tmp = File.createTempFile("graph", "tg");
+		graph.save(tmp.getPath());
+		DefaultValueTestGraph g = DefaultValueTestSchema.instance()
+				.loadDefaultValueTestGraph(tmp.getPath());
+		e = g.getFirstTestEdge();
+
 		checkAttributes(e.is_boolEdge(), e.get_intEdge(), e.get_longEdge(),
 				e.get_doubleEdge(), e.get_stringEdge(), e.get_enumEdge(),
 				e.get_listEdge(), e.get_complexListEdge(), e.get_setEdge(),

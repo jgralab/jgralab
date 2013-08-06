@@ -4007,7 +4007,6 @@ public class EdgeTest extends InstanceTest {
 		SubLink e1 = g.createSubLink(v1, v2);
 
 		// test of writeAttributeValues
-		// TODO check if save command has to be wrapped inside a transaction...
 		g.save("test.tg");
 
 		LineNumberReader reader = new LineNumberReader(
@@ -4024,8 +4023,9 @@ public class EdgeTest extends InstanceTest {
 				break;
 			}
 		}
-		assertEquals("n", parts[2]);
-		assertEquals("0", parts[3]);
+		// Both haven't been set so are u
+		assertEquals("u", parts[2]);
+		assertEquals("u", parts[3]);
 		// test of readAttributeValues
 		VertexTestGraph loadedgraph = loadTestGraph();
 

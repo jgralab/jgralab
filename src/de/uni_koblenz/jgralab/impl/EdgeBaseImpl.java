@@ -35,6 +35,8 @@
 
 package de.uni_koblenz.jgralab.impl;
 
+import java.util.BitSet;
+
 import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
@@ -62,6 +64,19 @@ public abstract class EdgeBaseImpl extends IncidenceImpl implements
 		super(graph);
 		setId(anId);
 		reversedEdge = createReversedEdge();
+	}
+
+	private BitSet setAttributes;
+
+	@Override
+	public void internalInitializeSetAttributesBitSet() {
+		setAttributes = new BitSet(getAttributedElementClass()
+				.getAttributeCount());
+	}
+
+	@Override
+	public BitSet internalGetSetAttributesBitSet() {
+		return setAttributes;
 	}
 
 	/*

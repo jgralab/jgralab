@@ -40,7 +40,7 @@ import de.uni_koblenz.jgralab.schema.Attribute;
 import de.uni_koblenz.jgralab.schema.GraphElementClass;
 
 public interface InternalGraphElement<SC extends GraphElementClass<SC, IC>, IC extends GraphElement<SC, IC>>
-		extends GraphElement<SC, IC> {
+		extends GraphElement<SC, IC>, InternalAttributedElement {
 
 	/**
 	 * sets the id field of this graph element
@@ -64,4 +64,5 @@ public interface InternalGraphElement<SC extends GraphElementClass<SC, IC>, IC e
 	 * graph, an edge or a vertex are treated as a change.
 	 */
 	public void graphModified();
+
 }

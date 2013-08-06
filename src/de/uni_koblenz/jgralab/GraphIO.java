@@ -184,6 +184,10 @@ public final class GraphIO {
 	// middle of nextIncidence array to care or negative incidence ids
 	private int edgeOffset;
 
+	public static enum Unset {
+		UNSET
+	};
+
 	/**
 	 * Buffers the parsed data of enum domains prior to their creation in
 	 * JGraLab.
@@ -862,9 +866,10 @@ public final class GraphIO {
 				}
 			} else {
 				if (!TgLexer.isWs(lastCh)) {
-					if (!(lastCh == '(' || lastCh == '[' || lastCh == '{'
-							|| lastCh == '<' || ch == ')' || ch == ']'
-							|| ch == '}' || ch == '>' || ch == ':' || ch == ',' || ch == ';')) {
+					if (!((lastCh == '(') || (lastCh == '[') || (lastCh == '{')
+							|| (lastCh == '<') || (ch == ')') || (ch == ']')
+							|| (ch == '}') || (ch == '>') || (ch == ':')
+							|| (ch == ',') || (ch == ';'))) {
 						TGOut.write(32);
 					}
 				}
@@ -1092,7 +1097,7 @@ public final class GraphIO {
 		match();
 		header();
 		schema();
-		if (lookAhead == Token.EOF || lookAhead == Token.GRAPH) {
+		if ((lookAhead == Token.EOF) || (lookAhead == Token.GRAPH)) {
 			return;
 		}
 		throw new GraphIOException(lexer.getLocation() + "Unexpected symbol '"
@@ -1145,8 +1150,8 @@ public final class GraphIO {
 				// lookAhead = Graph is a too weak check. So we test that before
 				// the Graph, the last token is a ;, too.
 				Token prev = null;
-				while (lookAhead != Token.EOF
-						&& !(prev == Token.SEMICOLON && lookAhead == Token.GRAPH)) {
+				while ((lookAhead != Token.EOF)
+						&& !((prev == Token.SEMICOLON) && (lookAhead == Token.GRAPH))) {
 					prev = lookAhead;
 					match();
 				}
@@ -1166,7 +1171,7 @@ public final class GraphIO {
 
 		// test for correct syntax, because otherwise, the following
 		// sorting/creation methods probably can't work.
-		if (!(lookAhead == Token.EOF || lookAhead == Token.GRAPH)) {
+		if (!((lookAhead == Token.EOF) || (lookAhead == Token.GRAPH))) {
 			throw new GraphIOException(lexer.getLocation()
 					+ "Unexpected symbol '" + lexer.getText() + "'");
 		}
@@ -1301,10 +1306,13 @@ public final class GraphIO {
 		}
 		String currentGraphClassName = parseGraphClass();
 
-		while (lookAhead == Token.PACKAGE || lookAhead == Token.RECORDDOMAIN
-				|| lookAhead == Token.ENUMDOMAIN || lookAhead == Token.ABSTRACT
-				|| lookAhead == Token.VERTEXCLASS
-				|| lookAhead == Token.EDGECLASS || lookAhead == Token.COMMENT) {
+		while ((lookAhead == Token.PACKAGE)
+				|| (lookAhead == Token.RECORDDOMAIN)
+				|| (lookAhead == Token.ENUMDOMAIN)
+				|| (lookAhead == Token.ABSTRACT)
+				|| (lookAhead == Token.VERTEXCLASS)
+				|| (lookAhead == Token.EDGECLASS)
+				|| (lookAhead == Token.COMMENT)) {
 			if (lookAhead == Token.PACKAGE) {
 				parsePackage();
 			} else if (lookAhead == Token.RECORDDOMAIN) {
@@ -1498,19 +1506,19 @@ public final class GraphIO {
 	 */
 	private void parseAttrDomain(List<String> attrDomain)
 			throws GraphIOException {
-		if (lookAhead == Token.LIST || lookAhead == Token.LIST2) {
+		if ((lookAhead == Token.LIST) || (lookAhead == Token.LIST2)) {
 			match();
 			match(Token.LT);
 			attrDomain.add("List<");
 			parseAttrDomain(attrDomain);
 			match(Token.GT);
-		} else if (lookAhead == Token.SET || lookAhead == Token.SET2) {
+		} else if ((lookAhead == Token.SET) || (lookAhead == Token.SET2)) {
 			match();
 			match(Token.LT);
 			attrDomain.add("Set<");
 			parseAttrDomain(attrDomain);
 			match(Token.GT);
-		} else if (lookAhead == Token.MAP || lookAhead == Token.MAP2) {
+		} else if ((lookAhead == Token.MAP) || (lookAhead == Token.MAP2)) {
 			match();
 			match(Token.LT);
 			attrDomain.add("Map<");
@@ -1806,18 +1814,18 @@ public final class GraphIO {
 		}
 		char c = s.charAt(0);
 		if (startsWithUppercase) {
-			if (c < 'A' || c > 'Z') {
+			if ((c < 'A') || (c > 'Z')) {
 				return false;
 			}
 		} else {
-			if (c < 'a' || c > 'z') {
+			if ((c < 'a') || (c > 'z')) {
 				return false;
 			}
 		}
 		for (int i = 1; i < l; ++i) {
 			c = s.charAt(i);
-			if (!(c >= 'A' && c <= 'Z' || c >= 'a' && c <= 'z' || c >= '0'
-					&& c <= '9' || c == '_')) {
+			if (!(((c >= 'A') && (c <= 'Z')) || ((c >= 'a') && (c <= 'z'))
+					|| ((c >= '0') && (c <= '9')) || (c == '_'))) {
 				return false;
 			}
 		}
@@ -1960,7 +1968,7 @@ public final class GraphIO {
 			lookAhead = lexer.nextToken();
 		} else {
 			throw new GraphIOException(lexer.getLocation() + "Expected " + t
-					+ " but found " + lexer.getText() + "'");
+					+ " but found '" + lexer.getText() + "'");
 		}
 	}
 
@@ -2021,19 +2029,19 @@ public final class GraphIO {
 		String qn = lexer.getText();
 		int l = qn.length();
 		String result = null;
-		if (l > 0 && qn.charAt(l - 1) != '.') {
+		if ((l > 0) && (qn.charAt(l - 1) != '.')) {
 			int e = qn.indexOf('.');
 			if (e < 0) {
 				// unqualified simple name, prepend current package name
-				if (isValidIdentifier(qn, true) || packageNameAllowed
-						&& isValidIdentifier(qn, false)) {
+				if (isValidIdentifier(qn, true)
+						|| (packageNameAllowed && isValidIdentifier(qn, false))) {
 					result = currentPackageName + qn;
 				}
 			} else if (e == 0) {
 				// simple name in default package (.SimpleName)
 				String sn = qn.substring(1);
-				if (isValidIdentifier(sn, true) || packageNameAllowed
-						&& isValidIdentifier(sn, false)) {
+				if (isValidIdentifier(sn, true)
+						|| (packageNameAllowed && isValidIdentifier(sn, false))) {
 					result = sn;
 				}
 			} else {
@@ -2041,7 +2049,7 @@ public final class GraphIO {
 				int s = 0;
 				boolean ok = true;
 				// check package name parts
-				while (ok && e >= 0) {
+				while (ok && (e >= 0)) {
 					String pn = qn.substring(s, e);
 					ok = ok && isValidIdentifier(pn, false);
 					if (ok) {
@@ -2051,8 +2059,8 @@ public final class GraphIO {
 				}
 				// simple name starts at position s
 				ok = ok
-						&& (isValidIdentifier(qn.substring(s), true) || packageNameAllowed
-								&& isValidIdentifier(qn.substring(s), false));
+						&& (isValidIdentifier(qn.substring(s), true) || (packageNameAllowed && isValidIdentifier(
+								qn.substring(s), false)));
 				if (ok) {
 					result = qn;
 				}
@@ -2076,11 +2084,12 @@ public final class GraphIO {
 	public final String matchPackageName() throws GraphIOException {
 		String pn = lexer.getText();
 		int l = pn.length();
-		boolean ok = l > 0 && pn.charAt(0) != '.' && pn.charAt(l - 1) != '.';
+		boolean ok = (l > 0) && (pn.charAt(0) != '.')
+				&& (pn.charAt(l - 1) != '.');
 		if (ok) {
 			int s = 0;
 			int e = pn.indexOf('.');
-			while (ok && e >= 0) {
+			while (ok && (e >= 0)) {
 				ok = ok && isValidIdentifier(pn.substring(s, e), false);
 				s = e + 1;
 				e = pn.indexOf('.', s);
@@ -2127,7 +2136,8 @@ public final class GraphIO {
 	}
 
 	public final boolean matchBoolean() throws GraphIOException {
-		if (lookAhead != Token.TRUE_LITERAL && lookAhead != Token.FALSE_LITERAL) {
+		if ((lookAhead != Token.TRUE_LITERAL)
+				&& (lookAhead != Token.FALSE_LITERAL)) {
 			throw new GraphIOException(lexer.getLocation()
 					+ "Expected a boolean constant ('f' or 't') but found '"
 					+ lexer.getText() + "'");

@@ -83,10 +83,7 @@ public class ReversedEdgeCodeGenerator extends
 		CodeList code = (CodeList) super.createBody();
 		if (currentCycle.isStdImpl()) {
 			rootBlock.setVariable("baseClassName", "ReversedEdgeImpl");
-
-			if (currentCycle.isStdImpl()) {
-				addImports("#jgImplStdPackage#.#baseClassName#");
-			}
+			addImports("#jgImplStdPackage#.#baseClassName#");
 
 			if (config.hasTypeSpecificMethodsSupport()) {
 				code.add(createNextEdgeMethods());

@@ -36,6 +36,7 @@
 package de.uni_koblenz.jgralab.impl;
 
 import java.util.ArrayList;
+import java.util.BitSet;
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
@@ -75,6 +76,19 @@ public abstract class VertexBaseImpl extends
 	protected VertexBaseImpl(int id, Graph graph) {
 		super(graph);
 		this.id = id;
+	}
+
+	private BitSet setAttributes;
+
+	@Override
+	public void internalInitializeSetAttributesBitSet() {
+		setAttributes = new BitSet(getAttributedElementClass()
+				.getAttributeCount());
+	}
+
+	@Override
+	public BitSet internalGetSetAttributesBitSet() {
+		return setAttributes;
 	}
 
 	/*

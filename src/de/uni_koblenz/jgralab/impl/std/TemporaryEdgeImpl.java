@@ -59,6 +59,19 @@ public class TemporaryEdgeImpl extends EdgeImpl implements TemporaryEdge {
 	}
 
 	@Override
+	public boolean isUnsetAttribute(String name)
+			throws NoSuchAttributeException {
+		throw new UnsupportedOperationException(
+				"The isUnsetAttribute() method is not available for temporary elements.");
+	}
+
+	@Override
+	public void internalInitializeSetAttributesBitSet() {
+		throw new UnsupportedOperationException(
+				"The internalInitializeSetAttributesBitSet() method is not available for temporary elements.");
+	}
+
+	@Override
 	public void initializeAttributesWithDefaultValues() {
 		// do nothing - no attributes
 	}

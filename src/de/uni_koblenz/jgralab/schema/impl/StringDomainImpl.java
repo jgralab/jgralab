@@ -39,11 +39,11 @@ import java.io.IOException;
 
 import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.exception.GraphIOException;
+import de.uni_koblenz.jgralab.impl.TgLexer.Token;
 import de.uni_koblenz.jgralab.schema.Package;
 import de.uni_koblenz.jgralab.schema.Schema;
 import de.uni_koblenz.jgralab.schema.StringDomain;
 import de.uni_koblenz.jgralab.schema.codegenerator.CodeBlock;
-import de.uni_koblenz.jgralab.schema.codegenerator.CodeGenerator;
 import de.uni_koblenz.jgralab.schema.codegenerator.CodeSnippet;
 
 public final class StringDomainImpl extends BasicDomainImpl implements
@@ -66,9 +66,10 @@ public final class StringDomainImpl extends BasicDomainImpl implements
 
 	@Override
 	public CodeBlock getReadMethod(String schemaPrefix, String variableName,
-			String graphIoVariableName) {
-		return new CodeSnippet(variableName + " = " + graphIoVariableName
-				+ ".matchUtfString();");
+			String graphIoVariableName, boolean withUnsetCheck) {
+		return maybeWrapInUnsetCheck(graphIoVariableName, withUnsetCheck,
+				variableName + " = " + graphIoVariableName
+						+ ".matchUtfString();");
 	}
 
 	@Override
@@ -84,41 +85,6 @@ public final class StringDomainImpl extends BasicDomainImpl implements
 	}
 
 	@Override
-	public CodeBlock getTransactionReadMethod(String schemaPrefix,
-			String variableName, String graphIoVariableName) {
-		return new CodeSnippet(
-				getJavaAttributeImplementationTypeName(schemaPrefix) + " "
-						+ variableName + " = " + graphIoVariableName
-						+ ".matchUtfString();");
-	}
-
-	@Override
-	public CodeBlock getTransactionWriteMethod(String schemaRootPackagePrefix,
-			String variableName, String graphIoVariableName) {
-		return this.getWriteMethod(schemaRootPackagePrefix, "get"
-				+ CodeGenerator.camelCase(variableName) + "()",
-				graphIoVariableName);
-	}
-
-	@Override
-	public String getTransactionJavaAttributeImplementationTypeName(
-			String schemaRootPackagePrefix) {
-		return getJavaAttributeImplementationTypeName(schemaRootPackagePrefix);
-	}
-
-	@Override
-	public String getTransactionJavaClassName(String schemaRootPackagePrefix) {
-		return "java.lang.String";
-	}
-
-	@Override
-	public String getVersionedClass(String schemaRootPackagePrefix) {
-		return "de.uni_koblenz.jgralab.impl.trans.VersionedReferenceImpl<"
-				+ getTransactionJavaAttributeImplementationTypeName(schemaRootPackagePrefix)
-				+ ">";
-	}
-
-	@Override
 	public String getInitialValue() {
 		return "null";
 	}
@@ -130,8 +96,11 @@ public final class StringDomainImpl extends BasicDomainImpl implements
 
 	@Override
 	public Object parseGenericAttribute(GraphIO io) throws GraphIOException {
-		String result = io.matchUtfString();
-		return result;
+		if (io.isNextToken(Token.UNSET)) {
+			io.match();
+			return GraphIO.Unset.UNSET;
+		}
+		return io.matchUtfString();
 	}
 
 	@Override
@@ -142,6 +111,6 @@ public final class StringDomainImpl extends BasicDomainImpl implements
 
 	@Override
 	public boolean isConformValue(Object value) {
-		return value == null || String.class.isInstance(value);
+		return (value == null) || String.class.isInstance(value);
 	}
 }

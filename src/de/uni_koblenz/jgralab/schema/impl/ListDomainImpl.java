@@ -51,7 +51,6 @@ import de.uni_koblenz.jgralab.schema.ListDomain;
 import de.uni_koblenz.jgralab.schema.Package;
 import de.uni_koblenz.jgralab.schema.Schema;
 import de.uni_koblenz.jgralab.schema.codegenerator.CodeBlock;
-import de.uni_koblenz.jgralab.schema.codegenerator.CodeGenerator;
 import de.uni_koblenz.jgralab.schema.codegenerator.CodeList;
 import de.uni_koblenz.jgralab.schema.codegenerator.CodeSnippet;
 
@@ -81,35 +80,17 @@ public final class ListDomainImpl extends CollectionDomainImpl implements
 	}
 
 	@Override
-	public String getTransactionJavaAttributeImplementationTypeName(
-			String schemaRootPackagePrefix) {
-		return getJavaAttributeImplementationTypeName(schemaRootPackagePrefix);
-	}
-
-	@Override
 	public String getJavaClassName(String schemaRootPackagePrefix) {
 		return getJavaAttributeImplementationTypeName(schemaRootPackagePrefix);
 	}
 
 	@Override
-	public String getTransactionJavaClassName(String schemaRootPackagePrefix) {
-		return getJavaAttributeImplementationTypeName(schemaRootPackagePrefix);
-	}
-
-	@Override
-	public String getVersionedClass(String schemaRootPackagePrefix) {
-		return "de.uni_koblenz.jgralab.impl.trans.VersionedReferenceImpl<"
-				+ getTransactionJavaAttributeImplementationTypeName(schemaRootPackagePrefix)
-				+ ">";
-	}
-
-	@Override
 	public CodeBlock getReadMethod(String schemaPrefix, String variableName,
-			String graphIoVariableName) {
+			String graphIoVariableName, boolean withUnsetCheck) {
 		CodeList code = new CodeList();
 		code.setVariable("init", "");
 		internalGetReadMethod(code, schemaPrefix, variableName,
-				graphIoVariableName);
+				graphIoVariableName, withUnsetCheck);
 
 		return code;
 	}
@@ -136,7 +117,8 @@ public final class ListDomainImpl extends CollectionDomainImpl implements
 	}
 
 	private void internalGetReadMethod(CodeList code, String schemaPrefix,
-			String variableName, String graphIoVariableName) {
+			String variableName, String graphIoVariableName,
+			boolean withUnsetCheck) {
 		code.setVariable("name", variableName);
 		code.setVariable("empty", ListDomain.EMPTY_LIST);
 		code.setVariable("basedom",
@@ -146,6 +128,9 @@ public final class ListDomainImpl extends CollectionDomainImpl implements
 		code.setVariable("io", graphIoVariableName);
 
 		code.addNoIndent(new CodeSnippet("#init#"));
+		if (withUnsetCheck) {
+			code.addNoIndent(new CodeSnippet("boolean attrIsSet = true;"));
+		}
 		code.addNoIndent(new CodeSnippet("if (#io#.isNextToken(#token#.LSQ)) {"));
 		code.add(new CodeSnippet(LISTDOMAIN_TYPE
 				+ "<#basedom#> $#name# = #empty#;", "#io#.match();",
@@ -157,14 +142,21 @@ public final class ListDomainImpl extends CollectionDomainImpl implements
 		}
 		code.add(
 				getBaseDomain().getReadMethod(schemaPrefix,
-						"$" + variableName + "Element", graphIoVariableName), 1);
+						"$" + variableName + "Element", graphIoVariableName,
+						false), 1);
 		code.add(new CodeSnippet("\t$#name# = $#name#.plus($#name#Element);",
 				"}", "#io#.match();", "#name# = $#name#;"));
 		code.addNoIndent(new CodeSnippet(
 				"} else if (#io#.isNextToken(#token#.NULL_LITERAL)) {"));
 
 		code.add(new CodeSnippet("#io#.match(); ", "#name# = null;"));
-		code.addNoIndent(new CodeSnippet("} else {", "\t#name# = null;", "}"));
+		if (withUnsetCheck) {
+			code.addNoIndent(new CodeSnippet(
+					"} else if (#io#.isNextToken(#token#.UNSET)) {",
+					"\t#io#.match();", "\tattrIsSet = false;"));
+		}
+		code.addNoIndent(new CodeSnippet("} else {",
+				"\tthrow new GraphIOException(\"Unknown List value\");", "}"));
 	}
 
 	private void internalGetWriteMethod(CodeList code,
@@ -197,34 +189,16 @@ public final class ListDomainImpl extends CollectionDomainImpl implements
 	}
 
 	@Override
-	public CodeBlock getTransactionReadMethod(String schemaPrefix,
-			String variableName, String graphIoVariableName) {
-		CodeList code = new CodeList();
-		code.setVariable("init", LISTDOMAIN_TYPE + "<#basedom#> #name# = null;");
-		internalGetReadMethod(code, schemaPrefix, variableName,
-				graphIoVariableName);
-		return code;
-	}
-
-	@Override
-	public CodeBlock getTransactionWriteMethod(String schemaRootPackagePrefix,
-			String variableName, String graphIoVariableName) {
-		CodeList code = new CodeList();
-		code.setVariable("name", "get" + CodeGenerator.camelCase(variableName)
-				+ "()");
-		internalGetWriteMethod(code, schemaRootPackagePrefix, variableName,
-				graphIoVariableName);
-		return code;
-	}
-
-	@Override
 	public String getInitialValue() {
 		return "null";
 	}
 
 	@Override
 	public Object parseGenericAttribute(GraphIO io) throws GraphIOException {
-		if (io.isNextToken(Token.LSQ)) {
+		if (io.isNextToken(Token.UNSET)) {
+			io.match();
+			return GraphIO.Unset.UNSET;
+		} else if (io.isNextToken(Token.LSQ)) {
 			PVector<Object> result = JGraLab.vector();
 			io.match();
 			while (!io.isNextToken(Token.RSQ)) {

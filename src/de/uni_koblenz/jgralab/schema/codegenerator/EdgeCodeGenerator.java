@@ -123,9 +123,7 @@ public class EdgeCodeGenerator extends
 		CodeList code = (CodeList) super.createBody();
 		if (currentCycle.isStdImpl()) {
 			rootBlock.setVariable("baseClassName", "EdgeImpl");
-			if (currentCycle.isStdImpl()) {
-				addImports("#jgImplStdPackage#.#baseClassName#");
-			}
+			addImports("#jgImplStdPackage#.#baseClassName#");
 		}
 		if (config.hasTypeSpecificMethodsSupport()
 				&& !currentCycle.isClassOnly()) {

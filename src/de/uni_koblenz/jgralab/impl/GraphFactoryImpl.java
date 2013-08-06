@@ -126,6 +126,8 @@ public abstract class GraphFactoryImpl implements GraphFactory {
 			G graph = (G) graphConstructor.newInstance(id, vMax, eMax);
 			graph.setGraphFactory(this);
 			graphCreated = true;
+			((InternalAttributedElement) graph)
+					.internalInitializeSetAttributesBitSet();
 			return graph;
 		} catch (Exception ex) {
 			throw new SchemaClassAccessException(
@@ -150,6 +152,8 @@ public abstract class GraphFactoryImpl implements GraphFactory {
 			} else {
 				newInstance = (E) edgeMap.get(ec).newInstance(id, g, alpha,
 						omega);
+				((InternalAttributedElement) newInstance)
+						.internalInitializeSetAttributesBitSet();
 			}
 			ig.fireAfterCreateEdge(newInstance);
 			return newInstance;
@@ -174,6 +178,8 @@ public abstract class GraphFactoryImpl implements GraphFactory {
 				newInstance = (V) g.createTemporaryVertex();
 			} else {
 				newInstance = (V) vertexMap.get(vc).newInstance(id, g);
+				((InternalAttributedElement) newInstance)
+						.internalInitializeSetAttributesBitSet();
 			}
 			ig.fireAfterCreateVertex(newInstance);
 			return newInstance;

@@ -51,7 +51,6 @@ import de.uni_koblenz.jgralab.schema.Domain;
 import de.uni_koblenz.jgralab.schema.Package;
 import de.uni_koblenz.jgralab.schema.RecordDomain;
 import de.uni_koblenz.jgralab.schema.codegenerator.CodeBlock;
-import de.uni_koblenz.jgralab.schema.codegenerator.CodeGenerator;
 import de.uni_koblenz.jgralab.schema.codegenerator.CodeSnippet;
 import de.uni_koblenz.jgralab.schema.exception.CycleException;
 import de.uni_koblenz.jgralab.schema.exception.SchemaClassAccessException;
@@ -153,12 +152,12 @@ public final class RecordDomainImpl extends CompositeDomainImpl implements
 
 	@Override
 	public CodeBlock getReadMethod(String schemaPrefix, String variableName,
-			String graphIoVariableName) {
+			String graphIoVariableName, boolean withUnsetCheck) {
 		CodeSnippet code = new CodeSnippet();
 		code.setVariable("name", variableName);
 		code.setVariable("init", "");
 		internalGetReadMethod(code, schemaPrefix, variableName,
-				graphIoVariableName);
+				graphIoVariableName, withUnsetCheck);
 
 		return code;
 	}
@@ -195,15 +194,23 @@ public final class RecordDomainImpl extends CompositeDomainImpl implements
 	}
 
 	private void internalGetReadMethod(CodeSnippet code, String schemaPrefix,
-			String variableName, String graphIoVariableName) {
+			String variableName, String graphIoVariableName,
+			boolean withUnsetCheck) {
 		code.add("#init#");
-		code.add("if (" + graphIoVariableName + ".isNextToken(#token#.LBR)) {");
+		code.setVariable("io", graphIoVariableName);
+		if (withUnsetCheck) {
+			code.add("boolean attrIsSet = true;");
+		}
+		code.add("if (#io#.isNextToken(#token#.LBR)) {");
 		code.add("\t" + "#name# = new " + getSchema().getPackagePrefix() + "."
 				+ getQualifiedName() + "(io);");
-		code.add("} else if (" + graphIoVariableName
-				+ ".isNextToken(#token#.NULL_LITERAL)) {");
-		code.add("\t" + graphIoVariableName + ".match();");
+		code.add("} else if (#io#.isNextToken(#token#.NULL_LITERAL)) {");
+		code.add("\t#io#.match();");
 		code.add("\t" + variableName + " = null;");
+		if (withUnsetCheck) {
+			code.add("} else if (#io#.isNextToken(#token#.UNSET)) {",
+					"\t#io#.match();", "\tattrIsSet = false;");
+		}
 		code.add("} else {");
 		code.add("\tthrow new GraphIOException(\"Read record: '(' or 'n' expected\");");
 		code.add("}");
@@ -222,48 +229,6 @@ public final class RecordDomainImpl extends CompositeDomainImpl implements
 	}
 
 	@Override
-	public CodeBlock getTransactionReadMethod(String schemaPrefix,
-			String variableName, String graphIoVariableName) {
-		CodeSnippet code = new CodeSnippet();
-		code.setVariable("name", variableName);
-		code.setVariable("init",
-				getJavaAttributeImplementationTypeName(schemaPrefix)
-						+ " #name# = null;");
-		internalGetReadMethod(code, schemaPrefix, variableName,
-				graphIoVariableName);
-		return code;
-	}
-
-	@Override
-	public CodeBlock getTransactionWriteMethod(String schemaRootPackagePrefix,
-			String variableName, String graphIoVariableName) {
-		CodeSnippet code = new CodeSnippet();
-		code.setVariable("name", "get" + CodeGenerator.camelCase(variableName)
-				+ "()");
-		internalGetWriteMethod(code, schemaRootPackagePrefix, variableName,
-				graphIoVariableName);
-		return code;
-	}
-
-	@Override
-	public String getTransactionJavaAttributeImplementationTypeName(
-			String schemaRootPackagePrefix) {
-		return getJavaAttributeImplementationTypeName(schemaRootPackagePrefix);
-	}
-
-	@Override
-	public String getTransactionJavaClassName(String schemaRootPackagePrefix) {
-		return getJavaAttributeImplementationTypeName(schemaRootPackagePrefix);
-	}
-
-	@Override
-	public String getVersionedClass(String schemaRootPackagePrefix) {
-		return "de.uni_koblenz.jgralab.impl.trans.VersionedReferenceImpl<"
-				+ getTransactionJavaAttributeImplementationTypeName(schemaRootPackagePrefix)
-				+ ">";
-	}
-
-	@Override
 	public String getInitialValue() {
 		return "null";
 	}
@@ -275,7 +240,10 @@ public final class RecordDomainImpl extends CompositeDomainImpl implements
 
 	@Override
 	public Object parseGenericAttribute(GraphIO io) throws GraphIOException {
-		if (io.isNextToken(Token.LBR)) {
+		if (io.isNextToken(Token.UNSET)) {
+			io.match();
+			return GraphIO.Unset.UNSET;
+		} else if (io.isNextToken(Token.LBR)) {
 			de.uni_koblenz.jgralab.impl.RecordImpl result = de.uni_koblenz.jgralab.impl.RecordImpl
 					.empty();
 			io.match();

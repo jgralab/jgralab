@@ -46,7 +46,7 @@ import de.uni_koblenz.jgralab.schema.Attribute;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.VertexClass;
 
-public interface InternalGraph extends Graph {
+public interface InternalGraph extends Graph, InternalAttributedElement {
 
 	/**
 	 * Changes this graph's version. graphModified() is called whenever the
