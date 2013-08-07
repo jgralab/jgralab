@@ -72,7 +72,7 @@ public class TemporaryEdgeImpl extends EdgeImpl implements TemporaryEdge {
 	}
 
 	@Override
-	public void initializeAttributesWithDefaultValues() {
+	public void internalInitializeAttributesWithDefaultValues() {
 		// do nothing - no attributes
 	}
 

@@ -97,7 +97,7 @@ public class TemporaryVertexImpl extends VertexImpl implements TemporaryVertex {
 	}
 
 	@Override
-	public void initializeAttributesWithDefaultValues() {
+	public void internalInitializeAttributesWithDefaultValues() {
 		// do nothing
 	}
 

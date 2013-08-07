@@ -189,13 +189,6 @@ public interface AttributedElement<SC extends AttributedElementClass<SC, IC>, IC
 	public Schema getSchema();
 
 	/**
-	 * Initializes all values for all
-	 * {@link de.uni_koblenz.jgralab.schema.Attribute}s with their
-	 * {@code default} values.
-	 */
-	void initializeAttributesWithDefaultValues();
-
-	/**
 	 * @param cls
 	 *            schema class to test
 	 * @return true, iff this {@link AttributedElement} is an instance of the

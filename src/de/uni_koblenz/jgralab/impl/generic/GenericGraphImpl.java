@@ -183,7 +183,7 @@ public class GenericGraphImpl extends GraphImpl implements
 	}
 
 	@Override
-	public void initializeAttributesWithDefaultValues() {
+	public void internalInitializeAttributesWithDefaultValues() {
 		initializeGenericAttributeValues(this);
 	}
 

@@ -118,7 +118,7 @@ public abstract class GraphElementImpl<SC extends GraphElementClass<SC, IC>, IC 
 	}
 
 	@Override
-	public void initializeAttributesWithDefaultValues() {
+	public void internalInitializeAttributesWithDefaultValues() {
 		// disable GraphChangeListener notifications
 		boolean b = graph.setLoading(true);
 		try {

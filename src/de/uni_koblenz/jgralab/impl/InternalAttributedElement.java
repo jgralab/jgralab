@@ -13,4 +13,11 @@ public interface InternalAttributedElement {
 	public BitSet internalGetSetAttributesBitSet();
 
 	public void internalInitializeSetAttributesBitSet();
+
+	/**
+	 * Initializes all values for all
+	 * {@link de.uni_koblenz.jgralab.schema.Attribute}s with their
+	 * {@code default} values.
+	 */
+	void internalInitializeAttributesWithDefaultValues();
 }

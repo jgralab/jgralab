@@ -186,7 +186,7 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 	}
 
 	@Override
-	public void initializeAttributesWithDefaultValues() {
+	public void internalInitializeAttributesWithDefaultValues() {
 		for (Attribute attr : getAttributedElementClass().getAttributeList()) {
 			try {
 				if ((attr.getDefaultValueAsString() != null)

@@ -157,7 +157,7 @@ public class GenericVertexImpl extends VertexImpl implements
 	}
 
 	@Override
-	public void initializeAttributesWithDefaultValues() {
+	public void internalInitializeAttributesWithDefaultValues() {
 		GenericGraphImpl.initializeGenericAttributeValues(this);
 	}
 

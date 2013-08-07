@@ -224,7 +224,7 @@ public class GenericEdgeImpl extends EdgeImpl implements
 	}
 
 	@Override
-	public void initializeAttributesWithDefaultValues() {
+	public void internalInitializeAttributesWithDefaultValues() {
 		GenericGraphImpl.initializeGenericAttributeValues(this);
 	}
 
