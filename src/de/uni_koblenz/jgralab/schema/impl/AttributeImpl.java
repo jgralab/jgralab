@@ -39,6 +39,7 @@ import java.util.regex.Pattern;
 
 import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.exception.GraphIOException;
+import de.uni_koblenz.jgralab.impl.InternalAttributedElement;
 import de.uni_koblenz.jgralab.schema.Attribute;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.Domain;
@@ -191,7 +192,9 @@ public class AttributeImpl implements Attribute, Comparable<Attribute> {
 			element.setAttribute(name, defaultValue);
 		} else {
 			if (defaultValueAsString != null) {
-				element.readAttributeValueFromString(name, defaultValueAsString);
+				((InternalAttributedElement) element)
+						.readAttributeValueFromString(name,
+								defaultValueAsString);
 			}
 			defaultValue = element.getAttribute(name);
 			defaultValueComputed = true;

@@ -63,6 +63,9 @@ import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.exception.GraphException;
 import de.uni_koblenz.jgralab.exception.GraphIOException;
 import de.uni_koblenz.jgralab.exception.NoSuchAttributeException;
+import de.uni_koblenz.jgralab.impl.InternalEdge;
+import de.uni_koblenz.jgralab.impl.InternalGraph;
+import de.uni_koblenz.jgralab.impl.InternalVertex;
 import de.uni_koblenz.jgralab.impl.RecordImpl;
 import de.uni_koblenz.jgralab.impl.generic.GenericEdgeImpl;
 import de.uni_koblenz.jgralab.impl.generic.GenericGraphImpl;
@@ -765,7 +768,8 @@ public class GenericGraphImplTest {
 
 		Schema s = GraphIO.loadSchemaFromFile(SCHEMAFOLDER
 				+ "DefaultValueTestSchema.tg");
-		Graph g = s.createGraph(ImplementationType.GENERIC);
+		InternalGraph g = (InternalGraph) s
+				.createGraph(ImplementationType.GENERIC);
 		for (Attribute a : g.getAttributedElementClass().getAttributeList()) {
 			testDefaultValue(g.getAttribute(a.getName()), a);
 		}
@@ -831,7 +835,8 @@ public class GenericGraphImplTest {
 
 		Schema s = GraphIO.loadSchemaFromFile(SCHEMAFOLDER
 				+ "DefaultValueTestSchema.tg");
-		Graph g = s.createGraph(ImplementationType.GENERIC);
+		InternalGraph g = (InternalGraph) s
+				.createGraph(ImplementationType.GENERIC);
 		for (Attribute a : g.getAttributedElementClass().getAttributeList()) {
 			testDefaultValue(g.getAttribute(a.getName()), a);
 		}
@@ -895,7 +900,8 @@ public class GenericGraphImplTest {
 			NoSuchAttributeException, IOException {
 		Schema s = GraphIO.loadSchemaFromFile(SCHEMAFOLDER
 				+ "DefaultValueTestSchema.tg");
-		Graph g = s.createGraph(ImplementationType.GENERIC);
+		InternalGraph g = (InternalGraph) s
+				.createGraph(ImplementationType.GENERIC);
 		for (Attribute a : g.getAttributedElementClass().getAttributeList()) {
 			testDefaultValue(g.getAttribute(a.getName()), a);
 		}
@@ -944,7 +950,7 @@ public class GenericGraphImplTest {
 	public void testWriteAttributeValues() throws GraphIOException, IOException {
 		Schema s = GraphIO.loadSchemaFromFile(SCHEMAFOLDER
 				+ "DefaultValueTestSchema.tg");
-		Graph g = s.createGraph(ImplementationType.GENERIC);
+		InternalGraph g = (InternalGraph) s.createGraph(ImplementationType.GENERIC);
 		for (Attribute a : g.getAttributedElementClass().getAttributeList()) {
 			testDefaultValue(g.getAttribute(a.getName()), a);
 		}
@@ -1143,7 +1149,8 @@ public class GenericGraphImplTest {
 		// implementation
 		Graph g2 = GraphIO.loadGraphFromFile(GRAPHFOLDER + "greqltestgraph.tg",
 				ImplementationType.STANDARD, null);
-		for (Vertex v : g2.vertices()) {
+		for (Vertex vx : g2.vertices()) {
+			InternalVertex v = (InternalVertex) vx;
 			assertEquals(v.getAttributedElementClass(), g1.getVertex(v.getId())
 					.getAttributedElementClass());
 
@@ -1151,7 +1158,7 @@ public class GenericGraphImplTest {
 			for (Attribute a : v.getAttributedElementClass().getAttributeList()) {
 				try {
 					assertEquals(v.writeAttributeValueToString(a.getName()),
-							g2.getVertex(v.getId())
+							((InternalVertex) g2.getVertex(v.getId()))
 									.writeAttributeValueToString(a.getName()));
 				} catch (IOException e) {
 					e.printStackTrace();
@@ -1159,7 +1166,8 @@ public class GenericGraphImplTest {
 				}
 			}
 		}
-		for (Edge edge : g2.edges()) {
+		for (Edge edgex : g2.edges()) {
+			InternalEdge edge = (InternalEdge) edgex;
 			assertEquals(edge.getAttributedElementClass(),
 					g1.getEdge(edge.getId()).getAttributedElementClass());
 
@@ -1167,10 +1175,9 @@ public class GenericGraphImplTest {
 			for (Attribute a : edge.getAttributedElementClass()
 					.getAttributeList()) {
 
-				assertEquals(
-						edge.writeAttributeValueToString(a.getName()),
-						g2.getEdge(edge.getId()).writeAttributeValueToString(
-								a.getName()));
+				assertEquals(edge.writeAttributeValueToString(a.getName()),
+						((InternalEdge) g2.getEdge(edge.getId()))
+								.writeAttributeValueToString(a.getName()));
 
 			}
 		}

@@ -55,6 +55,7 @@ import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.exception.GraphException;
 import de.uni_koblenz.jgralab.exception.GraphIOException;
 import de.uni_koblenz.jgralab.exception.NoSuchAttributeException;
+import de.uni_koblenz.jgralab.impl.InternalVertex;
 import de.uni_koblenz.jgralab.impl.RecordImpl;
 import de.uni_koblenz.jgralab.schema.Attribute;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
@@ -586,8 +587,8 @@ public class GenericVertexImplTest {
 		Schema s = GraphIO.loadSchemaFromFile(GenericGraphImplTest.SCHEMAFOLDER
 				+ "DefaultValueTestSchema.tg");
 		Graph g = s.createGraph(ImplementationType.GENERIC);
-		Vertex v = g.createVertex(g.getGraphClass()
-				.getVertexClass("TestVertex"));
+		InternalVertex v = g.createVertex(g.getGraphClass().getVertexClass(
+				"TestVertex"));
 		for (Attribute a : v.getAttributedElementClass().getAttributeList()) {
 			GenericGraphImplTest.testDefaultValue(v.getAttribute(a.getName()),
 					a);
@@ -653,8 +654,8 @@ public class GenericVertexImplTest {
 		Schema s = GraphIO.loadSchemaFromFile(GenericGraphImplTest.SCHEMAFOLDER
 				+ "DefaultValueTestSchema.tg");
 		Graph g = s.createGraph(ImplementationType.GENERIC);
-		Vertex v = g.createVertex(g.getGraphClass()
-				.getVertexClass("TestVertex"));
+		InternalVertex v = g.createVertex(g.getGraphClass().getVertexClass(
+				"TestVertex"));
 		for (Attribute a : v.getAttributedElementClass().getAttributeList()) {
 			GenericGraphImplTest.testDefaultValue(v.getAttribute(a.getName()),
 					a);
@@ -721,7 +722,7 @@ public class GenericVertexImplTest {
 		Schema s = GraphIO.loadSchemaFromFile(GenericGraphImplTest.SCHEMAFOLDER
 				+ "DefaultValueTestSchema.tg");
 		Graph g = s.createGraph(ImplementationType.GENERIC);
-		Vertex v = g.createVertex(g.getGraphClass().getVertexClass(
+		InternalVertex v = g.createVertex(g.getGraphClass().getVertexClass(
 				"TestSubVertex"));
 		for (Attribute a : v.getAttributedElementClass().getAttributeList()) {
 			GenericGraphImplTest.testDefaultValue(v.getAttribute(a.getName()),
@@ -772,8 +773,8 @@ public class GenericVertexImplTest {
 		Schema s = GraphIO.loadSchemaFromFile(GenericGraphImplTest.SCHEMAFOLDER
 				+ "DefaultValueTestSchema.tg");
 		Graph g = s.createGraph(ImplementationType.GENERIC);
-		Vertex v = g.createVertex(g.getGraphClass()
-				.getVertexClass("TestVertex"));
+		InternalVertex v = g.createVertex(g.getGraphClass().getVertexClass(
+				"TestVertex"));
 		for (Attribute a : v.getAttributedElementClass().getAttributeList()) {
 			GenericGraphImplTest.testDefaultValue(v.getAttribute(a.getName()),
 					a);

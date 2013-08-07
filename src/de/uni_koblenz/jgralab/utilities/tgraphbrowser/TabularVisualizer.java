@@ -47,6 +47,7 @@ import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.exception.GraphIOException;
+import de.uni_koblenz.jgralab.impl.InternalAttributedElement;
 import de.uni_koblenz.jgralab.schema.Attribute;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.VertexClass;
@@ -220,12 +221,12 @@ public class TabularVisualizer {
 			int totalNumberOfElements = (isVertex ? state.verticesOfTableView
 					: state.edgesOfTableView).length;
 			numberOfPages = totalNumberOfElements / numberPerPage;
-			if (totalNumberOfElements % numberPerPage != 0) {
+			if ((totalNumberOfElements % numberPerPage) != 0) {
 				numberOfPages++;
 			}
 			// determine the page in which the element with the id is found
-			numberOfPageWithElementOfId = positionOfElementInArray
-					/ numberPerPage + 1;
+			numberOfPageWithElementOfId = (positionOfElementInArray
+					/ numberPerPage) + 1;
 			// create the navigation bar through the table pages
 			createNavigationThroughPages(code, isVertex ? "Vertex" : "Edge",
 					numberOfPages, numberOfPageWithElementOfId, true);
@@ -441,7 +442,7 @@ public class TabularVisualizer {
 					+ ".appendChild(document.createTextNode(\"");
 			code.append(attr.getName()).append(" = ");
 			try {
-				String content = currentElement
+				String content = ((InternalAttributedElement) currentElement)
 						.writeAttributeValueToString(attr.getName());
 				content = Pattern.compile(Matcher.quoteReplacement("\\"))
 						.matcher(content)
@@ -494,10 +495,10 @@ public class TabularVisualizer {
 		for (Edge e : currentVertex.incidences()) {
 			if (selectedEdgeClasses.get(e.getAttributedElementClass())) {
 				// show all incidences whose type is selected
-				if ((numberOfEdges > (displayedPage - 1)
-						* NUMBER_OF_INCIDENCES_PER_PAGE)
-						&& (numberOfEdges <= displayedPage
-								* NUMBER_OF_INCIDENCES_PER_PAGE)) {
+				if ((numberOfEdges > ((displayedPage - 1)
+						* NUMBER_OF_INCIDENCES_PER_PAGE))
+						&& (numberOfEdges <= (displayedPage
+								* NUMBER_OF_INCIDENCES_PER_PAGE))) {
 					if (numberOfEdges > 1) {
 						// create <br />
 						code.append("currentTd.appendChild(document.createElement(\"br\"));\n");
@@ -541,7 +542,7 @@ public class TabularVisualizer {
 				numberOfEdges++;
 			}
 		}
-		if (numberOfEdges - 1 > NUMBER_OF_INCIDENCES_PER_PAGE) {
+		if ((numberOfEdges - 1) > NUMBER_OF_INCIDENCES_PER_PAGE) {
 			// if there are more than NUMBER_OF_INCIDENCES_PER_PAGE
 			// incidences create a header to switch through the pages
 			if (hasNoLeadingBr) {
@@ -549,9 +550,9 @@ public class TabularVisualizer {
 				code.append("currentTd.insertBefore(document.createElement(\"br\"),currentTd.firstChild);\n");
 			}
 			numberOfEdges--;
-			int numberOfPages = numberOfEdges
-					/ NUMBER_OF_INCIDENCES_PER_PAGE
-					+ (numberOfEdges % NUMBER_OF_INCIDENCES_PER_PAGE == 0 ? 0
+			int numberOfPages = (numberOfEdges
+					/ NUMBER_OF_INCIDENCES_PER_PAGE)
+					+ ((numberOfEdges % NUMBER_OF_INCIDENCES_PER_PAGE) == 0 ? 0
 							: 1);
 			createNavigationThroughPages(code, "v" + currentVertex.getId(),
 					numberOfPages, displayedPage, false);
@@ -564,7 +565,7 @@ public class TabularVisualizer {
 	 * @return
 	 */
 	private boolean isOutgoingEdge(Vertex currentVertex, Edge e) {
-		return e.isNormal() && e.getAlpha() == currentVertex;
+		return e.isNormal() && (e.getAlpha() == currentVertex);
 	}
 
 	/**

@@ -66,6 +66,7 @@ import de.uni_koblenz.jgralab.exception.GraphException;
 import de.uni_koblenz.jgralab.exception.GraphIOException;
 import de.uni_koblenz.jgralab.graphmarker.AbstractBooleanGraphMarker;
 import de.uni_koblenz.jgralab.impl.GraphBaseImpl;
+import de.uni_koblenz.jgralab.impl.InternalAttributedElement;
 import de.uni_koblenz.jgralab.impl.InternalGraph;
 import de.uni_koblenz.jgralab.impl.TgLexer;
 import de.uni_koblenz.jgralab.impl.TgLexer.Token;
@@ -750,7 +751,7 @@ public final class GraphIO {
 					nextI = nextI.getNextIncidence();
 				}
 				write(">");
-				nextV.writeAttributeValues(this);
+				((InternalAttributedElement) nextV).writeAttributeValues(this);
 				write(";\n");
 				nextV = nextV.getNextVertex();
 
@@ -785,7 +786,7 @@ public final class GraphIO {
 				}
 				write(Long.toString(eId));
 				writeIdentifier(aec.getSimpleName());
-				nextE.writeAttributeValues(this);
+				((InternalAttributedElement) nextE).writeAttributeValues(this);
 				write(";\n");
 				nextE = nextE.getNextEdge();
 
@@ -2264,7 +2265,7 @@ public final class GraphIO {
 		VertexClass vc = (VertexClass) schema.getAttributedElementClass(vcName);
 		Vertex vertex = graphFactory.createVertex(vc, vId, graph);
 		parseIncidentEdges(vertex);
-		vertex.readAttributeValues(this);
+		((InternalAttributedElement) vertex).readAttributeValues(this);
 		match(Token.SEMICOLON);
 	}
 
@@ -2274,7 +2275,7 @@ public final class GraphIO {
 		EdgeClass ec = (EdgeClass) schema.getAttributedElementClass(ecName);
 		Edge edge = graphFactory.createEdge(ec, eId, graph, edgeOut[eId],
 				edgeIn[eId]);
-		edge.readAttributeValues(this);
+		((InternalAttributedElement) edge).readAttributeValues(this);
 		match(Token.SEMICOLON);
 	}
 

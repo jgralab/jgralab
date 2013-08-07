@@ -52,6 +52,7 @@ import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.exception.GraphException;
 import de.uni_koblenz.jgralab.exception.GraphIOException;
 import de.uni_koblenz.jgralab.exception.NoSuchAttributeException;
+import de.uni_koblenz.jgralab.impl.InternalEdge;
 import de.uni_koblenz.jgralab.impl.RecordImpl;
 import de.uni_koblenz.jgralab.schema.AggregationKind;
 import de.uni_koblenz.jgralab.schema.Attribute;
@@ -400,10 +401,10 @@ public class GenericEdgeImplTest {
 		Schema s = GraphIO.loadSchemaFromFile(GenericGraphImplTest.SCHEMAFOLDER
 				+ "DefaultValueTestSchema.tg");
 		Graph g = s.createGraph(ImplementationType.GENERIC);
-		Edge e = g.createEdge(g.getGraphClass().getEdgeClass("TestEdge"),
-				g.createVertex(g.getGraphClass()
-						.getVertexClass("TestSubVertex")), g.createVertex(g
-						.getGraphClass().getVertexClass("TestSubVertex")));
+		InternalEdge e = g.createEdge(g.getGraphClass()
+				.getEdgeClass("TestEdge"), g.createVertex(g.getGraphClass()
+				.getVertexClass("TestSubVertex")), g.createVertex(g
+				.getGraphClass().getVertexClass("TestSubVertex")));
 		for (Attribute a : e.getAttributedElementClass().getAttributeList()) {
 			GenericGraphImplTest.testDefaultValue(e.getAttribute(a.getName()),
 					a);
@@ -471,10 +472,10 @@ public class GenericEdgeImplTest {
 		Schema s = GraphIO.loadSchemaFromFile(GenericGraphImplTest.SCHEMAFOLDER
 				+ "DefaultValueTestSchema.tg");
 		Graph g = s.createGraph(ImplementationType.GENERIC);
-		Edge e = g.createEdge(g.getGraphClass().getEdgeClass("TestEdge"),
-				g.createVertex(g.getGraphClass()
-						.getVertexClass("TestSubVertex")), g.createVertex(g
-						.getGraphClass().getVertexClass("TestSubVertex")));
+		InternalEdge e = g.createEdge(g.getGraphClass()
+				.getEdgeClass("TestEdge"), g.createVertex(g.getGraphClass()
+				.getVertexClass("TestSubVertex")), g.createVertex(g
+				.getGraphClass().getVertexClass("TestSubVertex")));
 		for (Attribute a : e.getAttributedElementClass().getAttributeList()) {
 			GenericGraphImplTest.testDefaultValue(e.getAttribute(a.getName()),
 					a);
@@ -543,10 +544,10 @@ public class GenericEdgeImplTest {
 		Schema s = GraphIO.loadSchemaFromFile(GenericGraphImplTest.SCHEMAFOLDER
 				+ "DefaultValueTestSchema.tg");
 		Graph g = s.createGraph(ImplementationType.GENERIC);
-		Edge e = g.createEdge(g.getGraphClass().getEdgeClass("TestEdge"),
-				g.createVertex(g.getGraphClass()
-						.getVertexClass("TestSubVertex")), g.createVertex(g
-						.getGraphClass().getVertexClass("TestSubVertex")));
+		InternalEdge e = g.createEdge(g.getGraphClass()
+				.getEdgeClass("TestEdge"), g.createVertex(g.getGraphClass()
+				.getVertexClass("TestSubVertex")), g.createVertex(g
+				.getGraphClass().getVertexClass("TestSubVertex")));
 		for (Attribute a : e.getAttributedElementClass().getAttributeList()) {
 			GenericGraphImplTest.testDefaultValue(e.getAttribute(a.getName()),
 					a);
@@ -598,10 +599,10 @@ public class GenericEdgeImplTest {
 		Schema s = GraphIO.loadSchemaFromFile(GenericGraphImplTest.SCHEMAFOLDER
 				+ "DefaultValueTestSchema.tg");
 		Graph g = s.createGraph(ImplementationType.GENERIC);
-		Edge e = g.createEdge(g.getGraphClass().getEdgeClass("TestEdge"),
-				g.createVertex(g.getGraphClass()
-						.getVertexClass("TestSubVertex")), g.createVertex(g
-						.getGraphClass().getVertexClass("TestSubVertex")));
+		InternalEdge e = g.createEdge(g.getGraphClass()
+				.getEdgeClass("TestEdge"), g.createVertex(g.getGraphClass()
+				.getVertexClass("TestSubVertex")), g.createVertex(g
+				.getGraphClass().getVertexClass("TestSubVertex")));
 		for (Attribute a : e.getAttributedElementClass().getAttributeList()) {
 			GenericGraphImplTest.testDefaultValue(e.getAttribute(a.getName()),
 					a);

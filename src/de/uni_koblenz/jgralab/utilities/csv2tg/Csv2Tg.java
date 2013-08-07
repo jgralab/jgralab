@@ -62,6 +62,7 @@ import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.exception.GraphIOException;
 import de.uni_koblenz.jgralab.exception.NoSuchAttributeException;
+import de.uni_koblenz.jgralab.impl.InternalAttributedElement;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.Schema;
@@ -354,8 +355,9 @@ public class Csv2Tg implements FilenameFilter {
 			String transformedString = transformCsvStringValue(valueString);
 
 			try {
-				element.readAttributeValueFromString(attributeName,
-						transformedString);
+				((InternalAttributedElement) element)
+						.readAttributeValueFromString(attributeName,
+								transformedString);
 			} catch (NoSuchAttributeException ex) {
 				throw new RuntimeException("The attribute \"" + attributeName
 						+ "\" with value \"" + transformedString
