@@ -189,7 +189,7 @@ public abstract class AttributedElementCodeGenerator<SC extends AttributedElemen
 				"\tsuper(id, g);"));
 		if (hasDefaultAttributeValues()) {
 			code.addNoIndent(new CodeSnippet(
-					"\tinitializeAttributesWithDefaultValues();"));
+					"\t((de.uni_koblenz.jgralab.impl.InternalAttributedElement) this).internalInitializeAttributesWithDefaultValues();"));
 		}
 
 		code.add(createSpecialConstructorCode());

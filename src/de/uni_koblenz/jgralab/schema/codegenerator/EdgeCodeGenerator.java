@@ -102,7 +102,7 @@ public class EdgeCodeGenerator extends
 				"\tsuper(id, g, alpha, omega);"));
 		if (hasDefaultAttributeValues()) {
 			code.addNoIndent(new CodeSnippet(
-					"\tinitializeAttributesWithDefaultValues();"));
+					"\t((de.uni_koblenz.jgralab.impl.InternalAttributedElement) this).internalInitializeAttributesWithDefaultValues();"));
 		}
 		code.add(createSpecialConstructorCode());
 		code.addNoIndent(new CodeSnippet("}"));

@@ -116,15 +116,17 @@ public class GraphCodeGenerator extends
 				"**/",
 				"public #simpleImplClassName#(java.lang.String id, int vMax, int eMax) {",
 				"\tsuper(id, #javaClassName#.GC, vMax, eMax);",
-				"\tinitializeAttributesWithDefaultValues();",
+				"\t((de.uni_koblenz.jgralab.impl.InternalAttributedElement) this).internalInitializeAttributesWithDefaultValues();",
 				"}",
 				"",
 				"/**",
 				" * DON'T USE THE CONSTRUCTOR",
 				" * For instantiating a Graph, use the Schema and a GraphFactory",
-				"**/", "public #simpleImplClassName#(java.lang.String id) {",
+				"**/",
+				"public #simpleImplClassName#(java.lang.String id) {",
 				"\tsuper(id, #javaClassName#.GC);",
-				"\tinitializeAttributesWithDefaultValues();", "}");
+				"\t((de.uni_koblenz.jgralab.impl.InternalAttributedElement) this).internalInitializeAttributesWithDefaultValues();",
+				"}");
 		return code;
 	}
 
