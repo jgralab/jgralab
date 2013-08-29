@@ -195,6 +195,156 @@ public class FreeIndexList {
 	}
 
 	/**
+	 * Allocates the index <code>index</code>.
+	 * 
+	 * @param id
+	 *            <code>int</code> the index to be allocated
+	 * @return <code>index</code>, or 0 if no more indices are available or
+	 *         <code>index</code> is out of range of the current index list.
+	 */
+	public int allocateIndex(int id) {
+		if (free == 0) {
+			return 0;
+		}
+		assert runCount > 0;
+		assert id > 0;
+		assert id <= used + free;
+
+		// find run in which index occurs
+		int indexOfRequiredRun = -1;
+		int lastIdOfPreviousRun = 0;
+		int lastIdOfCurrentRun = 0;
+		do {
+			indexOfRequiredRun++;
+			lastIdOfPreviousRun = lastIdOfCurrentRun;
+			lastIdOfCurrentRun += (runs[indexOfRequiredRun] < 0 ? -runs[indexOfRequiredRun]
+					: runs[indexOfRequiredRun]);
+		} while (indexOfRequiredRun < runCount && lastIdOfCurrentRun < id);
+		if (indexOfRequiredRun >= runCount) {
+			// the current index was not found in the index list
+			return 0;
+		}
+		assert runs[indexOfRequiredRun] > 0 : "The id " + id
+				+ " is already in use.";
+
+		if ((id == lastIdOfPreviousRun + 1 && indexOfRequiredRun > 0)
+				|| id == 1) {
+			// id has been the first id of a free run
+			// the current "free" run has do be decremented
+			runs[indexOfRequiredRun]--;
+			if (runs[indexOfRequiredRun] == 0) {
+				// in the current "free" run, there does not exist any id
+				// anymore
+				deleteRun(indexOfRequiredRun);
+				if (runCount == 0) {
+					runCount++;
+				} else if (indexOfRequiredRun > 0) {
+					indexOfRequiredRun--;
+				}
+			} else if (indexOfRequiredRun == 0) {
+				// this is the first id of the first run and it is "free"
+				// insert a "used" run at the beginning of runs
+				insertNewRun(0);
+			} else {
+				indexOfRequiredRun--;
+			}
+			// at this point indexOfRequired run is the index of the "used" run
+			// which has to be increased
+
+			// the "used" run has to be increased
+			// "used" runs consist of negative values
+			runs[indexOfRequiredRun]--;
+		} else if (id == lastIdOfCurrentRun) {
+			// id is the last id of a free run
+			if (indexOfRequiredRun + 1 == runCount) {
+				// if the current run is at the last one, insert a new run
+				insertNewRun(indexOfRequiredRun + 1);
+			}
+			// the following "used" run has to be increased
+			// "used" runs consist of negative values
+			runs[indexOfRequiredRun + 1]--;
+			// the current "free" run has to be decremented
+			runs[indexOfRequiredRun]--;
+			if (runs[indexOfRequiredRun] == 0) {
+				// in the current "free" run does not exist any id anymore
+				deleteRun(indexOfRequiredRun);
+			}
+		} else {
+			// id (ai) is in the middle of a free run
+			// <am,...,ai-1,ai,ai+1,...,an>
+
+			// create two new runs
+			insertNewRun(indexOfRequiredRun);
+			insertNewRun(indexOfRequiredRun);
+			// determine number of free ids of the current run which are smaller
+			// than id
+			// = i-1 - (m-1) <=> id - 1 - lastIdOfPreviousRun
+			runs[indexOfRequiredRun] = id - 1 - lastIdOfPreviousRun;
+			// the run in the middle only consists of the allocated id
+			runs[indexOfRequiredRun + 1] = -1;
+			// determine number of free ids of the current run which are greater
+			// than id
+			// = n - i <=> lastIdOfCurrentRun - id
+			runs[indexOfRequiredRun + 2] = lastIdOfCurrentRun - id;
+
+			// <am,...,ai-1> <-ai> <ai+1,...,an>
+		}
+		free--;
+		used++;
+
+		assert isHealthy();
+		return id;
+	}
+
+	private void deleteRun(int indexOfDeletedRun) {
+		assert runs[indexOfDeletedRun] == 0;
+		if (indexOfDeletedRun < runCount - 1) {
+			// the deleted run has a succeeding run
+			if (indexOfDeletedRun == 0) {
+				if (runCount > 1) {
+					// shift following runs to the left to close the gap of one
+					// empty run
+					System.arraycopy(runs, 1, runs, 0, runCount
+							- indexOfDeletedRun - 1);
+				}
+			} else {
+				// the deleted run has a preceding run, too
+				// combine both runs
+				runs[indexOfDeletedRun - 1] += runs[indexOfDeletedRun + 1];
+				runs[indexOfDeletedRun + 1] = 0;
+				if (indexOfDeletedRun + 1 < runCount - 1) {
+					// shift following runs to the left to close the gap of two
+					// empty runs
+					System.arraycopy(runs, indexOfDeletedRun + 2, runs,
+							indexOfDeletedRun, runCount - indexOfDeletedRun - 2);
+				}
+				runCount--;
+				runs[runCount] = 0;
+			}
+		}
+		runCount--;
+		runs[runCount] = 0;
+	}
+
+	private void insertNewRun(int indexOfNewRun) {
+		int[] oldValues = runs;
+		if (runCount >= runs.length) {
+			// allocate more space
+			runs = new int[runs.length * 2];
+			// copy unchanged values
+			System.arraycopy(oldValues, 0, runs, 0, indexOfNewRun);
+		}
+		if (indexOfNewRun < runCount) {
+			// the new run is not inserted at the end
+			// shift following values to the right
+			System.arraycopy(oldValues, indexOfNewRun, runs, indexOfNewRun + 1,
+					Math.min(runCount, oldValues.length) - indexOfNewRun);
+		}
+		runs[indexOfNewRun] = 0;
+		runCount++;
+	}
+
+	/**
 	 * Frees the specified <code>index</code>.
 	 * 
 	 * @param index
@@ -446,7 +596,7 @@ public class FreeIndexList {
 	 *         and isHealthy will not return anything.
 	 */
 	private boolean isHealthy() {
-		// printArray();
+		// printArray(System.out);
 		assert runCount > 0;
 		assert free >= 0;
 		assert used >= 0;

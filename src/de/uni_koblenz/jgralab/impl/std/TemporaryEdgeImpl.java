@@ -23,7 +23,7 @@ import de.uni_koblenz.jgralab.schema.EdgeClass;
 
 public class TemporaryEdgeImpl extends EdgeImpl implements TemporaryEdge {
 
-	private HashMap<String, Object> attributes;
+	private final HashMap<String, Object> attributes;
 	private EdgeClass preliminaryType;
 
 	protected TemporaryEdgeImpl(int anId, Graph graph, Vertex alpha,
@@ -157,16 +157,18 @@ public class TemporaryEdgeImpl extends EdgeImpl implements TemporaryEdge {
 
 		// set id
 		int idToFree = newEdge.getId();
-		newEdge.setId(tempID);
-		g.allocateEdgeIndex(tempID);
-		g.freeEdgeIndex(idToFree);
-		// fix edge[] & revEdge
-		InternalEdge[] edge = g.getEdge();
-		edge[tempID] = newEdge;
-		edge[idToFree] = null;
-		InternalEdge[] revEdge = g.getRevEdge();
-		revEdge[tempID] = (InternalEdge) newEdge.getReversedEdge();
-		revEdge[idToFree] = null;
+		if (id != idToFree) {
+			newEdge.setId(tempID);
+			g.allocateEdgeIndex(tempID);
+			g.freeEdgeIndex(idToFree);
+			// fix edge[] & revEdge
+			InternalEdge[] edge = g.getEdge();
+			edge[tempID] = newEdge;
+			edge[idToFree] = null;
+			InternalEdge[] revEdge = g.getRevEdge();
+			revEdge[tempID] = (InternalEdge) newEdge.getReversedEdge();
+			revEdge[idToFree] = null;
+		}
 
 		return newEdge;
 

@@ -280,7 +280,8 @@ public interface InternalGraph extends Graph, InternalAttributedElement {
 	public void freeVertexIndex(int index);
 
 	/**
-	 * Use to allocate a <code>Vertex</code>-index.
+	 * Use to allocate the <code>Vertex</code>-index <code>currentId</code>. If
+	 * <code>currentId == 0</code> a new index is created.
 	 * 
 	 * @param currentId
 	 *            needed for transaction support
@@ -288,7 +289,8 @@ public interface InternalGraph extends Graph, InternalAttributedElement {
 	public int allocateVertexIndex(int currentId);
 
 	/**
-	 * Use to allocate a <code>Edge</code>-index.
+	 * Use to allocate the <code>Edge</code>-index <code>currentId</code>. If
+	 * <code>currentId == 0</code> a new index is created.
 	 * 
 	 * @param currentId
 	 *            needed for transaction support

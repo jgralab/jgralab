@@ -231,20 +231,24 @@ public abstract class GraphImpl extends
 
 	@Override
 	public int allocateVertexIndex(int currentId) {
-		int vId = freeVertexList.allocateIndex();
+		int vId = currentId == 0 ? freeVertexList.allocateIndex()
+				: freeVertexList.allocateIndex(currentId);
 		if (vId == 0) {
 			expandVertexArray(getExpandedVertexCount());
-			vId = freeVertexList.allocateIndex();
+			vId = currentId == 0 ? freeVertexList.allocateIndex()
+					: freeVertexList.allocateIndex(currentId);
 		}
 		return vId;
 	}
 
 	@Override
 	public int allocateEdgeIndex(int currentId) {
-		int eId = freeEdgeList.allocateIndex();
+		int eId = currentId == 0 ? freeEdgeList.allocateIndex() : freeEdgeList
+				.allocateIndex(currentId);
 		if (eId == 0) {
 			expandEdgeArray(getExpandedEdgeCount());
-			eId = freeEdgeList.allocateIndex();
+			eId = currentId == 0 ? freeEdgeList.allocateIndex() : freeEdgeList
+					.allocateIndex(currentId);
 		}
 		return eId;
 	}

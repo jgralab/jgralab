@@ -22,7 +22,7 @@ import de.uni_koblenz.jgralab.schema.VertexClass;
 
 public class TemporaryVertexImpl extends VertexImpl implements TemporaryVertex {
 
-	private HashMap<String, Object> attributes;
+	private final HashMap<String, Object> attributes;
 
 	private VertexClass preliminaryType;
 
@@ -157,13 +157,15 @@ public class TemporaryVertexImpl extends VertexImpl implements TemporaryVertex {
 
 		// Set id
 		int idToFree = newVertex.getId();
-		newVertex.setId(id);
-		g.allocateVertexIndex(id);
-		g.freeVertexIndex(idToFree);
-		// fixup vertex[]
-		InternalVertex[] vertex = g.getVertex();
-		vertex[id] = newVertex;
-		vertex[idToFree] = null;
+		if (id != idToFree) {
+			newVertex.setId(id);
+			g.allocateVertexIndex(id);
+			g.freeVertexIndex(idToFree);
+			// fixup vertex[]
+			InternalVertex[] vertex = g.getVertex();
+			vertex[id] = newVertex;
+			vertex[idToFree] = null;
+		}
 
 		// Transform TemporaryEdges with type
 		HashSet<TemporaryEdge> tempEdgeList = new HashSet<TemporaryEdge>();

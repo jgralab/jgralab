@@ -137,7 +137,7 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 	protected FreeIndexList freeEdgeList;
 
 	// ------------- TRAVERSAL CONTEXT -------------
-	private ThreadLocal<TraversalContext> tc = new ThreadLocal<TraversalContext>();
+	private final ThreadLocal<TraversalContext> tc = new ThreadLocal<TraversalContext>();
 
 	// ------------- UNSET ATTRIBUTES --------------
 	protected BitSet setAttributes;
@@ -1426,7 +1426,7 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 						InternalVertex v = getVertex()[vId];
 						getVertex()[vId] = null;
 						getFreeVertexList().freeIndex(vId);
-						int newId = allocateVertexIndex(vId);
+						int newId = allocateVertexIndex(0);
 						assert newId < vId;
 						v.setId(newId);
 						getVertex()[newId] = v;
@@ -1457,7 +1457,7 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 						InternalEdge r = getRevEdge()[eId];
 						getRevEdge()[eId] = null;
 						getFreeEdgeList().freeIndex(eId);
-						int newId = allocateEdgeIndex(eId);
+						int newId = allocateEdgeIndex(0);
 						assert newId < eId;
 						e.setId(newId);
 						getEdge()[newId] = e;

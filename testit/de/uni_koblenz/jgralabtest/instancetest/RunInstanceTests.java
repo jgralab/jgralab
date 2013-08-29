@@ -63,13 +63,13 @@ import de.uni_koblenz.jgralabtest.instancetest.internal.RunInternalTests;
  * 
  */
 @RunWith(Suite.class)
-@Suite.SuiteClasses( { ImplementationModeTest.class, EdgeListTest.class,
+@Suite.SuiteClasses({ ImplementationModeTest.class, EdgeListTest.class,
 		IncidenceListTest.class, LoadTest.class, VertexListTest.class,
 		VertexTest.class, EdgeTest.class, RoleNameTest.class, GraphTest.class,
 		GraphStructureChangedListenerTest.class, DefaultValueTest.class,
-		RunGraphMarkerTests.class, TraversalContextTest.class, 
-		TraversalContextMultipleThreadsTest.class,
-		RunInternalTests.class })
+		RunGraphMarkerTests.class, TraversalContextTest.class,
+		TraversalContextMultipleThreadsTest.class, RunInternalTests.class,
+		FreeIndexListTest.class })
 public class RunInstanceTests {
 
 	@BeforeClass
