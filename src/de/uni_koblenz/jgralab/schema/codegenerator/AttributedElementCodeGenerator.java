@@ -371,8 +371,8 @@ public abstract class AttributedElementCodeGenerator<SC extends AttributedElemen
 		code.setVariable("dname", attr.getDomain().getSimpleName());
 		code.setVariable("graphRef",
 				aec.getClass() == GraphClassImpl.class ? "" : "graph.");
-		code.setVariable("attrIndex", String.valueOf(attr
-				.getAttributedElementClass().getAttributeIndex(attr.getName())));
+		code.setVariable("attrIndex",
+				String.valueOf(aec.getAttributeIndex(attr.getName())));
 
 		switch (currentCycle) {
 		case ABSTRACT:
