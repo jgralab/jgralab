@@ -36,35 +36,29 @@ package de.uni_koblenz.jgralab.schema.codegenerator;
 
 /**
  * This class keeps the configurations of the code generator and is passed to
- * all instances. It keeps and manages the following configuration entries:
+ * all instances. It keeps the following configurations:<br>
  * 
- * - <code>standardSupport</code> toggles, if the classes for standard support
- * should be created, enabled by default.<br>
+ * <br>
+ * - <code>MINIMAL</code> creates a new {@link CodeGeneratorConfiguration}
+ * object that is marked to be without type specific method support.<br>
  * <br>
  * 
- * - <code>transactionSupport</code> toggles, if the classes for transaction
- * support should be created, enabled by default.<br>
+ * - <code>NORMAL</code> creates a new {@link CodeGeneratorConfiguration} object
+ * that is marked to be with type specific method support (default).<br>
  * <br>
  * 
- * - <code>typespecificMethodsSupport</code> toggles, if the typespecific
- * methods such as "getNextXYVertex" should be created, enabled by default.<br>
- * <br>
- * 
- * - <code>methodsForSubclasseSupport</code> toggles, if the methods with an
- * additional subtype-flag like "getNextXYVertex(boolean withSubclasses)" should
- * be created. Needs typeSpecifigMethodsSupport to be enabled. Disabled by
- * default.<br>
- * <br>
- * 
+ * A <em>type-specific method</em> is a method such as "getNextXYVertex".
  */
 public class CodeGeneratorConfiguration {
+
 	public static final CodeGeneratorConfiguration MINIMAL = new CodeGeneratorConfiguration()
 			.withoutTypeSpecificMethodSupport();
+
 	public static final CodeGeneratorConfiguration NORMAL = new CodeGeneratorConfiguration();
 
 	/**
 	 * toggles, if the type-specific methods such as "getNextXYVertex" should be
-	 * created
+	 * created. TODO Explain this better.
 	 */
 	private boolean typespecificMethodSupport = true;
 
@@ -108,4 +102,5 @@ public class CodeGeneratorConfiguration {
 	public boolean hasTypeSpecificMethodsSupport() {
 		return typespecificMethodSupport;
 	}
+
 }
