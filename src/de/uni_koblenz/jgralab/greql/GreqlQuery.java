@@ -164,8 +164,19 @@ public abstract class GreqlQuery implements ParallelGreqlEvaluatorCallable {
 	}
 
 	@SuppressWarnings("unchecked")
+	public <T> T getSingleResult(Graph datagraph, GreqlEnvironment environment) {
+		return (T) evaluate(datagraph, environment);
+	}
+
+	@SuppressWarnings("unchecked")
 	public <T> PVector<T> getResultList(Graph datagraph) {
 		return (PVector<T>) evaluate(datagraph);
+	}
+
+	@SuppressWarnings("unchecked")
+	public <T> PVector<T> getResultList(Graph datagraph,
+			GreqlEnvironment environment) {
+		return (PVector<T>) evaluate(datagraph, environment);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -174,8 +185,20 @@ public abstract class GreqlQuery implements ParallelGreqlEvaluatorCallable {
 	}
 
 	@SuppressWarnings("unchecked")
+	public <K, V> PMap<K, V> getResultMap(Graph datagraph,
+			GreqlEnvironment environment) {
+		return (PMap<K, V>) evaluate(datagraph, environment);
+	}
+
+	@SuppressWarnings("unchecked")
 	public <T> POrderedSet<T> getResultSet(Graph datagraph) {
 		return (POrderedSet<T>) evaluate(datagraph);
+	}
+
+	@SuppressWarnings("unchecked")
+	public <T> POrderedSet<T> getResultSet(Graph datagraph,
+			GreqlEnvironment environment) {
+		return (POrderedSet<T>) evaluate(datagraph, environment);
 	}
 
 	/*
