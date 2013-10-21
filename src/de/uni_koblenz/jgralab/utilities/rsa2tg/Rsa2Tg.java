@@ -1056,9 +1056,12 @@ public class Rsa2Tg extends XmlProcessor {
 
 	private void handleComment(String body) {
 		// decode RSA's clumsy HTML-like comments...
-		body = body.replaceAll("\\s+", " ");
 		body = body.replace("<p>", " ");
 		body = body.replace("</p>", "\n");
+		body = body.replace("<br>", "\n");
+		// RSA uses \u00a0 (NO-BREAK SPACE) sometimes. Use a normal space
+		// instead.
+		body = body.replace('\u00a0', ' ');
 		String[] lines = body.split("\n");
 		StringBuilder text = new StringBuilder();
 		for (String line : lines) {
@@ -1209,7 +1212,8 @@ public class Rsa2Tg extends XmlProcessor {
 								.get(att.get_name());
 						throw new RuntimeException(
 								"The name of the "
-										+ (childClass == gec && current != gec ? ""
+										+ ((childClass == gec)
+												&& (current != gec) ? ""
 												: "inherited ")
 										+ "attribute "
 										+ att.get_name()
