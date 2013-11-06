@@ -155,13 +155,14 @@ public class QuantifiedExpressionEvaluator extends
 
 		VertexEvaluator<? extends Declaration> declEval = query
 				.getVertexEvaluator(quantifiedExpr
-						.getFirstIsQuantifiedDeclOfIncidence().getAlpha());
+						.getFirstIsQuantifiedDeclOfIncidence(EdgeDirection.IN)
+						.getAlpha());
 		long declCosts = declEval.getCurrentSubtreeEvaluationCosts();
 
 		VertexEvaluator<? extends Expression> boundExprEval = query
 				.getVertexEvaluator(quantifiedExpr
-						.getFirstIsBoundExprOfQuantifiedExpressionIncidence()
-						.getAlpha());
+						.getFirstIsBoundExprOfQuantifiedExpressionIncidence(
+								EdgeDirection.IN).getAlpha());
 		long boundExprCosts = boundExprEval.getCurrentSubtreeEvaluationCosts();
 
 		long ownCosts = 20;
