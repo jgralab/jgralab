@@ -135,7 +135,7 @@
 	<property name="utilities.excludes" value="tgschema2java/**" />
 
 	<!-- The targets -->
-	<target name="build" depends="clean,createClassesDir,ist_utilities,compile,modify_manifest,jar" />
+	<target name="build" depends="clean,createClassesDir,ist_utilities,compile,modify_manifest,jar,sourcejar" />
 
 	<target name="clean">
 		<delete dir="${classes.dir}" />
@@ -458,7 +458,7 @@
 
 	<!-- release -->
 	<!-- calls targets modify, clean, jar, test and document -->
-	<target name="release" depends="cleanall,bumpmicro,build,sourcejar,document" />
+	<target name="release" depends="cleanall,bumpmicro,build,document" />
 
 	<target name="bumpmicro_internal" depends="versiontasks">
 		<bump_micro />
@@ -502,12 +502,22 @@
 		</junit>
 	</target>
 
-	<!-- Push a new jgralab jar to clojars.org -->
+	<!-- Push a new jgralab source jar to clojars.org -->
 	<target name="clojars-push">
+		<exec executable="cp">
+			<!-- Copy src-jar to jgralab.jar since clojars expects
+			     jgralab.jar or jgralab-x.y.z.jar, but not
+			     jgralab.src.jar -->
+			<arg value="build/jar/jgralab.src.jar" />
+			<arg value="jgralab.jar" />
+		</exec>
 		<exec executable="scp">
 			<arg value="pom.xml" />
-			<arg value="build/jar/jgralab.jar" />
+			<arg value="jgralab.jar" />
 			<arg value="clojars@clojars.org:" />
+		</exec>
+		<exec executable="rm">
+			<arg value="jgralab.jar" />
 		</exec>
 	</target>
 
