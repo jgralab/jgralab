@@ -78,8 +78,9 @@ install an IRC client, you can also
 
 Copyright (C) 2006-2013 The JGraLab Team <ist@uni-koblenz.de>
 
-Distributed under the General Public License (Version 3), with the following
-additional grant:
+Distributed under the
+[General Public License, Version 3](http://www.gnu.org/copyleft/gpl.html) with
+the following additional grant:
 
     Additional permission under GNU GPL version 3 section 7
 
