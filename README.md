@@ -1,3 +1,7 @@
+<object data="http://jgralab.github.io/jgralab/images/jgralab-logo.svg" width="600">
+  <img src="http://jgralab.github.io/jgralab/images/jgralab-logo.png" alt="JGraLab Logo" width="600">
+</object>
+
 # JGraLab
 
 JGraLab is a Java graph library implementing so-called TGraphs: typed,
