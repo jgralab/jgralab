@@ -44,20 +44,14 @@ import de.uni_koblenz.jgralab.greql.funlib.Description;
 import de.uni_koblenz.jgralab.greql.funlib.Function;
 
 public class Split extends Function {
-	
-	@Description(params = {"s", "regex"}, description = 
-		"Splits the given string according to the given regular expression and returns the parts as list.",
-		categories = Category.STRINGS)
+
+	@Description(params = { "s", "regex" }, description = "Splits the given string according to the given regular expression and returns the parts as list.", categories = Category.STRINGS)
 	public Split() {
 		super(10, 3, 0.1);
 	}
 
 	public List<String> evaluate(String s, String regex) {
-		Pattern pat = ReMatch.patternCache.get(regex);
-		if (pat == null) {
-			pat = Pattern.compile(regex);
-			ReMatch.patternCache.put(regex, pat);
-		}
+		Pattern pat = RegExPatternCache.get(regex);
 		String[] parts = pat.split(s);
 		PVector<String> result = JGraLab.vector();
 		for (String part : parts) {

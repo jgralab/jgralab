@@ -631,6 +631,7 @@ public abstract class SwingApplication extends JFrame {
 			if (RUNS_ON_MAC_OS_X) {
 				java.awt.FileDialog fd = new java.awt.FileDialog(parent, title,
 						java.awt.FileDialog.LOAD);
+				fd.setModal(true);
 				if (lastDir != null) {
 					fd.setDirectory(lastDir.getAbsolutePath());
 				}
@@ -641,13 +642,7 @@ public abstract class SwingApplication extends JFrame {
 						return f.canRead() && name.endsWith(extension);
 					}
 				});
-				if (RUNS_ON_MAC_OS_X) {
-					menuBar.setEnabled(false);
-				}
 				fd.setVisible(true);
-				if (RUNS_ON_MAC_OS_X) {
-					menuBar.setEnabled(true);
-				}
 				if (fd.getFile() != null) {
 					String name = fd.getDirectory() + fd.getFile();
 					selectedFile = new File(name);
@@ -683,6 +678,7 @@ public abstract class SwingApplication extends JFrame {
 				final String extension, File oldFile) {
 			java.awt.FileDialog fd = new java.awt.FileDialog(parent, title,
 					java.awt.FileDialog.SAVE);
+			fd.setModal(true);
 			fd.setFilenameFilter(new FilenameFilter() {
 				@Override
 				public boolean accept(File dir, String name) {
@@ -691,23 +687,13 @@ public abstract class SwingApplication extends JFrame {
 							&& name.endsWith(extension);
 				}
 			});
-			fd.setModal(true);
-			if (RUNS_ON_MAC_OS_X) {
-				menuBar.setEnabled(false);
-				SwingApplication.this.validate();
-			}
 			fd.setVisible(true);
-			if (RUNS_ON_MAC_OS_X) {
-				menuBar.setEnabled(true);
-				SwingApplication.this.validate();
-			}
 			if (fd.getFile() != null) {
 				String name = fd.getDirectory() + fd.getFile();
 				if (!name.endsWith(extension)) {
 					name += extension;
 				}
 				File f = new File(name);
-				System.out.println(f);
 				if (f.exists()) {
 					if (JOptionPane.showConfirmDialog(parent, MessageFormat
 							.format(SwingApplication.this.getMessage(

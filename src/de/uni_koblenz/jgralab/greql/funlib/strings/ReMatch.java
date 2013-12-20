@@ -34,7 +34,6 @@
  */
 package de.uni_koblenz.jgralab.greql.funlib.strings;
 
-import java.util.HashMap;
 import java.util.regex.Pattern;
 
 import de.uni_koblenz.jgralab.greql.funlib.Description;
@@ -48,18 +47,8 @@ public class ReMatch extends Function {
 		super(50, 1, 0.1);
 	}
 
-	// cache is also used by Split function
-	static HashMap<String, Pattern> patternCache = new HashMap<String, Pattern>();
-
 	public Boolean evaluate(String s, String regex) {
-		Pattern pat;
-		synchronized (patternCache) {
-			pat = patternCache.get(regex);
-			if (pat == null) {
-				pat = Pattern.compile(regex);
-				patternCache.put(regex, pat);
-			}
-		}
+		Pattern pat = RegExPatternCache.get(regex);
 		return pat.matcher(s).matches();
 	}
 }
