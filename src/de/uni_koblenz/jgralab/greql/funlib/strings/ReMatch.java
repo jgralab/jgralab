@@ -41,10 +41,9 @@ import de.uni_koblenz.jgralab.greql.funlib.Description;
 import de.uni_koblenz.jgralab.greql.funlib.Function;
 
 public class ReMatch extends Function {
-	
-	@Description(params = {"s", "regex"}, description = "Returns true, iff the given string matches the given regular expression. \n"
-		+ "Can be used as infix operator: myString =\\textasciitilde{} myRegexp.",
-		categories = Category.STRINGS)
+
+	@Description(params = { "s", "regex" }, description = "Returns true, iff the given string matches the given regular expression. \n"
+			+ "Can be used as infix operator: myString =\\textasciitilde{} myRegexp.", categories = Category.STRINGS)
 	public ReMatch() {
 		super(50, 1, 0.1);
 	}
@@ -53,10 +52,13 @@ public class ReMatch extends Function {
 	static HashMap<String, Pattern> patternCache = new HashMap<String, Pattern>();
 
 	public Boolean evaluate(String s, String regex) {
-		Pattern pat = patternCache.get(regex);
-		if (pat == null) {
-			pat = Pattern.compile(regex);
-			patternCache.put(regex, pat);
+		Pattern pat;
+		synchronized (patternCache) {
+			pat = patternCache.get(regex);
+			if (pat == null) {
+				pat = Pattern.compile(regex);
+				patternCache.put(regex, pat);
+			}
 		}
 		return pat.matcher(s).matches();
 	}
