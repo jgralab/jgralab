@@ -198,7 +198,7 @@
 	<property name="resource.excludes" value="" />
 
 	<!-- location of the generated manifest file -->
-	<!--property name="manifest_static" value="false" /-->
+	<!--property name="manifest.static" value="false" /-->
 	<property name="manifest.dir" value="${project.dir}/META-INF/" />
 	<property name="manifest.file" value="${manifest.dir}/MANIFEST.MF" />
 	<property name="manifest.tmp.file" value="${build.dir}/MANIFEST.MF" />
