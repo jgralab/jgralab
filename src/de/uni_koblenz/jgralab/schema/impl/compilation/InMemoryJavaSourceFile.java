@@ -37,12 +37,12 @@ package de.uni_koblenz.jgralab.schema.impl.compilation;
 
 import java.net.URI;
 
-import javax.tools.SimpleJavaFileObject;
+import de.uni_koblenz.javax.tools.SimpleJavaFileObject;
 
 /**
  * An object of this class holds the Java source code (used for in-memory
  * compilaton of generated schema classes).
- * 
+ *
  * @author ist@uni-koblenz.de
  */
 public class InMemoryJavaSourceFile extends SimpleJavaFileObject {
@@ -54,7 +54,7 @@ public class InMemoryJavaSourceFile extends SimpleJavaFileObject {
 	/**
 	 * Creates an {@link InMemoryJavaSourceFile} with name <code>name</code> and
 	 * source <code>code</code>.
-	 * 
+	 *
 	 * @param name
 	 *            the name of the compilation unit represented by this file
 	 *            object

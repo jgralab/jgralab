@@ -8,10 +8,9 @@ import java.util.List;
 import java.util.Set;
 import java.util.Vector;
 
-import javax.tools.JavaCompiler;
-import javax.tools.StandardJavaFileManager;
-import javax.tools.ToolProvider;
-
+import de.uni_koblenz.javax.tools.JavaCompiler;
+import de.uni_koblenz.javax.tools.StandardJavaFileManager;
+import de.uni_koblenz.javax.tools.ToolProvider;
 import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Graph;
@@ -169,7 +168,7 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 	 * will implement the interface {@link ExecutableQuery}, thus it may be
 	 * evaluated simply by calling its execute-Method. For proper execution, the
 	 * GReQL function library needs to be available.
-	 * 
+	 *
 	 * @param queryString
 	 *            the query in its String representation
 	 * @param datagraphSchema
@@ -210,7 +209,7 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 	 * <code>classname</code> is available to your environment and may be
 	 * instantiated using reflection, e.g., by
 	 * Class.forName(className).newInstance().
-	 * 
+	 *
 	 * @param queryString
 	 *            the query in its String representation
 	 * @param datagraphSchema
@@ -1159,7 +1158,7 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 	 * access routines to the FunLib-function will be created, some of the
 	 * functions that rely on path descriptions (e.g., pathSystem) are realized
 	 * by code generation for the path search.
-	 * 
+	 *
 	 * @param funApp
 	 * @return
 	 */
@@ -1784,7 +1783,7 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 	 * functionality is realized by the methods
 	 * createAddToPathSearchQueueSnippet and createAddToPathSystemQueueSnippet,
 	 * which will be called depending on the pathSystem parameter
-	 * 
+	 *
 	 * @return a CodeBlock implementing the transition with all its checks
 	 */
 	private CodeBlock createCodeForTransition(Transition trans,
@@ -2115,7 +2114,7 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 	/**
 	 * Creates a method encapsulating the codelist given and returns the call of
 	 * that method as a String
-	 * 
+	 *
 	 * @param list
 	 * @param uniqueId
 	 *            a unique Id used to create a global variable that stores the
@@ -2268,7 +2267,13 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 		StandardJavaFileManager jfm = compiler.getStandardFileManager(null,
 				null, null);
 		ClassFileManager manager = new ClassFileManager(this, jfm);
-		compiler.getTask(null, manager, null, null, null, javaSources).call();
+
+		try {
+            compiler.getTask(null, manager, null, null, null, javaSources).call();
+        } catch(Exception e1) {
+            throw new RuntimeException(e1);
+        }
+
 		try {
 			SchemaClassManager schemaClassManager = SchemaClassManager
 					.instance(codeGeneratorFileManagerName);

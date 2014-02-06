@@ -34,7 +34,7 @@
  */
 package de.uni_koblenz.jgralab;
 
-import javax.tools.JavaFileObject;
+import de.uni_koblenz.javax.tools.JavaFileObject;
 
 public interface EclipseAdapter {
 	public Iterable<JavaFileObject> listJavaFileObjects(String packageName,

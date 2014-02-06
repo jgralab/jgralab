@@ -39,14 +39,14 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.net.URI;
 
-import javax.tools.SimpleJavaFileObject;
+import de.uni_koblenz.javax.tools.SimpleJavaFileObject;
 
 /**
  * A ClassFileAbstraction holds Java bytecode for generated schema classes
  * compiled in-memory.
- * 
+ *
  * @author ist@uni-koblenz.de
- * 
+ *
  */
 public class InMemoryClassFile extends SimpleJavaFileObject {
 	private byte[] bytecode;
@@ -54,7 +54,7 @@ public class InMemoryClassFile extends SimpleJavaFileObject {
 	/**
 	 * Creates a new {@code ClassFileAbstraction} for the class given by
 	 * {@code name}.
-	 * 
+	 *
 	 * @param name
 	 *            the name of the class
 	 */

@@ -52,10 +52,10 @@ import java.util.TreeMap;
 import java.util.Vector;
 import java.util.regex.Pattern;
 
-import javax.tools.JavaCompiler;
-import javax.tools.JavaFileObject;
-import javax.tools.StandardJavaFileManager;
-import javax.tools.ToolProvider;
+import de.uni_koblenz.javax.tools.JavaCompiler;
+import de.uni_koblenz.javax.tools.JavaFileObject;
+import de.uni_koblenz.javax.tools.StandardJavaFileManager;
+import de.uni_koblenz.javax.tools.ToolProvider;
 
 import org.pcollections.ArrayPSet;
 import org.pcollections.PSet;
@@ -147,14 +147,14 @@ public class SchemaImpl implements Schema, ManagableArtifact {
 	 */
 	private boolean allowLowercaseEnumConstants = true;
 
-	private PackageImpl defaultPackage;
+	private final PackageImpl defaultPackage;
 
 	/**
 	 * Maps from qualified name to the {@link Domain}.
 	 */
 	Map<String, Domain> domains = new HashMap<String, Domain>();
 
-	private DirectedAcyclicGraph<Domain> domainsDag = new DirectedAcyclicGraph<Domain>();
+	private final DirectedAcyclicGraph<Domain> domainsDag = new DirectedAcyclicGraph<Domain>();
 
 	private int version;
 
@@ -169,12 +169,12 @@ public class SchemaImpl implements Schema, ManagableArtifact {
 	/**
 	 * The name of this schema without the package prefix.
 	 */
-	private String name;
+	private final String name;
 
 	/**
 	 * The package prefix of this schema.
 	 */
-	private String packagePrefix;
+	private final String packagePrefix;
 
 	/**
 	 * Maps from qualified name to the {@link Package} with that qualified name.
@@ -185,7 +185,7 @@ public class SchemaImpl implements Schema, ManagableArtifact {
 	 * The qualified name of this schema, that is {@link #packagePrefix} DOT
 	 * {@link #name}
 	 */
-	private String qualifiedName;
+	private final String qualifiedName;
 
 	/**
 	 * A set of all qualified names known to this schema.
@@ -210,7 +210,7 @@ public class SchemaImpl implements Schema, ManagableArtifact {
 
 	/**
 	 * Creates a new <code>Schema</code>.
-	 * 
+	 *
 	 * @param name
 	 *            Name of schema.
 	 * @param packagePrefix
@@ -387,7 +387,12 @@ public class SchemaImpl implements Schema, ManagableArtifact {
 				null, null);
 		Iterable<? extends JavaFileObject> compilationUnits = fileManager
 				.getJavaFileObjectsFromFiles(getJavaFiles(schemaDir));
-		c.getTask(null, fileManager, null, null, null, compilationUnits).call();
+		try {
+            c.getTask(null, fileManager, null, null, null, compilationUnits).call();
+        } catch(Exception e) {
+            // TODO This is pretty hackish.
+            throw new IOException(e);
+        }
 		fileManager.close();
 	}
 
@@ -567,7 +572,12 @@ public class SchemaImpl implements Schema, ManagableArtifact {
 				null, null);
 		ClassFileManager manager = new ClassFileManager(this, jfm);
 		Vector<InMemoryJavaSourceFile> javaSources = commit(config);
-		compiler.getTask(null, manager, null, null, null, javaSources).call();
+
+		try {
+            compiler.getTask(null, manager, null, null, null, javaSources).call();
+        } catch(Exception e) {
+            throw new RuntimeException(e);
+        }
 	}
 
 	@Override
@@ -683,7 +693,7 @@ public class SchemaImpl implements Schema, ManagableArtifact {
 	/**
 	 * Creates a {@link Package} with given qualified name, or returns an
 	 * existing package with this qualified name.
-	 * 
+	 *
 	 * @param qn
 	 *            the qualified name of the package
 	 * @return a new {@link Package} with the given qualified name, or an
@@ -740,7 +750,7 @@ public class SchemaImpl implements Schema, ManagableArtifact {
 	/**
 	 * Given a qualified name like foo.bar.baz returns a string array with two
 	 * components: the package prefix (foo.bar) and the simple name (baz).
-	 * 
+	 *
 	 * @param qualifiedName
 	 *            a qualified name
 	 * @return a string array with two components: the package prefix and the
@@ -988,7 +998,7 @@ public class SchemaImpl implements Schema, ManagableArtifact {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param implementationType
 	 * @return
 	 */
@@ -1043,7 +1053,7 @@ public class SchemaImpl implements Schema, ManagableArtifact {
 
 	/**
 	 * only used internally
-	 * 
+	 *
 	 * @return number of graphelementclasses contained in graphclass
 	 */
 	private int getNumberOfElements() {
