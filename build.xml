@@ -116,6 +116,7 @@
 
 	<property name="algolib.src" value="${src.dir}/de/uni_koblenz/jgralab/algolib" />
 
+	<property name="javaxandroid.src" value="${src.dir}/de/uni_koblenz/javax/" />
 	<property name="gruml.src" value="${src.dir}/de/uni_koblenz/jgralab/grumlschema/" />
 
 	<property name="graphvalidator.src" value="${src.dir}/de/uni_koblenz/jgralab" />
@@ -166,8 +167,22 @@
 		</javac>
 	</target>
 	
+	<target name="javaxandroid">
+		<javac fork="true"
+		       source="1.6" target="1.6"
+		       srcdir="${javaxandroid.src}"
+		       destdir="${classes.dir}"
+		       memoryinitialsize="512m"
+		       memorymaximumsize="512m"
+		       classpathref="classpath"
+		       debug="${debug}"
+		       includeantruntime="false"
+		       encoding="${javac.encoding}" >
+		</javac>
+	</target>
+	
 	<!-- compile -->
-	<target name="compile" depends="pcollections,core,tgtools,greql,algolib,graphvalidator,rsa,utilities,gretl_and_eca,generatetestschemas">
+	<target name="compile" depends="pcollections,javaxandroid,core,tgtools,greql,algolib,graphvalidator,rsa,utilities,gretl_and_eca,generatetestschemas">
 		<mkdir dir="testit/testdata" />
 	</target>
 
