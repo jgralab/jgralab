@@ -195,6 +195,6 @@ public class FunLibTest {
 		FunLib.apply(os, "equals", "RED", Color.RED);
 		FunLib.apply(os, "nequals", Color.RED, "RED");
 		FunLib.apply(os, "nequals", Color.GREEN, "RED");
-		FunLib.apply(os, "ndequals", "RED", Color.RED);
+		FunLib.apply(os, "nequals", "RED", Color.RED);
 	}
 }

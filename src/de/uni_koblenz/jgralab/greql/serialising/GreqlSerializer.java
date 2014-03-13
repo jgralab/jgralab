@@ -793,7 +793,9 @@ public class GreqlSerializer {
 					sb.append(", ");
 				}
 				serializeExpression(val, false);
-				if (isTableHeaderOf != null) {
+				if (isTableHeaderOf != null
+						&& isTableHeaderOf.getAlpha()
+								.getAttributedElementClass() != UndefinedLiteral.VC) {
 					sb.append(" as ");
 					serializeExpression(isTableHeaderOf.getAlpha(), false);
 					isTableHeaderOf = isTableHeaderOf
@@ -803,7 +805,8 @@ public class GreqlSerializer {
 			sb.append(' ');
 		} else {
 			serializeExpression(result, true);
-			if (isTableHeaderOf != null) {
+			if (isTableHeaderOf != null
+					&& isTableHeaderOf.getAlpha().getAttributedElementClass() != UndefinedLiteral.VC) {
 				sb.append(" as ");
 				serializeExpression(isTableHeaderOf.getAlpha(), false);
 				sb.append(" ");

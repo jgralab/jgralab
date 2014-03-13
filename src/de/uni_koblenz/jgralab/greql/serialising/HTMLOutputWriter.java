@@ -170,64 +170,76 @@ public class HTMLOutputWriter extends DefaultWriter {
 
 	@Override
 	protected void writeTuple(Tuple t) throws IOException {
-		out.println(table(1, 2) + "<tr><td>");
+		out.println(table(1, 2) + "<tr>");
+		out.print("<td>");
 		boolean first = true;
 		for (Object val : t) {
 			if (first) {
 				first = false;
 			} else {
-				out.println("</td><td>");
+				out.println("</td>");
+				out.print("<td>");
 			}
 			write(val);
 		}
-		out.println("</td></tr></table>");
+		out.println("</td>");
+		out.println("</tr></table>");
 	}
 
 	@Override
 	protected void writeRecord(Record r) throws IOException {
-		out.println(table(1, 2) + "<tr><td>");
+		out.println(table(1, 2) + "<tr>");
+		out.print("<td>");
 		boolean first = true;
 		for (String compName : r.getComponentNames()) {
 			if (first) {
 				first = false;
 			} else {
-				out.println("</td><td>");
+				out.println("</td>");
+				out.print("<td>");
 			}
 			out.println(compName + ": ");
 			write(r.getComponent(compName));
 		}
-		out.println("</td></tr></table>");
+		out.println("</td>");
+		out.println("</tr></table>");
 	}
 
 	@Override
 	protected void writeTable(Table<?> table) throws IOException {
-		out.print(table(1, 2) + "<tr><th>");
+		out.println(table(1, 2) + "<tr>");
+		out.print("<th>");
 		boolean first = true;
 		for (Object val : table.getTitles()) {
 			if (first) {
 				first = false;
 			} else {
-				out.print("</th><th>");
+				out.println("</th>");
+				out.print("<th>");
 			}
 			write(val);
 		}
-		out.println("</th></tr>");
+		out.println("</th>");
+		out.println("</tr>");
 		for (Object o : table) {
-			out.println("<tr><td>");
+			out.println("<tr>");
+			out.print("<td>");
 			if (o instanceof Tuple) {
 				first = true;
 				for (Object val : (Tuple) o) {
 					if (first) {
 						first = false;
 					} else {
-						out.println("</td><td>");
+						out.println("</td>");
+						out.print("<td>");
 					}
 					write(val);
 				}
 			} else {
 				write(o);
 			}
-			out.println("</td></tr>");
+			out.println("</td>");
+			out.println("</tr>");
 		}
 		out.println("</table>");
 	}
@@ -254,12 +266,11 @@ public class HTMLOutputWriter extends DefaultWriter {
 	@Override
 	protected void writeVertex(Vertex vertex) throws IOException {
 		if (createElementLinks) {
-			out.println("<a href=\"v" + vertex.getId() + "\">v"
-					+ vertex.getId() + ": "
-					+ vertex.getAttributedElementClass().getUniqueName()
+			out.print("<a href=\"v" + vertex.getId() + "\">v" + vertex.getId()
+					+ ": " + vertex.getAttributedElementClass().getUniqueName()
 					+ "</a>");
 		} else {
-			out.println("v" + vertex.getId() + ": "
+			out.print("v" + vertex.getId() + ": "
 					+ vertex.getAttributedElementClass().getUniqueName());
 		}
 	}
@@ -267,39 +278,39 @@ public class HTMLOutputWriter extends DefaultWriter {
 	@Override
 	protected void writeEdge(Edge edge) throws IOException {
 		if (createElementLinks) {
-			out.println("<a href=\"e" + edge.getId() + "\">e" + edge.getId()
+			out.print("<a href=\"e" + edge.getId() + "\">e" + edge.getId()
 					+ ": " + edge.getAttributedElementClass().getUniqueName()
 					+ "</a>");
 		} else {
-			out.println("e" + edge.getId() + ": "
+			out.print("e" + edge.getId() + ": "
 					+ edge.getAttributedElementClass().getUniqueName());
 		}
 	}
 
 	@Override
 	protected void writeInteger(Integer b) throws IOException {
-		out.println(b.toString());
+		out.print(b.toString());
 	}
 
 	@Override
 	protected void writeLong(Long b) throws IOException {
-		out.println(b.toString());
+		out.print(b.toString());
 	}
 
 	@Override
 	protected void writeDouble(Double b) throws IOException {
-		out.println(b.toString());
+		out.print(b.toString());
 	}
 
 	@Override
 	protected void writeString(String b) throws IOException {
-		out.println(htmlQuote(b));
+		out.print(htmlQuote(b));
 	}
 
 	@Override
 	protected void writeEnum(Enum<?> e) throws IOException {
 		String b = e.toString();
-		out.println(b);
+		out.print(b);
 	}
 
 	@Override
@@ -348,21 +359,24 @@ public class HTMLOutputWriter extends DefaultWriter {
 		out.print(table(1, 2));
 		boolean first = true;
 		for (Object o : c) {
-			out.println("<tr><td>");
+			out.println("<tr>");
+			out.print("<td>");
 			if (o instanceof Tuple) {
 				first = true;
 				for (Object val : (Tuple) o) {
 					if (first) {
 						first = false;
 					} else {
-						out.println("</td><td>");
+						out.println("</td>");
+						out.print("<td>");
 					}
 					write(val);
 				}
 			} else {
 				write(o);
 			}
-			out.println("</td></tr>");
+			out.println("</td>");
+			out.println("</tr>");
 		}
 		out.println("</table>");
 	}

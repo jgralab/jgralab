@@ -51,6 +51,7 @@ import de.uni_koblenz.jgralab.greql.schema.Expression;
 import de.uni_koblenz.jgralab.greql.schema.IsTableHeaderOf;
 import de.uni_koblenz.jgralab.greql.schema.ListComprehension;
 import de.uni_koblenz.jgralab.greql.types.Table;
+import de.uni_koblenz.jgralab.greql.types.Undefined;
 
 /**
  * Evaluates a ListComprehensionvertex in the GReQL-2 Syntaxgraph
@@ -89,12 +90,23 @@ public class ListComprehensionEvaluator extends
 		}
 		if (createHeader) {
 			PVector<String> headerTuple = JGraLab.<String> vector();
+			boolean allUndefined = true;
 			for (VertexEvaluator<? extends Expression> headerEvaluator : headerEvaluators) {
-				headerTuple = headerTuple.plus((String) headerEvaluator
-						.getResult(evaluator));
+				Object header = headerEvaluator.getResult(evaluator);
+				if (header instanceof Undefined) {
+					headerTuple = headerTuple.plus("");
+				} else {
+					allUndefined = false;
+					headerTuple = headerTuple.plus(header.toString());
+				}
 			}
-			Table<Object> table = Table.empty();
-			return table.withTitles(headerTuple);
+			if (allUndefined) {
+				createHeader = false;
+				return JGraLab.vector();
+			} else {
+				Table<Object> table = Table.empty();
+				return table.withTitles(headerTuple);
+			}
 		}
 		return JGraLab.vector();
 	}

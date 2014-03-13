@@ -97,6 +97,7 @@ import de.uni_koblenz.jgralab.greql.schema.ThisLiteral;
 import de.uni_koblenz.jgralab.greql.schema.ThisVertex;
 import de.uni_koblenz.jgralab.greql.schema.TupleConstruction;
 import de.uni_koblenz.jgralab.greql.schema.TypeId;
+import de.uni_koblenz.jgralab.greql.schema.UndefinedLiteral;
 import de.uni_koblenz.jgralab.greql.schema.Variable;
 import de.uni_koblenz.jgralab.greql.schema.VertexSetExpression;
 import de.uni_koblenz.jgralab.greql.serialising.GreqlSerializer;
@@ -849,9 +850,13 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 			initSnippet
 					.add("org.pcollections.PVector<String> header = JGraLab.vector();");
 			while (isTableHeaderOf != null) {
-				initSnippet.add("header = header.plus("
-						+ createCodeForExpression(isTableHeaderOf.getAlpha())
-						+ ");");
+				if (isTableHeaderOf.getAlpha().getAttributedElementClass() == UndefinedLiteral.VC) {
+					initSnippet.add("header = header.plus(\"\");");
+				} else {
+					initSnippet.add("header = header.plus("
+							+ createCodeForExpression(isTableHeaderOf
+									.getAlpha()) + ".toString());");
+				}
 				isTableHeaderOf = isTableHeaderOf
 						.getNextIsTableHeaderOfIncidence(EdgeDirection.IN);
 			}

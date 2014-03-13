@@ -530,7 +530,36 @@ public class GreqlParser extends ParserHelper {
 		}
 		match(TokenTypes.EOF);
 		testIllegalThisLiterals();
+		removeUndefinedTableheaders();
 		mergeVariablesInGreqlExpression(rootExpr);
+	}
+
+	private void removeUndefinedTableheaders() {
+		// remove table headers of list comprehensions where
+		// all headers are undefined
+		COMPR: for (ComprehensionWithTableHeader compr : graph
+				.getComprehensionWithTableHeaderVertices()) {
+			for (IsTableHeaderOf th : compr.getIsTableHeaderOfIncidences()) {
+				if (th.getThat().getAttributedElementClass() != UndefinedLiteral.VC) {
+					continue COMPR;
+				}
+			}
+			IsTableHeaderOf th = compr.getFirstIsTableHeaderOfIncidence();
+			while (th != null) {
+				IsTableHeaderOf next = th.getNextIsTableHeaderOfIncidence();
+				th.delete();
+				th = next;
+			}
+		}
+		// remove orphaned UndefinedLiterals
+		UndefinedLiteral ul = graph.getFirstUndefinedLiteral();
+		while (ul != null) {
+			UndefinedLiteral next = ul.getNextUndefinedLiteral();
+			if (ul.getFirstIncidence() == null) {
+				ul.delete();
+			}
+			ul = next;
+		}
 	}
 
 	private final PSet<String> parseImports() {
@@ -2146,6 +2175,15 @@ public class GreqlParser extends ParserHelper {
 							.createIsTableHeaderOf(asExpr, listCompr);
 					tableHeaderOf.set_sourcePositions(createSourcePositionList(
 							lengthAsExpr, offsetAsExpr));
+				} else {
+					UndefinedLiteral ul = null;
+					if (!inPredicateMode()) {
+						ul = graph.getFirstUndefinedLiteral();
+						if (ul == null) {
+							ul = graph.createUndefinedLiteral();
+						}
+					}
+					graph.createIsTableHeaderOf(ul, listCompr);
 				}
 			}
 		} while (tryMatch(TokenTypes.COMMA));
