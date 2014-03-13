@@ -149,14 +149,17 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 
 	private final HashSet<String> resultVariables = new HashSet<String>();
 
+	private final ClassLoader schemaClassLoader;
+
 	public GreqlCodeGenerator(GreqlQuery query, Schema datagraphSchema,
-			String packageName, String classname) {
+			String packageName, String classname, ClassLoader schemaClassLoader) {
 		super(packageName, "", CodeGeneratorConfiguration.MINIMAL);
 		graph = query.getQueryGraph();
 		this.query = query;
 		this.classname = classname;
 		this.packageName = packageName;
 		this.schema = datagraphSchema;
+		this.schemaClassLoader = schemaClassLoader;
 		scope = new Scope();
 		evaluator = new GreqlEvaluatorImpl(query, null,
 				new GreqlEnvironmentAdapter());
@@ -181,7 +184,7 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 	 *            defined by its qualified name <code>classname</code>
 	 */
 	public static void generateCode(String queryString, Schema datagraphSchema,
-			String classname, String path) {
+			String classname, String path, ClassLoader schemaClassLoader) {
 		GreqlQuery query = GreqlQuery
 				.createQuery(queryString, new DefaultOptimizer(
 						new DefaultOptimizerInfo(datagraphSchema)));
@@ -192,7 +195,7 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 			packageName = classname.substring(0, classname.lastIndexOf("."));
 		}
 		GreqlCodeGenerator greqlcodeGen = new GreqlCodeGenerator(query,
-				datagraphSchema, packageName, simpleName);
+				datagraphSchema, packageName, simpleName, schemaClassLoader);
 		try {
 			greqlcodeGen.createFiles(path);
 		} catch (GraphIOException e) {
@@ -218,7 +221,7 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 	 *            the fully qualified name of the class to be generated
 	 */
 	public static Class<ExecutableQuery> generateCode(String queryString,
-			Schema datagraphSchema, String classname) {
+			Schema datagraphSchema, String classname, ClassLoader schemaClassLoader) {
 		GreqlQuery query = GreqlQuery
 				.createQuery(queryString, new DefaultOptimizer(
 						new DefaultOptimizerInfo(datagraphSchema)));
@@ -230,7 +233,7 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 			packageName = classname.substring(0, classname.lastIndexOf("."));
 		}
 		GreqlCodeGenerator greqlcodeGen = new GreqlCodeGenerator(query,
-				datagraphSchema, packageName, simpleName);
+				datagraphSchema, packageName, simpleName, schemaClassLoader);
 		return greqlcodeGen.compile();
 	}
 
@@ -2276,7 +2279,7 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 
 		try {
 			SchemaClassManager schemaClassManager = SchemaClassManager
-					.instance(codeGeneratorFileManagerName);
+					.instance(schemaClassLoader, codeGeneratorFileManagerName);
 			return (Class<ExecutableQuery>) Class.forName(packageName + "."
 					+ this.classname, true, schemaClassManager);
 		} catch (ClassNotFoundException e) {

@@ -44,8 +44,8 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 
-import javax.tools.JavaFileObject;
-import javax.tools.JavaFileObject.Kind;
+import de.uni_koblenz.javax.tools.JavaFileObject;
+import de.uni_koblenz.javax.tools.JavaFileObject.Kind;
 
 import org.eclipse.core.runtime.FileLocator;
 import org.osgi.framework.Version;
@@ -58,7 +58,7 @@ import de.uni_koblenz.jgralab.schema.impl.compilation.ClassFileObject;
  * {@link #listJavaFileObjects(String, boolean)} looks for JGraLab class files
  * in the plugin bundle. Those files are required by the Java compiler, but can
  * not be found elsewhere.
- * 
+ *
  * @author ist@uni-koblenz.de
  */
 public class EclipseAdapterImpl implements EclipseAdapter {

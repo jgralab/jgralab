@@ -101,8 +101,8 @@ public class VertexClassImpl extends GraphElementClassImpl<VertexClass, Vertex>
 	 * builds a new vertex class object
 	 */
 	protected VertexClassImpl(String simpleName, PackageImpl pkg,
-			GraphClassImpl gc) {
-		super(simpleName, pkg, gc, gc.vertexClassDag);
+			GraphClassImpl gc, ClassLoader schemaClassLoader) {
+		super(simpleName, pkg, gc, gc.vertexClassDag, schemaClassLoader);
 		parentPackage.addVertexClass(this);
 		graphClass.addVertexClass(this);
 	}
@@ -500,7 +500,7 @@ public class VertexClassImpl extends GraphElementClassImpl<VertexClass, Vertex>
 
 	/**
 	 * Called when an edge class connected to this vertex class is deleted
-	 * 
+	 *
 	 * @param ic
 	 */
 	void unlink(IncidenceClass ic) {

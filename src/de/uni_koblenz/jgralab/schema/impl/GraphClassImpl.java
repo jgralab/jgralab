@@ -88,15 +88,17 @@ public final class GraphClassImpl extends
 	 * visibility of this constructor cannot be changed without causing serious
 	 * issues in the program.
 	 * </p>
-	 * 
+	 *
 	 * @param qn
 	 *            a unique name in the <code>Schema</code>
 	 * @param aSchema
 	 *            the <code>Schema</code> containing this
 	 *            <code>GraphClass</code>
 	 */
-	GraphClassImpl(String gcName, SchemaImpl schema) {
-		super(gcName, (PackageImpl) schema.getDefaultPackage(), schema);
+	GraphClassImpl(String gcName, SchemaImpl schema,
+			ClassLoader schemaClassLoader) {
+		super(gcName, (PackageImpl) schema.getDefaultPackage(), schema,
+				schemaClassLoader);
 		schema.setGraphClass(this);
 	}
 
@@ -108,7 +110,8 @@ public final class GraphClassImpl extends
 	final void initializeDefaultVertexClass() {
 		VertexClassImpl vc = new VertexClassImpl(
 				VertexClass.DEFAULTVERTEXCLASS_NAME,
-				(PackageImpl) schema.getDefaultPackage(), this);
+				(PackageImpl) schema.getDefaultPackage(), this,
+				schemaClassLoader);
 		vc.setAbstract(true);
 		defaultVertexClass = vc;
 	}
@@ -120,7 +123,7 @@ public final class GraphClassImpl extends
 				(PackageImpl) schema.getDefaultPackage(), this,
 				defaultVertexClass, 0, Integer.MAX_VALUE, "",
 				AggregationKind.NONE, defaultVertexClass, 0, Integer.MAX_VALUE,
-				"", AggregationKind.NONE);
+				"", AggregationKind.NONE, schemaClassLoader);
 		ec.setAbstract(true);
 		defaultEdgeClass = ec;
 	}
@@ -132,13 +135,13 @@ public final class GraphClassImpl extends
 
 	final void initializeTemporaryVertexClass() {
 		assert getTemporaryVertexClass() == null : "TemporaryVertexClass already created!";
-		tempVertexClass = new TemporaryVertexClassImpl(this);
+		tempVertexClass = new TemporaryVertexClassImpl(this, schemaClassLoader);
 	}
 
 	final void initializeTemporaryEdgeClass() {
 		assert getDefaultVertexClass() != null : "Default VertexClass has not yet been created!";
 		assert getTemporaryEdgeClass() == null : "TemporaryEdgeClass already created!";
-		this.tempEdgeClass = new TemporaryEdgeClassImpl(this);
+		this.tempEdgeClass = new TemporaryEdgeClassImpl(this, schemaClassLoader);
 	}
 
 	@Override
@@ -200,7 +203,7 @@ public final class GraphClassImpl extends
 		PackageImpl parent = schema.createPackageWithParents(qn[0]);
 		EdgeClassImpl ec = new EdgeClassImpl(qn[1], parent, this, from,
 				fromMin, fromMax, fromRoleName, aggrFrom, to, toMin, toMax,
-				toRoleName, aggrTo);
+				toRoleName, aggrTo, schemaClassLoader);
 		if (defaultEdgeClass != null) {
 			ec.addSuperClass(defaultEdgeClass);
 		}
@@ -214,7 +217,8 @@ public final class GraphClassImpl extends
 		String[] qn = SchemaImpl.splitQualifiedName(qualifiedName);
 		PackageImpl parent = ((SchemaImpl) getSchema())
 				.createPackageWithParents(qn[0]);
-		VertexClassImpl vc = new VertexClassImpl(qn[1], parent, this);
+		VertexClassImpl vc = new VertexClassImpl(qn[1], parent, this,
+				schemaClassLoader);
 		if (defaultVertexClass != null) {
 			vc.addSuperClass(defaultVertexClass);
 		}

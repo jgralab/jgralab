@@ -202,6 +202,8 @@ public class SchemaImpl implements Schema, ManagableArtifact {
 
 	private StringDomain stringDomain;
 
+	private final ClassLoader schemaClassLoader;
+
 	private static final Pattern SCHEMA_NAME_PATTERN = Pattern
 			.compile("^\\p{Upper}(\\p{Alnum}|[_])*\\p{Alnum}$");
 
@@ -216,7 +218,8 @@ public class SchemaImpl implements Schema, ManagableArtifact {
 	 * @param packagePrefix
 	 *            Package prefix of schema.
 	 */
-	public SchemaImpl(String name, String packagePrefix) {
+	public SchemaImpl(String name, String packagePrefix,
+			ClassLoader schemaClassLoader) {
 		if (!SCHEMA_NAME_PATTERN.matcher(name).matches()) {
 			throw new SchemaException(
 					"Invalid schema name '"
@@ -240,10 +243,12 @@ public class SchemaImpl implements Schema, ManagableArtifact {
 							+ "The last character before a '.' and the end of the line must be an alphanumeric character.");
 		}
 
+		this.schemaClassLoader = schemaClassLoader;
 		this.name = name;
 		this.packagePrefix = packagePrefix;
 		qualifiedName = packagePrefix + "." + name;
-		schemaClassManager = SchemaClassManager.instance(qualifiedName);
+		schemaClassManager = SchemaClassManager.instance(schemaClassLoader,
+				qualifiedName);
 
 		// Needs to be created before any NamedElement can be created
 		defaultPackage = PackageImpl.createDefaultPackage(this);
@@ -388,11 +393,12 @@ public class SchemaImpl implements Schema, ManagableArtifact {
 		Iterable<? extends JavaFileObject> compilationUnits = fileManager
 				.getJavaFileObjectsFromFiles(getJavaFiles(schemaDir));
 		try {
-            c.getTask(null, fileManager, null, null, null, compilationUnits).call();
-        } catch(Exception e) {
-            // TODO This is pretty hackish.
-            throw new IOException(e);
-        }
+			c.getTask(null, fileManager, null, null, null, compilationUnits)
+					.call();
+		} catch (Exception e) {
+			// TODO This is pretty hackish.
+			throw new IOException(e);
+		}
 		fileManager.close();
 	}
 
@@ -574,10 +580,11 @@ public class SchemaImpl implements Schema, ManagableArtifact {
 		Vector<InMemoryJavaSourceFile> javaSources = commit(config);
 
 		try {
-            compiler.getTask(null, manager, null, null, null, javaSources).call();
-        } catch(Exception e) {
-            throw new RuntimeException(e);
-        }
+			compiler.getTask(null, manager, null, null, null, javaSources)
+					.call();
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	@Override
@@ -592,7 +599,8 @@ public class SchemaImpl implements Schema, ManagableArtifact {
 		String[] components = splitQualifiedName(qualifiedName);
 		PackageImpl parent = createPackageWithParents(components[0]);
 		String simpleName = components[1];
-		EnumDomain ed = new EnumDomainImpl(simpleName, parent, enumComponents);
+		EnumDomain ed = new EnumDomainImpl(simpleName, parent, enumComponents,
+				schemaClassLoader);
 		return ed;
 	}
 
@@ -616,7 +624,8 @@ public class SchemaImpl implements Schema, ManagableArtifact {
 			throw new SchemaException(
 					"A GraphClass must always be in the default package!");
 		}
-		GraphClassImpl gc = new GraphClassImpl(simpleName, this);
+		GraphClassImpl gc = new GraphClassImpl(simpleName, this,
+				schemaClassLoader);
 		gc.initializeDefaultVertexClass();
 		gc.initializeDefaultEdgeClass();
 		gc.initializeTemporaryVertexClass();
@@ -786,7 +795,7 @@ public class SchemaImpl implements Schema, ManagableArtifact {
 		PackageImpl parent = createPackageWithParents(components[0]);
 		String simpleName = components[1];
 		RecordDomain rd = new RecordDomainImpl(simpleName, parent,
-				recordComponents);
+				recordComponents, schemaClassLoader);
 		return rd;
 	}
 
@@ -1026,8 +1035,8 @@ public class SchemaImpl implements Schema, ManagableArtifact {
 
 			try {
 				schemaClass = (Class<? extends Graph>) Class.forName(
-						implClassName, true,
-						SchemaClassManager.instance(qualifiedName));
+						implClassName, true, SchemaClassManager.instance(
+								schemaClassLoader, qualifiedName));
 			} catch (ClassNotFoundException e) {
 				throw new SchemaClassAccessException(
 						"can't load implementation class '" + implClassName

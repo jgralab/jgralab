@@ -8,7 +8,7 @@ Bundle-Name: JGraLab
 Bundle-SymbolicName: de.uni_koblenz.jgralab;singleton:=true
 Bundle-Activator: de.uni_koblenz.jgralab.plugin.Activator
 Bundle-Vendor: Institute for Software Technology
-Require-Bundle: org.eclipse.core.runtime
+Require-Bundle: org.eclipse.core.runtime;resolution:=optional
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Export-Package: de.uni_koblenz.ist.utilities.ant,de.uni_koblenz.ist.ut
  ilities.csvreader,de.uni_koblenz.ist.utilities.gui,de.uni_koblenz.ist

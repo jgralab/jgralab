@@ -60,9 +60,9 @@ import de.uni_koblenz.jgralab.schema.VertexClass;
 
 /**
  * TODO add comment
- * 
+ *
  * @author ist@uni-koblenz.de
- * 
+ *
  */
 public class SchemaCodeGenerator extends CodeGenerator {
 
@@ -70,7 +70,7 @@ public class SchemaCodeGenerator extends CodeGenerator {
 
 	/**
 	 * Creates a new SchemaCodeGenerator which creates code for the given schema
-	 * 
+	 *
 	 * @param schema
 	 *            the schema to create the code for
 	 * @param schemaPackageName
@@ -251,7 +251,7 @@ public class SchemaCodeGenerator extends CodeGenerator {
 				" * This constructor is private. Use the <code>instance()</code> method",
 				" * to access the schema.", " */",
 				"private #simpleClassName#() {",
-				"\tsuper(\"#simpleClassName#\", \"#schemaPackage#\");"));
+				"\tsuper(\"#simpleClassName#\", \"#schemaPackage#\", #simpleClassName#.class.getClassLoader());"));
 
 		code.add(createEnumDomains());
 		code.add(createCompositeDomains());

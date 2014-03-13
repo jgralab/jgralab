@@ -176,7 +176,7 @@ public class GReTLRunner {
 		if (targetSchema != null) {
 			c = new Context(targetSchema);
 		} else {
-			c = new Context(schema, graphclass);
+			c = new Context(schema, graphclass, Class.class.getClassLoader());
 		}
 
 		if (cli.getArgs().length == 0) {

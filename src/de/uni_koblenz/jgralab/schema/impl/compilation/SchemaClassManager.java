@@ -44,23 +44,24 @@ import de.uni_koblenz.jgralab.schema.Schema;
 /**
  * A {@code SchemaClassManager} holds the bytecode of the generated schema
  * classes of one {@link Schema} in a Map {@link #schemaClassFiles}.
- * 
+ *
  * As a specialization of {@link ClassLoader}, it overwrites the
  * {@link #findClass(String)} method such that {@link #schemaClassFiles} is
  * first searched for classes' bytecode before invoking {@code findClass} of the
  * original {@code ClassLoader}.
- * 
+ *
  * Once the class is loaded, the byte code is discarded.
- * 
+ *
  * @author ist@uni-koblenz.de
  */
 public class SchemaClassManager extends ClassLoader {
 	private static HashMap<String, WeakReference<SchemaClassManager>> instances = new HashMap<String, WeakReference<SchemaClassManager>>();
 
-	private Map<String, InMemoryClassFile> schemaClassFiles;
+	private final Map<String, InMemoryClassFile> schemaClassFiles;
 	private String schemaQName = null;
+	private final ClassLoader parentClassLoader;
 
-	public static SchemaClassManager instance(String qualifiedName) {
+	public static SchemaClassManager instance(ClassLoader parent, String qualifiedName) {
 		// Singleton implementation using weak references
 		WeakReference<SchemaClassManager> ref = instances.get(qualifiedName);
 		SchemaClassManager result = null;
@@ -74,16 +75,22 @@ public class SchemaClassManager extends ClassLoader {
 					result = ref.get();
 				}
 				if (result == null) {
-					result = new SchemaClassManager(qualifiedName);
+					result = new SchemaClassManager(parent, qualifiedName);
 					instances.put(qualifiedName,
 							new WeakReference<SchemaClassManager>(result));
 				}
 			}
 		}
+
 		return result;
 	}
 
-	private SchemaClassManager(String schemaQName) {
+//	public static SchemaClassManager instance(String qualifiedName) {
+//		return instance(null, qualifiedName);
+//	}
+
+	private SchemaClassManager(ClassLoader parent, String schemaQName) {
+		parentClassLoader = parent;
 		this.schemaQName = schemaQName;
 		schemaClassFiles = new HashMap<String, InMemoryClassFile>();
 	}
@@ -104,7 +111,11 @@ public class SchemaClassManager extends ClassLoader {
 			schemaClassFiles.remove(name);
 			return clazz;
 		}
-		
+
+		if(parentClassLoader != null) {
+			return parentClassLoader.loadClass(name);
+		}
+
 		// if not defined internally, use the standard class loader mechanisms
 		return Class.forName(name);
 	}

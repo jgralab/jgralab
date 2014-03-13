@@ -92,14 +92,15 @@ public abstract class GraphElementClassImpl<SC extends GraphElementClass<SC, IC>
 
 	/**
 	 * delegates its constructor to the generalized class
-	 * 
+	 *
 	 * @param qn
 	 *            the unique identifier of the element in the schema
 	 */
 	@SuppressWarnings("unchecked")
 	protected GraphElementClassImpl(String simpleName, PackageImpl pkg,
-			GraphClassImpl graphClass, DirectedAcyclicGraph<SC> dag) {
-		super(simpleName, pkg, graphClass.schema);
+			GraphClassImpl graphClass, DirectedAcyclicGraph<SC> dag,
+			ClassLoader schemaClassLoader) {
+		super(simpleName, pkg, graphClass.schema, schemaClassLoader);
 		ownAttributes = ArrayPVector.empty();
 		subclassDag = (DirectedAcyclicGraph<GraphElementClass<SC, IC>>) dag;
 		subclassDag.createNode(this);
@@ -134,7 +135,7 @@ public abstract class GraphElementClassImpl<SC extends GraphElementClass<SC, IC>
 
 	/**
 	 * adds a superClass to this class
-	 * 
+	 *
 	 * @param superClass
 	 *            the class to add as superclass
 	 */

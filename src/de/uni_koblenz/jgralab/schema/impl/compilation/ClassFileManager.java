@@ -104,7 +104,7 @@ public class ClassFileManager extends
 		}
 		// redirect compiler output to InMemoryClassFiles
 		InMemoryClassFile cfa = new InMemoryClassFile(className);
-		SchemaClassManager.instance(qualifiedSchemaName).putSchemaClass(
+		SchemaClassManager.instance(null, qualifiedSchemaName).putSchemaClass(
 				className, cfa);
 		// System.out.println("Registered class");
 		return cfa;

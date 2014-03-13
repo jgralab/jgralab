@@ -19,9 +19,10 @@ import de.uni_koblenz.jgralab.schema.VertexClass;
 
 public class TemporaryVertexClassImpl extends VertexClassImpl {
 
-	protected TemporaryVertexClassImpl(GraphClassImpl gc) {
+	protected TemporaryVertexClassImpl(GraphClassImpl gc,
+			ClassLoader schemaClassLoader) {
 		super("TemporaryVertexClass", (PackageImpl) gc.getSchema()
-				.getDefaultPackage(), gc);
+				.getDefaultPackage(), gc, schemaClassLoader);
 	}
 
 	@Override

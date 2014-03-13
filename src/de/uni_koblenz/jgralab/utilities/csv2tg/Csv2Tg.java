@@ -136,7 +136,7 @@ public class Csv2Tg implements FilenameFilter {
 	private boolean isCompiled(Schema schema) {
 		try {
 			Class.forName(schema.getQualifiedName(), true,
-					SchemaClassManager.instance(schema.getQualifiedName()));
+					SchemaClassManager.instance(null, schema.getQualifiedName()));
 		} catch (ClassNotFoundException ex) {
 			return false;
 		}

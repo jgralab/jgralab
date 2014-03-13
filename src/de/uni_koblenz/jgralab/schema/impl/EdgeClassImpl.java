@@ -51,7 +51,7 @@ public class EdgeClassImpl extends GraphElementClassImpl<EdgeClass, Edge>
 
 	/**
 	 * builds a new edge class
-	 * 
+	 *
 	 * @param qn
 	 *            the unique identifier of the edge class in the schema
 	 * @param from
@@ -84,8 +84,9 @@ public class EdgeClassImpl extends GraphElementClassImpl<EdgeClass, Edge>
 	protected EdgeClassImpl(String simpleName, PackageImpl pkg,
 			GraphClassImpl gc, VertexClass from, int fromMin, int fromMax,
 			String fromRoleName, AggregationKind aggrFrom, VertexClass to,
-			int toMin, int toMax, String toRoleName, AggregationKind aggrTo) {
-		super(simpleName, pkg, gc, gc.edgeClassDag);
+			int toMin, int toMax, String toRoleName, AggregationKind aggrTo,
+			ClassLoader schemaClassLoader) {
+		super(simpleName, pkg, gc, gc.edgeClassDag, schemaClassLoader);
 
 		if (pkg.isDefaultPackage() && simpleName.equals(DEFAULTEDGECLASS_NAME)) {
 			// the default EC is just created
@@ -146,7 +147,7 @@ public class EdgeClassImpl extends GraphElementClassImpl<EdgeClass, Edge>
 	 * checks if the incidence classes own and inherited are compatible, i.e. if
 	 * the upper multiplicity of own is lower or equal than the one of inherited
 	 * and so on
-	 * 
+	 *
 	 * @param special
 	 * @param general
 	 * @throws SchemaException
