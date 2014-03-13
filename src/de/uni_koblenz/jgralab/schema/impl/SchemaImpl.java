@@ -261,6 +261,10 @@ public class SchemaImpl implements Schema, ManagableArtifact {
 		createStringDomain();
 	}
 
+	public SchemaImpl(String name, String packagePrefix) {
+		this(name, packagePrefix, null);
+	}
+
 	void addDomain(Domain dom) {
 		if (domains.containsKey(dom.getQualifiedName())) {
 			throw new SchemaException("Duplicate Domain '"

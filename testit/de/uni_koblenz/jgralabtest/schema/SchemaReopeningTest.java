@@ -66,7 +66,7 @@ public class SchemaReopeningTest {
 		Class<?> csc = Class
 				.forName("foo.reopen.test.ReopenTestSchema", true,
 						SchemaClassManager
-								.instance("foo.reopen.test.ReopenTestSchema"));
+								.instance(null, "foo.reopen.test.ReopenTestSchema"));
 		Schema cs = (Schema) csc.getMethod("instance").invoke(null);
 		cs.reopen();
 	}

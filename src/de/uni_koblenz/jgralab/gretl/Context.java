@@ -222,6 +222,10 @@ public class Context {
 		setSourceGraph(g);
 	}
 
+	public Context(String targetSchemaName, String targetGraphClassName) {
+		this(targetSchemaName, targetGraphClassName, null);
+	}
+
 	/**
 	 * @param aec
 	 *            the AttributedElementClass for which to get the archMap

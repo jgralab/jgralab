@@ -203,6 +203,11 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 		}
 	}
 
+	public static Class<ExecutableQuery> generateCode(String queryString,
+			Schema datagraphSchema, String classname) {
+		return generateCode(queryString, datagraphSchema, classname, null);
+	}
+
 	/**
 	 * Generates and compiles an in-memory Java class implementing a GReQL
 	 * query. The generated class will implement the interface
