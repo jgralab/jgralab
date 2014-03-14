@@ -72,7 +72,11 @@ public class Intersection extends Function {
 
 	@Override
 	public long getEstimatedCosts(ArrayList<Long> inElements) {
-		return inElements.get(0) + inElements.get(1);
+		long elements = 0;
+		for (long n : inElements) {
+			elements += n;
+		}
+		return elements;
 	}
 
 	@Override

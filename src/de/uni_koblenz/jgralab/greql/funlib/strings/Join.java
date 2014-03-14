@@ -41,16 +41,16 @@ import de.uni_koblenz.jgralab.greql.funlib.Function;
 
 public class Join extends Function {
 
-	@Description(params = { "l", "delimiter" }, description = "Joins the strings in the given collection by interleaving with the given delimiter.", categories = Category.STRINGS)
+	@Description(params = { "l", "delimiter" }, description = "Joins the string representations of objects in the given collection l by interleaving with the delimiter.", categories = Category.STRINGS)
 	public Join() {
 		super(5, 1, 1.0);
 	}
 
-	public String evaluate(PCollection<String> l, String delimiter) {
+	public String evaluate(PCollection<?> l, String delimiter) {
 		StringBuilder sb = new StringBuilder();
 		String d = "";
-		for (String s : l) {
-			sb.append(d).append(s);
+		for (Object s : l) {
+			sb.append(d).append(s.toString());
 			d = delimiter;
 		}
 		return sb.toString();

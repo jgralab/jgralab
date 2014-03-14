@@ -992,6 +992,7 @@ public class GreqlGui extends SwingApplication {
 			getCurrentQuery().saveToFile(f);
 			setPrefString(PREFS_KEY_LAST_QUERY_DIRECTORY, f.getParentFile()
 					.getCanonicalPath());
+			recentQueryList.rememberFile(f);
 			return true;
 		} catch (IOException e) {
 			// TODO
