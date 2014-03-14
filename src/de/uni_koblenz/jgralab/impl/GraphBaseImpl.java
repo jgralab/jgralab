@@ -46,6 +46,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.UUID;
 
 import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Edge;
@@ -225,7 +226,7 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 
 		schema = cls.getSchema();
 		// graphFactory = schema.getGraphFactory();
-		setId(id == null ? RandomIdGenerator.generateId() : id);
+		setId(id == null ? UUID.randomUUID().toString() : id);
 		// needed for initialization of graphVersion with transactions
 		graphVersion = -1;
 		setGraphVersion(0);

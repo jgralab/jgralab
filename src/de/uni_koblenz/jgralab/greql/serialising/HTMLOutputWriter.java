@@ -426,7 +426,7 @@ public class HTMLOutputWriter extends DefaultWriter {
 		if (useCss) {
 			out.println("<style type=\"text/css\">");
 			out.println("table { border: thin gray solid; border-collapse: collapse; border-spacing: 2px }");
-			out.println("td { border: thin gray solid; border-collapse: collapse; border-spacing: 2px }");
+			out.println("td { vertical-align: top; border: thin gray solid; border-collapse: collapse; border-spacing: 2px }");
 			out.println("th { border: thin gray solid; border-collapse: collapse; border-spacing: 2px }");
 			out.println("</style>\n");
 		}
