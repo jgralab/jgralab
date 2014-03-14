@@ -183,28 +183,31 @@ public class QueryEditorPanel extends JPanel {
 	private static class CompletionEntry implements Comparable<CompletionEntry> {
 		@SuppressWarnings("unused")
 		CompletionEntryType type;
+		String key;
 		String name;
 		String replacement;
 		String description;
 		int offset;
 
-		public CompletionEntry(CompletionEntryType type, String name,
-				String replacement, String description) {
+		public CompletionEntry(CompletionEntryType type, String key,
+				String name, String replacement, String description) {
 			this.type = type;
+			this.key = key;
 			this.name = name;
 			this.replacement = replacement;
 			this.description = description;
 		}
 
-		public CompletionEntry(CompletionEntryType type, String name,
-				String replacement, String description, int offset) {
-			this(type, name, replacement, description);
+		public CompletionEntry(CompletionEntryType type, String key,
+				String name, String replacement, String description, int offset) {
+			this(type, key, name, replacement, description);
 			this.offset = offset;
 		}
 
 		@Override
 		public int compareTo(CompletionEntry c) {
-			return name.compareTo(c.name);
+			int r = name.compareTo(c.name);
+			return r == 0 ? key.compareTo(c.key) : r;
 		}
 	}
 
@@ -298,7 +301,10 @@ public class QueryEditorPanel extends JPanel {
 						for (Attribute attr : vc.getOwnAttributeList()) {
 							if (attr.getName().toLowerCase().startsWith(prefix)) {
 								completionEntries.add(new CompletionEntry(
-										CompletionEntryType.ATTRIBUTE, attr
+										CompletionEntryType.ATTRIBUTE, vc
+												.getQualifiedName()
+												+ "."
+												+ attr.getName(), attr
 												.getName()
 												+ " in "
 												+ vc.getSimpleName(), attr
@@ -311,7 +317,10 @@ public class QueryEditorPanel extends JPanel {
 						for (Attribute attr : ec.getOwnAttributeList()) {
 							if (attr.getName().toLowerCase().startsWith(prefix)) {
 								completionEntries.add(new CompletionEntry(
-										CompletionEntryType.ATTRIBUTE, attr
+										CompletionEntryType.ATTRIBUTE, ec
+												.getQualifiedName()
+												+ "."
+												+ attr.getName(), attr
 												.getName()
 												+ " in "
 												+ ec.getSimpleName(), attr
@@ -329,7 +338,10 @@ public class QueryEditorPanel extends JPanel {
 										.startsWith(prefix)) {
 							completionEntries.add(new CompletionEntry(
 									CompletionEntryType.VERTEXCLASS, vc
-											.getSimpleName(), vc
+											.getQualifiedName(), vc
+											.getSimpleName()
+											+ " ("
+											+ vc.getPackageName() + ")", vc
 											.getQualifiedName(),
 									getDescription(vc)));
 						}
@@ -343,7 +355,10 @@ public class QueryEditorPanel extends JPanel {
 										.startsWith(prefix)) {
 							completionEntries.add(new CompletionEntry(
 									CompletionEntryType.EDGECLASS, ec
-											.getSimpleName(), ec
+											.getQualifiedName(), ec
+											.getSimpleName()
+											+ " ("
+											+ ec.getPackageName() + ")", ec
 											.getQualifiedName(),
 									getDescription(ec)));
 						}
@@ -443,60 +458,63 @@ public class QueryEditorPanel extends JPanel {
 		Set<String> funcs = FunLib.getFunctionNames();
 		for (String s : funcs) {
 			greqlEntries.add(new CompletionEntry(
-					CompletionEntryType.GREQL_FUNCTION, s, s + "()", FunLib
+					CompletionEntryType.GREQL_FUNCTION, s, s, s + "()", FunLib
 							.getFunctionInfo(s).getHtmlDescription(), -1));
 		}
 		greqlEntries.add(new CompletionEntry(CompletionEntryType.GREQL_IDIOM,
-				"V", "V{}", getDescriptionFromResources("vertexset.html"), -1));
+				"V", "V", "V{}", getDescriptionFromResources("vertexset.html"),
+				-1));
 		greqlEntries.add(new CompletionEntry(CompletionEntryType.GREQL_IDIOM,
-				"E", "E{}", getDescriptionFromResources("edgeset.html"), -1));
+				"E", "E", "E{}", getDescriptionFromResources("edgeset.html"),
+				-1));
 		greqlEntries.add(new CompletionEntry(CompletionEntryType.GREQL_IDIOM,
-				"false", "false", "Boolean constant"));
+				"false", "false", "false", "Boolean constant"));
 		greqlEntries.add(new CompletionEntry(CompletionEntryType.GREQL_IDIOM,
-				"true", "true", "Boolean constant"));
+				"true", "true", "true", "Boolean constant"));
 		greqlEntries.add(new CompletionEntry(CompletionEntryType.GREQL_IDIOM,
-				"undefined", "undefined", "Undefined constant"));
+				"undefined", "undefined", "undefined", "Undefined constant"));
 		greqlEntries.add(new CompletionEntry(CompletionEntryType.GREQL_IDIOM,
-				"tv", "thisVertex",
+				"tv", "tv", "thisVertex",
 				getDescriptionFromResources("thisliteral.html")));
 		greqlEntries.add(new CompletionEntry(CompletionEntryType.GREQL_IDIOM,
-				"te", "thisEdge",
+				"te", "te", "thisEdge",
 				getDescriptionFromResources("thisliteral.html")));
 		greqlEntries.add(new CompletionEntry(CompletionEntryType.GREQL_IDIOM,
-				"fwr", "from\n\t\nwith\n\t\nreport\n\t\nend",
+				"fwr", "fwr", "from\n\t\nwith\n\t\nreport\n\t\nend",
 				getDescriptionFromResources("listcomp.html"), -20));
 		greqlEntries.add(new CompletionEntry(CompletionEntryType.GREQL_IDIOM,
-				"fwr set", "from\n\t\nwith\n\t\nreportSet\n\t\nend",
+				"fwr set", "fwr set", "from\n\t\nwith\n\t\nreportSet\n\t\nend",
 				getDescriptionFromResources("setcomp.html"), -23));
 		greqlEntries.add(new CompletionEntry(CompletionEntryType.GREQL_IDIOM,
-				"fwr map", "from\n\t\nwith\n\t\nreportMap\n\t\nend",
+				"fwr map", "fwr map", "from\n\t\nwith\n\t\nreportMap\n\t\nend",
 				getDescriptionFromResources("mapcomp.html"), -23));
 		greqlEntries.add(new CompletionEntry(CompletionEntryType.GREQL_IDIOM,
-				"exists", "exists @ ",
+				"exists", "exists", "exists @ ",
 				getDescriptionFromResources("exists.html"), -2));
 		greqlEntries.add(new CompletionEntry(CompletionEntryType.GREQL_IDIOM,
-				"exists!", "exists!  @ ",
+				"exists!", "exists!", "exists!  @ ",
 				getDescriptionFromResources("exists1.html"), -3));
 		greqlEntries.add(new CompletionEntry(CompletionEntryType.GREQL_IDIOM,
-				"forall", "forall  @ ",
+				"forall", "forall", "forall  @ ",
 				getDescriptionFromResources("forall.html"), -3));
-		greqlEntries
-				.add(new CompletionEntry(CompletionEntryType.GREQL_IDIOM,
-						"let", "let  in ",
-						getDescriptionFromResources("let.html"), -4));
 		greqlEntries.add(new CompletionEntry(CompletionEntryType.GREQL_IDIOM,
-				"where", "\nwhere ", getDescriptionFromResources("where.html"),
-				-7));
-		greqlEntries
-				.add(new CompletionEntry(CompletionEntryType.GREQL_IDIOM,
-						"list", "list()",
-						getDescriptionFromResources("list.html"), -1));
+				"let", "let", "let  in ",
+				getDescriptionFromResources("let.html"), -4));
 		greqlEntries.add(new CompletionEntry(CompletionEntryType.GREQL_IDIOM,
-				"set", "set()", getDescriptionFromResources("set.html"), -1));
+				"where", "where", "\nwhere ",
+				getDescriptionFromResources("where.html"), -7));
 		greqlEntries.add(new CompletionEntry(CompletionEntryType.GREQL_IDIOM,
-				"map", "map()", getDescriptionFromResources("map.html"), -1));
+				"list", "list", "list()",
+				getDescriptionFromResources("list.html"), -1));
 		greqlEntries.add(new CompletionEntry(CompletionEntryType.GREQL_IDIOM,
-				"tup", "tup()", getDescriptionFromResources("tup.html"), -1));
+				"set", "set", "set()", getDescriptionFromResources("set.html"),
+				-1));
+		greqlEntries.add(new CompletionEntry(CompletionEntryType.GREQL_IDIOM,
+				"map", "map", "map()", getDescriptionFromResources("map.html"),
+				-1));
+		greqlEntries.add(new CompletionEntry(CompletionEntryType.GREQL_IDIOM,
+				"tup", "tup", "tup()", getDescriptionFromResources("tup.html"),
+				-1));
 		return greqlEntries;
 	}
 
@@ -586,12 +604,13 @@ public class QueryEditorPanel extends JPanel {
 	protected void lookupWord() {
 		int caretPosition = queryArea.getCaretPosition();
 		char[] a = queryArea.getText().toCharArray();
+		int len = a.length;
 
 		int p = caretPosition - 1;
 		while (p >= 0 && (Character.isLetterOrDigit(a[p]) || a[p] == '_')) {
 			--p;
 		}
-		// p is the position of the first non-id character to the left of
+		// now, p is the position of the first non-id character to the left of
 		// caretPosition
 		int dot = p;
 		while (dot >= 0 && Character.isWhitespace(a[dot])) {
@@ -613,8 +632,27 @@ public class QueryEditorPanel extends JPanel {
 				break;
 			}
 		}
+
 		lookupType = null;
+		int rPos = insertPos;
+		int carPos = caretPosition;
 		if (p >= 0 && a[p] == '{') {
+			int lcurlyPos = p;
+			// try to find right end of replacement (before rcurly or comma)
+			int q = prefixStart - 1;
+			while (q >= 0 && a[q] != '{' && a[q] != ',') {
+				if (Character.isWhitespace(a[q])
+						|| Character.isLetterOrDigit(a[q]) || a[q] == '_'
+						|| a[q] == '$' || a[q] == '^' || a[q] == '.'
+						|| a[q] == '!') {
+					--q;
+				} else {
+					break;
+				}
+			}
+			if (q >= 0 && (a[q] == '{' || a[q] == ',')) {
+				lcurlyPos = q;
+			}
 			// type is possible, try to find out whether EdgeClass or
 			// VertexClass should be inserted
 			--p;
@@ -625,22 +663,51 @@ public class QueryEditorPanel extends JPanel {
 				if (a[p] == 'V' || a[p] == '&') {
 					// VertexClass
 					lookupType = CompletionEntryType.VERTEXCLASS;
+					rPos = lcurlyPos + 1;
+
 				} else if (a[p] == 'E' || a[p] == '-' || a[p] == '>') {
 					// EdgeClass
 					lookupType = CompletionEntryType.EDGECLASS;
+					rPos = lcurlyPos + 1;
 				}
 			}
 			if (lookupType == null) {
 				lookupType = CompletionEntryType.GRAPHELEMENTCLASS;
+				rPos = lcurlyPos + 1;
 			}
 		}
 		if (lookupType == null && dot >= 0 && a[dot] == '.') {
+			rPos = dot + 1;
 			lookupType = CompletionEntryType.ATTRIBUTE;
 		}
 
 		if (lookupType == null) {
 			lookupType = CompletionEntryType.GREQL_FUNCTION;
 		}
+
+		if (lookupType == CompletionEntryType.VERTEXCLASS
+				|| lookupType == CompletionEntryType.EDGECLASS
+				|| lookupType == CompletionEntryType.GRAPHELEMENTCLASS) {
+			// schema type should be inserted, try to find a closing curly
+			// bracket }
+			// to the right of the caret position
+			int q = caretPosition;
+			while (q < len && a[q] != '}' && a[q] != ',') {
+				if (Character.isWhitespace(a[q])
+						|| Character.isLetterOrDigit(a[q]) || a[q] == '_'
+						|| a[q] == '$' || a[q] == '^' || a[q] == '.'
+						|| a[q] == '!') {
+					++q;
+				} else {
+					break;
+				}
+			}
+			if (q < len && (a[q] == '}' || a[q] == ',')) {
+				carPos = q;
+			}
+		}
+		final int replacePos = rPos;
+		final int replaceLength = carPos - replacePos;
 		String prefix = "";
 		try {
 			prefix = queryArea.getText(insertPos, insertLength).toLowerCase();
@@ -711,12 +778,12 @@ public class QueryEditorPanel extends JPanel {
 					e.consume();
 					if (selectTable.getSelectedRow() >= 0) {
 						try {
-							queryArea.getDocument().remove(insertPos,
-									insertLength);
+							queryArea.getDocument().remove(replacePos,
+									replaceLength);
 							CompletionEntry entry = completions
 									.getEntry(selectTable.getSelectedRow());
 							String completion = entry.replacement;
-							queryArea.getDocument().insertString(insertPos,
+							queryArea.getDocument().insertString(replacePos,
 									completion, null);
 							queryArea.setCaretPosition(queryArea
 									.getCaretPosition()
