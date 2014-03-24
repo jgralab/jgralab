@@ -52,7 +52,7 @@ public abstract class DomainImpl extends NamedElementImpl implements Domain {
 					"boolean attrIsSet = true;",
 					"if (!"
 							+ graphIo
-							+ ".isNextToken(de.uni_koblenz.jgralab.impl.TgLexer.Token.UNSET)) {",
+							+ ".isNextToken(de.uni_koblenz.jgralab.impl.TgLexer.Token.UNSET_LITERAL)) {",
 					"\t" + code, "} else {", "\t" + graphIo + ".match();",
 					"\tattrIsSet = false;", "}");
 		}

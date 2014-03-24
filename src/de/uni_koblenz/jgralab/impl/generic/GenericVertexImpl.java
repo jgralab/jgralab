@@ -85,18 +85,22 @@ public class GenericVertexImpl extends VertexImpl implements
 			throws GraphIOException, NoSuchAttributeException {
 		int i = type.getAttributeIndex(attributeName);
 		Domain dom = type.getAttribute(attributeName).getDomain();
-		GenericGraphImpl.setAttributeValueHandlingUnset(attributes, i, dom, dom
-				.parseGenericAttribute(GraphIO.createStringReader(value,
-						getSchema())));
+		if (GenericGraphImpl.setAttributeValueHandlingUnset(attributes, i, dom,
+				dom.parseGenericAttribute(GraphIO.createStringReader(value,
+						getSchema())))) {
+			internalMarkAttributeAsSet(i, true);
+		}
 	}
 
 	@Override
 	public void readAttributeValues(GraphIO io) throws GraphIOException {
 		for (Attribute a : type.getAttributeList()) {
 			Domain dom = a.getDomain();
-			GenericGraphImpl.setAttributeValueHandlingUnset(attributes,
-					type.getAttributeIndex(a.getName()), dom,
-					dom.parseGenericAttribute(io));
+			int i = type.getAttributeIndex(a.getName());
+			if (GenericGraphImpl.setAttributeValueHandlingUnset(attributes, i,
+					dom, dom.parseGenericAttribute(io))) {
+				internalMarkAttributeAsSet(i, true);
+			}
 		}
 	}
 
@@ -105,7 +109,7 @@ public class GenericVertexImpl extends VertexImpl implements
 			throws IOException, GraphIOException, NoSuchAttributeException {
 		GraphIO io = GraphIO.createStringWriter(getSchema());
 		if (isUnsetAttribute(attributeName)) {
-			io.writeIdentifier(Token.UNSET.toString());
+			io.writeIdentifier(Token.UNSET_LITERAL.toString());
 		} else {
 			type.getAttribute(attributeName).getDomain()
 					.serializeGenericAttribute(io, getAttribute(attributeName));
@@ -118,7 +122,7 @@ public class GenericVertexImpl extends VertexImpl implements
 			GraphIOException {
 		for (Attribute a : type.getAttributeList()) {
 			if (isUnsetAttribute(a.getName())) {
-				io.writeIdentifier(Token.UNSET.toString());
+				io.writeIdentifier(Token.UNSET_LITERAL.toString());
 			} else {
 				a.getDomain().serializeGenericAttribute(io,
 						getAttribute(a.getName()));
