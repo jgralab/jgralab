@@ -94,7 +94,7 @@ public final class LongDomainImpl extends BasicDomainImpl implements LongDomain 
 
 	@Override
 	public Object parseGenericAttribute(GraphIO io) throws GraphIOException {
-		if (io.isNextToken(Token.UNSET)) {
+		if (io.isNextToken(Token.UNSET_LITERAL)) {
 			io.match();
 			return GraphIO.Unset.UNSET;
 		}

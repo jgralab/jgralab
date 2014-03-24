@@ -53,7 +53,7 @@ public class TgLexer {
 				"RecordDomain"), COMMENT("Comment"), PACKAGE("Package"), GRAPH(
 				"Graph"), LIST("List"), LIST2(".LIST"), SET("Set"), SET2(".Set"), MAP(
 				"Map"), MAP2(".Map"), TEXT(null), INT(null), STRING(null), EOF(
-				null), UNSET("u");
+				null), UNSET_LITERAL("u");
 
 		String lexeme;
 

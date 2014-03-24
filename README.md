@@ -78,6 +78,25 @@ Join us on the official [JGraLab IRC Channel](irc://irc.freenode.net/#jgralab)
 install an IRC client, you can also
 [chat directly in your browser](http://webchat.freenode.net/?channels=jgralab).
 
+## Publications
+
+  - _GReTL: an extensible, operational, graph-based transformation language_,
+    Jürgen Ebert and Tassilo Horn, In: Software and Systems Modeling, 2012,
+    http://dx.doi.org/10.1007/s10270-012-0250-3
+  - _The GReTL Transformation Language_, Tassilo Horn and Jürgen Ebert, In:
+    Theory and Practice of Model Transformations - 4th International
+    Conference, ICMT 2011, http://dx.doi.org/10.1007/978-3-642-21732-6_11
+  - _Solving the TTC 2011 Compiler Optimization Case with GReTL_, Tassilo Horn,
+    TTC 2011, http://arxiv.org/abs/1111.4745v1
+  - _Solving the TTC 2011 Reengineering Case with GReTL_, Tassilo Horn, TTC
+    2011, http://arxiv.org/abs/1111.4747
+  - _Saying Hello World with GReTL - A Solution to the TTC 2011 Instructive
+    Case_, Tassilo Horn, TTC 2011, http://arxiv.org/abs/1111.4762
+  - _Reverse Engineering Using Graph Queries_, Jürgen Ebert and Daniel
+    Bildhauer, In: Schürr, Andy; Lewerentz, Claus; Engels, Gregor; Schäfer,
+    Wilhelm; Westfechtel, Bernhard: Graph Transformations and Model Driven
+    Engineering, 2010, http://uni-koblenz.de/~ist/documents/Ebert2010REU.pdf
+
 ## License
 
 Copyright (C) 2006-2013 The JGraLab Team <ist@uni-koblenz.de>
@@ -101,3 +120,4 @@ the following additional grant:
 <!-- mode: markdown          -->
 <!-- indent-tabs-mode: nil   -->
 <!-- End:                    -->
+

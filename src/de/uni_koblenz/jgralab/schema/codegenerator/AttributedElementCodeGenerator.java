@@ -462,7 +462,7 @@ public abstract class AttributedElementCodeGenerator<SC extends AttributedElemen
 				a.add(new CodeSnippet(
 						"if (isUnsetAttribute(\"" + attribute.getName()
 								+ "\")) {",
-						"\tio.writeIdentifier(de.uni_koblenz.jgralab.impl.TgLexer.Token.UNSET.toString());",
+						"\tio.writeIdentifier(GraphIO.UNSET_LITERAL);",
 						"} else {"));
 				a.add(attribute.getDomain().getWriteMethod(
 						schemaRootPackageName, "_" + attribute.getName(), "io"),
@@ -520,7 +520,7 @@ public abstract class AttributedElementCodeGenerator<SC extends AttributedElemen
 				code.add(new CodeSnippet(
 						"if (isUnsetAttribute(\"" + attribute.getName()
 								+ "\")) {",
-						"\tio.writeIdentifier(de.uni_koblenz.jgralab.impl.TgLexer.Token.UNSET.toString());",
+						"\tio.writeIdentifier(GraphIO.UNSET_LITERAL);",
 						"} else {"));
 				code.add(
 						attribute.getDomain().getWriteMethod(

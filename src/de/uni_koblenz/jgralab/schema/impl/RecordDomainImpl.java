@@ -208,7 +208,7 @@ public final class RecordDomainImpl extends CompositeDomainImpl implements
 		code.add("\t#io#.match();");
 		code.add("\t" + variableName + " = null;");
 		if (withUnsetCheck) {
-			code.add("} else if (#io#.isNextToken(#token#.UNSET)) {",
+			code.add("} else if (#io#.isNextToken(#token#.UNSET_LITERAL)) {",
 					"\t#io#.match();", "\tattrIsSet = false;");
 		}
 		code.add("} else {");
@@ -240,7 +240,7 @@ public final class RecordDomainImpl extends CompositeDomainImpl implements
 
 	@Override
 	public Object parseGenericAttribute(GraphIO io) throws GraphIOException {
-		if (io.isNextToken(Token.UNSET)) {
+		if (io.isNextToken(Token.UNSET_LITERAL)) {
 			io.match();
 			return GraphIO.Unset.UNSET;
 		} else if (io.isNextToken(Token.LBR)) {

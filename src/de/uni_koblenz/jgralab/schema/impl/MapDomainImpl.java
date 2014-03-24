@@ -214,7 +214,7 @@ public final class MapDomainImpl extends CompositeDomainImpl implements
 		code.add(new CodeSnippet("#io#.match();", "#name# = null;"));
 		if (withUnsetCheck) {
 			code.addNoIndent(new CodeSnippet(
-					"} else if (#io#.isNextToken(#token#.UNSET)) {",
+					"} else if (#io#.isNextToken(#token#.UNSET_LITERAL)) {",
 					"\t#io#.match();", "\tattrIsSet = false;"));
 		}
 		code.addNoIndent(new CodeSnippet("} else {",
@@ -269,7 +269,7 @@ public final class MapDomainImpl extends CompositeDomainImpl implements
 
 	@Override
 	public Object parseGenericAttribute(GraphIO io) throws GraphIOException {
-		if (io.isNextToken(Token.UNSET)) {
+		if (io.isNextToken(Token.UNSET_LITERAL)) {
 			io.match();
 			return GraphIO.Unset.UNSET;
 		} else if (io.isNextToken(Token.LCRL)) {

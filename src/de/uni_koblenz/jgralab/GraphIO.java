@@ -109,6 +109,7 @@ public final class GraphIO {
 			.toString();
 	public static final String FALSE_LITERAL = TgLexer.Token.FALSE_LITERAL
 			.toString();
+	public static final String UNSET_LITERAL = TgLexer.Token.UNSET_LITERAL.toString();
 	public static final String TGRAPH_FILE_EXTENSION = ".tg";
 	public static final String TGRAPH_COMPRESSED_FILE_EXTENSION = ".tg.gz";
 	private static final int WRITE_BUFFER_SIZE = 65536;
