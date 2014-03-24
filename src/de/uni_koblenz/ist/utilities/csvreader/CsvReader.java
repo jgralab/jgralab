@@ -118,6 +118,8 @@ public class CsvReader {
 	 */
 	private boolean quoting;
 
+	private int recordNumber;
+
 	/**
 	 * Creates a CsvReader and reads the first line of input as field names.
 	 * Field separator is ";", no quote character.
@@ -184,6 +186,7 @@ public class CsvReader {
 		if (withFieldNames == WITH_FIELDNAMES) {
 			readFieldNames();
 		}
+		recordNumber = 0;
 	}
 
 	/**
@@ -191,6 +194,14 @@ public class CsvReader {
 	 */
 	public int getLineNumber() {
 		return reader.getLineNumber();
+	}
+
+	/**
+	 * @return the record number of the currently read record (not counting
+	 *         field names, comment and blank lines)
+	 */
+	public int getRecordNumber() {
+		return recordNumber;
 	}
 
 	/**
@@ -224,8 +235,12 @@ public class CsvReader {
 				return false;
 			}
 
+			if (line.trim().isEmpty()) {
+				// skip blank lines
+				continue;
+			}
 			if (commentLine.matcher(line).matches()) {
-				// if comment, try again
+				// skip comment
 				continue;
 			}
 			// not EOF, so create a new result record
@@ -266,6 +281,7 @@ public class CsvReader {
 			// add last field (could be the only one if the line contains no
 			// seperators nor quotes)
 			currentRecord.add(removeStringDelimiters(field));
+			++recordNumber;
 			return true;
 		}
 	}
