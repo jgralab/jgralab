@@ -38,14 +38,14 @@ public class ComplexToken extends Token {
 
 	public String value = null;
 
-	public ComplexToken(TokenTypes type, int offset, int length, String value) {
+	public ComplexToken(GreqlTokenType type, int offset, int length,
+			String value) {
 		super(type, offset, length);
+		if (type.getText() != null) {
+			throw new IllegalArgumentException(
+					"Complex tokens must not have a type with a fixed text");
+		}
 		this.value = value;
-	}
-
-	@Override
-	public boolean isComplex() {
-		return true;
 	}
 
 	@Override

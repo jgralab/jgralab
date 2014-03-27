@@ -34,10 +34,35 @@
  */
 package de.uni_koblenz.jgralab.greql.parser;
 
-public class SimpleToken extends Token {
+public enum GreqlTokenType {
+	TRANSPOSED("^T"), AND("and"), FALSE("false"), NOT("not"), UNDEFINED(
+			"undefined"), OR("or"), TRUE("true"), XOR("xor"), AS("as"), MAP(
+			"map"), E("E"), EXISTS_ONE("exists!"), EXISTS("exists"), END("end"), FORALL(
+			"forall"), FROM("from"), ON("on"), IN("in"), LET("let"), LIST(
+			"list"), REC("rec"), REPORT("report"), REPORTSET("reportSet"), REPORTSETN(
+			"reportSetN"), REPORTLIST("reportList"), REPORTLISTN("reportListN"), REPORTMAP(
+			"reportMap"), REPORTMAPN("reportMapN"), STORE("store"), SET("set"), TUP(
+			"tup"), USING("using"), V("V"), WHERE("where"), WITH("with"), QUESTION(
+			"?"), EXCL("!"), COLON(":"), COMMA(","), DOT("."), DOTDOT(".."), AT(
+			"@"), LPAREN("("), RPAREN(")"), LBRACK("["), RBRACK("]"), LCURLY(
+			"{"), RCURLY("}"), EDGESTART("<-"), EDGEEND("->"), EDGE("--"), RARROW(
+			"-->"), LARROW("<--"), ARROW("<->"), ASSIGN(":="), EQUAL("="), MATCH(
+			"=~"), NOT_EQUAL("<>"), LE("<="), GE(">="), L_T("<"), G_T(">"), DIV(
+			"/"), PLUS("+"), MINUS("-"), STAR("*"), MOD("%"), SEMI(";"), CARET(
+			"^"), BOR("|"), AMP("&"), SMILEY(":-)"), HASH("#"), OUTAGGREGATION(
+			"<>--"), INAGGREGATION("--<>"), PATHSYSTEMSTART("-<"), IMPORT(
+			"import"), STRING(null), IDENTIFIER(null), DOUBLELITERAL(null), LONGLITERAL(
+			null), THISEDGE("thisEdge"), THISVERTEX("thisVertex"), EOF(null), PLUSPLUS(
+			"++"), POS_INFINITY("POSITIVE_INFINITY"), NEG_INFINITY(
+			"NEGATIVE_INFINITY"), NOT_A_NUMBER("NaN");
 
-	public SimpleToken(TokenTypes type, int position, int length) {
-		super(type, position, length);
+	private String text;
+
+	private GreqlTokenType(String t) {
+		text = t;
 	}
 
+	public String getText() {
+		return text;
+	}
 }

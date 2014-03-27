@@ -944,6 +944,7 @@ public class Rsa2Tg extends XmlProcessor {
 	private void handleDefaultValue(String xmiId, String value) {
 		if (currentAttribute == null) {
 			throw new ProcessingException(
+					getParser(),
 					getFilename(),
 					"Found a <defaultValue> tag (XMI id "
 							+ xmiId
@@ -1098,7 +1099,7 @@ public class Rsa2Tg extends XmlProcessor {
 		assert graphClass != null;
 		// The qualified name of the GraphClass should be set.
 		if (graphClass.get_qualifiedName() == null) {
-			throw new ProcessingException(getFilename(),
+			throw new ProcessingException(getParser(), getFilename(),
 					"No <<graphclass>> defined in schema '"
 							+ schema.get_packagePrefix() + "."
 							+ schema.get_name() + "'");
@@ -2541,7 +2542,7 @@ public class Rsa2Tg extends XmlProcessor {
 		int n = getValue();
 		if ((currentAssociationEnd == null) && inOwnedAttribute) {
 			if (n != 1) {
-				throw new ProcessingException(getFilename(),
+				throw new ProcessingException(getParser(), getFilename(),
 						"grUML does not support attribute multiplicities other than 1..1");
 			}
 		} else {
@@ -2575,7 +2576,7 @@ public class Rsa2Tg extends XmlProcessor {
 		int n = getValue();
 		if ((currentAssociationEnd == null) && inOwnedAttribute) {
 			if (n != 1) {
-				throw new ProcessingException(getFilename(),
+				throw new ProcessingException(getParser(), getFilename(),
 						"grUML does not support attribute multiplicities other than 1..1");
 			}
 		} else {

@@ -190,11 +190,11 @@ public class GreqlParser extends ParserHelper {
 		System.out.println(s);
 	}
 
-	private final TokenTypes lookAhead(int i) {
+	private final GreqlTokenType lookAhead(int i) {
 		if ((current + i) < tokens.size()) {
 			return tokens.get(current + i).type;
 		} else {
-			return TokenTypes.EOF;
+			return GreqlTokenType.EOF;
 		}
 	}
 
@@ -336,7 +336,7 @@ public class GreqlParser extends ParserHelper {
 	}
 
 	private final String matchIdentifier() {
-		if (lookAhead(0) == TokenTypes.IDENTIFIER) {
+		if (lookAhead(0) == GreqlTokenType.IDENTIFIER) {
 			String name = lookAhead.getValue();
 			if (isValidIdentifier(name)) {
 				match();
@@ -348,7 +348,7 @@ public class GreqlParser extends ParserHelper {
 	}
 
 	private final String matchSimpleName() {
-		if (lookAhead(0) == TokenTypes.IDENTIFIER) {
+		if (lookAhead(0) == GreqlTokenType.IDENTIFIER) {
 			String name = lookAhead.getValue();
 			if (isValidSimpleName(name)) {
 				match();
@@ -359,7 +359,7 @@ public class GreqlParser extends ParserHelper {
 		return null;
 	}
 
-	private final void match(TokenTypes type) {
+	private final void match(GreqlTokenType type) {
 		if (lookAhead(0) == type) {
 			match();
 		} else {
@@ -367,7 +367,7 @@ public class GreqlParser extends ParserHelper {
 		}
 	}
 
-	private static final boolean isValidName(TokenTypes token) {
+	private static final boolean isValidName(GreqlTokenType token) {
 		switch (token) {
 		case MAP:
 		case AS:
@@ -388,18 +388,18 @@ public class GreqlParser extends ParserHelper {
 	}
 
 	private final String matchPackageName() {
-		if (((lookAhead(0) == TokenTypes.IDENTIFIER) || isValidName(lookAhead(0)))
+		if (((lookAhead(0) == GreqlTokenType.IDENTIFIER) || isValidName(lookAhead(0)))
 				&& isValidPackageName(getLookAheadValue(0))) {
 			StringBuilder name = new StringBuilder();
 			name.append(lookAhead.getValue());
 			match();
 			boolean ph = true;
 			do {
-				if (lookAhead(0) == TokenTypes.DOT) {
-					if (((lookAhead(1) == TokenTypes.IDENTIFIER) || isValidName(lookAhead(1)))
+				if (lookAhead(0) == GreqlTokenType.DOT) {
+					if (((lookAhead(1) == GreqlTokenType.IDENTIFIER) || isValidName(lookAhead(1)))
 							&& isValidPackageName(getLookAheadValue(1))) {
 						ph = true;
-						match(TokenTypes.DOT);
+						match(GreqlTokenType.DOT);
 						name.append(".");
 						name.append(lookAhead.getValue());
 						match();
@@ -430,13 +430,13 @@ public class GreqlParser extends ParserHelper {
 		predicateStart();
 		try {
 			matchPackageName();
-			match(TokenTypes.DOT);
+			match(GreqlTokenType.DOT);
 		} catch (ParsingException ex) {
 		}
 		if (predicateEnd()) {
 			name.append(matchPackageName());
 			name.append(".");
-			match(TokenTypes.DOT);
+			match(GreqlTokenType.DOT);
 		}
 		name.append(matchSimpleName());
 		return name.toString();
@@ -495,12 +495,12 @@ public class GreqlParser extends ParserHelper {
 	}
 
 	private final void parseQuery() {
-		if (lookAhead(0) == TokenTypes.EOF) {
+		if (lookAhead(0) == GreqlTokenType.EOF) {
 			return;
 		}
 		GreqlExpression rootExpr = graph.createGreqlExpression();
 		rootExpr.set_importedTypes(parseImports());
-		if (lookAhead(0) == TokenTypes.USING) {
+		if (lookAhead(0) == GreqlTokenType.USING) {
 			match();
 			List<VertexPosition<Variable>> varList = parseVariableList();
 			for (VertexPosition<Variable> var : varList) {
@@ -509,7 +509,7 @@ public class GreqlParser extends ParserHelper {
 				isVarOf.set_sourcePositions(createSourcePositionList(
 						var.length, var.offset));
 			}
-			match(TokenTypes.COLON);
+			match(GreqlTokenType.COLON);
 		}
 		int offset = getCurrentOffset();
 		Expression expr = parseExpression();
@@ -518,9 +518,9 @@ public class GreqlParser extends ParserHelper {
 		}
 		IsQueryExprOf e = graph.createIsQueryExprOf(expr, rootExpr);
 		e.set_sourcePositions(createSourcePositionList(offset));
-		if (lookAhead(0) == TokenTypes.STORE) {
+		if (lookAhead(0) == GreqlTokenType.STORE) {
 			match();
-			match(TokenTypes.AS);
+			match(GreqlTokenType.AS);
 			Identifier ident = graph.createIdentifier();
 			offset = getCurrentOffset();
 			ident.set_name(matchIdentifier());
@@ -528,7 +528,7 @@ public class GreqlParser extends ParserHelper {
 					rootExpr);
 			isId.set_sourcePositions(createSourcePositionList(offset));
 		}
-		match(TokenTypes.EOF);
+		match(GreqlTokenType.EOF);
 		testIllegalThisLiterals();
 		removeUndefinedTableheaders();
 		mergeVariablesInGreqlExpression(rootExpr);
@@ -564,20 +564,20 @@ public class GreqlParser extends ParserHelper {
 
 	private final PSet<String> parseImports() {
 		PSet<String> importedTypes = JGraLab.set();
-		while (lookAhead(0) == TokenTypes.IMPORT) {
-			match(TokenTypes.IMPORT);
+		while (lookAhead(0) == GreqlTokenType.IMPORT) {
+			match(GreqlTokenType.IMPORT);
 			StringBuilder importedType = new StringBuilder();
 			importedType.append(matchPackageName());
-			match(TokenTypes.DOT);
-			if (lookAhead(0) == TokenTypes.STAR) {
-				match(TokenTypes.STAR);
+			match(GreqlTokenType.DOT);
+			if (lookAhead(0) == GreqlTokenType.STAR) {
+				match(GreqlTokenType.STAR);
 				importedType.append(".*");
 			} else {
 				importedType.append(".");
 				importedType.append(matchSimpleName());
 			}
 			importedTypes = importedTypes.plus(importedType.toString());
-			match(TokenTypes.SEMI);
+			match(GreqlTokenType.SEMI);
 		}
 		return importedTypes;
 	}
@@ -587,7 +587,7 @@ public class GreqlParser extends ParserHelper {
 		int offset = getCurrentOffset();
 		vlist.add(new VertexPosition<Variable>(parseVariable(true),
 				getLength(offset), offset));
-		while (lookAhead(0) == TokenTypes.COMMA) {
+		while (lookAhead(0) == GreqlTokenType.COMMA) {
 			match();
 			vlist.add(new VertexPosition<Variable>(parseVariable(true),
 					getLength(offset), offset));
@@ -646,11 +646,11 @@ public class GreqlParser extends ParserHelper {
 			return null;
 		}
 		Expression result = null;
-		if (lookAhead(0) == TokenTypes.ON) {
+		if (lookAhead(0) == GreqlTokenType.ON) {
 			match();
 			int offsetDef = getCurrentOffset();
 			SubgraphDefinition subgraphDef = parseSubgraphDefinition();
-			match(TokenTypes.COLON);
+			match(GreqlTokenType.COLON);
 			int lengthDef = getLength(offsetDef);
 			int offsetRestrExpr = getCurrentOffset();
 			Expression restrictedExpr = parseWhereExpression();
@@ -677,7 +677,7 @@ public class GreqlParser extends ParserHelper {
 		return result;
 	}
 
-	private final boolean tryMatch(TokenTypes type) {
+	private final boolean tryMatch(GreqlTokenType type) {
 		if (lookAhead(0) == type) {
 			match();
 			return true;
@@ -687,11 +687,11 @@ public class GreqlParser extends ParserHelper {
 
 	private final Quantifier parseQuantifier() {
 		QuantificationType type = null;
-		if (tryMatch(TokenTypes.FORALL)) {
+		if (tryMatch(GreqlTokenType.FORALL)) {
 			type = QuantificationType.FORALL;
-		} else if (tryMatch(TokenTypes.EXISTS_ONE)) {
+		} else if (tryMatch(GreqlTokenType.EXISTS_ONE)) {
 			type = QuantificationType.EXISTSONE;
-		} else if (tryMatch(TokenTypes.EXISTS)) {
+		} else if (tryMatch(GreqlTokenType.EXISTS)) {
 			type = QuantificationType.EXISTS;
 		}
 		if (type != null) {
@@ -713,9 +713,9 @@ public class GreqlParser extends ParserHelper {
 	}
 
 	private final Expression parseQuantifiedExpression() {
-		if ((lookAhead(0) == TokenTypes.EXISTS)
-				|| (lookAhead(0) == TokenTypes.EXISTS_ONE)
-				|| (lookAhead(0) == TokenTypes.FORALL)) {
+		if ((lookAhead(0) == GreqlTokenType.EXISTS)
+				|| (lookAhead(0) == GreqlTokenType.EXISTS_ONE)
+				|| (lookAhead(0) == GreqlTokenType.FORALL)) {
 			int offsetQuantifier = getCurrentOffset();
 			int offsetQuantifiedDecl = 0;
 			int offsetQuantifiedExpr = 0;
@@ -728,7 +728,7 @@ public class GreqlParser extends ParserHelper {
 			duringParsingvariableSymbolTable.blockBegin();
 			Declaration decl = parseQuantifiedDeclaration();
 			lengthQuantifiedDecl = getLength(offsetQuantifiedDecl);
-			match(TokenTypes.AT);
+			match(GreqlTokenType.AT);
 			offsetQuantifiedExpr = getCurrentOffset();
 			Expression boundExpr = parseSubgraphRestrictedExpression();
 			lengthQuantifiedExpr = getLength(offsetQuantifiedExpr);
@@ -759,11 +759,11 @@ public class GreqlParser extends ParserHelper {
 	}
 
 	private final Expression parseLetExpression() {
-		if (lookAhead(0) == TokenTypes.LET) {
+		if (lookAhead(0) == GreqlTokenType.LET) {
 			match();
 			duringParsingvariableSymbolTable.blockBegin();
 			List<VertexPosition<Definition>> defList = parseDefinitionList();
-			match(TokenTypes.IN);
+			match(GreqlTokenType.IN);
 			int offset = getCurrentOffset();
 			Expression boundExpr = parseLetExpression();
 			LetExpression result = null;
@@ -791,7 +791,7 @@ public class GreqlParser extends ParserHelper {
 	private final Expression parseWhereExpression() {
 		int offset = getCurrentOffset();
 		Expression expr = parseQuantifiedExpression();
-		if (tryMatch(TokenTypes.WHERE)) {
+		if (tryMatch(GreqlTokenType.WHERE)) {
 			int length = getLength(offset);
 			List<VertexPosition<Definition>> defList = parseDefinitionList();
 			WhereExpression result = null;
@@ -827,7 +827,7 @@ public class GreqlParser extends ParserHelper {
 				definitions.add(new VertexPosition<Definition>(v, offset,
 						length));
 			}
-		} while (tryMatch(TokenTypes.COMMA));
+		} while (tryMatch(GreqlTokenType.COMMA));
 		return definitions;
 	}
 
@@ -835,7 +835,7 @@ public class GreqlParser extends ParserHelper {
 		int offsetVar = getCurrentOffset();
 		Variable var = parseVariable(true);
 		int lengthVar = getLength(offsetVar);
-		match(TokenTypes.ASSIGN);
+		match(GreqlTokenType.ASSIGN);
 		int offsetExpr = getCurrentOffset();
 		Expression expr = parseExpression();
 		int lengthExpr = getLength(offsetExpr);
@@ -861,11 +861,11 @@ public class GreqlParser extends ParserHelper {
 		int offsetExpr = getCurrentOffset();
 		Expression result = parseOrExpression();
 		int lengthExpr = getLength(offsetExpr);
-		if (tryMatch(TokenTypes.QUESTION)) {
+		if (tryMatch(GreqlTokenType.QUESTION)) {
 			int offsetTrueExpr = getCurrentOffset();
 			Expression trueExpr = parseConditionalExpression();
 			int lengthTrueExpr = getLength(offsetTrueExpr);
-			match(TokenTypes.COLON);
+			match(GreqlTokenType.COLON);
 			int offsetFalseExpr = getCurrentOffset();
 			Expression falseExpr = parseConditionalExpression();
 			int lengthFalseExpr = getLength(offsetFalseExpr);
@@ -898,7 +898,7 @@ public class GreqlParser extends ParserHelper {
 		construct.preArg1();
 		Expression expr = parseXorExpression();
 		construct.preOp(expr);
-		if (tryMatch(TokenTypes.OR)) {
+		if (tryMatch(GreqlTokenType.OR)) {
 			construct.postOp("or");
 			return construct.postArg2(parseOrExpression());
 		}
@@ -910,7 +910,7 @@ public class GreqlParser extends ParserHelper {
 		construct.preArg1();
 		Expression expr = parseAndExpression();
 		construct.preOp(expr);
-		if (tryMatch(TokenTypes.XOR)) {
+		if (tryMatch(GreqlTokenType.XOR)) {
 			construct.postOp("xor");
 			return construct.postArg2(parseXorExpression());
 		}
@@ -922,7 +922,7 @@ public class GreqlParser extends ParserHelper {
 		construct.preArg1();
 		Expression expr = parseEqualityExpression();
 		construct.preOp(expr);
-		if (tryMatch(TokenTypes.AND)) {
+		if (tryMatch(GreqlTokenType.AND)) {
 			construct.postOp("and");
 			return construct.postArg2(parseAndExpression());
 		}
@@ -934,10 +934,10 @@ public class GreqlParser extends ParserHelper {
 		construct.preArg1();
 		Expression expr = parseRelationalExpression();
 		construct.preOp(expr);
-		if (tryMatch(TokenTypes.EQUAL)) {
+		if (tryMatch(GreqlTokenType.EQUAL)) {
 			construct.postOp("equals");
 			return construct.postArg2(parseEqualityExpression());
-		} else if (tryMatch(TokenTypes.NOT_EQUAL)) {
+		} else if (tryMatch(GreqlTokenType.NOT_EQUAL)) {
 			construct.postOp("nequals");
 			return construct.postArg2(parseEqualityExpression());
 		}
@@ -950,15 +950,15 @@ public class GreqlParser extends ParserHelper {
 		Expression expr = parseAdditiveExpression();
 		construct.preOp(expr);
 		String name = null;
-		if (tryMatch(TokenTypes.L_T)) {
+		if (tryMatch(GreqlTokenType.L_T)) {
 			name = "leThan";
-		} else if (tryMatch(TokenTypes.LE)) {
+		} else if (tryMatch(GreqlTokenType.LE)) {
 			name = "leEqual";
-		} else if (tryMatch(TokenTypes.GE)) {
+		} else if (tryMatch(GreqlTokenType.GE)) {
 			name = "grEqual";
-		} else if (tryMatch(TokenTypes.G_T)) {
+		} else if (tryMatch(GreqlTokenType.G_T)) {
 			name = "grThan";
-		} else if (tryMatch(TokenTypes.MATCH)) {
+		} else if (tryMatch(GreqlTokenType.MATCH)) {
 			name = "reMatch";
 		}
 		if (name != null) {
@@ -982,11 +982,11 @@ public class GreqlParser extends ParserHelper {
 			}
 			name = null;
 			construct.preOp(expr);
-			if (tryMatch(TokenTypes.PLUS)) {
+			if (tryMatch(GreqlTokenType.PLUS)) {
 				name = "add";
-			} else if (tryMatch(TokenTypes.MINUS)) {
+			} else if (tryMatch(GreqlTokenType.MINUS)) {
 				name = "sub";
-			} else if (tryMatch(TokenTypes.PLUSPLUS)) {
+			} else if (tryMatch(GreqlTokenType.PLUSPLUS)) {
 				name = "concat";
 			}
 			if (name != null) {
@@ -1011,11 +1011,11 @@ public class GreqlParser extends ParserHelper {
 			}
 			name = null;
 			construct.preOp(expr);
-			if (tryMatch(TokenTypes.STAR)) {
+			if (tryMatch(GreqlTokenType.STAR)) {
 				name = "mul";
-			} else if (tryMatch(TokenTypes.MOD)) {
+			} else if (tryMatch(GreqlTokenType.MOD)) {
 				name = "mod";
-			} else if (tryMatch(TokenTypes.DIV)) {
+			} else if (tryMatch(GreqlTokenType.DIV)) {
 				name = "div";
 			}
 			if (name != null) {
@@ -1028,14 +1028,14 @@ public class GreqlParser extends ParserHelper {
 
 	private final Expression parseUnaryExpression() {
 		FunctionConstruct construct = null;
-		if ((lookAhead(0) == TokenTypes.NOT)
-				|| (lookAhead(0) == TokenTypes.MINUS)) {
+		if ((lookAhead(0) == GreqlTokenType.NOT)
+				|| (lookAhead(0) == GreqlTokenType.MINUS)) {
 			construct = new FunctionConstruct();
 			construct.preUnaryOp();
 			String opName = null;
-			if (tryMatch(TokenTypes.NOT)) {
+			if (tryMatch(GreqlTokenType.NOT)) {
 				opName = "not";
-			} else if (tryMatch(TokenTypes.MINUS)) {
+			} else if (tryMatch(GreqlTokenType.MINUS)) {
 				opName = "neg";
 			}
 			if (!inPredicateMode()) {
@@ -1075,13 +1075,13 @@ public class GreqlParser extends ParserHelper {
 		Expression expr = parsePrimaryExpression();
 		int length = getLength(offset);
 		boolean secondPart = false;
-		if (lookAhead(0) == TokenTypes.DOT) {
+		if (lookAhead(0) == GreqlTokenType.DOT) {
 			secondPart = true;
 		}
-		if (lookAhead(0) == TokenTypes.LBRACK) {
+		if (lookAhead(0) == GreqlTokenType.LBRACK) {
 			predicateStart();
 			try {
-				match(TokenTypes.LBRACK);
+				match(GreqlTokenType.LBRACK);
 				parsePrimaryPathDescription(); // TODO: pathDescription statt
 				// PrimaryPathDescription?
 			} catch (ParsingException ex) {
@@ -1104,16 +1104,16 @@ public class GreqlParser extends ParserHelper {
 		int lengthArg2 = 0;
 		int offsetArg2 = 0;
 		Expression arg2 = null;
-		if (tryMatch(TokenTypes.DOT)) {
+		if (tryMatch(GreqlTokenType.DOT)) {
 			name = "getValue";
 			lengthOperator = 1;
 			offsetArg2 = getCurrentOffset();
 			arg2 = parseIdentifier();
-		} else if (tryMatch(TokenTypes.LBRACK)) {
+		} else if (tryMatch(GreqlTokenType.LBRACK)) {
 			offsetArg2 = getCurrentOffset();
 			arg2 = parseExpression();
 			lengthArg2 = getLength(offsetArg2);
-			match(TokenTypes.RBRACK);
+			match(GreqlTokenType.RBRACK);
 			lengthOperator = getLength(offsetOperator);
 		}
 		Expression result = null;
@@ -1123,13 +1123,13 @@ public class GreqlParser extends ParserHelper {
 					lengthArg1, arg2, offsetArg2, lengthArg2, true);
 		}
 		boolean secondPart = false;
-		if (lookAhead(0) == TokenTypes.DOT) {
+		if (lookAhead(0) == GreqlTokenType.DOT) {
 			secondPart = true;
 		}
-		if (lookAhead(0) == TokenTypes.LBRACK) {
+		if (lookAhead(0) == GreqlTokenType.LBRACK) {
 			predicateStart();
 			try {
-				match(TokenTypes.LBRACK);
+				match(GreqlTokenType.LBRACK);
 				parsePrimaryPathDescription(); // TODO: pathDescription statt
 				// PrimaryPathDescription?
 			} catch (ParsingException ex) {
@@ -1145,11 +1145,11 @@ public class GreqlParser extends ParserHelper {
 	}
 
 	private final Expression parsePrimaryExpression() {
-		if (lookAhead(0) == TokenTypes.LPAREN) {
+		if (lookAhead(0) == GreqlTokenType.LPAREN) {
 			return parseParenthesedExpression();
 		}
 
-		if ((lookAhead(0) == TokenTypes.V) || (lookAhead(0) == TokenTypes.E)) {
+		if ((lookAhead(0) == GreqlTokenType.V) || (lookAhead(0) == GreqlTokenType.E)) {
 			return parseRangeExpression();
 		}
 
@@ -1162,11 +1162,11 @@ public class GreqlParser extends ParserHelper {
 			return parseAltPathDescription();
 		}
 
-		if (((lookAhead(0) == TokenTypes.IDENTIFIER)
-				|| (lookAhead(0) == TokenTypes.AND)
-				|| (lookAhead(0) == TokenTypes.NOT)
-				|| (lookAhead(0) == TokenTypes.XOR) || (lookAhead(0) == TokenTypes.OR))
-				&& ((lookAhead(1) == TokenTypes.LCURLY) || (lookAhead(1) == TokenTypes.LPAREN))) {
+		if (((lookAhead(0) == GreqlTokenType.IDENTIFIER)
+				|| (lookAhead(0) == GreqlTokenType.AND)
+				|| (lookAhead(0) == GreqlTokenType.NOT)
+				|| (lookAhead(0) == GreqlTokenType.XOR) || (lookAhead(0) == GreqlTokenType.OR))
+				&& ((lookAhead(1) == GreqlTokenType.LCURLY) || (lookAhead(1) == GreqlTokenType.LPAREN))) {
 			predicateStart();
 			try {
 				parseFunctionApplication();
@@ -1203,7 +1203,7 @@ public class GreqlParser extends ParserHelper {
 		if (predicateEnd()) {
 			return parseLiteral();
 		}
-		if (lookAhead(0) == TokenTypes.FROM) {
+		if (lookAhead(0) == GreqlTokenType.FROM) {
 			return parseFWRExpression();
 		}
 		fail("Unrecognized token");
@@ -1220,9 +1220,9 @@ public class GreqlParser extends ParserHelper {
 			Expression expr = parseAltPathDescription();
 			return expr;
 		}
-		match(TokenTypes.LPAREN);
+		match(GreqlTokenType.LPAREN);
 		Expression expr = parseExpression();
-		match(TokenTypes.RPAREN);
+		match(GreqlTokenType.RPAREN);
 		return expr;
 	}
 
@@ -1234,7 +1234,7 @@ public class GreqlParser extends ParserHelper {
 		int offsetPart1 = getCurrentOffset();
 		PathDescription part1 = parseIntermediateVertexPathDescription();
 		int lengthPart1 = getLength(offsetPart1);
-		if (tryMatch(TokenTypes.BOR)) {
+		if (tryMatch(GreqlTokenType.BOR)) {
 			int offsetPart2 = getCurrentOffset();
 			PathDescription part2 = parseAltPathDescription();
 			int lengthPart2 = getLength(offsetPart2);
@@ -1290,7 +1290,7 @@ public class GreqlParser extends ParserHelper {
 		int lengthPart1 = getLength(offsetPart1);
 		predicateStart();
 		try {
-			if (lookAhead(0) != TokenTypes.EOF) {
+			if (lookAhead(0) != GreqlTokenType.EOF) {
 				parseSequentialPathDescription();
 			} else {
 				fail("Found EOF");
@@ -1318,7 +1318,7 @@ public class GreqlParser extends ParserHelper {
 		Expression expr = null;
 		int lengthRestr = 0;
 		int offsetRestr = 0;
-		if (tryMatch(TokenTypes.LCURLY)) {
+		if (tryMatch(GreqlTokenType.LCURLY)) {
 			predicateStart();
 			try {
 				parseTypeAndRoleExpressionList();
@@ -1327,13 +1327,13 @@ public class GreqlParser extends ParserHelper {
 			if (predicateEnd()) {
 				typeIds = parseTypeAndRoleExpressionList();
 			}
-			if (tryMatch(TokenTypes.AT)) {
+			if (tryMatch(GreqlTokenType.AT)) {
 				offsetRestr = getCurrentOffset();
 				expr = parseExpression();
 				lengthRestr = getLength(offsetRestr);
 			}
-			match(TokenTypes.RCURLY);
-			match(TokenTypes.AMP);
+			match(GreqlTokenType.RCURLY);
+			match(GreqlTokenType.AMP);
 		}
 		PathDescription pathDescr = parseGoalRestrictedPathDescription();
 		if (!inPredicateMode()) {
@@ -1357,8 +1357,8 @@ public class GreqlParser extends ParserHelper {
 
 	private final PathDescription parseGoalRestrictedPathDescription() {
 		PathDescription pathDescr = parseIteratedOrTransposedPathDescription();
-		if (tryMatch(TokenTypes.AMP)) {
-			match(TokenTypes.LCURLY);
+		if (tryMatch(GreqlTokenType.AMP)) {
+			match(GreqlTokenType.LCURLY);
 			predicateStart();
 			try {
 				parseTypeAndRoleExpressionList();
@@ -1376,7 +1376,7 @@ public class GreqlParser extends ParserHelper {
 					}
 				}
 			}
-			if (tryMatch(TokenTypes.AT)) {
+			if (tryMatch(GreqlTokenType.AT)) {
 				int offset = getCurrentOffset();
 				Expression expr = parseExpression();
 				int length = getLength(offset);
@@ -1387,7 +1387,7 @@ public class GreqlParser extends ParserHelper {
 							length, offset));
 				}
 			}
-			match(TokenTypes.RCURLY);
+			match(GreqlTokenType.RCURLY);
 		}
 		return pathDescr;
 	}
@@ -1396,10 +1396,10 @@ public class GreqlParser extends ParserHelper {
 		int offsetPath = getCurrentOffset();
 		PathDescription pathDescr = parsePrimaryPathDescription();
 		int lengthPath = getLength(offsetPath);
-		if ((lookAhead(0) == TokenTypes.STAR)
-				|| (lookAhead(0) == TokenTypes.PLUS)
-				|| (lookAhead(0) == TokenTypes.TRANSPOSED)
-				|| (lookAhead(0) == TokenTypes.CARET)) {
+		if ((lookAhead(0) == GreqlTokenType.STAR)
+				|| (lookAhead(0) == GreqlTokenType.PLUS)
+				|| (lookAhead(0) == GreqlTokenType.TRANSPOSED)
+				|| (lookAhead(0) == GreqlTokenType.CARET)) {
 			return parseIteration(pathDescr, offsetPath, lengthPath);
 		}
 		return pathDescr;
@@ -1409,9 +1409,9 @@ public class GreqlParser extends ParserHelper {
 			int offsetPath, int lengthPath) {
 		IterationType iteration = null;
 		PathDescription result = null;
-		if (tryMatch(TokenTypes.STAR)) {
+		if (tryMatch(GreqlTokenType.STAR)) {
 			iteration = IterationType.STAR;
-		} else if (tryMatch(TokenTypes.PLUS)) {
+		} else if (tryMatch(GreqlTokenType.PLUS)) {
 			iteration = IterationType.PLUS;
 		}
 		if (iteration != null) {
@@ -1425,7 +1425,7 @@ public class GreqlParser extends ParserHelper {
 						lengthPath, offsetPath));
 				result = ipd;
 			}
-		} else if (tryMatch(TokenTypes.TRANSPOSED)) {
+		} else if (tryMatch(GreqlTokenType.TRANSPOSED)) {
 			if (!inPredicateMode()) {
 				TransposedPathDescription tpd = graph
 						.createTransposedPathDescription();
@@ -1435,7 +1435,7 @@ public class GreqlParser extends ParserHelper {
 						lengthPath, offsetPath));
 				result = tpd;
 			}
-		} else if (tryMatch(TokenTypes.CARET)) {
+		} else if (tryMatch(GreqlTokenType.CARET)) {
 			int offsetExpr = getCurrentOffset();
 			Expression ie = parseNumericLiteral();
 			if (!inPredicateMode()) {
@@ -1459,48 +1459,48 @@ public class GreqlParser extends ParserHelper {
 		} else {
 			fail("No iteration or transposition at iterated path description");
 		}
-		if ((lookAhead(0) == TokenTypes.STAR)
-				|| (lookAhead(0) == TokenTypes.PLUS)
-				|| (lookAhead(0) == TokenTypes.CARET)) {
+		if ((lookAhead(0) == GreqlTokenType.STAR)
+				|| (lookAhead(0) == GreqlTokenType.PLUS)
+				|| (lookAhead(0) == GreqlTokenType.CARET)) {
 			return parseIteration(result, offsetPath, getLength(offsetPath));
 		}
 		return result;
 	}
 
 	private final PathDescription parsePrimaryPathDescription() {
-		if (lookAhead(0) == TokenTypes.LPAREN) {
+		if (lookAhead(0) == GreqlTokenType.LPAREN) {
 			predicateStart();
 			try {
-				match(TokenTypes.LPAREN);
+				match(GreqlTokenType.LPAREN);
 				parseAltPathDescription();
 			} catch (ParsingException ex) {
 			}
 			if (predicateEnd()) {
-				match(TokenTypes.LPAREN);
+				match(GreqlTokenType.LPAREN);
 				PathDescription pathDescr = parseAltPathDescription();
-				match(TokenTypes.RPAREN);
+				match(GreqlTokenType.RPAREN);
 				return pathDescr;
 			}
 		}
-		if ((lookAhead(0) == TokenTypes.OUTAGGREGATION)
-				|| (lookAhead(0) == TokenTypes.INAGGREGATION)) {
+		if ((lookAhead(0) == GreqlTokenType.OUTAGGREGATION)
+				|| (lookAhead(0) == GreqlTokenType.INAGGREGATION)) {
 			return parseAggregationPathDescription();
 		}
-		if ((lookAhead(0) == TokenTypes.RARROW)
-				|| (lookAhead(0) == TokenTypes.LARROW)
-				|| (lookAhead(0) == TokenTypes.ARROW)) {
+		if ((lookAhead(0) == GreqlTokenType.RARROW)
+				|| (lookAhead(0) == GreqlTokenType.LARROW)
+				|| (lookAhead(0) == GreqlTokenType.ARROW)) {
 			return parseSimplePathDescription();
 		}
-		if ((lookAhead(0) == TokenTypes.EDGESTART)
-				|| (lookAhead(0) == TokenTypes.EDGEEND)
-				|| (lookAhead(0) == TokenTypes.EDGE)) {
+		if ((lookAhead(0) == GreqlTokenType.EDGESTART)
+				|| (lookAhead(0) == GreqlTokenType.EDGEEND)
+				|| (lookAhead(0) == GreqlTokenType.EDGE)) {
 			return parseEdgePathDescription();
 		}
-		if (tryMatch(TokenTypes.LBRACK)) {
+		if (tryMatch(GreqlTokenType.LBRACK)) {
 			int offset = getCurrentOffset();
 			PathDescription pathDescr = parseAltPathDescription();
 			int length = getLength(offset);
-			match(TokenTypes.RBRACK);
+			match(GreqlTokenType.RBRACK);
 			if (!inPredicateMode()) {
 				OptionalPathDescription optPathDescr = graph
 						.createOptionalPathDescription();
@@ -1523,18 +1523,18 @@ public class GreqlParser extends ParserHelper {
 		int offsetDir = getCurrentOffset();
 		int offsetEdgeRestr = 0;
 		int lengthEdgeRestr = 0;
-		if (tryMatch(TokenTypes.RARROW)) {
+		if (tryMatch(GreqlTokenType.RARROW)) {
 			direction = GReQLDirection.OUT;
-		} else if (tryMatch(TokenTypes.LARROW)) {
+		} else if (tryMatch(GreqlTokenType.LARROW)) {
 			direction = GReQLDirection.IN;
 		} else {
-			match(TokenTypes.ARROW);
+			match(GreqlTokenType.ARROW);
 		}
-		if (tryMatch(TokenTypes.LCURLY)) {
+		if (tryMatch(GreqlTokenType.LCURLY)) {
 			offsetEdgeRestr = getCurrentOffset();
 			edgeRestr = parseEdgeRestriction();
 			lengthEdgeRestr = getLength(offsetEdgeRestr);
-			match(TokenTypes.RCURLY);
+			match(GreqlTokenType.RCURLY);
 		}
 		if (!inPredicateMode()) {
 			PrimaryPathDescription result = graph.createSimplePathDescription();
@@ -1569,16 +1569,16 @@ public class GreqlParser extends ParserHelper {
 		EdgeRestriction edgeRestr = null;
 		int restrOffset = 0;
 		int restrLength = 0;
-		if (tryMatch(TokenTypes.INAGGREGATION)) {
+		if (tryMatch(GreqlTokenType.INAGGREGATION)) {
 			outAggregation = false;
 		} else {
-			match(TokenTypes.OUTAGGREGATION);
+			match(GreqlTokenType.OUTAGGREGATION);
 		}
-		if (tryMatch(TokenTypes.LCURLY)) {
+		if (tryMatch(GreqlTokenType.LCURLY)) {
 			restrOffset = getCurrentOffset();
 			edgeRestr = parseEdgeRestriction();
 			restrLength = getLength(restrOffset);
-			match(TokenTypes.RCURLY);
+			match(GreqlTokenType.RCURLY);
 		}
 		if (!inPredicateMode()) {
 			AggregationPathDescription result = graph
@@ -1601,19 +1601,19 @@ public class GreqlParser extends ParserHelper {
 		boolean edgeEnd = false;
 		GReQLDirection direction = GReQLDirection.INOUT;
 		int offsetDir = getCurrentOffset();
-		if (tryMatch(TokenTypes.EDGESTART)) {
+		if (tryMatch(GreqlTokenType.EDGESTART)) {
 			edgeStart = true;
 		} else {
-			match(TokenTypes.EDGE);
+			match(GreqlTokenType.EDGE);
 		}
 		int offsetExpr = getCurrentOffset();
 		Expression expr = parseExpression();
 		int lengthExpr = getLength(offsetExpr);
 
-		if (tryMatch(TokenTypes.EDGEEND)) {
+		if (tryMatch(GreqlTokenType.EDGEEND)) {
 			edgeEnd = true;
 		} else {
-			match(TokenTypes.EDGE);
+			match(GreqlTokenType.EDGE);
 		}
 
 		if (!inPredicateMode()) {
@@ -1649,26 +1649,26 @@ public class GreqlParser extends ParserHelper {
 
 	private final FunctionApplication parseFunctionApplication() {
 		List<VertexPosition<TypeId>> typeIds = null;
-		if (((lookAhead(0) == TokenTypes.IDENTIFIER)
-				|| (lookAhead(0) == TokenTypes.AND)
-				|| (lookAhead(0) == TokenTypes.NOT)
-				|| (lookAhead(0) == TokenTypes.XOR) || (lookAhead(0) == TokenTypes.OR))
+		if (((lookAhead(0) == GreqlTokenType.IDENTIFIER)
+				|| (lookAhead(0) == GreqlTokenType.AND)
+				|| (lookAhead(0) == GreqlTokenType.NOT)
+				|| (lookAhead(0) == GreqlTokenType.XOR) || (lookAhead(0) == GreqlTokenType.OR))
 				&& isFunctionName(lookAhead.getValue())
-				&& ((lookAhead(1) == TokenTypes.LCURLY) || (lookAhead(1) == TokenTypes.LPAREN))) {
+				&& ((lookAhead(1) == GreqlTokenType.LCURLY) || (lookAhead(1) == GreqlTokenType.LPAREN))) {
 			int offset = getCurrentOffset();
 			String name = lookAhead.getValue();
 			match();
 			int length = getLength(offset);
-			if (tryMatch(TokenTypes.LCURLY)) {
+			if (tryMatch(GreqlTokenType.LCURLY)) {
 				typeIds = parseTypeExpressionList();
-				match(TokenTypes.RCURLY);
+				match(GreqlTokenType.RCURLY);
 			}
-			match(TokenTypes.LPAREN);
+			match(GreqlTokenType.LPAREN);
 			List<VertexPosition<Expression>> expressions = null;
-			if (lookAhead(0) != TokenTypes.RPAREN) {
-				expressions = parseExpressionList(TokenTypes.COMMA);
+			if (lookAhead(0) != GreqlTokenType.RPAREN) {
+				expressions = parseExpressionList(GreqlTokenType.COMMA);
 			}
-			match(TokenTypes.RPAREN);
+			match(GreqlTokenType.RPAREN);
 			if (!inPredicateMode()) {
 				FunctionApplication funApp = graph.createFunctionApplication();
 				// retrieve function id or create a new one
@@ -1712,12 +1712,12 @@ public class GreqlParser extends ParserHelper {
 				return parseListConstruction();
 			case SET:
 				match();
-				match(TokenTypes.LPAREN);
-				if (tryMatch(TokenTypes.RPAREN)) {
+				match(GreqlTokenType.LPAREN);
+				if (tryMatch(GreqlTokenType.RPAREN)) {
 					return graph.createSetConstruction();
 				}
-				List<VertexPosition<Expression>> expressions = parseExpressionList(TokenTypes.COMMA);
-				match(TokenTypes.RPAREN);
+				List<VertexPosition<Expression>> expressions = parseExpressionList(GreqlTokenType.COMMA);
+				match(GreqlTokenType.RPAREN);
 				if (!inPredicateMode()) {
 					return createPartsOfValueConstruction(expressions,
 							graph.createSetConstruction());
@@ -1726,12 +1726,12 @@ public class GreqlParser extends ParserHelper {
 				}
 			case TUP:
 				match();
-				match(TokenTypes.LPAREN);
-				if (tryMatch(TokenTypes.RPAREN)) {
+				match(GreqlTokenType.LPAREN);
+				if (tryMatch(GreqlTokenType.RPAREN)) {
 					return graph.createTupleConstruction();
 				}
-				expressions = parseExpressionList(TokenTypes.COMMA);
-				match(TokenTypes.RPAREN);
+				expressions = parseExpressionList(GreqlTokenType.COMMA);
+				match(GreqlTokenType.RPAREN);
 				if (!inPredicateMode()) {
 					return createPartsOfValueConstruction(expressions,
 							graph.createTupleConstruction());
@@ -1747,9 +1747,9 @@ public class GreqlParser extends ParserHelper {
 	}
 
 	private final MapConstruction parseMapConstruction() {
-		match(TokenTypes.MAP);
-		match(TokenTypes.LPAREN);
-		if (tryMatch(TokenTypes.RPAREN)) {
+		match(GreqlTokenType.MAP);
+		match(GreqlTokenType.LPAREN);
+		if (tryMatch(GreqlTokenType.RPAREN)) {
 			return graph.createMapConstruction();
 		}
 		MapConstruction mapConstr = null;
@@ -1759,7 +1759,7 @@ public class GreqlParser extends ParserHelper {
 		int offsetKey = getCurrentOffset();
 		Expression keyExpr = parseExpression();
 		int lengthKey = getLength(offsetKey);
-		match(TokenTypes.EDGEEND);
+		match(GreqlTokenType.EDGEEND);
 		int offsetValue = getCurrentOffset();
 		Expression valueExpr = parseExpression();
 		int lengthValue = getLength(offsetValue);
@@ -1773,11 +1773,11 @@ public class GreqlParser extends ParserHelper {
 			valueEdge.set_sourcePositions(createSourcePositionList(lengthValue,
 					offsetValue));
 		}
-		while (tryMatch(TokenTypes.COMMA)) {
+		while (tryMatch(GreqlTokenType.COMMA)) {
 			offsetKey = getCurrentOffset();
 			keyExpr = parseExpression();
 			lengthKey = getLength(offsetKey);
-			match(TokenTypes.EDGEEND);
+			match(GreqlTokenType.EDGEEND);
 			offsetValue = getCurrentOffset();
 			valueExpr = parseExpression();
 			lengthValue = getLength(offsetValue);
@@ -1793,21 +1793,21 @@ public class GreqlParser extends ParserHelper {
 			}
 		}
 
-		match(TokenTypes.RPAREN);
+		match(GreqlTokenType.RPAREN);
 		return mapConstr;
 	}
 
 	private final ValueConstruction parseListConstruction() {
-		match(TokenTypes.LIST);
-		match(TokenTypes.LPAREN);
-		if (tryMatch(TokenTypes.RPAREN)) {
+		match(GreqlTokenType.LIST);
+		match(GreqlTokenType.LPAREN);
+		if (tryMatch(GreqlTokenType.RPAREN)) {
 			return graph.createListConstruction();
 		}
 		ValueConstruction result = null;
 		int offsetStart = getCurrentOffset();
 		Expression startExpr = parseExpression();
 		int lengthStart = getLength(offsetStart);
-		if (tryMatch(TokenTypes.DOTDOT)) {
+		if (tryMatch(GreqlTokenType.DOTDOT)) {
 			int offsetEnd = getCurrentOffset();
 			Expression endExpr = parseExpression();
 			int lengthEnd = getLength(offsetEnd);
@@ -1824,8 +1824,8 @@ public class GreqlParser extends ParserHelper {
 			}
 		} else {
 			List<VertexPosition<Expression>> allExpressions = null;
-			if (tryMatch(TokenTypes.COMMA)) {
-				allExpressions = parseExpressionList(TokenTypes.COMMA);
+			if (tryMatch(GreqlTokenType.COMMA)) {
+				allExpressions = parseExpressionList(GreqlTokenType.COMMA);
 			}
 			if (!inPredicateMode()) {
 				VertexPosition<Expression> v = new VertexPosition<Expression>(
@@ -1839,13 +1839,13 @@ public class GreqlParser extends ParserHelper {
 						graph.createListConstruction());
 			}
 		}
-		match(TokenTypes.RPAREN);
+		match(GreqlTokenType.RPAREN);
 		return result;
 	}
 
 	private final ValueConstruction parseRecordConstruction() {
-		match(TokenTypes.REC);
-		match(TokenTypes.LPAREN);
+		match(GreqlTokenType.REC);
+		match(GreqlTokenType.LPAREN);
 		List<VertexPosition<RecordElement>> elements = new ArrayList<VertexPosition<RecordElement>>();
 		do {
 			int offset = getCurrentOffset();
@@ -1853,8 +1853,8 @@ public class GreqlParser extends ParserHelper {
 			int length = getLength(offset);
 			elements.add(new VertexPosition<RecordElement>(recElem, length,
 					offset));
-		} while (tryMatch(TokenTypes.COMMA));
-		match(TokenTypes.RPAREN);
+		} while (tryMatch(GreqlTokenType.COMMA));
+		match(GreqlTokenType.RPAREN);
 		if (!inPredicateMode()) {
 			RecordConstruction valueConstr = graph.createRecordConstruction();
 			if (elements != null) {
@@ -1875,7 +1875,7 @@ public class GreqlParser extends ParserHelper {
 		int offsetRecId = getCurrentOffset();
 		String recIdName = matchIdentifier();
 		int lengthRecId = getLength(offsetRecId);
-		match(TokenTypes.COLON);
+		match(GreqlTokenType.COLON);
 		int offsetExpr = getCurrentOffset();
 		Expression expr = parseExpression();
 		int lengthExpr = getLength(offsetExpr);
@@ -1903,7 +1903,7 @@ public class GreqlParser extends ParserHelper {
 					declarations, graph.createDeclaration(), IsSimpleDeclOf.EC,
 					false);
 		}
-		while (tryMatch(TokenTypes.COMMA)) {
+		while (tryMatch(GreqlTokenType.COMMA)) {
 			int offsetConstraint = getCurrentOffset();
 			Expression constraintExpr = parseExpression();
 			int lengthConstraint = getLength(offsetConstraint);
@@ -1915,12 +1915,12 @@ public class GreqlParser extends ParserHelper {
 			}
 			predicateStart();
 			try {
-				match(TokenTypes.COMMA);
+				match(GreqlTokenType.COMMA);
 				parseSimpleDeclaration();
 			} catch (ParsingException ex) {
 			}
 			if (predicateEnd()) {
-				match(TokenTypes.COMMA);
+				match(GreqlTokenType.COMMA);
 				declarations = parseDeclarationList();
 				if (!inPredicateMode()) {
 					createMultipleEdgesToParent(declarations, declaration,
@@ -1937,15 +1937,15 @@ public class GreqlParser extends ParserHelper {
 		SimpleDeclaration decl = parseSimpleDeclaration();
 		int length = getLength(offset);
 		declList.add(new VertexPosition<SimpleDeclaration>(decl, length, offset));
-		if (lookAhead(0) == TokenTypes.COMMA) {
+		if (lookAhead(0) == GreqlTokenType.COMMA) {
 			predicateStart();
 			try {
-				match(TokenTypes.COMMA);
+				match(GreqlTokenType.COMMA);
 				parseSimpleDeclaration();
 			} catch (ParsingException ex) {
 			}
 			if (predicateEnd()) {
-				match(TokenTypes.COMMA);
+				match(GreqlTokenType.COMMA);
 				declList.addAll(parseDeclarationList());
 			}
 		}
@@ -1954,7 +1954,7 @@ public class GreqlParser extends ParserHelper {
 
 	private final SimpleDeclaration parseSimpleDeclaration() {
 		List<VertexPosition<Variable>> variables = parseVariableList();
-		match(TokenTypes.COLON);
+		match(GreqlTokenType.COLON);
 		int offset = getCurrentOffset();
 		Expression expr = parseExpression();
 		int length = getLength(offset);
@@ -1972,7 +1972,7 @@ public class GreqlParser extends ParserHelper {
 	}
 
 	private final List<VertexPosition<Expression>> parseExpressionList(
-			TokenTypes separator) {
+			GreqlTokenType separator) {
 		int pos = alreadySucceeded(RuleEnum.EXPRESSION_LIST);
 		if (skipRule(pos)) {
 			return null;
@@ -1990,20 +1990,20 @@ public class GreqlParser extends ParserHelper {
 
 	private final Expression parseRangeExpression() {
 		Expression expr = null;
-		if (tryMatch(TokenTypes.V)) {
+		if (tryMatch(GreqlTokenType.V)) {
 			if (!inPredicateMode()) {
 				expr = graph.createVertexSetExpression();
 			}
 		} else {
-			match(TokenTypes.E);
+			match(GreqlTokenType.E);
 			if (!inPredicateMode()) {
 				expr = graph.createEdgeSetExpression();
 			}
 		}
-		if (tryMatch(TokenTypes.LCURLY)) {
-			if (!tryMatch(TokenTypes.RCURLY)) {
+		if (tryMatch(GreqlTokenType.LCURLY)) {
+			if (!tryMatch(GreqlTokenType.RCURLY)) {
 				List<VertexPosition<TypeId>> typeIds = parseTypeExpressionList();
-				match(TokenTypes.RCURLY);
+				match(GreqlTokenType.RCURLY);
 				if (!inPredicateMode()) {
 					createMultipleEdgesToParent(typeIds, expr,
 							IsTypeRestrOfExpression.EC, 0);
@@ -2020,7 +2020,7 @@ public class GreqlParser extends ParserHelper {
 			TypeId t = parseTypeId();
 			int length = getLength(offset);
 			list.add(new VertexPosition<TypeId>(t, length, offset));
-		} while (tryMatch(TokenTypes.COMMA));
+		} while (tryMatch(GreqlTokenType.COMMA));
 		return list;
 	}
 
@@ -2029,7 +2029,7 @@ public class GreqlParser extends ParserHelper {
 		if (!inPredicateMode()) {
 			type = graph.createTypeId();
 		}
-		if (tryMatch(TokenTypes.CARET)) {
+		if (tryMatch(GreqlTokenType.CARET)) {
 			if (!inPredicateMode()) {
 				type.set_excluded(true);
 			}
@@ -2038,7 +2038,7 @@ public class GreqlParser extends ParserHelper {
 		if (!inPredicateMode()) {
 			type.set_name(s);
 		}
-		if (tryMatch(TokenTypes.EXCL)) {
+		if (tryMatch(GreqlTokenType.EXCL)) {
 			if (!inPredicateMode()) {
 				type.set_type(true);
 			}
@@ -2069,7 +2069,7 @@ public class GreqlParser extends ParserHelper {
 			TypeOrRoleId id = parseTypeOrRoleId();
 			int length = getLength(offset);
 			list.add(new VertexPosition<TypeOrRoleId>(id, length, offset));
-		} while (tryMatch(TokenTypes.COMMA));
+		} while (tryMatch(GreqlTokenType.COMMA));
 		return list;
 	}
 
@@ -2101,7 +2101,7 @@ public class GreqlParser extends ParserHelper {
 				}
 			}
 		}
-		if (tryMatch(TokenTypes.AT)) {
+		if (tryMatch(GreqlTokenType.AT)) {
 			predicateOffset = getCurrentOffset();
 			predicate = parseExpression();
 			predicateLength = getLength(predicateOffset);
@@ -2145,14 +2145,14 @@ public class GreqlParser extends ParserHelper {
 		Expression expr = null;
 		int lengthExpr = 0;
 		Expression asExpr = null;
-		match(TokenTypes.REPORT);
+		match(GreqlTokenType.REPORT);
 		do {
 			hasLabel = false;
 			offsetExpr = getCurrentOffset();
 			offset = offsetExpr;
 			expr = parseExpression();
 			lengthExpr = getLength(offsetExpr);
-			if (tryMatch(TokenTypes.AS)) {
+			if (tryMatch(GreqlTokenType.AS)) {
 				offsetAsExpr = getCurrentOffset();
 				asExpr = parseExpression();
 				lengthAsExpr = getLength(offsetAsExpr);
@@ -2186,7 +2186,7 @@ public class GreqlParser extends ParserHelper {
 					graph.createIsTableHeaderOf(ul, listCompr);
 				}
 			}
-		} while (tryMatch(TokenTypes.COMMA));
+		} while (tryMatch(GreqlTokenType.COMMA));
 		if (!inPredicateMode() && (tupConstr.getDegree(EdgeDirection.IN) == 1)) {
 			Vertex v = tupConstr.getFirstIncidence(EdgeDirection.IN).getAlpha();
 			Edge e2 = tupConstr.getFirstIncidence(EdgeDirection.OUT);
@@ -2199,8 +2199,8 @@ public class GreqlParser extends ParserHelper {
 	private final Comprehension parseReportClause() {
 		Comprehension comprehension = null;
 		boolean map = false;
-		TokenTypes separator = TokenTypes.COMMA;
-		TokenTypes comprehensionType = lookAhead(0);
+		GreqlTokenType separator = GreqlTokenType.COMMA;
+		GreqlTokenType comprehensionType = lookAhead(0);
 		switch (comprehensionType) {
 		case REPORT:
 			return parseLabeledReportList();
@@ -2210,12 +2210,12 @@ public class GreqlParser extends ParserHelper {
 				comprehension = graph.createListComprehension();
 			}
 			match();
-			if (comprehensionType == TokenTypes.REPORTLISTN) {
+			if (comprehensionType == GreqlTokenType.REPORTLISTN) {
 				Expression limit = parseExpression();
 				if (!inPredicateMode()) {
 					comprehension.add_maxCount(limit);
 				}
-				match(TokenTypes.COLON);
+				match(GreqlTokenType.COLON);
 			}
 			break;
 		case REPORTSET:
@@ -2224,12 +2224,12 @@ public class GreqlParser extends ParserHelper {
 				comprehension = graph.createSetComprehension();
 			}
 			match();
-			if (comprehensionType == TokenTypes.REPORTSETN) {
+			if (comprehensionType == GreqlTokenType.REPORTSETN) {
 				Expression limit = parseExpression();
 				if (!inPredicateMode()) {
 					comprehension.add_maxCount(limit);
 				}
-				match(TokenTypes.COLON);
+				match(GreqlTokenType.COLON);
 			}
 			break;
 		case REPORTMAP:
@@ -2238,14 +2238,14 @@ public class GreqlParser extends ParserHelper {
 				comprehension = graph.createMapComprehension();
 			}
 			map = true;
-			separator = TokenTypes.EDGEEND;
+			separator = GreqlTokenType.EDGEEND;
 			match();
-			if (comprehensionType == TokenTypes.REPORTMAPN) {
+			if (comprehensionType == GreqlTokenType.REPORTMAPN) {
 				Expression limit = parseExpression();
 				if (!inPredicateMode()) {
 					comprehension.add_maxCount(limit);
 				}
-				match(TokenTypes.COLON);
+				match(GreqlTokenType.COLON);
 			}
 			break;
 		default:
@@ -2291,7 +2291,7 @@ public class GreqlParser extends ParserHelper {
 	}
 
 	private final Comprehension parseFWRExpression() {
-		match(TokenTypes.FROM);
+		match(GreqlTokenType.FROM);
 		int offsetDecl = getCurrentOffset();
 		duringParsingvariableSymbolTable.blockBegin();
 		List<VertexPosition<SimpleDeclaration>> declarations = parseDeclarationList();
@@ -2302,7 +2302,7 @@ public class GreqlParser extends ParserHelper {
 			createMultipleEdgesToParent(declarations, declaration,
 					IsSimpleDeclOf.EC, false);
 		}
-		if (tryMatch(TokenTypes.WITH)) {
+		if (tryMatch(GreqlTokenType.WITH)) {
 			int offsetConstraint = getCurrentOffset();
 			Expression constraintExpr = parseExpression();
 			int lengthConstraint = getLength(offsetConstraint);
@@ -2321,7 +2321,7 @@ public class GreqlParser extends ParserHelper {
 			comprDeclOf.set_sourcePositions(createSourcePositionList(
 					lengthDecl, offsetDecl));
 		}
-		match(TokenTypes.END);
+		match(GreqlTokenType.END);
 		duringParsingvariableSymbolTable.blockEnd();
 		return comprehension;
 	}
@@ -2340,7 +2340,7 @@ public class GreqlParser extends ParserHelper {
 		predicateStart();
 		try {
 			parseAltPathDescription();
-			if (!tryMatch(TokenTypes.SMILEY)) {
+			if (!tryMatch(GreqlTokenType.SMILEY)) {
 				parseValueAccess(); // parseRestrictedExpression();
 			}
 		} catch (ParsingException ex) {
@@ -2357,7 +2357,7 @@ public class GreqlParser extends ParserHelper {
 				int offsetArg1 = getCurrentOffset();
 				expr = parseValueAccess();// parseRestrictedExpression();
 				int lengthArg1 = getLength(offsetArg1);
-				if (lookAhead(0) == TokenTypes.SMILEY) {
+				if (lookAhead(0) == GreqlTokenType.SMILEY) {
 					expr = parseRegPathOrPathSystem(expr, offsetArg1,
 							lengthArg1);
 				} else {
@@ -2439,12 +2439,12 @@ public class GreqlParser extends ParserHelper {
 		int offsetExpr = offsetArg1;
 		int lengthExpr = 0;
 		Expression restrExpr = null;
-		match(TokenTypes.SMILEY);
+		match(GreqlTokenType.SMILEY);
 		int offsetPathDescr = getCurrentOffset();
 		PathDescription pathDescr = parseAltPathDescription();
 		int lengthPathDescr = getLength(offsetPathDescr);
 		int offsetOperator2 = getCurrentOffset();
-		if (tryMatch(TokenTypes.SMILEY)) {
+		if (tryMatch(GreqlTokenType.SMILEY)) {
 			offsetExpr = getCurrentOffset();
 			restrExpr = parseValueAccess(); // parseRestrictedExpression();
 			lengthExpr = getLength(offsetExpr);
@@ -2470,7 +2470,7 @@ public class GreqlParser extends ParserHelper {
 		PathDescription pathDescr = parseAltPathDescription();
 		int lengthPathDescr = getLength(offsetPathDescr);
 		int offsetOperator = getCurrentOffset();
-		if (tryMatch(TokenTypes.SMILEY)) {
+		if (tryMatch(GreqlTokenType.SMILEY)) {
 			isPathSystem = true;
 		}
 		int offsetExpr = getCurrentOffset();
@@ -2575,7 +2575,7 @@ public class GreqlParser extends ParserHelper {
 	// }
 
 	private final Expression parseNumericLiteral() {
-		if (lookAhead(0) == TokenTypes.DOUBLELITERAL) {
+		if (lookAhead(0) == GreqlTokenType.DOUBLELITERAL) {
 			double value = ((DoubleToken) lookAhead).getNumber().doubleValue();
 			match();
 			if (!inPredicateMode()) {
@@ -2586,7 +2586,7 @@ public class GreqlParser extends ParserHelper {
 				return null;
 			}
 		}
-		if (lookAhead(0) == TokenTypes.LONGLITERAL) {
+		if (lookAhead(0) == GreqlTokenType.LONGLITERAL) {
 			long value = ((LongToken) lookAhead).getNumber().longValue();
 			match();
 			if (!inPredicateMode()) {

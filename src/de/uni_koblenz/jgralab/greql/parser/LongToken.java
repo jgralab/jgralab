@@ -34,32 +34,23 @@
  */
 package de.uni_koblenz.jgralab.greql.parser;
 
-public class LongToken extends Token {
+public class LongToken extends ComplexToken {
 
 	Long intValue = null;
-	
-	String value = null;
 
-	public LongToken(TokenTypes type, int offset, int length, String value, long intValue) {
-		super(type, offset, length);
+	public LongToken(GreqlTokenType type, int offset, int length, String value,
+			long intValue) {
+		super(type, offset, length, value);
 		this.value = value;
 		this.intValue = intValue;
 	}
-
-	@Override
-	public boolean isComplex() {
-		return true;
-	}
-	
-	@Override
-	public String getValue() {
-		return value;
-	}
-
 
 	public Long getNumber() {
 		return intValue;
 	}
 
-
+	@Override
+	public String toString() {
+		return super.toString() + " = " + intValue;
+	}
 }

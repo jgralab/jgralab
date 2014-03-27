@@ -34,31 +34,22 @@
  */
 package de.uni_koblenz.jgralab.greql.parser;
 
-public class DoubleToken extends Token {
+public class DoubleToken extends ComplexToken {
 
 	Double doubleValue = null;
 
-	String value = null;
-
-	public DoubleToken(TokenTypes type, int offset, int length, String value,
-			Double doubleValue) {
-		super(type, offset, length);
-		this.value = value;
+	public DoubleToken(GreqlTokenType type, int offset, int length,
+			String value, Double doubleValue) {
+		super(type, offset, length, value);
 		this.doubleValue = doubleValue;
-	}
-
-	@Override
-	public boolean isComplex() {
-		return true;
-	}
-
-	@Override
-	public String getValue() {
-		return value;
 	}
 
 	public Double getNumber() {
 		return doubleValue;
 	}
 
+	@Override
+	public String toString() {
+		return super.toString() + " = " + doubleValue;
+	}
 }

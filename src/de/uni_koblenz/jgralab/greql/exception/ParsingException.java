@@ -49,7 +49,7 @@ public class ParsingException extends GreqlException {
 	public ParsingException(String msg, String token, int offset, int length,
 			String query) {
 		super("Parsing error: " + msg + " '" + token + "' at position ("
-				+ offset + "," + length + ")");
+				+ offset + ", " + length + ")");
 		errorMessage = msg;
 		tokenString = token;
 		this.offset = offset;

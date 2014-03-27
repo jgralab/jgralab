@@ -34,26 +34,22 @@
  */
 package de.uni_koblenz.jgralab.greql.parser;
 
-public abstract class Token {
+public class Token {
 
-	public TokenTypes type;
+	public GreqlTokenType type;
 
 	private int offset;
 
 	private int length;
 
-	public Token(TokenTypes type, int offset, int length) {
+	public Token(GreqlTokenType type, int offset, int length) {
 		this.type = type;
 		this.offset = offset;
 		this.length = length;
 	}
 
-	public boolean isComplex() {
-		return false;
-	}
-
 	public String getValue() {
-		return GreqlLexer.getTokenString(type);
+		return type.getText();
 	}
 
 	public int getOffset() {
@@ -63,20 +59,10 @@ public abstract class Token {
 	public int getLength() {
 		return length;
 	}
-	
+
 	@Override
 	public String toString() {
-		StringBuilder sb = new StringBuilder();
-		sb.append(getValue());
-		sb.append(" (");
-		sb.append(type);
-		sb.append(", ");
-		sb.append("[");
-		sb.append(offset);
-		sb.append(", ");
-		sb.append(length);
-		sb.append("])");
-		return sb.toString();
+		return getValue() + " [" + type + ", (" + offset + ", " + length + ")]";
 	}
 
 }
