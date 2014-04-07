@@ -51,6 +51,10 @@ import de.uni_koblenz.jgralab.Vertex;
  * instance of <code>BitSetVertexGraphMarker</code> and an instance of
  * <code>BitSetEdgeGraphMarker</code>.
  * 
+ * When marking an {@link Edge}, by default a {@link SubGraphMarker} also marks
+ * the incident {@linkplain Vertex vertices}. This behaviour can be changed via
+ * {@link #setAutoMarkIncidentVertices(boolean)}.
+ * 
  * @author ist@uni-koblenz.de
  * 
  */
@@ -59,12 +63,14 @@ public class SubGraphMarker extends AbstractBooleanGraphMarker implements
 
 	private final BitSetEdgeMarker edgeGraphMarker;
 	private final BitSetVertexMarker vertexGraphMarker;
+	private boolean autoMarkIncidentVertices;
 	private long version;
 
 	public SubGraphMarker(Graph graph) {
 		super(graph);
 		edgeGraphMarker = new BitSetEdgeMarker(graph);
 		vertexGraphMarker = new BitSetVertexMarker(graph);
+		autoMarkIncidentVertices = true;
 	}
 
 	@Override
@@ -75,6 +81,29 @@ public class SubGraphMarker extends AbstractBooleanGraphMarker implements
 		++version;
 		edgeGraphMarker.clear();
 		vertexGraphMarker.clear();
+	}
+
+	/**
+	 * @return true iff this {@link SubGraphMarker} automatically marks incident
+	 *         vertices when an edge is marked
+	 */
+	public boolean isAutoMarkIncidentVertices() {
+		return autoMarkIncidentVertices;
+	}
+
+	/**
+	 * Controls the behaviour of this {@link SubGraphMarker} when marking an
+	 * {@linkplain Edge edge}. When set to <code>true</code>, both incident
+	 * {@linkplain Vertex vertices} are marked when an {@linkplain Edge edge} is
+	 * marked. When set to <code>false</code>, marking an {@linkplain Edge edge}
+	 * does <i>not</i> automatically mark the {@linkplain Vertex vertices}.
+	 * 
+	 * @param autoMarkIncidentVertices
+	 *            enable (<code>true</code>)/disable (<code>false</code>)
+	 *            autmatic vertex marking
+	 */
+	public void setAutoMarkIncidentVertices(boolean autoMarkIncidentVertices) {
+		this.autoMarkIncidentVertices = autoMarkIncidentVertices;
 	}
 
 	public int getECount() {
@@ -180,8 +209,10 @@ public class SubGraphMarker extends AbstractBooleanGraphMarker implements
 	public boolean mark(Edge e) {
 		if (edgeGraphMarker.mark(e)) {
 			++version;
-			vertexGraphMarker.mark(e.getAlpha());
-			vertexGraphMarker.mark(e.getOmega());
+			if (autoMarkIncidentVertices) {
+				vertexGraphMarker.mark(e.getAlpha());
+				vertexGraphMarker.mark(e.getOmega());
+			}
 			return true;
 		}
 		return false;
@@ -280,7 +311,6 @@ public class SubGraphMarker extends AbstractBooleanGraphMarker implements
 
 	@Override
 	public boolean containsEdge(Edge e) {
-		boolean result = edgeGraphMarker.isMarked(e);
-		return result;
+		return edgeGraphMarker.isMarked(e);
 	}
 }

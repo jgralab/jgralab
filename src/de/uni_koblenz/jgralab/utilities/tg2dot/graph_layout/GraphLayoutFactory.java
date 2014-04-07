@@ -152,7 +152,7 @@ public class GraphLayoutFactory {
 								+ " ++ ')'  : '') ++ ' | ' ++ typeName("
 								+ ELEMENT
 								+ ") ++ '}|' ++ "
-								+ "joinWithCollection(\"\\l\", from attr:attributeNames("
+								+ "joinWithCollection(\"\\\\l\", from attr:attributeNames("
 								+ ELEMENT
 								+ ") "
 								+ "reportSet (attr ++ ' = ' ++ ("
@@ -188,7 +188,7 @@ public class GraphLayoutFactory {
 								+ " ++ ')'  : '') ++ ("
 								+ PRINT_EDGE_ATTRIBUTES
 								+ " ? '\\n' ++ "
-								+ "joinWithCollection('\\l', from "
+								+ "joinWithCollection('\\\\l', from "
 								+ "attr:attributeNames("
 								+ ELEMENT
 								+ ") "
