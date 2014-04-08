@@ -15,22 +15,33 @@ Current build status: [![Build Status](https://secure.travis-ci.org/jgralab/jgra
 
 ### Building from Sources
 
-The `jgralab` project depends on the `common` project.  It is important that
-they reside next to each other on your filesystem.  For example, clone both
-projects into some base folder `jgsrc` so that the filesystem structure is like
-so.
+The following assumes that you create (or use) a workspace folder `jgsrc` for JGraLab 
+and your JGraLab applications. Name and location of that workspace can be arbitrarily
+chosen.
+
+When you plan to use Eclipse as IDE, the easiest is to put the `jgralab` folder into
+your Eclipse workspace folder.
+
+The Ant build scripts require that your applications are located
+in sibling folders next to `jgralab`.
 
     jgsrc/               # your jgralab workspace
     +-> jgralab/         # this project, i.e., jgralab itself
-
+    +-> mygraphproject   # your app has to sit next to jgralab
+    
 To build `jgralab` you need to have [Apache Ant](http://ant.apache.org/).
 Build `jgralab`.
 
     $ cd jgsrc/jgralab/
     $ ant
 
-The `jgralab` project contains an Eclipse `.project` and `.classpath` file, so that you
-can import it in Eclipse as existing project.
+The `jgralab` folder contains an Eclipse `.project` and `.classpath` file, so that you
+can import it in Eclipse as existing project. This import step is necessary also when
+you initially decided to put JGraLab into the Eclipse workspace since
+Eclipse does not automatically scan its workspace for new projects.
+
+JGRaLab's Ant build generates many source files. Each time you run `ant`, you have
+to refresh the project in Eclipse, so that the changes get reflected in the IDE. 
 
 ### Getting Releases via Maven or Leiningen
 
