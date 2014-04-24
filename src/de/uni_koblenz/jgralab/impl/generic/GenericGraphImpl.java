@@ -278,7 +278,14 @@ public class GenericGraphImpl extends GraphImpl implements
 				throw new GraphException("The provided Map misses a "
 						+ c.getName() + " key!");
 			}
-			record = record.plus(c.getName(), values.get(c.getName()));
+			Object value = values.get(c.getName());
+			if (!c.getDomain().isConformValue(value)) {
+				throw new GraphException("Value " + value
+						+ (value != null ? " of type " + value.getClass() : "")
+						+ " doesn't match domain " + c.getDomain()
+						+ " of component " + c.getName() + ".");
+			}
+			record = record.plus(c.getName(), value);
 		}
 		return record;
 	}
