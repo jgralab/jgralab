@@ -35,7 +35,9 @@
 package de.uni_koblenz.jgralab.impl.generic;
 
 import java.io.IOException;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Edge;
@@ -269,6 +271,7 @@ public class GenericGraphImpl extends GraphImpl implements
 	@Override
 	public Record createRecord(RecordDomain recordDomain,
 			Map<String, Object> values) {
+		assert recordDomain.getComponents().size() == values.size();
 		RecordImpl record = RecordImpl.empty();
 		for (RecordComponent c : recordDomain.getComponents()) {
 			if (!values.containsKey(c.getName())) {
