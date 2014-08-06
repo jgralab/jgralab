@@ -64,14 +64,18 @@ public final class EnumDomainImpl extends DomainImpl implements EnumDomain {
 	 */
 	private Class<? extends Object> schemaClass;
 
+	private final ClassLoader schemaClassLoader;
+
 	/**
 	 * @param qn
 	 *            the unique name of the enum in the schema
 	 * @param constants
 	 *            holds a list of the components of the enumeration
 	 */
-	EnumDomainImpl(String sn, PackageImpl pkg, List<String> constants) {
+	EnumDomainImpl(String sn, PackageImpl pkg, List<String> constants,
+			ClassLoader schemaClassLoader) {
 		super(sn, pkg);
+		this.schemaClassLoader = schemaClassLoader;
 		for (String c : constants) {
 			addConst(c);
 		}
@@ -175,8 +179,8 @@ public final class EnumDomainImpl extends DomainImpl implements EnumDomain {
 					+ getQualifiedName();
 			try {
 				schemaClass = Class.forName(schemaClassName, true,
-						SchemaClassManager.instance(getSchema()
-								.getQualifiedName()));
+						SchemaClassManager.instance(schemaClassLoader,
+								getSchema().getQualifiedName()));
 			} catch (ClassNotFoundException e) {
 				throw new SchemaClassAccessException(
 						"Can't load (generated) schema class for EnumDomain '"

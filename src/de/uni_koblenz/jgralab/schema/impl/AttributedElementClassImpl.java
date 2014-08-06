@@ -97,11 +97,14 @@ public abstract class AttributedElementClassImpl<SC extends AttributedElementCla
 	 */
 	private Class<IC> schemaImplementationClass;
 
+	protected final ClassLoader schemaClassLoader;
+
 	protected AttributedElementClassImpl(String simpleName, PackageImpl pkg,
-			SchemaImpl schema) {
+			SchemaImpl schema, ClassLoader schemaClassLoader) {
 		super(simpleName, pkg, schema);
 		allAttributes = ArrayPVector.empty();
 		constraints = ArrayPSet.empty();
+		this.schemaClassLoader = schemaClassLoader;
 	}
 
 	protected Attribute createAttribute(Attribute anAttribute) {
@@ -187,8 +190,11 @@ public abstract class AttributedElementClassImpl<SC extends AttributedElementCla
 			String schemaClassName = schema.getPackagePrefix() + "."
 					+ getQualifiedName();
 			try {
-				schemaClass = (Class<IC>) Class.forName(schemaClassName, true,
-						SchemaClassManager.instance(schema.getQualifiedName()));
+				schemaClass = (Class<IC>) Class.forName(
+						schemaClassName,
+						true,
+						SchemaClassManager.instance(schemaClassLoader,
+								schema.getQualifiedName()));
 			} catch (ClassNotFoundException e) {
 				throw new SchemaClassAccessException(
 						"Can't load (generated) schema class for AttributedElementClass '"

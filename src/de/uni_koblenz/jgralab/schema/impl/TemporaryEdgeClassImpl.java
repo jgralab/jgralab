@@ -18,14 +18,14 @@ import de.uni_koblenz.jgralab.schema.exception.SchemaException;
 
 public class TemporaryEdgeClassImpl extends EdgeClassImpl {
 
-	protected TemporaryEdgeClassImpl(GraphClassImpl graphClass) {
+	protected TemporaryEdgeClassImpl(GraphClassImpl graphClass, ClassLoader schemaClassLoader) {
 		// super(simpleName, pkg, gc, from, fromMin, fromMax, fromRoleName,
 		// aggrFrom, to, toMin, toMax, toRoleName, aggrTo)
 		super("TemporaryEdgeClass", (PackageImpl) graphClass.getSchema()
 				.getDefaultPackage(), graphClass, graphClass
 				.getDefaultVertexClass(), 0, Integer.MAX_VALUE, "",
 				AggregationKind.NONE, graphClass.getDefaultVertexClass(), 0,
-				Integer.MAX_VALUE, "", AggregationKind.NONE);
+				Integer.MAX_VALUE, "", AggregationKind.NONE, schemaClassLoader);
 	}
 
 	@Override

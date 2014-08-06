@@ -71,6 +71,8 @@ public final class RecordDomainImpl extends CompositeDomainImpl implements
 	 */
 	private final Map<String, RecordComponent> components = new TreeMap<String, RecordComponent>();
 
+	private final ClassLoader schemaClassLoader;
+
 	/**
 	 * @param qn
 	 *            the unique name of the record in the schema
@@ -78,8 +80,9 @@ public final class RecordDomainImpl extends CompositeDomainImpl implements
 	 *            a list of the components of the record
 	 */
 	RecordDomainImpl(String sn, PackageImpl pkg,
-			Collection<RecordComponent> components) {
+			Collection<RecordComponent> components, ClassLoader schemaClassLoader) {
 		super(sn, pkg);
+		this.schemaClassLoader = schemaClassLoader;
 		if (components != null) {
 			for (RecordComponent c : components) {
 				addComponent(c.getName(), c.getDomain());
@@ -139,7 +142,7 @@ public final class RecordDomainImpl extends CompositeDomainImpl implements
 					+ getQualifiedName();
 			try {
 				schemaClass = Class.forName(schemaClassName, true,
-						SchemaClassManager.instance(getSchema()
+						SchemaClassManager.instance(schemaClassLoader, getSchema()
 								.getQualifiedName()));
 			} catch (ClassNotFoundException e) {
 				throw new SchemaClassAccessException(

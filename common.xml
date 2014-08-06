@@ -63,7 +63,7 @@
 
 	<!-- global project specific directories; they should remain as they are to ensure analogy among the projects -->
 	<!-- project directory; the base directory of the project -->
-	<property name="project.dir" value="../${projectname}" />
+	<property name="project.dir" location="../${projectname}" />
 
 	<!-- source directory; all source code is expected to be here -->
 	<property name="src.dir" value="${project.dir}/src" />
