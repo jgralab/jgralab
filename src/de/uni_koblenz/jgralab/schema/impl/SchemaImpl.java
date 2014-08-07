@@ -147,14 +147,14 @@ public class SchemaImpl implements Schema, ManagableArtifact {
 	 */
 	private boolean allowLowercaseEnumConstants = true;
 
-	private PackageImpl defaultPackage;
+	private final PackageImpl defaultPackage;
 
 	/**
 	 * Maps from qualified name to the {@link Domain}.
 	 */
 	Map<String, Domain> domains = new HashMap<String, Domain>();
 
-	private DirectedAcyclicGraph<Domain> domainsDag = new DirectedAcyclicGraph<Domain>();
+	private final DirectedAcyclicGraph<Domain> domainsDag = new DirectedAcyclicGraph<Domain>();
 
 	private int version;
 
@@ -169,12 +169,12 @@ public class SchemaImpl implements Schema, ManagableArtifact {
 	/**
 	 * The name of this schema without the package prefix.
 	 */
-	private String name;
+	private final String name;
 
 	/**
 	 * The package prefix of this schema.
 	 */
-	private String packagePrefix;
+	private final String packagePrefix;
 
 	/**
 	 * Maps from qualified name to the {@link Package} with that qualified name.
@@ -185,7 +185,7 @@ public class SchemaImpl implements Schema, ManagableArtifact {
 	 * The qualified name of this schema, that is {@link #packagePrefix} DOT
 	 * {@link #name}
 	 */
-	private String qualifiedName;
+	private final String qualifiedName;
 
 	/**
 	 * A set of all qualified names known to this schema.
@@ -202,6 +202,8 @@ public class SchemaImpl implements Schema, ManagableArtifact {
 
 	private StringDomain stringDomain;
 
+	private final ClassLoader schemaClassLoader;
+
 	private static final Pattern SCHEMA_NAME_PATTERN = Pattern
 			.compile("^\\p{Upper}(\\p{Alnum}|[_])*\\p{Alnum}$");
 
@@ -216,7 +218,8 @@ public class SchemaImpl implements Schema, ManagableArtifact {
 	 * @param packagePrefix
 	 *            Package prefix of schema.
 	 */
-	public SchemaImpl(String name, String packagePrefix) {
+	public SchemaImpl(String name, String packagePrefix,
+			ClassLoader schemaClassLoader) {
 		if (!SCHEMA_NAME_PATTERN.matcher(name).matches()) {
 			throw new SchemaException(
 					"Invalid schema name '"
@@ -240,10 +243,12 @@ public class SchemaImpl implements Schema, ManagableArtifact {
 							+ "The last character before a '.' and the end of the line must be an alphanumeric character.");
 		}
 
+		this.schemaClassLoader = schemaClassLoader;
 		this.name = name;
 		this.packagePrefix = packagePrefix;
 		qualifiedName = packagePrefix + "." + name;
-		schemaClassManager = SchemaClassManager.instance(qualifiedName);
+		schemaClassManager = SchemaClassManager.instance(schemaClassLoader,
+				qualifiedName);
 
 		// Needs to be created before any NamedElement can be created
 		defaultPackage = PackageImpl.createDefaultPackage(this);
@@ -254,6 +259,10 @@ public class SchemaImpl implements Schema, ManagableArtifact {
 		createIntegerDomain();
 		createLongDomain();
 		createStringDomain();
+	}
+
+	public SchemaImpl(String name, String packagePrefix) {
+		this(name, packagePrefix, null);
 	}
 
 	void addDomain(Domain dom) {
@@ -582,7 +591,8 @@ public class SchemaImpl implements Schema, ManagableArtifact {
 		String[] components = splitQualifiedName(qualifiedName);
 		PackageImpl parent = createPackageWithParents(components[0]);
 		String simpleName = components[1];
-		EnumDomain ed = new EnumDomainImpl(simpleName, parent, enumComponents);
+		EnumDomain ed = new EnumDomainImpl(simpleName, parent, enumComponents,
+				schemaClassLoader);
 		return ed;
 	}
 
@@ -606,7 +616,8 @@ public class SchemaImpl implements Schema, ManagableArtifact {
 			throw new SchemaException(
 					"A GraphClass must always be in the default package!");
 		}
-		GraphClassImpl gc = new GraphClassImpl(simpleName, this);
+		GraphClassImpl gc = new GraphClassImpl(simpleName, this,
+				schemaClassLoader);
 		gc.initializeDefaultVertexClass();
 		gc.initializeDefaultEdgeClass();
 		gc.initializeTemporaryVertexClass();
@@ -776,7 +787,7 @@ public class SchemaImpl implements Schema, ManagableArtifact {
 		PackageImpl parent = createPackageWithParents(components[0]);
 		String simpleName = components[1];
 		RecordDomain rd = new RecordDomainImpl(simpleName, parent,
-				recordComponents);
+				recordComponents, schemaClassLoader);
 		return rd;
 	}
 
@@ -1016,8 +1027,8 @@ public class SchemaImpl implements Schema, ManagableArtifact {
 
 			try {
 				schemaClass = (Class<? extends Graph>) Class.forName(
-						implClassName, true,
-						SchemaClassManager.instance(qualifiedName));
+						implClassName, true, SchemaClassManager.instance(
+								schemaClassLoader, qualifiedName));
 			} catch (ClassNotFoundException e) {
 				throw new SchemaClassAccessException(
 						"can't load implementation class '" + implClassName

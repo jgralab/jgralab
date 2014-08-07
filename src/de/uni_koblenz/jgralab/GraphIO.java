@@ -231,8 +231,9 @@ public final class GraphIO {
 	private final HashMap<String, String> stringPool;
 
 	private GraphFactory graphFactory;
+	private final ClassLoader schemaClassLoader;
 
-	private GraphIO() {
+	private GraphIO(ClassLoader schemaClassLoader) {
 		domains = new TreeMap<String, Domain>();
 		enumDomainBuffer = new HashSet<EnumDomainData>();
 		recordDomainBuffer = new ArrayList<RecordDomainData>();
@@ -241,6 +242,7 @@ public final class GraphIO {
 		edgeClassBuffer = new TreeMap<String, List<GraphElementClassData>>();
 		commentData = new HashMap<String, List<String>>();
 		stringPool = new HashMap<String, String>();
+		this.schemaClassLoader = schemaClassLoader;
 	}
 
 	public static Schema loadSchemaFromFile(String filename)
@@ -264,8 +266,13 @@ public final class GraphIO {
 
 	public static Schema loadSchemaFromStream(InputStream in, String filename)
 			throws GraphIOException {
+		return loadSchemaFromStream(in, filename, null);
+	}
+
+	public static Schema loadSchemaFromStream(InputStream in, String filename,
+			ClassLoader schemaClassLoader) throws GraphIOException {
 		try {
-			GraphIO io = new GraphIO();
+			GraphIO io = new GraphIO(schemaClassLoader);
 			io.lexer = new TgLexer(in, filename);
 			io.tgfile();
 			io.schema.finish();
@@ -318,7 +325,7 @@ public final class GraphIO {
 	public static void saveSchemaToStream(Schema schema, OutputStream out)
 			throws GraphIOException {
 		try {
-			GraphIO io = new GraphIO();
+			GraphIO io = new GraphIO(schema.getClass().getClassLoader());
 			io.TGOut = out;
 			// don't save spaces in schema files since they're likely to be read
 			// by humans
@@ -593,7 +600,8 @@ public final class GraphIO {
 						+ " is not possible. "
 						+ "It contains temporary graph elements.");
 			}
-			GraphIO io = new GraphIO();
+			GraphIO io = new GraphIO(graph.getSchema().getClass()
+					.getClassLoader());
 			io.TGOut = out;
 			io.compact = true; // save spaces in graph files
 			io.saveGraph((InternalGraph) graph, pf, null);
@@ -627,7 +635,8 @@ public final class GraphIO {
 						+ "It contains temporary graph elements.");
 			}
 
-			GraphIO io = new GraphIO();
+			GraphIO io = new GraphIO(subGraph.getGraph().getSchema().getClass()
+					.getClassLoader());
 			io.TGOut = out;
 			io.compact = true; // save spaces in graph files
 			io.saveGraph((InternalGraph) subGraph.getGraph(), pf, subGraph);
@@ -911,7 +920,7 @@ public final class GraphIO {
 
 	public static GraphIO createStringReader(String input, Schema schema)
 			throws GraphIOException {
-		GraphIO io = new GraphIO();
+		GraphIO io = new GraphIO(schema.getClass().getClassLoader());
 		io.lexer = new TgLexer(input);
 		io.schema = schema;
 		io.match();
@@ -919,7 +928,7 @@ public final class GraphIO {
 	}
 
 	public static GraphIO createStringWriter(Schema schema) {
-		GraphIO io = new GraphIO();
+		GraphIO io = new GraphIO(schema.getClass().getClassLoader());
 		io.BAOut = new ByteArrayOutputStream();
 		io.TGOut = io.BAOut;
 		io.schema = schema;
@@ -947,6 +956,12 @@ public final class GraphIO {
 	public static Graph loadGraphFromFile(String filename,
 			ImplementationType implementationType, ProgressFunction pf)
 			throws GraphIOException {
+		return loadGraphFromFile(filename, implementationType, pf, null);
+	}
+
+	public static Graph loadGraphFromFile(String filename,
+			ImplementationType implementationType, ProgressFunction pf,
+			ClassLoader cl) throws GraphIOException {
 		if (implementationType == null) {
 			throw new IllegalArgumentException(
 					"ImplementationType must be != null");
@@ -955,7 +970,7 @@ public final class GraphIO {
 		try {
 			in = inputStreamForFilename(filename);
 			return loadGraphFromStream(in, filename, null, null,
-					implementationType, pf);
+					implementationType, pf, cl);
 		} catch (IOException ex) {
 			throw new GraphIOException(
 					"Exception while loading graph from file " + filename, ex);
@@ -1033,8 +1048,16 @@ public final class GraphIO {
 			String filename, Schema schema, GraphFactory graphFactory,
 			ImplementationType implementationType, ProgressFunction pf)
 			throws GraphIOException {
+		return loadGraphFromStream(in, filename, schema, graphFactory,
+				implementationType, pf, null);
+	}
+
+	public static <G extends Graph> G loadGraphFromStream(InputStream in,
+			String filename, Schema schema, GraphFactory graphFactory,
+			ImplementationType implementationType, ProgressFunction pf,
+			ClassLoader schemaClassLoader) throws GraphIOException {
 		try {
-			GraphIO io = new GraphIO();
+			GraphIO io = new GraphIO(schemaClassLoader);
 			io.lexer = new TgLexer(in, filename);
 			io.schema = schema;
 			io.tgfile();
@@ -1045,14 +1068,14 @@ public final class GraphIO {
 				Class<?> schemaClass = null;
 				try {
 					schemaClass = Class.forName(schemaQName, true,
-							SchemaClassManager.instance(schemaQName));
+							SchemaClassManager.instance(schemaClassLoader, schemaQName));
 				} catch (ClassNotFoundException e) {
 					// schema class not found, try compile schema in-memory
 					io.schema.finish();
 					io.schema.compile(CodeGeneratorConfiguration.MINIMAL);
 					try {
 						schemaClass = Class.forName(schemaQName, true,
-								SchemaClassManager.instance(schemaQName));
+								SchemaClassManager.instance(schemaClassLoader, schemaQName));
 					} catch (ClassNotFoundException e1) {
 						throw new GraphIOException(
 								"Unable to load a graph which belongs to the schema because the Java-classes for this schema can not be created.",
@@ -1166,7 +1189,7 @@ public final class GraphIO {
 			}
 		}
 
-		schema = new SchemaImpl(qn[1], qn[0]);
+		schema = new SchemaImpl(qn[1], qn[0], schemaClassLoader);
 
 		// read Domains and GraphClasses with contained GraphElementClasses
 		parseSchema();

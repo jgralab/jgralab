@@ -98,8 +98,9 @@ public abstract class GraphElementClassImpl<SC extends GraphElementClass<SC, IC>
 	 */
 	@SuppressWarnings("unchecked")
 	protected GraphElementClassImpl(String simpleName, PackageImpl pkg,
-			GraphClassImpl graphClass, DirectedAcyclicGraph<SC> dag) {
-		super(simpleName, pkg, graphClass.schema);
+			GraphClassImpl graphClass, DirectedAcyclicGraph<SC> dag,
+			ClassLoader schemaClassLoader) {
+		super(simpleName, pkg, graphClass.schema, schemaClassLoader);
 		ownAttributes = ArrayPVector.empty();
 		subclassDag = (DirectedAcyclicGraph<GraphElementClass<SC, IC>>) dag;
 		subclassDag.createNode(this);

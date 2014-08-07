@@ -84,8 +84,9 @@ public class EdgeClassImpl extends GraphElementClassImpl<EdgeClass, Edge>
 	protected EdgeClassImpl(String simpleName, PackageImpl pkg,
 			GraphClassImpl gc, VertexClass from, int fromMin, int fromMax,
 			String fromRoleName, AggregationKind aggrFrom, VertexClass to,
-			int toMin, int toMax, String toRoleName, AggregationKind aggrTo) {
-		super(simpleName, pkg, gc, gc.edgeClassDag);
+			int toMin, int toMax, String toRoleName, AggregationKind aggrTo,
+			ClassLoader schemaClassLoader) {
+		super(simpleName, pkg, gc, gc.edgeClassDag, schemaClassLoader);
 
 		if (pkg.isDefaultPackage() && simpleName.equals(DEFAULTEDGECLASS_NAME)) {
 			// the default EC is just created
