@@ -4070,7 +4070,7 @@ public class EdgeTest extends InstanceTest {
 		e.set_anInt(4);
 
 		assertEquals("test", e.getAttribute("aString"));
-		assertEquals(4, e.getAttribute("anInt"));
+		assertEquals((Integer) 4, e.getAttribute("anInt"));
 	}
 
 	/**
@@ -4087,7 +4087,7 @@ public class EdgeTest extends InstanceTest {
 		e.set_anInt(4);
 
 		assertEquals("test", e.getAttribute("aString"));
-		assertEquals(4, e.getAttribute("anInt"));
+		assertEquals((Integer) 4, e.getAttribute("anInt"));
 	}
 
 	/**
@@ -4137,7 +4137,7 @@ public class EdgeTest extends InstanceTest {
 		e.setAttribute("anInt", 4);
 
 		assertEquals("test", e.getAttribute("aString"));
-		assertEquals(4, e.getAttribute("anInt"));
+		assertEquals((Integer) 4, e.getAttribute("anInt"));
 	}
 
 	/**
@@ -4154,7 +4154,7 @@ public class EdgeTest extends InstanceTest {
 		e.setAttribute("anInt", 4);
 
 		assertEquals("test", e.getAttribute("aString"));
-		assertEquals(4, e.getAttribute("anInt"));
+		assertEquals((Integer) 4, e.getAttribute("anInt"));
 	}
 
 	/**

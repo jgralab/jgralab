@@ -95,8 +95,11 @@ public final class ConsPStack<E> extends AbstractSequentialList<E> implements
 		if (!i.hasNext()) {
 			return empty();
 		}
+
 		E e = i.next();
-		return from(i).plus(e);
+		// Java 8 requires explicit typing: "ConsPStack.<E>". This is a change
+		// to the original PCollection code.
+		return ConsPStack.<E> from(i).plus(e);
 	}
 
 	// // PRIVATE CONSTRUCTORS ////

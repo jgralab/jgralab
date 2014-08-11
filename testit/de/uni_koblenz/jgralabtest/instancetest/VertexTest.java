@@ -5838,7 +5838,7 @@ public class VertexTest extends InstanceTest {
 		v.set_number(4);
 		assertEquals(map, v.getAttribute("nodeMap"));
 		assertEquals("test", v.getAttribute("name"));
-		assertEquals(4, v.getAttribute("number"));
+		assertEquals((Integer) 4, v.getAttribute("number"));
 	}
 
 	/**
@@ -5882,7 +5882,7 @@ public class VertexTest extends InstanceTest {
 		v.setAttribute("number", 4);
 		assertEquals(map, v.getAttribute("nodeMap"));
 		assertEquals("test", v.getAttribute("name"));
-		assertEquals(4, v.getAttribute("number"));
+		assertEquals((Integer) 4, v.getAttribute("number"));
 	}
 
 	/**

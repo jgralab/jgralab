@@ -90,12 +90,12 @@ public class GenericVertexImplTest {
 				JGraLab.set().plus(JGraLab.set().plus(true))
 						.plus(JGraLab.set().plus(false)),
 				v.getAttribute("complexSetVertex"));
-		assertEquals(1.1d, v.getAttribute("doubleVertex"));
+		assertEquals((Double) 1.1d, v.getAttribute("doubleVertex"));
 		assertEquals("FIRST", v.getAttribute("enumVertex"));
-		assertEquals(1, v.getAttribute("intVertex"));
+		assertEquals((Integer) 1, v.getAttribute("intVertex"));
 		assertEquals(JGraLab.vector().plus(true).plus(false).plus(true),
 				v.getAttribute("listVertex"));
-		assertEquals(1l, v.getAttribute("longVertex"));
+		assertEquals((Long) 1l, v.getAttribute("longVertex"));
 		assertEquals(JGraLab.map().plus(1, true).plus(2, false).plus(3, true),
 				v.getAttribute("mapVertex"));
 		assertEquals(
@@ -149,17 +149,17 @@ public class GenericVertexImplTest {
 		assertEquals(JGraLab.set().plus(JGraLab.set().plus(false)),
 				v.getAttribute("complexSetVertex"));
 		v.setAttribute("doubleVertex", 2.2d);
-		assertEquals(2.2d, v.getAttribute("doubleVertex"));
+		assertEquals((Double) 2.2d, v.getAttribute("doubleVertex"));
 		v.setAttribute("enumVertex", "SECOND");
 		assertEquals("SECOND", v.getAttribute("enumVertex"));
 		v.setAttribute("intVertex", 42);
-		assertEquals(42, v.getAttribute("intVertex"));
+		assertEquals((Integer) 42, v.getAttribute("intVertex"));
 		v.setAttribute("listVertex", JGraLab.vector().plus(false).plus(false)
 				.plus(true));
 		assertEquals(JGraLab.vector().plus(false).plus(false).plus(true),
 				v.getAttribute("listVertex"));
 		v.setAttribute("longVertex", 987654321l);
-		assertEquals(987654321l, v.getAttribute("longVertex"));
+		assertEquals((Long) 987654321l, v.getAttribute("longVertex"));
 		v.setAttribute("mapVertex", JGraLab.map().plus(42, true)
 				.plus(24, false));
 		assertEquals(JGraLab.map().plus(42, true).plus(24, false),
@@ -613,16 +613,16 @@ public class GenericVertexImplTest {
 		assertEquals(JGraLab.set().plus(JGraLab.set().plus(false)),
 				v.getAttribute("complexSetVertex"));
 		v.readAttributeValueFromString("doubleVertex", "12.34");
-		assertEquals(12.34d, v.getAttribute("doubleVertex"));
+		assertEquals((Double) 12.34d, v.getAttribute("doubleVertex"));
 		v.readAttributeValueFromString("enumVertex", "SECOND");
 		assertEquals("SECOND", v.getAttribute("enumVertex"));
 		v.readAttributeValueFromString("intVertex", "42");
-		assertEquals(42, v.getAttribute("intVertex"));
+		assertEquals((Integer) 42, v.getAttribute("intVertex"));
 		v.readAttributeValueFromString("listVertex", "[t t]");
 		assertEquals(JGraLab.vector().plus(true).plus(true),
 				v.getAttribute("listVertex"));
 		v.readAttributeValueFromString("longVertex", "987654321");
-		assertEquals(987654321l, v.getAttribute("longVertex"));
+		assertEquals((Long) 987654321l, v.getAttribute("longVertex"));
 		v.readAttributeValueFromString("mapVertex", "{1 - f 2 - t}");
 		assertEquals(JGraLab.map().plus(1, false).plus(2, true),
 				v.getAttribute("mapVertex"));
@@ -689,12 +689,12 @@ public class GenericVertexImplTest {
 				v.getAttribute("complexMapVertex"));
 		assertEquals(JGraLab.set().plus(JGraLab.set().plus(false)),
 				v.getAttribute("complexSetVertex"));
-		assertEquals(12.34d, v.getAttribute("doubleVertex"));
+		assertEquals((Double) 12.34d, v.getAttribute("doubleVertex"));
 		assertEquals("SECOND", v.getAttribute("enumVertex"));
-		assertEquals(42, v.getAttribute("intVertex"));
+		assertEquals((Integer) 42, v.getAttribute("intVertex"));
 		assertEquals(JGraLab.vector().plus(true).plus(true),
 				v.getAttribute("listVertex"));
-		assertEquals(987654321l, v.getAttribute("longVertex"));
+		assertEquals((Long) 987654321l, v.getAttribute("longVertex"));
 		assertEquals(JGraLab.map().plus(1, false).plus(2, true),
 				v.getAttribute("mapVertex"));
 		assertEquals(

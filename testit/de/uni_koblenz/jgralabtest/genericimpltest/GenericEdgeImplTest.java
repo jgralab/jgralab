@@ -91,12 +91,12 @@ public class GenericEdgeImplTest {
 				JGraLab.set().plus(JGraLab.set().plus(true))
 						.plus(JGraLab.set().plus(false)),
 				e1.getAttribute("complexSetEdge"));
-		assertEquals(1.1d, e1.getAttribute("doubleEdge"));
+		assertEquals((Double) 1.1d, e1.getAttribute("doubleEdge"));
 		assertEquals("FIRST", e1.getAttribute("enumEdge"));
-		assertEquals(1, e1.getAttribute("intEdge"));
+		assertEquals((Integer) 1, e1.getAttribute("intEdge"));
 		assertEquals(JGraLab.vector().plus(true).plus(false).plus(true),
 				e1.getAttribute("listEdge"));
-		assertEquals(1l, e1.getAttribute("longEdge"));
+		assertEquals((Long) 1l, e1.getAttribute("longEdge"));
 		assertEquals(JGraLab.map().plus(1, true).plus(2, false).plus(3, true),
 				e1.getAttribute("mapEdge"));
 		assertEquals(
@@ -150,17 +150,17 @@ public class GenericEdgeImplTest {
 		assertEquals(JGraLab.set().plus(JGraLab.set().plus(false)),
 				e1.getAttribute("complexSetEdge"));
 		e1.setAttribute("doubleEdge", 2.2d);
-		assertEquals(2.2d, e1.getAttribute("doubleEdge"));
+		assertEquals((Double) 2.2d, e1.getAttribute("doubleEdge"));
 		e1.setAttribute("enumEdge", "SECOND");
 		assertEquals("SECOND", e1.getAttribute("enumEdge"));
 		e1.setAttribute("intEdge", 42);
-		assertEquals(42, e1.getAttribute("intEdge"));
+		assertEquals((Integer) 42, e1.getAttribute("intEdge"));
 		e1.setAttribute("listEdge", JGraLab.vector().plus(false).plus(false)
 				.plus(true));
 		assertEquals(JGraLab.vector().plus(false).plus(false).plus(true),
 				e1.getAttribute("listEdge"));
 		e1.setAttribute("longEdge", 987654321l);
-		assertEquals(987654321l, e1.getAttribute("longEdge"));
+		assertEquals((Long) 987654321l, e1.getAttribute("longEdge"));
 		e1.setAttribute("mapEdge", JGraLab.map().plus(42, true).plus(24, false));
 		assertEquals(JGraLab.map().plus(42, true).plus(24, false),
 				e1.getAttribute("mapEdge"));
@@ -429,16 +429,16 @@ public class GenericEdgeImplTest {
 		assertEquals(JGraLab.set().plus(JGraLab.set().plus(false)),
 				e.getAttribute("complexSetEdge"));
 		e.readAttributeValueFromString("doubleEdge", "12.34");
-		assertEquals(12.34d, e.getAttribute("doubleEdge"));
+		assertEquals((Double) 12.34d, e.getAttribute("doubleEdge"));
 		e.readAttributeValueFromString("enumEdge", "SECOND");
 		assertEquals("SECOND", e.getAttribute("enumEdge"));
 		e.readAttributeValueFromString("intEdge", "42");
-		assertEquals(42, e.getAttribute("intEdge"));
+		assertEquals((Integer) 42, e.getAttribute("intEdge"));
 		e.readAttributeValueFromString("listEdge", "[t t]");
 		assertEquals(JGraLab.vector().plus(true).plus(true),
 				e.getAttribute("listEdge"));
 		e.readAttributeValueFromString("longEdge", "987654321");
-		assertEquals(987654321l, e.getAttribute("longEdge"));
+		assertEquals((Long) 987654321l, e.getAttribute("longEdge"));
 		e.readAttributeValueFromString("mapEdge", "{1 - f 2 - t}");
 		assertEquals(JGraLab.map().plus(1, false).plus(2, true),
 				e.getAttribute("mapEdge"));
@@ -509,12 +509,12 @@ public class GenericEdgeImplTest {
 				e.getAttribute("complexMapEdge"));
 		assertEquals(JGraLab.set().plus(JGraLab.set().plus(false)),
 				e.getAttribute("complexSetEdge"));
-		assertEquals(12.34d, e.getAttribute("doubleEdge"));
+		assertEquals((Double) 12.34d, e.getAttribute("doubleEdge"));
 		assertEquals("SECOND", e.getAttribute("enumEdge"));
-		assertEquals(42, e.getAttribute("intEdge"));
+		assertEquals((Integer) 42, e.getAttribute("intEdge"));
 		assertEquals(JGraLab.vector().plus(true).plus(true),
 				e.getAttribute("listEdge"));
-		assertEquals(987654321l, e.getAttribute("longEdge"));
+		assertEquals((Long) 987654321l, e.getAttribute("longEdge"));
 		assertEquals(JGraLab.map().plus(1, false).plus(2, true),
 				e.getAttribute("mapEdge"));
 		assertEquals(
