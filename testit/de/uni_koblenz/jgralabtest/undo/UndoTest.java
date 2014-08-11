@@ -386,10 +386,10 @@ public class UndoTest {
 			String key = "v" + v.getAttribute("name")
 					+ (RESPECT_GLOBAL_ORDER ? "-" + i : "");
 			StringBuilder sb = new StringBuilder().append("v").append(
-					v.getAttribute("name"));
+					(CharSequence) v.getAttribute("name"));
 			for (Edge e : v.incidences()) {
 				sb.append(" ").append(e.isNormal() ? "+" : "-")
-						.append(e.getAttribute("name"));
+						.append((CharSequence) e.getAttribute("name"));
 			}
 			String val = sb.toString();
 			state.put(key, val);
