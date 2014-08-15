@@ -52,18 +52,17 @@
 	<!-- the fully qualified name of the project's main class -->
 	<property name="main.fq" value="${basePackage}.${main}" />
 
+	<!-- jgralab project directory; the base directory of the project -->
+	<property name="project.dir" location="${ant.file.common}/.." />
+	
 	<!-- the location of the jgralab.jar; only change if the sourcecode of jgralab is not available (3rd party project) -->
-	<property name="jgralab.location" value="../jgralab/build/jar/jgralab.jar" />
+	<property name="jgralab.location" value="${project.dir}/build/jar/jgralab.jar" />
 
 	<!-- maximum memory for forked java tasks (java, javadoc, test); override in specialization if "OutOfMemoryError"s occur -->
 	<property name="maxmemsize" value="512M" />
 
 	<!-- minimum memory for forked java tasks (java, javadoc, test) -->
 	<property name="minmemsize" value="256M" />
-
-	<!-- global project specific directories; they should remain as they are to ensure analogy among the projects -->
-	<!-- project directory; the base directory of the project -->
-	<property name="project.dir" location="../${projectname}" />
 
 	<!-- source directory; all source code is expected to be here -->
 	<property name="src.dir" value="${project.dir}/src" />
@@ -284,7 +283,7 @@
 
 	<!-- builds jgralab -->
 	<target name="jgralab">
-		<ant dir="../jgralab" antfile="build.xml" inheritAll="false" target="ensureJarExists" />
+		<ant dir="${project.dir}" antfile="build.xml" inheritAll="false" target="ensureJarExists" />
 	</target>
 
 	<!-- sets the property "jar exists" to true if the project's jar is present -->
