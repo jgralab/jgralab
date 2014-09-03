@@ -1130,7 +1130,7 @@ public class SchemaImpl implements Schema, ManagableArtifact {
 
 	@Override
 	public boolean knows(String qn) {
-		return (namedElements.containsKey(qn) || getQualifiedName().equals(qn));
+		return (namedElements.containsKey(qn) || getName().equals(qn));
 	}
 
 	@Override
