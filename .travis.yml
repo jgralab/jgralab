@@ -12,6 +12,5 @@ script: ant test
 jdk:
   - openjdk6
   - openjdk7
-  - oraclejdk6
   - oraclejdk7
   - oraclejdk8
