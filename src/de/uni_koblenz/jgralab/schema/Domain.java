@@ -99,7 +99,7 @@ public interface Domain extends NamedElement {
 	public boolean isPrimitive();
 
 	/**
-	 * @return true if this domain is a primitive type
+	 * @return true if this domain is the BooleanDomain
 	 */
 	public boolean isBoolean();
 
