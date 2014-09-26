@@ -503,22 +503,26 @@
 	</target>
 
 	<!-- Push a new jgralab source jar to clojars.org -->
-	<target name="clojars-push">
-		<exec executable="cp">
-			<!-- Copy src-jar to jgralab.jar since clojars expects
-			     jgralab.jar or jgralab-x.y.z.jar, but not
-			     jgralab.src.jar -->
-			<arg value="build/jar/jgralab.src.jar" />
-			<arg value="jgralab.jar" />
-		</exec>
-		<exec executable="scp">
-			<arg value="pom.xml" />
-			<arg value="jgralab.jar" />
-			<arg value="clojars@clojars.org:" />
-		</exec>
-		<exec executable="rm">
-			<arg value="jgralab.jar" />
-		</exec>
+	<target name="clojars-push" depends="versiontasks">
+	  <retrieve_version />
+	  <exec executable="cp">
+	    <!-- Copy src-jar to jgralab.jar since clojars expects
+		 jgralab.jar or jgralab-x.y.z.jar, but not
+		 jgralab.src.jar -->
+	    <arg value="build/jar/jgralab.src.jar" />
+	    <arg value="jgralab.jar" />
+	  </exec>
+	  <exec executable="lein">
+	    <arg value="deploy" />
+	    <arg value="clojars" />
+	    <arg value="de.uni-koblenz.ist/jgralab" />
+	    <arg value="${version}" />
+	    <arg value="pom.xml" />
+	    <arg value="jgralab.jar" />
+	  </exec>
+	  <exec executable="rm">
+	    <arg value="jgralab.jar" />
+	  </exec>
 	</target>
 
 </project>
