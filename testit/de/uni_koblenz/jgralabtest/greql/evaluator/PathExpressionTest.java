@@ -1050,45 +1050,45 @@ public class PathExpressionTest {
 	public void testTransposedPathDescription_OneEdge_false()
 			throws InstantiationException, IllegalAccessException {
 		String classname = "testdata.TestTransposedPathDescription_OneEdge_false";
-		compareReachabilityResults("getVertex(144) -->^T getVertex(154)",
+		compareReachabilityResults("getVertex(144) -->^-1 getVertex(154)",
 				false, classname);
-		compareReachableVerticesResults("getVertex(144) -->^T", classname
+		compareReachableVerticesResults("getVertex(144) -->^-1", classname
 				+ "_2");
 		compareReachabilityResults(
-				"isReachable(getVertex(144),getVertex(154), -->^T )", false,
+				"isReachable(getVertex(144),getVertex(154), -->^-1 )", false,
 				classname + "_3");
 		compareReachableVerticesResults(
-				"reachableVertices(getVertex(144), -->^T)", classname + "_4");
+				"reachableVertices(getVertex(144), -->^-1)", classname + "_4");
 	}
 
 	@Test
 	public void testTransposedPathDescription_OneEdge_true()
 			throws InstantiationException, IllegalAccessException {
 		String classname = "testdata.TestTransposedPathDescription_OneEdge_true";
-		compareReachabilityResults("getVertex(144) (<--)^T getVertex(154)",
+		compareReachabilityResults("getVertex(144) (<--)^-1 getVertex(154)",
 				true, classname);
-		compareReachableVerticesResults("getVertex(144) (<--)^T", classname
+		compareReachableVerticesResults("getVertex(144) (<--)^-1", classname
 				+ "_2");
 		compareReachabilityResults(
-				"isReachable(getVertex(144),getVertex(154), (<--)^T )", true,
+				"isReachable(getVertex(144),getVertex(154), (<--)^-1 )", true,
 				classname + "_3");
 		compareReachableVerticesResults(
-				"reachableVertices(getVertex(144), (<--)^T)", classname + "_4");
+				"reachableVertices(getVertex(144), (<--)^-1)", classname + "_4");
 	}
 
 	@Test
 	public void testTransposedPathDescription_SeveralEdges()
 			throws InstantiationException, IllegalAccessException {
 		String classname = "testdata.TestTransposedPathDescription_SeveralEdges";
-		compareReachabilityResults("getVertex(144)(<--<--^3)^T getVertex(16)",
+		compareReachabilityResults("getVertex(144)(<--<--^3)^-1 getVertex(16)",
 				true, classname);
-		compareReachableVerticesResults("getVertex(144)(<--<--^3)^T", classname
-				+ "_2");
+		compareReachableVerticesResults("getVertex(144)(<--<--^3)^-1",
+				classname + "_2");
 		compareReachabilityResults(
-				"isReachable(getVertex(144),getVertex(16),(<--<--^3)^T )",
+				"isReachable(getVertex(144),getVertex(16),(<--<--^3)^-1 )",
 				true, classname + "_3");
 		compareReachableVerticesResults(
-				"reachableVertices(getVertex(144),(<--<--^3)^T)", classname
+				"reachableVertices(getVertex(144),(<--<--^3)^-1)", classname
 						+ "_4");
 	}
 

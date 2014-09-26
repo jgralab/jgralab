@@ -604,21 +604,21 @@ public class PathSystemTest {
 	@Test
 	public void testTransposedPathDescription_OneEdge_false()
 			throws InstantiationException, IllegalAccessException {
-		compareResultsOfQuery("pathSystem(getVertex(144),-->^T)",
+		compareResultsOfQuery("pathSystem(getVertex(144),-->^-1)",
 				"testdata.TestTransposedPathDescription_OneEdge_false");
 	}
 
 	@Test
 	public void testTransposedPathDescription_OneEdge_true()
 			throws InstantiationException, IllegalAccessException {
-		compareResultsOfQuery("pathSystem(getVertex(144),(<--)^T)",
+		compareResultsOfQuery("pathSystem(getVertex(144),(<--)^-1)",
 				"testdata.TestTransposedPathDescription_OneEdge_true");
 	}
 
 	@Test
 	public void testTransposedPathDescription_SeveralEdges()
 			throws InstantiationException, IllegalAccessException {
-		compareResultsOfQuery("pathSystem(getVertex(144),(<--<--^3)^T)",
+		compareResultsOfQuery("pathSystem(getVertex(144),(<--<--^3)^-1)",
 				"testdata.TestTransposedPathDescription_SeveralEdges");
 	}
 

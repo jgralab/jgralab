@@ -638,8 +638,9 @@ public class GreqlSerializer {
 
 	private void serializeTransposedPathDescription(
 			TransposedPathDescription exp) {
+		sb.append("(");
 		serializePathDescription(exp.get_transposedPath());
-		sb.append("^T");
+		sb.append(")^-1");
 	}
 
 	private void serializeSequentialPathDescription(
@@ -671,8 +672,9 @@ public class GreqlSerializer {
 
 	private void serializeExponentiatedPathDescription(
 			ExponentiatedPathDescription exp) {
+		sb.append("(");
 		serializePathDescription(exp.get_exponentiatedPath());
-		sb.append('^');
+		sb.append(")^");
 		serializeLiteral(exp.get_exponent());
 	}
 

@@ -44,7 +44,6 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.FutureTask;
 import java.util.concurrent.ThreadPoolExecutor;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import de.uni_koblenz.jgralab.Graph;
@@ -109,9 +108,9 @@ public class ParallelGreqlEvaluator {
 	// dependency graph
 	private static Logger logger = JGraLab
 			.getLogger(ParallelGreqlEvaluator.class);
-	static {
-		logger.setLevel(Level.FINE);
-	}
+	// static {
+	// logger.setLevel(Level.FINE);
+	// }
 
 	private DirectedAcyclicGraph<TaskHandle> dependencyGraph;
 
