@@ -187,7 +187,7 @@ public class GraphLayoutFactory {
 								+ ELEMENT_SEQUENCE_INDEX
 								+ " ++ ')'  : '') ++ ("
 								+ PRINT_EDGE_ATTRIBUTES
-								+ " ? '\\n' ++ "
+								+ " ? '\\\\l' ++ "
 								+ "joinWithCollection('\\\\l', from "
 								+ "attr:attributeNames("
 								+ ELEMENT
