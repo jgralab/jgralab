@@ -53,6 +53,7 @@ import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.exception.GraphIOException;
+import de.uni_koblenz.jgralab.exception.NoSuchAttributeException;
 import de.uni_koblenz.jgralab.graphmarker.AbstractGraphMarker;
 import de.uni_koblenz.jgralab.impl.ConsoleProgressFunction;
 import de.uni_koblenz.jgralab.schema.Attribute;
@@ -72,6 +73,11 @@ public class TGMerge {
 	private Map<Vertex, Vertex> old2NewVertices = new HashMap<Vertex, Vertex>();
 	private Map<Vertex, Vertex> new2OldVertices = new HashMap<Vertex, Vertex>();
 	private Map<Edge, Edge> new2OldEdges = new HashMap<Edge, Edge>();
+
+	/**
+	 * Indicates, if schema versions differ between graphs
+	 */
+	private boolean schemaVersionDifference = false;
 
 	/**
 	 * Remembers the positions of all copied graph elements in their original
@@ -127,6 +133,10 @@ public class TGMerge {
 			if (!s.equals(g.getSchema())) {
 				throw new RuntimeException(
 						"It's only possible to merge additionalGraphs conforming to one schema.");
+			}
+
+			if (s != g.getSchema()) {
+				schemaVersionDifference = true;
 			}
 		}
 
@@ -337,6 +347,11 @@ public class TGMerge {
 		EdgeClass targetType = targetGraph.getSchema()
 				.getAttributedElementClass(typeName);
 
+		if (targetType == null) {
+			throw new RuntimeException("EdgeClass '" + typeName
+					+ "' does not exist in target schema!");
+		}
+
 		Edge newEdge = targetGraph.createEdge(targetType, start, end);
 
 		copyAttributes(e, newEdge);
@@ -353,6 +368,11 @@ public class TGMerge {
 		VertexClass targetType = targetGraph.getSchema()
 				.getAttributedElementClass(typeName);
 
+		if (targetType == null) {
+			throw new RuntimeException("VertexClass '" + typeName
+					+ "' does not exist in target schema!");
+		}
+
 		Vertex newVertex = targetGraph.createVertex(targetType);
 
 		copyAttributes(v, newVertex);
@@ -365,8 +385,20 @@ public class TGMerge {
 			AttributedElement<?, ?> newAttrElem) {
 		for (Attribute attr : oldAttrElem.getAttributedElementClass()
 				.getAttributeList()) {
-			newAttrElem.setAttribute(attr.getName(),
-					oldAttrElem.getAttribute(attr.getName()));
+			try {
+				newAttrElem.setAttribute(attr.getName(),
+						oldAttrElem.getAttribute(attr.getName()));
+			} catch (NoSuchAttributeException e) {
+				logger.warning("The attribute '"
+						+ attr.getName()
+						+ "' of the element '"
+						+ oldAttrElem
+						+ " ("
+						+ oldAttrElem.getAttributedElementClass()
+						+ ")"
+						+ "' does not exist in the target schema! Skipping this attribute for the target element '"
+						+ newAttrElem + "'!");
+			}
 		}
 	}
 
