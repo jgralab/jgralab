@@ -56,7 +56,9 @@ import de.uni_koblenz.jgralab.exception.GraphIOException;
 import de.uni_koblenz.jgralab.graphmarker.AbstractGraphMarker;
 import de.uni_koblenz.jgralab.impl.ConsoleProgressFunction;
 import de.uni_koblenz.jgralab.schema.Attribute;
+import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.Schema;
+import de.uni_koblenz.jgralab.schema.VertexClass;
 
 /**
  * @author Tassilo Horn &lt;horn@uni-koblenz.de&gt;
@@ -116,13 +118,18 @@ public class TGMerge {
 					"Merging makes no sense with less than 2 Graphs.");
 		}
 
+		// Tests, if the schemas of all graphs are equal. Here, equality is
+		// tested by the qualified name of the schema, not by identity of the
+		// schema objects! This is required to merge graphs, with different
+		// versions of a schema!
 		Schema s = graphs[0].getSchema();
 		for (Graph g : graphs) {
-			if (g.getSchema() != s) {
+			if (!s.equals(g.getSchema())) {
 				throw new RuntimeException(
 						"It's only possible to merge additionalGraphs conforming to one schema.");
 			}
 		}
+
 		targetGraph = graphs[0];
 		additionalGraphs = new LinkedList<Graph>();
 		for (int i = 1; i < graphs.length; i++) {
@@ -323,8 +330,14 @@ public class TGMerge {
 	private void copyEdge(Edge e) {
 		Vertex start = old2NewVertices.get(e.getAlpha());
 		Vertex end = old2NewVertices.get(e.getOmega());
-		Edge newEdge = targetGraph.createEdge(e.getAttributedElementClass(),
-				start, end);
+
+		// Retrieve the target edge class by the qualified name of the source
+		// edge class
+		String typeName = e.getAttributedElementClass().getQualifiedName();
+		EdgeClass targetType = targetGraph.getSchema()
+				.getAttributedElementClass(typeName);
+
+		Edge newEdge = targetGraph.createEdge(targetType, start, end);
 
 		copyAttributes(e, newEdge);
 
@@ -333,8 +346,14 @@ public class TGMerge {
 	}
 
 	private void copyVertex(Vertex v) {
-		Vertex newVertex = targetGraph.createVertex(v
-				.getAttributedElementClass());
+
+		// Retrieve the target vertex class by the qualified name of the source
+		// vertex class
+		String typeName = v.getAttributedElementClass().getQualifiedName();
+		VertexClass targetType = targetGraph.getSchema()
+				.getAttributedElementClass(typeName);
+
+		Vertex newVertex = targetGraph.createVertex(targetType);
 
 		copyAttributes(v, newVertex);
 
