@@ -52,6 +52,8 @@ import de.uni_koblenz.jgralab.greql.schema.IsBoundVarOf;
 import de.uni_koblenz.jgralab.greql.schema.IsDeclaredVarOf;
 import de.uni_koblenz.jgralab.greql.schema.IsSimpleDeclOf;
 import de.uni_koblenz.jgralab.greql.schema.SimpleDeclaration;
+import de.uni_koblenz.jgralab.greql.schema.ThisEdge;
+import de.uni_koblenz.jgralab.greql.schema.ThisVertex;
 import de.uni_koblenz.jgralab.greql.schema.Variable;
 
 /**
@@ -137,6 +139,14 @@ public abstract class OptimizerBase implements Optimizer {
 		if (var1 == var2) {
 			return false;
 		}
+
+		// thisVertex and thisEdge are actually never declared, but we say they
+		// are always declared after every other var.
+		if (var1 instanceof ThisVertex || var1 instanceof ThisEdge
+				|| var2 instanceof ThisVertex || var2 instanceof ThisEdge) {
+			throw new OptimizerException("ThisVertex and ThisEdge aren't declared!");
+		}
+
 		IsBoundVarOf ibvo1 = var1.getFirstIsBoundVarOfIncidence();
 		IsBoundVarOf ibvo2 = var2.getFirstIsBoundVarOfIncidence();
 

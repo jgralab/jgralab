@@ -65,6 +65,7 @@ import de.uni_koblenz.jgralab.greql.schema.PathDescription;
 import de.uni_koblenz.jgralab.greql.schema.PathExistence;
 import de.uni_koblenz.jgralab.greql.schema.PathExpression;
 import de.uni_koblenz.jgralab.greql.schema.SimpleDeclaration;
+import de.uni_koblenz.jgralab.greql.schema.ThisVertex;
 import de.uni_koblenz.jgralab.greql.schema.TypeId;
 import de.uni_koblenz.jgralab.greql.schema.Variable;
 import de.uni_koblenz.jgralab.greql.schema.VertexSetExpression;
@@ -179,6 +180,12 @@ public class PathExistenceToDirectedPathExpressionOptimizer extends
 					+ "PathExistence hasn't form var1 --> var2, skipping...");
 			return false;
 		}
+		// They should also not be ThisVertex
+		if (startExp instanceof ThisVertex || targetExp instanceof ThisVertex) {
+			logger.finer(optimizerHeaderString()
+					+ "PathExistence starts or ends at thisVertex, skipping...");
+			return false;
+		}
 
 		// Don't optimize PathDescriptions containing EdgePathDescriptions,
 		// cause we don't handle these dependencies right now...
@@ -244,7 +251,7 @@ public class PathExistenceToDirectedPathExpressionOptimizer extends
 				sd = startSD;
 			}
 		} else {
-			// both are declared vars
+			// both are non-externally bound, normally declared vars
 			SimpleDeclaration startSD = start
 					.getFirstIsDeclaredVarOfIncidence().getOmega();
 			SimpleDeclaration targetSD = target
