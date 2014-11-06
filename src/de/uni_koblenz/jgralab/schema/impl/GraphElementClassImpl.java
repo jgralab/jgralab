@@ -258,12 +258,7 @@ public abstract class GraphElementClassImpl<SC extends GraphElementClass<SC, IC>
 		if (finished) {
 			return allAttributes.size();
 		}
-		int attrCount = getOwnAttributeCount();
-		for (AttributedElementClass<SC, IC> superClass : subclassDag
-				.getDirectPredecessors(this)) {
-			attrCount += superClass.getAttributeCount();
-		}
-		return attrCount;
+		return getAttributeList().size();
 	}
 
 	@Override
