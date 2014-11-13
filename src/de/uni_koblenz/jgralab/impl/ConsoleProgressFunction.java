@@ -150,6 +150,9 @@ public class ConsoleProgressFunction implements ProgressFunction {
 	 */
 	@Override
 	public void init(long elements) {
+		if (elements < 0) {
+			elements = Long.MAX_VALUE;
+		}
 		printStream.println(message + " " + elements + " elements");
 		currentChar = 0;
 		this.totalElements = elements;

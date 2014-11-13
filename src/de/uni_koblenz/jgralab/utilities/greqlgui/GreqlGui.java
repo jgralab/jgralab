@@ -415,6 +415,7 @@ public class GreqlGui extends SwingApplication {
 					try {
 						queryResult = query.evaluate(graph,
 								new GreqlEnvironmentAdapter(), this);
+						System.out.println("done");
 					} catch (Exception e1) {
 						ex = e1;
 					} finally {

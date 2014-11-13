@@ -2090,6 +2090,9 @@ public class StateRepository {
 
 			@Override
 			public void init(long elements) {
+				if (elements < 0) {
+					elements = Long.MAX_VALUE;
+				}
 				currentChar = 0;
 				totalElements = elements;
 			}

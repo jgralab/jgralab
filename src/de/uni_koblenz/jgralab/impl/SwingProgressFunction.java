@@ -127,12 +127,14 @@ public class SwingProgressFunction implements ProgressFunction, ActionListener {
 	 * @see de.uni_koblenz.jgralab.ProgressFunction#init(long)
 	 */
 	@Override
-	public void init(final long totalElements) {
+	public void init(long totalElements) {
+		final long realTotalElements = (totalElements < 0) ? Long.MAX_VALUE
+				: totalElements;
 		invoke(new Runnable() {
 
 			@Override
 			public void run() {
-				SwingProgressFunction.this.totalElements = totalElements;
+				SwingProgressFunction.this.totalElements = realTotalElements;
 				elementFormatter = NumberFormat
 						.getInstance(Locale.getDefault());
 				timeFormatter = NumberFormat.getInstance(Locale.getDefault());
@@ -148,8 +150,8 @@ public class SwingProgressFunction implements ProgressFunction, ActionListener {
 				pb = new JProgressBar();
 				brm = new DefaultBoundedRangeModel();
 				pb.setModel(brm);
-				updateInterval = brm.getMaximum() > totalElements ? 1
-						: totalElements / brm.getMaximum();
+				updateInterval = brm.getMaximum() > realTotalElements ? 1
+						: realTotalElements / brm.getMaximum();
 
 				JPanel pnl = new JPanel();
 				pnl.setLayout(new BorderLayout(8, 8));
@@ -174,14 +176,12 @@ public class SwingProgressFunction implements ProgressFunction, ActionListener {
 
 	Runnable timeTextUpdater = new Runnable() {
 		public void run() {
-			lbl
-					.setText(elementFormatter.format(totalElements)
-							+ " "
-							+ itemName
-							+ ", "
-							+ timeFormatter
-									.format((System.currentTimeMillis() - startTime) / 1000.0)
-							+ "s");
+			lbl.setText(elementFormatter.format(totalElements)
+					+ " "
+					+ itemName
+					+ ", "
+					+ timeFormatter.format((System.currentTimeMillis() - startTime) / 1000.0)
+					+ "s");
 		}
 	};
 
