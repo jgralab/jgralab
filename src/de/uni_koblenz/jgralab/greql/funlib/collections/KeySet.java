@@ -61,7 +61,7 @@ public class KeySet extends Function {
 	}
 
 	@Override
-	public long getEstimatedCardinality(int inElements) {
+	public long getEstimatedCardinality(long inElements) {
 		return inElements;
 	}
 }

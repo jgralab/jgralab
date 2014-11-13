@@ -115,6 +115,7 @@ public class GreqlEvaluatorImpl implements InternalGreqlEvaluator {
 	private GreqlEnvironment environment;
 
 	private int cnt = 0;
+	long stepsAtLastProgressReport = 0;
 
 	/**
 	 * should be called by every vertex evaluator to indicate a progress. The
@@ -132,8 +133,13 @@ public class GreqlEvaluatorImpl implements InternalGreqlEvaluator {
 		}
 		progressStepsPassed += value;
 		if (progressFunction != null) {
-			progressFunction.progress(progressStepsPassed);
+			if (progressStepsPassed - stepsAtLastProgressReport > progressFunction
+					.getUpdateInterval()) {
+				progressFunction.progress(progressStepsPassed);
+				stepsAtLastProgressReport = progressStepsPassed;
+			}
 		}
+		System.out.println(progressStepsPassed);
 	}
 
 	@Override

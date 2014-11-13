@@ -256,7 +256,7 @@ public class FunctionApplicationEvaluator extends
 		FunctionApplication funApp = getVertex();
 		IsArgumentOf inc = funApp
 				.getFirstIsArgumentOfIncidence(EdgeDirection.IN);
-		int elements = 0;
+		long elements = 0;
 		while (inc != null) {
 			VertexEvaluator<? extends Expression> argEval = query
 					.getVertexEvaluator(inc.getAlpha());

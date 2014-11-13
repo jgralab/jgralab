@@ -93,11 +93,11 @@ public abstract class Function {
 	 * Calculates the estimated result size for the given number of input
 	 * elements
 	 * 
-	 * @param inElements
+	 * @param elements
 	 *            the number of input elements to calculate the result size for
 	 * @return the estimated number of elements in the result
 	 */
-	public long getEstimatedCardinality(int inElements) {
+	public long getEstimatedCardinality(long elements) {
 		return cardinality;
 	}
 }

@@ -53,7 +53,7 @@ public class Values extends Function {
 	}
 
 	@Override
-	public long getEstimatedCardinality(int inElements) {
+	public long getEstimatedCardinality(long inElements) {
 		return inElements;
 	}
 }

@@ -130,7 +130,7 @@ public class SortByColumn extends Function {
 	}
 
 	@Override
-	public long getEstimatedCardinality(int inElements) {
+	public long getEstimatedCardinality(long inElements) {
 		return inElements;
 	}
 }

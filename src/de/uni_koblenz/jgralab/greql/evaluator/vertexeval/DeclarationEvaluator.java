@@ -122,7 +122,7 @@ public class DeclarationEvaluator extends VertexEvaluator<Declaration> {
 		}
 
 		IsConstraintOf consInc = decl.getFirstIsConstraintOfIncidence();
-		int constraintsCosts = 0;
+		long constraintsCosts = 0;
 		while (consInc != null) {
 			VertexEvaluator<? extends Expression> constraint = query
 					.getVertexEvaluator(consInc.getAlpha());
