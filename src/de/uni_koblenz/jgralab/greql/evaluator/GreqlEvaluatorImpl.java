@@ -139,7 +139,6 @@ public class GreqlEvaluatorImpl implements InternalGreqlEvaluator {
 				stepsAtLastProgressReport = progressStepsPassed;
 			}
 		}
-		System.out.println(progressStepsPassed);
 	}
 
 	@Override
