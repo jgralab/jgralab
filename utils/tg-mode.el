@@ -1,6 +1,6 @@
 ;;; tg-mode.el --- Major mode for editing TG files with emacs
 
-;; Copyright (C) 2007, 2008, 2009, 2010 by Tassilo Horn
+;; Copyright (C) 2007-2014 by Tassilo Horn
 
 ;; Author: Tassilo Horn <horn@uni-koblenz.de>
 
@@ -23,17 +23,10 @@
 ;; Major mode for editing TG files with Emacs.  Include superior navigation
 ;; functions, a full schema parser, and eldoc capabilities.
 
-;;; Version
-;; $Revision$
 
 ;;* Code
 
-(when (not (fboundp 'defparameter))
-  (defmacro defparameter (symbol &optional initvalue docstring)
-    "Common Lisps defparameter."
-    `(progn
-       (defvar ,symbol nil ,docstring)
-       (setq   ,symbol ,initvalue))))
+(require 'cl-lib)
 
 ;;** Schema parsing
 
@@ -41,16 +34,21 @@
   "The schema of the current TG file.")
 (make-variable-buffer-local 'tg-schema-alist)
 
+(defvar tg-id2class-map nil)
+(make-variable-buffer-local 'tg-id2class-map)
+
 (defun tg-init-schema ()
-  (setq tg-schema-alist (tg--parse-schema))
+  (setq tg-schema-alist nil)
+  (setq tg-id2class-map nil)
+  (tg--parse-schema)
   (tg--init-unique-name-hashmap))
 
 (defun tg--parse-schema ()
   "Parse the schema of the current schema/graph file."
+  (setq tg-id2class-map (make-hash-table :test #'string=))
   (save-excursion
     (goto-char (point-min))
     (let ((current-package "")
-          schema-alist
           finished)
       (while (not finished)
         (cond
@@ -64,49 +62,54 @@
          ((looking-at "^GraphClass[[:space:]]+\\([[:alnum:]._]+\\)[[:space:]]*\\(?:{\\([^}]*\\)}\\)?"))
          ;; VertexClass
          ((looking-at (concat "^\\(?:abstract[[:space:]]+\\)?"
-                              "VertexClass[[:space:]]+"
-                              "\\([[:alnum:]._]+\\)[[:space:]]*"
-                              "\\(?::\\([^{[;]+\\)\\)?[[:space:]]*" ;; Superclasses
-                              "\\(?:{\\([^}]*\\)}\\)?[[:space:]]*"  ;; Attributes
-                              "\\(?:\\[.*\\]\\)?[[:space:]]*;"      ;; Constraints
-                              ))
-          (let ((qname (concat current-package (match-string-no-properties 1))))
-            (setq schema-alist
-                  (cons (list :meta 'VertexClass
-                              :qname qname
-                              :super (tg--parse-superclasses (match-string-no-properties 2) current-package)
-                              :attrs (tg--parse-attributes qname (match-string-no-properties 3)))
-                        schema-alist))))
+			      "VertexClass[[:space:]]+"
+			      "\\(?:\\(?4:[[:digit:]]+\\)[[:space:]]+\\)?"     ;; 4: id of VC in TG3
+			      "\\(?1:[[:alpha:]][[:alnum:]._]*\\)[[:space:]]*" ;; 1: VC name
+			      "\\(?::\\(?2:[^{[;]+\\)\\)?[[:space:]]*"         ;; 2: Superclasses
+			      "\\(?:{\\(?3:[^}]*\\)}\\)?[[:space:]]*"          ;; 3: Attributes
+			      "\\(?:\\[.*\\]\\)?[[:space:]]*;"                 ;; Constraints
+			      ))
+          (let* ((qname (concat current-package (match-string-no-properties 1))))
+	    (when (match-string 4)
+	      (puthash (match-string-no-properties 4) qname tg-id2class-map))
+	    (setq tg-schema-alist
+		  (cons (list :meta 'VertexClass
+			      :qname qname
+			      :super (tg--parse-superclasses (match-string-no-properties 2) current-package)
+			      :attrs (tg--parse-attributes qname (match-string-no-properties 3)))
+			tg-schema-alist))))
          ;; EdgeClasses
          ((looking-at (concat "^\\(?:abstract[[:space:]]+\\)?"
-                            "EdgeClass[[:space:]]+"
-                            "\\([[:alnum:]._]+\\)[[:space:]]*"      ;; Name
-                            "\\(?::\\([[:alnum:]._ ]+\\)\\)?[[:space:]]*" ;; Supertypes
-                            "\\<from\\>[[:space:]]+\\([[:alnum:]._]+\\)[[:space:]]+.*?"
-                            "\\<to\\>[[:space:]]+\\([[:alnum:]._]+\\)[[:space:]]+.*?" ;; from/to
-                            "\\(?:{\\([^}]*\\)}\\)?[[:space:]]*" ;; Attributes
-                            "\\(?:\\[.*\\]\\)?[[:space:]]*;"     ;; Constraints
-                            ))
+			      "EdgeClass[[:space:]]+"
+			      "\\(?:\\(?6:[[:digit:]]+\\)[[:space:]]+\\)?"     ;; 6: id of EC in TG3
+			      "\\(?1:[[:alpha:]][[:alnum:]._]*\\)[[:space:]]*" ;; 1: Name
+			      "\\(?::\\(?2:[[:alnum:]._ ]+\\)\\)?[[:space:]]*" ;; 2: Supertypes
+			      "\\<from\\>[[:space:]]+\\(?3:[[:alnum:]._]+\\).*?" ;; 3: from
+			      "\\<to\\>[[:space:]]+\\(?4:[[:alnum:]._]+\\).*?" ;; 4: to
+			      "\\(?:{\\(?5:[^}]*\\)}\\)?[[:space:]]*"          ;; 5: Attributes
+			      "\\(?:\\[.*\\]\\)?[[:space:]]*;"                 ;; Constraints
+			      ))
           (let ((qname (concat current-package (match-string-no-properties 1)))
                 (from (match-string-no-properties 3))
                 (to   (match-string-no-properties 4)))
+	    (when (match-string 6)
+	      (puthash (match-string-no-properties 6) qname tg-id2class-map))
             (save-match-data
               (setq from (if (string-match "\\." from) from (concat current-package from)))
               (setq to   (if (string-match "\\." to)   to   (concat current-package to))))
-            (setq schema-alist
+            (setq tg-schema-alist
                   (cons (list :meta 'EdgeClass
                               :qname qname
                               :super (tg--parse-superclasses (match-string-no-properties 2) current-package)
                               :attrs (tg--parse-attributes qname (match-string-no-properties 5))
                               :from from
                               :to to)
-                        schema-alist))))
+                        tg-schema-alist))))
          ;; End of schema (part)
          ((or (= (point) (point-max))
               (looking-at "^Graph[^a-zA-Z]+"))
           (setq finished t)))
-        (forward-line 1))
-      schema-alist)))
+        (forward-line 1)))))
 
 (defun tg--parse-superclasses (str current-package)
   "Given a string \"Foo, Bar, Baz\" it returns (\"Foo\" \"Bar\"
@@ -177,7 +180,7 @@ attributes from some schema element.  Returns a list of common
 attributes, where common means, that only the attribute names
 have to equal, but not the domain or owner."
   (let (result)
-    (dolist (attr (reduce 'nconc lists))
+    (dolist (attr (cl-reduce 'nconc lists))
       (let ((in-all (catch 'in-all
                       (dolist (type lists)
                         (when (not (tg--attribute-name-member-p attr type))
@@ -199,8 +202,8 @@ valid for all TYPES."
                     types)))
     (if only-in-all
         (tg--attribute-restriction all-attrs)
-      (remove-duplicates
-       (reduce 'nconc all-attrs)))))
+      (delete-dups
+       (cl-reduce 'nconc all-attrs)))))
 
 (defun tg-all-attributes (el)
   "Returns an alist of all attribute of the schema element
@@ -277,7 +280,7 @@ The optional TYPE specifies that the returned name has to be the
   "Return the vertex id (as string), if on a vertex line, else return nil."
   (save-excursion
     (goto-char (line-beginning-position))
-    (and (looking-at "^\\([[:digit:]]+\\)[[:space:]]+[[:word:]._]+[[:space:]]+<[[:digit:]- ]*>")
+    (and (looking-at "^\\([[:digit:]]+\\)[[:space:]]+[[:alnum:]._]+[[:space:]]*<[[:digit:]- ]*>")
          (match-string-no-properties 1))))
 
 (defun tg-edge-p ()
@@ -285,7 +288,7 @@ The optional TYPE specifies that the returned name has to be the
   (save-excursion
     (goto-char (line-beginning-position))
     (and (not (tg-vertex-p))
-         (looking-at "^\\([[:digit:]]+\\)[[:space:]]+[[:word:]._]+")
+         (looking-at "^\\([[:digit:]]+\\)[[:space:]]+[[:alnum:]._]+")
          (match-string-no-properties 1))))
 
 ;;** Navigation
@@ -333,7 +336,7 @@ prefix arg, jump to the target vertex."
   ;; Push the mark, so that we can easily jump back again
   (push-mark))
 
-(defparameter tg-mode-map
+(defvar tg-mode-map
   (let ((m (make-sparse-keymap)))
     (define-key m (kbd "C-c C-c") 'tg-jump)
     (define-key m (kbd "C-c C-d") 'eldoc-mode)
@@ -384,8 +387,11 @@ prefix arg, jump to the target vertex."
   "Eldoc MTYPE element at current line."
   (save-excursion
     (goto-char (line-beginning-position))
-    (if (looking-at "[[:digit:]]+[[:space:]]+\\([[:word:]_.]+\\)")
-        (let* ((name (match-string-no-properties 1))
+    (if (looking-at "[[:digit:]]+[[:space:]]+\\([[:alnum:]_.]+\\)")
+        (let* ((name (let ((n (match-string-no-properties 1)))
+		       (if (string-match "^[[:digit:]]+$" n)
+			   (gethash n tg-id2class-map)
+			 n)))
                (qname (save-excursion
                         (re-search-backward "^Package[[:space:]]+\\(.*\\);[[:space:]]*$" nil t 1)
                         (let ((pkg (match-string-no-properties 1)))
