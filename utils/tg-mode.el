@@ -367,10 +367,25 @@ prefix arg, jump to the target vertex."
 
 ;;*** Code
 
-(defvar tg--last-thing "")
-(make-variable-buffer-local 'tg--last-thing)
+(defvar tg--last-things-bounds nil)
+(make-variable-buffer-local 'tg--last-things-bounds)
 (defvar tg--last-doc "")
 (make-variable-buffer-local 'tg--last-doc)
+
+(defun tg--attribute-index ()
+  "Return the index of the attribute value point is on."
+  (let ((p (point))
+	(idx -1))
+    (save-excursion
+      (beginning-of-line)
+      (if (tg-vertex-p)
+	  (search-forward ">" (line-end-position) t)
+	(re-search-forward "[[:digit:]]+[[:space:]]+[[:alnum:]]+[[:space:]]+"))
+      (while (and (<= (point) p)
+		  (not (eql ?\; (char-after (point)))))
+	(forward-sexp)
+	(cl-incf idx))
+      idx)))
 
 (defun tg-eldoc-incidence ()
   "Return a doc string for the incidence at point."
@@ -385,28 +400,32 @@ prefix arg, jump to the target vertex."
 
 (defun tg-eldoc-vertex-or-edge-at-point (mtype)
   "Eldoc MTYPE element at current line."
-  (save-excursion
-    (goto-char (line-beginning-position))
-    (if (looking-at "[[:digit:]]+[[:space:]]+\\([[:alnum:]_.]+\\)")
-        (let* ((name (let ((n (match-string-no-properties 1)))
-		       (if (string-match "^[[:digit:]]+$" n)
-			   (gethash n tg-id2class-map)
-			 n)))
-               (qname (save-excursion
-                        (re-search-backward "^Package[[:space:]]+\\(.*\\);[[:space:]]*$" nil t 1)
-                        (let ((pkg (match-string-no-properties 1)))
-                          (if (and pkg (not (string= "" pkg)))
-                              (concat pkg "." name)
-                            name)))))
-          (setq tg--last-doc (tg-eldoc-vertex-or-edge (tg-get-schema-element mtype qname))))
-      (setq tg--last-doc nil))))
+  (let ((attr-index (tg--attribute-index)))
+    (save-excursion
+      (goto-char (line-beginning-position))
+      (if (looking-at "[[:digit:]]+[[:space:]]+\\([[:alnum:]_.]+\\)")
+	  (let* ((name (let ((n (match-string-no-properties 1)))
+			 (if (string-match "^[[:digit:]]+$" n)
+			     (gethash n tg-id2class-map)
+			   n)))
+		 (qname (save-excursion
+			  (re-search-backward "^Package[[:space:]]+\\(.*\\);[[:space:]]*$" nil t 1)
+			  (let ((pkg (match-string-no-properties 1)))
+			    (if (and pkg (not (string= "" pkg)))
+				(concat pkg "." name)
+			      name)))))
+	    (setq tg--last-doc (tg-eldoc-vertex-or-edge (tg-get-schema-element mtype qname)
+							attr-index)))
+	(setq tg--last-doc nil)))))
 
-(defun tg-eldoc-vertex-or-edge (elem)
-  "Return a doc string for schema element ELEM."
+(defun tg-eldoc-vertex-or-edge (elem attr-idx)
+  "Return a doc string for schema element ELEM.
+Put emphasis on attribute ATTR-IDX."
   (let* ((mtype (plist-get elem :meta))
          (name (plist-get elem :qname))
          (supers (tg-format-type-list (plist-get elem :super) 'tg-supertype-face))
          (attrs (tg-format-attr-list (tg-all-attributes elem)
+				     attr-idx
                                      'tg-attribute-face
                                      'tg-type-face
                                      'tg-supertype-face)))
@@ -441,7 +460,7 @@ name is used."
              reststr
            (concat ", " reststr)))))))
 
-(defun tg-format-attr-list (lst face1 face2 face3)
+(defun tg-format-attr-list (lst attr-idx face1 face2 face3)
   "Return a string representation of the given attribute list:
 IN: ((\"attr1\" \"domain1\" \"OwningType\") (\"attr2\" \"domain2\"))
 OUT: attr1 : domain1 (OwningType), attr2 : domain2
@@ -452,34 +471,37 @@ types with FACE3."
     (if (null c)
         ""
       (concat
-       (propertize (plist-get c :name) 'face face1)
+       (propertize (plist-get c :name) 'face (if (= 0 attr-idx)
+						 'bold
+					       face1))
        ":"
        (propertize (plist-get c :domain) 'face face2)
        (when (plist-get c :owner)
          (concat "(" (propertize (tg-unique-name (plist-get c :owner) 'unique) 'face face3) ")"))
-       (let ((reststr (tg-format-attr-list (cdr lst) face1 face2 face3)))
+       (let ((reststr (tg-format-attr-list (cdr lst) (1- attr-idx) face1 face2 face3)))
          (if (= (length reststr) 0)
              reststr
            (concat ", " reststr)))))))
 
 (defun tg-documentation-function ()
-  ;;(message "Called!")
-  (let ((thing (thing-at-point 'sexp)))
-    (if (string= thing tg--last-thing)
-        tg--last-doc
-      (setq tg--last-thing thing)
-      (let ((eid (tg-edge-p))
-            (vid (tg-vertex-p)))
-        (cond
-         ((tg-incidence-list-p)
-          (tg-eldoc-incidence))
-         (eid
-          (tg-eldoc-vertex-or-edge-at-point 'EdgeClass))
-         (vid
-          (tg-eldoc-vertex-or-edge-at-point 'VertexClass))
-         (t
-          (setq tg--last-doc nil))))
-      tg--last-doc)))
+  (if (and tg--last-things-bounds
+	   (<= (car tg--last-things-bounds)
+	       (point)
+	       (cdr tg--last-things-bounds)))
+      tg--last-doc
+    (setq tg--last-things-bounds (bounds-of-thing-at-point 'sexp))
+    (let ((eid (tg-edge-p))
+	  (vid (tg-vertex-p)))
+      (cond
+       ((tg-incidence-list-p)
+	(tg-eldoc-incidence))
+       (eid
+	(tg-eldoc-vertex-or-edge-at-point 'EdgeClass))
+       (vid
+	(tg-eldoc-vertex-or-edge-at-point 'VertexClass))
+       (t
+	(setq tg--last-doc nil))))
+    tg--last-doc))
 
 (defun tg-eldoc-init ()
   (set (make-local-variable 'eldoc-documentation-function)
@@ -492,6 +514,13 @@ types with FACE3."
 
 (defun tg-initialize ()
   (use-local-map tg-mode-map)
+  (modify-syntax-entry ?\. "_")
+  (modify-syntax-entry ?\{ "(}")
+  (modify-syntax-entry ?\} "){")
+  (modify-syntax-entry ?\[ "(]")
+  (modify-syntax-entry ?\] ")[")
+  (modify-syntax-entry ?\< "(>")
+  (modify-syntax-entry ?\> ")<")
   (require 'eldoc)
   (add-hook 'eldoc-mode-hook
             'tg-eldoc-init nil t))

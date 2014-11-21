@@ -30,7 +30,7 @@
 ;; TG mode contains the schema parsing stuff.
 (require 'tg-mode)
 
-(defparameter greql-keywords
+(defvar greql-keywords
   (let ((lst '((:meta keyword :name "E" :description "EdgeSetExpression: E{<Type>+}")
                (:meta keyword :name "V" :description "VertexSetExpression: V{<Type>+}")
                (:meta keyword :name "as" :description "Assign a name to a table header.")
@@ -126,13 +126,13 @@
         (when (string= (plist-get k :name) key)
           (throw 'keyword k))))))
 
-(defparameter greql-functions (greql-functions)
+(defvar greql-functions (greql-functions)
   "GReQL functions that should be completed and highlighted.")
 
 (dolist (ext '("\\.greqlquery$" "\\.grq$" "\\.greql$" "\\.gretl$"))
   (add-to-list 'auto-mode-alist (cons ext 'greql-mode)))
 
-(defparameter greql-fontlock-keywords-1
+(defvar greql-fontlock-keywords-1
   `(
     ;; Highlight function names
     ,(list (regexp-opt (mapcar (lambda (f)
@@ -146,7 +146,7 @@
     ;; Highlight one-line comments
     ,(list "//.*$" 0 font-lock-comment-face t)))
 
-(defparameter greql-fontlock-keywords-2
+(defvar greql-fontlock-keywords-2
   (append greql-fontlock-keywords-1
           (list (regexp-opt (mapcar (lambda (key) (plist-get key :name))
                                     greql-keywords)
@@ -176,7 +176,7 @@
         (goto-char (match-end 1))
         (throw 'found t)))))
 
-(defparameter greql-fontlock-keywords-3
+(defvar greql-fontlock-keywords-3
   (append greql-fontlock-keywords-2
           (list
            (list 'greql-fontlock-known-types 1 font-lock-type-face)
@@ -464,10 +464,10 @@ elements."
   (greql-complete-1 (greql-completion-list-at-point arg)
                     (when (greql-variable-p) "[.]")))
 
-(defparameter greql--indent-regexp
+(defvar greql--indent-regexp
   "\\(?:\\_<\\(?:exists!?\\|forall\\|from\\)\\_>\\|(\\)")
 
-(defparameter greql--deindent-regexp
+(defvar greql--deindent-regexp
   "\\(?:)\\|\\_<end\\_>\\)")
 
 (defun greql-calculate-indent ()
@@ -754,7 +754,7 @@ Also remove all properties from string."
 (defvar greql--last-doc "")
 (make-variable-buffer-local 'greql--last-doc)
 
-(defparameter greql-doc-buffer "*GReQL Documentation*"
+(defvar greql-doc-buffer "*GReQL Documentation*"
   "The name of the GReQL documentation buffer.")
 
 (defun greql-doc-next (n)
@@ -788,7 +788,7 @@ Also remove all properties from string."
     (define-key greql-doc-mode-map (kbd "SPC") 'greql-doc-next)
     (define-key greql-doc-mode-map (kbd "DEL") 'greql-doc-previous)))
 
-(defparameter greql-fontlock-keywords-doc
+(defvar greql-fontlock-keywords-doc
   (let ((regex (regexp-opt (mapcar (lambda (elem) (plist-get elem :name))
                                    greql-functions) t)))
     (list (list (concat "\\(?:[`]?" regex "['(]\\)")
