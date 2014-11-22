@@ -264,7 +264,17 @@ The optional TYPE specifies that the returned name has to be the
     "abstract" "aggregation" "from" "role" "to" "Map" "redefines" "none"
     "shared" "composite" "TGraph" "Comment")
   ;; Additional expressions to highlight
-  nil
+  '(("^\\([[:digit:]]+\\)[[:space:]]+\\([[:alnum:]]+\\)\\(<\\)\\([^>]+\\)\\(>\\).*\\(;\\)[[:space:]]*$"
+     (1 'bold)
+     (2 font-lock-type-face)
+     (3 'bold)
+     (4 font-lock-reference-face)
+     (5 'bold)
+     (6 'bold))
+    ("^\\([[:digit:]]+\\)[[:space:]]+\\([[:alnum:]]+\\)[[:space:]]+.*\\(;\\)[[:space:]]*$"
+     (1 'bold)
+     (2 font-lock-type-face)
+     (3 'bold)))
   ;; Enable greql-mode for files matching this patterns
   '("\\.tg$")
   ;; List of functions to be run when mode is activated
