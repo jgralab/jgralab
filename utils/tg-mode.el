@@ -264,7 +264,7 @@ The optional TYPE specifies that the returned name has to be the
     "abstract" "aggregation" "from" "role" "to" "Map" "redefines" "none"
     "shared" "composite" "TGraph" "Comment")
   ;; Additional expressions to highlight
-  '(("^\\([[:digit:]]+\\)[[:space:]]+\\([[:alnum:]]+\\)\\(<\\)\\([^>]+\\)\\(>\\).*\\(;\\)[[:space:]]*$"
+  '(("^\\([[:digit:]]+\\)[[:space:]]+\\([[:alnum:]]+\\)\\(<\\)\\([^>]*\\)\\(>\\).*\\(;\\)[[:space:]]*$"
      (1 'bold)
      (2 font-lock-type-face)
      (3 'bold)
@@ -513,13 +513,6 @@ types with FACE3."
 	(setq tg--last-doc nil))))
     tg--last-doc))
 
-(defun tg-eldoc-init ()
-  (set (make-local-variable 'eldoc-documentation-function)
-       'tg-documentation-function)
-  (add-hook 'after-save-hook
-            'tg-init-schema nil t)
-  (tg-init-schema))
-
 ;;** Init function
 
 (defun tg-initialize ()
@@ -531,9 +524,9 @@ types with FACE3."
   (modify-syntax-entry ?\] ")[")
   (modify-syntax-entry ?\< "(>")
   (modify-syntax-entry ?\> ")<")
-  (require 'eldoc)
-  (add-hook 'eldoc-mode-hook
-            'tg-eldoc-init nil t))
+  (setq-local eldoc-documentation-function 'tg-documentation-function)
+  (add-hook 'after-save-hook 'tg-init-schema nil t)
+  (tg-init-schema))
 
 (provide 'tg-mode)
 
