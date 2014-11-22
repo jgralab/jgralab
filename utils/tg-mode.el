@@ -271,7 +271,7 @@ The optional TYPE specifies that the returned name has to be the
      (4 font-lock-reference-face)
      (5 'bold)
      (6 'bold))
-    ("^\\([[:digit:]]+\\)[[:space:]]+\\([[:alnum:]]+\\)[[:space:]]+.*\\(;\\)[[:space:]]*$"
+    ("^\\([[:digit:]]+\\)[[:space:]]+\\([[:alnum:]]+\\)\\(?:[[:space:]]+.*\\)?\\(;\\)[[:space:]]*$"
      (1 'bold)
      (2 font-lock-type-face)
      (3 'bold)))
