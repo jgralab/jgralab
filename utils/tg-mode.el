@@ -344,7 +344,7 @@ prefix arg, jump to the target vertex."
                                                (concat "-" no)
                                              no)))))))
   ;; Push the mark, so that we can easily jump back again
-  (push-mark))
+  (push-mark nil 'nomessage))
 
 (defvar tg-mode-map
   (let ((m (make-sparse-keymap)))
