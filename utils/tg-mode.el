@@ -81,13 +81,13 @@
          ;; EdgeClasses
          ((looking-at (concat "^\\(?:abstract[[:space:]]+\\)?"
 			      "EdgeClass[[:space:]]+"
-			      "\\(?:\\(?6:[[:digit:]]+\\)[[:space:]]+\\)?"     ;; 6: id of EC in TG3
-			      "\\(?1:[[:alpha:]][[:alnum:]._]*\\)[[:space:]]*" ;; 1: Name
-			      "\\(?::\\(?2:[[:alnum:]._ ]+\\)\\)?[[:space:]]*" ;; 2: Supertypes
+			      "\\(?:\\(?6:[[:digit:]]+\\)[[:space:]]+\\)?"      ;; 6: id of EC in TG3
+			      "\\(?1:[[:alpha:]][[:alnum:]._]*\\)[[:space:]]*"  ;; 1: Name
+			      "\\(?::\\(?2:[[:alnum:]._, ]+\\)\\)?[[:space:]]*" ;; 2: Supertypes
 			      "\\<from\\>[[:space:]]+\\(?3:[[:alnum:]._]+\\).*?" ;; 3: from
-			      "\\<to\\>[[:space:]]+\\(?4:[[:alnum:]._]+\\).*?" ;; 4: to
-			      "\\(?:{\\(?5:[^}]*\\)}\\)?[[:space:]]*"          ;; 5: Attributes
-			      "\\(?:\\[.*\\]\\)?[[:space:]]*;"                 ;; Constraints
+			      "\\<to\\>[[:space:]]+\\(?4:[[:alnum:]._]+\\).*?"  ;; 4: to
+			      "\\(?:{\\(?5:[^}]*\\)}\\)?[[:space:]]*"           ;; 5: Attributes
+			      "\\(?:\\[.*\\]\\)?[[:space:]]*;"                  ;; Constraints
 			      ))
           (let ((qname (concat current-package (match-string-no-properties 1)))
                 (from (match-string-no-properties 3))
