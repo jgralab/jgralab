@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2013 Institute for Software Technology
+ * Copyright (C) 2006-2014 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -75,8 +75,8 @@ public class FunLib {
 	private static final Logger logger = JGraLab.getLogger(FunLib.class);
 
 	static {
-		functions = new HashMap<String, FunctionInfo>();
-		functionNames = new TreeSet<String>();
+		functions = new HashMap<>();
+		functionNames = new TreeSet<>();
 		// register builtin functions
 		logger.fine("Registering builtin functions");
 		register(de.uni_koblenz.jgralab.greql.funlib.artithmetics.Abs.class);
@@ -328,7 +328,7 @@ public class FunLib {
 		FunctionInfo(String name, Class<? extends Function> cls) {
 			this.name = name;
 			functionClass = cls;
-			ArrayList<Signature> functionSignatures = new ArrayList<Signature>();
+			ArrayList<Signature> functionSignatures = new ArrayList<>();
 			try {
 				function = cls.newInstance();
 			} catch (InstantiationException e) {
@@ -356,7 +356,7 @@ public class FunLib {
 		FunctionInfo(String name, Function func) {
 			this.name = name;
 			functionClass = func.getClass();
-			ArrayList<Signature> functionSignatures = new ArrayList<Signature>();
+			ArrayList<Signature> functionSignatures = new ArrayList<>();
 			function = func;
 			needsGraphArgument = functionClass
 					.isAnnotationPresent(NeedsGraphArgument.class);
@@ -402,7 +402,7 @@ public class FunLib {
 		}
 
 		public final Set<Class<?>> getReturnTypes() {
-			Set<Class<?>> returnTypes = new HashSet<Class<?>>();
+			Set<Class<?>> returnTypes = new HashSet<>();
 			for (Signature signatur : signatures) {
 				returnTypes.add(signatur.evaluateMethod.getReturnType());
 			}
@@ -676,7 +676,7 @@ public class FunLib {
 
 	private static class LaTeXFunctionDocsGenerator {
 		private final BufferedWriter bw;
-		private final Map<Category, SortedMap<String, AnnotationInfo>> cat2funs = new HashMap<Function.Category, SortedMap<String, AnnotationInfo>>();
+		private final Map<Category, SortedMap<String, AnnotationInfo>> cat2funs = new HashMap<>();
 
 		LaTeXFunctionDocsGenerator(String fileName,
 				final Map<String, FunctionInfo> funs) throws IOException {
@@ -725,7 +725,7 @@ public class FunLib {
 					constructorDescription = consAnno.description();
 				}
 
-				HashMap<Category, ArrayList<SignatureInfo>> cat2sig = new HashMap<Function.Category, ArrayList<SignatureInfo>>();
+				HashMap<Category, ArrayList<SignatureInfo>> cat2sig = new HashMap<>();
 				int methodCount = e.getValue().signatures.length;
 				for (int i = 0; i < methodCount; i++) {
 					createSigInfo(e, consAnno, cat2sig, i);
@@ -734,7 +734,7 @@ public class FunLib {
 				for (Category cat : cat2sig.keySet()) {
 					SortedMap<String, AnnotationInfo> m = cat2funs.get(cat);
 					if (m == null) {
-						m = new TreeMap<String, AnnotationInfo>();
+						m = new TreeMap<>();
 						cat2funs.put(cat, m);
 					}
 					AnnotationInfo aninfo = new AnnotationInfo();

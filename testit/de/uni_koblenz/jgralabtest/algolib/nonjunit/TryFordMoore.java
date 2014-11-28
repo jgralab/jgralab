@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2013 Institute for Software Technology
+ * Copyright (C) 2006-2014 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -144,7 +144,7 @@ public class TryFordMoore {
 
 	private void printResult2(Location target, Function<Vertex, Edge> result,
 			DoubleFunction<Vertex> distance) {
-		Stack<Vertex> stack = new Stack<Vertex>();
+		Stack<Vertex> stack = new Stack<>();
 		stack.push(target);
 		Edge currentEdge = result.get(target);
 		while (currentEdge != null) {
@@ -164,7 +164,7 @@ public class TryFordMoore {
 				ImplementationType.STANDARD);
 		// heuristic = new DoubleVertexMarker(graph);
 		weightFunction = new DoubleEdgeMarker(graph);
-		names = new ArrayVertexMarker<String>(graph);
+		names = new ArrayVertexMarker<>(graph);
 		v = new Location[20];
 
 		for (int i = 0; i < v.length; i++) {

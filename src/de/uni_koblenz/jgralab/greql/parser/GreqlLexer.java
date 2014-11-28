@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2013 Institute for Software Technology
+ * Copyright (C) 2006-2014 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -45,18 +45,17 @@ import java.util.TreeSet;
 import de.uni_koblenz.jgralab.greql.exception.ParsingException;
 
 public class GreqlLexer {
-	private static Map<String, GreqlTokenType> stringToTokenMap = new HashMap<String, GreqlTokenType>();
+	private static Map<String, GreqlTokenType> stringToTokenMap = new HashMap<>();
 	private static String[] nonIdTokens;
 
 	static {
-		SortedSet<String> tokens = new TreeSet<String>(
-				new Comparator<String>() {
-					@Override
-					public int compare(String o1, String o2) {
-						int r = o2.length() - o1.length();
-						return r == 0 ? o1.compareTo(o2) : r;
-					}
-				});
+		SortedSet<String> tokens = new TreeSet<>(new Comparator<String>() {
+			@Override
+			public int compare(String o1, String o2) {
+				int r = o2.length() - o1.length();
+				return r == 0 ? o1.compareTo(o2) : r;
+			}
+		});
 
 		for (GreqlTokenType t : GreqlTokenType.values()) {
 			String text = t.getText();
@@ -314,7 +313,7 @@ public class GreqlLexer {
 	}
 
 	public static List<Token> scan(String query) {
-		List<Token> list = new ArrayList<Token>();
+		List<Token> list = new ArrayList<>();
 		GreqlLexer lexer = new GreqlLexer(query);
 		Token t;
 		do {

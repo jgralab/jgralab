@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2013 Institute for Software Technology
+ * Copyright (C) 2006-2014 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -329,7 +329,7 @@ public class SettingsDialog extends JDialog implements ActionListener,
 	}
 
 	public List<String> getGreqlFunctionList() {
-		ArrayList<String> result = new ArrayList<String>();
+		ArrayList<String> result = new ArrayList<>();
 		Enumeration<?> e = greqlFunctionModel.elements();
 		while (e.hasMoreElements()) {
 			result.add((String) e.nextElement());

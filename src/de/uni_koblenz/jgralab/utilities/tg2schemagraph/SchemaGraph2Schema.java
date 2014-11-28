@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2013 Institute for Software Technology
+ * Copyright (C) 2006-2014 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -158,12 +158,12 @@ public class SchemaGraph2Schema {
 	 */
 	private void setUp() {
 
-		incidenceMap = new HashMap<IncidenceClass, de.uni_koblenz.jgralab.schema.IncidenceClass>();
-		gGraphElementClasses = new ArrayList<GraphElementClass>();
-		gTempVertexClasses = new ArrayList<GraphElementClass>();
-		gTempEdgeClasses = new ArrayList<GraphElementClass>();
-		gDomains = new ArrayList<Domain>();
-		gSuperEdgeClasses = new ArrayList<EdgeClass>();
+		incidenceMap = new HashMap<>();
+		gGraphElementClasses = new ArrayList<>();
+		gTempVertexClasses = new ArrayList<>();
+		gTempEdgeClasses = new ArrayList<>();
+		gDomains = new ArrayList<>();
+		gSuperEdgeClasses = new ArrayList<>();
 	}
 
 	/**
@@ -436,7 +436,7 @@ public class SchemaGraph2Schema {
 	 *            Domain, which is converted into a Domain of the Schema.
 	 * @return Created Domain.
 	 */
-	private final HashSet<String> rdNames = new HashSet<String>();
+	private final HashSet<String> rdNames = new HashSet<>();
 
 	private de.uni_koblenz.jgralab.schema.Domain createDomain(Domain gDomain) {
 
@@ -534,7 +534,7 @@ public class SchemaGraph2Schema {
 			RecordDomain gDomain) {
 
 		// Creates a map of record components
-		List<RecordComponent> recordComponents = new ArrayList<RecordComponent>();
+		List<RecordComponent> recordComponents = new ArrayList<>();
 		// Loop over all existing record components
 		for (HasRecordDomainComponent hasRecordComponent : gDomain
 				.getHasRecordDomainComponentIncidences(OUTGOING)) {
@@ -862,7 +862,7 @@ public class SchemaGraph2Schema {
 			EdgeClass gEdgeClass) {
 
 		// List of all super classes is created
-		ArrayList<de.uni_koblenz.jgralab.schema.EdgeClass> superClasses = new ArrayList<de.uni_koblenz.jgralab.schema.EdgeClass>();
+		ArrayList<de.uni_koblenz.jgralab.schema.EdgeClass> superClasses = new ArrayList<>();
 
 		// Loop over all SpecializesEdgeClass edges
 		for (SpecializesEdgeClass specializesEdgeClass : gEdgeClass
@@ -907,7 +907,7 @@ public class SchemaGraph2Schema {
 			VertexClass gVertexClass) {
 
 		// List of all super classes is created
-		ArrayList<de.uni_koblenz.jgralab.schema.VertexClass> superClasses = new ArrayList<de.uni_koblenz.jgralab.schema.VertexClass>();
+		ArrayList<de.uni_koblenz.jgralab.schema.VertexClass> superClasses = new ArrayList<>();
 
 		// Loop over all SpecializesEdgeClass edges
 		for (SpecializesVertexClass specializesVertexClass : gVertexClass

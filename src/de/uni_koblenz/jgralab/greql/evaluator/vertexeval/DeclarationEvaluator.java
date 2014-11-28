@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2013 Institute for Software Technology
+ * Copyright (C) 2006-2014 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -79,7 +79,7 @@ public class DeclarationEvaluator extends VertexEvaluator<Declaration> {
 	@Override
 	public VariableDeclarationLayer evaluate(InternalGreqlEvaluator evaluator) {
 		evaluator.progress(getOwnEvaluationCosts());
-		ArrayList<VertexEvaluator<? extends Expression>> constraintList = new ArrayList<VertexEvaluator<? extends Expression>>();
+		ArrayList<VertexEvaluator<? extends Expression>> constraintList = new ArrayList<>();
 		for (IsConstraintOf consInc : vertex
 				.getIsConstraintOfIncidences(EdgeDirection.IN)) {
 			VertexEvaluator<? extends Expression> curEval = query
@@ -89,7 +89,7 @@ public class DeclarationEvaluator extends VertexEvaluator<Declaration> {
 			}
 		}
 		/* create list of VariableDeclaration objects */
-		List<VariableDeclaration> varDeclList = new ArrayList<VariableDeclaration>();
+		List<VariableDeclaration> varDeclList = new ArrayList<>();
 		for (IsSimpleDeclOf inc : vertex
 				.getIsSimpleDeclOfIncidences(EdgeDirection.IN)) {
 			SimpleDeclaration simpleDecl = inc.getAlpha();

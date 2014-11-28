@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2013 Institute for Software Technology
+ * Copyright (C) 2006-2014 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -35,7 +35,7 @@
 
 package de.uni_koblenz.jgralab.schema.codegenerator;
 
-import java.util.Vector;
+import java.util.ArrayList;
 
 /**
  * represents little parts of code code may be put into it in the form of
@@ -48,7 +48,7 @@ public class CodeSnippet extends CodeBlock {
 	/**
 	 * stores the lines of the code of <code>this</code>
 	 */
-	protected Vector<String> lines;
+	protected ArrayList<String> lines;
 
 	/**
 	 * defines if a new line should start the CodeSnippet
@@ -133,7 +133,7 @@ public class CodeSnippet extends CodeBlock {
 	public CodeSnippet(CodeList parent, boolean newLine, String... initialLines) {
 		super(parent);
 		wantsNewLine = newLine;
-		this.lines = new Vector<String>();
+		this.lines = new ArrayList<>();
 		if (initialLines != null) {
 			for (String line : initialLines) {
 				lines.add(line);

@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2013 Institute for Software Technology
+ * Copyright (C) 2006-2014 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -61,14 +61,14 @@ public class RecordDomainTest extends CompositeDomainTest {
 	public void init() {
 		super.init();
 		// Initializing of DomainTest
-		List<RecordComponent> elements = new ArrayList<RecordComponent>();
+		List<RecordComponent> elements = new ArrayList<>();
 		elements.add(new RecordComponent("int1", schema1.getDomain("Integer")));
 		elements.add(new RecordComponent("double1", schema1.getDomain("Double")));
 		elements.add(new RecordComponent("bool1", schema1.getDomain("Boolean")));
 		elements.add(new RecordComponent("string1", schema1.getDomain("String")));
 		schema1.createRecordDomain("package1.Record1", elements);
 		domain1 = schema1.getDomain("package1.Record1");
-		elements = new ArrayList<RecordComponent>();
+		elements = new ArrayList<>();
 		elements.add(new RecordComponent("int1", schema2.getDomain("Integer")));
 		elements.add(new RecordComponent("double1", schema2.getDomain("Double")));
 		elements.add(new RecordComponent("bool1", schema2.getDomain("Boolean")));
@@ -93,20 +93,20 @@ public class RecordDomainTest extends CompositeDomainTest {
 		// Initializing of CompositeDomainTest
 		domain3 = (CompositeDomain) domain1;
 		schema1.createListDomain(schema1.getDomain("Boolean"));
-		List<RecordComponent> element = new ArrayList<RecordComponent>();
+		List<RecordComponent> element = new ArrayList<>();
 		element.add(new RecordComponent("aList", schema1
 				.getDomain("List<Boolean>")));
 		element.add(new RecordComponent("aRecord", domain1));
 		schema1.createRecordDomain("Record4", element);
 		domain4 = (CompositeDomain) schema1.getDomain("Record4");
-		expectedCompositeDomains1 = new HashSet<CompositeDomain>();
-		expectedCompositeDomains2 = new HashSet<CompositeDomain>();
+		expectedCompositeDomains1 = new HashSet<>();
+		expectedCompositeDomains2 = new HashSet<>();
 		expectedCompositeDomains3 = expectedCompositeDomains1;
-		expectedCompositeDomains4 = new HashSet<CompositeDomain>();
+		expectedCompositeDomains4 = new HashSet<>();
 		expectedCompositeDomains4.add((ListDomain) schema1
 				.getDomain("List<Boolean>"));
 		expectedCompositeDomains4.add((RecordDomain) domain1);
-		expectedDomains1 = new HashSet<Domain>();
+		expectedDomains1 = new HashSet<>();
 		expectedDomains1.add(schema1.getDomain("Integer"));
 		expectedDomains1.add(schema1.getDomain("Double"));
 		expectedDomains1.add(schema1.getDomain("Boolean"));
@@ -115,7 +115,7 @@ public class RecordDomainTest extends CompositeDomainTest {
 			expectedDomains2.add(comp.getDomain());
 		}
 		expectedDomains3 = expectedDomains1;
-		expectedDomains4 = new HashSet<Domain>();
+		expectedDomains4 = new HashSet<>();
 		expectedDomains4.add(schema1.getDomain("List<Boolean>"));
 		expectedDomains4.add(domain1);
 	}
@@ -217,7 +217,7 @@ public class RecordDomainTest extends CompositeDomainTest {
 
 		// now r1 <>-- r2 holds
 
-		List<RecordComponent> r3Components = new ArrayList<RecordComponent>();
+		List<RecordComponent> r3Components = new ArrayList<>();
 		r3Components.add(new RecordComponent("myR2", r2));
 		RecordDomain r3 = s.createRecordDomain("test.R3", r3Components);
 
@@ -271,7 +271,7 @@ public class RecordDomainTest extends CompositeDomainTest {
 		// It should contain all elements
 		Collection<RecordDomain.RecordComponent> components = ((RecordDomain) domain1)
 				.getComponents();
-		List<RecordComponent> elements = new ArrayList<RecordComponent>(4);
+		List<RecordComponent> elements = new ArrayList<>(4);
 		elements.add(new RecordComponent("int1", schema1.getDomain("Integer")));
 		elements.add(new RecordComponent("double1", schema1.getDomain("Double")));
 		elements.add(new RecordComponent("bool1", schema1.getDomain("Boolean")));

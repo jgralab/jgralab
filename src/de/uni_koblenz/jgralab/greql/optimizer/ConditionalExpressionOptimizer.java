@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2013 Institute for Software Technology
+ * Copyright (C) 2006-2014 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -137,7 +137,7 @@ public class ConditionalExpressionOptimizer extends OptimizerBase {
 		}
 
 		// delete "with true" constraints
-		Set<Vertex> verticesToDelete = new HashSet<Vertex>();
+		Set<Vertex> verticesToDelete = new HashSet<>();
 		for (IsConstraintOf ico : query.getQueryGraph()
 				.getIsConstraintOfEdges()) {
 			Vertex alpha = ico.getAlpha();
@@ -163,7 +163,7 @@ public class ConditionalExpressionOptimizer extends OptimizerBase {
 
 	private LinkedList<VertexEdgeClassTuple> rememberConnections(
 			FunctionApplication top) {
-		LinkedList<VertexEdgeClassTuple> list = new LinkedList<VertexEdgeClassTuple>();
+		LinkedList<VertexEdgeClassTuple> list = new LinkedList<>();
 		assert top.isValid();
 		for (Edge e : top.incidences(EdgeDirection.OUT)) {
 			list.add(new VertexEdgeClassTuple((GreqlVertex) e.getOmega(), e
@@ -173,7 +173,7 @@ public class ConditionalExpressionOptimizer extends OptimizerBase {
 	}
 
 	private FunctionApplication findAndOrNotFunApp(GreqlExpression g) {
-		Queue<GreqlVertex> queue = new LinkedList<GreqlVertex>();
+		Queue<GreqlVertex> queue = new LinkedList<>();
 		queue.add(g);
 		while (!queue.isEmpty()) {
 			GreqlVertex v = queue.poll();

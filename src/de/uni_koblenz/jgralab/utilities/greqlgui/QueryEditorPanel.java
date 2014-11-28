@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2013 Institute for Software Technology
+ * Copyright (C) 2006-2014 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -219,7 +219,7 @@ public class QueryEditorPanel extends JPanel {
 
 		public CompletionTableModel(Collection<CompletionEntry> e,
 				CompletionEntryType t) {
-			entries = new ArrayList<CompletionEntry>(e);
+			entries = new ArrayList<>(e);
 			lookupType = t;
 		}
 
@@ -267,7 +267,7 @@ public class QueryEditorPanel extends JPanel {
 
 	private CompletionTableModel getCompletionTableModel(String prefix,
 			CompletionEntryType lookupType) {
-		TreeSet<CompletionEntry> completionEntries = new TreeSet<CompletionEntry>();
+		TreeSet<CompletionEntry> completionEntries = new TreeSet<>();
 
 		switch (lookupType) {
 		case GREQL_FUNCTION:
@@ -291,7 +291,7 @@ public class QueryEditorPanel extends JPanel {
 		Graph g = gui.getGraph();
 		if (g != null) {
 			Schema schema = g.getSchema();
-			Stack<Package> s = new Stack<Package>();
+			Stack<Package> s = new Stack<>();
 			s.push(schema.getDefaultPackage());
 			prefix = prefix.toLowerCase();
 			while (!s.isEmpty()) {
@@ -454,7 +454,7 @@ public class QueryEditorPanel extends JPanel {
 		if (greqlEntries != null) {
 			return greqlEntries;
 		}
-		greqlEntries = new TreeSet<CompletionEntry>();
+		greqlEntries = new TreeSet<>();
 		Set<String> funcs = FunLib.getFunctionNames();
 		for (String s : funcs) {
 			greqlEntries.add(new CompletionEntry(

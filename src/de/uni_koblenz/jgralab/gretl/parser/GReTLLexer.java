@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2013 Institute for Software Technology
+ * Copyright (C) 2006-2014 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -56,7 +56,7 @@ public class GReTLLexer {
 	/**
 	 * Names of transformation ops that have their own parser.
 	 */
-	private static Set<String> transformsWithCustomDSL = new HashSet<String>();
+	private static Set<String> transformsWithCustomDSL = new HashSet<>();
 
 	static {
 		transformsWithCustomDSL.add(CreateSubgraph.class.getSimpleName());
@@ -66,14 +66,14 @@ public class GReTLLexer {
 	private GReTLLexer(String source) {
 		transformText = source;
 		position = 0;
-		tokens = new ArrayList<Token>();
+		tokens = new ArrayList<>();
 		if (transformText == null) {
 			throw new NullPointerException(
 					"Cannot parse nullpointer as GReTL transformation.");
 		}
 	}
 
-	protected static Map<TokenTypes, String> fixedTokens = new LinkedHashMap<TokenTypes, String>();
+	protected static Map<TokenTypes, String> fixedTokens = new LinkedHashMap<>();
 
 	private static final class StringLengthComparator implements
 			Comparator<String> {

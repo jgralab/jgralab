@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2013 Institute for Software Technology
+ * Copyright (C) 2006-2014 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -74,8 +74,8 @@ public class Types {
 	private static final HashSet<Class<?>> types;
 
 	static {
-		typeNames = new HashMap<Class<?>, String>();
-		types = new HashSet<Class<?>>();
+		typeNames = new HashMap<>();
+		types = new HashSet<>();
 		for (Class<?> cls : Types.GREQL_TYPES) {
 			typeNames.put(cls, cls.getSimpleName());
 			types.add(cls);

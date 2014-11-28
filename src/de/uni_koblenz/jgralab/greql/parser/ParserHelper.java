@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2013 Institute for Software Technology
+ * Copyright (C) 2006-2014 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -156,8 +156,8 @@ public abstract class ParserHelper {
 
 	private void cleanGraph() {
 		if (!graphCleaned) {
-			Set<Vertex> reachableVertices = new HashSet<Vertex>();
-			Queue<Vertex> queue = new LinkedList<Vertex>();
+			Set<Vertex> reachableVertices = new HashSet<>();
+			Queue<Vertex> queue = new LinkedList<>();
 			GreqlExpression root = graph.getFirstGreqlExpression();
 			queue.add(root);
 			while (!queue.isEmpty()) {
@@ -193,14 +193,14 @@ public abstract class ParserHelper {
 
 	protected void replaceDefinitionExpressions()
 			throws DuplicateVariableException, UndefinedVariableException {
-		List<DefinitionExpression> list = new ArrayList<DefinitionExpression>();
+		List<DefinitionExpression> list = new ArrayList<>();
 		for (DefinitionExpression exp : graph.getDefinitionExpressionVertices()) {
 			list.add(exp);
 		}
 
 		/* iterate over all definitionsexpressions in the graph */
 		for (DefinitionExpression exp : list) {
-			List<Definition> defList = new ArrayList<Definition>();
+			List<Definition> defList = new ArrayList<>();
 			for (IsDefinitionOf isDefOf : exp
 					.getIsDefinitionOfIncidences(EdgeDirection.IN)) {
 				Definition definition = isDefOf.getAlpha();
@@ -243,7 +243,7 @@ public abstract class ParserHelper {
 	}
 
 	protected void eliminateUnusedNodes() {
-		List<Vertex> deleteList = new ArrayList<Vertex>();
+		List<Vertex> deleteList = new ArrayList<>();
 		for (Vertex v : graph.vertices()) {
 			if (v.getFirstIncidence() == null) {
 				deleteList.add(v);
@@ -299,7 +299,7 @@ public abstract class ParserHelper {
 						e.get_sourcePositions());
 			}
 		} else {
-			ArrayList<Edge> incidenceList = new ArrayList<Edge>();
+			ArrayList<Edge> incidenceList = new ArrayList<>();
 			for (Edge inc : v.incidences(EdgeDirection.IN)) {
 				incidenceList.add(inc);
 			}
@@ -579,15 +579,15 @@ public abstract class ParserHelper {
 	 * outside a PathDescription is found, a ParseException is thrown.
 	 */
 	protected final void testIllegalThisLiterals() {
-		Set<Class<? extends GreqlAggregation>> allowedEdgesForThisVertex = new HashSet<Class<? extends GreqlAggregation>>();
-		Set<Class<? extends GreqlAggregation>> allowedEdgesForThisEdge = new HashSet<Class<? extends GreqlAggregation>>();
+		Set<Class<? extends GreqlAggregation>> allowedEdgesForThisVertex = new HashSet<>();
+		Set<Class<? extends GreqlAggregation>> allowedEdgesForThisEdge = new HashSet<>();
 		allowedEdgesForThisVertex.add(IsGoalRestrOf.class);
 		allowedEdgesForThisVertex.add(IsStartRestrOf.class);
 		allowedEdgesForThisEdge.add(IsBooleanPredicateOfEdgeRestriction.class);
 
 		for (ThisLiteral vertex : graph.getThisVertexVertices()) {
 			for (Edge sourcePositionEdge : vertex.incidences(EdgeDirection.OUT)) {
-				Queue<GreqlVertex> queue = new LinkedList<GreqlVertex>();
+				Queue<GreqlVertex> queue = new LinkedList<>();
 				queue.add(vertex);
 				while (!queue.isEmpty()) {
 					GreqlVertex currentVertex = queue.poll();
@@ -617,7 +617,7 @@ public abstract class ParserHelper {
 
 		for (ThisLiteral vertex : graph.getThisEdgeVertices()) {
 			for (Edge sourcePositionEdge : vertex.incidences(EdgeDirection.OUT)) {
-				Queue<GreqlVertex> queue = new LinkedList<GreqlVertex>();
+				Queue<GreqlVertex> queue = new LinkedList<>();
 				queue.add(vertex);
 				while (!queue.isEmpty()) {
 					GreqlVertex currentVertex = queue.poll();
@@ -644,7 +644,7 @@ public abstract class ParserHelper {
 				}
 			}
 		}
-		LinkedList<Vertex> literalsToDelete = new LinkedList<Vertex>();
+		LinkedList<Vertex> literalsToDelete = new LinkedList<>();
 		ThisVertex firstThisVertex = null;
 		for (ThisVertex thisVertex : graph.getThisVertexVertices()) {
 			if (firstThisVertex == null) {

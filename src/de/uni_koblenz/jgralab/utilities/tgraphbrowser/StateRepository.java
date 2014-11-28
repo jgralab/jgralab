@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2013 Institute for Software Technology
+ * Copyright (C) 2006-2014 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -94,7 +94,7 @@ public class StateRepository {
 	 * state of all sessions. The position in this array is the sessionID.
 	 * sessions.get(0)==null must always be true.
 	 */
-	private static ArrayList<State> sessions = new ArrayList<State>();
+	private static ArrayList<State> sessions = new ArrayList<>();
 
 	/**
 	 * The id of the next session
@@ -109,14 +109,14 @@ public class StateRepository {
 	/**
 	 * maps the name of a method to the corresponding method
 	 */
-	public static HashMap<String, Method> definedMethods = new HashMap<String, Method>();
+	public static HashMap<String, Method> definedMethods = new HashMap<>();
 	static {
 		for (Method method : StateRepository.class.getMethods()) {
 			definedMethods.put(method.getName(), method);
 		}
 	}
 
-	public static HashMap<String, GraphWrapper> usedGraphs = new HashMap<String, GraphWrapper>();
+	public static HashMap<String, GraphWrapper> usedGraphs = new HashMap<>();
 
 	/**
 	 * the workspace
@@ -1841,9 +1841,9 @@ public class StateRepository {
 		public void initializeState(String graphFile) {
 			lastAccess = System.currentTimeMillis();
 			setGraphIdentifier(graphFile, new File(graphFile).lastModified());
-			navigationHistory = new ArrayList<Object>();
-			selectedVertexClasses = new HashMap<VertexClass, Boolean>();
-			selectedEdgeClasses = new HashMap<EdgeClass, Boolean>();
+			navigationHistory = new ArrayList<>();
+			selectedVertexClasses = new HashMap<>();
+			selectedEdgeClasses = new HashMap<>();
 			insertPosition = 0;
 			setGraph(graphFile, new File(graphFile).lastModified());
 		}

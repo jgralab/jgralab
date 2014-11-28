@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2013 Institute for Software Technology
+ * Copyright (C) 2006-2014 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -184,8 +184,8 @@ public class SchemaGraph2XMITest {
 	 */
 	private void compareTgs(String originalTg, String generatedTg) {
 		try {
-			HashSet<String> originalTgContent = new HashSet<String>();
-			HashSet<String> generatedTgContent = new HashSet<String>();
+			HashSet<String> originalTgContent = new HashSet<>();
+			HashSet<String> generatedTgContent = new HashSet<>();
 
 			// read lines of original Tg
 			LineNumberReader reader = new LineNumberReader(new FileReader(
@@ -248,7 +248,7 @@ public class SchemaGraph2XMITest {
 	 */
 	private String sortAttributes(String line) {
 		StringBuilder startOfLine = new StringBuilder();
-		TreeSet<String> attributes = new TreeSet<String>();
+		TreeSet<String> attributes = new TreeSet<>();
 		StringBuilder endOfLine = new StringBuilder();
 
 		boolean isInAttributeDefinition = false;

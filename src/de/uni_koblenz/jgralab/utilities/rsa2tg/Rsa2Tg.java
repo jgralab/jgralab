@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2013 Institute for Software Technology
+ * Copyright (C) 2006-2014 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -640,21 +640,21 @@ public class Rsa2Tg extends XmlProcessor {
 				ImplementationType.STANDARD);
 
 		// Initializing all necessary data structures for processing purposes.
-		xmiIdStack = new Stack<String>();
-		idMap = new HashMap<String, Vertex>();
-		packageStack = new Stack<Package>();
-		generalizations = new GraphMarker<Set<String>>(sg);
-		realizations = new HashMap<String, Set<String>>();
-		attributeType = new GraphMarker<String>(sg);
-		recordComponentType = new GraphMarker<String>(sg);
-		domainMap = new HashMap<String, Domain>();
-		preliminaryVertices = new HashSet<Vertex>();
-		ownedEnds = new HashSet<IncidenceClass>();
-		constraints = new HashMap<String, List<String>>();
-		comments = new HashMap<String, List<String>>();
-		ignoredPackages = new HashSet<Package>();
+		xmiIdStack = new Stack<>();
+		idMap = new HashMap<>();
+		packageStack = new Stack<>();
+		generalizations = new GraphMarker<>(sg);
+		realizations = new HashMap<>();
+		attributeType = new GraphMarker<>(sg);
+		recordComponentType = new GraphMarker<>(sg);
+		domainMap = new HashMap<>();
+		preliminaryVertices = new HashSet<>();
+		ownedEnds = new HashSet<>();
+		constraints = new HashMap<>();
+		comments = new HashMap<>();
+		ignoredPackages = new HashSet<>();
 		modelRootElementNestingDepth = 1;
-		derivedGraphElementClasses = new HashSet<GraphElementClass>();
+		derivedGraphElementClasses = new HashSet<>();
 	}
 
 	/**
@@ -1079,7 +1079,7 @@ public class Rsa2Tg extends XmlProcessor {
 		}
 		List<String> commentList = comments.get(annotatedElementId);
 		if (commentList == null) {
-			commentList = new LinkedList<String>();
+			commentList = new LinkedList<>();
 			comments.put(annotatedElementId, commentList);
 		}
 		commentList.add(text.toString());
@@ -1187,7 +1187,7 @@ public class Rsa2Tg extends XmlProcessor {
 
 	private void checkAttributes() {
 		GraphClass graphClass = sg.getFirstGraphClass();
-		Map<String, AttributedElementClass> definedAttributes = new HashMap<String, AttributedElementClass>();
+		Map<String, AttributedElementClass> definedAttributes = new HashMap<>();
 		for (Attribute a : graphClass.get_attributes()) {
 			if (definedAttributes.containsKey(a.get_name())) {
 				throw new RuntimeException("Attribute " + a.get_name() + " at "
@@ -1198,9 +1198,9 @@ public class Rsa2Tg extends XmlProcessor {
 
 		for (GraphElementClass gec : sg.getGraphElementClassVertices()) {
 			boolean isVertexClass = gec.isInstanceOf(VertexClass.VC);
-			definedAttributes = new HashMap<String, AttributedElementClass>();
+			definedAttributes = new HashMap<>();
 			BooleanGraphMarker alreadyChecked = new BooleanGraphMarker(sg);
-			Queue<GraphElementClass> queue = new LinkedList<GraphElementClass>();
+			Queue<GraphElementClass> queue = new LinkedList<>();
 			queue.add(gec);
 			while (!queue.isEmpty()) {
 				GraphElementClass current = queue.poll();
@@ -1276,7 +1276,7 @@ public class Rsa2Tg extends XmlProcessor {
 		}
 		int n = 0;
 		// recursively descend into subpackages
-		List<Package> subPackages = new ArrayList<Package>();
+		List<Package> subPackages = new ArrayList<>();
 		for (Package sub : pkg.get_subpackages()) {
 			subPackages.add(sub);
 		}
@@ -1356,7 +1356,7 @@ public class Rsa2Tg extends XmlProcessor {
 	 */
 	private void checkEnumDomains() {
 		System.out.println("Checking enumeration domains...");
-		ArrayList<String> faultyDomains = new ArrayList<String>();
+		ArrayList<String> faultyDomains = new ArrayList<>();
 		for (EnumDomain ed : sg.getEnumDomainVertices()) {
 			if (ed.get_enumConstants().size() < 1) {
 				faultyDomains.add(ed.get_qualifiedName());
@@ -1827,7 +1827,7 @@ public class Rsa2Tg extends XmlProcessor {
 		String client = getAttribute(UML_ATTRIBUTE_CLIENT);
 		Set<String> reals = realizations.get(client);
 		if (reals == null) {
-			reals = new TreeSet<String>();
+			reals = new TreeSet<>();
 			realizations.put(client, reals);
 		}
 		reals.add(supplier);
@@ -2278,7 +2278,7 @@ public class Rsa2Tg extends XmlProcessor {
 			if (suppliers.size() > 0) {
 				Set<String> superClasses = generalizations.getMark(client);
 				if (superClasses == null) {
-					superClasses = new TreeSet<String>();
+					superClasses = new TreeSet<>();
 					generalizations.mark(client, superClasses);
 				}
 				superClasses.addAll(suppliers);
@@ -2430,7 +2430,7 @@ public class Rsa2Tg extends XmlProcessor {
 		if (text.startsWith("\"")) {
 			List<String> l = constraints.get(constrainedElementId);
 			if (l == null) {
-				l = new LinkedList<String>();
+				l = new LinkedList<>();
 				constraints.put(constrainedElementId, l);
 			}
 			l.add(text);
@@ -2741,7 +2741,7 @@ public class Rsa2Tg extends XmlProcessor {
 		String general = getAttribute(UML_ATTRIBUTE_GENERAL);
 		Set<String> gens = generalizations.getMark(currentClass);
 		if (gens == null) {
-			gens = new TreeSet<String>();
+			gens = new TreeSet<>();
 			generalizations.mark(currentClass, gens);
 		}
 		gens.add(general);

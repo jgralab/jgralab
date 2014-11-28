@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2013 Institute for Software Technology
+ * Copyright (C) 2006-2014 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -96,17 +96,16 @@ public class RandomGraphForAStar {
 	}
 
 	public LinkedList<LocationPoint> createKDTree(WeightedGraph graph) {
-		LinkedList<LocationPoint> locations = new LinkedList<LocationPoint>();
+		LinkedList<LocationPoint> locations = new LinkedList<>();
 
 		for (Location currentLocation : graph.getLocationVertices()) {
 			locations.add(new LocationPoint(currentLocation));
 		}
 
 		// System.out.println("Creating KD-tree...");
-		KDTree<LocationPoint> kdtree = new KDTree<LocationPoint>(locations,
-				KD_SEGMENT_SIZE);
+		KDTree<LocationPoint> kdtree = new KDTree<>(locations, KD_SEGMENT_SIZE);
 		if (kdTrees == null) {
-			kdTrees = new HashMap<WeightedGraph, KDTree<LocationPoint>>();
+			kdTrees = new HashMap<>();
 		}
 		kdTrees.put(graph, kdtree);
 		return locations;

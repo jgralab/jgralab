@@ -18,7 +18,7 @@ public class PriorityQueueTest {
 
 	@Before
 	public void setUp() {
-		pQueue = new PriorityQueue<String>();
+		pQueue = new PriorityQueue<>();
 	}
 
 	@Test

@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2013 Institute for Software Technology
+ * Copyright (C) 2006-2014 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -122,7 +122,7 @@ public abstract class GraphElementClassImpl<SC extends GraphElementClass<SC, IC>
 							+ "'. A derived AttributedElementClass already contains this Attribute.");
 		}
 		super.createAttribute(anAttribute);
-		TreeSet<Attribute> s = new TreeSet<Attribute>(ownAttributes);
+		TreeSet<Attribute> s = new TreeSet<>(ownAttributes);
 		s.add(anAttribute);
 		ownAttributes = ArrayPVector.<Attribute> empty().plusAll(s);
 		return anAttribute;
@@ -240,7 +240,7 @@ public abstract class GraphElementClassImpl<SC extends GraphElementClass<SC, IC>
 
 		// System.err.println("Finish " + getClass().getSimpleName() + " "
 		// + getQualifiedName());
-		TreeSet<Attribute> s = new TreeSet<Attribute>(ownAttributes);
+		TreeSet<Attribute> s = new TreeSet<>(ownAttributes);
 		for (AttributedElementClass<SC, IC> superClass : subclassDag
 				.getDirectPredecessors(this)) {
 			// System.err.println("\t" + superClass.getQualifiedName() + " "
@@ -267,7 +267,7 @@ public abstract class GraphElementClassImpl<SC extends GraphElementClass<SC, IC>
 			return allAttributes;
 		}
 
-		TreeSet<Attribute> attrList = new TreeSet<Attribute>();
+		TreeSet<Attribute> attrList = new TreeSet<>();
 		attrList.addAll(ownAttributes);
 		for (AttributedElementClass<SC, IC> superClass : subclassDag
 				.getDirectPredecessors(this)) {

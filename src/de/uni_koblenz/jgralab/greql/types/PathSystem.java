@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2013 Institute for Software Technology
+ * Copyright (C) 2006-2014 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -136,9 +136,9 @@ public class PathSystem {
 	 * creates a new PathSystem with the given rootVertex in the given datagraph
 	 */
 	public PathSystem() {
-		dag = new DirectedAcyclicGraph<PathSystemNode>();
-		leafNodes = new HashSet<PathSystemNode>();
-		vertex2node = new HashMap<Vertex, PathSystemNode>();
+		dag = new DirectedAcyclicGraph<>();
+		leafNodes = new HashSet<>();
+		vertex2node = new HashMap<>();
 	}
 
 	/**
@@ -339,8 +339,8 @@ public class PathSystem {
 	public int getDepth() {
 		assertFinished();
 		int maxdepth = 0;
-		Map<PathSystemNode, Integer> depth = new HashMap<PathSystemNode, Integer>();
-		Queue<PathSystemNode> workingQueue = new LinkedList<PathSystemNode>();
+		Map<PathSystemNode, Integer> depth = new HashMap<>();
+		Queue<PathSystemNode> workingQueue = new LinkedList<>();
 		workingQueue.add(root);
 		depth.put(root, 0);
 		while (!workingQueue.isEmpty()) {

@@ -111,7 +111,7 @@ public class UndoTest {
 
 		Map<String, String> beforeModification = storeState();
 
-		ArrayList<Node> l = new ArrayList<Node>(g.getVCount());
+		ArrayList<Node> l = new ArrayList<>(g.getVCount());
 		for (Node v : g.getNodeVertices()) {
 			l.add(v);
 		}
@@ -142,7 +142,7 @@ public class UndoTest {
 
 		Map<String, String> beforeModification = storeState();
 
-		ArrayList<Link> l = new ArrayList<Link>(g.getECount());
+		ArrayList<Link> l = new ArrayList<>(g.getECount());
 		for (Link e : g.getLinkEdges()) {
 			l.add(e);
 		}
@@ -361,7 +361,7 @@ public class UndoTest {
 	private void createRandomGraph() {
 		mgr.beginEdit("create random graph");
 		try {
-			ArrayList<Node> v = new ArrayList<Node>();
+			ArrayList<Node> v = new ArrayList<>();
 			for (int i = 1; i <= 10; ++i) {
 				v.add(cv());
 			}
@@ -378,7 +378,7 @@ public class UndoTest {
 	private Map<String, String> storeState() {
 		// System.out
 		// .println("-------------------------------------------------------------");
-		Map<String, String> state = new TreeMap<String, String>();
+		Map<String, String> state = new TreeMap<>();
 		@SuppressWarnings("unused")
 		int i = 0;
 		for (Vertex v : g.vertices()) {

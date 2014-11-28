@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2013 Institute for Software Technology
+ * Copyright (C) 2006-2014 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -114,10 +114,9 @@ public class ECATestGretlAction {
 
 		EventDescription<VertexClass> bef_ev = new DeleteVertexEventDescription(
 				EventDescription.EventTime.BEFORE, Contact.VC);
-		Action<VertexClass> bef_act = new GretlTransformAction<VertexClass>(
+		Action<VertexClass> bef_act = new GretlTransformAction<>(
 				SimpleCopyTransformation.class);
-		ECARule<VertexClass> bef_rule = new ECARule<VertexClass>(bef_ev,
-				bef_act);
+		ECARule<VertexClass> bef_rule = new ECARule<>(bef_ev, bef_act);
 
 		ECARuleManager mgr = new ECARuleManager(testGraph);
 		testGraph.addGraphChangeListener(mgr);
@@ -143,12 +142,11 @@ public class ECATestGretlAction {
 		System.out.println("Save rule with GretlTransformAction.");
 		EventDescription<VertexClass> bef_ev = new DeleteVertexEventDescription(
 				EventDescription.EventTime.BEFORE, Contact.VC);
-		Action<VertexClass> bef_act = new GretlTransformAction<VertexClass>(
+		Action<VertexClass> bef_act = new GretlTransformAction<>(
 				SimpleCopyTransformation.class);
-		ECARule<VertexClass> bef_rule = new ECARule<VertexClass>(bef_ev,
-				bef_act);
+		ECARule<VertexClass> bef_rule = new ECARule<>(bef_ev, bef_act);
 
-		ArrayList<ECARule<?>> rules = new ArrayList<ECARule<?>>();
+		ArrayList<ECARule<?>> rules = new ArrayList<>();
 		rules.add(bef_rule);
 
 		try {

@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2013 Institute for Software Technology
+ * Copyright (C) 2006-2014 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -80,7 +80,7 @@ public class TGComparer {
 
 	private void dropEmptyLines(ArrayList<String> lines) {
 
-		ArrayList<String> dropList = new ArrayList<String>();
+		ArrayList<String> dropList = new ArrayList<>();
 		for (String line : lines) {
 			if (line.trim().length() == 0) {
 				dropList.add(line);
@@ -212,7 +212,7 @@ public class TGComparer {
 		try {
 			br = new BufferedReader(new FileReader(filename));
 
-			stringList = new ArrayList<String>();
+			stringList = new ArrayList<>();
 
 			while (br.ready()) {
 				stringList.add(br.readLine());

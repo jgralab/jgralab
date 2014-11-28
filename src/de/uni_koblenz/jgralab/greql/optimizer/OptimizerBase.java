@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2013 Institute for Software Technology
+ * Copyright (C) 2006-2014 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -144,7 +144,8 @@ public abstract class OptimizerBase implements Optimizer {
 		// are always declared after every other var.
 		if (var1 instanceof ThisVertex || var1 instanceof ThisEdge
 				|| var2 instanceof ThisVertex || var2 instanceof ThisEdge) {
-			throw new OptimizerException("ThisVertex and ThisEdge aren't declared!");
+			throw new OptimizerException(
+					"ThisVertex and ThisEdge aren't declared!");
 		}
 
 		IsBoundVarOf ibvo1 = var1.getFirstIsBoundVarOfIncidence();
@@ -288,7 +289,7 @@ public abstract class OptimizerBase implements Optimizer {
 		for (Variable var : varsToBeSplit) {
 			IsDeclaredVarOf inc = sd
 					.getFirstIsDeclaredVarOfIncidence(EdgeDirection.IN);
-			HashSet<IsDeclaredVarOf> relinkIncs = new HashSet<IsDeclaredVarOf>();
+			HashSet<IsDeclaredVarOf> relinkIncs = new HashSet<>();
 			while (inc != null) {
 				if (inc.getAlpha() == var) {
 					// This inc is now declared by newSD, so we need to relink

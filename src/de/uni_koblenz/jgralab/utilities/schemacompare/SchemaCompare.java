@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2013 Institute for Software Technology
+ * Copyright (C) 2006-2014 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -63,7 +63,7 @@ public class SchemaCompare {
 	private int diffCount = 0;
 	private boolean reverseRun = false;
 
-	Set<Object> marked = new HashSet<Object>();
+	Set<Object> marked = new HashSet<>();
 
 	public SchemaCompare(Schema s1, Schema s2) {
 		s = s1;
@@ -168,8 +168,7 @@ public class SchemaCompare {
 
 		EnumDomain f = (EnumDomain) e;
 
-		if (!new HashSet<String>(d.getConsts()).equals(new HashSet<String>(f
-				.getConsts()))) {
+		if (!new HashSet<>(d.getConsts()).equals(new HashSet<>(f.getConsts()))) {
 			reportDiff(
 					"EnumDomain " + d.getQualifiedName() + ": " + d.getConsts(),
 					"EnumDomain " + f.getQualifiedName() + ": " + f.getConsts());
@@ -288,7 +287,7 @@ public class SchemaCompare {
 	}
 
 	private Set<String> getQNameSet(Set<? extends NamedElement> a) {
-		Set<String> q = new TreeSet<String>();
+		Set<String> q = new TreeSet<>();
 		for (NamedElement aec : a) {
 			q.add(aec.getQualifiedName());
 		}

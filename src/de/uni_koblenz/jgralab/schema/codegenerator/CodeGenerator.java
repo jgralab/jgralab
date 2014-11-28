@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2013 Institute for Software Technology
+ * Copyright (C) 2006-2014 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -41,7 +41,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 
@@ -67,7 +66,7 @@ public abstract class CodeGenerator {
 
 		protected static List<GenerationCycle> filter(
 				CodeGeneratorConfiguration config) {
-			List<GenerationCycle> out = new ArrayList<GenerationCycle>();
+			List<GenerationCycle> out = new ArrayList<>();
 			out.add(ABSTRACT);
 			out.add(STDIMPL);
 			out.add(CLASSONLY);
@@ -351,13 +350,12 @@ public abstract class CodeGenerator {
 	/**
 	 * Returns {@code JavaSourceFromString}s from the generated code.
 	 * 
-	 * @return a Vector of {@code JavaSourceFromString}s from the generated code
+	 * @return a list of {@code JavaSourceFromString}s from the generated code
 	 */
-	public Vector<InMemoryJavaSourceFile> createJavaSources() {
+	public ArrayList<InMemoryJavaSourceFile> createJavaSources() {
 		String className = rootBlock.getVariable("simpleClassName");
 		String implClassName = rootBlock.getVariable("simpleImplClassName");
-		Vector<InMemoryJavaSourceFile> javaSources = new Vector<InMemoryJavaSourceFile>(
-				2);
+		ArrayList<InMemoryJavaSourceFile> javaSources = new ArrayList<>(2);
 
 		currentCycle = getNextCycle();
 		while (currentCycle != null) {

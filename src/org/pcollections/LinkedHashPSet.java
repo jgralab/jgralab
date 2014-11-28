@@ -32,7 +32,7 @@ public class LinkedHashPSet<E> implements POrderedSet<E> {
 	 * @return an immutable POrderedSet wrapping the given {@link LinkedHashSet}
 	 */
 	public static <T> LinkedHashPSet<T> immute(LinkedHashSet<T> lhs) {
-		return new LinkedHashPSet<T>(lhs);
+		return new LinkedHashPSet<>(lhs);
 	}
 
 	private final void checkUnmodified() {
@@ -121,7 +121,7 @@ public class LinkedHashPSet<E> implements POrderedSet<E> {
 	@Override
 	public final Iterator<E> iterator() {
 		checkUnmodified();
-		return new ImmutableIterator<E>(lhs.iterator());
+		return new ImmutableIterator<>(lhs.iterator());
 	}
 
 	@Override

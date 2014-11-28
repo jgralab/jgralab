@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2013 Institute for Software Technology
+ * Copyright (C) 2006-2014 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -215,10 +215,10 @@ public class Csv2Tg implements FilenameFilter {
 	}
 
 	private void setUp() {
-		vertices = new HashMap<String, Vertex>();
-		vertexInstances = new HashMap<VertexClass, CsvReader>();
-		edgeInstances = new HashMap<EdgeClass, CsvReader>();
-		reader2FilenameMap = new HashMap<CsvReader, String>();
+		vertices = new HashMap<>();
+		vertexInstances = new HashMap<>();
+		edgeInstances = new HashMap<>();
+		reader2FilenameMap = new HashMap<>();
 		graph = schema.createGraph(ImplementationType.GENERIC);
 	}
 
@@ -397,7 +397,7 @@ public class Csv2Tg implements FilenameFilter {
 	}
 
 	private String[] getFilesInFolder(String[] filenames) {
-		HashSet<String> fileList = new HashSet<String>();
+		HashSet<String> fileList = new HashSet<>();
 		for (String filename : filenames) {
 
 			File file = new File(filename).getAbsoluteFile();

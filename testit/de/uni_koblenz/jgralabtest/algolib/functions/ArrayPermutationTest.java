@@ -1,9 +1,9 @@
 package de.uni_koblenz.jgralabtest.algolib.functions;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import static org.junit.Assert.assertEquals;
 
 import java.util.Iterator;
 import java.util.NoSuchElementException;
@@ -24,8 +24,8 @@ public class ArrayPermutationTest {
 
 	@Before
 	public void setUp() {
-		perm = new ArrayPermutation<String>(permArray);
-		empty = new ArrayPermutation<String>(new String[] {});
+		perm = new ArrayPermutation<>(permArray);
+		empty = new ArrayPermutation<>(new String[] {});
 	}
 
 	@Test

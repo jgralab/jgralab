@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2013 Institute for Software Technology
+ * Copyright (C) 2006-2014 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -60,7 +60,7 @@ public final class MapPSet<E> extends AbstractSet<E> implements PSet<E> {
 	 */
 	@SuppressWarnings("unchecked")
 	public static <E> MapPSet<E> from(final PMap<E, ?> map) {
-		return new MapPSet<E>((PMap<E, Object>) map);
+		return new MapPSet<>((PMap<E, Object>) map);
 	}
 
 	/**
@@ -114,20 +114,23 @@ public final class MapPSet<E> extends AbstractSet<E> implements PSet<E> {
 		IN
 	}
 
+	@Override
 	public MapPSet<E> plus(final E e) {
 		if (contains(e)) {
 			return this;
 		}
-		return new MapPSet<E>(map.plus(e, In.IN));
+		return new MapPSet<>(map.plus(e, In.IN));
 	}
 
+	@Override
 	public MapPSet<E> minus(final Object e) {
 		if (!contains(e)) {
 			return this;
 		}
-		return new MapPSet<E>(map.minus(e));
+		return new MapPSet<>(map.minus(e));
 	}
 
+	@Override
 	public MapPSet<E> plusAll(final Collection<? extends E> list) {
 		PMap<E, Object> map = this.map;
 		for (E e : list) {
@@ -136,6 +139,7 @@ public final class MapPSet<E> extends AbstractSet<E> implements PSet<E> {
 		return from(map);
 	}
 
+	@Override
 	public MapPSet<E> minusAll(final Collection<?> list) {
 		PMap<E, Object> map = this.map.minusAll(list);
 		return from(map);

@@ -357,11 +357,11 @@ public class ArgoUml2Tg extends Xml2Tg {
 			XMLStreamException {
 		defaultPackage = null;
 		graphClass = null;
-		domainMap = new HashMap<String, Domain>();
-		packageMap = new HashMap<String, Package>();
-		profileIdMap = new HashMap<String, Domain>();
-		qnMap = new HashMap<String, Vertex>();
-		xmiIdMap = new HashMap<String, Vertex>();
+		domainMap = new HashMap<>();
+		packageMap = new HashMap<>();
+		profileIdMap = new HashMap<>();
+		qnMap = new HashMap<>();
+		xmiIdMap = new HashMap<>();
 		schema = null;
 		sg = null;
 		System.out.println("Process " + fileName + "...");
@@ -370,11 +370,11 @@ public class ArgoUml2Tg extends Xml2Tg {
 	}
 
 	private void convertToTg(String filename) {
-		qnMap = new HashMap<String, Vertex>();
-		packageMap = new HashMap<String, Package>();
-		domainMap = new HashMap<String, Domain>();
-		profileIdMap = new HashMap<String, Domain>();
-		xmiIdMap = new HashMap<String, Vertex>();
+		qnMap = new HashMap<>();
+		packageMap = new HashMap<>();
+		domainMap = new HashMap<>();
+		profileIdMap = new HashMap<>();
+		xmiIdMap = new HashMap<>();
 
 		xu = new XmlGraphUtilities(getXmlGraph());
 		Element model = xu.firstChildWithName(
@@ -431,7 +431,7 @@ public class ArgoUml2Tg extends Xml2Tg {
 
 	private void checkAttributes() {
 		GraphClass graphClass = sg.getFirstGraphClass();
-		Map<String, AttributedElementClass> definedAttributes = new HashMap<String, AttributedElementClass>();
+		Map<String, AttributedElementClass> definedAttributes = new HashMap<>();
 		for (Attribute a : graphClass.get_attributes()) {
 			if (definedAttributes.containsKey(a.get_name())) {
 				throw new RuntimeException("Attribute " + a.get_name() + " at "
@@ -442,9 +442,9 @@ public class ArgoUml2Tg extends Xml2Tg {
 
 		for (GraphElementClass gec : sg.getGraphElementClassVertices()) {
 			boolean isVertexClass = gec.isInstanceOf(VertexClass.VC);
-			definedAttributes = new HashMap<String, AttributedElementClass>();
+			definedAttributes = new HashMap<>();
 			BooleanGraphMarker alreadyChecked = new BooleanGraphMarker(sg);
-			Queue<GraphElementClass> queue = new LinkedList<GraphElementClass>();
+			Queue<GraphElementClass> queue = new LinkedList<>();
 			queue.add(gec);
 			while (!queue.isEmpty()) {
 				GraphElementClass current = queue.poll();
@@ -500,9 +500,9 @@ public class ArgoUml2Tg extends Xml2Tg {
 			}
 			// perform a breadth first search towards the superclasses in the
 			// generalization hierarchy.
-			Queue<GraphElementClass> queue = new LinkedList<GraphElementClass>();
+			Queue<GraphElementClass> queue = new LinkedList<>();
 			IntegerVertexMarker longestDistance = new IntegerVertexMarker(sg);
-			GraphMarker<Edge> startGeneralization = new GraphMarker<Edge>(sg);
+			GraphMarker<Edge> startGeneralization = new GraphMarker<>(sg);
 
 			longestDistance.mark(gec, 0);
 			// initialize marker
@@ -567,7 +567,7 @@ public class ArgoUml2Tg extends Xml2Tg {
 			// startGeneralization, then it is a redundant generalization
 			// because there exist already a generalization of a subclass of
 			// e.getOmega();
-			Set<Edge> importantSpecializations = new HashSet<Edge>();
+			Set<Edge> importantSpecializations = new HashSet<>();
 			Iterator<FunctionEntry<AttributedElement<?, ?>, Edge>> it = startGeneralization
 					.iterator();
 			while (it.hasNext()) {

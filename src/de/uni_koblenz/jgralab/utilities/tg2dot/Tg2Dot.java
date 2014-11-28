@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2013 Institute for Software Technology
+ * Copyright (C) 2006-2014 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -533,7 +533,7 @@ public class Tg2Dot extends Tg2Whatever {
 	private Map<String, String> createEvaluatedStyleAttributeList(
 			Definition spec) {
 
-		Map<String, String> evaluatedList = new HashMap<String, String>();
+		Map<String, String> evaluatedList = new HashMap<>();
 
 		for (String attributeName : spec.getAttributeNames()) {
 			String query = spec.getAttributeValue(attributeName);

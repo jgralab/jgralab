@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2013 Institute for Software Technology
+ * Copyright (C) 2006-2014 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -94,8 +94,8 @@ public abstract class CodeBlock {
 	 */
 	protected CodeBlock(CodeList parent) {
 		additionalIndent = 0;
-		variables = new HashMap<String, String>();
-		replacementStack = new Stack<String>();
+		variables = new HashMap<>();
+		replacementStack = new Stack<>();
 		if (parent != null) {
 			parent.add(this);
 		}

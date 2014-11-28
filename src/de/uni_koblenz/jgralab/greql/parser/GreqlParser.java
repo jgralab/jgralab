@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2013 Institute for Software Technology
+ * Copyright (C) 2006-2014 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -57,7 +57,7 @@ import de.uni_koblenz.jgralab.schema.EdgeClass;
 
 public class GreqlParser extends ParserHelper {
 	private static final GreqlSchema SCHEMA = GreqlSchema.instance();
-	private final Map<RuleEnum, int[]> testedRules = new HashMap<RuleEnum, int[]>();
+	private final Map<RuleEnum, int[]> testedRules = new HashMap<>();
 
 	private List<Token> tokens = null;
 
@@ -152,14 +152,14 @@ public class GreqlParser extends ParserHelper {
 
 	public GreqlParser(String source, Set<String> subQueryNames) {
 		query = source;
-		parsingStack = new Stack<Integer>();
-		predicateStack = new Stack<Boolean>();
+		parsingStack = new Stack<>();
+		predicateStack = new Stack<>();
 		graph = SCHEMA.createGreqlGraph(ImplementationType.STANDARD);
 		tokens = GreqlLexer.scan(source);
 		afterParsingvariableSymbolTable = new SymbolTable();
 		duringParsingvariableSymbolTable = new SimpleSymbolTable();
 		duringParsingvariableSymbolTable.blockBegin();
-		functionSymbolTable = new HashMap<String, FunctionId>();
+		functionSymbolTable = new HashMap<>();
 		graphCleaned = false;
 		lookAhead = tokens.get(0);
 		this.subQueryNames = subQueryNames;
@@ -583,13 +583,13 @@ public class GreqlParser extends ParserHelper {
 	}
 
 	private final List<VertexPosition<Variable>> parseVariableList() {
-		List<VertexPosition<Variable>> vlist = new ArrayList<VertexPosition<Variable>>();
+		List<VertexPosition<Variable>> vlist = new ArrayList<>();
 		int offset = getCurrentOffset();
-		vlist.add(new VertexPosition<Variable>(parseVariable(true),
-				getLength(offset), offset));
+		vlist.add(new VertexPosition<>(parseVariable(true), getLength(offset),
+				offset));
 		while (lookAhead(0) == GreqlTokenType.COMMA) {
 			match();
-			vlist.add(new VertexPosition<Variable>(parseVariable(true),
+			vlist.add(new VertexPosition<>(parseVariable(true),
 					getLength(offset), offset));
 		}
 		return vlist;
@@ -817,15 +817,14 @@ public class GreqlParser extends ParserHelper {
 	private final List<VertexPosition<Definition>> parseDefinitionList() {
 		List<VertexPosition<Definition>> definitions = null;
 		if (!inPredicateMode()) {
-			definitions = new ArrayList<VertexPosition<Definition>>();
+			definitions = new ArrayList<>();
 		}
 		do {
 			int offset = getCurrentOffset();
 			Definition v = parseDefinition();
 			int length = getLength(offset);
 			if (!inPredicateMode()) {
-				definitions.add(new VertexPosition<Definition>(v, offset,
-						length));
+				definitions.add(new VertexPosition<>(v, offset, length));
 			}
 		} while (tryMatch(GreqlTokenType.COMMA));
 		return definitions;
@@ -1835,11 +1834,10 @@ public class GreqlParser extends ParserHelper {
 				allExpressions = parseExpressionList(GreqlTokenType.COMMA);
 			}
 			if (!inPredicateMode()) {
-				VertexPosition<Expression> v = new VertexPosition<Expression>(
-						startExpr, lengthStart, offsetStart);
+				VertexPosition<Expression> v = new VertexPosition<>(startExpr,
+						lengthStart, offsetStart);
 				if (allExpressions == null) {
-					allExpressions = new ArrayList<VertexPosition<Expression>>(
-							1);
+					allExpressions = new ArrayList<>(1);
 				}
 				allExpressions.add(0, v);
 				result = createPartsOfValueConstruction(allExpressions,
@@ -1853,13 +1851,12 @@ public class GreqlParser extends ParserHelper {
 	private final ValueConstruction parseRecordConstruction() {
 		match(GreqlTokenType.REC);
 		match(GreqlTokenType.LPAREN);
-		List<VertexPosition<RecordElement>> elements = new ArrayList<VertexPosition<RecordElement>>();
+		List<VertexPosition<RecordElement>> elements = new ArrayList<>();
 		do {
 			int offset = getCurrentOffset();
 			RecordElement recElem = parseRecordElement();
 			int length = getLength(offset);
-			elements.add(new VertexPosition<RecordElement>(recElem, length,
-					offset));
+			elements.add(new VertexPosition<>(recElem, length, offset));
 		} while (tryMatch(GreqlTokenType.COMMA));
 		match(GreqlTokenType.RPAREN);
 		if (!inPredicateMode()) {
@@ -1939,11 +1936,11 @@ public class GreqlParser extends ParserHelper {
 	}
 
 	private final List<VertexPosition<SimpleDeclaration>> parseDeclarationList() {
-		List<VertexPosition<SimpleDeclaration>> declList = new ArrayList<VertexPosition<SimpleDeclaration>>();
+		List<VertexPosition<SimpleDeclaration>> declList = new ArrayList<>();
 		int offset = getCurrentOffset();
 		SimpleDeclaration decl = parseSimpleDeclaration();
 		int length = getLength(offset);
-		declList.add(new VertexPosition<SimpleDeclaration>(decl, length, offset));
+		declList.add(new VertexPosition<>(decl, length, offset));
 		if (lookAhead(0) == GreqlTokenType.COMMA) {
 			predicateStart();
 			try {
@@ -1984,12 +1981,12 @@ public class GreqlParser extends ParserHelper {
 		if (skipRule(pos)) {
 			return null;
 		}
-		List<VertexPosition<Expression>> list = new ArrayList<VertexPosition<Expression>>();
+		List<VertexPosition<Expression>> list = new ArrayList<>();
 		do {
 			int offset = getCurrentOffset();
 			Expression expr = parseExpression();
 			int length = getLength(offset);
-			list.add(new VertexPosition<Expression>(expr, length, offset));
+			list.add(new VertexPosition<>(expr, length, offset));
 		} while (tryMatch(separator));
 		ruleSucceeds(RuleEnum.EXPRESSION_LIST, pos);
 		return list;
@@ -2021,12 +2018,12 @@ public class GreqlParser extends ParserHelper {
 	}
 
 	private final List<VertexPosition<TypeId>> parseTypeExpressionList() {
-		List<VertexPosition<TypeId>> list = new ArrayList<VertexPosition<TypeId>>();
+		List<VertexPosition<TypeId>> list = new ArrayList<>();
 		do {
 			int offset = getCurrentOffset();
 			TypeId t = parseTypeId();
 			int length = getLength(offset);
-			list.add(new VertexPosition<TypeId>(t, length, offset));
+			list.add(new VertexPosition<>(t, length, offset));
 		} while (tryMatch(GreqlTokenType.COMMA));
 		return list;
 	}
@@ -2070,12 +2067,12 @@ public class GreqlParser extends ParserHelper {
 	}
 
 	private final List<VertexPosition<? extends TypeOrRoleId>> parseTypeAndRoleExpressionList() {
-		List<VertexPosition<? extends TypeOrRoleId>> list = new ArrayList<VertexPosition<? extends TypeOrRoleId>>();
+		List<VertexPosition<? extends TypeOrRoleId>> list = new ArrayList<>();
 		do {
 			int offset = getCurrentOffset();
 			TypeOrRoleId id = parseTypeOrRoleId();
 			int length = getLength(offset);
-			list.add(new VertexPosition<TypeOrRoleId>(id, length, offset));
+			list.add(new VertexPosition<>(id, length, offset));
 		} while (tryMatch(GreqlTokenType.COMMA));
 		return list;
 	}
@@ -2097,8 +2094,8 @@ public class GreqlParser extends ParserHelper {
 		if (predicateEnd()) {
 			List<VertexPosition<? extends TypeOrRoleId>> typeOrRoleIds = parseTypeAndRoleExpressionList();
 			if (typeOrRoleIds != null) {
-				typeIds = new ArrayList<VertexPosition<TypeId>>();
-				roleIds = new ArrayList<VertexPosition<RoleId>>();
+				typeIds = new ArrayList<>();
+				roleIds = new ArrayList<>();
 				for (VertexPosition<? extends TypeOrRoleId> id : typeOrRoleIds) {
 					if (id.node instanceof TypeId) {
 						typeIds.add((VertexPosition<TypeId>) id);

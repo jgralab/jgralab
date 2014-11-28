@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2013 Institute for Software Technology
+ * Copyright (C) 2006-2014 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -146,7 +146,7 @@ public class ArrayGraphmarkerTest extends InstanceTest {
 		v1 = g.createNode();
 		v2 = g.createNode();
 		g.createLink(v1, v2);
-		marker = new ArrayVertexMarker<TestMarkerObject>(g);
+		marker = new ArrayVertexMarker<>(g);
 	}
 
 	@After

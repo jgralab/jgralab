@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2013 Institute for Software Technology
+ * Copyright (C) 2006-2014 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -38,7 +38,7 @@ import de.uni_koblenz.jgralab.schema.impl.DirectedAcyclicGraph;
 
 public class DigraphTest {
 	public static void main(String[] args) {
-		DirectedAcyclicGraph<String> g = new DirectedAcyclicGraph<String>(true);
+		DirectedAcyclicGraph<String> g = new DirectedAcyclicGraph<>(true);
 		g.createNode("E");
 		g.createNode("A");
 		g.createNode("B");

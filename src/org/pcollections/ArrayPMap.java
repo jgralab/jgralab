@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2013 Institute for Software Technology
+ * Copyright (C) 2006-2014 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -104,8 +104,8 @@ public final class ArrayPMap<K, V> implements POrderedMap<K, V>,
 		return true;
 	}
 
-	private static ArrayPMap<?, ?> empty = new ArrayPMap<Object, Object>(
-			ArrayPSet.empty(), ArrayPVector.empty());
+	private static ArrayPMap<?, ?> empty = new ArrayPMap<>(ArrayPSet.empty(),
+			ArrayPVector.empty());
 
 	@SuppressWarnings("unchecked")
 	public static <T, U> ArrayPMap<T, U> empty() {
@@ -173,8 +173,7 @@ public final class ArrayPMap<K, V> implements POrderedMap<K, V>,
 		PSet<Map.Entry<K, V>> entries = ArrayPSet.empty();
 		Iterator<V> val = values.iterator();
 		for (K key : keys) {
-			entries = entries.plus(new SimpleImmutableEntry<K, V>(key, val
-					.next()));
+			entries = entries.plus(new SimpleImmutableEntry<>(key, val.next()));
 		}
 		return entries;
 	}
@@ -182,8 +181,7 @@ public final class ArrayPMap<K, V> implements POrderedMap<K, V>,
 	@Override
 	public ArrayPMap<K, V> minus(Object key) {
 		int i = keys.toPVector().indexOf(key);
-		return i < 0 ? this : new ArrayPMap<K, V>(keys.minus(key),
-				values.minus(i));
+		return i < 0 ? this : new ArrayPMap<>(keys.minus(key), values.minus(i));
 	}
 
 	@Override
@@ -202,9 +200,9 @@ public final class ArrayPMap<K, V> implements POrderedMap<K, V>,
 	public ArrayPMap<K, V> plus(K key, V value) {
 		int i = keys.toPVector().indexOf(key);
 		if (i >= 0) {
-			return new ArrayPMap<K, V>(keys, values.with(i, value));
+			return new ArrayPMap<>(keys, values.with(i, value));
 		} else {
-			return new ArrayPMap<K, V>(keys.plusWithoutCheck(key),
+			return new ArrayPMap<>(keys.plusWithoutCheck(key),
 					values.plus(value));
 		}
 	}
@@ -262,7 +260,7 @@ public final class ArrayPMap<K, V> implements POrderedMap<K, V>,
 
 		@Override
 		public SimpleImmutableEntry<K, V> next() {
-			return new SimpleImmutableEntry<K, V>(ki.next(), vi.next());
+			return new SimpleImmutableEntry<>(ki.next(), vi.next());
 		}
 
 		@Override
@@ -283,7 +281,7 @@ public final class ArrayPMap<K, V> implements POrderedMap<K, V>,
 
 	@Override
 	public Entry<K, V> entryAt(final int idx) {
-		return new SimpleImmutableEntry<K, V>(keyAt(idx), valueAt(idx));
+		return new SimpleImmutableEntry<>(keyAt(idx), valueAt(idx));
 	}
 
 }

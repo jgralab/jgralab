@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2013 Institute for Software Technology
+ * Copyright (C) 2006-2014 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -71,13 +71,13 @@ public class GraphLayout {
 	}
 
 	private void initiateDataStructures() {
-		vertexTypeDefinitions = new HashMap<VertexClass, TypeDefinition>();
-		edgeTypeDefinitions = new HashMap<EdgeClass, TypeDefinition>();
-		elementDefinitions = new ArrayList<ElementDefinition>();
+		vertexTypeDefinitions = new HashMap<>();
+		edgeTypeDefinitions = new HashMap<>();
+		elementDefinitions = new ArrayList<>();
 
-		attributedElementsDefinedByElementDefinitions = new HashSet<AttributedElement<?, ?>>();
+		attributedElementsDefinedByElementDefinitions = new HashSet<>();
 
-		globalVariables = new HashMap<String, String>();
+		globalVariables = new HashMap<>();
 	}
 
 	void setSchema(Schema schema) {

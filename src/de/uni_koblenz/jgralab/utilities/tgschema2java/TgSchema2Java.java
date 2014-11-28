@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2013 Institute for Software Technology
+ * Copyright (C) 2006-2014 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -41,7 +41,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.Vector;
 
 import javax.tools.JavaCompiler;
 import javax.tools.JavaFileObject;
@@ -191,7 +190,7 @@ public class TgSchema2Java {
 	}
 
 	private Set<String> getGeneratedFilePaths(String path) {
-		Set<String> generatedFilePaths = new HashSet<String>();
+		Set<String> generatedFilePaths = new HashSet<>();
 		JavaFileFilter javaFileFilter = new JavaFileFilter();
 
 		File folder = new File(path);
@@ -224,7 +223,7 @@ public class TgSchema2Java {
 		String schemaPath = schema.getPathName();
 		Set<String> existingFilePaths = getGeneratedFilePaths(commitPath
 				+ File.separator + schemaPath);
-		Set<String> requiredFilePaths = new HashSet<String>();
+		Set<String> requiredFilePaths = new HashSet<>();
 
 		requiredFilePaths.add(commitPath + File.separator
 				+ schema.getFileName() + ".java");
@@ -313,7 +312,7 @@ public class TgSchema2Java {
 
 		Iterable<? extends JavaFileObject> compilationUnits1 = fileManager
 				.getJavaFileObjectsFromFiles(files1);
-		Vector<String> options = new Vector<String>();
+		ArrayList<String> options = new ArrayList<>();
 		if (classpath != null) {
 			options.add("-cp");
 			options.add(classpath);
@@ -325,7 +324,7 @@ public class TgSchema2Java {
 	}
 
 	private List<File> findFilesInDirectory(File folder) throws Exception {
-		List<File> javaSources = new ArrayList<File>();
+		List<File> javaSources = new ArrayList<>();
 		for (File file : folder.listFiles()) {
 			if (file.isFile() && file.getName().endsWith(".java")) {
 				javaSources.add(file);

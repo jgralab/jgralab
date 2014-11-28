@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2013 Institute for Software Technology
+ * Copyright (C) 2006-2014 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -96,7 +96,7 @@ public class XMLLoader extends XmlProcessor implements XMLConstants {
 		int state;
 		Edge edge2Parent;
 		boolean isLeaf = true;
-		List<PathSystemNode> children = new ArrayList<PathSystemNode>();
+		List<PathSystemNode> children = new ArrayList<>();
 
 		@Override
 		public String toString() {
@@ -108,15 +108,15 @@ public class XMLLoader extends XmlProcessor implements XMLConstants {
 
 	private Map<String, Graph> id2GraphMap = null;
 	private Map<String, Schema> schemaName2Schema = null;
-	private final Stack<Object> stack = new Stack<Object>();
+	private final Stack<Object> stack = new Stack<>();
 
 	public XMLLoader(Graph... graphs) {
-		id2GraphMap = new HashMap<String, Graph>(graphs.length);
+		id2GraphMap = new HashMap<>(graphs.length);
 		for (Graph g : graphs) {
 			id2GraphMap.put(g.getId(), g);
 		}
 
-		schemaName2Schema = new HashMap<String, Schema>(graphs.length);
+		schemaName2Schema = new HashMap<>(graphs.length);
 		for (Graph g : graphs) {
 			Schema s = g.getSchema();
 			schemaName2Schema.put(s.getQualifiedName(), s);

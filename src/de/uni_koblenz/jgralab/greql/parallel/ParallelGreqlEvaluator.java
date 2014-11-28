@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  * 
- * Copyright (C) 2006-2013 Institute for Software Technology
+ * Copyright (C) 2006-2014 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  * 
@@ -250,7 +250,7 @@ public class ParallelGreqlEvaluator {
 	 * Constructs an empty {@link ParallelGreqlEvaluator} with no tasks.
 	 */
 	public ParallelGreqlEvaluator() {
-		dependencyGraph = new DirectedAcyclicGraph<TaskHandle>();
+		dependencyGraph = new DirectedAcyclicGraph<>();
 	}
 
 	/**
@@ -542,7 +542,7 @@ public class ParallelGreqlEvaluator {
 			Set<TaskHandle> initialTasks;
 			if (evaluationEnvironment.sequentially) {
 				// sequential case, simply order all tasks topologically
-				initialTasks = new LinkedHashSet<TaskHandle>();
+				initialTasks = new LinkedHashSet<>();
 				for (TaskHandle handle : dependencyGraph
 						.getNodesInTopologicalOrder()) {
 					EvaluationTask t = handle
@@ -554,7 +554,7 @@ public class ParallelGreqlEvaluator {
 				// - create EvaluationTasks for all TaskHandles
 				// - initalize inDegree map with number of predecessors
 				// - determine initial tasks (tasks without predecessors)
-				initialTasks = new TreeSet<TaskHandle>();
+				initialTasks = new TreeSet<>();
 				// dependencyGraph.getNodesInTopologicalOrder();
 				for (TaskHandle handle : dependencyGraph.getNodes()) {
 					EvaluationTask t = handle
@@ -688,7 +688,7 @@ public class ParallelGreqlEvaluator {
 				return;
 			}
 			// add dependencies based on used/stored variables of GReQL queries
-			HashMap<String, HashSet<TaskHandle>> definingTasks = new HashMap<String, HashSet<TaskHandle>>();
+			HashMap<String, HashSet<TaskHandle>> definingTasks = new HashMap<>();
 
 			// determine TaskHandles that define (store) a variable
 			for (TaskHandle handle : dependencyGraph.getNodes()) {
@@ -699,7 +699,7 @@ public class ParallelGreqlEvaluator {
 				for (String var : sv) {
 					HashSet<TaskHandle> vs = definingTasks.get(var);
 					if (vs == null) {
-						vs = new HashSet<TaskHandle>();
+						vs = new HashSet<>();
 						definingTasks.put(var, vs);
 					}
 					vs.add(handle);
@@ -741,7 +741,7 @@ public class ParallelGreqlEvaluator {
 		// determine tasks that can be started after finishedTask has completed,
 		// i.e. tasks that have no more unfinished predecessors
 		synchronized (dependencyGraph) {
-			Set<TaskHandle> nextTasks = new TreeSet<TaskHandle>();
+			Set<TaskHandle> nextTasks = new TreeSet<>();
 			for (TaskHandle succ : dependencyGraph
 					.getDirectSuccessors(finishedTask)) {
 				int i = environment.inDegree.get(succ) - 1;

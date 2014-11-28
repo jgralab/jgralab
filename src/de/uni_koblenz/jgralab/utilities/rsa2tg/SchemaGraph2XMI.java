@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2013 Institute for Software Technology
+ * Copyright (C) 2006-2014 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -113,7 +113,7 @@ public class SchemaGraph2XMI {
 	 * domains are the LongDomain, the DoubleDomain, all CollectionDomains and
 	 * all MapDomains.
 	 */
-	private final TreeSet<Domain> typesToBeDeclaredAtTheEnd = new TreeSet<Domain>();
+	private final TreeSet<Domain> typesToBeDeclaredAtTheEnd = new TreeSet<>();
 
 	/**
 	 * If set to <code>true</code>, the EdgeClasses are created as associations
@@ -1102,7 +1102,7 @@ public class SchemaGraph2XMI {
 		}
 
 		// find a unique rolename
-		HashMap<String, Object> boundVars = new HashMap<String, Object>();
+		HashMap<String, Object> boundVars = new HashMap<>();
 		boundVars.put("start", connectedVertexClass);
 		int counter = 0;
 		Object result;

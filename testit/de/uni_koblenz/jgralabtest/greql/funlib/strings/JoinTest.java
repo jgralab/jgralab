@@ -24,7 +24,7 @@ public class JoinTest extends StringsTest {
 
 	@Before
 	public void setUp() {
-		pcollectionValues = new LinkedList<PCollection<String>>();
+		pcollectionValues = new LinkedList<>();
 		for (int i = 0; i < 30; i++) {
 			pcollectionValues.add(createRandomPVector(i));
 			pcollectionValues.add(createRandomPSet(i));

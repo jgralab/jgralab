@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2013 Institute for Software Technology
+ * Copyright (C) 2006-2014 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -66,7 +66,7 @@ public class IncidenceClassImpl implements IncidenceClass {
 		}
 		this.direction = direction;
 		this.vertexClass = vertexClass;
-		this.subsettedIncidenceClasses = new HashSet<IncidenceClass>();
+		this.subsettedIncidenceClasses = new HashSet<>();
 		this.incidenceClassIdInSchema = ((SchemaImpl) edgeClass.getSchema())
 				.getNextIncidenceClassId();
 	}
@@ -151,7 +151,7 @@ public class IncidenceClassImpl implements IncidenceClass {
 		if (((VertexClassImpl) vertexClass).isFinished()) {
 			return this.allSubsettedIncidenceClasses;
 		}
-		Set<IncidenceClass> result = new HashSet<IncidenceClass>();
+		Set<IncidenceClass> result = new HashSet<>();
 		result.addAll(subsettedIncidenceClasses);
 		for (IncidenceClass ic : subsettedIncidenceClasses) {
 			result.addAll(ic.getSubsettedIncidenceClasses());
@@ -178,7 +178,7 @@ public class IncidenceClassImpl implements IncidenceClass {
 
 	@Override
 	public Set<String> getAllRoles() {
-		Set<String> result = new HashSet<String>();
+		Set<String> result = new HashSet<>();
 		result.add(getRolename());
 		for (IncidenceClass ic : getSubsettedIncidenceClasses()) {
 			result.add(ic.getRolename());
@@ -187,7 +187,7 @@ public class IncidenceClassImpl implements IncidenceClass {
 	}
 
 	void finish() {
-		this.allSubsettedIncidenceClasses = new HashSet<IncidenceClass>();
+		this.allSubsettedIncidenceClasses = new HashSet<>();
 		this.allSubsettedIncidenceClasses.addAll(subsettedIncidenceClasses);
 		for (IncidenceClass ic : subsettedIncidenceClasses) {
 			this.allSubsettedIncidenceClasses.addAll(ic

@@ -2,11 +2,11 @@ package de.uni_koblenz.jgralab.greql.executable;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.TypeVariable;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
-import java.util.Vector;
 
 import javax.tools.JavaCompiler;
 import javax.tools.StandardJavaFileManager;
@@ -135,7 +135,7 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 	private final CodeSnippet staticInitializerSnippet = new CodeSnippet(
 			"static {");
 
-	private final List<CodeBlock> createdMethods = new LinkedList<CodeBlock>();
+	private final List<CodeBlock> createdMethods = new LinkedList<>();
 
 	private final Scope scope;
 
@@ -149,7 +149,7 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 
 	private final InternalGreqlEvaluator evaluator;
 
-	private final HashSet<String> resultVariables = new HashSet<String>();
+	private final HashSet<String> resultVariables = new HashSet<>();
 
 	public GreqlCodeGenerator(GreqlQuery query, Schema datagraphSchema,
 			String packageName, String classname) {
@@ -1945,7 +1945,7 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 		}
 		if (roles != null) {
 			addImports("de.uni_koblenz.jgralab.schema.IncidenceClass");
-			HashSet<IncidenceClass> incidenceClasses = new HashSet<IncidenceClass>();
+			HashSet<IncidenceClass> incidenceClasses = new HashSet<>();
 			for (EdgeClass ec : schema.getGraphClass().getEdgeClasses()) {
 				IncidenceClass to = ec.getTo();
 				if (roles.contains(to.getRolename())) {
@@ -2230,7 +2230,7 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 		createdMethods.add(list);
 	}
 
-	private final HashSet<String> staticFieldNames = new HashSet<String>();
+	private final HashSet<String> staticFieldNames = new HashSet<>();
 
 	private void addStaticField(String type, String var, String def) {
 		if (!staticFieldNames.contains(var)) {
@@ -2268,7 +2268,7 @@ public class GreqlCodeGenerator extends CodeGenerator implements
 					+ "Most probably, you use a JRE instead of a JDK. "
 					+ "The JRE does not provide a compiler.");
 		}
-		Vector<InMemoryJavaSourceFile> javaSources = new Vector<InMemoryJavaSourceFile>();
+		ArrayList<InMemoryJavaSourceFile> javaSources = new ArrayList<>();
 		javaSources.add(createInMemoryJavaSource());
 		StandardJavaFileManager jfm = compiler.getStandardFileManager(null,
 				null, null);

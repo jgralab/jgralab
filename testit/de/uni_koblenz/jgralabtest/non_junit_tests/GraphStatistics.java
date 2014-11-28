@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2013 Institute for Software Technology
+ * Copyright (C) 2006-2014 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -46,7 +46,7 @@ import de.uni_koblenz.jgralab.impl.ConsoleProgressFunction;
 import de.uni_koblenz.jgralab.schema.NamedElement;
 
 public class GraphStatistics {
-	static Map<NamedElement, Integer> counters = new HashMap<NamedElement, Integer>();
+	static Map<NamedElement, Integer> counters = new HashMap<>();
 
 	public static void main(String[] args) {
 		try {

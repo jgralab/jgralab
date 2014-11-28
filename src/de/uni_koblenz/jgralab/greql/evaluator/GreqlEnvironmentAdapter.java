@@ -35,7 +35,7 @@ public class GreqlEnvironmentAdapter implements GreqlEnvironment {
 	@Override
 	public synchronized Object setVariable(String varName, Object value) {
 		if (variableMap == null) {
-			variableMap = new HashMap<String, Object>();
+			variableMap = new HashMap<>();
 		}
 		return variableMap.put(varName, value);
 	}

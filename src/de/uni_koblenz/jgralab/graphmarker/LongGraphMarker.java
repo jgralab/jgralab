@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2013 Institute for Software Technology
+ * Copyright (C) 2006-2014 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -202,7 +202,7 @@ public abstract class LongGraphMarker<T extends GraphElement<?, ?>> extends
 			@Override
 			public LongFunctionEntry<T> next() {
 				T currentElement = markedElements.next();
-				return new LongFunctionEntry<T>(currentElement,
+				return new LongFunctionEntry<>(currentElement,
 						get(currentElement));
 			}
 

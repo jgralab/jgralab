@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2013 Institute for Software Technology
+ * Copyright (C) 2006-2014 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -116,7 +116,7 @@ public class PathExistenceToDirectedPathExpressionOptimizer extends
 			return false;
 		}
 
-		List<PathExistence> pes = new LinkedList<PathExistence>();
+		List<PathExistence> pes = new LinkedList<>();
 		for (PathExistence pe : syntaxgraph.getPathExistenceVertices()) {
 			// PathExistences that are inside a not() must not be optimized,
 			// because that would filter out exactly the right elements.
@@ -439,7 +439,7 @@ public class PathExistenceToDirectedPathExpressionOptimizer extends
 	}
 
 	private SimpleDeclaration splitSimpleDecl(SimpleDeclaration sd, Variable var) {
-		Set<Variable> splitSet = new HashSet<Variable>(1);
+		Set<Variable> splitSet = new HashSet<>(1);
 		splitSet.add(var);
 		return splitSimpleDeclaration(sd, splitSet);
 	}

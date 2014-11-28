@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2013 Institute for Software Technology
+ * Copyright (C) 2006-2014 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -44,7 +44,7 @@ public class TemplateGraphLexer {
 	protected static Map<TokenType, String> fixedTokens;
 
 	static {
-		fixedTokens = new HashMap<TokenType, String>();
+		fixedTokens = new HashMap<>();
 		fixedTokens.put(TokenType.L_CURLY, "{");
 		fixedTokens.put(TokenType.R_CURLY, "}");
 		fixedTokens.put(TokenType.PIPE, "|");
@@ -66,7 +66,7 @@ public class TemplateGraphLexer {
 	}
 
 	public static List<Token> scan(String query) {
-		List<Token> list = new ArrayList<Token>();
+		List<Token> list = new ArrayList<>();
 		TemplateGraphLexer lexer = new TemplateGraphLexer(query);
 		while (lexer.hasNextToken()) {
 			Token nextToken = lexer.getNextToken();

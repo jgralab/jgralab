@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2013 Institute for Software Technology
+ * Copyright (C) 2006-2014 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -43,7 +43,7 @@ public class QueueBuffer<T> implements Buffer<T> {
 	private Queue<T> queue;
 
 	public QueueBuffer() {
-		queue = new LinkedList<T>();
+		queue = new LinkedList<>();
 	}
 
 	@Override

@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2013 Institute for Software Technology
+ * Copyright (C) 2006-2014 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -126,13 +126,13 @@ public class XDotPanel extends DrawingPanel {
 			}
 		});
 
-		listenerList = new ArrayList<ElementSelectionListener>();
+		listenerList = new ArrayList<>();
 	}
 
 	public void setGraph(Graph g, InputStream xdotInputStream)
 			throws IOException {
 		graph = g;
-		elementShapes = new GraphMarker<List<XDotShape>>(g);
+		elementShapes = new GraphMarker<>(g);
 		XDotParser p = new XDotParser(graph, elementShapes);
 		shapes = p.parseXDotFile(new BufferedInputStream(xdotInputStream));
 		Rectangle2D bounds = p.getBounds();
@@ -177,8 +177,8 @@ public class XDotPanel extends DrawingPanel {
 	}
 
 	private void computeBoundingBoxes() {
-		elementBoxes = new GraphMarker<Rectangle>(graph);
-		elementTexts = new GraphMarker<Rectangle>(graph);
+		elementBoxes = new GraphMarker<>(graph);
+		elementTexts = new GraphMarker<>(graph);
 		for (AttributedElement<?, ?> el : elementShapes.getMarkedElements()) {
 			List<XDotShape> l = elementShapes.get(el);
 			Rectangle rb = null;

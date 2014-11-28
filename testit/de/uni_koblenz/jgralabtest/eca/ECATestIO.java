@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2013 Institute for Software Technology
+ * Copyright (C) 2006-2014 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -118,22 +118,20 @@ public class ECATestIO {
 		System.out.println("Saving an ECA Rule.");
 		EventDescription<VertexClass> bef_ev = new DeleteVertexEventDescription(
 				EventDescription.EventTime.BEFORE, Book.VC);
-		Action<VertexClass> bef_act = new PrintAction<VertexClass>(
+		Action<VertexClass> bef_act = new PrintAction<>(
 				"ECA Test Message: Book Vertex will become deleted.");
-		ECARule<VertexClass> bef_rule = new ECARule<VertexClass>(bef_ev,
-				bef_act);
+		ECARule<VertexClass> bef_rule = new ECARule<>(bef_ev, bef_act);
 
 		EventDescription<VertexClass> aft_ev = new CreateVertexEventDescription(
 				EventDescription.EventTime.AFTER, NewMedia.VC);
-		Condition<VertexClass> aft_cond = new GreqlCondition<VertexClass>(
+		Condition<VertexClass> aft_cond = new GreqlCondition<>(
 				"count( V{NewMedia} ) = 2");
-		Action<VertexClass> aft_act = new PrintAction<VertexClass>(
+		Action<VertexClass> aft_act = new PrintAction<>(
 				"ECA Test Message: New Medium after Condition Test created. "
 						+ "This message should appear only once.");
-		ECARule<VertexClass> aft_rule = new ECARule<VertexClass>(aft_ev,
-				aft_cond, aft_act);
+		ECARule<VertexClass> aft_rule = new ECARule<>(aft_ev, aft_cond, aft_act);
 
-		ArrayList<ECARule<?>> rules = new ArrayList<ECARule<?>>();
+		ArrayList<ECARule<?>> rules = new ArrayList<>();
 		rules.add(bef_rule);
 		rules.add(aft_rule);
 		try {
@@ -181,13 +179,12 @@ public class ECATestIO {
 	@Test
 	public void saveRuleWithChangeAttributeEvent() {
 		System.out.println("Saving a rule monitoring a ChangeAttributeEvent.");
-		EventDescription<VertexClass> bef_ev = new ChangeAttributeEventDescription<VertexClass>(
+		EventDescription<VertexClass> bef_ev = new ChangeAttributeEventDescription<>(
 				EventDescription.EventTime.BEFORE, Book.VC, "title");
-		Action<VertexClass> bef_act = new PrintAction<VertexClass>(
+		Action<VertexClass> bef_act = new PrintAction<>(
 				"ECA Test Message: Title of Book Vertex will become changed.");
-		ECARule<VertexClass> bef_rule = new ECARule<VertexClass>(bef_ev,
-				bef_act);
-		ArrayList<ECARule<?>> rules = new ArrayList<ECARule<?>>();
+		ECARule<VertexClass> bef_rule = new ECARule<>(bef_ev, bef_act);
+		ArrayList<ECARule<?>> rules = new ArrayList<>();
 		rules.add(bef_rule);
 		try {
 			ECAIO.saveECArules(simlibgraph.getSchema(), FOLDER_FOR_RULE_FILES
@@ -227,12 +224,11 @@ public class ECATestIO {
 		System.out.println("Save ECA rule with context.");
 		EventDescription<VertexClass> aft_ev = new CreateVertexEventDescription(
 				EventDescription.EventTime.AFTER, "V{Medium}");
-		Action<VertexClass> aft_act = new PrintAction<VertexClass>(
+		Action<VertexClass> aft_act = new PrintAction<>(
 				"ECA Test Message: New Medium created.");
-		ECARule<VertexClass> aft_rule = new ECARule<VertexClass>(aft_ev,
-				aft_act);
+		ECARule<VertexClass> aft_rule = new ECARule<>(aft_ev, aft_act);
 
-		ArrayList<ECARule<?>> rules = new ArrayList<ECARule<?>>();
+		ArrayList<ECARule<?>> rules = new ArrayList<>();
 		rules.add(aft_rule);
 		try {
 			ECAIO.saveECArules(simlibgraph.getSchema(), FOLDER_FOR_RULE_FILES
@@ -269,13 +265,12 @@ public class ECATestIO {
 
 		EventDescription<EdgeClass> aft_ev = new ChangeEdgeEventDescription(
 				EventDescription.EventTime.AFTER, Loans.EC, EdgeEnd.ANY);
-		Condition<EdgeClass> aft_cond = new GreqlCondition<EdgeClass>(
+		Condition<EdgeClass> aft_cond = new GreqlCondition<>(
 				"startVertex(context).name = 'Stephanie Plum'");
 		Action<EdgeClass> aft_act = new RevertEdgeChangingAction();
-		ECARule<EdgeClass> aft_rule = new ECARule<EdgeClass>(aft_ev, aft_cond,
-				aft_act);
+		ECARule<EdgeClass> aft_rule = new ECARule<>(aft_ev, aft_cond, aft_act);
 
-		ArrayList<ECARule<?>> rules = new ArrayList<ECARule<?>>();
+		ArrayList<ECARule<?>> rules = new ArrayList<>();
 		rules.add(aft_rule);
 		try {
 			ECAIO.saveECArules(simlibgraph.getSchema(), FOLDER_FOR_RULE_FILES
@@ -314,15 +309,14 @@ public class ECATestIO {
 	@Test
 	public void saveRuleWithOwnCondition() {
 		System.out.println("Save rule with own Condition.");
-		EventDescription<VertexClass> aft_ev = new ChangeAttributeEventDescription<VertexClass>(
+		EventDescription<VertexClass> aft_ev = new ChangeAttributeEventDescription<>(
 				EventDescription.EventTime.AFTER, Magazin.VC, "year");
-		Condition<VertexClass> cond = new IsGreaterThan2012<VertexClass>();
-		Action<VertexClass> act = new PrintAction<VertexClass>(
+		Condition<VertexClass> cond = new IsGreaterThan2012<>();
+		Action<VertexClass> act = new PrintAction<>(
 				"new year is greater than 2012");
-		ECARule<VertexClass> aft_rule = new ECARule<VertexClass>(aft_ev, cond,
-				act);
+		ECARule<VertexClass> aft_rule = new ECARule<>(aft_ev, cond, act);
 
-		ArrayList<ECARule<?>> rules = new ArrayList<ECARule<?>>();
+		ArrayList<ECARule<?>> rules = new ArrayList<>();
 		rules.add(aft_rule);
 		try {
 			ECAIO.saveECArules(simlibgraph.getSchema(), FOLDER_FOR_RULE_FILES

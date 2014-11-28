@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2013 Institute for Software Technology
+ * Copyright (C) 2006-2014 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -71,8 +71,7 @@ abstract public class ValueConstructionEvaluator<V extends ValueConstruction>
 				inc = inc.getNextIsPartOfIncidence(EdgeDirection.IN);
 			}
 			inc = vertex.getFirstIsPartOfIncidence(EdgeDirection.IN);
-			partEvaluators = new ArrayList<VertexEvaluator<? extends Expression>>(
-					partCount);
+			partEvaluators = new ArrayList<>(partCount);
 			while (inc != null) {
 				Expression currentExpression = inc.getAlpha();
 				VertexEvaluator<? extends Expression> vertexEval = query

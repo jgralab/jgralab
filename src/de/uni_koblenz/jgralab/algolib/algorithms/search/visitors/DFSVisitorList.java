@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2013 Institute for Software Technology
+ * Copyright (C) 2006-2014 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -42,13 +42,12 @@ import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.algolib.algorithms.AlgorithmTerminatedException;
 import de.uni_koblenz.jgralab.algolib.visitors.Visitor;
 
-public class DFSVisitorList extends SearchVisitorList implements
-		DFSVisitor {
+public class DFSVisitorList extends SearchVisitorList implements DFSVisitor {
 
 	private List<DFSVisitor> visitors;
 
-	public DFSVisitorList(){
-		visitors = new ArrayList<DFSVisitor>();
+	public DFSVisitorList() {
+		visitors = new ArrayList<>();
 	}
 
 	@Override

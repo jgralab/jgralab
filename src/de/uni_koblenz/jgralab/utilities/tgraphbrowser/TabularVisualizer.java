@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2013 Institute for Software Technology
+ * Copyright (C) 2006-2014 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -34,11 +34,8 @@
  */
 package de.uni_koblenz.jgralab.utilities.tgraphbrowser;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.pcollections.PSet;
 
@@ -46,8 +43,6 @@ import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.exception.GraphIOException;
-import de.uni_koblenz.jgralab.impl.InternalAttributedElement;
 import de.uni_koblenz.jgralab.schema.Attribute;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.VertexClass;
@@ -68,8 +63,8 @@ public class TabularVisualizer {
 	 */
 	public void calculateVertexListAndEdgeList(State state,
 			PSet<GraphElement<?, ?>> elements) {
-		ArrayList<Vertex> vertices = new ArrayList<Vertex>();
-		ArrayList<Edge> edges = new ArrayList<Edge>();
+		ArrayList<Vertex> vertices = new ArrayList<>();
+		ArrayList<Edge> edges = new ArrayList<>();
 		for (GraphElement<?, ?> jv : elements) {
 			if (jv instanceof Vertex) {
 				Vertex v = (Vertex) jv;

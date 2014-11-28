@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2013 Institute for Software Technology
+ * Copyright (C) 2006-2014 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -112,11 +112,11 @@ final class TgTokenRecognizer {
 
 		// temporary list of states, copied into the states array when DFA is
 		// complete
-		ArrayList<State> dfaStates = new ArrayList<State>();
+		ArrayList<State> dfaStates = new ArrayList<>();
 
 		// Maps states and input characters to next state index
 		// key = "s" + input state + character
-		Map<String, Integer> cm = new HashMap<String, Integer>();
+		Map<String, Integer> cm = new HashMap<>();
 
 		// create initial state s0
 		State cr = new State(stateLen);
@@ -173,7 +173,7 @@ final class TgTokenRecognizer {
 
 		// maps Tokens to the corresponding state index during construction;
 		// after processing each character of the token, the map is updated.
-		Map<Token, Integer> tm = new HashMap<Token, Integer>();
+		Map<Token, Integer> tm = new HashMap<>();
 		// initially, all tokens map to the start state (index 0)
 		for (Token t : Token.values()) {
 			if (t.lexeme == null) {

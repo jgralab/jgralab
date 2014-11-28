@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2013 Institute for Software Technology
+ * Copyright (C) 2006-2014 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -229,7 +229,7 @@ public class IncidenceListTest extends InstanceTest {
 	}
 
 	private List<Vertex> getVertexList() {
-		List<Vertex> vertexList = new LinkedList<Vertex>();
+		List<Vertex> vertexList = new LinkedList<>();
 		for (Vertex v : g.vertices()) {
 			vertexList.add(v);
 		}
@@ -268,7 +268,7 @@ public class IncidenceListTest extends InstanceTest {
 	}
 
 	private List<Edge> getIncidenceList(Vertex n) {
-		List<Edge> il = new ArrayList<Edge>();
+		List<Edge> il = new ArrayList<>();
 		for (Edge e : n.incidences()) {
 			il.add(e);
 		}
@@ -375,7 +375,7 @@ public class IncidenceListTest extends InstanceTest {
 
 		Node isolated = g.createNode();
 
-		final GraphMarker<Integer> marker = new GraphMarker<Integer>(g);
+		final GraphMarker<Integer> marker = new GraphMarker<>(g);
 		Comparator<Edge> comp = new Comparator<Edge>() {
 
 			@Override
@@ -399,7 +399,7 @@ public class IncidenceListTest extends InstanceTest {
 			nodes[i] = g.createNode();
 		}
 		// create edges from node 0 to all others
-		List<Link> links = new ArrayList<Link>();
+		List<Link> links = new ArrayList<>();
 		for (int i = 1; i < nodes.length; i++) {
 			links.add(g.createLink(nodes[0], nodes[i]));
 		}
@@ -445,8 +445,8 @@ public class IncidenceListTest extends InstanceTest {
 	}
 
 	private List<Link> copyAndMix(List<Link> original) {
-		List<Link> copy = new ArrayList<Link>(original.size());
-		RandomBufferGeneric<Link> mixer = new RandomBufferGeneric<Link>(
+		List<Link> copy = new ArrayList<>(original.size());
+		RandomBufferGeneric<Link> mixer = new RandomBufferGeneric<>(
 				original.size());
 		for (Link current : original) {
 			mixer.put(current);

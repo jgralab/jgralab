@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2013 Institute for Software Technology
+ * Copyright (C) 2006-2014 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -190,10 +190,10 @@ public class PathExistenceOptimizer extends OptimizerBase {
 				return 1;
 			}
 		};
-		TreeSet<Variable> startExpVars = new TreeSet<Variable>(comparator);
+		TreeSet<Variable> startExpVars = new TreeSet<>(comparator);
 		startExpVars.addAll(OptimizerUtility
 				.collectInternallyDeclaredVariablesBelow(startExp));
-		TreeSet<Variable> targetExpVars = new TreeSet<Variable>(comparator);
+		TreeSet<Variable> targetExpVars = new TreeSet<>(comparator);
 		targetExpVars.addAll(OptimizerUtility
 				.collectInternallyDeclaredVariablesBelow(targetExp));
 
@@ -249,7 +249,7 @@ public class PathExistenceOptimizer extends OptimizerBase {
 		anOptimizationWasDone = true;
 
 		Edge inc = pe.getFirstIncidence(EdgeDirection.OUT);
-		Set<Edge> edgesToRelink = new HashSet<Edge>();
+		Set<Edge> edgesToRelink = new HashSet<>();
 		while (inc != null) {
 			edgesToRelink.add(inc);
 			inc = inc.getNextIncidence(EdgeDirection.OUT);
@@ -286,7 +286,7 @@ public class PathExistenceOptimizer extends OptimizerBase {
 	 *         current {@link Greql} graph.
 	 */
 	private Set<PathExistence> collectPathExistenceVertices() {
-		HashSet<PathExistence> pathExistenceVertices = new HashSet<PathExistence>();
+		HashSet<PathExistence> pathExistenceVertices = new HashSet<>();
 		for (PathExistence pe : syntaxgraph.getPathExistenceVertices()) {
 			pathExistenceVertices.add(pe);
 		}

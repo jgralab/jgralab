@@ -29,7 +29,7 @@ public class TemporaryEdgeImpl extends EdgeImpl implements TemporaryEdge {
 	protected TemporaryEdgeImpl(int anId, Graph graph, Vertex alpha,
 			Vertex omega) {
 		super(anId, graph, alpha, omega);
-		this.attributes = new HashMap<String, Object>();
+		this.attributes = new HashMap<>();
 		((GraphBaseImpl) graph).addEdge(this, alpha, omega);
 	}
 
@@ -37,7 +37,7 @@ public class TemporaryEdgeImpl extends EdgeImpl implements TemporaryEdge {
 			EdgeClass preliminaryType, Vertex alpha, Vertex omega) {
 		super(anId, graph, alpha, omega);
 		this.preliminaryType = preliminaryType;
-		this.attributes = new HashMap<String, Object>();
+		this.attributes = new HashMap<>();
 		((GraphBaseImpl) graph).addEdge(this, alpha, omega);
 	}
 

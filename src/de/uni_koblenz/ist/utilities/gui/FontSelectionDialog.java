@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2013 Institute for Software Technology
+ * Copyright (C) 2006-2014 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -136,7 +136,7 @@ public class FontSelectionDialog extends JDialog {
 		Arrays.sort(availableFamilies);
 
 		if (monospacedOnly) {
-			ArrayList<String> l = new ArrayList<String>();
+			ArrayList<String> l = new ArrayList<>();
 			FontRenderContext frc = new FontRenderContext(
 					AffineTransform.getTranslateInstance(0, 0), false, false);
 			for (String fam : availableFamilies) {

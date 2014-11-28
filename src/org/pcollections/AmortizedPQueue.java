@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2013 Institute for Software Technology
+ * Copyright (C) 2006-2014 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -52,7 +52,7 @@ import java.util.Iterator;
 @SuppressWarnings("deprecation")
 public class AmortizedPQueue<E> extends AbstractQueue<E> implements PQueue<E> {
 
-	private static final AmortizedPQueue<Object> EMPTY = new AmortizedPQueue<Object>();
+	private static final AmortizedPQueue<Object> EMPTY = new AmortizedPQueue<>();
 
 	@SuppressWarnings("unchecked")
 	public static <E> AmortizedPQueue<E> empty() {
@@ -139,23 +139,23 @@ public class AmortizedPQueue<E> extends AbstractQueue<E> implements PQueue<E> {
 			// If there's nothing on front, dump back onto front
 			// (as stacks, this goes in reverse like we want)
 			// and take one off.
-			return new AmortizedPQueue<E>(Empty.<E> stack().plusAll(back),
+			return new AmortizedPQueue<>(Empty.<E> stack().plusAll(back),
 					Empty.<E> stack()).minus();
 		} else if (fsize == 1) {
 			// If there's one element on front, dump back onto front,
 			// but now we've already removed the head.
-			return new AmortizedPQueue<E>(Empty.<E> stack().plusAll(back),
+			return new AmortizedPQueue<>(Empty.<E> stack().plusAll(back),
 					Empty.<E> stack());
 		} else {
 			// If there's more than one on front, we pop one off.
-			return new AmortizedPQueue<E>(front.minus(0), back);
+			return new AmortizedPQueue<>(front.minus(0), back);
 		}
 	}
 
 	/* Worst-case O(1) */
 	@Override
 	public AmortizedPQueue<E> plus(E e) {
-		return new AmortizedPQueue<E>(this, e);
+		return new AmortizedPQueue<>(this, e);
 	}
 
 	/* Worst-case O(k) */
@@ -195,7 +195,7 @@ public class AmortizedPQueue<E> extends AbstractQueue<E> implements PQueue<E> {
 	}
 
 	public static void main(String[] args) {
-		AmortizedPQueue<Integer> queue = new AmortizedPQueue<Integer>();
+		AmortizedPQueue<Integer> queue = new AmortizedPQueue<>();
 
 		queue = queue.plus(1).minus().minus().plus(2).plus(3).plus(4).plus(5)
 				.minus().plus(6).plus(7);

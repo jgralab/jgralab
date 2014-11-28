@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2013 Institute for Software Technology
+ * Copyright (C) 2006-2014 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -65,7 +65,8 @@ public class SimpleDeclarationEvaluator extends
 	 * @param vertex
 	 *            the vertex which gets evaluated by this VertexEvaluator
 	 */
-	public SimpleDeclarationEvaluator(SimpleDeclaration vertex, GreqlQueryImpl query) {
+	public SimpleDeclarationEvaluator(SimpleDeclaration vertex,
+			GreqlQueryImpl query) {
 		super(vertex, query);
 	}
 
@@ -101,8 +102,8 @@ public class SimpleDeclarationEvaluator extends
 
 		// Calculate the costs for the type definition
 		VertexEvaluator<? extends Expression> typeExprEval = query
-				.getVertexEvaluator(simpleDecl
-						.getFirstIsTypeExprOfIncidence().getAlpha());
+				.getVertexEvaluator(simpleDecl.getFirstIsTypeExprOfIncidence()
+						.getAlpha());
 
 		long typeCosts = typeExprEval.getCurrentSubtreeEvaluationCosts();
 
@@ -125,8 +126,8 @@ public class SimpleDeclarationEvaluator extends
 
 	@Override
 	public void calculateNeededAndDefinedVariables() {
-		neededVariables = new HashSet<Variable>();
-		definedVariables = new HashSet<Variable>();
+		neededVariables = new HashSet<>();
+		definedVariables = new HashSet<>();
 		IsDeclaredVarOf varInc = vertex
 				.getFirstIsDeclaredVarOfIncidence(EdgeDirection.IN);
 		while (varInc != null) {
@@ -148,9 +149,8 @@ public class SimpleDeclarationEvaluator extends
 	public long calculateEstimatedCardinality() {
 		SimpleDeclaration decl = getVertex();
 		VertexEvaluator<? extends Expression> typeExprEval = query
-				.getVertexEvaluator(decl
-						.getFirstIsTypeExprOfIncidence(EdgeDirection.IN)
-						.getAlpha());
+				.getVertexEvaluator(decl.getFirstIsTypeExprOfIncidence(
+						EdgeDirection.IN).getAlpha());
 		long singleCardinality = typeExprEval.getEstimatedCardinality();
 		long wholeCardinality = singleCardinality
 				* getDefinedVariables().size();

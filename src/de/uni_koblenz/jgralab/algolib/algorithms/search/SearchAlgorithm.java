@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2013 Institute for Software Technology
+ * Copyright (C) 2006-2014 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -225,7 +225,7 @@ public abstract class SearchAlgorithm extends StructureOrientedAlgorithm
 	 */
 	public SearchAlgorithm withParent() {
 		checkStateForSettingParameters();
-		parent = new ArrayVertexMarker<Edge>(graph);
+		parent = new ArrayVertexMarker<>(graph);
 		return this;
 
 	}
@@ -379,13 +379,13 @@ public abstract class SearchAlgorithm extends StructureOrientedAlgorithm
 	@Override
 	public Permutation<Vertex> getVertexOrder() {
 		checkStateForResult();
-		return new ArrayPermutation<Vertex>(vertexOrder);
+		return new ArrayPermutation<>(vertexOrder);
 	}
 
 	@Override
 	public Permutation<Edge> getEdgeOrder() {
 		checkStateForResult();
-		return new ArrayPermutation<Edge>(edgeOrder);
+		return new ArrayPermutation<>(edgeOrder);
 	}
 
 	/**

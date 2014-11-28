@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2013 Institute for Software Technology
+ * Copyright (C) 2006-2014 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -227,14 +227,13 @@ public class FloydAlgorithm extends StructureOrientedAlgorithm implements
 	@Override
 	public BinaryDoubleFunction<Vertex, Vertex> getDistances() {
 		checkStateForResult();
-		return new ArrayBinaryDoubleFunction<Vertex>(weightedDistance,
-				indexMapping);
+		return new ArrayBinaryDoubleFunction<>(weightedDistance, indexMapping);
 	}
 
 	@Override
 	public BinaryFunction<Vertex, Vertex, Edge> getSuccessor() {
 		checkStateForResult();
-		return new ArrayBinaryFunction<Vertex, Edge>(successor, indexMapping);
+		return new ArrayBinaryFunction<>(successor, indexMapping);
 	}
 
 	public Permutation<Vertex> getVertexOrder() {

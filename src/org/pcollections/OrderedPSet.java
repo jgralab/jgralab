@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2013 Institute for Software Technology
+ * Copyright (C) 2006-2014 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -39,7 +39,7 @@ import java.util.Iterator;
 
 @SuppressWarnings("deprecation")
 public class OrderedPSet<E> implements POrderedSet<E> {
-	private static final OrderedPSet<Object> EMPTY = new OrderedPSet<Object>(
+	private static final OrderedPSet<Object> EMPTY = new OrderedPSet<>(
 			Empty.set(), Empty.vector());
 
 	@SuppressWarnings("unchecked")
@@ -88,7 +88,7 @@ public class OrderedPSet<E> implements POrderedSet<E> {
 		if (contents.contains(e)) {
 			return this;
 		}
-		return new OrderedPSet<E>(contents.plus(e), order.plus(e));
+		return new OrderedPSet<>(contents.plus(e), order.plus(e));
 	}
 
 	@Override
@@ -105,7 +105,7 @@ public class OrderedPSet<E> implements POrderedSet<E> {
 		if (!contents.contains(e)) {
 			return this;
 		}
-		return new OrderedPSet<E>(contents.minus(e), order.minus(e));
+		return new OrderedPSet<>(contents.minus(e), order.minus(e));
 	}
 
 	@Override

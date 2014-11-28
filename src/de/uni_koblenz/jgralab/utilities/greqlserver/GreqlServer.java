@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2013 Institute for Software Technology
+ * Copyright (C) 2006-2014 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -67,7 +67,7 @@ import de.uni_koblenz.jgralab.utilities.tg2dot.Tg2Dot;
 public class GreqlServer extends Thread {
 
 	private static Thread clientHandlerLoop;
-	private static HashSet<GreqlServer> clients = new HashSet<GreqlServer>();
+	private static HashSet<GreqlServer> clients = new HashSet<>();
 
 	private final Socket socket;
 	private final BufferedReader in;

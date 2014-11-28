@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  * 
- * Copyright (C) 2006-2013 Institute for Software Technology
+ * Copyright (C) 2006-2014 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  * 
@@ -162,7 +162,7 @@ public class GreqlQueryImpl extends GreqlQuery implements
 						queryGraph);
 				// dertermine all nodes reachable from the root
 				// GreqlExpression vertex
-				Queue<Vertex> q = new LinkedList<Vertex>();
+				Queue<Vertex> q = new LinkedList<>();
 				q.offer(queryGraph.getFirstGreqlExpression());
 				while (!q.isEmpty()) {
 					Vertex v = q.poll();
@@ -175,7 +175,7 @@ public class GreqlQueryImpl extends GreqlQuery implements
 					}
 				}
 				// collect unconnected nodes
-				List<Vertex> orphans = new ArrayList<Vertex>();
+				List<Vertex> orphans = new ArrayList<>();
 				for (Vertex v : queryGraph.vertices()) {
 					if (!reachables.isMarked(v)) {
 						orphans.add(v);
@@ -230,7 +230,7 @@ public class GreqlQueryImpl extends GreqlQuery implements
 							.forName("de.uni_koblenz.jgralab.utilities.tg2dot.Tg2Dot");
 				}
 				t2d = tg2DotClass.newInstance();
-				tg2DotReference = new SoftReference<Object>(t2d);
+				tg2DotReference = new SoftReference<>(t2d);
 			}
 			tg2DotClass.getMethod("setGraph", Graph.class).invoke(t2d, graph);
 			tg2DotClass.getMethod("setOutputFile", String.class).invoke(t2d,

@@ -109,7 +109,7 @@ public class Tg2ArgoUml {
 
 	private boolean addEdgeClassGeneralizationAsComment = false;
 
-	private final Map<Domain, String> domain2id = new HashMap<Domain, String>();
+	private final Map<Domain, String> domain2id = new HashMap<>();
 
 	/**
 	 * Processes an TG-file as schema or a schema in a grUML graph to a XMI
@@ -333,7 +333,7 @@ public class Tg2ArgoUml {
 
 	private void createSchema(XMLStreamWriter writer, Schema schema)
 			throws XMLStreamException {
-		Map<Vertex, String> comment2id = new HashMap<Vertex, String>();
+		Map<Vertex, String> comment2id = new HashMap<>();
 
 		writer.writeStartElement(UML_NAMESPACE_URI, "Model");
 		writer.writeAttribute("xmi.id", schema.get_packagePrefix() + "."
@@ -396,7 +396,7 @@ public class Tg2ArgoUml {
 
 			attachCommentsAndConstraints(writer, pack, comment2id);
 
-			comment2id = new HashMap<Vertex, String>();
+			comment2id = new HashMap<>();
 
 			writer.writeStartElement(UML_NAMESPACE_URI,
 					"Namespace.ownedElement");
@@ -406,7 +406,7 @@ public class Tg2ArgoUml {
 			createDomain(writer, dom, comment2id);
 		}
 
-		Set<Edge> specializations = new HashSet<Edge>();
+		Set<Edge> specializations = new HashSet<>();
 
 		for (GraphElementClass gec : pack.get_graphelementclasses()) {
 			if (gec.isInstanceOf(VertexClass.VC)) {

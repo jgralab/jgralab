@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2013 Institute for Software Technology
+ * Copyright (C) 2006-2014 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -69,7 +69,7 @@ public final class RecordDomainImpl extends CompositeDomainImpl implements
 	/**
 	 * holds a list of the components of the record
 	 */
-	private final Map<String, RecordComponent> components = new TreeMap<String, RecordComponent>();
+	private final Map<String, RecordComponent> components = new TreeMap<>();
 
 	private final ClassLoader schemaClassLoader;
 
@@ -80,7 +80,8 @@ public final class RecordDomainImpl extends CompositeDomainImpl implements
 	 *            a list of the components of the record
 	 */
 	RecordDomainImpl(String sn, PackageImpl pkg,
-			Collection<RecordComponent> components, ClassLoader schemaClassLoader) {
+			Collection<RecordComponent> components,
+			ClassLoader schemaClassLoader) {
 		super(sn, pkg);
 		this.schemaClassLoader = schemaClassLoader;
 		if (components != null) {
@@ -142,8 +143,8 @@ public final class RecordDomainImpl extends CompositeDomainImpl implements
 					+ getQualifiedName();
 			try {
 				schemaClass = Class.forName(schemaClassName, true,
-						SchemaClassManager.instance(schemaClassLoader, getSchema()
-								.getQualifiedName()));
+						SchemaClassManager.instance(schemaClassLoader,
+								getSchema().getQualifiedName()));
 			} catch (ClassNotFoundException e) {
 				throw new SchemaClassAccessException(
 						"Can't load (generated) schema class for RecordDomain '"

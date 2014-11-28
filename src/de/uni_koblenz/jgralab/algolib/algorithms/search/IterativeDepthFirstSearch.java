@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2013 Institute for Software Technology
+ * Copyright (C) 2006-2014 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -75,9 +75,9 @@ public class IterativeDepthFirstSearch extends DepthFirstSearch {
 	@Override
 	public void reset() {
 		super.reset();
-		parent = new ArrayVertexMarker<Edge>(graph);
-		remainingIncidences = new ArrayVertexMarker<Iterator<Edge>>(graph);
-		incompleteVertices = new Stack<Vertex>();
+		parent = new ArrayVertexMarker<>(graph);
+		remainingIncidences = new ArrayVertexMarker<>(graph);
+		incompleteVertices = new Stack<>();
 	}
 
 	@Override

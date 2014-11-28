@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2013 Institute for Software Technology
+ * Copyright (C) 2006-2014 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -38,12 +38,12 @@ package de.uni_koblenz.jgralab.schema;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.Vector;
 
 import org.pcollections.PSet;
 
@@ -68,7 +68,7 @@ public interface Schema extends Comparable<Schema> {
 	 * Reserved Java words that are not allowed as a name for any NamedElement
 	 * and/or Schema.
 	 */
-	public static final Set<String> RESERVED_JAVA_WORDS = new TreeSet<String>(
+	public static final Set<String> RESERVED_JAVA_WORDS = new TreeSet<>(
 			Arrays.asList(new String[] { "abstract", "continue", "for", "new",
 					"switch", "assert", "default", "goto", "package",
 					"synchronized", "boolean", "do", "if", "private", "this",
@@ -96,7 +96,7 @@ public interface Schema extends Comparable<Schema> {
 	 *            a {@link CodeGeneratorConfiguration} specifying the requested
 	 *            implementation variant
 	 */
-	public Vector<InMemoryJavaSourceFile> commit(
+	public ArrayList<InMemoryJavaSourceFile> commit(
 			CodeGeneratorConfiguration config);
 
 	/**

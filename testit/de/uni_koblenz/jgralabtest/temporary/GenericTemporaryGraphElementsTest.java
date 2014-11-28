@@ -269,7 +269,7 @@ public class GenericTemporaryGraphElementsTest {
 		assertEquals(v2_crossroad, e_street.getOmega());
 		assertEquals("Gandhi-Street", e_street.getAttribute("name"));
 		assertEquals(true, e_street.getAttribute("oneway"));
-		assertEquals((Double) 111.11, e_street.getAttribute("length"));
+		assertEquals(111.11, e_street.getAttribute("length"));
 	}
 
 	@Test
@@ -294,7 +294,7 @@ public class GenericTemporaryGraphElementsTest {
 	@Test
 	public void testConvertVertexWithRecordAttributeFail() {
 		schema.reopen();
-		ArrayList<RecordComponent> recordComponents = new ArrayList<RecordComponent>();
+		ArrayList<RecordComponent> recordComponents = new ArrayList<>();
 		recordComponents.add(new RecordComponent("test", schema
 				.getStringDomain()));
 		RecordDomain d = schema.createRecordDomain("NewRecordDomain",

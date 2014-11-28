@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2013 Institute for Software Technology
+ * Copyright (C) 2006-2014 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -46,7 +46,7 @@ import de.uni_koblenz.jgralab.schema.EdgeClass;
 
 /**
  * This class provides an Iterable for the Vertices adjacent to a given vertex.
- *
+ * 
  * @author ist@uni-koblenz.de
  */
 public class NeighbourIterable<E extends Edge, V extends Vertex> implements
@@ -58,7 +58,7 @@ public class NeighbourIterable<E extends Edge, V extends Vertex> implements
 	 * Creates an Iterable for all neighbours adjacent to <code>v</code> via
 	 * edges of the specified edgeclass <code>ec</code> and
 	 * <code>orientation</code>.
-	 *
+	 * 
 	 * @param v
 	 *            a Vertex
 	 * @param ec
@@ -70,7 +70,7 @@ public class NeighbourIterable<E extends Edge, V extends Vertex> implements
 			VertexFilter<V> filter) {
 		assert (v != null) && v.isValid();
 		this.filter = filter;
-		it = new IncidenceIterable<E>(v, ec, dir);
+		it = new IncidenceIterable<>(v, ec, dir);
 	}
 
 	class NeigbourIterator implements Iterator<V> {

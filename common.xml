@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- JGraLab - The Java Graph Laboratory                                      -->
 <!--                                                                          -->
-<!-- Copyright (C) 2006-2013 Institute for Software Technology                -->
+<!-- Copyright (C) 2006-2014 Institute for Software Technology                -->
 <!--                         University of Koblenz-Landau, Germany            -->
 <!--                         ist@uni-koblenz.de                               -->
 <!--                                                                          -->
@@ -123,12 +123,13 @@
 	</path>
 
 	<!-- properties for the target "compile" -->
+
 	<!-- includes for compiling sources -->
 	<property name="compileincludes" value="" />
 
 	<!-- excludes for compiling sources -->
 	<property name="compileexcludes" value="" />
-	
+
 	<!-- excludes package-info.java -->
 	<property name="no_package_info" value="**/package-info.java" />
 
@@ -140,6 +141,8 @@
 	<property name="testcompileexcludes" value="" />
 
 	<!-- Settings for javac -->
+	<property name="javac.source" value="1.7" />
+	<property name="javac.target" value="1.7" />
 	<property name="javac.encoding" value="UTF8" />
 
 	<!-- debug infos in compiled sources -->
@@ -266,7 +269,11 @@
 	<!-- compile -->
 	<!-- compiles all Java sources in $src.dir and puts teh generated classes into $classes.dir-->
 	<target name="compile" depends="createClassesDir,generateschema">
-		<javac fork="true"
+		<javac
+			fork="true"
+			source="${javac.source}"
+			target="${javac.target}"
+			encoding="${javac.encoding}"
 			srcdir="${src.dir}" 
 			includes="${compileincludes}"
 			excludes="${compileexcludes}"
@@ -277,7 +284,7 @@
 			includeantruntime="false"
 			debug="${debug}"
 			debuglevel="${debuglevel}"
-			encoding="${javac.encoding}">
+		>
 			<compilerarg line="-Xlint:unchecked" />
 		</javac>
 	</target>
@@ -323,14 +330,16 @@
 		<echo>Compiling test case classes...</echo>
 		<javac 
 			fork="true"
+			source="${javac.source}"
+			target="${javac.target}"
+			encoding="${javac.encoding}"
 			srcdir="${testcases.dir}"
 			destdir="${testclasses.dir}"
 			includes="${testcompileincludes}"
 			excludes="${testcompileexcludes}"
-			memoryinitialsize="512m"
-			memorymaximumsize="${maxmemsize}"
+		    memoryinitialsize="${minmemsize}" 
+		    memorymaximumsize="${maxmemsize}"
 			classpathref="testclasspath"
-			encoding="${javac.encoding}"
 		/>
 	</target>
 
@@ -366,13 +375,13 @@
 			<attribute name="Main-Class" value="${main.fq}" />
 		</manifest>
 	</target>
-	
+
 	<target name="merge_manifest" >
 		<copy file="${manifest.file}" tofile="${manifest.tmp.file}" />
 		<taskdef name="merge_manifest" classname="de.uni_koblenz.ist.utilities.ant.MergeManifest" classpathref="classpath" />
 		<merge_manifest dest="${tmp.dir}" manifest="${manifest.tmp.file}" />
 	</target>
-	
+
 	<!-- TODO create target merge_manifest -->
 
 	<!-- jar -->
@@ -424,14 +433,17 @@
 	<target name="document">
 		<delete dir="${doc.dir}/html" />
 		<mkdir dir="${doc.dir}/html" />
-		<javadoc sourcepath="${src.dir}"
+		<javadoc 
+			source="${javac.source}"
+			target="${javac.target}"
+			encoding="${javac.encoding}"
+			sourcepath="${src.dir}"
 			destdir="${doc.dir}/html"
 			packagenames="${basePackage}.*"
 			excludepackagenames="${documentexcludes}"
 			access="${document.access}"
 			maxmemory="${maxmemsize}"
-			classpathref="classpath"
-			encoding="${javac.encoding}" />
+			classpathref="classpath" />
 		<zip destfile="${doc.dir}/${projectname}_api.zip" basedir="${doc.dir}/html" compress="true" />
 	</target>
 
@@ -447,7 +459,7 @@
 			<arg line="-i ${project.dir} -l ${license.file}" />
 		</java>
 	</target>
-	
+
 	<target name="createMissingPackageDocumentation">
 		<taskdef name="create-pi" classname="de.uni_koblenz.ist.utilities.ant.CreateMissingPackageDocumentation" classpathref="classpath" />
 		<create-pi srcDir="${src.dir}" />

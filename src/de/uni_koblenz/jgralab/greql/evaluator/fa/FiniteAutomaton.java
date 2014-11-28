@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2013 Institute for Software Technology
+ * Copyright (C) 2006-2014 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -78,8 +78,7 @@ public abstract class FiniteAutomaton {
 	 * prints this automaton as ascii-stream
 	 */
 	public void printAscii() {
-		logger
-				.info("|||||||||||||||||||||||  Automaton: |||||||||||||||||||||||||");
+		logger.info("|||||||||||||||||||||||  Automaton: |||||||||||||||||||||||||");
 		Iterator<State> stateIter = stateList.iterator();
 		while (stateIter.hasNext()) {
 			State currentState = stateIter.next();
@@ -99,8 +98,7 @@ public abstract class FiniteAutomaton {
 			}
 			logger.info("\n--------------------------");
 		}
-		logger
-				.info("||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| ");
+		logger.info("||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| ");
 	}
 
 	public void printAscii2() {
@@ -137,9 +135,9 @@ public abstract class FiniteAutomaton {
 	 * creates a new instance
 	 */
 	public FiniteAutomaton() {
-		finalStates = new ArrayList<State>();
-		stateList = new ArrayList<State>();
-		transitionList = new ArrayList<Transition>();
+		finalStates = new ArrayList<>();
+		stateList = new ArrayList<>();
+		transitionList = new ArrayList<>();
 	}
 
 	/**

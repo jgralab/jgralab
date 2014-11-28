@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2013 Institute for Software Technology
+ * Copyright (C) 2006-2014 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -52,7 +52,7 @@ class GraphElementCellRenderer extends DefaultTreeCellRenderer {
 
 	private static final long serialVersionUID = -1698523886275339684L;
 
-	private static final Map<String, ImageIcon> ICON_CACHE = new HashMap<String, ImageIcon>();
+	private static final Map<String, ImageIcon> ICON_CACHE = new HashMap<>();
 
 	private static ImageIcon getIcon(String name) {
 		ImageIcon icon = ICON_CACHE.get(name);

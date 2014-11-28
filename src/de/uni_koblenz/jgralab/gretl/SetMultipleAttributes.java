@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2013 Institute for Software Technology
+ * Copyright (C) 2006-2014 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -96,8 +96,7 @@ public class SetMultipleAttributes extends
 
 	private List<PMap<Object, Object>> splice(
 			PMap<Object, PSequence<Object>> arch2listOfAttrVals) {
-		List<PMap<Object, Object>> out = new ArrayList<PMap<Object, Object>>(
-				attributes.length);
+		List<PMap<Object, Object>> out = new ArrayList<>(attributes.length);
 
 		for (int i = 0; i < attributes.length; i++) {
 			out.add(Empty.orderedMap());

@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2013 Institute for Software Technology
+ * Copyright (C) 2006-2014 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -66,31 +66,26 @@ import de.uni_koblenz.jgralab.schema.VertexClass;
  * 
  */
 public class TGMerge {
-	private List<Graph> additionalGraphs = new LinkedList<Graph>();
-	private List<AbstractGraphMarker<?>> additionalGraphMarkers = new LinkedList<AbstractGraphMarker<?>>();
+	private List<Graph> additionalGraphs = new LinkedList<>();
+	private List<AbstractGraphMarker<?>> additionalGraphMarkers = new LinkedList<>();
 
 	private Graph targetGraph;
-	private Map<Vertex, Vertex> old2NewVertices = new HashMap<Vertex, Vertex>();
-	private Map<Vertex, Vertex> new2OldVertices = new HashMap<Vertex, Vertex>();
-	private Map<Edge, Edge> new2OldEdges = new HashMap<Edge, Edge>();
-
-	/**
-	 * Indicates, if schema versions differ between graphs
-	 */
-	private boolean schemaVersionDifference = false;
+	private Map<Vertex, Vertex> old2NewVertices = new HashMap<>();
+	private Map<Vertex, Vertex> new2OldVertices = new HashMap<>();
+	private Map<Edge, Edge> new2OldEdges = new HashMap<>();
 
 	/**
 	 * Remembers the positions of all copied graph elements in their original
 	 * graph to speed up sorting of vertices and edges.
 	 */
-	private Map<GraphElement<?, ?>, Integer> copiedGraphPositions = new HashMap<GraphElement<?, ?>, Integer>();
+	private Map<GraphElement<?, ?>, Integer> copiedGraphPositions = new HashMap<>();
 
 	/**
 	 * Remembers the positions of all target graph elements before the elements
 	 * of another graph are merged into to speed up sorting of vertices and
 	 * edges.
 	 */
-	private Map<GraphElement<?, ?>, Integer> targetGraphPositions = new HashMap<GraphElement<?, ?>, Integer>();
+	private Map<GraphElement<?, ?>, Integer> targetGraphPositions = new HashMap<>();
 
 	private static Logger logger = JGraLab.getLogger(TGMerge.class);
 
@@ -134,14 +129,10 @@ public class TGMerge {
 				throw new RuntimeException(
 						"It's only possible to merge additionalGraphs conforming to one schema.");
 			}
-
-			if (s != g.getSchema()) {
-				schemaVersionDifference = true;
-			}
 		}
 
 		targetGraph = graphs[0];
-		additionalGraphs = new LinkedList<Graph>();
+		additionalGraphs = new LinkedList<>();
 		for (int i = 1; i < graphs.length; i++) {
 			additionalGraphs.add(graphs[i]);
 		}
@@ -156,7 +147,7 @@ public class TGMerge {
 
 		String outputFilename = cmdl.getOptionValue('o').trim();
 
-		List<Graph> graphs = new LinkedList<Graph>();
+		List<Graph> graphs = new LinkedList<>();
 		for (String g : cmdl.getArgs()) {
 			graphs.add(GraphIO.loadGraphFromFile(g,
 					new ConsoleProgressFunction("Loading")));

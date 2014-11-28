@@ -74,11 +74,11 @@ public class DFSTestVisitor extends SearchTestVisitor implements DFSVisitor {
 	@Override
 	public void reset() {
 		super.reset();
-		forwardArcs = new LinkedList<Edge>();
-		backwardArcs = new LinkedList<Edge>();
-		crosslinks = new LinkedList<Edge>();
-		leftTreeEdges = new LinkedList<Edge>();
-		leftVertices = new LinkedList<Vertex>();
+		forwardArcs = new LinkedList<>();
+		backwardArcs = new LinkedList<>();
+		crosslinks = new LinkedList<>();
+		leftTreeEdges = new LinkedList<>();
+		leftVertices = new LinkedList<>();
 	}
 
 	@Override
@@ -86,35 +86,35 @@ public class DFSTestVisitor extends SearchTestVisitor implements DFSVisitor {
 		super.performPostTests();
 
 		// check if all visited vertices have been left
-		Set<Vertex> vertexSet = new HashSet<Vertex>();
+		Set<Vertex> vertexSet = new HashSet<>();
 		vertexSet.addAll(vertices);
-		Set<Vertex> leftVertexSet = new HashSet<Vertex>();
+		Set<Vertex> leftVertexSet = new HashSet<>();
 		leftVertexSet.addAll(leftVertices);
 		assertEquals("Not all visited vertices have been left.", vertexSet,
 				leftVertexSet);
 
 		// check if all visited edges have been left
-		Set<Edge> treeEdgeSet = new HashSet<Edge>();
+		Set<Edge> treeEdgeSet = new HashSet<>();
 		treeEdgeSet.addAll(treeEdges);
-		Set<Edge> leftTreeEdgeSet = new HashSet<Edge>();
+		Set<Edge> leftTreeEdgeSet = new HashSet<>();
 		leftTreeEdgeSet.addAll(leftTreeEdges);
 		assertEquals("Not all visited tree edges have been left.", treeEdgeSet,
 				leftTreeEdgeSet);
 
 		// check if forward arcs have only been visited once
-		Set<Edge> forwardArcSet = new HashSet<Edge>();
+		Set<Edge> forwardArcSet = new HashSet<>();
 		forwardArcSet.addAll(forwardArcs);
 		assertEquals("Some forward arcs have been visited multiple times.",
 				forwardArcSet.size(), forwardArcs.size());
 
 		// check if backward arcs have only been visited once
-		Set<Edge> backwardArcSet = new HashSet<Edge>();
+		Set<Edge> backwardArcSet = new HashSet<>();
 		backwardArcSet.addAll(backwardArcs);
 		assertEquals("Some backward arcs have been visited multiple times.",
 				backwardArcSet.size(), backwardArcs.size());
 
 		// check if crosslinks have only been visited once
-		Set<Edge> crosslinkSet = new HashSet<Edge>();
+		Set<Edge> crosslinkSet = new HashSet<>();
 		crosslinkSet.addAll(crosslinks);
 		assertEquals("Some crosslinks have been visited multiple times.",
 				crosslinkSet.size(), crosslinks.size());
@@ -122,9 +122,9 @@ public class DFSTestVisitor extends SearchTestVisitor implements DFSVisitor {
 		// check if the intersection of the different frond sets and the
 		// complete frond set is empty and their union is identical to
 		// the complete frond set
-		Set<Edge> frondSet = new HashSet<Edge>();
+		Set<Edge> frondSet = new HashSet<>();
 		frondSet.addAll(fronds);
-		Set<Edge> unionSet = new HashSet<Edge>();
+		Set<Edge> unionSet = new HashSet<>();
 		unionSet.addAll(forwardArcSet);
 		unionSet.addAll(backwardArcSet);
 		unionSet.addAll(crosslinkSet);

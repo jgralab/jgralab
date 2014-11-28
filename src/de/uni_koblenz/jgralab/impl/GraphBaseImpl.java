@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2013 Institute for Software Technology
+ * Copyright (C) 2006-2014 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -138,7 +138,7 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 	protected FreeIndexList freeEdgeList;
 
 	// ------------- TRAVERSAL CONTEXT -------------
-	private final ThreadLocal<TraversalContext> tc = new ThreadLocal<TraversalContext>();
+	private final ThreadLocal<TraversalContext> tc = new ThreadLocal<>();
 
 	// ------------- UNSET ATTRIBUTES --------------
 	protected BitSet setAttributes;
@@ -588,7 +588,7 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 	 */
 	@Override
 	public final Iterable<Edge> edges() {
-		return new EdgeIterable<Edge>(this);
+		return new EdgeIterable<>(this);
 	}
 
 	/*
@@ -600,7 +600,7 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 	 */
 	@Override
 	public final Iterable<Edge> edges(EdgeClass edgeClass) {
-		return new EdgeIterable<Edge>(this, edgeClass);
+		return new EdgeIterable<>(this, edgeClass);
 	}
 
 	/**
@@ -1367,7 +1367,7 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 	 */
 	@Override
 	public final Iterable<Vertex> vertices() {
-		return new VertexIterable<Vertex>(this, null, null);
+		return new VertexIterable<>(this, null, null);
 	}
 
 	/*
@@ -1379,7 +1379,7 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 	 */
 	@Override
 	public final Iterable<Vertex> vertices(VertexFilter<Vertex> filter) {
-		return new VertexIterable<Vertex>(this, null, filter);
+		return new VertexIterable<>(this, null, filter);
 	}
 
 	/*
@@ -1390,7 +1390,7 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 	 */
 	@Override
 	public final Iterable<Vertex> vertices(VertexClass vertexClass) {
-		return new VertexIterable<Vertex>(this, vertexClass, null);
+		return new VertexIterable<>(this, vertexClass, null);
 	}
 
 	/*
@@ -1402,7 +1402,7 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 	@Override
 	public final Iterable<Vertex> vertices(VertexClass vertexClass,
 			VertexFilter<Vertex> filter) {
-		return new VertexIterable<Vertex>(this, vertexClass, filter);
+		return new VertexIterable<>(this, vertexClass, filter);
 	}
 
 	/*
@@ -1791,7 +1791,7 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 			throw new IllegalArgumentException("Listener must not be null");
 		}
 		if (graphChangeListeners == null) {
-			graphChangeListeners = new ArrayList<GraphChangeListener>();
+			graphChangeListeners = new ArrayList<>();
 		}
 		if (graphChangeListeners.contains(l)) {
 			throw new IllegalStateException("Listener is already registered");
@@ -1823,12 +1823,12 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 	protected List<GraphStructureChangedListener> graphStructureChangedListeners;
 	{
 		graphStructureChangedListenersWithAutoRemoval = null;
-		graphStructureChangedListeners = new ArrayList<GraphStructureChangedListener>();
+		graphStructureChangedListeners = new ArrayList<>();
 	}
 
 	private final void lazyCreateGraphStructureChangedListenersWithAutoRemoval() {
 		if (graphStructureChangedListenersWithAutoRemoval == null) {
-			graphStructureChangedListenersWithAutoRemoval = new LinkedList<WeakReference<GraphStructureChangedListener>>();
+			graphStructureChangedListenersWithAutoRemoval = new LinkedList<>();
 		}
 	}
 
@@ -1839,8 +1839,7 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 		if (newListener instanceof GraphStructureChangedListenerWithAutoRemove) {
 			lazyCreateGraphStructureChangedListenersWithAutoRemoval();
 			graphStructureChangedListenersWithAutoRemoval
-					.add(new WeakReference<GraphStructureChangedListener>(
-							newListener));
+					.add(new WeakReference<>(newListener));
 		} else {
 			graphStructureChangedListeners.add(newListener);
 		}

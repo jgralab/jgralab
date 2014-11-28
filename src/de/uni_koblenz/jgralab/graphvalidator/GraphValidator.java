@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2013 Institute for Software Technology
+ * Copyright (C) 2006-2014 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -104,11 +104,11 @@ public class GraphValidator {
 	 */
 	public SortedSet<MultiplicityConstraintViolation> validateMultiplicities(
 			EdgeClass ec) {
-		SortedSet<MultiplicityConstraintViolation> brokenConstraints = new TreeSet<MultiplicityConstraintViolation>();
+		SortedSet<MultiplicityConstraintViolation> brokenConstraints = new TreeSet<>();
 
 		int toMin = ec.getTo().getMin();
 		int toMax = ec.getTo().getMax();
-		Map<AttributedElement<?, ?>, Integer> badOutgoing = new HashMap<AttributedElement<?, ?>, Integer>();
+		Map<AttributedElement<?, ?>, Integer> badOutgoing = new HashMap<>();
 		for (Vertex v : graph.vertices(ec.getFrom().getVertexClass())) {
 			int degree = v.getDegree(ec, EdgeDirection.OUT);
 			if ((degree < toMin) || (degree > toMax)) {
@@ -124,7 +124,7 @@ public class GraphValidator {
 
 		int fromMin = ec.getFrom().getMin();
 		int fromMax = ec.getFrom().getMax();
-		Map<AttributedElement<?, ?>, Integer> badIncoming = new HashMap<AttributedElement<?, ?>, Integer>();
+		Map<AttributedElement<?, ?>, Integer> badIncoming = new HashMap<>();
 		for (Vertex v : graph.vertices(ec.getTo().getVertexClass())) {
 			int degree = v.getDegree(ec, EdgeDirection.IN);
 			if ((degree < fromMin) || (degree > fromMax)) {
@@ -151,7 +151,7 @@ public class GraphValidator {
 	 *         violation, sorted by their type
 	 */
 	public SortedSet<ConstraintViolation> validate() {
-		SortedSet<ConstraintViolation> brokenConstraints = new TreeSet<ConstraintViolation>();
+		SortedSet<ConstraintViolation> brokenConstraints = new TreeSet<>();
 
 		// Check if all multiplicities are correct
 		for (EdgeClass ec : graph.getGraphClass().getEdgeClasses()) {
@@ -159,7 +159,7 @@ public class GraphValidator {
 		}
 
 		// check if all greql constraints are met
-		List<AttributedElementClass<?, ?>> aecs = new ArrayList<AttributedElementClass<?, ?>>();
+		List<AttributedElementClass<?, ?>> aecs = new ArrayList<>();
 		aecs.add(graph.getSchema().getGraphClass());
 		aecs.addAll(graph.getSchema().getGraphClass().getVertexClasses());
 		aecs.addAll(graph.getSchema().getGraphClass().getEdgeClasses());
@@ -179,7 +179,7 @@ public class GraphValidator {
 	 */
 	public SortedSet<ConstraintViolation> validateConstraints(
 			AttributedElementClass<?, ?> aec) {
-		SortedSet<ConstraintViolation> brokenConstraints = new TreeSet<ConstraintViolation>();
+		SortedSet<ConstraintViolation> brokenConstraints = new TreeSet<>();
 		for (Constraint constraint : aec.getConstraints()) {
 			String query = constraint.getPredicate();
 			try {

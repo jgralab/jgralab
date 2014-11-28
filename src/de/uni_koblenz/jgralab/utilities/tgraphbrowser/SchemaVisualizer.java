@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2013 Institute for Software Technology
+ * Copyright (C) 2006-2014 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -216,14 +216,14 @@ public class SchemaVisualizer {
 			convertToTypeWithSubtypes(code, uniqueName);
 			for (Package p : subPackages) {
 				// get vertices of this package
-				ArrayList<VertexClass> verticesOfThisPackage = new ArrayList<VertexClass>();
+				ArrayList<VertexClass> verticesOfThisPackage = new ArrayList<>();
 				for (VertexClass vc : vertices) {
 					if (vc.getQualifiedName().startsWith(p.getQualifiedName())) {
 						verticesOfThisPackage.add(vc);
 					}
 				}
 				// get edges of this package
-				ArrayList<EdgeClass> edgesOfThisPackage = new ArrayList<EdgeClass>();
+				ArrayList<EdgeClass> edgesOfThisPackage = new ArrayList<>();
 				for (EdgeClass e : edges) {
 					if (e.getQualifiedName().startsWith(p.getQualifiedName())) {
 						edgesOfThisPackage.add(e);
@@ -269,10 +269,10 @@ public class SchemaVisualizer {
 		String var = createForVertex ? "Vertex" : "Edge";
 		createRootUl(code, var);
 		// unsetAEClasses saves the classes which have more than one superclass
-		ArrayList<GraphElementClass<?, ?>> unsetAEClasses = new ArrayList<GraphElementClass<?, ?>>();
+		ArrayList<GraphElementClass<?, ?>> unsetAEClasses = new ArrayList<>();
 		// unsetSuperClasses are the superclasses which still need the
 		// representation of the class from unsetAEClasses at the same index
-		ArrayList<Iterator<GraphElementClass<?, ?>>> unsetSuperClasses = new ArrayList<Iterator<GraphElementClass<?, ?>>>();
+		ArrayList<Iterator<GraphElementClass<?, ?>>> unsetSuperClasses = new ArrayList<>();
 		// iterate all classes
 		for (GraphElementClass<?, ?> aeclass : classes) {
 			// mark all Classes as selected

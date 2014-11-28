@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  * 
- * Copyright (C) 2006-2013 Institute for Software Technology
+ * Copyright (C) 2006-2014 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  * 
@@ -63,8 +63,8 @@ public class EvaluationEnvironment {
 
 	EvaluationEnvironment(boolean sequentially) {
 		// package scoped constructor, no construction from outside
-		inDegree = new HashMap<TaskHandle, Integer>();
-		tasks = new HashMap<TaskHandle, EvaluationTask>();
+		inDegree = new HashMap<>();
+		tasks = new HashMap<>();
 		this.sequentially = sequentially;
 	}
 

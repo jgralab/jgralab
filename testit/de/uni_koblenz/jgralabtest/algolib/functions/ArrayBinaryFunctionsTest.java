@@ -78,13 +78,11 @@ public class ArrayBinaryFunctionsTest {
 						|| parameter.equals("drei");
 			}
 		};
-		intFunction = new ArrayBinaryIntFunction<String>(intData, mapping);
-		longFunction = new ArrayBinaryLongFunction<String>(longData, mapping);
-		doubleFunction = new ArrayBinaryDoubleFunction<String>(doubleData,
-				mapping);
-		booleanFunction = new ArrayRelation<String>(booleanData, mapping);
-		objectFunction = new ArrayBinaryFunction<String, String>(objectData,
-				mapping);
+		intFunction = new ArrayBinaryIntFunction<>(intData, mapping);
+		longFunction = new ArrayBinaryLongFunction<>(longData, mapping);
+		doubleFunction = new ArrayBinaryDoubleFunction<>(doubleData, mapping);
+		booleanFunction = new ArrayRelation<>(booleanData, mapping);
+		objectFunction = new ArrayBinaryFunction<>(objectData, mapping);
 	}
 
 	@Test

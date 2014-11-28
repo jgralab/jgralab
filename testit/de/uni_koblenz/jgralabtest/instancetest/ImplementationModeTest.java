@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2013 Institute for Software Technology
+ * Copyright (C) 2006-2014 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -36,7 +36,6 @@ package de.uni_koblenz.jgralabtest.instancetest;
 
 import static org.junit.Assert.fail;
 
-import java.io.File;
 import java.util.Collection;
 
 import org.junit.AfterClass;
@@ -67,7 +66,7 @@ public class ImplementationModeTest extends InstanceTest {
 	final int V = 4;
 	final int E = 4;
 	final int N = 10;
-	private static final String filename = "./testit/testgraphs/implementationMode.tg";
+	private static final String filename = "./testit/testdata/implementationMode.tg";
 	MinimalGraph g;
 
 	@Before
@@ -92,7 +91,7 @@ public class ImplementationModeTest extends InstanceTest {
 
 	@AfterClass
 	public static void cleanup() {
-		new File(filename).delete();
+		// new File(filename).delete();
 	}
 
 	@Test

@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2013 Institute for Software Technology
+ * Copyright (C) 2006-2014 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -70,7 +70,7 @@ public final class HashPMap<K, V> extends AbstractMap<K, V> implements
 	 */
 	public static <K, V> HashPMap<K, V> empty(
 			final PMap<Integer, PSequence<Entry<K, V>>> intMap) {
-		return new HashPMap<K, V>(intMap.minusAll(intMap.keySet()), 0);
+		return new HashPMap<>(intMap.minusAll(intMap.keySet()), 0);
 	}
 
 	// // PRIVATE CONSTRUCTORS ////
@@ -100,8 +100,7 @@ public final class HashPMap<K, V> extends AbstractMap<K, V> implements
 
 				@Override
 				public Iterator<Entry<K, V>> iterator() {
-					return new SequenceIterator<Entry<K, V>>(intMap.values()
-							.iterator());
+					return new SequenceIterator<>(intMap.values().iterator());
 				}
 
 				// OVERRIDDEN METHODS OF AbstractSet //
@@ -142,6 +141,7 @@ public final class HashPMap<K, V> extends AbstractMap<K, V> implements
 	}
 
 	// // IMPLEMENTED METHODS OF PMap////
+	@Override
 	public HashPMap<K, V> plusAll(final Map<? extends K, ? extends V> map) {
 		HashPMap<K, V> result = this;
 		for (Entry<? extends K, ? extends V> entry : map.entrySet()) {
@@ -150,6 +150,7 @@ public final class HashPMap<K, V> extends AbstractMap<K, V> implements
 		return result;
 	}
 
+	@Override
 	public HashPMap<K, V> minusAll(final Collection<?> keys) {
 		HashPMap<K, V> result = this;
 		for (Object key : keys) {
@@ -158,18 +159,20 @@ public final class HashPMap<K, V> extends AbstractMap<K, V> implements
 		return result;
 	}
 
+	@Override
 	public HashPMap<K, V> plus(final K key, final V value) {
 		PSequence<Entry<K, V>> entries = getEntries(key.hashCode());
 		int size0 = entries.size(), i = keyIndexIn(entries, key);
 		if (i != -1) {
 			entries = entries.minus(i);
 		}
-		entries = entries.plus(new org.pcollections.SimpleImmutableEntry<K, V>(
-				key, value));
-		return new HashPMap<K, V>(intMap.plus(key.hashCode(), entries), size
+		entries = entries.plus(new org.pcollections.SimpleImmutableEntry<>(key,
+				value));
+		return new HashPMap<>(intMap.plus(key.hashCode(), entries), size
 				- size0 + entries.size());
 	}
 
+	@Override
 	public HashPMap<K, V> minus(final Object key) {
 		PSequence<Entry<K, V>> entries = getEntries(key.hashCode());
 		int i = keyIndexIn(entries, key);
@@ -178,11 +181,10 @@ public final class HashPMap<K, V> extends AbstractMap<K, V> implements
 		}
 		entries = entries.minus(i);
 		if (entries.size() == 0) {
-			return new HashPMap<K, V>(intMap.minus(key.hashCode()), size - 1);
+			return new HashPMap<>(intMap.minus(key.hashCode()), size - 1);
 		}
 		// otherwise replace hash entry with new smaller one:
-		return new HashPMap<K, V>(intMap.plus(key.hashCode(), entries),
-				size - 1);
+		return new HashPMap<>(intMap.plus(key.hashCode(), entries), size - 1);
 	}
 
 	// // PRIVATE UTILITIES ////
@@ -215,10 +217,12 @@ public final class HashPMap<K, V> extends AbstractMap<K, V> implements
 			this.i = i;
 		}
 
+		@Override
 		public boolean hasNext() {
 			return seq.size() > 0 || i.hasNext();
 		}
 
+		@Override
 		public E next() {
 			if (seq.size() == 0) {
 				seq = i.next();
@@ -228,6 +232,7 @@ public final class HashPMap<K, V> extends AbstractMap<K, V> implements
 			return result;
 		}
 
+		@Override
 		public void remove() {
 			throw new UnsupportedOperationException();
 		}

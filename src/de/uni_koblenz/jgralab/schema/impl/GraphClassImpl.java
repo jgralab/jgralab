@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2013 Institute for Software Technology
+ * Copyright (C) 2006-2014 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -54,13 +54,13 @@ import de.uni_koblenz.jgralab.schema.exception.SchemaException;
 public final class GraphClassImpl extends
 		AttributedElementClassImpl<GraphClass, Graph> implements GraphClass {
 
-	Map<String, VertexClass> vertexClasses = new HashMap<String, VertexClass>();
+	Map<String, VertexClass> vertexClasses = new HashMap<>();
 
-	DirectedAcyclicGraph<VertexClass> vertexClassDag = new DirectedAcyclicGraph<VertexClass>(
+	DirectedAcyclicGraph<VertexClass> vertexClassDag = new DirectedAcyclicGraph<>(
 			true);
-	Map<String, EdgeClass> edgeClasses = new HashMap<String, EdgeClass>();
+	Map<String, EdgeClass> edgeClasses = new HashMap<>();
 
-	DirectedAcyclicGraph<EdgeClass> edgeClassDag = new DirectedAcyclicGraph<EdgeClass>(
+	DirectedAcyclicGraph<EdgeClass> edgeClassDag = new DirectedAcyclicGraph<>(
 			true);
 
 	PVector<VertexClass> userDefinedVertexClasses;

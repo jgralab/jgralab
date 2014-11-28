@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2013 Institute for Software Technology
+ * Copyright (C) 2006-2014 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -157,12 +157,12 @@ public class Schema2SchemaGraph {
 	 * SetUp method, which instantiates all necessary resources.
 	 */
 	private void setUp() {
-		packageMap = new HashMap<de.uni_koblenz.jgralab.schema.Package, Package>();
-		attributedElementClassMap = new HashMap<de.uni_koblenz.jgralab.schema.AttributedElementClass<?, ?>, AttributedElementClass>();
-		domainMap = new HashMap<de.uni_koblenz.jgralab.schema.Domain, Domain>();
-		vertexClassMap = new HashMap<de.uni_koblenz.jgralab.schema.VertexClass, VertexClass>();
-		edgeClassMap = new HashMap<de.uni_koblenz.jgralab.schema.EdgeClass, EdgeClass>();
-		incidenceClassMap = new HashMap<de.uni_koblenz.jgralab.schema.IncidenceClass, IncidenceClass>();
+		packageMap = new HashMap<>();
+		attributedElementClassMap = new HashMap<>();
+		domainMap = new HashMap<>();
+		vertexClassMap = new HashMap<>();
+		edgeClassMap = new HashMap<>();
+		incidenceClassMap = new HashMap<>();
 
 		schemaGraph = GrumlSchema.instance().createSchemaGraph(
 				ImplementationType.STANDARD);

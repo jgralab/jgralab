@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2013 Institute for Software Technology
+ * Copyright (C) 2006-2014 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -70,8 +70,7 @@ public class PathSystem extends Function {
 		GraphMarker<PathSystemMarkerEntry>[] marker = new GraphMarker[dfa.stateList
 				.size()];
 		for (int i = 0; i < dfa.stateList.size(); i++) {
-			marker[i] = new GraphMarker<PathSystemMarkerEntry>(
-					startVertex.getGraph());
+			marker[i] = new GraphMarker<>(startVertex.getGraph());
 		}
 		Set<PathSystemMarkerEntry> leaves = markVerticesOfPathSystem(evaluator,
 				marker, startVertex, dfa);
@@ -128,8 +127,8 @@ public class PathSystem extends Function {
 			InternalGreqlEvaluator evaluator,
 			GraphMarker<PathSystemMarkerEntry>[] marker, Vertex startVertex,
 			DFA dfa) {
-		Set<PathSystemMarkerEntry> finalEntries = new HashSet<PathSystemMarkerEntry>();
-		Queue<PathSystemMarkerEntry> queue = new LinkedList<PathSystemMarkerEntry>();
+		Set<PathSystemMarkerEntry> finalEntries = new HashSet<>();
+		Queue<PathSystemMarkerEntry> queue = new LinkedList<>();
 		PathSystemMarkerEntry currentEntry = markVertex(marker, startVertex,
 				dfa.initialState, null /* no parent vertex */, null /*
 																	 * no parent
@@ -184,9 +183,9 @@ public class PathSystem extends Function {
 			GraphMarker<PathSystemMarkerEntry>[] marker, Vertex rootVertex,
 			Set<PathSystemMarkerEntry> leafEntries) {
 		de.uni_koblenz.jgralab.greql.types.PathSystem pathSystem = new de.uni_koblenz.jgralab.greql.types.PathSystem();
-		Map<Vertex, PathSystemNode[]> vertex2state2node = new HashMap<Vertex, PathSystemNode[]>();
-		Map<Vertex, PathSystemMarkerEntry[]> vertex2state2marker = new HashMap<Vertex, PathSystemMarkerEntry[]>();
-		Queue<PathSystemNode> nodesWithoutParentEdge = new LinkedList<PathSystemNode>();
+		Map<Vertex, PathSystemNode[]> vertex2state2node = new HashMap<>();
+		Map<Vertex, PathSystemMarkerEntry[]> vertex2state2marker = new HashMap<>();
+		Queue<PathSystemNode> nodesWithoutParentEdge = new LinkedList<>();
 		PathSystemMarkerEntry rootMarker = marker[0].getMark(rootVertex);
 		PathSystemNode root = pathSystem.setRootVertex(rootVertex,
 				rootMarker.state.number, rootMarker.state.isFinal);

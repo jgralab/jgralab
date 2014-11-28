@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2013 Institute for Software Technology
+ * Copyright (C) 2006-2014 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -120,7 +120,7 @@ public class RolenameCodeGenerator {
 			code.add(
 					"@Override",
 					"public java.util.List<? extends #vertexClassName#> remove_#rolename#() {",
-					"\tjava.util.List<#vertexClassName#> adjacences = new java.util.ArrayList<#vertexClassName#>();",
+					"\tjava.util.List<#vertexClassName#> adjacences = new java.util.ArrayList<>();",
 					"\t#edgeClassName# edge = (#edgeClassName#) getFirstIncidence(#edgeClassName#.EC, #dir#);",
 					"\twhile (edge != null) {",
 					"\t\t#edgeClassName# next = (#edgeClassName#) edge.getNextIncidence(#edgeClassName#.EC, #dir#);",
@@ -250,7 +250,7 @@ public class RolenameCodeGenerator {
 
 	public CodeBlock createRolenameMethods(boolean createClass) {
 		CodeList list = new CodeList();
-		Set<IncidenceClass> validFarICs = new HashSet<IncidenceClass>();
+		Set<IncidenceClass> validFarICs = new HashSet<>();
 		validFarICs.addAll(vertexClass.getValidFromFarIncidenceClasses());
 		validFarICs.addAll(vertexClass.getValidToFarIncidenceClasses());
 		for (IncidenceClass ic : validFarICs) {

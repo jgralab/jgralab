@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2013 Institute for Software Technology
+ * Copyright (C) 2006-2014 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -101,7 +101,7 @@ public class MapDomainTest extends CompositeDomainTest {
 		expectedSimpleName = expectedQualifiedName1;
 		// Initializing for the CompositeDomainTest
 		keyDomain3 = schema1.createListDomain(schema1.getDomain("Integer"));
-		List<RecordComponent> components = new ArrayList<RecordComponent>();
+		List<RecordComponent> components = new ArrayList<>();
 		components.add(new RecordComponent("aList", keyDomain3));
 		components.add(new RecordComponent("aMap", domain1));
 		valueDomain3 = schema1.createRecordDomain("Record1", components);

@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2013 Institute for Software Technology
+ * Copyright (C) 2006-2014 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -34,7 +34,7 @@
  */
 package de.uni_koblenz.jgralabtest.schema;
 
-import java.util.Vector;
+import java.util.ArrayList;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -195,7 +195,7 @@ public class EdgeClassImplTest extends GraphElementClassImplTest<EdgeClass> {
 	 */
 	@Test
 	public void testGetAllSubClasses() {
-		Vector<EdgeClass> expectedSubClasses = new Vector<EdgeClass>();
+		ArrayList<EdgeClass> expectedSubClasses = new ArrayList<>();
 		// TODO: This kind of creation of an edge class is not allowed
 		// Beispiel Kante
 		EdgeClass subClass = createEdgeClass("EdgeClassSubClass", edgeClass);
@@ -215,7 +215,7 @@ public class EdgeClassImplTest extends GraphElementClassImplTest<EdgeClass> {
 	 */
 	@Test
 	public void testGetAllSubClasses2() {
-		Vector<EdgeClass> expectedSubClasses = new Vector<EdgeClass>();
+		ArrayList<EdgeClass> expectedSubClasses = new ArrayList<>();
 
 		// Beispiel kante
 		EdgeClass subClass = createEdgeClass("EdgeClassSubClass", edgeClass);
@@ -240,7 +240,7 @@ public class EdgeClassImplTest extends GraphElementClassImplTest<EdgeClass> {
 	 */
 	@Test
 	public void testGetAllSubClasses3() {
-		Vector<EdgeClass> expectedSubClasses = new Vector<EdgeClass>();
+		ArrayList<EdgeClass> expectedSubClasses = new ArrayList<>();
 
 		// Beispiel kante
 		EdgeClass subClass = createEdgeClass("EdgeClassSubClass", edgeClass);
@@ -264,7 +264,7 @@ public class EdgeClassImplTest extends GraphElementClassImplTest<EdgeClass> {
 	@Test
 	public void testGetAllSubClasses4() {
 		// no subclasses expected
-		testGetAllSubClasses(new Vector<EdgeClass>());
+		testGetAllSubClasses(new ArrayList<EdgeClass>());
 	}
 
 	/**
@@ -275,7 +275,7 @@ public class EdgeClassImplTest extends GraphElementClassImplTest<EdgeClass> {
 	 */
 	@Test
 	public void testGetAllSuperClasses() {
-		Vector<EdgeClass> expectedSuperClasses = new Vector<EdgeClass>();
+		ArrayList<EdgeClass> expectedSuperClasses = new ArrayList<>();
 
 		// Normale Kante
 		EdgeClass superClass = createEdgeClass("EdgeClassSuperClass",
@@ -296,7 +296,7 @@ public class EdgeClassImplTest extends GraphElementClassImplTest<EdgeClass> {
 	 */
 	@Test
 	public void testGetAllSuperClasses2() {
-		Vector<EdgeClass> expectedSuperClasses = new Vector<EdgeClass>();
+		ArrayList<EdgeClass> expectedSuperClasses = new ArrayList<>();
 
 		// Normale Kanten
 		EdgeClass superClass = createEdgeClass("EdgeClassSuperClass", edgeClass);
@@ -320,7 +320,7 @@ public class EdgeClassImplTest extends GraphElementClassImplTest<EdgeClass> {
 	 */
 	@Test
 	public void testGetAllSuperClasses3() {
-		Vector<EdgeClass> expectedSuperClasses = new Vector<EdgeClass>();
+		ArrayList<EdgeClass> expectedSuperClasses = new ArrayList<>();
 
 		// Normale Kanten
 		EdgeClass superClass = createEdgeClass("VertexClassSuperClass",
@@ -345,7 +345,7 @@ public class EdgeClassImplTest extends GraphElementClassImplTest<EdgeClass> {
 	 */
 	@Test
 	public void testGetAllSuperClasses4() {
-		Vector<EdgeClass> expectedSuperClasses = new Vector<EdgeClass>();
+		ArrayList<EdgeClass> expectedSuperClasses = new ArrayList<>();
 
 		testGetAllSuperClasses(expectedSuperClasses);
 	}
@@ -394,7 +394,7 @@ public class EdgeClassImplTest extends GraphElementClassImplTest<EdgeClass> {
 	public void testGetDirectSubClasses() {
 
 		// Beispiel kante
-		Vector<EdgeClass> expectedSubClasses = new Vector<EdgeClass>();
+		ArrayList<EdgeClass> expectedSubClasses = new ArrayList<>();
 
 		EdgeClass subClass = createEdgeClass("EdgeClassSubClass", edgeClass);
 
@@ -413,7 +413,7 @@ public class EdgeClassImplTest extends GraphElementClassImplTest<EdgeClass> {
 	 */
 	@Test
 	public void testGetDirectSubClasses2() {
-		Vector<EdgeClass> expectedSubClasses = new Vector<EdgeClass>();
+		ArrayList<EdgeClass> expectedSubClasses = new ArrayList<>();
 
 		// Beispiel kante
 		EdgeClass subClass2 = createEdgeClass("EdgeClassSubClass2", edgeClass);
@@ -438,7 +438,7 @@ public class EdgeClassImplTest extends GraphElementClassImplTest<EdgeClass> {
 	 */
 	@Test
 	public void testGetDirectSubClasses3() {
-		Vector<EdgeClass> expectedSubClasses = new Vector<EdgeClass>();
+		ArrayList<EdgeClass> expectedSubClasses = new ArrayList<>();
 
 		// Beispiel kante
 		EdgeClass subClass = createEdgeClass("EdgeClassSubClass", edgeClass);
@@ -465,7 +465,7 @@ public class EdgeClassImplTest extends GraphElementClassImplTest<EdgeClass> {
 	 */
 	@Test
 	public void testGetDirectSubClasses4() {
-		testGetDirectSubClasses(new Vector<EdgeClass>());
+		testGetDirectSubClasses(new ArrayList<EdgeClass>());
 	}
 
 	/**
@@ -476,7 +476,7 @@ public class EdgeClassImplTest extends GraphElementClassImplTest<EdgeClass> {
 	 */
 	@Test
 	public void testGetDirectSuperClasses() {
-		Vector<EdgeClass> expectedSuperClasses = new Vector<EdgeClass>();
+		ArrayList<EdgeClass> expectedSuperClasses = new ArrayList<>();
 
 		// Normale Kante
 		EdgeClass superClass = createEdgeClass("EdgeClassSuperClass", edgeClass);
@@ -496,7 +496,7 @@ public class EdgeClassImplTest extends GraphElementClassImplTest<EdgeClass> {
 	 */
 	@Test
 	public void testGetDirectSuperClasses2() {
-		Vector<EdgeClass> expectedSuperClasses = new Vector<EdgeClass>();
+		ArrayList<EdgeClass> expectedSuperClasses = new ArrayList<>();
 
 		// Normale Kanten
 		EdgeClass superClass = createEdgeClass("EdgeClassSuperClass", edgeClass);
@@ -520,7 +520,7 @@ public class EdgeClassImplTest extends GraphElementClassImplTest<EdgeClass> {
 	 */
 	@Test
 	public void testGetDirectSuperClasses3() {
-		Vector<EdgeClass> expectedSuperClasses = new Vector<EdgeClass>();
+		ArrayList<EdgeClass> expectedSuperClasses = new ArrayList<>();
 
 		// Normale Kanten
 		EdgeClass superClass = createEdgeClass("EdgeClassSuperClass", edgeClass); // Direct
@@ -545,7 +545,7 @@ public class EdgeClassImplTest extends GraphElementClassImplTest<EdgeClass> {
 	 */
 	@Test
 	public void testGetDirectSuperClasses4() {
-		Vector<EdgeClass> expectedSuperClasses = new Vector<EdgeClass>();
+		ArrayList<EdgeClass> expectedSuperClasses = new ArrayList<>();
 
 		testGetDirectSuperClasses(expectedSuperClasses);
 	}

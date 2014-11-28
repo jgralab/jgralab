@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2013 Institute for Software Technology
+ * Copyright (C) 2006-2014 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -71,7 +71,7 @@ public class CreateSubgraph extends Transformation<Void> {
 	private TemplateGraph templateGraph = null;
 	private Object match;
 	private String matchText;
-	private Set<GraphElement<?, ?>> createdElements = new HashSet<GraphElement<?, ?>>();
+	private Set<GraphElement<?, ?>> createdElements = new HashSet<>();
 
 	public CreateSubgraph(Context c, String subgraphCreationText, Object match) {
 		super(c);
@@ -271,7 +271,7 @@ public class CreateSubgraph extends Transformation<Void> {
 	}
 
 	private void applyAttributeSetting(PSet<Object> matchCollection) {
-		List<Iterable<? extends GraphElement<?, ?>>> iterables = new LinkedList<Iterable<? extends GraphElement<?, ?>>>();
+		List<Iterable<? extends GraphElement<?, ?>>> iterables = new LinkedList<>();
 		iterables.add(templateGraph.getCreateVertexVertices());
 		iterables.add(templateGraph.getCreateEdgeEdges());
 

@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2013 Institute for Software Technology
+ * Copyright (C) 2006-2014 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -80,8 +80,7 @@ public class Context {
 	private static final Pattern QUERY_GRAPH_ALIAS_PATTERN = Pattern.compile(
 			"\\p{Space}*(#(\\p{Alnum}+)#\\p{Space}*).*", Pattern.DOTALL);
 
-	private final Map<String, Graph> sourceGraphs = new HashMap<String, Graph>(
-			1);
+	private final Map<String, Graph> sourceGraphs = new HashMap<>(1);
 	private GreqlQuery query = null;
 
 	Schema targetSchema = null;
@@ -120,16 +119,16 @@ public class Context {
 	 * Maps from {@link AttributedElementClass} to a map, mapping old elements
 	 * to their images. (zeta-reverse)
 	 */
-	private final Map<AttributedElementClass<?, ?>, PMap<Object, AttributedElement<?, ?>>> imgMap = new HashMap<AttributedElementClass<?, ?>, PMap<Object, AttributedElement<?, ?>>>();
+	private final Map<AttributedElementClass<?, ?>, PMap<Object, AttributedElement<?, ?>>> imgMap = new HashMap<>();
 
 	/**
 	 * Maps from {@link AttributedElementClass} to a map, mapping new elements
 	 * to the elements they were created for (their archetypes). (zeta)
 	 */
-	private final Map<AttributedElementClass<?, ?>, PMap<AttributedElement<?, ?>, Object>> archMap = new HashMap<AttributedElementClass<?, ?>, PMap<AttributedElement<?, ?>, Object>>();
+	private final Map<AttributedElementClass<?, ?>, PMap<AttributedElement<?, ?>, Object>> archMap = new HashMap<>();
 
-	private final Map<String, Object> greqlExtraVars = new HashMap<String, Object>();
-	private final Set<String> greqlImports = new HashSet<String>();
+	private final Map<String, Object> greqlExtraVars = new HashMap<>();
+	private final Set<String> greqlImports = new HashSet<>();
 
 	final void setGReQLVariable(String name, Object val) {
 		greqlExtraVars.put(name, val);
@@ -746,7 +745,7 @@ public class Context {
 		StringBuilder sb = new StringBuilder();
 		sb.append("using ");
 		boolean first = true;
-		for (String name : new TreeSet<String>(greqlMapping.keySet())) {
+		for (String name : new TreeSet<>(greqlMapping.keySet())) {
 			if (first) {
 				first = false;
 			} else {

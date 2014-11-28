@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2013 Institute for Software Technology
+ * Copyright (C) 2006-2014 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -54,7 +54,7 @@ import java.util.ListIterator;
 public final class ConsPStack<E> extends AbstractSequentialList<E> implements
 		PStack<E> {
 	// // STATIC FACTORY METHODS ////
-	private static final ConsPStack<Object> EMPTY = new ConsPStack<Object>();
+	private static final ConsPStack<Object> EMPTY = new ConsPStack<>();
 
 	/**
 	 * @param <E>
@@ -141,28 +141,34 @@ public final class ConsPStack<E> extends AbstractSequentialList<E> implements
 			int i = index;
 			ConsPStack<E> next = subList(index);
 
+			@Override
 			public boolean hasNext() {
 				return next.size > 0;
 			}
 
+			@Override
 			public boolean hasPrevious() {
 				return i > 0;
 			}
 
+			@Override
 			public int nextIndex() {
 				return index;
 			}
 
+			@Override
 			public int previousIndex() {
 				return index - 1;
 			}
 
+			@Override
 			public E next() {
 				E e = next.first;
 				next = next.rest;
 				return e;
 			}
 
+			@Override
 			public E previous() {
 				System.err
 						.println("ConsPStack.listIterator().previous() is inefficient, don't use it!");
@@ -170,14 +176,17 @@ public final class ConsPStack<E> extends AbstractSequentialList<E> implements
 				return next.first;
 			}
 
+			@Override
 			public void add(final E o) {
 				throw new UnsupportedOperationException();
 			}
 
+			@Override
 			public void remove() {
 				throw new UnsupportedOperationException();
 			}
 
+			@Override
 			public void set(final E o) {
 				throw new UnsupportedOperationException();
 			}
@@ -197,17 +206,19 @@ public final class ConsPStack<E> extends AbstractSequentialList<E> implements
 			return empty();
 		}
 		if (start == 0) {
-			return new ConsPStack<E>(first, rest.subList(0, end - 1));
+			return new ConsPStack<>(first, rest.subList(0, end - 1));
 		}
 		// otherwise, don't want the current element:
 		return rest.subList(start - 1, end - 1);
 	}
 
 	// // IMPLEMENTED METHODS OF PStack ////
+	@Override
 	public ConsPStack<E> plus(final E e) {
-		return new ConsPStack<E>(e, this);
+		return new ConsPStack<>(e, this);
 	}
 
+	@Override
 	public ConsPStack<E> plusAll(final Collection<? extends E> list) {
 		ConsPStack<E> result = this;
 		for (E e : list) {
@@ -216,6 +227,7 @@ public final class ConsPStack<E> extends AbstractSequentialList<E> implements
 		return result;
 	}
 
+	@Override
 	public ConsPStack<E> plus(final int i, final E e) {
 		if (i < 0 || i > size) {
 			throw new IndexOutOfBoundsException();
@@ -223,9 +235,10 @@ public final class ConsPStack<E> extends AbstractSequentialList<E> implements
 		if (i == 0) {
 			return plus(e);
 		}
-		return new ConsPStack<E>(first, rest.plus(i - 1, e));
+		return new ConsPStack<>(first, rest.plus(i - 1, e));
 	}
 
+	@Override
 	public ConsPStack<E> plusAll(final int i, final Collection<? extends E> list) {
 		// TODO inefficient if list.isEmpty()
 		if (i < 0 || i > size) {
@@ -234,9 +247,10 @@ public final class ConsPStack<E> extends AbstractSequentialList<E> implements
 		if (i == 0) {
 			return plusAll(list);
 		}
-		return new ConsPStack<E>(first, rest.plusAll(i - 1, list));
+		return new ConsPStack<>(first, rest.plusAll(i - 1, list));
 	}
 
+	@Override
 	public ConsPStack<E> minus(final Object e) {
 		if (size == 0) {
 			return this;
@@ -249,13 +263,15 @@ public final class ConsPStack<E> extends AbstractSequentialList<E> implements
 		if (newRest == rest) {
 			return this;
 		}
-		return new ConsPStack<E>(first, newRest);
+		return new ConsPStack<>(first, newRest);
 	}
 
+	@Override
 	public ConsPStack<E> minus(final int i) {
 		return minus(get(i));
 	}
 
+	@Override
 	public ConsPStack<E> minusAll(final Collection<?> list) {
 		if (size == 0) {
 			return this;
@@ -268,9 +284,10 @@ public final class ConsPStack<E> extends AbstractSequentialList<E> implements
 		if (newRest == rest) {
 			return this;
 		}
-		return new ConsPStack<E>(first, newRest);
+		return new ConsPStack<>(first, newRest);
 	}
 
+	@Override
 	public ConsPStack<E> with(final int i, final E e) {
 		if (i < 0 || i >= size) {
 			throw new IndexOutOfBoundsException();
@@ -279,15 +296,16 @@ public final class ConsPStack<E> extends AbstractSequentialList<E> implements
 			if (first.equals(e)) {
 				return this;
 			}
-			return new ConsPStack<E>(e, rest);
+			return new ConsPStack<>(e, rest);
 		}
 		ConsPStack<E> newRest = rest.with(i - 1, e);
 		if (newRest == rest) {
 			return this;
 		}
-		return new ConsPStack<E>(first, newRest);
+		return new ConsPStack<>(first, newRest);
 	}
 
+	@Override
 	public ConsPStack<E> subList(final int start) {
 		if (start < 0 || start > size) {
 			throw new IndexOutOfBoundsException();

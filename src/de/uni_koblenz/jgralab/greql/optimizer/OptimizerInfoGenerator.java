@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2013 Institute for Software Technology
+ * Copyright (C) 2006-2014 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -79,8 +79,8 @@ public class OptimizerInfoGenerator {
 			throw new IllegalArgumentException("Schema must not be null");
 		}
 		this.schema = schema;
-		gecCount = new HashMap<GraphElementClass<?, ?>, Long>();
-		gecWithSubclassCount = new HashMap<GraphElementClass<?, ?>, Long>();
+		gecCount = new HashMap<>();
+		gecWithSubclassCount = new HashMap<>();
 		for (GraphElementClass<?, ?> gec : schema.getGraphClass()
 				.getGraphElementClasses()) {
 			gecCount.put(gec, 0l);

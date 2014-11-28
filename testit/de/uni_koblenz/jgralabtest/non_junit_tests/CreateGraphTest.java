@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2013 Institute for Software Technology
+ * Copyright (C) 2006-2014 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -63,7 +63,7 @@ public class CreateGraphTest {
 
 		System.err.flush();
 		System.out.println("Create " + gc.getQualifiedName());
-		Graph g = schema.createGraph(ImplementationType.STANDARD);
+		Graph g = schema.createGraph(ImplementationType.GENERIC);
 		g.createVertex(vc);
 		g.createVertex(vc);
 		JGraLab.setLogLevel(l);

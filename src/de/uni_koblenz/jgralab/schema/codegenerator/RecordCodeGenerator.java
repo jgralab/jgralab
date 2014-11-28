@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2013 Institute for Software Technology
+ * Copyright (C) 2006-2014 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -241,7 +241,7 @@ public class RecordCodeGenerator extends CodeGenerator {
 				"java.util.ArrayList");
 		code.add("public class #simpleClassName# implements de.uni_koblenz.jgralab.Record {");
 		code.add(
-				"\tprivate static List<String> componentNames = new ArrayList<String>("
+				"\tprivate static List<String> componentNames = new ArrayList<>("
 						+ recordDomain.getComponents().size() + ");", "",
 				"\tstatic {");
 		for (RecordComponent rc : recordDomain.getComponents()) {

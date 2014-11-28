@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2013 Institute for Software Technology
+ * Copyright (C) 2006-2014 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -117,7 +117,7 @@ public class VariableEvaluator<V extends Variable> extends VertexEvaluator<V> {
 	@Override
 	public Set<Variable> getNeededVariables() {
 		if (neededVariables == null) {
-			neededVariables = new HashSet<Variable>();
+			neededVariables = new HashSet<>();
 			neededVariables.add(vertex);
 		}
 		return neededVariables;
@@ -126,16 +126,16 @@ public class VariableEvaluator<V extends Variable> extends VertexEvaluator<V> {
 	@Override
 	public Set<Variable> getDefinedVariables() {
 		if (definedVariables == null) {
-			definedVariables = new HashSet<Variable>();
+			definedVariables = new HashSet<>();
 		}
 		return definedVariables;
 	}
 
 	@SuppressWarnings("unchecked")
 	public List<VertexEvaluator<? extends Expression>> calculateDependingExpressions() {
-		Queue<GreqlVertex> queue = new LinkedList<GreqlVertex>();
-		List<VertexEvaluator<? extends Expression>> dependingEvaluators = new ArrayList<VertexEvaluator<? extends Expression>>();
-		List<Vertex> forbiddenVertices = new ArrayList<Vertex>();
+		Queue<GreqlVertex> queue = new LinkedList<>();
+		List<VertexEvaluator<? extends Expression>> dependingEvaluators = new ArrayList<>();
+		List<Vertex> forbiddenVertices = new ArrayList<>();
 		SimpleDeclaration simpleDecl = null;
 		if (vertex.getFirstIsDeclaredVarOfIncidence(EdgeDirection.OUT) != null) {
 			simpleDecl = (SimpleDeclaration) vertex

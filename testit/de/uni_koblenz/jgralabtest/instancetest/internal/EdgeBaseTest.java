@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2013 Institute for Software Technology
+ * Copyright (C) 2006-2014 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -132,7 +132,7 @@ public class EdgeBaseTest extends InstanceTest {
 	 * @return ret @
 	 */
 	private ArrayList<ArrayList<Edge>> createRandomGraph() {
-		ArrayList<ArrayList<Edge>> ret = new ArrayList<ArrayList<Edge>>(6);
+		ArrayList<ArrayList<Edge>> ret = new ArrayList<>(6);
 		ret.add(new ArrayList<Edge>());
 		ret.add(new ArrayList<Edge>());
 		ret.add(new ArrayList<Edge>());

@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2013 Institute for Software Technology
+ * Copyright (C) 2006-2014 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -74,7 +74,7 @@ public class IsReachable extends Function {
 		for (State s : dfa.stateList) {
 			markers[s.number] = new BooleanGraphMarker(u.getGraph());
 		}
-		Queue<PathSearchQueueEntry> queue = new LinkedList<PathSearchQueueEntry>();
+		Queue<PathSearchQueueEntry> queue = new LinkedList<>();
 		PathSearchQueueEntry currentEntry = new PathSearchQueueEntry(u,
 				dfa.initialState);
 		markers[currentEntry.state.number].mark(currentEntry.vertex);

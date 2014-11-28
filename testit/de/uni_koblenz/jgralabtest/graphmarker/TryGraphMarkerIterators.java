@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2013 Institute for Software Technology
+ * Copyright (C) 2006-2014 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -80,8 +80,8 @@ public class TryGraphMarkerIterators {
 		for (int i = 0; i < links.length; i++) {
 			links[i] = graph.createLink(nodes[i], nodes[10 - i - 1]);
 		}
-		arrayVertexMarker = new ArrayVertexMarker<String>(graph);
-		arrayEdgeMarker = new ArrayEdgeMarker<String>(graph);
+		arrayVertexMarker = new ArrayVertexMarker<>(graph);
+		arrayEdgeMarker = new ArrayEdgeMarker<>(graph);
 		integerVertexMarker = new IntegerVertexMarker(graph);
 		integerEdgeMarker = new IntegerEdgeMarker(graph);
 		doubleVertexMarker = new DoubleVertexMarker(graph);

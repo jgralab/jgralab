@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2013 Institute for Software Technology
+ * Copyright (C) 2006-2014 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -80,11 +80,11 @@ public class Xml2Tg extends XmlProcessor {
 	private String fileName;
 
 	public Xml2Tg() {
-		idAttributes = new HashSet<String>();
-		idRefAttributes = new HashSet<String>();
-		idRefsAttributes = new HashSet<String>();
-		idMap = new HashMap<String, Vertex>();
-		elementStack = new Stack<Element>();
+		idAttributes = new HashSet<>();
+		idRefAttributes = new HashSet<>();
+		idRefsAttributes = new HashSet<>();
+		idMap = new HashMap<>();
+		elementStack = new Stack<>();
 	}
 
 	public XMLGraph getXmlGraph() {
@@ -260,7 +260,7 @@ public class Xml2Tg extends XmlProcessor {
 
 	@Override
 	protected void endDocument() throws XMLStreamException {
-		ArrayList<String> undefinedRefs = new ArrayList<String>();
+		ArrayList<String> undefinedRefs = new ArrayList<>();
 		if (elementStack.size() > 0) {
 			throw new RuntimeException("XML document is malformed");
 		}

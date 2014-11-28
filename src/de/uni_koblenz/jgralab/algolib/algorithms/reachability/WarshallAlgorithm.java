@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2013 Institute for Software Technology
+ * Copyright (C) 2006-2014 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -197,12 +197,12 @@ public class WarshallAlgorithm extends StructureOrientedAlgorithm implements
 	@Override
 	public Relation<Vertex, Vertex> getReachable() {
 		checkStateForResult();
-		return new ArrayRelation<Vertex>(reachable, indexMapping);
+		return new ArrayRelation<>(reachable, indexMapping);
 	}
 
 	@Override
 	public BinaryFunction<Vertex, Vertex, Edge> getSuccessor() {
-		return new ArrayBinaryFunction<Vertex, Edge>(successor, indexMapping);
+		return new ArrayBinaryFunction<>(successor, indexMapping);
 	}
 
 	public Permutation<Vertex> getVertexOrder() {

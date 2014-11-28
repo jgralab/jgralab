@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2013 Institute for Software Technology
+ * Copyright (C) 2006-2014 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -34,9 +34,9 @@
  */
 package de.uni_koblenz.jgralabtest.schema;
 
+import java.util.ArrayList;
 import java.util.Random;
 import java.util.Set;
-import java.util.Vector;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -72,7 +72,7 @@ public abstract class GraphElementClassImplTest<GEC extends GraphElementClass<?,
 	 * 
 	 * NOTE: This method is called upon in all of this classes´ subclasses.
 	 */
-	public final void testGetAllSubClasses(Vector<GEC> expectedSubClasses) {
+	public final void testGetAllSubClasses(ArrayList<GEC> expectedSubClasses) {
 		schema.finish();
 
 		@SuppressWarnings("unchecked")
@@ -117,7 +117,7 @@ public abstract class GraphElementClassImplTest<GEC extends GraphElementClass<?,
 	 * 
 	 * NOTE: This method is called upon in all of this classes´ subclasses.
 	 */
-	public final void testGetAllSuperClasses(Vector<GEC> expectedSuperClasses) {
+	public final void testGetAllSuperClasses(ArrayList<GEC> expectedSuperClasses) {
 		schema.finish();
 
 		@SuppressWarnings("unchecked")
@@ -164,7 +164,7 @@ public abstract class GraphElementClassImplTest<GEC extends GraphElementClass<?,
 	 * 
 	 * NOTE: This method is called upon in all of this classes´ subclasses.
 	 */
-	public final void testGetDirectSubClasses(Vector<GEC> expectedSubClasses) {
+	public final void testGetDirectSubClasses(ArrayList<GEC> expectedSubClasses) {
 		schema.finish();
 
 		@SuppressWarnings("unchecked")
@@ -208,7 +208,8 @@ public abstract class GraphElementClassImplTest<GEC extends GraphElementClass<?,
 	 * 
 	 * NOTE: This method is called upon in all of this classes´ subclasses.
 	 */
-	public final void testGetDirectSuperClasses(Vector<GEC> expectedSuperClasses) {
+	public final void testGetDirectSuperClasses(
+			ArrayList<GEC> expectedSuperClasses) {
 		schema.finish();
 
 		@SuppressWarnings("unchecked")

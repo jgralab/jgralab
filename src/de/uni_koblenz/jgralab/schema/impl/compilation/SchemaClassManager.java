@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2013 Institute for Software Technology
+ * Copyright (C) 2006-2014 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -55,13 +55,14 @@ import de.uni_koblenz.jgralab.schema.Schema;
  * @author ist@uni-koblenz.de
  */
 public class SchemaClassManager extends ClassLoader {
-	private static HashMap<String, WeakReference<SchemaClassManager>> instances = new HashMap<String, WeakReference<SchemaClassManager>>();
+	private static HashMap<String, WeakReference<SchemaClassManager>> instances = new HashMap<>();
 
 	private final Map<String, InMemoryClassFile> schemaClassFiles;
 	private String schemaQName = null;
 	private final ClassLoader parentClassLoader;
 
-	public static SchemaClassManager instance(ClassLoader parent, String qualifiedName) {
+	public static SchemaClassManager instance(ClassLoader parent,
+			String qualifiedName) {
 		// Singleton implementation using weak references
 		WeakReference<SchemaClassManager> ref = instances.get(qualifiedName);
 		SchemaClassManager result = null;
@@ -76,8 +77,7 @@ public class SchemaClassManager extends ClassLoader {
 				}
 				if (result == null) {
 					result = new SchemaClassManager(parent, qualifiedName);
-					instances.put(qualifiedName,
-							new WeakReference<SchemaClassManager>(result));
+					instances.put(qualifiedName, new WeakReference<>(result));
 				}
 			}
 		}
@@ -85,14 +85,14 @@ public class SchemaClassManager extends ClassLoader {
 		return result;
 	}
 
-    public static SchemaClassManager instance(String qualifiedName) {
-        return instance(null, qualifiedName);
-    }
+	public static SchemaClassManager instance(String qualifiedName) {
+		return instance(null, qualifiedName);
+	}
 
 	private SchemaClassManager(ClassLoader parent, String schemaQName) {
 		parentClassLoader = parent;
 		this.schemaQName = schemaQName;
-		schemaClassFiles = new HashMap<String, InMemoryClassFile>();
+		schemaClassFiles = new HashMap<>();
 	}
 
 	public void putSchemaClass(String className, InMemoryClassFile cfa) {
@@ -112,7 +112,7 @@ public class SchemaClassManager extends ClassLoader {
 			return clazz;
 		}
 
-		if(parentClassLoader != null) {
+		if (parentClassLoader != null) {
 			return parentClassLoader.loadClass(name);
 		}
 

@@ -28,13 +28,13 @@ public class TemporaryVertexImpl extends VertexImpl implements TemporaryVertex {
 
 	protected TemporaryVertexImpl(int id, Graph graph) {
 		super(id, graph);
-		this.attributes = new HashMap<String, Object>();
+		this.attributes = new HashMap<>();
 	}
 
 	protected TemporaryVertexImpl(int id, Graph graph,
 			VertexClass preliminaryType) {
 		super(id, graph);
-		this.attributes = new HashMap<String, Object>();
+		this.attributes = new HashMap<>();
 		this.preliminaryType = preliminaryType;
 	}
 
@@ -168,7 +168,7 @@ public class TemporaryVertexImpl extends VertexImpl implements TemporaryVertex {
 		}
 
 		// Transform TemporaryEdges with type
-		HashSet<TemporaryEdge> tempEdgeList = new HashSet<TemporaryEdge>();
+		HashSet<TemporaryEdge> tempEdgeList = new HashSet<>();
 		for (Edge te : newVertex.incidences(this.getGraphClass()
 				.getTemporaryEdgeClass())) {
 			if ((((TemporaryEdge) te).getPreliminaryType() != null)

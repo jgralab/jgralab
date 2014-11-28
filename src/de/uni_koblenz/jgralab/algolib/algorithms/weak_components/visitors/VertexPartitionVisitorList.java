@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2013 Institute for Software Technology
+ * Copyright (C) 2006-2014 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -47,7 +47,7 @@ public class VertexPartitionVisitorList extends VisitorList implements
 	private List<VertexPartitionVisitor> visitors;
 
 	public VertexPartitionVisitorList() {
-		visitors = new ArrayList<VertexPartitionVisitor>();
+		visitors = new ArrayList<>();
 	}
 
 	@Override

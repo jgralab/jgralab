@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2013 Institute for Software Technology
+ * Copyright (C) 2006-2014 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -115,7 +115,7 @@ public abstract class AttributedElementClassImpl<SC extends AttributedElementCla
 					+ anAttribute.getName() + "' in AttributedElementClass '"
 					+ getQualifiedName() + "'");
 		}
-		TreeSet<Attribute> s = new TreeSet<Attribute>(allAttributes);
+		TreeSet<Attribute> s = new TreeSet<>(allAttributes);
 		s.add(anAttribute);
 		allAttributes = ArrayPVector.<Attribute> empty().plusAll(s);
 		return anAttribute;
@@ -251,7 +251,7 @@ public abstract class AttributedElementClassImpl<SC extends AttributedElementCla
 	protected void finish() {
 		assert allAttributes != null;
 
-		attributeIndex = new HashMap<String, Integer>();
+		attributeIndex = new HashMap<>();
 		int i = 0;
 		for (Attribute a : allAttributes) {
 			attributeIndex.put(a.getName(), i);

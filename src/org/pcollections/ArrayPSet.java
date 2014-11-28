@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2013 Institute for Software Technology
+ * Copyright (C) 2006-2014 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -63,8 +63,7 @@ public final class ArrayPSet<E> implements POrderedSet<E>, Serializable {
 		this.entries = entries;
 	}
 
-	private static ArrayPSet<?> empty = new ArrayPSet<Object>(
-			ArrayPVector.empty());
+	private static ArrayPSet<?> empty = new ArrayPSet<>(ArrayPVector.empty());
 
 	@SuppressWarnings("unchecked")
 	public static <T> ArrayPSet<T> empty() {
@@ -115,11 +114,11 @@ public final class ArrayPSet<E> implements POrderedSet<E>, Serializable {
 			POrderedSet<E> s = OrderedPSet.empty();
 			return s.plusAll(entries).plus(e);
 		}
-		return new ArrayPSet<E>(entries.plus(e));
+		return new ArrayPSet<>(entries.plus(e));
 	}
 
 	POrderedSet<E> plusWithoutCheck(E e) {
-		return new ArrayPSet<E>(entries.plus(e));
+		return new ArrayPSet<>(entries.plus(e));
 	}
 
 	@Override
@@ -136,7 +135,7 @@ public final class ArrayPSet<E> implements POrderedSet<E>, Serializable {
 
 	@Override
 	public POrderedSet<E> minus(Object e) {
-		return contains(e) ? new ArrayPSet<E>(entries.minus(e)) : this;
+		return contains(e) ? new ArrayPSet<>(entries.minus(e)) : this;
 	}
 
 	@Override

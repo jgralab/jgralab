@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>de.uni-koblenz.ist</groupId>
 	<artifactId>jgralab</artifactId>
-	<version>7.7.21</version>
+	<version>8.0.0</version>
 	<name>JGraLab</name>
 	<description>
 		A high-performance TGraph library.

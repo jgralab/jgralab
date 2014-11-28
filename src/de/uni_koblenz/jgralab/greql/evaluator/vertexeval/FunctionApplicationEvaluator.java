@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2013 Institute for Software Technology
+ * Copyright (C) 2006-2014 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -121,7 +121,7 @@ public class FunctionApplicationEvaluator extends
 	 * necessary to build it up each time the function gets evaluated
 	 */
 	protected ArrayList<VertexEvaluator<? extends Expression>> createVertexEvaluatorList() {
-		ArrayList<VertexEvaluator<? extends Expression>> vertexEvalList = new ArrayList<VertexEvaluator<? extends Expression>>();
+		ArrayList<VertexEvaluator<? extends Expression>> vertexEvalList = new ArrayList<>();
 		IsArgumentOf inc = vertex
 				.getFirstIsArgumentOfIncidence(EdgeDirection.IN);
 		while (inc != null) {
@@ -225,7 +225,7 @@ public class FunctionApplicationEvaluator extends
 		IsArgumentOf inc = funApp
 				.getFirstIsArgumentOfIncidence(EdgeDirection.IN);
 		long argCosts = 0;
-		ArrayList<Long> elements = new ArrayList<Long>();
+		ArrayList<Long> elements = new ArrayList<>();
 		while (inc != null) {
 			VertexEvaluator<? extends Expression> argEval = query
 					.getVertexEvaluator(inc.getAlpha());

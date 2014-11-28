@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2013 Institute for Software Technology
+ * Copyright (C) 2006-2014 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -793,16 +793,16 @@ public class GenericGraphImplTest {
 		assertEquals(JGraLab.set().plus(JGraLab.set().plus(false)),
 				g.getAttribute("complexSetGraph"));
 		g.readAttributeValueFromString("doubleGraph", "12.34");
-		assertEquals((Double) 12.34d, g.getAttribute("doubleGraph"));
+		assertEquals(12.34d, g.getAttribute("doubleGraph"));
 		g.readAttributeValueFromString("enumGraph", "SECOND");
 		assertEquals("SECOND", g.getAttribute("enumGraph"));
 		g.readAttributeValueFromString("intGraph", "42");
-		assertEquals((Integer) 42, g.getAttribute("intGraph"));
+		assertEquals(42, g.getAttribute("intGraph"));
 		g.readAttributeValueFromString("listGraph", "[t t]");
 		assertEquals(JGraLab.vector().plus(true).plus(true),
 				g.getAttribute("listGraph"));
 		g.readAttributeValueFromString("longGraph", "987654321");
-		assertEquals((Long) 987654321l, g.getAttribute("longGraph"));
+		assertEquals(987654321l, g.getAttribute("longGraph"));
 		g.readAttributeValueFromString("mapGraph", "{1 - f 2 - t}");
 		assertEquals(JGraLab.map().plus(1, false).plus(2, true),
 				g.getAttribute("mapGraph"));
@@ -868,12 +868,12 @@ public class GenericGraphImplTest {
 				g.getAttribute("complexMapGraph"));
 		assertEquals(JGraLab.set().plus(JGraLab.set().plus(false)),
 				g.getAttribute("complexSetGraph"));
-		assertEquals((Double) 12.34d, g.getAttribute("doubleGraph"));
+		assertEquals(12.34d, g.getAttribute("doubleGraph"));
 		assertEquals("SECOND", g.getAttribute("enumGraph"));
-		assertEquals((Integer) 42, g.getAttribute("intGraph"));
+		assertEquals(42, g.getAttribute("intGraph"));
 		assertEquals(JGraLab.vector().plus(true).plus(true),
 				g.getAttribute("listGraph"));
-		assertEquals((Long) 987654321l, g.getAttribute("longGraph"));
+		assertEquals(987654321l, g.getAttribute("longGraph"));
 		assertEquals(JGraLab.map().plus(1, false).plus(2, true),
 				g.getAttribute("mapGraph"));
 		assertEquals(
@@ -1080,11 +1080,11 @@ public class GenericGraphImplTest {
 		for (int i = 0; i < edges.length; i++) {
 			assertFalse((Boolean) edges[i].getAttribute("oneway"));
 			assertEquals("e" + (i + 1), edges[i].getAttribute("name"));
-			assertEquals((Integer) 0, edges[i].getAttribute("length"));
+			assertEquals(0, edges[i].getAttribute("length"));
 		}
-		assertEquals((Integer) 0, edges[4].getAttribute("height"));
-		assertEquals((Integer) 0, edges[8].getAttribute("height"));
-		assertEquals((Integer) 0, edges[9].getAttribute("height"));
+		assertEquals(0, edges[4].getAttribute("height"));
+		assertEquals(0, edges[8].getAttribute("height"));
+		assertEquals(0, edges[9].getAttribute("height"));
 
 		// Check incidences
 		assertEquals(2, vertices[0].getDegree());
@@ -1192,7 +1192,7 @@ public class GenericGraphImplTest {
 		Graph g = schema.createGraph(ImplementationType.GENERIC);
 		RecordDomain testRecordDomain = (RecordDomain) schema
 				.getDomain("TestRecordDomain");
-		Map<String, Object> values = new HashMap<String, Object>();
+		Map<String, Object> values = new HashMap<>();
 		Boolean boolRecord = Boolean.FALSE;
 		Double doubleRecord = Double.valueOf(0.123d);
 		String enumRecord = "SECOND";

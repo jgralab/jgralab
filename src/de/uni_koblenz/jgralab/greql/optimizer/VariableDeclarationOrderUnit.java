@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2013 Institute for Software Technology
+ * Copyright (C) 2006-2014 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -95,7 +95,7 @@ public class VariableDeclarationOrderUnit implements
 
 		// Collect all vertices that depend on the variable and thus need to be
 		// recalculated when it changes its value.
-		dependentVertices = new HashSet<Vertex>();
+		dependentVertices = new HashSet<>();
 		addDependendVertices(variable);
 		while (extendDependendVertices()) {
 			// Add dependent vertices transitively
@@ -133,7 +133,7 @@ public class VariableDeclarationOrderUnit implements
 	 */
 	private boolean extendDependendVertices() {
 		boolean extensionWasNeeded = false;
-		ArrayList<Vertex> list = new ArrayList<Vertex>(dependentVertices.size());
+		ArrayList<Vertex> list = new ArrayList<>(dependentVertices.size());
 		for (Vertex v : dependentVertices) {
 			list.add(v);
 		}

@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2013 Institute for Software Technology
+ * Copyright (C) 2006-2014 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -65,7 +65,7 @@ public class TempAttributeTest extends TestCase {
 
 	@Test
 	public void testTempAttribute() {
-		GraphMarker<String> marker = new GraphMarker<String>(graph);
+		GraphMarker<String> marker = new GraphMarker<>(graph);
 		System.out
 				.println("Setting and getting temporary attribute belonging to the graph itself");
 		marker.mark(graph, "successful");
@@ -85,7 +85,7 @@ public class TempAttributeTest extends TestCase {
 	@Test
 	public void testGenericForEachIncidence() {
 		Vertex v = graph.getFirstVertex();
-		List<Edge> edgeList = new ArrayList<Edge>();
+		List<Edge> edgeList = new ArrayList<>();
 		for (Edge p : v.incidences()) {
 			edgeList.add(p);
 		}
@@ -99,7 +99,7 @@ public class TempAttributeTest extends TestCase {
 	@Test
 	public void testForEachStreet() {
 		Intersection v = (Intersection) graph.getFirstVertex();
-		List<Edge> edgeList = new ArrayList<Edge>();
+		List<Edge> edgeList = new ArrayList<>();
 
 		for (Edge p : v.getStreetIncidences()) {
 			edgeList.add(p);
@@ -114,7 +114,7 @@ public class TempAttributeTest extends TestCase {
 	@Test
 	public void testForEachBridge() {
 		Intersection v = (Intersection) graph.getFirstVertex();
-		List<Edge> edgeList = new ArrayList<Edge>();
+		List<Edge> edgeList = new ArrayList<>();
 
 		for (Edge p : v.getBridgeIncidences()) {
 			edgeList.add(p);
@@ -125,7 +125,7 @@ public class TempAttributeTest extends TestCase {
 	@Test
 	public void testForEachStreetDirection() {
 		Intersection v = (Intersection) graph.getFirstVertex();
-		List<Edge> edgeList = new ArrayList<Edge>();
+		List<Edge> edgeList = new ArrayList<>();
 
 		for (Edge p : v.getStreetIncidences(EdgeDirection.IN)) {
 			edgeList.add(p);
@@ -136,7 +136,7 @@ public class TempAttributeTest extends TestCase {
 	@Test
 	public void testForEachStreetDirection2() {
 		Intersection v = (Intersection) graph.getFirstVertex();
-		List<Edge> edgeList = new ArrayList<Edge>();
+		List<Edge> edgeList = new ArrayList<>();
 
 		for (Edge p : v.getStreetIncidences(EdgeDirection.OUT)) {
 			edgeList.add(p);

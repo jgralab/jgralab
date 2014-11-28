@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  * 
- * Copyright (C) 2006-2013 Institute for Software Technology
+ * Copyright (C) 2006-2014 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  * 
@@ -43,7 +43,7 @@ import de.uni_koblenz.jgralab.greql.optimizer.Optimizer;
 
 public class GreqlQueryCache {
 
-	private final HashMap<String, SoftReference<GreqlQuery>> cache = new HashMap<String, SoftReference<GreqlQuery>>();
+	private final HashMap<String, SoftReference<GreqlQuery>> cache = new HashMap<>();
 
 	private Optimizer optimizer;
 
@@ -71,7 +71,7 @@ public class GreqlQueryCache {
 			}
 		}
 		GreqlQuery query = GreqlQuery.createQuery(queryText, optimizer);
-		cache.put(key, new SoftReference<GreqlQuery>(query));
+		cache.put(key, new SoftReference<>(query));
 		return query;
 	}
 }

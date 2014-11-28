@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2013 Institute for Software Technology
+ * Copyright (C) 2006-2014 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -43,9 +43,9 @@ import de.uni_koblenz.jgralab.gretl.parser.TokenTypes;
  * Executes the given {@link CountingTransformation}s at most N times. If an
  * earlier application doesn't succeed, it may shortcut. Returns the actual
  * number of applications.
- *
+ * 
  * @author horn
- *
+ * 
  */
 public class NTimes extends CountingTransformation {
 
@@ -60,7 +60,7 @@ public class NTimes extends CountingTransformation {
 	}
 
 	public static NTimes parseAndCreate(ExecuteTransformation et) {
-		List<CountingTransformation> ts = new LinkedList<CountingTransformation>();
+		List<CountingTransformation> ts = new LinkedList<>();
 		int times = Integer.valueOf(et.match(TokenTypes.IDENT).value);
 		while (et.tryMatchTransformationCall()) {
 			CountingTransformation t = (CountingTransformation) et

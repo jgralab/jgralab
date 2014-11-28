@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2013 Institute for Software Technology
+ * Copyright (C) 2006-2014 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -63,7 +63,7 @@ public final class ListDomainImpl extends CollectionDomainImpl implements
 	 * @return the list elements in a set (loses order and duplicates)
 	 */
 	public static Set<Object> toSet(List<Object> aList) {
-		return new HashSet<Object>(aList);
+		return new HashSet<>(aList);
 	}
 
 	ListDomainImpl(Schema schema, Domain aBaseDomain) {

@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2013 Institute for Software Technology
+ * Copyright (C) 2006-2014 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -65,7 +65,7 @@ public class TryKDTree {
 
 		sw.reset();
 		sw.start();
-		KDTree<Point2> tree = new KDTree<Point2>(list, segmentSize);
+		KDTree<Point2> tree = new KDTree<>(list, segmentSize);
 		sw.stop();
 
 		System.out.println("KD-tree built in " + sw.getDuration() + "ms.");
@@ -95,7 +95,7 @@ public class TryKDTree {
 
 	private static LinkedList<Point2> createRandomList(Random rng, double min,
 			double max, int length) {
-		LinkedList<Point2> list = new LinkedList<Point2>();
+		LinkedList<Point2> list = new LinkedList<>();
 		for (int i = 0; i < length; i++) {
 			Point2 newPoint = createRandomPoint(min, max, rng);
 			// System.out.println(newPoint);

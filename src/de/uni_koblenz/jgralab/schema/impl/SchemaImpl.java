@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2013 Institute for Software Technology
+ * Copyright (C) 2006-2014 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -49,7 +49,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
-import java.util.Vector;
 import java.util.regex.Pattern;
 
 import javax.tools.JavaCompiler;
@@ -152,9 +151,9 @@ public class SchemaImpl implements Schema, ManagableArtifact {
 	/**
 	 * Maps from qualified name to the {@link Domain}.
 	 */
-	Map<String, Domain> domains = new HashMap<String, Domain>();
+	Map<String, Domain> domains = new HashMap<>();
 
-	private final DirectedAcyclicGraph<Domain> domainsDag = new DirectedAcyclicGraph<Domain>();
+	private final DirectedAcyclicGraph<Domain> domainsDag = new DirectedAcyclicGraph<>();
 
 	private int version;
 
@@ -179,7 +178,7 @@ public class SchemaImpl implements Schema, ManagableArtifact {
 	/**
 	 * Maps from qualified name to the {@link Package} with that qualified name.
 	 */
-	Map<String, PackageImpl> packages = new TreeMap<String, PackageImpl>();
+	Map<String, PackageImpl> packages = new TreeMap<>();
 
 	/**
 	 * The qualified name of this schema, that is {@link #packagePrefix} DOT
@@ -190,7 +189,7 @@ public class SchemaImpl implements Schema, ManagableArtifact {
 	/**
 	 * A set of all qualified names known to this schema.
 	 */
-	Map<String, NamedElement> namedElements = new TreeMap<String, NamedElement>();
+	Map<String, NamedElement> namedElements = new TreeMap<>();
 
 	private BooleanDomain booleanDomain;
 
@@ -304,9 +303,9 @@ public class SchemaImpl implements Schema, ManagableArtifact {
 		return allowLowercaseEnumConstants;
 	}
 
-	private Vector<InMemoryJavaSourceFile> createClasses(
+	private ArrayList<InMemoryJavaSourceFile> createClasses(
 			CodeGeneratorConfiguration config) {
-		Vector<InMemoryJavaSourceFile> javaSources = new Vector<InMemoryJavaSourceFile>();
+		ArrayList<InMemoryJavaSourceFile> javaSources = new ArrayList<>();
 
 		/* create code for graph */
 		GraphCodeGenerator graphCodeGenerator = new GraphCodeGenerator(
@@ -401,7 +400,7 @@ public class SchemaImpl implements Schema, ManagableArtifact {
 	}
 
 	private List<File> getJavaFiles(File schemaDir) {
-		LinkedList<File> sources = new LinkedList<File>();
+		LinkedList<File> sources = new LinkedList<>();
 		for (File f : schemaDir.listFiles()) {
 			if (f.isDirectory()) {
 				sources.addAll(getJavaFiles(f));
@@ -413,11 +412,11 @@ public class SchemaImpl implements Schema, ManagableArtifact {
 	}
 
 	@Override
-	public Vector<InMemoryJavaSourceFile> commit(
+	public ArrayList<InMemoryJavaSourceFile> commit(
 			CodeGeneratorConfiguration config) {
 		assertFinished();
 
-		Vector<InMemoryJavaSourceFile> javaSources = new Vector<InMemoryJavaSourceFile>();
+		ArrayList<InMemoryJavaSourceFile> javaSources = new ArrayList<>();
 
 		// generate schema class
 		CodeGenerator schemaCodeGenerator = new SchemaCodeGenerator(this,
@@ -575,7 +574,7 @@ public class SchemaImpl implements Schema, ManagableArtifact {
 		StandardJavaFileManager jfm = compiler.getStandardFileManager(null,
 				null, null);
 		ClassFileManager manager = new ClassFileManager(this, jfm);
-		Vector<InMemoryJavaSourceFile> javaSources = commit(config);
+		ArrayList<InMemoryJavaSourceFile> javaSources = commit(config);
 		compiler.getTask(null, manager, null, null, null, javaSources).call();
 	}
 
@@ -829,7 +828,7 @@ public class SchemaImpl implements Schema, ManagableArtifact {
 
 	@Override
 	public List<CompositeDomain> getCompositeDomains() {
-		ArrayList<CompositeDomain> topologicalOrderList = new ArrayList<CompositeDomain>();
+		ArrayList<CompositeDomain> topologicalOrderList = new ArrayList<>();
 
 		for (Domain dom : domainsDag.getNodesInTopologicalOrder()) {
 			if (dom instanceof CompositeDomain) {
@@ -957,7 +956,7 @@ public class SchemaImpl implements Schema, ManagableArtifact {
 
 	@Override
 	public List<EnumDomain> getEnumDomains() {
-		ArrayList<EnumDomain> enumList = new ArrayList<EnumDomain>();
+		ArrayList<EnumDomain> enumList = new ArrayList<>();
 
 		for (Domain dl : domains.values()) {
 			if (dl instanceof EnumDomain) {
@@ -1078,7 +1077,7 @@ public class SchemaImpl implements Schema, ManagableArtifact {
 
 	@Override
 	public List<RecordDomain> getRecordDomains() {
-		ArrayList<RecordDomain> recordList = new ArrayList<RecordDomain>();
+		ArrayList<RecordDomain> recordList = new ArrayList<>();
 
 		for (Domain dl : domains.values()) {
 			if (dl instanceof RecordDomain) {

@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2013 Institute for Software Technology
+ * Copyright (C) 2006-2014 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -140,7 +140,7 @@ public class FordMooreAlgorithm extends StructureOrientedAlgorithm implements
 	@Override
 	public void reset() {
 		super.reset();
-		parent = new ArrayVertexMarker<Edge>(graph);
+		parent = new ArrayVertexMarker<>(graph);
 		distance = new DoubleVertexMarker(graph);
 		for (Vertex v : graph.vertices()) {
 			distance.set(v, Double.POSITIVE_INFINITY);

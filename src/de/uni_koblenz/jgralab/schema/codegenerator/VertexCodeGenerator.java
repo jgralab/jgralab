@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2013 Institute for Software Technology
+ * Copyright (C) 2006-2014 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -114,7 +114,7 @@ public class VertexCodeGenerator extends
 	private CodeBlock createFirstIncidenceMethods() {
 		CodeList code = new CodeList();
 		VertexClass vc = aec;
-		Set<EdgeClass> edgeClassSet = new HashSet<EdgeClass>();
+		Set<EdgeClass> edgeClassSet = new HashSet<>();
 		if (currentCycle.isStdImpl()) {
 			edgeClassSet.addAll(vc.getConnectedEdgeClasses());
 		}
@@ -193,7 +193,7 @@ public class VertexCodeGenerator extends
 	private CodeBlock createNextVertexMethods() {
 		CodeList code = new CodeList();
 
-		TreeSet<GraphElementClass<?, ?>> superClasses = new TreeSet<GraphElementClass<?, ?>>();
+		TreeSet<GraphElementClass<?, ?>> superClasses = new TreeSet<>();
 		superClasses.addAll(aec.getAllSuperClasses());
 		superClasses.add(aec);
 
@@ -248,7 +248,7 @@ public class VertexCodeGenerator extends
 	private CodeBlock createIncidenceIteratorMethods() {
 		VertexClass vc = aec;
 		CodeList code = new CodeList();
-		Set<EdgeClass> edgeClassSet = new HashSet<EdgeClass>();
+		Set<EdgeClass> edgeClassSet = new HashSet<>();
 		if (currentCycle.isStdImpl()) {
 			edgeClassSet.addAll(vc.getConnectedEdgeClasses());
 		}
@@ -293,7 +293,7 @@ public class VertexCodeGenerator extends
 			if (currentCycle.isStdImpl()) {
 				s.add("@Override");
 				s.add("public Iterable<#edgeClassQualifiedName#> get#edgeClassUniqueName#Incidences() {");
-				s.add("\treturn new IncidenceIterable<#edgeClassQualifiedName#>(this, #edgeClassQualifiedName#.EC);");
+				s.add("\treturn new IncidenceIterable<>(this, #edgeClassQualifiedName#.EC);");
 				s.add("}");
 			}
 			s.add("");
@@ -308,7 +308,7 @@ public class VertexCodeGenerator extends
 			if (currentCycle.isStdImpl()) {
 				s.add("@Override");
 				s.add("public Iterable<#edgeClassQualifiedName#> get#edgeClassUniqueName#Incidences(EdgeDirection direction) {");
-				s.add("\treturn new IncidenceIterable<#edgeClassQualifiedName#>(this, #edgeClassQualifiedName#.EC, direction);");
+				s.add("\treturn new IncidenceIterable<>(this, #edgeClassQualifiedName#.EC, direction);");
 				s.add("}");
 			}
 		}

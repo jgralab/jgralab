@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2013 Institute for Software Technology
+ * Copyright (C) 2006-2014 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -81,7 +81,7 @@ public class DirectedAcyclicGraph<T> extends DirectedGraph<T> {
 	}
 
 	protected boolean computeTopologicalOrder() {
-		Queue<Node<T>> q = new LinkedList<Node<T>>();
+		Queue<Node<T>> q = new LinkedList<>();
 		// Enter all nodes without a predecessor into q
 		for (Node<T> n : nodes) {
 			n.mark = n.predecessors.size();
@@ -121,8 +121,8 @@ public class DirectedAcyclicGraph<T> extends DirectedGraph<T> {
 		if (finished) {
 			return;
 		}
-		cachedPredecessors = new HashMap<T, PSet<T>>();
-		cachedSuccessors = new HashMap<T, PSet<T>>();
+		cachedPredecessors = new HashMap<>();
+		cachedSuccessors = new HashMap<>();
 		for (Node<T> n : nodes) {
 			cachedPredecessors.put(n.data,
 					getAllPredecessorsInTopologicalOrder(n.data));
@@ -149,8 +149,8 @@ public class DirectedAcyclicGraph<T> extends DirectedGraph<T> {
 			throw new SchemaException();
 		}
 		Node<T> n = entries.get(data);
-		Set<T> s = new HashSet<T>();
-		Queue<T> q = new LinkedList<T>();
+		Set<T> s = new HashSet<>();
+		Queue<T> q = new LinkedList<>();
 		for (T p : n.successors) {
 			q.addAll(entries.get(p).successors);
 		}
@@ -171,8 +171,8 @@ public class DirectedAcyclicGraph<T> extends DirectedGraph<T> {
 			return cachedPredecessors.get(data);
 		}
 		Node<T> n = entries.get(data);
-		Set<T> s = new HashSet<T>();
-		Queue<T> q = new LinkedList<T>(n.predecessors);
+		Set<T> s = new HashSet<>();
+		Queue<T> q = new LinkedList<>(n.predecessors);
 		while (!q.isEmpty()) {
 			n = entries.get(q.poll());
 			if (!s.contains(n.data)) {
@@ -196,8 +196,8 @@ public class DirectedAcyclicGraph<T> extends DirectedGraph<T> {
 			return cachedSuccessors.get(data);
 		}
 		Node<T> n = entries.get(data);
-		Set<T> s = new HashSet<T>();
-		Queue<T> q = new LinkedList<T>(n.successors);
+		Set<T> s = new HashSet<>();
+		Queue<T> q = new LinkedList<>(n.successors);
 		while (!q.isEmpty()) {
 			n = entries.get(q.poll());
 			if (!s.contains(n.data)) {
@@ -235,7 +235,7 @@ public class DirectedAcyclicGraph<T> extends DirectedGraph<T> {
 
 	@Override
 	public String toString() {
-		HashMap<T, Integer> idx = new HashMap<T, Integer>();
+		HashMap<T, Integer> idx = new HashMap<>();
 		StringBuilder sb = new StringBuilder();
 		sb.append("digraph g {\n");
 		int i = 0;

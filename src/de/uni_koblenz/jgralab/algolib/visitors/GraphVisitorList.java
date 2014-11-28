@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2013 Institute for Software Technology
+ * Copyright (C) 2006-2014 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -41,13 +41,12 @@ import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.algolib.algorithms.AlgorithmTerminatedException;
 
-public class GraphVisitorList extends
-		VisitorList implements GraphVisitor {
+public class GraphVisitorList extends VisitorList implements GraphVisitor {
 
 	private List<GraphVisitor> visitors;
 
-	public GraphVisitorList(){
-		visitors = new ArrayList<GraphVisitor>();
+	public GraphVisitorList() {
+		visitors = new ArrayList<>();
 	}
 
 	@Override
@@ -75,7 +74,7 @@ public class GraphVisitorList extends
 	}
 
 	@Override
-	public void visitEdge(Edge e)  throws AlgorithmTerminatedException {
+	public void visitEdge(Edge e) throws AlgorithmTerminatedException {
 		int n = visitors.size();
 		for (int i = 0; i < n; i++) {
 			visitors.get(i).visitEdge(e);
@@ -83,7 +82,7 @@ public class GraphVisitorList extends
 	}
 
 	@Override
-	public void visitVertex(Vertex v)  throws AlgorithmTerminatedException {
+	public void visitVertex(Vertex v) throws AlgorithmTerminatedException {
 		int n = visitors.size();
 		for (int i = 0; i < n; i++) {
 			visitors.get(i).visitVertex(v);

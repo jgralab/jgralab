@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2013 Institute for Software Technology
+ * Copyright (C) 2006-2014 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -237,7 +237,7 @@ public class GraphLayoutFactory {
 	private <T extends GraphElementClass<?, ?>> void applyHierarchie(
 			Map<T, TypeDefinition> map, boolean isVertexClasses) {
 
-		List<T> allSchemaTypes = new ArrayList<T>();
+		List<T> allSchemaTypes = new ArrayList<>();
 		if (isVertexClasses) {
 			allSchemaTypes.addAll((List<T>) schema.getGraphClass()
 					.getVertexClasses());
@@ -249,7 +249,7 @@ public class GraphLayoutFactory {
 		for (Entry<T, TypeDefinition> entry : map.entrySet()) {
 			T type = entry.getKey();
 
-			ArrayList<T> allSuperClasses = new ArrayList<T>(allSchemaTypes);
+			ArrayList<T> allSuperClasses = new ArrayList<>(allSchemaTypes);
 			allSuperClasses.retainAll(type.getAllSuperClasses());
 			if (isVertexClasses) {
 				allSuperClasses.add(0, (T) type.getGraphClass()

@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2013 Institute for Software Technology
+ * Copyright (C) 2006-2014 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -44,14 +44,14 @@ public abstract class CompositeDomainTest extends DomainTest {
 
 	protected CompositeDomain domain3;
 	protected CompositeDomain domain4;
-	protected Set<CompositeDomain> expectedCompositeDomains1 = new HashSet<CompositeDomain>();
-	protected Set<CompositeDomain> expectedCompositeDomains2 = new HashSet<CompositeDomain>();
-	protected Set<CompositeDomain> expectedCompositeDomains3 = new HashSet<CompositeDomain>();
-	protected Set<CompositeDomain> expectedCompositeDomains4 = new HashSet<CompositeDomain>();
-	protected Set<Domain> expectedDomains1 = new HashSet<Domain>();
-	protected Set<Domain> expectedDomains2 = new HashSet<Domain>();
-	protected Set<Domain> expectedDomains3 = new HashSet<Domain>();
-	protected Set<Domain> expectedDomains4 = new HashSet<Domain>();
+	protected Set<CompositeDomain> expectedCompositeDomains1 = new HashSet<>();
+	protected Set<CompositeDomain> expectedCompositeDomains2 = new HashSet<>();
+	protected Set<CompositeDomain> expectedCompositeDomains3 = new HashSet<>();
+	protected Set<CompositeDomain> expectedCompositeDomains4 = new HashSet<>();
+	protected Set<Domain> expectedDomains1 = new HashSet<>();
+	protected Set<Domain> expectedDomains2 = new HashSet<>();
+	protected Set<Domain> expectedDomains3 = new HashSet<>();
+	protected Set<Domain> expectedDomains4 = new HashSet<>();
 
 	@Override
 	public void init() {

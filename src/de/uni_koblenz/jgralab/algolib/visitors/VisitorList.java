@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2013 Institute for Software Technology
+ * Copyright (C) 2006-2014 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -43,8 +43,8 @@ public abstract class VisitorList implements Visitor {
 
 	private List<Visitor> visitors;
 
-	public VisitorList(){
-		visitors = new ArrayList<Visitor>();
+	public VisitorList() {
+		visitors = new ArrayList<>();
 	}
 
 	public void addVisitor(Visitor visitor) {

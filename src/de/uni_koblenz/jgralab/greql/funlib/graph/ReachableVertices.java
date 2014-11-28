@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2013 Institute for Software Technology
+ * Copyright (C) 2006-2014 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -74,7 +74,7 @@ public class ReachableVertices extends Function {
 		// BitSet[] markedElements = new BitSet[dfa.stateList.size()];
 		for (State s : dfa.stateList) {
 			// markedElements[s.number] = new BitSet();
-			markedElements[s.number] = new HashSet<Vertex>(100);
+			markedElements[s.number] = new HashSet<>(100);
 		}
 		VertexStateQueue queue = new VertexStateQueue();
 		markedElements[dfa.initialState.number].add(v);

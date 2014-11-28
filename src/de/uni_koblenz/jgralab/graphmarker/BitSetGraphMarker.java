@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2013 Institute for Software Technology
+ * Copyright (C) 2006-2014 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -162,7 +162,7 @@ public abstract class BitSetGraphMarker<T extends GraphElement<?, ?>> extends
 			@Override
 			public BooleanFunctionEntry<T> next() {
 				T currentElement = domainElements.next();
-				return new BooleanFunctionEntry<T>(currentElement,
+				return new BooleanFunctionEntry<>(currentElement,
 						get(currentElement));
 			}
 

@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2013 Institute for Software Technology
+ * Copyright (C) 2006-2014 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -35,7 +35,7 @@
 
 package de.uni_koblenz.jgralab.schema.codegenerator;
 
-import java.util.Vector;
+import java.util.ArrayList;
 
 /**
  * a list of <code>CodeBlocks</code> <code>CodeBlock</code>s may be added and
@@ -48,7 +48,7 @@ public class CodeList extends CodeBlock {
 	/**
 	 * contains the <code>CodeBlock</code>s building <code>this</code>
 	 */
-	Vector<CodeBlock> blocks;
+	ArrayList<CodeBlock> blocks;
 
 	/**
 	 * creates an empty <code>CodeList</code>
@@ -58,7 +58,7 @@ public class CodeList extends CodeBlock {
 	}
 
 	/**
-	 * creates a <code>CodeList</code> with an empty vector of CodeBlocks and an
+	 * creates a <code>CodeList</code> with an empty ArrayList of CodeBlocks and an
 	 * empty CodeBlock the content of <code>parent</code> does not affect the
 	 * created CodeList
 	 * 
@@ -68,7 +68,7 @@ public class CodeList extends CodeBlock {
 	 */
 	public CodeList(CodeList parent) {
 		super(parent);
-		blocks = new Vector<CodeBlock>();
+		blocks = new ArrayList<>();
 	}
 
 	/**

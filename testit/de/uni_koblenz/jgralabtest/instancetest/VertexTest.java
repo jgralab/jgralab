@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2013 Institute for Software Technology
+ * Copyright (C) 2006-2014 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -290,7 +290,7 @@ public class VertexTest extends InstanceTest {
 			assertEquals(expectedDegrees[1], nodes[1].getDegree());
 			assertEquals(expectedDegrees[2], nodes[2].getDegree());
 		}
-		HashMap<Vertex, Integer> vertices = new HashMap<Vertex, Integer>();
+		HashMap<Vertex, Integer> vertices = new HashMap<>();
 		vertices.put(nodes[0], expectedDegrees[0]);
 		vertices.put(nodes[1], expectedDegrees[1]);
 		vertices.put(nodes[2], expectedDegrees[2]);
@@ -410,7 +410,7 @@ public class VertexTest extends InstanceTest {
 			assertEquals(expectedOut[2], nodes[2].getDegree(EdgeDirection.OUT));
 		}
 		// delete the edges
-		HashMap<Vertex, Integer> numbers = new HashMap<Vertex, Integer>();
+		HashMap<Vertex, Integer> numbers = new HashMap<>();
 		numbers.put(nodes[0], 0);
 		numbers.put(nodes[1], 1);
 		numbers.put(nodes[2], 2);
@@ -526,7 +526,7 @@ public class VertexTest extends InstanceTest {
 					expectedSubLink[2], expectedLinkBack[2]);
 		}
 		// delete the edges
-		HashMap<Vertex, Integer> numbers = new HashMap<Vertex, Integer>();
+		HashMap<Vertex, Integer> numbers = new HashMap<>();
 		numbers.put(nodes[0], 0);
 		numbers.put(nodes[1], 1);
 		numbers.put(nodes[2], 2);
@@ -698,7 +698,7 @@ public class VertexTest extends InstanceTest {
 			assertEquals(expectedSubLink[2], nodes[2].getDegree(SubLink.EC));
 		}
 		// delete the edges
-		HashMap<Vertex, Integer> numbers = new HashMap<Vertex, Integer>();
+		HashMap<Vertex, Integer> numbers = new HashMap<>();
 		numbers.put(nodes[0], 0);
 		numbers.put(nodes[1], 1);
 		numbers.put(nodes[2], 2);
@@ -834,7 +834,7 @@ public class VertexTest extends InstanceTest {
 					expectedSubLink[2], expectedLinkBack[2]);
 		}
 		// delete the edges
-		HashMap<Vertex, Integer> numbers = new HashMap<Vertex, Integer>();
+		HashMap<Vertex, Integer> numbers = new HashMap<>();
 		numbers.put(nodes[0], 0);
 		numbers.put(nodes[1], 1);
 		numbers.put(nodes[2], 2);
@@ -988,7 +988,7 @@ public class VertexTest extends InstanceTest {
 					expectedSubLink[2], expectedLinkBack[2]);
 		}
 		// delete the edges
-		HashMap<Vertex, Integer> numbers = new HashMap<Vertex, Integer>();
+		HashMap<Vertex, Integer> numbers = new HashMap<>();
 		numbers.put(nodes[0], 0);
 		numbers.put(nodes[1], 1);
 		numbers.put(nodes[2], 2);
@@ -1189,7 +1189,7 @@ public class VertexTest extends InstanceTest {
 					+ expectedLinkBackOut[2], EdgeDirection.INOUT);
 		}
 		// delete the edges
-		HashMap<Vertex, Integer> numbers = new HashMap<Vertex, Integer>();
+		HashMap<Vertex, Integer> numbers = new HashMap<>();
 		numbers.put(nodes[0], 0);
 		numbers.put(nodes[1], 1);
 		numbers.put(nodes[2], 2);
@@ -1414,7 +1414,7 @@ public class VertexTest extends InstanceTest {
 					+ expectedLinkBackOut[2], EdgeDirection.INOUT);
 		}
 		// delete the edges
-		HashMap<Vertex, Integer> numbers = new HashMap<Vertex, Integer>();
+		HashMap<Vertex, Integer> numbers = new HashMap<>();
 		numbers.put(nodes[0], 0);
 		numbers.put(nodes[1], 1);
 		numbers.put(nodes[2], 2);
@@ -1686,7 +1686,7 @@ public class VertexTest extends InstanceTest {
 					EdgeDirection.INOUT);
 		}
 		// delete the edges
-		HashMap<Vertex, Integer> numbers = new HashMap<Vertex, Integer>();
+		HashMap<Vertex, Integer> numbers = new HashMap<>();
 		numbers.put(nodes[0], 0);
 		numbers.put(nodes[1], 1);
 		numbers.put(nodes[2], 2);
@@ -1950,7 +1950,7 @@ public class VertexTest extends InstanceTest {
 					+ expectedLinkBackOut[2], EdgeDirection.INOUT);
 		}
 		// delete the edges
-		HashMap<Vertex, Integer> numbers = new HashMap<Vertex, Integer>();
+		HashMap<Vertex, Integer> numbers = new HashMap<>();
 		numbers.put(nodes[0], 0);
 		numbers.put(nodes[1], 1);
 		numbers.put(nodes[2], 2);
@@ -4412,12 +4412,12 @@ public class VertexTest extends InstanceTest {
 	public void incidencesTestEdgeDirection1() {
 		Vertex v0 = g.createDoubleSubNode();
 		Vertex v1 = g.createDoubleSubNode();
-		LinkedList<Edge> v0inout = new LinkedList<Edge>();
-		LinkedList<Edge> v0out = new LinkedList<Edge>();
-		LinkedList<Edge> v0in = new LinkedList<Edge>();
-		LinkedList<Edge> v1inout = new LinkedList<Edge>();
-		LinkedList<Edge> v1out = new LinkedList<Edge>();
-		LinkedList<Edge> v1in = new LinkedList<Edge>();
+		LinkedList<Edge> v0inout = new LinkedList<>();
+		LinkedList<Edge> v0out = new LinkedList<>();
+		LinkedList<Edge> v0in = new LinkedList<>();
+		LinkedList<Edge> v1inout = new LinkedList<>();
+		LinkedList<Edge> v1out = new LinkedList<>();
+		LinkedList<Edge> v1in = new LinkedList<>();
 		Edge e = g.createLink((AbstractSuperNode) v0, (SuperNode) v1);
 		v0inout.add(e);
 		v0out.add(e);
@@ -4443,15 +4443,15 @@ public class VertexTest extends InstanceTest {
 		Vertex v0 = g.createSubNode();
 		Vertex v1 = g.createDoubleSubNode();
 		Vertex v2 = g.createSuperNode();
-		LinkedList<Edge> v0inout = new LinkedList<Edge>();
-		LinkedList<Edge> v0out = new LinkedList<Edge>();
-		LinkedList<Edge> v0in = new LinkedList<Edge>();
-		LinkedList<Edge> v1inout = new LinkedList<Edge>();
-		LinkedList<Edge> v1out = new LinkedList<Edge>();
-		LinkedList<Edge> v1in = new LinkedList<Edge>();
-		LinkedList<Edge> v2inout = new LinkedList<Edge>();
-		LinkedList<Edge> v2out = new LinkedList<Edge>();
-		LinkedList<Edge> v2in = new LinkedList<Edge>();
+		LinkedList<Edge> v0inout = new LinkedList<>();
+		LinkedList<Edge> v0out = new LinkedList<>();
+		LinkedList<Edge> v0in = new LinkedList<>();
+		LinkedList<Edge> v1inout = new LinkedList<>();
+		LinkedList<Edge> v1out = new LinkedList<>();
+		LinkedList<Edge> v1in = new LinkedList<>();
+		LinkedList<Edge> v2inout = new LinkedList<>();
+		LinkedList<Edge> v2out = new LinkedList<>();
+		LinkedList<Edge> v2in = new LinkedList<>();
 		Edge e = g.createLink((AbstractSuperNode) v0, (SuperNode) v1);
 		v0inout.add(e);
 		v0out.add(e);
@@ -4497,15 +4497,15 @@ public class VertexTest extends InstanceTest {
 			g = createNewGraph();
 			Vertex[] vertices = new Vertex[] { g.createSubNode(),
 					g.createDoubleSubNode(), g.createSuperNode() };
-			LinkedList<LinkedList<Edge>> inout = new LinkedList<LinkedList<Edge>>();
+			LinkedList<LinkedList<Edge>> inout = new LinkedList<>();
 			inout.add(new LinkedList<Edge>());
 			inout.add(new LinkedList<Edge>());
 			inout.add(new LinkedList<Edge>());
-			LinkedList<LinkedList<Edge>> out = new LinkedList<LinkedList<Edge>>();
+			LinkedList<LinkedList<Edge>> out = new LinkedList<>();
 			out.add(new LinkedList<Edge>());
 			out.add(new LinkedList<Edge>());
 			out.add(new LinkedList<Edge>());
-			LinkedList<LinkedList<Edge>> in = new LinkedList<LinkedList<Edge>>();
+			LinkedList<LinkedList<Edge>> in = new LinkedList<>();
 			in.add(new LinkedList<Edge>());
 			in.add(new LinkedList<Edge>());
 			in.add(new LinkedList<Edge>());
@@ -4693,12 +4693,12 @@ public class VertexTest extends InstanceTest {
 		EdgeClass[] ecs = getEdgeClasses();
 		Vertex v0 = g.createDoubleSubNode();
 		Vertex v1 = g.createDoubleSubNode();
-		LinkedList<Edge> v0link = new LinkedList<Edge>();
-		LinkedList<Edge> v0sublink = new LinkedList<Edge>();
-		LinkedList<Edge> v0linkback = new LinkedList<Edge>();
-		LinkedList<Edge> v1link = new LinkedList<Edge>();
-		LinkedList<Edge> v1sublink = new LinkedList<Edge>();
-		LinkedList<Edge> v1linkback = new LinkedList<Edge>();
+		LinkedList<Edge> v0link = new LinkedList<>();
+		LinkedList<Edge> v0sublink = new LinkedList<>();
+		LinkedList<Edge> v0linkback = new LinkedList<>();
+		LinkedList<Edge> v1link = new LinkedList<>();
+		LinkedList<Edge> v1sublink = new LinkedList<>();
+		LinkedList<Edge> v1linkback = new LinkedList<>();
 		Edge e = g.createSubLink((DoubleSubNode) v0, (SuperNode) v1);
 		v0link.add(e);
 		v0sublink.add(e);
@@ -4725,15 +4725,15 @@ public class VertexTest extends InstanceTest {
 		Vertex v0 = g.createSubNode();
 		Vertex v1 = g.createDoubleSubNode();
 		Vertex v2 = g.createSuperNode();
-		LinkedList<Edge> v0link = new LinkedList<Edge>();
-		LinkedList<Edge> v0sublink = new LinkedList<Edge>();
-		LinkedList<Edge> v0linkback = new LinkedList<Edge>();
-		LinkedList<Edge> v1link = new LinkedList<Edge>();
-		LinkedList<Edge> v1sublink = new LinkedList<Edge>();
-		LinkedList<Edge> v1linkback = new LinkedList<Edge>();
-		LinkedList<Edge> v2link = new LinkedList<Edge>();
-		LinkedList<Edge> v2sublink = new LinkedList<Edge>();
-		LinkedList<Edge> v2linkback = new LinkedList<Edge>();
+		LinkedList<Edge> v0link = new LinkedList<>();
+		LinkedList<Edge> v0sublink = new LinkedList<>();
+		LinkedList<Edge> v0linkback = new LinkedList<>();
+		LinkedList<Edge> v1link = new LinkedList<>();
+		LinkedList<Edge> v1sublink = new LinkedList<>();
+		LinkedList<Edge> v1linkback = new LinkedList<>();
+		LinkedList<Edge> v2link = new LinkedList<>();
+		LinkedList<Edge> v2sublink = new LinkedList<>();
+		LinkedList<Edge> v2linkback = new LinkedList<>();
 		Edge e = g.createLink((AbstractSuperNode) v0, (SuperNode) v1);
 		v0link.add(e);
 		v1link.add(e.getReversedEdge());
@@ -4774,15 +4774,15 @@ public class VertexTest extends InstanceTest {
 			EdgeClass[] ecs = getEdgeClasses();
 			Vertex[] vertices = new Vertex[] { g.createSubNode(),
 					g.createDoubleSubNode(), g.createSuperNode() };
-			LinkedList<LinkedList<Edge>> link = new LinkedList<LinkedList<Edge>>();
+			LinkedList<LinkedList<Edge>> link = new LinkedList<>();
 			link.add(new LinkedList<Edge>());
 			link.add(new LinkedList<Edge>());
 			link.add(new LinkedList<Edge>());
-			LinkedList<LinkedList<Edge>> sublink = new LinkedList<LinkedList<Edge>>();
+			LinkedList<LinkedList<Edge>> sublink = new LinkedList<>();
 			sublink.add(new LinkedList<Edge>());
 			sublink.add(new LinkedList<Edge>());
 			sublink.add(new LinkedList<Edge>());
-			LinkedList<LinkedList<Edge>> linkback = new LinkedList<LinkedList<Edge>>();
+			LinkedList<LinkedList<Edge>> linkback = new LinkedList<>();
 			linkback.add(new LinkedList<Edge>());
 			linkback.add(new LinkedList<Edge>());
 			linkback.add(new LinkedList<Edge>());
@@ -4854,12 +4854,12 @@ public class VertexTest extends InstanceTest {
 	public void incidencesTestClass1() {
 		Vertex v0 = g.createDoubleSubNode();
 		Vertex v1 = g.createDoubleSubNode();
-		LinkedList<Edge> v0link = new LinkedList<Edge>();
-		LinkedList<Edge> v0sublink = new LinkedList<Edge>();
-		LinkedList<Edge> v0linkback = new LinkedList<Edge>();
-		LinkedList<Edge> v1link = new LinkedList<Edge>();
-		LinkedList<Edge> v1sublink = new LinkedList<Edge>();
-		LinkedList<Edge> v1linkback = new LinkedList<Edge>();
+		LinkedList<Edge> v0link = new LinkedList<>();
+		LinkedList<Edge> v0sublink = new LinkedList<>();
+		LinkedList<Edge> v0linkback = new LinkedList<>();
+		LinkedList<Edge> v1link = new LinkedList<>();
+		LinkedList<Edge> v1sublink = new LinkedList<>();
+		LinkedList<Edge> v1linkback = new LinkedList<>();
 		Edge e = g.createSubLink((DoubleSubNode) v0, (SuperNode) v1);
 		v0link.add(e);
 		v0sublink.add(e);
@@ -4885,15 +4885,15 @@ public class VertexTest extends InstanceTest {
 		Vertex v0 = g.createSubNode();
 		Vertex v1 = g.createDoubleSubNode();
 		Vertex v2 = g.createSuperNode();
-		LinkedList<Edge> v0link = new LinkedList<Edge>();
-		LinkedList<Edge> v0sublink = new LinkedList<Edge>();
-		LinkedList<Edge> v0linkback = new LinkedList<Edge>();
-		LinkedList<Edge> v1link = new LinkedList<Edge>();
-		LinkedList<Edge> v1sublink = new LinkedList<Edge>();
-		LinkedList<Edge> v1linkback = new LinkedList<Edge>();
-		LinkedList<Edge> v2link = new LinkedList<Edge>();
-		LinkedList<Edge> v2sublink = new LinkedList<Edge>();
-		LinkedList<Edge> v2linkback = new LinkedList<Edge>();
+		LinkedList<Edge> v0link = new LinkedList<>();
+		LinkedList<Edge> v0sublink = new LinkedList<>();
+		LinkedList<Edge> v0linkback = new LinkedList<>();
+		LinkedList<Edge> v1link = new LinkedList<>();
+		LinkedList<Edge> v1sublink = new LinkedList<>();
+		LinkedList<Edge> v1linkback = new LinkedList<>();
+		LinkedList<Edge> v2link = new LinkedList<>();
+		LinkedList<Edge> v2sublink = new LinkedList<>();
+		LinkedList<Edge> v2linkback = new LinkedList<>();
 		Edge e = g.createLink((AbstractSuperNode) v0, (SuperNode) v1);
 		v0link.add(e);
 		v1link.add(e.getReversedEdge());
@@ -4933,15 +4933,15 @@ public class VertexTest extends InstanceTest {
 			g = createNewGraph();
 			Vertex[] vertices = new Vertex[] { g.createSubNode(),
 					g.createDoubleSubNode(), g.createSuperNode() };
-			LinkedList<LinkedList<Edge>> link = new LinkedList<LinkedList<Edge>>();
+			LinkedList<LinkedList<Edge>> link = new LinkedList<>();
 			link.add(new LinkedList<Edge>());
 			link.add(new LinkedList<Edge>());
 			link.add(new LinkedList<Edge>());
-			LinkedList<LinkedList<Edge>> sublink = new LinkedList<LinkedList<Edge>>();
+			LinkedList<LinkedList<Edge>> sublink = new LinkedList<>();
 			sublink.add(new LinkedList<Edge>());
 			sublink.add(new LinkedList<Edge>());
 			sublink.add(new LinkedList<Edge>());
-			LinkedList<LinkedList<Edge>> linkback = new LinkedList<LinkedList<Edge>>();
+			LinkedList<LinkedList<Edge>> linkback = new LinkedList<>();
 			linkback.add(new LinkedList<Edge>());
 			linkback.add(new LinkedList<Edge>());
 			linkback.add(new LinkedList<Edge>());
@@ -5030,24 +5030,24 @@ public class VertexTest extends InstanceTest {
 		EdgeClass[] ecs = getEdgeClasses();
 		Vertex v0 = g.createDoubleSubNode();
 		Vertex v1 = g.createDoubleSubNode();
-		LinkedList<Edge> v0linkInout = new LinkedList<Edge>();
-		LinkedList<Edge> v0linkOut = new LinkedList<Edge>();
-		LinkedList<Edge> v0linkIn = new LinkedList<Edge>();
-		LinkedList<Edge> v0sublinkInout = new LinkedList<Edge>();
-		LinkedList<Edge> v0sublinkOut = new LinkedList<Edge>();
-		LinkedList<Edge> v0sublinkIn = new LinkedList<Edge>();
-		LinkedList<Edge> v0linkbackInout = new LinkedList<Edge>();
-		LinkedList<Edge> v0linkbackOut = new LinkedList<Edge>();
-		LinkedList<Edge> v0linkbackIn = new LinkedList<Edge>();
-		LinkedList<Edge> v1linkInout = new LinkedList<Edge>();
-		LinkedList<Edge> v1linkOut = new LinkedList<Edge>();
-		LinkedList<Edge> v1linkIn = new LinkedList<Edge>();
-		LinkedList<Edge> v1sublinkInout = new LinkedList<Edge>();
-		LinkedList<Edge> v1sublinkOut = new LinkedList<Edge>();
-		LinkedList<Edge> v1sublinkIn = new LinkedList<Edge>();
-		LinkedList<Edge> v1linkbackInout = new LinkedList<Edge>();
-		LinkedList<Edge> v1linkbackOut = new LinkedList<Edge>();
-		LinkedList<Edge> v1linkbackIn = new LinkedList<Edge>();
+		LinkedList<Edge> v0linkInout = new LinkedList<>();
+		LinkedList<Edge> v0linkOut = new LinkedList<>();
+		LinkedList<Edge> v0linkIn = new LinkedList<>();
+		LinkedList<Edge> v0sublinkInout = new LinkedList<>();
+		LinkedList<Edge> v0sublinkOut = new LinkedList<>();
+		LinkedList<Edge> v0sublinkIn = new LinkedList<>();
+		LinkedList<Edge> v0linkbackInout = new LinkedList<>();
+		LinkedList<Edge> v0linkbackOut = new LinkedList<>();
+		LinkedList<Edge> v0linkbackIn = new LinkedList<>();
+		LinkedList<Edge> v1linkInout = new LinkedList<>();
+		LinkedList<Edge> v1linkOut = new LinkedList<>();
+		LinkedList<Edge> v1linkIn = new LinkedList<>();
+		LinkedList<Edge> v1sublinkInout = new LinkedList<>();
+		LinkedList<Edge> v1sublinkOut = new LinkedList<>();
+		LinkedList<Edge> v1sublinkIn = new LinkedList<>();
+		LinkedList<Edge> v1linkbackInout = new LinkedList<>();
+		LinkedList<Edge> v1linkbackOut = new LinkedList<>();
+		LinkedList<Edge> v1linkbackIn = new LinkedList<>();
 		Edge e = g.createSubLink((DoubleSubNode) v0, (SuperNode) v1);
 		v0linkInout.add(e);
 		v0linkOut.add(e);
@@ -5094,33 +5094,33 @@ public class VertexTest extends InstanceTest {
 		Vertex v0 = g.createSubNode();
 		Vertex v1 = g.createDoubleSubNode();
 		Vertex v2 = g.createSuperNode();
-		LinkedList<Edge> v0linkInout = new LinkedList<Edge>();
-		LinkedList<Edge> v0linkOut = new LinkedList<Edge>();
-		LinkedList<Edge> v0linkIn = new LinkedList<Edge>();
-		LinkedList<Edge> v0sublinkInout = new LinkedList<Edge>();
-		LinkedList<Edge> v0sublinkOut = new LinkedList<Edge>();
-		LinkedList<Edge> v0sublinkIn = new LinkedList<Edge>();
-		LinkedList<Edge> v0linkbackInout = new LinkedList<Edge>();
-		LinkedList<Edge> v0linkbackOut = new LinkedList<Edge>();
-		LinkedList<Edge> v0linkbackIn = new LinkedList<Edge>();
-		LinkedList<Edge> v1linkInout = new LinkedList<Edge>();
-		LinkedList<Edge> v1linkOut = new LinkedList<Edge>();
-		LinkedList<Edge> v1linkIn = new LinkedList<Edge>();
-		LinkedList<Edge> v1sublinkInout = new LinkedList<Edge>();
-		LinkedList<Edge> v1sublinkOut = new LinkedList<Edge>();
-		LinkedList<Edge> v1sublinkIn = new LinkedList<Edge>();
-		LinkedList<Edge> v1linkbackInout = new LinkedList<Edge>();
-		LinkedList<Edge> v1linkbackOut = new LinkedList<Edge>();
-		LinkedList<Edge> v1linkbackIn = new LinkedList<Edge>();
-		LinkedList<Edge> v2linkInout = new LinkedList<Edge>();
-		LinkedList<Edge> v2linkOut = new LinkedList<Edge>();
-		LinkedList<Edge> v2linkIn = new LinkedList<Edge>();
-		LinkedList<Edge> v2sublinkInout = new LinkedList<Edge>();
-		LinkedList<Edge> v2sublinkOut = new LinkedList<Edge>();
-		LinkedList<Edge> v2sublinkIn = new LinkedList<Edge>();
-		LinkedList<Edge> v2linkbackInout = new LinkedList<Edge>();
-		LinkedList<Edge> v2linkbackOut = new LinkedList<Edge>();
-		LinkedList<Edge> v2linkbackIn = new LinkedList<Edge>();
+		LinkedList<Edge> v0linkInout = new LinkedList<>();
+		LinkedList<Edge> v0linkOut = new LinkedList<>();
+		LinkedList<Edge> v0linkIn = new LinkedList<>();
+		LinkedList<Edge> v0sublinkInout = new LinkedList<>();
+		LinkedList<Edge> v0sublinkOut = new LinkedList<>();
+		LinkedList<Edge> v0sublinkIn = new LinkedList<>();
+		LinkedList<Edge> v0linkbackInout = new LinkedList<>();
+		LinkedList<Edge> v0linkbackOut = new LinkedList<>();
+		LinkedList<Edge> v0linkbackIn = new LinkedList<>();
+		LinkedList<Edge> v1linkInout = new LinkedList<>();
+		LinkedList<Edge> v1linkOut = new LinkedList<>();
+		LinkedList<Edge> v1linkIn = new LinkedList<>();
+		LinkedList<Edge> v1sublinkInout = new LinkedList<>();
+		LinkedList<Edge> v1sublinkOut = new LinkedList<>();
+		LinkedList<Edge> v1sublinkIn = new LinkedList<>();
+		LinkedList<Edge> v1linkbackInout = new LinkedList<>();
+		LinkedList<Edge> v1linkbackOut = new LinkedList<>();
+		LinkedList<Edge> v1linkbackIn = new LinkedList<>();
+		LinkedList<Edge> v2linkInout = new LinkedList<>();
+		LinkedList<Edge> v2linkOut = new LinkedList<>();
+		LinkedList<Edge> v2linkIn = new LinkedList<>();
+		LinkedList<Edge> v2sublinkInout = new LinkedList<>();
+		LinkedList<Edge> v2sublinkOut = new LinkedList<>();
+		LinkedList<Edge> v2sublinkIn = new LinkedList<>();
+		LinkedList<Edge> v2linkbackInout = new LinkedList<>();
+		LinkedList<Edge> v2linkbackOut = new LinkedList<>();
+		LinkedList<Edge> v2linkbackIn = new LinkedList<>();
 		Edge e = g.createLink((AbstractSuperNode) v0, (SuperNode) v1);
 		v0linkInout.add(e);
 		v0linkOut.add(e);
@@ -5195,41 +5195,41 @@ public class VertexTest extends InstanceTest {
 			EdgeClass[] ecs = getEdgeClasses();
 			Vertex[] vertices = new Vertex[] { g.createSubNode(),
 					g.createDoubleSubNode(), g.createSuperNode() };
-			LinkedList<LinkedList<Edge>> linkinout = new LinkedList<LinkedList<Edge>>();
+			LinkedList<LinkedList<Edge>> linkinout = new LinkedList<>();
 			linkinout.add(new LinkedList<Edge>());
 			linkinout.add(new LinkedList<Edge>());
 			linkinout.add(new LinkedList<Edge>());
-			LinkedList<LinkedList<Edge>> linkout = new LinkedList<LinkedList<Edge>>();
+			LinkedList<LinkedList<Edge>> linkout = new LinkedList<>();
 			linkout.add(new LinkedList<Edge>());
 			linkout.add(new LinkedList<Edge>());
 			linkout.add(new LinkedList<Edge>());
-			LinkedList<LinkedList<Edge>> linkin = new LinkedList<LinkedList<Edge>>();
+			LinkedList<LinkedList<Edge>> linkin = new LinkedList<>();
 			linkin.add(new LinkedList<Edge>());
 			linkin.add(new LinkedList<Edge>());
 			linkin.add(new LinkedList<Edge>());
 
-			LinkedList<LinkedList<Edge>> sublinkinout = new LinkedList<LinkedList<Edge>>();
+			LinkedList<LinkedList<Edge>> sublinkinout = new LinkedList<>();
 			sublinkinout.add(new LinkedList<Edge>());
 			sublinkinout.add(new LinkedList<Edge>());
 			sublinkinout.add(new LinkedList<Edge>());
-			LinkedList<LinkedList<Edge>> sublinkout = new LinkedList<LinkedList<Edge>>();
+			LinkedList<LinkedList<Edge>> sublinkout = new LinkedList<>();
 			sublinkout.add(new LinkedList<Edge>());
 			sublinkout.add(new LinkedList<Edge>());
 			sublinkout.add(new LinkedList<Edge>());
-			LinkedList<LinkedList<Edge>> sublinkin = new LinkedList<LinkedList<Edge>>();
+			LinkedList<LinkedList<Edge>> sublinkin = new LinkedList<>();
 			sublinkin.add(new LinkedList<Edge>());
 			sublinkin.add(new LinkedList<Edge>());
 			sublinkin.add(new LinkedList<Edge>());
 
-			LinkedList<LinkedList<Edge>> linkbackinout = new LinkedList<LinkedList<Edge>>();
+			LinkedList<LinkedList<Edge>> linkbackinout = new LinkedList<>();
 			linkbackinout.add(new LinkedList<Edge>());
 			linkbackinout.add(new LinkedList<Edge>());
 			linkbackinout.add(new LinkedList<Edge>());
-			LinkedList<LinkedList<Edge>> linkbackout = new LinkedList<LinkedList<Edge>>();
+			LinkedList<LinkedList<Edge>> linkbackout = new LinkedList<>();
 			linkbackout.add(new LinkedList<Edge>());
 			linkbackout.add(new LinkedList<Edge>());
 			linkbackout.add(new LinkedList<Edge>());
-			LinkedList<LinkedList<Edge>> linkbackin = new LinkedList<LinkedList<Edge>>();
+			LinkedList<LinkedList<Edge>> linkbackin = new LinkedList<>();
 			linkbackin.add(new LinkedList<Edge>());
 			linkbackin.add(new LinkedList<Edge>());
 			linkbackin.add(new LinkedList<Edge>());
@@ -5379,24 +5379,24 @@ public class VertexTest extends InstanceTest {
 	public void incidencesTestClassEdgeDirection1() {
 		Vertex v0 = g.createDoubleSubNode();
 		Vertex v1 = g.createDoubleSubNode();
-		LinkedList<Edge> v0linkInout = new LinkedList<Edge>();
-		LinkedList<Edge> v0linkOut = new LinkedList<Edge>();
-		LinkedList<Edge> v0linkIn = new LinkedList<Edge>();
-		LinkedList<Edge> v0sublinkInout = new LinkedList<Edge>();
-		LinkedList<Edge> v0sublinkOut = new LinkedList<Edge>();
-		LinkedList<Edge> v0sublinkIn = new LinkedList<Edge>();
-		LinkedList<Edge> v0linkbackInout = new LinkedList<Edge>();
-		LinkedList<Edge> v0linkbackOut = new LinkedList<Edge>();
-		LinkedList<Edge> v0linkbackIn = new LinkedList<Edge>();
-		LinkedList<Edge> v1linkInout = new LinkedList<Edge>();
-		LinkedList<Edge> v1linkOut = new LinkedList<Edge>();
-		LinkedList<Edge> v1linkIn = new LinkedList<Edge>();
-		LinkedList<Edge> v1sublinkInout = new LinkedList<Edge>();
-		LinkedList<Edge> v1sublinkOut = new LinkedList<Edge>();
-		LinkedList<Edge> v1sublinkIn = new LinkedList<Edge>();
-		LinkedList<Edge> v1linkbackInout = new LinkedList<Edge>();
-		LinkedList<Edge> v1linkbackOut = new LinkedList<Edge>();
-		LinkedList<Edge> v1linkbackIn = new LinkedList<Edge>();
+		LinkedList<Edge> v0linkInout = new LinkedList<>();
+		LinkedList<Edge> v0linkOut = new LinkedList<>();
+		LinkedList<Edge> v0linkIn = new LinkedList<>();
+		LinkedList<Edge> v0sublinkInout = new LinkedList<>();
+		LinkedList<Edge> v0sublinkOut = new LinkedList<>();
+		LinkedList<Edge> v0sublinkIn = new LinkedList<>();
+		LinkedList<Edge> v0linkbackInout = new LinkedList<>();
+		LinkedList<Edge> v0linkbackOut = new LinkedList<>();
+		LinkedList<Edge> v0linkbackIn = new LinkedList<>();
+		LinkedList<Edge> v1linkInout = new LinkedList<>();
+		LinkedList<Edge> v1linkOut = new LinkedList<>();
+		LinkedList<Edge> v1linkIn = new LinkedList<>();
+		LinkedList<Edge> v1sublinkInout = new LinkedList<>();
+		LinkedList<Edge> v1sublinkOut = new LinkedList<>();
+		LinkedList<Edge> v1sublinkIn = new LinkedList<>();
+		LinkedList<Edge> v1linkbackInout = new LinkedList<>();
+		LinkedList<Edge> v1linkbackOut = new LinkedList<>();
+		LinkedList<Edge> v1linkbackIn = new LinkedList<>();
 		Edge e = g.createSubLink((DoubleSubNode) v0, (SuperNode) v1);
 		v0linkInout.add(e);
 		v0linkOut.add(e);
@@ -5444,33 +5444,33 @@ public class VertexTest extends InstanceTest {
 		Vertex v0 = g.createSubNode();
 		Vertex v1 = g.createDoubleSubNode();
 		Vertex v2 = g.createSuperNode();
-		LinkedList<Edge> v0linkInout = new LinkedList<Edge>();
-		LinkedList<Edge> v0linkOut = new LinkedList<Edge>();
-		LinkedList<Edge> v0linkIn = new LinkedList<Edge>();
-		LinkedList<Edge> v0sublinkInout = new LinkedList<Edge>();
-		LinkedList<Edge> v0sublinkOut = new LinkedList<Edge>();
-		LinkedList<Edge> v0sublinkIn = new LinkedList<Edge>();
-		LinkedList<Edge> v0linkbackInout = new LinkedList<Edge>();
-		LinkedList<Edge> v0linkbackOut = new LinkedList<Edge>();
-		LinkedList<Edge> v0linkbackIn = new LinkedList<Edge>();
-		LinkedList<Edge> v1linkInout = new LinkedList<Edge>();
-		LinkedList<Edge> v1linkOut = new LinkedList<Edge>();
-		LinkedList<Edge> v1linkIn = new LinkedList<Edge>();
-		LinkedList<Edge> v1sublinkInout = new LinkedList<Edge>();
-		LinkedList<Edge> v1sublinkOut = new LinkedList<Edge>();
-		LinkedList<Edge> v1sublinkIn = new LinkedList<Edge>();
-		LinkedList<Edge> v1linkbackInout = new LinkedList<Edge>();
-		LinkedList<Edge> v1linkbackOut = new LinkedList<Edge>();
-		LinkedList<Edge> v1linkbackIn = new LinkedList<Edge>();
-		LinkedList<Edge> v2linkInout = new LinkedList<Edge>();
-		LinkedList<Edge> v2linkOut = new LinkedList<Edge>();
-		LinkedList<Edge> v2linkIn = new LinkedList<Edge>();
-		LinkedList<Edge> v2sublinkInout = new LinkedList<Edge>();
-		LinkedList<Edge> v2sublinkOut = new LinkedList<Edge>();
-		LinkedList<Edge> v2sublinkIn = new LinkedList<Edge>();
-		LinkedList<Edge> v2linkbackInout = new LinkedList<Edge>();
-		LinkedList<Edge> v2linkbackOut = new LinkedList<Edge>();
-		LinkedList<Edge> v2linkbackIn = new LinkedList<Edge>();
+		LinkedList<Edge> v0linkInout = new LinkedList<>();
+		LinkedList<Edge> v0linkOut = new LinkedList<>();
+		LinkedList<Edge> v0linkIn = new LinkedList<>();
+		LinkedList<Edge> v0sublinkInout = new LinkedList<>();
+		LinkedList<Edge> v0sublinkOut = new LinkedList<>();
+		LinkedList<Edge> v0sublinkIn = new LinkedList<>();
+		LinkedList<Edge> v0linkbackInout = new LinkedList<>();
+		LinkedList<Edge> v0linkbackOut = new LinkedList<>();
+		LinkedList<Edge> v0linkbackIn = new LinkedList<>();
+		LinkedList<Edge> v1linkInout = new LinkedList<>();
+		LinkedList<Edge> v1linkOut = new LinkedList<>();
+		LinkedList<Edge> v1linkIn = new LinkedList<>();
+		LinkedList<Edge> v1sublinkInout = new LinkedList<>();
+		LinkedList<Edge> v1sublinkOut = new LinkedList<>();
+		LinkedList<Edge> v1sublinkIn = new LinkedList<>();
+		LinkedList<Edge> v1linkbackInout = new LinkedList<>();
+		LinkedList<Edge> v1linkbackOut = new LinkedList<>();
+		LinkedList<Edge> v1linkbackIn = new LinkedList<>();
+		LinkedList<Edge> v2linkInout = new LinkedList<>();
+		LinkedList<Edge> v2linkOut = new LinkedList<>();
+		LinkedList<Edge> v2linkIn = new LinkedList<>();
+		LinkedList<Edge> v2sublinkInout = new LinkedList<>();
+		LinkedList<Edge> v2sublinkOut = new LinkedList<>();
+		LinkedList<Edge> v2sublinkIn = new LinkedList<>();
+		LinkedList<Edge> v2linkbackInout = new LinkedList<>();
+		LinkedList<Edge> v2linkbackOut = new LinkedList<>();
+		LinkedList<Edge> v2linkbackIn = new LinkedList<>();
 		Edge e = g.createLink((AbstractSuperNode) v0, (SuperNode) v1);
 		v0linkInout.add(e);
 		v0linkOut.add(e);
@@ -5547,41 +5547,41 @@ public class VertexTest extends InstanceTest {
 			g = createNewGraph();
 			Vertex[] vertices = new Vertex[] { g.createSubNode(),
 					g.createDoubleSubNode(), g.createSuperNode() };
-			LinkedList<LinkedList<Edge>> linkinout = new LinkedList<LinkedList<Edge>>();
+			LinkedList<LinkedList<Edge>> linkinout = new LinkedList<>();
 			linkinout.add(new LinkedList<Edge>());
 			linkinout.add(new LinkedList<Edge>());
 			linkinout.add(new LinkedList<Edge>());
-			LinkedList<LinkedList<Edge>> linkout = new LinkedList<LinkedList<Edge>>();
+			LinkedList<LinkedList<Edge>> linkout = new LinkedList<>();
 			linkout.add(new LinkedList<Edge>());
 			linkout.add(new LinkedList<Edge>());
 			linkout.add(new LinkedList<Edge>());
-			LinkedList<LinkedList<Edge>> linkin = new LinkedList<LinkedList<Edge>>();
+			LinkedList<LinkedList<Edge>> linkin = new LinkedList<>();
 			linkin.add(new LinkedList<Edge>());
 			linkin.add(new LinkedList<Edge>());
 			linkin.add(new LinkedList<Edge>());
 
-			LinkedList<LinkedList<Edge>> sublinkinout = new LinkedList<LinkedList<Edge>>();
+			LinkedList<LinkedList<Edge>> sublinkinout = new LinkedList<>();
 			sublinkinout.add(new LinkedList<Edge>());
 			sublinkinout.add(new LinkedList<Edge>());
 			sublinkinout.add(new LinkedList<Edge>());
-			LinkedList<LinkedList<Edge>> sublinkout = new LinkedList<LinkedList<Edge>>();
+			LinkedList<LinkedList<Edge>> sublinkout = new LinkedList<>();
 			sublinkout.add(new LinkedList<Edge>());
 			sublinkout.add(new LinkedList<Edge>());
 			sublinkout.add(new LinkedList<Edge>());
-			LinkedList<LinkedList<Edge>> sublinkin = new LinkedList<LinkedList<Edge>>();
+			LinkedList<LinkedList<Edge>> sublinkin = new LinkedList<>();
 			sublinkin.add(new LinkedList<Edge>());
 			sublinkin.add(new LinkedList<Edge>());
 			sublinkin.add(new LinkedList<Edge>());
 
-			LinkedList<LinkedList<Edge>> linkbackinout = new LinkedList<LinkedList<Edge>>();
+			LinkedList<LinkedList<Edge>> linkbackinout = new LinkedList<>();
 			linkbackinout.add(new LinkedList<Edge>());
 			linkbackinout.add(new LinkedList<Edge>());
 			linkbackinout.add(new LinkedList<Edge>());
-			LinkedList<LinkedList<Edge>> linkbackout = new LinkedList<LinkedList<Edge>>();
+			LinkedList<LinkedList<Edge>> linkbackout = new LinkedList<>();
 			linkbackout.add(new LinkedList<Edge>());
 			linkbackout.add(new LinkedList<Edge>());
 			linkbackout.add(new LinkedList<Edge>());
-			LinkedList<LinkedList<Edge>> linkbackin = new LinkedList<LinkedList<Edge>>();
+			LinkedList<LinkedList<Edge>> linkbackin = new LinkedList<>();
 			linkbackin.add(new LinkedList<Edge>());
 			linkbackin.add(new LinkedList<Edge>());
 			linkbackin.add(new LinkedList<Edge>());
@@ -5838,7 +5838,7 @@ public class VertexTest extends InstanceTest {
 		v.set_number(4);
 		assertEquals(map, v.getAttribute("nodeMap"));
 		assertEquals("test", v.getAttribute("name"));
-		assertEquals((Integer) 4, v.getAttribute("number"));
+		assertEquals(4, v.getAttribute("number"));
 	}
 
 	/**
@@ -5882,7 +5882,7 @@ public class VertexTest extends InstanceTest {
 		v.setAttribute("number", 4);
 		assertEquals(map, v.getAttribute("nodeMap"));
 		assertEquals("test", v.getAttribute("name"));
-		assertEquals((Integer) 4, v.getAttribute("number"));
+		assertEquals(4, v.getAttribute("number"));
 	}
 
 	/**

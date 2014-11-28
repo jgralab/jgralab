@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2013 Institute for Software Technology
+ * Copyright (C) 2006-2014 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -300,7 +300,7 @@ public class CompareSchemaWithSchemaGraph {
 	}
 
 	private List<String> retrieveComments(NamedElement gElement) {
-		List<String> gComments = new ArrayList<String>();
+		List<String> gComments = new ArrayList<>();
 
 		Annotates annotates = gElement.getFirstAnnotatesIncidence();
 
@@ -506,7 +506,7 @@ public class CompareSchemaWithSchemaGraph {
 		// Clones a map of Components
 
 		Collection<RecordComponent> tempComponents = domain.getComponents();
-		Map<String, de.uni_koblenz.jgralab.schema.Domain> components = new HashMap<String, de.uni_koblenz.jgralab.schema.Domain>(
+		Map<String, de.uni_koblenz.jgralab.schema.Domain> components = new HashMap<>(
 				tempComponents.size());
 		for (RecordComponent component : tempComponents) {
 			components.put(component.getName(), component.getDomain());
@@ -892,7 +892,7 @@ public class CompareSchemaWithSchemaGraph {
 			AttributedElementClass gElement) {
 
 		// Clone the map of Attribute objects.
-		Map<String, de.uni_koblenz.jgralab.schema.Attribute> attributes = new HashMap<String, de.uni_koblenz.jgralab.schema.Attribute>(
+		Map<String, de.uni_koblenz.jgralab.schema.Attribute> attributes = new HashMap<>(
 				getAttributeMap(element.getOwnAttributeList()));
 
 		// Loop over all HasAttribute edges
@@ -1000,7 +1000,7 @@ public class CompareSchemaWithSchemaGraph {
 	final private Map<String, de.uni_koblenz.jgralab.schema.Attribute> getAttributeMap(
 			List<de.uni_koblenz.jgralab.schema.Attribute> attributeList) {
 
-		Map<String, de.uni_koblenz.jgralab.schema.Attribute> attributes = new HashMap<String, de.uni_koblenz.jgralab.schema.Attribute>();
+		Map<String, de.uni_koblenz.jgralab.schema.Attribute> attributes = new HashMap<>();
 
 		for (de.uni_koblenz.jgralab.schema.Attribute attribute : attributeList) {
 			attributes.put(attribute.getName(), attribute);
@@ -1021,7 +1021,7 @@ public class CompareSchemaWithSchemaGraph {
 			Set<T> elementSet) {
 
 		// Creates the AttributedElementClass map.
-		Map<String, T> map = new HashMap<String, T>();
+		Map<String, T> map = new HashMap<>();
 
 		// Fills the map
 		for (T element : elementSet) {

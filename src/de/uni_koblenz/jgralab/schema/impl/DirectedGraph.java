@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2013 Institute for Software Technology
+ * Copyright (C) 2006-2014 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -67,7 +67,7 @@ public class DirectedGraph<T> {
 
 	public DirectedGraph() {
 		nodes = ArrayPSet.empty();
-		entries = new HashMap<T, Node<T>>();
+		entries = new HashMap<>();
 		nodeValues = ArrayPSet.empty();
 	}
 
@@ -114,7 +114,7 @@ public class DirectedGraph<T> {
 		assert !nodeValues.contains(data);
 		assert entries.get(data) == null;
 		nodeValues = nodeValues.plus(data);
-		Node<T> n = new Node<T>(data);
+		Node<T> n = new Node<>(data);
 		nodes = nodes.plus(n);
 		entries.put(data, n);
 		return data;

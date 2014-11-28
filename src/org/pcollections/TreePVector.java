@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2013 Institute for Software Technology
+ * Copyright (C) 2006-2014 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -56,7 +56,7 @@ import java.util.Map.Entry;
 @SuppressWarnings("deprecation")
 public class TreePVector<E> extends AbstractList<E> implements PVector<E> {
 	// // STATIC FACTORY METHODS ////
-	private static final TreePVector<Object> EMPTY = new TreePVector<Object>(
+	private static final TreePVector<Object> EMPTY = new TreePVector<>(
 			IntTreePMap.empty());
 
 	/**
@@ -141,17 +141,20 @@ public class TreePVector<E> extends AbstractList<E> implements PVector<E> {
 	}
 
 	// //IMPLEMENTED METHODS OF PVector ////
+	@Override
 	public TreePVector<E> plus(final E e) {
-		return new TreePVector<E>(map.plus(size(), e));
+		return new TreePVector<>(map.plus(size(), e));
 	}
 
+	@Override
 	public TreePVector<E> plus(final int i, final E e) {
 		if (i < 0 || i > size()) {
 			throw new IndexOutOfBoundsException();
 		}
-		return new TreePVector<E>(map.withKeysChangedAbove(i, 1).plus(i, e));
+		return new TreePVector<>(map.withKeysChangedAbove(i, 1).plus(i, e));
 	}
 
+	@Override
 	public TreePVector<E> minus(final Object e) {
 		for (Entry<Integer, E> entry : map.entrySet()) {
 			if (entry.getValue().equals(e)) {
@@ -161,13 +164,15 @@ public class TreePVector<E> extends AbstractList<E> implements PVector<E> {
 		return this;
 	}
 
+	@Override
 	public TreePVector<E> minus(final int i) {
 		if (i < 0 || i >= size()) {
 			throw new IndexOutOfBoundsException();
 		}
-		return new TreePVector<E>(map.minus(i).withKeysChangedAbove(i, -1));
+		return new TreePVector<>(map.minus(i).withKeysChangedAbove(i, -1));
 	}
 
+	@Override
 	public TreePVector<E> plusAll(final Collection<? extends E> list) {
 		TreePVector<E> result = this;
 		for (E e : list) {
@@ -176,6 +181,7 @@ public class TreePVector<E> extends AbstractList<E> implements PVector<E> {
 		return result;
 	}
 
+	@Override
 	public TreePVector<E> minusAll(final Collection<?> list) {
 		TreePVector<E> result = this;
 		for (Object e : list) {
@@ -184,6 +190,7 @@ public class TreePVector<E> extends AbstractList<E> implements PVector<E> {
 		return result;
 	}
 
+	@Override
 	public TreePVector<E> plusAll(int i, final Collection<? extends E> list) {
 		if (i < 0 || i > size()) {
 			throw new IndexOutOfBoundsException();
@@ -195,9 +202,10 @@ public class TreePVector<E> extends AbstractList<E> implements PVector<E> {
 		for (E e : list) {
 			map = map.plus(i++, e);
 		}
-		return new TreePVector<E>(map);
+		return new TreePVector<>(map);
 	}
 
+	@Override
 	public PVector<E> with(final int i, final E e) {
 		if (i < 0 || i >= size()) {
 			throw new IndexOutOfBoundsException();
@@ -206,7 +214,7 @@ public class TreePVector<E> extends AbstractList<E> implements PVector<E> {
 		if (map == this.map) {
 			return this;
 		}
-		return new TreePVector<E>(map);
+		return new TreePVector<>(map);
 	}
 
 	@Override

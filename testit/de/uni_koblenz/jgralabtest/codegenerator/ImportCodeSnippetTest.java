@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2013 Institute for Software Technology
+ * Copyright (C) 2006-2014 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -303,7 +303,7 @@ public class ImportCodeSnippetTest extends CodeSnippetTest {
 	public void testAddVariablesAndGetVariable() {
 		// border cases
 		ImportCodeSnippet ics = new ImportCodeSnippet();
-		Map<String, String> testMap = new HashMap<String, String>();
+		Map<String, String> testMap = new HashMap<>();
 		assertEquals("*UNDEFINED:Beta*", ics.getVariable("Beta"));
 		assertEquals("*UNDEFINED:*", ics.getVariable(""));
 

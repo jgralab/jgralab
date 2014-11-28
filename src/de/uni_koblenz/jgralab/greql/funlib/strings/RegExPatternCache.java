@@ -7,9 +7,9 @@ import java.util.regex.Pattern;
 
 public class RegExPatternCache {
 	// cache is also used by Split function
-	private static HashMap<String, PatternRef> patternCache = new HashMap<String, PatternRef>();
+	private static HashMap<String, PatternRef> patternCache = new HashMap<>();
 
-	private static ReferenceQueue<Pattern> patternQueue = new ReferenceQueue<Pattern>();
+	private static ReferenceQueue<Pattern> patternQueue = new ReferenceQueue<>();
 
 	private static class PatternRef extends SoftReference<Pattern> {
 		String regex;

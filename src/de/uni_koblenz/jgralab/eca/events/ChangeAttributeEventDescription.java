@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2013 Institute for Software Technology
+ * Copyright (C) 2006-2014 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -103,9 +103,8 @@ public class ChangeAttributeEventDescription<AEC extends AttributedElementClass<
 				Graph graph = getActiveECARules().get(0).getECARuleManager()
 						.getGraph();
 				for (ECARule<AEC> rule : activeRules) {
-					rule.trigger(new ChangeAttributeEvent<AEC>(nested,
-							getTime(), graph, element, attributeName, oldValue,
-							newValue));
+					rule.trigger(new ChangeAttributeEvent<>(nested, getTime(),
+							graph, element, attributeName, oldValue, newValue));
 				}
 			}
 		}

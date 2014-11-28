@@ -46,7 +46,7 @@ public class TraversalContextMultipleThreadsTest {
 		private VertexClass vc;
 		private Graph graph;
 
-		private List<Vertex> list = new ArrayList<Vertex>();
+		private List<Vertex> list = new ArrayList<>();
 
 		public TestThread(VertexClass vc, Graph g) {
 			this.vc = vc;

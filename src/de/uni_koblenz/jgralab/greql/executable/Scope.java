@@ -8,11 +8,11 @@ public class Scope {
 	protected LinkedList<TreeSet<String>> list = null;
 
 	public Scope() {
-		list = new LinkedList<TreeSet<String>>();
+		list = new LinkedList<>();
 	}
 
 	public void blockBegin() {
-		TreeSet<String> set = new TreeSet<String>();
+		TreeSet<String> set = new TreeSet<>();
 		list.addFirst(set);
 	}
 
@@ -27,7 +27,7 @@ public class Scope {
 	}
 
 	public TreeSet<String> getDefinedVariables() {
-		TreeSet<String> r = new TreeSet<String>();
+		TreeSet<String> r = new TreeSet<>();
 		for (TreeSet<String> set : list) {
 			r.addAll(set);
 		}

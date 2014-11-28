@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2013 Institute for Software Technology
+ * Copyright (C) 2006-2014 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -157,10 +157,10 @@ public class OptionHandler {
 	 */
 	public OptionHandler(String toolString, String versionString) {
 		options = new Options();
-		optionList = new ArrayList<Option>();
-		optionGroupList = new ArrayList<OptionGroup>();
-		requiredOptions = new HashSet<Option>();
-		requiredOptionGroups = new HashSet<OptionGroup>();
+		optionList = new ArrayList<>();
+		optionGroupList = new ArrayList<>();
+		requiredOptions = new HashSet<>();
+		requiredOptionGroups = new HashSet<>();
 		helpFormatter = new HelpFormatter();
 		parserType = ParserType.GNU;
 		this.toolString = toolString;
@@ -323,7 +323,7 @@ public class OptionHandler {
 		boolean ok = true;
 		Option[] setOptions = comLine.getOptions();
 
-		Set<Option> setOptionsSet = new HashSet<Option>();
+		Set<Option> setOptionsSet = new HashSet<>();
 		for (Option current : setOptions) {
 			setOptionsSet.add(current);
 		}

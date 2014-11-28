@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2013 Institute for Software Technology
+ * Copyright (C) 2006-2014 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -120,90 +120,90 @@ public class ECARuleManager implements GraphChangeListener {
 
 		this.graph = graph;
 
-		rules = new ArrayList<ECARule<?>>();
+		rules = new ArrayList<>();
 	}
 
 	private void createBeforeCreateVertexEventsLazily() {
 		if (beforeCreateVertexEvents == null) {
-			beforeCreateVertexEvents = new ArrayList<CreateVertexEventDescription>();
+			beforeCreateVertexEvents = new ArrayList<>();
 		}
 	}
 
 	private void createAfterCreateVertexEventsLazily() {
 		if (afterCreateVertexEvents == null) {
-			afterCreateVertexEvents = new ArrayList<CreateVertexEventDescription>();
+			afterCreateVertexEvents = new ArrayList<>();
 		}
 	}
 
 	private void createBeforeDeleteVertexEventsLazily() {
 		if (beforeDeleteVertexEvents == null) {
-			beforeDeleteVertexEvents = new ArrayList<DeleteVertexEventDescription>();
+			beforeDeleteVertexEvents = new ArrayList<>();
 		}
 	}
 
 	private void createAfterDeleteVertexEventsLazily() {
 		if (afterDeleteVertexEvents == null) {
-			afterDeleteVertexEvents = new ArrayList<DeleteVertexEventDescription>();
+			afterDeleteVertexEvents = new ArrayList<>();
 		}
 	}
 
 	private void createBeforeCreateEdgeEventsLazily() {
 		if (beforeCreateEdgeEvents == null) {
-			beforeCreateEdgeEvents = new ArrayList<CreateEdgeEventDescription>();
+			beforeCreateEdgeEvents = new ArrayList<>();
 		}
 	}
 
 	private void createAfterCreateEdgeEventsLazily() {
 		if (afterCreateEdgeEvents == null) {
-			afterCreateEdgeEvents = new ArrayList<CreateEdgeEventDescription>();
+			afterCreateEdgeEvents = new ArrayList<>();
 		}
 	}
 
 	private void createBeforeDeleteEdgeEventsLazily() {
 		if (beforeDeleteEdgeEvents == null) {
-			beforeDeleteEdgeEvents = new ArrayList<DeleteEdgeEventDescription>();
+			beforeDeleteEdgeEvents = new ArrayList<>();
 		}
 	}
 
 	private void createAfterDeleteEdgeEventsLazily() {
 		if (afterDeleteEdgeEvents == null) {
-			afterDeleteEdgeEvents = new ArrayList<DeleteEdgeEventDescription>();
+			afterDeleteEdgeEvents = new ArrayList<>();
 		}
 	}
 
 	private void createBeforeChangeAlphaOfEdgeEventsLazily() {
 		if (beforeChangeAlphaOfEdgeEvents == null) {
-			beforeChangeAlphaOfEdgeEvents = new ArrayList<ChangeEdgeEventDescription>();
+			beforeChangeAlphaOfEdgeEvents = new ArrayList<>();
 		}
 	}
 
 	private void createAfterChangeAlphaOfEdgeEventsLazily() {
 		if (afterChangeAlphaOfEdgeEvents == null) {
-			afterChangeAlphaOfEdgeEvents = new ArrayList<ChangeEdgeEventDescription>();
+			afterChangeAlphaOfEdgeEvents = new ArrayList<>();
 		}
 	}
 
 	private void createBeforeChangeOmegaOfEdgeEventsLazily() {
 		if (beforeChangeOmegaOfEdgeEvents == null) {
-			beforeChangeOmegaOfEdgeEvents = new ArrayList<ChangeEdgeEventDescription>();
+			beforeChangeOmegaOfEdgeEvents = new ArrayList<>();
 		}
 	}
 
 	private void createAfterChangeOmegaOfEdgeEventsLazily() {
 		if (afterChangeOmegaOfEdgeEvents == null) {
-			afterChangeOmegaOfEdgeEvents = new ArrayList<ChangeEdgeEventDescription>();
+			afterChangeOmegaOfEdgeEvents = new ArrayList<>();
 		}
 	}
 
 	private void createBeforeChangeAttributeEventsLazily() {
 		if (beforeChangeAttributeEvents == null) {
-			beforeChangeAttributeEvents = new ArrayList<ChangeAttributeEventDescription<?>>();
+			beforeChangeAttributeEvents = new ArrayList<>();
 		}
 	}
 
 	private void createAfterChangeAttributeEventsLazily() {
 		if (afterChangeAttributeEvents == null) {
-			afterChangeAttributeEvents = new ArrayList<ChangeAttributeEventDescription<?>>();
+			afterChangeAttributeEvents = new ArrayList<>();
 		}
 	}
 
@@ -517,7 +517,7 @@ public class ECARuleManager implements GraphChangeListener {
 	 */
 	public <AEC extends AttributedElementClass<AEC, ?>> void addECARule(
 			EventDescription<AEC> event, Action<AEC> action) {
-		ECARule<AEC> newRule = new ECARule<AEC>(event, action);
+		ECARule<AEC> newRule = new ECARule<>(event, action);
 		this.addECARule(newRule);
 
 	}
@@ -537,7 +537,7 @@ public class ECARuleManager implements GraphChangeListener {
 	public <AEC extends AttributedElementClass<AEC, ?>> void addECARule(
 			EventDescription<AEC> event, Condition<AEC> condition,
 			Action<AEC> action) {
-		ECARule<AEC> newRule = new ECARule<AEC>(event, condition, action);
+		ECARule<AEC> newRule = new ECARule<>(event, condition, action);
 		this.addECARule(newRule);
 	}
 

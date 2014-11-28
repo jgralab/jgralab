@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2013 Institute for Software Technology
+ * Copyright (C) 2006-2014 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -47,7 +47,7 @@ public class Table<T> implements PCollection<T> {
 	private PVector<String> titles;
 	private PVector<T> entries;
 
-	private static Table<?> empty = new Table<Object>();
+	private static Table<?> empty = new Table<>();
 
 	private Table() {
 		titles = JGraLab.vector();
@@ -73,7 +73,7 @@ public class Table<T> implements PCollection<T> {
 	}
 
 	public Table<T> withTitles(PVector<String> t) {
-		return new Table<T>(t, entries);
+		return new Table<>(t, entries);
 	}
 
 	public T get(int index) {
@@ -82,7 +82,7 @@ public class Table<T> implements PCollection<T> {
 
 	@Override
 	public Table<T> plus(T e) {
-		return new Table<T>(titles, entries.plus(e));
+		return new Table<>(titles, entries.plus(e));
 	}
 
 	@Override
@@ -137,17 +137,17 @@ public class Table<T> implements PCollection<T> {
 
 	@Override
 	public PCollection<T> minus(Object arg0) {
-		return new Table<T>(titles, entries.minus(arg0));
+		return new Table<>(titles, entries.minus(arg0));
 	}
 
 	@Override
 	public PCollection<T> minusAll(Collection<?> arg0) {
-		return new Table<T>(titles, entries.minusAll(arg0));
+		return new Table<>(titles, entries.minusAll(arg0));
 	}
 
 	@Override
 	public Table<T> plusAll(Collection<? extends T> arg0) {
-		return new Table<T>(titles, entries.plusAll(arg0));
+		return new Table<>(titles, entries.plusAll(arg0));
 	}
 
 	@Override

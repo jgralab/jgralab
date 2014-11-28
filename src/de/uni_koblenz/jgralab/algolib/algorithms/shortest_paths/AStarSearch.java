@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2013 Institute for Software Technology
+ * Copyright (C) 2006-2014 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -135,7 +135,7 @@ public class AStarSearch extends StructureOrientedAlgorithm implements
 			weightedDistance.set(v, Double.POSITIVE_INFINITY);
 		}
 		visitedVertices = new BitSetVertexMarker(graph);
-		parent = new ArrayVertexMarker<Edge>(graph);
+		parent = new ArrayVertexMarker<>(graph);
 		vertexQueue = vertexQueue == null ? new PriorityQueue<Vertex>()
 				: vertexQueue.clear();
 	}
@@ -218,9 +218,11 @@ public class AStarSearch extends StructureOrientedAlgorithm implements
 					if (weightedDistance.get(nextVertex) > newDistance) {
 						parent.set(nextVertex, currentEdge);
 						weightedDistance.set(nextVertex, newDistance);
-						vertexQueue.put(nextVertex, newDistance
-								+ (heuristic == null ? 0 : heuristic.get(
-										nextVertex, target)));
+						vertexQueue.put(
+								nextVertex,
+								newDistance
+										+ (heuristic == null ? 0 : heuristic
+												.get(nextVertex, target)));
 					}
 				}
 			}

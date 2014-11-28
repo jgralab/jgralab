@@ -77,7 +77,7 @@ public class ExecutableSliceHelper {
 
 		Map<Edge, PathSystemMarkerEntry> map = currentMarker.getMark(v);
 		if (map == null) {
-			map = new HashMap<Edge, PathSystemMarkerEntry>();
+			map = new HashMap<>();
 			currentMarker.mark(v, map);
 		}
 
@@ -103,13 +103,11 @@ public class ExecutableSliceHelper {
 			sliceSubGraph.mark(v);
 		}
 
-		Queue<Vertex> queue = new LinkedList<Vertex>();
+		Queue<Vertex> queue = new LinkedList<>();
 		Vertex currentVertex, parentVertex;
 		int parentState = -1;
-		GraphMarker<Set<Integer>> stateMarker = new GraphMarker<Set<Integer>>(
-				graph);
-		GraphMarker<Integer> currentStateMarker = new GraphMarker<Integer>(
-				graph);
+		GraphMarker<Set<Integer>> stateMarker = new GraphMarker<>(graph);
+		GraphMarker<Integer> currentStateMarker = new GraphMarker<>(graph);
 
 		for (Vertex leaf : leaves) { // iterate through leaves
 			// iterate through GraphMarkers (one for each state)

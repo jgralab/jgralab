@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2013 Institute for Software Technology
+ * Copyright (C) 2006-2014 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -48,7 +48,7 @@ public abstract class InstanceTest {
 	private static Collection<Object[]> parameters;
 
 	static {
-		parameters = new ArrayList<Object[]>();
+		parameters = new ArrayList<>();
 		// for (ImplementationType current : ImplementationType.values()) {
 		// parameters.add(new Object[] { current });
 		// }

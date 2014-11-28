@@ -18,13 +18,13 @@ public class PListTest {
 	public void testCreate() throws Exception {
 		PList pl = new PList();
 
-		List<String> s = new ArrayList<String>();
+		List<String> s = new ArrayList<>();
 		s.add("Alice");
 		s.add("Bob");
 		s.add("Charlie");
 		pl.getDict().putArray("strings", s);
 
-		List<PListDict> dl = new ArrayList<PListDict>();
+		List<PListDict> dl = new ArrayList<>();
 		dl.add(new PListDict());
 		dl.add(new PListDict());
 

@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2013 Institute for Software Technology
+ * Copyright (C) 2006-2014 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -410,7 +410,7 @@ public class DotWriter {
 
 	private static Map<String, String> createReversableEdgeAttributePairMap() {
 		// reversableEdgeAttributePairs
-		Map<String, String> edgeAttributePairs = new HashMap<String, String>();
+		Map<String, String> edgeAttributePairs = new HashMap<>();
 		edgeAttributePairs.put("headURL", "tailURL");
 		edgeAttributePairs.put("headclip", "tailclip");
 		edgeAttributePairs.put("headhref", "tailhref");
@@ -442,7 +442,7 @@ public class DotWriter {
 
 		List<String> allowedDotEdgeAttributes = Arrays
 				.asList(allowedDotAttributes);
-		return Collections.unmodifiableSet(new HashSet<String>(
+		return Collections.unmodifiableSet(new HashSet<>(
 				allowedDotEdgeAttributes));
 	}
 
@@ -458,7 +458,7 @@ public class DotWriter {
 
 		List<String> allowedDotNodeAttributes = Arrays
 				.asList(allowedNodeAttribute);
-		return Collections.unmodifiableSet(new HashSet<String>(
+		return Collections.unmodifiableSet(new HashSet<>(
 				allowedDotNodeAttributes));
 	}
 }

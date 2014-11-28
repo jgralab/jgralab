@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2013 Institute for Software Technology
+ * Copyright (C) 2006-2014 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -78,7 +78,7 @@ public abstract class MapGraphMarker<T extends AttributedElement<?, ?>, O>
 	 */
 	protected MapGraphMarker(Graph g) {
 		super(g);
-		tempAttributeMap = new HashMap<T, O>();
+		tempAttributeMap = new HashMap<>();
 	}
 
 	/**
@@ -231,8 +231,7 @@ public abstract class MapGraphMarker<T extends AttributedElement<?, ?>, O>
 			@Override
 			public FunctionEntry<T, O> next() {
 				T currentElement = markedElements.next();
-				return new FunctionEntry<T, O>(currentElement,
-						get(currentElement));
+				return new FunctionEntry<>(currentElement, get(currentElement));
 			}
 
 			@Override

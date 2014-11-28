@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2013 Institute for Software Technology
+ * Copyright (C) 2006-2014 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -55,11 +55,11 @@ public class SimpleSymbolTable {
 	protected LinkedList<HashMap<String, Vertex>> list = null;
 
 	public SimpleSymbolTable() {
-		list = new LinkedList<HashMap<String, Vertex>>();
+		list = new LinkedList<>();
 	}
 
 	public void blockBegin() {
-		HashMap<String, Vertex> map = new HashMap<String, Vertex>();
+		HashMap<String, Vertex> map = new HashMap<>();
 		list.addFirst(map);
 	}
 
@@ -84,7 +84,7 @@ public class SimpleSymbolTable {
 			} else {
 				List<RecordDomain> recordDomains = existingVariable.getSchema()
 						.getRecordDomains();
-				Map<String, Object> map = new HashMap<String, Object>();
+				Map<String, Object> map = new HashMap<>();
 				map.put("length", -1);
 				map.put("offset", -1);
 				for (RecordDomain dom : recordDomains) {
@@ -113,7 +113,7 @@ public class SimpleSymbolTable {
 	 * @return the set of known identifiers
 	 */
 	public Set<String> getKnownIdentifierSet() {
-		Set<String> result = new HashSet<String>();
+		Set<String> result = new HashSet<>();
 		for (HashMap<String, Vertex> keyMap : list) {
 			result.addAll(keyMap.keySet());
 		}

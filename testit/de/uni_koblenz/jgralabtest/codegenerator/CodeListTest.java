@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2013 Institute for Software Technology
+ * Copyright (C) 2006-2014 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -643,7 +643,7 @@ public class CodeListTest {
 	public void testAddAndGetVariables() {
 		// border cases
 		CodeList cl = new CodeList();
-		Map<String, String> testMap = new HashMap<String, String>();
+		Map<String, String> testMap = new HashMap<>();
 		testMap.put(null, null);
 		cl.addVariables(testMap);
 		assertNull(cl.getVariable(null));

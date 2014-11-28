@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2013 Institute for Software Technology
+ * Copyright (C) 2006-2014 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -67,10 +67,12 @@ public class KDTree<P extends Point> {
 			this.value = value;
 		}
 
+		@Override
 		public boolean isLeaf() {
 			return false;
 		}
 
+		@Override
 		public String toString() {
 			StringBuilder out = new StringBuilder();
 			appendIndent(out, level);
@@ -99,10 +101,12 @@ public class KDTree<P extends Point> {
 			this.values = values;
 		}
 
+		@Override
 		public boolean isLeaf() {
 			return true;
 		}
 
+		@Override
 		public String toString() {
 			StringBuilder out = new StringBuilder();
 			appendIndent(out, level);
@@ -147,9 +151,9 @@ public class KDTree<P extends Point> {
 		}
 		mean /= segmentSize;
 		// segment will become the left list
-		LinkedList<P> left = new LinkedList<P>();
+		LinkedList<P> left = new LinkedList<>();
 		// elements bigger than mean will be filtered out into the right list
-		LinkedList<P> right = new LinkedList<P>();
+		LinkedList<P> right = new LinkedList<>();
 		Iterator<P> iter = segment.iterator();
 		while (iter.hasNext()) {
 			P current = iter.next();
@@ -175,6 +179,7 @@ public class KDTree<P extends Point> {
 		return out;
 	}
 
+	@Override
 	public String toString() {
 		return root.toString();
 	}
@@ -187,7 +192,7 @@ public class KDTree<P extends Point> {
 	}
 
 	public List<P> getNearestNeighborsExhaustively(P point, int count) {
-		List<P> nearestNeighbors = new ArrayList<P>(count);
+		List<P> nearestNeighbors = new ArrayList<>(count);
 		double[] minimalDistances = new double[count];
 		for (int i = 0; i < count; i++) {
 			nearestNeighbors.add(null);
@@ -200,7 +205,7 @@ public class KDTree<P extends Point> {
 
 	public List<P> getNearestNeighbors(P point, int count) {
 		// initialize helper structures
-		List<P> nearestNeighbors = new ArrayList<P>(count);
+		List<P> nearestNeighbors = new ArrayList<>(count);
 		double[] minimalDistances = new double[count];
 		for (int i = 0; i < count; i++) {
 			nearestNeighbors.add(null);
@@ -284,7 +289,7 @@ public class KDTree<P extends Point> {
 	}
 
 	public List<P> getArea(P point, double radius) {
-		List<P> area = new LinkedList<P>();
+		List<P> area = new LinkedList<>();
 		TreeNode startAt = root;
 		appendToAreaFromSubtree(point, radius * radius, area, startAt);
 		return area;
@@ -310,12 +315,10 @@ public class KDTree<P extends Point> {
 				alternativeNode = keyNode.right;
 			}
 
-			appendToAreaFromSubtree(point, squaredRadius, area,
-					nextNode);
+			appendToAreaFromSubtree(point, squaredRadius, area, nextNode);
 
 			double squaredDistanceFromCurrentHyperplane = ((Point) point)
-					.get(keyNode.position)
-					- keyNode.value;
+					.get(keyNode.position) - keyNode.value;
 			squaredDistanceFromCurrentHyperplane *= squaredDistanceFromCurrentHyperplane;
 
 			if (squaredDistanceFromCurrentHyperplane <= squaredRadius) {
@@ -328,7 +331,7 @@ public class KDTree<P extends Point> {
 	private void appendToAreaFromSegment(P point, double squaredRadius,
 			List<P> area, LinkedList<P> segment) {
 		for (P current : segment) {
-			Point currentPoint = (Point) current;
+			Point currentPoint = current;
 			double currentDistance = point.squaredDistance(currentPoint);
 
 			if (currentDistance <= squaredRadius) {

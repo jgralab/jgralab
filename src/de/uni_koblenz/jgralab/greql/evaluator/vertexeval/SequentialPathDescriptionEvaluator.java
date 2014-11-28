@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2013 Institute for Software Technology
+ * Copyright (C) 2006-2014 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -59,7 +59,7 @@ public class SequentialPathDescriptionEvaluator extends
 		evaluator.progress(getOwnEvaluationCosts());
 		IsSequenceElementOf inc = vertex
 				.getFirstIsSequenceElementOfIncidence(EdgeDirection.IN);
-		ArrayList<NFA> nfaList = new ArrayList<NFA>();
+		ArrayList<NFA> nfaList = new ArrayList<>();
 		while (inc != null) {
 			PathDescriptionEvaluator<?> pathEval = (PathDescriptionEvaluator<?>) query
 					.getVertexEvaluator(inc.getAlpha());

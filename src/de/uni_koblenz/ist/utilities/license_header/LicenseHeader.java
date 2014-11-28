@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2013 Institute for Software Technology
+ * Copyright (C) 2006-2014 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -295,7 +295,7 @@ public class LicenseHeader {
 			cacheXMLHeader(length);
 		}
 
-		List<String> outputLines = new LinkedList<String>();
+		List<String> outputLines = new LinkedList<>();
 
 		// now open the current input file
 		BufferedReader reader = new BufferedReader(new FileReader(toProcess));
@@ -396,7 +396,7 @@ public class LicenseHeader {
 			cacheTGHeader();
 		}
 
-		List<String> outputLines = new LinkedList<String>();
+		List<String> outputLines = new LinkedList<>();
 
 		// now open the current input file
 		BufferedReader reader = new BufferedReader(new FileReader(toProcess));
@@ -482,7 +482,7 @@ public class LicenseHeader {
 			cacheJavaHeader(firstLine, lastLine);
 		}
 
-		List<String> outputLines = new LinkedList<String>();
+		List<String> outputLines = new LinkedList<>();
 
 		// now open the current input file
 		BufferedReader reader = new BufferedReader(new FileReader(toProcess));
@@ -559,7 +559,7 @@ public class LicenseHeader {
 		if (verbose) {
 			System.out.println("Caching license header for Java...");
 		}
-		javaHeaderLines = new LinkedList<String>();
+		javaHeaderLines = new LinkedList<>();
 
 		// add header to outputLines
 		BufferedReader reader = new BufferedReader(new FileReader(licence));
@@ -584,7 +584,7 @@ public class LicenseHeader {
 		if (verbose) {
 			System.out.println("Caching license header for XML...");
 		}
-		xmlHeaderLines = new LinkedList<String>();
+		xmlHeaderLines = new LinkedList<>();
 		BufferedReader reader = new BufferedReader(new FileReader(licence));
 		try {
 			String currentLine = "";
@@ -618,7 +618,7 @@ public class LicenseHeader {
 		if (verbose) {
 			System.out.println("Caching license header for TG...");
 		}
-		tgHeaderLines = new LinkedList<String>();
+		tgHeaderLines = new LinkedList<>();
 		BufferedReader reader = new BufferedReader(new FileReader(licence));
 		try {
 			String currentLine = "";

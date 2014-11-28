@@ -46,7 +46,7 @@ public class ReachableWithSearchTest {
 				new RecursiveDepthFirstSearch(gs[0]).undirected() };
 		rws = new ReachableWithSearch(gs[0], searches[0]).undirected();
 
-		referenceResults = new ArrayList<Relation<Vertex, Vertex>>(GRAPHS);
+		referenceResults = new ArrayList<>(GRAPHS);
 
 		WarshallAlgorithm warshall = new WarshallAlgorithm(gs[0]).undirected();
 		for (SimpleGraph g : gs) {

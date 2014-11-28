@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2013 Institute for Software Technology
+ * Copyright (C) 2006-2014 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -72,7 +72,7 @@ public class MergeManifest extends Task {
 				return;
 			}
 			File[] content = targetMetaDir.listFiles();
-			List<File> manifests = new LinkedList<File>();
+			List<File> manifests = new LinkedList<>();
 			// find manifest files
 			for (File currentContent : content) {
 				if (currentContent.isDirectory()) {

@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2013 Institute for Software Technology
+ * Copyright (C) 2006-2014 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -110,9 +110,9 @@ public class VariableDeclarationOrderOptimizer extends OptimizerBase {
 	public boolean optimize(GreqlQuery query) throws OptimizerException {
 		GreqlGraph syntaxgraph = query.getQueryGraph();
 
-		ArrayList<List<VariableDeclarationOrderUnit>> unitsList = new ArrayList<List<VariableDeclarationOrderUnit>>();
+		ArrayList<List<VariableDeclarationOrderUnit>> unitsList = new ArrayList<>();
 		for (Declaration decl : syntaxgraph.getDeclarationVertices()) {
-			List<VariableDeclarationOrderUnit> units = new ArrayList<VariableDeclarationOrderUnit>();
+			List<VariableDeclarationOrderUnit> units = new ArrayList<>();
 			Set<Variable> varsOfDecl = collectVariablesDeclaredBy(decl);
 			if (varsOfDecl.size() < 2) {
 				// With only one Variable, there's
@@ -128,7 +128,7 @@ public class VariableDeclarationOrderOptimizer extends OptimizerBase {
 
 		boolean varDeclOrderChanged = false;
 
-		Set<SimpleDeclaration> oldSDs = new HashSet<SimpleDeclaration>();
+		Set<SimpleDeclaration> oldSDs = new HashSet<>();
 		for (List<VariableDeclarationOrderUnit> units : unitsList) {
 			Collections.sort(units);
 
@@ -180,7 +180,7 @@ public class VariableDeclarationOrderOptimizer extends OptimizerBase {
 	}
 
 	private List<Variable> collectVariablesInDeclarationOrder(Declaration decl) {
-		ArrayList<Variable> varList = new ArrayList<Variable>();
+		ArrayList<Variable> varList = new ArrayList<>();
 		for (IsSimpleDeclOf isSD : decl.getIsSimpleDeclOfIncidences()) {
 			for (IsDeclaredVarOf isVar : isSD.getAlpha()
 					.getIsDeclaredVarOfIncidences()) {
@@ -192,7 +192,7 @@ public class VariableDeclarationOrderOptimizer extends OptimizerBase {
 
 	private List<Variable> collectVariablesInProposedDeclarationOrder(
 			List<VariableDeclarationOrderUnit> units) {
-		ArrayList<Variable> varList = new ArrayList<Variable>();
+		ArrayList<Variable> varList = new ArrayList<>();
 		for (VariableDeclarationOrderUnit unit : units) {
 			varList.add(unit.getVariable());
 		}
@@ -209,7 +209,7 @@ public class VariableDeclarationOrderOptimizer extends OptimizerBase {
 	 *         {@link SimpleDeclaration}s of <code>decl</code>.
 	 */
 	private Set<Variable> collectVariablesDeclaredBy(Declaration decl) {
-		HashSet<Variable> vars = new HashSet<Variable>();
+		HashSet<Variable> vars = new HashSet<>();
 		for (IsSimpleDeclOf inc : decl
 				.getIsSimpleDeclOfIncidences(EdgeDirection.IN)) {
 			vars.addAll(OptimizerUtility.collectVariablesDeclaredBy(inc

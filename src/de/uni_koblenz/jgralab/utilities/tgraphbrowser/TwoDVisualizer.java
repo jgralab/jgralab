@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2013 Institute for Software Technology
+ * Copyright (C) 2006-2014 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -320,7 +320,7 @@ public class TwoDVisualizer {
 	 */
 	private SubGraphMarker computeElements(Vertex currentElement,
 			Integer pathLength, Graph graph, State state) {
-		HashMap<String, Object> boundVars = new HashMap<String, Object>();
+		HashMap<String, Object> boundVars = new HashMap<>();
 		boundVars.put("current", currentElement);
 		StringBuilder query = new StringBuilder("using current: ");
 		query.append("slice(current,<->" + state.getEdgeTypeSet() + "^1");

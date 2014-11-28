@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2013 Institute for Software Technology
+ * Copyright (C) 2006-2014 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -66,11 +66,11 @@ public class ExecuteTransformation extends Transformation<Graph> {
 
 	static String FACTORY_METHOD_NAME = "parseAndCreate";
 
-	private static final HashMap<String, Method> knownTransformationClasses = new HashMap<String, Method>();
+	private static final HashMap<String, Method> knownTransformationClasses = new HashMap<>();
 	private static Logger logger = JGraLab
 			.getLogger(ExecuteTransformation.class);
 
-	private final HashMap<String, Transformation<?>> definedTransformations = new HashMap<String, Transformation<?>>();
+	private final HashMap<String, Transformation<?>> definedTransformations = new HashMap<>();
 
 	public static void registerTransformation(
 			Class<? extends Transformation<?>> tClass) {
@@ -383,7 +383,7 @@ public class ExecuteTransformation extends Transformation<Graph> {
 	}
 
 	public Attribute[] matchAttributeArray() {
-		List<Attribute> lst = new LinkedList<Attribute>();
+		List<Attribute> lst = new LinkedList<>();
 		while (tryMatch(TokenTypes.IDENT)) {
 			lst.add(matchAttribute());
 			if (tryMatch(TokenTypes.COMMA)) {
@@ -410,7 +410,7 @@ public class ExecuteTransformation extends Transformation<Graph> {
 	}
 
 	public VertexClass[] matchVertexClassArray() {
-		LinkedList<VertexClass> lst = new LinkedList<VertexClass>();
+		LinkedList<VertexClass> lst = new LinkedList<>();
 		while (tryMatch(TokenTypes.IDENT)) {
 			lst.add(vc(match(TokenTypes.IDENT).value));
 		}
@@ -418,7 +418,7 @@ public class ExecuteTransformation extends Transformation<Graph> {
 	}
 
 	public EdgeClass[] matchEdgeClassArray() {
-		LinkedList<EdgeClass> lst = new LinkedList<EdgeClass>();
+		LinkedList<EdgeClass> lst = new LinkedList<>();
 		while (tryMatch(TokenTypes.IDENT)) {
 			lst.add(ec(match(TokenTypes.IDENT).value));
 		}
@@ -426,7 +426,7 @@ public class ExecuteTransformation extends Transformation<Graph> {
 	}
 
 	public RecordComponent[] matchRecordComponentArray() {
-		List<RecordComponent> l = new LinkedList<RecordComponent>();
+		List<RecordComponent> l = new LinkedList<>();
 		match(TokenTypes.PAREN_OPEN);
 		while (tryMatch(TokenTypes.IDENT)) {
 			String compName = match(TokenTypes.IDENT).value;
@@ -456,7 +456,7 @@ public class ExecuteTransformation extends Transformation<Graph> {
 	 */
 	public String[] matchIdentifierArray() {
 		match(TokenTypes.PAREN_OPEN);
-		List<String> strs = new LinkedList<String>();
+		List<String> strs = new LinkedList<>();
 		while (tryMatch(TokenTypes.IDENT)) {
 			strs.add(match(TokenTypes.IDENT).value);
 			if (tryMatch(TokenTypes.COMMA)) {
@@ -562,7 +562,7 @@ public class ExecuteTransformation extends Transformation<Graph> {
 	}
 
 	public AttributeSpec[] matchAttributeSpecArray() {
-		List<AttributeSpec> l = new LinkedList<AttributeSpec>();
+		List<AttributeSpec> l = new LinkedList<>();
 		boolean first = true;
 		do {
 			if (first) {

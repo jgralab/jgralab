@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2013 Institute for Software Technology
+ * Copyright (C) 2006-2014 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -71,7 +71,7 @@ public class NonConstantTerm extends Formula {
 
 	@Override
 	protected ArrayList<Expression> getNonConstantTermExpressions() {
-		ArrayList<Expression> exps = new ArrayList<Expression>();
+		ArrayList<Expression> exps = new ArrayList<>();
 		exps.add(expression);
 		return exps;
 	}

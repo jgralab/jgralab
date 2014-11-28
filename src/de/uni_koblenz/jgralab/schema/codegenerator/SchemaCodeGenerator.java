@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2013 Institute for Software Technology
+ * Copyright (C) 2006-2014 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -231,7 +231,7 @@ public class SchemaCodeGenerator extends CodeGenerator {
 				"/**",
 				" * reference to the singleton instance",
 				" */",
-				"static WeakReference<#simpleClassName#> theInstance = new WeakReference<#simpleClassName#>(null);",
+				"static WeakReference<#simpleClassName#> theInstance = new WeakReference<>(null);",
 				"",
 				"/**",
 				" * @return the singleton instance of #simpleClassName#",
@@ -242,7 +242,7 @@ public class SchemaCodeGenerator extends CodeGenerator {
 				"\t\treturn s;",
 				"\t}",
 				"\ts = new #simpleClassName#();",
-				"\ttheInstance = new WeakReference<#simpleClassName#>(s);",
+				"\ttheInstance = new WeakReference<>(s);",
 				"\treturn s;",
 				"}",
 				"",
@@ -264,7 +264,7 @@ public class SchemaCodeGenerator extends CodeGenerator {
 	private CodeBlock createPackageComments() {
 		CodeList code = new CodeList();
 		Package pkg = schema.getDefaultPackage();
-		Stack<Package> s = new Stack<Package>();
+		Stack<Package> s = new Stack<>();
 		s.push(pkg);
 		boolean hasComment = false;
 		while (!s.isEmpty()) {

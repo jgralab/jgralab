@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2013 Institute for Software Technology
+ * Copyright (C) 2006-2014 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -223,7 +223,7 @@ public class OptimizerUtility {
 	 *         <code>sd</code>
 	 */
 	public static Set<Variable> collectVariablesDeclaredBy(SimpleDeclaration sd) {
-		HashSet<Variable> vars = new HashSet<Variable>();
+		HashSet<Variable> vars = new HashSet<>();
 		for (IsDeclaredVarOf inc : sd
 				.getIsDeclaredVarOfIncidences(EdgeDirection.IN)) {
 			vars.add(inc.getAlpha());
@@ -302,7 +302,7 @@ public class OptimizerUtility {
 			return;
 		}
 
-		HashSet<Vertex> nextOrphans = new HashSet<Vertex>();
+		HashSet<Vertex> nextOrphans = new HashSet<>();
 		for (Edge inc : vertex.incidences(EdgeDirection.IN)) {
 			nextOrphans.add(inc.getAlpha());
 		}

@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2013 Institute for Software Technology
+ * Copyright (C) 2006-2014 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -123,7 +123,7 @@ public class WeakComponentsWithBFS extends StructureOrientedAlgorithm implements
 
 	public WeakComponentsWithBFS withInverseResult() {
 		checkStateForSettingParameters();
-		inverseResult = new ArrayVertexMarker<Set<Vertex>>(graph);
+		inverseResult = new ArrayVertexMarker<>(graph);
 		return this;
 	}
 
@@ -136,7 +136,7 @@ public class WeakComponentsWithBFS extends StructureOrientedAlgorithm implements
 	@Override
 	public void reset() {
 		super.reset();
-		weakComponents = new ArrayVertexMarker<Vertex>(graph);
+		weakComponents = new ArrayVertexMarker<>(graph);
 		inverseResult = inverseResult == null ? null
 				: new ArrayVertexMarker<Set<Vertex>>(graph);
 		kappa = 0;

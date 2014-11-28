@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2013 Institute for Software Technology
+ * Copyright (C) 2006-2014 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -977,7 +977,7 @@ public class RoleNameTest extends InstanceTest {
 	 */
 	private LinkedList<Vertex> getAllVerticesWithRolename(
 			LinkedList<Edge> inci, String... rolenames) {
-		LinkedList<Vertex> ret = new LinkedList<Vertex>();
+		LinkedList<Vertex> ret = new LinkedList<>();
 		for (Edge e : inci) {
 			if (e.isNormal() && checkRoleName(e.getThatRole(), rolenames)) {
 				ret.add(e.getOmega());
@@ -995,8 +995,8 @@ public class RoleNameTest extends InstanceTest {
 	 */
 	private LinkedList<Vertex> getAllVerticesWithRolename(Vertex to,
 			String... rolenames) {
-		LinkedList<Vertex> ret = new LinkedList<Vertex>();
-		PriorityQueue<Edge> edges = new PriorityQueue<Edge>();
+		LinkedList<Vertex> ret = new LinkedList<>();
+		PriorityQueue<Edge> edges = new PriorityQueue<>();
 		for (Edge e : graph.edges()) {
 			if (e.getOmega() == to && checkRoleName(e.getThisRole(), rolenames)) {
 				edges.add(e);
@@ -1230,14 +1230,14 @@ public class RoleNameTest extends InstanceTest {
 		D v6 = graph.createD();
 		A v7 = graph.createA();
 		C v8 = graph.createC();
-		LinkedList<Edge> v1Inci = new LinkedList<Edge>();
-		LinkedList<Edge> v2Inci = new LinkedList<Edge>();
-		LinkedList<Edge> v3Inci = new LinkedList<Edge>();
-		LinkedList<Edge> v4Inci = new LinkedList<Edge>();
-		LinkedList<Edge> v5Inci = new LinkedList<Edge>();
-		LinkedList<Edge> v6Inci = new LinkedList<Edge>();
-		LinkedList<Edge> v7Inci = new LinkedList<Edge>();
-		LinkedList<Edge> v8Inci = new LinkedList<Edge>();
+		LinkedList<Edge> v1Inci = new LinkedList<>();
+		LinkedList<Edge> v2Inci = new LinkedList<>();
+		LinkedList<Edge> v3Inci = new LinkedList<>();
+		LinkedList<Edge> v4Inci = new LinkedList<>();
+		LinkedList<Edge> v5Inci = new LinkedList<>();
+		LinkedList<Edge> v6Inci = new LinkedList<>();
+		LinkedList<Edge> v7Inci = new LinkedList<>();
+		LinkedList<Edge> v8Inci = new LinkedList<>();
 		createRandomGraph(true, v1, v2, v3, v4, v5, v6, v7, v8, v1Inci, v2Inci,
 				v3Inci, v4Inci, v5Inci, v6Inci, v7Inci, v8Inci);
 		testIncidences(v1, v2, v3, v4, v5, v6, v7, v8, v1Inci, v2Inci, v3Inci,
@@ -1367,14 +1367,14 @@ public class RoleNameTest extends InstanceTest {
 		D v6 = graph.createD();
 		A v7 = graph.createA();
 		C v8 = graph.createC();
-		LinkedList<Edge> v1Inci = new LinkedList<Edge>();
-		LinkedList<Edge> v2Inci = new LinkedList<Edge>();
-		LinkedList<Edge> v3Inci = new LinkedList<Edge>();
-		LinkedList<Edge> v4Inci = new LinkedList<Edge>();
-		LinkedList<Edge> v5Inci = new LinkedList<Edge>();
-		LinkedList<Edge> v6Inci = new LinkedList<Edge>();
-		LinkedList<Edge> v7Inci = new LinkedList<Edge>();
-		LinkedList<Edge> v8Inci = new LinkedList<Edge>();
+		LinkedList<Edge> v1Inci = new LinkedList<>();
+		LinkedList<Edge> v2Inci = new LinkedList<>();
+		LinkedList<Edge> v3Inci = new LinkedList<>();
+		LinkedList<Edge> v4Inci = new LinkedList<>();
+		LinkedList<Edge> v5Inci = new LinkedList<>();
+		LinkedList<Edge> v6Inci = new LinkedList<>();
+		LinkedList<Edge> v7Inci = new LinkedList<>();
+		LinkedList<Edge> v8Inci = new LinkedList<>();
 		createRandomGraph(true, v1, v2, v3, v4, v5, v6, v7, v8, v1Inci, v2Inci,
 				v3Inci, v4Inci, v5Inci, v6Inci, v7Inci, v8Inci);
 		deleteAll(true, v1, v3, v1Inci, v3Inci, "x", "w");
@@ -1421,12 +1421,12 @@ public class RoleNameTest extends InstanceTest {
 		v1.add_z(v2);
 		v1.add_w(v2);
 
-		LinkedList<Vertex> expected = new LinkedList<Vertex>();
+		LinkedList<Vertex> expected = new LinkedList<>();
 		expected.add(v2);
 		expected.add(v2);
 		expected.add(v2);
 		compareLists(expected, v1.get_w());
-		expected = new LinkedList<Vertex>();
+		expected = new LinkedList<>();
 		expected.add(v2);
 		compareLists(expected, v1.get_y());
 		compareLists(expected, v1.get_z());
@@ -1442,7 +1442,7 @@ public class RoleNameTest extends InstanceTest {
 		A v1 = graph.createA();
 		v1.add_v(v1);
 		graph.createI(v1, v1);
-		LinkedList<Vertex> expected = new LinkedList<Vertex>();
+		LinkedList<Vertex> expected = new LinkedList<>();
 		expected.add(v1);
 		expected.add(v1);
 		compareLists(expected, v1.get_v());
@@ -1463,14 +1463,14 @@ public class RoleNameTest extends InstanceTest {
 		D v6 = graph.createD();
 		A v7 = graph.createA();
 		C v8 = graph.createC();
-		LinkedList<Edge> v1Inci = new LinkedList<Edge>();
-		LinkedList<Edge> v2Inci = new LinkedList<Edge>();
-		LinkedList<Edge> v3Inci = new LinkedList<Edge>();
-		LinkedList<Edge> v4Inci = new LinkedList<Edge>();
-		LinkedList<Edge> v5Inci = new LinkedList<Edge>();
-		LinkedList<Edge> v6Inci = new LinkedList<Edge>();
-		LinkedList<Edge> v7Inci = new LinkedList<Edge>();
-		LinkedList<Edge> v8Inci = new LinkedList<Edge>();
+		LinkedList<Edge> v1Inci = new LinkedList<>();
+		LinkedList<Edge> v2Inci = new LinkedList<>();
+		LinkedList<Edge> v3Inci = new LinkedList<>();
+		LinkedList<Edge> v4Inci = new LinkedList<>();
+		LinkedList<Edge> v5Inci = new LinkedList<>();
+		LinkedList<Edge> v6Inci = new LinkedList<>();
+		LinkedList<Edge> v7Inci = new LinkedList<>();
+		LinkedList<Edge> v8Inci = new LinkedList<>();
 		createRandomGraph(true, v1, v2, v3, v4, v5, v6, v7, v8, v1Inci, v2Inci,
 				v3Inci, v4Inci, v5Inci, v6Inci, v7Inci, v8Inci);
 		LinkedList<Vertex> expected = getAllVerticesWithRolename(v1Inci, "x",
@@ -1639,18 +1639,18 @@ public class RoleNameTest extends InstanceTest {
 		C2 v10 = graph.createC2();
 		D2 v11 = graph.createD2();
 		D2 v12 = graph.createD2();
-		LinkedList<Edge> v1Inci = new LinkedList<Edge>();
-		LinkedList<Edge> v2Inci = new LinkedList<Edge>();
-		LinkedList<Edge> v3Inci = new LinkedList<Edge>();
-		LinkedList<Edge> v4Inci = new LinkedList<Edge>();
-		LinkedList<Edge> v5Inci = new LinkedList<Edge>();
-		LinkedList<Edge> v6Inci = new LinkedList<Edge>();
-		LinkedList<Edge> v7Inci = new LinkedList<Edge>();
-		LinkedList<Edge> v8Inci = new LinkedList<Edge>();
-		LinkedList<Edge> v9Inci = new LinkedList<Edge>();
-		LinkedList<Edge> v10Inci = new LinkedList<Edge>();
-		LinkedList<Edge> v11Inci = new LinkedList<Edge>();
-		LinkedList<Edge> v12Inci = new LinkedList<Edge>();
+		LinkedList<Edge> v1Inci = new LinkedList<>();
+		LinkedList<Edge> v2Inci = new LinkedList<>();
+		LinkedList<Edge> v3Inci = new LinkedList<>();
+		LinkedList<Edge> v4Inci = new LinkedList<>();
+		LinkedList<Edge> v5Inci = new LinkedList<>();
+		LinkedList<Edge> v6Inci = new LinkedList<>();
+		LinkedList<Edge> v7Inci = new LinkedList<>();
+		LinkedList<Edge> v8Inci = new LinkedList<>();
+		LinkedList<Edge> v9Inci = new LinkedList<>();
+		LinkedList<Edge> v10Inci = new LinkedList<>();
+		LinkedList<Edge> v11Inci = new LinkedList<>();
+		LinkedList<Edge> v12Inci = new LinkedList<>();
 		createRandomGraph(false, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11,
 				v12, v1Inci, v2Inci, v3Inci, v4Inci, v5Inci, v6Inci, v7Inci,
 				v8Inci, v9Inci, v10Inci, v11Inci, v12Inci);
@@ -1751,18 +1751,18 @@ public class RoleNameTest extends InstanceTest {
 		C2 v10 = graph.createC2();
 		D2 v11 = graph.createD2();
 		D2 v12 = graph.createD2();
-		LinkedList<Edge> v1Inci = new LinkedList<Edge>();
-		LinkedList<Edge> v2Inci = new LinkedList<Edge>();
-		LinkedList<Edge> v3Inci = new LinkedList<Edge>();
-		LinkedList<Edge> v4Inci = new LinkedList<Edge>();
-		LinkedList<Edge> v5Inci = new LinkedList<Edge>();
-		LinkedList<Edge> v6Inci = new LinkedList<Edge>();
-		LinkedList<Edge> v7Inci = new LinkedList<Edge>();
-		LinkedList<Edge> v8Inci = new LinkedList<Edge>();
-		LinkedList<Edge> v9Inci = new LinkedList<Edge>();
-		LinkedList<Edge> v10Inci = new LinkedList<Edge>();
-		LinkedList<Edge> v11Inci = new LinkedList<Edge>();
-		LinkedList<Edge> v12Inci = new LinkedList<Edge>();
+		LinkedList<Edge> v1Inci = new LinkedList<>();
+		LinkedList<Edge> v2Inci = new LinkedList<>();
+		LinkedList<Edge> v3Inci = new LinkedList<>();
+		LinkedList<Edge> v4Inci = new LinkedList<>();
+		LinkedList<Edge> v5Inci = new LinkedList<>();
+		LinkedList<Edge> v6Inci = new LinkedList<>();
+		LinkedList<Edge> v7Inci = new LinkedList<>();
+		LinkedList<Edge> v8Inci = new LinkedList<>();
+		LinkedList<Edge> v9Inci = new LinkedList<>();
+		LinkedList<Edge> v10Inci = new LinkedList<>();
+		LinkedList<Edge> v11Inci = new LinkedList<>();
+		LinkedList<Edge> v12Inci = new LinkedList<>();
 		createRandomGraph(false, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11,
 				v12, v1Inci, v2Inci, v3Inci, v4Inci, v5Inci, v6Inci, v7Inci,
 				v8Inci, v9Inci, v10Inci, v11Inci, v12Inci);
@@ -1817,12 +1817,12 @@ public class RoleNameTest extends InstanceTest {
 		v2.add_sourceH(v1);
 		v2.add_sourceG(v1);
 		v2.add_sourceH(v1);
-		LinkedList<Vertex> expected = new LinkedList<Vertex>();
+		LinkedList<Vertex> expected = new LinkedList<>();
 		expected.add(v1);
 		expected.add(v1);
 		expected.add(v1);
 		compareLists(expected, v2.get_sourceH());
-		expected = new LinkedList<Vertex>();
+		expected = new LinkedList<>();
 		expected.add(v1);
 		compareLists(expected, v2.get_sourceF());
 		compareLists(expected, v2.get_sourceG());
@@ -1838,7 +1838,7 @@ public class RoleNameTest extends InstanceTest {
 		A v1 = graph.createA();
 		v1.add_sourceI(v1);
 		graph.createI(v1, v1);
-		LinkedList<Vertex> expected = new LinkedList<Vertex>();
+		LinkedList<Vertex> expected = new LinkedList<>();
 		expected.add(v1);
 		expected.add(v1);
 		compareLists(expected, v1.get_sourceI());
@@ -1863,18 +1863,18 @@ public class RoleNameTest extends InstanceTest {
 		C2 v10 = graph.createC2();
 		D2 v11 = graph.createD2();
 		D2 v12 = graph.createD2();
-		LinkedList<Edge> v1Inci = new LinkedList<Edge>();
-		LinkedList<Edge> v2Inci = new LinkedList<Edge>();
-		LinkedList<Edge> v3Inci = new LinkedList<Edge>();
-		LinkedList<Edge> v4Inci = new LinkedList<Edge>();
-		LinkedList<Edge> v5Inci = new LinkedList<Edge>();
-		LinkedList<Edge> v6Inci = new LinkedList<Edge>();
-		LinkedList<Edge> v7Inci = new LinkedList<Edge>();
-		LinkedList<Edge> v8Inci = new LinkedList<Edge>();
-		LinkedList<Edge> v9Inci = new LinkedList<Edge>();
-		LinkedList<Edge> v10Inci = new LinkedList<Edge>();
-		LinkedList<Edge> v11Inci = new LinkedList<Edge>();
-		LinkedList<Edge> v12Inci = new LinkedList<Edge>();
+		LinkedList<Edge> v1Inci = new LinkedList<>();
+		LinkedList<Edge> v2Inci = new LinkedList<>();
+		LinkedList<Edge> v3Inci = new LinkedList<>();
+		LinkedList<Edge> v4Inci = new LinkedList<>();
+		LinkedList<Edge> v5Inci = new LinkedList<>();
+		LinkedList<Edge> v6Inci = new LinkedList<>();
+		LinkedList<Edge> v7Inci = new LinkedList<>();
+		LinkedList<Edge> v8Inci = new LinkedList<>();
+		LinkedList<Edge> v9Inci = new LinkedList<>();
+		LinkedList<Edge> v10Inci = new LinkedList<>();
+		LinkedList<Edge> v11Inci = new LinkedList<>();
+		LinkedList<Edge> v12Inci = new LinkedList<>();
 		createRandomGraph(false, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11,
 				v12, v1Inci, v2Inci, v3Inci, v4Inci, v5Inci, v6Inci, v7Inci,
 				v8Inci, v9Inci, v10Inci, v11Inci, v12Inci);

@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2013 Institute for Software Technology
+ * Copyright (C) 2006-2014 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -58,8 +58,8 @@ public class DFAState extends State {
 	 * constructs a new state from the given nea state
 	 */
 	public DFAState(State s) {
-		neaStates = new ArrayList<State>();
-		ArrayList<Transition> newTransitions = new ArrayList<Transition>();
+		neaStates = new ArrayList<>();
+		ArrayList<Transition> newTransitions = new ArrayList<>();
 		Iterator<Transition> transitionIter = s.outTransitions.iterator();
 		while (transitionIter.hasNext()) {
 			Transition t = transitionIter.next();
@@ -84,11 +84,11 @@ public class DFAState extends State {
 	 */
 	public ArrayList<Transition> addRepresentedState(State s) {
 		if (neaStates.contains(s)) {
-			return new ArrayList<Transition>();
+			return new ArrayList<>();
 		}
 		neaStates.add(s);
-		ArrayList<Transition> oldTransList = new ArrayList<Transition>();
-		ArrayList<Transition> newTransList = new ArrayList<Transition>();
+		ArrayList<Transition> oldTransList = new ArrayList<>();
+		ArrayList<Transition> newTransList = new ArrayList<>();
 		oldTransList.addAll(s.outTransitions);
 		Iterator<Transition> transitionIter = oldTransList.iterator();
 		while (transitionIter.hasNext()) {

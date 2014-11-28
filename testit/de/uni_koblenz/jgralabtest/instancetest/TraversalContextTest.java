@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2013 Institute for Software Technology
+ * Copyright (C) 2006-2014 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -94,6 +94,9 @@ public class TraversalContextTest extends InstanceTest {
 			graph = MinimalSchema.instance().createMinimalGraph(
 					ImplementationType.STANDARD);
 			break;
+		case GENERIC:
+			throw new UnsupportedOperationException(
+					"TraversalContextTest not implemented for GENERIC implementation.");
 		}
 
 		createGraphAndSubgraph();
@@ -392,7 +395,7 @@ public class TraversalContextTest extends InstanceTest {
 
 	@Test
 	public void testVertices() throws Exception {
-		List<Vertex> listAllTrue = new LinkedList<Vertex>();
+		List<Vertex> listAllTrue = new LinkedList<>();
 		for (int i = 1; i < v.length; i++) {
 			listAllTrue.add(v[i]);
 		}
@@ -400,11 +403,11 @@ public class TraversalContextTest extends InstanceTest {
 		testVerticesWithTC(listAllTrue, fullGraph);
 
 		// empty list
-		List<Vertex> listAllFalse = new LinkedList<Vertex>();
+		List<Vertex> listAllFalse = new LinkedList<>();
 		testVerticesWithTC(listAllFalse, emptyGraph);
 
 		// subgraph1
-		List<Vertex> list1 = new LinkedList<Vertex>();
+		List<Vertex> list1 = new LinkedList<>();
 		list1.add(v[1]);
 		list1.add(v[2]);
 		list1.add(v[3]);
@@ -413,7 +416,7 @@ public class TraversalContextTest extends InstanceTest {
 		testVerticesWithTC(list1, subgraph1);
 
 		// subgraph2
-		List<Vertex> list2 = new LinkedList<Vertex>();
+		List<Vertex> list2 = new LinkedList<>();
 		list2.add(v[2]);
 		list2.add(v[3]);
 		list2.add(v[4]);
@@ -427,7 +430,7 @@ public class TraversalContextTest extends InstanceTest {
 	private void testVerticesWithTC(List<Vertex> controlList,
 			TraversalContext tc) {
 		graph.setTraversalContext(tc);
-		List<Vertex> vertices = new LinkedList<Vertex>();
+		List<Vertex> vertices = new LinkedList<>();
 		for (Vertex v : graph.vertices()) {
 			vertices.add(v);
 		}
@@ -684,17 +687,17 @@ public class TraversalContextTest extends InstanceTest {
 
 	@Test
 	public void testEdges() {
-		List<Edge> listAllTrue = new LinkedList<Edge>();
+		List<Edge> listAllTrue = new LinkedList<>();
 		for (int i = 1; i < e.length; i++) {
 			listAllTrue.add(e[i]);
 		}
 		testEdgesWithTC(listAllTrue, null);
 		testEdgesWithTC(listAllTrue, fullGraph);
 
-		List<Edge> listAllFalse = new LinkedList<Edge>();
+		List<Edge> listAllFalse = new LinkedList<>();
 		testEdgesWithTC(listAllFalse, emptyGraph);
 
-		List<Edge> list1 = new LinkedList<Edge>();
+		List<Edge> list1 = new LinkedList<>();
 		list1.add(e[1]);
 		list1.add(e[2]);
 		list1.add(e[3]);
@@ -705,7 +708,7 @@ public class TraversalContextTest extends InstanceTest {
 		list1.add(e[8]);
 		testEdgesWithTC(list1, subgraph1);
 
-		List<Edge> list2 = new LinkedList<Edge>();
+		List<Edge> list2 = new LinkedList<>();
 		list2.add(e[4]);
 		list2.add(e[6]);
 		list2.add(e[14]);
@@ -720,7 +723,7 @@ public class TraversalContextTest extends InstanceTest {
 
 	private void testEdgesWithTC(List<Edge> controlList, TraversalContext tc) {
 		graph.setTraversalContext(tc);
-		List<Edge> edges = new LinkedList<Edge>();
+		List<Edge> edges = new LinkedList<>();
 		for (Edge e : graph.edges()) {
 			edges.add(e);
 		}
@@ -984,7 +987,7 @@ public class TraversalContextTest extends InstanceTest {
 	public void testIncidences() throws Exception {
 		// no TC or all true
 		// v2
-		List<Edge> incidenceList = new LinkedList<Edge>();
+		List<Edge> incidenceList = new LinkedList<>();
 		incidenceList.add(re[1]);
 		incidenceList.add(e[4]);
 		incidenceList.add(e[5]);
@@ -1026,7 +1029,7 @@ public class TraversalContextTest extends InstanceTest {
 	private void testIncidencesWithTC(Vertex v, List<Edge> controlList,
 			TraversalContext tc) {
 		graph.setTraversalContext(tc);
-		List<Edge> edges = new LinkedList<Edge>();
+		List<Edge> edges = new LinkedList<>();
 		for (Edge e : v.incidences()) {
 			edges.add(e);
 		}

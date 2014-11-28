@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2013 Institute for Software Technology
+ * Copyright (C) 2006-2014 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -84,7 +84,7 @@ public abstract class AttributedElementCodeGenerator<SC extends AttributedElemen
 		rootBlock.setVariable("schemaPackageName", schemaRootPackageName);
 		rootBlock.setVariable("theGraph", "graph");
 
-		interfaces = new TreeSet<String>();
+		interfaces = new TreeSet<>();
 		interfaces.add(aec.getQualifiedName());
 		rootBlock.setVariable("isAbstractClass", aec.isAbstract() ? "true"
 				: "false");
@@ -459,9 +459,8 @@ public abstract class AttributedElementCodeGenerator<SC extends AttributedElemen
 				a.addNoIndent(new CodeSnippet(
 						"if (attributeName.equals(\"#variableName#\")) {",
 						"\tGraphIO io = GraphIO.createStringWriter(getSchema());"));
-				a.add(new CodeSnippet(
-						"if (isUnsetAttribute(\"" + attribute.getName()
-								+ "\")) {",
+				a.add(new CodeSnippet("if (isUnsetAttribute(\""
+						+ attribute.getName() + "\")) {",
 						"\tio.writeIdentifier(GraphIO.UNSET_LITERAL);",
 						"} else {"));
 				a.add(attribute.getDomain().getWriteMethod(
@@ -517,9 +516,8 @@ public abstract class AttributedElementCodeGenerator<SC extends AttributedElemen
 				"public void writeAttributeValues(GraphIO io) throws GraphIOException, IOException {"));
 		if ((attributes != null) && !attributes.isEmpty()) {
 			for (Attribute attribute : attributes) {
-				code.add(new CodeSnippet(
-						"if (isUnsetAttribute(\"" + attribute.getName()
-								+ "\")) {",
+				code.add(new CodeSnippet("if (isUnsetAttribute(\""
+						+ attribute.getName() + "\")) {",
 						"\tio.writeIdentifier(GraphIO.UNSET_LITERAL);",
 						"} else {"));
 				code.add(

@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2013 Institute for Software Technology
+ * Copyright (C) 2006-2014 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -35,8 +35,8 @@
 package de.uni_koblenz.ist.utilities.plist;
 
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.Stack;
-import java.util.Vector;
 
 import javax.xml.stream.XMLStreamException;
 
@@ -49,7 +49,7 @@ class PListProcessor extends XmlProcessor {
 		String tag;
 		String lastKey;
 		PListDict dict;
-		Vector<Object> array;
+		ArrayList<Object> array;
 		Object value;
 	}
 
@@ -66,7 +66,7 @@ class PListProcessor extends XmlProcessor {
 		if (e.tag.equals("dict")) {
 			e.dict = new PListDict();
 		} else if (e.tag.equals("array")) {
-			e.array = new Vector<Object>();
+			e.array = new ArrayList<>();
 		}
 		objectStack.push(e);
 	}
@@ -129,7 +129,7 @@ class PListProcessor extends XmlProcessor {
 			throw new IllegalStateException(
 					"startDocument called multiple times");
 		}
-		objectStack = new Stack<StackEntry>();
+		objectStack = new Stack<>();
 	}
 
 	@Override

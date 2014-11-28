@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2013 Institute for Software Technology
+ * Copyright (C) 2006-2014 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -261,7 +261,7 @@ public abstract class NamedElementImpl implements NamedElement {
 				this.qualifiedName = Package.DEFAULTPACKAGE_NAME;
 				this.parentPackage = null;
 				this.simpleName = Package.DEFAULTPACKAGE_NAME;
-				comments = new ArrayList<String>();
+				comments = new ArrayList<>();
 				return;
 			} else {
 				throw new SchemaException("Cannot create the element '"
@@ -361,7 +361,7 @@ public abstract class NamedElementImpl implements NamedElement {
 		}
 
 		schema.addNamedElement(this);
-		comments = new ArrayList<String>();
+		comments = new ArrayList<>();
 	}
 
 	@Override
@@ -489,7 +489,7 @@ public abstract class NamedElementImpl implements NamedElement {
 		comment = comment.trim();
 		if (comment.length() > 0) {
 			if (this.comments == null) {
-				this.comments = new ArrayList<String>();
+				this.comments = new ArrayList<>();
 			}
 			this.comments.add(comment);
 		}

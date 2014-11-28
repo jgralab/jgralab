@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2013 Institute for Software Technology
+ * Copyright (C) 2006-2014 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -48,7 +48,7 @@ import de.uni_koblenz.jgralab.greql.exception.GreqlException;
 import de.uni_koblenz.jgralab.greql.funlib.FunLib;
 
 public class GreqlQueryFunctionTest extends GenericTest {
-	HashSet<String> functions = new HashSet<String>();
+	HashSet<String> functions = new HashSet<>();
 
 	private void registerGreqlFunction(String name, String queryText) {
 		GreqlQuery query = GreqlQuery.createQuery(queryText);

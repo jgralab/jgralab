@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2013 Institute for Software Technology
+ * Copyright (C) 2006-2014 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -569,7 +569,7 @@ public abstract class VertexBaseImpl extends
 	@Override
 	public final Iterable<Edge> incidences() {
 		assert isValid();
-		return new IncidenceIterable<Edge>(this);
+		return new IncidenceIterable<>(this);
 	}
 
 	/*
@@ -582,7 +582,7 @@ public abstract class VertexBaseImpl extends
 	@Override
 	public final Iterable<Edge> incidences(EdgeDirection dir) {
 		assert isValid();
-		return new IncidenceIterable<Edge>(this, dir);
+		return new IncidenceIterable<>(this, dir);
 	}
 
 	/*
@@ -596,7 +596,7 @@ public abstract class VertexBaseImpl extends
 	public final Iterable<Edge> incidences(EdgeClass eclass, EdgeDirection dir) {
 		assert eclass != null;
 		assert isValid();
-		return new IncidenceIterable<Edge>(this, eclass, dir);
+		return new IncidenceIterable<>(this, eclass, dir);
 	}
 
 	/*
@@ -610,7 +610,7 @@ public abstract class VertexBaseImpl extends
 	public final Iterable<Edge> incidences(EdgeClass eclass) {
 		assert eclass != null;
 		assert isValid();
-		return new IncidenceIterable<Edge>(this, eclass);
+		return new IncidenceIterable<>(this, eclass);
 	}
 
 	@Override
@@ -816,7 +816,7 @@ public abstract class VertexBaseImpl extends
 		assert (role != null) && (role.length() > 0);
 		assert isValid();
 		DirectedSchemaEdgeClass entry = getEdgeForRolename(role);
-		List<Vertex> adjacences = new ArrayList<Vertex>();
+		List<Vertex> adjacences = new ArrayList<>();
 		EdgeDirection dir = entry.getDirection();
 		for (Edge e : incidences(entry.getEdgeClass(), dir)) {
 			adjacences.add(e.getThat());
@@ -852,8 +852,8 @@ public abstract class VertexBaseImpl extends
 		TraversalContext oldTC = getGraph().setTraversalContext(null);
 		try {
 			DirectedSchemaEdgeClass entry = getEdgeForRolename(role);
-			List<Vertex> adjacences = new ArrayList<Vertex>();
-			List<Edge> deleteList = new ArrayList<Edge>();
+			List<Vertex> adjacences = new ArrayList<>();
+			List<Edge> deleteList = new ArrayList<>();
 			EdgeDirection dir = entry.getDirection();
 			for (Edge e : incidences(entry.getEdgeClass(), dir)) {
 				deleteList.add(e);
@@ -877,7 +877,7 @@ public abstract class VertexBaseImpl extends
 		TraversalContext oldTC = getGraph().setTraversalContext(null);
 		try {
 			DirectedSchemaEdgeClass entry = getEdgeForRolename(role);
-			List<Edge> deleteList = new ArrayList<Edge>();
+			List<Edge> deleteList = new ArrayList<>();
 			EdgeDirection dir = entry.getDirection();
 			for (Edge e : incidences(entry.getEdgeClass(), dir)) {
 				if (e.getThat() == other) {
@@ -903,7 +903,7 @@ public abstract class VertexBaseImpl extends
 	public final <T extends Vertex> POrderedSet<T> reachableVertices(
 			Class<T> returnType, PathElement... pathElements) {
 		PSet<T> result = JGraLab.set();
-		Queue<Vertex> q = new LinkedList<Vertex>();
+		Queue<Vertex> q = new LinkedList<>();
 		q.add(this);
 
 		for (int i = 0; i < pathElements.length; i++) {

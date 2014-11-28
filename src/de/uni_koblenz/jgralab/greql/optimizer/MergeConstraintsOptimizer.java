@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2013 Institute for Software Technology
+ * Copyright (C) 2006-2014 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -97,14 +97,14 @@ public class MergeConstraintsOptimizer extends OptimizerBase {
 	public boolean optimize(GreqlQuery query) throws OptimizerException {
 		GreqlGraph syntaxgraph = query.getQueryGraph();
 
-		ArrayList<Declaration> declarations = new ArrayList<Declaration>();
+		ArrayList<Declaration> declarations = new ArrayList<>();
 		for (Declaration decl : syntaxgraph.getDeclarationVertices()) {
 			declarations.add(decl);
 		}
 
 		boolean constraintsGotMerged = false;
 		for (Declaration decl : declarations) {
-			ArrayList<IsConstraintOf> constraintEdges = new ArrayList<IsConstraintOf>();
+			ArrayList<IsConstraintOf> constraintEdges = new ArrayList<>();
 			for (IsConstraintOf constraint : decl
 					.getIsConstraintOfIncidences(EdgeDirection.IN)) {
 				constraintEdges.add(constraint);

@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2013 Institute for Software Technology
+ * Copyright (C) 2006-2014 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -123,7 +123,7 @@ public class EdgeRestrictionEvaluator extends VertexEvaluator<EdgeRestriction> {
 		}
 
 		if (vertex.getFirstIsRoleIdOfIncidence() != null) {
-			validRoles = new HashSet<String>();
+			validRoles = new HashSet<>();
 			for (IsRoleIdOf e : vertex.getIsRoleIdOfIncidences()) {
 				RoleId role = e.getAlpha();
 				validRoles.add(role.get_name());

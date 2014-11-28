@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2013 Institute for Software Technology
+ * Copyright (C) 2006-2014 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -49,8 +49,8 @@ public interface BasicDomain extends Domain {
 	/**
 	 * List of names of the basic domains.
 	 */
-	public static final Set<String> BASIC_DOMAINS = new TreeSet<String>(Arrays
-			.asList(new String[] { BooleanDomain.BOOLEANDOMAIN_NAME,
+	public static final Set<String> BASIC_DOMAINS = new TreeSet<>(
+			Arrays.asList(new String[] { BooleanDomain.BOOLEANDOMAIN_NAME,
 					DoubleDomain.DOUBLEDOMAIN_NAME,
 					IntegerDomain.INTDOMAIN_NAME, LongDomain.LONGDOMAIN_NAME,
 					StringDomain.STRINGDOMAIN_NAME }));

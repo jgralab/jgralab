@@ -110,7 +110,7 @@ install an IRC client, you can also
 
 ## License
 
-Copyright (C) 2006-2013 The JGraLab Team <ist@uni-koblenz.de>
+Copyright (C) 2006-2014 The JGraLab Team <ist@uni-koblenz.de>
 
 Distributed under the
 [General Public License, Version 3](http://www.gnu.org/copyleft/gpl.html) with

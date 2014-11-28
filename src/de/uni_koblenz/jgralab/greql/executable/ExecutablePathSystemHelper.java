@@ -31,9 +31,9 @@ public class ExecutablePathSystemHelper {
 			GraphMarker<PathSystemMarkerEntry>[] marker, Vertex rootVertex,
 			Set<PathSystemMarkerEntry> leafEntries) {
 		de.uni_koblenz.jgralab.greql.types.PathSystem pathSystem = new de.uni_koblenz.jgralab.greql.types.PathSystem();
-		Map<Vertex, PathSystemNode[]> vertex2state2node = new HashMap<Vertex, PathSystemNode[]>();
-		Map<Vertex, PathSystemMarkerEntry[]> vertex2state2marker = new HashMap<Vertex, PathSystemMarkerEntry[]>();
-		Queue<PathSystemNode> nodesWithoutParentEdge = new LinkedList<PathSystemNode>();
+		Map<Vertex, PathSystemNode[]> vertex2state2node = new HashMap<>();
+		Map<Vertex, PathSystemMarkerEntry[]> vertex2state2marker = new HashMap<>();
+		Queue<PathSystemNode> nodesWithoutParentEdge = new LinkedList<>();
 		PathSystemMarkerEntry rootMarker = marker[0].getMark(rootVertex);
 		PathSystemNode root = pathSystem.setRootVertex(rootVertex,
 				rootMarker.stateNumber, rootMarker.stateIsFinal);

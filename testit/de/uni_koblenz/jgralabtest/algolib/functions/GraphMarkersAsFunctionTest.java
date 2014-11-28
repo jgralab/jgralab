@@ -59,7 +59,7 @@ public class GraphMarkersAsFunctionTest {
 		longMarker = new LongVertexMarker(graph);
 		doubleMarker = new DoubleVertexMarker(graph);
 		booleanMarker = new BitSetVertexMarker(graph);
-		objectMarker = new ArrayVertexMarker<String>(graph);
+		objectMarker = new ArrayVertexMarker<>(graph);
 	}
 
 	private void fillGraphMarkers() {

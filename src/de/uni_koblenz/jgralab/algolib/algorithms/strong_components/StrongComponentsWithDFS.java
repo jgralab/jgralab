@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2013 Institute for Software Technology
+ * Copyright (C) 2006-2014 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -127,7 +127,7 @@ public class StrongComponentsWithDFS extends StructureOrientedAlgorithm
 
 	public StrongComponentsWithDFS withInverseResult() {
 		checkStateForSettingParameters();
-		inverseResult = new ArrayVertexMarker<Set<Vertex>>(graph);
+		inverseResult = new ArrayVertexMarker<>(graph);
 		return this;
 	}
 
@@ -166,7 +166,7 @@ public class StrongComponentsWithDFS extends StructureOrientedAlgorithm
 	@Override
 	public void resetParameters() {
 		super.resetParameters();
-		vertexStack = new Stack<Vertex>();
+		vertexStack = new Stack<>();
 		visitors = new ReducedGraphVisitorList();
 		inverseResult = null;
 		lowlinkVisitor = new DFSVisitorAdapter() {
@@ -227,7 +227,7 @@ public class StrongComponentsWithDFS extends StructureOrientedAlgorithm
 					Set<Vertex> currentSubSet = null;
 					if (inverseResult != null) {
 						assert inverseResult.get(v) == null;
-						currentSubSet = new HashSet<Vertex>();
+						currentSubSet = new HashSet<>();
 						inverseResult.set(v, currentSubSet);
 					}
 					Vertex x;
@@ -249,7 +249,7 @@ public class StrongComponentsWithDFS extends StructureOrientedAlgorithm
 	public void reset() {
 		super.reset();
 		lowlink = new IntegerVertexMarker(graph);
-		strongComponents = new ArrayVertexMarker<Vertex>(graph);
+		strongComponents = new ArrayVertexMarker<>(graph);
 		inverseResult = inverseResult == null ? null
 				: new ArrayVertexMarker<Set<Vertex>>(graph);
 		vertexStack.clear();

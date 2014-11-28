@@ -1,9 +1,9 @@
 package de.uni_koblenz.jgralabtest.algolib.algorithms.test_visitors;
 
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
 
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -30,11 +30,11 @@ public class StrongComponentsTestVisitor extends ReducedGraphVisitorAdapter {
 	@Override
 	public void reset() {
 		super.reset();
-		representativeVertexList = new LinkedList<Vertex>();
-		reducedEdgeList = new LinkedList<Edge>();
+		representativeVertexList = new LinkedList<>();
+		reducedEdgeList = new LinkedList<>();
 
-		representativeVertices = new HashSet<Vertex>();
-		reducedEdges = new HashSet<Edge>();
+		representativeVertices = new HashSet<>();
+		reducedEdges = new HashSet<>();
 	}
 
 	@Override

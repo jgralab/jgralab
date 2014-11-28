@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2013 Institute for Software Technology
+ * Copyright (C) 2006-2014 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -138,7 +138,7 @@ public class JGraLab {
 			"  Codename: $codename" };
 
 	private static final String[] copyrightInfo = {
-			"Copyright (C) 2006-2013 Institute for Software Technology",
+			"Copyright (C) 2006-2014 Institute for Software Technology",
 			"                        University of Koblenz-Landau, Germany",
 			"                        ist@uni-koblenz.de",
 			"",
@@ -171,7 +171,7 @@ public class JGraLab {
 			"", "This software uses:", "", "Apache Commons CLI 1.2",
 			"Copyright 2001-2009 The Apache Software Foundation" };
 
-	private static HashMap<String, Logger> loggerMap = new HashMap<String, Logger>();
+	private static HashMap<String, Logger> loggerMap = new HashMap<>();
 	private static Logger rootLogger = getRootLogger();
 
 	/**

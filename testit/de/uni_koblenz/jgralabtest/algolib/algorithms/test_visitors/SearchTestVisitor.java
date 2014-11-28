@@ -1,9 +1,9 @@
 package de.uni_koblenz.jgralabtest.algolib.algorithms.test_visitors;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertEquals;
 
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -115,40 +115,40 @@ public class SearchTestVisitor extends SearchVisitorAdapter {
 	public void reset() {
 		super.reset();
 		currentRoot = null;
-		vertices = new LinkedList<Vertex>();
-		edges = new LinkedList<Edge>();
-		treeEdges = new LinkedList<Edge>();
-		fronds = new LinkedList<Edge>();
+		vertices = new LinkedList<>();
+		edges = new LinkedList<>();
+		treeEdges = new LinkedList<>();
+		fronds = new LinkedList<>();
 	}
 
 	public void performPostTests() throws Exception {
 		// check if all vertices have been visited only once
-		Set<Vertex> vertexSet = new HashSet<Vertex>();
+		Set<Vertex> vertexSet = new HashSet<>();
 		vertexSet.addAll(vertices);
 		assertEquals("Some vertices have been visited multiple times."
 				+ vertexSet.size(), vertexSet.size(), vertices.size());
 
 		// check if all edges have been visited only once
-		Set<Edge> edgeSet = new HashSet<Edge>();
+		Set<Edge> edgeSet = new HashSet<>();
 		edgeSet.addAll(edges);
 		assertEquals("Some edges have been visited multiple times.",
 				edgeSet.size(), edges.size());
 
 		// check if all tree edges have been visited only once
-		Set<Edge> treeEdgeSet = new HashSet<Edge>();
+		Set<Edge> treeEdgeSet = new HashSet<>();
 		treeEdgeSet.addAll(treeEdges);
 		assertEquals("Some tree edges have been visited multiple times.",
 				treeEdgeSet.size(), treeEdges.size());
 
 		// check if all fronds have been visited only once
-		Set<Edge> frondSet = new HashSet<Edge>();
+		Set<Edge> frondSet = new HashSet<>();
 		frondSet.addAll(fronds);
 		assertEquals("Some fronds have been visited multiple times.",
 				frondSet.size(), fronds.size());
 
 		// check if the intersection of the tree edge- and frond sets are empty
 		// and their union is identical with the complete edge set
-		Set<Edge> unionSet = new HashSet<Edge>();
+		Set<Edge> unionSet = new HashSet<>();
 		unionSet.addAll(treeEdgeSet);
 		unionSet.addAll(frondSet);
 		assertEquals(

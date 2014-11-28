@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2013 Institute for Software Technology
+ * Copyright (C) 2006-2014 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -82,7 +82,7 @@ public final class ArrayPVector<E> implements PVector<E>, Serializable {
 		this.sublist = false;
 	}
 
-	private static ArrayPVector<?> empty = new ArrayPVector<Object>();
+	private static ArrayPVector<?> empty = new ArrayPVector<>();
 
 	@Override
 	public boolean equals(Object obj) {
@@ -311,11 +311,11 @@ public final class ArrayPVector<E> implements PVector<E>, Serializable {
 		ArrayPVector<E> result;
 		if (i == 0) {
 			// remove first
-			result = new ArrayPVector<E>(value, offset + 1, count - 1);
+			result = new ArrayPVector<>(value, offset + 1, count - 1);
 			result.sublist = true;
 		} else if (i == count - 1) {
 			// remove last
-			result = new ArrayPVector<E>(value, offset, count - 1);
+			result = new ArrayPVector<>(value, offset, count - 1);
 			result.sublist = true;
 		} else {
 			// remove in the middle
@@ -323,7 +323,7 @@ public final class ArrayPVector<E> implements PVector<E>, Serializable {
 			E[] val = (E[]) new Object[count - 1];
 			System.arraycopy(value, offset, val, 0, i);
 			System.arraycopy(value, offset + i + 1, val, i, count - i - 1);
-			result = new ArrayPVector<E>(val, 0, count - 1);
+			result = new ArrayPVector<>(val, 0, count - 1);
 		}
 		return result;
 	}
@@ -352,7 +352,7 @@ public final class ArrayPVector<E> implements PVector<E>, Serializable {
 				@SuppressWarnings("unchecked")
 				E[] val = (E[]) new Object[INITIAL_SIZE];
 				val[0] = e;
-				return new ArrayPVector<E>(val, 0, 1);
+				return new ArrayPVector<>(val, 0, 1);
 			} else {
 				// we have to clone
 				@SuppressWarnings("unchecked")
@@ -360,13 +360,13 @@ public final class ArrayPVector<E> implements PVector<E>, Serializable {
 						(int) (count * GROW_FACTOR))];
 				System.arraycopy(value, offset, val, 0, count);
 				val[count] = e;
-				return new ArrayPVector<E>(val, 0, count + 1);
+				return new ArrayPVector<>(val, 0, count + 1);
 
 			}
 		} else {
 			sublist = true;
 			value[offset + count] = e;
-			return new ArrayPVector<E>(value, offset, count + 1);
+			return new ArrayPVector<>(value, offset, count + 1);
 		}
 	}
 
@@ -397,7 +397,7 @@ public final class ArrayPVector<E> implements PVector<E>, Serializable {
 				value[i++] = e;
 			}
 			sublist = true;
-			return new ArrayPVector<E>(value, offset, i);
+			return new ArrayPVector<>(value, offset, i);
 		} else {
 			// l longer than remaining space
 			E[] val = (E[]) new Object[count + n];
@@ -412,7 +412,7 @@ public final class ArrayPVector<E> implements PVector<E>, Serializable {
 				}
 				val[i++] = e;
 			}
-			return new ArrayPVector<E>(val, 0, i);
+			return new ArrayPVector<>(val, 0, i);
 		}
 	}
 
@@ -438,7 +438,7 @@ public final class ArrayPVector<E> implements PVector<E>, Serializable {
 		if (idx < count) {
 			System.arraycopy(value, idx, val, n - count + idx, count - idx);
 		}
-		return new ArrayPVector<E>(val, 0, n);
+		return new ArrayPVector<>(val, 0, n);
 	}
 
 	@Override
@@ -452,7 +452,7 @@ public final class ArrayPVector<E> implements PVector<E>, Serializable {
 			if (start == end) {
 				return empty();
 			}
-			ArrayPVector<E> result = new ArrayPVector<E>(value, offset + start,
+			ArrayPVector<E> result = new ArrayPVector<>(value, offset + start,
 					end - start);
 			result.sublist = true;
 			return result;
@@ -470,7 +470,7 @@ public final class ArrayPVector<E> implements PVector<E>, Serializable {
 		}
 		E[] val = Arrays.copyOfRange(value, offset, offset + count);
 		val[i] = e;
-		return new ArrayPVector<E>(val, 0, count);
+		return new ArrayPVector<>(val, 0, count);
 	}
 
 	@Override

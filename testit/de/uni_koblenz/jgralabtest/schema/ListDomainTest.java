@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2013 Institute for Software Technology
+ * Copyright (C) 2006-2014 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -38,9 +38,6 @@ import java.util.HashSet;
 
 import org.junit.Before;
 
-import de.uni_koblenz.jgralab.schema.CompositeDomain;
-import de.uni_koblenz.jgralab.schema.Domain;
-
 public class ListDomainTest extends CollectionDomainTest {
 
 	@Override
@@ -67,18 +64,18 @@ public class ListDomainTest extends CollectionDomainTest {
 		// Initializing of CompositeDomainTest
 		domain3 = schema1.createListDomain(schema1.getDomain("String"));
 		domain4 = schema1.createListDomain(domain3);
-		expectedCompositeDomains1 = new HashSet<CompositeDomain>();
-		expectedCompositeDomains2 = new HashSet<CompositeDomain>();
-		expectedCompositeDomains3 = new HashSet<CompositeDomain>();
-		expectedCompositeDomains4 = new HashSet<CompositeDomain>();
+		expectedCompositeDomains1 = new HashSet<>();
+		expectedCompositeDomains2 = new HashSet<>();
+		expectedCompositeDomains3 = new HashSet<>();
+		expectedCompositeDomains4 = new HashSet<>();
 		expectedCompositeDomains4.add(domain3);
-		expectedDomains1 = new HashSet<Domain>();
+		expectedDomains1 = new HashSet<>();
 		expectedDomains1.add(schema1.getDomain("Integer"));
-		expectedDomains2 = new HashSet<Domain>();
+		expectedDomains2 = new HashSet<>();
 		expectedDomains2.add(schema2.getDomain("Integer"));
-		expectedDomains3 = new HashSet<Domain>();
+		expectedDomains3 = new HashSet<>();
 		expectedDomains3.add(schema1.getDomain("String"));
-		expectedDomains4 = new HashSet<Domain>();
+		expectedDomains4 = new HashSet<>();
 		expectedDomains4.add(domain3);
 	}
 

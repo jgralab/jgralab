@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2013 Institute for Software Technology
+ * Copyright (C) 2006-2014 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -82,7 +82,7 @@ public abstract class XmlProcessor {
 	private String fileName;
 
 	public XmlProcessor() {
-		ignoredElements = new TreeSet<String>();
+		ignoredElements = new TreeSet<>();
 	}
 
 	public void process(String fileName) throws FileNotFoundException,
@@ -118,8 +118,8 @@ public abstract class XmlProcessor {
 	}
 
 	private void startDocumentEvent() throws XMLStreamException {
-		elementNameStack = new Stack<String>();
-		elementContentStack = new Stack<StringBuilder>();
+		elementNameStack = new Stack<>();
+		elementContentStack = new Stack<>();
 		ignoreCounter = 0;
 		startDocument();
 	}
@@ -210,7 +210,7 @@ public abstract class XmlProcessor {
 	}
 
 	protected Set<String> getAttributeNames() {
-		LinkedHashSet<String> attrNames = new LinkedHashSet<String>();
+		LinkedHashSet<String> attrNames = new LinkedHashSet<>();
 		int n = parser.getAttributeCount();
 		for (int i = 0; i < n; ++i) {
 			String ns = parser.getAttributePrefix(i);

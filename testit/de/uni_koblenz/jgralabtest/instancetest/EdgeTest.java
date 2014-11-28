@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2013 Institute for Software Technology
+ * Copyright (C) 2006-2014 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -2502,7 +2502,7 @@ public class EdgeTest extends InstanceTest {
 			boolean nosubclasses) {
 		Vertex[] nodes = new Vertex[] { g.createSubNode(),
 				g.createDoubleSubNode(), g.createSuperNode() };
-		ArrayList<ArrayList<Edge>> ret = new ArrayList<ArrayList<Edge>>();
+		ArrayList<ArrayList<Edge>> ret = new ArrayList<>();
 		if (!edgeClass) {
 			// edges for getPrevEdgeInGraph() are needed
 			ret.add(new ArrayList<Edge>());
@@ -3251,7 +3251,7 @@ public class EdgeTest extends InstanceTest {
 	 * @return ret @
 	 */
 	private ArrayList<ArrayList<Edge>> createRandomGraph() {
-		ArrayList<ArrayList<Edge>> ret = new ArrayList<ArrayList<Edge>>(6);
+		ArrayList<ArrayList<Edge>> ret = new ArrayList<>(6);
 		ret.add(new ArrayList<Edge>());
 		ret.add(new ArrayList<Edge>());
 		ret.add(new ArrayList<Edge>());
@@ -4070,7 +4070,7 @@ public class EdgeTest extends InstanceTest {
 		e.set_anInt(4);
 
 		assertEquals("test", e.getAttribute("aString"));
-		assertEquals((Integer) 4, e.getAttribute("anInt"));
+		assertEquals(4, e.getAttribute("anInt"));
 	}
 
 	/**
@@ -4087,7 +4087,7 @@ public class EdgeTest extends InstanceTest {
 		e.set_anInt(4);
 
 		assertEquals("test", e.getAttribute("aString"));
-		assertEquals((Integer) 4, e.getAttribute("anInt"));
+		assertEquals(4, e.getAttribute("anInt"));
 	}
 
 	/**
@@ -4137,7 +4137,7 @@ public class EdgeTest extends InstanceTest {
 		e.setAttribute("anInt", 4);
 
 		assertEquals("test", e.getAttribute("aString"));
-		assertEquals((Integer) 4, e.getAttribute("anInt"));
+		assertEquals(4, e.getAttribute("anInt"));
 	}
 
 	/**
@@ -4154,7 +4154,7 @@ public class EdgeTest extends InstanceTest {
 		e.setAttribute("anInt", 4);
 
 		assertEquals("test", e.getAttribute("aString"));
-		assertEquals((Integer) 4, e.getAttribute("anInt"));
+		assertEquals(4, e.getAttribute("anInt"));
 	}
 
 	/**

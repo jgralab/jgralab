@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2013 Institute for Software Technology
+ * Copyright (C) 2006-2014 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -69,7 +69,7 @@ public class RequestThread extends Thread {
 
 	private final Socket _socket;
 
-	private static final HashSet<String> svgToDelete = new HashSet<String>();
+	private static final HashSet<String> svgToDelete = new HashSet<>();
 
 	public RequestThread(Socket socket, String path) {
 		_socket = socket;
@@ -367,7 +367,7 @@ public class RequestThread extends Thread {
 			String sessionId = bodyparts[1];
 			String methodname = bodyparts[2];
 			// read parameters
-			ArrayList<String> args = new ArrayList<String>();
+			ArrayList<String> args = new ArrayList<>();
 			args.add(sessionId);
 			// each line is a parameter
 			for (int i = 3; i < bodyparts.length; i++) {

@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2013 Institute for Software Technology
+ * Copyright (C) 2006-2014 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -61,7 +61,7 @@ public final class MapPBag<E> extends AbstractCollection<E> implements PBag<E> {
 	 *         map.minusAll(map.keySet())
 	 */
 	public static <E> MapPBag<E> empty(final PMap<E, Integer> map) {
-		return new MapPBag<E>(map.minusAll(map.keySet()), 0);
+		return new MapPBag<>(map.minusAll(map.keySet()), 0);
 	}
 
 	// // PRIVATE CONSTRUCTORS ////
@@ -87,10 +87,12 @@ public final class MapPBag<E> extends AbstractCollection<E> implements PBag<E> {
 			private E e;
 			private int n = 0;
 
+			@Override
 			public boolean hasNext() {
 				return n > 0 || i.hasNext();
 			}
 
+			@Override
 			public E next() {
 				if (n == 0) { // finished with current element
 					Entry<E, Integer> entry = i.next();
@@ -101,6 +103,7 @@ public final class MapPBag<E> extends AbstractCollection<E> implements PBag<E> {
 				return e;
 			}
 
+			@Override
 			public void remove() {
 				throw new UnsupportedOperationException();
 			}
@@ -138,10 +141,12 @@ public final class MapPBag<E> extends AbstractCollection<E> implements PBag<E> {
 	}
 
 	// // IMPLEMENTED METHODS OF PSet ////
+	@Override
 	public MapPBag<E> plus(final E e) {
-		return new MapPBag<E>(map.plus(e, count(e) + 1), size + 1);
+		return new MapPBag<>(map.plus(e, count(e) + 1), size + 1);
 	}
 
+	@Override
 	@SuppressWarnings("unchecked")
 	public MapPBag<E> minus(final Object e) {
 		int n = count(e);
@@ -149,12 +154,13 @@ public final class MapPBag<E> extends AbstractCollection<E> implements PBag<E> {
 			return this;
 		}
 		if (n == 1) {
-			return new MapPBag<E>(map.minus(e), size - 1);
+			return new MapPBag<>(map.minus(e), size - 1);
 		}
 		// otherwise just decrement count:
-		return new MapPBag<E>(map.plus((E) e, n - 1), size - 1);
+		return new MapPBag<>(map.plus((E) e, n - 1), size - 1);
 	}
 
+	@Override
 	public MapPBag<E> plusAll(final Collection<? extends E> list) {
 		MapPBag<E> bag = this;
 		for (E e : list) {
@@ -163,10 +169,11 @@ public final class MapPBag<E> extends AbstractCollection<E> implements PBag<E> {
 		return bag;
 	}
 
+	@Override
 	public MapPBag<E> minusAll(final Collection<?> list) {
 		// removes _all_ elements found in list, i.e. counts are irrelevant:
 		PMap<E, Integer> map = this.map.minusAll(list);
-		return new MapPBag<E>(map, size(map)); // (completely recomputes size)
+		return new MapPBag<>(map, size(map)); // (completely recomputes size)
 	}
 
 	// // PRIVATE UTILITIES ////

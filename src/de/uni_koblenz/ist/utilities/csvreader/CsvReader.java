@@ -2,7 +2,7 @@
  /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2013 Institute for Software Technology
+ * Copyright (C) 2006-2014 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -89,7 +89,7 @@ public class CsvReader {
 	private LineNumberReader reader;
 
 	/**
-	 * Vector of Strings taken from first line of input
+	 * List of Strings taken from first line of input
 	 */
 	private ArrayList<String> fieldNames;
 
@@ -181,7 +181,7 @@ public class CsvReader {
 		reader = new LineNumberReader(in);
 		this.separators = separators;
 		this.quote = quote;
-		currentRecord = new ArrayList<String>();
+		currentRecord = new ArrayList<>();
 		quoting = !quote.equals(""); // switch on quoting if requested
 		if (withFieldNames == WITH_FIELDNAMES) {
 			readFieldNames();
@@ -213,7 +213,7 @@ public class CsvReader {
 	 */
 	public void readFieldNames() throws IOException {
 		if (readRecord()) {
-			fieldNames = new ArrayList<String>(currentRecord);
+			fieldNames = new ArrayList<>(currentRecord);
 		}
 	}
 
@@ -351,12 +351,12 @@ public class CsvReader {
 	 * @return the current record
 	 */
 	public List<String> getCurrentRecord() {
-		return new ArrayList<String>(currentRecord);
+		return new ArrayList<>(currentRecord);
 	}
 
 	/**
-	 * @return a Vector of Strings with field names, possibly null if field
-	 *         names were not read
+	 * @return a List of Strings with field names, possibly null if field names
+	 *         were not read
 	 */
 	public List<String> getFieldNames() {
 		return fieldNames;

@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2013 Institute for Software Technology
+ * Copyright (C) 2006-2014 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -150,7 +150,7 @@ public class EarlySelectionOptimizer extends OptimizerBase {
 	 * @throws OptimizerException
 	 */
 	private boolean runOptimization() throws OptimizerException {
-		HashMap<SimpleDeclaration, Set<Expression>> movableExpressions = new HashMap<SimpleDeclaration, Set<Expression>>();
+		HashMap<SimpleDeclaration, Set<Expression>> movableExpressions = new HashMap<>();
 
 		// find all movable constraints in all Declarations
 		for (Declaration decl : syntaxgraph.getDeclarationVertices()) {
@@ -173,7 +173,7 @@ public class EarlySelectionOptimizer extends OptimizerBase {
 
 		// now perform the needed transformations
 		boolean aTransformationWasDone = false;
-		List<SimpleDeclaration> simpleDeclsWithMovableExpressions = new ArrayList<SimpleDeclaration>(
+		List<SimpleDeclaration> simpleDeclsWithMovableExpressions = new ArrayList<>(
 				movableExpressions.keySet());
 
 		// Sort the list of SDs with associated movable expressions to handle
@@ -211,7 +211,7 @@ public class EarlySelectionOptimizer extends OptimizerBase {
 			// Check if there's a predicate needing only part of the variables
 			// the SimpleDeclaration declares and one that needs all of them.
 			boolean foundPredicateNeedingAllVars = false, foundPredNeedingPartOfVars = false;
-			Set<Variable> varsMaybeToSplitOut = new HashSet<Variable>();
+			Set<Variable> varsMaybeToSplitOut = new HashSet<>();
 			for (Expression pred : movableExpressions.get(sd)) {
 				Set<Variable> neededLocalVars = collectNeededLocalVariables(pred);
 				if (neededLocalVars.size() < varsDeclaredBySd.size()) {
@@ -288,7 +288,7 @@ public class EarlySelectionOptimizer extends OptimizerBase {
 
 		// First we search the edges that access the variables to be moved,
 		// which have to be relinked to the record access funApp later.
-		HashMap<Variable, Set<Edge>> varEdgeMap = new HashMap<Variable, Set<Edge>>();
+		HashMap<Variable, Set<Edge>> varEdgeMap = new HashMap<>();
 
 		for (Variable var : varsDeclaredByOrigSD) {
 			varEdgeMap.put(var, collectVariableAccessEdges(var));
@@ -332,8 +332,8 @@ public class EarlySelectionOptimizer extends OptimizerBase {
 		origSD.getFirstIsSimpleDeclOfIncidence(EdgeDirection.OUT).setOmega(
 				newInnerDecl);
 
-		Expression newCombinedConstraint = createConjunction(
-				new ArrayList<Expression>(predicates), new HashSet<Variable>());
+		Expression newCombinedConstraint = createConjunction(new ArrayList<>(
+				predicates), new HashSet<Variable>());
 		syntaxgraph.createIsConstraintOf(newCombinedConstraint, newInnerDecl);
 
 		// printGraphAsDot(syntaxgraph, "before-deleting.");
@@ -376,8 +376,8 @@ public class EarlySelectionOptimizer extends OptimizerBase {
 				+ ") with predicates " + predicates);
 
 		// Create the new vertices
-		Expression newCombinedConstraint = createConjunction(
-				new ArrayList<Expression>(predicates), varsDeclaredByOrigSD);
+		Expression newCombinedConstraint = createConjunction(new ArrayList<>(
+				predicates), varsDeclaredByOrigSD);
 		SetComprehension newSetComp = syntaxgraph.createSetComprehension();
 		Declaration newDecl = syntaxgraph.createDeclaration();
 		SimpleDeclaration newInnerSD = syntaxgraph.createSimpleDeclaration();
@@ -420,7 +420,7 @@ public class EarlySelectionOptimizer extends OptimizerBase {
 			return;
 		}
 
-		ArrayList<Edge> upEdges = new ArrayList<Edge>();
+		ArrayList<Edge> upEdges = new ArrayList<>();
 		for (Edge e : exp.incidences(EdgeDirection.OUT)) {
 			if ((e.getOmega() instanceof FunctionApplication)
 					&& existsForwardPathExcludingOtherTargetClassVertices(e,
@@ -449,7 +449,7 @@ public class EarlySelectionOptimizer extends OptimizerBase {
 					otherArg = inc.getAlpha();
 				}
 			}
-			ArrayList<Edge> funAppEdges = new ArrayList<Edge>();
+			ArrayList<Edge> funAppEdges = new ArrayList<>();
 			for (Edge funAppEdge : funApp.incidences(EdgeDirection.OUT)) {
 				funAppEdges.add(funAppEdge);
 			}
@@ -474,7 +474,7 @@ public class EarlySelectionOptimizer extends OptimizerBase {
 	private Set<Edge> collectVariableAccessEdges(Variable var) {
 		// GreqlEvaluator.println("collectEdgesComingFrom(" + startVertex + ", "
 		// + targetEdge + ")");
-		HashSet<Edge> edges = new HashSet<Edge>();
+		HashSet<Edge> edges = new HashSet<>();
 		for (Edge e : var.incidences(EdgeDirection.OUT)) {
 			if ((e instanceof IsDeclaredVarOf) || (e instanceof IsBoundVarOf)
 					|| (e instanceof IsVarOf)) {
@@ -545,7 +545,7 @@ public class EarlySelectionOptimizer extends OptimizerBase {
 	 */
 	private HashMap<SimpleDeclaration, Set<Expression>> collectMovableExpressions(
 			Expression exp) {
-		HashMap<SimpleDeclaration, Set<Expression>> movableExpressions = new HashMap<SimpleDeclaration, Set<Expression>>();
+		HashMap<SimpleDeclaration, Set<Expression>> movableExpressions = new HashMap<>();
 
 		if ((exp instanceof FunctionApplication)
 				&& OptimizerUtility.isAnd((FunctionApplication) exp)) {
@@ -581,7 +581,7 @@ public class EarlySelectionOptimizer extends OptimizerBase {
 				if (movableExpressions.containsKey(sd)) {
 					movableExpressions.get(sd).add(exp);
 				} else {
-					HashSet<Expression> predicates = new HashSet<Expression>();
+					HashSet<Expression> predicates = new HashSet<>();
 					predicates.add(exp);
 					movableExpressions.put(sd, predicates);
 				}
@@ -633,7 +633,7 @@ public class EarlySelectionOptimizer extends OptimizerBase {
 	private Set<Variable> collectNeededLocalVariables(Expression exp) {
 		Set<Variable> neededVars = OptimizerUtility
 				.collectInternallyDeclaredVariablesBelow(exp);
-		Set<Variable> neededLocalVars = new HashSet<Variable>();
+		Set<Variable> neededLocalVars = new HashSet<>();
 		Declaration localDecl = findNearestDeclarationAbove(exp);
 		for (SimpleDeclaration sd : collectSimpleDeclarationsOf(localDecl)) {
 			for (Variable var : neededVars) {
@@ -690,7 +690,7 @@ public class EarlySelectionOptimizer extends OptimizerBase {
 	 *         <code>decl</code>
 	 */
 	private List<SimpleDeclaration> collectSimpleDeclarationsOf(Declaration decl) {
-		ArrayList<SimpleDeclaration> sds = new ArrayList<SimpleDeclaration>();
+		ArrayList<SimpleDeclaration> sds = new ArrayList<>();
 		for (IsSimpleDeclOf inc : decl
 				.getIsSimpleDeclOfIncidences(EdgeDirection.IN)) {
 			sds.add(inc.getAlpha());
@@ -710,7 +710,7 @@ public class EarlySelectionOptimizer extends OptimizerBase {
 	 *         <code>v</code>
 	 */
 	private Set<Variable> collectUndeclaredVariablesBelow(Vertex vertex) {
-		HashSet<Variable> undeclaredVars = new HashSet<Variable>();
+		HashSet<Variable> undeclaredVars = new HashSet<>();
 		for (Variable var : OptimizerUtility
 				.collectInternallyDeclaredVariablesBelow(vertex)) {
 			if (var.getFirstIsDeclaredVarOfIncidence(EdgeDirection.OUT) == null) {

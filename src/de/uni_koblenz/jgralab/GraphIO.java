@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2013 Institute for Software Technology
+ * Copyright (C) 2006-2014 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -102,14 +102,25 @@ public final class GraphIO {
 	/**
 	 * TG File Version this GraphIO recognizes.
 	 */
-	public static final int TGFILE_VERSION = 2;
+	// Version 2: Classes and package name are printed literally in graph part;
+	// this format can still be read
+	// Version 3: Class names are encoded as int values in graph part, package
+	// names are obsolete, ids are assigned in the schema part
+
+	// version that will be written
+	public static final int TGFILE_VERSION = 3;
+	// version range that can be read
+	public static final int TGFILE_MIN_VERSION = 2;
+	public static final int TGFILE_MAX_VERSION = 3;
+
 	public static final String NULL_LITERAL = TgLexer.Token.NULL_LITERAL
 			.toString();
 	public static final String TRUE_LITERAL = TgLexer.Token.TRUE_LITERAL
 			.toString();
 	public static final String FALSE_LITERAL = TgLexer.Token.FALSE_LITERAL
 			.toString();
-	public static final String UNSET_LITERAL = TgLexer.Token.UNSET_LITERAL.toString();
+	public static final String UNSET_LITERAL = TgLexer.Token.UNSET_LITERAL
+			.toString();
 	public static final String TGRAPH_FILE_EXTENSION = ".tg";
 	public static final String TGRAPH_COMPRESSED_FILE_EXTENSION = ".tg.gz";
 	private static final int WRITE_BUFFER_SIZE = 65536;
@@ -166,6 +177,10 @@ public final class GraphIO {
 	private OutputStream TGOut;
 
 	private Schema schema;
+
+	private Schema providedSchema; // a schema provided to load functions
+
+	private int fileVersion; // the version of the currently read file
 
 	/**
 	 * Maps domain names to the respective Domains.
@@ -233,15 +248,23 @@ public final class GraphIO {
 	private GraphFactory graphFactory;
 	private final ClassLoader schemaClassLoader;
 
+	private int aecIdGenerator; // generates ids of attributedElementClasses
+								// written to the schema
+	private Map<AttributedElementClass<?, ?>, Integer> aecToIdMap;
+	private Map<Integer, AttributedElementClass<?, ?>> idToAecMap;
+
 	private GraphIO(ClassLoader schemaClassLoader) {
-		domains = new TreeMap<String, Domain>();
-		enumDomainBuffer = new HashSet<EnumDomainData>();
-		recordDomainBuffer = new ArrayList<RecordDomainData>();
+		domains = new TreeMap<>();
+		enumDomainBuffer = new HashSet<>();
+		recordDomainBuffer = new ArrayList<>();
 		graphClass = null;
-		vertexClassBuffer = new TreeMap<String, List<GraphElementClassData>>();
-		edgeClassBuffer = new TreeMap<String, List<GraphElementClassData>>();
-		commentData = new HashMap<String, List<String>>();
-		stringPool = new HashMap<String, String>();
+		vertexClassBuffer = new TreeMap<>();
+		edgeClassBuffer = new TreeMap<>();
+		commentData = new HashMap<>();
+		stringPool = new HashMap<>();
+		aecToIdMap = new HashMap<>();
+		aecIdGenerator = 0;
+		idToAecMap = new HashMap<>();
 		this.schemaClassLoader = schemaClassLoader;
 	}
 
@@ -346,13 +369,14 @@ public final class GraphIO {
 		// write graphclass
 		GraphClass gc = schema.getGraphClass();
 		write("GraphClass");
+		writeAecId(gc);
 		writeIdentifier(gc.getSimpleName());
 		writeAttributes(null, gc);
 		writeConstraints(gc);
 		write(";\n");
 		writeComments(gc, gc.getSimpleName());
 
-		Queue<de.uni_koblenz.jgralab.schema.Package> worklist = new LinkedList<de.uni_koblenz.jgralab.schema.Package>();
+		Queue<de.uni_koblenz.jgralab.schema.Package> worklist = new LinkedList<>();
 		worklist.offer(s.getDefaultPackage());
 		while (!worklist.isEmpty()) {
 			Package pkg = worklist.poll();
@@ -405,6 +429,7 @@ public final class GraphIO {
 					write("abstract");
 				}
 				write("VertexClass");
+				writeAecId(vc);
 				writeIdentifier(vc.getSimpleName());
 				writeHierarchy(pkg, vc);
 				writeAttributes(pkg, vc);
@@ -422,6 +447,7 @@ public final class GraphIO {
 					write("abstract");
 				}
 				write("EdgeClass");
+				writeAecId(ec);
 				writeIdentifier(ec.getSimpleName());
 				writeHierarchy(pkg, ec);
 
@@ -492,6 +518,13 @@ public final class GraphIO {
 			// write package comments
 			writeComments(pkg, "." + pkg.getQualifiedName());
 		}
+	}
+
+	private void writeAecId(AttributedElementClass<?, ?> aec)
+			throws IOException {
+		aecToIdMap.put(aec, aecIdGenerator);
+		writeInteger(aecIdGenerator);
+		aecIdGenerator++;
 	}
 
 	private void writeComments(NamedElement elem, String name)
@@ -701,8 +734,14 @@ public final class GraphIO {
 			write("Graph");
 			write(toUtfString(graph.getId()));
 			writeLong(graph.getGraphVersion());
-			writeIdentifier(graph.getAttributedElementClass()
-					.getQualifiedName());
+
+			// TG3: write numeric id of GraphClass
+			writeInteger(aecToIdMap.get(graph.getAttributedElementClass()));
+
+			// TG2: write numeric id of GraphClass
+			// writeIdentifier(graph.getAttributedElementClass()
+			// .getQualifiedName());
+
 			int vCount = graph.getVCount();
 			int eCount = graph.getECount();
 			// with a GraphMarker, v/eCount have to be restricted to the marked
@@ -727,6 +766,7 @@ public final class GraphIO {
 			graph.writeAttributeValues(this);
 			write(";\n");
 
+			@SuppressWarnings("unused")
 			Package oldPackage = null;
 			// write vertices
 			// System.out.println("Writing vertices");
@@ -739,15 +779,19 @@ public final class GraphIO {
 				vId = nextV.getId();
 				AttributedElementClass<?, ?> aec = nextV
 						.getAttributedElementClass();
-				Package currentPackage = aec.getPackage();
-				if (currentPackage != oldPackage) {
-					write("Package");
-					writeIdentifier(currentPackage.getQualifiedName());
-					write(";\n");
-					oldPackage = currentPackage;
-				}
-				write(Long.toString(vId));
-				writeIdentifier(aec.getSimpleName());
+				// TG2: write package name
+				// Package currentPackage = aec.getPackage();
+				// if (currentPackage != oldPackage) {
+				// write("Package");
+				// writeIdentifier(currentPackage.getQualifiedName());
+				// write(";\n");
+				// oldPackage = currentPackage;
+				// }
+				writeLong(vId);
+				// TG3: write AEC ID
+				writeInteger(aecToIdMap.get(aec));
+				// TG2: write AEC name
+				// writeIdentifier(aec.getSimpleName());
 				// write incident edges
 				Edge nextI = nextV.getFirstIncidence();
 				write("<");
@@ -787,15 +831,19 @@ public final class GraphIO {
 				eId = nextE.getId();
 				AttributedElementClass<?, ?> aec = nextE
 						.getAttributedElementClass();
-				Package currentPackage = aec.getPackage();
-				if (currentPackage != oldPackage) {
-					write("Package");
-					writeIdentifier(currentPackage.getQualifiedName());
-					write(";\n");
-					oldPackage = currentPackage;
-				}
-				write(Long.toString(eId));
-				writeIdentifier(aec.getSimpleName());
+				// TG2: write package name
+				// Package currentPackage = aec.getPackage();
+				// if (currentPackage != oldPackage) {
+				// write("Package");
+				// writeIdentifier(currentPackage.getQualifiedName());
+				// write(";\n");
+				// oldPackage = currentPackage;
+				// }
+				writeLong(eId);
+				// TG3: write AEC ID
+				writeInteger(aecToIdMap.get(aec));
+				// TG2: write AEC name
+				// writeIdentifier(aec.getSimpleName());
 				((InternalAttributedElement) nextE).writeAttributeValues(this);
 				write(";\n");
 				nextE = nextE.getNextEdge();
@@ -1068,14 +1116,16 @@ public final class GraphIO {
 				Class<?> schemaClass = null;
 				try {
 					schemaClass = Class.forName(schemaQName, true,
-							SchemaClassManager.instance(schemaClassLoader, schemaQName));
+							SchemaClassManager.instance(schemaClassLoader,
+									schemaQName));
 				} catch (ClassNotFoundException e) {
 					// schema class not found, try compile schema in-memory
 					io.schema.finish();
 					io.schema.compile(CodeGeneratorConfiguration.MINIMAL);
 					try {
 						schemaClass = Class.forName(schemaQName, true,
-								SchemaClassManager.instance(schemaClassLoader, schemaQName));
+								SchemaClassManager.instance(schemaClassLoader,
+										schemaQName));
 					} catch (ClassNotFoundException e1) {
 						throw new GraphIOException(
 								"Unable to load a graph which belongs to the schema because the Java-classes for this schema can not be created.",
@@ -1137,10 +1187,12 @@ public final class GraphIO {
 	 */
 	private void header() throws GraphIOException {
 		match(Token.TGRAPH);
-		int version = matchInteger();
-		if (version != TGFILE_VERSION) {
-			throw new GraphIOException("Can't read TGFile version " + version
-					+ ". Expected version " + TGFILE_VERSION);
+		fileVersion = matchInteger();
+		if (fileVersion < TGFILE_MIN_VERSION
+				|| fileVersion > TGFILE_MAX_VERSION) {
+			throw new GraphIOException("Can't read TGFile version "
+					+ fileVersion + ". Expected version " + TGFILE_MIN_VERSION
+					+ "..." + TGFILE_MAX_VERSION);
 		}
 		match(Token.SEMICOLON);
 	}
@@ -1162,25 +1214,14 @@ public final class GraphIO {
 		}
 		match(Token.SEMICOLON);
 
+		providedSchema = null;
 		if (schema != null) {
 			// We already have a schema, so we don't want to load the schema
 			// from the file
 
 			// but wait, check if the names match...
 			if (schema.getQualifiedName().equals(qn[0] + "." + qn[1])) {
-				// yes, everything is fine :-)
-				// skip schema part
-				//
-				// Beware: it's totally ok to have a VertexClass Graph, so
-				// lookAhead = Graph is a too weak check. So we test that before
-				// the Graph, the last token is a ;, too.
-				Token prev = null;
-				while ((lookAhead != Token.EOF)
-						&& !((prev == Token.SEMICOLON) && (lookAhead == Token.GRAPH))) {
-					prev = lookAhead;
-					match();
-				}
-				return;
+				providedSchema = schema;
 			} else {
 				throw new GraphIOException(
 						"Trying to load a graph with wrong schema. Expected: "
@@ -1203,17 +1244,43 @@ public final class GraphIO {
 
 		// sort data of RecordDomains, GraphClasses and GraphElementClasses in
 		// topological order
-
 		checkFromToVertexClasses();
-
 		sortRecordDomains();
 		sortVertexClasses();
 		sortEdgeClasses();
 
-		createDomains(); // create Domains
-		completeGraphClass(); // create GraphClasses with contained elements
-		buildHierarchy(); // build inheritance relationships
-		processComments();
+		if (providedSchema == null) {
+			createDomains(); // create Domains
+			completeGraphClass(); // create GraphClasses with contained elements
+			buildHierarchy(); // build inheritance relationships
+			processComments();
+		} else {
+			// we use the providedSchema if one was specified
+			if (fileVersion == 3) {
+				registerProvidedSchemaIds();
+			}
+			schema = providedSchema;
+		}
+	}
+
+	private void registerProvidedSchemaIds() throws GraphIOException {
+		registerAecId(graphClass.id, providedSchema.getGraphClass());
+		for (GraphElementClassData currentGraphElementClassData : vertexClassBuffer
+				.get(graphClass.name)) {
+			registerAecId(
+					currentGraphElementClassData.id,
+					providedSchema
+							.getAttributedElementClass(currentGraphElementClassData
+									.getQualifiedName()));
+		}
+		for (GraphElementClassData currentGraphElementClassData : edgeClassBuffer
+				.get(graphClass.name)) {
+			registerAecId(
+					currentGraphElementClassData.id,
+					providedSchema
+							.getAttributedElementClass(currentGraphElementClassData
+									.getQualifiedName()));
+		}
 	}
 
 	/**
@@ -1308,8 +1375,7 @@ public final class GraphIO {
 
 	private List<RecordComponent> getComponents(
 			List<ComponentData> componentsData) throws GraphIOException {
-		List<RecordComponent> result = new ArrayList<RecordComponent>(
-				componentsData.size());
+		List<RecordComponent> result = new ArrayList<>(componentsData.size());
 
 		for (ComponentData ad : componentsData) {
 			RecordComponent c = new RecordComponent(ad.name,
@@ -1355,7 +1421,7 @@ public final class GraphIO {
 	private void parseComment() throws GraphIOException {
 		match(Token.COMMENT);
 		String qName = matchQualifiedName(true);
-		List<String> comments = new ArrayList<String>();
+		List<String> comments = new ArrayList<>();
 		comments.add(matchUtfString());
 		while (lookAhead != Token.SEMICOLON) {
 			comments.add(matchUtfString());
@@ -1407,6 +1473,10 @@ public final class GraphIO {
 		match(Token.GRAPHCLASS);
 		graphClass = new GraphClassData();
 
+		if (fileVersion == 3) {
+			graphClass.id = matchInteger();
+		}
+
 		graphClass.name = matchSimpleName(true);
 		if (lookAhead == Token.LCRL) {
 			graphClass.attributes = parseAttributes();
@@ -1438,7 +1508,9 @@ public final class GraphIO {
 	private GraphClass createGraphClass(GraphClassData gcData)
 			throws GraphIOException {
 		GraphClass gc = schema.createGraphClass(gcData.name);
-
+		if (fileVersion == 3) {
+			registerAecId(gcData.id, gc);
+		}
 		gc.setAbstract(gcData.isAbstract);
 
 		addAttributes(gcData.attributes, gc);
@@ -1458,7 +1530,7 @@ public final class GraphIO {
 	 * @throws GraphIOException
 	 */
 	private List<String> parseHierarchy() throws GraphIOException {
-		List<String> hierarchy = new LinkedList<String>();
+		List<String> hierarchy = new LinkedList<>();
 		match(Token.COLON);
 		String qn = matchQualifiedName();
 		hierarchy.add(qn);
@@ -1471,8 +1543,8 @@ public final class GraphIO {
 	}
 
 	private List<AttributeData> parseAttributes() throws GraphIOException {
-		List<AttributeData> attributesData = new ArrayList<AttributeData>();
-		Set<String> names = new TreeSet<String>();
+		List<AttributeData> attributesData = new ArrayList<>();
+		Set<String> names = new TreeSet<>();
 
 		match(Token.LCRL);
 		AttributeData ad = new AttributeData();
@@ -1516,7 +1588,7 @@ public final class GraphIO {
 	}
 
 	private List<String> parseAttrDomain() throws GraphIOException {
-		List<String> result = new ArrayList<String>();
+		List<String> result = new ArrayList<>();
 		parseAttrDomain(result);
 		return result;
 	}
@@ -1661,6 +1733,9 @@ public final class GraphIO {
 
 		if (lookAhead == Token.VERTEXCLASS) {
 			match();
+			if (fileVersion == 3) {
+				graphElementClassData.id = matchInteger();
+			}
 			String[] qn = matchAndSplitQualifiedName();
 			graphElementClassData.packageName = qn[0];
 			graphElementClassData.simpleName = qn[1];
@@ -1670,6 +1745,9 @@ public final class GraphIO {
 			vertexClassBuffer.get(gcName).add(graphElementClassData);
 		} else if (lookAhead == Token.EDGECLASS) {
 			match();
+			if (fileVersion == 3) {
+				graphElementClassData.id = matchInteger();
+			}
 			String[] qn = matchAndSplitQualifiedName();
 			graphElementClassData.packageName = qn[0];
 			graphElementClassData.simpleName = qn[1];
@@ -1707,7 +1785,7 @@ public final class GraphIO {
 	private Set<Constraint> parseConstraints() throws GraphIOException {
 		// constraints have the form: ["msg" "pred" "optGreql"] or ["msg"
 		// "pred"] and there may be as many as one wants...
-		Set<Constraint> constraints = new TreeSet<Constraint>();
+		Set<Constraint> constraints = new TreeSet<>();
 		do {
 			match(Token.LSQ);
 			String msg = matchUtfString();
@@ -1722,9 +1800,21 @@ public final class GraphIO {
 		return constraints;
 	}
 
+	private void registerAecId(int id, AttributedElementClass<?, ?> aec)
+			throws GraphIOException {
+		if (idToAecMap.containsKey(id)) {
+			throw new GraphIOException("duplicate AttributedElementClass id "
+					+ id + " for " + aec.getQualifiedName());
+		}
+		idToAecMap.put(id, aec);
+	}
+
 	private VertexClass createVertexClass(GraphElementClassData vcd,
 			GraphClass gc) throws GraphIOException {
 		VertexClass vc = gc.createVertexClass(vcd.getQualifiedName());
+		if (fileVersion == 3) {
+			registerAecId(vcd.id, vc);
+		}
 		vc.setAbstract(vcd.isAbstract);
 
 		addAttributes(vcd.attributes, vc);
@@ -1744,7 +1834,9 @@ public final class GraphIO {
 				gc.getVertexClass(ecd.toVertexClassName),
 				ecd.toMultiplicity[0], ecd.toMultiplicity[1], ecd.toRoleName,
 				ecd.toAggregation);
-
+		if (fileVersion == 3) {
+			registerAecId(ecd.id, ec);
+		}
 		addAttributes(ecd.attributes, ec);
 
 		for (Constraint constraint : ecd.constraints) {
@@ -1858,8 +1950,8 @@ public final class GraphIO {
 	}
 
 	private List<ComponentData> parseRecordComponents() throws GraphIOException {
-		List<ComponentData> componentsData = new ArrayList<ComponentData>();
-		Set<String> names = new TreeSet<String>();
+		List<ComponentData> componentsData = new ArrayList<>();
+		Set<String> names = new TreeSet<>();
 
 		match(Token.LBR);
 		ComponentData cd = new ComponentData();
@@ -1896,7 +1988,7 @@ public final class GraphIO {
 	 */
 	private List<String> parseEnumConstants() throws GraphIOException {
 		match(Token.LBR);
-		List<String> enums = new ArrayList<String>();
+		List<String> enums = new ArrayList<>();
 		String c = matchEnumConstant();
 		if (c == null) {
 			throw new GraphIOException(lexer.getLocation() + "'" + NULL_LITERAL
@@ -2178,8 +2270,13 @@ public final class GraphIO {
 		String graphId = matchUtfString();
 		long graphVersion = matchLong();
 
-		gcName = matchSimpleName(true);
-		// check if classname is known in the schema
+		if (fileVersion == 2) {
+			gcName = matchSimpleName(true);
+			// check if classname is known in the schema
+		} else {
+			int id = matchInteger();
+			gcName = idToAecMap.get(id).getSimpleName();
+		}
 		if (!schema.getGraphClass().getQualifiedName().equals(gcName)) {
 			throw new GraphIOException(lexer.getLocation() + "Graph Class "
 					+ gcName + "does not exist in " + schema.getQualifiedName());
@@ -2223,7 +2320,7 @@ public final class GraphIO {
 
 		int vNo = 1;
 		while (vNo <= vCount) {
-			if (lookAhead == Token.PACKAGE) {
+			if (fileVersion == 2 && lookAhead == Token.PACKAGE) {
 				parsePackage();
 			} else {
 				vertexDesc(graph);
@@ -2242,7 +2339,7 @@ public final class GraphIO {
 
 		int eNo = 1;
 		while (eNo <= eCount) {
-			if (lookAhead == Token.PACKAGE) {
+			if (fileVersion == 2 && lookAhead == Token.PACKAGE) {
 				parsePackage();
 			} else {
 				edgeDesc(graph);
@@ -2285,8 +2382,14 @@ public final class GraphIO {
 
 	private void vertexDesc(Graph graph) throws GraphIOException {
 		int vId = vId();
-		String vcName = matchQualifiedName();
-		VertexClass vc = (VertexClass) schema.getAttributedElementClass(vcName);
+		VertexClass vc = null;
+		if (fileVersion == 2) {
+			String vcName = matchQualifiedName();
+			vc = (VertexClass) schema.getAttributedElementClass(vcName);
+		} else {
+			int id = matchInteger();
+			vc = (VertexClass) idToAecMap.get(id);
+		}
 		Vertex vertex = graphFactory.createVertex(vc, vId, graph);
 		parseIncidentEdges(vertex);
 		((InternalAttributedElement) vertex).readAttributeValues(this);
@@ -2295,8 +2398,14 @@ public final class GraphIO {
 
 	private void edgeDesc(Graph graph) throws GraphIOException {
 		int eId = eId();
-		String ecName = matchQualifiedName();
-		EdgeClass ec = (EdgeClass) schema.getAttributedElementClass(ecName);
+		EdgeClass ec = null;
+		if (fileVersion == 2) {
+			String ecName = matchQualifiedName();
+			ec = (EdgeClass) schema.getAttributedElementClass(ecName);
+		} else {
+			int id = matchInteger();
+			ec = (EdgeClass) idToAecMap.get(id);
+		}
 		Edge edge = graphFactory.createEdge(ec, eId, graph, edgeOut[eId],
 				edgeIn[eId]);
 		((InternalAttributedElement) edge).readAttributeValues(this);
@@ -2409,7 +2518,7 @@ public final class GraphIO {
 	}
 
 	private void sortRecordDomains() throws GraphIOException {
-		List<RecordDomainData> orderedRdList = new ArrayList<RecordDomainData>();
+		List<RecordDomainData> orderedRdList = new ArrayList<>();
 		boolean componentDomsInOrderedList = true;
 		RecordDomainData rd;
 		boolean definedRdName;
@@ -2490,12 +2599,12 @@ public final class GraphIO {
 
 	private void sortVertexClasses() throws GraphIOException {
 		List<GraphElementClassData> orderedVcList, unorderedVcList;
-		Set<String> orderedVcNames = new TreeSet<String>();
+		Set<String> orderedVcNames = new TreeSet<>();
 		GraphElementClassData vc;
 		boolean definedVcName;
 
 		unorderedVcList = vertexClassBuffer.get(graphClass.name);
-		orderedVcList = new ArrayList<GraphElementClassData>();
+		orderedVcList = new ArrayList<>();
 
 		// iteratively add VertexClasses from vertexClassBuffer,
 		// whose superclasses already are in orderedVcList,
@@ -2540,12 +2649,12 @@ public final class GraphIO {
 
 	private void sortEdgeClasses() throws GraphIOException {
 		List<GraphElementClassData> orderedEcList, unorderedEcList;
-		Set<String> orderedEcNames = new TreeSet<String>();
+		Set<String> orderedEcNames = new TreeSet<>();
 		GraphElementClassData ec;
 		boolean definedEcName;
 
 		unorderedEcList = edgeClassBuffer.get(graphClass.name);
-		orderedEcList = new ArrayList<GraphElementClassData>();
+		orderedEcList = new ArrayList<>();
 
 		// iteratively add EdgeClasses from edgeClassBuffer,
 		// whose superclasses already are in orderedEcList,
@@ -2684,10 +2793,11 @@ public final class GraphIO {
 	 * used to create a GraphClass.
 	 */
 	private static class GraphClassData {
-		Set<Constraint> constraints = new HashSet<Constraint>(1);
+		int id;
 		String name;
 		boolean isAbstract = false;
-		List<AttributeData> attributes = new ArrayList<AttributeData>();
+		List<AttributeData> attributes = new ArrayList<>();
+		Set<Constraint> constraints = new HashSet<>(1);
 	}
 
 	/**
@@ -2695,6 +2805,7 @@ public final class GraphIO {
 	 * This data is used to create a GraphElementClass.
 	 */
 	private class GraphElementClassData {
+		int id;
 		String simpleName;
 		String packageName;
 
@@ -2704,7 +2815,7 @@ public final class GraphIO {
 
 		boolean isAbstract = false;
 
-		List<String> directSuperClasses = new LinkedList<String>();
+		List<String> directSuperClasses = new LinkedList<>();
 
 		String fromVertexClassName;
 
@@ -2722,8 +2833,8 @@ public final class GraphIO {
 
 		AggregationKind toAggregation;
 
-		List<AttributeData> attributes = new ArrayList<AttributeData>();
+		List<AttributeData> attributes = new ArrayList<>();
 
-		Set<Constraint> constraints = new HashSet<Constraint>(1);
+		Set<Constraint> constraints = new HashSet<>(1);
 	}
 }

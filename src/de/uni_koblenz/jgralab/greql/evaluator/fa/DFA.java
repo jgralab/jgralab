@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2013 Institute for Software Technology
+ * Copyright (C) 2006-2014 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -70,9 +70,9 @@ public class DFA extends FiniteAutomaton {
 	 */
 	public DFA(NFA nfa) {
 		// count++;
-		finalStates = new ArrayList<State>();
-		transitionList = new ArrayList<Transition>();
-		stateList = new ArrayList<State>();
+		finalStates = new ArrayList<>();
+		transitionList = new ArrayList<>();
+		stateList = new ArrayList<>();
 		eleminateEpsilonTransitions(nfa);
 		myhillConstruction(nfa);
 		removeDuplicateTransitions();
@@ -82,7 +82,7 @@ public class DFA extends FiniteAutomaton {
 	}
 
 	private void removeDuplicateTransitions() {
-		Set<Transition> duplicateTransitions = new HashSet<Transition>();
+		Set<Transition> duplicateTransitions = new HashSet<>();
 		for (State s : this.stateList) {
 			for (int i = 0; i < s.outTransitions.size() - 1; i++) {
 				Transition t1 = s.outTransitions.get(i);
@@ -226,7 +226,7 @@ public class DFA extends FiniteAutomaton {
 						// change the endState of all inTransitions of
 						// newDEAState to stateToCheck
 						foundSameState = true;
-						ArrayList<Transition> inTransList = new ArrayList<Transition>(
+						ArrayList<Transition> inTransList = new ArrayList<>(
 								newDFAState.inTransitions);
 						Iterator<Transition> iter = inTransList.iterator();
 						while (iter.hasNext()) {

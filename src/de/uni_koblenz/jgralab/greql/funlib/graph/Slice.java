@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2013 Institute for Software Technology
+ * Copyright (C) 2006-2014 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -83,9 +83,9 @@ public class Slice extends Function {
 			Category.GRAPH, Category.PATHS_AND_PATHSYSTEMS_AND_SLICES })
 	public SubGraphMarker evaluate(InternalGreqlEvaluator evaluator,
 			PSet<Vertex> roots, DFA dfa) {
-		Set<Vertex> sliCritVertices = new HashSet<Vertex>();
+		Set<Vertex> sliCritVertices = new HashSet<>();
 		graph = null;
-		
+
 		for (Vertex v : roots) {
 			if (graph == null) {
 				graph = v.getGraph();
@@ -95,8 +95,7 @@ public class Slice extends Function {
 		}
 		assert evaluator.getGraph() == graph : "Roots from different graph than we're querying!?!";
 
-		marker = new ArrayList<GraphMarker<Map<Edge, PathSystemMarkerEntry>>>(
-				dfa.stateList.size());
+		marker = new ArrayList<>(dfa.stateList.size());
 		for (int i = 0; i < dfa.stateList.size(); i++) {
 			marker.add(new GraphMarker<Map<Edge, PathSystemMarkerEntry>>(graph));
 		}
@@ -130,7 +129,7 @@ public class Slice extends Function {
 
 		Map<Edge, PathSystemMarkerEntry> map = currentMarker.getMark(v);
 		if (map == null) {
-			map = new HashMap<Edge, PathSystemMarkerEntry>();
+			map = new HashMap<>();
 			currentMarker.mark(v, map);
 		}
 
@@ -192,8 +191,8 @@ public class Slice extends Function {
 	private List<Vertex> markVerticesOfSlice(InternalGreqlEvaluator evaluator,
 			Set<Vertex> sliCritVertices, DFA dfa) {
 		// GreqlEvaluator.errprintln("Start marking vertices of slice");
-		ArrayList<Vertex> finalVertices = new ArrayList<Vertex>();
-		Queue<PathSystemQueueEntry> queue = new LinkedList<PathSystemQueueEntry>();
+		ArrayList<Vertex> finalVertices = new ArrayList<>();
+		Queue<PathSystemQueueEntry> queue = new LinkedList<>();
 		PathSystemQueueEntry currentEntry;
 
 		// fill queue with vertices in slicing criterion and mark these vertices
@@ -256,11 +255,11 @@ public class Slice extends Function {
 			sliceSubGraph.mark(v);
 		}
 
-		Queue<Vertex> queue = new LinkedList<Vertex>();
+		Queue<Vertex> queue = new LinkedList<>();
 		Vertex currentVertex, parentVertex;
 		State parentState;
-		stateMarker = new GraphMarker<Set<State>>(graph);
-		GraphMarker<State> currentStateMarker = new GraphMarker<State>(graph);
+		stateMarker = new GraphMarker<>(graph);
+		GraphMarker<State> currentStateMarker = new GraphMarker<>(graph);
 
 		for (Vertex leaf : leaves) { // iterate through leaves
 			// iterate through GraphMarkers (one for each state)

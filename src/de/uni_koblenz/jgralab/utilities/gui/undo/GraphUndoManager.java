@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2013 Institute for Software Technology
+ * Copyright (C) 2006-2014 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -98,7 +98,7 @@ public class GraphUndoManager extends UndoManager implements
 	 * Keeps track of most recent version of elements. Key is negative for
 	 * edges, positive for vertices.
 	 */
-	private HashMap<Integer, Integer> versions = new HashMap<Integer, Integer>();
+	private HashMap<Integer, Integer> versions = new HashMap<>();
 
 	/**
 	 * first and last {@link GraphEdit} in a doubly linked list of all live
@@ -114,7 +114,7 @@ public class GraphUndoManager extends UndoManager implements
 	 * {@link CompoundGraphEdit}s. This stack keeps track of the active
 	 * {@link CompoundGraphEdit}s.
 	 */
-	private Stack<CompoundGraphEdit> compoundEditStack = new Stack<CompoundGraphEdit>();
+	private Stack<CompoundGraphEdit> compoundEditStack = new Stack<>();
 
 	/**
 	 * Data needed to delete/resurrect a {@link Vertex} and all incident
@@ -124,8 +124,8 @@ public class GraphUndoManager extends UndoManager implements
 	private CompoundEdit deleteVertexCompound;
 	private DeleteVertexEdit deleteVertexEdit;
 	private boolean undoDeleteVertex;
-	private ArrayList<Edge> correctIncidences = new ArrayList<Edge>();
-	private ArrayList<Integer> correctPositions = new ArrayList<Integer>();
+	private ArrayList<Edge> correctIncidences = new ArrayList<>();
+	private ArrayList<Integer> correctPositions = new ArrayList<>();
 
 	/**
 	 * GraphEdit events.

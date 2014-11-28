@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2013 Institute for Software Technology
+ * Copyright (C) 2006-2014 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -97,7 +97,7 @@ public class TransformXorFunctionApplicationOptimizer extends OptimizerBase {
 	public boolean optimize(GreqlQuery query) throws OptimizerException {
 		GreqlGraph syntaxgraph = query.getQueryGraph();
 
-		ArrayList<FunctionApplication> xors = new ArrayList<FunctionApplication>();
+		ArrayList<FunctionApplication> xors = new ArrayList<>();
 		for (FunctionApplication funApp : syntaxgraph
 				.getFunctionApplicationVertices()) {
 			if (OptimizerUtility.isXor(funApp)) {
@@ -155,7 +155,7 @@ public class TransformXorFunctionApplicationOptimizer extends OptimizerBase {
 			syntaxgraph.createIsArgumentOf(arg2, rightAnd);
 
 			// relink all edges that started in the Xor vertex
-			ArrayList<Edge> edgesToBeRelinked = new ArrayList<Edge>();
+			ArrayList<Edge> edgesToBeRelinked = new ArrayList<>();
 			Edge e = xor.getFirstIncidence(EdgeDirection.OUT);
 			while (e != null) {
 				edgesToBeRelinked.add(e);

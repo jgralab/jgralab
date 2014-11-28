@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2013 Institute for Software Technology
+ * Copyright (C) 2006-2014 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -40,10 +40,12 @@ import de.uni_koblenz.jgralab.exception.GraphIOException;
 
 public class GraphLoadBenchmark {
 	public static void main(String[] args) {
-		final int N = 100;
+		final int N = 1;
 		// final String FILENAME =
-		// "/Users/riediger/Documents/workspace-dev/jgstreetmap/OsmGraph.tg.gz";
-		final String FILENAME = "/Users/riediger/Desktop/tmp/anhang/lr5200.tg";
+		// "/Users/riediger/workspace/jgstreetmap/OsmGraph.tg.gz";
+		// final String FILENAME =
+		// "/Users/riediger/Desktop/tmp/anhang/lr5200.tg";
+		final String FILENAME = "testit/testdata/graph.tg.gz";
 		try {
 			long min = Long.MAX_VALUE;
 			long max = 0;
@@ -53,6 +55,11 @@ public class GraphLoadBenchmark {
 				long t0 = System.currentTimeMillis();
 				GraphIO.loadGraphFromFile(FILENAME,
 						ImplementationType.STANDARD, null);
+				// if (i == 1) {
+				// g.save("testit/testdata/graph.tg",
+				// new ConsoleProgressFunction());
+				// System.exit(0);
+				// }
 				long t1 = System.currentTimeMillis();
 				long t = t1 - t0;
 				min = Math.min(min, t);

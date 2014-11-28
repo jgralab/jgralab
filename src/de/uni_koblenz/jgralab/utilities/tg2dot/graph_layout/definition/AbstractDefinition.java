@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2013 Institute for Software Technology
+ * Copyright (C) 2006-2014 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -56,7 +56,7 @@ public abstract class AbstractDefinition implements Definition {
 	 */
 	protected AbstractDefinition() {
 
-		attributes = new HashMap<String, String>();
+		attributes = new HashMap<>();
 	}
 
 	/**
@@ -65,7 +65,7 @@ public abstract class AbstractDefinition implements Definition {
 	 */
 	public AbstractDefinition(AbstractDefinition definition) {
 		this();
-		attributes = new HashMap<String, String>(definition.attributes);
+		attributes = new HashMap<>(definition.attributes);
 	}
 
 	@Override

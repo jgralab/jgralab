@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2013 Institute for Software Technology
+ * Copyright (C) 2006-2014 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -169,8 +169,8 @@ public class DefaultOptimizerInfo implements OptimizerInfo {
 		// init frequencies of graph element classes WITHOUT subclasses
 		// gec is abstract -> f = 0.0
 		// else f = 1 / number of non-abstract classes
-		frequenciesWithoutSubclasses = new HashMap<GraphElementClass<?, ?>, Double>(
-				vertexClassCount + edgeClassCount);
+		frequenciesWithoutSubclasses = new HashMap<>(vertexClassCount
+				+ edgeClassCount);
 		for (GraphElementClass<?, ?> gec : gc.getGraphElementClasses()) {
 			if (gec instanceof VertexClass) {
 				frequenciesWithoutSubclasses.put(gec, gec.isAbstract() ? 0.0
@@ -183,8 +183,7 @@ public class DefaultOptimizerInfo implements OptimizerInfo {
 
 		// init frequencies of graph element classes WITH subclasses
 		// by traversing the classes in reverse topological order
-		frequencies = new HashMap<GraphElementClass<?, ?>, Double>(
-				vertexClassCount + edgeClassCount);
+		frequencies = new HashMap<>(vertexClassCount + edgeClassCount);
 
 		for (GraphElementClass<?, ?> gec : schema.getGraphClass()
 				.getGraphElementClasses()) {

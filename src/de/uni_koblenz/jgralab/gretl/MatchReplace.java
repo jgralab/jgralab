@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2013 Institute for Software Technology
+ * Copyright (C) 2006-2014 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -73,20 +73,20 @@ public class MatchReplace extends InPlaceTransformation {
 	private TemplateGraph replaceGraph;
 	private String semanticExpression;
 	private PSet<Object> matches;
-	private Map<CreateVertex, Vertex> createVertices2Vertices = new HashMap<CreateVertex, Vertex>();
-	private LinkedHashSet<Vertex> matchedVertices = new LinkedHashSet<Vertex>();
-	private LinkedHashSet<Edge> matchedEdges = new LinkedHashSet<Edge>();
-	private Set<GraphElement<?, ?>> preservables = new HashSet<GraphElement<?, ?>>();
+	private Map<CreateVertex, Vertex> createVertices2Vertices = new HashMap<>();
+	private LinkedHashSet<Vertex> matchedVertices = new LinkedHashSet<>();
+	private LinkedHashSet<Edge> matchedEdges = new LinkedHashSet<>();
+	private Set<GraphElement<?, ?>> preservables = new HashSet<>();
 	private boolean addGlobalMappings = false;
 
 	/**
 	 * for validating successive matches.
 	 */
-	private HashSet<GraphElement<?, ?>> allModifiedElements = new HashSet<GraphElement<?, ?>>();
+	private HashSet<GraphElement<?, ?>> allModifiedElements = new HashSet<>();
 
 	/**
 	 * Creates a new {@link MatchReplace} transformation.
-	 *
+	 * 
 	 * @param context
 	 *            the {@link Context}
 	 * @param replaceGraph
@@ -111,8 +111,8 @@ public class MatchReplace extends InPlaceTransformation {
 	 * is true. This has to be done with caution, because if you delete an edge
 	 * or vertex for which some mapping exists (or which is contained as part of
 	 * a value in some mapping) later, then your mappings are skrewed up!
-	 *
-	 *
+	 * 
+	 * 
 	 * @param context
 	 * @param replaceGraph
 	 * @param addGlobalMappings
@@ -346,7 +346,7 @@ public class MatchReplace extends InPlaceTransformation {
 	}
 
 	private EdgeClass getSingleEdgeClassBetween(VertexClass from, VertexClass to) {
-		List<EdgeClass> possibles = new LinkedList<EdgeClass>();
+		List<EdgeClass> possibles = new LinkedList<>();
 		for (EdgeClass ec : from.getConnectedEdgeClasses()) {
 			if (ec.isAbstract()) {
 				// Cannot be instantiated, so don't care

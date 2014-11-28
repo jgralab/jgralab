@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2013 Institute for Software Technology
+ * Copyright (C) 2006-2014 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -76,7 +76,7 @@ public abstract class VertexEvaluator<V extends GreqlVertex> {
 	 * soon as the class is loaded
 	 */
 	static {
-		unevaluatedVertices = new ArrayList<String>();
+		unevaluatedVertices = new ArrayList<>();
 		unevaluatedVertices.add("Quantifier");
 		unevaluatedVertices.add("RoleId");
 		unevaluatedVertices.add("FunctionId");
@@ -325,8 +325,8 @@ public abstract class VertexEvaluator<V extends GreqlVertex> {
 	 * calculate the set of needed and defined variables
 	 */
 	public void calculateNeededAndDefinedVariables() {
-		neededVariables = new HashSet<Variable>();
-		definedVariables = new HashSet<Variable>();
+		neededVariables = new HashSet<>();
+		definedVariables = new HashSet<>();
 		Edge inc = getVertex().getFirstIncidence(EdgeDirection.IN);
 		while (inc != null) {
 			VertexEvaluator<?> veval = query
@@ -337,7 +337,7 @@ public abstract class VertexEvaluator<V extends GreqlVertex> {
 			}
 			inc = inc.getNextIncidence(EdgeDirection.IN);
 		}
-		HashSet<Variable> bothVariables = new HashSet<Variable>();
+		HashSet<Variable> bothVariables = new HashSet<>();
 		bothVariables.addAll(neededVariables);
 		neededVariables.removeAll(definedVariables);
 		definedVariables.removeAll(bothVariables);
@@ -429,7 +429,7 @@ public abstract class VertexEvaluator<V extends GreqlVertex> {
 	public List<SourcePosition> createPossibleSourcePositions() {
 		GreqlAggregation inc = (GreqlAggregation) getVertex()
 				.getFirstIncidence(EdgeDirection.OUT);
-		List<SourcePosition> possibleSourcePositions = new ArrayList<SourcePosition>();
+		List<SourcePosition> possibleSourcePositions = new ArrayList<>();
 		while (inc != null) {
 			List<SourcePosition> sourcePositions = inc.get_sourcePositions();
 			possibleSourcePositions.addAll(sourcePositions);
@@ -442,7 +442,7 @@ public abstract class VertexEvaluator<V extends GreqlVertex> {
 	 * creates the sourcepositions for the given edge
 	 */
 	protected List<SourcePosition> createSourcePositions(GreqlAggregation edge) {
-		List<SourcePosition> possibleSourcePositions = new ArrayList<SourcePosition>();
+		List<SourcePosition> possibleSourcePositions = new ArrayList<>();
 		List<SourcePosition> sourcePositions = edge.get_sourcePositions();
 		possibleSourcePositions.addAll(sourcePositions);
 		return possibleSourcePositions;
@@ -456,7 +456,7 @@ public abstract class VertexEvaluator<V extends GreqlVertex> {
 	private void removeInvalidSourcePosition(QuerySourceException ex) {
 		GreqlAggregation inc = (GreqlAggregation) getVertex()
 				.getFirstIncidence(EdgeDirection.OUT);
-		List<SourcePosition> possibleSourcePositions = new ArrayList<SourcePosition>();
+		List<SourcePosition> possibleSourcePositions = new ArrayList<>();
 		while (inc != null) {
 			List<SourcePosition> sourcePositions = inc.get_sourcePositions();
 			possibleSourcePositions.addAll(sourcePositions);

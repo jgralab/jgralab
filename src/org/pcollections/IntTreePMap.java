@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2013 Institute for Software Technology
+ * Copyright (C) 2006-2014 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -69,7 +69,7 @@ import java.util.Set;
 public final class IntTreePMap<V> extends AbstractMap<Integer, V> implements
 		PMap<Integer, V> {
 	// // STATIC FACTORY METHODS ////
-	private static final IntTreePMap<Object> EMPTY = new IntTreePMap<Object>(
+	private static final IntTreePMap<Object> EMPTY = new IntTreePMap<>(
 			IntTree.EMPTYNODE);
 
 	/**
@@ -120,7 +120,7 @@ public final class IntTreePMap<V> extends AbstractMap<Integer, V> implements
 		if (root == this.root) {
 			return this;
 		}
-		return new IntTreePMap<V>(root);
+		return new IntTreePMap<>(root);
 	}
 
 	// // UNINHERITED METHODS OF IntTreePMap ////
@@ -193,10 +193,12 @@ public final class IntTreePMap<V> extends AbstractMap<Integer, V> implements
 	}
 
 	// // IMPLEMENTED METHODS OF PMap////
+	@Override
 	public IntTreePMap<V> plus(final Integer key, final V value) {
 		return withRoot(root.plus(key, value));
 	}
 
+	@Override
 	public IntTreePMap<V> minus(final Object key) {
 		if (!(key instanceof Integer)) {
 			return this;
@@ -204,6 +206,7 @@ public final class IntTreePMap<V> extends AbstractMap<Integer, V> implements
 		return withRoot(root.minus((Integer) key));
 	}
 
+	@Override
 	public IntTreePMap<V> plusAll(final Map<? extends Integer, ? extends V> map) {
 		IntTree<V> root = this.root;
 		for (Entry<? extends Integer, ? extends V> entry : map.entrySet()) {
@@ -212,6 +215,7 @@ public final class IntTreePMap<V> extends AbstractMap<Integer, V> implements
 		return withRoot(root);
 	}
 
+	@Override
 	public IntTreePMap<V> minusAll(final Collection<?> keys) {
 		IntTree<V> root = this.root;
 		for (Object key : keys) {

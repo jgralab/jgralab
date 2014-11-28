@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2013 Institute for Software Technology
+ * Copyright (C) 2006-2014 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -81,11 +81,11 @@ public class NFA extends FiniteAutomaton {
 	 * 
 	 */
 	protected NFA(NFA nfaToCopy) {
-		Map<Integer, State> oldStateToNewStateMap = new HashMap<Integer, State>();
+		Map<Integer, State> oldStateToNewStateMap = new HashMap<>();
 		nfaToCopy.updateStateAttributes();
-		finalStates = new ArrayList<State>();
-		stateList = new ArrayList<State>();
-		transitionList = new ArrayList<Transition>();
+		finalStates = new ArrayList<>();
+		stateList = new ArrayList<>();
+		transitionList = new ArrayList<>();
 		// copy all states
 		for (State currentState : nfaToCopy.stateList) {
 			State newState = new State();
@@ -242,7 +242,7 @@ public class NFA extends FiniteAutomaton {
 		} else {
 			newInitialState = nfa.finalStates.get(0);
 		}
-		nfa.finalStates = new ArrayList<State>();
+		nfa.finalStates = new ArrayList<>();
 		nfa.finalStates.add(nfa.initialState);
 		nfa.initialState = newInitialState;
 		nfa.updateStateAttributes();
@@ -365,9 +365,9 @@ public class NFA extends FiniteAutomaton {
 	 * epsilon-transition from the initial to the final state
 	 */
 	protected NFA() {
-		finalStates = new ArrayList<State>();
-		transitionList = new ArrayList<Transition>();
-		stateList = new ArrayList<State>();
+		finalStates = new ArrayList<>();
+		transitionList = new ArrayList<>();
+		stateList = new ArrayList<>();
 		initialState = new State();
 		State finalState = new State();
 		finalStates.add(finalState);

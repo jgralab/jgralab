@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2013 Institute for Software Technology
+ * Copyright (C) 2006-2014 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -58,7 +58,7 @@ public class CreateVertexClassDisjoint extends Transformation<VertexClass> {
 	public static CreateVertexClassDisjoint parseAndCreate(
 			ExecuteTransformation et) {
 		String qname = et.matchQualifiedName();
-		List<String> semanticExps = new LinkedList<String>();
+		List<String> semanticExps = new LinkedList<>();
 		while (et.tryMatch(TokenTypes.TRANSFORM_ARROW)) {
 			et.matchTransformationArrow();
 			semanticExps.add(et.matchSemanticExpression());

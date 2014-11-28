@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2013 Institute for Software Technology
+ * Copyright (C) 2006-2014 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -74,7 +74,7 @@ public class XDotParser {
 	public XDotParser(Graph g, GraphMarker<List<XDotShape>> es) {
 		graph = g;
 		elementShapes = es;
-		colorMap = new HashMap<String, Color>();
+		colorMap = new HashMap<>();
 		colorMap.put("black", Color.BLACK);
 		colorMap.put("white", Color.WHITE);
 		colorMap.put("red", Color.RED);
@@ -291,7 +291,7 @@ public class XDotParser {
 		xs.setElement(currentElement);
 		List<XDotShape> l = elementShapes.get(currentElement);
 		if (l == null) {
-			l = new ArrayList<XDotShape>();
+			l = new ArrayList<>();
 			elementShapes.mark(currentElement, l);
 		}
 		l.add(xs);
@@ -380,7 +380,7 @@ public class XDotParser {
 			parseSubgraph();
 		} else {
 			String id = matchID();
-			Map<String, String> attrs = new TreeMap<String, String>();
+			Map<String, String> attrs = new TreeMap<>();
 			if (la.text.equals("=")) {
 				// here, we have an assignment
 				// stmt ::= ID = ID
@@ -436,7 +436,7 @@ public class XDotParser {
 	public List<XDotShape> parseXDotFile(InputStream is) throws IOException {
 
 		// System.out.println("----- XDOT FILE -----");
-		shapes = new ArrayList<XDotShape>();
+		shapes = new ArrayList<>();
 		elementShapes.clear();
 		bounds = null;
 		try {

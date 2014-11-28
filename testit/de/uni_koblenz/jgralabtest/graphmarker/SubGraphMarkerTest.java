@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2013 Institute for Software Technology
+ * Copyright (C) 2006-2014 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -126,8 +126,8 @@ public class SubGraphMarkerTest extends InstanceTest {
 	}
 
 	public void assertAllMarkedCorrectly() {
-		Set<AttributedElement<?, ?>> oldSet = new HashSet<AttributedElement<?, ?>>();
-		Set<AttributedElement<?, ?>> newSet = new HashSet<AttributedElement<?, ?>>();
+		Set<AttributedElement<?, ?>> oldSet = new HashSet<>();
+		Set<AttributedElement<?, ?>> newSet = new HashSet<>();
 		for (AttributedElement<?, ?> currentElement : oldMarker
 				.getMarkedElements()) {
 			oldSet.add(currentElement);

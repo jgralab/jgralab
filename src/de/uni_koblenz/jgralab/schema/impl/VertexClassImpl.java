@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2013 Institute for Software Technology
+ * Copyright (C) 2006-2014 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -54,7 +54,7 @@ public class VertexClassImpl extends GraphElementClassImpl<VertexClass, Vertex>
 	/**
 	 * the own in IncidenceClasses
 	 */
-	private Set<IncidenceClass> inIncidenceClasses = new HashSet<IncidenceClass>();
+	private Set<IncidenceClass> inIncidenceClasses = new HashSet<>();
 
 	/**
 	 * the in IncidenceClasses - only set if schema is finish
@@ -64,7 +64,7 @@ public class VertexClassImpl extends GraphElementClassImpl<VertexClass, Vertex>
 	/**
 	 * the own out IncidenceClasses
 	 */
-	private Set<IncidenceClass> outIncidenceClasses = new HashSet<IncidenceClass>();
+	private Set<IncidenceClass> outIncidenceClasses = new HashSet<>();
 
 	/**
 	 * the out IncidenceClasses - only set if schema is finish
@@ -215,7 +215,7 @@ public class VertexClassImpl extends GraphElementClassImpl<VertexClass, Vertex>
 			return validFromFarIncidenceClasses;
 		}
 
-		Set<IncidenceClass> validFromInc = new HashSet<IncidenceClass>();
+		Set<IncidenceClass> validFromInc = new HashSet<>();
 		for (IncidenceClass ic : getAllOutIncidenceClasses()) {
 			IncidenceClass farInc = ic.getEdgeClass().getTo();
 			validFromInc.add(farInc);
@@ -235,7 +235,7 @@ public class VertexClassImpl extends GraphElementClassImpl<VertexClass, Vertex>
 		if (isFinished()) {
 			return validToFarIncidenceClasses;
 		}
-		Set<IncidenceClass> validToInc = new HashSet<IncidenceClass>();
+		Set<IncidenceClass> validToInc = new HashSet<>();
 		for (IncidenceClass ic : getAllInIncidenceClasses()) {
 			IncidenceClass farInc = ic.getEdgeClass().getFrom();
 			validToInc.add(farInc);
@@ -256,7 +256,7 @@ public class VertexClassImpl extends GraphElementClassImpl<VertexClass, Vertex>
 			return validFromEdgeClasses;
 		}
 		// System.err.print("+");
-		Set<EdgeClass> validFrom = new HashSet<EdgeClass>();
+		Set<EdgeClass> validFrom = new HashSet<>();
 		for (IncidenceClass ic : getValidFromFarIncidenceClasses()) {
 			if (!ic.getEdgeClass().isDefaultGraphElementClass()) {
 				validFrom.add(ic.getEdgeClass());
@@ -271,7 +271,7 @@ public class VertexClassImpl extends GraphElementClassImpl<VertexClass, Vertex>
 			return validToEdgeClasses;
 		}
 		// System.err.print("-");
-		Set<EdgeClass> validTo = new HashSet<EdgeClass>();
+		Set<EdgeClass> validTo = new HashSet<>();
 		for (IncidenceClass ic : getValidToFarIncidenceClasses()) {
 			if (!ic.getEdgeClass().isDefaultGraphElementClass()) {
 				validTo.add(ic.getEdgeClass());
@@ -293,7 +293,7 @@ public class VertexClassImpl extends GraphElementClassImpl<VertexClass, Vertex>
 		if (isFinished()) {
 			return allInIncidenceClasses;
 		}
-		Set<IncidenceClass> incidenceClasses = new HashSet<IncidenceClass>();
+		Set<IncidenceClass> incidenceClasses = new HashSet<>();
 		incidenceClasses.addAll(inIncidenceClasses);
 		for (VertexClass vc : getDirectSuperClasses()) {
 			incidenceClasses.addAll(vc.getAllInIncidenceClasses());
@@ -306,7 +306,7 @@ public class VertexClassImpl extends GraphElementClassImpl<VertexClass, Vertex>
 		if (isFinished()) {
 			return allOutIncidenceClasses;
 		}
-		Set<IncidenceClass> incidenceClasses = new HashSet<IncidenceClass>();
+		Set<IncidenceClass> incidenceClasses = new HashSet<>();
 		incidenceClasses.addAll(outIncidenceClasses);
 		for (VertexClass vc : getDirectSuperClasses()) {
 			incidenceClasses.addAll(vc.getAllOutIncidenceClasses());
@@ -316,7 +316,7 @@ public class VertexClassImpl extends GraphElementClassImpl<VertexClass, Vertex>
 
 	@Override
 	public Set<IncidenceClass> getOwnAndInheritedFarIncidenceClasses() {
-		Set<IncidenceClass> result = new HashSet<IncidenceClass>();
+		Set<IncidenceClass> result = new HashSet<>();
 		for (IncidenceClass ic : getAllInIncidenceClasses()) {
 			result.add(ic.getEdgeClass().getFrom());
 			for (IncidenceClass sup : ic.getSubsettedIncidenceClasses()) {
@@ -334,7 +334,7 @@ public class VertexClassImpl extends GraphElementClassImpl<VertexClass, Vertex>
 
 	@Override
 	public Set<EdgeClass> getConnectedEdgeClasses() {
-		Set<EdgeClass> result = new HashSet<EdgeClass>();
+		Set<EdgeClass> result = new HashSet<>();
 		for (IncidenceClass ic : getAllInIncidenceClasses()) {
 			result.add(ic.getEdgeClass());
 		}
@@ -346,7 +346,7 @@ public class VertexClassImpl extends GraphElementClassImpl<VertexClass, Vertex>
 
 	@Override
 	public Set<EdgeClass> getOwnConnectedEdgeClasses() {
-		Set<EdgeClass> result = new HashSet<EdgeClass>();
+		Set<EdgeClass> result = new HashSet<>();
 		for (IncidenceClass ic : getOwnInIncidenceClasses()) {
 			result.add(ic.getEdgeClass());
 		}
@@ -358,10 +358,10 @@ public class VertexClassImpl extends GraphElementClassImpl<VertexClass, Vertex>
 
 	@Override
 	protected void finish() {
-		allInIncidenceClasses = new HashSet<IncidenceClass>();
+		allInIncidenceClasses = new HashSet<>();
 		allInIncidenceClasses.addAll(inIncidenceClasses);
 
-		allOutIncidenceClasses = new HashSet<IncidenceClass>();
+		allOutIncidenceClasses = new HashSet<>();
 		allOutIncidenceClasses.addAll(outIncidenceClasses);
 
 		for (VertexClass vc : getDirectSuperClasses()) {
@@ -384,7 +384,7 @@ public class VertexClassImpl extends GraphElementClassImpl<VertexClass, Vertex>
 		validToEdgeClasses = Collections
 				.unmodifiableSet(getValidToEdgeClasses());
 
-		farRoleNameToEdgeClass = new HashMap<String, DirectedSchemaEdgeClass>();
+		farRoleNameToEdgeClass = new HashMap<>();
 		for (IncidenceClass ic : getOwnAndInheritedFarIncidenceClasses()) {
 			String role = ic.getRolename();
 			if (role.length() == 0) {
@@ -459,8 +459,8 @@ public class VertexClassImpl extends GraphElementClassImpl<VertexClass, Vertex>
 		}
 
 		// Make em modifiable again
-		inIncidenceClasses = new HashSet<IncidenceClass>(inIncidenceClasses);
-		outIncidenceClasses = new HashSet<IncidenceClass>(outIncidenceClasses);
+		inIncidenceClasses = new HashSet<>(inIncidenceClasses);
+		outIncidenceClasses = new HashSet<>(outIncidenceClasses);
 
 		super.reopen();
 	}

@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2013 Institute for Software Technology
+ * Copyright (C) 2006-2014 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -53,28 +53,28 @@ import de.uni_koblenz.jgralab.schema.exception.SchemaException;
 
 public final class PackageImpl extends NamedElementImpl implements Package {
 
-	final Map<String, Domain> domains = new TreeMap<String, Domain>();
-	final Map<String, EdgeClass> edgeClasses = new TreeMap<String, EdgeClass>();
-	final Map<String, VertexClass> vertexClasses = new TreeMap<String, VertexClass>();
-	private final Map<String, Package> subPackages = new TreeMap<String, Package>();
+	final Map<String, Domain> domains = new TreeMap<>();
+	final Map<String, EdgeClass> edgeClasses = new TreeMap<>();
+	final Map<String, VertexClass> vertexClasses = new TreeMap<>();
+	private final Map<String, Package> subPackages = new TreeMap<>();
 
 	/**
 	 * Creates a new <code>DefaultPackage</code> in the given Schema.
-	 *
+	 * 
 	 * <p>
 	 * <b>Pattern:</b>
 	 * <code>p = PackageImpl.createDefaultPackage(schema);</code>
 	 * </p>
-	 *
+	 * 
 	 * <p>
 	 * <b>Preconditions:</b> none<br/>
 	 * </p>
-	 *
+	 * 
 	 * <p>
 	 * <b>Postconditions:</b> p is the newly created <code>DefaultPackage</code>
 	 * for this schema
 	 * </p>
-	 *
+	 * 
 	 * @param schema
 	 *            the schema containing the new <code>DefaultPackage</code>
 	 * @return the newly created <code>DefaultPackage</code> for the given
@@ -90,7 +90,7 @@ public final class PackageImpl extends NamedElementImpl implements Package {
 
 	/**
 	 * Constructor for the default package
-	 *
+	 * 
 	 * @param schema
 	 */
 	private PackageImpl(SchemaImpl schema) {
@@ -119,7 +119,7 @@ public final class PackageImpl extends NamedElementImpl implements Package {
 
 	/**
 	 * Adds the EdgeClass <code>ec</code> to this Package.
-	 *
+	 * 
 	 * @param ec
 	 *            an EdgeClass
 	 */
@@ -135,8 +135,8 @@ public final class PackageImpl extends NamedElementImpl implements Package {
 				+ ec.getSimpleName();
 		// Don't track the default edge class
 		if (!(isDefaultPackage() && ec.getSimpleName().equals(
-				EdgeClass.DEFAULTEDGECLASS_NAME)) && 
-				!(isDefaultPackage() && ec.getSimpleName().equals(
+				EdgeClass.DEFAULTEDGECLASS_NAME))
+				&& !(isDefaultPackage() && ec.getSimpleName().equals(
 						EdgeClass.TEMPORARYEDGECLASS_NAME))) {
 			edgeClasses.put(ec.getSimpleName(), ec);
 		}
@@ -144,7 +144,7 @@ public final class PackageImpl extends NamedElementImpl implements Package {
 
 	/**
 	 * Adds the subpackage <code>subPkg</code> to this Package.
-	 *
+	 * 
 	 * @param subPkg
 	 *            a subpackage
 	 */
@@ -163,7 +163,7 @@ public final class PackageImpl extends NamedElementImpl implements Package {
 
 	/**
 	 * Adds the VertexClass <code>vc</code> to this Package.
-	 *
+	 * 
 	 * @param vc
 	 *            a VertexClass
 	 */
@@ -179,8 +179,8 @@ public final class PackageImpl extends NamedElementImpl implements Package {
 				+ vc.getSimpleName() + "\"";
 		// Don't track the default vertex class
 		if (!(isDefaultPackage() && vc.getSimpleName().equals(
-				VertexClass.DEFAULTVERTEXCLASS_NAME)) && 
-				!(isDefaultPackage() && vc.getSimpleName().equals(
+				VertexClass.DEFAULTVERTEXCLASS_NAME))
+				&& !(isDefaultPackage() && vc.getSimpleName().equals(
 						VertexClass.TEMPORARYVERTEXCLASS_NAME))) {
 			vertexClasses.put(vc.getSimpleName(), vc);
 		}
@@ -264,7 +264,7 @@ public final class PackageImpl extends NamedElementImpl implements Package {
 		simpleName = newSimpleName;
 		parentPackage = schema.createPackageWithParents(newPackageName);
 
-		List<NamedElement> l = new LinkedList<NamedElement>();
+		List<NamedElement> l = new LinkedList<>();
 		l.addAll(vertexClasses.values());
 		l.addAll(edgeClasses.values());
 		l.addAll(subPackages.values());

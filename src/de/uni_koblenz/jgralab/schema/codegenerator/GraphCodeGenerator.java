@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2013 Institute for Software Technology
+ * Copyright (C) 2006-2014 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -134,7 +134,7 @@ public class GraphCodeGenerator extends
 		CodeList code = new CodeList();
 
 		GraphClass gc = aec;
-		TreeSet<GraphElementClass<?, ?>> sortedClasses = new TreeSet<GraphElementClass<?, ?>>();
+		TreeSet<GraphElementClass<?, ?>> sortedClasses = new TreeSet<>();
 		sortedClasses.addAll(gc.getGraphElementClasses());
 		for (GraphElementClass<?, ?> gec : sortedClasses) {
 			CodeList gecCode = new CodeList();
@@ -285,7 +285,7 @@ public class GraphCodeGenerator extends
 			}
 			if (currentCycle.isStdImpl()) {
 				s.add("public Iterable<#edgeJavaClassName#> get#edgeUniqueName#Edges() {");
-				s.add("\treturn new EdgeIterable<#edgeJavaClassName#>(this, #edgeJavaClassName#.EC);");
+				s.add("\treturn new EdgeIterable<>(this, #edgeJavaClassName#.EC);");
 				s.add("}");
 			}
 			s.add("");
@@ -301,7 +301,7 @@ public class GraphCodeGenerator extends
 			return code;
 		}
 
-		Set<VertexClass> vertexClassSet = new HashSet<VertexClass>();
+		Set<VertexClass> vertexClassSet = new HashSet<>();
 		vertexClassSet.addAll(gc.getVertexClasses());
 
 		for (VertexClass vertex : vertexClassSet) {
@@ -325,11 +325,11 @@ public class GraphCodeGenerator extends
 			}
 			if (currentCycle.isStdImpl()) {
 				s.add("public Iterable<#vertexJavaClassName#> get#vertexCamelName#Vertices() {");
-				s.add("\treturn new VertexIterable<#vertexJavaClassName#>(this, #vertexJavaClassName#.VC, null);");
+				s.add("\treturn new VertexIterable<>(this, #vertexJavaClassName#.VC, null);");
 				s.add("}");
 				s.add("",
 						"public Iterable<#vertexJavaClassName#> get#vertexCamelName#Vertices(#jgPackage#.VertexFilter<#vertexJavaClassName#> filter) {");
-				s.add("\treturn new VertexIterable<#vertexJavaClassName#>(this, #vertexJavaClassName#.VC, filter);");
+				s.add("\treturn new VertexIterable<>(this, #vertexJavaClassName#.VC, filter);");
 				s.add("}");
 			}
 			s.add("");

@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2013 Institute for Software Technology
+ * Copyright (C) 2006-2014 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -103,8 +103,8 @@ public class CommonSubgraphOptimizer extends OptimizerBase {
 
 	public CommonSubgraphOptimizer(OptimizerInfo optimizerInfo) {
 		super(optimizerInfo);
-		subgraphMap = new HashMap<String, GreqlVertex>();
-		reverseSubgraphMap = new HashMap<GreqlVertex, String>();
+		subgraphMap = new HashMap<>();
+		reverseSubgraphMap = new HashMap<>();
 	}
 
 	/*

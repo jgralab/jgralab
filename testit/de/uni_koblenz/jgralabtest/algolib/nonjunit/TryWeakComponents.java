@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2013 Institute for Software Technology
+ * Copyright (C) 2006-2014 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -59,7 +59,7 @@ public class TryWeakComponents {
 		}
 		System.out.println("Expected Kappa: " + KAPPA);
 		BreadthFirstSearch bfs = new BreadthFirstSearch(graph);
-		final Set<Vertex> representatives = new HashSet<Vertex>();
+		final Set<Vertex> representatives = new HashSet<>();
 
 		WeakComponentsWithBFS solver = new WeakComponentsWithBFS(graph, bfs)
 				.withInverseResult();

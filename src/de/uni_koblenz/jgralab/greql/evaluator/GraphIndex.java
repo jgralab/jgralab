@@ -1,7 +1,7 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
- * Copyright (C) 2006-2013 Institute for Software Technology
+ * Copyright (C) 2006-2014 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
  *
@@ -48,9 +48,9 @@ import de.uni_koblenz.jgralab.Vertex;
 
 /**
  * This class contains the computed index for a graph
- *
+ * 
  * @author ist@uni-koblenz.de
- *
+ * 
  */
 public class GraphIndex {
 
@@ -100,7 +100,7 @@ public class GraphIndex {
 
 	/**
 	 * Creates a new GraphIndex for the graph
-	 *
+	 * 
 	 * @param graph
 	 *            the graph to create the Index for
 	 */
@@ -108,7 +108,7 @@ public class GraphIndex {
 		this.graph = graph;
 		graphVersion = graph.getGraphVersion();
 		graphSize = graph.getECount() + graph.getVCount();
-		vertexIndex = new HashMap<String, VertexIndexEntry>();
+		vertexIndex = new HashMap<>();
 	}
 
 	/**
@@ -127,7 +127,7 @@ public class GraphIndex {
 
 	/**
 	 * adds a indexed vertex set
-	 *
+	 * 
 	 * @param query
 	 *            the query which constructs this set, e.g. "V{Identifier}"
 	 */
@@ -153,7 +153,7 @@ public class GraphIndex {
 	/**
 	 * removes as much entrys as are needed to push the index size below the
 	 * given value in graph elements
-	 *
+	 * 
 	 * @param maxIndexSize
 	 *            the method will remove as much indix entrys as needed to get
 	 *            the index size lower than maxIndexSize, measured in
@@ -163,7 +163,7 @@ public class GraphIndex {
 		if (indexSize <= maxIndexSize) {
 			return;
 		}
-		TreeSet<Entry<String, VertexIndexEntry>> entrySet = new TreeSet<Entry<String, VertexIndexEntry>>(
+		TreeSet<Entry<String, VertexIndexEntry>> entrySet = new TreeSet<>(
 				new Comparator<Entry<String, VertexIndexEntry>>() {
 					@Override
 					public int compare(Entry<String, VertexIndexEntry> o1,
