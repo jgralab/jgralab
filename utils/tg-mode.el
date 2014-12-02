@@ -319,32 +319,42 @@ The optional TYPE specifies that the returned name has to be the
     (search-backward inc)
     (point)))
 
+(defun tg-edge-by-id (id)
+  "Return the buffer position of the edge with ID."
+  (save-excursion
+    (goto-char (point-min))
+    (re-search-forward "^Graph[^a-zA-Z]+")
+    (re-search-forward (concat "^" id " [[:alnum:]]+[[:space:]]*[^<]"))
+    (line-beginning-position)))
+
 (defun tg-jump (arg)
   "Jump to an appropriate position depending on position of point.
+Concretely, for incidences/edges jumps in the cycle:
 
-When on an incidence number, jump to the vertex that is the
-That-Vertex of the incident edge.
-
-When on an edge, jump to the vertex it is starting from.  With
-prefix arg, jump to the target vertex."
+   ╭──> <outgoing-incidence> ───────────────> <incoming-incidence> ───╮
+   │                                                                  │
+   ╰───────────────────────────── <edge> <────────────────────────────╯"
   (interactive "P")
-  (cond
-   ((tg-incidence-list-p)
-    (re-search-backward "[^[:digit:]-]" nil t 1)
-    (when (looking-at "[< ]\\([[:digit:]-]+\\)")
-      (let ((incnum (match-string-no-properties 1)))
-        (goto-char (tg-vertex-by-incidence (if (string-match "^-" incnum)
-                                               (substring incnum 1)
-                                             (concat "-" incnum)))))))
-   ((tg-edge-p)
-    (goto-char (line-beginning-position))
-    (when (looking-at "\\([[:digit:]]+\\)[[:space:]]+")
-      (let ((no (match-string-no-properties 1)))
-        (goto-char (tg-vertex-by-incidence (if arg
-                                               (concat "-" no)
-                                             no)))))))
-  ;; Push the mark, so that we can easily jump back again
-  (push-mark nil 'nomessage))
+  (let ((done-something t))
+    (cond
+     ((tg-incidence-list-p)
+      (re-search-backward "[^[:digit:]-]" nil t 1)
+      (when (looking-at "[< ]\\([[:digit:]-]+\\)")
+	(let ((incnum (match-string-no-properties 1)))
+	  (if (string-match-p "^-" incnum)
+	      (goto-char (tg-edge-by-id (substring incnum 1)))
+	    (goto-char (tg-vertex-by-incidence (concat "-" incnum)))))))
+     ((tg-edge-p)
+      (goto-char (line-beginning-position))
+      (when (looking-at "\\([[:digit:]]+\\)[[:space:]]+")
+	(let ((no (match-string-no-properties 1)))
+	  (goto-char (tg-vertex-by-incidence (if arg
+						 (concat "-" no)
+					       no))))))
+     (t (setq done-something nil)))
+    (when done-something
+      ;; Push the mark, so that we can easily jump back again
+      (push-mark nil 'nomessage))))
 
 (defvar tg-mode-map
   (let ((m (make-sparse-keymap)))
@@ -390,7 +400,8 @@ prefix arg, jump to the target vertex."
       (beginning-of-line)
       (if (tg-vertex-p)
 	  (search-forward ">" (line-end-position) t)
-	(re-search-forward "[[:digit:]]+[[:space:]]+[[:alnum:]]+[[:space:]]+"))
+	(re-search-forward "[[:digit:]]+[[:space:]]+[[:alnum:]]+[[:space:]]+"
+			   (line-end-position) t))
       (while (and (<= (point) p)
 		  (not (eql ?\; (char-after (point)))))
 	(forward-sexp)
@@ -405,8 +416,22 @@ prefix arg, jump to the target vertex."
       (let ((incnum (match-string-no-properties 1)))
         (goto-char (buffer-end 1))
         (re-search-backward (concat "^" incnum "[[:space:]]+") nil t 1)
-        (setq tg--last-doc (buffer-substring (line-beginning-position)
-                                             (line-end-position)))))))
+	(let ((edge-line (buffer-substring (line-beginning-position)
+					   (line-end-position))))
+	  (when (string-match
+		 "^\\([[:digit:]]+\\)[[:space:]]+\\([[:alnum:]]+\\)\\([[:space:]]+.+\\)?\\(;\\)$"
+		 edge-line)
+	    (let ((id (match-string 1 edge-line))
+		  (type (if (string-match-p "^[[:digit:]]+$" (match-string 2 edge-line))
+			    (gethash (match-string 2 edge-line) tg-id2class-map)
+			  (match-string 2 edge-line)))
+		  (attrs (or (match-string 3 edge-line) ""))
+		  (semicolon (match-string 4 edge-line)))
+	      (setq tg--last-doc (concat (propertize id 'face 'bold)
+					 " "
+					 (propertize type 'face 'tg-type-face)
+					 (propertize attrs 'face 'tg-attribute-face)
+					 (propertize semicolon 'face 'bold))))))))))
 
 (defun tg-eldoc-vertex-or-edge-at-point (mtype)
   "Eldoc MTYPE element at current line."
