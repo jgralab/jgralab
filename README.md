@@ -1,3 +1,7 @@
+[![License GPL 3][badge-license]](http://www.gnu.org/licenses/gpl-3.0.txt)
+[![Build Status](https://secure.travis-ci.org/jgralab/jgralab.png)](http://travis-ci.org/jgralab/jgralab)
+[![Clojars Project](http://clojars.org/de.uni-koblenz.ist/jgralab/latest-version.svg)](http://clojars.org/de.uni-koblenz.ist/jgralab)
+
 <object data="http://jgralab.github.io/jgralab/images/jgralab-logo.svg" width="600">
   <img src="http://jgralab.github.io/jgralab/images/jgralab-logo.png" alt="JGraLab Logo" width="600">
 </object>
@@ -8,8 +12,6 @@ JGraLab is a Java graph library implementing so-called TGraphs: typed,
 attributed, ordered, and directed graphs.  Beyond the plain data structure, the
 library contains an extensive algorithm library, the graph query language
 GReQL, the transformation API GReTL, and tons of utilities.
-
-Current build status: [![Build Status](https://secure.travis-ci.org/jgralab/jgralab.png)](http://travis-ci.org/jgralab/jgralab)
 
 ## Installation and Building
 
@@ -126,9 +128,11 @@ the following additional grant:
     combination shall include the source code for the parts of JGraLab used as
     well as that of the covered work.
 
+[![License GPL 3][badge-license]](http://www.gnu.org/licenses/gpl-3.0.txt)
+[badge-license]: https://img.shields.io/badge/license-GPL_3-green.svg
+
 
 <!-- Local Variables:        -->
 <!-- mode: markdown          -->
 <!-- indent-tabs-mode: nil   -->
 <!-- End:                    -->
-
