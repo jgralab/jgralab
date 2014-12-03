@@ -2,9 +2,9 @@
 <html>
 
   <head>
-    <meta charset='utf-8' />
-    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
-    <meta name="description" content="JGraLab : The Java Graph Laboratory" />
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="description" content="JGraLab : The Java Graph Laboratory">
 
     <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
 
@@ -31,32 +31,41 @@
     <!-- MAIN CONTENT -->
     <div id="main_content_wrap" class="outer">
       <section id="main_content" class="inner">
-        <p>
-  <img src="http://jgralab.github.io/jgralab/images/jgralab-logo.png" alt="JGraLab Logo" width="600"></p>
+        <p><a href="http://www.gnu.org/licenses/gpl-3.0.txt"><img src="https://img.shields.io/badge/license-GPL_3-green.svg" alt="License GPL 3"></a>
+<a href="http://travis-ci.org/jgralab/jgralab"><img src="https://secure.travis-ci.org/jgralab/jgralab.png" alt="Build Status"></a>
+<a href="http://clojars.org/de.uni-koblenz.ist/jgralab"><img src="http://clojars.org/de.uni-koblenz.ist/jgralab/latest-version.svg" alt="Clojars Project"></a></p>
+
+<p>
+  <img src="http://jgralab.github.io/jgralab/images/jgralab-logo.png" alt="JGraLab Logo" width="600">
+</p>
 
 <h1>
-<a name="jgralab" class="anchor" href="#jgralab"><span class="octicon octicon-link"></span></a>JGraLab</h1>
+<a id="jgralab" class="anchor" href="#jgralab" aria-hidden="true"><span class="octicon octicon-link"></span></a>JGraLab</h1>
 
 <p>JGraLab is a Java graph library implementing so-called TGraphs: typed,
 attributed, ordered, and directed graphs.  Beyond the plain data structure, the
 library contains an extensive algorithm library, the graph query language
 GReQL, the transformation API GReTL, and tons of utilities.</p>
 
-<p>Current build status: <a href="http://travis-ci.org/jgralab/jgralab"><img src="https://secure.travis-ci.org/jgralab/jgralab.png" alt="Build Status"></a></p>
-
 <h2>
-<a name="installation-and-building" class="anchor" href="#installation-and-building"><span class="octicon octicon-link"></span></a>Installation and Building</h2>
+<a id="installation-and-building" class="anchor" href="#installation-and-building" aria-hidden="true"><span class="octicon octicon-link"></span></a>Installation and Building</h2>
 
 <h3>
-<a name="building-from-sources" class="anchor" href="#building-from-sources"><span class="octicon octicon-link"></span></a>Building from Sources</h3>
+<a id="building-from-sources" class="anchor" href="#building-from-sources" aria-hidden="true"><span class="octicon octicon-link"></span></a>Building from Sources</h3>
 
-<p>The <code>jgralab</code> project depends on the <code>common</code> project.  It is important that
-they reside next to each other on your filesystem.  For example, clone both
-projects into some base folder <code>jgsrc</code> so that the filesystem structure is like
-so.</p>
+<p>The following assumes that you create (or use) a workspace folder <code>jgsrc</code> for JGraLab 
+and your JGraLab applications. Name and location of that workspace can be arbitrarily
+chosen.</p>
+
+<p>When you plan to use Eclipse as IDE, the easiest is to put the <code>jgralab</code> folder into
+your Eclipse workspace folder.</p>
+
+<p>The Ant build scripts require that your applications are located
+in sibling folders next to <code>jgralab</code>.</p>
 
 <pre><code>jgsrc/               # your jgralab workspace
 +-&gt; jgralab/         # this project, i.e., jgralab itself
++-&gt; mygraphproject   # your app has to sit next to jgralab
 </code></pre>
 
 <p>To build <code>jgralab</code> you need to have <a href="http://ant.apache.org/">Apache Ant</a>.
@@ -66,11 +75,16 @@ Build <code>jgralab</code>.</p>
 $ ant
 </code></pre>
 
-<p>The <code>jgralab</code> project contains an Eclipse <code>.project</code> and <code>.classpath</code> file, so that you
-can import it in Eclipse as existing project.</p>
+<p>The <code>jgralab</code> folder contains an Eclipse <code>.project</code> and <code>.classpath</code> file, so that you
+can import it in Eclipse as existing project. This import step is necessary also when
+you initially decided to put JGraLab into the Eclipse workspace since
+Eclipse does not automatically scan its workspace for new projects.</p>
+
+<p>JGRaLab's Ant build generates many source files. Each time you run <code>ant</code>, you have
+to refresh the project in Eclipse, so that the changes get reflected in the IDE. </p>
 
 <h3>
-<a name="getting-releases-via-maven-or-leiningen" class="anchor" href="#getting-releases-via-maven-or-leiningen"><span class="octicon octicon-link"></span></a>Getting Releases via Maven or Leiningen</h3>
+<a id="getting-releases-via-maven-or-leiningen" class="anchor" href="#getting-releases-via-maven-or-leiningen" aria-hidden="true"><span class="octicon octicon-link"></span></a>Getting Releases via Maven or Leiningen</h3>
 
 <p>The current and past JGraLab releases are pushed to
 <a href="https://clojars.org/de.uni-koblenz.ist/jgralab">the JGraLab Clojars site</a> so
@@ -79,7 +93,7 @@ that you can fetch them easily as project dependency via the
 and project management systems.</p>
 
 <h3>
-<a name="downloading-a-pre-compiled-jar" class="anchor" href="#downloading-a-pre-compiled-jar"><span class="octicon octicon-link"></span></a>Downloading a Pre-Compiled Jar</h3>
+<a id="downloading-a-pre-compiled-jar" class="anchor" href="#downloading-a-pre-compiled-jar" aria-hidden="true"><span class="octicon octicon-link"></span></a>Downloading a Pre-Compiled Jar</h3>
 
 <p>You can download nightly builds from our
 <a href="http://userpages.uni-koblenz.de/%7Eist/jgralab/snapshots/">snapshots page</a>.  The
@@ -89,17 +103,17 @@ applications using JGraLab, because then you get nicer code completion, e.g.,
 the real names of method parameters instead of just <code>arg0</code>.</p>
 
 <h2>
-<a name="documentation" class="anchor" href="#documentation"><span class="octicon octicon-link"></span></a>Documentation</h2>
+<a id="documentation" class="anchor" href="#documentation" aria-hidden="true"><span class="octicon octicon-link"></span></a>Documentation</h2>
 
 <h3>
-<a name="api-documentation" class="anchor" href="#api-documentation"><span class="octicon octicon-link"></span></a>API Documentation</h3>
+<a id="api-documentation" class="anchor" href="#api-documentation" aria-hidden="true"><span class="octicon octicon-link"></span></a>API Documentation</h3>
 
 <p>You can find the API documentation for the current JGraLab master branch at our
 <a href="http://userpages.uni-koblenz.de/%7Eist/jgralab/api/">API Docs Page</a>.  This
 documentation is regenerated every night.</p>
 
 <h3>
-<a name="coverage-report" class="anchor" href="#coverage-report"><span class="octicon octicon-link"></span></a>Coverage Report</h3>
+<a id="coverage-report" class="anchor" href="#coverage-report" aria-hidden="true"><span class="octicon octicon-link"></span></a>Coverage Report</h3>
 
 <p>Every night, we run all our test cases against the current master branch and
 measure our coverage using
@@ -108,22 +122,22 @@ results are accessible at our
 <a href="http://userpages.uni-koblenz.de/%7Eist/jgralab/clover-report/">Coverage Report Page</a>.</p>
 
 <h3>
-<a name="tutorials-and-getting-started" class="anchor" href="#tutorials-and-getting-started"><span class="octicon octicon-link"></span></a>Tutorials and Getting Started</h3>
+<a id="tutorials-and-getting-started" class="anchor" href="#tutorials-and-getting-started" aria-hidden="true"><span class="octicon octicon-link"></span></a>Tutorials and Getting Started</h3>
 
 <p>We've started writing a tutorial in the
 <a href="https://github.com/jgralab/jgralab/wiki">JGraLab Wiki</a>.  It's not yet
 complete, but we'll keep working on extending it.</p>
 
 <h3>
-<a name="getting-help" class="anchor" href="#getting-help"><span class="octicon octicon-link"></span></a>Getting Help</h3>
+<a id="getting-help" class="anchor" href="#getting-help" aria-hidden="true"><span class="octicon octicon-link"></span></a>Getting Help</h3>
 
-<p>Join us on the official <a>JGraLab IRC Channel</a>
+<p>Join us on the official JGraLab IRC Channel
 (channel <code>#jgralab</code> on <code>irc.freenode.net</code>).  If you don't have or don't want to
 install an IRC client, you can also
 <a href="http://webchat.freenode.net/?channels=jgralab">chat directly in your browser</a>.</p>
 
 <h2>
-<a name="publications" class="anchor" href="#publications"><span class="octicon octicon-link"></span></a>Publications</h2>
+<a id="publications" class="anchor" href="#publications" aria-hidden="true"><span class="octicon octicon-link"></span></a>Publications</h2>
 
 <ul>
 <li>
@@ -154,10 +168,12 @@ Bildhauer, In: Schürr, Andy; Lewerentz, Claus; Engels, Gregor; Schäfer,
 Wilhelm; Westfechtel, Bernhard: Graph Transformations and Model Driven
 Engineering, 2010, <a href="http://uni-koblenz.de/%7Eist/documents/Ebert2010REU.pdf">http://uni-koblenz.de/~ist/documents/Ebert2010REU.pdf</a>
 </li>
-</ul><h2>
-<a name="license" class="anchor" href="#license"><span class="octicon octicon-link"></span></a>License</h2>
+</ul>
 
-<p>Copyright (C) 2006-2013 The JGraLab Team <a href="mailto:ist@uni-koblenz.de">ist@uni-koblenz.de</a></p>
+<h2>
+<a id="license" class="anchor" href="#license" aria-hidden="true"><span class="octicon octicon-link"></span></a>License</h2>
+
+<p>Copyright (C) 2006-2014 The JGraLab Team <a href="mailto:ist@uni-koblenz.de">ist@uni-koblenz.de</a></p>
 
 <p>Distributed under the
 <a href="http://www.gnu.org/copyleft/gpl.html">General Public License, Version 3</a> with
@@ -173,6 +189,8 @@ resulting work.  Corresponding Source for a non-source form of such a
 combination shall include the source code for the parts of JGraLab used as
 well as that of the covered work.
 </code></pre>
+
+<p><a href="http://www.gnu.org/licenses/gpl-3.0.txt"><img src="https://img.shields.io/badge/license-GPL_3-green.svg" alt="License GPL 3"></a></p>
 
 
 
