@@ -322,7 +322,7 @@ public class TGMerge {
 				Edge oldPrevInc = oldInc.getPrevIncidence();
 				Edge newPrevInc = (oldPrevInc != null) ? old2NewEdges
 						.get(oldPrevInc) : newV.getFirstIncidence();
-				newInc.putIncidenceBefore(newPrevInc);
+				newInc.putIncidenceAfter(newPrevInc);
 			}
 		}
 	}
