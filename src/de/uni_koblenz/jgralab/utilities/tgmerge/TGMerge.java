@@ -39,6 +39,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.logging.Logger;
 
 import org.apache.commons.cli.CommandLine;
@@ -72,6 +73,7 @@ public class TGMerge {
 	private Graph targetGraph;
 	private Map<Vertex, Vertex> old2NewVertices = new HashMap<>();
 	private Map<Vertex, Vertex> new2OldVertices = new HashMap<>();
+	private Map<Edge, Edge> old2NewEdges = new HashMap<>();
 	private Map<Edge, Edge> new2OldEdges = new HashMap<>();
 
 	/**
@@ -202,6 +204,7 @@ public class TGMerge {
 
 	private void resetMaps() {
 		old2NewVertices.clear();
+		old2NewEdges.clear();
 		new2OldVertices.clear();
 		new2OldEdges.clear();
 		copiedGraphPositions.clear();
@@ -310,21 +313,17 @@ public class TGMerge {
 
 	private void sortIncidences() {
 		logger.fine("Sorting incidences...");
-		for (Vertex v : old2NewVertices.values()) {
-			v.sortIncidences(new Comparator<Edge>() {
-				@Override
-				public int compare(Edge e1, Edge e2) {
-					Edge old1 = new2OldEdges.get(e1);
-					Edge old2 = new2OldEdges.get(e2);
-					if (old1.isBeforeIncidence(old2)) {
-						return -1;
-					} else if (old2.isBeforeIncidence(old1)) {
-						return 1;
-					}
-					throw new RuntimeException(
-							"Exception while sorting incidences.");
-				}
-			});
+		for (Entry<Vertex, Vertex> entry : old2NewVertices.entrySet()) {
+			Vertex oldV = entry.getKey();
+			logger.finest("Sorting " + oldV.getDegree() + " incs of " + oldV);
+			Vertex newV = entry.getValue();
+			for (Edge oldInc : oldV.incidences()) {
+				Edge newInc = old2NewEdges.get(oldInc);
+				Edge oldPrevInc = oldInc.getPrevIncidence();
+				Edge newPrevInc = (oldPrevInc != null) ? old2NewEdges
+						.get(oldPrevInc) : newV.getFirstIncidence();
+				newInc.putIncidenceBefore(newPrevInc);
+			}
 		}
 	}
 
@@ -349,6 +348,8 @@ public class TGMerge {
 
 		new2OldEdges.put(newEdge, e);
 		new2OldEdges.put(newEdge.getReversedEdge(), e.getReversedEdge());
+		old2NewEdges.put(e, newEdge);
+		old2NewEdges.put(e.getReversedEdge(), newEdge.getReversedEdge());
 	}
 
 	private void copyVertex(Vertex v) {
