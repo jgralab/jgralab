@@ -36,7 +36,10 @@
 package de.uni_koblenz.jgralab.schema.impl;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 
 import org.pcollections.ArrayPSet;
 import org.pcollections.PSet;
@@ -45,12 +48,22 @@ import de.uni_koblenz.jgralab.schema.exception.SchemaException;
 
 public class DirectedGraph<T> {
 
-	protected static class Node<T> {
+	protected final static class Node<T> {
 		final T data;
 		PSet<T> successors;
 		PSet<T> predecessors;
 
 		int mark;
+
+		protected void rehash() {
+			PSet<T> tmpSuccessors = successors;
+			successors = ArrayPSet.empty();
+			successors = successors.plusAll(tmpSuccessors);
+
+			PSet<T> tmpPredecessors = predecessors;
+			predecessors = ArrayPSet.empty();
+			predecessors = predecessors.plusAll(tmpPredecessors);
+		}
 
 		Node(T data) {
 			assert data != null;
@@ -71,7 +84,43 @@ public class DirectedGraph<T> {
 		nodeValues = ArrayPSet.empty();
 	}
 
+	private boolean rehashNeeded = false;
+
+	/**
+	 * To be called whenever a T-object contained in this DirectedGraph changes
+	 * in such a way that its hashCode() changes. Since T-objects are stored in
+	 * hash-sets and are used as keys in hash-maps, a rehash is needed and will
+	 * be performed when the directed graph is finished again.
+	 */
+	public void setRehashNeeded() {
+		rehashNeeded = true;
+	}
+
+	protected void rehashIfNeeded() {
+		if (!rehashNeeded) {
+			return;
+		}
+		// The qualifiedNames of the elements might have changed, so rebuild
+		// hash maps and sets.
+		Set<Entry<T, Node<T>>> s = new HashSet<>(entries.entrySet());
+		entries.clear();
+		for (Entry<T, Node<T>> e : s) {
+			entries.put(e.getKey(), e.getValue());
+		}
+
+		for (Node<T> n : nodes) {
+			n.rehash();
+		}
+
+		PSet<T> tmpNodeValues = nodeValues;
+		nodeValues = ArrayPSet.empty();
+		nodeValues.plusAll(tmpNodeValues);
+
+		rehashNeeded = false;
+	}
+
 	public void finish() {
+		rehashIfNeeded();
 		finished = true;
 	}
 

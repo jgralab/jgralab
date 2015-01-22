@@ -51,7 +51,6 @@ import java.util.Set;
  * 
  * @param <E>
  */
-@SuppressWarnings("deprecation")
 public final class ArrayPSet<E> implements POrderedSet<E>, Serializable {
 	private static final long serialVersionUID = 5643294766821496614L;
 	// When to promote to OrderedPSet

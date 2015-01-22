@@ -121,6 +121,7 @@ public class DirectedAcyclicGraph<T> extends DirectedGraph<T> {
 		if (finished) {
 			return;
 		}
+		rehashIfNeeded();
 		cachedPredecessors = new HashMap<>();
 		cachedSuccessors = new HashMap<>();
 		for (Node<T> n : nodes) {
@@ -199,7 +200,15 @@ public class DirectedAcyclicGraph<T> extends DirectedGraph<T> {
 		Set<T> s = new HashSet<>();
 		Queue<T> q = new LinkedList<>(n.successors);
 		while (!q.isEmpty()) {
-			n = entries.get(q.poll());
+			T elem = q.poll();
+			n = entries.get(elem);
+			if (n == null) {
+				System.out.println(elem);
+				for (T key : entries.keySet()) {
+					System.out.println("  - " + key + ", identical? "
+							+ (elem == key) + ", equal? " + elem.equals(key));
+				}
+			}
 			if (!s.contains(n.data)) {
 				s.add(n.data);
 				for (T x : n.successors) {

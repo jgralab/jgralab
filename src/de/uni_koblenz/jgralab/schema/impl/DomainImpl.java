@@ -97,6 +97,7 @@ public abstract class DomainImpl extends NamedElementImpl implements Domain {
 		super.unregister();
 		schema.domains.remove(qualifiedName);
 		parentPackage.domains.remove(simpleName);
+		schema.domainsDag.setRehashNeeded();
 	}
 
 	@Override

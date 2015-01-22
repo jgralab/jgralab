@@ -477,6 +477,7 @@ public class VertexClassImpl extends GraphElementClassImpl<VertexClass, Vertex>
 		super.unregister();
 		graphClass.vertexClasses.remove(qualifiedName);
 		parentPackage.vertexClasses.remove(simpleName);
+		graphClass.vertexClassDag.setRehashNeeded();
 	}
 
 	@Override

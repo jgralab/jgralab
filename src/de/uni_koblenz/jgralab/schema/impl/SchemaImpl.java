@@ -153,7 +153,7 @@ public class SchemaImpl implements Schema, ManagableArtifact {
 	 */
 	Map<String, Domain> domains = new HashMap<>();
 
-	private final DirectedAcyclicGraph<Domain> domainsDag = new DirectedAcyclicGraph<>();
+	protected final DirectedAcyclicGraph<Domain> domainsDag = new DirectedAcyclicGraph<>();
 
 	private int version;
 

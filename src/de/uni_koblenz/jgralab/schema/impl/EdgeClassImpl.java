@@ -229,6 +229,7 @@ public class EdgeClassImpl extends GraphElementClassImpl<EdgeClass, Edge>
 		super.unregister();
 		graphClass.edgeClasses.remove(qualifiedName);
 		parentPackage.edgeClasses.remove(simpleName);
+		graphClass.edgeClassDag.setRehashNeeded();
 	}
 
 	@Override

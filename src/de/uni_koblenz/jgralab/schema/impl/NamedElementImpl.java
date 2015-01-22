@@ -433,7 +433,9 @@ public abstract class NamedElementImpl implements NamedElement {
 
 	@Override
 	public final int hashCode() {
-		return qualifiedName.hashCode() + schema.hashCode();
+		int hash = 113 + schema.hashCode();
+		hash = 23 * hash + qualifiedName.hashCode();
+		return hash;
 	}
 
 	@Override
