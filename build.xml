@@ -376,5 +376,26 @@
 		</exec>
 	</target>
 
+
+	<!-- Install the jgralab source jar into the local maven repo -->
+	<target name="mvn-install" depends="versiontasks">
+		<retrieve_version />
+		<exec executable="cp">
+			<!-- Copy src-jar to jgralab.jar since maven expects
+			     jgralab.jar or jgralab-x.y.z.jar, but not
+			     jgralab.src.jar -->
+			<arg value="build/jar/jgralab.src.jar" />
+			<arg value="jgralab.jar" />
+		</exec>
+		<exec executable="mvn">
+			<arg value="install:install-file" />
+			<arg value="-Dfile=jgralab.jar" />
+			<arg value="-DpomFile=pom.xml" />
+		</exec>
+		<exec executable="rm">
+			<arg value="jgralab.jar" />
+		</exec>
+	</target>
+
 </project>
 
