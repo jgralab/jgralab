@@ -49,7 +49,7 @@ public interface VertexClass extends GraphElementClass<VertexClass, Vertex> {
 
 	public final static String DEFAULTVERTEXCLASS_NAME = "Vertex";
 	public final static String TEMPORARYVERTEXCLASS_NAME = "TemporaryVertexClass";
-	
+
 	/**
 	 * adds a superclass to the list of superclasses, all attributes get
 	 * inherited from those classes
@@ -59,6 +59,14 @@ public interface VertexClass extends GraphElementClass<VertexClass, Vertex> {
 	 *
 	 */
 	public void addSuperClass(VertexClass superClass);
+
+	/**
+	 * Removes a current superclass from the list of superclasses.
+	 * 
+	 * @param superClass
+	 *            a current superclass
+	 */
+	public void removeSuperClass(VertexClass superClass);
 
 	public Set<IncidenceClass> getAllInIncidenceClasses();
 

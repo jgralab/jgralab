@@ -156,6 +156,18 @@ public abstract class GraphElementClassImpl<SC extends GraphElementClass<SC, IC>
 		subclassDag.createEdge(superClass, this);
 	}
 
+	protected void removeSuperClass(SC superClass) {
+		assertNotFinished();
+		if (superClass == this) {
+			return;
+		}
+		if (!getAllSuperClasses().contains(superClass)) {
+			throw new SchemaException(superClass + " is no superclass of "
+					+ this + " so cannot remove it as such.");
+		}
+		subclassDag.deleteEdge(superClass, this);
+	}
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public PSet<SC> getDirectSubClasses() {

@@ -59,6 +59,14 @@ public interface EdgeClass extends GraphElementClass<EdgeClass, Edge> {
 	 */
 	public void addSuperClass(EdgeClass superClass);
 
+	/**
+	 * Removes a current superclass from the list of superclasses.
+	 * 
+	 * @param superClass
+	 *            a current superclass
+	 */
+	public void removeSuperClass(EdgeClass superClass);
+
 	public IncidenceClass getFrom();
 
 	public IncidenceClass getTo();

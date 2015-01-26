@@ -176,6 +176,13 @@ public class IncidenceClassImpl implements IncidenceClass {
 		subsettedIncidenceClasses.add(other);
 	}
 
+	void removeSubsettedIncidenceClass(IncidenceClass other) {
+		if (((VertexClassImpl) vertexClass).isFinished()) {
+			throw new SchemaException("No changes to finished schema!");
+		}
+		subsettedIncidenceClasses.remove(other);
+	}
+
 	@Override
 	public Set<String> getAllRoles() {
 		Set<String> result = new HashSet<>();

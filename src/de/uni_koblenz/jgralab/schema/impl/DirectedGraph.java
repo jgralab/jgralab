@@ -128,7 +128,7 @@ public class DirectedGraph<T> {
 		return finished;
 	}
 
-	public void createEdge(T alpha, T omega) {
+	private void checkEdgeCreateDelete(T alpha, T omega) {
 		if (finished) {
 			throw new IllegalStateException("Graph is already finished.");
 		}
@@ -140,6 +140,10 @@ public class DirectedGraph<T> {
 			throw new IllegalArgumentException(
 					"omega doesn't belong to this graph.");
 		}
+	}
+
+	public void createEdge(T alpha, T omega) {
+		checkEdgeCreateDelete(alpha, omega);
 		if (alpha.equals(omega)) {
 			// don't allow loops
 			throw new SchemaException("Loops are not supported.");
@@ -154,6 +158,19 @@ public class DirectedGraph<T> {
 		assert toNode != null;
 		fromNode.successors = fromNode.successors.plus(omega);
 		toNode.predecessors = toNode.predecessors.plus(alpha);
+	}
+
+	public void deleteEdge(T alpha, T omega) {
+		checkEdgeCreateDelete(alpha, omega);
+		if (alpha.equals(omega)) {
+			return;
+		}
+		Node<T> fromNode = entries.get(alpha);
+		assert fromNode != null;
+		Node<T> toNode = entries.get(omega);
+		assert toNode != null;
+		fromNode.successors = fromNode.successors.minus(omega);
+		toNode.predecessors = toNode.predecessors.minus(alpha);
 	}
 
 	public T createNode(T data) {

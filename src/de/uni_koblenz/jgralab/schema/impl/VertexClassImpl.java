@@ -191,6 +191,43 @@ public class VertexClassImpl extends GraphElementClassImpl<VertexClass, Vertex>
 		super.addSuperClass(superClass);
 	}
 
+	@Override
+	public void removeSuperClass(VertexClass superClass) {
+		assertNotFinished();
+		if (superClass == this) {
+			return;
+		}
+
+		// An edge class may only specialize another edge class if the
+		// source/target vertex classes are equal or specializations of each
+		// other, too. Removal of a specialization must ensure that this still
+		// holds after the removal, so we throw an exception if this VC or any
+		// sub-VC has an incident EC which is a subclass of any of the ECs
+		// incident to superClass or one of superClass' superclasses.
+		for (EdgeClass ec : superClass.getConnectedEdgeClasses()) {
+			Set<EdgeClass> superConnectedSubECs = ec.getAllSubClasses();
+			for (VertexClass sub : getAllSubClasses().plus(this)) {
+				for (EdgeClass subConnectedEC : sub
+						.getOwnConnectedEdgeClasses()) {
+					if (superConnectedSubECs.contains(subConnectedEC)) {
+						throw new SchemaException(
+								"Cannot remove superclass "
+										+ superClass.getQualifiedName()
+										+ " from "
+										+ getQualifiedName()
+										+ " because the EdgeClass "
+										+ subConnectedEC.getQualifiedName()
+										+ " specializes an EdgeClass starting or ending at "
+										+ super.getQualifiedName()
+										+ " or one of its superclasses.");
+					}
+				}
+			}
+		}
+
+		super.removeSuperClass(superClass);
+	}
+
 	private void checkDuplicateRolenames(VertexClass superClass) {
 		checkDuplicatedRolenamesAgainstAllIncidences(superClass
 				.getAllInIncidenceClasses());

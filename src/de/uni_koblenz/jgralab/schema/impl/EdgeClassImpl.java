@@ -126,10 +126,22 @@ public class EdgeClassImpl extends GraphElementClassImpl<EdgeClass, Edge>
 		checkIncidenceClassSpecialization(getFrom(), superClass.getFrom());
 		checkIncidenceClassSpecialization(getTo(), superClass.getTo());
 		super.addSuperClass(superClass);
-
 		((IncidenceClassImpl) getFrom()).addSubsettedIncidenceClass(superClass
 				.getFrom());
 		((IncidenceClassImpl) getTo()).addSubsettedIncidenceClass(superClass
+				.getTo());
+	}
+
+	@Override
+	public void removeSuperClass(EdgeClass superClass) {
+		assertNotFinished();
+		if (superClass == this) {
+			return;
+		}
+		super.removeSuperClass(superClass);
+		((IncidenceClassImpl) getFrom())
+				.removeSubsettedIncidenceClass(superClass.getFrom());
+		((IncidenceClassImpl) getTo()).removeSubsettedIncidenceClass(superClass
 				.getTo());
 	}
 
@@ -260,4 +272,5 @@ public class EdgeClassImpl extends GraphElementClassImpl<EdgeClass, Edge>
 	public boolean isDefaultGraphElementClass() {
 		return this == graphClass.getDefaultEdgeClass();
 	}
+
 }
