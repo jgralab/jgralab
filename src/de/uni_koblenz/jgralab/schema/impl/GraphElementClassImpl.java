@@ -414,6 +414,10 @@ public abstract class GraphElementClassImpl<SC extends GraphElementClass<SC, IC>
 
 	@Override
 	public void delete() {
+		for (SC sub : getDirectSubClasses()) {
+			sub.delete();
+		}
+		
 		for (Attribute a : ownAttributes) {
 			a.delete();
 		}
@@ -424,8 +428,5 @@ public abstract class GraphElementClassImpl<SC extends GraphElementClass<SC, IC>
 		allSuperClasses = null;
 		allSuperClassesBitSet = null;
 		schema.namedElements.remove(qualifiedName);
-		for (SC sub : getDirectSubClasses()) {
-			sub.delete();
-		}
 	}
 }
