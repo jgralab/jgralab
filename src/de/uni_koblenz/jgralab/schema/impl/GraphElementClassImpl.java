@@ -419,6 +419,13 @@ public abstract class GraphElementClassImpl<SC extends GraphElementClass<SC, IC>
 		}
 		ownAttributes = null;
 		allAttributes = null;
+		allSubClasses = null;
+		allSubClassesBitSet = null;
+		allSuperClasses = null;
+		allSuperClassesBitSet = null;
 		schema.namedElements.remove(qualifiedName);
+		for (SC sub : getDirectSubClasses()) {
+			sub.delete();
+		}
 	}
 }

@@ -258,8 +258,11 @@ public interface GraphElementClass<SC extends GraphElementClass<SC, IC>, IC exte
 	public int getGraphElementClassIdInSchema();
 
 	/**
-	 * Deletes this graph element class from its graph class (package, and
-	 * schema)
+	 * Deletes this graph element class from its graph class, package, and
+	 * schema. All subclasses are deleted, too. To prevent that, first delete
+	 * the specializations using
+	 * {@link VertexClass#removeSuperClass(VertexClass)} or
+	 * {@link EdgeClass#removeSuperClass(EdgeClass)}.
 	 */
 	public void delete();
 

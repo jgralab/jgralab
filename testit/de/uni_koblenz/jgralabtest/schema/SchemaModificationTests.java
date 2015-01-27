@@ -262,6 +262,55 @@ public class SchemaModificationTests {
 	}
 
 	@Test
+	public void testThatDeleteIsRecursive() {
+		GraphClass gc = createSchemaWithGraphClass();
+		VertexClass vc1 = gc.createVertexClass("VC1");
+		VertexClass vc2 = gc.createVertexClass("VC2");
+		vc2.addSuperClass(vc1);
+		EdgeClass ec1 = createEdgeClass(gc, "EC1", vc1, vc2);
+		EdgeClass ec2 = createEdgeClass(gc, "EC2", vc2, vc2);
+		ec2.addSuperClass(ec1);
+
+		ec1.delete();
+		assertNull(gc.getEdgeClass("EC1"));
+		assertNull(gc.getEdgeClass("EC2"));
+		assertEquals(0, gc.getEdgeClassCount());
+		assertEquals(2, gc.getVertexClassCount());
+
+		vc1.delete();
+		assertNull(gc.getVertexClass("VC1"));
+		assertNull(gc.getVertexClass("VC2"));
+		assertEquals(0, gc.getEdgeClassCount());
+		assertEquals(0, gc.getVertexClassCount());
+	}
+
+	@Test(expected = SchemaException.class)
+	public void testDeleteVCWithConnectedECs1() {
+		GraphClass gc = createSchemaWithGraphClass();
+		VertexClass vc1 = gc.createVertexClass("VC1");
+		VertexClass vc2 = gc.createVertexClass("VC2");
+		vc2.addSuperClass(vc1);
+		EdgeClass ec1 = createEdgeClass(gc, "EC1", vc1, vc2);
+		EdgeClass ec2 = createEdgeClass(gc, "EC2", vc2, vc2);
+		ec2.addSuperClass(ec1);
+
+		vc2.delete();
+	}
+
+	@Test(expected = SchemaException.class)
+	public void testDeleteVCWithConnectedECs2() {
+		GraphClass gc = createSchemaWithGraphClass();
+		VertexClass vc1 = gc.createVertexClass("VC1");
+		VertexClass vc2 = gc.createVertexClass("VC2");
+		vc2.addSuperClass(vc1);
+		EdgeClass ec1 = createEdgeClass(gc, "EC1", vc1, vc2);
+		EdgeClass ec2 = createEdgeClass(gc, "EC2", vc2, vc2);
+		ec2.addSuperClass(ec1);
+
+		vc1.delete();
+	}
+
+	@Test
 	public void testGCAttributeDeletion() {
 		GraphClass gc = createSchemaWithGraphClass();
 		Attribute a1 = gc.createAttribute("a1", gc.getSchema()
