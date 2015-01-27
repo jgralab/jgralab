@@ -161,9 +161,10 @@ public abstract class GraphElementClassImpl<SC extends GraphElementClass<SC, IC>
 		if (superClass == this) {
 			return;
 		}
-		if (!getAllSuperClasses().contains(superClass)) {
-			throw new SchemaException(superClass + " is no superclass of "
-					+ this + " so cannot remove it as such.");
+		if (!getDirectSuperClasses().contains(superClass)) {
+			throw new SchemaException(superClass
+					+ " is no direct superclass of " + this
+					+ " so cannot remove it as such.");
 		}
 		subclassDag.deleteEdge(superClass, this);
 	}
