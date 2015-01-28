@@ -435,7 +435,6 @@
 		<mkdir dir="${doc.dir}/html" />
 		<javadoc 
 			source="${javac.source}"
-			target="${javac.target}"
 			encoding="${javac.encoding}"
 			sourcepath="${src.dir}"
 			destdir="${doc.dir}/html"

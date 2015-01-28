@@ -77,9 +77,9 @@ public class IncidenceClassImpl implements IncidenceClass {
 
 	private final VertexClass vertexClass;
 
-	private final int maxEdgesAtVertex;
+	private int maxEdgesAtVertex;
 
-	private final int minEdgesAtVertex;
+	private int minEdgesAtVertex;
 
 	private String rolename;
 
@@ -212,5 +212,20 @@ public class IncidenceClassImpl implements IncidenceClass {
 
 	void reopen() {
 		allSubsettedIncidenceClasses = null;
+	}
+
+	@Override
+	public void setMax(int max) {
+		maxEdgesAtVertex = max;
+	}
+
+	@Override
+	public void setMin(int min) {
+		minEdgesAtVertex = min;
+	}
+
+	@Override
+	public void setRolename(String name) {
+		rolename = name;
 	}
 }

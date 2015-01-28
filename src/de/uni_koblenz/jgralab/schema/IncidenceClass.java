@@ -45,10 +45,26 @@ public interface IncidenceClass {
 	public int getMax();
 
 	/**
+	 * Set the upper multiplicity to <code>max</code>.
+	 * 
+	 * @param max
+	 *            an number between 0 and Integer.MAX_VALUE
+	 */
+	public void setMax(int max);
+
+	/**
 	 * @return the lower multiplicity, i.e. the minimal number of edges
 	 *         connected to the vertex at the opposite end
 	 */
 	public int getMin();
+
+	/**
+	 * Set the lower multiplicity to <code>min</code>.
+	 * 
+	 * @param min
+	 *            an number between 0 and Integer.MAX_VALUE
+	 */
+	public void setMin(int min);
 
 	/**
 	 * @return {@link IncidenceDirection#OUT} if this {@link IncidenceClass} is
@@ -62,6 +78,14 @@ public interface IncidenceClass {
 	 *         end
 	 */
 	public String getRolename();
+
+	/**
+	 * Sets the name of this incidence class to <code>name</code>.
+	 * 
+	 * @param name
+	 *            the new rolename
+	 */
+	public void setRolename(String name);
 
 	/**
 	 * @return the type of this IncidenceClass, NONE for a normal edge end,
