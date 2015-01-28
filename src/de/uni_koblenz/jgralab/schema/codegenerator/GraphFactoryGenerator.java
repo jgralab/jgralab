@@ -119,10 +119,6 @@ public class GraphFactoryGenerator extends CodeGenerator {
 	}
 
 	protected CodeBlock createFillTableForGraph(GraphClass graphClass) {
-		if (graphClass.isAbstract()) {
-			return null;
-		}
-
 		CodeSnippet code = new CodeSnippet(false);
 		code.setVariable("graphName", graphClass.getQualifiedName() + ".GC");
 		code.setVariable("graphImplName", "#schemaImplStdPackage#."
@@ -133,11 +129,10 @@ public class GraphFactoryGenerator extends CodeGenerator {
 		code.setVariable("graphDatabaseImplName", "#schemaImplDbPackage#."
 				+ graphClass.getQualifiedName() + "Impl");
 
-		if (!graphClass.isAbstract()) {
-			if (currentCycle.isStdImpl()) {
-				code.add("setGraphImplementationClass(#schemaPackage#.#graphName#, #graphImplName#.class);");
-			}
+		if (currentCycle.isStdImpl()) {
+			code.add("setGraphImplementationClass(#schemaPackage#.#graphName#, #graphImplName#.class);");
 		}
+
 		return code;
 	}
 

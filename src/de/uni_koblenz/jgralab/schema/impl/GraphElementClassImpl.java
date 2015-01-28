@@ -109,6 +109,16 @@ public abstract class GraphElementClassImpl<SC extends GraphElementClass<SC, IC>
 	}
 
 	@Override
+	public boolean isAbstract() {
+		return isAbstract;
+	}
+
+	@Override
+	public void setAbstract(boolean isAbstract) {
+		this.isAbstract = isAbstract;
+	}
+
+	@Override
 	protected Attribute createAttribute(Attribute anAttribute) {
 		assertNotFinished();
 		// Check if a subclass already contains an attribute with that name. In
@@ -417,7 +427,7 @@ public abstract class GraphElementClassImpl<SC extends GraphElementClass<SC, IC>
 		for (SC sub : getDirectSubClasses()) {
 			sub.delete();
 		}
-		
+
 		for (Attribute a : ownAttributes) {
 			a.delete();
 		}

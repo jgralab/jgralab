@@ -65,7 +65,7 @@ public abstract class AttributedElementClassImplTest<AEC extends AttributedEleme
 	/*
 	 * Tests for the addAttribute(Attribute) and addAttribute(QualifiedName,
 	 * Domain) methods.
-	 *
+	 * 
 	 * NOTE: As addAttribute(QualifiedName, Domain) only creates an attribute
 	 * with the given parameters then calling the addAttribute(Attribute) method
 	 * and in accordance with the specification of addAttribute(QualifiedName,
@@ -755,61 +755,6 @@ public abstract class AttributedElementClassImplTest<AEC extends AttributedEleme
 				"null");
 
 		Assert.assertTrue(attributedElement.hasOwnAttributes());
-	}
-
-	/*
-	 * Tests for the isAbstract() method.
-	 */
-	/**
-	 * isAbstract()
-	 *
-	 * TEST CASE: The element is abstract
-	 */
-	@Test
-	public final void testIsAbstract() {
-		attributedElement.setAbstract(true);
-
-		Assert.assertTrue(attributedElement.isAbstract());
-
-	}
-
-	/**
-	 * isAbstract()
-	 *
-	 * TEST CASE: The element is not abstract
-	 */
-	@Test
-	public final void testIsAbstract2() {
-		attributedElement.setAbstract(false);
-
-		Assert.assertFalse(attributedElement.isAbstract());
-	}
-
-	/*
-	 * Tests for the setAbstract() method.
-	 */
-	/**
-	 * setAbstract()
-	 *
-	 * TEST CASE: The element is set to an abstract state
-	 */
-	@Test
-	public void testSetAbstract() {
-		attributedElement.setAbstract(true);
-
-		Assert.assertTrue(attributedElement.isAbstract());
-	}
-
-	/**
-	 * setAbstract()
-	 *
-	 * TEST CASE: The element is set to a non-abstract state
-	 */
-	@Test
-	public void testSetAbstract2() {
-		attributedElement.setAbstract(false);
-
-		Assert.assertFalse(attributedElement.isAbstract());
 	}
 
 	@Test

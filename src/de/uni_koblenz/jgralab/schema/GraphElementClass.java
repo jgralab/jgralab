@@ -272,4 +272,51 @@ public interface GraphElementClass<SC extends GraphElementClass<SC, IC>, IC exte
 	 */
 	public boolean isDefaultGraphElementClass();
 
+	/**
+	 * States if this attributed element class is abstract. Abstract elements
+	 * can´t have instances.
+	 * 
+	 * <p>
+	 * <b>Pattern:</b> <code>isAbstract = attrElement.isAbstract();</code>
+	 * </p>
+	 * 
+	 * <p>
+	 * <b>Preconditions:</b> none
+	 * </p>
+	 * 
+	 * <p>
+	 * <b>Postconditions:</b> <code>isAbstract</code> is:
+	 * <ul>
+	 * <li><code>true</code> if <code>attrElement</code> is abstract and
+	 * therefore may not have any instances</li>
+	 * <li>otherwise <code>false</code>
+	 * </ul>
+	 * 
+	 * @return <code>true</code>, if the element is abstract , otherwise
+	 *         <code>false</code>
+	 */
+	public boolean isAbstract();
+
+	/**
+	 * Defines if this graph element class is abstract. Abstract elements can´t
+	 * have instances.
+	 * 
+	 * <p>
+	 * <b>Pattern:</b> <code>attrElement.setAbstract(value);</code>
+	 * </p>
+	 * 
+	 * <p>
+	 * <b>Preconditions:</b> none
+	 * </p>
+	 * 
+	 * <p>
+	 * <b>Postconditions:</b> <code>attrElement'</code> is abstract and no new
+	 * instances can be created
+	 * </p>
+	 * 
+	 * @param isAbstract
+	 *            the new value defining the state of this attributed element
+	 */
+	public void setAbstract(boolean isAbstract);
+
 }

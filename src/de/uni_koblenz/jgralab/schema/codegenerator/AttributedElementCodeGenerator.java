@@ -43,6 +43,7 @@ import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.schema.Attribute;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.EnumDomain;
+import de.uni_koblenz.jgralab.schema.GraphElementClass;
 import de.uni_koblenz.jgralab.schema.RecordDomain;
 import de.uni_koblenz.jgralab.schema.impl.GraphClassImpl;
 
@@ -65,6 +66,11 @@ public abstract class AttributedElementCodeGenerator<SC extends AttributedElemen
 	 */
 	protected SC aec;
 
+	private boolean isAbstract(SC aec) {
+		return (aec instanceof GraphElementClass<?, ?>)
+				&& ((GraphElementClass<?, ?>) aec).isAbstract();
+	}
+
 	protected AttributedElementCodeGenerator(SC attributedElementClass,
 			String schemaRootPackageName, CodeGeneratorConfiguration config) {
 		super(schemaRootPackageName, attributedElementClass.getPackageName(),
@@ -86,8 +92,9 @@ public abstract class AttributedElementCodeGenerator<SC extends AttributedElemen
 
 		interfaces = new TreeSet<>();
 		interfaces.add(aec.getQualifiedName());
-		rootBlock.setVariable("isAbstractClass", aec.isAbstract() ? "true"
+		rootBlock.setVariable("isAbstractClass", isAbstract(aec) ? "true"
 				: "false");
+
 	}
 
 	protected abstract String getSchemaTypeName();
@@ -136,10 +143,10 @@ public abstract class AttributedElementCodeGenerator<SC extends AttributedElemen
 
 		code.setVariable("classOrInterface",
 				currentCycle.isStdImpl() ? " class" : " interface");
-		code.setVariable("abstract",
-				currentCycle.isStdImpl() && aec.isAbstract() ? " abstract" : "");
+		code.setVariable("abstract", currentCycle.isStdImpl()
+				&& isAbstract(aec) ? " abstract" : "");
 		code.setVariable("impl",
-				currentCycle.isStdImpl() && !aec.isAbstract() ? "Impl" : "");
+				currentCycle.isStdImpl() && !isAbstract(aec) ? "Impl" : "");
 		code.add("public#abstract##classOrInterface# #simpleClassName##impl##extends##implements# {");
 		code.setVariable("extends",
 				currentCycle.isStdImpl() ? " extends #baseClassName#" : "");

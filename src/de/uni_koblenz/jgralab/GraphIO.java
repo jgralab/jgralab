@@ -1511,7 +1511,6 @@ public final class GraphIO {
 		if (fileVersion == 3) {
 			registerAecId(gcData.id, gc);
 		}
-		gc.setAbstract(gcData.isAbstract);
 
 		addAttributes(gcData.attributes, gc);
 
@@ -2795,7 +2794,6 @@ public final class GraphIO {
 	private static class GraphClassData {
 		int id;
 		String name;
-		boolean isAbstract = false;
 		List<AttributeData> attributes = new ArrayList<>();
 		Set<Constraint> constraints = new HashSet<>(1);
 	}

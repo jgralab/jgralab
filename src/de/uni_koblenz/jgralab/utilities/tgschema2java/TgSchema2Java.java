@@ -247,16 +247,15 @@ public class TgSchema2Java {
 		GraphClass gc = schema.getGraphClass();
 		requiredFilePaths.add(commitPath + File.separator + schemaPath
 				+ File.separator + gc.getFileName() + ".java");
-		if (!gc.isAbstract()) {
-			pathName = gc.getPathName();
 
-			if (!pathName.isEmpty()) {
-				pathName = pathName.concat(File.separator);
-			}
-			requiredFilePaths.add(commitPath + File.separator + schemaPath
-					+ File.separator + "impl" + File.separator + pathName
-					+ gc.getSimpleName() + "Impl.java");
+		pathName = gc.getPathName();
+
+		if (!pathName.isEmpty()) {
+			pathName = pathName.concat(File.separator);
 		}
+		requiredFilePaths.add(commitPath + File.separator + schemaPath
+				+ File.separator + "impl" + File.separator + pathName
+				+ gc.getSimpleName() + "Impl.java");
 
 		for (VertexClass vc : schema.getGraphClass().getVertexClasses()) {
 			requiredFilePaths.add(commitPath + File.separator + schemaPath

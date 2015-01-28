@@ -82,7 +82,7 @@ public abstract class AttributedElementClassImpl<SC extends AttributedElementCla
 	/**
 	 * true if element class is abstract
 	 */
-	private boolean isAbstract;
+	protected boolean isAbstract;
 
 	/**
 	 * The class object representing the generated interface for this
@@ -207,7 +207,7 @@ public abstract class AttributedElementClassImpl<SC extends AttributedElementCla
 	@SuppressWarnings("unchecked")
 	@Override
 	public Class<IC> getSchemaImplementationClass() {
-		if (isAbstract()) {
+		if (isAbstract) {
 			throw new SchemaClassAccessException(
 					"Can't get (generated) schema implementation class. AttributedElementClass '"
 							+ getQualifiedName() + "' is abstract!");
@@ -232,16 +232,6 @@ public abstract class AttributedElementClassImpl<SC extends AttributedElementCla
 	@Override
 	public boolean hasAttributes() {
 		return !getAttributeList().isEmpty();
-	}
-
-	@Override
-	public boolean isAbstract() {
-		return isAbstract;
-	}
-
-	@Override
-	public void setAbstract(boolean isAbstract) {
-		this.isAbstract = isAbstract;
 	}
 
 	/**
