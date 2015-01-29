@@ -526,21 +526,17 @@ public class GraphTest extends InstanceTest {
 		assertTrue(g1.containsEdge(e17));
 
 		g1.deleteVertex(v10);
-		// create new instances of implicitly deleted vertices
-		v12 = g1.createVertex(DoubleSubNode.VC);
 
 		// all edges from or to v10 do no longer exist
-		// check if implicitly deleted vertex v5 was really deleted and check if
-		// its incident edges have been deleted.
-		assertFalse(g1.containsVertex(v5));
-		assertFalse(g1.containsEdge(e9));
-		assertFalse(g1.containsEdge(e10));
 
 		assertFalse(g1.containsEdge(e1));
 		assertFalse(g1.containsEdge(e3));
 		assertFalse(g1.containsEdge(e7));
 		assertFalse(g1.containsEdge(e17));
+
 		// all other edges do still exist
+		assertTrue(g1.containsEdge(e9));
+		assertTrue(g1.containsEdge(e10));
 		assertTrue(g1.containsEdge(e5));
 		assertTrue(g1.containsEdge(e8));
 		assertTrue(g1.containsEdge(e14));

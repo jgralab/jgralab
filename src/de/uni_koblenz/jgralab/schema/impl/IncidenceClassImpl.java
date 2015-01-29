@@ -105,6 +105,22 @@ public class IncidenceClassImpl implements IncidenceClass {
 		}
 	}
 
+	private void checkAllIncidenceClassSpecializations() {
+		// check above
+		for (IncidenceClass sup : getOwnSubsettedIncidenceClasses()) {
+			checkIncidenceClassSpecialization(sup);
+		}
+		// check below
+		for (EdgeClass subEC : getEdgeClass().getAllSubClasses()) {
+			IncidenceClassImpl subsettingIC = (IncidenceClassImpl) (direction == IncidenceDirection.OUT ? subEC
+					.getFrom() : subEC.getTo());
+			for (IncidenceClass sup : subsettingIC
+					.getOwnSubsettedIncidenceClasses()) {
+				subsettingIC.checkIncidenceClassSpecialization(sup);
+			}
+		}
+	}
+
 	@Override
 	public void setAggregationKind(AggregationKind kind) {
 		if ((kind != AggregationKind.NONE)
@@ -114,6 +130,7 @@ public class IncidenceClassImpl implements IncidenceClass {
 							+ edgeClass.getQualifiedName());
 		}
 		this.aggregationKind = kind;
+		checkAllIncidenceClassSpecializations();
 	}
 
 	@Override
@@ -164,16 +181,16 @@ public class IncidenceClassImpl implements IncidenceClass {
 		return vertexClass;
 	}
 
-	public void addSubsettedIncidenceClass(IncidenceClass other) {
+	public void addSubsettedIncidenceClass(IncidenceClass superIC) {
 		if (((VertexClassImpl) vertexClass).isFinished()) {
 			throw new SchemaException("No changes to finished schema!");
 		}
-		EdgeClassImpl.checkIncidenceClassSpecialization(this, other);
-		if (other.getSubsettedIncidenceClasses().contains(this)) {
+		checkIncidenceClassSpecialization(superIC);
+		if (superIC.getSubsettedIncidenceClasses().contains(this)) {
 			throw new SchemaException(
 					"Subsetting of IncidenceClasses need to be acyclic");
 		}
-		subsettedIncidenceClasses.add(other);
+		subsettedIncidenceClasses.add(superIC);
 	}
 
 	void removeSubsettedIncidenceClass(IncidenceClass other) {
@@ -217,15 +234,120 @@ public class IncidenceClassImpl implements IncidenceClass {
 	@Override
 	public void setMax(int max) {
 		maxEdgesAtVertex = max;
+		checkAllIncidenceClassSpecializations();
 	}
 
 	@Override
 	public void setMin(int min) {
 		minEdgesAtVertex = min;
+		checkAllIncidenceClassSpecializations();
 	}
 
 	@Override
 	public void setRolename(String name) {
 		rolename = name;
+		checkAllIncidenceClassSpecializations();
+	}
+
+	/**
+	 * checks if the incidence classes own and inherited are compatible, i.e. if
+	 * the upper multiplicity of own is lower or equal than the one of inherited
+	 * and so on
+	 * 
+	 * @param special
+	 * @param general
+	 * @throws SchemaException
+	 *             upon illegal combinations
+	 */
+	void checkIncidenceClassSpecialization(IncidenceClass general) {
+		// direction
+		if (!(direction == general.getDirection())) {
+			String dir = getDirection() == IncidenceDirection.OUT ? "Alpha"
+					: "Omega";
+			throw new SchemaException(
+					"An IncidenceClass may specialize only IncidenceClasses whose direction is the same. "
+							+ "Offending EdgeClasses are "
+							+ getEdgeClass().getQualifiedName()
+							+ " which wants to specialize "
+							+ general.getEdgeClass().getQualifiedName()
+							+ " at end "
+							+ dir
+							+ ". Connected VertexClass of special IncidenceClass ist "
+							+ getVertexClass().getQualifiedName()
+							+ " and of general VertexClass is "
+							+ general.getVertexClass().getQualifiedName() + ".");
+		}
+		// Vertex same
+		if (!(general.getVertexClass().equals(getVertexClass()) || general
+				.getVertexClass().isSuperClassOf(getVertexClass()))) {
+			String dir = getDirection() == IncidenceDirection.OUT ? "Alpha"
+					: "Omega";
+			throw new SchemaException(
+					"An IncidenceClass may specialize only IncidenceClasses whose connected vertex class "
+							+ "is identical or a superclass of the own one. Offending EdgeClasses are "
+							+ getEdgeClass().getQualifiedName()
+							+ " which wants to specialize "
+							+ general.getEdgeClass().getQualifiedName()
+							+ " at end "
+							+ dir
+							+ ". Connected VertexClass of special IncidenceClass ist "
+							+ getVertexClass().getQualifiedName()
+							+ " and of general VertexClass is "
+							+ general.getVertexClass().getQualifiedName() + ".");
+		}
+		// Multiplicities
+		if (getMax() > general.getMax()) {
+			String dir = getDirection() == IncidenceDirection.OUT ? "Alpha"
+					: "Omega";
+			throw new SchemaException(
+					"The multiplicity of an edge class may not be larger than "
+							+ "the multiplicities of its superclass. Offending EdgeClasses are "
+							+ getEdgeClass().getQualifiedName() + " and "
+							+ general.getEdgeClass().getQualifiedName()
+							+ " at end " + dir);
+		}
+
+		// Aggregation kind must equal the super-IC's kind
+		if (!general.getEdgeClass().isDefaultGraphElementClass()
+				&& getAggregationKind() != general.getAggregationKind()) {
+			String dir = getDirection() == IncidenceDirection.OUT ? "Alpha"
+					: "Omega";
+			throw new SchemaException(
+					"The aggregation kind of an incidence class must equal the one of its subsetted class. "
+							+ "Offending EdgeClasses are "
+							+ getEdgeClass().getQualifiedName()
+							+ " and "
+							+ general.getEdgeClass().getQualifiedName()
+							+ " at end " + dir);
+		}
+
+		// name clashes
+		if (general.getRolename().equals(getRolename())
+				&& !general.getRolename().isEmpty() && !getRolename().isEmpty()) {
+			String dir = getDirection() == IncidenceDirection.OUT ? "Alpha"
+					: "Omega";
+			throw new SchemaException(
+					"An IncidenceClass may only subset an IncidenceClass with a different name. Offending"
+							+ "EdgeClasses are "
+							+ getEdgeClass().getQualifiedName()
+							+ " and "
+							+ general.getEdgeClass().getQualifiedName()
+							+ " at end " + dir);
+		}
+		for (IncidenceClass ic : general.getSubsettedIncidenceClasses()) {
+			if (ic.getRolename().equals(getRolename())
+					&& !general.getRolename().isEmpty()
+					&& !ic.getRolename().isEmpty()) {
+				String dir = ic.getDirection() == IncidenceDirection.OUT ? "Alpha"
+						: "Omega";
+				throw new SchemaException(
+						"An IncidenceClass may only subset an IncidenceClass with a different name. Offending"
+								+ "EdgeClasses are "
+								+ getEdgeClass().getQualifiedName()
+								+ " and "
+								+ ic.getEdgeClass().getQualifiedName()
+								+ " at end " + dir);
+			}
+		}
 	}
 }

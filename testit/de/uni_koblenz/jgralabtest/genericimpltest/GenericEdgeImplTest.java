@@ -359,7 +359,7 @@ public class GenericEdgeImplTest {
 		Edge subLink = g.createEdge(g.getGraphClass().getEdgeClass("SubLink"),
 				doubleSubNode, superNode);
 
-		assertEquals(AggregationKind.COMPOSITE, subLink.getAggregationKind());
+		assertEquals(AggregationKind.NONE, subLink.getAggregationKind());
 		assertEquals(AggregationKind.NONE, link.getAggregationKind());
 		assertEquals(AggregationKind.SHARED, linkBack.getAggregationKind());
 	}
@@ -385,8 +385,7 @@ public class GenericEdgeImplTest {
 				doubleSubNode, superNode);
 
 		assertEquals(AggregationKind.NONE, subLink.getAlphaAggregationKind());
-		assertEquals(AggregationKind.COMPOSITE,
-				subLink.getOmegaAggregationKind());
+		assertEquals(AggregationKind.NONE, subLink.getOmegaAggregationKind());
 		assertEquals(AggregationKind.NONE, link.getAlphaAggregationKind());
 		assertEquals(AggregationKind.NONE, link.getOmegaAggregationKind());
 		assertEquals(AggregationKind.NONE, linkBack.getAlphaAggregationKind());

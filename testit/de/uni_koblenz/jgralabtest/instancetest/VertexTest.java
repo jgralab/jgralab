@@ -4048,7 +4048,7 @@ public class VertexTest extends InstanceTest {
 	// (tested in VertexList Test)
 
 	/**
-	 * Deleting v3 in v1<>---e1----v2<>-----e2-----v3
+	 * Deleting v3 in v1---e1----v2-----e2-----v3
 	 * 
 	 * @
 	 */
@@ -4077,7 +4077,7 @@ public class VertexTest extends InstanceTest {
 	}
 
 	/**
-	 * Deleting v2 in v1<>---e1----v2<>-----e2-----v3
+	 * Deleting v2 in v1---e1----v2-----e2-----v3
 	 * 
 	 * @
 	 */
@@ -4091,20 +4091,11 @@ public class VertexTest extends InstanceTest {
 		v2.delete();
 		assertFalse(v2.isValid());
 		assertEquals(0, g.getECount());
-		assertEquals(1, g.getVCount());
-		boolean first = true;
-		for (Vertex v : g.vertices()) {
-			if (first) {
-				assertEquals(v1, v);
-				first = false;
-			} else {
-				fail("No further vertices expected!");
-			}
-		}
+		assertEquals(2, g.getVCount());
 	}
 
 	/**
-	 * Deleting v1 in v1<>---e1----v2<>-----e2-----v3
+	 * Deleting v1 in v1---e1----v2-----e2-----v3
 	 * 
 	 * @
 	 */
@@ -4117,12 +4108,12 @@ public class VertexTest extends InstanceTest {
 		g.createSubLink(v2, v3);
 		v1.delete();
 		assertFalse(v1.isValid());
-		assertEquals(0, g.getECount());
-		assertEquals(0, g.getVCount());
+		assertEquals(1, g.getECount());
+		assertEquals(2, g.getVCount());
 	}
 
 	/**
-	 * Deleting v1 in v1<>---e1----v2 v1<>-----e2-----v3
+	 * Deleting v1 in v1---e1----v2 v1-----e2-----v3
 	 * 
 	 * @
 	 */
@@ -4136,11 +4127,11 @@ public class VertexTest extends InstanceTest {
 		v1.delete();
 		assertFalse(v1.isValid());
 		assertEquals(0, g.getECount());
-		assertEquals(0, g.getVCount());
+		assertEquals(2, g.getVCount());
 	}
 
 	/**
-	 * Deleting v1 in v1<>---e1----v2 v1<>-----e2-----v2
+	 * Deleting v1 in v1---e1----v2 v1-----e2-----v2
 	 * 
 	 * @
 	 */
@@ -4153,11 +4144,11 @@ public class VertexTest extends InstanceTest {
 		v1.delete();
 		assertFalse(v1.isValid());
 		assertEquals(0, g.getECount());
-		assertEquals(0, g.getVCount());
+		assertEquals(1, g.getVCount());
 	}
 
 	/**
-	 * Deleting v1 in v1<>---e1----v2-----e2-----v3
+	 * Deleting v1 in v1---e1----v2-----e2-----v3
 	 * 
 	 * @
 	 */
@@ -4171,8 +4162,8 @@ public class VertexTest extends InstanceTest {
 		v1.delete();
 
 		assertFalse(v1.isValid());
-		assertEquals(0, g.getECount());
-		assertEquals(1, g.getVCount());
+		assertEquals(1, g.getECount());
+		assertEquals(2, g.getVCount());
 	}
 
 	// tests of the method Iterable<Edge> incidences();

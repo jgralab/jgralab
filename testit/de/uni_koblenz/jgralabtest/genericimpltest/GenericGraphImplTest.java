@@ -419,7 +419,7 @@ public class GenericGraphImplTest {
 
 		g.deleteVertex(v1);
 		assertFalse(g.containsEdge(e1));
-		assertFalse(g.containsVertex(v2));
+		assertTrue(g.containsVertex(v2));
 		assertFalse(g.containsEdge(e2));
 	}
 
