@@ -114,7 +114,7 @@ public class DirectedGraph<T> {
 
 		PSet<T> tmpNodeValues = nodeValues;
 		nodeValues = ArrayPSet.empty();
-		nodeValues.plusAll(tmpNodeValues);
+		nodeValues = nodeValues.plusAll(tmpNodeValues);
 
 		rehashNeeded = false;
 	}
@@ -133,12 +133,12 @@ public class DirectedGraph<T> {
 			throw new IllegalStateException("Graph is already finished.");
 		}
 		if (!nodeValues.contains(alpha)) {
-			throw new IllegalArgumentException(
-					"alpha doesn't belong to this graph.");
+			throw new IllegalArgumentException("alpha " + alpha
+					+ " doesn't belong to this graph.");
 		}
 		if (!nodeValues.contains(omega)) {
-			throw new IllegalArgumentException(
-					"omega doesn't belong to this graph.");
+			throw new IllegalArgumentException("omega " + omega
+					+ " doesn't belong to this graph.");
 		}
 	}
 

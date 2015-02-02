@@ -159,6 +159,7 @@ public class SchemaModificationTests {
 		Package p1 = gc.getSchema().getPackage("p1");
 		assertNull(gc.getSchema().getPackage("p2"));
 		p1.setQualifiedName("p2");
+		gc.getSchema().finish();
 		assertEquals(p1, gc.getSchema().getPackage("p2"));
 		for (NamedElement ne : new NamedElement[] { foo, bar, baz }) {
 			assertEquals("p2." + ne.getSimpleName(), ne.getQualifiedName());
