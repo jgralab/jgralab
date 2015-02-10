@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Ant-Version: Apache Ant 1.8.2
 Created-By: 1.7.0_60-b19 (Oracle Corporation)
 Main-Class: de.uni_koblenz.jgralab.JGraLab
-Bundle-Version: 8.0.5.Hylonomus
+Bundle-Version: 8.0.6.Hylonomus
 Bundle-ManifestVersion: 2
 Bundle-Name: JGraLab
 Bundle-SymbolicName: de.uni_koblenz.jgralab;singleton:=true
@@ -88,8 +88,8 @@ Bundle-ActivationPolicy: lazy
 
 Name: de/uni_koblenz/jgralab/
 Implementation-Title: JGraLab
-Implementation-Version: 8.0.5@Hylonomus@ad08f28e88c90338a3a4f093f38771
- e8d0504501
+Implementation-Version: 8.0.6@Hylonomus@f8c11cdac7de9026ccef32b3fc5a78
+ bffc7c6317
 Implementation-Vendor: University of Koblenz, Institute for Software T
  echnology
 

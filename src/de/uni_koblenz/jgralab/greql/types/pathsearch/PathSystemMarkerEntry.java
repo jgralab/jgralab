@@ -35,14 +35,16 @@
 
 package de.uni_koblenz.jgralab.greql.types.pathsearch;
 
+import java.util.Objects;
+
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql.evaluator.fa.State;
 
 public class PathSystemMarkerEntry {
-	
+
 	/**
-	 * The vertex that is marked 
+	 * The vertex that is marked
 	 */
 	public Vertex vertex;
 
@@ -83,13 +85,34 @@ public class PathSystemMarkerEntry {
 	 * @param distance
 	 *            the distance to the root vertex of the pathsystem
 	 */
-	public PathSystemMarkerEntry(Vertex vertex, Vertex parentVertex, Edge parentEdge, State s,
-			State parentState, int distance) {
+	public PathSystemMarkerEntry(Vertex vertex, Vertex parentVertex,
+			Edge parentEdge, State s, State parentState, int distance) {
 		this.distanceToRoot = distance;
 		this.state = s;
 		this.edgeToParentVertex = parentEdge;
 		this.parentVertex = parentVertex;
 		this.parentState = parentState;
 		this.vertex = vertex;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null) {
+			return false;
+		}
+		if (obj.getClass() != getClass()) {
+			return false;
+		}
+		PathSystemMarkerEntry other = (PathSystemMarkerEntry) obj;
+		return Objects.equals(vertex, other.vertex)
+				&& Objects.equals(parentVertex, parentVertex)
+				&& Objects.equals(edgeToParentVertex, other.edgeToParentVertex)
+				&& Objects.equals(state, other.state)
+				&& Objects.equals(parentState, other.parentState);
+	}
+
+	@Override
+	public int hashCode() {
+		return vertex.hashCode() + state.hashCode();
 	}
 }

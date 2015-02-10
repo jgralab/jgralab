@@ -34,21 +34,20 @@
  */
 package de.uni_koblenz.jgralab.greql.funlib.graph;
 
-import org.pcollections.PSet;
-
+import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql.funlib.Description;
 import de.uni_koblenz.jgralab.greql.funlib.Function;
 import de.uni_koblenz.jgralab.greql.types.Path;
 import de.uni_koblenz.jgralab.greql.types.PathSystem;
 
-public class ExtractPaths extends Function {
+public class ExtractPath extends Function {
 
-	public ExtractPaths() {
-		super();
+	public ExtractPath() {
+		super(100, 1, 1);
 	}
 
-	@Description(params = "ps", description = "Returns the set of Paths in the PathSystem ps.", categories = Category.GRAPH)
-	public PSet<Path> evaluate(PathSystem ps) {
-		return ps.extractPaths();
+	@Description(params = { "ps", "v" }, description = "Returns (one of) the shortest paths to v in PathSystem ps.", categories = Category.GRAPH)
+	public Path evaluate(PathSystem ps, Vertex v) {
+		return ps.extractPath(v);
 	}
 }

@@ -36,6 +36,7 @@
 package de.uni_koblenz.jgralab.greql.evaluator.fa;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 /**
  * Models a state of the finite automaton. Is baseclass for DFAState, which
@@ -111,5 +112,24 @@ public class State {
 	 */
 	public void removeInTransition(Transition t) {
 		inTransitions.remove(t);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null) {
+			return false;
+		}
+		if (obj.getClass() != getClass()) {
+			return false;
+		}
+		State other = (State) obj;
+		return number == other.number && isFinal == other.isFinal
+				&& Objects.equals(inTransitions, other.inTransitions)
+				&& Objects.equals(outTransitions, other.outTransitions);
+	}
+
+	@Override
+	public int hashCode() {
+		return number;
 	}
 }

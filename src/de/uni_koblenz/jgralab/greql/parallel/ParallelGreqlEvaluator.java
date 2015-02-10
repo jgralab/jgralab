@@ -753,7 +753,9 @@ public class ParallelGreqlEvaluator {
 			// submit successor tasks to the executor
 			for (TaskHandle succ : nextTasks) {
 				logger.fine("Execute " + succ);
-				environment.executor.execute(environment.tasks.get(succ));
+				if (!environment.executor.isShutdown()) {
+					environment.executor.execute(environment.tasks.get(succ));
+				}
 			}
 		}
 	}

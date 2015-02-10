@@ -15,3 +15,5 @@ testit/testschemas/greqltestschema.tg
 
 # Mac OS X crap
 *.DS_Store
+/greqlQueryResult.html
+/greqlQueryResult.xml

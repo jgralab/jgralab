@@ -39,6 +39,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Queue;
 import java.util.Set;
 import java.util.logging.Logger;
@@ -70,6 +71,26 @@ public class PathSystem {
 		}
 
 		@Override
+		public boolean equals(Object obj) {
+			if (obj == null) {
+				return false;
+			}
+			if (obj.getClass() != getClass()) {
+				return false;
+			}
+			PathSystemNode other = (PathSystemNode) obj;
+			return Objects.equals(currentVertex, other.currentVertex)
+					&& Objects.equals(edge2parent, other.edge2parent)
+					&& state == other.state;
+
+		}
+
+		@Override
+		public int hashCode() {
+			return currentVertex.hashCode() + state;
+		}
+
+		@Override
 		public String toString() {
 			return "(" + currentVertex + ", " + state + ") " + edge2parent;
 		}
@@ -79,6 +100,8 @@ public class PathSystem {
 	private final DirectedAcyclicGraph<PathSystemNode> dag;
 
 	private final Map<Vertex, PathSystemNode> vertex2node;
+
+	private Map<Vertex, PathSystemNode> vertex2leaf;
 
 	/**
 	 * This is the rootvertex of the pathsystem
@@ -206,9 +229,7 @@ public class PathSystem {
 	public void addLeaf(PathSystemNode newLeaf) {
 		assertUnfinished();
 		assert newLeaf != null;
-		if (!leafNodes.contains(newLeaf)) {
-			leafNodes.add(newLeaf);
-		}
+		leafNodes.add(newLeaf);
 	}
 
 	public boolean isLeaf(PathSystemNode leaf) {
@@ -259,13 +280,18 @@ public class PathSystem {
 	 */
 	public PSet<Vertex> getLeaves() {
 		assertFinished();
-
-		PSet<Vertex> leaves = JGraLab.set();
-		// create the set of leaves out of the key set
-		for (PathSystemNode leafNode : leafNodes) {
-			leaves = leaves.plus(leafNode.currentVertex);
+		if (vertex2leaf == null) {
+			computeVertexToLeaf();
 		}
-		return leaves;
+		PSet<Vertex> leaves = JGraLab.set();
+		return leaves.plusAll(vertex2leaf.keySet());
+	}
+
+	private void computeVertexToLeaf() {
+		vertex2leaf = new HashMap<>();
+		for (PathSystemNode n : leafNodes) {
+			vertex2leaf.put(n.currentVertex, n);
+		}
 	}
 
 	public PSet<PathSystemNode> getChildren(PathSystemNode currentNode) {
@@ -284,11 +310,10 @@ public class PathSystem {
 	 */
 	public Path extractPath(Vertex vertex) {
 		assertFinished();
-		PathSystemNode currentNode = vertex2node.get(vertex);
-		if (currentNode == null || leafNodes.contains(currentNode)) {
-			return null;
+		if (vertex2leaf == null) {
+			computeVertexToLeaf();
 		}
-		return extractPath(currentNode);
+		return extractPath(vertex2leaf.get(vertex));
 	}
 
 	/**
@@ -301,21 +326,22 @@ public class PathSystem {
 	 */
 	private Path extractPath(PathSystemNode currentNode) {
 		assertFinished();
+		if (currentNode == null) {
+			return null;
+		}
 		Path path = Path.start(currentNode.currentVertex);
-		while (currentNode != null) {
+		while (true) {
 			if (currentNode.edge2parent != null) {
 				PSet<PathSystemNode> predecessors = dag
 						.getDirectPredecessors(currentNode);
 				assert predecessors.size() == 1 : currentNode
 						+ " has precessors: " + predecessors;
 				path = path.append(currentNode.edge2parent.getReversedEdge());
-				currentNode = predecessors.toArray(new PathSystemNode[1])[0];
+				currentNode = predecessors.iterator().next();
 			} else {
-				// the root was found
-				currentNode = null;
+				return path.reverse();
 			}
 		}
-		return path.reverse();
 	}
 
 	/**

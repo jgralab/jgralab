@@ -141,6 +141,7 @@ public class FunLib {
 		register(de.uni_koblenz.jgralab.greql.funlib.graph.EdgeSetSubgraph.class);
 		register(de.uni_koblenz.jgralab.greql.funlib.graph.ElementSetSubgraph.class);
 		register(de.uni_koblenz.jgralab.greql.funlib.graph.EndVertex.class);
+		register(de.uni_koblenz.jgralab.greql.funlib.graph.ExtractPath.class);
 		register(de.uni_koblenz.jgralab.greql.funlib.graph.ExtractPaths.class);
 		register(de.uni_koblenz.jgralab.greql.funlib.graph.First.class);
 		register(de.uni_koblenz.jgralab.greql.funlib.graph.FirstEdge.class);

@@ -72,7 +72,7 @@ public class EclipseAdapterImpl implements EclipseAdapter {
 		}
 		String directoryName = packageName.replace('.', '/');
 		URL url = Activator.getContext().getBundle().getResource(directoryName);
-		ArrayList<JavaFileObject> list = new ArrayList<JavaFileObject>();
+		ArrayList<JavaFileObject> list = new ArrayList<>();
 		if (url == null) {
 			return list;
 		}
