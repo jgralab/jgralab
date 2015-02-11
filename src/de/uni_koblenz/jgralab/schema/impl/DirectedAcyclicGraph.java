@@ -203,11 +203,15 @@ public class DirectedAcyclicGraph<T> extends DirectedGraph<T> {
 			T elem = q.poll();
 			n = entries.get(elem);
 			if (n == null) {
-				System.out.println(elem);
+				StringBuilder sb = new StringBuilder();
+				sb.append(elem.toString()).append("\n");
 				for (T key : entries.keySet()) {
-					System.out.println("  - " + key + ", identical? "
-							+ (elem == key) + ", equal? " + elem.equals(key));
+					sb.append(
+							"\t" + key + ", identical? " + (elem == key)
+									+ ", equal? " + elem.equals(key)).append(
+							"\n");
 				}
+				throw new IllegalStateException(sb.toString());
 			}
 			if (!s.contains(n.data)) {
 				s.add(n.data);

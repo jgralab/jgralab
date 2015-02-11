@@ -325,7 +325,6 @@ public class PathSystem {
 	 * @return a Path from rootVertex to given vertex
 	 */
 	private Path extractPath(PathSystemNode currentNode) {
-		assertFinished();
 		if (currentNode == null) {
 			return null;
 		}

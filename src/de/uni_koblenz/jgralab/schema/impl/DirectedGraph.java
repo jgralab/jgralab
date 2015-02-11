@@ -36,10 +36,8 @@
 package de.uni_koblenz.jgralab.schema.impl;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
 
 import org.pcollections.ArrayPSet;
 import org.pcollections.PSet;
@@ -74,7 +72,7 @@ public class DirectedGraph<T> {
 	}
 
 	protected PSet<Node<T>> nodes;
-	protected final Map<T, Node<T>> entries;
+	protected Map<T, Node<T>> entries;
 	protected boolean finished;
 	protected PSet<T> nodeValues;
 
@@ -102,12 +100,11 @@ public class DirectedGraph<T> {
 		}
 		// The qualifiedNames of the elements might have changed, so rebuild
 		// hash maps and sets.
-		Set<Entry<T, Node<T>>> s = new HashSet<>(entries.entrySet());
-		entries.clear();
-		for (Entry<T, Node<T>> e : s) {
-			entries.put(e.getKey(), e.getValue());
+		Map<T, Node<T>> s = new HashMap<>();
+		for (Entry<T, Node<T>> e : entries.entrySet()) {
+			s.put(e.getKey(), e.getValue());
 		}
-
+		entries = s;
 		for (Node<T> n : nodes) {
 			n.rehash();
 		}
@@ -148,6 +145,7 @@ public class DirectedGraph<T> {
 			// don't allow loops
 			throw new SchemaException("Loops are not supported.");
 		}
+		rehashIfNeeded();
 		Node<T> fromNode = entries.get(alpha);
 		assert fromNode != null;
 		if (fromNode.successors.contains(omega)) {
@@ -165,6 +163,7 @@ public class DirectedGraph<T> {
 		if (alpha.equals(omega)) {
 			return;
 		}
+		rehashIfNeeded();
 		Node<T> fromNode = entries.get(alpha);
 		assert fromNode != null;
 		Node<T> toNode = entries.get(omega);
@@ -177,6 +176,7 @@ public class DirectedGraph<T> {
 		if (finished) {
 			throw new IllegalStateException("Graph is already finished.");
 		}
+		rehashIfNeeded();
 		assert !nodeValues.contains(data);
 		assert entries.get(data) == null;
 		nodeValues = nodeValues.plus(data);
@@ -187,23 +187,28 @@ public class DirectedGraph<T> {
 	}
 
 	public int getNodeCount() {
+		rehashIfNeeded();
 		return nodeValues.size();
 	}
 
 	public PSet<T> getNodes() {
+		rehashIfNeeded();
 		return nodeValues;
 	}
 
 	public boolean isConnected(T alpha, T omega) {
+		rehashIfNeeded();
 		return entries.get(alpha).successors.contains(omega);
 	}
 
 	public PSet<T> getDirectPredecessors(T data) {
+		rehashIfNeeded();
 		assert nodeValues.contains(data);
 		return entries.get(data).predecessors;
 	}
 
 	public PSet<T> getDirectSuccessors(T data) {
+		rehashIfNeeded();
 		assert nodeValues.contains(data);
 		return entries.get(data).successors;
 	}
@@ -212,6 +217,7 @@ public class DirectedGraph<T> {
 		if (finished) {
 			throw new IllegalStateException("Graph is already finished.");
 		}
+		rehashIfNeeded();
 		Node<T> node = entries.get(data);
 		entries.remove(data);
 		nodes = nodes.minus(node);

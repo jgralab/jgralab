@@ -137,31 +137,37 @@ public final class ArrayPSet<E> implements POrderedSet<E>, Serializable {
 		return contains(e) ? new ArrayPSet<>(entries.minus(e)) : this;
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
 	public boolean add(E o) {
 		throw new UnsupportedOperationException();
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
 	public boolean remove(Object o) {
 		throw new UnsupportedOperationException();
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
 	public boolean addAll(Collection<? extends E> c) {
 		throw new UnsupportedOperationException();
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
 	public boolean removeAll(Collection<?> c) {
 		throw new UnsupportedOperationException();
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
 	public boolean retainAll(Collection<?> c) {
 		throw new UnsupportedOperationException();
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
 	public void clear() {
 		throw new UnsupportedOperationException();

@@ -42,32 +42,31 @@ import static junit.framework.Assert.assertTrue;
 import org.junit.Test;
 
 import de.uni_koblenz.jgralab.Record;
-import de.uni_koblenz.jgralab.greql.schema.SourcePosition;
 import de.uni_koblenz.jgralab.impl.RecordImpl;
 
 public class RecordTest {
 
 	@Test
 	public void testHashCode() throws Exception {
-		SourcePosition sp = new SourcePosition(17, 4);
-		Record r = RecordImpl.empty().plus("offset", 4).plus("length", 17);
-		assertEquals(sp.hashCode(), r.hashCode());
+		Record r1 = RecordImpl.empty().plus("offset", 4).plus("length", 17);
+		Record r2 = RecordImpl.empty().plus("offset", 4).plus("length", 17);
+		assertEquals(r1.hashCode(), r2.hashCode());
 	}
 
 	@Test
 	public void testEquals() throws Exception {
-		SourcePosition sp = new SourcePosition(17, 4);
-		RecordImpl r = RecordImpl.empty().plus("offset", 4);
+		Record r1 = RecordImpl.empty().plus("offset", 4).plus("length", 17);
+		RecordImpl r2 = RecordImpl.empty().plus("offset", 4);
 
-		assertFalse(sp.equals(null));
-		assertFalse(sp.equals(r));
+		assertFalse(r1.equals(null));
+		assertFalse(r1.equals(r2));
 
-		assertFalse(r.equals(null));
-		assertFalse(r.equals(sp));
+		assertFalse(r2.equals(null));
+		assertFalse(r2.equals(r1));
 
-		r = r.plus("length", 17);
+		r2 = r2.plus("length", 17);
 
-		assertTrue(sp.equals(r));
-		assertTrue(r.equals(sp));
+		assertTrue(r1.equals(r2));
+		assertTrue(r2.equals(r1));
 	}
 }
