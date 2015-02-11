@@ -507,6 +507,7 @@ public class VertexClassImpl extends GraphElementClassImpl<VertexClass, Vertex>
 		super.register();
 		graphClass.vertexClasses.put(qualifiedName, this);
 		parentPackage.vertexClasses.put(simpleName, this);
+		graphClass.vertexClassDag.finishHashCodeChange();
 	}
 
 	@Override
@@ -514,7 +515,7 @@ public class VertexClassImpl extends GraphElementClassImpl<VertexClass, Vertex>
 		super.unregister();
 		graphClass.vertexClasses.remove(qualifiedName);
 		parentPackage.vertexClasses.remove(simpleName);
-		graphClass.vertexClassDag.setRehashNeeded();
+		graphClass.vertexClassDag.prepareHashCodeChange(this);
 	}
 
 	@Override

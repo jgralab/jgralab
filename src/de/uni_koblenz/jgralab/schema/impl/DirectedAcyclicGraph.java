@@ -81,6 +81,7 @@ public class DirectedAcyclicGraph<T> extends DirectedGraph<T> {
 	}
 
 	protected boolean computeTopologicalOrder() {
+		assertNoPendingNodeChange();
 		Queue<Node<T>> q = new LinkedList<>();
 		// Enter all nodes without a predecessor into q
 		for (Node<T> n : nodes) {
@@ -121,7 +122,7 @@ public class DirectedAcyclicGraph<T> extends DirectedGraph<T> {
 		if (finished) {
 			return;
 		}
-		rehashIfNeeded();
+		assertNoPendingNodeChange();
 		cachedPredecessors = new HashMap<>();
 		cachedSuccessors = new HashMap<>();
 		for (Node<T> n : nodes) {
@@ -149,6 +150,7 @@ public class DirectedAcyclicGraph<T> extends DirectedGraph<T> {
 		if (!finished) {
 			throw new SchemaException();
 		}
+		assertNoPendingNodeChange();
 		Node<T> n = entries.get(data);
 		Set<T> s = new HashSet<>();
 		Queue<T> q = new LinkedList<>();
@@ -171,6 +173,7 @@ public class DirectedAcyclicGraph<T> extends DirectedGraph<T> {
 		if (finished) {
 			return cachedPredecessors.get(data);
 		}
+		assertNoPendingNodeChange();
 		Node<T> n = entries.get(data);
 		Set<T> s = new HashSet<>();
 		Queue<T> q = new LinkedList<>(n.predecessors);
@@ -196,6 +199,7 @@ public class DirectedAcyclicGraph<T> extends DirectedGraph<T> {
 		if (finished) {
 			return cachedSuccessors.get(data);
 		}
+		assertNoPendingNodeChange();
 		Node<T> n = entries.get(data);
 		Set<T> s = new HashSet<>();
 		Queue<T> q = new LinkedList<>(n.successors);

@@ -158,6 +158,7 @@ public class EdgeClassImpl extends GraphElementClassImpl<EdgeClass, Edge>
 		super.register();
 		graphClass.edgeClasses.put(qualifiedName, this);
 		parentPackage.edgeClasses.put(simpleName, this);
+		graphClass.edgeClassDag.finishHashCodeChange();
 	}
 
 	@Override
@@ -165,7 +166,7 @@ public class EdgeClassImpl extends GraphElementClassImpl<EdgeClass, Edge>
 		super.unregister();
 		graphClass.edgeClasses.remove(qualifiedName);
 		parentPackage.edgeClasses.remove(simpleName);
-		graphClass.edgeClassDag.setRehashNeeded();
+		graphClass.edgeClassDag.prepareHashCodeChange(this);
 	}
 
 	@Override

@@ -90,6 +90,7 @@ public abstract class DomainImpl extends NamedElementImpl implements Domain {
 		super.register();
 		schema.domains.put(qualifiedName, this);
 		parentPackage.domains.put(simpleName, this);
+		schema.domainsDag.finishHashCodeChange();
 	}
 
 	@Override
@@ -97,7 +98,7 @@ public abstract class DomainImpl extends NamedElementImpl implements Domain {
 		super.unregister();
 		schema.domains.remove(qualifiedName);
 		parentPackage.domains.remove(simpleName);
-		schema.domainsDag.setRehashNeeded();
+		schema.domainsDag.prepareHashCodeChange(this);
 	}
 
 	@Override

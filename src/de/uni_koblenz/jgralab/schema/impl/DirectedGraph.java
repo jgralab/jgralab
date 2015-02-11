@@ -37,7 +37,6 @@ package de.uni_koblenz.jgralab.schema.impl;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import org.pcollections.ArrayPSet;
 import org.pcollections.PSet;
@@ -82,42 +81,62 @@ public class DirectedGraph<T> {
 		nodeValues = ArrayPSet.empty();
 	}
 
-	private boolean rehashNeeded = false;
+	private Node<T> nodeUnderChange = null;
 
-	/**
-	 * To be called whenever a T-object contained in this DirectedGraph changes
-	 * in such a way that its hashCode() changes. Since T-objects are stored in
-	 * hash-sets and are used as keys in hash-maps, a rehash is needed and will
-	 * be performed when the directed graph is finished again.
-	 */
-	public void setRehashNeeded() {
-		rehashNeeded = true;
+	void prepareHashCodeChange(T elemUnderChange) {
+		if (finished) {
+			throw new IllegalStateException("Graph is already finished.");
+		}
+		if (nodeUnderChange != null) {
+			throw new RuntimeException("Already change for " + nodeUnderChange
+					+ " prepared!");
+		}
+
+		nodeUnderChange = entries.remove(elemUnderChange);
+		nodeValues = nodeValues.minus(elemUnderChange);
+
+		for (T pred : nodeUnderChange.predecessors) {
+			Node<T> predNode = entries.get(pred);
+			predNode.successors = predNode.successors.minus(elemUnderChange);
+		}
+		for (T succ : nodeUnderChange.successors) {
+			Node<T> succNode = entries.get(succ);
+			succNode.predecessors = succNode.predecessors
+					.minus(elemUnderChange);
+		}
 	}
 
-	protected void rehashIfNeeded() {
-		if (!rehashNeeded) {
-			return;
-		}
-		// The qualifiedNames of the elements might have changed, so rebuild
-		// hash maps and sets.
-		Map<T, Node<T>> s = new HashMap<>();
-		for (Entry<T, Node<T>> e : entries.entrySet()) {
-			s.put(e.getKey(), e.getValue());
-		}
-		entries = s;
-		for (Node<T> n : nodes) {
-			n.rehash();
+	void finishHashCodeChange() {
+		if (nodeUnderChange == null) {
+			throw new RuntimeException("No node change prepared!");
 		}
 
-		PSet<T> tmpNodeValues = nodeValues;
-		nodeValues = ArrayPSet.empty();
-		nodeValues = nodeValues.plusAll(tmpNodeValues);
+		entries.put(nodeUnderChange.data, nodeUnderChange);
+		nodeValues = nodeValues.plus(nodeUnderChange.data);
 
-		rehashNeeded = false;
+		for (T pred : nodeUnderChange.predecessors) {
+			Node<T> predNode = entries.get(pred);
+			predNode.successors = predNode.successors
+					.plus(nodeUnderChange.data);
+		}
+		for (T succ : nodeUnderChange.successors) {
+			Node<T> succNode = entries.get(succ);
+			succNode.predecessors = succNode.predecessors
+					.plus(nodeUnderChange.data);
+		}
+
+		nodeUnderChange = null;
+	}
+
+	protected void assertNoPendingNodeChange() {
+		if (nodeUnderChange != null) {
+			throw new RuntimeException("Node " + nodeUnderChange
+					+ " still prepared for change!");
+		}
 	}
 
 	public void finish() {
-		rehashIfNeeded();
+		assertNoPendingNodeChange();
 		finished = true;
 	}
 
@@ -145,7 +164,7 @@ public class DirectedGraph<T> {
 			// don't allow loops
 			throw new SchemaException("Loops are not supported.");
 		}
-		rehashIfNeeded();
+		assertNoPendingNodeChange();
 		Node<T> fromNode = entries.get(alpha);
 		assert fromNode != null;
 		if (fromNode.successors.contains(omega)) {
@@ -163,7 +182,7 @@ public class DirectedGraph<T> {
 		if (alpha.equals(omega)) {
 			return;
 		}
-		rehashIfNeeded();
+		assertNoPendingNodeChange();
 		Node<T> fromNode = entries.get(alpha);
 		assert fromNode != null;
 		Node<T> toNode = entries.get(omega);
@@ -176,7 +195,7 @@ public class DirectedGraph<T> {
 		if (finished) {
 			throw new IllegalStateException("Graph is already finished.");
 		}
-		rehashIfNeeded();
+		assertNoPendingNodeChange();
 		assert !nodeValues.contains(data);
 		assert entries.get(data) == null;
 		nodeValues = nodeValues.plus(data);
@@ -187,28 +206,28 @@ public class DirectedGraph<T> {
 	}
 
 	public int getNodeCount() {
-		rehashIfNeeded();
+		assertNoPendingNodeChange();
 		return nodeValues.size();
 	}
 
 	public PSet<T> getNodes() {
-		rehashIfNeeded();
+		assertNoPendingNodeChange();
 		return nodeValues;
 	}
 
 	public boolean isConnected(T alpha, T omega) {
-		rehashIfNeeded();
+		assertNoPendingNodeChange();
 		return entries.get(alpha).successors.contains(omega);
 	}
 
 	public PSet<T> getDirectPredecessors(T data) {
-		rehashIfNeeded();
+		assertNoPendingNodeChange();
 		assert nodeValues.contains(data);
 		return entries.get(data).predecessors;
 	}
 
 	public PSet<T> getDirectSuccessors(T data) {
-		rehashIfNeeded();
+		assertNoPendingNodeChange();
 		assert nodeValues.contains(data);
 		return entries.get(data).successors;
 	}
@@ -217,7 +236,7 @@ public class DirectedGraph<T> {
 		if (finished) {
 			throw new IllegalStateException("Graph is already finished.");
 		}
-		rehashIfNeeded();
+		assertNoPendingNodeChange();
 		Node<T> node = entries.get(data);
 		entries.remove(data);
 		nodes = nodes.minus(node);
