@@ -88,8 +88,8 @@ public class DirectedGraph<T> {
 			throw new IllegalStateException("Graph is already finished.");
 		}
 		if (nodeUnderChange != null) {
-			throw new RuntimeException("Already change for " + nodeUnderChange
-					+ " prepared!");
+			throw new IllegalStateException("Already change for "
+					+ nodeUnderChange + " prepared!");
 		}
 
 		nodeUnderChange = entries.remove(elemUnderChange);
@@ -108,7 +108,7 @@ public class DirectedGraph<T> {
 
 	void finishHashCodeChange() {
 		if (nodeUnderChange == null) {
-			throw new RuntimeException("No node change prepared!");
+			throw new IllegalStateException("No node change prepared!");
 		}
 
 		entries.put(nodeUnderChange.data, nodeUnderChange);
@@ -130,7 +130,7 @@ public class DirectedGraph<T> {
 
 	protected void assertNoPendingNodeChange() {
 		if (nodeUnderChange != null) {
-			throw new RuntimeException("Node " + nodeUnderChange
+			throw new IllegalStateException("Node " + nodeUnderChange
 					+ " still prepared for change!");
 		}
 	}
