@@ -1,6 +1,6 @@
 ;;; greql-mode.el --- Major mode for editing GReQL2 and GReTL files with emacs
 
-;; Copyright (C) 2007, 2008, 2009, 2010, 2011 by Tassilo Horn
+;; Copyright (C) 2007, 2008, 2009, 2010, 2011, 2015 by Tassilo Horn
 
 ;; Author: Tassilo Horn <horn@uni-koblenz.de>
 
@@ -24,6 +24,8 @@
 ;; some stuff for editing GReTL transformations.
 
 ;;* Code
+
+(require 'cl-lib)
 
 ;;** Main
 
@@ -441,18 +443,18 @@ elements."
        (tg-all-attributes-multi (car vartypes) (cadr vartypes) arg))))
    ;; complete keywords / functions
    (t
-    (flet ((format-entry (fun)
-                         (let* ((name (plist-get fun :name))
-                                (i (- 79 (length name))))
-                           (list name
-                                 (format (concat "% " (number-to-string i) "."
-                                                 (number-to-string (- i 2)) "s")
-                                         (plist-get fun :description))))))
+    (cl-flet ((format-entry (fun)
+			    (let* ((name (plist-get fun :name))
+				   (i (- 79 (length name))))
+			      (list name
+				    (format (concat "% " (number-to-string i) "."
+						    (number-to-string (- i 2)) "s")
+					    (plist-get fun :description))))))
       (append
        (mapcar 'format-entry
-               greql-keywords)
+	       greql-keywords)
        (mapcar 'format-entry
-               greql-functions))))))
+	       greql-functions))))))
 
 (defun greql-complete (arg)
   "Complete word at point intelligently.
