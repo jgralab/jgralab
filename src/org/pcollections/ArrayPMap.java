@@ -55,7 +55,6 @@ import java.util.Set;
  * @param <K>
  * @param <V>
  */
-@SuppressWarnings("deprecation")
 public final class ArrayPMap<K, V> implements POrderedMap<K, V>,
 		Iterable<SimpleImmutableEntry<K, V>>, Serializable {
 	private static final long serialVersionUID = -7101801297307300984L;

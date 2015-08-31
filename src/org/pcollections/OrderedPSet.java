@@ -37,7 +37,6 @@ package org.pcollections;
 import java.util.Collection;
 import java.util.Iterator;
 
-@SuppressWarnings("deprecation")
 public class OrderedPSet<E> implements POrderedSet<E> {
 	private static final OrderedPSet<Object> EMPTY = new OrderedPSet<>(
 			Empty.set(), Empty.vector());

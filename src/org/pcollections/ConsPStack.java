@@ -50,7 +50,6 @@ import java.util.ListIterator;
  * 
  * @param <E>
  */
-@SuppressWarnings("deprecation")
 public final class ConsPStack<E> extends AbstractSequentialList<E> implements
 		PStack<E> {
 	// // STATIC FACTORY METHODS ////

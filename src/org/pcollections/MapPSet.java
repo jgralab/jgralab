@@ -50,7 +50,6 @@ import java.util.Iterator;
  * 
  * @param <E>
  */
-@SuppressWarnings("deprecation")
 public final class MapPSet<E> extends AbstractSet<E> implements PSet<E> {
 	// // STATIC FACTORY METHODS ////
 	/**

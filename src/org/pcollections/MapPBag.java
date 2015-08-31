@@ -51,7 +51,6 @@ import java.util.Map.Entry;
  * 
  * @param <E>
  */
-@SuppressWarnings("deprecation")
 public final class MapPBag<E> extends AbstractCollection<E> implements PBag<E> {
 	// // STATIC FACTORY METHODS ////
 	/**

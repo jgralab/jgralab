@@ -43,7 +43,6 @@ import org.pcollections.PVector;
 
 import de.uni_koblenz.jgralab.JGraLab;
 
-@SuppressWarnings("deprecation")
 public class Tuple implements PSequence<Object> {
 	private PVector<Object> entries;
 

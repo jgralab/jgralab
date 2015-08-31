@@ -53,7 +53,6 @@ import java.util.Map.Entry;
  * 
  * @param <E>
  */
-@SuppressWarnings("deprecation")
 public class TreePVector<E> extends AbstractList<E> implements PVector<E> {
 	// // STATIC FACTORY METHODS ////
 	private static final TreePVector<Object> EMPTY = new TreePVector<>(

@@ -42,7 +42,6 @@ import org.pcollections.PVector;
 
 import de.uni_koblenz.jgralab.JGraLab;
 
-@SuppressWarnings("deprecation")
 public class Table<T> implements PCollection<T> {
 	private PVector<String> titles;
 	private PVector<T> entries;

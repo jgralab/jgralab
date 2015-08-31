@@ -65,7 +65,6 @@ import java.util.Set;
  * 
  * @param <V>
  */
-@SuppressWarnings("deprecation")
 public final class IntTreePMap<V> extends AbstractMap<Integer, V> implements
 		PMap<Integer, V> {
 	// // STATIC FACTORY METHODS ////

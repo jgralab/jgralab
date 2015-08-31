@@ -1,6 +1,6 @@
 package de.uni_koblenz.jgralabtest.greql.funlib.collections;
 
-import static junit.framework.Assert.assertEquals;
+import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 import org.pcollections.PVector;

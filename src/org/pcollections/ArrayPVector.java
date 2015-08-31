@@ -58,7 +58,6 @@ import java.util.NoSuchElementException;
  * @param <E>
  *            the element type
  */
-@SuppressWarnings("deprecation")
 public final class ArrayPVector<E> implements PVector<E>, Serializable {
 	private static final long serialVersionUID = -3381080251584514162L;
 

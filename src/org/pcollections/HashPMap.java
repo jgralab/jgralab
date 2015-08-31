@@ -57,7 +57,6 @@ import java.util.Set;
  * @param <K>
  * @param <V>
  */
-@SuppressWarnings("deprecation")
 public final class HashPMap<K, V> extends AbstractMap<K, V> implements
 		PMap<K, V> {
 	// // STATIC FACTORY METHODS ////

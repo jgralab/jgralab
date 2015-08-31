@@ -16,7 +16,6 @@ import java.util.Set;
  * 
  * @param <E>
  */
-@SuppressWarnings("deprecation")
 public class LinkedHashPSet<E> implements POrderedSet<E> {
 
 	private final LinkedHashSet<E> lhs;

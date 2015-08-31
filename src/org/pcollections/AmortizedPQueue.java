@@ -49,7 +49,6 @@ import java.util.Iterator;
  * 
  * @param <E>
  */
-@SuppressWarnings("deprecation")
 public class AmortizedPQueue<E> extends AbstractQueue<E> implements PQueue<E> {
 
 	private static final AmortizedPQueue<Object> EMPTY = new AmortizedPQueue<>();
