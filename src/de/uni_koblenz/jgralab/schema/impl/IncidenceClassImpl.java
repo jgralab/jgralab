@@ -123,6 +123,8 @@ public class IncidenceClassImpl implements IncidenceClass {
 
 	@Override
 	public void setAggregationKind(AggregationKind kind) {
+		((VertexClassImpl) vertexClass).assertNotFinished();
+
 		if ((kind != AggregationKind.NONE)
 				&& (getOpposite().getAggregationKind() != AggregationKind.NONE)) {
 			throw new SchemaException(
@@ -233,18 +235,21 @@ public class IncidenceClassImpl implements IncidenceClass {
 
 	@Override
 	public void setMax(int max) {
+		((VertexClassImpl) vertexClass).assertNotFinished();
 		maxEdgesAtVertex = max;
 		checkAllIncidenceClassSpecializations();
 	}
 
 	@Override
 	public void setMin(int min) {
+		((VertexClassImpl) vertexClass).assertNotFinished();
 		minEdgesAtVertex = min;
 		checkAllIncidenceClassSpecializations();
 	}
 
 	@Override
 	public void setRolename(String name) {
+		((VertexClassImpl) vertexClass).assertNotFinished();
 		rolename = name;
 		checkAllIncidenceClassSpecializations();
 	}
