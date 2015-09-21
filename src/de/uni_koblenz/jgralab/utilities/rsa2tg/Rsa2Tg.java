@@ -1857,7 +1857,7 @@ public class Rsa2Tg extends XmlProcessor {
 				.getAttributeList()) {
 			sb.append(attr.getName());
 			sb.append(" = ");
-			sb.append(attributedElement.getAttribute(attr.getName()));
+			sb.append(attributedElement.getAttribute(attr.getName()).toString());
 			sb.append("; ");
 		}
 		sb.append("}\n");
