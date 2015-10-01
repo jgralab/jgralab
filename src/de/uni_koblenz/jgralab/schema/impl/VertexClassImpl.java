@@ -525,11 +525,21 @@ public class VertexClassImpl extends GraphElementClassImpl<VertexClass, Vertex>
 			throw new SchemaException(
 					"The default vertex class cannot be deleted.");
 		}
-		if (!getConnectedEdgeClasses().isEmpty()) {
+		if (!getOwnConnectedEdgeClasses().isEmpty()) {
 			throw new SchemaException("Cannot delete vertex class "
 					+ qualifiedName
 					+ " because there are still connected edge classes: "
-					+ getConnectedEdgeClasses());
+					+ getOwnConnectedEdgeClasses());
+		}
+		for (VertexClass sub : getAllSubClasses()) {
+			if (!sub.getOwnConnectedEdgeClasses().isEmpty()) {
+				throw new SchemaException(
+						"Cannot delete vertex class "
+								+ qualifiedName
+								+ " because there are still edge classes connected to subclass "
+								+ sub.getQualifiedName() + ": "
+								+ sub.getOwnConnectedEdgeClasses());
+			}
 		}
 		super.delete();
 		graphClass.vertexClasses.remove(qualifiedName);
